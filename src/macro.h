@@ -191,37 +191,37 @@ extern int mem_any_set (unsigned char *, int);
        __iter = g_list_next (__iter), n++) {                        \
     PinType *via = __iter->data;
 
-#define DRILL_LOOP(top) do {                                        \
-  GList *__iter;                                                    \
-  GList *__copy = g_list_copy ((top)->Drill);                       \
-  Cardinal n;                                                       \
-  for (__iter = __copy, n = 0; __iter != NULL;                      \
-       __iter = g_list_next (__iter), n++) {                        \
-    DrillType *drill = __iter->data;
+#define DRILL_LOOP(top) do             {               \
+        Cardinal        n;                                      \
+        GList *__copy = NULL; /* DUMMY */                       \
+        DrillTypePtr    drill;                                  \
+        for (n = 0; (top)->DrillN > 0 && n < (top)->DrillN; n++)                        \
+        {                                                       \
+                drill = &(top)->Drill[n]
 
-#define NETLIST_LOOP(top) do {                                      \
-  GList *__iter;                                                    \
-  GList *__copy = g_list_reverse (g_list_copy ((top)->NetList));    \
-  Cardinal n;                                                       \
-  for (__iter = __copy, n = (top)->NetListN - 1; __iter != NULL;    \
-       __iter = g_list_next (__iter), n--) {                        \
-    NetListType *netlist = __iter->data;
+#define NETLIST_LOOP(top) do   {                         \
+        Cardinal        n;                                      \
+        GList *__copy = NULL; /* DUMMY */                       \
+        NetListTypePtr   netlist;                               \
+        for (n = (top)->NetListN-1; n != -1; n--)               \
+        {                                                       \
+                netlist = &(top)->NetList[n]
 
-#define NET_LOOP(top) do {                                          \
-  GList *__iter;                                                    \
-  GList *__copy = g_list_reverse (g_list_copy ((top)->Net));        \
-  Cardinal n;                                                       \
-  for (__iter = __copy, n = (top)->NetN - 1; __iter != NULL;        \
-       __iter = g_list_next (__iter), n--) {                        \
-    NetType *net = __iter->data;
+#define NET_LOOP(top) do   {                             \
+        Cardinal        n;                                      \
+        GList *__copy = NULL; /* DUMMY */                       \
+        NetTypePtr   net;                                       \
+        for (n = (top)->NetN-1; n != -1; n--)                   \
+        {                                                       \
+                net = &(top)->Net[n]
 
-#define CONNECTION_LOOP(net) do {                                   \
-  GList *__iter;                                                    \
-  GList *__copy = g_list_reverse (g_list_copy ((net)->Connection)); \
-  Cardinal n;                                                       \
-  for (__iter = __copy, n = (net)->ConnectionN - 1; __iter != NULL; \
-       __iter = g_list_next (__iter), n--) {                        \
-    ConnectionType *connection = __iter->data;
+#define CONNECTION_LOOP(net) do {                         \
+        Cardinal        n;                                      \
+        GList *__copy = NULL; /* DUMMY */                       \
+        ConnectionTypePtr       connection;                     \
+        for (n = (net)->ConnectionN-1; n != -1; n--)            \
+        {                                                       \
+                connection = & (net)->Connection[n]
 
 #define ELEMENT_LOOP(top) do {                                      \
   GList *__iter;                                                    \
@@ -239,16 +239,17 @@ extern int mem_any_set (unsigned char *, int);
        __iter = g_list_next (__iter), n--) {                        \
     RatType *line = __iter->data;
 
-#define	ELEMENTTEXT_LOOP(element) do {                              \
-        Cardinal n;                                                 \
-        GList *__copy = NULL; /* DUMMY */                           \
-        TextTypePtr text;                                           \
-        for (n = MAX_ELEMENTNAMES-1; n != -1; n--)                  \
-        {                                                           \
-                text = &(element)->Name[n]
+#define	ELEMENTTEXT_LOOP(element) do { 	\
+	Cardinal	n;				\
+	GList *__copy = NULL; /* DUMMY */		\
+	TextTypePtr	text;				\
+	for (n = MAX_ELEMENTNAMES-1; n != -1; n--)	\
+	{						\
+		text = &(element)->Name[n]
+
 
 #define	ELEMENTNAME_LOOP(element) do	{ 			\
-	GList *__copy = NULL; /* DUMMY */				\
+	GList *__copy = NULL; /* DUMMY */			\
 	Cardinal	n;					\
 	char		*textstring;				\
 	for (n = MAX_ELEMENTNAMES-1; n != -1; n--)		\
@@ -287,20 +288,13 @@ extern int mem_any_set (unsigned char *, int);
        __iter = g_list_next (__iter), n--) {                        \
     LineType *line = __iter->data;
 
-#define ELEMENTARG(element) do {                                    \
+#define ELEMENTARC_LOOP(element) do {                               \
   GList *__iter;                                                    \
   GList *__copy = g_list_reverse (g_list_copy ((element)->Arc));    \
   Cardinal n;                                                       \
   for (__iter = __copy, n = (element)->ArcN - 1; __iter != NULL;    \
        __iter = g_list_next (__iter), n--) {                        \
     ArcType *line = __iter->data;
-
-#define	ELEMENTARC_LOOP(element)	do { 	\
-	Cardinal	n;				\
-	ArcTypePtr	arc;				\
-	for (n = (element)->ArcN-1; n != -1; n--)	\
-	{						\
-		arc = &(element)->Arc[n]
 
 #define LINE_LOOP(layer) do {                                       \
   GList *__iter;                                                    \
@@ -328,6 +322,7 @@ extern int mem_any_set (unsigned char *, int);
 
 #define	POLYGONPOINT_LOOP(polygon) do	{	\
 	Cardinal			n;		\
+	GList *__copy = NULL; /* DUMMY */		\
 	PointTypePtr	point;				\
 	for (n = (polygon)->PointN-1; n != -1; n--)	\
 	{						\
@@ -448,47 +443,48 @@ extern int mem_any_set (unsigned char *, int);
 		if (layer->On)				\
 			POLYGON_LOOP(layer)
 
-#define POINTER_LOOP(top) do {                                      \
-  GList *__iter;                                                    \
-  GList *__copy = g_list_reverse (g_list_copy ((top)->Ptr));        \
-  Cardinal n;                                                       \
-  for (__iter = __copy, n = (top)->PtrN - 1; __iter != NULL;        \
-       __iter = g_list_next (__iter), n--) {                        \
-    void **ptr = &__iter->data;
+#define POINTER_LOOP(top) do	{	\
+	Cardinal	n;			\
+	GList *__copy = NULL; /* DUMMY */	\
+	void	**ptr;				\
+	for (n = (top)->PtrN-1; n != -1; n--)	\
+	{					\
+		ptr = &(top)->Ptr[n]
 
-#define MENU_LOOP(top) do {                                         \
-  GList *__iter;                                                    \
-  GList *__copy = g_list_reverse (g_list_copy ((top)->Menu));       \
-  Cardinal n;                                                       \
-  for (__iter = __copy, n = (top)->MenuN - 1; __iter != NULL;       \
-       __iter = g_list_next (__iter), n--) {                        \
-    LibraryMenuType *menu = __iter->data;
+#define MENU_LOOP(top)	do {	\
+	Cardinal	l;			\
+	GList *__copy = NULL; /* DUMMY */	\
+	LibraryMenuTypePtr menu;		\
+	for (l = (top)->MenuN-1; l != -1; l--)	\
+	{					\
+		menu = &(top)->Menu[l]
 
-#define ENTRY_LOOP(top) do {                                        \
-  GList *__iter;                                                    \
-  GList *__copy = g_list_reverse (g_list_copy ((top)->Entry));      \
-  Cardinal n;                                                       \
-  for (__iter = __copy, n = (top)->EntryN - 1; __iter != NULL;      \
-       __iter = g_list_next (__iter), n--) {                        \
-    LibraryEntryType *entry = __iter->data;
+#define ENTRY_LOOP(top) do	{	\
+	Cardinal	n;			\
+	GList *__copy = NULL; /* DUMMY */	\
+	LibraryEntryTypePtr entry;		\
+	for (n = (top)->EntryN-1; n != -1; n--)	\
+	{					\
+		entry = &(top)->Entry[n]
 
-#define GROUP_LOOP(data, group) do {                                \
-  GList *__copy = NULL; /* DUMMY */                                 \
-  Cardinal entry; \
-  for (entry = 0; entry < ((PCBTypePtr)(data->pcb))->LayerGroups.Number[(group)]; entry++) \
-  {                                                                 \
-    LayerTypePtr layer;                                             \
-    Cardinal number;                                                \
-    number = ((PCBTypePtr)(data->pcb))->LayerGroups.Entries[(group)][entry]; \
-    if (number >= max_copper_layer)                                 \
-      continue;                                                     \
-    layer = &data->Layer[number];
+#define GROUP_LOOP(data, group) do { 	\
+	Cardinal entry; \
+	GList *__copy = NULL; /* DUMMY */	\
+        for (entry = 0; entry < ((PCBTypePtr)(data->pcb))->LayerGroups.Number[(group)]; entry++) \
+        { \
+		LayerTypePtr layer;		\
+		Cardinal number; 		\
+		number = ((PCBTypePtr)(data->pcb))->LayerGroups.Entries[(group)][entry]; \
+		if (number >= max_copper_layer)	\
+		  continue;			\
+		layer = &data->Layer[number];
 
-#define LAYER_LOOP(data, ml) do {                                   \
-        Cardinal n;                                                 \
-        GList *__copy = NULL; /* DUMMY */                           \
-        for (n = 0; n < ml; n++)                                    \
-        {                                                           \
-           LayerTypePtr layer = (&data->Layer[(n)]);
+#define LAYER_LOOP(data, ml) do { \
+        Cardinal n; \
+        GList *__copy = NULL; /* DUMMY */ \
+	for (n = 0; n < ml; n++) \
+	{ \
+	   LayerTypePtr layer = (&data->Layer[(n)]);
+
 
 #endif
