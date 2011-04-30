@@ -1,0 +1,59 @@
+Bottom: ba6ced8fbb2dc03f7a0c738b53fb5fb5b9aec815
+Top:    5b694eee311c694746b0040f8943fe4fd9178412
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 16:21:06 +0100
+
+Refresh of drc-hack-hack-hack
+
+---
+
+diff --git a/src/puller.c b/src/puller.c
+index 21e5b61..b76a2b1 100644
+--- a/src/puller.c
++++ b/src/puller.c
+@@ -623,6 +623,11 @@ typedef struct Extra {
+   End end;
+   unsigned char found:1;
+   unsigned char deleted:1;
++  int type;
++  union {
++    LineType *line;
++    ArcType *arc;
++  } parent;
+ } Extra;
+ 
+ static Extra multi_next;
+@@ -640,12 +645,12 @@ static void trace_paths ();
+ #endif
+ static void mark_line_for_deletion (LineTypePtr);
+ 
+-#define LINE2EXTRA(l) (lines[(l)-CURRENT->Line])
+-#define ARC2EXTRA(a) (arcs[(a)-CURRENT->Arc])
+-#define EXTRA2LINE(e) (CURRENT->Line[(e)-lines])
+-#define EXTRA2ARC(e) (CURRENT->Arc[(e)-arcs])
+-#define EXTRA_IS_LINE(e) ((unsigned)(e-lines) < nlines)
+-#define EXTRA_IS_ARC(e) ((unsigned)(e-arcs) < narcs)
++#define LINE2EXTRA(l)    g_hash_table_lookup (lines, l)
++#define ARC2EXTRA(a)     g_hash_table_lookup (arcs, a)
++#define EXTRA2LINE(e)    (e->parent.line)
++#define EXTRA2ARC(e)     (e->parent.arc)
++#define EXTRA_IS_LINE(e) (e->type == LINE_TYPE)
++#define EXTRA_IS_ARC(e)  (e->type == ARC_TYPE)
+ 
+ static void
+ unlink_end (Extra *x, Extra **e)
+@@ -712,7 +717,6 @@ typedef struct {
+ static int
+ find_pair_line_callback (const BoxType * b, void *cl)
+ {
+-#if 0
+   LineTypePtr line = (LineTypePtr) b;
+ #if TRACE1
+   Extra *e = & LINE2EXTRA (line);
+@@ -747,7 +751,6 @@ find_pair_line_callback (const BoxType * b, void *cl)
+ #endif
+ 	}
+     }
+-#endif
+   return 0;
+ }
