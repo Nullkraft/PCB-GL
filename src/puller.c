@@ -679,14 +679,18 @@ unlink_end (Extra *x, Extra **e)
 }
 
 #if TRACE1
+
+static void
+clear_found_cb (AnyObjectType *ptr, Extra *extra, void *userdata)
+{
+  extra->found = 0;
+}
+
 static void
 clear_found ()
 {
-  int i;
-  for (i=0; i<nlines; i++)
-    lines[i].found = 0;
-  for (i=0; i<narcs; i++)
-    arcs[i].found = 0;
+  g_hash_table_foreach (lines, (GHFunc)clear_found_cb, NULL);
+  g_hash_table_foreach (arcs, (GHFunc)clear_found_cb, NULL);
 }
 #endif
 
