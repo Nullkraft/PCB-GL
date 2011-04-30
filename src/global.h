@@ -388,12 +388,14 @@ typedef struct			/* holds drill information */
 {
   BDimension DrillSize;		/* this drill's diameter */
   Cardinal ElementN,		/* the number of elements using this drill size */
+    ElementMax,			/* max number of elements from malloc() */
     PinCount,			/* number of pins drilled this size */
     ViaCount,			/* number of vias drilled this size */
     UnplatedCount,		/* number of these holes that are unplated */
-    PinN;			/* number of drill coordinates in the list */
-  GList *Pin;		/* coordinates to drill */
-  GList *Element;		/* a pointer to an array of element pointers */
+    PinN,			/* number of drill coordinates in the list */
+    PinMax;			/* max number of coordinates from malloc() */
+  PinTypePtr *Pin;		/* coordinates to drill */
+  ElementTypePtr *Element;	/* a pointer to an array of element pointers */
 } DrillType, *DrillTypePtr;
 
 typedef struct			/* holds a range of Drill Infos */
