@@ -1,0 +1,44 @@
+Bottom: e55b74938ea9933bf0d09e4d2e5fe1768bc863e3
+Top:    e2c617cbbdcf784d7082decfbcc779a4b07cc54d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 05:30:35 +0100
+
+Refresh of convert-board-objects-to-glist
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 84e0942..f98019c 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -170,7 +170,7 @@ static hidGC ar_gc = 0;
+ 
+ #define LIST_LOOP(init, which, x) do {\
+      routebox_t *__next_one__ = (init);\
+-   GList *__copy; /* DUMMY */\
++   GList *__copy = NULL; /* DUMMY */\
+    x = NULL;\
+    if (!__next_one__)\
+      assert(__next_one__);\
+diff --git a/src/global.h b/src/global.h
+index 025f0a0..c162e70 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -388,12 +388,14 @@ typedef struct			/* holds drill information */
+ {
+   BDimension DrillSize;		/* this drill's diameter */
+   Cardinal ElementN,		/* the number of elements using this drill size */
++    ElementMax,			/* max number of elements from malloc() */
+     PinCount,			/* number of pins drilled this size */
+     ViaCount,			/* number of vias drilled this size */
+     UnplatedCount,		/* number of these holes that are unplated */
+-    PinN;			/* number of drill coordinates in the list */
+-  GList *Pin;		/* coordinates to drill */
+-  GList *Element;		/* a pointer to an array of element pointers */
++    PinN,			/* number of drill coordinates in the list */
++    PinMax;			/* max number of coordinates from malloc() */
++  PinTypePtr *Pin;		/* coordinates to drill */
++  ElementTypePtr *Element;	/* a pointer to an array of element pointers */
+ } DrillType, *DrillTypePtr;
+ 
+ typedef struct			/* holds a range of Drill Infos */
