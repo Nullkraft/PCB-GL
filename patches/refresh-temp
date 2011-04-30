@@ -1,0 +1,86 @@
+Bottom: b81a4a23d50cd98f3009ca6dc4d6c7a0a3d9ae3e
+Top:    85ddf4cd109844c374fd7dc0c9008bbd13395ba5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 05:56:06 +0100
+
+Refresh of convert-board-objects-to-glist
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index b0f5f7d..08dd71c 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -242,7 +242,9 @@ MoveViaToBuffer (PinType *via)
+ 
+   r_delete_entry (Source->via_tree, (BoxType *) via);
+   Source->Via = g_list_remove (Source->Via, via);
++  Source->ViaN --;
+   Dest->Via = g_list_append (Dest->Via, via);
++  Dest->ViaN ++;
+ 
+   CLEAR_FLAG (WARNFLAG | FOUNDFLAG, via);
+ 
+@@ -260,8 +262,12 @@ static void *
+ MoveRatToBuffer (RatType *rat)
+ {
+   r_delete_entry (Source->rat_tree, (BoxType *)rat);
++
+   Source->Rat = g_list_remove (Source->Rat, rat);
++  Source->RatN --;
+   Dest->Rat = g_list_append (Dest->Rat, rat);
++  Dest->RatN ++;
++
+   CLEAR_FLAG (FOUNDFLAG, rat);
+ 
+   if (!Dest->rat_tree)
+@@ -282,7 +288,9 @@ MoveLineToBuffer (LayerType *layer, LineTypePtr line)
+   r_delete_entry (layer->line_tree, (BoxType*)line);
+ 
+   layer->Line = g_list_remove (layer->Line, line);
++  layer->LineN --;
+   lay->Line = g_list_append (lay->Line, line);
++  lay->LineN ++;
+ 
+   CLEAR_FLAG (FOUNDFLAG, line);
+ 
+@@ -305,7 +313,9 @@ MoveArcToBuffer (LayerType *layer, ArcType *arc)
+   r_delete_entry (layer->arc_tree, (BoxTypePtr) arc);
+ 
+   layer->Arc = g_list_remove (layer->Arc, arc);
++  layer->ArcN --;
+   lay->Arc = g_list_append (lay->Arc, arc);
++  lay->ArcN ++;
+ 
+   CLEAR_FLAG (FOUNDFLAG, arc);
+ 
+@@ -328,7 +338,9 @@ MoveTextToBuffer (LayerType *layer, TextType *text)
+   RestoreToPolygon (Source, TEXT_TYPE, layer, text);
+ 
+   layer->Text = g_list_remove (layer->Text, text);
++  layer->TextN --;
+   lay->Text = g_list_append (lay->Text, text);
++  lay->TextN ++;
+ 
+   if (!lay->text_tree)
+     lay->text_tree = r_create_tree (NULL, 0, 0);
+@@ -348,7 +360,9 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
+   r_delete_entry (layer->polygon_tree, (BoxType *)polygon);
+ 
+   layer->Polygon = g_list_remove (layer->Polygon, polygon);
++  layer->PolygonN --;
+   lay->Polygon = g_list_append (lay->Polygon, polygon);
++  lay->PolygonN ++;
+ 
+   CLEAR_FLAG (FOUNDFLAG, polygon);
+ 
+@@ -371,7 +385,9 @@ MoveElementToBuffer (ElementType *element)
+   r_delete_element (Source, element);
+ 
+   Source->Element = g_list_remove (Source->Element, element);
++  Source->ElementN --;
+   Dest->Element = g_list_append (Dest->Element, element);
++  Dest->ElementN ++;
+ 
+   PIN_LOOP (element);
+   {
