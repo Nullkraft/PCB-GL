@@ -2651,21 +2651,19 @@ GlobalPuller(int argc, char **argv, int x, int y)
   printf("\nlines\n");
 #endif
 
-  /* We do this backwards so we don't have to edit the extras.  */
-  for (i=CURRENT->LineN-1; i>=0; i--)
+  LINE_LOOP (CURRENT);
     {
-      LineTypePtr line = & CURRENT->Line[i];
       if (LINE2EXTRA (line)->deleted)
 	RemoveLine (CURRENT, line);
     }
+  END_LOOP;
 
-  /* We do this backwards so we don't have to edit the extras.  */
-  for (i=CURRENT->ArcN-1; i>=0; i--)
+  ARC_LOOP (CURRENT);
     {
-      ArcTypePtr arc = & CURRENT->Arc[i];
       if (ARC2EXTRA (arc)->deleted)
 	RemoveArc (CURRENT, arc);
     }
+  END_LOOP;
 
   g_hash_table_unref (lines);
   g_hash_table_unref (arcs);
