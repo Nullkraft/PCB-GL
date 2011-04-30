@@ -160,7 +160,7 @@ REGISTER_FLAGS (djopt_flag_list)
 static char *
 element_name_for (corner_s * c)
 {
-  ELEMENT_LOOP (PCB->Data)
+  ELEMENT_LOOP (PCB->Data);
   {
     PIN_LOOP (element);
     {
