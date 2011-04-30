@@ -1,5 +1,5 @@
 Bottom: 4d7ea9054089cff99ab5d1933f2cd035603a55bc
-Top:    23f04184d4099129f031f7fd3fd76a715ed588e1
+Top:    ac73ff0db6ce5b9611b2e32509949f660411c62c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 13:50:17 +0100
 
@@ -13,15 +13,12 @@ fewer places.
 ---
 
 diff --git a/src/rats.c b/src/rats.c
-index c6cdb2d..24a3007 100644
+index c6cdb2d..a6e526c 100644
 --- a/src/rats.c
 +++ b/src/rats.c
-@@ -123,56 +123,56 @@ static bool
- FindPad (char *ElementName, char *PinNum, ConnectionType * conn, bool Same)
- {
+@@ -125,54 +125,54 @@ FindPad (char *ElementName, char *PinNum, ConnectionType * conn, bool Same)
    ElementTypePtr element;
--  Cardinal i;
-+  GList *i;
+   Cardinal i;
  
 -  if ((element = SearchElementByName (PCB->Data, ElementName)) != NULL)
 +  if ((element = SearchElementByName (PCB->Data, ElementName)) == NULL)
