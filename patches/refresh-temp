@@ -1,0 +1,31 @@
+Bottom: abb25cedcdb06fe5afe881570f89f8de2ef5fa93
+Top:    b09ed2b8067610b5c4972e32ab4ed003408c2c4d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 19:07:52 +0100
+
+Refresh of convert-board-objects-to-glist
+
+---
+
+diff --git a/src/puller.c b/src/puller.c
+index 30011ae..2238204 100644
+--- a/src/puller.c
++++ b/src/puller.c
+@@ -1260,7 +1260,7 @@ print_extra (Extra *e, Extra *prev)
+   if (EXTRA_IS_LINE (e))
+     {
+       LineTypePtr line = EXTRA2LINE (e);
+-      printf(" %4d L %d,%d-%d,%d", (int)(line-CURRENT->Line), line->Point1.X, line->Point1.Y, line->Point2.X, line->Point2.Y);
++      printf(" %p L %d,%d-%d,%d", line, line->Point1.X, line->Point1.Y, line->Point2.X, line->Point2.Y);
+       printf("  %s %p %s %p\n",
+ 	     e->start.is_pad ? "pad" : "pin", e->start.pin,
+ 	     e->end.is_pad ? "pad" : "pin", e->end.pin);
+@@ -1268,7 +1268,7 @@ print_extra (Extra *e, Extra *prev)
+   else if (EXTRA_IS_ARC (e))
+     {
+       ArcTypePtr arc = EXTRA2ARC (e);
+-      printf(" %4d A %d,%d-%d,%d", (int) (arc-CURRENT->Arc), e->start.x, e->start.y, e->end.x, e->end.y);
++      printf(" %p A %d,%d-%d,%d", arc, e->start.x, e->start.y, e->end.x, e->end.y);
+       printf(" at %d,%d ang %ld,%ld\n", arc->X, arc->Y, arc->StartAngle, arc->Delta);
+     }
+   else if (e == &multi_next)
