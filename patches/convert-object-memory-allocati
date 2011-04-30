@@ -1,5 +1,5 @@
 Bottom: 425a524650f1a11ddeec3c1e033e983fa9617717
-Top:    a622ecbfd685a6243706e776325d28ca4e1b9cea
+Top:    65711857d77476acdd3ace39d826e8e2af9137b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-29 20:55:13 +0100
 
@@ -1336,7 +1336,7 @@ index e990d4a..b4307f7 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index 0e25089..efca2e1 100644
+index 0e25089..cbbb172 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -441,7 +441,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
@@ -1411,7 +1411,21 @@ index 0e25089..efca2e1 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1980,10 +1987,13 @@ pcb_author (void)
+@@ -1696,8 +1703,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+       *y = ((ElementTypePtr) ptr2)->MarkY;
+       break;
+     case POLYGON_TYPE:
+-      *x = ((PolygonTypePtr) ptr2)->Points[0].X;
+-      *y = ((PolygonTypePtr) ptr2)->Points[0].Y;
++      {
++        PointType *point0 = ((PolygonTypePtr) ptr2)->Points->data;
++        *x = point0->X;
++        *y = point0->Y;
++      }
+       break;
+ 
+     case LINEPOINT_TYPE:
+@@ -1980,10 +1990,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
