@@ -1,0 +1,21 @@
+Bottom: f6f6919965d0a5e2557a09b588c1d4be8bb72073
+Top:    980a740beee9d46dbd8d0138d171fc658d75e25c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 15:43:01 +0100
+
+Refresh of hid-gtk-drop-in-gl-renderer-wo
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 0be44de..d9641aa 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1205,6 +1205,5 @@ ghid_flush_debug_draw (void)
+ void
+ ghid_finish_debug_draw (void)
+ {
+-  /* No special tear down requirements
+-   */
++  ghid_end_drawing (gport);
+ }
