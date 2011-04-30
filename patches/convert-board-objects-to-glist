@@ -1,5 +1,5 @@
 Bottom: e4d3d3b07b98bce82fd3562414a50cd099bb7beb
-Top:    b09ed2b8067610b5c4972e32ab4ed003408c2c4d
+Top:    b99badef4f876bc7e1fc9eefab867b30f0916e72
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 15:20:39 +0100
 
@@ -2204,7 +2204,7 @@ index 4e36640..6b572d8 100644
  #define STRDUP(x) (((x) != NULL) ? strdup (x) : NULL)
  
 diff --git a/src/puller.c b/src/puller.c
-index 30011ae..2238204 100644
+index 30011ae..488748d 100644
 --- a/src/puller.c
 +++ b/src/puller.c
 @@ -1260,7 +1260,7 @@ print_extra (Extra *e, Extra *prev)
@@ -2225,6 +2225,32 @@ index 30011ae..2238204 100644
        printf(" at %d,%d ang %ld,%ld\n", arc->X, arc->Y, arc->StartAngle, arc->Delta);
      }
    else if (e == &multi_next)
+@@ -2651,21 +2651,19 @@ GlobalPuller(int argc, char **argv, int x, int y)
+   printf("\nlines\n");
+ #endif
+ 
+-  /* We do this backwards so we don't have to edit the extras.  */
+-  for (i=CURRENT->LineN-1; i>=0; i--)
++  LINE_LOOP (CURRENT);
+     {
+-      LineTypePtr line = & CURRENT->Line[i];
+       if (LINE2EXTRA (line)->deleted)
+ 	RemoveLine (CURRENT, line);
+     }
++  END_LOOP;
+ 
+-  /* We do this backwards so we don't have to edit the extras.  */
+-  for (i=CURRENT->ArcN-1; i>=0; i--)
++  ARC_LOOP (CURRENT);
+     {
+-      ArcTypePtr arc = & CURRENT->Arc[i];
+       if (ARC2EXTRA (arc)->deleted)
+ 	RemoveArc (CURRENT, arc);
+     }
++  END_LOOP;
+ 
+   g_hash_table_unref (lines);
+   g_hash_table_unref (arcs);
 diff --git a/src/rats.c b/src/rats.c
 index a6e526c..d2aa8bb 100644
 --- a/src/rats.c
