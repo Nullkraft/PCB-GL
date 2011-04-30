@@ -525,8 +525,8 @@ FreePolygonMemory (PolygonType *polygon)
   if (polygon == NULL)
     return;
 
-  g_list_free_full (polygon->Points, (GDestroyNotify)FreePoint);
-  g_list_free_full (polygon->HoleIndex, (GDestroyNotify)FreeHoleIndex);
+  free (polygon->Points);
+  free (polygon->HoleIndex);
 
   if (polygon->Clipped)
     poly_Free (&polygon->Clipped);
