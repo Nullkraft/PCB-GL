@@ -38,32 +38,6 @@
 #include <stdlib.h>
 #include "global.h"
 
-/* ---------------------------------------------------------------------------
- * number of additional objects that are allocated with one system call
- */
-#define	STEP_VIA			2000	/* block size for realloc() calls */
-#define	STEP_PIN			20
-#define	STEP_PAD			20
-#define	STEP_LINE			10000
-#define STEP_ARC			1000
-#define	STEP_ELEMENTLINE	10
-#define	STEP_ELEMENTARC		5
-#define	STEP_TEXT			50
-#define	STEP_ELEMENT		50
-#define STEP_DRILL		30
-#define STEP_POINT		100
-#define	STEP_SYMBOLLINE		10
-#define	STEP_SELECTORENTRY	128
-#define	STEP_REMOVELIST		500
-#define	STEP_UNDOLIST		500
-#define	STEP_POLYGON		10
-#define	STEP_POLYGONPOINT	10
-#define	STEP_POLYGONHOLEINDEX	10
-#define	STEP_LIBRARYMENU	10
-#define	STEP_LIBRARYENTRY	20
-#define	STEP_RUBBERBAND		100
-#define STEP_RAT		2000
-
 #define STRDUP(x) (((x) != NULL) ? strdup (x) : NULL)
 
 /* ---------------------------------------------------------------------------
@@ -97,7 +71,10 @@ ElementTypeHandle GetDrillElementMemory (DrillTypePtr);
 PinTypeHandle GetDrillPinMemory (DrillTypePtr);
 DrillTypePtr GetDrillInfoDrillMemory (DrillInfoTypePtr);
 void **GetPointerMemory (PointerListTypePtr);
+AttributeTypePtr GetAttributeMemory (AttributeListTypePtr);
+void FreeAttribute (AttributeTypePtr);
 void FreePolygonMemory (PolygonTypePtr);
+void FreeAttributeListMemory (AttributeListTypePtr);
 void FreeElementMemory (ElementTypePtr);
 void FreePCBMemory (PCBTypePtr);
 void FreeBoxListMemory (BoxListTypePtr);
