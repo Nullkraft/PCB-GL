@@ -1,5 +1,5 @@
-Bottom: 1cf97ca29b60d2f04809e7b6ce706886935254b2
-Top:    a301e3f6ba72466a88c9bbce6c81a291d4a2b15b
+Bottom: 0e538e52aa48e72636f3652f06f226bee3a540b6
+Top:    7011a3a604819abdb1b827b72dd423bfb5410d23
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-29 16:54:31 +0100
 
@@ -9,10 +9,10 @@ hid/gtk: Hook up debug drawing APIs
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 27d62c6..1923941 100644
+index a47803e..45f1e96 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1226,3 +1226,26 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1299,3 +1299,26 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    return pixmap;
  }
