@@ -1,0 +1,14 @@
+Bottom: bde09837966af6260dab85c7c523be38863f3de0
+Top:    bde09837966af6260dab85c7c523be38863f3de0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 05:40:54 +0100
+
+Include glib.h from global.h
+
+To avoid compiler warnings, remove the now duplicated (or unecessary)
+#define ABS definitions from various files.
+
+
+---
+
+
