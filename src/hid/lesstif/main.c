@@ -3875,6 +3875,7 @@ lesstif_request_debug_draw (void)
 {
   /* Send drawing to the backing pixmap */
   pixmap = main_pixmap;
+  return &lesstif_hid;
 }
 
 static void
