@@ -5120,7 +5120,7 @@ AutoRoute (bool selected)
   ddraw = gui->request_debug_draw ();
   if (ddraw != NULL)
     {
-      ar_gc = gui->make_gc ();
+      ar_gc = ddraw->make_gc ();
       ddraw->set_line_cap (ar_gc, Round_Cap);
     }
 #endif
