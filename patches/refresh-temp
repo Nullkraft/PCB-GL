@@ -1,0 +1,25 @@
+Bottom: 2ba9d40a8afe8791813040b09c70b0873890b83b
+Top:    98b4567fe79be47047097ec25fc452d11790955c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 16:11:01 +0100
+
+Refresh of debug-patch
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 416bc55..5c767ea 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -3670,8 +3670,11 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
+ 
+   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+     Draw ();
++
++#ifdef ROUTE_DEBUG
+   if (ddraw != NULL)
+     ddraw->flush_debug_draw ();
++#endif
+ }
+ 
+ /* create a fake "edge" used to defer via site searching. */
