@@ -1,5 +1,5 @@
 Bottom: 5c4e977abb5413e17e3a198ef9ea401fef7c3d22
-Top:    1e047411c0e150a13f10660310f4449a01f93255
+Top:    665ca9794cbb8f140d888b549440b57de1a19808
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 05:09:21 +0100
 
@@ -2158,6 +2158,39 @@ index 24f20a2..77a2ce2 100644
  }
  
  /* ---------------------------------------------------------------------------
+diff --git a/src/mymem.h b/src/mymem.h
+index 4e36640..6b572d8 100644
+--- a/src/mymem.h
++++ b/src/mymem.h
+@@ -41,14 +41,6 @@
+ /* ---------------------------------------------------------------------------
+  * number of additional objects that are allocated with one system call
+  */
+-#define	STEP_VIA			2000	/* block size for realloc() calls */
+-#define	STEP_PIN			20
+-#define	STEP_PAD			20
+-#define	STEP_LINE			10000
+-#define STEP_ARC			1000
+-#define	STEP_ELEMENTLINE	10
+-#define	STEP_ELEMENTARC		5
+-#define	STEP_TEXT			50
+ #define	STEP_ELEMENT		50
+ #define STEP_DRILL		30
+ #define STEP_POINT		100
+@@ -56,13 +48,11 @@
+ #define	STEP_SELECTORENTRY	128
+ #define	STEP_REMOVELIST		500
+ #define	STEP_UNDOLIST		500
+-#define	STEP_POLYGON		10
+ #define	STEP_POLYGONPOINT	10
+ #define	STEP_POLYGONHOLEINDEX	10
+ #define	STEP_LIBRARYMENU	10
+ #define	STEP_LIBRARYENTRY	20
+ #define	STEP_RUBBERBAND		100
+-#define STEP_RAT		2000
+ 
+ #define STRDUP(x) (((x) != NULL) ? strdup (x) : NULL)
+ 
 diff --git a/src/parse_y.y b/src/parse_y.y
 index d0f31aa..ad8cb44 100644
 --- a/src/parse_y.y
