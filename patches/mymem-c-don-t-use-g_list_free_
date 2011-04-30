@@ -3,10 +3,11 @@ Top:    6ea9a39939c26b41cca4c7351a7fe8794fdc29de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 20:29:08 +0100
 
-mymem.c: Don't use g_list_free_full () it is too new.
+mymem.c: Provide an optional implementation of g_list_free_full ()
 
-This was only added in GLib 2.28, it is just a convenience function,
-so we can cook up our own.
+This API was only added in GLib 2.28, and it is just a small
+convenience function. If an insufficient GLib version is found,
+provide our own implementation.
 
 
 ---
