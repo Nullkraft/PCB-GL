@@ -3670,8 +3670,11 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
 
   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
     Draw ();
+
+#ifdef ROUTE_DEBUG
   if (ddraw != NULL)
     ddraw->flush_debug_draw ();
+#endif
 }
 
 /* create a fake "edge" used to defer via site searching. */
