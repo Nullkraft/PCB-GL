@@ -36,6 +36,8 @@
 
 #include "global.h"
 
+#include <memory.h>
+
 #include "data.h"
 #include "error.h"
 #include "mymem.h"
@@ -57,128 +59,129 @@ static void DSRealloc (DynamicStringTypePtr, size_t);
 /* ---------------------------------------------------------------------------
  * get next slot for a rubberband connection, allocates memory if necessary
  */
-RubberbandType *
+RubberbandTypePtr
 GetRubberbandMemory (void)
 {
-  AttachedObjectType *attached = &Crosshair.AttachedObject;
-  RubberbandType *new_obj;
+  RubberbandTypePtr ptr = Crosshair.AttachedObject.Rubberband;
 
-  new_obj = g_slice_new0 (RubberbandType);
-  attached->Rubberband = g_list_append (attached->Rubberband, new_obj);
-  attached->RubberbandN ++;
-
-  return new_obj;
+  /* realloc new memory if necessary and clear it */
+  if (Crosshair.AttachedObject.RubberbandN >=
+      Crosshair.AttachedObject.RubberbandMax)
+    {
+      Crosshair.AttachedObject.RubberbandMax += STEP_RUBBERBAND;
+      ptr = (RubberbandTypePtr)realloc (ptr, Crosshair.AttachedObject.RubberbandMax *
+                          sizeof (RubberbandType));
+      Crosshair.AttachedObject.Rubberband = ptr;
+      memset (ptr + Crosshair.AttachedObject.RubberbandN, 0,
+	      STEP_RUBBERBAND * sizeof (RubberbandType));
+    }
+  return (ptr + Crosshair.AttachedObject.RubberbandN++);
 }
 
 void **
-GetPointerMemory (PointerListType *list)
+GetPointerMemory (PointerListTypePtr list)
 {
-  void **new_obj;
+  void **ptr = list->Ptr;
 
-  new_obj = g_slice_new0 (void *);
-  list->Ptr = g_list_append (list->Ptr, new_obj);
-  list->PtrN ++;
-
-  return new_obj;
-}
-
-static void
-FreePointer (gpointer data)
-{
-  g_slice_free (void *, data);
+  /* realloc new memory if necessary and clear it */
+  if (list->PtrN >= list->PtrMax)
+    {
+      list->PtrMax = STEP_POINT + (2 * list->PtrMax);
+      ptr = (void **)realloc (ptr, list->PtrMax * sizeof (void *));
+      list->Ptr = ptr;
+      memset (ptr + list->PtrN, 0,
+	      (list->PtrMax - list->PtrN) * sizeof (void *));
+    }
+  return (ptr + list->PtrN++);
 }
 
 void
-FreePointerListMemory (PointerListType *list)
+FreePointerListMemory (PointerListTypePtr list)
 {
-  g_list_free_full (list->Ptr, (GDestroyNotify)FreePointer);
+  free (list->Ptr);
   memset (list, 0, sizeof (PointerListType));
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a box, allocates memory if necessary
  */
-BoxType *
-GetBoxMemory (BoxListType *boxlist)
+BoxTypePtr
+GetBoxMemory (BoxListTypePtr Boxes)
 {
-  BoxType *new_obj;
+  BoxTypePtr box = Boxes->Box;
 
-  new_obj = g_slice_new0 (BoxType);
-  boxlist->Box = g_list_append (boxlist->Box, new_obj);
-  boxlist->BoxN ++;
-
-  return new_obj;
+  /* realloc new memory if necessary and clear it */
+  if (Boxes->BoxN >= Boxes->BoxMax)
+    {
+      Boxes->BoxMax = STEP_POINT + (2 * Boxes->BoxMax);
+      box = (BoxTypePtr)realloc (box, Boxes->BoxMax * sizeof (BoxType));
+      Boxes->Box = box;
+      memset (box + Boxes->BoxN, 0,
+	      (Boxes->BoxMax - Boxes->BoxN) * sizeof (BoxType));
+    }
+  return (box + Boxes->BoxN++);
 }
 
-static void
-FreeBox (BoxType *data)
-{
-  g_slice_free (BoxType, data);
-}
 
 /* ---------------------------------------------------------------------------
  * get next slot for a connection, allocates memory if necessary
  */
-ConnectionType *
-GetConnectionMemory (NetType *net)
+ConnectionTypePtr
+GetConnectionMemory (NetTypePtr Net)
 {
-  ConnectionType *new_obj;
+  ConnectionTypePtr con = Net->Connection;
 
-  new_obj = g_slice_new (ConnectionType);
-  net->Connection = g_list_append (net->Connection, new_obj);
-  net->ConnectionN ++;
-
-  return new_obj;
-}
-
-static void
-FreeConnection (ConnectionType *data)
-{
-  g_slice_free (ConnectionType, data);
+  /* realloc new memory if necessary and clear it */
+  if (Net->ConnectionN >= Net->ConnectionMax)
+    {
+      Net->ConnectionMax += STEP_POINT;
+      con = (ConnectionTypePtr)realloc (con, Net->ConnectionMax * sizeof (ConnectionType));
+      Net->Connection = con;
+      memset (con + Net->ConnectionN, 0,
+	      STEP_POINT * sizeof (ConnectionType));
+    }
+  return (con + Net->ConnectionN++);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a subnet, allocates memory if necessary
  */
-NetType *
-GetNetMemory (NetListType *netlist)
+NetTypePtr
+GetNetMemory (NetListTypePtr Netlist)
 {
-  NetType *new_obj;
+  NetTypePtr net = Netlist->Net;
 
-  new_obj = g_slice_new (NetType);
-  netlist->Net = g_list_append (netlist->Net, new_obj);
-  netlist->NetN ++;
-
-  return new_obj;
-}
-
-static void
-FreeNet (NetType *data)
-{
-  g_slice_free (NetType, data);
+  /* realloc new memory if necessary and clear it */
+  if (Netlist->NetN >= Netlist->NetMax)
+    {
+      Netlist->NetMax += STEP_POINT;
+      net = (NetTypePtr)realloc (net, Netlist->NetMax * sizeof (NetType));
+      Netlist->Net = net;
+      memset (net + Netlist->NetN, 0, STEP_POINT * sizeof (NetType));
+    }
+  return (net + Netlist->NetN++);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a net list, allocates memory if necessary
  */
-NetListType *
-GetNetListMemory (NetListListType *netlistlist)
+NetListTypePtr
+GetNetListMemory (NetListListTypePtr Netlistlist)
 {
-  NetListType* new_obj;
+  NetListTypePtr netlist = Netlistlist->NetList;
 
-  new_obj = g_slice_new (NetListType);
-  netlistlist->NetList = g_list_append (netlistlist->NetList, new_obj);
-  netlistlist->NetListN ++;
-
-  return new_obj;
+  /* realloc new memory if necessary and clear it */
+  if (Netlistlist->NetListN >= Netlistlist->NetListMax)
+    {
+      Netlistlist->NetListMax += STEP_POINT;
+      netlist = (NetListTypePtr)realloc (netlist,
+                         Netlistlist->NetListMax * sizeof (NetListType));
+      Netlistlist->NetList = netlist;
+      memset (netlist + Netlistlist->NetListN, 0,
+	      STEP_POINT * sizeof (NetListType));
+    }
+  return (netlist + Netlistlist->NetListN++);
 }
-
-static void
-FreeNetList (NetListType *data)
-{
-  g_slice_free (NetListType, data);
-}
-
 /* ---------------------------------------------------------------------------
  * get next slot for a pin, allocates memory if necessary
  */
@@ -351,22 +354,21 @@ FreePolygon (PolygonType *data)
  * gets the next slot for a point in a polygon struct, allocates memory
  * if necessary
  */
-PointType *
-GetPointMemoryInPolygon (PolygonType *polygon)
+PointTypePtr
+GetPointMemoryInPolygon (PolygonTypePtr Polygon)
 {
-  PointType *new_obj;
+  PointTypePtr points = Polygon->Points;
 
-  new_obj = g_slice_new (PointType);
-  polygon->Points = g_list_append (polygon->Points, new_obj);
-  polygon->PointN ++;
-
-  return new_obj;
-}
-
-static void
-FreePoint (PointType *data)
-{
-  g_slice_free (PointType, data);
+  /* realloc new memory if necessary and clear it */
+  if (Polygon->PointN >= Polygon->PointMax)
+    {
+      Polygon->PointMax += STEP_POLYGONPOINT;
+      points = (PointTypePtr)realloc (points, Polygon->PointMax * sizeof (PointType));
+      Polygon->Points = points;
+      memset (points + Polygon->PointN, 0,
+	      STEP_POLYGONPOINT * sizeof (PointType));
+    }
+  return (points + Polygon->PointN++);
 }
 
 /* ---------------------------------------------------------------------------
@@ -374,21 +376,20 @@ FreePoint (PointType *data)
  * if necessary
  */
 Cardinal *
-GetHoleIndexMemoryInPolygon (PolygonType *polygon)
+GetHoleIndexMemoryInPolygon (PolygonTypePtr Polygon)
 {
-  Cardinal *new_obj;
+  Cardinal *holeindex = Polygon->HoleIndex;
 
-  new_obj = g_slice_new (Cardinal);
-  polygon->HoleIndex = g_list_append (polygon->HoleIndex, new_obj);
-  polygon->HoleIndexN ++;
-
-  return new_obj;
-}
-
-static void
-FreeHoleIndex (Cardinal *data)
-{
-  g_slice_free (Cardinal, data);
+  /* realloc new memory if necessary and clear it */
+  if (Polygon->HoleIndexN >= Polygon->HoleIndexMax)
+    {
+      Polygon->HoleIndexMax += STEP_POLYGONHOLEINDEX;
+      holeindex = (Cardinal *)realloc (holeindex, Polygon->HoleIndexMax * sizeof (int));
+      Polygon->HoleIndex = holeindex;
+      memset (holeindex + Polygon->HoleIndexN, 0,
+	      STEP_POLYGONHOLEINDEX * sizeof (int));
+    }
+  return (holeindex + Polygon->HoleIndexN++);
 }
 
 /* ---------------------------------------------------------------------------
@@ -413,142 +414,106 @@ FreeElement (ElementType *data)
 }
 
 /* ---------------------------------------------------------------------------
- * get next slot for a library entry, allocates memory if necessary
+ * get next slot for a library menu, allocates memory if necessary
  */
-LibraryEntryType *
-GetLibraryEntryMemory (LibraryMenuType *menu)
+LibraryMenuTypePtr
+GetLibraryMenuMemory (LibraryTypePtr lib)
 {
-  LibraryEntryType *new_obj;
+  LibraryMenuTypePtr menu = lib->Menu;
 
-  new_obj = g_slice_new (LibraryEntryType);
-  menu->Entry = g_list_append (menu->Entry, new_obj);
-  menu->EntryN ++;
-
-  return new_obj;
-}
-
-static void
-FreeLibraryEntry (LibraryEntryType *entry)
-{
-  free (entry->AllocatedMemory);
-  free (entry->ListEntry);
-
-  g_slice_free (LibraryEntryType, entry);
+  /* realloc new memory if necessary and clear it */
+  if (lib->MenuN >= lib->MenuMax)
+    {
+      lib->MenuMax += STEP_LIBRARYMENU;
+      menu = (LibraryMenuTypePtr)realloc (menu, lib->MenuMax * sizeof (LibraryMenuType));
+      lib->Menu = menu;
+      memset (menu + lib->MenuN, 0,
+	      STEP_LIBRARYMENU * sizeof (LibraryMenuType));
+    }
+  return (menu + lib->MenuN++);
 }
 
 /* ---------------------------------------------------------------------------
- * get next slot for a library menu, allocates memory if necessary
+ * get next slot for a library entry, allocates memory if necessary
  */
-LibraryMenuType *
-GetLibraryMenuMemory (LibraryType *lib)
+LibraryEntryTypePtr
+GetLibraryEntryMemory (LibraryMenuTypePtr Menu)
 {
-  LibraryMenuType *new_obj;
+  LibraryEntryTypePtr entry = Menu->Entry;
 
-  new_obj = g_slice_new (LibraryMenuType);
-  lib->Menu = g_list_append (lib->Menu, new_obj);
-  lib->MenuN ++;
-
-  return new_obj;
-}
-
-static void
-FreeLibraryMenu (LibraryMenuType *menu)
-{
-  g_list_free_full (menu->Entry, (GDestroyNotify)FreeLibraryEntry);
-  free (menu->Name);
-  g_slice_free (LibraryMenuType, menu);
+  /* realloc new memory if necessary and clear it */
+  if (Menu->EntryN >= Menu->EntryMax)
+    {
+      Menu->EntryMax += STEP_LIBRARYENTRY;
+      entry = (LibraryEntryTypePtr)realloc (entry, Menu->EntryMax * sizeof (LibraryEntryType));
+      Menu->Entry = entry;
+      memset (entry + Menu->EntryN, 0,
+	      STEP_LIBRARYENTRY * sizeof (LibraryEntryType));
+    }
+  return (entry + Menu->EntryN++);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a DrillElement, allocates memory if necessary
  */
-ElementType **
-GetDrillElementMemory (DrillType *drill)
+ElementTypeHandle
+GetDrillElementMemory (DrillTypePtr Drill)
 {
-  ElementType **new_obj;
+  ElementTypePtr *element;
 
-  new_obj = g_slice_new (ElementType *);
-  drill->Element = g_list_append (drill->Element, new_obj);
-  drill->ElementN ++;
+  element = Drill->Element;
 
-  return new_obj;
-}
-
-static void
-FreeDrillElement (ElementType **data)
-{
-  g_slice_free (ElementType *, data);
+  /* realloc new memory if necessary and clear it */
+  if (Drill->ElementN >= Drill->ElementMax)
+    {
+      Drill->ElementMax += STEP_ELEMENT;
+      element = (ElementTypePtr *)realloc (element,
+                         Drill->ElementMax * sizeof (ElementTypeHandle));
+      Drill->Element = element;
+      memset (element + Drill->ElementN, 0,
+	      STEP_ELEMENT * sizeof (ElementTypeHandle));
+    }
+  return (element + Drill->ElementN++);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a DrillPoint, allocates memory if necessary
  */
-PinType **
-GetDrillPinMemory (DrillType *drill)
+PinTypeHandle
+GetDrillPinMemory (DrillTypePtr Drill)
 {
-  PinType **new_obj;
+  PinTypePtr *pin;
 
-  new_obj = g_slice_new (PinType *);
-  drill->Pin = g_list_append (drill->Pin, new_obj);
-  drill->PinN ++;
+  pin = Drill->Pin;
 
-  return new_obj;
-}
-
-static void
-FreeDrillPin (PinType **data)
-{
-  g_slice_free (PinType *, data);
+  /* realloc new memory if necessary and clear it */
+  if (Drill->PinN >= Drill->PinMax)
+    {
+      Drill->PinMax += STEP_POINT;
+      pin = (PinTypePtr *)realloc (pin, Drill->PinMax * sizeof (PinTypeHandle));
+      Drill->Pin = pin;
+      memset (pin + Drill->PinN, 0, STEP_POINT * sizeof (PinTypeHandle));
+    }
+  return (pin + Drill->PinN++);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a Drill, allocates memory if necessary
  */
-DrillType *
-GetDrillInfoDrillMemory (DrillInfoType *drillinfo)
+DrillTypePtr
+GetDrillInfoDrillMemory (DrillInfoTypePtr DrillInfo)
 {
-  DrillType *new_obj;
+  DrillTypePtr drill = DrillInfo->Drill;
 
-  new_obj = g_slice_new (DrillType);
-  drillinfo->Drill = g_list_append (drillinfo->Drill, new_obj);
-  drillinfo->DrillN ++;
-
-  return new_obj;
-}
-
-static void
-FreeDrill (DrillType *drill)
-{
-  g_list_free_full (drill->Element, (GDestroyNotify)FreeDrillElement);
-  g_list_free_full (drill->Pin, (GDestroyNotify)FreeDrillPin);
-  g_slice_free (DrillType, drill);
-}
-
-void
-FreeDrillInfo (DrillInfoType *drill_info)
-{
-  g_list_free_full (drill_info->Drill, (GDestroyNotify)FreeDrill);
-  g_slice_free (DrillInfoType, drill_info);
-}
-
-AttributeType *
-GetAttributeMemory (AttributeListType *attr_list)
-{
-  AttributeType *new_obj;
-
-  new_obj = g_slice_new0 (AttributeType);
-  attr_list->List = g_list_append (attr_list->List, new_obj);
-  attr_list->Number ++;
-
-  return new_obj;
-}
-
-void
-FreeAttribute (AttributeType *attr)
-{
-  free (attr->name);
-  free (attr->value);
-  g_slice_free (AttributeType, attr);
+  /* realloc new memory if necessary and clear it */
+  if (DrillInfo->DrillN >= DrillInfo->DrillMax)
+    {
+      DrillInfo->DrillMax += STEP_DRILL;
+      drill = (DrillTypePtr)realloc (drill, DrillInfo->DrillMax * sizeof (DrillType));
+      DrillInfo->Drill = drill;
+      memset (drill + DrillInfo->DrillN, 0, STEP_DRILL * sizeof (DrillType));
+    }
+  return (drill + DrillInfo->DrillN++);
 }
 
 /* ---------------------------------------------------------------------------
@@ -574,74 +539,79 @@ FreePolygonMemory (PolygonType *polygon)
  * frees memory used by a box list
  */
 void
-FreeBoxListMemory (BoxListType *boxlist)
+FreeBoxListMemory (BoxListTypePtr Boxlist)
 {
-  if (boxlist == NULL)
-    return;
-
-  g_list_free_full (boxlist->Box, (GDestroyNotify)FreeBox);
-  memset (boxlist, 0, sizeof (BoxListType));
+  if (Boxlist)
+    {
+      free (Boxlist->Box);
+      memset (Boxlist, 0, sizeof (BoxListType));
+    }
 }
 
 /* ---------------------------------------------------------------------------
  * frees memory used by a net 
  */
 void
-FreeNetListMemory (NetListType *netlist)
+FreeNetListMemory (NetListTypePtr Netlist)
 {
-  if (netlist == NULL)
-    return;
-
-  NET_LOOP (netlist);
-  {
-    FreeNetMemory (net);
-  }
-  END_LOOP;
-
-  g_list_free_full (netlist->Net, (GDestroyNotify)FreeNet);
-  memset (netlist, 0, sizeof (NetListType));
+  if (Netlist)
+    {
+      NET_LOOP (Netlist);
+      {
+	FreeNetMemory (net);
+      }
+      END_LOOP;
+      free (Netlist->Net);
+      memset (Netlist, 0, sizeof (NetListType));
+    }
 }
 
 /* ---------------------------------------------------------------------------
  * frees memory used by a net list
  */
 void
-FreeNetListListMemory (NetListListType *netlistlist)
+FreeNetListListMemory (NetListListTypePtr Netlistlist)
 {
-  if (netlistlist == NULL)
-    return;
-
-  NETLIST_LOOP (netlistlist);
-  {
-    FreeNetListMemory (netlist);
-  }
-  END_LOOP;
-
-  g_list_free_full (netlistlist->NetList, (GDestroyNotify)FreeNetList);
-  memset (netlistlist, 0, sizeof (NetListListType));
+  if (Netlistlist)
+    {
+      NETLIST_LOOP (Netlistlist);
+      {
+	FreeNetListMemory (netlist);
+      }
+      END_LOOP;
+      free (Netlistlist->NetList);
+      memset (Netlistlist, 0, sizeof (NetListListType));
+    }
 }
 
 /* ---------------------------------------------------------------------------
  * frees memory used by a subnet 
  */
 void
-FreeNetMemory (NetType *net)
+FreeNetMemory (NetTypePtr Net)
 {
-  if (net == NULL)
-    return;
-
-  g_list_free_full (net->Connection, (GDestroyNotify)FreeConnection);
-  memset (net, 0, sizeof (NetType));
+  if (Net)
+    {
+      free (Net->Connection);
+      memset (Net, 0, sizeof (NetType));
+    }
 }
-
 /* ---------------------------------------------------------------------------
  * frees memory used by an attribute list
-*/
-void
-FreeAttributeListMemory (AttributeListType *list)
+ */
+static void
+FreeAttributeListMemory (AttributeListTypePtr list)
 {
-  g_list_free_full (list->List, (GDestroyNotify)FreeAttribute);
-  memset (list, 0, sizeof (AttributeListType));
+  int i;
+
+  for (i = 0; i < list->Number; i++)
+    {
+      free (list->List[i].name);
+      free (list->List[i].value);
+    }
+  free (list->List);
+  list->List = NULL;
+  list->Max = 0;
 }
 
 /* ---------------------------------------------------------------------------
@@ -787,9 +757,24 @@ FreeDataMemory (DataType *data)
  * releases the memory that's allocated by the library
  */
 void
-FreeLibraryMemory (LibraryType *lib)
+FreeLibraryMemory (LibraryTypePtr lib)
 {
-  g_list_free_full (lib->Menu, (GDestroyNotify)FreeLibraryMenu);
+  MENU_LOOP (lib);
+  {
+    ENTRY_LOOP (menu);
+    {
+      free (entry->AllocatedMemory);
+      free (entry->ListEntry);
+    }
+    END_LOOP;
+    free (menu->Entry);
+    free (menu->Name);
+  }
+  END_LOOP;
+  free (lib->Menu);
+
+  /* clear struct */
+  memset (lib, 0, sizeof (LibraryType));
 }
 
 /* ---------------------------------------------------------------------------
