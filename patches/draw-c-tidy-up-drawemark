@@ -1,5 +1,5 @@
 Bottom: ad737718a5de9a9b003a3da018f631539f0a025e
-Top:    ad737718a5de9a9b003a3da018f631539f0a025e
+Top:    2813eecf215e97fe24684fff495f11e7751f34f8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 13:36:47 +0100
 
@@ -12,4 +12,29 @@ fewer places.
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 9ebcba6..5409249 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -774,10 +774,17 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
+   if (!PCB->InvisibleObjectsOn && invisible)
+     return;
+ 
+-  if (e->PinN && mark_size > e->Pin[0].Thickness / 2)
+-    mark_size = e->Pin[0].Thickness / 2;
+-  if (e->PadN && mark_size > e->Pad[0].Thickness / 2)
+-    mark_size = e->Pad[0].Thickness / 2;
++  if (e->PinN)
++    {
++      PinType *pin0 = &e->Pin[0];
++      mark_size = MIN (mark_size, pin0->Thickness / 2);
++    }
++
++  if (e->PadN)
++    {
++      PadType *pad0 = &e->Pad[0];
++      mark_size = MIN (mark_size, pad0->Thickness / 2);
++    }
+ 
+   gui->set_color (Output.fgGC,
+ 		  invisible ? PCB->InvisibleMarkColor : PCB->ElementColor);
