@@ -1,0 +1,160 @@
+Bottom: 63838a9b1030885f67f5d7f590098baad599433b
+Top:    ea0f3bce60467d2dda331b7503567735c48224b7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 06:41:06 +0100
+
+Refresh of convert-board-objects-to-glist
+
+---
+
+diff --git a/src/mymem.c b/src/mymem.c
+index 9279aaa..77a2ce2 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -190,7 +190,7 @@ GetPinMemory (ElementType *element)
+ {
+   PinType *new_obj;
+ 
+-  new_obj = g_slice_new (PinType);
++  new_obj = g_slice_new0 (PinType);
+   element->Pin = g_list_append (element->Pin, new_obj);
+   element->PinN ++;
+ 
+@@ -211,7 +211,7 @@ GetPadMemory (ElementType *element)
+ {
+   PadType *new_obj;
+ 
+-  new_obj = g_slice_new (PadType);
++  new_obj = g_slice_new0 (PadType);
+   element->Pad = g_list_append (element->Pad, new_obj);
+   element->PadN ++;
+ 
+@@ -232,7 +232,7 @@ GetViaMemory (DataType *data)
+ {
+   PinType *new_obj;
+ 
+-  new_obj = g_slice_new (PinType);
++  new_obj = g_slice_new0 (PinType);
+   data->Via = g_list_append (data->Via, new_obj);
+   data->ViaN ++;
+ 
+@@ -253,7 +253,7 @@ GetRatMemory (DataType *data)
+ {
+   RatType *new_obj;
+ 
+-  new_obj = g_slice_new (RatType);
++  new_obj = g_slice_new0 (RatType);
+   data->Rat = g_list_append (data->Rat, new_obj);
+   data->RatN ++;
+ 
+@@ -274,7 +274,7 @@ GetLineMemory (LayerType *layer)
+ {
+   LineType *new_obj;
+ 
+-  new_obj = g_slice_new (LineType);
++  new_obj = g_slice_new0 (LineType);
+   layer->Line = g_list_append (layer->Line, new_obj);
+   layer->LineN ++;
+ 
+@@ -295,7 +295,7 @@ GetArcMemory (LayerType *layer)
+ {
+   ArcType *new_obj;
+ 
+-  new_obj = g_slice_new (ArcType);
++  new_obj = g_slice_new0 (ArcType);
+   layer->Arc = g_list_append (layer->Arc, new_obj);
+   layer->ArcN ++;
+ 
+@@ -316,7 +316,7 @@ GetTextMemory (LayerType *layer)
+ {
+   TextType *new_obj;
+ 
+-  new_obj = g_slice_new (TextType);
++  new_obj = g_slice_new0 (TextType);
+   layer->Text = g_list_append (layer->Text, new_obj);
+   layer->TextN ++;
+ 
+@@ -337,7 +337,7 @@ GetPolygonMemory (LayerType *layer)
+ {
+   PolygonType *new_obj;
+ 
+-  new_obj = g_slice_new (PolygonType);
++  new_obj = g_slice_new0 (PolygonType);
+   layer->Polygon = g_list_append (layer->Polygon, new_obj);
+   layer->PolygonN ++;
+ 
+@@ -400,7 +400,7 @@ GetElementMemory (DataType *data)
+ {
+   ElementType *new_obj;
+ 
+-  new_obj = g_slice_new (ElementType);
++  new_obj = g_slice_new0 (ElementType);
+   data->Element = g_list_append (data->Element, new_obj);
+   data->ElementN ++;
+ 
+diff --git a/src/remove.c b/src/remove.c
+index 9ae39c4..1dcb63e 100644
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -135,6 +135,8 @@ DestroyVia (PinTypePtr Via)
+   DestroyTarget->Via = g_list_remove (DestroyTarget->Via, Via);
+   DestroyTarget->ViaN --;
+ 
++  g_slice_free (PinType, Via);
++
+   return NULL;
+ }
+ 
+@@ -150,6 +152,8 @@ DestroyLine (LayerTypePtr Layer, LineTypePtr Line)
+   Layer->Line = g_list_remove (Layer->Line, Line);
+   Layer->LineN --;
+ 
++  g_slice_free (LineType, Line);
++
+   return NULL;
+ }
+ 
+@@ -164,6 +168,8 @@ DestroyArc (LayerTypePtr Layer, ArcTypePtr Arc)
+   Layer->Arc = g_list_remove (Layer->Arc, Arc);
+   Layer->ArcN --;
+ 
++  g_slice_free (ArcType, Arc);
++
+   return NULL;
+ }
+ 
+@@ -179,6 +185,8 @@ DestroyPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   Layer->Polygon = g_list_remove (Layer->Polygon, Polygon);
+   Layer->PolygonN --;
+ 
++  g_slice_free (PolygonType, Polygon);
++
+   return NULL;
+ }
+ 
+@@ -234,6 +242,8 @@ DestroyText (LayerTypePtr Layer, TextTypePtr Text)
+   Layer->Text = g_list_remove (Layer->Text, Text);
+   Layer->TextN --;
+ 
++  g_slice_free (TextType, Text);
++
+   return NULL;
+ }
+ 
+@@ -272,6 +282,8 @@ DestroyElement (ElementTypePtr Element)
+   DestroyTarget->Element = g_list_remove (DestroyTarget->Element, Element);
+   DestroyTarget->ElementN --;
+ 
++  g_slice_free (ElementType, Element);
++
+   return NULL;
+ }
+ 
+@@ -287,6 +299,8 @@ DestroyRat (RatTypePtr Rat)
+   DestroyTarget->Rat = g_list_remove (DestroyTarget->Rat, Rat);
+   DestroyTarget->RatN --;
+ 
++  g_slice_free (RatType, Rat);
++
+   return NULL;
+ }
