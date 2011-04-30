@@ -1,5 +1,5 @@
 Bottom: ac73ff0db6ce5b9611b2e32509949f660411c62c
-Top:    f35b8bbef7bd24a92f33b30f153c03bfbb8c03a8
+Top:    ffeaa475406872d1ff74177bdce43fd9fb6ad93a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 05:09:21 +0100
 
@@ -911,29 +911,17 @@ index cb2b92d..9ad5331 100644
     *rat_tree;
    struct PCBType *pcb;
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index 46806da..5c18aa9 100644
+index 46806da..35ef8eb 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
-@@ -90,12 +90,19 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
+@@ -90,6 +90,7 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
     * set all package lines/arcs to zero width
     */
    CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0);
 +
-+  pin0 = pinout->element.Pin->data;
-+  pin1 = g_list_next (pinout->element.Pin)->data;
-+
    PIN_LOOP (&pinout->element);
    {
      SET_FLAG (DISPLAYNAMEFLAG, pin);
-   }
-   END_LOOP;
- 
-+  pad0 = pinout->element.Pad->data;
-+  pad1 = g_list_next (pinout->element.Pad)->data;
-+
-   PAD_LOOP (&pinout->element);
-   {
-     SET_FLAG (DISPLAYNAMEFLAG, pad);
 diff --git a/src/macro.h b/src/macro.h
 index 1fb6584..e990d4a 100644
 --- a/src/macro.h
