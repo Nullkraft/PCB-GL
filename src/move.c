@@ -569,7 +569,7 @@ moveline_callback (const BoxType * b, void *cl)
 }
 
 static void *
-MoveLineToLayer (LayerTypePtr Layer, LineTypePtr Line)
+MoveLineToLayer (LayerType *Layer, LineType *Line)
 {
   struct via_info info;
   BoxType sb;
@@ -641,8 +641,8 @@ MoveLineToLayer (LayerTypePtr Layer, LineTypePtr Line)
  * moves a text object between layers; lowlevel routines
  */
 static void *
-MoveTextToLayerLowLevel (LayerTypePtr Source, TextTypePtr Text,
-			 LayerTypePtr Destination)
+MoveTextToLayerLowLevel (LayerType *Source, TextType *Text,
+			 LayerType *Destination)
 {
   TextTypePtr newone = GetTextMemory (Destination);
 
@@ -672,7 +672,7 @@ MoveTextToLayerLowLevel (LayerTypePtr Source, TextTypePtr Text,
  * moves a text object between layers
  */
 static void *
-MoveTextToLayer (LayerTypePtr Layer, TextTypePtr Text)
+MoveTextToLayer (LayerType *Layer, TextType *Text)
 {
   TextTypePtr newone;
 
@@ -700,8 +700,8 @@ MoveTextToLayer (LayerTypePtr Layer, TextTypePtr Text)
  * moves a polygon between layers; lowlevel routines
  */
 static void *
-MovePolygonToLayerLowLevel (LayerTypePtr Source, PolygonTypePtr Polygon,
-			    LayerTypePtr Destination)
+MovePolygonToLayerLowLevel (LayerType *Source, PolygonType *Polygon,
+			    LayerType *Destination)
 {
   PolygonTypePtr newone = GetPolygonMemory (Destination);
 
@@ -748,7 +748,7 @@ mptl_pin_callback (const BoxType *b, void *cl)
  * moves a polygon between layers
  */
 static void *
-MovePolygonToLayer (LayerTypePtr Layer, PolygonTypePtr Polygon)
+MovePolygonToLayer (LayerType *Layer, PolygonType *Polygon)
 {
   PolygonTypePtr newone;
   struct mptlc d;
