@@ -1,0 +1,27 @@
+Bottom: 10846269560a4dcd1b6536ba10b728a9ed1f1f47
+Top:    4d7ea9054089cff99ab5d1933f2cd035603a55bc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 13:47:42 +0100
+
+Refresh of src-toporouter-c-tidy-up-escap
+
+---
+
+diff --git a/src/toporouter.c b/src/toporouter.c
+index 3590472..74459f4 100644
+--- a/src/toporouter.c
++++ b/src/toporouter.c
+@@ -7987,8 +7987,11 @@ escape (int argc, char **argv, int x, int y)
+       PinTypePtr via;
+       LineTypePtr line;
+ 
+-      pitch = sqrt( pow(abs(element->Pad[0].Point1.X - element->Pad[1].Point1.X), 2) + 
+-        pow(abs(element->Pad[0].Point1.Y - element->Pad[1].Point1.Y), 2) );
++      PadType *pad0 = &element->Pad[0];
++      PadType *pad1 = &element->Pad[1];
++
++      pitch = sqrt (pow (abs (pad0->Point1.X - pad1->Point1.X), 2) +
++                    pow (abs (pad0->Point1.Y - pad1->Point1.Y), 2) );
+       length = sqrt(pow(pitch,2) + pow(pitch,2)) / 2.;
+ 
+       dx = length * sin(M_PI/4.);
