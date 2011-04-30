@@ -1,5 +1,5 @@
 Bottom: e72f14570324fd9e4760722fa6269def0ffb32ae
-Top:    980a740beee9d46dbd8d0138d171fc658d75e25c
+Top:    60a3be9a19a55eda52190f2b5aba845b983c11be
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 15:20:43 +0100
 
@@ -755,7 +755,7 @@ index 0000000..e69a6b7
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..d9641aa
+index 0000000..c21808b
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -0,0 +1,1209 @@
@@ -1960,7 +1960,7 @@ index 0000000..d9641aa
 +void
 +ghid_flush_debug_draw (void)
 +{
-+//  gdk_window_process_all_updates ();
++  gdk_window_process_all_updates ();
 +}
 +
 +void
