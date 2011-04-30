@@ -1,0 +1,22 @@
+Bottom: cd7fa2ab71e43c745c2946a05a51c796a43c74d2
+Top:    a60faf03a2c26e8c5d2b4497ff1b80a72c2ae18d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 14:45:03 +0100
+
+Refresh of djopt-c-tidy-up-element_name_f
+
+---
+
+diff --git a/src/djopt.c b/src/djopt.c
+index d95b4a1..b5f44b4 100644
+--- a/src/djopt.c
++++ b/src/djopt.c
+@@ -160,7 +160,7 @@ REGISTER_FLAGS (djopt_flag_list)
+ static char *
+ element_name_for (corner_s * c)
+ {
+-  ELEMENT_LOOP (PCB->Data)
++  ELEMENT_LOOP (PCB->Data);
+   {
+     PIN_LOOP (element);
+     {
