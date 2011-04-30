@@ -1,7 +1,7 @@
-Bottom: 63838a9b1030885f67f5d7f590098baad599433b
-Top:    21ee63ca6cc189a282a04a535af2ac94294015df
+Bottom: ea0f3bce60467d2dda331b7503567735c48224b7
+Top:    b125fc9bd2bcf3f4dcb59270ce846e64911d5f35
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-29 20:55:13 +0100
+Date:   2011-04-30 06:51:56 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -1479,7 +1479,7 @@ index ab96078..da1f550 100644
  
    AddObjectToMoveUndoList (Type, Ptr1, Ptr2, Ptr3, DX, DY);
 diff --git a/src/mymem.c b/src/mymem.c
-index 9279aaa..c084f20 100644
+index 77a2ce2..63f4699 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -36,8 +36,6 @@
