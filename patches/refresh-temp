@@ -1,0 +1,42 @@
+Bottom: c19bd6beae3d6613a98ad0d302c17b8fcc2f3e20
+Top:    b29e42e4d06201c76845a1ea903181a8e37d64f7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 14:32:58 +0100
+
+Refresh of move-c-gratuitous-cosmetic-cha
+
+---
+
+diff --git a/src/move.c b/src/move.c
+index 00ba2bf..7ba7476 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -458,8 +458,8 @@ MoveLineToLayerLowLevel (LayerType *Source, LineType *Line,
+  * moves an arc between layers; lowlevel routines
+  */
+ static void *
+-MoveArcToLayerLowLevel (LayerTypePtr Source, ArcTypePtr Arc,
+-			LayerTypePtr Destination)
++MoveArcToLayerLowLevel (LayerType *Source, ArcType *Arc,
++			LayerType *Destination)
+ {
+   ArcTypePtr newone = GetArcMemory (Destination);
+ 
+@@ -481,7 +481,7 @@ MoveArcToLayerLowLevel (LayerTypePtr Source, ArcTypePtr Arc,
+  * moves an arc between layers
+  */
+ static void *
+-MoveArcToLayer (LayerTypePtr Layer, ArcTypePtr Arc)
++MoveArcToLayer (LayerType *Layer, ArcType *Arc)
+ {
+   ArcTypePtr newone;
+ 
+@@ -513,7 +513,7 @@ MoveArcToLayer (LayerTypePtr Layer, ArcTypePtr Arc)
+  * moves a line between layers
+  */
+ static void *
+-MoveRatToLayer (RatTypePtr Rat)
++MoveRatToLayer (RatType *Rat)
+ {
+   LineTypePtr newone;
+   //LocationType X1 = Rat->Point1.X, Y1 = Rat->Point1.Y;
