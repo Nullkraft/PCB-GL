@@ -123,7 +123,7 @@ static bool
 FindPad (char *ElementName, char *PinNum, ConnectionType * conn, bool Same)
 {
   ElementTypePtr element;
-  GList *i;
+  Cardinal i;
 
   if ((element = SearchElementByName (PCB->Data, ElementName)) == NULL)
     return false;
