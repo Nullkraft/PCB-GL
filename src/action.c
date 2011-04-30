@@ -6388,7 +6388,7 @@ ActionRedo (int argc, char **argv, int x, int y)
       if (Settings.Mode == LINE_MODE &&
 	  Crosshair.AttachedLine.State != STATE_FIRST)
 	{
-	  LineTypePtr line = &CURRENT->Line[CURRENT->LineN - 1];
+	  LineType *line = g_list_last (CURRENT->Line)->data;
 	  Crosshair.AttachedLine.Point1.X =
 	    Crosshair.AttachedLine.Point2.X = line->Point2.X;
 	  Crosshair.AttachedLine.Point1.Y =
