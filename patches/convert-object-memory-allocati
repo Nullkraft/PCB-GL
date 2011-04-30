@@ -1,7 +1,7 @@
-Bottom: 665ca9794cbb8f140d888b549440b57de1a19808
-Top:    7d12bb4998fa5245a72a1928385c3e324dbd90f0
+Bottom: f9aa67e383c39f439e5f9dd6add978468c659f87
+Top:    b94876c7fa2f8f098946e617cf25efbf8539b2ba
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-30 13:09:21 +0100
+Date:   2011-04-30 15:06:49 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -302,7 +302,7 @@ index 27dba28..920d8e8 100644
        {
  	if (layer->LineN || layer->ArcN)
 diff --git a/src/buffer.c b/src/buffer.c
-index 08dd71c..c3d301f 100644
+index 8793f50..9c0b77b 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -597,47 +597,55 @@ void
@@ -832,7 +832,7 @@ index 9ad5331..f843617 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index f5e2717..e8b4a17 100644
+index ac961db..6cead6d 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -828,6 +828,7 @@ static void
@@ -1444,7 +1444,7 @@ index 0e25089..cbbb172 100644
  }
  
 diff --git a/src/move.c b/src/move.c
-index ab96078..da1f550 100644
+index 6ce043a..364e8d3 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -789,7 +789,7 @@ void *
@@ -2223,7 +2223,7 @@ index e42d4bb..48261a9 100644
        }
        END_LOOP;
 diff --git a/src/toporouter.c b/src/toporouter.c
-index 2a21f58..75006c5 100644
+index 402de74..7d3dd40 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
 @@ -2804,7 +2804,8 @@ import_clusters(toporouter_t *r)
