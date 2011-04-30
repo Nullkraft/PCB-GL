@@ -7136,7 +7136,7 @@ ActionElementList (int argc, char **argv, int x, int y)
 	return 1;
 
       er = ElementOrientation (e);
-      pe = & PASTEBUFFER->Data->Element[0];
+      pe = PASTEBUFFER->Data->Element->data;
       pr = ElementOrientation (pe);
 
       mx = e->MarkX;
