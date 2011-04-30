@@ -1,4 +1,4 @@
-Bottom: b09ed2b8067610b5c4972e32ab4ed003408c2c4d
+Bottom: cdeacdb22aaeb9fbf83cb4844afd0049db5721db
 Top:    04917593681e752445afe86d5b00c11f3532606e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 18:54:06 +0100
@@ -9,7 +9,7 @@ Lots of puller fixes
 ---
 
 diff --git a/src/puller.c b/src/puller.c
-index 2238204..ef399d5 100644
+index 1c655e1..ef399d5 100644
 --- a/src/puller.c
 +++ b/src/puller.c
 @@ -608,7 +608,7 @@ status ()
@@ -483,15 +483,7 @@ index 2238204..ef399d5 100644
    abort();
  }
  
-@@ -2561,7 +2563,6 @@ trace_print_lines_arcs (void)
- static int
- GlobalPuller(int argc, char **argv, int x, int y)
- {
--  int i;
-   int select_flags = 0;
- 
-   setbuf(stdout, 0);
-@@ -2623,7 +2624,7 @@ GlobalPuller(int argc, char **argv, int x, int y)
+@@ -2622,7 +2624,7 @@ GlobalPuller(int argc, char **argv, int x, int y)
  	    if (line->Point1.X < 0)
  	      abort1();
  #endif
@@ -500,29 +492,3 @@ index 2238204..ef399d5 100644
  	      maybe_pull (line, e);
  #if TRACE0
  	    if (did_something != old_did_something)
-@@ -2651,21 +2652,19 @@ GlobalPuller(int argc, char **argv, int x, int y)
-   printf("\nlines\n");
- #endif
- 
--  /* We do this backwards so we don't have to edit the extras.  */
--  for (i=CURRENT->LineN-1; i>=0; i--)
-+  LINE_LOOP (CURRENT);
-     {
--      LineTypePtr line = & CURRENT->Line[i];
-       if (LINE2EXTRA (line)->deleted)
- 	RemoveLine (CURRENT, line);
-     }
-+  END_LOOP;
- 
--  /* We do this backwards so we don't have to edit the extras.  */
--  for (i=CURRENT->ArcN-1; i>=0; i--)
-+  ARC_LOOP (CURRENT);
-     {
--      ArcTypePtr arc = & CURRENT->Arc[i];
-       if (ARC2EXTRA (arc)->deleted)
- 	RemoveArc (CURRENT, arc);
-     }
-+  END_LOOP;
- 
-   g_hash_table_unref (lines);
-   g_hash_table_unref (arcs);
