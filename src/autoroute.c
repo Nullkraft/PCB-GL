@@ -4617,14 +4617,6 @@ ripout_livedraw_obj (routebox_t *rb)
     }
 }
 
-static int
-ripout_livedraw_obj_cb (const BoxType * b, void *cl)
-{
-  routebox_t *box = (routebox_t *) b;
-  ripout_livedraw_obj (box);
-  return 0;
-}
-
 static void
 ripout_all_livedrawn (routedata_t *rd)
 {
