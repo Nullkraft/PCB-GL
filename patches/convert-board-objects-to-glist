@@ -1,7 +1,7 @@
-Bottom: cecefe95177c7cf3ddad81c213249aec93b601bd
-Top:    f9aa67e383c39f439e5f9dd6add978468c659f87
+Bottom: 7918641981ba21627467828a2bb3942aa2ec2f70
+Top:    a11afa21e50c6440e7b8fa267aab4400adb3df92
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-30 05:09:21 +0100
+Date:   2011-04-30 15:20:39 +0100
 
 Convert board objects to GLists of g_slice allocated memory
 
@@ -464,7 +464,7 @@ index 6409139..e4eeb0b 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/djopt.c b/src/djopt.c
-index 8e94d7e..de8498d 100644
+index 842ed47..185d7e8 100644
 --- a/src/djopt.c
 +++ b/src/djopt.c
 @@ -760,28 +760,14 @@ static void
