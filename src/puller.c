@@ -1068,7 +1068,11 @@ find_pairs ()
   } END_LOOP;
 
   LINE_LOOP (CURRENT); {
-    Extra *e = new_line_extra (line);
+    new_line_extra (line);
+  } END_LOOP;
+
+  LINE_LOOP (CURRENT); {
+    Extra *e = LINE2EXTRA (line);
     if (line->Point1.X >= 0)
       {
 	find_pairs_1 (line, & e->start.next, line->Point1.X, line->Point1.Y);
