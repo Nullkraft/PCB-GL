@@ -1,5 +1,5 @@
-Bottom: b81a4a23d50cd98f3009ca6dc4d6c7a0a3d9ae3e
-Top:    4d1a7f87605b0eb4a3b5b2246c8d7521f61ebf7c
+Bottom: 85ddf4cd109844c374fd7dc0c9008bbd13395ba5
+Top:    bf9a0262b0831c9708c7b8cf02b9bfd0955dca11
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-29 20:55:13 +0100
 
@@ -302,10 +302,10 @@ index 27dba28..920d8e8 100644
        {
  	if (layer->LineN || layer->ArcN)
 diff --git a/src/buffer.c b/src/buffer.c
-index b0f5f7d..554c580 100644
+index 08dd71c..c3d301f 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -581,47 +581,55 @@ void
+@@ -597,47 +597,55 @@ void
  make_footprint_hash ()
  {
    int i, j;
@@ -372,7 +372,7 @@ index b0f5f7d..554c580 100644
  
  #ifdef DEBUG
  /* 	      printf(" ... found file footprint %s\n",  fp); */
-@@ -633,7 +641,7 @@ make_footprint_hash ()
+@@ -649,7 +657,7 @@ make_footprint_hash ()
  	  else 
            /* m4 */
  	    {
@@ -381,7 +381,7 @@ index b0f5f7d..554c580 100644
  	      if (fp)
  		{
  		  footprint_hash[num_entries].footprint = strdup (fp+1);
-@@ -644,7 +652,7 @@ make_footprint_hash ()
+@@ -660,7 +668,7 @@ make_footprint_hash ()
  		}
  	      else
  		{
@@ -390,7 +390,7 @@ index b0f5f7d..554c580 100644
  		  footprint_hash[num_entries].footprint = fp;
  		  footprint_hash[num_entries].footprint_allocated = 0;
  		}
-@@ -721,8 +729,8 @@ LoadFootprintByName (BufferTypePtr Buffer, char *Footprint)
+@@ -737,8 +745,8 @@ LoadFootprintByName (BufferTypePtr Buffer, char *Footprint)
        return 1;
      }
  
