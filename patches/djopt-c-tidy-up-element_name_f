@@ -1,5 +1,5 @@
 Bottom: 028ec64ac8a1af4bb2e94fb65df25bf64d320263
-Top:    028ec64ac8a1af4bb2e94fb65df25bf64d320263
+Top:    cd7fa2ab71e43c745c2946a05a51c796a43c74d2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 14:44:28 +0100
 
@@ -8,4 +8,40 @@ djopt.c: Tidy up element_name_for() by using loop macros
 
 ---
 
-
+diff --git a/src/djopt.c b/src/djopt.c
+index 09abdc5..d95b4a1 100644
+--- a/src/djopt.c
++++ b/src/djopt.c
+@@ -160,19 +160,22 @@ REGISTER_FLAGS (djopt_flag_list)
+ static char *
+ element_name_for (corner_s * c)
+ {
+-  int i, p;
+-  ElementType *e;
+-
+-  for (i = 0; i < PCB->Data->ElementN; i++)
++  ELEMENT_LOOP (PCB->Data)
++  {
++    PIN_LOOP (element);
++    {
++      if (pin == c->pin)
++        return element->Name[1].TextString;
++    }
++    END_LOOP;
++    PAD_LOOP (element);
+     {
+-      e = PCB->Data->Element + i;
+-      for (p = 0; p < e->PinN; p++)
+-	if (e->Pin + p == c->pin)
+-	  return e->Name[1].TextString;
+-      for (p = 0; p < e->PadN; p++)
+-	if (e->Pad + p == c->pad)
+-	  return e->Name[1].TextString;
++      if (pad == c->pad)
++        return element->Name[1].TextString;
+     }
++    END_LOOP;
++  }
++  END_LOOP;
+   return "unknown";
+ }
