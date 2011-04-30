@@ -1,4 +1,4 @@
-Bottom: bde09837966af6260dab85c7c523be38863f3de0
+Bottom: 5c4e977abb5413e17e3a198ef9ea401fef7c3d22
 Top:    425a524650f1a11ddeec3c1e033e983fa9617717
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 05:09:21 +0100
@@ -25,21 +25,10 @@ index ed087c1..2f0bbd7 100644
  
        mx = e->MarkX;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index c17a8fe..27dba28 100644
+index b58600f..27dba28 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
-@@ -159,10 +159,6 @@ static hidGC ar_gc = 0;
- 	 CONFLICT_LEVEL(rb)==LO_CONFLICT ? \
- 	 AutoRouteParameters.LastConflictPenalty : 1) * (rb)->pass)
- 
--#if !defined(ABS)
--#define ABS(x) (((x)<0)?-(x):(x))
--#endif
--
- #define _NORTH 1
- #define _EAST 2
- #define _SOUTH 4
-@@ -170,6 +166,7 @@ static hidGC ar_gc = 0;
+@@ -166,6 +166,7 @@ static hidGC ar_gc = 0;
  
  #define LIST_LOOP(init, which, x) do {\
       routebox_t *__next_one__ = (init);\
@@ -464,21 +453,6 @@ index 6409139..e4eeb0b 100644
  }
  
  /* ---------------------------------------------------------------------------
-diff --git a/src/crosshair.c b/src/crosshair.c
-index 2abe960..c2551ec 100644
---- a/src/crosshair.c
-+++ b/src/crosshair.c
-@@ -56,10 +56,6 @@
- 
- RCSID ("$Id$");
- 
--#if !defined(ABS)
--#define ABS(x) (((x)<0)?-(x):(x))
--#endif
--
- typedef struct
- {
-   int x, y;
 diff --git a/src/draw.c b/src/draw.c
 index 9ebcba6..e1ae2dc 100644
 --- a/src/draw.c
@@ -505,18 +479,6 @@ index 9ebcba6..e1ae2dc 100644
  
    gui->set_color (Output.fgGC,
  		  invisible ? PCB->InvisibleMarkColor : PCB->ElementColor);
-diff --git a/src/edif.y b/src/edif.y
-index da33c9b..cb31d9a 100644
---- a/src/edif.y
-+++ b/src/edif.y
-@@ -38,7 +38,6 @@ LibraryEntryTypePtr GetLibraryEntryMemory (LibraryMenuTypePtr);
- #define	IDENT_LENGTH		255
- #define	Malloc(s)		malloc(s)
- #define	Free(p)			free(p)
--#define	ABS(v)			((v) < 0 ? -(v) : (v))
- #define	Getc(s)			getc(s)
- #define	Ungetc(c)		ungetc(c,Input)
- 
 diff --git a/src/find.c b/src/find.c
 index b740890..eb4cac2 100644
 --- a/src/find.c
@@ -703,18 +665,10 @@ index eae2545..69d61ea 100644
        int y1 = l->Point1.Y;
        int ox, oy, s;
 diff --git a/src/global.h b/src/global.h
-index a036ee5..c162e70 100644
+index cb2b92d..c162e70 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -50,6 +50,7 @@
- #include <ctype.h>
- #include <sys/types.h>
- #include <stdbool.h>
-+#include <glib.h>
- 
- /* Forward declarations for structures the HIDs need.  */
- typedef struct BoxType BoxType, *BoxTypePtr;
-@@ -285,13 +286,11 @@ typedef struct			/* holds information about one layer */
+@@ -286,13 +286,11 @@ typedef struct			/* holds information about one layer */
    Cardinal LineN,		/* number of lines */
      TextN,			/* labels */
      PolygonN,			/* polygons */
@@ -733,7 +687,7 @@ index a036ee5..c162e70 100644
    rtree_t *line_tree, *text_tree, *polygon_tree, *arc_tree;
    bool On;			/* visible flag */
    char *Color,			/* color */
-@@ -336,12 +335,14 @@ typedef struct
+@@ -337,12 +335,14 @@ typedef struct
    /* see macro.h */
    LocationType MarkX,		/* position mark */
      MarkY;
@@ -754,7 +708,7 @@ index a036ee5..c162e70 100644
    BoxType VBox;
    AttributeListType Attributes;
  } ElementType, *ElementTypePtr, **ElementTypeHandle;
-@@ -371,15 +372,12 @@ typedef struct			/* complete set of symbols */
+@@ -372,15 +372,12 @@ typedef struct			/* complete set of symbols */
  typedef struct			/* holds all objects */
  {
    Cardinal ViaN,		/* number of vias */
@@ -1310,18 +1264,6 @@ index c4a844b..489224b 100644
  void *MovePolygonToLayerLowLevel (LayerTypePtr, PolygonTypePtr, LayerTypePtr);
  bool MoveSelectedObjectsToLayer (LayerTypePtr);
  
-diff --git a/src/mtspace.c b/src/mtspace.c
-index 9d593e8..40f5413 100644
---- a/src/mtspace.c
-+++ b/src/mtspace.c
-@@ -55,7 +55,6 @@
- #include <dmalloc.h>
- #endif
- 
--#define ABS(x) ((x) < 0 ? -(x) : (x))
- RCSID ("$Id$");
- 
- /* mtspace data structures are built on r-trees. */
 diff --git a/src/mymem.c b/src/mymem.c
 index 24f20a2..758d18d 100644
 --- a/src/mymem.c
@@ -2059,20 +2001,6 @@ index d0f31aa..ad8cb44 100644
  			PCB = pcb_save;
  			}
  			   
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 0a3a2b5..1dba74c 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -54,9 +54,6 @@
- 
- #define EPSILON (1E-8)
- #define IsZero(a, b) (fabs((a) - (b)) < EPSILON)
--#ifndef ABS
--#define ABS(x) ((x) < 0 ? -(x) : (x))
--#endif
- 
- /*********************************************************************/
- /*              L o n g   V e c t o r   S t u f f                    */
 diff --git a/src/toporouter.c b/src/toporouter.c
 index 3590472..2a21f58 100644
 --- a/src/toporouter.c
