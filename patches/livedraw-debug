@@ -1,5 +1,5 @@
 Bottom: 60ffc68b53c541de436ef5083a88e69e659870b1
-Top:    60ffc68b53c541de436ef5083a88e69e659870b1
+Top:    8b05977d1e40503e79beefd82e28b0eaecec2263
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-29 20:50:57 +0100
 
@@ -8,4 +8,87 @@ Livedraw debug
 
 ---
 
-
+diff --git a/src/autoroute.c b/src/autoroute.c
+index d752231..78e62c4 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -3986,6 +3986,7 @@ struct routeone_status
+   bool net_completely_routed;
+ };
+ 
++static void ripout_livedraw_obj (routebox_t *rb);
+ 
+ static struct routeone_status
+ RouteOne (routedata_t * rd, routebox_t * from, routebox_t * to, int max_edges)
+@@ -4508,6 +4509,8 @@ RouteOne (routedata_t * rd, routebox_t * from, routebox_t * to, int max_edges)
+       if (rb->conflicts_with
+ 	  && rb->parent.expansion_area->conflicts_with != rb->conflicts_with)
+ 	vector_destroy (&rb->conflicts_with);
++      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
++        ripout_livedraw_obj (rb);
+       r_delete_entry (rd->layergrouptree[rb->group], &rb->box);
+     }
+   vector_destroy (&area_vec);
+@@ -4604,11 +4607,13 @@ ripout_livedraw_obj (routebox_t *rb)
+       LayerType *layer = LAYER_PTR (PCB->LayerGroups.Entries[rb->group][0]);
+       EraseLine (rb->livedraw_obj.line);
+       DestroyObject (PCB->Data, LINE_TYPE, layer, rb->livedraw_obj.line, NULL);
++      rb->livedraw_obj.line = NULL;
+     }
+   if (rb->type == VIA && rb->livedraw_obj.via)
+     {
+       EraseVia (rb->livedraw_obj.via);
+       DestroyObject (PCB->Data, VIA_TYPE, rb->livedraw_obj.via, NULL, NULL);
++      rb->livedraw_obj.via = NULL;
+     }
+ }
+ 
+@@ -4620,6 +4625,21 @@ ripout_livedraw_obj_cb (const BoxType * b, void *cl)
+   return 0;
+ }
+ 
++static void
++ripout_all_livedrawn (routedata_t *rd)
++{
++  routebox_t *net, *p;
++  LIST_LOOP (rd->first_net, different_net, net);
++  {
++    LIST_LOOP (net, same_net, p);
++    {
++      ripout_livedraw_obj (p);
++    }
++    END_LOOP;
++  }
++  END_LOOP;
++}
++
+ struct routeall_status
+ {
+   /* --- for completion rate statistics ---- */
+@@ -4738,8 +4758,8 @@ RouteAll (routedata_t * rd)
+ 		    }
+ 		  if (rip)
+ 		    {
+-		      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+-			ripout_livedraw_obj (p);
++                      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
++                        ripout_livedraw_obj (p);
+ 		      del =
+ 			r_delete_entry (rd->layergrouptree[p->group],
+ 					&p->box);
+@@ -5265,14 +5285,7 @@ AutoRoute (bool selected)
+   changed = (RouteAll (rd).total_nets_routed > 0) || changed;
+ donerouting:
+   if (changed && TEST_FLAG (LIVEROUTEFLAG, PCB))
+-    {
+-      int i;
+-      BoxType big = {0, 0, MAX_COORD, MAX_COORD};
+-      for (i = 0; i < max_group; i++)
+-	{
+-	  r_search (rd->layergrouptree[i], &big, NULL, ripout_livedraw_obj_cb, NULL);
+-	}
+-    }
++    ripout_all_livedrawn (rd);
+   if (changed)
+     changed = IronDownAllUnfixedPaths (rd);
+   Message ("Total added wire length = %f inches, %d vias added\n",
