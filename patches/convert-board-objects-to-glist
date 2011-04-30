@@ -1,0 +1,14 @@
+Bottom: bde09837966af6260dab85c7c523be38863f3de0
+Top:    bde09837966af6260dab85c7c523be38863f3de0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 05:09:21 +0100
+
+Convert board objects to GLists of g_slice allocated memory
+
+This enables pointers for these objects to be immutable during their
+lifetime, which is a _huge_ benefit for some operations.
+
+
+---
+
+
