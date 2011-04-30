@@ -1192,18 +1192,54 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 HID *
 ghid_request_debug_draw (void)
 {
-  ghid_start_drawing (gport);
+  GHidPort *port = gport;
+  GtkWidget *widget = port->drawing_area;
+
+  ghid_start_drawing (port);
+
+  glViewport (0, 0, widget->allocation.width, widget->allocation.height);
+
+  glMatrixMode (GL_PROJECTION);
+  glLoadIdentity ();
+  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
+  glMatrixMode (GL_MODELVIEW);
+  glLoadIdentity ();
+  glTranslatef (0.0f, 0.0f, -Z_NEAR);
+
+  hidgl_init_triangle_array (&buffer);
+  ghid_invalidate_current_gc ();
+
+  glPushMatrix ();
+  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
+            (ghid_flip_y ? -1. : 1.) / port->zoom,
+            (ghid_flip_x == ghid_flip_y) ? 1. : -1.);
+  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
+                             -port->view_x0,
+                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
+                             -port->view_y0, 0);
+
   return &ghid_hid;
 }
 
 void
 ghid_flush_debug_draw (void)
 {
-  gdk_window_process_all_updates ();
+  GtkWidget *widget = gport->drawing_area;
+  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
+
+  hidgl_flush_triangles (&buffer);
+
+  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
+    gdk_gl_drawable_swap_buffers (pGlDrawable);
+  else
+    glFlush ();
 }
 
 void
 ghid_finish_debug_draw (void)
 {
+  hidgl_flush_triangles (&buffer);
+  glPopMatrix ();
+
   ghid_end_drawing (gport);
 }
