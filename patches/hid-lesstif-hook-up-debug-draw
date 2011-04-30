@@ -1,5 +1,5 @@
-Bottom: 9f328921b9122a81aa7731c11490bb3626a6baac
-Top:    f88da0f3e64d0ef119065ae63b7f146a9be45ec1
+Bottom: 7011a3a604819abdb1b827b72dd423bfb5410d23
+Top:    09de4ee8b2cb1e745dfc3b339695eef4e679766a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-29 17:10:45 +0100
 
@@ -9,10 +9,10 @@ hid/lesstif: Hook up debug drawing APIs
 ---
 
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 6a42706..1fdaa1b 100644
+index cfb65be..395cc98 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3858,6 +3858,37 @@ lesstif_progress (int so_far, int total, const char *message)
+@@ -3870,6 +3870,37 @@ lesstif_progress (int so_far, int total, const char *message)
    return 0;
  }
  
@@ -50,7 +50,7 @@ index 6a42706..1fdaa1b 100644
  #include "dolists.h"
  
  void
-@@ -3921,6 +3952,10 @@ hid_lesstif_init ()
+@@ -3933,6 +3964,10 @@ hid_lesstif_init ()
    lesstif_hid.progress                = lesstif_progress;
    lesstif_hid.edit_attributes         = lesstif_attributes_dialog;
  
