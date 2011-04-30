@@ -191,12 +191,13 @@ extern int mem_any_set (unsigned char *, int);
        __iter = g_list_next (__iter), n++) {                        \
     PinType *via = __iter->data;
 
-#define DRILL_LOOP(top) do             {                            \
-        Cardinal        n;                                          \
-        DrillTypePtr    drill;                                      \
-        for (n = 0; (top)->DrillN > 0 && n < (top)->DrillN; n++)    \
-        {                                                           \
-                drill = &(top)->Drill[n]
+#define DRILL_LOOP(top) do {                                        \
+  GList *__iter;                                                    \
+  GList *__copy = g_list_copy ((top)->Drill);                       \
+  Cardinal n;                                                       \
+  for (__iter = __copy, n = 0; __iter != NULL;                      \
+       __iter = g_list_next (__iter), n++) {                        \
+    DrillType *drill = __iter->data;
 
 #define NETLIST_LOOP(top) do {                                      \
   GList *__iter;                                                    \

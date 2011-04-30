@@ -774,10 +774,17 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
   if (!PCB->InvisibleObjectsOn && invisible)
     return;
 
-  if (e->PinN && mark_size > e->Pin[0].Thickness / 2)
-    mark_size = e->Pin[0].Thickness / 2;
-  if (e->PadN && mark_size > e->Pad[0].Thickness / 2)
-    mark_size = e->Pad[0].Thickness / 2;
+  if (e->Pin != NULL)
+    {
+      PinType *pin0 = e->Pin->data;
+      mark_size = MIN (mark_size, pin0->Thickness / 2);
+    }
+
+  if (e->Pad != NULL)
+    {
+      PadType *pad0 = e->Pad->data;
+      mark_size = MIN (mark_size, pad0->Thickness / 2);
+    }
 
   gui->set_color (Output.fgGC,
 		  invisible ? PCB->InvisibleMarkColor : PCB->ElementColor);
@@ -1195,7 +1202,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
 {
   LocationType x = 0;
   unsigned char *string = (unsigned char *) Text->TextString;
-  Cardinal n;
+  GList *iter;
   FontTypePtr font = &PCB->Font;
 
   while (string && *string)
@@ -1203,11 +1210,12 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
       /* draw lines if symbol is valid and data is present */
       if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
 	{
-	  LineTypePtr line = font->Symbol[*string].Line;
-	  LineType newline;
-
-	  for (n = font->Symbol[*string].LineN; n; n--, line++)
+	  for (iter = font->Symbol[*string].Line;
+	       iter != NULL; iter = g_list_next (iter))
 	    {
+	      LineType *line = iter->data;
+	      LineType newline;
+
 	      /* create one line, scale, move, rotate and swap it */
 	      newline = *line;
 	      newline.Point1.X = (newline.Point1.X + x) * Text->Scale / 100;

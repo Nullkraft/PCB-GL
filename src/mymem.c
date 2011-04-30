@@ -421,8 +421,8 @@ GetLibraryEntryMemory (LibraryMenuType *menu)
   LibraryEntryType *new_obj;
 
   new_obj = g_slice_new (LibraryEntryType);
+  menu->Entry = g_list_append (menu->Entry, new_obj);
   menu->EntryN ++;
-#warning LINK UP WITH OTHER OBJCETS?
 
   return new_obj;
 }
@@ -445,8 +445,8 @@ GetLibraryMenuMemory (LibraryType *lib)
   LibraryMenuType *new_obj;
 
   new_obj = g_slice_new (LibraryMenuType);
+  lib->Menu = g_list_append (lib->Menu, new_obj);
   lib->MenuN ++;
-#warning LINK UP WITH OTHER OBJCETS?
 
   return new_obj;
 }
@@ -468,8 +468,8 @@ GetDrillElementMemory (DrillType *drill)
   ElementType **new_obj;
 
   new_obj = g_slice_new (ElementType *);
+  drill->Element = g_list_append (drill->Element, new_obj);
   drill->ElementN ++;
-#warning LINK UP WITH OTHER OBJCETS?
 
   return new_obj;
 }
@@ -489,8 +489,8 @@ GetDrillPinMemory (DrillType *drill)
   PinType **new_obj;
 
   new_obj = g_slice_new (PinType *);
+  drill->Pin = g_list_append (drill->Pin, new_obj);
   drill->PinN ++;
-#warning LINK UP WITH OTHER OBJCETS?
 
   return new_obj;
 }
@@ -510,18 +510,26 @@ GetDrillInfoDrillMemory (DrillInfoType *drillinfo)
   DrillType *new_obj;
 
   new_obj = g_slice_new (DrillType);
+  drillinfo->Drill = g_list_append (drillinfo->Drill, new_obj);
   drillinfo->DrillN ++;
-#warning LINK UP WITH OTHER OBJCETS?
 
   return new_obj;
 }
 
 static void
-FreeDrill (DrillType *data)
+FreeDrill (DrillType *drill)
 {
-  g_slice_free (DrillType, data);
+  g_list_free_full (drill->Element, (GDestroyNotify)FreeDrillElement);
+  g_list_free_full (drill->Pin, (GDestroyNotify)FreeDrillPin);
+  g_slice_free (DrillType, drill);
 }
 
+void
+FreeDrillInfo (DrillInfoType *drill_info)
+{
+  g_list_free_full (drill_info->Drill, (GDestroyNotify)FreeDrill);
+  g_slice_free (DrillInfoType, drill_info);
+}
 
 AttributeType *
 GetAttributeMemory (AttributeListType *attr_list)

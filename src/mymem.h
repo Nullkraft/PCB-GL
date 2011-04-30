@@ -70,6 +70,7 @@ LibraryEntryTypePtr GetLibraryEntryMemory (LibraryMenuTypePtr);
 ElementTypeHandle GetDrillElementMemory (DrillTypePtr);
 PinTypeHandle GetDrillPinMemory (DrillTypePtr);
 DrillTypePtr GetDrillInfoDrillMemory (DrillInfoTypePtr);
+void FreeDrillInfo (DrillInfoTypePtr);
 void **GetPointerMemory (PointerListTypePtr);
 AttributeTypePtr GetAttributeMemory (AttributeListTypePtr);
 void FreeAttribute (AttributeTypePtr);

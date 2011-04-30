@@ -389,14 +389,14 @@ typedef struct			/* holds drill information */
     ViaCount,			/* number of vias drilled this size */
     UnplatedCount,		/* number of these holes that are unplated */
     PinN;			/* number of drill coordinates in the list */
-  PinTypePtr *Pin;		/* coordinates to drill */
-  ElementTypePtr *Element;	/* a pointer to an array of element pointers */
+  GList *Pin;		/* coordinates to drill */
+  GList *Element;		/* a pointer to an array of element pointers */
 } DrillType, *DrillTypePtr;
 
 typedef struct			/* holds a range of Drill Infos */
 {
   Cardinal DrillN;		/* number of drill sizes */
-  DrillTypePtr Drill;		/* plated holes */
+  GList *Drill;			/* plated holes */
 } DrillInfoType, *DrillInfoTypePtr;
 
 typedef struct

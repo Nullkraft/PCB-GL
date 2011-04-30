@@ -436,44 +436,36 @@ MovePolygonPoint (LayerTypePtr Layer, PolygonTypePtr Polygon,
  * moves a line between layers; lowlevel routines
  */
 void *
-MoveLineToLayerLowLevel (LayerTypePtr Source, LineTypePtr Line,
+MoveLineToLayerLowLevel (LayerTypePtr Source, LineTypePtr line,
 			 LayerTypePtr Destination)
 {
-  LineTypePtr newone = GetLineMemory (Destination);
+  r_delete_entry (Source->line_tree, (BoxType *)line);
 
-  r_delete_entry (Source->line_tree, (BoxTypePtr) Line);
-  /* copy the data and remove it from the former layer */
-  *newone = *Line;
-  *Line = Source->Line[--Source->LineN];
-  r_substitute (Source->line_tree, (BoxType *) & Source->Line[Source->LineN],
-		(BoxType *) Line);
-  memset (&Source->Line[Source->LineN], 0, sizeof (LineType));
+  Source->Line = g_list_remove (Source->Line, line);
+  Destination->Line = g_list_append (Destination->Line, line);
+
   if (!Destination->line_tree)
     Destination->line_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Destination->line_tree, (BoxTypePtr) newone, 0);
-  return (newone);
+  r_insert_entry (Destination->line_tree, (BoxType *)line, 0);
+  return line;
 }
 
 /* ---------------------------------------------------------------------------
  * moves an arc between layers; lowlevel routines
  */
 void *
-MoveArcToLayerLowLevel (LayerTypePtr Source, ArcTypePtr Arc,
+MoveArcToLayerLowLevel (LayerTypePtr Source, ArcTypePtr arc,
 			LayerTypePtr Destination)
 {
-  ArcTypePtr newone = GetArcMemory (Destination);
+  r_delete_entry (Source->arc_tree, (BoxType *)arc);
 
-  r_delete_entry (Source->arc_tree, (BoxTypePtr) Arc);
-  /* copy the data and remove it from the former layer */
-  *newone = *Arc;
-  *Arc = Source->Arc[--Source->ArcN];
-  r_substitute (Source->arc_tree, (BoxType *) & Source->Arc[Source->ArcN],
-		(BoxType *) Arc);
-  memset (&Source->Arc[Source->ArcN], 0, sizeof (ArcType));
+  Source->Arc = g_list_remove (Source->Arc, arc);
+  Destination->Arc = g_list_append (Destination->Arc, arc);
+
   if (!Destination->arc_tree)
     Destination->arc_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Destination->arc_tree, (BoxTypePtr) newone, 0);
-  return (newone);
+  r_insert_entry (Destination->arc_tree, (BoxType *)arc, 0);
+  return arc;
 }
 
 
@@ -640,83 +632,74 @@ MoveLineToLayer (LayerTypePtr Layer, LineTypePtr Line)
 /* ---------------------------------------------------------------------------
  * moves a text object between layers; lowlevel routines
  */
-void *
-MoveTextToLayerLowLevel (LayerTypePtr Source, TextTypePtr Text,
+TextType *
+MoveTextToLayerLowLevel (LayerTypePtr Source, TextType *text,
 			 LayerTypePtr Destination)
 {
-  TextTypePtr newone = GetTextMemory (Destination);
+  RestoreToPolygon (PCB->Data, TEXT_TYPE, Source, text);
+  r_delete_entry (Source->text_tree, (BoxType *)text);
 
-  RestoreToPolygon (PCB->Data, TEXT_TYPE, Source, Text);
-  r_delete_entry (Source->text_tree, (BoxTypePtr) Text);
-  /* copy the data and remove it from the former layer */
-  *newone = *Text;
-  *Text = Source->Text[--Source->TextN];
-  r_substitute (Source->text_tree, (BoxType *) & Source->Text[Source->TextN],
-		(BoxType *) Text);
-  memset (&Source->Text[Source->TextN], 0, sizeof (TextType));
+  Source->Text = g_list_remove (Source->Text, text);
+  Destination->Text = g_list_append (Destination->Text, text);
+
   if (GetLayerGroupNumberByNumber (solder_silk_layer) ==
       GetLayerGroupNumberByPointer (Destination))
-    SET_FLAG (ONSOLDERFLAG, newone);
+    SET_FLAG (ONSOLDERFLAG, text);
   else
-    CLEAR_FLAG (ONSOLDERFLAG, newone);
+    CLEAR_FLAG (ONSOLDERFLAG, text);
+
   /* re-calculate the bounding box (it could be mirrored now) */
-  SetTextBoundingBox (&PCB->Font, newone);
+  SetTextBoundingBox (&PCB->Font, text);
   if (!Destination->text_tree)
     Destination->text_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Destination->text_tree, (BoxTypePtr) newone, 0);
-  ClearFromPolygon (PCB->Data, TEXT_TYPE, Destination, newone);
-  return (newone);
+  r_insert_entry (Destination->text_tree, (BoxType *) text, 0);
+  ClearFromPolygon (PCB->Data, TEXT_TYPE, Destination, text);
+
+  return text;
 }
 
 /* ---------------------------------------------------------------------------
  * moves a text object between layers
  */
 static void *
-MoveTextToLayer (LayerTypePtr Layer, TextTypePtr Text)
+MoveTextToLayer (LayerType *layer, TextType *text)
 {
-  TextTypePtr newone;
-
-  if (TEST_FLAG (LOCKFLAG, Text))
+  if (TEST_FLAG (LOCKFLAG, text))
     {
       Message (_("Sorry, the object is locked\n"));
       return NULL;
     }
-  if (Dest != Layer)
+  if (Dest != layer)
     {
-      AddObjectToMoveToLayerUndoList (TEXT_TYPE, Layer, Text, Text);
-      if (Layer->On)
-	EraseText (Layer, Text);
-      newone = (TextTypePtr)MoveTextToLayerLowLevel (Layer, Text, Dest);
+      AddObjectToMoveToLayerUndoList (TEXT_TYPE, layer, text, text);
+      if (layer->On)
+	EraseText (layer, text);
+      text = MoveTextToLayerLowLevel (layer, text, Dest);
       if (Dest->On)
-	DrawText (Dest, newone);
-      if (Layer->On || Dest->On)
+	DrawText (Dest, text);
+      if (layer->On || Dest->On)
 	Draw ();
-      return (newone);
     }
-  return (Text);
+  return text;
 }
 
 /* ---------------------------------------------------------------------------
  * moves a polygon between layers; lowlevel routines
  */
 void *
-MovePolygonToLayerLowLevel (LayerTypePtr Source, PolygonTypePtr Polygon,
+MovePolygonToLayerLowLevel (LayerTypePtr Source, PolygonType *polygon,
 			    LayerTypePtr Destination)
 {
-  PolygonTypePtr newone = GetPolygonMemory (Destination);
+  r_delete_entry (Source->polygon_tree, (BoxType *) polygon);
 
-  r_delete_entry (Source->polygon_tree, (BoxType *) Polygon);
-  /* copy the data and remove it from the former layer */
-  *newone = *Polygon;
-  *Polygon = Source->Polygon[--Source->PolygonN];
-  r_substitute (Source->polygon_tree,
-		(BoxType *) & Source->Polygon[Source->PolygonN],
-		(BoxType *) Polygon);
-  memset (&Source->Polygon[Source->PolygonN], 0, sizeof (PolygonType));
+  Source->Polygon = g_list_remove (Source->Polygon, polygon);
+  Destination->Polygon = g_list_append (Destination->Polygon, polygon);
+
   if (!Destination->polygon_tree)
     Destination->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Destination->polygon_tree, (BoxType *) newone, 0);
-  return (newone);
+  r_insert_entry (Destination->polygon_tree, (BoxType *) polygon, 0);
+
+  return polygon;
 }
 
 struct mptlc
@@ -806,7 +789,7 @@ void *
 MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
 			 LocationType DX, LocationType DY)
 {
-  RubberbandTypePtr ptr;
+  GList *iter;
   void *ptr2;
 
   /* setup offset */
@@ -816,9 +799,11 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
     return (NULL);
 
   /* move all the lines... and reset the counter */
-  ptr = Crosshair.AttachedObject.Rubberband;
-  while (Crosshair.AttachedObject.RubberbandN)
+  for (iter = Crosshair.AttachedObject.Rubberband;
+       iter != NULL; iter = g_list_next (iter))
     {
+      RubberbandType *ptr = iter->data;
+
       /* first clear any marks that we made in the line flags */
       CLEAR_FLAG (RUBBERENDFLAG, ptr->Line);
       AddObjectToMoveUndoList (LINEPOINT_TYPE,
@@ -826,7 +811,6 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
 			       DY);
       MoveLinePoint (ptr->Layer, ptr->Line, ptr->MovedPoint);
       Crosshair.AttachedObject.RubberbandN--;
-      ptr++;
     }
 
   AddObjectToMoveUndoList (Type, Ptr1, Ptr2, Ptr3, DX, DY);
