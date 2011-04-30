@@ -11,6 +11,12 @@ lifetime, which is a _huge_ benefit for some operations.
 Having otherwise was becoming VERY tiresome, and was a perenial source
 of bugs tripping up novice and experts of the codebase alike.
 
+Due to the risks associated with modifying the structure being iterated
+over, this patch makes the relevant *_LOOP macros iterate over a shallow
+copy of the underlying GList. This is slight overkill for many cases,
+but until we have identified which do not modify the data-structures it
+is wise to keep as we are.
+
 
 ---
 
