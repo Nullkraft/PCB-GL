@@ -1,0 +1,36 @@
+Bottom: e4d3d3b07b98bce82fd3562414a50cd099bb7beb
+Top:    0a7c2ae572d8baec3afd9142b09d2f974e146873
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 19:13:43 +0100
+
+Refresh of puller-c-re-write-to-use-hash-
+
+---
+
+diff --git a/src/puller.c b/src/puller.c
+index 30011ae..1ecea15 100644
+--- a/src/puller.c
++++ b/src/puller.c
+@@ -679,14 +679,18 @@ unlink_end (Extra *x, Extra **e)
+ }
+ 
+ #if TRACE1
++
++static void
++clear_found_cb (AnyObjectType *ptr, Extra *extra, void *userdata)
++{
++  extra->found = 0;
++}
++
+ static void
+ clear_found ()
+ {
+-  int i;
+-  for (i=0; i<nlines; i++)
+-    lines[i].found = 0;
+-  for (i=0; i<narcs; i++)
+-    arcs[i].found = 0;
++  g_hash_table_foreach (lines, (GHFunc)clear_found_cb, NULL);
++  g_hash_table_foreach (arcs, (GHFunc)clear_found_cb, NULL);
+ }
+ #endif
