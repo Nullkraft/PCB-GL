@@ -76,6 +76,8 @@ static void
 pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
 {
   gint tx, ty, x_min = 0, y_min = 0;
+  PinType *pin0, *pin1;
+  PadType *pad0, *pad1;
 
   if (element == NULL)
     {
@@ -92,10 +94,14 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
    * set all package lines/arcs to zero width
    */
   CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0);
+
+  pin0 = pinout->element.Pin->data;
+  pin1 = g_list_next (pinout->element.Pin)->data;
+
   PIN_LOOP (&pinout->element);
   {
-    tx = abs (pinout->element.Pin[0].X - pin->X);
-    ty = abs (pinout->element.Pin[0].Y - pin->Y);
+    tx = abs (pin0->X - pin->X);
+    ty = abs (pin0->Y - pin->Y);
     if (x_min == 0 || (tx != 0 && tx < x_min))
       x_min = tx;
     if (y_min == 0 || (ty != 0 && ty < y_min))
@@ -104,10 +110,13 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
   }
   END_LOOP;
 
+  pad0 = pinout->element.Pad->data;
+  pad1 = g_list_next (pinout->element.Pad)->data;
+
   PAD_LOOP (&pinout->element);
   {
-    tx = abs (pinout->element.Pad[0].Point1.X - pad->Point1.X);
-    ty = abs (pinout->element.Pad[0].Point1.Y - pad->Point1.Y);
+    tx = abs (pad0->Point1.X - pad->Point1.X);
+    ty = abs (pad0->Point1.Y - pad->Point1.Y);
     if (x_min == 0 || (tx != 0 && tx < x_min))
       x_min = tx;
     if (y_min == 0 || (ty != 0 && ty < y_min))
