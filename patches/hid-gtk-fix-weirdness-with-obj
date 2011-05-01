@@ -10,6 +10,9 @@ and top coordinates. In general, this resulted in the incorrect region
 being invalidated - manifesting as artaefacts on the the screen, such as
 when dragging objects around.
 
+Also drop the (double) cast.. having checked, Vx and Vy take integer
+arguments. I'm not sure why the rest of this file casts to double.
+
 
 ---
 
