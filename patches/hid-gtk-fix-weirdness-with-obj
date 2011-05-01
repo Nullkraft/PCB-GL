@@ -6,8 +6,9 @@ Date:   2011-05-01 23:29:23 +0100
 hid/gtk: Fix conversion from world to screen in ghid_invalidate_lr
 
 I accidentally muddled the Vx and Vy conversions routines for the right
-and bottom coordinates. This resulted in the incorrect region being
-invalidated.
+and top coordinates. In general, this resulted in the incorrect region
+being invalidated - manifesting as artaefacts on the the screen, such as
+when dragging objects around.
 
 
 ---
