@@ -1,7 +1,7 @@
-Bottom: 6ea9a39939c26b41cca4c7351a7fe8794fdc29de
-Top:    4f3011ccf09a1b88483655c1cb674f4f5556d0c9
+Bottom: f3aa2ffc22b0870255176d871bcfa55ddeda49d5
+Top:    c399c0e6775739cc448dd2357bfa5c40d5964b5d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-30 19:49:03 +0100
+Date:   2011-05-02 00:16:31 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -1479,7 +1479,7 @@ index 6ce043a..364e8d3 100644
  
    AddObjectToMoveUndoList (Type, Ptr1, Ptr2, Ptr3, DX, DY);
 diff --git a/src/mymem.c b/src/mymem.c
-index 77a2ce2..63f4699 100644
+index 1feb2ef..d755cce 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -36,8 +36,6 @@
@@ -1491,7 +1491,7 @@ index 77a2ce2..63f4699 100644
  #include "data.h"
  #include "error.h"
  #include "mymem.h"
-@@ -59,128 +57,126 @@ static void DSRealloc (DynamicStringTypePtr, size_t);
+@@ -70,128 +68,126 @@ g_list_free_full (GList *list, GDestroyNotify free_func)
  /* ---------------------------------------------------------------------------
   * get next slot for a rubberband connection, allocates memory if necessary
   */
@@ -1698,7 +1698,7 @@ index 77a2ce2..63f4699 100644
  }
  /* ---------------------------------------------------------------------------
   * get next slot for a pin, allocates memory if necessary
-@@ -354,21 +350,22 @@ FreePolygon (PolygonType *data)
+@@ -365,21 +361,22 @@ FreePolygon (PolygonType *data)
   * gets the next slot for a point in a polygon struct, allocates memory
   * if necessary
   */
@@ -1734,7 +1734,7 @@ index 77a2ce2..63f4699 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -376,20 +373,21 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
+@@ -387,20 +384,21 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
   * if necessary
   */
  Cardinal *
@@ -1768,7 +1768,7 @@ index 77a2ce2..63f4699 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -414,106 +412,142 @@ FreeElement (ElementType *data)
+@@ -425,106 +423,142 @@ FreeElement (ElementType *data)
  }
  
  /* ---------------------------------------------------------------------------
@@ -1979,7 +1979,7 @@ index 77a2ce2..63f4699 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -539,79 +573,74 @@ FreePolygonMemory (PolygonType *polygon)
+@@ -550,79 +584,74 @@ FreePolygonMemory (PolygonType *polygon)
   * frees memory used by a box list
   */
  void
@@ -2101,7 +2101,7 @@ index 77a2ce2..63f4699 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -757,24 +786,9 @@ FreeDataMemory (DataType *data)
+@@ -768,24 +797,9 @@ FreeDataMemory (DataType *data)
   * releases the memory that's allocated by the library
   */
  void
