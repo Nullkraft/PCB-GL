@@ -1,0 +1,18 @@
+Bottom: c31aa5df3e9296c2dec1f9060759dc46607015d5
+Top:    c31aa5df3e9296c2dec1f9060759dc46607015d5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-01 23:29:07 +0100
+
+hid/gtk: Rest clip region for bg_gc, as it is used for expose events.
+
+We set the clip region in the redraw_region() function to clip drawing
+to the area which we intend to repaint, but we did not clear the clip
+again.
+
+This caused expose events to be clipped to the last redraw area rather
+than the required damaged area.
+
+
+---
+
+
