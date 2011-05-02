@@ -5,10 +5,14 @@ Date:   2011-05-03 00:14:41 +0100
 
 change.c: Fix some drawing artaefacts when rotating the buffer
 
-I mixed up the calls to nofify_crosshair_changed() with true and
-false parameters before and after the changes. This caused the GUI
-to get out of sync undrawing and redrawing the crosshair attached
-objects around the change.
+In commit 0213e4791f9aa4008c8d06a48c377b338f6e1a43 converting
+{Hide,Restore}Crosshair calls to become notify_crosshair_changed,
+I mixed up two of the true / false parameters to to nofify_crosshair_changed.
+
+This caused the GUI to get out of sync undrawing and redrawing the
+crosshair attached objects around the change.
+
+Reported-by: DJ Delorie <dj@delorie.com>
 
 
 ---
