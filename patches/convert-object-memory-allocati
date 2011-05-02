@@ -1,7 +1,7 @@
-Bottom: f3aa2ffc22b0870255176d871bcfa55ddeda49d5
-Top:    c399c0e6775739cc448dd2357bfa5c40d5964b5d
+Bottom: c51fca71162992b9721c6a310d694b2bc0fe44e0
+Top:    f6324038d7c883acf87905a502f6d79f0247037e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-02 00:16:31 +0100
+Date:   2011-05-02 14:49:09 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -1154,7 +1154,7 @@ index e7612e9..104ca29 100644
    qsort (rectLeft, boxlist->BoxN, sizeof (*rectLeft), compareleft);
    qsort (rectRight, boxlist->BoxN, sizeof (*rectRight), compareright);
 diff --git a/src/macro.h b/src/macro.h
-index e990d4a..b4307f7 100644
+index b61f673..81699e1 100644
 --- a/src/macro.h
 +++ b/src/macro.h
 @@ -14,7 +14,7 @@
