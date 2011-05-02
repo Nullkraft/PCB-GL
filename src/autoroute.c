@@ -92,7 +92,6 @@ RCSID ("$Id$");
 #define ROUTE_VERBOSE
 */
 
-/*
 #define ROUTE_DEBUG
 //#define DEBUG_SHOW_ROUTE_BOXES
 #define DEBUG_SHOW_EXPANSION_BOXES
@@ -101,7 +100,6 @@ RCSID ("$Id$");
 #define DEBUG_SHOW_TARGETS
 #define DEBUG_SHOW_SOURCES
 //#define DEBUG_SHOW_ZIGZAG
-*/
 
 static direction_t
 directionIncrement(direction_t dir)
@@ -4644,12 +4642,28 @@ struct routeall_status
   int ripped;
   int total_nets_routed;
 };
+
+static double
+calculate_progress (double this_heap_item, double this_heap_size,
+                    struct routeall_status *ras)
+{
+  double total_passes = passes + smoothes + 1;      /* + 1 is the refinement pass */
+  double this_pass = AutoRouteParameters.pass - 1; /* Number passes from zero */
+  double subnet_fraction = (double)ras->routed_subnets / (double)ras->total_subnets;
+  double heap_fraction = pow (subnet_fraction, 4); /* Account for later subnets being harder to route */
+  double pass_fraction = (this_heap_item + heap_fraction ) / this_heap_size;
+  double process_fraction = (this_pass + pass_fraction) / total_passes;
+
+  return process_fraction;
+}
+
 struct routeall_status
 RouteAll (routedata_t * rd)
 {
   struct routeall_status ras;
   struct routeone_status ros;
   bool rip;
+  int request_cancel;
 #ifdef NET_HEAP
   heap_t *net_heap;
 #endif
@@ -4657,6 +4671,8 @@ RouteAll (routedata_t * rd)
   routebox_t *net, *p, *pp;
   cost_t total_net_cost, last_cost = 0, this_cost = 0;
   int i;
+  int this_heap_size;
+  int this_heap_item;
 
   /* initialize heap for first pass; 
    * do smallest area first; that makes
@@ -4698,7 +4714,8 @@ RouteAll (routedata_t * rd)
 	ras.failed = ras.ripped = 0;
       assert (heap_is_empty (next_pass));
 
-      while (!heap_is_empty (this_pass))
+      this_heap_size = heap_size (this_pass);
+      for (this_heap_item = 0; !heap_is_empty (this_pass); this_heap_item++)
 	{
 #ifdef ROUTE_DEBUG
 	  if (aabort)
@@ -4785,82 +4802,94 @@ RouteAll (routedata_t * rd)
 	  total_net_cost = 0;
 	  /* only route that which isn't fully routed */
 #ifdef ROUTE_DEBUG
-	  if (ras.total_subnets && !aabort)
+	  if (ras.total_subnets == 0 || aabort)
 #else
-	  if (ras.total_subnets)
+	  if (ras.total_subnets == 0)
 #endif
 	    {
-	      /* the loop here ensures that we get to all subnets even if
-	       * some of them are unreachable from the first subnet. */
-	      LIST_LOOP (net, same_net, p);
-	      {
+	      /* Route easiest nets from this pass first on next pass.
+	       * This works best because it's likely that the hardest
+	       * is the last one routed (since it has the most obstacles)
+	       * but it will do no good to rip it up and try it again
+	       * without first changing any of the other routes
+	       */
+	      heap_insert (next_pass, total_net_cost, net);
+	      continue;
+	    }
+
+	  /* the loop here ensures that we get to all subnets even if
+	   * some of them are unreachable from the first subnet. */
+	  LIST_LOOP (net, same_net, p);
+	  {
 #ifdef NET_HEAP
-		BoxType b = shrink_routebox (p);
-		/* using a heap allows us to start from smaller objects and
-		 * end at bigger ones. also prefer to start at planes, then pads */
-		heap_insert (net_heap, (float) (b.X2 - b.X1) *
+	    BoxType b = shrink_routebox (p);
+	    /* using a heap allows us to start from smaller objects and
+	     * end at bigger ones. also prefer to start at planes, then pads */
+	    heap_insert (net_heap, (float) (b.X2 - b.X1) *
 #if defined(ROUTE_RANDOMIZED)
-			     (0.3 + rand () / (RAND_MAX + 1.0)) *
+			 (0.3 + rand () / (RAND_MAX + 1.0)) *
 #endif
-			     (b.Y2 - b.Y1) * (p->type == PLANE ?
-					      -1 : (p->type ==
-						    PAD ? 1 : 10)), p);
-	      }
-	      END_LOOP;
-	      ros.net_completely_routed = 0;
-	      while (!heap_is_empty (net_heap))
+			 (b.Y2 - b.Y1) * (p->type == PLANE ?
+					  -1 : (p->type ==
+						PAD ? 1 : 10)), p);
+	  }
+	  END_LOOP;
+	  ros.net_completely_routed = 0;
+	  while (!heap_is_empty (net_heap))
+	    {
+	      p = (routebox_t *) heap_remove_smallest (net_heap);
+#endif
+	      if (!p->flags.fixed || p->flags.subnet_processed ||
+		  p->type == OTHER)
+		continue;
+
+	      while (!ros.net_completely_routed)
 		{
-		  p = (routebox_t *) heap_remove_smallest (net_heap);
-#endif
-		  if (p->flags.fixed && !p->flags.subnet_processed
-		      && p->type != OTHER)
+		  assert (no_expansion_boxes (rd));
+		  /* FIX ME: the number of edges to examine should be in autoroute parameters
+		   * i.e. the 2000 and 800 hard-coded below should be controllable by the user
+		   */
+		  ros =
+		    RouteOne (rd, p, NULL,
+			      ((AutoRouteParameters.
+				is_smoothing ? 2000 : 800) * (i +
+							      1)) *
+			      routing_layers);
+		  total_net_cost += ros.best_route_cost;
+		  if (ros.found_route)
 		    {
-		      while (!ros.net_completely_routed)
+		      if (ros.route_had_conflicts)
+			ras.conflict_subnets++;
+		      else
 			{
-			  assert (no_expansion_boxes (rd));
-			  /* FIX ME: the number of edges to examine should be in autoroute parameters
-			   * i.e. the 2000 and 800 hard-coded below should be controllable by the user
-			   */
-			  ros =
-			    RouteOne (rd, p, NULL,
-				      ((AutoRouteParameters.
-					is_smoothing ? 2000 : 800) * (i +
-								      1)) *
-				      routing_layers);
-			  total_net_cost += ros.best_route_cost;
-			  if (ros.found_route)
-			    {
-			      if (ros.route_had_conflicts)
-				ras.conflict_subnets++;
-			      else
-				{
-				  ras.routed_subnets++;
-				  ras.total_nets_routed++;
-				}
-			    }
-			  else
-			    {
-			      if (!ros.net_completely_routed)
-				ras.failed++;
-			      /* don't bother trying any other source in this subnet */
-			      LIST_LOOP (p, same_subnet, pp);
-			      pp->flags.subnet_processed = 1;
-			      END_LOOP;
-			      break;
-			    }
-			  /* note that we can infer nothing about ras.total_subnets based
-			   * on the number of calls to RouteOne, because we may be unable
-			   * to route a net from a particular starting point, but perfectly
-			   * able to route it from some other. */
+			  double percent;
+			  ras.routed_subnets++;
+			  ras.total_nets_routed++;
+			  percent = calculate_progress (this_heap_item, this_heap_size, &ras);
+			  gui->progress (percent * 100., 100,  _("Autorouting tracks"));
 			}
 		    }
+		  else
+		    {
+		      if (!ros.net_completely_routed)
+			ras.failed++;
+		      /* don't bother trying any other source in this subnet */
+		      LIST_LOOP (p, same_subnet, pp);
+		      pp->flags.subnet_processed = 1;
+		      END_LOOP;
+		      break;
+		    }
+		  /* note that we can infer nothing about ras.total_subnets based
+		   * on the number of calls to RouteOne, because we may be unable
+		   * to route a net from a particular starting point, but perfectly
+		   * able to route it from some other. */
 		}
-#ifndef NET_HEAP
-	      END_LOOP;
-#endif
-	      if (!ros.net_completely_routed)
-		net->flags.is_bad = 1;	/* don't skip this the next round */
 	    }
+#ifndef NET_HEAP
+	  END_LOOP;
+#endif
+	  if (!ros.net_completely_routed)
+	    net->flags.is_bad = 1;	/* don't skip this the next round */
 
 	  /* Route easiest nets from this pass first on next pass.
 	   * This works best because it's likely that the hardest
@@ -4884,7 +4913,12 @@ RouteAll (routedata_t * rd)
       tmp = this_pass;
       this_pass = next_pass;
       next_pass = tmp;
-      /* XXX: here we should update a status bar */
+      if (0)
+      {
+        double percent = calculate_progress (this_heap_size, this_heap_size, &ras);
+        request_cancel = gui->progress (percent * 100., 100,
+                                        _("Autorouting tracks"));
+      }
 #if defined(ROUTE_DEBUG) || defined (ROUTE_VERBOSE)
       printf
 	("END OF PASS %d: %d/%d subnets routed without conflicts at cost %.0f, %d conflicts, %d failed %d ripped\n",
@@ -5283,6 +5317,7 @@ AutoRoute (bool selected)
   /* auto-route all nets */
   changed = (RouteAll (rd).total_nets_routed > 0) || changed;
 donerouting:
+  gui->progress (0, 0, NULL);
   if (changed && TEST_FLAG (LIVEROUTEFLAG, PCB))
     {
       int i;
