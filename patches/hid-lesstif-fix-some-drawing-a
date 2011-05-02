@@ -12,6 +12,9 @@ I mixed up two of the true / false parameters to to nofify_crosshair_changed.
 This caused the GUI to get out of sync undrawing and redrawing the
 crosshair attached objects around the change.
 
+Manually checking the diff from the offending commit, I don't see any
+other calls which were transposed incorrectly.
+
 Reported-by: DJ Delorie <dj@delorie.com>
 
 
