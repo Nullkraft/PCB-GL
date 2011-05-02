@@ -4650,6 +4650,7 @@ RouteAll (routedata_t * rd)
   struct routeall_status ras;
   struct routeone_status ros;
   bool rip;
+  int request_cancel;
 #ifdef NET_HEAP
   heap_t *net_heap;
 #endif
@@ -4884,7 +4885,8 @@ RouteAll (routedata_t * rd)
       tmp = this_pass;
       this_pass = next_pass;
       next_pass = tmp;
-      /* XXX: here we should update a status bar */
+      request_cancel = gui->progress (ras.routed_subnets, ras.total_subnets,
+                                      _("Autorouting tracks"));
 #if defined(ROUTE_DEBUG) || defined (ROUTE_VERBOSE)
       printf
 	("END OF PASS %d: %d/%d subnets routed without conflicts at cost %.0f, %d conflicts, %d failed %d ripped\n",
@@ -5283,6 +5285,7 @@ AutoRoute (bool selected)
   /* auto-route all nets */
   changed = (RouteAll (rd).total_nets_routed > 0) || changed;
 donerouting:
+  gui->progress (0, 0, NULL);
   if (changed && TEST_FLAG (LIVEROUTEFLAG, PCB))
     {
       int i;
