@@ -1,7 +1,7 @@
-Bottom: c51fca71162992b9721c6a310d694b2bc0fe44e0
-Top:    f6324038d7c883acf87905a502f6d79f0247037e
+Bottom: 979925f0c38de7d565108736f8dfbd6307e6aa7b
+Top:    df070884703039a9bb832b8c6c8a019989516979
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-02 14:49:09 +0100
+Date:   2011-05-03 00:43:31 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index ae6b87e..c0db1cc 100644
+index 4f2e401..6b8c60d 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1900,37 +1900,39 @@ static int
