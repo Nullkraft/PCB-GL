@@ -1000,6 +1000,8 @@ hidgl_stencil_bits (void)
   return stencil_bits;
 }
 
+int debug_stencil_clears = 0;
+
 static void
 hidgl_clean_unassigned_stencil (void)
 {
@@ -1009,6 +1011,7 @@ hidgl_clean_unassigned_stencil (void)
   glClearStencil (0);
   glClear (GL_STENCIL_BUFFER_BIT);
   glPopAttrib ();
+  debug_stencil_clears++;
 }
 
 int
