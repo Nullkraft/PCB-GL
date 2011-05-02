@@ -1,0 +1,21 @@
+Bottom: c51fca71162992b9721c6a310d694b2bc0fe44e0
+Top:    c51fca71162992b9721c6a310d694b2bc0fe44e0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-02 15:11:19 +0100
+
+hid/lesstif: Fix dropped crosshair artaefacts when dragging objects.
+
+It seems that the idle_proc redraw code assumed the crosshair was
+switched off upon entry, proceeding to redraw everything (and
+obliterate the crosshair in the process). The final show_crosshair (1)
+call only has any effect if the crosshair was notionally off before
+hand.
+
+As a quick work-around (you could probably do it with less flicker with
+a little more logic), ensure the crosshair is turned off just prior to
+redrawing the screen - so it will switch back on correctly afterwards.
+
+
+---
+
+
