@@ -92,14 +92,16 @@ RCSID ("$Id$");
 #define ROUTE_VERBOSE
 */
 
+/*
 #define ROUTE_DEBUG
-#define DEBUG_SHOW_ROUTE_BOXES
+//#define DEBUG_SHOW_ROUTE_BOXES
 #define DEBUG_SHOW_EXPANSION_BOXES
-#define DEBUG_SHOW_EDGES
-#define DEBUG_SHOW_VIA_BOXES
+//#define DEBUG_SHOW_EDGES
+//#define DEBUG_SHOW_VIA_BOXES
 #define DEBUG_SHOW_TARGETS
 #define DEBUG_SHOW_SOURCES
 //#define DEBUG_SHOW_ZIGZAG
+*/
 
 static direction_t
 directionIncrement(direction_t dir)
@@ -4190,7 +4192,7 @@ RouteOne (routedata_t * rd, routebox_t * from, routebox_t * to, int max_edges)
       /* we should never add edges on inactive layer groups to the heap. */
       assert (is_layer_group_active[e->rb->group]);
 #if defined(ROUTE_DEBUG) && defined(DEBUG_SHOW_EXPANSION_BOXES)
-      showedge (e);
+      //showedge (e);
 #endif
       if (e->rb->flags.is_thermal)
 	{
