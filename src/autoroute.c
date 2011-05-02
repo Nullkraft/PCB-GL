@@ -92,7 +92,6 @@ RCSID ("$Id$");
 #define ROUTE_VERBOSE
 */
 
-/*
 #define ROUTE_DEBUG
 //#define DEBUG_SHOW_ROUTE_BOXES
 #define DEBUG_SHOW_EXPANSION_BOXES
@@ -101,7 +100,6 @@ RCSID ("$Id$");
 #define DEBUG_SHOW_TARGETS
 #define DEBUG_SHOW_SOURCES
 //#define DEBUG_SHOW_ZIGZAG
-*/
 
 static direction_t
 directionIncrement(direction_t dir)
@@ -441,6 +439,7 @@ static int passes = 12;
 static int routing_layers = 0;
 static float total_wire_length = 0;
 static int total_via_count = 0;
+static double old_percent = 0;
 
 /* assertion helper for routeboxen */
 #ifndef NDEBUG
@@ -4835,8 +4834,15 @@ RouteAll (routedata_t * rd)
 				ras.conflict_subnets++;
 			      else
 				{
+                                  double percent;
 				  ras.routed_subnets++;
 				  ras.total_nets_routed++;
+                                  percent = MAX (0, /*old_percent, */
+                                             ((double)AutoRouteParameters.pass - 1.+
+                                             pow ((double)ras.routed_subnets / (double)ras.total_subnets, 4)) /
+                                             (double)(passes + smoothes + 1));
+                                  gui->progress (percent * 100., 100,  _("Autorouting tracks"));
+                                  old_percent = percent;
 				}
 			    }
 			  else
@@ -4885,8 +4891,15 @@ RouteAll (routedata_t * rd)
       tmp = this_pass;
       this_pass = next_pass;
       next_pass = tmp;
-      request_cancel = gui->progress (ras.routed_subnets, ras.total_subnets,
-                                      _("Autorouting tracks"));
+      {
+        double percent = MAX (0, /*old_percent, */
+                           ((double)AutoRouteParameters.pass - 1.+
+                           pow ((double)ras.routed_subnets / (double)ras.total_subnets, 4)) /
+                           (double)(passes + smoothes + 1));
+        old_percent = percent;
+        request_cancel = gui->progress (percent * 100., 100,
+                                        _("Autorouting tracks"));
+      }
 #if defined(ROUTE_DEBUG) || defined (ROUTE_VERBOSE)
       printf
 	("END OF PASS %d: %d/%d subnets routed without conflicts at cost %.0f, %d conflicts, %d failed %d ripped\n",
@@ -5122,6 +5135,8 @@ AutoRoute (bool selected)
 
   total_wire_length = 0;
   total_via_count = 0;
+
+  old_percent = 0;
 
 #ifdef ROUTE_DEBUG
   ddraw = gui->request_debug_draw ();
