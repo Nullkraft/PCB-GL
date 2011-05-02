@@ -1,5 +1,5 @@
 Bottom: 0be548f61c69dec3a736aaf5790ba5c607ea0192
-Top:    0be548f61c69dec3a736aaf5790ba5c607ea0192
+Top:    80bdf9969678ff9350d7be208280fc58b84a16f7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-02 14:49:19 +0100
 
@@ -8,4 +8,30 @@ autoroute.c: Temporarily turn on some debugging drawing
 
 ---
 
-
+diff --git a/src/autoroute.c b/src/autoroute.c
+index cc6587f..6629137 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -93,10 +93,10 @@ RCSID ("$Id$");
+ */
+ 
+ #define ROUTE_DEBUG
+-//#define DEBUG_SHOW_ROUTE_BOXES
++#define DEBUG_SHOW_ROUTE_BOXES
+ #define DEBUG_SHOW_EXPANSION_BOXES
+-//#define DEBUG_SHOW_EDGES
+-//#define DEBUG_SHOW_VIA_BOXES
++#define DEBUG_SHOW_EDGES
++#define DEBUG_SHOW_VIA_BOXES
+ #define DEBUG_SHOW_TARGETS
+ #define DEBUG_SHOW_SOURCES
+ //#define DEBUG_SHOW_ZIGZAG
+@@ -4190,7 +4190,7 @@ RouteOne (routedata_t * rd, routebox_t * from, routebox_t * to, int max_edges)
+       /* we should never add edges on inactive layer groups to the heap. */
+       assert (is_layer_group_active[e->rb->group]);
+ #if defined(ROUTE_DEBUG) && defined(DEBUG_SHOW_EXPANSION_BOXES)
+-      //showedge (e);
++      showedge (e);
+ #endif
+       if (e->rb->flags.is_thermal)
+ 	{
