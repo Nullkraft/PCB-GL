@@ -13,6 +13,12 @@ There are probably still bits of code in hid/gtk/gtkhid-gl.c which
 could be moved to a shared place if / when other HIDs wish to use
 GL rendering.
 
+Currently only rat lines are drawn transparent, as we need to sub-
+composite each layer to avoid a confusing field of hightlights being
+drawn where line ends overlap.
+
+More good stuff to come soon!
+
 Credits:
 
   Algorithm to calculate number of segments to use in circular
@@ -20,6 +26,10 @@ Credits:
 
   Thanks to Krzysztof Kościuszkiewicz for testing and debugging
   some issues with the GL_SCISSOR_TEST being used.
+
+  An small team of dedicated testers who have provided feedback,
+  bug reports and encoragement throught the long development of
+  this branch.
 
 
 ---
