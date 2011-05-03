@@ -1,5 +1,5 @@
 Bottom: bea6a6edae1c1de30311a1f5796589e4c1491c60
-Top:    2cbbed598a16e63e235a4e8201736e93a9b3fa9c
+Top:    30b7c85dda3661ce7e28e9f2ff95255cc454dfeb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:27 +0100
 
@@ -78,10 +78,10 @@ index 5abbfb2..8129207 100644
  if WIN32
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
-index 0000000..3bcdaa2
+index 0000000..a0438de
 --- /dev/null
 +++ b/src/hid/common/hidgl.c
-@@ -0,0 +1,559 @@
+@@ -0,0 +1,551 @@
 +/* $Id: */
 +
 +#if 1 /* DISABLE EVERYTHING! */
@@ -130,14 +130,6 @@ index 0000000..3bcdaa2
 +
 +triangle_buffer buffer;
 +float global_depth = 0;
-+
-+#if 0
-+triangle_array *
-+hidgl_new_triangle_array (void)
-+{
-+  return malloc (sizeof (triangle_buffer));
-+}
-+#endif
 +
 +void
 +hidgl_init_triangle_array (triangle_buffer *buffer)
