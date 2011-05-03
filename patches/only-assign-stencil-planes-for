@@ -1,7 +1,7 @@
-Bottom: 68ea09281280672b2f66ac051bbc72129b3b53e3
-Top:    23894d3192c0205d270dc3ab90e130fb8be5ad43
+Bottom: d8f28eb4cd1410d35ba6248724ea90ce866420ac
+Top:    cd245a9bb76a397f72580efd29f1240963a30a02
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-03 16:47:31 +0100
+Date:   2011-05-03 16:49:36 +0100
 
 Only assign stencil planes for visible layers
 
@@ -11,7 +11,7 @@ NB: Split out of the FBO patch
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 234f001..fdd6186 100644
+index 4fdefd9..48acbe6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -153,6 +153,7 @@ ghid_set_layer (const char *name, int group, int empty)
