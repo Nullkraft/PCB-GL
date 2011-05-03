@@ -1,5 +1,5 @@
-Bottom: fa425b49b72f8777c7701c3f1533d6c832b0b11a
-Top:    7516327520a1c60aa0d0f62dee8bf136b6ffc81e
+Bottom: ab8e46d7970a19f4cbbd143d625c288702d21478
+Top:    dd1d965614abfe3cc704a67ce86ad911b6665ee2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:37 +0100
 
@@ -9,7 +9,7 @@ Hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5c24e76..1c88900 100644
+index 3c91b96..ab2323f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -44,6 +44,7 @@ static hidGC current_gc = NULL;
@@ -20,7 +20,7 @@ index 5c24e76..1c88900 100644
  
  
  /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
-@@ -440,6 +441,12 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -438,6 +439,12 @@ ghid_set_color (hidGC gc, const char *name)
  
    gc->colorname = (char *) name;
  
@@ -33,7 +33,7 @@ index 5c24e76..1c88900 100644
    if (gport->colormap == NULL)
      gport->colormap = gtk_widget_get_colormap (gport->top_window);
    if (strcmp (name, "erase") == 0)
-@@ -815,6 +822,9 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -816,6 +823,9 @@ ghid_show_crosshair (gboolean paint_new_location)
    if (!paint_new_location)
      return;
  
@@ -85,7 +85,7 @@ index 5c24e76..1c88900 100644
  
    save_zoom = gport->zoom;
    save_width = gport->width;
-@@ -2246,6 +2263,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2245,6 +2262,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    }
    gport->render_priv->in_context = true;
  
@@ -95,7 +95,7 @@ index 5c24e76..1c88900 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -2290,6 +2310,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2289,6 +2309,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glFlush ();
  
