@@ -1,5 +1,5 @@
-Bottom: bee153f0ac185d9bef6a9c7bea691fe296930645
-Top:    172c83f8d8ba89230b6c123044dd4efa200e1815
+Bottom: c1a75cbe76975976df2998c798796373bb2127e0
+Top:    ea6958f84c3769667a431da84d6b1ba0267ccf00
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:29 +0100
 
@@ -149,10 +149,10 @@ index 9104190..a90ccc2 100644
  #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 01344c6..9285e02 100644
+index 1f97cdd..534594a 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -549,28 +549,27 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -541,28 +541,27 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
@@ -185,7 +185,7 @@ index 01344c6..9285e02 100644
  };
  
  static int
-@@ -583,20 +582,23 @@ do_hole (const BoxType *b, void *cl)
+@@ -575,20 +574,23 @@ do_hole (const BoxType *b, void *cl)
    if (curc->Flags.orient == PLF_DIR) {
      return 0;
    }
@@ -214,7 +214,7 @@ index 01344c6..9285e02 100644
  
    global_scale = scale;
  
-@@ -606,52 +608,64 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -598,52 +600,64 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
        return;
      }
  
@@ -302,7 +302,7 @@ index 01344c6..9285e02 100644
  
    gluDeleteTess (info.tobj);
    myFreeCombined ();
-@@ -666,6 +680,92 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+@@ -658,6 +672,92 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
  }
  

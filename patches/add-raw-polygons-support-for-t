@@ -1,5 +1,5 @@
-Bottom: a6a02aa0a4d4041a7501a2807fc87aba2936300e
-Top:    bee153f0ac185d9bef6a9c7bea691fe296930645
+Bottom: d95d934647615cad832dd104b41522f77c00affd
+Top:    c1a75cbe76975976df2998c798796373bb2127e0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:28 +0100
 
@@ -26,7 +26,7 @@ For now, we don't use polygons on the mask, so its not a a problem (?).
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 3bcdaa2..01344c6 100644
+index a0438de..1f97cdd 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -36,6 +36,7 @@
@@ -37,7 +37,7 @@ index 3bcdaa2..01344c6 100644
  
  
  #ifdef HAVE_LIBDMALLOC
-@@ -454,6 +455,8 @@ myBegin (GLenum type)
+@@ -446,6 +447,8 @@ myBegin (GLenum type)
    triangle_comp_idx = 0;
  }
  
@@ -46,7 +46,7 @@ index 3bcdaa2..01344c6 100644
  static void
  myVertex (GLdouble *vertex_data)
  {
-@@ -546,6 +549,116 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -538,6 +541,116 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
