@@ -2,7 +2,7 @@
  *                            COPYRIGHT
  *
  *  PCB, interactive printed circuit board design
- *  Copyright (C) 2009 PCB Contributors (See ChangeLog for details).
+ *  Copyright (C) 2009-2011 PCB Contributors (See ChangeLog for details).
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
