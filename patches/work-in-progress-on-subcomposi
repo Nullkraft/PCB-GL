@@ -1,5 +1,5 @@
 Bottom: bb38ade2c03a2ba279c4732dc15936ef2bbef38f
-Top:    75bbfd3f6334c2985085f9f5bafea533ccb4d6b4
+Top:    666abc91626127b8682a7c4c563fb0555ea9c6e7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-02 14:49:23 +0100
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e1ae2dc..0ab3ece 100644
+index e1ae2dc..991fd8f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -693,6 +693,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -126,16 +126,16 @@ index e1ae2dc..0ab3ece 100644
  }
  
  static void
-@@ -1117,7 +1153,8 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
-   int n_entries = PCB->LayerGroups.Number[group];
-   Cardinal *layers = PCB->LayerGroups.Entries[group];
- 
--  for (i = n_entries - 1; i >= 0; i--)
-+  for (i = n_entries - 1; i >= 0;
-+      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
-     {
-       layernum = layers[i];
-       Layer = PCB->Data->Layer + layers[i];
+@@ -1126,6 +1162,9 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+         rv = 0;
+       if (layernum < max_copper_layer && Layer->On)
+         DrawLayerCommon (Layer, drawn_area, true);
++
++      if (gui->gui) /* HACK: Subcomposite each layer in a layer group separately */
++        gui->set_layer (0, group, 0);
+     }
+   if (n_entries > 1)
+     rv = 1;
 diff --git a/src/hid.h b/src/hid.h
 index 9104190..a90ccc2 100644
 --- a/src/hid.h
