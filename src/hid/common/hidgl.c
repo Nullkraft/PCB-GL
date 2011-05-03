@@ -690,7 +690,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
      */
     /* Drawing operations now set our reference bit in the stencil buffer */
 
-    r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
+    r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
     hidgl_flush_triangles (&buffer);
 
     /* Drawing operations as masked to areas where the stencil buffer is '0' */
