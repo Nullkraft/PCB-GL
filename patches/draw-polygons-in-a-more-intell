@@ -1,5 +1,5 @@
-Bottom: 8d3899075bb04a6b36abd3e8bd595d97d3686b4b
-Top:    45a66c74ef81cdde902effa5d278c21a05c78e8c
+Bottom: 21a4502d4023d0355487565ed3cbd02046f14cb6
+Top:    09b6cdadce6d09e66b223b0d3c584bdc614de5c7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 16:49:39 +0100
 
@@ -178,10 +178,10 @@ index 188d398..3b8cd27 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6f68233..b76440d 100644
+index b1799ca..cd98091 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1471,11 +1471,28 @@ struct poly_info
+@@ -1458,11 +1458,28 @@ struct poly_info
  };
  
  static int
@@ -212,7 +212,7 @@ index 6f68233..b76440d 100644
    return 1;
  }
  
-@@ -1613,7 +1630,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1600,7 +1617,8 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.Layer = Layer;
          info.drawn_area = screen;
