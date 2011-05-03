@@ -179,12 +179,14 @@ ghid_draw_bg_image (void)
       glGenTextures (1, &texture_handle);
       glBindTexture (GL_TEXTURE_2D, texture_handle);
 
+      /* XXX: We should proabbly determine what the maxmimum texture supported is,
+       *      and if our image is larger, shrink it down using GDK pixbuf routines
+       *      rather than having it fail below.
+       */
+
       glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,
                     (n_channels == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, pixels);
     }
-
-  if (texture_handle == 0)
-    return;
 
   glBindTexture (GL_TEXTURE_2D, texture_handle);
 
