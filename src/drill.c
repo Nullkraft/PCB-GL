@@ -90,11 +90,9 @@ InitializeDrill (DrillTypePtr drill, PinTypePtr pin, ElementTypePtr element)
   drill->ViaCount = 0;
   drill->PinCount = 0;
   drill->UnplatedCount = 0;
-  drill->ElementMax = 0;
   drill->Element = NULL;
   drill->PinN = 0;
   drill->Pin = NULL;
-  drill->PinMax = 0;
   ptr = (void *) GetDrillPinMemory (drill);
   *((PinTypeHandle) ptr) = pin;
   if (element)
@@ -166,9 +164,8 @@ GetDrillInfo (DataTypePtr top)
 		}
 	    }
 	    END_LOOP;
-	    if (AllDrills->Drill[AllDrills->DrillN - 1].DrillSize <
-		pin->DrillingHole)
-	      {
+	    if (AllDrills->Drill[AllDrills->DrillN - 1].DrillSize < pin->DrillingHole)
+	      { /* ^^ Last drill in the list, presumably sorted? */
 		Drill = GetDrillInfoDrillMemory (AllDrills);
 		InitializeDrill (Drill, pin, element);
 	      }
@@ -231,8 +228,7 @@ RoundDrillInfo (DrillInfoTypePtr d, int roundto)
 	{
 	  int ei, ej;
 
-	  d->Drill[i].ElementMax
-	    = d->Drill[i].ElementN + d->Drill[i+1].ElementN;
+	  d->Drill[i].ElementMax = d->Drill[i].ElementN + d->Drill[i+1].ElementN;
 	  if (d->Drill[i].ElementMax)
 	    {
 	      d->Drill[i].Element = (ElementTypePtr *)realloc (d->Drill[i].Element,
@@ -279,17 +275,4 @@ RoundDrillInfo (DrillInfoTypePtr d, int roundto)
 	  i++;
 	}
     }
-}
-
-void
-FreeDrillInfo (DrillInfoTypePtr Drills)
-{
-  DRILL_LOOP (Drills);
-  {
-    free (drill->Element);
-    free (drill->Pin);
-  }
-  END_LOOP;
-  free (Drills->Drill);
-  free (Drills);
 }
