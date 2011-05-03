@@ -1,5 +1,5 @@
-Bottom: 6743bc607c75311aa167fb1e4b9a46e08aa200a3
-Top:    28f27ef1175894e656245fc96eba0235fcdd976f
+Bottom: 6755e63c1c436cce9f1456858dabe420fa33040a
+Top:    f405cc8708507c9847e7843d9ee58450436e93c8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 14:08:12 +0100
 
@@ -10,10 +10,10 @@ Use them rather than the GLU tessellator
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 39b8cb9..65501a5 100644
+index 914d6ae..3178ee7 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -575,12 +575,10 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -549,12 +549,10 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
@@ -29,7 +29,7 @@ index 39b8cb9..65501a5 100644
  
    /* If the contour is round, and hidgl_fill_circle would use
     * less slices than we have vertices to draw it, then call
-@@ -594,22 +592,12 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices,
+@@ -568,22 +566,12 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices,
      }
    }
  
@@ -55,7 +55,7 @@ index 39b8cb9..65501a5 100644
    double scale;
  };
  
-@@ -624,7 +612,7 @@ do_hole (const BoxType *b, void *cl)
+@@ -598,7 +586,7 @@ do_hole (const BoxType *b, void *cl)
      return 0;
    }
  
@@ -64,7 +64,7 @@ index 39b8cb9..65501a5 100644
    return 1;
  }
  
-@@ -636,17 +624,8 @@ static int assigned_bits = 0;
+@@ -610,17 +598,8 @@ static int assigned_bits = 0;
  void
  hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
  {
@@ -82,7 +82,7 @@ index 39b8cb9..65501a5 100644
  
    info.scale = scale;
    global_scale = scale;
-@@ -657,68 +636,59 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -631,68 +610,59 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
        return;
      }
  
