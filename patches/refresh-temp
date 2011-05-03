@@ -1,0 +1,32 @@
+Bottom: 1078ed5affa4c0e57a9799cfb49d91762a800cd2
+Top:    244abaedc7eeffe5639c94e75c5749aa5f65e8c9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-03 17:48:00 +0100
+
+Refresh of hid-gtk-drop-in-gl-renderer-wo
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 412542e..06c8612 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -179,13 +179,15 @@ ghid_draw_bg_image (void)
+       glGenTextures (1, &texture_handle);
+       glBindTexture (GL_TEXTURE_2D, texture_handle);
+ 
++      /* XXX: We should proabbly determine what the maxmimum texture supported is,
++       *      and if our image is larger, shrink it down using GDK pixbuf routines
++       *      rather than having it fail below.
++       */
++
+       glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,
+                     (n_channels == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, pixels);
+     }
+ 
+-  if (texture_handle == 0)
+-    return;
+-
+   glBindTexture (GL_TEXTURE_2D, texture_handle);
+ 
+   glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
