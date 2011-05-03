@@ -246,8 +246,6 @@ ghid_draw_grid (BoxTypePtr drawn_area)
 
   hidgl_flush_triangles (&buffer);
 
-  glTexCoord2f (0., 0.);
-
   glDisable (GL_STENCIL_TEST);
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
