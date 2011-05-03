@@ -1,9 +1,17 @@
 Bottom: 4e6e9657c5c1e78096b33278f0a4b06209089aa7
 Top:    378438e9994e38053d4194c91ebfd907888b101a
-Author: Peter Clifton <pcjc2@cam.ac.uk>
+Author: Andrew Poelstra <asp11@sfu.ca>
 Date:   2011-05-03 21:20:02 +0100
 
+Universal use of GetValue
 
+This is a patch to make all numeric code use GetValue, to unify parsing
+code and make sure everything uses the same units. Contained is almost
+a complete rewrite of GetValue to simplify code that uses funny units.
+
+Reviewed-by: Peter Clifton <pcjc2@cam.ac.uk>
+
+Affects-bug: lp-772027
 
 
 ---
