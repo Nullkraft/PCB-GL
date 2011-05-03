@@ -1,7 +1,7 @@
-Bottom: 979925f0c38de7d565108736f8dfbd6307e6aa7b
-Top:    df070884703039a9bb832b8c6c8a019989516979
+Bottom: 59ba5b568f4f8946b9ce22d6aec1e983695e1368
+Top:    fffad95b4218b2be6d195bae2e6dc1258bcea47e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-03 00:43:31 +0100
+Date:   2011-05-03 16:00:33 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -290,7 +290,7 @@ index 65eef92..31a17fb 100644
    double C0, T0;
    bool changed = false;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index d419031..415bd21 100644
+index 1669a36..2dcdd4f 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -1010,7 +1010,6 @@ CreateRouteData ()
