@@ -1,5 +1,5 @@
-Bottom: acad62db027c8dd5207f4c07ac69d5bb993af193
-Top:    00b87a35847c39a4b62a9f88c166ddda94c3e8c9
+Bottom: 5458532e1cea1c000571770189b702c510fcec5b
+Top:    c480d41a538e5461a9655e078e0305b83cb57821
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 00:43:46 +0100
 
@@ -947,7 +947,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e22c807..2668fbb 100644
+index 86dcdcf..732b6b0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -700,7 +700,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
@@ -1016,7 +1016,7 @@ index e22c807..2668fbb 100644
  }
  
  struct cyl_info {
-@@ -2128,7 +2134,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2127,7 +2133,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glEnd ();
    }
  
@@ -1024,7 +1024,7 @@ index e22c807..2668fbb 100644
    // hid_expose_callback (&ghid_hid, &region, 0);
    ghid_draw_everything (&region);
    hidgl_flush_triangles (&buffer);
-@@ -2138,7 +2143,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2137,7 +2142,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
    ghid_draw_grid (&region);
  
@@ -1032,7 +1032,7 @@ index e22c807..2668fbb 100644
    ghid_invalidate_current_gc ();
    DrawAttached ();
    DrawMark ();
-@@ -2147,6 +2151,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2146,6 +2150,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_show_crosshair (TRUE);
  
    hidgl_flush_triangles (&buffer);
@@ -1040,7 +1040,7 @@ index e22c807..2668fbb 100644
  
    check_gl_drawing_ok_hack = false;
    hidgl_in_context (false);
-@@ -2247,7 +2252,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2246,7 +2251,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
