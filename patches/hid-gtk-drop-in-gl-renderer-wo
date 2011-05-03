@@ -1,5 +1,5 @@
 Bottom: bea6a6edae1c1de30311a1f5796589e4c1491c60
-Top:    d0c81669742823f669ab3e4d84025eba74c5e8d2
+Top:    90d806dffbfeb054adb0da15bcd1594ea194960d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:27 +0100
 
@@ -736,10 +736,10 @@ index 0000000..282b144
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..ef2d486
+index 0000000..0923110
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1165 @@
+@@ -0,0 +1,1159 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -908,7 +908,6 @@ index 0000000..ef2d486
 +      int width =             gdk_pixbuf_get_width (ghidgui->bg_pixbuf);
 +      int height =            gdk_pixbuf_get_height (ghidgui->bg_pixbuf);
 +      int rowstride =         gdk_pixbuf_get_rowstride (ghidgui->bg_pixbuf);
-+      // gboolean has_alpha =    gdk_pixbuf_get_has_alpha (ghidgui->bg_pixbuf);
 +      int bits_per_sample =   gdk_pixbuf_get_bits_per_sample (ghidgui->bg_pixbuf);
 +      int n_channels =        gdk_pixbuf_get_n_channels (ghidgui->bg_pixbuf);
 +      unsigned char *pixels = gdk_pixbuf_get_pixels (ghidgui->bg_pixbuf);
@@ -977,22 +976,22 @@ index 0000000..ef2d486
 +
 +    case HID_MASK_CLEAR:
 +      /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
-+      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
-+      glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
-+      glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
-+      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
++      glColorMask (0, 0, 0, 0);                   /* Disable writting in color buffer */
++      glEnable (GL_STENCIL_TEST);                 /* Enable Stencil test              */
++      glStencilFunc (GL_ALWAYS, 1, 1);            /* Test always passes, value written 1 */
++      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
 +      break;
 +
 +    case HID_MASK_AFTER:
 +      /* Drawing operations as masked to areas where the stencil buffer is '0' */
-+      glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
-+      glStencilFunc (GL_EQUAL, 0, 1);             // Draw only where stencil buffer is 1
-+      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
++      glColorMask (1, 1, 1, 1);                   /* Enable drawing of r, g, b & a */
++      glStencilFunc (GL_EQUAL, 0, 1);             /* Draw only where stencil buffer is 1 */
++      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    /* Stencil buffer read only */
 +      break;
 +
 +    case HID_MASK_OFF:
 +      /* Disable stenciling */
-+      glDisable (GL_STENCIL_TEST);                // Disable Stencil test
++      glDisable (GL_STENCIL_TEST);
 +      break;
 +    }
 +  cur_mask = use_it;
@@ -1010,7 +1009,6 @@ index 0000000..ef2d486
 +  gport->grid_color.red ^= gport->bg_color.red;
 +  gport->grid_color.green ^= gport->bg_color.green;
 +  gport->grid_color.blue ^= gport->bg_color.blue;
-+//  gdk_color_alloc (gport->colormap, &gport->grid_color);
 +}
 +
 +void
@@ -1176,7 +1174,6 @@ index 0000000..ef2d486
 +void
 +ghid_set_draw_xor (hidGC gc, int xor)
 +{
-+  // printf ("ghid_set_draw_xor (%p, %d) -- not implemented\n", gc, xor);
 +  /* NOT IMPLEMENTED */
 +
 +  /* Only presently called when setting up a crosshair GC.
@@ -1483,7 +1480,6 @@ index 0000000..ef2d486
 +  /* setup GL-context */
 +  priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
 +                                              GDK_GL_MODE_STENCIL |
-+                                           // GDK_GL_MODE_DEPTH   |
 +                                              GDK_GL_MODE_DOUBLE);
 +  if (!priv->glconfig)
 +    {
@@ -1762,7 +1758,6 @@ index 0000000..ef2d486
 +
 +  glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
 +                                        GDK_GL_MODE_STENCIL |
-+//                                        GDK_GL_MODE_DEPTH   |
 +                                        GDK_GL_MODE_SINGLE);
 +
 +  pixmap = gdk_pixmap_new (NULL, width, height, depth);
@@ -1833,7 +1828,6 @@ index 0000000..ef2d486
 +  /* end drawing to current GL-context */
 +  gport->render_priv->in_context = false;
 +  gdk_gl_drawable_gl_end (gldrawable);
-+//  gdk_gl_context_destroy (glcontext);
 +
 +  gdk_pixmap_unset_gl_capability (pixmap);
 +
