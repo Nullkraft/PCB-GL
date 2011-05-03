@@ -182,17 +182,6 @@ ghid_make_gc (void)
 static void
 ghid_draw_grid (BoxTypePtr drawn_area)
 {
-  static GLfloat *points = 0;
-  static int npoints = 0;
-  int x1, y1, x2, y2, n, i;
-  double x, y;
-  extern float global_depth;
-
-  if (!Settings.DrawGrid)
-    return;
-  if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
-    return;
-
   if (gdk_color_parse (Settings.GridColor, &gport->grid_color))
     {
       gport->grid_color.red ^= gport->bg_color.red;
@@ -209,56 +198,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
              gport->grid_color.green / 65535.,
              gport->grid_color.blue / 65535.);
 
-  x1 = GRIDFIT_X (MAX (0, drawn_area->X1), PCB->Grid);
-  y1 = GRIDFIT_Y (MAX (0, drawn_area->Y1), PCB->Grid);
-  x2 = GRIDFIT_X (MIN (PCB->MaxWidth, drawn_area->X2), PCB->Grid);
-  y2 = GRIDFIT_Y (MIN (PCB->MaxHeight, drawn_area->Y2), PCB->Grid);
-  if (x1 > x2)
-    {
-      int tmp = x1;
-      x1 = x2;
-      x2 = tmp;
-    }
-  if (y1 > y2)
-    {
-      int tmp = y1;
-      y1 = y2;
-      y2 = tmp;
-    }
-  if (Vx (x1) < 0)
-    x1 += PCB->Grid;
-  if (Vy (y1) < 0)
-    y1 += PCB->Grid;
-  if (Vx (x2) >= gport->width)
-    x2 -= PCB->Grid;
-  if (Vy (y2) >= gport->height)
-    y2 -= PCB->Grid;
-  n = (int) ((x2 - x1) / PCB->Grid + 0.5) + 1;
-  if (n > npoints)
-    {
-      npoints = n + 10;
-      points = realloc (points, npoints * 3 * sizeof (GLfloat));
-    }
+  hidgl_draw_grid (drawn_area);
 
-  glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (3, GL_FLOAT, 0, points);
-
-  n = 0;
-  for (x = x1; x <= x2; x += PCB->Grid)
-    {
-      points[3 * n] = Vx (x);
-      points[3 * n + 2] = global_depth;
-      n++;
-    }
-  for (y = y1; y <= y2; y += PCB->Grid)
-    {
-      int vy = Vy (y);
-      for (i = 0; i < n; i++)
-	points[3 * i + 1] = vy;
-      glDrawArrays (GL_POINTS, 0, n);
-    }
-
-  glDisableClientState (GL_VERTEX_ARRAY);
   glDisable (GL_COLOR_LOGIC_OP);
 }
 
