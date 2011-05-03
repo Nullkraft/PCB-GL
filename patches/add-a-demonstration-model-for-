@@ -1,5 +1,5 @@
-Bottom: 09b6cdadce6d09e66b223b0d3c584bdc614de5c7
-Top:    107efd9bd7fca040747a8146b6929539d9951318
+Bottom: 6ead8fb2a02429180aa286048c7f71325163781a
+Top:    5d01a78e1a6b97695206577944ac3e515e69f3bd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
 
@@ -432,7 +432,7 @@ literal 0
 HcmV?d00001
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 3b8cd27..ffb0b09 100644
+index d27c4db..d01e496 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -48,6 +48,7 @@ RCSID ("$Id: $");
@@ -443,7 +443,7 @@ index 3b8cd27..ffb0b09 100644
  
  static bool in_context = false;
  
-@@ -880,8 +881,11 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
+@@ -872,8 +873,11 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
    hidgl_flush_triangles (&buffer);
  
    glPushAttrib (GL_STENCIL_BUFFER_BIT |           // Resave the stencil write-mask etc.., and
@@ -456,7 +456,7 @@ index 3b8cd27..ffb0b09 100644
  
    if (use_new_stencil)
      {
-@@ -948,7 +952,34 @@ load_built_in_shaders (void)
+@@ -940,7 +944,34 @@ load_built_in_shaders (void)
            "  gl_FragColor = gl_Color;\n"
            "}\n";
  
