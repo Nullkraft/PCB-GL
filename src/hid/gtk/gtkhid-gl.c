@@ -808,7 +808,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              GHidPort *port)
 {
   BoxType region;
-  int eleft, eright, etop, ebottom;
 
   ghid_start_drawing (port);
 
@@ -841,19 +840,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
   region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
 
-  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
-  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
-
   glColor3f (port->bg_color.red / 65535.,
              port->bg_color.green / 65535.,
              port->bg_color.blue / 65535.);
-
-  glBegin (GL_QUADS);
-  glVertex3i (eleft,  etop,    0);
-  glVertex3i (eright, etop,    0);
-  glVertex3i (eright, ebottom, 0);
-  glVertex3i (eleft,  ebottom, 0);
-  glEnd ();
 
   glPushMatrix ();
   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
@@ -863,6 +852,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              -port->view_x0,
                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                              -port->view_y0, 0);
+
+  glBegin (GL_QUADS);
+  glVertex3i (0, 0, 0);
+  glVertex3i (PCB->MaxWidth, 0, 0);
+  glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
+  glVertex3i (0, PCB->MaxHeight, 0);
+  glEnd ();
 
   ghid_draw_bg_image ();
 
