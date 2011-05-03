@@ -1,5 +1,5 @@
-Bottom: 6ac5a3facbf62d18ae383139f5a9a0d909049c31
-Top:    4883fb8fb45cabd5f081eecbdd9bb3566b1181c2
+Bottom: fd72086061fe257cf8263be57d2a42dd1edfed63
+Top:    8fed97c8fe92013f82bbfeef6b4c3b41af191551
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:43 +0100
 
@@ -9,10 +9,10 @@ Play with perspective
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 990b017..188d398 100644
+index f93a21d..d7806b9 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -187,6 +187,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
+@@ -179,6 +179,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
    glEnableClientState (GL_TEXTURE_COORD_ARRAY);
    glEnableClientState (GL_VERTEX_ARRAY);
    glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
@@ -25,7 +25,7 @@ index 990b017..188d398 100644
    glDisableClientState (GL_VERTEX_ARRAY);
    glDisableClientState (GL_TEXTURE_COORD_ARRAY);
  
-@@ -369,24 +375,31 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -361,24 +367,31 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
    /* Don't bother capping hairlines */
    if (circular_caps && !hairline)
      {
