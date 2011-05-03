@@ -1,5 +1,5 @@
-Bottom: fd9d37e6918c7e262c044a77929af09c95d39460
-Top:    3ad7d7aebe0eee2d26f78b441710419f86b91378
+Bottom: c45d7bd1e7c6906373ead9dc330f6fb553d5340c
+Top:    388a4b34a471d38dc6f77a6d802b26de02235f78
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:42 +0100
 
@@ -116,10 +116,10 @@ index 76f8e87..8012817 100644
 +  return BORAST_STATUS_SUCCESS;
 +}
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 72dcf9d..f84648b 100644
+index f3b6dca..94efd60 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -664,9 +664,25 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -677,9 +677,25 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
@@ -145,7 +145,7 @@ index 72dcf9d..f84648b 100644
    borast_traps_t traps;
  
    /* If the contour is round, then call hidgl_fill_circle to draw it. */
-@@ -675,9 +691,108 @@ fill_contour (PLINE *contour)
+@@ -688,9 +704,108 @@ fill_contour (PLINE *contour)
      return;
    }
  
