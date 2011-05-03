@@ -1,5 +1,5 @@
-Bottom: 6daa6405f5e73954689f7cd3e4df5c037212fe9a
-Top:    b60d8308134604f9d19436b1e93ae7e53d1b2b9f
+Bottom: b3f615af31189d1c671d62102800309f825e8765
+Top:    0ef15929531ba95321dad6d0f02b50faeaef627f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-02 14:49:26 +0100
 
@@ -26,7 +26,7 @@ index 6ec61f1..f7b55a2 100644
    if (!Settings.DrawGrid)
      return;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e5d6bf0..ee331bb 100644
+index 9e02d08..90a0055 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -96,6 +96,18 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -227,7 +227,7 @@ index e5d6bf0..ee331bb 100644
        glEnd ();
      }
  
-@@ -1035,6 +1049,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1031,6 +1045,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
