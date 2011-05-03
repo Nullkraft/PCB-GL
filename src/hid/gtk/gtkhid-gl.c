@@ -96,6 +96,18 @@ ghid_set_layer (const char *name, int group, int empty)
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
+  if (group >= 0 && group < max_group) {
+    hidgl_set_depth ((max_group - group) * 10);
+  } else {
+    if (SL_TYPE (idx) == SL_SILK) {
+      if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
+        hidgl_set_depth (max_group * 10 + 3);
+      } else {
+        hidgl_set_depth (10 - 3);
+      }
+    }
+  }
+
   glEnable (GL_STENCIL_TEST);                // Enable Stencil test
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
   /* Reset stencil buffer so we can paint anywhere */
@@ -650,16 +662,16 @@ ghid_notify_mark_change (bool changes_complete)
 }
 
 static void
-draw_right_cross (gint x, gint y)
+draw_right_cross (gint x, gint y, gint z)
 {
-  glVertex2i (x, 0);
-  glVertex2i (x, gport->height);
-  glVertex2i (0, y);
-  glVertex2i (gport->width, y);
+  glVertex3i (x, 0, z);
+  glVertex3i (x, gport->height, z);
+  glVertex3i (0, y, z);
+  glVertex3i (gport->width, y, z);
 }
 
 static void
-draw_slanted_cross (gint x, gint y)
+draw_slanted_cross (gint x, gint y, gint z)
 {
   gint x0, y0, x1, y1;
 
@@ -671,8 +683,8 @@ draw_slanted_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - x;
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 
   x0 = x - (gport->height - y);
   x0 = MAX(0, MIN (x0, gport->width));
@@ -682,12 +694,12 @@ draw_slanted_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - (gport->width - x);
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 }
 
 static void
-draw_dozen_cross (gint x, gint y)
+draw_dozen_cross (gint x, gint y, gint z)
 {
   gint x0, y0, x1, y1;
   gdouble tan60 = sqrt (3);
@@ -700,8 +712,8 @@ draw_dozen_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - x * tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 
   x0 = x + (gport->height - y) * tan60;
   x0 = MAX(0, MIN (x0, gport->width));
@@ -711,8 +723,8 @@ draw_dozen_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - x / tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 
   x0 = x - (gport->height - y) / tan60;
   x0 = MAX(0, MIN (x0, gport->width));
@@ -722,8 +734,8 @@ draw_dozen_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - (gport->width - x) * tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 
   x0 = x - (gport->height - y) * tan60;
   x0 = MAX(0, MIN (x0, gport->width));
@@ -733,20 +745,20 @@ draw_dozen_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - (gport->width - x) / tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 }
 
 static void
-draw_crosshair (gint x, gint y)
+draw_crosshair (gint x, gint y, gint z)
 {
   static enum crosshair_shape prev = Basic_Crosshair_Shape;
 
-  draw_right_cross (x, y);
+  draw_right_cross (x, y, z);
   if (prev == Union_Jack_Crosshair_Shape)
-    draw_slanted_cross (x, y);
+    draw_slanted_cross (x, y, z);
   if (prev == Dozen_Crosshair_Shape)
-    draw_dozen_cross (x, y);
+    draw_dozen_cross (x, y, z);
   prev = Crosshair.shape;
 }
 
@@ -756,10 +768,11 @@ draw_crosshair (gint x, gint y)
 void
 ghid_show_crosshair (gboolean paint_new_location)
 {
-  gint x, y;
+  gint x, y, z;
   gboolean draw_markers;
   static int done_once = 0;
   static GdkColor cross_color;
+  extern float global_depth;
 
   if (!paint_new_location)
     return;
@@ -772,6 +785,7 @@ ghid_show_crosshair (gboolean paint_new_location)
     }
   x = DRAW_X (gport->x_crosshair);
   y = DRAW_Y (gport->y_crosshair);
+  z = global_depth;
 
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
@@ -785,7 +799,7 @@ ghid_show_crosshair (gboolean paint_new_location)
   if (x >= 0 && paint_new_location)
     {
       glBegin (GL_LINES);
-      draw_crosshair (x, y);
+      draw_crosshair (x, y, z);
       glEnd ();
     }
 
@@ -793,22 +807,22 @@ ghid_show_crosshair (gboolean paint_new_location)
   if (x >= 0 && paint_new_location && draw_markers)
     {
       glBegin (GL_QUADS);
-      glVertex2i (0,                  y - VCD);
-      glVertex2i (0,                  y - VCD + VCW);
-      glVertex2i (VCD,                y - VCD + VCW);
-      glVertex2i (VCD,                y - VCD);
-      glVertex2i (gport->width,       y - VCD);
-      glVertex2i (gport->width,       y - VCD + VCW);
-      glVertex2i (gport->width - VCD, y - VCD + VCW);
-      glVertex2i (gport->width - VCD, y - VCD);
-      glVertex2i (x - VCD,            0);
-      glVertex2i (x - VCD,            VCD);
-      glVertex2i (x - VCD + VCW,      VCD);
-      glVertex2i (x - VCD + VCW,      0);
-      glVertex2i (x - VCD,            gport->height - VCD);
-      glVertex2i (x - VCD,            gport->height);
-      glVertex2i (x - VCD + VCW,      gport->height);
-      glVertex2i (x - VCD + VCW,      gport->height - VCD);
+      glVertex3i (0,                  y - VCD,             z);
+      glVertex3i (0,                  y - VCD + VCW,       z);
+      glVertex3i (VCD,                y - VCD + VCW,       z);
+      glVertex3i (VCD,                y - VCD,             z);
+      glVertex3i (gport->width,       y - VCD,             z);
+      glVertex3i (gport->width,       y - VCD + VCW,       z);
+      glVertex3i (gport->width - VCD, y - VCD + VCW,       z);
+      glVertex3i (gport->width - VCD, y - VCD,             z);
+      glVertex3i (x - VCD,            0,                   z);
+      glVertex3i (x - VCD,            VCD,                 z);
+      glVertex3i (x - VCD + VCW,      VCD,                 z);
+      glVertex3i (x - VCD + VCW,      0,                   z);
+      glVertex3i (x - VCD,            gport->height - VCD, z);
+      glVertex3i (x - VCD,            gport->height,       z);
+      glVertex3i (x - VCD + VCW,      gport->height,       z);
+      glVertex3i (x - VCD + VCW,      gport->height - VCD, z);
       glEnd ();
     }
 
@@ -1052,6 +1066,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                              -port->view_y0, 0);
   hid_expose_callback (&ghid_hid, &region, 0);
+
+  /* Just prod the drawing code so the current depth gets set to
+     the right value for the layer we are editing */
+  gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
+  gui->set_layer (NULL, SL_FINISHED, 0);
 
   ghid_draw_grid (&region);
 
