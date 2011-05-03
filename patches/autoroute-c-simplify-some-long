@@ -1,0 +1,17 @@
+Bottom: 979925f0c38de7d565108736f8dfbd6307e6aa7b
+Top:    979925f0c38de7d565108736f8dfbd6307e6aa7b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-03 15:53:55 +0100
+
+autoroute.c: Simplify some long if statements
+
+In a couple of cases, almost all the processing logic was burried inside
+an if statement checking for validity of this processing pass. Re-organise
+to test for an invalid condition, then "continue;" the loop if that is hit.
+
+This reduces the nesting of some rather complex functions.
+
+
+---
+
+
