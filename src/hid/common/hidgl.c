@@ -102,38 +102,29 @@ hidgl_draw_grid (BoxType *drawn_area)
   static int npoints = 0;
   int x1, y1, x2, y2, n, i;
   double x, y;
-  extern float global_depth;
 
   if (!Settings.DrawGrid)
-    return;
-
-  if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
     return;
 
   x1 = GRIDFIT_X (MAX (0, drawn_area->X1), PCB->Grid);
   y1 = GRIDFIT_Y (MAX (0, drawn_area->Y1), PCB->Grid);
   x2 = GRIDFIT_X (MIN (PCB->MaxWidth, drawn_area->X2), PCB->Grid);
   y2 = GRIDFIT_Y (MIN (PCB->MaxHeight, drawn_area->Y2), PCB->Grid);
+
   if (x1 > x2)
     {
       int tmp = x1;
       x1 = x2;
       x2 = tmp;
     }
+
   if (y1 > y2)
     {
       int tmp = y1;
       y1 = y2;
       y2 = tmp;
     }
-  if (Vx (x1) < 0)
-    x1 += PCB->Grid;
-  if (Vy (y1) < 0)
-    y1 += PCB->Grid;
-  if (Vx (x2) >= gport->width)
-    x2 -= PCB->Grid;
-  if (Vy (y2) >= gport->height)
-    y2 -= PCB->Grid;
+
   n = (int) ((x2 - x1) / PCB->Grid + 0.5) + 1;
   if (n > npoints)
     {
@@ -147,15 +138,14 @@ hidgl_draw_grid (BoxType *drawn_area)
   n = 0;
   for (x = x1; x <= x2; x += PCB->Grid)
     {
-      points[3 * n] = Vx (x);
+      points[3 * n + 0] = x;
       points[3 * n + 2] = global_depth;
       n++;
     }
   for (y = y1; y <= y2; y += PCB->Grid)
     {
-      int vy = Vy (y);
       for (i = 0; i < n; i++)
-        points[3 * i + 1] = vy;
+        points[3 * i + 1] = y;
       glDrawArrays (GL_POINTS, 0, n);
     }
 

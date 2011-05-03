@@ -131,6 +131,9 @@ ghid_make_gc (void)
 static void
 ghid_draw_grid (BoxTypePtr drawn_area)
 {
+  if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
+    return;
+
   if (gdk_color_parse (Settings.GridColor, &gport->grid_color))
     {
       gport->grid_color.red ^= gport->bg_color.red;
@@ -879,20 +882,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                              -port->view_y0, 0);
   hid_expose_callback (&ghid_hid, &region, 0);
-  hidgl_flush_triangles (&buffer);
-  glPopMatrix ();
 
-  ghid_draw_grid ();
+  ghid_draw_grid (&region);
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
-  glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-            (ghid_flip_y ? -1. : 1.) / port->zoom, 1);
-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-                             -port->view_x0,
-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-                             -port->view_y0, 0);
+
   DrawAttached ();
   DrawMark ();
   hidgl_flush_triangles (&buffer);
