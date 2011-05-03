@@ -166,7 +166,6 @@ ghid_draw_bg_image (void)
       int width =             gdk_pixbuf_get_width (ghidgui->bg_pixbuf);
       int height =            gdk_pixbuf_get_height (ghidgui->bg_pixbuf);
       int rowstride =         gdk_pixbuf_get_rowstride (ghidgui->bg_pixbuf);
-      // gboolean has_alpha =    gdk_pixbuf_get_has_alpha (ghidgui->bg_pixbuf);
       int bits_per_sample =   gdk_pixbuf_get_bits_per_sample (ghidgui->bg_pixbuf);
       int n_channels =        gdk_pixbuf_get_n_channels (ghidgui->bg_pixbuf);
       unsigned char *pixels = gdk_pixbuf_get_pixels (ghidgui->bg_pixbuf);
@@ -235,22 +234,22 @@ ghid_use_mask (int use_it)
 
     case HID_MASK_CLEAR:
       /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
-      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
-      glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
-      glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+      glColorMask (0, 0, 0, 0);                   /* Disable writting in color buffer */
+      glEnable (GL_STENCIL_TEST);                 /* Enable Stencil test              */
+      glStencilFunc (GL_ALWAYS, 1, 1);            /* Test always passes, value written 1 */
+      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
       break;
 
     case HID_MASK_AFTER:
       /* Drawing operations as masked to areas where the stencil buffer is '0' */
-      glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
-      glStencilFunc (GL_EQUAL, 0, 1);             // Draw only where stencil buffer is 1
-      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
+      glColorMask (1, 1, 1, 1);                   /* Enable drawing of r, g, b & a */
+      glStencilFunc (GL_EQUAL, 0, 1);             /* Draw only where stencil buffer is 1 */
+      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    /* Stencil buffer read only */
       break;
 
     case HID_MASK_OFF:
       /* Disable stenciling */
-      glDisable (GL_STENCIL_TEST);                // Disable Stencil test
+      glDisable (GL_STENCIL_TEST);
       break;
     }
   cur_mask = use_it;
@@ -268,7 +267,6 @@ set_special_grid_color (void)
   gport->grid_color.red ^= gport->bg_color.red;
   gport->grid_color.green ^= gport->bg_color.green;
   gport->grid_color.blue ^= gport->bg_color.blue;
-//  gdk_color_alloc (gport->colormap, &gport->grid_color);
 }
 
 void
@@ -434,7 +432,6 @@ ghid_set_line_width (hidGC gc, int width)
 void
 ghid_set_draw_xor (hidGC gc, int xor)
 {
-  // printf ("ghid_set_draw_xor (%p, %d) -- not implemented\n", gc, xor);
   /* NOT IMPLEMENTED */
 
   /* Only presently called when setting up a crosshair GC.
@@ -741,7 +738,6 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   /* setup GL-context */
   priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                               GDK_GL_MODE_STENCIL |
-                                           // GDK_GL_MODE_DEPTH   |
                                               GDK_GL_MODE_DOUBLE);
   if (!priv->glconfig)
     {
@@ -1020,7 +1016,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 
   glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                         GDK_GL_MODE_STENCIL |
-//                                        GDK_GL_MODE_DEPTH   |
                                         GDK_GL_MODE_SINGLE);
 
   pixmap = gdk_pixmap_new (NULL, width, height, depth);
@@ -1091,7 +1086,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   /* end drawing to current GL-context */
   gport->render_priv->in_context = false;
   gdk_gl_drawable_gl_end (gldrawable);
-//  gdk_gl_context_destroy (glcontext);
 
   gdk_pixmap_unset_gl_capability (pixmap);
 
