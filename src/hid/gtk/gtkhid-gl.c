@@ -141,8 +141,6 @@ ghid_draw_grid (BoxTypePtr drawn_area)
       gport->grid_color.blue ^= gport->bg_color.blue;
     }
 
-  hidgl_flush_triangles (&buffer);
-
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
 
@@ -871,10 +869,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   hid_expose_callback (&ghid_hid, &region, 0);
+  hidgl_flush_triangles (&buffer);
 
   ghid_draw_grid (&region);
 
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
 
   DrawAttached ();
