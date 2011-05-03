@@ -1,0 +1,23 @@
+Bottom: f9ca059455aaa8c586a70010c234ae9b3b8fc496
+Top:    ef77d13fe3fac507886c5fcaff140a9c0dfcd9b2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-03 01:10:04 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 327a1bf..6c7f587 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1852,8 +1852,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+ 
+   /* Draw pins, pads, vias below silk */
+   if (global_view_2d) {
+-    gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
+-                    SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0);
++    gui->set_layer (NULL, SWAP_IDENT ? solder_group : component_group, 0);
+ 
+     if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
+       /* Mask out drilled holes */
