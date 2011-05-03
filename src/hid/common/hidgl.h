@@ -66,7 +66,7 @@ hidgl_add_triangle (triangle_buffer *buffer,
                                  x3, y3, global_depth);
 }
 
-// void draw_grid ()
+void hidgl_draw_grid (BoxType *drawn_area);
 void hidgl_set_depth (float depth);
 void hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale);
 void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_angle, int delta_angle, double scale);

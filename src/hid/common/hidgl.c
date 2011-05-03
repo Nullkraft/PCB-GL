@@ -95,41 +95,25 @@ hidgl_set_depth (float depth)
   global_depth = depth;
 }
 
-/* ------------------------------------------------------------ */
-#if 0
-/*static*/ void
-draw_grid ()
+void
+hidgl_draw_grid (BoxType *drawn_area)
 {
   static GLfloat *points = 0;
   static int npoints = 0;
   int x1, y1, x2, y2, n, i;
   double x, y;
+  extern float global_depth;
 
   if (!Settings.DrawGrid)
     return;
+
   if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
     return;
 
-  if (gdk_color_parse (Settings.GridColor, &gport->grid_color))
-    {
-      gport->grid_color.red ^= gport->bg_color.red;
-      gport->grid_color.green ^= gport->bg_color.green;
-      gport->grid_color.blue ^= gport->bg_color.blue;
-    }
-
-  hidgl_flush_triangles ();
-
-  glEnable (GL_COLOR_LOGIC_OP);
-  glLogicOp (GL_XOR);
-
-  glColor3f (gport->grid_color.red / 65535.,
-             gport->grid_color.green / 65535.,
-             gport->grid_color.blue / 65535.);
-
-  x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
-  y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
-  x2 = GRIDFIT_X (SIDE_X (gport->view_x0 + gport->view_width - 1), PCB->Grid);
-  y2 = GRIDFIT_Y (SIDE_Y (gport->view_y0 + gport->view_height - 1), PCB->Grid);
+  x1 = GRIDFIT_X (MAX (0, drawn_area->X1), PCB->Grid);
+  y1 = GRIDFIT_Y (MAX (0, drawn_area->Y1), PCB->Grid);
+  x2 = GRIDFIT_X (MIN (PCB->MaxWidth, drawn_area->X2), PCB->Grid);
+  y2 = GRIDFIT_Y (MIN (PCB->MaxHeight, drawn_area->Y2), PCB->Grid);
   if (x1 > x2)
     {
       int tmp = x1;
@@ -154,31 +138,30 @@ draw_grid ()
   if (n > npoints)
     {
       npoints = n + 10;
-      points = realloc (points, npoints * 2 * sizeof (GLfloat));
+      points = realloc (points, npoints * 3 * sizeof (GLfloat));
     }
 
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (2, GL_FLOAT, 0, points);
+  glVertexPointer (3, GL_FLOAT, 0, points);
 
   n = 0;
   for (x = x1; x <= x2; x += PCB->Grid)
     {
-      points[2 * n] = Vx (x);
+      points[3 * n] = Vx (x);
+      points[3 * n + 2] = global_depth;
       n++;
     }
   for (y = y1; y <= y2; y += PCB->Grid)
     {
       int vy = Vy (y);
       for (i = 0; i < n; i++)
-        points[2 * i + 1] = vy;
+        points[3 * i + 1] = vy;
       glDrawArrays (GL_POINTS, 0, n);
     }
 
   glDisableClientState (GL_VERTEX_ARRAY);
-  glDisable (GL_COLOR_LOGIC_OP);
 }
 
-#endif
 /* ------------------------------------------------------------ */
 
 #define MAX_PIXELS_ARC_TO_CHORD 0.5
