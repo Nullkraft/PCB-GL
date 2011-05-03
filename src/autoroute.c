@@ -4790,13 +4790,7 @@ RouteAll (routedata_t * rd)
 	  if (ras.total_subnets == 0)
 #endif
 	    {
-	      /* Route easiest nets from this pass first on next pass.
-	       * This works best because it's likely that the hardest
-	       * is the last one routed (since it has the most obstacles)
-	       * but it will do no good to rip it up and try it again
-	       * without first changing any of the other routes
-	       */
-	      heap_insert (next_pass, total_net_cost, net);
+	      heap_insert (next_pass, 0, net);
 	      continue;
 	    }
 
