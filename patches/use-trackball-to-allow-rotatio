@@ -1,5 +1,5 @@
-Bottom: 9871381e0c70153eb7b84546250491a7e7479bae
-Top:    a78eab13b8d3ae8bf463e0a20a30d85e897ce796
+Bottom: 3d035d3f480423a128a91dca86f8f4e28ce95280
+Top:    86594fbc4536ed69f334c5b9acb65a0b3142a21d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:32 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 14417f1..e8ea474 100644
+index 85d31c2..6ccf787 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -162,7 +162,7 @@ index 14417f1..e8ea474 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1163,7 +1239,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1162,7 +1238,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -171,7 +171,7 @@ index 14417f1..e8ea474 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1278,3 +1354,196 @@ ghid_finish_debug_draw (void)
+@@ -1276,3 +1352,196 @@ ghid_finish_debug_draw (void)
  
    ghid_end_drawing (gport);
  }

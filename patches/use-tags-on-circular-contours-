@@ -1,5 +1,5 @@
-Bottom: 18df4ab7e5801b0ab252b8bb2c09c07d18466352
-Top:    97df29f376cf2539bfada362d59ce843f0f2d9a1
+Bottom: 190092126b46874b627f6e2eaffbfdf560e49fc3
+Top:    50ddfcece1c16098886782bdebd7665fccf93135
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:31 +0100
 
@@ -9,10 +9,10 @@ Use tags on circular contours to render them faster
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 534594a..39f8e6e 100644
+index 223d64f..fba23ff 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -541,11 +541,24 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -552,11 +552,24 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
@@ -38,7 +38,7 @@ index 534594a..39f8e6e 100644
    gluTessBeginPolygon (tobj, NULL);
    gluTessBeginContour (tobj);
    do {
-@@ -562,6 +575,7 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
+@@ -573,6 +586,7 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
  struct do_hole_info {
    GLUtesselator *tobj;
    GLdouble *vertices;
@@ -46,7 +46,7 @@ index 534594a..39f8e6e 100644
  };
  
  static int
-@@ -575,7 +589,7 @@ do_hole (const BoxType *b, void *cl)
+@@ -586,7 +600,7 @@ do_hole (const BoxType *b, void *cl)
      return 0;
    }
  
@@ -55,7 +55,7 @@ index 534594a..39f8e6e 100644
    return 1;
  }
  
-@@ -592,6 +606,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -603,6 +617,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    struct do_hole_info info;
    int stencil_bit;
  
@@ -63,8 +63,8 @@ index 534594a..39f8e6e 100644
    global_scale = scale;
  
    if (poly->Clipped == NULL)
-@@ -651,7 +666,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
-                                                               // any bits permitted by the stencil writemask
+@@ -661,7 +676,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+                                                 /* any bits permitted by the stencil writemask */
  
    /* Draw the polygon outer */
 -  tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices);
