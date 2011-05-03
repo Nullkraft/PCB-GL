@@ -4845,11 +4845,8 @@ RouteAll (routedata_t * rd)
 			ras.conflict_subnets++;
 		      else
 			{
-			  double percent;
 			  ras.routed_subnets++;
 			  ras.total_nets_routed++;
-			  percent = calculate_progress (this_heap_item, this_heap_size, &ras);
-			  gui->progress (percent * 100., 100,  _("Autorouting tracks"));
 			}
 		    }
 		  else
