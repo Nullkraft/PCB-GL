@@ -1,5 +1,5 @@
 Bottom: ebd4a783b63cab958b63a1830d53a4cc07e32e77
-Top:    244abaedc7eeffe5639c94e75c5749aa5f65e8c9
+Top:    fb1504300eed5180282f8fa7fbb7430ff512f2ba
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 17:44:38 +0100
 
@@ -727,10 +727,10 @@ index 0000000..c26e24e
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..06c8612
+index 0000000..ffbd788
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1167 @@
+@@ -0,0 +1,1165 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -873,8 +873,6 @@ index 0000000..06c8612
 +      gport->grid_color.green ^= gport->bg_color.green;
 +      gport->grid_color.blue ^= gport->bg_color.blue;
 +    }
-+
-+  hidgl_flush_triangles (&buffer);
 +
 +  glEnable (GL_COLOR_LOGIC_OP);
 +  glLogicOp (GL_XOR);
@@ -1604,10 +1602,10 @@ index 0000000..06c8612
 +  hidgl_init_triangle_array (&buffer);
 +  ghid_invalidate_current_gc ();
 +  hid_expose_callback (&ghid_hid, &region, 0);
++  hidgl_flush_triangles (&buffer);
 +
 +  ghid_draw_grid (&region);
 +
-+  hidgl_init_triangle_array (&buffer);
 +  ghid_invalidate_current_gc ();
 +
 +  DrawAttached ();
