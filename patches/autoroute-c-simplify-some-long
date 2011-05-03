@@ -1,5 +1,5 @@
 Bottom: 979925f0c38de7d565108736f8dfbd6307e6aa7b
-Top:    2377b6f81c8b0fcdc3e69870fb835e89121b808e
+Top:    59ba5b568f4f8946b9ce22d6aec1e983695e1368
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 15:53:55 +0100
 
@@ -15,10 +15,10 @@ This reduces the nesting of some rather complex functions.
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index d419031..554fda7 100644
+index d419031..1669a36 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
-@@ -4785,82 +4785,91 @@ RouteAll (routedata_t * rd)
+@@ -4785,82 +4785,85 @@ RouteAll (routedata_t * rd)
  	  total_net_cost = 0;
  	  /* only route that which isn't fully routed */
  #ifdef ROUTE_DEBUG
@@ -33,13 +33,7 @@ index d419031..554fda7 100644
 -	       * some of them are unreachable from the first subnet. */
 -	      LIST_LOOP (net, same_net, p);
 -	      {
-+	      /* Route easiest nets from this pass first on next pass.
-+	       * This works best because it's likely that the hardest
-+	       * is the last one routed (since it has the most obstacles)
-+	       * but it will do no good to rip it up and try it again
-+	       * without first changing any of the other routes
-+	       */
-+	      heap_insert (next_pass, total_net_cost, net);
++	      heap_insert (next_pass, 0, net);
 +	      continue;
 +	    }
 +
