@@ -1,5 +1,5 @@
 Bottom: ebd4a783b63cab958b63a1830d53a4cc07e32e77
-Top:    dff42226016a574efee33a7fe6ac3f2661c244c6
+Top:    afe0164c35f686f6ff94194e14247b1dfce78fcc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-02 14:49:22 +0100
 
@@ -755,10 +755,10 @@ index 0000000..e69a6b7
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..25a36d8
+index 0000000..94a2903
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1245 @@
+@@ -0,0 +1,1240 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -1501,11 +1501,6 @@ index 0000000..25a36d8
 +
 +  if (!paint_new_location)
 +    return;
-+
-+  if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
-+    printf ("Returning\n");
-+    return;
-+  }
 +
 +  if (!done_once)
 +    {
