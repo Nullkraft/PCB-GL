@@ -1,6 +1,27 @@
-/* $Id: */
-
-#if 1 /* DISABLE EVERYTHING! */
+/*
+ *                            COPYRIGHT
+ *
+ *  PCB, interactive printed circuit board design
+ *  Copyright (C) 2011 PCB Contributers (See ChangeLog for details)
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ *  Contact addresses for paper mail and Email:
+ *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ *  Thomas.Nau@rz.uni-ulm.de
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -12,7 +33,6 @@
 #include <string.h>
 #endif
 #include <math.h>
-#include <time.h>
 #include <assert.h>
 
 /* The Linux OpenGL ABI 1.0 spec requires that we define
@@ -37,12 +57,10 @@
 #include "hid.h"
 #include "hidgl.h"
 
-
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: $");
 
 triangle_buffer buffer;
 float global_depth = 0;
@@ -143,8 +161,6 @@ hidgl_draw_grid (BoxType *drawn_area)
 
   glDisableClientState (GL_VERTEX_ARRAY);
 }
-
-/* ------------------------------------------------------------ */
 
 #define MAX_PIXELS_ARC_TO_CHORD 0.5
 #define MIN_SLICES 6
@@ -506,8 +522,6 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
   GLUtesselator *tobj;
   GLdouble *vertices;
 
-//  return;
-
   assert (n_coords > 0);
 
   vertices = malloc (sizeof(GLdouble) * n_coords * 3);
@@ -544,8 +558,3 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
   hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
   hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
 }
-
-/* ---------------------------------------------------------------------- */
-
-#endif /* DISABLE EVERYTHING! */
-
