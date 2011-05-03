@@ -1,7 +1,7 @@
-Bottom: ee34388733898c31f005bd4bcf09d162c1e5f85c
-Top:    67a3416db1c2dd23ff245a8dc8321288ca2c9d61
+Bottom: 1793e3afba9cf4be2631b51634dcefc8b76088aa
+Top:    06b9f24b4e68ace3f104ee358966a821ae87313f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-02 15:26:15 +0100
+Date:   2011-05-03 21:23:38 +0100
 
 Provide a progress dialog for the autorouter
 
@@ -95,7 +95,7 @@ index 1669a36..1178292 100644
      {
        int i;
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 74e6a8c..41e620e 100644
+index 3defd27..6c00d91 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -739,9 +739,66 @@ ghid_beep ()
