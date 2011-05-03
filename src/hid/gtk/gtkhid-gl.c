@@ -854,10 +854,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              -port->view_y0, 0);
 
   glBegin (GL_QUADS);
-  glVertex3i (0, 0, 0);
-  glVertex3i (PCB->MaxWidth, 0, 0);
+  glVertex3i (0,             0,              0);
+  glVertex3i (PCB->MaxWidth, 0,              0);
   glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
-  glVertex3i (0, PCB->MaxHeight, 0);
+  glVertex3i (0,             PCB->MaxHeight, 0);
   glEnd ();
 
   ghid_draw_bg_image ();
