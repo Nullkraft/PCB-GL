@@ -1,7 +1,7 @@
-Bottom: bbdd115b83c1816231c10da4f6534991b9d9342d
-Top:    75d0c909468a96cf4db9363188410822b8c05b16
+Bottom: 55cdf49211cd6938e8668151718be0871f6c28a9
+Top:    8d3899075bb04a6b36abd3e8bd595d97d3686b4b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-03 16:00:48 +0100
+Date:   2011-05-03 16:47:34 +0100
 
 Play with perspective
 
@@ -9,7 +9,7 @@ Play with perspective
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 97b6ef7..f220317 100644
+index 990b017..188d398 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -187,6 +187,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
@@ -25,7 +25,7 @@ index 97b6ef7..f220317 100644
    glDisableClientState (GL_VERTEX_ARRAY);
    glDisableClientState (GL_TEXTURE_COORD_ARRAY);
  
-@@ -395,24 +401,31 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -369,24 +375,31 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
    /* Don't bother capping hairlines */
    if (circular_caps && !hairline)
      {
@@ -76,7 +76,7 @@ index 97b6ef7..f220317 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2a0063e..bd40d90 100644
+index 596f78c..6f68233 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -33,6 +33,8 @@
@@ -105,7 +105,7 @@ index 2a0063e..bd40d90 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -1601,7 +1606,8 @@ DrawMask (int side, BoxType * screen)
+@@ -1543,7 +1548,8 @@ DrawMask (int side, BoxType * screen)
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
@@ -115,7 +115,7 @@ index 2a0063e..bd40d90 100644
    SET_FLAG (FULLPOLYFLAG, &polygon);
    common_fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_Free (&polygon.Clipped);
-@@ -1822,7 +1828,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1764,7 +1770,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
    /* XXX: This isn't strictly correct, as I've ignored the matrix
@@ -124,7 +124,7 @@ index 2a0063e..bd40d90 100644
    /* NB: last_modelview_matrix is transposed in memory! */
    reverse_layers = (last_modelview_matrix[2][2] < 0);
  
-@@ -1976,6 +1982,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1918,6 +1924,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    int new_x, new_y;
    int min_depth;
    int max_depth;
@@ -137,7 +137,7 @@ index 2a0063e..bd40d90 100644
  
    ghid_start_drawing (port);
  
-@@ -2004,22 +2016,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1946,22 +1958,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -213,7 +213,7 @@ index 2a0063e..bd40d90 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->bg_color.red / 65535.,
                  port->bg_color.green / 65535.,
-@@ -2027,7 +2082,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1969,7 +2024,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -222,7 +222,7 @@ index 2a0063e..bd40d90 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -2038,58 +2093,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1980,58 +2035,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -321,7 +321,7 @@ index 2a0063e..bd40d90 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2480,10 +2550,10 @@ ghid_finish_debug_draw (void)
+@@ -2423,10 +2493,10 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
@@ -335,7 +335,7 @@ index 2a0063e..bd40d90 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2511,9 +2581,9 @@ determinant_4x4 (float m[4][4])
+@@ -2454,9 +2524,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -347,7 +347,7 @@ index 2a0063e..bd40d90 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2578,68 +2648,104 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2521,68 +2591,104 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
@@ -436,44 +436,44 @@ index 2a0063e..bd40d90 100644
 +
 +//  if (fabs (determinant_2x2 (mat)) < 0.000000000001)
 +//    printf ("Determinant is quite small\n");
-+
-+  invert_2x2 (mat, inv_mat);
  
 -  y = (float)ey - last_modelview_matrix[3][1] * 1
 -                - last_modelview_matrix[2][1] * vz;
-+  fvx = (inv_mat[0][0] * x + inv_mat[0][1] * y);
-+  fvy = (inv_mat[1][0] * x + inv_mat[1][1] * y);
++  invert_2x2 (mat, inv_mat);
  
 -  /*
 -    x = view_matrix[0][0] * vx +
 -        view_matrix[0][1] * vy;
-+//  if (fvx == NAN) printf ("fvx is NAN\n");
-+//  if (fvy == NAN) printf ("fvx is NAN\n");
++  fvx = (inv_mat[0][0] * x + inv_mat[0][1] * y);
++  fvy = (inv_mat[1][0] * x + inv_mat[1][1] * y);
  
 -    y = view_matrix[1][0] * vx +
 -        view_matrix[1][1] * vy;
-+//  if (fabs (fvx) == INFINITY) printf ("fvx is infinite %f\n", fvx);
-+//  if (fabs (fvy) == INFINITY) printf ("fvy is infinite %f\n", fvy);
++//  if (fvx == NAN) printf ("fvx is NAN\n");
++//  if (fvy == NAN) printf ("fvx is NAN\n");
  
 -    [view_matrix[0][0] view_matrix[0][1]] [vx] = [x]
 -    [view_matrix[1][0] view_matrix[1][1]] [vy]   [y]
 -  */
-+//  if (fvx > (double)G_MAXINT/5.) {fvx = (double)G_MAXINT/5.; printf ("fvx overflow clamped\n"); }
-+//  if (fvy > (double)G_MAXINT/5.) {fvy = (double)G_MAXINT/5.; printf ("fvy overflow clamped\n"); }
++//  if (fabs (fvx) == INFINITY) printf ("fvx is infinite %f\n", fvx);
++//  if (fabs (fvy) == INFINITY) printf ("fvy is infinite %f\n", fvy);
  
 -  mat[0][0] = last_modelview_matrix[0][0];
 -  mat[0][1] = last_modelview_matrix[1][0];
 -  mat[1][0] = last_modelview_matrix[0][1];
 -  mat[1][1] = last_modelview_matrix[1][1];
-+//  if (fvx < (double)-G_MAXINT/5.) {fvx = (double)-G_MAXINT/5.; printf ("fvx underflow clamped\n"); }
-+//  if (fvy < (double)-G_MAXINT/5.) {fvy = (double)-G_MAXINT/5.; printf ("fvy underflow clamped\n"); }
++//  if (fvx > (double)G_MAXINT/5.) {fvx = (double)G_MAXINT/5.; printf ("fvx overflow clamped\n"); }
++//  if (fvy > (double)G_MAXINT/5.) {fvy = (double)G_MAXINT/5.; printf ("fvy overflow clamped\n"); }
  
 -//    if (determinant_2x2 (mat) < 0.00001)
 -//      printf ("Determinant is quite small\n");
-+  *vx = (int)fvx;
-+  *vy = (int)fvy;
++//  if (fvx < (double)-G_MAXINT/5.) {fvx = (double)-G_MAXINT/5.; printf ("fvx underflow clamped\n"); }
++//  if (fvy < (double)-G_MAXINT/5.) {fvy = (double)-G_MAXINT/5.; printf ("fvy underflow clamped\n"); }
  
 -  invert_2x2 (mat, inv_mat);
++  *vx = (int)fvx;
++  *vy = (int)fvy;
++
 +  {
 +    float ex, ey, ez;
 +    /* Reproject the computed board plane coordinates to eye space */
@@ -482,7 +482,9 @@ index 2a0063e..bd40d90 100644
 +    ez = last_modelview_matrix[0][2] * fvx + last_modelview_matrix[1][2] * fvy + last_modelview_matrix[2][2] * fvz + last_modelview_matrix[3][2];
 +    /* We don't care about ew, as we don't use anything other than 1 for homogeneous coordinates at this stage */
 +    /* ew = last_modelview_matrix[0][3] * fvx + last_modelview_matrix[1][3] * fvy + last_modelview_matrix[2][3] * fvz + last_modelview_matrix[3][3]; */
-+
+ 
+-  *vx = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
+-  *vy = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
 +#if 0
 +    if (-ez < near)
 +      printf ("ez is closer than the near clipping plane, ez = %f\n", ez);
@@ -493,9 +495,7 @@ index 2a0063e..bd40d90 100644
 +      // printf ("EZ IS BEHIND THE CAMERA !! ez = %f\n", ez);
 +      return false;
 +    }
- 
--  *vx = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
--  *vy = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
++
 +    return true;
 +  }
  }

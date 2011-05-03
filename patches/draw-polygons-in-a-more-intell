@@ -1,7 +1,7 @@
-Bottom: 75d0c909468a96cf4db9363188410822b8c05b16
-Top:    44d246ee400c399dea6acd8bbbd4bd86ac173bf7
+Bottom: 8d3899075bb04a6b36abd3e8bd595d97d3686b4b
+Top:    45a66c74ef81cdde902effa5d278c21a05c78e8c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-03 16:00:48 +0100
+Date:   2011-05-03 16:47:35 +0100
 
 Draw polygons in a more intelligent order
 
@@ -36,10 +36,10 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index f220317..800f469 100644
+index 188d398..3b8cd27 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -852,14 +852,23 @@ do_hole (const BoxType *b, void *cl)
+@@ -826,14 +826,23 @@ do_hole (const BoxType *b, void *cl)
    return 1;
  }
  
@@ -64,7 +64,7 @@ index f220317..800f469 100644
    int stencil_bit;
  
    CHECK_IS_IN_CONTEXT ();
-@@ -870,59 +879,70 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -844,59 +853,70 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
        return;
      }
  
@@ -178,10 +178,10 @@ index f220317..800f469 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bd40d90..5a09ff5 100644
+index 6f68233..b76440d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1529,11 +1529,28 @@ struct poly_info
+@@ -1471,11 +1471,28 @@ struct poly_info
  };
  
  static int
@@ -212,7 +212,7 @@ index bd40d90..5a09ff5 100644
    return 1;
  }
  
-@@ -1671,7 +1688,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1613,7 +1630,8 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.Layer = Layer;
          info.drawn_area = screen;
