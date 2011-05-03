@@ -1,0 +1,165 @@
+Bottom: 59ba5b568f4f8946b9ce22d6aec1e983695e1368
+Top:    4e6e9657c5c1e78096b33278f0a4b06209089aa7
+Author: Andrew Poelstra <asp11@sfu.ca>
+Date:   2011-05-03 11:20:19 -0700
+
+Add case-sensitivity to all unit-reading code
+
+Reviewed-by: Peter Clifton <pcjc2@cam.ac.uk>
+
+This breaks existing behaviour for any users using capitalised units
+in scripts, but as in general, units ARE case sensitive, we should
+not support anything other than their canonical names.
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index ac961db..66a279b 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1651,18 +1651,18 @@ CursorAction(int argc, char **argv, int x, int y)
+    * xu and yu are the scale factors that we multiply dx and dy by to
+    * come up with PCB internal units.
+    */
+-  if (strncasecmp (argv[3], "mm", 2) == 0)
++  if (strncmp (argv[3], "mm", 2) == 0)
+     xu = yu = MM_TO_COORD(1);
+-  else if (strncasecmp (argv[3], "mil", 3) == 0)
++  else if (strncmp (argv[3], "mil", 3) == 0)
+     xu = yu = MIL_TO_COORD(1);
+-  else if (strncasecmp (argv[3], "grid", 4) == 0)
++  else if (strncmp (argv[3], "grid", 4) == 0)
+     xu = yu = PCB->Grid;
+-  else if (strncasecmp (argv[3], "view", 4) == 0)
++  else if (strncmp (argv[3], "view", 4) == 0)
+     {
+       xu = gport->view_width / 100.0;
+       yu = gport->view_height / 100.0;
+     }
+-  else if (strncasecmp (argv[3], "board", 4) == 0)
++  else if (strncmp (argv[3], "board", 4) == 0)
+     {
+       xu = PCB->MaxWidth / 100.0;
+       yu = PCB->MaxHeight / 100.0;
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 3da94a9..3a57ca5 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -889,18 +889,18 @@ CursorAction(int argc, char **argv, int x, int y)
+   if (!flip_y)
+     dy = -dy;
+ 
+-  if (strncasecmp (argv[3], "mm", 2) == 0)
++  if (strncmp (argv[3], "mm", 2) == 0)
+     xu = yu = MM_TO_COORD(1);
+-  else if (strncasecmp (argv[3], "mil", 3) == 0)
++  else if (strncmp (argv[3], "mil", 3) == 0)
+     xu = yu = MIL_TO_COORD(1);
+-  else if (strncasecmp (argv[3], "grid", 4) == 0)
++  else if (strncmp (argv[3], "grid", 4) == 0)
+     xu = yu = PCB->Grid;
+-  else if (strncasecmp (argv[3], "view", 4) == 0)
++  else if (strncmp (argv[3], "view", 4) == 0)
+     {
+       xu = Pz(view_width) / 100.0;
+       yu = Pz(view_height) / 100.0;
+     }
+-  else if (strncasecmp (argv[3], "board", 4) == 0)
++  else if (strncmp (argv[3], "board", 4) == 0)
+     {
+       xu = PCB->MaxWidth / 100.0;
+       yu = PCB->MaxHeight / 100.0;
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 26f15b7..29ffae3 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -314,16 +314,16 @@ parse_bloat (char *str)
+     return;
+   suf[0] = 0;
+   sscanf (str, "%lf %s", &val, suf);
+-  if (strcasecmp (suf, "in") == 0)
++  if (strcmp (suf, "in") == 0)
+     bloat = INCH_TO_COORD(val);
+-  else if (strcasecmp (suf, "mil") == 0)
++  else if (strcmp (suf, "mil") == 0)
+     bloat = MIL_TO_COORD(val);
+-  else if (strcasecmp (suf, "mm") == 0)
++  else if (strcmp (suf, "mm") == 0)
+     bloat = MM_TO_COORD(val);
+-  else if (strcasecmp (suf, "um") == 0)
++  else if (strcmp (suf, "um") == 0)
+     bloat = MM_TO_COORD(val) / 1000.0;
+-  else if (strcasecmp (suf, "pix") == 0
+-	   || strcasecmp (suf, "px") == 0)
++  else if (strcmp (suf, "pix") == 0
++	   || strcmp (suf, "px") == 0)
+     bloat = val * scale;
+   else
+     bloat = val;
+diff --git a/src/misc.c b/src/misc.c
+index 0e25089..4f308ed 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -138,13 +138,13 @@ GetValue (const char *val, const char *units, bool * absolute)
+     
+   if (units && *units)
+     {
+-      if (strncasecmp (units, "mm", 2) == 0)
++      if (strncmp (units, "mm", 2) == 0)
+         value = MM_TO_COORD(value);
+-      else if (strncasecmp (units, "cm", 2) == 0)
++      else if (strncmp (units, "cm", 2) == 0)
+         value = 10 * MM_TO_COORD(value);
+-      else if (strncasecmp (units, "mil", 3) == 0)
++      else if (strncmp (units, "mil", 3) == 0)
+         value = MIL_TO_COORD(value);
+-      else if (strncasecmp (units, "in", 3) == 0)
++      else if (strncmp (units, "in", 3) == 0)
+         value = INCH_TO_COORD(value);
+     }
+   return value;
+diff --git a/src/parse_l.l b/src/parse_l.l
+index 56d3b84..0898abf 100644
+--- a/src/parse_l.l
++++ b/src/parse_l.l
+@@ -96,10 +96,10 @@ static	int		Parse(char *, char *, char *, char *);
+ HEX				0x[0-9a-fA-F]+
+ DECIMAL			-?[1-9][0-9]*|0
+ FLOATING                [+-]?[0-9]*("."[0-9]*)?
+-FLOATINGMM              {FLOATING}[mM][mM]
+-FLOATINGUM              {FLOATING}[uU][mM]
+-FLOATINGIN              {FLOATING}[iI][nN]
+-FLOATINGMIL             {FLOATING}[mM][iI][lL]
++FLOATINGMM              {FLOATING}mm
++FLOATINGUM              {FLOATING}um
++FLOATINGIN              {FLOATING}in
++FLOATINGMIL             {FLOATING}mil
+ CARDINAL		[1-9][0-9]*|0
+ STRINGCHAR		([^"\n\r\\]|\\.)
+ 
+diff --git a/src/report.c b/src/report.c
+index 5131ec6..3e71ee7 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -616,17 +616,17 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
+   if (argc < 1)
+     units_name = Settings.grid_units_mm ? "mm" : "mil";
+ 
+-  if (strcasecmp (units_name, "mm") == 0)
++  if (strcmp (units_name, "mm") == 0)
+     {
+       prec = 4;
+       scale = COORD_TO_MM(1);
+     }
+-  else if (strcasecmp (units_name, "mil") == 0)
++  else if (strcmp (units_name, "mil") == 0)
+     {
+       prec = 2;
+       scale = COORD_TO_MIL(1);
+     }
+-  else if (strcasecmp (units_name, "in") == 0)
++  else if (strcmp (units_name, "in") == 0)
+     {
+       prec = 5;
+       scale = COORD_TO_INCH(1);
