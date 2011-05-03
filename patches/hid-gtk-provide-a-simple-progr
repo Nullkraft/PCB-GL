@@ -1,5 +1,5 @@
 Bottom: 9a6fcc3160ceee211472b7aaee9215b040985bd1
-Top:    31eb422573cb62a97474c2ec21723ace4252314f
+Top:    15df15bd33d06a2cb4a4f87359ab75861fb80880
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 23:08:45 +0100
 
@@ -15,10 +15,10 @@ to update progress.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index fd092c6..87a7dbd 100644
+index fd092c6..9fbd128 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -739,9 +739,66 @@ ghid_beep ()
+@@ -739,9 +739,75 @@ ghid_beep ()
    gdk_beep ();
  }
  
@@ -33,6 +33,7 @@ index fd092c6..87a7dbd 100644
 +make_progress_dialog (void)
 +{
 +  struct progress_dialog *pd;
++  GtkWidget *alignment;
 +  GtkWidget *vbox;
 +
 +  pd = g_new0 (struct progress_dialog, 1);
@@ -41,15 +42,23 @@ index fd092c6..87a7dbd 100644
 +  gtk_window_set_title (GTK_WINDOW (pd->dialog), _("Progress"));
 +
 +  pd->message = gtk_label_new (NULL);
-+  pd->progress = gtk_progress_bar_new ();
++  gtk_label_set_width_chars (GTK_LABEL (pd->message), 30);
++  gtk_misc_set_alignment (GTK_MISC (pd->message), 0., 0.);
 +
-+  vbox = gtk_vbox_new (false, 8);
++  pd->progress = gtk_progress_bar_new ();
++  gtk_widget_set_size_request (pd->progress, -1, 26);
++
++  vbox = gtk_vbox_new (false, 0);
 +  gtk_box_pack_start (GTK_BOX (vbox), pd->message, true, true, 8);
 +  gtk_box_pack_start (GTK_BOX (vbox), pd->progress, false, true, 8);
 +
++  alignment = gtk_alignment_new (0., 0., 1., 1.);
++  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 8, 8, 8, 8);
++  gtk_container_add (GTK_CONTAINER (alignment), vbox);
++
 +  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (pd->dialog)->vbox),
-+                      vbox, true, true, 0);
-+  gtk_widget_show_all (vbox);
++                      alignment, true, true, 0);
++  gtk_widget_show_all (alignment);
 +
 +  return pd;
 +}
