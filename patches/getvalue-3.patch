@@ -11,6 +11,10 @@ a complete rewrite of GetValue to simplify code that uses funny units.
 
 Reviewed-by: Peter Clifton <pcjc2@cam.ac.uk>
 
+When committing the patch from Launchpad, I rebased it to apply with
+strcasecmp and strncasecmp changed to strcmp and strncmp, as changed
+by commit 31b7309764f2e4bd40141038c30f1f38309efb4a
+
 Affects-bug: lp-772027
 
 
