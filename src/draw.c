@@ -1153,8 +1153,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
-  for (i = n_entries - 1; i >= 0;
-      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
+  for (i = n_entries - 1; i >= 0; i--)
     {
       layernum = layers[i];
       Layer = PCB->Data->Layer + layers[i];
@@ -1163,6 +1162,9 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
         rv = 0;
       if (layernum < max_copper_layer && Layer->On)
         DrawLayerCommon (Layer, drawn_area, true);
+
+      if (gui->gui) /* HACK: Subcomposite each layer in a layer group separately */
+        gui->set_layer (0, group, 0);
     }
   if (n_entries > 1)
     rv = 1;
