@@ -1,5 +1,5 @@
-Bottom: c1bac75ade2e4ff96f0384f03676217728f3b2c7
-Top:    0b379fa0562edb743120f05e71d3e56c0ed56f89
+Bottom: b8875b858df4bd2eac160dafc80f66e2a9f94169
+Top:    81297f317339ad3a3c31bd86a668ca2936d398f8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -30,7 +30,7 @@ index c89e680..727786a 100644
  	hid/common/hidgl_shaders.h \
  	hid/common/trackball.c \
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 2bd3631..e8909a6 100644
+index db9368a..dd38812 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -1040,6 +1040,7 @@ hidgl_init (void)
@@ -2564,7 +2564,7 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5a2d991..276c4cc 100644
+index 048c62f..3b7a890 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1673,7 +1673,7 @@ DrawMask (int side, BoxType * screen)
@@ -2588,7 +2588,7 @@ index 5a2d991..276c4cc 100644
      }
    return 1;
  }
-@@ -2788,125 +2793,27 @@ ghid_finish_debug_draw (void)
+@@ -2785,125 +2790,27 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
