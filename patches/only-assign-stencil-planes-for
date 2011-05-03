@@ -1,5 +1,5 @@
-Bottom: 953592c96c91b2aa0c39563f070c0aee2261c1a4
-Top:    19d40692e1c90713b8e568871ceed294517c94e4
+Bottom: 5458532e1cea1c000571770189b702c510fcec5b
+Top:    bdce5454837a195314f89eb137b6b14a4eaf710b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 00:43:48 +0100
 
@@ -11,10 +11,10 @@ NB: Split out of the FBO patch
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8ac03ed..bd40d90 100644
+index 86dcdcf..fe069c0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -158,6 +158,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -153,6 +153,7 @@ ghid_set_layer (const char *name, int group, int empty)
  {
    render_priv *priv = gport->render_priv;
    static int stencil_bit = 0;
@@ -22,7 +22,7 @@ index 8ac03ed..bd40d90 100644
    int idx = group;
    if (idx >= 0 && idx < max_group)
      {
-@@ -177,48 +178,53 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -172,48 +173,53 @@ ghid_set_layer (const char *name, int group, int empty)
  
    hidgl_set_depth (compute_depth (group));
  

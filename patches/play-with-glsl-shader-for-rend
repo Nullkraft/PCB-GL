@@ -1,5 +1,5 @@
-Bottom: 5458532e1cea1c000571770189b702c510fcec5b
-Top:    c480d41a538e5461a9655e078e0305b83cb57821
+Bottom: bdce5454837a195314f89eb137b6b14a4eaf710b
+Top:    b532c88a3a0af3aabaa5795f2f200da499233490
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 00:43:46 +0100
 
@@ -947,10 +947,10 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 86dcdcf..732b6b0 100644
+index fe069c0..cbfd2a6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -700,7 +700,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
+@@ -706,7 +706,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
  {
    USE_GC (gc);
  
@@ -959,7 +959,7 @@ index 86dcdcf..732b6b0 100644
  }
  
  
-@@ -717,7 +717,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -723,7 +723,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
    USE_GC (gc);
  
@@ -968,7 +968,7 @@ index 86dcdcf..732b6b0 100644
  }
  
  void
-@@ -1718,9 +1718,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1724,9 +1724,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
  #define MIN_FACES_PER_CYL 6
  #define MAX_FACES_PER_CYL 360
    float radius = vr;
@@ -979,7 +979,7 @@ index 86dcdcf..732b6b0 100644
    int i;
    int slices;
  
-@@ -1735,19 +1733,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1741,19 +1739,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
    z1 = compute_depth (from_layer);
    z2 = compute_depth (to_layer);
  
@@ -1016,7 +1016,7 @@ index 86dcdcf..732b6b0 100644
  }
  
  struct cyl_info {
-@@ -2127,7 +2133,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2133,7 +2139,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glEnd ();
    }
  
@@ -1024,7 +1024,7 @@ index 86dcdcf..732b6b0 100644
    // hid_expose_callback (&ghid_hid, &region, 0);
    ghid_draw_everything (&region);
    hidgl_flush_triangles (&buffer);
-@@ -2137,7 +2142,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2143,7 +2148,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
    ghid_draw_grid (&region);
  
@@ -1032,7 +1032,7 @@ index 86dcdcf..732b6b0 100644
    ghid_invalidate_current_gc ();
    DrawAttached ();
    DrawMark ();
-@@ -2146,6 +2150,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2152,6 +2156,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_show_crosshair (TRUE);
  
    hidgl_flush_triangles (&buffer);
@@ -1040,7 +1040,7 @@ index 86dcdcf..732b6b0 100644
  
    check_gl_drawing_ok_hack = false;
    hidgl_in_context (false);
-@@ -2246,7 +2251,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2252,7 +2257,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
