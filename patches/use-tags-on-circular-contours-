@@ -1,5 +1,5 @@
-Bottom: 234f3ba45c351481f35ee541d8f21731caf75418
-Top:    9c9310566130aafe950add139ea5511e2e80957d
+Bottom: 4c345249e983894fb2eb456b0b61807abda94267
+Top:    9d5acf7d241145c8ea5e5b3c8de06ef42c81436a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-02 14:49:24 +0100
 
@@ -9,10 +9,10 @@ Use tags on circular contours to render them faster
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 3dc1991..3e08fec 100644
+index 9285e02..6ec61f1 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -576,11 +576,24 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -549,11 +549,24 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
@@ -38,7 +38,7 @@ index 3dc1991..3e08fec 100644
    gluTessBeginPolygon (tobj, NULL);
    gluTessBeginContour (tobj);
    do {
-@@ -597,6 +610,7 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
+@@ -570,6 +583,7 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
  struct do_hole_info {
    GLUtesselator *tobj;
    GLdouble *vertices;
@@ -46,7 +46,7 @@ index 3dc1991..3e08fec 100644
  };
  
  static int
-@@ -610,7 +624,7 @@ do_hole (const BoxType *b, void *cl)
+@@ -583,7 +597,7 @@ do_hole (const BoxType *b, void *cl)
      return 0;
    }
  
@@ -55,7 +55,7 @@ index 3dc1991..3e08fec 100644
    return 1;
  }
  
-@@ -627,6 +641,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -600,6 +614,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    struct do_hole_info info;
    int stencil_bit;
  
@@ -63,7 +63,7 @@ index 3dc1991..3e08fec 100644
    global_scale = scale;
  
    if (poly->Clipped == NULL)
-@@ -686,7 +701,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -659,7 +674,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                                // any bits permitted by the stencil writemask
  
    /* Draw the polygon outer */
