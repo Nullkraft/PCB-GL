@@ -1,7 +1,7 @@
-Bottom: 59ba5b568f4f8946b9ce22d6aec1e983695e1368
-Top:    fffad95b4218b2be6d195bae2e6dc1258bcea47e
+Bottom: 378438e9994e38053d4194c91ebfd907888b101a
+Top:    8986120d71b74c2246d1a3a17f9f0e9e2201abc3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-03 16:00:33 +0100
+Date:   2011-05-03 21:23:15 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -832,7 +832,7 @@ index 9ad5331..f843617 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index ac961db..6cead6d 100644
+index fd092c6..d24d081 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -828,6 +828,7 @@ static void
@@ -1336,10 +1336,10 @@ index b61f673..81699e1 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index 0e25089..cbbb172 100644
+index e505047..6cef87d 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -441,7 +441,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
+@@ -499,7 +499,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
    SymbolTypePtr symbol = FontPtr->Symbol;
    unsigned char *s = (unsigned char *) Text->TextString;
    BDimension minThick = 0;
@@ -1348,7 +1348,7 @@ index 0e25089..cbbb172 100644
    int space = 0;
  
    LocationType minx=0, miny=0, maxx=0, maxy=0;
-@@ -462,9 +462,9 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
+@@ -520,9 +520,9 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
      {
        if (*s <= MAX_FONTPOSITION && symbol[*s].Valid)
  	{
@@ -1360,7 +1360,7 @@ index 0e25089..cbbb172 100644
  	      int t = line->Thickness / 4;
  	      if (t < minThick)
  		t = minThick;
-@@ -723,9 +723,9 @@ CenterDisplay (LocationType X, LocationType Y, bool Delta)
+@@ -781,9 +781,9 @@ CenterDisplay (LocationType X, LocationType Y, bool Delta)
  void
  SetFontInfo (FontTypePtr Ptr)
  {
@@ -1372,7 +1372,7 @@ index 0e25089..cbbb172 100644
    LocationType totalminy = MAX_COORD;
  
    /* calculate cell with and height (is at least DEFAULT_CELLSIZE)
-@@ -744,8 +744,9 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -802,8 +802,9 @@ SetFontInfo (FontTypePtr Ptr)
  
        minx = miny = MAX_COORD;
        maxx = maxy = 0;
@@ -1383,7 +1383,7 @@ index 0e25089..cbbb172 100644
            minx = MIN (minx, line->Point1.X);
            miny = MIN (miny, line->Point1.Y);
            minx = MIN (minx, line->Point2.X);
-@@ -757,8 +758,11 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -815,8 +816,11 @@ SetFontInfo (FontTypePtr Ptr)
          }
  
        /* move symbol to left edge */
@@ -1397,7 +1397,7 @@ index 0e25089..cbbb172 100644
  
        /* set symbol bounding box with a minimum cell size of (1,1) */
        symbol->Width = maxx - minx + 1;
-@@ -775,8 +779,11 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -833,8 +837,11 @@ SetFontInfo (FontTypePtr Ptr)
      if (symbol->Valid)
        {
          symbol->Height -= totalminy;
@@ -1411,7 +1411,7 @@ index 0e25089..cbbb172 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1696,8 +1703,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1754,8 +1761,11 @@ GetGridLockCoordinates (int type, void *ptr1,
        *y = ((ElementTypePtr) ptr2)->MarkY;
        break;
      case POLYGON_TYPE:
@@ -1425,7 +1425,7 @@ index 0e25089..cbbb172 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -1980,10 +1990,13 @@ pcb_author (void)
+@@ -2038,10 +2048,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
@@ -2169,7 +2169,7 @@ index 6b572d8..b7bbd16 100644
  void FreePCBMemory (PCBTypePtr);
  void FreeBoxListMemory (BoxListTypePtr);
 diff --git a/src/report.c b/src/report.c
-index 5131ec6..5890c16 100644
+index 3e71ee7..7915b94 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -335,8 +335,7 @@ ReportDialog (int argc, char **argv, int x, int y)
