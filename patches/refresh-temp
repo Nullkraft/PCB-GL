@@ -1,0 +1,22 @@
+Bottom: 05040dd7fca1307ec5dcfe5c71e03adec8985124
+Top:    70d236c4885608eda9e952f12288befc04ad895f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-03 14:02:21 +0100
+
+Refresh of polygon-stuff
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 3898275..80e7fe5 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -690,7 +690,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+      */
+     /* Drawing operations now set our reference bit in the stencil buffer */
+ 
+-    r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
++    r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+     hidgl_flush_triangles (&buffer);
+ 
+     /* Drawing operations as masked to areas where the stencil buffer is '0' */
