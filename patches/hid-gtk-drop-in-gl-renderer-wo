@@ -1,5 +1,5 @@
 Bottom: bea6a6edae1c1de30311a1f5796589e4c1491c60
-Top:    a179935c6eb521104f26ec12dee4c55f0fd2745d
+Top:    3313c96dcc22cbf1f134c49c35a16540fde9fc11
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:27 +0100
 
@@ -726,7 +726,7 @@ index 0000000..282b144
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..5bc13b6
+index 0000000..0b76c71
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -0,0 +1,1161 @@
@@ -811,7 +811,7 @@ index 0000000..5bc13b6
 +
 +  if (idx >= 0 && idx < max_copper_layer + 2)
 +    {
-+      priv->trans_lines = true;
++      priv->trans_lines = false;
 +      return PCB->Data->Layer[idx].On;
 +    }
 +  if (idx < 0)
