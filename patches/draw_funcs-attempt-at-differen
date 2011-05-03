@@ -1,5 +1,5 @@
-Bottom: 78e40b1db183d4b718274c7beaff87ebf6c3dc3a
-Top:    92d644a8286dc93d8a5e360fff5590f28761670c
+Bottom: 877d19b6935d645f1cb3ba258229a141b5ab74d6
+Top:    5b06138bfdf1cf79728fb15d2c955936ed538868
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-02 14:49:24 +0100
 
@@ -9,10 +9,10 @@ DRAW_FUNCS: Attempt at different render order for PCB+GL
 ---
 
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index eb0cc57..45c3c82 100644
+index 28ab8d4..19bce70 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
-@@ -433,6 +433,12 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+@@ -433,12 +433,25 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
    int group = GetLayerGroupNumberByPointer (layer);
    struct poly_info info = {drawn_area, layer};
  
@@ -25,7 +25,6 @@ index eb0cc57..45c3c82 100644
    /* print the non-clearing polys */
    r_search (layer->polygon_tree, drawn_area, NULL, poly_callback, &info);
  
-@@ -443,6 +449,13 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
    if (TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
  
@@ -39,7 +38,7 @@ index eb0cc57..45c3c82 100644
    r_search (layer->line_tree, drawn_area, NULL, line_callback, layer);
    r_search (layer->arc_tree,  drawn_area, NULL, arc_callback,  layer);
    r_search (layer->text_tree, drawn_area, NULL, text_callback, layer);
-@@ -478,8 +491,6 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+@@ -474,8 +487,6 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
  
    /* draw vias */
    r_search (PCB->Data->via_tree, drawn_area, NULL, via_inlayer_callback, layer);
