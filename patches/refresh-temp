@@ -1,0 +1,23 @@
+Bottom: 1a3ff7a3ae89d00e71d6f890812b62557177141b
+Top:    10d945e7c6ae4f4503ffda801866009323ce2440
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-03 16:54:41 +0100
+
+Refresh of remove-hack-in-draw-c-which-br
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 234e2ec..a7a1a74 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -695,9 +695,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+         rv = 0;
+       if (layernum < max_copper_layer && Layer->On)
+         dapi->draw_layer (Layer, drawn_area, NULL);
+-
+-      if (gui->gui) /* HACK: Subcomposite each layer in a layer group separately */
+-        gui->set_layer (0, group, 0);
+     }
+   if (n_entries > 1)
+     rv = 1;
