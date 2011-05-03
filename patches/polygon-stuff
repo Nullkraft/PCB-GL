@@ -1,5 +1,5 @@
 Bottom: bdce5454837a195314f89eb137b6b14a4eaf710b
-Top:    1800dae5e6fa7c64080970a7f006f2abe444522c
+Top:    05040dd7fca1307ec5dcfe5c71e03adec8985124
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 13:52:15 +0100
 
@@ -9,7 +9,7 @@ polygon stuff
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 1142db6..682e5e0 100644
+index 1142db6..3898275 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -665,51 +665,59 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
@@ -81,7 +81,7 @@ index 1142db6..682e5e0 100644
 +                                                                // reference is all assigned bits so we set
 +                                                                // any bits permitted by the stencil writemask
 +    /* Draw the polygon outer */
-+    fill_contour (poly->Clipped->contours);
++    fill_contour (poly->Clipped->contours, scale);
 +    hidgl_flush_triangles (&buffer);
 +
 +    /* Unassign our stencil buffer bit */
@@ -111,7 +111,7 @@ index 1142db6..682e5e0 100644
 -  glPopAttrib ();                                             // Restore the stencil buffer write-mask etc..
 +  } else {
 +    /* Polygon does not have holes */
-+    fill_contour (poly->Clipped->contours);
++    fill_contour (poly->Clipped->contours, scale);
 +  }
  }
  
