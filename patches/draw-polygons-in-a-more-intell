@@ -1,5 +1,5 @@
-Bottom: 4883fb8fb45cabd5f081eecbdd9bb3566b1181c2
-Top:    0a98450f9932604ca214da933648cd61b8df4687
+Bottom: 8fed97c8fe92013f82bbfeef6b4c3b41af191551
+Top:    6ead8fb2a02429180aa286048c7f71325163781a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:44 +0100
 
@@ -36,10 +36,10 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 188d398..3b8cd27 100644
+index d7806b9..d27c4db 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -826,14 +826,23 @@ do_hole (const BoxType *b, void *cl)
+@@ -818,14 +818,23 @@ do_hole (const BoxType *b, void *cl)
    return 1;
  }
  
@@ -64,7 +64,7 @@ index 188d398..3b8cd27 100644
    int stencil_bit;
  
    CHECK_IS_IN_CONTEXT ();
-@@ -844,59 +853,70 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -836,59 +845,70 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
        return;
      }
  
