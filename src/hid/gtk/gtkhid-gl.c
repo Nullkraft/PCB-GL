@@ -155,74 +155,38 @@ ghid_draw_grid (BoxTypePtr drawn_area)
   glDisable (GL_COLOR_LOGIC_OP);
 }
 
-#if 0
 static void
 ghid_draw_bg_image (void)
 {
-  static GdkPixbuf *pixbuf = NULL;
-  static gint vw_scaled, vh_scaled, x_cached, y_cached;
-  GdkInterpType interp_type;
-  gint x, y, vw, vh, w, h, w_src, h_src;
+  static int texture_handle = 0;
   int bits_per_sample;
   gboolean has_alpha;
+  unsigned char *pixels;
 
   if (!ghidgui->bg_pixbuf)
     return;
 
-  w = PCB->MaxWidth / gport->zoom;
-  h = PCB->MaxHeight / gport->zoom;
-  x = gport->view_x0 / gport->zoom;
-  y = gport->view_y0 / gport->zoom;
-  vw = gport->view_width / gport->zoom;
-  vh = gport->view_height / gport->zoom;
-
-  if (pixbuf == NULL || vw_scaled != vw || vh_scaled != vh)
+  if (texture_handle == 0)
     {
-      if (pixbuf != NULL)
-        g_object_unref(G_OBJECT(pixbuf));
-
-      bits_per_sample = gdk_pixbuf_get_bits_per_sample(ghidgui->bg_pixbuf);
+      bits_per_sample = gdk_pixbuf_get_bits_per_sample (ghidgui->bg_pixbuf);
       has_alpha = gdk_pixbuf_get_has_alpha (ghidgui->bg_pixbuf);
-      pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
-                              has_alpha,
-                              bits_per_sample,
-                              vw, vh);
+      pixels = gdk_pixbuf_get_pixels (ghidgui->bg_pixbuf);
+
     }
 
-  if (pixbuf == NULL)
+  if (texture_handle == 0)
     return;
 
-  if (vw_scaled != vw || vh_scaled != vh ||
-       x_cached != x  ||  y_cached != y)
-    {
-      w_src = gdk_pixbuf_get_width(ghidgui->bg_pixbuf);
-      h_src = gdk_pixbuf_get_height(ghidgui->bg_pixbuf);
+  /* Render a quad with the background as a texture */
 
-      if (w > w_src && h > h_src)
-        interp_type = GDK_INTERP_NEAREST;
-      else
-        interp_type = GDK_INTERP_BILINEAR;
+  glBegin (GL_QUADS);
+  glVertex3i (0,             0,              0);
+  glVertex3i (PCB->MaxWidth, 0,              0);
+  glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
+  glVertex3i (0,             PCB->MaxHeight, 0);
+  glEnd ();
 
-      gdk_pixbuf_scale(ghidgui->bg_pixbuf, pixbuf,
-                       0, 0, vw, vh,
-                       (double) -x,
-                       (double) -y,
-                       (double) w / w_src,
-                       (double) h / h_src,
-                       interp_type);
-
-      x_cached = x;
-      y_cached = y;
-      vw_scaled = vw;
-      vh_scaled = vh;
-    }
-
-  if (pixbuf != NULL)
-    gdk_draw_pixbuf(gport->drawable, gport->bg_gc, pixbuf,
-                    0, 0, 0, 0, vw, vh, GDK_RGB_DITHER_NORMAL, 0, 0);
 }
-#endif
-
 
 void
 ghid_use_mask (int use_it)
@@ -868,11 +832,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glVertex3i (eleft,  ebottom, 0);
   glEnd ();
 
-  /* TODO: Background image */
-
-  hidgl_init_triangle_array (&buffer);
-  ghid_invalidate_current_gc ();
-
   glPushMatrix ();
   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
             (ghid_flip_y ? -1. : 1.) / port->zoom,
@@ -881,6 +840,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              -port->view_x0,
                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                              -port->view_y0, 0);
+
+  ghid_draw_bg_image ();
+
+  hidgl_init_triangle_array (&buffer);
+  ghid_invalidate_current_gc ();
   hid_expose_callback (&ghid_hid, &region, 0);
 
   ghid_draw_grid (&region);
