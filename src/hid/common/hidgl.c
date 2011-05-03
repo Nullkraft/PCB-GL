@@ -47,14 +47,6 @@ RCSID ("$Id: $");
 triangle_buffer buffer;
 float global_depth = 0;
 
-#if 0
-triangle_array *
-hidgl_new_triangle_array (void)
-{
-  return malloc (sizeof (triangle_buffer));
-}
-#endif
-
 void
 hidgl_init_triangle_array (triangle_buffer *buffer)
 {
