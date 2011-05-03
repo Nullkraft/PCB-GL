@@ -1,0 +1,34 @@
+Bottom: 244abaedc7eeffe5639c94e75c5749aa5f65e8c9
+Top:    fb1504300eed5180282f8fa7fbb7430ff512f2ba
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-03 18:04:23 +0100
+
+Refresh of hid-gtk-drop-in-gl-renderer-wo
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 06c8612..ffbd788 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -141,8 +141,6 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+       gport->grid_color.blue ^= gport->bg_color.blue;
+     }
+ 
+-  hidgl_flush_triangles (&buffer);
+-
+   glEnable (GL_COLOR_LOGIC_OP);
+   glLogicOp (GL_XOR);
+ 
+@@ -871,10 +869,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+   hid_expose_callback (&ghid_hid, &region, 0);
++  hidgl_flush_triangles (&buffer);
+ 
+   ghid_draw_grid (&region);
+ 
+-  hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+ 
+   DrawAttached ();
