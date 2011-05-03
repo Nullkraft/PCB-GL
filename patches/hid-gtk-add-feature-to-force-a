@@ -1,5 +1,5 @@
-Bottom: 647a816a96151b2b998b06e66ce69769fa63ae75
-Top:    a56506655b8abcf1c3e663e352574ef0aeaef020
+Bottom: c50444440e9bb57348520b8336f9662a45dad539
+Top:    a2f17fadbd49fabefc68e19417339d6f037a5710
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-02 14:49:22 +0100
 
@@ -16,7 +16,7 @@ mainloop is not hit until the auto-routing operation is fully complete.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index cdb4974..6a60150 100644
+index 7937c4a..359ebcb 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -43,6 +43,7 @@ typedef struct render_priv {
@@ -60,9 +60,9 @@ index cdb4974..6a60150 100644
  {
 +  render_priv *priv = port->render_priv;
    BoxType region;
-   int eleft, eright, etop, ebottom;
  
-@@ -886,6 +897,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   ghid_start_drawing (port);
+@@ -882,6 +893,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_end_drawing (port);
  
