@@ -1,5 +1,5 @@
-Bottom: 782155276d5b0d2ea481044a032879aaca9ca412
-Top:    97eeb28d477d5cd673162b5c7353c195a5d21d63
+Bottom: f5350ce17691e3c437273896b144d99946e97b28
+Top:    74845fca9efc64f5618b69149aa0cd34b7fe15fc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-02 14:49:20 +0100
 
@@ -9,7 +9,7 @@ Continue with crazy idea
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 643544e..d8b5e03 100644
+index a8b815e..dddedfb 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -141,16 +141,6 @@ set_pv_color (PinType *pv, int type)
@@ -146,8 +146,8 @@ index 643544e..d8b5e03 100644
 +	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-     }
-@@ -688,25 +611,6 @@ via_mask_callback (const BoxType * b, void *cl)
+       gui->set_layer (NULL, SL (FINISHED, 0), 0);
+@@ -724,25 +647,6 @@ via_mask_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -173,7 +173,7 @@ index 643544e..d8b5e03 100644
  static int
  pad_mask_callback (const BoxType * b, void *cl)
  {
-@@ -735,7 +639,7 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -771,7 +675,7 @@ DrawSilk (int side, const BoxType * drawn_area)
      {
        gui->use_mask (HID_MASK_BEFORE);
  #endif
@@ -182,7 +182,7 @@ index 643544e..d8b5e03 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -750,7 +654,7 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -786,7 +690,7 @@ DrawSilk (int side, const BoxType * drawn_area)
    if (gui->poly_after)
      {
        gui->use_mask (HID_MASK_AFTER);
@@ -191,7 +191,7 @@ index 643544e..d8b5e03 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -838,116 +742,6 @@ DrawRats (BoxTypePtr drawn_area)
+@@ -874,116 +778,6 @@ DrawRats (BoxTypePtr drawn_area)
      gui->use_mask (HID_MASK_OFF);
  }
  
@@ -308,7 +308,7 @@ index 643544e..d8b5e03 100644
  /* ---------------------------------------------------------------------------
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
-@@ -969,7 +763,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -1006,7 +800,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
            strcmp (Layer->Name, "route") == 0)
          rv = 0;
        if (layernum < max_copper_layer && Layer->On)
@@ -590,7 +590,7 @@ index b97d89a..9f21809 100644
  
  extern struct draw_funcs *dapi;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index b6d7585..8b60d1d 100644
+index 48bcb03..c0f6005 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -26,6 +26,7 @@
@@ -601,7 +601,7 @@ index b6d7585..8b60d1d 100644
  
  #include "hid.h"
  #include "../hidint.h"
-@@ -717,7 +718,7 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -720,7 +721,7 @@ gerber_set_layer (const char *name, int group, int empty)
      {
        if (outline_layer
  	  && outline_layer != PCB->Data->Layer+idx)
@@ -611,7 +611,7 @@ index b6d7585..8b60d1d 100644
  	{
  	  hidGC gc = gui->make_gc ();
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 92f03fd..49f59e3 100644
+index 500184c..d5863f5 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -16,6 +16,7 @@
@@ -622,7 +622,7 @@ index 92f03fd..49f59e3 100644
  
  #include "hid.h"
  #include "../hidint.h"
-@@ -863,7 +864,7 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -867,7 +868,7 @@ ps_set_layer (const char *name, int group, int empty)
        && strcmp (name, "outline")
        && strcmp (name, "route"))
      {
