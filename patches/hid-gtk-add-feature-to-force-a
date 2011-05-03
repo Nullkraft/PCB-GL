@@ -1,5 +1,5 @@
-Bottom: 739e1cb2b04cc014ec908b7ce7e101c824091cb0
-Top:    d95d934647615cad832dd104b41522f77c00affd
+Bottom: 92169934e9702bee338423727927332d1ed0ee7f
+Top:    4b92df9b530ac71c2ebafe6a44ae7c1859267495
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 21:23:27 +0100
 
@@ -16,7 +16,7 @@ mainloop is not hit until the auto-routing operation is fully complete.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index dd6ed24..d44d577 100644
+index 385351e..253ff3f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -43,6 +43,7 @@ typedef struct render_priv {
@@ -27,7 +27,7 @@ index dd6ed24..d44d577 100644
  } render_priv;
  
  
-@@ -535,10 +536,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
+@@ -532,10 +533,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
    ghid_invalidate_all ();
  }
  
@@ -45,7 +45,7 @@ index dd6ed24..d44d577 100644
  }
  
  void
-@@ -732,6 +740,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -733,6 +741,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  
    port->render_priv = priv = g_new0 (render_priv, 1);
  
