@@ -1,5 +1,5 @@
-Bottom: da2494a98d29e7246fb0219ceed9a9a1a54aa56d
-Top:    10d945e7c6ae4f4503ffda801866009323ce2440
+Bottom: 1a3ff7a3ae89d00e71d6f890812b62557177141b
+Top:    1a3ff7a3ae89d00e71d6f890812b62557177141b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-02 14:49:26 +0100
 
@@ -12,17 +12,4 @@ file during the fab drawing output.
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 6d849b6..a7a1a74 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -686,8 +686,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
-   int n_entries = PCB->LayerGroups.Number[group];
-   Cardinal *layers = PCB->LayerGroups.Entries[group];
- 
--  for (i = n_entries - 1; i >= 0;
--      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
-+  for (i = n_entries - 1; i >= 0; i--)
-     {
-       layernum = layers[i];
-       Layer = PCB->Data->Layer + layers[i];
+
