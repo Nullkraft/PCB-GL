@@ -3,8 +3,13 @@ Top:    4e6e9657c5c1e78096b33278f0a4b06209089aa7
 Author: Andrew Poelstra <asp11@sfu.ca>
 Date:   2011-05-03 11:20:19 -0700
 
-From b85be83cd577e209c2cf95a3627ef482536431b7 Mon Sep 17 00:00:00 2001
-Subject: [PATCH] Add case-sensitivity to all unit-reading code
+Add case-sensitivity to all unit-reading code
+
+Reviewed-by: Peter Clifton <pcjc2@cam.ac.uk>
+
+This breaks existing functionality if users were using capitalised
+units in scripts etc.. but as in general, units ARE case sensitive,
+we should not support anything other than their canonical names.
 
 
 ---
