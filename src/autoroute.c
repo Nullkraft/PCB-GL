@@ -439,7 +439,6 @@ static int passes = 12;
 static int routing_layers = 0;
 static float total_wire_length = 0;
 static int total_via_count = 0;
-static double old_percent = 0;
 
 /* assertion helper for routeboxen */
 #ifndef NDEBUG
@@ -4643,6 +4642,21 @@ struct routeall_status
   int ripped;
   int total_nets_routed;
 };
+
+static double
+calculate_progress (double this_heap_item, double this_heap_size,
+                    struct routeall_status *ras)
+{
+  double total_passes = passes + smoothes + 1;      /* + 1 is the refinement pass */
+  double this_pass = AutoRouteParameters.pass - 1; /* Number passes from zero */
+  double subnet_fraction = (double)ras->routed_subnets / (double)ras->total_subnets;
+  double heap_fraction = pow (subnet_fraction, 4); /* Account for later subnets being harder to route */
+  double pass_fraction = (this_heap_item + heap_fraction ) / this_heap_size;
+  double process_fraction = (this_pass + pass_fraction) / total_passes;
+
+  return process_fraction;
+}
+
 struct routeall_status
 RouteAll (routedata_t * rd)
 {
@@ -4657,6 +4671,8 @@ RouteAll (routedata_t * rd)
   routebox_t *net, *p, *pp;
   cost_t total_net_cost, last_cost = 0, this_cost = 0;
   int i;
+  int this_heap_size;
+  int this_heap_item;
 
   /* initialize heap for first pass; 
    * do smallest area first; that makes
@@ -4698,7 +4714,8 @@ RouteAll (routedata_t * rd)
 	ras.failed = ras.ripped = 0;
       assert (heap_is_empty (next_pass));
 
-      while (!heap_is_empty (this_pass))
+      this_heap_size = heap_size (this_pass);
+      for (this_heap_item = 0; !heap_is_empty (this_pass); this_heap_item++)
 	{
 #ifdef ROUTE_DEBUG
 	  if (aabort)
@@ -4834,15 +4851,11 @@ RouteAll (routedata_t * rd)
 				ras.conflict_subnets++;
 			      else
 				{
-                                  double percent;
+				  double percent;
 				  ras.routed_subnets++;
 				  ras.total_nets_routed++;
-                                  percent = MAX (0, /*old_percent, */
-                                             ((double)AutoRouteParameters.pass - 1.+
-                                             pow ((double)ras.routed_subnets / (double)ras.total_subnets, 4)) /
-                                             (double)(passes + smoothes + 1));
-                                  gui->progress (percent * 100., 100,  _("Autorouting tracks"));
-                                  old_percent = percent;
+				  percent = calculate_progress (this_heap_item, this_heap_size, &ras);
+				  gui->progress (percent * 100., 100,  _("Autorouting tracks"));
 				}
 			    }
 			  else
@@ -4891,12 +4904,9 @@ RouteAll (routedata_t * rd)
       tmp = this_pass;
       this_pass = next_pass;
       next_pass = tmp;
+      if (0)
       {
-        double percent = MAX (0, /*old_percent, */
-                           ((double)AutoRouteParameters.pass - 1.+
-                           pow ((double)ras.routed_subnets / (double)ras.total_subnets, 4)) /
-                           (double)(passes + smoothes + 1));
-        old_percent = percent;
+        double percent = calculate_progress (this_heap_size, this_heap_size, &ras);
         request_cancel = gui->progress (percent * 100., 100,
                                         _("Autorouting tracks"));
       }
@@ -5135,8 +5145,6 @@ AutoRoute (bool selected)
 
   total_wire_length = 0;
   total_via_count = 0;
-
-  old_percent = 0;
 
 #ifdef ROUTE_DEBUG
   ddraw = gui->request_debug_draw ();
