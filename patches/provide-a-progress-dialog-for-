@@ -1,5 +1,5 @@
 Bottom: 59ba5b568f4f8946b9ce22d6aec1e983695e1368
-Top:    59ba5b568f4f8946b9ce22d6aec1e983695e1368
+Top:    495792950a1021fa6f12ae3b326d20acfe54ec3c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-02 15:26:15 +0100
 
@@ -8,4 +8,175 @@ Provide a progress dialog for the autorouter
 
 ---
 
-
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 1669a36..88501d9 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -92,7 +92,6 @@ RCSID ("$Id$");
+ #define ROUTE_VERBOSE
+ */
+ 
+-/*
+ #define ROUTE_DEBUG
+ //#define DEBUG_SHOW_ROUTE_BOXES
+ #define DEBUG_SHOW_EXPANSION_BOXES
+@@ -101,7 +100,6 @@ RCSID ("$Id$");
+ #define DEBUG_SHOW_TARGETS
+ #define DEBUG_SHOW_SOURCES
+ //#define DEBUG_SHOW_ZIGZAG
+-*/
+ 
+ static direction_t
+ directionIncrement(direction_t dir)
+@@ -4644,12 +4642,28 @@ struct routeall_status
+   int ripped;
+   int total_nets_routed;
+ };
++
++static double
++calculate_progress (double this_heap_item, double this_heap_size,
++                    struct routeall_status *ras)
++{
++  double total_passes = passes + smoothes + 1;      /* + 1 is the refinement pass */
++  double this_pass = AutoRouteParameters.pass - 1; /* Number passes from zero */
++  double subnet_fraction = (double)ras->routed_subnets / (double)ras->total_subnets;
++  double heap_fraction = pow (subnet_fraction, 4); /* Account for later subnets being harder to route */
++  double pass_fraction = (this_heap_item + heap_fraction ) / this_heap_size;
++  double process_fraction = (this_pass + pass_fraction) / total_passes;
++
++  return process_fraction;
++}
++
+ struct routeall_status
+ RouteAll (routedata_t * rd)
+ {
+   struct routeall_status ras;
+   struct routeone_status ros;
+   bool rip;
++  int request_cancel;
+ #ifdef NET_HEAP
+   heap_t *net_heap;
+ #endif
+@@ -4657,6 +4671,8 @@ RouteAll (routedata_t * rd)
+   routebox_t *net, *p, *pp;
+   cost_t total_net_cost, last_cost = 0, this_cost = 0;
+   int i;
++  int this_heap_size;
++  int this_heap_item;
+ 
+   /* initialize heap for first pass; 
+    * do smallest area first; that makes
+@@ -4698,7 +4714,8 @@ RouteAll (routedata_t * rd)
+ 	ras.failed = ras.ripped = 0;
+       assert (heap_is_empty (next_pass));
+ 
+-      while (!heap_is_empty (this_pass))
++      this_heap_size = heap_size (this_pass);
++      for (this_heap_item = 0; !heap_is_empty (this_pass); this_heap_item++)
+ 	{
+ #ifdef ROUTE_DEBUG
+ 	  if (aabort)
+@@ -4839,8 +4856,11 @@ RouteAll (routedata_t * rd)
+ 			ras.conflict_subnets++;
+ 		      else
+ 			{
++			  double percent;
+ 			  ras.routed_subnets++;
+ 			  ras.total_nets_routed++;
++			  percent = calculate_progress (this_heap_item, this_heap_size, &ras);
++			  gui->progress (percent * 100., 100,  _("Autorouting tracks"));
+ 			}
+ 		    }
+ 		  else
+@@ -4887,7 +4907,12 @@ RouteAll (routedata_t * rd)
+       tmp = this_pass;
+       this_pass = next_pass;
+       next_pass = tmp;
+-      /* XXX: here we should update a status bar */
++      if (0)
++      {
++        double percent = calculate_progress (this_heap_size, this_heap_size, &ras);
++        request_cancel = gui->progress (percent * 100., 100,
++                                        _("Autorouting tracks"));
++      }
+ #if defined(ROUTE_DEBUG) || defined (ROUTE_VERBOSE)
+       printf
+ 	("END OF PASS %d: %d/%d subnets routed without conflicts at cost %.0f, %d conflicts, %d failed %d ripped\n",
+@@ -5286,6 +5311,7 @@ AutoRoute (bool selected)
+   /* auto-route all nets */
+   changed = (RouteAll (rd).total_nets_routed > 0) || changed;
+ donerouting:
++  gui->progress (0, 0, NULL);
+   if (changed && TEST_FLAG (LIVEROUTEFLAG, PCB))
+     {
+       int i;
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index ac961db..ca6db96 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -739,9 +739,66 @@ ghid_beep ()
+   gdk_beep ();
+ }
+ 
++struct progress_dialog
++{
++  GtkWidget *dialog;
++  GtkWidget *message;
++  GtkWidget *progress;
++};
++
++static struct progress_dialog *
++make_progress_dialog (void)
++{
++  struct progress_dialog *pd;
++  GtkWidget *vbox;
++
++  pd = g_new0 (struct progress_dialog, 1);
++
++  pd->dialog = gtk_dialog_new ();
++  gtk_window_set_title (GTK_WINDOW (pd->dialog), _("Progress"));
++
++  pd->message = gtk_label_new (NULL);
++  pd->progress = gtk_progress_bar_new ();
++
++  vbox = gtk_vbox_new (false, 8);
++  gtk_box_pack_start (GTK_BOX (vbox), pd->message, true, true, 8);
++  gtk_box_pack_start (GTK_BOX (vbox), pd->progress, false, true, 8);
++
++  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (pd->dialog)->vbox),
++                      vbox, true, true, 0);
++  gtk_widget_show_all (vbox);
++
++  return pd;
++}
++
+ static int
+ ghid_progress (int so_far, int total, const char *message)
+ {
++  static struct progress_dialog *pd = NULL;
++
++  /* If we are finished, destroy any dialog */
++  if (so_far == 0 && total == 0 && message == NULL)
++    {
++      if (pd != NULL)
++        gtk_widget_destroy (pd->dialog);
++
++      g_free (pd);
++      pd = NULL;
++      return 0;
++    }
++
++  if (pd == NULL)
++    {
++      pd = make_progress_dialog ();
++      gtk_window_present (GTK_WINDOW (pd->dialog));
++    }
++
++  gtk_label_set_text (GTK_LABEL (pd->message), message);
++  gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (pd->progress),
++                                 (double)so_far / (double)total);
++
++  gdk_window_process_updates (pd->dialog->window, true);
++
+   return 0;
+ }
