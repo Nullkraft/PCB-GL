@@ -1,5 +1,5 @@
 Bottom: edc5f4cdacb8417c7f0449873e268150c9447793
-Top:    222c73fd22b6bf9b0713debadced5c50ae63472e
+Top:    da2494a98d29e7246fb0219ceed9a9a1a54aa56d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 01:14:49 +0100
 
@@ -88,7 +88,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4ec7e55..43bd1dc 100644
+index 4ec7e55..f0d6724 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -266,17 +266,15 @@ index 4ec7e55..43bd1dc 100644
  	case SL_ASSY:
  	  return 0;
  	case SL_PDRILL:
-@@ -194,6 +246,9 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -194,6 +246,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
  
    hidgl_flush_triangles (&buffer);
  
-+  glTexCoord2f (0., 0.);
-+
 +  glDisable (GL_STENCIL_TEST);
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
  
-@@ -204,6 +259,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -204,6 +257,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
    hidgl_draw_grid (drawn_area);
  
    glDisable (GL_COLOR_LOGIC_OP);
@@ -284,7 +282,7 @@ index 4ec7e55..43bd1dc 100644
  }
  
  #if 0
-@@ -365,10 +421,6 @@ typedef struct
+@@ -365,10 +419,6 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -295,7 +293,7 @@ index 4ec7e55..43bd1dc 100644
  void
  ghid_set_color (hidGC gc, const char *name)
  {
-@@ -486,7 +538,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -486,7 +536,7 @@ ghid_set_color (hidGC gc, const char *name)
    glColor4d (r, g, b, a);
  }
  
@@ -304,7 +302,7 @@ index 4ec7e55..43bd1dc 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -665,9 +717,9 @@ static void
+@@ -665,9 +715,9 @@ static void
  draw_right_cross (gint x, gint y, gint z)
  {
    glVertex3i (x, 0, z);
@@ -316,7 +314,7 @@ index 4ec7e55..43bd1dc 100644
  }
  
  static void
-@@ -675,25 +727,25 @@ draw_slanted_cross (gint x, gint y, gint z)
+@@ -675,25 +725,25 @@ draw_slanted_cross (gint x, gint y, gint z)
  {
    gint x0, y0, x1, y1;
  
@@ -354,7 +352,7 @@ index 4ec7e55..43bd1dc 100644
    glVertex3i (x0, y0, z);
    glVertex3i (x1, y1, z);
  }
-@@ -704,47 +756,47 @@ draw_dozen_cross (gint x, gint y, gint z)
+@@ -704,47 +754,47 @@ draw_dozen_cross (gint x, gint y, gint z)
    gint x0, y0, x1, y1;
    gdouble tan60 = sqrt (3);
  
@@ -426,7 +424,7 @@ index 4ec7e55..43bd1dc 100644
    glVertex3i (x0, y0, z);
    glVertex3i (x1, y1, z);
  }
-@@ -783,8 +835,8 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -783,8 +833,8 @@ ghid_show_crosshair (gboolean paint_new_location)
        /* FIXME: when CrossColor changed from config */
        ghid_map_color_string (Settings.CrossColor, &cross_color);
      }
@@ -437,7 +435,7 @@ index 4ec7e55..43bd1dc 100644
    z = global_depth;
  
    glEnable (GL_COLOR_LOGIC_OP);
-@@ -807,22 +859,22 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -807,22 +857,22 @@ ghid_show_crosshair (gboolean paint_new_location)
    if (x >= 0 && paint_new_location && draw_markers)
      {
        glBegin (GL_QUADS);
@@ -476,7 +474,7 @@ index 4ec7e55..43bd1dc 100644
        glEnd ();
      }
  
-@@ -882,6 +934,10 @@ ghid_start_drawing (GHidPort *port)
+@@ -882,6 +932,10 @@ ghid_start_drawing (GHidPort *port)
  
    port->render_priv->in_context = true;
  
@@ -487,7 +485,7 @@ index 4ec7e55..43bd1dc 100644
    return TRUE;
  }
  
-@@ -900,6 +956,14 @@ ghid_end_drawing (GHidPort *port)
+@@ -900,6 +954,14 @@ ghid_end_drawing (GHidPort *port)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
@@ -502,7 +500,7 @@ index 4ec7e55..43bd1dc 100644
  }
  
  void
-@@ -907,6 +971,885 @@ ghid_screen_update (void)
+@@ -907,6 +969,885 @@ ghid_screen_update (void)
  {
  }
  
@@ -1388,7 +1386,7 @@ index 4ec7e55..43bd1dc 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -915,7 +1858,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -915,7 +1856,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    render_priv *priv = port->render_priv;
    BoxType region;
@@ -1396,7 +1394,7 @@ index 4ec7e55..43bd1dc 100644
    int min_x, min_y;
    int max_x, max_y;
    int new_x, new_y;
-@@ -954,6 +1896,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -954,6 +1894,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -1410,7 +1408,7 @@ index 4ec7e55..43bd1dc 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
    glEnable (GL_STENCIL_TEST);
-@@ -961,7 +1910,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -961,7 +1908,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  port->offlimits_color.green / 65535.,
                  port->offlimits_color.blue / 65535.,
                  1.);
@@ -1418,7 +1416,7 @@ index 4ec7e55..43bd1dc 100644
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-@@ -972,8 +1920,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -972,8 +1918,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1429,7 +1427,7 @@ index 4ec7e55..43bd1dc 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1027,25 +1975,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1027,25 +1973,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
    min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
  
@@ -1457,7 +1455,7 @@ index 4ec7e55..43bd1dc 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1057,21 +1993,45 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1057,21 +1991,45 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  //  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
  
@@ -1515,7 +1513,7 @@ index 4ec7e55..43bd1dc 100644
    ghid_draw_grid (&region);
  
    hidgl_init_triangle_array (&buffer);
-@@ -1080,7 +2040,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1080,7 +2038,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawAttached ();
    DrawMark ();
    hidgl_flush_triangles (&buffer);
