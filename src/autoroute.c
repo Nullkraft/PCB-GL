@@ -92,6 +92,7 @@ RCSID ("$Id$");
 #define ROUTE_VERBOSE
 */
 
+/*
 #define ROUTE_DEBUG
 //#define DEBUG_SHOW_ROUTE_BOXES
 #define DEBUG_SHOW_EXPANSION_BOXES
@@ -100,6 +101,7 @@ RCSID ("$Id$");
 #define DEBUG_SHOW_TARGETS
 #define DEBUG_SHOW_SOURCES
 //#define DEBUG_SHOW_ZIGZAG
+*/
 
 static direction_t
 directionIncrement(direction_t dir)
