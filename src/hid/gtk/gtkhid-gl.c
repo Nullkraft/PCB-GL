@@ -1852,8 +1852,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
 
   /* Draw pins, pads, vias below silk */
   if (global_view_2d) {
-    gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
-                    SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0);
+    gui->set_layer (NULL, SWAP_IDENT ? solder_group : component_group, 0);
 
     if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
       /* Mask out drilled holes */
