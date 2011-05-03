@@ -706,7 +706,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                                 // reference is all assigned bits so we set
                                                                 // any bits permitted by the stencil writemask
     /* Draw the polygon outer */
-    fill_contour (poly->Clipped->contours);
+    fill_contour (poly->Clipped->contours, scale);
     hidgl_flush_triangles (&buffer);
 
     /* Unassign our stencil buffer bit */
@@ -716,7 +716,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 
   } else {
     /* Polygon does not have holes */
-    fill_contour (poly->Clipped->contours);
+    fill_contour (poly->Clipped->contours, scale);
   }
 }
 
