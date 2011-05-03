@@ -1,5 +1,5 @@
 Bottom: ebd4a783b63cab958b63a1830d53a4cc07e32e77
-Top:    19ea1abb8416a682a6fa7197e6723c578bad73b7
+Top:    4cdc58ac9de803d28991bce89b1704da1cb17e0b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-03 16:39:57 +0100
 
@@ -77,10 +77,10 @@ index 5abbfb2..8129207 100644
  if WIN32
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
-index 0000000..aa9d6e0
+index 0000000..3bcdaa2
 --- /dev/null
 +++ b/src/hid/common/hidgl.c
-@@ -0,0 +1,569 @@
+@@ -0,0 +1,559 @@
 +/* $Id: */
 +
 +#if 1 /* DISABLE EVERYTHING! */
@@ -185,38 +185,29 @@ index 0000000..aa9d6e0
 +  static int npoints = 0;
 +  int x1, y1, x2, y2, n, i;
 +  double x, y;
-+  extern float global_depth;
 +
 +  if (!Settings.DrawGrid)
-+    return;
-+
-+  if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
 +    return;
 +
 +  x1 = GRIDFIT_X (MAX (0, drawn_area->X1), PCB->Grid);
 +  y1 = GRIDFIT_Y (MAX (0, drawn_area->Y1), PCB->Grid);
 +  x2 = GRIDFIT_X (MIN (PCB->MaxWidth, drawn_area->X2), PCB->Grid);
 +  y2 = GRIDFIT_Y (MIN (PCB->MaxHeight, drawn_area->Y2), PCB->Grid);
++
 +  if (x1 > x2)
 +    {
 +      int tmp = x1;
 +      x1 = x2;
 +      x2 = tmp;
 +    }
++
 +  if (y1 > y2)
 +    {
 +      int tmp = y1;
 +      y1 = y2;
 +      y2 = tmp;
 +    }
-+  if (Vx (x1) < 0)
-+    x1 += PCB->Grid;
-+  if (Vy (y1) < 0)
-+    y1 += PCB->Grid;
-+  if (Vx (x2) >= gport->width)
-+    x2 -= PCB->Grid;
-+  if (Vy (y2) >= gport->height)
-+    y2 -= PCB->Grid;
++
 +  n = (int) ((x2 - x1) / PCB->Grid + 0.5) + 1;
 +  if (n > npoints)
 +    {
@@ -230,15 +221,14 @@ index 0000000..aa9d6e0
 +  n = 0;
 +  for (x = x1; x <= x2; x += PCB->Grid)
 +    {
-+      points[3 * n] = Vx (x);
++      points[3 * n + 0] = x;
 +      points[3 * n + 2] = global_depth;
 +      n++;
 +    }
 +  for (y = y1; y <= y2; y += PCB->Grid)
 +    {
-+      int vy = Vy (y);
 +      for (i = 0; i < n; i++)
-+        points[3 * i + 1] = vy;
++        points[3 * i + 1] = y;
 +      glDrawArrays (GL_POINTS, 0, n);
 +    }
 +
@@ -737,10 +727,10 @@ index 0000000..c26e24e
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..1b1d5f8
+index 0000000..5148d5a
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1183 @@
+@@ -0,0 +1,1178 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -874,6 +864,9 @@ index 0000000..1b1d5f8
 +static void
 +ghid_draw_grid (BoxTypePtr drawn_area)
 +{
++  if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
++    return;
++
 +  if (gdk_color_parse (Settings.GridColor, &gport->grid_color))
 +    {
 +      gport->grid_color.red ^= gport->bg_color.red;
@@ -1622,20 +1615,12 @@ index 0000000..1b1d5f8
 +                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
 +                             -port->view_y0, 0);
 +  hid_expose_callback (&ghid_hid, &region, 0);
-+  hidgl_flush_triangles (&buffer);
-+  glPopMatrix ();
 +
-+  ghid_draw_grid ();
++  ghid_draw_grid (&region);
 +
 +  hidgl_init_triangle_array (&buffer);
 +  ghid_invalidate_current_gc ();
-+  glPushMatrix ();
-+  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-+            (ghid_flip_y ? -1. : 1.) / port->zoom, 1);
-+  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-+                             -port->view_x0,
-+                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-+                             -port->view_y0, 0);
++
 +  DrawAttached ();
 +  DrawMark ();
 +  hidgl_flush_triangles (&buffer);
