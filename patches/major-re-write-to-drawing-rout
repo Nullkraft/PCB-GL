@@ -1,5 +1,5 @@
 Bottom: e19f26480f828cd7abcf36eacc2fadabd6503f24
-Top:    f9ca059455aaa8c586a70010c234ae9b3b8fc496
+Top:    ef77d13fe3fac507886c5fcaff140a9c0dfcd9b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-02 14:49:26 +0100
 
@@ -88,7 +88,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1d7ed31..327a1bf 100644
+index 1d7ed31..6c7f587 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -299,7 +299,7 @@ index 1d7ed31..327a1bf 100644
  }
  
  void
-@@ -968,6 +1015,890 @@ ghid_screen_update (void)
+@@ -968,6 +1015,889 @@ ghid_screen_update (void)
  {
  }
  
@@ -1140,8 +1140,7 @@ index 1d7ed31..327a1bf 100644
 +
 +  /* Draw pins, pads, vias below silk */
 +  if (global_view_2d) {
-+    gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
-+                    SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0);
++    gui->set_layer (NULL, SWAP_IDENT ? solder_group : component_group, 0);
 +
 +    if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
 +      /* Mask out drilled holes */
@@ -1190,7 +1189,7 @@ index 1d7ed31..327a1bf 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1033,8 +1964,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1033,8 +1963,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1201,7 +1200,7 @@ index 1d7ed31..327a1bf 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1100,13 +2031,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1100,13 +2030,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1215,7 +1214,7 @@ index 1d7ed31..327a1bf 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1126,7 +2050,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1126,7 +2049,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
