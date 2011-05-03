@@ -739,9 +739,75 @@ ghid_beep ()
   gdk_beep ();
 }
 
+struct progress_dialog
+{
+  GtkWidget *dialog;
+  GtkWidget *message;
+  GtkWidget *progress;
+};
+
+static struct progress_dialog *
+make_progress_dialog (void)
+{
+  struct progress_dialog *pd;
+  GtkWidget *alignment;
+  GtkWidget *vbox;
+
+  pd = g_new0 (struct progress_dialog, 1);
+
+  pd->dialog = gtk_dialog_new ();
+  gtk_window_set_title (GTK_WINDOW (pd->dialog), _("Progress"));
+
+  pd->message = gtk_label_new (NULL);
+  gtk_label_set_width_chars (GTK_LABEL (pd->message), 30);
+  gtk_misc_set_alignment (GTK_MISC (pd->message), 0., 0.);
+
+  pd->progress = gtk_progress_bar_new ();
+  gtk_widget_set_size_request (pd->progress, -1, 26);
+
+  vbox = gtk_vbox_new (false, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), pd->message, true, true, 8);
+  gtk_box_pack_start (GTK_BOX (vbox), pd->progress, false, true, 8);
+
+  alignment = gtk_alignment_new (0., 0., 1., 1.);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 8, 8, 8, 8);
+  gtk_container_add (GTK_CONTAINER (alignment), vbox);
+
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (pd->dialog)->vbox),
+                      alignment, true, true, 0);
+  gtk_widget_show_all (alignment);
+
+  return pd;
+}
+
 static int
 ghid_progress (int so_far, int total, const char *message)
 {
+  static struct progress_dialog *pd = NULL;
+
+  /* If we are finished, destroy any dialog */
+  if (so_far == 0 && total == 0 && message == NULL)
+    {
+      if (pd != NULL)
+        gtk_widget_destroy (pd->dialog);
+
+      g_free (pd);
+      pd = NULL;
+      return 0;
+    }
+
+  if (pd == NULL)
+    {
+      pd = make_progress_dialog ();
+      gtk_window_present (GTK_WINDOW (pd->dialog));
+    }
+
+  gtk_label_set_text (GTK_LABEL (pd->message), message);
+  gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (pd->progress),
+                                 (double)so_far / (double)total);
+
+  gdk_window_process_updates (pd->dialog->window, true);
+
   return 0;
 }
 
