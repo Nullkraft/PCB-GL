@@ -544,19 +544,23 @@ ghid_invalidate_all ()
 void
 ghid_notify_crosshair_change (bool changes_complete)
 {
+  /* We sometimes get called before the GUI is up */
+  if (gport->drawing_area == NULL)
+    return;
+
   /* FIXME: We could just invalidate the bounds of the crosshair attached objects? */
-  /* FIXME: Seems we're getting prodded before the GUI is up! */
-  if (gport->drawing_area)
-    ghid_invalidate_all ();
+  ghid_invalidate_all ();
 }
 
 void
 ghid_notify_mark_change (bool changes_complete)
 {
+  /* We sometimes get called before the GUI is up */
+  if (gport->drawing_area == NULL)
+    return;
+
   /* FIXME: We could just invalidate the bounds of the mark? */
-  /* FIXME: Seems we're getting prodded before the GUI is up! */
-  if (gport->drawing_area)
-    ghid_invalidate_all ();
+  ghid_invalidate_all ();
 }
 
 static void
