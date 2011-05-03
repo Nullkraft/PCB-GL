@@ -1,0 +1,22 @@
+Bottom: 6d5525a9e6d1e2178cce872e4f14e8507e303c3b
+Top:    a0f75c39f9857cf069c40e13d55a7fce78781af9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-03 16:49:53 +0100
+
+Refresh of play-with-glsl-shader-for-rend
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 1d08e52..26497de 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -254,6 +254,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+ 
+   hidgl_flush_triangles (&buffer);
+ 
++  glTexCoord2f (0., 0.);
++
+   glDisable (GL_STENCIL_TEST);
+   glEnable (GL_COLOR_LOGIC_OP);
+   glLogicOp (GL_XOR);
