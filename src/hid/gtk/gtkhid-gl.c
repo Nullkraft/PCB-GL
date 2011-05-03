@@ -741,11 +741,6 @@ ghid_show_crosshair (gboolean paint_new_location)
   if (!paint_new_location)
     return;
 
-  if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
-    printf ("Returning\n");
-    return;
-  }
-
   if (!done_once)
     {
       done_once = 1;
