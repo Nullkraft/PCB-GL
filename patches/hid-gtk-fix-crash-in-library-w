@@ -1,0 +1,15 @@
+Bottom: eec2882c4f3f690e6d2bb5cb150eb168de10343a
+Top:    eec2882c4f3f690e6d2bb5cb150eb168de10343a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-04 03:05:08 +0100
+
+hid/gtk: Fix crash in library window
+
+I missed a GList*->data dereference when converting to GList object
+storage. Unfortunately, the parameter in question was void * typed,
+so the compiler didn't notice my mistake.
+
+
+---
+
+
