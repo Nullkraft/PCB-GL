@@ -1,5 +1,5 @@
 Bottom: eec2882c4f3f690e6d2bb5cb150eb168de10343a
-Top:    eec2882c4f3f690e6d2bb5cb150eb168de10343a
+Top:    f01cea67683988082f14ec991fc47ca1b5f76950
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-04 03:05:08 +0100
 
@@ -12,4 +12,16 @@ so the compiler didn't notice my mistake.
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-library-window.c b/src/hid/gtk/gui-library-window.c
+index 8c8ae17..3c0c077 100644
+--- a/src/hid/gtk/gui-library-window.c
++++ b/src/hid/gtk/gui-library-window.c
+@@ -405,7 +405,7 @@ out:
+ 
+   /* update the preview with new symbol data */
+   g_object_set (library_window->preview,
+-		"element-data", PASTEBUFFER->Data->Element, NULL);
++		"element-data", PASTEBUFFER->Data->Element->data, NULL);
+ }
+ 
+ /*! \brief Requests re-evaluation of the filter.
