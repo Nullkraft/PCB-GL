@@ -1,7 +1,7 @@
-Bottom: 90d806dffbfeb054adb0da15bcd1594ea194960d
-Top:    7c17540e4566a574630d334b64660a426548fabb
+Bottom: f01cea67683988082f14ec991fc47ca1b5f76950
+Top:    88d6cc40afbfb8815e453aebeae105792fb4fa43
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-03 22:35:25 +0100
+Date:   2011-05-04 03:15:45 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -290,7 +290,7 @@ index 65eef92..31a17fb 100644
    double C0, T0;
    bool changed = false;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 1669a36..2dcdd4f 100644
+index 8aca7d0..9299bdf 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -1010,7 +1010,6 @@ CreateRouteData ()
@@ -832,10 +832,10 @@ index 9ad5331..f843617 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index fd092c6..d24d081 100644
+index 963a691..ba2388c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -828,6 +828,7 @@ static void
+@@ -1034,6 +1034,7 @@ static void
  ghid_attributes_revert ()
  {
    int i;
@@ -843,7 +843,7 @@ index fd092c6..d24d081 100644
  
    ghid_attributes_need_rows (attributes_list->Number);
  
-@@ -841,11 +842,14 @@ ghid_attributes_revert ()
+@@ -1047,11 +1048,14 @@ ghid_attributes_revert ()
      }
  
    /* Fill in values */
@@ -861,7 +861,7 @@ index fd092c6..d24d081 100644
  #if 0
  #endif
      }
-@@ -911,28 +915,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
+@@ -1117,28 +1121,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
        if (response == GTK_RESPONSE_OK)
  	{
  	  int i;
