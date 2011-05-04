@@ -5,18 +5,6 @@ Date:   2011-05-03 23:08:45 +0100
 
 hid/gtk: Provide a simple progress dialog implementation
 
-Known issues:
-
-Since the GUI mainloop is not running, the dialog will not currently
-resize its widgets whilst a task is running and periodically calling
-to update progress.
-
-Width of the label is hard-coded to force a sensible dialogue box
-size - this due the the above issue.
-
-As the GUI mainloop is not running, it is not possible to add a button
-to cancel the action in progress.
-
 
 ---
 
