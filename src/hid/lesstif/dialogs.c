@@ -409,6 +409,59 @@ lesstif_log (const char *fmt, ...)
 
 /* ------------------------------------------------------------ */
 
+bool progress_cancelled = false;
+
+static void
+progress_callback (Widget w, void *v, void *cbs)
+{
+  progress_cancelled = true;
+}
+
+Widget progress_dialog = 0;
+static Widget progress_cancel, progress_progress, progress_label;
+
+void
+lesstif_progress_dialog (int sp_far, int total, const char *msg)
+{
+  char *cancelmsg = "Cancel";
+  XmString xs;
+
+  if (mainwind == 0)
+    return;
+
+  if (progress_dialog == 0)
+    {
+      n = 0;
+      stdarg (XmNdefaultButtonType, XmDIALOG_CANCEL_BUTTON);
+      stdarg (XmNtitle, "Progress");
+      progress_dialog = XmCreateQuestionDialog (mainwind, "progress", args, n);
+      XtAddCallback (progress_dialog, XmNcancelCallback, (XtCallbackProc) progress_callback, NULL);
+
+      progress_cancel = XmMessageBoxGetChild (progress_dialog, XmDIALOG_CANCEL_BUTTON);
+      progress_label =  XmMessageBoxGetChild (progress_dialog, XmDIALOG_MESSAGE_LABEL);
+
+      XtUnmanageChild (XmMessageBoxGetChild (progress_dialog, XmDIALOG_OK_BUTTON));
+      XtUnmanageChild (XmMessageBoxGetChild (progress_dialog, XmDIALOG_HELP_BUTTON));
+
+      n = 0;
+      xs = XmStringCreateLocalized (cancelmsg);
+      stdarg (XmNcancelLabelString, xs);
+      XtManageChild (progress_cancel);
+
+      stdarg (XmNdefaultPosition, False);
+      XtSetValues (progress_dialog, args, n);
+    }
+
+  n = 0;
+  xs = XmStringCreateLocalized ((char *)msg);
+  stdarg (XmNmessageString, xs);
+  XtSetValues (progress_dialog, args, n);
+
+  return;
+}
+
+/* ------------------------------------------------------------ */
+
 static Widget confirm_dialog = 0;
 static Widget confirm_cancel, confirm_ok, confirm_label;
 
