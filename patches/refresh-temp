@@ -1,0 +1,74 @@
+Bottom: d3fda885994bd9155df20501e8e47467ccacbffb
+Top:    b3fdbcf0833472f0adaa8d275036bb9cb140dd5d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-04 02:16:56 +0100
+
+Refresh of hid-gtk-provide-a-simple-progr
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index f65f401..963a691 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -887,33 +887,19 @@ destroy_progress_dialog (struct progress_dialog *pd)
+   g_free (pd);
+ }
+ 
+-#define MAX_EVENT_LATENCY (100./1000.) /* 100us */
+ static void
+ handle_progress_dialog_events (struct progress_dialog *pd)
+ {
+   GMainContext * context = g_main_loop_get_context (pd->loop);
+ 
+-  /* We don't want to keep the underlying process too busy whilst we
+-   * process events. If we get called quickly after the last progress
+-   * update, wait a little bit before we respond - perhaps the next
+-   * time progress is reported.
+-
+-   * The exception here is that we always want to process the first
+-   * batch of events after having shown the dialog for the first time
+-   */
+-  if (pd->started && g_timer_elapsed (pd->timer, NULL) < MAX_EVENT_LATENCY)
+-    return;
+-
+   /* Process events */
+   while (g_main_context_pending (context))
+     {
+       g_main_context_iteration (context, FALSE);
+     }
+-
+-  pd->started = TRUE;
+-  g_timer_start (pd->timer);
+ }
+ 
++#define MIN_TIME_SEPARATION (50./1000.) /* 50ms */
+ static int
+ ghid_progress (int so_far, int total, const char *message)
+ {
+@@ -933,11 +919,25 @@ ghid_progress (int so_far, int total, const char *message)
+       pd = make_progress_dialog ();
+     }
+ 
++  /* We don't want to keep the underlying process too busy whilst we
++   * process events. If we get called quickly after the last progress
++   * update, wait a little bit before we respond - perhaps the next
++   * time progress is reported.
++
++   * The exception here is that we always want to process the first
++   * batch of events after having shown the dialog for the first time
++   */
++  if (pd->started && g_timer_elapsed (pd->timer, NULL) < MIN_TIME_SEPARATION)
++    return 0;
++
+   gtk_label_set_text (GTK_LABEL (pd->message), message);
+   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (pd->progress),
+                                  (double)so_far / (double)total);
+ 
+   handle_progress_dialog_events (pd);
++  g_timer_start (pd->timer);
++
++  pd->started = TRUE;
+ 
+   if (pd->stop_loop)
+     {
