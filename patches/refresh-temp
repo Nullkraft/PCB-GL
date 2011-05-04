@@ -1,0 +1,228 @@
+Bottom: 15df15bd33d06a2cb4a4f87359ab75861fb80880
+Top:    d3fda885994bd9155df20501e8e47467ccacbffb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-04 01:51:46 +0100
+
+Refresh of hid-gtk-provide-a-simple-progr
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 9fbd128..f65f401 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -744,8 +744,60 @@ struct progress_dialog
+   GtkWidget *dialog;
+   GtkWidget *message;
+   GtkWidget *progress;
++  gint response_id;
++  GMainLoop *loop;
++  gboolean destroyed;
++  gboolean stop_loop;
++  gboolean started;
++  GTimer *timer;
++
++  gulong response_handler;
++  gulong unmap_handler;
++  gulong destroy_handler;
++  gulong delete_handler;
+ };
+ 
++static void
++run_unmap_handler (GtkDialog *dialog, gpointer data)
++{
++  struct progress_dialog *pd = data;
++
++  pd->stop_loop = TRUE;
++}
++
++static void
++run_response_handler (GtkDialog *dialog,
++                      gint response_id,
++                      gpointer data)
++{
++  struct progress_dialog *pd = data;
++
++  pd->response_id = response_id;
++  pd->stop_loop = TRUE;
++}
++
++static gint
++run_delete_handler (GtkDialog *dialog,
++                    GdkEventAny *event,
++                    gpointer data)
++{
++  struct progress_dialog *pd = data;
++
++  pd->stop_loop = TRUE;
++
++  return TRUE; /* Do not destroy */
++}
++
++static void
++run_destroy_handler (GtkDialog *dialog, gpointer data)
++{
++  struct progress_dialog *pd = data;
++
++  /* stop_loop will be set by run_unmap_handler */
++
++  pd->destroyed = TRUE;
++}
++
+ static struct progress_dialog *
+ make_progress_dialog (void)
+ {
+@@ -754,12 +806,23 @@ make_progress_dialog (void)
+   GtkWidget *vbox;
+ 
+   pd = g_new0 (struct progress_dialog, 1);
+-
+-  pd->dialog = gtk_dialog_new ();
+-  gtk_window_set_title (GTK_WINDOW (pd->dialog), _("Progress"));
++  pd->response_id = GTK_RESPONSE_NONE;
++
++  pd->dialog = gtk_dialog_new_with_buttons (_("Progress"),
++                                            GTK_WINDOW (gport->top_window),
++                                            /* Modal so nothing else can get events whilst
++                                               the main mainloop isn't running */
++                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
++                                            GTK_STOCK_CANCEL,
++                                            GTK_RESPONSE_CANCEL,
++                                            NULL);
++
++  gtk_window_set_deletable (GTK_WINDOW (pd->dialog), FALSE);
++  gtk_window_set_skip_pager_hint (GTK_WINDOW (pd->dialog), TRUE);
++  gtk_window_set_skip_taskbar_hint (GTK_WINDOW (pd->dialog), TRUE);
++  gtk_widget_set_size_request (pd->dialog, 300, -1);
+ 
+   pd->message = gtk_label_new (NULL);
+-  gtk_label_set_width_chars (GTK_LABEL (pd->message), 30);
+   gtk_misc_set_alignment (GTK_MISC (pd->message), 0., 0.);
+ 
+   pd->progress = gtk_progress_bar_new ();
+@@ -775,40 +838,117 @@ make_progress_dialog (void)
+ 
+   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (pd->dialog)->vbox),
+                       alignment, true, true, 0);
++
+   gtk_widget_show_all (alignment);
+ 
++  g_object_ref (pd->dialog);
++  gtk_window_present (GTK_WINDOW (pd->dialog));
++
++  pd->response_handler =
++    g_signal_connect (pd->dialog, "response",
++                      G_CALLBACK (run_response_handler), pd);
++  pd->unmap_handler =
++    g_signal_connect (pd->dialog, "unmap",
++                      G_CALLBACK (run_unmap_handler), pd);
++  pd->delete_handler =
++    g_signal_connect (pd->dialog, "delete-event",
++                      G_CALLBACK (run_delete_handler), pd);
++  pd->destroy_handler =
++    g_signal_connect (pd->dialog, "destroy",
++                      G_CALLBACK (run_destroy_handler), pd);
++
++  pd->loop = g_main_loop_new (NULL, FALSE);
++  pd->timer = g_timer_new ();
++
+   return pd;
+ }
+ 
++static void
++destroy_progress_dialog (struct progress_dialog *pd)
++{
++  if (pd == NULL)
++    return;
++
++  if (!pd->destroyed)
++    {
++      g_signal_handler_disconnect (pd->dialog, pd->response_handler);
++      g_signal_handler_disconnect (pd->dialog, pd->unmap_handler);
++      g_signal_handler_disconnect (pd->dialog, pd->delete_handler);
++      g_signal_handler_disconnect (pd->dialog, pd->destroy_handler);
++    }
++
++  g_timer_destroy (pd->timer);
++  g_object_unref (pd->dialog);
++  g_main_loop_unref (pd->loop);
++
++  gtk_widget_destroy (pd->dialog);
++
++  pd->loop = NULL;
++  g_free (pd);
++}
++
++#define MAX_EVENT_LATENCY (100./1000.) /* 100us */
++static void
++handle_progress_dialog_events (struct progress_dialog *pd)
++{
++  GMainContext * context = g_main_loop_get_context (pd->loop);
++
++  /* We don't want to keep the underlying process too busy whilst we
++   * process events. If we get called quickly after the last progress
++   * update, wait a little bit before we respond - perhaps the next
++   * time progress is reported.
++
++   * The exception here is that we always want to process the first
++   * batch of events after having shown the dialog for the first time
++   */
++  if (pd->started && g_timer_elapsed (pd->timer, NULL) < MAX_EVENT_LATENCY)
++    return;
++
++  /* Process events */
++  while (g_main_context_pending (context))
++    {
++      g_main_context_iteration (context, FALSE);
++    }
++
++  pd->started = TRUE;
++  g_timer_start (pd->timer);
++}
++
+ static int
+ ghid_progress (int so_far, int total, const char *message)
+ {
+   static struct progress_dialog *pd = NULL;
++  int retval = 0;
+ 
+   /* If we are finished, destroy any dialog */
+   if (so_far == 0 && total == 0 && message == NULL)
+     {
+-      if (pd != NULL)
+-        gtk_widget_destroy (pd->dialog);
+-
+-      g_free (pd);
++      destroy_progress_dialog (pd);
+       pd = NULL;
+-      return 0;
++      return retval;
+     }
+ 
+   if (pd == NULL)
+     {
+       pd = make_progress_dialog ();
+-      gtk_window_present (GTK_WINDOW (pd->dialog));
+     }
+ 
+   gtk_label_set_text (GTK_LABEL (pd->message), message);
+   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (pd->progress),
+                                  (double)so_far / (double)total);
+ 
+-  gdk_window_process_updates (pd->dialog->window, true);
++  handle_progress_dialog_events (pd);
+ 
+-  return 0;
++  if (pd->stop_loop)
++    {
++      retval = (pd->response_id == GTK_RESPONSE_CANCEL ||
++                pd->response_id == GTK_RESPONSE_DELETE_EVENT ||
++                pd->response_id == GTK_RESPONSE_NONE);
++      destroy_progress_dialog (pd);
++      pd = NULL;
++    }
++
++  return retval;
+ }
+ 
+ /* ---------------------------------------------------------------------- */
