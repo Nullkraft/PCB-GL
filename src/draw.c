@@ -141,10 +141,12 @@ set_pv_color (PinType *pv, int type)
 }
 
 static int
-pad_callback (const BoxType * b, void *cl)
+pad_inlayer_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
-  int *side = cl;
+  LayerType *layer = cl;
+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  int group = GetLayerGroupNumberByPointer (layer);
 
   if (ON_SIDE (pad, *side))
     {
