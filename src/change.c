@@ -1265,7 +1265,7 @@ ChangePolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
   AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, poly, poly, true);
   ClearFromPolygon (PCB->Data, POLYGON_TYPE, Layer, poly);
   }
-  DrawPolygon (Layer, poly, 0);
+  DrawPolygon (Layer, poly);
   return (poly);
 }
 

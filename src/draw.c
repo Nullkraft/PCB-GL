@@ -920,7 +920,7 @@ poly_callback (const BoxType * b, void *cl)
   if (gui->thindraw_pcb_polygon != NULL &&
       (TEST_FLAG (THINDRAWFLAG, PCB) ||
        TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
-       TEST_FLAG (CLEARLINEFLAG, Polygon)))
+       TEST_FLAG (CLEARLINEFLAG, polygon)))
     gui->thindraw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
   else
     gui->fill_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
