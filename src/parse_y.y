@@ -52,6 +52,7 @@
 #include "misc.h"
 #include "parse_l.h"
 #include "polygon.h"
+#include "pour.h"
 #include "remove.h"
 #include "rtree.h"
 #include "strflags.h"
@@ -64,7 +65,7 @@
 RCSID("$Id$");
 
 static	LayerTypePtr	Layer;
-static	PolygonTypePtr	Polygon;
+static	PourTypePtr	Pour;
 static	SymbolTypePtr	Symbol;
 static	int		pin_num;
 static	LibraryMenuTypePtr	Menu;
@@ -185,9 +186,9 @@ parsepcb
 			 * we didn't know the layer grouping before.
 			 */
 			PCB = yyPCB;
-			ALLPOLYGON_LOOP (yyData);
+			ALLPOUR (yyData);
 			{
-			  InitClip (yyData, layer, polygon);
+			  InitPourClip (yyData, layer, pour);
 			}
 			ENDALL_LOOP;
 			PCB = pcb_save;
@@ -886,7 +887,7 @@ layerdefinition
 			/* x1, y1, x2, y2, flags */
 		| T_RECTANGLE '(' NUMBER NUMBER NUMBER NUMBER NUMBER ')'
 			{
-				CreateNewPolygonFromRectangle(Layer,
+				CreateNewPourFromRectangle(Layer,
 					$3*100, $4*100, ($3+$5)*100, ($4+$6)*100, OldFlags($7));
 			}
 		| text_hi_format
@@ -1121,7 +1122,7 @@ polygon_format
 		: /* flags are passed in */
 		T_POLYGON '(' flags ')' '('
 			{
-				Polygon = CreateNewPolygon(Layer, $3);
+				Pour = CreateNewPour(Layer, $3);
 			}
 		  polygonpoints
 		  polygonholes ')'
@@ -1129,13 +1130,13 @@ polygon_format
 				Cardinal contour, contour_start, contour_end;
 				bool bad_contour_found = false;
 				/* ignore junk */
-				for (contour = 0; contour <= Polygon->HoleIndexN; contour++)
+				for (contour = 0; contour <= Pour->HoleIndexN; contour++)
 				  {
 				    contour_start = (contour == 0) ?
-						      0 : Polygon->HoleIndex[contour - 1];
-				    contour_end = (contour == Polygon->HoleIndexN) ?
-						 Polygon->PointN :
-						 Polygon->HoleIndex[contour];
+						      0 : Pour->HoleIndex[contour - 1];
+				    contour_end = (contour == Pour->HoleIndexN) ?
+						 Pour->PointN :
+						 Pour->HoleIndex[contour];
 				    if (contour_end - contour_start < 3)
 				      bad_contour_found = true;
 				  }
@@ -1144,16 +1145,16 @@ polygon_format
 				  {
 				    Message("WARNING parsing file '%s'\n"
 					    "    line:        %i\n"
-					    "    description: 'ignored polygon (< 3 points in a contour)'\n",
+					    "    description: 'ignored pour (< 3 points in a contour)'\n",
 					    yyfilename, yylineno);
-				    DestroyObject(yyData, POLYGON_TYPE, Layer, Polygon, Polygon);
+				    DestroyObject(yyData, POLYGON_TYPE, Layer, Pour, Pour);
 				  }
 				else
 				  {
-				    SetPolygonBoundingBox (Polygon);
-				    if (!Layer->polygon_tree)
-				      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-				    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+				    SetPourBoundingBox (Pour);
+				    if (!Layer->pour_tree)
+				      Layer->pour_tree = r_create_tree (NULL, 0, 0);
+				    r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
 				  }
 			}
 		;
@@ -1167,7 +1168,7 @@ polygonholes
 polygonhole
 		: T_POLYGON_HOLE '('
 			{
-				CreateNewHoleInPolygon (Polygon);
+				CreateNewHoleInPour (Pour);
 			}
 		  polygonpoints ')'
 		;
@@ -1181,11 +1182,11 @@ polygonpoint
 			/* xcoord ycoord */
 		: '(' NUMBER NUMBER ')'
 			{
-				CreateNewPointInPolygon(Polygon, $2*100, $3*100);
+				CreateNewPointInPour(Pour, $2*100, $3*100);
 			}
 		| '[' NUMBER NUMBER ']'
 			{
-				CreateNewPointInPolygon(Polygon, $2, $3);
+				CreateNewPointInPour(Pour, $2, $3);
 			}
 		|
 		;
