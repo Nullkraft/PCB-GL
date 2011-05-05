@@ -1,5 +1,5 @@
 Bottom: 2733a8a302edb8603a30c6319fb86597b0b980bc
-Top:    2733a8a302edb8603a30c6319fb86597b0b980bc
+Top:    f5629b68520a9714d3917344c29b8f521738a7f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 02:18:31 +0100
 
@@ -11,4 +11,16 @@ interval between processing events.
 
 ---
 
-
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index f43d7d7..a4b9975 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -3888,7 +3888,7 @@ lesstif_progress_dialog (int sp_far, int total, const char *msg)
+   return;
+ }
+ 
+-#define MIN_TIME_SEPARATION (500./1000.) /* 50ms */
++#define MIN_TIME_SEPARATION (50./1000.) /* 50ms */
+ static int
+ lesstif_progress (int so_far, int total, const char *message)
+ {
