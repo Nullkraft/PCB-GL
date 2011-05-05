@@ -43,6 +43,7 @@ typedef struct render_priv {
   GdkGLConfig *glconfig;
   bool trans_lines;
   bool in_context;
+  GTimer *time_since_expose;
 } render_priv;
 
 
@@ -540,10 +541,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
   ghid_invalidate_all ();
 }
 
+#define MAX_ELAPSED (50. / 1000.) /* 50ms */
 void
 ghid_invalidate_all ()
 {
+  render_priv *priv = gport->render_priv;
+  double elapsed = g_timer_elapsed (priv->time_since_expose, NULL);
+
   ghid_draw_area_update (gport, NULL);
+
+  if (elapsed > MAX_ELAPSED)
+    gdk_window_process_all_updates ();
 }
 
 void
@@ -741,6 +749,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 
   port->render_priv = priv = g_new0 (render_priv, 1);
 
+  priv->time_since_expose = g_timer_new ();
+
   gtk_gl_init(argc, argv);
 
   /* setup GL-context */
@@ -815,6 +825,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              GdkEventExpose *ev,
                              GHidPort *port)
 {
+  render_priv *priv = port->render_priv;
   BoxType region;
 
   ghid_start_drawing (port);
@@ -889,6 +900,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   hidgl_flush_triangles (&buffer);
 
   ghid_end_drawing (port);
+
+  g_timer_start (priv->time_since_expose);
 
   return FALSE;
 }
