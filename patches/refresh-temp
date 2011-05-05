@@ -1,0 +1,134 @@
+Bottom: ddd46974fcac5677edebd33e3973577384688cc7
+Top:    2733a8a302edb8603a30c6319fb86597b0b980bc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-05 01:56:46 +0100
+
+Refresh of hid-lesstif-simple-progress-im
+
+---
+
+diff --git a/src/hid/lesstif/dialogs.c b/src/hid/lesstif/dialogs.c
+index 1de1f09..ffe99eb 100644
+--- a/src/hid/lesstif/dialogs.c
++++ b/src/hid/lesstif/dialogs.c
+@@ -409,59 +409,6 @@ lesstif_log (const char *fmt, ...)
+ 
+ /* ------------------------------------------------------------ */
+ 
+-bool progress_cancelled = false;
+-
+-static void
+-progress_callback (Widget w, void *v, void *cbs)
+-{
+-  progress_cancelled = true;
+-}
+-
+-Widget progress_dialog = 0;
+-static Widget progress_cancel, progress_progress, progress_label;
+-
+-void
+-lesstif_progress_dialog (int sp_far, int total, const char *msg)
+-{
+-  char *cancelmsg = "Cancel";
+-  XmString xs;
+-
+-  if (mainwind == 0)
+-    return;
+-
+-  if (progress_dialog == 0)
+-    {
+-      n = 0;
+-      stdarg (XmNdefaultButtonType, XmDIALOG_CANCEL_BUTTON);
+-      stdarg (XmNtitle, "Progress");
+-      progress_dialog = XmCreateQuestionDialog (mainwind, "progress", args, n);
+-      XtAddCallback (progress_dialog, XmNcancelCallback, (XtCallbackProc) progress_callback, NULL);
+-
+-      progress_cancel = XmMessageBoxGetChild (progress_dialog, XmDIALOG_CANCEL_BUTTON);
+-      progress_label =  XmMessageBoxGetChild (progress_dialog, XmDIALOG_MESSAGE_LABEL);
+-
+-      XtUnmanageChild (XmMessageBoxGetChild (progress_dialog, XmDIALOG_OK_BUTTON));
+-      XtUnmanageChild (XmMessageBoxGetChild (progress_dialog, XmDIALOG_HELP_BUTTON));
+-
+-      n = 0;
+-      xs = XmStringCreateLocalized (cancelmsg);
+-      stdarg (XmNcancelLabelString, xs);
+-      XtManageChild (progress_cancel);
+-
+-      stdarg (XmNdefaultPosition, False);
+-      XtSetValues (progress_dialog, args, n);
+-    }
+-
+-  n = 0;
+-  xs = XmStringCreateLocalized ((char *)msg);
+-  stdarg (XmNmessageString, xs);
+-  XtSetValues (progress_dialog, args, n);
+-
+-  return;
+-}
+-
+-/* ------------------------------------------------------------ */
+-
+ static Widget confirm_dialog = 0;
+ static Widget confirm_cancel, confirm_ok, confirm_label;
+ 
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 67820b8..f43d7d7 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -3840,9 +3840,53 @@ lesstif_beep (void)
+   fflush (stdout);
+ }
+ 
+-extern int lesstif_progress_dialog (int sp_far, int total, const char *message);
+-extern bool progress_cancelled;
+-extern Widget progress_dialog;
++
++static bool progress_cancelled = false;
++
++static void
++progress_cancel_callback (Widget w, void *v, void *cbs)
++{
++  progress_cancelled = true;
++}
++
++static Widget progress_dialog = 0;
++static Widget progress_cancel, progress_label;
++
++static void
++lesstif_progress_dialog (int sp_far, int total, const char *msg)
++{
++  XmString xs;
++
++  if (mainwind == 0)
++    return;
++
++  if (progress_dialog == 0)
++    {
++      n = 0;
++      stdarg (XmNdefaultButtonType, XmDIALOG_CANCEL_BUTTON);
++      stdarg (XmNtitle, "Progress");
++      stdarg (XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL);
++      progress_dialog = XmCreateQuestionDialog (mainwind, "progress", args, n);
++      XtAddCallback (progress_dialog, XmNcancelCallback,
++                     (XtCallbackProc) progress_cancel_callback, NULL);
++
++      progress_cancel = XmMessageBoxGetChild (progress_dialog, XmDIALOG_CANCEL_BUTTON);
++      progress_label =  XmMessageBoxGetChild (progress_dialog, XmDIALOG_MESSAGE_LABEL);
++
++      XtUnmanageChild (XmMessageBoxGetChild (progress_dialog, XmDIALOG_OK_BUTTON));
++      XtUnmanageChild (XmMessageBoxGetChild (progress_dialog, XmDIALOG_HELP_BUTTON));
++
++      stdarg (XmNdefaultPosition, False);
++      XtSetValues (progress_dialog, args, n);
++    }
++
++  n = 0;
++  xs = XmStringCreateLocalized ((char *)msg);
++  stdarg (XmNmessageString, xs);
++  XtSetValues (progress_dialog, args, n);
++
++  return;
++}
+ 
+ #define MIN_TIME_SEPARATION (500./1000.) /* 50ms */
+ static int
