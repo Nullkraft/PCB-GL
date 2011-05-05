@@ -3928,6 +3928,9 @@ lesstif_progress (int so_far, int total, const char *message)
       XtDispatchEvent (&e);
     }
 
+  XtAppNextEvent (app_context, &e);
+  XtDispatchEvent (&e);
+
   /* Note the time we did this */
   gettimeofday (&last_time, NULL);
 
