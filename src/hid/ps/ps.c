@@ -16,6 +16,7 @@
 #include "misc.h"
 #include "error.h"
 #include "draw.h"
+#include "draw_funcs.h"
 
 #include "hid.h"
 #include "../hidint.h"
@@ -867,7 +868,7 @@ ps_set_layer (const char *name, int group, int empty)
       && strcmp (name, "outline")
       && strcmp (name, "route"))
     {
-      DrawLayer (outline_layer, &region);
+      dapi->draw_layer (outline_layer, &region, NULL);
     }
 
   return 1;
