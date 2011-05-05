@@ -1,5 +1,5 @@
 Bottom: f402806b273793e8997c845062843092f91c6d46
-Top:    f402806b273793e8997c845062843092f91c6d46
+Top:    6b48aa4b6ab55b799a94f111d47eebdb9e7c90a7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:56 +0100
 
@@ -12,4 +12,17 @@ file during the fab drawing output.
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 1faed77..b1e9477 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1162,9 +1162,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+         rv = 0;
+       if (layernum < max_copper_layer && Layer->On)
+         DrawLayerCommon (Layer, drawn_area, true);
+-
+-      if (gui->gui) /* HACK: Subcomposite each layer in a layer group separately */
+-        gui->set_layer (0, group, 0);
+     }
+   if (n_entries > 1)
+     rv = 1;
