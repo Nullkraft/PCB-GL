@@ -1168,6 +1168,10 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
         rv = 0;
       if (layernum < max_copper_layer && Layer->On)
         DrawLayerCommon (Layer, drawn_area, true);
+
+      /* HACK: Let GTK/GL subcomposite each layer in the group separately */
+      if (gui->gui)
+        gui->set_layer (0, group, 0);
     }
   if (n_entries > 1)
     rv = 1;
