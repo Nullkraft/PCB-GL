@@ -26,6 +26,7 @@
 #include "misc.h"
 #include "error.h"
 #include "draw.h"
+#include "draw_funcs.h"
 
 #include "hid.h"
 #include "../hidint.h"
@@ -720,7 +721,7 @@ gerber_set_layer (const char *name, int group, int empty)
     {
       if (outline_layer
 	  && outline_layer != PCB->Data->Layer+idx)
-	DrawLayer (outline_layer, &region);
+	dapi->draw_layer (outline_layer, &region, NULL);
       else if (!outline_layer)
 	{
 	  hidGC gc = gui->make_gc ();
