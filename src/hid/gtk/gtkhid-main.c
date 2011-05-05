@@ -2297,6 +2297,7 @@ hid_gtk_init ()
   ghid_hid.fill_circle              = ghid_fill_circle;
   ghid_hid.fill_polygon             = ghid_fill_polygon;
   ghid_hid.fill_pcb_polygon         = ghid_fill_pcb_polygon;
+  ghid_hid.thindraw_pcb_polygon     = ghid_thindraw_pcb_polygon;
   ghid_hid.fill_rect                = ghid_fill_rect;
 
   ghid_hid.calibrate                = ghid_calibrate;
