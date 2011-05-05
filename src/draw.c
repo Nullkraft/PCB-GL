@@ -695,9 +695,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
         rv = 0;
       if (layernum < max_copper_layer && Layer->On)
         dapi->draw_layer (Layer, drawn_area, NULL);
-
-      if (gui->gui) /* HACK: Subcomposite each layer in a layer group separately */
-        gui->set_layer (0, group, 0);
     }
   if (n_entries > 1)
     rv = 1;
