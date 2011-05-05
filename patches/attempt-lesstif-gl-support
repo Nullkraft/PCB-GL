@@ -1,5 +1,5 @@
 Bottom: 9c3e3d121e81adecc96631da74f4740683f79d66
-Top:    c4ffa0a2bca52f20124b255789591aff43a5a5a0
+Top:    34dbae47dea03a7e7077b55971ea3948bd002def
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:10:44 +0100
 
@@ -66,7 +66,7 @@ index ae29099..03e2e26 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 4f7e12a..ce8a70f 100644
+index 4f7e12a..fdd74de 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -388,33 +388,17 @@ index 4f7e12a..ce8a70f 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3206,240 +3408,468 @@ set_gc (hidGC gc)
+@@ -3206,240 +3408,456 @@ set_gc (hidGC gc)
  			  join);
      }
  }
 +#endif
  
- static void
--lesstif_set_line_cap (hidGC gc, EndCapStyle style)
-+lesstif_set_draw_faded (hidGC gc, int faded)
- {
--  gc->cap = style;
-+  /* We don't use this */
- }
- 
- static void
--lesstif_set_line_width (hidGC gc, int width)
-+lesstif_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
- {
--  gc->width = width;
-+  CRASH;
- }
- 
 -static void
--lesstif_set_draw_xor (hidGC gc, int xor_set)
+-lesstif_set_line_cap (hidGC gc, EndCapStyle style)
 +int compute_depth (int group)
  {
--  gc->xor_set = xor_set;
+-  gc->cap = style;
 +  static int last_depth_computed = 0;
 +
 +  int solder_group;
@@ -464,10 +448,12 @@ index 4f7e12a..ce8a70f 100644
 +  return depth;
  }
  
--#define ISORT(a,b) if (a>b) { a^=b; b^=a; a^=b; }
+-static void
+-lesstif_set_line_width (hidGC gc, int width)
 +int
 +ghid_set_layer (const char *name, int group, int empty)
-+{
+ {
+-  gc->width = width;
 +  static int stencil_bit = 0;
 +  int idx = (group >= 0 && group < max_layer) ?
 +              PCB->LayerGroups.Entries[group][0] : group;
@@ -489,9 +475,7 @@ index 4f7e12a..ce8a70f 100644
 +    glStencilMask (0);
 +    glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
 +  }
- 
--static void
--lesstif_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
++
 +  if (idx >= 0 && idx < max_layer + 2) {
 +    trans_lines = TRUE;
 +    return PCB->Data->Layer[idx].On;
@@ -521,62 +505,31 @@ index 4f7e12a..ce8a70f 100644
 +    }
 +  }
 +  return 0;
-+}
-+
+ }
+ 
+-static void
+-lesstif_set_draw_xor (hidGC gc, int xor_set)
 +void
 +ghid_use_mask (int use_it)
  {
--  double dx1, dy1, dx2, dy2;
--  int vw = Vz (gc->width);
--  if ((pinout || TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB)) && gc->erase)
+-  gc->xor_set = xor_set;
 +  static int stencil_bit = 0;
 +
 +  /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
 +  if (use_it == HID_LIVE_DRAWING ||
 +      use_it == HID_LIVE_DRAWING_OFF ||
 +      use_it == HID_FLUSH_DRAW_Q) {
-     return;
--#if 0
--  printf ("draw_line %d,%d %d,%d @%d", x1, y1, x2, y2, gc->width);
--#endif
--  dx1 = Vx (x1);
--  dy1 = Vy (y1);
--  dx2 = Vx (x2);
--  dy2 = Vy (y2);
--#if 0
--  printf (" = %d,%d %d,%d %s\n", x1, y1, x2, y2, gc->colorname);
--#endif
++    return;
 +  }
- 
--#if 1
--  if (! ClipLine (0, 0, view_width, view_height,
--		  &dx1, &dy1, &dx2, &dy2, vw))
++
 +  if (use_it == cur_mask)
-     return;
--#endif
- 
--  x1 = dx1;
--  y1 = dy1;
--  x2 = dx2;
--  y2 = dy2;
++    return;
++
 +  /* Flush out any existing geoemtry to be rendered */
 +  hidgl_flush_triangles (&buffer);
- 
--  set_gc (gc);
--  if (gc->cap == Square_Cap && x1 == x2 && y1 == y2)
--    {
--      XFillRectangle (display, pixmap, my_gc, x1 - vw / 2, y1 - vw / 2, vw,
--		      vw);
--      if (use_mask)
--	XFillRectangle (display, mask_bitmap, mask_gc, x1 - vw / 2,
--			y1 - vw / 2, vw, vw);
--    }
--  else
++
 +  switch (use_it)
-     {
--      XDrawLine (display, pixmap, my_gc, x1, y1, x2, y2);
--      if (use_mask)
--	XDrawLine (display, mask_bitmap, mask_gc, x1, y1, x2, y2);
++    {
 +    case HID_MASK_BEFORE:
 +      /* Write '1' to the stencil buffer where the solder-mask is drawn. */
 +      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
@@ -605,10 +558,11 @@ index 4f7e12a..ce8a70f 100644
 +      hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
 +      glDisable (GL_STENCIL_TEST);                // Disable Stencil test
 +      break;
-     }
++    }
 +  cur_mask = use_it;
  }
  
+-#define ISORT(a,b) if (a>b) { a^=b; b^=a; a^=b; }
 +typedef struct
 +{
 +  int color_set;
@@ -620,15 +574,28 @@ index 4f7e12a..ce8a70f 100644
 +  double blue;
 +} ColorCache;
 +
-+
+ 
 +  /* Config helper functions for when the user changes color preferences.
 +     |  set_special colors used in the gtkhid.
 +   */
  static void
--lesstif_draw_arc (hidGC gc, int cx, int cy, int width, int height,
--		  int start_angle, int delta_angle)
+-lesstif_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
 +set_special_grid_color (void)
-+{
+ {
+-  double dx1, dy1, dx2, dy2;
+-  int vw = Vz (gc->width);
+-  if ((pinout || TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB)) && gc->erase)
+-    return;
+-#if 0
+-  printf ("draw_line %d,%d %d,%d @%d", x1, y1, x2, y2, gc->width);
+-#endif
+-  dx1 = Vx (x1);
+-  dy1 = Vy (y1);
+-  dx2 = Vx (x2);
+-  dy2 = Vy (y2);
+-#if 0
+-  printf (" = %d,%d %d,%d %s\n", x1, y1, x2, y2, gc->colorname);
+-#endif
 +  //if (!gport->colormap)
 +  //  return;
 +  //gport->grid_color.red ^= gport->bg_color.red;
@@ -636,13 +603,89 @@ index 4f7e12a..ce8a70f 100644
 +  //gport->grid_color.blue ^= gport->bg_color.blue;
 +//  gdk_color_alloc (gport->colormap, &gport->grid_color);
 +}
-+
+ 
+-#if 1
+-  if (! ClipLine (0, 0, view_width, view_height,
+-		  &dx1, &dy1, &dx2, &dy2, vw))
 +void
 +ghid_set_special_colors (HID_Attribute * ha)
- {
++{
++#if 0
++  if (!ha->name || !ha->value)
+     return;
++  if (!strcmp (ha->name, "background-color"))
++    {
++      ghid_map_color_string (*(char **) ha->value, &gport->bg_color);
++      set_special_grid_color ();
++    }
++  else if (!strcmp (ha->name, "off-limit-color"))
++  {
++      ghid_map_color_string (*(char **) ha->value, &gport->offlimits_color);
++    }
++  else if (!strcmp (ha->name, "grid-color"))
++    {
++      ghid_map_color_string (*(char **) ha->value, &gport->grid_color);
++      set_special_grid_color ();
++    }
+ #endif
++}
++
++/* static */ char *current_color = NULL;
++/* static */ double global_alpha_mult = 1.0;
++/* static */ int alpha_changed = 0;
+ 
+-  x1 = dx1;
+-  y1 = dy1;
+-  x2 = dx2;
+-  y2 = dy2;
++void
++ghid_set_color (hidGC gc, const char *name)
++{
++  static void *cache = NULL;
++  hidval cval;
++  ColorCache *cc;
++  double alpha_mult = 1.0;
++  double r, g, b, a;
++  static XColor color, exact_color;
++  a = 1.0;
+ 
+-  set_gc (gc);
+-  if (gc->cap == Square_Cap && x1 == x2 && y1 == y2)
++  if (!alpha_changed && current_color != NULL)
+     {
+-      XFillRectangle (display, pixmap, my_gc, x1 - vw / 2, y1 - vw / 2, vw,
+-		      vw);
+-      if (use_mask)
+-	XFillRectangle (display, mask_bitmap, mask_gc, x1 - vw / 2,
+-			y1 - vw / 2, vw, vw);
++      if (strcmp (name, current_color) == 0)
++        return;
++      free (current_color);
+     }
+-  else
++
++  alpha_changed = 0;
++
++  current_color = strdup (name);
++
++  if (name == NULL)
+     {
+-      XDrawLine (display, pixmap, my_gc, x1, y1, x2, y2);
+-      if (use_mask)
+-	XDrawLine (display, mask_bitmap, mask_gc, x1, y1, x2, y2);
++      fprintf (stderr, "%s():  name = NULL, setting to magenta\n",
++               __FUNCTION__);
++      name = "magenta";
+     }
+-}
+ 
+-static void
+-lesstif_draw_arc (hidGC gc, int cx, int cy, int width, int height,
+-		  int start_angle, int delta_angle)
+-{
 -  if ((pinout || TEST_FLAG (THINDRAWFLAG, PCB)) && gc->erase)
 -    return;
- #if 0
+-#if 0
 -  printf ("draw_arc %d,%d %dx%d s %d d %d", cx, cy, width, height, start_angle, delta_angle);
 -#endif
 -  width = Vz (width);
@@ -650,32 +693,38 @@ index 4f7e12a..ce8a70f 100644
 -  cx = Vx (cx) - width;
 -  cy = Vy (cy) - height;
 -  if (flip_x)
-+  if (!ha->name || !ha->value)
-+    return;
-+  if (!strcmp (ha->name, "background-color"))
++  gc->colorname = (char *) name;
++
++//  if (gport->colormap == 0)
++//    gport->colormap = gtk_widget_get_colormap (gport->top_window);
++  if (strcmp (name, "erase") == 0)
      {
 -      start_angle = 180 - start_angle;
 -      delta_angle = - delta_angle;
-+      ghid_map_color_string (*(char **) ha->value, &gport->bg_color);
-+      set_special_grid_color ();
++      gc->erase = 1;
++      r = bgred   / 65535.;
++      g = bggreen / 65535.;
++      b = bgblue  / 65535.;
      }
 -  if (flip_y)
-+  else if (!strcmp (ha->name, "off-limit-color"))
-+  {
-+      ghid_map_color_string (*(char **) ha->value, &gport->offlimits_color);
-+    }
-+  else if (!strcmp (ha->name, "grid-color"))
++  else if (strcmp (name, "drill") == 0)
      {
 -      start_angle = - start_angle;
 -      delta_angle = - delta_angle;					
-+      ghid_map_color_string (*(char **) ha->value, &gport->grid_color);
-+      set_special_grid_color ();
++      gc->erase = 0;
++      alpha_mult = 0.85;
++      r = 0.5;
++      g = 0.5;
++      b = 0.5;
++//      r = offlimit_color.red   / 65535.;
++//      g = offlimit_color.green / 65535.;
++//      b = offlimit_color.blue  / 65535.;
      }
 -  start_angle = (start_angle + 360 + 180) % 360 - 180;
 -#if 0
 -  printf (" = %d,%d %dx%d %d %s\n", cx, cy, width, height, gc->width,
 -	  gc->colorname);
- #endif
+-#endif
 -  set_gc (gc);
 -  XDrawArc (display, pixmap, my_gc, cx, cy,
 -	    width * 2, height * 2, (start_angle + 180) * 64,
@@ -698,63 +747,6 @@ index 4f7e12a..ce8a70f 100644
 -      XDrawLine (display, pixmap, arc2_gc, cx, cy,
 -		 cx - width*cos((start_angle+delta_angle)*M_PI/180),
 -		 cy + width*sin((start_angle+delta_angle)*M_PI/180));
-+}
-+
-+/* static */ char *current_color = NULL;
-+/* static */ double global_alpha_mult = 1.0;
-+/* static */ int alpha_changed = 0;
-+
-+void
-+ghid_set_color (hidGC gc, const char *name)
-+{
-+  static void *cache = NULL;
-+  hidval cval;
-+  ColorCache *cc;
-+  double alpha_mult = 1.0;
-+  double r, g, b, a;
-+  static XColor color, exact_color;
-+  a = 1.0;
-+
-+  if (!alpha_changed && current_color != NULL)
-+    {
-+      if (strcmp (name, current_color) == 0)
-+        return;
-+      free (current_color);
-+    }
-+
-+  alpha_changed = 0;
-+
-+  current_color = strdup (name);
-+
-+  if (name == NULL)
-+    {
-+      fprintf (stderr, "%s():  name = NULL, setting to magenta\n",
-+               __FUNCTION__);
-+      name = "magenta";
-+    }
-+
-+  gc->colorname = (char *) name;
-+
-+//  if (gport->colormap == 0)
-+//    gport->colormap = gtk_widget_get_colormap (gport->top_window);
-+  if (strcmp (name, "erase") == 0)
-+    {
-+      gc->erase = 1;
-+      r = bgred   / 65535.;
-+      g = bggreen / 65535.;
-+      b = bgblue  / 65535.;
-+    }
-+  else if (strcmp (name, "drill") == 0)
-+    {
-+      gc->erase = 0;
-+      alpha_mult = 0.85;
-+      r = 0.5;
-+      g = 0.5;
-+      b = 0.5;
-+//      r = offlimit_color.red   / 65535.;
-+//      g = offlimit_color.green / 65535.;
-+//      b = offlimit_color.blue  / 65535.;
-     }
 +  else
 +    {
 +      alpha_mult = 0.7;
@@ -800,7 +792,7 @@ index 4f7e12a..ce8a70f 100644
 +      b = cc->blue;
 +
 +      gc->erase = 0;
-+    }
+     }
 +  if (1) {
 +    double maxi, mult;
 +    alpha_mult *= global_alpha_mult;
@@ -1042,7 +1034,7 @@ index 4f7e12a..ce8a70f 100644
  }
  
  static void
-@@ -3998,6 +4428,7 @@ lesstif_finish_debug_draw (void)
+@@ -3998,6 +4416,7 @@ lesstif_finish_debug_draw (void)
     */
  }
  
@@ -1050,7 +1042,7 @@ index 4f7e12a..ce8a70f 100644
  #include "dolists.h"
  
  void
-@@ -4023,17 +4454,19 @@ hid_lesstif_init ()
+@@ -4023,17 +4442,19 @@ hid_lesstif_init ()
    lesstif_hid.set_layer               = lesstif_set_layer;
    lesstif_hid.make_gc                 = lesstif_make_gc;
    lesstif_hid.destroy_gc              = lesstif_destroy_gc;
@@ -1081,12 +1073,3 @@ index 4f7e12a..ce8a70f 100644
  
    lesstif_hid.calibrate               = lesstif_calibrate;
    lesstif_hid.shift_is_pressed        = lesstif_shift_is_pressed;
-@@ -4059,7 +4492,7 @@ hid_lesstif_init ()
-   lesstif_hid.show_item               = lesstif_show_item;
-   lesstif_hid.beep                    = lesstif_beep;
-   lesstif_hid.progress                = lesstif_progress;
--  lesstif_hid.edit_attributes         = lesstif_attributes_dialog;
-+  lesstif_hid.edit_attributes_dialog  = lesstif_attributes_dialog;
- 
-   lesstif_hid.request_debug_draw      = lesstif_request_debug_draw;
-   lesstif_hid.flush_debug_draw        = lesstif_flush_debug_draw;
