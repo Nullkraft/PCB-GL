@@ -1,5 +1,5 @@
-Bottom: b266fcc46a33660a12c0c94174fe9d092085c3a6
-Top:    cd9830815b72ec9883c158595b28138dabf4a486
+Bottom: a90573f9ff3cd1fe646cb0a38d0e6f74bb1aacb2
+Top:    6d6a7474a92986f9313895ee5846a2782f0c4eef
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
@@ -14,10 +14,10 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e1ae2dc..991fd8f 100644
+index 643544e..ca65a11 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -693,6 +693,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -520,6 +520,7 @@ DrawEverything (BoxTypePtr drawn_area)
  	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
@@ -25,7 +25,7 @@ index e1ae2dc..991fd8f 100644
      }
  
    /* draw all layers in layerstack order */
-@@ -701,8 +702,11 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -528,8 +529,11 @@ DrawEverything (BoxTypePtr drawn_area)
        int group = drawn_groups[i];
  
        if (gui->set_layer (0, group, 0))
@@ -39,7 +39,7 @@ index e1ae2dc..991fd8f 100644
      }
  
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
-@@ -724,16 +728,28 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -551,16 +555,28 @@ DrawEverything (BoxTypePtr drawn_area)
  
    /* Draw the solder mask if turned on */
    if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
@@ -72,7 +72,7 @@ index e1ae2dc..991fd8f 100644
  
    if (gui->gui)
      {
-@@ -743,27 +759,47 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -570,27 +586,47 @@ DrawEverything (BoxTypePtr drawn_area)
  		  NULL);
        /* Draw rat lines on top */
        if (gui->set_layer ("rats", SL (RATS, 0), 0))
@@ -126,7 +126,7 @@ index e1ae2dc..991fd8f 100644
  }
  
  static void
-@@ -1126,6 +1162,9 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -970,6 +1006,9 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
          rv = 0;
        if (layernum < max_copper_layer && Layer->On)
          DrawLayerCommon (Layer, drawn_area, true);
