@@ -3922,11 +3922,11 @@ lesstif_progress (int so_far, int total, const char *message)
   if (!started)
     XtManageChild (progress_dialog);
 
-  /* Dispatch one event - ideally we would keep dispatching until we
-   * were about to block, but I can't see how to do this with Xt
-   */
-  XtAppNextEvent (app_context, &e);
-  XtDispatchEvent (&e);
+  while (XtAppPending (app_context))
+    {
+      XtAppNextEvent (app_context, &e);
+      XtDispatchEvent (&e);
+    }
 
   /* Note the time we did this */
   gettimeofday (&last_time, NULL);
