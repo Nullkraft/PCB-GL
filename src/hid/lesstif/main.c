@@ -3410,18 +3410,6 @@ set_gc (hidGC gc)
 }
 #endif
 
-static void
-lesstif_set_draw_faded (hidGC gc, int faded)
-{
-  /* We don't use this */
-}
-
-static void
-lesstif_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
-{
-  CRASH;
-}
-
 int compute_depth (int group)
 {
   static int last_depth_computed = 0;
@@ -4492,7 +4480,7 @@ hid_lesstif_init ()
   lesstif_hid.show_item               = lesstif_show_item;
   lesstif_hid.beep                    = lesstif_beep;
   lesstif_hid.progress                = lesstif_progress;
-  lesstif_hid.edit_attributes_dialog  = lesstif_attributes_dialog;
+  lesstif_hid.edit_attributes         = lesstif_attributes_dialog;
 
   lesstif_hid.request_debug_draw      = lesstif_request_debug_draw;
   lesstif_hid.flush_debug_draw        = lesstif_flush_debug_draw;
