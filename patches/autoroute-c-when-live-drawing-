@@ -1,0 +1,15 @@
+Bottom: c70eb1ccdcb2bdf5fe663f5b122cb84910e523c8
+Top:    c70eb1ccdcb2bdf5fe663f5b122cb84910e523c8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-05 01:11:37 +0100
+
+autoroute.c: When live-drawing, only emit one via per location
+
+I'd accidentally put the live-draw via in a place where it would
+emit one via for every layer group - causing warnings in PCB's
+log about dropped vias.
+
+
+---
+
+
