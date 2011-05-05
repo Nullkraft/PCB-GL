@@ -46,6 +46,7 @@
 #include "misc.h"
 #include "move.h"
 #include "polygon.h"
+#include "pour.h"
 #include "rtree.h"
 #include "search.h"
 #include "select.h"
@@ -65,7 +66,7 @@ RCSID ("$Id$");
  * some local prototypes
  */
 static void *InsertPointIntoLine (LayerTypePtr, LineTypePtr);
-static void *InsertPointIntoPolygon (LayerTypePtr, PolygonTypePtr);
+static void *InsertPointIntoPour (LayerTypePtr, PourTypePtr);
 static void *InsertPointIntoRat (RatTypePtr);
 
 /* ---------------------------------------------------------------------------
@@ -79,7 +80,8 @@ static bool Forcible;
 static ObjectFunctionType InsertFunctions = {
   InsertPointIntoLine,
   NULL,
-  InsertPointIntoPolygon,
+  NULL,
+  InsertPointIntoPour,
   NULL,
   NULL,
   NULL,
@@ -138,12 +140,12 @@ InsertPointIntoLine (LayerTypePtr Layer, LineTypePtr Line)
 			   InsertX - X, InsertY - Y);
   EraseLine (Line);
   r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
-  RestoreToPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+  RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
   Line->Point2.X = InsertX;
   Line->Point2.Y = InsertY;
   SetLineBoundingBox (Line);
   r_insert_entry (Layer->line_tree, (BoxTypePtr) Line, 0);
-  ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+  ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
   DrawLine (Layer, Line);
   /* we must create after playing with Line since creation may
    * invalidate the line pointer
@@ -155,7 +157,7 @@ InsertPointIntoLine (LayerTypePtr Layer, LineTypePtr Line)
     {
       AddObjectToCreateUndoList (LINE_TYPE, Layer, line, line);
       DrawLine (Layer, line);
-      ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, line);
+      ClearFromPours (PCB->Data, LINE_TYPE, Layer, line);
       /* creation call adds it to the rtree */
     }
   Draw ();
@@ -163,10 +165,10 @@ InsertPointIntoLine (LayerTypePtr Layer, LineTypePtr Line)
 }
 
 /* ---------------------------------------------------------------------------
- * inserts a point into a polygon
+ * inserts a point into a pour
  */
 static void *
-InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+InsertPointIntoPour (LayerTypePtr Layer, PourTypePtr Pour)
 {
   PointType save;
   Cardinal n;
@@ -178,40 +180,40 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
        * first make sure adding the point is sensible
        */
       line.Thickness = 0;
-      line.Point1 = Polygon->Points[prev_contour_point (Polygon, InsertAt)];
-      line.Point2 = Polygon->Points[InsertAt];
+      line.Point1 = Pour->Points[prev_contour_point (Pour, InsertAt)];
+      line.Point2 = Pour->Points[InsertAt];
       if (IsPointOnLine ((float) InsertX, (float) InsertY, 0.0, &line))
 	return (NULL);
     }
   /*
    * second, shift the points up to make room for the new point
    */
-  ErasePolygon (Polygon);
-  r_delete_entry (Layer->polygon_tree, (BoxTypePtr) Polygon);
-  save = *CreateNewPointInPolygon (Polygon, InsertX, InsertY);
-  for (n = Polygon->PointN - 1; n > InsertAt; n--)
-    Polygon->Points[n] = Polygon->Points[n - 1];
+  ErasePour (Pour);
+  r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
+  save = *CreateNewPointInPour (Pour, InsertX, InsertY);
+  for (n = Pour->PointN - 1; n > InsertAt; n--)
+    Pour->Points[n] = Pour->Points[n - 1];
 
   /* Shift up indices of any holes */
-  for (n = 0; n < Polygon->HoleIndexN; n++)
-    if (Polygon->HoleIndex[n] > InsertAt ||
-	(InsertLast && Polygon->HoleIndex[n] == InsertAt))
-      Polygon->HoleIndex[n]++;
+  for (n = 0; n < Pour->HoleIndexN; n++)
+    if (Pour->HoleIndex[n] > InsertAt ||
+	(InsertLast && Pour->HoleIndex[n] == InsertAt))
+      Pour->HoleIndex[n]++;
 
-  Polygon->Points[InsertAt] = save;
+  Pour->Points[InsertAt] = save;
   SetChangedFlag (true);
-  AddObjectToInsertPointUndoList (POLYGONPOINT_TYPE, Layer, Polygon,
-				  &Polygon->Points[InsertAt]);
+  AddObjectToInsertPointUndoList (POURPOINT_TYPE, Layer, Pour,
+				  &Pour->Points[InsertAt]);
 
-  SetPolygonBoundingBox (Polygon);
-  r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
-  InitClip (PCB->Data, Layer, Polygon);
-  if (Forcible || !RemoveExcessPolygonPoints (Layer, Polygon))
+  SetPourBoundingBox (Pour);
+  r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
+  InitPourClip (PCB->Data, Layer, Pour);
+  if (Forcible || !RemoveExcessPourPoints (Layer, Pour))
     {
-      DrawPolygon (Layer, Polygon);
+      DrawPour (Layer, Pour);
       Draw ();
     }
-  return (&Polygon->Points[InsertAt]);
+  return (&Pour->Points[InsertAt]);
 }
 
 /* ---------------------------------------------------------------------------

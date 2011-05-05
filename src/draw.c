@@ -50,6 +50,7 @@
 #include "search.h"
 #include "select.h"
 #include "print.h"
+#include "pour.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -743,6 +744,75 @@ poly_callback (const BoxType * b, void *cl)
   return 1;
 }
 
+struct pour_info
+{
+  const BoxType * clip;
+  LayerTypePtr Layer;
+};
+
+/* ---------------------------------------------------------------------------
+ * lowlevel drawing routine for pours
+ */
+static void
+_draw_pour (PourType *pour)
+{
+  int *x, *y, n, i;
+
+  n = pour->PointN;
+  x = (int *) malloc (n * sizeof (int));
+  y = (int *) malloc (n * sizeof (int));
+  for (i = 0; i < n; i++)
+    {
+      x[i] = pour->Points[i].X;
+      y[i] = pour->Points[i].Y;
+    }
+
+//  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+//      TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+//      TEST_FLAG (CLEARLINEFLAG, pour))
+  if (1)
+    {
+      gui->set_line_width (Output.fgGC, 2);
+//      gui->set_line_width (Output.fgGC, 1);
+      for (i = 0; i < n; i++)
+        {
+          Cardinal next = next_contour_point (pour, i);
+          gui->draw_line (Output.fgGC, x[i], y[i], x[next], y[next]);
+        }
+    }
+  else
+    gui->fill_polygon (Output.fgGC, n, x, y);
+  free (x);
+  free (y);
+}
+
+static int
+pour_callback (const BoxType * b, void *cl)
+{
+  struct pour_info *i = (struct pour_info *) cl;
+  PourType *pour = (PourType *)b;
+
+  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, pour))
+    {
+      if (TEST_FLAG (SELECTEDFLAG, pour))
+        gui->set_color (Output.fgGC, i->Layer->SelectedColor);
+      else
+        gui->set_color (Output.fgGC, PCB->ConnectedColor);
+    }
+  else
+    gui->set_color (Output.fgGC, i->Layer->Color);
+
+  if (gui->gui)
+    _draw_pour (pour);
+
+  if (pour->PolygonN)
+    {
+      r_search (pour->polygon_tree, i->clip, NULL, poly_callback, i->Layer);
+    }
+
+  return 1;
+}
+
 static int
 pad_mask_callback (const BoxType * b, void *cl)
 {
@@ -903,10 +973,10 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
   int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
   int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
   int group = GetLayerGroupNumberByPointer (Layer);
-  struct poly_info info = {screen, Layer};
+  struct pour_info info = {screen, Layer};
 
   /* print the non-clearing polys */
-  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+  r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
 
   if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
@@ -958,7 +1028,7 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
   struct poly_info info = {screen, Layer};
 
   /* print the non-clearing polys */
-  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+  r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
 
   /* draw all visible lines this layer */
   r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
@@ -1295,6 +1365,15 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 }
 
 /* ---------------------------------------------------------------------------
+ * draws a pour on a layer
+ */
+void
+DrawPour (LayerTypePtr Layer, PourTypePtr Pour)
+{
+  AddPart (Pour);
+}
+
+/* ---------------------------------------------------------------------------
  * draws an element
  */
 void
@@ -1475,6 +1554,15 @@ ErasePolygon (PolygonTypePtr Polygon)
 }
 
 /* ---------------------------------------------------------------------------
+ * erases a pour on a layer
+ */
+void
+ErasePour (PourTypePtr Pour)
+{
+  AddPart (Pour);
+}
+
+/* ---------------------------------------------------------------------------
  * erases an element
  */
 void
@@ -1540,6 +1628,9 @@ EraseObject (int type, void *lptr, void *ptr)
     case POLYGON_TYPE:
       ErasePolygon ((PolygonTypePtr) ptr);
       break;
+    case POUR_TYPE:
+      ErasePour ((PourTypePtr) ptr);
+      break;
     case ELEMENT_TYPE:
       EraseElement ((ElementTypePtr) ptr);
       break;
@@ -1586,6 +1677,10 @@ DrawObject (int type, void *ptr1, void *ptr2)
     case POLYGON_TYPE:
       if (((LayerTypePtr) ptr1)->On)
 	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
+      break;
+    case POUR_TYPE:
+      if (((LayerTypePtr) ptr1)->On)
+	DrawPour ((LayerTypePtr) ptr1, (PourTypePtr) ptr2);
       break;
     case ELEMENT_TYPE:
       if (PCB->ElementOn &&
