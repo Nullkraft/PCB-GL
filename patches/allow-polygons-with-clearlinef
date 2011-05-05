@@ -1,5 +1,5 @@
 Bottom: 9c3e3d121e81adecc96631da74f4740683f79d66
-Top:    a86bd067105363e924591700dcf0a357ef6ae28e
+Top:    2396e957e8a6aaae02997be63ef74fcdc32200fc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-23 16:55:52 +0000
 
@@ -28,14 +28,14 @@ polygon fill.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 8793f50..750a1e8 100644
+index 8793f50..f62f69e 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -357,6 +357,7 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
  {
    LayerType *lay = &Dest->Layer[GetLayerNumber (Source, layer)];
  
-+  RestoreToPolygon (Source, POLYGON_TYPE, Layer, Polygon);
++  RestoreToPolygon (Source, POLYGON_TYPE, layer, polygon);
    r_delete_entry (layer->polygon_tree, (BoxType *)polygon);
  
    layer->Polygon = g_list_remove (layer->Polygon, polygon);
@@ -43,12 +43,12 @@ index 8793f50..750a1e8 100644
    if (!lay->polygon_tree)
      lay->polygon_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (lay->polygon_tree, (BoxType *)polygon, 0);
-+  ClearFromPolygon (Source, POLYGON_TYPE, Layer, Polygon);
++  ClearFromPolygon (Source, POLYGON_TYPE, layer, polygon);
    return (polygon);
  }
  
 diff --git a/src/change.c b/src/change.c
-index c65c534..746c516 100644
+index c65c534..f83dd5e 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -124,6 +124,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
@@ -112,7 +112,7 @@ index c65c534..746c516 100644
 +  AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, poly, poly, true);
 +  ClearFromPolygon (PCB->Data, POLYGON_TYPE, Layer, poly);
 +  }
-+  DrawPolygon (Layer, poly, 0);
++  DrawPolygon (Layer, poly);
 +  return (poly);
 +}
 +
@@ -170,7 +170,7 @@ index 7bae706..420f780 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/draw.c b/src/draw.c
-index b1e9477..7c057fa 100644
+index b1e9477..b00b4c0 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -919,7 +919,8 @@ poly_callback (const BoxType * b, void *cl)
@@ -179,10 +179,31 @@ index b1e9477..7c057fa 100644
        (TEST_FLAG (THINDRAWFLAG, PCB) ||
 -       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
 +       TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
-+       TEST_FLAG (CLEARLINEFLAG, Polygon)))
++       TEST_FLAG (CLEARLINEFLAG, polygon)))
      gui->thindraw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
    else
      gui->fill_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index dfe34b2..50ca30d 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -11,7 +11,6 @@
+ #include "../hidint.h"
+ #include "gui.h"
+ #include "draw.h"
+-#include "draw_funcs.h"
+ #include "rtree.h"
+ #include "polygon.h"
+ #include "gui-pinout-preview.h"
+@@ -1785,7 +1784,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
+     if (PCB->ElementOn) {
+       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
+-      dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
++      draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
+     }
+     if (global_view_2d) {
+       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
 diff --git a/src/move.c b/src/move.c
 index 6ce043a..9935ce5 100644
 --- a/src/move.c
