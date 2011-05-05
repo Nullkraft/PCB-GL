@@ -3210,8 +3210,9 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
     {
        live_via = CreateNewVia (PCB->Data, X, Y, radius * 2,
-                                2 * rb->style->Keepaway, 0,
-                                rb->style->Hole, NULL, MakeFlags (0));
+                                2 * AutoRouteParameters.style->Keepaway, 0,
+                                AutoRouteParameters.style->Hole, NULL,
+                                MakeFlags (0));
        if (live_via != NULL)
          DrawVia (live_via);
     }
@@ -3256,7 +3257,7 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
       /* and add it to the r-tree! */
       r_insert_entry (rd->layergrouptree[rb->group], &rb->box, 1);
       rb->flags.homeless = 0;	/* not homeless anymore */
-      rb->livedraw_obj.via = via;
+      rb->livedraw_obj.via = live_via;
     }
 }
 static void
