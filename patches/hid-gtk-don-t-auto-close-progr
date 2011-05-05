@@ -8,6 +8,10 @@ hid/gtk: Don't auto-close progress dialog until commanded to
 We pass the cancel return value to our caller, but it is up to them
 to dismiss the progress dialog.
 
+Utilise the response_id to determine when the dialog has been closed
+or cancelled, rather than a separate stop_loop variable (which was a
+legacy from the blocking gtk_dialog_run() this code was based upon.
+
 Tidy up due to resulting simplifications.
 
 
