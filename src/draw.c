@@ -694,7 +694,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
           strcmp (Layer->Name, "route") == 0)
         rv = 0;
       if (layernum < max_copper_layer && Layer->On)
-        DrawLayerCommon (Layer, drawn_area, true);
+        dapi->draw_layer (Layer, drawn_area, NULL);
     }
   if (n_entries > 1)
     rv = 1;
