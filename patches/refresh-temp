@@ -1,0 +1,224 @@
+Bottom: 42c140ad08aa4342259b96b4d96765db015723fd
+Top:    ceeb283ec873007015fdac9b287855b8a3b3b5f6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-06 02:06:44 +0100
+
+Refresh of add-support-for-a-poured-objec-I
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index c5f3a3f..c228c87 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -650,8 +650,10 @@ CreateNewPour (LayerTypePtr Layer, FlagType Flags)
+   pour->PointN = 0;
+   pour->PointMax = 0;
+   pour->Points = NULL;
++  pour->HoleIndexN = 0;
++  pour->HoleIndexMax = 0;
++  pour->HoleIndex = NULL;
+   pour->PolygonN = 0;
+-  pour->PolygonMax = 0;
+   pour->Polygons = NULL;
+ 
+   return (pour);
+diff --git a/src/draw.c b/src/draw.c
+index ff0d663..32eb9a7 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1028,7 +1028,7 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+   struct poly_info info = {screen, Layer};
+ 
+   /* print the non-clearing polys */
+-  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
++  r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
+ 
+   /* draw all visible lines this layer */
+   r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
+diff --git a/src/file.c b/src/file.c
+index 1d09e48..a5d589c 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -163,9 +163,9 @@ static char *pcb_basename (char *p);
+ int
+ PCBFileVersionNeeded (void)
+ {
+-  ALLPOLYGON_LOOP (PCB->Data);
++  ALLPOUR_LOOP (PCB->Data);
+   {
+-    if (polygon->HoleIndexN > 0)
++    if (pour->HoleIndexN > 0)
+       return PCB_FILE_VERSION_HOLES;
+   }
+   ENDALL_LOOP;
+diff --git a/src/insert.c b/src/insert.c
+index 56f36c0..7f71bc4 100644
+--- a/src/insert.c
++++ b/src/insert.c
+@@ -140,12 +140,12 @@ InsertPointIntoLine (LayerTypePtr Layer, LineTypePtr Line)
+ 			   InsertX - X, InsertY - Y);
+   EraseLine (Line);
+   r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
+-  RestoreToPolygon (PCB->Data, LINE_TYPE, Layer, Line);
++  RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
+   Line->Point2.X = InsertX;
+   Line->Point2.Y = InsertY;
+   SetLineBoundingBox (Line);
+   r_insert_entry (Layer->line_tree, (BoxTypePtr) Line, 0);
+-  ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
++  ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
+   DrawLine (Layer, Line);
+   /* we must create after playing with Line since creation may
+    * invalidate the line pointer
+@@ -157,7 +157,7 @@ InsertPointIntoLine (LayerTypePtr Layer, LineTypePtr Line)
+     {
+       AddObjectToCreateUndoList (LINE_TYPE, Layer, line, line);
+       DrawLine (Layer, line);
+-      ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, line);
++      ClearFromPours (PCB->Data, LINE_TYPE, Layer, line);
+       /* creation call adds it to the rtree */
+     }
+   Draw ();
+diff --git a/src/move.c b/src/move.c
+index 2de6d8d..12c36b2 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -367,7 +367,7 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)
+       ErasePour (Pour);
+     }
+   r_delete_entry (Layer->pour_tree, (BoxType *)Pour);
+-  MovePourLowLevel (Pours, DeltaX, DeltaY);
++  MovePourLowLevel (Pour, DeltaX, DeltaY);
+   r_insert_entry (Layer->pour_tree, (BoxType *)Pour, 0);
+   InitPourClip (PCB->Data, Layer, Pour);
+   if (Layer->On)
+@@ -433,7 +433,7 @@ MovePourPoint (LayerTypePtr Layer, PourTypePtr Pour, PointTypePtr Point)
+   SetPourBoundingBox (Pour);
+   r_insert_entry (Layer->pour_tree, (BoxType *)Pour, 0);
+   RemoveExcessPourPoints (Layer, Pour);
+-  InitPourClip (PCB->Data, Layer, Polygon);
++  InitPourClip (PCB->Data, Layer, Pour);
+   if (Layer->On)
+     {
+       DrawPour (Layer, Pour);
+@@ -753,7 +753,7 @@ MovePourToLayer (LayerType *layer, PourType *pour)
+   if (((long int) Dest == -1) || (layer == Dest))
+     return pour;
+   AddObjectToMoveToLayerUndoList (POUR_TYPE, layer, pour, pour);
+-  if (Layer->On)
++  if (layer->On)
+     ErasePour (pour);
+ #define FIXME Later
+ #if 0
+diff --git a/src/mymem.c b/src/mymem.c
+index de1b375..fd02ffa 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -343,29 +343,22 @@ FreeText (TextType *data)
+ /* ---------------------------------------------------------------------------
+  * get next slot for a pour polygon object, allocates memory if necessary
+  */
+-PourTypePtr
+-GetPourMemory (LayerTypePtr Layer)
++PourType *
++GetPourMemory (LayerType *layer)
+ {
+-  PourTypePtr pour = Layer->Pour;
++  PourType *new_obj;
+ 
+-  /* realloc new memory if necessary and clear it */
+-  if (Layer->PourN >= Layer->PourMax)
+-    {
+-      Layer->PourMax += STEP_POUR;
+-      if (Layer->pour_tree)
+-	r_destroy_tree (&Layer->pour_tree);
+-      pour = realloc (pour, Layer->PourMax * sizeof (PourType));
+-      Layer->Pour = pour;
+-      memset (pour + Layer->PourN, 0,
+-	      STEP_POUR * sizeof (PourType));
+-      Layer->pour_tree = r_create_tree (NULL, 0, 0);
+-      POUR_LOOP (Layer);
+-      {
+-	r_insert_entry (Layer->pour_tree, (BoxType *) pour, 0);
+-      }
+-      END_LOOP;
+-    }
+-  return (pour + Layer->PourN++);
++  new_obj = g_slice_new0 (PourType);
++  layer->Pour = g_list_append (layer->Pour, new_obj);
++  layer->PourN ++;
++
++  return new_obj;
++}
++
++static void
++FreePour (PourType *data)
++{
++  g_slice_free (PourType, data);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -383,12 +376,6 @@ GetPolygonMemoryInPour (PourType *pour)
+   return new_obj;
+ }
+ 
+-static void
+-FreePolygon (PolygonType *data)
+-{
+-  g_slice_free (PolygonType, data);
+-}
+-
+ /* ---------------------------------------------------------------------------
+  * gets the next slot for a point in a polygon struct, allocates memory
+  * if necessary
+@@ -609,7 +596,7 @@ FreePourMemory (PourTypePtr Pour)
+     {
+       free (Pour->Points);
+       free (Pour->HoleIndex);
+-#define FIXME Later
++#define FIXME Later - free the polygons?
+ #if 0
+       if (Pour->Clipped)
+ 	poly_Free (&Pour->Clipped);
+diff --git a/src/parse_y.y b/src/parse_y.y
+index a9291ff..0bfb31a 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -186,7 +186,7 @@ parsepcb
+ 			 * we didn't know the layer grouping before.
+ 			 */
+ 			PCB = yyPCB;
+-			ALLPOUR (yyData);
++			ALLPOUR_LOOP (yyData);
+ 			{
+ 			  InitPourClip (yyData, layer, pour);
+ 			}
+diff --git a/src/pour.c b/src/pour.c
+index 786c7f9..8345c61 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -351,15 +351,16 @@ CopyAttachedPourToLayer (void)
+ static void *
+ DestroyPolygonInPour (PourTypePtr pour, PolygonTypePtr polygon)
+ {
+-  r_delete_entry (pour->polygon_tree, (BoxTypePtr) polygon);
++  r_delete_entry (pour->polygon_tree, (BoxType *) polygon);
+ 
+   FreePolygonMemory (polygon);
+-  *polygon = pour->Polygons[ --pour->PolygonN ];
+-  r_substitute (pour->polygon_tree,
+-                (BoxType *) & pour->Polygons[ pour->PolygonN ],
+-                (BoxType *) polygon);
+-  memset (&pour->Polygons[ pour->PolygonN ], 0, sizeof (PolygonType));
+-  return (NULL);
++
++  pour->Polygons = g_list_remove (pour->Polygons, polygon);
++  pour->PolygonN --;
++
++  g_slice_free (PolygonType, polygon);
++
++  return NULL;
+ }
+ 
+ static int
