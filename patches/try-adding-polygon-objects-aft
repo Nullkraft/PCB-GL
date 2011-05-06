@@ -1,5 +1,5 @@
-Bottom: 27a380b98ac45a2b85b70ab302d5068919746f57
-Top:    30ef4b7ac928e3c1755c2dc21ce8860f63b5cc7a
+Bottom: 5a9071c475b7a3edfae30739edd9001947bc7490
+Top:    376b0e70b9b8df75c96ccc8ed05c9d455c5fc978
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-04 22:56:59 +0000
 
@@ -16,7 +16,7 @@ Try adding polygon objects after each clipping stage. rtree->faster??
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index 0c70a8f..7573061 100644
+index 4b6ad49..42ae7ec 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -74,6 +74,8 @@ RCSID ("$Id$");
@@ -28,7 +28,7 @@ index 0c70a8f..7573061 100644
  
  Cardinal
  pour_point_idx (PourTypePtr pour, PointTypePtr point)
-@@ -528,187 +530,41 @@ struct cpInfo
+@@ -529,187 +531,41 @@ struct cpInfo
    bool solder;
    POLYAREA *pg;
    BoxType *region;
@@ -232,7 +232,7 @@ index 0c70a8f..7573061 100644
  {
    int r = 0;
    BoxType region;
-@@ -724,7 +580,6 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+@@ -725,7 +581,6 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
    info.other = here;
    info.layer = Layer;
    info.pour = pour;
@@ -240,7 +240,7 @@ index 0c70a8f..7573061 100644
    if (here)
      region = clip_box (here, &pour->BoundingBox);
    else
-@@ -735,26 +590,29 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+@@ -736,26 +591,29 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
    if (setjmp (info.env) == 0)
      {
        r = 0;
@@ -284,7 +284,7 @@ index 0c70a8f..7573061 100644
    return r;
  }
  
-@@ -925,7 +783,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -926,7 +784,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  
    if (pg == NULL)
      {
@@ -293,7 +293,7 @@ index 0c70a8f..7573061 100644
        poly_Free (&np);
        mark_islands (Data, layer, pour, type, ptr1, ptr2);
        return -1;
-@@ -940,21 +798,10 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -941,21 +799,10 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  
    if (pg == NULL)
      {
@@ -316,7 +316,7 @@ index 0c70a8f..7573061 100644
    count_all = count_added = 0;
    /* For each piece of the clipped up polygon, create a new child */
    start_pg = pg;
-@@ -988,7 +835,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -989,7 +836,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
      }
    while ((pg = tmp) != start_pg);
  
@@ -325,7 +325,7 @@ index 0c70a8f..7573061 100644
  
    return 0;
  }
-@@ -1227,19 +1074,6 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -1228,19 +1075,6 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
    unite_poly (np, &pg);
  
  
@@ -345,7 +345,7 @@ index 0c70a8f..7573061 100644
    if (pg == NULL)
      {
        printf ("Poly killed to death somehow\n");
-@@ -1279,9 +1113,9 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -1280,9 +1114,9 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
      }
    while ((pg = tmp) != start_pg);
  
@@ -357,7 +357,7 @@ index 0c70a8f..7573061 100644
  
    return 0;
  }
-@@ -1291,8 +1125,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -1292,8 +1126,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  int
  InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
  {
@@ -367,7 +367,7 @@ index 0c70a8f..7573061 100644
  
    /* Free any children we might have */
    if (pour->PolygonN)
-@@ -1312,64 +1145,37 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+@@ -1313,64 +1146,37 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
        printf ("Clipping returned NULL - can that be good?\n");
        return 0;
      }
@@ -450,7 +450,7 @@ index 0c70a8f..7573061 100644
  
    POURPOLYGON_LOOP (pour);
    {
-@@ -1522,6 +1328,7 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1523,6 +1329,7 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
    PlowPours (Data, type, ptr1, ptr2, subtract_plow, false);
