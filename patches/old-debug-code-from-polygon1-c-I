@@ -1,5 +1,5 @@
-Bottom: 9150538fa35c5595ef053b4461e55c050fd3e39f
-Top:    102c2527c4eea6a15740f5047ec7c2d31aac9c41
+Bottom: 105b90c38b294d60bc5bc584ddeec1ccbc9a755a
+Top:    8f17c689b3b53a44d4aa342edcead20964f78014
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-12 14:10:58 +0000
 
@@ -9,10 +9,10 @@ Old debug code from polygon1.c
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index cfd2baa..f75c954 100644
+index 9060e06..6ee70f8 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2234,6 +2234,136 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2231,6 +2231,136 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    while ((a = anext), *pieces != NULL && !finished);
  }
  
@@ -149,7 +149,7 @@ index cfd2baa..f75c954 100644
  static void
  M_POLYAREA_Collect_separated (jmp_buf * e, PLINE * afst, POLYAREA ** contours,
  			      PLINE ** holes, int action, BOOLp maybe)
-@@ -2387,15 +2517,68 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2384,15 +2514,68 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
