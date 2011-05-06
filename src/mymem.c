@@ -343,29 +343,22 @@ FreeText (TextType *data)
 /* ---------------------------------------------------------------------------
  * get next slot for a pour polygon object, allocates memory if necessary
  */
-PourTypePtr
-GetPourMemory (LayerTypePtr Layer)
+PourType *
+GetPourMemory (LayerType *layer)
 {
-  PourTypePtr pour = Layer->Pour;
+  PourType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Layer->PourN >= Layer->PourMax)
-    {
-      Layer->PourMax += STEP_POUR;
-      if (Layer->pour_tree)
-	r_destroy_tree (&Layer->pour_tree);
-      pour = realloc (pour, Layer->PourMax * sizeof (PourType));
-      Layer->Pour = pour;
-      memset (pour + Layer->PourN, 0,
-	      STEP_POUR * sizeof (PourType));
-      Layer->pour_tree = r_create_tree (NULL, 0, 0);
-      POUR_LOOP (Layer);
-      {
-	r_insert_entry (Layer->pour_tree, (BoxType *) pour, 0);
-      }
-      END_LOOP;
-    }
-  return (pour + Layer->PourN++);
+  new_obj = g_slice_new0 (PourType);
+  layer->Pour = g_list_append (layer->Pour, new_obj);
+  layer->PourN ++;
+
+  return new_obj;
+}
+
+static void
+FreePour (PourType *data)
+{
+  g_slice_free (PourType, data);
 }
 
 /* ---------------------------------------------------------------------------
@@ -381,12 +374,6 @@ GetPolygonMemoryInPour (PourType *pour)
   pour->PolygonN ++;
 
   return new_obj;
-}
-
-static void
-FreePolygon (PolygonType *data)
-{
-  g_slice_free (PolygonType, data);
 }
 
 /* ---------------------------------------------------------------------------
@@ -609,7 +596,7 @@ FreePourMemory (PourTypePtr Pour)
     {
       free (Pour->Points);
       free (Pour->HoleIndex);
-#define FIXME Later
+#define FIXME Later - free the polygons?
 #if 0
       if (Pour->Clipped)
 	poly_Free (&Pour->Clipped);

@@ -163,9 +163,9 @@ static char *pcb_basename (char *p);
 int
 PCBFileVersionNeeded (void)
 {
-  ALLPOLYGON_LOOP (PCB->Data);
+  ALLPOUR_LOOP (PCB->Data);
   {
-    if (polygon->HoleIndexN > 0)
+    if (pour->HoleIndexN > 0)
       return PCB_FILE_VERSION_HOLES;
   }
   ENDALL_LOOP;

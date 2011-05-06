@@ -367,7 +367,7 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)
       ErasePour (Pour);
     }
   r_delete_entry (Layer->pour_tree, (BoxType *)Pour);
-  MovePourLowLevel (Pours, DeltaX, DeltaY);
+  MovePourLowLevel (Pour, DeltaX, DeltaY);
   r_insert_entry (Layer->pour_tree, (BoxType *)Pour, 0);
   InitPourClip (PCB->Data, Layer, Pour);
   if (Layer->On)
@@ -433,7 +433,7 @@ MovePourPoint (LayerTypePtr Layer, PourTypePtr Pour, PointTypePtr Point)
   SetPourBoundingBox (Pour);
   r_insert_entry (Layer->pour_tree, (BoxType *)Pour, 0);
   RemoveExcessPourPoints (Layer, Pour);
-  InitPourClip (PCB->Data, Layer, Polygon);
+  InitPourClip (PCB->Data, Layer, Pour);
   if (Layer->On)
     {
       DrawPour (Layer, Pour);
@@ -753,7 +753,7 @@ MovePourToLayer (LayerType *layer, PourType *pour)
   if (((long int) Dest == -1) || (layer == Dest))
     return pour;
   AddObjectToMoveToLayerUndoList (POUR_TYPE, layer, pour, pour);
-  if (Layer->On)
+  if (layer->On)
     ErasePour (pour);
 #define FIXME Later
 #if 0

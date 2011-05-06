@@ -351,15 +351,16 @@ CopyAttachedPourToLayer (void)
 static void *
 DestroyPolygonInPour (PourTypePtr pour, PolygonTypePtr polygon)
 {
-  r_delete_entry (pour->polygon_tree, (BoxTypePtr) polygon);
+  r_delete_entry (pour->polygon_tree, (BoxType *) polygon);
 
   FreePolygonMemory (polygon);
-  *polygon = pour->Polygons[ --pour->PolygonN ];
-  r_substitute (pour->polygon_tree,
-                (BoxType *) & pour->Polygons[ pour->PolygonN ],
-                (BoxType *) polygon);
-  memset (&pour->Polygons[ pour->PolygonN ], 0, sizeof (PolygonType));
-  return (NULL);
+
+  pour->Polygons = g_list_remove (pour->Polygons, polygon);
+  pour->PolygonN --;
+
+  g_slice_free (PolygonType, polygon);
+
+  return NULL;
 }
 
 static int

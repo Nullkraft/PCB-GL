@@ -1028,7 +1028,7 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
   struct poly_info info = {screen, Layer};
 
   /* print the non-clearing polys */
-  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+  r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
 
   /* draw all visible lines this layer */
   r_search (Layer->line_tree, screen, NULL, line_callback, Layer);

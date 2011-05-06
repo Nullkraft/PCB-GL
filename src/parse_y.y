@@ -186,7 +186,7 @@ parsepcb
 			 * we didn't know the layer grouping before.
 			 */
 			PCB = yyPCB;
-			ALLPOUR (yyData);
+			ALLPOUR_LOOP (yyData);
 			{
 			  InitPourClip (yyData, layer, pour);
 			}

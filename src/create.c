@@ -650,8 +650,10 @@ CreateNewPour (LayerTypePtr Layer, FlagType Flags)
   pour->PointN = 0;
   pour->PointMax = 0;
   pour->Points = NULL;
+  pour->HoleIndexN = 0;
+  pour->HoleIndexMax = 0;
+  pour->HoleIndex = NULL;
   pour->PolygonN = 0;
-  pour->PolygonMax = 0;
   pour->Polygons = NULL;
 
   return (pour);
