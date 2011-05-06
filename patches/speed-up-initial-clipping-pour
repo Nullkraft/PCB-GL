@@ -1,5 +1,5 @@
-Bottom: 38ec4a164c8f64c0faa4831d701d71354c8fcb64
-Top:    114be8057234782ddf232b705a3a77d4baebea6c
+Bottom: ceeb283ec873007015fdac9b287855b8a3b3b5f6
+Top:    08e06eb84aadb05018981ec23d1da3fc9538d003
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 15:54:11 +0100
 
@@ -9,7 +9,7 @@ Speed up initial clipping (pours version of what we had before)
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index 786c7f9..ea7e3f9 100644
+index 8345c61..593e5b0 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -67,6 +67,8 @@ RCSID ("$Id$");
@@ -21,7 +21,7 @@ index 786c7f9..ea7e3f9 100644
  
  /* ---------------------------------------------------------------------------
   * local prototypes
-@@ -526,9 +528,22 @@ struct cpInfo
+@@ -527,9 +529,22 @@ struct cpInfo
    bool solder;
    POLYAREA *pg;
    BoxType *region;
@@ -44,7 +44,7 @@ index 786c7f9..ea7e3f9 100644
  static int
  pin_sub_callback (const BoxType * b, void *cl)
  {
-@@ -544,8 +559,12 @@ pin_sub_callback (const BoxType * b, void *cl)
+@@ -545,8 +560,12 @@ pin_sub_callback (const BoxType * b, void *cl)
    if (np == NULL)
      return 0;
  
@@ -59,7 +59,7 @@ index 786c7f9..ea7e3f9 100644
    return 1;
  }
  
-@@ -566,8 +585,12 @@ arc_sub_callback (const BoxType * b, void *cl)
+@@ -567,8 +586,12 @@ arc_sub_callback (const BoxType * b, void *cl)
    if (np == NULL)
      return 0;
  
@@ -74,7 +74,7 @@ index 786c7f9..ea7e3f9 100644
    return 1;
  }
  
-@@ -711,18 +734,23 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+@@ -712,18 +735,23 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
  
    if (setjmp (info.env) == 0)
      {
