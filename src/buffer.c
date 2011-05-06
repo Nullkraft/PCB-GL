@@ -247,9 +247,9 @@ AddElementToBuffer (ElementTypePtr Element)
 static void *
 MoveViaToBuffer (PinType *via)
 {
+  r_delete_entry (Source->via_tree, (BoxType *) via);
   RestoreToPours (Source, VIA_TYPE, via, via);
 
-  r_delete_entry (Source->via_tree, (BoxType *) via);
   Source->Via = g_list_remove (Source->Via, via);
   Source->ViaN --;
   Dest->Via = g_list_append (Dest->Via, via);
@@ -293,8 +293,8 @@ MoveLineToBuffer (LayerType *layer, LineType *line)
 {
   LayerTypePtr lay = &Dest->Layer[GetLayerNumber (Source, layer)];
 
-  RestoreToPours (Source, LINE_TYPE, layer, line);
   r_delete_entry (layer->line_tree, (BoxType *)line);
+  RestoreToPours (Source, LINE_TYPE, layer, line);
 
   layer->Line = g_list_remove (layer->Line, line);
   layer->LineN --;
@@ -318,8 +318,8 @@ MoveArcToBuffer (LayerType *layer, ArcType *arc)
 {
   LayerType *lay = &Dest->Layer[GetLayerNumber (Source, layer)];
 
-  RestoreToPours (Source, ARC_TYPE, layer, arc);
   r_delete_entry (layer->arc_tree, (BoxType *)arc);
+  RestoreToPours (Source, ARC_TYPE, layer, arc);
 
   layer->Arc = g_list_remove (layer->Arc, arc);
   layer->ArcN --;
