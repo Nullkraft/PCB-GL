@@ -69,6 +69,7 @@ PourTypePtr CreateNewPour (LayerTypePtr, FlagType);
 PointTypePtr CreateNewPointInPour (PourTypePtr,
 				      LocationType, LocationType);
 PourType *CreateNewHoleInPour (PourType *);
+void RefdesMapInit (void);
 ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
 				 FontTypePtr, FlagType, char *, char *,
 				 char *, LocationType, LocationType, BYTE,
