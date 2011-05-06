@@ -1,5 +1,5 @@
-Bottom: 3edf60ce6d7c1795facadc7677adac4911c8d3ec
-Top:    fc996c8d7ae50bdfb3cadd4d39762c81238ee5d2
+Bottom: 4c4025fc0826219a4d90f9c1b214bfcfef9146a5
+Top:    b0180a3442c84191050bdb9eea803d6aed85cc93
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 15:54:12 +0100
 
@@ -24,7 +24,7 @@ Add magic flag to stop pour clipping for off-screen buffers
 ---
 
 diff --git a/src/create.c b/src/create.c
-index e244739..4cb1a08 100644
+index c228c87..a2b1ed6 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -151,6 +151,7 @@ CreateNewPCB (bool SetDefaultNames)
@@ -36,10 +36,10 @@ index e244739..4cb1a08 100644
    ptr->ThermStyle = 4;
    ptr->IsleArea = 2.e8;
 diff --git a/src/global.h b/src/global.h
-index 3f7166c..dac0744 100644
+index 7c0d2ed..43ab6f6 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -419,6 +419,7 @@ typedef struct			/* holds all objects */
+@@ -405,6 +405,7 @@ typedef struct			/* holds all objects */
     *rat_tree;
    struct PCBType *pcb;
    LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
@@ -48,10 +48,10 @@ index 3f7166c..dac0744 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/pour.c b/src/pour.c
-index ea7e3f9..624c55f 100644
+index 593e5b0..2bb9918 100644
 --- a/src/pour.c
 +++ b/src/pour.c
-@@ -1388,6 +1388,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1389,6 +1389,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
  void
  RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  {
@@ -60,7 +60,7 @@ index ea7e3f9..624c55f 100644
    if (type == POUR_TYPE)
      {
  #warning FIXME Later: Why do we need to do this?
-@@ -1400,6 +1402,8 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1401,6 +1403,8 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  void
  ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
  {
