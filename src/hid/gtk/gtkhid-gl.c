@@ -11,7 +11,6 @@
 #include "../hidint.h"
 #include "gui.h"
 #include "draw.h"
-#include "draw_funcs.h"
 #include "rtree.h"
 #include "polygon.h"
 #include "gui-pinout-preview.h"
@@ -1785,7 +1784,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
     if (PCB->ElementOn) {
       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-      dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
+      draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
     }
     if (global_view_2d) {
       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
