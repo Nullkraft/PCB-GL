@@ -1,5 +1,5 @@
-Bottom: a7d67602d32e8602b938b31b8d3160006bf432d2
-Top:    e978dc7ac0adf7cabae561b9be6afc0ff61df552
+Bottom: 0a9abc208d5641c9a18eb6131d4b4dde47256e3f
+Top:    58b5956bb7e9fa9dd5c90871d5ff8221b09c3767
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:56 +0100
 
@@ -13,10 +13,10 @@ file during the fab drawing output.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 262dfec..ff98a15 100644
+index 234e2ec..6dcfc9a 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -799,10 +799,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -694,10 +694,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
            strcmp (Layer->Name, "route") == 0)
          rv = 0;
        if (layernum < max_copper_layer && Layer->On)
