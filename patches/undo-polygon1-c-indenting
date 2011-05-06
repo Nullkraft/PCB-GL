@@ -1,5 +1,5 @@
-Bottom: 102c2527c4eea6a15740f5047ec7c2d31aac9c41
-Top:    27a380b98ac45a2b85b70ab302d5068919746f57
+Bottom: 8f17c689b3b53a44d4aa342edcead20964f78014
+Top:    5a9071c475b7a3edfae30739edd9001947bc7490
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-12 14:10:58 +0000
 
@@ -9,10 +9,10 @@ Undo polygon1.c indenting
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f75c954..41550e4 100644
+index 6ee70f8..c161e50 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -742,9 +742,9 @@ get_seg (const BoxType * b, void *cl)
+@@ -739,9 +739,9 @@ get_seg (const BoxType * b, void *cl)
  static int
  contour_bounds_touch (const BoxType * b, void *cl)
  {
@@ -24,7 +24,7 @@ index f75c954..41550e4 100644
    PLINE *rtree_over;
    PLINE *looping_over;
    VNODE *av;			/* node iterators */
-@@ -764,17 +764,17 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -761,17 +761,17 @@ contour_bounds_touch (const BoxType * b, void *cl)
     */
    if (pa->Count < pb->Count)
      {
@@ -45,7 +45,7 @@ index f75c954..41550e4 100644
      {
        /* check this edge for any insertions */
        double dx;
-@@ -782,28 +782,28 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -779,28 +779,28 @@ contour_bounds_touch (const BoxType * b, void *cl)
        /* compute the slant for region trimming */
        dx = av->next->point[0] - av->point[0];
        if (dx == 0)
@@ -85,7 +85,7 @@ index f75c954..41550e4 100644
  
        /* NB: If this actually hits anything, we are teleported back to the beginning */
        info.tree = rtree_over->tree;
-@@ -851,16 +851,16 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -848,16 +848,16 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        c_info.pa = pa;
  
        if (!add)
@@ -112,7 +112,7 @@ index f75c954..41550e4 100644
  
        sb.X1 = pa->xmin;
        sb.Y1 = pa->ymin;
-@@ -902,8 +902,7 @@ static int
+@@ -899,8 +899,7 @@ static int
  intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
  {
    int call_count = 1;
@@ -122,7 +122,7 @@ index f75c954..41550e4 100644
    return 0;
  }
  
-@@ -1004,7 +1003,7 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
+@@ -1001,7 +1000,7 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
  /* Routines for making labels */
  
  static int
@@ -131,7 +131,7 @@ index f75c954..41550e4 100644
  {
    PLINE *me = (PLINE *) cl;
    PLINE *check = (PLINE *) b;
-@@ -1042,22 +1041,19 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+@@ -1039,22 +1038,19 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
  	break;
        outer = (POLYAREA *) heap_remove_smallest (heap);
  
@@ -167,7 +167,7 @@ index f75c954..41550e4 100644
      }
    while (1);
    heap_destroy (&heap);
-@@ -1173,11 +1169,10 @@ M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
+@@ -1170,11 +1166,10 @@ M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
  {
    PLINE *curc = afst;
  
@@ -183,7 +183,7 @@ index f75c954..41550e4 100644
    return FALSE;
  }
  
-@@ -1230,7 +1225,7 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
+@@ -1227,7 +1222,7 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
  
  static void
  PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
@@ -192,7 +192,7 @@ index f75c954..41550e4 100644
  {
    assert (cntr != NULL);
    assert (cntr->Count > 2);
-@@ -1239,7 +1234,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1236,7 +1231,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
    if (cntr->Flags.orient == PLF_DIR)
      {
        if (owner != NULL)
@@ -201,7 +201,7 @@ index f75c954..41550e4 100644
        InsCntr (e, cntr, contours);
      }
    /* put hole into temporary list */
-@@ -1250,28 +1245,28 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1247,28 +1242,28 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
  	{
  	  cntr->next = parent_contour->next;
  	  parent_contour->next = cntr;
@@ -242,7 +242,7 @@ index f75c954..41550e4 100644
  {
    if (piece->contours == contour)
      piece->contours = contour->next;
-@@ -1284,7 +1279,7 @@ remove_contour (POLYAREA * piece, PLINE * prev_contour, PLINE * contour,
+@@ -1281,7 +1276,7 @@ remove_contour (POLYAREA * piece, PLINE * prev_contour, PLINE * contour,
    contour->next = NULL;
  
    if (remove_rtree_entry)
@@ -251,7 +251,7 @@ index f75c954..41550e4 100644
  }
  
  struct polyarea_info
-@@ -1297,23 +1292,22 @@ static int
+@@ -1294,23 +1289,22 @@ static int
  heap_it (const BoxType * b, void *cl)
  {
    heap_t *heap = (heap_t *) cl;
@@ -279,7 +279,7 @@ index f75c954..41550e4 100644
  {
    struct find_inside_info *info = (struct find_inside_info *) cl;
    PLINE *check = (PLINE *) b;
-@@ -1351,7 +1345,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1348,7 +1342,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
    curc = dest;
    do
      {
@@ -288,7 +288,7 @@ index f75c954..41550e4 100644
      }
    while ((curc = curc->f) != dest);
  
-@@ -1399,7 +1393,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1396,7 +1390,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
        pa_info = (struct polyarea_info *) heap_remove_smallest (heap);
        if (heap_is_empty (heap))
  	{			/* only one possibility it must be the right one */
@@ -297,7 +297,7 @@ index f75c954..41550e4 100644
  	  container = pa_info->pa->contours;
  	}
        else
-@@ -1692,37 +1686,37 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1689,37 +1683,37 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
  }				/* Gather */
  
  static void
@@ -359,7 +359,7 @@ index f75c954..41550e4 100644
  }
  
  static void
-@@ -1734,21 +1728,20 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
+@@ -1731,21 +1725,20 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
  
    cur = &a->head;
    do
@@ -389,7 +389,7 @@ index f75c954..41550e4 100644
  {
    PLINE *tmprev;
  
-@@ -1796,7 +1789,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1793,7 +1786,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	      PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
  	      return TRUE;
  	    }
@@ -398,7 +398,7 @@ index f75c954..41550e4 100644
  	case PBO_UNITE:
  	case PBO_SUB:
  	  if ((*A)->Flags.status == OUTSIDE)
-@@ -1805,8 +1798,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1802,8 +1795,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	      /* disappear this contour (rtree entry removed in PutContour) */
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
@@ -408,7 +408,7 @@ index f75c954..41550e4 100644
  	      return TRUE;
  	    }
  	  break;
-@@ -1872,21 +1864,21 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1869,21 +1861,21 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  
  
  static inline int
@@ -433,7 +433,7 @@ index f75c954..41550e4 100644
  {
    /* If this item was the start of the list, advance that pointer */
    if (*list == piece)
-@@ -1903,7 +1895,7 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
+@@ -1900,7 +1892,7 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
  
  static void
  M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
@@ -442,7 +442,7 @@ index f75c954..41550e4 100644
  {
    POLYAREA *a = *pieces;
    POLYAREA *anext;
-@@ -1914,88 +1906,75 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
+@@ -1911,88 +1903,75 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
      return;
  
    /* TODO: STASH ENOUGH INFORMATION EARLIER ON, SO WE CAN REMOVE THE INTERSECTED
@@ -578,7 +578,7 @@ index f75c954..41550e4 100644
  {
    struct find_inside_m_pa_info *info = (struct find_inside_m_pa_info *) cl;
    PLINE *check = (PLINE *) b;
-@@ -2005,18 +1984,17 @@ find_inside_m_pa (const BoxType * b, void *cl)
+@@ -2002,18 +1981,17 @@ find_inside_m_pa (const BoxType * b, void *cl)
    /* Don't look at contours marked as being intersected */
    if (check->Flags.status == ISECTED)
      return 0;
@@ -602,7 +602,7 @@ index f75c954..41550e4 100644
  {
    POLYAREA *a = *pieces;
    POLYAREA *b;
-@@ -2031,8 +2009,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2028,8 +2006,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    if (a == NULL)
      return;
  
@@ -612,7 +612,7 @@ index f75c954..41550e4 100644
      case PBO_ISECT:
        del_outside = 1;
        break;
-@@ -2040,204 +2017,176 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2037,204 +2014,176 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
      case PBO_SUB:
        del_inside = 1;
        break;
@@ -952,7 +952,7 @@ index f75c954..41550e4 100644
  {
    POLYAREA *a = *pieces;
    POLYAREA *anext;
-@@ -2250,8 +2199,7 @@ M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
+@@ -2247,8 +2196,7 @@ M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
    if (a == NULL)
      return;
  
@@ -962,7 +962,7 @@ index f75c954..41550e4 100644
      case PBO_ISECT:
        del_outside = 1;
        break;
-@@ -2261,122 +2209,103 @@ M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
+@@ -2258,122 +2206,103 @@ M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
      case PBO_SUB:
        del_inside = 1;
        break;
@@ -1163,7 +1163,7 @@ index f75c954..41550e4 100644
  }
  
  static void
-@@ -2384,7 +2313,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -2381,7 +2310,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
  		    PLINE ** holes, int action, BOOLp maybe)
  {
    POLYAREA *a = afst;
@@ -1172,7 +1172,7 @@ index f75c954..41550e4 100644
    PLINE **cur, **next, *parent_contour;
  
    assert (a != NULL);
-@@ -2393,35 +2322,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -2390,35 +2319,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
    do
      {
        if (maybe && a->contours->Flags.status != ISECTED)
@@ -1230,7 +1230,7 @@ index f75c954..41550e4 100644
      }
    while ((a = a->f) != afst);
  }
-@@ -2519,53 +2448,45 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2516,53 +2445,45 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  
  #if 0
  /* SANITY CHECK */
@@ -1322,7 +1322,7 @@ index f75c954..41550e4 100644
  /* END SANITY CHECK */
  #endif
  
-@@ -2581,17 +2502,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2578,17 +2499,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  //      M_POLYAREA_update_primary_old (&e, res, &holes, &a_isected, action);
        M_POLYAREA_separate_isected (&e, res, &holes, &a_isected);
        M_POLYAREA_label_separated (a_isected, b, FALSE);
@@ -1345,7 +1345,7 @@ index f75c954..41550e4 100644
  
        InsertHoles (&e, *res, &holes);
      }
-@@ -2657,7 +2577,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -2654,7 +2574,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
     * Since the outer contour is by always piereced by the no-holes dicer,
     * every contour within is going to be relegated to the hole insersion queue.
     */
@@ -1354,7 +1354,7 @@ index f75c954..41550e4 100644
    code2 = poly_Boolean_free (ac, bc, aminusb, PBO_SUB);
  
    if (code1)
-@@ -2771,10 +2691,10 @@ poly_DelContour (PLINE ** c)
+@@ -2768,10 +2688,10 @@ poly_DelContour (PLINE ** c)
      {
        prev = cur->prev;
        if (cur->cvc_next != NULL)
@@ -1369,7 +1369,7 @@ index f75c954..41550e4 100644
        free (cur);
      }
    if ((*c)->head.cvc_next != NULL)
-@@ -2973,7 +2893,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+@@ -2970,7 +2890,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
      {
        if (!poly_CopyContour (last, cur))
  	return FALSE;
@@ -1378,7 +1378,7 @@ index f75c954..41550e4 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -3317,7 +3237,7 @@ poly_Create (void)
+@@ -3314,7 +3234,7 @@ poly_Create (void)
  }
  
  void
@@ -1387,7 +1387,7 @@ index f75c954..41550e4 100644
  {
    PLINE *pl;
  
-@@ -3376,7 +3296,7 @@ poly_ChkContour (PLINE * a)
+@@ -3373,7 +3293,7 @@ poly_ChkContour (PLINE * a)
    VNODE *a1, *a2, *a2_start, *hit1, *hit2;
    Vector i1, i2;
    int icnt;
@@ -1396,7 +1396,7 @@ index f75c954..41550e4 100644
  
  #warning FIXME Later: Deliberately disabled this test - seems something strange is going on
    return FALSE;
-@@ -3393,13 +3313,12 @@ poly_ChkContour (PLINE * a)
+@@ -3390,13 +3310,12 @@ poly_ChkContour (PLINE * a)
  				    a2->point, a2->next->point, i1, i2)) > 0)
  	    {
  	      if (icnt > 1)
