@@ -1,0 +1,259 @@
+Bottom: c1082c9658b19443f862f1ee2cd91e412963ed68
+Top:    a645d44201a3244c552a209dcac2ccd34bd2bd74
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-06 02:13:23 +0100
+
+Refresh of island-removal-fixes
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 243eb8c..8bbbe4a 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -247,9 +247,9 @@ AddElementToBuffer (ElementTypePtr Element)
+ static void *
+ MoveViaToBuffer (PinType *via)
+ {
++  r_delete_entry (Source->via_tree, (BoxType *) via);
+   RestoreToPours (Source, VIA_TYPE, via, via);
+ 
+-  r_delete_entry (Source->via_tree, (BoxType *) via);
+   Source->Via = g_list_remove (Source->Via, via);
+   Source->ViaN --;
+   Dest->Via = g_list_append (Dest->Via, via);
+@@ -293,8 +293,8 @@ MoveLineToBuffer (LayerType *layer, LineType *line)
+ {
+   LayerTypePtr lay = &Dest->Layer[GetLayerNumber (Source, layer)];
+ 
+-  RestoreToPours (Source, LINE_TYPE, layer, line);
+   r_delete_entry (layer->line_tree, (BoxType *)line);
++  RestoreToPours (Source, LINE_TYPE, layer, line);
+ 
+   layer->Line = g_list_remove (layer->Line, line);
+   layer->LineN --;
+@@ -318,8 +318,8 @@ MoveArcToBuffer (LayerType *layer, ArcType *arc)
+ {
+   LayerType *lay = &Dest->Layer[GetLayerNumber (Source, layer)];
+ 
+-  RestoreToPours (Source, ARC_TYPE, layer, arc);
+   r_delete_entry (layer->arc_tree, (BoxType *)arc);
++  RestoreToPours (Source, ARC_TYPE, layer, arc);
+ 
+   layer->Arc = g_list_remove (layer->Arc, arc);
+   layer->ArcN --;
+diff --git a/src/change.c b/src/change.c
+index e7074bb..2e5a5b2 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -491,10 +491,10 @@ ChangeViaClearSize (PinTypePtr Via)
+     value = PCB->Bloat * 2 + 2;
+   if (Via->Clearance == value)
+     return NULL;
++  r_delete_entry (PCB->Data->via_tree, (BoxType *) Via);
+   RestoreToPours (PCB->Data, VIA_TYPE, Via, Via);
+   AddObjectToClearSizeUndoList (VIA_TYPE, Via, Via, Via);
+   EraseVia (Via);
+-  r_delete_entry (PCB->Data->via_tree, (BoxType *) Via);
+   Via->Clearance = value;
+   SetPinBoundingBox (Via);
+   r_insert_entry (PCB->Data->via_tree, (BoxType *) Via, 0);
+@@ -557,10 +557,10 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
+     value = PCB->Bloat * 2 + 2;
+   if (Pin->Clearance == value)
+     return NULL;
++  r_delete_entry (PCB->Data->pin_tree, &Pin->BoundingBox);
+   RestoreToPours (PCB->Data, PIN_TYPE, Element, Pin);
+   AddObjectToClearSizeUndoList (PIN_TYPE, Element, Pin, Pin);
+   ErasePin (Pin);
+-  r_delete_entry (PCB->Data->pin_tree, &Pin->BoundingBox);
+   Pin->Clearance = value;
+   /* SetElementBB updates all associated rtrees */
+   SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
+@@ -584,9 +584,9 @@ ChangePadSize (ElementTypePtr Element, PadTypePtr Pad)
+     {
+       AddObjectToSizeUndoList (PAD_TYPE, Element, Pad, Pad);
+       AddObjectToMaskSizeUndoList (PAD_TYPE, Element, Pad, Pad);
++      r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
+       RestoreToPours (PCB->Data, PAD_TYPE, Element, Pad);
+       ErasePad (Pad);
+-      r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
+       Pad->Mask += value - Pad->Thickness;
+       Pad->Thickness = value;
+       /* SetElementBB updates all associated rtrees */
+@@ -619,9 +619,9 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
+   if (value == Pad->Clearance)
+     return NULL;
+   AddObjectToClearSizeUndoList (PAD_TYPE, Element, Pad, Pad);
++  r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
+   RestoreToPours (PCB->Data, PAD_TYPE, Element, Pad);
+   ErasePad (Pad);
+-  r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
+   Pad->Clearance = value;
+   /* SetElementBB updates all associated rtrees */
+   SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
+@@ -749,9 +749,9 @@ ChangeLineClearSize (LayerTypePtr Layer, LineTypePtr Line)
+   if (value != Line->Clearance)
+     {
+       AddObjectToClearSizeUndoList (LINE_TYPE, Layer, Line, Line);
++      r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
+       RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
+       EraseLine (Line);
+-      r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
+       Line->Clearance = value;
+       if (Line->Clearance == 0)
+ 	{
+diff --git a/src/misc.c b/src/misc.c
+index c90ebb6..903422c 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -1682,8 +1682,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+       new_da = 360;
+       new_sa = 0;
+     }
+-  RestoreToPours (PCB->Data, ARC_TYPE, Layer, a);
+   r_delete_entry (Layer->arc_tree, (BoxTypePtr) a);
++  RestoreToPours (PCB->Data, ARC_TYPE, Layer, a);
+   AddObjectToChangeAnglesUndoList (ARC_TYPE, a, a, a);
+   a->StartAngle = new_sa;
+   a->Delta = new_da;
+diff --git a/src/move.c b/src/move.c
+index bb3aed3..6fa6d73 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -282,8 +282,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
+ {
+   if (Layer->On)
+     EraseLine (Line);
+-  RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
+   r_delete_entry (Layer->line_tree, (BoxType *)Line);
++  RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
+   MOVE_LINE_LOWLEVEL (Line, DeltaX, DeltaY);
+   r_insert_entry (Layer->line_tree, (BoxType *)Line, 0);
+   ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
+@@ -301,8 +301,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
+ static void *
+ MoveArc (LayerTypePtr Layer, ArcTypePtr Arc)
+ {
+-  RestoreToPours (PCB->Data, ARC_TYPE, Layer, Arc);
+   r_delete_entry (Layer->arc_tree, (BoxType *)Arc);
++  RestoreToPours (PCB->Data, ARC_TYPE, Layer, Arc);
+   if (Layer->On)
+     {
+       EraseArc (Arc);
+@@ -325,8 +325,8 @@ MoveArc (LayerTypePtr Layer, ArcTypePtr Arc)
+ static void *
+ MoveText (LayerTypePtr Layer, TextTypePtr Text)
+ {
+-  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
+   r_delete_entry (Layer->text_tree, (BoxType *)Text);
++  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
+   if (Layer->On)
+     {
+       EraseText (Layer, Text);
+@@ -388,8 +388,8 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
+     {
+       if (Layer->On)
+ 	EraseLine (Line);
+-      RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
+       r_delete_entry (Layer->line_tree, &Line->BoundingBox);
++      RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
+       MOVE (Point->X, Point->Y, DeltaX, DeltaY);
+       SetLineBoundingBox (Line);
+       r_insert_entry (Layer->line_tree, &Line->BoundingBox, 0);
+@@ -649,8 +649,8 @@ static void *
+ MoveTextToLayerLowLevel (LayerType *Source, TextType *text,
+ 			 LayerType *Destination)
+ {
+-  RestoreToPours (PCB->Data, TEXT_TYPE, Source, text);
+   r_delete_entry (Source->text_tree, (BoxType *)text);
++  RestoreToPours (PCB->Data, TEXT_TYPE, Source, text);
+ 
+   Source->Text = g_list_remove (Source->Text, text);
+   Destination->Text = g_list_append (Destination->Text, text);
+diff --git a/src/pour.c b/src/pour.c
+index e03a621..75bfa9c 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -824,7 +824,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+ 
+   if (np == NULL)
+     {
+-      printf ("Didn't get a POLYAREA to subtract, so bailing\n");
++      mark_islands (Data, layer, pour, type, ptr1, ptr2);
++      // printf ("Didn't get a POLYAREA to subtract, so bailing\n");
+       return 0;
+     }
+ 
+@@ -874,6 +875,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+     {
+       printf ("Hmm, got pg == NULL in subtract_plow\n");
+       poly_Free (&np);
++      mark_islands (Data, layer, pour, type, ptr1, ptr2);
+       return -1;
+     }
+ 
+@@ -1099,6 +1101,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+   if (np == NULL)
+     {
+       printf ("Didn't get a POLYAREA to add, so bailing\n");
++      mark_islands (Data, layer, pour, type, ptr1, ptr2);
+       return 0;
+     }
+ 
+@@ -1109,6 +1112,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+   if (np == NULL)
+     {
+       printf ("POLYAREA to add got clipped away, so bailing\n");
++      mark_islands (Data, layer, pour, type, ptr1, ptr2);
+       return 0;
+     }
+ 
+@@ -1390,9 +1394,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+     case POLYGON_TYPE:
+     case POUR_TYPE:
+       /* the cast works equally well for lines and arcs */
+-      if (!ignore_clearflags &&
+-          !TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
+-        return 0;
++// NEED TO KEEP GOING FOR POURS
++//      if (!ignore_clearflags &&
++//          !TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
++//        return 0;
+       /* silk doesn't plow */
+       if (GetLayerNumber (Data, ptr1) >= max_copper_layer)
+         return 0;
+diff --git a/src/rotate.c b/src/rotate.c
+index eda827c..0bada91 100644
+--- a/src/rotate.c
++++ b/src/rotate.c
+@@ -181,8 +181,8 @@ static void *
+ RotateText (LayerTypePtr Layer, TextTypePtr Text)
+ {
+   EraseText (Layer, Text);
+-  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
+   r_delete_entry (Layer->text_tree, (BoxTypePtr) Text);
++  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
+   RotateTextLowLevel (Text, CenterX, CenterY, Number);
+   r_insert_entry (Layer->text_tree, (BoxTypePtr) Text, 0);
+   ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
+@@ -276,8 +276,8 @@ RotateLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
+   EraseLine (Line);
+   if (Layer)
+     {
+-      RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
+       r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
++      RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
+     }
+   else
+     r_delete_entry (PCB->Data->rat_tree, (BoxTypePtr) Line);
+@@ -390,8 +390,8 @@ RotateObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+       EraseLine (ptr->Line);
+       if (ptr->Layer)
+ 	{
+-	  RestoreToPours (PCB->Data, LINE_TYPE, ptr->Layer, ptr->Line);
+ 	  r_delete_entry (ptr->Layer->line_tree, (BoxType *) ptr->Line);
++	  RestoreToPours (PCB->Data, LINE_TYPE, ptr->Layer, ptr->Line);
+ 	}
+       else
+ 	r_delete_entry (PCB->Data->rat_tree, (BoxType *) ptr->Line);
