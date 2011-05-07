@@ -3,7 +3,7 @@ Top:    4370cb1efb3b3895d7330a6de29b0346df1d69b9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
-Add raw polygons support for the GTK HID, bypassing the no-holes dicer
+Add raw polygons support for the GTK+GL HID, bypassing the no-holes dicer
 
 Uses the OpenGL stencil buffer to make drawing polygons with holes faster.
 
@@ -14,9 +14,9 @@ Uses the OpenGL stencil buffer to make drawing polygons with holes faster.
 5. Paint outer polygon through areas of the stencil buffer still 0
 6. Clear stencil buffer, switch off stencilling.
 
-** BUGS? **
+BUGS?
 
-Probably throws up if the function is used whilst drawing the mask,
+Might throw up if the function is used whilst drawing the mask,
 since that uses stenciling as well, and they don't know to co-operate.
 
 For now, we don't use polygons on the mask, so its not a a problem (?).
