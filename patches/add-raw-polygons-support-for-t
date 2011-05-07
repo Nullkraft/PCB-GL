@@ -14,13 +14,11 @@ Uses the OpenGL stencil buffer to make drawing polygons with holes faster.
 5. Paint outer polygon through areas of the stencil buffer still 0
 6. Clear stencil buffer, switch off stencilling.
 
-BUGS?
+Caveat:
 
-Might throw up if the function is used whilst drawing the mask,
-since that uses stenciling as well, and they don't know to co-operate.
-
-For now, we don't use polygons on the mask, so its not a a problem (?).
-(OR do we.. for some pins?)
+This function might throw up if it is used whilst drawing the mask, since
+that uses stenciling as well. We don't use polygons on the mask, so its
+not a a problem. (Mask cutouts for octagonal pins do work correctly).
 
 
 ---
