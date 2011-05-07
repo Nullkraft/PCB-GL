@@ -1,0 +1,52 @@
+Bottom: b266fcc46a33660a12c0c94174fe9d092085c3a6
+Top:    728f68805c1a2a581049a64d5da3ba4518a726b6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-07 17:45:58 +0100
+
+Refresh of add-raw-polygons-support-for-t
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index b1efe7b..64639d5 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -629,23 +629,23 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+ 
+   glClearStencil (0);
+   glClear (GL_STENCIL_BUFFER_BIT);
+-  glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
++  glColorMask (0, 0, 0, 0);                   /* Disable writting in color buffer */
+   glEnable (GL_STENCIL_TEST);
+ 
+   i = 0;
+   cc = 1;
+ 
+   /* Drawing operations set the stencil buffer to '1' */
+-  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
++  glStencilFunc (GL_ALWAYS, 1, 1);            /* Test always passes, value written 1 */
++  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
+ 
+   r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+   hidgl_flush_triangles (&buffer);
+ 
+   /* Drawing operations as masked to areas where the stencil buffer is '1' */
+-  glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
+-  glStencilFunc (GL_EQUAL, 0, 1);             // Draw only where stencil buffer is 0
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
++  glColorMask (1, 1, 1, 1);                   /* Enable drawing of r, g, b & a */
++  glStencilFunc (GL_EQUAL, 0, 1);             /* Draw only where stencil buffer is 0 */
++  glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    /* Stencil buffer read only */
+ 
+   /* Draw the polygon outer */
+   gluTessBeginPolygon (info.tobj, NULL);
+@@ -654,7 +654,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   hidgl_flush_triangles (&buffer);
+ 
+   glClear (GL_STENCIL_BUFFER_BIT);
+-  glDisable (GL_STENCIL_TEST);                // Disable Stencil test
++  glDisable (GL_STENCIL_TEST);                /* Disable Stencil test */
+ 
+   gluDeleteTess (info.tobj);
+   myFreeCombined ();
