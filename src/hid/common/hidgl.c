@@ -629,23 +629,23 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 
   glClearStencil (0);
   glClear (GL_STENCIL_BUFFER_BIT);
-  glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
+  glColorMask (0, 0, 0, 0);                   /* Disable writting in color buffer */
   glEnable (GL_STENCIL_TEST);
 
   i = 0;
   cc = 1;
 
   /* Drawing operations set the stencil buffer to '1' */
-  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+  glStencilFunc (GL_ALWAYS, 1, 1);            /* Test always passes, value written 1 */
+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
 
   r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
   hidgl_flush_triangles (&buffer);
 
   /* Drawing operations as masked to areas where the stencil buffer is '1' */
-  glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
-  glStencilFunc (GL_EQUAL, 0, 1);             // Draw only where stencil buffer is 0
-  glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
+  glColorMask (1, 1, 1, 1);                   /* Enable drawing of r, g, b & a */
+  glStencilFunc (GL_EQUAL, 0, 1);             /* Draw only where stencil buffer is 0 */
+  glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    /* Stencil buffer read only */
 
   /* Draw the polygon outer */
   gluTessBeginPolygon (info.tobj, NULL);
@@ -654,7 +654,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   hidgl_flush_triangles (&buffer);
 
   glClear (GL_STENCIL_BUFFER_BIT);
-  glDisable (GL_STENCIL_TEST);                // Disable Stencil test
+  glDisable (GL_STENCIL_TEST);                /* Disable Stencil test */
 
   gluDeleteTess (info.tobj);
   myFreeCombined ();
