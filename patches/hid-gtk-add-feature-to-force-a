@@ -1,5 +1,5 @@
-Bottom: 927d8424df1eff935733aa2931b075903bf7d89e
-Top:    422a52667ed2cf058851a4cd43718132c934c53b
+Bottom: 1c64168649b10f7968837df55a9274d0ae944b12
+Top:    728f68805c1a2a581049a64d5da3ba4518a726b6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:50 +0100
 
@@ -16,7 +16,7 @@ mainloop is not hit until the auto-routing operation is fully complete.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 385351e..253ff3f 100644
+index 7916b41..7dae38e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -43,6 +43,7 @@ typedef struct render_priv {
@@ -27,7 +27,7 @@ index 385351e..253ff3f 100644
  } render_priv;
  
  
-@@ -532,10 +533,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
+@@ -540,10 +541,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
    ghid_invalidate_all ();
  }
  
@@ -45,7 +45,7 @@ index 385351e..253ff3f 100644
  }
  
  void
-@@ -733,6 +741,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -741,6 +749,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  
    port->render_priv = priv = g_new0 (render_priv, 1);
  
@@ -54,7 +54,7 @@ index 385351e..253ff3f 100644
    gtk_gl_init(argc, argv);
  
    /* setup GL-context */
-@@ -807,6 +817,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -815,6 +825,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -62,7 +62,7 @@ index 385351e..253ff3f 100644
    BoxType region;
  
    ghid_start_drawing (port);
-@@ -882,6 +893,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -890,6 +901,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_end_drawing (port);
  
