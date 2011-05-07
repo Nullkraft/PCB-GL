@@ -120,7 +120,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
   CHECK_IS_IN_CONTEXT ();
 
   buffer->use_vbo = true;
-  // buffer->use_vbo = false;
+  /* buffer->use_vbo = false; */
 
   if (buffer->use_vbo) {
     glGenBuffers (1, &buffer->vbo_id);
@@ -831,14 +831,23 @@ do_hole (const BoxType *b, void *cl)
   return 1;
 }
 
+static bool
+polygon_contains_user_holes (PolygonType *polygon)
+{
+  return (polygon->HoleIndexN > 0);
+}
+
+
 static GLint stencil_bits;
 static int dirty_bits = 0;
 static int assigned_bits = 0;
 
 /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
 void
-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool force_new_stencil */)
 {
+  bool force_new_stencil = false;
+  bool use_new_stencil;
   int stencil_bit;
 
   CHECK_IS_IN_CONTEXT ();
@@ -849,58 +858,69 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
       return;
     }
 
-  if (poly->Clipped->contour_tree->size > 1) {
-    /* Polygon has holes */
+  if (poly->Clipped->contour_tree->size == 1)
+    {
+      /* Polygon does not have holes */
+      fill_contour (poly->Clipped->contours);
+      return;
+    }
 
-    stencil_bit = hidgl_assign_clear_stencil_bit ();
-    if (!stencil_bit)
-      {
-        printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
-        /* XXX: Could use the GLU tesselator or the full BO polygon tesselator */
-        return;
-      }
+  /* Polygon has holes.. does it have any user-drawn holes?
+   * If so, it must be masked with a _new_ stencil bit.
+   */
+  use_new_stencil = force_new_stencil | polygon_contains_user_holes (poly);
 
-    /* Flush out any existing geoemtry to be rendered */
-    hidgl_flush_triangles (&buffer);
+  if (use_new_stencil)
+    {
+      stencil_bit = hidgl_assign_clear_stencil_bit ();
+      if (!stencil_bit)
+        {
+          printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
+          /* XXX: Could use the GLU tesselator or the full BO polygon tesselator */
+          return;
+        }
+    }
 
-    glPushAttrib (GL_STENCIL_BUFFER_BIT |                   /* Resave the stencil write-mask etc.., and */
-                  GL_COLOR_BUFFER_BIT);                     /* the colour buffer write mask etc.. for part way restore */
-    glStencilMask (stencil_bit);                            /* Only write to our stencil bit */
-    glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    /* Always pass stencil test, ref value is our bit */
-    glColorMask (0, 0, 0, 0);                               /* Disable writting in color buffer */
+  /* Flush out any existing geoemtry to be rendered */
+  hidgl_flush_triangles (&buffer);
 
-    /* It will already be setup like this (so avoid prodding the state-machine):
-     * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
-     */
-    /* Drawing operations now set our reference bit in the stencil buffer */
+  glPushAttrib (GL_STENCIL_BUFFER_BIT |           /* Resave the stencil write-mask etc.., and */
+                GL_COLOR_BUFFER_BIT);             /* the colour buffer write mask etc.. for part way restore */
+  glColorMask (0, 0, 0, 0);                       /* Disable writting in color buffer */
 
-    r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
-    hidgl_flush_triangles (&buffer);
+  if (use_new_stencil)
+    {
+      glStencilMask (stencil_bit);                            /* Only write to our stencil bit */
+      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    /* Always pass stencil test, ref value is our bit */
+    }
 
-    /* Drawing operations as masked to areas where the stencil buffer is '0' */
+  /* It will already be setup like this (so avoid prodding the state-machine):
+   * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
+   */
+  /* Drawing operations now set our reference bit in the stencil buffer */
 
-    glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
-    glPushAttrib (GL_STENCIL_BUFFER_BIT);         /* Save the stencil op and function */
+  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
+  hidgl_flush_triangles (&buffer);
 
-    glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);    /* This allows us to toggle the bit on the subcompositing bitplane */
+  /* Drawing operations as masked to areas where the stencil buffer is '0' */
+
+  glPopAttrib ();                                 /* Restore the colour and stencil buffer write-mask etc.. */
+  glPushAttrib (GL_STENCIL_BUFFER_BIT);           /* Save the stencil op and function */
+
+  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);      /* This allows us to toggle the bit on the subcompositing bitplane */
                                                   /* If the stencil test has passed, we know that bit is 0, so we're */
                                                   /* effectively just setting it to 1. */
-    glStencilFunc (GL_GEQUAL, 0, assigned_bits);  /* Pass stencil test if all assigned bits clear, */
+  glStencilFunc (GL_GEQUAL, 0, assigned_bits);    /* Pass stencil test if all assigned bits clear, */
                                                   /* reference is all assigned bits so we set */
                                                   /* any bits permitted by the stencil writemask */
-    /* Draw the polygon outer */
-    fill_contour (poly->Clipped->contours);
-    hidgl_flush_triangles (&buffer);
+  /* Draw the polygon outer */
+  fill_contour (poly->Clipped->contours);
+  hidgl_flush_triangles (&buffer);
 
-    /* Unassign our stencil buffer bit */
-    hidgl_return_stencil_bit (stencil_bit);
+  if (use_new_stencil)
+    hidgl_return_stencil_bit (stencil_bit);       /* Unassign our stencil buffer bit */
 
-    glPopAttrib ();                               /* Restore the stencil buffer op and function */
-
-  } else {
-    /* Polygon does not have holes */
-    fill_contour (poly->Clipped->contours);
-  }
+  glPopAttrib ();                                 /* Restore the stencil buffer op and function */
 }
 
 void
