@@ -153,6 +153,7 @@ ghid_set_layer (const char *name, int group, int empty)
 {
   render_priv *priv = gport->render_priv;
   static int stencil_bit = 0;
+  bool group_visible = false;
   int idx = group;
   if (idx >= 0 && idx < max_group)
     {
@@ -172,10 +173,43 @@ ghid_set_layer (const char *name, int group, int empty)
 
   hidgl_set_depth (compute_depth (group));
 
+  if (idx >= 0 && idx < max_copper_layer + 2)
+    {
+      priv->trans_lines = true;
+      group_visible = PCB->Data->Layer[idx].On;
+    }
+  else if (idx < 0)
+    {
+      switch (SL_TYPE (idx))
+	{
+	case SL_INVISIBLE:
+	  group_visible = PCB->InvisibleObjectsOn;
+	  break;
+	case SL_MASK:
+	  group_visible = TEST_FLAG (SHOWMASKFLAG, PCB);
+	  break;
+	case SL_SILK:
+	  priv->trans_lines = true;
+	  group_visible = PCB->ElementOn;
+	  break;
+	case SL_ASSY:
+	  break;
+	case SL_PDRILL:
+	case SL_UDRILL:
+	  group_visible = true;
+	  break;
+	case SL_RATS:
+	  if (PCB->RatOn)
+	    priv->trans_lines = true;
+	  group_visible = PCB->RatOn;
+	  break;
+	}
+    }
+
   glEnable (GL_STENCIL_TEST);                   /* Enable Stencil test */
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   /* Stencil pass => replace stencil value (with 1) */
   hidgl_return_stencil_bit (stencil_bit);       /* Relinquish any bitplane we previously used */
-  if (SL_TYPE (idx) != SL_FINISHED) {
+  if (group_visible) {
     stencil_bit = hidgl_assign_clear_stencil_bit();       /* Get a new (clean) bitplane to stencil with */
     glStencilMask (stencil_bit);                          /* Only write to our subcompositing stencil bitplane */
     glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); /* Pass stencil test if our assigned bit is clear */
@@ -185,35 +219,7 @@ ghid_set_layer (const char *name, int group, int empty)
     glStencilFunc (GL_ALWAYS, 0, 0);  /* Always pass stencil test */
   }
 
-  if (idx >= 0 && idx < max_copper_layer + 2)
-    {
-      priv->trans_lines = true;
-      return PCB->Data->Layer[idx].On;
-    }
-
-  if (idx < 0)
-    {
-      switch (SL_TYPE (idx))
-	{
-	case SL_INVISIBLE:
-	  return PCB->InvisibleObjectsOn;
-	case SL_MASK:
-	  return TEST_FLAG (SHOWMASKFLAG, PCB);
-	case SL_SILK:
-	  priv->trans_lines = true;
-	  return PCB->ElementOn;
-	case SL_ASSY:
-	  return 0;
-	case SL_PDRILL:
-	case SL_UDRILL:
-	  return 1;
-	case SL_RATS:
-	  if (PCB->RatOn)
-	    priv->trans_lines = true;
-	  return PCB->RatOn;
-	}
-    }
-  return 0;
+  return group_visible;
 }
 
 void
