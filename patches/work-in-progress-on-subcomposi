@@ -1,5 +1,5 @@
 Bottom: 37a5f17cf543ddad1f07b85f16602416dd573b27
-Top:    680fc1a29c1d6b271ded6c85bb6f2d6c5454d5a6
+Top:    ace1b28254a186417363321fa229a3a2b965e355
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
@@ -456,7 +456,7 @@ index 5289c71..08061fe 100644
    AD (destroy_gc);
    AD (use_mask);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7dae38e..1a75bd3 100644
+index 7dae38e..075e940 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,6 +21,7 @@
@@ -514,7 +514,7 @@ index 7dae38e..1a75bd3 100644
  	  if (SL_MYSIDE (idx))
  	    return PCB->ElementOn;
  	  return 0;
-@@ -112,6 +130,20 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -112,6 +130,23 @@ ghid_set_layer (const char *name, int group, int empty)
    return 0;
  }
  
@@ -522,6 +522,9 @@ index 7dae38e..1a75bd3 100644
 +ghid_end_layer (void)
 +{
 +  render_priv *priv = gport->render_priv;
++
++  /* Flush out any existing geoemtry to be rendered */
++  hidgl_flush_triangles (&buffer);
 +
 +  /* Relinquish any bitplane we previously used */
 +  hidgl_return_stencil_bit (priv->subcomposite_stencil_bit);
@@ -535,7 +538,7 @@ index 7dae38e..1a75bd3 100644
  void
  ghid_destroy_gc (hidGC gc)
  {
-@@ -214,17 +246,12 @@ ghid_draw_bg_image (void)
+@@ -214,17 +249,12 @@ ghid_draw_bg_image (void)
  void
  ghid_use_mask (int use_it)
  {
@@ -555,7 +558,7 @@ index 7dae38e..1a75bd3 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -235,22 +262,25 @@ ghid_use_mask (int use_it)
+@@ -235,22 +265,25 @@ ghid_use_mask (int use_it)
  
      case HID_MASK_CLEAR:
        /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
@@ -587,7 +590,7 @@ index 7dae38e..1a75bd3 100644
        break;
      }
    cur_mask = use_it;
-@@ -762,6 +792,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -762,6 +795,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
        printf ("Could not setup GL-context!\n");
        return; /* Should we abort? */
      }
@@ -597,7 +600,7 @@ index 7dae38e..1a75bd3 100644
  }
  
  void
-@@ -830,6 +863,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -830,6 +866,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -612,7 +615,7 @@ index 7dae38e..1a75bd3 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -847,12 +888,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -847,12 +891,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -633,7 +636,7 @@ index 7dae38e..1a75bd3 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -990,9 +1039,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -990,9 +1042,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -647,7 +650,7 @@ index 7dae38e..1a75bd3 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
-@@ -1099,8 +1151,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1099,8 +1154,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -658,7 +661,7 @@ index 7dae38e..1a75bd3 100644
  
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
-@@ -1162,6 +1216,12 @@ ghid_request_debug_draw (void)
+@@ -1162,6 +1219,12 @@ ghid_request_debug_draw (void)
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
