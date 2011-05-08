@@ -1,0 +1,23 @@
+Bottom: ace1b28254a186417363321fa229a3a2b965e355
+Top:    0a7fe1ecdb81ad64cf85a67ef3d26c432b0e9dca
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-08 17:04:46 +0100
+
+Refresh of work-in-progress-on-subcomposi
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index e9b30d2..6f60305 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1013,7 +1013,8 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+       if (layernum < max_copper_layer && Layer->On)
+         DrawLayerCommon (Layer, drawn_area, true);
+ 
+-      if (gui->gui) /* HACK: Subcomposite each layer in a layer group separately */
++      /* HACK: Let GTK/GL subcomposite each layer in the group separately */
++      if (gui->gui)
+         gui->set_layer (0, group, 0);
+     }
+   if (n_entries > 1)
