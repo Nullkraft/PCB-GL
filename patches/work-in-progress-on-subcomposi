@@ -1,5 +1,5 @@
-Bottom: 8b7094c5753c4664d35e31f15ddcd961589b3a19
-Top:    ae849a0fb2b549731b2d71038958bf825dd6437a
+Bottom: 78fd42c0248ad6de41e97dc9249daeda4d13f131
+Top:    05f1f058f3745f924c7c9316cd8ee1ac71fc212e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
@@ -200,18 +200,10 @@ index 5289c71..08061fe 100644
    AD (destroy_gc);
    AD (use_mask);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4b071b5..6bba869 100644
+index ed11aec..6bba869 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -21,6 +21,7 @@
- #include <GL/gl.h>
- #include <gtk/gtkgl.h>
- #include "hid/common/hidgl.h"
-+#include "hid/common/draw_helpers.h"
- 
- #ifdef HAVE_LIBDMALLOC
- #include <dmalloc.h>
-@@ -43,6 +44,7 @@ typedef struct render_priv {
+@@ -44,6 +44,7 @@ typedef struct render_priv {
    GdkGLConfig *glconfig;
    bool trans_lines;
    bool in_context;
@@ -219,7 +211,7 @@ index 4b071b5..6bba869 100644
  } render_priv;
  
  
-@@ -63,6 +65,7 @@ int
+@@ -64,6 +65,7 @@ int
  ghid_set_layer (const char *name, int group, int empty)
  {
    render_priv *priv = gport->render_priv;
@@ -227,7 +219,7 @@ index 4b071b5..6bba869 100644
    int idx = group;
    if (idx >= 0 && idx < max_group)
      {
-@@ -77,6 +80,21 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -78,6 +80,21 @@ ghid_set_layer (const char *name, int group, int empty)
        idx = PCB->LayerGroups.Entries[group][idx];
      }
  
@@ -249,7 +241,7 @@ index 4b071b5..6bba869 100644
    if (idx >= 0 && idx < max_copper_layer + 2)
      {
        priv->trans_lines = true;
-@@ -93,7 +111,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -94,7 +111,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -258,7 +250,7 @@ index 4b071b5..6bba869 100644
  	  if (SL_MYSIDE (idx))
  	    return PCB->ElementOn;
  	  return 0;
-@@ -111,6 +129,23 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -112,6 +129,23 @@ ghid_set_layer (const char *name, int group, int empty)
    return 0;
  }
  
@@ -282,7 +274,7 @@ index 4b071b5..6bba869 100644
  void
  ghid_destroy_gc (hidGC gc)
  {
-@@ -750,6 +785,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -751,6 +785,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
        printf ("Could not setup GL-context!\n");
        return; /* Should we abort? */
      }
@@ -292,7 +284,7 @@ index 4b071b5..6bba869 100644
  }
  
  void
-@@ -1167,6 +1205,12 @@ ghid_request_debug_draw (void)
+@@ -1168,6 +1205,12 @@ ghid_request_debug_draw (void)
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
