@@ -599,7 +599,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   PLINE *contour;
   struct do_hole_info info;
 
-
   global_scale = scale;
 
   if (poly->Clipped == NULL)
