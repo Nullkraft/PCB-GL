@@ -1,0 +1,38 @@
+Bottom: a03899438f75edaa6d68a5bd27e1f436d505db75
+Top:    e1b886a4b9ff979e58f92eb2decfa7dd3956b21e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-05 21:05:57 +0100
+
+Fix layer on/off rendering
+
+I'm not certain this is correct at all. It works around failure
+to switch layer visibility on / off after
+
+commit 9768e060fad7bc3dfc366da76ea1db8154005018
+"Fix layer visibility logic for some boards."
+
+After which, copper layers on the component / solder group
+would still be drawn unless the silk layer was also turned off.
+
+This appears to be due to the GL HID's custom drawing routines
+not checking the return of the (HID)->set_layer function in certain
+instances.
+
+This fix is almost certainly WRONG.
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index ca8d794..4b5e458 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1557,7 +1557,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+         strcmp (Layer->Name, "route") == 0)
+       rv = 0;
+ 
+-    if (layernum < max_copper_layer /*&& Layer->On*/) {
++    if (layernum < max_copper_layer && Layer->On) {
+ 
+       if (!first_run)
+         gui->set_layer (0, group, 0);
