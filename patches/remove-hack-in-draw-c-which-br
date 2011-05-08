@@ -1,5 +1,5 @@
 Bottom: 880d5646c31bbb1140628cf52467c7662f95aefc
-Top:    880d5646c31bbb1140628cf52467c7662f95aefc
+Top:    0f36c6b08655477e229a50c8171ebcb9e86596d5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:56 +0100
 
@@ -12,4 +12,18 @@ file during the fab drawing output.
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 1e90cb2..c8599fd 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -701,10 +701,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+         rv = 0;
+       if (layernum < max_copper_layer && Layer->On)
+         dapi->draw_layer (Layer, drawn_area, NULL);
+-
+-      /* HACK: Let GTK/GL subcomposite each layer in the group separately */
+-      if (gui->gui)
+-        gui->set_layer (0, group, 0);
+     }
+   if (n_entries > 1)
+     rv = 1;
