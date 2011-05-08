@@ -1,0 +1,22 @@
+Bottom: ee70dcbfbe0f7c67d2fbb2e0e791b64f337e8ce8
+Top:    0521f85294372d7872a1821eaaffb257804832a8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-08 20:25:55 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 90b0bd5..2eeb7f0 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -135,8 +135,6 @@ compute_depth (int group)
+     }
+   } else if (SL_TYPE (group) == SL_RATS) {
+     depth = last_depth_computed;
+-  } else if (SL_TYPE (group) == SL_FINISHED) {
+-    depth = last_depth_computed;
+   } else {
+     /* DEFAULT CASE */
+     printf ("Unknown layer group to set depth for: %i\n", group);
