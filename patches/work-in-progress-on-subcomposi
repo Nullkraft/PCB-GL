@@ -1,5 +1,5 @@
-Bottom: 5b8c66c1b49277f14a8163de93218d93000be119
-Top:    fd9c823e40ffc9f9337995ec18a0ebeacfa9fe7c
+Bottom: 2addbe16d434df840161674cda8f1a496fe0dc8e
+Top:    9e06ada3d04d8b8e361e5e036839e51c95183196
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e7614db..c3f4fc1 100644
+index 910fd2d..3c12833 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -44,6 +44,7 @@ typedef struct render_priv {
@@ -51,7 +51,7 @@ index e7614db..c3f4fc1 100644
 +
    if (idx >= 0 && idx < max_copper_layer + 2)
      {
-       priv->trans_lines = false;
+       priv->trans_lines = true;
 @@ -94,7 +108,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
