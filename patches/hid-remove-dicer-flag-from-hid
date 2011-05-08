@@ -1,0 +1,15 @@
+Bottom: 4370cb1efb3b3895d7330a6de29b0346df1d69b9
+Top:    4370cb1efb3b3895d7330a6de29b0346df1d69b9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-08 10:22:56 +0100
+
+HID: Remove "dicer" flag from HID structure.
+
+We don't pay any attention to this flag - always dicing the polygons
+in our common_fill_pcb_polygon routine. HIDs which don't want diced
+polygons implement their own hook for fill_pcb_polygon.
+
+
+---
+
+
