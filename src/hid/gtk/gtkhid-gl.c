@@ -1524,10 +1524,8 @@ DrawLayerGroup (int group, const BoxType * screen)
   int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
   int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
 
-  if (!gui->set_layer (0, group, 0)) {
-    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  if (!gui->set_layer (0, group, 0))
     return 0;
-  }
 
   /* HACK: Subcomposite each layer in a layer group separately */
   for (i = n_entries - 1; i >= 0; i--) {
@@ -1565,7 +1563,7 @@ DrawLayerGroup (int group, const BoxType * screen)
 
         /* HACK: Subcomposite polygons separately from other layer primitives */
         /* Reset the compositing */
-        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        gui->end_layer ();
         gui->set_layer (0, group, 0);
 
         if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
@@ -1605,7 +1603,7 @@ DrawLayerGroup (int group, const BoxType * screen)
     }
   }
 
-  gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  gui->end_layer ();
 
   return (n_entries > 1);
 }
@@ -1766,13 +1764,13 @@ ghid_draw_everything (BoxTypePtr drawn_area)
       if (gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
                           SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
         DrawMask (side, drawn_area);
-        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        gui->end_layer ();
       }
       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
     }
     if (PCB->ElementOn)
       r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
-    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    gui->end_layer ();
   }
 
   /* draw all layers in layerstack order */
@@ -1821,20 +1819,20 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
     if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
 
-    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    gui->end_layer ();
   }
 
   /* Draw the solder mask if turned on */
   if (gui->set_layer (SWAP_IDENT ? "soldermask" : "componentmask",
                       SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
     DrawMask (side, drawn_area);
-    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    gui->end_layer ();
   }
 
   if (gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
                       SWAP_IDENT ? SL (SILK, BOTTOM) : SL (SILK, TOP), 0)) {
       DrawSilk (side, drawn_area);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      gui->end_layer ();
   }
 
   /* Draw element Marks */
@@ -1844,7 +1842,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   /* Draw rat lines on top */
   if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0)) {
     DrawRats(drawn_area);
-    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    gui->end_layer ();
   }
 
   Settings.ShowSolderSide = save_show_solder;
