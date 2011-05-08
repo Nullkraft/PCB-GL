@@ -1,5 +1,5 @@
 Bottom: 96a09b060bd61aa542cf7b049c0e2a5d16619fef
-Top:    96a09b060bd61aa542cf7b049c0e2a5d16619fef
+Top:    5f63c32dc0811f2361cc47293fe9b00433480ec6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-08 20:49:34 +0100
 
@@ -10,4 +10,91 @@ NB: Split out of the FBO patch
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index a30213f..e7ccabd 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -152,6 +152,7 @@ ghid_set_layer (const char *name, int group, int empty)
+ {
+   render_priv *priv = gport->render_priv;
+   int stencil_bit;
++  bool group_visible = false;
+   int idx = group;
+   if (idx >= 0 && idx < max_group)
+     {
+@@ -171,44 +172,56 @@ ghid_set_layer (const char *name, int group, int empty)
+ 
+   hidgl_set_depth (compute_depth (group));
+ 
+-  glEnable (GL_STENCIL_TEST);                                 /* Enable Stencil test */
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);                 /* Stencil pass => replace stencil value (with 1) */
+-
+-  hidgl_return_stencil_bit (priv->subcomposite_stencil_bit);  /* Relinquish any bitplane we previously used */
+-  stencil_bit = hidgl_assign_clear_stencil_bit();             /* Get a new (clean) bitplane to stencil with */
+-  glStencilFunc (GL_GREATER, stencil_bit, stencil_bit);       /* Pass stencil test if our assigned bit is clear */
+-  glStencilMask (stencil_bit);                                /* Only write to our subcompositing stencil bitplane */
+-  priv->subcomposite_stencil_bit = stencil_bit;
+-
+   if (idx >= 0 && idx < max_copper_layer + 2)
+     {
+       priv->trans_lines = true;
+-      return PCB->Data->Layer[idx].On;
++      group_visible = PCB->Data->Layer[idx].On;
+     }
+-
+-  if (idx < 0)
++  else if (idx < 0)
+     {
+       switch (SL_TYPE (idx))
+ 	{
+ 	case SL_INVISIBLE:
+-	  return PCB->InvisibleObjectsOn;
++	  group_visible = PCB->InvisibleObjectsOn;
++	  break;
+ 	case SL_MASK:
+-	  return TEST_FLAG (SHOWMASKFLAG, PCB);
++	  group_visible = TEST_FLAG (SHOWMASKFLAG, PCB);
++	  break;
+ 	case SL_SILK:
+ 	  priv->trans_lines = true;
+-	  return PCB->ElementOn;
++	  group_visible = PCB->ElementOn;
++	  break;
+ 	case SL_ASSY:
+-	  return 0;
++	  break;
+ 	case SL_PDRILL:
+ 	case SL_UDRILL:
+-	  return 1;
++	  group_visible = true;
++	  break;
+ 	case SL_RATS:
+ 	  if (PCB->RatOn)
+ 	    priv->trans_lines = true;
+-	  return PCB->RatOn;
++	  group_visible = PCB->RatOn;
++	  break;
+ 	}
+     }
+-  return 0;
++
++  glEnable (GL_STENCIL_TEST);                                 /* Enable Stencil test */
++  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);                 /* Stencil pass => replace stencil value (with 1) */
++
++  hidgl_return_stencil_bit (priv->subcomposite_stencil_bit);  /* Relinquish any bitplane we previously used */
++
++  if (group_visible) {
++    stencil_bit = hidgl_assign_clear_stencil_bit();           /* Get a new (clean) bitplane to stencil with */
++    glStencilMask (stencil_bit);                              /* Only write to our subcompositing stencil bitplane */
++    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit);     /* Pass stencil test if our assigned bit is clear */
++    priv->subcomposite_stencil_bit = stencil_bit;
++  } else {
++    stencil_bit = 0;
++    glStencilMask (0);
++    glStencilFunc (GL_ALWAYS, 0, 0);  /* Always pass stencil test */
++  }
++
++  return group_visible;
+ }
+ 
+ static void
