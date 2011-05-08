@@ -3,12 +3,10 @@ Top:    9e06ada3d04d8b8e361e5e036839e51c95183196
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
-Work in progress on subcompositing / stencil buffers
+GTK/GL: Sub-composite objects on each layer using the stencil buffer
 
-If we have many stencil buffer bits, we may as well use all of them before
-resorting to a costly clear and re-using the same bit-planes over.
-
-
+This avoids the highlight which appears when translucent objects on
+a given layer and drawn over each other.
 
 
 ---
