@@ -1,0 +1,608 @@
+Bottom: 5f66f9c5d288a1812579b26b51bd3559dea1f092
+Top:    de9269ce35ef93c0f5da43913a771792e52367a6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-08 17:06:01 +0100
+
+Refresh of work-in-progress-on-subcomposi
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index e1ae2dc..994dd1c 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -693,6 +693,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
+ 	}
+       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
++      gui->end_layer ();
+     }
+ 
+   /* draw all layers in layerstack order */
+@@ -701,8 +702,11 @@ DrawEverything (BoxTypePtr drawn_area)
+       int group = drawn_groups[i];
+ 
+       if (gui->set_layer (0, group, 0))
+-        if (DrawLayerGroup (group, drawn_area) && !gui->gui)
+-          DrawPPV (group, drawn_area);
++        {
++          if (DrawLayerGroup (group, drawn_area) && !gui->gui)
++            DrawPPV (group, drawn_area);
++          gui->end_layer ();
++        }
+     }
+ 
+   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
+@@ -716,24 +720,42 @@ DrawEverything (BoxTypePtr drawn_area)
+       CountHoles (&plated, &unplated, drawn_area);
+ 
+       if (plated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
+-        DrawHoles (true, false, drawn_area);
++        {
++          DrawHoles (true, false, drawn_area);
++          gui->end_layer ();
++        }
+ 
+       if (unplated && gui->set_layer ("unplated-drill", SL (PDRILL, 0), 0))
+-        DrawHoles (false, true, drawn_area);
++        {
++          DrawHoles (false, true, drawn_area);
++          gui->end_layer ();
++        }
+     }
+ 
+   /* Draw the solder mask if turned on */
+   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
+-    DrawMask (COMPONENT_LAYER, drawn_area);
++    {
++      DrawMask (COMPONENT_LAYER, drawn_area);
++      gui->end_layer ();
++    }
+ 
+   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
+-    DrawMask (SOLDER_LAYER, drawn_area);
++    {
++      DrawMask (SOLDER_LAYER, drawn_area);
++      gui->end_layer ();
++    }
+ 
+   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
+-    DrawSilk (COMPONENT_LAYER, drawn_area);
++    {
++      DrawSilk (COMPONENT_LAYER, drawn_area);
++      gui->end_layer ();
++    }
+ 
+   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
+-    DrawSilk (SOLDER_LAYER, drawn_area);
++    {
++      DrawSilk (SOLDER_LAYER, drawn_area);
++      gui->end_layer ();
++    }
+ 
+   if (gui->gui)
+     {
+@@ -743,27 +765,47 @@ DrawEverything (BoxTypePtr drawn_area)
+ 		  NULL);
+       /* Draw rat lines on top */
+       if (gui->set_layer ("rats", SL (RATS, 0), 0))
+-	DrawRats(drawn_area);
++        {
++          DrawRats(drawn_area);
++          gui->end_layer ();
++        }
+     }
+ 
+   paste_empty = IsPasteEmpty (COMPONENT_LAYER);
+   if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
+-    DrawPaste (COMPONENT_LAYER, drawn_area);
++    {
++      DrawPaste (COMPONENT_LAYER, drawn_area);
++      gui->end_layer ();
++    }
+ 
+   paste_empty = IsPasteEmpty (SOLDER_LAYER);
+   if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
+-    DrawPaste (SOLDER_LAYER, drawn_area);
++    {
++      DrawPaste (SOLDER_LAYER, drawn_area);
++      gui->end_layer ();
++    }
+ 
+   doing_assy = true;
++
+   if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
+-    PrintAssembly (COMPONENT_LAYER, drawn_area);
++    {
++      PrintAssembly (COMPONENT_LAYER, drawn_area);
++      gui->end_layer ();
++    }
+ 
+   if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
+-    PrintAssembly (SOLDER_LAYER, drawn_area);
++    {
++      PrintAssembly (SOLDER_LAYER, drawn_area);
++      gui->end_layer ();
++    }
++
+   doing_assy = false;
+ 
+   if (gui->set_layer ("fab", SL (FAB, 0), 0))
+-    PrintFab (Output.fgGC);
++    {
++      PrintFab (Output.fgGC);
++      gui->end_layer ();
++    }
+ }
+ 
+ static void
+@@ -1126,6 +1168,10 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+         rv = 0;
+       if (layernum < max_copper_layer && Layer->On)
+         DrawLayerCommon (Layer, drawn_area, true);
++
++      /* HACK: Let GTK/GL subcomposite each layer in the group separately */
++      if (gui->gui)
++        gui->set_layer (0, group, 0);
+     }
+   if (n_entries > 1)
+     rv = 1;
+diff --git a/src/hid.h b/src/hid.h
+index 3919db0..eeb09ab 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -311,6 +311,9 @@ typedef enum
+        layer is empty, if zero it may be non-empty.  */
+     int (*set_layer) (const char *name_, int group_, int _empty);
+ 
++    /* Tell the GUI the layer last selected has been finished with */
++    void (*end_layer) (void);
++
+     /* Drawing Functions.  Coordinates and distances are ALWAYS in PCB's
+        default coordinates (1/100 mil at the time this comment was
+        written).  Angles are always in degrees, with 0 being "right"
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 453c7f9..223d64f 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -590,6 +590,9 @@ do_hole (const BoxType *b, void *cl)
+   return 1;
+ }
+ 
++static GLint stencil_bits;
++static int dirty_bits = 0;
++static int assigned_bits = 0;
+ 
+ /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
+ void
+@@ -598,6 +601,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   int vertex_count = 0;
+   PLINE *contour;
+   struct do_hole_info info;
++  int stencil_bit;
+ 
+   global_scale = scale;
+ 
+@@ -607,6 +611,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+       return;
+     }
+ 
++  stencil_bit = hidgl_assign_clear_stencil_bit ();
++  if (!stencil_bit)
++    {
++      printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
++      return;
++    }
++
+   /* Flush out any existing geoemtry to be rendered */
+   hidgl_flush_triangles (&buffer);
+ 
+@@ -623,29 +634,40 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   gluTessCallback(info.tobj, GLU_TESS_COMBINE, myCombine);
+   gluTessCallback(info.tobj, GLU_TESS_ERROR, myError);
+ 
+-  glClearStencil (0);
+-  glClear (GL_STENCIL_BUFFER_BIT);
+-  glColorMask (0, 0, 0, 0);                   /* Disable writting in color buffer */
+-  glEnable (GL_STENCIL_TEST);
++  glPushAttrib (GL_STENCIL_BUFFER_BIT);                   /* Save the write mask etc.. for final restore */
++  glPushAttrib (GL_STENCIL_BUFFER_BIT |                   /* Resave the stencil write-mask etc.., and */
++                GL_COLOR_BUFFER_BIT);                     /* the colour buffer write mask etc.. for part way restore */
++  glStencilMask (stencil_bit);                            /* Only write to our stencil bit */
++  glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    /* Always pass stencil test, ref value is our bit */
++  glColorMask (0, 0, 0, 0);                               /* Disable writting in color buffer */
+ 
+-  /* Drawing operations set the stencil buffer to '1' */
+-  glStencilFunc (GL_ALWAYS, 1, 1);            /* Test always passes, value written 1 */
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
++  /* It will already be setup like this (so avoid prodding the state-machine):
++   * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
++   */
++  /* Drawing operations now set our reference bit in the stencil buffer */
+ 
+   r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+   hidgl_flush_triangles (&buffer);
+ 
+-  /* Drawing operations as masked to areas where the stencil buffer is '1' */
+-  glColorMask (1, 1, 1, 1);                   /* Enable drawing of r, g, b & a */
+-  glStencilFunc (GL_EQUAL, 0, 1);             /* Draw only where stencil buffer is 0 */
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    /* Stencil buffer read only */
++  /* Drawing operations as masked to areas where the stencil buffer is '0' */
++
++  glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
++
++  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);    /* This allows us to toggle the bit on the subcompositing bitplane */
++                                                /* If the stencil test has passed, we know that bit is 0, so we're */
++                                                /* effectively just setting it to 1. */
++  glStencilFunc (GL_GEQUAL, 0, assigned_bits);  /* Pass stencil test if all assigned bits clear, */
++                                                /* reference is all assigned bits so we set */
++                                                /* any bits permitted by the stencil writemask */
+ 
+   /* Draw the polygon outer */
+   tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices);
+   hidgl_flush_triangles (&buffer);
+ 
+-  glClear (GL_STENCIL_BUFFER_BIT);
+-  glDisable (GL_STENCIL_TEST);                /* Disable Stencil test */
++  /* Unassign our stencil buffer bit */
++  hidgl_return_stencil_bit (stencil_bit);
++
++  glPopAttrib ();                               /* Restore the stencil buffer write-mask etc.. */
+ 
+   gluDeleteTess (info.tobj);
+   myFreeCombined ();
+@@ -659,3 +681,88 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+   hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
+   hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
+ }
++
++void
++hidgl_init (void)
++{
++  glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
++
++  if (stencil_bits == 0)
++    {
++      printf ("No stencil bits available.\n"
++              "Cannot mask polygon holes or subcomposite layers\n");
++      /* TODO: Flag this to the HID so it can revert to the dicer? */
++    }
++  else if (stencil_bits == 1)
++    {
++      printf ("Only one stencil bitplane avilable\n"
++              "Cannot use stencil buffer to sub-composite layers.\n");
++      /* Do we need to disable that somewhere? */
++    }
++}
++
++int
++hidgl_stencil_bits (void)
++{
++  return stencil_bits;
++}
++
++static void
++hidgl_clean_unassigned_stencil (void)
++{
++  glPushAttrib (GL_STENCIL_BUFFER_BIT);
++  glStencilMask (~assigned_bits);
++  glClearStencil (0);
++  glClear (GL_STENCIL_BUFFER_BIT);
++  glPopAttrib ();
++}
++
++int
++hidgl_assign_clear_stencil_bit (void)
++{
++  int stencil_bitmask = (1 << stencil_bits) - 1;
++  int test;
++  int first_dirty = 0;
++
++  if (assigned_bits == stencil_bitmask)
++    {
++      printf ("No more stencil bits available, total of %i already assigned\n",
++              stencil_bits);
++      return 0;
++    }
++
++  /* Look for a bitplane we don't have to clear */
++  for (test = 1; test & stencil_bitmask; test <<= 1)
++    {
++      if (!(test & dirty_bits))
++        {
++          assigned_bits |= test;
++          dirty_bits |= test;
++          return test;
++        }
++      else if (!first_dirty && !(test & assigned_bits))
++        {
++          first_dirty = test;
++        }
++    }
++
++  /* Didn't find any non dirty planes. Clear those dirty ones which aren't in use */
++  hidgl_clean_unassigned_stencil ();
++  assigned_bits |= first_dirty;
++  dirty_bits = assigned_bits;
++
++  return first_dirty;
++}
++
++void
++hidgl_return_stencil_bit (int bit)
++{
++  assigned_bits &= ~bit;
++}
++
++void
++hidgl_reset_stencil_usage (void)
++{
++  assigned_bits = 0;
++  dirty_bits = 0;
++}
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index d2ab3c4..37d35b9 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -76,5 +76,10 @@ void hidgl_fill_polygon (int n_coords, int *x, int *y);
+ void hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale);
+ void hidgl_fill_rect (int x1, int y1, int x2, int y2);
+ 
++void hidgl_init (void);
++int hidgl_stencil_bits (void);
++int hidgl_assign_clear_stencil_bit (void);
++void hidgl_return_stencil_bit (int bit);
++void hidgl_reset_stencil_usage (void);
+ 
+ #endif /* __HIDGL_INCLUDED__  */
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 5289c71..08061fe 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -68,6 +68,11 @@ nogui_set_layer (const char *name, int idx, int empty)
+   return 0;
+ }
+ 
++static void
++nogui_end_layer (void)
++{
++}
++
+ static hidGC
+ nogui_make_gc (void)
+ {
+@@ -456,6 +461,7 @@ HID hid_nogui = {
+   0 /* nogui_notify_crosshair_change */ ,
+   0 /* nogui_notify_mark_change */ ,
+   nogui_set_layer,
++  nogui_end_layer,
+   nogui_make_gc,
+   nogui_destroy_gc,
+   nogui_use_mask,
+@@ -521,6 +527,7 @@ apply_default_hid (HID * d, HID * s)
+   AD (notify_crosshair_change);
+   AD (notify_mark_change);
+   AD (set_layer);
++  AD (end_layer);
+   AD (make_gc);
+   AD (destroy_gc);
+   AD (use_mask);
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 7916b41..cc72d2d 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -21,6 +21,7 @@
+ #include <GL/gl.h>
+ #include <gtk/gtkgl.h>
+ #include "hid/common/hidgl.h"
++#include "hid/common/draw_helpers.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -43,6 +44,7 @@ typedef struct render_priv {
+   GdkGLConfig *glconfig;
+   bool trans_lines;
+   bool in_context;
++  int subcomposite_stencil_bit;
+ } render_priv;
+ 
+ 
+@@ -63,6 +65,7 @@ int
+ ghid_set_layer (const char *name, int group, int empty)
+ {
+   render_priv *priv = gport->render_priv;
++  int stencil_bit;
+   int idx = group;
+   if (idx >= 0 && idx < max_group)
+     {
+@@ -77,6 +80,21 @@ ghid_set_layer (const char *name, int group, int empty)
+       idx = PCB->LayerGroups.Entries[group][idx];
+     }
+ 
++#define SUBCOMPOSITE_LAYERS
++#ifdef SUBCOMPOSITE_LAYERS
++  /* Flush out any existing geoemtry to be rendered */
++  hidgl_flush_triangles (&buffer);
++
++  glEnable (GL_STENCIL_TEST);                                 /* Enable Stencil test */
++  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);                 /* Stencil pass => replace stencil value (with 1) */
++
++  hidgl_return_stencil_bit (priv->subcomposite_stencil_bit);  /* Relinquish any bitplane we previously used */
++  stencil_bit = hidgl_assign_clear_stencil_bit();             /* Get a new (clean) bitplane to stencil with */
++  glStencilFunc (GL_GREATER, stencil_bit, stencil_bit);       /* Pass stencil test if our assigned bit is clear */
++  glStencilMask (stencil_bit);                                /* Only write to our subcompositing stencil bitplane */
++  priv->subcomposite_stencil_bit = stencil_bit;
++#endif
++
+   if (idx >= 0 && idx < max_copper_layer + 2)
+     {
+       priv->trans_lines = true;
+@@ -93,7 +111,7 @@ ghid_set_layer (const char *name, int group, int empty)
+ 	    return TEST_FLAG (SHOWMASKFLAG, PCB);
+ 	  return 0;
+ 	case SL_SILK:
+-	  priv->trans_lines = false;
++	  priv->trans_lines = true;
+ 	  if (SL_MYSIDE (idx))
+ 	    return PCB->ElementOn;
+ 	  return 0;
+@@ -111,6 +129,23 @@ ghid_set_layer (const char *name, int group, int empty)
+   return 0;
+ }
+ 
++static void
++ghid_end_layer (void)
++{
++  render_priv *priv = gport->render_priv;
++
++  /* Flush out any existing geoemtry to be rendered */
++  hidgl_flush_triangles (&buffer);
++
++  /* Relinquish any bitplane we previously used */
++  hidgl_return_stencil_bit (priv->subcomposite_stencil_bit);
++  priv->subcomposite_stencil_bit = 0;
++
++  /* Always pass stencil test */
++  glStencilMask (0);
++  glStencilFunc (GL_ALWAYS, 0, 0);
++}
++
+ void
+ ghid_destroy_gc (hidGC gc)
+ {
+@@ -213,17 +248,12 @@ ghid_draw_bg_image (void)
+ void
+ ghid_use_mask (int use_it)
+ {
+-  /* NOTE: We are assuming the stencil buffer bit plane is clear at the start
+-   *       of a masked drawing operation.
+-   *
+-   *       For our current usage we know that it will start clean at the
+-   *       beginning of the frame - and that the mask is only used at most
+-   *       once during rendering (for the solder-mask layer).
+-   */
++  static int stencil_bit = 0;
+ 
+   if (use_it == cur_mask)
+     return;
+ 
++  /* Flush out any existing geoemtry to be rendered */
+   hidgl_flush_triangles (&buffer);
+ 
+   switch (use_it)
+@@ -234,22 +264,25 @@ ghid_use_mask (int use_it)
+ 
+     case HID_MASK_CLEAR:
+       /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
+-      glColorMask (0, 0, 0, 0);                   /* Disable writting in color buffer */
+-      glEnable (GL_STENCIL_TEST);                 /* Enable Stencil test              */
+-      glStencilFunc (GL_ALWAYS, 1, 1);            /* Test always passes, value written 1 */
+-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
++      glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
++      glEnable (GL_STENCIL_TEST);                           /* Enable Stencil test */
++      stencil_bit = hidgl_assign_clear_stencil_bit();       /* Get a new (clean) bitplane to stencil with */
++      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, write stencil_bit */
++      glStencilMask (stencil_bit);                          /* Only write to our subcompositing stencil bitplane */
++      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           /* Stencil pass => replace stencil value (with 1) */
+       break;
+ 
+     case HID_MASK_AFTER:
+       /* Drawing operations as masked to areas where the stencil buffer is '0' */
+       glColorMask (1, 1, 1, 1);                   /* Enable drawing of r, g, b & a */
+-      glStencilFunc (GL_EQUAL, 0, 1);             /* Draw only where stencil buffer is 1 */
++      glStencilFunc (GL_GEQUAL, 0, stencil_bit);  /* Draw only where our bit of the stencil buffer is clear */
+       glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    /* Stencil buffer read only */
+       break;
+ 
+     case HID_MASK_OFF:
+       /* Disable stenciling */
+-      glDisable (GL_STENCIL_TEST);
++      hidgl_return_stencil_bit (stencil_bit);     /* Relinquish any bitplane we previously used */
++      glDisable (GL_STENCIL_TEST);                /* Disable Stencil test */
+       break;
+     }
+   cur_mask = use_it;
+@@ -752,6 +785,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+       printf ("Could not setup GL-context!\n");
+       return; /* Should we abort? */
+     }
++
++  /* Setup HID function pointers specific to the GL renderer*/
++  ghid_hid.end_layer = ghid_end_layer;
+ }
+ 
+ void
+@@ -819,6 +855,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   ghid_start_drawing (port);
+ 
++  hidgl_init ();
++
++  /* If we don't have any stencil bits available,
++     we can't use the hidgl polygon drawing routine */
++  /* TODO: We could use the GLU tessellator though */
++  if (hidgl_stencil_bits() == 0)
++    ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
++
+   glEnable (GL_BLEND);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 
+@@ -836,12 +880,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
+ 
++  glEnable (GL_STENCIL_TEST);
+   glClearColor (port->offlimits_color.red / 65535.,
+                 port->offlimits_color.green / 65535.,
+                 port->offlimits_color.blue / 65535.,
+                 1.);
+ 
++  glStencilMask (~0);
++  glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
++  hidgl_reset_stencil_usage ();
++
++  /* Disable the stencil test until we need it - otherwise it gets dirty */
++  glDisable (GL_STENCIL_TEST);
++  glStencilFunc (GL_ALWAYS, 0, 0);
+ 
+   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+@@ -977,9 +1029,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+                 gport->bg_color.green / 65535.,
+                 gport->bg_color.blue / 65535.,
+                 1.);
+-
++  glStencilMask (~0);
++  glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+ 
++  hidgl_reset_stencil_usage ();
++
+   /* call the drawing routine */
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+@@ -1086,8 +1141,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+                 gport->bg_color.green / 65535.,
+                 gport->bg_color.blue / 65535.,
+                 1.);
++  glStencilMask (~0);
+   glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
++  hidgl_reset_stencil_usage ();
+ 
+   /* call the drawing routine */
+   hidgl_init_triangle_array (&buffer);
+@@ -1149,6 +1206,12 @@ ghid_request_debug_draw (void)
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+ 
++  /* Setup stenciling */
++  /* Drawing operations set the stencil buffer to '1' */
++  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
++  /* Drawing operations as masked to areas where the stencil buffer is '0' */
++  /* glStencilFunc (GL_GREATER, 1, 1); */           /* Draw only where stencil buffer is 0 */
++
+   glPushMatrix ();
+   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
+             (ghid_flip_y ? -1. : 1.) / port->zoom,
