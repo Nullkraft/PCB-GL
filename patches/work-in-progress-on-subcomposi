@@ -1,5 +1,5 @@
 Bottom: 2addbe16d434df840161674cda8f1a496fe0dc8e
-Top:    98755dd20c0103988a0feea778739a2cf4ab626a
+Top:    5debe9fe8e9952bd520df07b40c18851ff0981c6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
@@ -13,21 +13,6 @@ resorting to a costly clear and re-using the same bit-planes over.
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 6c3d709..994dd1c 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -1168,6 +1168,10 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
-         rv = 0;
-       if (layernum < max_copper_layer && Layer->On)
-         DrawLayerCommon (Layer, drawn_area, true);
-+
-+      /* HACK: Let GTK/GL subcomposite each layer in the group separately */
-+      if (gui->gui)
-+        gui->set_layer (0, group, 0);
-     }
-   if (n_entries > 1)
-     rv = 1;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index 910fd2d..9b1bc3a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
