@@ -1,5 +1,5 @@
 Bottom: a80d2f345a0a0f3ba19f47b0d180d2edb3ae2786
-Top:    c5848620fd92ae9db0aed8d27c77454657a583d9
+Top:    120745a6b7e20fd146ff8a5027ee08c19940fa9a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-08 17:38:45 +0100
 
@@ -207,7 +207,7 @@ index d2ab3c4..37d35b9 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d9ee158..718f10c 100644
+index d9ee158..78a4213 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -213,17 +213,12 @@ ghid_draw_bg_image (void)
@@ -276,3 +276,50 @@ index d9ee158..718f10c 100644
 +
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 
+@@ -836,12 +842,19 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
+ 
++  glEnable (GL_STENCIL_TEST);
+   glClearColor (port->offlimits_color.red / 65535.,
+                 port->offlimits_color.green / 65535.,
+                 port->offlimits_color.blue / 65535.,
+                 1.);
+-
++  glStencilMask (~0);
++  glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
++  hidgl_reset_stencil_usage ();
++
++  /* Disable the stencil test until we need it - otherwise it gets dirty */
++  glDisable (GL_STENCIL_TEST);
++  glStencilFunc (GL_ALWAYS, 0, 0);
+ 
+   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+@@ -977,9 +990,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+                 gport->bg_color.green / 65535.,
+                 gport->bg_color.blue / 65535.,
+                 1.);
+-
++  glStencilMask (~0);
++  glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+ 
++  hidgl_reset_stencil_usage ();
++
+   /* call the drawing routine */
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+@@ -1086,8 +1102,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+                 gport->bg_color.green / 65535.,
+                 gport->bg_color.blue / 65535.,
+                 1.);
++  glStencilMask (~0);
+   glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
++  hidgl_reset_stencil_usage ();
+ 
+   /* call the drawing routine */
+   hidgl_init_triangle_array (&buffer);
