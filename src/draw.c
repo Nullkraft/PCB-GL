@@ -520,7 +520,7 @@ DrawEverything (BoxTypePtr drawn_area)
 	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
 	}
       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      gui->end_layer ();
     }
 
   /* draw all layers in layerstack order */
@@ -532,7 +532,7 @@ DrawEverything (BoxTypePtr drawn_area)
         {
           if (DrawLayerGroup (group, drawn_area) && !gui->gui)
             DrawPPV (group, drawn_area);
-          gui->set_layer (NULL, SL (FINISHED, 0), 0);
+          gui->end_layer ();
         }
     }
 
@@ -547,35 +547,41 @@ DrawEverything (BoxTypePtr drawn_area)
       CountHoles (&plated, &unplated, drawn_area);
 
       if (plated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
-        DrawHoles (true, false, drawn_area);
+        {
+          DrawHoles (true, false, drawn_area);
+          gui->end_layer ();
+        }
 
       if (unplated && gui->set_layer ("unplated-drill", SL (PDRILL, 0), 0))
-        DrawHoles (false, true, drawn_area);
+        {
+          DrawHoles (false, true, drawn_area);
+          gui->end_layer ();
+        }
     }
 
   /* Draw the solder mask if turned on */
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
     {
       DrawMask (COMPONENT_LAYER, drawn_area);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      gui->end_layer ();
     }
 
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
     {
       DrawMask (SOLDER_LAYER, drawn_area);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      gui->end_layer ();
     }
 
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
     {
       DrawSilk (COMPONENT_LAYER, drawn_area);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      gui->end_layer ();
     }
 
   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
     {
       DrawSilk (SOLDER_LAYER, drawn_area);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      gui->end_layer ();
     }
 
   if (gui->gui)
@@ -588,7 +594,7 @@ DrawEverything (BoxTypePtr drawn_area)
       if (gui->set_layer ("rats", SL (RATS, 0), 0))
         {
           DrawRats(drawn_area);
-          gui->set_layer (NULL, SL (FINISHED, 0), 0);
+          gui->end_layer ();
         }
     }
 
@@ -596,14 +602,14 @@ DrawEverything (BoxTypePtr drawn_area)
   if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
     {
       DrawPaste (COMPONENT_LAYER, drawn_area);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      gui->end_layer ();
     }
 
   paste_empty = IsPasteEmpty (SOLDER_LAYER);
   if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
     {
       DrawPaste (SOLDER_LAYER, drawn_area);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      gui->end_layer ();
     }
 
   doing_assy = true;
@@ -611,13 +617,13 @@ DrawEverything (BoxTypePtr drawn_area)
   if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
     {
       PrintAssembly (COMPONENT_LAYER, drawn_area);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      gui->end_layer ();
     }
 
   if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
     {
       PrintAssembly (SOLDER_LAYER, drawn_area);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      gui->end_layer ();
     }
 
   doing_assy = false;
@@ -625,7 +631,7 @@ DrawEverything (BoxTypePtr drawn_area)
   if (gui->set_layer ("fab", SL (FAB, 0), 0))
     {
       PrintFab (Output.fgGC);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      gui->end_layer ();
     }
 }
 

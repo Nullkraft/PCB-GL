@@ -207,7 +207,6 @@ extern "C"
 #define SL_FAB		0x0070
 #define SL_ASSY		0x0080
 #define SL_RATS		0x0090
-#define SL_FINISHED	0x00A0
 /* Callers should use this.  */
 #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
 
@@ -311,6 +310,9 @@ typedef enum
        from the PCB struct.  The EMPTY argument is a hint - if set, the
        layer is empty, if zero it may be non-empty.  */
     int (*set_layer) (const char *name_, int group_, int _empty);
+
+    /* Tell the GUI the layer last selected has been finished with */
+    void (*end_layer) (void);
 
     /* Drawing Functions.  Coordinates and distances are ALWAYS in PCB's
        default coordinates (1/100 mil at the time this comment was
