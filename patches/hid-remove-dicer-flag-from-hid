@@ -1,5 +1,5 @@
 Bottom: 4370cb1efb3b3895d7330a6de29b0346df1d69b9
-Top:    4370cb1efb3b3895d7330a6de29b0346df1d69b9
+Top:    d45aa7b9758308c63248f8dbfbf581ec1db5ac37
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-08 10:22:56 +0100
 
@@ -12,4 +12,70 @@ polygons implement their own hook for fill_pcb_polygon.
 
 ---
 
-
+diff --git a/src/hid.h b/src/hid.h
+index 9104190..3919db0 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -273,10 +273,6 @@ typedef enum
+        polygons will be drawn twice.  */
+     char poly_after:1;
+ 
+-    /* If set, the redraw code will dice the polygons, so that there
+-       are no clearances in any polygons.  */
+-    char poly_dicer:1;
+-
+     /* Returns a set of resources describing options the export or print
+        HID supports.  In GUI mode, the print/export dialogs use this to
+        set up the selectable options.  In command line mode, these are
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 7d529ba..543b99f 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -142,10 +142,6 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
+ void
+ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
+-  /* FIXME: We aren't checking the gui's dicer flag..
+-            we are dicing for every case. Some GUIs
+-            rely on this, and need their flags fixing. */
+-
+   if (!poly->NoHolesValid)
+     {
+       /* If enough of the polygon is on-screen, compute the entire
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index f9d5949..5289c71 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -447,7 +447,7 @@ HID hid_nogui = {
+   sizeof (HID),
+   "nogui",
+   "Default GUI when no other GUI is present.  Does nothing.",
+-  0, 0, 0, 0, 0, 0,
++  0, 0, 0, 0, 0,
+   nogui_get_export_options,
+   nogui_do_export,
+   nogui_parse_arguments,
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index b6d7585..47e6124 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -1166,7 +1166,6 @@ hid_gerber_init ()
+   gerber_hid.name                = "gerber";
+   gerber_hid.description         = "RS-274X (Gerber) export.";
+   gerber_hid.exporter            = 1;
+-  gerber_hid.poly_dicer          = 1;
+ 
+   gerber_hid.get_export_options  = gerber_get_export_options;
+   gerber_hid.do_export           = gerber_do_export;
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 29ffae3..9890364 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -1522,7 +1522,6 @@ hid_png_init ()
+   png_hid.description = "GIF/JPEG/PNG export.";
+   png_hid.exporter    = 1;
+   png_hid.poly_before = 1;
+-  png_hid.poly_dicer  = 1;
+ 
+   png_hid.get_export_options  = png_get_export_options;
+   png_hid.do_export           = png_do_export;
