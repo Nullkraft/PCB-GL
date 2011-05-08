@@ -611,6 +611,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
       return;
     }
 
+  /* Special case non-holed polygons which don't require a stencil bit */
+  if (poly->Clipped->contour_tree->size == 1) {
+    fill_contour (poly->Clipped->contours, scale);
+    return;
+  }
+
+  /* Polygon has holes */
+
   stencil_bit = hidgl_assign_clear_stencil_bit ();
   if (!stencil_bit)
     {
