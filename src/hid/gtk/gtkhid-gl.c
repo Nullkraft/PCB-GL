@@ -793,7 +793,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
       return; /* Should we abort? */
     }
 
-  ghid_gui.end_layer = ghid_end_layer;
+  /* Setup HID function pointers specific to the GL renderer*/
+  ghid_hid.end_layer = ghid_end_layer;
 }
 
 void
