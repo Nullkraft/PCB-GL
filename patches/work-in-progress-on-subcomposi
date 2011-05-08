@@ -1,5 +1,5 @@
-Bottom: 5e42dddbc9e2eb3f6f03fe2006e77482b9b84b81
-Top:    6d6a7474a92986f9313895ee5846a2782f0c4eef
+Bottom: 37a5f17cf543ddad1f07b85f16602416dd573b27
+Top:    0301120cd7ab187bcbc76faae90a029587e9c6a8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
@@ -137,7 +137,7 @@ index 643544e..ca65a11 100644
    if (n_entries > 1)
      rv = 1;
 diff --git a/src/hid.h b/src/hid.h
-index 9104190..a90ccc2 100644
+index 3919db0..6d20425 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -207,6 +207,7 @@ extern "C"
@@ -406,7 +406,7 @@ index d2ab3c4..37d35b9 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index b6d7585..48bcb03 100644
+index 47e6124..1963982 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -514,6 +514,9 @@ gerber_set_layer (const char *name, int group, int empty)
@@ -625,7 +625,7 @@ index 9dbf24c..6395682 100644
  		name = PCB->Data->Layer[idx].Name;
  	}
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 29ffae3..3347e11 100644
+index 9890364..d206934 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -905,6 +905,10 @@ png_set_layer (const char *name, int group, int empty)
