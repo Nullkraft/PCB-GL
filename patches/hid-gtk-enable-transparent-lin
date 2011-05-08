@@ -1,5 +1,5 @@
-Bottom: 120745a6b7e20fd146ff8a5027ee08c19940fa9a
-Top:    8b7094c5753c4664d35e31f15ddcd961589b3a19
+Bottom: 37677f2f838a9bcc587ba66d9e51679ec99b4a49
+Top:    78fd42c0248ad6de41e97dc9249daeda4d13f131
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:50 +0100
 
@@ -9,10 +9,10 @@ hid/gtk: Enable transparent lines in GL renderer
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 78a4213..4b071b5 100644
+index d047272..ed11aec 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -79,7 +79,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -80,7 +80,7 @@ ghid_set_layer (const char *name, int group, int empty)
  
    if (idx >= 0 && idx < max_copper_layer + 2)
      {
