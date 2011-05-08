@@ -1,5 +1,5 @@
-Bottom: bc93d87cdc79bbcb61e7f385f23c9b2a98736c99
-Top:    58bcf27626f3274f1019fb6f5fa3434ebcf94677
+Bottom: 5da752a5756b1eb3869e3dcb7a88a54d60a2cd01
+Top:    71e2997774ffb7dad38cef6bd066ad79284d0df1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:53 +0100
 
@@ -9,7 +9,7 @@ Use tags on circular contours to render them faster
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index fb6b118..93a02e7 100644
+index 070480c..e073bdf 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -552,11 +552,24 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
@@ -63,7 +63,7 @@ index fb6b118..93a02e7 100644
    global_scale = scale;
  
    if (poly->Clipped == NULL)
-@@ -662,7 +677,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -670,7 +685,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  
    /* Draw the polygon outer */
