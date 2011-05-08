@@ -1,7 +1,7 @@
-Bottom: d0d1ae5265aad390b44632bde4cea35cf3942907
-Top:    78ff17d3bdc1e3205321d1df3c21a0933577762d
+Bottom: ec634fc49d1ab2d4423f88c7906b02691959c6c8
+Top:    aea431322012ef87699d3ef55cf8eff3196e7f70
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-08 20:49:31 +0100
+Date:   2011-05-08 22:17:06 +0100
 
 Continue with crazy idea
 
@@ -9,7 +9,7 @@ Continue with crazy idea
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 4692c35..2e1af79 100644
+index 075a73e..3a8b967 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -141,16 +141,6 @@ set_pv_color (PinType *pv, int type)
@@ -138,8 +138,8 @@ index 4692c35..2e1af79 100644
 +	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-     }
-@@ -669,25 +593,6 @@ via_mask_callback (const BoxType * b, void *cl)
+       gui->end_layer ();
+@@ -711,25 +635,6 @@ via_mask_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -165,7 +165,7 @@ index 4692c35..2e1af79 100644
  static int
  pad_mask_callback (const BoxType * b, void *cl)
  {
-@@ -716,7 +621,7 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -758,7 +663,7 @@ DrawSilk (int side, const BoxType * drawn_area)
      {
        gui->use_mask (HID_MASK_BEFORE);
  #endif
@@ -174,7 +174,7 @@ index 4692c35..2e1af79 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -731,7 +636,7 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -773,7 +678,7 @@ DrawSilk (int side, const BoxType * drawn_area)
    if (gui->poly_after)
      {
        gui->use_mask (HID_MASK_AFTER);
@@ -183,7 +183,7 @@ index 4692c35..2e1af79 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -819,116 +724,6 @@ DrawRats (BoxTypePtr drawn_area)
+@@ -861,116 +766,6 @@ DrawRats (BoxTypePtr drawn_area)
      gui->use_mask (HID_MASK_OFF);
  }
  
@@ -300,7 +300,7 @@ index 4692c35..2e1af79 100644
  /* ---------------------------------------------------------------------------
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
-@@ -950,7 +745,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -992,7 +787,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
            strcmp (Layer->Name, "route") == 0)
          rv = 0;
        if (layernum < max_copper_layer && Layer->On)
