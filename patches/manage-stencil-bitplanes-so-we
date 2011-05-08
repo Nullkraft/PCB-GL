@@ -1,0 +1,15 @@
+Bottom: a80d2f345a0a0f3ba19f47b0d180d2edb3ae2786
+Top:    a80d2f345a0a0f3ba19f47b0d180d2edb3ae2786
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-08 17:38:45 +0100
+
+Manage stencil bitplanes so we don't have to clear them every time.
+
+Clearing the stencil buffer is a slow operation (especially on cards
+limited by fill rate (cough.. Intel.. cough), so the more clears we
+can avoid, the better.
+
+
+---
+
+
