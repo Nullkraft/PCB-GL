@@ -1207,10 +1207,7 @@ ghid_request_debug_draw (void)
   ghid_invalidate_current_gc ();
 
   /* Setup stenciling */
-  /* Drawing operations set the stencil buffer to '1' */
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
-  /* Drawing operations as masked to areas where the stencil buffer is '0' */
-  /* glStencilFunc (GL_GREATER, 1, 1); */           /* Draw only where stencil buffer is 0 */
+  glDisable (GL_STENCIL_TEST);
 
   glPushMatrix ();
   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
