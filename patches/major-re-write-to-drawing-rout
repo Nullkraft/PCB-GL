@@ -1,5 +1,5 @@
-Bottom: 2d45d5127644e1663aac0c61622749b5ec49fbcf
-Top:    880d5646c31bbb1140628cf52467c7662f95aefc
+Bottom: 59a1890a308cb387e760b7b1bd7732dd1815ce51
+Top:    ee70dcbfbe0f7c67d2fbb2e0e791b64f337e8ce8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:55 +0100
 
@@ -19,7 +19,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 82120c1..1e90cb2 100644
+index b75d7ae..c8599fd 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -85,11 +85,11 @@ static bool doing_assy = false;
@@ -89,7 +89,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 49fd0d8..1c28c68 100644
+index b408a02..90b0bd5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -1376,15 +1376,7 @@ index 49fd0d8..1c28c68 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
    glEnable (GL_STENCIL_TEST);
-@@ -955,7 +1909,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-                 port->offlimits_color.green / 65535.,
-                 port->offlimits_color.blue / 65535.,
-                 1.);
--
-   glStencilMask (~0);
-   glClearStencil (0);
-   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-@@ -966,8 +1919,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -966,8 +1920,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1395,7 +1387,7 @@ index 49fd0d8..1c28c68 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1021,43 +1974,62 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1021,43 +1975,62 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
    min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
  
@@ -1482,7 +1474,7 @@ index 49fd0d8..1c28c68 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1065,7 +2037,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1065,7 +2038,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawAttached ();
    DrawMark ();
    hidgl_flush_triangles (&buffer);
