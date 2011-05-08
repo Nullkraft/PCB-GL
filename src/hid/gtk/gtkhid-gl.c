@@ -855,6 +855,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   /* Disable the stencil test until we need it - otherwise it gets dirty */
   glDisable (GL_STENCIL_TEST);
+  glStencilMask (0);
   glStencilFunc (GL_ALWAYS, 0, 0);
 
   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));

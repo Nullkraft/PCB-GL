@@ -635,30 +635,31 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   gluTessCallback(info.tobj, GLU_TESS_ERROR, myError);
 
   glPushAttrib (GL_STENCIL_BUFFER_BIT);                 /* Save the write mask etc.. for final restore */
+  glEnable (GL_STENCIL_TEST);
   glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                 GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
   glStencilMask (stencil_bit);                          /* Only write to our stencil bit */
   glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, ref value is our bit */
   glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
 
-  /* It will already be setup like this (so avoid prodding the state-machine):
-   * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
-   */
+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           /* Stencil pass => replace stencil value */
+
   /* Drawing operations now set our reference bit in the stencil buffer */
 
   r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
   hidgl_flush_triangles (&buffer);
 
-  /* Drawing operations as masked to areas where the stencil buffer is '0' */
-
   glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
 
-  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);    /* This allows us to toggle the bit on the subcompositing bitplane */
+  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);    /* This allows us to toggle the bit on any subcompositing bitplane */
                                                 /* If the stencil test has passed, we know that bit is 0, so we're */
                                                 /* effectively just setting it to 1. */
+
   glStencilFunc (GL_GEQUAL, 0, assigned_bits);  /* Pass stencil test if all assigned bits clear, */
                                                 /* reference is all assigned bits so we set */
                                                 /* any bits permitted by the stencil writemask */
+
+  /* Drawing operations as masked to areas where the stencil buffer is '0' */
 
   /* Draw the polygon outer */
   tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices);
