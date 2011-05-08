@@ -1,5 +1,5 @@
-Bottom: 78167fd2e952fe83c2bb6dbae3144fecb91c0d34
-Top:    ecd84a25443d441ea519989606e6bf89d8a08b0a
+Bottom: dd19ebe04611b504b61fd0996bcd9f189b2fc290
+Top:    0f36c6b08655477e229a50c8171ebcb9e86596d5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:56 +0100
 
@@ -13,10 +13,10 @@ file during the fab drawing output.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 234e2ec..a7a1a74 100644
+index 00d2785..c8599fd 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -695,9 +695,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -701,9 +701,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
          rv = 0;
        if (layernum < max_copper_layer && Layer->On)
          dapi->draw_layer (Layer, drawn_area, NULL);
