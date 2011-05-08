@@ -1,0 +1,28 @@
+Bottom: 976c8635d6df452c4b294b2d288e2d77cb688009
+Top:    9e06ada3d04d8b8e361e5e036839e51c95183196
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-08 20:09:52 +0100
+
+Refresh of hid-common-hidgl-c-special-cas
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 070480c..fb6b118 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -611,14 +611,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+       return;
+     }
+ 
+-  /* Special case non-holed polygons which don't require a stencil bit */
+-  if (poly->Clipped->contour_tree->size == 1) {
+-    fill_contour (poly->Clipped->contours, scale);
+-    return;
+-  }
+-
+-  /* Polygon has holes */
+-
+   stencil_bit = hidgl_assign_clear_stencil_bit ();
+   if (!stencil_bit)
+     {
