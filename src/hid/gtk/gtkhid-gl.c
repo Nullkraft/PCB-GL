@@ -868,10 +868,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      we can't use the hidgl polygon drawing routine */
   /* TODO: We could use the GLU tessellator though */
   if (hidgl_stencil_bits() == 0)
-    {
-      ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
-      ghid_hid.poly_dicer = 1;
-    }
+    ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
