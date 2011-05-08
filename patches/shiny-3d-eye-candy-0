@@ -1,5 +1,5 @@
-Bottom: bd472a95970e52386c9e62915b1623019194bba5
-Top:    8140a2f8f9f51ad19b5988d11f9091b7bf6088b5
+Bottom: ab538309eb17b8a3104c939e7bcc5bbe1f720ac3
+Top:    6dff3289d36f0e3e5b0040509929114eda819299
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:55 +0100
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index fba23ff..bb7d531 100644
+index 93a02e7..643bca4 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -110,6 +110,7 @@ hidgl_draw_grid (BoxType *drawn_area)
@@ -26,7 +26,7 @@ index fba23ff..bb7d531 100644
    if (!Settings.DrawGrid)
      return;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1a822c6..49fd0d8 100644
+index 7ec2edd..b408a02 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -92,11 +92,23 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -246,7 +246,7 @@ index 1a822c6..49fd0d8 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1514,8 +1533,8 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
+@@ -1511,8 +1530,8 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
    mat[1][0] = last_modelview_matrix[0][1];
    mat[1][1] = last_modelview_matrix[1][1];
  
