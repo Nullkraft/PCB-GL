@@ -1,0 +1,309 @@
+Bottom: 0301120cd7ab187bcbc76faae90a029587e9c6a8
+Top:    b30fd88d02d57742c705d70407f4812ad60942e0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-08 10:59:28 +0100
+
+Refresh of work-in-progress-on-subcomposi
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index ca65a11..e9b30d2 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -520,7 +520,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
+ 	}
+       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->end_layer ();
+     }
+ 
+   /* draw all layers in layerstack order */
+@@ -532,7 +532,7 @@ DrawEverything (BoxTypePtr drawn_area)
+         {
+           if (DrawLayerGroup (group, drawn_area) && !gui->gui)
+             DrawPPV (group, drawn_area);
+-          gui->set_layer (NULL, SL (FINISHED, 0), 0);
++          gui->end_layer ();
+         }
+     }
+ 
+@@ -547,35 +547,41 @@ DrawEverything (BoxTypePtr drawn_area)
+       CountHoles (&plated, &unplated, drawn_area);
+ 
+       if (plated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
+-        DrawHoles (true, false, drawn_area);
++        {
++          DrawHoles (true, false, drawn_area);
++          gui->end_layer ();
++        }
+ 
+       if (unplated && gui->set_layer ("unplated-drill", SL (PDRILL, 0), 0))
+-        DrawHoles (false, true, drawn_area);
++        {
++          DrawHoles (false, true, drawn_area);
++          gui->end_layer ();
++        }
+     }
+ 
+   /* Draw the solder mask if turned on */
+   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
+     {
+       DrawMask (COMPONENT_LAYER, drawn_area);
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->end_layer ();
+     }
+ 
+   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
+     {
+       DrawMask (SOLDER_LAYER, drawn_area);
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->end_layer ();
+     }
+ 
+   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
+     {
+       DrawSilk (COMPONENT_LAYER, drawn_area);
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->end_layer ();
+     }
+ 
+   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
+     {
+       DrawSilk (SOLDER_LAYER, drawn_area);
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->end_layer ();
+     }
+ 
+   if (gui->gui)
+@@ -588,7 +594,7 @@ DrawEverything (BoxTypePtr drawn_area)
+       if (gui->set_layer ("rats", SL (RATS, 0), 0))
+         {
+           DrawRats(drawn_area);
+-          gui->set_layer (NULL, SL (FINISHED, 0), 0);
++          gui->end_layer ();
+         }
+     }
+ 
+@@ -596,14 +602,14 @@ DrawEverything (BoxTypePtr drawn_area)
+   if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
+     {
+       DrawPaste (COMPONENT_LAYER, drawn_area);
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->end_layer ();
+     }
+ 
+   paste_empty = IsPasteEmpty (SOLDER_LAYER);
+   if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
+     {
+       DrawPaste (SOLDER_LAYER, drawn_area);
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->end_layer ();
+     }
+ 
+   doing_assy = true;
+@@ -611,13 +617,13 @@ DrawEverything (BoxTypePtr drawn_area)
+   if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
+     {
+       PrintAssembly (COMPONENT_LAYER, drawn_area);
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->end_layer ();
+     }
+ 
+   if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
+     {
+       PrintAssembly (SOLDER_LAYER, drawn_area);
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->end_layer ();
+     }
+ 
+   doing_assy = false;
+@@ -625,7 +631,7 @@ DrawEverything (BoxTypePtr drawn_area)
+   if (gui->set_layer ("fab", SL (FAB, 0), 0))
+     {
+       PrintFab (Output.fgGC);
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->end_layer ();
+     }
+ }
+ 
+diff --git a/src/hid.h b/src/hid.h
+index 6d20425..eeb09ab 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -207,7 +207,6 @@ extern "C"
+ #define SL_FAB		0x0070
+ #define SL_ASSY		0x0080
+ #define SL_RATS		0x0090
+-#define SL_FINISHED	0x00A0
+ /* Callers should use this.  */
+ #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
+ 
+@@ -312,6 +311,9 @@ typedef enum
+        layer is empty, if zero it may be non-empty.  */
+     int (*set_layer) (const char *name_, int group_, int _empty);
+ 
++    /* Tell the GUI the layer last selected has been finished with */
++    void (*end_layer) (void);
++
+     /* Drawing Functions.  Coordinates and distances are ALWAYS in PCB's
+        default coordinates (1/100 mil at the time this comment was
+        written).  Angles are always in degrees, with 0 being "right"
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 1963982..47e6124 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -514,9 +514,6 @@ gerber_set_layer (const char *name, int group, int empty)
+ 	     && group <
+ 	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
+ 
+-  if (SL_TYPE (idx) == SL_FINISHED)
+-    return 0;
+-
+   if (name == 0)
+     name = PCB->Data->Layer[idx].Name;
+ 
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 25e5d41..b643788 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -45,6 +45,7 @@ typedef struct render_priv {
+   bool trans_lines;
+   bool in_context;
+   GTimer *time_since_expose;
++  int subcomposite_stencil_bit;
+ } render_priv;
+ 
+ 
+@@ -65,7 +66,7 @@ int
+ ghid_set_layer (const char *name, int group, int empty)
+ {
+   render_priv *priv = gport->render_priv;
+-  static int stencil_bit = 0;
++  int stencil_bit;
+   int idx = group;
+   if (idx >= 0 && idx < max_group)
+     {
+@@ -85,24 +86,14 @@ ghid_set_layer (const char *name, int group, int empty)
+   /* Flush out any existing geoemtry to be rendered */
+   hidgl_flush_triangles (&buffer);
+ 
+-  glEnable (GL_STENCIL_TEST);                               /* Enable Stencil test */
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);               /* Stencil pass => replace stencil value (with 1) */
+-  /* Reset stencil buffer so we can paint anywhere */
+-  hidgl_return_stencil_bit (stencil_bit);                   /* Relinquish any bitplane we previously used */
+-  if (SL_TYPE (idx) != SL_FINISHED)
+-    {
+-      stencil_bit = hidgl_assign_clear_stencil_bit();       /* Get a new (clean) bitplane to stencil with */
+-      glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); /* Pass stencil test if our assigned bit is clear */
+-      glStencilMask (stencil_bit);                          /* Only write to our subcompositing stencil bitplane */
+-    }
+-  else
+-    {
+-#endif
+-      stencil_bit = 0;
+-      glStencilMask (0);
+-      glStencilFunc (GL_ALWAYS, 0, 0);                      /* Always pass stencil test */
+-#ifdef SUBCOMPOSITE_LAYERS
+-    }
++  glEnable (GL_STENCIL_TEST);                                 /* Enable Stencil test */
++  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);                 /* Stencil pass => replace stencil value (with 1) */
++
++  hidgl_return_stencil_bit (priv->subcomposite_stencil_bit);  /* Relinquish any bitplane we previously used */
++  stencil_bit = hidgl_assign_clear_stencil_bit();             /* Get a new (clean) bitplane to stencil with */
++  glStencilFunc (GL_GREATER, stencil_bit, stencil_bit);       /* Pass stencil test if our assigned bit is clear */
++  glStencilMask (stencil_bit);                                /* Only write to our subcompositing stencil bitplane */
++  priv->subcomposite_stencil_bit = stencil_bit;
+ #endif
+ 
+   if (idx >= 0 && idx < max_copper_layer + 2)
+@@ -139,6 +130,20 @@ ghid_set_layer (const char *name, int group, int empty)
+   return 0;
+ }
+ 
++static void
++ghid_end_layer (void)
++{
++  render_priv *priv = gport->render_priv;
++
++  /* Relinquish any bitplane we previously used */
++  hidgl_return_stencil_bit (priv->subcomposite_stencil_bit);
++  priv->subcomposite_stencil_bit = 0;
++
++  /* Always pass stencil test */
++  glStencilMask (0);
++  glStencilFunc (GL_ALWAYS, 0, 0);
++}
++
+ void
+ ghid_destroy_gc (hidGC gc)
+ {
+@@ -787,6 +792,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+       printf ("Could not setup GL-context!\n");
+       return; /* Should we abort? */
+     }
++
++  ghid_gui.end_layer = ghid_end_layer;
+ }
+ 
+ void
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 6395682..9dbf24c 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -706,10 +706,6 @@ nelma_set_layer(const char *name, int group, int empty)
+ 	int             idx = (group >= 0 && group < max_group) ?
+ 	PCB->LayerGroups.Entries[group][0] : group;
+ 
+-	if (SL_TYPE (idx) == SL_FINISHED) {
+-		return 0;
+-	}
+-
+ 	if (name == 0) {
+ 		name = PCB->Data->Layer[idx].Name;
+ 	}
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index d206934..9890364 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -905,10 +905,6 @@ png_set_layer (const char *name, int group, int empty)
+   int idx = (group >= 0
+ 	     && group <
+ 	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
+-
+-  if (SL_TYPE (idx) == SL_FINISHED)
+-    return 0;
+-
+   if (name == 0)
+     name = PCB->Data->Layer[idx].Name;
+ 
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index d5a351f..e17f8a3 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -337,10 +337,6 @@ eps_set_layer (const char *name, int group, int empty)
+   int idx = (group >= 0
+ 	     && group <
+ 	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
+-
+-  if (SL_TYPE (idx) == SL_FINISHED)
+-    return 0;
+-
+   if (name == 0)
+     name = PCB->Data->Layer[idx].Name;
+ 
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 500184c..92f03fd 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -651,10 +651,6 @@ ps_set_layer (const char *name, int group, int empty)
+   int idx = (group >= 0
+ 	     && group <
+ 	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
+-
+-  if (SL_TYPE (idx) == SL_FINISHED)
+-    return 0;
+-
+   if (name == 0)
+     name = PCB->Data->Layer[idx].Name;
