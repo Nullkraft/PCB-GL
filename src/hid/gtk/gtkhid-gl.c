@@ -135,6 +135,9 @@ ghid_end_layer (void)
 {
   render_priv *priv = gport->render_priv;
 
+  /* Flush out any existing geoemtry to be rendered */
+  hidgl_flush_triangles (&buffer);
+
   /* Relinquish any bitplane we previously used */
   hidgl_return_stencil_bit (priv->subcomposite_stencil_bit);
   priv->subcomposite_stencil_bit = 0;
