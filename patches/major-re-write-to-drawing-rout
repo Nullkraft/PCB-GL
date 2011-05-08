@@ -1,4 +1,4 @@
-Bottom: 4021b7db7544642cbc17f988c2c2c7dfc8392ba3
+Bottom: 717c4b9f82d5de56970699b60a07cfe82f52951a
 Top:    5ec8166e3952ea1c713bc2dca4921c827682f594
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:55 +0100
@@ -89,7 +89,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b408a02..90b0bd5 100644
+index c36cc43..90b0bd5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -210,14 +210,7 @@ index b408a02..90b0bd5 100644
    glEnable (GL_STENCIL_TEST);                                 /* Enable Stencil test */
    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);                 /* Stencil pass => replace stencil value (with 1) */
  
-@@ -117,13 +179,13 @@ ghid_set_layer (const char *name, int group, int empty)
-   glStencilFunc (GL_GREATER, stencil_bit, stencil_bit);       /* Pass stencil test if our assigned bit is clear */
-   glStencilMask (stencil_bit);                                /* Only write to our subcompositing stencil bitplane */
-   priv->subcomposite_stencil_bit = stencil_bit;
--#endif
- 
-   if (idx >= 0 && idx < max_copper_layer + 2)
-     {
+@@ -123,6 +185,7 @@ ghid_set_layer (const char *name, int group, int empty)
        priv->trans_lines = true;
        return PCB->Data->Layer[idx].On;
      }
@@ -225,7 +218,7 @@ index b408a02..90b0bd5 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -131,14 +193,10 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -130,14 +193,10 @@ ghid_set_layer (const char *name, int group, int empty)
  	case SL_INVISIBLE:
  	  return PCB->InvisibleObjectsOn;
  	case SL_MASK:
@@ -242,7 +235,7 @@ index b408a02..90b0bd5 100644
  	case SL_ASSY:
  	  return 0;
  	case SL_PDRILL:
-@@ -200,6 +258,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -199,6 +258,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
@@ -250,7 +243,7 @@ index b408a02..90b0bd5 100644
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
  
-@@ -210,6 +269,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -209,6 +269,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
    hidgl_draw_grid (drawn_area);
  
    glDisable (GL_COLOR_LOGIC_OP);
@@ -258,7 +251,7 @@ index b408a02..90b0bd5 100644
  }
  
  static void
-@@ -358,10 +418,6 @@ typedef struct
+@@ -357,10 +418,6 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -269,7 +262,7 @@ index b408a02..90b0bd5 100644
  void
  ghid_set_color (hidGC gc, const char *name)
  {
-@@ -479,7 +535,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -478,7 +535,7 @@ ghid_set_color (hidGC gc, const char *name)
    glColor4d (r, g, b, a);
  }
  
@@ -278,7 +271,7 @@ index b408a02..90b0bd5 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -661,9 +717,9 @@ static void
+@@ -660,9 +717,9 @@ static void
  draw_right_cross (gint x, gint y, gint z)
  {
    glVertex3i (x, 0, z);
@@ -290,7 +283,7 @@ index b408a02..90b0bd5 100644
  }
  
  static void
-@@ -671,25 +727,25 @@ draw_slanted_cross (gint x, gint y, gint z)
+@@ -670,25 +727,25 @@ draw_slanted_cross (gint x, gint y, gint z)
  {
    gint x0, y0, x1, y1;
  
@@ -328,7 +321,7 @@ index b408a02..90b0bd5 100644
    glVertex3i (x0, y0, z);
    glVertex3i (x1, y1, z);
  }
-@@ -700,47 +756,47 @@ draw_dozen_cross (gint x, gint y, gint z)
+@@ -699,47 +756,47 @@ draw_dozen_cross (gint x, gint y, gint z)
    gint x0, y0, x1, y1;
    gdouble tan60 = sqrt (3);
  
@@ -400,7 +393,7 @@ index b408a02..90b0bd5 100644
    glVertex3i (x0, y0, z);
    glVertex3i (x1, y1, z);
  }
-@@ -779,8 +835,8 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -778,8 +835,8 @@ ghid_show_crosshair (gboolean paint_new_location)
        /* FIXME: when CrossColor changed from config */
        ghid_map_color_string (Settings.CrossColor, &cross_color);
      }
@@ -411,7 +404,7 @@ index b408a02..90b0bd5 100644
    z = global_depth;
  
    glEnable (GL_COLOR_LOGIC_OP);
-@@ -803,22 +859,22 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -802,22 +859,22 @@ ghid_show_crosshair (gboolean paint_new_location)
    if (x >= 0 && paint_new_location && draw_markers)
      {
        glBegin (GL_QUADS);
@@ -450,7 +443,7 @@ index b408a02..90b0bd5 100644
        glEnd ();
      }
  
-@@ -880,6 +936,10 @@ ghid_start_drawing (GHidPort *port)
+@@ -879,6 +936,10 @@ ghid_start_drawing (GHidPort *port)
  
    port->render_priv->in_context = true;
  
@@ -461,7 +454,7 @@ index b408a02..90b0bd5 100644
    return TRUE;
  }
  
-@@ -898,6 +958,14 @@ ghid_end_drawing (GHidPort *port)
+@@ -897,6 +958,14 @@ ghid_end_drawing (GHidPort *port)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
@@ -476,7 +469,7 @@ index b408a02..90b0bd5 100644
  }
  
  void
-@@ -905,6 +973,885 @@ ghid_screen_update (void)
+@@ -904,6 +973,885 @@ ghid_screen_update (void)
  {
  }
  
@@ -1362,7 +1355,7 @@ index b408a02..90b0bd5 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -948,6 +1895,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -947,6 +1895,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -1376,7 +1369,7 @@ index b408a02..90b0bd5 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
    glEnable (GL_STENCIL_TEST);
-@@ -966,8 +1920,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -965,8 +1920,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1387,7 +1380,7 @@ index b408a02..90b0bd5 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1021,43 +1975,62 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1020,43 +1975,62 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
    min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
  
@@ -1474,7 +1467,7 @@ index b408a02..90b0bd5 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1065,7 +2038,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1064,7 +2038,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawAttached ();
    DrawMark ();
    hidgl_flush_triangles (&buffer);
