@@ -1,0 +1,28 @@
+Bottom: b660e68e40e4dceb5068d2a38f9d661ee8862d0d
+Top:    8110cd3793f48d627bf19ecddc8c7b9d40c68160
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-08 20:13:17 +0100
+
+Refresh of add-routines-to-render-just-a-
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 4a6c7db..7b0860c 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -614,6 +614,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+       return;
+     }
+ 
++  /* Special case non-holed polygons which don't require a stencil bit */
++  if (poly->Clipped->contour_tree->size == 1) {
++    fill_contour (poly->Clipped->contours, scale);
++    return;
++  }
++
++  /* Polygon has holes */
++
+   stencil_bit = hidgl_assign_clear_stencil_bit ();
+   if (!stencil_bit)
+     {
