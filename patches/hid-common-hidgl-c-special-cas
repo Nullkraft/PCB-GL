@@ -1,5 +1,5 @@
 Bottom: 5debe9fe8e9952bd520df07b40c18851ff0981c6
-Top:    5debe9fe8e9952bd520df07b40c18851ff0981c6
+Top:    d86c0d5bc1b90160b9c23c78e0c4f919ea58fbb5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-08 20:03:53 +0100
 
@@ -10,4 +10,22 @@ This saves a bit-plane usage in the stencil buffer.
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index fb6b118..070480c 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -611,6 +611,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+       return;
+     }
+ 
++  /* Special case non-holed polygons which don't require a stencil bit */
++  if (poly->Clipped->contour_tree->size == 1) {
++    fill_contour (poly->Clipped->contours, scale);
++    return;
++  }
++
++  /* Polygon has holes */
++
+   stencil_bit = hidgl_assign_clear_stencil_bit ();
+   if (!stencil_bit)
+     {
