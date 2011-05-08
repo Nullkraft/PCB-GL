@@ -80,8 +80,6 @@ ghid_set_layer (const char *name, int group, int empty)
       idx = PCB->LayerGroups.Entries[group][idx];
     }
 
-#define SUBCOMPOSITE_LAYERS
-#ifdef SUBCOMPOSITE_LAYERS
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
@@ -93,7 +91,6 @@ ghid_set_layer (const char *name, int group, int empty)
   glStencilFunc (GL_GREATER, stencil_bit, stencil_bit);       /* Pass stencil test if our assigned bit is clear */
   glStencilMask (stencil_bit);                                /* Only write to our subcompositing stencil bitplane */
   priv->subcomposite_stencil_bit = stencil_bit;
-#endif
 
   if (idx >= 0 && idx < max_copper_layer + 2)
     {
