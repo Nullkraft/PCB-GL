@@ -5,8 +5,9 @@ Date:   2011-05-05 21:05:51 +0100
 
 GTK/GL: Sub-composite objects on each layer using the stencil buffer
 
-This avoids the highlight which appears when translucent objects on
-a given layer and drawn over each other.
+This avoids the highlight where translucent objects on a given layer
+are drawn over each other. It enables us to have a translucent silk
+screen layer and still be able to read the text.
 
 
 ---
