@@ -1,5 +1,5 @@
-Bottom: 6779fbeb84d68e6314dbb4a81d52913fdc8328bb
-Top:    c3eb96637544c62e30e3763228f1dd4ad8dce10e
+Bottom: 8140a2f8f9f51ad19b5988d11f9091b7bf6088b5
+Top:    e16fe089ff0bf2a26cabb4883ca9d64848c664c3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:52 +0100
 
@@ -9,7 +9,7 @@ Continue with crazy idea
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e9b30d2..8fa667e 100644
+index 6f60305..687be78 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -141,16 +141,6 @@ set_pv_color (PinType *pv, int type)
@@ -315,8 +315,8 @@ index e9b30d2..8fa667e 100644
 -        DrawLayerCommon (Layer, drawn_area, true);
 +        dapi->draw_layer (Layer, drawn_area, NULL);
  
-       if (gui->gui) /* HACK: Subcomposite each layer in a layer group separately */
-         gui->set_layer (0, group, 0);
+       /* HACK: Let GTK/GL subcomposite each layer in the group separately */
+       if (gui->gui)
 diff --git a/src/draw.h b/src/draw.h
 index adfee36..cf324a5 100644
 --- a/src/draw.h
