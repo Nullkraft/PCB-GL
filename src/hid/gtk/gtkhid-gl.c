@@ -107,8 +107,6 @@ ghid_set_layer (const char *name, int group, int empty)
     }
   }
 
-#define SUBCOMPOSITE_LAYERS
-#ifdef SUBCOMPOSITE_LAYERS
   glEnable (GL_STENCIL_TEST);                                 /* Enable Stencil test */
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);                 /* Stencil pass => replace stencil value (with 1) */
 
@@ -1055,7 +1053,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   /* Just prod the drawing code so the current depth gets set to
      the right value for the layer we are editing */
   gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
-  gui->set_layer (NULL, SL_FINISHED, 0);
+  gui->end_layer ();
 
   ghid_draw_grid (&region);
 
