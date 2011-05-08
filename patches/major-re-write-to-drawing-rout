@@ -1,5 +1,5 @@
 Bottom: 1b0dc8dd752c853dd7b856d1bcc73d4a60624ab7
-Top:    0521f85294372d7872a1821eaaffb257804832a8
+Top:    fc202331aa7d5b732736f5a1b1a78285c16f26b8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:55 +0100
 
@@ -89,7 +89,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index db33d19..2eeb7f0 100644
+index db33d19..067ed0e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -464,7 +464,7 @@ index db33d19..2eeb7f0 100644
  }
  
  void
-@@ -902,6 +971,885 @@ ghid_screen_update (void)
+@@ -902,6 +971,883 @@ ghid_screen_update (void)
  {
  }
  
@@ -1021,10 +1021,8 @@ index db33d19..2eeb7f0 100644
 +  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
 +  int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
 +
-+  if (!gui->set_layer (0, group, 0)) {
-+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
++  if (!gui->set_layer (0, group, 0))
 +    return 0;
-+  }
 +
 +  /* HACK: Subcomposite each layer in a layer group separately */
 +  for (i = n_entries - 1; i >= 0; i--) {
@@ -1062,7 +1060,7 @@ index db33d19..2eeb7f0 100644
 +
 +        /* HACK: Subcomposite polygons separately from other layer primitives */
 +        /* Reset the compositing */
-+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
++        gui->end_layer ();
 +        gui->set_layer (0, group, 0);
 +
 +        if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
@@ -1102,7 +1100,7 @@ index db33d19..2eeb7f0 100644
 +    }
 +  }
 +
-+  gui->set_layer (NULL, SL (FINISHED, 0), 0);
++  gui->end_layer ();
 +
 +  return (n_entries > 1);
 +}
@@ -1263,13 +1261,13 @@ index db33d19..2eeb7f0 100644
 +      if (gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
 +                          SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
 +        DrawMask (side, drawn_area);
-+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
++        gui->end_layer ();
 +      }
 +      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
 +    }
 +    if (PCB->ElementOn)
 +      r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
-+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
++    gui->end_layer ();
 +  }
 +
 +  /* draw all layers in layerstack order */
@@ -1318,20 +1316,20 @@ index db33d19..2eeb7f0 100644
 +    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
 +    if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
 +
-+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
++    gui->end_layer ();
 +  }
 +
 +  /* Draw the solder mask if turned on */
 +  if (gui->set_layer (SWAP_IDENT ? "soldermask" : "componentmask",
 +                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
 +    DrawMask (side, drawn_area);
-+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
++    gui->end_layer ();
 +  }
 +
 +  if (gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
 +                      SWAP_IDENT ? SL (SILK, BOTTOM) : SL (SILK, TOP), 0)) {
 +      DrawSilk (side, drawn_area);
-+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->end_layer ();
 +  }
 +
 +  /* Draw element Marks */
@@ -1341,7 +1339,7 @@ index db33d19..2eeb7f0 100644
 +  /* Draw rat lines on top */
 +  if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0)) {
 +    DrawRats(drawn_area);
-+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
++    gui->end_layer ();
 +  }
 +
 +  Settings.ShowSolderSide = save_show_solder;
@@ -1350,7 +1348,7 @@ index db33d19..2eeb7f0 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -945,6 +1893,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -945,6 +1891,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -1364,7 +1362,7 @@ index db33d19..2eeb7f0 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
    glEnable (GL_STENCIL_TEST);
-@@ -963,8 +1918,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -963,8 +1916,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1375,7 +1373,7 @@ index db33d19..2eeb7f0 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1018,43 +1973,62 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1018,43 +1971,62 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
    min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
  
@@ -1462,7 +1460,7 @@ index db33d19..2eeb7f0 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1062,7 +2036,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1062,7 +2034,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawAttached ();
    DrawMark ();
    hidgl_flush_triangles (&buffer);
