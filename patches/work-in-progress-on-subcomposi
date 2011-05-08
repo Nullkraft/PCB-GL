@@ -1,5 +1,5 @@
 Bottom: 37a5f17cf543ddad1f07b85f16602416dd573b27
-Top:    69b300030b2c2d31e4fadeda7fb27a019c31df03
+Top:    680fc1a29c1d6b271ded6c85bb6f2d6c5454d5a6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
@@ -423,8 +423,40 @@ index d2ab3c4..37d35b9 100644
 +void hidgl_reset_stencil_usage (void);
  
  #endif /* __HIDGL_INCLUDED__  */
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 5289c71..08061fe 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -68,6 +68,11 @@ nogui_set_layer (const char *name, int idx, int empty)
+   return 0;
+ }
+ 
++static void
++nogui_end_layer (void)
++{
++}
++
+ static hidGC
+ nogui_make_gc (void)
+ {
+@@ -456,6 +461,7 @@ HID hid_nogui = {
+   0 /* nogui_notify_crosshair_change */ ,
+   0 /* nogui_notify_mark_change */ ,
+   nogui_set_layer,
++  nogui_end_layer,
+   nogui_make_gc,
+   nogui_destroy_gc,
+   nogui_use_mask,
+@@ -521,6 +527,7 @@ apply_default_hid (HID * d, HID * s)
+   AD (notify_crosshair_change);
+   AD (notify_mark_change);
+   AD (set_layer);
++  AD (end_layer);
+   AD (make_gc);
+   AD (destroy_gc);
+   AD (use_mask);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7dae38e..75d12f8 100644
+index 7dae38e..1a75bd3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,6 +21,7 @@
@@ -555,16 +587,17 @@ index 7dae38e..75d12f8 100644
        break;
      }
    cur_mask = use_it;
-@@ -762,6 +792,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -762,6 +792,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
        printf ("Could not setup GL-context!\n");
        return; /* Should we abort? */
      }
 +
-+  ghid_gui.end_layer = ghid_end_layer;
++  /* Setup HID function pointers specific to the GL renderer*/
++  ghid_hid.end_layer = ghid_end_layer;
  }
  
  void
-@@ -830,6 +862,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -830,6 +863,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -579,7 +612,7 @@ index 7dae38e..75d12f8 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -847,12 +887,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -847,12 +888,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -600,7 +633,7 @@ index 7dae38e..75d12f8 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -990,9 +1038,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -990,9 +1039,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -614,7 +647,7 @@ index 7dae38e..75d12f8 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
-@@ -1099,8 +1150,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1099,8 +1151,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -625,7 +658,7 @@ index 7dae38e..75d12f8 100644
  
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
-@@ -1162,6 +1215,12 @@ ghid_request_debug_draw (void)
+@@ -1162,6 +1216,12 @@ ghid_request_debug_draw (void)
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
