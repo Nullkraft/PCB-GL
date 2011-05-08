@@ -842,12 +842,19 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
 
+  glEnable (GL_STENCIL_TEST);
   glClearColor (port->offlimits_color.red / 65535.,
                 port->offlimits_color.green / 65535.,
                 port->offlimits_color.blue / 65535.,
                 1.);
-
+  glStencilMask (~0);
+  glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  hidgl_reset_stencil_usage ();
+
+  /* Disable the stencil test until we need it - otherwise it gets dirty */
+  glDisable (GL_STENCIL_TEST);
+  glStencilFunc (GL_ALWAYS, 0, 0);
 
   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
@@ -983,8 +990,11 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                 gport->bg_color.green / 65535.,
                 gport->bg_color.blue / 65535.,
                 1.);
-
+  glStencilMask (~0);
+  glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+  hidgl_reset_stencil_usage ();
 
   /* call the drawing routine */
   hidgl_init_triangle_array (&buffer);
@@ -1092,8 +1102,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                 gport->bg_color.green / 65535.,
                 gport->bg_color.blue / 65535.,
                 1.);
+  glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  hidgl_reset_stencil_usage ();
 
   /* call the drawing routine */
   hidgl_init_triangle_array (&buffer);
