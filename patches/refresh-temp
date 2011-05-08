@@ -1,0 +1,21 @@
+Bottom: 120745a6b7e20fd146ff8a5027ee08c19940fa9a
+Top:    d84edd6efa8d2e601947976aa8f1cd3975000b33
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-08 17:55:20 +0100
+
+Refresh of manage-stencil-bitplanes-so-we
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 78a4213..d047272 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -21,6 +21,7 @@
+ #include <GL/gl.h>
+ #include <gtk/gtkgl.h>
+ #include "hid/common/hidgl.h"
++#include "hid/common/draw_helpers.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
