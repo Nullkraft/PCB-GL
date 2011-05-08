@@ -3,7 +3,10 @@ Top:    c69e4ab8b25196c012f0929c96fa30c6eb45019a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-08 11:40:01 +0100
 
-Render polygons a contour at a time
+hid/common/hidgl.c: Tidy up polygon contour tessleation
+
+Move the gluTessBeginPolygon and gluTessEndPolygon calls inside
+tesselate_contour, rather than duplicating it in each caller.
 
 
 ---
