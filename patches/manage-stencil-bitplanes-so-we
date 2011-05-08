@@ -1,5 +1,5 @@
 Bottom: a80d2f345a0a0f3ba19f47b0d180d2edb3ae2786
-Top:    120745a6b7e20fd146ff8a5027ee08c19940fa9a
+Top:    d84edd6efa8d2e601947976aa8f1cd3975000b33
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-08 17:38:45 +0100
 
@@ -207,10 +207,18 @@ index d2ab3c4..37d35b9 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d9ee158..78a4213 100644
+index d9ee158..d047272 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -213,17 +213,12 @@ ghid_draw_bg_image (void)
+@@ -21,6 +21,7 @@
+ #include <GL/gl.h>
+ #include <gtk/gtkgl.h>
+ #include "hid/common/hidgl.h"
++#include "hid/common/draw_helpers.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -213,17 +214,12 @@ ghid_draw_bg_image (void)
  void
  ghid_use_mask (int use_it)
  {
@@ -230,7 +238,7 @@ index d9ee158..78a4213 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -234,22 +229,25 @@ ghid_use_mask (int use_it)
+@@ -234,22 +230,25 @@ ghid_use_mask (int use_it)
  
      case HID_MASK_CLEAR:
        /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
@@ -262,7 +270,7 @@ index d9ee158..78a4213 100644
        break;
      }
    cur_mask = use_it;
-@@ -819,6 +817,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -819,6 +818,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -277,7 +285,7 @@ index d9ee158..78a4213 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -836,12 +842,19 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -836,12 +843,19 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -298,7 +306,7 @@ index d9ee158..78a4213 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -977,9 +990,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -977,9 +991,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -312,7 +320,7 @@ index d9ee158..78a4213 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
-@@ -1086,8 +1102,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1086,8 +1103,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
