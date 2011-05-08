@@ -1,5 +1,5 @@
-Bottom: f31be373371b9ed1c38f774d7e3b610e20a898a7
-Top:    8110cd3793f48d627bf19ecddc8c7b9d40c68160
+Bottom: d8e9c979bdc1d08b7dca54234b4c50bfaebd4dbb
+Top:    b660e68e40e4dceb5068d2a38f9d661ee8862d0d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:58 +0100
 
@@ -11,7 +11,7 @@ Use them rather than the GLU tessellator
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 0a916b6..7b0860c 100644
+index ce055f5..4a6c7db 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -553,12 +553,10 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
@@ -83,7 +83,7 @@ index 0a916b6..7b0860c 100644
  
    info.scale = scale;
    global_scale = scale;
-@@ -647,27 +626,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -639,27 +618,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    if (!stencil_bit)
      {
        printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
@@ -112,7 +112,7 @@ index 0a916b6..7b0860c 100644
    glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                  GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
    glStencilMask (stencil_bit);                          /* Only write to our stencil bit */
-@@ -682,11 +647,11 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -674,11 +639,11 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    hidgl_flush_triangles (&buffer);
  
    glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
@@ -126,7 +126,7 @@ index 0a916b6..7b0860c 100644
    glStencilFunc (GL_GEQUAL, 0, assigned_bits);  /* Pass stencil test if all assigned bits clear, */
                                                  /* reference is all assigned bits so we set */
                                                  /* any bits permitted by the stencil writemask */
-@@ -694,17 +659,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -686,17 +651,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  
    /* Draw the polygon outer */
