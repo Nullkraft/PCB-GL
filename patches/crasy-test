@@ -1,5 +1,5 @@
 Bottom: 8110cd3793f48d627bf19ecddc8c7b9d40c68160
-Top:    8110cd3793f48d627bf19ecddc8c7b9d40c68160
+Top:    f79d4b5f469abe204390a077a5b5a243a8c0e258
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:52 +0100
 
@@ -8,4 +8,22 @@ Crasy test
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index c8599fd..513bc47 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -141,10 +141,12 @@ set_pv_color (PinType *pv, int type)
+ }
+ 
+ static int
+-pad_callback (const BoxType * b, void *cl)
++pad_inlayer_callback (const BoxType * b, void *cl)
+ {
+   PadTypePtr pad = (PadTypePtr) b;
+-  int *side = cl;
++  LayerType *layer = cl;
++  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
++  int group = GetLayerGroupNumberByPointer (layer);
+ 
+   if (ON_SIDE (pad, *side))
+     {
