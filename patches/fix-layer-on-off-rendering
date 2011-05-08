@@ -1,5 +1,5 @@
-Bottom: 74310a82ab596b93d56ced703240edf0a645dbe3
-Top:    cde4eaebfcce3361bc0a9948cc1d7a154291c37a
+Bottom: f79d4b5f469abe204390a077a5b5a243a8c0e258
+Top:    f79d4b5f469abe204390a077a5b5a243a8c0e258
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:57 +0100
 
@@ -23,16 +23,4 @@ This fix is almost certainly WRONG.
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ca8d794..4b5e458 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1557,7 +1557,7 @@ DrawLayerGroup (int group, const BoxType * screen)
-         strcmp (Layer->Name, "route") == 0)
-       rv = 0;
- 
--    if (layernum < max_copper_layer /*&& Layer->On*/) {
-+    if (layernum < max_copper_layer && Layer->On) {
- 
-       if (!first_run)
-         gui->set_layer (0, group, 0);
+
