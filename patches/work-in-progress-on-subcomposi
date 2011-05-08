@@ -1,5 +1,5 @@
 Bottom: ec1a74f78d785c7314c927422916dae7c1c24f70
-Top:    31882b6f90fa8e0de1eddbd73b348316c27bcf15
+Top:    98755dd20c0103988a0feea778739a2cf4ab626a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
@@ -200,7 +200,7 @@ index 5289c71..08061fe 100644
    AD (destroy_gc);
    AD (use_mask);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 910fd2d..ea7d73a 100644
+index 910fd2d..9b1bc3a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -44,6 +44,7 @@ typedef struct render_priv {
@@ -284,15 +284,12 @@ index 910fd2d..ea7d73a 100644
  }
  
  void
-@@ -1169,6 +1206,12 @@ ghid_request_debug_draw (void)
+@@ -1169,6 +1206,9 @@ ghid_request_debug_draw (void)
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
 +  /* Setup stenciling */
-+  /* Drawing operations set the stencil buffer to '1' */
-+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
-+  /* Drawing operations as masked to areas where the stencil buffer is '0' */
-+  /* glStencilFunc (GL_GREATER, 1, 1); */           /* Draw only where stencil buffer is 0 */
++  glDisable (GL_STENCIL_TEST);
 +
    glPushMatrix ();
    glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
