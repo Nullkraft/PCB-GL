@@ -1,5 +1,5 @@
 Bottom: 2addbe16d434df840161674cda8f1a496fe0dc8e
-Top:    5debe9fe8e9952bd520df07b40c18851ff0981c6
+Top:    9e06ada3d04d8b8e361e5e036839e51c95183196
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 910fd2d..9b1bc3a 100644
+index 910fd2d..3c12833 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -44,6 +44,7 @@ typedef struct render_priv {
@@ -33,12 +33,10 @@ index 910fd2d..9b1bc3a 100644
    int idx = group;
    if (idx >= 0 && idx < max_group)
      {
-@@ -78,6 +80,21 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -78,6 +80,18 @@ ghid_set_layer (const char *name, int group, int empty)
        idx = PCB->LayerGroups.Entries[group][idx];
      }
  
-+#define SUBCOMPOSITE_LAYERS
-+#ifdef SUBCOMPOSITE_LAYERS
 +  /* Flush out any existing geoemtry to be rendered */
 +  hidgl_flush_triangles (&buffer);
 +
@@ -50,12 +48,11 @@ index 910fd2d..9b1bc3a 100644
 +  glStencilFunc (GL_GREATER, stencil_bit, stencil_bit);       /* Pass stencil test if our assigned bit is clear */
 +  glStencilMask (stencil_bit);                                /* Only write to our subcompositing stencil bitplane */
 +  priv->subcomposite_stencil_bit = stencil_bit;
-+#endif
 +
    if (idx >= 0 && idx < max_copper_layer + 2)
      {
        priv->trans_lines = true;
-@@ -94,7 +111,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -94,7 +108,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -64,7 +61,7 @@ index 910fd2d..9b1bc3a 100644
  	  if (SL_MYSIDE (idx))
  	    return PCB->ElementOn;
  	  return 0;
-@@ -112,6 +129,23 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -112,6 +126,23 @@ ghid_set_layer (const char *name, int group, int empty)
    return 0;
  }
  
@@ -88,7 +85,7 @@ index 910fd2d..9b1bc3a 100644
  void
  ghid_destroy_gc (hidGC gc)
  {
-@@ -751,6 +785,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -751,6 +782,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
        printf ("Could not setup GL-context!\n");
        return; /* Should we abort? */
      }
@@ -98,7 +95,7 @@ index 910fd2d..9b1bc3a 100644
  }
  
  void
-@@ -1169,6 +1206,9 @@ ghid_request_debug_draw (void)
+@@ -1169,6 +1203,9 @@ ghid_request_debug_draw (void)
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
