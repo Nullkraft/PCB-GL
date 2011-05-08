@@ -1,0 +1,25 @@
+Bottom: 31882b6f90fa8e0de1eddbd73b348316c27bcf15
+Top:    98755dd20c0103988a0feea778739a2cf4ab626a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-08 19:07:54 +0100
+
+Refresh of work-in-progress-on-subcomposi
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index ea7d73a..9b1bc3a 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1207,10 +1207,7 @@ ghid_request_debug_draw (void)
+   ghid_invalidate_current_gc ();
+ 
+   /* Setup stenciling */
+-  /* Drawing operations set the stencil buffer to '1' */
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
+-  /* Drawing operations as masked to areas where the stencil buffer is '0' */
+-  /* glStencilFunc (GL_GREATER, 1, 1); */           /* Draw only where stencil buffer is 0 */
++  glDisable (GL_STENCIL_TEST);
+ 
+   glPushMatrix ();
+   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
