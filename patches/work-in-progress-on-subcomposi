@@ -1,5 +1,5 @@
 Bottom: 2addbe16d434df840161674cda8f1a496fe0dc8e
-Top:    9e06ada3d04d8b8e361e5e036839e51c95183196
+Top:    9652184a0568f71e3c8d111f1ee5beca3ace4803
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
@@ -13,7 +13,7 @@ screen layer and still be able to read the text.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 910fd2d..3c12833 100644
+index 910fd2d..a7278df 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -44,6 +44,7 @@ typedef struct render_priv {
@@ -51,15 +51,6 @@ index 910fd2d..3c12833 100644
    if (idx >= 0 && idx < max_copper_layer + 2)
      {
        priv->trans_lines = true;
-@@ -94,7 +108,7 @@ ghid_set_layer (const char *name, int group, int empty)
- 	    return TEST_FLAG (SHOWMASKFLAG, PCB);
- 	  return 0;
- 	case SL_SILK:
--	  priv->trans_lines = false;
-+	  priv->trans_lines = true;
- 	  if (SL_MYSIDE (idx))
- 	    return PCB->ElementOn;
- 	  return 0;
 @@ -112,6 +126,23 @@ ghid_set_layer (const char *name, int group, int empty)
    return 0;
  }
