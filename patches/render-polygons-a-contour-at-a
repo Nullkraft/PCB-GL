@@ -1,5 +1,5 @@
 Bottom: 37a5f17cf543ddad1f07b85f16602416dd573b27
-Top:    c69e4ab8b25196c012f0929c96fa30c6eb45019a
+Top:    424751b3a7001322d82d71230a77cf8df259a942
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-08 11:40:01 +0100
 
@@ -12,7 +12,7 @@ tesselate_contour, rather than duplicating it in each caller.
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 64639d5..1d07dec 100644
+index 64639d5..453c7f9 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -552,28 +552,27 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
@@ -48,7 +48,7 @@ index 64639d5..1d07dec 100644
  };
  
  static int
-@@ -586,16 +585,16 @@ do_hole (const BoxType *b, void *cl)
+@@ -586,21 +585,20 @@ do_hole (const BoxType *b, void *cl)
    if (curc->Flags.orient == PLF_DIR) {
      return 0;
    }
@@ -69,7 +69,12 @@ index 64639d5..1d07dec 100644
    int vertex_count = 0;
    PLINE *contour;
    struct do_hole_info info;
-@@ -609,19 +608,17 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+ 
+-
+   global_scale = scale;
+ 
+   if (poly->Clipped == NULL)
+@@ -609,19 +607,17 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
        return;
      }
  
@@ -91,7 +96,7 @@ index 64639d5..1d07dec 100644
    gluTessCallback(info.tobj, GLU_TESS_BEGIN, myBegin);
    gluTessCallback(info.tobj, GLU_TESS_VERTEX, myVertex);
    gluTessCallback(info.tobj, GLU_TESS_COMBINE, myCombine);
-@@ -632,9 +629,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -632,9 +628,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    glColorMask (0, 0, 0, 0);                   /* Disable writting in color buffer */
    glEnable (GL_STENCIL_TEST);
  
@@ -101,7 +106,7 @@ index 64639d5..1d07dec 100644
    /* Drawing operations set the stencil buffer to '1' */
    glStencilFunc (GL_ALWAYS, 1, 1);            /* Test always passes, value written 1 */
    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
-@@ -648,9 +642,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -648,9 +641,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    /* Stencil buffer read only */
  
    /* Draw the polygon outer */
