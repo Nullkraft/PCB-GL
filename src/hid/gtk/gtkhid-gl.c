@@ -135,8 +135,6 @@ compute_depth (int group)
     }
   } else if (SL_TYPE (group) == SL_RATS) {
     depth = last_depth_computed;
-  } else if (SL_TYPE (group) == SL_FINISHED) {
-    depth = last_depth_computed;
   } else {
     /* DEFAULT CASE */
     printf ("Unknown layer group to set depth for: %i\n", group);
