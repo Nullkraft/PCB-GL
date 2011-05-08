@@ -1,5 +1,5 @@
-Bottom: 78fd42c0248ad6de41e97dc9249daeda4d13f131
-Top:    05f1f058f3745f924c7c9316cd8ee1ac71fc212e
+Bottom: ec1a74f78d785c7314c927422916dae7c1c24f70
+Top:    31882b6f90fa8e0de1eddbd73b348316c27bcf15
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-05 21:05:51 +0100
 
@@ -200,7 +200,7 @@ index 5289c71..08061fe 100644
    AD (destroy_gc);
    AD (use_mask);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ed11aec..6bba869 100644
+index 910fd2d..ea7d73a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -44,6 +44,7 @@ typedef struct render_priv {
@@ -284,7 +284,7 @@ index ed11aec..6bba869 100644
  }
  
  void
-@@ -1168,6 +1205,12 @@ ghid_request_debug_draw (void)
+@@ -1169,6 +1206,12 @@ ghid_request_debug_draw (void)
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
