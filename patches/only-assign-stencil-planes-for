@@ -3,9 +3,9 @@ Top:    5f63c32dc0811f2361cc47293fe9b00433480ec6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-08 20:49:34 +0100
 
-Only assign stencil planes for visible layers
+Only assign stencil planes where sub-compositing is required
 
-NB: Split out of the FBO patch
+That is, only for visible layers, and not the mask or rat layers.
 
 
 ---
