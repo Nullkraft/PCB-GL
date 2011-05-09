@@ -81,18 +81,6 @@ start_subcomposite (void)
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
-  if (group >= 0 && group < max_group) {
-    hidgl_set_depth ((max_group - group) * 10);
-  } else {
-    if (SL_TYPE (idx) == SL_SILK) {
-      if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
-        hidgl_set_depth (max_group * 10 + 3);
-      } else {
-        hidgl_set_depth (10 - 3);
-      }
-    }
-  }
-
   glEnable (GL_STENCIL_TEST);                                 /* Enable Stencil test */
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);                 /* Stencil pass => replace stencil value (with 1) */
 
@@ -141,6 +129,19 @@ ghid_set_layer (const char *name, int group, int empty)
 
   end_subcomposite ();
   start_subcomposite ();
+
+  /* Drawing is already flushed by {start,end}_subcomposite */
+  if (group >= 0 && group < max_group) {
+    hidgl_set_depth ((max_group - group) * 10);
+  } else {
+    if (SL_TYPE (idx) == SL_SILK) {
+      if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
+        hidgl_set_depth (max_group * 10 + 3);
+      } else {
+        hidgl_set_depth (10 - 3);
+      }
+    }
+  }
 
   if (idx >= 0 && idx < max_copper_layer + 2)
     {
