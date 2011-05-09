@@ -1,0 +1,21 @@
+Bottom: 077cbbb4a03d16b3aa25ee423dd97aa4f73b154e
+Top:    04fe6dea19880b1b9c863cf66659a7a84dcae1ac
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-09 07:36:31 +0100
+
+Refresh of gtk-gl-split-out-sub-compositi
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 059c4aa..8af8a03 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -101,7 +101,6 @@ int
+ ghid_set_layer (const char *name, int group, int empty)
+ {
+   render_priv *priv = gport->render_priv;
+-  int stencil_bit;
+   int idx = group;
+   if (idx >= 0 && idx < max_group)
+     {
