@@ -101,7 +101,6 @@ int
 ghid_set_layer (const char *name, int group, int empty)
 {
   render_priv *priv = gport->render_priv;
-  int stencil_bit;
   int idx = group;
   if (idx >= 0 && idx < max_group)
     {
