@@ -1,5 +1,5 @@
-Bottom: df983203f4609ddd1882064be97b840ca740007a
-Top:    2d3183d539ebd434920c7f4423528263ae624aae
+Bottom: 1a44aeee01ff5d06facc524ee71853327759db26
+Top:    71fbfa094b8a7044f7889a61d1ae62a4351c414f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 02:41:14 +0100
 
@@ -9,7 +9,7 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index af4bcca..d419620 100644
+index 69d5180..bbacf47 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,8 +83,6 @@ static bool doing_assy = false;
@@ -21,7 +21,7 @@ index af4bcca..d419620 100644
  static void AddPart (void *);
  static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
  static void DrawRats (BoxType *);
-@@ -533,7 +531,7 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
+@@ -582,7 +580,7 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
   * Draws pins pads and vias - Always draws for non-gui HIDs,
   * otherwise drawing depends on PCB->PinOn and PCB->ViaOn
   */
@@ -30,7 +30,7 @@ index af4bcca..d419620 100644
  DrawPPV (int group, const BoxType *drawn_area)
  {
    int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-@@ -718,7 +716,7 @@ DrawRats (BoxTypePtr drawn_area)
+@@ -767,7 +765,7 @@ DrawRats (BoxTypePtr drawn_area)
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
   */
@@ -54,7 +54,7 @@ index 5224adc..4d754dd 100644
  void DrawSilk (int side, const BoxType *);
  void DrawPaste (int side, BoxType *);
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 7d529ba..3c67bde 100644
+index 543b99f..8270236 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -1,6 +1,11 @@
@@ -69,7 +69,7 @@ index 7d529ba..3c67bde 100644
  
  static void
  fill_contour (hidGC gc, PLINE *pl)
-@@ -475,3 +480,225 @@ common_draw_helpers_init (HID *hid)
+@@ -471,3 +476,225 @@ common_draw_helpers_init (HID *hid)
    hid->fill_pcb_pv          = common_fill_pcb_pv;
    hid->thindraw_pcb_pv      = common_thindraw_pcb_pv;
  }
@@ -296,7 +296,7 @@ index 7d529ba..3c67bde 100644
 +    PrintFab ();
 +}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 4429121..27e9729 100644
+index ee078c1..8f030c3 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -25,8 +25,10 @@
@@ -310,7 +310,7 @@ index 4429121..27e9729 100644
  
  #include "hid.h"
  #include "../hidint.h"
-@@ -347,26 +349,6 @@ gerber_get_export_options (int *n)
+@@ -345,26 +347,6 @@ gerber_get_export_options (int *n)
    return gerber_options;
  }
  
@@ -337,7 +337,7 @@ index 4429121..27e9729 100644
  static void
  maybe_close_f ()
  {
-@@ -383,18 +365,143 @@ maybe_close_f ()
+@@ -381,18 +363,143 @@ maybe_close_f ()
  
  static BoxType region;
  
@@ -488,7 +488,7 @@ index 4429121..27e9729 100644
  
    if (!options)
      {
-@@ -439,24 +546,20 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -437,24 +544,20 @@ gerber_do_export (HID_Attr_Val * options)
    else
      {
        memset (print_group, 0, sizeof (print_group));
@@ -524,7 +524,7 @@ index 4429121..27e9729 100644
    linewidth = -1;
    lastcap = -1;
    lastgroup = -1;
-@@ -474,17 +577,13 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -472,17 +575,13 @@ gerber_do_export (HID_Attr_Val * options)
    lastgroup = -1;
    c_layerapps = 0;
    finding_apertures = 1;
@@ -544,7 +544,7 @@ index 4429121..27e9729 100644
  }
  
  static void
-@@ -520,14 +619,6 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -518,14 +617,6 @@ gerber_set_layer (const char *name, int group, int empty)
    if (name == 0)
      name = PCB->Data->Layer[idx].Name;
  
