@@ -1,0 +1,36 @@
+Bottom: 04fe6dea19880b1b9c863cf66659a7a84dcae1ac
+Top:    3d303de2afb4922f1ebb9da3028134c87e1f4796
+Author: Peter Clifton (none) <peterc@paramita-desktop-2>
+Date:   2011-05-10 12:40:11 +0100
+
+From 224cea120af8989e553944cd5a81b0034d1ec50c Mon Sep 17 00:00:00 2001
+Subject: [PATCH] search.c: Don't allow selecting pads or pins of locked elements
+
+The locked flag test was mistakenly being applied ot the
+pad or pin its-self, not the parent element.
+
+
+---
+
+diff --git a/src/search.c b/src/search.c
+index 3fafcd4..ff86bc7 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -115,7 +115,7 @@ pinorvia_callback (const BoxType * box, void *cl)
+   struct ans_info *i = (struct ans_info *) cl;
+   PinTypePtr pin = (PinTypePtr) box;
+ 
+-  if (TEST_FLAG (i->locked, pin))
++  if (TEST_FLAG (i->locked, *(AnyObjectType **)i->ptr1))
+     return 0;
+ 
+   if (!IsPointOnPin (PosX, PosY, SearchRadius, pin))
+@@ -182,7 +182,7 @@ pad_callback (const BoxType * b, void *cl)
+   PadTypePtr pad = (PadTypePtr) b;
+   struct ans_info *i = (struct ans_info *) cl;
+ 
+-  if (TEST_FLAG (i->locked, pad))
++  if (TEST_FLAG (i->locked, *(AnyObjectType **)i->ptr1))
+     return 0;
+ 
+   if (FRONT (pad) || i->BackToo)
