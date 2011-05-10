@@ -44,6 +44,7 @@ static hidGC current_gc = NULL;
 static char *current_color = NULL;
 static double global_alpha_mult = 1.0;
 static int alpha_changed = 0;
+static bool check_gl_drawing_ok_hack = false;
 
 
 /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
@@ -458,6 +459,14 @@ ghid_set_color (hidGC gc, const char *name)
 
   alpha_changed = 0;
   gc->colorname = (char *) name;
+
+  /* If we can't set the GL colour right now, ensure we quite
+   * whilst current_color is still NULL, so we don't NOOP the
+   * next ghid_set_color call.
+   */
+  if (!check_gl_drawing_ok_hack)
+    return;
+
   current_color = strdup (name);
 
   if (gport->colormap == NULL)
@@ -836,6 +845,9 @@ ghid_show_crosshair (gboolean paint_new_location)
   extern float global_depth;
 
   if (!paint_new_location)
+    return;
+
+  if (!check_gl_drawing_ok_hack)
     return;
 
   if (!done_once)
@@ -1908,6 +1920,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_start_drawing (port);
 
   hidgl_init ();
+  check_gl_drawing_ok_hack = true;
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
@@ -2082,6 +2095,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   hidgl_flush_triangles (&buffer);
 
+  check_gl_drawing_ok_hack = false;
   ghid_end_drawing (port);
 
   g_timer_start (priv->time_since_expose);
@@ -2152,6 +2166,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   }
   gport->render_priv->in_context = true;
 
+  check_gl_drawing_ok_hack = true;
+
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -2198,6 +2214,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   else
     glFlush ();
 
+  check_gl_drawing_ok_hack = false;
+
   /* end drawing to current GL-context */
   gport->render_priv->in_context = false;
   gdk_gl_drawable_gl_end (pGlDrawable);
@@ -2227,6 +2245,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   int save_width, save_height;
   int save_view_width, save_view_height;
   BoxType region;
+  bool save_check_gl_drawing_ok_hack;
 
   save_zoom = gport->zoom;
   save_width = gport->width;
@@ -2265,6 +2284,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
     return NULL;
   }
   gport->render_priv->in_context = true;
+
+  save_check_gl_drawing_ok_hack = check_gl_drawing_ok_hack;
+  check_gl_drawing_ok_hack = true;
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -2309,6 +2331,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   glPopMatrix ();
 
   glFlush ();
+
+  check_gl_drawing_ok_hack = save_check_gl_drawing_ok_hack;
 
   /* end drawing to current GL-context */
   gport->render_priv->in_context = false;
