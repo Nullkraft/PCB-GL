@@ -1,0 +1,54 @@
+Bottom: 3d303de2afb4922f1ebb9da3028134c87e1f4796
+Top:    b31c16549d2d5f34412f7266d7c3254eab3dd876
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-10 14:21:04 +0100
+
+From f7bbf0a0a7c7c6b0d3f6669cace0604216ea9326 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] search.c: Fix crash introduced by bad logic in the last commit
+
+The deferference of ptr1 needs to come _after_ we've assigned it,
+so use the pad->Element or pin->Element member instead.
+
+
+---
+
+diff --git a/src/search.c b/src/search.c
+index ff86bc7..30fe883 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -114,13 +114,14 @@ pinorvia_callback (const BoxType * box, void *cl)
+ {
+   struct ans_info *i = (struct ans_info *) cl;
+   PinTypePtr pin = (PinTypePtr) box;
++  AnyObjectType *ptr1 = pin->Element ? pin->Element : pin;
+ 
+-  if (TEST_FLAG (i->locked, *(AnyObjectType **)i->ptr1))
++  if (TEST_FLAG (i->locked, ptr1))
+     return 0;
+ 
+   if (!IsPointOnPin (PosX, PosY, SearchRadius, pin))
+     return 0;
+-  *i->ptr1 = pin->Element ? pin->Element : pin;
++  *i->ptr1 = ptr1;
+   *i->ptr2 = *i->ptr3 = pin;
+   longjmp (i->env, 1);
+   return 1;			/* never reached */
+@@ -181,15 +182,16 @@ pad_callback (const BoxType * b, void *cl)
+ {
+   PadTypePtr pad = (PadTypePtr) b;
+   struct ans_info *i = (struct ans_info *) cl;
++  AnyObjectType *ptr1 = pad->Element;
+ 
+-  if (TEST_FLAG (i->locked, *(AnyObjectType **)i->ptr1))
++  if (TEST_FLAG (i->locked, ptr1))
+     return 0;
+ 
+   if (FRONT (pad) || i->BackToo)
+     {
+       if (IsPointInPad (PosX, PosY, SearchRadius, pad))
+ 	    {
+-	      *i->ptr1 = pad->Element;
++	      *i->ptr1 = ptr1;
+ 	      *i->ptr2 = *i->ptr3 = pad;
+ 	      longjmp (i->env, 1);
+ 	    }
