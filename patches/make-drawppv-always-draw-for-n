@@ -1,5 +1,5 @@
-Bottom: 2d3183d539ebd434920c7f4423528263ae624aae
-Top:    c2fc5a854f9f43992db71d999f0baf669bd586d0
+Bottom: 71fbfa094b8a7044f7889a61d1ae62a4351c414f
+Top:    71fbfa094b8a7044f7889a61d1ae62a4351c414f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 01:10:02 +0100
 
@@ -8,36 +8,4 @@ draw.c: Draw pins, pads and vias (for non-gui HIDs) from DrawLayerGroup()
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index d419620..8f63b2c 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -366,7 +366,6 @@ PrintAssembly (int side, const BoxType * drawn_area)
- 
-   gui->set_draw_faded (Output.fgGC, 1);
-   DrawLayerGroup (side_group, drawn_area);
--  DrawPPV (side_group, drawn_area);
-   gui->set_draw_faded (Output.fgGC, 0);
- 
-   /* draw package */
-@@ -428,8 +427,7 @@ DrawEverything (BoxTypePtr drawn_area)
-       int group = drawn_groups[i];
- 
-       if (gui->set_layer (0, group, 0))
--        if (DrawLayerGroup (group, drawn_area) && !gui->gui)
--          DrawPPV (group, drawn_area);
-+        DrawLayerGroup (group, drawn_area);
-     }
- 
-   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
-@@ -737,7 +735,9 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
-     }
-   if (n_entries > 1)
-     rv = 1;
--  return rv;
-+
-+  if (rv == 1 && !gui->gui)
-+    DrawPPV (group, drawn_area);
- }
- 
- static void
+
