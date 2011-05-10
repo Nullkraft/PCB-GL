@@ -1,0 +1,42 @@
+Bottom: 71fbfa094b8a7044f7889a61d1ae62a4351c414f
+Top:    ffbcf9596b415b2a0a3e5f39c77e5f26e1adbf03
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-10 14:32:53 +0100
+
+Refresh of make-drawppv-always-draw-for-n
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index bbacf47..77ecd73 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -366,7 +366,6 @@ PrintAssembly (int side, const BoxType * drawn_area)
+ 
+   gui->set_draw_faded (Output.fgGC, 1);
+   DrawLayerGroup (side_group, drawn_area);
+-  DrawPPV (side_group, drawn_area);
+   gui->set_draw_faded (Output.fgGC, 0);
+ 
+   /* draw package */
+@@ -430,8 +429,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 
+       if (gui->set_layer (0, group, 0))
+         {
+-          if (DrawLayerGroup (group, drawn_area) && !gui->gui)
+-            DrawPPV (group, drawn_area);
++          DrawLayerGroup (group, drawn_area); 
+           gui->end_layer ();
+         }
+     }
+@@ -786,7 +784,9 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+     }
+   if (n_entries > 1)
+     rv = 1;
+-  return rv;
++
++  if (rv == 1 && !gui->gui)
++    DrawPPV (group, drawn_area);
+ }
+ 
+ static void
