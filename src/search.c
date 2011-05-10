@@ -115,7 +115,7 @@ pinorvia_callback (const BoxType * box, void *cl)
   struct ans_info *i = (struct ans_info *) cl;
   PinTypePtr pin = (PinTypePtr) box;
 
-  if (TEST_FLAG (i->locked, pin))
+  if (TEST_FLAG (i->locked, *(AnyObjectType **)i->ptr1))
     return 0;
 
   if (!IsPointOnPin (PosX, PosY, SearchRadius, pin))
@@ -182,7 +182,7 @@ pad_callback (const BoxType * b, void *cl)
   PadTypePtr pad = (PadTypePtr) b;
   struct ans_info *i = (struct ans_info *) cl;
 
-  if (TEST_FLAG (i->locked, pad))
+  if (TEST_FLAG (i->locked, *(AnyObjectType **)i->ptr1))
     return 0;
 
   if (FRONT (pad) || i->BackToo)
