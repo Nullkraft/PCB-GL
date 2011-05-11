@@ -1,5 +1,5 @@
-Bottom: fd4b1a2e31c49e57da7dd1a712d4c6fd4207a736
-Top:    b7cdca107b47468c1173856136396d1d3735ee93
+Bottom: bb5c62b82f051bbe0e14e14cb9c31e59bfbf3ce7
+Top:    6f18577e50d81adddab49a1ec52afef9c0c2c3f3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-10 14:33:38 +0100
 
@@ -12,7 +12,7 @@ rat layers.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 87ee2cc..6230fa6 100644
+index 95f15ee..cc69de7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -187,6 +187,8 @@ int
@@ -99,7 +99,7 @@ index 87ee2cc..6230fa6 100644
  }
  
  static void
-@@ -1861,7 +1878,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1855,7 +1872,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
  
    /* Draw pins, pads, vias below silk */
    if (global_view_2d) {
@@ -108,7 +108,7 @@ index 87ee2cc..6230fa6 100644
  
      if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
        /* Mask out drilled holes */
-@@ -1878,7 +1895,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1872,7 +1889,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
  
