@@ -1,7 +1,7 @@
-Bottom: 830ac95e75587670597333e9d73448664f65af2d
-Top:    e1491d8520a5879cd854b6b6bc2c7f4ee1c69244
+Bottom: 4cb83e4914303301af97da2e9adc48bc1713595b
+Top:    b105c90967d6b3631614e990d89ebbdb7cfbee24
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-11 12:13:12 +0100
+Date:   2011-05-11 12:23:11 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -956,7 +956,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 89b47f3..9729b94 100644
+index 33cbc9f..68e6252 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -291,6 +291,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -968,7 +968,7 @@ index 89b47f3..9729b94 100644
    glDisable (GL_STENCIL_TEST);
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -670,7 +672,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
+@@ -667,7 +669,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
  {
    USE_GC (gc);
  
@@ -977,7 +977,7 @@ index 89b47f3..9729b94 100644
  }
  
  
-@@ -687,7 +689,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -684,7 +686,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
    USE_GC (gc);
  
@@ -986,7 +986,7 @@ index 89b47f3..9729b94 100644
  }
  
  void
-@@ -1687,9 +1689,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1685,9 +1687,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
  #define MIN_FACES_PER_CYL 6
  #define MAX_FACES_PER_CYL 360
    float radius = vr;
@@ -997,7 +997,7 @@ index 89b47f3..9729b94 100644
    int i;
    int slices;
  
-@@ -1704,19 +1704,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1702,19 +1702,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
    z1 = compute_depth (from_layer);
    z2 = compute_depth (to_layer);
  
@@ -1034,7 +1034,7 @@ index 89b47f3..9729b94 100644
  }
  
  struct cyl_info {
-@@ -2112,6 +2120,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2124,6 +2132,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_show_crosshair (TRUE);
  
    hidgl_flush_triangles (&buffer);
@@ -1042,7 +1042,7 @@ index 89b47f3..9729b94 100644
  
    check_gl_drawing_ok_hack = false;
    hidgl_in_context (false);
-@@ -2212,7 +2221,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2224,7 +2233,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
