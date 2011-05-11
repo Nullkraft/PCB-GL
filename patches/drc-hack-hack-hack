@@ -1,5 +1,5 @@
 Bottom: a8de699f6e4759dc6b118729796dbd6daf77b641
-Top:    a8de699f6e4759dc6b118729796dbd6daf77b641
+Top:    0e03dd25c1c0b8be7e7cb99cf8224c23abbca076
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-11 12:23:16 +0100
 
@@ -8,4 +8,21 @@ drc: HACK HACK HACK
 
 ---
 
-
+diff --git a/src/find.c b/src/find.c
+index eb4cac2..73468d2 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -2748,7 +2748,12 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
+ 
+               line.Point1.X = v->point[0];
+               line.Point1.Y = v->point[1];
+-              line.Thickness = 2 * Bloat;
++              line.Thickness = Bloat;
++              /* Another Bloat is added by IsLineInPolygon, making the correct
++               * 2x Bloat. Ideally we would change it there, but doing so
++               * breaks some other DRC checks which rely on the broken behaviour
++               * in IsLineInPolygon.
++               */
+               line.Clearance = 0;
+               line.Flags = NoFlags ();
+               for (v = v->next; v != &c->head; v = v->next)
