@@ -1,5 +1,5 @@
-Bottom: 0e5ce3fa891f8fc70adc486ccfd78c0d426e949a
-Top:    47e2b71d72a1af5a276371b3f81033493d77d24b
+Bottom: 0e03dd25c1c0b8be7e7cb99cf8224c23abbca076
+Top:    7e0648fb0a80f11c0af56af13d6215ab644e5a7d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-31 02:14:08 +0100
 
@@ -33,7 +33,7 @@ rely on the half-bloat being added in various places.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 1b3c9ed..663ba67 100644
+index 73468d2..fc08061 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -772,10 +772,10 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
@@ -66,7 +66,7 @@ index 1b3c9ed..663ba67 100644
            if (IsRectangleInPolygon (x1, y1, x2, y2, &i->polygon)
                && ADD_PV_TO_LIST (pv))
              longjmp (i->env, 1);
-@@ -2670,7 +2670,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+@@ -2675,7 +2675,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
      return false;
    if (TEST_FLAG(SQUAREFLAG,Line)&&(Line->Point1.X==Line->Point2.X||Line->Point1.Y==Line->Point2.Y))
       {
@@ -75,7 +75,7 @@ index 1b3c9ed..663ba67 100644
         LocationType x1, x2, y1, y2;
  
         x1 = MIN (Line->Point1.X, Line->Point2.X) - wid;
-@@ -2684,7 +2684,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+@@ -2689,7 +2689,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
        && Box->Y1 <= Polygon->Clipped->contours->ymax + Bloat
        && Box->Y2 >= Polygon->Clipped->contours->ymin - Bloat)
      {
@@ -84,7 +84,7 @@ index 1b3c9ed..663ba67 100644
          return FALSE;           /* error */
        return isects (lp, Polygon, true);
      }
-@@ -2743,12 +2743,7 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
+@@ -2748,12 +2748,7 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
  
                line.Point1.X = v->point[0];
                line.Point1.Y = v->point[1];
