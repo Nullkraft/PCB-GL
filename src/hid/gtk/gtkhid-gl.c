@@ -347,12 +347,15 @@ typedef struct
   double blue;
 } ColorCache;
 
+static char *current_color = NULL;
+static double global_alpha_mult = 1.0;
+static int alpha_changed = 0;
+
 void
 ghid_set_color (hidGC gc, const char *name)
 {
   render_priv *priv = gport->render_priv;
   static void *cache = NULL;
-  static char *old_name = NULL;
   hidval cval;
   ColorCache *cc;
   double alpha_mult = 1.0;
@@ -361,23 +364,19 @@ ghid_set_color (hidGC gc, const char *name)
 
   current_gc = gc;
 
-  if (old_name != NULL)
-    {
-      if (strcmp (name, old_name) == 0)
-        return;
-      free (old_name);
-    }
+  if (!alpha_changed && current_color != NULL &&
+      strcmp (name, current_color) == 0)
+    return;
 
-  old_name = strdup (name);
+  free (current_color);
+  current_color = NULL;
 
   if (name == NULL)
-    {
-      fprintf (stderr, "%s():  name = NULL, setting to magenta\n",
-               __FUNCTION__);
-      name = "magenta";
-    }
+    return;
 
+  alpha_changed = 0;
   gc->colorname = (char *) name;
+  current_color = strdup (name);
 
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -442,6 +441,7 @@ ghid_set_color (hidGC gc, const char *name)
     }
   if (1) {
     double maxi, mult;
+    alpha_mult *= global_alpha_mult;
     if (priv->trans_lines)
       a = a * alpha_mult;
     maxi = r;
@@ -460,6 +460,16 @@ ghid_set_color (hidGC gc, const char *name)
 
   hidgl_flush_triangles (&buffer);
   glColor4d (r, g, b, a);
+}
+
+void
+ghid_global_alpha_mult (hidGC gc, double alpha_mult)
+{
+  if (alpha_mult != global_alpha_mult) {
+    global_alpha_mult = alpha_mult;
+    alpha_changed = 1;
+    ghid_set_color (gc, gc->colorname);
+  }
 }
 
 void
@@ -570,6 +580,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
   USE_GC (gc);
 
   hidgl_fill_pcb_polygon (poly, clip_box, gport->zoom);
+}
+
+void
+ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+{
+  common_thindraw_pcb_polygon (gc, poly, clip_box);
+  ghid_global_alpha_mult (gc, 0.25);
+  ghid_fill_pcb_polygon (gc, poly, clip_box);
+  ghid_global_alpha_mult (gc, 1.0);
 }
 
 void
