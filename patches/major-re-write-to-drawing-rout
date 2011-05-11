@@ -1,7 +1,7 @@
 Bottom: 56399ca7fdb605063313b3c1dbfd4e58f487323c
-Top:    27423333f5d0263067f8bb07ea19d5601ac62d89
+Top:    4256771355ddb701ff08b0a558dd501b9d655e61
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-10 14:33:36 +0100
+Date:   2011-05-11 12:07:40 +0100
 
 Major re-write to drawing routines
 
@@ -14,7 +14,7 @@ Notes from squashed patches:
   Fix rendering depths for silk and mask layers
   Fixup depth for layers and element marks
   Move more rendering to world coordinates
-
+  Fix get_coords function
 
 ---
 
@@ -1477,9 +1477,20 @@ index 093126b..700d94b 100644
    ghid_show_crosshair (TRUE);
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7df2067..77a7416 100644
+index 7df2067..e6e1e53 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
+@@ -203,8 +203,8 @@ ghid_get_coords (const char *msg, int *x, int *y)
+     ghid_get_user_xy (msg);
+   if (ghid_port.has_entered)
+     {
+-      *x = SIDE_X (gport->view_x);
+-      *y = SIDE_Y (gport->view_y);
++      *x = gport->view_x;
++      *y = gport->view_y;
+     }
+ }
+ 
 @@ -233,14 +233,14 @@ ghid_note_event_location (GdkEventButton * ev)
  #ifdef ENABLE_GL
    /* Unproject event_x and event_y to world coordinates of the plane we are on */
