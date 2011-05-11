@@ -1,0 +1,24 @@
+Bottom: 7cd73bda1f391dbfbf043a2653d4efe69c35a859
+Top:    b7cdca107b47468c1173856136396d1d3735ee93
+Author: Peter Clifton (none) <peterc@paramita-desktop-2>
+Date:   2011-05-11 12:07:15 +0100
+
+hid/gtk: Fix get_coords function
+
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 1bf6529..a51ec8b 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -205,8 +205,8 @@ ghid_get_coords (const char *msg, int *x, int *y)
+     ghid_get_user_xy (msg);
+   if (ghid_port.has_entered)
+     {
+-      *x = SIDE_X (gport->view_x);
+-      *y = SIDE_Y (gport->view_y);
++      *x = gport->view_x;
++      *y = gport->view_y;
+     }
+ }
