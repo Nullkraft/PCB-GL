@@ -1,0 +1,28 @@
+Bottom: 3b3209ccb01389ddbef208de8ef7254dbcaf5aac
+Top:    0d3a2189f2cacc6e14d1699a9a166b6517029f8c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-11 12:20:39 +0100
+
+Refresh of gtk-gl-don-t-set-magenta-for-a
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index ad5ff98..3902bc3 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -369,14 +369,6 @@ ghid_set_color (hidGC gc, const char *name)
+     }
+ 
+   old_name = strdup (name);
+-
+-  if (name == NULL)
+-    {
+-      fprintf (stderr, "%s():  name = NULL, setting to magenta\n",
+-               __FUNCTION__);
+-      name = "magenta";
+-    }
+-
+   gc->colorname = (char *) name;
+ 
+   if (gport->colormap == NULL)
