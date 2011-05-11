@@ -285,7 +285,6 @@ libgtk_a_CPPFLAGS = -I./hid/gtk
 LIBGTK_SRCS = \
 	dolists.h \
 	hid/hidint.h \
-	hid/gtk/bga-wizard.c \
 	hid/gtk/gtkhid-main.c \
 	hid/gtk/gtkhid.h \
 	hid/gtk/gui.h \
