@@ -5,6 +5,10 @@ Date:   2011-05-11 12:18:42 +0100
 
 gtk/gl: Don't set "magenta" for a NULL color passed to ghid_set_color
 
+The code has a strdup (name), followed by a test for name == NULL. If
+name _were_ ever NULL, the strdup would crash, so we can remove this
+test.
+
 
 ---
 
