@@ -1,5 +1,5 @@
 Bottom: 0e03dd25c1c0b8be7e7cb99cf8224c23abbca076
-Top:    eadda53bb6dc639c2e547bbb7c90f11b28d344af
+Top:    0e03dd25c1c0b8be7e7cb99cf8224c23abbca076
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-11 12:23:16 +0100
 
@@ -8,15 +8,4 @@ drc: HACK HACK HACK
 
 ---
 
-diff --git a/src/Makefile.am b/src/Makefile.am
-index 4943755..353160a 100644
---- a/src/Makefile.am
-+++ b/src/Makefile.am
-@@ -285,6 +285,7 @@ libgtk_a_CPPFLAGS = -I./hid/gtk
- LIBGTK_SRCS = \
- 	dolists.h \
- 	hid/hidint.h \
-+	hid/gtk/bga-wizard.c \
- 	hid/gtk/gtkhid-main.c \
- 	hid/gtk/gtkhid.h \
- 	hid/gtk/gui.h \
+
