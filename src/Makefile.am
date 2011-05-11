@@ -295,23 +295,23 @@ hid/common/hidlist.h : Makefile
 libgtk_a_CPPFLAGS = -I./hid/gtk
 LIBGTK_SRCS = \
 	dolists.h \
-	hid/hidint.h \
+	hid/gtk/bga-wizard.c \
+	hid/gtk/gtkhid.h \
+	hid/gtk/gtkhid-main.c \
+	hid/gtk/gtk-pcb-cell-renderer-visibility.c \
+	hid/gtk/gtk-pcb-cell-renderer-visibility.h \
 	hid/gtk/gtk-pcb-coord-entry.c \
 	hid/gtk/gtk-pcb-coord-entry.h \
 	hid/gtk/gtk-pcb-layer-selector.c \
 	hid/gtk/gtk-pcb-layer-selector.h \
-	hid/gtk/gtk-pcb-cell-renderer-visibility.c \
-	hid/gtk/gtk-pcb-cell-renderer-visibility.h \
-	hid/gtk/gtkhid-main.c \
-	hid/gtk/gtkhid.h \
-	hid/gtk/gui.h \
 	hid/gtk/gui-command-window.c \
 	hid/gtk/gui-config.c \
+	hid/gtk/gui-dialog.c \
 	hid/gtk/gui-dialog-print.c \
 	hid/gtk/gui-dialog-size.c \
-	hid/gtk/gui-dialog.c \
 	hid/gtk/gui-drc-window.c \
 	hid/gtk/gui-drc-window.h \
+	hid/gtk/gui.h \
 	hid/gtk/gui-keyref-window.c \
 	hid/gtk/gui-library-window.c \
 	hid/gtk/gui-library-window.h \
@@ -326,6 +326,7 @@ LIBGTK_SRCS = \
 	hid/gtk/gui-utils.c \
 	hid/gtk/snavi.c \
 	hid/gtk/snavi.h
+	hid/hidint.h \
 libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
 
 hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
