@@ -1,5 +1,5 @@
-Bottom: 4256771355ddb701ff08b0a558dd501b9d655e61
-Top:    c7daca87c81a4683e64300a34d62f38021a142cd
+Bottom: 56399ca7fdb605063313b3c1dbfd4e58f487323c
+Top:    6d9471a693eed0106e5d49967057a3638c27a626
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-11 12:08:56 +0100
 
@@ -9,10 +9,10 @@ Fix ghid_set_color function a bit
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 700d94b..ccb4391 100644
+index 093126b..d090641 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -445,25 +445,19 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -388,25 +388,19 @@ ghid_set_color (hidGC gc, const char *name)
  
    current_gc = gc;
  
@@ -46,7 +46,7 @@ index 700d94b..ccb4391 100644
  
    if (gport->colormap == NULL)
      gport->colormap = gtk_widget_get_colormap (gport->top_window);
-@@ -555,7 +549,7 @@ ghid_global_alpha_mult (hidGC gc, double alpha_mult)
+@@ -498,7 +492,7 @@ ghid_global_alpha_mult (hidGC gc, double alpha_mult)
    if (alpha_mult != global_alpha_mult) {
      global_alpha_mult = alpha_mult;
      alpha_changed = 1;
