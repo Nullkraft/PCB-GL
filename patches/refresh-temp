@@ -1,0 +1,21 @@
+Bottom: 7e0648fb0a80f11c0af56af13d6215ab644e5a7d
+Top:    cb45cc51b1697b7a33d5aeb36271120828ce9e65
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-11 12:32:10 +0100
+
+Refresh of bga-wizard
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 4943755..353160a 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -285,6 +285,7 @@ libgtk_a_CPPFLAGS = -I./hid/gtk
+ LIBGTK_SRCS = \
+ 	dolists.h \
+ 	hid/hidint.h \
++	hid/gtk/bga-wizard.c \
+ 	hid/gtk/gtkhid-main.c \
+ 	hid/gtk/gtkhid.h \
+ 	hid/gtk/gui.h \
