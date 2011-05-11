@@ -464,31 +464,23 @@ ghid_set_color (hidGC gc, const char *name)
 
   current_gc = gc;
 
-  if (!alpha_changed && current_color != NULL)
-    {
-      if (strcmp (name, current_color) == 0)
-        return;
-      free (current_color);
-    }
+  if (!alpha_changed && current_color != NULL &&
+      strcmp (name, current_color) == 0)
+    return;
 
-  alpha_changed = 0;
-
-  current_color = strdup (name);
+  free (current_color);
+  current_color = NULL;
 
   if (name == NULL)
-    {
-      fprintf (stderr, "%s():  name = NULL, setting to magenta\n",
-               __FUNCTION__);
-      name = "magenta";
-    }
+    return;
 
+  alpha_changed = 0;
   gc->colorname = (char *) name;
 
   if (!check_gl_drawing_ok_hack)
-    {
-      current_color = NULL;
-      return;
-    }
+    return;
+
+  current_color = strdup (name);
 
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -580,7 +572,7 @@ ghid_global_alpha_mult (hidGC gc, double alpha_mult)
   if (alpha_mult != global_alpha_mult) {
     global_alpha_mult = alpha_mult;
     alpha_changed = 1;
-    ghid_set_color (gc, current_color);
+    ghid_set_color (gc, gc->colorname);
   }
 }
 
