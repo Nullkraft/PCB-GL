@@ -203,8 +203,8 @@ ghid_get_coords (const char *msg, int *x, int *y)
     ghid_get_user_xy (msg);
   if (ghid_port.has_entered)
     {
-      *x = SIDE_X (gport->view_x);
-      *y = SIDE_Y (gport->view_y);
+      *x = gport->view_x;
+      *y = gport->view_y;
     }
 }
 
