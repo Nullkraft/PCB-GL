@@ -1,7 +1,7 @@
 Bottom: 3b3209ccb01389ddbef208de8ef7254dbcaf5aac
-Top:    e288bdfcd94d25c6c06acfcf29d8e14026064c4a
+Top:    968c743fcd9086158a49b3ce4523001c62b074ff
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-10 14:33:35 +0100
+Date:   2011-05-11 12:18:16 +0100
 
 Hack to make pretty translucent polygons in thindraw-poly mode
 
@@ -9,8 +9,6 @@ TODO: Perhaps need some way to configure this.. it might be nice in
 non-thindraw mode too. If people want thin-draw to gain extra speed,
 rather than have it actually slower (due to fill + outline), then a
 way to turn it off would also be useful.
-
-
 
 ---
 
@@ -32,7 +30,7 @@ index 4cb9a02..678c7bc 100644
  {
    gint w, h, lw, xx, yy;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ad5ff98..3193a1d 100644
+index ad5ff98..e5fc2bb 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -347,12 +347,15 @@ typedef struct
@@ -52,28 +50,39 @@ index ad5ff98..3193a1d 100644
    hidval cval;
    ColorCache *cc;
    double alpha_mult = 1.0;
-@@ -361,14 +364,16 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -361,23 +364,19 @@ ghid_set_color (hidGC gc, const char *name)
  
    current_gc = gc;
  
 -  if (old_name != NULL)
-+  if (!alpha_changed && current_color != NULL)
-     {
+-    {
 -      if (strcmp (name, old_name) == 0)
-+      if (strcmp (name, current_color) == 0)
-         return;
+-        return;
 -      free (old_name);
-+      free (current_color);
-     }
+-    }
++  if (!alpha_changed && current_color != NULL &&
++      strcmp (name, current_color) == 0)
++    return;
  
 -  old_name = strdup (name);
-+  alpha_changed = 0;
-+
-+  current_color = strdup (name);
++  free (current_color);
++  current_color = NULL;
  
    if (name == NULL)
-     {
-@@ -442,6 +447,7 @@ ghid_set_color (hidGC gc, const char *name)
+-    {
+-      fprintf (stderr, "%s():  name = NULL, setting to magenta\n",
+-               __FUNCTION__);
+-      name = "magenta";
+-    }
++    return;
+ 
++  alpha_changed = 0;
+   gc->colorname = (char *) name;
++  current_color = strdup (name);
+ 
+   if (gport->colormap == NULL)
+     gport->colormap = gtk_widget_get_colormap (gport->top_window);
+@@ -442,6 +441,7 @@ ghid_set_color (hidGC gc, const char *name)
      }
    if (1) {
      double maxi, mult;
@@ -81,7 +90,7 @@ index ad5ff98..3193a1d 100644
      if (priv->trans_lines)
        a = a * alpha_mult;
      maxi = r;
-@@ -463,6 +469,16 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -463,6 +463,16 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
@@ -90,7 +99,7 @@ index ad5ff98..3193a1d 100644
 +  if (alpha_mult != global_alpha_mult) {
 +    global_alpha_mult = alpha_mult;
 +    alpha_changed = 1;
-+    ghid_set_color (gc, current_color);
++    ghid_set_color (gc, gc->colorname);
 +  }
 +}
 +
@@ -98,7 +107,7 @@ index ad5ff98..3193a1d 100644
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
    gc->cap = style;
-@@ -573,6 +589,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -573,6 +583,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  }
  
  void
