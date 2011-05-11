@@ -1,5 +1,5 @@
 Bottom: 4256771355ddb701ff08b0a558dd501b9d655e61
-Top:    4256771355ddb701ff08b0a558dd501b9d655e61
+Top:    c7daca87c81a4683e64300a34d62f38021a142cd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-11 12:08:56 +0100
 
@@ -8,4 +8,49 @@ Fix ghid_set_color function a bit
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 700d94b..ccb4391 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -445,25 +445,19 @@ ghid_set_color (hidGC gc, const char *name)
+ 
+   current_gc = gc;
+ 
+-  if (!alpha_changed && current_color != NULL)
+-    {
+-      if (strcmp (name, current_color) == 0)
+-        return;
+-      free (current_color);
+-    }
+-
+-  alpha_changed = 0;
++  if (!alpha_changed && current_color != NULL &&
++      strcmp (name, current_color) == 0)
++    return;
+ 
+-  current_color = strdup (name);
++  free (current_color);
++  current_color = NULL;
+ 
+   if (name == NULL)
+-    {
+-      fprintf (stderr, "%s():  name = NULL, setting to magenta\n",
+-               __FUNCTION__);
+-      name = "magenta";
+-    }
++    return;
+ 
++  alpha_changed = 0;
+   gc->colorname = (char *) name;
++  current_color = strdup (name);
+ 
+   if (gport->colormap == NULL)
+     gport->colormap = gtk_widget_get_colormap (gport->top_window);
+@@ -555,7 +549,7 @@ ghid_global_alpha_mult (hidGC gc, double alpha_mult)
+   if (alpha_mult != global_alpha_mult) {
+     global_alpha_mult = alpha_mult;
+     alpha_changed = 1;
+-    ghid_set_color (gc, current_color);
++    ghid_set_color (gc, gc->colorname);
+   }
+ }
