@@ -459,13 +459,15 @@ ghid_set_color (hidGC gc, const char *name)
 
   alpha_changed = 0;
   gc->colorname = (char *) name;
-  current_color = strdup (name);
 
+  /* If we can't set the GL colour right now, ensure we quite
+   * whilst current_color is still NULL, so we don't NOOP the
+   * next ghid_set_color call.
+   */
   if (!check_gl_drawing_ok_hack)
-    {
-      current_color = NULL;
-      return;
-    }
+    return;
+
+  current_color = strdup (name);
 
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
