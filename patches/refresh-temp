@@ -1,0 +1,34 @@
+Bottom: 4b3dfa1b945847f40a5bf8955d9d1647f68c38ff
+Top:    b62faf5159cb2efb6304ee9a892ac33f9bbbf5c6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-11 12:12:26 +0100
+
+Refresh of hack-to-avoid-gl-calls-when-we
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 052a114..13dd54e 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -459,13 +459,15 @@ ghid_set_color (hidGC gc, const char *name)
+ 
+   alpha_changed = 0;
+   gc->colorname = (char *) name;
+-  current_color = strdup (name);
+ 
++  /* If we can't set the GL colour right now, ensure we quite
++   * whilst current_color is still NULL, so we don't NOOP the
++   * next ghid_set_color call.
++   */
+   if (!check_gl_drawing_ok_hack)
+-    {
+-      current_color = NULL;
+-      return;
+-    }
++    return;
++
++  current_color = strdup (name);
+ 
+   if (gport->colormap == NULL)
+     gport->colormap = gtk_widget_get_colormap (gport->top_window);
