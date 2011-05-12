@@ -19,6 +19,7 @@
 
 #include "hid.h"
 #include "../hidint.h"
+#include "hid/common/hidnogui.h"
 #include "hid/common/draw_helpers.h"
 #include "../ps/ps.h"
 #include "../../print.h"
@@ -1343,6 +1344,7 @@ hid_ps_init ()
 {
   memset (&ps_hid, 0, sizeof (HID));
 
+  common_nogui_init (&ps_hid);
   common_draw_helpers_init (&ps_hid);
 
   ps_hid.struct_size        = sizeof (HID);
@@ -1373,7 +1375,6 @@ hid_ps_init ()
   ps_hid.calibrate          = ps_calibrate;
   ps_hid.set_crosshair      = ps_set_crosshair;
 
-  apply_default_hid (&ps_hid, 0);
   hid_register_hid (&ps_hid);
 
   hid_eps_init ();
