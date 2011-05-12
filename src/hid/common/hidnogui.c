@@ -448,77 +448,85 @@ nogui_finish_debug_draw (void)
 {
 }
 
-HID hid_nogui = {
-  sizeof (HID),
-  "nogui",
-  "Default GUI when no other GUI is present.  Does nothing.",
-  0, 0, 0, 0, 0,
-  nogui_get_export_options,
-  nogui_do_export,
-  nogui_parse_arguments,
-  nogui_invalidate_lr,
-  nogui_invalidate_all,
-  0 /* nogui_notify_crosshair_change */ ,
-  0 /* nogui_notify_mark_change */ ,
-  nogui_set_layer,
-  nogui_end_layer,
-  nogui_make_gc,
-  nogui_destroy_gc,
-  nogui_use_mask,
-  nogui_set_color,
-  nogui_set_line_cap,
-  nogui_set_line_width,
-  nogui_set_draw_xor,
-  nogui_set_draw_faded,
-  nogui_draw_line,
-  nogui_draw_arc,
-  nogui_draw_rect,
-  nogui_fill_circle,
-  nogui_fill_polygon,
-  nogui_fill_pcb_polygon,
-  0 /* nogui_thindraw_pcb_polygon */ ,
-  nogui_fill_pcb_pad,
-  nogui_thindraw_pcb_pad,
-  nogui_fill_pcb_pv,
-  nogui_thindraw_pcb_pv,
-  nogui_fill_rect,
-  nogui_calibrate,
-  nogui_shift_is_pressed,
-  nogui_control_is_pressed,
-  nogui_mod1_is_pressed,
-  nogui_get_coords,
-  nogui_set_crosshair,
-  nogui_add_timer,
-  nogui_stop_timer,
-  nogui_watch_file,
-  nogui_unwatch_file,
-  nogui_add_block_hook,
-  nogui_stop_block_hook,
-  nogui_log,
-  nogui_logv,
-  nogui_confirm_dialog,
-  nogui_close_confirm_dialog,
-  nogui_report_dialog,
-  nogui_prompt_for,
-  nogui_fileselect,
-  nogui_attribute_dialog,
-  nogui_show_item,
-  nogui_beep,
-  nogui_progress,
-  0 /* nogui_drc_gui */ ,
-  0 /* edit_attributes */,
-  nogui_request_debug_draw,
-  nogui_flush_debug_draw,
-  nogui_finish_debug_draw,
-};
+void
+common_nogui_init (HID *hid)
+{
+  hid->get_export_options =   nogui_get_export_options;
+  hid->do_export =            nogui_do_export;
+  hid->parse_arguments =      nogui_parse_arguments;
+  hid->invalidate_lr =        nogui_invalidate_lr;
+  hid->invalidate_all =       nogui_invalidate_all;
+  hid->set_layer =            nogui_set_layer;
+  hid->end_layer =            nogui_end_layer;
+  hid->make_gc =              nogui_make_gc;
+  hid->destroy_gc =           nogui_destroy_gc;
+  hid->use_mask =             nogui_use_mask;
+  hid->set_color =            nogui_set_color;
+  hid->set_line_cap =         nogui_set_line_cap;
+  hid->set_line_width =       nogui_set_line_width;
+  hid->set_draw_xor =         nogui_set_draw_xor;
+  hid->set_draw_faded =       nogui_set_draw_faded;
+  hid->draw_line =            nogui_draw_line;
+  hid->draw_arc =             nogui_draw_arc;
+  hid->draw_rect =            nogui_draw_rect;
+  hid->fill_circle =          nogui_fill_circle;
+  hid->fill_polygon =         nogui_fill_polygon;
+  hid->fill_pcb_polygon =     nogui_fill_pcb_polygon;
+  hid->fill_pcb_pad =         nogui_fill_pcb_pad;
+  hid->thindraw_pcb_pad =     nogui_thindraw_pcb_pad;
+  hid->fill_pcb_pv =          nogui_fill_pcb_pv;
+  hid->thindraw_pcb_pv =      nogui_thindraw_pcb_pv;
+  hid->fill_rect =            nogui_fill_rect;
+  hid->calibrate =            nogui_calibrate;
+  hid->shift_is_pressed =     nogui_shift_is_pressed;
+  hid->control_is_pressed =   nogui_control_is_pressed;
+  hid->mod1_is_pressed =      nogui_mod1_is_pressed;
+  hid->get_coords =           nogui_get_coords;
+  hid->set_crosshair =        nogui_set_crosshair;
+  hid->add_timer =            nogui_add_timer;
+  hid->stop_timer =           nogui_stop_timer;
+  hid->watch_file =           nogui_watch_file;
+  hid->unwatch_file =         nogui_unwatch_file;
+  hid->add_block_hook =       nogui_add_block_hook;
+  hid->stop_block_hook =      nogui_stop_block_hook;
+  hid->log =                  nogui_log;
+  hid->logv =                 nogui_logv;
+  hid->confirm_dialog =       nogui_confirm_dialog;
+  hid->close_confirm_dialog = nogui_close_confirm_dialog;
+  hid->report_dialog =        nogui_report_dialog;
+  hid->prompt_for =           nogui_prompt_for;
+  hid->fileselect =           nogui_fileselect;
+  hid->attribute_dialog =     nogui_attribute_dialog;
+  hid->show_item =            nogui_show_item;
+  hid->beep =                 nogui_beep;
+  hid->progress =             nogui_progress;
+  hid->request_debug_draw =   nogui_request_debug_draw;
+  hid->flush_debug_draw =     nogui_flush_debug_draw;
+  hid->finish_debug_draw =    nogui_finish_debug_draw;
+}
+
+static HID nogui_hid;
+
+HID *
+hid_nogui_get_hid (void)
+{
+  memset (&nogui_hid, 0, sizeof (HID));
+
+  nogui_hid.struct_size = sizeof (HID);
+  nogui_hid.name        = "nogui";
+  nogui_hid.description = "Default GUI when no other GUI is present.  "
+                          "Does nothing.";
+
+  common_nogui_init (&nogui_hid);
+
+  return &nogui_hid;
+}
 
 #define AD(x) if (!d->x) d->x = s->x
 
 void
 apply_default_hid (HID * d, HID * s)
 {
-  if (s == 0)
-    s = &hid_nogui;
   AD (get_export_options);
   AD (do_export);
   AD (parse_arguments);
