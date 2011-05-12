@@ -1,5 +1,5 @@
-Bottom: a8272c4c2888b1648087b3e2e199753231ca2034
-Top:    dfd51148c86accaeddbe8d51574611aa706be4c8
+Bottom: d7f067f1596b6af6a4b9bc8e572dc50f712367a6
+Top:    f86658d3b57ae33803e0297793d82a80617a780b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -2564,10 +2564,10 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4b09682..e860f71 100644
+index 0e411db..a089436 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1646,7 +1646,7 @@ DrawMask (int side, BoxType * screen)
+@@ -1638,7 +1638,7 @@ DrawMask (int side, BoxType * screen)
    } else {
      glBindTexture (GL_TEXTURE_2D, texture);
    }
@@ -2576,7 +2576,7 @@ index 4b09682..e860f71 100644
  
    if (1) {
      GLfloat s_params[] = {0.0001, 0., 0., 0.};
-@@ -1892,6 +1892,11 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1884,6 +1884,11 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
@@ -2588,7 +2588,7 @@ index 4b09682..e860f71 100644
      }
    return 1;
  }
-@@ -2757,125 +2762,27 @@ ghid_finish_debug_draw (void)
+@@ -2763,125 +2768,27 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
