@@ -1,0 +1,15 @@
+Bottom: b31c16549d2d5f34412f7266d7c3254eab3dd876
+Top:    b31c16549d2d5f34412f7266d7c3254eab3dd876
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-13 00:21:11 +0100
+
+Apply the default hidnogui HID to the GUIs as well.
+
+This saves them having to re-implement NOOP implementations for
+functions the "nogui" HID provides a non "CRASH;" implementation
+for.
+
+
+---
+
+
