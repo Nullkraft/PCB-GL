@@ -1,5 +1,5 @@
 Bottom: 7e767efc9440eb58622a22a4c56bacf1d27e71eb
-Top:    a7f028b7f3c335d4456d9122c3e8c127893f5f20
+Top:    6f417890840696100bc0938d4558e9685fe3cdd6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 14:31:35 +0100
 
@@ -13,25 +13,8 @@ way to turn it off would also be useful.
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 4cb9a02..678c7bc 100644
---- a/src/hid/gtk/gtkhid-gdk.c
-+++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -661,6 +661,12 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
- }
- 
- void
-+ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
-+{
-+  common_thindraw_pcb_polygon (gc, poly, clip_box);
-+}
-+
-+void
- ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
- {
-   gint w, h, lw, xx, yy;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3902bc3..c60bb18 100644
+index 3902bc3..2f145df 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -347,12 +347,15 @@ typedef struct
@@ -116,6 +99,14 @@ index 3902bc3..c60bb18 100644
  ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
  {
    USE_GC (gc);
+@@ -802,6 +826,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ 
+   /* Setup HID function pointers specific to the GL renderer*/
+   ghid_hid.end_layer = ghid_end_layer;
++  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+ }
+ 
+ void
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
 index 847da1b..3346c85 100644
 --- a/src/hid/gtk/gtkhid-main.c
@@ -128,16 +119,3 @@ index 847da1b..3346c85 100644
    ghid_hid.fill_rect                = ghid_fill_rect;
  
    ghid_hid.calibrate                = ghid_calibrate;
-diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 00856da..5563b82 100644
---- a/src/hid/gtk/gui.h
-+++ b/src/hid/gtk/gui.h
-@@ -487,6 +487,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
- void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
- void ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly,
-                             const BoxType *clip_box); /* GL ONLY */
-+void ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
-+                                const BoxType *clip_box); /* GL ONLY */
- void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
- void ghid_invalidate_lr (int left, int right, int top, int bottom);
- void ghid_invalidate_all ();
