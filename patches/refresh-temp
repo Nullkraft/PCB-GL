@@ -1,0 +1,20 @@
+Bottom: 459386463746d0a5de62f63298845b79d55e0928
+Top:    2ed2ad416815c3fb52906cda0f175bd9a5c405d6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-13 02:22:22 +0100
+
+Refresh of hid-common-hidgl-c-fix-vertex-
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 21322f7..00efdce 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -142,7 +142,6 @@ hidgl_draw_grid (BoxType *drawn_area)
+       points = realloc (points, npoints * 3 * sizeof (GLfloat));
+     }
+ 
+-  glPushAttrib ();
+   glEnableClientState (GL_VERTEX_ARRAY);
+   glVertexPointer (3, GL_FLOAT, 0, points);
