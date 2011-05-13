@@ -1,0 +1,67 @@
+Bottom: b98fa91212349dfadf0a23429707195b40f94710
+Top:    8a180783fcedea6e35f73b64cc1bb4d0565c90f2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-14 00:53:59 +0100
+
+Refresh of gtk-gl-add-facility-to-set-an-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 4921ce5..bd8fdd2 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -45,6 +45,12 @@ typedef struct render_priv {
+   bool trans_lines;
+   bool in_context;
+   int subcomposite_stencil_bit;
++
++  /* Data to determine when we need to change the current rendering colour */
++  char *current_color = NULL;
++  double alpha_mult = 1.0;
++  int alpha_changed = 0;
++
+ } render_priv;
+ 
+ 
+@@ -346,10 +352,6 @@ typedef struct
+   double blue;
+ } ColorCache;
+ 
+-static char *current_color = NULL;
+-static double global_alpha_mult = 1.0;
+-static int alpha_changed = 0;
+-
+ void
+ ghid_set_color (hidGC gc, const char *name)
+ {
+@@ -437,7 +439,7 @@ ghid_set_color (hidGC gc, const char *name)
+     }
+   if (1) {
+     double maxi, mult;
+-    alpha_mult *= global_alpha_mult;
++    alpha_mult *= priv->alpha_mult;
+     if (priv->trans_lines)
+       a = a * alpha_mult;
+     maxi = r;
+@@ -461,9 +463,9 @@ ghid_set_color (hidGC gc, const char *name)
+ void
+ ghid_set_alpha_mult (hidGC gc, double alpha_mult)
+ {
+-  if (alpha_mult != global_alpha_mult) {
+-    global_alpha_mult = alpha_mult;
+-    alpha_changed = 1;
++  if (alpha_mult != priv->alpha_mult) {
++    priv->alpha_mult = alpha_mult;
++    priv->alpha_changed = 1;
+     ghid_set_color (gc, gc->colorname);
+   }
+ }
+@@ -522,6 +524,7 @@ use_gc (hidGC gc)
+ 
+   current_gc = gc;
+ 
++  set_gl_color_for_gc (gc);
+   ghid_set_color (gc, gc->colorname);
+   return 1;
+ }
