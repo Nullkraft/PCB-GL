@@ -5,7 +5,9 @@ Date:   2011-05-13 14:31:34 +0100
 
 hid/common/hidgl.c: Use tags on circular contours to render them faster
 
-This lets us avoid the polygon tesselator for circular contours.
+This lets us avoid the polygon tesselator for circular contours, and lets
+us render a different number of vertices in our appoximation depending
+upon zoom level.
 
 
 ---
