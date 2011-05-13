@@ -1,5 +1,5 @@
 Bottom: 30fb5c71d3c772a1fabed99bac93405dac1b1d57
-Top:    f237b5daed5d0741bdd34d3ff61c5627a70c3a4f
+Top:    d9233f3e4a7ffcedf846cd2c32244e9fb7bb0059
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 00:46:06 +0100
 
@@ -329,6 +329,19 @@ index 08061fe..aef38b8 100644
 +
 +  return &nogui_hid;
  }
+diff --git a/src/hid/common/hidnogui.h b/src/hid/common/hidnogui.h
+new file mode 100644
+index 0000000..244c8c2
+--- /dev/null
++++ b/src/hid/common/hidnogui.h
+@@ -0,0 +1,7 @@
++#ifndef __HID_NOGUI_INCLUDED__
++#define __HID_NOGUI_INCLUDED__
++
++void common_nogui_init (HID *hid);
++HID *hid_nogui_get_hid (void);
++
++#endif
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
 index 6514fe9..2f26c8e 100644
 --- a/src/hid/gcode/gcode.c
