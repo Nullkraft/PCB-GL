@@ -1,5 +1,5 @@
-Bottom: 4c1e9af7174f58ced0b5b72be7c3c8278afe6684
-Top:    fec3a47fbea8ddc4a569c7adb0e6e214f380bea7
+Bottom: f2e929add468975740a360a820851909a66fd58c
+Top:    669d5940d0e87f763743cc70f434d3d8bcdc054c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 00:46:06 +0100
 
@@ -9,7 +9,7 @@ Replace apply_default_hid() with an explicit common_nogui_init() function
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 8129207..c0430e1 100644
+index 0de23aa..18fe5c1 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -150,6 +150,7 @@ PCB_SRCS = \
@@ -77,7 +77,7 @@ index 6e5bc22..3319491 100644
    hid_register_hid (&bom_hid);
  }
 diff --git a/src/hid/common/hidinit.c b/src/hid/common/hidinit.c
-index 554e592..793e43d 100644
+index 4233b4c..58d1880 100644
 --- a/src/hid/common/hidinit.c
 +++ b/src/hid/common/hidinit.c
 @@ -23,6 +23,7 @@
