@@ -337,6 +337,94 @@ via_hole_callback (const BoxType * b, void *cl)
 }
 
 static void
+set_pv_color (PinType *pv, int type)
+{
+  if (TEST_FLAG (WARNFLAG, pv))          gui->set_color (Output.fgGC, PCB->WarnColor);
+  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+                                                                                         : PCB->PinSelectedColor);
+  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+  else                                   gui->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor
+                                                                                         : PCB->PinColor);
+}
+
+static int
+pin_callback (const BoxType * b, void *cl)
+{
+  set_pv_color ((PinType *)b, PIN_TYPE);
+  dapi->draw_pin ((PinType *)b, NULL, NULL);
+  return 1;
+}
+
+static int
+via_callback (const BoxType * b, void *cl)
+{
+  set_pv_color ((PinType *)b, VIA_TYPE);
+  dapi->draw_via ((PinType *)b, NULL, NULL);
+  return 1;
+}
+
+static int
+pad_callback (const BoxType * b, void *cl)
+{
+  PadTypePtr pad = (PadTypePtr) b;
+  int *side = cl;
+
+  if (ON_SIDE (pad, *side))
+    {
+      if (TEST_FLAG (WARNFLAG, pad))          gui->set_color (Output.fgGC, PCB->WarnColor);
+      else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
+      else if (TEST_FLAG (FOUNDFLAG, pad))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+      else if (FRONT (pad))                   gui->set_color (Output.fgGC, PCB->PinColor);
+      else                                    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+
+      dapi->draw_pad (pad, NULL, NULL);
+    }
+  return 1;
+}
+
+static void
+draw_ppv (int group, const BoxType *drawn_area, void *userdata)
+{
+  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  int side;
+
+  if (PCB->PinOn || !gui->gui)
+    {
+      /* draw element pins */
+      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+
+      /* draw element pads */
+      if (group == component_group)
+        {
+          side = COMPONENT_LAYER;
+          r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+        }
+
+      if (group == solder_group)
+        {
+          side = SOLDER_LAYER;
+          r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+        }
+    }
+
+  /* draw vias */
+  if (PCB->ViaOn)
+    r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+
+  dapi->draw_holes (-1, drawn_area, NULL);
+}
+
+static void
+draw_holes (int plated, const BoxType *drawn_area, void *userdata)
+{
+  if (PCB->PinOn)
+    r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, &plated);
+  if (PCB->ViaOn)
+    r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, &plated);
+}
+
+static void
 draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
 {
   int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
@@ -351,13 +439,8 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
 
-  /* draw all visible lines this layer */
   r_search (layer->line_tree, drawn_area, NULL, line_callback, layer);
-
-  /* draw the layer arcs on drawn_area */
-  r_search (layer->arc_tree, drawn_area, NULL, arc_callback, layer);
-
-  /* draw the layer text on drawn_area */
+  r_search (layer->arc_tree,  drawn_area, NULL, arc_callback,  layer);
   r_search (layer->text_tree, drawn_area, NULL, text_callback, layer);
 
   /* We should check for gui->gui here, but it's kinda cool seeing the
@@ -380,14 +463,6 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
   if (layer_num >= max_copper_layer)
     return;
 
-#if 0
-  /* Don't draw vias on layers which are out of the layer stack */
-  if ((group >= component_group && group >= solder_group) ||
-      (group <= component_group && group <= solder_group))
-    return;
-#endif
-
-  /* draw element pins */
   r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_inlayer_callback, layer);
 
   /* draw element pads */
@@ -417,6 +492,9 @@ struct draw_funcs d_f = {
   .draw_rat       = draw_rat,
   .draw_arc       = draw_arc,
   .draw_poly      = draw_poly,
+
+  .draw_ppv       = draw_ppv,
+  .draw_holes     = draw_holes,
   .draw_layer     = draw_layer,
 };
 
