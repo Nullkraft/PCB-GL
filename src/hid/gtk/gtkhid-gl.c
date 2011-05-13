@@ -346,12 +346,15 @@ typedef struct
   double blue;
 } ColorCache;
 
+static char *current_color = NULL;
+static double global_alpha_mult = 1.0;
+static int alpha_changed = 0;
+
 static void
 set_gl_color_for_gc (hidGC gc)
 {
   render_priv *priv = gport->render_priv;
   static void *cache = NULL;
-  static char *old_name = NULL;
   hidval cval;
   ColorCache *cc;
   double alpha_mult = 1.0;
@@ -360,14 +363,16 @@ set_gl_color_for_gc (hidGC gc)
 
   current_gc = gc;
 
-  if (old_name != NULL)
-    {
-      if (strcmp (gc->colorname, old_name) == 0)
-        return;
-      free (old_name);
-    }
+  if (!alpha_changed && current_color != NULL &&
+      strcmp (name, current_color) == 0)
+    return;
 
-  old_name = strdup (gc->colorname);
+  free (current_color);
+  current_color = NULL;
+
+  alpha_changed = 0;
+  gc->colorname = (char *) name;
+  current_color = strdup (name);
 
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -432,6 +437,7 @@ set_gl_color_for_gc (hidGC gc)
     }
   if (1) {
     double maxi, mult;
+    alpha_mult *= global_alpha_mult;
     if (priv->trans_lines)
       a = a * alpha_mult;
     maxi = r;
@@ -462,6 +468,16 @@ ghid_set_color (hidGC gc, const char *name)
   gc->colorname = (char *) name;
 
   set_gl_color_for_gc (gc);
+}
+
+void
+ghid_global_alpha_mult (hidGC gc, double alpha_mult)
+{
+  if (alpha_mult != global_alpha_mult) {
+    global_alpha_mult = alpha_mult;
+    alpha_changed = 1;
+    set_gl_color_for_gc (gc);
+  }
 }
 
 void
@@ -572,6 +588,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
   USE_GC (gc);
 
   hidgl_fill_pcb_polygon (poly, clip_box, gport->zoom);
+}
+
+void
+ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+{
+  common_thindraw_pcb_polygon (gc, poly, clip_box);
+  ghid_global_alpha_mult (gc, 0.25);
+  ghid_fill_pcb_polygon (gc, poly, clip_box);
+  ghid_global_alpha_mult (gc, 1.0);
 }
 
 void
@@ -804,6 +829,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   /* Setup HID function pointers specific to the GL renderer*/
   ghid_hid.end_layer = ghid_end_layer;
   ghid_hid.fill_pcb_polygon = ghid_fill_pcb_polygon;
+  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 }
 
 void
