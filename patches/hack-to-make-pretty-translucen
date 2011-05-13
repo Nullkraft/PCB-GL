@@ -1,7 +1,7 @@
-Bottom: 0d3a2189f2cacc6e14d1699a9a166b6517029f8c
-Top:    7d24861c272a1dfa458bdb5e91651ddee56defcd
+Bottom: c3b21405946ba8ed114c5478b5e605264088db09
+Top:    59fe88e464cabbda92eb9cea590b210ecc867413
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-11 12:18:16 +0100
+Date:   2011-05-13 01:54:01 +0100
 
 Hack to make pretty translucent polygons in thindraw-poly mode
 
@@ -9,6 +9,7 @@ TODO: Perhaps need some way to configure this.. it might be nice in
 non-thindraw mode too. If people want thin-draw to gain extra speed,
 rather than have it actually slower (due to fill + outline), then a
 way to turn it off would also be useful.
+
 
 ---
 
@@ -116,10 +117,10 @@ index 3902bc3..c60bb18 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index ea0a0dd..efff594 100644
+index 847da1b..3346c85 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2297,6 +2297,7 @@ hid_gtk_init ()
+@@ -2299,6 +2299,7 @@ hid_gtk_init ()
    ghid_hid.fill_circle              = ghid_fill_circle;
    ghid_hid.fill_polygon             = ghid_fill_polygon;
    ghid_hid.fill_pcb_polygon         = ghid_fill_pcb_polygon;

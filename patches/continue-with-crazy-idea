@@ -1,7 +1,7 @@
-Bottom: 802364dee73b494e735811a12355ef7eec31d947
-Top:    0c6b6610f2486f6ee99aac9f06be2d73ae3352a8
+Bottom: ea4328da1007360d9b475a2e482a4f78d0ff916b
+Top:    f6f1da759bf1b861066a851b57263b95f98de6fe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-10 14:33:36 +0100
+Date:   2011-05-13 01:54:03 +0100
 
 Continue with crazy idea
 
@@ -590,7 +590,7 @@ index b97d89a..9f21809 100644
  
  extern struct draw_funcs *dapi;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 47e6124..ee078c1 100644
+index 7737444..bf8e4bb 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -26,6 +26,7 @@
@@ -601,7 +601,7 @@ index 47e6124..ee078c1 100644
  
  #include "hid.h"
  #include "../hidint.h"
-@@ -717,7 +718,7 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -718,7 +719,7 @@ gerber_set_layer (const char *name, int group, int empty)
      {
        if (outline_layer
  	  && outline_layer != PCB->Data->Layer+idx)
@@ -611,7 +611,7 @@ index 47e6124..ee078c1 100644
  	{
  	  hidGC gc = gui->make_gc ();
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 92f03fd..49f59e3 100644
+index 7f2c3d7..aa17cb8 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -16,6 +16,7 @@
@@ -622,7 +622,7 @@ index 92f03fd..49f59e3 100644
  
  #include "hid.h"
  #include "../hidint.h"
-@@ -863,7 +864,7 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -864,7 +865,7 @@ ps_set_layer (const char *name, int group, int empty)
        && strcmp (name, "outline")
        && strcmp (name, "route"))
      {
