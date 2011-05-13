@@ -1,0 +1,22 @@
+Bottom: 691a2c3049cc00eb7ba1e920f782405756529bfb
+Top:    2ed2ad416815c3fb52906cda0f175bd9a5c405d6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-13 11:54:35 +0100
+
+Refresh of hid-common-hidgl-c-fix-vertex-
+
+---
+
+diff --git a/src/hid/common/hidnogui.h b/src/hid/common/hidnogui.h
+deleted file mode 100644
+index 244c8c2..0000000
+--- a/src/hid/common/hidnogui.h
++++ /dev/null
+@@ -1,7 +0,0 @@
+-#ifndef __HID_NOGUI_INCLUDED__
+-#define __HID_NOGUI_INCLUDED__
+-
+-void common_nogui_init (HID *hid);
+-HID *hid_nogui_get_hid (void);
+-
+-#endif
