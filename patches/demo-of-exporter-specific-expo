@@ -1,7 +1,7 @@
-Bottom: 1a44aeee01ff5d06facc524ee71853327759db26
-Top:    71fbfa094b8a7044f7889a61d1ae62a4351c414f
+Bottom: 0103ee07f4afd15bc4b9e5437d47b12431e97c2d
+Top:    4d40b7ab79533673e62298b6fd276022627b2caa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-21 02:41:14 +0100
+Date:   2011-05-13 01:53:57 +0100
 
 Demo of exporter specific export routine
 
@@ -296,7 +296,7 @@ index 543b99f..8270236 100644
 +    PrintFab ();
 +}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index ee078c1..8f030c3 100644
+index bf8e4bb..6af62c3 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -25,8 +25,10 @@
@@ -310,7 +310,7 @@ index ee078c1..8f030c3 100644
  
  #include "hid.h"
  #include "../hidint.h"
-@@ -345,26 +347,6 @@ gerber_get_export_options (int *n)
+@@ -346,26 +348,6 @@ gerber_get_export_options (int *n)
    return gerber_options;
  }
  
@@ -337,7 +337,7 @@ index ee078c1..8f030c3 100644
  static void
  maybe_close_f ()
  {
-@@ -381,18 +363,143 @@ maybe_close_f ()
+@@ -382,18 +364,143 @@ maybe_close_f ()
  
  static BoxType region;
  
@@ -488,7 +488,7 @@ index ee078c1..8f030c3 100644
  
    if (!options)
      {
-@@ -437,24 +544,20 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -438,24 +545,20 @@ gerber_do_export (HID_Attr_Val * options)
    else
      {
        memset (print_group, 0, sizeof (print_group));
@@ -524,7 +524,7 @@ index ee078c1..8f030c3 100644
    linewidth = -1;
    lastcap = -1;
    lastgroup = -1;
-@@ -472,17 +575,13 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -473,17 +576,13 @@ gerber_do_export (HID_Attr_Val * options)
    lastgroup = -1;
    c_layerapps = 0;
    finding_apertures = 1;
@@ -544,7 +544,7 @@ index ee078c1..8f030c3 100644
  }
  
  static void
-@@ -518,14 +617,6 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -519,14 +618,6 @@ gerber_set_layer (const char *name, int group, int empty)
    if (name == 0)
      name = PCB->Data->Layer[idx].Name;
  
