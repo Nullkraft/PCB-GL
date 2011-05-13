@@ -826,6 +826,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 
   /* Setup HID function pointers specific to the GL renderer*/
   ghid_hid.end_layer = ghid_end_layer;
+  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 }
 
 void
