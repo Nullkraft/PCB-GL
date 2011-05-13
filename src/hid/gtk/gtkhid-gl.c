@@ -352,6 +352,10 @@ typedef struct
   double blue;
 } ColorCache;
 
+static char *current_color = NULL;
+static double global_alpha_mult = 1.0;
+static int alpha_changed = 0;
+
 static void
 set_gl_color_for_gc (hidGC gc)
 {
@@ -592,6 +596,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 }
 
 void
+ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+{
+  common_thindraw_pcb_polygon (gc, poly, clip_box);
+  ghid_global_alpha_mult (gc, 0.25);
+  ghid_fill_pcb_polygon (gc, poly, clip_box);
+  ghid_global_alpha_mult (gc, 1.0);
+}
+
+void
 ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 {
   USE_GC (gc);
@@ -821,6 +834,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   /* Setup HID function pointers specific to the GL renderer*/
   ghid_hid.end_layer = ghid_end_layer;
   ghid_hid.fill_pcb_polygon = ghid_fill_pcb_polygon;
+  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 }
 
 void
