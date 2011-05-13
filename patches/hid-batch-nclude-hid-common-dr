@@ -1,5 +1,5 @@
 Bottom: f7b827995b5e0899313f19fa94bed9a2e0e4e918
-Top:    f7b827995b5e0899313f19fa94bed9a2e0e4e918
+Top:    30fb5c71d3c772a1fabed99bac93405dac1b1d57
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 01:48:59 +0100
 
@@ -10,4 +10,14 @@ Fixes a compiler warning about an implicitly declared function.
 
 ---
 
-
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index a51d058..1b5ca10 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -17,6 +17,7 @@
+ #include "hid.h"
+ #include "../hidint.h"
+ 
++#include "hid/common/draw_helpers.h"
+ #include "hid/common/actions.h"
+ #include "hid/common/hidinit.h"
