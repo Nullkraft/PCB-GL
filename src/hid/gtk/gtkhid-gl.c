@@ -346,12 +346,15 @@ typedef struct
   double blue;
 } ColorCache;
 
+static char *current_color = NULL;
+static double global_alpha_mult = 1.0;
+static int alpha_changed = 0;
+
 void
 ghid_set_color (hidGC gc, const char *name)
 {
   render_priv *priv = gport->render_priv;
   static void *cache = NULL;
-  static char *old_name = NULL;
   hidval cval;
   ColorCache *cc;
   double alpha_mult = 1.0;
@@ -360,15 +363,16 @@ ghid_set_color (hidGC gc, const char *name)
 
   current_gc = gc;
 
-  if (old_name != NULL)
-    {
-      if (strcmp (name, old_name) == 0)
-        return;
-      free (old_name);
-    }
+  if (!alpha_changed && current_color != NULL &&
+      strcmp (name, current_color) == 0)
+    return;
 
-  old_name = strdup (name);
+  free (current_color);
+  current_color = NULL;
+
+  alpha_changed = 0;
   gc->colorname = (char *) name;
+  current_color = strdup (name);
 
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -433,6 +437,7 @@ ghid_set_color (hidGC gc, const char *name)
     }
   if (1) {
     double maxi, mult;
+    alpha_mult *= global_alpha_mult;
     if (priv->trans_lines)
       a = a * alpha_mult;
     maxi = r;
@@ -451,6 +456,16 @@ ghid_set_color (hidGC gc, const char *name)
 
   hidgl_flush_triangles (&buffer);
   glColor4d (r, g, b, a);
+}
+
+void
+ghid_set_alpha_mult (hidGC gc, double alpha_mult)
+{
+  if (alpha_mult != global_alpha_mult) {
+    global_alpha_mult = alpha_mult;
+    alpha_changed = 1;
+    ghid_set_color (gc, gc->colorname);
+  }
 }
 
 void
