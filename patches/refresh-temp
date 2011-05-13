@@ -1,0 +1,22 @@
+Bottom: f237b5daed5d0741bdd34d3ff61c5627a70c3a4f
+Top:    d9233f3e4a7ffcedf846cd2c32244e9fb7bb0059
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-13 11:55:14 +0100
+
+Refresh of refactor-application-of-the-de
+
+---
+
+diff --git a/src/hid/common/hidnogui.h b/src/hid/common/hidnogui.h
+new file mode 100644
+index 0000000..244c8c2
+--- /dev/null
++++ b/src/hid/common/hidnogui.h
+@@ -0,0 +1,7 @@
++#ifndef __HID_NOGUI_INCLUDED__
++#define __HID_NOGUI_INCLUDED__
++
++void common_nogui_init (HID *hid);
++HID *hid_nogui_get_hid (void);
++
++#endif
