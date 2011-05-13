@@ -66,8 +66,6 @@ float global_depth = 0;
 void
 hidgl_init_triangle_array (triangle_buffer *buffer)
 {
-  glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (3, GL_FLOAT, 0, buffer->triangle_array);
   buffer->triangle_count = 0;
   buffer->coord_comp_count = 0;
 }
@@ -78,7 +76,11 @@ hidgl_flush_triangles (triangle_buffer *buffer)
   if (buffer->triangle_count == 0)
     return;
 
+  glEnableClientState (GL_VERTEX_ARRAY);
+  glVertexPointer (3, GL_FLOAT, 0, buffer->triangle_array);
   glDrawArrays (GL_TRIANGLES, 0, buffer->triangle_count * 3);
+  glDisableClientState (GL_VERTEX_ARRAY);
+
   buffer->triangle_count = 0;
   buffer->coord_comp_count = 0;
 }
@@ -140,6 +142,7 @@ hidgl_draw_grid (BoxType *drawn_area)
       points = realloc (points, npoints * 3 * sizeof (GLfloat));
     }
 
+  glPushAttrib ();
   glEnableClientState (GL_VERTEX_ARRAY);
   glVertexPointer (3, GL_FLOAT, 0, points);
 
