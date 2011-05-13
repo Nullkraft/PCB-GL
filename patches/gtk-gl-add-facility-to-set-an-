@@ -1,5 +1,5 @@
 Bottom: 867fbf689dbc7fe2866d50a5cfb6d1faaf30b502
-Top:    867fbf689dbc7fe2866d50a5cfb6d1faaf30b502
+Top:    b98fa91212349dfadf0a23429707195b40f94710
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-14 00:46:27 +0100
 
@@ -8,4 +8,73 @@ GTK/GL: Add facility to set an alpha multiplier for the current rendering
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 2d80bb2..4921ce5 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -346,12 +346,15 @@ typedef struct
+   double blue;
+ } ColorCache;
+ 
++static char *current_color = NULL;
++static double global_alpha_mult = 1.0;
++static int alpha_changed = 0;
++
+ void
+ ghid_set_color (hidGC gc, const char *name)
+ {
+   render_priv *priv = gport->render_priv;
+   static void *cache = NULL;
+-  static char *old_name = NULL;
+   hidval cval;
+   ColorCache *cc;
+   double alpha_mult = 1.0;
+@@ -360,15 +363,16 @@ ghid_set_color (hidGC gc, const char *name)
+ 
+   current_gc = gc;
+ 
+-  if (old_name != NULL)
+-    {
+-      if (strcmp (name, old_name) == 0)
+-        return;
+-      free (old_name);
+-    }
++  if (!alpha_changed && current_color != NULL &&
++      strcmp (name, current_color) == 0)
++    return;
++
++  free (current_color);
++  current_color = NULL;
+ 
+-  old_name = strdup (name);
++  alpha_changed = 0;
+   gc->colorname = (char *) name;
++  current_color = strdup (name);
+ 
+   if (gport->colormap == NULL)
+     gport->colormap = gtk_widget_get_colormap (gport->top_window);
+@@ -433,6 +437,7 @@ ghid_set_color (hidGC gc, const char *name)
+     }
+   if (1) {
+     double maxi, mult;
++    alpha_mult *= global_alpha_mult;
+     if (priv->trans_lines)
+       a = a * alpha_mult;
+     maxi = r;
+@@ -454,6 +459,16 @@ ghid_set_color (hidGC gc, const char *name)
+ }
+ 
+ void
++ghid_set_alpha_mult (hidGC gc, double alpha_mult)
++{
++  if (alpha_mult != global_alpha_mult) {
++    global_alpha_mult = alpha_mult;
++    alpha_changed = 1;
++    ghid_set_color (gc, gc->colorname);
++  }
++}
++
++void
+ ghid_set_line_cap (hidGC gc, EndCapStyle style)
+ {
+   gc->cap = style;
