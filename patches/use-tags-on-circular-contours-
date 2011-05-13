@@ -3,7 +3,9 @@ Top:    b58d3427f335e43edf6246d4a05028b8a4e791de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 14:31:34 +0100
 
-Use tags on circular contours to render them faster
+hid/common/hidgl.c: Use tags on circular contours to render them faster
+
+This lets us avoid the polygon tesselator for circular contours.
 
 
 ---
