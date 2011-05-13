@@ -3,7 +3,20 @@ Top:    f7b827995b5e0899313f19fa94bed9a2e0e4e918
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 00:46:06 +0100
 
-Replace apply_default_hid() with an explicit common_nogui_init() function
+Refactor application of the default hidnogui HID handlers.
+
+Replace usage of apply_default_hid() just prior to registering a HID
+with an early call to the new common_nogui_init() function which pre-
+applies the defaults, rather than post-replacing NULL handlers.
+
+As this was the last user of the apply_default_hid() function,
+remove it. Good riddance to yet another place which had to be updated
+every time a new HID member was added.
+
+The default nogui HID is now constructed explicitly by a call to
+nogui_hid_get_hid (), which is called from hid_init(). This is
+different to the other HIDs, as the nogui "hid" is never explicitly
+registered.
 
 
 ---
