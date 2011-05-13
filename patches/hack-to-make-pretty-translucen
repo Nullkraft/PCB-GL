@@ -1,5 +1,5 @@
 Bottom: 7e767efc9440eb58622a22a4c56bacf1d27e71eb
-Top:    6f417890840696100bc0938d4558e9685fe3cdd6
+Top:    86cdc9a1be9082ecc3f33dcfd676a4b7ed6ee749
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 14:31:35 +0100
 
@@ -107,15 +107,3 @@ index 3902bc3..2f145df 100644
  }
  
  void
-diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 847da1b..3346c85 100644
---- a/src/hid/gtk/gtkhid-main.c
-+++ b/src/hid/gtk/gtkhid-main.c
-@@ -2299,6 +2299,7 @@ hid_gtk_init ()
-   ghid_hid.fill_circle              = ghid_fill_circle;
-   ghid_hid.fill_polygon             = ghid_fill_polygon;
-   ghid_hid.fill_pcb_polygon         = ghid_fill_pcb_polygon;
-+  ghid_hid.thindraw_pcb_polygon     = ghid_thindraw_pcb_polygon;
-   ghid_hid.fill_rect                = ghid_fill_rect;
- 
-   ghid_hid.calibrate                = ghid_calibrate;
