@@ -1,0 +1,595 @@
+Bottom: 30fb5c71d3c772a1fabed99bac93405dac1b1d57
+Top:    f237b5daed5d0741bdd34d3ff61c5627a70c3a4f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-13 00:46:06 +0100
+
+Refactor application of the default hidnogui HID handlers.
+
+Replace usage of apply_default_hid() just prior to registering a HID
+with an early call to the new common_nogui_init() function which pre-
+applies the defaults, rather than post-replacing NULL handlers.
+
+As this was the last user of the apply_default_hid() function,
+remove it. Good riddance to yet another place which had to be updated
+every time a new HID member was added.
+
+The default nogui HID is now constructed explicitly by a call to
+nogui_hid_get_hid (), which is called from hid_init(). This is
+different to the other HIDs, as the nogui "hid" is never explicitly
+registered.
+
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 0de23aa..18fe5c1 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -150,6 +150,7 @@ PCB_SRCS = \
+ 	hid/common/hidinit.c \
+ 	hid/common/hidinit.h \
+ 	hid/common/hidnogui.c \
++	hid/common/hidnogui.h \
+ 	hid/common/extents.c \
+ 	hid/common/draw_helpers.c \
+ 	hid/common/draw_helpers.h \
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 1b5ca10..0208a1e 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -18,6 +18,7 @@
+ #include "../hidint.h"
+ 
+ #include "hid/common/draw_helpers.h"
++#include "hid/common/hidnogui.h"
+ #include "hid/common/actions.h"
+ #include "hid/common/hidinit.h"
+ 
+@@ -335,6 +336,7 @@ hid_batch_init ()
+ {
+   memset (&batch_hid, 0, sizeof (HID));
+ 
++  common_nogui_init (&batch_hid);
+   common_draw_helpers_init (&batch_hid);
+ 
+   batch_hid.struct_size           = sizeof (HID);
+@@ -376,7 +378,6 @@ hid_batch_init ()
+   batch_hid.attribute_dialog      = batch_attribute_dialog;
+   batch_hid.show_item             = batch_show_item;
+ 
+-  apply_default_hid (&batch_hid, 0);
+   hid_register_hid (&batch_hid);
+ #include "batch_lists.h"
+ }
+diff --git a/src/hid/bom/bom.c b/src/hid/bom/bom.c
+index 6e5bc22..3319491 100644
+--- a/src/hid/bom/bom.c
++++ b/src/hid/bom/bom.c
+@@ -16,6 +16,7 @@
+ #include "misc.h"
+ 
+ #include "hid.h"
++#include "hid/common/hidnogui.h"
+ #include "../hidint.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+@@ -543,6 +544,8 @@ hid_bom_init ()
+ {
+   memset (&bom_hid, 0, sizeof (HID));
+ 
++  common_nogui_init (&bom_hid);
++
+   bom_hid.struct_size         = sizeof (HID);
+   bom_hid.name                = "bom";
+   bom_hid.description         = "Exports a Bill of Materials";
+@@ -552,6 +555,5 @@ hid_bom_init ()
+   bom_hid.do_export           = bom_do_export;
+   bom_hid.parse_arguments     = bom_parse_arguments;
+ 
+-  apply_default_hid (&bom_hid, 0);
+   hid_register_hid (&bom_hid);
+ }
+diff --git a/src/hid/common/hidinit.c b/src/hid/common/hidinit.c
+index 4233b4c..58d1880 100644
+--- a/src/hid/common/hidinit.c
++++ b/src/hid/common/hidinit.c
+@@ -23,6 +23,7 @@
+ 
+ #include "global.h"
+ #include "hid.h"
++#include "hidnogui.h"
+ #include "../hidint.h"
+ 
+ /* for dlopen() and friends on windows */
+@@ -45,9 +46,7 @@ RCSID ("$Id$");
+ HID **hid_list = 0;
+ int hid_num_hids = 0;
+ 
+-extern HID hid_nogui;
+-
+-HID *gui = &hid_nogui;
++HID *gui = NULL;
+ HID *exporter = NULL;
+ 
+ int pixel_slop = 1;
+@@ -122,8 +121,9 @@ hid_load_dir (char *dirname)
+ void
+ hid_init ()
+ {
++  /* Setup a "nogui" default HID */
++  gui = hid_nogui_get_hid ();
+ 
+-  gui = &hid_nogui;
+ #define HID_DEF(x) hid_ ## x ## _init();
+ #include "hid/common/hidlist.h"
+ #undef HID_DEF
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 08061fe..aef38b8 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -448,130 +448,76 @@ nogui_finish_debug_draw (void)
+ {
+ }
+ 
+-HID hid_nogui = {
+-  sizeof (HID),
+-  "nogui",
+-  "Default GUI when no other GUI is present.  Does nothing.",
+-  0, 0, 0, 0, 0,
+-  nogui_get_export_options,
+-  nogui_do_export,
+-  nogui_parse_arguments,
+-  nogui_invalidate_lr,
+-  nogui_invalidate_all,
+-  0 /* nogui_notify_crosshair_change */ ,
+-  0 /* nogui_notify_mark_change */ ,
+-  nogui_set_layer,
+-  nogui_end_layer,
+-  nogui_make_gc,
+-  nogui_destroy_gc,
+-  nogui_use_mask,
+-  nogui_set_color,
+-  nogui_set_line_cap,
+-  nogui_set_line_width,
+-  nogui_set_draw_xor,
+-  nogui_set_draw_faded,
+-  nogui_draw_line,
+-  nogui_draw_arc,
+-  nogui_draw_rect,
+-  nogui_fill_circle,
+-  nogui_fill_polygon,
+-  nogui_fill_pcb_polygon,
+-  0 /* nogui_thindraw_pcb_polygon */ ,
+-  nogui_fill_pcb_pad,
+-  nogui_thindraw_pcb_pad,
+-  nogui_fill_pcb_pv,
+-  nogui_thindraw_pcb_pv,
+-  nogui_fill_rect,
+-  nogui_calibrate,
+-  nogui_shift_is_pressed,
+-  nogui_control_is_pressed,
+-  nogui_mod1_is_pressed,
+-  nogui_get_coords,
+-  nogui_set_crosshair,
+-  nogui_add_timer,
+-  nogui_stop_timer,
+-  nogui_watch_file,
+-  nogui_unwatch_file,
+-  nogui_add_block_hook,
+-  nogui_stop_block_hook,
+-  nogui_log,
+-  nogui_logv,
+-  nogui_confirm_dialog,
+-  nogui_close_confirm_dialog,
+-  nogui_report_dialog,
+-  nogui_prompt_for,
+-  nogui_fileselect,
+-  nogui_attribute_dialog,
+-  nogui_show_item,
+-  nogui_beep,
+-  nogui_progress,
+-  0 /* nogui_drc_gui */ ,
+-  0 /* edit_attributes */,
+-  nogui_request_debug_draw,
+-  nogui_flush_debug_draw,
+-  nogui_finish_debug_draw,
+-};
+-
+-#define AD(x) if (!d->x) d->x = s->x
+-
+ void
+-apply_default_hid (HID * d, HID * s)
+-{
+-  if (s == 0)
+-    s = &hid_nogui;
+-  AD (get_export_options);
+-  AD (do_export);
+-  AD (parse_arguments);
+-  AD (invalidate_lr);
+-  AD (invalidate_all);
+-  AD (notify_crosshair_change);
+-  AD (notify_mark_change);
+-  AD (set_layer);
+-  AD (end_layer);
+-  AD (make_gc);
+-  AD (destroy_gc);
+-  AD (use_mask);
+-  AD (set_color);
+-  AD (set_line_cap);
+-  AD (set_line_width);
+-  AD (set_draw_xor);
+-  AD (set_draw_faded);
+-  AD (draw_line);
+-  AD (draw_arc);
+-  AD (fill_circle);
+-  AD (fill_polygon);
+-  AD (fill_pcb_polygon);
+-  AD (thindraw_pcb_polygon);
+-  AD (fill_pcb_pad);
+-  AD (thindraw_pcb_pad);
+-  AD (fill_pcb_pv);
+-  AD (thindraw_pcb_pv);
+-  AD (calibrate);
+-  AD (shift_is_pressed);
+-  AD (control_is_pressed);
+-  AD (mod1_is_pressed);
+-  AD (get_coords);
+-  AD (set_crosshair);
+-  AD (add_timer);
+-  AD (stop_timer);
+-  AD (watch_file);
+-  AD (unwatch_file);
+-  AD (add_block_hook);
+-  AD (stop_block_hook);
+-  AD (log);
+-  AD (logv);
+-  AD (confirm_dialog);
+-  AD (close_confirm_dialog);
+-  AD (report_dialog);
+-  AD (prompt_for);
+-  AD (fileselect);
+-  AD (attribute_dialog);
+-  AD (show_item);
+-  AD (beep);
+-  AD (progress);
+-  AD (drc_gui);
+-  AD (edit_attributes);
+-  AD (request_debug_draw);
+-  AD (flush_debug_draw);
+-  AD (finish_debug_draw);
++common_nogui_init (HID *hid)
++{
++  hid->get_export_options =   nogui_get_export_options;
++  hid->do_export =            nogui_do_export;
++  hid->parse_arguments =      nogui_parse_arguments;
++  hid->invalidate_lr =        nogui_invalidate_lr;
++  hid->invalidate_all =       nogui_invalidate_all;
++  hid->set_layer =            nogui_set_layer;
++  hid->end_layer =            nogui_end_layer;
++  hid->make_gc =              nogui_make_gc;
++  hid->destroy_gc =           nogui_destroy_gc;
++  hid->use_mask =             nogui_use_mask;
++  hid->set_color =            nogui_set_color;
++  hid->set_line_cap =         nogui_set_line_cap;
++  hid->set_line_width =       nogui_set_line_width;
++  hid->set_draw_xor =         nogui_set_draw_xor;
++  hid->set_draw_faded =       nogui_set_draw_faded;
++  hid->draw_line =            nogui_draw_line;
++  hid->draw_arc =             nogui_draw_arc;
++  hid->draw_rect =            nogui_draw_rect;
++  hid->fill_circle =          nogui_fill_circle;
++  hid->fill_polygon =         nogui_fill_polygon;
++  hid->fill_pcb_polygon =     nogui_fill_pcb_polygon;
++  hid->fill_pcb_pad =         nogui_fill_pcb_pad;
++  hid->thindraw_pcb_pad =     nogui_thindraw_pcb_pad;
++  hid->fill_pcb_pv =          nogui_fill_pcb_pv;
++  hid->thindraw_pcb_pv =      nogui_thindraw_pcb_pv;
++  hid->fill_rect =            nogui_fill_rect;
++  hid->calibrate =            nogui_calibrate;
++  hid->shift_is_pressed =     nogui_shift_is_pressed;
++  hid->control_is_pressed =   nogui_control_is_pressed;
++  hid->mod1_is_pressed =      nogui_mod1_is_pressed;
++  hid->get_coords =           nogui_get_coords;
++  hid->set_crosshair =        nogui_set_crosshair;
++  hid->add_timer =            nogui_add_timer;
++  hid->stop_timer =           nogui_stop_timer;
++  hid->watch_file =           nogui_watch_file;
++  hid->unwatch_file =         nogui_unwatch_file;
++  hid->add_block_hook =       nogui_add_block_hook;
++  hid->stop_block_hook =      nogui_stop_block_hook;
++  hid->log =                  nogui_log;
++  hid->logv =                 nogui_logv;
++  hid->confirm_dialog =       nogui_confirm_dialog;
++  hid->close_confirm_dialog = nogui_close_confirm_dialog;
++  hid->report_dialog =        nogui_report_dialog;
++  hid->prompt_for =           nogui_prompt_for;
++  hid->fileselect =           nogui_fileselect;
++  hid->attribute_dialog =     nogui_attribute_dialog;
++  hid->show_item =            nogui_show_item;
++  hid->beep =                 nogui_beep;
++  hid->progress =             nogui_progress;
++  hid->request_debug_draw =   nogui_request_debug_draw;
++  hid->flush_debug_draw =     nogui_flush_debug_draw;
++  hid->finish_debug_draw =    nogui_finish_debug_draw;
++}
++
++static HID nogui_hid;
++
++HID *
++hid_nogui_get_hid (void)
++{
++  memset (&nogui_hid, 0, sizeof (HID));
++
++  nogui_hid.struct_size = sizeof (HID);
++  nogui_hid.name        = "nogui";
++  nogui_hid.description = "Default GUI when no other GUI is present.  "
++                          "Does nothing.";
++
++  common_nogui_init (&nogui_hid);
++
++  return &nogui_hid;
+ }
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 6514fe9..2f26c8e 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -53,6 +53,7 @@
+ #include "hid.h"
+ #include "../hidint.h"
+ #include <gd.h>
++#include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+ #include "gcode.h"
+ #include "bitmap.h"
+@@ -1031,6 +1032,7 @@ hid_gcode_init ()
+ {
+   memset (&gcode_hid, 0, sizeof (HID));
+ 
++  common_nogui_init (&gcode_hid);
+   common_draw_helpers_init (&gcode_hid);
+ 
+   gcode_hid.struct_size         = sizeof (HID);
+@@ -1060,7 +1062,6 @@ hid_gcode_init ()
+   gcode_hid.calibrate           = gcode_calibrate;
+   gcode_hid.set_crosshair       = gcode_set_crosshair;
+ 
+-  apply_default_hid (&gcode_hid, 0);
+   hid_register_hid (&gcode_hid);
+ 
+ #include "gcode_lists.h"
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 47e6124..7737444 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -29,6 +29,7 @@
+ 
+ #include "hid.h"
+ #include "../hidint.h"
++#include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+ #include "hid/common/hidinit.h"
+ 
+@@ -1160,6 +1161,7 @@ hid_gerber_init ()
+ {
+   memset (&gerber_hid, 0, sizeof (HID));
+ 
++  common_nogui_init (&gerber_hid);
+   common_draw_helpers_init (&gerber_hid);
+ 
+   gerber_hid.struct_size         = sizeof (HID);
+@@ -1187,6 +1189,5 @@ hid_gerber_init ()
+   gerber_hid.calibrate           = gerber_calibrate;
+   gerber_hid.set_crosshair       = gerber_set_crosshair;
+ 
+-  apply_default_hid (&gerber_hid, 0);
+   hid_register_hid (&gerber_hid);
+ }
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 091f472..847da1b 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -18,6 +18,7 @@
+ #include "error.h"
+ #include "../hidint.h"
+ #include "gui.h"
++#include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+@@ -2268,6 +2269,7 @@ hid_gtk_init ()
+ 
+   memset (&ghid_hid, 0, sizeof (HID));
+ 
++  common_nogui_init (&ghid_hid);
+   common_draw_helpers_init (&ghid_hid);
+ 
+   ghid_hid.struct_size              = sizeof (HID);
+@@ -2330,7 +2332,6 @@ hid_gtk_init ()
+   ghid_hid.flush_debug_draw         = ghid_flush_debug_draw;
+   ghid_hid.finish_debug_draw        = ghid_finish_debug_draw;
+ 
+-  apply_default_hid (&ghid_hid, 0);
+   hid_register_hid (&ghid_hid);
+ #include "gtk_lists.h"
+ }
+diff --git a/src/hid/hidint.h b/src/hid/hidint.h
+index a2148a0..8302745 100644
+--- a/src/hid/hidint.h
++++ b/src/hid/hidint.h
+@@ -39,10 +39,6 @@ HID_Action *hid_find_action (const char *name);
+ 
+ HID_Flag *hid_find_flag (const char *name);
+ 
+-/* Any field that is NULL in "d" is copied from the matching field in
+-   "s".  If "s" is NULL, the nogui HID is used.  */
+-void apply_default_hid (HID * d, HID * s);
+-
+ /* A HID may use this if it does not need command line arguments in
+    any special format; for example, the Lesstif HID needs to use the
+    Xt parser, but the Postscript HID can use this function.  */
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index c2513bf..90979c0 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -28,6 +28,7 @@
+ 
+ #include "hid.h"
+ #include "../hidint.h"
++#include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+ #include "hid/common/hid_resource.h"
+ #include "lesstif.h"
+@@ -4005,6 +4006,7 @@ hid_lesstif_init ()
+ {
+   memset (&lesstif_hid, 0, sizeof (HID));
+ 
++  common_nogui_init (&lesstif_hid);
+   common_draw_helpers_init (&lesstif_hid);
+ 
+   lesstif_hid.struct_size             = sizeof (HID);
+@@ -4065,7 +4067,6 @@ hid_lesstif_init ()
+   lesstif_hid.flush_debug_draw        = lesstif_flush_debug_draw;
+   lesstif_hid.finish_debug_draw       = lesstif_finish_debug_draw;
+ 
+-  apply_default_hid (&lesstif_hid, 0);
+   hid_register_hid (&lesstif_hid);
+ #include "lesstif_lists.h"
+ }
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index 2f34833..3d46fec 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -17,6 +17,7 @@
+ #include "hid.h"
+ #include "../hidint.h"
+ #include "../ps/ps.h"
++#include "hid/common/hidnogui.h"
+ #include "hid/common/hidinit.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+@@ -118,6 +119,7 @@ hid_lpr_init ()
+ {
+   memset (&lpr_hid, 0, sizeof (HID));
+ 
++  common_nogui_init (&lpr_hid);
+   ps_ps_init (&lpr_hid);
+ 
+   lpr_hid.struct_size         = sizeof (HID);
+@@ -131,6 +133,5 @@ hid_lpr_init ()
+   lpr_hid.parse_arguments     = lpr_parse_arguments;
+   lpr_hid.calibrate           = lpr_calibrate;
+ 
+-  apply_default_hid (&lpr_hid, 0);
+   hid_register_hid (&lpr_hid);
+ }
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 9dbf24c..8c78a53 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -71,6 +71,7 @@
+ 
+ #include "hid.h"
+ #include "../hidint.h"
++#include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+ 
+ #include <gd.h>
+@@ -1046,6 +1047,7 @@ hid_nelma_init()
+ {
+   memset (&nelma_hid, 0, sizeof (HID));
+ 
++  common_nogui_init (&nelma_hid);
+   common_draw_helpers_init (&nelma_hid);
+ 
+   nelma_hid.struct_size         = sizeof (HID);
+@@ -1075,7 +1077,6 @@ hid_nelma_init()
+   nelma_hid.calibrate           = nelma_calibrate;
+   nelma_hid.set_crosshair       = nelma_set_crosshair;
+ 
+-  apply_default_hid (&nelma_hid, 0);
+   hid_register_hid (&nelma_hid);
+ 
+ #include "nelma_lists.h"
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 9890364..279e39c 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -41,6 +41,7 @@
+ 
+ #include "hid.h"
+ #include "../hidint.h"
++#include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+ #include "png.h"
+ 
+@@ -1515,6 +1516,7 @@ hid_png_init ()
+ {
+   memset (&png_hid, 0, sizeof (HID));
+ 
++  common_nogui_init (&png_hid);
+   common_draw_helpers_init (&png_hid);
+ 
+   png_hid.struct_size = sizeof (HID);
+@@ -1543,7 +1545,6 @@ hid_png_init ()
+   png_hid.calibrate           = png_calibrate;
+   png_hid.set_crosshair       = png_set_crosshair;
+ 
+-  apply_default_hid (&png_hid, 0);
+   hid_register_hid (&png_hid);
+ 
+ #include "png_lists.h"
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index e17f8a3..69430d8 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -16,6 +16,7 @@
+ 
+ #include "hid.h"
+ #include "../hidint.h"
++#include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+ #include "../ps/ps.h"
+ #include "hid/common/hidinit.h"
+@@ -628,6 +629,7 @@ hid_eps_init ()
+ {
+   memset (&eps_hid, 0, sizeof (HID));
+ 
++  common_nogui_init (&eps_hid);
+   common_draw_helpers_init (&eps_hid);
+ 
+   eps_hid.struct_size         = sizeof (HID);
+@@ -656,6 +658,5 @@ hid_eps_init ()
+   eps_hid.calibrate           = eps_calibrate;
+   eps_hid.set_crosshair       = eps_set_crosshair;
+ 
+-  apply_default_hid (&eps_hid, 0);
+   hid_register_hid (&eps_hid);
+ }
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index c2e5b26..7f2c3d7 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -19,6 +19,7 @@
+ 
+ #include "hid.h"
+ #include "../hidint.h"
++#include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+ #include "../ps/ps.h"
+ #include "../../print.h"
+@@ -1368,6 +1369,7 @@ hid_ps_init ()
+ {
+   memset (&ps_hid, 0, sizeof (HID));
+ 
++  common_nogui_init (&ps_hid);
+   common_draw_helpers_init (&ps_hid);
+   ps_ps_init (&ps_hid);
+ 
+@@ -1377,7 +1379,6 @@ hid_ps_init ()
+   ps_hid.exporter           = 1;
+   ps_hid.poly_before        = 1;
+ 
+-  apply_default_hid (&ps_hid, 0);
+   hid_register_hid (&ps_hid);
+ 
+   hid_eps_init ();
