@@ -1,5 +1,5 @@
 Bottom: f2e929add468975740a360a820851909a66fd58c
-Top:    f2e929add468975740a360a820851909a66fd58c
+Top:    f7b827995b5e0899313f19fa94bed9a2e0e4e918
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 01:23:33 +0100
 
@@ -11,4 +11,105 @@ little opaque.
 
 ---
 
-
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index f65c5a5..2f34833 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -118,6 +118,8 @@ hid_lpr_init ()
+ {
+   memset (&lpr_hid, 0, sizeof (HID));
+ 
++  ps_ps_init (&lpr_hid);
++
+   lpr_hid.struct_size         = sizeof (HID);
+   lpr_hid.name                = "lpr";
+   lpr_hid.description         = "Postscript print.";
+@@ -129,7 +131,6 @@ hid_lpr_init ()
+   lpr_hid.parse_arguments     = lpr_parse_arguments;
+   lpr_hid.calibrate           = lpr_calibrate;
+ 
+-  apply_default_hid (&lpr_hid, &ps_hid);
+   apply_default_hid (&lpr_hid, 0);
+   hid_register_hid (&lpr_hid);
+ }
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 92f03fd..c2e5b26 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1338,12 +1338,38 @@ ps_set_crosshair (int x, int y, int action)
+ 
+ HID ps_hid;
+ 
++void ps_ps_init (HID *hid)
++{
++  hid->get_export_options = ps_get_export_options;
++  hid->do_export          = ps_do_export;
++  hid->parse_arguments    = ps_parse_arguments;
++  hid->set_layer          = ps_set_layer;
++  hid->make_gc            = ps_make_gc;
++  hid->destroy_gc         = ps_destroy_gc;
++  hid->use_mask           = ps_use_mask;
++  hid->set_color          = ps_set_color;
++  hid->set_line_cap       = ps_set_line_cap;
++  hid->set_line_width     = ps_set_line_width;
++  hid->set_draw_xor       = ps_set_draw_xor;
++  hid->set_draw_faded     = ps_set_draw_faded;
++  hid->draw_line          = ps_draw_line;
++  hid->draw_arc           = ps_draw_arc;
++  hid->draw_rect          = ps_draw_rect;
++  hid->fill_circle        = ps_fill_circle;
++  hid->fill_polygon       = ps_fill_polygon;
++  hid->fill_pcb_polygon   = ps_fill_pcb_polygon;
++  hid->fill_rect          = ps_fill_rect;
++  hid->calibrate          = ps_calibrate;
++  hid->set_crosshair      = ps_set_crosshair;
++}
++
+ void
+ hid_ps_init ()
+ {
+   memset (&ps_hid, 0, sizeof (HID));
+ 
+   common_draw_helpers_init (&ps_hid);
++  ps_ps_init (&ps_hid);
+ 
+   ps_hid.struct_size        = sizeof (HID);
+   ps_hid.name               = "ps";
+@@ -1351,28 +1377,6 @@ hid_ps_init ()
+   ps_hid.exporter           = 1;
+   ps_hid.poly_before        = 1;
+ 
+-  ps_hid.get_export_options = ps_get_export_options;
+-  ps_hid.do_export          = ps_do_export;
+-  ps_hid.parse_arguments    = ps_parse_arguments;
+-  ps_hid.set_layer          = ps_set_layer;
+-  ps_hid.make_gc            = ps_make_gc;
+-  ps_hid.destroy_gc         = ps_destroy_gc;
+-  ps_hid.use_mask           = ps_use_mask;
+-  ps_hid.set_color          = ps_set_color;
+-  ps_hid.set_line_cap       = ps_set_line_cap;
+-  ps_hid.set_line_width     = ps_set_line_width;
+-  ps_hid.set_draw_xor       = ps_set_draw_xor;
+-  ps_hid.set_draw_faded     = ps_set_draw_faded;
+-  ps_hid.draw_line          = ps_draw_line;
+-  ps_hid.draw_arc           = ps_draw_arc;
+-  ps_hid.draw_rect          = ps_draw_rect;
+-  ps_hid.fill_circle        = ps_fill_circle;
+-  ps_hid.fill_polygon       = ps_fill_polygon;
+-  ps_hid.fill_pcb_polygon   = ps_fill_pcb_polygon;
+-  ps_hid.fill_rect          = ps_fill_rect;
+-  ps_hid.calibrate          = ps_calibrate;
+-  ps_hid.set_crosshair      = ps_set_crosshair;
+-
+   apply_default_hid (&ps_hid, 0);
+   hid_register_hid (&ps_hid);
+ 
+diff --git a/src/hid/ps/ps.h b/src/hid/ps/ps.h
+index 749ad18..661eaa8 100644
+--- a/src/hid/ps/ps.h
++++ b/src/hid/ps/ps.h
+@@ -5,3 +5,4 @@ extern void ps_hid_export_to_file (FILE *, HID_Attr_Val *);
+ extern void ps_start_file (FILE *);
+ extern void ps_calibrate_1 (double , double , int);
+ extern void hid_eps_init ();
++void ps_ps_init (HID *hid);
