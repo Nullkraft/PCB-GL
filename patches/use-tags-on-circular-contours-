@@ -1,7 +1,7 @@
-Bottom: bf485deeb62c19d327d5834d730643bf96909cc6
-Top:    d7556f180e818d43dcc7e7df7d156547806f2356
+Bottom: 5589dbf8cb884c0b587f00ab260915b0fdf397bf
+Top:    8c4c6886c2d578ba7dbfc95c2e3c165f9cffdf76
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-13 01:54:00 +0100
+Date:   2011-05-13 02:26:52 +0100
 
 Use tags on circular contours to render them faster
 
@@ -9,10 +9,10 @@ Use tags on circular contours to render them faster
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index fb6b118..93a02e7 100644
+index 00efdce..bbba217 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -552,11 +552,24 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -554,11 +554,24 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
@@ -38,7 +38,7 @@ index fb6b118..93a02e7 100644
    gluTessBeginPolygon (tobj, NULL);
    gluTessBeginContour (tobj);
    do {
-@@ -573,6 +586,7 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
+@@ -575,6 +588,7 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
  struct do_hole_info {
    GLUtesselator *tobj;
    GLdouble *vertices;
@@ -46,7 +46,7 @@ index fb6b118..93a02e7 100644
  };
  
  static int
-@@ -586,7 +600,7 @@ do_hole (const BoxType *b, void *cl)
+@@ -588,7 +602,7 @@ do_hole (const BoxType *b, void *cl)
      return 0;
    }
  
@@ -55,7 +55,7 @@ index fb6b118..93a02e7 100644
    return 1;
  }
  
-@@ -603,6 +617,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -605,6 +619,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    struct do_hole_info info;
    int stencil_bit;
  
@@ -63,7 +63,7 @@ index fb6b118..93a02e7 100644
    global_scale = scale;
  
    if (poly->Clipped == NULL)
-@@ -662,7 +677,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -664,7 +679,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  
    /* Draw the polygon outer */

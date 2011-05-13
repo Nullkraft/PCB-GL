@@ -1,7 +1,7 @@
-Bottom: d1de9c6232f90486fc88bb7a07cb3a33510789e4
-Top:    ea4328da1007360d9b475a2e482a4f78d0ff916b
+Bottom: baa7c55267d369b71d976afbfba4b7554027d57d
+Top:    5c3f7e3165346d05ff2c83b5548ce2246c180d2b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-13 01:54:02 +0100
+Date:   2011-05-13 02:26:54 +0100
 
 Shiny 3D eye-candy
 
@@ -14,10 +14,10 @@ Squashed:
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 93a02e7..643bca4 100644
+index bbba217..3dc4a3b 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -110,6 +110,7 @@ hidgl_draw_grid (BoxType *drawn_area)
+@@ -112,6 +112,7 @@ hidgl_draw_grid (BoxType *drawn_area)
    static int npoints = 0;
    int x1, y1, x2, y2, n, i;
    double x, y;
