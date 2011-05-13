@@ -1,7 +1,7 @@
-Bottom: b31c16549d2d5f34412f7266d7c3254eab3dd876
-Top:    467e8847e7482238dd20bef06ecbd558d6f5c0af
+Bottom: f237b5daed5d0741bdd34d3ff61c5627a70c3a4f
+Top:    75d6f5a765bfef1527976ee28bc5078782018286
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-10 14:33:30 +0100
+Date:   2011-05-13 01:53:45 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -832,10 +832,10 @@ index 9ad5331..f843617 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index ea0a0dd..647294c 100644
+index 847da1b..aca1b90 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1006,6 +1006,7 @@ static void
+@@ -1007,6 +1007,7 @@ static void
  ghid_attributes_revert ()
  {
    int i;
@@ -843,7 +843,7 @@ index ea0a0dd..647294c 100644
  
    ghid_attributes_need_rows (attributes_list->Number);
  
-@@ -1019,11 +1020,14 @@ ghid_attributes_revert ()
+@@ -1020,11 +1021,14 @@ ghid_attributes_revert ()
      }
  
    /* Fill in values */
@@ -861,7 +861,7 @@ index ea0a0dd..647294c 100644
  #if 0
  #endif
      }
-@@ -1089,28 +1093,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
+@@ -1090,28 +1094,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
        if (response == GTK_RESPONSE_OK)
  	{
  	  int i;
@@ -993,10 +993,10 @@ index b60b8ba..c638a51 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 9dbf24c..c552b9a 100644
+index 8c78a53..d219fe4 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -296,28 +296,26 @@ nelma_write_materials(FILE * out)
+@@ -297,28 +297,26 @@ nelma_write_materials(FILE * out)
  static void 
  nelma_write_nets(FILE * out)
  {
@@ -1031,7 +1031,7 @@ index 9dbf24c..c552b9a 100644
  
  			/* pin_name_to_xy(pin, &x, &y); */
  
-@@ -349,7 +347,7 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -350,7 +348,7 @@ nelma_write_layer(FILE * out, int z, int h,
  	LibraryMenuTypePtr net;
  	LibraryEntryTypePtr pin;
  
@@ -1040,7 +1040,7 @@ index 9dbf24c..c552b9a 100644
  
  	fprintf(out, "layer %s {\n", name);
  	fprintf(out, "\theight = %d\n", h);
-@@ -360,11 +358,11 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -361,11 +359,11 @@ nelma_write_layer(FILE * out, int z, int h,
  		fprintf(out, "\tobjects = {\n");
  		netlist = PCB->NetlistLib;
  
@@ -1056,7 +1056,7 @@ index 9dbf24c..c552b9a 100644
  
  				if (m != 0 || n != 0)
  					fprintf(out, ",\n");
-@@ -469,17 +467,17 @@ nelma_write_objects(FILE * out)
+@@ -470,17 +468,17 @@ nelma_write_objects(FILE * out)
  	LibraryMenuTypePtr net;
  	LibraryEntryTypePtr pin;
  
