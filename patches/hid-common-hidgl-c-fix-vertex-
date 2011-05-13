@@ -1,5 +1,5 @@
 Bottom: f237b5daed5d0741bdd34d3ff61c5627a70c3a4f
-Top:    2ed2ad416815c3fb52906cda0f175bd9a5c405d6
+Top:    691a2c3049cc00eb7ba1e920f782405756529bfb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 02:16:34 +0100
 
@@ -39,3 +39,16 @@ index fb6b118..00efdce 100644
    buffer->triangle_count = 0;
    buffer->coord_comp_count = 0;
  }
+diff --git a/src/hid/common/hidnogui.h b/src/hid/common/hidnogui.h
+new file mode 100644
+index 0000000..244c8c2
+--- /dev/null
++++ b/src/hid/common/hidnogui.h
+@@ -0,0 +1,7 @@
++#ifndef __HID_NOGUI_INCLUDED__
++#define __HID_NOGUI_INCLUDED__
++
++void common_nogui_init (HID *hid);
++HID *hid_nogui_get_hid (void);
++
++#endif
