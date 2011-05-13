@@ -1,0 +1,31 @@
+Bottom: 524bd26fe227be4eab4b8032597f4ebbf31beade
+Top:    f2e929add468975740a360a820851909a66fd58c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-13 01:21:35 +0100
+
+Refresh of src-makefile-am-use-am_cflags-
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 8129207..0de23aa 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -5,7 +5,7 @@
+ SUBDIRS=	icons
+ 
+ CC = @CC_OR_CXX@
+-CFLAGS = @CC_OR_CXX_FLAGS@
++AM_CFLAGS = @CC_OR_CXX_FLAGS@
+ 
+ pcbtreedir=	@PCBTREEDIR@
+ pcblibdir=	@PCBLIBDIR@
+@@ -28,7 +28,7 @@ bin_PROGRAMS=	pcb
+ if DEBUG_BUILD
+ # don't disable assert()
+ else
+-AM_CFLAGS = -DNDEBUG
++AM_CFLAGS += -DNDEBUG
+ endif
+ 
+ PCB_SRCS = \
