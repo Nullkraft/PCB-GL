@@ -3,10 +3,10 @@ Top:    f7b827995b5e0899313f19fa94bed9a2e0e4e918
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 01:23:33 +0100
 
-hid/lpr, hid/ps: Provide helper function to fill in HID members
+hid/ps: Provide helper function to fill in HID members useful to other HIDs
 
-This avoids setting things up with apply_default_hid, which is a
-little opaque.
+This avoids setting up the drawing routines of the lpr HID with
+apply_default_hid, which is a little opaque.
 
 
 ---
