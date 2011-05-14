@@ -1,5 +1,5 @@
 Bottom: e28b880c9ffab474e25c448ff94d4c66e59d04a5
-Top:    6cb6911856caddb2d09932b7df29242cacb237cf
+Top:    fb6f36182dba35a2dc247c5dc96e341ac239742f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-14 00:46:27 +0100
 
@@ -9,14 +9,14 @@ GTK/GL: Add facility to set an alpha multiplier for the current rendering
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7c7184a..a9c11f1 100644
+index 7c7184a..6d51b24 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -46,6 +46,7 @@ typedef struct render_priv {
    bool in_context;
    int subcomposite_stencil_bit;
    char *current_colorname;
-+  int current_alpha;
++  double current_alpha_mult;
  } render_priv;
  
  
@@ -36,25 +36,30 @@ index 7c7184a..a9c11f1 100644
    return rv;
  }
  
-@@ -359,7 +362,8 @@ set_gl_color_for_gc (hidGC gc)
+@@ -359,11 +362,13 @@ set_gl_color_for_gc (hidGC gc)
    a = 1.0;
  
    if (priv->current_colorname != NULL &&
 -      strcmp (priv->current_colorname, gc->colorname) == 0)
 +      strcmp (priv->current_colorname, gc->colorname) == 0 &&
-+      priv->current_alphamult == gc->alpha_mult)
++      priv->current_alpha_mult == gc->alpha_mult)
      return;
  
    free (priv->current_colorname);
-@@ -428,6 +432,7 @@ set_gl_color_for_gc (hidGC gc)
+   priv->current_colorname = strdup (gc->colorname);
++  priv->current_alpha_mult = gc->alpha_mult;
+ 
+   if (gport->colormap == NULL)
+     gport->colormap = gtk_widget_get_colormap (gport->top_window);
+@@ -428,6 +433,7 @@ set_gl_color_for_gc (hidGC gc)
      }
    if (1) {
      double maxi, mult;
-+    alpha_mult *= priv->alpha_mult;
++    alpha_mult *= gc->alpha_mult;
      if (priv->trans_lines)
        a = a * alpha_mult;
      maxi = r;
-@@ -456,6 +461,13 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -456,6 +462,13 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
