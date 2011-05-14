@@ -1,0 +1,103 @@
+Bottom: 74c3500cf3e1f5cf1df8ac4100ab0efddc996e15
+Top:    2545c4da1ebeea6e0c00de41267e084616ea80ac
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-14 01:00:04 +0100
+
+Refresh of hack-to-make-pretty-translucen
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index b6f21e5..e47da1a 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -346,12 +346,15 @@ typedef struct
+   double blue;
+ } ColorCache;
+ 
++static char *current_color = NULL;
++static double global_alpha_mult = 1.0;
++static int alpha_changed = 0;
++
+ static void
+ set_gl_color_for_gc (hidGC gc)
+ {
+   render_priv *priv = gport->render_priv;
+   static void *cache = NULL;
+-  static char *old_name = NULL;
+   hidval cval;
+   ColorCache *cc;
+   double alpha_mult = 1.0;
+@@ -360,14 +363,16 @@ set_gl_color_for_gc (hidGC gc)
+ 
+   current_gc = gc;
+ 
+-  if (old_name != NULL)
+-    {
+-      if (strcmp (gc->colorname, old_name) == 0)
+-        return;
+-      free (old_name);
+-    }
++  if (!alpha_changed && current_color != NULL &&
++      strcmp (name, current_color) == 0)
++    return;
+ 
+-  old_name = strdup (gc->colorname);
++  free (current_color);
++  current_color = NULL;
++
++  alpha_changed = 0;
++  gc->colorname = (char *) name;
++  current_color = strdup (name);
+ 
+   if (gport->colormap == NULL)
+     gport->colormap = gtk_widget_get_colormap (gport->top_window);
+@@ -432,6 +437,7 @@ set_gl_color_for_gc (hidGC gc)
+     }
+   if (1) {
+     double maxi, mult;
++    alpha_mult *= global_alpha_mult;
+     if (priv->trans_lines)
+       a = a * alpha_mult;
+     maxi = r;
+@@ -465,6 +471,16 @@ ghid_set_color (hidGC gc, const char *name)
+ }
+ 
+ void
++ghid_global_alpha_mult (hidGC gc, double alpha_mult)
++{
++  if (alpha_mult != global_alpha_mult) {
++    global_alpha_mult = alpha_mult;
++    alpha_changed = 1;
++    set_gl_color_for_gc (gc);
++  }
++}
++
++void
+ ghid_set_line_cap (hidGC gc, EndCapStyle style)
+ {
+   gc->cap = style;
+@@ -575,6 +591,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ }
+ 
+ void
++ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++{
++  common_thindraw_pcb_polygon (gc, poly, clip_box);
++  ghid_global_alpha_mult (gc, 0.25);
++  ghid_fill_pcb_polygon (gc, poly, clip_box);
++  ghid_global_alpha_mult (gc, 1.0);
++}
++
++void
+ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ {
+   USE_GC (gc);
+@@ -804,6 +829,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+   /* Setup HID function pointers specific to the GL renderer*/
+   ghid_hid.end_layer = ghid_end_layer;
+   ghid_hid.fill_pcb_polygon = ghid_fill_pcb_polygon;
++  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+ }
+ 
+ void
