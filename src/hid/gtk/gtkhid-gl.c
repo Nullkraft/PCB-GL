@@ -53,7 +53,7 @@ typedef struct hid_gc_struct
 {
   HID *me_pointer;
 
-  gchar *colorname;
+  const char *colorname;
   gint width;
   gint cap, join;
   gchar xor;
@@ -363,8 +363,6 @@ set_gl_color_for_gc (hidGC gc)
     return;
 
   free (priv->current_colorname);
-  priv->current_colorname = NULL;
-
   priv->current_colorname = strdup (gc->colorname);
 
   if (gport->colormap == NULL)
@@ -453,11 +451,7 @@ set_gl_color_for_gc (hidGC gc)
 void
 ghid_set_color (hidGC gc, const char *name)
 {
-  current_gc = gc;
-
-  gc->colorname = (char *) name;
-
-  set_gl_color_for_gc (gc);
+  gc->colorname = name;
 }
 
 void
