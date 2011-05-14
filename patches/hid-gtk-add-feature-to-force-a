@@ -1,5 +1,5 @@
-Bottom: 867fbf689dbc7fe2866d50a5cfb6d1faaf30b502
-Top:    2b5c70f29601ab438246d7906a5f4acfabcee7f7
+Bottom: 4fb8993653d9a6ab68fcba49c30feb676dc4e815
+Top:    4fb8993653d9a6ab68fcba49c30feb676dc4e815
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 14:31:33 +0100
 
@@ -15,58 +15,4 @@ mainloop is not hit until the auto-routing operation is fully complete.
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2d80bb2..ccb527d 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -45,6 +45,7 @@ typedef struct render_priv {
-   bool trans_lines;
-   bool in_context;
-   int subcomposite_stencil_bit;
-+  GTimer *time_since_expose;
- } render_priv;
- 
- 
-@@ -577,10 +578,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
-   ghid_invalidate_all ();
- }
- 
-+#define MAX_ELAPSED (50. / 1000.) /* 50ms */
- void
- ghid_invalidate_all ()
- {
-+  render_priv *priv = gport->render_priv;
-+  double elapsed = g_timer_elapsed (priv->time_since_expose, NULL);
-+
-   ghid_draw_area_update (gport, NULL);
-+
-+  if (elapsed > MAX_ELAPSED)
-+    gdk_window_process_all_updates ();
- }
- 
- void
-@@ -778,6 +786,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
- 
-   port->render_priv = priv = g_new0 (render_priv, 1);
- 
-+  priv->time_since_expose = g_timer_new ();
-+
-   gtk_gl_init(argc, argv);
- 
-   /* setup GL-context */
-@@ -856,6 +866,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-                              GdkEventExpose *ev,
-                              GHidPort *port)
- {
-+  render_priv *priv = port->render_priv;
-   BoxType region;
- 
-   ghid_start_drawing (port);
-@@ -947,6 +958,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
- 
-   ghid_end_drawing (port);
- 
-+  g_timer_start (priv->time_since_expose);
-+
-   return FALSE;
- }
+
