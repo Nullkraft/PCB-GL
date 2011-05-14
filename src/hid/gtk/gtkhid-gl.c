@@ -358,8 +358,6 @@ set_gl_color_for_gc (hidGC gc)
   double r, g, b, a;
   a = 1.0;
 
-  current_gc = gc;
-
   if (old_name != NULL)
     {
       if (strcmp (gc->colorname, old_name) == 0)
@@ -455,8 +453,6 @@ set_gl_color_for_gc (hidGC gc)
 void
 ghid_set_color (hidGC gc, const char *name)
 {
-  render_priv *priv = gport->render_priv;
-
   current_gc = gc;
 
   gc->colorname = (char *) name;
@@ -518,7 +514,7 @@ use_gc (hidGC gc)
 
   current_gc = gc;
 
-  set_gl_colour_for_gc (gc);
+  set_gl_color_for_gc (gc);
   return 1;
 }
 
