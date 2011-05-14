@@ -5,6 +5,9 @@ Date:   2011-05-14 01:31:41 +0100
 
 GTK/GL: Refactor alpha handling
 
+Replace "alpha_mult" in set_gl_color_for_gc () with just explicitly calling
+this the "a" (alpha) value of the colour in question.
+
 
 ---
 
