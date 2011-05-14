@@ -1689,6 +1689,7 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
 void
 ghid_draw_everything (BoxTypePtr drawn_area)
 {
+  render_priv *priv = gport->render_priv;
   int i, ngroups;
   int side;
   /* This is the list of layer groups we will draw.  */
@@ -1703,7 +1704,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   int min_phys_group;
   int max_phys_group;
 
-  current_color = NULL;
+  priv->current_colorname = NULL;
 
   /* Test direction of rendering */
   /* Look at sign of eye coordinate system z-coord when projecting a
