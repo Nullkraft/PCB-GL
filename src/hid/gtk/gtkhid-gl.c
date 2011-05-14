@@ -45,6 +45,12 @@ typedef struct render_priv {
   bool trans_lines;
   bool in_context;
   int subcomposite_stencil_bit;
+
+  /* Data to determine when we need to change the current rendering colour */
+  char *current_color = NULL;
+  double alpha_mult = 1.0;
+  int alpha_changed = 0;
+
 } render_priv;
 
 
@@ -351,7 +357,6 @@ set_gl_color_for_gc (hidGC gc)
 {
   render_priv *priv = gport->render_priv;
   static void *cache = NULL;
-  static char *old_name = NULL;
   hidval cval;
   ColorCache *cc;
   double alpha_mult = 1.0;
@@ -360,14 +365,15 @@ set_gl_color_for_gc (hidGC gc)
 
   current_gc = gc;
 
-  if (old_name != NULL)
-    {
-      if (strcmp (gc->colorname, old_name) == 0)
-        return;
-      free (old_name);
-    }
+  if (!alpha_changed && priv->current_color != NULL &&
+      strcmp (gc->colorname, priv->current_color) == 0)
+    return;
 
-  old_name = strdup (gc->colorname);
+  free (priv->current_color);
+  priv->current_color = NULL;
+
+  priv->alpha_changed = 0;
+  priv->current_color = strdup (gc->colorname);
 
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -432,6 +438,7 @@ set_gl_color_for_gc (hidGC gc)
     }
   if (1) {
     double maxi, mult;
+    alpha_mult *= priv->alpha_mult;
     if (priv->trans_lines)
       a = a * alpha_mult;
     maxi = r;
@@ -462,6 +469,16 @@ ghid_set_color (hidGC gc, const char *name)
   gc->colorname = (char *) name;
 
   set_gl_color_for_gc (gc);
+}
+
+void
+ghid_set_alpha_mult (hidGC gc, double alpha_mult)
+{
+  if (alpha_mult != priv->alpha_mult) {
+    priv->alpha_mult = alpha_mult;
+    priv->alpha_changed = 1;
+    set_gl_color_for_gc (gc);
+  }
 }
 
 void
@@ -518,7 +535,7 @@ use_gc (hidGC gc)
 
   current_gc = gc;
 
-  set_gl_colour_for_gc (gc);
+  set_gl_color_for_gc (gc);
   return 1;
 }
 
