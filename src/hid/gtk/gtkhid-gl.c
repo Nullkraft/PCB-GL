@@ -46,7 +46,7 @@ typedef struct render_priv {
   bool in_context;
   int subcomposite_stencil_bit;
   char *current_colorname;
-  int current_alpha;
+  double current_alpha_mult;
 } render_priv;
 
 
@@ -363,11 +363,12 @@ set_gl_color_for_gc (hidGC gc)
 
   if (priv->current_colorname != NULL &&
       strcmp (priv->current_colorname, gc->colorname) == 0 &&
-      priv->current_alphamult == gc->alpha_mult)
+      priv->current_alpha_mult == gc->alpha_mult)
     return;
 
   free (priv->current_colorname);
   priv->current_colorname = strdup (gc->colorname);
+  priv->current_alpha_mult = gc->alpha_mult;
 
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -432,7 +433,7 @@ set_gl_color_for_gc (hidGC gc)
     }
   if (1) {
     double maxi, mult;
-    alpha_mult *= priv->alpha_mult;
+    alpha_mult *= gc->alpha_mult;
     if (priv->trans_lines)
       a = a * alpha_mult;
     maxi = r;
