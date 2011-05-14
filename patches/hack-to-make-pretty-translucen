@@ -1,5 +1,5 @@
-Bottom: c76192b0ad0a875849770f31f1a77d5781ae2385
-Top:    2b9da24051a25843df69baa2bdaac73a6bff6073
+Bottom: 74c3500cf3e1f5cf1df8ac4100ab0efddc996e15
+Top:    3fe064b5c50ab7c8aab67a12648117ed8d7f6ef6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 14:31:35 +0100
 
@@ -14,10 +14,10 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8c2c1fe..77299a2 100644
+index b6f21e5..d074e62 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -592,6 +592,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -575,6 +575,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  }
  
  void
@@ -33,7 +33,7 @@ index 8c2c1fe..77299a2 100644
  ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
  {
    USE_GC (gc);
-@@ -821,6 +830,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -804,6 +813,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
    /* Setup HID function pointers specific to the GL renderer*/
    ghid_hid.end_layer = ghid_end_layer;
    ghid_hid.fill_pcb_polygon = ghid_fill_pcb_polygon;
