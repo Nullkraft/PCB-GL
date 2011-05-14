@@ -452,6 +452,7 @@ void
 ghid_set_color (hidGC gc, const char *name)
 {
   gc->colorname = name;
+  set_gl_color_for_gc (gc);
 }
 
 void
