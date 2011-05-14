@@ -1,5 +1,5 @@
 Bottom: 9e12ec9e014127ce37fdda36f87a03d33b4756a0
-Top:    f0a8bd09727dafb15766b14271595364a73f08e3
+Top:    a6db38a2cbe8dd5a06e1af79c997a0cdef9fcfaa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-14 00:46:27 +0100
 
@@ -9,21 +9,35 @@ GTK/GL: Add facility to set an alpha multiplier for the current rendering
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 10ecbc2..717f6b8 100644
+index 10ecbc2..ddddfc4 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -45,6 +45,12 @@ typedef struct render_priv {
+@@ -45,6 +45,10 @@ typedef struct render_priv {
    bool trans_lines;
    bool in_context;
    int subcomposite_stencil_bit;
 +
-+  /* Data to determine when we need to change the current rendering colour */
-+  char *current_color = NULL;
-+  double alpha_mult = 1.0;
-+  int alpha_changed = 0;
++  char *current_colorname;
++  int current_alpha;
 +
  } render_priv;
  
+ 
+@@ -53,6 +57,7 @@ typedef struct hid_gc_struct
+   HID *me_pointer;
+ 
+   gchar *colorname;
++  double alpha_mult;
+   gint width;
+   gint cap, join;
+   gchar xor;
+@@ -172,6 +177,7 @@ ghid_make_gc (void)
+   rv = g_new0 (hid_gc_struct, 1);
+   rv->me_pointer = &ghid_hid;
+   rv->colorname = Settings.BackgroundColor;
++  rv->alpha_mult = 1.0;
+   return rv;
+ }
  
 @@ -351,21 +357,21 @@ set_gl_color_for_gc (hidGC gc)
  {
@@ -45,11 +59,11 @@ index 10ecbc2..717f6b8 100644
 +  if (!alpha_changed && priv->current_color != NULL &&
 +      strcmp (gc->colorname, priv->current_color) == 0)
 +    return;
- 
--  old_name = strdup (gc->colorname);
++
 +  free (priv->current_color);
 +  priv->current_color = NULL;
-+
+ 
+-  old_name = strdup (gc->colorname);
 +  priv->alpha_changed = 0;
 +  priv->current_color = strdup (gc->colorname);
  
