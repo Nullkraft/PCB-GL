@@ -45,6 +45,7 @@ typedef struct render_priv {
   bool trans_lines;
   bool in_context;
   int subcomposite_stencil_bit;
+  char *current_colorname;
 } render_priv;
 
 
@@ -351,21 +352,20 @@ set_gl_color_for_gc (hidGC gc)
 {
   render_priv *priv = gport->render_priv;
   static void *cache = NULL;
-  static char *old_name = NULL;
   hidval cval;
   ColorCache *cc;
   double alpha_mult = 1.0;
   double r, g, b, a;
   a = 1.0;
 
-  if (old_name != NULL)
-    {
-      if (strcmp (gc->colorname, old_name) == 0)
-        return;
-      free (old_name);
-    }
+  if (priv->current_colorname != NULL &&
+      strcmp (priv->current_colorname, gc->colorname) == 0)
+    return;
 
-  old_name = strdup (gc->colorname);
+  free (priv->current_colorname);
+  priv->current_colorname = NULL;
+
+  priv->current_colorname = strdup (gc->colorname);
 
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
