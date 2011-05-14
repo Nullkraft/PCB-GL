@@ -1,5 +1,5 @@
 Bottom: 909ce46c23126bfd0119eaa40bfdf43635ab8cf8
-Top:    4bad3236e0fc54933488a3e079459ec6f0256fb8
+Top:    7833129837a6aecead2559a649c1428d290a99f9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 14:31:39 +0100
 
@@ -90,7 +90,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d002838..901ac29 100644
+index d002838..f1a4085 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -174,15 +174,7 @@ index d002838..901ac29 100644
  static void
  start_subcomposite (void)
  {
-@@ -110,7 +177,6 @@ end_subcomposite (void)
-   priv->subcomposite_stencil_bit = 0;
- }
- 
--
- int
- ghid_set_layer (const char *name, int group, int empty)
- {
-@@ -133,23 +199,14 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -133,23 +200,14 @@ ghid_set_layer (const char *name, int group, int empty)
    start_subcomposite ();
  
    /* Drawing is already flushed by {start,end}_subcomposite */
@@ -208,7 +200,7 @@ index d002838..901ac29 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -157,14 +214,10 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -157,14 +215,10 @@ ghid_set_layer (const char *name, int group, int empty)
  	case SL_INVISIBLE:
  	  return PCB->InvisibleObjectsOn;
  	case SL_MASK:
@@ -225,7 +217,7 @@ index d002838..901ac29 100644
  	case SL_ASSY:
  	  return 0;
  	case SL_PDRILL:
-@@ -216,6 +269,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -216,6 +270,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
@@ -233,7 +225,7 @@ index d002838..901ac29 100644
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
  
-@@ -226,6 +280,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -226,6 +281,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
    hidgl_draw_grid (drawn_area);
  
    glDisable (GL_COLOR_LOGIC_OP);
@@ -241,7 +233,7 @@ index d002838..901ac29 100644
  }
  
  static void
-@@ -659,9 +714,9 @@ static void
+@@ -659,9 +715,9 @@ static void
  draw_right_cross (gint x, gint y, gint z)
  {
    glVertex3i (x, 0, z);
@@ -253,7 +245,7 @@ index d002838..901ac29 100644
  }
  
  static void
-@@ -669,25 +724,25 @@ draw_slanted_cross (gint x, gint y, gint z)
+@@ -669,25 +725,25 @@ draw_slanted_cross (gint x, gint y, gint z)
  {
    gint x0, y0, x1, y1;
  
@@ -291,7 +283,7 @@ index d002838..901ac29 100644
    glVertex3i (x0, y0, z);
    glVertex3i (x1, y1, z);
  }
-@@ -698,47 +753,47 @@ draw_dozen_cross (gint x, gint y, gint z)
+@@ -698,47 +754,47 @@ draw_dozen_cross (gint x, gint y, gint z)
    gint x0, y0, x1, y1;
    gdouble tan60 = sqrt (3);
  
@@ -363,7 +355,7 @@ index d002838..901ac29 100644
    glVertex3i (x0, y0, z);
    glVertex3i (x1, y1, z);
  }
-@@ -777,8 +832,8 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -777,8 +833,8 @@ ghid_show_crosshair (gboolean paint_new_location)
        /* FIXME: when CrossColor changed from config */
        ghid_map_color_string (Settings.CrossColor, &cross_color);
      }
@@ -374,7 +366,7 @@ index d002838..901ac29 100644
    z = global_depth;
  
    glEnable (GL_COLOR_LOGIC_OP);
-@@ -801,22 +856,22 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -801,22 +857,22 @@ ghid_show_crosshair (gboolean paint_new_location)
    if (x >= 0 && paint_new_location && draw_markers)
      {
        glBegin (GL_QUADS);
@@ -413,7 +405,7 @@ index d002838..901ac29 100644
        glEnd ();
      }
  
-@@ -880,6 +935,10 @@ ghid_start_drawing (GHidPort *port)
+@@ -880,6 +936,10 @@ ghid_start_drawing (GHidPort *port)
  
    port->render_priv->in_context = true;
  
@@ -424,7 +416,7 @@ index d002838..901ac29 100644
    return TRUE;
  }
  
-@@ -898,6 +957,14 @@ ghid_end_drawing (GHidPort *port)
+@@ -898,6 +958,14 @@ ghid_end_drawing (GHidPort *port)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
@@ -439,7 +431,7 @@ index d002838..901ac29 100644
  }
  
  void
-@@ -905,6 +972,883 @@ ghid_screen_update (void)
+@@ -905,6 +973,883 @@ ghid_screen_update (void)
  {
  }
  
@@ -1323,7 +1315,7 @@ index d002838..901ac29 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -948,6 +1892,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -948,6 +1893,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -1337,7 +1329,7 @@ index d002838..901ac29 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
    glEnable (GL_STENCIL_TEST);
-@@ -966,8 +1917,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -966,8 +1918,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1348,7 +1340,7 @@ index d002838..901ac29 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1021,43 +1972,62 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1021,43 +1973,62 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
    min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
  
@@ -1435,7 +1427,7 @@ index d002838..901ac29 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1065,7 +2035,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1065,7 +2036,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawAttached ();
    DrawMark ();
    hidgl_flush_triangles (&buffer);
