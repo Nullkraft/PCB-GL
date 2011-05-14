@@ -1,5 +1,5 @@
-Bottom: e28b880c9ffab474e25c448ff94d4c66e59d04a5
-Top:    fb6f36182dba35a2dc247c5dc96e341ac239742f
+Bottom: d90d38e79fd9560c94785d2a95b95962d3fcbec3
+Top:    5a3057114e749775a8f90e29e6f96c3f9549701e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-14 00:46:27 +0100
 
@@ -9,7 +9,7 @@ GTK/GL: Add facility to set an alpha multiplier for the current rendering
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7c7184a..6d51b24 100644
+index cfd41ff..f5c4dc9 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -46,6 +46,7 @@ typedef struct render_priv {
@@ -28,7 +28,7 @@ index 7c7184a..6d51b24 100644
    gint width;
    gint cap, join;
    gchar xor;
-@@ -173,6 +175,7 @@ ghid_make_gc (void)
+@@ -172,6 +174,7 @@ ghid_make_gc (void)
    rv = g_new0 (hid_gc_struct, 1);
    rv->me_pointer = &ghid_hid;
    rv->colorname = Settings.BackgroundColor;
@@ -36,7 +36,7 @@ index 7c7184a..6d51b24 100644
    return rv;
  }
  
-@@ -359,11 +362,13 @@ set_gl_color_for_gc (hidGC gc)
+@@ -358,11 +361,13 @@ set_gl_color_for_gc (hidGC gc)
    a = 1.0;
  
    if (priv->current_colorname != NULL &&
@@ -51,7 +51,7 @@ index 7c7184a..6d51b24 100644
  
    if (gport->colormap == NULL)
      gport->colormap = gtk_widget_get_colormap (gport->top_window);
-@@ -428,6 +433,7 @@ set_gl_color_for_gc (hidGC gc)
+@@ -423,6 +428,7 @@ set_gl_color_for_gc (hidGC gc)
      }
    if (1) {
      double maxi, mult;
@@ -59,7 +59,7 @@ index 7c7184a..6d51b24 100644
      if (priv->trans_lines)
        a = a * alpha_mult;
      maxi = r;
-@@ -456,6 +462,13 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -451,6 +457,13 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
