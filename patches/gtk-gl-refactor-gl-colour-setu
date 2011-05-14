@@ -1,5 +1,5 @@
 Bottom: 867fbf689dbc7fe2866d50a5cfb6d1faaf30b502
-Top:    f8ec05d47f9a8e26204964880f0c6c1e60f4187b
+Top:    e28b880c9ffab474e25c448ff94d4c66e59d04a5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-14 00:54:16 +0100
 
@@ -9,7 +9,7 @@ gtk/gl: Refactor GL colour setup handling
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2d80bb2..6d97de6 100644
+index 2d80bb2..7c7184a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -45,6 +45,7 @@ typedef struct render_priv {
@@ -102,20 +102,21 @@ index 2d80bb2..6d97de6 100644
              gdk_color_alloc (gport->colormap, &cc->color);
            else
              gdk_color_white (gport->colormap, &cc->color);
-@@ -454,6 +449,12 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -454,6 +449,13 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
 +ghid_set_color (hidGC gc, const char *name)
 +{
 +  gc->colorname = name;
++  set_gl_color_for_gc (gc);
 +}
 +
 +void
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
    gc->cap = style;
-@@ -507,7 +508,7 @@ use_gc (hidGC gc)
+@@ -507,7 +509,7 @@ use_gc (hidGC gc)
  
    current_gc = gc;
  
