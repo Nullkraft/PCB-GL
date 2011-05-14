@@ -1,0 +1,21 @@
+Bottom: f8ec05d47f9a8e26204964880f0c6c1e60f4187b
+Top:    e28b880c9ffab474e25c448ff94d4c66e59d04a5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-14 01:22:48 +0100
+
+Refresh of gtk-gl-refactor-gl-colour-setu
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 6d97de6..7c7184a 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -452,6 +452,7 @@ void
+ ghid_set_color (hidGC gc, const char *name)
+ {
+   gc->colorname = name;
++  set_gl_color_for_gc (gc);
+ }
+ 
+ void
