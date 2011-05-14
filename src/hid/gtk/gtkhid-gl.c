@@ -46,10 +46,8 @@ typedef struct render_priv {
   bool in_context;
   int subcomposite_stencil_bit;
 
-  /* Data to determine when we need to change the current rendering colour */
-  char *current_color = NULL;
-  double alpha_mult = 1.0;
-  int alpha_changed = 0;
+  char *current_colorname;
+  int current_alpha;
 
 } render_priv;
 
@@ -59,6 +57,7 @@ typedef struct hid_gc_struct
   HID *me_pointer;
 
   gchar *colorname;
+  double alpha_mult;
   gint width;
   gint cap, join;
   gchar xor;
@@ -178,6 +177,7 @@ ghid_make_gc (void)
   rv = g_new0 (hid_gc_struct, 1);
   rv->me_pointer = &ghid_hid;
   rv->colorname = Settings.BackgroundColor;
+  rv->alpha_mult = 1.0;
   return rv;
 }
 
