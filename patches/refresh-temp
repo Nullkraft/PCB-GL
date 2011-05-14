@@ -1,0 +1,41 @@
+Bottom: f0a8bd09727dafb15766b14271595364a73f08e3
+Top:    a6db38a2cbe8dd5a06e1af79c997a0cdef9fcfaa
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-14 01:10:15 +0100
+
+Refresh of gtk-gl-add-facility-to-set-an-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 717f6b8..ddddfc4 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -46,10 +46,8 @@ typedef struct render_priv {
+   bool in_context;
+   int subcomposite_stencil_bit;
+ 
+-  /* Data to determine when we need to change the current rendering colour */
+-  char *current_color = NULL;
+-  double alpha_mult = 1.0;
+-  int alpha_changed = 0;
++  char *current_colorname;
++  int current_alpha;
+ 
+ } render_priv;
+ 
+@@ -59,6 +57,7 @@ typedef struct hid_gc_struct
+   HID *me_pointer;
+ 
+   gchar *colorname;
++  double alpha_mult;
+   gint width;
+   gint cap, join;
+   gchar xor;
+@@ -178,6 +177,7 @@ ghid_make_gc (void)
+   rv = g_new0 (hid_gc_struct, 1);
+   rv->me_pointer = &ghid_hid;
+   rv->colorname = Settings.BackgroundColor;
++  rv->alpha_mult = 1.0;
+   return rv;
+ }
