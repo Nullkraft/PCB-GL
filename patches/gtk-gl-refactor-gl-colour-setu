@@ -1,5 +1,5 @@
-Bottom: 867fbf689dbc7fe2866d50a5cfb6d1faaf30b502
-Top:    e28b880c9ffab474e25c448ff94d4c66e59d04a5
+Bottom: ddfb7e42932e32ff6f79f0e7bd4d6ab292d5bc3d
+Top:    d90d38e79fd9560c94785d2a95b95962d3fcbec3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-14 00:54:16 +0100
 
@@ -9,7 +9,7 @@ gtk/gl: Refactor GL colour setup handling
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2d80bb2..7c7184a 100644
+index 95e0f11..cfd41ff 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -45,6 +45,7 @@ typedef struct render_priv {
@@ -29,7 +29,7 @@ index 2d80bb2..7c7184a 100644
    gint width;
    gint cap, join;
    gchar xor;
-@@ -346,40 +347,34 @@ typedef struct
+@@ -345,39 +346,33 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -69,7 +69,6 @@ index 2d80bb2..7c7184a 100644
 -  if (strcmp (name, "erase") == 0)
 +  if (strcmp (gc->colorname, "erase") == 0)
      {
-       gc->erase = 1;
        r = gport->bg_color.red   / 65535.;
        g = gport->bg_color.green / 65535.;
        b = gport->bg_color.blue  / 65535.;
@@ -77,9 +76,9 @@ index 2d80bb2..7c7184a 100644
 -  else if (strcmp (name, "drill") == 0)
 +  else if (strcmp (gc->colorname, "drill") == 0)
      {
-       gc->erase = 0;
        alpha_mult = 0.85;
-@@ -390,19 +385,19 @@ ghid_set_color (hidGC gc, const char *name)
+       r = gport->offlimits_color.red   / 65535.;
+@@ -387,19 +382,19 @@ ghid_set_color (hidGC gc, const char *name)
    else
      {
        alpha_mult = 0.7;
@@ -102,7 +101,7 @@ index 2d80bb2..7c7184a 100644
              gdk_color_alloc (gport->colormap, &cc->color);
            else
              gdk_color_white (gport->colormap, &cc->color);
-@@ -454,6 +449,13 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -449,6 +444,13 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
@@ -116,7 +115,7 @@ index 2d80bb2..7c7184a 100644
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
    gc->cap = style;
-@@ -507,7 +509,7 @@ use_gc (hidGC gc)
+@@ -502,7 +504,7 @@ use_gc (hidGC gc)
  
    current_gc = gc;
  
