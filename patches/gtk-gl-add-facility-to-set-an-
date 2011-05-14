@@ -1,5 +1,5 @@
-Bottom: 9e12ec9e014127ce37fdda36f87a03d33b4756a0
-Top:    a6db38a2cbe8dd5a06e1af79c997a0cdef9fcfaa
+Bottom: e1d96a3ae963f6ee6de4725161091b05012768a0
+Top:    e1d96a3ae963f6ee6de4725161091b05012768a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-14 00:46:27 +0100
 
@@ -8,89 +8,4 @@ GTK/GL: Add facility to set an alpha multiplier for the current rendering
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 10ecbc2..ddddfc4 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -45,6 +45,10 @@ typedef struct render_priv {
-   bool trans_lines;
-   bool in_context;
-   int subcomposite_stencil_bit;
-+
-+  char *current_colorname;
-+  int current_alpha;
-+
- } render_priv;
- 
- 
-@@ -53,6 +57,7 @@ typedef struct hid_gc_struct
-   HID *me_pointer;
- 
-   gchar *colorname;
-+  double alpha_mult;
-   gint width;
-   gint cap, join;
-   gchar xor;
-@@ -172,6 +177,7 @@ ghid_make_gc (void)
-   rv = g_new0 (hid_gc_struct, 1);
-   rv->me_pointer = &ghid_hid;
-   rv->colorname = Settings.BackgroundColor;
-+  rv->alpha_mult = 1.0;
-   return rv;
- }
- 
-@@ -351,21 +357,21 @@ set_gl_color_for_gc (hidGC gc)
- {
-   render_priv *priv = gport->render_priv;
-   static void *cache = NULL;
--  static char *old_name = NULL;
-   hidval cval;
-   ColorCache *cc;
-   double alpha_mult = 1.0;
-   double r, g, b, a;
-   a = 1.0;
- 
--  if (old_name != NULL)
--    {
--      if (strcmp (gc->colorname, old_name) == 0)
--        return;
--      free (old_name);
--    }
-+  if (!alpha_changed && priv->current_color != NULL &&
-+      strcmp (gc->colorname, priv->current_color) == 0)
-+    return;
-+
-+  free (priv->current_color);
-+  priv->current_color = NULL;
- 
--  old_name = strdup (gc->colorname);
-+  priv->alpha_changed = 0;
-+  priv->current_color = strdup (gc->colorname);
- 
-   if (gport->colormap == NULL)
-     gport->colormap = gtk_widget_get_colormap (gport->top_window);
-@@ -430,6 +436,7 @@ set_gl_color_for_gc (hidGC gc)
-     }
-   if (1) {
-     double maxi, mult;
-+    alpha_mult *= priv->alpha_mult;
-     if (priv->trans_lines)
-       a = a * alpha_mult;
-     maxi = r;
-@@ -461,6 +468,16 @@ ghid_set_color (hidGC gc, const char *name)
- }
- 
- void
-+ghid_set_alpha_mult (hidGC gc, double alpha_mult)
-+{
-+  if (alpha_mult != priv->alpha_mult) {
-+    priv->alpha_mult = alpha_mult;
-+    priv->alpha_changed = 1;
-+    set_gl_color_for_gc (gc);
-+  }
-+}
-+
-+void
- ghid_set_line_cap (hidGC gc, EndCapStyle style)
- {
-   gc->cap = style;
+
