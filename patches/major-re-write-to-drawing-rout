@@ -1,5 +1,5 @@
 Bottom: 909ce46c23126bfd0119eaa40bfdf43635ab8cf8
-Top:    7833129837a6aecead2559a649c1428d290a99f9
+Top:    0963bedab22c1979762246b37507bc64422f6716
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 14:31:39 +0100
 
@@ -90,7 +90,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d002838..f1a4085 100644
+index d002838..290b00b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -431,7 +431,7 @@ index d002838..f1a4085 100644
  }
  
  void
-@@ -905,6 +973,883 @@ ghid_screen_update (void)
+@@ -905,6 +973,884 @@ ghid_screen_update (void)
  {
  }
  
@@ -1151,6 +1151,7 @@ index d002838..f1a4085 100644
 +void
 +ghid_draw_everything (BoxTypePtr drawn_area)
 +{
++  render_priv *priv = gport->render_priv;
 +  int i, ngroups;
 +  int side;
 +  /* This is the list of layer groups we will draw.  */
@@ -1165,7 +1166,7 @@ index d002838..f1a4085 100644
 +  int min_phys_group;
 +  int max_phys_group;
 +
-+  current_color = NULL;
++  priv->current_colorname = NULL;
 +
 +  /* Test direction of rendering */
 +  /* Look at sign of eye coordinate system z-coord when projecting a
@@ -1315,7 +1316,7 @@ index d002838..f1a4085 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -948,6 +1893,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -948,6 +1894,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -1329,7 +1330,7 @@ index d002838..f1a4085 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
    glEnable (GL_STENCIL_TEST);
-@@ -966,8 +1918,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -966,8 +1919,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1340,7 +1341,7 @@ index d002838..f1a4085 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1021,43 +1973,62 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1021,43 +1974,62 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
    min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
  
@@ -1427,7 +1428,7 @@ index d002838..f1a4085 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1065,7 +2036,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1065,7 +2037,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawAttached ();
    DrawMark ();
    hidgl_flush_triangles (&buffer);
