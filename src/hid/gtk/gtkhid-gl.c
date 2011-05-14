@@ -177,6 +177,7 @@ end_subcomposite (void)
   priv->subcomposite_stencil_bit = 0;
 }
 
+
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
