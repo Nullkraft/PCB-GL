@@ -1,5 +1,5 @@
 Bottom: 867fbf689dbc7fe2866d50a5cfb6d1faaf30b502
-Top:    9e12ec9e014127ce37fdda36f87a03d33b4756a0
+Top:    e1d96a3ae963f6ee6de4725161091b05012768a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-14 00:54:16 +0100
 
@@ -9,10 +9,18 @@ gtk/gl: Refactor GL colour setup handling
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2d80bb2..10ecbc2 100644
+index 2d80bb2..409c182 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -346,8 +346,8 @@ typedef struct
+@@ -45,6 +45,7 @@ typedef struct render_priv {
+   bool trans_lines;
+   bool in_context;
+   int subcomposite_stencil_bit;
++  char *current_colorname;
+ } render_priv;
+ 
+ 
+@@ -346,40 +347,36 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -23,23 +31,30 @@ index 2d80bb2..10ecbc2 100644
  {
    render_priv *priv = gport->render_priv;
    static void *cache = NULL;
-@@ -358,28 +358,25 @@ ghid_set_color (hidGC gc, const char *name)
+-  static char *old_name = NULL;
+   hidval cval;
+   ColorCache *cc;
+   double alpha_mult = 1.0;
    double r, g, b, a;
    a = 1.0;
  
 -  current_gc = gc;
--
-   if (old_name != NULL)
-     {
++  if (priv->current_colorname != NULL &&
++      strcmp (priv->current_colorname, gc->colorname) == 0)
++    return;
+ 
+-  if (old_name != NULL)
+-    {
 -      if (strcmp (name, old_name) == 0)
-+      if (strcmp (gc->colorname, old_name) == 0)
-         return;
-       free (old_name);
-     }
+-        return;
+-      free (old_name);
+-    }
++  free (priv->current_colorname);
++  priv->current_colorname = NULL;
  
 -  old_name = strdup (name);
 -  gc->colorname = (char *) name;
-+  old_name = strdup (gc->colorname);
++  priv->current_colorname = strdup (gc->colorname);
  
    if (gport->colormap == NULL)
      gport->colormap = gtk_widget_get_colormap (gport->top_window);
