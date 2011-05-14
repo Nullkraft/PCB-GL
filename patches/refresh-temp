@@ -1,0 +1,21 @@
+Bottom: 4bad3236e0fc54933488a3e079459ec6f0256fb8
+Top:    7833129837a6aecead2559a649c1428d290a99f9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-14 01:42:41 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 901ac29..f1a4085 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -177,6 +177,7 @@ end_subcomposite (void)
+   priv->subcomposite_stencil_bit = 0;
+ }
+ 
++
+ int
+ ghid_set_layer (const char *name, int group, int empty)
+ {
