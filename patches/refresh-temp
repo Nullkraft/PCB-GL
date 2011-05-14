@@ -1,0 +1,24 @@
+Bottom: 8b78f417d4c094200bfe5638e81675fbfc8e7845
+Top:    2b9da24051a25843df69baa2bdaac73a6bff6073
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-14 01:03:45 +0100
+
+Refresh of hack-to-make-pretty-translucen
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 5f8adce..77299a2 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -352,10 +352,6 @@ typedef struct
+   double blue;
+ } ColorCache;
+ 
+-static char *current_color = NULL;
+-static double global_alpha_mult = 1.0;
+-static int alpha_changed = 0;
+-
+ static void
+ set_gl_color_for_gc (hidGC gc)
+ {
