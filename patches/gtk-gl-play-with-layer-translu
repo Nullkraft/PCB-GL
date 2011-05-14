@@ -1,5 +1,5 @@
-Bottom: 7833129837a6aecead2559a649c1428d290a99f9
-Top:    1d36b4bd590feeb566d25d7dbdf093e84eed4520
+Bottom: 0963bedab22c1979762246b37507bc64422f6716
+Top:    b2a658136fff06fcd04f1cf4ad46758e3be755a5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-13 14:31:39 +0100
 
@@ -9,7 +9,7 @@ gtk/gl: Play with layer translucency
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f1a4085..e345b74 100644
+index 290b00b..0c85469 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -656,10 +656,11 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -26,15 +26,15 @@ index f1a4085..e345b74 100644
  }
  
  void
-@@ -1690,6 +1691,7 @@ void
- ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1691,6 +1692,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
  {
+   render_priv *priv = gport->render_priv;
    int i, ngroups;
 +  int number_phys_on_top;
    int side;
    /* This is the list of layer groups we will draw.  */
    int do_group[MAX_LAYER];
-@@ -1776,26 +1778,39 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1777,26 +1779,39 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    }
  
    /* draw all layers in layerstack order */
