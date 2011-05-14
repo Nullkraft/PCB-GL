@@ -46,6 +46,7 @@ typedef struct render_priv {
   bool in_context;
   int subcomposite_stencil_bit;
   char *current_colorname;
+  int current_alpha;
 } render_priv;
 
 
@@ -54,6 +55,7 @@ typedef struct hid_gc_struct
   HID *me_pointer;
 
   const char *colorname;
+  double alpha_mult;
   gint width;
   gint cap, join;
   gchar xor;
@@ -173,6 +175,7 @@ ghid_make_gc (void)
   rv = g_new0 (hid_gc_struct, 1);
   rv->me_pointer = &ghid_hid;
   rv->colorname = Settings.BackgroundColor;
+  rv->alpha_mult = 1.0;
   return rv;
 }
 
@@ -359,7 +362,8 @@ set_gl_color_for_gc (hidGC gc)
   a = 1.0;
 
   if (priv->current_colorname != NULL &&
-      strcmp (priv->current_colorname, gc->colorname) == 0)
+      strcmp (priv->current_colorname, gc->colorname) == 0 &&
+      priv->current_alphamult == gc->alpha_mult)
     return;
 
   free (priv->current_colorname);
@@ -428,6 +432,7 @@ set_gl_color_for_gc (hidGC gc)
     }
   if (1) {
     double maxi, mult;
+    alpha_mult *= priv->alpha_mult;
     if (priv->trans_lines)
       a = a * alpha_mult;
     maxi = r;
@@ -452,6 +457,13 @@ void
 ghid_set_color (hidGC gc, const char *name)
 {
   gc->colorname = name;
+  set_gl_color_for_gc (gc);
+}
+
+void
+ghid_set_alpha_mult (hidGC gc, double alpha_mult)
+{
+  gc->alpha_mult = alpha_mult;
   set_gl_color_for_gc (gc);
 }
 
