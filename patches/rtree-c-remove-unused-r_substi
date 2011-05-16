@@ -1,0 +1,15 @@
+Bottom: 0963bedab22c1979762246b37507bc64422f6716
+Top:    0963bedab22c1979762246b37507bc64422f6716
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-16 01:41:26 +0100
+
+rtree.c: Remove unused r_substitute() function
+
+This function was used to update r-trees when they contained objects
+changed memory location. Since we no longer shuffle objects around when
+we delete them, this function is no longer required.
+
+
+---
+
+
