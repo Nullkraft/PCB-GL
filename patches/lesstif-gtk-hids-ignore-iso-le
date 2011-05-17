@@ -1,0 +1,21 @@
+Bottom: 41275ebf36f106cedef6963331ebce848338db3a
+Top:    41275ebf36f106cedef6963331ebce848338db3a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-17 11:44:01 +0100
+
+Lesstif + GTK HIDs: Ignore ISO Level3 shift modifier key
+
+This key press is found on some international keyboards (e.g. Spanish).
+If we don't ignore it, PCB complains about the key not being tied to
+an action when it is pressed.
+
+Thanks to Gabriel for reporting this and providing the patch for
+Lesstif. I have made the equivalent change to GTK as well.
+
+Reported-By: Gabriel Paubert <paubert@iram.es>
+Signed-off-By: Peter Clifton <pcjc2@cam.ac.uk>
+
+
+---
+
+
