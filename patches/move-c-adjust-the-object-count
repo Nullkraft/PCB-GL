@@ -1,0 +1,22 @@
+Bottom: c271dda29a135a715e69d0061f0e7a93c9215f4c
+Top:    c271dda29a135a715e69d0061f0e7a93c9215f4c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-18 00:54:14 +0100
+
+move.c: Adjust the object counters when moving objects between layers
+
+This fixes a crash introduced by
+commit 2ce35292b9e96da38cb56878005aba20891689eb,
+"Convert board objects to GLists of g_slice allocated memory"
+
+It doesn't fix entirity of the defect reported in that bug, but
+it restores the prior behaviour where PCB would hang, not segfault.
+
+Reported-by: Colin Bennett <colin@gibibit.com>
+
+Affects-bug: lp-783640
+
+
+---
+
+
