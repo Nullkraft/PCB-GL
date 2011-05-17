@@ -1,5 +1,5 @@
 Bottom: 0f6b0b90d7739c61acae47649b0c406540570e73
-Top:    a0d518f6267bdf08ee99afc306ffb7a4fd257fd2
+Top:    41275ebf36f106cedef6963331ebce848338db3a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-17 00:56:30 +0100
 
@@ -13,7 +13,7 @@ FreeElement () for convenience.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 8793f50..c048a59 100644
+index 8793f50..b396918 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -926,7 +926,7 @@ SmashBufferElement (BufferTypePtr Buffer)
@@ -21,6 +21,6 @@ index 8793f50..c048a59 100644
    END_LOOP;
    FreeElementMemory (element);
 -  free (element);
-+  FreeElement (element);
++  g_slice_free (ElementType, element);
    return (true);
  }
