@@ -224,6 +224,14 @@ ghid_note_event_location (GdkEventButton * ev)
       event_x = ev->x;
       event_y = ev->y;
     }
+
+  /* FIXME: IFDEF HACK */
+#ifdef ENABLE_GL
+  /* Unproject event_x and event_y to world coordinates of the plane we are on */
+  ghid_unproject_to_z_plane (event_x, event_y, 0,
+                             &event_x, &event_y);
+#endif
+
   gport->view_x = event_x * gport->zoom + gport->view_x0;
   gport->view_y = event_y * gport->zoom + gport->view_y0;
 
@@ -516,7 +524,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
   ghid_invalidate_all ();
   return 0;
 }
-
 
 #if GTK_CHECK_VERSION(2,12,0)
 # define ENABLE_TOOLTIPS 1
