@@ -6,8 +6,11 @@ Date:   2011-05-17 00:56:30 +0100
 buffer.c: Fix crash in SmashBufferElement
 
 The element is allocated with g_slice_new, so must be free'd with
-the appropriate function, g_slice_free. This is wrapped by
-FreeElement () for convenience.
+g_slice_free.
+
+Broken since commit 2ce35292b9e96da38cb56878005aba20891689eb:
+
+    Convert board objects to GLists of g_slice allocated memory
 
 
 ---
