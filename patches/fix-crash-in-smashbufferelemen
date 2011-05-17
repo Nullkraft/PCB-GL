@@ -3,7 +3,11 @@ Top:    0f6b0b90d7739c61acae47649b0c406540570e73
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-17 00:56:30 +0100
 
-Fix crash in SmashBufferElement
+buffer.c: Fix crash in SmashBufferElement
+
+The element is allocated with g_slice_new, so must be free'd with
+the appropriate function, g_slice_free. This is wrapped by
+FreeElement () for convenience.
 
 
 ---
