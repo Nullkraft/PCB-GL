@@ -1,5 +1,5 @@
 Bottom: 6d1e5bda9cc14bfa4c80b381432a064be7336f1e
-Top:    879ab16b2866ccb99eb12bbbd72c20e63a0cecb7
+Top:    9af18789fc4a504550058f002e75fbf7858e80e2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-19 18:13:43 +0100
 
@@ -15,7 +15,7 @@ Reported-by: Gabriel Paubert <paubert@iram.es>
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index b396918..553c55f 100644
+index b396918..2e63af5 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -196,6 +196,15 @@ AddPolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -27,9 +27,9 @@ index b396918..553c55f 100644
 +   * other objects, CreateNewPolygon does not do this as it creates a
 +   * skeleton polygon object, which won't have correct bounds.
 +   */
-+  if (!Layer->polygon_tree)
-+    Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-+  r_insert_entry (Layer->polygon_tree, (BoxTypePtr) polygon, 0);
++  if (!layer->polygon_tree)
++    layer->polygon_tree = r_create_tree (NULL, 0, 0);
++  r_insert_entry (layer->polygon_tree, (BoxType *)polygon, 0);
 +
    CLEAR_FLAG (FOUNDFLAG | ExtraFlag, polygon);
    return (polygon);
