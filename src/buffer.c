@@ -196,6 +196,15 @@ AddPolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
 
   polygon = CreateNewPolygon (layer, Polygon->Flags);
   CopyPolygonLowLevel (polygon, Polygon);
+
+  /* Update the polygon r-tree. Unlike similarly named functions for
+   * other objects, CreateNewPolygon does not do this as it creates a
+   * skeleton polygon object, which won't have correct bounds.
+   */
+  if (!Layer->polygon_tree)
+    Layer->polygon_tree = r_create_tree (NULL, 0, 0);
+  r_insert_entry (Layer->polygon_tree, (BoxTypePtr) polygon, 0);
+
   CLEAR_FLAG (FOUNDFLAG | ExtraFlag, polygon);
   return (polygon);
 }
@@ -480,7 +489,8 @@ AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
 /* ---------------------------------------------------------------------------
  * loads element data from file/library into buffer
  * parse the file with disabled 'PCB mode' (see parser)
- * returns false on error
+ * returns false on er
+ *(char *)0 = 0;ror
  * if successful, update some other stuff and reposition the pastebuffer
  */
 bool
