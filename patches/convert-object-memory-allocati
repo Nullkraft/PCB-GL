@@ -1,7 +1,7 @@
-Bottom: c271dda29a135a715e69d0061f0e7a93c9215f4c
-Top:    abfb2f2c77a71ae60c4b9a0555a432a414e3e054
+Bottom: 9af18789fc4a504550058f002e75fbf7858e80e2
+Top:    a3ddfd5d3d1f2acdfc2c67a93cd8334d6318d832
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-17 12:54:09 +0100
+Date:   2011-05-19 18:19:19 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -302,10 +302,10 @@ index c766c14..b5e003f 100644
        {
  	if (layer->LineN || layer->ArcN)
 diff --git a/src/buffer.c b/src/buffer.c
-index b396918..b933b51 100644
+index 2e63af5..069debc 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -597,47 +597,55 @@ void
+@@ -606,47 +606,55 @@ void
  make_footprint_hash ()
  {
    int i, j;
@@ -372,7 +372,7 @@ index b396918..b933b51 100644
  
  #ifdef DEBUG
  /* 	      printf(" ... found file footprint %s\n",  fp); */
-@@ -649,7 +657,7 @@ make_footprint_hash ()
+@@ -658,7 +666,7 @@ make_footprint_hash ()
  	  else 
            /* m4 */
  	    {
@@ -381,7 +381,7 @@ index b396918..b933b51 100644
  	      if (fp)
  		{
  		  footprint_hash[num_entries].footprint = strdup (fp+1);
-@@ -660,7 +668,7 @@ make_footprint_hash ()
+@@ -669,7 +677,7 @@ make_footprint_hash ()
  		}
  	      else
  		{
@@ -390,7 +390,7 @@ index b396918..b933b51 100644
  		  footprint_hash[num_entries].footprint = fp;
  		  footprint_hash[num_entries].footprint_allocated = 0;
  		}
-@@ -737,8 +745,8 @@ LoadFootprintByName (BufferTypePtr Buffer, char *Footprint)
+@@ -746,8 +754,8 @@ LoadFootprintByName (BufferTypePtr Buffer, char *Footprint)
        return 1;
      }
  
@@ -1444,10 +1444,10 @@ index e505047..6cef87d 100644
  }
  
 diff --git a/src/move.c b/src/move.c
-index 6ce043a..364e8d3 100644
+index de1e2e7..aa0b1b2 100644
 --- a/src/move.c
 +++ b/src/move.c
-@@ -789,7 +789,7 @@ void *
+@@ -797,7 +797,7 @@ void *
  MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
  			 LocationType DX, LocationType DY)
  {
@@ -1456,7 +1456,7 @@ index 6ce043a..364e8d3 100644
    void *ptr2;
  
    /* setup offset */
-@@ -799,9 +799,11 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+@@ -807,9 +807,11 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
      return (NULL);
  
    /* move all the lines... and reset the counter */
@@ -1470,7 +1470,7 @@ index 6ce043a..364e8d3 100644
        /* first clear any marks that we made in the line flags */
        CLEAR_FLAG (RUBBERENDFLAG, ptr->Line);
        AddObjectToMoveUndoList (LINEPOINT_TYPE,
-@@ -809,7 +811,6 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+@@ -817,7 +819,6 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
  			       DY);
        MoveLinePoint (ptr->Layer, ptr->Line, ptr->MovedPoint);
        Crosshair.AttachedObject.RubberbandN--;
