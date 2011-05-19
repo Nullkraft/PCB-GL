@@ -201,9 +201,9 @@ AddPolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
    * other objects, CreateNewPolygon does not do this as it creates a
    * skeleton polygon object, which won't have correct bounds.
    */
-  if (!Layer->polygon_tree)
-    Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Layer->polygon_tree, (BoxTypePtr) polygon, 0);
+  if (!layer->polygon_tree)
+    layer->polygon_tree = r_create_tree (NULL, 0, 0);
+  r_insert_entry (layer->polygon_tree, (BoxType *)polygon, 0);
 
   CLEAR_FLAG (FOUNDFLAG | ExtraFlag, polygon);
   return (polygon);
