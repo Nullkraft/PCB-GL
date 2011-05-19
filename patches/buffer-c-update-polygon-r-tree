@@ -1,5 +1,5 @@
 Bottom: 6d1e5bda9cc14bfa4c80b381432a064be7336f1e
-Top:    6d1e5bda9cc14bfa4c80b381432a064be7336f1e
+Top:    b9691c4d9dcc451a616a3fc8ec16d517681f7524
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-19 18:13:43 +0100
 
@@ -14,4 +14,33 @@ Reported-by: Gabriel Paubert <paubert@iram.es>
 
 ---
 
-
+diff --git a/src/buffer.c b/src/buffer.c
+index b396918..f2b29fc 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -196,6 +196,15 @@ AddPolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ 
+   polygon = CreateNewPolygon (layer, Polygon->Flags);
+   CopyPolygonLowLevel (polygon, Polygon);
++
++  /* Update the polygon r-tree. Unlike similarly named functions for
++   * other objects, CreateNewPolygon does not do this as it creates a
++   * skeleton polygon object, which won't have correct bounds.
++   */
++  if (!Layer->polygon_tree)
++    Layer->polygon_tree = r_create_tree (NULL, 0, 0);
++  r_insert_entry (Layer->polygon_tree, (BoxTypePtr) polygon, 0);
++
+   CLEAR_FLAG (FOUNDFLAG | ExtraFlag, polygon);
+   return (polygon);
+ }
+@@ -480,7 +489,8 @@ AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
+ /* ---------------------------------------------------------------------------
+  * loads element data from file/library into buffer
+  * parse the file with disabled 'PCB mode' (see parser)
+- * returns false on error
++ * returns false on er
++ *(char *)0 = 0;ror
+  * if successful, update some other stuff and reposition the pastebuffer
+  */
+ bool
