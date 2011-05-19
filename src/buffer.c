@@ -489,8 +489,7 @@ AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
 /* ---------------------------------------------------------------------------
  * loads element data from file/library into buffer
  * parse the file with disabled 'PCB mode' (see parser)
- * returns false on er
- *(char *)0 = 0;ror
+ * returns false on error
  * if successful, update some other stuff and reposition the pastebuffer
  */
 bool
