@@ -1,0 +1,23 @@
+Bottom: b9691c4d9dcc451a616a3fc8ec16d517681f7524
+Top:    879ab16b2866ccb99eb12bbbd72c20e63a0cecb7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-05-19 18:14:40 +0100
+
+Refresh of buffer-c-update-polygon-r-tree
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index f2b29fc..553c55f 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -489,8 +489,7 @@ AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
+ /* ---------------------------------------------------------------------------
+  * loads element data from file/library into buffer
+  * parse the file with disabled 'PCB mode' (see parser)
+- * returns false on er
+- *(char *)0 = 0;ror
++ * returns false on error
+  * if successful, update some other stuff and reposition the pastebuffer
+  */
+ bool
