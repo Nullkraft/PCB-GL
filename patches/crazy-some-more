@@ -1,5 +1,5 @@
-Bottom: b64433bd0123c7b919ba76fd06d8c240f0c0d863
-Top:    3f6b2f90f96feacec1236febb9d839f80f707ca6
+Bottom: 8d7e1597edc650e4936c4a8a1377a3932063f0ce
+Top:    60cca5d7abf0ec6b9510de119d9a4e57ea36c568
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-19 18:19:33 +0100
 
@@ -9,7 +9,7 @@ Crazy some more
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 3338731..b75d7ae 100644
+index ce2fb5c..a919041 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,7 +83,6 @@ static bool doing_assy = false;
@@ -133,14 +133,14 @@ index 3338731..b75d7ae 100644
            gui->end_layer ();
          }
  
-       if (unplated && gui->set_layer ("unplated-drill", SL (PDRILL, 0), 0))
+       if (unplated && gui->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
          {
 -          DrawHoles (false, true, drawn_area);
 +          dapi->draw_holes (0, drawn_area, NULL);
            gui->end_layer ();
          }
      }
-@@ -599,46 +534,6 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
+@@ -602,46 +537,6 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
      }
  }
  

@@ -1,5 +1,5 @@
-Bottom: 4b72da671d9a64a551dd5309dc13c13d73a269b4
-Top:    b0cc74baf5ae963d924473ba75c68932aede38f2
+Bottom: 601d1009a979ccfbb6d7e9e22ea606e092544b7d
+Top:    76fdac729316977296058be9c280c32b8603d0a9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-19 18:19:35 +0100
 
@@ -27,7 +27,7 @@ index e6fe45b..f40f274 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 8d4ab72..9fa5198 100644
+index b1b22fe..bf7333b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -39,7 +39,7 @@ index 8d4ab72..9fa5198 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -699,6 +701,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -692,6 +694,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -48,7 +48,7 @@ index 8d4ab72..9fa5198 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -799,6 +803,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -792,6 +796,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -57,7 +57,7 @@ index 8d4ab72..9fa5198 100644
      }
  
    out->has_entered = FALSE;
-@@ -840,3 +846,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -833,3 +839,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
