@@ -1247,7 +1247,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
 {
   LocationType x = 0;
   unsigned char *string = (unsigned char *) Text->TextString;
-  Cardinal n;
+  GList *iter;
   FontTypePtr font = &PCB->Font;
 
   while (string && *string)
@@ -1255,11 +1255,12 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
       /* draw lines if symbol is valid and data is present */
       if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
 	{
-	  LineTypePtr line = font->Symbol[*string].Line;
-	  LineType newline;
-
-	  for (n = font->Symbol[*string].LineN; n; n--, line++)
+	  for (iter = font->Symbol[*string].Line;
+	       iter != NULL; iter = g_list_next (iter))
 	    {
+	      LineType *line = iter->data;
+	      LineType newline;
+
 	      /* create one line, scale, move, rotate and swap it */
 	      newline = *line;
 	      newline.Point1.X = (newline.Point1.X + x) * Text->Scale / 100;
