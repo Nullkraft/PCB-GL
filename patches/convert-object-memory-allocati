@@ -1,7 +1,7 @@
-Bottom: 9af18789fc4a504550058f002e75fbf7858e80e2
-Top:    a3ddfd5d3d1f2acdfc2c67a93cd8334d6318d832
+Bottom: ba3f4580d2d35bbd24615ce5e3324274a69a44f8
+Top:    72335d3dc970a23c175411c57984d36a443bb17e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-19 18:19:19 +0100
+Date:   2011-05-24 14:11:19 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -534,10 +534,10 @@ index c2551ec..ae8cebd 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index 6c3d709..8d982dd 100644
+index ef465cb..16dab9d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1244,7 +1244,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+@@ -1247,7 +1247,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
  {
    LocationType x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
@@ -546,7 +546,7 @@ index 6c3d709..8d982dd 100644
    FontTypePtr font = &PCB->Font;
  
    while (string && *string)
-@@ -1252,11 +1252,12 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+@@ -1255,11 +1255,12 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
        /* draw lines if symbol is valid and data is present */
        if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
  	{
@@ -832,7 +832,7 @@ index 9ad5331..f843617 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 688527a..556c37a 100644
+index b89974d..dc1a523 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1007,6 +1007,7 @@ static void
@@ -993,7 +993,7 @@ index b60b8ba..c638a51 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 8c78a53..d219fe4 100644
+index 4f5f748..d2e4089 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -297,28 +297,26 @@ nelma_write_materials(FILE * out)
@@ -1444,7 +1444,7 @@ index e505047..6cef87d 100644
  }
  
 diff --git a/src/move.c b/src/move.c
-index de1e2e7..aa0b1b2 100644
+index 3f902b8..01eb7f7 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -797,7 +797,7 @@ void *
