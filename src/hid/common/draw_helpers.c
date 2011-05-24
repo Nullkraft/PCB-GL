@@ -696,5 +696,5 @@ common_export_region (HID *hid, BoxType *region)
     //PrintAssembly (region, solder_group, 1);
 
   if (gui->set_layer ("fab", SL (FAB, 0), 0))
-    PrintFab ();
+    PrintFab (Output.fgGC);
 }
