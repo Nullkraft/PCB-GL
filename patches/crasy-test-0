@@ -1,7 +1,7 @@
-Bottom: 62bd62b9ce44653f7a790fb80dada82973a335b4
-Top:    1a8eafaeb72ee3ae0cc3e373acab67659ff02ef8
+Bottom: 2c0ca2519e2d69bac4181a0973d1c82853f554c2
+Top:    c771ca2c65c450ea0dfa2e02c9cc9c0d85be66e7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-19 18:19:31 +0100
+Date:   2011-05-24 14:41:05 +0100
 
 Crasy test
 
@@ -22,7 +22,7 @@ index 18fe5c1..d6c16c2 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index 6c3d709..67ec6cf 100644
+index ef465cb..935ddf9 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -41,6 +41,7 @@
@@ -581,7 +581,7 @@ index 6c3d709..67ec6cf 100644
    }
    END_LOOP;
  }
-@@ -883,20 +710,23 @@ DrawPPV (int group, const BoxType *drawn_area)
+@@ -886,20 +713,23 @@ DrawPPV (int group, const BoxType *drawn_area)
    if (PCB->ViaOn || !gui->gui)
      {
        r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
@@ -613,7 +613,7 @@ index 6c3d709..67ec6cf 100644
    return 1;
  }
  
-@@ -910,49 +740,22 @@ poly_callback (const BoxType * b, void *cl)
+@@ -913,49 +743,22 @@ poly_callback (const BoxType * b, void *cl)
  {
    struct poly_info *i = cl;
    PolygonType *polygon = (PolygonType *)b;
@@ -670,7 +670,7 @@ index 6c3d709..67ec6cf 100644
    return 1;
  }
  
-@@ -982,9 +785,9 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -985,9 +788,9 @@ DrawSilk (int side, const BoxType * drawn_area)
      }
  
    gui->use_mask (HID_MASK_CLEAR);
@@ -683,7 +683,7 @@ index 6c3d709..67ec6cf 100644
  
    if (gui->poly_after)
      {
-@@ -1032,9 +835,9 @@ DrawMask (int side, BoxType * screen)
+@@ -1035,9 +838,9 @@ DrawMask (int side, BoxType * screen)
        gui->use_mask (HID_MASK_CLEAR);
      }
  
@@ -696,7 +696,7 @@ index 6c3d709..67ec6cf 100644
  
    if (thin)
      gui->set_color (Output.pmGC, "erase");
-@@ -1054,13 +857,8 @@ DrawPaste (int side, BoxType *drawn_area)
+@@ -1057,13 +860,8 @@ DrawPaste (int side, BoxType *drawn_area)
    gui->set_color (Output.fgGC, PCB->ElementColor);
    ALLPAD_LOOP (PCB->Data);
    {
@@ -712,7 +712,7 @@ index 6c3d709..67ec6cf 100644
    }
    ENDALL_LOOP;
  }
-@@ -1108,6 +906,9 @@ text_callback (const BoxType * b, void *cl)
+@@ -1111,6 +909,9 @@ text_callback (const BoxType * b, void *cl)
  void
  DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
  {
@@ -722,7 +722,7 @@ index 6c3d709..67ec6cf 100644
    struct poly_info info = {screen, Layer};
  
    /* print the non-clearing polys */
-@@ -1128,6 +929,55 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -1131,6 +932,55 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
    /* We should check for gui->gui here, but it's kinda cool seeing the
       auto-outline magically disappear when you first add something to
       the "outline" layer.  */
@@ -778,7 +778,7 @@ index 6c3d709..67ec6cf 100644
    if (IsLayerEmpty (Layer)
        && (strcmp (Layer->Name, "outline") == 0
  	  || strcmp (Layer->Name, "route") == 0))
-@@ -1140,12 +990,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -1143,12 +993,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
      }
  }
  
@@ -791,7 +791,7 @@ index 6c3d709..67ec6cf 100644
  /* ---------------------------------------------------------------------------
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
-@@ -1236,6 +1080,20 @@ GatherPadName (PadTypePtr Pad)
+@@ -1239,6 +1083,20 @@ GatherPadName (PadTypePtr Pad)
    return;
  }
  
