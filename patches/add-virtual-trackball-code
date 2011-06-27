@@ -1,7 +1,7 @@
-Bottom: c771ca2c65c450ea0dfa2e02c9cc9c0d85be66e7
-Top:    abd87c0d5f3124f047d7e62b22556885ae8ea3e7
+Bottom: 502b07350e8c5e9856688143e3b52e5244ae733f
+Top:    9d69bf2a5aaa1e80973a2688a22bd7939fba79b4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-24 14:41:06 +0100
+Date:   2011-06-27 14:19:26 +0100
 
 Add virtual trackball code
 
@@ -21,10 +21,10 @@ index 3bfb3ed..f83167f 100644
  src/misc.c
  src/move.c
 diff --git a/src/Makefile.am b/src/Makefile.am
-index d6c16c2..e6fe45b 100644
+index 1581881..bdc808b 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -171,11 +171,16 @@ LIBGTK_GDK_SRCS= \
+@@ -173,11 +173,16 @@ LIBGTK_GDK_SRCS= \
  	hid/gtk/gtkhid-gdk.c
  
  LIBGTK_GL_SRCS= \
