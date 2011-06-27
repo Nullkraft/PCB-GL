@@ -1,7 +1,7 @@
-Bottom: fa5a249aca6dc1e69cd8a34e97d8b9e2894c11f2
-Top:    753336a4a10f8efda6b8e5fd1c0fe70ede4c94e3
+Bottom: b6abbae3ed03a0cab897e36b7db93d517b3c6e7e
+Top:    3b74d770ea3023781fd6c6317695fd13aa927259
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-24 14:42:14 +0100
+Date:   2011-06-27 14:20:06 +0100
 
 bdale patch
 
@@ -9,7 +9,7 @@ bdale patch
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 4f2e401..dca3f7d 100644
+index 8b7e6d5..164a8f9 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -7999,6 +7999,71 @@ ActionAttributes (int argc, char **argv, int x, int y)
@@ -95,10 +95,10 @@ index 4f2e401..dca3f7d 100644
  
  REGISTER_ACTIONS (action_action_list)
 diff --git a/src/polygon.c b/src/polygon.c
-index d5d08f1..17e854a 100644
+index 5875a0f..d031725 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1966,8 +1966,8 @@ struct clip_outline_info {
+@@ -1967,8 +1967,8 @@ struct clip_outline_info {
    POLYAREA *poly;
  };
  
