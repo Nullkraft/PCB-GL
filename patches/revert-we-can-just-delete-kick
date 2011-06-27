@@ -1,7 +1,7 @@
-Bottom: 25ba23e2792797e5a6278f16a9fc1aaaf620ca5b
-Top:    ba3f4580d2d35bbd24615ce5e3324274a69a44f8
+Bottom: 3dc595fb1a88e783571390c9de026fb6338fc3ed
+Top:    1a04a444488cabfc3646ed3a93bb4992c52eb8b4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-24 14:11:20 +0100
+Date:   2011-06-27 14:17:29 +0100
 
 Revert "We can just delete kicked out holes"
 
@@ -33,7 +33,7 @@ discarded with this patch applied.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ee0c36e..1dba74c 100644
+index 9b5ba9b..70d553f 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1390,8 +1390,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
