@@ -1,5 +1,5 @@
-Bottom: 76fdac729316977296058be9c280c32b8603d0a9
-Top:    048d9e87b4f3d81ea01e19a2c77569c66baee827
+Bottom: 5c0b753fc5c341ad42bbfdfcc1a66053b3643f91
+Top:    8005bc27135987fa1572324ce4ad339694400b20
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-19 18:19:36 +0100
 
@@ -11,7 +11,7 @@ Code from cairo - intersection routines stripped out
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 94c6779..ae29099 100644
+index fd14c98..1488b11 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
@@ -194,7 +194,7 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index f40f274..7cbfb99 100644
+index 88b95d6..ac2e810 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -41,6 +41,22 @@ PCB_SRCS = \
@@ -220,7 +220,7 @@ index f40f274..7cbfb99 100644
  	change.c \
  	change.h \
  	clip.c \
-@@ -138,6 +154,7 @@ PCB_SRCS = \
+@@ -140,6 +156,7 @@ PCB_SRCS = \
  	set.h \
  	strflags.c \
  	strflags.h \

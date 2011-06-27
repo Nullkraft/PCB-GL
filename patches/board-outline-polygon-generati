@@ -1,5 +1,5 @@
-Bottom: 9ee66199afb538cc3621bcb214fdf4456e71120e
-Top:    3b7de5722596619b5f63ae7bccbc7a784506e363
+Bottom: a20e65886c7b6d3e5956e00692cda29d5fa3a424
+Top:    d20703b899900f4cf116e09c0888c057e715553d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-19 18:19:37 +0100
 
@@ -52,7 +52,7 @@ index 951a02e..636de8a 100644
  
    gui->use_mask (HID_MASK_OFF);
 diff --git a/src/polygon.c b/src/polygon.c
-index 2ff3433..d5d08f1 100644
+index 0b5b2d0..5875a0f 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -79,6 +79,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -63,7 +63,7 @@ index 2ff3433..d5d08f1 100644
  
  #include "global.h"
  #include "box.h"
-@@ -1959,3 +1960,172 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1960,3 +1961,172 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
  
    SetChangedFlag (true);
  }
