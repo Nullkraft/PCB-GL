@@ -1,7 +1,7 @@
-Bottom: 6d02a0e5b4cf21f298f1a6e0b1d3a238329fd980
-Top:    b0c1855b349570f4dad6737f763d5143842d9d06
+Bottom: 78a10f8a1f0dfe15125bc5228a223dd70de15ca8
+Top:    57bd4f66d6d8157527f202801fa337986bb1a63b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-24 14:42:19 +0100
+Date:   2011-06-27 14:20:13 +0100
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -17,7 +17,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 4f2e401..22df196 100644
+index 8b7e6d5..109e552 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3458,9 +3458,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
