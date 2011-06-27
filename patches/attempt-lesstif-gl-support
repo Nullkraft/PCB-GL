@@ -1,7 +1,7 @@
-Bottom: fa5a249aca6dc1e69cd8a34e97d8b9e2894c11f2
-Top:    a3dd4513ea09339603c999d11aade06d2076e200
+Bottom: b6abbae3ed03a0cab897e36b7db93d517b3c6e7e
+Top:    ee33442d002187d82bc2d1b971330971f623aff0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-24 14:42:22 +0100
+Date:   2011-06-27 14:20:16 +0100
 
 Attempt lesstif GL support
 
@@ -14,7 +14,7 @@ __ A LOT __ of drawing model changes in lesstif
 ---
 
 diff --git a/configure.ac b/configure.ac
-index ae29099..03e2e26 100644
+index 1488b11..a82f59e 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -397,7 +397,8 @@ AC_ARG_ENABLE([gl],
@@ -39,7 +39,7 @@ index ae29099..03e2e26 100644
  	;;
  	esac
  
-@@ -753,6 +755,25 @@ for e in $HIDLIST; do
+@@ -745,6 +747,25 @@ for e in $HIDLIST; do
  	    ;;
  	  * ) ;;
  	esac
@@ -66,7 +66,7 @@ index ae29099..03e2e26 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 90979c0..1c1c5bd 100644
+index f41c4ce..015e19a 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -29,10 +29,14 @@
@@ -380,7 +380,7 @@ index 90979c0..1c1c5bd 100644
  }
  
  void
-@@ -3144,6 +3345,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3147,6 +3348,7 @@ lesstif_set_color (hidGC gc, const char *name)
      }
  }
  
@@ -388,7 +388,7 @@ index 90979c0..1c1c5bd 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3207,240 +3409,456 @@ set_gc (hidGC gc)
+@@ -3210,240 +3412,456 @@ set_gc (hidGC gc)
  			  join);
      }
  }
@@ -1034,7 +1034,7 @@ index 90979c0..1c1c5bd 100644
  }
  
  static void
-@@ -3999,6 +4417,7 @@ lesstif_finish_debug_draw (void)
+@@ -4002,6 +4420,7 @@ lesstif_finish_debug_draw (void)
     */
  }
  
@@ -1042,7 +1042,7 @@ index 90979c0..1c1c5bd 100644
  #include "dolists.h"
  
  void
-@@ -4025,17 +4444,19 @@ hid_lesstif_init ()
+@@ -4028,17 +4447,19 @@ hid_lesstif_init ()
    lesstif_hid.set_layer               = lesstif_set_layer;
    lesstif_hid.make_gc                 = lesstif_make_gc;
    lesstif_hid.destroy_gc              = lesstif_destroy_gc;
