@@ -1,7 +1,7 @@
-Bottom: 1a04a444488cabfc3646ed3a93bb4992c52eb8b4
-Top:    a4bfd0dce1774d8e50a1cb9aa8c482477a75e8fe
+Bottom: 81082100c7bd9467cc469bb4ffe27af73156fa82
+Top:    d709a4648b446b4931d8845cfa6adfb89e91ee3d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-06-27 14:12:57 +0100
+Date:   2011-07-05 20:06:59 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -832,7 +832,7 @@ index 08abbb8..0e5c8a7 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index b5e36d5..531eb3a 100644
+index 2fcb37b..c232616 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1007,6 +1007,7 @@ static void
