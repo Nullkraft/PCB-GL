@@ -2471,8 +2471,11 @@ regular expressions.
 @cindex autorouter
 
 @pcb{} includes an autorouter which can greatly speed up the
-layout of a circuit board.  The autorouter is a rectangle-expansion
-type of autorouter based on 
+layout of a circuit board.  There are two independent autorouter
+implementations: Autorouter and experimental (and optional)
+Toporouter.
+
+The autorouter is a rectangle-expansion type of autorouter based on
 ``A Method for Gridless Routing of Printed Circuit Boards'' by
 A. C. Finch, K. J. Mackenzie, G. J. Balsdon, and G. Symonds in the
 1985 Proceedings of the 22nd ACM/IEEE Design Automation Conference.
@@ -2542,6 +2545,44 @@ After the design has been autorouted, you may want to run the trace
 optimizer.  See section @ref{Trace Optimizer} for more information on
 the trace optimizer.
 
+
+The autorouter is a rectangle-expansion type of autorouter based on
+``A Method for Gridless Routing of Printed Circuit Boards'' by
+A. C. Finch, K. J. Mackenzie, G. J. Balsdon, and G. Symonds in the
+1985 Proceedings of the 22nd ACM/IEEE Design Automation Conference.
+This reference is available from the ACM Digital Library at
+@url{http://www.acm.org/dl} for those with institutional or personal
+access to it.  It's also available from your local engineering
+library.
+
+The toporouter uses a different algorithm based on techniques from the
+following publications: T. Dayan and W.W.M. Dai in the ``Layer
+Assignment for a Rubber Band Router'' Tech Report UCSC-CRL-92-50, Univ.
+of California, Santa Cruz, 1992; W.W.M Dai, T. Dayan and D. Staepelaere
+in the ``Topological Routing in SURF: Generating a Rubber-Band Sketch'',
+Proc. 28th ACM/IEEE Design Automation Conference, 1991, pp. 39-44; David
+Staepelaere, Jeffrey Jue, Tal Dayan, Wayne Wei-Ming Dai in ``SURF:
+Rubber-Band Routing System for Multichip Modules'', IEEE Design and Test
+of Computers, vol. 10, no. 4,  pp. 18-26, October/December, 1993; T.
+Dayan in ``Rubber-band based topological router'' PhD Thesis, Univ. of
+California, Santa Cruz, 1997; David Staepelaere in ``Geometric
+transformations for a rubber-band sketch'' Master's thesis, Univ. of
+California, Santa Cruz, September 1992.  The reference papers are not
+needed for using the toporouter.
+
+In difference to the autorouter, the toporouter makes global
+optimization of routes, and uses lines and arcs that meet the current
+DRC. The current implementation is not capable to connect pads to
+rectangles and polygons.
+
+Choose ``Toporouter'' in the connection menu to use toporouter.
+
+Before using the toporouter, all elements need to be loaded into the
+layout and placed, the connectivity netlist must be loaded, and rat
+lines needs to be up to date.
+
+Toporouter is an experimental code, so remember to save your design
+before calling toporouter.
 
 @c --------------------------- User Commands chapter -------------------------------
 @node User Commands
