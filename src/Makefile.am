@@ -230,8 +230,8 @@ EXTRA_DIST= \
 	$(srcdir)/hid/png/hid.conf \
 	$(srcdir)/hid/nelma/hid.conf \
 	$(srcdir)/hid/ps/hid.conf \
-	gpcb-menu.res \
-	pcb-menu.res \
+	gpcb-menu.res.in \
+	pcb-menu.res.in \
 	pcbtest.sh.in \
 	dbus.xml
 
@@ -245,11 +245,25 @@ pcb-menu.h : pcb-menu.res
 	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < ${srcdir}/pcb-menu.res >> $@
 	echo '0};' >> $@
 
+pcb-menu.res : pcb-menu.res.in
+if WITH_TOPOROUTER
+	sed '/%if/d ;/%endif/d' < ${srcdir}/pcb-menu.res.in >> $@
+else
+	sed '/%if/,/%endif/d' < ${srcdir}/pcb-menu.res.in >> $@
+endif
+
 gpcb-menu.h : gpcb-menu.res
 	echo '/* AUTOMATICALLY GENERATED FROM gpcb-menu.res DO NOT EDIT */' > $@
 	echo 'const char *gpcb_menu_default[] = {' >> $@
 	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < ${srcdir}/gpcb-menu.res >> $@
 	echo '0};' >> $@
+
+gpcb-menu.res : gpcb-menu.res.in
+if WITH_TOPOROUTER
+	sed '/%if/d ;/%endif/d' < ${srcdir}/gpcb-menu.res.in >> $@
+else
+	sed '/%if/,/%endif/d' < ${srcdir}/gpcb-menu.res.in >> $@
+endif
 
 hid/common/hidlist.h : Makefile
 	$(MKDIR_P) hid/common
