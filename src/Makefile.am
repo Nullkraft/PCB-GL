@@ -241,7 +241,11 @@ all-local: pcbtest.sh
 
 pcb-menu.res : pcb-menu.res.in
 	echo '/* AUTOMATICALLY GENERATED FROM pcb-menu.res.in DO NOT EDIT */' > $@
-	cat ${srcdir}/pcb-menu.res.in >> $@
+if WITH_TOPOROUTER
+	sed '/%if/d ;/%endif/d' < ${srcdir}/pcb-menu.res.in >> $@
+else
+	sed '/%if/,/%endif/d' < ${srcdir}/pcb-menu.res.in >> $@
+endif
 
 pcb-menu.h : pcb-menu.res
 	echo '/* AUTOMATICALLY GENERATED FROM pcb-menu.res DO NOT EDIT */' > $@
@@ -251,7 +255,11 @@ pcb-menu.h : pcb-menu.res
 
 gpcb-menu.res : gpcb-menu.res.in
 	echo '/* AUTOMATICALLY GENERATED FROM gpcb-menu.res.in DO NOT EDIT */' > $@
-	cat ${srcdir}/gpcb-menu.res.in >> $@
+if WITH_TOPOROUTER
+	sed '/%if/d ;/%endif/d' < ${srcdir}/gpcb-menu.res.in >> $@
+else
+	sed '/%if/,/%endif/d' < ${srcdir}/gpcb-menu.res.in >> $@
+endif
 
 gpcb-menu.h : gpcb-menu.res
 	echo '/* AUTOMATICALLY GENERATED FROM gpcb-menu.res DO NOT EDIT */' > $@
