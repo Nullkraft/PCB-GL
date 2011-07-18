@@ -326,6 +326,9 @@ MainMenu =
    -
    {"Auto-route selected rats" AutoRoute(Selected)}
    {"Auto-route all rats" AutoRoute(AllRats)}
+%if TOPO_ENABLED
+   {"Toporouter" Toporouter()}
+%endif
    {"Rip up all auto-routed tracks" RipUp(All)}
    -
    {"Optimize routed tracks"
