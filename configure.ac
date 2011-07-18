@@ -320,6 +320,17 @@ AS_CASE(["x$enable_toporouter"],[xyes | xno],,
 )
 AC_MSG_RESULT([$enable_toporouter])
 AM_CONDITIONAL([WITH_TOPOROUTER], test $enable_toporouter != no)
+AS_CASE([$enable_toporouter],[yes],
+ [
+  topo_enabled=1
+ ],
+ [
+  topo_enabled=0
+ ]
+)
+AC_DEFINE_UNQUOTED([TOPO_ENABLED], [$topo_enabled],
+ [Define to 1 to enable toporouter]
+)
 
 AC_MSG_CHECKING([whether to enable toporouter output])
 AC_ARG_ENABLE([toporouter-output],
