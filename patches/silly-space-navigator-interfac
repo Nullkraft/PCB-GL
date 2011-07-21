@@ -1,7 +1,7 @@
-Bottom: 0688dcf3278f148a83ebee85c3889922630eba53
-Top:    89b0aea9bd00413bae5601c4ee74fe975fb8ef7c
+Bottom: af1b3df8806c7bde04d8ba50d1d7c8928fb15df4
+Top:    08e02604a5c5d4bb387795e5dd6965d30b29a04f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-05-19 18:19:35 +0100
+Date:   2011-07-21 16:10:09 +0100
 
 Silly space navigator interface to allow funky views
 
@@ -90,7 +90,7 @@ index 25105fc..c7f46ea 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 2e716f4..5939b4e 100644
+index a0ac519..d0c82fe 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -125,6 +125,7 @@ a zoom in/out.
@@ -101,7 +101,7 @@ index 2e716f4..5939b4e 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2277,6 +2278,7 @@ ghid_build_pcb_top_window (void)
+@@ -1983,6 +1984,7 @@ ghid_build_pcb_top_window (void)
    /* FIXME: IFDEF HACK */
  #ifdef ENABLE_GL
    trackball = ghid_trackball_new ();
@@ -109,7 +109,7 @@ index 2e716f4..5939b4e 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -2745,6 +2747,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2451,6 +2453,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
