@@ -825,7 +825,7 @@ check_snap_object (struct snap_data *snap_data, LocationType x, LocationType y,
 void
 FitCrosshairIntoGrid (LocationType X, LocationType Y)
 {
-  LocationType x, y;
+  LocationType nearest_grid_x, nearest_grid_y;
   void *ptr1, *ptr2, *ptr3;
   struct snap_data snap_data;
   int ans;
@@ -835,31 +835,32 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
 
   if (PCB->RatDraw)
     {
-      x = -600;
-      y = -600;
+      nearest_grid_x = -600;
+      nearest_grid_y = -600;
     }
   else
     {
-      x = GRIDFIT_X (Crosshair.X, PCB->Grid);
-      y = GRIDFIT_Y (Crosshair.Y, PCB->Grid);
+      nearest_grid_x = GRIDFIT_X (Crosshair.X, PCB->Grid);
+      nearest_grid_y = GRIDFIT_Y (Crosshair.Y, PCB->Grid);
 
       if (Marked.status && TEST_FLAG (ORTHOMOVEFLAG, PCB))
 	{
 	  int dx = Crosshair.X - Marked.X;
 	  int dy = Crosshair.Y - Marked.Y;
 	  if (ABS (dx) > ABS (dy))
-	    y = Marked.Y;
+	    nearest_grid_y = Marked.Y;
 	  else
-	    x = Marked.X;
+	    nearest_grid_x = Marked.X;
 	}
 
     }
 
   snap_data.crosshair = &Crosshair;
-  snap_data.nearest_sq_dist = crosshair_sq_dist (&Crosshair, x, y);
+  snap_data.nearest_sq_dist =
+    crosshair_sq_dist (&Crosshair, nearest_grid_x, nearest_grid_y);
   snap_data.nearest_is_grid = true;
-  snap_data.x = x;
-  snap_data.y = y;
+  snap_data.x = nearest_grid_x;
+  snap_data.y = nearest_grid_y;
 
   ans = NO_TYPE;
   if (!PCB->RatDraw)
@@ -975,7 +976,74 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
       check_snap_object (&snap_data, pnt->X, pnt->Y, true);
     }
 
-  /* Add code to snap at some sensible point along a line */
+  /* Code to snap at some sensible point along a line */
+  /* Pick the nearest grid-point in the x or y direction
+   * to align with, then adjust until we hit the line
+   */
+  ans = NO_TYPE;
+  if (TEST_FLAG (SNAPPINFLAG, PCB))
+    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+                                LINE_TYPE, &ptr1, &ptr2, &ptr3);
+
+  if (ans != NO_TYPE)
+    {
+      LineType *line = (LineType *)ptr2;
+      LocationType try_x, try_y;
+      double dx, dy;
+      double dist;
+
+      dx = line->Point2.X - line->Point1.X;
+      dy = line->Point2.Y - line->Point1.Y;
+
+      /* Try snapping along the X axis */
+      if (dy != 0.)
+        {
+          /* Move in the X direction until we hit the line */
+          try_x = (nearest_grid_y - line->Point1.Y) / dy * dx + line->Point1.X;
+          try_y = nearest_grid_y;
+          check_snap_object (&snap_data, try_x, try_y, true);
+        }
+
+      /* Try snapping along the Y axis */
+      if (dx != 0.)
+        {
+          try_x = nearest_grid_x;
+          try_y = (nearest_grid_x - line->Point1.X) / dx * dy + line->Point1.Y;
+          check_snap_object (&snap_data, try_x, try_y, true);
+        }
+
+      if (dx != dy) /* If line not parallel with dX = dY direction.. */
+        {
+          /* Try snapping diagonally towards the line in the dX = dY direction */
+
+          if (dy == 0)
+            dist = line->Point1.Y - nearest_grid_y;
+          else
+            dist = ((line->Point1.X - nearest_grid_x) -
+                    (line->Point1.Y - nearest_grid_y) * dx / dy) / (1 - dx / dy);
+
+          try_x = nearest_grid_x + dist;
+          try_y = nearest_grid_y + dist;
+
+          check_snap_object (&snap_data, try_x, try_y, true);
+        }
+
+      if (dx != -dy) /* If line not parallel with dX = -dY direction.. */
+        {
+          /* Try snapping diagonally towards the line in the dX = -dY direction */
+
+          if (dy == 0)
+            dist = nearest_grid_y - line->Point1.Y;
+          else
+            dist = ((line->Point1.X - nearest_grid_x) -
+                    (line->Point1.Y - nearest_grid_y) * dx / dy) / (1 + dx / dy);
+
+          try_x = nearest_grid_x + dist;
+          try_y = nearest_grid_y - dist;
+
+          check_snap_object (&snap_data, try_x, try_y, true);
+        }
+    }
 
   ans = NO_TYPE;
   if (TEST_FLAG (SNAPPINFLAG, PCB))
