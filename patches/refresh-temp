@@ -1,0 +1,28 @@
+Bottom: 9d0247542acec3eb5a3af45d21eddd0cea7af3e9
+Top:    c85dffb55db52a96c2e6c2bc56379108f332c59a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 00:46:34 +0100
+
+Refresh of line-c-fix-assert-which-is-alw
+
+---
+
+diff --git a/src/line.c b/src/line.c
+index 0411afc..7da09dc 100644
+--- a/src/line.c
++++ b/src/line.c
+@@ -487,9 +487,13 @@ EnforceLineDRC (void)
+   bool shift;
+   float r1, r2;
+ 
++  /* Silence a bogus compiler warning by storing this in a variable */
++  int layer_idx = INDEXOFCURRENT;
++
+   if ( gui->mod1_is_pressed() || gui->control_is_pressed () || PCB->RatDraw
+-      || INDEXOFCURRENT >= max_copper_layer)
++      || layer_idx >= max_copper_layer)
+     return;
++
+   rs.X = r45.X = Crosshair.X;
+   rs.Y = r45.Y = Crosshair.Y;
+   /* first try starting straight */
