@@ -3,16 +3,16 @@ Top:    c85dffb55db52a96c2e6c2bc56379108f332c59a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 00:35:24 +0100
 
-line.c: Fix a bogus compiler warning regarding a X + n >= X being always true.
+line.c: Fix a bogus compiler warning regarding a (X + c) >= X being always true.
 
-It would appear that gcc (4.6.1-5ubuntu1) is inoring the full definition
-of INDEXOFCURRENT and fixating on portions of it which will indeed always
-evaluate to a particular value.
+line.c: In function ‘EnforceLineDRC’:
+line.c:491:7: warning: assuming signed overflow does not occur when assuming that (X + c) >= X is always true [-Wstrict-overflow]
 
-Since these are conditional, e.g.: (cond ? a : b), and there appears to be
-no reason for GCC to assume the controlling condition is always true, it
-is "probably" safe to assume that this warning manifests due to gcc
-considering each portion of the INDEXOFCURRENT definition in turn.
+It would appear that gcc (4.6.1-5ubuntu1) is identifying the conditional
+portions of INDEXOFCURRENT which would always evaluate a particular way
+if a given condition is met. It is "probably" safe to assume that this
+warning manifests due to gcc considering each portion of the INDEXOFCURRENT
+definition in turn.
 
 It appears we can avoid this particular warning by temporarily assigning
 INDEXOFCURRENT into a variable before we test with it.
