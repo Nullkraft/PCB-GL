@@ -1,7 +1,7 @@
-Bottom: e27f43ec51709ada6d3366c3c6fdc9ffe102e224
-Top:    e8339a40155b361f9e05081a91a952670d6399ef
+Bottom: 8c223a4af9f2de6d4a9b28e125a28dbec9f0fb5c
+Top:    80c3fae5f5ddfb9b765f1bc32a9fa086eae4d2e7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-23 21:01:54 +0100
+Date:   2011-07-24 00:58:37 +0100
 
 Draw polygons in a more intelligent order
 
@@ -36,7 +36,7 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 1f4bc43..75eff4b 100644
+index e7852d7..9e8e0e9 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -120,7 +120,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)

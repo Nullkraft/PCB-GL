@@ -1,7 +1,7 @@
-Bottom: 3d4a503b89186fed569a7d75451e6296ccc2e114
-Top:    b8cf6e8b5814cde7bbec7b4c876a8f604cf4a15b
+Bottom: b501b3b11ada0776c7bed124ac010a57fb66f801
+Top:    d4c124f285242ba4e8832cc0bf8d98de3838a141
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-23 21:01:52 +0100
+Date:   2011-07-24 00:58:35 +0100
 
 Cache polygon contour tri-strip tesselations (HACK: IN THE CORE!)
 
@@ -116,7 +116,7 @@ index 76f8e87..8012817 100644
 +  return BORAST_STATUS_SUCCESS;
 +}
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 1a08413..a00fd82 100644
+index 8e347b6..a7ffb87 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -677,9 +677,25 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
@@ -271,7 +271,7 @@ index ce427ad..62a1125 100644
  
  PLINE *poly_NewContour(Vector v);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 70d553f..fb4f898 100644
+index ffb1542..bbee3d5 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -2549,6 +2549,9 @@ poly_ClrContour (PLINE * c)

@@ -1,7 +1,7 @@
-Bottom: b8cf6e8b5814cde7bbec7b4c876a8f604cf4a15b
-Top:    889811225a0315d545b36bf192a4ba7437da651a
+Bottom: d4c124f285242ba4e8832cc0bf8d98de3838a141
+Top:    8a05a3dd9678987b503a9eb586be9d813faa2a7b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-23 21:01:53 +0100
+Date:   2011-07-24 00:58:36 +0100
 
 Try a new, different sized VBO buffer for each upload.
 
@@ -9,7 +9,7 @@ Try a new, different sized VBO buffer for each upload.
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index a00fd82..cfdb1fb 100644
+index a7ffb87..19c8581 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -143,10 +143,6 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
