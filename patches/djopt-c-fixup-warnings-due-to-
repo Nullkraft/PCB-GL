@@ -1,4 +1,4 @@
-Bottom: d4b7e6e7b498428c03282976b1acacf7e0431f47
+Bottom: c7d277b2ee00baa57451024961b637cfba5df7fc
 Top:    f1f46a9fecbb2ddf69ede5f91adac965d372d981
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 00:07:37 +0100
@@ -8,31 +8,6 @@ djopt.c: Fixup warnings due to assigned but unused variables
 
 ---
 
-diff --git a/src/copy.c b/src/copy.c
-index b93fcfb..4091389 100644
---- a/src/copy.c
-+++ b/src/copy.c
-@@ -294,7 +294,6 @@ CopyElement (ElementTypePtr Element)
- 	 Element->Name[1].TextString);
- #endif
- 
--  bool didDraw = false;
-   ElementTypePtr element = CopyElementLowLevel (PCB->Data,
- 						NULL, Element,
- 						TEST_FLAG (UNIQUENAMEFLAG,
-@@ -307,12 +306,10 @@ CopyElement (ElementTypePtr Element)
-     {
-       DrawElementName (element);
-       DrawElementPackage (element);
--      didDraw = true;
-     }
-   if (PCB->PinOn)
-     {
-       DrawElementPinsAndPads (element);
--      didDraw = true;
-     }
- #ifdef DEBUG
-   printf(" ... Leaving CopyElement.\n");
 diff --git a/src/djopt.c b/src/djopt.c
 index 0b00d8e..d25d621 100644
 --- a/src/djopt.c
