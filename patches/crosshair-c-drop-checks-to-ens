@@ -9,6 +9,10 @@ It isn't obvious that these are doing the right thing, or are even
 being triggered. Drop the checks in the hope that the now simplified
 code continues to "just work" without the special casing.
 
+It would seem that the MIN, MAX functions applied when setting
+Crosshair.X and Crosshair.Y should already constrain the coordinates
+such that the removed code was never triggered.
+
 
 ---
 
