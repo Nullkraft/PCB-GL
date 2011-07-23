@@ -1,0 +1,94 @@
+Bottom: d543f316c7554606e77d7391e26f7800cfcc4943
+Top:    2b7ebf1f1a64fdb9840f7b2f598c7c63843c4c1a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-23 18:24:46 +0100
+
+Refresh of refactor-crosshair-snap-code-t
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 889748b..62d3da0 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -797,18 +797,20 @@ struct snap_data {
+ };
+ 
+ /* Snap to a given location if it is the closest thing we found so far.
+- * Objects take preference closer grid points, UNLESS the user is
+- * pressing the SHIFT key, in which case, the closest object (including
+- * grid points), will be snapped to.
++ * If "prefer_to_grid" is set, the passed location will take preference
++ * over a closer grid points we already snapped to UNLESS the user is
++ * pressing the SHIFT key. If the SHIFT key is pressed, the closest object
++ * (including grid points), is always preferred.
+  */
+ static void
+-check_snap_object (struct snap_data *snap_data, LocationType x, LocationType y)
++check_snap_object (struct snap_data *snap_data, LocationType x, LocationType y,
++                   bool prefer_to_grid)
+ {
+   double sq_dist;
+ 
+   sq_dist = crosshair_sq_dist (snap_data->crosshair, x, y);
+   if (sq_dist < snap_data->nearest_sq_dist ||
+-      (snap_data->nearest_is_grid && !gui->shift_is_pressed()))
++      (prefer_to_grid && snap_data->nearest_is_grid && !gui->shift_is_pressed()))
+     {
+       snap_data->x = x;
+       snap_data->y = y;
+@@ -940,7 +942,8 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+     {
+       PadType *pad = (PadType *)ptr2;
+       check_snap_object (&snap_data, (pad->Point1.X + pad->Point2.X) / 2,
+-                                     (pad->Point1.Y + pad->Point2.Y) / 2);
++                                     (pad->Point1.Y + pad->Point2.Y) / 2,
++                         true);
+     }
+ 
+   ans = NO_TYPE;
+@@ -958,7 +961,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+   if (ans != NO_TYPE)
+     {
+       PinType *pin = (PinType *)ptr2;
+-      check_snap_object (&snap_data, pin->X, pin->Y);
++      check_snap_object (&snap_data, pin->X, pin->Y, true);
+     }
+ 
+   ans = NO_TYPE;
+@@ -975,7 +978,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+   if (ans != NO_TYPE)
+     {
+       PinType *pin = (PinType *)ptr2;
+-      check_snap_object (&snap_data, pin->X, pin->Y);
++      check_snap_object (&snap_data, pin->X, pin->Y, true);
+     }
+ 
+   ans = NO_TYPE;
+@@ -986,7 +989,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+   if (ans != NO_TYPE)
+     {
+       PointType *pnt = (PointType *)ptr3;
+-      check_snap_object (&snap_data, pnt->X, pnt->Y);
++      check_snap_object (&snap_data, pnt->X, pnt->Y, true);
+     }
+ 
+   ans = NO_TYPE;
+@@ -997,7 +1000,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+   if (ans != NO_TYPE)
+     {
+       PointType *pnt = (PointType *)ptr3;
+-      check_snap_object (&snap_data, pnt->X, pnt->Y);
++      check_snap_object (&snap_data, pnt->X, pnt->Y, true);
+     }
+ 
+ 
+@@ -1009,7 +1012,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+   if (ans & ELEMENT_TYPE)
+     {
+       ElementType *el = (ElementType *) ptr1;
+-      check_snap_object (&snap_data, el->MarkX, el->MarkY);
++      check_snap_object (&snap_data, el->MarkX, el->MarkY, false);
+     }
+ 
+   if (snap_data.x >= 0 && snap_data.y >= 0)
