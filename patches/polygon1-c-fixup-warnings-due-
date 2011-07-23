@@ -5,6 +5,10 @@ Date:   2011-07-24 00:11:43 +0100
 
 polygon1.c: Fixup warnings due to assigned but unused variables
 
+Adds a nasty cludge using #ifndef NDEBUG around a variable assignment
+which is only used in a later assert() statement. (NB: assert()
+evaluates to nothing if NDEBUG is defined).
+
 
 ---
 
