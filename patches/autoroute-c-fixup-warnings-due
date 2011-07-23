@@ -1,0 +1,15 @@
+Bottom: ed21d177d20a25a0cf9aa08cdaf0d886d4c9d64e
+Top:    ed21d177d20a25a0cf9aa08cdaf0d886d4c9d64e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 00:04:28 +0100
+
+autoroute.c: Fixup warnings due to assigned but unused variables
+
+Adds a nasty cludge using #ifndef NDEBUG around a variable assignment
+which is only used in a later assert() statement. (NB: assert()
+evaluates to nothing if NDEBUG is defined).
+
+
+---
+
+
