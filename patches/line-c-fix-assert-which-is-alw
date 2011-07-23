@@ -3,7 +3,19 @@ Top:    9d0247542acec3eb5a3af45d21eddd0cea7af3e9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 00:35:24 +0100
 
-line.c: Fix assert which is always true
+line.c: Fix a bogus compiler warning regarding a X + n >= X being always true.
+
+It would appear that gcc (4.6.1-5ubuntu1) is inoring the full definition
+of INDEXOFCURRENT and fixating on portions of it which will indeed always
+evaluate to a particular value.
+
+Since these are conditional, e.g.: (cond ? a : b), and there appears to be
+no reason for GCC to assume the controlling condition is always true, it
+is "probably" safe to assume that this warning manifests due to gcc
+considering each portion of the INDEXOFCURRENT definition in turn.
+
+It appears we can avoid this particular warning by temporarily assigning
+INDEXOFCURRENT into a variable before we test with it.
 
 
 ---
