@@ -1,7 +1,7 @@
-Bottom: b75c0766171e6969995f417e1d9f7c31292870ae
+Bottom: 0b972b86e4dc43c9a88176df4aa4ae741ebbe2fc
 Top:    0b972b86e4dc43c9a88176df4aa4ae741ebbe2fc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-23 16:10:39 +0100
+Date:   2011-07-23 16:17:30 +0100
 
 Allow editing of ordinary text objects when element names are hidden
 
@@ -10,24 +10,4 @@ Closes-bug: lp-810678
 
 ---
 
-diff --git a/src/search.c b/src/search.c
-index 30fe883..60f6f46 100644
---- a/src/search.c
-+++ b/src/search.c
-@@ -1167,11 +1167,14 @@ SearchObjectByLocation (int Type,
-       SearchBox = point_box (X, Y);
-     }
- 
--  if (TEST_FLAG (LOCKNAMESFLAG, PCB)
--      || TEST_FLAG (HIDENAMESFLAG, PCB))
-+  if (TEST_FLAG (LOCKNAMESFLAG, PCB))
-     {
-       Type &= ~ (ELEMENTNAME_TYPE | TEXT_TYPE);
-     }
-+  if (TEST_FLAG (HIDENAMESFLAG, PCB))
-+    {
-+      Type &= ~ELEMENTNAME_TYPE;
-+    }
-   if (TEST_FLAG (ONLYNAMESFLAG, PCB))
-     {
-       Type &= (ELEMENTNAME_TYPE | TEXT_TYPE);
+
