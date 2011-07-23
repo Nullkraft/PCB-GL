@@ -33,6 +33,8 @@
 #include <dmalloc.h>
 #endif
 
+//#define VIEW_ORTHO
+
 RCSID ("$Id$");
 
 
@@ -95,12 +97,15 @@ compute_depth (int group)
   int middle_copper_group;
   int depth;
 
+  if (global_view_2d)
+    return 0;
+
   solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
   component_group = GetLayerGroupNumberByNumber (component_silk_layer);
 
   min_copper_group = MIN (solder_group, component_group);
   max_copper_group = MAX (solder_group, component_group);
-  num_copper_groups = max_copper_group - min_copper_group + 1;
+  num_copper_groups = max_copper_group - min_copper_group;// + 1;
   middle_copper_group = min_copper_group + num_copper_groups / 2;
 
   if (group >= 0 && group < max_group) {
@@ -1562,7 +1567,8 @@ DrawMask (int side, BoxType * screen)
   polygon.Clipped = board_outline_poly ();
   polygon.NoHoles = NULL;
   polygon.NoHolesValid = 0;
-  polygon.BoundingBox = *screen;
+  if (screen)
+    polygon.BoundingBox = *screen;
   SET_FLAG (FULLPOLYFLAG, &polygon);
   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
   poly_Free (&polygon.Clipped);
@@ -1783,7 +1789,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   /* Look at sign of eye coordinate system z-coord when projecting a
      world vector along +ve Z axis, (0, 0, 1). */
   /* XXX: This isn't strictly correct, as I've ignored the matrix
-          elements for homogeneous coordinates. */
+     elements for homogeneous coordinates. */
   /* NB: last_modelview_matrix is transposed in memory! */
   reverse_layers = (last_modelview_matrix[2][2] < 0);
 
@@ -1950,6 +1956,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   int new_x, new_y;
   int min_depth;
   int max_depth;
+  float aspect;
+  GLfloat scale[] = {1, 0, 0, 0,
+                     0, 1, 0, 0,
+                     0, 0, 1, 0,
+                     0, 0, 0, 1};
+  bool horizon_problem = false;
 
   ghid_start_drawing (port);
 
@@ -1975,21 +1987,64 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
+
+  aspect = (float)widget->allocation.width / (float)widget->allocation.height;
+
+#ifdef VIEW_ORTHO
+  glOrtho (-1. * aspect, 1. * aspect, 1., -1., 1., 24.);
+#else
+  glFrustum (-1. * aspect, 1 * aspect, 1., -1., 1., 24.);
+#endif
+
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
 
-  glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
+#ifndef VIEW_ORTHO
+  /* TEST HACK */
+  glScalef (11., 11., 1.);
+#endif
+
+  /* Push the space coordinates board back into the middle of the z-view volume */
+  glTranslatef (0., 0., -11.);
+
+  /* Rotate about the center of the board space */
   glMultMatrixf ((GLfloat *)view_matrix);
-  glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-            (ghid_flip_y ? -1. : 1.) / port->zoom,
-            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-                             -port->view_x0,
-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-                             -port->view_y0, 0);
+
+  /* Flip about the center of the viewed area */
+  glScalef ((ghid_flip_x ? -1. : 1.),
+            (ghid_flip_y ? -1. : 1.),
+            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.));
+
+  /* Scale board coordiantes to (-1,-1)-(1,1) coordiantes */
+  /* Adjust the "w" coordinate of our homogeneous coodinates. We coulld in
+   * theory just use glScalef to transform, but on mesa this produces errors
+   * as the resulting modelview matrix has a very small determinant.
+   */
+  scale[15] = (float)port->zoom * (float)MIN (widget->allocation.width, widget->allocation.height) / 2.;
+  /* XXX: Need to choose which to use (width or height) based on the aspect of the window
+   *      AND the aspect of the board!
+   */
+  glMultMatrixf (scale);
+
+  /* Translate to the center of the board space view */
+  glTranslatef (-(port->view_x0 + port->view_width / 2),
+                -(port->view_y0 + port->view_height / 2),
+                0.);
+
+  /* Stash the model view matrix so we can work out the screen coordinate -> board coordinate mapping */
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
+
+#if 0
+  /* Fix up matrix so the board Z coordinate does not affect world Z
+   * this lets us view each stacked layer without parallax effects.
+   *
+   * Commented out because it breaks:
+   *   Board view "which side should I render first" calculation
+   *   Z-buffer depth occlusion when rendering component models
+   */
+  last_modelview_matrix[2][2] = 0.;
+  glLoadMatrixf ((GLfloat *)last_modelview_matrix);
+#endif
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (port->bg_color.red / 65535.,
@@ -1998,7 +2053,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                 1.);
   glStencilMask (~0);
   glClearStencil (0);
-  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   hidgl_reset_stencil_usage ();
 
   /* Disable the stencil test until we need it - otherwise it gets dirty */
@@ -2010,57 +2065,72 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
   max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
 
-  ghid_unproject_to_z_plane (ev->area.x,
-                             ev->area.y,
-                             min_depth, &new_x, &new_y);
+  if (!ghid_unproject_to_z_plane (ev->area.x,
+                                  ev->area.y,
+                                  min_depth, &new_x, &new_y))
+    horizon_problem = true;
   max_x = min_x = new_x;
   max_y = min_y = new_y;
 
-  ghid_unproject_to_z_plane (ev->area.x,
-                             ev->area.y,
-                             max_depth, &new_x, &new_y);
+  if (!ghid_unproject_to_z_plane (ev->area.x,
+                                  ev->area.y,
+                                  max_depth, &new_x, &new_y))
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
   /* */
-  ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
-                             ev->area.y,
-                             min_depth, &new_x, &new_y);
+  if (!ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
+                                 ev->area.y,
+                                 min_depth, &new_x, &new_y))
+    horizon_problem = true;
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
-  ghid_unproject_to_z_plane (ev->area.x + ev->area.width, ev->area.y,
-                             max_depth, &new_x, &new_y);
-  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
-  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
-
-  /* */
-  ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
-                             ev->area.y + ev->area.height,
-                             min_depth, &new_x, &new_y);
-  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
-  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
-
-  ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
-                             ev->area.y + ev->area.height,
-                             max_depth, &new_x, &new_y);
+  if (!ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
+                                  ev->area.y,
+                                  max_depth, &new_x, &new_y))
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
   /* */
-  ghid_unproject_to_z_plane (ev->area.x,
-                             ev->area.y + ev->area.height,
-                             min_depth,
-                             &new_x, &new_y);
+  if (!ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
+                                  ev->area.y + ev->area.height,
+                                  min_depth, &new_x, &new_y))
+    horizon_problem = true;
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
-  ghid_unproject_to_z_plane (ev->area.x,
-                             ev->area.y + ev->area.height,
-                             max_depth,
-                             &new_x, &new_y);
+  if (!ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
+                                  ev->area.y + ev->area.height,
+                                  max_depth, &new_x, &new_y))
+    horizon_problem = true;
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  /* */
+  if (!ghid_unproject_to_z_plane (ev->area.x,
+                                  ev->area.y + ev->area.height,
+                                  min_depth,
+                                  &new_x, &new_y))
+    horizon_problem = true;
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  if (!ghid_unproject_to_z_plane (ev->area.x,
+                                  ev->area.y + ev->area.height,
+                                  max_depth,
+                                  &new_x, &new_y))
+    horizon_problem = true;
+
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  if (horizon_problem) {
+    min_x = 0;
+    min_y = 0;
+    max_x = PCB->MaxWidth;
+    max_y = PCB->MaxHeight;
+  }
 
   region.X1 = min_x;  region.X2 = max_x + 1;
   region.Y1 = min_y;  region.Y2 = max_y + 1;
@@ -2454,10 +2524,10 @@ ghid_finish_debug_draw (void)
   ghid_end_drawing (gport);
 }
 
-static float
-determinant_2x2 (float m[2][2])
+static double
+determinant_2x2 (double m[2][2])
 {
-  float det;
+  double det;
   det = m[0][0] * m[1][1] -
         m[0][1] * m[1][0];
   return det;
@@ -2485,9 +2555,9 @@ determinant_4x4 (float m[4][4])
 #endif
 
 static void
-invert_2x2 (float m[2][2], float out[2][2])
+invert_2x2 (double m[2][2], double out[2][2])
 {
-  float scale = 1 / determinant_2x2 (m);
+  double scale = 1 / determinant_2x2 (m);
   out[0][0] =  m[1][1] * scale;
   out[0][1] = -m[0][1] * scale;
   out[1][0] = -m[1][0] * scale;
@@ -2552,68 +2622,104 @@ invert_4x4 (float m[4][4], float out[4][4])
 #endif
 
 
-void
+bool
 ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
 {
-  float mat[2][2];
-  float inv_mat[2][2];
-  float x, y;
+  double mat[2][2];
+  double inv_mat[2][2];
+  double x, y;
+  double fvz;
+  double vpx, vpy;
+  double fvx, fvy;
+  GtkWidget *widget = gport->drawing_area;
 
-  /*
-    ex = view_matrix[0][0] * vx +
-         view_matrix[0][1] * vy +
-         view_matrix[0][2] * vz +
-         view_matrix[0][3] * 1;
-    ey = view_matrix[1][0] * vx +
-         view_matrix[1][1] * vy +
-         view_matrix[1][2] * vz +
-         view_matrix[1][3] * 1;
-    UNKNOWN ez = view_matrix[2][0] * vx +
-                 view_matrix[2][1] * vy +
-                 view_matrix[2][2] * vz +
-                 view_matrix[2][3] * 1;
+  /* FIXME: Dirty kludge.. I know what our view parameters are here */
+  double aspect = (double)widget->allocation.width / (double)widget->allocation.height;
+  double width = 2. * aspect;
+  double height = 2.;
+  double near = 1.;
+  // double far = 24.;
 
-    ex - view_matrix[0][3] * 1
-       - view_matrix[0][2] * vz
-      = view_matrix[0][0] * vx +
-        view_matrix[0][1] * vy;
-
-    ey - view_matrix[1][3] * 1
-       - view_matrix[1][2] * vz
-      = view_matrix[1][0] * vx +
-        view_matrix[1][1] * vy;
-  */
+  /* This is nasty beyond words, but I'm lazy and translating directly
+   * from some untested maths I derived which used this notation */
+  double A, B, C, D, E, F, G, H, I, J, K, L;
 
   /* NB: last_modelview_matrix is transposed in memory! */
-  x = (float)ex - last_modelview_matrix[3][0] * 1
-                - last_modelview_matrix[2][0] * vz;
+  A = last_modelview_matrix[0][0];
+  B = last_modelview_matrix[1][0];
+  C = last_modelview_matrix[2][0];
+  D = last_modelview_matrix[3][0];
+  E = last_modelview_matrix[0][1];
+  F = last_modelview_matrix[1][1];
+  G = last_modelview_matrix[2][1];
+  H = last_modelview_matrix[3][1];
+  I = last_modelview_matrix[0][2];
+  J = last_modelview_matrix[1][2];
+  K = last_modelview_matrix[2][2];
+  L = last_modelview_matrix[3][2];
+  /* I could assert that the last row is (as assumed) [0 0 0 1], but again.. I'm lazy */
 
-  y = (float)ey - last_modelview_matrix[3][1] * 1
-                - last_modelview_matrix[2][1] * vz;
+  /* Convert from event coordinates to viewport coordinates */
+  vpx = (float)ex / (float)widget->allocation.width * 2. - 1.;
+  vpy = (float)ey / (float)widget->allocation.height * 2. - 1.;
 
-  /*
-    x = view_matrix[0][0] * vx +
-        view_matrix[0][1] * vy;
+  /* Convert our model space Z plane coordinte to float for convenience */
+  fvz = (float)vz;
 
-    y = view_matrix[1][0] * vx +
-        view_matrix[1][1] * vy;
+  /* This isn't really X and Y? */
+  x = (C * fvz + D) * 2. / width  * near + vpx * (K * fvz + L);
+  y = (G * fvz + H) * 2. / height * near + vpy * (K * fvz + L);
 
-    [view_matrix[0][0] view_matrix[0][1]] [vx] = [x]
-    [view_matrix[1][0] view_matrix[1][1]] [vy]   [y]
-  */
+  mat[0][0] = -vpx * I - A * 2 / width / near;
+  mat[0][1] = -vpx * J - B * 2 / width / near;
+  mat[1][0] = -vpy * I - E * 2 / height / near;
+  mat[1][1] = -vpy * J - F * 2 / height / near;
 
-  mat[0][0] = last_modelview_matrix[0][0];
-  mat[0][1] = last_modelview_matrix[1][0];
-  mat[1][0] = last_modelview_matrix[0][1];
-  mat[1][1] = last_modelview_matrix[1][1];
-
-  /*    if (determinant_2x2 (mat) < 0.00001)       */
-  /*      printf ("Determinant is quite small\n"); */
+//  if (fabs (determinant_2x2 (mat)) < 0.000000000001)
+//    printf ("Determinant is quite small\n");
 
   invert_2x2 (mat, inv_mat);
 
-  *vx = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
-  *vy = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
+  fvx = (inv_mat[0][0] * x + inv_mat[0][1] * y);
+  fvy = (inv_mat[1][0] * x + inv_mat[1][1] * y);
+
+//  if (fvx == NAN) printf ("fvx is NAN\n");
+//  if (fvy == NAN) printf ("fvx is NAN\n");
+
+//  if (fabs (fvx) == INFINITY) printf ("fvx is infinite %f\n", fvx);
+//  if (fabs (fvy) == INFINITY) printf ("fvy is infinite %f\n", fvy);
+
+//  if (fvx > (double)G_MAXINT/5.) {fvx = (double)G_MAXINT/5.; printf ("fvx overflow clamped\n"); }
+//  if (fvy > (double)G_MAXINT/5.) {fvy = (double)G_MAXINT/5.; printf ("fvy overflow clamped\n"); }
+
+//  if (fvx < (double)-G_MAXINT/5.) {fvx = (double)-G_MAXINT/5.; printf ("fvx underflow clamped\n"); }
+//  if (fvy < (double)-G_MAXINT/5.) {fvy = (double)-G_MAXINT/5.; printf ("fvy underflow clamped\n"); }
+
+  *vx = (int)fvx;
+  *vy = (int)fvy;
+
+  {
+    float ex, ey, ez;
+    /* Reproject the computed board plane coordinates to eye space */
+    ex = last_modelview_matrix[0][0] * fvx + last_modelview_matrix[1][0] * fvy + last_modelview_matrix[2][0] * fvz + last_modelview_matrix[3][0];
+    ey = last_modelview_matrix[0][1] * fvx + last_modelview_matrix[1][1] * fvy + last_modelview_matrix[2][1] * fvz + last_modelview_matrix[3][1];
+    ez = last_modelview_matrix[0][2] * fvx + last_modelview_matrix[1][2] * fvy + last_modelview_matrix[2][2] * fvz + last_modelview_matrix[3][2];
+    /* We don't care about ew, as we don't use anything other than 1 for homogeneous coordinates at this stage */
+    /* ew = last_modelview_matrix[0][3] * fvx + last_modelview_matrix[1][3] * fvy + last_modelview_matrix[2][3] * fvz + last_modelview_matrix[3][3]; */
+
+#if 0
+    if (-ez < near)
+      printf ("ez is closer than the near clipping plane, ez = %f\n", ez);
+    if (-ez > far)
+      printf ("ez is further than the near clipping plane, ez = %f\n", ez);
+#endif
+    if (-ez < 0) {
+      // printf ("EZ IS BEHIND THE CAMERA !! ez = %f\n", ez);
+      return false;
+    }
+
+    return true;
+  }
 }
 
 
