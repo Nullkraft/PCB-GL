@@ -1,0 +1,15 @@
+Bottom: a1377a9a5193736c73eeb3cbc90b3edf277b919c
+Top:    a1377a9a5193736c73eeb3cbc90b3edf277b919c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-23 19:06:04 +0100
+
+crosshair.c: Drop checks to ensure the crosshair is inside the PCB
+
+It isn't obvious that these are doing the right thing, or are even
+being triggered. Drop the checks in the hope that the now simplified
+code continues to "just work" without the special casing.
+
+
+---
+
+
