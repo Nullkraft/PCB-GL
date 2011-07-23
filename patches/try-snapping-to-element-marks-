@@ -1,0 +1,20 @@
+Bottom: 2b7ebf1f1a64fdb9840f7b2f598c7c63843c4c1a
+Top:    2b7ebf1f1a64fdb9840f7b2f598c7c63843c4c1a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-23 18:30:50 +0100
+
+Try snapping to element marks first, as they are only a weak snap.
+
+Because the element mark is never chosen in preference to a closer grid
+point, we should try snapping to it first - rather than last.
+
+Currently, we might have a crosshair location where (say), a pad is snapped
+to in preference to the nearest grid-point, then the element mark is tested
+and snapped to because it is closer than the pad. This can occur even when
+there is a closer grid point than the element mark, since the grid snap
+(nearest_is_grid == true) has already been discarded by the snap to the pad.
+
+
+---
+
+
