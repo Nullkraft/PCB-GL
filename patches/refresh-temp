@@ -1,0 +1,70 @@
+Bottom: d4b7e6e7b498428c03282976b1acacf7e0431f47
+Top:    f1f46a9fecbb2ddf69ede5f91adac965d372d981
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 00:07:38 +0100
+
+Refresh of djopt-c-fixup-warnings-due-to-
+
+---
+
+diff --git a/src/copy.c b/src/copy.c
+index b93fcfb..4091389 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -294,7 +294,6 @@ CopyElement (ElementTypePtr Element)
+ 	 Element->Name[1].TextString);
+ #endif
+ 
+-  bool didDraw = false;
+   ElementTypePtr element = CopyElementLowLevel (PCB->Data,
+ 						NULL, Element,
+ 						TEST_FLAG (UNIQUENAMEFLAG,
+@@ -307,12 +306,10 @@ CopyElement (ElementTypePtr Element)
+     {
+       DrawElementName (element);
+       DrawElementPackage (element);
+-      didDraw = true;
+     }
+   if (PCB->PinOn)
+     {
+       DrawElementPinsAndPads (element);
+-      didDraw = true;
+     }
+ #ifdef DEBUG
+   printf(" ... Leaving CopyElement.\n");
+diff --git a/src/djopt.c b/src/djopt.c
+index 0b00d8e..d25d621 100644
+--- a/src/djopt.c
++++ b/src/djopt.c
+@@ -948,7 +948,6 @@ static int
+ split_line (line_s * l, corner_s * c)
+ {
+   int i;
+-  LayerType *layer;
+   LineType *pcbline;
+   line_s *ls;
+ 
+@@ -965,7 +964,6 @@ split_line (line_s * l, corner_s * c)
+     }
+ 
+   check (c, l);
+-  layer = PCB->Data->Layer + l->layer;
+   pcbline = create_pcb_line (l->layer,
+ 			     c->x, c->y, l->e->x, l->e->y,
+ 			     l->line->Thickness, l->line->Clearance,
+@@ -2558,7 +2556,6 @@ pinsnap ()
+   PinType *pin;
+   int again = 1;
+ 
+-  corner_s *prev_c;
+   int close = 0;
+   corner_s *c2;
+ 
+@@ -2575,7 +2572,6 @@ pinsnap ()
+ 	  if (!(c->pin || c->via || c->pad))
+ 	    continue;
+ 
+-	  prev_c = c;
+ 	  pin = 0;
+ 
+ 	  dprintf ("\ncorner %s\n", corner_name (c));
