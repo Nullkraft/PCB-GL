@@ -1,0 +1,15 @@
+Bottom: 974ed983ca74e2a55568d7f754dc3f1360e67a2f
+Top:    974ed983ca74e2a55568d7f754dc3f1360e67a2f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 00:24:32 +0100
+
+rtree.c: Fixup warnings due to assigned but unused variables
+
+Adds a nasty cludge using #ifndef NDEBUG around a variable assignment
+which is only used in a later assert() statement. (NB: assert()
+evaluates to nothing if NDEBUG is defined).
+
+
+---
+
+
