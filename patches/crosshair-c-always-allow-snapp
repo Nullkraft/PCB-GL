@@ -1,4 +1,4 @@
-Bottom: 85a8e7996d7b4684dd98fa212b7bc7ebcb2cd35d
+Bottom: cc9ecdc70a7fec69ae2907d60954a04ffa06d5bf
 Top:    cc9ecdc70a7fec69ae2907d60954a04ffa06d5bf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-23 19:22:57 +0100
@@ -8,15 +8,4 @@ crosshair.c: Always allow snapping to the element mark (except in rat-draw mode)
 
 ---
 
-diff --git a/src/crosshair.c b/src/crosshair.c
-index 67613b6..da8bb92 100644
---- a/src/crosshair.c
-+++ b/src/crosshair.c
-@@ -862,7 +862,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
-   snap_data.y = y;
- 
-   ans = NO_TYPE;
--  if (!PCB->RatDraw && TEST_FLAG (SNAPPINFLAG, PCB))
-+  if (!PCB->RatDraw)
-     ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
-                                 ELEMENT_TYPE, &ptr1, &ptr2, &ptr3);
+
