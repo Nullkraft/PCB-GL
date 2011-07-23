@@ -1,7 +1,7 @@
-Bottom: 81f7977a97c6b04cef9b72875f28cbdffc780bb1
-Top:    1038b69e6c86a974e5980f3a3a9141ac1273c15a
+Bottom: 4ef9879d1b17d48314d7c32681c4c5c44f265b16
+Top:    3c4e4d6052a95b2b34b2d8ce0d702ec680f2a27d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-23 21:01:30 +0100
+Date:   2011-07-24 00:56:01 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 8b7e6d5..00b1654 100644
+index 9b67924..1f3d235 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1901,37 +1901,39 @@ static int
@@ -70,7 +70,7 @@ index 8b7e6d5..00b1654 100644
  	    }
  	}
      }
-@@ -3298,6 +3300,8 @@ static const char renumber_help[] =
+@@ -3297,6 +3299,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, int x, int y)
  {
@@ -79,7 +79,7 @@ index 8b7e6d5..00b1654 100644
    bool changed = false;
    ElementTypePtr *element_list;
    ElementTypePtr *locked_element_list;
-@@ -3635,6 +3639,7 @@ ActionRenumber (int argc, char **argv, int x, int y)
+@@ -3634,6 +3638,7 @@ ActionRenumber (int argc, char **argv, int x, int y)
    free (element_list);
    free (cnt_list);
    return 0;
@@ -87,7 +87,7 @@ index 8b7e6d5..00b1654 100644
  }
  
  
-@@ -4629,16 +4634,15 @@ ActionChangeName (int argc, char **argv, int x, int y)
+@@ -4628,16 +4633,15 @@ ActionChangeName (int argc, char **argv, int x, int y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index 8b7e6d5..00b1654 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatTypePtr) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6950,22 +6954,26 @@ find_element_by_refdes (char *refdes)
+@@ -6949,22 +6953,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListTypePtr list, const char *name)
  {
@@ -290,7 +290,7 @@ index 65eef92..31a17fb 100644
    double C0, T0;
    bool changed = false;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index c799e93..525b37b 100644
+index 63ab15c..998f2cf 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -1010,7 +1010,6 @@ CreateRouteData ()
@@ -402,7 +402,7 @@ index 6ff6132..a14b5d2 100644
    if (entry->Template == (char *) -1)
      {
 diff --git a/src/copy.c b/src/copy.c
-index b93fcfb..51781ca 100644
+index 4091389..b5f1aee 100644
 --- a/src/copy.c
 +++ b/src/copy.c
 @@ -122,7 +122,7 @@ CopyElementLowLevel (DataTypePtr Data, ElementTypePtr Dest,
@@ -619,7 +619,7 @@ index a7a908b..46e8f80 100644
 -  free (Drills);
 -}
 diff --git a/src/fontmode.c b/src/fontmode.c
-index 69d61ea..a754843 100644
+index 2575a33..4145f08 100644
 --- a/src/fontmode.c
 +++ b/src/fontmode.c
 @@ -81,6 +81,7 @@ FontEdit (int argc, char **argv, int Ux, int Uy)
@@ -832,10 +832,10 @@ index 08abbb8..0e5c8a7 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 2fcb37b..c232616 100644
+index 6a8d904..0cc980c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1007,6 +1007,7 @@ static void
+@@ -1001,6 +1001,7 @@ static void
  ghid_attributes_revert ()
  {
    int i;
@@ -843,7 +843,7 @@ index 2fcb37b..c232616 100644
  
    ghid_attributes_need_rows (attributes_list->Number);
  
-@@ -1020,11 +1021,14 @@ ghid_attributes_revert ()
+@@ -1014,11 +1015,14 @@ ghid_attributes_revert ()
      }
  
    /* Fill in values */
@@ -861,7 +861,7 @@ index 2fcb37b..c232616 100644
  #if 0
  #endif
      }
-@@ -1090,28 +1094,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
+@@ -1084,28 +1088,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
        if (response == GTK_RESPONSE_OK)
  	{
  	  int i;
@@ -2184,10 +2184,10 @@ index e42d4bb..48261a9 100644
        }
        END_LOOP;
 diff --git a/src/toporouter.c b/src/toporouter.c
-index 5a82b14..ed0a5cd 100644
+index 3b52f24..b4aace9 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
-@@ -2805,7 +2805,8 @@ import_clusters(toporouter_t *r)
+@@ -2799,7 +2799,8 @@ import_clusters(toporouter_t *r)
    NETLIST_LOOP(&nets);
    {
      if(netlist->NetN > 0) {
@@ -2198,7 +2198,7 @@ index 5a82b14..ed0a5cd 100644
        NET_LOOP(netlist);
        {
 diff --git a/src/undo.c b/src/undo.c
-index 21b86f4..843527c 100644
+index 971c771..149eabe 100644
 --- a/src/undo.c
 +++ b/src/undo.c
 @@ -164,7 +164,7 @@ UndoListType, *UndoListTypePtr;
@@ -2390,7 +2390,7 @@ index 21b86f4..843527c 100644
  
    *lib = *saved;
  
-@@ -1620,7 +1613,8 @@ void
+@@ -1614,7 +1607,8 @@ void
  AddNetlistLibToUndoList (LibraryTypePtr lib)
  {
    UndoListTypePtr undo;
@@ -2400,7 +2400,7 @@ index 21b86f4..843527c 100644
    LibraryTypePtr old;
    
    if (!Locked)
-@@ -1633,7 +1627,6 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
+@@ -1627,7 +1621,6 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
        undo->Data.NetlistChange.old = (LibraryTypePtr)malloc (sizeof (LibraryTypePtr));
        old = undo->Data.NetlistChange.old;
        old->MenuN = lib->MenuN;
@@ -2408,7 +2408,7 @@ index 21b86f4..843527c 100644
        old->Menu = (LibraryMenuTypePtr)malloc (old->MenuMax * sizeof (LibraryMenuType));
        if (old->Menu == NULL)
  	{
-@@ -1642,21 +1635,15 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
+@@ -1636,21 +1629,15 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
  	}
  
        /* iterate over each net */
@@ -2436,7 +2436,7 @@ index 21b86f4..843527c 100644
  	  old->Menu[i].Entry = 
  	    (LibraryEntryTypePtr)malloc (old->Menu[i].EntryMax * sizeof (LibraryEntryType));
  	  if (old->Menu[i].Entry == NULL)
-@@ -1666,39 +1653,19 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
+@@ -1660,39 +1647,19 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
  	    }
  	  
  	  /* iterate over each pin on the net */
