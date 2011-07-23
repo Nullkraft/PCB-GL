@@ -975,6 +975,8 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
       check_snap_object (&snap_data, pnt->X, pnt->Y, true);
     }
 
+  /* Add code to snap at some sensible point along a line */
+
   ans = NO_TYPE;
   if (TEST_FLAG (SNAPPINFLAG, PCB))
     ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
