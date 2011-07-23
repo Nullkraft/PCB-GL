@@ -1,0 +1,22 @@
+Bottom: cc9ecdc70a7fec69ae2907d60954a04ffa06d5bf
+Top:    a730cb358fdf7ff44860d60a1b963d8eaa0de7c3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-23 19:32:40 +0100
+
+Refresh of snap-to-off-grid-lines-when-dr
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index da8bb92..8877725 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -975,6 +975,8 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+       check_snap_object (&snap_data, pnt->X, pnt->Y, true);
+     }
+ 
++  /* Add code to snap at some sensible point along a line */
++
+   ans = NO_TYPE;
+   if (TEST_FLAG (SNAPPINFLAG, PCB))
+     ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
