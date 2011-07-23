@@ -1,5 +1,5 @@
 Bottom: 33263bf95f37406ccc72ec88d108cc62859b0b8b
-Top:    33263bf95f37406ccc72ec88d108cc62859b0b8b
+Top:    bdd29612fc1bc30c1ea761ded034e727283d4506
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-23 19:21:50 +0100
 
@@ -8,4 +8,15 @@ crosshair.c: Don't snap to an element's mark in rat-draw mode.
 
 ---
 
-
+diff --git a/src/crosshair.c b/src/crosshair.c
+index b5e35f5..d8752e7 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -862,7 +862,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+   snap_data.y = y;
+ 
+   ans = NO_TYPE;
+-  if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
++  if (TEST_FLAG (SNAPPINFLAG, PCB))
+     ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+                                 ELEMENT_TYPE, &ptr1, &ptr2, &ptr3);
