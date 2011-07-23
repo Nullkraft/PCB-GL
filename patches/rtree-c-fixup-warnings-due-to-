@@ -1,5 +1,5 @@
 Bottom: 974ed983ca74e2a55568d7f754dc3f1360e67a2f
-Top:    974ed983ca74e2a55568d7f754dc3f1360e67a2f
+Top:    c4d1acc35448752eca57b5361228401af98c8b3b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 00:24:32 +0100
 
@@ -12,4 +12,27 @@ evaluates to nothing if NDEBUG is defined).
 
 ---
 
-
+diff --git a/src/rtree.c b/src/rtree.c
+index 526d2b7..680be3d 100644
+--- a/src/rtree.c
++++ b/src/rtree.c
+@@ -596,12 +596,19 @@ int
+ r_region_is_empty (rtree_t * rtree, const BoxType * region)
+ {
+   jmp_buf env;
++#ifndef NDEBUG
+   int r;
++#endif
+ 
+   if (setjmp (env))
+     return 0;
+-  r = r_search (rtree, region, NULL, __r_region_is_empty_rect_in_reg, &env);
++#ifndef NDEBUG
++  r =
++#endif
++    r_search (rtree, region, NULL, __r_region_is_empty_rect_in_reg, &env);
++#ifndef NDEBUG
+   assert (r == 0);              /* otherwise longjmp would have been called */
++#endif
+   return 1;                     /* no rectangles found */
+ }
