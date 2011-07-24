@@ -1,0 +1,63 @@
+Bottom: 52a9f876d484a24b9e5be92cefadb3fb2d40fcae
+Top:    094986722bdf5ca806e91032e64ffe6368b3de6f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 12:54:04 +0100
+
+Refresh of testing
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index f0eedf7..590953e 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -140,7 +140,6 @@ ghid_draw_grid (void)
+   int x1, y1, x2, y2, n, i;
+   double x, y;
+   render_priv *priv = gport->render_priv;
+-  return;
+ 
+   if (!Settings.DrawGrid)
+     return;
+@@ -163,8 +162,8 @@ ghid_draw_grid (void)
+     }
+   x1 = GRIDFIT_X (gport->view_x0, PCB->Grid);
+   y1 = GRIDFIT_Y (gport->view_y0, PCB->Grid);
+-  x2 = GRIDFIT_X (gport->view_x0 + FLIP_X (gport->view_width)  - 1, PCB->Grid);
+-  y2 = GRIDFIT_Y (gport->view_y0 + FLIP_Y (gport->view_height) - 1, PCB->Grid);
++  x2 = GRIDFIT_X (gport->view_x0 + gport->view_width  - 1, PCB->Grid);
++  y2 = GRIDFIT_Y (gport->view_y0 + gport->view_height - 1, PCB->Grid);
+   if (x1 > x2)
+     {
+       int tmp = x1;
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 8a2211c..01fa5cc 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1669,6 +1669,9 @@ Center(int argc, char **argv, int x, int y)
+ //      y = y0 + h2;
+ //    }
+ 
++//  dx = (x0 - gport->view_x0) / gport->zoom;
++//  dy = (y0 - gport->view_y0) / gport->zoom;
++
+   gport->view_x0 = x0;
+   gport->view_y0 = y0;
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 564b331..28d881e 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -72,6 +72,12 @@ extern int ghid_flip_x, ghid_flip_y;
+ #define PCB_X(x) (int)((double)(x) * FLIP_X (gport->zoom) + gport->view_x0)
+ #define PCB_Y(y) (int)((double)(y) * FLIP_Y (gport->zoom) + gport->view_y0)
+ 
++//#define	DRAW_X(x)	(gint)(FLIP_X(x - gport->view_x0) / gport->zoom)
++//#define	DRAW_Y(y)	(gint)(FLIP_Y(y - gport->view_y0) / gport->zoom)
++
++//#define	VIEW_X(x)	(FLIP_X(x) * gport->zoom + gport->view_x0)
++//#define	VIEW_Y(y)	(FLIP_Y(y) * gport->zoom + gport->view_y0)
++
+ /*
+  * Used to intercept "special" hotkeys that gtk doesn't usually pass
+  * on to the menu hotkeys.  We catch them and put them back where we
