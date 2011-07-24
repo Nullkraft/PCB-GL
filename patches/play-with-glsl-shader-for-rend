@@ -1,7 +1,7 @@
-Bottom: 4ba15b0e2dec3253a49da20df0ff205f5636ccfc
-Top:    18fd2f7711801d825f620b4cd91950fb4e66fe47
+Bottom: 60ee7fc4e2173710cb563daf75115ecb96ae2a78
+Top:    196770289251e5f334b1ca4c59042d5b05030c7b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-24 16:43:26 +0100
+Date:   2011-07-24 17:11:45 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -60,7 +60,7 @@ index ac2e810..454f6ca 100644
  	hid/common/trackball.h
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 6726ed9..8e347b6 100644
+index f8a4b09..1c2bc38 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -63,6 +63,7 @@
@@ -235,7 +235,7 @@ index 6726ed9..8e347b6 100644
  hidgl_set_depth (float depth)
  {
    global_depth = depth;
-@@ -198,42 +305,34 @@ int calc_slices (float pix_radius, float sweep_angle)
+@@ -197,42 +304,34 @@ int calc_slices (float pix_radius, float sweep_angle)
    return (int)ceilf (slices);
  }
  
@@ -295,7 +295,7 @@ index 6726ed9..8e347b6 100644
    int circular_caps = 0;
    int hairline = 0;
  
-@@ -246,30 +345,20 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -245,30 +344,20 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
  
    deltax = x2 - x1;
    deltay = y2 - y1;
@@ -333,7 +333,7 @@ index 6726ed9..8e347b6 100644
    switch (cap) {
      case Trace_Cap:
      case Round_Cap:
-@@ -278,26 +367,50 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -277,26 +366,50 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
  
      case Square_Cap:
      case Beveled_Cap:
@@ -398,7 +398,7 @@ index 6726ed9..8e347b6 100644
      }
  }
  
-@@ -376,10 +489,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+@@ -375,10 +488,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
  
    draw_cap (width, x + rx * -cosf (start_angle_rad),
                     y + rx *  sinf (start_angle_rad),
@@ -411,7 +411,7 @@ index 6726ed9..8e347b6 100644
  }
  
  void
-@@ -396,37 +509,20 @@ hidgl_draw_rect (int x1, int y1, int x2, int y2)
+@@ -395,37 +508,20 @@ hidgl_draw_rect (int x1, int y1, int x2, int y2)
  
  
  void
@@ -459,7 +459,7 @@ index 6726ed9..8e347b6 100644
  }
  
  #define MAX_COMBINED_MALLOCS 2500
-@@ -490,8 +586,6 @@ myBegin (GLenum type)
+@@ -489,8 +585,6 @@ myBegin (GLenum type)
    triangle_comp_idx = 0;
  }
  
@@ -468,7 +468,7 @@ index 6726ed9..8e347b6 100644
  static void
  myVertex (GLdouble *vertex_data)
  {
-@@ -584,20 +678,14 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -583,20 +677,14 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  static void
@@ -493,7 +493,7 @@ index 6726ed9..8e347b6 100644
    }
  
    _borast_traps_init (&traps);
-@@ -605,14 +693,9 @@ fill_contour (PLINE *contour, double scale)
+@@ -604,14 +692,9 @@ fill_contour (PLINE *contour, double scale)
    _borast_traps_fini (&traps);
  }
  
@@ -508,7 +508,7 @@ index 6726ed9..8e347b6 100644
    PLINE *curc = (PLINE *) b;
  
    /* Ignore the outer contour - we draw it first explicitly*/
-@@ -620,7 +703,7 @@ do_hole (const BoxType *b, void *cl)
+@@ -619,7 +702,7 @@ do_hole (const BoxType *b, void *cl)
      return 0;
    }
  
@@ -517,7 +517,7 @@ index 6726ed9..8e347b6 100644
    return 1;
  }
  
-@@ -630,14 +713,11 @@ static int assigned_bits = 0;
+@@ -629,14 +712,11 @@ static int assigned_bits = 0;
  
  /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
  void
@@ -533,7 +533,7 @@ index 6726ed9..8e347b6 100644
  
    if (poly->Clipped == NULL)
      {
-@@ -647,7 +727,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -646,7 +726,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  
    /* Special case non-holed polygons which don't require a stencil bit */
    if (poly->Clipped->contour_tree->size == 1) {
@@ -542,7 +542,7 @@ index 6726ed9..8e347b6 100644
      return;
    }
  
-@@ -674,7 +754,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -673,7 +753,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  
    /* Drawing operations now set our reference bit in the stencil buffer */
  
@@ -551,7 +551,7 @@ index 6726ed9..8e347b6 100644
    hidgl_flush_triangles (&buffer);
  
    glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
-@@ -690,7 +770,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -689,7 +769,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  
    /* Draw the polygon outer */
@@ -560,7 +560,7 @@ index 6726ed9..8e347b6 100644
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
-@@ -703,14 +783,44 @@ void
+@@ -702,14 +782,44 @@ void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
    CHECK_IS_IN_CONTEXT ();
@@ -608,7 +608,7 @@ index 6726ed9..8e347b6 100644
    CHECK_IS_IN_CONTEXT ();
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
-@@ -726,6 +836,16 @@ hidgl_init (void)
+@@ -725,6 +835,16 @@ hidgl_init (void)
                "Cannot use stencil buffer to sub-composite layers.\n");
        /* Do we need to disable that somewhere? */
      }
@@ -955,10 +955,10 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0d17816..b5e6e50 100644
+index be1184d..c9ff0c3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -289,6 +289,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -291,6 +291,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
@@ -967,7 +967,7 @@ index 0d17816..b5e6e50 100644
    glDisable (GL_STENCIL_TEST);
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -661,7 +663,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
+@@ -663,7 +665,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
  {
    USE_GC (gc);
  
@@ -976,7 +976,7 @@ index 0d17816..b5e6e50 100644
  }
  
  
-@@ -678,7 +680,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -680,7 +682,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
    USE_GC (gc);
  
