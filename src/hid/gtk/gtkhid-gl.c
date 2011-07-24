@@ -71,6 +71,13 @@ typedef struct hid_gc_struct
 }
 hid_gc_struct;
 
+/* Px converts view->pcb, Vx converts pcb->view */
+static inline int
+Vz (int z)
+{
+  return z / gport->zoom + 0.5;
+}
+
 static inline int
 Px (int x)
 {
@@ -89,12 +96,6 @@ Py (int y)
   if (priv->view.flip_y)
     rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
   return  rv;
-}
-
-static inline int
-Vz (int z)
-{
-  return z / gport->zoom + 0.5;
 }
 
 static void
