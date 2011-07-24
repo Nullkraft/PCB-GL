@@ -791,7 +791,6 @@ ghid_show_crosshair (gboolean paint_new_location)
   if (x >= 0 && paint_new_location && draw_markers)
     {
       glBegin (GL_QUADS);
-
       glVertex3i (SIDE_X (gport->view_x0),                            y - vcd,       z);
       glVertex3i (SIDE_X (gport->view_x0),                            y - vcd + vcw, z);
       glVertex3i (SIDE_X (gport->view_x0 + vcd),                      y - vcd + vcw, z);
