@@ -731,15 +731,15 @@ draw_dozen_cross (gint x, gint y, gint z)
 }
 
 static void
-draw_crosshair (gint x, gint y)
+draw_crosshair (gint x, gint y, gint z)
 {
   static enum crosshair_shape prev = Basic_Crosshair_Shape;
 
-  draw_right_cross (x, y);
+  draw_right_cross (x, y, z);
   if (prev == Union_Jack_Crosshair_Shape)
-    draw_slanted_cross (x, y);
+    draw_slanted_cross (x, y, z);
   if (prev == Dozen_Crosshair_Shape)
-    draw_dozen_cross (x, y);
+    draw_dozen_cross (x, y, z);
   prev = Crosshair.shape;
 }
 
@@ -781,7 +781,7 @@ ghid_show_crosshair (gboolean paint_new_location)
   if (x >= 0 && paint_new_location)
     {
       glBegin (GL_LINES);
-      draw_crosshair (x, y);
+      draw_crosshair (x, y, z);
       glEnd ();
     }
 
