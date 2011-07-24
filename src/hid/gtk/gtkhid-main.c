@@ -179,15 +179,12 @@ Zoom (int argc, char **argv, int x, int y)
 static void
 zoom_to (double new_zoom, int x, int y)
 {
-  double min_zoom;
-  double max_zoom;
+  double min_zoom, max_zoom;
   double xtmp, ytmp;
 
   /* gport->zoom:
    * zoom value is PCB units per screen pixel.  Larger numbers mean zooming
    * out - the largest value means you are looking at the whole board.
-   *
-   * PCB units per screen pixel
    *
    * gport->view_width and gport->view_height are in PCB coordinates
    */
@@ -206,15 +203,15 @@ zoom_to (double new_zoom, int x, int y)
   if (gport->zoom == new_zoom)
     return;
 
-  xtmp = (SIDE_X (gport->pcb_x) - gport->view_x0) / (double) gport->view_width;
-  ytmp = (SIDE_Y (gport->pcb_y) - gport->view_y0) / (double) gport->view_height;
+  xtmp = (SIDE_X (gport->pcb_x) - gport->view_x0) / (double)gport->view_width;
+  ytmp = (SIDE_Y (gport->pcb_y) - gport->view_y0) / (double)gport->view_height;
 
   gport->zoom = new_zoom;
   pixel_slop = new_zoom;
   ghid_port_ranges_scale (FALSE);
 
-  gport->view_x0 = MIN (0, SIDE_X (gport->pcb_x) - xtmp * gport->view_width);
-  gport->view_y0 = MIN (0, SIDE_Y (gport->pcb_y) - ytmp * gport->view_height);
+  gport->view_x0 = MAX (0, SIDE_X (gport->pcb_x) - xtmp * gport->view_width);
+  gport->view_y0 = MAX (0, SIDE_Y (gport->pcb_y) - ytmp * gport->view_height);
 
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
