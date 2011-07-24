@@ -1,5 +1,5 @@
 Bottom: fdde47be376f12d33e5ab19216050874f3ce9af1
-Top:    7d11f01d4de3d43aa7c303dceaee0cfbb6411add
+Top:    525babe7d9fcc6004261f4e581a376f0f37f0d3b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Refactor viewport handling
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 8394d20..52c5860 100644
+index 8394d20..aefda85 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -33,6 +33,7 @@ static int cur_mask = -1;
@@ -72,7 +72,7 @@ index 8394d20..52c5860 100644
  
 -  w = gport->width * gport->zoom;
 -  h = gport->height * gport->zoom;
-+  w = gport->width *  priv->view.pcb_units_per_pixel;
++  w = gport->width  * priv->view.pcb_units_per_pixel;
 +  h = gport->height * priv->view.pcb_units_per_pixel;
    if (SIDE_X (cx) < gport->view_x0 - radius
        || SIDE_X (cx) > gport->view_x0 + w + radius
@@ -189,7 +189,7 @@ index 8394d20..52c5860 100644
    gport->height = save_height;
    gport->view_x0 = save_left;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6c09d23..10db8db 100644
+index 6c09d23..8ae17f0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -44,8 +44,12 @@ static hidGC current_gc = NULL;
@@ -338,7 +338,7 @@ index 6c09d23..10db8db 100644
    gport->height = da_h;
 -  gport->view_width = da_w * gport->zoom;
 -  gport->view_height = da_h * gport->zoom;
-+  gport->view_width = da_w * priv->view.pcb_units_per_pixel;
++  gport->view_width = da_w  * priv->view.pcb_units_per_pixel;
 +  gport->view_height = da_h * priv->view.pcb_units_per_pixel;
    gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
