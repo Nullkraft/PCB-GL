@@ -1,5 +1,5 @@
-Bottom: fc7689c2118c9870f8e753f9abb084b1521fac6e
-Top:    d7bc5a6bd9c61678d62b14e2e01976fc94c83f77
+Bottom: fd67787606cc46cfa8cdd74fc9545866dac3e111
+Top:    fb9ff9583e92dad1ee0a91d98d5e0a4cf91d9175
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 16:03:06 +0100
 
@@ -26,7 +26,7 @@ index 992f3e3..6f8055a 100644
    if (!Settings.DrawGrid)
      return;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e9ca321..8b69160 100644
+index ea62f19..b73e783 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -134,6 +134,19 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -66,7 +66,7 @@ index e9ca321..8b69160 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -1043,6 +1057,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1042,6 +1056,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -78,7 +78,7 @@ index e9ca321..8b69160 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1527,7 +1546,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
+@@ -1526,7 +1545,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
