@@ -1,0 +1,21 @@
+Bottom: 92380e1b4198f84819206ca110131bfc7086126e
+Top:    b90ed143ac205e9b5c95be97a95bb9da92fe0524
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 17:45:43 +0100
+
+Refresh of hid-gtk-fixup-zoom-action
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index b11d32c..f0d3da5 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -2382,7 +2382,6 @@ ghid_parse_arguments (int *argc, char ***argv)
+   gtk_init (argc, argv);
+ 
+   gport = &ghid_port;
+-  gport->zoom = 300.0;
+   pixel_slop = 300;
+ 
+   ghid_init_renderer (argc, argv, gport);
