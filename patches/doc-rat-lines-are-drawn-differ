@@ -1,0 +1,43 @@
+Bottom: e997ea6dcfa34b4d6001170a343a856fd2cc7ec3
+Top:    92e36281792aaecfa61ff06ccdfe90899711c66c
+Author: Felix Ruoff <Felix@posaunenmission.de>
+Date:   2011-07-24 18:26:55 +0200
+
+doc: Rat lines are drawn differently to other lines
+
+Fixes up documentation to reflect actual behaviour. The old docs stated
+that rat lines are drawn stippled, however this is not how any of the
+supported HIDs actually draws them.
+
+Just state that they may be drawn differently to distinguish them from
+other tracks.
+
+[Minor edits to the sentence and commit message by Peter Clifton]
+
+Signed-off-by: Peter Clifton <pcjc2@cam.ac.uk>
+
+
+---
+
+diff --git a/doc/pcb.texi b/doc/pcb.texi
+index 5bdb5fb..17f5051 100644
+--- a/doc/pcb.texi
++++ b/doc/pcb.texi
+@@ -2194,7 +2194,7 @@ If the layout is already completely wired, nothing will be added, and you will
+ get a message that the wiring is complete.
+ 
+ Rat-lines are lines having the special property that they only connect to pins and
+-pads at their end points.  Rat-lines are drawn on the screen with a stippled pattern
++pads at their end points.  Rat-lines may be drawn different to other lines
+ to make them easier to identify since they have special behavior and cannot
+ remain in a completed layout.
+ Rat-lines are added in the minimum length straight-line tree pattern
+@@ -3602,7 +3602,7 @@ Adds rat-lines to the layout using the loaded netlist file (see the @emph{:rn},
+ line thickness shown in the status line.
+ Only missing connectivity is added by the
+ AddRats command so if, for example, the layout is complete nothing will be added.
+-Rat lines are drawn on the screen with a stippled pattern
++Rat lines may be drawn different to other lines on the screen
+ to make them easier to identify since they cannot appear in a completed layout.
+ The rat-lines are added in the minimum length straight-line tree pattern
+ (always ending on pins or pads) that satisfies the missing connectivity in the circuit.
