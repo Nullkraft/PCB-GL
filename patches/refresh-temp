@@ -1,0 +1,70 @@
+Bottom: 39b2f461ba9d7888fa8ca5bccebb21f1007caa8f
+Top:    b44307b2cded520265a8471358f96f90caf938bb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 16:54:58 +0100
+
+Refresh of hid-gtk-abstract-away-event-co
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 5da8000..4fdb8d3 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1308,3 +1308,12 @@ ghid_finish_debug_draw (void)
+   /* No special tear down requirements
+    */
+ }
++
++bool
++ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
++{
++  *pcb_x = EVENT_TO_PCB_X (event_x);
++  *pcb_y = EVENT_TO_PCB_Y (event_y);
++
++  return true;
++}
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 044d7c5..ed34ea1 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1272,3 +1272,12 @@ ghid_finish_debug_draw (void)
+ 
+   ghid_end_drawing (gport);
+ }
++
++bool
++ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
++{
++  *pcb_x = EVENT_TO_PCB_X (event_x);
++  *pcb_y = EVENT_TO_PCB_Y (event_y);
++
++  return true;
++}
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 1a10251..951a001 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -226,8 +226,8 @@ ghid_note_event_location (GdkEventButton * ev)
+       event_x = ev->x;
+       event_y = ev->y;
+     }
+-  gport->pcb_x = EVENT_TO_PCB_X (event_x);
+-  gport->pcb_y = EVENT_TO_PCB_Y (event_y);
++
++  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
+ 
+   moved = MoveCrosshairAbsolute (gport->pcb_x, gport->pcb_y);
+   if (moved)
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 29a5407..e825b75 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -504,6 +504,7 @@ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
+ HID *ghid_request_debug_draw (void);
+ void ghid_flush_debug_draw (void);
+ void ghid_finish_debug_draw (void);
++bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
+ 
+ /* gtkhid-main.c */
+ void ghid_pan_fixup (void);
