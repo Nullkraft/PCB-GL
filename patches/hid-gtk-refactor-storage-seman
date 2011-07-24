@@ -8,7 +8,8 @@ hid/gtk: Refactor storage semantics of view_x, view_y coordinates
 They now directly represent actual cursor coordinates, and don't require
 passing through SIDE_{X,Y} before use.
 
-NB: FUBAR ON ITS OWN.. TOO MANY PLACES ASSUME THE OLD WAY!
+To avoid confusion, view_x and view_y have been renamed to pcb_x and pcb_y
+to reflect the change of semantics.
 
 
 ---
