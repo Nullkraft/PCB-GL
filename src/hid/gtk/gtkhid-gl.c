@@ -777,8 +777,8 @@ ghid_show_crosshair (gboolean paint_new_location)
       /* FIXME: when CrossColor changed from config */
       ghid_map_color_string (Settings.CrossColor, &cross_color);
     }
-  x = DRAW_X (gport->x_crosshair);
-  y = DRAW_Y (gport->y_crosshair);
+  x = gport->x_crosshair;
+  y = gport->y_crosshair;
   z = global_depth;
 
   glEnable (GL_COLOR_LOGIC_OP);
@@ -801,22 +801,22 @@ ghid_show_crosshair (gboolean paint_new_location)
   if (x >= 0 && paint_new_location && draw_markers)
     {
       glBegin (GL_QUADS);
-      glVertex3i (0,                  y - VCD,             z);
-      glVertex3i (0,                  y - VCD + VCW,       z);
-      glVertex3i (VCD,                y - VCD + VCW,       z);
-      glVertex3i (VCD,                y - VCD,             z);
-      glVertex3i (gport->width,       y - VCD,             z);
-      glVertex3i (gport->width,       y - VCD + VCW,       z);
-      glVertex3i (gport->width - VCD, y - VCD + VCW,       z);
-      glVertex3i (gport->width - VCD, y - VCD,             z);
-      glVertex3i (x - VCD,            0,                   z);
-      glVertex3i (x - VCD,            VCD,                 z);
-      glVertex3i (x - VCD + VCW,      VCD,                 z);
-      glVertex3i (x - VCD + VCW,      0,                   z);
-      glVertex3i (x - VCD,            gport->height - VCD, z);
-      glVertex3i (x - VCD,            gport->height,       z);
-      glVertex3i (x - VCD + VCW,      gport->height,       z);
-      glVertex3i (x - VCD + VCW,      gport->height - VCD, z);
+      glVertex3i (0,                       y - VCD,                  z);
+      glVertex3i (0,                       y - VCD + VCW,            z);
+      glVertex3i (VCD,                     y - VCD + VCW,            z);
+      glVertex3i (VCD,                     y - VCD,                  z);
+      glVertex3i (gport->view_width,       y - VCD,                  z);
+      glVertex3i (gport->view_width,       y - VCD + VCW,            z);
+      glVertex3i (gport->view_width - VCD, y - VCD + VCW,            z);
+      glVertex3i (gport->view_width - VCD, y - VCD,                  z);
+      glVertex3i (x - VCD,                 0,                        z);
+      glVertex3i (x - VCD,                 VCD,                      z);
+      glVertex3i (x - VCD + VCW,           VCD,                      z);
+      glVertex3i (x - VCD + VCW,           0,                        z);
+      glVertex3i (x - VCD,                 gport->view_height - VCD, z);
+      glVertex3i (x - VCD,                 gport->view_height,       z);
+      glVertex3i (x - VCD + VCW,           gport->view_height,       z);
+      glVertex3i (x - VCD + VCW,           gport->view_height - VCD, z);
       glEnd ();
     }
 
