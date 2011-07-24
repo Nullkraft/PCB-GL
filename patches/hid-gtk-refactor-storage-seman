@@ -3,13 +3,22 @@ Top:    572fb2632bed8440d0b863935e1022cf9fb8cc18
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-26 23:29:46 +0000
 
-hid/gtk: Refactor storage semantics of view_x, view_y coordinates
+hid/gtk: Refactor semantics of, and rename view_x, view_y coordinates
 
-They now directly represent actual cursor coordinates, and don't require
-passing through SIDE_{X,Y} before use.
+Rather than storing pointer coordinates in the imaginary "view" system,
+where the coordinates (in PCB base units) represent that of an unflipped
+board, store them such that they are directly meaningful on the board.
+
+As they now directly represent the cursor coordinats on the actual board,
+they don't require passing through the SIDE_{X,Y} macros before use with
+APIs that expect board coordinates.
 
 To avoid confusion, view_x and view_y have been renamed to pcb_x and pcb_y
 to reflect the change of semantics.
+
+In a number of cases, SIDE_{X,Y} macro calls were added to preserve
+correct functionality of old code which manipulates the mouse position in
+"view" coordinates. These are primarily concerned with zooming and panning.
 
 
 ---
