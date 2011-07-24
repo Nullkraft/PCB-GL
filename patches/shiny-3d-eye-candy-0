@@ -1,5 +1,5 @@
-Bottom: 07c111717c34ed00818872098a4062a2c9d574d2
-Top:    b8e626a134b1970fd0fe96acbc0ab9bbeae7f025
+Bottom: 81b8742f27c0ab40c595978be4d6cf995cfa2e3a
+Top:    e0d57fc125cff8d0ff25a373c1b04bd2c488ad81
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 01:16:22 +0100
 
@@ -26,7 +26,7 @@ index 992f3e3..6f8055a 100644
    if (!Settings.DrawGrid)
      return;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index cc186c7..ad47fce 100644
+index 1b9fbce..e8cd9c6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -132,6 +132,19 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -74,7 +74,7 @@ index cc186c7..ad47fce 100644
        glVertex3i (SIDE_X (gport->view_x0),                            y - vcd,       z);
        glVertex3i (SIDE_X (gport->view_x0),                            y - vcd + vcw, z);
        glVertex3i (SIDE_X (gport->view_x0 + vcd),                      y - vcd + vcw, z);
-@@ -1042,6 +1057,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1040,6 +1055,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -86,7 +86,7 @@ index cc186c7..ad47fce 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1513,8 +1533,8 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
+@@ -1511,8 +1531,8 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
    mat[1][0] = last_modelview_matrix[0][1];
    mat[1][1] = last_modelview_matrix[1][1];
  

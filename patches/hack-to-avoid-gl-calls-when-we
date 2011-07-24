@@ -1,5 +1,5 @@
-Bottom: 93f645eeaa846c60fc81189b1058a7eb7591b7fe
-Top:    7c986b92ee730646ab267753918452f13d1e468e
+Bottom: 4057ec32690f869388ef4d21dc3e6ceaf79ee858
+Top:    beda97fa25a2b03128cf9e966ca003c71049a45e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 01:16:25 +0100
 
@@ -9,7 +9,7 @@ Hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 34737f9..54bf324 100644
+index b282e65..af1dc94 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -39,6 +39,7 @@ RCSID ("$Id$");
@@ -54,7 +54,7 @@ index 34737f9..54bf324 100644
  
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
-@@ -2098,6 +2112,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2096,6 +2110,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    hidgl_flush_triangles (&buffer);
  
@@ -62,7 +62,7 @@ index 34737f9..54bf324 100644
    ghid_end_drawing (port);
  
    g_timer_start (priv->time_since_expose);
-@@ -2168,6 +2183,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2166,6 +2181,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    }
    gport->render_priv->in_context = true;
  
@@ -71,7 +71,7 @@ index 34737f9..54bf324 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -2214,6 +2231,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2212,6 +2229,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    else
      glFlush ();
  
@@ -80,7 +80,7 @@ index 34737f9..54bf324 100644
    /* end drawing to current GL-context */
    gport->render_priv->in_context = false;
    gdk_gl_drawable_gl_end (pGlDrawable);
-@@ -2243,6 +2262,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2241,6 +2260,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    int save_width, save_height;
    int save_view_width, save_view_height;
    BoxType region;
@@ -88,7 +88,7 @@ index 34737f9..54bf324 100644
  
    save_zoom = gport->zoom;
    save_width = gport->width;
-@@ -2282,6 +2302,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2280,6 +2300,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    }
    gport->render_priv->in_context = true;
  
@@ -98,7 +98,7 @@ index 34737f9..54bf324 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -2326,6 +2349,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2324,6 +2347,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glFlush ();
  
