@@ -213,6 +213,10 @@ ghid_note_event_location (GdkEventButton * ev)
 {
   gint event_x, event_y;
   gboolean moved;
+  /* FIXME: IFDEF HACK */
+#ifdef ENABLE_GL
+  int pcb_x, pcb_y;
+#endif
 
   if (!ev)
     {
@@ -224,8 +228,18 @@ ghid_note_event_location (GdkEventButton * ev)
       event_x = ev->x;
       event_y = ev->y;
     }
+
+  /* FIXME: IFDEF HACK */
+#ifdef ENABLE_GL
+  /* Unproject event_x and event_y to world coordinates of the plane we are on */
+  ghid_unproject_to_z_plane (event_x, event_y, 0,
+                             &pcb_x, &pcb_y);
+  gport->view_x = SIDE_X (pcb_x);
+  gport->view_y = SIDE_Y (pcb_y);
+#else
   gport->view_x = event_x * gport->zoom + gport->view_x0;
   gport->view_y = event_y * gport->zoom + gport->view_y0;
+#endif
 
   moved = MoveCrosshairAbsolute (SIDE_X (gport->view_x), 
 				 SIDE_Y (gport->view_y));
