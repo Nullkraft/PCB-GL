@@ -221,7 +221,6 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
   LibraryMenuType *node_net;
   LibraryEntryType *node;
   static gchar *node_name;
-	gint		x0, y0, margin;
 
   if (selection_holdoff)	/* PCB is highlighting, user is not selecting */
     return;
@@ -264,7 +263,6 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
    */
   SelectPin (node, TRUE);
   IncrementUndoSerialNumber ();
-  margin = gport->view_width / 20;
 
   ghid_screen_update();
 }

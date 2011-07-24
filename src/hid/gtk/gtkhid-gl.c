@@ -1325,13 +1325,50 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
 }
 
 bool
-ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *screen_y)
+ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
 {
+  render_priv *priv = gport->render_priv;
+
   *event_x = DRAW_X (pcb_x);
   *event_y = DRAW_Y (pcb_y);
 
   return true;
 }
+
+void
+ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+{
+  render_priv *priv = gport->render_priv;
+
+  gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
+  gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
+
+  /* don't pan so far to the right that we see way past the right edge of the
+   * board, or so far down that we see way past the bottom edge of the board.
+   */
+  gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
+  gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
+
+  /* don't view above or to the left of the board... ever */
+  gport->view_x0 = MAX (0, gport->view_x0);
+  gport->view_y0 = MAX (0, gport->view_y0);
+
+  /* if we can see the entire board and some, then zoom to fit */
+  if (gport->view_width  > PCB->MaxWidth  &&
+      gport->view_height > PCB->MaxHeight)
+    {
+      ghid_zoom_view_fit ();
+      return;
+    }
+
+  ghidgui->adjustment_changed_holdoff = TRUE;
+  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
+  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
+  ghidgui->adjustment_changed_holdoff = FALSE;
+
+  ghid_port_ranges_changed();
+}
+
 
 /* gport->zoom:
  * zoom value is PCB units per screen pixel.  Larger numbers mean zooming
@@ -1398,6 +1435,8 @@ ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 
   priv->view.flip_x = flip_x ? ! priv->view.flip_x : priv->view.flip_x;
   priv->view.flip_y = flip_y ? ! priv->view.flip_y : priv->view.flip_y;
+
+  /* XXX: PAN THE BOARD SO THE CENTER LOCATION REMAINS IN THE SAME PLACE */
 
   ghid_invalidate_all ();
 }

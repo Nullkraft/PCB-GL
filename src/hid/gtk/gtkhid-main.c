@@ -29,47 +29,6 @@
 RCSID ("$Id$");
 
 
-void
-ghid_pan_fixup ()
-{
-
-  /*
-   * don't pan so far to the right that we see way past the right 
-   * edge of the board.
-   */
-  if (gport->view_x0 > PCB->MaxWidth - gport->view_width)
-    gport->view_x0 = PCB->MaxWidth - gport->view_width;
-
-  /*
-   * don't pan so far down that we see way past the bottom edge of
-   * the board.
-   */
-  if (gport->view_y0 > PCB->MaxHeight - gport->view_height)
-    gport->view_y0 = PCB->MaxHeight - gport->view_height;
-
-  /* don't view above or to the left of the board... ever */
-  if (gport->view_x0 < 0)
-    gport->view_x0 = 0;
-
-   if (gport->view_y0 < 0)
-    gport->view_y0 = 0;
-
-  /* if we can see the entire board and some, then zoom to fit */
-  if (gport->view_width > PCB->MaxWidth &&
-      gport->view_height > PCB->MaxHeight)
-    {
-      ghid_zoom_view_fit ();
-      return;
-    }
-
-  ghidgui->adjustment_changed_holdoff = TRUE;
-  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
-  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
-  ghidgui->adjustment_changed_holdoff = FALSE;
-
-  ghid_port_ranges_changed();
-}
-
 /* ------------------------------------------------------------ */
 
 static const char zoom_syntax[] =
@@ -265,8 +224,6 @@ ghid_set_crosshair (int x, int y, int action)
 
       ghid_event_to_pcb_coords (widget_x, widget_y, &pcb_x, &pcb_y);
       ghid_pan_view_abs (pcb_x, pcb_y, widget_x, widget_y);
-
-      ghid_pan_fixup (); /* XXX: ??? */
 
       /* Just in case we couldn't pan the board the whole way,
        * we warp the pointer to where the crosshair DID land.
@@ -1509,8 +1466,6 @@ Center(int argc, char **argv, int x, int y)
   widget_y = gport->height / 2;
 
   ghid_pan_view_abs (x, y, widget_x, widget_y);
-
-  ghid_pan_fixup (); /* XXX: ???? */
 
   /* Now move the mouse pointer to the place where the board location
    * actually ended up.

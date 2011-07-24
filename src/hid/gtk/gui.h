@@ -508,7 +508,6 @@ void ghid_zoom_view_fit (void);
 void ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y);
 
 /* gtkhid-main.c */
-void ghid_pan_fixup (void);
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
 
