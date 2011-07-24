@@ -708,7 +708,6 @@ redraw_region (GdkRectangle *rect)
   if (!gport->pixmap)
     return;
 
-<<<<<<< current
   if (rect != NULL)
     {
       priv->clip_rect = *rect;
@@ -728,10 +727,10 @@ redraw_region (GdkRectangle *rect)
   set_clip (priv, priv->mask_gc);
   set_clip (priv, priv->grid_gc);
 
-  region.X1 = MIN(PCB_X (0), PCB_X (gport->width  + 1));
-  region.Y1 = MIN(PCB_Y (0), PCB_Y (gport->height + 1));
-  region.X2 = MAX(PCB_X (0), PCB_X (gport->width  + 1));
-  region.Y2 = MAX(PCB_Y (0), PCB_Y (gport->height + 1));
+  region.X1 = MIN (PCB_X (0), PCB_X (gport->width  + 1));
+  region.Y1 = MIN (PCB_Y (0), PCB_Y (gport->height + 1));
+  region.X2 = MAX (PCB_X (0), PCB_X (gport->width  + 1));
+  region.Y2 = MAX (PCB_Y (0), PCB_Y (gport->height + 1));
 
   eleft =   SCREEN_X (0);
   eright =  SCREEN_X (PCB->MaxWidth);
@@ -1273,10 +1272,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   gdk_draw_rectangle (pixmap, priv->bg_gc, TRUE, 0, 0, width, height);
 
   /* call the drawing routine */
-  region.X1 = MIN(PCB_X (0), PCB_X (gport->width  + 1));
-  region.Y1 = MIN(PCB_Y (0), PCB_Y (gport->height + 1));
-  region.X2 = MAX(PCB_X (0), PCB_X (gport->width  + 1));
-  region.Y2 = MAX(PCB_Y (0), PCB_Y (gport->height + 1));
+  region.X1 = MIN (PCB_X (0), PCB_X (gport->width  + 1));
+  region.Y1 = MIN (PCB_Y (0), PCB_Y (gport->height + 1));
+  region.X2 = MAX (PCB_X (0), PCB_X (gport->width  + 1));
+  region.Y2 = MAX (PCB_Y (0), PCB_Y (gport->height + 1));
   hid_expose_callback (&ghid_hid, &region, NULL);
 
   gport->drawable = save_drawable;
