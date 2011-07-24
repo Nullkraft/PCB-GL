@@ -1,5 +1,5 @@
 Bottom: fd67787606cc46cfa8cdd74fc9545866dac3e111
-Top:    80a0d37cffe301b96a279c0e884652f977810986
+Top:    a97395030de8b11b190d548bea6b1e1f67c32d6c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 16:03:06 +0100
 
@@ -13,18 +13,6 @@ Squashed:
 
 ---
 
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 992f3e3..6f8055a 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -112,6 +112,7 @@ hidgl_draw_grid (BoxType *drawn_area)
-   static int npoints = 0;
-   int x1, y1, x2, y2, n, i;
-   double x, y;
-+  extern float global_depth;
- 
-   if (!Settings.DrawGrid)
-     return;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index ea62f19..a9e7795 100644
 --- a/src/hid/gtk/gtkhid-gl.c
