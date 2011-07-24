@@ -1,5 +1,5 @@
 Bottom: 299a3edee6777df067c58ea99d2fa1da6cc284b1
-Top:    a2da3092dff5a558f1151838c95aa0cd116321ae
+Top:    3a95e242dd51fecf9e77fff4d9a194583226adab
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 19:43:51 +0100
 
@@ -11,6 +11,21 @@ it is not possible to save the flip state in the PCB settings any more.
 
 ---
 
+diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
+index e9469e9..15eceb9 100644
+--- a/src/gpcb-menu.res
++++ b/src/gpcb-menu.res
+@@ -168,8 +168,8 @@ MainMenu =
+     {"Zoom to 10mil/px" Zoom(=1000)}
+     {"Zoom In 20% and center" Zoom(-1.2) Center() m=Z }
+     {"Zoom Out 20% and center" Zoom(+1.2) Center() m=O }
+-    {"Flip up/down" checked=flip_y SwapSides(V) a={"Tab" "<Key>Tab"}}
+-    {"Flip left/right" checked=flip_x SwapSides(H) a={"Shift-Tab" "Shift<Key>Tab"}}
++    {"Flip up/down" SwapSides(V) a={"Tab" "<Key>Tab"}}
++    {"Flip left/right" SwapSides(H) a={"Shift-Tab" "Shift<Key>Tab"}}
+     {"Spin 180 degrees" SwapSides(R) a={"Ctrl-Tab" "Ctrl<Key>Tab"}}
+     {"Swap Sides" SwapSides() a={"Ctrl-Shift-Tab" "Ctrl Shift<Key>Tab"}}
+     {"Center cursor" Center() a={"C" "<Key>c"}}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index ed34ea1..432588f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
