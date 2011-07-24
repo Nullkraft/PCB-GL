@@ -61,12 +61,6 @@
 #define	FROM_PCB_UNITS(v)	(Settings.grid_units_mm ? COORD_TO_MM(v) : COORD_TO_MIL(v))
 #define	TO_PCB_UNITS(v)		(Settings.grid_units_mm ? MM_TO_COORD(v) : MIL_TO_COORD(v))
 
-#define	DRAW_X(x)	(gint)((SIDE_X(x) - gport->view_x0) / gport->zoom)
-#define	DRAW_Y(y)	(gint)((SIDE_Y(y) - gport->view_y0) / gport->zoom)
-
-#define	EVENT_TO_PCB_X(x)	SIDE_X((gint)((x) * gport->zoom + gport->view_x0))
-#define	EVENT_TO_PCB_Y(y)	SIDE_Y((gint)((y) * gport->zoom + gport->view_y0))
-
 /*
  * Used to intercept "special" hotkeys that gtk doesn't usually pass
  * on to the menu hotkeys.  We catch them and put them back where we
@@ -167,16 +161,8 @@ typedef struct
   gboolean has_entered;
   gboolean panning;
 
-/* zoom value is PCB units per screen pixel.  Larger numbers mean zooming
-|  out - the largest value means you are looking at the whole board.
-*/
-  gdouble zoom;			/* PCB units per screen pixel.  Larger */
-  /* numbers mean zooming out. */
-  gint view_x0,			/* Viewport in PCB coordinates */
-    view_y0, view_width, view_height;
-  Coord pcb_x, pcb_y;
-
-  gint crosshair_x, crosshair_y;
+  Coord pcb_x, pcb_y;             /* PCB coordinates of the object under the mouse pointer */
+  Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair set by PCB's core    */
 }
 GHidPort;
 
