@@ -770,7 +770,6 @@ ghid_show_crosshair (gboolean paint_new_location)
   int vcd = VCD * gport->zoom;
   static int done_once = 0;
   static GdkColor cross_color;
-  extern float global_depth;
 
   if (!paint_new_location)
     return;
