@@ -1,5 +1,5 @@
-Bottom: a3765a73ce40f1edf6cb1f86d6ef55b86149b063
-Top:    96cc0d721f22ca5d4d0a9bfa2f3e14b8092e774d
+Bottom: 7879a6f7f5a5f9f2ab25f4108c5c47e2c842828e
+Top:    a045ec11160e56fbd5f9013aca3b85eaa4b3b012
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-26 23:29:46 +0000
 
@@ -14,10 +14,10 @@ NB: FUBAR ON ITS OWN.. TOO MANY PLACES ASSUME THE OLD WAY!
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8bbf3eb..7c0afa8 100644
+index 6a8d904..915656a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -244,28 +244,30 @@ zoom_to (double new_zoom, int x, int y)
+@@ -241,28 +241,30 @@ zoom_to (double new_zoom, int x, int y)
        gdouble xtmp, ytmp;
        gint x0, y0;
  
@@ -57,7 +57,7 @@ index 8bbf3eb..7c0afa8 100644
        ghid_port_ranges_changed();
      }
  
-@@ -1467,12 +1469,12 @@ SwapSides (int argc, char **argv, int x, int y)
+@@ -1516,12 +1518,12 @@ SwapSides (int argc, char **argv, int x, int y)
       location */
    if (do_flip_x)
      {
@@ -73,10 +73,10 @@ index 8bbf3eb..7c0afa8 100644
      }
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index e0120b6..6d6fd69 100644
+index 1f9a31a..694a712 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -184,19 +184,21 @@ ghid_port_ranges_zoom (gdouble zoom)
+@@ -166,19 +166,21 @@ ghid_port_ranges_zoom (gdouble zoom)
    if ((zoom > xtmp && zoom > ytmp) || zoom == 0.0)
      zoom = (xtmp > ytmp) ? xtmp : ytmp;
  
@@ -102,7 +102,7 @@ index e0120b6..6d6fd69 100644
    if (y0 < 0)
      y0 = 0;
    gport->view_y0 = y0;
-@@ -221,8 +223,8 @@ ghid_get_coords (const char *msg, int *x, int *y)
+@@ -203,8 +205,8 @@ ghid_get_coords (const char *msg, int *x, int *y)
      ghid_get_user_xy (msg);
    if (ghid_port.has_entered)
      {
@@ -113,7 +113,7 @@ index e0120b6..6d6fd69 100644
      }
  }
  
-@@ -242,11 +244,10 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -224,11 +226,10 @@ ghid_note_event_location (GdkEventButton * ev)
        event_x = ev->x;
        event_y = ev->y;
      }
