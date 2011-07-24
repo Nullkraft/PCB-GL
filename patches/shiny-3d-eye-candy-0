@@ -1,5 +1,5 @@
-Bottom: 0a2d11ad942b55c91feb27b01f535723334ee011
-Top:    d5486e28749825934b60fbf04b412c8dd06886bd
+Bottom: e96d0e2bb4efe71db557626be75dc6b879c220b5
+Top:    082d6ca7e70bfccd4bef6bcafb4a00f7e6103844
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 16:03:06 +0100
 
@@ -98,7 +98,7 @@ index 17359b0..c6f60dd 100644
    invert_2x2 (mat, inv_mat);
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 9e534f6..28d04e0 100644
+index 5b2000b..8422448 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -215,6 +215,10 @@ ghid_note_event_location (GdkEventButton * ev)
@@ -120,4 +120,4 @@ index 9e534f6..28d04e0 100644
 +  ghid_unproject_to_z_plane (event_x, event_y, global_depth,
                               &gport->pcb_x, &gport->pcb_y);
  #else
-   gport->pcb_x = VIEW_X (event_x);
+   gport->pcb_x = EVENT_TO_PCB_X (event_x);
