@@ -134,6 +134,19 @@ ghid_set_layer (const char *name, int group, int empty)
   end_subcomposite ();
   start_subcomposite ();
 
+  /* Drawing is already flushed by {start,end}_subcomposite */
+  if (group >= 0 && group < max_group) {
+    hidgl_set_depth ((max_group - group) * 10);
+  } else {
+    if (SL_TYPE (idx) == SL_SILK) {
+      if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
+        hidgl_set_depth (max_group * 10 + 3);
+      } else {
+        hidgl_set_depth (10 - 3);
+      }
+    }
+  }
+
   if (idx >= 0 && idx < max_copper_layer + 2)
     {
       priv->trans_lines = true;
@@ -769,7 +782,7 @@ ghid_show_crosshair (gboolean paint_new_location)
     }
   x = gport->crosshair_x;
   y = gport->crosshair_y;
-  z = 0;
+  z = global_depth;
 
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
@@ -1041,6 +1054,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_invalidate_current_gc ();
   hid_expose_callback (&ghid_hid, &region, 0);
   hidgl_flush_triangles (&buffer);
+
+  /* Just prod the drawing code so the current depth gets set to
+     the right value for the layer we are editing */
+  gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
+  gui->end_layer ();
 
   ghid_draw_grid (&region);
 
@@ -1526,7 +1544,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
 bool
 ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
 {
-  ghid_unproject_to_z_plane (event_x, event_y, 0, pcb_x, pcb_y);
+  ghid_unproject_to_z_plane (event_x, event_y, global_depth, pcb_x, pcb_y);
 
   return true;
 }
