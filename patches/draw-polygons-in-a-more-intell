@@ -1,5 +1,5 @@
-Bottom: e96bb78280902667efd3f1b10648ad1854a36c79
-Top:    f8b3767eb4cd0ba2876fb8f2fa3cf9cd61095723
+Bottom: 9d7567b6d1b72f87cdb0a76aa6df16cc65da0e4a
+Top:    19b74cd7a6c3a2727fcc9ed881e0ecd7528839d7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 01:28:20 +0100
 
@@ -129,10 +129,10 @@ index e7852d7..9e8e0e9 100644
    glPopAttrib ();                               /* Restore the stencil buffer op and function */
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5c0b384..76b2eaf 100644
+index e6ceb75..312a81a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1490,11 +1490,28 @@ struct poly_info
+@@ -1497,11 +1497,28 @@ struct poly_info
  };
  
  static int
@@ -163,7 +163,7 @@ index 5c0b384..76b2eaf 100644
    return 1;
  }
  
-@@ -1630,7 +1647,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1637,7 +1654,8 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.Layer = Layer;
          info.drawn_area = screen;
