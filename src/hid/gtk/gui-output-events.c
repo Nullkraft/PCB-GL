@@ -226,8 +226,8 @@ ghid_note_event_location (GdkEventButton * ev)
       event_x = ev->x;
       event_y = ev->y;
     }
-  gport->pcb_x = VIEW_X (event_x);
-  gport->pcb_y = VIEW_Y (event_y);
+  gport->pcb_x = EVENT_TO_PCB_X (event_x);
+  gport->pcb_y = EVENT_TO_PCB_Y (event_y);
 
   moved = MoveCrosshairAbsolute (gport->pcb_x, gport->pcb_y);
   if (moved)
@@ -737,8 +737,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	  w = ghid_port.width * gport->zoom;
 	  h = ghid_port.height * gport->zoom;
 
-	  x0 = VIEW_X (0);
-	  y0 = VIEW_Y (0);
+	  x0 = EVENT_TO_PCB_X (0);
+	  y0 = EVENT_TO_PCB_Y (0);
 	  ghid_get_coords (NULL, &x, &y);
 	  x -= x0;
 	  y -= y0;
