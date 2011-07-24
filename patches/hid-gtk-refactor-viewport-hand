@@ -1,5 +1,5 @@
-Bottom: 39b2f461ba9d7888fa8ca5bccebb21f1007caa8f
-Top:    88e7a6444da42c32d46a54a29cb0f9123e1c50db
+Bottom: b44307b2cded520265a8471358f96f90caf938bb
+Top:    92380e1b4198f84819206ca110131bfc7086126e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Refactor viewport handling
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 5da8000..b5ea250 100644
+index 4fdb8d3..cbd83c3 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -39,6 +39,7 @@ typedef struct render_priv {
@@ -189,7 +189,7 @@ index 5da8000..b5ea250 100644
    gport->height = save_height;
    gport->view_x0 = save_left;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 29a5407..d080c3f 100644
+index e825b75..78d9539 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -61,16 +61,6 @@
@@ -228,7 +228,7 @@ index 29a5407..d080c3f 100644
  }
  GHidPort;
  
-@@ -517,59 +499,4 @@ extern GdkPixmap *XC_hand_source, *XC_hand_mask;
+@@ -518,59 +500,4 @@ extern GdkPixmap *XC_hand_source, *XC_hand_mask;
  extern GdkPixmap *XC_lock_source, *XC_lock_mask;
  extern GdkPixmap *XC_clock_source, *XC_clock_mask;
  
