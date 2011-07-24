@@ -2127,24 +2127,6 @@ HID_Action ghid_main_action_list[] = {
 REGISTER_ACTIONS (ghid_main_action_list)
 
 
-static int
-flag_flipx (int x)
-{ 
-  return ghid_flip_x;
-} 
-static int  
-flag_flipy (int x)
-{ 
-  return ghid_flip_y;
-} 
-
-HID_Flag ghid_main_flag_list[] = {
-  {"flip_x", flag_flipx, 0},
-  {"flip_y", flag_flipy, 0}
-};  
-
-REGISTER_FLAGS (ghid_main_flag_list)
-
 #include "dolists.h"
 
 /*
