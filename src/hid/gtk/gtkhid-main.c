@@ -1042,8 +1042,9 @@ PCBChanged (int argc, char **argv, int x, int y)
   if (!gport->pixmap)
     return 0;
   RouteStylesChanged (0, NULL, 0, 0);
-  ghid_port_ranges_scale (TRUE);
-  ghid_port_ranges_pan (0, 0, FALSE);
+  ghid_port_ranges_scale ();
+  ghid_port_ranges_changed ();
+  ghid_pan_view_abs (0, 0, 0, 0);
   ghid_zoom_view_fit ();
   ghid_port_ranges_changed ();
   ghid_sync_with_new_layout ();
@@ -1462,8 +1463,8 @@ Center(int argc, char **argv, int x, int y)
     AFAIL (center);
 
   /* Aim to put the given x, y PCB coordinates in the center of the widget */
-  widget_x = gport->width / 2;
-  widget_y = gport->height / 2;
+  widget_x = gport->drawing_area->allocation.width / 2;
+  widget_y = gport->drawing_area->allocation.height / 2;
 
   ghid_pan_view_abs (x, y, widget_x, widget_y);
 
@@ -1533,13 +1534,13 @@ CursorAction(int argc, char **argv, int x, int y)
 {
   UnitList extra_units_x = {
     { "grid",  PCB->Grid, 0 },
-    { "view",  gport->view_width, UNIT_PERCENT },
+//    { "view",  gport->view_width, UNIT_PERCENT },
     { "board", PCB->MaxWidth, UNIT_PERCENT },
     { "", 0, 0 }
   };
   UnitList extra_units_y = {
     { "grid",  PCB->Grid, 0 },
-    { "view",  gport->view_height, UNIT_PERCENT },
+//    { "view",  gport->view_height, UNIT_PERCENT },
     { "board", PCB->MaxHeight, UNIT_PERCENT },
     { "", 0, 0 }
   };
@@ -1711,8 +1712,9 @@ default is given, div=40.
 static int
 ScrollAction (int argc, char **argv, int x, int y)
 {
-  gdouble dx = 0.0, dy = 0.0;
-  int div = 40;
+  double dx = 0.;
+  double dy = 0.;
+  double fraction = 1. / 40.;
 
   if (!ghidgui)
     return 0;
@@ -1721,24 +1723,25 @@ ScrollAction (int argc, char **argv, int x, int y)
     AFAIL (scroll);
 
   if (argc == 2)
-    div = atoi(argv[1]);
+    fraction = 1. / (double) atoi(argv[1]);
 
   if (strcasecmp (argv[0], "up") == 0)
-    dy = -(ghid_port.height * gport->zoom / div);
-  else if (strcasecmp (argv[0], "down") == 0)
-    dy = ghid_port.height * gport->zoom / div;
+    dy = -fraction;
+  else if (strcasecmp (argv[0], "down")  == 0)
+    dy =  fraction;
   else if (strcasecmp (argv[0], "right") == 0)
-    dx = ghid_port.width * gport->zoom / div;
-  else if (strcasecmp (argv[0], "left") == 0)
-    dx = -(ghid_port.width * gport->zoom / div);
+    dx =  fraction;
+  else if (strcasecmp (argv[0], "left")  == 0)
+    dx = -fraction;
   else
     AFAIL (scroll);
 
-  notify_crosshair_change (false);
-  ghid_port_ranges_pan (dx, dy, TRUE);
+//  notify_crosshair_change (false);
+//  ghid_port_ranges_pan (dx, dy, TRUE);
+  ghid_pan_view_rel_to_visible (dx, dy);
   MoveCrosshairRelative (dx, dy);
-  AdjustAttachedObjects ();
-  notify_crosshair_change (true);
+//  AdjustAttachedObjects ();
+//  notify_crosshair_change (true);
 
   return 0;
 }
