@@ -1,0 +1,20 @@
+Bottom: 79cd9ba277f37b241b93c3397d3209371c4434ae
+Top:    03a00ebb9097740711f9ba33cf71189bf8e1ec5f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 16:00:22 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 11fffbc..25105fc 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -215,7 +215,6 @@ ghid_note_event_location (GdkEventButton * ev)
+   gboolean moved;
+   /* FIXME: IFDEF HACK */
+ #ifdef ENABLE_GL
+-  int pcb_x, pcb_y;
+   extern float global_depth; /* FIXME: REMOVE THIS HACK! */
+ #endif
