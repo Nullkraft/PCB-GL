@@ -1,5 +1,5 @@
 Bottom: 460564b429f180577a80f077fd0f4b35ed8e2609
-Top:    460564b429f180577a80f077fd0f4b35ed8e2609
+Top:    5e84ea32a4df67bb1b024d59a466c96b5f6e6314
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
 
@@ -8,4 +8,24 @@ hid/gtk: Refactor viewport handling
 
 ---
 
-
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 7538fb5..54d780a 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -171,15 +171,8 @@ typedef struct
+   gboolean has_entered;
+   gboolean panning;
+ 
+-/* zoom value is PCB units per screen pixel.  Larger numbers mean zooming
+-|  out - the largest value means you are looking at the whole board.
+-*/
+-  gdouble zoom;			/* PCB units per screen pixel.  Larger */
+-  /* numbers mean zooming out. */
+-  gint view_x0,			/* Viewport in PCB coordinates */
+-    view_y0, view_width, view_height, view_x, view_y;
+-
+-  gint crosshair_x, y_crosshair_y;
++  Coord pointer_x, pointer_y;       /* PCB coordinates of the object under the mouse pointer */
++  Coord crosshair_x, y_crosshair_y; /* PCB coordinates of the crosshair set by the CORE      */
+ }
+ GHidPort;
