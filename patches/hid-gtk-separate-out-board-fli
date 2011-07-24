@@ -1,5 +1,5 @@
 Bottom: 299a3edee6777df067c58ea99d2fa1da6cc284b1
-Top:    2bc03f59c7d06431e5d829a7405f892d82c93b72
+Top:    db29c5457ff0fea504478c5c191ecb56245a39ce
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 19:43:51 +0100
 
@@ -12,7 +12,7 @@ it is not possible to save the flip state in the PCB settings any more.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ed34ea1..8632e3a 100644
+index ed34ea1..dc97a17 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -47,6 +47,8 @@ typedef struct render_priv {
@@ -91,7 +91,7 @@ index ed34ea1..8632e3a 100644
 +  glTranslatef (priv->flip_x ?  gport->view_x0 - PCB->MaxWidth  :
 +                               -gport->view_x0,
 +                priv->flip_y ?  gport->view_y0 - PCB->MaxHeight :
-+                              -gport->view_y0, 0);
++                               -gport->view_y0, 0);
    region.X1 = MIN(Px(0), Px(gport->width + 1));
    region.Y1 = MIN(Py(0), Py(gport->height + 1));
    region.X2 = MAX(Px(0), Px(gport->width + 1));
