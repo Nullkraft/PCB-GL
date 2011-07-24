@@ -62,12 +62,6 @@
 #define	FROM_PCB_UNITS(v)	coord_to_unit (Settings.grid_unit, v)
 #define	TO_PCB_UNITS(v)		unit_to_coord (Settings.grid_unit, v)
 
-#define	DRAW_X(x)         (gint)((SIDE_X(x) - gport->view.x0) / gport->view.coord_per_px)
-#define	DRAW_Y(y)         (gint)((SIDE_Y(y) - gport->view.y0) / gport->view.coord_per_px)
-
-#define	EVENT_TO_PCB_X(x) SIDE_X((gint)((x) * gport->view.coord_per_px + gport->view.x0))
-#define	EVENT_TO_PCB_Y(y) SIDE_Y((gint)((y) * gport->view.coord_per_px + gport->view.y0))
-
 /*
  * Used to intercept "special" hotkeys that gtk doesn't usually pass
  * on to the menu hotkeys.  We catch them and put them back where we
@@ -163,7 +157,6 @@ typedef struct
    *drawing_area;		/* and its drawing area */
   GdkPixmap *pixmap, *mask;
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
-  gint width, height;
 
   struct render_priv *render_priv;
 
@@ -177,7 +170,6 @@ typedef struct
   gboolean has_entered;
   gboolean panning;
 
-  view_data view;
   Coord pcb_x, pcb_y;             /* PCB coordinates of the mouse pointer */
   Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair     */
 }
@@ -501,6 +493,7 @@ void ghid_finish_debug_draw (void);
 bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
 bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
 void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
+void ghid_pan_view_rel_to_visible (double fraction_x, double fraction_y);
 void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
 void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
 void ghid_zoom_view_fit (void);

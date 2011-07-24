@@ -52,16 +52,18 @@
 
 #define TOOLTIP_UPDATE_DELAY 200
 
-// static gint x_pan_speed, y_pan_speed;
+static double x_pan_speed, y_pan_speed;
 void
 ghid_port_ranges_changed (void)
 {
+#if 0
   GtkAdjustment *h_adj, *v_adj;
 
   h_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
   v_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
   gport->view.x0 = h_adj->value;
   gport->view.y0 = v_adj->value;
+#endif
 
   ghid_invalidate_all ();
 }
@@ -72,6 +74,7 @@ ghid_port_ranges_changed (void)
 void
 ghid_port_ranges_scale (void)
 {
+#if 0
   GtkAdjustment *adj;
 
   /* Update the scrollbars with PCB units.  So Scale the current
@@ -94,6 +97,7 @@ ghid_port_ranges_scale (void)
   adj->step_increment = adj->page_size / 100.0;
   adj->lower = -gport->view.height;
   adj->upper = PCB->MaxHeight + adj->page_size;
+#endif
 }
 
 
@@ -385,14 +389,11 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 {
   static gboolean first_time_done;
 
-  gport->width = ev->width;
-  gport->height = ev->height;
-
   if (gport->pixmap)
     gdk_pixmap_unref (gport->pixmap);
 
   gport->pixmap = gdk_pixmap_new (widget->window,
-				  gport->width, gport->height, -1);
+				  ev->width, ev->height, -1);
   gport->drawable = gport->pixmap;
 
   if (!first_time_done)
@@ -540,24 +541,20 @@ gint
 ghid_port_window_motion_cb (GtkWidget * widget,
 			    GdkEventMotion * ev, GHidPort * out)
 {
-  gdouble dx, dy;
-  static gint x_prev = -1, y_prev = -1;
-
   gdk_event_request_motions (ev);
 
   if (out->panning)
     {
-      dx = gport->view.coord_per_px * (x_prev - ev->x);
-      dy = gport->view.coord_per_px * (y_prev - ev->y);
-      if (x_prev > 0)
-        ghid_pan_view_rel (dx, dy);
-      x_prev = ev->x;
-      y_prev = ev->y;
+      /* gport->pcb_x and gport->pcb_y will correspond to where the user
+       * grabbed the board. Move the board so that location lands where
+       * the mouse pointer now is, as indicated by the event.
+       */
+      ghid_pan_view_abs (gport->pcb_x, gport->pcb_y, ev->x, ev->y);
+
       return FALSE;
     }
-  x_prev = y_prev = -1;
-  ghid_note_event_location ((GdkEventButton *)ev);
 
+  ghid_note_event_location ((GdkEventButton *)ev);
   queue_tooltip_update (out);
 
   return FALSE;
@@ -596,29 +593,22 @@ ghid_port_window_enter_cb (GtkWidget * widget,
   return FALSE;
 }
 
-#if 0
 static gboolean
 ghid_pan_idle_cb (gpointer data)
 {
-  gdouble dx = 0, dy = 0;
-
   if (gport->has_entered)
     return FALSE;
 
-  dy = gport->view.coord_per_px * y_pan_speed;
-  dx = gport->view.coord_per_px * x_pan_speed;
-  ghid_pan_view_rel (dx, dy);
+  ghid_pan_view_rel_to_visible (x_pan_speed, y_pan_speed);
+
   return TRUE;
 }
-#endif
 
 gint
 ghid_port_window_leave_cb (GtkWidget * widget, 
                            GdkEventCrossing * ev, GHidPort * out)
 {
-  // Coord x0, y0, x, y, dx, dy, w, h;
-  
-  /* printf("leave mode: %d detail: %d\n", ev->mode, ev->detail); */
+//  Coord x0, y0, x, y, dx, dy, w, h;
 
   /* Window leave events can also be triggered because of focus grabs. Some
    * X applications occasionally grab the focus and so trigger this function.
@@ -628,11 +618,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
    */
 
   if(ev->mode != GDK_CROSSING_NORMAL)
-    {
-      return FALSE;
-    }
+    return FALSE;
 
-#if 0
   if(out->has_entered && !ghidgui->in_popup)
     {
       /* if actively drawing, start scrolling */
@@ -642,6 +629,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	  /* GdkEvent coords are set to 0,0 at leave events, so must figure
 	     |  out edge the cursor left.
 	   */
+#if 0
 	  w = ghid_port.width * out->view.coord_per_px;
 	  h = ghid_port.height * out->view.coord_per_px;
 
@@ -651,16 +639,16 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	  x -= x0;
 	  y -= y0;
 
-	  if (gport->view.flip_x)
-	      x = -x;
-	  if (gport->view.flip_y)
-	      y = -y;
+	  if (gport->view.flip_x) x = -x;
+	  if (gport->view.flip_y) y = -y;
 
 	  dx = w - x;
 	  dy = h - y;
+#endif
 
 	  x_pan_speed = y_pan_speed = 2 * ghidgui->auto_pan_speed;
 
+#if 0
 	  if (x < dx)
 	    {
 	      x_pan_speed = -x_pan_speed;
@@ -685,10 +673,10 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	      else
 		x_pan_speed = 0;
 	    }
+#endif
 	  g_idle_add (ghid_pan_idle_cb, NULL);
 	}
     }
-#endif
 
   out->has_entered = FALSE;
 
