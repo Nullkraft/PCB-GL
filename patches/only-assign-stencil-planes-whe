@@ -1,5 +1,5 @@
-Bottom: 74e5c24e26544ca67de54f94f7f8f115b61a5f9e
-Top:    4ba15b0e2dec3253a49da20df0ff205f5636ccfc
+Bottom: 5cb40ab70b3bd485a39e73c1df9d04722f73792a
+Top:    60ee7fc4e2173710cb563daf75115ecb96ae2a78
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 16:03:10 +0100
 
@@ -12,10 +12,10 @@ rat layers.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index fdfc05f..0d17816 100644
+index 9bd78e8..be1184d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -184,6 +184,8 @@ int
+@@ -186,6 +186,8 @@ int
  ghid_set_layer (const char *name, int group, int empty)
  {
    render_priv *priv = gport->render_priv;
@@ -24,7 +24,7 @@ index fdfc05f..0d17816 100644
    int idx = group;
    if (idx >= 0 && idx < max_group)
      {
-@@ -198,41 +200,56 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -200,41 +202,56 @@ ghid_set_layer (const char *name, int group, int empty)
        idx = PCB->LayerGroups.Entries[group][idx];
    }
  

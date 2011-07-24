@@ -1,5 +1,5 @@
-Bottom: d6e80bb81b5e4be7ac463c4f8cab61a9cdec2880
-Top:    13dfb3cce7256902e8e39f3d87ede74548312ee1
+Bottom: 582a9f2b776a6b513465d403427c979c51cda0fc
+Top:    cebf0c3128ad09bece511aa8ce8b7dc71f1ac7db
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 16:03:09 +0100
 
@@ -11,10 +11,10 @@ Use them rather than the GLU tessellator
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 03d2962..cef826a 100644
+index 84930e1..2857b6d 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -555,12 +555,10 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -554,12 +554,10 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
@@ -30,7 +30,7 @@ index 03d2962..cef826a 100644
  
    /* If the contour is round, and hidgl_fill_circle would use
     * less slices than we have vertices to draw it, then call
-@@ -574,22 +572,12 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices,
+@@ -573,22 +571,12 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices,
      }
    }
  
@@ -56,7 +56,7 @@ index 03d2962..cef826a 100644
    double scale;
  };
  
-@@ -604,7 +592,7 @@ do_hole (const BoxType *b, void *cl)
+@@ -603,7 +591,7 @@ do_hole (const BoxType *b, void *cl)
      return 0;
    }
  
@@ -65,7 +65,7 @@ index 03d2962..cef826a 100644
    return 1;
  }
  
-@@ -616,17 +604,8 @@ static int assigned_bits = 0;
+@@ -615,17 +603,8 @@ static int assigned_bits = 0;
  void
  hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
  {
@@ -83,7 +83,7 @@ index 03d2962..cef826a 100644
  
    info.scale = scale;
    global_scale = scale;
-@@ -637,31 +616,25 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -636,31 +615,25 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
        return;
      }
  
@@ -124,7 +124,7 @@ index 03d2962..cef826a 100644
    glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                  GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
    glStencilMask (stencil_bit);                          /* Only write to our stencil bit */
-@@ -676,11 +649,11 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -675,11 +648,11 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    hidgl_flush_triangles (&buffer);
  
    glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
@@ -138,7 +138,7 @@ index 03d2962..cef826a 100644
    glStencilFunc (GL_GEQUAL, 0, assigned_bits);  /* Pass stencil test if all assigned bits clear, */
                                                  /* reference is all assigned bits so we set */
                                                  /* any bits permitted by the stencil writemask */
-@@ -688,17 +661,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -687,17 +660,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  
    /* Draw the polygon outer */

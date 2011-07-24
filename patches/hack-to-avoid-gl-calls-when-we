@@ -1,5 +1,5 @@
-Bottom: 1687a5b26f402469de4028e7baa3087e7793f1b1
-Top:    1197367ac1f31f1d0c0986386e69838b32ee3225
+Bottom: 12382fef1aa7757f9ece279e0d3ec0585126f969
+Top:    7f1a491676f172f7cf32d35a92f8fe4d28707973
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 16:03:09 +0100
 
@@ -9,7 +9,7 @@ Hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e658434..0f9ad6f 100644
+index fd5ad6c..a1569cc 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -39,6 +39,7 @@ RCSID ("$Id$");
@@ -20,7 +20,7 @@ index e658434..0f9ad6f 100644
  
  /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
  */
-@@ -446,6 +447,15 @@ set_gl_color_for_gc (hidGC gc)
+@@ -448,6 +449,15 @@ set_gl_color_for_gc (hidGC gc)
      return;
  
    free (priv->current_colorname);
@@ -36,7 +36,7 @@ index e658434..0f9ad6f 100644
    priv->current_colorname = strdup (gc->colorname);
    priv->current_alpha_mult = gc->alpha_mult;
  
-@@ -831,6 +841,9 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -832,6 +842,9 @@ ghid_show_crosshair (gboolean paint_new_location)
    if (!paint_new_location)
      return;
  
