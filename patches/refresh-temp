@@ -1,0 +1,49 @@
+Bottom: 052ee4f59f81ec5e4f7465bf42a9017cd3c26cf3
+Top:    4b18ec13ce943d601d951c03e085c3fc4a602bfb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 01:22:45 +0100
+
+Refresh of silly-space-navigator-interfac
+
+---
+
+diff --git a/src/hid/gtk/snavi.c b/src/hid/gtk/snavi.c
+index abbf93f..2f58f02 100644
+--- a/src/hid/gtk/snavi.c
++++ b/src/hid/gtk/snavi.c
+@@ -86,7 +86,7 @@ gboolean snavi_event (GIOChannel   *source,
+                       gpointer      data)
+ {
+   static gint axes[6] = { 0, 0, 0, 0, 0, 0 };
+-  static gint buttons[2] = { 0, 0 };
++  /* static gint buttons[2] = { 0, 0 }; */
+   int i = 0;
+ 
+   struct       input_event event;
+@@ -114,8 +114,7 @@ gboolean snavi_event (GIOChannel   *source,
+ 
+       case EV_KEY:
+         if (event.code >= BTN_0 && event.code <= BTN_1)
+-          buttons[event.code - BTN_0] = event.value;
+-
++          /* buttons[event.code - BTN_0] = event.value; */
+           button_cb (event.code - BTN_0, event.value, cb_userdata);
+         break;
+ 
+@@ -160,7 +159,6 @@ setup_snavi (void (*update_pan)(int, int, int, gpointer),
+              void (*button)(int, int, gpointer),
+              gpointer data)
+ {
+-  int event_id;
+   GIOChannel *snavi;
+ 
+   update_pan_cb = update_pan;
+@@ -184,7 +182,7 @@ setup_snavi (void (*update_pan)(int, int, int, gpointer),
+     {
+       g_io_channel_set_encoding (snavi, NULL, NULL);
+       g_io_channel_set_buffered (snavi, FALSE);
+-      event_id = g_io_add_watch (snavi, G_IO_IN, snavi_event, NULL);
++      g_io_add_watch (snavi, G_IO_IN, snavi_event, NULL);
+     }
+ 
+   return snavi;
