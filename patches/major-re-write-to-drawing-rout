@@ -1,4 +1,4 @@
-Bottom: 35842d1b9c8c5eb02bf96ac8495a0fdcba1bd315
+Bottom: 6b5713d6b293ef1dd5778d13c30e29861775f9b8
 Top:    815d1c37f239597ac681e2e0527b08f942a21653
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 01:16:23 +0100
@@ -90,7 +90,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6226f31..290b00b 100644
+index 3f7a77f..290b00b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -233,128 +233,6 @@ index 6226f31..290b00b 100644
  }
  
  static void
-@@ -659,9 +715,9 @@ static void
- draw_right_cross (gint x, gint y, gint z)
- {
-   glVertex3i (x, 0, z);
--  glVertex3i (x, gport->height, z);
-+  glVertex3i (x, PCB->MaxHeight, z);
-   glVertex3i (0, y, z);
--  glVertex3i (gport->width, y, z);
-+  glVertex3i (PCB->MaxWidth, y, z);
- }
- 
- static void
-@@ -669,25 +725,25 @@ draw_slanted_cross (gint x, gint y, gint z)
- {
-   gint x0, y0, x1, y1;
- 
--  x0 = x + (gport->height - y);
--  x0 = MAX(0, MIN (x0, gport->width));
-+  x0 = x + (PCB->MaxHeight - y);
-+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
-   x1 = x - y;
--  x1 = MAX(0, MIN (x1, gport->width));
--  y0 = y + (gport->width - x);
--  y0 = MAX(0, MIN (y0, gport->height));
-+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
-+  y0 = y + (PCB->MaxWidth - x);
-+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
-   y1 = y - x;
--  y1 = MAX(0, MIN (y1, gport->height));
-+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
-   glVertex3i (x0, y0, z);
-   glVertex3i (x1, y1, z);
- 
--  x0 = x - (gport->height - y);
--  x0 = MAX(0, MIN (x0, gport->width));
-+  x0 = x - (PCB->MaxHeight - y);
-+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
-   x1 = x + y;
--  x1 = MAX(0, MIN (x1, gport->width));
-+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
-   y0 = y + x;
--  y0 = MAX(0, MIN (y0, gport->height));
--  y1 = y - (gport->width - x);
--  y1 = MAX(0, MIN (y1, gport->height));
-+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
-+  y1 = y - (PCB->MaxWidth - x);
-+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
-   glVertex3i (x0, y0, z);
-   glVertex3i (x1, y1, z);
- }
-@@ -698,47 +754,47 @@ draw_dozen_cross (gint x, gint y, gint z)
-   gint x0, y0, x1, y1;
-   gdouble tan60 = sqrt (3);
- 
--  x0 = x + (gport->height - y) / tan60;
--  x0 = MAX(0, MIN (x0, gport->width));
-+  x0 = x + (PCB->MaxHeight - y) / tan60;
-+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
-   x1 = x - y / tan60;
--  x1 = MAX(0, MIN (x1, gport->width));
--  y0 = y + (gport->width - x) * tan60;
--  y0 = MAX(0, MIN (y0, gport->height));
-+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
-+  y0 = y + (PCB->MaxWidth - x) * tan60;
-+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
-   y1 = y - x * tan60;
--  y1 = MAX(0, MIN (y1, gport->height));
-+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
-   glVertex3i (x0, y0, z);
-   glVertex3i (x1, y1, z);
- 
--  x0 = x + (gport->height - y) * tan60;
--  x0 = MAX(0, MIN (x0, gport->width));
-+  x0 = x + (PCB->MaxHeight - y) * tan60;
-+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
-   x1 = x - y * tan60;
--  x1 = MAX(0, MIN (x1, gport->width));
--  y0 = y + (gport->width - x) / tan60;
--  y0 = MAX(0, MIN (y0, gport->height));
-+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
-+  y0 = y + (PCB->MaxWidth - x) / tan60;
-+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
-   y1 = y - x / tan60;
--  y1 = MAX(0, MIN (y1, gport->height));
-+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
-   glVertex3i (x0, y0, z);
-   glVertex3i (x1, y1, z);
- 
--  x0 = x - (gport->height - y) / tan60;
--  x0 = MAX(0, MIN (x0, gport->width));
-+  x0 = x - (PCB->MaxHeight - y) / tan60;
-+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
-   x1 = x + y / tan60;
--  x1 = MAX(0, MIN (x1, gport->width));
-+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
-   y0 = y + x * tan60;
--  y0 = MAX(0, MIN (y0, gport->height));
--  y1 = y - (gport->width - x) * tan60;
--  y1 = MAX(0, MIN (y1, gport->height));
-+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
-+  y1 = y - (PCB->MaxWidth - x) * tan60;
-+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
-   glVertex3i (x0, y0, z);
-   glVertex3i (x1, y1, z);
- 
--  x0 = x - (gport->height - y) * tan60;
--  x0 = MAX(0, MIN (x0, gport->width));
-+  x0 = x - (PCB->MaxHeight - y) * tan60;
-+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
-   x1 = x + y * tan60;
--  x1 = MAX(0, MIN (x1, gport->width));
-+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
-   y0 = y + x / tan60;
--  y0 = MAX(0, MIN (y0, gport->height));
--  y1 = y - (gport->width - x) / tan60;
--  y1 = MAX(0, MIN (y1, gport->height));
-+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
-+  y1 = y - (PCB->MaxWidth - x) / tan60;
-+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
-   glVertex3i (x0, y0, z);
-   glVertex3i (x1, y1, z);
- }
 @@ -880,6 +936,10 @@ ghid_start_drawing (GHidPort *port)
  
    port->render_priv->in_context = true;
