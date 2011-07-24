@@ -1,5 +1,5 @@
 Bottom: e22868cc59246a3a3c633e640e0c072d93e7aab4
-Top:    07c111717c34ed00818872098a4062a2c9d574d2
+Top:    81b8742f27c0ab40c595978be4d6cf995cfa2e3a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 01:16:22 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b97ee7c..cc186c7 100644
+index b97ee7c..1b9fbce 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -74,7 +74,7 @@ index b97ee7c..cc186c7 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -945,20 +963,76 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -945,20 +963,74 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilMask (0);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -138,10 +138,8 @@ index b97ee7c..cc186c7 100644
 +  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
 +  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 +
-+  region.X1 = MIN (Px (min_x), Px (max_x + 1));
-+  region.X2 = MAX (Px (min_x), Px (max_x + 1));
-+  region.Y1 = MIN (Py (min_y), Py (max_y + 1));
-+  region.Y2 = MAX (Py (min_y), Py (max_y + 1));
++  region.X1 = min_x; region.X2 = max_x + 1;
++  region.Y1 = min_y; region.Y2 = max_y + 1;
  
    glColor3f (port->bg_color.red / 65535.,
               port->bg_color.green / 65535.,
@@ -159,7 +157,7 @@ index b97ee7c..cc186c7 100644
    glEnd ();
  
    ghid_draw_bg_image ();
-@@ -1062,7 +1136,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1062,7 +1134,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -168,7 +166,7 @@ index b97ee7c..cc186c7 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1174,7 +1248,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1174,7 +1246,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -177,7 +175,7 @@ index b97ee7c..cc186c7 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1285,3 +1359,196 @@ ghid_finish_debug_draw (void)
+@@ -1285,3 +1357,196 @@ ghid_finish_debug_draw (void)
  
    ghid_end_drawing (gport);
  }
