@@ -1,4 +1,4 @@
-Bottom: 1543b8492b542d5e00de2256e73116aede4037cb
+Bottom: f40f04391e8e8ba928653a35f93565b2584c219b
 Top:    3ec6892cc5c9e99b224e4f9ed107706de4aad1b9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 18:51:45 +0100
@@ -17,7 +17,7 @@ factor to trigger the zoom-to-fit feature.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index c71e70b..a92937f 100644
+index 9cab107..a92937f 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -31,6 +31,7 @@ RCSID ("$Id$");
@@ -46,14 +46,7 @@ index c71e70b..a92937f 100644
        return 0;
      }
  
-@@ -222,12 +223,19 @@ zoom_to (double new_zoom, int x, int y)
-   ghid_set_status_line_label ();
- }
- 
--void
-+static void
- zoom_by (double factor, int x, int y)
- {
+@@ -228,6 +229,13 @@ zoom_by (double factor, int x, int y)
    zoom_to (gport->zoom * factor, x, y);
  }
  
