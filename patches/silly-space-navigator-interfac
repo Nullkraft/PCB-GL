@@ -1,5 +1,5 @@
-Bottom: 11ad095e4eb0f115d67cf9355e68ce5e155680a0
-Top:    7b5693514d5e622046254c0cd39215dad7c6152f
+Bottom: e00561e73771e7704b41e5b6f09298b355baeb57
+Top:    a5acfe605aede4ff10e569767bd32999dd71c4be
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 16:03:08 +0100
 
@@ -178,10 +178,10 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index b7a67dd..34e8a30 100644
+index d033682..cbe5a00 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -146,6 +146,8 @@ typedef struct
+@@ -143,6 +143,8 @@ typedef struct
      library_window_width,
      library_window_height,
      netlist_window_height, history_size, settings_mode, auto_pan_speed;
@@ -190,7 +190,7 @@ index b7a67dd..34e8a30 100644
  }
  GhidGui;
  
-@@ -158,6 +160,7 @@ typedef struct
+@@ -155,6 +157,7 @@ typedef struct
  {
    GtkWidget *top_window,	/* toplevel widget              */
     *drawing_area;		/* and its drawing area */
@@ -198,7 +198,7 @@ index b7a67dd..34e8a30 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -308,6 +311,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -305,6 +308,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
