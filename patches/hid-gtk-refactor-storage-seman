@@ -1,5 +1,5 @@
-Bottom: 28f3a0fe7f84747dff3ec269302a64aa45ae9542
-Top:    4a7506b5c449f88fd2cd017255387e7c69a1d3da
+Bottom: 814924afcf965eb4abf2381590363309574c64b2
+Top:    572fb2632bed8440d0b863935e1022cf9fb8cc18
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-26 23:29:46 +0000
 
@@ -15,7 +15,7 @@ to reflect the change of semantics.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 6a8d904..e38cea4 100644
+index a3c3d29..8500f6a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -241,28 +241,30 @@ zoom_to (double new_zoom, int x, int y)
@@ -74,7 +74,7 @@ index 6a8d904..e38cea4 100644
      }
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 1f9a31a..0a90931 100644
+index abf8f53..7ab56f0 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -166,19 +166,21 @@ ghid_port_ranges_zoom (gdouble zoom)
@@ -130,7 +130,7 @@ index 1f9a31a..0a90931 100644
      {
        AdjustAttachedObjects ();
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 31ee636..efe6b3b 100644
+index 1253511..991757b 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -177,7 +177,8 @@ typedef struct
@@ -141,5 +141,5 @@ index 31ee636..efe6b3b 100644
 +    view_y0, view_width, view_height;
 +  Coord pcb_x, pcb_y;
  
-   gint x_crosshair, y_crosshair;
+   gint crosshair_x, crosshair_y;
  }
