@@ -62,14 +62,15 @@
 #define	TO_PCB_UNITS(v)		(Settings.grid_units_mm ? MM_TO_COORD(v) : MIL_TO_COORD(v))
 
 extern int ghid_flip_x, ghid_flip_y;
-#define SIDE_X(x)   ((ghid_flip_x ? PCB->MaxWidth - (x) : (x)))
-#define SIDE_Y(y)   ((ghid_flip_y ? PCB->MaxHeight - (y) : (y)))
+#define FLIP_X(x) (ghid_flip_x ? -(x) : (x))
+#define FLIP_Y(y) (ghid_flip_y ? -(y) : (y))
 
-#define	DRAW_X(x)	(gint)((SIDE_X(x) - gport->view_x0) / gport->zoom)
-#define	DRAW_Y(y)	(gint)((SIDE_Y(y) - gport->view_y0) / gport->zoom)
+#define SCREEN_X(x) (int)((double)((x) - gport->view_x0) / FLIP_X (gport->zoom) + 0.5)
+#define SCREEN_Y(y) (int)((double)((y) - gport->view_y0) / FLIP_Y (gport->zoom) + 0.5)
+#define SCREEN_R(r) (int)((double)(r) / gport->zoom + 0.5)
 
-#define	VIEW_X(x)	SIDE_X((gint)((x) * gport->zoom + gport->view_x0))
-#define	VIEW_Y(y)	SIDE_Y((gint)((y) * gport->zoom + gport->view_y0))
+#define PCB_X(x) (int)((double)(x) * FLIP_X (gport->zoom) + gport->view_x0)
+#define PCB_Y(y) (int)((double)(y) * FLIP_Y (gport->zoom) + gport->view_y0)
 
 /*
  * Used to intercept "special" hotkeys that gtk doesn't usually pass
@@ -511,65 +512,8 @@ void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
 
 
-
-
 extern GdkPixmap *XC_hand_source, *XC_hand_mask;
 extern GdkPixmap *XC_lock_source, *XC_lock_mask;
 extern GdkPixmap *XC_clock_source, *XC_clock_mask;
-
-
-/* Coordinate conversions */
-/* Px converts view->pcb, Vx converts pcb->view */
-static inline int
-Vx (int x)
-{
-  int rv;
-  if (ghid_flip_x)
-    rv = (PCB->MaxWidth - x - gport->view_x0) / gport->zoom + 0.5;
-  else
-    rv = (x - gport->view_x0) / gport->zoom + 0.5;
-  return rv;
-}
-
-static inline int
-Vy (int y)
-{
-  int rv;
-  if (ghid_flip_y)
-    rv = (PCB->MaxHeight - y - gport->view_y0) / gport->zoom + 0.5;
-  else
-    rv = (y - gport->view_y0) / gport->zoom + 0.5;
-  return rv;
-}
-
-static inline int
-Vz (int z)
-{
-  return z / gport->zoom + 0.5;
-}
-
-static inline int
-Px (int x)
-{
-  int rv = x * gport->zoom + gport->view_x0;
-  if (ghid_flip_x)
-    rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
-  return  rv;
-}
-
-static inline int
-Py (int y)
-{
-  int rv = y * gport->zoom + gport->view_y0;
-  if (ghid_flip_y)
-    rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
-  return  rv;
-}
-
-static inline int
-Pz (int z)
-{
-  return (z * gport->zoom);
-}
 
 #endif /* __GHID_INCLUDED__  */
