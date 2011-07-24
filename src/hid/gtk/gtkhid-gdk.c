@@ -1312,6 +1312,8 @@ ghid_finish_debug_draw (void)
 bool
 ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
 {
+  render_priv *priv = gport->render_priv;
+
   *pcb_x = EVENT_TO_PCB_X (event_x);
   *pcb_y = EVENT_TO_PCB_Y (event_y);
 
