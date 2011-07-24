@@ -1186,7 +1186,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   glTranslatef (priv->flip_x ?  gport->view_x0 - PCB->MaxWidth  :
                                -gport->view_x0,
                 priv->flip_y ?  gport->view_y0 - PCB->MaxHeight :
-                              -gport->view_y0, 0);
+                               -gport->view_y0, 0);
   region.X1 = MIN(Px(0), Px(gport->width + 1));
   region.Y1 = MIN(Py(0), Py(gport->height + 1));
   region.X2 = MAX(Px(0), Px(gport->width + 1));
