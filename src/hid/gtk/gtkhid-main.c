@@ -44,30 +44,30 @@ ghid_pan_fixup ()
    * don't pan so far to the right that we see way past the right 
    * edge of the board.
    */
-  if (gport->view_x0 > PCB->MaxWidth - gport->view_width)
-    gport->view_x0 = PCB->MaxWidth - gport->view_width;
+//  if (gport->view_x0 > PCB->MaxWidth - gport->view_width)
+//    gport->view_x0 = PCB->MaxWidth - gport->view_width;
 
   /*
    * don't pan so far down that we see way past the bottom edge of
    * the board.
    */
-  if (gport->view_y0 > PCB->MaxHeight - gport->view_height)
-    gport->view_y0 = PCB->MaxHeight - gport->view_height;
+//  if (gport->view_y0 > PCB->MaxHeight - gport->view_height)
+//    gport->view_y0 = PCB->MaxHeight - gport->view_height;
 
   /* don't view above or to the left of the board... ever */
-  if (gport->view_x0 < 0)
-    gport->view_x0 = 0;
+//  if (gport->view_x0 < 0)
+//    gport->view_x0 = 0;
 
-   if (gport->view_y0 < 0)
-    gport->view_y0 = 0;
+//   if (gport->view_y0 < 0)
+//    gport->view_y0 = 0;
 
   /* if we can see the entire board and some, then zoom to fit */
-  if (gport->view_width > PCB->MaxWidth &&
-      gport->view_height > PCB->MaxHeight)
-    {
-      zoom_fit ();
-      return;
-    }
+ // if (gport->view_width > PCB->MaxWidth &&
+ //     gport->view_height > PCB->MaxHeight)
+ //   {
+ //     zoom_fit ();
+ //     return;
+ //   }
 
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
@@ -373,7 +373,8 @@ ghid_set_crosshair (int x, int y, int action)
        * but the value we've been given is relative to your drawing area
        */
       gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
-      gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
+      gdk_display_warp_pointer (display, screen, xofs + SCREEN_X (x),
+                                                 yofs + SCREEN_Y (y));
     }
 }
 
@@ -1629,25 +1630,25 @@ Center(int argc, char **argv, int x, int y)
   if (argc != 0)
     AFAIL (center);
 
-  x = GRIDFIT_X (SIDE_X (x), PCB->Grid);
-  y = GRIDFIT_Y (SIDE_Y (y), PCB->Grid);
+  x = GRIDFIT_X (x, PCB->Grid);
+  y = GRIDFIT_Y (y, PCB->Grid);
 
-  w2 = gport->view_width / 2;
-  h2 = gport->view_height / 2;
+  w2 = FLIP_X (gport->view_width) / 2;
+  h2 = FLIP_Y (gport->view_height) / 2;
   x0 = x - w2;
   y0 = y - h2;
 
-  if (x0 < 0)
-    {
-      x0 = 0;
-      x = x0 + w2;
-    }
+//  if (x0 < 0)
+//    {
+//      x0 = 0;
+//      x = x0 + w2;
+//    }
 
-  if (y0 < 0)
-    {
-      y0 = 0;
-      y = y0 + h2;
-    }
+//  if (y0 < 0)
+//    {
+//      y0 = 0;
+//      y = y0 + h2;
+//    }
 
   gport->view_x0 = x0;
   gport->view_y0 = y0;
@@ -1667,7 +1668,8 @@ Center(int argc, char **argv, int x, int y)
    * but the value we've been given is relative to your drawing area
    */
   gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
-  gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
+  gdk_display_warp_pointer (display, screen, xofs + SCREEN_X (x),
+                                             yofs + SCREEN_Y (y));
 
   return 0;
 }
