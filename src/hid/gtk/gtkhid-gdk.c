@@ -33,6 +33,7 @@ static int cur_mask = -1;
 static int mask_seq = 0;
 
 typedef struct view_data {
+  double pcb_units_per_pixel;
   bool flip_x;
   bool flip_y;
 } view_data;
@@ -276,10 +277,10 @@ ghid_draw_bg_image (void)
   if (!ghidgui->bg_pixbuf)
     return;
 
-  w = PCB->MaxWidth / gport->zoom;
-  h = PCB->MaxHeight / gport->zoom;
-  x = gport->view_x0 / gport->zoom;
-  y = gport->view_y0 / gport->zoom;
+  w = PCB->MaxWidth  / priv->view.pcb_units_per_pixel;
+  h = PCB->MaxHeight / priv->view.pcb_units_per_pixel;
+  x = gport->view_x0 / priv->view.pcb_units_per_pixel;
+  y = gport->view_y0 / priv->view.pcb_units_per_pixel;
 
   if (w_scaled != w || h_scaled != h)
     {
@@ -572,7 +573,7 @@ ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
   dy2 = Vy ((double) y2);
 
   if (!ClipLine (0, 0, gport->width, gport->height,
-		 &dx1, &dy1, &dx2, &dy2, gc->width / gport->zoom))
+		 &dx1, &dy1, &dx2, &dy2, gc->width / priv->view.pcb_units_per_pixel))
     return;
 
   USE_GC (gc);
@@ -587,8 +588,8 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
   gint w, h, radius;
   render_priv *priv = gport->render_priv;
 
-  w = gport->width * gport->zoom;
-  h = gport->height * gport->zoom;
+  w = gport->width  * priv->view.pcb_units_per_pixel;
+  h = gport->height * priv->view.pcb_units_per_pixel;
   radius = (xradius > yradius) ? xradius : yradius;
   if (SIDE_X (cx) < gport->view_x0 - radius
       || SIDE_X (cx) > gport->view_x0 + w + radius
@@ -625,8 +626,8 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
   render_priv *priv = gport->render_priv;
 
   lw = gc->width;
-  w = gport->width * gport->zoom;
-  h = gport->height * gport->zoom;
+  w = gport->width  * priv->view.pcb_units_per_pixel;
+  h = gport->height * priv->view.pcb_units_per_pixel;
 
   if ((SIDE_X (x1) < gport->view_x0 - lw
        && SIDE_X (x2) < gport->view_x0 - lw)
@@ -668,8 +669,8 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
   gint w, h, vr;
   render_priv *priv = gport->render_priv;
 
-  w = gport->width * gport->zoom;
-  h = gport->height * gport->zoom;
+  w = gport->width *  priv->view.pcb_units_per_pixel;
+  h = gport->height * priv->view.pcb_units_per_pixel;
   if (SIDE_X (cx) < gport->view_x0 - radius
       || SIDE_X (cx) > gport->view_x0 + w + radius
       || SIDE_Y (cy) < gport->view_y0 - radius
@@ -711,8 +712,8 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
   render_priv *priv = gport->render_priv;
 
   lw = gc->width;
-  w = gport->width * gport->zoom;
-  h = gport->height * gport->zoom;
+  w = gport->width  * priv->view.pcb_units_per_pixel;
+  h = gport->height * priv->view.pcb_units_per_pixel;
 
   if ((SIDE_X (x1) < gport->view_x0 - lw
        && SIDE_X (x2) < gport->view_x0 - lw)
@@ -1200,7 +1201,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   double xz, yz;
   render_priv *priv = gport->render_priv;
 
-  save_zoom = gport->zoom;
+  save_zoom = priv->view.pcb_units_per_pixel;
   save_width = gport->width;
   save_height = gport->height;
   save_left = gport->view_x0;
@@ -1216,15 +1217,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   xz = (double) pinout->x_max / da_w;
   yz = (double) pinout->y_max / da_h;
   if (xz > yz)
-    gport->zoom = xz;
+    priv->view.pcb_units_per_pixel = xz;
   else
-    gport->zoom = yz;
+    priv->view.pcb_units_per_pixel = yz;
 
   gport->drawable = widget->window;
   gport->width = da_w;
   gport->height = da_h;
-  gport->view_width = da_w * gport->zoom;
-  gport->view_height = da_h * gport->zoom;
+  gport->view_width = da_w * priv->view.pcb_units_per_pixel;
+  gport->view_height = da_h * priv->view.pcb_units_per_pixel;
   gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
   gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
 
@@ -1235,7 +1236,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   hid_expose_callback (&ghid_hid, NULL, &pinout->element);
 
   gport->drawable = save_drawable;
-  gport->zoom = save_zoom;
+  priv->view.pcb_units_per_pixel = save_zoom;
   gport->width = save_width;
   gport->height = save_height;
   gport->view_x0 = save_left;
@@ -1252,15 +1253,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   xz = (double) pinout->x_max / da_w;
   yz = (double) pinout->y_max / da_h;
   if (xz > yz)
-    gport->zoom = xz;
+    priv->view.pcb_units_per_pixel = xz;
   else
-    gport->zoom = yz;
+    priv->view.pcb_units_per_pixel = yz;
 
   gport->drawable = widget->window;
   gport->width = da_w;
   gport->height = da_h;
-  gport->view_width = da_w * gport->zoom;
-  gport->view_height = da_h * gport->zoom;
+  gport->view_width = da_w * priv->view.pcb_units_per_pixel;
+  gport->view_height = da_h * priv->view.pcb_units_per_pixel;
   gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
   gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
 
@@ -1271,7 +1272,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   hid_expose_callback (&ghid_hid, NULL, &pinout->element);
 
   gport->drawable = save_drawable;
-  gport->zoom = save_zoom;
+  priv->view.pcb_units_per_pixel = save_zoom;
   gport->width = save_width;
   gport->height = save_height;
   gport->view_x0 = save_left;
@@ -1295,7 +1296,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   render_priv *priv = gport->render_priv;
 
   save_drawable = gport->drawable;
-  save_zoom = gport->zoom;
+  save_zoom = priv->view.pcb_units_per_pixel;
   save_width = gport->width;
   save_height = gport->height;
   save_left = gport->view_x0;
@@ -1309,11 +1310,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    */
 
   gport->drawable = pixmap;
-  gport->zoom = zoom;
+  priv->view.pcb_units_per_pixel = zoom;
   gport->width = width;
   gport->height = height;
-  gport->view_width = width * gport->zoom;
-  gport->view_height = height * gport->zoom;
+  gport->view_width =  width  * priv->view.pcb_units_per_pixel;
+  gport->view_height = height * priv->view.pcb_units_per_pixel;
   gport->view_x0 = priv->view.flip_x ? PCB->MaxWidth - cx : cx;
   gport->view_x0 -= gport->view_height / 2;
   gport->view_y0 = priv->view.flip_y ? PCB->MaxHeight - cy : cy;
@@ -1330,7 +1331,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   hid_expose_callback (&ghid_hid, &region, NULL);
 
   gport->drawable = save_drawable;
-  gport->zoom = save_zoom;
+  priv->view.pcb_units_per_pixel = save_zoom;
   gport->width = save_width;
   gport->height = save_height;
   gport->view_x0 = save_left;
