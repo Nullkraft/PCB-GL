@@ -1,4 +1,4 @@
-Bottom: 2bc03f59c7d06431e5d829a7405f892d82c93b72
+Bottom: db29c5457ff0fea504478c5c191ecb56245a39ce
 Top:    48140522e7f11c6556d5944362e9526499d662cc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
@@ -189,7 +189,7 @@ index 4fdb8d3..cbd83c3 100644
    gport->height = save_height;
    gport->view_x0 = save_left;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8632e3a..cb386aa 100644
+index dc97a17..cb386aa 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -40,6 +40,15 @@ static hidGC current_gc = NULL;
@@ -390,7 +390,7 @@ index 8632e3a..cb386aa 100644
    gport->view_x0 = priv->flip_x ? PCB->MaxWidth - cx : cx;
    gport->view_x0 -= gport->view_height / 2;
    gport->view_y0 = priv->flip_y ? PCB->MaxHeight - cy : cy;
-@@ -1181,12 +1200,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1181,8 +1200,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -401,11 +401,6 @@ index 8632e3a..cb386aa 100644
    glTranslatef (priv->flip_x ?  gport->view_x0 - PCB->MaxWidth  :
                                 -gport->view_x0,
                  priv->flip_y ?  gport->view_y0 - PCB->MaxHeight :
--                              -gport->view_y0, 0);
-+                               -gport->view_y0, 0);
-   region.X1 = MIN(Px(0), Px(gport->width + 1));
-   region.Y1 = MIN(Py(0), Py(gport->height + 1));
-   region.X2 = MAX(Px(0), Px(gport->width + 1));
 @@ -1206,7 +1225,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    g_object_unref (glconfig);
    g_object_unref (glcontext);
