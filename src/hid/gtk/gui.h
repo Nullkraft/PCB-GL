@@ -177,7 +177,8 @@ typedef struct
   gdouble zoom;			/* PCB units per screen pixel.  Larger */
   /* numbers mean zooming out. */
   gint view_x0,			/* Viewport in PCB coordinates */
-    view_y0, view_width, view_height, view_x, view_y;
+    view_y0, view_width, view_height;
+  Coord pcb_x, pcb_y;
 
   gint x_crosshair, y_crosshair;
 }
