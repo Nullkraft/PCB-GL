@@ -1,5 +1,5 @@
 Bottom: c9f907bf69829fba57668aed91398fda552939dd
-Top:    052ee4f59f81ec5e4f7465bf42a9017cd3c26cf3
+Top:    4b18ec13ce943d601d951c03e085c3fc4a602bfb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 01:16:24 +0100
 
@@ -211,10 +211,10 @@ index d033682..cbe5a00 100644
  */
 diff --git a/src/hid/gtk/snavi.c b/src/hid/gtk/snavi.c
 new file mode 100644
-index 0000000..abbf93f
+index 0000000..2f58f02
 --- /dev/null
 +++ b/src/hid/gtk/snavi.c
-@@ -0,0 +1,191 @@
+@@ -0,0 +1,189 @@
 +/*
 + * spacenavi.c - a proof-of-concept hack to access the
 + * 3dconnexion space navigator
@@ -303,7 +303,7 @@ index 0000000..abbf93f
 +                      gpointer      data)
 +{
 +  static gint axes[6] = { 0, 0, 0, 0, 0, 0 };
-+  static gint buttons[2] = { 0, 0 };
++  /* static gint buttons[2] = { 0, 0 }; */
 +  int i = 0;
 +
 +  struct       input_event event;
@@ -331,8 +331,7 @@ index 0000000..abbf93f
 +
 +      case EV_KEY:
 +        if (event.code >= BTN_0 && event.code <= BTN_1)
-+          buttons[event.code - BTN_0] = event.value;
-+
++          /* buttons[event.code - BTN_0] = event.value; */
 +          button_cb (event.code - BTN_0, event.value, cb_userdata);
 +        break;
 +
@@ -377,7 +376,6 @@ index 0000000..abbf93f
 +             void (*button)(int, int, gpointer),
 +             gpointer data)
 +{
-+  int event_id;
 +  GIOChannel *snavi;
 +
 +  update_pan_cb = update_pan;
@@ -401,7 +399,7 @@ index 0000000..abbf93f
 +    {
 +      g_io_channel_set_encoding (snavi, NULL, NULL);
 +      g_io_channel_set_buffered (snavi, FALSE);
-+      event_id = g_io_add_watch (snavi, G_IO_IN, snavi_event, NULL);
++      g_io_add_watch (snavi, G_IO_IN, snavi_event, NULL);
 +    }
 +
 +  return snavi;
