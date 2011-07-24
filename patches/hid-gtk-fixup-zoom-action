@@ -5,8 +5,11 @@ Date:   2011-07-24 17:44:29 +0100
 
 hid/gtk: Fixup Zoom action.
 
-If the passed coordinates are both zero, we pass the PCB coordinates of the
-board center into a function which currently expects screen coordinates. Fail.
+If the passed coordinates are both zero, we pass the PCB coordinates
+of the board center into a function which currently expects screen
+coordinates. FAIL.
+
+Remove that special case code - it should just work without it.
 
 
 ---
