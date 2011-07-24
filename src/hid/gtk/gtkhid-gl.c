@@ -1019,8 +1019,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
-  region.X1 = min_x; region.X2 = max_x + 1;
-  region.Y1 = min_y; region.Y2 = max_y + 1;
+  region.X1 = min_x;  region.X2 = max_x + 1;
+  region.Y1 = min_y;  region.Y2 = max_y + 1;
 
   glColor3f (port->bg_color.red / 65535.,
              port->bg_color.green / 65535.,
