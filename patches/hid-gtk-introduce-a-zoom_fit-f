@@ -1,0 +1,19 @@
+Bottom: 1543b8492b542d5e00de2256e73116aede4037cb
+Top:    1543b8492b542d5e00de2256e73116aede4037cb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 18:51:45 +0100
+
+hid/gtk: Introduce a zoom_fit() function, remove duplicated code.
+
+Several places in the code invoke a "zoom_fit" type function by calling
+zoom_to() or ghid_port_ranges_zoom() with bogus parameters.
+
+Implement a specific function which restricts this to one location, then
+remove the now redundant ghid_port_ranges_zoom(), which basically just
+duplicated the code from zoom_by() with an added check for a 0.0 zoom
+factor to trigger the zoom-to-fit feature.
+
+
+---
+
+
