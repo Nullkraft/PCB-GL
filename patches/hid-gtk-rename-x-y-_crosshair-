@@ -1,5 +1,5 @@
 Bottom: a6efdf7b585f84eb8578ed6014801ab3b8ef66bd
-Top:    adb7dfa131863105668e032acefc6c89ec053b50
+Top:    814924afcf965eb4abf2381590363309574c64b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:47:12 +0100
 
@@ -80,7 +80,7 @@ index 1f9a31a..abf8f53 100644
    if (description == NULL)
      return FALSE;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 31ee636..7538fb5 100644
+index 31ee636..1253511 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -179,7 +179,7 @@ typedef struct
@@ -88,6 +88,6 @@ index 31ee636..7538fb5 100644
      view_y0, view_width, view_height, view_x, view_y;
  
 -  gint x_crosshair, y_crosshair;
-+  gint crosshair_x, y_crosshair_y;
++  gint crosshair_x, crosshair_y;
  }
  GHidPort;
