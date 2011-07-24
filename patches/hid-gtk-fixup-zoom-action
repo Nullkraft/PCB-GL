@@ -3,13 +3,19 @@ Top:    e997ea6dcfa34b4d6001170a343a856fd2cc7ec3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 17:44:29 +0100
 
-hid/gtk: Fixup Zoom action.
+hid/gtk: Fixup Zoom() and zoom_by() so they don't ignore passed coordinates.
 
-If the passed coordinates are both zero, we pass the PCB coordinates
-of the board center into a function which currently expects screen
-coordinates. FAIL.
+The Zoom() action was passing bogus coordinates (in pixels), and
+zoom_by() was ignoring the passed coordinates and just using the mouse
+pointer location last recorded in gport->pcb_x and gport->pcb_y.
 
-Remove that special case code - it should just work without it.
+Fix zoom_by() to use the passed coordinates, fix Zoom() to not mangle
+the passed board coordinates into screen space.. zoom_by() wants
+board coords.
+
+Finally, remove a special case from the Zoom() action where if the passed
+coordinates were both zero, we would pass the PCB coordinates of the board
+center. I'm hopeful that things will "just work" without this.
 
 
 ---
