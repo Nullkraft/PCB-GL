@@ -1,0 +1,22 @@
+Bottom: 1543b8492b542d5e00de2256e73116aede4037cb
+Top:    f40f04391e8e8ba928653a35f93565b2584c219b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 18:54:51 +0100
+
+Refresh of hid-gtk-add-missing-static-par
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index c71e70b..9cab107 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -222,7 +222,7 @@ zoom_to (double new_zoom, int x, int y)
+   ghid_set_status_line_label ();
+ }
+ 
+-void
++static void
+ zoom_by (double factor, int x, int y)
+ {
+   zoom_to (gport->zoom * factor, x, y);
