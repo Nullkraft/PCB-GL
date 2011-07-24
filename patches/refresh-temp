@@ -1,0 +1,21 @@
+Bottom: 80a0d37cffe301b96a279c0e884652f977810986
+Top:    a97395030de8b11b190d548bea6b1e1f67c32d6c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 17:06:02 +0100
+
+Refresh of shiny-3d-eye-candy-0
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 6f8055a..992f3e3 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -112,7 +112,6 @@ hidgl_draw_grid (BoxType *drawn_area)
+   static int npoints = 0;
+   int x1, y1, x2, y2, n, i;
+   double x, y;
+-  extern float global_depth;
+ 
+   if (!Settings.DrawGrid)
+     return;
