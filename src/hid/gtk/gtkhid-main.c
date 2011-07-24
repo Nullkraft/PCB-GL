@@ -1460,8 +1460,8 @@ Center(int argc, char **argv, Coord pcb_x, Coord pcb_y)
     AFAIL (center);
 
   /* Aim to put the given x, y PCB coordinates in the center of the widget */
-  widget_x = gport->width / 2;
-  widget_y = gport->height / 2;
+  widget_x = gport->drawing_area->allocation.width / 2;
+  widget_y = gport->drawing_area->allocation.height / 2;
 
   ghid_pan_view_abs (pcb_x, pcb_y, widget_x, widget_y);
 
@@ -1531,13 +1531,13 @@ CursorAction(int argc, char **argv, Coord x, Coord y)
 {
   UnitList extra_units_x = {
     { "grid",  PCB->Grid, 0 },
-    { "view",  gport->view.width, UNIT_PERCENT },
+//    { "view",  gport->view_width, UNIT_PERCENT },
     { "board", PCB->MaxWidth, UNIT_PERCENT },
     { "", 0, 0 }
   };
   UnitList extra_units_y = {
     { "grid",  PCB->Grid, 0 },
-    { "view",  gport->view.height, UNIT_PERCENT },
+//    { "view",  gport->view_height, UNIT_PERCENT },
     { "board", PCB->MaxHeight, UNIT_PERCENT },
     { "", 0, 0 }
   };
@@ -1714,8 +1714,9 @@ default is given, div=40.
 static int
 ScrollAction (int argc, char **argv, Coord x, Coord y)
 {
-  gdouble dx = 0.0, dy = 0.0;
-  int div = 40;
+  double dx = 0.;
+  double dy = 0.;
+  double fraction = 1. / 40.;
 
   if (!ghidgui)
     return 0;
@@ -1724,20 +1725,20 @@ ScrollAction (int argc, char **argv, Coord x, Coord y)
     AFAIL (scroll);
 
   if (argc == 2)
-    div = atoi(argv[1]);
+    fraction = 1. / (double) atoi(argv[1]);
 
   if (strcasecmp (argv[0], "up") == 0)
-    dy = -gport->view.height / div;
-  else if (strcasecmp (argv[0], "down") == 0)
-    dy = gport->view.height / div;
+    dy = -fraction;
+  else if (strcasecmp (argv[0], "down")  == 0)
+    dy =  fraction;
   else if (strcasecmp (argv[0], "right") == 0)
-    dx = gport->view.width / div;
-  else if (strcasecmp (argv[0], "left") == 0)
-    dx = -gport->view.width / div;
+    dx =  fraction;
+  else if (strcasecmp (argv[0], "left")  == 0)
+    dx = -fraction;
   else
     AFAIL (scroll);
 
-  ghid_pan_view_rel (dx, dy);
+  ghid_pan_view_rel_to_visible (dx, dy);
 
   return 0;
 }
