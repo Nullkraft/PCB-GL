@@ -1,5 +1,5 @@
-Bottom: 4b3500a8fd17479afa2b5fcecb24ab30efb24c78
-Top:    4a78f566445bf1a62a9bc0105371b23b8279e76d
+Bottom: 28f3a0fe7f84747dff3ec269302a64aa45ae9542
+Top:    7879a6f7f5a5f9f2ab25f4108c5c47e2c842828e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-02-01 21:58:58 +0000
 
@@ -166,10 +166,10 @@ index 4024881..2c48fc5 100644
        else if (ptr->MovedPoint == &ptr->Line->Point1)
  	XORDrawAttachedLine (ptr->Line->Point1.X + dx,
 diff --git a/src/global.h b/src/global.h
-index 08abbb8..d577bb1 100644
+index 94f4fae..e690360 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -676,6 +676,7 @@ typedef struct			/* some resources... */
+@@ -678,6 +678,7 @@ typedef struct			/* some resources... */
      StipplePolygons,		/* draw polygons with stipple */
      AllDirectionLines,		/* enable lines to all directions */
      RubberBandMode,		/* move, rotate use rubberband connections */
