@@ -21,7 +21,9 @@
 #include <GL/gl.h>
 #include <gtk/gtkgl.h>
 #include "hid/common/hidgl.h"
+
 #include "hid/common/draw_helpers.h"
+#include "hid/common/trackball.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -39,6 +41,15 @@ static hidGC current_gc = NULL;
 #define USE_GC(gc) if (!use_gc(gc)) return
 
 static int cur_mask = -1;
+static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+                                    {0.0, 1.0, 0.0, 0.0},
+                                    {0.0, 0.0, 1.0, 0.0},
+                                    {0.0, 0.0, 0.0, 1.0}};
+static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+                                              {0.0, 1.0, 0.0, 0.0},
+                                              {0.0, 0.0, 1.0, 0.0},
+                                              {0.0, 0.0, 0.0, 1.0}};
+static int global_view_2d = 1;
 
 typedef struct render_priv {
   GdkGLConfig *glconfig;
@@ -894,6 +905,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 {
   render_priv *priv = port->render_priv;
   BoxType region;
+  int min_x, min_y;
+  int max_x, max_y;
+  int new_x, new_y;
+  int min_depth;
+  int max_depth;
 
   ghid_start_drawing (port);
 
@@ -917,11 +933,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
+  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
-  glTranslatef (0.0f, 0.0f, -Z_NEAR);
-
+  glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
+  glMultMatrixf ((GLfloat *)view_matrix);
+  glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
             (ghid_flip_y ? -1. : 1.) / port->zoom,
             ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
@@ -929,6 +946,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              -port->view_x0,
                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                              -port->view_y0, 0);
+  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (port->offlimits_color.red / 65535.,
@@ -945,20 +963,74 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glStencilMask (0);
   glStencilFunc (GL_ALWAYS, 0, 0);
 
-  region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-  region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-  region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
-  region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
+  /* Test the 8 corners of a cube spanning the event */
+  min_depth = -50; /* FIXME */
+  max_depth =  0;  /* FIXME */
+
+  ghid_unproject_to_z_plane (ev->area.x,
+                             ev->area.y,
+                             min_depth, &new_x, &new_y);
+  max_x = min_x = new_x;
+  max_y = min_y = new_y;
+
+  ghid_unproject_to_z_plane (ev->area.x,
+                             ev->area.y,
+                             max_depth, &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  /* */
+  ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
+                             ev->area.y,
+                             min_depth, &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  ghid_unproject_to_z_plane (ev->area.x + ev->area.width, ev->area.y,
+                             max_depth, &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  /* */
+  ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
+                             ev->area.y + ev->area.height,
+                             min_depth, &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
+                             ev->area.y + ev->area.height,
+                             max_depth, &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  /* */
+  ghid_unproject_to_z_plane (ev->area.x,
+                             ev->area.y + ev->area.height,
+                             min_depth,
+                             &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  ghid_unproject_to_z_plane (ev->area.x,
+                             ev->area.y + ev->area.height,
+                             max_depth,
+                             &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  region.X1 = min_x;  region.X2 = max_x + 1;
+  region.Y1 = min_y;  region.Y2 = max_y + 1;
 
   glColor3f (port->bg_color.red / 65535.,
              port->bg_color.green / 65535.,
              port->bg_color.blue / 65535.);
 
   glBegin (GL_QUADS);
-  glVertex3i (0,             0,              0);
-  glVertex3i (PCB->MaxWidth, 0,              0);
-  glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
-  glVertex3i (0,             PCB->MaxHeight, 0);
+  glVertex3i (0,             0,              -50);
+  glVertex3i (PCB->MaxWidth, 0,              -50);
+  glVertex3i (PCB->MaxWidth, PCB->MaxHeight, -50);
+  glVertex3i (0,             PCB->MaxHeight, -50);
   glEnd ();
 
   ghid_draw_bg_image ();
@@ -1062,7 +1134,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
+  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
@@ -1174,7 +1246,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-  glOrtho (0, width, height, 0, 0, 100);
+  glOrtho (0, width, height, 0, -100000, 100000);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
@@ -1284,4 +1356,197 @@ ghid_finish_debug_draw (void)
   glPopMatrix ();
 
   ghid_end_drawing (gport);
+}
+
+static float
+determinant_2x2 (float m[2][2])
+{
+  float det;
+  det = m[0][0] * m[1][1] -
+        m[0][1] * m[1][0];
+  return det;
+}
+
+#if 0
+static float
+determinant_4x4 (float m[4][4])
+{
+  float det;
+  det = m[0][3] * m[1][2] * m[2][1] * m[3][0]-m[0][2] * m[1][3] * m[2][1] * m[3][0] -
+        m[0][3] * m[1][1] * m[2][2] * m[3][0]+m[0][1] * m[1][3] * m[2][2] * m[3][0] +
+        m[0][2] * m[1][1] * m[2][3] * m[3][0]-m[0][1] * m[1][2] * m[2][3] * m[3][0] -
+        m[0][3] * m[1][2] * m[2][0] * m[3][1]+m[0][2] * m[1][3] * m[2][0] * m[3][1] +
+        m[0][3] * m[1][0] * m[2][2] * m[3][1]-m[0][0] * m[1][3] * m[2][2] * m[3][1] -
+        m[0][2] * m[1][0] * m[2][3] * m[3][1]+m[0][0] * m[1][2] * m[2][3] * m[3][1] +
+        m[0][3] * m[1][1] * m[2][0] * m[3][2]-m[0][1] * m[1][3] * m[2][0] * m[3][2] -
+        m[0][3] * m[1][0] * m[2][1] * m[3][2]+m[0][0] * m[1][3] * m[2][1] * m[3][2] +
+        m[0][1] * m[1][0] * m[2][3] * m[3][2]-m[0][0] * m[1][1] * m[2][3] * m[3][2] -
+        m[0][2] * m[1][1] * m[2][0] * m[3][3]+m[0][1] * m[1][2] * m[2][0] * m[3][3] +
+        m[0][2] * m[1][0] * m[2][1] * m[3][3]-m[0][0] * m[1][2] * m[2][1] * m[3][3] -
+        m[0][1] * m[1][0] * m[2][2] * m[3][3]+m[0][0] * m[1][1] * m[2][2] * m[3][3];
+   return det;
+}
+#endif
+
+static void
+invert_2x2 (float m[2][2], float out[2][2])
+{
+  float scale = 1 / determinant_2x2 (m);
+  out[0][0] =  m[1][1] * scale;
+  out[0][1] = -m[0][1] * scale;
+  out[1][0] = -m[1][0] * scale;
+  out[1][1] =  m[0][0] * scale;
+}
+
+#if 0
+static void
+invert_4x4 (float m[4][4], float out[4][4])
+{
+  float scale = 1 / determinant_4x4 (m);
+
+  out[0][0] = (m[1][2] * m[2][3] * m[3][1] - m[1][3] * m[2][2] * m[3][1] +
+               m[1][3] * m[2][1] * m[3][2] - m[1][1] * m[2][3] * m[3][2] -
+               m[1][2] * m[2][1] * m[3][3] + m[1][1] * m[2][2] * m[3][3]) * scale;
+  out[0][1] = (m[0][3] * m[2][2] * m[3][1] - m[0][2] * m[2][3] * m[3][1] -
+               m[0][3] * m[2][1] * m[3][2] + m[0][1] * m[2][3] * m[3][2] +
+               m[0][2] * m[2][1] * m[3][3] - m[0][1] * m[2][2] * m[3][3]) * scale;
+  out[0][2] = (m[0][2] * m[1][3] * m[3][1] - m[0][3] * m[1][2] * m[3][1] +
+               m[0][3] * m[1][1] * m[3][2] - m[0][1] * m[1][3] * m[3][2] -
+               m[0][2] * m[1][1] * m[3][3] + m[0][1] * m[1][2] * m[3][3]) * scale;
+  out[0][3] = (m[0][3] * m[1][2] * m[2][1] - m[0][2] * m[1][3] * m[2][1] -
+               m[0][3] * m[1][1] * m[2][2] + m[0][1] * m[1][3] * m[2][2] +
+               m[0][2] * m[1][1] * m[2][3] - m[0][1] * m[1][2] * m[2][3]) * scale;
+  out[1][0] = (m[1][3] * m[2][2] * m[3][0] - m[1][2] * m[2][3] * m[3][0] -
+               m[1][3] * m[2][0] * m[3][2] + m[1][0] * m[2][3] * m[3][2] +
+               m[1][2] * m[2][0] * m[3][3] - m[1][0] * m[2][2] * m[3][3]) * scale;
+  out[1][1] = (m[0][2] * m[2][3] * m[3][0] - m[0][3] * m[2][2] * m[3][0] +
+               m[0][3] * m[2][0] * m[3][2] - m[0][0] * m[2][3] * m[3][2] -
+               m[0][2] * m[2][0] * m[3][3] + m[0][0] * m[2][2] * m[3][3]) * scale;
+  out[1][2] = (m[0][3] * m[1][2] * m[3][0] - m[0][2] * m[1][3] * m[3][0] -
+               m[0][3] * m[1][0] * m[3][2] + m[0][0] * m[1][3] * m[3][2] +
+               m[0][2] * m[1][0] * m[3][3] - m[0][0] * m[1][2] * m[3][3]) * scale;
+  out[1][3] = (m[0][2] * m[1][3] * m[2][0] - m[0][3] * m[1][2] * m[2][0] +
+               m[0][3] * m[1][0] * m[2][2] - m[0][0] * m[1][3] * m[2][2] -
+               m[0][2] * m[1][0] * m[2][3] + m[0][0] * m[1][2] * m[2][3]) * scale;
+  out[2][0] = (m[1][1] * m[2][3] * m[3][0] - m[1][3] * m[2][1] * m[3][0] +
+               m[1][3] * m[2][0] * m[3][1] - m[1][0] * m[2][3] * m[3][1] -
+               m[1][1] * m[2][0] * m[3][3] + m[1][0] * m[2][1] * m[3][3]) * scale;
+  out[2][1] = (m[0][3] * m[2][1] * m[3][0] - m[0][1] * m[2][3] * m[3][0] -
+               m[0][3] * m[2][0] * m[3][1] + m[0][0] * m[2][3] * m[3][1] +
+               m[0][1] * m[2][0] * m[3][3] - m[0][0] * m[2][1] * m[3][3]) * scale;
+  out[2][2] = (m[0][1] * m[1][3] * m[3][0] - m[0][3] * m[1][1] * m[3][0] +
+               m[0][3] * m[1][0] * m[3][1] - m[0][0] * m[1][3] * m[3][1] -
+               m[0][1] * m[1][0] * m[3][3] + m[0][0] * m[1][1] * m[3][3]) * scale;
+  out[2][3] = (m[0][3] * m[1][1] * m[2][0] - m[0][1] * m[1][3] * m[2][0] -
+               m[0][3] * m[1][0] * m[2][1] + m[0][0] * m[1][3] * m[2][1] +
+               m[0][1] * m[1][0] * m[2][3] - m[0][0] * m[1][1] * m[2][3]) * scale;
+  out[3][0] = (m[1][2] * m[2][1] * m[3][0] - m[1][1] * m[2][2] * m[3][0] -
+               m[1][2] * m[2][0] * m[3][1] + m[1][0] * m[2][2] * m[3][1] +
+               m[1][1] * m[2][0] * m[3][2] - m[1][0] * m[2][1] * m[3][2]) * scale;
+  out[3][1] = (m[0][1] * m[2][2] * m[3][0] - m[0][2] * m[2][1] * m[3][0] +
+               m[0][2] * m[2][0] * m[3][1] - m[0][0] * m[2][2] * m[3][1] -
+               m[0][1] * m[2][0] * m[3][2] + m[0][0] * m[2][1] * m[3][2]) * scale;
+  out[3][2] = (m[0][2] * m[1][1] * m[3][0] - m[0][1] * m[1][2] * m[3][0] -
+               m[0][2] * m[1][0] * m[3][1] + m[0][0] * m[1][2] * m[3][1] +
+               m[0][1] * m[1][0] * m[3][2] - m[0][0] * m[1][1] * m[3][2]) * scale;
+  out[3][3] = (m[0][1] * m[1][2] * m[2][0] - m[0][2] * m[1][1] * m[2][0] +
+               m[0][2] * m[1][0] * m[2][1] - m[0][0] * m[1][2] * m[2][1] -
+               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
+}
+#endif
+
+
+void
+ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
+{
+  float mat[2][2];
+  float inv_mat[2][2];
+  float x, y;
+
+  /*
+    ex = view_matrix[0][0] * vx +
+         view_matrix[0][1] * vy +
+         view_matrix[0][2] * vz +
+         view_matrix[0][3] * 1;
+    ey = view_matrix[1][0] * vx +
+         view_matrix[1][1] * vy +
+         view_matrix[1][2] * vz +
+         view_matrix[1][3] * 1;
+    UNKNOWN ez = view_matrix[2][0] * vx +
+                 view_matrix[2][1] * vy +
+                 view_matrix[2][2] * vz +
+                 view_matrix[2][3] * 1;
+
+    ex - view_matrix[0][3] * 1
+       - view_matrix[0][2] * vz
+      = view_matrix[0][0] * vx +
+        view_matrix[0][1] * vy;
+
+    ey - view_matrix[1][3] * 1
+       - view_matrix[1][2] * vz
+      = view_matrix[1][0] * vx +
+        view_matrix[1][1] * vy;
+  */
+
+  /* NB: last_modelview_matrix is transposed in memory! */
+  x = (float)ex - last_modelview_matrix[3][0] * 1
+                - last_modelview_matrix[2][0] * vz;
+
+  y = (float)ey - last_modelview_matrix[3][1] * 1
+                - last_modelview_matrix[2][1] * vz;
+
+  /*
+    x = view_matrix[0][0] * vx +
+        view_matrix[0][1] * vy;
+
+    y = view_matrix[1][0] * vx +
+        view_matrix[1][1] * vy;
+
+    [view_matrix[0][0] view_matrix[0][1]] [vx] = [x]
+    [view_matrix[1][0] view_matrix[1][1]] [vy]   [y]
+  */
+
+  mat[0][0] = last_modelview_matrix[0][0];
+  mat[0][1] = last_modelview_matrix[1][0];
+  mat[1][0] = last_modelview_matrix[0][1];
+  mat[1][1] = last_modelview_matrix[1][1];
+
+//    if (determinant_2x2 (mat) < 0.00001)
+//      printf ("Determinant is quite small\n");
+
+  invert_2x2 (mat, inv_mat);
+
+  *vx = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
+  *vy = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
+}
+
+
+void
+ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
+{
+  global_view_2d = view_2d;
+  ghid_invalidate_all ();
+}
+
+void
+ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+{
+#ifdef DEBUG_ROTATE
+  int row, column;
+#endif
+
+  build_rotmatrix (view_matrix, quarternion);
+
+#ifdef DEBUG_ROTATE
+  for (row = 0; row < 4; row++) {
+    printf ("[ %f", view_matrix[row][0]);
+    for (column = 1; column < 4; column++) {
+      printf (",\t%f", view_matrix[row][column]);
+    }
+    printf ("\t]\n");
+  }
+  printf ("\n");
+#endif
+
+  ghid_invalidate_all ();
 }
