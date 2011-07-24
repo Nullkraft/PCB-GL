@@ -1,5 +1,5 @@
-Bottom: 28a170de6cd555024b1ba11f8d17d820ae227657
-Top:    0a97e683e08c75735fac7f777816fc4847adcb20
+Bottom: e22868cc59246a3a3c633e640e0c072d93e7aab4
+Top:    eb70690302c2f67cda57c28d735c9908b3b8eac3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 01:16:22 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 270ccc8..6770eff 100644
+index b97ee7c..a31e1a6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -38,7 +38,7 @@ index 270ccc8..6770eff 100644
  
  typedef struct render_priv {
    GdkGLConfig *glconfig;
-@@ -887,6 +898,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -894,6 +905,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    render_priv *priv = port->render_priv;
    BoxType region;
@@ -50,7 +50,7 @@ index 270ccc8..6770eff 100644
  
    ghid_start_drawing (port);
  
-@@ -910,10 +926,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -917,10 +933,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -65,9 +65,9 @@ index 270ccc8..6770eff 100644
 +  glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
 +  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
-   glEnable (GL_STENCIL_TEST);
-   glClearColor (port->offlimits_color.red / 65535.,
-@@ -930,10 +950,66 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
+             (ghid_flip_y ? -1. : 1.) / port->zoom,
+@@ -945,20 +965,76 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilMask (0);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -138,8 +138,7 @@ index 270ccc8..6770eff 100644
  
    glColor3f (port->bg_color.red / 65535.,
               port->bg_color.green / 65535.,
-@@ -949,10 +1025,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-                              -port->view_y0, 0);
+              port->bg_color.blue / 65535.);
  
    glBegin (GL_QUADS);
 -  glVertex3i (0,             0,              0);
@@ -153,7 +152,7 @@ index 270ccc8..6770eff 100644
    glEnd ();
  
    ghid_draw_bg_image ();
-@@ -1057,7 +1133,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1062,7 +1138,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -162,7 +161,7 @@ index 270ccc8..6770eff 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1169,7 +1245,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1174,7 +1250,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -171,7 +170,7 @@ index 270ccc8..6770eff 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1280,3 +1356,196 @@ ghid_finish_debug_draw (void)
+@@ -1285,3 +1361,196 @@ ghid_finish_debug_draw (void)
  
    ghid_end_drawing (gport);
  }
@@ -428,10 +427,10 @@ index b11d32c..f8a26eb7 100644
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 31ee636..d033682 100644
+index 5fd8bb5..b7a67dd 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -301,7 +301,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -304,7 +304,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
  gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  				       GdkEventScroll * ev, GHidPort * out);
  
@@ -439,7 +438,7 @@ index 31ee636..d033682 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -503,6 +502,9 @@ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
+@@ -506,6 +505,9 @@ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
  HID *ghid_request_debug_draw (void);
  void ghid_flush_debug_draw (void);
  void ghid_finish_debug_draw (void);
