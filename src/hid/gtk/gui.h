@@ -301,7 +301,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
 gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
 				       GdkEventScroll * ev, GHidPort * out);
 
-
 gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 						GdkEventConfigure * ev,
 						GHidPort * out);
@@ -503,6 +502,9 @@ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
 HID *ghid_request_debug_draw (void);
 void ghid_flush_debug_draw (void);
 void ghid_finish_debug_draw (void);
+void ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy);
+void ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
+void ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata);
 
 /* gtkhid-main.c */
 void ghid_pan_fixup (void);
