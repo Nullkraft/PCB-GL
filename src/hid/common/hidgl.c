@@ -112,7 +112,6 @@ hidgl_draw_grid (BoxType *drawn_area)
   static int npoints = 0;
   int x1, y1, x2, y2, n, i;
   double x, y;
-  extern float global_depth;
 
   if (!Settings.DrawGrid)
     return;
