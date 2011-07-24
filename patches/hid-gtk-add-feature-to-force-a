@@ -1,7 +1,7 @@
-Bottom: 39b2f461ba9d7888fa8ca5bccebb21f1007caa8f
-Top:    dbca714f9485896f3368a66c53676d6fd8e378b6
+Bottom: b44307b2cded520265a8471358f96f90caf938bb
+Top:    3474be1334b5b5a6f136a77fd67a366c5fc30127
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-24 16:42:43 +0100
+Date:   2011-07-24 16:55:07 +0100
 
 hid/gtk: Add feature to force an immediate redraw if framerate is low
 
@@ -16,7 +16,7 @@ mainloop is not hit until the auto-routing operation is fully complete.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 044d7c5..526c0b9 100644
+index ed34ea1..655fcd4 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -47,6 +47,7 @@ typedef struct render_priv {
