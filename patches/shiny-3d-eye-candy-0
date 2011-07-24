@@ -1,4 +1,4 @@
-Bottom: d03c9c2b82ecdd12f8980dc5e9a1df9c09c25329
+Bottom: fc7689c2118c9870f8e753f9abb084b1521fac6e
 Top:    d7bc5a6bd9c61678d62b14e2e01976fc94c83f77
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 16:03:06 +0100
@@ -26,7 +26,7 @@ index 992f3e3..6f8055a 100644
    if (!Settings.DrawGrid)
      return;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f86689b..8b69160 100644
+index e9ca321..8b69160 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -134,6 +134,19 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -66,15 +66,7 @@ index f86689b..8b69160 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -791,6 +805,7 @@ ghid_show_crosshair (gboolean paint_new_location)
-   if (x >= 0 && paint_new_location && draw_markers)
-     {
-       glBegin (GL_QUADS);
-+
-       glVertex3i (SIDE_X (gport->view_x0),                            y - vcd,       z);
-       glVertex3i (SIDE_X (gport->view_x0),                            y - vcd + vcw, z);
-       glVertex3i (SIDE_X (gport->view_x0 + vcd),                      y - vcd + vcw, z);
-@@ -1042,6 +1057,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1043,6 +1057,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -86,18 +78,7 @@ index f86689b..8b69160 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1513,8 +1533,8 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
-   mat[1][0] = last_modelview_matrix[0][1];
-   mat[1][1] = last_modelview_matrix[1][1];
- 
--//    if (determinant_2x2 (mat) < 0.00001)
--//      printf ("Determinant is quite small\n");
-+  /*    if (determinant_2x2 (mat) < 0.00001)       */
-+  /*      printf ("Determinant is quite small\n"); */
- 
-   invert_2x2 (mat, inv_mat);
- 
-@@ -1526,7 +1546,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
+@@ -1527,7 +1546,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
