@@ -1,7 +1,7 @@
-Bottom: 31a29af108e84180d59e09a03f1eeced5f9450ec
-Top:    df29c1a732ed83d23857dbe7d27e9e37b32c982b
+Bottom: 03ba7cb9b2dedd7f94c132b24f5fd2b28245c7c8
+Top:    4068678de5fbfec70422e97b5cc7b93340e31835
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-24 01:16:30 +0100
+Date:   2011-07-24 01:28:18 +0100
 
 Cache polygon contour tri-strip tesselations (HACK: IN THE CORE!)
 
@@ -12,7 +12,7 @@ into the core like this.
 ---
 
 diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
-index 76f8e87..8012817 100644
+index 5cccfbc..05fffb4 100644
 --- a/src/borast/borast-bentley-ottmann.c
 +++ b/src/borast/borast-bentley-ottmann.c
 @@ -126,7 +126,7 @@ typedef struct _borast_bo_sweep_line {
@@ -24,7 +24,7 @@ index 76f8e87..8012817 100644
  _line_compute_intersection_x_for_y (const borast_line_t *line,
                                      borast_fixed_t y)
  {
-@@ -1452,9 +1452,21 @@ bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps)
+@@ -1451,9 +1451,21 @@ bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps)
        hidgl_ensure_triangle_space (&buffer, 1);
        hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
      } else {
@@ -46,7 +46,7 @@ index 76f8e87..8012817 100644
      }
  #else
      glBegin (GL_LINES);
-@@ -1478,9 +1490,8 @@ bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps)
+@@ -1477,9 +1489,8 @@ bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps)
    return BORAST_STATUS_SUCCESS;
  }
  
@@ -56,8 +56,8 @@ index 76f8e87..8012817 100644
 +bo_contour_to_traps (PLINE *contour,  borast_traps_t *traps)
  {
    int intersections;
-   borast_status_t status;
-@@ -1568,3 +1579,57 @@ bo_contour_to_traps (PLINE *contour, borast_traps_t *traps)
+   borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
+@@ -1566,3 +1577,57 @@ bo_contour_to_traps (PLINE *contour, borast_traps_t *traps)
  
    return BORAST_STATUS_SUCCESS;
  }
