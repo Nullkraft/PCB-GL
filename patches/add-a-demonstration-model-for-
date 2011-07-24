@@ -1,5 +1,5 @@
-Bottom: 19b74cd7a6c3a2727fcc9ed881e0ecd7528839d7
-Top:    b9ac4cf1ff5dc966cfc1d39ebbda50acc0d646b8
+Bottom: f2776dd041ee3ac4c980c15e9e911df993db3406
+Top:    ad3c8719a8a4c343c392b23df2e38105e7ec88a6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
 
@@ -432,7 +432,7 @@ literal 0
 HcmV?d00001
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 9e8e0e9..f37ff4d 100644
+index 1ea5d58..6a1969b 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -64,6 +64,7 @@
@@ -443,7 +443,7 @@ index 9e8e0e9..f37ff4d 100644
  
  static bool in_context = false;
  
-@@ -886,6 +887,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
+@@ -885,6 +886,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
    glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                  GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
    glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
@@ -452,7 +452,7 @@ index 9e8e0e9..f37ff4d 100644
  
    if (use_new_stencil)
      {
-@@ -951,7 +954,34 @@ load_built_in_shaders (void)
+@@ -950,7 +953,34 @@ load_built_in_shaders (void)
            "  gl_FragColor = gl_Color;\n"
            "}\n";
  
@@ -1511,10 +1511,10 @@ index 0000000..f9746f1
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 312a81a..0eda98b 100644
+index 3dd2d21..ea96671 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -310,6 +310,47 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -312,6 +312,47 @@ ghid_draw_grid (BoxTypePtr drawn_area)
    glEnable (GL_STENCIL_TEST);
  }
  
@@ -1562,7 +1562,7 @@ index 312a81a..0eda98b 100644
  static void
  ghid_draw_bg_image (void)
  {
-@@ -387,6 +428,7 @@ ghid_use_mask (int use_it)
+@@ -389,6 +430,7 @@ ghid_use_mask (int use_it)
      case HID_MASK_CLEAR:
        /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
        glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
@@ -1570,7 +1570,7 @@ index 312a81a..0eda98b 100644
        glEnable (GL_STENCIL_TEST);                           /* Enable Stencil test */
        stencil_bit = hidgl_assign_clear_stencil_bit();       /* Get a new (clean) bitplane to stencil with */
        glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, write stencil_bit */
-@@ -397,6 +439,7 @@ ghid_use_mask (int use_it)
+@@ -399,6 +441,7 @@ ghid_use_mask (int use_it)
      case HID_MASK_AFTER:
        /* Drawing operations as masked to areas where the stencil buffer is '0' */
        glColorMask (1, 1, 1, 1);                   /* Enable drawing of r, g, b & a */
