@@ -31,6 +31,7 @@ RCSID ("$Id$");
 
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
+static void zoom_fit (void);
 
 int ghid_flip_x = 0, ghid_flip_y = 0;
 
@@ -64,7 +65,7 @@ ghid_pan_fixup ()
   if (gport->view_width > PCB->MaxWidth &&
       gport->view_height > PCB->MaxHeight)
     {
-      zoom_by (1, 0, 0);
+      zoom_fit ();
       return;
     }
 
@@ -128,28 +129,20 @@ static int
 Zoom (int argc, char **argv, int x, int y)
 {
   const char *vp;
+  int vx, vy;
   double v;
 
   if (argc > 1)
     AFAIL (zoom);
 
-  if (x == 0 && y == 0)
-    {
-      x = gport->view_width / 2;
-      y = gport->view_height / 2;
-    }
-  else
-    {
-      /* Px converts view->pcb, Vx converts pcb->view */
-      x = Vx (x);
-      y = Vy (y);
-    }
-
   if (argc < 1)
     {
-      zoom_to (1000000, 0, 0);
+      zoom_fit ();
       return 0;
     }
+
+  vx = Vx (x);
+  vy = Vy (y);
 
   vp = argv[0];
   if (*vp == '+' || *vp == '-' || *vp == '=')
@@ -160,15 +153,15 @@ Zoom (int argc, char **argv, int x, int y)
   switch (argv[0][0])
     {
     case '-':
-      zoom_by (1 / v, x, y);
+      zoom_by (1 / v, vx, vy);
       break;
     default:
     case '+':
-      zoom_by (v, x, y);
+      zoom_by (v, vx, vy);
       break;
     case '=':
       /* this needs to set the scale factor absolutely*/
-      zoom_to (v, x, y);
+      zoom_to (v, vx, vy);
       break;
     }
 
@@ -222,10 +215,17 @@ zoom_to (double new_zoom, int x, int y)
   ghid_set_status_line_label ();
 }
 
-void
+static void
 zoom_by (double factor, int x, int y)
 {
   zoom_to (gport->zoom * factor, x, y);
+}
+
+static void
+zoom_fit (void)
+{
+  zoom_to (MAX (PCB->MaxWidth  / gport->width,
+                PCB->MaxHeight / gport->height), 0, 0);
 }
 
 /* ------------------------------------------------------------ */
@@ -1181,7 +1181,7 @@ PCBChanged (int argc, char **argv, int x, int y)
   RouteStylesChanged (0, NULL, 0, 0);
   ghid_port_ranges_scale (TRUE);
   ghid_port_ranges_pan (0, 0, FALSE);
-  ghid_port_ranges_zoom (0);
+  zoom_fit ();
   ghid_port_ranges_changed ();
   ghid_sync_with_new_layout ();
   return 0;
