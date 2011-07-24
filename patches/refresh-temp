@@ -1,0 +1,92 @@
+Bottom: 28f3a0fe7f84747dff3ec269302a64aa45ae9542
+Top:    460564b429f180577a80f077fd0f4b35ed8e2609
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 13:48:13 +0100
+
+Refresh of hid-gtk-rename-x-y-_crosshair-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 48d9fc2..5da8000 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1005,7 +1005,7 @@ show_crosshair (gboolean paint_new_location)
+   static GdkGC *xor_gc;
+   static GdkColor cross_color;
+ 
+-  if (gport->x_crosshair < 0 || ghidgui->creating || !gport->has_entered)
++  if (gport->crosshair_x < 0 || ghidgui->creating || !gport->has_entered)
+     return;
+ 
+   if (!xor_gc)
+@@ -1018,8 +1018,8 @@ show_crosshair (gboolean paint_new_location)
+       /* FIXME: when CrossColor changed from config */
+       ghid_map_color_string (Settings.CrossColor, &cross_color);
+     }
+-  x = DRAW_X (gport->x_crosshair);
+-  y = DRAW_Y (gport->y_crosshair);
++  x = DRAW_X (gport->crosshair_x);
++  y = DRAW_Y (gport->crosshair_y);
+ 
+   gdk_gc_set_foreground (xor_gc, &cross_color);
+ 
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 4999005..05dd719 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -744,8 +744,8 @@ ghid_show_crosshair (gboolean paint_new_location)
+       /* FIXME: when CrossColor changed from config */
+       ghid_map_color_string (Settings.CrossColor, &cross_color);
+     }
+-  x = DRAW_X (gport->x_crosshair);
+-  y = DRAW_Y (gport->y_crosshair);
++  x = DRAW_X (gport->crosshair_x);
++  y = DRAW_Y (gport->crosshair_y);
+ 
+   glEnable (GL_COLOR_LOGIC_OP);
+   glLogicOp (GL_XOR);
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 6a8d904..a3c3d29 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -345,11 +345,11 @@ ghid_mod1_is_pressed ()
+ void
+ ghid_set_crosshair (int x, int y, int action)
+ {
+-  if (gport->x_crosshair != x || gport->y_crosshair != y)
++  if (gport->crosshair_x != x || gport->crosshair_y != y)
+     {
+       ghid_set_cursor_position_labels ();
+-      gport->x_crosshair = x;
+-      gport->y_crosshair = y;
++      gport->crosshair_x = x;
++      gport->crosshair_y = y;
+ 
+       /*
+        * FIXME - does this trigger the idle_proc stuff?  It is in the
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 1f9a31a..abf8f53 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -592,7 +592,7 @@ static gboolean check_object_tooltips (GHidPort *out)
+   char *description;
+ 
+   /* check if there are any pins or pads at that position */
+-  description = describe_location (out->x_crosshair, out->y_crosshair);
++  description = describe_location (out->crosshair_x, out->crosshair_y);
+ 
+   if (description == NULL)
+     return FALSE;
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 31ee636..7538fb5 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -179,7 +179,7 @@ typedef struct
+   gint view_x0,			/* Viewport in PCB coordinates */
+     view_y0, view_width, view_height, view_x, view_y;
+ 
+-  gint x_crosshair, y_crosshair;
++  gint crosshair_x, y_crosshair_y;
+ }
+ GHidPort;
