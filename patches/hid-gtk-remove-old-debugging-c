@@ -1,0 +1,15 @@
+Bottom: b44307b2cded520265a8471358f96f90caf938bb
+Top:    b44307b2cded520265a8471358f96f90caf938bb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 18:18:47 +0100
+
+hid/gtk: Remove old debugging code from zoom_to and zoom_by() functions
+
+This code was adding to clutter in the functions, and appears in some
+cases to be bit-rotten. (The coordinates it operated on don't appear to
+be have been consistent with the current GUI code).
+
+
+---
+
+
