@@ -744,8 +744,8 @@ ghid_show_crosshair (gboolean paint_new_location)
       /* FIXME: when CrossColor changed from config */
       ghid_map_color_string (Settings.CrossColor, &cross_color);
     }
-  x = DRAW_X (gport->x_crosshair);
-  y = DRAW_Y (gport->y_crosshair);
+  x = DRAW_X (gport->crosshair_x);
+  y = DRAW_Y (gport->crosshair_y);
 
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
