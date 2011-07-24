@@ -1073,7 +1073,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
 
   gport->width = da_w;
   gport->height = da_h;
-  gport->view_width = da_w * priv->view.pcb_units_per_pixel;
+  gport->view_width = da_w  * priv->view.pcb_units_per_pixel;
   gport->view_height = da_h * priv->view.pcb_units_per_pixel;
   gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
   gport->view_y0 = (pinout->y_max - gport->view_height) / 2;

@@ -669,7 +669,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
   gint w, h, vr;
   render_priv *priv = gport->render_priv;
 
-  w = gport->width *  priv->view.pcb_units_per_pixel;
+  w = gport->width  * priv->view.pcb_units_per_pixel;
   h = gport->height * priv->view.pcb_units_per_pixel;
   if (SIDE_X (cx) < gport->view_x0 - radius
       || SIDE_X (cx) > gport->view_x0 + w + radius
