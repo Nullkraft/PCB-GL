@@ -128,28 +128,20 @@ static int
 Zoom (int argc, char **argv, int x, int y)
 {
   const char *vp;
+  int vx, vy;
   double v;
 
   if (argc > 1)
     AFAIL (zoom);
-
-  if (x == 0 && y == 0)
-    {
-      x = gport->view_width / 2;
-      y = gport->view_height / 2;
-    }
-  else
-    {
-      /* Px converts view->pcb, Vx converts pcb->view */
-      x = Vx (x);
-      y = Vy (y);
-    }
 
   if (argc < 1)
     {
       zoom_to (1000000, 0, 0);
       return 0;
     }
+
+  vx = Vx (x);
+  vy = Vy (y);
 
   vp = argv[0];
   if (*vp == '+' || *vp == '-' || *vp == '=')
@@ -160,15 +152,15 @@ Zoom (int argc, char **argv, int x, int y)
   switch (argv[0][0])
     {
     case '-':
-      zoom_by (1 / v, x, y);
+      zoom_by (1 / v, vx, vy);
       break;
     default:
     case '+':
-      zoom_by (v, x, y);
+      zoom_by (v, vx, vy);
       break;
     case '=':
       /* this needs to set the scale factor absolutely*/
-      zoom_to (v, x, y);
+      zoom_to (v, vx, vy);
       break;
     }
 
@@ -179,6 +171,7 @@ Zoom (int argc, char **argv, int x, int y)
 static void
 zoom_to (double new_zoom, int x, int y)
 {
+  double min_zoom;
   double max_zoom;
 
   /* gport->zoom:
@@ -190,53 +183,44 @@ zoom_to (double new_zoom, int x, int y)
    * gport->view_width and gport->view_height are in PCB coordinates
    */
 
-  /* Find the zoom that would just make the entire board fit */
-  max_zoom = PCB->MaxWidth / gport->width;
-  if (max_zoom < PCB->MaxHeight / gport->height)
-    max_zoom = PCB->MaxHeight / gport->height;
+  /* Set the "minimum" zoom constant (maximum zoom),
+   * at 1 pixel per PCB unit */
+  min_zoom = 1;
 
-  /* 
-   * clip the zooming so we can never have more than 1 pixel per PCB
-   * unit and never zoom out more than viewing the entire board
-   */
-     
-  if (new_zoom < 1)
-    new_zoom = 1;
-  if (new_zoom > max_zoom)
-    new_zoom = max_zoom;
+  /* Set the "maximum" zoom constant (minimum zoom),
+   * to make the entire board just fit inside the viewport */
+  max_zoom = MAX (PCB->MaxWidth  / gport->width,
+                  PCB->MaxHeight / gport->height);
 
-  if (gport->zoom != new_zoom)
-    {
-      gdouble xtmp, ytmp;
-      gint x0, y0;
+  new_zoom = MIN (MAX (min_zoom, new_zoom), max_zoom);
 
-      xtmp = (SIDE_X (gport->pcb_x) - gport->view_x0) /
-                (gdouble) gport->view_width;
-      ytmp = (SIDE_Y (gport->pcb_y) - gport->view_y0) /
-                (gdouble) gport->view_height;
+  if (gport->zoom == new_zoom)
+    return;
 
-      gport->zoom = new_zoom;
-      pixel_slop = new_zoom;
-      ghid_port_ranges_scale(FALSE);
+  gport->zoom = new_zoom;
+  pixel_slop = new_zoom;
 
-      x0 = SIDE_X (gport->pcb_x) - xtmp * gport->view_width;
-      if (x0 < 0)
-        x0 = 0;
-      gport->view_x0 = x0;
+  ghid_port_ranges_scale (FALSE);
 
-      y0 = SIDE_Y (gport->pcb_y) - ytmp * gport->view_height;
-      if (y0 < 0)
-        y0 = 0;
-      gport->view_y0 = y0;
+  /*
+    gport->view_width = gport->width * gport->zoom;
+    gport->view_height = gport->height * gport->zoom;
 
-      ghidgui->adjustment_changed_holdoff = TRUE;
-      gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
-      gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
-      ghidgui->adjustment_changed_holdoff = FALSE;
+    if (gport->view_width >= PCB->MaxWidth)
+      gport->view_width = PCB->MaxWidth;
+    if (gport->view_height >= PCB->MaxHeight)
+      gport->view_height = PCB->MaxHeight;
+  */
 
-      ghid_port_ranges_changed();
-    }
+  gport->view_x0 = MIN (0, SIDE_X (gport->pcb_x) - (SIDE_X (gport->pcb_x) - gport->view_x0) / old_zoom * new_zoom);
+  gport->view_y0 = MIN (0, SIDE_Y (gport->pcb_y) - (SIDE_Y (gport->pcb_y) - gport->view_y0) / old_zoom * new_zoom);
 
+  ghidgui->adjustment_changed_holdoff = TRUE;
+  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
+  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
+  ghidgui->adjustment_changed_holdoff = FALSE;
+
+  ghid_port_ranges_changed ();
   ghid_set_status_line_label ();
 }
 
