@@ -203,8 +203,8 @@ ghid_get_coords (const char *msg, int *x, int *y)
     ghid_get_user_xy (msg);
   if (ghid_port.has_entered)
     {
-      *x = SIDE_X (gport->view_x);
-      *y = SIDE_Y (gport->view_y);
+      *x = gport->view_x;
+      *y = gport->view_y;
     }
 }
 
@@ -233,14 +233,14 @@ ghid_note_event_location (GdkEventButton * ev)
 #ifdef ENABLE_GL
   /* Unproject event_x and event_y to world coordinates of the plane we are on */
   ghid_unproject_to_z_plane (event_x, event_y, global_depth,
-                             &event_x, &event_y);
+                             &gport->view_x, &gport->view_y);
+#else
+  gport->view_x = SIDE_X (event_x * gport->zoom + gport->view_x0);
+  gport->view_y = SIDE_Y (event_y * gport->zoom + gport->view_y0);
 #endif
 
-  gport->view_x = event_x * gport->zoom + gport->view_x0;
-  gport->view_y = event_y * gport->zoom + gport->view_y0;
-
-  moved = MoveCrosshairAbsolute (SIDE_X (gport->view_x), 
-				 SIDE_Y (gport->view_y));
+  moved = MoveCrosshairAbsolute (gport->view_x,
+				 gport->view_y);
   if (moved)
     {
       AdjustAttachedObjects ();
