@@ -777,8 +777,8 @@ ghid_show_crosshair (gboolean paint_new_location)
       /* FIXME: when CrossColor changed from config */
       ghid_map_color_string (Settings.CrossColor, &cross_color);
     }
-  x = DRAW_X (gport->x_crosshair);
-  y = DRAW_Y (gport->y_crosshair);
+  x = gport->x_crosshair;
+  y = gport->y_crosshair;
   z = global_depth;
 
   glEnable (GL_COLOR_LOGIC_OP);
@@ -801,22 +801,22 @@ ghid_show_crosshair (gboolean paint_new_location)
   if (x >= 0 && paint_new_location && draw_markers)
     {
       glBegin (GL_QUADS);
-      glVertex3i (0,                  y - VCD,             z);
-      glVertex3i (0,                  y - VCD + VCW,       z);
-      glVertex3i (VCD,                y - VCD + VCW,       z);
-      glVertex3i (VCD,                y - VCD,             z);
-      glVertex3i (gport->width,       y - VCD,             z);
-      glVertex3i (gport->width,       y - VCD + VCW,       z);
-      glVertex3i (gport->width - VCD, y - VCD + VCW,       z);
-      glVertex3i (gport->width - VCD, y - VCD,             z);
-      glVertex3i (x - VCD,            0,                   z);
-      glVertex3i (x - VCD,            VCD,                 z);
-      glVertex3i (x - VCD + VCW,      VCD,                 z);
-      glVertex3i (x - VCD + VCW,      0,                   z);
-      glVertex3i (x - VCD,            gport->height - VCD, z);
-      glVertex3i (x - VCD,            gport->height,       z);
-      glVertex3i (x - VCD + VCW,      gport->height,       z);
-      glVertex3i (x - VCD + VCW,      gport->height - VCD, z);
+      glVertex3i (0,                       y - VCD,                  z);
+      glVertex3i (0,                       y - VCD + VCW,            z);
+      glVertex3i (VCD,                     y - VCD + VCW,            z);
+      glVertex3i (VCD,                     y - VCD,                  z);
+      glVertex3i (gport->view_width,       y - VCD,                  z);
+      glVertex3i (gport->view_width,       y - VCD + VCW,            z);
+      glVertex3i (gport->view_width - VCD, y - VCD + VCW,            z);
+      glVertex3i (gport->view_width - VCD, y - VCD,                  z);
+      glVertex3i (x - VCD,                 0,                        z);
+      glVertex3i (x - VCD,                 VCD,                      z);
+      glVertex3i (x - VCD + VCW,           VCD,                      z);
+      glVertex3i (x - VCD + VCW,           0,                        z);
+      glVertex3i (x - VCD,                 gport->view_height - VCD, z);
+      glVertex3i (x - VCD,                 gport->view_height,       z);
+      glVertex3i (x - VCD + VCW,           gport->view_height,       z);
+      glVertex3i (x - VCD + VCW,           gport->view_height - VCD, z);
       glEnd ();
     }
 
@@ -948,6 +948,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
   glMultMatrixf ((GLfloat *)view_matrix);
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
+  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
+            (ghid_flip_y ? -1. : 1.) / port->zoom,
+            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
+  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
+                             -port->view_x0,
+                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
+                             -port->view_y0, 0);
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
   glEnable (GL_STENCIL_TEST);
@@ -1021,23 +1028,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
-  region.X1 = MIN (Px (min_x), Px (max_x + 1));
-  region.X2 = MAX (Px (min_x), Px (max_x + 1));
-  region.Y1 = MIN (Py (min_y), Py (max_y + 1));
-  region.Y2 = MAX (Py (min_y), Py (max_y + 1));
+  region.X1 = min_x;  region.X2 = max_x + 1;
+  region.Y1 = min_y;  region.Y2 = max_y + 1;
 
   glColor3f (port->bg_color.red / 65535.,
              port->bg_color.green / 65535.,
              port->bg_color.blue / 65535.);
-
-  glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-            (ghid_flip_y ? -1. : 1.) / port->zoom,
-            (ghid_flip_x == ghid_flip_y) ? 1. : -1.);
-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-                             -port->view_x0,
-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-                             -port->view_y0, 0);
 
   glBegin (GL_QUADS);
   glVertex3i (0,             0,              -50);
@@ -1065,7 +1061,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   DrawAttached ();
   DrawMark ();
   hidgl_flush_triangles (&buffer);
-  glPopMatrix ();
 
   ghid_show_crosshair (TRUE);
 
