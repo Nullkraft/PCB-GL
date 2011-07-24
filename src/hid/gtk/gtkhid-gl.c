@@ -47,6 +47,8 @@ typedef struct render_priv {
   int subcomposite_stencil_bit;
   char *current_colorname;
   double current_alpha_mult;
+  bool flip_x;
+  bool flip_y;
 } render_priv;
 
 
@@ -911,13 +913,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
 
-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-            (ghid_flip_y ? -1. : 1.) / port->zoom,
-            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-                             -port->view_x0,
-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-                             -port->view_y0, 0);
+  glScalef ((priv->flip_x ? -1. : 1.) / port->zoom,
+            (priv->flip_y ? -1. : 1.) / port->zoom,
+            ((priv->flip_x == priv->flip_y) ? 1. : -1.) / port->zoom);
+  glTranslatef (priv->flip_x ?  port->view_x0 - PCB->MaxWidth  :
+                               -port->view_x0,
+                priv->flip_y ?  port->view_y0 - PCB->MaxHeight :
+                               -port->view_y0, 0);
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (port->offlimits_color.red / 65535.,
@@ -1068,12 +1070,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
-            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
-  glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
-                             -gport->view_x0,
-                ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
-                             -gport->view_y0, 0);
+  glScalef ((priv->flip_x ? -1. : 1.) / gport->zoom,
+            (priv->flip_y ? -1. : 1.) / gport->zoom, 1);
+  glTranslatef (priv->flip_x ?  gport->view_x0 - PCB->MaxWidth  :
+                               -gport->view_x0,
+                priv->flip_y ?  gport->view_y0 - PCB->MaxHeight :
+                               -gport->view_y0, 0);
   hid_expose_callback (&ghid_hid, NULL, &pinout->element);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
@@ -1140,9 +1142,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   gport->height = height;
   gport->view_width = width * gport->zoom;
   gport->view_height = height * gport->zoom;
-  gport->view_x0 = ghid_flip_x ? PCB->MaxWidth - cx : cx;
+  gport->view_x0 = priv->flip_x ? PCB->MaxWidth - cx : cx;
   gport->view_x0 -= gport->view_height / 2;
-  gport->view_y0 = ghid_flip_y ? PCB->MaxHeight - cy : cy;
+  gport->view_y0 = priv->flip_y ? PCB->MaxHeight - cy : cy;
   gport->view_y0 -= gport->view_width  / 2;
 
   /* make GL-context "current" */
@@ -1179,12 +1181,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
-            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
-  glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
-                             -gport->view_x0,
-                ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
-                             -gport->view_y0, 0);
+  glScalef ((priv->flip_x ? -1. : 1.) / gport->zoom,
+            (priv->flip_y ? -1. : 1.) / gport->zoom, 1);
+  glTranslatef (priv->flip_x ?  gport->view_x0 - PCB->MaxWidth  :
+                               -gport->view_x0,
+                priv->flip_y ?  gport->view_y0 - PCB->MaxHeight :
+                              -gport->view_y0, 0);
   region.X1 = MIN(Px(0), Px(gport->width + 1));
   region.Y1 = MIN(Py(0), Py(gport->height + 1));
   region.X2 = MAX(Px(0), Px(gport->width + 1));
@@ -1239,13 +1241,13 @@ ghid_request_debug_draw (void)
   glDisable (GL_STENCIL_TEST);
 
   glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-            (ghid_flip_y ? -1. : 1.) / port->zoom,
-            (ghid_flip_x == ghid_flip_y) ? 1. : -1.);
-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-                             -port->view_x0,
-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-                             -port->view_y0, 0);
+  glScalef ((priv->flip_x ? -1. : 1.) / port->zoom,
+            (priv->flip_y ? -1. : 1.) / port->zoom,
+            (priv->flip_x == priv->flip_y) ? 1. : -1.);
+  glTranslatef (priv->flip_x ?  port->view_x0 - PCB->MaxWidth  :
+                               -port->view_x0,
+                priv->flip_y ?  port->view_y0 - PCB->MaxHeight :
+                               -port->view_y0, 0);
 
   return &ghid_hid;
 }
