@@ -132,6 +132,19 @@ ghid_set_layer (const char *name, int group, int empty)
   end_subcomposite ();
   start_subcomposite ();
 
+  /* Drawing is already flushed by {start,end}_subcomposite */
+  if (group >= 0 && group < max_group) {
+    hidgl_set_depth ((max_group - group) * 10);
+  } else {
+    if (SL_TYPE (idx) == SL_SILK) {
+      if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
+        hidgl_set_depth (max_group * 10 + 3);
+      } else {
+        hidgl_set_depth (10 - 3);
+      }
+    }
+  }
+
   if (idx >= 0 && idx < max_copper_layer + 2)
     {
       priv->trans_lines = true;
@@ -755,6 +768,7 @@ ghid_show_crosshair (gboolean paint_new_location)
   int vcd = VCD * gport->zoom;
   static int done_once = 0;
   static GdkColor cross_color;
+  extern float global_depth;
 
   if (!paint_new_location)
     return;
@@ -767,7 +781,7 @@ ghid_show_crosshair (gboolean paint_new_location)
     }
   x = gport->x_crosshair;
   y = gport->y_crosshair;
-  z = 0;
+  z = global_depth;
 
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
@@ -789,6 +803,7 @@ ghid_show_crosshair (gboolean paint_new_location)
   if (x >= 0 && paint_new_location && draw_markers)
     {
       glBegin (GL_QUADS);
+
       glVertex3i (SIDE_X (gport->view_x0),                            y - vcd,       z);
       glVertex3i (SIDE_X (gport->view_x0),                            y - vcd + vcw, z);
       glVertex3i (SIDE_X (gport->view_x0 + vcd),                      y - vcd + vcw, z);
@@ -1043,6 +1058,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_invalidate_current_gc ();
   hid_expose_callback (&ghid_hid, &region, 0);
   hidgl_flush_triangles (&buffer);
+
+  /* Just prod the drawing code so the current depth gets set to
+     the right value for the layer we are editing */
+  gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
+  gui->end_layer ();
 
   ghid_draw_grid (&region);
 
@@ -1515,8 +1535,8 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
   mat[1][0] = last_modelview_matrix[0][1];
   mat[1][1] = last_modelview_matrix[1][1];
 
-//    if (determinant_2x2 (mat) < 0.00001)
-//      printf ("Determinant is quite small\n");
+  /*    if (determinant_2x2 (mat) < 0.00001)       */
+  /*      printf ("Determinant is quite small\n"); */
 
   invert_2x2 (mat, inv_mat);
 
