@@ -1,5 +1,5 @@
 Bottom: a045ec11160e56fbd5f9013aca3b85eaa4b3b012
-Top:    85a9a05d5592fc8c0b656320f2707535acf3bb55
+Top:    52a9f876d484a24b9e5be92cefadb3fb2d40fcae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-27 00:22:57 +0000
 
@@ -9,7 +9,7 @@ WOW.. TESTING
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 48d9fc2..2899bf7 100644
+index 48d9fc2..f0eedf7 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -140,10 +140,11 @@ ghid_draw_grid (void)
@@ -220,15 +220,7 @@ index 48d9fc2..2899bf7 100644
    if (x2 < x1)
      {
        xx = x1;
-@@ -700,6 +708,7 @@ redraw_region (GdkRectangle *rect)
-   if (!gport->pixmap)
-     return;
- 
-+<<<<<<< current
-   if (rect != NULL)
-     {
-       priv->clip_rect = *rect;
-@@ -719,19 +728,15 @@ redraw_region (GdkRectangle *rect)
+@@ -719,19 +727,15 @@ redraw_region (GdkRectangle *rect)
    set_clip (priv, priv->mask_gc);
    set_clip (priv, priv->grid_gc);
  
@@ -245,10 +237,10 @@ index 48d9fc2..2899bf7 100644
 -  eright = Vx (PCB->MaxWidth);
 -  etop = Vy (0);
 -  ebottom = Vy (PCB->MaxHeight);
-+  region.X1 = MIN(PCB_X (0), PCB_X (gport->width  + 1));
-+  region.Y1 = MIN(PCB_Y (0), PCB_Y (gport->height + 1));
-+  region.X2 = MAX(PCB_X (0), PCB_X (gport->width  + 1));
-+  region.Y2 = MAX(PCB_Y (0), PCB_Y (gport->height + 1));
++  region.X1 = MIN (PCB_X (0), PCB_X (gport->width  + 1));
++  region.Y1 = MIN (PCB_Y (0), PCB_Y (gport->height + 1));
++  region.X2 = MAX (PCB_X (0), PCB_X (gport->width  + 1));
++  region.Y2 = MAX (PCB_Y (0), PCB_Y (gport->height + 1));
 +
 +  eleft =   SCREEN_X (0);
 +  eright =  SCREEN_X (PCB->MaxWidth);
@@ -257,7 +249,7 @@ index 48d9fc2..2899bf7 100644
    if (eleft > eright)
      {
        int tmp = eleft;
-@@ -1018,8 +1023,8 @@ show_crosshair (gboolean paint_new_location)
+@@ -1018,8 +1022,8 @@ show_crosshair (gboolean paint_new_location)
        /* FIXME: when CrossColor changed from config */
        ghid_map_color_string (Settings.CrossColor, &cross_color);
      }
@@ -268,7 +260,7 @@ index 48d9fc2..2899bf7 100644
  
    gdk_gc_set_foreground (xor_gc, &cross_color);
  
-@@ -1268,10 +1273,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1268,10 +1272,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    gdk_draw_rectangle (pixmap, priv->bg_gc, TRUE, 0, 0, width, height);
  
    /* call the drawing routine */
@@ -276,15 +268,15 @@ index 48d9fc2..2899bf7 100644
 -  region.Y1 = MIN(Py(0), Py(gport->height + 1));
 -  region.X2 = MAX(Px(0), Px(gport->width + 1));
 -  region.Y2 = MAX(Py(0), Py(gport->height + 1));
-+  region.X1 = MIN(PCB_X (0), PCB_X (gport->width  + 1));
-+  region.Y1 = MIN(PCB_Y (0), PCB_Y (gport->height + 1));
-+  region.X2 = MAX(PCB_X (0), PCB_X (gport->width  + 1));
-+  region.Y2 = MAX(PCB_Y (0), PCB_Y (gport->height + 1));
++  region.X1 = MIN (PCB_X (0), PCB_X (gport->width  + 1));
++  region.Y1 = MIN (PCB_Y (0), PCB_Y (gport->height + 1));
++  region.X2 = MAX (PCB_X (0), PCB_X (gport->width  + 1));
++  region.Y2 = MAX (PCB_Y (0), PCB_Y (gport->height + 1));
    hid_expose_callback (&ghid_hid, &region, NULL);
  
    gport->drawable = save_drawable;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4999005..611117d 100644
+index 4999005..89152f2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -919,10 +919,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -295,10 +287,10 @@ index 4999005..611117d 100644
 -  region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
 -  region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
 -  region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
-+  region.X1 = MIN(PCB_X (ev->area.x), PCB_X (ev->area.x + ev->area.width  + 1));
-+  region.Y1 = MIN(PCB_Y (ev->area.y), PCB_Y (ev->area.y + ev->area.height + 1));
-+  region.X2 = MAX(PCB_X (ev->area.x), PCB_X (ev->area.x + ev->area.width  + 1));
-+  region.Y2 = MAX(PCB_Y (ev->area.y), PCB_Y (ev->area.y + ev->area.height + 1));
++  region.X1 = MIN (PCB_X (ev->area.x), PCB_X (ev->area.x + ev->area.width  + 1));
++  region.Y1 = MIN (PCB_Y (ev->area.y), PCB_Y (ev->area.y + ev->area.height + 1));
++  region.X2 = MAX (PCB_X (ev->area.x), PCB_X (ev->area.x + ev->area.width  + 1));
++  region.Y2 = MAX (PCB_Y (ev->area.y), PCB_Y (ev->area.y + ev->area.height + 1));
  
    glColor3f (port->bg_color.red / 65535.,
               port->bg_color.green / 65535.,
@@ -310,10 +302,10 @@ index 4999005..611117d 100644
 -  region.Y1 = MIN(Py(0), Py(gport->height + 1));
 -  region.X2 = MAX(Px(0), Px(gport->width + 1));
 -  region.Y2 = MAX(Py(0), Py(gport->height + 1));
-+  region.X1 = MIN(PCB_X (0), PCB_X (gport->width  + 1));
-+  region.Y1 = MIN(PCB_Y (0), PCB_Y (gport->height + 1));
-+  region.X2 = MAX(PCB_X (0), PCB_X (gport->width  + 1));
-+  region.Y2 = MAX(PCB_Y (0), PCB_Y (gport->height + 1));
++  region.X1 = MIN (PCB_X (0), PCB_X (gport->width  + 1));
++  region.Y1 = MIN (PCB_Y (0), PCB_Y (gport->height + 1));
++  region.X2 = MAX (PCB_X (0), PCB_X (gport->width  + 1));
++  region.Y2 = MAX (PCB_Y (0), PCB_Y (gport->height + 1));
    hid_expose_callback (&ghid_hid, &region, NULL);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
