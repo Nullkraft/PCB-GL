@@ -86,7 +86,7 @@ gboolean snavi_event (GIOChannel   *source,
                       gpointer      data)
 {
   static gint axes[6] = { 0, 0, 0, 0, 0, 0 };
-  static gint buttons[2] = { 0, 0 };
+  /* static gint buttons[2] = { 0, 0 }; */
   int i = 0;
 
   struct       input_event event;
@@ -114,8 +114,7 @@ gboolean snavi_event (GIOChannel   *source,
 
       case EV_KEY:
         if (event.code >= BTN_0 && event.code <= BTN_1)
-          buttons[event.code - BTN_0] = event.value;
-
+          /* buttons[event.code - BTN_0] = event.value; */
           button_cb (event.code - BTN_0, event.value, cb_userdata);
         break;
 
@@ -160,7 +159,6 @@ setup_snavi (void (*update_pan)(int, int, int, gpointer),
              void (*button)(int, int, gpointer),
              gpointer data)
 {
-  int event_id;
   GIOChannel *snavi;
 
   update_pan_cb = update_pan;
@@ -184,7 +182,7 @@ setup_snavi (void (*update_pan)(int, int, int, gpointer),
     {
       g_io_channel_set_encoding (snavi, NULL, NULL);
       g_io_channel_set_buffered (snavi, FALSE);
-      event_id = g_io_add_watch (snavi, G_IO_IN, snavi_event, NULL);
+      g_io_add_watch (snavi, G_IO_IN, snavi_event, NULL);
     }
 
   return snavi;
