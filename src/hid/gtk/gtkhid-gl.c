@@ -791,6 +791,7 @@ ghid_show_crosshair (gboolean paint_new_location)
   if (x >= 0 && paint_new_location && draw_markers)
     {
       glBegin (GL_QUADS);
+
       glVertex3i (SIDE_X (gport->view_x0),                            y - vcd,       z);
       glVertex3i (SIDE_X (gport->view_x0),                            y - vcd + vcw, z);
       glVertex3i (SIDE_X (gport->view_x0 + vcd),                      y - vcd + vcw, z);
@@ -1513,8 +1514,8 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
   mat[1][0] = last_modelview_matrix[0][1];
   mat[1][1] = last_modelview_matrix[1][1];
 
-//    if (determinant_2x2 (mat) < 0.00001)
-//      printf ("Determinant is quite small\n");
+  /*    if (determinant_2x2 (mat) < 0.00001)       */
+  /*      printf ("Determinant is quite small\n"); */
 
   invert_2x2 (mat, inv_mat);
 
