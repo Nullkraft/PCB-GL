@@ -1,5 +1,5 @@
-Bottom: 6b5713d6b293ef1dd5778d13c30e29861775f9b8
-Top:    815d1c37f239597ac681e2e0527b08f942a21653
+Bottom: eeae336ac163dccf3fadc604422cc7df72d118c3
+Top:    787a080b8bca935cda7df9a3219ab78e16d50077
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 01:16:23 +0100
 
@@ -90,7 +90,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3f7a77f..290b00b 100644
+index 51c788d..94b686d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -233,7 +233,7 @@ index 3f7a77f..290b00b 100644
  }
  
  static void
-@@ -880,6 +936,10 @@ ghid_start_drawing (GHidPort *port)
+@@ -886,6 +942,10 @@ ghid_start_drawing (GHidPort *port)
  
    port->render_priv->in_context = true;
  
@@ -244,7 +244,7 @@ index 3f7a77f..290b00b 100644
    return TRUE;
  }
  
-@@ -898,6 +958,14 @@ ghid_end_drawing (GHidPort *port)
+@@ -904,6 +964,14 @@ ghid_end_drawing (GHidPort *port)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
@@ -259,7 +259,7 @@ index 3f7a77f..290b00b 100644
  }
  
  void
-@@ -905,6 +973,884 @@ ghid_screen_update (void)
+@@ -911,6 +979,884 @@ ghid_screen_update (void)
  {
  }
  
@@ -1144,7 +1144,7 @@ index 3f7a77f..290b00b 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -973,8 +1919,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -979,8 +1925,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1155,7 +1155,7 @@ index 3f7a77f..290b00b 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1035,25 +1981,55 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1041,25 +1987,55 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
