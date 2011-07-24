@@ -1,5 +1,5 @@
 Bottom: 299a3edee6777df067c58ea99d2fa1da6cc284b1
-Top:    299a3edee6777df067c58ea99d2fa1da6cc284b1
+Top:    6796450b4fbf2ade2f97e87eae9441718299a1f5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 22:22:53 +0100
 
@@ -8,4 +8,15 @@ hid/gtk: Fix missing variable in GDK renderer
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 4fdb8d3..a06d007 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1312,6 +1312,8 @@ ghid_finish_debug_draw (void)
+ bool
+ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+ {
++  render_priv *priv = gport->render_priv;
++
+   *pcb_x = EVENT_TO_PCB_X (event_x);
+   *pcb_y = EVENT_TO_PCB_Y (event_y);
