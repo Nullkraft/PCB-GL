@@ -72,6 +72,12 @@ extern int ghid_flip_x, ghid_flip_y;
 #define PCB_X(x) (int)((double)(x) * FLIP_X (gport->zoom) + gport->view_x0)
 #define PCB_Y(y) (int)((double)(y) * FLIP_Y (gport->zoom) + gport->view_y0)
 
+//#define	DRAW_X(x)	(gint)(FLIP_X(x - gport->view_x0) / gport->zoom)
+//#define	DRAW_Y(y)	(gint)(FLIP_Y(y - gport->view_y0) / gport->zoom)
+
+//#define	VIEW_X(x)	(FLIP_X(x) * gport->zoom + gport->view_x0)
+//#define	VIEW_Y(y)	(FLIP_Y(y) * gport->zoom + gport->view_y0)
+
 /*
  * Used to intercept "special" hotkeys that gtk doesn't usually pass
  * on to the menu hotkeys.  We catch them and put them back where we
