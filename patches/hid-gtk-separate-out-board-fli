@@ -5,6 +5,9 @@ Date:   2011-07-24 19:43:51 +0100
 
 hid/gtk: Separate out board flipping operations into render specific code
 
+As the different renderers may do different things with the board view,
+it is not possible to save the flip state in the PCB settings any more.
+
 
 ---
 
