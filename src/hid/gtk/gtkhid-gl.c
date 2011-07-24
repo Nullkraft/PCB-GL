@@ -756,14 +756,16 @@ draw_crosshair (gint x, gint y, gint z)
   prev = Crosshair.shape;
 }
 
-#define VCW 16
-#define VCD 8
+#define VCW 16 /* Crosshair pan-marker width in pixels */
+#define VCD 8  /* Crosshair pan-marker depth in pixels */
 
 void
 ghid_show_crosshair (gboolean paint_new_location)
 {
   gint x, y, z;
   gboolean draw_markers;
+  int vcw = VCW * gport->zoom;
+  int vcd = VCD * gport->zoom;
   static int done_once = 0;
   static GdkColor cross_color;
   extern float global_depth;
@@ -801,22 +803,26 @@ ghid_show_crosshair (gboolean paint_new_location)
   if (x >= 0 && paint_new_location && draw_markers)
     {
       glBegin (GL_QUADS);
-      glVertex3i (0,                       y - VCD,                  z);
-      glVertex3i (0,                       y - VCD + VCW,            z);
-      glVertex3i (VCD,                     y - VCD + VCW,            z);
-      glVertex3i (VCD,                     y - VCD,                  z);
-      glVertex3i (gport->view_width,       y - VCD,                  z);
-      glVertex3i (gport->view_width,       y - VCD + VCW,            z);
-      glVertex3i (gport->view_width - VCD, y - VCD + VCW,            z);
-      glVertex3i (gport->view_width - VCD, y - VCD,                  z);
-      glVertex3i (x - VCD,                 0,                        z);
-      glVertex3i (x - VCD,                 VCD,                      z);
-      glVertex3i (x - VCD + VCW,           VCD,                      z);
-      glVertex3i (x - VCD + VCW,           0,                        z);
-      glVertex3i (x - VCD,                 gport->view_height - VCD, z);
-      glVertex3i (x - VCD,                 gport->view_height,       z);
-      glVertex3i (x - VCD + VCW,           gport->view_height,       z);
-      glVertex3i (x - VCD + VCW,           gport->view_height - VCD, z);
+      glVertex3i (SIDE_X (gport->view_x0),                            y - vcd,       z);
+      glVertex3i (SIDE_X (gport->view_x0),                            y - vcd + vcw, z);
+      glVertex3i (SIDE_X (gport->view_x0 + vcd),                      y - vcd + vcw, z);
+      glVertex3i (SIDE_X (gport->view_x0 + vcd),                      y - vcd,       z);
+
+      glVertex3i (SIDE_X (gport->view_x0 + gport->view_width),        y - vcd,       z);
+      glVertex3i (SIDE_X (gport->view_x0 + gport->view_width),        y - vcd + vcw, z);
+      glVertex3i (SIDE_X (gport->view_x0 + gport->view_width - vcd),  y - vcd + vcw, z);
+      glVertex3i (SIDE_X (gport->view_x0 + gport->view_width - vcd),  y - vcd,       z);
+
+      glVertex3i (x - vcd,       SIDE_Y (gport->view_y0),                            z);
+      glVertex3i (x - vcd,       SIDE_Y (gport->view_y0 + vcd),                      z);
+      glVertex3i (x - vcd + vcw, SIDE_Y (gport->view_y0 + vcd),                      z);
+      glVertex3i (x - vcd + vcw, SIDE_Y (gport->view_y0),                            z);
+
+      glVertex3i (x - vcd,       SIDE_Y (gport->view_y0 + gport->view_height - vcd), z);
+      glVertex3i (x - vcd,       SIDE_Y (gport->view_y0 + gport->view_height),       z);
+      glVertex3i (x - vcd + vcw, SIDE_Y (gport->view_y0 + gport->view_height),       z);
+      glVertex3i (x - vcd + vcw, SIDE_Y (gport->view_y0 + gport->view_height - vcd), z);
+
       glEnd ();
     }
 
