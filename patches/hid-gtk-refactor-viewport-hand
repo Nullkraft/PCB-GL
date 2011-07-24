@@ -1,5 +1,5 @@
 Bottom: 299a3edee6777df067c58ea99d2fa1da6cc284b1
-Top:    749dd1fa1e937df4ccb43414f268dcc47e277091
+Top:    343067fe1b2edc6316e4685b1f185ce4a8baa9f8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
 
@@ -188,6 +188,256 @@ index 4fdb8d3..cbd83c3 100644
    gport->width = save_width;
    gport->height = save_height;
    gport->view_x0 = save_left;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index ed34ea1..6275cc2 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -40,6 +40,13 @@ static hidGC current_gc = NULL;
+ 
+ static int cur_mask = -1;
+ 
++typedef struct view_data {
++  double pcb_units_per_pixel;
++  Coord center_x;
++  Coord center_y;
++  /* TODO: Rotation matrix, flips etc..? */
++} view_data;
++
+ typedef struct render_priv {
+   GdkGLConfig *glconfig;
+   bool trans_lines;
+@@ -47,6 +54,8 @@ typedef struct render_priv {
+   int subcomposite_stencil_bit;
+   char *current_colorname;
+   double current_alpha_mult;
++  view_data view;
++  double pcb_units_per_pixel;
+ } render_priv;
+ 
+ 
+@@ -523,19 +532,21 @@ use_gc (hidGC gc)
+ void
+ ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
+ {
++  render_priv *priv = gport->render_priv;
+   USE_GC (gc);
+ 
+-  hidgl_draw_line (gc->cap, gc->width, x1, y1, x2, y2, gport->zoom);
++  hidgl_draw_line (gc->cap, gc->width, x1, y1, x2, y2, priv->pcb_units_per_pixel);
+ }
+ 
+ void
+ ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
+                          int start_angle, int delta_angle)
+ {
++  render_priv *priv = gport->render_priv;
+   USE_GC (gc);
+ 
+   hidgl_draw_arc (gc->width, cx, cy, xradius, yradius,
+-                  start_angle, delta_angle, gport->zoom);
++                  start_angle, delta_angle, priv->pcb_units_per_pixel);
+ }
+ 
+ void
+@@ -550,9 +561,10 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ void
+ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
+ {
++  render_priv *priv = gport->render_priv;
+   USE_GC (gc);
+ 
+-  hidgl_fill_circle (cx, cy, radius, gport->zoom);
++  hidgl_fill_circle (cx, cy, radius, priv->pcb_units_per_pixel);
+ }
+ 
+ 
+@@ -567,9 +579,10 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+ void
+ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
++  render_priv *priv = gport->render_priv;
+   USE_GC (gc);
+ 
+-  hidgl_fill_pcb_polygon (poly, clip_box, gport->zoom);
++  hidgl_fill_pcb_polygon (poly, clip_box, priv->pcb_units_per_pixel);
+ }
+ 
+ void
+@@ -730,10 +743,11 @@ draw_crosshair (gint x, gint y, gint z)
+ void
+ ghid_show_crosshair (gboolean paint_new_location)
+ {
++  render_priv *priv = gport->render_priv;
+   gint x, y, z;
+   gboolean draw_markers;
+-  int vcw = VCW * gport->zoom;
+-  int vcd = VCD * gport->zoom;
++  int vcw = VCW * priv->pcb_units_per_pixel;
++  int vcd = VCD * priv->pcb_units_per_pixel;
+   static int done_once = 0;
+   static GdkColor cross_color;
+ 
+@@ -882,6 +896,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+                              GdkEventExpose *ev,
+                              GHidPort *port)
+ {
++  render_priv *priv = port->render_priv;
+   BoxType region;
+ 
+   ghid_start_drawing (port);
+@@ -911,9 +926,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
+ 
+-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
+-            (ghid_flip_y ? -1. : 1.) / port->zoom,
+-            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
++  glScalef ((ghid_flip_x ? -1. : 1.) / priv->pcb_units_per_pixel,
++            (ghid_flip_y ? -1. : 1.) / priv->pcb_units_per_pixel,
++            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / priv->pcb_units_per_pixel);
+   glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
+                              -port->view_x0,
+                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
+@@ -996,6 +1011,7 @@ gboolean
+ ghid_pinout_preview_expose (GtkWidget *widget,
+                             GdkEventExpose *ev)
+ {
++  render_priv *priv = gport->render_priv;
+   GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
+   GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
+   GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
+@@ -1006,7 +1022,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   int save_view_width, save_view_height;
+   double xz, yz;
+ 
+-  save_zoom = gport->zoom;
++  save_zoom = priv->pcb_units_per_pixel;
+   save_width = gport->width;
+   save_height = gport->height;
+   save_left = gport->view_x0;
+@@ -1020,14 +1036,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   xz = (double) pinout->x_max / da_w;
+   yz = (double) pinout->y_max / da_h;
+   if (xz > yz)
+-    gport->zoom = xz;
++    priv->pcb_units_per_pixel = xz;
+   else
+-    gport->zoom = yz;
++    priv->pcb_units_per_pixel = yz;
+ 
+   gport->width = da_w;
+   gport->height = da_h;
+-  gport->view_width = da_w * gport->zoom;
+-  gport->view_height = da_h * gport->zoom;
++  gport->view_width = da_w * priv->pcb_units_per_pixel;
++  gport->view_height = da_h * priv->pcb_units_per_pixel;
+   gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
+   gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
+ 
+@@ -1068,8 +1084,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+   glPushMatrix ();
+-  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
+-            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
++  glScalef ((ghid_flip_x ? -1. : 1.) / priv->pcb_units_per_pixel,
++            (ghid_flip_y ? -1. : 1.) / priv->pcb_units_per_pixel, 1);
+   glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
+                              -gport->view_x0,
+                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
+@@ -1087,7 +1103,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   gport->render_priv->in_context = false;
+   gdk_gl_drawable_gl_end (pGlDrawable);
+ 
+-  gport->zoom = save_zoom;
++  priv->pcb_units_per_pixel = save_zoom;
+   gport->width = save_width;
+   gport->height = save_height;
+   gport->view_x0 = save_left;
+@@ -1102,6 +1118,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+ GdkPixmap *
+ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
+ {
++  render_priv *priv = gport->render_priv;
+   GdkGLConfig *glconfig;
+   GdkPixmap *pixmap;
+   GdkGLPixmap *glpixmap;
+@@ -1113,7 +1130,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   int save_view_width, save_view_height;
+   BoxType region;
+ 
+-  save_zoom = gport->zoom;
++  save_zoom = priv->pcb_units_per_pixel;
+   save_width = gport->width;
+   save_height = gport->height;
+   save_left = gport->view_x0;
+@@ -1135,11 +1152,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+ 
+   /* Setup zoom factor for drawing routines */
+ 
+-  gport->zoom = zoom;
++  priv->pcb_units_per_pixel = zoom;
+   gport->width = width;
+   gport->height = height;
+-  gport->view_width = width * gport->zoom;
+-  gport->view_height = height * gport->zoom;
++  gport->view_width = width * priv->pcb_units_per_pixel;
++  gport->view_height = height * priv->pcb_units_per_pixel;
+   gport->view_x0 = ghid_flip_x ? PCB->MaxWidth - cx : cx;
+   gport->view_x0 -= gport->view_height / 2;
+   gport->view_y0 = ghid_flip_y ? PCB->MaxHeight - cy : cy;
+@@ -1179,8 +1196,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+   glPushMatrix ();
+-  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
+-            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
++  glScalef ((ghid_flip_x ? -1. : 1.) / priv->pcb_units_per_pixel,
++            (ghid_flip_y ? -1. : 1.) / priv->pcb_units_per_pixel, 1);
+   glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
+                              -gport->view_x0,
+                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
+@@ -1204,7 +1221,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   g_object_unref (glconfig);
+   g_object_unref (glcontext);
+ 
+-  gport->zoom = save_zoom;
++  priv->pcb_units_per_pixel = save_zoom;
+   gport->width = save_width;
+   gport->height = save_height;
+   gport->view_x0 = save_left;
+@@ -1219,6 +1236,7 @@ HID *
+ ghid_request_debug_draw (void)
+ {
+   GHidPort *port = gport;
++  render_priv *priv = port->render_priv;
+   GtkWidget *widget = port->drawing_area;
+ 
+   ghid_start_drawing (port);
+@@ -1239,8 +1257,8 @@ ghid_request_debug_draw (void)
+   glDisable (GL_STENCIL_TEST);
+ 
+   glPushMatrix ();
+-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
+-            (ghid_flip_y ? -1. : 1.) / port->zoom,
++  glScalef ((ghid_flip_x ? -1. : 1.) / priv->pcb_units_per_pixel,
++            (ghid_flip_y ? -1. : 1.) / priv->pcb_units_per_pixel,
+             (ghid_flip_x == ghid_flip_y) ? 1. : -1.);
+   glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
+                              -port->view_x0,
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index b11d32c..cf47cf5 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -2382,8 +2382,6 @@ ghid_parse_arguments (int *argc, char ***argv)
+   gtk_init (argc, argv);
+ 
+   gport = &ghid_port;
+-  gport->zoom = 300.0;
+-  pixel_slop = 300;
+ 
+   ghid_init_renderer (argc, argv, gport);
+ 
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
 index 930df19..79f9b1f 100644
 --- a/src/hid/gtk/gui.h
