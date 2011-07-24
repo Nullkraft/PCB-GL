@@ -1,5 +1,5 @@
 Bottom: 4b18ec13ce943d601d951c03e085c3fc4a602bfb
-Top:    aa33cdd786d8034068f4e9b6749b9f2622474ebd
+Top:    b8030400ee36fbc2a8db046f0a5cf6163f0ad15f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 01:16:25 +0100
 
@@ -249,10 +249,10 @@ index 0000000..b187cf2
 +License (LGPL) version 2.1.
 diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
 new file mode 100644
-index 0000000..76f8e87
+index 0000000..5cccfbc
 --- /dev/null
 +++ b/src/borast/borast-bentley-ottmann.c
-@@ -0,0 +1,1570 @@
+@@ -0,0 +1,1568 @@
 +/*
 + * Copyright © 2004 Carl Worth
 + * Copyright © 2006 Red Hat, Inc.
@@ -1407,7 +1407,7 @@ index 0000000..76f8e87
 +    borast_bo_event_queue_t event_queue;
 +    borast_bo_sweep_line_t sweep_line;
 +    borast_bo_event_t *event;
-+    borast_bo_edge_t *left, *right;
++    borast_bo_edge_t *left; /* , *right; */
 +    borast_bo_edge_t *e1;
 +
 +#if DEBUG_EVENTS
@@ -1497,7 +1497,7 @@ index 0000000..76f8e87
 +            }
 +
 +            left = e1->prev;
-+            right = e1->next;
++            /* right = e1->next */;
 +
 +            break;
 +
@@ -1506,7 +1506,7 @@ index 0000000..76f8e87
 +            _borast_bo_event_queue_delete (&event_queue, event);
 +
 +            left = e1->prev;
-+            right = e1->next;
++            /* right = e1->next; */
 +
 +            _borast_bo_sweep_line_delete (&sweep_line, e1);
 +
@@ -1640,7 +1640,6 @@ index 0000000..76f8e87
 +bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps)
 +{
 +  int intersections;
-+  borast_status_t status;
 +  borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
 +  borast_bo_start_event_t *events;
 +  borast_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
@@ -1682,10 +1681,10 @@ index 0000000..76f8e87
 +   * passes of the Bentley-Ottmann algorithm. It would merely
 +   * require storing the results of each pass into a temporary
 +   * borast_traps_t. */
-+  status = _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
-+                                                       num_events,
-+                                                       traps,
-+                                                       &intersections);
++  _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
++                                               num_events,
++                                               traps,
++                                               &intersections);
 +
 +  for (n = 0; n < traps->num_traps; n++) {
 +    int x1, y1, x2, y2, x3, y3, x4, y4;
@@ -1738,7 +1737,6 @@ index 0000000..76f8e87
 +bo_contour_to_traps (PLINE *contour, borast_traps_t *traps)
 +{
 +  int intersections;
-+  borast_status_t status;
 +  borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
 +  borast_bo_start_event_t *events;
 +  borast_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
@@ -1773,10 +1771,10 @@ index 0000000..76f8e87
 +   * passes of the Bentley-Ottmann algorithm. It would merely
 +   * require storing the results of each pass into a temporary
 +   * borast_traps_t. */
-+  status = _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
-+                                                       num_events,
-+                                                       traps,
-+                                                       &intersections);
++  _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
++                                              num_events,
++                                              traps,
++                                              &intersections);
 +
 +  for (n = 0; n < traps->num_traps; n++) {
 +    int x1, y1, x2, y2, x3, y3, x4, y4;
