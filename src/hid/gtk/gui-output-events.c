@@ -215,7 +215,6 @@ ghid_note_event_location (GdkEventButton * ev)
   gboolean moved;
   /* FIXME: IFDEF HACK */
 #ifdef ENABLE_GL
-  int pcb_x, pcb_y;
   extern float global_depth; /* FIXME: REMOVE THIS HACK! */
 #endif
 
