@@ -171,15 +171,8 @@ typedef struct
   gboolean has_entered;
   gboolean panning;
 
-/* zoom value is PCB units per screen pixel.  Larger numbers mean zooming
-|  out - the largest value means you are looking at the whole board.
-*/
-  gdouble zoom;			/* PCB units per screen pixel.  Larger */
-  /* numbers mean zooming out. */
-  gint view_x0,			/* Viewport in PCB coordinates */
-    view_y0, view_width, view_height, view_x, view_y;
-
-  gint crosshair_x, y_crosshair_y;
+  Coord pointer_x, pointer_y;       /* PCB coordinates of the object under the mouse pointer */
+  Coord crosshair_x, y_crosshair_y; /* PCB coordinates of the crosshair set by the CORE      */
 }
 GHidPort;
 
