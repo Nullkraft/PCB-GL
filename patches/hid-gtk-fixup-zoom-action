@@ -1,0 +1,14 @@
+Bottom: 92380e1b4198f84819206ca110131bfc7086126e
+Top:    92380e1b4198f84819206ca110131bfc7086126e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-24 17:44:29 +0100
+
+hid/gtk: Fixup Zoom action.
+
+If the passed coordinates are both zero, we pass the PCB coordinates of the
+board center into a function which currently expects screen coordinates. Fail.
+
+
+---
+
+
