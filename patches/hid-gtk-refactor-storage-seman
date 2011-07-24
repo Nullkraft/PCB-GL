@@ -1,5 +1,5 @@
 Bottom: 28f3a0fe7f84747dff3ec269302a64aa45ae9542
-Top:    eeb1c29afd422cdcafd2a9d6753b03916c8a59d6
+Top:    4a7506b5c449f88fd2cd017255387e7c69a1d3da
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-26 23:29:46 +0000
 
@@ -15,7 +15,7 @@ to reflect the change of semantics.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 6a8d904..915656a 100644
+index 6a8d904..e38cea4 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -241,28 +241,30 @@ zoom_to (double new_zoom, int x, int y)
@@ -25,9 +25,9 @@ index 6a8d904..915656a 100644
 -      xtmp = (gport->view_x - gport->view_x0) / (gdouble) gport->view_width;
 -      ytmp = (gport->view_y - gport->view_y0) / (gdouble) gport->view_height;
 -      
-+      xtmp = (SIDE_X (gport->view_x) - gport->view_x0) /
++      xtmp = (SIDE_X (gport->pcb_x) - gport->view_x0) /
 +                (gdouble) gport->view_width;
-+      ytmp = (SIDE_Y (gport->view_y) - gport->view_y0) /
++      ytmp = (SIDE_Y (gport->pcb_y) - gport->view_y0) /
 +                (gdouble) gport->view_height;
 +
        gport->zoom = new_zoom;
@@ -35,14 +35,14 @@ index 6a8d904..915656a 100644
        ghid_port_ranges_scale(FALSE);
  
 -      x0 = gport->view_x - xtmp * gport->view_width;
-+      x0 = SIDE_X (gport->view_x) - xtmp * gport->view_width;
++      x0 = SIDE_X (gport->pcb_x) - xtmp * gport->view_width;
        if (x0 < 0)
 -	x0 = 0;
 +        x0 = 0;
        gport->view_x0 = x0;
  
 -      y0 = gport->view_y - ytmp * gport->view_height;
-+      y0 = SIDE_Y (gport->view_y) - ytmp * gport->view_height;
++      y0 = SIDE_Y (gport->pcb_y) - ytmp * gport->view_height;
        if (y0 < 0)
 -	y0 = 0;
 +        y0 = 0;
@@ -63,18 +63,18 @@ index 6a8d904..915656a 100644
    if (do_flip_x)
      {
 -	flipd = PCB->MaxWidth / 2 - gport->view_x;
-+	flipd = PCB->MaxWidth / 2 - SIDE_X (gport->view_x);
++	flipd = PCB->MaxWidth / 2 - SIDE_X (gport->pcb_x);
  	ghid_port_ranges_pan (2 * flipd, 0, TRUE);
      }
    if (do_flip_y)
      {
 -	flipd = PCB->MaxHeight / 2 - gport->view_y;
-+	flipd = PCB->MaxHeight / 2 - SIDE_Y (gport->view_y);
++	flipd = PCB->MaxHeight / 2 - SIDE_Y (gport->pcb_y);
  	ghid_port_ranges_pan (0, 2 * flipd, TRUE);
      }
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 1f9a31a..694a712 100644
+index 1f9a31a..0a90931 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -166,19 +166,21 @@ ghid_port_ranges_zoom (gdouble zoom)
@@ -83,9 +83,9 @@ index 1f9a31a..694a712 100644
  
 -  xtmp = (gport->view_x - gport->view_x0) / (gdouble) gport->view_width;
 -  ytmp = (gport->view_y - gport->view_y0) / (gdouble) gport->view_height;
-+  xtmp = (SIDE_X (gport->view_x) - gport->view_x0) /
++  xtmp = (SIDE_X (gport->pcb_x) - gport->view_x0) /
 +            (gdouble) gport->view_width;
-+  ytmp = (SIDE_Y (gport->view_y) - gport->view_y0) /
++  ytmp = (SIDE_Y (gport->pcb_y) - gport->view_y0) /
 +            (gdouble) gport->view_height;
  
    gport->zoom = zoom;
@@ -93,13 +93,13 @@ index 1f9a31a..694a712 100644
    ghid_port_ranges_scale(FALSE);
  
 -  x0 = gport->view_x - xtmp * gport->view_width;
-+  x0 = SIDE_X (gport->view_x) - xtmp * gport->view_width;
++  x0 = SIDE_X (gport->pcb_x) - xtmp * gport->view_width;
    if (x0 < 0)
      x0 = 0;
    gport->view_x0 = x0;
  
 -  y0 = gport->view_y - ytmp * gport->view_height;
-+  y0 = SIDE_Y (gport->view_y) - ytmp * gport->view_height;
++  y0 = SIDE_Y (gport->pcb_y) - ytmp * gport->view_height;
    if (y0 < 0)
      y0 = 0;
    gport->view_y0 = y0;
@@ -109,8 +109,8 @@ index 1f9a31a..694a712 100644
      {
 -      *x = SIDE_X (gport->view_x);
 -      *y = SIDE_Y (gport->view_y);
-+      *x = gport->view_x;
-+      *y = gport->view_y;
++      *x = gport->pcb_x;
++      *y = gport->pcb_y;
      }
  }
  
@@ -120,12 +120,26 @@ index 1f9a31a..694a712 100644
      }
 -  gport->view_x = event_x * gport->zoom + gport->view_x0;
 -  gport->view_y = event_y * gport->zoom + gport->view_y0;
-+  gport->view_x = VIEW_X (event_x);
-+  gport->view_y = VIEW_Y (event_y);
++  gport->pcb_x = VIEW_X (event_x);
++  gport->pcb_y = VIEW_Y (event_y);
  
 -  moved = MoveCrosshairAbsolute (SIDE_X (gport->view_x), 
 -				 SIDE_Y (gport->view_y));
-+  moved = MoveCrosshairAbsolute (gport->view_x, gport->view_y);
++  moved = MoveCrosshairAbsolute (gport->pcb_x, gport->pcb_y);
    if (moved)
      {
        AdjustAttachedObjects ();
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 31ee636..efe6b3b 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -177,7 +177,8 @@ typedef struct
+   gdouble zoom;			/* PCB units per screen pixel.  Larger */
+   /* numbers mean zooming out. */
+   gint view_x0,			/* Viewport in PCB coordinates */
+-    view_y0, view_width, view_height, view_x, view_y;
++    view_y0, view_width, view_height;
++  Coord pcb_x, pcb_y;
+ 
+   gint x_crosshair, y_crosshair;
+ }
