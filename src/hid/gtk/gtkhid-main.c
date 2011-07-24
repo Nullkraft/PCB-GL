@@ -29,13 +29,6 @@
 RCSID ("$Id$");
 
 
-static void zoom_to (double factor, int x, int y);
-static void zoom_by (double factor, int x, int y);
-static void zoom_fit (void);
-
-int ghid_flip_x = 0, ghid_flip_y = 0;
-
-
 void
 ghid_pan_fixup ()
 {
@@ -65,7 +58,7 @@ ghid_pan_fixup ()
   if (gport->view_width > PCB->MaxWidth &&
       gport->view_height > PCB->MaxHeight)
     {
-      zoom_fit ();
+      ghid_zoom_view_fit ();
       return;
     }
 
@@ -136,7 +129,7 @@ Zoom (int argc, char **argv, int x, int y)
 
   if (argc < 1)
     {
-      zoom_fit ();
+      ghid_zoom_view_fit ();
       return 0;
     }
 
@@ -149,79 +142,18 @@ Zoom (int argc, char **argv, int x, int y)
   switch (argv[0][0])
     {
     case '-':
-      zoom_by (1 / v, x, y);
+      ghid_zoom_view_rel (x, y, 1 / v);
       break;
     default:
     case '+':
-      zoom_by (v, x, y);
+      ghid_zoom_view_rel (x, y, v);
       break;
     case '=':
-      /* this needs to set the scale factor absolutely*/
-      zoom_to (v, x, y);
+      ghid_zoom_view_abs (x, y, v);
       break;
     }
 
   return 0;
-}
-
-
-static void
-zoom_to (double new_zoom, int x, int y)
-{
-  double min_zoom, max_zoom;
-  double xtmp, ytmp;
-
-  /* gport->zoom:
-   * zoom value is PCB units per screen pixel.  Larger numbers mean zooming
-   * out - the largest value means you are looking at the whole board.
-   *
-   * gport->view_width and gport->view_height are in PCB coordinates
-   */
-
-  /* Set the "minimum" zoom constant (maximum zoom),
-   * at 1 pixel per PCB unit */
-  min_zoom = 1;
-
-  /* Set the "maximum" zoom constant (minimum zoom),
-   * to make the entire board just fit inside the viewport */
-  max_zoom = MAX (PCB->MaxWidth  / gport->width,
-                  PCB->MaxHeight / gport->height);
-
-  new_zoom = MIN (MAX (min_zoom, new_zoom), max_zoom);
-
-  if (gport->zoom == new_zoom)
-    return;
-
-  xtmp = (SIDE_X (x) - gport->view_x0) / (double)gport->view_width;
-  ytmp = (SIDE_Y (y) - gport->view_y0) / (double)gport->view_height;
-
-  gport->zoom = new_zoom;
-  pixel_slop = new_zoom;
-  ghid_port_ranges_scale (FALSE);
-
-  gport->view_x0 = MAX (0, SIDE_X (x) - xtmp * gport->view_width);
-  gport->view_y0 = MAX (0, SIDE_Y (y) - ytmp * gport->view_height);
-
-  ghidgui->adjustment_changed_holdoff = TRUE;
-  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
-  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
-  ghidgui->adjustment_changed_holdoff = FALSE;
-
-  ghid_port_ranges_changed ();
-  ghid_set_status_line_label ();
-}
-
-static void
-zoom_by (double factor, int x, int y)
-{
-  zoom_to (gport->zoom * factor, x, y);
-}
-
-static void
-zoom_fit (void)
-{
-  zoom_to (MAX (PCB->MaxWidth  / gport->width,
-                PCB->MaxHeight / gport->height), 0, 0);
 }
 
 /* ------------------------------------------------------------ */
@@ -286,95 +218,73 @@ ghid_mod1_is_pressed ()
 void
 ghid_set_crosshair (int x, int y, int action)
 {
+  GdkDisplay *display;
+  GdkScreen *screen;
+  int offset_x, offset_y;
+  int widget_x, widget_y;
+  int pointer_x, pointer_y;
+  Coord pcb_x, pcb_y;
+
   if (gport->crosshair_x != x || gport->crosshair_y != y)
     {
       ghid_set_cursor_position_labels ();
       gport->crosshair_x = x;
       gport->crosshair_y = y;
 
-      /*
-       * FIXME - does this trigger the idle_proc stuff?  It is in the
+      /* FIXME - does this trigger the idle_proc stuff?  It is in the
        * lesstif HID.  Maybe something is needed here?
        *
        * need_idle_proc ();
        */
-
     }
 
-  /*
-   * Pan the viewport so that the crosshair (which is in a fixed
-   * location relative to the board) lands where the pointer
-   * is.  What happens is the crosshair is moved on the board
-   * (see above) and then we move the board here to line it up
-   * again.  We do this by figuring out where the pointer is
-   * in board coordinates and we know where the crosshair is
-   * in board coordinates.  Then we know how far to pan.
-   */
-  if (action == HID_SC_PAN_VIEWPORT)
-    {
-      GdkDisplay *display;
-      gint pos_x, pos_y, xofs, yofs;
-      
-      display = gdk_display_get_default ();
-      
-      /* figure out where the pointer is relative to the display */ 
-      gdk_display_get_pointer (display, NULL, &pos_x, &pos_y, NULL); 
-      
-      /*
-       * Figure out where the drawing area is on the screen so we can
-       * figure out where the pointer is relative to the viewport.
-       */ 
-      gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
-      
-      pos_x -= xofs;
-      pos_y -= yofs;
+  if (action != HID_SC_PAN_VIEWPORT &&
+      action != HID_SC_WARP_POINTER)
+    return;
 
-      /*
-       * pointer is at
-       *  px = gport->view_x0 + pos_x * gport->zoom
-       *  py = gport->view_y0 + pos_y * gport->zoom
-       *
-       * cross hair is at
-       *  x
-       *  y
-       *
-       * we need to shift x0 by (x - px) and y0 by (y - py)
-       * x0 = x0 + x - (x0 + pos_x * zoom)
-       *    = x - pos_x*zoom
+  /* Find out where the drawing area is on the screen. gdk_display_get_pointer
+   * and gdk_display_warp_pointer work relative to the whole display, whilst
+   * our coordinates are relative to the drawing area origin.
+   */
+  gdk_window_get_origin (gport->drawing_area->window, &offset_x, &offset_y);
+  display = gdk_display_get_default ();
+
+  switch (action) {
+    case HID_SC_PAN_VIEWPORT:
+      /* Pan the board in the viewport so that the crosshair (who's location
+       * relative on the board was set above) lands where the pointer is.
+       * We pass the request to pan a particular point on the board to a
+       * given widget coordinate of the viewport into the rendering code
        */
 
-      if (ghid_flip_x)
-        gport->view_x0 = x - (gport->view_width - pos_x * gport->zoom);
-      else
-        gport->view_x0 = x - pos_x * gport->zoom;
+      /* Find out where the pointer is relative to the display */
+      gdk_display_get_pointer (display, NULL, &pointer_x, &pointer_y, NULL);
 
-      if (ghid_flip_y)
-        gport->view_y0 = y - (gport->view_height - pos_y * gport->zoom);
-      else
-        gport->view_y0 = y - pos_y * gport->zoom;
+      widget_x = pointer_x - offset_x;
+      widget_y = pointer_y - offset_y;
 
-      ghid_pan_fixup();
+      ghid_event_to_pcb_coords (widget_x, widget_y, &pcb_x, &pcb_y);
+      ghid_pan_view_abs (pcb_x, pcb_y, widget_x, widget_y);
 
-      action = HID_SC_WARP_POINTER;
-    }
+      ghid_pan_fixup (); /* XXX: ??? */
 
-  if (action == HID_SC_WARP_POINTER)
-    {
-      gint xofs, yofs;
-      GdkDisplay *display;
-      GdkScreen *screen;
+      /* Just in case we couldn't pan the board the whole way,
+       * we warp the pointer to where the crosshair DID land.
+       */
+      /* Fall through */
 
-      display = gdk_display_get_default ();
+    case HID_SC_WARP_POINTER:
       screen = gdk_display_get_default_screen (display);
 
-      /*
-       * Figure out where the drawing area is on the screen because
-       * gdk_display_warp_pointer will warp relative to the whole display
-       * but the value we've been given is relative to your drawing area
-       */
-      gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
-      gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
-    }
+      ghid_pcb_to_event_coords (x, y, &widget_x, &widget_y);
+
+      pointer_x = offset_x + widget_x;
+      pointer_y = offset_y + widget_y;
+
+      gdk_display_warp_pointer (display, screen, pointer_x, pointer_y);
+
+      break;
+  }
 }
 
 typedef struct
@@ -1177,7 +1087,7 @@ PCBChanged (int argc, char **argv, int x, int y)
   RouteStylesChanged (0, NULL, 0, 0);
   ghid_port_ranges_scale (TRUE);
   ghid_port_ranges_pan (0, 0, FALSE);
-  zoom_fit ();
+  ghid_zoom_view_fit ();
   ghid_port_ranges_changed ();
   ghid_sync_with_new_layout ();
   return 0;
@@ -1390,84 +1300,48 @@ side'' of the board.
 static int
 SwapSides (int argc, char **argv, int x, int y)
 {
-  gint flipd;
-  int do_flip_x = 0;
-  int do_flip_y = 0;
-  int comp_group = GetLayerGroupNumberByNumber (component_silk_layer);
-  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
   int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
-  int comp_showing =
-    PCB->Data->Layer[PCB->LayerGroups.Entries[comp_group][0]].On;
-  int solder_showing =
-    PCB->Data->Layer[PCB->LayerGroups.Entries[solder_group][0]].On;
+  int comp_group =   GetLayerGroupNumberByNumber (component_silk_layer);
+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  int comp_showing =   LAYER_PTR (PCB->LayerGroups.Entries[comp_group][0])->On;
+  int solder_showing = LAYER_PTR (PCB->LayerGroups.Entries[solder_group][0])->On;
 
 
   if (argc > 0)
     {
       switch (argv[0][0]) {
-      case 'h':
-      case 'H':
-	ghid_flip_x = ! ghid_flip_x;
-	do_flip_x = 1;
-	break;
-      case 'v':
-      case 'V':
-	ghid_flip_y = ! ghid_flip_y;
-	do_flip_y = 1;
-	break;
-      case 'r':
-      case 'R':
-	ghid_flip_x = ! ghid_flip_x;
-	ghid_flip_y = ! ghid_flip_y;
-	do_flip_x = 1;
-	do_flip_y = 1;
-	break;
-      default:
-	return 1;
+        case 'h':
+        case 'H':
+          ghid_flip_view (x, y, true, false);
+          break;
+        case 'v':
+        case 'V':
+          ghid_flip_view (x, y, false, true);
+          break;
+        case 'r':
+        case 'R':
+          ghid_flip_view (x, y, true, true);
+          Settings.ShowSolderSide = !Settings.ShowSolderSide; /* Swapped back below */
+          break;
+        default:
+          return 1;
       }
-      /* SwapSides will swap this */
-      Settings.ShowSolderSide = (ghid_flip_x == ghid_flip_y);
     }
 
   Settings.ShowSolderSide = !Settings.ShowSolderSide;
-  if (Settings.ShowSolderSide)
+
+  if ((active_group == comp_group   && comp_showing   && !solder_showing) ||
+      (active_group == solder_group && solder_showing && !comp_showing))
     {
-      if (active_group == comp_group && comp_showing && !solder_showing)
-	{
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 0,
-				 0);
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[solder_group][0], 1,
-				 1);
-	}
-    }
-  else
-    {
-      if (active_group == solder_group && solder_showing && !comp_showing)
-	{
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[solder_group][0], 0,
-				 0);
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 1,
-				 1);
-	}
+      bool new_comp_vis = Settings.ShowSolderSide && active_group == comp_group;
+
+      ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0],
+                             new_comp_vis, new_comp_vis);
+      ChangeGroupVisibility (PCB->LayerGroups.Entries[solder_group][0],
+                             !new_comp_vis, !new_comp_vis);
     }
 
-  /* Update coordinates so that the current location stays where it was on the
-     other side; we need to do this since the actual flip center is the
-     center of the board while the user expect the center would be the current
-     location */
-  if (do_flip_x)
-    {
-	flipd = PCB->MaxWidth / 2 - SIDE_X (gport->pcb_x);
-	ghid_port_ranges_pan (2 * flipd, 0, TRUE);
-    }
-  if (do_flip_y)
-    {
-	flipd = PCB->MaxHeight / 2 - SIDE_Y (gport->pcb_y);
-	ghid_port_ranges_pan (0, 2 * flipd, TRUE);
-    }
-
-  ghid_invalidate_all ();
-  return 0;
+   return 0;
 }
 
 /* ------------------------------------------------------------ */
@@ -1621,53 +1495,38 @@ currently within the window already.
 static int
 Center(int argc, char **argv, int x, int y)
 {
-  int x0, y0, w2, h2;
   GdkDisplay *display;
   GdkScreen *screen;
-  int xofs, yofs;
+  int offset_x, offset_y;
+  int widget_x, widget_y;
+  int pointer_x, pointer_y;
 
   if (argc != 0)
     AFAIL (center);
 
-  x = GRIDFIT_X (SIDE_X (x), PCB->Grid);
-  y = GRIDFIT_Y (SIDE_Y (y), PCB->Grid);
+  /* Aim to put the given x, y PCB coordinates in the center of the widget */
+  widget_x = gport->width / 2;
+  widget_y = gport->height / 2;
 
-  w2 = gport->view_width / 2;
-  h2 = gport->view_height / 2;
-  x0 = x - w2;
-  y0 = y - h2;
+  ghid_pan_view_abs (x, y, widget_x, widget_y);
 
-  if (x0 < 0)
-    {
-      x0 = 0;
-      x = x0 + w2;
-    }
+  ghid_pan_fixup (); /* XXX: ???? */
 
-  if (y0 < 0)
-    {
-      y0 = 0;
-      y = y0 + h2;
-    }
+  /* Now move the mouse pointer to the place where the board location
+   * actually ended up.
+   *
+   * XXX: Should only do this if we confirm we are inside our window?
+   */
 
-  gport->view_x0 = x0;
-  gport->view_y0 = y0;
+  ghid_pcb_to_event_coords (x, y, &widget_x, &widget_y);
+  gdk_window_get_origin (gport->drawing_area->window, &offset_x, &offset_y);
 
-  ghid_pan_fixup ();
-
-  /* Move the pointer to the center of the window, but only if it's
-     currently within the window already.  Watch out for edges,
-     though.  */
+  pointer_x = offset_x + widget_x;
+  pointer_y = offset_y + widget_y;
 
   display = gdk_display_get_default ();
   screen = gdk_display_get_default_screen (display);
-
-  /*
-   * Figure out where the drawing area is on the screen because
-   * gdk_display_warp_pointer will warp relative to the whole display
-   * but the value we've been given is relative to your drawing area
-   */
-  gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
-  gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
+  gdk_display_warp_pointer (display, screen, pointer_x, pointer_y);
 
   return 0;
 }
@@ -1743,11 +1602,12 @@ CursorAction(int argc, char **argv, int x, int y)
     AFAIL (cursor);
 
   dx = GetValueEx (argv[1], argv[3], NULL, extra_units_x, "");
-  if (ghid_flip_x)
-    dx = -dx;
   dy = GetValueEx (argv[2], argv[3], NULL, extra_units_y, "");
-  if (!ghid_flip_y)
-    dy = -dy;
+
+#if 0 /* We cannot know this sensibly from the renderer, so we have to remove it */
+  if (ghid_flip_x) dx = -dx;
+  if (!ghid_flip_y) dy = -dy;
+#endif
 
   EventMoveCrosshair (Crosshair.X + dx, Crosshair.Y + dy);
   gui->set_crosshair (Crosshair.X, Crosshair.Y, pan_warp);
