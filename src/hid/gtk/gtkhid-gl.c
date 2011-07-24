@@ -1935,6 +1935,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_start_drawing (port);
 
+  hidgl_in_context (true);
   hidgl_init ();
   check_gl_drawing_ok_hack = true;
 
@@ -2113,6 +2114,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   hidgl_flush_triangles (&buffer);
 
   check_gl_drawing_ok_hack = false;
+  hidgl_in_context (false);
   ghid_end_drawing (port);
 
   g_timer_start (priv->time_since_expose);
@@ -2184,6 +2186,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   gport->render_priv->in_context = true;
 
   check_gl_drawing_ok_hack = true;
+  hidgl_in_context (true);
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -2232,6 +2235,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
     glFlush ();
 
   check_gl_drawing_ok_hack = false;
+  hidgl_in_context (false);
 
   /* end drawing to current GL-context */
   gport->render_priv->in_context = false;
@@ -2304,6 +2308,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 
   save_check_gl_drawing_ok_hack = check_gl_drawing_ok_hack;
   check_gl_drawing_ok_hack = true;
+  hidgl_in_context (true);
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -2350,6 +2355,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   glFlush ();
 
   check_gl_drawing_ok_hack = save_check_gl_drawing_ok_hack;
+  hidgl_in_context (false);
 
   /* end drawing to current GL-context */
   gport->render_priv->in_context = false;
