@@ -264,22 +264,9 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
    */
   SelectPin (node, TRUE);
   IncrementUndoSerialNumber ();
-	margin = gport->view_width / 20;
-	if (   Crosshair.X < gport->view_x0 + margin
-	    || Crosshair.X > gport->view_x0 + gport->view_width - margin
-	    || Crosshair.Y < gport->view_y0 + margin
-	    || Crosshair.Y > gport->view_y0 + gport->view_height - margin
-	   )
-	  {
+  margin = gport->view_width / 20;
 
-	    x0 = SIDE_X (Crosshair.X) - gport->view_width / 2;
-	    y0 = SIDE_Y (Crosshair.Y) - gport->view_height / 2;
-	    gport->view_x0 = x0;
-	    gport->view_y0 = y0;
-	    ghid_pan_fixup ();
-	    gui->set_crosshair (Crosshair.X, Crosshair.Y, HID_SC_WARP_POINTER);
-	  }
-	ghid_screen_update();
+  ghid_screen_update();
 }
 
 
