@@ -1,5 +1,5 @@
-Bottom: 6a112a1fdfcec7f3e4f97af9ffde4fba3a48984f
-Top:    f601a985534466202588083d89bb9c11079a2111
+Bottom: 581ac1a0b5c115b4fc50a0202a3338069d3f3974
+Top:    97db8e5ce5f2c84e3e263c2f45308a380a4ddd6b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-26 23:27:36 +0000
 
@@ -9,7 +9,7 @@ TESTING
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index f0eedf7..590953e 100644
+index 4be9a20..113eb39 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -140,7 +140,6 @@ ghid_draw_grid (void)
@@ -32,10 +32,10 @@ index f0eedf7..590953e 100644
      {
        int tmp = x1;
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index fc10a43..aa0a9e8 100644
+index 1da82b3..7cb92b0 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1669,6 +1669,9 @@ Center(int argc, char **argv, int x, int y)
+@@ -1650,6 +1650,9 @@ Center(int argc, char **argv, int x, int y)
  //      y = y0 + h2;
  //    }
  
@@ -46,7 +46,7 @@ index fc10a43..aa0a9e8 100644
    gport->view_y0 = y0;
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 86b1558..aea068c 100644
+index 3e01610..ee94f0f 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -72,6 +72,12 @@ extern int ghid_flip_x, ghid_flip_y;
