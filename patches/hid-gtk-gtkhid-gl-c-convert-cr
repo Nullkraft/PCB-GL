@@ -3,7 +3,10 @@ Top:    1bd50eced43ea4803993daaf85e33e117d6b0fa2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 16:03:04 +0100
 
-hid/gtk/gtkhid-gl.c: Convert crosshair drawing to use PCB world coordinates
+gtk+gl: Convert crosshair drawing to use PCB world coordinates
+
+Whilst I'm at it, add a z-coordinate to the crosshair drawing functions
+to future proof them for when we add some 3D effects.
 
 
 ---
