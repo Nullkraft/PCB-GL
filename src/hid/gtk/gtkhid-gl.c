@@ -936,12 +936,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
-
   glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
   glMultMatrixf ((GLfloat *)view_matrix);
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
-  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
-
   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
             (ghid_flip_y ? -1. : 1.) / port->zoom,
             ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
@@ -949,6 +946,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              -port->view_x0,
                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                              -port->view_y0, 0);
+  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (port->offlimits_color.red / 65535.,
