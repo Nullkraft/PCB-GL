@@ -61,12 +61,6 @@
 #define	FROM_PCB_UNITS(v)	(Settings.grid_units_mm ? COORD_TO_MM(v) : COORD_TO_MIL(v))
 #define	TO_PCB_UNITS(v)		(Settings.grid_units_mm ? MM_TO_COORD(v) : MIL_TO_COORD(v))
 
-#define	DRAW_X(x)	(gint)((SIDE_X(x) - gport->view_x0) / gport->zoom)
-#define	DRAW_Y(y)	(gint)((SIDE_Y(y) - gport->view_y0) / gport->zoom)
-
-#define	EVENT_TO_PCB_X(x)	SIDE_X((gint)((x) * gport->zoom + gport->view_x0))
-#define	EVENT_TO_PCB_Y(y)	SIDE_Y((gint)((y) * gport->zoom + gport->view_y0))
-
 /*
  * Used to intercept "special" hotkeys that gtk doesn't usually pass
  * on to the menu hotkeys.  We catch them and put them back where we
@@ -153,7 +147,6 @@ typedef struct
    *drawing_area;		/* and its drawing area */
   GdkPixmap *pixmap, *mask;
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
-  gint width, height;
 
   struct render_priv *render_priv;
 
@@ -167,16 +160,8 @@ typedef struct
   gboolean has_entered;
   gboolean panning;
 
-/* zoom value is PCB units per screen pixel.  Larger numbers mean zooming
-|  out - the largest value means you are looking at the whole board.
-*/
-  gdouble zoom;			/* PCB units per screen pixel.  Larger */
-  /* numbers mean zooming out. */
-  gint view_x0,			/* Viewport in PCB coordinates */
-    view_y0, view_width, view_height;
-  Coord pcb_x, pcb_y;
-
-  gint crosshair_x, crosshair_y;
+  Coord pcb_x, pcb_y;             /* PCB coordinates of the object under the mouse pointer */
+  Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair set by PCB's core    */
 }
 GHidPort;
 
@@ -272,8 +257,7 @@ void ghid_get_pointer (gint *, gint *);
 /* gui-output-events.c function prototypes.
 */
 void ghid_port_ranges_changed (void);
-gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
-void ghid_port_ranges_scale (gboolean emit_changed);
+void ghid_port_ranges_scale (void);
 void ghid_port_ranges_update_ranges (void);
 
 gboolean ghid_note_event_location (GdkEventButton * ev);
@@ -502,6 +486,7 @@ void ghid_finish_debug_draw (void);
 bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
 bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
 void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
+void ghid_pan_view_rel_to_visible (double fraction_x, double fraction_y);
 void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
 void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
 void ghid_zoom_view_fit (void);
