@@ -1,7 +1,7 @@
-Bottom: 28f3a0fe7f84747dff3ec269302a64aa45ae9542
-Top:    3eb4f524c466076775289b398d58d616cea671ab
+Bottom: 39b2f461ba9d7888fa8ca5bccebb21f1007caa8f
+Top:    f119a71a49bdfddae7591bd9e29d0cf97acb3e95
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-24 16:01:49 +0100
+Date:   2011-07-24 16:42:17 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -832,10 +832,10 @@ index 94f4fae..536ca78 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 6a8d904..0cc980c 100644
+index 8500f6a..d3ae7ca 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1001,6 +1001,7 @@ static void
+@@ -1003,6 +1003,7 @@ static void
  ghid_attributes_revert ()
  {
    int i;
@@ -843,7 +843,7 @@ index 6a8d904..0cc980c 100644
  
    ghid_attributes_need_rows (attributes_list->Number);
  
-@@ -1014,11 +1015,14 @@ ghid_attributes_revert ()
+@@ -1016,11 +1017,14 @@ ghid_attributes_revert ()
      }
  
    /* Fill in values */
@@ -861,7 +861,7 @@ index 6a8d904..0cc980c 100644
  #if 0
  #endif
      }
-@@ -1084,28 +1088,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
+@@ -1086,28 +1090,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
        if (response == GTK_RESPONSE_OK)
  	{
  	  int i;
