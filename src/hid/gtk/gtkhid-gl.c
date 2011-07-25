@@ -1325,7 +1325,7 @@ draw_lead_user (render_priv *priv)
   glColor3f (LEAD_USER_COLOR_R, LEAD_USER_COLOR_G,LEAD_USER_COLOR_B);
 
 
-  /* arcs at the approrpriate radiuses */
+  /* arcs at the approrpriate radii */
 
   for (i = 0; i < LEAD_USER_ARC_COUNT; i++, radius -= separation)
     {
