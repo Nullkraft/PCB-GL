@@ -8,6 +8,13 @@ hid/gtk: Add a shutdown function to the renderer backends
 This will be necessary to stop any event handlers / timers which
 should not fire as the GUI is being shut down.
 
+This code isn't actually very "live" at the moment, as the place I've
+hooked up its trigger (the destroy event of the main window), doesn't
+actually appear to get called.
+
+This seems to be because the core "Quit" action just kills the program
+dead, rather than attempting to shut down the GUI.
+
 
 ---
 
