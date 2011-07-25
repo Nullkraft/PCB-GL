@@ -2146,9 +2146,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_show_crosshair (TRUE);
 
   hidgl_flush_triangles (&buffer);
-  hidgl_finish_triangle_array (&buffer);
 
   draw_lead_user (priv);
+
+  hidgl_finish_triangle_array (&buffer);
 
   check_gl_drawing_ok_hack = false;
   hidgl_in_context (false);
