@@ -1,0 +1,55 @@
+Bottom: 6895b28d21fa4b3dcd75129644248c52e2f25760
+Top:    34cea3d89d4e662894b1c8b93cc6ae6e61a9be62
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-25 02:10:43 +0100
+
+Refresh of silly-space-navigator-interfac
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 83df23f..f22c973 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -30,7 +30,7 @@ RCSID ("$Id$");
+ 
+ 
+ static void zoom_to (double factor, int x, int y);
+-static void zoom_by (double factor, int x, int y);
++void zoom_by (double factor, int x, int y);
+ static void zoom_fit (void);
+ 
+ int ghid_flip_x = 0, ghid_flip_y = 0;
+@@ -211,7 +211,7 @@ zoom_to (double new_zoom, int x, int y)
+   ghid_set_status_line_label ();
+ }
+ 
+-static void
++void
+ zoom_by (double factor, int x, int y)
+ {
+   zoom_to (gport->zoom * factor, x, y);
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index e80ec5a..d8250d1 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -781,13 +781,19 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+   return TRUE;
+ }
+ 
++void zoom_by (double factor, int x, int y); /* XXX: TEMPORARY HACK */
++
+ void ndof_pan_cb (int dx, int dy, int dz, gpointer data)
+ {
+   if (dx || dy)
+     ghid_port_ranges_pan (-gport->zoom * 5 * dx,
+                           -gport->zoom * 5 * dy, TRUE);
+   if (dz)
++#if 0 /* XXX: TEMPORARY HACK */
+     ghid_port_ranges_zoom (gport->zoom * (1.0 - (dz / 100.0)));
++#else
++    zoom_by (gport->zoom * (1.0 - (dz / 100.0)), gport->pcb_x, gport->pcb_y);
++#endif
+ }
+ 
+ void ndof_roll_cb (int dx, int dy, int dz, gpointer data)
