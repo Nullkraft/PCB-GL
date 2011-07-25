@@ -1,5 +1,5 @@
 Bottom: 07b95bdb4669544ad757edccb3e200f792d6a569
-Top:    c13135a0e109b7701b05a88879d73edd8c377766
+Top:    b5bd3d279aba0dc81e79756e6eb114ee9c7c872f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-25 02:11:28 +0100
 
@@ -12,7 +12,7 @@ into the core like this.
 ---
 
 diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
-index 5cccfbc..05fffb4 100644
+index 5cccfbc..37a73c9 100644
 --- a/src/borast/borast-bentley-ottmann.c
 +++ b/src/borast/borast-bentley-ottmann.c
 @@ -126,7 +126,7 @@ typedef struct _borast_bo_sweep_line {
@@ -57,7 +57,7 @@ index 5cccfbc..05fffb4 100644
  {
    int intersections;
    borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
-@@ -1566,3 +1577,57 @@ bo_contour_to_traps (PLINE *contour, borast_traps_t *traps)
+@@ -1566,3 +1577,56 @@ bo_contour_to_traps (PLINE *contour, borast_traps_t *traps)
  
    return BORAST_STATUS_SUCCESS;
  }
@@ -67,7 +67,6 @@ index 5cccfbc..05fffb4 100644
 +bo_contour_to_traps_no_draw (PLINE *contour, borast_traps_t *traps)
 +{
 +  int intersections;
-+  borast_status_t status;
 +  borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
 +  borast_bo_start_event_t *events;
 +  borast_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
@@ -101,10 +100,10 @@ index 5cccfbc..05fffb4 100644
 +   * passes of the Bentley-Ottmann algorithm. It would merely
 +   * require storing the results of each pass into a temporary
 +   * borast_traps_t. */
-+  status = _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
-+                                                       num_events,
-+                                                       traps,
-+                                                       &intersections);
++   _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
++                                                num_events,
++                                                traps,
++                                                &intersections);
 +
 +#if DEBUG_TRAPS
 +  dump_traps (traps, "bo-polygon-out.txt");
