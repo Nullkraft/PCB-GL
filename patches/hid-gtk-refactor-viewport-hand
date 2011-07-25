@@ -1,5 +1,5 @@
-Bottom: a8189389d6640d9f85a227b1e294293f87e0e55c
-Top:    ab7811bdae5f04cdaabcdbc952a4914178b9de7b
+Bottom: 2c005eb6ab2f3e3523ba495590a3c94c46657852
+Top:    6db7a2a4a40e409ae49cafd8445f9e7ff2682130
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Refactor viewport handling
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 8394d20..78762c0 100644
+index fb7d0e1..a2f9528 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -33,6 +33,7 @@ static int cur_mask = -1;
@@ -20,7 +20,7 @@ index 8394d20..78762c0 100644
    bool flip_x;
    bool flip_y;
  } view_data;
-@@ -276,10 +277,10 @@ ghid_draw_bg_image (void)
+@@ -288,10 +289,10 @@ ghid_draw_bg_image (void)
    if (!ghidgui->bg_pixbuf)
      return;
  
@@ -35,7 +35,7 @@ index 8394d20..78762c0 100644
  
    if (w_scaled != w || h_scaled != h)
      {
-@@ -572,7 +573,7 @@ ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -584,7 +585,7 @@ ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
    dy2 = Vy ((double) y2);
  
    if (!ClipLine (0, 0, gport->width, gport->height,
@@ -44,7 +44,7 @@ index 8394d20..78762c0 100644
      return;
  
    USE_GC (gc);
-@@ -587,8 +588,8 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
+@@ -599,8 +600,8 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
    gint w, h, radius;
    render_priv *priv = gport->render_priv;
  
@@ -55,7 +55,7 @@ index 8394d20..78762c0 100644
    radius = (xradius > yradius) ? xradius : yradius;
    if (SIDE_X (cx) < gport->view_x0 - radius
        || SIDE_X (cx) > gport->view_x0 + w + radius
-@@ -625,8 +626,8 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -637,8 +638,8 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
    render_priv *priv = gport->render_priv;
  
    lw = gc->width;
@@ -66,7 +66,7 @@ index 8394d20..78762c0 100644
  
    if ((SIDE_X (x1) < gport->view_x0 - lw
         && SIDE_X (x2) < gport->view_x0 - lw)
-@@ -668,8 +669,8 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
+@@ -680,8 +681,8 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
    gint w, h, vr;
    render_priv *priv = gport->render_priv;
  
@@ -77,7 +77,7 @@ index 8394d20..78762c0 100644
    if (SIDE_X (cx) < gport->view_x0 - radius
        || SIDE_X (cx) > gport->view_x0 + w + radius
        || SIDE_Y (cy) < gport->view_y0 - radius
-@@ -711,8 +712,8 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -723,8 +724,8 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
    render_priv *priv = gport->render_priv;
  
    lw = gc->width;
@@ -88,7 +88,7 @@ index 8394d20..78762c0 100644
  
    if ((SIDE_X (x1) < gport->view_x0 - lw
         && SIDE_X (x2) < gport->view_x0 - lw)
-@@ -1200,7 +1201,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1222,7 +1223,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    double xz, yz;
    render_priv *priv = gport->render_priv;
  
@@ -97,7 +97,7 @@ index 8394d20..78762c0 100644
    save_width = gport->width;
    save_height = gport->height;
    save_left = gport->view_x0;
-@@ -1216,15 +1217,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1238,15 +1239,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    xz = (double) pinout->x_max / da_w;
    yz = (double) pinout->y_max / da_h;
    if (xz > yz)
@@ -117,7 +117,7 @@ index 8394d20..78762c0 100644
    gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
  
-@@ -1235,7 +1236,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1257,7 +1258,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
  
    gport->drawable = save_drawable;
@@ -126,7 +126,7 @@ index 8394d20..78762c0 100644
    gport->width = save_width;
    gport->height = save_height;
    gport->view_x0 = save_left;
-@@ -1252,15 +1253,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1274,15 +1275,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    xz = (double) pinout->x_max / da_w;
    yz = (double) pinout->y_max / da_h;
    if (xz > yz)
@@ -146,7 +146,7 @@ index 8394d20..78762c0 100644
    gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
  
-@@ -1271,7 +1272,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1293,7 +1294,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
  
    gport->drawable = save_drawable;
@@ -155,7 +155,7 @@ index 8394d20..78762c0 100644
    gport->width = save_width;
    gport->height = save_height;
    gport->view_x0 = save_left;
-@@ -1295,7 +1296,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1317,7 +1318,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    render_priv *priv = gport->render_priv;
  
    save_drawable = gport->drawable;
@@ -164,7 +164,7 @@ index 8394d20..78762c0 100644
    save_width = gport->width;
    save_height = gport->height;
    save_left = gport->view_x0;
-@@ -1309,11 +1310,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1331,11 +1332,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
     */
  
    gport->drawable = pixmap;
@@ -179,7 +179,7 @@ index 8394d20..78762c0 100644
    gport->view_x0 = priv->view.flip_x ? PCB->MaxWidth - cx : cx;
    gport->view_x0 -= gport->view_height / 2;
    gport->view_y0 = priv->view.flip_y ? PCB->MaxHeight - cy : cy;
-@@ -1330,7 +1331,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1352,7 +1353,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    hid_expose_callback (&ghid_hid, &region, NULL);
  
    gport->drawable = save_drawable;
@@ -189,7 +189,7 @@ index 8394d20..78762c0 100644
    gport->height = save_height;
    gport->view_x0 = save_left;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 814a7ea..3eb3fca 100644
+index b341d3f..f4bcc3f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -38,14 +38,34 @@ static hidGC current_gc = NULL;
@@ -366,7 +366,7 @@ index 814a7ea..3eb3fca 100644
  
        glEnd ();
      }
-@@ -885,6 +910,11 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
+@@ -893,6 +918,11 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
  void
  ghid_drawing_area_configure_hook (GHidPort *port)
  {
@@ -378,7 +378,7 @@ index 814a7ea..3eb3fca 100644
  }
  
  gboolean
-@@ -961,13 +991,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -969,13 +999,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -399,7 +399,7 @@ index 814a7ea..3eb3fca 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -1052,20 +1082,11 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1060,20 +1090,11 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
    GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
@@ -422,7 +422,7 @@ index 814a7ea..3eb3fca 100644
  
    /* Setup zoom factor for drawing routines */
  
-@@ -1073,16 +1094,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1081,16 +1102,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    xz = (double) pinout->x_max / da_w;
    yz = (double) pinout->y_max / da_h;
    if (xz > yz)
@@ -445,7 +445,7 @@ index 814a7ea..3eb3fca 100644
  
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
-@@ -1121,12 +1140,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1129,12 +1148,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -464,7 +464,7 @@ index 814a7ea..3eb3fca 100644
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1140,13 +1159,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1148,13 +1167,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    gport->render_priv->in_context = false;
    gdk_gl_drawable_gl_end (pGlDrawable);
  
@@ -479,7 +479,7 @@ index 814a7ea..3eb3fca 100644
  
    return FALSE;
  }
-@@ -1161,19 +1174,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1169,19 +1182,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    GdkGLPixmap *glpixmap;
    GdkGLContext* glcontext;
    GdkGLDrawable* gldrawable;
@@ -501,7 +501,7 @@ index 814a7ea..3eb3fca 100644
  
    /* Setup rendering context for drawing routines
     */
-@@ -1189,15 +1193,13 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1197,15 +1201,13 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    /* Setup zoom factor for drawing routines */
  
@@ -524,7 +524,7 @@ index 814a7ea..3eb3fca 100644
  
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
-@@ -1233,16 +1235,16 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1241,16 +1243,16 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -551,7 +551,7 @@ index 814a7ea..3eb3fca 100644
    hid_expose_callback (&ghid_hid, &region, NULL);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1258,13 +1260,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1266,13 +1268,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    g_object_unref (glconfig);
    g_object_unref (glcontext);
  
@@ -566,7 +566,7 @@ index 814a7ea..3eb3fca 100644
  
    return pixmap;
  }
-@@ -1294,13 +1290,13 @@ ghid_request_debug_draw (void)
+@@ -1302,13 +1298,13 @@ ghid_request_debug_draw (void)
    glDisable (GL_STENCIL_TEST);
  
    glPushMatrix ();
@@ -586,7 +586,7 @@ index 814a7ea..3eb3fca 100644
  
    return &ghid_hid;
  }
-@@ -1350,46 +1346,65 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1358,46 +1354,65 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
    return true;
  }
  
@@ -669,7 +669,7 @@ index 814a7ea..3eb3fca 100644
   */
  
  void
-@@ -1404,26 +1419,28 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1412,26 +1427,28 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
     * the entire board just fits inside the viewport
     */
    min_zoom = 1;
@@ -709,7 +709,7 @@ index 814a7ea..3eb3fca 100644
    ghidgui->adjustment_changed_holdoff = FALSE;
  
    ghid_port_ranges_changed ();
-@@ -1433,14 +1450,16 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1441,14 +1458,16 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  void
  ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
  {
@@ -729,7 +729,7 @@ index 814a7ea..3eb3fca 100644
  }
  
  void
-@@ -1493,7 +1512,7 @@ draw_lead_user (render_priv *priv)
+@@ -1501,7 +1520,7 @@ draw_lead_user (render_priv *priv)
  
        /* Draw an arc at radius */
        hidgl_draw_arc (width, priv->lead_user_x, priv->lead_user_y,
@@ -1089,10 +1089,10 @@ index 7e3891d..5e552a3 100644
    out->has_entered = FALSE;
  
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index b11d32c..cf47cf5 100644
+index e9c2669..7d750b0 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2382,8 +2382,6 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2383,8 +2383,6 @@ ghid_parse_arguments (int *argc, char ***argv)
    gtk_init (argc, argv);
  
    gport = &ghid_port;
@@ -1102,7 +1102,7 @@ index b11d32c..cf47cf5 100644
    ghid_init_renderer (argc, argv, gport);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 53845db..edd1f7f 100644
+index ba19d66..bf4af59 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -61,12 +61,6 @@
