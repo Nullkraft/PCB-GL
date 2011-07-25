@@ -52,7 +52,7 @@
 
 #define TOOLTIP_UPDATE_DELAY 200
 
-static gint x_pan_speed, y_pan_speed;
+// static gint x_pan_speed, y_pan_speed;
 void
 ghid_port_ranges_changed (void)
 {
@@ -647,6 +647,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
   return FALSE;
 }
 
+#if 0
 static gboolean
 ghid_pan_idle_cb (gpointer data)
 {
@@ -658,12 +659,13 @@ ghid_pan_idle_cb (gpointer data)
   dx = gport->zoom * x_pan_speed;
   return (ghid_port_ranges_pan (dx, dy, TRUE));
 }
+#endif
 
 gint
 ghid_port_window_leave_cb (GtkWidget * widget, 
                            GdkEventCrossing * ev, GHidPort * out)
 {
-  gint x0, y0, x, y, dx, dy, w, h;
+  // gint x0, y0, x, y, dx, dy, w, h;
   
   /* printf("leave mode: %d detail: %d\n", ev->mode, ev->detail); */
 
@@ -679,6 +681,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
       return FALSE;
     }
 
+#if 0
   if(out->has_entered && !ghidgui->in_popup)
     {
       /* if actively drawing, start scrolling */
@@ -734,6 +737,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	  g_idle_add (ghid_pan_idle_cb, NULL);
 	}
     }
+#endif
 
   out->has_entered = FALSE;
 
