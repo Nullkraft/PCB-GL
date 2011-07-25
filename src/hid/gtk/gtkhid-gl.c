@@ -52,7 +52,7 @@ typedef struct render_priv {
   guint lead_user_timeout;
   GTimer *lead_user_timer;
   bool lead_user;
-  float lead_user_radius;
+  Coord lead_user_radius;
   Coord lead_user_x;
   Coord lead_user_y;
 
@@ -837,6 +837,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 void
 ghid_shutdown_renderer (GHidPort *port)
 {
+  ghid_cancel_lead_user ();
   g_free (port->render_priv);
   port->render_priv = NULL;
 }
@@ -1352,7 +1353,7 @@ gboolean
 lead_user_cb (gpointer data)
 {
   render_priv *priv = data;
-  double step;
+  Coord step;
   double elapsed_time;
 
   /* Queue a redraw */
@@ -1362,7 +1363,7 @@ lead_user_cb (gpointer data)
   elapsed_time = g_timer_elapsed (priv->lead_user_timer, NULL);
   g_timer_start (priv->lead_user_timer);
 
-  step = MM_TO_COORD (LEAD_USER_VELOCITY) * elapsed_time;
+  step = MM_TO_COORD (LEAD_USER_VELOCITY * elapsed_time);
   if (priv->lead_user_radius > step)
     priv->lead_user_radius -= step;
   else
@@ -1396,6 +1397,9 @@ ghid_cancel_lead_user (void)
 
   if (priv->lead_user_timer)
     g_timer_destroy (priv->lead_user_timer);
+
+  if (priv->lead_user)
+    ghid_invalidate_all ();
 
   priv->lead_user_timeout = 0;
   priv->lead_user_timer = NULL;
