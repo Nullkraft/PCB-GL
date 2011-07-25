@@ -1,5 +1,5 @@
 Bottom: 7861f60602706cb58a7d930483548209b5f9c22c
-Top:    2529a03f98e608942ba83914abcab2768ebf6039
+Top:    07b95bdb4669544ad757edccb3e200f792d6a569
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-25 02:11:27 +0100
 
@@ -955,7 +955,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4419231..9e2221b 100644
+index 4419231..9ae6595 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -302,6 +302,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1033,15 +1033,16 @@ index 4419231..9e2221b 100644
  }
  
  struct cyl_info {
-@@ -2138,6 +2146,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   ghid_show_crosshair (TRUE);
- 
-   hidgl_flush_triangles (&buffer);
-+  hidgl_finish_triangle_array (&buffer);
+@@ -2141,6 +2149,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    draw_lead_user (priv);
  
-@@ -2240,7 +2249,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
++  hidgl_finish_triangle_array (&buffer);
++
+   check_gl_drawing_ok_hack = false;
+   hidgl_in_context (false);
+   ghid_end_drawing (port);
+@@ -2240,7 +2250,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
