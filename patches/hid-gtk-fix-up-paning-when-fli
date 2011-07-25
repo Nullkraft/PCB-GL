@@ -1,0 +1,31 @@
+Bottom: 299a3edee6777df067c58ea99d2fa1da6cc284b1
+Top:    ec8a9c16ccb50ef13a7969de3af15abcc5a49d5f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-25 01:40:38 +0100
+
+hid/gtk: Fix up paning when flipping the board.
+
+I'm not sure when this got broken, but it was probably my fault ;)
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index c917e43..83df23f 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1458,12 +1458,12 @@ SwapSides (int argc, char **argv, int x, int y)
+   if (do_flip_x)
+     {
+ 	flipd = PCB->MaxWidth / 2 - SIDE_X (gport->pcb_x);
+-	ghid_port_ranges_pan (2 * flipd, 0, TRUE);
++	ghid_port_ranges_pan (-2 * flipd, 0, TRUE);
+     }
+   if (do_flip_y)
+     {
+ 	flipd = PCB->MaxHeight / 2 - SIDE_Y (gport->pcb_y);
+-	ghid_port_ranges_pan (0, 2 * flipd, TRUE);
++	ghid_port_ranges_pan (0, -2 * flipd, TRUE);
+     }
+ 
+   ghid_invalidate_all ();
