@@ -1,5 +1,5 @@
-Bottom: a540c52a792312c36c9cacfbfb23e1cf5c477e0e
-Top:    84aaef691c42be07e772518c2c69a2c88620414e
+Bottom: 47a1ff121d78e6106841040006b76dc86ea7b5f4
+Top:    7ee8507d09063f615196b0ec90a5f5544a90ef57
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-25 14:08:51 +0100
 
@@ -12,7 +12,7 @@ a particular location on the board.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ed34ea1..2a7c145 100644
+index 2d7fec0..cc39be2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -47,6 +47,15 @@ typedef struct render_priv {
@@ -42,7 +42,7 @@ index ed34ea1..2a7c145 100644
  static void
  start_subcomposite (void)
  {
-@@ -882,6 +895,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -889,6 +902,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -50,7 +50,7 @@ index ed34ea1..2a7c145 100644
    BoxType region;
  
    ghid_start_drawing (port);
-@@ -969,6 +983,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -976,6 +990,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    hidgl_flush_triangles (&buffer);
  
@@ -59,7 +59,7 @@ index ed34ea1..2a7c145 100644
    ghid_end_drawing (port);
  
    return FALSE;
-@@ -1281,3 +1297,100 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+@@ -1288,3 +1304,100 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  
    return true;
  }
@@ -250,10 +250,10 @@ index 31caa2e..331f5a8 100644
  
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 114574f..20f175d 100644
+index b0bbe0a..d17cca2 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -504,6 +504,9 @@ void ghid_flush_debug_draw (void);
+@@ -505,6 +505,9 @@ void ghid_flush_debug_draw (void);
  void ghid_finish_debug_draw (void);
  bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
  
