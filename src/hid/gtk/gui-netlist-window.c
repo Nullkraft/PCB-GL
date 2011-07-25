@@ -264,7 +264,12 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
   dup_string (&node_name, node->ListEntry);
   node_selected_net = selected_net;
 
+  /* Now just toggle a select of the node on the layout
+   */
   SelectPin (node, true);
+  IncrementUndoSerialNumber ();
+
+  /* And lead the user to the location */
   if (SeekPad (node, &conn, false))
     switch (conn.type) {
       case PIN_TYPE:
@@ -286,7 +291,6 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
           break;
         }
     }
-
 }
 
 
