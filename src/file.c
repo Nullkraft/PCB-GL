@@ -405,6 +405,9 @@ LoadPCB (char *Filename)
   oldPCB = PCB;
   PCB = newPCB;
 
+  /* Hack, load the mapping file */
+  RefdesMapInit ();
+
   /* new data isn't added to the undo list */
   if (!ParsePCB (PCB, Filename))
     {
