@@ -1,5 +1,5 @@
-Bottom: fdde47be376f12d33e5ab19216050874f3ce9af1
-Top:    525babe7d9fcc6004261f4e581a376f0f37f0d3b
+Bottom: 12d64c1b13c4641aa96b72f3ef288e13d4891a8b
+Top:    faa46c38f540636d6f68c1ca896183da2f902d3e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
 
@@ -189,7 +189,7 @@ index 8394d20..aefda85 100644
    gport->height = save_height;
    gport->view_x0 = save_left;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6c09d23..8ae17f0 100644
+index 814a7ea..328e7bb 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -44,8 +44,12 @@ static hidGC current_gc = NULL;
@@ -205,7 +205,7 @@ index 6c09d23..8ae17f0 100644
  } view_data;
  
  typedef struct render_priv {
-@@ -75,16 +79,16 @@ hid_gc_struct;
+@@ -87,16 +91,16 @@ static void draw_lead_user (render_priv *priv);
  static inline int
  Vz (int z)
  {
@@ -225,7 +225,7 @@ index 6c09d23..8ae17f0 100644
    return  rv;
  }
  
-@@ -92,9 +96,9 @@ static inline int
+@@ -104,9 +108,9 @@ static inline int
  Py (int y)
  {
    render_priv *priv = gport->render_priv;
@@ -237,7 +237,7 @@ index 6c09d23..8ae17f0 100644
    return  rv;
  }
  
-@@ -559,19 +563,21 @@ use_gc (hidGC gc)
+@@ -571,19 +575,21 @@ use_gc (hidGC gc)
  void
  ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
  {
@@ -261,7 +261,7 @@ index 6c09d23..8ae17f0 100644
  }
  
  void
-@@ -586,9 +592,10 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -598,9 +604,10 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
  void
  ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
  {
@@ -273,7 +273,7 @@ index 6c09d23..8ae17f0 100644
  }
  
  
-@@ -603,9 +610,10 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -615,9 +622,10 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  void
  ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
@@ -285,7 +285,7 @@ index 6c09d23..8ae17f0 100644
  }
  
  void
-@@ -769,8 +777,8 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -781,8 +789,8 @@ ghid_show_crosshair (gboolean paint_new_location)
    render_priv *priv = gport->render_priv;
    gint x, y, z;
    gboolean draw_markers;
@@ -296,7 +296,7 @@ index 6c09d23..8ae17f0 100644
    static int done_once = 0;
    static GdkColor cross_color;
  
-@@ -949,13 +957,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -961,13 +969,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -315,7 +315,7 @@ index 6c09d23..8ae17f0 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -1045,7 +1053,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1059,7 +1067,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    int save_view_width, save_view_height;
    double xz, yz;
  
@@ -324,7 +324,7 @@ index 6c09d23..8ae17f0 100644
    save_width = gport->width;
    save_height = gport->height;
    save_left = gport->view_x0;
-@@ -1059,14 +1067,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1073,14 +1081,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    xz = (double) pinout->x_max / da_w;
    yz = (double) pinout->y_max / da_h;
    if (xz > yz)
@@ -343,7 +343,7 @@ index 6c09d23..8ae17f0 100644
    gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
  
-@@ -1107,12 +1115,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1121,12 +1129,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -360,7 +360,7 @@ index 6c09d23..8ae17f0 100644
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1126,7 +1134,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1140,7 +1148,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    gport->render_priv->in_context = false;
    gdk_gl_drawable_gl_end (pGlDrawable);
  
@@ -369,7 +369,7 @@ index 6c09d23..8ae17f0 100644
    gport->width = save_width;
    gport->height = save_height;
    gport->view_x0 = save_left;
-@@ -1153,7 +1161,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1167,7 +1175,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    int save_view_width, save_view_height;
    BoxType region;
  
@@ -378,7 +378,7 @@ index 6c09d23..8ae17f0 100644
    save_width = gport->width;
    save_height = gport->height;
    save_left = gport->view_x0;
-@@ -1175,11 +1183,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1189,11 +1197,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    /* Setup zoom factor for drawing routines */
  
@@ -393,7 +393,7 @@ index 6c09d23..8ae17f0 100644
    gport->view_x0 = priv->view.flip_x ? PCB->MaxWidth - cx : cx;
    gport->view_x0 -= gport->view_height / 2;
    gport->view_y0 = priv->view.flip_y ? PCB->MaxHeight - cy : cy;
-@@ -1219,10 +1227,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1233,10 +1241,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -407,7 +407,7 @@ index 6c09d23..8ae17f0 100644
                  priv->view.flip_y ?  gport->view_y0 - PCB->MaxHeight :
                                 -gport->view_y0, 0);
    region.X1 = MIN(Px(0), Px(gport->width + 1));
-@@ -1244,7 +1252,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1258,7 +1266,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    g_object_unref (glconfig);
    g_object_unref (glcontext);
  
@@ -416,7 +416,7 @@ index 6c09d23..8ae17f0 100644
    gport->width = save_width;
    gport->height = save_height;
    gport->view_x0 = save_left;
-@@ -1280,13 +1288,13 @@ ghid_request_debug_draw (void)
+@@ -1294,13 +1302,13 @@ ghid_request_debug_draw (void)
    glDisable (GL_STENCIL_TEST);
  
    glPushMatrix ();
@@ -434,7 +434,7 @@ index 6c09d23..8ae17f0 100644
  
    return &ghid_hid;
  }
-@@ -1341,8 +1349,8 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+@@ -1355,8 +1363,8 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  {
    render_priv *priv = gport->render_priv;
  
@@ -445,7 +445,7 @@ index 6c09d23..8ae17f0 100644
  
    /* don't pan so far to the right that we see way past the right edge of the
     * board, or so far down that we see way past the bottom edge of the board.
-@@ -1371,7 +1379,7 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+@@ -1385,7 +1393,7 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  }
  
  
@@ -454,7 +454,7 @@ index 6c09d23..8ae17f0 100644
   * zoom value is PCB units per screen pixel.  Larger numbers mean zooming
   * out - the largest value means you are looking at the whole board.
   *
-@@ -1394,13 +1402,13 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1408,13 +1416,13 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
                    PCB->MaxHeight / gport->height);
    new_zoom = MIN (MAX (min_zoom, new_zoom), max_zoom);
  
@@ -470,7 +470,7 @@ index 6c09d23..8ae17f0 100644
    pixel_slop = new_zoom;
    ghid_port_ranges_scale (FALSE);
  
-@@ -1419,7 +1427,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1433,7 +1441,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  void
  ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
  {
@@ -493,7 +493,7 @@ index b11d32c..cf47cf5 100644
    ghid_init_renderer (argc, argv, gport);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 96a8662..88fbfdd 100644
+index 53845db..86414c4 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -61,12 +61,6 @@
