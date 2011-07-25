@@ -432,14 +432,11 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 {
   static gboolean first_time_done;
 
-  gport->width = ev->width;
-  gport->height = ev->height;
-
   if (gport->pixmap)
     gdk_pixmap_unref (gport->pixmap);
 
   gport->pixmap = gdk_pixmap_new (widget->window,
-				  gport->width, gport->height, -1);
+				  ev->width, ev->height, -1);
   gport->drawable = gport->pixmap;
 
   if (!first_time_done)

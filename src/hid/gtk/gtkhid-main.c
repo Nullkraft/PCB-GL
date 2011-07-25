@@ -1463,8 +1463,8 @@ Center(int argc, char **argv, int x, int y)
     AFAIL (center);
 
   /* Aim to put the given x, y PCB coordinates in the center of the widget */
-  widget_x = gport->width / 2;
-  widget_y = gport->height / 2;
+  widget_x = gport->drawing_area->allocation.width / 2;
+  widget_y = gport->drawing_area->allocation.height / 2;
 
   ghid_pan_view_abs (x, y, widget_x, widget_y);
 
