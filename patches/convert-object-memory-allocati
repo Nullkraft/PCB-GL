@@ -1,7 +1,7 @@
-Bottom: 528d1d39544763c39bb5496fefb186f874eb407b
-Top:    9e7f1d5d8ff8f40f6791ae2af9575ed6379eebe9
+Bottom: 161dc446dcd0fb438e6c94cbf05a757fa995534d
+Top:    2fb140d90476b3ad519aeb513f38120bcf46828e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-25 14:08:54 +0100
+Date:   2011-07-26 00:52:22 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -897,10 +897,10 @@ index 83df23f..bd24bda 100644
  
  	  break;
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index b8ca134..7ab9b85 100644
+index 331f5a8..6e0198b 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
-@@ -520,9 +520,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
+@@ -517,9 +517,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
  static void
  netlist_select_cb (GtkWidget * widget, gpointer data)
  {
@@ -911,7 +911,7 @@ index b8ca134..7ab9b85 100644
    gboolean select_flag = GPOINTER_TO_INT (data);
  
    if (!selected_net)
-@@ -533,9 +532,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+@@ -530,9 +529,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
    InitConnectionLookup ();
    ResetConnections (true);
  
@@ -925,7 +925,7 @@ index b8ca134..7ab9b85 100644
  
    SelectConnection (select_flag);
    ResetConnections (false);
-@@ -858,9 +860,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -849,9 +851,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
  {
    struct ggnfnn_task *task = (struct ggnfnn_task *)data;
    LibraryMenuType *net;
@@ -936,7 +936,7 @@ index b8ca134..7ab9b85 100644
    gboolean is_disabled;
  
    /* We only want to inspect leaf nodes in the tree */
-@@ -877,13 +878,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -868,13 +869,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
      return FALSE;
  
    /* Look for the node name in this net. */
@@ -955,7 +955,7 @@ index b8ca134..7ab9b85 100644
  
    return FALSE;
  }
-@@ -1015,7 +1019,7 @@ ghid_netlist_window_update (gboolean init_nodes)
+@@ -994,7 +998,7 @@ ghid_netlist_window_update (gboolean init_nodes)
  
    /* XXX Check if the select callback does this for us */
    if (init_nodes)
