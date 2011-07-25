@@ -30,7 +30,7 @@ RCSID ("$Id$");
 
 
 static void zoom_to (double factor, int x, int y);
-static void zoom_by (double factor, int x, int y);
+void zoom_by (double factor, int x, int y);
 static void zoom_fit (void);
 
 int ghid_flip_x = 0, ghid_flip_y = 0;
@@ -211,7 +211,7 @@ zoom_to (double new_zoom, int x, int y)
   ghid_set_status_line_label ();
 }
 
-static void
+void
 zoom_by (double factor, int x, int y)
 {
   zoom_to (gport->zoom * factor, x, y);

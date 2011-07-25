@@ -781,13 +781,19 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
   return TRUE;
 }
 
+void zoom_by (double factor, int x, int y); /* XXX: TEMPORARY HACK */
+
 void ndof_pan_cb (int dx, int dy, int dz, gpointer data)
 {
   if (dx || dy)
     ghid_port_ranges_pan (-gport->zoom * 5 * dx,
                           -gport->zoom * 5 * dy, TRUE);
   if (dz)
+#if 0 /* XXX: TEMPORARY HACK */
     ghid_port_ranges_zoom (gport->zoom * (1.0 - (dz / 100.0)));
+#else
+    zoom_by (gport->zoom * (1.0 - (dz / 100.0)), gport->pcb_x, gport->pcb_y);
+#endif
 }
 
 void ndof_roll_cb (int dx, int dy, int dz, gpointer data)
