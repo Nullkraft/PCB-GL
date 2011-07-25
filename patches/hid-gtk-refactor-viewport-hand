@@ -1,5 +1,5 @@
 Bottom: a8189389d6640d9f85a227b1e294293f87e0e55c
-Top:    1a41a6e698ef0ae2f57211bc90d00d434e158f72
+Top:    ab7811bdae5f04cdaabcdbc952a4914178b9de7b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
 
@@ -189,7 +189,7 @@ index 8394d20..78762c0 100644
    gport->height = save_height;
    gport->view_x0 = save_left;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 814a7ea..e10f4cf 100644
+index 814a7ea..3eb3fca 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -38,14 +38,34 @@ static hidGC current_gc = NULL;
@@ -524,7 +524,7 @@ index 814a7ea..e10f4cf 100644
  
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
-@@ -1233,12 +1235,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1233,16 +1235,16 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -534,15 +534,23 @@ index 814a7ea..e10f4cf 100644
 -                               -gport->view_x0,
 -                priv->view.flip_y ?  gport->view_y0 - PCB->MaxHeight :
 -                               -gport->view_y0, 0);
+-  region.X1 = MIN(Px(0), Px(gport->width + 1));
+-  region.Y1 = MIN(Py(0), Py(gport->height + 1));
+-  region.X2 = MAX(Px(0), Px(gport->width + 1));
+-  region.Y2 = MAX(Py(0), Py(gport->height + 1));
 +  glScalef ((priv->view.flip_x ? -1. : 1.) / priv->view.coords_per_px,
 +            (priv->view.flip_y ? -1. : 1.) / priv->view.coords_per_px, 1);
 +  glTranslatef (priv->view.flip_x ?  priv->view.x0 - PCB->MaxWidth  :
 +                                    -priv->view.x0,
 +                priv->view.flip_y ?  priv->view.y0 - PCB->MaxHeight :
 +                               -priv->view.y0, 0);
-   region.X1 = MIN(Px(0), Px(gport->width + 1));
-   region.Y1 = MIN(Py(0), Py(gport->height + 1));
-   region.X2 = MAX(Px(0), Px(gport->width + 1));
++  region.X1 = MIN(Px(0), Px(width + 1));
++  region.Y1 = MIN(Py(0), Py(height + 1));
++  region.X2 = MAX(Px(0), Px(width + 1));
++  region.Y2 = MAX(Py(0), Py(height + 1));
+   hid_expose_callback (&ghid_hid, &region, NULL);
+   hidgl_flush_triangles (&buffer);
+   glPopMatrix ();
 @@ -1258,13 +1260,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    g_object_unref (glconfig);
    g_object_unref (glcontext);
@@ -578,7 +586,7 @@ index 814a7ea..e10f4cf 100644
  
    return &ghid_hid;
  }
-@@ -1350,46 +1346,63 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1350,46 +1346,65 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
    return true;
  }
  
@@ -606,6 +614,7 @@ index 814a7ea..e10f4cf 100644
 +  priv->view.x0 = MAX (0, priv->view.x0);
 +  priv->view.y0 = MAX (0, priv->view.y0);
  
++#if 0
    /* if we can see the entire board and some, then zoom to fit */
 -  if (gport->view_width  > PCB->MaxWidth  &&
 -      gport->view_height > PCB->MaxHeight)
@@ -615,6 +624,7 @@ index 814a7ea..e10f4cf 100644
        ghid_zoom_view_fit ();
        return;
      }
++#endif
  
    ghidgui->adjustment_changed_holdoff = TRUE;
 -  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
@@ -633,7 +643,8 @@ index 814a7ea..e10f4cf 100644
 +
 +  priv->view.x0 = MAX (0, SIDE_X (pcb_x) - widget_x * priv->view.coords_per_px);
 +  priv->view.y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * priv->view.coords_per_px);
-+
+ 
+-/* gport->zoom:
 +  finish_pan (priv);
 +}
 +
@@ -641,8 +652,7 @@ index 814a7ea..e10f4cf 100644
 +ghid_pan_view_rel_to_visible (double fraction_x, double fraction_y)
 +{
 +  render_priv *priv = gport->render_priv;
- 
--/* gport->zoom:
++
 +  priv->view.x0 = MAX (0, priv->view.x0 + FLIP_X (priv->view.width) * fraction_x);
 +  priv->view.y0 = MAX (0, priv->view.y0 + FLIP_Y (priv->view.height) * fraction_y);
 +
@@ -659,7 +669,7 @@ index 814a7ea..e10f4cf 100644
   */
  
  void
-@@ -1404,26 +1417,26 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1404,26 +1419,28 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
     * the entire board just fits inside the viewport
     */
    min_zoom = 1;
@@ -682,10 +692,12 @@ index 814a7ea..e10f4cf 100644
 +  priv->view.coords_per_px = new_zoom;
    pixel_slop = new_zoom;
 -  ghid_port_ranges_scale (FALSE);
-+  ghid_port_ranges_scale ();
++  // ghid_port_ranges_scale (); /* XXX: We still need to update the scroll-bars */
  
 -  gport->view_x0 = MAX (0, SIDE_X (center_x) - xtmp * gport->view_width);
 -  gport->view_y0 = MAX (0, SIDE_Y (center_y) - ytmp * gport->view_height);
++  priv->view.width  = MIN (gport->drawing_area->allocation.width  * priv->view.coords_per_px, PCB->MaxWidth);
++  priv->view.height = MIN (gport->drawing_area->allocation.height * priv->view.coords_per_px, PCB->MaxHeight);
 +  priv->view.x0 = MAX (0, SIDE_X (center_x) - xtmp * priv->view.width);
 +  priv->view.y0 = MAX (0, SIDE_Y (center_y) - ytmp * priv->view.height);
  
@@ -697,7 +709,7 @@ index 814a7ea..e10f4cf 100644
    ghidgui->adjustment_changed_holdoff = FALSE;
  
    ghid_port_ranges_changed ();
-@@ -1433,14 +1446,16 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1433,14 +1450,16 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  void
  ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
  {
@@ -717,7 +729,7 @@ index 814a7ea..e10f4cf 100644
  }
  
  void
-@@ -1493,7 +1508,7 @@ draw_lead_user (render_priv *priv)
+@@ -1493,7 +1512,7 @@ draw_lead_user (render_priv *priv)
  
        /* Draw an arc at radius */
        hidgl_draw_arc (width, priv->lead_user_x, priv->lead_user_y,
@@ -727,7 +739,7 @@ index 814a7ea..e10f4cf 100644
  
    hidgl_flush_triangles (&buffer);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index c106690..21dcd8d 100644
+index c106690..dfa15e7 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1042,8 +1042,9 @@ PCBChanged (int argc, char **argv, int x, int y)
@@ -781,7 +793,7 @@ index c106690..21dcd8d 100644
  
    if (!ghidgui)
      return 0;
-@@ -1721,24 +1723,25 @@ ScrollAction (int argc, char **argv, int x, int y)
+@@ -1721,24 +1723,21 @@ ScrollAction (int argc, char **argv, int x, int y)
      AFAIL (scroll);
  
    if (argc == 2)
@@ -807,22 +819,19 @@ index c106690..21dcd8d 100644
  
 -  notify_crosshair_change (false);
 -  ghid_port_ranges_pan (dx, dy, TRUE);
-+//  notify_crosshair_change (false);
-+//  ghid_port_ranges_pan (dx, dy, TRUE);
-+  ghid_pan_view_rel_to_visible (dx, dy);
-   MoveCrosshairRelative (dx, dy);
+-  MoveCrosshairRelative (dx, dy);
 -  AdjustAttachedObjects ();
 -  notify_crosshair_change (true);
-+//  AdjustAttachedObjects ();
-+//  notify_crosshair_change (true);
++  ghid_pan_view_rel_to_visible (dx, dy);
++  MoveCrosshairRelative (dx, dy);  /* XXX: ??? */
  
    return 0;
  }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7e3891d..423c37d 100644
+index 7e3891d..5e552a3 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -52,16 +52,18 @@
+@@ -52,99 +52,52 @@
  
  #define TOOLTIP_UPDATE_DELAY 200
  
@@ -842,7 +851,52 @@ index 7e3891d..423c37d 100644
  
    ghid_invalidate_all ();
  }
-@@ -114,37 +116,31 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
+ 
+-gboolean
+-ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
+-{
+-  GtkAdjustment *h_adj, *v_adj;
+-  gdouble x0, y0, x1, y1;
+-
+-  h_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
+-  v_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
+-  x0 = h_adj->value;
+-  y0 = v_adj->value;
+-
+-  if (relative)
+-    {
+-      x1 = x0 + x;
+-      y1 = y0 + y;
+-    }
+-  else
+-    {
+-      x1 = x;
+-      y1 = y;
+-    }
+-
+-  if (x1 < h_adj->lower)
+-    x1 = h_adj->lower;
+-  if (x1 > h_adj->upper - h_adj->page_size)
+-    x1 = h_adj->upper - h_adj->page_size;
+-
+-  if (y1 < v_adj->lower)
+-    y1 = v_adj->lower;
+-  if (y1 > v_adj->upper - v_adj->page_size)
+-    y1 = v_adj->upper - v_adj->page_size;
+-
+-  ghidgui->adjustment_changed_holdoff = TRUE;
+-  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), x1);
+-  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), y1);
+-  ghidgui->adjustment_changed_holdoff = FALSE;
+-
+-  if ((x0 != x1) || (y0 != y1))
+-    ghid_port_ranges_changed();
+-
+-  ghid_note_event_location (NULL);
+-  return ((x0 != x1) || (y0 != y1));
+-}
+ 
+   /* Do scrollbar scaling based on current port drawing area size and
       |  overall PCB board size.
     */
  void
@@ -890,7 +944,7 @@ index 7e3891d..423c37d 100644
  }
  
  
-@@ -436,14 +432,11 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -436,14 +389,11 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  {
    static gboolean first_time_done;
  
@@ -906,7 +960,7 @@ index 7e3891d..423c37d 100644
    gport->drawable = gport->pixmap;
  
    if (!first_time_done)
-@@ -467,7 +460,7 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -467,7 +417,7 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
        ghid_drawing_area_configure_hook (out);
      }
  
@@ -915,7 +969,7 @@ index 7e3891d..423c37d 100644
    ghid_invalidate_all ();
    return 0;
  }
-@@ -591,24 +584,20 @@ gint
+@@ -591,24 +541,20 @@ gint
  ghid_port_window_motion_cb (GtkWidget * widget,
  			    GdkEventMotion * ev, GHidPort * out)
  {
@@ -947,7 +1001,7 @@ index 7e3891d..423c37d 100644
    queue_tooltip_update (out);
  
    return FALSE;
-@@ -647,27 +636,22 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -647,27 +593,22 @@ ghid_port_window_enter_cb (GtkWidget * widget,
    return FALSE;
  }
  
@@ -980,7 +1034,7 @@ index 7e3891d..423c37d 100644
  
    /* Window leave events can also be triggered because of focus grabs. Some
     * X applications occasionally grab the focus and so trigger this function.
-@@ -677,11 +661,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -677,11 +618,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
     */
  
    if(ev->mode != GDK_CROSSING_NORMAL)
@@ -993,7 +1047,7 @@ index 7e3891d..423c37d 100644
    if(out->has_entered && !ghidgui->in_popup)
      {
        /* if actively drawing, start scrolling */
-@@ -691,6 +672,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -691,6 +629,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	  /* GdkEvent coords are set to 0,0 at leave events, so must figure
  	     |  out edge the cursor left.
  	   */
@@ -1001,7 +1055,7 @@ index 7e3891d..423c37d 100644
  	  w = ghid_port.width * gport->zoom;
  	  h = ghid_port.height * gport->zoom;
  
-@@ -700,16 +682,16 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -700,16 +639,16 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	  x -= x0;
  	  y -= y0;
  
@@ -1022,7 +1076,7 @@ index 7e3891d..423c37d 100644
  	  if (x < dx)
  	    {
  	      x_pan_speed = -x_pan_speed;
-@@ -734,10 +716,10 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -734,10 +673,10 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	      else
  		x_pan_speed = 0;
  	    }
@@ -1048,7 +1102,7 @@ index b11d32c..cf47cf5 100644
    ghid_init_renderer (argc, argv, gport);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 53845db..b17dad6 100644
+index 53845db..edd1f7f 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -61,12 +61,6 @@
@@ -1064,7 +1118,15 @@ index 53845db..b17dad6 100644
  /*
   * Used to intercept "special" hotkeys that gtk doesn't usually pass
   * on to the menu hotkeys.  We catch them and put them back where we
-@@ -167,16 +161,8 @@ typedef struct
+@@ -153,7 +147,6 @@ typedef struct
+    *drawing_area;		/* and its drawing area */
+   GdkPixmap *pixmap, *mask;
+   GdkDrawable *drawable;	/* Current drawable for drawing routines */
+-  gint width, height;
+ 
+   struct render_priv *render_priv;
+ 
+@@ -167,16 +160,8 @@ typedef struct
    gboolean has_entered;
    gboolean panning;
  
@@ -1083,7 +1145,7 @@ index 53845db..b17dad6 100644
  }
  GHidPort;
  
-@@ -272,8 +258,7 @@ void ghid_get_pointer (gint *, gint *);
+@@ -272,8 +257,7 @@ void ghid_get_pointer (gint *, gint *);
  /* gui-output-events.c function prototypes.
  */
  void ghid_port_ranges_changed (void);
@@ -1093,7 +1155,7 @@ index 53845db..b17dad6 100644
  void ghid_port_ranges_update_ranges (void);
  
  gboolean ghid_note_event_location (GdkEventButton * ev);
-@@ -502,6 +487,7 @@ void ghid_finish_debug_draw (void);
+@@ -502,6 +486,7 @@ void ghid_finish_debug_draw (void);
  bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
  void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
