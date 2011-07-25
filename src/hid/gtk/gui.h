@@ -258,8 +258,7 @@ void ghid_get_pointer (gint *, gint *);
 /* gui-output-events.c function prototypes.
 */
 void ghid_port_ranges_changed (void);
-gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
-void ghid_port_ranges_scale (gboolean emit_changed);
+void ghid_port_ranges_scale (void);
 void ghid_port_ranges_update_ranges (void);
 
 gboolean ghid_note_event_location (GdkEventButton * ev);
@@ -488,6 +487,7 @@ void ghid_finish_debug_draw (void);
 bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
 bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
 void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
+void ghid_pan_view_rel_to_visible (double fraction_x, double fraction_y);
 void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
 void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
 void ghid_zoom_view_fit (void);
