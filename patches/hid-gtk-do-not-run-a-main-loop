@@ -1,0 +1,20 @@
+Bottom: 3d1a7a453d81a0e630b788865b457094f5c876be
+Top:    3d1a7a453d81a0e630b788865b457094f5c876be
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-25 23:27:29 +0100
+
+hid/gtk: Do not run a main loop from within the netlist window code.
+
+It turns out that this is a really bad idea.. if the main loop is kept
+busy, the new main-loop never exits and the events can become reentrant.
+
+I discovered this when testing code for an animation which used the main
+event loop for its timing. Each time a node was selected in the netlist
+window, stack-frame would grow - as the new nested main loops never
+became idle. Segfaults ensued quite readily, presumably due to the code
+not being designed to be reentrant.
+
+
+---
+
+
