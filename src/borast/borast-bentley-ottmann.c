@@ -1583,7 +1583,6 @@ borast_status_t
 bo_contour_to_traps_no_draw (PLINE *contour, borast_traps_t *traps)
 {
   int intersections;
-  borast_status_t status;
   borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
   borast_bo_start_event_t *events;
   borast_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
@@ -1617,10 +1616,10 @@ bo_contour_to_traps_no_draw (PLINE *contour, borast_traps_t *traps)
    * passes of the Bentley-Ottmann algorithm. It would merely
    * require storing the results of each pass into a temporary
    * borast_traps_t. */
-  status = _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
-                                                       num_events,
-                                                       traps,
-                                                       &intersections);
+   _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+                                                num_events,
+                                                traps,
+                                                &intersections);
 
 #if DEBUG_TRAPS
   dump_traps (traps, "bo-polygon-out.txt");
