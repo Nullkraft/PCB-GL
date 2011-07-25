@@ -14,6 +14,13 @@ window, stack-frame would grow - as the new nested main loops never
 became idle. Segfaults ensued quite readily, presumably due to the code
 not being designed to be reentrant.
 
+It appears from reading the code, that these:
+
+  while (gtk_events_pending ())        /* Make sure everything gets built */
+    gtk_main_iteration ();
+
+Are not actually necessary.
+
 
 ---
 
