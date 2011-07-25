@@ -1,7 +1,7 @@
-Bottom: 4fe080655ddfe9177c52e1c0e816b6ff92b9eca4
-Top:    55563329afc31f6163ad1bec60114eea75e6bc45
+Bottom: 4e1880b8cf13d403ac8902b97cb8c4a0d5a02791
+Top:    19331c5b7242095bccd5e5f1f6138265dd237355
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-25 14:09:07 +0100
+Date:   2011-07-26 00:52:38 +0100
 
 Shiny 3D eye-candy
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index cd975d6..d2b6069 100644
+index 8cd5deb..cd8045c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -146,6 +146,19 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -46,7 +46,7 @@ index cd975d6..d2b6069 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -1054,6 +1067,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1062,6 +1075,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -58,7 +58,7 @@ index cd975d6..d2b6069 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1540,7 +1558,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
+@@ -1548,7 +1566,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {

@@ -1,7 +1,7 @@
-Bottom: a8362d1bccaaa32c7c533fceea4ca4a1bb15328f
-Top:    e8e85ed7062b7860fec5f9c4ba2484b4c2ac15f9
+Bottom: 553b7bacda2e4003d71cc69ef0eabe06d8661a51
+Top:    bd7204f55dba1b5783fd6b049679846ae9138f7b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-25 14:09:08 +0100
+Date:   2011-07-26 00:52:40 +0100
 
 Major re-write to drawing routines
 
@@ -90,7 +90,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d2b6069..ed8e3ef 100644
+index cd8045c..662d74d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -232,7 +232,7 @@ index d2b6069..ed8e3ef 100644
  }
  
  static void
-@@ -899,6 +954,10 @@ ghid_start_drawing (GHidPort *port)
+@@ -907,6 +962,10 @@ ghid_start_drawing (GHidPort *port)
  
    port->render_priv->in_context = true;
  
@@ -243,7 +243,7 @@ index d2b6069..ed8e3ef 100644
    return TRUE;
  }
  
-@@ -917,6 +976,14 @@ ghid_end_drawing (GHidPort *port)
+@@ -925,6 +984,14 @@ ghid_end_drawing (GHidPort *port)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
@@ -258,7 +258,7 @@ index d2b6069..ed8e3ef 100644
  }
  
  void
-@@ -924,6 +991,884 @@ ghid_screen_update (void)
+@@ -932,6 +999,884 @@ ghid_screen_update (void)
  {
  }
  
@@ -1143,7 +1143,7 @@ index d2b6069..ed8e3ef 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -991,8 +1936,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -999,8 +1944,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1154,7 +1154,7 @@ index d2b6069..ed8e3ef 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1053,25 +1998,55 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1061,25 +2006,55 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  

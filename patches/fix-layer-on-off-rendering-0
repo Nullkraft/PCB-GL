@@ -1,7 +1,7 @@
-Bottom: fbbbdb29c84ef5e9d710ac88d417bca1bfe06928
-Top:    81813ecb68a3b3779355a9c9671e63913e8ce807
+Bottom: 0865e0b11956166c4edbb7648f36b5e78ad06482
+Top:    7a9347e57686e899aeb625a14d77de3cba9d4301
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-25 14:09:09 +0100
+Date:   2011-07-26 00:52:41 +0100
 
 Fix layer on/off rendering
 
@@ -24,10 +24,10 @@ This fix is almost certainly WRONG.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5ad0729..d1428e0 100644
+index 3d08013..3043c11 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1574,7 +1574,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1582,7 +1582,7 @@ DrawLayerGroup (int group, const BoxType * screen)
          strcmp (Layer->Name, "route") == 0)
        rv = 0;
  

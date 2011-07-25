@@ -1,7 +1,7 @@
-Bottom: 528d1d39544763c39bb5496fefb186f874eb407b
-Top:    1d22090adadfa1a46f0de6c86756d56069098451
+Bottom: 161dc446dcd0fb438e6c94cbf05a757fa995534d
+Top:    4f34b0b885267c34ff5f4227ccf94ee13b247fdb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-25 14:09:05 +0100
+Date:   2011-07-26 00:52:35 +0100
 
 hid/gtk: Add feature to force an immediate redraw if framerate is low
 
@@ -16,7 +16,7 @@ mainloop is not hit until the auto-routing operation is fully complete.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2a7c145..08ee4c5 100644
+index a910946..e925996 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -47,6 +47,7 @@ typedef struct render_priv {
@@ -54,7 +54,7 @@ index 2a7c145..08ee4c5 100644
    gtk_gl_init(argc, argv);
  
    /* setup GL-context */
-@@ -987,6 +997,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -995,6 +1005,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_end_drawing (port);
  
