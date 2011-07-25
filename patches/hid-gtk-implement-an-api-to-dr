@@ -1,5 +1,5 @@
 Bottom: 299a3edee6777df067c58ea99d2fa1da6cc284b1
-Top:    be4804d68af5d78b9644864d04ef4d4797cf1663
+Top:    fe0375d245c3eb6bfd28450fb7ad44554554988a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 23:11:19 +0100
 
@@ -161,7 +161,7 @@ index ed34ea1..2a7c145 100644
 +  priv->lead_user = false;
 +}
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 26b97bb..8ace9d5 100644
+index 26b97bb..b8ca134 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
 @@ -220,8 +220,9 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
@@ -187,14 +187,16 @@ index 26b97bb..8ace9d5 100644
        g_free (node_name);
        node_name = NULL;
      }
-@@ -260,26 +264,29 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
+@@ -260,26 +264,33 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
    dup_string (&node_name, node->ListEntry);
    node_selected_net = selected_net;
  
 -  /* Now just toggle a select of the node on the layout and pan.
--   */
++  /* Now just toggle a select of the node on the layout
+    */
 -  SelectPin (node, TRUE);
--  IncrementUndoSerialNumber ();
++  SelectPin (node, true);
+   IncrementUndoSerialNumber ();
 -	margin = gport->view_width / 20;
 -	if (   Crosshair.X < gport->view_x0 + margin
 -	    || Crosshair.X > gport->view_x0 + gport->view_width - margin
@@ -211,7 +213,8 @@ index 26b97bb..8ace9d5 100644
 -	    gui->set_crosshair (Crosshair.X, Crosshair.Y, HID_SC_WARP_POINTER);
 -	  }
 -	ghid_screen_update();
-+  SelectPin (node, true);
++
++  /* And lead the user to the location */
 +  if (SeekPad (node, &conn, false))
 +    switch (conn.type) {
 +      case PIN_TYPE:
@@ -233,11 +236,10 @@ index 26b97bb..8ace9d5 100644
 +          break;
 +        }
 +    }
-+
  }
  
  
-@@ -626,8 +633,10 @@ node_get_node_from_name (gchar * node_name, LibraryMenuType ** node_net)
+@@ -626,8 +637,10 @@ node_get_node_from_name (gchar * node_name, LibraryMenuType ** node_net)
    if (!netlist_window)
      ghid_netlist_window_create (gport);
  
@@ -248,7 +250,7 @@ index 26b97bb..8ace9d5 100644
  
    /* Now walk through node entries of each net in the net model looking for
       |  the node_name.
-@@ -662,6 +671,9 @@ netlist_close_cb (GtkWidget * widget, gpointer data)
+@@ -662,6 +675,9 @@ netlist_close_cb (GtkWidget * widget, gpointer data)
    gtk_widget_destroy (netlist_window);
    selected_net = NULL;
    netlist_window = NULL;
@@ -258,7 +260,7 @@ index 26b97bb..8ace9d5 100644
  }
  
  
-@@ -888,8 +900,10 @@ ghid_get_net_from_node_name (gchar * node_name, gboolean enabled_only)
+@@ -888,8 +904,10 @@ ghid_get_net_from_node_name (gchar * node_name, gboolean enabled_only)
    if (!netlist_window)
      ghid_netlist_window_create (gport);
  
