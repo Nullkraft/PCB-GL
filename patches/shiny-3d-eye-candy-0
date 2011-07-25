@@ -1,5 +1,5 @@
-Bottom: fd67787606cc46cfa8cdd74fc9545866dac3e111
-Top:    a97395030de8b11b190d548bea6b1e1f67c32d6c
+Bottom: 43e0730a056d6c649108a5516c29f115fe821076
+Top:    eb8e624109499b71d9c03e47ee840c4336e0cdd5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 16:03:06 +0100
 
@@ -14,10 +14,10 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ea62f19..a9e7795 100644
+index cd975d6..d2b6069 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -134,6 +134,19 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -146,6 +146,19 @@ ghid_set_layer (const char *name, int group, int empty)
    end_subcomposite ();
    start_subcomposite ();
  
@@ -37,7 +37,7 @@ index ea62f19..a9e7795 100644
    if (idx >= 0 && idx < max_copper_layer + 2)
      {
        priv->trans_lines = true;
-@@ -769,7 +782,7 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -781,7 +794,7 @@ ghid_show_crosshair (gboolean paint_new_location)
      }
    x = gport->crosshair_x;
    y = gport->crosshair_y;
@@ -46,7 +46,7 @@ index ea62f19..a9e7795 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -1042,6 +1055,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1054,6 +1067,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -58,7 +58,7 @@ index ea62f19..a9e7795 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1526,7 +1544,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
+@@ -1540,7 +1558,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
