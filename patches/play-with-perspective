@@ -1,5 +1,5 @@
 Bottom: ccd7575e215536a589b2c3cfeaa2924bb5414321
-Top:    b19ca6ec945f9b6acea05d405a576158a542f2dc
+Top:    242246a0af514b2dfb4e4c8c2caf20d32a432d75
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-25 02:11:29 +0100
 
@@ -76,7 +76,7 @@ index e5c43e1..1ea5d58 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0e9fed9..3c21498 100644
+index 0e9fed9..7f09b69 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -33,6 +33,8 @@
@@ -200,8 +200,8 @@ index 0e9fed9..3c21498 100644
 +  glMultMatrixf (scale);
 +
 +  /* Translate to the center of the board space view */
-+  glTranslatef (-(port->view_x0 + port->view_width / 2),
-+                -(port->view_y0 + port->view_height / 2),
++  glTranslatef (-SIDE_X (port->view_x0 + port->view_width / 2),
++                -SIDE_Y (port->view_y0 + port->view_height / 2),
 +                0.);
 +
 +  /* Stash the model view matrix so we can work out the screen coordinate -> board coordinate mapping */
