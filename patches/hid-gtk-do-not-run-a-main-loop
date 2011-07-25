@@ -1,5 +1,5 @@
 Bottom: 37b2a486df3ff6f4466004648f0d169b173d0b2f
-Top:    a2bad0041a3a687a737b91130d4aa5f79488363e
+Top:    a540c52a792312c36c9cacfbfb23e1cf5c477e0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-25 23:27:29 +0100
 
@@ -18,26 +18,26 @@ not being designed to be reentrant.
 ---
 
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 0f65d8b..a25976a 100644
+index 0f65d8b..31caa2e 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
-@@ -622,8 +622,7 @@ node_get_node_from_name (gchar * node_name, LibraryMenuType ** node_net)
+@@ -622,9 +622,6 @@ node_get_node_from_name (gchar * node_name, LibraryMenuType ** node_net)
     */
    ghid_netlist_window_create (gport);
  
 -  while (gtk_events_pending ())	/* Make sure everything gets built */
 -    gtk_main_iteration ();
-+  /* XXX */
- 
+-
    /* Now walk through node entries of each net in the net model looking for
       |  the node_name.
-@@ -883,8 +882,7 @@ ghid_get_net_from_node_name (gchar * node_name, gboolean enabled_only)
+    */
+@@ -883,9 +880,6 @@ ghid_get_net_from_node_name (gchar * node_name, gboolean enabled_only)
     */
    ghid_netlist_window_create (gport);
  
 -  while (gtk_events_pending ())	/* Make sure everything gets built */
 -    gtk_main_iteration ();
-+  /* XXX */
- 
+-
    /* If no netlist is loaded the window doesn't appear. */
    if (netlist_window == NULL)
+     return NULL;
