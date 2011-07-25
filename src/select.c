@@ -85,10 +85,7 @@ SelectPin (LibraryEntryTypePtr entry, bool toggle)
 	    AddObjectToFlagUndoList (PIN_TYPE, conn.ptr1, conn.ptr2,
 				     conn.ptr2);
 	    if (toggle)
-	      {
-		TOGGLE_FLAG (SELECTEDFLAG, pin);
-		CenterDisplay (pin->X, pin->Y, false);
-	      }
+	      TOGGLE_FLAG (SELECTEDFLAG, pin);
 	    else
 	      SET_FLAG (SELECTEDFLAG, pin);
 	    DrawPin (pin);
@@ -101,10 +98,7 @@ SelectPin (LibraryEntryTypePtr entry, bool toggle)
 	    AddObjectToFlagUndoList (PAD_TYPE, conn.ptr1, conn.ptr2,
 				     conn.ptr2);
 	    if (toggle)
-	      {
-		TOGGLE_FLAG (SELECTEDFLAG, pad);
-		CenterDisplay (pad->Point1.X, pad->Point1.Y, false);
-	      }
+	      TOGGLE_FLAG (SELECTEDFLAG, pad);
 	    else
 	      SET_FLAG (SELECTEDFLAG, pad);
 	    DrawPad (pad);
