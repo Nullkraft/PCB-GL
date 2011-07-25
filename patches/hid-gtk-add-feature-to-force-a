@@ -1,5 +1,5 @@
 Bottom: 1938bd7878a561fc25e2a73001ffbf8c78d8cc37
-Top:    1938bd7878a561fc25e2a73001ffbf8c78d8cc37
+Top:    6f001a518a37c174b7c28b7db0bcc995c4e46a51
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-25 01:58:31 +0100
 
@@ -15,4 +15,50 @@ mainloop is not hit until the auto-routing operation is fully complete.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 2a7c145..08ee4c5 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -47,6 +47,7 @@ typedef struct render_priv {
+   int subcomposite_stencil_bit;
+   char *current_colorname;
+   double current_alpha_mult;
++  GTimer *time_since_expose;
+ 
+   /* Feature for leading the user to a particular location */
+   guint lead_user_timeout;
+@@ -608,10 +609,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
+   ghid_invalidate_all ();
+ }
+ 
++#define MAX_ELAPSED (50. / 1000.) /* 50ms */
+ void
+ ghid_invalidate_all ()
+ {
++  render_priv *priv = gport->render_priv;
++  double elapsed = g_timer_elapsed (priv->time_since_expose, NULL);
++
+   ghid_draw_area_update (gport, NULL);
++
++  if (elapsed > MAX_ELAPSED)
++    gdk_window_process_all_updates ();
+ }
+ 
+ void
+@@ -816,6 +824,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ 
+   port->render_priv = priv = g_new0 (render_priv, 1);
+ 
++  priv->time_since_expose = g_timer_new ();
++
+   gtk_gl_init(argc, argv);
+ 
+   /* setup GL-context */
+@@ -987,6 +997,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   ghid_end_drawing (port);
+ 
++  g_timer_start (priv->time_since_expose);
++
+   return FALSE;
+ }
