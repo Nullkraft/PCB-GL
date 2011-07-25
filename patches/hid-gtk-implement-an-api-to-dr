@@ -1,5 +1,5 @@
 Bottom: 299a3edee6777df067c58ea99d2fa1da6cc284b1
-Top:    6dcde7d30e37f5c022655c7c37ae29b95e7fb1a2
+Top:    be4804d68af5d78b9644864d04ef4d4797cf1663
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 23:11:19 +0100
 
@@ -12,7 +12,7 @@ a particular location on the board.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ed34ea1..ea1336e 100644
+index ed34ea1..2a7c145 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -47,6 +47,15 @@ typedef struct render_priv {
@@ -91,7 +91,7 @@ index ed34ea1..ea1336e 100644
 +  glColor3f (LEAD_USER_COLOR_R, LEAD_USER_COLOR_G,LEAD_USER_COLOR_B);
 +
 +
-+  /* arcs at the approrpriate radiuses */
++  /* arcs at the approrpriate radii */
 +
 +  for (i = 0; i < LEAD_USER_ARC_COUNT; i++, radius -= separation)
 +    {
