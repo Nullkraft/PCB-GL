@@ -622,8 +622,6 @@ node_get_node_from_name (gchar * node_name, LibraryMenuType ** node_net)
    */
   ghid_netlist_window_create (gport);
 
-  /* XXX */
-
   /* Now walk through node entries of each net in the net model looking for
      |  the node_name.
    */
@@ -881,8 +879,6 @@ ghid_get_net_from_node_name (gchar * node_name, gboolean enabled_only)
      |  caller wants.
    */
   ghid_netlist_window_create (gport);
-
-  /* XXX */
 
   /* If no netlist is loaded the window doesn't appear. */
   if (netlist_window == NULL)
