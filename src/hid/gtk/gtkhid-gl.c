@@ -1241,10 +1241,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                                     -priv->view.x0,
                 priv->view.flip_y ?  priv->view.y0 - PCB->MaxHeight :
                                -priv->view.y0, 0);
-  region.X1 = MIN(Px(0), Px(gport->width + 1));
-  region.Y1 = MIN(Py(0), Py(gport->height + 1));
-  region.X2 = MAX(Px(0), Px(gport->width + 1));
-  region.Y2 = MAX(Py(0), Py(gport->height + 1));
+  region.X1 = MIN(Px(0), Px(width + 1));
+  region.Y1 = MIN(Py(0), Py(height + 1));
+  region.X2 = MAX(Px(0), Px(width + 1));
+  region.Y2 = MAX(Py(0), Py(height + 1));
   hid_expose_callback (&ghid_hid, &region, NULL);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
@@ -1359,6 +1359,7 @@ finish_pan (render_priv *priv)
   priv->view.x0 = MAX (0, priv->view.x0);
   priv->view.y0 = MAX (0, priv->view.y0);
 
+#if 0
   /* if we can see the entire board and some, then zoom to fit */
   if (priv->view.width  > PCB->MaxWidth  &&
       priv->view.height > PCB->MaxHeight)
@@ -1366,6 +1367,7 @@ finish_pan (render_priv *priv)
       ghid_zoom_view_fit ();
       return;
     }
+#endif
 
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), priv->view.x0);
@@ -1429,8 +1431,10 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 
   priv->view.coords_per_px = new_zoom;
   pixel_slop = new_zoom;
-  ghid_port_ranges_scale ();
+  // ghid_port_ranges_scale (); /* XXX: We still need to update the scroll-bars */
 
+  priv->view.width  = MIN (gport->drawing_area->allocation.width  * priv->view.coords_per_px, PCB->MaxWidth);
+  priv->view.height = MIN (gport->drawing_area->allocation.height * priv->view.coords_per_px, PCB->MaxHeight);
   priv->view.x0 = MAX (0, SIDE_X (center_x) - xtmp * priv->view.width);
   priv->view.y0 = MAX (0, SIDE_Y (center_y) - ytmp * priv->view.height);
 

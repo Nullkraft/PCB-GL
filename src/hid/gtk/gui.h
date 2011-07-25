@@ -147,7 +147,6 @@ typedef struct
    *drawing_area;		/* and its drawing area */
   GdkPixmap *pixmap, *mask;
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
-  gint width, height;
 
   struct render_priv *render_priv;
 
