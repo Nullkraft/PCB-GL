@@ -1,0 +1,33 @@
+Bottom: 78d652b6b03f4394cc0479eb2d323e224bf42db0
+Top:    e41e283bf1b7f3780ee8b7d20ae3c94745e52d93
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-25 23:38:02 +0100
+
+Refresh of hid-gtk-do-not-run-a-main-loop
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 7ec5b95..0a26496 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -623,8 +623,7 @@ node_get_node_from_name (gchar * node_name, LibraryMenuType ** node_net)
+   if (!netlist_window)
+     ghid_netlist_window_create (gport);
+ 
+-  while (gtk_events_pending ())	/* Make sure everything gets built */
+-    gtk_main_iteration ();
++  /* XXX */
+ 
+   /* Now walk through node entries of each net in the net model looking for
+      |  the node_name.
+@@ -885,8 +884,7 @@ ghid_get_net_from_node_name (gchar * node_name, gboolean enabled_only)
+   if (!netlist_window)
+     ghid_netlist_window_create (gport);
+ 
+-  while (gtk_events_pending ())	/* Make sure everything gets built */
+-    gtk_main_iteration ();
++  /* XXX */
+ 
+   /* If no netlist is loaded the window doesn't appear. */
+   if (netlist_window == NULL)
