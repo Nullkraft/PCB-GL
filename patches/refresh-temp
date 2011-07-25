@@ -1,0 +1,33 @@
+Bottom: 78d652b6b03f4394cc0479eb2d323e224bf42db0
+Top:    37b2a486df3ff6f4466004648f0d169b173d0b2f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-25 23:40:36 +0100
+
+Refresh of hid-gtk-skip-check-before-call
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 7ec5b95..0f65d8b 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -620,8 +620,7 @@ node_get_node_from_name (gchar * node_name, LibraryMenuType ** node_net)
+   /* Have to force the netlist window created because we need the treeview
+      |  models constructed to do the search.
+    */
+-  if (!netlist_window)
+-    ghid_netlist_window_create (gport);
++  ghid_netlist_window_create (gport);
+ 
+   while (gtk_events_pending ())	/* Make sure everything gets built */
+     gtk_main_iteration ();
+@@ -882,8 +881,7 @@ ghid_get_net_from_node_name (gchar * node_name, gboolean enabled_only)
+      |  models constructed so we can find the LibraryMenuType pointer the
+      |  caller wants.
+    */
+-  if (!netlist_window)
+-    ghid_netlist_window_create (gport);
++  ghid_netlist_window_create (gport);
+ 
+   while (gtk_events_pending ())	/* Make sure everything gets built */
+     gtk_main_iteration ();
