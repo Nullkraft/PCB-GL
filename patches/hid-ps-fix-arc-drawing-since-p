@@ -1,0 +1,23 @@
+Bottom: 47a1ff121d78e6106841040006b76dc86ea7b5f4
+Top:    47a1ff121d78e6106841040006b76dc86ea7b5f4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-27 00:34:12 +0100
+
+hid/ps: Fix arc drawing since pcb_printf patch
+
+The last parameter to the arc macro we use for drawing arcs is unitless,
+so should be a double. This was broken by:
+
+commit fa9ae1f6b1eabaab961795ce7be53afe46eaa735
+
+    Convert ps/eps/lpr HID's to use pcb-printf
+
+I've reverted the change, and added an extra (double) cast compared
+to what was there before, as I'm not sure we wouldn't get an integer
+division without it. (One day I should learn these type promotion /
+casting rules properly ;)
+
+
+---
+
+
