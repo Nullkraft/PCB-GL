@@ -13,9 +13,9 @@ commit fa9ae1f6b1eabaab961795ce7be53afe46eaa735
     Convert ps/eps/lpr HID's to use pcb-printf
 
 I've reverted the change, and added an extra (double) cast compared
-to what was there before, as I'm not sure we wouldn't get an integer
-division without it. (One day I should learn these type promotion /
-casting rules properly ;)
+to what was there before, I'm not sure we wouldn't get an integer
+division without it. One day I should learn these type promotion /
+casting rules properly! ;)
 
 
 ---
