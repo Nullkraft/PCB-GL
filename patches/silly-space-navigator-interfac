@@ -1,5 +1,5 @@
 Bottom: 4a9f843b74ea5c1e7ddb7c659cb545f28240dc30
-Top:    8c2713eefc51dcd45c21db39782ed2cf7cf00a39
+Top:    460552ba2bb51420f643d0f4c2fb0c7ee92cd160
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-27 11:32:38 +0100
 
@@ -49,7 +49,7 @@ index 83df23f..f22c973 100644
  {
    zoom_to (gport->zoom * factor, x, y);
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index bc47214..d8250d1 100644
+index bc47214..5b3fc3d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -95,7 +95,7 @@ index bc47214..d8250d1 100644
 +#if 0 /* XXX: TEMPORARY HACK */
 +    ghid_port_ranges_zoom (gport->zoom * (1.0 - (dz / 100.0)));
 +#else
-+    zoom_by (gport->zoom * (1.0 - (dz / 100.0)), gport->pcb_x, gport->pcb_y);
++    zoom_by (1.0 - (dz / 100.0), gport->pcb_x, gport->pcb_y);
 +#endif
 +}
 +
