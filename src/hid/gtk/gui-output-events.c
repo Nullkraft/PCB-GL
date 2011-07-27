@@ -792,7 +792,7 @@ void ndof_pan_cb (int dx, int dy, int dz, gpointer data)
 #if 0 /* XXX: TEMPORARY HACK */
     ghid_port_ranges_zoom (gport->zoom * (1.0 - (dz / 100.0)));
 #else
-    zoom_by (gport->zoom * (1.0 - (dz / 100.0)), gport->pcb_x, gport->pcb_y);
+    zoom_by (1.0 - (dz / 100.0), gport->pcb_x, gport->pcb_y);
 #endif
 }
 
