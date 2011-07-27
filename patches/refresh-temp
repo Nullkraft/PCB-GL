@@ -1,0 +1,21 @@
+Bottom: 8c2713eefc51dcd45c21db39782ed2cf7cf00a39
+Top:    460552ba2bb51420f643d0f4c2fb0c7ee92cd160
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-07-27 11:40:25 +0100
+
+Refresh of silly-space-navigator-interfac
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index d8250d1..5b3fc3d 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -792,7 +792,7 @@ void ndof_pan_cb (int dx, int dy, int dz, gpointer data)
+ #if 0 /* XXX: TEMPORARY HACK */
+     ghid_port_ranges_zoom (gport->zoom * (1.0 - (dz / 100.0)));
+ #else
+-    zoom_by (gport->zoom * (1.0 - (dz / 100.0)), gport->pcb_x, gport->pcb_y);
++    zoom_by (1.0 - (dz / 100.0), gport->pcb_x, gport->pcb_y);
+ #endif
+ }
