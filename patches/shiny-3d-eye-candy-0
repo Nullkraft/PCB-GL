@@ -1,5 +1,5 @@
-Bottom: f902646eb3d7d4d6e68815643d42fb62e7efe67f
-Top:    a9e5c028d03a6d177da1465b6edbea1bd5455ab1
+Bottom: a53ed602084003db919decbdfc163f9f4ed64c5a
+Top:    df768f6a4935274fdee7d9bd612d2d4f59a5ab5f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-27 11:32:35 +0100
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 44d11bb..cc9797b 100644
+index 8cd5deb..cd8045c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -146,6 +146,19 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -46,7 +46,7 @@ index 44d11bb..cc9797b 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -1060,6 +1073,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1062,6 +1075,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -58,7 +58,7 @@ index 44d11bb..cc9797b 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1544,7 +1562,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
+@@ -1548,7 +1566,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
