@@ -1,5 +1,5 @@
-Bottom: 4b9b8eaa0ecb1dd1001ba072d7aafff1a6b81b16
-Top:    559db3ec81f267713f158a49d8c98793ae1b01dd
+Bottom: ea37049b0f34670583c3f37871e5406bca9e1f47
+Top:    83c0e186b23e65c35a7e3c2b027fa84e66dc154c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-27 11:32:38 +0100
 
@@ -19,10 +19,10 @@ the pads.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 390ceae..3d08013 100644
+index b6ec030..4c63fa4 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1157,7 +1157,21 @@ draw_pin (PinTypePtr pin, bool draw_hole)
+@@ -1156,7 +1156,21 @@ draw_pin (PinTypePtr pin, bool draw_hole)
  static int
  pin_callback (const BoxType * b, void *cl)
  {
@@ -45,7 +45,7 @@ index 390ceae..3d08013 100644
    return 1;
  }
  
-@@ -1274,8 +1288,11 @@ pad_callback (const BoxType * b, void *cl)
+@@ -1273,8 +1287,11 @@ pad_callback (const BoxType * b, void *cl)
    PadTypePtr pad = (PadTypePtr) b;
    int *side = cl;
  
@@ -58,7 +58,7 @@ index 390ceae..3d08013 100644
    return 1;
  }
  
-@@ -1609,6 +1626,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1608,6 +1625,9 @@ DrawLayerGroup (int group, const BoxType * screen)
  
        /* Draw pins, vias and pads on this layer */
        if (!global_view_2d && rv) {
