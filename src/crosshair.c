@@ -846,16 +846,17 @@ check_snap_offgrid_line (struct snap_data *snap_data,
 
   line = (LineType *)ptr2;
 
-  /* Allow snapping to off-grid lines when drawing new lines,
-   * when moving a line end-point (but don't snap to the same line)
+  /* Allow snapping to off-grid lines when drawing new lines (on
+   * the same layer), and when moving a line end-point
+   * (but don't snap to the same line)
    */
-#if 0
-  if ( Settings.Mode != LINE_MODE &&
+  if ((Settings.Mode != LINE_MODE ||
+       Crosshair.AttachedObject.Ptr1 != ptr1) &&
       (Settings.Mode != MOVE_MODE ||
+       Crosshair.AttachedObject.Ptr1 != ptr1 ||
        Crosshair.AttachedObject.Type != LINEPOINT_TYPE ||
        Crosshair.AttachedObject.Ptr2 == line))
     return;
-#endif
 
   dx = line->Point2.X - line->Point1.X;
   dy = line->Point2.Y - line->Point1.Y;
