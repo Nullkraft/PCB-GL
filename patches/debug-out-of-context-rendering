@@ -1,5 +1,5 @@
-Bottom: 0e01d9d4377f5b4f956723b4ebfebe2bd4b636ae
-Top:    5ffefafd3022948f5a5f8ec9625c9c45036b158b
+Bottom: eabdd9ba70367c557a07a8e1fe340cab259dfbcf
+Top:    aa01972b578dee26549f937e3f514c29ac2f5dd9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-27 11:32:41 +0100
 
@@ -148,10 +148,10 @@ index 37d35b9..4502e5b 100644
  void hidgl_flush_triangles (triangle_buffer *buffer);
  void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f3b9192..85570df 100644
+index b687c14..ae008ac 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1952,6 +1952,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1954,6 +1954,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -159,7 +159,7 @@ index f3b9192..85570df 100644
    hidgl_init ();
    check_gl_drawing_ok_hack = true;
  
-@@ -2130,6 +2131,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2132,6 +2133,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    draw_lead_user (priv);
  
    check_gl_drawing_ok_hack = false;
@@ -167,7 +167,7 @@ index f3b9192..85570df 100644
    ghid_end_drawing (port);
  
    g_timer_start (priv->time_since_expose);
-@@ -2201,6 +2203,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2203,6 +2205,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    gport->render_priv->in_context = true;
  
    check_gl_drawing_ok_hack = true;
@@ -175,7 +175,7 @@ index f3b9192..85570df 100644
  
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-@@ -2249,6 +2252,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2251,6 +2254,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
      glFlush ();
  
    check_gl_drawing_ok_hack = false;
@@ -183,7 +183,7 @@ index f3b9192..85570df 100644
  
    /* end drawing to current GL-context */
    gport->render_priv->in_context = false;
-@@ -2321,6 +2325,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2323,6 +2327,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    save_check_gl_drawing_ok_hack = check_gl_drawing_ok_hack;
    check_gl_drawing_ok_hack = true;
@@ -191,7 +191,7 @@ index f3b9192..85570df 100644
  
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-@@ -2367,6 +2372,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2369,6 +2374,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    glFlush ();
  
    check_gl_drawing_ok_hack = save_check_gl_drawing_ok_hack;
