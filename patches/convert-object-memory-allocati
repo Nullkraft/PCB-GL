@@ -1,7 +1,7 @@
-Bottom: 6472b531cecb0c6a63121bffe1481d78a935da70
-Top:    e07c8b01a8740ab0de651c9d4a09df691081bb56
+Bottom: 76a88caa1eceda737ac02a4ff0cc67efe5f3ac5d
+Top:    57e2b31dff0f4c69646cb385a7689df50efdfa56
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-03 00:26:53 +0100
+Date:   2011-08-03 00:29:02 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -897,10 +897,10 @@ index 83df23f..bd24bda 100644
  
  	  break;
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 31caa2e..ba4197c 100644
+index 331f5a8..6e0198b 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
-@@ -506,9 +506,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
+@@ -517,9 +517,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
  static void
  netlist_select_cb (GtkWidget * widget, gpointer data)
  {
@@ -911,7 +911,7 @@ index 31caa2e..ba4197c 100644
    gboolean select_flag = GPOINTER_TO_INT (data);
  
    if (!selected_net)
-@@ -519,9 +518,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+@@ -530,9 +529,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
    InitConnectionLookup ();
    ResetConnections (true);
  
@@ -925,7 +925,7 @@ index 31caa2e..ba4197c 100644
  
    SelectConnection (select_flag);
    ResetConnections (false);
-@@ -835,9 +837,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -849,9 +851,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
  {
    struct ggnfnn_task *task = (struct ggnfnn_task *)data;
    LibraryMenuType *net;
@@ -936,7 +936,7 @@ index 31caa2e..ba4197c 100644
    gboolean is_disabled;
  
    /* We only want to inspect leaf nodes in the tree */
-@@ -854,13 +855,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -868,13 +869,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
      return FALSE;
  
    /* Look for the node name in this net. */
@@ -955,7 +955,7 @@ index 31caa2e..ba4197c 100644
  
    return FALSE;
  }
-@@ -980,7 +984,7 @@ ghid_netlist_window_update (gboolean init_nodes)
+@@ -994,7 +998,7 @@ ghid_netlist_window_update (gboolean init_nodes)
  
    /* XXX Check if the select callback does this for us */
    if (init_nodes)
@@ -2153,10 +2153,10 @@ index 53b8b41..8ec8d87 100644
  		 GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1),
  		 TEST_FLAG (LOCKFLAG, Polygon) ? "It is LOCKED.\n" : "");
 diff --git a/src/select.c b/src/select.c
-index e42d4bb..48261a9 100644
+index 1aa5cb6..a8247e8 100644
 --- a/src/select.c
 +++ b/src/select.c
-@@ -1022,18 +1022,20 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -1016,18 +1016,20 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
  
        MENU_LOOP (&PCB->NetlistLib);
        {
