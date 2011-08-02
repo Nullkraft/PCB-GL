@@ -5,6 +5,15 @@ Date:   2011-08-03 00:17:11 +0100
 
 crosshair.c: Revise heuristic for snapping on off-grid lines
 
+Only snap to an off-grid section of a line when:
+
+Drawing lines on the same layer as the one being snapped to
+When manipulating the end-point of a _different) line on the
+same layer as the one being snapped to.
+
+This should hopefully reduce the tendancy of the off-grid-line
+code to cause lots of unnecessary snapping.
+
 
 ---
 
