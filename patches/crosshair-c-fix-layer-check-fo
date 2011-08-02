@@ -1,5 +1,5 @@
 Bottom: 76a88caa1eceda737ac02a4ff0cc67efe5f3ac5d
-Top:    76a88caa1eceda737ac02a4ff0cc67efe5f3ac5d
+Top:    0ef5a3c82041c81240b1207e28abe589d6db40bd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-03 00:35:59 +0100
 
@@ -8,4 +8,17 @@ crosshair.c: Fix layer check for off-grid line snapping in line-draw mode
 
 ---
 
-
+diff --git a/src/crosshair.c b/src/crosshair.c
+index bb0a87b..76b072b 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -850,8 +850,7 @@ check_snap_offgrid_line (struct snap_data *snap_data,
+    * the same layer), and when moving a line end-point
+    * (but don't snap to the same line)
+    */
+-  if ((Settings.Mode != LINE_MODE ||
+-       Crosshair.AttachedObject.Ptr1 != ptr1) &&
++  if ((Settings.Mode != LINE_MODE || CURRENT != ptr1) &&
+       (Settings.Mode != MOVE_MODE ||
+        Crosshair.AttachedObject.Ptr1 != ptr1 ||
+        Crosshair.AttachedObject.Type != LINEPOINT_TYPE ||
