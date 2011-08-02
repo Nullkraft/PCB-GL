@@ -1,5 +1,5 @@
 Bottom: 73f802141977f276c9c24438b8e65153c7e860cc
-Top:    831be5899e7800a691794b416b4902d33a6b735d
+Top:    bcdda0a726d6f0264aba4f277ecddef002af1b0a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-03 00:17:11 +0100
 
@@ -9,10 +9,10 @@ crosshair.c: Revise heuristic for snapping on off-grid lines
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 4024881..b42afa9 100644
+index 4024881..bb0a87b 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -819,6 +819,97 @@ check_snap_object (struct snap_data *snap_data, LocationType x, LocationType y,
+@@ -819,6 +819,98 @@ check_snap_object (struct snap_data *snap_data, LocationType x, LocationType y,
      }
  }
  
@@ -43,16 +43,17 @@ index 4024881..b42afa9 100644
 +
 +  line = (LineType *)ptr2;
 +
-+  /* Allow snapping to off-grid lines when drawing new lines,
-+   * when moving a line end-point (but don't snap to the same line)
++  /* Allow snapping to off-grid lines when drawing new lines (on
++   * the same layer), and when moving a line end-point
++   * (but don't snap to the same line)
 +   */
-+#if 0
-+  if ( Settings.Mode != LINE_MODE &&
++  if ((Settings.Mode != LINE_MODE ||
++       Crosshair.AttachedObject.Ptr1 != ptr1) &&
 +      (Settings.Mode != MOVE_MODE ||
++       Crosshair.AttachedObject.Ptr1 != ptr1 ||
 +       Crosshair.AttachedObject.Type != LINEPOINT_TYPE ||
 +       Crosshair.AttachedObject.Ptr2 == line))
 +    return;
-+#endif
 +
 +  dx = line->Point2.X - line->Point1.X;
 +  dy = line->Point2.Y - line->Point1.Y;
@@ -110,7 +111,7 @@ index 4024881..b42afa9 100644
  /* ---------------------------------------------------------------------------
   * recalculates the passed coordinates to fit the current grid setting
   */
-@@ -976,74 +1067,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -976,74 +1068,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
        check_snap_object (&snap_data, pnt->X, pnt->Y, true);
      }
  
