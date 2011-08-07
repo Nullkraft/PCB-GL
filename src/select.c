@@ -61,47 +61,6 @@
 
 RCSID ("$Id$");
 
-
-
-/* ---------------------------------------------------------------------------
- * toggle selection of pin
- */
-void
-TogglePinSelected (LibraryEntryTypePtr entry)
-{
-  ConnectionType conn;
-
-  if (SeekPad (entry, &conn, false))
-    {
-      switch (conn.type)
-	{
-	case PIN_TYPE:
-	  {
-	    PinTypePtr pin = (PinTypePtr) conn.ptr2;
-
-	    AddObjectToFlagUndoList (PIN_TYPE, conn.ptr1, conn.ptr2,
-				     conn.ptr2);
-	    TOGGLE_FLAG (SELECTEDFLAG, pin);
-	    CenterDisplay (pin->X, pin->Y);
-	    DrawPin (pin);
-	    break;
-	  }
-	case PAD_TYPE:
-	  {
-	    PadTypePtr pad = (PadTypePtr) conn.ptr2;
-
-	    AddObjectToFlagUndoList (PAD_TYPE, conn.ptr1, conn.ptr2,
-				     conn.ptr2);
-	    TOGGLE_FLAG (SELECTEDFLAG, pad);
-	    CenterDisplay (pad->Point1.X, pad->Point1.Y);
-	    DrawPad (pad);
-	    break;
-	  }
-	}
-    }
-}
-
-
 /* ---------------------------------------------------------------------------
  * toggles the selection of any kind of object
  * the different types are defined by search.h
