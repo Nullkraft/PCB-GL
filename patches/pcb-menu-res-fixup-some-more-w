@@ -1,5 +1,5 @@
 Bottom: fca8dcbb6d453891216a246037284f19689c3dbd
-Top:    fca8dcbb6d453891216a246037284f19689c3dbd
+Top:    7cb86bfbe3919d918bd97d8e3f573be30ce715e6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 15:55:50 +0100
 
@@ -8,4 +8,16 @@ pcb-menu.res: Fixup some more whitespace
 
 ---
 
-
+diff --git a/src/pcb-menu.res b/src/pcb-menu.res
+index bda9bd7..1e88e52 100644
+--- a/src/pcb-menu.res
++++ b/src/pcb-menu.res
+@@ -31,7 +31,7 @@ MainMenu =
+    {"About..." About()}
+    {"Save layout" Save(Layout) m=S a={"Ctrl-S" "Ctrl<Key>s"}}
+    {"Save layout as..." Save(LayoutAs) m=A a={"Shift Ctrl-S" "Shift Ctrl<Key>s"}}
+-	{"Revert" Load(Revert,none)}
++   {"Revert" Load(Revert,none)}
+    {"Import Schematics" Import() }
+    {"Load layout" Load(Layout)}
+    {"Load element data to paste-buffer" PasteBuffer(Clear) Load(ElementTobuffer)}
