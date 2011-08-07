@@ -1,0 +1,17 @@
+Bottom: 89480928e0e1e09fa658558e20b161a10d434049
+Top:    89480928e0e1e09fa658558e20b161a10d434049
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 23:16:31 +0100
+
+select.c: Remove toggle argument to "SelectPin" and rename
+
+All the callers pass "TRUE" for this argument, and thus the
+semenatics of the function is to toggle the selection of a given
+pin / pad, not to select it.
+
+Rename the function "TogglePinSelected" to reflect this.
+
+
+---
+
+
