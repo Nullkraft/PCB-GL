@@ -1,5 +1,5 @@
 Bottom: 024a00c3e6fc6c1b7604b059c6cd813424353a0a
-Top:    024a00c3e6fc6c1b7604b059c6cd813424353a0a
+Top:    65f42279307190a4d20af7f2a1e435cfef746d5a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 15:41:47 +0100
 
@@ -11,4 +11,19 @@ We were missing translations.
 
 ---
 
-
+diff --git a/po/POTFILES.in b/po/POTFILES.in
+index 3bfb3ed..0e5e331 100644
+--- a/po/POTFILES.in
++++ b/po/POTFILES.in
+@@ -7,9 +7,11 @@ data/x-pcb-layout.desktop.in
+ data/x-pcb-netlist.desktop.in
+ src/action.c
+ src/autoplace.c
++src/autoroute.c
+ src/buffer.c
+ src/change.c
+ src/create.c
++src/crosshair.c
+ src/edif.c
+ src/error.c
+ src/file.c
