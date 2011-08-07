@@ -312,54 +312,6 @@ loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
    */
   switch (ksym)
     {
-    case GDK_Up:
-      if (mk == CONTROL_PRESSED)
-	{
-	  hid_actionl ("Display", "Scroll", "8", NULL);
-	  hid_actionl ("Display", "Scroll", "0", NULL);
-	}
-      else if (mk == SHIFT_PRESSED)
-	hid_actionl ("MovePointer", "0", "-10", NULL);
-      else if (mk == NONE_PRESSED)
-	hid_actionl ("MovePointer", "0", "-1", NULL);
-      break;
-
-    case GDK_Down:
-      if (mk == CONTROL_PRESSED)
-	{
-	  hid_actionl ("Display", "Scroll", "2", NULL);
-	  hid_actionl ("Display", "Scroll", "0", NULL);
-	}
-      else if (mk == SHIFT_PRESSED)
-	hid_actionl ("MovePointer", "0", "10", NULL);
-      else if (mk == NONE_PRESSED)
-	hid_actionl ("MovePointer", "0", "1", NULL);
-      break;
-
-    case GDK_Left:
-      if (mk == CONTROL_PRESSED)
-	{
-	  hid_actionl ("Display", "Scroll", "4", NULL);
-	  hid_actionl ("Display", "Scroll", "0", NULL);
-	}
-      else if (mk == SHIFT_PRESSED)
-	hid_actionl ("MovePointer", "-10", "0", NULL);
-      else if (mk == NONE_PRESSED)
-	hid_actionl ("MovePointer", "-1", "0", NULL);
-      break;
-
-    case GDK_Right:
-      if (mk == CONTROL_PRESSED)
-	{
-	  hid_actionl ("Display", "Scroll", "6", NULL);
-	  hid_actionl ("Display", "Scroll", "0", NULL);
-	}
-      else if (mk == SHIFT_PRESSED)
-	hid_actionl ("MovePointer", "10", "0", NULL);
-      else if (mk == NONE_PRESSED)
-	hid_actionl ("MovePointer", "1", "0", NULL);
-      break;
-
     case GDK_Return:		/* Accept cursor location */
       if (g_main_loop_is_running (*loop))
 	g_main_loop_quit (*loop);
