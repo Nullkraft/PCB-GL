@@ -1,5 +1,5 @@
 Bottom: e3d9cedddd4a15e3608768a4c70b09e8d1a41bc4
-Top:    e3d9cedddd4a15e3608768a4c70b09e8d1a41bc4
+Top:    6ae8d6c76cda504cd82e773cd6928f8252a29413
 Author: Stanislav Brabec <sbrabec@suse.cz>
 Date:   2011-07-18 19:14:19 +0200
 
@@ -15,4 +15,92 @@ Reviewed-by: Peter Clifton <pcjc2@cam.ac.uk>
 
 ---
 
-
+diff --git a/configure.ac b/configure.ac
+index fd14c98..666d51e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -320,6 +320,17 @@ AS_CASE(["x$enable_toporouter"],[xyes | xno],,
+ )
+ AC_MSG_RESULT([$enable_toporouter])
+ AM_CONDITIONAL([WITH_TOPOROUTER], test $enable_toporouter != no)
++AS_CASE([$enable_toporouter],[yes],
++ [
++  topo_enabled=1
++ ],
++ [
++  topo_enabled=0
++ ]
++)
++AC_DEFINE_UNQUOTED([TOPO_ENABLED], [$topo_enabled],
++ [Define to 1 to enable toporouter]
++)
+ 
+ AC_MSG_CHECKING([whether to enable toporouter output])
+ AC_ARG_ENABLE([toporouter-output],
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 75c6886..b55071f 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -241,7 +241,11 @@ all-local: pcbtest.sh
+ 
+ pcb-menu.res : pcb-menu.res.in
+ 	echo '/* AUTOMATICALLY GENERATED FROM pcb-menu.res.in DO NOT EDIT */' > $@
+-	cat ${srcdir}/pcb-menu.res.in >> $@
++if WITH_TOPOROUTER
++	sed '/%if/d ;/%endif/d' < ${srcdir}/pcb-menu.res.in >> $@
++else
++	sed '/%if/,/%endif/d' < ${srcdir}/pcb-menu.res.in >> $@
++endif
+ 
+ pcb-menu.h : pcb-menu.res
+ 	echo '/* AUTOMATICALLY GENERATED FROM pcb-menu.res DO NOT EDIT */' > $@
+@@ -251,7 +255,11 @@ pcb-menu.h : pcb-menu.res
+ 
+ gpcb-menu.res : gpcb-menu.res.in
+ 	echo '/* AUTOMATICALLY GENERATED FROM gpcb-menu.res.in DO NOT EDIT */' > $@
+-	cat ${srcdir}/gpcb-menu.res.in >> $@
++if WITH_TOPOROUTER
++	sed '/%if/d ;/%endif/d' < ${srcdir}/gpcb-menu.res.in >> $@
++else
++	sed '/%if/,/%endif/d' < ${srcdir}/gpcb-menu.res.in >> $@
++endif
+ 
+ gpcb-menu.h : gpcb-menu.res
+ 	echo '/* AUTOMATICALLY GENERATED FROM gpcb-menu.res DO NOT EDIT */' > $@
+diff --git a/src/gpcb-menu.res.in b/src/gpcb-menu.res.in
+index dc594c4..ec39860 100644
+--- a/src/gpcb-menu.res.in
++++ b/src/gpcb-menu.res.in
+@@ -326,6 +326,9 @@ MainMenu =
+    -
+    {"Auto-route selected rats" AutoRoute(Selected)}
+    {"Auto-route all rats" AutoRoute(AllRats)}
++%if TOPO_ENABLED
++   {"Toporouter" Toporouter()}
++%endif
+    {"Rip up all auto-routed tracks" RipUp(All)}
+    -
+    {"Optimize routed tracks"
+diff --git a/src/pcb-menu.res.in b/src/pcb-menu.res.in
+index bda9bd7..b4189dc 100644
+--- a/src/pcb-menu.res.in
++++ b/src/pcb-menu.res.in
+@@ -31,7 +31,7 @@ MainMenu =
+    {"About..." About()}
+    {"Save layout" Save(Layout) m=S a={"Ctrl-S" "Ctrl<Key>s"}}
+    {"Save layout as..." Save(LayoutAs) m=A a={"Shift Ctrl-S" "Shift Ctrl<Key>s"}}
+-	{"Revert" Load(Revert,none)}
++   {"Revert" Load(Revert,none)}
+    {"Import Schematics" Import() }
+    {"Load layout" Load(Layout)}
+    {"Load element data to paste-buffer" PasteBuffer(Clear) Load(ElementTobuffer)}
+@@ -309,6 +309,9 @@ MainMenu =
+    -
+    {"Auto-route selected rats" AutoRoute(Selected)}
+    {"Auto-route all rats" AutoRoute(AllRats)}
++%if TOPO_ENABLED
++   {"Toporouter" Toporouter()}
++%endif
+    {"Rip up all auto-routed tracks" RipUp(All)}
+    -
+    {"Auto-Optimize" djopt(auto)  a={"Shift-=" "Shift<Key>="}}
