@@ -18,7 +18,7 @@ EXTRA_LIBRARIES = \
 	liblpr.a libgerber.a libbom.a libpng.a libps.a libnelma.a \
 	libgcode.a
 
-pcblib_DATA=	\
+pcblib_DATA= \
 	default_font \
 	gpcb-menu.res \
 	pcb-menu.res
@@ -457,7 +457,9 @@ DISTCLEANFILES= pcbtest.sh gpcb-menu.h pcb-menu.h \
 	hid/nelma/nelma_lists.h \
 	hid/ps/ps_lists.h \
 	core_lists.h \
-	dbus-introspect.h
+	dbus-introspect.h \
+	gpcb-menu.res \
+	pcb-menu.res
 
 # create wrapper script that lets you test pcb prior to installation
 pcbtest.sh:	$(srcdir)/pcbtest.sh.in Makefile
