@@ -234,7 +234,7 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
       |  if off here will get our on/off toggling out of sync.
       */
       if (node_net == node_selected_net)
-	SelectPin (node, TRUE);
+	TogglePinSelected (node);
       g_free (node_name);
       node_name = NULL;
     }
@@ -259,7 +259,7 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
 
   /* Now just toggle a select of the node on the layout and pan.
    */
-  SelectPin (node, TRUE);
+  TogglePinSelected (node);
   IncrementUndoSerialNumber ();
 	margin = gport->view_width / 20;
 	if (   Crosshair.X < gport->view_x0 + margin
