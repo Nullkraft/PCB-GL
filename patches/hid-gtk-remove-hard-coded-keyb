@@ -3,10 +3,18 @@ Top:    102aa014762405a776472126eaa4ab4fe12ad6be
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 22:45:13 +0100
 
-hid/gtk: Remove dead "MovePointer" action calling code.
+hid/gtk: Remove dead "MovePointer" keyboard navigation code.
 
 This was not working correctly anyway, as the action was not
 properly registered. Obviously no-one missed it, so let it die.
+
+Whilst we are here, kill off the hard-coded panning actions
+in this sub-main loop. Eventually, we should use common code
+for any keyboard navigation.
+
+This only affects operation of the ghid_get_user_xy() function,
+e.g. the one which temporarily greys out the PCB user interface
+whilst waiting for the user to supply a location.
 
 
 ---
