@@ -1,5 +1,5 @@
 Bottom: 34aea2338028a7b95d4f4ed946e0896de4655319
-Top:    102aa014762405a776472126eaa4ab4fe12ad6be
+Top:    396354cd61f09ba6d1e3feace66592bb4bf857d9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 22:45:13 +0100
 
@@ -20,10 +20,10 @@ whilst waiting for the user to supply a location.
 ---
 
 diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
-index 730db5e..79fe3b4 100644
+index 730db5e..cadd2aa 100644
 --- a/src/hid/gtk/gui-misc.c
 +++ b/src/hid/gtk/gui-misc.c
-@@ -293,7 +293,7 @@ ghid_restore_cursor (void)
+@@ -293,73 +293,19 @@ ghid_restore_cursor (void)
  static gboolean got_location;
  
    /* If user hits a key instead of the mouse button, we'll abort unless
@@ -32,9 +32,16 @@ index 730db5e..79fe3b4 100644
     */
  static gboolean
  loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
-@@ -308,58 +308,8 @@ loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
-   state = (GdkModifierType) (kev->state);
-   mk = ghid_modifier_keys_state (&state);
+ 		   GMainLoop ** loop)
+ {
+-  ModifierKeysState mk;
+-  GdkModifierType state;
+   gint ksym = kev->keyval;
+ 
+   if (ghid_is_modifier_key_sym (ksym))
+     return TRUE;
+-  state = (GdkModifierType) (kev->state);
+-  mk = ghid_modifier_keys_state (&state);
  
 -  /* Duplicate the cursor key actions in gui-output-events.c
 -   */
