@@ -1,0 +1,31 @@
+Bottom: 12fdf0386be4f4a3561e2f75c4b4bff50c3d262f
+Top:    102aa014762405a776472126eaa4ab4fe12ad6be
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 22:54:09 +0100
+
+Refresh of hid-gtk-remove-hard-coded-keyb
+
+---
+
+diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
+index 745e8ea..79fe3b4 100644
+--- a/src/hid/gtk/gui-misc.c
++++ b/src/hid/gtk/gui-misc.c
+@@ -293,7 +293,7 @@ ghid_restore_cursor (void)
+ static gboolean got_location;
+ 
+   /* If user hits a key instead of the mouse button, we'll abort unless
+-     |  it's one of the cursor keys.  Move the layout if a cursor key.
++     |  it's the enter key (which accepts the current crosshair location).
+    */
+ static gboolean
+ loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
+@@ -308,8 +308,6 @@ loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
+   state = (GdkModifierType) (kev->state);
+   mk = ghid_modifier_keys_state (&state);
+ 
+-  /* Duplicate the cursor key actions in gui-output-events.c
+-   */
+   switch (ksym)
+     {
+     case GDK_Return:		/* Accept cursor location */
