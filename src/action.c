@@ -323,7 +323,6 @@ static int defer_updates = 0;
 static int defer_needs_update = 0;
 
 static Cardinal polyIndex = 0;
-static bool IgnoreMotionEvents = false;
 static bool saved_mode = false;
 #ifdef HAVE_LIBSTROKE
 static bool mid_stroke = false;
@@ -2153,17 +2152,12 @@ EventMoveCrosshair (int ev_x, int ev_y)
     }
 #endif /* HAVE_LIBSTROKE */
   /* ignore events that are caused by ActionMovePointer */
-  if (!IgnoreMotionEvents)
+  if (MoveCrosshairAbsolute (ev_x, ev_y))
     {
-      if (MoveCrosshairAbsolute (ev_x, ev_y))
-	{
-	  /* update object position and cursor location */
-	  AdjustAttachedObjects ();
-	  notify_crosshair_change (true);
-	}
+      /* update object position and cursor location */
+      AdjustAttachedObjects ();
+      notify_crosshair_change (true);
     }
-  else
-    IgnoreMotionEvents = false;
 }
 
 /* --------------------------------------------------------------------------- */
