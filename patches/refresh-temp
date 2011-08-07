@@ -1,0 +1,28 @@
+Bottom: 102aa014762405a776472126eaa4ab4fe12ad6be
+Top:    396354cd61f09ba6d1e3feace66592bb4bf857d9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 22:57:20 +0100
+
+Refresh of hid-gtk-remove-dead-movepointe
+
+---
+
+diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
+index 79fe3b4..cadd2aa 100644
+--- a/src/hid/gtk/gui-misc.c
++++ b/src/hid/gtk/gui-misc.c
+@@ -299,14 +299,10 @@ static gboolean
+ loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
+ 		   GMainLoop ** loop)
+ {
+-  ModifierKeysState mk;
+-  GdkModifierType state;
+   gint ksym = kev->keyval;
+ 
+   if (ghid_is_modifier_key_sym (ksym))
+     return TRUE;
+-  state = (GdkModifierType) (kev->state);
+-  mk = ghid_modifier_keys_state (&state);
+ 
+   switch (ksym)
+     {
