@@ -1,7 +1,7 @@
-Bottom: 94f30e540f683c603a7e7b8718165a33446bd253
-Top:    877c6801a6928f712ffefaf675a6faa8acc1cfde
+Bottom: 6a9ba1ca6d143763b3f9512d663977626f1b4625
+Top:    cee5a18f6fae1194f9e0e53fe1e0c3df060f287f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-03 00:39:21 +0100
+Date:   2011-08-07 16:01:22 +0100
 
 bdale patch
 
@@ -9,10 +9,10 @@ bdale patch
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 9b67924..501dd26 100644
+index d6e1d89..7debd78 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -7996,6 +7996,71 @@ ActionAttributes (int argc, char **argv, int x, int y)
+@@ -8005,6 +8005,71 @@ ActionAttributes (int argc, char **argv, int x, int y)
    return 0;
  }
  
@@ -84,7 +84,7 @@ index 9b67924..501dd26 100644
  /* --------------------------------------------------------------------------- */
  
  HID_Action action_action_list[] = {
-@@ -8187,6 +8252,9 @@ HID_Action action_action_list[] = {
+@@ -8196,6 +8261,9 @@ HID_Action action_action_list[] = {
    {"Import", 0, ActionImport,
     import_help, import_syntax}
    ,
