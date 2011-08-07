@@ -1,5 +1,5 @@
 Bottom: 768d0728dfcd8b6bebd74bee17e75e61a197403c
-Top:    768d0728dfcd8b6bebd74bee17e75e61a197403c
+Top:    980d5c353a90fc8661b2dc04805ba90e4bdbb480
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 22:41:03 +0100
 
@@ -11,4 +11,28 @@ we are emitting the appropriate change notifications.
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index e222dbf..6339e39 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2114,18 +2114,11 @@ ActionSetThermal (int argc, char **argv, int x, int y)
+ void
+ ActionMovePointer (char *deltax, char *deltay)
+ {
+-  LocationType x, y, dx, dy;
++  LocationType dx, dy;
+ 
+-  /* save old crosshair position */
+-  x = Crosshair.X;
+-  y = Crosshair.Y;
+   dx = (LocationType) (atoi (deltax) * PCB->Grid);
+   dy = (LocationType) (atoi (deltay) * PCB->Grid);
+-  MoveCrosshairRelative (TO_SCREEN_SIGN_X (dx), TO_SCREEN_SIGN_Y (dy));
+-  FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
+-  /* restore crosshair for erasure */
+-  Crosshair.X = x;
+-  Crosshair.Y = y;
++
+   notify_crosshair_change (false);
+   MoveCrosshairRelative (TO_SCREEN_SIGN_X (dx), TO_SCREEN_SIGN_Y (dy));
+   /* update object position and cursor location */
