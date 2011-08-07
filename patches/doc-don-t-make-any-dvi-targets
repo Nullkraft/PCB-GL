@@ -1,0 +1,15 @@
+Bottom: 69ac75bd63ef617622dd74a5e4e5c6fdfd15a0e4
+Top:    69ac75bd63ef617622dd74a5e4e5c6fdfd15a0e4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 15:34:53 +0100
+
+doc: Don't make any DVI targets
+
+We don't have rules to build all the prerequisites, and we don't care
+about DVI. This makes "make distcheck" pass again.
+
+
+
+---
+
+
