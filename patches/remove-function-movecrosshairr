@@ -1,0 +1,19 @@
+Bottom: 89480928e0e1e09fa658558e20b161a10d434049
+Top:    89480928e0e1e09fa658558e20b161a10d434049
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 23:10:47 +0100
+
+Remove function MoveCrosshairRelative()
+
+All the callers were actually just trying to re-fit the
+same crosshair location into the grid / board area, so
+ended up just calling FitCrosshairIntoGrid with the current
+crosshair location.
+
+Move this call directly into the two callers of
+MoveCrosshairRelative(), and remove the latter.
+
+
+---
+
+
