@@ -1,0 +1,14 @@
+Bottom: 768d0728dfcd8b6bebd74bee17e75e61a197403c
+Top:    768d0728dfcd8b6bebd74bee17e75e61a197403c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 22:41:03 +0100
+
+action.c: Simplify ActionMovePointer()
+
+The save / restore of the crosshair coordinates is unnecessary since
+we are emitting the appropriate change notifications.
+
+
+---
+
+
