@@ -1,0 +1,101 @@
+Bottom: 89480928e0e1e09fa658558e20b161a10d434049
+Top:    aa9f11498e1633caf7c86e13d32d67ebea1d2248
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 23:16:31 +0100
+
+Move the SelectPin() function into the file of its only caller.
+
+Whilst we're at it, simplify the function, removing its always-
+constant argument and condense the redrawing calls.
+
+The new function is in hid/gtk/gui-netlist-window.c, and is called
+toggle_pin_selected ().
+
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 31caa2e..8598018 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -234,7 +234,7 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
+       |  if off here will get our on/off toggling out of sync.
+       */
+       if (node_net == node_selected_net)
+-	SelectPin (node, TRUE);
++	TogglePinSelected (node);
+       g_free (node_name);
+       node_name = NULL;
+     }
+@@ -259,7 +259,7 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
+ 
+   /* Now just toggle a select of the node on the layout and pan.
+    */
+-  SelectPin (node, TRUE);
++  TogglePinSelected (node);
+   IncrementUndoSerialNumber ();
+ 	margin = gport->view_width / 20;
+ 	if (   Crosshair.X < gport->view_x0 + margin
+diff --git a/src/select.c b/src/select.c
+index 8dfe270..99fca0a 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -65,12 +65,9 @@ RCSID ("$Id$");
+ 
+ /* ---------------------------------------------------------------------------
+  * toggle selection of pin
+- * This SelectPin function was moved to here from the original netlist.c
+- * as part of the gui code separation for the Gtk port. SelectPin() is
+- * written by and is Copyright (C) 1998, 1999, 2000, 2001 harry eaton
+  */
+ void
+-SelectPin (LibraryEntryTypePtr entry, bool toggle)
++TogglePinSelected (LibraryEntryTypePtr entry)
+ {
+   ConnectionType conn;
+ 
+@@ -84,13 +81,8 @@ SelectPin (LibraryEntryTypePtr entry, bool toggle)
+ 
+ 	    AddObjectToFlagUndoList (PIN_TYPE, conn.ptr1, conn.ptr2,
+ 				     conn.ptr2);
+-	    if (toggle)
+-	      {
+-		TOGGLE_FLAG (SELECTEDFLAG, pin);
+-		CenterDisplay (pin->X, pin->Y);
+-	      }
+-	    else
+-	      SET_FLAG (SELECTEDFLAG, pin);
++	    TOGGLE_FLAG (SELECTEDFLAG, pin);
++	    CenterDisplay (pin->X, pin->Y);
+ 	    DrawPin (pin);
+ 	    break;
+ 	  }
+@@ -100,13 +92,8 @@ SelectPin (LibraryEntryTypePtr entry, bool toggle)
+ 
+ 	    AddObjectToFlagUndoList (PAD_TYPE, conn.ptr1, conn.ptr2,
+ 				     conn.ptr2);
+-	    if (toggle)
+-	      {
+-		TOGGLE_FLAG (SELECTEDFLAG, pad);
+-		CenterDisplay (pad->Point1.X, pad->Point1.Y);
+-	      }
+-	    else
+-	      SET_FLAG (SELECTEDFLAG, pad);
++	    TOGGLE_FLAG (SELECTEDFLAG, pad);
++	    CenterDisplay (pad->Point1.X, pad->Point1.Y);
+ 	    DrawPad (pad);
+ 	    break;
+ 	  }
+diff --git a/src/select.h b/src/select.h
+index e24ab82..513be4b 100644
+--- a/src/select.h
++++ b/src/select.h
+@@ -37,7 +37,7 @@
+ 	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | ELEMENT_TYPE |	\
+ 	 PIN_TYPE | PAD_TYPE | ELEMENTNAME_TYPE | RATLINE_TYPE | ARC_TYPE)
+ 
+-void SelectPin (LibraryEntryTypePtr entry, bool toggle);
++void TogglePinSelected (LibraryEntryTypePtr entry);
+ bool SelectObject (void);
+ bool SelectBlock (BoxTypePtr, bool);
+ bool SelectedOperation (ObjectFunctionTypePtr, bool, int);
