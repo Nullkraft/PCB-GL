@@ -1,0 +1,21 @@
+Bottom: f9dbc4b10a50542577c49473c0ec41fc71abad70
+Top:    2e4ae4ec16be692ae53351a77a41007cf9dd4270
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 15:33:52 +0100
+
+Refresh of doc-remove-eps-files-in-favour
+
+---
+
+diff --git a/doc/Makefile.am b/doc/Makefile.am
+index 1e7d430..06f42b7 100644
+--- a/doc/Makefile.am
++++ b/doc/Makefile.am
+@@ -49,6 +49,8 @@ dist_man_MANS=	pcb.1
+ html_docs=	${info_TEXINFOS:.texi=.html}
+ pdf_docs=	${info_TEXINFOS:.texi=.pdf} refcard.pdf
+ 
++DVIS=
++
+ # put the html manual into 1 file instead of multiple files?
+ AM_MAKEINFOHTMLFLAGS=	--css-include=$(srcdir)/pcb.css --no-split
