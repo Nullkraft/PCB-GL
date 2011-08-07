@@ -3,13 +3,13 @@ Top:    aa9f11498e1633caf7c86e13d32d67ebea1d2248
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 23:16:31 +0100
 
-select.c: Remove toggle argument to "SelectPin" and rename
+Move the SelectPin() function into the file of its only caller.
 
-All the callers pass "TRUE" for this argument, and thus the
-semenatics of the function is to toggle the selection of a given
-pin / pad, not to select it.
+Whilst we're at it, simplify the function, removing its always-
+constant argument and condense the redrawing calls.
 
-Rename the function "TogglePinSelected" to reflect this.
+The new function is in hid/gtk/gui-netlist-window.c, and is called
+toggle_pin_selected ().
 
 
 ---
