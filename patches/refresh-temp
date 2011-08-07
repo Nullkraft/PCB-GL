@@ -1,0 +1,23 @@
+Bottom: 658ae1a1fb292b093c1fd0fd676b4d90f80dcfbe
+Top:    a19cb475f20c185601fe8b7f9c689ae41376b75a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 23:50:52 +0100
+
+Refresh of macro-h-remove-now-unused-scre
+
+---
+
+diff --git a/src/macro.h b/src/macro.h
+index 7fa0927..695d3b6 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -47,9 +47,6 @@
+ #define	SWAP_X(x)		(SWAP_SIGN_X(x))
+ #define	SWAP_Y(y)		(PCB->MaxHeight +SWAP_SIGN_Y(y))
+ 
+-#define	TO_SCREEN_SIGN_X(x)	(SWAP_IDENT ? SWAP_SIGN_X(x) : (x))
+-#define	TO_SCREEN_SIGN_Y(y)	(SWAP_IDENT ? SWAP_SIGN_Y(y) : (y))
+-
+ /* ---------------------------------------------------------------------------
+  * misc macros, some might already be defined by <limits.h>
+  */
