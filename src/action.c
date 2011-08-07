@@ -2151,7 +2151,6 @@ EventMoveCrosshair (int ev_x, int ev_y)
       return;
     }
 #endif /* HAVE_LIBSTROKE */
-  /* ignore events that are caused by ActionMovePointer */
   if (MoveCrosshairAbsolute (ev_x, ev_y))
     {
       /* update object position and cursor location */
