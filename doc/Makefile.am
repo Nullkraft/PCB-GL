@@ -36,12 +36,12 @@ info_TEXINFOS=	pcb.texi
 # via GIT are considered to be doing "development" and incur a slightly
 # higher list of required tools.
 if GIT_OR_CVS_VERSION
-pcb_TEXINFOS=	${inline_texi} ${pcb_output} ${tab_texi} ${images_output}
+pcb_TEXINFOS=	${inline_texi} ${pcb_output} ${tab_texi}
 else
 pcb_TEXINFOS=
 endif
 
-dist_html_DATA=	${html_docs} ${pcb_output_inst} ${images_output_inst}
+dist_html_DATA=	${html_docs} ${pcb_output_inst}
 dist_pdf_DATA=	${pdf_docs}
 
 dist_man_MANS=	pcb.1
@@ -60,7 +60,6 @@ mostlyclean-aminfo:
 
 EXTRA_DIST= \
 	ascii2texi.awk \
-	eps2png \
 	extract-docs \
 	refcard.tex \
 	pcb.css \
@@ -68,15 +67,13 @@ EXTRA_DIST= \
 	${pcb_files} \
 	${pcb_output_noinst} \
 	${tab_files} \
-	${tab_texi} \
-	${images}
+	${tab_texi}
 
 if GIT_OR_CVS_VERSION
 BUILT_SOURCES=	${tab_texi} ${pcb_output} ${inline_texi}
 CLEANFILES= \
 	refcard.aux refcard.log refcard.pdf \
-	${pcb_output} ${tab_texi} ${inline_texi} pcb.html pcb.pdf \
-	${images_output}
+	${pcb_output} ${tab_texi} ${inline_texi} pcb.html pcb.pdf
 else
 BUILT_SOURCES=
 endif
@@ -110,19 +107,6 @@ pcb_output_inst=	\
 
 pcb_output=	${pcb_output_inst} ${pcb_output_noinst}
 
-# Additional images
-images= \
-	gcode_control_img.eps \
-	gcode_tool_path.eps
-
-images_output_noinst= \
-	${images:.eps=.pdf}
-
-images_output_inst= \
-	${images:.eps=.png}
-
-images_output= ${images_output_noinst} ${images_output_inst}
-
 ${inline_texi} : extracted-docs
 
 # no need to build these when building via a tarball.  They're not used then
@@ -135,23 +119,10 @@ else
 	@echo "Skipping documentation extraction since you are not building from GIT sources"
 endif
 
-SUFFIXES = .eps .pcb .pdf .png .tab .tex
-
-.pcb.eps :
-	${PCB} -x eps --only-visible --font-path $(top_srcdir)/src --eps-file $@ $<
+SUFFIXES = .pcb .pdf .png .tab .tex
 
 .pcb.png :
 	${PCB} -x png --only-visible --font-path $(top_srcdir)/src --outfile $@ $<
-
-.eps.pdf :
-if MISSING_PS2PDF
-	@echo "****************************************************"
-	@echo "WARNING:  ps2pdf is missing on your system but"
-	@echo "$@ is out of date and needs to rebuilt."
-	@echo "Changes to $< will be ignored"
-else
-	${PS2PDF} `${AWK} 'BEGIN{s=8}; /BoundingBox/ {printf("-r%d -g%dx%d", s*72, s*$$4, s*$$5);}' $<` $< $@
-endif
 
 .tab.texi:
 	${ASCII2TEXI} $< > $@
@@ -167,6 +138,3 @@ else
 	${PDFLATEX} $<
 	${PDFLATEX} $<
 endif
-
-.eps.png:
-	${PERL} eps2png --png $< > $@
