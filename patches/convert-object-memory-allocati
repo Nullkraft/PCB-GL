@@ -1,7 +1,7 @@
-Bottom: cd29bf6db71ba54699014a46f443ea85b546c75b
-Top:    f3335e557c51dcdb6442389b735e127c41b82155
+Bottom: 84d52bfd4755ac83a265343221ffa0c7023a8bf8
+Top:    681304716b9888fcf85e5b270479771dc36a758d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-07 16:00:49 +0100
+Date:   2011-08-08 00:22:02 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -9,10 +9,10 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index d6e1d89..f162608 100644
+index cb2a7bf..39de1a5 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1901,37 +1901,39 @@ static int
+@@ -1898,37 +1898,39 @@ static int
  ActionDumpLibrary (int argc, char **argv, int x, int y)
  {
    int i, j;
@@ -70,7 +70,7 @@ index d6e1d89..f162608 100644
  	    }
  	}
      }
-@@ -3297,6 +3299,8 @@ static const char renumber_help[] =
+@@ -3262,6 +3264,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, int x, int y)
  {
@@ -79,7 +79,7 @@ index d6e1d89..f162608 100644
    bool changed = false;
    ElementTypePtr *element_list;
    ElementTypePtr *locked_element_list;
-@@ -3634,6 +3638,7 @@ ActionRenumber (int argc, char **argv, int x, int y)
+@@ -3599,6 +3603,7 @@ ActionRenumber (int argc, char **argv, int x, int y)
    free (element_list);
    free (cnt_list);
    return 0;
@@ -87,7 +87,7 @@ index d6e1d89..f162608 100644
  }
  
  
-@@ -4637,16 +4642,15 @@ ActionChangeName (int argc, char **argv, int x, int y)
+@@ -4601,16 +4606,15 @@ ActionChangeName (int argc, char **argv, int x, int y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index d6e1d89..f162608 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatTypePtr) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6958,22 +6962,26 @@ find_element_by_refdes (char *refdes)
+@@ -6922,22 +6926,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListTypePtr list, const char *name)
  {
@@ -897,10 +897,10 @@ index 83df23f..bd24bda 100644
  
  	  break;
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 331f5a8..6e0198b 100644
+index bc3fc69..aa3676f 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
-@@ -517,9 +517,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
+@@ -530,9 +530,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
  static void
  netlist_select_cb (GtkWidget * widget, gpointer data)
  {
@@ -911,7 +911,7 @@ index 331f5a8..6e0198b 100644
    gboolean select_flag = GPOINTER_TO_INT (data);
  
    if (!selected_net)
-@@ -530,9 +529,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+@@ -543,9 +542,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
    InitConnectionLookup ();
    ResetConnections (true);
  
@@ -925,7 +925,7 @@ index 331f5a8..6e0198b 100644
  
    SelectConnection (select_flag);
    ResetConnections (false);
-@@ -849,9 +851,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -862,9 +864,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
  {
    struct ggnfnn_task *task = (struct ggnfnn_task *)data;
    LibraryMenuType *net;
@@ -936,7 +936,7 @@ index 331f5a8..6e0198b 100644
    gboolean is_disabled;
  
    /* We only want to inspect leaf nodes in the tree */
-@@ -868,13 +869,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -881,13 +882,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
      return FALSE;
  
    /* Look for the node name in this net. */
@@ -955,7 +955,7 @@ index 331f5a8..6e0198b 100644
  
    return FALSE;
  }
-@@ -994,7 +998,7 @@ ghid_netlist_window_update (gboolean init_nodes)
+@@ -1007,7 +1011,7 @@ ghid_netlist_window_update (gboolean init_nodes)
  
    /* XXX Check if the select callback does this for us */
    if (init_nodes)
@@ -1126,7 +1126,7 @@ index e7612e9..104ca29 100644
    qsort (rectLeft, boxlist->BoxN, sizeof (*rectLeft), compareleft);
    qsort (rectRight, boxlist->BoxN, sizeof (*rectRight), compareright);
 diff --git a/src/macro.h b/src/macro.h
-index 7fa0927..317c427 100644
+index 695d3b6..aa1d466 100644
 --- a/src/macro.h
 +++ b/src/macro.h
 @@ -14,7 +14,7 @@
@@ -1138,7 +1138,7 @@ index 7fa0927..317c427 100644
   *  along with this program; if not, write to the Free Software
   *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
   *
-@@ -187,33 +187,37 @@ extern int mem_any_set (unsigned char *, int);
+@@ -184,33 +184,37 @@ extern int mem_any_set (unsigned char *, int);
         __iter = __next, __next = g_list_next (__iter), n++) {       \
      PinType *via = __iter->data;
  
@@ -1203,7 +1203,7 @@ index 7fa0927..317c427 100644
  
  #define ELEMENT_LOOP(top) do {                                      \
    GList *__iter, *__next;                                           \
-@@ -421,7 +425,7 @@ extern int mem_any_set (unsigned char *, int);
+@@ -418,7 +422,7 @@ extern int mem_any_set (unsigned char *, int);
  	LayerTypePtr	layer = (board)->Data->Layer;		\
  	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
  	{ \
@@ -1212,7 +1212,7 @@ index 7fa0927..317c427 100644
                    if (TEXT_IS_VISIBLE((board), layer, text))
  
  #define	VISIBLEPOLYGON_LOOP(top) do	{	\
-@@ -432,43 +436,48 @@ extern int mem_any_set (unsigned char *, int);
+@@ -429,43 +433,48 @@ extern int mem_any_set (unsigned char *, int);
  		if (layer->On)				\
  			POLYGON_LOOP(layer)
  
@@ -1299,7 +1299,7 @@ index 7fa0927..317c427 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index ce2ab4a..36351c0 100644
+index 3dc87c6..a3d8312 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -510,7 +510,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
@@ -1323,7 +1323,7 @@ index ce2ab4a..36351c0 100644
  	      int t = line->Thickness / 4;
  	      if (t < minThick)
  		t = minThick;
-@@ -792,9 +792,9 @@ CenterDisplay (LocationType X, LocationType Y, bool Delta)
+@@ -784,9 +784,9 @@ CenterDisplay (LocationType X, LocationType Y)
  void
  SetFontInfo (FontTypePtr Ptr)
  {
@@ -1335,7 +1335,7 @@ index ce2ab4a..36351c0 100644
    LocationType totalminy = MAX_COORD;
  
    /* calculate cell with and height (is at least DEFAULT_CELLSIZE)
-@@ -813,8 +813,9 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -805,8 +805,9 @@ SetFontInfo (FontTypePtr Ptr)
  
        minx = miny = MAX_COORD;
        maxx = maxy = 0;
@@ -1346,7 +1346,7 @@ index ce2ab4a..36351c0 100644
            minx = MIN (minx, line->Point1.X);
            miny = MIN (miny, line->Point1.Y);
            minx = MIN (minx, line->Point2.X);
-@@ -826,8 +827,11 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -818,8 +819,11 @@ SetFontInfo (FontTypePtr Ptr)
          }
  
        /* move symbol to left edge */
@@ -1360,7 +1360,7 @@ index ce2ab4a..36351c0 100644
  
        /* set symbol bounding box with a minimum cell size of (1,1) */
        symbol->Width = maxx - minx + 1;
-@@ -844,8 +848,11 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -836,8 +840,11 @@ SetFontInfo (FontTypePtr Ptr)
      if (symbol->Valid)
        {
          symbol->Height -= totalminy;
@@ -1374,7 +1374,7 @@ index ce2ab4a..36351c0 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1765,8 +1772,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1757,8 +1764,11 @@ GetGridLockCoordinates (int type, void *ptr1,
        *y = ((ElementTypePtr) ptr2)->MarkY;
        break;
      case POLYGON_TYPE:
@@ -1388,7 +1388,7 @@ index ce2ab4a..36351c0 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -2049,10 +2059,13 @@ pcb_author (void)
+@@ -2041,10 +2051,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
@@ -2153,10 +2153,10 @@ index 53b8b41..8ec8d87 100644
  		 GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1),
  		 TEST_FLAG (LOCKFLAG, Polygon) ? "It is LOCKED.\n" : "");
 diff --git a/src/select.c b/src/select.c
-index 1aa5cb6..a8247e8 100644
+index 96db234..08c7511 100644
 --- a/src/select.c
 +++ b/src/select.c
-@@ -1016,18 +1016,20 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -968,18 +968,20 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
  
        MENU_LOOP (&PCB->NetlistLib);
        {
