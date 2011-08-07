@@ -1,5 +1,5 @@
 Bottom: 89480928e0e1e09fa658558e20b161a10d434049
-Top:    89480928e0e1e09fa658558e20b161a10d434049
+Top:    4f08c9d7589e7c98d352fa74ef852367f2d9cb11
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-25 14:08:51 +0100
 
@@ -11,4 +11,459 @@ a particular location on the board.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 25d38fd..5118612 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -39,6 +39,15 @@ typedef struct render_priv {
+   GdkRectangle clip_rect;
+   int attached_invalidate_depth;
+   int mark_invalidate_depth;
++
++  /* Feature for leading the user to a particular location */
++  guint lead_user_timeout;
++  GTimer *lead_user_timer;
++  bool lead_user;
++  Coord lead_user_radius;
++  Coord lead_user_x;
++  Coord lead_user_y;
++
+ } render_priv;
+ 
+ 
+@@ -56,6 +65,9 @@ typedef struct hid_gc_struct
+ hid_gc_struct;
+ 
+ 
++static void draw_lead_user (render_priv *priv);
++
++
+ int
+ ghid_set_layer (const char *name, int group, int empty)
+ {
+@@ -783,6 +795,8 @@ redraw_region (GdkRectangle *rect)
+   if (priv->mark_invalidate_depth == 0)
+     DrawMark ();
+ 
++  draw_lead_user (priv);
++
+   priv->clip = false;
+ 
+   /* Rest the clip for bg_gc, as it is used outside this function */
+@@ -1075,6 +1089,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ void
+ ghid_shutdown_renderer (GHidPort *port)
+ {
++  ghid_cancel_lead_user ();
+   g_free (port->render_priv);
+   port->render_priv = NULL;
+ }
+@@ -1324,3 +1339,117 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+ 
+   return true;
+ }
++
++#define LEAD_USER_WIDTH           0.2          /* millimeters */
++#define LEAD_USER_PERIOD          (1000 / 5)   /* 5fps (in ms) */
++#define LEAD_USER_VELOCITY        3.           /* millimeters per second */
++#define LEAD_USER_ARC_COUNT       3
++#define LEAD_USER_ARC_SEPARATION  3.           /* millimeters */
++#define LEAD_USER_INITIAL_RADIUS  10.          /* millimetres */
++#define LEAD_USER_COLOR_R         1.
++#define LEAD_USER_COLOR_G         1.
++#define LEAD_USER_COLOR_B         0.
++
++static void
++draw_lead_user (render_priv *priv)
++{
++  int i;
++  Coord radius = priv->lead_user_radius;
++  Coord width = MM_TO_COORD (LEAD_USER_WIDTH);
++  Coord separation = MM_TO_COORD (LEAD_USER_ARC_SEPARATION);
++  static GdkGC *lead_gc = NULL;
++  GdkColor lead_color;
++
++  if (!priv->lead_user)
++    return;
++
++  if (lead_gc == NULL)
++    {
++      lead_gc = gdk_gc_new (ghid_port.drawing_area->window);
++      gdk_gc_copy (lead_gc, ghid_port.drawing_area->style->white_gc);
++      gdk_gc_set_function (lead_gc, GDK_XOR);
++      gdk_gc_set_clip_origin (lead_gc, 0, 0);
++      lead_color.pixel = 0;
++      lead_color.red   = (int)(65535. * LEAD_USER_COLOR_R);
++      lead_color.green = (int)(65535. * LEAD_USER_COLOR_G);
++      lead_color.blue  = (int)(65535. * LEAD_USER_COLOR_B);
++      gdk_color_alloc (gport->colormap, &lead_color);
++      gdk_gc_set_foreground (lead_gc, &lead_color);
++    }
++
++  set_clip (priv, lead_gc);
++  gdk_gc_set_line_attributes (lead_gc, Vz (width),
++                              GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
++
++  /* arcs at the approrpriate radii */
++
++  for (i = 0; i < LEAD_USER_ARC_COUNT; i++, radius -= separation)
++    {
++      if (radius < width)
++        radius += MM_TO_COORD (LEAD_USER_INITIAL_RADIUS);
++
++      /* Draw an arc at radius */
++      gdk_draw_arc (gport->drawable, lead_gc, FALSE,
++                    Vx (priv->lead_user_x - radius),
++                    Vy (priv->lead_user_y - radius),
++                    Vz (2. * radius), Vz (2. * radius),
++                    0, 360 * 64);
++    }
++}
++
++gboolean
++lead_user_cb (gpointer data)
++{
++  render_priv *priv = data;
++  Coord step;
++  double elapsed_time;
++
++  /* Queue a redraw */
++  ghid_invalidate_all ();
++
++  /* Update radius */
++  elapsed_time = g_timer_elapsed (priv->lead_user_timer, NULL);
++  g_timer_start (priv->lead_user_timer);
++
++  step = MM_TO_COORD (LEAD_USER_VELOCITY * elapsed_time);
++  if (priv->lead_user_radius > step)
++    priv->lead_user_radius -= step;
++  else
++    priv->lead_user_radius = MM_TO_COORD (LEAD_USER_INITIAL_RADIUS);
++
++  return TRUE;
++}
++
++void
++ghid_lead_user_to_location (Coord x, Coord y)
++{
++  render_priv *priv = gport->render_priv;
++
++  ghid_cancel_lead_user ();
++
++  priv->lead_user = true;
++  priv->lead_user_x = x;
++  priv->lead_user_y = y;
++  priv->lead_user_radius = MM_TO_COORD (LEAD_USER_INITIAL_RADIUS);
++  priv->lead_user_timeout = g_timeout_add (LEAD_USER_PERIOD, lead_user_cb, priv);
++  priv->lead_user_timer = g_timer_new ();
++}
++
++void
++ghid_cancel_lead_user (void)
++{
++  render_priv *priv = gport->render_priv;
++
++  if (priv->lead_user_timeout)
++    g_source_remove (priv->lead_user_timeout);
++
++  if (priv->lead_user_timer)
++    g_timer_destroy (priv->lead_user_timer);
++
++  if (priv->lead_user)
++    ghid_invalidate_all ();
++
++  priv->lead_user_timeout = 0;
++  priv->lead_user_timer = NULL;
++  priv->lead_user = false;
++}
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 2d7fec0..a910946 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -47,6 +47,15 @@ typedef struct render_priv {
+   int subcomposite_stencil_bit;
+   char *current_colorname;
+   double current_alpha_mult;
++
++  /* Feature for leading the user to a particular location */
++  guint lead_user_timeout;
++  GTimer *lead_user_timer;
++  bool lead_user;
++  Coord lead_user_radius;
++  Coord lead_user_x;
++  Coord lead_user_y;
++
+ } render_priv;
+ 
+ 
+@@ -62,6 +71,10 @@ typedef struct hid_gc_struct
+ }
+ hid_gc_struct;
+ 
++
++static void draw_lead_user (render_priv *priv);
++
++
+ static void
+ start_subcomposite (void)
+ {
+@@ -824,6 +837,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ void
+ ghid_shutdown_renderer (GHidPort *port)
+ {
++  ghid_cancel_lead_user ();
+   g_free (port->render_priv);
+   port->render_priv = NULL;
+ }
+@@ -889,6 +903,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+                              GdkEventExpose *ev,
+                              GHidPort *port)
+ {
++  render_priv *priv = port->render_priv;
+   BoxType region;
+ 
+   ghid_start_drawing (port);
+@@ -976,6 +991,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   hidgl_flush_triangles (&buffer);
+ 
++  draw_lead_user (priv);
++
+   ghid_end_drawing (port);
+ 
+   return FALSE;
+@@ -1288,3 +1305,103 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+ 
+   return true;
+ }
++
++#define LEAD_USER_WIDTH           0.2          /* millimeters */
++#define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
++#define LEAD_USER_VELOCITY        3.           /* millimeters per second */
++#define LEAD_USER_ARC_COUNT       3
++#define LEAD_USER_ARC_SEPARATION  3.           /* millimeters */
++#define LEAD_USER_INITIAL_RADIUS  10.          /* millimetres */
++#define LEAD_USER_COLOR_R         1.
++#define LEAD_USER_COLOR_G         1.
++#define LEAD_USER_COLOR_B         0.
++
++static void
++draw_lead_user (render_priv *priv)
++{
++  int i;
++  double radius = priv->lead_user_radius;
++  double width = MM_TO_COORD (LEAD_USER_WIDTH);
++  double separation = MM_TO_COORD (LEAD_USER_ARC_SEPARATION);
++
++  if (!priv->lead_user)
++    return;
++
++  glPushAttrib (GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
++  glEnable (GL_COLOR_LOGIC_OP);
++  glLogicOp (GL_XOR);
++  glColor3f (LEAD_USER_COLOR_R, LEAD_USER_COLOR_G,LEAD_USER_COLOR_B);
++
++
++  /* arcs at the approrpriate radii */
++
++  for (i = 0; i < LEAD_USER_ARC_COUNT; i++, radius -= separation)
++    {
++      if (radius < width)
++        radius += MM_TO_COORD (LEAD_USER_INITIAL_RADIUS);
++
++      /* Draw an arc at radius */
++      hidgl_draw_arc (width, priv->lead_user_x, priv->lead_user_y,
++                      radius, radius, 0, 360, gport->zoom);
++    }
++
++  hidgl_flush_triangles (&buffer);
++  glPopAttrib ();
++}
++
++gboolean
++lead_user_cb (gpointer data)
++{
++  render_priv *priv = data;
++  Coord step;
++  double elapsed_time;
++
++  /* Queue a redraw */
++  ghid_invalidate_all ();
++
++  /* Update radius */
++  elapsed_time = g_timer_elapsed (priv->lead_user_timer, NULL);
++  g_timer_start (priv->lead_user_timer);
++
++  step = MM_TO_COORD (LEAD_USER_VELOCITY * elapsed_time);
++  if (priv->lead_user_radius > step)
++    priv->lead_user_radius -= step;
++  else
++    priv->lead_user_radius = MM_TO_COORD (LEAD_USER_INITIAL_RADIUS);
++
++  return TRUE;
++}
++
++void
++ghid_lead_user_to_location (Coord x, Coord y)
++{
++  render_priv *priv = gport->render_priv;
++
++  ghid_cancel_lead_user ();
++
++  priv->lead_user = true;
++  priv->lead_user_x = x;
++  priv->lead_user_y = y;
++  priv->lead_user_radius = MM_TO_COORD (LEAD_USER_INITIAL_RADIUS);
++  priv->lead_user_timeout = g_timeout_add (LEAD_USER_PERIOD, lead_user_cb, priv);
++  priv->lead_user_timer = g_timer_new ();
++}
++
++void
++ghid_cancel_lead_user (void)
++{
++  render_priv *priv = gport->render_priv;
++
++  if (priv->lead_user_timeout)
++    g_source_remove (priv->lead_user_timeout);
++
++  if (priv->lead_user_timer)
++    g_timer_destroy (priv->lead_user_timer);
++
++  if (priv->lead_user)
++    ghid_invalidate_all ();
++
++  priv->lead_user_timeout = 0;
++  priv->lead_user_timer = NULL;
++  priv->lead_user = false;
++}
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 31caa2e..331f5a8 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -217,8 +217,9 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
+   GtkTreeModel *model;
+   LibraryMenuType *node_net;
+   LibraryEntryType *node;
++  ConnectionType conn;
++  Coord x, y;
+   static gchar *node_name;
+-	gint		x0, y0, margin;
+ 
+   if (selection_holdoff)	/* PCB is highlighting, user is not selecting */
+     return;
+@@ -234,7 +235,10 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
+       |  if off here will get our on/off toggling out of sync.
+       */
+       if (node_net == node_selected_net)
+-	SelectPin (node, TRUE);
++        {
++          SelectPin (node, true);
++          ghid_cancel_lead_user ();
++        }
+       g_free (node_name);
+       node_name = NULL;
+     }
+@@ -257,26 +261,33 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
+   dup_string (&node_name, node->ListEntry);
+   node_selected_net = selected_net;
+ 
+-  /* Now just toggle a select of the node on the layout and pan.
++  /* Now just toggle a select of the node on the layout
+    */
+-  SelectPin (node, TRUE);
++  SelectPin (node, true);
+   IncrementUndoSerialNumber ();
+-	margin = gport->view_width / 20;
+-	if (   Crosshair.X < gport->view_x0 + margin
+-	    || Crosshair.X > gport->view_x0 + gport->view_width - margin
+-	    || Crosshair.Y < gport->view_y0 + margin
+-	    || Crosshair.Y > gport->view_y0 + gport->view_height - margin
+-	   )
+-	  {
+-
+-	    x0 = SIDE_X (Crosshair.X) - gport->view_width / 2;
+-	    y0 = SIDE_Y (Crosshair.Y) - gport->view_height / 2;
+-	    gport->view_x0 = x0;
+-	    gport->view_y0 = y0;
+-	    ghid_pan_fixup ();
+-	    gui->set_crosshair (Crosshair.X, Crosshair.Y, HID_SC_WARP_POINTER);
+-	  }
+-	ghid_screen_update();
++
++  /* And lead the user to the location */
++  if (SeekPad (node, &conn, false))
++    switch (conn.type) {
++      case PIN_TYPE:
++        {
++          PinTypePtr pin = (PinTypePtr) conn.ptr2;
++          x = pin->X;
++          y = pin->Y;
++          gui->set_crosshair (x, y, 0);
++          ghid_lead_user_to_location (x, y);
++          break;
++        }
++      case PAD_TYPE:
++        {
++          PadTypePtr pad = (PadTypePtr) conn.ptr2;
++          x = pad->Point1.X + (pad->Point2.X - pad->Point1.X) / 2;
++          y = pad->Point1.Y + (pad->Point2.Y - pad->Point2.Y) / 2;
++          gui->set_crosshair (x, y, 0);
++          ghid_lead_user_to_location (x, y);
++          break;
++        }
++    }
+ }
+ 
+ 
+@@ -655,6 +666,9 @@ netlist_close_cb (GtkWidget * widget, gpointer data)
+   gtk_widget_destroy (netlist_window);
+   selected_net = NULL;
+   netlist_window = NULL;
++
++  /* For now, we are the only consumer of this API, so we can just do this */
++  ghid_cancel_lead_user ();
+ }
+ 
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index b0bbe0a..d17cca2 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -505,6 +505,9 @@ void ghid_flush_debug_draw (void);
+ void ghid_finish_debug_draw (void);
+ bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
+ 
++void ghid_lead_user_to_location (Coord x, Coord y);
++void ghid_cancel_lead_user (void);
++
+ /* gtkhid-main.c */
+ void ghid_pan_fixup (void);
+ void ghid_get_coords (const char *msg, int *x, int *y);
+diff --git a/src/select.c b/src/select.c
+index 8dfe270..1aa5cb6 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -85,10 +85,7 @@ SelectPin (LibraryEntryTypePtr entry, bool toggle)
+ 	    AddObjectToFlagUndoList (PIN_TYPE, conn.ptr1, conn.ptr2,
+ 				     conn.ptr2);
+ 	    if (toggle)
+-	      {
+-		TOGGLE_FLAG (SELECTEDFLAG, pin);
+-		CenterDisplay (pin->X, pin->Y);
+-	      }
++	      TOGGLE_FLAG (SELECTEDFLAG, pin);
+ 	    else
+ 	      SET_FLAG (SELECTEDFLAG, pin);
+ 	    DrawPin (pin);
+@@ -101,10 +98,7 @@ SelectPin (LibraryEntryTypePtr entry, bool toggle)
+ 	    AddObjectToFlagUndoList (PAD_TYPE, conn.ptr1, conn.ptr2,
+ 				     conn.ptr2);
+ 	    if (toggle)
+-	      {
+-		TOGGLE_FLAG (SELECTEDFLAG, pad);
+-		CenterDisplay (pad->Point1.X, pad->Point1.Y);
+-	      }
++	      TOGGLE_FLAG (SELECTEDFLAG, pad);
+ 	    else
+ 	      SET_FLAG (SELECTEDFLAG, pad);
+ 	    DrawPad (pad);
