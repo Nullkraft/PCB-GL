@@ -1,5 +1,5 @@
-Bottom: 161dc446dcd0fb438e6c94cbf05a757fa995534d
-Top:    2c005eb6ab2f3e3523ba495590a3c94c46657852
+Bottom: f6f2d24a4ca9fdddabfaf4e99e072d01586f16e4
+Top:    5e9941e980d3d2088347441e5b38fe0323f257ca
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 19:43:51 +0100
 
@@ -11,10 +11,10 @@ it is not possible to save the flip state in the PCB settings any more.
 
 ---
 
-diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
-index e9469e9..15eceb9 100644
---- a/src/gpcb-menu.res
-+++ b/src/gpcb-menu.res
+diff --git a/src/gpcb-menu.res.in b/src/gpcb-menu.res.in
+index dc594c4..1bf95c0 100644
+--- a/src/gpcb-menu.res.in
++++ b/src/gpcb-menu.res.in
 @@ -168,8 +168,8 @@ MainMenu =
      {"Zoom to 10mil/px" Zoom(=1000)}
      {"Zoom In 20% and center" Zoom(-1.2) Center() m=Z }
