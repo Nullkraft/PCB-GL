@@ -6,8 +6,7 @@ Date:   2011-08-07 15:34:53 +0100
 doc: Don't make any DVI targets
 
 We don't have rules to build all the prerequisites, and we don't care
-about DVI. This makes "make distcheck" pass again.
-
+about DVI. This is one of the issues causing "make distcheck" to fail.
 
 
 ---
