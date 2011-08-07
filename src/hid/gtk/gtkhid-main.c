@@ -29,54 +29,6 @@
 RCSID ("$Id$");
 
 
-static void zoom_to (double factor, int x, int y);
-static void zoom_by (double factor, int x, int y);
-static void zoom_fit (void);
-
-int ghid_flip_x = 0, ghid_flip_y = 0;
-
-
-void
-ghid_pan_fixup ()
-{
-
-  /*
-   * don't pan so far to the right that we see way past the right 
-   * edge of the board.
-   */
-  if (gport->view_x0 > PCB->MaxWidth - gport->view_width)
-    gport->view_x0 = PCB->MaxWidth - gport->view_width;
-
-  /*
-   * don't pan so far down that we see way past the bottom edge of
-   * the board.
-   */
-  if (gport->view_y0 > PCB->MaxHeight - gport->view_height)
-    gport->view_y0 = PCB->MaxHeight - gport->view_height;
-
-  /* don't view above or to the left of the board... ever */
-  if (gport->view_x0 < 0)
-    gport->view_x0 = 0;
-
-   if (gport->view_y0 < 0)
-    gport->view_y0 = 0;
-
-  /* if we can see the entire board and some, then zoom to fit */
-  if (gport->view_width > PCB->MaxWidth &&
-      gport->view_height > PCB->MaxHeight)
-    {
-      zoom_fit ();
-      return;
-    }
-
-  ghidgui->adjustment_changed_holdoff = TRUE;
-  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
-  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
-  ghidgui->adjustment_changed_holdoff = FALSE;
-
-  ghid_port_ranges_changed();
-}
-
 /* ------------------------------------------------------------ */
 
 static const char zoom_syntax[] =
@@ -136,7 +88,7 @@ Zoom (int argc, char **argv, int x, int y)
 
   if (argc < 1)
     {
-      zoom_fit ();
+      ghid_zoom_view_fit ();
       return 0;
     }
 
@@ -149,79 +101,18 @@ Zoom (int argc, char **argv, int x, int y)
   switch (argv[0][0])
     {
     case '-':
-      zoom_by (1 / v, x, y);
+      ghid_zoom_view_rel (x, y, 1 / v);
       break;
     default:
     case '+':
-      zoom_by (v, x, y);
+      ghid_zoom_view_rel (x, y, v);
       break;
     case '=':
-      /* this needs to set the scale factor absolutely*/
-      zoom_to (v, x, y);
+      ghid_zoom_view_abs (x, y, v);
       break;
     }
 
   return 0;
-}
-
-
-static void
-zoom_to (double new_zoom, int x, int y)
-{
-  double min_zoom, max_zoom;
-  double xtmp, ytmp;
-
-  /* gport->zoom:
-   * zoom value is PCB units per screen pixel.  Larger numbers mean zooming
-   * out - the largest value means you are looking at the whole board.
-   *
-   * gport->view_width and gport->view_height are in PCB coordinates
-   */
-
-  /* Set the "minimum" zoom constant (maximum zoom),
-   * at 1 pixel per PCB unit */
-  min_zoom = 1;
-
-  /* Set the "maximum" zoom constant (minimum zoom),
-   * to make the entire board just fit inside the viewport */
-  max_zoom = MAX (PCB->MaxWidth  / gport->width,
-                  PCB->MaxHeight / gport->height);
-
-  new_zoom = MIN (MAX (min_zoom, new_zoom), max_zoom);
-
-  if (gport->zoom == new_zoom)
-    return;
-
-  xtmp = (SIDE_X (x) - gport->view_x0) / (double)gport->view_width;
-  ytmp = (SIDE_Y (y) - gport->view_y0) / (double)gport->view_height;
-
-  gport->zoom = new_zoom;
-  pixel_slop = new_zoom;
-  ghid_port_ranges_scale (FALSE);
-
-  gport->view_x0 = MAX (0, SIDE_X (x) - xtmp * gport->view_width);
-  gport->view_y0 = MAX (0, SIDE_Y (y) - ytmp * gport->view_height);
-
-  ghidgui->adjustment_changed_holdoff = TRUE;
-  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
-  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
-  ghidgui->adjustment_changed_holdoff = FALSE;
-
-  ghid_port_ranges_changed ();
-  ghid_set_status_line_label ();
-}
-
-static void
-zoom_by (double factor, int x, int y)
-{
-  zoom_to (gport->zoom * factor, x, y);
-}
-
-static void
-zoom_fit (void)
-{
-  zoom_to (MAX (PCB->MaxWidth  / gport->width,
-                PCB->MaxHeight / gport->height), 0, 0);
 }
 
 /* ------------------------------------------------------------ */
@@ -1153,7 +1044,7 @@ PCBChanged (int argc, char **argv, int x, int y)
   RouteStylesChanged (0, NULL, 0, 0);
   ghid_port_ranges_scale (TRUE);
   ghid_port_ranges_pan (0, 0, FALSE);
-  zoom_fit ();
+  ghid_zoom_view_fit ();
   ghid_port_ranges_changed ();
   ghid_sync_with_new_layout ();
   return 0;
@@ -1366,84 +1257,48 @@ side'' of the board.
 static int
 SwapSides (int argc, char **argv, int x, int y)
 {
-  gint flipd;
-  int do_flip_x = 0;
-  int do_flip_y = 0;
-  int comp_group = GetLayerGroupNumberByNumber (component_silk_layer);
-  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
   int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
-  int comp_showing =
-    PCB->Data->Layer[PCB->LayerGroups.Entries[comp_group][0]].On;
-  int solder_showing =
-    PCB->Data->Layer[PCB->LayerGroups.Entries[solder_group][0]].On;
+  int comp_group =   GetLayerGroupNumberByNumber (component_silk_layer);
+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  int comp_showing =   LAYER_PTR (PCB->LayerGroups.Entries[comp_group][0])->On;
+  int solder_showing = LAYER_PTR (PCB->LayerGroups.Entries[solder_group][0])->On;
 
 
   if (argc > 0)
     {
       switch (argv[0][0]) {
-      case 'h':
-      case 'H':
-	ghid_flip_x = ! ghid_flip_x;
-	do_flip_x = 1;
-	break;
-      case 'v':
-      case 'V':
-	ghid_flip_y = ! ghid_flip_y;
-	do_flip_y = 1;
-	break;
-      case 'r':
-      case 'R':
-	ghid_flip_x = ! ghid_flip_x;
-	ghid_flip_y = ! ghid_flip_y;
-	do_flip_x = 1;
-	do_flip_y = 1;
-	break;
-      default:
-	return 1;
+        case 'h':
+        case 'H':
+          ghid_flip_view (x, y, true, false);
+          break;
+        case 'v':
+        case 'V':
+          ghid_flip_view (x, y, false, true);
+          break;
+        case 'r':
+        case 'R':
+          ghid_flip_view (x, y, true, true);
+          Settings.ShowSolderSide = !Settings.ShowSolderSide; /* Swapped back below */
+          break;
+        default:
+          return 1;
       }
-      /* SwapSides will swap this */
-      Settings.ShowSolderSide = (ghid_flip_x == ghid_flip_y);
     }
 
   Settings.ShowSolderSide = !Settings.ShowSolderSide;
-  if (Settings.ShowSolderSide)
+
+  if ((active_group == comp_group   && comp_showing   && !solder_showing) ||
+      (active_group == solder_group && solder_showing && !comp_showing))
     {
-      if (active_group == comp_group && comp_showing && !solder_showing)
-	{
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 0,
-				 0);
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[solder_group][0], 1,
-				 1);
-	}
-    }
-  else
-    {
-      if (active_group == solder_group && solder_showing && !comp_showing)
-	{
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[solder_group][0], 0,
-				 0);
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 1,
-				 1);
-	}
+      bool new_comp_vis = Settings.ShowSolderSide && active_group == comp_group;
+
+      ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0],
+                             new_comp_vis, new_comp_vis);
+      ChangeGroupVisibility (PCB->LayerGroups.Entries[solder_group][0],
+                             !new_comp_vis, !new_comp_vis);
     }
 
-  /* Update coordinates so that the current location stays where it was on the
-     other side; we need to do this since the actual flip center is the
-     center of the board while the user expect the center would be the current
-     location */
-  if (do_flip_x)
-    {
-	flipd = PCB->MaxWidth / 2 - SIDE_X (gport->pcb_x);
-	ghid_port_ranges_pan (-2 * flipd, 0, TRUE);
-    }
-  if (do_flip_y)
-    {
-	flipd = PCB->MaxHeight / 2 - SIDE_Y (gport->pcb_y);
-	ghid_port_ranges_pan (0, -2 * flipd, TRUE);
-    }
-
-  ghid_invalidate_all ();
-  return 0;
+   return 0;
 }
 
 /* ------------------------------------------------------------ */
@@ -1702,11 +1557,12 @@ CursorAction(int argc, char **argv, int x, int y)
     AFAIL (cursor);
 
   dx = GetValueEx (argv[1], argv[3], NULL, extra_units_x, "");
-  if (ghid_flip_x)
-    dx = -dx;
   dy = GetValueEx (argv[2], argv[3], NULL, extra_units_y, "");
-  if (!ghid_flip_y)
-    dy = -dy;
+
+#if 0 /* We cannot know this sensibly from the renderer, so we have to remove it */
+  if (ghid_flip_x) dx = -dx;
+  if (!ghid_flip_y) dy = -dy;
+#endif
 
   EventMoveCrosshair (Crosshair.X + dx, Crosshair.Y + dy);
   gui->set_crosshair (Crosshair.X, Crosshair.Y, pan_warp);
@@ -2085,24 +1941,6 @@ HID_Action ghid_main_action_list[] = {
 
 REGISTER_ACTIONS (ghid_main_action_list)
 
-
-static int
-flag_flipx (int x)
-{ 
-  return ghid_flip_x;
-} 
-static int  
-flag_flipy (int x)
-{ 
-  return ghid_flip_y;
-} 
-
-HID_Flag ghid_main_flag_list[] = {
-  {"flip_x", flag_flipx, 0},
-  {"flip_y", flag_flipy, 0}
-};  
-
-REGISTER_FLAGS (ghid_main_flag_list)
 
 #include "dolists.h"
 
