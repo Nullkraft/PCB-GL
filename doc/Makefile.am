@@ -60,6 +60,7 @@ mostlyclean-aminfo:
 
 EXTRA_DIST= \
 	ascii2texi.awk \
+	eps2png \
 	extract-docs \
 	refcard.tex \
 	pcb.css \
@@ -119,10 +120,23 @@ else
 	@echo "Skipping documentation extraction since you are not building from GIT sources"
 endif
 
-SUFFIXES = .pcb .pdf .png .tab .tex
+SUFFIXES = .eps .pcb .pdf .png .tab .tex
+
+.pcb.eps :
+	${PCB} -x eps --only-visible --font-path $(top_srcdir)/src --eps-file $@ $<
 
 .pcb.png :
 	${PCB} -x png --only-visible --font-path $(top_srcdir)/src --outfile $@ $<
+
+.eps.pdf :
+if MISSING_PS2PDF
+	@echo "****************************************************"
+	@echo "WARNING:  ps2pdf is missing on your system but"
+	@echo "$@ is out of date and needs to rebuilt."
+	@echo "Changes to $< will be ignored"
+else
+	${PS2PDF} `${AWK} 'BEGIN{s=8}; /BoundingBox/ {printf("-r%d -g%dx%d", s*72, s*$$4, s*$$5);}' $<` $< $@
+endif
 
 .tab.texi:
 	${ASCII2TEXI} $< > $@
@@ -138,3 +152,6 @@ else
 	${PDFLATEX} $<
 	${PDFLATEX} $<
 endif
+
+.eps.png:
+	${PERL} eps2png --png $< > $@
