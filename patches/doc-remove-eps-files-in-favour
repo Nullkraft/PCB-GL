@@ -1,5 +1,5 @@
 Bottom: 69ac75bd63ef617622dd74a5e4e5c6fdfd15a0e4
-Top:    f9dbc4b10a50542577c49473c0ec41fc71abad70
+Top:    2e4ae4ec16be692ae53351a77a41007cf9dd4270
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 14:56:16 +0100
 
@@ -11,7 +11,7 @@ Remove Makefile.am stuff for converting from eps files
 ---
 
 diff --git a/doc/Makefile.am b/doc/Makefile.am
-index 6d1e457..1e7d430 100644
+index 6d1e457..06f42b7 100644
 --- a/doc/Makefile.am
 +++ b/doc/Makefile.am
 @@ -36,12 +36,12 @@ info_TEXINFOS=	pcb.texi
@@ -29,7 +29,16 @@ index 6d1e457..1e7d430 100644
  dist_pdf_DATA=	${pdf_docs}
  
  dist_man_MANS=	pcb.1
-@@ -68,15 +68,13 @@ EXTRA_DIST= \
+@@ -49,6 +49,8 @@ dist_man_MANS=	pcb.1
+ html_docs=	${info_TEXINFOS:.texi=.html}
+ pdf_docs=	${info_TEXINFOS:.texi=.pdf} refcard.pdf
+ 
++DVIS=
++
+ # put the html manual into 1 file instead of multiple files?
+ AM_MAKEINFOHTMLFLAGS=	--css-include=$(srcdir)/pcb.css --no-split
+ 
+@@ -68,15 +70,13 @@ EXTRA_DIST= \
  	${pcb_files} \
  	${pcb_output_noinst} \
  	${tab_files} \
@@ -47,7 +56,7 @@ index 6d1e457..1e7d430 100644
  else
  BUILT_SOURCES=
  endif
-@@ -110,19 +108,6 @@ pcb_output_inst=	\
+@@ -110,19 +110,6 @@ pcb_output_inst=	\
  
  pcb_output=	${pcb_output_inst} ${pcb_output_noinst}
  
