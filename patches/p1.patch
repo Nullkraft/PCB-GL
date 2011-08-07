@@ -1,0 +1,33 @@
+Bottom: f5bce0d495ca8b68a6b3963f07ed85a2266cec9d
+Top:    08452cef620327a78c0c1bae781a9e2d9b1a977a
+Author: Stanislav Brabec <sbrabec@suse.cz>
+Date:   2011-07-18 17:39:52 +0200
+
+From 7a3ae942bcd6cbf68bc80bbf73209fb45f1ab538 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] RipUp(): Rip arcs created by toporouter.
+
+Toporouter creates not only lines but also arcs. Rip up all auto routed tracks should rip these arcs as well.
+
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 9b67924..d6e1d89 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -3683,6 +3683,15 @@ ActionRipUp (int argc, char **argv, int x, int y)
+ 	      }
+ 	  }
+ 	  ENDALL_LOOP;
++	  ALLARC_LOOP (PCB->Data);
++	  {
++	    if (TEST_FLAG (AUTOFLAG, arc) && !TEST_FLAG (LOCKFLAG, arc))
++	      {
++		RemoveObject (ARC_TYPE, layer, arc, arc);
++		changed = true;
++	      }
++	  }
++	  ENDALL_LOOP;
+ 	  VIA_LOOP (PCB->Data);
+ 	  {
+ 	    if (TEST_FLAG (AUTOFLAG, via) && !TEST_FLAG (LOCKFLAG, via))
