@@ -1,5 +1,5 @@
 Bottom: 08452cef620327a78c0c1bae781a9e2d9b1a977a
-Top:    546aefd2513f4dae55fbe7ebc8783876510e03e3
+Top:    6d630c408715fcbc0ab440e1f9c058279dbfd9d6
 Author: Stanislav Brabec <sbrabec@suse.cz>
 Date:   2011-07-18 19:14:19 +0200
 
@@ -78,10 +78,10 @@ index 7efb2d7..e66ad95 100644
  	$(MKDIR_P) hid/common
  	true > $@
 diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res.in
-similarity index 99%
+similarity index 98%
 rename from src/gpcb-menu.res
 rename to src/gpcb-menu.res.in
-index e9469e9..991b86c 100644
+index e9469e9..ec39860 100644
 --- a/src/gpcb-menu.res
 +++ b/src/gpcb-menu.res.in
 @@ -326,6 +326,9 @@ MainMenu =
@@ -94,13 +94,76 @@ index e9469e9..991b86c 100644
     {"Rip up all auto-routed tracks" RipUp(All)}
     -
     {"Optimize routed tracks"
+@@ -483,17 +486,17 @@ PopupMenus =
+        {"Unselect all objects" Unselect(All)}
+        {"Remove selected objects" RemoveSelected()}
+        {"Copy selection to buffer"
+-	GetXY(Click to set the snap point for this buffer)
+-	PasteBuffer(Clear)
+-	PasteBuffer(AddSelected)
+-	Mode(PasteBuffer)
++        GetXY(Click to set the snap point for this buffer)
++        PasteBuffer(Clear)
++        PasteBuffer(AddSelected)
++        Mode(PasteBuffer)
+        }
+        {"Cut selection to buffer"
+-	GetXY(Click to set the snap point for this buffer)
+-	PasteBuffer(Clear)
+-	PasteBuffer(AddSelected)
+-	RemoveSelected()
+-	Mode(PasteBuffer)
++        GetXY(Click to set the snap point for this buffer)
++        PasteBuffer(Clear)
++        PasteBuffer(AddSelected)
++        RemoveSelected()
++        Mode(PasteBuffer)
+        }
+        {"Convert selection to element" Select(Convert)}
+        {"Auto place selected elements" AutoPlaceSelected()}
 diff --git a/src/pcb-menu.res b/src/pcb-menu.res.in
 similarity index 99%
 rename from src/pcb-menu.res
 rename to src/pcb-menu.res.in
-index aaf48c4..f047a06 100644
+index aaf48c4..b4189dc 100644
 --- a/src/pcb-menu.res
 +++ b/src/pcb-menu.res.in
+@@ -31,7 +31,7 @@ MainMenu =
+    {"About..." About()}
+    {"Save layout" Save(Layout) m=S a={"Ctrl-S" "Ctrl<Key>s"}}
+    {"Save layout as..." Save(LayoutAs) m=A a={"Shift Ctrl-S" "Shift Ctrl<Key>s"}}
+-	{"Revert" Load(Revert,none)}
++   {"Revert" Load(Revert,none)}
+    {"Import Schematics" Import() }
+    {"Load layout" Load(Layout)}
+    {"Load element data to paste-buffer" PasteBuffer(Clear) Load(ElementTobuffer)}
+@@ -218,7 +218,7 @@ MainMenu =
+     {"Set Dispersion" Import(setdisperse)}
+    }
+   }
+-    
++
+   {Select
+    {"Select all visible objects" Select(All)}
+    {"Select all connected objects" Select(Connection)}
+@@ -267,7 +267,7 @@ MainMenu =
+    {"Elements" ChangeSquare(SelectedElements)}
+    {"Pins" ChangeSquare(SelectedPins)}
+   }
+-    
++
+   {Buffer
+    {"Copy selection to buffer" GetXY(Click to set the snap point for this buffer)
+     PasteBuffer(Clear) PasteBuffer(AddSelected) Mode(PasteBuffer)}
+@@ -295,7 +295,7 @@ MainMenu =
+    {"#4" checked=buffer,4 PasteBuffer(4) a={"Shift-4" "Shift<Key>4"}}
+    {"#5" checked=buffer,5 PasteBuffer(5) a={"Shift-5" "Shift<Key>5"}}
+   }
+-    
++
+   {Connects
+    {"Lookup connection to object" GetXY(Click on the object) Connection(Find) a={"Ctrl-F" "Ctrl<Key>f"}}
+    {"Reset scanned pads/pins/vias" Connection(ResetPinsViasAndPads) Display(Redraw)}
 @@ -309,6 +309,9 @@ MainMenu =
     -
     {"Auto-route selected rats" AutoRoute(Selected)}
@@ -111,3 +174,12 @@ index aaf48c4..f047a06 100644
     {"Rip up all auto-routed tracks" RipUp(All)}
     -
     {"Auto-Optimize" djopt(auto)  a={"Shift-=" "Shift<Key>="}}
+@@ -331,7 +334,7 @@ MainMenu =
+    -
+    {"Apply vendor drill mapping" ApplyVendor()}
+   }
+-    
++
+   {Info
+    {"Generate object report" ReportObject() a={"Ctrl-R" "Ctrl<Key>r"}}
+    {"Generate drill summary" Report(DrillReport)}
