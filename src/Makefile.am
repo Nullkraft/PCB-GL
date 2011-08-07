@@ -230,8 +230,8 @@ EXTRA_DIST= \
 	$(srcdir)/hid/png/hid.conf \
 	$(srcdir)/hid/nelma/hid.conf \
 	$(srcdir)/hid/ps/hid.conf \
-	gpcb-menu.res \
-	pcb-menu.res \
+	gpcb-menu.res.in \
+	pcb-menu.res.in \
 	pcbtest.sh.in \
 	dbus.xml
 
@@ -239,11 +239,19 @@ AM_YFLAGS=	-d
 
 all-local: pcbtest.sh
 
+pcb-menu.res : pcb-menu.res.in
+	echo '/* AUTOMATICALLY GENERATED FROM pcb-menu.res.in DO NOT EDIT */' > $@
+	cat ${srcdir}/pcb-menu.res.in >> $@
+
 pcb-menu.h : pcb-menu.res
 	echo '/* AUTOMATICALLY GENERATED FROM pcb-menu.res DO NOT EDIT */' > $@
 	echo 'const char *pcb_menu_default[] = {' >> $@
 	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < ${srcdir}/pcb-menu.res >> $@
 	echo '0};' >> $@
+
+gpcb-menu.res : gpcb-menu.res.in
+	echo '/* AUTOMATICALLY GENERATED FROM gpcb-menu.res.in DO NOT EDIT */' > $@
+	cat ${srcdir}/gpcb-menu.res.in >> $@
 
 gpcb-menu.h : gpcb-menu.res
 	echo '/* AUTOMATICALLY GENERATED FROM gpcb-menu.res DO NOT EDIT */' > $@
