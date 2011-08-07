@@ -52,7 +52,6 @@ void HideCrosshair (void);
 void RestoreCrosshair (void);
 void DrawAttached (void);
 void DrawMark (void);
-void MoveCrosshairRelative (LocationType, LocationType);
 bool MoveCrosshairAbsolute (LocationType, LocationType);
 void SetCrosshairRange (LocationType, LocationType, LocationType,
 			LocationType);
