@@ -197,6 +197,8 @@ int
 ghid_set_layer (const char *name, int group, int empty)
 {
   render_priv *priv = gport->render_priv;
+  bool group_visible = false;
+  bool subcomposite = true;
   int idx = group;
   if (idx >= 0 && idx < max_group)
     {
@@ -211,41 +213,56 @@ ghid_set_layer (const char *name, int group, int empty)
       idx = PCB->LayerGroups.Entries[group][idx];
   }
 
-  end_subcomposite ();
-  start_subcomposite ();
-
-  /* Drawing is already flushed by {start,end}_subcomposite */
-  hidgl_set_depth (compute_depth (group));
-
   if (idx >= 0 && idx < max_copper_layer + 2)
     {
       priv->trans_lines = true;
-      return PCB->Data->Layer[idx].On;
+      subcomposite = true;
+      group_visible = PCB->Data->Layer[idx].On;
     }
-
-  if (idx < 0)
+  else if (idx < 0)
     {
       switch (SL_TYPE (idx))
 	{
 	case SL_INVISIBLE:
-	  return PCB->InvisibleObjectsOn;
+	  priv->trans_lines = false;
+	  subcomposite = false;
+	  group_visible = PCB->InvisibleObjectsOn;
+	  break;
 	case SL_MASK:
-	  return TEST_FLAG (SHOWMASKFLAG, PCB);
+	  priv->trans_lines = true;
+	  subcomposite = false;
+	  group_visible = TEST_FLAG (SHOWMASKFLAG, PCB);
+	  break;
 	case SL_SILK:
 	  priv->trans_lines = true;
-	  return PCB->ElementOn;
+	  subcomposite = true;
+	  group_visible = PCB->ElementOn;
+	  break;
 	case SL_ASSY:
-	  return 0;
+	  break;
 	case SL_PDRILL:
 	case SL_UDRILL:
-	  return 1;
+	  priv->trans_lines = true;
+	  subcomposite = true;
+	  group_visible = true;
+	  break;
 	case SL_RATS:
-	  if (PCB->RatOn)
-	    priv->trans_lines = true;
-	  return PCB->RatOn;
+	  priv->trans_lines = true;
+	  subcomposite = false;
+	  group_visible = PCB->RatOn;
+	  break;
 	}
     }
-  return 0;
+
+  end_subcomposite ();
+
+  if (group_visible && subcomposite)
+    start_subcomposite ();
+
+  /* Drawing is already flushed by {start,end}_subcomposite */
+  hidgl_set_depth (compute_depth (group));
+
+  return group_visible;
 }
 
 static void
@@ -1892,7 +1909,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
 
   /* Draw pins, pads, vias below silk */
   if (global_view_2d) {
-    gui->set_layer (NULL, SWAP_IDENT ? solder_group : component_group, 0);
+    start_subcomposite ();
 
     if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
       /* Mask out drilled holes */
@@ -1909,7 +1926,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
     if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
 
-    gui->end_layer ();
+    end_subcomposite ();
   }
 
   /* Draw the solder mask if turned on */
