@@ -1,0 +1,21 @@
+Bottom: 4638e95d6249d3d784dda6350c897b6f9c92ac2d
+Top:    768d0728dfcd8b6bebd74bee17e75e61a197403c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 22:30:43 +0100
+
+Refresh of action-c-remove-dead-code-igno
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 6a339bb..e222dbf 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2151,7 +2151,6 @@ EventMoveCrosshair (int ev_x, int ev_y)
+       return;
+     }
+ #endif /* HAVE_LIBSTROKE */
+-  /* ignore events that are caused by ActionMovePointer */
+   if (MoveCrosshairAbsolute (ev_x, ev_y))
+     {
+       /* update object position and cursor location */
