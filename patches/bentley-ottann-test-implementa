@@ -1,7 +1,7 @@
-Bottom: 6316e7805720fcec377bb6b4978083bac84b4e5a
-Top:    0835fd40289db0521708d3985ce573cc2933abf7
+Bottom: 9e64ec88f8b674469cfcbd6c9a16d3fa36a193a2
+Top:    1bb7530cc5909f0c130b3a030f4ed09160bc6515
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-03 00:39:17 +0100
+Date:   2011-08-07 16:01:16 +0100
 
 Bentley-Ottann test implementation
 
@@ -11,7 +11,7 @@ Code from cairo - intersection routines stripped out
 ---
 
 diff --git a/configure.ac b/configure.ac
-index fd14c98..1488b11 100644
+index 666d51e..9fe501f 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
@@ -194,7 +194,7 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 88b95d6..ac2e810 100644
+index a5073ee..c14d21f 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -41,6 +41,22 @@ PCB_SRCS = \

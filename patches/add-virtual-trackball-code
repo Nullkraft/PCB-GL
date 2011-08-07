@@ -1,7 +1,7 @@
-Bottom: 01b1f5d7eec956cb14df1f0b12a1b4c524426036
-Top:    b0ae657debd2874bfaa39717dbe9cbbe1f303768
+Bottom: 294f305f597b581a38fa8fc00b5f3b34870e68ed
+Top:    072e915d9dace3113706e7856b5b0f8da537c33d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-03 00:39:14 +0100
+Date:   2011-08-07 16:01:11 +0100
 
 Add virtual trackball code
 
@@ -9,10 +9,10 @@ Add virtual trackball code
 ---
 
 diff --git a/po/POTFILES.in b/po/POTFILES.in
-index 3bfb3ed..f83167f 100644
+index 8d62595..0a67518 100644
 --- a/po/POTFILES.in
 +++ b/po/POTFILES.in
-@@ -33,6 +33,7 @@ src/hid/gtk/gui-misc.c
+@@ -35,6 +35,7 @@ src/hid/gtk/gui-misc.c
  src/hid/gtk/gui-netlist-window.c
  src/hid/gtk/gui-top-window.c
  src/hid/ps/ps.c
@@ -21,7 +21,7 @@ index 3bfb3ed..f83167f 100644
  src/misc.c
  src/move.c
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 1581881..bdc808b 100644
+index b87b0b8..4e46523 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -173,11 +173,16 @@ LIBGTK_GDK_SRCS= \
