@@ -1,5 +1,5 @@
 Bottom: 34aea2338028a7b95d4f4ed946e0896de4655319
-Top:    12fdf0386be4f4a3561e2f75c4b4bff50c3d262f
+Top:    102aa014762405a776472126eaa4ab4fe12ad6be
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 22:45:13 +0100
 
@@ -12,11 +12,24 @@ properly registered. Obviously no-one missed it, so let it die.
 ---
 
 diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
-index 730db5e..745e8ea 100644
+index 730db5e..79fe3b4 100644
 --- a/src/hid/gtk/gui-misc.c
 +++ b/src/hid/gtk/gui-misc.c
-@@ -312,54 +312,6 @@ loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
+@@ -293,7 +293,7 @@ ghid_restore_cursor (void)
+ static gboolean got_location;
+ 
+   /* If user hits a key instead of the mouse button, we'll abort unless
+-     |  it's one of the cursor keys.  Move the layout if a cursor key.
++     |  it's the enter key (which accepts the current crosshair location).
     */
+ static gboolean
+ loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
+@@ -308,58 +308,8 @@ loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
+   state = (GdkModifierType) (kev->state);
+   mk = ghid_modifier_keys_state (&state);
+ 
+-  /* Duplicate the cursor key actions in gui-output-events.c
+-   */
    switch (ksym)
      {
 -    case GDK_Up:
