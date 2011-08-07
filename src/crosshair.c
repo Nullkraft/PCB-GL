@@ -1105,15 +1105,6 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
 }
 
 /* ---------------------------------------------------------------------------
- * move crosshair relative (has to be switched off)
- */
-void
-MoveCrosshairRelative (LocationType DeltaX, LocationType DeltaY)
-{
-  FitCrosshairIntoGrid (Crosshair.X + DeltaX, Crosshair.Y + DeltaY);
-}
-
-/* ---------------------------------------------------------------------------
  * move crosshair absolute
  * return true if the crosshair was moved from its existing position
  */
@@ -1155,7 +1146,7 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
   Crosshair.MaxY = MIN ((LocationType) PCB->MaxHeight, MaxY);
 
   /* force update of position */
-  MoveCrosshairRelative (0, 0);
+  FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
 }
 
 /* ---------------------------------------------------------------------------
