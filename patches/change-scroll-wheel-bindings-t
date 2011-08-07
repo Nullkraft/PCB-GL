@@ -1,7 +1,7 @@
-Bottom: 0ef5a3c82041c81240b1207e28abe589d6db40bd
-Top:    ebf111939acd1f4039b68e1e6b69f8aaee095691
+Bottom: cd29bf6db71ba54699014a46f443ea85b546c75b
+Top:    4619c9cf3545df11b36341c3c6d3c1f0597b080a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-03 00:39:06 +0100
+Date:   2011-08-07 16:00:54 +0100
 
 Change scroll-wheel bindings to match more GTK applications
 
@@ -15,10 +15,10 @@ Change scroll-wheel bindings to match more GTK applications
 
 ---
 
-diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
-index e9469e9..7b0769d 100644
---- a/src/gpcb-menu.res
-+++ b/src/gpcb-menu.res
+diff --git a/src/gpcb-menu.res.in b/src/gpcb-menu.res.in
+index ec39860..66a1acd 100644
+--- a/src/gpcb-menu.res.in
++++ b/src/gpcb-menu.res.in
 @@ -25,18 +25,18 @@ Mouse =
      up-shift-ctrl = { Mode(Notify) Mode(Restore) Display(ToggleRubberbandMode) }
    }

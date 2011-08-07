@@ -1,7 +1,7 @@
-Bottom: ebf111939acd1f4039b68e1e6b69f8aaee095691
-Top:    7b5d30d37aa96611f49f17a0119d0b7c795fb5e5
+Bottom: 4619c9cf3545df11b36341c3c6d3c1f0597b080a
+Top:    ed9b0b60499b607672f545b866521d9bb5a15584
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-03 00:39:06 +0100
+Date:   2011-08-07 16:00:55 +0100
 
 Bentley-Ottann test implementation
 
@@ -9,7 +9,7 @@ Bentley-Ottann test implementation
 ---
 
 diff --git a/configure.ac b/configure.ac
-index fd14c98..1488b11 100644
+index 666d51e..9fe501f 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
@@ -192,7 +192,7 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 7efb2d7..ddc6d0f 100644
+index b55071f..4fd7980 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -41,6 +41,33 @@ PCB_SRCS = \
