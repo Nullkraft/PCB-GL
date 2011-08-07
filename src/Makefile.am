@@ -246,7 +246,7 @@ pcb-menu.res : pcb-menu.res.in
 pcb-menu.h : pcb-menu.res
 	echo '/* AUTOMATICALLY GENERATED FROM pcb-menu.res DO NOT EDIT */' > $@
 	echo 'const char *pcb_menu_default[] = {' >> $@
-	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < ${srcdir}/pcb-menu.res >> $@
+	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < pcb-menu.res >> $@
 	echo '0};' >> $@
 
 gpcb-menu.res : gpcb-menu.res.in
@@ -256,7 +256,7 @@ gpcb-menu.res : gpcb-menu.res.in
 gpcb-menu.h : gpcb-menu.res
 	echo '/* AUTOMATICALLY GENERATED FROM gpcb-menu.res DO NOT EDIT */' > $@
 	echo 'const char *gpcb_menu_default[] = {' >> $@
-	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < ${srcdir}/gpcb-menu.res >> $@
+	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < gpcb-menu.res >> $@
 	echo '0};' >> $@
 
 hid/common/hidlist.h : Makefile
