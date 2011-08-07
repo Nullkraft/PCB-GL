@@ -1,5 +1,5 @@
 Bottom: 8faf883fe5de08676d01f7cd7448f3c5a0d673c5
-Top:    06d24eb3466a74a466c85da62dafd0e2a290ec66
+Top:    b5459e9c317707c0792bf02c210bafaa4a4031e9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 14:20:46 +0100
 
@@ -51,3 +51,11 @@ index 7efb2d7..21a9f5a 100644
  gpcb-menu.h : gpcb-menu.res
  	echo '/* AUTOMATICALLY GENERATED FROM gpcb-menu.res DO NOT EDIT */' > $@
  	echo 'const char *gpcb_menu_default[] = {' >> $@
+diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res.in
+similarity index 100%
+rename from src/gpcb-menu.res
+rename to src/gpcb-menu.res.in
+diff --git a/src/pcb-menu.res b/src/pcb-menu.res.in
+similarity index 100%
+rename from src/pcb-menu.res
+rename to src/pcb-menu.res.in
