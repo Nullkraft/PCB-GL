@@ -6,7 +6,9 @@ Date:   2011-08-07 14:20:46 +0100
 Generate pcb-menu.res and gpcb-menu.res from ".in" files
 
 No functional changes here, just a preliminary cleaning before
-adding the topological autorouter to the menus.
+adding the topological autorouter to the menus. Doing so requies
+conditional inclusion of certain lines, as the toporouter is not
+always built.
 
 Based on a patch by Stanislav Brabec <sbrabec@suse.cz>
 
