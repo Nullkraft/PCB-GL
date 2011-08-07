@@ -41,7 +41,7 @@ else
 pcb_TEXINFOS=
 endif
 
-dist_html_DATA=	${html_docs} ${pcb_output_inst}
+dist_html_DATA=	${html_docs} ${pcb_output_inst} ${images}
 dist_pdf_DATA=	${pdf_docs}
 
 dist_man_MANS=	pcb.1
@@ -109,6 +109,11 @@ pcb_output_inst=	\
 	${pcb_files:.pcb=.png}
 
 pcb_output=	${pcb_output_inst} ${pcb_output_noinst}
+
+# Additional images
+images=	\
+	gcode_control_img.png \
+	gcode_tool_path.png
 
 ${inline_texi} : extracted-docs
 
