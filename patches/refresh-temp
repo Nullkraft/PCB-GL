@@ -1,0 +1,37 @@
+Bottom: 89480928e0e1e09fa658558e20b161a10d434049
+Top:    c1b094b0efd13747cd05a3e9730948fdc590637b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 23:14:26 +0100
+
+Refresh of select-c-don-t-center-the-disp
+
+---
+
+diff --git a/src/select.c b/src/select.c
+index 8dfe270..1aa5cb6 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -85,10 +85,7 @@ SelectPin (LibraryEntryTypePtr entry, bool toggle)
+ 	    AddObjectToFlagUndoList (PIN_TYPE, conn.ptr1, conn.ptr2,
+ 				     conn.ptr2);
+ 	    if (toggle)
+-	      {
+-		TOGGLE_FLAG (SELECTEDFLAG, pin);
+-		CenterDisplay (pin->X, pin->Y);
+-	      }
++	      TOGGLE_FLAG (SELECTEDFLAG, pin);
+ 	    else
+ 	      SET_FLAG (SELECTEDFLAG, pin);
+ 	    DrawPin (pin);
+@@ -101,10 +98,7 @@ SelectPin (LibraryEntryTypePtr entry, bool toggle)
+ 	    AddObjectToFlagUndoList (PAD_TYPE, conn.ptr1, conn.ptr2,
+ 				     conn.ptr2);
+ 	    if (toggle)
+-	      {
+-		TOGGLE_FLAG (SELECTEDFLAG, pad);
+-		CenterDisplay (pad->Point1.X, pad->Point1.Y);
+-	      }
++	      TOGGLE_FLAG (SELECTEDFLAG, pad);
+ 	    else
+ 	      SET_FLAG (SELECTEDFLAG, pad);
+ 	    DrawPad (pad);
