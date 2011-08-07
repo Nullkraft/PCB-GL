@@ -1,0 +1,112 @@
+Bottom: 08452cef620327a78c0c1bae781a9e2d9b1a977a
+Top:    546aefd2513f4dae55fbe7ebc8783876510e03e3
+Author: Stanislav Brabec <sbrabec@suse.cz>
+Date:   2011-07-18 19:14:19 +0200
+
+From a81bcd34620362ce32c256be2ec60d9429c6034f Mon Sep 17 00:00:00 2001
+Subject: [PATCH 1/2] Add Toporouter to menu
+
+Toporouter is a very nice and nearly invisible feature. Add it to the
+menu to make it more visible.
+
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index fd14c98..666d51e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -320,6 +320,17 @@ AS_CASE(["x$enable_toporouter"],[xyes | xno],,
+ )
+ AC_MSG_RESULT([$enable_toporouter])
+ AM_CONDITIONAL([WITH_TOPOROUTER], test $enable_toporouter != no)
++AS_CASE([$enable_toporouter],[yes],
++ [
++  topo_enabled=1
++ ],
++ [
++  topo_enabled=0
++ ]
++)
++AC_DEFINE_UNQUOTED([TOPO_ENABLED], [$topo_enabled],
++ [Define to 1 to enable toporouter]
++)
+ 
+ AC_MSG_CHECKING([whether to enable toporouter output])
+ AC_ARG_ENABLE([toporouter-output],
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 7efb2d7..e66ad95 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -230,8 +230,8 @@ EXTRA_DIST= \
+ 	$(srcdir)/hid/png/hid.conf \
+ 	$(srcdir)/hid/nelma/hid.conf \
+ 	$(srcdir)/hid/ps/hid.conf \
+-	gpcb-menu.res \
+-	pcb-menu.res \
++	gpcb-menu.res.in \
++	pcb-menu.res.in \
+ 	pcbtest.sh.in \
+ 	dbus.xml
+ 
+@@ -245,12 +245,26 @@ pcb-menu.h : pcb-menu.res
+ 	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < ${srcdir}/pcb-menu.res >> $@
+ 	echo '0};' >> $@
+ 
++pcb-menu.res : pcb-menu.res.in
++if WITH_TOPOROUTER
++	sed '/%if/d ;/%endif/d' < ${srcdir}/pcb-menu.res.in >> $@
++else
++	sed '/%if/,/%endif/d' < ${srcdir}/pcb-menu.res.in >> $@
++endif
++
+ gpcb-menu.h : gpcb-menu.res
+ 	echo '/* AUTOMATICALLY GENERATED FROM gpcb-menu.res DO NOT EDIT */' > $@
+ 	echo 'const char *gpcb_menu_default[] = {' >> $@
+ 	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < ${srcdir}/gpcb-menu.res >> $@
+ 	echo '0};' >> $@
+ 
++gpcb-menu.res : gpcb-menu.res.in
++if WITH_TOPOROUTER
++	sed '/%if/d ;/%endif/d' < ${srcdir}/gpcb-menu.res.in >> $@
++else
++	sed '/%if/,/%endif/d' < ${srcdir}/gpcb-menu.res.in >> $@
++endif
++
+ hid/common/hidlist.h : Makefile
+ 	$(MKDIR_P) hid/common
+ 	true > $@
+diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res.in
+similarity index 99%
+rename from src/gpcb-menu.res
+rename to src/gpcb-menu.res.in
+index e9469e9..991b86c 100644
+--- a/src/gpcb-menu.res
++++ b/src/gpcb-menu.res.in
+@@ -326,6 +326,9 @@ MainMenu =
+    -
+    {"Auto-route selected rats" AutoRoute(Selected)}
+    {"Auto-route all rats" AutoRoute(AllRats)}
++%if TOPO_ENABLED
++   {"Toporouter" Toporouter()}
++%endif
+    {"Rip up all auto-routed tracks" RipUp(All)}
+    -
+    {"Optimize routed tracks"
+diff --git a/src/pcb-menu.res b/src/pcb-menu.res.in
+similarity index 99%
+rename from src/pcb-menu.res
+rename to src/pcb-menu.res.in
+index aaf48c4..f047a06 100644
+--- a/src/pcb-menu.res
++++ b/src/pcb-menu.res.in
+@@ -309,6 +309,9 @@ MainMenu =
+    -
+    {"Auto-route selected rats" AutoRoute(Selected)}
+    {"Auto-route all rats" AutoRoute(AllRats)}
++%if TOPO_ENABLED
++   {"Toporouter" Toporouter()}
++%endif
+    {"Rip up all auto-routed tracks" RipUp(All)}
+    -
+    {"Auto-Optimize" djopt(auto)  a={"Shift-=" "Shift<Key>="}}
