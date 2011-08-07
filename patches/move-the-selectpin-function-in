@@ -5,11 +5,11 @@ Date:   2011-08-07 23:16:31 +0100
 
 Move the SelectPin() function into the file of its only caller.
 
-Whilst we're at it, simplify the function, removing its always-
-constant argument and condense the redrawing calls.
-
 The new function is in hid/gtk/gui-netlist-window.c, and is called
 toggle_pin_selected ().
+
+Whilst we're at it, simplify the function, removing its always-
+constant argument and condense the redrawing calls.
 
 
 ---
