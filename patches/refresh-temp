@@ -1,0 +1,63 @@
+Bottom: 89480928e0e1e09fa658558e20b161a10d434049
+Top:    210d933a6196dc2d8e7ae4c21f79bd247b78c3ab
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 23:10:51 +0100
+
+Refresh of remove-function-movecrosshairr
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 76b072b..b468b33 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1105,15 +1105,6 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * move crosshair relative (has to be switched off)
+- */
+-void
+-MoveCrosshairRelative (LocationType DeltaX, LocationType DeltaY)
+-{
+-  FitCrosshairIntoGrid (Crosshair.X + DeltaX, Crosshair.Y + DeltaY);
+-}
+-
+-/* ---------------------------------------------------------------------------
+  * move crosshair absolute
+  * return true if the crosshair was moved from its existing position
+  */
+@@ -1155,7 +1146,7 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
+   Crosshair.MaxY = MIN ((LocationType) PCB->MaxHeight, MaxY);
+ 
+   /* force update of position */
+-  MoveCrosshairRelative (0, 0);
++  FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/crosshair.h b/src/crosshair.h
+index 6e9656e..c10a46f 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -52,7 +52,6 @@ void HideCrosshair (void);
+ void RestoreCrosshair (void);
+ void DrawAttached (void);
+ void DrawMark (void);
+-void MoveCrosshairRelative (LocationType, LocationType);
+ bool MoveCrosshairAbsolute (LocationType, LocationType);
+ void SetCrosshairRange (LocationType, LocationType, LocationType,
+ 			LocationType);
+diff --git a/src/set.c b/src/set.c
+index c77129e..2028ec6 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -313,7 +313,8 @@ SetMode (int Mode)
+   /* force a crosshair grid update because the valid range
+    * may have changed
+    */
+-  MoveCrosshairRelative (0, 0);
++  FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
++
+   notify_crosshair_change (true);
+ }
