@@ -293,7 +293,7 @@ ghid_restore_cursor (void)
 static gboolean got_location;
 
   /* If user hits a key instead of the mouse button, we'll abort unless
-     |  it's one of the cursor keys.  Move the layout if a cursor key.
+     |  it's the enter key (which accepts the current crosshair location).
    */
 static gboolean
 loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
@@ -308,8 +308,6 @@ loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
   state = (GdkModifierType) (kev->state);
   mk = ghid_modifier_keys_state (&state);
 
-  /* Duplicate the cursor key actions in gui-output-events.c
-   */
   switch (ksym)
     {
     case GDK_Return:		/* Accept cursor location */
