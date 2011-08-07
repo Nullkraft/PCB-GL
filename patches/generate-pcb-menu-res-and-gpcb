@@ -1,5 +1,5 @@
 Bottom: 8faf883fe5de08676d01f7cd7448f3c5a0d673c5
-Top:    6e79acc95e5cd324e988850c7bb7a5ba4b71e9ee
+Top:    fe00ff19dcd6f47ab3550b53b4d712aca6fb4a23
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 14:20:46 +0100
 
@@ -16,7 +16,7 @@ Affects-bug: lp-812429
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 7efb2d7..f57483c 100644
+index 7efb2d7..75c6886 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -18,7 +18,7 @@ EXTRA_LIBRARIES = \
@@ -39,7 +39,7 @@ index 7efb2d7..f57483c 100644
  	pcbtest.sh.in \
  	dbus.xml
  
-@@ -239,12 +239,20 @@ AM_YFLAGS=	-d
+@@ -239,16 +239,24 @@ AM_YFLAGS=	-d
  
  all-local: pcbtest.sh
  
@@ -50,7 +50,8 @@ index 7efb2d7..f57483c 100644
  pcb-menu.h : pcb-menu.res
  	echo '/* AUTOMATICALLY GENERATED FROM pcb-menu.res DO NOT EDIT */' > $@
  	echo 'const char *pcb_menu_default[] = {' >> $@
- 	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < ${srcdir}/pcb-menu.res >> $@
+-	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < ${srcdir}/pcb-menu.res >> $@
++	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < pcb-menu.res >> $@
  	echo '0};' >> $@
  
 +gpcb-menu.res : gpcb-menu.res.in
@@ -60,6 +61,11 @@ index 7efb2d7..f57483c 100644
  gpcb-menu.h : gpcb-menu.res
  	echo '/* AUTOMATICALLY GENERATED FROM gpcb-menu.res DO NOT EDIT */' > $@
  	echo 'const char *gpcb_menu_default[] = {' >> $@
+-	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < ${srcdir}/gpcb-menu.res >> $@
++	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/",/' < gpcb-menu.res >> $@
+ 	echo '0};' >> $@
+ 
+ hid/common/hidlist.h : Makefile
 @@ -449,7 +457,9 @@ DISTCLEANFILES= pcbtest.sh gpcb-menu.h pcb-menu.h \
  	hid/nelma/nelma_lists.h \
  	hid/ps/ps_lists.h \
