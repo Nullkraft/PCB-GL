@@ -36,18 +36,20 @@ info_TEXINFOS=	pcb.texi
 # via GIT are considered to be doing "development" and incur a slightly
 # higher list of required tools.
 if GIT_OR_CVS_VERSION
-pcb_TEXINFOS=	${inline_texi} ${pcb_output} ${tab_texi} ${images_output}
+pcb_TEXINFOS=	${inline_texi} ${pcb_output} ${tab_texi}
 else
 pcb_TEXINFOS=
 endif
 
-dist_html_DATA=	${html_docs} ${pcb_output_inst} ${images_output_inst}
+dist_html_DATA=	${html_docs} ${pcb_output_inst}
 dist_pdf_DATA=	${pdf_docs}
 
 dist_man_MANS=	pcb.1
 
 html_docs=	${info_TEXINFOS:.texi=.html}
 pdf_docs=	${info_TEXINFOS:.texi=.pdf} refcard.pdf
+
+DVIS=
 
 # put the html manual into 1 file instead of multiple files?
 AM_MAKEINFOHTMLFLAGS=	--css-include=$(srcdir)/pcb.css --no-split
@@ -68,15 +70,13 @@ EXTRA_DIST= \
 	${pcb_files} \
 	${pcb_output_noinst} \
 	${tab_files} \
-	${tab_texi} \
-	${images}
+	${tab_texi}
 
 if GIT_OR_CVS_VERSION
 BUILT_SOURCES=	${tab_texi} ${pcb_output} ${inline_texi}
 CLEANFILES= \
 	refcard.aux refcard.log refcard.pdf \
-	${pcb_output} ${tab_texi} ${inline_texi} pcb.html pcb.pdf \
-	${images_output}
+	${pcb_output} ${tab_texi} ${inline_texi} pcb.html pcb.pdf
 else
 BUILT_SOURCES=
 endif
@@ -109,19 +109,6 @@ pcb_output_inst=	\
 	${pcb_files:.pcb=.png}
 
 pcb_output=	${pcb_output_inst} ${pcb_output_noinst}
-
-# Additional images
-images= \
-	gcode_control_img.eps \
-	gcode_tool_path.eps
-
-images_output_noinst= \
-	${images:.eps=.pdf}
-
-images_output_inst= \
-	${images:.eps=.png}
-
-images_output= ${images_output_noinst} ${images_output_inst}
 
 ${inline_texi} : extracted-docs
 
