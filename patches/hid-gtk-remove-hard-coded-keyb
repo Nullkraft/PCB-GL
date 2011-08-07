@@ -3,10 +3,10 @@ Top:    34aea2338028a7b95d4f4ed946e0896de4655319
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 22:45:13 +0100
 
-hid/gtk: Remove hard-coded keyboard shortcuts to move the mouse and board
+hid/gtk: Remove dead "MovePointer" action calling code.
 
-This was not working correctly anyway due to over-keen snapping,
-and it is probably not the correct way to implement this anyway.
+This was not working correctly anyway, as the action was not
+properly registered. Obviously no-one missed it, so let it die.
 
 
 ---
