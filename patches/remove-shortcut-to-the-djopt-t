@@ -1,7 +1,7 @@
-Bottom: 3f183b32c6dd50cde02257fbe7e411742df8681d
-Top:    d028ac249ebf4325126f6422926646badf6bc813
+Bottom: 3f378b03a2a7350e922e8eb7ca2cf673f814c2e3
+Top:    91c0ebac86ba10c8b6af0b467f84a0443770c57a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-03 00:39:26 +0100
+Date:   2011-08-07 16:01:29 +0100
 
 Remove "=" shortcut to the djopt() thingy which keeps eating my design
 
@@ -18,11 +18,11 @@ ARR!! how much work have I lost to this key binding!
 
 ---
 
-diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
-index 7b0769d..7ac8233 100644
---- a/src/gpcb-menu.res
-+++ b/src/gpcb-menu.res
-@@ -329,13 +329,11 @@ MainMenu =
+diff --git a/src/gpcb-menu.res.in b/src/gpcb-menu.res.in
+index 66a1acd..2fa7c2d 100644
+--- a/src/gpcb-menu.res.in
++++ b/src/gpcb-menu.res.in
+@@ -332,13 +332,11 @@ MainMenu =
     {"Rip up all auto-routed tracks" RipUp(All)}
     -
     {"Optimize routed tracks"
