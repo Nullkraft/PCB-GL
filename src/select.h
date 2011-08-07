@@ -37,7 +37,7 @@
 	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | ELEMENT_TYPE |	\
 	 PIN_TYPE | PAD_TYPE | ELEMENTNAME_TYPE | RATLINE_TYPE | ARC_TYPE)
 
-void SelectPin (LibraryEntryTypePtr entry, bool toggle);
+void TogglePinSelected (LibraryEntryTypePtr entry);
 bool SelectObject (void);
 bool SelectBlock (BoxTypePtr, bool);
 bool SelectedOperation (ObjectFunctionTypePtr, bool, int);
