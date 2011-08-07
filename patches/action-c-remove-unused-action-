@@ -1,5 +1,5 @@
 Bottom: 396354cd61f09ba6d1e3feace66592bb4bf857d9
-Top:    b691f3ed96b4510c220f5a4ecf3d8526ab4a6495
+Top:    366c7831dd7fb4941504754c2759441128ea1e1e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-07 22:58:18 +0100
 
@@ -38,3 +38,14 @@ index 6339e39..704b98f 100644
   * !!! no action routine !!!
   *
   * event handler to set the cursor according to the X pointer position
+diff --git a/src/action.h b/src/action.h
+index ee116e8..e92c578 100644
+--- a/src/action.h
++++ b/src/action.h
+@@ -35,7 +35,6 @@
+ 
+ #define CLONE_TYPES LINE_TYPE | ARC_TYPE | VIA_TYPE | POLYGON_TYPE
+ 
+-void ActionMovePointer (char *, char *);
+ void ActionAdjustStyle (char *);
+ void EventMoveCrosshair (int, int);
