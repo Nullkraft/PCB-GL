@@ -1,0 +1,34 @@
+Bottom: 4bf1161695c84a64c663b47b05e83b1d059cf98c
+Top:    7631e9677abff83206a5810e51e0d44f94523996
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-07 15:48:37 +0100
+
+Refresh of doc-remove-eps-files-in-favour
+
+---
+
+diff --git a/doc/Makefile.am b/doc/Makefile.am
+index 06f42b7..ae3b4a9 100644
+--- a/doc/Makefile.am
++++ b/doc/Makefile.am
+@@ -41,7 +41,7 @@ else
+ pcb_TEXINFOS=
+ endif
+ 
+-dist_html_DATA=	${html_docs} ${pcb_output_inst}
++dist_html_DATA=	${html_docs} ${pcb_output_inst} ${images}
+ dist_pdf_DATA=	${pdf_docs}
+ 
+ dist_man_MANS=	pcb.1
+@@ -110,6 +110,11 @@ pcb_output_inst=	\
+ 
+ pcb_output=	${pcb_output_inst} ${pcb_output_noinst}
+ 
++# Additional images
++images=	\
++	gcode_control_img.png \
++	gcode_tool_path.png
++
+ ${inline_texi} : extracted-docs
+ 
+ # no need to build these when building via a tarball.  They're not used then
