@@ -1,7 +1,7 @@
-Bottom: 0ef5a3c82041c81240b1207e28abe589d6db40bd
-Top:    e9668e0ff3ac14fa5267240c279548441017cf33
+Bottom: cd29bf6db71ba54699014a46f443ea85b546c75b
+Top:    f3335e557c51dcdb6442389b735e127c41b82155
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-03 00:39:03 +0100
+Date:   2011-08-07 16:00:49 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 9b67924..1f3d235 100644
+index d6e1d89..f162608 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1901,37 +1901,39 @@ static int
@@ -87,7 +87,7 @@ index 9b67924..1f3d235 100644
  }
  
  
-@@ -4628,16 +4633,15 @@ ActionChangeName (int argc, char **argv, int x, int y)
+@@ -4637,16 +4642,15 @@ ActionChangeName (int argc, char **argv, int x, int y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index 9b67924..1f3d235 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatTypePtr) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6949,22 +6953,26 @@ find_element_by_refdes (char *refdes)
+@@ -6958,22 +6962,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListTypePtr list, const char *name)
  {
