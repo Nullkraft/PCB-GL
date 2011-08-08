@@ -332,7 +332,11 @@ ghid_set_crosshair (int x, int y, int action)
       widget_y = pointer_y - offset_y;
 
       ghid_event_to_pcb_coords (widget_x, widget_y, &pcb_x, &pcb_y);
-      ghid_pan_view_abs (pcb_x, pcb_y, widget_x, widget_y);
+
+      gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
+      gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
+
+      ghid_pan_fixup ();
 
       /* Just in case we couldn't pan the board the whole way,
        * we warp the pointer to where the crosshair DID land.
@@ -1595,7 +1599,7 @@ currently within the window already.
 %end-doc */
 
 static int
-Center(int argc, char **argv, int x, int y)
+Center(int argc, char **argv, int pcb_x, int pcb_y)
 {
   GdkDisplay *display;
   GdkScreen *screen;
@@ -1610,7 +1614,10 @@ Center(int argc, char **argv, int x, int y)
   widget_x = gport->width / 2;
   widget_y = gport->height / 2;
 
-  ghid_pan_view_abs (x, y, widget_x, widget_y);
+  gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
+  gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
+
+  ghid_pan_fixup ();
 
   /* Now move the mouse pointer to the place where the board location
    * actually ended up.
@@ -1618,7 +1625,7 @@ Center(int argc, char **argv, int x, int y)
    * XXX: Should only do this if we confirm we are inside our window?
    */
 
-  ghid_pcb_to_event_coords (x, y, &widget_x, &widget_y);
+  ghid_pcb_to_event_coords (pcb_x, pcb_y, &widget_x, &widget_y);
   gdk_window_get_origin (gport->drawing_area->window, &offset_x, &offset_y);
 
   pointer_x = offset_x + widget_x;
