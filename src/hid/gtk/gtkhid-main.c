@@ -30,8 +30,6 @@
 RCSID ("$Id$");
 
 
-bool ghid_flip_x = false, ghid_flip_y = false;
-
 /* ------------------------------------------------------------ */
 
 static const char zoom_syntax[] =
@@ -1560,11 +1558,12 @@ CursorAction(int argc, char **argv, Coord x, Coord y)
     AFAIL (cursor);
 
   dx = GetValueEx (argv[1], argv[3], NULL, extra_units_x, "");
-  if (ghid_flip_x)
-    dx = -dx;
   dy = GetValueEx (argv[2], argv[3], NULL, extra_units_y, "");
-  if (!ghid_flip_y)
-    dy = -dy;
+
+#if 0 /* We cannot know this sensibly from the renderer, so we have to remove it */
+  if (ghid_flip_x) dx = -dx;
+  if (!ghid_flip_y) dy = -dy;
+#endif
 
   EventMoveCrosshair (Crosshair.X + dx, Crosshair.Y + dy);
   gui->set_crosshair (Crosshair.X, Crosshair.Y, pan_warp);
@@ -1948,24 +1947,6 @@ HID_Action ghid_main_action_list[] = {
 
 REGISTER_ACTIONS (ghid_main_action_list)
 
-
-static int
-flag_flipx (int x)
-{ 
-  return ghid_flip_x;
-} 
-static int  
-flag_flipy (int x)
-{ 
-  return ghid_flip_y;
-} 
-
-HID_Flag ghid_main_flag_list[] = {
-  {"flip_x", flag_flipx, 0},
-  {"flip_y", flag_flipy, 0}
-};  
-
-REGISTER_FLAGS (ghid_main_flag_list)
 
 #include "dolists.h"
 
