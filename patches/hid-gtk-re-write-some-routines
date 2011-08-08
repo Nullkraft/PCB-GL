@@ -1,5 +1,5 @@
 Bottom: bb23933c3d73e368f9e5ed7bba22b538d3e0a82a
-Top:    c88643d73161fd843c0a773f44ce588ba0864d59
+Top:    b22cf82204edb7f072cb9aef7af802da567e0d4c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-08 00:14:52 +0100
 
@@ -11,10 +11,10 @@ Cleans up ghid_set_crosshair() and Center() in gtkhid-main.c
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 83df23f..9e312e6 100644
+index 83df23f..ed28ca1 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -286,95 +286,71 @@ ghid_mod1_is_pressed ()
+@@ -286,95 +286,75 @@ ghid_mod1_is_pressed ()
  void
  ghid_set_crosshair (int x, int y, int action)
  {
@@ -114,16 +114,19 @@ index 83df23f..9e312e6 100644
  
 -      ghid_pan_fixup();
 +      ghid_event_to_pcb_coords (widget_x, widget_y, &pcb_x, &pcb_y);
-+      ghid_pan_view_abs (pcb_x, pcb_y, widget_x, widget_y);
  
 -      action = HID_SC_WARP_POINTER;
 -    }
--
++      gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
++      gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
+ 
 -  if (action == HID_SC_WARP_POINTER)
 -    {
 -      gint xofs, yofs;
 -      GdkDisplay *display;
 -      GdkScreen *screen;
++      ghid_pan_fixup ();
++
 +      /* Just in case we couldn't pan the board the whole way,
 +       * we warp the pointer to where the crosshair DID land.
 +       */
@@ -153,9 +156,12 @@ index 83df23f..9e312e6 100644
  }
  
  typedef struct
-@@ -1621,53 +1597,36 @@ currently within the window already.
+@@ -1619,55 +1599,41 @@ currently within the window already.
+ %end-doc */
+ 
  static int
- Center(int argc, char **argv, int x, int y)
+-Center(int argc, char **argv, int x, int y)
++Center(int argc, char **argv, int pcb_x, int pcb_y)
  {
 -  int x0, y0, w2, h2;
    GdkDisplay *display;
@@ -178,20 +184,22 @@ index 83df23f..9e312e6 100644
 -  h2 = gport->view_height / 2;
 -  x0 = x - w2;
 -  y0 = y - h2;
-+  ghid_pan_view_abs (x, y, widget_x, widget_y);
- 
+-
 -  if (x0 < 0)
 -    {
 -      x0 = 0;
 -      x = x0 + w2;
 -    }
--
++  gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
++  gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
+ 
 -  if (y0 < 0)
 -    {
 -      y0 = 0;
 -      y = y0 + h2;
 -    }
--
++  ghid_pan_fixup ();
+ 
 -  gport->view_x0 = x0;
 -  gport->view_y0 = y0;
 +  /* Now move the mouse pointer to the place where the board location
@@ -201,7 +209,7 @@ index 83df23f..9e312e6 100644
 +   */
  
 -  ghid_pan_fixup ();
-+  ghid_pcb_to_event_coords (x, y, &widget_x, &widget_y);
++  ghid_pcb_to_event_coords (pcb_x, pcb_y, &widget_x, &widget_y);
 +  gdk_window_get_origin (gport->drawing_area->window, &offset_x, &offset_y);
  
 -  /* Move the pointer to the center of the window, but only if it's
