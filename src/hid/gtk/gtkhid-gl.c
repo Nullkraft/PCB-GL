@@ -38,7 +38,15 @@ static hidGC current_gc = NULL;
 */
 #define USE_GC(gc) if (!use_gc(gc)) return
 
+#define SIDE_X(x)   ((priv->view.flip_x ? PCB->MaxWidth  - (x) : (x)))
+#define SIDE_Y(y)   ((priv->view.flip_y ? PCB->MaxHeight - (y) : (y)))
+
 static int cur_mask = -1;
+
+typedef struct view_data {
+  bool flip_x;
+  bool flip_y;
+} view_data;
 
 typedef struct render_priv {
   GdkGLConfig *glconfig;
@@ -47,6 +55,8 @@ typedef struct render_priv {
   int subcomposite_stencil_bit;
   char *current_colorname;
   double current_alpha_mult;
+
+  view_data view;
 
   /* Feature for leading the user to a particular location */
   guint lead_user_timeout;
@@ -74,6 +84,32 @@ hid_gc_struct;
 
 static void draw_lead_user (render_priv *priv);
 
+/* Px converts view->pcb, Vx converts pcb->view */
+static inline int
+Vz (Coord z)
+{
+  return z / gport->zoom + 0.5;
+}
+
+static inline Coord
+Px (int x)
+{
+  render_priv *priv = gport->render_priv;
+  Coord rv = x * gport->zoom + gport->view_x0;
+  if (priv->view.flip_x)
+    rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
+  return  rv;
+}
+
+static inline Coord
+Py (int y)
+{
+  render_priv *priv = gport->render_priv;
+  Coord rv = y * gport->zoom + gport->view_y0;
+  if (priv->view.flip_y)
+    rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
+  return  rv;
+}
 
 static void
 start_subcomposite (void)
@@ -743,6 +779,7 @@ draw_crosshair (gint x, gint y, gint z)
 void
 ghid_show_crosshair (gboolean paint_new_location)
 {
+  render_priv *priv = gport->render_priv;
   gint x, y, z;
   gboolean draw_markers;
   int vcw = VCW * gport->zoom;
@@ -933,13 +970,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
 
-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-            (ghid_flip_y ? -1. : 1.) / port->zoom,
-            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-                             -port->view_x0,
-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-                             -port->view_y0, 0);
+  glScalef ((priv->view.flip_x ? -1. : 1.) / port->zoom,
+            (priv->view.flip_y ? -1. : 1.) / port->zoom,
+            ((priv->view.flip_x == priv->view.flip_y) ? 1. : -1.) / port->zoom);
+  glTranslatef (priv->view.flip_x ?  port->view_x0 - PCB->MaxWidth  :
+                               -port->view_x0,
+                priv->view.flip_y ?  port->view_y0 - PCB->MaxHeight :
+                               -port->view_y0, 0);
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (port->offlimits_color.red / 65535.,
@@ -1020,6 +1057,7 @@ gboolean
 ghid_pinout_preview_expose (GtkWidget *widget,
                             GdkEventExpose *ev)
 {
+  render_priv *priv = gport->render_priv;
   GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
   GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
   GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
@@ -1092,12 +1130,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
-            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
-  glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
-                             -gport->view_x0,
-                ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
-                             -gport->view_y0, 0);
+  glScalef ((priv->view.flip_x ? -1. : 1.) / gport->zoom,
+            (priv->view.flip_y ? -1. : 1.) / gport->zoom, 1);
+  glTranslatef (priv->view.flip_x ?  gport->view_x0 - PCB->MaxWidth  :
+                               -gport->view_x0,
+                priv->view.flip_y ?  gport->view_y0 - PCB->MaxHeight :
+                               -gport->view_y0, 0);
   hid_expose_callback (&ghid_hid, NULL, &pinout->element);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
@@ -1126,6 +1164,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
 GdkPixmap *
 ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
 {
+  render_priv *priv = gport->render_priv;
   GdkGLConfig *glconfig;
   GdkPixmap *pixmap;
   GdkGLPixmap *glpixmap;
@@ -1164,9 +1203,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   gport->height = height;
   gport->view_width = width * gport->zoom;
   gport->view_height = height * gport->zoom;
-  gport->view_x0 = ghid_flip_x ? PCB->MaxWidth - cx : cx;
+  gport->view_x0 = priv->view.flip_x ? PCB->MaxWidth - cx : cx;
   gport->view_x0 -= gport->view_height / 2;
-  gport->view_y0 = ghid_flip_y ? PCB->MaxHeight - cy : cy;
+  gport->view_y0 = priv->view.flip_y ? PCB->MaxHeight - cy : cy;
   gport->view_y0 -= gport->view_width  / 2;
 
   /* make GL-context "current" */
@@ -1203,12 +1242,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
-            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
-  glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
-                             -gport->view_x0,
-                ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
-                             -gport->view_y0, 0);
+  glScalef ((priv->view.flip_x ? -1. : 1.) / gport->zoom,
+            (priv->view.flip_y ? -1. : 1.) / gport->zoom, 1);
+  glTranslatef (priv->view.flip_x ?  gport->view_x0 - PCB->MaxWidth  :
+                               -gport->view_x0,
+                priv->view.flip_y ?  gport->view_y0 - PCB->MaxHeight :
+                               -gport->view_y0, 0);
   region.X1 = MIN(Px(0), Px(gport->width + 1));
   region.Y1 = MIN(Py(0), Py(gport->height + 1));
   region.X2 = MAX(Px(0), Px(gport->width + 1));
@@ -1243,6 +1282,7 @@ HID *
 ghid_request_debug_draw (void)
 {
   GHidPort *port = gport;
+  render_priv *priv = port->render_priv;
   GtkWidget *widget = port->drawing_area;
 
   ghid_start_drawing (port);
@@ -1263,13 +1303,13 @@ ghid_request_debug_draw (void)
   glDisable (GL_STENCIL_TEST);
 
   glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-            (ghid_flip_y ? -1. : 1.) / port->zoom,
-            (ghid_flip_x == ghid_flip_y) ? 1. : -1.);
-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-                             -port->view_x0,
-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-                             -port->view_y0, 0);
+  glScalef ((priv->view.flip_x ? -1. : 1.) / port->zoom,
+            (priv->view.flip_y ? -1. : 1.) / port->zoom,
+            (priv->view.flip_x == priv->view.flip_y) ? 1. : -1.);
+  glTranslatef (priv->view.flip_x ?  port->view_x0 - PCB->MaxWidth  :
+                               -port->view_x0,
+                priv->view.flip_y ?  port->view_y0 - PCB->MaxHeight :
+                               -port->view_y0, 0);
 
   return &ghid_hid;
 }
@@ -1300,6 +1340,8 @@ ghid_finish_debug_draw (void)
 bool
 ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
 {
+  render_priv *priv = gport->render_priv;
+
   *pcb_x = EVENT_TO_PCB_X (event_x);
   *pcb_y = EVENT_TO_PCB_Y (event_y);
 
@@ -1309,6 +1351,8 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
 bool
 ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
 {
+  render_priv *priv = gport->render_priv;
+
   *event_x = DRAW_X (pcb_x);
   *event_y = DRAW_Y (pcb_y);
 
@@ -1318,6 +1362,8 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
 void
 ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 {
+  render_priv *priv = gport->render_priv;
+
   gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
   gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
 
@@ -1356,6 +1402,7 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 void
 ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 {
+  render_priv *priv = gport->render_priv;
   double min_zoom, max_zoom;
   double xtmp, ytmp;
 
@@ -1406,13 +1453,14 @@ ghid_zoom_view_fit (void)
 void
 ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 {
+  render_priv *priv = gport->render_priv;
   int widget_x, widget_y;
 
   /* Work out where on the screen the flip point is */
   ghid_pcb_to_event_coords (center_x, center_y, &widget_x, &widget_y);
 
-  ghid_flip_x = ghid_flip_x != flip_x;
-  ghid_flip_y = ghid_flip_y != flip_y;
+  priv->view.flip_x = priv->view.flip_x != flip_x;
+  priv->view.flip_y = priv->view.flip_y != flip_y;
 
   /* Pan the board so the center location remains in the same place */
   ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
