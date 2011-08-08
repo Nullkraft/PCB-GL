@@ -1,13 +1,12 @@
-Bottom: c88643d73161fd843c0a773f44ce588ba0864d59
+Bottom: b22cf82204edb7f072cb9aef7af802da567e0d4c
 Top:    dd0769307a5275887ba11fbf498e243b8cbb0e3a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-07-24 19:43:51 +0100
+Date:   2011-08-08 23:07:05 +0100
 
 hid/gtk: Separate out board flipping operations into render specific code
 
 As the different renderers may do different things with the board view,
 it is not possible to save the flip state in the PCB settings any more.
-
 
 ---
 
@@ -587,7 +586,7 @@ index 5c554fa..b341d3f 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 9e312e6..c106690 100644
+index ed28ca1..c106690 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -29,54 +29,6 @@
@@ -739,7 +738,20 @@ index 9e312e6..c106690 100644
  /* ------------------------------------------------------------ */
  
  void
-@@ -1153,7 +1044,7 @@ PCBChanged (int argc, char **argv, int x, int y)
+@@ -332,11 +223,7 @@ ghid_set_crosshair (int x, int y, int action)
+       widget_y = pointer_y - offset_y;
+ 
+       ghid_event_to_pcb_coords (widget_x, widget_y, &pcb_x, &pcb_y);
+-
+-      gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
+-      gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
+-
+-      ghid_pan_fixup ();
++      ghid_pan_view_abs (pcb_x, pcb_y, widget_x, widget_y);
+ 
+       /* Just in case we couldn't pan the board the whole way,
+        * we warp the pointer to where the crosshair DID land.
+@@ -1157,7 +1044,7 @@ PCBChanged (int argc, char **argv, int x, int y)
    RouteStylesChanged (0, NULL, 0, 0);
    ghid_port_ranges_scale (TRUE);
    ghid_port_ranges_pan (0, 0, FALSE);
@@ -748,7 +760,7 @@ index 9e312e6..c106690 100644
    ghid_port_ranges_changed ();
    ghid_sync_with_new_layout ();
    return 0;
-@@ -1366,84 +1257,48 @@ side'' of the board.
+@@ -1370,84 +1257,48 @@ side'' of the board.
  static int
  SwapSides (int argc, char **argv, int x, int y)
  {
@@ -861,7 +873,37 @@ index 9e312e6..c106690 100644
  }
  
  /* ------------------------------------------------------------ */
-@@ -1702,11 +1557,12 @@ CursorAction(int argc, char **argv, int x, int y)
+@@ -1599,7 +1450,7 @@ currently within the window already.
+ %end-doc */
+ 
+ static int
+-Center(int argc, char **argv, int pcb_x, int pcb_y)
++Center(int argc, char **argv, int x, int y)
+ {
+   GdkDisplay *display;
+   GdkScreen *screen;
+@@ -1614,10 +1465,7 @@ Center(int argc, char **argv, int pcb_x, int pcb_y)
+   widget_x = gport->width / 2;
+   widget_y = gport->height / 2;
+ 
+-  gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
+-  gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
+-
+-  ghid_pan_fixup ();
++  ghid_pan_view_abs (x, y, widget_x, widget_y);
+ 
+   /* Now move the mouse pointer to the place where the board location
+    * actually ended up.
+@@ -1625,7 +1473,7 @@ Center(int argc, char **argv, int pcb_x, int pcb_y)
+    * XXX: Should only do this if we confirm we are inside our window?
+    */
+ 
+-  ghid_pcb_to_event_coords (pcb_x, pcb_y, &widget_x, &widget_y);
++  ghid_pcb_to_event_coords (x, y, &widget_x, &widget_y);
+   gdk_window_get_origin (gport->drawing_area->window, &offset_x, &offset_y);
+ 
+   pointer_x = offset_x + widget_x;
+@@ -1709,11 +1557,12 @@ CursorAction(int argc, char **argv, int x, int y)
      AFAIL (cursor);
  
    dx = GetValueEx (argv[1], argv[3], NULL, extra_units_x, "");
@@ -878,7 +920,7 @@ index 9e312e6..c106690 100644
  
    EventMoveCrosshair (Crosshair.X + dx, Crosshair.Y + dy);
    gui->set_crosshair (Crosshair.X, Crosshair.Y, pan_warp);
-@@ -2086,24 +1942,6 @@ HID_Action ghid_main_action_list[] = {
+@@ -2093,24 +1942,6 @@ HID_Action ghid_main_action_list[] = {
  REGISTER_ACTIONS (ghid_main_action_list)
  
  
