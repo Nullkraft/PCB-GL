@@ -52,7 +52,6 @@ ghid_pan_fixup ()
   if (gport->view_width  > PCB->MaxWidth  &&
       gport->view_height > PCB->MaxHeight)
     {
-      ghid_zoom_view_fit ();
       zoom_fit ();
       return;
     }
