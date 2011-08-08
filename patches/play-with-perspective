@@ -1,7 +1,7 @@
-Bottom: fadec0b765f444de6a0871a010650e60be962311
-Top:    e1db8a36ea03abcc92c131ad534da6057c7b65f1
+Bottom: 5fa33fdfb15f0ba3bc3cb47ea0e9d1d12c474e4b
+Top:    f1ffa0414e4db207a502a4f31b4dd36e57efd642
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-08 00:22:43 +0100
+Date:   2011-08-08 23:53:40 +0100
 
 Play with perspective
 
@@ -76,7 +76,7 @@ index e5c43e1..1ea5d58 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index fc96c2a..1cc3e45 100644
+index bfddf94..c06d41f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -33,6 +33,8 @@
@@ -490,9 +490,7 @@ index fc96c2a..1cc3e45 100644
 +    float ez = last_modelview_matrix[0][2] * fvx + last_modelview_matrix[1][2] * fvy + last_modelview_matrix[2][2] * fvz + last_modelview_matrix[3][2];
 +    /* We don't care about ew, as we don't use anything other than 1 for homogeneous coordinates at this stage */
 +    /* float ew = last_modelview_matrix[0][3] * fvx + last_modelview_matrix[1][3] * fvy + last_modelview_matrix[2][3] * fvz + last_modelview_matrix[3][3]; */
- 
--  *vx = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
--  *vy = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
++
 +#if 0
 +    if (-ez < near)
 +      printf ("ez is closer than the near clipping plane, ez = %f\n", ez);
@@ -503,7 +501,9 @@ index fc96c2a..1cc3e45 100644
 +      // printf ("EZ IS BEHIND THE CAMERA !! ez = %f\n", ez);
 +      return false;
 +    }
-+
+ 
+-  *vx = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
+-  *vy = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
 +    return true;
 +  }
  }
@@ -517,3 +517,5 @@ index fc96c2a..1cc3e45 100644
 -  return true;
 +  return ghid_unproject_to_z_plane (event_x, event_y, global_depth, pcb_x, pcb_y);
  }
+ 
+ bool
