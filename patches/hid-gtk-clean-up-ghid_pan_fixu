@@ -1,5 +1,5 @@
 Bottom: b22cf82204edb7f072cb9aef7af802da567e0d4c
-Top:    b22cf82204edb7f072cb9aef7af802da567e0d4c
+Top:    3a760e0e1523d0afc2229c36d25bdc3ae96b27e5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-08 23:13:02 +0100
 
@@ -8,4 +8,48 @@ hid/gtk: Clean up ghid_pan_fixup ()
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index ed28ca1..36c7b7c 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -40,31 +40,19 @@ void
+ ghid_pan_fixup ()
+ {
+ 
+-  /*
+-   * don't pan so far to the right that we see way past the right 
+-   * edge of the board.
+-   */
+-  if (gport->view_x0 > PCB->MaxWidth - gport->view_width)
+-    gport->view_x0 = PCB->MaxWidth - gport->view_width;
+-
+-  /*
+-   * don't pan so far down that we see way past the bottom edge of
+-   * the board.
+-   */
+-  if (gport->view_y0 > PCB->MaxHeight - gport->view_height)
+-    gport->view_y0 = PCB->MaxHeight - gport->view_height;
+-
+-  /* don't view above or to the left of the board... ever */
+-  if (gport->view_x0 < 0)
+-    gport->view_x0 = 0;
++  /* Don't pan so far to the right or bottom that we see past the board edge */
++  gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
++  gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
+ 
+-   if (gport->view_y0 < 0)
+-    gport->view_y0 = 0;
++  /* Don't view above or to the left of the board... ever */
++  gport->view_x0 = MAX (0, gport->view_x0);
++  gport->view_y0 = MAX (0, gport->view_y0);
+ 
+-  /* if we can see the entire board and some, then zoom to fit */
+-  if (gport->view_width > PCB->MaxWidth &&
++  /* If we can see the entire board and some, then zoom to fit */
++  if (gport->view_width  > PCB->MaxWidth  &&
+       gport->view_height > PCB->MaxHeight)
+     {
++      ghid_zoom_view_fit ();
+       zoom_fit ();
+       return;
+     }
