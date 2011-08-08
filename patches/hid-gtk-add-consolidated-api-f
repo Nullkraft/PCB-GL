@@ -1,5 +1,5 @@
 Bottom: b280f603a328d12cd2e9bb987864cd99cdee737b
-Top:    06dbefb6610910561912eb55706c52616e84739b
+Top:    caf1d753e2f9e8c5bb049168c99825ee253eb1e5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-08 23:23:32 +0100
 
@@ -9,18 +9,16 @@ hid/gtk: Add consolidated API for zooming / panning
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index e9b5b3e..4b66908 100644
+index e9b5b3e..8b11e70 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1349,6 +1349,110 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1349,6 +1349,105 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
    return true;
  }
  
 +void
 +ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 +{
-+  render_priv *priv = gport->render_priv;
-+
 +  gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
 +  gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
 +
@@ -59,7 +57,6 @@ index e9b5b3e..4b66908 100644
 +void
 +ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 +{
-+  render_priv *priv = gport->render_priv;
 +  double min_zoom, max_zoom;
 +  double xtmp, ytmp;
 +
@@ -110,10 +107,8 @@ index e9b5b3e..4b66908 100644
 +void
 +ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 +{
-+  render_priv *priv = gport->render_priv;
-+
-+  priv->view.flip_x = flip_x ? ! priv->view.flip_x : priv->view.flip_x;
-+  priv->view.flip_y = flip_y ? ! priv->view.flip_y : priv->view.flip_y;
++  ghid_flip_x = ghid_flip_x != flip_x;
++  ghid_flip_y = ghid_flip_x != flip_y;
 +
 +  /* XXX: PAN THE BOARD SO THE CENTER LOCATION REMAINS IN THE SAME PLACE */
 +
