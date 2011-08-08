@@ -510,7 +510,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
   SymbolTypePtr symbol = FontPtr->Symbol;
   unsigned char *s = (unsigned char *) Text->TextString;
   BDimension minThick = 0;
-  int i;
+  GList *i;
   int space = 0;
 
   LocationType minx=0, miny=0, maxx=0, maxy=0;
@@ -531,9 +531,9 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
     {
       if (*s <= MAX_FONTPOSITION && symbol[*s].Valid)
 	{
-	  LineTypePtr line = symbol[*s].Line;
-	  for (i = 0; i < symbol[*s].LineN; line++, i++)
+	  for (i = symbol[*s].Line; i != NULL; i = g_list_next (i))
 	    {
+              LineType *line = i->data;
 	      int t = line->Thickness / 4;
 	      if (t < minThick)
 		t = minThick;
@@ -784,9 +784,9 @@ CenterDisplay (LocationType X, LocationType Y)
 void
 SetFontInfo (FontTypePtr Ptr)
 {
-  Cardinal i, j;
+  Cardinal i;
+  GList *iter;
   SymbolTypePtr symbol;
-  LineTypePtr line;
   LocationType totalminy = MAX_COORD;
 
   /* calculate cell with and height (is at least DEFAULT_CELLSIZE)
@@ -805,8 +805,9 @@ SetFontInfo (FontTypePtr Ptr)
 
       minx = miny = MAX_COORD;
       maxx = maxy = 0;
-      for (line = symbol->Line, j = symbol->LineN; j; j--, line++)
+      for (iter = symbol->Line ; iter != NULL; iter = g_list_next (iter))
         {
+          LineType *line = iter->data;
           minx = MIN (minx, line->Point1.X);
           miny = MIN (miny, line->Point1.Y);
           minx = MIN (minx, line->Point2.X);
@@ -818,8 +819,11 @@ SetFontInfo (FontTypePtr Ptr)
         }
 
       /* move symbol to left edge */
-      for (line = symbol->Line, j = symbol->LineN; j; j--, line++)
-        MOVE_LINE_LOWLEVEL (line, -minx, 0);
+      for (iter = symbol->Line; iter != NULL; iter = g_list_next (iter))
+        {
+          LineType *line = iter->data;
+          MOVE_LINE_LOWLEVEL (line, -minx, 0);
+        }
 
       /* set symbol bounding box with a minimum cell size of (1,1) */
       symbol->Width = maxx - minx + 1;
@@ -836,8 +840,11 @@ SetFontInfo (FontTypePtr Ptr)
     if (symbol->Valid)
       {
         symbol->Height -= totalminy;
-        for (line = symbol->Line, j = symbol->LineN; j; j--, line++)
-          MOVE_LINE_LOWLEVEL (line, 0, -totalminy);
+        for (iter = symbol->Line; iter != NULL; iter = g_list_next (iter))
+          {
+            LineType *line = iter->data;
+            MOVE_LINE_LOWLEVEL (line, 0, -totalminy);
+          }
       }
 
   /* setup the box for the default symbol */
@@ -1757,8 +1764,11 @@ GetGridLockCoordinates (int type, void *ptr1,
       *y = ((ElementTypePtr) ptr2)->MarkY;
       break;
     case POLYGON_TYPE:
-      *x = ((PolygonTypePtr) ptr2)->Points[0].X;
-      *y = ((PolygonTypePtr) ptr2)->Points[0].Y;
+      {
+        PointType *point0 = ((PolygonTypePtr) ptr2)->Points->data;
+        *x = point0->X;
+        *y = point0->Y;
+      }
       break;
 
     case LINEPOINT_TYPE:
@@ -2041,10 +2051,13 @@ pcb_author (void)
 char *
 AttributeGetFromList (AttributeListType *list, char *name)
 {
-  int i;
-  for (i=0; i<list->Number; i++)
-    if (strcmp (name, list->List[i].name) == 0)
-      return list->List[i].value;
+  GList *i;
+  for (i = list->List; i != NULL; i = g_list_next (i))
+    {
+      AttributeType *attr = i->data;
+      if (strcmp (name, attr->name) == 0)
+        return attr->value;
+    }
   return NULL;
 }
 
