@@ -1,5 +1,5 @@
-Bottom: 7c55822259c1008550e0a55cb0c0f1e79e3a20bf
-Top:    56435a0f68ca9e5420ea6ed795709979a0a86021
+Bottom: e0961e3e0b7651b8b6f24d922372ab4a272b3fd9
+Top:    ca599aca7b94a0c4545e6eb6f0e80e10ce0a494a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-08 00:22:32 +0100
 
@@ -27,7 +27,7 @@ index d91a91b..cb361ab 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 83df23f..f22c973 100644
+index a4cd443..4614844 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -30,7 +30,7 @@ RCSID ("$Id$");
@@ -39,7 +39,7 @@ index 83df23f..f22c973 100644
  static void zoom_fit (void);
  
  int ghid_flip_x = 0, ghid_flip_y = 0;
-@@ -211,7 +211,7 @@ zoom_to (double new_zoom, int x, int y)
+@@ -198,7 +198,7 @@ zoom_to (double new_zoom, int x, int y)
    ghid_set_status_line_label ();
  }
  
@@ -206,7 +206,7 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 82faeed..28dac61 100644
+index 5a78d84..780394b 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -143,6 +143,8 @@ typedef struct
