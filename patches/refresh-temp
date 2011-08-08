@@ -1,0 +1,68 @@
+Bottom: 1a1855418b789d7eed4f1d83d55e8d24dd921a9a
+Top:    06dbefb6610910561912eb55706c52616e84739b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-08 23:40:03 +0100
+
+Refresh of hid-gtk-add-consolidated-api-f
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index a6dfb48..e287313 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1318,8 +1318,6 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+ void
+ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+ {
+-  render_priv *priv = gport->render_priv;
+-
+   gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
+   gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
+ 
+@@ -1358,7 +1356,6 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+ void
+ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+ {
+-  render_priv *priv = gport->render_priv;
+   double min_zoom, max_zoom;
+   double xtmp, ytmp;
+ 
+@@ -1409,10 +1406,8 @@ ghid_zoom_view_fit (void)
+ void
+ ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
+ {
+-  render_priv *priv = gport->render_priv;
+-
+-  priv->view.flip_x = flip_x ? ! priv->view.flip_x : priv->view.flip_x;
+-  priv->view.flip_y = flip_y ? ! priv->view.flip_y : priv->view.flip_y;
++  ghid_flip_x = ghid_flip_x != flip_x;
++  ghid_flip_y = ghid_flip_y != flip_y;
+ 
+   /* XXX: PAN THE BOARD SO THE CENTER LOCATION REMAINS IN THE SAME PLACE */
+ 
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 872ee52..f3ae149 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -29,6 +29,8 @@
+ RCSID ("$Id$");
+ 
+ 
++bool ghid_flip_x = false, ghid_flip_y = false;
++
+ /* ------------------------------------------------------------ */
+ 
+ static const char zoom_syntax[] =
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 9bebe8f..fc44afb 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -61,7 +61,7 @@
+ #define	FROM_PCB_UNITS(v)	(Settings.grid_units_mm ? COORD_TO_MM(v) : COORD_TO_MIL(v))
+ #define	TO_PCB_UNITS(v)		(Settings.grid_units_mm ? MM_TO_COORD(v) : MIL_TO_COORD(v))
+ 
+-extern int ghid_flip_x, ghid_flip_y;
++extern bool ghid_flip_x, ghid_flip_y;
+ #define SIDE_X(x)   ((ghid_flip_x ? PCB->MaxWidth - (x) : (x)))
+ #define SIDE_Y(y)   ((ghid_flip_y ? PCB->MaxHeight - (y) : (y)))
