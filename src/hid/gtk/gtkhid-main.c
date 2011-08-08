@@ -29,6 +29,8 @@
 RCSID ("$Id$");
 
 
+bool ghid_flip_x = false, ghid_flip_y = false;
+
 /* ------------------------------------------------------------ */
 
 static const char zoom_syntax[] =
