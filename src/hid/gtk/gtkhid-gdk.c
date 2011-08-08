@@ -1352,8 +1352,6 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
 void
 ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 {
-  render_priv *priv = gport->render_priv;
-
   gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
   gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
 
@@ -1392,7 +1390,6 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 void
 ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 {
-  render_priv *priv = gport->render_priv;
   double min_zoom, max_zoom;
   double xtmp, ytmp;
 
@@ -1443,10 +1440,8 @@ ghid_zoom_view_fit (void)
 void
 ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 {
-  render_priv *priv = gport->render_priv;
-
-  priv->view.flip_x = flip_x ? ! priv->view.flip_x : priv->view.flip_x;
-  priv->view.flip_y = flip_y ? ! priv->view.flip_y : priv->view.flip_y;
+  ghid_flip_x = ghid_flip_x != flip_x;
+  ghid_flip_y = ghid_flip_x != flip_y;
 
   /* XXX: PAN THE BOARD SO THE CENTER LOCATION REMAINS IN THE SAME PLACE */
 
