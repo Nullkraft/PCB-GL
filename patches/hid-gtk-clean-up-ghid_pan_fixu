@@ -1,5 +1,5 @@
 Bottom: b22cf82204edb7f072cb9aef7af802da567e0d4c
-Top:    3a760e0e1523d0afc2229c36d25bdc3ae96b27e5
+Top:    b280f603a328d12cd2e9bb987864cd99cdee737b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-08 23:13:02 +0100
 
@@ -9,10 +9,10 @@ hid/gtk: Clean up ghid_pan_fixup ()
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index ed28ca1..36c7b7c 100644
+index ed28ca1..a4cd443 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -40,31 +40,19 @@ void
+@@ -40,29 +40,16 @@ void
  ghid_pan_fixup ()
  {
  
@@ -49,7 +49,4 @@ index ed28ca1..36c7b7c 100644
 +  if (gport->view_width  > PCB->MaxWidth  &&
        gport->view_height > PCB->MaxHeight)
      {
-+      ghid_zoom_view_fit ();
        zoom_fit ();
-       return;
-     }
