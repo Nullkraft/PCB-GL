@@ -1000,32 +1000,6 @@ ghid_screen_update (void)
 }
 
 static int
-element_callback (const BoxType * b, void *cl)
-{
-  ElementTypePtr element = (ElementTypePtr) b;
-  int *side = cl;
-
-  if (ON_SIDE (element, *side))
-    DrawElementPackage (element);
-  return 1;
-}
-
-static int
-name_callback (const BoxType * b, void *cl)
-{
-  TextTypePtr text = (TextTypePtr) b;
-  ElementTypePtr element = (ElementTypePtr) text->Element;
-  int *side = cl;
-
-  if (TEST_FLAG (HIDENAMEFLAG, element))
-    return 0;
-
-  if (ON_SIDE (element, *side))
-    DrawElementName (element);
-  return 0;
-}
-
-static int
 EMark_callback (const BoxType * b, void *cl)
 {
   ElementTypePtr element = (ElementTypePtr) b;
@@ -1782,24 +1756,20 @@ ghid_draw_everything (BoxTypePtr drawn_area)
 
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
-    if (PCB->ElementOn) {
-      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-      dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
-    }
-    if (global_view_2d) {
+    DrawSilk (side, drawn_area);
+
+    if (global_view_2d)
       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-    } else {
-      /* Draw the reverse-side solder mask if turned on */
-      if (gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
-                          SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
+
+    gui->end_layer ();
+
+    /* Draw the reverse-side solder mask if turned on */
+    if (!global_view_2d &&
+        gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
+                        SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
         DrawMask (side, drawn_area);
         gui->end_layer ();
       }
-      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
-    }
-    if (PCB->ElementOn)
-      r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
-    gui->end_layer ();
   }
 
   /* draw all layers in layerstack order */
