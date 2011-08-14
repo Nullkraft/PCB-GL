@@ -1,7 +1,7 @@
-Bottom: b280f603a328d12cd2e9bb987864cd99cdee737b
-Top:    2d929089be25a0e5466392a71c3924856794e662
+Bottom: d7e2904a9d9c530745827e5b1da0b5c93c5d7c28
+Top:    765680b2386630263776e93e473fa8a692b3335a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-08 23:51:47 +0100
+Date:   2011-08-14 23:52:37 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -9,10 +9,10 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index cb2a7bf..39de1a5 100644
+index 30d9745..5280a42 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1898,37 +1898,39 @@ static int
+@@ -1903,37 +1903,39 @@ static int
  ActionDumpLibrary (int argc, char **argv, int x, int y)
  {
    int i, j;
@@ -70,7 +70,7 @@ index cb2a7bf..39de1a5 100644
  	    }
  	}
      }
-@@ -3262,6 +3264,8 @@ static const char renumber_help[] =
+@@ -3267,6 +3269,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, int x, int y)
  {
@@ -79,7 +79,7 @@ index cb2a7bf..39de1a5 100644
    bool changed = false;
    ElementTypePtr *element_list;
    ElementTypePtr *locked_element_list;
-@@ -3599,6 +3603,7 @@ ActionRenumber (int argc, char **argv, int x, int y)
+@@ -3604,6 +3608,7 @@ ActionRenumber (int argc, char **argv, int x, int y)
    free (element_list);
    free (cnt_list);
    return 0;
@@ -87,7 +87,7 @@ index cb2a7bf..39de1a5 100644
  }
  
  
-@@ -4601,16 +4606,15 @@ ActionChangeName (int argc, char **argv, int x, int y)
+@@ -4606,16 +4611,15 @@ ActionChangeName (int argc, char **argv, int x, int y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index cb2a7bf..39de1a5 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatTypePtr) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6922,22 +6926,26 @@ find_element_by_refdes (char *refdes)
+@@ -6926,22 +6930,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListTypePtr list, const char *name)
  {
@@ -431,10 +431,10 @@ index 4091389..b5f1aee 100644
    Dest->MarkX = Src->MarkX + dx;
    Dest->MarkY = Src->MarkY + dy;
 diff --git a/src/create.c b/src/create.c
-index e4eeb0b..1bf5627 100644
+index cd31935..a55936b 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -915,25 +915,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
+@@ -917,25 +917,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
  		       LocationType X1, LocationType Y1,
  		       LocationType X2, LocationType Y2, BDimension Thickness)
  {
@@ -465,7 +465,7 @@ index e4eeb0b..1bf5627 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1002,16 +996,17 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
+@@ -1004,16 +998,17 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
  /* ---------------------------------------------------------------------------
   * Add an attribute to a list.
   */
@@ -675,7 +675,7 @@ index 2575a33..4145f08 100644
        w = maxx + symbol->Delta + ox;
        CreateDrawnLineOnLayer (lwidth,
 diff --git a/src/global.h b/src/global.h
-index 94f4fae..536ca78 100644
+index 0ae5d22..3f8792b 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -220,8 +220,8 @@ typedef struct
@@ -708,7 +708,7 @@ index 94f4fae..536ca78 100644
  
  };
  
-@@ -362,10 +360,9 @@ typedef struct
+@@ -368,10 +366,9 @@ typedef struct
   */
  typedef struct			/* a single symbol */
  {
@@ -721,7 +721,7 @@ index 94f4fae..536ca78 100644
    Coord Width, Height,		/* size of cell */
      Delta;			/* distance to next symbol */
  } SymbolType, *SymbolTypePtr;
-@@ -398,21 +395,18 @@ typedef struct			/* holds drill information */
+@@ -404,21 +401,18 @@ typedef struct			/* holds drill information */
  {
    Coord DrillSize;		/* this drill's diameter */
    Cardinal ElementN,		/* the number of elements using this drill size */
@@ -748,7 +748,7 @@ index 94f4fae..536ca78 100644
  } DrillInfoType, *DrillInfoTypePtr;
  
  typedef struct
-@@ -450,9 +444,8 @@ typedef struct
+@@ -456,9 +450,8 @@ typedef struct
    char *Name,			/* name of the menu entry */
     *directory,			/* Directory name library elements are from */
     *Style;			/* routing style */
@@ -760,7 +760,7 @@ index 94f4fae..536ca78 100644
    char flag;			/* used by the netlist window to enable/disable nets */
    char internal;		/* if set, this is an internal-only entry, not
  				   part of the global netlist. */
-@@ -461,8 +454,7 @@ typedef struct
+@@ -467,8 +460,7 @@ typedef struct
  typedef struct
  {
    Cardinal MenuN;               /* number of objects */
@@ -770,7 +770,7 @@ index 94f4fae..536ca78 100644
  } LibraryType, *LibraryTypePtr;
  
  
-@@ -563,9 +555,8 @@ typedef struct			/* currently attached object */
+@@ -569,9 +561,8 @@ typedef struct			/* currently attached object */
    void *Ptr1,			/* three pointers to data, see */
     *Ptr2,			/* search.c */
     *Ptr3;
@@ -782,7 +782,7 @@ index 94f4fae..536ca78 100644
  } AttachedObjectType, *AttachedObjectTypePtr;
  
  enum crosshair_shape
-@@ -727,38 +718,33 @@ typedef struct			/* holds a connection */
+@@ -732,38 +723,33 @@ typedef struct			/* holds a connection */
  
  typedef struct			/* holds a net of connections */
  {
@@ -1126,7 +1126,7 @@ index e7612e9..104ca29 100644
    qsort (rectLeft, boxlist->BoxN, sizeof (*rectLeft), compareleft);
    qsort (rectRight, boxlist->BoxN, sizeof (*rectRight), compareright);
 diff --git a/src/macro.h b/src/macro.h
-index 695d3b6..aa1d466 100644
+index 025351f..322000d 100644
 --- a/src/macro.h
 +++ b/src/macro.h
 @@ -14,7 +14,7 @@
@@ -1299,7 +1299,7 @@ index 695d3b6..aa1d466 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index 3dc87c6..a3d8312 100644
+index 0188404..5e88272 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -510,7 +510,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
@@ -2092,7 +2092,7 @@ index 1feb2ef..d755cce 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/mymem.h b/src/mymem.h
-index 6b572d8..b7bbd16 100644
+index cbfd47e..88e53ff 100644
 --- a/src/mymem.h
 +++ b/src/mymem.h
 @@ -38,22 +38,6 @@
