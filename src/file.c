@@ -408,6 +408,9 @@ LoadPCB (char *Filename)
   /* mark the default font invalid to know if the file has one */
   newPCB->Font.Valid = false;
 
+  /* Hack, load the mapping file */
+  RefdesMapInit ();
+
   /* new data isn't added to the undo list */
   if (!ParsePCB (PCB, Filename))
     {
