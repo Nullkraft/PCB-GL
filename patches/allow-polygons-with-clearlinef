@@ -1,7 +1,7 @@
-Bottom: 284186ed2cb6d0c51fcf790b6a65c3e402bdc8e9
-Top:    2827f66b1518b53d60514f92dbbab43d7965f4cf
+Bottom: ba4ca5793e2e49785496362557bd358361422208
+Top:    32b715d1ecc0507a3a3eb15d1f38f119f616828a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-08 23:53:45 +0100
+Date:   2011-08-15 00:01:33 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -48,7 +48,7 @@ index 6ff6132..de2499a 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index c65c534..f83dd5e 100644
+index 70e5470..d13e0db 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -124,6 +124,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
@@ -157,7 +157,7 @@ index c65c534..f83dd5e 100644
   */
  static void *
 diff --git a/src/change.h b/src/change.h
-index 7bae706..420f780 100644
+index 94a0e21..d6e65a1 100644
 --- a/src/change.h
 +++ b/src/change.h
 @@ -57,7 +57,7 @@
@@ -216,7 +216,7 @@ index 49177e9..41c2b1d 100644
      {
        DrawPolygon (Layer, Polygon);
 diff --git a/src/polygon.c b/src/polygon.c
-index 5875a0f..72a1660 100644
+index 8aa1cb1..1eec95b 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -867,6 +867,20 @@ SubtractPad (PadType * pad, PolygonType * p)
