@@ -1,7 +1,7 @@
-Bottom: abe7b6cde819b1d0aab768be2afe3e4a6ed2cbf0
-Top:    75d1c68039c4ba4ee9942e44ab36085e1a8f3009
+Bottom: 758a2ce090231e237a4a80b0be252b260a934e52
+Top:    4f0cfb4b15d503cf3f2d1788678722c51fc40c77
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-08 23:51:58 +0100
+Date:   2011-08-14 23:52:46 +0100
 
 Demo of exporter specific export routine
 
@@ -40,7 +40,7 @@ index 05ebad2..3293c1b 100644
  {
    int i, rv = 1;
 diff --git a/src/draw.h b/src/draw.h
-index 5224adc..4d754dd 100644
+index 4798962..3ec4d5b 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -71,6 +71,9 @@ void EraseElementName (ElementTypePtr);
@@ -54,7 +54,7 @@ index 5224adc..4d754dd 100644
  void DrawSilk (int side, const BoxType *);
  void DrawPaste (int side, BoxType *);
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 543b99f..4265824 100644
+index d7ef716..8901eff 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -1,6 +1,11 @@
@@ -69,7 +69,7 @@ index 543b99f..4265824 100644
  
  static void
  fill_contour (hidGC gc, PLINE *pl)
-@@ -471,3 +476,225 @@ common_draw_helpers_init (HID *hid)
+@@ -476,3 +481,225 @@ common_draw_helpers_init (HID *hid)
    hid->fill_pcb_pv          = common_fill_pcb_pv;
    hid->thindraw_pcb_pv      = common_thindraw_pcb_pv;
  }

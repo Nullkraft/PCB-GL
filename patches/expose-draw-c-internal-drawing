@@ -1,7 +1,7 @@
-Bottom: d540d27d460994e8ec4d7fff7b2ac267d6fe846c
-Top:    abe7b6cde819b1d0aab768be2afe3e4a6ed2cbf0
+Bottom: e8f27e949fc7c8b8a9ff3ee63dfabb65c7dfbe06
+Top:    758a2ce090231e237a4a80b0be252b260a934e52
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-08 23:51:57 +0100
+Date:   2011-08-14 23:52:45 +0100
 
 Expose draw.c internal drawing APIs
 
@@ -51,7 +51,7 @@ index fa9e7f8..05ebad2 100644
  {
    gui->set_color (Output.fgGC, PCB->ElementColor);
 diff --git a/src/draw.h b/src/draw.h
-index cf324a5..5224adc 100644
+index eaf5aa8..4798962 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -71,6 +71,10 @@ void EraseElementName (ElementTypePtr);
