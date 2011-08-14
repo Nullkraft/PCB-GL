@@ -1,5 +1,5 @@
 Bottom: c36f90a3cf2220eb6649af6b07721907744ac682
-Top:    c36f90a3cf2220eb6649af6b07721907744ac682
+Top:    7fbf52a77594c27f2214ddd0c4d4dc1f44cb86a1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-14 23:52:53 +0100
 
@@ -11,4 +11,239 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 006e43e..38236b0 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -13,6 +13,7 @@
+ #include "draw.h"
+ #include "draw_funcs.h"
+ #include "rtree.h"
++#include "polygon.h"
+ #include "gui-pinout-preview.h"
+ 
+ /* The Linux OpenGL ABI 1.0 spec requires that we define
+@@ -1503,6 +1504,7 @@ static void
+ DrawMask (int side, BoxType * screen)
+ {
+   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
++  PolygonType polygon;
+ 
+   OutputType *out = &Output;
+ 
+@@ -1524,7 +1526,18 @@ DrawMask (int side, BoxType * screen)
+   gui->use_mask (HID_MASK_AFTER);
+   gui->set_color (out->fgGC, PCB->MaskColor);
+   ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
+-  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
++
++  polygon.Clipped = board_outline_poly ();
++  polygon.NoHoles = NULL;
++  polygon.NoHolesValid = 0;
++  polygon.BoundingBox = *screen;
++  SET_FLAG (FULLPOLYFLAG, &polygon);
++  common_fill_pcb_polygon (out->fgGC, &polygon, screen);
++  poly_Free (&polygon.Clipped);
++  poly_FreeContours (&polygon.NoHoles);
++  /* THE GL fill_pcb_polygon doesn't work whilst masking */
++//  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
++//  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+   ghid_set_alpha_mult (out->fgGC, 1.0);
+ 
+   gui->use_mask (HID_MASK_OFF);
+diff --git a/src/polygon.c b/src/polygon.c
+index 72a9299..8aa1cb1 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -79,6 +79,7 @@ dicer output is used for HIDs which cannot render things with holes
+ #include <math.h>
+ #include <memory.h>
+ #include <setjmp.h>
++#include <glib.h>
+ 
+ #include "global.h"
+ #include "box.h"
+@@ -1960,3 +1961,172 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+ 
+   SetChangedFlag (true);
+ }
++
++
++struct clip_outline_info {
++  POLYAREA *poly;
++};
++
++#define ROUTER_THICKNESS 1000
++//#define ROUTER_THICKNESS 10
++
++static int
++arc_outline_callback (const BoxType * b, void *cl)
++{
++  ArcTypePtr arc = (ArcTypePtr)b;
++  struct clip_outline_info *info = cl;
++  POLYAREA *np, *res;
++
++  if (!(np = ArcPoly (arc, ROUTER_THICKNESS)))
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  info->poly = res;
++
++  return 1;
++}
++
++static int
++line_outline_callback (const BoxType * b, void *cl)
++{
++  LineTypePtr line = (LineTypePtr)b;
++  struct clip_outline_info *info = cl;
++  POLYAREA *np, *res;
++
++  if (!(np = LinePoly (line, ROUTER_THICKNESS)))
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  info->poly = res;
++
++  return 1;
++}
++
++static void
++delete_piece_cb (gpointer data, gpointer userdata)
++{
++  POLYAREA *piece = data;
++  POLYAREA **res = userdata;
++
++  /* If this item was the start of the list, advance that pointer */
++  if (*res == piece)
++    *res = (*res)->f;
++
++  /* But reset it to NULL if it wraps around and hits us again */
++  if (*res == piece)
++    *res = NULL;
++
++  piece->b->f = piece->f;
++  piece->f->b = piece->b;
++  piece->f = piece->b = piece;
++
++  poly_Free (&piece);
++}
++
++POLYAREA *board_outline_poly ()
++{
++  int i;
++  int count;
++  int found_outline = 0;
++  LayerTypePtr Layer = NULL;
++  BoxType region;
++  struct clip_outline_info info;
++  POLYAREA *whole_world;
++  POLYAREA *clipped;
++  POLYAREA *piece;
++  POLYAREA *check;
++  GList *pieces_to_delete = NULL;
++
++#define BLOAT_WORLD 1000
++
++  whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
++                          -BLOAT_WORLD, BLOAT_WORLD + PCB->MaxHeight);
++
++  for (i = 0; i < max_copper_layer; i++)
++    {
++      Layer = PCB->Data->Layer + i;
++
++      if (strcmp (Layer->Name, "outline") == 0 ||
++          strcmp (Layer->Name, "route") == 0)
++        {
++          found_outline = 1;
++          break;
++        }
++    }
++
++  if (!found_outline) {
++    printf ("Didn't find outline\n");
++    return whole_world;
++  }
++
++  /* Do stuff to turn the outline layer into a polygon */
++
++  /* Ideally, we just want to look at centre-lines, but that is hard!
++   *
++   * Lets add all lines, arcs etc.. together to form a polygon comprising
++   * the bits we presume a router would remove.
++   *
++   * Then we need to subtract that from some notional "infinite" plane
++   * polygon, leaving the remaining pieces.
++   *
++   * OR.. we could just look at the holes in the resulting polygon?
++   *
++   * Given these holes, we need to know which are inside and outside.
++   *   _____________
++   *  / ___________ \
++   *  ||           ||
++   *  ||   //=\\   ||
++   *  ||   || ||   ||
++   *  ||   \\=//   ||
++   *  ||___________||
++   *  \_____________/
++   */
++
++  info.poly = whole_world;
++
++  region.X1 = 0;
++  region.Y1 = 0;
++  region.X2 = PCB->MaxWidth;
++  region.Y2 = PCB->MaxHeight;
++
++  r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
++  r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
++
++  clipped = info.poly;
++
++  /* Now we just need to work out which pieces of polygon are inside
++     and outside the board! */
++
++  /* If there is only one piece, return that */
++  if (clipped->f == clipped)
++    return clipped;
++
++  /* WARNING: This next check is O(n^2), where n is the number of clipped
++   *          pieces, hopefully the outline layer isn't too complex!
++   */
++
++  piece = clipped;
++  do { /* LOOP OVER POLYGON PIECES */
++
++    if (piece->contours == NULL)
++      printf ("WTF?\n");
++
++    count = 0;
++    check = clipped;
++    do { /* LOOP OVER POLYGON PIECES */
++      if (check == piece)
++        continue;
++      if (poly_ContourInContour (check->contours, piece->contours))
++        count ++;
++    } while ((check = check->f) != clipped);
++
++    /* If the piece is inside an odd number of others, delete it */
++    if ((count & 1) == 0)
++      pieces_to_delete = g_list_prepend (pieces_to_delete, piece);
++
++  } while ((piece = piece->f) != clipped);
++
++  g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
++
++  return clipped;
++}
+diff --git a/src/polygon.h b/src/polygon.h
+index e3b31c0..15c71d4 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -89,5 +89,5 @@ bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
+ void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
+                           void (*emit) (PLINE *, void *), void *user_data);
+ void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
+-
++POLYAREA *board_outline_poly ();
+ #endif
