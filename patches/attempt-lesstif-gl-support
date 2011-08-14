@@ -1,7 +1,7 @@
-Bottom: 284186ed2cb6d0c51fcf790b6a65c3e402bdc8e9
-Top:    5fcf874f6ad39e53c7fc4385eeb7eb845f1575ff
+Bottom: ba4ca5793e2e49785496362557bd358361422208
+Top:    d01d1805dc4abcd6eca107a64591607222cecef9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-08 23:53:44 +0100
+Date:   2011-08-15 00:01:32 +0100
 
 Attempt lesstif GL support
 
@@ -14,7 +14,7 @@ __ A LOT __ of drawing model changes in lesstif
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 1488b11..a82f59e 100644
+index e9685a8..0a125ec 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -397,7 +397,8 @@ AC_ARG_ENABLE([gl],
@@ -66,7 +66,7 @@ index 1488b11..a82f59e 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index be9a330..af05248 100644
+index ff6d8cd..a462dc7 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -30,10 +30,14 @@
@@ -338,7 +338,7 @@ index be9a330..af05248 100644
  
    display = XtDisplay (appwidget);
    screen_s = XtScreen (appwidget);
-@@ -2434,7 +2623,8 @@ static int need_redraw = 0;
+@@ -2440,7 +2629,8 @@ static int need_redraw = 0;
  static Boolean
  idle_proc (XtPointer dummy)
  {
@@ -348,7 +348,7 @@ index be9a330..af05248 100644
      {
        int mx, my;
        BoxType region;
-@@ -2842,7 +3032,7 @@ idle_proc (XtPointer dummy)
+@@ -2848,7 +3038,7 @@ idle_proc (XtPointer dummy)
  
    lesstif_update_widget_flags ();
  
@@ -357,7 +357,7 @@ index be9a330..af05248 100644
    idle_proc_set = 0;
    return True;
  }
-@@ -2859,11 +3049,22 @@ lesstif_need_idle_proc ()
+@@ -2865,11 +3055,22 @@ lesstif_need_idle_proc ()
  static void
  lesstif_invalidate_lr (int l, int r, int t, int b)
  {
@@ -380,7 +380,7 @@ index be9a330..af05248 100644
  }
  
  void
-@@ -3125,6 +3326,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3131,6 +3332,7 @@ lesstif_set_color (hidGC gc, const char *name)
      }
  }
  
@@ -388,7 +388,7 @@ index be9a330..af05248 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3188,240 +3390,456 @@ set_gc (hidGC gc)
+@@ -3194,240 +3396,456 @@ set_gc (hidGC gc)
  			  join);
      }
  }
@@ -1034,7 +1034,7 @@ index be9a330..af05248 100644
  }
  
  static void
-@@ -3980,6 +4398,7 @@ lesstif_finish_debug_draw (void)
+@@ -3986,6 +4404,7 @@ lesstif_finish_debug_draw (void)
     */
  }
  
@@ -1042,7 +1042,7 @@ index be9a330..af05248 100644
  #include "dolists.h"
  
  void
-@@ -4006,17 +4425,19 @@ hid_lesstif_init ()
+@@ -4012,17 +4431,19 @@ hid_lesstif_init ()
    lesstif_hid.set_layer               = lesstif_set_layer;
    lesstif_hid.make_gc                 = lesstif_make_gc;
    lesstif_hid.destroy_gc              = lesstif_destroy_gc;
