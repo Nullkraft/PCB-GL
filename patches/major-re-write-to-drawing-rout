@@ -1,5 +1,5 @@
 Bottom: f66ee542f619bf096a247fa9d97376b9ccd774e7
-Top:    400cd627af8ec28e6cddb1101c4d1035a99c6cde
+Top:    2dfc98ca95447bafe9956d524822f1ac48212c5d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-08 00:22:26 +0100
 
@@ -90,7 +90,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8e1d59b..975125b 100644
+index 8e1d59b..97f8774 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -258,36 +258,10 @@ index 8e1d59b..975125b 100644
  }
  
  void
-@@ -932,6 +999,884 @@ ghid_screen_update (void)
+@@ -932,6 +999,854 @@ ghid_screen_update (void)
  {
  }
  
-+static int
-+element_callback (const BoxType * b, void *cl)
-+{
-+  ElementTypePtr element = (ElementTypePtr) b;
-+  int *side = cl;
-+
-+  if (ON_SIDE (element, *side))
-+    DrawElementPackage (element);
-+  return 1;
-+}
-+
-+static int
-+name_callback (const BoxType * b, void *cl)
-+{
-+  TextTypePtr text = (TextTypePtr) b;
-+  ElementTypePtr element = (ElementTypePtr) text->Element;
-+  int *side = cl;
-+
-+  if (TEST_FLAG (HIDENAMEFLAG, element))
-+    return 0;
-+
-+  if (ON_SIDE (element, *side))
-+    DrawElementName (element);
-+  return 0;
-+}
-+
 +static int
 +EMark_callback (const BoxType * b, void *cl)
 +{
@@ -1045,24 +1019,20 @@ index 8e1d59b..975125b 100644
 +
 +  if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
 +      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
-+    if (PCB->ElementOn) {
-+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-+      dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
-+    }
-+    if (global_view_2d) {
++    DrawSilk (side, drawn_area);
++
++    if (global_view_2d)
 +      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-+    } else {
-+      /* Draw the reverse-side solder mask if turned on */
-+      if (gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
-+                          SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
++
++    gui->end_layer ();
++
++    /* Draw the reverse-side solder mask if turned on */
++    if (!global_view_2d &&
++        gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
++                        SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
 +        DrawMask (side, drawn_area);
 +        gui->end_layer ();
 +      }
-+      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
-+    }
-+    if (PCB->ElementOn)
-+      r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
-+    gui->end_layer ();
 +  }
 +
 +  /* draw all layers in layerstack order */
@@ -1143,7 +1113,7 @@ index 8e1d59b..975125b 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -999,8 +1944,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -999,8 +1914,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1154,7 +1124,7 @@ index 8e1d59b..975125b 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1061,25 +2006,55 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1061,25 +1976,55 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
