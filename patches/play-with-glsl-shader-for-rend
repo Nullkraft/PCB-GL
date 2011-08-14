@@ -1,7 +1,7 @@
-Bottom: 284186ed2cb6d0c51fcf790b6a65c3e402bdc8e9
-Top:    b63f11823d3f5f0abfd0fa4d8192e3422037a1fe
+Bottom: ba4ca5793e2e49785496362557bd358361422208
+Top:    10be5905daaed474b434419cf3ac11667364ba15
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-08 23:53:37 +0100
+Date:   2011-08-14 23:55:18 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -626,12 +626,12 @@ index f8a4b09..1c2bc38 100644
  
  int
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 4502e5b..5074edb 100644
+index 5802c3a..f47e36e 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -23,37 +23,88 @@
- #ifndef __HIDGL_INCLUDED__
- #define __HIDGL_INCLUDED__
+ #ifndef PCB_HID_COMMON_HIDGL_H
+ #define PCB_HID_COMMON_HIDGL_H
  
 -#define TRIANGLE_ARRAY_SIZE 5461
 +#include "hidgl_shaders.h"
@@ -955,7 +955,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9acfeef..97bed97 100644
+index c5376c5..8a4805e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -302,6 +302,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -985,7 +985,7 @@ index 9acfeef..97bed97 100644
  }
  
  void
-@@ -1707,9 +1709,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1681,9 +1683,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
  #define MIN_FACES_PER_CYL 6
  #define MAX_FACES_PER_CYL 360
    float radius = vr;
@@ -996,7 +996,7 @@ index 9acfeef..97bed97 100644
    int i;
    int slices;
  
-@@ -1724,19 +1724,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1698,19 +1698,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
    z1 = compute_depth (from_layer);
    z2 = compute_depth (to_layer);
  
@@ -1033,7 +1033,7 @@ index 9acfeef..97bed97 100644
  }
  
  struct cyl_info {
-@@ -2149,6 +2157,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2119,6 +2127,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    draw_lead_user (priv);
  
@@ -1042,7 +1042,7 @@ index 9acfeef..97bed97 100644
    check_gl_drawing_ok_hack = false;
    hidgl_in_context (false);
    ghid_end_drawing (port);
-@@ -2248,7 +2258,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2218,7 +2228,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
