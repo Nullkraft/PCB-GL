@@ -1707,6 +1707,7 @@ ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
   ghid_invalidate_all ();
 }
 
+void
 ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
 {
   global_view_2d = view_2d;
