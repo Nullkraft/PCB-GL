@@ -135,6 +135,8 @@ typedef struct
     library_window_width,
     library_window_height,
     netlist_window_height, history_size, settings_mode, auto_pan_speed;
+
+  GIOChannel *snavi;
 }
 GhidGui;
 
@@ -147,6 +149,7 @@ typedef struct
 {
   GtkWidget *top_window,	/* toplevel widget              */
    *drawing_area;		/* and its drawing area */
+  GtkWidget *trackball;
   GdkPixmap *pixmap, *mask;
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
   gint width, height;
@@ -288,6 +291,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 						GdkEventConfigure * ev,
 						GHidPort * out);
 
+void ndof_pan_cb (int dx, int dy, int dz, gpointer data);
+void ndof_roll_cb (int dx, int dy, int dz, gpointer data);
+void ndof_done_cb (gpointer data);
+void ndof_button_cb (int button, int value, gpointer data);
 
 /* gui-dialog.c function prototypes.
 */
