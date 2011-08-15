@@ -1,5 +1,5 @@
 Bottom: 67302407da0b4f0847ec5cf303b630103a50d2de
-Top:    2c4d3af151a5dfbf6474460299a9869a41d2d991
+Top:    8fb0086dfd86dc6908835d636c2e75106b7d1dd9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-15 12:30:56 +0100
 
@@ -27,7 +27,7 @@ index d91a91b..cb361ab 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7e3891d..1d0d76c 100644
+index 7e3891d..d1deef9 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -57,7 +57,7 @@ index 7e3891d..1d0d76c 100644
      }
  #endif
  
-@@ -778,3 +784,37 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -778,3 +784,33 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -70,11 +70,7 @@ index 7e3891d..1d0d76c 100644
 +    ghid_port_ranges_pan (-gport->zoom * 5 * dx,
 +                          -gport->zoom * 5 * dy, TRUE);
 +  if (dz)
-+#if 1 /* XXX: TEMPORARY HACK */
-+    ghid_port_ranges_zoom (gport->zoom * (1.0 - (dz / 100.0)));
-+#else
-+    zoom_by (1.0 - (dz / 100.0), gport->pcb_x, gport->pcb_y);
-+#endif
++    ghid_zoom_view_rel (gport->pcb_x, gport->pcb_y, 1.0 - (dz / 100.0));
 +}
 +
 +void ndof_roll_cb (int dx, int dy, int dz, gpointer data)
