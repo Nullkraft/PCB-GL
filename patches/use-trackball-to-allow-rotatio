@@ -1,5 +1,5 @@
 Bottom: f18dc4282185eb359a81cfed4945dc2da6b7ca96
-Top:    5d2a1108c4b025e853b91ee7c4a5e7b53d0f9f73
+Top:    d3891eb81adee57b5e323b157b1059e5585d6222
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-15 12:30:53 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f498056..53bb33b 100644
+index f498056..7d5f6ef 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -361,10 +361,11 @@ index f498056..53bb33b 100644
  
    return true;
  }
-@@ -1474,6 +1707,35 @@ ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
+@@ -1474,6 +1707,36 @@ ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
    ghid_invalidate_all ();
  }
  
++void
 +ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
 +{
 +  global_view_2d = view_2d;
