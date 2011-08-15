@@ -793,11 +793,7 @@ void ndof_pan_cb (int dx, int dy, int dz, gpointer data)
     ghid_port_ranges_pan (-gport->zoom * 5 * dx,
                           -gport->zoom * 5 * dy, TRUE);
   if (dz)
-#if 1 /* XXX: TEMPORARY HACK */
-    ghid_port_ranges_zoom (gport->zoom * (1.0 - (dz / 100.0)));
-#else
-    zoom_by (1.0 - (dz / 100.0), gport->pcb_x, gport->pcb_y);
-#endif
+    ghid_zoom_view_rel (gport->pcb_x, gport->pcb_y, 1.0 - (dz / 100.0));
 }
 
 void ndof_roll_cb (int dx, int dy, int dz, gpointer data)
