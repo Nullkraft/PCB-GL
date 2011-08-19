@@ -1,7 +1,7 @@
-Bottom: 671837944e3c98fac9d554dcf587c647cfd0810e
-Top:    f5b2c488e7b2251ef8526231d44ed086b3d4243b
+Bottom: 023131b0611281fcfeb3d925fd2be4a58bcf9bdb
+Top:    7fa95d57d92e4c0d7268fd4a927303a517357ca5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-19 15:47:31 +0100
+Date:   2011-08-19 17:06:11 +0100
 
 Hack to avoid GL calls when we're out of context
 
@@ -9,7 +9,7 @@ Hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d681002..efce000 100644
+index 38affef..0dbe47a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -39,6 +39,7 @@ RCSID ("$Id$");

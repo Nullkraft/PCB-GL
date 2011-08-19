@@ -1,7 +1,7 @@
-Bottom: e7ae1aeee749a33023d904e2df51e3f9d7649f2c
-Top:    8d939b253576af385662d1d5a7acb71dd4d8bf86
+Bottom: af14cd1c16efee134fec3746940873ecc746a92f
+Top:    2715b3ac64f9a960fdaa8df76bb29c6deead034d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-19 15:47:27 +0100
+Date:   2011-08-19 17:06:05 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 43bfd74..f2ef8ff 100644
+index cd85a77..5579a7c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
