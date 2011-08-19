@@ -62,7 +62,7 @@
 #define	FROM_PCB_UNITS(v)	coord_to_unit (Settings.grid_unit, v)
 #define	TO_PCB_UNITS(v)		unit_to_coord (Settings.grid_unit, v)
 
-extern int ghid_flip_x, ghid_flip_y;
+extern bool ghid_flip_x, ghid_flip_y;
 #define SIDE_X(x)   ((ghid_flip_x ? PCB->MaxWidth - (x) : (x)))
 #define SIDE_Y(y)   ((ghid_flip_y ? PCB->MaxHeight - (y) : (y)))
 
@@ -501,12 +501,16 @@ void ghid_flush_debug_draw (void);
 void ghid_finish_debug_draw (void);
 bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
 bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
+void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
+void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
+void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
+void ghid_zoom_view_fit (void);
+void ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y);
 
 void ghid_lead_user_to_location (Coord x, Coord y);
 void ghid_cancel_lead_user (void);
 
 /* gtkhid-main.c */
-void ghid_pan_fixup (void);
 void ghid_get_coords (const char *msg, Coord *x, Coord *y);
 gint PCBChanged (int argc, char **argv, Coord x, Coord y);
 
