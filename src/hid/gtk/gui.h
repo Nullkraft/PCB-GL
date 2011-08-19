@@ -284,7 +284,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
 gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
 				       GdkEventScroll * ev, GHidPort * out);
 
-
 gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 						GdkEventConfigure * ev,
 						GHidPort * out);
@@ -502,6 +501,8 @@ void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
 void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
 void ghid_zoom_view_fit (void);
 void ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y);
+void ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
+void ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata);
 
 void ghid_lead_user_to_location (Coord x, Coord y);
 void ghid_cancel_lead_user (void);
