@@ -1,7 +1,7 @@
-Bottom: ba4ca5793e2e49785496362557bd358361422208
-Top:    00a4347ae2bba522ac380e8fb1000fdd536f875d
+Bottom: 1bf4bcf72c07c261b966bb7f3eef4e27ef86b8d0
+Top:    1f1bb915acc6237dcca03c4aca9f1a1ac116e3d9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-14 23:55:16 +0100
+Date:   2011-08-19 15:47:34 +0100
 
 bdale patch
 
@@ -9,10 +9,10 @@ bdale patch
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 30d9745..67d52e2 100644
+index 93c17a2..1ad6450 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -7973,6 +7973,71 @@ ActionAttributes (int argc, char **argv, int x, int y)
+@@ -7941,6 +7941,71 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
    return 0;
  }
  
@@ -84,7 +84,7 @@ index 30d9745..67d52e2 100644
  /* --------------------------------------------------------------------------- */
  
  HID_Action action_action_list[] = {
-@@ -8164,6 +8229,9 @@ HID_Action action_action_list[] = {
+@@ -8132,6 +8197,9 @@ HID_Action action_action_list[] = {
    {"Import", 0, ActionImport,
     import_help, import_syntax}
    ,
@@ -95,10 +95,10 @@ index 30d9745..67d52e2 100644
  
  REGISTER_ACTIONS (action_action_list)
 diff --git a/src/polygon.c b/src/polygon.c
-index 8aa1cb1..a2dc3e4 100644
+index e41d514..218c62f 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1967,8 +1967,8 @@ struct clip_outline_info {
+@@ -1963,8 +1963,8 @@ struct clip_outline_info {
    POLYAREA *poly;
  };
  
