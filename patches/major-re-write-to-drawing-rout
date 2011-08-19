@@ -1,5 +1,5 @@
-Bottom: 891ebfc8c765ebb352e41ba9e3337102343baee0
-Top:    c49f237f96042a7a16ac538b9bf68229c19695e6
+Bottom: 813e0398828a6359a6e5fa613abab942b41980b3
+Top:    461452fe948c79d2cbaf7bbc7bca6ebd453ba8f0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-19 15:47:28 +0100
 
@@ -90,7 +90,7 @@ index 7e27e5b..828e9f6 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 41655f1..b80e9a3 100644
+index fc253e3..8419940 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -103,7 +103,7 @@ index 41655f1..b80e9a3 100644
  #include "gui-pinout-preview.h"
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
-@@ -261,14 +264,10 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -270,14 +273,10 @@ ghid_set_layer (const char *name, int group, int empty)
  	case SL_INVISIBLE:
  	  return PCB->InvisibleObjectsOn;
  	case SL_MASK:
@@ -120,7 +120,7 @@ index 41655f1..b80e9a3 100644
  	case SL_ASSY:
  	  return 0;
  	case SL_PDRILL:
-@@ -320,6 +319,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -329,6 +328,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
@@ -128,7 +128,7 @@ index 41655f1..b80e9a3 100644
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
  
-@@ -330,6 +330,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -339,6 +339,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
    hidgl_draw_grid (drawn_area);
  
    glDisable (GL_COLOR_LOGIC_OP);
@@ -136,7 +136,7 @@ index 41655f1..b80e9a3 100644
  }
  
  static void
-@@ -998,6 +999,10 @@ ghid_start_drawing (GHidPort *port)
+@@ -1007,6 +1008,10 @@ ghid_start_drawing (GHidPort *port)
  
    port->render_priv->in_context = true;
  
@@ -147,7 +147,7 @@ index 41655f1..b80e9a3 100644
    return TRUE;
  }
  
-@@ -1016,6 +1021,14 @@ ghid_end_drawing (GHidPort *port)
+@@ -1025,6 +1030,14 @@ ghid_end_drawing (GHidPort *port)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
@@ -162,7 +162,7 @@ index 41655f1..b80e9a3 100644
  }
  
  void
-@@ -1023,6 +1036,854 @@ ghid_screen_update (void)
+@@ -1032,6 +1045,854 @@ ghid_screen_update (void)
  {
  }
  
@@ -1017,7 +1017,7 @@ index 41655f1..b80e9a3 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1090,8 +1951,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1099,8 +1960,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1028,7 +1028,7 @@ index 41655f1..b80e9a3 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1152,18 +2013,50 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1161,18 +2022,50 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
