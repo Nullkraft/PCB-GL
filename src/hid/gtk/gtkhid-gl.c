@@ -2752,8 +2752,8 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
 //  if (fvx < (double)-G_MAXINT/5.) {fvx = (double)-G_MAXINT/5.; printf ("fvx underflow clamped\n"); }
 //  if (fvy < (double)-G_MAXINT/5.) {fvy = (double)-G_MAXINT/5.; printf ("fvy underflow clamped\n"); }
 
-  *pcb_x = (int)fvx;
-  *pcb_ = (int)fvy;
+  *pcb_x = (Coord)fvx;
+  *pcb_y = (Coord)fvy;
 
   {
     /* Reproject the computed board plane coordinates to eye space */
