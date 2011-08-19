@@ -1,5 +1,5 @@
 Bottom: 3300330f586c4aafc14e578f69329d90fd03fb93
-Top:    783da328412cb7c3969129c49b2fd1171c5211eb
+Top:    8795c063954a63ff8c0121843e69da7a5827007c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-19 15:21:06 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 43bfd74..ddda630 100644
+index 43bfd74..f2ef8ff 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -42,7 +42,7 @@ index 43bfd74..ddda630 100644
  hid_gc_struct;
  
  static void draw_lead_user (render_priv *priv);
-+static void ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy);
++static void ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y);
  
  /* Px converts view->pcb, Vx converts pcb->view */
  static inline int
@@ -50,11 +50,11 @@ index 43bfd74..ddda630 100644
  {
    render_priv *priv = port->render_priv;
    BoxType region;
-+  int min_x, min_y;
-+  int max_x, max_y;
-+  int new_x, new_y;
-+  int min_depth;
-+  int max_depth;
++  Coord min_x, min_y;
++  Coord max_x, max_y;
++  Coord new_x, new_y;
++  Coord min_depth;
++  Coord max_depth;
  
    ghid_start_drawing (port);
  
@@ -286,7 +286,7 @@ index 43bfd74..ddda630 100644
 +
 +
 +static void
-+ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
++ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y)
 +{
 +  float mat[2][2];
 +  float inv_mat[2][2];
@@ -319,10 +319,10 @@ index 43bfd74..ddda630 100644
 +
 +  /* NB: last_modelview_matrix is transposed in memory! */
 +  x = (float)ex - last_modelview_matrix[3][0] * 1
-+                - last_modelview_matrix[2][0] * vz;
++                - last_modelview_matrix[2][0] * pcb_z;
 +
 +  y = (float)ey - last_modelview_matrix[3][1] * 1
-+                - last_modelview_matrix[2][1] * vz;
++                - last_modelview_matrix[2][1] * pcb_z;
 +
 +  /*
 +    x = view_matrix[0][0] * vx +
@@ -345,8 +345,8 @@ index 43bfd74..ddda630 100644
 +
 +  invert_2x2 (mat, inv_mat);
 +
-+  *vx = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
-+  *vy = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
++  *pcb_x = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
++  *pcb_y = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
 +}
 +
 +
