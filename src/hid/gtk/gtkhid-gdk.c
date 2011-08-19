@@ -26,8 +26,16 @@ extern HID ghid_hid;
 */
 #define USE_GC(gc) if (!use_gc(gc)) return
 
+#define SIDE_X(x)   ((priv->view.flip_x ? PCB->MaxWidth  - (x) : (x)))
+#define SIDE_Y(y)   ((priv->view.flip_y ? PCB->MaxHeight - (y) : (y)))
+
 static int cur_mask = -1;
 static int mask_seq = 0;
+
+typedef struct view_data {
+  bool flip_x;
+  bool flip_y;
+} view_data;
 
 typedef struct render_priv {
   GdkGC *bg_gc;
@@ -39,6 +47,7 @@ typedef struct render_priv {
   GdkRectangle clip_rect;
   int attached_invalidate_depth;
   int mark_invalidate_depth;
+  view_data view;
 
   /* Feature for leading the user to a particular location */
   guint lead_user_timeout;
@@ -64,6 +73,52 @@ typedef struct hid_gc_struct
 }
 hid_gc_struct;
 
+/* Px converts view->pcb, Vx converts pcb->view */
+static inline int
+Vx (int x)
+{
+  render_priv *priv = gport->render_priv;
+  if (priv->view.flip_x)
+    return (PCB->MaxWidth - x - gport->view_x0) / gport->zoom + 0.5;
+  else
+    return (x - gport->view_x0) / gport->zoom + 0.5;
+}
+
+static inline int
+Vy (int y)
+{
+  render_priv *priv = gport->render_priv;
+  if (priv->view.flip_y)
+    return (PCB->MaxHeight - y - gport->view_y0) / gport->zoom + 0.5;
+  else
+    return (y - gport->view_y0) / gport->zoom + 0.5;
+}
+
+static inline int
+Vz (int z)
+{
+  return z / gport->zoom + 0.5;
+}
+
+static inline int
+Px (int x)
+{
+  render_priv *priv = gport->render_priv;
+  int rv = x * gport->zoom + gport->view_x0;
+  if (priv->view.flip_x)
+    rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
+  return  rv;
+}
+
+static inline int
+Py (int y)
+{
+  render_priv *priv = gport->render_priv;
+  int rv = y * gport->zoom + gport->view_y0;
+  if (priv->view.flip_y)
+    rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
+  return  rv;
+}
 
 static void draw_lead_user (render_priv *priv);
 
@@ -557,12 +612,12 @@ ghid_draw_arc (hidGC gc, Coord cx, Coord cy,
   vrx = Vz (xradius);
   vry = Vz (yradius);
 
-  if (ghid_flip_x)
+  if (priv->view.flip_x)
     {
       start_angle = 180 - start_angle;
       delta_angle = -delta_angle;
     }
-  if (ghid_flip_y)
+  if (priv->view.flip_y)
     {
       start_angle = -start_angle;
       delta_angle = -delta_angle;
@@ -1282,9 +1337,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   gport->height = height;
   gport->view_width = width * gport->zoom;
   gport->view_height = height * gport->zoom;
-  gport->view_x0 = ghid_flip_x ? PCB->MaxWidth - cx : cx;
+  gport->view_x0 = priv->view.flip_x ? PCB->MaxWidth - cx : cx;
   gport->view_x0 -= gport->view_height / 2;
-  gport->view_y0 = ghid_flip_y ? PCB->MaxHeight - cy : cy;
+  gport->view_y0 = priv->view.flip_y ? PCB->MaxHeight - cy : cy;
   gport->view_y0 -= gport->view_width  / 2;
 
   /* clear background */
@@ -1335,6 +1390,8 @@ ghid_finish_debug_draw (void)
 bool
 ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
 {
+  render_priv *priv = gport->render_priv;
+
   *pcb_x = EVENT_TO_PCB_X (event_x);
   *pcb_y = EVENT_TO_PCB_Y (event_y);
 
@@ -1344,6 +1401,8 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
 bool
 ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
 {
+  render_priv *priv = gport->render_priv;
+
   *event_x = DRAW_X (pcb_x);
   *event_y = DRAW_Y (pcb_y);
 
@@ -1353,6 +1412,8 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
 void
 ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 {
+  render_priv *priv = gport->render_priv;
+
   gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
   gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
 
@@ -1391,6 +1452,7 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 void
 ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 {
+  render_priv *priv = gport->render_priv;
   double min_zoom, max_zoom;
   double xtmp, ytmp;
 
@@ -1441,8 +1503,10 @@ ghid_zoom_view_fit (void)
 void
 ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 {
-  ghid_flip_x = ghid_flip_x != flip_x;
-  ghid_flip_y = ghid_flip_x != flip_y;
+  render_priv *priv = gport->render_priv;
+
+  priv->view.flip_x = priv->view.flip_x != flip_x;
+  priv->view.flip_y = priv->view.flip_y != flip_y;
 
   /* XXX: PAN THE BOARD SO THE CENTER LOCATION REMAINS IN THE SAME PLACE */
 
