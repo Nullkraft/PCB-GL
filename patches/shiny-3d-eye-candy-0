@@ -1,5 +1,5 @@
 Bottom: 8d939b253576af385662d1d5a7acb71dd4d8bf86
-Top:    cc246c26ee36a827993010824505446e1ecbd6c9
+Top:    f8c52ae38a6f206b3f636a3b15453b76bf417fac
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-19 15:47:27 +0100
 
@@ -14,10 +14,10 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f2ef8ff..41655f1 100644
+index f2ef8ff..fc253e3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -123,6 +123,70 @@ Py (int y)
+@@ -123,6 +123,79 @@ Py (int y)
    return  rv;
  }
  
@@ -73,7 +73,16 @@ index f2ef8ff..41655f1 100644
 +    } else {
 +      depth = -((max_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
 +    }
-+  } else if (SL_TYPE (group) == SL_RATS) {
++  } else if (SL_TYPE (group) == SL_RATS   ||
++             SL_TYPE (group) == SL_PDRILL ||
++             SL_TYPE (group) == SL_UDRILL) {
++    /* Draw these at the depth we last rendered at */
++    depth = last_depth_computed;
++  } else if (SL_TYPE (group) == SL_PASTE  ||
++             SL_TYPE (group) == SL_FAB    ||
++             SL_TYPE (group) == SL_ASSY) {
++    /* Layer types we don't use, which draw.c asks us about, so
++     * we just return _something_ to avoid the warnign below. */
 +    depth = last_depth_computed;
 +  } else {
 +    /* DEFAULT CASE */
@@ -88,7 +97,7 @@ index f2ef8ff..41655f1 100644
  static void
  start_subcomposite (void)
  {
-@@ -181,11 +245,15 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -181,11 +254,15 @@ ghid_set_layer (const char *name, int group, int empty)
    end_subcomposite ();
    start_subcomposite ();
  
@@ -104,7 +113,7 @@ index f2ef8ff..41655f1 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -817,7 +885,7 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -817,7 +894,7 @@ ghid_show_crosshair (gboolean paint_new_location)
      }
    x = gport->crosshair_x;
    y = gport->crosshair_y;
@@ -113,7 +122,7 @@ index f2ef8ff..41655f1 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -1098,6 +1166,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1098,6 +1175,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -123,7 +132,7 @@ index f2ef8ff..41655f1 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1587,7 +1658,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -1587,7 +1667,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
