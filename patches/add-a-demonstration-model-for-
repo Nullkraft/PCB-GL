@@ -1,5 +1,5 @@
 Bottom: d4302d5d9dc7f8c228a3d916a0aadd3c80c68674
-Top:    89bd87164608154a8dd10b6d8acb7e199950dc73
+Top:    afb978530b96016e962f90a390b61472b2ebe507
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
 
@@ -509,10 +509,10 @@ index b83e45b..2f8653a 100644
  #endif /* PCB_HID_COMMON_HIDGL_H  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
 new file mode 100644
-index 0000000..f9746f1
+index 0000000..e4182f5
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
-@@ -0,0 +1,997 @@
+@@ -0,0 +1,1002 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -556,7 +556,7 @@ index 0000000..f9746f1
 +  int width;
 +  int height;
 +  int rowstride;
-+  int has_alpha;
++  /* int has_alpha; */
 +  int bits_per_sample;
 +  int n_channels;
 +  unsigned char *pixels;
@@ -575,7 +575,7 @@ index 0000000..f9746f1
 +  width = gdk_pixbuf_get_width (pixbuf);
 +  height = gdk_pixbuf_get_height (pixbuf);
 +  rowstride = gdk_pixbuf_get_rowstride (pixbuf);
-+  has_alpha = gdk_pixbuf_get_has_alpha (pixbuf);
++  /* has_alpha = gdk_pixbuf_get_has_alpha (pixbuf); */
 +  bits_per_sample = gdk_pixbuf_get_bits_per_sample (pixbuf);
 +  n_channels = gdk_pixbuf_get_n_channels (pixbuf);
 +  pixels = gdk_pixbuf_get_pixels (pixbuf);
@@ -643,7 +643,7 @@ index 0000000..f9746f1
 +resistor_string_to_value (char *string)
 +{
 +  char *c = string;
-+  double accum_value;
++  double accum_value = 0;
 +  bool before_decimal_point = true;
 +  double place_value = 1.;
 +  double multiplier = 1.;
@@ -1166,10 +1166,15 @@ index 0000000..f9746f1
 +  float resistor_pin_bend_radius = resistor_bulge_radius;
 +  float resistor_width = resistor_pin_spacing - 2. * resistor_pin_bend_radius;
 +
-+  center_x = (element->Pin[0].X + element->Pin[1].X) / 2.;
-+  center_y = (element->Pin[0].Y + element->Pin[1].Y) / 2.;
-+  angle = atan2f (element->Pin[1].Y - element->Pin[0].Y,
-+                  element->Pin[1].X - element->Pin[0].X);
++  PinType *first_pin = element->Pin->data;
++  PinType *second_pin = g_list_next (element->Pin)->data;
++
++  Coord pin_delta_x = second_pin->X - first_pin->X;
++  Coord pin_delta_y = second_pin->Y - first_pin->Y;
++
++  center_x = first_pin->X + pin_delta_x / 2.;
++  center_y = first_pin->Y + pin_delta_y / 2.;
++  angle = atan2f (pin_delta_y, pin_delta_x);
 +
 +  /* TRANSFORM MATRIX */
 +  glPushMatrix ();
@@ -1511,7 +1516,7 @@ index 0000000..f9746f1
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e6cc7a3..5537fa3 100644
+index e6cc7a3..a96b882 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -359,6 +359,47 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1735,8 +1740,8 @@ index e6cc7a3..5537fa3 100644
 +  glColor3f (1., 1., 1.);
 +
 +  if (0) {
-+    int x, y;
-+    float z = max_depth;
++    Coord x, y;
++    Coord z = max_depth;
 +
 +    glBegin (GL_LINES);
 +
