@@ -2354,8 +2354,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glColor3f (1., 1., 1.);
 
   if (0) {
-    int x, y;
-    float z = max_depth;
+    Coord x, y;
+    Coord z = max_depth;
 
     glBegin (GL_LINES);
 

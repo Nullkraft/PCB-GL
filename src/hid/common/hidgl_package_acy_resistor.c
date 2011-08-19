@@ -41,7 +41,7 @@ load_texture_from_png (char *filename, bool bumpmap)
   int width;
   int height;
   int rowstride;
-  int has_alpha;
+  /* int has_alpha; */
   int bits_per_sample;
   int n_channels;
   unsigned char *pixels;
@@ -60,7 +60,7 @@ load_texture_from_png (char *filename, bool bumpmap)
   width = gdk_pixbuf_get_width (pixbuf);
   height = gdk_pixbuf_get_height (pixbuf);
   rowstride = gdk_pixbuf_get_rowstride (pixbuf);
-  has_alpha = gdk_pixbuf_get_has_alpha (pixbuf);
+  /* has_alpha = gdk_pixbuf_get_has_alpha (pixbuf); */
   bits_per_sample = gdk_pixbuf_get_bits_per_sample (pixbuf);
   n_channels = gdk_pixbuf_get_n_channels (pixbuf);
   pixels = gdk_pixbuf_get_pixels (pixbuf);
@@ -128,7 +128,7 @@ static double
 resistor_string_to_value (char *string)
 {
   char *c = string;
-  double accum_value;
+  double accum_value = 0;
   bool before_decimal_point = true;
   double place_value = 1.;
   double multiplier = 1.;
@@ -651,10 +651,15 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   float resistor_pin_bend_radius = resistor_bulge_radius;
   float resistor_width = resistor_pin_spacing - 2. * resistor_pin_bend_radius;
 
-  center_x = (element->Pin[0].X + element->Pin[1].X) / 2.;
-  center_y = (element->Pin[0].Y + element->Pin[1].Y) / 2.;
-  angle = atan2f (element->Pin[1].Y - element->Pin[0].Y,
-                  element->Pin[1].X - element->Pin[0].X);
+  PinType *first_pin = element->Pin->data;
+  PinType *second_pin = g_list_next (element->Pin)->data;
+
+  Coord pin_delta_x = second_pin->X - first_pin->X;
+  Coord pin_delta_y = second_pin->Y - first_pin->Y;
+
+  center_x = first_pin->X + pin_delta_x / 2.;
+  center_y = first_pin->Y + pin_delta_y / 2.;
+  angle = atan2f (pin_delta_y, pin_delta_x);
 
   /* TRANSFORM MATRIX */
   glPushMatrix ();
