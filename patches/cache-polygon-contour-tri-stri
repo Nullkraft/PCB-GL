@@ -1,5 +1,5 @@
-Bottom: 10be5905daaed474b434419cf3ac11667364ba15
-Top:    d0fac6262de8666e11fc6e8777bcaa74fb4bb0b0
+Bottom: 0384d48c913897b7d3af1ddb5455ef5b7f824bc1
+Top:    f3a72655f019ea3053faea7f4c86b63a21e50e59
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-14 23:55:18 +0100
 
@@ -115,10 +115,10 @@ index 5cccfbc..37a73c9 100644
 +  return BORAST_STATUS_SUCCESS;
 +}
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 1c2bc38..d0d4ac8 100644
+index ca97c99..7c3dba6 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -676,9 +676,25 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -676,9 +676,25 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
    free (vertices);
  }
  
@@ -257,10 +257,10 @@ index 1c2bc38..d0d4ac8 100644
  
  static int
 diff --git a/src/polyarea.h b/src/polyarea.h
-index 413f519..a864216 100644
+index 43fd93d..d49660b 100644
 --- a/src/polyarea.h
 +++ b/src/polyarea.h
-@@ -107,6 +107,8 @@ struct PLINE
+@@ -106,6 +106,8 @@ struct PLINE
        unsigned int status:3;
        unsigned int orient:1;
      } Flags;
@@ -270,7 +270,7 @@ index 413f519..a864216 100644
  
  PLINE *poly_NewContour(Vector v);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ffb1542..bbee3d5 100644
+index 9da353e..a922155 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -2549,6 +2549,9 @@ poly_ClrContour (PLINE * c)

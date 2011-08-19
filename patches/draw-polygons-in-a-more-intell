@@ -1,5 +1,5 @@
-Bottom: 1145f9648cffc6496367dac3adfdd393fb655095
-Top:    c108e59ef059099fda72d0f81f9de813ce2832bb
+Bottom: 5198152a4e2c32bffbde703e73d861ceb639cccc
+Top:    fdb9356457dcecfbea81df30b0d1a1736763cac7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-14 23:55:20 +0100
 
@@ -36,7 +36,7 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 1700669..e5c43e1 100644
+index f3ab274..681a4b1 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -120,7 +120,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
@@ -129,10 +129,10 @@ index 1700669..e5c43e1 100644
    glPopAttrib ();                               /* Restore the stencil buffer op and function */
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2578506..55760f7 100644
+index 690f97a..2db1533 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1485,11 +1485,28 @@ struct poly_info
+@@ -1522,11 +1522,28 @@ struct poly_info
  };
  
  static int
@@ -163,7 +163,7 @@ index 2578506..55760f7 100644
    return 1;
  }
  
-@@ -1624,7 +1641,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1661,7 +1678,8 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.Layer = Layer;
          info.drawn_area = screen;
