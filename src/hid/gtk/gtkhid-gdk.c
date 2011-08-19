@@ -1350,6 +1350,111 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
   return true;
 }
 
+void
+ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+{
+  gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
+  gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
+
+  /* Don't pan so far to the right or bottom that we see past the board edge */
+  gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
+  gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
+
+  /* Don't view above or to the left of the board... ever */
+  gport->view_x0 = MAX (0, gport->view_x0);
+  gport->view_y0 = MAX (0, gport->view_y0);
+
+  /* If we can see the entire board and some, then zoom to fit */
+  if (gport->view_width  > PCB->MaxWidth  &&
+      gport->view_height > PCB->MaxHeight)
+    {
+      ghid_zoom_view_fit ();
+      return;
+    }
+
+  ghidgui->adjustment_changed_holdoff = TRUE;
+  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
+  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
+  ghidgui->adjustment_changed_holdoff = FALSE;
+
+  ghid_port_ranges_changed();
+}
+
+
+/* gport->zoom:
+ * zoom value is PCB units per screen pixel.  Larger numbers mean zooming
+ * out - the largest value means you are looking at the whole board.
+ *
+ * gport->view_width and gport->view_height are in PCB coordinates
+ */
+
+void
+ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+{
+  double min_zoom, max_zoom;
+  double xtmp, ytmp;
+
+  /* Limit the "minimum" zoom constant (maximum zoom), at 1 pixel per PCB
+   * unit, and set the "maximum" zoom constant (minimum zoom), such that
+   * the entire board just fits inside the viewport
+   */
+  min_zoom = 1;
+  max_zoom = MAX (PCB->MaxWidth  / gport->width,
+                  PCB->MaxHeight / gport->height);
+  new_zoom = MIN (MAX (min_zoom, new_zoom), max_zoom);
+
+  if (gport->zoom == new_zoom)
+    return;
+
+  xtmp = (SIDE_X (center_x) - gport->view_x0) / (double)gport->view_width;
+  ytmp = (SIDE_Y (center_y) - gport->view_y0) / (double)gport->view_height;
+
+  gport->zoom = new_zoom;
+  pixel_slop = new_zoom;
+  ghid_port_ranges_scale (FALSE);
+
+  gport->view_x0 = MAX (0, SIDE_X (center_x) - xtmp * gport->view_width);
+  gport->view_y0 = MAX (0, SIDE_Y (center_y) - ytmp * gport->view_height);
+
+  ghidgui->adjustment_changed_holdoff = TRUE;
+  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
+  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
+  ghidgui->adjustment_changed_holdoff = FALSE;
+
+  ghid_port_ranges_changed ();
+  ghid_set_status_line_label ();
+}
+
+void
+ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
+{
+  ghid_zoom_view_abs (center_x, center_y, gport->zoom * factor);
+}
+
+void
+ghid_zoom_view_fit (void)
+{
+  ghid_zoom_view_abs (0, 0, MAX (PCB->MaxWidth  / gport->width,
+                                 PCB->MaxHeight / gport->height));
+}
+
+void
+ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
+{
+  int widget_x, widget_y;
+
+  /* Work out where on the screen the flip point is */
+  ghid_pcb_to_event_coords (center_x, center_y, &widget_x, &widget_y);
+
+  ghid_flip_x = ghid_flip_x != flip_x;
+  ghid_flip_y = ghid_flip_y != flip_y;
+
+  /* Pan the board so the center location remains in the same place */
+  ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
+
+  ghid_invalidate_all ();
+}
+
 
 #define LEAD_USER_WIDTH           0.2          /* millimeters */
 #define LEAD_USER_PERIOD          (1000 / 5)   /* 5fps (in ms) */
