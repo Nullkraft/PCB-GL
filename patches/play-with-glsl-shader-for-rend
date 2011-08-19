@@ -1,7 +1,7 @@
-Bottom: 1bf4bcf72c07c261b966bb7f3eef4e27ef86b8d0
-Top:    aafcad086ae3168b264fbcfed756d93078ab185d
+Bottom: 0961707ae0ebe5d73f7bf389ccf064b0b7037ff7
+Top:    0fa642c0080b19502306a70ed74bbe556ac2a297
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-19 15:47:36 +0100
+Date:   2011-08-19 16:58:59 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -955,10 +955,10 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4ee2a41..90130f5 100644
+index db33396..ade2fe4 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -338,6 +338,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -347,6 +347,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
@@ -967,7 +967,7 @@ index 4ee2a41..90130f5 100644
    glDisable (GL_STENCIL_TEST);
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -710,7 +712,7 @@ ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
+@@ -719,7 +721,7 @@ ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
  {
    USE_GC (gc);
  
@@ -976,7 +976,7 @@ index 4ee2a41..90130f5 100644
  }
  
  
-@@ -727,7 +729,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -736,7 +738,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
    USE_GC (gc);
  
@@ -985,7 +985,7 @@ index 4ee2a41..90130f5 100644
  }
  
  void
-@@ -1718,9 +1720,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1727,9 +1729,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
  #define MIN_FACES_PER_CYL 6
  #define MAX_FACES_PER_CYL 360
    float radius = vr;
@@ -996,7 +996,7 @@ index 4ee2a41..90130f5 100644
    int i;
    int slices;
  
-@@ -1735,19 +1735,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1744,19 +1744,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
    z1 = compute_depth (from_layer);
    z2 = compute_depth (to_layer);
  
@@ -1033,7 +1033,7 @@ index 4ee2a41..90130f5 100644
  }
  
  struct cyl_info {
-@@ -2156,6 +2164,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2165,6 +2173,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    draw_lead_user (priv);
  
@@ -1042,7 +1042,7 @@ index 4ee2a41..90130f5 100644
    check_gl_drawing_ok_hack = false;
    hidgl_in_context (false);
    ghid_end_drawing (port);
-@@ -2256,7 +2266,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2265,7 +2275,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
