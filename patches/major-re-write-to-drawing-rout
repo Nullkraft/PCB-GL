@@ -1,5 +1,5 @@
 Bottom: e2c50590271649d95538a8ea0da4becdeb30227b
-Top:    b861a6ec6b0f799d136580257242223bc021aea7
+Top:    1f2faabffd64be38f13f3a6146c5a842bb2c6227
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-15 12:30:55 +0100
 
@@ -66,7 +66,7 @@ index 6230a0c..ab40792 100644
  {
    /*
 diff --git a/src/draw.h b/src/draw.h
-index 7e27e5b..ee1a83d 100644
+index 7e27e5b..828e9f6 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -71,6 +71,19 @@ void EraseElementName (ElementTypePtr);
@@ -79,7 +79,7 @@ index 7e27e5b..ee1a83d 100644
 +void DrawPlainPin (PinTypePtr, bool);
 +void DrawPlainVia (PinTypePtr, bool);
 +void DrawRegularText (LayerTypePtr, TextTypePtr);
-+void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
++void DrawEMark (ElementTypePtr, Coord, Coord, bool);
 +void DrawHole (PinTypePtr);
 +void DrawRats (BoxType *);
 +void DrawSilk (int side, const BoxType *);
