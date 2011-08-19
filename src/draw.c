@@ -83,7 +83,6 @@ static bool doing_assy = false;
  * some local prototypes
  */
 static void DrawEverything (BoxTypePtr);
-static void DrawPPV (int group, const BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
 static void AddPart (void *);
 static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
@@ -139,22 +138,6 @@ set_pv_color (PinType *pv, int type)
   else if (TEST_FLAG (FOUNDFLAG, pv))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
   else                                   gui->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor
                                                                                          : PCB->PinColor);
-}
-
-static int
-pin_callback (const BoxType * b, void *cl)
-{
-  set_pv_color ((PinType *)b, PIN_TYPE);
-  dapi->draw_pin ((PinType *)b, NULL, NULL);
-  return 1;
-}
-
-static int
-via_callback (const BoxType * b, void *cl)
-{
-  set_pv_color ((PinType *)b, VIA_TYPE);
-  dapi->draw_via ((PinType *)b, NULL, NULL);
-  return 1;
 }
 
 static int
@@ -246,54 +229,6 @@ EMark_callback (const BoxType * b, void *cl)
 
   DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
   return 1;
-}
-
-static int
-pin_hole_callback (const BoxType * b, void *cl)
-{
-  PinType *pin = (PinType*)b;
-  int plated = cl ? *(int *) cl : -1;
-
-  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
-      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
-    return 1;
-
-  if (TEST_FLAG (WARNFLAG, pin))          gui->set_color (Output.fgGC, PCB->WarnColor);
-  else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
-  else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
-
-  dapi->draw_pin_hole (pin, NULL, NULL);
-  return 1;
-}
-
-static int
-via_hole_callback (const BoxType * b, void *cl)
-{
-  PinType *via = (PinType*)b;
-  int plated = cl ? *(int *) cl : -1;
-
-  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, via)) ||
-      (plated == 1 &&  TEST_FLAG (HOLEFLAG, via)))
-    return 1;
-
-  if (TEST_FLAG (WARNFLAG, via))          gui->set_color (Output.fgGC, PCB->WarnColor);
-  else if (TEST_FLAG (SELECTEDFLAG, via)) gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
-  else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
-
-  dapi->draw_via_hole (via, NULL, NULL);
-  return 1;
-}
-
-static void
-DrawHoles (bool draw_plated, bool draw_unplated, BoxType *drawn_area)
-{
-  int plated = -1;
-
-  if ( draw_plated && !draw_unplated) plated = 1;
-  if (!draw_plated &&  draw_unplated) plated = 0;
-
-  r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, &plated);
-  r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, &plated);
 }
 
 typedef struct
@@ -389,7 +324,7 @@ PrintAssembly (int side, const BoxType * drawn_area)
 
   gui->set_draw_faded (Output.fgGC, 1);
   DrawLayerGroup (side_group, drawn_area);
-  DrawPPV (side_group, drawn_area);
+  dapi->draw_ppv (side_group, drawn_area, NULL);
   gui->set_draw_faded (Output.fgGC, 0);
 
   /* draw package */
@@ -454,7 +389,7 @@ DrawEverything (BoxTypePtr drawn_area)
       if (gui->set_layer (0, group, 0))
         {
           if (DrawLayerGroup (group, drawn_area) && !gui->gui)
-            DrawPPV (group, drawn_area);
+            dapi->draw_ppv (group, drawn_area, NULL);
           gui->end_layer ();
         }
     }
@@ -464,20 +399,20 @@ DrawEverything (BoxTypePtr drawn_area)
 
   /* Draw pins, pads, vias below silk */
   if (gui->gui)
-    DrawPPV (SWAP_IDENT ? solder : component, drawn_area);
+    dapi->draw_ppv (SWAP_IDENT ? solder : component, drawn_area, NULL);
   else
     {
       CountHoles (&plated, &unplated, drawn_area);
 
       if (plated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
         {
-          DrawHoles (true, false, drawn_area);
+          dapi->draw_holes (1, drawn_area, NULL);
           gui->end_layer ();
         }
 
       if (unplated && gui->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
         {
-          DrawHoles (false, true, drawn_area);
+          dapi->draw_holes (0, drawn_area, NULL);
           gui->end_layer ();
         }
     }
@@ -599,46 +534,6 @@ DrawEMark (ElementTypePtr e, Coord X, Coord Y, bool invisible)
       gui->draw_line (Output.fgGC, X, Y, X + 2 * mark_size, Y);
       gui->draw_line (Output.fgGC, X, Y, X, Y - 4* mark_size);
     }
-}
-
-/* ---------------------------------------------------------------------------
- * Draws pins pads and vias - Always draws for non-gui HIDs,
- * otherwise drawing depends on PCB->PinOn and PCB->ViaOn
- */
-static void
-DrawPPV (int group, const BoxType *drawn_area)
-{
-  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
-  int side;
-
-  if (PCB->PinOn || !gui->gui)
-    {
-      /* draw element pins */
-      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
-
-      /* draw element pads */
-      if (group == component_group)
-        {
-          side = COMPONENT_LAYER;
-          r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-        }
-
-      if (group == solder_group)
-        {
-          side = SOLDER_LAYER;
-          r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-        }
-    }
-
-  /* draw vias */
-  if (PCB->ViaOn || !gui->gui)
-    {
-      r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
-      r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, NULL);
-    }
-  if (PCB->PinOn || doing_assy)
-    r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, NULL);
 }
 
 static int
