@@ -1,5 +1,5 @@
-Bottom: 783da328412cb7c3969129c49b2fd1171c5211eb
-Top:    e3c4c28d7ac4e36005c3ba24fb2e26a1d5644eac
+Bottom: 8795c063954a63ff8c0121843e69da7a5827007c
+Top:    b0b8423406336e4468d5444e99201c2f7cec41a5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-15 12:30:53 +0100
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ddda630..64942ff 100644
+index f2ef8ff..38318ff 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -181,6 +181,19 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -58,7 +58,7 @@ index ddda630..64942ff 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1587,7 +1605,7 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
+@@ -1587,7 +1605,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
