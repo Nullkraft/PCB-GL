@@ -1,7 +1,7 @@
-Bottom: c74e388c572cbb004e4db0612b974b9f6c3c7e5c
-Top:    120ac798368c116b3dd712159ccf91bbf3ff3325
+Bottom: 5de19ba684373c4e3d0a6d9b9bbfd09efcd21c2b
+Top:    80ad50da808856e87b3c8cba7736df9b9791382d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-08 23:53:42 +0100
+Date:   2011-08-19 16:59:05 +0100
 
 drc: HACK HACK HACK
 
@@ -9,10 +9,10 @@ drc: HACK HACK HACK
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 43dee33..b79579e 100644
+index 1bbb1b5..7e79c30 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2746,7 +2746,12 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
+@@ -2618,7 +2618,12 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
  
                line.Point1.X = v->point[0];
                line.Point1.Y = v->point[1];
