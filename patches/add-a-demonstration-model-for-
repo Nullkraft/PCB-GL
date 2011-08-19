@@ -1,5 +1,5 @@
-Bottom: b179d15dba18f6cfc1824821354a608ed92d2d17
-Top:    1a222c5619cef14f23ecba08c440bd33d4e861e4
+Bottom: d4302d5d9dc7f8c228a3d916a0aadd3c80c68674
+Top:    89bd87164608154a8dd10b6d8acb7e199950dc73
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
 
@@ -488,7 +488,7 @@ index 15ce751..c839b29 100644
    hidgl_shader_activate (circular_program);
  }
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index ed0efdc..2f8653a 100644
+index b83e45b..2f8653a 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -40,6 +40,7 @@ extern triangle_buffer buffer;
@@ -499,33 +499,7 @@ index ed0efdc..2f8653a 100644
  
  void hidgl_in_context (bool is_in_context);
  void hidgl_init_triangle_array (triangle_buffer *buffer);
-@@ -120,23 +121,13 @@ hidgl_add_triangle (triangle_buffer *buffer,
- 
- void hidgl_draw_grid (BoxType *drawn_area);
- void hidgl_set_depth (float depth);
--<<<<<<< current
- void hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, double scale);
- void hidgl_draw_arc (Coord width, Coord vx, Coord vy, Coord vrx, Coord vry, Angle start_angle, Angle delta_angle, double scale);
- void hidgl_draw_rect (Coord x1, Coord y1, Coord x2, Coord y2);
--void hidgl_fill_circle (Coord vx, Coord vy, Coord vr, double scale);
-+void hidgl_fill_circle (Coord vx, Coord vy, Coord vr);
- void hidgl_fill_polygon (int n_coords, Coord *x, Coord *y);
--void hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale);
--void hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2);
--=======
--void hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale);
--void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_angle, int delta_angle, double scale);
--void hidgl_draw_rect (int x1, int y1, int x2, int y2);
--void hidgl_fill_circle (int vx, int vy, int vr);
--void hidgl_fill_polygon (int n_coords, int *x, int *y);
- void hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box);
--void hidgl_fill_rect (int x1, int y1, int x2, int y2);
-->>>>>>> patched
-+void hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2);
- 
- void hidgl_init (void);
- int hidgl_stencil_bits (void);
-@@ -144,4 +135,7 @@ int hidgl_assign_clear_stencil_bit (void);
+@@ -134,4 +135,7 @@ int hidgl_assign_clear_stencil_bit (void);
  void hidgl_return_stencil_bit (int bit);
  void hidgl_reset_stencil_usage (void);
  
@@ -1537,7 +1511,7 @@ index 0000000..f9746f1
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 99bf0f5..cb19767 100644
+index e6cc7a3..5537fa3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -359,6 +359,47 @@ ghid_draw_grid (BoxTypePtr drawn_area)
