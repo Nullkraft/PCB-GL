@@ -75,7 +75,7 @@ hid_gc_struct;
 
 /* Px converts view->pcb, Vx converts pcb->view */
 static inline int
-Vx (int x)
+Vx (Coord x)
 {
   render_priv *priv = gport->render_priv;
   if (priv->view.flip_x)
@@ -85,7 +85,7 @@ Vx (int x)
 }
 
 static inline int
-Vy (int y)
+Vy (Coord y)
 {
   render_priv *priv = gport->render_priv;
   if (priv->view.flip_y)
@@ -95,26 +95,26 @@ Vy (int y)
 }
 
 static inline int
-Vz (int z)
+Vz (Coord z)
 {
   return z / gport->zoom + 0.5;
 }
 
-static inline int
+static inline Coord
 Px (int x)
 {
   render_priv *priv = gport->render_priv;
-  int rv = x * gport->zoom + gport->view_x0;
+  Coord rv = x * gport->zoom + gport->view_x0;
   if (priv->view.flip_x)
     rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
   return  rv;
 }
 
-static inline int
+static inline Coord
 Py (int y)
 {
   render_priv *priv = gport->render_priv;
-  int rv = y * gport->zoom + gport->view_y0;
+  Coord rv = y * gport->zoom + gport->view_y0;
   if (priv->view.flip_y)
     rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
   return  rv;

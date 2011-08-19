@@ -85,26 +85,26 @@ static void draw_lead_user (render_priv *priv);
 
 /* Px converts view->pcb, Vx converts pcb->view */
 static inline int
-Vz (int z)
+Vz (Coord z)
 {
   return z / gport->zoom + 0.5;
 }
 
-static inline int
+static inline Coord
 Px (int x)
 {
   render_priv *priv = gport->render_priv;
-  int rv = x * gport->zoom + gport->view_x0;
+  Coord rv = x * gport->zoom + gport->view_x0;
   if (priv->view.flip_x)
     rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
   return  rv;
 }
 
-static inline int
+static inline Coord
 Py (int y)
 {
   render_priv *priv = gport->render_priv;
-  int rv = y * gport->zoom + gport->view_y0;
+  Coord rv = y * gport->zoom + gport->view_y0;
   if (priv->view.flip_y)
     rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
   return  rv;
