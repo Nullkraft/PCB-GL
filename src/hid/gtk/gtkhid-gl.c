@@ -175,7 +175,16 @@ compute_depth (int group)
     } else {
       depth = -((max_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
     }
-  } else if (SL_TYPE (group) == SL_RATS) {
+  } else if (SL_TYPE (group) == SL_RATS   ||
+             SL_TYPE (group) == SL_PDRILL ||
+             SL_TYPE (group) == SL_UDRILL) {
+    /* Draw these at the depth we last rendered at */
+    depth = last_depth_computed;
+  } else if (SL_TYPE (group) == SL_PASTE  ||
+             SL_TYPE (group) == SL_FAB    ||
+             SL_TYPE (group) == SL_ASSY) {
+    /* Layer types we don't use, which draw.c asks us about, so
+     * we just return _something_ to avoid the warnign below. */
     depth = last_depth_computed;
   } else {
     /* DEFAULT CASE */
