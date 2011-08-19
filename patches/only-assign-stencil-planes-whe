@@ -1,5 +1,5 @@
-Bottom: e7d03f3946199ddac052ffaa62e235da1cb21fca
-Top:    1bf4bcf72c07c261b966bb7f3eef4e27ef86b8d0
+Bottom: 9f04a53ceed456d720d50c1045909b89912359f3
+Top:    0961707ae0ebe5d73f7bf389ccf064b0b7037ff7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-19 15:47:32 +0100
 
@@ -12,10 +12,10 @@ rat layers.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8616f38..4ee2a41 100644
+index 26275c0..db33396 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -233,6 +233,8 @@ int
+@@ -242,6 +242,8 @@ int
  ghid_set_layer (const char *name, int group, int empty)
  {
    render_priv *priv = gport->render_priv;
@@ -24,7 +24,7 @@ index 8616f38..4ee2a41 100644
    int idx = group;
    if (idx >= 0 && idx < max_group)
      {
-@@ -247,41 +249,56 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -256,41 +258,56 @@ ghid_set_layer (const char *name, int group, int empty)
        idx = PCB->LayerGroups.Entries[group][idx];
    }
  
@@ -99,7 +99,7 @@ index 8616f38..4ee2a41 100644
  }
  
  static void
-@@ -1899,7 +1916,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1908,7 +1925,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
  
    /* Draw pins, pads, vias below silk */
    if (global_view_2d) {
@@ -108,7 +108,7 @@ index 8616f38..4ee2a41 100644
  
      if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
        /* Mask out drilled holes */
-@@ -1916,7 +1933,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1925,7 +1942,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
  
