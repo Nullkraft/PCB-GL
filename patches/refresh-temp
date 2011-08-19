@@ -1,0 +1,31 @@
+Bottom: b5f2e5527d23dce9b81c9b65188139c50bfefeaf
+Top:    eaa500b14df37ab2c25b3c0a241ff19cd40db79d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-19 15:46:46 +0100
+
+Refresh of find-c-fix-unused-variables
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 2b47874..1bbb1b5 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -1583,7 +1583,7 @@ LineLineIntersect (LineTypePtr Line1, LineTypePtr Line2)
+ {
+   double s, r;
+   double line1_dx, line1_dy, line2_dx, line2_dy,
+-         point1_dx, point1_dy, point2_dx, point2_dy;
++         point1_dx, point1_dy;
+   if (TEST_FLAG (SQUAREFLAG, Line1))/* pretty reckless recursion */
+     {
+       PointType p[4];
+@@ -1625,8 +1625,6 @@ LineLineIntersect (LineTypePtr Line1, LineTypePtr Line2)
+   line2_dy = Line2->Point2.Y - Line2->Point1.Y;
+   point1_dx = Line1->Point1.X - Line2->Point1.X;
+   point1_dy = Line1->Point1.Y - Line2->Point1.Y;
+-  point2_dx = Line1->Point2.X - Line2->Point2.X;
+-  point2_dy = Line1->Point2.Y - Line2->Point2.Y;
+ 
+   /* If either line is a point, we have failed already, since the
+    *   endpoint check above will have caught an "intersection". */
