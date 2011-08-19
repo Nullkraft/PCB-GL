@@ -1,5 +1,5 @@
-Bottom: 272355df7e04b5d669fcff637ba2274d5232aca7
-Top:    de4ea7466241e4d6fc6749d50153bc6938f00c0e
+Bottom: de2c02292ae471e8c0b66ce545a647a506121d9f
+Top:    339e7b95c90da65167fed0540f16c9a6eda5fab1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-15 12:13:36 +0100
 
@@ -9,7 +9,7 @@ draw.c: Draw pins, pads and vias (for non-gui HIDs) from DrawLayerGroup()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 3293c1b..e15d8f4 100644
+index 46b3063..697f676 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -366,7 +366,6 @@ PrintAssembly (int side, const BoxType * drawn_area)
@@ -30,7 +30,7 @@ index 3293c1b..e15d8f4 100644
            gui->end_layer ();
          }
      }
-@@ -789,7 +787,9 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -788,7 +786,9 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
      }
    if (n_entries > 1)
      rv = 1;
