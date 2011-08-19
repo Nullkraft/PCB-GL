@@ -633,8 +633,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	  w = ghid_port.width * gport->zoom;
 	  h = ghid_port.height * gport->zoom;
 
-	  x0 = EVENT_TO_PCB_X (0);
-	  y0 = EVENT_TO_PCB_Y (0);
+	  x0 = PCB_X (0);
+	  y0 = PCB_Y (0);
 	  ghid_get_coords (NULL, &x, &y);
 	  x -= x0;
 	  y -= y0;

@@ -496,8 +496,6 @@ void ghid_get_coords (const char *msg, Coord *x, Coord *y);
 gint PCBChanged (int argc, char **argv, Coord x, Coord y);
 
 
-
-
 extern GdkPixmap *XC_hand_source, *XC_hand_mask;
 extern GdkPixmap *XC_lock_source, *XC_lock_mask;
 extern GdkPixmap *XC_clock_source, *XC_clock_mask;
