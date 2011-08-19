@@ -1,0 +1,22 @@
+Bottom: b861a6ec6b0f799d136580257242223bc021aea7
+Top:    1f2faabffd64be38f13f3a6146c5a842bb2c6227
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-19 15:26:33 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/draw.h b/src/draw.h
+index ee1a83d..828e9f6 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -77,7 +77,7 @@ void DrawPinOrViaLowLevel (PinTypePtr, bool);
+ void DrawPlainPin (PinTypePtr, bool);
+ void DrawPlainVia (PinTypePtr, bool);
+ void DrawRegularText (LayerTypePtr, TextTypePtr);
+-void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
++void DrawEMark (ElementTypePtr, Coord, Coord, bool);
+ void DrawHole (PinTypePtr);
+ void DrawRats (BoxType *);
+ void DrawSilk (int side, const BoxType *);
