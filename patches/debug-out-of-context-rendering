@@ -1,5 +1,5 @@
-Bottom: 7542b7a3b046c933ce60ff4a75be651b1fd5f1b7
-Top:    9d76f908269a559583ace1a38af74f02176b2db6
+Bottom: e2fd8f11da6a3679afe096f3668213dda1d9b8bb
+Top:    2df746ba04e36c5b9704adf776d70bc36108200c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-15 12:30:58 +0100
 
@@ -9,7 +9,7 @@ Debug out of context rendering
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 2857b6d..f8a4b09 100644
+index 67e3a3e..6467b22 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -64,6 +64,25 @@
@@ -54,7 +54,7 @@ index 2857b6d..f8a4b09 100644
    if (count > TRIANGLE_ARRAY_SIZE)
      {
        fprintf (stderr, "Not enough space in vertex buffer\n");
-@@ -186,6 +207,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
+@@ -186,6 +207,7 @@ static void draw_cap (Coord width, Coord x, Coord y, Angle angle, double scale)
    int slices = calc_slices (radius / scale, M_PI);
    int i;
  
@@ -62,7 +62,7 @@ index 2857b6d..f8a4b09 100644
    if (slices < MIN_TRIANGLES_PER_CAP)
      slices = MIN_TRIANGLES_PER_CAP;
  
-@@ -214,6 +236,7 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -214,6 +236,7 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
    int circular_caps = 0;
    int hairline = 0;
  
@@ -70,7 +70,7 @@ index 2857b6d..f8a4b09 100644
    if (width == 0.0)
      hairline = 1;
  
-@@ -297,6 +320,7 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+@@ -297,6 +320,7 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
    int i;
    int hairline = 0;
  
@@ -78,15 +78,15 @@ index 2857b6d..f8a4b09 100644
    if (width == 0.0)
      hairline = 1;
  
-@@ -360,6 +384,7 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+@@ -360,6 +384,7 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
  void
- hidgl_draw_rect (int x1, int y1, int x2, int y2)
+ hidgl_draw_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  {
 +  CHECK_IS_IN_CONTEXT ();
    glBegin (GL_LINE_LOOP);
    glVertex3f (x1, y1, global_depth);
    glVertex3f (x1, y2, global_depth);
-@@ -379,6 +404,7 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
+@@ -379,6 +404,7 @@ hidgl_fill_circle (Coord vx, Coord vy, Coord vr, double scale)
    int slices;
    int i;
  
@@ -94,7 +94,7 @@ index 2857b6d..f8a4b09 100644
    slices = calc_slices (vr / scale, 2 * M_PI);
  
    if (slices < MIN_TRIANGLES_PER_CIRCLE)
-@@ -525,6 +551,8 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -525,6 +551,8 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
    GLUtesselator *tobj;
    GLdouble *vertices;
  
@@ -113,13 +113,13 @@ index 2857b6d..f8a4b09 100644
  
 @@ -672,6 +701,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  void
- hidgl_fill_rect (int x1, int y1, int x2, int y2)
+ hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  {
 +  CHECK_IS_IN_CONTEXT ();
    hidgl_ensure_triangle_space (&buffer, 2);
    hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
-@@ -680,6 +710,7 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+@@ -680,6 +710,7 @@ hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  void
  hidgl_init (void)
  {
@@ -136,7 +136,7 @@ index 2857b6d..f8a4b09 100644
    glStencilMask (~assigned_bits);
    glClearStencil (0);
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 3af338d..5802c3a 100644
+index 858270a..9a035d1 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -33,6 +33,7 @@ typedef struct {
@@ -148,7 +148,7 @@ index 3af338d..5802c3a 100644
  void hidgl_flush_triangles (triangle_buffer *buffer);
  void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 07ff5dd..9a366d1 100644
+index a99e078..9e5f3fd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1961,6 +1961,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,

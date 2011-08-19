@@ -1,5 +1,5 @@
-Bottom: 67302407da0b4f0847ec5cf303b630103a50d2de
-Top:    8fb0086dfd86dc6908835d636c2e75106b7d1dd9
+Bottom: b67b2f28c0e46fe094f43465dc5c44dc1f279472
+Top:    0d5b2770d46abd3dae4df330b54e021aea838857
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-15 12:30:56 +0100
 
@@ -12,10 +12,10 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index d91a91b..cb361ab 100644
+index e295fd5..1eb3f8a 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -298,7 +298,9 @@ LIBGTK_SRCS = \
+@@ -300,7 +300,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-pinout-preview.h \
  	hid/gtk/gui-pinout-window.c \
  	hid/gtk/gui-top-window.c \
@@ -27,7 +27,7 @@ index d91a91b..cb361ab 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7e3891d..d1deef9 100644
+index 8971099..023e3ef 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -92,7 +92,7 @@ index 7e3891d..d1deef9 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index eca6349..d2b80b5 100644
+index 24a4882..1301f7c 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -125,6 +125,7 @@ a zoom in/out.
@@ -180,10 +180,10 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 0033a8f..3c91262 100644
+index 9338fcf..20021aa 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -139,6 +139,8 @@ typedef struct
+@@ -135,6 +135,8 @@ typedef struct
      library_window_width,
      library_window_height,
      netlist_window_height, history_size, settings_mode, auto_pan_speed;
@@ -192,7 +192,7 @@ index 0033a8f..3c91262 100644
  }
  GhidGui;
  
-@@ -151,6 +153,7 @@ typedef struct
+@@ -147,6 +149,7 @@ typedef struct
  {
    GtkWidget *top_window,	/* toplevel widget              */
     *drawing_area;		/* and its drawing area */
@@ -200,7 +200,7 @@ index 0033a8f..3c91262 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -301,6 +304,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -288,6 +291,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  

@@ -1,5 +1,5 @@
-Bottom: 01e573dbd6cab16c800d64c1e48b7e1b948ea0fc
-Top:    afa46a1038167b70b625d1b04702633a140d1eb9
+Bottom: b5e0b671c7e382e279f018995c3ad62ea857030d
+Top:    26b48fa5bf29b21aaba84d23da58db33504f5b86
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-15 12:30:57 +0100
 
@@ -11,10 +11,10 @@ Use them rather than the GLU tessellator
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 84930e1..2857b6d 100644
+index 2c8b017..67e3a3e 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -554,12 +554,10 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -554,12 +554,10 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
    free (vertices);
  }
  
