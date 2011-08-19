@@ -1,0 +1,35 @@
+Bottom: b36952e7ae6f54f3ea577e6b00fa0e162a314ab4
+Top:    6e28d50d7b5041c23131a4efb316c2cc95e4e658
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-19 17:05:16 +0100
+
+Refresh of hid-gtk-convert-line-width-to-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index c38cbc5..c04f975 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -57,7 +57,7 @@ typedef struct hid_gc_struct
+   GdkGC *gc;
+ 
+   gchar *colorname;
+-  gint width;
++  Coord width;
+   gint cap, join;
+   gchar xor_mask;
+   gint mask_seq;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 95ab93d..23fa8c6 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -65,7 +65,7 @@ typedef struct hid_gc_struct
+ 
+   const char *colorname;
+   double alpha_mult;
+-  gint width;
++  Coord width;
+   gint cap, join;
+   gchar xor;
+ }
