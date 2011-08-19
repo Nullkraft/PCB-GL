@@ -141,16 +141,6 @@ set_pv_color (PinType *pv, int type)
                                                                                          : PCB->PinColor);
 }
 
-static void
-set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
-{
-  if (TEST_FLAG (WARNFLAG, pv))          gui->set_color (Output.fgGC, PCB->WarnColor);
-  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
-                                                                                         : PCB->PinSelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  else                                   gui->set_color (Output.fgGC, layer->Color);
-}
-
 static int
 pin_callback (const BoxType * b, void *cl)
 {
@@ -160,25 +150,9 @@ pin_callback (const BoxType * b, void *cl)
 }
 
 static int
-pin_inlayer_callback (const BoxType * b, void *cl)
-{
-  set_pv_inlayer_color ((PinType *)b, cl, PIN_TYPE);
-  dapi->draw_pin ((PinType *)b, NULL, NULL);
-  return 1;
-}
-
-static int
 via_callback (const BoxType * b, void *cl)
 {
   set_pv_color ((PinType *)b, VIA_TYPE);
-  dapi->draw_via ((PinType *)b, NULL, NULL);
-  return 1;
-}
-
-static int
-via_inlayer_callback (const BoxType * b, void *cl)
-{
-  set_pv_inlayer_color ((PinType *)b, cl, VIA_TYPE);
   dapi->draw_via ((PinType *)b, NULL, NULL);
   return 1;
 }
@@ -196,28 +170,6 @@ pad_callback (const BoxType * b, void *cl)
       else if (TEST_FLAG (FOUNDFLAG, pad))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
       else if (FRONT (pad))                   gui->set_color (Output.fgGC, PCB->PinColor);
       else                                    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-
-      dapi->draw_pad (pad, NULL, NULL);
-    }
-  return 1;
-}
-
-static int
-pad_inlayer_callback (const BoxType * b, void *cl)
-{
-  PadTypePtr pad = (PadTypePtr) b;
-  LayerType *layer = cl;
-  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
-  int group = GetLayerGroupNumberByPointer (layer);
-
-  int side = (group == solder_group) ? SOLDER_LAYER : COMPONENT_LAYER;
-
-  if (ON_SIDE (pad, side))
-    {
-      if (TEST_FLAG (WARNFLAG, pad))          gui->set_color (Output.fgGC, PCB->WarnColor);
-      else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
-      else if (TEST_FLAG (FOUNDFLAG, pad))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
-      else                                    gui->set_color (Output.fgGC, layer->Color);
 
       dapi->draw_pad (pad, NULL, NULL);
     }
@@ -357,20 +309,6 @@ CountHoles (int *plated, int *unplated, BoxType *drawn_area)
 }
 
 static int
-line_callback (const BoxType * b, void *cl)
-{
-  LayerType *layer = cl;
-  LineType *line = (LineType *)b;
-
-  if (TEST_FLAG (SELECTEDFLAG, line))   gui->set_color (Output.fgGC, layer->SelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, line)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  else                                  gui->set_color (Output.fgGC, layer->Color);
-
-  dapi->draw_line (line, NULL, NULL);
-  return 1;
-}
-
-static int
 rat_callback (const BoxType * b, void *cl)
 {
   RatType *rat = (RatType *)b;
@@ -380,20 +318,6 @@ rat_callback (const BoxType * b, void *cl)
   else                                 gui->set_color (Output.fgGC, PCB->RatColor);
 
   dapi->draw_rat (rat, NULL, NULL);
-  return 1;
-}
-
-static int
-arc_callback (const BoxType * b, void *cl)
-{
-  LayerType *layer = cl;
-  ArcType *arc = (ArcType *)b;
-
-  if (TEST_FLAG (SELECTEDFLAG, arc))   gui->set_color (Output.fgGC, layer->SelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, arc)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  else                                 gui->set_color (Output.fgGC, layer->Color);
-
-  dapi->draw_arc (arc, NULL, NULL);
   return 1;
 }
 
@@ -498,7 +422,7 @@ DrawEverything (BoxTypePtr drawn_area)
 	{
 	  r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
 	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
+	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
 	}
       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
       gui->end_layer ();
@@ -713,25 +637,6 @@ via_mask_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-struct poly_info {
-  const BoxType *drawn_area;
-  LayerType *layer;
-};
-
-static int
-poly_callback (const BoxType * b, void *cl)
-{
-  struct poly_info *i = cl;
-  PolygonType *polygon = (PolygonType *)b;
-
-  if (TEST_FLAG (SELECTEDFLAG, polygon))   gui->set_color (Output.fgGC, i->layer->SelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, polygon)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  else                                     gui->set_color (Output.fgGC, i->layer->Color);
-
-  dapi->draw_poly (polygon, i->drawn_area, NULL);
-  return 1;
-}
-
 static int
 pad_mask_callback (const BoxType * b, void *cl)
 {
@@ -760,7 +665,7 @@ DrawSilk (int side, const BoxType * drawn_area)
     {
       gui->use_mask (HID_MASK_BEFORE);
 #endif
-      DrawLayer (LAYER_PTR (max_copper_layer + side), drawn_area);
+      dapi->draw_layer (LAYER_PTR (max_copper_layer + side), drawn_area, NULL);
       /* draw package */
       r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
@@ -775,7 +680,7 @@ DrawSilk (int side, const BoxType * drawn_area)
   if (gui->poly_after)
     {
       gui->use_mask (HID_MASK_AFTER);
-      DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
+      dapi->draw_layer (LAYER_PTR (max_copper_layer + layer), drawn_area, NULL);
       /* draw package */
       r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
@@ -863,116 +768,6 @@ DrawRats (BoxTypePtr drawn_area)
     gui->use_mask (HID_MASK_OFF);
 }
 
-static int
-text_callback (const BoxType * b, void *cl)
-{
-  LayerType *layer = cl;
-  TextType *text = (TextType *)b;
-  int min_silk_line;
-
-  if (TEST_FLAG (SELECTEDFLAG, text))
-    gui->set_color (Output.fgGC, layer->SelectedColor);
-  else
-    gui->set_color (Output.fgGC, layer->Color);
-  if (layer == &PCB->Data->SILKLAYER ||
-      layer == &PCB->Data->BACKSILKLAYER)
-    min_silk_line = PCB->minSlk;
-  else
-    min_silk_line = PCB->minWid;
-  DrawTextLowLevel (text, min_silk_line);
-  return 1;
-}
-
-/* ---------------------------------------------------------------------------
- * draws one non-copper layer
- */
-void
-DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
-{
-  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
-  int group = GetLayerGroupNumberByPointer (Layer);
-  struct poly_info info = {screen, Layer};
-
-  /* print the non-clearing polys */
-  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
-
-  if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
-    return;
-
-  /* draw all visible lines this layer */
-  r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
-
-  /* draw the layer arcs on screen */
-  r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
-
-  /* draw the layer text on screen */
-  r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
-
-  /* We should check for gui->gui here, but it's kinda cool seeing the
-     auto-outline magically disappear when you first add something to
-     the "outline" layer.  */
-
-  if (strcmp (Layer->Name, "outline") == 0 ||
-      strcmp (Layer->Name, "route") == 0)
-    {
-      if (IsLayerEmpty (Layer))
-        {
-          gui->set_color (Output.fgGC, Layer->Color);
-          gui->set_line_width (Output.fgGC, PCB->minWid);
-          gui->draw_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-        }
-      return;
-    }
-
-  /* draw element pins */
-  r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
-
-  /* draw element pads */
-  if (group == component_group)
-    r_search (PCB->Data->pad_tree, screen, NULL, pad_inlayer_callback, Layer);
-
-  if (group == solder_group)
-    r_search (PCB->Data->pad_tree, screen, NULL, pad_inlayer_callback, Layer);
-
-  /* draw vias */
-  r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-  r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
-  r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-}
-
-void
-DrawLayer (LayerTypePtr Layer, const BoxType * screen)
-{
-  struct poly_info info = {screen, Layer};
-
-  /* print the non-clearing polys */
-  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
-
-  /* draw all visible lines this layer */
-  r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
-
-  /* draw the layer arcs on screen */
-  r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
-
-  /* draw the layer text on screen */
-  r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
-
-  /* We should check for gui->gui here, but it's kinda cool seeing the
-     auto-outline magically disappear when you first add something to
-     the "outline" layer.  */
-  if (IsLayerEmpty (Layer)
-      && (strcmp (Layer->Name, "outline") == 0
-	  || strcmp (Layer->Name, "route") == 0))
-    {
-      gui->set_color (Output.fgGC, Layer->Color);
-      gui->set_line_width (Output.fgGC, PCB->minWid);
-      gui->draw_rect (Output.fgGC,
-		      0, 0,
-		      PCB->MaxWidth, PCB->MaxHeight);
-    }
-}
-
 /* ---------------------------------------------------------------------------
  * draws one layer group.  Returns non-zero if pins and pads should be
  * drawn with this group.
@@ -994,7 +789,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
           strcmp (Layer->Name, "route") == 0)
         rv = 0;
       if (layernum < max_copper_layer && Layer->On)
-        DrawLayerCommon (Layer, drawn_area, true);
+        dapi->draw_layer (Layer, drawn_area, NULL);
     }
   if (n_entries > 1)
     rv = 1;
