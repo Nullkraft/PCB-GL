@@ -94,7 +94,7 @@ typedef struct hid_gc_struct
 hid_gc_struct;
 
 static void draw_lead_user (render_priv *priv);
-static void ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy);
+static void ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y);
 
 /* Px converts view->pcb, Vx converts pcb->view */
 static inline int
@@ -963,11 +963,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 {
   render_priv *priv = port->render_priv;
   BoxType region;
-  int min_x, min_y;
-  int max_x, max_y;
-  int new_x, new_y;
-  int min_depth;
-  int max_depth;
+  Coord min_x, min_y;
+  Coord max_x, max_y;
+  Coord new_x, new_y;
+  Coord min_depth;
+  Coord max_depth;
 
   ghid_start_drawing (port);
 
@@ -1520,7 +1520,7 @@ invert_4x4 (float m[4][4], float out[4][4])
 
 
 static void
-ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
+ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y)
 {
   float mat[2][2];
   float inv_mat[2][2];
@@ -1553,10 +1553,10 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
 
   /* NB: last_modelview_matrix is transposed in memory! */
   x = (float)ex - last_modelview_matrix[3][0] * 1
-                - last_modelview_matrix[2][0] * vz;
+                - last_modelview_matrix[2][0] * pcb_z;
 
   y = (float)ey - last_modelview_matrix[3][1] * 1
-                - last_modelview_matrix[2][1] * vz;
+                - last_modelview_matrix[2][1] * pcb_z;
 
   /*
     x = view_matrix[0][0] * vx +
@@ -1579,8 +1579,8 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
 
   invert_2x2 (mat, inv_mat);
 
-  *vx = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
-  *vy = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
+  *pcb_x = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
+  *pcb_y = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
 }
 
 
