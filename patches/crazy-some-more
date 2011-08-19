@@ -1,5 +1,5 @@
-Bottom: 88406d3774f73244582663fe8f9cca96c5970ce7
-Top:    702b0930f31d1b1e1b13c43c6af99cb8b298e4c3
+Bottom: ebb1b78bc15571e7a0d4de8473c7dc08934b6ec2
+Top:    ea036e361323ddad58a16ce4cdd094054b6bae61
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-15 12:30:54 +0100
 
@@ -9,7 +9,7 @@ Crazy some more
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index ce2fb5c..a919041 100644
+index 567c648..6230a0c 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,7 +83,6 @@ static bool doing_assy = false;
@@ -19,7 +19,7 @@ index ce2fb5c..a919041 100644
 -static void DrawPPV (int group, const BoxType *);
  static int DrawLayerGroup (int, const BoxType *);
  static void AddPart (void *);
- static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+ static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
 @@ -142,22 +141,6 @@ set_pv_color (PinType *pv, int type)
  }
  
@@ -140,7 +140,7 @@ index ce2fb5c..a919041 100644
            gui->end_layer ();
          }
      }
-@@ -602,46 +537,6 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
+@@ -601,46 +536,6 @@ DrawEMark (ElementTypePtr e, Coord X, Coord Y, bool invisible)
      }
  }
  
