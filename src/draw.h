@@ -77,7 +77,7 @@ void DrawPinOrViaLowLevel (PinTypePtr, bool);
 void DrawPlainPin (PinTypePtr, bool);
 void DrawPlainVia (PinTypePtr, bool);
 void DrawRegularText (LayerTypePtr, TextTypePtr);
-void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+void DrawEMark (ElementTypePtr, Coord, Coord, bool);
 void DrawHole (PinTypePtr);
 void DrawRats (BoxType *);
 void DrawSilk (int side, const BoxType *);
