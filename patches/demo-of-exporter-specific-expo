@@ -1,5 +1,5 @@
-Bottom: bb2d2e36ae98ecda0864804946d51aca076c5c96
-Top:    272355df7e04b5d669fcff637ba2274d5232aca7
+Bottom: 264cefec21c1d8441cec542f7e35605dfe4f4d19
+Top:    de2c02292ae471e8c0b66ce545a647a506121d9f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-15 12:13:36 +0100
 
@@ -9,7 +9,7 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 05ebad2..3293c1b 100644
+index 92ed769..46b3063 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,8 +83,6 @@ static bool doing_assy = false;
@@ -19,9 +19,9 @@ index 05ebad2..3293c1b 100644
 -static void DrawPPV (int group, const BoxType *);
 -static int DrawLayerGroup (int, const BoxType *);
  static void AddPart (void *);
- static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+ static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
  static void DrawRats (BoxType *);
-@@ -585,7 +583,7 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
+@@ -584,7 +582,7 @@ DrawEMark (ElementTypePtr e, Coord X, Coord Y, bool invisible)
   * Draws pins pads and vias - Always draws for non-gui HIDs,
   * otherwise drawing depends on PCB->PinOn and PCB->ViaOn
   */
@@ -30,7 +30,7 @@ index 05ebad2..3293c1b 100644
  DrawPPV (int group, const BoxType *drawn_area)
  {
    int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-@@ -770,7 +768,7 @@ DrawRats (BoxTypePtr drawn_area)
+@@ -769,7 +767,7 @@ DrawRats (BoxTypePtr drawn_area)
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
   */
@@ -40,7 +40,7 @@ index 05ebad2..3293c1b 100644
  {
    int i, rv = 1;
 diff --git a/src/draw.h b/src/draw.h
-index 4798962..3ec4d5b 100644
+index 95e343c..4b315cc 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -71,6 +71,9 @@ void EraseElementName (ElementTypePtr);
@@ -54,7 +54,7 @@ index 4798962..3ec4d5b 100644
  void DrawSilk (int side, const BoxType *);
  void DrawPaste (int side, BoxType *);
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index d7ef716..8901eff 100644
+index 03e82d8..56cf914 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -1,6 +1,11 @@
@@ -296,7 +296,7 @@ index d7ef716..8901eff 100644
 +    PrintFab (Output.fgGC);
 +}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 2897b17..7e99183 100644
+index 48bf722..a312aa3 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -25,9 +25,11 @@
@@ -477,7 +477,7 @@ index 2897b17..7e99183 100644
  static void
  gerber_do_export (HID_Attr_Val * options)
  {
-   char *fnbase;
+   const char *fnbase;
    int i;
 -  static int saved_layer_stack[MAX_LAYER];
 -  int save_ons[MAX_LAYER + 2];
