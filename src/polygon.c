@@ -1963,8 +1963,8 @@ struct clip_outline_info {
   POLYAREA *poly;
 };
 
-#define ROUTER_THICKNESS 1000
-//#define ROUTER_THICKNESS 10
+//#define ROUTER_THICKNESS 1000
+#define ROUTER_THICKNESS 10
 
 static int
 arc_outline_callback (const BoxType * b, void *cl)
