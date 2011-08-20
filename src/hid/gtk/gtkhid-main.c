@@ -1361,9 +1361,9 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
   gint flipd;
   int do_flip_x = 0;
   int do_flip_y = 0;
+  int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
   int comp_group = GetLayerGroupNumberByNumber (component_silk_layer);
   int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
-  int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
   bool comp_on = LAYER_PTR (PCB->LayerGroups.Entries[comp_group][0])->On;
   bool solder_on = LAYER_PTR (PCB->LayerGroups.Entries[solder_group][0])->On;
 
