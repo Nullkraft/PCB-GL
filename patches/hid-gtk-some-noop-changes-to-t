@@ -1,5 +1,5 @@
 Bottom: 6e28d50d7b5041c23131a4efb316c2cc95e4e658
-Top:    f63888d0372e86697d078aa5425f992e2d0ed397
+Top:    6ec00d68f38f5e62cfe23f7b602c114dd9e916af
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-20 15:45:20 +0100
 
@@ -12,13 +12,17 @@ Hopefully this makes the function a little simpler.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 68775c1..be922a6 100644
+index 68775c1..d7549ca 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1364,59 +1364,47 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
+@@ -1361,62 +1361,50 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
+   gint flipd;
+   int do_flip_x = 0;
+   int do_flip_y = 0;
++  int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
    int comp_group = GetLayerGroupNumberByNumber (component_silk_layer);
    int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
-   int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
+-  int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
 -  int comp_showing =
 -    PCB->Data->Layer[PCB->LayerGroups.Entries[comp_group][0]].On;
 -  int solder_showing =
