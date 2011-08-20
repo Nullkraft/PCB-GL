@@ -1266,21 +1266,20 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
   int comp_showing =   LAYER_PTR (PCB->LayerGroups.Entries[comp_group][0])->On;
   int solder_showing = LAYER_PTR (PCB->LayerGroups.Entries[solder_group][0])->On;
 
-
   if (argc > 0)
     {
       switch (argv[0][0]) {
         case 'h':
         case 'H':
-          ghid_flip_view (x, y, true, false);
+          ghid_flip_view (gport->pcb_x, gport->pcb_y, true, false);
           break;
         case 'v':
         case 'V':
-          ghid_flip_view (x, y, false, true);
+          ghid_flip_view (gport->pcb_x, gport->pcb_y, false, true);
           break;
         case 'r':
         case 'R':
-          ghid_flip_view (x, y, true, true);
+          ghid_flip_view (gport->pcb_x, gport->pcb_y, true, true);
           Settings.ShowSolderSide = !Settings.ShowSolderSide; /* Swapped back below */
           break;
         default:

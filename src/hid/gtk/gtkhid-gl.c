@@ -1406,10 +1406,16 @@ ghid_zoom_view_fit (void)
 void
 ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 {
+  int widget_x, widget_y;
+
+  /* Work out where on the screen the flip point is */
+  ghid_pcb_to_event_coords (center_x, center_y, &widget_x, &widget_y);
+
   ghid_flip_x = ghid_flip_x != flip_x;
   ghid_flip_y = ghid_flip_y != flip_y;
 
-  /* XXX: PAN THE BOARD SO THE CENTER LOCATION REMAINS IN THE SAME PLACE */
+  /* Pan the board so the center location remains in the same place */
+  ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
 
   ghid_invalidate_all ();
 }
