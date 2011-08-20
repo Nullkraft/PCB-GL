@@ -1,5 +1,5 @@
 Bottom: 6e28d50d7b5041c23131a4efb316c2cc95e4e658
-Top:    5b0c1f171249e0dfd9a57b2c40ebdac0228b2016
+Top:    792bc2f356653d9189164dfd95f291208b94147b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-20 15:20:14 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Rework zoom / pan API
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 68775c1..f2677f6 100644
+index 68775c1..3f9b51a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -30,16 +30,13 @@
@@ -19,13 +19,14 @@ index 68775c1..f2677f6 100644
 -static void zoom_to (double factor, Coord x, Coord y);
 -static void zoom_by (double factor, Coord x, Coord y);
 -static void zoom_fit (void);
--
--int ghid_flip_x = 0, ghid_flip_y = 0;
--
 +bool ghid_flip_x = false, ghid_flip_y = false;
  
- void
+-int ghid_flip_x = 0, ghid_flip_y = 0;
+-
+-
+-void
 -ghid_pan_fixup ()
++static void
 +ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  {
 +  gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
@@ -54,7 +55,7 @@ index 68775c1..f2677f6 100644
 + * gport->view_width and gport->view_height are in PCB coordinates
 + */
 +
-+void
++static void
 +ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 +{
 +  double min_zoom, max_zoom;
@@ -91,20 +92,20 @@ index 68775c1..f2677f6 100644
 +  ghid_set_status_line_label ();
 +}
 +
-+void
++static void
 +ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
 +{
 +  ghid_zoom_view_abs (center_x, center_y, gport->zoom * factor);
 +}
 +
-+void
++static void
 +ghid_zoom_view_fit (void)
 +{
 +  ghid_zoom_view_abs (0, 0, MAX (PCB->MaxWidth  / gport->width,
 +                                 PCB->MaxHeight / gport->height));
 +}
 +
-+void
++static void
 +ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 +{
 +  int widget_x, widget_y;
@@ -253,7 +254,7 @@ index 68775c1..f2677f6 100644
    /* Now move the mouse pointer to the place where the board location
     * actually ended up.
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 752c184..537c079 100644
+index 752c184..7c0ffb5 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -62,7 +62,7 @@
@@ -265,15 +266,10 @@ index 752c184..537c079 100644
  #define SIDE_X(x)   ((ghid_flip_x ? PCB->MaxWidth - (x) : (x)))
  #define SIDE_Y(y)   ((ghid_flip_y ? PCB->MaxHeight - (y) : (y)))
  
-@@ -506,7 +506,11 @@ void ghid_lead_user_to_location (Coord x, Coord y);
+@@ -506,7 +506,6 @@ void ghid_lead_user_to_location (Coord x, Coord y);
  void ghid_cancel_lead_user (void);
  
  /* gtkhid-main.c */
 -void ghid_pan_fixup (void);
-+void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
-+void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
-+void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
-+void ghid_zoom_view_fit (void);
-+void ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y);
  void ghid_get_coords (const char *msg, Coord *x, Coord *y);
  gint PCBChanged (int argc, char **argv, Coord x, Coord y);
