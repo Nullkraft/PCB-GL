@@ -81,6 +81,7 @@ typedef struct hid_gc_struct
 }
 hid_gc_struct;
 
+
 static void draw_lead_user (render_priv *priv);
 
 /* Px converts view->pcb, Vx converts pcb->view */
