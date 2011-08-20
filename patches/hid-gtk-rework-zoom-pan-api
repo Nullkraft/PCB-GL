@@ -1,5 +1,5 @@
-Bottom: f63888d0372e86697d078aa5425f992e2d0ed397
-Top:    b881eb0de1a339ea8222636cc85593d6213d0596
+Bottom: 6ec00d68f38f5e62cfe23f7b602c114dd9e916af
+Top:    f86b2078b306862ee2fe4b8bc55b6c87861bb42c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-20 15:20:14 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Rework zoom / pan API
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index be922a6..d318b17 100644
+index d7549ca..2baf935 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -30,16 +30,15 @@
