@@ -1,0 +1,58 @@
+Bottom: 5fe7b3afb453cbec33b9f44af0f458f81f6ef3bd
+Top:    c974b5f93505ebebeab7215ab480e8fa62d6a223
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-20 10:40:43 +0100
+
+Refresh of add-a-demonstration-model-for-
+
+---
+
+diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
+index e4182f5..c863e3d 100644
+--- a/src/hid/common/hidgl_package_acy_resistor.c
++++ b/src/hid/common/hidgl_package_acy_resistor.c
+@@ -605,10 +605,9 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
+ 
+ #define NUM_RESISTOR_STRIPS 100
+ #define NUM_PIN_RINGS 15
+-#define MIL_TO_INTERNAL 100.
+ 
+ /* XXX: HARDCODED MAGIC */
+-#define BOARD_THICKNESS 6300
++#define BOARD_THICKNESS MM_TO_COORD (1.6)
+ 
+ void
+ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness)
+@@ -634,19 +633,19 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+   GLuint restore_sp;
+ 
+   /* XXX: Hard-coded magic */
+-  float resistor_pin_radius = 12. * MIL_TO_INTERNAL;
+-  float resistor_taper1_radius = 16. * MIL_TO_INTERNAL;
+-  float resistor_taper2_radius = 35. * MIL_TO_INTERNAL;
+-  float resistor_bulge_radius = 43. * MIL_TO_INTERNAL;
+-  float resistor_barrel_radius = 37. * MIL_TO_INTERNAL;
+-
+-  float resistor_taper1_offset = 25 * MIL_TO_INTERNAL;
+-  float resistor_taper2_offset = 33 * MIL_TO_INTERNAL;
+-  float resistor_bulge_offset = 45. * MIL_TO_INTERNAL;
+-  float resistor_bulge_width = 50. * MIL_TO_INTERNAL;
+-  float resistor_pin_spacing = 400. * MIL_TO_INTERNAL;
+-
+-  float pin_penetration_depth = 30. * MIL_TO_INTERNAL + board_thickness;
++  float resistor_pin_radius = MIL_TO_COORD (12.);
++  float resistor_taper1_radius = MIL_TO_COORD (16.);
++  float resistor_taper2_radius = MIL_TO_COORD (35.);
++  float resistor_bulge_radius = MIL_TO_COORD (43.);
++  float resistor_barrel_radius = MIL_TO_COORD (37.);
++
++  float resistor_taper1_offset = MIL_TO_COORD (25);
++  float resistor_taper2_offset = MIL_TO_COORD (33);
++  float resistor_bulge_offset = MIL_TO_COORD (45.);
++  float resistor_bulge_width = MIL_TO_COORD (50.);
++  float resistor_pin_spacing = MIL_TO_COORD (400.);
++
++  float pin_penetration_depth = MIL_TO_COORD (30.) + board_thickness;
+ 
+   float resistor_pin_bend_radius = resistor_bulge_radius;
+   float resistor_width = resistor_pin_spacing - 2. * resistor_pin_bend_radius;
