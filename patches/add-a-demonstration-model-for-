@@ -1,5 +1,5 @@
 Bottom: 7dd6ffd8bc75e88ef98384ba844bb4c29c150bff
-Top:    0dccf949dec10fa503b0ea2307bf0c0c6afca8a0
+Top:    93c6e705f11ef37ea33b2cf78bab3ea74bfdca6f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
 
@@ -1514,7 +1514,7 @@ index 0000000..801f98f
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2451cba..fd06e90 100644
+index 2451cba..b24c49c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -368,6 +368,47 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1768,7 +1768,7 @@ index 2451cba..fd06e90 100644
    /* Set the current depth to the right value for the layer we are editing */
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
  
-@@ -2258,6 +2410,71 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2258,6 +2410,63 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawMark ();
    hidgl_flush_triangles (&buffer);
  
@@ -1829,18 +1829,10 @@ index 2451cba..fd06e90 100644
 +  glDisable (GL_COLOR_MATERIAL);
 +  glDisable (GL_LIGHTING);
 +
-+#ifdef ONE_SHOT
-+    glEndList ();
-+    one_shot = 0;
-+  }
-+
-+  glCallList (display_list);
-+#endif
-+
    ghid_show_crosshair (TRUE);
  
    hidgl_flush_triangles (&buffer);
-@@ -2365,7 +2582,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2365,7 +2574,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -1849,7 +1841,7 @@ index 2451cba..fd06e90 100644
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
-@@ -2435,6 +2652,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2435,6 +2644,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
@@ -1857,7 +1849,7 @@ index 2451cba..fd06e90 100644
                                          GDK_GL_MODE_SINGLE);
  
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
-@@ -2485,7 +2703,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2485,7 +2695,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
