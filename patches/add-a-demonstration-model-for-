@@ -1,5 +1,5 @@
 Bottom: 90a4d0c5d88e443ad6ca5a8a72381e7ea0ce8ebc
-Top:    c974b5f93505ebebeab7215ab480e8fa62d6a223
+Top:    d0077a3c6fcf24f404f72500184ce2e0d7277625
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
 
@@ -1515,7 +1515,7 @@ index 0000000..c863e3d
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b7f0a70..d6010b8 100644
+index b7f0a70..fd06e90 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -368,6 +368,47 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1713,15 +1713,6 @@ index b7f0a70..d6010b8 100644
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
        if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
        hidgl_flush_triangles (&buffer);
-@@ -2078,7 +2188,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   /* Scale board coordiantes to (-1,-1)-(1,1) coordiantes */
-   /* Adjust the "w" coordinate of our homogeneous coodinates. We coulld in
-    * theory just use glScalef to transform, but on mesa this produces errors
--   * as the resulting modelview matrix has a very small determinant.
-+   * as the resulting modelview matrix has a very smalldeterminant.
-    */
-   scale[15] = (float)port->zoom * (float)MIN (widget->allocation.width, widget->allocation.height) / 2.;
-   /* XXX: Need to choose which to use (width or height) based on the aspect of the window
 @@ -2107,6 +2217,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  #endif
  
