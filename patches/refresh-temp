@@ -1,0 +1,28 @@
+Bottom: 0dccf949dec10fa503b0ea2307bf0c0c6afca8a0
+Top:    93c6e705f11ef37ea33b2cf78bab3ea74bfdca6f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-20 11:29:09 +0100
+
+Refresh of add-a-demonstration-model-for-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index fd06e90..b24c49c 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2467,14 +2467,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glDisable (GL_COLOR_MATERIAL);
+   glDisable (GL_LIGHTING);
+ 
+-#ifdef ONE_SHOT
+-    glEndList ();
+-    one_shot = 0;
+-  }
+-
+-  glCallList (display_list);
+-#endif
+-
+   ghid_show_crosshair (TRUE);
+ 
+   hidgl_flush_triangles (&buffer);
