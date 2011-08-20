@@ -1,5 +1,5 @@
 Bottom: 7dd6ffd8bc75e88ef98384ba844bb4c29c150bff
-Top:    d0077a3c6fcf24f404f72500184ce2e0d7277625
+Top:    0dccf949dec10fa503b0ea2307bf0c0c6afca8a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
 
@@ -509,10 +509,10 @@ index b83e45b..2f8653a 100644
  #endif /* PCB_HID_COMMON_HIDGL_H  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
 new file mode 100644
-index 0000000..c863e3d
+index 0000000..801f98f
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
-@@ -0,0 +1,1001 @@
+@@ -0,0 +1,1000 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -737,7 +737,6 @@ index 0000000..c863e3d
 +  value -= *st1;
 +
 +  value *= 10.;
-+  printf ("XXX: Something dies if I don't print this!: %f\n", value);
 +  *st2 = (int)value;
 +  value -= *st2;
 +
