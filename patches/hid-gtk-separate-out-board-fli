@@ -1,5 +1,5 @@
 Bottom: 73d912b3892f608c5b6f137fd3c0e7a547744571
-Top:    adef94d5e6a0fd668dc4c8079e9e04683548cffd
+Top:    5308d094284304161619fdcea2c27347d7349f91
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-08 23:07:05 +0100
 
@@ -188,7 +188,7 @@ index 8f69ab4..095c999 100644
    /* Pan the board so the center location remains in the same place */
    ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7840b4d..b36870d 100644
+index 7840b4d..3db5468 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -38,8 +38,16 @@ static hidGC current_gc = NULL;
@@ -217,11 +217,8 @@ index 7840b4d..b36870d 100644
    /* Feature for leading the user to a particular location */
    guint lead_user_timeout;
    GTimer *lead_user_timer;
-@@ -71,9 +81,34 @@ typedef struct hid_gc_struct
- }
- hid_gc_struct;
+@@ -74,6 +84,32 @@ hid_gc_struct;
  
--
  static void draw_lead_user (render_priv *priv);
  
 +/* Px converts view->pcb, Vx converts pcb->view */
@@ -253,7 +250,7 @@ index 7840b4d..b36870d 100644
  
  static void
  start_subcomposite (void)
-@@ -743,6 +778,7 @@ draw_crosshair (gint x, gint y, gint z)
+@@ -743,6 +779,7 @@ draw_crosshair (gint x, gint y, gint z)
  void
  ghid_show_crosshair (gboolean paint_new_location)
  {
@@ -261,7 +258,7 @@ index 7840b4d..b36870d 100644
    gint x, y, z;
    gboolean draw_markers;
    int vcw = VCW * gport->zoom;
-@@ -933,13 +969,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -933,13 +970,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -282,7 +279,7 @@ index 7840b4d..b36870d 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -1020,6 +1056,7 @@ gboolean
+@@ -1020,6 +1057,7 @@ gboolean
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
  {
@@ -290,7 +287,7 @@ index 7840b4d..b36870d 100644
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
    GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
-@@ -1092,12 +1129,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1092,12 +1130,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -309,7 +306,7 @@ index 7840b4d..b36870d 100644
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1126,6 +1163,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1126,6 +1164,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  GdkPixmap *
  ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
  {
@@ -317,7 +314,7 @@ index 7840b4d..b36870d 100644
    GdkGLConfig *glconfig;
    GdkPixmap *pixmap;
    GdkGLPixmap *glpixmap;
-@@ -1164,9 +1202,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1164,9 +1203,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    gport->height = height;
    gport->view_width = width * gport->zoom;
    gport->view_height = height * gport->zoom;
@@ -329,7 +326,7 @@ index 7840b4d..b36870d 100644
    gport->view_y0 -= gport->view_width  / 2;
  
    /* make GL-context "current" */
-@@ -1203,12 +1241,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1203,12 +1242,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -348,7 +345,7 @@ index 7840b4d..b36870d 100644
    region.X1 = MIN(Px(0), Px(gport->width + 1));
    region.Y1 = MIN(Py(0), Py(gport->height + 1));
    region.X2 = MAX(Px(0), Px(gport->width + 1));
-@@ -1243,6 +1281,7 @@ HID *
+@@ -1243,6 +1282,7 @@ HID *
  ghid_request_debug_draw (void)
  {
    GHidPort *port = gport;
@@ -356,7 +353,7 @@ index 7840b4d..b36870d 100644
    GtkWidget *widget = port->drawing_area;
  
    ghid_start_drawing (port);
-@@ -1263,13 +1302,13 @@ ghid_request_debug_draw (void)
+@@ -1263,13 +1303,13 @@ ghid_request_debug_draw (void)
    glDisable (GL_STENCIL_TEST);
  
    glPushMatrix ();
@@ -377,7 +374,7 @@ index 7840b4d..b36870d 100644
  
    return &ghid_hid;
  }
-@@ -1300,6 +1339,8 @@ ghid_finish_debug_draw (void)
+@@ -1300,6 +1340,8 @@ ghid_finish_debug_draw (void)
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
@@ -386,7 +383,7 @@ index 7840b4d..b36870d 100644
    *pcb_x = EVENT_TO_PCB_X (event_x);
    *pcb_y = EVENT_TO_PCB_Y (event_y);
  
-@@ -1309,6 +1350,8 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+@@ -1309,6 +1351,8 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  bool
  ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  {
@@ -395,7 +392,7 @@ index 7840b4d..b36870d 100644
    *event_x = DRAW_X (pcb_x);
    *event_y = DRAW_Y (pcb_y);
  
-@@ -1318,6 +1361,8 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1318,6 +1362,8 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  void
  ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  {
@@ -404,7 +401,7 @@ index 7840b4d..b36870d 100644
    gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
    gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
  
-@@ -1356,6 +1401,7 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+@@ -1356,6 +1402,7 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  void
  ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  {
@@ -412,7 +409,7 @@ index 7840b4d..b36870d 100644
    double min_zoom, max_zoom;
    double xtmp, ytmp;
  
-@@ -1406,13 +1452,14 @@ ghid_zoom_view_fit (void)
+@@ -1406,13 +1453,14 @@ ghid_zoom_view_fit (void)
  void
  ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
  {
