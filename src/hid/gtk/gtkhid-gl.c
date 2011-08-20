@@ -2188,7 +2188,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   /* Scale board coordiantes to (-1,-1)-(1,1) coordiantes */
   /* Adjust the "w" coordinate of our homogeneous coodinates. We coulld in
    * theory just use glScalef to transform, but on mesa this produces errors
-   * as the resulting modelview matrix has a very smalldeterminant.
+   * as the resulting modelview matrix has a very small determinant.
    */
   scale[15] = (float)port->zoom * (float)MIN (widget->allocation.width, widget->allocation.height) / 2.;
   /* XXX: Need to choose which to use (width or height) based on the aspect of the window
