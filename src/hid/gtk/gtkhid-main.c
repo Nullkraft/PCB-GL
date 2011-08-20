@@ -32,6 +32,8 @@ RCSID ("$Id$");
 
 bool ghid_flip_x = false, ghid_flip_y = false;
 
+static void ghid_zoom_view_fit (void);
+
 static void
 ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 {
