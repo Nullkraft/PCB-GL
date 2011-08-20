@@ -1,0 +1,22 @@
+Bottom: 90a4d0c5d88e443ad6ca5a8a72381e7ea0ce8ebc
+Top:    7dd6ffd8bc75e88ef98384ba844bb4c29c150bff
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-20 10:44:31 +0100
+
+Refresh of play-with-perspective
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index b7f0a70..2451cba 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2704,7 +2704,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+   double width = 2. * aspect;
+   double height = 2.;
+   double near = 1.;
+-  // double far = 24.;
++  /* double far = 24.; */
+ 
+   /* This is nasty beyond words, but I'm lazy and translating directly
+    * from some untested maths I derived which used this notation */
