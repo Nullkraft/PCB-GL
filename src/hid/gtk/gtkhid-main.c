@@ -1407,7 +1407,7 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
                              !new_comp_vis, !new_comp_vis);
     }
 
-   return 0;
+  return 0;
 }
 
 /* ------------------------------------------------------------ */
