@@ -32,7 +32,7 @@ RCSID ("$Id$");
 
 bool ghid_flip_x = false, ghid_flip_y = false;
 
-void
+static void
 ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 {
   gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
@@ -70,7 +70,7 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  * gport->view_width and gport->view_height are in PCB coordinates
  */
 
-void
+static void
 ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 {
   double min_zoom, max_zoom;
@@ -107,20 +107,20 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
   ghid_set_status_line_label ();
 }
 
-void
+static void
 ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
 {
   ghid_zoom_view_abs (center_x, center_y, gport->zoom * factor);
 }
 
-void
+static void
 ghid_zoom_view_fit (void)
 {
   ghid_zoom_view_abs (0, 0, MAX (PCB->MaxWidth  / gport->width,
                                  PCB->MaxHeight / gport->height));
 }
 
-void
+static void
 ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 {
   int widget_x, widget_y;

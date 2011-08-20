@@ -506,11 +506,6 @@ void ghid_lead_user_to_location (Coord x, Coord y);
 void ghid_cancel_lead_user (void);
 
 /* gtkhid-main.c */
-void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
-void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
-void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
-void ghid_zoom_view_fit (void);
-void ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y);
 void ghid_get_coords (const char *msg, Coord *x, Coord *y);
 gint PCBChanged (int argc, char **argv, Coord x, Coord y);
 
