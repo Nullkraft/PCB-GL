@@ -1,0 +1,70 @@
+Bottom: 5b0c1f171249e0dfd9a57b2c40ebdac0228b2016
+Top:    792bc2f356653d9189164dfd95f291208b94147b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-20 15:36:50 +0100
+
+Refresh of hid-gtk-rework-zoom-pan-api
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index f2677f6..3f9b51a 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -32,7 +32,7 @@ RCSID ("$Id$");
+ 
+ bool ghid_flip_x = false, ghid_flip_y = false;
+ 
+-void
++static void
+ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+ {
+   gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
+@@ -70,7 +70,7 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+  * gport->view_width and gport->view_height are in PCB coordinates
+  */
+ 
+-void
++static void
+ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+ {
+   double min_zoom, max_zoom;
+@@ -107,20 +107,20 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+   ghid_set_status_line_label ();
+ }
+ 
+-void
++static void
+ ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
+ {
+   ghid_zoom_view_abs (center_x, center_y, gport->zoom * factor);
+ }
+ 
+-void
++static void
+ ghid_zoom_view_fit (void)
+ {
+   ghid_zoom_view_abs (0, 0, MAX (PCB->MaxWidth  / gport->width,
+                                  PCB->MaxHeight / gport->height));
+ }
+ 
+-void
++static void
+ ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
+ {
+   int widget_x, widget_y;
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 537c079..7c0ffb5 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -506,11 +506,6 @@ void ghid_lead_user_to_location (Coord x, Coord y);
+ void ghid_cancel_lead_user (void);
+ 
+ /* gtkhid-main.c */
+-void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
+-void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
+-void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
+-void ghid_zoom_view_fit (void);
+-void ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y);
+ void ghid_get_coords (const char *msg, Coord *x, Coord *y);
+ gint PCBChanged (int argc, char **argv, Coord x, Coord y);
