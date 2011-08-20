@@ -2467,14 +2467,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glDisable (GL_COLOR_MATERIAL);
   glDisable (GL_LIGHTING);
 
-#ifdef ONE_SHOT
-    glEndList ();
-    one_shot = 0;
-  }
-
-  glCallList (display_list);
-#endif
-
   ghid_show_crosshair (TRUE);
 
   hidgl_flush_triangles (&buffer);
