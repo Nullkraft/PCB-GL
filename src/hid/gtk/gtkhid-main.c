@@ -1370,25 +1370,25 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
   if (argc > 0)
     {
       switch (argv[0][0]) {
-      case 'h':
-      case 'H':
-        ghid_flip_x = ! ghid_flip_x;
-        do_flip_x = 1;
-        break;
-      case 'v':
-      case 'V':
-        ghid_flip_y = ! ghid_flip_y;
-        do_flip_y = 1;
-        break;
-      case 'r':
-      case 'R':
-        ghid_flip_x = ! ghid_flip_x;
-        ghid_flip_y = ! ghid_flip_y;
-        do_flip_x = 1;
-        do_flip_y = 1;
-        break;
-      default:
-        return 1;
+        case 'h':
+        case 'H':
+          ghid_flip_x = ! ghid_flip_x;
+          do_flip_x = 1;
+          break;
+        case 'v':
+        case 'V':
+          ghid_flip_y = ! ghid_flip_y;
+          do_flip_y = 1;
+          break;
+        case 'r':
+        case 'R':
+          ghid_flip_x = ! ghid_flip_x;
+          ghid_flip_y = ! ghid_flip_y;
+          do_flip_x = 1;
+          do_flip_y = 1;
+          break;
+        default:
+          return 1;
       }
       /* SwapSides will swap this */
       Settings.ShowSolderSide = (ghid_flip_x == ghid_flip_y);
