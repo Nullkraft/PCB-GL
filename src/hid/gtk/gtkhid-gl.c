@@ -2704,7 +2704,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
   double width = 2. * aspect;
   double height = 2.;
   double near = 1.;
-  // double far = 24.;
+  /* double far = 24.; */
 
   /* This is nasty beyond words, but I'm lazy and translating directly
    * from some untested maths I derived which used this notation */
