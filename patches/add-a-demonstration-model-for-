@@ -1,4 +1,4 @@
-Bottom: 90a4d0c5d88e443ad6ca5a8a72381e7ea0ce8ebc
+Bottom: 7dd6ffd8bc75e88ef98384ba844bb4c29c150bff
 Top:    d0077a3c6fcf24f404f72500184ce2e0d7277625
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
@@ -1515,7 +1515,7 @@ index 0000000..c863e3d
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b7f0a70..fd06e90 100644
+index 2451cba..fd06e90 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -368,6 +368,47 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1867,15 +1867,6 @@ index b7f0a70..fd06e90 100644
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
-@@ -2704,7 +2922,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
-   double width = 2. * aspect;
-   double height = 2.;
-   double near = 1.;
--  // double far = 24.;
-+  /* double far = 24.; */
- 
-   /* This is nasty beyond words, but I'm lazy and translating directly
-    * from some untested maths I derived which used this notation */
 diff --git a/src/resistor_bump.png b/src/resistor_bump.png
 new file mode 100644
 index 0000000000000000000000000000000000000000..582007ed3a983dfe6b7c252bf778b6e224239298
