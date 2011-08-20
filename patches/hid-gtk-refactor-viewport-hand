@@ -1,5 +1,5 @@
-Bottom: b5f2e5527d23dce9b81c9b65188139c50bfefeaf
-Top:    20b8f8d07d76907c4aa9485d4e56f379ed161174
+Bottom: 5308d094284304161619fdcea2c27347d7349f91
+Top:    82a532eebf37712c80d237e6a07287999b9e0c99
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Refactor viewport handling
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 79a185c..a56b56b 100644
+index 095c999..d91e4b7 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -33,6 +33,7 @@ static int cur_mask = -1;
@@ -189,7 +189,7 @@ index 79a185c..a56b56b 100644
    gport->height = save_height;
    gport->view_x0 = save_left;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 013b9e5..5f66336 100644
+index 3db5468..e4bd3c0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -38,14 +38,34 @@ static hidGC current_gc = NULL;
@@ -229,7 +229,7 @@ index 013b9e5..5f66336 100644
  } view_data;
  
  typedef struct render_priv {
-@@ -87,16 +107,17 @@ static void draw_lead_user (render_priv *priv);
+@@ -88,16 +108,17 @@ static void draw_lead_user (render_priv *priv);
  static inline int
  Vz (Coord z)
  {
@@ -250,7 +250,7 @@ index 013b9e5..5f66336 100644
    return  rv;
  }
  
-@@ -104,9 +125,9 @@ static inline Coord
+@@ -105,9 +126,9 @@ static inline Coord
  Py (int y)
  {
    render_priv *priv = gport->render_priv;
@@ -262,7 +262,7 @@ index 013b9e5..5f66336 100644
    return  rv;
  }
  
-@@ -571,19 +592,21 @@ use_gc (hidGC gc)
+@@ -572,19 +593,21 @@ use_gc (hidGC gc)
  void
  ghid_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
  {
@@ -286,7 +286,7 @@ index 013b9e5..5f66336 100644
  }
  
  void
-@@ -598,9 +621,10 @@ ghid_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+@@ -599,9 +622,10 @@ ghid_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
  void
  ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
  {
@@ -298,7 +298,7 @@ index 013b9e5..5f66336 100644
  }
  
  
-@@ -615,9 +639,10 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -616,9 +640,10 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
  void
  ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
@@ -310,7 +310,7 @@ index 013b9e5..5f66336 100644
  }
  
  void
-@@ -781,8 +806,8 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -782,8 +807,8 @@ ghid_show_crosshair (gboolean paint_new_location)
    render_priv *priv = gport->render_priv;
    gint x, y, z;
    gboolean draw_markers;
@@ -321,7 +321,7 @@ index 013b9e5..5f66336 100644
    static int done_once = 0;
    static GdkColor cross_color;
  
-@@ -819,25 +844,25 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -820,25 +845,25 @@ ghid_show_crosshair (gboolean paint_new_location)
    if (x >= 0 && paint_new_location && draw_markers)
      {
        glBegin (GL_QUADS);
@@ -366,7 +366,7 @@ index 013b9e5..5f66336 100644
  
        glEnd ();
      }
-@@ -893,6 +918,11 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
+@@ -894,6 +919,11 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
  void
  ghid_drawing_area_configure_hook (GHidPort *port)
  {
@@ -378,7 +378,7 @@ index 013b9e5..5f66336 100644
  }
  
  gboolean
-@@ -969,13 +999,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -970,13 +1000,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -399,7 +399,7 @@ index 013b9e5..5f66336 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -1060,20 +1090,11 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1061,20 +1091,11 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
    GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
@@ -422,7 +422,7 @@ index 013b9e5..5f66336 100644
  
    /* Setup zoom factor for drawing routines */
  
-@@ -1081,16 +1102,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1082,16 +1103,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    xz = (double) pinout->x_max / da_w;
    yz = (double) pinout->y_max / da_h;
    if (xz > yz)
@@ -445,7 +445,7 @@ index 013b9e5..5f66336 100644
  
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
-@@ -1129,12 +1148,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1130,12 +1149,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -464,7 +464,7 @@ index 013b9e5..5f66336 100644
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1148,13 +1167,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1149,13 +1168,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    gport->render_priv->in_context = false;
    gdk_gl_drawable_gl_end (pGlDrawable);
  
@@ -479,7 +479,7 @@ index 013b9e5..5f66336 100644
  
    return FALSE;
  }
-@@ -1169,19 +1182,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1170,19 +1183,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    GdkGLPixmap *glpixmap;
    GdkGLContext* glcontext;
    GdkGLDrawable* gldrawable;
@@ -501,7 +501,7 @@ index 013b9e5..5f66336 100644
  
    /* Setup rendering context for drawing routines
     */
-@@ -1197,15 +1201,13 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1198,15 +1202,13 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    /* Setup zoom factor for drawing routines */
  
@@ -524,7 +524,7 @@ index 013b9e5..5f66336 100644
  
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
-@@ -1241,16 +1243,16 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1242,16 +1244,16 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -551,7 +551,7 @@ index 013b9e5..5f66336 100644
    hid_expose_callback (&ghid_hid, &region, NULL);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1266,13 +1268,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1267,13 +1269,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    g_object_unref (glconfig);
    g_object_unref (glcontext);
  
@@ -566,7 +566,7 @@ index 013b9e5..5f66336 100644
  
    return pixmap;
  }
-@@ -1302,13 +1298,13 @@ ghid_request_debug_draw (void)
+@@ -1303,13 +1299,13 @@ ghid_request_debug_draw (void)
    glDisable (GL_STENCIL_TEST);
  
    glPushMatrix ();
@@ -586,7 +586,7 @@ index 013b9e5..5f66336 100644
  
    return &ghid_hid;
  }
-@@ -1358,44 +1354,63 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1359,44 +1355,63 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
    return true;
  }
  
@@ -669,7 +669,7 @@ index 013b9e5..5f66336 100644
   */
  
  void
-@@ -1410,26 +1425,28 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1411,26 +1426,28 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
     * the entire board just fits inside the viewport
     */
    min_zoom = 1;
@@ -709,7 +709,7 @@ index 013b9e5..5f66336 100644
    ghidgui->adjustment_changed_holdoff = FALSE;
  
    ghid_port_ranges_changed ();
-@@ -1439,14 +1456,16 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1440,14 +1457,16 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  void
  ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
  {
@@ -729,7 +729,7 @@ index 013b9e5..5f66336 100644
  }
  
  void
-@@ -1499,7 +1518,7 @@ draw_lead_user (render_priv *priv)
+@@ -1505,7 +1524,7 @@ draw_lead_user (render_priv *priv)
  
        /* Draw an arc at radius */
        hidgl_draw_arc (width, priv->lead_user_x, priv->lead_user_y,
@@ -739,7 +739,7 @@ index 013b9e5..5f66336 100644
  
    hidgl_flush_triangles (&buffer);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 7c8d74b..78a7ae1 100644
+index 78b0fda..0386c87 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1043,8 +1043,9 @@ PCBChanged (int argc, char **argv, Coord x, Coord y)
@@ -754,7 +754,7 @@ index 7c8d74b..78a7ae1 100644
    ghid_zoom_view_fit ();
    ghid_port_ranges_changed ();
    ghid_sync_with_new_layout ();
-@@ -1463,8 +1464,8 @@ Center(int argc, char **argv, Coord pcb_x, Coord pcb_y)
+@@ -1462,8 +1463,8 @@ Center(int argc, char **argv, Coord pcb_x, Coord pcb_y)
      AFAIL (center);
  
    /* Aim to put the given x, y PCB coordinates in the center of the widget */
@@ -765,7 +765,7 @@ index 7c8d74b..78a7ae1 100644
  
    ghid_pan_view_abs (pcb_x, pcb_y, widget_x, widget_y);
  
-@@ -1534,13 +1535,13 @@ CursorAction(int argc, char **argv, Coord x, Coord y)
+@@ -1533,13 +1534,13 @@ CursorAction(int argc, char **argv, Coord x, Coord y)
  {
    UnitList extra_units_x = {
      { "grid",  PCB->Grid, 0 },
@@ -781,7 +781,7 @@ index 7c8d74b..78a7ae1 100644
      { "board", PCB->MaxHeight, UNIT_PERCENT },
      { "", 0, 0 }
    };
-@@ -1717,8 +1718,9 @@ default is given, div=40.
+@@ -1716,8 +1717,9 @@ default is given, div=40.
  static int
  ScrollAction (int argc, char **argv, Coord x, Coord y)
  {
@@ -793,7 +793,7 @@ index 7c8d74b..78a7ae1 100644
  
    if (!ghidgui)
      return 0;
-@@ -1727,24 +1729,21 @@ ScrollAction (int argc, char **argv, Coord x, Coord y)
+@@ -1726,24 +1728,21 @@ ScrollAction (int argc, char **argv, Coord x, Coord y)
      AFAIL (scroll);
  
    if (argc == 2)
