@@ -222,7 +222,6 @@ resistor_value_to_stripes (ElementType *element, int *st1, int *st2, int *st3, i
   value -= *st1;
 
   value *= 10.;
-  printf ("XXX: Something dies if I don't print this!: %f\n", value);
   *st2 = (int)value;
   value -= *st2;
 
