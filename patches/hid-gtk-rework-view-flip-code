@@ -1,5 +1,5 @@
 Bottom: f86b2078b306862ee2fe4b8bc55b6c87861bb42c
-Top:    42b59cb7f554c623f97a8895f5dbbfcce916de9f
+Top:    f3b4ce6b6c40fbbd6f3650ee0cf1dc64764fbd61
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-20 15:42:59 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Rework view flip code
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 2baf935..c8bc46c 100644
+index 2baf935..27ceeb9 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -122,6 +122,23 @@ ghid_zoom_view_fit (void)
@@ -77,7 +77,7 @@ index 2baf935..c8bc46c 100644
      }
  
    Settings.ShowSolderSide = !Settings.ShowSolderSide;
-@@ -1399,23 +1407,7 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
+@@ -1399,22 +1407,6 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
                               !new_comp_vis, !new_comp_vis);
      }
  
@@ -97,8 +97,5 @@ index 2baf935..c8bc46c 100644
 -    }
 -
 -  ghid_invalidate_all ();
--  return 0;
-+   return 0;
+   return 0;
  }
- 
- /* ------------------------------------------------------------ */
