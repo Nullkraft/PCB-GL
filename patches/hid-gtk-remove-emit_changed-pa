@@ -1,0 +1,14 @@
+Bottom: f3b4ce6b6c40fbbd6f3650ee0cf1dc64764fbd61
+Top:    f3b4ce6b6c40fbbd6f3650ee0cf1dc64764fbd61
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-22 00:06:39 +0100
+
+hid/gtk: Remove emit_changed parameter from ghid_port_ranges_scale.
+
+Let the one caller which passed TRUE for getting change notifications
+just call ghid_port_ranges_changed() manually.
+
+
+---
+
+
