@@ -5,8 +5,9 @@ Date:   2011-08-22 00:06:39 +0100
 
 hid/gtk: Remove emit_changed parameter from ghid_port_ranges_scale.
 
-Let the one caller which passed TRUE for getting change notifications
-just call ghid_port_ranges_changed() manually.
+The one caller which passed TRUE, PCBChanged () also immediately
+aftwewards calls ghid_port_ranges_pan(), which will take car of any
+changes necessary.
 
 
 ---
