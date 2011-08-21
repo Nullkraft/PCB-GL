@@ -1,5 +1,5 @@
 Bottom: 58c703b8a106d230e9975cdaa0b18840d9377e7c
-Top:    cd52f5e3dbbaf9ea5d91bdfd99cf8c0fef232b65
+Top:    1e1be3e31548a3040f15f15b8585c10593699c1f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-20 16:30:18 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Allow zooming out past the board size
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 96ff923..ece47d0 100644
+index 96ff923..02129e6 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -35,26 +35,13 @@ bool ghid_flip_x = false, ghid_flip_y = false;
@@ -97,37 +97,48 @@ index 96ff923..ece47d0 100644
    ghid_set_status_line_label ();
  }
  
-@@ -1574,6 +1567,9 @@ Center(int argc, char **argv, Coord pcb_x, Coord pcb_y)
-   widget_x = gport->width / 2;
-   widget_y = gport->height / 2;
- 
-+  printf ("Pointer_x: %i, Pointer_y: %i\n", widget_x, widget_y);
-+  pcb_printf ("PCB coords: %#mD\n", pcb_x, pcb_y);
-+
-   ghid_pan_view_abs (pcb_x, pcb_y, widget_x, widget_y);
- 
-   /* Now move the mouse pointer to the place where the board location
+@@ -118,6 +111,7 @@ ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
+ static void
+ ghid_zoom_view_fit (void)
+ {
++  ghid_pan_view_abs (0, 0, 0, 0);
+   ghid_zoom_view_abs (0, 0, MAX (PCB->MaxWidth  / gport->width,
+                                  PCB->MaxHeight / gport->height));
+ }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 0fc07f3..25b4ec4 100644
+index 0fc07f3..eff28bc 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -88,6 +88,7 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
-       y1 = y;
-     }
+@@ -77,26 +77,8 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
+   x0 = h_adj->value;
+   y0 = v_adj->value;
  
-+#if 0
-   if (x1 < h_adj->lower)
-     x1 = h_adj->lower;
-   if (x1 > h_adj->upper - h_adj->page_size)
-@@ -97,6 +98,7 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
-     y1 = v_adj->lower;
-   if (y1 > v_adj->upper - v_adj->page_size)
-     y1 = v_adj->upper - v_adj->page_size;
-+#endif
+-  if (relative)
+-    {
+-      x1 = x0 + x;
+-      y1 = y0 + y;
+-    }
+-  else
+-    {
+-      x1 = x;
+-      y1 = y;
+-    }
+-
+-  if (x1 < h_adj->lower)
+-    x1 = h_adj->lower;
+-  if (x1 > h_adj->upper - h_adj->page_size)
+-    x1 = h_adj->upper - h_adj->page_size;
+-
+-  if (y1 < v_adj->lower)
+-    y1 = v_adj->lower;
+-  if (y1 > v_adj->upper - v_adj->page_size)
+-    y1 = v_adj->upper - v_adj->page_size;
++  x1 = relative ? x + x0 : x;
++  y1 = relative ? y + y0 : y;
  
    ghidgui->adjustment_changed_holdoff = TRUE;
    gtk_range_set_value (GTK_RANGE (ghidgui->h_range), x1);
-@@ -110,9 +112,9 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
+@@ -110,9 +92,9 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
    return ((x0 != x1) || (y0 != y1));
  }
  
@@ -140,7 +151,7 @@ index 0fc07f3..25b4ec4 100644
  void
  ghid_port_ranges_scale (void)
  {
-@@ -125,22 +127,19 @@ ghid_port_ranges_scale (void)
+@@ -125,22 +107,19 @@ ghid_port_ranges_scale (void)
    gport->view_width = gport->width * gport->zoom;
    gport->view_height = gport->height * gport->zoom;
  
