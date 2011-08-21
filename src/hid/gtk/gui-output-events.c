@@ -112,9 +112,9 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
   return ((x0 != x1) || (y0 != y1));
 }
 
-  /* Do scrollbar scaling based on current port drawing area size and
-     |  overall PCB board size.
-   */
+/* Do scrollbar scaling based on current port drawing area size and
+   |  overall PCB board size.
+ */
 void
 ghid_port_ranges_scale (void)
 {
@@ -126,13 +126,6 @@ ghid_port_ranges_scale (void)
    */
   gport->view_width = gport->width * gport->zoom;
   gport->view_height = gport->height * gport->zoom;
-
-#if 0
-  if (gport->view_width >= 5 * PCB->MaxWidth)
-    gport->view_width = 5 * PCB->MaxWidth;
-  if (gport->view_height >= 5 * PCB->MaxHeight)
-    gport->view_height = 5 * PCB->MaxHeight;
-#endif
 
   adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
   adj->page_size = MIN (gport->view_width, PCB->MaxWidth);
