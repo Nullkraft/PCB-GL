@@ -1,0 +1,40 @@
+Bottom: 438cddefd28b0caa6e962761cd0fd93400c761f3
+Top:    cd52f5e3dbbaf9ea5d91bdfd99cf8c0fef232b65
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-22 00:17:15 +0100
+
+Refresh of hid-gtk-allow-zooming-out-past
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 2fe10c7..25b4ec4 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -112,9 +112,9 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
+   return ((x0 != x1) || (y0 != y1));
+ }
+ 
+-  /* Do scrollbar scaling based on current port drawing area size and
+-     |  overall PCB board size.
+-   */
++/* Do scrollbar scaling based on current port drawing area size and
++   |  overall PCB board size.
++ */
+ void
+ ghid_port_ranges_scale (void)
+ {
+@@ -127,13 +127,6 @@ ghid_port_ranges_scale (void)
+   gport->view_width = gport->width * gport->zoom;
+   gport->view_height = gport->height * gport->zoom;
+ 
+-#if 0
+-  if (gport->view_width >= 5 * PCB->MaxWidth)
+-    gport->view_width = 5 * PCB->MaxWidth;
+-  if (gport->view_height >= 5 * PCB->MaxHeight)
+-    gport->view_height = 5 * PCB->MaxHeight;
+-#endif
+-
+   adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
+   adj->page_size = MIN (gport->view_width, PCB->MaxWidth);
+   adj->page_increment = adj->page_size / 10.0;
