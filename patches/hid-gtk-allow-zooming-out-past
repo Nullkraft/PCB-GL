@@ -1,5 +1,5 @@
 Bottom: 58c703b8a106d230e9975cdaa0b18840d9377e7c
-Top:    438cddefd28b0caa6e962761cd0fd93400c761f3
+Top:    cd52f5e3dbbaf9ea5d91bdfd99cf8c0fef232b65
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-20 16:30:18 +0100
 
@@ -108,7 +108,7 @@ index 96ff923..ece47d0 100644
  
    /* Now move the mouse pointer to the place where the board location
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 0fc07f3..2fe10c7 100644
+index 0fc07f3..25b4ec4 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -88,6 +88,7 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
@@ -127,7 +127,20 @@ index 0fc07f3..2fe10c7 100644
  
    ghidgui->adjustment_changed_holdoff = TRUE;
    gtk_range_set_value (GTK_RANGE (ghidgui->h_range), x1);
-@@ -125,22 +127,26 @@ ghid_port_ranges_scale (void)
+@@ -110,9 +112,9 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
+   return ((x0 != x1) || (y0 != y1));
+ }
+ 
+-  /* Do scrollbar scaling based on current port drawing area size and
+-     |  overall PCB board size.
+-   */
++/* Do scrollbar scaling based on current port drawing area size and
++   |  overall PCB board size.
++ */
+ void
+ ghid_port_ranges_scale (void)
+ {
+@@ -125,22 +127,19 @@ ghid_port_ranges_scale (void)
    gport->view_width = gport->width * gport->zoom;
    gport->view_height = gport->height * gport->zoom;
  
@@ -135,13 +148,7 @@ index 0fc07f3..2fe10c7 100644
 -    gport->view_width = PCB->MaxWidth;
 -  if (gport->view_height >= PCB->MaxHeight)
 -    gport->view_height = PCB->MaxHeight;
-+#if 0
-+  if (gport->view_width >= 5 * PCB->MaxWidth)
-+    gport->view_width = 5 * PCB->MaxWidth;
-+  if (gport->view_height >= 5 * PCB->MaxHeight)
-+    gport->view_height = 5 * PCB->MaxHeight;
-+#endif
- 
+-
    adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
 -  adj->page_size = gport->view_width;
 -  adj->page_increment = adj->page_size/10.0;
