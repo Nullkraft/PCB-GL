@@ -77,28 +77,8 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
   x0 = h_adj->value;
   y0 = v_adj->value;
 
-  if (relative)
-    {
-      x1 = x0 + x;
-      y1 = y0 + y;
-    }
-  else
-    {
-      x1 = x;
-      y1 = y;
-    }
-
-#if 0
-  if (x1 < h_adj->lower)
-    x1 = h_adj->lower;
-  if (x1 > h_adj->upper - h_adj->page_size)
-    x1 = h_adj->upper - h_adj->page_size;
-
-  if (y1 < v_adj->lower)
-    y1 = v_adj->lower;
-  if (y1 > v_adj->upper - v_adj->page_size)
-    y1 = v_adj->upper - v_adj->page_size;
-#endif
+  x1 = relative ? x + x0 : x;
+  y1 = relative ? y + y0 : y;
 
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), x1);

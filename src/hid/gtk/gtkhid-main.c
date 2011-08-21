@@ -111,6 +111,7 @@ ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
 static void
 ghid_zoom_view_fit (void)
 {
+  ghid_pan_view_abs (0, 0, 0, 0);
   ghid_zoom_view_abs (0, 0, MAX (PCB->MaxWidth  / gport->width,
                                  PCB->MaxHeight / gport->height));
 }
@@ -1566,9 +1567,6 @@ Center(int argc, char **argv, Coord pcb_x, Coord pcb_y)
   /* Aim to put the given x, y PCB coordinates in the center of the widget */
   widget_x = gport->width / 2;
   widget_y = gport->height / 2;
-
-  printf ("Pointer_x: %i, Pointer_y: %i\n", widget_x, widget_y);
-  pcb_printf ("PCB coords: %#mD\n", pcb_x, pcb_y);
 
   ghid_pan_view_abs (pcb_x, pcb_y, widget_x, widget_y);
 
