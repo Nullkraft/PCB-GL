@@ -1,0 +1,83 @@
+Bottom: f3b4ce6b6c40fbbd6f3650ee0cf1dc64764fbd61
+Top:    58c703b8a106d230e9975cdaa0b18840d9377e7c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-22 00:10:59 +0100
+
+Refresh of hid-gtk-remove-emit_changed-pa
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 27ceeb9..96ff923 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -95,7 +95,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+ 
+   gport->zoom = new_zoom;
+   pixel_slop = new_zoom;
+-  ghid_port_ranges_scale (FALSE);
++  ghid_port_ranges_scale ();
+ 
+   gport->view_x0 = MAX (0, SIDE_X (center_x) - xtmp * gport->view_width);
+   gport->view_y0 = MAX (0, SIDE_Y (center_y) - ytmp * gport->view_height);
+@@ -1152,7 +1152,7 @@ PCBChanged (int argc, char **argv, Coord x, Coord y)
+   if (!gport->pixmap)
+     return 0;
+   RouteStylesChanged (0, NULL, 0, 0);
+-  ghid_port_ranges_scale (TRUE);
++  ghid_port_ranges_scale ();
+   ghid_port_ranges_pan (0, 0, FALSE);
+   ghid_zoom_view_fit ();
+   ghid_port_ranges_changed ();
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 527945a..0fc07f3 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -114,7 +114,7 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
+      |  overall PCB board size.
+    */
+ void
+-ghid_port_ranges_scale (gboolean emit_changed)
++ghid_port_ranges_scale (void)
+ {
+   GtkAdjustment *adj;
+ 
+@@ -135,16 +135,12 @@ ghid_port_ranges_scale (gboolean emit_changed)
+   adj->page_increment = adj->page_size/10.0;
+   adj->step_increment = adj->page_size/100.0;
+   adj->upper = PCB->MaxWidth;
+-  if (emit_changed)
+-    gtk_signal_emit_by_name (GTK_OBJECT (adj), "changed");
+ 
+   adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
+   adj->page_size = gport->view_height;
+   adj->page_increment = adj->page_size/10.0;
+   adj->step_increment = adj->page_size/100.0;
+   adj->upper = PCB->MaxHeight;
+-  if (emit_changed)
+-    gtk_signal_emit_by_name (GTK_OBJECT (adj), "changed");
+ }
+ 
+ 
+@@ -467,7 +463,7 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+       ghid_drawing_area_configure_hook (out);
+     }
+ 
+-  ghid_port_ranges_scale (FALSE);
++  ghid_port_ranges_scale ();
+   ghid_invalidate_all ();
+   return 0;
+ }
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 7c0ffb5..9bed4d9 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -264,7 +264,7 @@ void ghid_get_pointer (gint *, gint *);
+ */
+ void ghid_port_ranges_changed (void);
+ gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
+-void ghid_port_ranges_scale (gboolean emit_changed);
++void ghid_port_ranges_scale (void);
+ void ghid_port_ranges_update_ranges (void);
+ 
+ gboolean ghid_note_event_location (GdkEventButton * ev);
