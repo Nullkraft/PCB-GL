@@ -1,5 +1,5 @@
 Bottom: 630e8e261421ae859f3de13859ecffc1278970be
-Top:    630e8e261421ae859f3de13859ecffc1278970be
+Top:    6765366792ace4f5d54d62ea552cfdb9a003c60a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-24 22:35:40 +0100
 
@@ -8,4 +8,19 @@ hid/gtk: Fix rendering of soldermask outside board area
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 23fa8c6..57e963e 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -961,6 +961,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
+   region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
+ 
++  region.X1 = MAX (0, MIN (PCB->MaxWidth, region.X1));
++  region.X2 = MAX (0, MIN (PCB->MaxWidth, region.X2));
++  region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
++  region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
++
+   glColor3f (port->bg_color.red / 65535.,
+              port->bg_color.green / 65535.,
+              port->bg_color.blue / 65535.);
