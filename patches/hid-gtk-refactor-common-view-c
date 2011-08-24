@@ -5,6 +5,9 @@ Date:   2011-08-24 22:50:23 +0100
 
 hid/gtk: Refactor common view clamping code from ghid_{pan,zoom}_view_abs
 
+Inspection of the zoom-fit code which triggers if the view exceeds the
+size of the board suggests that it will never be called, so remove it.
+
 
 ---
 
