@@ -1,5 +1,5 @@
 Bottom: ab3a0ec563df017c98369f226a299675419b0439
-Top:    ab3a0ec563df017c98369f226a299675419b0439
+Top:    c4ccca2e508fe43ce412d46aca94a2f5d46e20e5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-24 23:54:22 +0100
 
@@ -8,4 +8,47 @@ temp
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index bab13ce..78cf91c 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -37,12 +37,23 @@ static void ghid_zoom_view_fit (void);
+ static void
+ pan_common (GHidPort *port)
+ {
++  int event_x, event_y;
++
++  /* We need to fix up the PCB coordinates corresponding to the last
++   * event so convert it back to event coordinates temporarily. */
++//  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
++
+   /* Don't pan so far the board is completely off the screen */
+   port->view_x0 = MAX (-port->view_width,  port->view_x0);
+   port->view_y0 = MAX (-port->view_height, port->view_y0);
+   port->view_x0 = MIN ( port->view_x0, PCB->MaxWidth);
+   port->view_y0 = MIN ( port->view_y0, PCB->MaxHeight);
+ 
++  ghid_note_event_location (NULL);
++
++  /* Fix up noted event coordinates to match where we clamped */
++//  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
++
+   ghidgui->adjustment_changed_holdoff = TRUE;
+   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
+   gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
+@@ -1839,11 +1850,11 @@ ScrollAction (int argc, char **argv, Coord x, Coord y)
+   else
+     AFAIL (scroll);
+ 
+-  notify_crosshair_change (false);
++//  notify_crosshair_change (false);
+   ghid_port_ranges_pan (dx, dy, TRUE);
+-  MoveCrosshairRelative (dx, dy);
+-  AdjustAttachedObjects ();
+-  notify_crosshair_change (true);
++//  MoveCrosshairRelative (dx, dy);
++//  AdjustAttachedObjects ();
++//  notify_crosshair_change (true);
+ 
+   return 0;
+ }
