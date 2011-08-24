@@ -37,22 +37,20 @@ static void ghid_zoom_view_fit (void);
 static void
 pan_common (GHidPort *port)
 {
-//  int event_x, event_y;
+  int event_x, event_y;
 
   /* We need to fix up the PCB coordinates corresponding to the last
-  * event so convert it back to event coordinates temporarily. */
-//  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
+   * event so convert it back to event coordinates temporarily. */
+  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
 
-  /* Don't pan so far that we see past the board edges */
-  gport->view_x0 = MAX (0, gport->view_x0);
-  gport->view_y0 = MAX (0, gport->view_y0);
-  gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
-  gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
-
-  ghid_note_event_location (NULL);
+  /* Don't pan so far the board is completely off the screen */
+  port->view_x0 = MAX (-port->view_width,  port->view_x0);
+  port->view_y0 = MAX (-port->view_height, port->view_y0);
+  port->view_x0 = MIN ( port->view_x0, PCB->MaxWidth);
+  port->view_y0 = MIN ( port->view_y0, PCB->MaxHeight);
 
   /* Fix up noted event coordinates to match where we clamped */
-//  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
+  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
 
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
@@ -88,6 +86,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
  * gport->view_width and gport->view_height are in PCB coordinates
  */
 
+#define ALLOW_ZOOM_OUT_BY 5
 static void
 ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 {
@@ -100,7 +99,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
    */
   min_zoom = 1;
   max_zoom = MAX (PCB->MaxWidth  / gport->width,
-                  PCB->MaxHeight / gport->height);
+                  PCB->MaxHeight / gport->height) * ALLOW_ZOOM_OUT_BY;
   new_zoom = MIN (MAX (min_zoom, new_zoom), max_zoom);
 
   if (gport->zoom == new_zoom)
@@ -130,6 +129,7 @@ ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
 static void
 ghid_zoom_view_fit (void)
 {
+  ghid_pan_view_abs (0, 0, 0, 0);
   ghid_zoom_view_abs (0, 0, MAX (PCB->MaxWidth  / gport->width,
                                  PCB->MaxHeight / gport->height));
 }
