@@ -961,6 +961,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
   region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
 
+  region.X1 = MAX (0, MIN (PCB->MaxWidth, region.X1));
+  region.X2 = MAX (0, MIN (PCB->MaxWidth, region.X2));
+  region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+  region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+
   glColor3f (port->bg_color.red / 65535.,
              port->bg_color.green / 65535.,
              port->bg_color.blue / 65535.);
