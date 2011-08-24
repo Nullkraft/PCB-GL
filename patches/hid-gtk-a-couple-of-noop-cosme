@@ -1,5 +1,5 @@
 Bottom: 942f167a1d3d8b2d67eddb33024148bc04a40e8b
-Top:    942f167a1d3d8b2d67eddb33024148bc04a40e8b
+Top:    a3d432337bb68006c99bd7ec6bf63346765c0c05
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-24 23:02:28 +0100
 
@@ -8,4 +8,39 @@ hid/gtk: A couple of NOOP cosmetic changes to ghid_port_ranges_pan()
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 0fc07f3..ba637c3 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -77,16 +77,8 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
+   x0 = h_adj->value;
+   y0 = v_adj->value;
+ 
+-  if (relative)
+-    {
+-      x1 = x0 + x;
+-      y1 = y0 + y;
+-    }
+-  else
+-    {
+-      x1 = x;
+-      y1 = y;
+-    }
++  x1 = relative ? x + x0 : x;
++  y1 = relative ? y + y0 : y;
+ 
+   if (x1 < h_adj->lower)
+     x1 = h_adj->lower;
+@@ -110,9 +102,9 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
+   return ((x0 != x1) || (y0 != y1));
+ }
+ 
+-  /* Do scrollbar scaling based on current port drawing area size and
+-     |  overall PCB board size.
+-   */
++/* Do scrollbar scaling based on current port drawing area size and
++   |  overall PCB board size.
++ */
+ void
+ ghid_port_ranges_scale (void)
+ {
