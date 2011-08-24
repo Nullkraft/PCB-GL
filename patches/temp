@@ -1,4 +1,4 @@
-Bottom: ab3a0ec563df017c98369f226a299675419b0439
+Bottom: c1771ef2ba300716b90b3ff0044e6ddee3f9283a
 Top:    613bff9fa23976d612dac1e6b72b3c97b285d2d0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-24 23:54:22 +0100
@@ -9,7 +9,7 @@ temp
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index bab13ce..17b0934 100644
+index be6a0a5..17b0934 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -37,12 +37,23 @@ static void ghid_zoom_view_fit (void);
@@ -36,15 +36,3 @@ index bab13ce..17b0934 100644
    ghidgui->adjustment_changed_holdoff = TRUE;
    gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
    gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
-@@ -1839,11 +1850,7 @@ ScrollAction (int argc, char **argv, Coord x, Coord y)
-   else
-     AFAIL (scroll);
- 
--  notify_crosshair_change (false);
-   ghid_port_ranges_pan (dx, dy, TRUE);
--  MoveCrosshairRelative (dx, dy);
--  AdjustAttachedObjects ();
--  notify_crosshair_change (true);
- 
-   return 0;
- }
