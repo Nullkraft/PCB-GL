@@ -1,5 +1,5 @@
 Bottom: a64e461b027be5e36afb51cc2853d3a2c1257553
-Top:    9f3b51ef6b7857742860fdfecf5cf6a0b6a88922
+Top:    942f167a1d3d8b2d67eddb33024148bc04a40e8b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-24 22:50:23 +0100
 
@@ -12,10 +12,10 @@ size of the board suggests that it will never be called, so remove it.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 96ff923..85f5d91 100644
+index 96ff923..be4f1db 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -35,11 +35,8 @@ bool ghid_flip_x = false, ghid_flip_y = false;
+@@ -35,26 +35,13 @@ bool ghid_flip_x = false, ghid_flip_y = false;
  static void ghid_zoom_view_fit (void);
  
  static void
@@ -25,10 +25,28 @@ index 96ff923..85f5d91 100644
 -  gport->view_x0 = MAX (0, SIDE_X (pcb_x) - widget_x * gport->zoom);
 -  gport->view_y0 = MAX (0, SIDE_Y (pcb_y) - widget_y * gport->zoom);
 -
-   /* Don't pan so far to the right or bottom that we see past the board edge */
-   gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
-   gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
-@@ -64,6 +61,15 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+-  /* Don't pan so far to the right or bottom that we see past the board edge */
+-  gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
+-  gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
+-
+-  /* Don't view above or to the left of the board... ever */
++  /* Don't pan so far that we see past the board edges */
+   gport->view_x0 = MAX (0, gport->view_x0);
+   gport->view_y0 = MAX (0, gport->view_y0);
+-
+-  /* If we can see the entire board and some, then zoom to fit */
+-  if (gport->view_width  > PCB->MaxWidth  &&
+-      gport->view_height > PCB->MaxHeight)
+-    {
+-      ghid_zoom_view_fit ();
+-      return;
+-    }
++  gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
++  gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
+ 
+   ghidgui->adjustment_changed_holdoff = TRUE;
+   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
+@@ -64,6 +51,15 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
    ghid_port_ranges_changed();
  }
  
@@ -44,7 +62,7 @@ index 96ff923..85f5d91 100644
  
  /* gport->zoom:
   * zoom value is PCB units per screen pixel.  Larger numbers mean zooming
-@@ -97,15 +103,11 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -97,15 +93,11 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
    pixel_slop = new_zoom;
    ghid_port_ranges_scale ();
  
