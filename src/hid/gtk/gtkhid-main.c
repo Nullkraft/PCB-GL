@@ -37,21 +37,11 @@ static void ghid_zoom_view_fit (void);
 static void
 pan_common (GHidPort *port)
 {
-  /* Don't pan so far to the right or bottom that we see past the board edge */
-  gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
-  gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
-
-  /* Don't view above or to the left of the board... ever */
-  gport->view_x0 = MAX (0, gport->view_x0);
-  gport->view_y0 = MAX (0, gport->view_y0);
-
-  /* If we can see the entire board and some, then zoom to fit */
-  if (gport->view_width  > PCB->MaxWidth  &&
-      gport->view_height > PCB->MaxHeight)
-    {
-      ghid_zoom_view_fit ();
-      return;
-    }
+  /* Don't pan so far the board is completely off the screen */
+  port->view_x0 = MAX (-port->view_width,  port->view_x0);
+  port->view_y0 = MAX (-port->view_height, port->view_y0);
+  port->view_x0 = MIN ( port->view_x0, PCB->MaxWidth);
+  port->view_y0 = MIN ( port->view_y0, PCB->MaxHeight);
 
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
@@ -78,6 +68,7 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  * gport->view_width and gport->view_height are in PCB coordinates
  */
 
+#define ALLOW_ZOOM_OUT_BY 5
 static void
 ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 {
@@ -90,7 +81,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
    */
   min_zoom = 1;
   max_zoom = MAX (PCB->MaxWidth  / gport->width,
-                  PCB->MaxHeight / gport->height);
+                  PCB->MaxHeight / gport->height) * ALLOW_ZOOM_OUT_BY;
   new_zoom = MIN (MAX (min_zoom, new_zoom), max_zoom);
 
   if (gport->zoom == new_zoom)
@@ -120,6 +111,7 @@ ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
 static void
 ghid_zoom_view_fit (void)
 {
+  ghid_pan_view_abs (0, 0, 0, 0);
   ghid_zoom_view_abs (0, 0, MAX (PCB->MaxWidth  / gport->width,
                                  PCB->MaxHeight / gport->height));
 }
