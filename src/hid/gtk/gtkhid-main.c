@@ -37,21 +37,11 @@ static void ghid_zoom_view_fit (void);
 static void
 pan_common (GHidPort *port)
 {
-  /* Don't pan so far to the right or bottom that we see past the board edge */
-  gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
-  gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
-
-  /* Don't view above or to the left of the board... ever */
+  /* Don't pan so far that we see past the board edges */
   gport->view_x0 = MAX (0, gport->view_x0);
   gport->view_y0 = MAX (0, gport->view_y0);
-
-  /* If we can see the entire board and some, then zoom to fit */
-  if (gport->view_width  > PCB->MaxWidth  &&
-      gport->view_height > PCB->MaxHeight)
-    {
-      ghid_zoom_view_fit ();
-      return;
-    }
+  gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
+  gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
 
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
