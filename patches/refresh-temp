@@ -1,0 +1,142 @@
+Bottom: 9f3b51ef6b7857742860fdfecf5cf6a0b6a88922
+Top:    8e77a6acf6ddb289241e3275b2ee40d8e85c5f89
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-24 22:52:52 +0100
+
+Refresh of hid-gtk-allow-zooming-out-past
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 85f5d91..02129e6 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -37,21 +37,11 @@ static void ghid_zoom_view_fit (void);
+ static void
+ pan_common (GHidPort *port)
+ {
+-  /* Don't pan so far to the right or bottom that we see past the board edge */
+-  gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
+-  gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
+-
+-  /* Don't view above or to the left of the board... ever */
+-  gport->view_x0 = MAX (0, gport->view_x0);
+-  gport->view_y0 = MAX (0, gport->view_y0);
+-
+-  /* If we can see the entire board and some, then zoom to fit */
+-  if (gport->view_width  > PCB->MaxWidth  &&
+-      gport->view_height > PCB->MaxHeight)
+-    {
+-      ghid_zoom_view_fit ();
+-      return;
+-    }
++  /* Don't pan so far the board is completely off the screen */
++  port->view_x0 = MAX (-port->view_width,  port->view_x0);
++  port->view_y0 = MAX (-port->view_height, port->view_y0);
++  port->view_x0 = MIN ( port->view_x0, PCB->MaxWidth);
++  port->view_y0 = MIN ( port->view_y0, PCB->MaxHeight);
+ 
+   ghidgui->adjustment_changed_holdoff = TRUE;
+   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
+@@ -78,6 +68,7 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+  * gport->view_width and gport->view_height are in PCB coordinates
+  */
+ 
++#define ALLOW_ZOOM_OUT_BY 5
+ static void
+ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+ {
+@@ -90,7 +81,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+    */
+   min_zoom = 1;
+   max_zoom = MAX (PCB->MaxWidth  / gport->width,
+-                  PCB->MaxHeight / gport->height);
++                  PCB->MaxHeight / gport->height) * ALLOW_ZOOM_OUT_BY;
+   new_zoom = MIN (MAX (min_zoom, new_zoom), max_zoom);
+ 
+   if (gport->zoom == new_zoom)
+@@ -120,6 +111,7 @@ ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
+ static void
+ ghid_zoom_view_fit (void)
+ {
++  ghid_pan_view_abs (0, 0, 0, 0);
+   ghid_zoom_view_abs (0, 0, MAX (PCB->MaxWidth  / gport->width,
+                                  PCB->MaxHeight / gport->height));
+ }
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 0fc07f3..eff28bc 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -77,26 +77,8 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
+   x0 = h_adj->value;
+   y0 = v_adj->value;
+ 
+-  if (relative)
+-    {
+-      x1 = x0 + x;
+-      y1 = y0 + y;
+-    }
+-  else
+-    {
+-      x1 = x;
+-      y1 = y;
+-    }
+-
+-  if (x1 < h_adj->lower)
+-    x1 = h_adj->lower;
+-  if (x1 > h_adj->upper - h_adj->page_size)
+-    x1 = h_adj->upper - h_adj->page_size;
+-
+-  if (y1 < v_adj->lower)
+-    y1 = v_adj->lower;
+-  if (y1 > v_adj->upper - v_adj->page_size)
+-    y1 = v_adj->upper - v_adj->page_size;
++  x1 = relative ? x + x0 : x;
++  y1 = relative ? y + y0 : y;
+ 
+   ghidgui->adjustment_changed_holdoff = TRUE;
+   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), x1);
+@@ -110,9 +92,9 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
+   return ((x0 != x1) || (y0 != y1));
+ }
+ 
+-  /* Do scrollbar scaling based on current port drawing area size and
+-     |  overall PCB board size.
+-   */
++/* Do scrollbar scaling based on current port drawing area size and
++   |  overall PCB board size.
++ */
+ void
+ ghid_port_ranges_scale (void)
+ {
+@@ -125,22 +107,19 @@ ghid_port_ranges_scale (void)
+   gport->view_width = gport->width * gport->zoom;
+   gport->view_height = gport->height * gport->zoom;
+ 
+-  if (gport->view_width >= PCB->MaxWidth)
+-    gport->view_width = PCB->MaxWidth;
+-  if (gport->view_height >= PCB->MaxHeight)
+-    gport->view_height = PCB->MaxHeight;
+-
+   adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
+-  adj->page_size = gport->view_width;
+-  adj->page_increment = adj->page_size/10.0;
+-  adj->step_increment = adj->page_size/100.0;
+-  adj->upper = PCB->MaxWidth;
++  adj->page_size = MIN (gport->view_width, PCB->MaxWidth);
++  adj->page_increment = adj->page_size / 10.0;
++  adj->step_increment = adj->page_size / 100.0;
++  adj->lower = -gport->view_width;
++  adj->upper = PCB->MaxWidth + adj->page_size;
+ 
+   adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
+-  adj->page_size = gport->view_height;
+-  adj->page_increment = adj->page_size/10.0;
+-  adj->step_increment = adj->page_size/100.0;
+-  adj->upper = PCB->MaxHeight;
++  adj->page_size = MIN (gport->view_height, PCB->MaxHeight);
++  adj->page_increment = adj->page_size / 10.0;
++  adj->step_increment = adj->page_size / 100.0;
++  adj->lower = -gport->view_height;
++  adj->upper = PCB->MaxHeight + adj->page_size;
+ }
