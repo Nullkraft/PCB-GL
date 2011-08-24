@@ -1,0 +1,42 @@
+Bottom: 6765366792ace4f5d54d62ea552cfdb9a003c60a
+Top:    4bd8da896310f5eed049c22fee3f25444d4dc6f3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-24 22:41:29 +0100
+
+Refresh of hid-gtk-fix-rendering-of-solde
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 57e963e..8c1e8a2 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -961,8 +961,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
+   region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
+ 
+-  region.X1 = MAX (0, MIN (PCB->MaxWidth, region.X1));
+-  region.X2 = MAX (0, MIN (PCB->MaxWidth, region.X2));
++  region.X1 = MAX (0, MIN (PCB->MaxWidth,  region.X1));
++  region.X2 = MAX (0, MIN (PCB->MaxWidth,  region.X2));
+   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+ 
+@@ -1214,10 +1214,17 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+                              -gport->view_x0,
+                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
+                              -gport->view_y0, 0);
++
+   region.X1 = MIN(Px(0), Px(gport->width + 1));
+   region.Y1 = MIN(Py(0), Py(gport->height + 1));
+   region.X2 = MAX(Px(0), Px(gport->width + 1));
+   region.Y2 = MAX(Py(0), Py(gport->height + 1));
++
++  region.X1 = MAX (0, MIN (PCB->MaxWidth,  region.X1));
++  region.X2 = MAX (0, MIN (PCB->MaxWidth,  region.X2));
++  region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
++  region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
++
+   hid_expose_callback (&ghid_hid, &region, NULL);
+   hidgl_flush_triangles (&buffer);
+   glPopMatrix ();
