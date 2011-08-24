@@ -589,7 +589,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
       dx = gport->zoom * (x_prev - ev->x);
       dy = gport->zoom * (y_prev - ev->y);
       if (x_prev > 0)
-	ghid_port_ranges_pan (dx, dy, TRUE);
+        ghid_pan_view_rel (dx, dy);
       x_prev = ev->x;
       y_prev = ev->y;
       return FALSE;
@@ -642,9 +642,11 @@ ghid_pan_idle_cb (gpointer data)
 
   if (gport->has_entered)
     return FALSE;
+
   dy = gport->zoom * y_pan_speed;
   dx = gport->zoom * x_pan_speed;
-  return (ghid_port_ranges_pan (dx, dy, TRUE));
+  ghid_pan_view_rel (dx, dy);
+  return TRUE;
 }
 
 gint

@@ -506,6 +506,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
 void ghid_cancel_lead_user (void);
 
 /* gtkhid-main.c */
+void ghid_pan_view_rel (Coord dx, Coord dy);
 void ghid_get_coords (const char *msg, Coord *x, Coord *y);
 gint PCBChanged (int argc, char **argv, Coord x, Coord y);
 
