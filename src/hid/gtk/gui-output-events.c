@@ -80,16 +80,6 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
   x1 = relative ? x + x0 : x;
   y1 = relative ? y + y0 : y;
 
-  if (x1 < h_adj->lower)
-    x1 = h_adj->lower;
-  if (x1 > h_adj->upper - h_adj->page_size)
-    x1 = h_adj->upper - h_adj->page_size;
-
-  if (y1 < v_adj->lower)
-    y1 = v_adj->lower;
-  if (y1 > v_adj->upper - v_adj->page_size)
-    y1 = v_adj->upper - v_adj->page_size;
-
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), x1);
   gtk_range_set_value (GTK_RANGE (ghidgui->v_range), y1);
@@ -117,22 +107,19 @@ ghid_port_ranges_scale (void)
   gport->view_width = gport->width * gport->zoom;
   gport->view_height = gport->height * gport->zoom;
 
-  if (gport->view_width >= PCB->MaxWidth)
-    gport->view_width = PCB->MaxWidth;
-  if (gport->view_height >= PCB->MaxHeight)
-    gport->view_height = PCB->MaxHeight;
-
   adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
-  adj->page_size = gport->view_width;
-  adj->page_increment = adj->page_size/10.0;
-  adj->step_increment = adj->page_size/100.0;
-  adj->upper = PCB->MaxWidth;
+  adj->page_size = MIN (gport->view_width, PCB->MaxWidth);
+  adj->page_increment = adj->page_size / 10.0;
+  adj->step_increment = adj->page_size / 100.0;
+  adj->lower = -gport->view_width;
+  adj->upper = PCB->MaxWidth + adj->page_size;
 
   adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
-  adj->page_size = gport->view_height;
-  adj->page_increment = adj->page_size/10.0;
-  adj->step_increment = adj->page_size/100.0;
-  adj->upper = PCB->MaxHeight;
+  adj->page_size = MIN (gport->view_height, PCB->MaxHeight);
+  adj->page_increment = adj->page_size / 10.0;
+  adj->step_increment = adj->page_size / 100.0;
+  adj->lower = -gport->view_height;
+  adj->upper = PCB->MaxHeight + adj->page_size;
 }
 
 
