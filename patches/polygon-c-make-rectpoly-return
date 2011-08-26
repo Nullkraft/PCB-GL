@@ -1,5 +1,5 @@
 Bottom: 2ddbc42332c1ad49612cee9f1228cd48f0e16bd7
-Top:    2ddbc42332c1ad49612cee9f1228cd48f0e16bd7
+Top:    a097192d67b980aea88fc8a7cfbff9ea27aac8f8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 14:10:18 +0100
 
@@ -21,4 +21,36 @@ returning a NULL (empty) polygon would be fine.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 7ebf4cd..ba9d5bf 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2201,6 +2201,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+ 
++  printf ("EV: %i %i %i %i\n", ev->area.x, ev->area.y, ev->area.width, ev->area.height);
++  printf ("PCB: %i %i %i %i\n", region.X1, region.X2, region.Y1, region.Y2);
++  if (region.X1 == region.X2)
++    *(char *)0 = 0;
++
+   glColor3f (port->bg_color.red / 65535.,
+              port->bg_color.green / 65535.,
+              port->bg_color.blue / 65535.);
+diff --git a/src/polygon.c b/src/polygon.c
+index e41d514..059a1f6 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -336,8 +336,10 @@ RectPoly (Coord x1, Coord x2, Coord y1, Coord y2)
+   PLINE *contour = NULL;
+   Vector v;
+ 
+-  assert (x2 > x1);
+-  assert (y2 > y1);
++  /* Return NULL for zero or negatively sized rectangles */
++  if (x2 <= x1 || y2 <= y1)
++    return NULL;
++
+   v[0] = x1;
+   v[1] = y1;
+   if ((contour = poly_NewContour (v)) == NULL)
