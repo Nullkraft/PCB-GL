@@ -1,5 +1,5 @@
-Bottom: 6fd0483f58c2e721ab93cf2114581521dd788bb3
-Top:    417b29242366221e151e2107078b67e87f9b068d
+Bottom: fd2566ee23adea7f47013c46fe4b697534d1b7cc
+Top:    227ab62f8cecf6495e20dadeabacc1484a4ea586
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-08 23:07:05 +0100
 
@@ -26,7 +26,7 @@ index a715ffd..9e48d73 100644
      {"Swap Sides" SwapSides() a={"Ctrl-Shift-Tab" "Ctrl Shift<Key>Tab"}}
      {"Center cursor" Center() a={"C" "<Key>c"}}
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 35e8ebc..5e2a71e 100644
+index 0d9c2b3..79c8a2c 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -26,9 +26,17 @@ extern HID ghid_hid;
@@ -161,16 +161,16 @@ index 35e8ebc..5e2a71e 100644
    int event_x, event_y;
  
    /* We need to fix up the PCB coordinates corresponding to the last
-@@ -1419,6 +1479,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
- void
+@@ -1420,6 +1480,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
+ static void
  ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  {
 +  render_priv *priv = gport->render_priv;
    double min_zoom, max_zoom;
    double xtmp, ytmp;
  
-@@ -1466,13 +1527,14 @@ ghid_zoom_view_fit (void)
- void
+@@ -1467,13 +1528,14 @@ ghid_zoom_view_fit (void)
+ static void
  ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
  {
 +  render_priv *priv = gport->render_priv;
@@ -187,7 +187,7 @@ index 35e8ebc..5e2a71e 100644
    /* Pan the board so the center location remains in the same place */
    ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e6faf3b..c29556d 100644
+index ac7f8fd..9a1807c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -38,8 +38,16 @@ static hidGC current_gc = NULL;
@@ -391,8 +391,8 @@ index e6faf3b..c29556d 100644
    *event_x = DRAW_X (pcb_x);
    *event_y = DRAW_Y (pcb_y);
  
-@@ -1358,6 +1402,8 @@ pan_common (GHidPort *port)
- void
+@@ -1359,6 +1403,8 @@ pan_common (GHidPort *port)
+ static void
  ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  {
 +  render_priv *priv = gport->render_priv;
@@ -400,16 +400,16 @@ index e6faf3b..c29556d 100644
    gport->view_x0 = SIDE_X (pcb_x) - widget_x * gport->zoom;
    gport->view_y0 = SIDE_Y (pcb_y) - widget_y * gport->zoom;
  
-@@ -1385,6 +1431,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
- void
+@@ -1386,6 +1432,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
+ static void
  ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  {
 +  render_priv *priv = gport->render_priv;
    double min_zoom, max_zoom;
    double xtmp, ytmp;
  
-@@ -1432,13 +1479,14 @@ ghid_zoom_view_fit (void)
- void
+@@ -1433,13 +1480,14 @@ ghid_zoom_view_fit (void)
+ static void
  ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
  {
 +  render_priv *priv = gport->render_priv;
