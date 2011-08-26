@@ -1356,7 +1356,7 @@ pan_common (GHidPort *port)
   ghid_port_ranges_changed();
 }
 
-static void
+void
 ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 {
   gport->view_x0 = SIDE_X (pcb_x) - widget_x * gport->zoom;
@@ -1383,7 +1383,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
  */
 
 #define ALLOW_ZOOM_OUT_BY 10 /* Arbitrary, and same as the lesstif HID */
-static void
+void
 ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 {
   double min_zoom, max_zoom;
@@ -1416,13 +1416,13 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
   ghid_set_status_line_label ();
 }
 
-static void
+void
 ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
 {
   ghid_zoom_view_abs (center_x, center_y, gport->zoom * factor);
 }
 
-static void
+void
 ghid_zoom_view_fit (void)
 {
   ghid_pan_view_abs (0, 0, 0, 0);
@@ -1430,7 +1430,7 @@ ghid_zoom_view_fit (void)
                                  PCB->MaxHeight / gport->height));
 }
 
-static void
+void
 ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 {
   int widget_x, widget_y;
