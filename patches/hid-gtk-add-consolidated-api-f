@@ -3,7 +3,10 @@ Top:    fd2566ee23adea7f47013c46fe4b697534d1b7cc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-19 14:53:10 +0100
 
-hid/gtk: Add consolidated API for zooming / panning
+hid/gtk: Move the APIs for zooming / panning into the renderers
+
+This is the first step towards making the view parameters private to
+each renderer. Unfortunately, it does mean duplicating a bit of code.
 
 
 ---
