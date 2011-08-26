@@ -1,4 +1,4 @@
-Bottom: 1942727d83d8b3be2e14fc20a67432ae618a4d08
+Bottom: c85c94a0181a926d576280bd29d50bcb8ced3055
 Top:    53ef77282061632bac9fa50505e368b64a3595b4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 06:22:22 +0100
@@ -12,7 +12,7 @@ code with the other view altering routines for zooming and panning.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index f5deb16..2e258d1 100644
+index cfb75f2..2e258d1 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -72,6 +72,15 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
@@ -31,21 +31,7 @@ index f5deb16..2e258d1 100644
  
  /* gport->zoom:
   * zoom value is PCB units per screen pixel.  Larger numbers mean zooming
-@@ -1839,17 +1848,17 @@ ScrollAction (int argc, char **argv, Coord x, Coord y)
-     div = atoi(argv[1]);
- 
-   if (strcasecmp (argv[0], "up") == 0)
--    dy = -(ghid_port.height * gport->zoom / div);
-+    dy = -gport->view_height / div;
-   else if (strcasecmp (argv[0], "down") == 0)
--    dy = ghid_port.height * gport->zoom / div;
-+    dy = gport->view_height / div;
-   else if (strcasecmp (argv[0], "right") == 0)
--    dx = ghid_port.width * gport->zoom / div;
-+    dx = gport->view_width / div;
-   else if (strcasecmp (argv[0], "left") == 0)
--    dx = -(ghid_port.width * gport->zoom / div);
-+    dx = -gport->view_width / div;
+@@ -1849,7 +1858,7 @@ ScrollAction (int argc, char **argv, Coord x, Coord y)
    else
      AFAIL (scroll);
  
