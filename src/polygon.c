@@ -1959,8 +1959,8 @@ struct clip_outline_info {
   POLYAREA *poly;
 };
 
-#define ROUTER_THICKNESS 1000
-//#define ROUTER_THICKNESS 10
+#define ROUTER_THICKNESS MIL_TO_COORD (10)
+//#define ROUTER_THICKNESS MIL_TO_COORD (0.1)
 
 static int
 arc_outline_callback (const BoxType * b, void *cl)
@@ -2029,7 +2029,7 @@ POLYAREA *board_outline_poly ()
   POLYAREA *check;
   GList *pieces_to_delete = NULL;
 
-#define BLOAT_WORLD 1000
+#define BLOAT_WORLD MIL_TO_COORD (10)
 
   whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
                           -BLOAT_WORLD, BLOAT_WORLD + PCB->MaxHeight);
