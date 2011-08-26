@@ -844,11 +844,13 @@ ps_set_layer (const char *name, int group, int empty)
   /* If we're printing a copper layer other than the outline layer,
      and we want to "print outlines", and we have an outline layer,
      print the outline layer on this layer also.  */
-  if (global.outline
-      && global.outline_layer != NULL
-      && global.outline_layer != PCB->Data->Layer+idx
-      && strcmp (name, "outline")
-      && strcmp (name, "route"))
+  if (global.outline &&
+      global.is_copper &&
+      global.outline_layer != NULL &&
+      global.outline_layer != PCB->Data->Layer+idx &&
+      strcmp (name, "outline") &&
+      strcmp (name, "route")
+      )
     {
       dapi->draw_layer (global.outline_layer, &global.region, NULL);
     }
