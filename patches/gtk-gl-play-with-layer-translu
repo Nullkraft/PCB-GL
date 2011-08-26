@@ -1,7 +1,7 @@
-Bottom: 27258ac7ac20dfe83acaec311d362535777d18d4
-Top:    22344e41f38f51f7e4ce6baf299981af886daf39
+Bottom: d8d91655b0653499e478e37dc299d6c17a1bbaca
+Top:    ddfe345d22f5d6139f39a6f49924ca05b44fcd06
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-26 14:53:15 +0100
+Date:   2011-08-26 15:05:34 +0100
 
 gtk/gl: Play with layer translucency
 
@@ -9,7 +9,7 @@ gtk/gl: Play with layer translucency
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 51dcf19..5fafe8d 100644
+index 543bcd0..983c8a3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -715,10 +715,11 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
