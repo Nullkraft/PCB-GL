@@ -133,51 +133,12 @@ Redraw (void)
 static void
 set_pv_color (PinType *pv, int type)
 {
-<<<<<<< current
-  BoxType box;
-  bool vert;
-  TextType text;
-
-  if (!pv->Name || !pv->Name[0])
-    text.TextString = EMPTY (pv->Number);
-  else
-    text.TextString = EMPTY (TEST_FLAG (SHOWNUMBERFLAG, PCB) ? pv->Number : pv->Name);
-
-  vert = TEST_FLAG (EDGE2FLAG, pv);
-
-  if (vert)
-    {
-      box.X1 = pv->X - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
-      box.Y1 = pv->Y - pv->DrillingHole / 2 - Settings.PinoutTextOffsetX;
-    }
-  else
-    {
-      box.X1 = pv->X + pv->DrillingHole / 2 + Settings.PinoutTextOffsetX;
-      box.Y1 = pv->Y - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
-    }
-
-  gui->set_color (Output.fgGC, PCB->PinNameColor);
-
-  text.Flags = NoFlags ();
-  /* Set font height to approx 56% of pin thickness */
-  text.Scale = 56 * pv->Thickness / FONT_CAPHEIGHT;
-  text.X = box.X1;
-  text.Y = box.Y1;
-  text.Direction = vert ? 1 : 0;
-
-  if (gui->gui)
-    doing_pinout++;
-  DrawTextLowLevel (&text, 0);
-  if (gui->gui)
-    doing_pinout--;
-=======
   if (TEST_FLAG (WARNFLAG, pv))          gui->set_color (Output.fgGC, PCB->WarnColor);
   else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                          : PCB->PinSelectedColor);
   else if (TEST_FLAG (FOUNDFLAG, pv))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
   else                                   gui->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor
                                                                                          : PCB->PinColor);
->>>>>>> patched
 }
 
 static void
@@ -217,49 +178,9 @@ via_callback (const BoxType * b, void *cl)
 static int
 via_inlayer_callback (const BoxType * b, void *cl)
 {
-<<<<<<< current
-  BoxType box;
-  bool vert;
-  TextType text;
-
-  if (!pad->Name || !pad->Name[0])
-    text.TextString = EMPTY (pad->Number);
-  else
-    text.TextString = EMPTY (TEST_FLAG (SHOWNUMBERFLAG, PCB) ? pad->Number : pad->Name);
-
-  /* should text be vertical ? */
-  vert = (pad->Point1.X == pad->Point2.X);
-
-  if (vert)
-    {
-      box.X1 = pad->Point1.X                      - pad->Thickness / 2;
-      box.Y1 = MAX (pad->Point1.Y, pad->Point2.Y) + pad->Thickness / 2;
-      box.X1 += Settings.PinoutTextOffsetY;
-      box.Y1 -= Settings.PinoutTextOffsetX;
-    }
-  else
-    {
-      box.X1 = MIN (pad->Point1.X, pad->Point2.X) - pad->Thickness / 2;
-      box.Y1 = pad->Point1.Y                      - pad->Thickness / 2;
-      box.X1 += Settings.PinoutTextOffsetX;
-      box.Y1 += Settings.PinoutTextOffsetY;
-    }
-
-  gui->set_color (Output.fgGC, PCB->PinNameColor);
-
-  text.Flags = NoFlags ();
-  /* Set font height to approx 90% of pin thickness */
-  text.Scale = 90 * pad->Thickness / FONT_CAPHEIGHT;
-  text.X = box.X1;
-  text.Y = box.Y1;
-  text.Direction = vert ? 1 : 0;
-
-  DrawTextLowLevel (&text, 0);
-=======
   set_pv_inlayer_color ((PinType *)b, cl, VIA_TYPE);
   dapi->draw_via ((PinType *)b, NULL, NULL);
   return 1;
->>>>>>> patched
 }
 
 static int
