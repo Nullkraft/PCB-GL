@@ -5,6 +5,11 @@ Date:   2011-08-26 17:50:02 +0100
 
 Fix some text scale factors
 
+This commit fixes pin / pad name drawing, the pinout preview and
+two actions which change the size of text based on user input.
+
+To recap:
+
 Text->Scale is a percentage scaling (from the font definition). The
 default font has has an approximate cap-height of 45-50 mils, and PCB
 assumes this to be the case.
