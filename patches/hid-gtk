@@ -1,5 +1,5 @@
 Bottom: cbfc1b362fd5701d00d7a2b563675cf8ec2e7bb2
-Top:    32bc4add78916f06ef1740dac6e09db624541999
+Top:    1942727d83d8b3be2e14fc20a67432ae618a4d08
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 14:28:05 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: ...
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index dc2ea56..2e258d1 100644
+index dc2ea56..f5deb16 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -37,12 +37,24 @@ static void ghid_zoom_view_fit (void);
@@ -37,42 +37,3 @@ index dc2ea56..2e258d1 100644
    ghidgui->adjustment_changed_holdoff = TRUE;
    gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
    gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
-@@ -60,6 +72,15 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
-   pan_common (gport);
- }
- 
-+void
-+ghid_pan_view_rel (Coord dx, Coord dy)
-+{
-+  gport->view_x0 += dx;
-+  gport->view_y0 += dy;
-+
-+  pan_common (gport);
-+}
-+
- 
- /* gport->zoom:
-  * zoom value is PCB units per screen pixel.  Larger numbers mean zooming
-@@ -1827,17 +1848,17 @@ ScrollAction (int argc, char **argv, Coord x, Coord y)
-     div = atoi(argv[1]);
- 
-   if (strcasecmp (argv[0], "up") == 0)
--    dy = -(ghid_port.height * gport->zoom / div);
-+    dy = -gport->view_height / div;
-   else if (strcasecmp (argv[0], "down") == 0)
--    dy = ghid_port.height * gport->zoom / div;
-+    dy = gport->view_height / div;
-   else if (strcasecmp (argv[0], "right") == 0)
--    dx = ghid_port.width * gport->zoom / div;
-+    dx = gport->view_width / div;
-   else if (strcasecmp (argv[0], "left") == 0)
--    dx = -(ghid_port.width * gport->zoom / div);
-+    dx = -gport->view_width / div;
-   else
-     AFAIL (scroll);
- 
--  ghid_port_ranges_pan (dx, dy, TRUE);
-+  ghid_pan_view_rel (dx, dy);
- 
-   return 0;
- }
