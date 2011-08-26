@@ -1,5 +1,5 @@
 Bottom: 82e044d5a8faeaffe8e2ceb293d8f734c8f73d91
-Top:    82e044d5a8faeaffe8e2ceb293d8f734c8f73d91
+Top:    1807660638e9678319a12f50ef6e6e5dc684ce66
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 15:04:54 +0100
 
@@ -11,4 +11,32 @@ be safe to remove.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtk-pcb-cell-renderer-visibility.c b/src/hid/gtk/gtk-pcb-cell-renderer-visibility.c
+index 5824adb..9e8593c 100644
+--- a/src/hid/gtk/gtk-pcb-cell-renderer-visibility.c
++++ b/src/hid/gtk/gtk-pcb-cell-renderer-visibility.c
+@@ -90,7 +90,6 @@ gtk_pcb_cell_renderer_visibility_render (GtkCellRenderer      *cell,
+   GtkPcbCellRendererVisibility *pcb_cell;
+   GdkRectangle toggle_rect;
+   GdkRectangle draw_rect;
+-  GtkStateType state;
+ 
+   pcb_cell = GTK_PCB_CELL_RENDERER_VISIBILITY (cell);
+   gtk_pcb_cell_renderer_visibility_get_size (cell, widget, cell_area,
+@@ -107,16 +106,6 @@ gtk_pcb_cell_renderer_visibility_render (GtkCellRenderer      *cell,
+   if (toggle_rect.width <= 0 || toggle_rect.height <= 0)
+     return;
+ 
+-  if ((flags & GTK_CELL_RENDERER_SELECTED) == GTK_CELL_RENDERER_SELECTED)
+-    {
+-      if (GTK_WIDGET_HAS_FOCUS (widget))
+-        state = GTK_STATE_SELECTED;
+-      else
+-        state = GTK_STATE_ACTIVE;
+-    }
+-  else
+-    state = GTK_STATE_NORMAL;
+-
+   if (gdk_rectangle_intersect (expose_area, cell_area, &draw_rect))
+     {
+       GdkColor color;
