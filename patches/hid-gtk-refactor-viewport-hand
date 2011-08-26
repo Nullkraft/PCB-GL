@@ -1,5 +1,5 @@
 Bottom: 210049172e0d349269c979869dd6c8015ce1eb90
-Top:    63f182d432616817a9f50e4376c5fc668ac84599
+Top:    1771e6305c582f69b167cde523e973588b39c682
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
 
@@ -997,7 +997,7 @@ index 8dc10b7..7361848 100644
    ghid_init_renderer (argc, argv, gport);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index cb65eb5..546c0eb 100644
+index cb65eb5..96c2c1b 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -62,11 +62,11 @@
@@ -1038,8 +1038,8 @@ index cb65eb5..546c0eb 100644
 -  Coord pcb_x, pcb_y;
 -
 -  gint crosshair_x, crosshair_y;
-+  Coord pcb_x, pcb_y;             /* PCB coordinates of the object under the mouse pointer */
-+  Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair set by PCB's core    */
++  Coord pcb_x, pcb_y;             /* PCB coordinates of the mouse pointer */
++  Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair set by PCB's core */
  }
  GHidPort;
  
