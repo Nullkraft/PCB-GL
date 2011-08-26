@@ -5,13 +5,25 @@ Date:   2011-08-26 17:50:02 +0100
 
 Fix some text scale factors
 
-Text->Scale is in percent (of the font definition), which has an
-approximate cap-height of 45-50 mils.
+Text->Scale is a percentage scaling (from the font definition). The
+default font has has an approximate cap-height of 45-50 mils, and PCB
+assumes this to be the case.
 
-It is not a Coord, it is an integer.
+Text->Scale is not a Coord, it is an integer, so use int as the resulting
+type for any calculations involving this number. (100% is stored as 100
+in Text->scale). Code which scales text based upon other object sizes does
+so by dividing to a dimensionless scale factor. We may have to be careful
+about the width of intermediate results when scaling based on Coords if
+Coord is changed to 64bit at some point.
 
-Code which scales text based upon other object sizes does so by
-dividing to a dimensionless scale factor.
+ChangeTextSize() and ChangeElementNameSize accept absolute (or delta)
+sizes in units of distance. These are converted to a Scale by
+assuming a 100% scaled font is 45mils high. YMMV.
+
+Oh - and just to note.. the line-thickness is drawn at half the width
+stored in the font definition. This is clearly bonkers, but we would
+break designs if we changed it now. Grr.
+(Thanks a bunch commit 66592387176ba2578dfc14023a6fe49226f3a3df).
 
 
 ---
