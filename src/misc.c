@@ -573,6 +573,12 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
    * and rotate box
    */
 
+  minx = MIL_TO_COORD (0);
+  miny = MIL_TO_COORD (0);
+  maxx = MIL_TO_COORD (500);
+  maxy = MIL_TO_COORD (500);
+
+
   if (TEST_FLAG (ONSOLDERFLAG, Text))
     {
       Text->BoundingBox.X1 = Text->X + minx;
