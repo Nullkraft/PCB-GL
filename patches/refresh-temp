@@ -3,7 +3,17 @@ Top:    0eabf4b37d1fca5b44bb3537c11af535e3f57d32
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 20:05:29 +0100
 
-Refresh of hid-gtk-fix-pinout-preview-def
+hid/gtk: Fix pinout preview default zoom after unit conversion
+
+Apparently the scale factor equation was dependant on the old PCB units
+of 100th mils to produce a sensible zoom level.
+
+Since this code is monumentally obtuse, just re-write something completley
+new. The old code probably bit-rot when we split out the rendering widget.
+
+Lets just suggest a fixed size of 100 pixels natural size for each 150 mil
+of element bounding box. That seems to work nicely.
+
 
 ---
 
