@@ -1,5 +1,5 @@
 Bottom: a96d52bbc52bbb4fb3cb168dfd19ab854ab4e0b7
-Top:    316f7376444b091b8a191964ec799e4bee52f2af
+Top:    1e4bfb2ffabdd4abcd5bc64828ef9e9d85725b5d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 07:20:15 +0100
 
@@ -27,7 +27,7 @@ index e930088..05c59f2 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 1cde17e..c372549 100644
+index 1cde17e..f8d8a8a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -57,7 +57,7 @@ index 1cde17e..c372549 100644
      }
  #endif
  
-@@ -729,3 +735,33 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -729,3 +735,32 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -67,8 +67,7 @@ index 1cde17e..c372549 100644
 +void ndof_pan_cb (int dx, int dy, int dz, gpointer data)
 +{
 +  if (dx || dy)
-+    ghid_port_ranges_pan (-gport->zoom * 5 * dx,
-+                          -gport->zoom * 5 * dy, TRUE);
++    ghid_pan_view_rel (-gport->zoom * 5 * dx, -gport->zoom * 5 * dy);
 +  if (dz)
 +    ghid_zoom_view_rel (gport->pcb_x, gport->pcb_y, 1.0 - (dz / 100.0));
 +}
