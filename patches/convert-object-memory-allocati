@@ -1,7 +1,7 @@
-Bottom: c8e35d9e5f90612c7f2e2bbb43b85f2e2df2715f
-Top:    d9d86f2c7d3dc39ae67b88e4ce7d10764a21b85e
+Bottom: 4014a2ec13c90f3f28b62b03f7801894d37b238c
+Top:    8b22b383e01ce81f861682ea5b204ddcab1a2e87
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-19 17:05:49 +0100
+Date:   2011-08-26 07:19:56 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 93c17a2..f93a558 100644
+index 20dbb0a..6b5ce26 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1897,37 +1897,39 @@ static int
@@ -431,10 +431,10 @@ index 29ac62f..318482f 100644
    Dest->MarkX = Src->MarkX + dx;
    Dest->MarkY = Src->MarkY + dy;
 diff --git a/src/create.c b/src/create.c
-index b57f4a5..dd63c59 100644
+index c843582..2363df1 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -904,25 +904,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
+@@ -909,25 +909,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
  		       Coord X1, Coord Y1,
  		       Coord X2, Coord Y2, Coord Thickness)
  {
@@ -465,7 +465,7 @@ index b57f4a5..dd63c59 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -991,16 +985,17 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
+@@ -996,16 +990,17 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
  /* ---------------------------------------------------------------------------
   * Add an attribute to a list.
   */
@@ -832,7 +832,7 @@ index a3a4ac1..06e2cc7 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 7c8d74b..072b104 100644
+index 1f352b7..5b8bbb9 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -810,6 +810,7 @@ static void
@@ -2132,10 +2132,10 @@ index cbfd47e..88e53ff 100644
  void FreePCBMemory (PCBTypePtr);
  void FreeBoxListMemory (BoxListTypePtr);
 diff --git a/src/report.c b/src/report.c
-index 56e1fa9..7113332 100644
+index 56e9be4..dd8a4e1 100644
 --- a/src/report.c
 +++ b/src/report.c
-@@ -322,14 +322,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
+@@ -334,14 +334,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
  
  	pcb_sprintf (&report[0], "%m+POLYGON ID# %ld;  Flags:%s\n"
  		 "Its bounding box is %$mD %$mD.\n"
