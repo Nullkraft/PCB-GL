@@ -1,5 +1,5 @@
 Bottom: f9c80b7f83c9325074d5042b80e49e557deb7f8c
-Top:    672014ef6ce496f57780a4ce99c87e2efde7cada
+Top:    3cc9dbd34f5c4866e5af171010a3de5ce5cdd96f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 20:32:09 +0100
 
@@ -22,7 +22,7 @@ index d4c37e0..3267a15 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index 7d7a594..1b4e7fa 100644
+index 7d7a594..993b529 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -41,6 +41,7 @@
@@ -88,34 +88,61 @@ index 7d7a594..1b4e7fa 100644
  
  /*---------------------------------------------------------------------------
   *  Adds the update rect to the update region
-@@ -172,8 +131,9 @@ Redraw (void)
+@@ -172,174 +131,96 @@ Redraw (void)
  }
  
  static void
 -_draw_pv_name (PinType *pv)
 +set_pv_color (PinType *pv, int type)
  {
-+<<<<<<< current
-   BoxType box;
-   bool vert;
-   TextType text;
-@@ -210,51 +170,54 @@ _draw_pv_name (PinType *pv)
-   DrawTextLowLevel (&text, 0);
-   if (gui->gui)
-     doing_pinout--;
-+=======
+-  BoxType box;
+-  bool vert;
+-  TextType text;
+-
+-  if (!pv->Name || !pv->Name[0])
+-    text.TextString = EMPTY (pv->Number);
+-  else
+-    text.TextString = EMPTY (TEST_FLAG (SHOWNUMBERFLAG, PCB) ? pv->Number : pv->Name);
+-
+-  vert = TEST_FLAG (EDGE2FLAG, pv);
+-
+-  if (vert)
+-    {
+-      box.X1 = pv->X - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
+-      box.Y1 = pv->Y - pv->DrillingHole / 2 - Settings.PinoutTextOffsetX;
+-    }
+-  else
+-    {
+-      box.X1 = pv->X + pv->DrillingHole / 2 + Settings.PinoutTextOffsetX;
+-      box.Y1 = pv->Y - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
+-    }
+-
+-  gui->set_color (Output.fgGC, PCB->PinNameColor);
+-
+-  text.Flags = NoFlags ();
+-  /* Set font height to approx 56% of pin thickness */
+-  text.Scale = 56 * pv->Thickness / FONT_CAPHEIGHT;
+-  text.X = box.X1;
+-  text.Y = box.Y1;
+-  text.Direction = vert ? 1 : 0;
+-
+-  if (gui->gui)
+-    doing_pinout++;
+-  DrawTextLowLevel (&text, 0);
+-  if (gui->gui)
+-    doing_pinout--;
 +  if (TEST_FLAG (WARNFLAG, pv))          gui->set_color (Output.fgGC, PCB->WarnColor);
 +  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
 +                                                                                         : PCB->PinSelectedColor);
 +  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
 +  else                                   gui->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor
 +                                                                                         : PCB->PinColor);
-+>>>>>>> patched
  }
  
  static void
 -_draw_pv (PinTypePtr pv, bool draw_hole)
--{
++set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
+ {
 -  if (TEST_FLAG (THINDRAWFLAG, PCB))
 -    gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
 -  else
@@ -127,8 +154,7 @@ index 7d7a594..1b4e7fa 100644
 -
 -static void
 -draw_pin (PinTypePtr pin, bool draw_hole)
-+set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
- {
+-{
 -  SetPVColor (pin, PIN_TYPE);
 -  _draw_pv (pin, draw_hole);
 +  if (TEST_FLAG (WARNFLAG, pv))          gui->set_color (Output.fgGC, PCB->WarnColor);
@@ -173,19 +199,46 @@ index 7d7a594..1b4e7fa 100644
 +static int
 +via_inlayer_callback (const BoxType * b, void *cl)
  {
-+<<<<<<< current
-   BoxType box;
-   bool vert;
-   TextType text;
-@@ -292,54 +255,51 @@ draw_pad_name (PadType *pad)
-   text.Direction = vert ? 1 : 0;
- 
-   DrawTextLowLevel (&text, 0);
-+=======
+-  BoxType box;
+-  bool vert;
+-  TextType text;
+-
+-  if (!pad->Name || !pad->Name[0])
+-    text.TextString = EMPTY (pad->Number);
+-  else
+-    text.TextString = EMPTY (TEST_FLAG (SHOWNUMBERFLAG, PCB) ? pad->Number : pad->Name);
+-
+-  /* should text be vertical ? */
+-  vert = (pad->Point1.X == pad->Point2.X);
+-
+-  if (vert)
+-    {
+-      box.X1 = pad->Point1.X                      - pad->Thickness / 2;
+-      box.Y1 = MAX (pad->Point1.Y, pad->Point2.Y) + pad->Thickness / 2;
+-      box.X1 += Settings.PinoutTextOffsetY;
+-      box.Y1 -= Settings.PinoutTextOffsetX;
+-    }
+-  else
+-    {
+-      box.X1 = MIN (pad->Point1.X, pad->Point2.X) - pad->Thickness / 2;
+-      box.Y1 = pad->Point1.Y                      - pad->Thickness / 2;
+-      box.X1 += Settings.PinoutTextOffsetX;
+-      box.Y1 += Settings.PinoutTextOffsetY;
+-    }
+-
+-  gui->set_color (Output.fgGC, PCB->PinNameColor);
+-
+-  text.Flags = NoFlags ();
+-  /* Set font height to approx 90% of pin thickness */
+-  text.Scale = 90 * pad->Thickness / FONT_CAPHEIGHT;
+-  text.X = box.X1;
+-  text.Y = box.Y1;
+-  text.Direction = vert ? 1 : 0;
+-
+-  DrawTextLowLevel (&text, 0);
 +  set_pv_inlayer_color ((PinType *)b, cl, VIA_TYPE);
 +  dapi->draw_via ((PinType *)b, NULL, NULL);
 +  return 1;
-+>>>>>>> patched
  }
  
 -static void
@@ -266,7 +319,7 @@ index 7d7a594..1b4e7fa 100644
    return 1;
  }
  
-@@ -381,12 +341,27 @@ draw_element_pins_and_pads (ElementType *element)
+@@ -381,12 +262,27 @@ draw_element_pins_and_pads (ElementType *element)
    PAD_LOOP (element);
    {
      if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
@@ -296,7 +349,7 @@ index 7d7a594..1b4e7fa 100644
    }
    END_LOOP;
  }
-@@ -410,35 +385,11 @@ hole_callback (const BoxType * b, void *cl)
+@@ -410,35 +306,11 @@ hole_callback (const BoxType * b, void *cl)
        (plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
      return 1;
  
@@ -313,7 +366,10 @@ index 7d7a594..1b4e7fa 100644
 -    }
 -  else
 -    gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
--
++  if (TEST_FLAG (WARNFLAG, pv))          gui->set_color (Output.fgGC, PCB->WarnColor);
++  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
++  else                                   gui->set_color (Output.fgGC, Settings.BlackColor);
+ 
 -  if (TEST_FLAG (HOLEFLAG, pv))
 -    {
 -      if (TEST_FLAG (WARNFLAG, pv))
@@ -322,10 +378,7 @@ index 7d7a594..1b4e7fa 100644
 -        gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
 -      else
 -        gui->set_color (Output.fgGC, Settings.BlackColor);
-+  if (TEST_FLAG (WARNFLAG, pv))          gui->set_color (Output.fgGC, PCB->WarnColor);
-+  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
-+  else                                   gui->set_color (Output.fgGC, Settings.BlackColor);
- 
+-
 -      gui->set_line_cap (Output.fgGC, Round_Cap);
 -      gui->set_line_width (Output.fgGC, 0);
 -      gui->draw_arc (Output.fgGC,
@@ -336,7 +389,7 @@ index 7d7a594..1b4e7fa 100644
    return 1;
  }
  
-@@ -484,39 +435,17 @@ CountHoles (int *plated, int *unplated, BoxType *drawn_area)
+@@ -484,39 +356,17 @@ CountHoles (int *plated, int *unplated, BoxType *drawn_area)
    if (unplated != NULL) *unplated = hcs.nunplated;
  }
  
@@ -384,7 +437,7 @@ index 7d7a594..1b4e7fa 100644
    return 1;
  }
  
-@@ -525,71 +454,25 @@ rat_callback (const BoxType * b, void *cl)
+@@ -525,71 +375,25 @@ rat_callback (const BoxType * b, void *cl)
  {
    RatType *rat = (RatType *)b;
  
@@ -468,7 +521,7 @@ index 7d7a594..1b4e7fa 100644
    return 1;
  }
  
-@@ -609,12 +492,14 @@ draw_element_package (ElementType *element)
+@@ -609,12 +413,14 @@ draw_element_package (ElementType *element)
    /* draw lines, arcs, text and pins */
    ELEMENTLINE_LOOP (element);
    {
@@ -485,7 +538,7 @@ index 7d7a594..1b4e7fa 100644
    }
    END_LOOP;
  }
-@@ -894,13 +779,16 @@ DrawPPV (int group, const BoxType *drawn_area)
+@@ -894,13 +700,16 @@ DrawPPV (int group, const BoxType *drawn_area)
  }
  
  static int
@@ -508,15 +561,15 @@ index 7d7a594..1b4e7fa 100644
    return 1;
  }
  
-@@ -914,49 +802,22 @@ poly_callback (const BoxType * b, void *cl)
+@@ -914,49 +723,22 @@ poly_callback (const BoxType * b, void *cl)
  {
    struct poly_info *i = cl;
    PolygonType *polygon = (PolygonType *)b;
 -  static char *color;
- 
+-
 -  if (!polygon->Clipped)
 -    return 0;
--
+ 
 -  if (TEST_FLAG (SELECTEDFLAG, polygon))
 -    color = i->layer->SelectedColor;
 -  else if (TEST_FLAG (FOUNDFLAG, polygon))
@@ -565,7 +618,7 @@ index 7d7a594..1b4e7fa 100644
    return 1;
  }
  
-@@ -986,9 +847,9 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -986,9 +768,9 @@ DrawSilk (int side, const BoxType * drawn_area)
      }
  
    gui->use_mask (HID_MASK_CLEAR);
@@ -578,7 +631,7 @@ index 7d7a594..1b4e7fa 100644
  
    if (gui->poly_after)
      {
-@@ -1036,9 +897,9 @@ DrawMask (int side, BoxType * screen)
+@@ -1036,9 +818,9 @@ DrawMask (int side, BoxType * screen)
        gui->use_mask (HID_MASK_CLEAR);
      }
  
@@ -591,7 +644,7 @@ index 7d7a594..1b4e7fa 100644
  
    if (thin)
      gui->set_color (Output.pmGC, "erase");
-@@ -1058,13 +919,8 @@ DrawPaste (int side, BoxType *drawn_area)
+@@ -1058,13 +840,8 @@ DrawPaste (int side, BoxType *drawn_area)
    gui->set_color (Output.fgGC, PCB->ElementColor);
    ALLPAD_LOOP (PCB->Data);
    {
@@ -607,7 +660,7 @@ index 7d7a594..1b4e7fa 100644
    }
    ENDALL_LOOP;
  }
-@@ -1112,6 +968,9 @@ text_callback (const BoxType * b, void *cl)
+@@ -1112,6 +889,9 @@ text_callback (const BoxType * b, void *cl)
  void
  DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
  {
@@ -617,7 +670,7 @@ index 7d7a594..1b4e7fa 100644
    struct poly_info info = {screen, Layer};
  
    /* print the non-clearing polys */
-@@ -1132,6 +991,55 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -1132,6 +912,55 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
    /* We should check for gui->gui here, but it's kinda cool seeing the
       auto-outline magically disappear when you first add something to
       the "outline" layer.  */
@@ -673,7 +726,7 @@ index 7d7a594..1b4e7fa 100644
    if (IsLayerEmpty (Layer)
        && (strcmp (Layer->Name, "outline") == 0
  	  || strcmp (Layer->Name, "route") == 0))
-@@ -1144,12 +1052,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -1144,12 +973,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
      }
  }
  
@@ -686,7 +739,7 @@ index 7d7a594..1b4e7fa 100644
  /* ---------------------------------------------------------------------------
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
-@@ -1240,6 +1142,20 @@ GatherPadName (PadTypePtr Pad)
+@@ -1240,6 +1063,20 @@ GatherPadName (PadTypePtr Pad)
    return;
  }
  
