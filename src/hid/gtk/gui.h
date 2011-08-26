@@ -62,10 +62,6 @@
 #define	FROM_PCB_UNITS(v)	coord_to_unit (Settings.grid_unit, v)
 #define	TO_PCB_UNITS(v)		unit_to_coord (Settings.grid_unit, v)
 
-extern bool ghid_flip_x, ghid_flip_y;
-#define SIDE_X(x)   ((ghid_flip_x ? PCB->MaxWidth - (x) : (x)))
-#define SIDE_Y(y)   ((ghid_flip_y ? PCB->MaxHeight - (y) : (y)))
-
 #define	DRAW_X(x)	(gint)((SIDE_X(x) - gport->view_x0) / gport->zoom)
 #define	DRAW_Y(y)	(gint)((SIDE_Y(y) - gport->view_y0) / gport->zoom)
 
@@ -519,59 +515,5 @@ extern GdkPixmap *XC_hand_source, *XC_hand_mask;
 extern GdkPixmap *XC_lock_source, *XC_lock_mask;
 extern GdkPixmap *XC_clock_source, *XC_clock_mask;
 
-
-/* Coordinate conversions */
-/* Px converts view->pcb, Vx converts pcb->view */
-static inline int
-Vx (Coord x)
-{
-  int rv;
-  if (ghid_flip_x)
-    rv = (PCB->MaxWidth - x - gport->view_x0) / gport->zoom + 0.5;
-  else
-    rv = (x - gport->view_x0) / gport->zoom + 0.5;
-  return rv;
-}
-
-static inline int
-Vy (Coord y)
-{
-  int rv;
-  if (ghid_flip_y)
-    rv = (PCB->MaxHeight - y - gport->view_y0) / gport->zoom + 0.5;
-  else
-    rv = (y - gport->view_y0) / gport->zoom + 0.5;
-  return rv;
-}
-
-static inline int
-Vz (Coord z)
-{
-  return z / gport->zoom + 0.5;
-}
-
-static inline Coord
-Px (int x)
-{
-  Coord rv = x * gport->zoom + gport->view_x0;
-  if (ghid_flip_x)
-    rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
-  return  rv;
-}
-
-static inline Coord
-Py (int y)
-{
-  Coord rv = y * gport->zoom + gport->view_y0;
-  if (ghid_flip_y)
-    rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
-  return  rv;
-}
-
-static inline Coord
-Pz (int z)
-{
-  return (z * gport->zoom);
-}
 
 #endif /* PCB_HID_GTK_GHID_H */
