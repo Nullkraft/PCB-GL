@@ -1,5 +1,5 @@
 Bottom: badb3292cd564c03a505b511c62991108c3803be
-Top:    badb3292cd564c03a505b511c62991108c3803be
+Top:    8778aa4f7fbf163b19198e2a8acbb028128ef59e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 06:47:08 +0100
 
@@ -9,4 +9,16 @@ tmo2
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 001d2ca..d6d061c 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1033,6 +1033,8 @@ get_layer_color (gint layer)
+ void
+ ghid_layer_buttons_color_update (void)
+ {
++  if (PCB == NULL)
++    return;
+   printf ("UPDATE COLORS\n");
+   gtk_pcb_layer_selector_update_colors
+     (GTK_PCB_LAYER_SELECTOR (ghidgui->layer_selector), get_layer_color);
