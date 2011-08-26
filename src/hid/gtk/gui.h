@@ -163,8 +163,8 @@ typedef struct
   gboolean has_entered;
   gboolean panning;
 
-  Coord pcb_x, pcb_y;             /* PCB coordinates of the object under the mouse pointer */
-  Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair set by PCB's core    */
+  Coord pcb_x, pcb_y;             /* PCB coordinates of the mouse pointer */
+  Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair set by PCB's core */
 }
 GHidPort;
 
