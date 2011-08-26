@@ -62,12 +62,6 @@
 #define	FROM_PCB_UNITS(v)	coord_to_unit (Settings.grid_unit, v)
 #define	TO_PCB_UNITS(v)		unit_to_coord (Settings.grid_unit, v)
 
-//#define	DRAW_X(x)	(gint)(FLIP_X(x - gport->view_x0) / gport->zoom)
-//#define	DRAW_Y(y)	(gint)(FLIP_Y(y - gport->view_y0) / gport->zoom)
-
-//#define	VIEW_X(x)	(FLIP_X(x) * gport->zoom + gport->view_x0)
-//#define	VIEW_Y(y)	(FLIP_Y(y) * gport->zoom + gport->view_y0)
-
 /*
  * Used to intercept "special" hotkeys that gtk doesn't usually pass
  * on to the menu hotkeys.  We catch them and put them back where we
