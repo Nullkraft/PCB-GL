@@ -8,14 +8,9 @@ Fix outline drawing to only apply on copper layers
 This matches comments in the code, and fixes (removes) outline drawing
 on the solder mask prints.
 
-Partial revert of commit 294494e56695251e63c0da9f243d6f59447f1c9f
+Partial revert of "Fix PS rect/outline logic"
 
-Fix PS rect/outline logic
-
-PS's draw_rect was actually doing a fill_rect.  Fixed.
-
-If the design has an outline layer, draw it in more of the cases where
-we would draw the synthetic outline.
+(commit 294494e56695251e63c0da9f243d6f59447f1c9f)
 
 
 ---
