@@ -348,6 +348,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
       gport->grid_color.blue ^= gport->bg_color.blue;
     }
 
+  glTexCoord2f (0., 0.);
+
   glDisable (GL_STENCIL_TEST);
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
@@ -720,7 +722,7 @@ ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
 {
   USE_GC (gc);
 
-  hidgl_fill_circle (cx, cy, radius, gport->zoom);
+  hidgl_fill_circle (cx, cy, radius);
 }
 
 
@@ -737,7 +739,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   USE_GC (gc);
 
-  hidgl_fill_pcb_polygon (poly, clip_box, gport->zoom);
+  hidgl_fill_pcb_polygon (poly, clip_box);
 }
 
 void
@@ -1728,9 +1730,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
 #define MIN_FACES_PER_CYL 6
 #define MAX_FACES_PER_CYL 360
   float radius = vr;
-  float x1, y1;
-  float x2, y2;
-  float z1, z2;
+  float x, y, z1, z2;
   int i;
   int slices;
 
@@ -1745,19 +1745,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
   z1 = compute_depth (from_layer);
   z2 = compute_depth (to_layer);
 
-  x1 = vx + vr;
-  y1 = vy;
+  x = vx + vr;
+  y = vy;
 
-  hidgl_ensure_triangle_space (&buffer, 2 * slices);
+  hidgl_ensure_vertex_space (&buffer, 2 * slices + 2 + 2);
+
+  /* NB: Repeated first virtex to separate from other tri-strip */
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
+
   for (i = 0; i < slices; i++)
     {
-      x2 = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
-      y2 = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
-      hidgl_add_triangle_3D (&buffer, x1, y1, z1,  x2, y2, z1,  x1, y1, z2);
-      hidgl_add_triangle_3D (&buffer, x2, y2, z1,  x1, y1, z2,  x2, y2, z2);
-      x1 = x2;
-      y1 = y2;
+      x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
+      y = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
+
+      hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+      hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
     }
+
+  /* NB: Repeated last virtex to separate from other tri-strip */
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
 }
 
 struct cyl_info {
@@ -2171,6 +2179,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   draw_lead_user (priv);
 
+  hidgl_finish_triangle_array (&buffer);
+
   check_gl_drawing_ok_hack = false;
   hidgl_in_context (false);
   ghid_end_drawing (port);
@@ -2271,7 +2281,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
   hidgl_reset_stencil_usage ();
 
   /* call the drawing routine */
