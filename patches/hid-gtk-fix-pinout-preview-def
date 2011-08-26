@@ -5,7 +5,11 @@ Date:   2011-08-26 19:53:37 +0100
 
 hid/gtk: Fix pinout preview default zoom after unit conversion
 
-Since this code is monumentally obtuse, just re-write something sane
+Since this code is monumentally obtuse, just re-write something new. It
+may have been bit-rotten a bit after splitting out the rendering widget.
+
+Lets just suggest a fixed size of 100 pixels natural size for each 150 mil
+of element bounding box. That seems to work nicely.
 
 
 ---
