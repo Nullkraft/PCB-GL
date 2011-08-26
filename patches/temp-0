@@ -1,7 +1,7 @@
-Bottom: 567706d0f4370805507f88c61e9923f64a5f4738
-Top:    95dfaa6d748e9654cb2181ecebb05cd76175b871
+Bottom: badb3292cd564c03a505b511c62991108c3803be
+Top:    cddeea4672c602bf89f9ee3fc371a2ba9b9a2612
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-25 00:06:50 +0100
+Date:   2011-08-26 06:22:22 +0100
 
 temp
 
@@ -145,10 +145,10 @@ index ba637c3..1c5327d 100644
  
  gint
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 9bed4d9..0ef545b 100644
+index 134d2fb..6fe3a04 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -263,9 +263,7 @@ void ghid_get_pointer (gint *, gint *);
+@@ -262,9 +262,7 @@ void ghid_get_pointer (gint *, gint *);
  /* gui-output-events.c function prototypes.
  */
  void ghid_port_ranges_changed (void);
@@ -158,7 +158,7 @@ index 9bed4d9..0ef545b 100644
  
  gboolean ghid_note_event_location (GdkEventButton * ev);
  gboolean have_crosshair_attachments (void);
-@@ -506,6 +504,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
+@@ -505,6 +503,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
  void ghid_cancel_lead_user (void);
  
  /* gtkhid-main.c */
