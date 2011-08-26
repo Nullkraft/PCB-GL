@@ -1,5 +1,5 @@
-Bottom: 9a5103588ce3ee1e7353a7b5f06f9145e0117885
-Top:    210049172e0d349269c979869dd6c8015ce1eb90
+Bottom: a7b9dad1f83967f4d7817c502cc1063652954f40
+Top:    f9c80b7f83c9325074d5042b80e49e557deb7f8c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-08 23:07:05 +0100
 
@@ -26,7 +26,7 @@ index a715ffd..9e48d73 100644
      {"Swap Sides" SwapSides() a={"Ctrl-Shift-Tab" "Ctrl Shift<Key>Tab"}}
      {"Center cursor" Center() a={"C" "<Key>c"}}
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 16d704f..bb79ae0 100644
+index 9e2aee9..1402c54 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -26,9 +26,17 @@ extern HID ghid_hid;
@@ -123,7 +123,7 @@ index 16d704f..bb79ae0 100644
      {
        start_angle = -start_angle;
        delta_angle = -delta_angle;
-@@ -1287,9 +1342,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1251,9 +1306,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    gport->height = height;
    gport->view_width = width * gport->zoom;
    gport->view_height = height * gport->zoom;
@@ -135,7 +135,7 @@ index 16d704f..bb79ae0 100644
    gport->view_y0 -= gport->view_width  / 2;
  
    /* clear background */
-@@ -1346,6 +1401,8 @@ ghid_finish_debug_draw (void)
+@@ -1310,6 +1365,8 @@ ghid_finish_debug_draw (void)
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
@@ -144,7 +144,7 @@ index 16d704f..bb79ae0 100644
    *pcb_x = EVENT_TO_PCB_X (event_x);
    *pcb_y = EVENT_TO_PCB_Y (event_y);
  
-@@ -1355,6 +1412,8 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+@@ -1319,6 +1376,8 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  bool
  ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  {
@@ -153,7 +153,7 @@ index 16d704f..bb79ae0 100644
    *event_x = DRAW_X (pcb_x);
    *event_y = DRAW_Y (pcb_y);
  
-@@ -1364,6 +1423,7 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1328,6 +1387,7 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  static void
  pan_common (GHidPort *port)
  {
@@ -161,7 +161,7 @@ index 16d704f..bb79ae0 100644
    int event_x, event_y;
  
    /* We need to fix up the PCB coordinates corresponding to the last
-@@ -1420,6 +1480,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
+@@ -1384,6 +1444,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
  void
  ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  {
@@ -169,7 +169,7 @@ index 16d704f..bb79ae0 100644
    double min_zoom, max_zoom;
    double xtmp, ytmp;
  
-@@ -1467,13 +1528,14 @@ ghid_zoom_view_fit (void)
+@@ -1431,13 +1492,14 @@ ghid_zoom_view_fit (void)
  void
  ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
  {
