@@ -1,0 +1,22 @@
+Bottom: 9b00b91c9b09b8ea38d7334592fcc89cbb0f6a02
+Top:    b6b138b763f5b54afb5162476dfc888cc671ec28
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-27 00:03:54 +0100
+
+Refresh of add-strip-hierarchy-options-to
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index af5820f..4e12f53 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -4781,7 +4781,7 @@ static const char togglestriphierarchy_help[] =
+ %end-doc */
+ 
+ static int
+-ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
++ActionToggleStripHierarchy (int argc, char **argv, Coord x, Coord y)
+ {
+   char *function = ARG (0);
+   if (function && PCB->ElementOn)
