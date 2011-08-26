@@ -1,7 +1,7 @@
-Bottom: cd815f7cb4a4f038b9c8c7bed23cc400f5b77379
-Top:    655dbaa17a16099d0f9768b56a47c95e2cd897f9
+Bottom: 702491f77357227a7043657a0f482a5cdfb35a40
+Top:    f81acc2d9b3503e4cb0fe1e52e95f7cd057b48a4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-26 14:23:54 +0100
+Date:   2011-08-26 14:53:21 +0100
 
 Only assign stencil planes where sub-compositing is required
 
@@ -12,7 +12,7 @@ rat layers.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6ee490f..06a0ba3 100644
+index ffb07b8..9fd92ed 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -243,6 +243,8 @@ int

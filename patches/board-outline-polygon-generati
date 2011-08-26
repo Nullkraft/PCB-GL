@@ -1,7 +1,7 @@
-Bottom: d748ba77d80ba9a4d38d8b2a3a1c4a545a7335f8
-Top:    4ecef59626fe1b01661f06200b553740f19cd82e
+Bottom: 3cfbf226cb051021d7f26f51db84346fe77b0db1
+Top:    d13b30b84864d5f381de7a5d435c11d9e2c06623
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-26 14:23:53 +0100
+Date:   2011-08-26 14:53:19 +0100
 
 Board outline polygon generation
 
@@ -12,7 +12,7 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index abe2be4..2b0bc44 100644
+index ea6b124..2aaf956 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -13,6 +13,7 @@
