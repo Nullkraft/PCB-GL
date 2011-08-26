@@ -3,7 +3,9 @@ Top:    c85c94a0181a926d576280bd29d50bcb8ced3055
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 14:39:12 +0100
 
-hid/gtk: Use pre-computed view widths in PCB coords, don't recompute
+hid/gtk: Don't recompute view size in PCB coords in ScrollAction()
+
+We aleady keep around the view size in PCB coords, so use it directly.
 
 
 ---
