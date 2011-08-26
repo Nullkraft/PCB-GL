@@ -3,7 +3,7 @@ Top:    cbfc1b362fd5701d00d7a2b563675cf8ec2e7bb2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 14:21:07 +0100
 
-polygon1.c: Fix dicer to give up if the clipping region passed is invalid.
+polygon.c: Fix dicer to give up if the clipping region passed is invalid.
 
 Most of the dance checking return codes from polyBoolean_free was
 unnecessary, as it sets the output to NULL if there is a problem, so
