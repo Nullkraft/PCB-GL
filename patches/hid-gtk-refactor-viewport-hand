@@ -1,5 +1,5 @@
-Bottom: 227ab62f8cecf6495e20dadeabacc1484a4ea586
-Top:    883839c986271fd17915c81e948e64d2c43498e3
+Bottom: b45f4813ec73f2ccb18e4fa0e1e0b873b66312fc
+Top:    ef9064a32ca73f259838bbbe12336349c9c71de3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Refactor viewport handling
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 79c8a2c..98a1295 100644
+index bb79ae0..863e0ab 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -33,6 +33,7 @@ static int cur_mask = -1;
@@ -189,7 +189,7 @@ index 79c8a2c..98a1295 100644
    gport->height = save_height;
    gport->view_x0 = save_left;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9a1807c..9890c13 100644
+index 3b95f8b..7377bcf 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -38,14 +38,34 @@ static hidGC current_gc = NULL;
@@ -706,7 +706,7 @@ index 9a1807c..9890c13 100644
    ghid_set_status_line_label ();
  }
 @@ -1466,15 +1474,18 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
- static void
+ void
  ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
  {
 -  ghid_zoom_view_abs (center_x, center_y, gport->zoom * factor);
@@ -715,7 +715,7 @@ index 9a1807c..9890c13 100644
 +  ghid_zoom_view_abs (center_x, center_y, priv->view.coords_per_px * factor);
  }
  
- static void
+ void
  ghid_zoom_view_fit (void)
  {
 +
@@ -726,7 +726,7 @@ index 9a1807c..9890c13 100644
 +                                 PCB->MaxHeight / gport->drawing_area->allocation.height));
  }
  
- static void
+ void
 @@ -1532,7 +1543,7 @@ draw_lead_user (render_priv *priv)
  
        /* Draw an arc at radius */
