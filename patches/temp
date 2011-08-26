@@ -1,5 +1,5 @@
-Bottom: 15fbf1145dfe08203c005dc9e8dee66354a01b41
-Top:    39d31fe4a179e3098bd8ef7763e0492399058292
+Bottom: 82e044d5a8faeaffe8e2ceb293d8f734c8f73d91
+Top:    82e044d5a8faeaffe8e2ceb293d8f734c8f73d91
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-24 23:54:22 +0100
 
@@ -8,28 +8,4 @@ temp
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index b7e593b..6a37703 100644
---- a/src/hid/gtk/gtkhid-main.c
-+++ b/src/hid/gtk/gtkhid-main.c
-@@ -41,7 +41,7 @@ pan_common (GHidPort *port)
- 
-   /* We need to fix up the PCB coordinates corresponding to the last
-    * event so convert it back to event coordinates temporarily. */
--  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
-+//  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
- 
-   /* Don't pan so far the board is completely off the screen */
-   port->view_x0 = MAX (-port->view_width,  port->view_x0);
-@@ -49,8 +49,10 @@ pan_common (GHidPort *port)
-   port->view_x0 = MIN ( port->view_x0, PCB->MaxWidth);
-   port->view_y0 = MIN ( port->view_y0, PCB->MaxHeight);
- 
-+  ghid_note_event_location (NULL);
-+
-   /* Fix up noted event coordinates to match where we clamped */
--  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
-+//  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
- 
-   ghidgui->adjustment_changed_holdoff = TRUE;
-   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
+
