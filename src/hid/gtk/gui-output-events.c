@@ -741,8 +741,7 @@ void zoom_by (double factor, int x, int y); /* XXX: TEMPORARY HACK */
 void ndof_pan_cb (int dx, int dy, int dz, gpointer data)
 {
   if (dx || dy)
-    ghid_port_ranges_pan (-gport->zoom * 5 * dx,
-                          -gport->zoom * 5 * dy, TRUE);
+    ghid_pan_view_rel (-gport->zoom * 5 * dx, -gport->zoom * 5 * dy);
   if (dz)
     ghid_zoom_view_rel (gport->pcb_x, gport->pcb_y, 1.0 - (dz / 100.0));
 }
