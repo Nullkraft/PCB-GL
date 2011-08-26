@@ -8,9 +8,11 @@ polygon.c: Make RectPoly return NULL for zero or negatively sized rectangles
 Previously we would hit an assertion failure, where we could indicate the
 problem by returning NULL.
 
-I've hit an issue in which some expose events in the GTK HID are
+I've hit an issue in which some expose events in the GTK (+GL) HID are
 collapsing to a zero-width region on the PCB, and some code is tripping
 up on the bad clip polygon produced using RectPoly on the coordinates.
+This causes segfaults in the branch which contains code to clip rendering
+of the soldermask at the board outline.
 
 We could (and perhaps should) test in the expose handler, but the failure
 mode here is not ideal. Since most builds of PCB run with asserts disabled,
