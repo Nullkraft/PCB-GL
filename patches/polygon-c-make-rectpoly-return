@@ -1,7 +1,7 @@
-Bottom: 2ddbc42332c1ad49612cee9f1228cd48f0e16bd7
-Top:    1c0d29c08d6115503fa087438e125f97b2a73122
+Bottom: 480c5f6de80da50004b546aa1038f952d0f309f9
+Top:    480c5f6de80da50004b546aa1038f952d0f309f9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-26 14:10:18 +0100
+Date:   2011-08-26 14:24:02 +0100
 
 polygon.c: Make RectPoly return NULL for zero or negatively sized rectangles
 
@@ -21,20 +21,4 @@ returning a NULL (empty) polygon would be fine.
 
 ---
 
-diff --git a/src/polygon.c b/src/polygon.c
-index e41d514..059a1f6 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -336,8 +336,10 @@ RectPoly (Coord x1, Coord x2, Coord y1, Coord y2)
-   PLINE *contour = NULL;
-   Vector v;
- 
--  assert (x2 > x1);
--  assert (y2 > y1);
-+  /* Return NULL for zero or negatively sized rectangles */
-+  if (x2 <= x1 || y2 <= y1)
-+    return NULL;
-+
-   v[0] = x1;
-   v[1] = y1;
-   if ((contour = poly_NewContour (v)) == NULL)
+
