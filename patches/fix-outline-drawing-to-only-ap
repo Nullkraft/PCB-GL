@@ -10,6 +10,13 @@ on the solder mask prints.
 
 Partial revert of commit 294494e56695251e63c0da9f243d6f59447f1c9f
 
+Fix PS rect/outline logic
+
+PS's draw_rect was actually doing a fill_rect.  Fixed.
+
+If the design has an outline layer, draw it in more of the cases where
+we would draw the synthetic outline.
+
 
 ---
 
