@@ -1,0 +1,33 @@
+Bottom: 62d6ddf412711f4024c9fef1130cb57cdf62cacc
+Top:    26b4084502488fe66211f41df4dc382d6162cb9d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-26 23:54:08 +0100
+
+Refresh of board-outline-polygon-generati
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index bdec6b4..bf9a634 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1959,8 +1959,8 @@ struct clip_outline_info {
+   POLYAREA *poly;
+ };
+ 
+-#define ROUTER_THICKNESS 1000
+-//#define ROUTER_THICKNESS 10
++#define ROUTER_THICKNESS MIL_TO_COORD (10)
++//#define ROUTER_THICKNESS MIL_TO_COORD (0.1)
+ 
+ static int
+ arc_outline_callback (const BoxType * b, void *cl)
+@@ -2029,7 +2029,7 @@ POLYAREA *board_outline_poly ()
+   POLYAREA *check;
+   GList *pieces_to_delete = NULL;
+ 
+-#define BLOAT_WORLD 1000
++#define BLOAT_WORLD MIL_TO_COORD (10)
+ 
+   whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
+                           -BLOAT_WORLD, BLOAT_WORLD + PCB->MaxHeight);
