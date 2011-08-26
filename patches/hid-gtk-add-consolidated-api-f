@@ -1,5 +1,5 @@
 Bottom: 82e044d5a8faeaffe8e2ceb293d8f734c8f73d91
-Top:    fd2566ee23adea7f47013c46fe4b697534d1b7cc
+Top:    918ffeef590796600b82dda2d56bbf0bbb684e55
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-19 14:53:10 +0100
 
@@ -12,7 +12,7 @@ each renderer. Unfortunately, it does mean duplicating a bit of code.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index bf05b6b..0d9c2b3 100644
+index bf05b6b..16d704f 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -1361,6 +1361,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
@@ -48,7 +48,7 @@ index bf05b6b..0d9c2b3 100644
 +  ghid_port_ranges_changed();
 +}
 +
-+static void
++void
 +ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 +{
 +  gport->view_x0 = SIDE_X (pcb_x) - widget_x * gport->zoom;
@@ -75,7 +75,7 @@ index bf05b6b..0d9c2b3 100644
 + */
 +
 +#define ALLOW_ZOOM_OUT_BY 10 /* Arbitrary, and same as the lesstif HID */
-+static void
++void
 +ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 +{
 +  double min_zoom, max_zoom;
@@ -108,13 +108,13 @@ index bf05b6b..0d9c2b3 100644
 +  ghid_set_status_line_label ();
 +}
 +
-+static void
++void
 +ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
 +{
 +  ghid_zoom_view_abs (center_x, center_y, gport->zoom * factor);
 +}
 +
-+static void
++void
 +ghid_zoom_view_fit (void)
 +{
 +  ghid_pan_view_abs (0, 0, 0, 0);
@@ -122,7 +122,7 @@ index bf05b6b..0d9c2b3 100644
 +                                 PCB->MaxHeight / gport->height));
 +}
 +
-+static void
++void
 +ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 +{
 +  int widget_x, widget_y;
@@ -143,7 +143,7 @@ index bf05b6b..0d9c2b3 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 5)   /* 5fps (in ms) */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8c1e8a2..ac7f8fd 100644
+index 8c1e8a2..8787a3b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1327,6 +1327,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
@@ -179,7 +179,7 @@ index 8c1e8a2..ac7f8fd 100644
 +  ghid_port_ranges_changed();
 +}
 +
-+static void
++void
 +ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 +{
 +  gport->view_x0 = SIDE_X (pcb_x) - widget_x * gport->zoom;
@@ -206,7 +206,7 @@ index 8c1e8a2..ac7f8fd 100644
 + */
 +
 +#define ALLOW_ZOOM_OUT_BY 10 /* Arbitrary, and same as the lesstif HID */
-+static void
++void
 +ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 +{
 +  double min_zoom, max_zoom;
@@ -239,13 +239,13 @@ index 8c1e8a2..ac7f8fd 100644
 +  ghid_set_status_line_label ();
 +}
 +
-+static void
++void
 +ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
 +{
 +  ghid_zoom_view_abs (center_x, center_y, gport->zoom * factor);
 +}
 +
-+static void
++void
 +ghid_zoom_view_fit (void)
 +{
 +  ghid_pan_view_abs (0, 0, 0, 0);
@@ -253,7 +253,7 @@ index 8c1e8a2..ac7f8fd 100644
 +                                 PCB->MaxHeight / gport->height));
 +}
 +
-+static void
++void
 +ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 +{
 +  int widget_x, widget_y;
