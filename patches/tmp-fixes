@@ -1,5 +1,5 @@
-Bottom: 7f0cd59597a88f71ef6b78cc8c57dcbaf661232d
-Top:    4ff747c63d871b3d16daa7885f26b3ef44df9619
+Bottom: e987e9fb6e3d36821161cad967bb084a781f0bea
+Top:    37d62a5e1701b9da6f9fa90862b4cc947a44f538
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 17:17:21 +0100
 
@@ -50,17 +50,11 @@ index 19bce70..f418e1a 100644
        if (IsLayerEmpty (layer))
          {
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 0a74759..1a0aabe 100644
+index 408f225..1a0aabe 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -841,11 +841,10 @@ ps_set_layer (const char *name, int group, int empty)
-     fprintf (global.f, "gsave tx ty translate 1 -1 scale 0 0 moveto ( ) show grestore newpath /ty ty ts sub def\n");
- #endif
- 
--  /* If we're printing a copper layer other than the outline layer,
--     and we want to "print outlines", and we have an outline layer,
-+  /* If we're printing a layer other than the outline layer, and
-+     we want to "print outlines", and we have an outline layer,
+@@ -845,7 +845,6 @@ ps_set_layer (const char *name, int group, int empty)
+      we want to "print outlines", and we have an outline layer,
       print the outline layer on this layer also.  */
    if (global.outline &&
 -      global.is_copper &&
