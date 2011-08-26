@@ -1,7 +1,7 @@
-Bottom: f88286cf53fa5d6e277b8ca05434a21e57af42db
-Top:    71bf558fbc1f1fbf82195ffca92e0079b7e6e07b
+Bottom: 33ac0e7e521d528bf17476b695eca0a438f01648
+Top:    90ef4bb07577bdfb71c2fda85ef724cfea08e2c6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-19 17:06:21 +0100
+Date:   2011-08-26 07:20:31 +0100
 
 Attempt lesstif GL support
 
@@ -66,7 +66,7 @@ index e9685a8..0a125ec 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index ad10772..a2dd094 100644
+index 30739e9..309f798 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -30,10 +30,14 @@
@@ -355,7 +355,7 @@ index ad10772..a2dd094 100644
      {
        int mx, my;
        BoxType region;
-@@ -2866,7 +3056,7 @@ idle_proc (XtPointer dummy)
+@@ -2875,7 +3065,7 @@ idle_proc (XtPointer dummy)
  
    lesstif_update_widget_flags ();
  
@@ -364,7 +364,7 @@ index ad10772..a2dd094 100644
    idle_proc_set = 0;
    return True;
  }
-@@ -2883,11 +3073,22 @@ lesstif_need_idle_proc ()
+@@ -2892,11 +3082,22 @@ lesstif_need_idle_proc ()
  static void
  lesstif_invalidate_lr (int l, int r, int t, int b)
  {
@@ -387,7 +387,7 @@ index ad10772..a2dd094 100644
  }
  
  void
-@@ -3149,6 +3350,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3158,6 +3359,7 @@ lesstif_set_color (hidGC gc, const char *name)
      }
  }
  
@@ -395,7 +395,7 @@ index ad10772..a2dd094 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3212,242 +3414,456 @@ set_gc (hidGC gc)
+@@ -3221,242 +3423,456 @@ set_gc (hidGC gc)
  			  join);
      }
  }
@@ -1042,7 +1042,7 @@ index ad10772..a2dd094 100644
  }
  
  static void
-@@ -4006,6 +4422,7 @@ lesstif_finish_debug_draw (void)
+@@ -4015,6 +4431,7 @@ lesstif_finish_debug_draw (void)
     */
  }
  
@@ -1050,7 +1050,7 @@ index ad10772..a2dd094 100644
  #include "dolists.h"
  
  void
-@@ -4032,17 +4449,19 @@ hid_lesstif_init ()
+@@ -4041,17 +4458,19 @@ hid_lesstif_init ()
    lesstif_hid.set_layer               = lesstif_set_layer;
    lesstif_hid.make_gc                 = lesstif_make_gc;
    lesstif_hid.destroy_gc              = lesstif_destroy_gc;
