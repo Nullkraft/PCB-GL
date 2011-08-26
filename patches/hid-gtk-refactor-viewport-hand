@@ -1,5 +1,5 @@
 Bottom: 210049172e0d349269c979869dd6c8015ce1eb90
-Top:    1771e6305c582f69b167cde523e973588b39c682
+Top:    f80fec58278bb43ba9dc12738d4786c86cb08997
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-07-24 13:48:26 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Refactor viewport handling
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index bb79ae0..fa70875 100644
+index bb79ae0..4855561 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -33,6 +33,7 @@ static int cur_mask = -1;
@@ -88,16 +88,69 @@ index bb79ae0..fa70875 100644
  
    if ((SIDE_X (x1) < gport->view_x0 - lw
         && SIDE_X (x2) < gport->view_x0 - lw)
-@@ -1228,7 +1229,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1220,77 +1221,31 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+ {
+   GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
+   GdkDrawable *save_drawable;
+-  double save_zoom;
++  view_data save_view;
+   int da_w, da_h;
+-  int save_left, save_top;
+-  int save_width, save_height;
+-  int save_view_width, save_view_height;
    double xz, yz;
    render_priv *priv = gport->render_priv;
  
 -  save_zoom = gport->zoom;
-+  save_zoom = priv->view.coord_per_px;
-   save_width = gport->width;
-   save_height = gport->height;
-   save_left = gport->view_x0;
-@@ -1244,15 +1245,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+-  save_width = gport->width;
+-  save_height = gport->height;
+-  save_left = gport->view_x0;
+-  save_top = gport->view_y0;
+-  save_view_width = gport->view_width;
+-  save_view_height = gport->view_height;
+-
+-  /* Setup drawable and zoom factor for drawing routines
+-   */
+-  save_drawable = gport->drawable;
+-
+-  gdk_window_get_geometry (widget->window, 0, 0, &da_w, &da_h, 0);
+-  xz = (double) pinout->x_max / da_w;
+-  yz = (double) pinout->y_max / da_h;
+-  if (xz > yz)
+-    gport->zoom = xz;
+-  else
+-    gport->zoom = yz;
+-
+-  gport->drawable = widget->window;
+-  gport->width = da_w;
+-  gport->height = da_h;
+-  gport->view_width = da_w * gport->zoom;
+-  gport->view_height = da_h * gport->zoom;
+-  gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
+-  gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
+-
+-  /* clear background */
+-  gdk_draw_rectangle (widget->window, priv->bg_gc, TRUE, 0, 0, da_w, da_h);
+-
+-  /* call the drawing routine */
+-  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
+-
+-  gport->drawable = save_drawable;
+-  gport->zoom = save_zoom;
+-  gport->width = save_width;
+-  gport->height = save_height;
+-  gport->view_x0 = save_left;
+-  gport->view_y0 = save_top;
+-  save_top = gport->view_y0;
+-  save_view_width = gport->view_width;
+-  save_view_height = gport->view_height;
+-
+   /* Setup drawable and zoom factor for drawing routines
+    */
+   save_drawable = gport->drawable;
++  save_view = priv->view;
+ 
+   gdk_window_get_geometry (widget->window, 0, 0, &da_w, &da_h, 0);
    xz = (double) pinout->x_max / da_w;
    yz = (double) pinout->y_max / da_h;
    if (xz > yz)
@@ -112,59 +165,55 @@ index bb79ae0..fa70875 100644
    gport->height = da_h;
 -  gport->view_width = da_w * gport->zoom;
 -  gport->view_height = da_h * gport->zoom;
-+  gport->view_width = da_w * priv->view.coord_per_px;
-+  gport->view_height = da_h * priv->view.coord_per_px;
-   gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
-   gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
+-  gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
+-  gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
++  priv->view.view_width = da_w * priv->view.coord_per_px;
++  priv->view.view_height = da_h * priv->view.coord_per_px;
++  priv->view.x0 = (pinout->x_max - gport->view_width) / 2;
++  priv->view.y0 = (pinout->y_max - gport->view_height) / 2;
  
-@@ -1263,7 +1264,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   /* clear background */
+   gdk_draw_rectangle (widget->window, priv->bg_gc, TRUE, 0, 0, da_w, da_h);
+@@ -1299,13 +1254,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
  
    gport->drawable = save_drawable;
 -  gport->zoom = save_zoom;
-+  priv->view.coord_per_px = save_zoom;
-   gport->width = save_width;
-   gport->height = save_height;
-   gport->view_x0 = save_left;
-@@ -1280,15 +1281,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
-   xz = (double) pinout->x_max / da_w;
-   yz = (double) pinout->y_max / da_h;
-   if (xz > yz)
--    gport->zoom = xz;
-+    priv->view.coord_per_px = xz;
-   else
--    gport->zoom = yz;
-+    priv->view.coord_per_px = yz;
+-  gport->width = save_width;
+-  gport->height = save_height;
+-  gport->view_x0 = save_left;
+-  gport->view_y0 = save_top;
+-  gport->view_width = save_view_width;
+-  gport->view_height = save_view_height;
++  priv->view = save_view;
  
-   gport->drawable = widget->window;
-   gport->width = da_w;
-   gport->height = da_h;
--  gport->view_width = da_w * gport->zoom;
--  gport->view_height = da_h * gport->zoom;
-+  gport->view_width = da_w * priv->view.coord_per_px;
-+  gport->view_height = da_h * priv->view.coord_per_px;
-   gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
-   gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
- 
-@@ -1299,7 +1300,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
-   hid_expose_callback (&ghid_hid, NULL, &pinout->element);
- 
-   gport->drawable = save_drawable;
--  gport->zoom = save_zoom;
-+  priv->view.coord_per_px = save_zoom;
-   gport->width = save_width;
-   gport->height = save_height;
-   gport->view_x0 = save_left;
-@@ -1323,7 +1324,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   return FALSE;
+ }
+@@ -1315,21 +1264,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+ {
+   GdkPixmap *pixmap;
+   GdkDrawable *save_drawable;
+-  double save_zoom;
+-  int save_left, save_top;
+-  int save_width, save_height;
+-  int save_view_width, save_view_height;
++  view_data save_view;
+   BoxType region;
    render_priv *priv = gport->render_priv;
  
    save_drawable = gport->drawable;
 -  save_zoom = gport->zoom;
-+  save_zoom = priv->view.coord_per_px;
-   save_width = gport->width;
-   save_height = gport->height;
-   save_left = gport->view_x0;
-@@ -1337,11 +1338,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+-  save_width = gport->width;
+-  save_height = gport->height;
+-  save_left = gport->view_x0;
+-  save_top = gport->view_y0;
+-  save_view_width = gport->view_width;
+-  save_view_height = gport->view_height;
++  save_view = priv->view;
+ 
+   pixmap = gdk_pixmap_new (NULL, width, height, depth);
+ 
+@@ -1337,11 +1277,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
     */
  
    gport->drawable = pixmap;
@@ -179,15 +228,21 @@ index bb79ae0..fa70875 100644
    gport->view_x0 = priv->view.flip_x ? PCB->MaxWidth - cx : cx;
    gport->view_x0 -= gport->view_height / 2;
    gport->view_y0 = priv->view.flip_y ? PCB->MaxHeight - cy : cy;
-@@ -1364,7 +1365,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1364,13 +1304,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    hid_expose_callback (&ghid_hid, &region, NULL);
  
    gport->drawable = save_drawable;
 -  gport->zoom = save_zoom;
-+  priv->view.coord_per_px = save_zoom;
-   gport->width = save_width;
-   gport->height = save_height;
-   gport->view_x0 = save_left;
+-  gport->width = save_width;
+-  gport->height = save_height;
+-  gport->view_x0 = save_left;
+-  gport->view_y0 = save_top;
+-  gport->view_width = save_view_width;
+-  gport->view_height = save_view_height;
++  priv->view = save_view;
+ 
+   return pixmap;
+ }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index 3b95f8b..5de5cca 100644
 --- a/src/hid/gtk/gtkhid-gl.c
@@ -997,26 +1052,23 @@ index 8dc10b7..7361848 100644
    ghid_init_renderer (argc, argv, gport);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index cb65eb5..96c2c1b 100644
+index cb65eb5..187887f 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -62,11 +62,11 @@
+@@ -62,12 +62,6 @@
  #define	FROM_PCB_UNITS(v)	coord_to_unit (Settings.grid_unit, v)
  #define	TO_PCB_UNITS(v)		unit_to_coord (Settings.grid_unit, v)
  
 -#define	DRAW_X(x)	(gint)((SIDE_X(x) - gport->view_x0) / gport->zoom)
 -#define	DRAW_Y(y)	(gint)((SIDE_Y(y) - gport->view_y0) / gport->zoom)
-+//#define	DRAW_X(x)	(gint)(FLIP_X(x - gport->view_x0) / gport->zoom)
-+//#define	DRAW_Y(y)	(gint)(FLIP_Y(y - gport->view_y0) / gport->zoom)
- 
+-
 -#define	EVENT_TO_PCB_X(x)	SIDE_X((gint)((x) * gport->zoom + gport->view_x0))
 -#define	EVENT_TO_PCB_Y(y)	SIDE_Y((gint)((y) * gport->zoom + gport->view_y0))
-+//#define	VIEW_X(x)	(FLIP_X(x) * gport->zoom + gport->view_x0)
-+//#define	VIEW_Y(y)	(FLIP_Y(y) * gport->zoom + gport->view_y0)
- 
+-
  /*
   * Used to intercept "special" hotkeys that gtk doesn't usually pass
-@@ -150,7 +150,6 @@ typedef struct
+  * on to the menu hotkeys.  We catch them and put them back where we
+@@ -150,7 +144,6 @@ typedef struct
     *drawing_area;		/* and its drawing area */
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
@@ -1024,7 +1076,7 @@ index cb65eb5..96c2c1b 100644
  
    struct render_priv *render_priv;
  
-@@ -164,16 +163,8 @@ typedef struct
+@@ -164,16 +157,8 @@ typedef struct
    gboolean has_entered;
    gboolean panning;
  
@@ -1043,7 +1095,7 @@ index cb65eb5..96c2c1b 100644
  }
  GHidPort;
  
-@@ -495,6 +486,7 @@ void ghid_finish_debug_draw (void);
+@@ -495,6 +480,7 @@ void ghid_finish_debug_draw (void);
  bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
  void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
