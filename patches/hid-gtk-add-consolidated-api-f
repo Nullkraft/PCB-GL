@@ -1,5 +1,5 @@
-Bottom: ad285e7c2ce7efc944eea306cc528fc5fda857f1
-Top:    9a5103588ce3ee1e7353a7b5f06f9145e0117885
+Bottom: fba6662529856aaff630b7e01da40fc64bcdc64d
+Top:    a7b9dad1f83967f4d7817c502cc1063652954f40
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-19 14:53:10 +0100
 
@@ -12,10 +12,10 @@ each renderer. Unfortunately, it does mean duplicating a bit of code.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index bf05b6b..16d704f 100644
+index 817a0fa..9e2aee9 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1361,6 +1361,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1325,6 +1325,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
    return true;
  }
  
