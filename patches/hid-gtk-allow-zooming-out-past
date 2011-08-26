@@ -3,17 +3,16 @@ Top:    82e044d5a8faeaffe8e2ceb293d8f734c8f73d91
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 06:22:23 +0100
 
-hid/gtk: Allow zooming out past the board size (up to 1/5 viewport size)
+hid/gtk: Allow zooming out past the board size (up to 1/10 viewport size)
 
-Adds an explicit pan fixup to ghid_view_zoom_fit(), as this is no longer
-clamped at the origin by pan_common().
+The 1/10 viewport size should be the same as the Lesstif HID allows. The
+purpose of the limit is to avoid zooming in so small the PCB is lost as a
+tiny dot, and also to avoid coodinate overflows when representing screen
+coordinats in PCB Coords. (Since we switched to nanometers, this could
+potentially raise its head more readily until we move to 64bit integers).
 
-It was also necessary to add a fixup for the stored gport->pcb_{x,y}
-coordinates. Without this, if you zoomed in far enough to clamp against
-the viewport edge, zooming out again would not produce the expected
-result (backing out the zoom), as the clamping against the viewport
-shifts the PCB coordinate under the mouse pointer, and hence the
-required zoom center.
+The explicit pan fixup added to ghid_view_zoom_fit() is required as
+pan_common() no longer clamps the view back to the origin.
 
 
 ---
