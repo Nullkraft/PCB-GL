@@ -1,7 +1,7 @@
-Bottom: af14cd1c16efee134fec3746940873ecc746a92f
-Top:    2715b3ac64f9a960fdaa8df76bb29c6deead034d
+Bottom: 67dc307bb8f6a0467ed6916c7986b374fd6d689a
+Top:    12cfb5f214277147dd2b057ac8f0ce67ea375be6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-19 17:06:05 +0100
+Date:   2011-08-26 07:20:10 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index cd85a77..5579a7c 100644
+index 905f0ba..44b5b64 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -38,15 +38,15 @@ index cd85a77..5579a7c 100644
  
  typedef struct view_data {
    bool flip_x;
-@@ -83,6 +94,7 @@ typedef struct hid_gc_struct
- hid_gc_struct;
+@@ -84,6 +95,7 @@ hid_gc_struct;
+ 
  
  static void draw_lead_user (render_priv *priv);
 +static void ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y);
  
  /* Px converts view->pcb, Vx converts pcb->view */
  static inline int
-@@ -951,6 +963,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -952,6 +964,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    render_priv *priv = port->render_priv;
    BoxType region;
@@ -58,7 +58,7 @@ index cd85a77..5579a7c 100644
  
    ghid_start_drawing (port);
  
-@@ -974,11 +991,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -975,11 +992,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -74,7 +74,7 @@ index cd85a77..5579a7c 100644
    glScalef ((priv->view.flip_x ? -1. : 1.) / port->zoom,
              (priv->view.flip_y ? -1. : 1.) / port->zoom,
              ((priv->view.flip_x == priv->view.flip_y) ? 1. : -1.) / port->zoom);
-@@ -986,6 +1004,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -987,6 +1005,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                                 -port->view_x0,
                  priv->view.flip_y ?  port->view_y0 - PCB->MaxHeight :
                                 -port->view_y0, 0);
@@ -82,7 +82,7 @@ index cd85a77..5579a7c 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -1002,20 +1021,74 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1003,10 +1022,64 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilMask (0);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -149,8 +149,9 @@ index cd85a77..5579a7c 100644
 +  region.X1 = min_x;  region.X2 = max_x + 1;
 +  region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-   glColor3f (port->bg_color.red / 65535.,
-              port->bg_color.green / 65535.,
+   region.X1 = MAX (0, MIN (PCB->MaxWidth,  region.X1));
+   region.X2 = MAX (0, MIN (PCB->MaxWidth,  region.X2));
+@@ -1018,10 +1091,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.blue / 65535.);
  
    glBegin (GL_QUADS);
@@ -165,7 +166,7 @@ index cd85a77..5579a7c 100644
    glEnd ();
  
    ghid_draw_bg_image ();
-@@ -1122,7 +1195,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1128,7 +1201,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -174,7 +175,7 @@ index cd85a77..5579a7c 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1235,7 +1308,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1241,7 +1314,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -183,7 +184,7 @@ index cd85a77..5579a7c 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1348,13 +1421,173 @@ ghid_finish_debug_draw (void)
+@@ -1361,13 +1434,173 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
@@ -361,7 +362,7 @@ index cd85a77..5579a7c 100644
  
    return true;
  }
-@@ -1474,6 +1707,36 @@ ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
+@@ -1506,6 +1739,36 @@ ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
    ghid_invalidate_all ();
  }
  
@@ -399,10 +400,10 @@ index cd85a77..5579a7c 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index aaab38e..24a4882 100644
+index 8dc10b7..cf64ee7 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -124,6 +124,7 @@ a zoom in/out.
+@@ -125,6 +125,7 @@ a zoom in/out.
  
  #include "gui-icons-mode-buttons.data"
  #include "gui-icons-misc.data"
@@ -410,7 +411,7 @@ index aaab38e..24a4882 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1866,6 +1867,10 @@ ghid_build_pcb_top_window (void)
+@@ -1433,6 +1434,10 @@ ghid_build_pcb_top_window (void)
    GtkWidget *vbox_main, *vbox_left, *hbox_middle, *hbox = NULL;
    GtkWidget *viewport, *ebox, *vbox, *frame;
    GtkWidget *label;
@@ -421,9 +422,9 @@ index aaab38e..24a4882 100644
    GHidPort *port = &ghid_port;
    gchar *s;
    GtkWidget *scrolled;
-@@ -1974,6 +1979,16 @@ ghid_build_pcb_top_window (void)
-       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-   make_layer_buttons(vbox, port);
+@@ -1552,6 +1557,16 @@ ghid_build_pcb_top_window (void)
+   gtk_box_pack_start (GTK_BOX(vbox), ghidgui->layer_selector,
+                       FALSE, FALSE, 0);
  
 +  /* FIXME: IFDEF HACK */
 +#ifdef ENABLE_GL
@@ -439,10 +440,10 @@ index aaab38e..24a4882 100644
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index de4b58d..9338fcf 100644
+index cb65eb5..8ac44d7 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -284,7 +284,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -281,7 +281,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
  gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  				       GdkEventScroll * ev, GHidPort * out);
  
@@ -450,7 +451,7 @@ index de4b58d..9338fcf 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -502,6 +501,8 @@ void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
+@@ -499,6 +498,8 @@ void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
  void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
  void ghid_zoom_view_fit (void);
  void ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y);
