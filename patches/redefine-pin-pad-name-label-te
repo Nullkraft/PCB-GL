@@ -1,0 +1,17 @@
+Bottom: fdb07e6e2b121ba4ee83390cd267ea9ed0f4b387
+Top:    fdb07e6e2b121ba4ee83390cd267ea9ed0f4b387
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-26 19:48:42 +0100
+
+Redefine pin / pad name label text size in terms of FONT_CAPHEIGHT
+
+This reduces the proliferation of various "magic numbers" which
+combine constants from several sources and aren't appearent why
+they are a particular number. There is a slight rounding error
+in the converted pin label size, but it is insignificant.
+
+
+
+---
+
+
