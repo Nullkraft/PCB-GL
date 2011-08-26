@@ -959,15 +959,15 @@ MoveLayer (int old_index, int new_index)
   if (new_index == -1
       && LastLayerInComponentGroup (old_index))
     {
-//      gui->confirm_dialog ("You can't delete the last top-side layer\n", "Ok", NULL);
-//      return 1;
+      gui->confirm_dialog ("You can't delete the last top-side layer\n", "Ok", NULL);
+      return 1;
     }
 
   if (new_index == -1
       && LastLayerInSolderGroup (old_index))
     {
-//      gui->confirm_dialog ("You can't delete the last bottom-side layer\n", "Ok", NULL);
-//      return 1;
+      gui->confirm_dialog ("You can't delete the last bottom-side layer\n", "Ok", NULL);
+      return 1;
     }
 
   for (g = 0; g < MAX_LAYER+2; g++)
