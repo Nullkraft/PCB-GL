@@ -3,7 +3,10 @@ Top:    53ef77282061632bac9fa50505e368b64a3595b4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 06:22:22 +0100
 
-temp
+hid/gtk: Remove ghid_port_ranges_pan for new replacement ghid_pan_view_rel
+
+ghid_pan_view_rel() does less heavy lifting directly, and shares common
+code with the other view altering routines for zooming and panning.
 
 
 ---
