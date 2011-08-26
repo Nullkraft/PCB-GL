@@ -1,7 +1,7 @@
-Bottom: 7dd6ffd8bc75e88ef98384ba844bb4c29c150bff
-Top:    2610253978eb8f32394470b7c43a6f5662bf9f32
+Bottom: a3b96b43319a9ec363c573945facfbd202da89a2
+Top:    e0f071ab091df24519d814a2f0050c158a63ccc6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-20 11:57:31 +0100
+Date:   2011-08-26 07:20:27 +0100
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -17,7 +17,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 93c17a2..41d06d2 100644
+index 20dbb0a..452a1e6 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3406,9 +3406,16 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
@@ -116,7 +116,7 @@ index 93c17a2..41d06d2 100644
  static const char changejoin_syntax[] =
    "ChangeJoin(ToggleObject|SelectedLines|SelectedArcs|Selected)";
  
-@@ -8085,6 +8163,9 @@ HID_Action action_action_list[] = {
+@@ -8088,6 +8166,9 @@ HID_Action action_action_list[] = {
    {"ToggleHideName", 0, ActionToggleHideName,
     togglehidename_help, togglehidename_syntax}
    ,
