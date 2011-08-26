@@ -4781,7 +4781,7 @@ static const char togglestriphierarchy_help[] =
 %end-doc */
 
 static int
-ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
+ActionToggleStripHierarchy (int argc, char **argv, Coord x, Coord y)
 {
   char *function = ARG (0);
   if (function && PCB->ElementOn)
