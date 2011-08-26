@@ -2201,11 +2201,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
 
-  printf ("EV: %i %i %i %i\n", ev->area.x, ev->area.y, ev->area.width, ev->area.height);
-  printf ("PCB: %i %i %i %i\n", region.X1, region.X2, region.Y1, region.Y2);
-  if (region.X1 == region.X2)
-    *(char *)0 = 0;
-
   glColor3f (port->bg_color.red / 65535.,
              port->bg_color.green / 65535.,
              port->bg_color.blue / 65535.);
