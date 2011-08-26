@@ -1,5 +1,5 @@
 Bottom: f7bc05d643549e8fd10f6f182184d5905afa16ca
-Top:    c2257e46e90d3aed9c72f9a599bf310823603fce
+Top:    4014a2ec13c90f3f28b62b03f7801894d37b238c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-08 23:07:05 +0100
 
@@ -187,7 +187,7 @@ index 35e8ebc..5e2a71e 100644
    /* Pan the board so the center location remains in the same place */
    ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e6faf3b..8ec857f 100644
+index e6faf3b..c29556d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -38,8 +38,16 @@ static hidGC current_gc = NULL;
@@ -391,15 +391,16 @@ index e6faf3b..8ec857f 100644
    *event_x = DRAW_X (pcb_x);
    *event_y = DRAW_Y (pcb_y);
  
-@@ -1330,6 +1374,7 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
- static void
- pan_common (GHidPort *port)
+@@ -1358,6 +1402,8 @@ pan_common (GHidPort *port)
+ void
+ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  {
 +  render_priv *priv = gport->render_priv;
-   int event_x, event_y;
++
+   gport->view_x0 = SIDE_X (pcb_x) - widget_x * gport->zoom;
+   gport->view_y0 = SIDE_Y (pcb_y) - widget_y * gport->zoom;
  
-   /* We need to fix up the PCB coordinates corresponding to the last
-@@ -1385,6 +1430,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
+@@ -1385,6 +1431,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
  void
  ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  {
@@ -407,7 +408,7 @@ index e6faf3b..8ec857f 100644
    double min_zoom, max_zoom;
    double xtmp, ytmp;
  
-@@ -1432,13 +1478,14 @@ ghid_zoom_view_fit (void)
+@@ -1432,13 +1479,14 @@ ghid_zoom_view_fit (void)
  void
  ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
  {
