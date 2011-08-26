@@ -1,5 +1,5 @@
-Bottom: 56eed64ec69705f2738e75e95d025f98dc530fd3
-Top:    fc8f4ffdbd2e83c9a3a4a38097bb111c1c1dbaa5
+Bottom: 1b09c658364ff66045de15528ea4456798774f57
+Top:    c345930056cc8b5da3656e662f4f9de9e37ca62c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 15:05:33 +0100
 
@@ -611,7 +611,7 @@ index 8829527..48bf722 100644
  	{
  	  hidGC gc = gui->make_gc ();
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index fb9b8cc..57d2b58 100644
+index 02448e5..dbfc19e 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -17,6 +17,7 @@
@@ -622,9 +622,9 @@ index fb9b8cc..57d2b58 100644
  
  #include "hid.h"
  #include "../hidint.h"
-@@ -849,7 +850,7 @@ ps_set_layer (const char *name, int group, int empty)
-       && strcmp (name, "outline")
-       && strcmp (name, "route"))
+@@ -850,7 +851,7 @@ ps_set_layer (const char *name, int group, int empty)
+       strcmp (name, "route") != 0
+       )
      {
 -      DrawLayer (global.outline_layer, &global.region);
 +      dapi->draw_layer (global.outline_layer, &global.region, NULL);
