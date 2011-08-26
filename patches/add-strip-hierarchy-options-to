@@ -1,5 +1,5 @@
 Bottom: 5e7e15a89eeec5c0008e3ae78f5a21f542a19706
-Top:    9b00b91c9b09b8ea38d7334592fcc89cbb0f6a02
+Top:    b6b138b763f5b54afb5162476dfc888cc671ec28
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 23:54:56 +0100
 
@@ -17,7 +17,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index faa1f21..af5820f 100644
+index faa1f21..4e12f53 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3407,9 +3407,16 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
@@ -53,7 +53,7 @@ index faa1f21..af5820f 100644
 +%end-doc */
 +
 +static int
-+ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
++ActionToggleStripHierarchy (int argc, char **argv, Coord x, Coord y)
 +{
 +  char *function = ARG (0);
 +  if (function && PCB->ElementOn)
