@@ -1,0 +1,22 @@
+Bottom: 46f067dafb7bbc890befb5b2a2f7551f6fc48c87
+Top:    82e044d5a8faeaffe8e2ceb293d8f734c8f73d91
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-26 14:33:15 +0100
+
+Refresh of hid-gtk-allow-zooming-out-past
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 99f7537..f5c836c 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -89,7 +89,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
+  * gport->view_width and gport->view_height are in PCB coordinates
+  */
+ 
+-#define ALLOW_ZOOM_OUT_BY 5
++#define ALLOW_ZOOM_OUT_BY 10 /* Arbitrary, and same as the lesstif HID */
+ static void
+ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+ {
