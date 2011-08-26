@@ -1,0 +1,25 @@
+Bottom: a097192d67b980aea88fc8a7cfbff9ea27aac8f8
+Top:    1c0d29c08d6115503fa087438e125f97b2a73122
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-26 14:19:01 +0100
+
+Refresh of polygon-c-make-rectpoly-return
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index ba9d5bf..7ebf4cd 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2201,11 +2201,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+ 
+-  printf ("EV: %i %i %i %i\n", ev->area.x, ev->area.y, ev->area.width, ev->area.height);
+-  printf ("PCB: %i %i %i %i\n", region.X1, region.X2, region.Y1, region.Y2);
+-  if (region.X1 == region.X2)
+-    *(char *)0 = 0;
+-
+   glColor3f (port->bg_color.red / 65535.,
+              port->bg_color.green / 65535.,
+              port->bg_color.blue / 65535.);
