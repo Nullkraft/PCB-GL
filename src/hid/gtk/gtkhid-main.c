@@ -89,7 +89,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
  * gport->view_width and gport->view_height are in PCB coordinates
  */
 
-#define ALLOW_ZOOM_OUT_BY 5
+#define ALLOW_ZOOM_OUT_BY 10 /* Arbitrary, and same as the lesstif HID */
 static void
 ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
 {
