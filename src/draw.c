@@ -83,8 +83,6 @@ static bool doing_assy = false;
  * some local prototypes
  */
 static void DrawEverything (BoxTypePtr);
-static void DrawPPV (int group, const BoxType *);
-static int DrawLayerGroup (int, const BoxType *);
 static void AddPart (void *);
 static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
 static void DrawRats (BoxType *);
@@ -584,7 +582,7 @@ DrawEMark (ElementTypePtr e, Coord X, Coord Y, bool invisible)
  * Draws pins pads and vias - Always draws for non-gui HIDs,
  * otherwise drawing depends on PCB->PinOn and PCB->ViaOn
  */
-static void
+void
 DrawPPV (int group, const BoxType *drawn_area)
 {
   int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
@@ -769,7 +767,7 @@ DrawRats (BoxTypePtr drawn_area)
  * draws one layer group.  Returns non-zero if pins and pads should be
  * drawn with this group.
  */
-static int
+int
 DrawLayerGroup (int group, const BoxType *drawn_area)
 {
   int i, rv = 1;
