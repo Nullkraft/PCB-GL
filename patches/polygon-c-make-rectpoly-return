@@ -1,0 +1,24 @@
+Bottom: 2ddbc42332c1ad49612cee9f1228cd48f0e16bd7
+Top:    2ddbc42332c1ad49612cee9f1228cd48f0e16bd7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-26 14:10:18 +0100
+
+polygon.c: Make RectPoly return NULL for zero or negatively sized rectangles
+
+Previously we would hit an assertion failure, where we could indicate the
+problem by returning NULL.
+
+I've hit an issue in which some expose events in the GTK HID are
+collapsing to a zero-width region on the PCB, and some code is tripping
+up on the bad clip polygon produced using RectPoly on the coordinates.
+
+We could (and perhaps should) test in the expose handler, but the failure
+mode here is not ideal. Since most builds of PCB run with asserts disabled,
+the asserts are not hit here and a bad polygon is silently gets created
+with no contours. This upsets the polygon algebra routines somewhat, but
+returning a NULL (empty) polygon would be fine.
+
+
+---
+
+
