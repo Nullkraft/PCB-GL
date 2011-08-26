@@ -909,25 +909,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
 		       Coord X1, Coord Y1,
 		       Coord X2, Coord Y2, Coord Thickness)
 {
-  LineTypePtr line = Symbol->Line;
+  LineType* line;
 
-  /* realloc new memory if necessary and clear it */
-  if (Symbol->LineN >= Symbol->LineMax)
-    {
-      Symbol->LineMax += STEP_SYMBOLLINE;
-      line = (LineTypePtr)realloc (line, Symbol->LineMax * sizeof (LineType));
-      Symbol->Line = line;
-      memset (line + Symbol->LineN, 0, STEP_SYMBOLLINE * sizeof (LineType));
-    }
+  line = g_slice_new0 (LineType);
+  Symbol->Line = g_list_append (Symbol->Line, line);
+  Symbol->LineN ++;
 
   /* copy values */
-  line = line + Symbol->LineN++;
   line->Point1.X = X1;
   line->Point1.Y = Y1;
   line->Point2.X = X2;
   line->Point2.Y = Y2;
   line->Thickness = Thickness;
-  return (line);
+  return line;
 }
 
 /* ---------------------------------------------------------------------------
@@ -996,16 +990,17 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
 /* ---------------------------------------------------------------------------
  * Add an attribute to a list.
  */
-AttributeTypePtr
-CreateNewAttribute (AttributeListTypePtr list, char *name, char *value)
+AttributeType *
+CreateNewAttribute (AttributeListType *list, char *name, char *value)
 {
-  if (list->Number >= list->Max)
-    {
-      list->Max += 10;
-      list->List = (AttributeType *)realloc (list->List, list->Max * sizeof (AttributeType));
-    }
-  list->List[list->Number].name = STRDUP (name);
-  list->List[list->Number].value = STRDUP (value);
-  list->Number++;
-  return &list->List[list->Number - 1];
+  AttributeType *attr;
+
+  attr = g_slice_new0 (AttributeType);
+  list->List = g_list_append (list->List, attr);
+  list->Number ++;
+
+  attr->name = STRDUP (name);
+  attr->value = STRDUP (value);
+
+  return attr;
 }
