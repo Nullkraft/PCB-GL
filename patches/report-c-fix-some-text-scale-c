@@ -1,5 +1,5 @@
 Bottom: ad285e7c2ce7efc944eea306cc528fc5fda857f1
-Top:    e1b0a059d38c7b67f12a640bbdc68f142ab16a9c
+Top:    29d381d60a5981c0e5eae39ee3c0de328af49274
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 17:50:02 +0100
 
@@ -81,30 +81,6 @@ index 8950539..1315707 100644
    text.X = box.X1;
    text.Y = box.Y1;
    text.Direction = vert ? 1 : 0;
-diff --git a/src/move.c b/src/move.c
-index 6b6359a..1fef475 100644
---- a/src/move.c
-+++ b/src/move.c
-@@ -959,15 +959,15 @@ MoveLayer (int old_index, int new_index)
-   if (new_index == -1
-       && LastLayerInComponentGroup (old_index))
-     {
--      gui->confirm_dialog ("You can't delete the last top-side layer\n", "Ok", NULL);
--      return 1;
-+//      gui->confirm_dialog ("You can't delete the last top-side layer\n", "Ok", NULL);
-+//      return 1;
-     }
- 
-   if (new_index == -1
-       && LastLayerInSolderGroup (old_index))
-     {
--      gui->confirm_dialog ("You can't delete the last bottom-side layer\n", "Ok", NULL);
--      return 1;
-+//      gui->confirm_dialog ("You can't delete the last bottom-side layer\n", "Ok", NULL);
-+//      return 1;
-     }
- 
-   for (g = 0; g < MAX_LAYER+2; g++)
 diff --git a/src/report.c b/src/report.c
 index 56e9be4..deb6095 100644
 --- a/src/report.c
