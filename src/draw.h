@@ -70,4 +70,8 @@ void EraseElementPinsAndPads (ElementTypePtr);
 void EraseElementName (ElementTypePtr);
 void EraseObject (int, void *, void *);
 
+void DrawMask (int side, BoxType *);
+void DrawSilk (int side, const BoxType *);
+void DrawPaste (int side, BoxType *);
+
 #endif
