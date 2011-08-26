@@ -5,6 +5,11 @@ Date:   2011-08-26 14:11:10 +0100
 
 polygon1.c: Fix dicer to give up if the clipping region passed is invalid.
 
+Most of the dance checking return codes from polyBoolean_free was
+unnecessary, as it sets the output to NULL if there is a problem, so
+remove that. Whilst we're at it, fix up some variable names to make the
+operation of the function clearer.
+
 
 ---
 
