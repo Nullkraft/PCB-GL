@@ -3,7 +3,12 @@ Top:    1942727d83d8b3be2e14fc20a67432ae618a4d08
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 14:28:05 +0100
 
-hid/gtk: ...
+hid/gtk: Add fixup for stored gport->pcb_{x,y} coords when changing view
+
+This updates the stored (in PCB coordinates) mouse pointer location on
+the board as we perform a pan / zoom. This is mostly relevant to panning
+and clipped zoom operations, as non-clipped zoom operations aim to leave
+the mouse pointer at the same PCB coordinate anyway.
 
 
 ---
