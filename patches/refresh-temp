@@ -1,0 +1,21 @@
+Bottom: badb3292cd564c03a505b511c62991108c3803be
+Top:    c9a4692272d4532b2a4946a50b1e6aef06212b65
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-26 06:29:39 +0100
+
+Refresh of hid-gtk-remove-update-colors-c
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 001d2ca..8dc10b7 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1033,7 +1033,6 @@ get_layer_color (gint layer)
+ void
+ ghid_layer_buttons_color_update (void)
+ {
+-  printf ("UPDATE COLORS\n");
+   gtk_pcb_layer_selector_update_colors
+     (GTK_PCB_LAYER_SELECTOR (ghidgui->layer_selector), get_layer_color);
+   pcb_colors_from_settings (PCB);
