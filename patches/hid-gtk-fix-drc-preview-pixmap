@@ -1,5 +1,5 @@
 Bottom: 4d5783dca47c30a21604ee2db430a23262ba7e6c
-Top:    4d5783dca47c30a21604ee2db430a23262ba7e6c
+Top:    fba6662529856aaff630b7e01da40fc64bcdc64d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 20:30:28 +0100
 
@@ -10,4 +10,15 @@ Another hard-coded constant in the old PCB coordinate system
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
+index 65e64a2..5972467 100644
+--- a/src/hid/gtk/gui-drc-window.c
++++ b/src/hid/gtk/gui-drc-window.c
+@@ -45,7 +45,7 @@
+ 
+ #define VIOLATION_PIXMAP_PIXEL_SIZE   100
+ #define VIOLATION_PIXMAP_PIXEL_BORDER 5
+-#define VIOLATION_PIXMAP_PCB_SIZE     10000
++#define VIOLATION_PIXMAP_PCB_SIZE     MIL_TO_COORD (100)
+ 
+ RCSID ("$Id$");
