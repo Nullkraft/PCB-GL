@@ -1374,7 +1374,6 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
 static void
 pan_common (GHidPort *port)
 {
-  render_priv *priv = gport->render_priv;
   int event_x, event_y;
 
   /* We need to fix up the PCB coordinates corresponding to the last
@@ -1403,6 +1402,8 @@ pan_common (GHidPort *port)
 void
 ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 {
+  render_priv *priv = gport->render_priv;
+
   gport->view_x0 = SIDE_X (pcb_x) - widget_x * gport->zoom;
   gport->view_y0 = SIDE_Y (pcb_y) - widget_y * gport->zoom;
 
