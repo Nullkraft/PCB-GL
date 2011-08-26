@@ -1,5 +1,5 @@
-Bottom: ed09122b2ebff80452deec7187291c6d5bfc3efd
-Top:    c70227f1288e8d97226a68e551aa5294c20749de
+Bottom: d592cb8b1db74032c4ecabab87409a61dbc93142
+Top:    d2b026f19569caf72bfbf857c7e6edfc1a34aa7d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 15:05:36 +0100
 
@@ -91,7 +91,7 @@ index 1cde17e..f8d8a8a 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index cf64ee7..f55e254 100644
+index c9536f8..7910980 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -126,6 +126,7 @@ a zoom in/out.
@@ -102,7 +102,7 @@ index cf64ee7..f55e254 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1560,6 +1561,7 @@ ghid_build_pcb_top_window (void)
+@@ -1586,6 +1587,7 @@ ghid_build_pcb_top_window (void)
    /* FIXME: IFDEF HACK */
  #ifdef ENABLE_GL
    trackball = ghid_trackball_new ();
@@ -110,7 +110,7 @@ index cf64ee7..f55e254 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -2025,6 +2027,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2051,6 +2053,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
