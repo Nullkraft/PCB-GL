@@ -262,9 +262,7 @@ void ghid_get_pointer (gint *, gint *);
 /* gui-output-events.c function prototypes.
 */
 void ghid_port_ranges_changed (void);
-gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
 void ghid_port_ranges_scale (void);
-void ghid_port_ranges_update_ranges (void);
 
 gboolean ghid_note_event_location (GdkEventButton * ev);
 gboolean have_crosshair_attachments (void);
@@ -505,6 +503,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
 void ghid_cancel_lead_user (void);
 
 /* gtkhid-main.c */
+void ghid_pan_view_rel (Coord dx, Coord dy);
 void ghid_get_coords (const char *msg, Coord *x, Coord *y);
 gint PCBChanged (int argc, char **argv, Coord x, Coord y);
 
