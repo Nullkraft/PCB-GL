@@ -37,11 +37,23 @@ static void ghid_zoom_view_fit (void);
 static void
 pan_common (GHidPort *port)
 {
+  int event_x, event_y;
+
+  /* We need to fix up the PCB coordinates corresponding to the last
+  * event so convert it back to event coordinates temporarily. */
+  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
+
   /* Don't pan so far that we see past the board edges */
   gport->view_x0 = MAX (0, gport->view_x0);
   gport->view_y0 = MAX (0, gport->view_y0);
   gport->view_x0 = MIN (gport->view_x0, PCB->MaxWidth  - gport->view_width);
   gport->view_y0 = MIN (gport->view_y0, PCB->MaxHeight - gport->view_height);
+
+  /* Fix up noted event coordinates to match where we clamped. Alternatively
+   * we could call ghid_note_event_location (NULL); to get a new pointer
+   * location, but this costs us an xserver round-trip (on X11 platforms)
+   */
+  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
 
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
@@ -56,6 +68,15 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
 {
   gport->view_x0 = SIDE_X (pcb_x) - widget_x * gport->zoom;
   gport->view_y0 = SIDE_Y (pcb_y) - widget_y * gport->zoom;
+
+  pan_common (gport);
+}
+
+void
+ghid_pan_view_rel (Coord dx, Coord dy)
+{
+  gport->view_x0 += dx;
+  gport->view_y0 += dy;
 
   pan_common (gport);
 }
@@ -1827,17 +1848,17 @@ ScrollAction (int argc, char **argv, Coord x, Coord y)
     div = atoi(argv[1]);
 
   if (strcasecmp (argv[0], "up") == 0)
-    dy = -(ghid_port.height * gport->zoom / div);
+    dy = -gport->view_height / div;
   else if (strcasecmp (argv[0], "down") == 0)
-    dy = ghid_port.height * gport->zoom / div;
+    dy = gport->view_height / div;
   else if (strcasecmp (argv[0], "right") == 0)
-    dx = ghid_port.width * gport->zoom / div;
+    dx = gport->view_width / div;
   else if (strcasecmp (argv[0], "left") == 0)
-    dx = -(ghid_port.width * gport->zoom / div);
+    dx = -gport->view_width / div;
   else
     AFAIL (scroll);
 
-  ghid_port_ranges_pan (dx, dy, TRUE);
+  ghid_pan_view_rel (dx, dy);
 
   return 0;
 }
