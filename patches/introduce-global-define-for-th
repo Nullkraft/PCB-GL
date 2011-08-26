@@ -1,5 +1,5 @@
 Bottom: 29d381d60a5981c0e5eae39ee3c0de328af49274
-Top:    edb5cc6f7568a76b28a88c8575c78a7cfed85083
+Top:    fdb07e6e2b121ba4ee83390cd267ea9ed0f4b387
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 18:55:15 +0100
 
@@ -45,103 +45,6 @@ index 97154fd..5d44355 100644
  
    if (TEST_FLAG (LOCKFLAG, &Element->Name[0]))
      return (NULL);
-diff --git a/src/misc.c b/src/misc.c
-index 7c6f958..9ea996c 100644
---- a/src/misc.c
-+++ b/src/misc.c
-@@ -497,21 +497,27 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
- {
-   SymbolTypePtr symbol = FontPtr->Symbol;
-   unsigned char *s = (unsigned char *) Text->TextString;
--  Coord minThick = 0;
-   int i;
--  int space = 0;
-+  int space;
- 
-   Coord minx, miny, maxx, maxy, tx;
--  int first_time = 1;
-+  Coord min_final_radius;
-+  Coord min_unscaled_radius;
-+  Coord unscaled_radius;
-+  bool first_time = true;
- 
-   minx = miny = maxx = maxy = tx = 0;
- 
--  if (PCB->minSlk < PCB->minWid)
--    minThick = PCB->minWid;
--  else
--    minThick = PCB->minSlk;
-+  /* Calculate the bounding box based on the larger of the thicknesses
-+   * the text might clamped at on silk or copper layers.
-+   */
-+  min_final_radius = MAX (PCB->minWid, PCB->minSlk) / 2;
- 
--  minThick /= Text->Scale / 50.0;
-+  /* Pre-adjust the line radius for the fact we are initially computing the
-+   * bounds of the un-scaled text, and the thickness clamping applies to
-+   * scaled text.
-+   */
-+  min_unscaled_radius = min_final_radius * 100 / Text->Scale;
- 
-   /* calculate size of the bounding box */
-   for (; s && *s; s++)
-@@ -521,25 +527,29 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
- 	  LineTypePtr line = symbol[*s].Line;
- 	  for (i = 0; i < symbol[*s].LineN; line++, i++)
- 	    {
--	      Coord t = line->Thickness / 4;
--	      if (t < minThick)
--		t = minThick;
-+              /* Clamp the width of text lines at the minimum thickness.
-+               * NB: Divide 4 in thickness calculation is comprised of a factor
-+               *     of 1/2 to get a radius from the center-line, and a factor
-+               *     of 1/2 because some stupid reason we render our glyphs
-+               *     at half their defined stroke-width.
-+               */
-+               Coord unscaled_radius = MAX (min_unscaled_radius, line->Thickness / 4);
- 
- 	      if (first_time)
- 		{
- 		  minx = maxx = line->Point1.X;
- 		  miny = maxy = line->Point1.Y;
--		  first_time = 0;
-+		  first_time = false;
- 		}
- 
--	      minx = MIN (minx, line->Point1.X - t + tx);
--	      miny = MIN (miny, line->Point1.Y - t);
--	      minx = MIN (minx, line->Point2.X - t + tx);
--	      miny = MIN (miny, line->Point2.Y - t);
--	      maxx = MAX (maxx, line->Point1.X + t + tx);
--	      maxy = MAX (maxy, line->Point1.Y + t);
--	      maxx = MAX (maxx, line->Point2.X + t + tx);
--	      maxy = MAX (maxy, line->Point2.Y + t);
-+	      minx = MIN (minx, line->Point1.X - unscaled_radius + tx);
-+	      miny = MIN (miny, line->Point1.Y - unscaled_radius);
-+	      minx = MIN (minx, line->Point2.X - unscaled_radius + tx);
-+	      miny = MIN (miny, line->Point2.Y - unscaled_radius);
-+	      maxx = MAX (maxx, line->Point1.X + unscaled_radius + tx);
-+	      maxy = MAX (maxy, line->Point1.Y + unscaled_radius);
-+	      maxx = MAX (maxx, line->Point2.X + unscaled_radius + tx);
-+	      maxy = MAX (maxy, line->Point2.Y + unscaled_radius);
- 	    }
- 	  space = symbol[*s].Delta;
- 	}
-@@ -563,10 +573,10 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
-     }
- 
-   /* scale values */
--  minx *= Text->Scale / 100.;
--  miny *= Text->Scale / 100.;
--  maxx *= Text->Scale / 100.;
--  maxy *= Text->Scale / 100.;
-+  minx = minx * Text->Scale / 100;
-+  miny = miny * Text->Scale / 100;
-+  maxx = maxx * Text->Scale / 100;
-+  maxy = maxy * Text->Scale / 100;
- 
-   /* set upper-left and lower-right corner;
-    * swap coordinates if necessary (origin is already in 'swapped')
 diff --git a/src/report.c b/src/report.c
 index deb6095..f640ef0 100644
 --- a/src/report.c
