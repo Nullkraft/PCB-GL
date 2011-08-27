@@ -182,8 +182,8 @@ typedef struct
   gboolean panning;
 
   view_data view;
-  Coord pcb_x, pcb_y;
-  gint crosshair_x, crosshair_y;
+  Coord pcb_x, pcb_y;             /* PCB coordinates of the mouse pointer */
+  Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair     */
 }
 GHidPort;
 
