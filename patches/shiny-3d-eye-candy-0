@@ -1,5 +1,5 @@
-Bottom: 8abb243358a4c25b90a46b3abb4356826ce071bf
-Top:    dcc0876c82f69d3b537d3a5abc232d9ee8f1e14e
+Bottom: 48788dbfcbcc31919946d94778b4c5c682c4c911
+Top:    6d36e6ada8c0350a21d793fb809595f6ad64ebd5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:36 +0100
 
@@ -14,12 +14,12 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a857c76..afc6009 100644
+index 5fa78ea..e473df8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -124,6 +124,79 @@ Py (int y)
-   return  rv;
- }
+@@ -88,6 +88,79 @@ static void draw_lead_user (render_priv *priv);
+ static void ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y);
+ 
  
 +#define BOARD_THICKNESS         MM_TO_COORD(1.60)
 +#define MASK_COPPER_SPACING     MM_TO_COORD(0.05)
@@ -97,7 +97,7 @@ index a857c76..afc6009 100644
  static void
  start_subcomposite (void)
  {
-@@ -182,11 +255,15 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -146,11 +219,15 @@ ghid_set_layer (const char *name, int group, int empty)
    end_subcomposite ();
    start_subcomposite ();
  
@@ -113,7 +113,7 @@ index a857c76..afc6009 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -818,7 +895,7 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -781,7 +858,7 @@ ghid_show_crosshair (gboolean paint_new_location)
      }
    x = gport->crosshair_x;
    y = gport->crosshair_y;
@@ -122,7 +122,7 @@ index a857c76..afc6009 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -1104,6 +1181,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1067,6 +1144,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -132,7 +132,7 @@ index a857c76..afc6009 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1600,7 +1680,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -1540,7 +1620,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
