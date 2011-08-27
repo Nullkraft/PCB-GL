@@ -1,5 +1,5 @@
 Bottom: c6221519d52dd93c43129968a26746598245e421
-Top:    aa059faf58fcd9a22a89722ff2216ad8742202fc
+Top:    10d75b10f5bbd7c476e133e1af1ee31da596f70c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:48 +0100
 
@@ -76,7 +76,7 @@ index 681a4b1..15ce751 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bc8a078..5f62294 100644
+index bc8a078..2becb72 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,7 @@
@@ -593,8 +593,8 @@ index bc8a078..5f62294 100644
 +       last_projection_matrix[3][3] * vpw;
 +
 +  /* And transform according to our viewport */
-+  *event_x = (wx / ww + 1) * 0.5 * gport->drawing_area->allocation.width,
-+  *event_y = (wy / ww + 1) * 0.5 * gport->drawing_area->allocation.height;
++  *event_x = ( wx / ww + 1.) * 0.5 * (float)gport->drawing_area->allocation.width,
++  *event_y = (-wy / ww + 1.) * 0.5 * (float)gport->drawing_area->allocation.height;
  
    return true;
  }
