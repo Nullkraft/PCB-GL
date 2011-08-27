@@ -1651,13 +1651,13 @@ CursorAction(int argc, char **argv, Coord x, Coord y)
 {
   UnitList extra_units_x = {
     { "grid",  PCB->Grid, 0 },
-    { "view",  gport->view_width, UNIT_PERCENT },
+    { "view",  gport->view.width, UNIT_PERCENT },
     { "board", PCB->MaxWidth, UNIT_PERCENT },
     { "", 0, 0 }
   };
   UnitList extra_units_y = {
     { "grid",  PCB->Grid, 0 },
-    { "view",  gport->view_height, UNIT_PERCENT },
+    { "view",  gport->view.height, UNIT_PERCENT },
     { "board", PCB->MaxHeight, UNIT_PERCENT },
     { "", 0, 0 }
   };
