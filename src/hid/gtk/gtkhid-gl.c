@@ -1628,14 +1628,14 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
 bool
 ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
 {
-  *event_x = view_matrix[0][0] * pcb_x +
-             view_matrix[0][1] * pcb_y +
-             view_matrix[0][2] * 0 +
-             view_matrix[0][3] * 1;
-  *event_y = view_matrix[1][0] * pcb_x +
-             view_matrix[1][1] * pcb_y +
-             view_matrix[1][2] * 0 +
-             view_matrix[1][3] * 1;
+  *event_x = view_matrix[0][0] * (float)pcb_x +
+             view_matrix[0][1] * (float)pcb_y +
+             view_matrix[0][2] * global_depth +
+             view_matrix[0][3] * 1.;
+  *event_y = view_matrix[1][0] * (float)pcb_x +
+             view_matrix[1][1] * (float)pcb_y +
+             view_matrix[1][2] * global_depth +
+             view_matrix[1][3] * 1.;
 
   return true;
 }
