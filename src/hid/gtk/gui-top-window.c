@@ -1743,7 +1743,6 @@ ghid_parse_arguments (int *argc, char ***argv)
   gtk_init (argc, argv);
 
   gport = &ghid_port;
-  gport->view.coord_per_px = 300.0;
   pixel_slop = 300;
 
   ghid_init_renderer (argc, argv, gport);
