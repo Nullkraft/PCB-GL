@@ -1,0 +1,24 @@
+Bottom: aa059faf58fcd9a22a89722ff2216ad8742202fc
+Top:    10d75b10f5bbd7c476e133e1af1ee31da596f70c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-27 20:25:59 +0100
+
+Refresh of play-with-perspective
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 5f62294..2becb72 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2796,8 +2796,8 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+        last_projection_matrix[3][3] * vpw;
+ 
+   /* And transform according to our viewport */
+-  *event_x = (wx / ww + 1) * 0.5 * gport->drawing_area->allocation.width,
+-  *event_y = (wy / ww + 1) * 0.5 * gport->drawing_area->allocation.height;
++  *event_x = ( wx / ww + 1.) * 0.5 * (float)gport->drawing_area->allocation.width,
++  *event_y = (-wy / ww + 1.) * 0.5 * (float)gport->drawing_area->allocation.height;
+ 
+   return true;
+ }
