@@ -1,5 +1,5 @@
-Bottom: ef9064a32ca73f259838bbbe12336349c9c71de3
-Top:    8c3f0632f4564533f6e27e493cf1eb03eae6994e
+Bottom: 24d71741d1b1a5f7864b76d2a1114ce850c85250
+Top:    41a8ec9d1750855c293c1daa017f2009d3dcacbb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-02-01 21:58:58 +0000
 
@@ -9,10 +9,10 @@ Port David Rowe's rubberbanding patch to git HEAD
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 20dbb0a..b418033 100644
+index faa1f21..2e92f4a 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -193,6 +193,7 @@ typedef enum
+@@ -194,6 +194,7 @@ typedef enum
    F_ToggleShowDRC,
    F_ToggleLiveRoute,
    F_ToggleRubberBandMode,
@@ -20,7 +20,7 @@ index 20dbb0a..b418033 100644
    F_ToggleStartDirection,
    F_ToggleSnapPin,
    F_ToggleThindraw,
-@@ -423,6 +424,7 @@ static FunctionType Functions[] = {
+@@ -424,6 +425,7 @@ static FunctionType Functions[] = {
    {"ToggleName", F_ToggleName},
    {"ToggleObject", F_ToggleObject},
    {"ToggleRubberBandMode", F_ToggleRubberBandMode},
@@ -28,7 +28,7 @@ index 20dbb0a..b418033 100644
    {"ToggleStartDirection", F_ToggleStartDirection},
    {"ToggleSnapPin", F_ToggleSnapPin},
    {"ToggleThindraw", F_ToggleThindraw},
-@@ -2466,6 +2468,7 @@ static const char display_syntax[] =
+@@ -2467,6 +2469,7 @@ static const char display_syntax[] =
    "Display(Grid|Redraw)\n"
    "Display(CycleClip|CycleCrosshair|Toggle45Degree|ToggleStartDirection)\n"
    "Display(ToggleGrid|ToggleRubberBandMode|ToggleUniqueNames)\n"
@@ -36,7 +36,7 @@ index 20dbb0a..b418033 100644
    "Display(ToggleMask|ToggleName|ToggleClearLine|ToggleFullPoly|ToggleSnapPin)\n"
    "Display(ToggleThindraw|ToggleThindrawPoly|ToggleOrthoMove|ToggleLocalRef)\n"
    "Display(ToggleCheckPlanes|ToggleShowDRC|ToggleAutoDRC)\n"
-@@ -2503,6 +2506,10 @@ Changes crosshair drawing.  Crosshair may accept form of 4-ray,
+@@ -2504,6 +2507,10 @@ Changes crosshair drawing.  Crosshair may accept form of 4-ray,
  @item ToggleRubberBandMode
  If set, moving an object moves all the lines attached to it too.
  
@@ -47,7 +47,7 @@ index 20dbb0a..b418033 100644
  @item ToggleStartDirection
  If set, each time you set a point in a line, the Clip toggles between
  orth-angle and angle-ortho.
-@@ -2701,6 +2708,10 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+@@ -2702,6 +2709,10 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
  	  notify_crosshair_change (true);
  	  break;
  
