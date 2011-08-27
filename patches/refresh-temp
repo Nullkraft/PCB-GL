@@ -1,0 +1,42 @@
+Bottom: 0057e32f2d79234c1c58935e617fcc62008293c3
+Top:    78870373ab0568b5ddadc397c46f1c6abd10ed13
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-27 18:01:00 +0100
+
+Refresh of use-trackball-to-allow-rotatio
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 0370ffc..fd09122 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1548,14 +1548,20 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+ bool
+ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+ {
+-  *event_x = view_matrix[0][0] * (float)pcb_x +
+-             view_matrix[0][1] * (float)pcb_y +
+-             view_matrix[0][2] * 0. +
+-             view_matrix[0][3] * 1.;
+-  *event_y = view_matrix[1][0] * (float)pcb_x +
+-             view_matrix[1][1] * (float)pcb_y +
+-             view_matrix[1][2] * 0. +
+-             view_matrix[1][3] * 1.;
++  /* NB: last_modelview_matrix is transposed in memory */
++  float w = last_modelview_matrix[0][3] * (float)pcb_x +
++            last_modelview_matrix[1][3] * (float)pcb_y +
++            last_modelview_matrix[2][3] * 0. +
++            last_modelview_matrix[3][3] * 1.;
++
++  *event_x = (last_modelview_matrix[0][0] * (float)pcb_x +
++              last_modelview_matrix[1][0] * (float)pcb_y +
++              last_modelview_matrix[2][0] * 0. +
++              last_modelview_matrix[3][0] * 1.) / w;
++  *event_y = (last_modelview_matrix[0][1] * (float)pcb_x +
++              last_modelview_matrix[1][1] * (float)pcb_y +
++              last_modelview_matrix[2][1] * 0. +
++              last_modelview_matrix[3][1] * 1.) / w;
+ 
+   return true;
+ }
