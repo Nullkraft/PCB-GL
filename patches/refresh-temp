@@ -1,0 +1,21 @@
+Bottom: 01dea51ed9988b5eedcdb836099564d3ad17a1a5
+Top:    368848ea60b78ec10bbf4d64aef14b841e84ebcc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-27 17:32:48 +0100
+
+Refresh of hid-gtk-use-view_data-struct-t
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index ce631a5..4deae2b 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1165,6 +1165,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+ {
+   GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
+   GdkDrawable *save_drawable;
++  int da_w, da_h;
+   view_data save_view;
+   int save_width, save_height;
+   double xz, yz;
