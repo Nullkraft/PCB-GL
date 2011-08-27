@@ -1,5 +1,5 @@
-Bottom: 721332343580d420e187fd3e664e3a6d7782a0cd
-Top:    61e9a53cf25912d8960cf4af6e717e268c83631f
+Bottom: 6c143a887216769bb12a59f44d5e3a167925f609
+Top:    5515b98df1dceadd033b9b2f319281e9b892d867
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 17:22:36 +0100
 
@@ -26,7 +26,7 @@ index a715ffd..9e48d73 100644
      {"Swap Sides" SwapSides() a={"Ctrl-Shift-Tab" "Ctrl Shift<Key>Tab"}}
      {"Center cursor" Center() a={"C" "<Key>c"}}
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index be2fd2a..1f65f0f 100644
+index fb4d0f6..72814e4 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -26,9 +26,18 @@ extern HID ghid_hid;
@@ -260,9 +260,9 @@ index be2fd2a..1f65f0f 100644
      return;
  
    x1 = Vx (x1);
-@@ -1166,32 +1222,30 @@ ghid_pinout_preview_expose (GtkWidget *widget,
-   GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
+@@ -1167,32 +1223,30 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    GdkDrawable *save_drawable;
+   int da_w, da_h;
    view_data save_view;
 -  int save_width, save_height;
 +  int da_w, da_h;
@@ -301,7 +301,7 @@ index be2fd2a..1f65f0f 100644
  
    /* clear background */
    gdk_draw_rectangle (widget->window, priv->bg_gc, TRUE, 0, 0, da_w, da_h);
-@@ -1201,8 +1255,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1202,8 +1256,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    gport->drawable = save_drawable;
    gport->view = save_view;
@@ -310,7 +310,7 @@ index be2fd2a..1f65f0f 100644
  
    return FALSE;
  }
-@@ -1213,14 +1265,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1214,14 +1266,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    GdkPixmap *pixmap;
    GdkDrawable *save_drawable;
    view_data save_view;
@@ -325,7 +325,7 @@ index be2fd2a..1f65f0f 100644
  
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
  
-@@ -1228,15 +1277,15 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1229,15 +1278,15 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
     */
  
    gport->drawable = pixmap;
@@ -348,7 +348,7 @@ index be2fd2a..1f65f0f 100644
  
    /* clear background */
    gdk_draw_rectangle (pixmap, priv->bg_gc, TRUE, 0, 0, width, height);
-@@ -1256,8 +1305,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1257,8 +1306,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    gport->drawable = save_drawable;
    gport->view = save_view;
@@ -357,7 +357,7 @@ index be2fd2a..1f65f0f 100644
  
    return pixmap;
  }
-@@ -1288,6 +1335,8 @@ ghid_finish_debug_draw (void)
+@@ -1289,6 +1336,8 @@ ghid_finish_debug_draw (void)
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
@@ -366,7 +366,7 @@ index be2fd2a..1f65f0f 100644
    *pcb_x = EVENT_TO_PCB_X (event_x);
    *pcb_y = EVENT_TO_PCB_Y (event_y);
  
-@@ -1297,6 +1346,8 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+@@ -1298,6 +1347,8 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  bool
  ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  {
@@ -375,7 +375,7 @@ index be2fd2a..1f65f0f 100644
    *event_x = DRAW_X (pcb_x);
    *event_y = DRAW_Y (pcb_y);
  
-@@ -1306,6 +1357,7 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1307,6 +1358,7 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  static void
  pan_common (GHidPort *port)
  {
@@ -383,7 +383,7 @@ index be2fd2a..1f65f0f 100644
    int event_x, event_y;
  
    /* We need to fix up the PCB coordinates corresponding to the last
-@@ -1313,10 +1365,10 @@ pan_common (GHidPort *port)
+@@ -1314,10 +1366,10 @@ pan_common (GHidPort *port)
    ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
  
    /* Don't pan so far the board is completely off the screen */
@@ -398,7 +398,7 @@ index be2fd2a..1f65f0f 100644
  
    /* Fix up noted event coordinates to match where we clamped. Alternatively
     * we could call ghid_note_event_location (NULL); to get a new pointer
-@@ -1325,8 +1377,8 @@ pan_common (GHidPort *port)
+@@ -1326,8 +1378,8 @@ pan_common (GHidPort *port)
    ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
  
    ghidgui->adjustment_changed_holdoff = TRUE;
@@ -409,7 +409,7 @@ index be2fd2a..1f65f0f 100644
    ghidgui->adjustment_changed_holdoff = FALSE;
  
    ghid_port_ranges_changed();
-@@ -1335,8 +1387,8 @@ pan_common (GHidPort *port)
+@@ -1336,8 +1388,8 @@ pan_common (GHidPort *port)
  void
  ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  {
@@ -420,7 +420,7 @@ index be2fd2a..1f65f0f 100644
  
    pan_common (gport);
  }
-@@ -1344,24 +1396,25 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+@@ -1345,24 +1397,25 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  void
  ghid_pan_view_rel (Coord dx, Coord dy)
  {
@@ -450,7 +450,7 @@ index be2fd2a..1f65f0f 100644
    double min_zoom, max_zoom;
    double xtmp, ytmp;
  
-@@ -1374,18 +1427,18 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1375,18 +1428,18 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
                    PCB->MaxHeight / gport->height) * ALLOW_ZOOM_OUT_BY;
    new_zoom = MIN (MAX (min_zoom, new_zoom), max_zoom);
  
@@ -475,7 +475,7 @@ index be2fd2a..1f65f0f 100644
  
    pan_common (gport);
  
-@@ -1395,7 +1448,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1396,7 +1449,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  void
  ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
  {
@@ -484,7 +484,7 @@ index be2fd2a..1f65f0f 100644
  }
  
  void
-@@ -1409,13 +1462,14 @@ ghid_zoom_view_fit (void)
+@@ -1410,13 +1463,14 @@ ghid_zoom_view_fit (void)
  void
  ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
  {
