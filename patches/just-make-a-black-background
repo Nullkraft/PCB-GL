@@ -1,5 +1,5 @@
-Bottom: b77b5852e5ab72eebc7ef095346ed19d9ef8cb2c
-Top:    f1686c439a0217539ab08ee9e559fb1f40357940
+Bottom: 7301efc8988dba9f94ba3a305bea64cc2e1f824a
+Top:    10d75b10f5bbd7c476e133e1af1ee31da596f70c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:48 +0100
 
@@ -9,11 +9,11 @@ Just make a black background.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e87aaad..d9d1071 100644
+index c0045e4..2becb72 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1997,9 +1997,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
+@@ -2077,9 +2077,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ #endif
  
    glEnable (GL_STENCIL_TEST);
 -  glClearColor (port->offlimits_color.red / 65535.,
@@ -25,7 +25,7 @@ index e87aaad..d9d1071 100644
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
-@@ -2088,6 +2088,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2183,6 +2183,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
    /* glStencilFunc (GL_GREATER, 1, 1); */           /* Draw only where stencil buffer is 0 */
  
@@ -33,7 +33,7 @@ index e87aaad..d9d1071 100644
    if (global_view_2d) {
      glBegin (GL_QUADS);
      glVertex3i (0,             0,              0);
-@@ -2118,6 +2119,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2213,6 +2214,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      }
      glEnd ();
    }
