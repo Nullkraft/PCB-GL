@@ -2796,8 +2796,8 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
        last_projection_matrix[3][3] * vpw;
 
   /* And transform according to our viewport */
-  *event_x = (wx / ww + 1) * 0.5 * gport->drawing_area->allocation.width,
-  *event_y = (wy / ww + 1) * 0.5 * gport->drawing_area->allocation.height;
+  *event_x = ( wx / ww + 1.) * 0.5 * (float)gport->drawing_area->allocation.width,
+  *event_y = (-wy / ww + 1.) * 0.5 * (float)gport->drawing_area->allocation.height;
 
   return true;
 }
