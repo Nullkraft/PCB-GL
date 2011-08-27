@@ -1,7 +1,7 @@
-Bottom: 3a5afb37f36384250db847ca74841d5c5ae30b19
-Top:    5b1c037cf4e0138ad57ddf082d7524e9c7c57518
+Bottom: 368848ea60b78ec10bbf4d64aef14b841e84ebcc
+Top:    3cb74e60946bcbb07d4e32ea1fd2ef51f07e4d9d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-27 13:35:25 +0100
+Date:   2011-08-27 18:23:27 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -619,10 +619,10 @@ index a7a908b..46e8f80 100644
 -  free (Drills);
 -}
 diff --git a/src/fontmode.c b/src/fontmode.c
-index 985a38f..5e1f803 100644
+index dd64f63..69f9a0d 100644
 --- a/src/fontmode.c
 +++ b/src/fontmode.c
-@@ -81,6 +81,7 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
+@@ -82,6 +82,7 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
    SymbolType *symbol;
    LayerTypePtr lfont, lorig, lwidth, lgrid;
    int s, l;
@@ -630,7 +630,7 @@ index 985a38f..5e1f803 100644
  
    if (hid_actionl ("New", "Font", 0))
      return 1;
-@@ -127,25 +128,26 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
+@@ -128,25 +129,26 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
        miny = MIL_TO_COORD (5);
        maxy = font->MaxHeight;
  
@@ -832,10 +832,10 @@ index a3a4ac1..06e2cc7 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 1f352b7..5b8bbb9 100644
+index 0c9019d..1819f23 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -810,6 +810,7 @@ static void
+@@ -930,6 +930,7 @@ static void
  ghid_attributes_revert ()
  {
    int i;
@@ -843,7 +843,7 @@ index 1f352b7..5b8bbb9 100644
  
    ghid_attributes_need_rows (attributes_list->Number);
  
-@@ -823,11 +824,14 @@ ghid_attributes_revert ()
+@@ -943,11 +944,14 @@ ghid_attributes_revert ()
      }
  
    /* Fill in values */
@@ -861,7 +861,7 @@ index 1f352b7..5b8bbb9 100644
  #if 0
  #endif
      }
-@@ -893,28 +897,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
+@@ -1013,28 +1017,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
        if (response == GTK_RESPONSE_OK)
  	{
  	  int i;
