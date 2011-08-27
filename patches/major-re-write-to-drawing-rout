@@ -1,5 +1,5 @@
 Bottom: e8c06b36fc0964e9fd07ff6b92adf2833c1c3a3c
-Top:    412128f5b7f614d2c81af3f93c30e0ac679b66a2
+Top:    2738249cd50cbc2c072909603e79eaae9a633b1a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:39 +0100
 
@@ -90,7 +90,7 @@ index 7e27e5b..828e9f6 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 07d2135..dd2d64c 100644
+index 07d2135..fdad579 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -951,7 +951,7 @@ index 07d2135..dd2d64c 100644
 +        drawn_groups[i - 1] <= max_phys_group) {
 +      cyl_info.from_layer = drawn_groups[i];
 +      cyl_info.to_layer = drawn_groups[i - 1];
-+      cyl_info.scale = gport->zoom;
++      cyl_info.scale = gport->view.coord_per_px;
 +      gui->set_color (Output.fgGC, "drill");
 +      ghid_set_alpha_mult (Output.fgGC, 0.75);
 +      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
