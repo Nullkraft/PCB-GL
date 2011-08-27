@@ -1,5 +1,5 @@
 Bottom: a999f675372962aac216897dfb49e63172febc2a
-Top:    0057e32f2d79234c1c58935e617fcc62008293c3
+Top:    78870373ab0568b5ddadc397c46f1c6abd10ed13
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 17:46:09 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9114bc4..0370ffc 100644
+index 9114bc4..fd09122 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -364,20 +364,26 @@ index 9114bc4..0370ffc 100644
  
    return true;
  }
-@@ -1313,12 +1548,48 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+@@ -1313,12 +1548,54 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  bool
  ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  {
 -  *event_x = DRAW_X (pcb_x);
 -  *event_y = DRAW_Y (pcb_y);
-+  *event_x = view_matrix[0][0] * (float)pcb_x +
-+             view_matrix[0][1] * (float)pcb_y +
-+             view_matrix[0][2] * 0. +
-+             view_matrix[0][3] * 1.;
-+  *event_y = view_matrix[1][0] * (float)pcb_x +
-+             view_matrix[1][1] * (float)pcb_y +
-+             view_matrix[1][2] * 0. +
-+             view_matrix[1][3] * 1.;
++  /* NB: last_modelview_matrix is transposed in memory */
++  float w = last_modelview_matrix[0][3] * (float)pcb_x +
++            last_modelview_matrix[1][3] * (float)pcb_y +
++            last_modelview_matrix[2][3] * 0. +
++            last_modelview_matrix[3][3] * 1.;
++
++  *event_x = (last_modelview_matrix[0][0] * (float)pcb_x +
++              last_modelview_matrix[1][0] * (float)pcb_y +
++              last_modelview_matrix[2][0] * 0. +
++              last_modelview_matrix[3][0] * 1.) / w;
++  *event_y = (last_modelview_matrix[0][1] * (float)pcb_x +
++              last_modelview_matrix[1][1] * (float)pcb_y +
++              last_modelview_matrix[2][1] * 0. +
++              last_modelview_matrix[3][1] * 1.) / w;
  
    return true;
  }
