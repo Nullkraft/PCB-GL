@@ -166,7 +166,8 @@ draw_poly (PolygonType *polygon, const BoxType *drawn_area, void *userdata)
 
   if (gui->thindraw_pcb_polygon != NULL &&
       (TEST_FLAG (THINDRAWFLAG, PCB) ||
-       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+       TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+       TEST_FLAG (CLEARLINEFLAG, polygon)))
     gui->thindraw_pcb_polygon (Output.fgGC, polygon, drawn_area);
   else
     gui->fill_pcb_polygon (Output.fgGC, polygon, drawn_area);
