@@ -1,0 +1,112 @@
+Bottom: 0c546270335c0791b3545dc672c8a2ba89a4e413
+Top:    b958deacfce513fbaec63a8e7d8f015cb8576b92
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-27 17:06:27 +0100
+
+Refresh of hid-gtk-separate-out-board-fli
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 4d039fd..4606811 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -43,10 +43,10 @@ static hidGC current_gc = NULL;
+ 
+ static int cur_mask = -1;
+ 
+-typedef struct view_data {
++typedef struct view_data2 {
+   bool flip_x;
+   bool flip_y;
+-} view_data;
++} view_data2;
+ 
+ typedef struct render_priv {
+   GdkGLConfig *glconfig;
+@@ -56,7 +56,7 @@ typedef struct render_priv {
+   char *current_colorname;
+   double current_alpha_mult;
+ 
+-  view_data view;
++  view_data2 view;
+ 
+   /* Feature for leading the user to a particular location */
+   guint lead_user_timeout;
+@@ -88,16 +88,16 @@ static void draw_lead_user (render_priv *priv);
+ static inline int
+ Vz (Coord z)
+ {
+-  return z / gport->zoom + 0.5;
++  return z / gport->view.coord_per_px + 0.5;
+ }
+ 
+ static inline Coord
+ Px (int x)
+ {
+   render_priv *priv = gport->render_priv;
+-  Coord rv = x * gport->zoom + gport->view_x0;
++  Coord rv = x * gport->view.coord_per_px + gport->view.x0;
+   if (priv->view.flip_x)
+-    rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
++    rv = PCB->MaxWidth - (x * gport->view.coord_per_px + gport->view.x0);
+   return  rv;
+ }
+ 
+@@ -105,9 +105,9 @@ static inline Coord
+ Py (int y)
+ {
+   render_priv *priv = gport->render_priv;
+-  Coord rv = y * gport->zoom + gport->view_y0;
++  Coord rv = y * gport->view.coord_per_px + gport->view.y0;
+   if (priv->view.flip_y)
+-    rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
++    rv = PCB->MaxHeight - (y * gport->view.coord_per_px + gport->view.y0);
+   return  rv;
+ }
+ 
+@@ -1403,15 +1403,10 @@ pan_common (GHidPort *port)
+ static void
+ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+ {
+-<<<<<<< current
+-  gport->view.x0 = SIDE_X (pcb_x) - widget_x * gport->view.coord_per_px;
+-  gport->view.y0 = SIDE_Y (pcb_y) - widget_y * gport->view.coord_per_px;
+-=======
+   render_priv *priv = gport->render_priv;
+ 
+-  gport->view_x0 = SIDE_X (pcb_x) - widget_x * gport->zoom;
+-  gport->view_y0 = SIDE_Y (pcb_y) - widget_y * gport->zoom;
+->>>>>>> patched
++  gport->view.x0 = SIDE_X (pcb_x) - widget_x * gport->view.coord_per_px;
++  gport->view.y0 = SIDE_Y (pcb_y) - widget_y * gport->view.coord_per_px;
+ 
+   pan_common (gport);
+ }
+@@ -1491,13 +1486,8 @@ ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
+   /* Work out where on the screen the flip point is */
+   ghid_pcb_to_event_coords (center_x, center_y, &widget_x, &widget_y);
+ 
+-<<<<<<< current
+-  gport->view.flip_x = gport->view.flip_x != flip_x;
+-  gport->view.flip_y = gport->view.flip_y != flip_y;
+-=======
+   priv->view.flip_x = priv->view.flip_x != flip_x;
+   priv->view.flip_y = priv->view.flip_y != flip_y;
+->>>>>>> patched
+ 
+   /* Pan the board so the center location remains in the same place */
+   ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index e25352e..db0e25c 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -62,9 +62,6 @@
+ #define	FROM_PCB_UNITS(v)	coord_to_unit (Settings.grid_unit, v)
+ #define	TO_PCB_UNITS(v)		unit_to_coord (Settings.grid_unit, v)
+ 
+-#define SIDE_X(x)         ((gport->view.flip_x ? PCB->MaxWidth - (x) : (x)))
+-#define SIDE_Y(y)         ((gport->view.flip_y ? PCB->MaxHeight - (y) : (y)))
+-
+ #define	DRAW_X(x)         (gint)((SIDE_X(x) - gport->view.x0) / gport->view.coord_per_px)
+ #define	DRAW_Y(y)         (gint)((SIDE_Y(y) - gport->view.y0) / gport->view.coord_per_px)
