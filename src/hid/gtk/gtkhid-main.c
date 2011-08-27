@@ -134,7 +134,7 @@ ghid_zoom_view_fit (void)
 }
 
 static void
-gport_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
+ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 {
   int widget_x, widget_y;
 
@@ -1387,15 +1387,15 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
       switch (argv[0][0]) {
         case 'h':
         case 'H':
-          gport_flip_view (gport->pcb_x, gport->pcb_y, true, false);
+          ghid_flip_view (gport->pcb_x, gport->pcb_y, true, false);
           break;
         case 'v':
         case 'V':
-          gport_flip_view (gport->pcb_x, gport->pcb_y, false, true);
+          ghid_flip_view (gport->pcb_x, gport->pcb_y, false, true);
           break;
         case 'r':
         case 'R':
-          gport_flip_view (gport->pcb_x, gport->pcb_y, true, true);
+          ghid_flip_view (gport->pcb_x, gport->pcb_y, true, true);
           Settings.ShowSolderSide = !Settings.ShowSolderSide; /* Swapped back below */
           break;
         default:
