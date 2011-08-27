@@ -1,5 +1,5 @@
-Bottom: 412128f5b7f614d2c81af3f93c30e0ac679b66a2
-Top:    ff6c307eeeeadedcebe57bc7f75775a7f2ed0875
+Bottom: 2738249cd50cbc2c072909603e79eaae9a633b1a
+Top:    5c2868d1caad1f5428583e28562568994401c464
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:39 +0100
 
@@ -9,7 +9,7 @@ gtk/gl: Play with layer translucency
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index dd2d64c..2cb325f 100644
+index fdad579..a428e97 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -679,10 +679,11 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -65,7 +65,7 @@ index dd2d64c..2cb325f 100644
 +    if (!global_view_2d && is_this_physical && is_next_physical) {
        cyl_info.from_layer = drawn_groups[i];
        cyl_info.to_layer = drawn_groups[i - 1];
-       cyl_info.scale = gport->zoom;
+       cyl_info.scale = gport->view.coord_per_px;
        gui->set_color (Output.fgGC, "drill");
 -      ghid_set_alpha_mult (Output.fgGC, 0.75);
 +      ghid_set_alpha_mult (Output.fgGC, alpha_mult * 0.75);
