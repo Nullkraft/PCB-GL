@@ -1,5 +1,5 @@
 Bottom: a999f675372962aac216897dfb49e63172febc2a
-Top:    2da3cde763754d681ea3ae31fc685d05ba8d630d
+Top:    48788dbfcbcc31919946d94778b4c5c682c4c911
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 17:46:09 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9114bc4..923dfa8 100644
+index 9114bc4..5fa78ea 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -78,10 +78,10 @@ index 9114bc4..923dfa8 100644
 -                             -port->view.x0,
 -                port->view.flip_y ? port->view.y0 - PCB->MaxHeight :
 -                             -port->view.y0, 0);
-+  glTranslatef (port->view.flip_x ?  port->view_x0 - PCB->MaxWidth  :
-+                                    -port->view_x0,
-+                port->view.flip_y ?  port->view_y0 - PCB->MaxHeight :
-+                                    -port->view_y0, 0);
++  glTranslatef (port->view.flip_x ?  port->view.x0 - PCB->MaxWidth  :
++                                    -port->view.x0,
++                port->view.flip_y ?  port->view.y0 - PCB->MaxHeight :
++                                    -port->view.y0, 0);
 +  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
    glEnable (GL_STENCIL_TEST);
