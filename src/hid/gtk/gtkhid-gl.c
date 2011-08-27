@@ -964,10 +964,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glScalef ((port->view.flip_x ? -1. : 1.) / port->view.coord_per_px,
             (port->view.flip_y ? -1. : 1.) / port->view.coord_per_px,
             ((port->view.flip_x == port->view.flip_y) ? 1. : -1.) / port->view.coord_per_px);
-  glTranslatef (port->view.flip_x ?  port->view_x0 - PCB->MaxWidth  :
-                                    -port->view_x0,
-                port->view.flip_y ?  port->view_y0 - PCB->MaxHeight :
-                                    -port->view_y0, 0);
+  glTranslatef (port->view.flip_x ?  port->view.x0 - PCB->MaxWidth  :
+                                    -port->view.x0,
+                port->view.flip_y ?  port->view.y0 - PCB->MaxHeight :
+                                    -port->view.y0, 0);
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
   glEnable (GL_STENCIL_TEST);
