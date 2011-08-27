@@ -145,6 +145,19 @@ GhidGui;
 
 extern GhidGui _ghidgui, *ghidgui;
 
+typedef struct
+{
+  double coord_per_px; /* Zoom level described as PCB units per screen pixel */
+
+  Coord x0;
+  Coord y0;
+  Coord width;
+  Coord height;
+
+  bool flip_x;
+  bool flip_y;
+
+} view_data;
 
   /* The output viewport
    */
@@ -168,15 +181,9 @@ typedef struct
   gboolean has_entered;
   gboolean panning;
 
-/* zoom value is PCB units per screen pixel.  Larger numbers mean zooming
-|  out - the largest value means you are looking at the whole board.
-*/
-  gdouble zoom;			/* PCB units per screen pixel.  Larger */
-                                /* numbers mean zooming out. */
-  /* Viewport in PCB coordinates */
-  Coord view_x0, view_y0, view_width, view_height;
-  Coord pcb_x, pcb_y;
-  Coord crosshair_x, crosshair_y;
+  view_data view;
+  Coord pcb_x, pcb_y;             /* PCB coordinates of the mouse pointer */
+  Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair     */
 }
 GHidPort;
 
