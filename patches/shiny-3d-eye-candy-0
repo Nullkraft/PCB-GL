@@ -1,5 +1,5 @@
 Bottom: 48788dbfcbcc31919946d94778b4c5c682c4c911
-Top:    6d36e6ada8c0350a21d793fb809595f6ad64ebd5
+Top:    9bc796d862a35d27a0a8119e6e1567e335f9c31e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:36 +0100
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5fa78ea..e473df8 100644
+index 5fa78ea..f5e508c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -88,6 +88,79 @@ static void draw_lead_user (render_priv *priv);
@@ -138,6 +138,29 @@ index 5fa78ea..e473df8 100644
  {
 -  ghid_unproject_to_z_plane (event_x, event_y, 0, pcb_x, pcb_y);
 +  ghid_unproject_to_z_plane (event_x, event_y, global_depth, pcb_x, pcb_y);
+ 
+   return true;
+ }
+@@ -1548,14 +1628,14 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+ bool
+ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+ {
+-  *event_x = view_matrix[0][0] * pcb_x +
+-             view_matrix[0][1] * pcb_y +
+-             view_matrix[0][2] * 0 +
+-             view_matrix[0][3] * 1;
+-  *event_y = view_matrix[1][0] * pcb_x +
+-             view_matrix[1][1] * pcb_y +
+-             view_matrix[1][2] * 0 +
+-             view_matrix[1][3] * 1;
++  *event_x = view_matrix[0][0] * (float)pcb_x +
++             view_matrix[0][1] * (float)pcb_y +
++             view_matrix[0][2] * global_depth +
++             view_matrix[0][3] * 1.;
++  *event_y = view_matrix[1][0] * (float)pcb_x +
++             view_matrix[1][1] * (float)pcb_y +
++             view_matrix[1][2] * global_depth +
++             view_matrix[1][3] * 1.;
  
    return true;
  }
