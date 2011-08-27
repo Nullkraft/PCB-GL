@@ -1,5 +1,5 @@
-Bottom: c6221519d52dd93c43129968a26746598245e421
-Top:    10d75b10f5bbd7c476e133e1af1ee31da596f70c
+Bottom: 938007715fa30b9eb0eb01039c71654772dde799
+Top:    7301efc8988dba9f94ba3a305bea64cc2e1f824a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:48 +0100
 
@@ -76,7 +76,7 @@ index 681a4b1..15ce751 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bc8a078..2becb72 100644
+index 09d009c..c0045e4 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,7 @@
@@ -240,7 +240,7 @@ index bc8a078..2becb72 100644
 +#endif
  
    glEnable (GL_STENCIL_TEST);
-   glClearColor (port->bg_color.red / 65535.,
+   glClearColor (port->offlimits_color.red / 65535.,
 @@ -2021,7 +2083,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
@@ -349,7 +349,7 @@ index bc8a078..2becb72 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2472,10 +2549,10 @@ ghid_finish_debug_draw (void)
+@@ -2470,10 +2547,10 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
@@ -363,7 +363,7 @@ index bc8a078..2becb72 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2503,9 +2580,9 @@ determinant_4x4 (float m[4][4])
+@@ -2501,9 +2578,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -375,7 +375,7 @@ index bc8a078..2becb72 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2570,96 +2647,157 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2568,96 +2645,157 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
