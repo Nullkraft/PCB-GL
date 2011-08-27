@@ -1165,6 +1165,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
 {
   GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
   GdkDrawable *save_drawable;
+  int da_w, da_h;
   view_data save_view;
   int save_width, save_height;
   double xz, yz;
