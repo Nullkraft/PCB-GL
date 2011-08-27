@@ -1,5 +1,5 @@
 Bottom: 67a632edad5dd3fdbbd06a6f851910e7cda522ef
-Top:    2c04474d390244ea4d7a79af138444fee83b9004
+Top:    aba9258630f021243dfa8ca87251fb2293df16a7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 14:53:20 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Encapsulate view parameters in a structure
 ---
 
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 6fe3a04..37251db 100644
+index 6fe3a04..f249cf6 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -145,6 +145,19 @@ GhidGui;
@@ -32,7 +32,7 @@ index 6fe3a04..37251db 100644
  
    /* The output viewport
     */
-@@ -168,15 +181,8 @@ typedef struct
+@@ -168,16 +181,9 @@ typedef struct
    gboolean has_entered;
    gboolean panning;
  
@@ -43,9 +43,11 @@ index 6fe3a04..37251db 100644
 -                                /* numbers mean zooming out. */
 -  /* Viewport in PCB coordinates */
 -  Coord view_x0, view_y0, view_width, view_height;
-+  view_data view;
-   Coord pcb_x, pcb_y;
+-  Coord pcb_x, pcb_y;
 -
-   gint crosshair_x, crosshair_y;
+-  gint crosshair_x, crosshair_y;
++  view_data view;
++  Coord pcb_x, pcb_y;             /* PCB coordinates of the mouse pointer */
++  Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair     */
  }
  GHidPort;
