@@ -1,0 +1,273 @@
+Bottom: 17d7f9ec0da67600fac0666cf233b3af248ec25e
+Top:    29a3c863feb1b91519ede14f08094789e6cf5fb3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-27 15:12:55 +0100
+
+Refresh of hid-gtk-encapsulate-view-param
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index f5c836c..32dfd83 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -30,8 +30,6 @@
+ RCSID ("$Id$");
+ 
+ 
+-bool ghid_flip_x = false, ghid_flip_y = false;
+-
+ static void ghid_zoom_view_fit (void);
+ 
+ static void
+@@ -44,10 +42,10 @@ pan_common (GHidPort *port)
+   ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
+ 
+   /* Don't pan so far the board is completely off the screen */
+-  port->view_x0 = MAX (-port->view_width,  port->view_x0);
+-  port->view_y0 = MAX (-port->view_height, port->view_y0);
+-  port->view_x0 = MIN ( port->view_x0, PCB->MaxWidth);
+-  port->view_y0 = MIN ( port->view_y0, PCB->MaxHeight);
++  port->view.x0 = MAX (-port->view.width,  port->view.x0);
++  port->view.y0 = MAX (-port->view.height, port->view.y0);
++  port->view.x0 = MIN ( port->view.x0, PCB->MaxWidth);
++  port->view.y0 = MIN ( port->view.y0, PCB->MaxHeight);
+ 
+   /* Fix up noted event coordinates to match where we clamped. Alternatively
+    * we could call ghid_note_event_location (NULL); to get a new pointer
+@@ -56,8 +54,8 @@ pan_common (GHidPort *port)
+   ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
+ 
+   ghidgui->adjustment_changed_holdoff = TRUE;
+-  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
+-  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
++  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view.x0);
++  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view.y0);
+   ghidgui->adjustment_changed_holdoff = FALSE;
+ 
+   ghid_port_ranges_changed();
+@@ -66,8 +64,8 @@ pan_common (GHidPort *port)
+ static void
+ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+ {
+-  gport->view_x0 = SIDE_X (pcb_x) - widget_x * gport->zoom;
+-  gport->view_y0 = SIDE_Y (pcb_y) - widget_y * gport->zoom;
++  gport->view.x0 = SIDE_X (pcb_x) - widget_x * gport->view.coord_per_px;
++  gport->view.y0 = SIDE_Y (pcb_y) - widget_y * gport->view.coord_per_px;
+ 
+   pan_common (gport);
+ }
+@@ -75,8 +73,8 @@ ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+ void
+ ghid_pan_view_rel (Coord dx, Coord dy)
+ {
+-  gport->view_x0 += dx;
+-  gport->view_y0 += dy;
++  gport->view.x0 += dx;
++  gport->view.y0 += dy;
+ 
+   pan_common (gport);
+ }
+@@ -105,18 +103,18 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+                   PCB->MaxHeight / gport->height) * ALLOW_ZOOM_OUT_BY;
+   new_zoom = MIN (MAX (min_zoom, new_zoom), max_zoom);
+ 
+-  if (gport->zoom == new_zoom)
++  if (gport->view.coords_per_px == new_zoom)
+     return;
+ 
+-  xtmp = (SIDE_X (center_x) - gport->view_x0) / (double)gport->view_width;
+-  ytmp = (SIDE_Y (center_y) - gport->view_y0) / (double)gport->view_height;
++  xtmp = (SIDE_X (center_x) - gport->view.x0) / (double)gport->view.width;
++  ytmp = (SIDE_Y (center_y) - gport->view.y0) / (double)gport->view.height;
+ 
+   gport->zoom = new_zoom;
+   pixel_slop = new_zoom;
+   ghid_port_ranges_scale ();
+ 
+-  gport->view_x0 = SIDE_X (center_x) - xtmp * gport->view_width;
+-  gport->view_y0 = SIDE_Y (center_y) - ytmp * gport->view_height;
++  gport->view.x0 = SIDE_X (center_x) - xtmp * gport->view.width;
++  gport->view.y0 = SIDE_Y (center_y) - ytmp * gport->view.height;
+ 
+   pan_common (gport);
+ 
+@@ -133,20 +131,20 @@ static void
+ ghid_zoom_view_fit (void)
+ {
+   ghid_pan_view_abs (0, 0, 0, 0);
+-  ghid_zoom_view_abs (0, 0, MAX (PCB->MaxWidth  / gport->width,
++  ghid_zoom_view.abs (0, 0, MAX (PCB->MaxWidth  / gport->width,
+                                  PCB->MaxHeight / gport->height));
+ }
+ 
+ static void
+-ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
++gport->view.flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
+ {
+   int widget_x, widget_y;
+ 
+   /* Work out where on the screen the flip point is */
+   ghid_pcb_to_event_coords (center_x, center_y, &widget_x, &widget_y);
+ 
+-  ghid_flip_x = ghid_flip_x != flip_x;
+-  ghid_flip_y = ghid_flip_y != flip_y;
++  gport->view.flip_x = ghid_flip_x != flip_x;
++  gport->view.flip_y = ghid_flip_y != flip_y;
+ 
+   /* Pan the board so the center location remains in the same place */
+   ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
+@@ -1391,15 +1389,15 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
+       switch (argv[0][0]) {
+         case 'h':
+         case 'H':
+-          ghid_flip_view (gport->pcb_x, gport->pcb_y, true, false);
++          gport->view.flip_view (gport->pcb_x, gport->pcb_y, true, false);
+           break;
+         case 'v':
+         case 'V':
+-          ghid_flip_view (gport->pcb_x, gport->pcb_y, false, true);
++          gport->view.flip_view (gport->pcb_x, gport->pcb_y, false, true);
+           break;
+         case 'r':
+         case 'R':
+-          ghid_flip_view (gport->pcb_x, gport->pcb_y, true, true);
++          gport->view.flip_view (gport->pcb_x, gport->pcb_y, true, true);
+           Settings.ShowSolderSide = !Settings.ShowSolderSide; /* Swapped back below */
+           break;
+         default:
+@@ -1679,10 +1677,10 @@ CursorAction(int argc, char **argv, Coord x, Coord y)
+     AFAIL (cursor);
+ 
+   dx = GetValueEx (argv[1], argv[3], NULL, extra_units_x, "");
+-  if (ghid_flip_x)
++  if (gport->view.flip_x)
+     dx = -dx;
+   dy = GetValueEx (argv[2], argv[3], NULL, extra_units_y, "");
+-  if (!ghid_flip_y)
++  if (!gport->view.flip_y)
+     dy = -dy;
+ 
+   EventMoveCrosshair (Crosshair.X + dx, Crosshair.Y + dy);
+@@ -2066,19 +2064,20 @@ REGISTER_ACTIONS (ghid_main_action_list)
+ 
+ static int
+ flag_flipx (int x)
+-{ 
+-  return ghid_flip_x;
+-} 
+-static int  
++{
++  return gport->view.flip_x;
++}
++
++static int
+ flag_flipy (int x)
+-{ 
+-  return ghid_flip_y;
+-} 
++{
++  return gport->view.flip_y;
++}
+ 
+ HID_Flag ghid_main_flag_list[] = {
+   {"flip_x", flag_flipx, 0},
+   {"flip_y", flag_flipy, 0}
+-};  
++};
+ 
+ REGISTER_FLAGS (ghid_main_flag_list)
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index f249cf6..df739ec 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -62,15 +62,14 @@
+ #define	FROM_PCB_UNITS(v)	coord_to_unit (Settings.grid_unit, v)
+ #define	TO_PCB_UNITS(v)		unit_to_coord (Settings.grid_unit, v)
+ 
+-extern bool ghid_flip_x, ghid_flip_y;
+-#define SIDE_X(x)   ((ghid_flip_x ? PCB->MaxWidth - (x) : (x)))
+-#define SIDE_Y(y)   ((ghid_flip_y ? PCB->MaxHeight - (y) : (y)))
++#define SIDE_X(x)   ((gport->view.flip_x ? PCB->MaxWidth - (x) : (x)))
++#define SIDE_Y(y)   ((gport->view.flip_y ? PCB->MaxHeight - (y) : (y)))
+ 
+-#define	DRAW_X(x)	(gint)((SIDE_X(x) - gport->view_x0) / gport->zoom)
+-#define	DRAW_Y(y)	(gint)((SIDE_Y(y) - gport->view_y0) / gport->zoom)
++#define	DRAW_X(x)	(gint)((SIDE_X(x) - gport->view.x0) / gport->view.coord_per_px)
++#define	DRAW_Y(y)	(gint)((SIDE_Y(y) - gport->view.y0) / gport->view.coord_per_px)
+ 
+-#define	EVENT_TO_PCB_X(x)	SIDE_X((gint)((x) * gport->zoom + gport->view_x0))
+-#define	EVENT_TO_PCB_Y(y)	SIDE_Y((gint)((y) * gport->zoom + gport->view_y0))
++#define	EVENT_TO_PCB_X(x)	SIDE_X((gint)((x) * gport->coord_per_px + gport->view.x0))
++#define	EVENT_TO_PCB_Y(y)	SIDE_Y((gint)((y) * gport->coord_oer_px + gport->view.y0))
+ 
+ /*
+  * Used to intercept "special" hotkeys that gtk doesn't usually pass
+@@ -527,10 +526,10 @@ static inline int
+ Vx (Coord x)
+ {
+   int rv;
+-  if (ghid_flip_x)
+-    rv = (PCB->MaxWidth - x - gport->view_x0) / gport->zoom + 0.5;
++  if (gport->view.flip_x)
++    rv = (PCB->MaxWidth - x - gport->view.x0) / gport->view.coord_per_px + 0.5;
+   else
+-    rv = (x - gport->view_x0) / gport->zoom + 0.5;
++    rv = (x - gport->view.x0) / gport->view.coord_per_px + 0.5;
+   return rv;
+ }
+ 
+@@ -538,41 +537,41 @@ static inline int
+ Vy (Coord y)
+ {
+   int rv;
+-  if (ghid_flip_y)
+-    rv = (PCB->MaxHeight - y - gport->view_y0) / gport->zoom + 0.5;
++  if (gport->view.flip_y)
++    rv = (PCB->MaxHeight - y - gport->view.y0) / gport->view.coord_per_px + 0.5;
+   else
+-    rv = (y - gport->view_y0) / gport->zoom + 0.5;
++    rv = (y - gport->view.y0) / gport->view.coord_per_px + 0.5;
+   return rv;
+ }
+ 
+ static inline int
+ Vz (Coord z)
+ {
+-  return z / gport->zoom + 0.5;
++  return z / gport->view.coord_per_px + 0.5;
+ }
+ 
+ static inline Coord
+ Px (int x)
+ {
+-  Coord rv = x * gport->zoom + gport->view_x0;
+-  if (ghid_flip_x)
+-    rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
++  Coord rv = x * gport->view.coord_per_px + gport->view.x0;
++  if (gport->view.flip_x)
++    rv = PCB->MaxWidth - (x * gport->view.coord_per_px + gport->view.x0);
+   return  rv;
+ }
+ 
+ static inline Coord
+ Py (int y)
+ {
+-  Coord rv = y * gport->zoom + gport->view_y0;
+-  if (ghid_flip_y)
+-    rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
++  Coord rv = y * gport->view.coord_per_px + gport->view.y0;
++  if (gport->view.flip_y)
++    rv = PCB->MaxHeight - (y * gport->view.coord_per_px + gport->view.y0);
+   return  rv;
+ }
+ 
+ static inline Coord
+ Pz (int z)
+ {
+-  return (z * gport->zoom);
++  return (z * gport->view.coord_per_px);
+ }
+ 
+ #endif /* PCB_HID_GTK_GHID_H */
