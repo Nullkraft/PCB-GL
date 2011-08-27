@@ -505,6 +505,11 @@ void ghid_flush_debug_draw (void);
 void ghid_finish_debug_draw (void);
 bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
 bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
+void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
+void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
+void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
+void ghid_zoom_view_fit (void);
+void ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y);
 void ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
 void ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata);
 
