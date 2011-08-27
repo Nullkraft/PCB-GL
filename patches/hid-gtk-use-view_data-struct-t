@@ -1,5 +1,5 @@
 Bottom: a40e625037bf0a6e49f312e334f8193501053535
-Top:    01dea51ed9988b5eedcdb836099564d3ad17a1a5
+Top:    368848ea60b78ec10bbf4d64aef14b841e84ebcc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 17:27:45 +0100
 
@@ -9,15 +9,15 @@ hid/gtk: Use view_data struct to simplify saving and restoring views
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 631e5b7..ce631a5 100644
+index 631e5b7..4deae2b 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1165,25 +1165,17 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1165,25 +1165,18 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  {
    GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
    GdkDrawable *save_drawable;
 -  double save_zoom;
--  int da_w, da_h;
+   int da_w, da_h;
 -  int save_left, save_top;
 +  view_data save_view;
    int save_width, save_height;
@@ -42,7 +42,7 @@ index 631e5b7..ce631a5 100644
  
    gdk_window_get_geometry (widget->window, 0, 0, &da_w, &da_h, 0);
    xz = (double) pinout->x_max / da_w;
-@@ -1208,13 +1200,9 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1208,13 +1201,9 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
  
    gport->drawable = save_drawable;
@@ -57,7 +57,7 @@ index 631e5b7..ce631a5 100644
  
    return FALSE;
  }
-@@ -1224,21 +1212,15 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1224,21 +1213,15 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  {
    GdkPixmap *pixmap;
    GdkDrawable *save_drawable;
@@ -81,7 +81,7 @@ index 631e5b7..ce631a5 100644
  
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
  
-@@ -1273,13 +1255,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1273,13 +1256,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    hid_expose_callback (&ghid_hid, &region, NULL);
  
    gport->drawable = save_drawable;
