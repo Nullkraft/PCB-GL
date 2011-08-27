@@ -1,5 +1,5 @@
-Bottom: a40e625037bf0a6e49f312e334f8193501053535
-Top:    d4bee023557090d4db7b227340b2b4cc48835183
+Bottom: 01dea51ed9988b5eedcdb836099564d3ad17a1a5
+Top:    721332343580d420e187fd3e664e3a6d7782a0cd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:23 +0100
 
@@ -12,10 +12,10 @@ each renderer. Unfortunately, it does mean duplicating a bit of code.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 631e5b7..a78b0d4 100644
+index ce631a5..be2fd2a 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1325,6 +1325,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1303,6 +1303,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
    return true;
  }
  
@@ -143,10 +143,10 @@ index 631e5b7..a78b0d4 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 5)   /* 5fps (in ms) */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ea8dd40..d42a2de 100644
+index 21a22e8..88afc44 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1327,6 +1327,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1307,6 +1307,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
    return true;
  }
  
