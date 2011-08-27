@@ -1555,11 +1555,20 @@ CursorAction(int argc, char **argv, Coord x, Coord y)
     AFAIL (cursor);
 
   dx = GetValueEx (argv[1], argv[3], NULL, extra_units_x, "");
+<<<<<<< current
   if (gport->view.flip_x)
     dx = -dx;
   dy = GetValueEx (argv[2], argv[3], NULL, extra_units_y, "");
   if (!gport->view.flip_y)
     dy = -dy;
+=======
+  dy = GetValueEx (argv[2], argv[3], NULL, extra_units_y, "");
+
+#if 0 /* We cannot know this sensibly from the renderer, so we have to remove it */
+  if (ghid_flip_x) dx = -dx;
+  if (!ghid_flip_y) dy = -dy;
+#endif
+>>>>>>> patched
 
   EventMoveCrosshair (Crosshair.X + dx, Crosshair.Y + dy);
   gui->set_crosshair (Crosshair.X, Crosshair.Y, pan_warp);
@@ -1940,6 +1949,7 @@ HID_Action ghid_main_action_list[] = {
 REGISTER_ACTIONS (ghid_main_action_list)
 
 
+<<<<<<< current
 static int
 flag_flipx (int x)
 {
@@ -1959,6 +1969,8 @@ HID_Flag ghid_main_flag_list[] = {
 
 REGISTER_FLAGS (ghid_main_flag_list)
 
+=======
+>>>>>>> patched
 #include "dolists.h"
 
 /*
