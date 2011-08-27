@@ -1,5 +1,5 @@
-Bottom: 066e32ad4ef293b3574ab3c01f9fe74135bd2351
-Top:    3a5afb37f36384250db847ca74841d5c5ae30b19
+Bottom: 4d1e181cc26e28b796034fa2b1e3e9b5ae0a5638
+Top:    f503646c394e5c68022c896b45c6cb98ebe2a1d7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:23 +0100
 
@@ -534,7 +534,7 @@ index 81dcd45..1cde17e 100644
    out->has_entered = FALSE;
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 7d936d1..cb65eb5 100644
+index 2bb996b..0737944 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -62,10 +62,6 @@
@@ -548,7 +548,7 @@ index 7d936d1..cb65eb5 100644
  #define	DRAW_X(x)	(gint)((SIDE_X(x) - gport->view_x0) / gport->zoom)
  #define	DRAW_Y(y)	(gint)((SIDE_Y(y) - gport->view_y0) / gport->zoom)
  
-@@ -520,58 +516,4 @@ extern GdkPixmap *XC_lock_source, *XC_lock_mask;
+@@ -526,58 +522,4 @@ extern GdkPixmap *XC_lock_source, *XC_lock_mask;
  extern GdkPixmap *XC_clock_source, *XC_clock_mask;
  
  
