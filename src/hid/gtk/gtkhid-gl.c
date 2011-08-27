@@ -1302,6 +1302,127 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
   return true;
 }
 
+static void
+pan_common (GHidPort *port)
+{
+  int event_x, event_y;
+
+  /* We need to fix up the PCB coordinates corresponding to the last
+  * event so convert it back to event coordinates temporarily. */
+  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
+
+  /* Don't pan so far the board is completely off the screen */
+  port->view.x0 = MAX (-port->view.width,  port->view.x0);
+  port->view.y0 = MAX (-port->view.height, port->view.y0);
+  port->view.x0 = MIN ( port->view.x0, PCB->MaxWidth);
+  port->view.y0 = MIN ( port->view.y0, PCB->MaxHeight);
+
+  /* Fix up noted event coordinates to match where we clamped. Alternatively
+   * we could call ghid_note_event_location (NULL); to get a new pointer
+   * location, but this costs us an xserver round-trip (on X11 platforms)
+   */
+  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
+
+  ghidgui->adjustment_changed_holdoff = TRUE;
+  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view.x0);
+  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view.y0);
+  ghidgui->adjustment_changed_holdoff = FALSE;
+
+  ghid_port_ranges_changed();
+}
+
+void
+ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
+{
+  gport->view.x0 = SIDE_X (pcb_x) - widget_x * gport->view.coord_per_px;
+  gport->view.y0 = SIDE_Y (pcb_y) - widget_y * gport->view.coord_per_px;
+
+  pan_common (gport);
+}
+
+void
+ghid_pan_view_rel (Coord dx, Coord dy)
+{
+  gport->view.x0 += dx;
+  gport->view.y0 += dy;
+
+  pan_common (gport);
+}
+
+
+/* gport->view.coord_per_px:
+ * zoom value is PCB units per screen pixel.  Larger numbers mean zooming
+ * out - the largest value means you are looking at the whole board.
+ *
+ * gport->view_width and gport->view_height are in PCB coordinates
+ */
+
+#define ALLOW_ZOOM_OUT_BY 10 /* Arbitrary, and same as the lesstif HID */
+void
+ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+{
+  double min_zoom, max_zoom;
+  double xtmp, ytmp;
+
+  /* Limit the "minimum" zoom constant (maximum zoom), at 1 pixel per PCB
+   * unit, and set the "maximum" zoom constant (minimum zoom), such that
+   * the entire board just fits inside the viewport
+   */
+  min_zoom = 1;
+  max_zoom = MAX (PCB->MaxWidth  / gport->width,
+                  PCB->MaxHeight / gport->height) * ALLOW_ZOOM_OUT_BY;
+  new_zoom = MIN (MAX (min_zoom, new_zoom), max_zoom);
+
+  if (gport->view.coord_per_px == new_zoom)
+    return;
+
+  xtmp = (SIDE_X (center_x) - gport->view.x0) / (double)gport->view.width;
+  ytmp = (SIDE_Y (center_y) - gport->view.y0) / (double)gport->view.height;
+
+  gport->view.coord_per_px = new_zoom;
+  pixel_slop = new_zoom;
+  ghid_port_ranges_scale ();
+
+  gport->view.x0 = SIDE_X (center_x) - xtmp * gport->view.width;
+  gport->view.y0 = SIDE_Y (center_y) - ytmp * gport->view.height;
+
+  pan_common (gport);
+
+  ghid_set_status_line_label ();
+}
+
+void
+ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
+{
+  ghid_zoom_view_abs (center_x, center_y, gport->view.coord_per_px * factor);
+}
+
+void
+ghid_zoom_view_fit (void)
+{
+  ghid_pan_view_abs (SIDE_X (0), SIDE_Y (0), 0, 0);
+  ghid_zoom_view_abs (SIDE_X (0), SIDE_Y (0),
+                      MAX (PCB->MaxWidth  / gport->width,
+                           PCB->MaxHeight / gport->height));
+}
+
+void
+ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
+{
+  int widget_x, widget_y;
+
+  /* Work out where on the screen the flip point is */
+  ghid_pcb_to_event_coords (center_x, center_y, &widget_x, &widget_y);
+
+  gport->view.flip_x = gport->view.flip_x != flip_x;
+  gport->view.flip_y = gport->view.flip_y != flip_y;
+
+  /* Pan the board so the center location remains in the same place */
+  ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
+
+  ghid_invalidate_all ();
+}
+
 
 #define LEAD_USER_WIDTH           0.2          /* millimeters */
 #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
