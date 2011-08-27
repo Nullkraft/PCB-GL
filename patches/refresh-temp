@@ -1,0 +1,23 @@
+Bottom: 2c04474d390244ea4d7a79af138444fee83b9004
+Top:    aba9258630f021243dfa8ca87251fb2293df16a7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-27 15:01:23 +0100
+
+Refresh of hid-gtk-encapsulate-view-param
+
+---
+
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 37251db..f249cf6 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -182,8 +182,8 @@ typedef struct
+   gboolean panning;
+ 
+   view_data view;
+-  Coord pcb_x, pcb_y;
+-  gint crosshair_x, crosshair_y;
++  Coord pcb_x, pcb_y;             /* PCB coordinates of the mouse pointer */
++  Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair     */
+ }
+ GHidPort;
