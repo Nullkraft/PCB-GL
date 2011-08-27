@@ -135,20 +135,6 @@ GhidGui;
 
 extern GhidGui _ghidgui, *ghidgui;
 
-typedef struct
-{
-  double coord_per_px; /* Zoom level described as PCB units per screen pixel */
-
-  Coord x0;
-  Coord y0;
-  Coord width;
-  Coord height;
-
-  bool flip_x;
-  bool flip_y;
-
-} view_data;
-
   /* The output viewport
    */
 typedef struct
