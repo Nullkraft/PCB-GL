@@ -1,7 +1,7 @@
-Bottom: dd595c9f963d49ec85959fa6b41f5780d7f43a6b
-Top:    4a6c175a01846fc39d4ca47da4b435b1f13bf431
+Bottom: 3a5afb37f36384250db847ca74841d5c5ae30b19
+Top:    5b1c037cf4e0138ad57ddf082d7524e9c7c57518
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-26 23:39:57 +0100
+Date:   2011-08-27 13:35:25 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -619,7 +619,7 @@ index a7a908b..46e8f80 100644
 -  free (Drills);
 -}
 diff --git a/src/fontmode.c b/src/fontmode.c
-index 8130b59..05dabd9 100644
+index 985a38f..5e1f803 100644
 --- a/src/fontmode.c
 +++ b/src/fontmode.c
 @@ -81,6 +81,7 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
@@ -630,7 +630,7 @@ index 8130b59..05dabd9 100644
  
    if (hid_actionl ("New", "Font", 0))
      return 1;
-@@ -118,25 +119,26 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
+@@ -127,25 +128,26 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
        miny = MIL_TO_COORD (5);
        maxy = font->MaxHeight;
  
