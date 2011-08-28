@@ -93,9 +93,9 @@ struct hid_gc_struct
 
 static struct color_struct *black = NULL, *white = NULL;
 static int linewidth = -1;
-static int lastgroup = -1;
+//static int lastgroup = -1;
 static gdImagePtr lastbrush = (gdImagePtr)((void *) -1);
-static int lastcap = -1;
+//static int lastcap = -1;
 static int lastcolor = -1;
 
 /* gd image and file for PNG export */
@@ -360,6 +360,7 @@ gcode_finish_png ()
 void
 gcode_start_png_export ()
 {
+#if 0
   BoxType region;
 
   region.X1 = 0;
@@ -375,6 +376,7 @@ gcode_start_png_export ()
   lastgroup = -1;
 
   hid_expose_callback (&gcode_hid, &region, 0);
+#endif
 }
 
 static void
