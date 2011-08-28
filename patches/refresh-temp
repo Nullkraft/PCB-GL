@@ -1,0 +1,23 @@
+Bottom: b3febdf3f7246656706b4217a96f220b7708c990
+Top:    3b2d0362069355fc1577becbef41511f320c32c2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-28 23:52:45 +0100
+
+Refresh of hid-ps-eps-c-don-t-use-core-dr
+
+---
+
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 97d4163..baef538 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -199,8 +199,7 @@ eps_expose (BoxType *bounds)
+         continue;
+ 
+       if (set_layer (0, group))
+-        if (DrawLayerGroup (group, bounds))
+-          DrawPPV (group, bounds);
++        DrawLayerGroup (group, bounds);
+     }
+ 
+   CountHoles (&nplated, &nunplated, bounds);
