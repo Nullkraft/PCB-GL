@@ -529,7 +529,7 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
         DrawLayerGroup (group, drawn_area);
     }
 
-  CountHoles (drawn_area, &nplated, &nunplated);
+  CountHoles (&nplated, &nunplated, drawn_area);
 
   if (nplated && set_layer ("plated-drill", SL (PDRILL, 0)))
     DrawHoles (true, drawn_area);
