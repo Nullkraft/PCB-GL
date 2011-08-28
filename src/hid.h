@@ -372,10 +372,7 @@ typedef enum
 
     HID_DRAW_API *graphics;
 
-    void (*fill_pcb_polygon) (hidGC gc_, PolygonType *poly,
-                              const BoxType *clip_box);
-    void (*thindraw_pcb_polygon) (hidGC gc_, PolygonType *poly,
-                                  const BoxType *clip_box);
+    void (*draw_pcb_polygon) (hidGC gc_, PolygonType *poly, const BoxType *clip_box);
     void (*fill_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
     void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
     void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
