@@ -1,0 +1,39 @@
+Bottom: bd6a25a2ee9c3676887e3ed08006b42698caf0fa
+Top:    28e537c232640942f6a76f5f913524cff208ce1f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-28 12:03:07 +0100
+
+Refresh of remove-thindraw_pcb_polygon-fr
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 5073fa9..4e078e9 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -580,11 +580,25 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+ void
+ ghid_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
++  static char *color;
+   USE_GC (gc);
+ 
+   if (!poly->Clipped)
+     return;
+ 
++#if 0
++  if (TEST_FLAG (SELECTEDFLAG, poly))
++    color = layer->SelectedColor;
++  else if (TEST_FLAG (FOUNDFLAG, poly))
++#endif
++    color = PCB->ConnectedColor;
++#if 0
++  else
++    color = layer->Color;
++#endif
++
++  gui->set_color (Output.fgGC, color);
++
+   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+     {
+       common_thindraw_pcb_polygon (gc, poly, clip_box);
