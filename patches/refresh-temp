@@ -1,0 +1,59 @@
+Bottom: d9336de566c7821bc92487033abe56ab1730359c
+Top:    58e09cfee9b2a170f6a54383a695eb66ea8c82a5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-28 12:38:34 +0100
+
+Refresh of hid-remove-some-ussigned-but-n
+
+---
+
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 07e3d35..a4377db 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -93,9 +93,7 @@ struct hid_gc_struct
+ 
+ static struct color_struct *black = NULL, *white = NULL;
+ static int linewidth = -1;
+-static int lastgroup = -1;
+ static gdImagePtr lastbrush = (gdImagePtr)((void *) -1);
+-static int lastcap = -1;
+ static int lastcolor = -1;
+ 
+ /* gd image and file for PNG export */
+@@ -369,10 +367,7 @@ gcode_start_png_export ()
+ 
+   linewidth = -1;
+   lastbrush = (gdImagePtr)((void *) -1);
+-  lastcap = -1;
+-  lastgroup = -1;
+   lastcolor = -1;
+-  lastgroup = -1;
+ 
+   hid_expose_callback (&gcode_hid, &region, 0);
+ }
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index e91594b..d5a58d8 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -111,9 +111,7 @@ static HID nelma_hid;
+ 
+ static struct color_struct *black = NULL, *white = NULL;
+ static Coord    linewidth = -1;
+-static int      lastgroup = -1;
+ static gdImagePtr lastbrush = (gdImagePtr)((void *) -1);
+-static int      lastcap = -1;
+ static int      lastcolor = -1;
+ 
+ /* gd image and file for PNG export */
+@@ -614,10 +612,7 @@ nelma_start_png_export()
+ 
+ 	linewidth = -1;
+ 	lastbrush = (gdImagePtr)((void *) -1);
+-	lastcap = -1;
+-	lastgroup = -1;
+ 	lastcolor = -1;
+-	lastgroup = -1;
+ 
+ 	hid_expose_callback(&nelma_hid, &region, 0);
+ }
