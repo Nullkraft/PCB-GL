@@ -151,36 +151,6 @@ nogui_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 }
 
 static void
-nogui_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
-{
-  CRASH;
-}
-
-static void
-nogui_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
-{
-  CRASH;
-}
-
-static void
-nogui_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
-{
-  CRASH;
-}
-
-static void
-nogui_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
-{
-  CRASH;
-}
-
-static void
-nogui_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
-{
-  CRASH;
-}
-
-static void
 nogui_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
   CRASH;
@@ -471,11 +441,6 @@ common_nogui_init (HID *hid)
   hid->draw_rect =            nogui_draw_rect;
   hid->fill_circle =          nogui_fill_circle;
   hid->fill_polygon =         nogui_fill_polygon;
-  hid->fill_pcb_polygon =     nogui_fill_pcb_polygon;
-  hid->fill_pcb_pad =         nogui_fill_pcb_pad;
-  hid->thindraw_pcb_pad =     nogui_thindraw_pcb_pad;
-  hid->fill_pcb_pv =          nogui_fill_pcb_pv;
-  hid->thindraw_pcb_pv =      nogui_thindraw_pcb_pv;
   hid->fill_rect =            nogui_fill_rect;
   hid->calibrate =            nogui_calibrate;
   hid->shift_is_pressed =     nogui_shift_is_pressed;
