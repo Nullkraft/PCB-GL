@@ -1,5 +1,5 @@
 Bottom: 245186e9239ad11e768d6b9e022d601f17036196
-Top:    ed07774027279e8dcef4ee675b18f0fe391e53c3
+Top:    4895cf70cf031fbcb4acc943a773ac3949293ae4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 23:20:00 +0100
 
@@ -9,7 +9,7 @@ hid/png: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 61437a0..d671a7e 100644
+index 61437a0..13b76a0 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -107,9 +107,7 @@ static color_struct *black = NULL, *white = NULL;
@@ -163,7 +163,7 @@ index 61437a0..d671a7e 100644
 +}
 +
 +static void
-+png_expose (const BoxType *bounds)
++png_expose (BoxType *bounds)
 +{
 +  HID *old_gui = gui;
 +  int group;
