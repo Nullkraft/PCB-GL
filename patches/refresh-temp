@@ -1,0 +1,63 @@
+Bottom: cad09bc00c392c8ef97271457954b50ddbcbf149
+Top:    221387564d3c36dff6599d0c96c915d414f197fe
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-28 12:47:45 +0100
+
+Refresh of more-chopping
+
+---
+
+diff --git a/src/hid.h b/src/hid.h
+index 6e665a8..16567d0 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -371,12 +371,6 @@ typedef enum
+     void (*draw_rect) (hidGC gc_, Coord x1_, Coord y1_, Coord x2_, Coord y2_);
+     void (*fill_circle) (hidGC gc_, Coord cx_, Coord cy_, Coord radius_);
+     void (*fill_polygon) (hidGC gc_, int n_coords_, Coord *x_, Coord *y_);
+-    void (*draw_polygon) (hidGC gc_, PolygonType *poly,
+-                          const BoxType *clip_box);
+-    void (*fill_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
+-    void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
+-    void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+-    void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+     void (*fill_rect) (hidGC gc_, Coord x1_, Coord y1_, Coord x2_, Coord y2_);
+ 
+ 
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 4e078e9..749f82a 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -859,7 +859,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ 
+   /* Setup HID function pointers specific to the GL renderer*/
+   ghid_hid.end_layer = ghid_end_layer;
+-  ghid_hid.draw_polygon = ghid_draw_polygon;
++//  ghid_hid.draw_polygon = ghid_draw_polygon;
+ }
+ 
+ void
+@@ -941,8 +941,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   /* If we don't have any stencil bits available,
+      we can't use the hidgl polygon drawing routine */
+   /* TODO: We could use the GLU tessellator though */
+-  if (hidgl_stencil_bits() == 0)
+-    ghid_hid.draw_polygon = common_draw_polygon;
++//  if (hidgl_stencil_bits() == 0)
++//    ghid_hid.draw_polygon = common_draw_polygon;
+ 
+   glEnable (GL_BLEND);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 8cab2f9..8820677 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1355,7 +1355,7 @@ void ps_ps_init (HID *hid)
+   hid->draw_rect          = ps_draw_rect;
+   hid->fill_circle        = ps_fill_circle;
+   hid->fill_polygon       = ps_fill_polygon;
+-  hid->draw_polygon       = ps_draw_polygon;
++//  hid->draw_polygon       = ps_draw_polygon;
+   hid->fill_rect          = ps_fill_rect;
+   hid->calibrate          = ps_calibrate;
+   hid->set_crosshair      = ps_set_crosshair;
