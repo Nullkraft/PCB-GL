@@ -580,10 +580,24 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 void
 ghid_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
+  static char *color;
   USE_GC (gc);
 
   if (!poly->Clipped)
     return;
+
+#if 0
+  if (TEST_FLAG (SELECTEDFLAG, poly))
+    color = layer->SelectedColor;
+  else if (TEST_FLAG (FOUNDFLAG, poly))
+#endif
+    color = PCB->ConnectedColor;
+#if 0
+  else
+    color = layer->Color;
+#endif
+
+  gui->set_color (Output.fgGC, color);
 
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
     {
