@@ -664,8 +664,7 @@ ps_expose (void)
         continue;
 
       if (set_layer (0, group))
-        if (DrawLayerGroup (group, NULL))
-          DrawPPV (group, NULL);
+        DrawLayerGroup (group, NULL);
     }
 
   CountHoles (&nplated, &nunplated, NULL);
