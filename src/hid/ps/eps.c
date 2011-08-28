@@ -36,7 +36,6 @@ RCSID ("$Id$");
 static HID_Attribute * eps_get_export_options (int *n);
 static void eps_do_export (HID_Attr_Val * options);
 static void eps_parse_arguments (int *argc, char ***argv);
-static int eps_set_layer (const char *name, int group, int empty);
 static hidGC eps_make_gc (void);
 static void eps_destroy_gc (hidGC gc);
 static void eps_use_mask (int use_it);
@@ -66,7 +65,6 @@ static HID eps_hid;
 
 static FILE *f = 0;
 static Coord linewidth = -1;
-static int lastgroup = -1;
 static int lastcap = -1;
 static int lastcolor = -1;
 static int print_group[MAX_LAYER];
@@ -153,6 +151,9 @@ eps_get_export_options (int *n)
 }
 
 static int comp_layer, solder_layer;
+static const char *filename;
+static BoxType *bounds;
+static int in_mono, as_shown;
 
 static int
 group_for_layer (int l)
@@ -184,9 +185,84 @@ layer_sort (const void *va, const void *vb)
   return b - a;
 }
 
-static const char *filename;
-static BoxType *bounds;
-static int in_mono, as_shown;
+static bool
+set_layer (const char *name, int group)
+{
+  int is_drill;
+  int idx = (group >= 0 && group < max_group) ?
+    PCB->LayerGroups.Entries[group][0] : group;
+
+  if (name == NULL)
+    name = PCB->Data->Layer[idx].Name;
+
+  is_drill = (SL_TYPE (idx) == SL_PDRILL || SL_TYPE (idx) == SL_UDRILL);
+
+  fprintf (f, "%% Layer %s group %d drill %d\n", name, group, is_drill);
+
+  if (as_shown)
+    {
+      switch (idx)
+        {
+        case SL (SILK, TOP):
+        case SL (SILK, BOTTOM):
+          return SL_MYSIDE (idx) ? PCB->ElementOn : 0;
+        }
+    }
+
+  /* When not drawing "as shown", we don't draw the bottom silk */
+  if (idx == SL (SILK, BOTTOM))
+    return 0;
+
+  return 1;
+}
+
+void
+eps_expose (BoxType *bounds)
+{
+  HID *old_gui = gui;
+  int group;
+  int nplated, nunplated;
+
+  gui = &eps_hid;
+  Output.fgGC = gui->make_gc ();
+  Output.bgGC = gui->make_gc ();
+  Output.pmGC = gui->make_gc ();
+
+  gui->set_color (Output.pmGC, "erase");
+  gui->set_color (Output.bgGC, "drill");
+
+  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+
+  /* draw all copper layers in group order */
+  for (group = 0; group < max_copper_layer; group++)
+    {
+      if (!print_layer[group])
+        continue;
+
+      if (set_layer (0, group))
+        DrawLayerGroup (group, bounds);
+    }
+
+  CountHoles (&nplated, &nunplated, bounds);
+
+  if (nplated && set_layer ("plated-drill", SL (PDRILL, 0)))
+    DrawHoles (true, false, bounds);
+
+  if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0)))
+    DrawHoles (false, true, bounds);
+
+  if (set_layer ("topsilk", SL (SILK, TOP)))
+    DrawSilk (COMPONENT_LAYER, bounds);
+
+  if (set_layer ("bottomsilk", SL (SILK, BOTTOM)))
+    DrawSilk (SOLDER_LAYER, bounds);
+
+  gui->destroy_gc (Output.fgGC);
+  gui->destroy_gc (Output.bgGC);
+  gui->destroy_gc (Output.pmGC);
+  gui = old_gui;
+}
 
 void
 eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -194,11 +270,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   int i;
   static int saved_layer_stack[MAX_LAYER];
   BoxType region;
-  FlagType save_thindraw;
-
-  save_thindraw = PCB->Flags;
-  CLEAR_FLAG(THINDRAWFLAG, PCB);
-  CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
 
   f = the_file;
 
@@ -268,7 +339,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   fprintf (f, "%%!PS-Adobe-3.0 EPSF-3.0\n");
   linewidth = -1;
   lastcap = -1;
-  lastgroup = -1;
   lastcolor = -1;
 
   in_mono = options[HA_mono].int_value;
@@ -311,8 +381,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   fprintf (f,
 	   "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
 
-  lastgroup = -1;
-  hid_expose_callback (&eps_hid, bounds, 0);
+  eps_expose (bounds);
 
   fprintf (f, "showpage\n");
 
@@ -320,9 +389,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   fprintf (f, "%%%%Trailer\n");
   fprintf (f, "cleartomark countdictstack exch sub { end } repeat restore\n");
   fprintf (f, "%%%%EOF\n");
-
-  memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
-  PCB->Flags = save_thindraw;
 }
 
 static void
@@ -366,66 +432,6 @@ eps_parse_arguments (int *argc, char ***argv)
 			   sizeof (eps_attribute_list) /
 			   sizeof (eps_attribute_list[0]));
   hid_parse_command_line (argc, argv);
-}
-
-static int is_mask;
-static int is_paste;
-static int is_drill;
-
-static int
-eps_set_layer (const char *name, int group, int empty)
-{
-  int idx = (group >= 0
-	     && group <
-	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
-  if (name == 0)
-    name = PCB->Data->Layer[idx].Name;
-
-  if (idx >= 0 && idx < max_copper_layer && !print_layer[idx])
-    return 0;
-  if (SL_TYPE (idx) == SL_ASSY || SL_TYPE (idx) == SL_FAB)
-    return 0;
-
-  if (strcmp (name, "invisible") == 0)
-    return 0;
-
-  is_drill = (SL_TYPE (idx) == SL_PDRILL || SL_TYPE (idx) == SL_UDRILL);
-  is_mask = (SL_TYPE (idx) == SL_MASK);
-  is_paste = (SL_TYPE (idx) == SL_PASTE);
-
-  if (is_mask || is_paste)
-    return 0;
-#if 0
-  printf ("Layer %s group %d drill %d mask %d\n", name, group, is_drill,
-	  is_mask);
-#endif
-  fprintf (f, "%% Layer %s group %d drill %d mask %d\n", name, group,
-	   is_drill, is_mask);
-
-  if (as_shown)
-    {
-      switch (idx)
-	{
-	case SL (SILK, TOP):
-	case SL (SILK, BOTTOM):
-	  if (SL_MYSIDE (idx))
-	    return PCB->ElementOn;
-	  else
-	    return 0;
-	}
-    }
-  else
-    {
-      switch (idx)
-	{
-	case SL (SILK, TOP):
-	  return 1;
-	case SL (SILK, BOTTOM):
-	  return 0;
-	}
-    }
-
-  return 1;
 }
 
 static hidGC
@@ -681,7 +687,6 @@ hid_eps_init ()
   eps_hid.get_export_options  = eps_get_export_options;
   eps_hid.do_export           = eps_do_export;
   eps_hid.parse_arguments     = eps_parse_arguments;
-  eps_hid.set_layer           = eps_set_layer;
   eps_hid.make_gc             = eps_make_gc;
   eps_hid.destroy_gc          = eps_destroy_gc;
   eps_hid.use_mask            = eps_use_mask;
