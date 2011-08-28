@@ -471,29 +471,29 @@ png_expose (const BoxType *bounds)
         continue;
 
       if (set_layer (0, group))
-        if (DrawLayerGroup (group, NULL))
-          DrawPPV (group, NULL);
+        if (DrawLayerGroup (group, bounds))
+          DrawPPV (group, bounds);
     }
 
-  CountHoles (&nplated, &nunplated, NULL);
+  CountHoles (&nplated, &nunplated, bounds);
 
   if (nplated && set_layer ("plated-drill", SL (PDRILL, 0)))
-    DrawHoles (true, false, NULL);
+    DrawHoles (true, false, bounds);
 
   if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0)))
-    DrawHoles (false, true, NULL);
+    DrawHoles (false, true, bounds);
 
   if (set_layer ("componentmask", SL (MASK, TOP)))
-    DrawMask (COMPONENT_LAYER, NULL);
+    DrawMask (COMPONENT_LAYER, bounds);
 
   if (set_layer ("soldermask", SL (MASK, BOTTOM)))
-    DrawMask (SOLDER_LAYER, NULL);
+    DrawMask (SOLDER_LAYER, bounds);
 
   if (set_layer ("topsilk", SL (SILK, TOP)))
-    DrawSilk (COMPONENT_LAYER, NULL);
+    DrawSilk (COMPONENT_LAYER, bounds);
 
   if (set_layer ("bottomsilk", SL (SILK, BOTTOM)))
-    DrawSilk (SOLDER_LAYER, NULL);
+    DrawSilk (SOLDER_LAYER, bounds);
 
   gui->destroy_gc (Output.fgGC);
   gui->destroy_gc (Output.bgGC);
