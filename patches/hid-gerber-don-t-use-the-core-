@@ -1,5 +1,5 @@
 Bottom: 4c7ecb34aecf2e502de45fa6fa97bed1ad61c8af
-Top:    5034802b08a8450a8bb3975d63e6de0b427bf598
+Top:    2c33c9a1028295f905e3773c10d615145cf5cc0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 16:30:51 +0100
 
@@ -9,7 +9,7 @@ hid/gerber: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 8829527..4518b21 100644
+index 8829527..d521474 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -27,6 +27,7 @@
@@ -149,7 +149,7 @@ index 8829527..4518b21 100644
 +    DrawPaste (SOLDER_LAYER, drawn_area);
 +
 +  if (set_layer ("fab", SL (FAB, 0), 0))
-+    PrintFab ();
++    PrintFab (Output.fgGC);
 +
 +  gui->destroy_gc (Output.fgGC);
 +  gui->destroy_gc (Output.bgGC);
