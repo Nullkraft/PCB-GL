@@ -1,5 +1,5 @@
 Bottom: 4c7ecb34aecf2e502de45fa6fa97bed1ad61c8af
-Top:    1f5639b83681bd2ec4c3eff6a179b30e387861ff
+Top:    17034d91460454faa121b62f230ec0935358e865
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 16:30:51 +0100
 
@@ -9,7 +9,7 @@ hid/gerber: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 8829527..a5405ce 100644
+index 8829527..003a77e 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -27,6 +27,7 @@
@@ -25,7 +25,7 @@ index 8829527..a5405ce 100644
  static void gerber_do_export (HID_Attr_Val * options);
  static void gerber_parse_arguments (int *argc, char ***argv);
 -static int gerber_set_layer (const char *name, int group, int empty);
-+static int set_layer (const char *name, int group, int empty);
++static bool set_layer (const char *name, int group);
  static hidGC gerber_make_gc (void);
  static void gerber_destroy_gc (hidGC gc);
  static void gerber_use_mask (int use_it);
@@ -103,38 +103,38 @@ index 8829527..a5405ce 100644
 +      if (!print_group[group])
 +        continue;
 +
-+      if (set_layer (0, group, 0))
++      if (set_layer (0, group))
 +        if (DrawLayerGroup (group, drawn_area))
 +          DrawPPV (group, drawn_area);
 +    }
 +
 +  count_holes (drawn_area, &nplated, &nunplated);
 +
-+  if (nplated && set_layer ("plated-drill", SL (PDRILL, 0), 0))
++  if (nplated && set_layer ("plated-drill", SL (PDRILL, 0)))
 +    DrawHoles (true, drawn_area);
 +
-+  if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0), 0))
++  if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0)))
 +    DrawHoles (false, drawn_area);
 +
-+  if (set_layer ("componentmask", SL (MASK, TOP), 0))
++  if (set_layer ("componentmask", SL (MASK, TOP)))
 +    DrawMask (COMPONENT_LAYER, drawn_area);
 +
-+  if (set_layer ("soldermask", SL (MASK, BOTTOM), 0))
++  if (set_layer ("soldermask", SL (MASK, BOTTOM)))
 +    DrawMask (SOLDER_LAYER, drawn_area);
 +
-+  if (set_layer ("topsilk", SL (SILK, TOP), 0))
++  if (set_layer ("topsilk", SL (SILK, TOP)))
 +    DrawSilk (COMPONENT_LAYER, drawn_area);
 +
-+  if (set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
++  if (set_layer ("bottomsilk", SL (SILK, BOTTOM)))
 +    DrawSilk (SOLDER_LAYER, drawn_area);
 +
-+  if (set_layer ("toppaste", SL (PASTE, TOP), 0))
++  if (set_layer ("toppaste", SL (PASTE, TOP)))
 +    DrawPaste (COMPONENT_LAYER, drawn_area);
 +
-+  if (set_layer ("bottompaste", SL (PASTE, BOTTOM), 0))
++  if (set_layer ("bottompaste", SL (PASTE, BOTTOM)))
 +    DrawPaste (SOLDER_LAYER, drawn_area);
 +
-+  if (set_layer ("fab", SL (FAB, 0), 0))
++  if (set_layer ("fab", SL (FAB, 0)))
 +    PrintFab (Output.fgGC);
 +
 +  gui->destroy_gc (Output.fgGC);
@@ -165,6 +165,8 @@ index 8829527..a5405ce 100644
    else
      {
        memset (print_group, 0, sizeof (print_group));
+-      memset (print_layer, 0, sizeof (print_layer));
+-    }
 +      for (i = 0; i < max_copper_layer; i++)
 +        {
 +          LayerType *layer = PCB->Data->Layer + i;
@@ -172,12 +174,6 @@ index 8829527..a5405ce 100644
 +        }
 +      print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
 +      print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
-+
-       memset (print_layer, 0, sizeof (print_layer));
-+      for (i = 0; i < max_copper_layer; i++)
-+        if (print_group[GetLayerGroupNumberByNumber (i)])
-+          print_layer[i] = 1;
-     }
  
 -  hid_save_and_show_layer_ons (save_ons);
 -  for (i = 0; i < max_copper_layer; i++)
@@ -185,13 +181,17 @@ index 8829527..a5405ce 100644
 -      LayerType *layer = PCB->Data->Layer + i;
 -      if (layer->LineN || layer->TextN || layer->ArcN || layer->PolygonN)
 -	print_group[GetLayerGroupNumberByNumber (i)] = 1;
--    }
++      memset (print_layer, 0, sizeof (print_layer));
++      for (i = 0; i < max_copper_layer; i++)
++        if (print_group[GetLayerGroupNumberByNumber (i)])
++          print_layer[i] = 1;
+     }
 -  print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
 -  print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
 -  for (i = 0; i < max_copper_layer; i++)
 -    if (print_group[GetLayerGroupNumberByNumber (i)])
 -      print_layer[i] = 1;
--
+ 
 -  memcpy (saved_layer_stack, LayerStack, sizeof (LayerStack));
 -  qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_sort);
    linewidth = -1;
@@ -224,13 +224,23 @@ index 8829527..a5405ce 100644
  }
  
  static void
-@@ -610,25 +652,17 @@ drill_sort (const void *va, const void *vb)
+@@ -609,26 +651,26 @@ drill_sort (const void *va, const void *vb)
+   return b->y - b->y;
  }
  
- static int
+-static int
 -gerber_set_layer (const char *name, int group, int empty)
-+set_layer (const char *name, int group, int empty)
++static bool
++set_layer (const char *name, int group)
  {
++  time_t currenttime;
++  char utcTime[64];
++#ifdef HAVE_GETPWUID
++  struct passwd *pwentry;
++#endif
++  ApertureList *aptr_list;
++  Aperture *search;
++
    int want_outline;
    char *cp;
    int idx = (group >= 0
@@ -253,7 +263,7 @@ index 8829527..a5405ce 100644
    flash_drills = 0;
    if (strcmp (name, "outline") == 0 ||
        strcmp (name, "route") == 0)
-@@ -639,18 +673,18 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -639,18 +681,18 @@ gerber_set_layer (const char *name, int group, int empty)
        int i;
        /* dump pending drills in sequence */
        qsort (pending_drills, n_pending_drills, sizeof (pending_drills[0]),
@@ -283,28 +293,24 @@ index 8829527..a5405ce 100644
        free (pending_drills);
        n_pending_drills = max_pending_drills = 0;
        pending_drills = NULL;
-@@ -661,124 +695,120 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -659,126 +701,110 @@ gerber_set_layer (const char *name, int group, int empty)
+   is_drill = (SL_TYPE (idx) == SL_PDRILL || SL_TYPE (idx) == SL_UDRILL);
+   is_mask = (SL_TYPE (idx) == SL_MASK);
    current_mask = 0;
- #if 0
-   printf ("Layer %s group %d drill %d mask %d\n", name, group, is_drill,
+-#if 0
+-  printf ("Layer %s group %d drill %d mask %d\n", name, group, is_drill,
 -	  is_mask);
-+          is_mask);
- #endif
- 
+-#endif
+-
 -  if (group < 0 || group != lastgroup)
 -    {
 -      time_t currenttime;
 -      char utcTime[64];
-+  time_t currenttime;
-+  char utcTime[64];
- #ifdef HAVE_GETPWUID
+-#ifdef HAVE_GETPWUID
 -      struct passwd *pwentry;
-+  struct passwd *pwentry;
- #endif
+-#endif
 -      ApertureList *aptr_list;
 -      Aperture *search;
-+  ApertureList *aptr_list;
-+  Aperture *search;
  
 -      lastgroup = group;
 -      lastX = -1;
@@ -436,20 +442,18 @@ index 8829527..a5405ce 100644
 -      pcb_fprintf (f, "G04 PCB-Dimensions: %.0mc %.0mc *\r\n",
 -	       PCB->MaxWidth, PCB->MaxHeight);
 -      fprintf (f, "G04 PCB-Coordinate-Origin: lower left *\r\n");
+-
+-      /* Signal data in inches. */
+-      fprintf (f, "%%MOIN*%%\r\n");
 +  fprintf (f, "G04 Format: Gerber/RS-274X *\r\n");
 +  pcb_fprintf (f, "G04 PCB-Dimensions: %.0mc %.0mc *\r\n",
 +           PCB->MaxWidth, PCB->MaxHeight);
 +  fprintf (f, "G04 PCB-Coordinate-Origin: lower left *\r\n");
  
--      /* Signal data in inches. */
--      fprintf (f, "%%MOIN*%%\r\n");
-+  /* Signal data in inches. */
-+  fprintf (f, "%%MOIN*%%\r\n");
- 
 -      /* Signal Leading zero suppression, Absolute Data, 2.5 format */
 -      fprintf (f, "%%FSLAX25Y25*%%\r\n");
-+  /* Signal Leading zero suppression, Absolute Data, 2.5 format */
-+  fprintf (f, "%%FSLAX25Y25*%%\r\n");
++  /* Signal data in inches. */
++  fprintf (f, "%%MOIN*%%\r\n");
  
 -      /* build a legal identifier. */
 -      if (layername)
@@ -457,12 +461,8 @@ index 8829527..a5405ce 100644
 -      layername = strdup (filesuff);
 -      if (strrchr (layername, '.'))
 -	* strrchr (layername, '.') = 0;
-+  /* build a legal identifier. */
-+  if (layername)
-+    free (layername);
-+  layername = strdup (filesuff);
-+  if (strrchr (layername, '.'))
-+    * strrchr (layername, '.') = 0;
++  /* Signal Leading zero suppression, Absolute Data, 2.5 format */
++  fprintf (f, "%%FSLAX25Y25*%%\r\n");
  
 -      for (cp=layername; *cp; cp++)
 -	{
@@ -473,7 +473,13 @@ index 8829527..a5405ce 100644
 -	}
 -      fprintf (f, "%%LN%s*%%\r\n", layername);
 -      lncount = 1;
--
++  /* build a legal identifier. */
++  if (layername)
++    free (layername);
++  layername = strdup (filesuff);
++  if (strrchr (layername, '.'))
++    * strrchr (layername, '.') = 0;
+ 
 -      for (search = aptr_list->data; search; search = search->next)
 -        fprintAperture(f, search);
 -      if (aptr_list->count == 0)
@@ -499,23 +505,30 @@ index 8829527..a5405ce 100644
  
   emit_outline:
    /* If we're printing a copper layer other than the outline layer,
-@@ -793,35 +823,35 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -791,37 +817,37 @@ gerber_set_layer (const char *name, int group, int empty)
+   if (copy_outline_mode == COPY_OUTLINE_SILK
+       && SL_TYPE (idx) == SL_SILK)
      want_outline = 1;
-   if (copy_outline_mode == COPY_OUTLINE_ALL
-       && (SL_TYPE (idx) == SL_SILK
+-  if (copy_outline_mode == COPY_OUTLINE_ALL
+-      && (SL_TYPE (idx) == SL_SILK
 -	  || SL_TYPE (idx) == SL_MASK
 -	  || SL_TYPE (idx) == SL_FAB
 -	  || SL_TYPE (idx) == SL_ASSY
 -	  || SL_TYPE (idx) == 0))
-+          || SL_TYPE (idx) == SL_MASK
-+          || SL_TYPE (idx) == SL_FAB
-+          || SL_TYPE (idx) == SL_ASSY
-+          || SL_TYPE (idx) == 0))
++  if (copy_outline_mode == COPY_OUTLINE_ALL &&
++      (SL_TYPE (idx) == SL_SILK ||
++       SL_TYPE (idx) == SL_MASK ||
++       SL_TYPE (idx) == SL_FAB  ||
++       SL_TYPE (idx) == SL_ASSY ||
++       SL_TYPE (idx) == 0))
      want_outline = 1;
  
-   if (want_outline
-       && strcmp (name, "outline")
-       && strcmp (name, "route"))
+-  if (want_outline
+-      && strcmp (name, "outline")
+-      && strcmp (name, "route"))
++  if (want_outline &&
++      strcmp (name, "outline") != 0 &&
++      strcmp (name, "route") != 0)
      {
 -      if (outline_layer
 -	  && outline_layer != PCB->Data->Layer+idx)
@@ -557,7 +570,7 @@ index 8829527..a5405ce 100644
      }
  
    return 1;
-@@ -1252,7 +1282,6 @@ hid_gerber_init ()
+@@ -1252,7 +1278,6 @@ hid_gerber_init ()
    gerber_hid.get_export_options  = gerber_get_export_options;
    gerber_hid.do_export           = gerber_do_export;
    gerber_hid.parse_arguments     = gerber_parse_arguments;
