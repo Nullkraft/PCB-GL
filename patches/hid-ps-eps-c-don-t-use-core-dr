@@ -1,5 +1,5 @@
 Bottom: 17034d91460454faa121b62f230ec0935358e865
-Top:    245186e9239ad11e768d6b9e022d601f17036196
+Top:    deeaab77160569b4a66986b3872777fd33d88ce0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 23:06:55 +0100
 
@@ -9,7 +9,7 @@ hid/ps/eps.c: Don't use core drawing routines
 ---
 
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 903270e..5775f60 100644
+index 903270e..97d4163 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -36,7 +36,6 @@ RCSID ("$Id$");
@@ -77,7 +77,7 @@ index 903270e..5775f60 100644
 +}
 +
 +void
-+eps_expose (const BoxType *bounds)
++eps_expose (BoxType *bounds)
 +{
 +  HID *old_gui = gui;
 +  int group;
@@ -127,7 +127,19 @@ index 903270e..5775f60 100644
  
  void
  eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
-@@ -226,7 +303,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -152,11 +229,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   int i;
+   static int saved_layer_stack[MAX_LAYER];
+   BoxType region;
+-  FlagType save_thindraw;
+-
+-  save_thindraw = PCB->Flags;
+-  CLEAR_FLAG(THINDRAWFLAG, PCB);
+-  CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
+ 
+   f = the_file;
+ 
+@@ -226,7 +298,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    fprintf (f, "%%!PS-Adobe-3.0 EPSF-3.0\n");
    linewidth = -1;
    lastcap = -1;
@@ -135,7 +147,7 @@ index 903270e..5775f60 100644
    lastcolor = -1;
  
    in_mono = options[HA_mono].int_value;
-@@ -269,8 +345,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -269,8 +340,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    fprintf (f,
  	   "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
  
@@ -145,7 +157,7 @@ index 903270e..5775f60 100644
  
    fprintf (f, "showpage\n");
  
-@@ -278,9 +353,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -278,9 +348,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    fprintf (f, "%%%%Trailer\n");
    fprintf (f, "cleartomark countdictstack exch sub { end } repeat restore\n");
    fprintf (f, "%%%%EOF\n");
@@ -155,7 +167,7 @@ index 903270e..5775f60 100644
  }
  
  static void
-@@ -326,66 +398,6 @@ eps_parse_arguments (int *argc, char ***argv)
+@@ -326,66 +393,6 @@ eps_parse_arguments (int *argc, char ***argv)
    hid_parse_command_line (argc, argv);
  }
  
@@ -222,7 +234,7 @@ index 903270e..5775f60 100644
  static hidGC
  eps_make_gc (void)
  {
-@@ -639,7 +651,6 @@ hid_eps_init ()
+@@ -639,7 +646,6 @@ hid_eps_init ()
    eps_hid.get_export_options  = eps_get_export_options;
    eps_hid.do_export           = eps_do_export;
    eps_hid.parse_arguments     = eps_parse_arguments;
