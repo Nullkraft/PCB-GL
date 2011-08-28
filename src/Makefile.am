@@ -61,6 +61,9 @@ PCB_SRCS = \
 	dolists.h \
 	draw.c \
 	draw.h \
+	draw_funcs.c \
+	draw_funcs.h \
+	gui_draw.c \
 	drill.c \
 	drill.h \
 	edif.y \
