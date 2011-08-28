@@ -466,27 +466,6 @@ assign_file_suffix (char *dest, int idx)
   strcat (dest, sext);
 }
 
-static int
-hole_callback (const BoxType * b, void *cl)
-{
-  PinTypePtr pin = (PinTypePtr) b;
-  bool plated = *(bool *)cl;
-
-  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
-      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
-    return 1;
-
-  gui->fill_circle (Output.bgGC, pin->X, pin->Y, pin->DrillingHole / 2);
-  return 1;
-}
-
-static void
-DrawHoles (bool plated, BoxType *drawn_area)
-{
-  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
-  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
-}
-
 static void
 gerber_expose (HID * hid, BoxType *drawn_area, void *item)
 {
