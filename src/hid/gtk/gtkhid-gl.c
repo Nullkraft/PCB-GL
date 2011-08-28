@@ -578,20 +578,40 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 }
 
 void
-ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ghid_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   USE_GC (gc);
 
-  hidgl_fill_pcb_polygon (poly, clip_box, gport->view.coord_per_px);
+  if (!poly->Clipped)
+    return;
+
+  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+    common_thindraw_pcb_polygon (poly, clip_box);
+  else
+    hidgl_fill_pcb_polygon (poly, clip_box);
+
+  /* If checking planes, thin-draw any pieces which have been clipped away */
+  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
+    {
+      PolygonType poly = *polygon;
+
+      for (poly.Clipped = polygon->Clipped->f;
+           poly.Clipped != polygon->Clipped;
+           poly.Clipped = poly.Clipped->f)
+        common_thindraw_pcb_polygon (poly, clip_box);
+    }
+
+
 }
 
 void
 ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
+  double old_alpha_mult = gc->alpha_mult;
   common_thindraw_pcb_polygon (gc, poly, clip_box);
-  ghid_set_alpha_mult (gc, 0.25);
+  ghid_set_alpha_mult (gc, gc->alpha_mult * 0.25);
   ghid_fill_pcb_polygon (gc, poly, clip_box);
-  ghid_set_alpha_mult (gc, 1.0);
+  ghid_set_alpha_mult (gc, old_alpha_mult);
 }
 
 void
