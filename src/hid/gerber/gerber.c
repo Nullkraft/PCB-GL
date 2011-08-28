@@ -399,7 +399,7 @@ maybe_close_f (FILE *f)
     }
 }
 
-static BoxType region;
+//static BoxType region;
 
 /* Very similar to layer_type_to_file_name() but appends only a
    three-character suffix compatible with Eagle's defaults.  */
@@ -565,10 +565,12 @@ gerber_do_export (HID_Attr_Val * options)
   lastgroup = -1;
   lastcolor = -1;
 
+#if 0
   region.X1 = 0;
   region.Y1 = 0;
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
+#endif
 
   pagecount = 1;
   resetApertures ();
@@ -576,11 +578,11 @@ gerber_do_export (HID_Attr_Val * options)
   lastgroup = -1;
   layer_list_idx = 0;
   finding_apertures = 1;
-  hid_expose_callback (&gerber_hid, &region, 0);
+  //hid_expose_callback (&gerber_hid, &region, 0);
 
   layer_list_idx = 0;
   finding_apertures = 0;
-  hid_expose_callback (&gerber_hid, &region, 0);
+  //hid_expose_callback (&gerber_hid, &region, 0);
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
 
@@ -805,7 +807,7 @@ gerber_set_layer (const char *name, int group, int empty)
     {
       if (outline_layer
 	  && outline_layer != PCB->Data->Layer+idx)
-	DrawLayer (outline_layer, &region);
+{}//	DrawLayer (outline_layer, &region);
       else if (!outline_layer)
 	{
 	  hidGC gc = gui->make_gc ();
