@@ -175,7 +175,7 @@ set_layer (const char *name, int group)
 }
 
 void
-eps_expose (const BoxType *bounds)
+eps_expose (BoxType *bounds)
 {
   HID *old_gui = gui;
   int group;
@@ -229,11 +229,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   int i;
   static int saved_layer_stack[MAX_LAYER];
   BoxType region;
-  FlagType save_thindraw;
-
-  save_thindraw = PCB->Flags;
-  CLEAR_FLAG(THINDRAWFLAG, PCB);
-  CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
 
   f = the_file;
 
