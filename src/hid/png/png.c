@@ -447,7 +447,7 @@ set_layer (const char *name, int group)
 }
 
 static void
-png_expose (const BoxType *bounds)
+png_expose (BoxType *bounds)
 {
   HID *old_gui = gui;
   int group;
