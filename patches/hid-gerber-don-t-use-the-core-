@@ -1,5 +1,5 @@
 Bottom: 4c7ecb34aecf2e502de45fa6fa97bed1ad61c8af
-Top:    2c33c9a1028295f905e3773c10d615145cf5cc0e
+Top:    eb5c1822ba34dacdd842d701de2bcb6dfa215270
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 16:30:51 +0100
 
@@ -9,7 +9,7 @@ hid/gerber: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 8829527..d521474 100644
+index 8829527..dd151aa 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -27,6 +27,7 @@
@@ -56,32 +56,10 @@ index 8829527..d521474 100644
  static void
  maybe_close_f (FILE *f)
  {
-@@ -485,18 +466,111 @@ assign_file_suffix (char *dest, int idx)
-   strcat (dest, sext);
+@@ -486,17 +467,89 @@ assign_file_suffix (char *dest, int idx)
  }
  
-+static int
-+hole_callback (const BoxType * b, void *cl)
-+{
-+  PinTypePtr pin = (PinTypePtr) b;
-+  bool plated = *(bool *)cl;
-+
-+  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
-+      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
-+    return 1;
-+
-+  gui->fill_circle (Output.bgGC, pin->X, pin->Y, pin->DrillingHole / 2);
-+  return 1;
-+}
-+
-+static void
-+DrawHoles (bool plated, BoxType *drawn_area)
-+{
-+  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
-+  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
-+}
-+
-+static void
+ static void
 +gerber_expose (HID * hid, BoxType *drawn_area, void *item)
 +{
 +  int i;
@@ -160,7 +138,7 @@ index 8829527..d521474 100644
 +  Output.pmGC = savepm;
 +}
 +
- static void
++static void
  gerber_do_export (HID_Attr_Val * options)
  {
    const char *fnbase;
@@ -175,7 +153,7 @@ index 8829527..d521474 100644
  
    if (!options)
      {
-@@ -542,24 +616,20 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -542,24 +595,20 @@ gerber_do_export (HID_Attr_Val * options)
    else
      {
        memset (print_group, 0, sizeof (print_group));
@@ -211,7 +189,7 @@ index 8829527..d521474 100644
    linewidth = -1;
    lastcap = -1;
    lastgroup = -1;
-@@ -576,18 +646,14 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -576,18 +625,14 @@ gerber_do_export (HID_Attr_Val * options)
    lastgroup = -1;
    layer_list_idx = 0;
    finding_apertures = 1;
@@ -232,7 +210,7 @@ index 8829527..d521474 100644
  }
  
  static void
-@@ -610,25 +676,17 @@ drill_sort (const void *va, const void *vb)
+@@ -610,25 +655,17 @@ drill_sort (const void *va, const void *vb)
  }
  
  static int
@@ -261,7 +239,7 @@ index 8829527..d521474 100644
    flash_drills = 0;
    if (strcmp (name, "outline") == 0 ||
        strcmp (name, "route") == 0)
-@@ -639,18 +697,18 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -639,18 +676,18 @@ gerber_set_layer (const char *name, int group, int empty)
        int i;
        /* dump pending drills in sequence */
        qsort (pending_drills, n_pending_drills, sizeof (pending_drills[0]),
@@ -291,7 +269,7 @@ index 8829527..d521474 100644
        free (pending_drills);
        n_pending_drills = max_pending_drills = 0;
        pending_drills = NULL;
-@@ -661,7 +719,7 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -661,7 +698,7 @@ gerber_set_layer (const char *name, int group, int empty)
    current_mask = 0;
  #if 0
    printf ("Layer %s group %d drill %d mask %d\n", name, group, is_drill,
@@ -300,7 +278,7 @@ index 8829527..d521474 100644
  #endif
  
    if (group < 0 || group != lastgroup)
-@@ -684,10 +742,10 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -684,10 +721,10 @@ gerber_set_layer (const char *name, int group, int empty)
        aptr_list = setLayerApertureList (layer_list_idx++);
  
        if (finding_apertures)
@@ -313,7 +291,7 @@ index 8829527..d521474 100644
  
        maybe_close_f (f);
        f = NULL;
-@@ -696,45 +754,45 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -696,45 +733,45 @@ gerber_set_layer (const char *name, int group, int empty)
        assign_file_suffix (filesuff, idx);
        f = fopen (filename, "wb");   /* Binary needed to force CR-LF */
        if (f == NULL) 
@@ -383,7 +361,7 @@ index 8829527..d521474 100644
        fprintf (f, "G04 Creator: %s " VERSION " *\r\n", Progname);
        fprintf (f, "G04 CreationDate: %s *\r\n", utcTime);
  
-@@ -746,7 +804,7 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -746,7 +783,7 @@ gerber_set_layer (const char *name, int group, int empty)
  
        fprintf (f, "G04 Format: Gerber/RS-274X *\r\n");
        pcb_fprintf (f, "G04 PCB-Dimensions: %.0mc %.0mc *\r\n",
@@ -392,7 +370,7 @@ index 8829527..d521474 100644
        fprintf (f, "G04 PCB-Coordinate-Origin: lower left *\r\n");
  
        /* Signal data in inches. */
-@@ -757,27 +815,27 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -757,27 +794,27 @@ gerber_set_layer (const char *name, int group, int empty)
  
        /* build a legal identifier. */
        if (layername)
@@ -431,7 +409,7 @@ index 8829527..d521474 100644
      }
  
   emit_outline:
-@@ -793,35 +851,35 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -793,35 +830,35 @@ gerber_set_layer (const char *name, int group, int empty)
      want_outline = 1;
    if (copy_outline_mode == COPY_OUTLINE_ALL
        && (SL_TYPE (idx) == SL_SILK
@@ -489,7 +467,7 @@ index 8829527..d521474 100644
      }
  
    return 1;
-@@ -1252,7 +1310,6 @@ hid_gerber_init ()
+@@ -1252,7 +1289,6 @@ hid_gerber_init ()
    gerber_hid.get_export_options  = gerber_get_export_options;
    gerber_hid.do_export           = gerber_do_export;
    gerber_hid.parse_arguments     = gerber_parse_arguments;
