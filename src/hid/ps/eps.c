@@ -109,6 +109,9 @@ eps_get_export_options (int *n)
 }
 
 static int comp_layer, solder_layer;
+static const char *filename;
+static BoxType *bounds;
+static int in_mono, as_shown;
 
 static int
 group_for_layer (int l)
@@ -172,12 +175,11 @@ set_layer (const char *name, int group)
 }
 
 void
-eps_expose (void)
+eps_expose (const BoxType *bounds)
 {
   HID *old_gui = gui;
   int group;
   int nplated, nunplated;
-  bool empty;
 
   gui = &eps_hid;
   Output.fgGC = gui->make_gc ();
@@ -193,38 +195,33 @@ eps_expose (void)
   /* draw all copper layers in group order */
   for (group = 0; group < max_copper_layer; group++)
     {
-      if (!print_layer[idx])
+      if (!print_layer[group])
         continue;
 
       if (set_layer (0, group))
-        if (DrawLayerGroup (group, NULL))
-          DrawPPV (group, NULL);
+        if (DrawLayerGroup (group, bounds))
+          DrawPPV (group, bounds);
     }
 
-  CountHoles (&nplated, &nunplated, NULL);
+  CountHoles (&nplated, &nunplated, bounds);
 
   if (nplated && set_layer ("plated-drill", SL (PDRILL, 0)))
-    DrawHoles (true, false, NULL);
+    DrawHoles (true, false, bounds);
 
   if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0)))
-    DrawHoles (false, true, NULL);
+    DrawHoles (false, true, bounds);
 
   if (set_layer ("topsilk", SL (SILK, TOP)))
-    DrawSilk (COMPONENT_LAYER, NULL);
+    DrawSilk (COMPONENT_LAYER, bounds);
 
   if (set_layer ("bottomsilk", SL (SILK, BOTTOM)))
-    DrawSilk (SOLDER_LAYER, NULL);
+    DrawSilk (SOLDER_LAYER, bounds);
 
   gui->destroy_gc (Output.fgGC);
   gui->destroy_gc (Output.bgGC);
   gui->destroy_gc (Output.pmGC);
   gui = old_gui;
 }
-
-
-static const char *filename;
-static BoxType *bounds;
-static int in_mono, as_shown;
 
 void
 eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
