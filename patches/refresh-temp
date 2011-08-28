@@ -1,0 +1,27 @@
+Bottom: 235bc7b2c762d9e5f43e93408127bf2f1a35a0b9
+Top:    98b331d7a4b5a8540f90349b770d2a2981eac2df
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-28 11:38:02 +0100
+
+Refresh of remove-thindraw_pcb_polygon-fr
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index e955845..695f7f4 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -607,11 +607,10 @@ ghid_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ void
+ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
+-  double old_alpha_mult = gc->alpha_mult;
+   common_thindraw_pcb_polygon (gc, poly, clip_box);
+-  ghid_set_alpha_mult (gc, gc->alpha_mult * 0.25);
++  ghid_set_alpha_mult (gc, 0.25);
+   ghid_fill_pcb_polygon (gc, poly, clip_box);
+-  ghid_set_alpha_mult (gc, old_alpha_mult);
++  ghid_set_alpha_mult (gc, 1.0);
+ }
+ 
+ void
