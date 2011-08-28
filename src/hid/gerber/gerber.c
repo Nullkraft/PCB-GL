@@ -562,31 +562,31 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
   count_holes (drawn_area, &nplated, &nunplated);
 
   if (nplated && set_layer ("plated-drill", SL (PDRILL, 0), 0))
-    DrawHoles (true, drawn_area, priv);
+    DrawHoles (true, drawn_area);
 
   if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0), 0))
-    DrawHoles (false, drawn_area, priv);
+    DrawHoles (false, drawn_area);
 
   if (set_layer ("componentmask", SL (MASK, TOP), 0))
-    DrawMask (COMPONENT_LAYER, drawn_area, priv);
+    DrawMask (COMPONENT_LAYER, drawn_area);
 
   if (set_layer ("soldermask", SL (MASK, BOTTOM), 0))
-    DrawMask (SOLDER_LAYER, drawn_area, priv);
+    DrawMask (SOLDER_LAYER, drawn_area);
 
   if (set_layer ("topsilk", SL (SILK, TOP), 0))
-    DrawSilk (COMPONENT_LAYER, drawn_area, priv);
+    DrawSilk (COMPONENT_LAYER, drawn_area);
 
   if (set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
-    DrawSilk (SOLDER_LAYER, drawn_area, priv);
+    DrawSilk (SOLDER_LAYER, drawn_area);
 
   if (set_layer ("toppaste", SL (PASTE, TOP), 0))
-    DrawPaste (COMPONENT_LAYER, drawn_area, priv);
+    DrawPaste (COMPONENT_LAYER, drawn_area);
 
   if (set_layer ("bottompaste", SL (PASTE, BOTTOM), 0))
-    DrawPaste (SOLDER_LAYER, drawn_area, priv);
+    DrawPaste (SOLDER_LAYER, drawn_area);
 
   if (set_layer ("fab", SL (FAB, 0), 0))
-    PrintFab (priv);
+    PrintFab ();
 
   gui->destroy_gc (Output.fgGC);
   gui->destroy_gc (Output.bgGC);
