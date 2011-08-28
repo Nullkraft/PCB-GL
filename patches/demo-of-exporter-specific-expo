@@ -1,5 +1,5 @@
-Bottom: 0258b13580fcb1b467109d0b69dbbd0ccc3dd1f1
-Top:    b8b7a2f282ab6b5b0580164cc3fa419525f01883
+Bottom: 91bcfdea426ca9285b73363401d8081e23903e16
+Top:    530d1268fb674d1698c9ce74782064e5b98d49bb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 15:05:29 +0100
 
@@ -40,12 +40,12 @@ index 92ed769..46b3063 100644
  {
    int i, rv = 1;
 diff --git a/src/draw.h b/src/draw.h
-index 95e343c..4b315cc 100644
+index cbddbe1..8bc90cb 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -71,6 +71,9 @@ void EraseElementName (ElementTypePtr);
+@@ -70,6 +70,9 @@ void EraseElementPinsAndPads (ElementTypePtr);
+ void EraseElementName (ElementTypePtr);
  void EraseObject (int, void *, void *);
- void LoadBackgroundImage (char *);
  
 +void DrawPPV (int group, const BoxType *);
 +int DrawLayerGroup (int, const BoxType *);
