@@ -859,7 +859,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 
   /* Setup HID function pointers specific to the GL renderer*/
   ghid_hid.end_layer = ghid_end_layer;
-  ghid_hid.draw_polygon = ghid_draw_polygon;
+//  ghid_hid.draw_polygon = ghid_draw_polygon;
 }
 
 void
@@ -941,8 +941,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
   /* TODO: We could use the GLU tessellator though */
-  if (hidgl_stencil_bits() == 0)
-    ghid_hid.draw_polygon = common_draw_polygon;
+//  if (hidgl_stencil_bits() == 0)
+//    ghid_hid.draw_polygon = common_draw_polygon;
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
