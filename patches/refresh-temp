@@ -1,0 +1,23 @@
+Bottom: bb1977f4552ce6613d03cea0c34976f322bee703
+Top:    02eb84fc06aac26d780a52a5f66a6d8d6562b5c3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-28 23:53:19 +0100
+
+Refresh of hid-png-don-t-use-the-core-s-d
+
+---
+
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 13b76a0..ae8b7a5 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -471,8 +471,7 @@ png_expose (BoxType *bounds)
+         continue;
+ 
+       if (set_layer (0, group))
+-        if (DrawLayerGroup (group, bounds))
+-          DrawPPV (group, bounds);
++        DrawLayerGroup (group, bounds);
+     }
+ 
+   CountHoles (&nplated, &nunplated, bounds);
