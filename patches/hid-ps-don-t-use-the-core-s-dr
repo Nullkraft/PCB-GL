@@ -1,5 +1,5 @@
 Bottom: 23e8cf6e90590e8e7a529d4aa9aa7f9111967f7a
-Top:    8c217f9762b4266acdd91615a215d7a71738fd65
+Top:    22b3719ed17adb5b9d1fbe60148115d57d6bd5de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 15:38:36 +0100
 
@@ -9,7 +9,7 @@ hid/ps: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 02448e5..8042efa 100644
+index 02448e5..e007d68 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -34,7 +34,7 @@ RCSID ("$Id$");
@@ -65,7 +65,7 @@ index 02448e5..8042efa 100644
  void
  ps_start_file (FILE *f)
  {
-@@ -434,6 +411,83 @@ psopen (const char *base, const char *which)
+@@ -434,6 +411,79 @@ psopen (const char *base, const char *which)
    return ps_open_file;
  }
  
@@ -127,15 +127,11 @@ index 02448e5..8042efa 100644
 +  if (set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
 +    DrawPaste (SOLDER_LAYER, NULL);
 +
-+  doing_assy = true;
-+
 +  if (set_layer ("topassembly", SL (ASSY, TOP), 0))
 +    PrintAssembly (COMPONENT_LAYER, NULL);
 +
 +  if (set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
 +    PrintAssembly (SOLDER_LAYER, NULL);
-+
-+  doing_assy = false;
 +
 +  if (set_layer ("fab", SL (FAB, 0), 0))
 +    PrintFab (Output.fgGC);
@@ -149,7 +145,7 @@ index 02448e5..8042efa 100644
  /* This is used by other HIDs that use a postscript format, like lpr
     or eps.  */
  void
-@@ -491,41 +545,24 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -491,41 +541,24 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
      }
  
    memset (global.print_group, 0, sizeof (global.print_group));
@@ -195,7 +191,7 @@ index 02448e5..8042efa 100644
    if (!global.multi_file)
      {
        /* %%Page DSC requires both a label and an ordinal */
-@@ -537,13 +574,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -537,13 +570,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
  
        global.doing_toc = 1;
        global.pagecount = 1;  /* 'pagecount' is modified by hid_expose_callback() call */
@@ -212,7 +208,7 @@ index 02448e5..8042efa 100644
  
    if (the_file)
      fprintf (the_file, "showpage\n");
-@@ -629,7 +666,7 @@ corner (FILE *fh, Coord x, Coord y, Coord dx, Coord dy)
+@@ -629,7 +662,7 @@ corner (FILE *fh, Coord x, Coord y, Coord dx, Coord dy)
  }
  
  static int
@@ -221,7 +217,7 @@ index 02448e5..8042efa 100644
  {
    static int lastgroup = -1;
    time_t currenttime;
-@@ -644,21 +681,11 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -644,21 +677,11 @@ ps_set_layer (const char *name, int group, int empty)
    if (empty)
      return 0;
  
@@ -243,16 +239,16 @@ index 02448e5..8042efa 100644
  
    if (global.doing_toc)
      {
-@@ -850,7 +877,7 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -850,7 +873,7 @@ ps_set_layer (const char *name, int group, int empty)
        strcmp (name, "route") != 0
        )
      {
 -      DrawLayer (global.outline_layer, &global.region);
-+      dapi->draw_layer (global.outline_layer, NULL, NULL);
++      DrawLayer (global.outline_layer, NULL);
      }
  
    return 1;
-@@ -1341,7 +1368,6 @@ void ps_ps_init (HID *hid)
+@@ -1341,7 +1364,6 @@ void ps_ps_init (HID *hid)
    hid->get_export_options = ps_get_export_options;
    hid->do_export          = ps_do_export;
    hid->parse_arguments    = ps_parse_arguments;
@@ -260,7 +256,7 @@ index 02448e5..8042efa 100644
    hid->make_gc            = ps_make_gc;
    hid->destroy_gc         = ps_destroy_gc;
    hid->use_mask           = ps_use_mask;
-@@ -1355,7 +1381,6 @@ void ps_ps_init (HID *hid)
+@@ -1355,7 +1377,6 @@ void ps_ps_init (HID *hid)
    hid->draw_rect          = ps_draw_rect;
    hid->fill_circle        = ps_fill_circle;
    hid->fill_polygon       = ps_fill_polygon;
