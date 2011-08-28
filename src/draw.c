@@ -75,65 +75,6 @@ RCSID ("$Id$");
  */
 static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
 
-static int doing_pinout = 0;
-static bool doing_assy = false;
-
-/* ---------------------------------------------------------------------------
- * some local prototypes
- */
-static void DrawEverything (BoxTypePtr);
-static void DrawPPV (int group, const BoxType *);
-static int DrawLayerGroup (int, const BoxType *);
-static void AddPart (void *);
-static void SetPVColor (PinTypePtr, int);
-static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
-static void DrawMask (int side, BoxType *);
-static void DrawPaste (int side, BoxType *);
-static void DrawRats (BoxType *);
-static void DrawSilk (int side, const BoxType *);
-
-/*--------------------------------------------------------------------------------------
- * setup color for pin or via
- */
-static void
-SetPVColor (PinTypePtr Pin, int Type)
-{
-  char *color;
-
-  if (Type == VIA_TYPE)
-    {
-      if (!doing_pinout
-	  && TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
-	{
-	  if (TEST_FLAG (WARNFLAG, Pin))
-	    color = PCB->WarnColor;
-	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
-	    color = PCB->ViaSelectedColor;
-	  else
-	    color = PCB->ConnectedColor;
-	}
-      else
-	color = PCB->ViaColor;
-    }
-  else
-    {
-      if (!doing_pinout
-	  && TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
-	{
-	  if (TEST_FLAG (WARNFLAG, Pin))
-	    color = PCB->WarnColor;
-	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
-	    color = PCB->PinSelectedColor;
-	  else
-	    color = PCB->ConnectedColor;
-	}
-      else
-	color = PCB->PinColor;
-    }
-
-  gui->set_color (Output.fgGC, color);
-}
-
 /*---------------------------------------------------------------------------
  *  Adds the update rect to the update region
  */
@@ -260,8 +201,7 @@ void
 DrawPin (PinTypePtr Pin)
 {
   AddPart (Pin);
-  if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
-      || doing_pinout)
+  if (!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
     DrawPinName (Pin);
 }
 
@@ -281,7 +221,7 @@ void
 DrawPad (PadTypePtr Pad)
 {
   AddPart (Pad);
-  if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, Pad))
+  if (TEST_FLAG (DISPLAYNAMEFLAG, Pad))
     DrawPadName (Pad);
 }
 
@@ -404,7 +344,7 @@ DrawElementPinsAndPads (ElementTypePtr Element)
 {
   PAD_LOOP (Element);
   {
-    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+    if (FRONT (pad) || PCB->InvisibleObjectsOn)
       DrawPad (pad);
   }
   END_LOOP;
