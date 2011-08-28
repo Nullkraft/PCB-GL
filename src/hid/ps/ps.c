@@ -238,8 +238,6 @@ static struct {
 
   double scale_factor;
 
-  BoxType region;
-
   HID_Attr_Val ps_values[NUM_OPTIONS];
 
   bool is_mask;
@@ -522,11 +520,6 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   ps_set_layer (NULL, 0, -1);
   use_gc (NULL);
 
-  global.region.X1 = 0;
-  global.region.Y1 = 0;
-  global.region.X2 = PCB->MaxWidth;
-  global.region.Y2 = PCB->MaxHeight;
-
   if (!global.multi_file)
     {
       /* %%Page DSC requires both a label and an ordinal */
@@ -538,13 +531,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 
       global.doing_toc = 1;
       global.pagecount = 1;  /* 'pagecount' is modified by hid_expose_callback() call */
-      hid_expose_callback (&ps_hid, &global.region, 0);
+      expose ();
     }
 
   global.pagecount = 1; /* Reset 'pagecount' if single file */
   global.doing_toc = 0;
   ps_set_layer (NULL, 0, -1);  /* reset static vars */
-  hid_expose_callback (&ps_hid, &global.region, 0);
+  expose (&ps_hid, &global.region);
 
   if (the_file)
     fprintf (the_file, "showpage\n");
@@ -851,7 +844,7 @@ ps_set_layer (const char *name, int group, int empty)
       strcmp (name, "route") != 0
       )
     {
-      dapi->draw_layer (global.outline_layer, &global.region, NULL);
+      draw_layer (global.outline_layer, NULL, NULL);
     }
 
   return 1;
@@ -1356,7 +1349,6 @@ void ps_ps_init (HID *hid)
   hid->draw_rect          = ps_draw_rect;
   hid->fill_circle        = ps_fill_circle;
   hid->fill_polygon       = ps_fill_polygon;
-  hid->fill_pcb_polygon   = ps_fill_pcb_polygon;
   hid->fill_rect          = ps_fill_rect;
   hid->calibrate          = ps_calibrate;
   hid->set_crosshair      = ps_set_crosshair;

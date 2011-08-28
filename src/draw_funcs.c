@@ -1,3 +1,4 @@
+#if 0
 
 #include "global.h"
 #include "data.h"
@@ -499,3 +500,4 @@ struct draw_funcs d_f = {
 };
 
 struct draw_funcs *dapi = &d_f;
+#endif
