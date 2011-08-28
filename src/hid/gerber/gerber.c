@@ -555,7 +555,7 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
     DrawPaste (SOLDER_LAYER, drawn_area);
 
   if (set_layer ("fab", SL (FAB, 0), 0))
-    PrintFab ();
+    PrintFab (Output.fgGC);
 
   gui->destroy_gc (Output.fgGC);
   gui->destroy_gc (Output.bgGC);
