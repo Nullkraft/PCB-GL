@@ -1,7 +1,7 @@
-Bottom: 12802cbdc0deee0eb2183e0d010f142077fbaff0
-Top:    8f3d571aeb8b5b270df2c258a3d06d3e3847efce
+Bottom: 3bebc3b80c81ff47b4587133772a21e1e95fce34
+Top:    42e05e1f7f0c46ae7d58d00aac9e52697516f4b6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-28 16:30:51 +0100
+Date:   2011-08-28 23:53:43 +0100
 
 hid/gerber: Don't use the core's drawing functions
 
@@ -9,7 +9,7 @@ hid/gerber: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 8829527..af3ad50 100644
+index 4a2d233..7573d24 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -27,6 +27,7 @@
@@ -37,7 +37,7 @@ index 8829527..af3ad50 100644
  static int lastcap = -1;
  static int lastcolor = -1;
  static int print_group[MAX_LAYER];
-@@ -366,26 +366,6 @@ gerber_get_export_options (int *n)
+@@ -390,26 +390,6 @@ gerber_get_export_options (int *n)
    return gerber_options;
  }
  
@@ -64,7 +64,7 @@ index 8829527..af3ad50 100644
  static void
  maybe_close_f (FILE *f)
  {
-@@ -486,17 +466,88 @@ assign_file_suffix (char *dest, int idx)
+@@ -510,17 +490,88 @@ assign_file_suffix (char *dest, int idx)
  }
  
  static void
@@ -160,7 +160,7 @@ index 8829527..af3ad50 100644
  
    if (!options)
      {
-@@ -542,27 +593,22 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -566,27 +617,22 @@ gerber_do_export (HID_Attr_Val * options)
    else
      {
        memset (print_group, 0, sizeof (print_group));
@@ -199,7 +199,7 @@ index 8829527..af3ad50 100644
    lastcolor = -1;
  
    region.X1 = 0;
-@@ -573,21 +619,16 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -597,21 +643,16 @@ gerber_do_export (HID_Attr_Val * options)
    pagecount = 1;
    resetApertures ();
  
@@ -223,7 +223,7 @@ index 8829527..af3ad50 100644
  }
  
  static void
-@@ -609,26 +650,26 @@ drill_sort (const void *va, const void *vb)
+@@ -633,26 +674,26 @@ drill_sort (const void *va, const void *vb)
    return b->y - b->y;
  }
  
@@ -262,7 +262,7 @@ index 8829527..af3ad50 100644
    flash_drills = 0;
    if (strcmp (name, "outline") == 0 ||
        strcmp (name, "route") == 0)
-@@ -639,18 +680,18 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -663,18 +704,18 @@ gerber_set_layer (const char *name, int group, int empty)
        int i;
        /* dump pending drills in sequence */
        qsort (pending_drills, n_pending_drills, sizeof (pending_drills[0]),
@@ -292,7 +292,7 @@ index 8829527..af3ad50 100644
        free (pending_drills);
        n_pending_drills = max_pending_drills = 0;
        pending_drills = NULL;
-@@ -659,126 +700,110 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -683,126 +724,110 @@ gerber_set_layer (const char *name, int group, int empty)
    is_drill = (SL_TYPE (idx) == SL_PDRILL || SL_TYPE (idx) == SL_UDRILL);
    is_mask = (SL_TYPE (idx) == SL_MASK);
    current_mask = 0;
@@ -504,7 +504,7 @@ index 8829527..af3ad50 100644
  
   emit_outline:
    /* If we're printing a copper layer other than the outline layer,
-@@ -791,37 +816,37 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -815,37 +840,37 @@ gerber_set_layer (const char *name, int group, int empty)
    if (copy_outline_mode == COPY_OUTLINE_SILK
        && SL_TYPE (idx) == SL_SILK)
      want_outline = 1;
@@ -569,7 +569,7 @@ index 8829527..af3ad50 100644
      }
  
    return 1;
-@@ -1252,7 +1277,6 @@ hid_gerber_init ()
+@@ -1276,7 +1301,6 @@ hid_gerber_init ()
    gerber_hid.get_export_options  = gerber_get_export_options;
    gerber_hid.do_export           = gerber_do_export;
    gerber_hid.parse_arguments     = gerber_parse_arguments;

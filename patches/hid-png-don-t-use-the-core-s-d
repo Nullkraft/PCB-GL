@@ -1,7 +1,7 @@
-Bottom: 3b2d0362069355fc1577becbef41511f320c32c2
-Top:    02eb84fc06aac26d780a52a5f66a6d8d6562b5c3
+Bottom: 197324e3de4790630ced038e444554afb042566c
+Top:    e23129bd6d24ef44e1a9dfd27df8e6c52dd65ce9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-28 23:20:00 +0100
+Date:   2011-08-28 23:53:44 +0100
 
 hid/png: Don't use the core's drawing functions
 
@@ -9,7 +9,7 @@ hid/png: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 61437a0..ae8b7a5 100644
+index f00d407..f58ed9f 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -107,9 +107,7 @@ static color_struct *black = NULL, *white = NULL;
@@ -22,7 +22,7 @@ index 61437a0..ae8b7a5 100644
  static int print_group[MAX_LAYER];
  static int print_layer[MAX_LAYER];
  
-@@ -312,10 +310,196 @@ layer_sort (const void *va, const void *vb)
+@@ -415,10 +413,196 @@ layer_sort (const void *va, const void *vb)
    return b - a;
  }
  
@@ -219,7 +219,7 @@ index 61437a0..ae8b7a5 100644
  static void
  parse_bloat (const char *str)
  {
-@@ -423,8 +607,6 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -526,8 +710,6 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
      }
    linewidth = -1;
    lastbrush = (gdImagePtr)((void *) -1);
@@ -228,7 +228,7 @@ index 61437a0..ae8b7a5 100644
    show_solder_side = Settings.ShowSolderSide;
  
    in_mono = options[HA_mono].int_value;
-@@ -440,7 +622,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -543,7 +725,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
  	}
      }
  
@@ -237,7 +237,7 @@ index 61437a0..ae8b7a5 100644
  
    memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
    PCB->Flags = save_flags;
-@@ -911,154 +1093,6 @@ png_parse_arguments (int *argc, char ***argv)
+@@ -1014,154 +1196,6 @@ png_parse_arguments (int *argc, char ***argv)
    hid_parse_command_line (argc, argv);
  }
  
@@ -392,7 +392,7 @@ index 61437a0..ae8b7a5 100644
  static hidGC
  png_make_gc (void)
  {
-@@ -1548,7 +1582,6 @@ hid_png_init ()
+@@ -1651,7 +1685,6 @@ hid_png_init ()
    png_hid.get_export_options  = png_get_export_options;
    png_hid.do_export           = png_do_export;
    png_hid.parse_arguments     = png_parse_arguments;

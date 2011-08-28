@@ -1,7 +1,7 @@
-Bottom: e362824bb1b2d7678035cf4029e423552c5fd6df
-Top:    12802cbdc0deee0eb2183e0d010f142077fbaff0
+Bottom: 996aedbedc8ec1974fd8b190b1d3089cda893674
+Top:    3bebc3b80c81ff47b4587133772a21e1e95fce34
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-28 15:38:36 +0100
+Date:   2011-08-28 23:53:43 +0100
 
 hid/ps: Don't use the core's drawing functions
 
@@ -9,7 +9,7 @@ hid/ps: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 02448e5..3b7477f 100644
+index 87202f6..0c5b0bd 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -34,7 +34,6 @@ RCSID ("$Id$");
@@ -20,7 +20,7 @@ index 02448e5..3b7477f 100644
  static void use_gc (hidGC gc);
  
  typedef struct hid_gc_struct
-@@ -213,7 +212,6 @@ static struct {
+@@ -368,7 +367,6 @@ static struct {
    int pagecount;
    Coord linewidth;
    bool print_group[MAX_LAYER];
@@ -28,7 +28,7 @@ index 02448e5..3b7477f 100644
    double fade_ratio;
    bool multi_file;
    Coord media_width, media_height, ps_width, ps_height;
-@@ -237,8 +235,6 @@ static struct {
+@@ -392,8 +390,6 @@ static struct {
  
    double scale_factor;
  
@@ -37,7 +37,7 @@ index 02448e5..3b7477f 100644
    HID_Attr_Val ps_values[NUM_OPTIONS];
  
    bool is_mask;
-@@ -260,26 +256,6 @@ ps_get_export_options (int *n)
+@@ -415,26 +411,6 @@ ps_get_export_options (int *n)
    return ps_attribute_list;
  }
  
@@ -64,7 +64,7 @@ index 02448e5..3b7477f 100644
  void
  ps_start_file (FILE *f)
  {
-@@ -434,18 +410,312 @@ psopen (const char *base, const char *which)
+@@ -589,18 +565,312 @@ psopen (const char *base, const char *which)
    return ps_open_file;
  }
  
@@ -383,7 +383,7 @@ index 02448e5..3b7477f 100644
  
    global.f = the_file;
    global.drill_helper = options[HA_drillhelper].int_value;
-@@ -491,65 +761,36 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -646,65 +916,36 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
      }
  
    memset (global.print_group, 0, sizeof (global.print_group));
@@ -456,7 +456,7 @@ index 02448e5..3b7477f 100644
  }
  
  static void
-@@ -604,258 +845,6 @@ ps_parse_arguments (int *argc, char ***argv)
+@@ -759,258 +1000,6 @@ ps_parse_arguments (int *argc, char ***argv)
    hid_parse_command_line (argc, argv);
  }
  
@@ -715,7 +715,7 @@ index 02448e5..3b7477f 100644
  static hidGC
  ps_make_gc (void)
  {
-@@ -1090,7 +1079,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -1245,7 +1234,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
  }
  
  static void
@@ -724,7 +724,7 @@ index 02448e5..3b7477f 100644
  {
    /* Ignore clip_box, just draw everything */
  
-@@ -1341,7 +1330,6 @@ void ps_ps_init (HID *hid)
+@@ -1496,7 +1485,6 @@ void ps_ps_init (HID *hid)
    hid->get_export_options = ps_get_export_options;
    hid->do_export          = ps_do_export;
    hid->parse_arguments    = ps_parse_arguments;
@@ -732,7 +732,7 @@ index 02448e5..3b7477f 100644
    hid->make_gc            = ps_make_gc;
    hid->destroy_gc         = ps_destroy_gc;
    hid->use_mask           = ps_use_mask;
-@@ -1355,7 +1343,6 @@ void ps_ps_init (HID *hid)
+@@ -1510,7 +1498,6 @@ void ps_ps_init (HID *hid)
    hid->draw_rect          = ps_draw_rect;
    hid->fill_circle        = ps_fill_circle;
    hid->fill_polygon       = ps_fill_polygon;

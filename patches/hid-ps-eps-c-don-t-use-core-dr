@@ -1,7 +1,7 @@
-Bottom: 8f3d571aeb8b5b270df2c258a3d06d3e3847efce
-Top:    3b2d0362069355fc1577becbef41511f320c32c2
+Bottom: 42e05e1f7f0c46ae7d58d00aac9e52697516f4b6
+Top:    197324e3de4790630ced038e444554afb042566c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-28 23:06:55 +0100
+Date:   2011-08-28 23:53:44 +0100
 
 hid/ps/eps.c: Don't use core drawing routines
 
@@ -9,7 +9,7 @@ hid/ps/eps.c: Don't use core drawing routines
 ---
 
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 903270e..baef538 100644
+index d280594..528d0d7 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -36,7 +36,6 @@ RCSID ("$Id$");
@@ -28,7 +28,7 @@ index 903270e..baef538 100644
  static int lastcap = -1;
  static int lastcolor = -1;
  static int print_group[MAX_LAYER];
-@@ -111,6 +109,9 @@ eps_get_export_options (int *n)
+@@ -153,6 +151,9 @@ eps_get_export_options (int *n)
  }
  
  static int comp_layer, solder_layer;
@@ -38,7 +38,7 @@ index 903270e..baef538 100644
  
  static int
  group_for_layer (int l)
-@@ -142,9 +143,84 @@ layer_sort (const void *va, const void *vb)
+@@ -184,9 +185,84 @@ layer_sort (const void *va, const void *vb)
    return b - a;
  }
  
@@ -126,7 +126,7 @@ index 903270e..baef538 100644
  
  void
  eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
-@@ -152,11 +228,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -194,11 +270,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    int i;
    static int saved_layer_stack[MAX_LAYER];
    BoxType region;
@@ -138,7 +138,7 @@ index 903270e..baef538 100644
  
    f = the_file;
  
-@@ -226,7 +297,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -268,7 +339,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    fprintf (f, "%%!PS-Adobe-3.0 EPSF-3.0\n");
    linewidth = -1;
    lastcap = -1;
@@ -146,7 +146,7 @@ index 903270e..baef538 100644
    lastcolor = -1;
  
    in_mono = options[HA_mono].int_value;
-@@ -269,8 +339,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -311,8 +381,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    fprintf (f,
  	   "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
  
@@ -156,7 +156,7 @@ index 903270e..baef538 100644
  
    fprintf (f, "showpage\n");
  
-@@ -278,9 +347,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -320,9 +389,6 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    fprintf (f, "%%%%Trailer\n");
    fprintf (f, "cleartomark countdictstack exch sub { end } repeat restore\n");
    fprintf (f, "%%%%EOF\n");
@@ -166,7 +166,7 @@ index 903270e..baef538 100644
  }
  
  static void
-@@ -326,66 +392,6 @@ eps_parse_arguments (int *argc, char ***argv)
+@@ -368,66 +434,6 @@ eps_parse_arguments (int *argc, char ***argv)
    hid_parse_command_line (argc, argv);
  }
  
@@ -233,7 +233,7 @@ index 903270e..baef538 100644
  static hidGC
  eps_make_gc (void)
  {
-@@ -639,7 +645,6 @@ hid_eps_init ()
+@@ -681,7 +687,6 @@ hid_eps_init ()
    eps_hid.get_export_options  = eps_get_export_options;
    eps_hid.do_export           = eps_do_export;
    eps_hid.parse_arguments     = eps_parse_arguments;
