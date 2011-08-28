@@ -140,7 +140,7 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
 #undef BOUNDS_INSIDE_CLIP_THRESHOLD
 
 void
-common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+common_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   if (!poly->NoHolesValid)
     {
@@ -469,8 +469,7 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
 void
 common_draw_helpers_init (HID *hid)
 {
-  hid->fill_pcb_polygon     = common_fill_pcb_polygon;
-  hid->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
+  hid->draw_polygon         = common_draw_polygon;
   hid->fill_pcb_pad         = common_fill_pcb_pad;
   hid->thindraw_pcb_pad     = common_thindraw_pcb_pad;
   hid->fill_pcb_pv          = common_fill_pcb_pv;
