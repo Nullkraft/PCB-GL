@@ -469,15 +469,11 @@ ps_expose (void)
   if (set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
     DrawPaste (SOLDER_LAYER, NULL);
 
-  doing_assy = true;
-
   if (set_layer ("topassembly", SL (ASSY, TOP), 0))
     PrintAssembly (COMPONENT_LAYER, NULL);
 
   if (set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
     PrintAssembly (SOLDER_LAYER, NULL);
-
-  doing_assy = false;
 
   if (set_layer ("fab", SL (FAB, 0), 0))
     PrintFab (Output.fgGC);
@@ -877,7 +873,7 @@ set_layer (const char *name, int group, int empty)
       strcmp (name, "route") != 0
       )
     {
-      dapi->draw_layer (global.outline_layer, NULL, NULL);
+      DrawLayer (global.outline_layer, NULL);
     }
 
   return 1;
