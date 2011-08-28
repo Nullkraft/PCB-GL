@@ -1,5 +1,5 @@
 Bottom: 368848ea60b78ec10bbf4d64aef14b841e84ebcc
-Top:    bd6a25a2ee9c3676887e3ed08006b42698caf0fa
+Top:    28e537c232640942f6a76f5f913524cff208ce1f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 01:26:19 +0100
 
@@ -128,22 +128,36 @@ index 9d88086..5b67cbc 100644
    hid->thindraw_pcb_pad =     nogui_thindraw_pcb_pad;
    hid->fill_pcb_pv =          nogui_fill_pcb_pv;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 21a22e8..5073fa9 100644
+index 21a22e8..4e078e9 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -578,20 +578,35 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -578,20 +578,49 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
  }
  
  void
 -ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 +ghid_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
++  static char *color;
    USE_GC (gc);
  
 -  hidgl_fill_pcb_polygon (poly, clip_box, gport->view.coord_per_px);
 -}
 +  if (!poly->Clipped)
 +    return;
++
++#if 0
++  if (TEST_FLAG (SELECTEDFLAG, poly))
++    color = layer->SelectedColor;
++  else if (TEST_FLAG (FOUNDFLAG, poly))
++#endif
++    color = PCB->ConnectedColor;
++#if 0
++  else
++    color = layer->Color;
++#endif
++
++  gui->set_color (Output.fgGC, color);
 +
 +  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
 +    {
@@ -177,7 +191,7 @@ index 21a22e8..5073fa9 100644
  }
  
  void
-@@ -830,8 +845,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -830,8 +859,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  
    /* Setup HID function pointers specific to the GL renderer*/
    ghid_hid.end_layer = ghid_end_layer;
@@ -187,7 +201,7 @@ index 21a22e8..5073fa9 100644
  }
  
  void
-@@ -914,7 +928,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -914,7 +942,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
    if (hidgl_stencil_bits() == 0)
