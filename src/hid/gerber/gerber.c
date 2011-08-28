@@ -466,35 +466,6 @@ assign_file_suffix (char *dest, int idx)
   strcat (dest, sext);
 }
 
-typedef struct
-{
-  int nplated;
-  int nunplated;
-} HoleCountStruct;
-
-static int
-hole_counting_callback (const BoxType * b, void *cl)
-{
-  PinTypePtr pin = (PinTypePtr) b;
-  HoleCountStruct *hcs = cl;
-  if (TEST_FLAG (HOLEFLAG, pin))
-    hcs->nunplated++;
-  else
-    hcs->nplated++;
-  return 1;
-}
-
-static void
-count_holes (BoxType *region, int *plated, int *unplated)
-{
-  HoleCountStruct hcs;
-  hcs.nplated = hcs.nunplated = 0;
-  r_search (PCB->Data->pin_tree, region, NULL, hole_counting_callback, &hcs);
-  r_search (PCB->Data->via_tree, region, NULL, hole_counting_callback, &hcs);
-  if (plated != NULL) *plated = hcs.nplated;
-  if (unplated != NULL) *unplated = hcs.nunplated;
-}
-
 static int
 hole_callback (const BoxType * b, void *cl)
 {
