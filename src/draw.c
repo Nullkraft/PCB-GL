@@ -915,7 +915,7 @@ poly_callback (const BoxType * b, void *cl)
   struct poly_info *i = cl;
   PolygonType *polygon = (PolygonType *)b;
 
-  gui->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
+  gui->draw_polygon (Output.fgGC, polygon, i->drawn_area);
 
   return 1;
 }

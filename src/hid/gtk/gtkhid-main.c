@@ -2143,7 +2143,6 @@ hid_gtk_init ()
   ghid_hid.draw_arc                 = ghid_draw_arc;
   ghid_hid.draw_rect                = ghid_draw_rect;
   ghid_hid.fill_circle              = ghid_fill_circle;
-  ghid_hid.draw_polygon             = common_gui_draw_polygon;
   ghid_hid.fill_rect                = ghid_fill_rect;
 
   ghid_hid.calibrate                = ghid_calibrate;
