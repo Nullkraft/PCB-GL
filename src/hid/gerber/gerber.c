@@ -403,7 +403,7 @@ maybe_close_f (FILE *f)
     }
 }
 
-static BoxType region;
+//static BoxType region;
 
 /* Very similar to layer_type_to_file_name() but appends only a
    three-character suffix compatible with Eagle's defaults.  */
@@ -641,10 +641,12 @@ gerber_do_export (HID_Attr_Val * options)
   lastcap = -1;
   lastcolor = -1;
 
+#if 0
   region.X1 = 0;
   region.Y1 = 0;
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
+#endif
 
   pagecount = 1;
   resetApertures ();
