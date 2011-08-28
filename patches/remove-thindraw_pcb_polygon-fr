@@ -1,5 +1,5 @@
 Bottom: 368848ea60b78ec10bbf4d64aef14b841e84ebcc
-Top:    235bc7b2c762d9e5f43e93408127bf2f1a35a0b9
+Top:    98b331d7a4b5a8540f90349b770d2a2981eac2df
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 01:26:19 +0100
 
@@ -71,10 +71,10 @@ index b1f532f..ae1f3f8 100644
      void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
      void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 21a22e8..e955845 100644
+index 21a22e8..695f7f4 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -578,20 +578,40 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -578,11 +578,30 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
  }
  
  void
@@ -104,18 +104,6 @@ index 21a22e8..e955845 100644
 +    }
 +
 +
- }
- 
- void
- ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
- {
-+  double old_alpha_mult = gc->alpha_mult;
-   common_thindraw_pcb_polygon (gc, poly, clip_box);
--  ghid_set_alpha_mult (gc, 0.25);
-+  ghid_set_alpha_mult (gc, gc->alpha_mult * 0.25);
-   ghid_fill_pcb_polygon (gc, poly, clip_box);
--  ghid_set_alpha_mult (gc, 1.0);
-+  ghid_set_alpha_mult (gc, old_alpha_mult);
  }
  
  void
