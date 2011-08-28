@@ -502,8 +502,7 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
         continue;
 
       if (set_layer (0, group))
-        if (DrawLayerGroup (group, drawn_area))
-          DrawPPV (group, drawn_area);
+        DrawLayerGroup (group, drawn_area);
     }
 
   count_holes (drawn_area, &nplated, &nunplated);
