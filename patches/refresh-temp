@@ -1,0 +1,41 @@
+Bottom: 2c33c9a1028295f905e3773c10d615145cf5cc0e
+Top:    eb5c1822ba34dacdd842d701de2bcb6dfa215270
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-28 16:35:02 +0100
+
+Refresh of hid-gerber-don-t-use-the-core-
+
+---
+
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index d521474..dd151aa 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -466,27 +466,6 @@ assign_file_suffix (char *dest, int idx)
+   strcat (dest, sext);
+ }
+ 
+-static int
+-hole_callback (const BoxType * b, void *cl)
+-{
+-  PinTypePtr pin = (PinTypePtr) b;
+-  bool plated = *(bool *)cl;
+-
+-  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
+-      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
+-    return 1;
+-
+-  gui->fill_circle (Output.bgGC, pin->X, pin->Y, pin->DrillingHole / 2);
+-  return 1;
+-}
+-
+-static void
+-DrawHoles (bool plated, BoxType *drawn_area)
+-{
+-  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
+-  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+-}
+-
+ static void
+ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
+ {
