@@ -1,5 +1,5 @@
 Bottom: 23e8cf6e90590e8e7a529d4aa9aa7f9111967f7a
-Top:    23e8cf6e90590e8e7a529d4aa9aa7f9111967f7a
+Top:    008831cf66925fe71e757177d99e2a77eaa4d998
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 15:46:36 +0100
 
@@ -10,4 +10,104 @@ This function may be more generally useful.
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index ea3e1ce..1bbbca0 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -454,36 +454,6 @@ DrawHoles (bool draw_plated, bool draw_unplated, BoxType *drawn_area)
+   r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+ }
+ 
+-typedef struct
+-{
+-  int nplated;
+-  int nunplated;
+-} HoleCountStruct;
+-
+-static int
+-hole_counting_callback (const BoxType * b, void *cl)
+-{
+-  PinTypePtr pin = (PinTypePtr) b;
+-  HoleCountStruct *hcs = (HoleCountStruct *) cl;
+-  if (TEST_FLAG (HOLEFLAG, pin))
+-    hcs->nunplated++;
+-  else
+-    hcs->nplated++;
+-  return 1;
+-}
+-
+-static void
+-CountHoles (int *plated, int *unplated, BoxType *drawn_area)
+-{
+-  HoleCountStruct hcs = {0, 0};
+-
+-  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_counting_callback, &hcs);
+-  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_counting_callback, &hcs);
+-
+-  if (plated != NULL) *plated = hcs.nplated;
+-  if (unplated != NULL) *unplated = hcs.nunplated;
+-}
+-
+ static void
+ _draw_line (LineType *line)
+ {
+diff --git a/src/misc.c b/src/misc.c
+index af1e58f..f6e01c5 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -681,6 +681,43 @@ IsPasteEmpty (int side)
+   return paste_empty;
+ }
+ 
++
++typedef struct
++{
++  int nplated;
++  int nunplated;
++} HoleCountStruct;
++
++static int
++hole_counting_callback (const BoxType * b, void *cl)
++{
++  PinTypePtr pin = (PinTypePtr) b;
++  HoleCountStruct *hcs = (HoleCountStruct *) cl;
++  if (TEST_FLAG (HOLEFLAG, pin))
++    hcs->nunplated++;
++  else
++    hcs->nplated++;
++  return 1;
++}
++
++/* ---------------------------------------------------------------------------
++ * counts the number of plated and unplated holes in the design within
++ * a given area of the board. To count for the whole board, pass NULL
++ * within_area.
++ */
++void
++CountHoles (int *plated, int *unplated, BoxType *within_area)
++{
++  HoleCountStruct hcs = {0, 0};
++
++  r_search (PCB->Data->pin_tree, within_area, NULL, hole_counting_callback, &hcs);
++  r_search (PCB->Data->via_tree, within_area, NULL, hole_counting_callback, &hcs);
++
++  if (plated != NULL)   *plated   = hcs.nplated;
++  if (unplated != NULL) *unplated = hcs.nunplated;
++}
++
++
+ /* ---------------------------------------------------------------------------
+  * gets minimum and maximum coordinates
+  * returns NULL if layout is empty
+diff --git a/src/misc.h b/src/misc.h
+index deaca84..f625cbc 100644
+--- a/src/misc.h
++++ b/src/misc.h
+@@ -59,6 +59,7 @@ bool IsLayerEmpty (LayerTypePtr);
+ bool IsLayerNumEmpty (int);
+ bool IsLayerGroupEmpty (int);
+ bool IsPasteEmpty (int);
++void CountHoles (int *, int *, BoxType *);
+ BoxTypePtr GetDataBoundingBox (DataTypePtr);
+ void CenterDisplay (Coord, Coord);
+ void SetFontInfo (FontTypePtr);
