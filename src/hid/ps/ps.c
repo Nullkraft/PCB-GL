@@ -1240,7 +1240,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 }
 
 static void
-ps_fill_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
+ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
 {
   /* Ignore clip_box, just draw everything */
 
@@ -1492,7 +1492,7 @@ void ps_ps_init (HID *hid)
   hid->get_export_options = ps_get_export_options;
   hid->do_export          = ps_do_export;
   hid->parse_arguments    = ps_parse_arguments;
-  hid->fill_pcb_polygon   = ps_fill_pcb_polygon;
+  hid->draw_pcb_polygon   = ps_draw_pcb_polygon;
   hid->calibrate          = ps_calibrate;
   hid->set_crosshair      = ps_set_crosshair;
 }

@@ -147,7 +147,7 @@ nogui_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 }
 
 static void
-nogui_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+nogui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   CRASH;
 }
@@ -454,7 +454,7 @@ common_nogui_init (HID *hid)
   hid->invalidate_all =       nogui_invalidate_all;
   hid->set_layer =            nogui_set_layer;
   hid->end_layer =            nogui_end_layer;
-  hid->fill_pcb_polygon =     nogui_fill_pcb_polygon;
+  hid->draw_pcb_polygon =     nogui_draw_pcb_polygon;
   hid->fill_pcb_pad =         nogui_fill_pcb_pad;
   hid->thindraw_pcb_pad =     nogui_thindraw_pcb_pad;
   hid->fill_pcb_pv =          nogui_fill_pcb_pv;
