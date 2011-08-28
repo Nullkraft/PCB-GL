@@ -111,9 +111,9 @@ static HID nelma_hid;
 
 static struct color_struct *black = NULL, *white = NULL;
 static Coord    linewidth = -1;
-static int      lastgroup = -1;
+//static int      lastgroup = -1;
 static gdImagePtr lastbrush = (gdImagePtr)((void *) -1);
-static int      lastcap = -1;
+//static int      lastcap = -1;
 static int      lastcolor = -1;
 
 /* gd image and file for PNG export */
@@ -605,6 +605,7 @@ nelma_finish_png()
 void 
 nelma_start_png_export()
 {
+#if 0
 	BoxType         region;
 
 	region.X1 = 0;
@@ -620,6 +621,7 @@ nelma_start_png_export()
 	lastgroup = -1;
 
 	hid_expose_callback(&nelma_hid, &region, 0);
+#endif
 }
 
 static void 

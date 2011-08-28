@@ -270,7 +270,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 	   "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
 
   lastgroup = -1;
-  hid_expose_callback (&eps_hid, bounds, 0);
+  //hid_expose_callback (&eps_hid, bounds, 0);
 
   fprintf (f, "showpage\n");
 
