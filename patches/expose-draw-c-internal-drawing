@@ -1,5 +1,5 @@
-Bottom: c1f26b4ee88a37e2aa617716e1839ea029abf982
-Top:    0258b13580fcb1b467109d0b69dbbd0ccc3dd1f1
+Bottom: ccabed7cd8cf2f01ace5f773982d1e271b9e6676
+Top:    ccabed7cd8cf2f01ace5f773982d1e271b9e6676
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 15:05:28 +0100
 
@@ -8,60 +8,4 @@ Expose draw.c internal drawing APIs
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 5102e0c..92ed769 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -87,10 +87,7 @@ static void DrawPPV (int group, const BoxType *);
- static int DrawLayerGroup (int, const BoxType *);
- static void AddPart (void *);
- static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
--static void DrawMask (int side, BoxType *);
--static void DrawPaste (int side, BoxType *);
- static void DrawRats (BoxType *);
--static void DrawSilk (int side, const BoxType *);
- 
- 
- /*---------------------------------------------------------------------------
-@@ -651,7 +648,7 @@ pad_mask_callback (const BoxType * b, void *cl)
-  * Draws silk layer.
-  */
- 
--static void
-+void
- DrawSilk (int side, const BoxType * drawn_area)
- {
- #if 0
-@@ -710,7 +707,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
- /* ---------------------------------------------------------------------------
-  * draws solder mask layer - this will cover nearly everything
-  */
--static void
-+void
- DrawMask (int side, BoxType * screen)
- {
-   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
-@@ -739,7 +736,7 @@ DrawMask (int side, BoxType * screen)
- /* ---------------------------------------------------------------------------
-  * draws solder paste layer for a given side of the board
-  */
--static void
-+void
- DrawPaste (int side, BoxType *drawn_area)
- {
-   gui->set_color (Output.fgGC, PCB->ElementColor);
-diff --git a/src/draw.h b/src/draw.h
-index 7e27e5b..95e343c 100644
---- a/src/draw.h
-+++ b/src/draw.h
-@@ -71,6 +71,10 @@ void EraseElementName (ElementTypePtr);
- void EraseObject (int, void *, void *);
- void LoadBackgroundImage (char *);
- 
-+void DrawMask (int side, BoxType *);
-+void DrawSilk (int side, const BoxType *);
-+void DrawPaste (int side, BoxType *);
-+
- /*GdkDrawable *draw_get_current_drawable(void);*/
- 
- #endif
+
