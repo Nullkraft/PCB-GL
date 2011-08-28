@@ -199,8 +199,7 @@ eps_expose (BoxType *bounds)
         continue;
 
       if (set_layer (0, group))
-        if (DrawLayerGroup (group, bounds))
-          DrawPPV (group, bounds);
+        DrawLayerGroup (group, bounds);
     }
 
   CountHoles (&nplated, &nunplated, bounds);
