@@ -1,5 +1,5 @@
-Bottom: 0d38ff6a95b93eccd650a777eac3f17362512b4d
-Top:    c1f26b4ee88a37e2aa617716e1839ea029abf982
+Bottom: 4372d083a598ff29626b9cef598d47d3a41faa4b
+Top:    ccabed7cd8cf2f01ace5f773982d1e271b9e6676
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-26 15:05:28 +0100
 
@@ -310,7 +310,7 @@ index 993b529..5102e0c 100644
    if (n_entries > 1)
      rv = 1;
 diff --git a/src/draw.h b/src/draw.h
-index 484ae98..7e27e5b 100644
+index ef32ebb..af72682 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -54,7 +54,6 @@ void DrawElementName (ElementTypePtr);
@@ -585,7 +585,7 @@ index 8829527..48bf722 100644
  	{
  	  hidGC gc = gui->make_gc ();
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index fb9b8cc..57d2b58 100644
+index 02448e5..dbfc19e 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -17,6 +17,7 @@
@@ -596,9 +596,9 @@ index fb9b8cc..57d2b58 100644
  
  #include "hid.h"
  #include "../hidint.h"
-@@ -849,7 +850,7 @@ ps_set_layer (const char *name, int group, int empty)
-       && strcmp (name, "outline")
-       && strcmp (name, "route"))
+@@ -850,7 +851,7 @@ ps_set_layer (const char *name, int group, int empty)
+       strcmp (name, "route") != 0
+       )
      {
 -      DrawLayer (global.outline_layer, &global.region);
 +      dapi->draw_layer (global.outline_layer, &global.region, NULL);
