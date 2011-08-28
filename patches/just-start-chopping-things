@@ -1,5 +1,5 @@
 Bottom: 28e537c232640942f6a76f5f913524cff208ce1f
-Top:    b341a41164ea328da46b392de81c7b3cf7059592
+Top:    7d3137a259dfb804034bc6b07edcb49a02501287
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 12:09:32 +0100
 
@@ -9,10 +9,76 @@ Just start chopping things
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 1e7cfee..f0279f2 100644
+index 1e7cfee..e80dc11 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -172,983 +172,6 @@ Redraw (void)
+@@ -75,65 +75,6 @@ RCSID ("$Id$");
+  */
+ static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
+ 
+-static int doing_pinout = 0;
+-static bool doing_assy = false;
+-
+-/* ---------------------------------------------------------------------------
+- * some local prototypes
+- */
+-static void DrawEverything (BoxTypePtr);
+-static void DrawPPV (int group, const BoxType *);
+-static int DrawLayerGroup (int, const BoxType *);
+-static void AddPart (void *);
+-static void SetPVColor (PinTypePtr, int);
+-static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
+-static void DrawMask (int side, BoxType *);
+-static void DrawPaste (int side, BoxType *);
+-static void DrawRats (BoxType *);
+-static void DrawSilk (int side, const BoxType *);
+-
+-/*--------------------------------------------------------------------------------------
+- * setup color for pin or via
+- */
+-static void
+-SetPVColor (PinTypePtr Pin, int Type)
+-{
+-  char *color;
+-
+-  if (Type == VIA_TYPE)
+-    {
+-      if (!doing_pinout
+-	  && TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
+-	{
+-	  if (TEST_FLAG (WARNFLAG, Pin))
+-	    color = PCB->WarnColor;
+-	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+-	    color = PCB->ViaSelectedColor;
+-	  else
+-	    color = PCB->ConnectedColor;
+-	}
+-      else
+-	color = PCB->ViaColor;
+-    }
+-  else
+-    {
+-      if (!doing_pinout
+-	  && TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
+-	{
+-	  if (TEST_FLAG (WARNFLAG, Pin))
+-	    color = PCB->WarnColor;
+-	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+-	    color = PCB->PinSelectedColor;
+-	  else
+-	    color = PCB->ConnectedColor;
+-	}
+-      else
+-	color = PCB->PinColor;
+-    }
+-
+-  gui->set_color (Output.fgGC, color);
+-}
+-
+ /*---------------------------------------------------------------------------
+  *  Adds the update rect to the update region
+  */
+@@ -172,983 +113,6 @@ Redraw (void)
  }
  
  static void
@@ -996,7 +1062,7 @@ index 1e7cfee..f0279f2 100644
  GatherPVName (PinTypePtr Ptr)
  {
    BoxType box;
-@@ -1211,89 +234,6 @@ GatherPadName (PadTypePtr Pad)
+@@ -1211,89 +175,6 @@ GatherPadName (PadTypePtr Pad)
  }
  
  /* ---------------------------------------------------------------------------
@@ -1086,7 +1152,35 @@ index 1e7cfee..f0279f2 100644
   * draw a via object
   */
  void
-@@ -1733,43 +673,3 @@ DrawObject (int type, void *ptr1, void *ptr2)
+@@ -1320,8 +201,7 @@ void
+ DrawPin (PinTypePtr Pin)
+ {
+   AddPart (Pin);
+-  if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
+-      || doing_pinout)
++  if (!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
+     DrawPinName (Pin);
+ }
+ 
+@@ -1341,7 +221,7 @@ void
+ DrawPad (PadTypePtr Pad)
+ {
+   AddPart (Pad);
+-  if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, Pad))
++  if (TEST_FLAG (DISPLAYNAMEFLAG, Pad))
+     DrawPadName (Pad);
+ }
+ 
+@@ -1464,7 +344,7 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+ {
+   PAD_LOOP (Element);
+   {
+-    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
++    if (FRONT (pad) || PCB->InvisibleObjectsOn)
+       DrawPad (pad);
+   }
+   END_LOOP;
+@@ -1733,43 +613,3 @@ DrawObject (int type, void *ptr1, void *ptr2)
        break;
      }
  }
