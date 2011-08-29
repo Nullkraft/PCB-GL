@@ -1,0 +1,58 @@
+Bottom: adee5f4ad5522815b55e059666e3397d4eaef6f2
+Top:    5b9ddfb52418fe50338e229cded5505ec47bfc1b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-30 00:15:52 +0100
+
+Refresh of draw-c-expose-some-drawing-api
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 07890c2..8c6fbf4 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -438,7 +438,7 @@ hole_callback (const BoxType * b, void *cl)
+   return 1;
+ }
+ 
+-static void
++void
+ DrawHoles (bool draw_plated, bool draw_unplated, BoxType *drawn_area)
+ {
+   int plated = -1;
+@@ -926,7 +926,7 @@ clearPad_callback (const BoxType * b, void *cl)
+  * Draws silk layer.
+  */
+ 
+-static void
++void
+ DrawSilk (int side, const BoxType * drawn_area)
+ {
+ #if 0
+@@ -985,7 +985,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
+ /* ---------------------------------------------------------------------------
+  * draws solder mask layer - this will cover nearly everything
+  */
+-static void
++void
+ DrawMask (int side, BoxType * screen)
+ {
+   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+@@ -1014,7 +1014,7 @@ DrawMask (int side, BoxType * screen)
+ /* ---------------------------------------------------------------------------
+  * draws solder paste layer for a given side of the board
+  */
+-static void
++void
+ DrawPaste (int side, BoxType *drawn_area)
+ {
+   gui->set_color (Output.fgGC, PCB->ElementColor);
+@@ -1107,7 +1107,7 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+  * draws one layer group.  If the exporter is not a GUI,
+  * also draws the pins / pads / vias in this layer group.
+  */
+-static void
++void
+ DrawLayerGroup (int group, const BoxType *drawn_area)
+ {
+   int i, rv = 1;
