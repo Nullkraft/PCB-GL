@@ -1,0 +1,13 @@
+Bottom: 296f1c2066c8f8c7729ae3381286d6e689b1d40c
+Top:    296f1c2066c8f8c7729ae3381286d6e689b1d40c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-29 23:39:21 +0100
+
+draw.c: Fold DrawLayerCommon() into DrawLayer()
+
+DrawLayer only calls DrawLayerCommon, so two functions are redundant.
+
+
+---
+
+
