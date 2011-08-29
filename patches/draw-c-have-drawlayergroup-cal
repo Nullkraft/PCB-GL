@@ -1,0 +1,17 @@
+Bottom: eb35bccb6ed76896fb86cd18bdc7ef9d7c235193
+Top:    eb35bccb6ed76896fb86cd18bdc7ef9d7c235193
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-29 23:35:01 +0100
+
+draw.c: Have DrawLayerGroup() call DrawPPV for non-gui exporters
+
+This means DrawLayerGroup() can have a void return type as most of
+the other drawing functions, and makes things a little neater.
+
+Only the GUI renderers special case the pin / pad / via to wait
+until a later rendering oass than the layers they reside on.
+
+
+---
+
+
