@@ -1,7 +1,7 @@
-Bottom: 74a9b3d137ef45856f65e3ec88c69ce0558f4c36
-Top:    cb02a66c180c79f5efcd723ca7c03c55e866b9b6
+Bottom: 4f92376f899d184678aef11c77077927fcdceb11
+Top:    5477abd322b975b610b1d295d8f94da15afc6754
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-27 18:23:30 +0100
+Date:   2011-08-30 00:50:18 +0100
 
 Bentley-Ottann test implementation
 
@@ -192,7 +192,7 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index d4c37e0..f444d29 100644
+index a9c51b2..ae9a8e3 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -41,6 +41,33 @@ PCB_SRCS = \
@@ -13833,7 +13833,7 @@ index 0000000..bb5ff35
 +
 +#endif /* __G_PQUEUE_H__ */
 diff --git a/src/main.c b/src/main.c
-index 2f4322f..bafe212 100644
+index 1c19a3c..cde25e2 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -57,6 +57,7 @@
@@ -13844,7 +13844,7 @@ index 2f4322f..bafe212 100644
  
  #include "hid/common/actions.h"
  
-@@ -908,6 +909,7 @@ char *program_directory = 0;
+@@ -1736,6 +1737,7 @@ char *program_directory = 0;
  
  #include "dolists.h"
  
@@ -13852,7 +13852,7 @@ index 2f4322f..bafe212 100644
  int
  main (int argc, char *argv[])
  {
-@@ -1120,11 +1122,16 @@ main (int argc, char *argv[])
+@@ -1945,11 +1947,16 @@ main (int argc, char *argv[])
            UNKNOWN (Settings.GnetlistProgram));
  #endif
  
