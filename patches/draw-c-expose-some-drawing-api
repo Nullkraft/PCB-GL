@@ -1,5 +1,5 @@
 Bottom: a978e5871d9236dd445d5cb9372c4e8f18f8ff72
-Top:    9d619ed5215c6596d6cdb69e00586695e39930f5
+Top:    f04f7af85cf19e5b3168f57e3887e9e69246d337
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:27:04 +0100
 
@@ -17,7 +17,7 @@ Exposes:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index f8db2ba..93b4f7e 100644
+index f8db2ba..675f76f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,14 +83,10 @@ static bool doing_assy = false;
@@ -44,6 +44,15 @@ index f8db2ba..93b4f7e 100644
  DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
  {
    int plated = -1;
+@@ -604,7 +600,7 @@ element_callback (const BoxType * b, void *cl)
+  * prints assembly drawing.
+  */
+ 
+-static void
++void
+ PrintAssembly (int side, const BoxType * drawn_area)
+ {
+   int side_group = GetLayerGroupNumberByNumber (max_copper_layer + side);
 @@ -930,7 +926,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
