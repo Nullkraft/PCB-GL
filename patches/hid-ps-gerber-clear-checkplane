@@ -3,9 +3,11 @@ Top:    296f1c2066c8f8c7729ae3381286d6e689b1d40c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:53:32 +0100
 
-hid/{ps,gerber}: Clear CHECKPLANESFLAG before exporting
+hid/{ps,eps,gerber}: Clear CHECKPLANESFLAG before exporting
 
-Ensure we are in a sensible view state before exporting
+Ensure we are in a sensible view state before exporting. This
+update those HIDs which cleared other similar renedering flags
+before exporting to include the CHECKPLANES flag.
 
 
 ---
