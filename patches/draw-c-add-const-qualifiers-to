@@ -1,5 +1,5 @@
 Bottom: fab2fda3e5ef6d096661c2f345d7bc765b86efdf
-Top:    efdda925a39817c4e6885a61732a40c3fa9d0fdd
+Top:    a978e5871d9236dd445d5cb9372c4e8f18f8ff72
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-30 00:16:12 +0100
 
@@ -9,10 +9,10 @@ draw.c: Add const qualifiers to some BoxType *drawn_area parameters
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e0da9a9..410d15e 100644
+index e0da9a9..f8db2ba 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -81,14 +81,14 @@ static bool doing_assy = false;
+@@ -81,15 +81,15 @@ static bool doing_assy = false;
  /* ---------------------------------------------------------------------------
   * some local prototypes
   */
@@ -25,10 +25,21 @@ index e0da9a9..410d15e 100644
  static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
 -static void DrawMask (int side, BoxType *);
 -static void DrawPaste (int side, BoxType *);
+-static void DrawRats (BoxType *);
 +static void DrawMask (int side, const BoxType *);
 +static void DrawPaste (int side, const BoxType *);
- static void DrawRats (BoxType *);
++static void DrawRats (const BoxType *);
  static void DrawSilk (int side, const BoxType *);
+ 
+ /*--------------------------------------------------------------------------------------
+@@ -443,7 +443,7 @@ hole_callback (const BoxType * b, void *cl)
+ }
+ 
+ static void
+-DrawHoles (bool draw_plated, bool draw_unplated, BoxType *drawn_area)
++DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
+ {
+   int plated = -1;
  
 @@ -623,7 +623,7 @@ PrintAssembly (int side, const BoxType * drawn_area)
   * initializes some identifiers for a new zoom factor and redraws whole screen
@@ -44,7 +55,7 @@ index e0da9a9..410d15e 100644
  
  static void
 -DrawMaskBoardArea (int mask_type, BoxType *screen)
-+DrawMaskBoardArea (int mask_type, BoxType *drawn_area)
++DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
  {
    /* Skip the mask drawing if the GUI doesn't want this type */
    if ((mask_type == HID_MASK_BEFORE && !gui->poly_before) ||
@@ -80,3 +91,12 @@ index e0da9a9..410d15e 100644
  {
    gui->set_color (Output.fgGC, PCB->ElementColor);
    ALLPAD_LOOP (PCB->Data);
+@@ -1036,7 +1036,7 @@ DrawPaste (int side, BoxType *drawn_area)
+ }
+ 
+ static void
+-DrawRats (BoxTypePtr drawn_area)
++DrawRats (const BoxType *drawn_area)
+ {
+   /*
+    * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
