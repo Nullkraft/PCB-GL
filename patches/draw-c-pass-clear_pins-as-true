@@ -11,8 +11,8 @@ via this code-path, and in all but the exporter cases, they are not called
 if CHECKPLANES is set.
 
 The exporters which call DrawLayer explicitly clear the CHECKPLANES flag
-(since commit c00ee74844cad14ecd55bae854a82ff6412633e6), so the code path
-taken will not be affected by this argument change.
+(since commit c00ee74844cad14ecd55bae854a82ff6412633e6), so nothing should
+be affected by this argument change.
 
 
 ---
