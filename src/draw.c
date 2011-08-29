@@ -600,7 +600,7 @@ element_callback (const BoxType * b, void *cl)
  * prints assembly drawing.
  */
 
-static void
+void
 PrintAssembly (int side, const BoxType * drawn_area)
 {
   int side_group = GetLayerGroupNumberByNumber (max_copper_layer + side);
