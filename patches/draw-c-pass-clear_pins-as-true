@@ -1,5 +1,5 @@
 Bottom: 296f1c2066c8f8c7729ae3381286d6e689b1d40c
-Top:    296f1c2066c8f8c7729ae3381286d6e689b1d40c
+Top:    39eb0587e1caf219c2fc443b952f330038659330
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:44:38 +0100
 
@@ -8,4 +8,40 @@ draw.c: Pass clear_pins as true when calling DrawLayerCommon
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 83080b3..fb29826 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1113,7 +1113,7 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+ void
+ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+ {
+-  DrawLayerCommon (Layer, screen, false);
++  DrawLayerCommon (Layer, screen, true);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 4a2d233..1539f88 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -521,6 +521,7 @@ gerber_do_export (HID_Attr_Val * options)
+   save_thindraw = PCB->Flags;
+   CLEAR_FLAG(THINDRAWFLAG, PCB);
+   CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
++  CLEAR_FLAG(CHECKPLANESFLAG, PCB);
+ 
+   if (!options)
+     {
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 87202f6..8e29fd5 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -601,6 +601,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   save_thindraw = PCB->Flags;
+   CLEAR_FLAG(THINDRAWFLAG, PCB);
+   CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
++  CLEAR_FLAG(CHECKPLANESFLAG, PCB);
+ 
+   global.f = the_file;
+   global.drill_helper = options[HA_drillhelper].int_value;
