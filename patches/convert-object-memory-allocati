@@ -1,7 +1,7 @@
-Bottom: 368848ea60b78ec10bbf4d64aef14b841e84ebcc
-Top:    3cb74e60946bcbb07d4e32ea1fd2ef51f07e4d9d
+Bottom: f04f7af85cf19e5b3168f57e3887e9e69246d337
+Top:    7168701730dd89ba88f00c3f9379980bd3a5b979
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-27 18:23:27 +0100
+Date:   2011-08-30 00:50:15 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -534,10 +534,10 @@ index d927cf8..bc137ea 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index 7d7a594..9a9eb55 100644
+index 675f76f..ba4f49e 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1248,7 +1248,7 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
+@@ -1203,7 +1203,7 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
@@ -546,7 +546,7 @@ index 7d7a594..9a9eb55 100644
    FontTypePtr font = &PCB->Font;
  
    while (string && *string)
-@@ -1256,11 +1256,12 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
+@@ -1211,11 +1211,12 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
        /* draw lines if symbol is valid and data is present */
        if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
  	{
@@ -832,7 +832,7 @@ index a3a4ac1..06e2cc7 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 0c9019d..1819f23 100644
+index 1c5c150..16ae4ff 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -930,6 +930,7 @@ static void
@@ -965,10 +965,10 @@ index 28d0ff2..2eff2df 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index e91594b..dee30cf 100644
+index 9659b66..0a89e25 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -293,28 +293,26 @@ nelma_write_materials(FILE * out)
+@@ -327,28 +327,26 @@ nelma_write_materials(FILE * out)
  static void 
  nelma_write_nets(FILE * out)
  {
@@ -1003,7 +1003,7 @@ index e91594b..dee30cf 100644
  
  			/* pin_name_to_xy(pin, &x, &y); */
  
-@@ -346,7 +344,7 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -380,7 +378,7 @@ nelma_write_layer(FILE * out, int z, int h,
  	LibraryMenuTypePtr net;
  	LibraryEntryTypePtr pin;
  
@@ -1012,7 +1012,7 @@ index e91594b..dee30cf 100644
  
  	fprintf(out, "layer %s {\n", name);
  	fprintf(out, "\theight = %d\n", h);
-@@ -357,11 +355,11 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -391,11 +389,11 @@ nelma_write_layer(FILE * out, int z, int h,
  		fprintf(out, "\tobjects = {\n");
  		netlist = PCB->NetlistLib;
  
@@ -1028,7 +1028,7 @@ index e91594b..dee30cf 100644
  
  				if (m != 0 || n != 0)
  					fprintf(out, ",\n");
-@@ -467,17 +465,17 @@ nelma_write_objects(FILE * out)
+@@ -501,17 +499,17 @@ nelma_write_objects(FILE * out)
  	LibraryMenuTypePtr net;
  	LibraryEntryTypePtr pin;
  
@@ -1299,7 +1299,7 @@ index 025351f..322000d 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index af1e58f..8ba281f 100644
+index ee7e26d..ea17b3e 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -497,7 +497,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
@@ -1320,7 +1320,7 @@ index af1e58f..8ba281f 100644
              {
                /* Clamp the width of text lines at the minimum thickness.
                 * NB: Divide 4 in thickness calculation is comprised of a factor
-@@ -780,9 +780,9 @@ CenterDisplay (Coord X, Coord Y)
+@@ -817,9 +817,9 @@ CenterDisplay (Coord X, Coord Y)
  void
  SetFontInfo (FontTypePtr Ptr)
  {
@@ -1332,7 +1332,7 @@ index af1e58f..8ba281f 100644
    Coord totalminy = MAX_COORD;
  
    /* calculate cell with and height (is at least DEFAULT_CELLSIZE)
-@@ -801,8 +801,9 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -838,8 +838,9 @@ SetFontInfo (FontTypePtr Ptr)
  
        minx = miny = MAX_COORD;
        maxx = maxy = 0;
@@ -1343,7 +1343,7 @@ index af1e58f..8ba281f 100644
            minx = MIN (minx, line->Point1.X);
            miny = MIN (miny, line->Point1.Y);
            minx = MIN (minx, line->Point2.X);
-@@ -814,8 +815,11 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -851,8 +852,11 @@ SetFontInfo (FontTypePtr Ptr)
          }
  
        /* move symbol to left edge */
@@ -1357,7 +1357,7 @@ index af1e58f..8ba281f 100644
  
        /* set symbol bounding box with a minimum cell size of (1,1) */
        symbol->Width = maxx - minx + 1;
-@@ -832,8 +836,11 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -869,8 +873,11 @@ SetFontInfo (FontTypePtr Ptr)
      if (symbol->Valid)
        {
          symbol->Height -= totalminy;
@@ -1371,7 +1371,7 @@ index af1e58f..8ba281f 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1718,8 +1725,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1755,8 +1762,11 @@ GetGridLockCoordinates (int type, void *ptr1,
        *y = ((ElementTypePtr) ptr2)->MarkY;
        break;
      case POLYGON_TYPE:
@@ -1385,7 +1385,7 @@ index af1e58f..8ba281f 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -2002,10 +2012,13 @@ pcb_author (void)
+@@ -2039,10 +2049,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
