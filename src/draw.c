@@ -89,7 +89,7 @@ static void SetPVColor (PinTypePtr, int);
 static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
 static void DrawMask (int side, const BoxType *);
 static void DrawPaste (int side, const BoxType *);
-static void DrawRats (BoxType *);
+static void DrawRats (const BoxType *);
 static void DrawSilk (int side, const BoxType *);
 
 /*--------------------------------------------------------------------------------------
@@ -443,7 +443,7 @@ hole_callback (const BoxType * b, void *cl)
 }
 
 static void
-DrawHoles (bool draw_plated, bool draw_unplated, BoxType *drawn_area)
+DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
 {
   int plated = -1;
 
@@ -970,7 +970,7 @@ DrawSilk (int side, const BoxType * drawn_area)
 
 
 static void
-DrawMaskBoardArea (int mask_type, BoxType *drawn_area)
+DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
 {
   /* Skip the mask drawing if the GUI doesn't want this type */
   if ((mask_type == HID_MASK_BEFORE && !gui->poly_before) ||
@@ -1036,7 +1036,7 @@ DrawPaste (int side, const BoxType *drawn_area)
 }
 
 static void
-DrawRats (BoxTypePtr drawn_area)
+DrawRats (const BoxType *drawn_area)
 {
   /*
    * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
