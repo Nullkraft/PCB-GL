@@ -37,6 +37,7 @@
 
 #include "global.h"
 #include "data.h"
+#include "draw.h"
 #include "error.h"
 #include "misc.h"
 
