@@ -1,5 +1,5 @@
 Bottom: f04f7af85cf19e5b3168f57e3887e9e69246d337
-Top:    d9767396d98f20c4eb5cef8235a6e0308098a77c
+Top:    db926208febc92c0d5dbec1391c6f358b9a6174c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:19:47 +0100
 
@@ -9,7 +9,7 @@ hid/ps: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 8e29fd5..caf792a 100644
+index 8e29fd5..3ca86b9 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -34,7 +34,6 @@ RCSID ("$Id$");
@@ -709,15 +709,6 @@ index 8e29fd5..caf792a 100644
  static hidGC
  ps_make_gc (void)
  {
-@@ -1246,7 +1242,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
- }
- 
- static void
--ps_fill_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
-+draw_poly (hidGC gc, PolygonType * poly, const BoxType * clip_box)
- {
-   /* Ignore clip_box, just draw everything */
- 
 @@ -1497,7 +1493,6 @@ void ps_ps_init (HID *hid)
    hid->get_export_options = ps_get_export_options;
    hid->do_export          = ps_do_export;
@@ -726,11 +717,3 @@ index 8e29fd5..caf792a 100644
    hid->make_gc            = ps_make_gc;
    hid->destroy_gc         = ps_destroy_gc;
    hid->use_mask           = ps_use_mask;
-@@ -1511,7 +1506,6 @@ void ps_ps_init (HID *hid)
-   hid->draw_rect          = ps_draw_rect;
-   hid->fill_circle        = ps_fill_circle;
-   hid->fill_polygon       = ps_fill_polygon;
--  hid->fill_pcb_polygon   = ps_fill_pcb_polygon;
-   hid->fill_rect          = ps_fill_rect;
-   hid->calibrate          = ps_calibrate;
-   hid->set_crosshair      = ps_set_crosshair;
