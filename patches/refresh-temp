@@ -1,0 +1,20 @@
+Bottom: edc39867f2de4a5940e85bd12f746c6845c817ce
+Top:    969156d073022d31bd581f7491001fdeb85c0c95
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-30 00:27:16 +0100
+
+Refresh of hid-ps-eps-c-don-t-use-core-dr
+
+---
+
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 1414d1a..f6f6e62 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -12,6 +12,7 @@
+ 
+ #include "global.h"
+ #include "data.h"
++#include "draw.h"
+ #include "misc.h"
+ #include "pcb-printf.h"
