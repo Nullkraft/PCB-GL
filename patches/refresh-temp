@@ -1,0 +1,20 @@
+Bottom: a8a206c22d691019e95016b5e8794f5ccc2b641b
+Top:    ff872c809f57ad28d12a3bea6b9b01e1907454c9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-30 00:27:42 +0100
+
+Refresh of hid-png-don-t-use-the-core-s-d
+
+---
+
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index f58ed9f..12a2f11 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -37,6 +37,7 @@
+ 
+ #include "global.h"
+ #include "data.h"
++#include "draw.h"
+ #include "error.h"
+ #include "misc.h"
