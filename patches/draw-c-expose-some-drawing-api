@@ -1,5 +1,5 @@
 Bottom: a978e5871d9236dd445d5cb9372c4e8f18f8ff72
-Top:    6e8ecc04d243cce9376c70dc2c42dceca40fee22
+Top:    9d619ed5215c6596d6cdb69e00586695e39930f5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:27:04 +0100
 
@@ -81,10 +81,10 @@ index f8db2ba..93b4f7e 100644
  {
    int i, rv = 1;
 diff --git a/src/draw.h b/src/draw.h
-index ef32ebb..c0a2bb1 100644
+index ef32ebb..d92dee5 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -71,4 +71,10 @@ void EraseElementPinsAndPads (ElementTypePtr);
+@@ -71,4 +71,11 @@ void EraseElementPinsAndPads (ElementTypePtr);
  void EraseElementName (ElementTypePtr);
  void EraseObject (int, void *, void *);
  
@@ -93,6 +93,7 @@ index ef32ebb..c0a2bb1 100644
 +void DrawSilk (int side, const BoxType *drawn_area);
 +void DrawMask (int side, const BoxType *drawn_area);
 +void DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area);
++void PrintAssembly (int side, const BoxType *drawn_area);
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
