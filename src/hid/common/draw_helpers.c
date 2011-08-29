@@ -2,6 +2,8 @@
 #include "hid.h"
 #include "polygon.h"
 
+#if 0
+
 static void
 fill_contour (hidGC gc, PLINE *pl)
 {
@@ -107,7 +109,7 @@ fill_clipped_contour (hidGC gc, PLINE *pl, const BoxType *clip_box)
  * lets compute the complete no-holes polygon.
  */
 #define BOUNDS_INSIDE_CLIP_THRESHOLD 0.5
-static int
+static bool
 should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
 {
   Coord x1, x2, y1, y2;
@@ -116,7 +118,7 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
 
   /* If there is no passed clip box, compute the whole thing */
   if (clip_box == NULL)
-    return 1;
+    return true;
 
   x1 = MAX (poly->BoundingBox.X1, clip_box->X1);
   x2 = MIN (poly->BoundingBox.X2, clip_box->X2);
@@ -125,7 +127,7 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
 
   /* Check if the polygon is outside the clip box */
   if ((x2 <= x1) || (y2 <= y1))
-    return 0;
+    return false;
 
   poly_bounding_area = (double)(poly->BoundingBox.X2 - poly->BoundingBox.X1) *
                        (double)(poly->BoundingBox.Y2 - poly->BoundingBox.Y1);
@@ -133,14 +135,14 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
   clipped_poly_area = (double)(x2 - x1) * (double)(y2 - y1);
 
   if (clipped_poly_area / poly_bounding_area >= BOUNDS_INSIDE_CLIP_THRESHOLD)
-    return 1;
+    return true;
 
-  return 0;
+  return false;
 }
 #undef BOUNDS_INSIDE_CLIP_THRESHOLD
 
-void
-common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+static void
+fill_poly (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   if (!poly->NoHolesValid)
     {
@@ -187,16 +189,15 @@ thindraw_hole_cb (PLINE *pl, void *user_data)
   return 0;
 }
 
-void
-common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
-                             const BoxType *clip_box)
+static void
+thindraw_poly (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   thindraw_contour (gc, poly->Clipped->contours);
   PolygonHoles (poly, clip_box, thindraw_hole_cb, gc);
 }
 
-void
-common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+static void
+thindraw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 {
   Coord w = clear ? (mask ? pad->Mask
                           : pad->Thickness + pad->Clearance)
@@ -264,8 +265,8 @@ common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
     }
 }
 
-void
-common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+static void
+fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 {
   Coord w = clear ? (mask ? pad->Mask
                           : pad->Thickness + pad->Clearance)
@@ -371,8 +372,8 @@ draw_octagon_poly (hidGC gc, Coord X, Coord Y,
     gui->fill_polygon (gc, 8, polygon_x, polygon_y);
 }
 
-void
-common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
+static void
+fill_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
 {
   Coord w = mask ? pv->Mask : pv->Thickness;
   Coord r = w / 2;
@@ -410,8 +411,8 @@ common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool m
     gui->fill_circle (bg_gc, pv->X, pv->Y, pv->DrillingHole / 2);
 }
 
-void
-common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
+static void
+thindraw_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
 {
   Coord w = mask ? pv->Mask : pv->Thickness;
   Coord r = w / 2;
@@ -466,13 +467,227 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
     }
 }
 
+static void
+_gui_draw_pv (PinType *pv, bool draw_hole)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    thindraw_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
+  else
+    fill_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
+}
+
+void
+common_draw_pin (PinType *pin, const BoxType *drawn_area, void *userdata)
+{
+  _draw_pv (pin, false);
+}
+
+void
+common_draw_pin_mask (PinType *pin, const BoxType *drawn_area, void *userdata)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+    thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+  else
+    fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+}
+
+static void
+draw_hole (PinType *pv, const BoxType *drawn_area, void *userdata)
+{
+  if (!TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
+
+  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (HOLEFLAG, pv))
+    {
+      gui->set_line_cap (Output.fgGC, Round_Cap);
+      gui->set_line_width (Output.fgGC, 0);
+
+      gui->draw_arc (Output.fgGC, pv->X, pv->Y,
+                     pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
+    }
+}
+
+void
+common_draw_pin_hole (PinType *pin, const BoxType *drawn_area, void *userdata)
+{
+  draw_hole (pin, drawn_area, userdata);
+}
+
+void
+common_draw_via (PinType *pin, const BoxType *drawn_area, void *userdata)
+{
+  _draw_pv (via, false);
+}
+
+void
+common_draw_via_mask (PinType *pin, const BoxType *drawn_area, void *userdata)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+    gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
+  else
+    gui->fill_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
+}
+
+void
+common_draw_via_hole (PinType *via, const BoxType *drawn_area, void *userdata)
+{
+  draw_hole (via, drawn_area, userdata);
+}
+
+static void
+_draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+{
+  if (clear && !mask && pad->Clearance <= 0)
+    return;
+
+  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+      (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+    gui->thindraw_pcb_pad (gc, pad, clear, mask);
+  else
+    gui->fill_pcb_pad (gc, pad, clear, mask);
+}
+
+void
+common_draw_pad (PadType *pad, const BoxType *drawn_area, void *userdata)
+{
+  _draw_pad (Output.fgGC, pad, false, false);
+}
+
+void
+common_draw_pad_mask (PadType *pad, const BoxType *drawn_area, void *userdata)
+{
+  if (pad->Mask <= 0)
+    return;
+
+  _draw_pad (Output.pmGC, pad, true, true);
+}
+
+void
+common_draw_pad_paste (PadType *pad, const BoxType *drawn_area, void *userdata)
+{
+  if (TEST_FLAG (NOPASTEFLAG, pad) || pad->Mask <= 0)
+    return;
+
+  if (pad->Mask < pad->Thickness)
+    _draw_pad (Output.fgGC, pad, true, true);
+  else
+    _draw_pad (Output.fgGC, pad, false, false);
+}
+
+static void
+_draw_line (LineType *line)
+{
+  gui->set_line_cap (Output.fgGC, Trace_Cap);
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->set_line_width (Output.fgGC, 0);
+  else
+    gui->set_line_width (Output.fgGC, line->Thickness);
+
+  gui->draw_line (Output.fgGC,
+                  line->Point1.X, line->Point1.Y,
+                  line->Point2.X, line->Point2.Y);
+}
+
+void
+common_draw_line (LineType *line, const BoxType *drawn_area, void *userdata)
+{
+  _draw_line (line);
+}
+
+void
+common_draw_arc (ArcType *arc , const BoxType *drawn_area, void *userdata)
+{
+  if (!arc->Thickness)
+    return;
+
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->set_line_width (Output.fgGC, 0);
+  else
+    gui->set_line_width (Output.fgGC, arc->Thickness);
+  gui->set_line_cap (Output.fgGC, Trace_Cap);
+
+  gui->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
+                 arc->Height, arc->StartAngle, arc->Delta);
+}
+
+void
+common_draw_poly (PolygonType *poly, const BoxType *drawn_area, void *userdata)
+{
+  if (!polygon->Clipped)
+    return;
+
+  if (gui->thindraw_pcb_polygon != NULL &&
+      (TEST_FLAG (THINDRAWFLAG, PCB) ||
+       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+    thindraw_poly (Output.fgGC, polygon, drawn_area);
+  else
+    fill_poly (Output.fgGC, polygon, drawn_area);
+
+  /* If checking planes, thin-draw any pieces which have been clipped away */
+  if (gui->thindraw_pcb_polygon != NULL &&
+      TEST_FLAG (CHECKPLANESFLAG, PCB) &&
+      !TEST_FLAG (FULLPOLYFLAG, polygon))
+    {
+      PolygonType poly = *polygon;
+
+      for (poly.Clipped = polygon->Clipped->f;
+           poly.Clipped != polygon->Clipped;
+           poly.Clipped = poly.Clipped->f)
+        thindraw_poly (Output.fgGC, &poly, drawn_area);
+    }
+}
+
+void
+common_draw_rat (RatType *rat, const BoxType *drawn_area, void *userdata)
+{
+  if (Settings.RatThickness < 20)
+    rat->Thickness = pixel_slop * Settings.RatThickness;
+  /* rats.c set VIAFLAG if this rat goes to a containing poly: draw a donut */
+  if (TEST_FLAG(VIAFLAG, rat))
+    {
+      int w = rat->Thickness;
+
+      if (TEST_FLAG (THINDRAWFLAG, PCB))
+        gui->set_line_width (Output.fgGC, 0);
+      else
+        gui->set_line_width (Output.fgGC, w);
+      gui->draw_arc (Output.fgGC, rat->Point1.X, rat->Point1.Y,
+                     w * 2, w * 2, 0, 360);
+    }
+  else
+    _draw_line ((LineType *) rat);
+}
+
+void
+common_draw_ppv (bool UNKNOWN, const BoxType *drawn_area, void *userdata)
+{
+
+}
+
+void
+common_draw_holes (bool UNKNOWN, const BoxType *drawn_area, void *userdata)
+{
+
+}
+
+void
+common_draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+{
+
+}
+
+#endif
+
+
 void
 common_draw_helpers_init (HID *hid)
 {
+#if 0
   hid->fill_pcb_polygon     = common_fill_pcb_polygon;
   hid->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
   hid->fill_pcb_pad         = common_fill_pcb_pad;
   hid->thindraw_pcb_pad     = common_thindraw_pcb_pad;
   hid->fill_pcb_pv          = common_fill_pcb_pv;
   hid->thindraw_pcb_pv      = common_thindraw_pcb_pv;
+#endif
 }
