@@ -532,10 +532,10 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
   CountHoles (&nplated, &nunplated, drawn_area);
 
   if (nplated && set_layer ("plated-drill", SL (PDRILL, 0)))
-    DrawHoles (true, drawn_area);
+    DrawHoles (true, false, drawn_area);
 
   if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0)))
-    DrawHoles (false, drawn_area);
+    DrawHoles (false, true, drawn_area);
 
   if (set_layer ("componentmask", SL (MASK, TOP)))
     DrawMask (COMPONENT_LAYER, drawn_area);
