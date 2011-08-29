@@ -1,0 +1,20 @@
+Bottom: 296f1c2066c8f8c7729ae3381286d6e689b1d40c
+Top:    2d5a1774ea80c0bea198b6d798192076e3cbfcab
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-29 23:55:13 +0100
+
+Refresh of hid-ps-gerber-clear-checkplane
+
+---
+
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 560f897..a406f38 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -198,6 +198,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   save_thindraw = PCB->Flags;
+   CLEAR_FLAG(THINDRAWFLAG, PCB);
+   CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
++  CLEAR_FLAG(CHECKPLANESFLAG, PCB);
+ 
+   f = the_file;
