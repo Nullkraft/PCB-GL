@@ -1,4 +1,4 @@
-Bottom: c7aa3f9c74a03323a34c8ef35059e32339ac7c8f
+Bottom: ce1995e36befa71914979c91e70f3d9b8b250202
 Top:    ce1995e36befa71914979c91e70f3d9b8b250202
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-30 00:35:19 +0100
@@ -7,16 +7,4 @@ Refresh of crasy-test
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 7059859..5dd4091 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -670,7 +670,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
-     rv = 1;
- 
-   if (rv && !gui->gui)
--    dapi->draw_ppv (side_group, drawn_area, NULL);
-+    dapi->draw_ppv (group, drawn_area, NULL);
- }
- 
- static void
+
