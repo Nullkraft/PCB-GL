@@ -7,6 +7,9 @@ draw.c: Fold DrawLayerCommon() into DrawLayer()
 
 DrawLayer only calls DrawLayerCommon, so two functions are redundant.
 
+DrawLayerCommon only had one direct caller, so we can fold the passed
+argument which was constant.
+
 
 ---
 
