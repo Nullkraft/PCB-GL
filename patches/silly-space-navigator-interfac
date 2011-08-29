@@ -1,5 +1,5 @@
-Bottom: 392a422e4f41a05fe7aba13eb59540d776053f5d
-Top:    563b785042d462b3f63f4267eeee2996ff9ea6b1
+Bottom: 33af8c80a2ed2c2f9ab3c34a4d28f3fc3901ff87
+Top:    e6af74acab5a4eccfe9bd4afcdff19a60dce4b26
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:41 +0100
 
@@ -12,10 +12,10 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index e930088..05c59f2 100644
+index 465222e..6991ff1 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -304,7 +304,9 @@ LIBGTK_SRCS = \
+@@ -306,7 +306,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-pinout-preview.h \
  	hid/gtk/gui-pinout-window.c \
  	hid/gtk/gui-top-window.c \
@@ -27,7 +27,7 @@ index e930088..05c59f2 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 0c9019d..6708e42 100644
+index 1c5c150..473483a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -119,7 +119,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
@@ -40,7 +40,7 @@ index 0c9019d..6708e42 100644
  {
    ghid_zoom_view_abs (center_x, center_y, gport->view.coord_per_px * factor);
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 5929a37..d73ed17 100644
+index b9c5ab3..73771b0 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -103,7 +103,7 @@ index 5929a37..d73ed17 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 912911d..ce8ee8c 100644
+index f270c50..d834875 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -126,6 +126,7 @@ a zoom in/out.
@@ -114,7 +114,7 @@ index 912911d..ce8ee8c 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1586,6 +1587,7 @@ ghid_build_pcb_top_window (void)
+@@ -1352,6 +1353,7 @@ ghid_build_pcb_top_window (void)
    /* FIXME: IFDEF HACK */
  #ifdef ENABLE_GL
    trackball = ghid_trackball_new ();
@@ -122,7 +122,7 @@ index 912911d..ce8ee8c 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -2051,6 +2053,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -1835,6 +1837,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
@@ -191,7 +191,7 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 2da2520..1a4f5d4 100644
+index de9e1f4..23fb669 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -139,6 +139,8 @@ typedef struct
@@ -211,7 +211,7 @@ index 2da2520..1a4f5d4 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -294,6 +297,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -292,6 +295,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
@@ -222,7 +222,7 @@ index 2da2520..1a4f5d4 100644
  
  /* gui-dialog.c function prototypes.
  */
-@@ -509,6 +516,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
+@@ -507,6 +514,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
  void ghid_cancel_lead_user (void);
  
  /* gtkhid-main.c */

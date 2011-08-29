@@ -1,5 +1,5 @@
-Bottom: 5c2868d1caad1f5428583e28562568994401c464
-Top:    b05ebe638995be2b8664f651908a052de90da421
+Bottom: 2573bb7cd7ce4a2ccadfaf62188d5ff9e3a1f37e
+Top:    eb75dad19bcd4bed15864503405fd10320771984
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:40 +0100
 
@@ -19,7 +19,7 @@ the pads.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a428e97..dc7037a 100644
+index 46f2d78..751ddef 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1141,7 +1141,21 @@ draw_pin (PinTypePtr pin, bool draw_hole)
@@ -58,7 +58,7 @@ index a428e97..dc7037a 100644
    return 1;
  }
  
-@@ -1593,6 +1610,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1593,6 +1610,9 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
  
        /* Draw pins, vias and pads on this layer */
        if (!global_view_2d && rv) {
