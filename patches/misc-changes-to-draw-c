@@ -1,5 +1,5 @@
-Bottom: 7d6dcb5a174620866d1d226cd0a6aec854fb6e73
-Top:    56dea84e0f7d1456d37dec41e62b374a74fbfd19
+Bottom: adee5f4ad5522815b55e059666e3397d4eaef6f2
+Top:    adee5f4ad5522815b55e059666e3397d4eaef6f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:19:47 +0100
 
@@ -8,53 +8,4 @@ Misc changes to draw.c
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 1bbbca0..5a6c954 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -83,7 +83,7 @@ static bool doing_assy = false;
-  */
- static void DrawEverything (BoxTypePtr);
- static void DrawPPV (int group, const BoxType *);
--static int DrawLayerGroup (int, const BoxType *);
-+static void DrawLayerGroup (int, const BoxType *);
- static void AddPart (void *);
- static void SetPVColor (PinTypePtr, int);
- static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
-@@ -612,7 +612,6 @@ PrintAssembly (int side, const BoxType * drawn_area)
-   doing_assy = true;
-   gui->set_draw_faded (Output.fgGC, 1);
-   DrawLayerGroup (side_group, drawn_area);
--  DrawPPV (side_group, drawn_area);
-   gui->set_draw_faded (Output.fgGC, 0);
- 
-   /* draw package */
-@@ -677,8 +676,7 @@ DrawEverything (BoxTypePtr drawn_area)
- 
-       if (gui->set_layer (0, group, 0))
-         {
--          if (DrawLayerGroup (group, drawn_area) && !gui->gui)
--            DrawPPV (group, drawn_area);
-+          DrawLayerGroup (group, drawn_area);
-           gui->end_layer ();
-         }
-     }
-@@ -1122,7 +1120,7 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
-  * draws one layer group.  Returns non-zero if pins and pads should be
-  * drawn with this group.
-  */
--static int
-+static void
- DrawLayerGroup (int group, const BoxType *drawn_area)
- {
-   int i, rv = 1;
-@@ -1143,7 +1141,8 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
-     }
-   if (n_entries > 1)
-     rv = 1;
--  return rv;
-+  if (rv && !gui->gui)
-+    DrawPPV (group, drawn_area);
- }
- 
- static void
+
