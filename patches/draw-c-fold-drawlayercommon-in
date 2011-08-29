@@ -5,10 +5,9 @@ Date:   2011-08-29 23:39:21 +0100
 
 draw.c: Fold DrawLayerCommon() into DrawLayer()
 
-DrawLayer only calls DrawLayerCommon, so two functions are redundant.
-
-DrawLayerCommon had one caller which passed TRUE for its "clear_pins"
-argument, so special case that test in the caller.
+Since the last commit, DrawLayer() just calls DrawLayerCommon with the
+"clear_pins" argument set to true. The only other DrawLayerCommon caller
+passes clear_pins as true, so having functions is redundant.
 
 
 ---
