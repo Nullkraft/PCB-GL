@@ -1,5 +1,5 @@
 Bottom: 5c091929285a3f1a7c4d7b2197fa9d3e0e4a91a7
-Top:    a62fdc32be85e4e3c18ebadd8d5ec0483ea4dd9a
+Top:    f8f1619e85a9834d725362a8870da7dfc3b4a9b7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:39 +0100
 
@@ -53,7 +53,7 @@ index 5dd4091..326be24 100644
  {
    /*
 diff --git a/src/draw.h b/src/draw.h
-index cec3a16..6cb124e 100644
+index cec3a16..f6dc31f 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -77,4 +77,15 @@ void DrawMask (int side, const BoxType *drawn_area);
@@ -68,12 +68,12 @@ index cec3a16..6cb124e 100644
 +void DrawRegularText (LayerTypePtr, TextTypePtr);
 +void DrawEMark (ElementTypePtr, Coord, Coord, bool);
 +void DrawHole (PinTypePtr);
-+void DrawRats (BoxType *);
++void DrawRats (const BoxType *);
 +/* TEMPORARY */
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 07d2135..fdad579 100644
+index 07d2135..4c62846 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -632,7 +632,7 @@ index 07d2135..fdad579 100644
 +}
 +
 +static void
-+DrawMask (int side, BoxType * screen)
++GhidDrawMask (int side, BoxType * screen)
 +{
 +  int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
 +
@@ -663,7 +663,7 @@ index 07d2135..fdad579 100644
 +}
 +
 +static int
-+DrawLayerGroup (int group, const BoxType * screen)
++GhidDrawLayerGroup (int group, const BoxType * screen)
 +{
 +  int i, rv = 1;
 +  int layernum;
@@ -917,14 +917,14 @@ index 07d2135..fdad579 100644
 +    if (!global_view_2d &&
 +        gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
 +                        SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
-+        DrawMask (side, drawn_area);
++        GhidDrawMask (side, drawn_area);
 +        gui->end_layer ();
 +      }
 +  }
 +
 +  /* draw all layers in layerstack order */
 +  for (i = ngroups - 1; i >= 0; i--) {
-+    DrawLayerGroup (drawn_groups [i], drawn_area);
++    GhidDrawLayerGroup (drawn_groups [i], drawn_area);
 +
 +#if 1
 +    if (!global_view_2d && i > 0 &&
@@ -974,7 +974,7 @@ index 07d2135..fdad579 100644
 +  /* Draw the solder mask if turned on */
 +  if (gui->set_layer (SWAP_IDENT ? "soldermask" : "componentmask",
 +                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
-+    DrawMask (side, drawn_area);
++    GhidDrawMask (side, drawn_area);
 +    gui->end_layer ();
 +  }
 +
