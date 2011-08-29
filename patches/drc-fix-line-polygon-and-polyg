@@ -1,7 +1,7 @@
-Bottom: e0fde573f00a9cfb0639c81146f8dd9c6a6eaa4b
-Top:    54ae41dfe19e4397a01a51554325b826867307b2
+Bottom: 3ca65d230a71e7e481d4c476fab536e415fb7346
+Top:    0fa510475be7a28c9d61081f18aef3e875973925
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-27 20:29:38 +0100
+Date:   2011-08-30 00:56:18 +0100
 
 drc: Fix line <-> polygon and polygon <-> polygon tests tests
 
@@ -33,10 +33,10 @@ rely on the half-bloat being added in various places.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 7e79c30..99aeff1 100644
+index 4724169..be2df67 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -756,10 +756,10 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
+@@ -760,10 +760,10 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
        double wide = MAX (0.5 * i->pv.Thickness + Bloat, 0);
        if (TEST_FLAG (SQUAREFLAG, &i->pv))
          {
@@ -51,7 +51,7 @@ index 7e79c30..99aeff1 100644
            if (IsRectangleInPolygon (x1, y1, x2, y2, polygon)
                && ADD_POLYGON_TO_LIST (i->layer, polygon))
              longjmp (i->env, 1);
-@@ -1105,10 +1105,10 @@ pv_poly_callback (const BoxType * b, void *cl)
+@@ -1110,10 +1110,10 @@ pv_poly_callback (const BoxType * b, void *cl)
        if (TEST_FLAG (SQUAREFLAG, pv))
          {
            Coord x1, x2, y1, y2;
@@ -66,7 +66,7 @@ index 7e79c30..99aeff1 100644
            if (IsRectangleInPolygon (x1, y1, x2, y2, &i->polygon)
                && ADD_PV_TO_LIST (pv))
              longjmp (i->env, 1);
-@@ -2545,7 +2545,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+@@ -2550,7 +2550,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
      return false;
    if (TEST_FLAG(SQUAREFLAG,Line)&&(Line->Point1.X==Line->Point2.X||Line->Point1.Y==Line->Point2.Y))
       {
@@ -75,7 +75,7 @@ index 7e79c30..99aeff1 100644
         Coord x1, x2, y1, y2;
  
         x1 = MIN (Line->Point1.X, Line->Point2.X) - wid;
-@@ -2559,7 +2559,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+@@ -2564,7 +2564,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
        && Box->Y1 <= Polygon->Clipped->contours->ymax + Bloat
        && Box->Y2 >= Polygon->Clipped->contours->ymin - Bloat)
      {
@@ -84,7 +84,7 @@ index 7e79c30..99aeff1 100644
          return FALSE;           /* error */
        return isects (lp, Polygon, true);
      }
-@@ -2618,12 +2618,7 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
+@@ -2623,12 +2623,7 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
  
                line.Point1.X = v->point[0];
                line.Point1.Y = v->point[1];
