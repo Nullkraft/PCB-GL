@@ -37,6 +37,7 @@
 
 #include "global.h"
 #include "data.h"
+#include "draw.h"
 #include "error.h"
 #include "misc.h"
 
@@ -107,9 +108,7 @@ static color_struct *black = NULL, *white = NULL;
 static gdImagePtr im = NULL, master_im, mask_im = NULL;
 static FILE *f = 0;
 static int linewidth = -1;
-static int lastgroup = -1;
 static gdImagePtr lastbrush = (gdImagePtr)((void *) -1);
-static int lastcap = -1;
 static int print_group[MAX_LAYER];
 static int print_layer[MAX_LAYER];
 
@@ -415,9 +414,195 @@ layer_sort (const void *va, const void *vb)
   return b - a;
 }
 
+static int is_mask;
 static const char *filename;
 static BoxType *bounds;
 static int in_mono, as_shown;
+
+static bool
+set_layer (const char *name, int group)
+{
+  int idx = (group >= 0
+	     && group <
+	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
+  if (name == 0)
+    name = PCB->Data->Layer[idx].Name;
+
+  doing_outline = 0;
+
+  is_mask = (SL_TYPE (idx) == SL_MASK);
+
+  if (photo_mode)
+    {
+      switch (idx)
+	{
+	case SL (SILK, TOP):
+	  if (photo_flip)
+	    return 0;
+	  photo_im = &photo_silk;
+	  break;
+	case SL (SILK, BOTTOM):
+	  if (!photo_flip)
+	    return 0;
+	  photo_im = &photo_silk;
+	  break;
+
+	case SL (MASK, TOP):
+	  if (photo_flip)
+	    return 0;
+	  photo_im = &photo_mask;
+	  break;
+	case SL (MASK, BOTTOM):
+	  if (!photo_flip)
+	    return 0;
+	  photo_im = &photo_mask;
+	  break;
+
+	case SL (PDRILL, 0):
+	case SL (UDRILL, 0):
+	  photo_im = &photo_drill;
+	  break;
+
+	default:
+	  if (idx < 0)
+	    return 0;
+
+	  if (strcmp (name, "outline") == 0)
+	    {
+	      doing_outline = 1;
+	      have_outline = 0;
+	      photo_im = &photo_outline;
+	    }
+	  else
+	    photo_im = photo_copper + group;
+
+	  break;
+	}
+
+      if (! *photo_im)
+	{
+	  static color_struct *black = NULL, *white = NULL;
+	  *photo_im = gdImageCreate (gdImageSX (im), gdImageSY (im));
+          if (photo_im == NULL) 
+	    {
+	      Message ("%s():  gdImageCreate(%d, %d) returned NULL.  Aborting export.\n", __FUNCTION__, 
+		       gdImageSX (im), gdImageSY (im));
+	      return 0;
+	    }
+
+
+	  white = (color_struct *) malloc (sizeof (color_struct));
+	  white->r = white->g = white->b = 255;
+	  white->a = 0;
+	  white->c = gdImageColorAllocate (*photo_im, white->r, white->g, white->b);
+	  if (white->c == BADC) 
+	    {
+	      Message ("%s():  gdImageColorAllocate() returned NULL.  Aborting export.\n", __FUNCTION__);
+	      return 0;
+	    }
+
+	  black = (color_struct *) malloc (sizeof (color_struct));
+	  black->r = black->g = black->b = black->a = 0;
+	  black->c = gdImageColorAllocate (*photo_im, black->r, black->g, black->b);
+	  if (black->c == BADC) 
+	    {
+	      Message ("%s(): gdImageColorAllocate() returned NULL.  Aborting export.\n", __FUNCTION__);
+	      return 0;
+	    }
+
+	  if (idx == SL (PDRILL, 0)
+	      || idx == SL (UDRILL, 0))
+	    gdImageFilledRectangle (*photo_im, 0, 0, gdImageSX (im), gdImageSY (im), black->c);
+	}
+      im = *photo_im;
+      return 1;
+    }
+
+  if (as_shown)
+    {
+      switch (idx)
+	{
+	case SL (SILK, TOP):
+	case SL (SILK, BOTTOM):
+	  if (SL_MYSIDE (idx))
+	    return PCB->ElementOn;
+	  return 0;
+
+	case SL (MASK, TOP):
+	case SL (MASK, BOTTOM):
+	  return TEST_FLAG (SHOWMASKFLAG, PCB) && SL_MYSIDE (idx);
+	}
+    }
+  else
+    {
+      if (is_mask)
+	return 0;
+
+      switch (idx)
+	{
+	case SL (SILK, TOP):
+	  return 1;
+	case SL (SILK, BOTTOM):
+	  return 0;
+	}
+    }
+
+  return 1;
+}
+
+static void
+png_expose (BoxType *bounds)
+{
+  HID *old_gui = gui;
+  int group;
+  int nplated, nunplated;
+
+  gui = &png_hid;
+  Output.fgGC = gui->make_gc ();
+  Output.bgGC = gui->make_gc ();
+  Output.pmGC = gui->make_gc ();
+
+  gui->set_color (Output.pmGC, "erase");
+  gui->set_color (Output.bgGC, "drill");
+
+  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+
+  /* draw all copper layers in group order */
+  for (group = 0; group < max_copper_layer; group++)
+    {
+      if (!print_group[group])
+        continue;
+
+      if (set_layer (0, group))
+        DrawLayerGroup (group, bounds);
+    }
+
+  CountHoles (&nplated, &nunplated, bounds);
+
+  if (nplated && set_layer ("plated-drill", SL (PDRILL, 0)))
+    DrawHoles (true, false, bounds);
+
+  if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0)))
+    DrawHoles (false, true, bounds);
+
+  if (set_layer ("componentmask", SL (MASK, TOP)))
+    DrawMask (COMPONENT_LAYER, bounds);
+
+  if (set_layer ("soldermask", SL (MASK, BOTTOM)))
+    DrawMask (SOLDER_LAYER, bounds);
+
+  if (set_layer ("topsilk", SL (SILK, TOP)))
+    DrawSilk (COMPONENT_LAYER, bounds);
+
+  if (set_layer ("bottomsilk", SL (SILK, BOTTOM)))
+    DrawSilk (SOLDER_LAYER, bounds);
+
+  gui->destroy_gc (Output.fgGC);
+  gui->destroy_gc (Output.bgGC);
+  gui->destroy_gc (Output.pmGC);
+  gui = old_gui;
+}
 
 static void
 parse_bloat (const char *str)
@@ -526,8 +711,6 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
     }
   linewidth = -1;
   lastbrush = (gdImagePtr)((void *) -1);
-  lastcap = -1;
-  lastgroup = -1;
   show_solder_side = Settings.ShowSolderSide;
 
   in_mono = options[HA_mono].int_value;
@@ -543,7 +726,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 	}
     }
 
-  hid_expose_callback (&png_hid, bounds, 0);
+  png_expose (bounds);
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
   PCB->Flags = save_flags;
@@ -1013,154 +1196,6 @@ png_parse_arguments (int *argc, char ***argv)
 			   sizeof (png_attribute_list[0]));
   hid_parse_command_line (argc, argv);
 }
-
-
-static int is_mask;
-static int is_drill;
-
-static int
-png_set_layer (const char *name, int group, int empty)
-{
-  int idx = (group >= 0
-	     && group <
-	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
-  if (name == 0)
-    name = PCB->Data->Layer[idx].Name;
-
-  doing_outline = 0;
-
-  if (idx >= 0 && idx < max_copper_layer && !print_layer[idx])
-    return 0;
-  if (SL_TYPE (idx) == SL_ASSY || SL_TYPE (idx) == SL_FAB)
-    return 0;
-
-  if (strcmp (name, "invisible") == 0)
-    return 0;
-
-  is_drill = (SL_TYPE (idx) == SL_PDRILL || SL_TYPE (idx) == SL_UDRILL);
-  is_mask = (SL_TYPE (idx) == SL_MASK);
-
-  if (SL_TYPE (idx) == SL_PASTE)
-    return 0;
-
-  if (photo_mode)
-    {
-      switch (idx)
-	{
-	case SL (SILK, TOP):
-	  if (photo_flip)
-	    return 0;
-	  photo_im = &photo_silk;
-	  break;
-	case SL (SILK, BOTTOM):
-	  if (!photo_flip)
-	    return 0;
-	  photo_im = &photo_silk;
-	  break;
-
-	case SL (MASK, TOP):
-	  if (photo_flip)
-	    return 0;
-	  photo_im = &photo_mask;
-	  break;
-	case SL (MASK, BOTTOM):
-	  if (!photo_flip)
-	    return 0;
-	  photo_im = &photo_mask;
-	  break;
-
-	case SL (PDRILL, 0):
-	case SL (UDRILL, 0):
-	  photo_im = &photo_drill;
-	  break;
-
-	default:
-	  if (idx < 0)
-	    return 0;
-
-	  if (strcmp (name, "outline") == 0)
-	    {
-	      doing_outline = 1;
-	      have_outline = 0;
-	      photo_im = &photo_outline;
-	    }
-	  else
-	    photo_im = photo_copper + group;
-
-	  break;
-	}
-
-      if (! *photo_im)
-	{
-	  static color_struct *black = NULL, *white = NULL;
-	  *photo_im = gdImageCreate (gdImageSX (im), gdImageSY (im));
-          if (photo_im == NULL) 
-	    {
-	      Message ("%s():  gdImageCreate(%d, %d) returned NULL.  Aborting export.\n", __FUNCTION__, 
-		       gdImageSX (im), gdImageSY (im));
-	      return 0;
-	    }
-
-
-	  white = (color_struct *) malloc (sizeof (color_struct));
-	  white->r = white->g = white->b = 255;
-	  white->a = 0;
-	  white->c = gdImageColorAllocate (*photo_im, white->r, white->g, white->b);
-	  if (white->c == BADC) 
-	    {
-	      Message ("%s():  gdImageColorAllocate() returned NULL.  Aborting export.\n", __FUNCTION__);
-	      return 0;
-	    }
-
-	  black = (color_struct *) malloc (sizeof (color_struct));
-	  black->r = black->g = black->b = black->a = 0;
-	  black->c = gdImageColorAllocate (*photo_im, black->r, black->g, black->b);
-	  if (black->c == BADC) 
-	    {
-	      Message ("%s(): gdImageColorAllocate() returned NULL.  Aborting export.\n", __FUNCTION__);
-	      return 0;
-	    }
-
-	  if (idx == SL (PDRILL, 0)
-	      || idx == SL (UDRILL, 0))
-	    gdImageFilledRectangle (*photo_im, 0, 0, gdImageSX (im), gdImageSY (im), black->c);
-	}
-      im = *photo_im;
-      return 1;
-    }
-
-  if (as_shown)
-    {
-      switch (idx)
-	{
-	case SL (SILK, TOP):
-	case SL (SILK, BOTTOM):
-	  if (SL_MYSIDE (idx))
-	    return PCB->ElementOn;
-	  return 0;
-
-	case SL (MASK, TOP):
-	case SL (MASK, BOTTOM):
-	  return TEST_FLAG (SHOWMASKFLAG, PCB) && SL_MYSIDE (idx);
-	}
-    }
-  else
-    {
-      if (is_mask)
-	return 0;
-
-      switch (idx)
-	{
-	case SL (SILK, TOP):
-	  return 1;
-	case SL (SILK, BOTTOM):
-	  return 0;
-	}
-    }
-
-  return 1;
-}
-
 
 static hidGC
 png_make_gc (void)
@@ -1651,7 +1686,6 @@ hid_png_init ()
   png_hid.get_export_options  = png_get_export_options;
   png_hid.do_export           = png_do_export;
   png_hid.parse_arguments     = png_parse_arguments;
-  png_hid.set_layer           = png_set_layer;
   png_hid.make_gc             = png_make_gc;
   png_hid.destroy_gc          = png_destroy_gc;
   png_hid.use_mask            = png_use_mask;
