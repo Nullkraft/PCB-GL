@@ -1,5 +1,5 @@
-Bottom: b5451eaef015e7d55da5ece68bb6080b45ea7f11
-Top:    e8c06b36fc0964e9fd07ff6b92adf2833c1c3a3c
+Bottom: 72521ff7171899cad09f3cc76adc7596fca24d71
+Top:    5c091929285a3f1a7c4d7b2197fa9d3e0e4a91a7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:38 +0100
 
@@ -50,10 +50,10 @@ index 19bce70..f418e1a 100644
        if (IsLayerEmpty (layer))
          {
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 408f225..1a0aabe 100644
+index 1f25448..98959fe 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -845,7 +845,6 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -1001,7 +1001,6 @@ ps_set_layer (const char *name, int group, int empty)
       we want to "print outlines", and we have an outline layer,
       print the outline layer on this layer also.  */
    if (global.outline &&

@@ -1,5 +1,5 @@
-Bottom: 3845d648283b5693ac6a1ad80f1b9e35ef73469b
-Top:    c3d60aabf89231c7587c2dbad75ec8e684bc2bce
+Bottom: c50894e18b297b53b89836bdd5237d7c7a1a68b6
+Top:    9d7a542262efe3be853b0632e40fe091d62d3d99
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 17:46:09 +0100
 
@@ -422,7 +422,7 @@ index 9114bc4..fd09122 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index e2beb3c..912911d 100644
+index c292660..f270c50 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -125,6 +125,7 @@ a zoom in/out.
@@ -433,7 +433,7 @@ index e2beb3c..912911d 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1458,6 +1459,10 @@ ghid_build_pcb_top_window (void)
+@@ -1224,6 +1225,10 @@ ghid_build_pcb_top_window (void)
    GtkWidget *vbox_main, *vbox_left, *hbox_middle, *hbox = NULL;
    GtkWidget *viewport, *ebox, *vbox, *frame;
    GtkWidget *label;
@@ -444,7 +444,7 @@ index e2beb3c..912911d 100644
    GHidPort *port = &ghid_port;
    gchar *s;
    GtkWidget *scrolled;
-@@ -1578,6 +1583,16 @@ ghid_build_pcb_top_window (void)
+@@ -1344,6 +1349,16 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX(vbox), ghidgui->layer_selector,
                        FALSE, FALSE, 0);
  
@@ -462,10 +462,10 @@ index e2beb3c..912911d 100644
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index ad2a112..2da2520 100644
+index e7e5f55..de9e1f4 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -290,7 +290,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -288,7 +288,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
  gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  				       GdkEventScroll * ev, GHidPort * out);
  
@@ -473,7 +473,7 @@ index ad2a112..2da2520 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -503,6 +502,8 @@ void ghid_flush_debug_draw (void);
+@@ -501,6 +500,8 @@ void ghid_flush_debug_draw (void);
  void ghid_finish_debug_draw (void);
  bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
