@@ -670,7 +670,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
     rv = 1;
 
   if (rv && !gui->gui)
-    dapi->draw_ppv (side_group, drawn_area, NULL);
+    dapi->draw_ppv (group, drawn_area, NULL);
 }
 
 static void
