@@ -1,5 +1,5 @@
-Bottom: 58e09cfee9b2a170f6a54383a695eb66ea8c82a5
-Top:    d9c1d714233bd00df02e9aa6d6acc2cbad488147
+Bottom: ff872c809f57ad28d12a3bea6b9b01e1907454c9
+Top:    e1b8d3e187f803ea41e3ab270a0b082084fba660
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 01:26:19 +0100
 
@@ -11,10 +11,10 @@ Just pass call the same function for all polygons, let the HID decide.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 7d7a594..1e7cfee 100644
+index 675f76f..787d38d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -914,38 +914,8 @@ poly_callback (const BoxType * b, void *cl)
+@@ -876,38 +876,8 @@ poly_callback (const BoxType * b, void *cl)
  {
    struct poly_info *i = cl;
    PolygonType *polygon = (PolygonType *)b;
@@ -211,10 +211,10 @@ index 21a22e8..4e078e9 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 0c9019d..8b6dd4f 100644
+index 1c5c150..7eb924c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2143,7 +2143,6 @@ hid_gtk_init ()
+@@ -2125,7 +2125,6 @@ hid_gtk_init ()
    ghid_hid.draw_arc                 = ghid_draw_arc;
    ghid_hid.draw_rect                = ghid_draw_rect;
    ghid_hid.fill_circle              = ghid_fill_circle;
@@ -223,10 +223,10 @@ index 0c9019d..8b6dd4f 100644
  
    ghid_hid.calibrate                = ghid_calibrate;
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 02448e5..2ec89e5 100644
+index 3ca86b9..ceb0058 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -1090,7 +1090,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -1242,7 +1242,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
  }
  
  static void
@@ -235,7 +235,7 @@ index 02448e5..2ec89e5 100644
  {
    /* Ignore clip_box, just draw everything */
  
-@@ -1355,7 +1355,7 @@ void ps_ps_init (HID *hid)
+@@ -1506,7 +1506,7 @@ void ps_ps_init (HID *hid)
    hid->draw_rect          = ps_draw_rect;
    hid->fill_circle        = ps_fill_circle;
    hid->fill_polygon       = ps_fill_polygon;
