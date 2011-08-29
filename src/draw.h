@@ -85,7 +85,7 @@ void DrawPlainVia (PinTypePtr, bool);
 void DrawRegularText (LayerTypePtr, TextTypePtr);
 void DrawEMark (ElementTypePtr, Coord, Coord, bool);
 void DrawHole (PinTypePtr);
-void DrawRats (BoxType *);
+void DrawRats (const BoxType *);
 /* TEMPORARY */
 
 #endif

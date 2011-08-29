@@ -1492,7 +1492,7 @@ clearPad_callback_solid (const BoxType * b, void *cl)
 }
 
 static void
-DrawMask (int side, BoxType * screen)
+GhidDrawMask (int side, BoxType * screen)
 {
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
 
@@ -1523,7 +1523,7 @@ DrawMask (int side, BoxType * screen)
 }
 
 static int
-DrawLayerGroup (int group, const BoxType * screen)
+GhidDrawLayerGroup (int group, const BoxType * screen)
 {
   int i, rv = 1;
   int layernum;
@@ -1777,14 +1777,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     if (!global_view_2d &&
         gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
                         SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
-        DrawMask (side, drawn_area);
+        GhidDrawMask (side, drawn_area);
         gui->end_layer ();
       }
   }
 
   /* draw all layers in layerstack order */
   for (i = ngroups - 1; i >= 0; i--) {
-    DrawLayerGroup (drawn_groups [i], drawn_area);
+    GhidDrawLayerGroup (drawn_groups [i], drawn_area);
 
 #if 1
     if (!global_view_2d && i > 0 &&
@@ -1834,7 +1834,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   /* Draw the solder mask if turned on */
   if (gui->set_layer (SWAP_IDENT ? "soldermask" : "componentmask",
                       SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
-    DrawMask (side, drawn_area);
+    GhidDrawMask (side, drawn_area);
     gui->end_layer ();
   }
 
