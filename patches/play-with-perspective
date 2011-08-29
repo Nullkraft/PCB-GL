@@ -1,7 +1,7 @@
-Bottom: 938007715fa30b9eb0eb01039c71654772dde799
-Top:    7301efc8988dba9f94ba3a305bea64cc2e1f824a
+Bottom: 11bbd23c87f4f3988bf85b3e87b639a1e429bb9a
+Top:    5a0cc622607f72db48f9e0d97f8f6fa021964260
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-27 13:35:48 +0100
+Date:   2011-08-30 00:56:14 +0100
 
 Play with perspective
 
@@ -76,7 +76,7 @@ index 681a4b1..15ce751 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 09d009c..c0045e4 100644
+index 0959765..f40341b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,7 @@
@@ -133,7 +133,7 @@ index 09d009c..c0045e4 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -1589,7 +1599,8 @@ DrawMask (int side, BoxType * screen)
+@@ -1589,7 +1599,8 @@ GhidDrawMask (int side, BoxType * screen)
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
