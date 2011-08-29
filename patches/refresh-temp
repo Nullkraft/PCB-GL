@@ -1,0 +1,33 @@
+Bottom: 2d5a1774ea80c0bea198b6d798192076e3cbfcab
+Top:    acb90057a5c2227df4d480223275c85609da35d2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-08-29 23:55:24 +0100
+
+Refresh of hid-ps-gerber-clear-checkplane
+
+---
+
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 4a2d233..1539f88 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -521,6 +521,7 @@ gerber_do_export (HID_Attr_Val * options)
+   save_thindraw = PCB->Flags;
+   CLEAR_FLAG(THINDRAWFLAG, PCB);
+   CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
++  CLEAR_FLAG(CHECKPLANESFLAG, PCB);
+ 
+   if (!options)
+     {
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 87202f6..8e29fd5 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -601,6 +601,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   save_thindraw = PCB->Flags;
+   CLEAR_FLAG(THINDRAWFLAG, PCB);
+   CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
++  CLEAR_FLAG(CHECKPLANESFLAG, PCB);
+ 
+   global.f = the_file;
+   global.drill_helper = options[HA_drillhelper].int_value;
