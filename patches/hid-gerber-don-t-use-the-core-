@@ -1,5 +1,5 @@
 Bottom: c4d49790aad0aa20960ad9d88330fa2959515be8
-Top:    cbcd6f96a8e1837e911c3c4fff5efdf70eb05e11
+Top:    d10ac357735036bfdd1ae489b820ae993a80a248
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:19:48 +0100
 
@@ -9,7 +9,7 @@ hid/gerber: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 1539f88..286d4ac 100644
+index 1539f88..baec5ff 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -27,6 +27,7 @@
@@ -110,10 +110,10 @@ index 1539f88..286d4ac 100644
 +  CountHoles (&nplated, &nunplated, drawn_area);
 +
 +  if (nplated && set_layer ("plated-drill", SL (PDRILL, 0)))
-+    DrawHoles (true, drawn_area);
++    DrawHoles (true, false, drawn_area);
 +
 +  if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0)))
-+    DrawHoles (false, drawn_area);
++    DrawHoles (false, true, drawn_area);
 +
 +  if (set_layer ("componentmask", SL (MASK, TOP)))
 +    DrawMask (COMPONENT_LAYER, drawn_area);
