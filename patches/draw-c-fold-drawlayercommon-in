@@ -7,7 +7,7 @@ draw.c: Fold DrawLayerCommon() into DrawLayer()
 
 DrawLayer only calls DrawLayerCommon, so two functions are redundant.
 
-DrawLayerCommon had one caller which passed TRUE for its "mask_pins"
+DrawLayerCommon had one caller which passed TRUE for its "clear_pins"
 argument, so special case that test in the caller.
 
 
