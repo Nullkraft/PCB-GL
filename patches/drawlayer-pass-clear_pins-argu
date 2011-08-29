@@ -3,16 +3,16 @@ Top:    da1e70cd8fc10de520644a8dad2aa12fe55f82c4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-30 00:04:35 +0100
 
-DrawLayer(): Pass clear_pins argument as true when calling DrawLayerCommon
+DrawLayer(): Pass true to clear_pins of DrawLayerCommon
 
-This should not affect any rendering. If the check planes flag is set, we
-should only draw polygons, nothing more. Only a handful of cases draw layers
-via this code-path, and in all but the exporter cases, they are not called
-if CHECKPLANES is set.
+This should not affect any rendering. If the check planes flag is set,
+we should only draw polygons, nothing more. Only a handful of cases draw
+layers via this code-path, and in all but the exporter cases, they are
+not called if CHECKPLANES is set.
 
 The exporters which call DrawLayer explicitly clear the CHECKPLANES flag
-(since commit c00ee74844cad14ecd55bae854a82ff6412633e6), so nothing should
-be affected by this argument change.
+(since commit 3c01bd38cb59922692408b71cd5d77892dbe6ade), so nothing
+should be affected by this argument change.
 
 
 ---
