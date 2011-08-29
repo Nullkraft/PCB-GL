@@ -83,14 +83,10 @@ static bool doing_assy = false;
  */
 static void DrawEverything (BoxTypePtr);
 static void DrawPPV (int group, const BoxType *);
-static int DrawLayerGroup (int, const BoxType *);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
 static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
-static void DrawMask (int side, BoxType *);
-static void DrawPaste (int side, BoxType *);
 static void DrawRats (BoxType *);
-static void DrawSilk (int side, const BoxType *);
 
 /*--------------------------------------------------------------------------------------
  * setup color for pin or via
