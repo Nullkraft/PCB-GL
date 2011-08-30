@@ -1,7 +1,7 @@
-Bottom: c50894e18b297b53b89836bdd5237d7c7a1a68b6
-Top:    9d7a542262efe3be853b0632e40fe091d62d3d99
+Bottom: 5261f1e66efbef04a7914993eaf3257e5d051ca4
+Top:    42ffdb80ff454f7e42865d3a84744f79373ca5dd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-27 17:46:09 +0100
+Date:   2011-08-30 20:48:09 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -422,7 +422,7 @@ index 9114bc4..fd09122 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index c292660..f270c50 100644
+index e0e5eec..93a2982 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -125,6 +125,7 @@ a zoom in/out.
