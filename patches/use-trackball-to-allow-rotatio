@@ -1,5 +1,5 @@
-Bottom: 5261f1e66efbef04a7914993eaf3257e5d051ca4
-Top:    42ffdb80ff454f7e42865d3a84744f79373ca5dd
+Bottom: 2b6a4310b17f29f573432663a1cdd87c137b60f8
+Top:    4f80b531ed0c649c6b28f517e0abba959486fafd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-30 20:48:09 +0100
 
@@ -422,7 +422,7 @@ index 9114bc4..fd09122 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index e0e5eec..93a2982 100644
+index d08a960..e7b8a78 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -125,6 +125,7 @@ a zoom in/out.
@@ -433,7 +433,7 @@ index e0e5eec..93a2982 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1224,6 +1225,10 @@ ghid_build_pcb_top_window (void)
+@@ -1220,6 +1221,10 @@ ghid_build_pcb_top_window (void)
    GtkWidget *vbox_main, *vbox_left, *hbox_middle, *hbox = NULL;
    GtkWidget *viewport, *ebox, *vbox, *frame;
    GtkWidget *label;
@@ -444,7 +444,7 @@ index e0e5eec..93a2982 100644
    GHidPort *port = &ghid_port;
    gchar *s;
    GtkWidget *scrolled;
-@@ -1344,6 +1349,16 @@ ghid_build_pcb_top_window (void)
+@@ -1340,6 +1345,16 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX(vbox), ghidgui->layer_selector,
                        FALSE, FALSE, 0);
  

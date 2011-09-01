@@ -1,5 +1,5 @@
-Bottom: 89a42a1f698015f6116381c34c22590650fbe3ff
-Top:    00d782c0e843839d30251fd58f563e995d21a923
+Bottom: e97c428159cf821053249c4c61f7d0f601f07d11
+Top:    9113e7dc55b13909bc25b03b5a22b9a3e3aabc07
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-30 20:48:13 +0100
 
@@ -27,7 +27,7 @@ index 465222e..6991ff1 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 1c5c150..473483a 100644
+index 58f299a..921d253 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -119,7 +119,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
@@ -103,7 +103,7 @@ index b9c5ab3..73771b0 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 93a2982..81fa4cb 100644
+index e7b8a78..e43ec20 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -126,6 +126,7 @@ a zoom in/out.
@@ -114,7 +114,7 @@ index 93a2982..81fa4cb 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1352,6 +1353,7 @@ ghid_build_pcb_top_window (void)
+@@ -1348,6 +1349,7 @@ ghid_build_pcb_top_window (void)
    /* FIXME: IFDEF HACK */
  #ifdef ENABLE_GL
    trackball = ghid_trackball_new ();
@@ -122,7 +122,7 @@ index 93a2982..81fa4cb 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -1835,6 +1837,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -1831,6 +1833,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
