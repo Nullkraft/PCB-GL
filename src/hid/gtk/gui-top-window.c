@@ -1308,7 +1308,8 @@ ghid_build_pcb_top_window (void)
    * a modal button GetLocation button press.
    */
   ghidgui->left_toolbar = gtk_vbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (hbox_middle), ghidgui->left_toolbar, FALSE, FALSE, 3);
+  gtk_box_pack_start (GTK_BOX (hbox_middle),
+                      ghidgui->left_toolbar, FALSE, FALSE, 3);
 
   vbox = ghid_scrolled_vbox (ghidgui->left_toolbar, &scrolled,
                              GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
