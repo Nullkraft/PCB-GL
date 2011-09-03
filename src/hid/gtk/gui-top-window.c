@@ -696,20 +696,20 @@ relative_label_size_req_cb (GtkWidget * widget,
 static void
 make_cursor_position_labels (GtkWidget * hbox, GHidPort * port)
 {
-  GtkWidget *frame, *label, *button;
+  GtkWidget *frame, *label;
 
   /* The grid units button next to the cursor position labels.
    */
-  button = gtk_button_new ();
+  ghidgui->grid_units_button = gtk_button_new ();
   label = gtk_label_new ("");
   gtk_label_set_markup (GTK_LABEL (label),
 			Settings.grid_unit->in_suffix);
   ghidgui->grid_units_label = label;
   gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
-  gtk_container_add (GTK_CONTAINER (button), label);
-  gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, TRUE, 0);
-  g_signal_connect (G_OBJECT (button), "clicked",
-		    G_CALLBACK (grid_units_button_cb), NULL);
+  gtk_container_add (GTK_CONTAINER (ghidgui->grid_units_button), label);
+  gtk_box_pack_end (GTK_BOX (hbox), ghidgui->grid_units_button, FALSE, TRUE, 0);
+  g_signal_connect (ghidgui->grid_units_button, "clicked",
+                    G_CALLBACK (grid_units_button_cb), NULL);
 
   /* The absolute cursor position label
    */
@@ -1207,6 +1207,7 @@ ghid_build_pcb_top_window (void)
 {
   GtkWidget *window;
   GtkWidget *vbox_main, *hbox_middle, *hbox;
+  GtkWidget *top_bar_background;
   GtkWidget *vbox, *frame;
   GtkWidget *label;
   GHidPort *port = &ghid_port;
@@ -1219,8 +1220,11 @@ ghid_build_pcb_top_window (void)
   gtk_container_add (GTK_CONTAINER (window), vbox_main);
 
   /* -- Top control bar */
+  top_bar_background = gtk_event_box_new ();
+  gtk_box_pack_start (GTK_BOX (vbox_main), top_bar_background, FALSE, FALSE, 0);
+
   ghidgui->top_hbox = gtk_hbox_new (FALSE, 4);
-  gtk_box_pack_start (GTK_BOX (vbox_main), ghidgui->top_hbox, FALSE, FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (top_bar_background), ghidgui->top_hbox);
 
   /*
    * menu_hbox will be made insensitive when the gui needs
@@ -1300,6 +1304,50 @@ ghid_build_pcb_top_window (void)
 
   hbox_middle = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox_main), hbox_middle, TRUE, TRUE, 3);
+
+  if (1) {
+    /* Attempt to produce a conststent style for our extra menu-bar items by
+     * copying aspects from the menu bar style set by the user's GTK theme
+     */
+
+    /* XXX: Need to fix this so it works with on-the-fly theme changes */
+
+    GtkWidget *window, *toolbar, *tool_button, *label;
+    GtkToolItem *tool_item;
+    GtkStyle *tool_button_style;
+    GtkStyle *menu_bar_interloper_style;
+
+    window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    toolbar = gtk_toolbar_new ();
+    gtk_container_add (GTK_CONTAINER (window), toolbar);
+    tool_item = gtk_tool_item_new ();
+    gtk_toolbar_insert (GTK_TOOLBAR (toolbar), tool_item, 0);
+    tool_button = gtk_button_new ();
+    gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
+    label = gtk_label_new ("Hello world");
+    gtk_container_add (GTK_CONTAINER (tool_button), label);
+
+    gtk_widget_ensure_style (tool_button);
+    tool_button_style = gtk_widget_get_style (tool_button);
+//    gtk_widget_destroy (window);
+    gtk_widget_show_all (window);
+
+    menu_bar_interloper_style = gtk_widget_get_style (ghidgui->menu_bar);
+
+    gtk_widget_set_style (top_bar_background,                      menu_bar_interloper_style);
+    gtk_widget_set_style (ghidgui->name_label,                     menu_bar_interloper_style);
+    gtk_widget_set_style (ghidgui->grid_units_label,               menu_bar_interloper_style);
+    gtk_widget_set_style (ghidgui->cursor_position_relative_label, menu_bar_interloper_style);
+    gtk_widget_set_style (ghidgui->cursor_position_absolute_label, menu_bar_interloper_style);
+
+    /* Get their frames too */
+    gtk_widget_set_style (gtk_widget_get_parent (ghidgui->cursor_position_relative_label), menu_bar_interloper_style);
+    gtk_widget_set_style (gtk_widget_get_parent (ghidgui->cursor_position_absolute_label), menu_bar_interloper_style);
+    gtk_widget_set_style (ghidgui->mode_buttons1_frame,                                    menu_bar_interloper_style);
+
+    /* These need a toobar button style to copy from */
+    gtk_widget_set_style (ghidgui->grid_units_button,              tool_button_style);
+  }
 
 
   /* -- Left control bar */
