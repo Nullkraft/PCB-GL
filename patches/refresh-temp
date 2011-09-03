@@ -1,0 +1,84 @@
+Bottom: 3f276479a3775815b424d3d56fba03ea5e295f10
+Top:    2650351f86593864d4e369051d19a75e873dac52
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-03 18:18:12 +0100
+
+Refresh of hid-gtk-remove-compact_vbox-an
+
+---
+
+diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
+index d29d485..0833486 100644
+--- a/src/hid/gtk/gui-config.c
++++ b/src/hid/gtk/gui-config.c
+@@ -829,20 +829,6 @@ config_compact_horizontal_toggle_cb (GtkToggleButton * button, gpointer data)
+   gboolean active = gtk_toggle_button_get_active (button);
+ 
+   ghidgui->compact_horizontal = active;
+-  if (active)
+-    {
+-      gtk_container_remove (GTK_CONTAINER (ghidgui->compact_hbox),
+-			    ghidgui->position_hbox);
+-      gtk_box_pack_end (GTK_BOX (ghidgui->compact_vbox),
+-			ghidgui->position_hbox, TRUE, FALSE, 0);
+-    }
+-  else
+-    {
+-      gtk_container_remove (GTK_CONTAINER (ghidgui->compact_vbox),
+-			    ghidgui->position_hbox);
+-      gtk_box_pack_end(GTK_BOX(ghidgui->compact_hbox), ghidgui->position_hbox,
+-			FALSE, FALSE, 4);
+-    }
+   ghid_set_status_line_label ();
+   ghidgui->config_modified = TRUE;
+ }
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 7ed1d77..07019df 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1240,30 +1240,9 @@ ghid_build_pcb_top_window (void)
+   gtk_container_add (GTK_CONTAINER (ghidgui->mode_buttons1_frame),
+                      ghidgui->mode_buttons1_hbox);
+ 
+-  ghidgui->compact_hbox = gtk_hbox_new (FALSE, 0);
+-  gtk_box_pack_end (GTK_BOX(ghidgui->top_hbox),
+-                    ghidgui->compact_hbox, FALSE, FALSE, 0);
+-
+-  ghidgui->compact_vbox = gtk_vbox_new (FALSE, 0);
+-  gtk_box_pack_end (GTK_BOX (ghidgui->top_hbox), ghidgui->compact_vbox,
+-                    FALSE, FALSE, 0);
+-
+-  /*
+-   * The position_box pack location depends on user setting of
+-   * compact horizontal mode.
+-   */
+   ghidgui->position_hbox = gtk_hbox_new (FALSE, 0);
+-  g_object_ref(G_OBJECT(ghidgui->position_hbox));	/* so can remove it */
+-  if (ghidgui->compact_horizontal)
+-    {
+-      gtk_box_pack_end (GTK_BOX (ghidgui->compact_vbox),
+-		     ghidgui->position_hbox, TRUE, FALSE, 0);
+-    }
+-  else
+-    {
+-      gtk_box_pack_end(GTK_BOX(ghidgui->compact_hbox), ghidgui->position_hbox,
+-		      FALSE, FALSE, 4);
+-    }
++  gtk_box_pack_end (GTK_BOX(ghidgui->top_hbox),
++                    ghidgui->position_hbox, FALSE, FALSE, 4);
+ 
+   make_cursor_position_labels (ghidgui->position_hbox, port);
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 8c6478f..9376605 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -104,7 +104,7 @@ typedef struct
+   GtkEntry *command_entry;
+ 
+   GtkWidget *top_hbox,
+-    *menu_hbox, *compact_vbox, *compact_hbox, *position_hbox,
++    *menu_hbox, *position_hbox,
+     *mode_buttons0_vbox, *mode_buttons1_hbox, *mode_buttons1_vbox,
+     *mode_buttons0_frame, *mode_buttons1_frame, *mode_buttons0_frame_vbox;
+   GtkWidget *left_toolbar;
