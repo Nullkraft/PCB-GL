@@ -1,7 +1,7 @@
-Bottom: 106127ab681141af69f9540b6ddc03dcca89e9ef
-Top:    db2b80f14b130104a42aaa3ce95d77771a5374f6
+Bottom: e32b85725630e48a572430398fb6c109195bfbc8
+Top:    ce699203c425a5f5458f6aae9af456d670daf30b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-30 20:47:59 +0100
+Date:   2011-09-03 19:47:14 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -832,7 +832,7 @@ index a3a4ac1..06e2cc7 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 1c5c150..16ae4ff 100644
+index 58f299a..157a859 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -930,6 +930,7 @@ static void
@@ -1299,7 +1299,7 @@ index 025351f..322000d 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index ee7e26d..ea17b3e 100644
+index 1000400..8456042 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -497,7 +497,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
@@ -1371,7 +1371,7 @@ index ee7e26d..ea17b3e 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1755,8 +1762,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1778,8 +1785,11 @@ GetGridLockCoordinates (int type, void *ptr1,
        *y = ((ElementTypePtr) ptr2)->MarkY;
        break;
      case POLYGON_TYPE:
@@ -1385,7 +1385,7 @@ index ee7e26d..ea17b3e 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -2039,10 +2049,13 @@ pcb_author (void)
+@@ -2062,10 +2072,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
@@ -1439,7 +1439,7 @@ index 6b6359a..d8a4f3c 100644
  
    AddObjectToMoveUndoList (Type, Ptr1, Ptr2, Ptr3, DX, DY);
 diff --git a/src/mymem.c b/src/mymem.c
-index 1feb2ef..d755cce 100644
+index 73b3ef7..57dc0e1 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -36,8 +36,6 @@
@@ -2089,7 +2089,7 @@ index 1feb2ef..d755cce 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/mymem.h b/src/mymem.h
-index cbfd47e..88e53ff 100644
+index a66e349..b564787 100644
 --- a/src/mymem.h
 +++ b/src/mymem.h
 @@ -38,22 +38,6 @@
