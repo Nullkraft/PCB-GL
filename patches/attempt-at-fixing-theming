@@ -1,5 +1,5 @@
 Bottom: 2650351f86593864d4e369051d19a75e873dac52
-Top:    9483c815ba687b8adfc6e03923b8628e606a1ef2
+Top:    a7817d70af514c5b2a8ab32d980415b74d41c71e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-03 18:02:48 +0100
 
@@ -9,7 +9,7 @@ Attempt at fixing theming
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 07019df..c629fb8 100644
+index 07019df..1cc1567 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -680,20 +680,20 @@ relative_label_size_req_cb (GtkWidget * widget,
@@ -39,10 +39,43 @@ index 07019df..c629fb8 100644
  
    /* The absolute cursor position label
     */
-@@ -1182,6 +1182,55 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
+@@ -1182,6 +1182,74 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
    gtk_main_quit ();
  }
  
++static void
++get_widget_styles (GtkStyle **menu_bar_style,
++                   GtkStyle **tool_button_style,
++                   GtkStyle **tool_button_label_style)
++{
++  GtkWidget *window;
++  GtkWidget *toolbar;
++  GtkWidget *tool_button;
++  GtkWidget *label;
++  GtkToolItem *tool_item;
++
++  /* We can get the menu bar style from PCB's menu bar */
++  *menu_bar_style = gtk_widget_get_style (ghidgui->menu_bar);
++
++  /* Build a fake window to extract the theme's styling from */
++  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
++  toolbar = gtk_toolbar_new ();
++  gtk_container_add (GTK_CONTAINER (window), toolbar);
++  tool_item = gtk_tool_item_new ();
++  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), tool_item, 0);
++  tool_button = gtk_button_new ();
++  gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
++  label = gtk_label_new ("");
++  gtk_container_add (GTK_CONTAINER (tool_button), label);
++
++  /* Extract the theme's style for a toolbar button */
++  gtk_widget_ensure_style (label);
++  *tool_button_style = gtk_widget_get_style (tool_button);
++  *tool_button_label_style = gtk_widget_get_style (label);
++
++  gtk_widget_destroy (window);
++}
++
 +/* Attempt to produce a conststent style for our extra menu-bar items by
 + * copying aspects from the menu bar style set by the user's GTK theme
 + */
@@ -51,34 +84,20 @@ index 07019df..c629fb8 100644
 +{
 +  /* XXX: Need to fix this so it works with on-the-fly theme changes */
 +
-+  GtkWidget *window, *toolbar, *tool_button, *label, *rel_pos_frame, *abs_pos_frame;
-+  GtkToolItem *tool_item;
-+  GtkStyle *tool_button_style;
++  GtkWidget *rel_pos_frame;
++  GtkWidget *abs_pos_frame;
 +  GtkStyle *menu_bar_style;
++  GtkStyle *tool_button_style;
++  GtkStyle *tool_button_label_style;
 +
-+  /* Build a fake window with a "proper" toolbar to extract the theme's styling from */
-+  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-+  toolbar = gtk_toolbar_new ();
-+  gtk_container_add (GTK_CONTAINER (window), toolbar);
-+  tool_item = gtk_tool_item_new ();
-+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), tool_item, 0);
-+  tool_button = gtk_button_new ();
-+  gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
-+  label = gtk_label_new ("Hello world");
-+  gtk_container_add (GTK_CONTAINER (tool_button), label);
-+
-+  /* Extract the theme's style for a toolbar button */
-+  gtk_widget_ensure_style (tool_button);
-+  tool_button_style = gtk_widget_get_style (tool_button);
-+
-+  gtk_widget_destroy (window);
++  get_widget_styles (&menu_bar_style,
++                     &tool_button_style,
++                     &tool_button_label_style);
 +
 +  gtk_widget_set_style (ghidgui->grid_units_button, tool_button_style);
 +  /* FIXME: The tool items in the compact vertical mode need setting as well */
 +
-+  menu_bar_style = gtk_widget_get_style (ghidgui->menu_bar);
-+
-+  gtk_widget_set_style (top_bar_background, menu_bar_style);
++  gtk_widget_set_style (ghidgui->top_bar_background, menu_bar_style);
 +  gtk_widget_set_style (ghidgui->grid_units_label, menu_bar_style);
 +  gtk_widget_set_style (ghidgui->cursor_position_relative_label, menu_bar_style);
 +  gtk_widget_set_style (ghidgui->cursor_position_absolute_label, menu_bar_style);
@@ -86,37 +105,31 @@ index 07019df..c629fb8 100644
 +  /* Get their frames too */
 +  rel_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_relative_label);
 +  abs_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_absolute_label);
++
 +  gtk_widget_set_style (rel_pos_frame, menu_bar_style);
 +  gtk_widget_set_style (abs_pos_frame, menu_bar_style);
 +  gtk_widget_set_style (ghidgui->mode_buttons1_frame, menu_bar_style);
 +}
 +
-+
  /* 
   * Create the top_window contents.  The config settings should be loaded
   * before this is called.
-@@ -1191,6 +1240,7 @@ ghid_build_pcb_top_window (void)
- {
-   GtkWidget *window;
-   GtkWidget *vbox_main, *hbox_middle, *hbox;
-+  GtkWidget *top_bar_background;
-   GtkWidget *vbox, *frame;
-   GtkWidget *label;
-   GHidPort *port = &ghid_port;
-@@ -1202,8 +1252,11 @@ ghid_build_pcb_top_window (void)
+@@ -1202,8 +1270,13 @@ ghid_build_pcb_top_window (void)
    gtk_container_add (GTK_CONTAINER (window), vbox_main);
  
    /* -- Top control bar */
-+  top_bar_background = gtk_event_box_new ();
-+  gtk_box_pack_start (GTK_BOX (vbox_main), top_bar_background, FALSE, FALSE, 0);
++  ghidgui->top_bar_background = gtk_event_box_new ();
++  gtk_box_pack_start (GTK_BOX (vbox_main),
++                      ghidgui->top_bar_background, FALSE, FALSE, 0);
 +
    ghidgui->top_hbox = gtk_hbox_new (FALSE, 4);
 -  gtk_box_pack_start (GTK_BOX (vbox_main), ghidgui->top_hbox, FALSE, FALSE, 0);
-+  gtk_container_add (GTK_CONTAINER (top_bar_background), ghidgui->top_hbox);
++  gtk_container_add (GTK_CONTAINER (ghidgui->top_bar_background),
++                     ghidgui->top_hbox);
  
    /*
     * menu_hbox will be made insensitive when the gui needs
-@@ -1249,6 +1302,7 @@ ghid_build_pcb_top_window (void)
+@@ -1249,6 +1322,7 @@ ghid_build_pcb_top_window (void)
    hbox_middle = gtk_hbox_new (FALSE, 0);
    gtk_box_pack_start (GTK_BOX (vbox_main), hbox_middle, TRUE, TRUE, 3);
  
@@ -125,10 +138,15 @@ index 07019df..c629fb8 100644
    /* -- Left control bar */
    /*
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 9376605..da61bda 100644
+index 9376605..9a02370 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -108,6 +108,7 @@ typedef struct
+@@ -104,10 +104,12 @@ typedef struct
+   GtkEntry *command_entry;
+ 
+   GtkWidget *top_hbox,
++    *top_bar_background,
+     *menu_hbox, *position_hbox,
      *mode_buttons0_vbox, *mode_buttons1_hbox, *mode_buttons1_vbox,
      *mode_buttons0_frame, *mode_buttons1_frame, *mode_buttons0_frame_vbox;
    GtkWidget *left_toolbar;
