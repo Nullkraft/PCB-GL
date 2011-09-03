@@ -1,5 +1,5 @@
 Bottom: 2650351f86593864d4e369051d19a75e873dac52
-Top:    9622952f0628e8305150e4c1c747c231124f7f63
+Top:    daa646c2b89b452b4a72286b9c1d282023c6df2f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-03 18:02:48 +0100
 
@@ -9,7 +9,7 @@ Attempt at fixing theming
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 07019df..075732c 100644
+index 07019df..c544813 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -680,20 +680,20 @@ relative_label_size_req_cb (GtkWidget * widget,
@@ -39,7 +39,7 @@ index 07019df..075732c 100644
  
    /* The absolute cursor position label
     */
-@@ -1182,6 +1182,76 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
+@@ -1182,6 +1182,78 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
    gtk_main_quit ();
  }
  
@@ -51,7 +51,7 @@ index 07019df..075732c 100644
 +  GtkWidget *window;
 +  GtkWidget *toolbar;
 +  GtkWidget *tool_button;
-+  GtkWidget *label;
++  GtkWidget *tool_button_label;
 +  GtkToolItem *tool_item;
 +
 +  /* We can get the menu bar style from PCB's menu bar */
@@ -65,15 +65,15 @@ index 07019df..075732c 100644
 +  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), tool_item, 0);
 +  tool_button = gtk_button_new ();
 +  gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
-+  label = gtk_label_new ("");
-+  gtk_container_add (GTK_CONTAINER (tool_button), label);
++  tool_button_label = gtk_label_new ("");
++  gtk_container_add (GTK_CONTAINER (tool_button), tool_button_label);
 +
 +  /* Extract the theme's style for a toolbar button */
-+  gtk_widget_ensure_style (button);
++  gtk_widget_ensure_style (tool_button);
 +  *tool_button_style = gtk_widget_get_style (tool_button);
 +
-+  gtk_widget_ensure_style (label);
-+  *tool_button_label_style = gtk_widget_get_style (label);
++  gtk_widget_ensure_style (tool_button_label);
++  *tool_button_label_style = gtk_widget_get_style (tool_button_label);
 +
 +  gtk_widget_destroy (window);
 +}
@@ -97,14 +97,16 @@ index 07019df..075732c 100644
 +                     &tool_button_label_style);
 +
 +  gtk_widget_set_style (ghidgui->grid_units_button, tool_button_style);
++  gtk_widget_set_style (ghidgui->grid_units_label, tool_button_label_style);
 +  /* FIXME: The tool items in the compact vertical mode need setting as well */
 +
++  /* FIXME: Should probably grab a menu item to get the text colour */
 +  gtk_widget_set_style (ghidgui->top_bar_background, menu_bar_style);
-+  gtk_widget_set_style (ghidgui->grid_units_label, menu_bar_style);
 +  gtk_widget_set_style (ghidgui->cursor_position_relative_label, menu_bar_style);
 +  gtk_widget_set_style (ghidgui->cursor_position_absolute_label, menu_bar_style);
 +
 +  /* Get their frames too */
++  /* FIXME: Should probably fake a frame to get this? */
 +  rel_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_relative_label);
 +  abs_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_absolute_label);
 +
@@ -116,7 +118,7 @@ index 07019df..075732c 100644
  /* 
   * Create the top_window contents.  The config settings should be loaded
   * before this is called.
-@@ -1202,8 +1272,13 @@ ghid_build_pcb_top_window (void)
+@@ -1202,8 +1274,13 @@ ghid_build_pcb_top_window (void)
    gtk_container_add (GTK_CONTAINER (window), vbox_main);
  
    /* -- Top control bar */
@@ -131,7 +133,7 @@ index 07019df..075732c 100644
  
    /*
     * menu_hbox will be made insensitive when the gui needs
-@@ -1249,6 +1324,7 @@ ghid_build_pcb_top_window (void)
+@@ -1249,6 +1326,7 @@ ghid_build_pcb_top_window (void)
    hbox_middle = gtk_hbox_new (FALSE, 0);
    gtk_box_pack_start (GTK_BOX (vbox_main), hbox_middle, TRUE, TRUE, 3);
  
