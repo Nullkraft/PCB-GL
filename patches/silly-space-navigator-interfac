@@ -1,5 +1,5 @@
-Bottom: e97c428159cf821053249c4c61f7d0f601f07d11
-Top:    9113e7dc55b13909bc25b03b5a22b9a3e3aabc07
+Bottom: 591abb8ef340680e143348d088d384d81d66fcb9
+Top:    808a4be6d8a74721f481398517adf76dfc4e0272
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-30 20:48:13 +0100
 
@@ -103,7 +103,7 @@ index b9c5ab3..73771b0 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index e7b8a78..e43ec20 100644
+index 8168eb5..b76b159 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -126,6 +126,7 @@ a zoom in/out.
@@ -114,7 +114,7 @@ index e7b8a78..e43ec20 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1348,6 +1349,7 @@ ghid_build_pcb_top_window (void)
+@@ -1350,6 +1351,7 @@ ghid_build_pcb_top_window (void)
    /* FIXME: IFDEF HACK */
  #ifdef ENABLE_GL
    trackball = ghid_trackball_new ();
@@ -191,10 +191,10 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index de9e1f4..23fb669 100644
+index de3f753..79c5448 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -139,6 +139,8 @@ typedef struct
+@@ -143,6 +143,8 @@ typedef struct
      library_window_width,
      library_window_height,
      netlist_window_height, history_size, settings_mode, auto_pan_speed;
@@ -203,7 +203,7 @@ index de9e1f4..23fb669 100644
  }
  GhidGui;
  
-@@ -164,6 +166,7 @@ typedef struct
+@@ -168,6 +170,7 @@ typedef struct
  {
    GtkWidget *top_window,	/* toplevel widget              */
     *drawing_area;		/* and its drawing area */
@@ -211,7 +211,7 @@ index de9e1f4..23fb669 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -292,6 +295,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -296,6 +299,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
@@ -222,7 +222,7 @@ index de9e1f4..23fb669 100644
  
  /* gui-dialog.c function prototypes.
  */
-@@ -507,6 +514,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
+@@ -511,6 +518,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
  void ghid_cancel_lead_user (void);
  
  /* gtkhid-main.c */
