@@ -1,0 +1,19 @@
+Bottom: e220b4930d718578fc6e9ae6d7902d26dbbc3fc5
+Top:    e220b4930d718578fc6e9ae6d7902d26dbbc3fc5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-03 15:56:13 +0100
+
+hid/gtk: Don't use a GtkEventBox as a container widget
+
+We weren't making use of the events from the event box, and appeared
+just to be using it as a convenient container to allow setting the
+sensitivity on our entire left hand toolbar at once.
+
+Scrap the event box widget and just store a pointer to the vbox widget
+which the left toobar items are packed into. We can set the sensitivity
+on this and get the desired effect.
+
+
+---
+
+
