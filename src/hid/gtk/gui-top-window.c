@@ -1208,8 +1208,10 @@ get_widget_styles (GtkStyle **menu_bar_style,
   gtk_container_add (GTK_CONTAINER (tool_button), label);
 
   /* Extract the theme's style for a toolbar button */
-  gtk_widget_ensure_style (label);
+  gtk_widget_ensure_style (button);
   *tool_button_style = gtk_widget_get_style (tool_button);
+
+  gtk_widget_ensure_style (label);
   *tool_button_label_style = gtk_widget_get_style (label);
 
   gtk_widget_destroy (window);
