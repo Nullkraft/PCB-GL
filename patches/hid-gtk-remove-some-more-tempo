@@ -1,0 +1,14 @@
+Bottom: ddae8b1503f6af578f6f774c2b7c3895fb134021
+Top:    ddae8b1503f6af578f6f774c2b7c3895fb134021
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-03 15:05:33 +0100
+
+hid/gtk: Remove some more temporary variable assignments
+
+These make the code harder to follow, as the same temporary variable
+is used again and again to refer to different widgets.
+
+
+---
+
+
