@@ -1,5 +1,5 @@
-Bottom: c7118b24e57cf9dadbc32d3e46fb56a74907a0d8
-Top:    5128b18dc74c6b5bc8e1ad2e253437480782faa7
+Bottom: 2650351f86593864d4e369051d19a75e873dac52
+Top:    17c33589a110b49cce9a72d3d288f8b90e56d22c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-03 18:02:48 +0100
 
@@ -9,10 +9,10 @@ Attempt at fixing theming
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index fb5a32a..c26fa17 100644
+index 07019df..3f5a974 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -696,20 +696,20 @@ relative_label_size_req_cb (GtkWidget * widget,
+@@ -680,20 +680,20 @@ relative_label_size_req_cb (GtkWidget * widget,
  static void
  make_cursor_position_labels (GtkWidget * hbox, GHidPort * port)
  {
@@ -39,7 +39,7 @@ index fb5a32a..c26fa17 100644
  
    /* The absolute cursor position label
     */
-@@ -1207,6 +1207,7 @@ ghid_build_pcb_top_window (void)
+@@ -1191,6 +1191,7 @@ ghid_build_pcb_top_window (void)
  {
    GtkWidget *window;
    GtkWidget *vbox_main, *hbox_middle, *hbox;
@@ -47,7 +47,7 @@ index fb5a32a..c26fa17 100644
    GtkWidget *vbox, *frame;
    GtkWidget *label;
    GHidPort *port = &ghid_port;
-@@ -1219,8 +1220,11 @@ ghid_build_pcb_top_window (void)
+@@ -1202,8 +1203,11 @@ ghid_build_pcb_top_window (void)
    gtk_container_add (GTK_CONTAINER (window), vbox_main);
  
    /* -- Top control bar */
@@ -60,7 +60,7 @@ index fb5a32a..c26fa17 100644
  
    /*
     * menu_hbox will be made insensitive when the gui needs
-@@ -1301,6 +1305,50 @@ ghid_build_pcb_top_window (void)
+@@ -1249,6 +1253,50 @@ ghid_build_pcb_top_window (void)
    hbox_middle = gtk_hbox_new (FALSE, 0);
    gtk_box_pack_start (GTK_BOX (vbox_main), hbox_middle, TRUE, TRUE, 3);
  
@@ -112,7 +112,7 @@ index fb5a32a..c26fa17 100644
    /* -- Left control bar */
    /*
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 1cb3865..6e7b52f 100644
+index 9376605..da61bda 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -108,6 +108,7 @@ typedef struct
