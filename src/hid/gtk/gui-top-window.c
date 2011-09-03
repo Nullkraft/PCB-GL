@@ -1182,6 +1182,39 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
   gtk_main_quit ();
 }
 
+static void
+get_widget_styles (GtkStyle **menu_bar_style,
+                   GtkStyle **tool_button_style,
+                   GtkStyle **tool_button_label_style)
+{
+  GtkWidget *window;
+  GtkWidget *toolbar;
+  GtkWidget *tool_button;
+  GtkWidget *label;
+  GtkToolItem *tool_item;
+
+  /* We can get the menu bar style from PCB's menu bar */
+  *menu_bar_style = gtk_widget_get_style (ghidgui->menu_bar);
+
+  /* Build a fake window to extract the theme's styling from */
+  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  toolbar = gtk_toolbar_new ();
+  gtk_container_add (GTK_CONTAINER (window), toolbar);
+  tool_item = gtk_tool_item_new ();
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), tool_item, 0);
+  tool_button = gtk_button_new ();
+  gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
+  label = gtk_label_new ("");
+  gtk_container_add (GTK_CONTAINER (tool_button), label);
+
+  /* Extract the theme's style for a toolbar button */
+  gtk_widget_ensure_style (label);
+  *tool_button_style = gtk_widget_get_style (tool_button);
+  *tool_button_label_style = gtk_widget_get_style (label);
+
+  gtk_widget_destroy (window);
+}
+
 /* Attempt to produce a conststent style for our extra menu-bar items by
  * copying aspects from the menu bar style set by the user's GTK theme
  */
@@ -1190,34 +1223,20 @@ fix_extra_menubar_theming (void)
 {
   /* XXX: Need to fix this so it works with on-the-fly theme changes */
 
-  GtkWidget *window, *toolbar, *tool_button, *label, *rel_pos_frame, *abs_pos_frame;
-  GtkToolItem *tool_item;
-  GtkStyle *tool_button_style;
+  GtkWidget *rel_pos_frame;
+  GtkWidget *abs_pos_frame;
   GtkStyle *menu_bar_style;
+  GtkStyle *tool_button_style;
+  GtkStyle *tool_button_label_style;
 
-  /* Build a fake window with a "proper" toolbar to extract the theme's styling from */
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  toolbar = gtk_toolbar_new ();
-  gtk_container_add (GTK_CONTAINER (window), toolbar);
-  tool_item = gtk_tool_item_new ();
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), tool_item, 0);
-  tool_button = gtk_button_new ();
-  gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
-  label = gtk_label_new ("Hello world");
-  gtk_container_add (GTK_CONTAINER (tool_button), label);
-
-  /* Extract the theme's style for a toolbar button */
-  gtk_widget_ensure_style (tool_button);
-  tool_button_style = gtk_widget_get_style (tool_button);
-
-  gtk_widget_destroy (window);
+  get_widget_styles (&menu_bar_style,
+                     &tool_button_style,
+                     &tool_button_label_style);
 
   gtk_widget_set_style (ghidgui->grid_units_button, tool_button_style);
   /* FIXME: The tool items in the compact vertical mode need setting as well */
 
-  menu_bar_style = gtk_widget_get_style (ghidgui->menu_bar);
-
-  gtk_widget_set_style (top_bar_background, menu_bar_style);
+  gtk_widget_set_style (ghidgui->top_bar_background, menu_bar_style);
   gtk_widget_set_style (ghidgui->grid_units_label, menu_bar_style);
   gtk_widget_set_style (ghidgui->cursor_position_relative_label, menu_bar_style);
   gtk_widget_set_style (ghidgui->cursor_position_absolute_label, menu_bar_style);
@@ -1225,11 +1244,11 @@ fix_extra_menubar_theming (void)
   /* Get their frames too */
   rel_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_relative_label);
   abs_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_absolute_label);
+
   gtk_widget_set_style (rel_pos_frame, menu_bar_style);
   gtk_widget_set_style (abs_pos_frame, menu_bar_style);
   gtk_widget_set_style (ghidgui->mode_buttons1_frame, menu_bar_style);
 }
-
 
 /* 
  * Create the top_window contents.  The config settings should be loaded
@@ -1240,7 +1259,6 @@ ghid_build_pcb_top_window (void)
 {
   GtkWidget *window;
   GtkWidget *vbox_main, *hbox_middle, *hbox;
-  GtkWidget *top_bar_background;
   GtkWidget *vbox, *frame;
   GtkWidget *label;
   GHidPort *port = &ghid_port;
@@ -1252,11 +1270,13 @@ ghid_build_pcb_top_window (void)
   gtk_container_add (GTK_CONTAINER (window), vbox_main);
 
   /* -- Top control bar */
-  top_bar_background = gtk_event_box_new ();
-  gtk_box_pack_start (GTK_BOX (vbox_main), top_bar_background, FALSE, FALSE, 0);
+  ghidgui->top_bar_background = gtk_event_box_new ();
+  gtk_box_pack_start (GTK_BOX (vbox_main),
+                      ghidgui->top_bar_background, FALSE, FALSE, 0);
 
   ghidgui->top_hbox = gtk_hbox_new (FALSE, 4);
-  gtk_container_add (GTK_CONTAINER (top_bar_background), ghidgui->top_hbox);
+  gtk_container_add (GTK_CONTAINER (ghidgui->top_bar_background),
+                     ghidgui->top_hbox);
 
   /*
    * menu_hbox will be made insensitive when the gui needs
