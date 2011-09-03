@@ -1,5 +1,5 @@
-Bottom: 591abb8ef340680e143348d088d384d81d66fcb9
-Top:    808a4be6d8a74721f481398517adf76dfc4e0272
+Bottom: 231785b41eafc4213243f180bd06f00e0ea8b08b
+Top:    88e2c1b9af5401dde786396486ee791cd5906ee1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-30 20:48:13 +0100
 
@@ -103,7 +103,7 @@ index b9c5ab3..73771b0 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 8168eb5..b76b159 100644
+index 0df71dd..1cdc9b6 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -126,6 +126,7 @@ a zoom in/out.
@@ -122,7 +122,7 @@ index 8168eb5..b76b159 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -1831,6 +1833,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -1832,6 +1834,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
