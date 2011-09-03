@@ -1,5 +1,5 @@
 Bottom: a4aaa3b5569e13e3c479c5229738ed45dd30278b
-Top:    9d11b5838e5d0033d314a6cbf25d2433abd8af9d
+Top:    7f6c835ab7fe0db8d626deb60ac2b318d1547174
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-03 19:40:11 +0100
 
@@ -422,7 +422,7 @@ index 9114bc4..fd09122 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index c544813..8168eb5 100644
+index c544813..0df71dd 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -125,6 +125,7 @@ a zoom in/out.
@@ -444,7 +444,7 @@ index c544813..8168eb5 100644
    GHidPort *port = &ghid_port;
    GtkWidget *scrolled;
  
-@@ -1342,6 +1347,16 @@ ghid_build_pcb_top_window (void)
+@@ -1342,6 +1347,17 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX(vbox), ghidgui->layer_selector,
                        FALSE, FALSE, 0);
  
@@ -455,7 +455,8 @@ index c544813..8168eb5 100644
 +                    G_CALLBACK (ghid_port_rotate), NULL);
 +  g_signal_connect (trackball, "view-2d-changed",
 +                    G_CALLBACK (ghid_view_2d), NULL);
-+  gtk_box_pack_start (GTK_BOX (vbox_left), trackball, FALSE, FALSE, 0);
++  gtk_box_pack_start (GTK_BOX(ghidgui->left_toolbar),
++                      trackball, FALSE, FALSE, 0);
 +#endif
 +
    ghidgui->mode_buttons0_frame_vbox = gtk_vbox_new (FALSE, 0);
