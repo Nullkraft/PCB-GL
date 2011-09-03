@@ -1190,7 +1190,7 @@ get_widget_styles (GtkStyle **menu_bar_style,
   GtkWidget *window;
   GtkWidget *toolbar;
   GtkWidget *tool_button;
-  GtkWidget *label;
+  GtkWidget *tool_button_label;
   GtkToolItem *tool_item;
 
   /* We can get the menu bar style from PCB's menu bar */
@@ -1204,15 +1204,15 @@ get_widget_styles (GtkStyle **menu_bar_style,
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), tool_item, 0);
   tool_button = gtk_button_new ();
   gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
-  label = gtk_label_new ("");
-  gtk_container_add (GTK_CONTAINER (tool_button), label);
+  tool_button_label = gtk_label_new ("");
+  gtk_container_add (GTK_CONTAINER (tool_button), tool_button_label);
 
   /* Extract the theme's style for a toolbar button */
-  gtk_widget_ensure_style (button);
+  gtk_widget_ensure_style (tool_button);
   *tool_button_style = gtk_widget_get_style (tool_button);
 
-  gtk_widget_ensure_style (label);
-  *tool_button_label_style = gtk_widget_get_style (label);
+  gtk_widget_ensure_style (tool_button_label);
+  *tool_button_label_style = gtk_widget_get_style (tool_button_label);
 
   gtk_widget_destroy (window);
 }
@@ -1236,14 +1236,16 @@ fix_extra_menubar_theming (void)
                      &tool_button_label_style);
 
   gtk_widget_set_style (ghidgui->grid_units_button, tool_button_style);
+  gtk_widget_set_style (ghidgui->grid_units_label, tool_button_label_style);
   /* FIXME: The tool items in the compact vertical mode need setting as well */
 
+  /* FIXME: Should probably grab a menu item to get the text colour */
   gtk_widget_set_style (ghidgui->top_bar_background, menu_bar_style);
-  gtk_widget_set_style (ghidgui->grid_units_label, menu_bar_style);
   gtk_widget_set_style (ghidgui->cursor_position_relative_label, menu_bar_style);
   gtk_widget_set_style (ghidgui->cursor_position_absolute_label, menu_bar_style);
 
   /* Get their frames too */
+  /* FIXME: Should probably fake a frame to get this? */
   rel_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_relative_label);
   abs_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_absolute_label);
 
