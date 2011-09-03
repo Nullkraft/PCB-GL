@@ -1,0 +1,14 @@
+Bottom: 782cce4c3c893f9c180f8060144ee8fd165a9207
+Top:    782cce4c3c893f9c180f8060144ee8fd165a9207
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-03 14:43:28 +0100
+
+hid/gtk: Skip the generic "hbox" variable when storing the widget anyway
+
+For widgets we keep references to in the ghidgui structure, we avoid
+confusion by assigning directly to the more descriptive ghidgui variable.
+
+
+---
+
+
