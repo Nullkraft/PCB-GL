@@ -1,5 +1,5 @@
 Bottom: e220b4930d718578fc6e9ae6d7902d26dbbc3fc5
-Top:    1116961644fe14b778a705068cc3ad1dac5c3eca
+Top:    c7118b24e57cf9dadbc32d3e46fb56a74907a0d8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-03 15:56:13 +0100
 
@@ -17,7 +17,7 @@ on this and get the desired effect.
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 95f39a2..f327573 100644
+index 95f39a2..fb5a32a 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1178,8 +1178,6 @@ make_mode_buttons (GHidPort * port)
@@ -40,7 +40,7 @@ index 95f39a2..f327573 100644
    GtkWidget *label;
    GHidPort *port = &ghid_port;
    gchar *s;
-@@ -1305,26 +1303,20 @@ ghid_build_pcb_top_window (void)
+@@ -1305,26 +1303,21 @@ ghid_build_pcb_top_window (void)
  
  
    /* -- Left control bar */
@@ -59,7 +59,8 @@ index 95f39a2..f327573 100644
 -  vbox_left = gtk_vbox_new (FALSE, 0);
 -  gtk_container_add (GTK_CONTAINER (ebox), vbox_left);
 +  ghidgui->left_toolbar = gtk_vbox_new (FALSE, 0);
-+  gtk_box_pack_start (GTK_BOX (hbox_middle), ghidgui->left_toolbar, FALSE, FALSE, 3);
++  gtk_box_pack_start (GTK_BOX (hbox_middle),
++                      ghidgui->left_toolbar, FALSE, FALSE, 3);
  
 -  vbox = ghid_scrolled_vbox(vbox_left, &scrolled,
 -      GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
@@ -74,7 +75,7 @@ index 95f39a2..f327573 100644
                        ghidgui->mode_buttons0_frame_vbox, FALSE, FALSE, 0);
  
    ghidgui->mode_buttons0_frame = gtk_frame_new (NULL);
-@@ -1336,7 +1328,7 @@ ghid_build_pcb_top_window (void)
+@@ -1336,7 +1329,7 @@ ghid_build_pcb_top_window (void)
    make_mode_buttons (port);
  
    frame = gtk_frame_new(NULL);
@@ -83,7 +84,7 @@ index 95f39a2..f327573 100644
    vbox = gtk_vbox_new(FALSE, 0);
    gtk_container_add(GTK_CONTAINER(frame), vbox);
    hbox = gtk_hbox_new(FALSE, 0);
-@@ -1514,7 +1506,7 @@ ghid_interface_input_signals_disconnect (void)
+@@ -1514,7 +1507,7 @@ ghid_interface_input_signals_disconnect (void)
  void
  ghid_interface_set_sensitive (gboolean sensitive)
  {
