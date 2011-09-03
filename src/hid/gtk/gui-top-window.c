@@ -1354,7 +1354,8 @@ ghid_build_pcb_top_window (void)
                     G_CALLBACK (ghid_port_rotate), NULL);
   g_signal_connect (trackball, "view-2d-changed",
                     G_CALLBACK (ghid_view_2d), NULL);
-  gtk_box_pack_start (GTK_BOX (vbox_left), trackball, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX(ghidgui->left_toolbar),
+                      trackball, FALSE, FALSE, 0);
 #endif
 
   ghidgui->mode_buttons0_frame_vbox = gtk_vbox_new (FALSE, 0);
