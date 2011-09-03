@@ -1182,6 +1182,55 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
   gtk_main_quit ();
 }
 
+/* Attempt to produce a conststent style for our extra menu-bar items by
+ * copying aspects from the menu bar style set by the user's GTK theme
+ */
+static void
+fix_extra_menubar_theming (void)
+{
+  /* XXX: Need to fix this so it works with on-the-fly theme changes */
+
+  GtkWidget *window, *toolbar, *tool_button, *label, *rel_pos_frame, *abs_pos_frame;
+  GtkToolItem *tool_item;
+  GtkStyle *tool_button_style;
+  GtkStyle *menu_bar_style;
+
+  /* Build a fake window with a "proper" toolbar to extract the theme's styling from */
+  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  toolbar = gtk_toolbar_new ();
+  gtk_container_add (GTK_CONTAINER (window), toolbar);
+  tool_item = gtk_tool_item_new ();
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), tool_item, 0);
+  tool_button = gtk_button_new ();
+  gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
+  label = gtk_label_new ("Hello world");
+  gtk_container_add (GTK_CONTAINER (tool_button), label);
+
+  /* Extract the theme's style for a toolbar button */
+  gtk_widget_ensure_style (tool_button);
+  tool_button_style = gtk_widget_get_style (tool_button);
+
+  gtk_widget_destroy (window);
+
+  gtk_widget_set_style (ghidgui->grid_units_button, tool_button_style);
+  /* FIXME: The tool items in the compact vertical mode need setting as well */
+
+  menu_bar_style = gtk_widget_get_style (ghidgui->menu_bar);
+
+  gtk_widget_set_style (top_bar_background, menu_bar_style);
+  gtk_widget_set_style (ghidgui->grid_units_label, menu_bar_style);
+  gtk_widget_set_style (ghidgui->cursor_position_relative_label, menu_bar_style);
+  gtk_widget_set_style (ghidgui->cursor_position_absolute_label, menu_bar_style);
+
+  /* Get their frames too */
+  rel_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_relative_label);
+  abs_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_absolute_label);
+  gtk_widget_set_style (rel_pos_frame, menu_bar_style);
+  gtk_widget_set_style (abs_pos_frame, menu_bar_style);
+  gtk_widget_set_style (ghidgui->mode_buttons1_frame, menu_bar_style);
+}
+
+
 /* 
  * Create the top_window contents.  The config settings should be loaded
  * before this is called.
@@ -1253,50 +1302,7 @@ ghid_build_pcb_top_window (void)
   hbox_middle = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox_main), hbox_middle, TRUE, TRUE, 3);
 
-  if (1) {
-    /* Attempt to produce a conststent style for our extra menu-bar items by
-     * copying aspects from the menu bar style set by the user's GTK theme
-     */
-
-    /* XXX: Need to fix this so it works with on-the-fly theme changes */
-
-    GtkWidget *window, *toolbar, *tool_button, *label;
-    GtkToolItem *tool_item;
-    GtkStyle *tool_button_style;
-    GtkStyle *menu_bar_interloper_style;
-
-    window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    toolbar = gtk_toolbar_new ();
-    gtk_container_add (GTK_CONTAINER (window), toolbar);
-    tool_item = gtk_tool_item_new ();
-    gtk_toolbar_insert (GTK_TOOLBAR (toolbar), tool_item, 0);
-    tool_button = gtk_button_new ();
-    gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
-    label = gtk_label_new ("Hello world");
-    gtk_container_add (GTK_CONTAINER (tool_button), label);
-
-    gtk_widget_ensure_style (tool_button);
-    tool_button_style = gtk_widget_get_style (tool_button);
-//    gtk_widget_destroy (window);
-    gtk_widget_show_all (window);
-
-    menu_bar_interloper_style = gtk_widget_get_style (ghidgui->menu_bar);
-
-    gtk_widget_set_style (top_bar_background,                      menu_bar_interloper_style);
-    gtk_widget_set_style (ghidgui->name_label,                     menu_bar_interloper_style);
-    gtk_widget_set_style (ghidgui->grid_units_label,               menu_bar_interloper_style);
-    gtk_widget_set_style (ghidgui->cursor_position_relative_label, menu_bar_interloper_style);
-    gtk_widget_set_style (ghidgui->cursor_position_absolute_label, menu_bar_interloper_style);
-
-    /* Get their frames too */
-    gtk_widget_set_style (gtk_widget_get_parent (ghidgui->cursor_position_relative_label), menu_bar_interloper_style);
-    gtk_widget_set_style (gtk_widget_get_parent (ghidgui->cursor_position_absolute_label), menu_bar_interloper_style);
-    gtk_widget_set_style (ghidgui->mode_buttons1_frame,                                    menu_bar_interloper_style);
-
-    /* These need a toobar button style to copy from */
-    gtk_widget_set_style (ghidgui->grid_units_button,              tool_button_style);
-  }
-
+  fix_extra_menubar_theming ();
 
   /* -- Left control bar */
   /*
