@@ -1,7 +1,7 @@
-Bottom: feae8020097ddd8e2fc48d9662536aa0ca0662f9
-Top:    208c6fc765416777484dc770b1c1000072dc6fbe
+Bottom: 4000d0dd0229fff0609f49d056d8b0a5726402ae
+Top:    3356e945e6a5162d74e95c7726527f1f2d95ca5d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-08-30 20:48:29 +0100
+Date:   2011-09-03 19:47:35 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -48,7 +48,7 @@ index ac2aa54..19bd801 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 5d44355..f3eade2 100644
+index eca110e..1d63ab8 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -124,6 +124,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
