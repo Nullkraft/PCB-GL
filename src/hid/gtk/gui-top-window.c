@@ -1117,8 +1117,8 @@ ghid_pack_mode_buttons (void)
 }
 
 static void
-make_mode_area_and_toolbar (GtkWidget **mode_frame,
-                            GtkWidget **mode_toolbar)
+make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
+                               GtkWidget **mode_toolbar)
 {
   GtkToolItem *tool_item;
   GtkWidget *vbox, *hbox = NULL;
@@ -1219,44 +1219,40 @@ get_widget_styles (GtkStyle **menu_bar_style,
                    GtkStyle **tool_button_style,
                    GtkStyle **tool_button_label_style)
 {
-  GtkWidget *window;
-  GtkWidget *toolbar;
   GtkWidget *tool_button;
   GtkWidget *tool_button_label;
   GtkToolItem *tool_item;
 
-  /* We can get the menu bar style from PCB's menu bar */
-  *menu_bar_style = gtk_widget_get_style (ghidgui->menu_bar);
-
-  /* Build a fake window to extract the theme's styling from */
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  toolbar = gtk_toolbar_new ();
-  gtk_container_add (GTK_CONTAINER (window), toolbar);
+  /* Build a tool item to extract the theme's styling for a toolbar button with text */
   tool_item = gtk_tool_item_new ();
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), tool_item, 0);
+  gtk_toolbar_insert (GTK_TOOLBAR (ghidgui->mode_toolbar), tool_item, 0);
   tool_button = gtk_button_new ();
   gtk_container_add (GTK_CONTAINER (tool_item), tool_button);
   tool_button_label = gtk_label_new ("");
   gtk_container_add (GTK_CONTAINER (tool_button), tool_button_label);
 
-  /* Extract the theme's style for a toolbar button */
+  /* Grab the various styles we need */
+  gtk_widget_ensure_style (ghidgui->menu_bar);
+  *menu_bar_style = gtk_widget_get_style (ghidgui->menu_bar);
+
+  gtk_widget_ensure_style (ghidgui->mode_toolbar);
+  *tool_bar_style = gtk_widget_get_style (ghidgui->mode_toolbar);
+
   gtk_widget_ensure_style (tool_button);
   *tool_button_style = gtk_widget_get_style (tool_button);
 
   gtk_widget_ensure_style (tool_button_label);
   *tool_button_label_style = gtk_widget_get_style (tool_button_label);
 
-  gtk_widget_destroy (window);
+  gtk_widget_destroy (tool_item);
 }
 
 /* Attempt to produce a conststent style for our extra menu-bar items by
  * copying aspects from the menu bar style set by the user's GTK theme
  */
 static void
-do_fix_extra_menubar_theming (void)
+do_fix_topbar_theming (void)
 {
-  /* XXX: Need to fix this so it works with on-the-fly theme changes */
-
   GtkWidget *rel_pos_frame;
   GtkWidget *abs_pos_frame;
   GtkStyle *menu_bar_style;
@@ -1283,24 +1279,23 @@ do_fix_extra_menubar_theming (void)
 
   gtk_widget_set_style (rel_pos_frame, menu_bar_style);
   gtk_widget_set_style (abs_pos_frame, menu_bar_style);
-  gtk_widget_set_style (ghidgui->mode_buttons1_frame, menu_bar_style);
 }
 
 static void
-fix_extra_menubar_theming (void)
+fix_topbar_theming (void)
 {
   GtkSettings *settings;
 
-  do_fix_extra_menubar_theming ();
+  do_fix_topbar_theming ();
 
   settings = gtk_widget_get_settings (ghidgui->top_bar_background);
   g_signal_connect (settings,
                     "notify::gtk-theme-name",
-                    G_CALLBACK (do_fix_extra_menubar_theming),
+                    G_CALLBACK (do_fix_topbar_theming),
                     NULL);
   g_signal_connect (settings,
                     "notify::gtk-font-name",
-                    G_CALLBACK (do_fix_extra_menubar_theming),
+                    G_CALLBACK (do_fix_topbar_theming),
                     NULL);
 }
 
@@ -1360,7 +1355,8 @@ ghid_build_pcb_top_window (void)
   gtk_box_pack_start (GTK_BOX (ghidgui->menubar_toolbar_vbox),
                       ghidgui->menu_bar, FALSE, FALSE, 0);
 
-  make_mode_area_and_toolbar (&ghidgui->mode_buttons_frame, &ghidgui->mode_toolbar);
+  make_mode_buttons_and_toolbar (&ghidgui->mode_buttons_frame,
+                                 &ghidgui->mode_toolbar);
   gtk_box_pack_start (GTK_BOX (ghidgui->menubar_toolbar_vbox),
                       ghidgui->mode_toolbar, FALSE, FALSE, 0);
 
@@ -1374,7 +1370,7 @@ ghid_build_pcb_top_window (void)
   hbox_middle = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox_main), hbox_middle, TRUE, TRUE, 3);
 
-  fix_extra_menubar_theming ();
+  fix_topbar_theming (); /* Must be called after toolbar is created */
 
   /* -- Left control bar */
   /*
@@ -1391,7 +1387,7 @@ ghid_build_pcb_top_window (void)
                       FALSE, FALSE, 0);
 
   /* ghidgui->mode_buttons_frame was created above in the call to
-   * make_mode_area_and_toolbar (&ghidgui->mode_buttons_frame, &ghidgui->mode_toolbar);
+   * make_mode_buttons_and_toolbar (...);
    */
   gtk_box_pack_start (GTK_BOX (ghidgui->left_toolbar),
                       ghidgui->mode_buttons_frame, FALSE, FALSE, 0);
