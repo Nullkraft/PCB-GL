@@ -1,5 +1,5 @@
 Bottom: b3b5d9256853e012a88d38719bc47c53cc86efeb
-Top:    b3b5d9256853e012a88d38719bc47c53cc86efeb
+Top:    a1ba2c4f584bc2559bbefb10ee465959223bf8a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 00:02:39 +0100
 
@@ -10,4 +10,18 @@ This is for some new widgets, like the GtkInfoBar.
 
 ---
 
-
+diff --git a/configure.ac b/configure.ac
+index 422347a..20b5cd3 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -752,8 +752,8 @@ for e in $HIDLIST; do
+ 		AC_MSG_ERROR([Cannot find pkg-config, make sure it is installed and in your PATH])
+ 	fi
+ 
+-	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.12.0, ,
+-		[AC_MSG_ERROR([Cannot find gtk+ >= 2.12.0, install it and rerun ./configure
++	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.18.0, ,
++		[AC_MSG_ERROR([Cannot find gtk+ >= 2.18.0, install it and rerun ./configure
+ Please review the following errors:
+ $GTK_PKG_ERRORS])]
+ 	)
