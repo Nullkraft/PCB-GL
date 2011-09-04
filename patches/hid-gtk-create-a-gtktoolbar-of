@@ -1,5 +1,5 @@
 Bottom: fcc0668d19f1998966359c341ca8a623bb6b5f67
-Top:    2e26dc059816e7c7a59e02052cd8689d982a66a4
+Top:    6023063f46a44d361762a6721e77c5b797a0a751
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-04 02:56:18 +0100
 
@@ -361,7 +361,7 @@ index 07019df..ee10745 100644
  
    ghid_route_style_temp_buttons_hide ();
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 9376605..27c6938 100644
+index 9376605..04bfeb6 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -105,10 +105,11 @@ typedef struct
@@ -370,8 +370,8 @@ index 9376605..27c6938 100644
      *menu_hbox, *position_hbox,
 -    *mode_buttons0_vbox, *mode_buttons1_hbox, *mode_buttons1_vbox,
 -    *mode_buttons0_frame, *mode_buttons1_frame, *mode_buttons0_frame_vbox;
-+    *mode_buttons_vbox, *menubar_toolbar_vbox,
-+    *mode_buttons_frame, *mode_buttons_frame_vbox;
++    *menubar_toolbar_vbox,
++    *mode_buttons_frame;
    GtkWidget *left_toolbar;
    GtkWidget *menu_bar, *layer_selector;
 +  GtkWidget *mode_toolbar;
