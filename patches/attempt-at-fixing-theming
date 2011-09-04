@@ -3,7 +3,16 @@ Top:    4806c34065a0667402b123764700941da2a2571a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-04 01:12:26 +0100
 
-Attempt at fixing theming
+hid/gtk: Fix styling of menubar area so it is consistent across its width
+
+This relies on some nasty tricks copying GtkStyle's between the menubar
+widget and a new GtkEventBox widget we pack the top bar in to give us a
+background to paint on. We also adjust the styles of the coordinate read-
+out labels and frames to ensure they are legible.
+
+There may still be some inconsistencies, as the coordinate selector button
+is themed as if it were a toolbar button, hence the colourings used may
+be designed to work with a different background colour than we have.
 
 
 ---
