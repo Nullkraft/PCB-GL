@@ -1,0 +1,47 @@
+Bottom: daa646c2b89b452b4a72286b9c1d282023c6df2f
+Top:    45ff74344ba0b38878b651be03827bee8db06ef6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-04 01:12:14 +0100
+
+Refresh of attempt-at-fixing-theming
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index c544813..a4b2b00 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1221,7 +1221,7 @@ get_widget_styles (GtkStyle **menu_bar_style,
+  * copying aspects from the menu bar style set by the user's GTK theme
+  */
+ static void
+-fix_extra_menubar_theming (void)
++do_fix_extra_menubar_theming (void)
+ {
+   /* XXX: Need to fix this so it works with on-the-fly theme changes */
+ 
+@@ -1254,6 +1254,24 @@ fix_extra_menubar_theming (void)
+   gtk_widget_set_style (ghidgui->mode_buttons1_frame, menu_bar_style);
+ }
+ 
++static void
++fix_extra_menubar_theming (void)
++{
++  GtkSettings *settings;
++
++  do_fix_extra_menubar_theming ();
++
++  settings = gtk_widget_get_settings (ghidgui->top_bar_background);
++  g_signal_connect (settings,
++                    "notify::gtk-theme-name",
++                    G_CALLBACK (do_fix_extra_menubar_theming),
++                    NULL);
++  g_signal_connect (settings,
++                    "notify::gtk-font-name",
++                    G_CALLBACK (do_fix_extra_menubar_theming),
++                    NULL);
++}
++
+ /* 
+  * Create the top_window contents.  The config settings should be loaded
+  * before this is called.
