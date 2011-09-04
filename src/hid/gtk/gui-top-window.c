@@ -628,6 +628,7 @@ file_changed_cb (GFileMonitor     *monitor,
                  GFileMonitorEvent event_type,
                  gpointer          user_data)
 {
+  GhidGui *_gui = (GhidGui *)user_data;
   GtkWidget *icon;
   GtkWidget *label;
   GtkWidget *content_area;
@@ -640,23 +641,23 @@ file_changed_cb (GFileMonitor     *monitor,
 
   /* File has changed on disk */
 
-  if (ghidgui->info_bar)
-    gtk_widget_destroy (ghidgui->info_bar);
+  if (_gui->info_bar)
+    gtk_widget_destroy (_gui->info_bar);
 
-  ghidgui->info_bar = gtk_info_bar_new_with_buttons (_("Reload"),
-                                                     GTK_RESPONSE_ACCEPT,
-                                                     GTK_STOCK_CANCEL,
-                                                     GTK_RESPONSE_CANCEL,
-                                                     NULL);
-  gtk_box_pack_start (GTK_BOX (ghidgui->vbox_middle),
-                      ghidgui->info_bar, FALSE, FALSE, 0);
-  gtk_box_reorder_child (GTK_BOX (ghidgui->vbox_middle), ghidgui->info_bar, 0);
+  _gui->info_bar = gtk_info_bar_new_with_buttons (_("Reload"),
+                                                  GTK_RESPONSE_ACCEPT,
+                                                  GTK_STOCK_CANCEL,
+                                                  GTK_RESPONSE_CANCEL,
+                                                  NULL);
+  gtk_box_pack_start (GTK_BOX (_gui->vbox_middle),
+                      _gui->info_bar, FALSE, FALSE, 0);
+  gtk_box_reorder_child (GTK_BOX (_gui->vbox_middle), _gui->info_bar, 0);
 
-  gtk_info_bar_set_message_type (GTK_INFO_BAR (ghidgui->info_bar),
+  gtk_info_bar_set_message_type (GTK_INFO_BAR (_gui->info_bar),
                                  GTK_MESSAGE_WARNING);
 
-  g_signal_connect (ghidgui->info_bar, "response",
-                    G_CALLBACK (info_bar_response_cb), user_data);
+  g_signal_connect (_gui->info_bar, "response",
+                    G_CALLBACK (info_bar_response_cb), _gui);
 
   file_path = g_file_get_path (file);
   file_path_utf8 = g_filename_to_utf8 (file_path, -1, NULL, NULL, NULL);
@@ -669,7 +670,7 @@ file_changed_cb (GFileMonitor     *monitor,
   g_free (file_path_utf8);
 
   content_area =
-    gtk_info_bar_get_content_area (GTK_INFO_BAR (ghidgui->info_bar));
+    gtk_info_bar_get_content_area (GTK_INFO_BAR (_gui->info_bar));
 
   icon = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING,
                                    GTK_ICON_SIZE_DIALOG);
@@ -686,29 +687,36 @@ file_changed_cb (GFileMonitor     *monitor,
 
   gtk_misc_set_alignment (GTK_MISC (label), 0., 0.5);
 
-  gtk_widget_show_all (ghidgui->info_bar);
+  gtk_widget_show_all (_gui->info_bar);
 }
 
 static void
-connect_file_change_monitor (char *filename)
+connect_file_change_monitor (GhidGui *_gui, char *filename)
 {
   GFile *file;
 
-  if (ghidgui->file_monitor)
-    g_object_unref (ghidgui->file_monitor);
+  if (_gui->file_monitor != NULL)
+    g_object_unref (_gui->file_monitor);
+  _gui->file_monitor = NULL;
+
+  if (_gui->info_bar != NULL)
+    gtk_widget_destroy (_gui->info_bar);
+  _gui->info_bar = NULL;
+
+  if (filename == NULL)
+    return;
 
   file = g_file_new_for_path (filename);
 
   /* XXX: Could hook up more error handling for g_file_monitor_file */
-  ghidgui->file_monitor = g_file_monitor_file (file,
-                                               G_FILE_MONITOR_NONE,
-                                               NULL,
-                                               NULL);
-
+  _gui->file_monitor = g_file_monitor_file (file,
+                                            G_FILE_MONITOR_NONE,
+                                            NULL,
+                                            NULL);
   g_object_unref (file);
 
-  g_signal_connect (ghidgui->file_monitor, "changed",
-                    G_CALLBACK (file_changed_cb), ghidgui);
+  g_signal_connect (_gui->file_monitor, "changed",
+                    G_CALLBACK (file_changed_cb), _gui);
 }
 
 
@@ -742,7 +750,9 @@ ghid_window_set_name_label (gchar * name)
   g_free (filename);
 
   if (PCB->Filename && *PCB->Filename)
-    connect_file_change_monitor (PCB->Filename);
+    connect_file_change_monitor (ghidgui, PCB->Filename);
+  else
+    connect_file_change_monitor (ghidgui, NULL);
 }
 
 static void
