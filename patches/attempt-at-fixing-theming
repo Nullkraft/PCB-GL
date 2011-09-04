@@ -1,5 +1,5 @@
 Bottom: 2650351f86593864d4e369051d19a75e873dac52
-Top:    daa646c2b89b452b4a72286b9c1d282023c6df2f
+Top:    45ff74344ba0b38878b651be03827bee8db06ef6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-03 18:02:48 +0100
 
@@ -9,7 +9,7 @@ Attempt at fixing theming
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 07019df..c544813 100644
+index 07019df..a4b2b00 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -680,20 +680,20 @@ relative_label_size_req_cb (GtkWidget * widget,
@@ -39,7 +39,7 @@ index 07019df..c544813 100644
  
    /* The absolute cursor position label
     */
-@@ -1182,6 +1182,78 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
+@@ -1182,6 +1182,96 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
    gtk_main_quit ();
  }
  
@@ -82,7 +82,7 @@ index 07019df..c544813 100644
 + * copying aspects from the menu bar style set by the user's GTK theme
 + */
 +static void
-+fix_extra_menubar_theming (void)
++do_fix_extra_menubar_theming (void)
 +{
 +  /* XXX: Need to fix this so it works with on-the-fly theme changes */
 +
@@ -115,10 +115,28 @@ index 07019df..c544813 100644
 +  gtk_widget_set_style (ghidgui->mode_buttons1_frame, menu_bar_style);
 +}
 +
++static void
++fix_extra_menubar_theming (void)
++{
++  GtkSettings *settings;
++
++  do_fix_extra_menubar_theming ();
++
++  settings = gtk_widget_get_settings (ghidgui->top_bar_background);
++  g_signal_connect (settings,
++                    "notify::gtk-theme-name",
++                    G_CALLBACK (do_fix_extra_menubar_theming),
++                    NULL);
++  g_signal_connect (settings,
++                    "notify::gtk-font-name",
++                    G_CALLBACK (do_fix_extra_menubar_theming),
++                    NULL);
++}
++
  /* 
   * Create the top_window contents.  The config settings should be loaded
   * before this is called.
-@@ -1202,8 +1274,13 @@ ghid_build_pcb_top_window (void)
+@@ -1202,8 +1292,13 @@ ghid_build_pcb_top_window (void)
    gtk_container_add (GTK_CONTAINER (window), vbox_main);
  
    /* -- Top control bar */
@@ -133,7 +151,7 @@ index 07019df..c544813 100644
  
    /*
     * menu_hbox will be made insensitive when the gui needs
-@@ -1249,6 +1326,7 @@ ghid_build_pcb_top_window (void)
+@@ -1249,6 +1344,7 @@ ghid_build_pcb_top_window (void)
    hbox_middle = gtk_hbox_new (FALSE, 0);
    gtk_box_pack_start (GTK_BOX (vbox_main), hbox_middle, TRUE, TRUE, 3);
  
