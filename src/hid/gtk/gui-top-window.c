@@ -1235,21 +1235,15 @@ get_widget_styles (GtkStyle **menu_bar_style,
   gtk_widget_ensure_style (ghidgui->menu_bar);
   *menu_bar_style = gtk_widget_get_style (ghidgui->menu_bar);
 
-  gtk_widget_ensure_style (ghidgui->mode_toolbar);
-  *tool_bar_style = gtk_widget_get_style (ghidgui->mode_toolbar);
-
   gtk_widget_ensure_style (tool_button);
   *tool_button_style = gtk_widget_get_style (tool_button);
 
   gtk_widget_ensure_style (tool_button_label);
   *tool_button_label_style = gtk_widget_get_style (tool_button_label);
 
-  gtk_widget_destroy (tool_item);
+  gtk_widget_destroy (GTK_WIDGET (tool_item));
 }
 
-/* Attempt to produce a conststent style for our extra menu-bar items by
- * copying aspects from the menu bar style set by the user's GTK theme
- */
 static void
 do_fix_topbar_theming (void)
 {
@@ -1263,24 +1257,35 @@ do_fix_topbar_theming (void)
                      &tool_button_style,
                      &tool_button_label_style);
 
-  gtk_widget_set_style (ghidgui->grid_units_button, tool_button_style);
-  gtk_widget_set_style (ghidgui->grid_units_label, tool_button_label_style);
-  /* FIXME: The tool items in the compact vertical mode need setting as well */
-
-  /* FIXME: Should probably grab a menu item to get the text colour */
+  /* Style the top bar background as if it were all a menu bar */
   gtk_widget_set_style (ghidgui->top_bar_background, menu_bar_style);
+
+  /* Style the cursor position labels using the menu bar style as well.
+   * If this turns out to cause problems with certain gtk themes, we may
+   * need to grab the GtkStyle associated with an actual menu item to
+   * get a text color to render with.
+   */
   gtk_widget_set_style (ghidgui->cursor_position_relative_label, menu_bar_style);
   gtk_widget_set_style (ghidgui->cursor_position_absolute_label, menu_bar_style);
 
-  /* Get their frames too */
-  /* FIXME: Should probably fake a frame to get this? */
+  /* Style the units button as if it were a toolbar button - hopefully
+   * this isn't too ugly sitting on a background themed as a menu bar.
+   * It is unlikely any theme defines colours for a GtkButton sitting on
+   * a menu bar.
+   */
   rel_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_relative_label);
   abs_pos_frame = gtk_widget_get_parent (ghidgui->cursor_position_absolute_label);
-
   gtk_widget_set_style (rel_pos_frame, menu_bar_style);
   gtk_widget_set_style (abs_pos_frame, menu_bar_style);
+  gtk_widget_set_style (ghidgui->grid_units_button, tool_button_style);
+  gtk_widget_set_style (ghidgui->grid_units_label, tool_button_label_style);
 }
 
+/* Attempt to produce a conststent style for our extra menu-bar items by
+ * copying aspects from the menu bar style set by the user's GTK theme.
+ * Setup signal handlers to update our efforts if the user changes their
+ * theme whilst we are running.
+ */
 static void
 fix_topbar_theming (void)
 {
@@ -1289,14 +1294,10 @@ fix_topbar_theming (void)
   do_fix_topbar_theming ();
 
   settings = gtk_widget_get_settings (ghidgui->top_bar_background);
-  g_signal_connect (settings,
-                    "notify::gtk-theme-name",
-                    G_CALLBACK (do_fix_topbar_theming),
-                    NULL);
-  g_signal_connect (settings,
-                    "notify::gtk-font-name",
-                    G_CALLBACK (do_fix_topbar_theming),
-                    NULL);
+  g_signal_connect (settings, "notify::gtk-theme-name",
+                    G_CALLBACK (do_fix_topbar_theming), NULL);
+  g_signal_connect (settings, "notify::gtk-font-name",
+                    G_CALLBACK (do_fix_topbar_theming), NULL);
 }
 
 /* 
