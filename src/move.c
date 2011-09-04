@@ -353,10 +353,12 @@ MovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
     {
       ErasePolygon (Polygon);
     }
+  RestoreToPolygon (PCB->Data, POLYGON_TYPE, Layer, Polygon);
   r_delete_entry (Layer->polygon_tree, (BoxType *)Polygon);
   MovePolygonLowLevel (Polygon, DeltaX, DeltaY);
   r_insert_entry (Layer->polygon_tree, (BoxType *)Polygon, 0);
   InitClip (PCB->Data, Layer, Polygon);
+  ClearFromPolygon (PCB->Data, POLYGON_TYPE, Layer, Polygon);
   if (Layer->On)
     {
       DrawPolygon (Layer, Polygon);
@@ -416,12 +418,14 @@ MovePolygonPoint (LayerTypePtr Layer, PolygonTypePtr Polygon,
     {
       ErasePolygon (Polygon);
     }
+  RestoreToPolygon (PCB->Data, POLYGON_TYPE, Layer, Polygon);
   r_delete_entry (Layer->polygon_tree, (BoxType *)Polygon);
   MOVE (Point->X, Point->Y, DeltaX, DeltaY);
   SetPolygonBoundingBox (Polygon);
   r_insert_entry (Layer->polygon_tree, (BoxType *)Polygon, 0);
   RemoveExcessPolygonPoints (Layer, Polygon);
   InitClip (PCB->Data, Layer, Polygon);
+  ClearFromPolygon (PCB->Data, POLYGON_TYPE, Layer, Polygon);
   if (Layer->On)
     {
       DrawPolygon (Layer, Polygon);
