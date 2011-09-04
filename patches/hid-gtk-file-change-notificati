@@ -5,7 +5,14 @@ Date:   2011-09-04 22:24:05 +0100
 
 hid/gtk: Add file change notification for the currently open PCB
 
-Requires GTK 2.18 or higher
+If the file is modified on disk, a bar appears at the top of the PCB
+area offering the user a choice as to whether they wish to reload the
+board or cancel (do nothing).
+
+If the user has changes, and hits reload - they are prompted as to
+whether they wish to throw away their changes.
+
+Requires GTK 2.18 or higher due to use of the GtkInfoBar widget.
 
 
 ---
