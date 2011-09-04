@@ -1117,8 +1117,8 @@ ghid_pack_mode_buttons (void)
 }
 
 static void
-make_mode_area_and_toolbar (GtkWidget **mode_frame,
-                            GtkWidget **mode_toolbar)
+make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
+                               GtkWidget **mode_toolbar)
 {
   GtkToolItem *tool_item;
   GtkWidget *vbox, *hbox = NULL;
@@ -1265,7 +1265,8 @@ ghid_build_pcb_top_window (void)
   gtk_box_pack_start (GTK_BOX (ghidgui->menubar_toolbar_vbox),
                       ghidgui->menu_bar, FALSE, FALSE, 0);
 
-  make_mode_area_and_toolbar (&ghidgui->mode_buttons_frame, &ghidgui->mode_toolbar);
+  make_mode_buttons_and_toolbar (&ghidgui->mode_buttons_frame,
+                                 &ghidgui->mode_toolbar);
   gtk_box_pack_start (GTK_BOX (ghidgui->menubar_toolbar_vbox),
                       ghidgui->mode_toolbar, FALSE, FALSE, 0);
 
@@ -1295,7 +1296,7 @@ ghid_build_pcb_top_window (void)
                       FALSE, FALSE, 0);
 
   /* ghidgui->mode_buttons_frame was created above in the call to
-   * make_mode_area_and_toolbar (&ghidgui->mode_buttons_frame, &ghidgui->mode_toolbar);
+   * make_mode_buttons_and_toolbar (...);
    */
   gtk_box_pack_start (GTK_BOX (ghidgui->left_toolbar),
                       ghidgui->mode_buttons_frame, FALSE, FALSE, 0);
