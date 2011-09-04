@@ -1,5 +1,5 @@
-Bottom: 231785b41eafc4213243f180bd06f00e0ea8b08b
-Top:    88e2c1b9af5401dde786396486ee791cd5906ee1
+Bottom: 44572ff130ab8937ce2b960ccbf4bdcb289fb0dd
+Top:    e88e2c6900488b63939e14cd8fb295eacd58f563
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-30 20:48:13 +0100
 
@@ -103,7 +103,7 @@ index b9c5ab3..73771b0 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 0df71dd..1cdc9b6 100644
+index 4f2db16..2c58d1e 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -126,6 +126,7 @@ a zoom in/out.
@@ -114,7 +114,7 @@ index 0df71dd..1cdc9b6 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1350,6 +1351,7 @@ ghid_build_pcb_top_window (void)
+@@ -1395,6 +1396,7 @@ ghid_build_pcb_top_window (void)
    /* FIXME: IFDEF HACK */
  #ifdef ENABLE_GL
    trackball = ghid_trackball_new ();
@@ -122,7 +122,7 @@ index 0df71dd..1cdc9b6 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -1832,6 +1834,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -1872,6 +1874,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
@@ -191,10 +191,10 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index de3f753..79c5448 100644
+index 321b25c..04db3bc 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -143,6 +143,8 @@ typedef struct
+@@ -144,6 +144,8 @@ typedef struct
      library_window_width,
      library_window_height,
      netlist_window_height, history_size, settings_mode, auto_pan_speed;
@@ -203,7 +203,7 @@ index de3f753..79c5448 100644
  }
  GhidGui;
  
-@@ -168,6 +170,7 @@ typedef struct
+@@ -169,6 +171,7 @@ typedef struct
  {
    GtkWidget *top_window,	/* toplevel widget              */
     *drawing_area;		/* and its drawing area */
@@ -211,7 +211,7 @@ index de3f753..79c5448 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -296,6 +299,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -297,6 +300,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
@@ -222,7 +222,7 @@ index de3f753..79c5448 100644
  
  /* gui-dialog.c function prototypes.
  */
-@@ -511,6 +518,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
+@@ -512,6 +519,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
  void ghid_cancel_lead_user (void);
  
  /* gtkhid-main.c */
