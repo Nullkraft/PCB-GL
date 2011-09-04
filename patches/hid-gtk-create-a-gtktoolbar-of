@@ -1,0 +1,25 @@
+Bottom: 13817d183b9eaee69b841c4a4a86e4cb9f4776f3
+Top:    13817d183b9eaee69b841c4a4a86e4cb9f4776f3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-04 02:56:18 +0100
+
+hid/gtk: Create a GtkToolbar of mode buttons for compact vertical mode
+
+Rather than packing our mode buttons into an hbox, use a proper GtkToolbar
+so theming will match the rest of the user's desktop.
+
+This simplifies code to switch compact mode on and off, as we have two
+distinct widgets to show / hide, rather than having to reparent the mode
+buttons each time.
+
+It does, however mean we have to be careful not to double-trigger events
+when keeping the two sets of mode buttons in sync with each other, so that
+isn't ideal.
+
+In the longer term, we probably ought to split out the mode button area
+on the left-hand toolbar as a separate self-contained widget.
+
+
+---
+
+
