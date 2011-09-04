@@ -1,5 +1,5 @@
 Bottom: 99c46884957a3cf4faab8ad7f13ef86b0cd673e3
-Top:    9b21d493018915bcdb24659e24ecf092c865c732
+Top:    cd3e40346adb7d37bab66f52067922e785e6b487
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-04 22:24:05 +0100
 
@@ -18,10 +18,10 @@ Requires GTK 2.18 or higher due to use of the GtkInfoBar widget.
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index fae0655..1abdfcc 100644
+index fae0655..1352be0 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -607,6 +607,110 @@ make_actions (GHidPort * port)
+@@ -607,6 +607,118 @@ make_actions (GHidPort * port)
                                  (GHID_LAYER_SELECTOR (ghidgui->layer_selector)));
  }
  
@@ -46,6 +46,7 @@ index fae0655..1abdfcc 100644
 +                 GFileMonitorEvent event_type,
 +                 gpointer          user_data)
 +{
++  GhidGui *_gui = (GhidGui *)user_data;
 +  GtkWidget *icon;
 +  GtkWidget *label;
 +  GtkWidget *content_area;
@@ -58,23 +59,23 @@ index fae0655..1abdfcc 100644
 +
 +  /* File has changed on disk */
 +
-+  if (ghidgui->info_bar)
-+    gtk_widget_destroy (ghidgui->info_bar);
++  if (_gui->info_bar)
++    gtk_widget_destroy (_gui->info_bar);
 +
-+  ghidgui->info_bar = gtk_info_bar_new_with_buttons (_("Reload"),
-+                                                     GTK_RESPONSE_ACCEPT,
-+                                                     GTK_STOCK_CANCEL,
-+                                                     GTK_RESPONSE_CANCEL,
-+                                                     NULL);
-+  gtk_box_pack_start (GTK_BOX (ghidgui->vbox_middle),
-+                      ghidgui->info_bar, FALSE, FALSE, 0);
-+  gtk_box_reorder_child (GTK_BOX (ghidgui->vbox_middle), ghidgui->info_bar, 0);
++  _gui->info_bar = gtk_info_bar_new_with_buttons (_("Reload"),
++                                                  GTK_RESPONSE_ACCEPT,
++                                                  GTK_STOCK_CANCEL,
++                                                  GTK_RESPONSE_CANCEL,
++                                                  NULL);
++  gtk_box_pack_start (GTK_BOX (_gui->vbox_middle),
++                      _gui->info_bar, FALSE, FALSE, 0);
++  gtk_box_reorder_child (GTK_BOX (_gui->vbox_middle), _gui->info_bar, 0);
 +
-+  gtk_info_bar_set_message_type (GTK_INFO_BAR (ghidgui->info_bar),
++  gtk_info_bar_set_message_type (GTK_INFO_BAR (_gui->info_bar),
 +                                 GTK_MESSAGE_WARNING);
 +
-+  g_signal_connect (ghidgui->info_bar, "response",
-+                    G_CALLBACK (info_bar_response_cb), user_data);
++  g_signal_connect (_gui->info_bar, "response",
++                    G_CALLBACK (info_bar_response_cb), _gui);
 +
 +  file_path = g_file_get_path (file);
 +  file_path_utf8 = g_filename_to_utf8 (file_path, -1, NULL, NULL, NULL);
@@ -87,7 +88,7 @@ index fae0655..1abdfcc 100644
 +  g_free (file_path_utf8);
 +
 +  content_area =
-+    gtk_info_bar_get_content_area (GTK_INFO_BAR (ghidgui->info_bar));
++    gtk_info_bar_get_content_area (GTK_INFO_BAR (_gui->info_bar));
 +
 +  icon = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING,
 +                                   GTK_ICON_SIZE_DIALOG);
@@ -104,45 +105,54 @@ index fae0655..1abdfcc 100644
 +
 +  gtk_misc_set_alignment (GTK_MISC (label), 0., 0.5);
 +
-+  gtk_widget_show_all (ghidgui->info_bar);
++  gtk_widget_show_all (_gui->info_bar);
 +}
 +
 +static void
-+connect_file_change_monitor (char *filename)
++connect_file_change_monitor (GhidGui *_gui, char *filename)
 +{
 +  GFile *file;
 +
-+  if (ghidgui->file_monitor)
-+    g_object_unref (ghidgui->file_monitor);
++  if (_gui->file_monitor != NULL)
++    g_object_unref (_gui->file_monitor);
++  _gui->file_monitor = NULL;
++
++  if (_gui->info_bar != NULL)
++    gtk_widget_destroy (_gui->info_bar);
++  _gui->info_bar = NULL;
++
++  if (filename == NULL)
++    return;
 +
 +  file = g_file_new_for_path (filename);
 +
 +  /* XXX: Could hook up more error handling for g_file_monitor_file */
-+  ghidgui->file_monitor = g_file_monitor_file (file,
-+                                               G_FILE_MONITOR_NONE,
-+                                               NULL,
-+                                               NULL);
-+
++  _gui->file_monitor = g_file_monitor_file (file,
++                                            G_FILE_MONITOR_NONE,
++                                            NULL,
++                                            NULL);
 +  g_object_unref (file);
 +
-+  g_signal_connect (ghidgui->file_monitor, "changed",
-+                    G_CALLBACK (file_changed_cb), ghidgui);
++  g_signal_connect (_gui->file_monitor, "changed",
++                    G_CALLBACK (file_changed_cb), _gui);
 +}
 +
  
  /* Refreshes the window title bar and sets the PCB name to the
   * window title bar or to a seperate label
-@@ -636,6 +740,9 @@ ghid_window_set_name_label (gchar * name)
+@@ -636,6 +748,11 @@ ghid_window_set_name_label (gchar * name)
    gtk_window_set_title (GTK_WINDOW (gport->top_window), str);
    g_free (str);
    g_free (filename);
 +
 +  if (PCB->Filename && *PCB->Filename)
-+    connect_file_change_monitor (PCB->Filename);
++    connect_file_change_monitor (ghidgui, PCB->Filename);
++  else
++    connect_file_change_monitor (ghidgui, NULL);
  }
  
  static void
-@@ -1403,11 +1510,12 @@ ghid_build_pcb_top_window (void)
+@@ -1403,11 +1520,12 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
    make_route_style_buttons(vbox, port);
  
@@ -158,7 +168,7 @@ index fae0655..1abdfcc 100644
  
    /* -- The PCB layout output drawing area */
  
-@@ -1448,15 +1556,16 @@ ghid_build_pcb_top_window (void)
+@@ -1448,15 +1566,16 @@ ghid_build_pcb_top_window (void)
      gtk_hscrollbar_new (GTK_ADJUSTMENT (ghidgui->h_adjustment));
    gtk_range_set_update_policy (GTK_RANGE (ghidgui->h_range),
  			       GTK_UPDATE_CONTINUOUS);
