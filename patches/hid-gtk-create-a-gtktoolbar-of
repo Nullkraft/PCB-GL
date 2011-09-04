@@ -1,5 +1,5 @@
 Bottom: fcc0668d19f1998966359c341ca8a623bb6b5f67
-Top:    6023063f46a44d361762a6721e77c5b797a0a751
+Top:    cb41784e2dcaf3b4df8c7fa2306727d554d4eb10
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-04 02:56:18 +0100
 
@@ -23,7 +23,7 @@ on the left-hand toolbar as a separate self-contained widget.
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 07019df..ee10745 100644
+index 07019df..3e7666c 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1008,7 +1008,10 @@ ghid_route_style_set_temp_style (RouteStyleType * rst, gint which)
@@ -202,8 +202,8 @@ index 07019df..ee10745 100644
  
  static void
 -make_mode_buttons (GHidPort * port)
-+make_mode_area_and_toolbar (GtkWidget **mode_frame,
-+                            GtkWidget **mode_toolbar)
++make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
++                               GtkWidget **mode_toolbar)
  {
 -  ModeButton *mb;
 -  GtkWidget *hbox0 = NULL, *button;
@@ -308,7 +308,7 @@ index 07019df..ee10745 100644
  
    /* Build layer menus */
    ghidgui->layer_selector = ghid_layer_selector_new ();
-@@ -1230,15 +1262,13 @@ ghid_build_pcb_top_window (void)
+@@ -1230,15 +1262,14 @@ ghid_build_pcb_top_window (void)
    /* Build main menu */
    ghidgui->menu_bar = ghid_load_menus ();
    make_actions (port);
@@ -322,14 +322,15 @@ index 07019df..ee10745 100644
 -  ghidgui->mode_buttons1_hbox = gtk_hbox_new (FALSE, 0);
 -  gtk_container_add (GTK_CONTAINER (ghidgui->mode_buttons1_frame),
 -                     ghidgui->mode_buttons1_hbox);
-+  make_mode_area_and_toolbar (&ghidgui->mode_buttons_frame, &ghidgui->mode_toolbar);
++  make_mode_buttons_and_toolbar (&ghidgui->mode_buttons_frame,
++                                 &ghidgui->mode_toolbar);
 +  gtk_box_pack_start (GTK_BOX (ghidgui->menubar_toolbar_vbox),
 +                      ghidgui->mode_toolbar, FALSE, FALSE, 0);
 +
  
    ghidgui->position_hbox = gtk_hbox_new (FALSE, 0);
    gtk_box_pack_end (GTK_BOX(ghidgui->top_hbox),
-@@ -1264,17 +1294,11 @@ ghid_build_pcb_top_window (void)
+@@ -1264,17 +1295,11 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX(vbox), ghidgui->layer_selector,
                        FALSE, FALSE, 0);
  
@@ -345,14 +346,14 @@ index 07019df..ee10745 100644
 -                     ghidgui->mode_buttons0_vbox);
 -  make_mode_buttons (port);
 +  /* ghidgui->mode_buttons_frame was created above in the call to
-+   * make_mode_area_and_toolbar (&ghidgui->mode_buttons_frame, &ghidgui->mode_toolbar);
++   * make_mode_buttons_and_toolbar (...);
 +   */
 +  gtk_box_pack_start (GTK_BOX (ghidgui->left_toolbar),
 +                      ghidgui->mode_buttons_frame, FALSE, FALSE, 0);
  
    frame = gtk_frame_new(NULL);
    gtk_box_pack_end (GTK_BOX (ghidgui->left_toolbar), frame, FALSE, FALSE, 0);
-@@ -1390,6 +1414,7 @@ ghid_build_pcb_top_window (void)
+@@ -1390,6 +1415,7 @@ ghid_build_pcb_top_window (void)
    ghidgui->creating = FALSE;
  
    gtk_widget_show_all (gport->top_window);
