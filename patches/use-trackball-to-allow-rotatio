@@ -1,7 +1,7 @@
-Bottom: a3f27f18e7b77b31f9b7c39f7679277976f94196
-Top:    d582ded931f4dd8081a7de307cdd5a0f2ca1db49
+Bottom: 7f20b3f4e9637e39a9d8881cbc31865dccf5050d
+Top:    cd05a589a16cb0bf2149f93e32b87dd4264d08fe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-04 03:33:23 +0100
+Date:   2011-09-05 00:36:06 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -422,7 +422,7 @@ index 9114bc4..fd09122 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index fae0655..4f2db16 100644
+index 1352be0..c9c586a 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -125,6 +125,7 @@ a zoom in/out.
@@ -433,7 +433,7 @@ index fae0655..4f2db16 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1311,6 +1312,10 @@ ghid_build_pcb_top_window (void)
+@@ -1428,6 +1429,10 @@ ghid_build_pcb_top_window (void)
    GtkWidget *vbox_main, *hbox_middle, *hbox;
    GtkWidget *vbox, *frame;
    GtkWidget *label;
@@ -444,7 +444,7 @@ index fae0655..4f2db16 100644
    GHidPort *port = &ghid_port;
    GtkWidget *scrolled;
  
-@@ -1387,6 +1392,17 @@ ghid_build_pcb_top_window (void)
+@@ -1504,6 +1509,17 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX(vbox), ghidgui->layer_selector,
                        FALSE, FALSE, 0);
  
@@ -463,10 +463,10 @@ index fae0655..4f2db16 100644
     * make_mode_buttons_and_toolbar (...);
     */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 8abfd12..321b25c 100644
+index 883e803..8b6050c 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -293,7 +293,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -297,7 +297,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
  gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  				       GdkEventScroll * ev, GHidPort * out);
  
@@ -474,7 +474,7 @@ index 8abfd12..321b25c 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -506,6 +505,8 @@ void ghid_flush_debug_draw (void);
+@@ -510,6 +509,8 @@ void ghid_flush_debug_draw (void);
  void ghid_finish_debug_draw (void);
  bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
