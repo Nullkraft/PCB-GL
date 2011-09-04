@@ -105,8 +105,8 @@ typedef struct
 
   GtkWidget *top_hbox,
     *menu_hbox, *position_hbox,
-    *mode_buttons_vbox, *menubar_toolbar_vbox,
-    *mode_buttons_frame, *mode_buttons_frame_vbox;
+    *menubar_toolbar_vbox,
+    *mode_buttons_frame;
   GtkWidget *left_toolbar;
   GtkWidget *menu_bar, *layer_selector;
   GtkWidget *mode_toolbar;
