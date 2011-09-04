@@ -1221,7 +1221,7 @@ get_widget_styles (GtkStyle **menu_bar_style,
  * copying aspects from the menu bar style set by the user's GTK theme
  */
 static void
-fix_extra_menubar_theming (void)
+do_fix_extra_menubar_theming (void)
 {
   /* XXX: Need to fix this so it works with on-the-fly theme changes */
 
@@ -1252,6 +1252,24 @@ fix_extra_menubar_theming (void)
   gtk_widget_set_style (rel_pos_frame, menu_bar_style);
   gtk_widget_set_style (abs_pos_frame, menu_bar_style);
   gtk_widget_set_style (ghidgui->mode_buttons1_frame, menu_bar_style);
+}
+
+static void
+fix_extra_menubar_theming (void)
+{
+  GtkSettings *settings;
+
+  do_fix_extra_menubar_theming ();
+
+  settings = gtk_widget_get_settings (ghidgui->top_bar_background);
+  g_signal_connect (settings,
+                    "notify::gtk-theme-name",
+                    G_CALLBACK (do_fix_extra_menubar_theming),
+                    NULL);
+  g_signal_connect (settings,
+                    "notify::gtk-font-name",
+                    G_CALLBACK (do_fix_extra_menubar_theming),
+                    NULL);
 }
 
 /* 
