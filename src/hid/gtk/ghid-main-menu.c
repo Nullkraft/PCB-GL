@@ -519,7 +519,7 @@ void
 ghid_main_menu_install_layer_selector (GHidMainMenu *mm,
                                        GHidLayerSelector *ls)
 {
-  GList *children, iter;;
+  GList *children, *iter;
 
   /* @layerview */
   if (mm->layer_view_shell)
@@ -563,7 +563,7 @@ void
 ghid_main_menu_install_route_style_selector (GHidMainMenu *mm,
                                              GHidRouteStyleSelector *rss)
 {
-  GList *children;
+  GList *children, *iter;
   /* @routestyles */
   if (mm->route_style_shell)
     {
