@@ -1,5 +1,5 @@
-Bottom: 25db2ee47c8776732221b3c40b245081cd000a10
-Top:    149e292df5b6043f8605fe31555a7436e2070dc5
+Bottom: 029799627a9af223a6c5194a8fbfeaf12faed605
+Top:    ec2736ae4c48ead2669515fff8f009b442449d6d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 13:00:47 +0100
 
@@ -11,7 +11,7 @@ In GTK3.0, direct access to widget->window will be impossible.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 5fa2d9c..5384440 100644
+index 1eed303..6df553e 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -261,7 +261,8 @@ ghid_shift_is_pressed ()
