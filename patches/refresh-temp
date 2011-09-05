@@ -1,0 +1,94 @@
+Bottom: 17ad0806336425dff90f86d86787493fbe3eb088
+Top:    efd8d22db93178d50bf9f9443a671f6c628a578d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-06 00:11:31 +0100
+
+Refresh of file-c-don-t-set-the-pcb-filen
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 5ac9497..3756bc4 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -5672,7 +5672,8 @@ ActionSaveTo (int argc, char **argv, Coord x, Coord y)
+ 
+   if (strcasecmp (function, "Layout") == 0)
+     {
+-      SavePCB (PCB->Filename);
++      if (SavePCB (PCB->Filename) == 0)
++        SetChangedFlag (false);
+       return 0;
+     }
+ 
+@@ -5681,9 +5682,12 @@ ActionSaveTo (int argc, char **argv, Coord x, Coord y)
+ 
+   if (strcasecmp (function, "LayoutAs") == 0)
+     {
+-      free (PCB->Filename);
+-      PCB->Filename = strdup (name);
+-      SavePCB (PCB->Filename);
++      if (SavePCB (name) == 0)
++        {
++          free (PCB->Filename);
++          PCB->Filename = strdup (name);
++          SetChangedFlag (false);
++        }
+       return 0;
+     }
+ 
+diff --git a/src/command.c b/src/command.c
+index 4c3a419..ac6d60a 100644
+--- a/src/command.c
++++ b/src/command.c
+@@ -340,13 +340,21 @@ CommandSaveLayout (int argc, char **argv, Coord x, Coord y)
+     {
+     case 0:
+       if (PCB->Filename)
+-	SavePCB (PCB->Filename);
++        {
++          if (SavePCB (PCB->Filename) == 0)
++            SetChangedFlag (false);
++        }
+       else
+ 	Message ("No filename to save to yet\n");
+       break;
+ 
+     case 1:
+-      SavePCB (argv[0]);
++      if (SavePCB (argv[0]) == 0)
++        {
++          free (PCB->Filename);
++          PCB->Filename = strdup (name);
++          SetChangedFlag (false);
++        }
+       break;
+ 
+     default:
+diff --git a/src/file.c b/src/file.c
+index 8021bcd..3fdc93d 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -351,21 +351,7 @@ SaveBufferElements (char *Filename)
+ int
+ SavePCB (char *Filename)
+ {
+-  int retcode;
+-  char *copy;
+-
+-  if (!(retcode = WritePipe (Filename, true)))
+-    {
+-      /* thanks to Nick Bailey for the bug-fix;
+-       * first of all make a copy of the passed filename because
+-       * it might be identical to 'PCB->Filename'
+-       */
+-      copy = strdup (Filename);
+-      free (PCB->Filename);
+-      PCB->Filename = copy;
+-      SetChangedFlag (false);
+-    }
+-  return (retcode);
++  return WritePipe (Filename, true);
+ }
+ 
+ /* ---------------------------------------------------------------------------
