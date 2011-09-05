@@ -354,6 +354,9 @@ SavePCB (char *Filename)
   int retcode;
   char *copy;
 
+  if (gui->notify_save_pcb != NULL)
+    gui->notify_save_pcb (Filename, false);
+
   if (!(retcode = WritePipe (Filename, true)))
     {
       /* thanks to Nick Bailey for the bug-fix;
@@ -365,6 +368,10 @@ SavePCB (char *Filename)
       PCB->Filename = copy;
       SetChangedFlag (false);
     }
+
+  if (gui->notify_save_pcb != NULL)
+    gui->notify_save_pcb (Filename, true);
+
   return (retcode);
 }
 
