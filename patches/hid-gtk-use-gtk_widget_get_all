@@ -1,0 +1,13 @@
+Bottom: 7ea673b6952289368b8054eff5fc190c412746f8
+Top:    7ea673b6952289368b8054eff5fc190c412746f8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 13:53:56 +0100
+
+hid/gtk: Use gtk_widget_get_allocation() not gdk_window_get_geometry()
+
+This avoids an unnecessary round-trip the the X server on X11 platforms.
+
+
+---
+
+
