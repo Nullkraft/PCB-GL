@@ -1,5 +1,5 @@
-Bottom: ef02da71fc8e9ce5d072ae36ef83bd648e67424f
-Top:    a5ec5974ed06817abeadae129aadcd6c0309dd6d
+Bottom: b4db52ff5ea3c236b6b952a4c9d74bd00fd16a58
+Top:    713af3ce6d219f968b4f710999b1063d6a70868b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 16:42:18 +0100
 
@@ -11,7 +11,7 @@ In GTK3.0, direct access to shell->children will be impossible.
 ---
 
 diff --git a/src/hid/gtk/ghid-main-menu.c b/src/hid/gtk/ghid-main-menu.c
-index 6b58485..0294a0e 100644
+index 9ac0367..2fe0a8b 100644
 --- a/src/hid/gtk/ghid-main-menu.c
 +++ b/src/hid/gtk/ghid-main-menu.c
 @@ -343,20 +343,27 @@ ghid_main_menu_real_add_resource (GHidMainMenu *menu, GtkMenuShell *shell,
