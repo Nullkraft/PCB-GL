@@ -1,0 +1,17 @@
+Bottom: 53b3aee4f92c436bd959219a359adce92752cfa6
+Top:    53b3aee4f92c436bd959219a359adce92752cfa6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 14:53:00 +0100
+
+hid/gtk: Avoid warning caused by early drawing before gport->pixmap is set
+
+Avoids a command line warning:
+
+(pcb:28876): Gdk-CRITICAL **: IA__gdk_draw_drawable: assertion `GDK_IS_DRAWABLE (src)' failed
+
+With the GDK renderer in use.
+
+
+---
+
+
