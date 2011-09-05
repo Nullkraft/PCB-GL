@@ -568,6 +568,16 @@ typedef enum
      */
     void (*finish_debug_draw)  (void);
 
+    /* Notification to the GUI around saving the PCB file.
+     *
+     * Called with a false parameter before the save, called again
+     * with true after the save.
+     *
+     * Allows GUIs which watch for file-changes on disk to ignore
+     * our deliberate changes.
+     */
+    void (*notify_save_pcb) (const char *filename, bool done);
+
     /* Notification to the GUI that the PCB file is being renamed. */
     void (*notify_pcb_filename_change) (const char *old_filename,
                                         const char *new_filename);
