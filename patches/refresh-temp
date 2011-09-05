@@ -1,0 +1,22 @@
+Bottom: efd8d22db93178d50bf9f9443a671f6c628a578d
+Top:    344d2a308759f01616a248f648569c7167b24e41
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-06 00:14:25 +0100
+
+Refresh of file-c-don-t-set-the-pcb-filen
+
+---
+
+diff --git a/src/command.c b/src/command.c
+index ac6d60a..f7a4983 100644
+--- a/src/command.c
++++ b/src/command.c
+@@ -352,7 +352,7 @@ CommandSaveLayout (int argc, char **argv, Coord x, Coord y)
+       if (SavePCB (argv[0]) == 0)
+         {
+           free (PCB->Filename);
+-          PCB->Filename = strdup (name);
++          PCB->Filename = strdup (argv[0]);
+           SetChangedFlag (false);
+         }
+       break;
