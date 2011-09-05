@@ -420,8 +420,7 @@ ghid_notify_save_pcb (const char *filename, bool done)
 }
 
 void
-ghid_notify_pcb_filename_changed (const char *old_filename,
-                                  const char *new_filename)
+ghid_notify_filename_changed (void)
 {
   disconnect_file_change_monitor (ghidgui);
   connect_file_change_monitor (ghidgui);
