@@ -1,5 +1,5 @@
 Bottom: 17ad0806336425dff90f86d86787493fbe3eb088
-Top:    dcbfb2c35318794c22c1c7bc76753c2213d56e01
+Top:    514ea88f8631add7f29fd4864109d06c586ef744
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 23:09:45 +0100
 
@@ -13,7 +13,7 @@ save the file ourselves.
 ---
 
 diff --git a/src/file.c b/src/file.c
-index 8021bcd..3f97364 100644
+index 8021bcd..7c1ebc0 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -354,6 +354,9 @@ SavePCB (char *Filename)
@@ -21,7 +21,7 @@ index 8021bcd..3f97364 100644
    char *copy;
  
 +  if (gui->notify_save_pcb != NULL)
-+    gui->notify_save_pcb (false);
++    gui->notify_save_pcb (Filename, false);
 +
    if (!(retcode = WritePipe (Filename, true)))
      {
@@ -32,13 +32,13 @@ index 8021bcd..3f97364 100644
      }
 +
 +  if (gui->notify_save_pcb != NULL)
-+    gui->notify_save_pcb (true);
++    gui->notify_save_pcb (Filename, true);
 +
    return (retcode);
  }
  
 diff --git a/src/hid.h b/src/hid.h
-index b1f532f..afb33e7 100644
+index b1f532f..d1c7c8e 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -567,6 +567,16 @@ typedef enum
@@ -54,7 +54,7 @@ index b1f532f..afb33e7 100644
 +     * Allows GUIs which watch for file-changes on disk to ignore
 +     * our deliberate changes.
 +     */
-+    void (*notify_save_pcb) (bool done);
++    void (*notify_save_pcb) (const char *filename, bool done);
    };
  
  /* Call this as soon as possible from main().  No other HID calls are
