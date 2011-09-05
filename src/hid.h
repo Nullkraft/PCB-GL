@@ -579,7 +579,7 @@ typedef enum
     void (*notify_save_pcb) (const char *filename, bool done);
 
     /* Notification to the GUI that the PCB file has been renamed. */
-    void (*notify_filename_changed) (void)
+    void (*notify_filename_changed) (void);
   };
 
 /* Call this as soon as possible from main().  No other HID calls are
