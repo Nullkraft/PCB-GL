@@ -1,5 +1,5 @@
 Bottom: 17ad0806336425dff90f86d86787493fbe3eb088
-Top:    efd8d22db93178d50bf9f9443a671f6c628a578d
+Top:    344d2a308759f01616a248f648569c7167b24e41
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-06 00:03:50 +0100
 
@@ -41,7 +41,7 @@ index 5ac9497..3756bc4 100644
      }
  
 diff --git a/src/command.c b/src/command.c
-index 4c3a419..ac6d60a 100644
+index 4c3a419..f7a4983 100644
 --- a/src/command.c
 +++ b/src/command.c
 @@ -340,13 +340,21 @@ CommandSaveLayout (int argc, char **argv, Coord x, Coord y)
@@ -62,7 +62,7 @@ index 4c3a419..ac6d60a 100644
 +      if (SavePCB (argv[0]) == 0)
 +        {
 +          free (PCB->Filename);
-+          PCB->Filename = strdup (name);
++          PCB->Filename = strdup (argv[0]);
 +          SetChangedFlag (false);
 +        }
        break;
