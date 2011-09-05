@@ -11,6 +11,11 @@ the window title. NB: That also gets called after every menu operation!
 Hook up the connection in the ghid_sync_with_new_layout() function,
 which looks to be a much more appropriate place.
 
+As an additional issue - we now see the file modifications PCB
+makes when it saves the file, so we need to explicily avoid notifying
+the user about those. (Before, we were avoiding those events as the
+file-monitor was previosuly being reset before it could pop up).
+
 
 ---
 
