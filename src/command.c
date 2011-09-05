@@ -351,9 +351,11 @@ CommandSaveLayout (int argc, char **argv, Coord x, Coord y)
     case 1:
       if (SavePCB (argv[0]) == 0)
         {
+          SetChangedFlag (false);
           free (PCB->Filename);
           PCB->Filename = strdup (argv[0]);
-          SetChangedFlag (false);
+           if (gui->notify_filename_change != NULL)
+            gui->notify_filename_change ();
         }
       break;
 
