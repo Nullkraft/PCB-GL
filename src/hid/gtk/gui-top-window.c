@@ -359,7 +359,7 @@ connect_file_change_monitor (GhidGui *_gui)
   _gui->info_bar = NULL;
 
   if (PCB->Filename == NULL ||
-      *PCB->Filename == NULL)
+      *PCB->Filename == '\0')
     return;
 
   file = g_file_new_for_path (PCB->Filename);
