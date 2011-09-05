@@ -1,0 +1,33 @@
+Bottom: ae4d6c624c4cd2ba59d6456268ca7b4fb81af215
+Top:    69a64cfaec88adac49ab2e3ca03561f4be10a5b8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 20:18:30 +0100
+
+Refresh of hid-gtk-use-g_signal_connect-n
+
+---
+
+diff --git a/src/hid/gtk/gui-utils.c b/src/hid/gtk/gui-utils.c
+index a4d7b12..0ea661b 100644
+--- a/src/hid/gtk/gui-utils.c
++++ b/src/hid/gtk/gui-utils.c
+@@ -228,8 +228,7 @@ ghid_check_button_connected (GtkWidget * box,
+     gtk_box_pack_end (GTK_BOX (box), b, expand, fill, pad);
+ 
+   if (cb_func)
+-    gtk_signal_connect (GTK_OBJECT (b), "clicked",
+-			GTK_SIGNAL_FUNC (cb_func), data);
++    g_signal_connect (b, "clicked", G_CALLBACK (cb_func), data);
+   if (button)
+     *button = b;
+ }
+@@ -251,8 +250,7 @@ ghid_button_connected (GtkWidget * box, GtkWidget ** button,
+     gtk_box_pack_end (GTK_BOX (box), b, expand, fill, pad);
+ 
+   if (cb_func)
+-    gtk_signal_connect (GTK_OBJECT (b), "clicked",
+-			GTK_SIGNAL_FUNC (cb_func), data);
++    g_signal_connect (b, "clicked", G_CALLBACK (cb_func), data);
+   if (button)
+     *button = b;
+ }
