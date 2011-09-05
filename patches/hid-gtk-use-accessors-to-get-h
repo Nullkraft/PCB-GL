@@ -1,5 +1,5 @@
-Bottom: 76a019348557b13ad2e1213a1155bcec761ba997
-Top:    267c2e2cc5746f78de1552aa408597ace9c9f762
+Bottom: 214861a6226558b7f140d89f26ad8b92b132149a
+Top:    b0584ce716ef0997419f04c59d9a6f5617501b4c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 13:10:03 +0100
 
@@ -213,10 +213,10 @@ index 2cda08e..8234899 100644
  
  
 diff --git a/src/hid/gtk/gui-utils.c b/src/hid/gtk/gui-utils.c
-index 605d1a4..8a75cae 100644
+index e4e97fa..a4d7b12 100644
 --- a/src/hid/gtk/gui-utils.c
 +++ b/src/hid/gtk/gui-utils.c
-@@ -664,6 +664,7 @@ ghid_dialog_report (gchar * title, gchar * message)
+@@ -655,6 +655,7 @@ ghid_dialog_report (gchar * title, gchar * message)
  {
    GtkWidget *top_win;
    GtkWidget *dialog;
@@ -224,7 +224,7 @@ index 605d1a4..8a75cae 100644
    GtkWidget *scrolled;
    GtkWidget *vbox, *vbox1;
    GtkWidget *label;
-@@ -684,10 +685,11 @@ ghid_dialog_report (gchar * title, gchar * message)
+@@ -675,10 +676,11 @@ ghid_dialog_report (gchar * title, gchar * message)
  			    GTK_OBJECT (dialog));
    gtk_window_set_wmclass (GTK_WINDOW (dialog), "PCB_Dialog", "PCB");
  
