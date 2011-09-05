@@ -5,7 +5,10 @@ Date:   2011-09-05 18:04:31 +0100
 
 hid/gtk: Re-write the tool-tip handling code to use newer tooltip API
 
-Use the gtk_widget_set_tooltip* API introduced in GTK 2.12
+Use the gtk_widget_set_tooltip* API introduced in GTK 2.12. This avoids
+the APIs deprecated in GTK 2.12, and also avoids the requirement to pack
+GTK_WIDGET_NO_WINDOW widgets inside gtk_event_box() widgets to make their
+tooltips work.
 
 
 ---
