@@ -1,0 +1,14 @@
+Bottom: b0584ce716ef0997419f04c59d9a6f5617501b4c
+Top:    b0584ce716ef0997419f04c59d9a6f5617501b4c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 15:46:27 +0100
+
+hid/gtk: Don't test for NOOP before calling gtk_widget_set_sensitive()
+
+We were using a deprecated test macro anyway, GTK already does a NOOP
+test inside gtk_widget_set_sensitive().
+
+
+---
+
+
