@@ -1,5 +1,5 @@
-Bottom: 029799627a9af223a6c5194a8fbfeaf12faed605
-Top:    ec2736ae4c48ead2669515fff8f009b442449d6d
+Bottom: 8aafc96dd843c5a4da685795507424bbc5448c7a
+Top:    db3e68fb4c933712b2e236ab84c2431f9ca68eaf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 13:00:47 +0100
 
@@ -125,10 +125,10 @@ index 88576a1..c4bef20 100644
      default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index f3e95e7..7dfeb64 100644
+index f57dd5c..9c22ea2 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -1351,7 +1351,8 @@ ghid_build_pcb_top_window (void)
+@@ -1354,7 +1354,8 @@ ghid_build_pcb_top_window (void)
  
    gtk_widget_show_all (gport->top_window);
    ghid_pack_mode_buttons ();
@@ -138,7 +138,7 @@ index f3e95e7..7dfeb64 100644
  }
  
  
-@@ -1425,28 +1426,30 @@ ghid_interface_set_sensitive (gboolean sensitive)
+@@ -1428,28 +1429,30 @@ ghid_interface_set_sensitive (gboolean sensitive)
  static void
  ghid_init_icons (GHidPort * port)
  {
