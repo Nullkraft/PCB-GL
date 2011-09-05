@@ -1,0 +1,14 @@
+Bottom: e1d59c034ebe1eb78777072087b7616acd3fecaf
+Top:    e1d59c034ebe1eb78777072087b7616acd3fecaf
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 17:44:14 +0100
+
+hid/gtk: Avoid the deprecated gdk_drawable_get_display()
+
+Grab the active display using gdk_window_get_display() on the window
+belonging to the drawing area.
+
+
+---
+
+
