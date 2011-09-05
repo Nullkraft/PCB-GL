@@ -7,6 +7,9 @@ hid/gtk: Use gtk_widget_get_style() accessor, rather than direct access
 
 In GTK3.0, direct access to widget->style will be impossible.
 
+Swap out the GTK_WIDGET_STATE() macro for gtk_widget_get_state(), which
+does not directly access the GSeal'd member widget->state.
+
 
 ---
 
