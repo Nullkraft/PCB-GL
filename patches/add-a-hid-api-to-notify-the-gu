@@ -1,5 +1,5 @@
 Bottom: cae7b5bfc7391a37c02308b59e7b966ef67bfb32
-Top:    8badf98b22d0b32f2a07ffa9f6ae4f6e930a790b
+Top:    a982f75025250dfea49a2aa1a004726d26c09718
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-06 00:22:51 +0100
 
@@ -12,28 +12,28 @@ into a different file.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index b8e4a81..34a9b47 100644
+index b8e4a81..4d545fe 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -5687,6 +5687,8 @@ ActionSaveTo (int argc, char **argv, Coord x, Coord y)
            SetChangedFlag (false);
            free (PCB->Filename);
            PCB->Filename = strdup (name);
-+          if (gui->notify_filename_change != NULL)
-+            gui->notify_filename_change ();
++          if (gui->notify_filename_changed != NULL)
++            gui->notify_filename_changed ();
          }
        return 0;
      }
 diff --git a/src/command.c b/src/command.c
-index 009d373..68827da 100644
+index 009d373..963ed85 100644
 --- a/src/command.c
 +++ b/src/command.c
 @@ -354,6 +354,8 @@ CommandSaveLayout (int argc, char **argv, Coord x, Coord y)
            SetChangedFlag (false);
            free (PCB->Filename);
            PCB->Filename = strdup (argv[0]);
-+           if (gui->notify_filename_change != NULL)
-+            gui->notify_filename_change ();
++           if (gui->notify_filename_changed != NULL)
++            gui->notify_filename_changed ();
          }
        break;
  
