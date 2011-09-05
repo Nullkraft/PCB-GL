@@ -1331,7 +1331,7 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
 static void
 draw_lead_user (render_priv *priv)
 {
-  GdkWindow *window = gtk_widget_get_window (widget);
+  GdkWindow *window = gtk_widget_get_window (gport->drawing_area);
   int i;
   Coord radius = priv->lead_user_radius;
   Coord width = MM_TO_COORD (LEAD_USER_WIDTH);
