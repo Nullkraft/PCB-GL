@@ -1,5 +1,5 @@
 Bottom: dcbfb2c35318794c22c1c7bc76753c2213d56e01
-Top:    3d24ec64bc4fb2791200ef323eb44f376e225158
+Top:    8bef0db9d47cd81fd48e402fff240633f0212c20
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 22:18:16 +0100
 
@@ -19,11 +19,24 @@ file-monitor was previosuly being reset before it could pop up).
 
 ---
 
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 3e253cb..351a699 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2169,6 +2169,8 @@ hid_gtk_init ()
+   ghid_hid.flush_debug_draw         = ghid_flush_debug_draw;
+   ghid_hid.finish_debug_draw        = ghid_finish_debug_draw;
+ 
++  ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
++
+   hid_register_hid (&ghid_hid);
+ #include "gtk_lists.h"
+ }
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 73bada5..0b57540 100644
+index 73bada5..f020043 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -262,6 +262,119 @@ void ghid_hotkey_cb (int which)
+@@ -262,6 +262,126 @@ void ghid_hotkey_cb (int which)
                    (gpointer) ghid_hotkey_actions[which].node);
  }
  
@@ -111,10 +124,8 @@ index 73bada5..0b57540 100644
 +}
 +
 +static void
-+connect_file_change_monitor (GhidGui *_gui)
++disconnect_file_change_monitor (GhidGui *_gui)
 +{
-+  GFile *file;
-+
 +  if (_gui->file_monitor != NULL)
 +    g_object_unref (_gui->file_monitor);
 +  _gui->file_monitor = NULL;
@@ -122,6 +133,15 @@ index 73bada5..0b57540 100644
 +  if (_gui->info_bar != NULL)
 +    gtk_widget_destroy (_gui->info_bar);
 +  _gui->info_bar = NULL;
++}
++
++static void
++connect_file_change_monitor (GhidGui *_gui)
++{
++  GFile *file;
++
++  /* Ensure any existing monitor is disconnected */
++  disconnect_file_change_monitor (_gui);
 +
 +  if (PCB->Filename == NULL ||
 +      *PCB->Filename == '\0')
@@ -143,15 +163,24 @@ index 73bada5..0b57540 100644
    /* Sync toggle states that were saved with the layout and notify the
       |  config code to update Settings values it manages.
     */
-@@ -277,6 +390,7 @@ ghid_sync_with_new_layout (void)
+@@ -277,6 +397,16 @@ ghid_sync_with_new_layout (void)
  
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
 +  connect_file_change_monitor (ghidgui);
++}
++
++void
++ghid_notify_save_pcb (bool done)
++{
++  if (!done)
++    disconnect_file_change_monitor (ghidgui);
++  else
++    connect_file_change_monitor (ghidgui);
  }
  
  /* ---------------------------------------------------------------------------
-@@ -467,119 +581,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
+@@ -467,119 +597,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
                 (GHID_ROUTE_STYLE_SELECTOR (gui->route_style_selector)));
  }
  
@@ -271,7 +300,7 @@ index 73bada5..0b57540 100644
  /* Refreshes the window title bar and sets the PCB name to the
   * window title bar or to a seperate label
   */
-@@ -608,11 +609,6 @@ ghid_window_set_name_label (gchar * name)
+@@ -608,11 +625,6 @@ ghid_window_set_name_label (gchar * name)
    gtk_window_set_title (GTK_WINDOW (gport->top_window), str);
    g_free (str);
    g_free (filename);
@@ -283,3 +312,14 @@ index 73bada5..0b57540 100644
  }
  
  static void
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index dfed2c6..95e302b 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -338,6 +338,7 @@ int ghid_drc_window_throw_dialog (void);
+ 
+ /* In gui-top-window.c  */
+ void ghid_update_toggle_flags (void);
++void ghid_notify_save_pcb (bool done);
+ void ghid_install_accel_groups (GtkWindow *window, GhidGui *gui);
+ void ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui);
