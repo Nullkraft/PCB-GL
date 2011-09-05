@@ -1,5 +1,5 @@
 Bottom: a982f75025250dfea49a2aa1a004726d26c09718
-Top:    c01bc37c244cc50f2ab73e0e90d7b923ebcc932c
+Top:    b2b126cf6ece972cf4f4fdbdd615dc013cc01daa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 22:18:16 +0100
 
@@ -335,7 +335,7 @@ index 73bada5..4ba598c 100644
  
  static void
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index dfed2c6..1ec824c 100644
+index dfed2c6..5bb8049 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -338,6 +338,8 @@ int ghid_drc_window_throw_dialog (void);
@@ -343,6 +343,6 @@ index dfed2c6..1ec824c 100644
  /* In gui-top-window.c  */
  void ghid_update_toggle_flags (void);
 +void ghid_notify_save_pcb (const char *file, bool done);
-+void ghid_noiify_pcb_filename_changed (const char *old_filename, const char *new_filename);
++void ghid_noiify_filename_changed (void);
  void ghid_install_accel_groups (GtkWindow *window, GhidGui *gui);
  void ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui);
