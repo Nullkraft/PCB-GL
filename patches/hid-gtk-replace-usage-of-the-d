@@ -1,0 +1,15 @@
+Bottom: 16955da58186ad2a47b744c887a3e51c014ce063
+Top:    16955da58186ad2a47b744c887a3e51c014ce063
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 17:59:03 +0100
+
+hid/gtk: Replace usage of the deprecated gtk_widget_set_uposition() call
+
+The closest replacement is gtk_window_move(), although we are rather at
+the mercy of the user's window manager as to whether it will honour the
+request we make.
+
+
+---
+
+
