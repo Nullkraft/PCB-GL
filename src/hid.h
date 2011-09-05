@@ -567,6 +567,10 @@ typedef enum
      * Any remaining rendering will be flushed to the screen.
      */
     void (*finish_debug_draw)  (void);
+
+    /* Notification to the GUI that the PCB file is being renamed. */
+    void (*notify_pcb_filename_change) (const char *old_filename,
+                                        const char *new_filename);
   };
 
 /* Call this as soon as possible from main().  No other HID calls are
