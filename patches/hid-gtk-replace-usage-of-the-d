@@ -5,9 +5,12 @@ Date:   2011-09-05 17:59:03 +0100
 
 hid/gtk: Replace usage of the deprecated gtk_widget_set_uposition() call
 
-The closest replacement is gtk_window_move(), although we are rather at
-the mercy of the user's window manager as to whether it will honour the
-request we make.
+The closest replacement is gtk_window_move(), and looking at the GTK
+sources, appears to be what gtk_widget_set_uposition() calls internally.
+
+We are still rather at the mercy of the user's window manager as to
+whether it will honour the request we make, and arguably we ought to
+remove this (mis-)feature anyway.
 
 
 ---
