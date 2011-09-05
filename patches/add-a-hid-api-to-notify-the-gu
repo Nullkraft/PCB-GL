@@ -1,5 +1,5 @@
 Bottom: 0304858bbbc998dda5baa84a731551da6f7d0f66
-Top:    881f45a8fcf66a6edc0a241145c101d948b62869
+Top:    ff4539e26e4746582d6365b9481f80cce66a2911
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-06 00:22:51 +0100
 
@@ -12,43 +12,50 @@ into a different file.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 3756bc4..f484d31 100644
+index 3756bc4..34a9b47 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -5684,6 +5684,8 @@ ActionSaveTo (int argc, char **argv, Coord x, Coord y)
+@@ -5684,9 +5684,11 @@ ActionSaveTo (int argc, char **argv, Coord x, Coord y)
      {
        if (SavePCB (name) == 0)
          {
-+          if (gui->notify_pcb_filename_change != NULL)
-+            gui->notify_pcb_filename_change (PCB->Filename, name);
++          SetChangedFlag (false);
            free (PCB->Filename);
            PCB->Filename = strdup (name);
-           SetChangedFlag (false);
+-          SetChangedFlag (false);
++          if (gui->notify_filename_change != NULL)
++            gui->notify_filename_change ();
+         }
+       return 0;
+     }
 diff --git a/src/command.c b/src/command.c
-index f7a4983..584cc56 100644
+index f7a4983..68827da 100644
 --- a/src/command.c
 +++ b/src/command.c
-@@ -351,6 +351,8 @@ CommandSaveLayout (int argc, char **argv, Coord x, Coord y)
+@@ -351,9 +351,11 @@ CommandSaveLayout (int argc, char **argv, Coord x, Coord y)
      case 1:
        if (SavePCB (argv[0]) == 0)
          {
-+           if (gui->notify_pcb_filename_change != NULL)
-+            gui->notify_pcb_filename_change (PCB->Filename, argv[0]);
++          SetChangedFlag (false);
            free (PCB->Filename);
            PCB->Filename = strdup (argv[0]);
-           SetChangedFlag (false);
+-          SetChangedFlag (false);
++           if (gui->notify_filename_change != NULL)
++            gui->notify_filename_change ();
+         }
+       break;
+ 
 diff --git a/src/hid.h b/src/hid.h
-index d1c7c8e..8b39eda 100644
+index d1c7c8e..c120164 100644
 --- a/src/hid.h
 +++ b/src/hid.h
-@@ -577,6 +577,10 @@ typedef enum
+@@ -577,6 +577,9 @@ typedef enum
       * our deliberate changes.
       */
      void (*notify_save_pcb) (const char *filename, bool done);
 +
-+    /* Notification to the GUI that the PCB file is being renamed. */
-+    void (*notify_pcb_filename_change) (const char *old_filename,
-+                                        const char *new_filename);
++    /* Notification to the GUI that the PCB file has been renamed. */
++    void (*notify_filename_changed) (void)
    };
  
  /* Call this as soon as possible from main().  No other HID calls are
