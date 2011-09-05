@@ -1,0 +1,15 @@
+Bottom: 1f32b4e14bbc4ade2f8a499989f4aedb2a039fb8
+Top:    1f32b4e14bbc4ade2f8a499989f4aedb2a039fb8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 15:55:47 +0100
+
+hid/gtk: Replace GTK_WIDGET_REALIZED() test with a check for window != NULL
+
+This avoids the use of the deprecated GTK_WIDGET_REALIZED macro, without
+needing to use the GTK2.20 function gtk_widget_get_realized(). The check
+for a NULL window should be sufficient here I hope.
+
+
+---
+
+
