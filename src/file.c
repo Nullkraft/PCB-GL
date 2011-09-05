@@ -355,7 +355,7 @@ SavePCB (char *Filename)
   char *copy;
 
   if (gui->notify_save_pcb != NULL)
-    gui->notify_save_pcb (false);
+    gui->notify_save_pcb (Filename, false);
 
   if (!(retcode = WritePipe (Filename, true)))
     {
@@ -370,7 +370,7 @@ SavePCB (char *Filename)
     }
 
   if (gui->notify_save_pcb != NULL)
-    gui->notify_save_pcb (true);
+    gui->notify_save_pcb (Filename, true);
 
   return (retcode);
 }

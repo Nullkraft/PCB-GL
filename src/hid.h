@@ -576,7 +576,7 @@ typedef enum
      * Allows GUIs which watch for file-changes on disk to ignore
      * our deliberate changes.
      */
-    void (*notify_save_pcb) (bool done);
+    void (*notify_save_pcb) (const char *filename, bool done);
   };
 
 /* Call this as soon as possible from main().  No other HID calls are
