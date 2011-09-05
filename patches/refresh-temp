@@ -1,0 +1,26 @@
+Bottom: bbfe2b4d97c30dfc9bb995b7859832242aaf724a
+Top:    17ad0806336425dff90f86d86787493fbe3eb088
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 23:02:30 +0100
+
+Refresh of implement-a-new-revertpcb-call
+
+---
+
+diff --git a/src/hid/common/actions.c b/src/hid/common/actions.c
+index da3bbfd..13bb129 100644
+--- a/src/hid/common/actions.c
++++ b/src/hid/common/actions.c
+@@ -438,9 +438,11 @@ these directly.
+ 
+ 
+ static const char pcbchanged_syntax[] =
+-  "PCBChanged()";
++  "PCBChanged([revert])";
+ static const char pcbchanged_help[] =
+-  "Tells the GUI that the whole PCB has changed.";
++  "Tells the GUI that the whole PCB has changed. The optional \"revert\""
++  "parameter can be used as a hint to the GUI that the same design is being"
++  "reloaded, and that it might keep some viewport settings";
+ 
+ /* %start-doc actions PCBChanged
