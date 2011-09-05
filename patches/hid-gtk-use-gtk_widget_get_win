@@ -1,4 +1,4 @@
-Bottom: 3ac02ca0ee786e913d18ea9852678a2b6a8d5279
+Bottom: 013de92444b555fb48f3ce5893b5ba7a95d668c8
 Top:    c8967588920b9a9b24fef318c586aa32d62fd823
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 13:00:47 +0100
@@ -10,19 +10,6 @@ In GTK3.0, direct access to widget->window will be impossible.
 
 ---
 
-diff --git a/configure.ac b/configure.ac
-index 71ab1c4..141b5d2 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -770,6 +770,8 @@ $GTKGLEXT_PKG_ERRORS])]
- 	GTKGLEXT_VER=`$PKG_CONFIG gtkglext-1.0 --modversion`
- 	fi
- 
-+	GTK_CFLAGS="$GTK_CFLAGS -DGSEAL_ENABLE"
-+
- 	;;
- 
-       gcode|nelma|png )
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
 index 5fa2d9c..5384440 100644
 --- a/src/hid/gtk/gtkhid-main.c
