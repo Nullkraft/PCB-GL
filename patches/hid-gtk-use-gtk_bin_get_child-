@@ -1,5 +1,5 @@
 Bottom: 7bc13eeb89f93d4e8c5a0ba2448cd290f489af55
-Top:    7bc13eeb89f93d4e8c5a0ba2448cd290f489af55
+Top:    dd0d688f16887efd86c3d836973592aabcb5d5bb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 16:18:10 +0100
 
@@ -10,4 +10,16 @@ In GTK3.0, direct access to bin->child will be impossible.
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-command-window.c b/src/hid/gtk/gui-command-window.c
+index 310ace8..d913cae 100644
+--- a/src/hid/gtk/gui-command-window.c
++++ b/src/hid/gtk/gui-command-window.c
+@@ -236,7 +236,7 @@ command_combo_box_entry_create (void)
+ {
+   ghidgui->command_combo_box = gtk_combo_box_entry_new_text ();
+   ghidgui->command_entry =
+-    GTK_ENTRY (GTK_BIN (ghidgui->command_combo_box)->child);
++    GTK_ENTRY (gtk_bin_get_child (GTK_BIN (ghidgui->command_combo_box)));
+ 
+   gtk_entry_set_width_chars (ghidgui->command_entry, 40);
+   gtk_entry_set_activates_default (ghidgui->command_entry, TRUE);
