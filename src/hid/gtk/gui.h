@@ -338,6 +338,7 @@ int ghid_drc_window_throw_dialog (void);
 
 /* In gui-top-window.c  */
 void ghid_update_toggle_flags (void);
+void ghid_notify_save_pcb (const char *file, bool done);
 void ghid_install_accel_groups (GtkWindow *window, GhidGui *gui);
 void ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui);
 
