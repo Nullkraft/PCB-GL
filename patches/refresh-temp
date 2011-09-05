@@ -1,0 +1,103 @@
+Bottom: cdb4fda821a3d5bfd33c82d221f015551f1956d3
+Top:    aae0fa426463446189006203d2abbfe27e82a7b5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 14:16:30 +0100
+
+Refresh of hid-gtk-use-gtk_widget_get_all-0
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 13c45b0..f5a99a9 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -904,8 +904,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+                              GHidPort *port)
+ {
+   render_priv *priv = port->render_priv;
++  GtkAllocation allocation;
+   BoxType region;
+ 
++  gtk_widget_get_allocation (widget, &allocation);
++
+   ghid_start_drawing (port);
+ 
+   hidgl_init ();
+@@ -919,16 +922,16 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glEnable (GL_BLEND);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 
+-  glViewport (0, 0, widget->allocation.width, widget->allocation.height);
++  glViewport (0, 0, allocation.width, allocation.height);
+ 
+   glEnable (GL_SCISSOR_TEST);
+   glScissor (ev->area.x,
+-             widget->allocation.height - ev->area.height - ev->area.y,
++             allocation.height - ev->area.height - ev->area.y,
+              ev->area.width, ev->area.height);
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+-  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
++  glOrtho (0, allocation.width, allocation.height, 0, 0, 100);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
+@@ -1063,16 +1066,16 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   glEnable (GL_BLEND);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 
+-  glViewport (0, 0, widget->allocation.width, widget->allocation.height);
++  glViewport (0, 0, allocation.width, allocation.height);
+ 
+   glEnable (GL_SCISSOR_TEST);
+   glScissor (ev->area.x,
+-             widget->allocation.height - ev->area.height - ev->area.y,
++             allocation.height - ev->area.height - ev->area.y,
+              ev->area.width, ev->area.height);
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+-  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
++  glOrtho (0, allocation.width, allocation.height, 0, 0, 100);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
+@@ -1236,14 +1239,17 @@ ghid_request_debug_draw (void)
+ {
+   GHidPort *port = gport;
+   GtkWidget *widget = port->drawing_area;
++  GtkAllocation allocation;
++
++  gtk_widget_get_allocation (widget, &allocation);
+ 
+   ghid_start_drawing (port);
+ 
+-  glViewport (0, 0, widget->allocation.width, widget->allocation.height);
++  glViewport (0, 0, allocation.width, allocation.height);
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+-  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
++  glOrtho (0, allocation.width, allocation.height, 0, 0, 100);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
+diff --git a/src/hid/gtk/gui-library-window.c b/src/hid/gtk/gui-library-window.c
+index 0339cf0..2cda08e 100644
+--- a/src/hid/gtk/gui-library-window.c
++++ b/src/hid/gtk/gui-library-window.c
+@@ -93,8 +93,11 @@ static gint
+ library_window_configure_event_cb (GtkWidget * widget, GdkEventConfigure * ev,
+ 				   gpointer data)
+ {
+-  ghidgui->library_window_width = widget->allocation.width;
+-  ghidgui->library_window_height = widget->allocation.height;
++  GtkAllocation allocation;
++
++  gtk_widget_get_allocation (widget, &allocation);
++  ghidgui->library_window_width = allocation.width;
++  ghidgui->library_window_height = allocation.height;
+   ghidgui->config_modified = TRUE;
+   return FALSE;
+ }
