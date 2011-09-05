@@ -1,0 +1,25 @@
+Bottom: e1d59c034ebe1eb78777072087b7616acd3fecaf
+Top:    3b409221551a281a042ecfa60a6de3b76b1b69ec
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 17:44:17 +0100
+
+Refresh of hid-gtk-avoid-the-deprecated-g
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 89d50be..3e253cb 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1542,9 +1542,8 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
+ {
+   int i = 0;
+   time_t start, end;
+-  GdkDisplay *display;
+-
+-  display = gdk_drawable_get_display (gport->drawable);
++  GdkWindow *window = gtk_widget_get_window (gport->drawing_area);
++  GdkDisplay *display = gdk_window_get_display (window);
+ 
+   gdk_display_sync (display);
+   time (&start);
