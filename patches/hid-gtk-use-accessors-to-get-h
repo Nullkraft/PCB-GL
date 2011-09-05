@@ -3,7 +3,9 @@ Top:    c8967588920b9a9b24fef318c586aa32d62fd823
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 13:10:03 +0100
 
-hid/gtk: Use accessors to get hbox / vbox from dialogues
+hid/gtk: Use accessors to get the vbox from GtkDialog
+
+In GTK3.0, direct access to dialog->vbox will be impossible.
 
 
 ---
