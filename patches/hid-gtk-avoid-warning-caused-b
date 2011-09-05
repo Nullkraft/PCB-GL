@@ -1,5 +1,5 @@
 Bottom: 53b3aee4f92c436bd959219a359adce92752cfa6
-Top:    53b3aee4f92c436bd959219a359adce92752cfa6
+Top:    0630c3a0c5c830bad2deb1329e029e325932a78d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 14:53:00 +0100
 
@@ -14,4 +14,19 @@ With the GDK renderer in use.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 4deae2b..ef3b30c 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1135,8 +1135,11 @@ ghid_screen_update (void)
+ {
+   render_priv *priv = gport->render_priv;
+ 
++  if (gport->pixmap == NULL)
++    return;
++
+   gdk_draw_drawable (gport->drawing_area->window, priv->bg_gc, gport->pixmap,
+-		     0, 0, 0, 0, gport->width, gport->height);
++                     0, 0, 0, 0, gport->width, gport->height);
+   show_crosshair (TRUE);
+ }
