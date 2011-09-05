@@ -1,5 +1,5 @@
-Bottom: 53b3aee4f92c436bd959219a359adce92752cfa6
-Top:    27513119d051cb811a17a651bd9079c63e076e44
+Bottom: 0630c3a0c5c830bad2deb1329e029e325932a78d
+Top:    4e1d728f59920085a0b4569169454afce3acfbb5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 13:53:56 +0100
 
@@ -11,10 +11,10 @@ This avoids an unnecessary round-trip the the X server on X11 platforms.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 4deae2b..d74c4e7 100644
+index ef3b30c..f0ce1ab 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1165,7 +1165,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1168,7 +1168,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  {
    GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
    GdkDrawable *save_drawable;
@@ -23,7 +23,7 @@ index 4deae2b..d74c4e7 100644
    view_data save_view;
    int save_width, save_height;
    double xz, yz;
-@@ -1178,24 +1178,25 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1181,24 +1181,25 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    save_width = gport->width;
    save_height = gport->height;
  
