@@ -1,0 +1,25 @@
+Bottom: b0584ce716ef0997419f04c59d9a6f5617501b4c
+Top:    e26605332687cec4e11488c2f14987ba62d9a3da
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 15:46:31 +0100
+
+Refresh of hid-gtk-don-t-test-for-noop-be
+
+---
+
+diff --git a/src/hid/gtk/gui-library-window.c b/src/hid/gtk/gui-library-window.c
+index 8234899..a1e1a53 100644
+--- a/src/hid/gtk/gui-library-window.c
++++ b/src/hid/gtk/gui-library-window.c
+@@ -474,10 +474,7 @@ library_window_callback_filter_entry_changed (GtkEditable * editable,
+   sensitive =
+     (g_ascii_strcasecmp (gtk_entry_get_text (library_window->entry_filter),
+ 			 "") != 0);
+-  if (GTK_WIDGET_IS_SENSITIVE (button) != sensitive)
+-    {
+-      gtk_widget_set_sensitive (button, sensitive);
+-    }
++  gtk_widget_set_sensitive (button, sensitive);
+ 
+   /* Cancel any pending update of the footprint list filter */
+   if (library_window->filter_timeout != 0)
