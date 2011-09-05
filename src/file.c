@@ -370,7 +370,7 @@ SavePCB (char *Filename)
     }
 
   if (gui->notify_save_pcb != NULL)
-    gui->notify_save_pcb (Filename, true);
+    gui->notify_save_pcb (PCB->Filename, true);
 
   return (retcode);
 }
