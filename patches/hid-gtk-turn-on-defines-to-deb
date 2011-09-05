@@ -1,5 +1,5 @@
 Bottom: 7f096cd9df96083d1d3cfad1eb065d0c3389ab8e
-Top:    03b18e8aab4a45da539dc081626c2faf86362a91
+Top:    f69fe3cc5b47c5cfb2b0286bfb072f9a3d29b1f9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 12:53:53 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Turn on defines to debug a potential GTK-3.0 build
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 71ab1c4..d2e2eeb 100644
+index 71ab1c4..1150f22 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -770,6 +770,9 @@ $GTKGLEXT_PKG_ERRORS])]
@@ -17,7 +17,7 @@ index 71ab1c4..d2e2eeb 100644
  	fi
  
 +	GTK_CFLAGS="$GTK_CFLAGS -DGSEAL_ENABLE"
-+#	GTK_CFLAGS="$GTK_CFLAGS -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGSEAL_ENABLE"
++	GTK_CFLAGS="$GTK_CFLAGS -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
 +
  	;;
  
