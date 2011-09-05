@@ -1,5 +1,5 @@
 Bottom: e1869f35665bbd7f5551e3e7bf53cdf7437d9671
-Top:    c9983dc41e830730d971b222324c552c2f7a93c0
+Top:    a3617c29885ebe5360ddf3c940a6537238575803
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 22:18:16 +0100
 
@@ -15,7 +15,7 @@ which looks to be a much more appropriate place.
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 73bada5..d40cad9 100644
+index 73bada5..0b57540 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -262,6 +262,119 @@ void ghid_hotkey_cb (int which)
@@ -119,7 +119,7 @@ index 73bada5..d40cad9 100644
 +  _gui->info_bar = NULL;
 +
 +  if (PCB->Filename == NULL ||
-+      *PCB->Filename == NULL)
++      *PCB->Filename == '\0')
 +    return;
 +
 +  file = g_file_new_for_path (PCB->Filename);
