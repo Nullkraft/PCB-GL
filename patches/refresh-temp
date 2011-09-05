@@ -1,0 +1,38 @@
+Bottom: 86810b58c74d1679f05e082d680178944abcb807
+Top:    267c2e2cc5746f78de1552aa408597ace9c9f762
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 15:38:17 +0100
+
+Refresh of hid-gtk-remove-unused-function
+
+---
+
+diff --git a/src/hid/gtk/gui-utils.c b/src/hid/gtk/gui-utils.c
+index e3852d6..8a75cae 100644
+--- a/src/hid/gtk/gui-utils.c
++++ b/src/hid/gtk/gui-utils.c
+@@ -200,12 +200,6 @@ ghid_button_set_text (GtkWidget * button, gchar * text)
+ }
+ 
+ 
+-gboolean
+-ghid_button_active (GtkWidget * widget)
+-{
+-  return GTK_TOGGLE_BUTTON (widget)->active;
+-}
+-
+ gchar *
+ ghid_entry_get_text (GtkWidget * entry)
+ {
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 4fa67a7..73e970e 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -358,7 +358,6 @@ void ghid_draw_area_update (GHidPort * out, GdkRectangle * rect);
+ gchar *ghid_get_color_name (GdkColor * color);
+ void ghid_map_color_string (gchar * color_string, GdkColor * color);
+ void ghid_button_set_text (GtkWidget * button, gchar * text);
+-gboolean ghid_button_active (GtkWidget * widget);
+ gchar *ghid_entry_get_text (GtkWidget * entry);
+ void ghid_check_button_connected (GtkWidget * box, GtkWidget ** button,
+ 				  gboolean active, gboolean pack_start,
