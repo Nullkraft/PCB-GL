@@ -405,24 +405,26 @@ ghid_sync_with_new_layout (void)
 }
 
 void
-ghid_notify_save_pcb (const char *file, bool done)
+ghid_notify_save_pcb (const char *filename, bool done)
 {
   /* Do nothing if it is not the active PCB file we're watching
    * that is being saved.
-   *
-   * Ideally, the core ought to notify us for a "SaveAs" type action
-   * so we could re-wire our file-monitor, but it doesn't. This works
-   * however, as the core sets the new PCB file-name before it saves,
-   * and this notification causes us to disconnect our old file-monitor
-   * (pointing at the old file), then we re-connect to the new file.
    */
-  if (strcmp (file, PCB->Filename) != 0)
+  if (strcmp (filename, PCB->Filename) != 0)
     return;
 
   if (!done)
     disconnect_file_change_monitor (ghidgui);
   else
     connect_file_change_monitor (ghidgui);
+}
+
+void
+ghid_notify_pcb_filename_changed (const char *old_filename,
+                                  const char *new_filename)
+{
+  disconnect_file_change_monitor (ghidgui);
+  connect_file_change_monitor (ghidgui);
 }
 
 /* ---------------------------------------------------------------------------
