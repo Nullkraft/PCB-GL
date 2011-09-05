@@ -1,5 +1,5 @@
 Bottom: 33dbffcb180ed0ce33c0c7a5d45b842ed7c85ad1
-Top:    5a1dc0ad4e48638a32ff60dcbe1195c5a5e107a5
+Top:    1020c581fcfc0ae347a261375e070e35513775f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 15:24:33 +0100
 
@@ -14,7 +14,7 @@ does not directly access the GSeal'd member widget->state.
 ---
 
 diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
-index e7f5c46..ce9a564 100644
+index e7f5c46..4ab38b1 100644
 --- a/src/hid/gtk/gui-drc-window.c
 +++ b/src/hid/gtk/gui-drc-window.c
 @@ -719,6 +719,7 @@ ghid_violation_renderer_render (GtkCellRenderer      *cell,
@@ -30,7 +30,7 @@ index e7f5c46..ce9a564 100644
    mydrawable = GDK_DRAWABLE (violation->pixmap);
  
 -  gdk_draw_drawable (window, widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
-+  gdk_draw_drawable (window, style->fg_gc[GTK_WIDGET_STATE (widget)],
++  gdk_draw_drawable (window, style->fg_gc[gtk_widget_get_state (widget)],
  		     mydrawable, 0, 0,
  		     cell_area->x + cell_area->width + VIOLATION_PIXMAP_PIXEL_BORDER,
  		     cell_area->y + VIOLATION_PIXMAP_PIXEL_BORDER, -1, -1);
