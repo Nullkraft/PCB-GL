@@ -1,0 +1,15 @@
+Bottom: 5779293f5e3c2d46febbfdb2a6ebb9404415744e
+Top:    5779293f5e3c2d46febbfdb2a6ebb9404415744e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 13:34:34 +0100
+
+hid/gtk: Clean and make gport_set_cursor_type() more GTK3.0 compatible
+
+Also removes the DEFAULT_CURSOR return value (for the case of no window
+being setup) to GDK_X_CURSOR (the 0 enum value), as the code path which
+returned DEFAULT_CURSOR would never have been hit.
+
+
+---
+
+
