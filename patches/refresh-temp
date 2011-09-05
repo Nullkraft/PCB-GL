@@ -1,0 +1,33 @@
+Bottom: 1841c30b5d859069adb077d5c5f28a6dbabdfb6c
+Top:    3d24ec64bc4fb2791200ef323eb44f376e225158
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 23:09:48 +0100
+
+Refresh of add-a-hid-api-call-notify_save
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index 8021bcd..3f97364 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -354,6 +354,9 @@ SavePCB (char *Filename)
+   int retcode;
+   char *copy;
+ 
++  if (gui->notify_save_pcb != NULL)
++    gui->notify_save_pcb (false);
++
+   if (!(retcode = WritePipe (Filename, true)))
+     {
+       /* thanks to Nick Bailey for the bug-fix;
+@@ -365,6 +368,10 @@ SavePCB (char *Filename)
+       PCB->Filename = copy;
+       SetChangedFlag (false);
+     }
++
++  if (gui->notify_save_pcb != NULL)
++    gui->notify_save_pcb (true);
++
+   return (retcode);
+ }
