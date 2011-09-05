@@ -1,5 +1,5 @@
 Bottom: 514ea88f8631add7f29fd4864109d06c586ef744
-Top:    6e9336f1a86e4c94bcac3d230ce0062563ea002c
+Top:    bbccf1ab501b389808360ffd5f18ace2c111d753
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 22:18:16 +0100
 
@@ -37,10 +37,10 @@ index 3e253cb..351a699 100644
  #include "gtk_lists.h"
  }
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 73bada5..7426bf3 100644
+index 73bada5..a9b2c5e 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -262,6 +262,129 @@ void ghid_hotkey_cb (int which)
+@@ -262,6 +262,131 @@ void ghid_hotkey_cb (int which)
                    (gpointer) ghid_hotkey_actions[which].node);
  }
  
@@ -149,6 +149,8 @@ index 73bada5..7426bf3 100644
 +  /* Ensure any existing monitor is disconnected */
 +  disconnect_file_change_monitor (_gui);
 +
++  printf ("PCB Filename is %s\n", PCB->Filename);
++
 +  if (PCB->Filename == NULL ||
 +      *PCB->Filename == '\0')
 +    return;
@@ -170,7 +172,7 @@ index 73bada5..7426bf3 100644
    /* Sync toggle states that were saved with the layout and notify the
       |  config code to update Settings values it manages.
     */
-@@ -277,6 +400,28 @@ ghid_sync_with_new_layout (void)
+@@ -277,6 +402,29 @@ ghid_sync_with_new_layout (void)
  
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
@@ -189,6 +191,7 @@ index 73bada5..7426bf3 100644
 +   * and this notification causes us to disconnect our old file-monitor
 +   * (pointing at the old file), then we re-connect to the new file.
 +   */
++  printf ("Filename is %s, PCB->Filename is %s\n", file, PCB->Filename);
 +  if (strcmp (file, PCB->Filename) != 0)
 +    return;
 +
@@ -199,7 +202,7 @@ index 73bada5..7426bf3 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -467,119 +612,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
+@@ -467,119 +615,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
                 (GHID_ROUTE_STYLE_SELECTOR (gui->route_style_selector)));
  }
  
@@ -319,7 +322,7 @@ index 73bada5..7426bf3 100644
  /* Refreshes the window title bar and sets the PCB name to the
   * window title bar or to a seperate label
   */
-@@ -608,11 +640,6 @@ ghid_window_set_name_label (gchar * name)
+@@ -608,11 +643,6 @@ ghid_window_set_name_label (gchar * name)
    gtk_window_set_title (GTK_WINDOW (gport->top_window), str);
    g_free (str);
    g_free (filename);
