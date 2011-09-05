@@ -1,0 +1,23 @@
+Bottom: e2a7fa0df052b8bb3cbf7338624bf93d8ca67ca2
+Top:    255fe58f78520c88e027156b411f26af103c8f8d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-06 00:30:45 +0100
+
+Refresh of hid-gtk-connect-up-the-file-ch
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 351a699..72cd411 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2169,7 +2169,8 @@ hid_gtk_init ()
+   ghid_hid.flush_debug_draw         = ghid_flush_debug_draw;
+   ghid_hid.finish_debug_draw        = ghid_finish_debug_draw;
+ 
+-  ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
++  ghid_hid.notify_save_pcb            = ghid_notify_save_pcb;
++  ghid_hid.notify_pcb_filename_change = ghid_hid.notify_pcb_filename_change;
+ 
+   hid_register_hid (&ghid_hid);
+ #include "gtk_lists.h"
