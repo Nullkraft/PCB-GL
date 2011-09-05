@@ -346,10 +346,8 @@ file_changed_cb (GFileMonitor     *monitor,
 }
 
 static void
-connect_file_change_monitor (GhidGui *_gui)
+disconnect_file_change_monitor (GhidGui *_gui)
 {
-  GFile *file;
-
   if (_gui->file_monitor != NULL)
     g_object_unref (_gui->file_monitor);
   _gui->file_monitor = NULL;
@@ -357,6 +355,15 @@ connect_file_change_monitor (GhidGui *_gui)
   if (_gui->info_bar != NULL)
     gtk_widget_destroy (_gui->info_bar);
   _gui->info_bar = NULL;
+}
+
+static void
+connect_file_change_monitor (GhidGui *_gui)
+{
+  GFile *file;
+
+  /* Ensure any existing monitor is disconnected */
+  disconnect_file_change_monitor (_gui);
 
   if (PCB->Filename == NULL ||
       *PCB->Filename == '\0')
@@ -391,6 +398,15 @@ ghid_sync_with_new_layout (void)
   ghid_window_set_name_label (PCB->Name);
   ghid_set_status_line_label ();
   connect_file_change_monitor (ghidgui);
+}
+
+void
+ghid_notify_save_pcb (bool done)
+{
+  if (!done)
+    disconnect_file_change_monitor (ghidgui);
+  else
+    connect_file_change_monitor (ghidgui);
 }
 
 /* ---------------------------------------------------------------------------
