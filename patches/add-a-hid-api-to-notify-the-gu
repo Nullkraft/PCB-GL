@@ -3,7 +3,10 @@ Top:    0304858bbbc998dda5baa84a731551da6f7d0f66
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-06 00:22:51 +0100
 
-Add a HID API to notify the GUI of a filename change in the active PCB
+Add a HID API call, notify_pcb_filename_change()
+
+This is so the core can tell the GUI when the PCB being edited is saved
+into a different file.
 
 
 ---
