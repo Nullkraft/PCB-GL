@@ -752,7 +752,7 @@ ghid_violation_renderer_render (GtkCellRenderer      *cell,
 
   mydrawable = GDK_DRAWABLE (violation->pixmap);
 
-  gdk_draw_drawable (window, style->fg_gc[GTK_WIDGET_STATE (widget)],
+  gdk_draw_drawable (window, style->fg_gc[gtk_widget_get_state (widget)],
 		     mydrawable, 0, 0,
 		     cell_area->x + cell_area->width + VIOLATION_PIXMAP_PIXEL_BORDER,
 		     cell_area->y + VIOLATION_PIXMAP_PIXEL_BORDER, -1, -1);
