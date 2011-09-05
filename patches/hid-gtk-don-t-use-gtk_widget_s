@@ -1,0 +1,13 @@
+Bottom: 6528c6bbb54b961c1d88354c6c20dfb9ba83de31
+Top:    6528c6bbb54b961c1d88354c6c20dfb9ba83de31
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 15:49:34 +0100
+
+hid/gtk: Don't use GTK_WIDGET_SET_FLAGS()
+
+Call the appropriate setter function instead. (For GTK3.0 compatibility).
+
+
+---
+
+
