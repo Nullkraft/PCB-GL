@@ -770,6 +770,8 @@ $GTKGLEXT_PKG_ERRORS])]
 	GTKGLEXT_VER=`$PKG_CONFIG gtkglext-1.0 --modversion`
 	fi
 
+	GTK_CFLAGS="$GTK_CFLAGS -DGSEAL_ENABLE"
+
 	;;
 
       gcode|nelma|png )
