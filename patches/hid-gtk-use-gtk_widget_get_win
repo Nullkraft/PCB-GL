@@ -1,5 +1,5 @@
 Bottom: 8b4fab74e9d96a793cc34bb44f30674e2fb9af90
-Top:    ae995fc094110cf520a8dc855430e013e0b801e2
+Top:    fa81ce17d57d144365ea60fcea5b02339c556a7a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 13:00:47 +0100
 
@@ -11,7 +11,7 @@ In GTK3.0, direct access to widget->window will be impossible.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index f0ce1ab..b5fa405 100644
+index f0ce1ab..85fd1d6 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -487,6 +487,7 @@ static int
@@ -240,7 +240,7 @@ index f0ce1ab..b5fa405 100644
  static void
  draw_lead_user (render_priv *priv)
  {
-+  GdkWindow *window = gtk_widget_get_window (widget);
++  GdkWindow *window = gtk_widget_get_window (gport->drawing_area);
    int i;
    Coord radius = priv->lead_user_radius;
    Coord width = MM_TO_COORD (LEAD_USER_WIDTH);
