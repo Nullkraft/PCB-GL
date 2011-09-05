@@ -1,0 +1,22 @@
+Bottom: c9983dc41e830730d971b222324c552c2f7a93c0
+Top:    a3617c29885ebe5360ddf3c940a6537238575803
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 22:20:07 +0100
+
+Refresh of hid-gtk-connect-up-the-file-ch
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index d40cad9..0b57540 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -359,7 +359,7 @@ connect_file_change_monitor (GhidGui *_gui)
+   _gui->info_bar = NULL;
+ 
+   if (PCB->Filename == NULL ||
+-      *PCB->Filename == NULL)
++      *PCB->Filename == '\0')
+     return;
+ 
+   file = g_file_new_for_path (PCB->Filename);
