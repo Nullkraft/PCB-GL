@@ -5685,7 +5685,7 @@ ActionSaveTo (int argc, char **argv, Coord x, Coord y)
       if (SavePCB (name) == 0)
         {
           if (gui->notify_pcb_filename_change != NULL)
-            gui->notify_pcb_filename_changed (PCB->Filename, name);
+            gui->notify_pcb_filename_change (PCB->Filename, name);
           free (PCB->Filename);
           PCB->Filename = strdup (name);
           SetChangedFlag (false);
