@@ -367,6 +367,8 @@ connect_file_change_monitor (GhidGui *_gui)
   /* Ensure any existing monitor is disconnected */
   disconnect_file_change_monitor (_gui);
 
+  printf ("PCB Filename is %s\n", PCB->Filename);
+
   if (PCB->Filename == NULL ||
       *PCB->Filename == '\0')
     return;
@@ -415,6 +417,7 @@ ghid_notify_save_pcb (const char *file, bool done)
    * and this notification causes us to disconnect our old file-monitor
    * (pointing at the old file), then we re-connect to the new file.
    */
+  printf ("Filename is %s, PCB->Filename is %s\n", file, PCB->Filename);
   if (strcmp (file, PCB->Filename) != 0)
     return;
 
