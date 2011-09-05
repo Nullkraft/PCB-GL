@@ -1,0 +1,68 @@
+Bottom: ff3e250f38c9c6ea50efba0793831f6ee872575b
+Top:    e45cdc50fa685538d23820297096ddffe251c5e7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-06 00:02:59 +0100
+
+Refresh of hid-gtk-connect-up-the-file-ch
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index a9b2c5e..b14aa4c 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -315,6 +315,7 @@ file_changed_cb (GFileMonitor     *monitor,
+                     G_CALLBACK (info_bar_response_cb), _gui);
+ 
+   file_path = g_file_get_path (file);
++  printf ("File %s has changed on disk (monitor %p)\n", file_path, monitor);
+   file_path_utf8 = g_filename_to_utf8 (file_path, -1, NULL, NULL, NULL);
+   g_free (file_path);
+   markup =
+@@ -348,6 +349,8 @@ file_changed_cb (GFileMonitor     *monitor,
+ static void
+ disconnect_file_change_monitor (GhidGui *_gui)
+ {
++  printf ("Disconnect monitor %p\n", _gui->file_monitor);
++
+   if (_gui->file_monitor != NULL)
+     g_object_unref (_gui->file_monitor);
+   _gui->file_monitor = NULL;
+@@ -355,8 +358,6 @@ disconnect_file_change_monitor (GhidGui *_gui)
+   if (_gui->info_bar != NULL)
+     gtk_widget_destroy (_gui->info_bar);
+   _gui->info_bar = NULL;
+-
+-  printf ("Disconnect\n");
+ }
+ 
+ static void
+@@ -367,13 +368,10 @@ connect_file_change_monitor (GhidGui *_gui)
+   /* Ensure any existing monitor is disconnected */
+   disconnect_file_change_monitor (_gui);
+ 
+-  printf ("PCB Filename is %s\n", PCB->Filename);
+-
+   if (PCB->Filename == NULL ||
+       *PCB->Filename == '\0')
+     return;
+ 
+-  printf ("Connecting for %s\n", PCB->Filename);
+   file = g_file_new_for_path (PCB->Filename);
+ 
+   /* XXX: Could hook up more error handling for g_file_monitor_file */
+@@ -383,6 +381,7 @@ connect_file_change_monitor (GhidGui *_gui)
+                                             NULL);
+   g_object_unref (file);
+ 
++  printf ("Connecting for %s new monitor is %p\n", PCB->Filename, _gui->file_monitor);
+   g_signal_connect (_gui->file_monitor, "changed",
+                     G_CALLBACK (file_changed_cb), _gui);
+ }
+@@ -417,7 +416,6 @@ ghid_notify_save_pcb (const char *file, bool done)
+    * and this notification causes us to disconnect our old file-monitor
+    * (pointing at the old file), then we re-connect to the new file.
+    */
+-  printf ("Filename is %s, PCB->Filename is %s\n", file, PCB->Filename);
+   if (strcmp (file, PCB->Filename) != 0)
+     return;
