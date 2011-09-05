@@ -5810,7 +5810,6 @@ ActionLoadFrom (int argc, char **argv, Coord x, Coord y)
 {
   char *function;
   char *name;
-  char fname[256];
 
   if (argc < 2)
     AFAIL (loadfrom);
@@ -5854,8 +5853,7 @@ ActionLoadFrom (int argc, char **argv, Coord x, Coord y)
 	   && (!PCB->Changed
 	       || gui->confirm_dialog (_("OK to override changes?"), 0)))
     {
-      strcpy (fname, PCB->Filename);	/*Calling LoadPCB(PCB->Filename) changes the content of PCB->Filename. */
-      LoadPCB (fname);
+      RevertPCB ();
     }
 
   return 0;
