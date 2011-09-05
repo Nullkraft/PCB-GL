@@ -1,0 +1,18 @@
+Bottom: e69bfe7e6e438bd79820c13ea498f1a81dd6a664
+Top:    e69bfe7e6e438bd79820c13ea498f1a81dd6a664
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 11:57:02 +0100
+
+hid/gtk: Avoid double-destroying the file-changed info_bar on "Reload"
+
+This was caused by an addition I made in the earlier patch to destroy
+the info_bar when the user manually reverts or loads a new file).
+
+The callback on revert button was trying to delete it (again) after
+the revert _action_ we call triggered a destroy of the widget. Avoid
+this by destroying the info_bar before we call the revert action.
+
+
+---
+
+
