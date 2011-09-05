@@ -1,5 +1,5 @@
-Bottom: 17ad0806336425dff90f86d86787493fbe3eb088
-Top:    8989932d0d63104560d741afe9431116f1d794a8
+Bottom: efd8d22db93178d50bf9f9443a671f6c628a578d
+Top:    efd8d22db93178d50bf9f9443a671f6c628a578d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 23:09:45 +0100
 
@@ -12,49 +12,4 @@ save the file ourselves.
 
 ---
 
-diff --git a/src/file.c b/src/file.c
-index 8021bcd..4297244 100644
---- a/src/file.c
-+++ b/src/file.c
-@@ -354,6 +354,9 @@ SavePCB (char *Filename)
-   int retcode;
-   char *copy;
- 
-+  if (gui->notify_save_pcb != NULL)
-+    gui->notify_save_pcb (Filename, false);
-+
-   if (!(retcode = WritePipe (Filename, true)))
-     {
-       /* thanks to Nick Bailey for the bug-fix;
-@@ -365,6 +368,10 @@ SavePCB (char *Filename)
-       PCB->Filename = copy;
-       SetChangedFlag (false);
-     }
-+
-+  if (gui->notify_save_pcb != NULL)
-+    gui->notify_save_pcb (PCB->Filename, true);
-+
-   return (retcode);
- }
- 
-diff --git a/src/hid.h b/src/hid.h
-index b1f532f..d1c7c8e 100644
---- a/src/hid.h
-+++ b/src/hid.h
-@@ -567,6 +567,16 @@ typedef enum
-      * Any remaining rendering will be flushed to the screen.
-      */
-     void (*finish_debug_draw)  (void);
-+
-+    /* Notification to the GUI around saving the PCB file.
-+     *
-+     * Called with a false parameter before the save, called again
-+     * with true after the save.
-+     *
-+     * Allows GUIs which watch for file-changes on disk to ignore
-+     * our deliberate changes.
-+     */
-+    void (*notify_save_pcb) (const char *filename, bool done);
-   };
- 
- /* Call this as soon as possible from main().  No other HID calls are
+
