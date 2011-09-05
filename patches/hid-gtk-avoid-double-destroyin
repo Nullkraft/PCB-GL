@@ -1,7 +1,7 @@
-Bottom: e69bfe7e6e438bd79820c13ea498f1a81dd6a664
-Top:    10b05bb6ecf7364c5f2299c1a61bd4d17ddf6dc8
+Bottom: bfaa6fbe08f352304ae3de80a8ee0d1d36b7a4eb
+Top:    3ac02ca0ee786e913d18ea9852678a2b6a8d5279
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-05 11:57:02 +0100
+Date:   2011-09-05 11:57:27 +0100
 
 hid/gtk: Avoid double-destroying the file-changed info_bar on "Reload"
 
@@ -16,10 +16,10 @@ this by destroying the info_bar before we call the revert action.
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 1352be0..b06feb7 100644
+index f713446..f3e95e7 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -614,11 +614,11 @@ info_bar_response_cb (GtkInfoBar *info_bar,
+@@ -471,11 +471,11 @@ info_bar_response_cb (GtkInfoBar *info_bar,
  {
    GhidGui *_gui = (GhidGui *)user_data;
  

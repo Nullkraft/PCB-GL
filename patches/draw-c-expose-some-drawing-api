@@ -1,7 +1,7 @@
-Bottom: cd3e40346adb7d37bab66f52067922e785e6b487
-Top:    e69bfe7e6e438bd79820c13ea498f1a81dd6a664
+Bottom: 1518c4bad10116380850a0ffdac30ff7ae154631
+Top:    bfaa6fbe08f352304ae3de80a8ee0d1d36b7a4eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-01 00:01:55 +0100
+Date:   2011-09-05 11:57:26 +0100
 
 draw.c: Expose some drawing APIs for the HIDs to use directly...
 
@@ -17,7 +17,7 @@ Exposes:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index f8db2ba..675f76f 100644
+index deb9e65..a06dde1 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,14 +83,10 @@ static bool doing_assy = false;
@@ -106,10 +106,10 @@ index ef32ebb..d92dee5 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 7a6b8a8..58f299a 100644
+index 1eed303..5fa2d9c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1928,7 +1928,8 @@ N_("Bring up the popup menu specified by @code{MenuName}.\n"
+@@ -1931,7 +1931,8 @@ N_("Bring up the popup menu specified by @code{MenuName}.\n"
  
  This just pops up the specified menu.  The menu must have been defined
  as a named subresource of the Popups resource in the menu resource
