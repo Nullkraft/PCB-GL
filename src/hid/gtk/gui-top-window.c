@@ -355,6 +355,8 @@ disconnect_file_change_monitor (GhidGui *_gui)
   if (_gui->info_bar != NULL)
     gtk_widget_destroy (_gui->info_bar);
   _gui->info_bar = NULL;
+
+  printf ("Disconnect\n");
 }
 
 static void
@@ -369,6 +371,7 @@ connect_file_change_monitor (GhidGui *_gui)
       *PCB->Filename == '\0')
     return;
 
+  printf ("Connecting for %s\n", PCB->Filename);
   file = g_file_new_for_path (PCB->Filename);
 
   /* XXX: Could hook up more error handling for g_file_monitor_file */
@@ -401,8 +404,20 @@ ghid_sync_with_new_layout (void)
 }
 
 void
-ghid_notify_save_pcb (bool done)
+ghid_notify_save_pcb (const char *file, bool done)
 {
+  /* Do nothing if it is not the active PCB file we're watching
+   * that is being saved.
+   *
+   * Ideally, the core ought to notify us for a "SaveAs" type action
+   * so we could re-wire our file-monitor, but it doesn't. This works
+   * however, as the core sets the new PCB file-name before it saves,
+   * and this notification causes us to disconnect our old file-monitor
+   * (pointing at the old file), then we re-connect to the new file.
+   */
+  if (strcmp (file, PCB->Filename) != 0)
+    return;
+
   if (!done)
     disconnect_file_change_monitor (ghidgui);
   else
