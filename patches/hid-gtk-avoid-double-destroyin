@@ -1,5 +1,5 @@
 Bottom: e69bfe7e6e438bd79820c13ea498f1a81dd6a664
-Top:    e69bfe7e6e438bd79820c13ea498f1a81dd6a664
+Top:    10b05bb6ecf7364c5f2299c1a61bd4d17ddf6dc8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 11:57:02 +0100
 
@@ -15,4 +15,22 @@ this by destroying the info_bar before we call the revert action.
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 1352be0..b06feb7 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -614,11 +614,11 @@ info_bar_response_cb (GtkInfoBar *info_bar,
+ {
+   GhidGui *_gui = (GhidGui *)user_data;
+ 
+-  if (response_id == GTK_RESPONSE_ACCEPT)
+-    hid_actionl ("LoadFrom", "revert", "none", NULL);
+-
+   gtk_widget_destroy (_gui->info_bar);
+   _gui->info_bar = NULL;
++
++  if (response_id == GTK_RESPONSE_ACCEPT)
++    hid_actionl ("LoadFrom", "revert", "none", NULL);
+ }
+ 
+ static void
