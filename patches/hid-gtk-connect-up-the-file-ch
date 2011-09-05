@@ -1,5 +1,5 @@
 Bottom: 8989932d0d63104560d741afe9431116f1d794a8
-Top:    ff3e250f38c9c6ea50efba0793831f6ee872575b
+Top:    e45cdc50fa685538d23820297096ddffe251c5e7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 22:18:16 +0100
 
@@ -37,10 +37,10 @@ index 3e253cb..351a699 100644
  #include "gtk_lists.h"
  }
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 73bada5..a9b2c5e 100644
+index 73bada5..b14aa4c 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -262,6 +262,131 @@ void ghid_hotkey_cb (int which)
+@@ -262,6 +262,130 @@ void ghid_hotkey_cb (int which)
                    (gpointer) ghid_hotkey_actions[which].node);
  }
  
@@ -97,6 +97,7 @@ index 73bada5..a9b2c5e 100644
 +                    G_CALLBACK (info_bar_response_cb), _gui);
 +
 +  file_path = g_file_get_path (file);
++  printf ("File %s has changed on disk (monitor %p)\n", file_path, monitor);
 +  file_path_utf8 = g_filename_to_utf8 (file_path, -1, NULL, NULL, NULL);
 +  g_free (file_path);
 +  markup =
@@ -130,6 +131,8 @@ index 73bada5..a9b2c5e 100644
 +static void
 +disconnect_file_change_monitor (GhidGui *_gui)
 +{
++  printf ("Disconnect monitor %p\n", _gui->file_monitor);
++
 +  if (_gui->file_monitor != NULL)
 +    g_object_unref (_gui->file_monitor);
 +  _gui->file_monitor = NULL;
@@ -137,8 +140,6 @@ index 73bada5..a9b2c5e 100644
 +  if (_gui->info_bar != NULL)
 +    gtk_widget_destroy (_gui->info_bar);
 +  _gui->info_bar = NULL;
-+
-+  printf ("Disconnect\n");
 +}
 +
 +static void
@@ -149,13 +150,10 @@ index 73bada5..a9b2c5e 100644
 +  /* Ensure any existing monitor is disconnected */
 +  disconnect_file_change_monitor (_gui);
 +
-+  printf ("PCB Filename is %s\n", PCB->Filename);
-+
 +  if (PCB->Filename == NULL ||
 +      *PCB->Filename == '\0')
 +    return;
 +
-+  printf ("Connecting for %s\n", PCB->Filename);
 +  file = g_file_new_for_path (PCB->Filename);
 +
 +  /* XXX: Could hook up more error handling for g_file_monitor_file */
@@ -165,6 +163,7 @@ index 73bada5..a9b2c5e 100644
 +                                            NULL);
 +  g_object_unref (file);
 +
++  printf ("Connecting for %s new monitor is %p\n", PCB->Filename, _gui->file_monitor);
 +  g_signal_connect (_gui->file_monitor, "changed",
 +                    G_CALLBACK (file_changed_cb), _gui);
 +}
@@ -172,7 +171,7 @@ index 73bada5..a9b2c5e 100644
    /* Sync toggle states that were saved with the layout and notify the
       |  config code to update Settings values it manages.
     */
-@@ -277,6 +402,29 @@ ghid_sync_with_new_layout (void)
+@@ -277,6 +401,28 @@ ghid_sync_with_new_layout (void)
  
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
@@ -191,7 +190,6 @@ index 73bada5..a9b2c5e 100644
 +   * and this notification causes us to disconnect our old file-monitor
 +   * (pointing at the old file), then we re-connect to the new file.
 +   */
-+  printf ("Filename is %s, PCB->Filename is %s\n", file, PCB->Filename);
 +  if (strcmp (file, PCB->Filename) != 0)
 +    return;
 +
@@ -202,7 +200,7 @@ index 73bada5..a9b2c5e 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -467,119 +615,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
+@@ -467,119 +613,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
                 (GHID_ROUTE_STYLE_SELECTOR (gui->route_style_selector)));
  }
  
@@ -322,7 +320,7 @@ index 73bada5..a9b2c5e 100644
  /* Refreshes the window title bar and sets the PCB name to the
   * window title bar or to a seperate label
   */
-@@ -608,11 +643,6 @@ ghid_window_set_name_label (gchar * name)
+@@ -608,11 +641,6 @@ ghid_window_set_name_label (gchar * name)
    gtk_window_set_title (GTK_WINDOW (gport->top_window), str);
    g_free (str);
    g_free (filename);
