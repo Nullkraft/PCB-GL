@@ -1,0 +1,15 @@
+Bottom: a3617c29885ebe5360ddf3c940a6537238575803
+Top:    a3617c29885ebe5360ddf3c940a6537238575803
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 22:55:37 +0100
+
+Implement a new RevertPCB() call, sharing code with LoadPCB()
+
+Adds a "revert" argument passed to the GUI's "PCBChanged" action.
+This should let it do less work resetting the view state for a
+board being reverted.
+
+
+---
+
+
