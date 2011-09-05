@@ -1,0 +1,104 @@
+Bottom: 029799627a9af223a6c5194a8fbfeaf12faed605
+Top:    8aafc96dd843c5a4da685795507424bbc5448c7a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 14:23:25 +0100
+
+Refresh of hid-gtk-use-gtk_widget_get_all-0
+
+---
+
+diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
+index 5972467..e7f5c46 100644
+--- a/src/hid/gtk/gui-drc-window.c
++++ b/src/hid/gtk/gui-drc-window.c
+@@ -58,8 +58,11 @@ static gint
+ drc_window_configure_event_cb (GtkWidget * widget,
+ 			       GdkEventConfigure * ev, gpointer data)
+ {
+-  ghidgui->drc_window_width = widget->allocation.width;
+-  ghidgui->drc_window_height = widget->allocation.height;
++  GtkAllocation allocation;
++
++  gtk_widget_get_allocation (widget, &allocation);
++  ghidgui->drc_window_width = allocation.width;
++  ghidgui->drc_window_height = allocation.height;
+   ghidgui->config_modified = TRUE;
+ 
+   return FALSE;
+diff --git a/src/hid/gtk/gui-keyref-window.c b/src/hid/gtk/gui-keyref-window.c
+index 801d6d7..6eaf3eb 100644
+--- a/src/hid/gtk/gui-keyref-window.c
++++ b/src/hid/gtk/gui-keyref-window.c
+@@ -315,8 +315,11 @@ static gint
+ keyref_window_configure_event_cb (GtkWidget * widget, GdkEventConfigure * ev,
+ 				  gpointer data)
+ {
+-  ghidgui->keyref_window_width = widget->allocation.width;
+-  ghidgui->keyref_window_height = widget->allocation.height;
++  GtkAllocation allocation;
++
++  gtk_widget_get_allocation (widget, &allocation);
++  ghidgui->keyref_window_width = allocation.width;
++  ghidgui->keyref_window_height = allocation.height;
+   ghidgui->config_modified = TRUE;
+   return FALSE;
+ }
+diff --git a/src/hid/gtk/gui-log-window.c b/src/hid/gtk/gui-log-window.c
+index 5f6d58f..41571e0 100644
+--- a/src/hid/gtk/gui-log-window.c
++++ b/src/hid/gtk/gui-log-window.c
+@@ -50,8 +50,11 @@ static gint
+ log_window_configure_event_cb (GtkWidget * widget,
+ 			       GdkEventConfigure * ev, gpointer data)
+ {
+-  ghidgui->log_window_width = widget->allocation.width;
+-  ghidgui->log_window_height = widget->allocation.height;
++  GtkAllocation allocation;
++
++  gtk_widget_get_allocation (widget, &allocation);
++  ghidgui->log_window_width = allocation.width;
++  ghidgui->log_window_height = allocation.height;
+   ghidgui->config_modified = TRUE;
+ 
+   return FALSE;
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 28d0ff2..e05ae57 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -668,7 +668,10 @@ static gint
+ netlist_window_configure_event_cb (GtkWidget * widget, GdkEventConfigure * ev,
+ 				   gpointer data)
+ {
+-  ghidgui->netlist_window_height = widget->allocation.height;
++  GtkAllocation allocation;
++
++  gtk_widget_get_allocation (widget, &allocation);
++  ghidgui->netlist_window_height = allocation.height;
+   ghidgui->config_modified = TRUE;
+   return FALSE;
+ }
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index f3e95e7..f57dd5c 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -194,13 +194,16 @@ static gint
+ top_window_configure_event_cb (GtkWidget * widget, GdkEventConfigure * ev,
+ 			       GHidPort * port)
+ {
++  GtkAllocation allocation;
+   gboolean new_w, new_h;
+ 
+-  new_w = (ghidgui->top_window_width != widget->allocation.width);
+-  new_h = (ghidgui->top_window_height != widget->allocation.height);
++  gtk_widget_get_allocation (widget, &allocation);
+ 
+-  ghidgui->top_window_width = widget->allocation.width;
+-  ghidgui->top_window_height = widget->allocation.height;
++  new_w = (ghidgui->top_window_width != allocation.width);
++  new_h = (ghidgui->top_window_height != allocation.height);
++
++  ghidgui->top_window_width = allocation.width;
++  ghidgui->top_window_height = allocation.height;
+ 
+   if (new_w || new_h)
+     ghidgui->config_modified = TRUE;
