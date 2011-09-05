@@ -1,5 +1,5 @@
 Bottom: b4db52ff5ea3c236b6b952a4c9d74bd00fd16a58
-Top:    ce7954e341082ec5c8249e494d1f33a77dff6375
+Top:    65f42312bd58f218afc8ed030c8c7356927f8bfc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 16:42:59 +0100
 
@@ -18,7 +18,7 @@ This would not work if the object counters were ever unsigned integers
 ---
 
 diff --git a/src/hid/gtk/ghid-main-menu.c b/src/hid/gtk/ghid-main-menu.c
-index 9ac0367..6b58485 100644
+index 9ac0367..d816498 100644
 --- a/src/hid/gtk/ghid-main-menu.c
 +++ b/src/hid/gtk/ghid-main-menu.c
 @@ -519,7 +519,7 @@ void
@@ -26,7 +26,7 @@ index 9ac0367..6b58485 100644
                                         GHidLayerSelector *ls)
  {
 -  GList *children;
-+  GList *children, iter;;
++  GList *children, *iter;
  
    /* @layerview */
    if (mm->layer_view_shell)
@@ -72,7 +72,15 @@ index 9ac0367..6b58485 100644
        /* Install new ones */
        mm->n_layer_picks = ghid_layer_selector_install_pick_items
                              (ls, mm->layer_pick_shell, mm->layer_pick_pos);
-@@ -570,13 +570,12 @@ ghid_main_menu_install_route_style_selector (GHidMainMenu *mm,
+@@ -563,20 +563,19 @@ void
+ ghid_main_menu_install_route_style_selector (GHidMainMenu *mm,
+                                              GHidRouteStyleSelector *rss)
+ {
+-  GList *children;
++  GList *children, *iter;
+   /* @routestyles */
+   if (mm->route_style_shell)
+     {
        /* Remove old children */
        children = gtk_container_get_children
                     (GTK_CONTAINER (mm->route_style_shell));
