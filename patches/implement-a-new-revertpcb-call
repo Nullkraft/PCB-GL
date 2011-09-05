@@ -5,8 +5,10 @@ Date:   2011-09-05 22:55:37 +0100
 
 Implement a new RevertPCB() call, sharing code with LoadPCB()
 
-Adds a "revert" argument passed to the GUI's "PCBChanged" action.
-This should let it do less work resetting the view state for a
+The RevertPCB() takes no filename parameter, and aside from that,
+the only difference to LoadPCB is that when it calls the GUI's
+"PCBChanged" action, it passes a new "revert" argument. This should
+let the GUIs optionally do less work resetting the view state for a
 board being reverted.
 
 
