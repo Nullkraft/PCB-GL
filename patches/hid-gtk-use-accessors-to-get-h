@@ -1,5 +1,5 @@
-Bottom: 149e292df5b6043f8605fe31555a7436e2070dc5
-Top:    b367e81f61fb3f912982299e63d15025fe1aac1e
+Bottom: ec2736ae4c48ead2669515fff8f009b442449d6d
+Top:    253781897fb82e22b6dba45ae02fa47f259a78b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 13:10:03 +0100
 
@@ -39,7 +39,7 @@ index ad8c26f..4bc4748 100644
    gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 4);
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 5384440..7ae6927 100644
+index 6df553e..e201d3c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -717,6 +717,7 @@ static struct progress_dialog *
@@ -178,10 +178,10 @@ index c079464..93cea47 100644
    label = gtk_label_new (all_message);
    gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 3);
 diff --git a/src/hid/gtk/gui-library-window.c b/src/hid/gtk/gui-library-window.c
-index 0339cf0..c4d5781 100644
+index 2cda08e..8234899 100644
 --- a/src/hid/gtk/gui-library-window.c
 +++ b/src/hid/gtk/gui-library-window.c
-@@ -782,7 +782,7 @@ library_window_constructor (GType type,
+@@ -785,7 +785,7 @@ library_window_constructor (GType type,
  {
    GObject *object;
    GhidLibraryWindow *library_window;
@@ -190,7 +190,7 @@ index 0339cf0..c4d5781 100644
    GtkWidget *hpaned, *notebook;
    GtkWidget *libview;
    GtkWidget *preview;
-@@ -803,7 +803,7 @@ library_window_constructor (GType type,
+@@ -806,7 +806,7 @@ library_window_constructor (GType type,
  		"modal", FALSE, "window-position", GTK_WIN_POS_NONE,
  		/* GtkDialog */
  		"has-separator", TRUE, NULL);
@@ -199,7 +199,7 @@ index 0339cf0..c4d5781 100644
  		"homogeneous", FALSE, NULL);
  
    /* horizontal pane containing selection and preview */
-@@ -850,9 +850,9 @@ library_window_constructor (GType type,
+@@ -853,9 +853,9 @@ library_window_constructor (GType type,
  
    gtk_paned_pack2 (GTK_PANED (hpaned), frame, FALSE, FALSE);
  
