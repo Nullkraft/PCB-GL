@@ -8,6 +8,14 @@ hid/gtk: Free list returned from gtk_container_get_children()
 We can (and should) g_list_free() the list of children returned when
 we are finished with it.
 
+Whilst we are at it, convert the while loop to a for loop and use a
+tighter condition on the loop termination test. The existing test worked,
+but would leave a negative number in the object counter we test against.
+This would not work if the object counters were ever unsigned integers
+(as they might plausibly be).
+
+Fix this now so the style isn't copied elsewhere.
+
 
 ---
 
