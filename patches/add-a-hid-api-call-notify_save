@@ -1,0 +1,15 @@
+Bottom: 1841c30b5d859069adb077d5c5f28a6dbabdfb6c
+Top:    1841c30b5d859069adb077d5c5f28a6dbabdfb6c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 23:09:45 +0100
+
+Add a HID API call, notify_save_pcb() called around saving the PCB
+
+The intention of this API is so that GUIs monitoring the active PCB
+file on disk for changes, can filter out changes which occur as we
+save the file ourselves.
+
+
+---
+
+
