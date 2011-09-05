@@ -1,5 +1,5 @@
 Bottom: 881f45a8fcf66a6edc0a241145c101d948b62869
-Top:    cf1a76be41e7278a3171df59730d867fd67a48a7
+Top:    68992b7ff032e5f99c73e4da0aaefcc79ee819ec
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 22:18:16 +0100
 
@@ -24,21 +24,21 @@ to the PCB file.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 3e253cb..72cd411 100644
+index 3e253cb..aa33d85 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -2169,6 +2169,9 @@ hid_gtk_init ()
    ghid_hid.flush_debug_draw         = ghid_flush_debug_draw;
    ghid_hid.finish_debug_draw        = ghid_finish_debug_draw;
  
-+  ghid_hid.notify_save_pcb            = ghid_notify_save_pcb;
-+  ghid_hid.notify_pcb_filename_change = ghid_hid.notify_pcb_filename_change;
++  ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
++  ghid_hid.notify_filename_changed  = ghid_hid_notify_filename_changed;
 +
    hid_register_hid (&ghid_hid);
  #include "gtk_lists.h"
  }
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 73bada5..d72be88 100644
+index 73bada5..4ba598c 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -262,6 +262,130 @@ void ghid_hotkey_cb (int which)
@@ -172,7 +172,7 @@ index 73bada5..d72be88 100644
    /* Sync toggle states that were saved with the layout and notify the
       |  config code to update Settings values it manages.
     */
-@@ -277,6 +401,30 @@ ghid_sync_with_new_layout (void)
+@@ -277,6 +401,29 @@ ghid_sync_with_new_layout (void)
  
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
@@ -195,15 +195,14 @@ index 73bada5..d72be88 100644
 +}
 +
 +void
-+ghid_notify_pcb_filename_changed (const char *old_filename,
-+                                  const char *new_filename)
++ghid_notify_filename_changed (void)
 +{
 +  disconnect_file_change_monitor (ghidgui);
 +  connect_file_change_monitor (ghidgui);
  }
  
  /* ---------------------------------------------------------------------------
-@@ -467,119 +615,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
+@@ -467,119 +614,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
                 (GHID_ROUTE_STYLE_SELECTOR (gui->route_style_selector)));
  }
  
@@ -323,7 +322,7 @@ index 73bada5..d72be88 100644
  /* Refreshes the window title bar and sets the PCB name to the
   * window title bar or to a seperate label
   */
-@@ -608,11 +643,6 @@ ghid_window_set_name_label (gchar * name)
+@@ -608,11 +642,6 @@ ghid_window_set_name_label (gchar * name)
    gtk_window_set_title (GTK_WINDOW (gport->top_window), str);
    g_free (str);
    g_free (filename);
