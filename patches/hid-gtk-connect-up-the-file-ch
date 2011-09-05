@@ -1,5 +1,5 @@
 Bottom: e1869f35665bbd7f5551e3e7bf53cdf7437d9671
-Top:    e1869f35665bbd7f5551e3e7bf53cdf7437d9671
+Top:    755cf796b61f0cef27f81124ddad9a584871e026
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 22:18:16 +0100
 
@@ -14,4 +14,50 @@ which looks to be a much more appropriate place.
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 73bada5..5fbb301 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -277,6 +277,7 @@ ghid_sync_with_new_layout (void)
+ 
+   ghid_window_set_name_label (PCB->Name);
+   ghid_set_status_line_label ();
++  connect_file_change_monitor (ghidgui);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -551,7 +552,7 @@ file_changed_cb (GFileMonitor     *monitor,
+ }
+ 
+ static void
+-connect_file_change_monitor (GhidGui *_gui, char *filename)
++connect_file_change_monitor (GhidGui *_gui)
+ {
+   GFile *file;
+ 
+@@ -563,10 +564,11 @@ connect_file_change_monitor (GhidGui *_gui, char *filename)
+     gtk_widget_destroy (_gui->info_bar);
+   _gui->info_bar = NULL;
+ 
+-  if (filename == NULL)
++  if (PCB->Filename == NULL ||
++      *PCB->Filename == NULL)
+     return;
+ 
+-  file = g_file_new_for_path (filename);
++  file = g_file_new_for_path (PCB->Filename);
+ 
+   /* XXX: Could hook up more error handling for g_file_monitor_file */
+   _gui->file_monitor = g_file_monitor_file (file,
+@@ -608,11 +610,6 @@ ghid_window_set_name_label (gchar * name)
+   gtk_window_set_title (GTK_WINDOW (gport->top_window), str);
+   g_free (str);
+   g_free (filename);
+-
+-  if (PCB->Filename && *PCB->Filename)
+-    connect_file_change_monitor (ghidgui, PCB->Filename);
+-  else
+-    connect_file_change_monitor (ghidgui, NULL);
+ }
+ 
+ static void
