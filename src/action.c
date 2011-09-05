@@ -5684,9 +5684,9 @@ ActionSaveTo (int argc, char **argv, Coord x, Coord y)
     {
       if (SavePCB (name) == 0)
         {
+          SetChangedFlag (false);
           free (PCB->Filename);
           PCB->Filename = strdup (name);
-          SetChangedFlag (false);
         }
       return 0;
     }
