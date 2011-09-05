@@ -1,0 +1,17 @@
+Bottom: e1869f35665bbd7f5551e3e7bf53cdf7437d9671
+Top:    e1869f35665bbd7f5551e3e7bf53cdf7437d9671
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 22:18:16 +0100
+
+hid/gtk: Connect up the file-change monitor in a more sensible place
+
+I must have had a brain-fail when I hooked it up in the call which sets
+the window title. NB: That also gets called after every menu operation!
+
+Hook up the connection in the ghid_sync_with_new_layout() function,
+which looks to be a much more appropriate place.
+
+
+---
+
+
