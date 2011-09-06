@@ -1,5 +1,5 @@
-Bottom: a3fdb9d7d0d89ddd64e7c3ed651902443dec361e
-Top:    6a0cf336ab53d181d2759425ef1b494c83f3dac7
+Bottom: 0bc574268bc6e311036be1ef95795f0e6b2fb9f1
+Top:    e14e78ced91968ceb0ce9ccc3e3485d97aff1f89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 22:55:37 +0100
 
@@ -37,10 +37,10 @@ index 55825a9..4d545fe 100644
  
    return 0;
 diff --git a/src/file.c b/src/file.c
-index d08c997..d31b157 100644
+index 7769057..be7f6a5 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -384,11 +384,15 @@ set_some_route_style ()
+@@ -383,11 +383,15 @@ set_some_route_style ()
   * load PCB
   * parse the file with enabled 'PCB mode' (see parser)
   * if successful, update some other stuff
@@ -58,7 +58,7 @@ index d08c997..d31b157 100644
    PCBTypePtr newPCB = CreateNewPCB (false);
    PCBTypePtr oldPCB;
  #ifdef DEBUG
-@@ -398,6 +402,8 @@ LoadPCB (char *Filename)
+@@ -397,6 +401,8 @@ LoadPCB (char *Filename)
    start = clock ();
  #endif
  
@@ -67,7 +67,7 @@ index d08c997..d31b157 100644
    oldPCB = PCB;
    PCB = newPCB;
  
-@@ -405,7 +411,7 @@ LoadPCB (char *Filename)
+@@ -404,7 +410,7 @@ LoadPCB (char *Filename)
    newPCB->Font.Valid = false;
  
    /* new data isn't added to the undo list */
@@ -76,7 +76,7 @@ index d08c997..d31b157 100644
      {
        RemovePCB (oldPCB);
  
-@@ -424,13 +430,13 @@ LoadPCB (char *Filename)
+@@ -423,13 +429,13 @@ LoadPCB (char *Filename)
  	{
  	  Message (_
  		   ("File '%s' has no font information, using default font\n"),
@@ -92,7 +92,7 @@ index d08c997..d31b157 100644
        /* just in case a bad file saved file is loaded */
  
        /* Use attribute PCB::grid::unit as unit, if we can */
-@@ -447,13 +453,16 @@ LoadPCB (char *Filename)
+@@ -446,13 +452,16 @@ LoadPCB (char *Filename)
  
        set_some_route_style ();
  
@@ -111,7 +111,7 @@ index d08c997..d31b157 100644
  #endif
  
        return (0);
-@@ -467,6 +476,24 @@ LoadPCB (char *Filename)
+@@ -466,6 +475,24 @@ LoadPCB (char *Filename)
  }
  
  /* ---------------------------------------------------------------------------
