@@ -5,7 +5,8 @@ Date:   2011-09-06 00:03:50 +0100
 
 file.c: Don't set the PCB filename or changed flags inside SavePCB (Filename)
 
-Save this for the caller to do (they already set the filename anyway).
+Save this for the caller to do. (action.c already set the filename for the
+SaveAs case anyway).
 
 
 ---
