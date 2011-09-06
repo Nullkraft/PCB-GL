@@ -411,7 +411,12 @@ ghid_notify_save_pcb (const char *filename, bool done)
    * that is being saved.
    */
   if (strcmp (filename, PCB->Filename) != 0)
-    return;
+    {
+      printf ("Being notified about save - ignoring save to %s\n", filename);
+      return;
+    }
+
+  printf ("Being notified about save to %s\n", filename);
 
   if (!done)
     disconnect_file_change_monitor (ghidgui);
@@ -422,6 +427,7 @@ ghid_notify_save_pcb (const char *filename, bool done)
 void
 ghid_notify_filename_changed (void)
 {
+  printf ("Notified the PCB file is now under a new name\n");
   disconnect_file_change_monitor (ghidgui);
   connect_file_change_monitor (ghidgui);
 }

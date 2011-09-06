@@ -2170,7 +2170,7 @@ hid_gtk_init ()
   ghid_hid.finish_debug_draw        = ghid_finish_debug_draw;
 
   ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
-  ghid_hid.notify_filename_changed  = ghid_hid_notify_filename_changed;
+  ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
 
   hid_register_hid (&ghid_hid);
 #include "gtk_lists.h"
