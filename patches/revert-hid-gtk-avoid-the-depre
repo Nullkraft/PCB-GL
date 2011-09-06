@@ -7,6 +7,9 @@ Revert "hid/gtk: Avoid the deprecated gdk_drawable_get_display()"
 
 This reverts commit c6d6ca16e58b5c7f2248c21e3248825f54e52374.
 
+Turns out the replacement API I used was only introduced in GTK 2.24,
+which is still a little new for us here.
+
 
 ---
 
