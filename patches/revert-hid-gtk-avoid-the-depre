@@ -1,0 +1,28 @@
+Bottom: e1869f35665bbd7f5551e3e7bf53cdf7437d9671
+Top:    d60bbe62542a09f15cf72a677817810e03103a53
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-06 01:18:25 +0100
+
+Revert "hid/gtk: Avoid the deprecated gdk_drawable_get_display()"
+
+This reverts commit c6d6ca16e58b5c7f2248c21e3248825f54e52374.
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 3e253cb..89d50be 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1542,8 +1542,9 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
+ {
+   int i = 0;
+   time_t start, end;
+-  GdkWindow *window = gtk_widget_get_window (gport->drawing_area);
+-  GdkDisplay *display = gdk_window_get_display (window);
++  GdkDisplay *display;
++
++  display = gdk_drawable_get_display (gport->drawable);
+ 
+   gdk_display_sync (display);
+   time (&start);
