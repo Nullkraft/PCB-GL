@@ -638,8 +638,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   float resistor_bulge_radius = MIL_TO_COORD (43.);
   float resistor_barrel_radius = MIL_TO_COORD (37.);
 
-  float resistor_taper1_offset = MIL_TO_COORD (25);
-  float resistor_taper2_offset = MIL_TO_COORD (33);
+  float resistor_taper1_offset = MIL_TO_COORD (25.);
+  float resistor_taper2_offset = MIL_TO_COORD (33.);
   float resistor_bulge_offset = MIL_TO_COORD (45.);
   float resistor_bulge_width = MIL_TO_COORD (50.);
   float resistor_pin_spacing = MIL_TO_COORD (400.);
