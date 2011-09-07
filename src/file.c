@@ -358,7 +358,6 @@ SavePCB (char *file)
 
   gui->notify_save_pcb (file, false);
   retcode = WritePipe (file, true);
-  printf ("File changes hitting disk now\n");
   gui->notify_save_pcb (file, true);
 
   return retcode;

@@ -115,7 +115,7 @@ typedef struct
   GtkWidget *vbox_middle;
 
   GtkWidget *info_bar;
-  GFileMonitor *file_monitor;
+  GTimeVal mtime;
 
   GtkWidget *h_range, *v_range;
   GtkObject *h_adjustment, *v_adjustment;
