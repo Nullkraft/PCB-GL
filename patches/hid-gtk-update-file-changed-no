@@ -5,10 +5,10 @@ Date:   2011-09-07 21:05:49 +0100
 
 hid/gtk: Update file-changed notification bar to match gedit a bit more
 
-Borrow from gedit:
-
-  1. Change the message text when the board has modifications.
-  2. Add accelerators to the button
+  1. Add a stock "refresh" image to the "Reload" button.
+  2. Change the message text when the board has modifications.
+  3. Reload without further prompting if the user presses "Reload",
+     even if the board is modified. (We already warned them due to 2.)
 
 
 ---
