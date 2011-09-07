@@ -3,22 +3,26 @@ Top:    381e7eee8b27db40f25dba58f254c9ae284633f1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 22:18:16 +0100
 
-hid/gtk: Connect up the file-change monitor in a more sensible place
+hid/gtk: Reimplement file-change monitor without GFileMonitor
 
-I must have had a brain-fail when I hooked it up in the call which sets
-the window title. NB: That also gets called after every menu operation!
+I must have had a brain-fail when I hooked up setting up the file-changed
+monitor in the function which sets the window title.
+NB: That also gets called after every menu operation!
 
-Hook up the connection in the ghid_sync_with_new_layout() function,
-which looks to be a much more appropriate place, however changing this
-alone revealed another issue - we now get notified for changes WE make
-to the files.
+A better place to hook up the monitor would be ghid_sync_with_new_layout(),
+however changing this alone revealed another issue - we would get notified
+for changes WE make to the files. We were avoiding those events as the
+file-monitor was being reset before it could pop up, at the end of the
+menu action which invoked the save).
 
-We were avoiding those events as the file-monitor was being reset before
-it could pop up, at the end of the menu action which invoked the save).
+However - due to a race condition bug in GLib / GIO, we would sometimes
+see change notify events for changes we made, even when we hooked up
+the GFileMonitor AFTER having saved (and synced) our changes to disk.
 
-Hook up to the new HID API (added in the previous commit) which allows
-us to temporarily disconnect the file-monitor when PCB's core is saving
-to the PCB file.
+Rather than attempt to work around this bug, implement the file-change
+notification in a much more simple way - look at the file mtime when we
+update the layout, and at each time the mouse pointer enters the main
+window. FWIW, this is how gedit currently achieves the same feature.
 
 
 ---
