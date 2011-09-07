@@ -1,5 +1,5 @@
 Bottom: 727ec629714af6a0fddf203b9170e6b0ce119556
-Top:    1d18ded49b7e2985c201e68084dff430fe569b08
+Top:    610f410f4b0b3a3cbd673c59a9d41921a910d864
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
 
@@ -509,7 +509,7 @@ index b83e45b..2f8653a 100644
  #endif /* PCB_HID_COMMON_HIDGL_H  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
 new file mode 100644
-index 0000000..801f98f
+index 0000000..c785b61
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
 @@ -0,0 +1,1000 @@
@@ -1153,8 +1153,8 @@ index 0000000..801f98f
 +  float resistor_bulge_radius = MIL_TO_COORD (43.);
 +  float resistor_barrel_radius = MIL_TO_COORD (37.);
 +
-+  float resistor_taper1_offset = MIL_TO_COORD (25);
-+  float resistor_taper2_offset = MIL_TO_COORD (33);
++  float resistor_taper1_offset = MIL_TO_COORD (25.);
++  float resistor_taper2_offset = MIL_TO_COORD (33.);
 +  float resistor_bulge_offset = MIL_TO_COORD (45.);
 +  float resistor_bulge_width = MIL_TO_COORD (50.);
 +  float resistor_pin_spacing = MIL_TO_COORD (400.);
