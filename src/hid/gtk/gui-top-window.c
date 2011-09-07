@@ -226,32 +226,38 @@ info_bar_response_cb (GtkInfoBar *info_bar,
 }
 
 static void
+close_file_modified_prompt (void)
+{
+  if (ghidgui->info_bar != NULL)
+    gtk_widget_destroy (ghidgui->info_bar);
+  ghidgui->info_bar = NULL;
+}
+
+static void
 prompt_file_modified_externally (void)
 {
-  GhidGui *_gui = ghidgui;
   GtkWidget *icon;
   GtkWidget *label;
   GtkWidget *content_area;
   char *file_path_utf8;
   char *markup;
 
-  if (_gui->info_bar)
-    gtk_widget_destroy (_gui->info_bar);
+  close_file_modified_prompt ();
 
-  _gui->info_bar = gtk_info_bar_new_with_buttons (_("Reload"),
+  ghidgui->info_bar = gtk_info_bar_new_with_buttons (_("Reload"),
                                                   GTK_RESPONSE_ACCEPT,
                                                   GTK_STOCK_CANCEL,
                                                   GTK_RESPONSE_CANCEL,
                                                   NULL);
-  gtk_box_pack_start (GTK_BOX (_gui->vbox_middle),
-                      _gui->info_bar, FALSE, FALSE, 0);
-  gtk_box_reorder_child (GTK_BOX (_gui->vbox_middle), _gui->info_bar, 0);
+  gtk_box_pack_start (GTK_BOX (ghidgui->vbox_middle),
+                      ghidgui->info_bar, FALSE, FALSE, 0);
+  gtk_box_reorder_child (GTK_BOX (ghidgui->vbox_middle), ghidgui->info_bar, 0);
 
-  gtk_info_bar_set_message_type (GTK_INFO_BAR (_gui->info_bar),
+  gtk_info_bar_set_message_type (GTK_INFO_BAR (ghidgui->info_bar),
                                  GTK_MESSAGE_WARNING);
 
-  g_signal_connect (_gui->info_bar, "response",
-                    G_CALLBACK (info_bar_response_cb), _gui);
+  g_signal_connect (ghidgui->info_bar, "response",
+                    G_CALLBACK (info_bar_response_cb), ghidgui);
 
   file_path_utf8 = g_filename_to_utf8 (PCB->Filename, -1, NULL, NULL, NULL);
   markup =
@@ -262,7 +268,7 @@ prompt_file_modified_externally (void)
   g_free (file_path_utf8);
 
   content_area =
-    gtk_info_bar_get_content_area (GTK_INFO_BAR (_gui->info_bar));
+    gtk_info_bar_get_content_area (GTK_INFO_BAR (ghidgui->info_bar));
 
   icon = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING,
                                    GTK_ICON_SIZE_DIALOG);
@@ -279,7 +285,7 @@ prompt_file_modified_externally (void)
 
   gtk_misc_set_alignment (GTK_MISC (label), 0., 0.5);
 
-  gtk_widget_show_all (_gui->info_bar);
+  gtk_widget_show_all (ghidgui->info_bar);
 }
 
 static bool
@@ -291,8 +297,8 @@ check_externally_modified (void)
 
   /* Treat zero time as a flag to indicate we've not got an mtime yet */
   if (PCB->Filename == NULL ||
-      (ghidgui->mtime.tv_sec == 0 &&
-       ghidgui->mtime.tv_usec == 0))
+      (ghidgui->our_mtime.tv_sec == 0 &&
+       ghidgui->our_mtime.tv_usec == 0))
     return false;
 
   file = g_file_new_for_path (PCB->Filename);
@@ -304,12 +310,18 @@ check_externally_modified (void)
       !g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_TIME_MODIFIED))
     return false;
 
-  g_file_info_get_modification_time (info, &timeval);
+  g_file_info_get_modification_time (info, &timeval); //&ghidgui->last_seen_mtime);
   g_object_unref (info);
 
-  return (timeval.tv_sec > ghidgui->mtime.tv_sec) ||
-         (timeval.tv_sec == ghidgui->mtime.tv_sec &&
-         timeval.tv_usec > ghidgui->mtime.tv_usec);
+  if (timeval.tv_sec == ghidgui->last_seen_mtime.tv_sec &&
+      timeval.tv_usec == ghidgui->last_seen_mtime.tv_usec)
+    return false;
+
+  ghidgui->last_seen_mtime = timeval;
+
+  return (ghidgui->last_seen_mtime.tv_sec > ghidgui->our_mtime.tv_sec) ||
+         (ghidgui->last_seen_mtime.tv_sec == ghidgui->our_mtime.tv_sec &&
+         ghidgui->last_seen_mtime.tv_usec > ghidgui->our_mtime.tv_usec);
 }
 
 static gboolean
@@ -377,8 +389,8 @@ update_board_mtime_from_disk (void)
   GFile *file;
   GFileInfo *info;
 
-  ghidgui->mtime.tv_sec = 0;
-  ghidgui->mtime.tv_usec = 0;
+  ghidgui->our_mtime.tv_sec = 0;
+  ghidgui->our_mtime.tv_usec = 0;
 
   if (PCB->Filename == NULL)
     return;
@@ -392,7 +404,7 @@ update_board_mtime_from_disk (void)
       !g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_TIME_MODIFIED))
     return;
 
-  g_file_info_get_modification_time (info, &ghidgui->mtime);
+  g_file_info_get_modification_time (info, &ghidgui->our_mtime);
   g_object_unref (info);
 }
 
@@ -411,6 +423,7 @@ ghid_sync_with_new_layout (void)
 
   ghid_window_set_name_label (PCB->Name);
   ghid_set_status_line_label ();
+  close_file_modified_prompt ();
   update_board_mtime_from_disk ();
 }
 

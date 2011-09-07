@@ -115,7 +115,8 @@ typedef struct
   GtkWidget *vbox_middle;
 
   GtkWidget *info_bar;
-  GTimeVal mtime;
+  GTimeVal our_mtime;
+  GTimeVal last_seen_mtime;
 
   GtkWidget *h_range, *v_range;
   GtkObject *h_adjustment, *v_adjustment;
