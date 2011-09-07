@@ -1,5 +1,5 @@
-Bottom: 37c0ab46dec9c43b8870dc91a0efb52d8967985d
-Top:    5044a00ba122d88552ab9db8dd27d9d713e2e263
+Bottom: 95fbb6554db026569ad40e2b84aef1287f726f82
+Top:    c7f00b388188ec52687bac3e7318bab77d492528
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 00:36:11 +0100
 
@@ -24,10 +24,10 @@ This fix is almost certainly WRONG.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8021b00..56bb31c 100644
+index cbdf073..2d60977 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1548,7 +1548,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1549,7 +1549,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
          strcmp (Layer->Name, "route") == 0)
        rv = 0;
  
