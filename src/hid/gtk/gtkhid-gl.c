@@ -201,23 +201,25 @@ end_subcomposite (void)
 }
 
 
+/* Compute group visibility based upon on copper layers only */
+static bool
+is_layer_group_visible (int group)
+{
+  int entry;
+  for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry++)
+    {
+      int layer_idx = PCB->LayerGroups.Entries[group][idx];
+      if (layer_idx >= 0 && layer_idx < max_copper_layer &&
+          LAYER_PTR (layer_idx).On)
+        return true;
+    }
+  return false;
+}
+
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
   render_priv *priv = gport->render_priv;
-  int idx = group;
-  if (idx >= 0 && idx < max_group)
-    {
-      int n = PCB->LayerGroups.Number[group];
-      for (idx = 0; idx < n-1; idx ++)
-	{
-	  int ni = PCB->LayerGroups.Entries[group][idx];
-	  if (ni >= 0 && ni < max_copper_layer + 2
-	      && PCB->Data->Layer[ni].On)
-	    break;
-	}
-      idx = PCB->LayerGroups.Entries[group][idx];
-  }
 
   end_subcomposite ();
   start_subcomposite ();
@@ -225,13 +227,12 @@ ghid_set_layer (const char *name, int group, int empty)
   /* Drawing is already flushed by {start,end}_subcomposite */
   hidgl_set_depth (compute_depth (group));
 
-  if (idx >= 0 && idx < max_copper_layer + 2)
+  if (group >= 0 && group < max_group)
     {
       priv->trans_lines = true;
-      return PCB->Data->Layer[idx].On;
+      return is_layer_group_visible (group);
     }
-
-  if (idx < 0)
+  else
     {
       switch (SL_TYPE (idx))
 	{
