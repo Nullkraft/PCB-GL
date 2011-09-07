@@ -1,0 +1,77 @@
+Bottom: 381e7eee8b27db40f25dba58f254c9ae284633f1
+Top:    1164998f042faa3be11dc5012f4df6855493af0d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-07 20:58:59 +0100
+
+Refresh of hid-gtk-connect-up-the-file-ch
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index ecc2bd1..5a98a9f 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -214,10 +214,8 @@ top_window_configure_event_cb (GtkWidget * widget, GdkEventConfigure * ev,
+ static void
+ info_bar_response_cb (GtkInfoBar *info_bar,
+                       gint        response_id,
+-                      gpointer    user_data)
++                      GhidGui    *_gui)
+ {
+-  GhidGui *_gui = (GhidGui *)user_data;
+-
+   gtk_widget_destroy (_gui->info_bar);
+   _gui->info_bar = NULL;
+ 
+@@ -226,7 +224,7 @@ info_bar_response_cb (GtkInfoBar *info_bar,
+ }
+ 
+ static void
+-close_file_modified_prompt (void)
++close_file_modified_externally_prompt (void)
+ {
+   if (ghidgui->info_bar != NULL)
+     gtk_widget_destroy (ghidgui->info_bar);
+@@ -234,7 +232,7 @@ close_file_modified_prompt (void)
+ }
+ 
+ static void
+-prompt_file_modified_externally (void)
++show_file_modified_externally_prompt (void)
+ {
+   GtkWidget *icon;
+   GtkWidget *label;
+@@ -242,7 +240,7 @@ prompt_file_modified_externally (void)
+   char *file_path_utf8;
+   char *markup;
+ 
+-  close_file_modified_prompt ();
++  close_file_modified_externally_prompt ();
+ 
+   ghidgui->info_bar = gtk_info_bar_new_with_buttons (_("Reload"),
+                                                   GTK_RESPONSE_ACCEPT,
+@@ -313,6 +311,7 @@ check_externally_modified (void)
+   g_file_info_get_modification_time (info, &timeval); //&ghidgui->last_seen_mtime);
+   g_object_unref (info);
+ 
++  /* Ignore when the file on disk is the same age as when we last looked */
+   if (timeval.tv_sec == ghidgui->last_seen_mtime.tv_sec &&
+       timeval.tv_usec == ghidgui->last_seen_mtime.tv_usec)
+     return false;
+@@ -328,7 +327,7 @@ static gboolean
+ top_window_enter_cb (GtkWidget *widget, GdkEvent  *event, GHidPort *port)
+ {
+   if (check_externally_modified ())
+-    prompt_file_modified_externally ();
++    show_file_modified_externally_prompt ();
+ 
+   return FALSE;
+ }
+@@ -423,7 +422,7 @@ ghid_sync_with_new_layout (void)
+ 
+   ghid_window_set_name_label (PCB->Name);
+   ghid_set_status_line_label ();
+-  close_file_modified_prompt ();
++  close_file_modified_externally_prompt ();
+   update_board_mtime_from_disk ();
+ }
