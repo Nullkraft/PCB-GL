@@ -1,5 +1,5 @@
 Bottom: 37c0ab46dec9c43b8870dc91a0efb52d8967985d
-Top:    6fa68fc84a58cd744e2bfb340f67570d766a8cd0
+Top:    95fbb6554db026569ad40e2b84aef1287f726f82
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-08 00:52:34 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Re-write parts of the PCB+GL set_layer function
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8021b00..3955428 100644
+index 8021b00..cbdf073 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -201,23 +201,25 @@ end_subcomposite (void)
@@ -23,9 +23,9 @@ index 8021b00..3955428 100644
 +  int entry;
 +  for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry++)
 +    {
-+      int layer_idx = PCB->LayerGroups.Entries[group][idx];
++      int layer_idx = PCB->LayerGroups.Entries[group][entry];
 +      if (layer_idx >= 0 && layer_idx < max_copper_layer &&
-+          LAYER_PTR (layer_idx).On)
++          LAYER_PTR (layer_idx)->On)
 +        return true;
 +    }
 +  return false;
@@ -51,7 +51,7 @@ index 8021b00..3955428 100644
  
    end_subcomposite ();
    start_subcomposite ();
-@@ -225,13 +227,12 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -225,15 +227,14 @@ ghid_set_layer (const char *name, int group, int empty)
    /* Drawing is already flushed by {start,end}_subcomposite */
    hidgl_set_depth (compute_depth (group));
  
@@ -66,5 +66,8 @@ index 8021b00..3955428 100644
 -  if (idx < 0)
 +  else
      {
-       switch (SL_TYPE (idx))
+-      switch (SL_TYPE (idx))
++      switch (SL_TYPE (group))
  	{
+ 	case SL_INVISIBLE:
+ 	  return PCB->InvisibleObjectsOn;
