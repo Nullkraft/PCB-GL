@@ -1,5 +1,5 @@
 Bottom: e14e78ced91968ceb0ce9ccc3e3485d97aff1f89
-Top:    381e7eee8b27db40f25dba58f254c9ae284633f1
+Top:    1164998f042faa3be11dc5012f4df6855493af0d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 22:18:16 +0100
 
@@ -42,20 +42,18 @@ index 89d50be..a855aa7 100644
  #include "gtk_lists.h"
  }
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 73bada5..ecc2bd1 100644
+index 73bada5..5a98a9f 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -211,6 +211,127 @@ top_window_configure_event_cb (GtkWidget * widget, GdkEventConfigure * ev,
+@@ -211,6 +211,126 @@ top_window_configure_event_cb (GtkWidget * widget, GdkEventConfigure * ev,
    return FALSE;
  }
  
 +static void
 +info_bar_response_cb (GtkInfoBar *info_bar,
 +                      gint        response_id,
-+                      gpointer    user_data)
++                      GhidGui    *_gui)
 +{
-+  GhidGui *_gui = (GhidGui *)user_data;
-+
 +  gtk_widget_destroy (_gui->info_bar);
 +  _gui->info_bar = NULL;
 +
@@ -64,7 +62,7 @@ index 73bada5..ecc2bd1 100644
 +}
 +
 +static void
-+close_file_modified_prompt (void)
++close_file_modified_externally_prompt (void)
 +{
 +  if (ghidgui->info_bar != NULL)
 +    gtk_widget_destroy (ghidgui->info_bar);
@@ -72,7 +70,7 @@ index 73bada5..ecc2bd1 100644
 +}
 +
 +static void
-+prompt_file_modified_externally (void)
++show_file_modified_externally_prompt (void)
 +{
 +  GtkWidget *icon;
 +  GtkWidget *label;
@@ -80,7 +78,7 @@ index 73bada5..ecc2bd1 100644
 +  char *file_path_utf8;
 +  char *markup;
 +
-+  close_file_modified_prompt ();
++  close_file_modified_externally_prompt ();
 +
 +  ghidgui->info_bar = gtk_info_bar_new_with_buttons (_("Reload"),
 +                                                  GTK_RESPONSE_ACCEPT,
@@ -151,6 +149,7 @@ index 73bada5..ecc2bd1 100644
 +  g_file_info_get_modification_time (info, &timeval); //&ghidgui->last_seen_mtime);
 +  g_object_unref (info);
 +
++  /* Ignore when the file on disk is the same age as when we last looked */
 +  if (timeval.tv_sec == ghidgui->last_seen_mtime.tv_sec &&
 +      timeval.tv_usec == ghidgui->last_seen_mtime.tv_usec)
 +    return false;
@@ -166,14 +165,14 @@ index 73bada5..ecc2bd1 100644
 +top_window_enter_cb (GtkWidget *widget, GdkEvent  *event, GHidPort *port)
 +{
 +  if (check_externally_modified ())
-+    prompt_file_modified_externally ();
++    show_file_modified_externally_prompt ();
 +
 +  return FALSE;
 +}
  
  /*! \brief Menu action callback function
   *  \par Function Description
-@@ -262,6 +383,31 @@ void ghid_hotkey_cb (int which)
+@@ -262,6 +382,31 @@ void ghid_hotkey_cb (int which)
                    (gpointer) ghid_hotkey_actions[which].node);
  }
  
@@ -205,11 +204,11 @@ index 73bada5..ecc2bd1 100644
    /* Sync toggle states that were saved with the layout and notify the
       |  config code to update Settings values it manages.
     */
-@@ -277,6 +423,27 @@ ghid_sync_with_new_layout (void)
+@@ -277,6 +422,27 @@ ghid_sync_with_new_layout (void)
  
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
-+  close_file_modified_prompt ();
++  close_file_modified_externally_prompt ();
 +  update_board_mtime_from_disk ();
 +}
 +
@@ -233,7 +232,7 @@ index 73bada5..ecc2bd1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -467,119 +634,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
+@@ -467,119 +633,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
                 (GHID_ROUTE_STYLE_SELECTOR (gui->route_style_selector)));
  }
  
@@ -353,7 +352,7 @@ index 73bada5..ecc2bd1 100644
  /* Refreshes the window title bar and sets the PCB name to the
   * window title bar or to a seperate label
   */
-@@ -608,11 +662,6 @@ ghid_window_set_name_label (gchar * name)
+@@ -608,11 +661,6 @@ ghid_window_set_name_label (gchar * name)
    gtk_window_set_title (GTK_WINDOW (gport->top_window), str);
    g_free (str);
    g_free (filename);
@@ -365,7 +364,7 @@ index 73bada5..ecc2bd1 100644
  }
  
  static void
-@@ -1319,6 +1368,8 @@ ghid_build_pcb_top_window (void)
+@@ -1319,6 +1367,8 @@ ghid_build_pcb_top_window (void)
  		    port);
    g_signal_connect (G_OBJECT (gport->top_window), "configure_event",
  		    G_CALLBACK (top_window_configure_event_cb), port);
