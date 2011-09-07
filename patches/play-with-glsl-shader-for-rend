@@ -1,7 +1,7 @@
-Bottom: 3bc2fcee899f1f1743796e3df5c350ffec0a79c3
-Top:    8cba42047fca6449e8e72a294c3faf167a916bd0
+Bottom: 88f696a1d086788b69ce7546650e1c483a35f48c
+Top:    cd4971e1a666c7f3c7dc8d951b7586cdfd082568
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-05 00:36:20 +0100
+Date:   2011-09-08 00:02:12 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -47,7 +47,7 @@ Notes:
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 6cb78f8..2727fb9 100644
+index 8d053d5..f2c1290 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -197,6 +197,8 @@ LIBGTK_GL_SRCS= \
@@ -955,7 +955,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c3af937..8c458bf 100644
+index e8f7ae9..2b095bb 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -312,6 +312,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1033,7 +1033,7 @@ index c3af937..8c458bf 100644
  }
  
  struct cyl_info {
-@@ -2134,6 +2142,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2137,6 +2145,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    draw_lead_user (priv);
  
@@ -1042,7 +1042,7 @@ index c3af937..8c458bf 100644
    check_gl_drawing_ok_hack = false;
    hidgl_in_context (false);
    ghid_end_drawing (port);
-@@ -2227,7 +2237,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2230,7 +2240,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
