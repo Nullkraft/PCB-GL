@@ -1,5 +1,5 @@
 Bottom: e14e78ced91968ceb0ce9ccc3e3485d97aff1f89
-Top:    1164998f042faa3be11dc5012f4df6855493af0d
+Top:    07ecb2e517d696211efe3b15de2ce0da2bafa51b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 22:18:16 +0100
 
@@ -42,7 +42,7 @@ index 89d50be..a855aa7 100644
  #include "gtk_lists.h"
  }
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 73bada5..5a98a9f 100644
+index 73bada5..e598d46 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -211,6 +211,126 @@ top_window_configure_event_cb (GtkWidget * widget, GdkEventConfigure * ev,
@@ -172,7 +172,7 @@ index 73bada5..5a98a9f 100644
  
  /*! \brief Menu action callback function
   *  \par Function Description
-@@ -262,6 +382,31 @@ void ghid_hotkey_cb (int which)
+@@ -262,6 +382,34 @@ void ghid_hotkey_cb (int which)
                    (gpointer) ghid_hotkey_actions[which].node);
  }
  
@@ -184,6 +184,7 @@ index 73bada5..5a98a9f 100644
 +
 +  ghidgui->our_mtime.tv_sec = 0;
 +  ghidgui->our_mtime.tv_usec = 0;
++  ghidgui->last_seen_mtime = ghidgui->our_mtime;
 +
 +  if (PCB->Filename == NULL)
 +    return;
@@ -199,12 +200,14 @@ index 73bada5..5a98a9f 100644
 +
 +  g_file_info_get_modification_time (info, &ghidgui->our_mtime);
 +  g_object_unref (info);
++
++  ghidgui->last_seen_mtime = ghidgui->our_mtime;
 +}
 +
    /* Sync toggle states that were saved with the layout and notify the
       |  config code to update Settings values it manages.
     */
-@@ -277,6 +422,27 @@ ghid_sync_with_new_layout (void)
+@@ -277,6 +425,27 @@ ghid_sync_with_new_layout (void)
  
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
@@ -232,7 +235,7 @@ index 73bada5..5a98a9f 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -467,119 +633,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
+@@ -467,119 +636,6 @@ ghid_remove_accel_groups (GtkWindow *window, GhidGui *gui)
                 (GHID_ROUTE_STYLE_SELECTOR (gui->route_style_selector)));
  }
  
@@ -352,7 +355,7 @@ index 73bada5..5a98a9f 100644
  /* Refreshes the window title bar and sets the PCB name to the
   * window title bar or to a seperate label
   */
-@@ -608,11 +661,6 @@ ghid_window_set_name_label (gchar * name)
+@@ -608,11 +664,6 @@ ghid_window_set_name_label (gchar * name)
    gtk_window_set_title (GTK_WINDOW (gport->top_window), str);
    g_free (str);
    g_free (filename);
@@ -364,7 +367,7 @@ index 73bada5..5a98a9f 100644
  }
  
  static void
-@@ -1319,6 +1367,8 @@ ghid_build_pcb_top_window (void)
+@@ -1319,6 +1370,8 @@ ghid_build_pcb_top_window (void)
  		    port);
    g_signal_connect (G_OBJECT (gport->top_window), "configure_event",
  		    G_CALLBACK (top_window_configure_event_cb), port);
