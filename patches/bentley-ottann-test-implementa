@@ -1,5 +1,5 @@
-Bottom: f4e9abc0818396afa1218cfd7b23afae26fc8eba
-Top:    e04084ff3a2a5a178a4956da67766a7a310f7b05
+Bottom: 406bb79278062f1afc785022a87658e1a5074227
+Top:    8b776597629b6662822367aeffedcd899ea4eaee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-05 00:36:12 +0100
 
@@ -11,7 +11,7 @@ Code from cairo - intersection routines stripped out
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 20b5cd3..f740dca 100644
+index 71ab1c4..74d6e9e 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
@@ -194,7 +194,7 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 6991ff1..6cb78f8 100644
+index 2a566ab..8d053d5 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -41,6 +41,22 @@ PCB_SRCS = \
