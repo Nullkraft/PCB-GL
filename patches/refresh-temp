@@ -1,0 +1,34 @@
+Bottom: 6fa68fc84a58cd744e2bfb340f67570d766a8cd0
+Top:    95fbb6554db026569ad40e2b84aef1287f726f82
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-08 00:54:40 +0100
+
+Refresh of hid-gtk-re-write-parts-of-the-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 3955428..cbdf073 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -208,9 +208,9 @@ is_layer_group_visible (int group)
+   int entry;
+   for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry++)
+     {
+-      int layer_idx = PCB->LayerGroups.Entries[group][idx];
++      int layer_idx = PCB->LayerGroups.Entries[group][entry];
+       if (layer_idx >= 0 && layer_idx < max_copper_layer &&
+-          LAYER_PTR (layer_idx).On)
++          LAYER_PTR (layer_idx)->On)
+         return true;
+     }
+   return false;
+@@ -234,7 +234,7 @@ ghid_set_layer (const char *name, int group, int empty)
+     }
+   else
+     {
+-      switch (SL_TYPE (idx))
++      switch (SL_TYPE (group))
+ 	{
+ 	case SL_INVISIBLE:
+ 	  return PCB->InvisibleObjectsOn;
