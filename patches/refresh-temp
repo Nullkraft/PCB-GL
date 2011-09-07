@@ -1,0 +1,24 @@
+Bottom: 1d18ded49b7e2985c201e68084dff430fe569b08
+Top:    610f410f4b0b3a3cbd673c59a9d41921a910d864
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-08 00:18:23 +0100
+
+Refresh of add-a-demonstration-model-for-
+
+---
+
+diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
+index 801f98f..c785b61 100644
+--- a/src/hid/common/hidgl_package_acy_resistor.c
++++ b/src/hid/common/hidgl_package_acy_resistor.c
+@@ -638,8 +638,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+   float resistor_bulge_radius = MIL_TO_COORD (43.);
+   float resistor_barrel_radius = MIL_TO_COORD (37.);
+ 
+-  float resistor_taper1_offset = MIL_TO_COORD (25);
+-  float resistor_taper2_offset = MIL_TO_COORD (33);
++  float resistor_taper1_offset = MIL_TO_COORD (25.);
++  float resistor_taper2_offset = MIL_TO_COORD (33.);
+   float resistor_bulge_offset = MIL_TO_COORD (45.);
+   float resistor_bulge_width = MIL_TO_COORD (50.);
+   float resistor_pin_spacing = MIL_TO_COORD (400.);
