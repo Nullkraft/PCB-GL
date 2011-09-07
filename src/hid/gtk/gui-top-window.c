@@ -390,6 +390,7 @@ update_board_mtime_from_disk (void)
 
   ghidgui->our_mtime.tv_sec = 0;
   ghidgui->our_mtime.tv_usec = 0;
+  ghidgui->last_seen_mtime = ghidgui->our_mtime;
 
   if (PCB->Filename == NULL)
     return;
@@ -405,6 +406,8 @@ update_board_mtime_from_disk (void)
 
   g_file_info_get_modification_time (info, &ghidgui->our_mtime);
   g_object_unref (info);
+
+  ghidgui->last_seen_mtime = ghidgui->our_mtime;
 }
 
   /* Sync toggle states that were saved with the layout and notify the
