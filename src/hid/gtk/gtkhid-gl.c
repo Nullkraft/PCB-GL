@@ -208,9 +208,9 @@ is_layer_group_visible (int group)
   int entry;
   for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry++)
     {
-      int layer_idx = PCB->LayerGroups.Entries[group][idx];
+      int layer_idx = PCB->LayerGroups.Entries[group][entry];
       if (layer_idx >= 0 && layer_idx < max_copper_layer &&
-          LAYER_PTR (layer_idx).On)
+          LAYER_PTR (layer_idx)->On)
         return true;
     }
   return false;
@@ -234,7 +234,7 @@ ghid_set_layer (const char *name, int group, int empty)
     }
   else
     {
-      switch (SL_TYPE (idx))
+      switch (SL_TYPE (group))
 	{
 	case SL_INVISIBLE:
 	  return PCB->InvisibleObjectsOn;
