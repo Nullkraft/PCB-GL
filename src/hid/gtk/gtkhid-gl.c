@@ -200,7 +200,6 @@ end_subcomposite (void)
   priv->subcomposite_stencil_bit = 0;
 }
 
-
 /* Compute group visibility based upon on copper layers only */
 static bool
 is_layer_group_visible (int group)
