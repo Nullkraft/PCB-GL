@@ -1,7 +1,7 @@
-Bottom: 730d95d6a54f0309bfddc4623b4d6ec1349ce7bf
-Top:    d1423022bfd1b6702b451d7227f2c04f383452e6
+Bottom: 26f20723c47beedc39ab98795ee82eeb4cdc3a08
+Top:    c158efb9af4506adc839212727f93b43d6b4192f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-05 00:36:24 +0100
+Date:   2011-09-08 01:00:29 +0100
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -17,7 +17,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index faa1f21..4e12f53 100644
+index 1923cf9..c0ccd86 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3407,9 +3407,16 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
@@ -116,7 +116,7 @@ index faa1f21..4e12f53 100644
  static const char changejoin_syntax[] =
    "ChangeJoin(ToggleObject|SelectedLines|SelectedArcs|Selected)";
  
-@@ -8089,6 +8167,9 @@ HID_Action action_action_list[] = {
+@@ -8106,6 +8184,9 @@ HID_Action action_action_list[] = {
    {"ToggleHideName", 0, ActionToggleHideName,
     togglehidename_help, togglehidename_syntax}
    ,
@@ -127,10 +127,10 @@ index faa1f21..4e12f53 100644
     undo_help, undo_syntax}
    ,
 diff --git a/src/const.h b/src/const.h
-index 0885871..7bb8071 100644
+index f029821..c82e90a 100644
 --- a/src/const.h
 +++ b/src/const.h
-@@ -174,6 +174,8 @@ Marker used internally to avoid revisiting an object.
+@@ -179,6 +179,8 @@ Marker used internally to avoid revisiting an object.
  @item 0x10000 nopaste
  For pads, set to prevent a solderpaste stencil opening for the
  pad.  Primarily used for pads used as fiducials.
@@ -139,7 +139,7 @@ index 0885871..7bb8071 100644
  @end table
  %end-doc */
  
-@@ -210,6 +212,7 @@ pad.  Primarily used for pads used as fiducials.
+@@ -215,6 +217,7 @@ pad.  Primarily used for pads used as fiducials.
  #define EDGE2FLAG               0x4000	/* Padr.Point2 is closer to outside edge */
  					/* also pinout text for pins is vertical */
  #define VISITFLAG		0x8000  /* marker to avoid re-visiting an object */
@@ -148,7 +148,7 @@ index 0885871..7bb8071 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index 326be24..792183e 100644
+index 9e9bdbe..9b2f76e 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -156,6 +156,32 @@ pad_callback (const BoxType * b, void *cl)

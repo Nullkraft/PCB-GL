@@ -1,7 +1,7 @@
-Bottom: 6b7978c581f688e54a08929b71ec9a48e91f01ba
-Top:    4c10a1cc8b0bc70dafd75bacd16166aa4d8a0e5a
+Bottom: 4d63719c20f02301c2047a14c563f106bb1e583b
+Top:    0fa5caadc30d75f4fafcd5578b6664a2c6e16dab
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-05 00:36:27 +0100
+Date:   2011-09-08 01:00:31 +0100
 
 Comment out check for GUI HID when considering hidenames
 
@@ -11,7 +11,7 @@ Yes - I want to hide them for a print!
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 792183e..5e97177 100644
+index 9b2f76e..296eeeb 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -184,7 +184,7 @@ DrawStrippedText (ElementTypePtr Element, int min_width)
