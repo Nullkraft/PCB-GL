@@ -1,7 +1,7 @@
 Bottom: e86c098d07e3d915afd699e149f35fe5c14f7576
-Top:    ce6846556ec3739860b4debab7531350869b414d
+Top:    b855a14f2d8ae05a0115b0051b21c267980c32a7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-08 00:56:48 +0100
+Date:   2011-09-08 01:12:39 +0100
 
 Major re-write to drawing routines
 
@@ -17,6 +17,7 @@ Notes from squashed patches:
   Fix get_coords function
   Re-write parts of the PCB+GL set_layer function
   Fix layer on/off rendering after commit 9768e060fad7bc3dfc366da76ea1db8154005018
+  Only assign stencil planes where sub-compositing is required - that is, not the far-side, mask, rat or switched off layers.
 
 ---
 
@@ -74,7 +75,7 @@ index cec3a16..f6dc31f 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9b42f0f..8f1f976 100644
+index 9b42f0f..6092a93 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -87,7 +88,7 @@ index 9b42f0f..8f1f976 100644
  #include "gui-pinout-preview.h"
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
-@@ -197,24 +200,25 @@ end_subcomposite (void)
+@@ -197,64 +200,78 @@ end_subcomposite (void)
    priv->subcomposite_stencil_bit = 0;
  }
  
@@ -123,19 +124,22 @@ index 9b42f0f..8f1f976 100644
 -	}
 -      idx = PCB->LayerGroups.Entries[group][idx];
 -  }
- 
-   end_subcomposite ();
-   start_subcomposite ();
-@@ -222,27 +226,22 @@ ghid_set_layer (const char *name, int group, int empty)
-   /* Drawing is already flushed by {start,end}_subcomposite */
-   hidgl_set_depth (compute_depth (group));
+-
+-  end_subcomposite ();
+-  start_subcomposite ();
+-
+-  /* Drawing is already flushed by {start,end}_subcomposite */
+-  hidgl_set_depth (compute_depth (group));
++  bool group_visible = false;
++  bool subcomposite = true;
  
 -  if (idx >= 0 && idx < max_copper_layer + 2)
 +  if (group >= 0 && group < max_group)
      {
        priv->trans_lines = true;
 -      return PCB->Data->Layer[idx].On;
-+      return is_layer_group_visible (group);
++      subcomposite = true;
++      group_visible = is_layer_group_visible (group);
      }
 -
 -  if (idx < 0)
@@ -145,22 +149,62 @@ index 9b42f0f..8f1f976 100644
 +      switch (SL_TYPE (group))
  	{
  	case SL_INVISIBLE:
- 	  return PCB->InvisibleObjectsOn;
+-	  return PCB->InvisibleObjectsOn;
++	  priv->trans_lines = false;
++	  subcomposite = false;
++	  group_visible = PCB->InvisibleObjectsOn;
++	  break;
  	case SL_MASK:
 -	  if (SL_MYSIDE (idx))
 -	    return TEST_FLAG (SHOWMASKFLAG, PCB);
 -	  return 0;
-+	  return TEST_FLAG (SHOWMASKFLAG, PCB);
++	  priv->trans_lines = true;
++	  subcomposite = false;
++	  group_visible = TEST_FLAG (SHOWMASKFLAG, PCB);
++	  break;
  	case SL_SILK:
  	  priv->trans_lines = true;
 -	  if (SL_MYSIDE (idx))
 -	    return PCB->ElementOn;
 -	  return 0;
-+	  return PCB->ElementOn;
++	  subcomposite = true;
++	  group_visible = PCB->ElementOn;
++	  break;
  	case SL_ASSY:
- 	  return 0;
+-	  return 0;
++	  break;
  	case SL_PDRILL:
-@@ -294,6 +293,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+ 	case SL_UDRILL:
+-	  return 1;
++	  priv->trans_lines = true;
++	  subcomposite = true;
++	  group_visible = true;
++	  break;
+ 	case SL_RATS:
+-	  if (PCB->RatOn)
+-	    priv->trans_lines = true;
+-	  return PCB->RatOn;
++	  priv->trans_lines = true;
++	  subcomposite = false;
++	  group_visible = PCB->RatOn;
++	  break;
+ 	}
+     }
+-  return 0;
++
++  end_subcomposite ();
++
++  if (group_visible && subcomposite)
++    start_subcomposite ();
++
++  /* Drawing is already flushed by {start,end}_subcomposite */
++  hidgl_set_depth (compute_depth (group));
++
++  return group_visible;
+ }
+ 
+ static void
+@@ -294,6 +311,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
@@ -168,7 +212,7 @@ index 9b42f0f..8f1f976 100644
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
  
-@@ -304,6 +304,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -304,6 +322,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
    hidgl_draw_grid (drawn_area);
  
    glDisable (GL_COLOR_LOGIC_OP);
@@ -176,7 +220,7 @@ index 9b42f0f..8f1f976 100644
  }
  
  static void
-@@ -971,6 +972,10 @@ ghid_start_drawing (GHidPort *port)
+@@ -971,6 +990,10 @@ ghid_start_drawing (GHidPort *port)
  
    port->render_priv->in_context = true;
  
@@ -187,7 +231,7 @@ index 9b42f0f..8f1f976 100644
    return TRUE;
  }
  
-@@ -989,6 +994,14 @@ ghid_end_drawing (GHidPort *port)
+@@ -989,6 +1012,14 @@ ghid_end_drawing (GHidPort *port)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
@@ -202,7 +246,7 @@ index 9b42f0f..8f1f976 100644
  }
  
  void
-@@ -996,6 +1009,854 @@ ghid_screen_update (void)
+@@ -996,6 +1027,854 @@ ghid_screen_update (void)
  {
  }
  
@@ -1008,7 +1052,7 @@ index 9b42f0f..8f1f976 100644
 +
 +  /* Draw pins, pads, vias below silk */
 +  if (global_view_2d) {
-+    gui->set_layer (NULL, SWAP_IDENT ? solder_group : component_group, 0);
++    start_subcomposite ();
 +
 +    if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
 +      /* Mask out drilled holes */
@@ -1025,7 +1069,7 @@ index 9b42f0f..8f1f976 100644
 +    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
 +    if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
 +
-+    gui->end_layer ();
++    end_subcomposite ();
 +  }
 +
 +  /* Draw the solder mask if turned on */
@@ -1057,7 +1101,7 @@ index 9b42f0f..8f1f976 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1066,8 +1927,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1066,8 +1945,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1068,7 +1112,7 @@ index 9b42f0f..8f1f976 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1133,18 +1994,50 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1133,18 +2012,50 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
