@@ -1,5 +1,5 @@
 Bottom: 0d4bbd4269a3eaea5689f27f712cbe4b0f481d43
-Top:    26f20723c47beedc39ab98795ee82eeb4cdc3a08
+Top:    9d0a70995d880269781042daa6a62d92b3894a12
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-08 01:00:28 +0100
 
@@ -9,46 +9,53 @@ Re-write ghid_set_layer() for some reason (can't recall why!)
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 96e54a6..27bd030 100644
+index 96e54a6..4ecd420 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -71,44 +71,46 @@ static void draw_lead_user (render_priv *priv);
+@@ -67,48 +67,49 @@ hid_gc_struct;
+ 
+ static void draw_lead_user (render_priv *priv);
+ 
++/* Compute group visibility based upon on copper layers only */
++static bool
++is_layer_group_visible (int group)
++{
++  int entry;
++  for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry++)
++    {
++      int layer_idx = PCB->LayerGroups.Entries[group][entry];
++      if (layer_idx >= 0 && layer_idx < max_copper_layer &&
++          LAYER_PTR (layer_idx)->On)
++        return true;
++    }
++  return false;
++}
+ 
  int
  ghid_set_layer (const char *name, int group, int empty)
  {
 -  int idx = group;
 -  if (idx >= 0 && idx < max_group)
-+  if (group >= 0 && group < max_group)
-     {
+-    {
 -      int n = PCB->LayerGroups.Number[group];
 -      for (idx = 0; idx < n-1; idx ++)
-+      int layer_idx;
-+      int entry;
-+      for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry ++)
- 	{
+-	{
 -	  int ni = PCB->LayerGroups.Entries[group][idx];
 -	  if (ni >= 0 && ni < max_copper_layer + 2
 -	      && PCB->Data->Layer[ni].On)
 -	    break;
-+	  layer_idx = PCB->LayerGroups.Entries[group][entry];
-+	  /* Only return TRUE for visible non-silk layers.
-+	   * NB: Silk layers ocupy layer_idx
-+	   * max_copper_layer and max_copper_layer + 1
-+	   */
-+	  if (layer_idx >= 0 && layer_idx < max_copper_layer &&
-+	      PCB->Data->Layer[layer_idx].On)
-+	    return TRUE;
- 	}
+-	}
 -      idx = PCB->LayerGroups.Entries[group][idx];
-+      return FALSE;
-     }
+-    }
++  if (group >= 0 && group < max_group)
++    return is_layer_group_visible (group);
++
++  /* If we didn't hit a match above, group is being used as a
++     special symbolic layer type, and will be negative. */
  
 -  if (idx >= 0 && idx < max_copper_layer + 2)
 -    return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
 -  if (idx < 0)
-+  /* If we didn't hit a match above, group is being used as a
-+     special symbolic layer type, and will be negative. */
-+
 +  switch (SL_TYPE (group))
      {
 -      switch (SL_TYPE (idx))
