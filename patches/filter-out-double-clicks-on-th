@@ -1,7 +1,7 @@
-Bottom: 736c32581e165bb2a18f179511958d0d61f29f60
-Top:    c7c1b6aa1207faddcab32337836cdc63902f0339
+Bottom: 6fe4d7930a23c58537c01d0f1a4bb53b57e98422
+Top:    6fe4d7930a23c58537c01d0f1a4bb53b57e98422
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-09 01:11:18 +0100
+Date:   2011-09-09 02:01:10 +0100
 
 Filter out double clicks on the layer selector widget
 
@@ -13,21 +13,4 @@ which would toggle the visibility an extra time.
 
 ---
 
-diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
-index a2bb3ff..639e2be 100644
---- a/src/hid/gtk/ghid-layer-selector.c
-+++ b/src/hid/gtk/ghid-layer-selector.c
-@@ -193,8 +193,11 @@ button_press_cb (GHidLayerSelector *ls, GdkEventButton *event)
-   GtkTreeViewColumn *column;
-   GtkTreePath *path;
- 
--  /* Ignore all but left-clicks */
--  if (event->button != 1)
-+  /* Ignore the synthetic presses caused by double and tripple clicks, and
-+   * also ignore all but left-clicks
-+   */
-+  if (event->type != GDK_BUTTON_PRESS ||
-+      event->button != 1)
-     return TRUE;
- 
-   if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (ls),
+
