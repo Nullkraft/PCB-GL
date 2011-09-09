@@ -1,5 +1,5 @@
-Bottom: 736c32581e165bb2a18f179511958d0d61f29f60
-Top:    b99f3d392fff9d717745c3d8fdad605efa7457d2
+Bottom: c7c1b6aa1207faddcab32337836cdc63902f0339
+Top:    6fe4d7930a23c58537c01d0f1a4bb53b57e98422
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-09 01:45:13 +0100
 
@@ -13,10 +13,10 @@ functions.
 ---
 
 diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
-index a2bb3ff..db2b7d4 100644
+index 639e2be..0f4ec30 100644
 --- a/src/hid/gtk/ghid-layer-selector.c
 +++ b/src/hid/gtk/ghid-layer-selector.c
-@@ -696,19 +696,23 @@ ghid_layer_selector_get_accel_group (GHidLayerSelector *ls)
+@@ -699,19 +699,23 @@ ghid_layer_selector_get_accel_group (GHidLayerSelector *ls)
    return ls->accel_group;
  }
  
@@ -46,7 +46,7 @@ index a2bb3ff..db2b7d4 100644
        return TRUE;
      }
    return FALSE;
-@@ -724,23 +728,27 @@ toggle_foreach_func (GtkTreeModel *model, GtkTreePath *path,
+@@ -727,23 +731,27 @@ toggle_foreach_func (GtkTreeModel *model, GtkTreePath *path,
  void
  ghid_layer_selector_toggle_layer (GHidLayerSelector *ls, gint user_id)
  {
@@ -81,7 +81,7 @@ index a2bb3ff..db2b7d4 100644
        return TRUE;
      }
    return FALSE;
-@@ -756,8 +764,13 @@ select_foreach_func (GtkTreeModel *model, GtkTreePath *path,
+@@ -759,8 +767,13 @@ select_foreach_func (GtkTreeModel *model, GtkTreePath *path,
  void
  ghid_layer_selector_select_layer (GHidLayerSelector *ls, gint user_id)
  {
@@ -96,7 +96,7 @@ index a2bb3ff..db2b7d4 100644
  }
  
  /*! \brief Selects the next visible layer
-@@ -950,6 +963,3 @@ ghid_layer_selector_show_layers (GHidLayerSelector *ls,
+@@ -953,6 +966,3 @@ ghid_layer_selector_show_layers (GHidLayerSelector *ls,
    while (gtk_tree_model_iter_next (GTK_TREE_MODEL (ls->list_store), &iter));
  }
  
