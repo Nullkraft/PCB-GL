@@ -5,6 +5,11 @@ Date:   2011-09-09 01:11:18 +0100
 
 Filter out double clicks on the layer selector widget
 
+This makes things behave a little nicer if you click to toggle a layer's
+visibility twice in quick succession. Previously, this would be
+interpreted as a double-click, causing an extra synthetic click event
+which would toggle the visibility an extra time.
+
 
 ---
 
