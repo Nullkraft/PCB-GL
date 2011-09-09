@@ -1,0 +1,15 @@
+Bottom: 736c32581e165bb2a18f179511958d0d61f29f60
+Top:    736c32581e165bb2a18f179511958d0d61f29f60
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-09 01:45:13 +0100
+
+hid/gtk: Avoid using g_object_{set,set}_data() where we don't need to
+
+Personally I hate to see data stashed and recalled with these functions,
+especially where is just a case of passing appropriate data to callback
+functions.
+
+
+---
+
+
