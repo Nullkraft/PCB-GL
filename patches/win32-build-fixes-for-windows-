@@ -1,5 +1,5 @@
 Bottom: 8fda8cc1f044c1e25a06ce33b756cb1ba4005dbd
-Top:    8fda8cc1f044c1e25a06ce33b756cb1ba4005dbd
+Top:    881555eb0a5fe10fd30fb3b41a285e777616594f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-11 22:17:23 +0100
 
@@ -8,4 +8,271 @@ Win32: Build fixes for windows build
 
 ---
 
-
+diff --git a/configure.ac b/configure.ac
+index 74d6e9e..cd696a2 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -429,7 +429,7 @@ Either do not use --enable-gl or enable the gtk HID.])
+ 	esac
+ 
+ 	GLU_CFLAGS=
+-	GLU_LIBS=-lGLU
++	GLU_LIBS=-lglu32 -lopengl32
+ 
+ 	AC_DEFINE([ENABLE_GL], 1,
+ 		[Define to 1 if GL support is to be compiled in])
+diff --git a/src/borast/borast-compiler-private.h b/src/borast/borast-compiler-private.h
+index f886f40..165b42e 100644
+--- a/src/borast/borast-compiler-private.h
++++ b/src/borast/borast-compiler-private.h
+@@ -160,7 +160,7 @@
+ #endif
+ 
+ #if (defined(__WIN32__) && !defined(__WINE__)) || defined(_MSC_VER)
+-#define snprintf _snprintf
++//#define snprintf _snprintf
+ #define popen _popen
+ #define pclose _pclose
+ #define hypot _hypot
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 15ce751..a1eb159 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -32,23 +32,56 @@
+ #include <math.h>
+ #include <assert.h>
+ 
+-/* The Linux OpenGL ABI 1.0 spec requires that we define
+- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+- * in order to get prototypes:
+- *   http://www.opengl.org/registry/ABI/
+- */
+-#define GL_GLEXT_PROTOTYPES 1
+-#include <GL/gl.h>
+-#include <GL/glu.h>
++#ifdef WIN32
++#   include <windows.h>
++#   include <GL/gl.h>
++#   include <GL/glu.h>
++#   include "glext.h"
++#else
++    /* The Linux OpenGL ABI 1.0 spec requires that we define
++     * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
++     * in order to get prototypes:
++     *   http://www.opengl.org/registry/ABI/
++     */
++#   define GL_GLEXT_PROTOTYPES 1
++#   include <GL/gl.h>
++#   include <GL/glu.h>
++#endif
++
++#ifdef WIN32
++PFNGLGENBUFFERSPROC         glGenBuffers        = NULL;
++PFNGLDELETEBUFFERSPROC      glDeleteBuffers     = NULL;
++PFNGLBINDBUFFERPROC         glBindBuffer        = NULL;
++PFNGLBUFFERDATAPROC         glBufferData        = NULL;
++PFNGLBUFFERSUBDATAPROC      glBufferSubData     = NULL;
++PFNGLMAPBUFFERPROC          glMapBuffer         = NULL;
++PFNGLUNMAPBUFFERPROC        glUnmapBuffer       = NULL;
++
++PFNGLATTACHSHADERPROC       glAttachShader      = NULL;
++PFNGLCOMPILESHADERPROC      glCompileShader     = NULL;
++PFNGLCREATEPROGRAMPROC      glCreateProgram     = NULL;
++PFNGLCREATESHADERPROC       glCreateShader      = NULL;
++PFNGLDELETEPROGRAMPROC      glDeleteProgram     = NULL;
++PFNGLDELETESHADERPROC       glDeleteShader      = NULL;
++PFNGLGETPROGRAMINFOLOGPROC  glGetProgramInfoLog = NULL;
++PFNGLGETPROGRAMIVPROC       glGetProgramiv      = NULL;
++PFNGLGETSHADERINFOLOGPROC   glGetShaderInfoLog  = NULL;
++PFNGLGETSHADERIVPROC        glGetShaderiv       = NULL;
++PFNGLISSHADERPROC           glIsShader          = NULL;
++PFNGLLINKPROGRAMPROC        glLinkProgram       = NULL;
++PFNGLSHADERSOURCEPROC       glShaderSource      = NULL;
++PFNGLUSEPROGRAMPROC         glUseProgram        = NULL;
++
++#endif
+ 
+ #include "action.h"
+ #include "crosshair.h"
+ #include "data.h"
+-#include "draw.h"
++//#include "draw.h"
+ #include "error.h"
+ #include "global.h"
+ #include "mymem.h"
+-#include "draw.h"
++//#include "draw.h"
+ #include "clip.h"
+ 
+ #include "hid.h"
+@@ -60,7 +93,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-
+ triangle_buffer buffer;
+ float global_depth = 0;
+ hidgl_shader *circular_program = NULL;
+@@ -963,6 +995,32 @@ hidgl_init (void)
+   if (done_once)
+     return;
+ 
++#ifdef WIN32
++  glGenBuffers        = (PFNGLGENBUFFERSPROC)        wglGetProcAddress ("glGenBuffers");
++  glDeleteBuffers     = (PFNGLDELETEBUFFERSPROC)     wglGetProcAddress ("glDeleteBuffers");
++  glBindBuffer        = (PFNGLBINDBUFFERPROC)        wglGetProcAddress ("glBindBuffer");
++  glBufferData        = (PFNGLBUFFERDATAPROC)        wglGetProcAddress ("glBufferData");
++  glBufferSubData     = (PFNGLBUFFERSUBDATAPROC)     wglGetProcAddress ("glBufferSubData");
++  glMapBuffer         = (PFNGLMAPBUFFERPROC)         wglGetProcAddress ("glMapBuffer");
++  glUnmapBuffer       = (PFNGLUNMAPBUFFERPROC)       wglGetProcAddress ("glUnmapBuffer");
++
++  glAttachShader      = (PFNGLATTACHSHADERPROC)      wglGetProcAddress ("glAttachShader");
++  glCompileShader     = (PFNGLCOMPILESHADERPROC)     wglGetProcAddress ("glCompileShader");
++  glCreateProgram     = (PFNGLCREATEPROGRAMPROC)     wglGetProcAddress ("glCreateProgram");
++  glCreateShader      = (PFNGLCREATESHADERPROC)      wglGetProcAddress ("glCreateShader");
++  glDeleteProgram     = (PFNGLDELETEPROGRAMPROC)     wglGetProcAddress ("glDeleteProgram");
++  glDeleteShader      = (PFNGLDELETESHADERPROC)      wglGetProcAddress ("glDeleteShader");
++  glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC) wglGetProcAddress ("glGetProgramInfoLog");
++  glGetProgramiv      = (PFNGLGETPROGRAMIVPROC)      wglGetProcAddress ("glGetProgramiv");
++  glGetShaderInfoLog  = (PFNGLGETSHADERINFOLOGPROC)  wglGetProcAddress ("glGetShaderInfoLog");
++  glGetShaderiv       = (PFNGLGETSHADERIVPROC)       wglGetProcAddress ("glGetShaderiv");
++  glIsShader          = (PFNGLISSHADERPROC)          wglGetProcAddress ("glIsShader");
++  glLinkProgram       = (PFNGLLINKPROGRAMPROC)       wglGetProcAddress ("glLinkProgram");
++  glShaderSource      = (PFNGLSHADERSOURCEPROC)      wglGetProcAddress ("glShaderSource");
++  glUseProgram        = (PFNGLUSEPROGRAMPROC)        wglGetProcAddress ("glUseProgram");
++#endif
++
++
+   CHECK_IS_IN_CONTEXT ();
+   glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
+ 
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index b83e45b..31d28e8 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -48,7 +48,7 @@ void hidgl_flush_triangles (triangle_buffer *buffer);
+ void hidgl_ensure_vertex_space (triangle_buffer *buffer, int count);
+ void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
+ 
+-inline void
++static inline void
+ hidgl_add_vertex_3D_tex (triangle_buffer *buffer,
+                          GLfloat x, GLfloat y, GLfloat z,
+                          GLfloat s, GLfloat t)
+@@ -61,7 +61,7 @@ hidgl_add_vertex_3D_tex (triangle_buffer *buffer,
+   buffer->vertex_count++;
+ }
+ 
+-inline void
++static inline void
+ hidgl_add_vertex_tex (triangle_buffer *buffer,
+                       GLfloat x, GLfloat y,
+                       GLfloat s, GLfloat t)
+diff --git a/src/hid/common/hidgl_shaders.c b/src/hid/common/hidgl_shaders.c
+index 8609afe..005d6f2 100644
+--- a/src/hid/common/hidgl_shaders.c
++++ b/src/hid/common/hidgl_shaders.c
+@@ -29,20 +29,52 @@
+ #include <string.h>
+ #include <stdio.h>
+ 
++#ifdef WIN32
++#   include <GL/gl.h>
++#   include <GL/glu.h>
++#   include "glext.h"
++#else
+ /* The Linux OpenGL ABI 1.0 spec requires that we define
+  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+  * in order to get prototypes:
+  *   http://www.opengl.org/registry/ABI/
+  */
+-#define GL_GLEXT_PROTOTYPES 1
+-#include <GL/gl.h>
+-#include <GL/glu.h>
++#   define GL_GLEXT_PROTOTYPES 1
++#   include <GL/gl.h>
++#   include <GL/glu.h>
++#endif
++
+ #include "hidgl_shaders.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+ 
++#ifdef WIN32
++extern PFNGLGENBUFFERSPROC         glGenBuffers;
++extern PFNGLDELETEBUFFERSPROC      glDeleteBuffers;
++extern PFNGLBINDBUFFERPROC         glBindBuffer;
++extern PFNGLBUFFERDATAPROC         glBufferData;
++extern PFNGLBUFFERSUBDATAPROC      glBufferSubData;
++extern PFNGLMAPBUFFERPROC          glMapBuffer;
++extern PFNGLUNMAPBUFFERPROC        glUnmapBuffer;
++
++extern PFNGLATTACHSHADERPROC       glAttachShader;
++extern PFNGLCOMPILESHADERPROC      glCompileShader;
++extern PFNGLCREATEPROGRAMPROC      glCreateProgram;
++extern PFNGLCREATESHADERPROC       glCreateShader;
++extern PFNGLDELETEPROGRAMPROC      glDeleteProgram;
++extern PFNGLDELETESHADERPROC       glDeleteShader;
++extern PFNGLGETPROGRAMINFOLOGPROC  glGetProgramInfoLog;
++extern PFNGLGETPROGRAMIVPROC       glGetProgramiv;
++extern PFNGLGETSHADERINFOLOGPROC   glGetShaderInfoLog;
++extern PFNGLGETSHADERIVPROC        glGetShaderiv;
++extern PFNGLISSHADERPROC           glIsShader;
++extern PFNGLLINKPROGRAMPROC        glLinkProgram;
++extern PFNGLSHADERSOURCEPROC       glShaderSource;
++extern PFNGLUSEPROGRAMPROC         glUseProgram;
++#endif
++
+ /* Opaque data-structure keeping a shader object */
+ struct _hidgl_shader {
+   char *name;
+diff --git a/src/hid/gtk/snavi.c b/src/hid/gtk/snavi.c
+index 2f58f02..d5c5850 100644
+--- a/src/hid/gtk/snavi.c
++++ b/src/hid/gtk/snavi.c
+@@ -12,6 +12,7 @@
+  *
+  */
+ 
++#if 0
+ #include <stdio.h>
+ #include <errno.h>
+ #include <stdlib.h>
+@@ -21,9 +22,11 @@
+ 
+ #include <linux/types.h>
+ #include <linux/input.h>
++#endif
+ 
+ #include <glib.h>
+ 
++#if 0
+ #define test_bit(bit, array)  (array [bit / 8] & (1 << (bit % 8)))
+ 
+ static void (*update_pan_cb)(int, int, int, gpointer);
+@@ -150,6 +153,7 @@ gboolean snavi_event (GIOChannel   *source,
+ 
+   return TRUE;
+ }
++#endif
+ 
+ 
+ GIOChannel *
+@@ -159,6 +163,9 @@ setup_snavi (void (*update_pan)(int, int, int, gpointer),
+              void (*button)(int, int, gpointer),
+              gpointer data)
+ {
++  return NULL;
++
++#if 0
+   GIOChannel *snavi;
+ 
+   update_pan_cb = update_pan;
+@@ -186,4 +193,5 @@ setup_snavi (void (*update_pan)(int, int, int, gpointer),
+     }
+ 
+   return snavi;
++#endif
+ }
