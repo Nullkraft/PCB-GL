@@ -48,7 +48,7 @@ void hidgl_flush_triangles (triangle_buffer *buffer);
 void hidgl_ensure_vertex_space (triangle_buffer *buffer, int count);
 void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
 
-inline void
+static inline void
 hidgl_add_vertex_3D_tex (triangle_buffer *buffer,
                          GLfloat x, GLfloat y, GLfloat z,
                          GLfloat s, GLfloat t)
@@ -61,7 +61,7 @@ hidgl_add_vertex_3D_tex (triangle_buffer *buffer,
   buffer->vertex_count++;
 }
 
-inline void
+static inline void
 hidgl_add_vertex_tex (triangle_buffer *buffer,
                       GLfloat x, GLfloat y,
                       GLfloat s, GLfloat t)
