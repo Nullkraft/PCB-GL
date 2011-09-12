@@ -1,5 +1,5 @@
 Bottom: ed07d47ca832a2b0914770e159cd2561e66e187c
-Top:    a2b662835892f889f5a56cc45c92bfa772dc171d
+Top:    162b49ce4204f0b2bc37970e5b315d0fa6d8cd39
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-12 02:06:13 +0100
 
@@ -9,7 +9,7 @@ Win32: Select the correct GL libraries to link against
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 71ab1c4..c5de7041 100644
+index 71ab1c4..e9718a1 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -427,7 +427,7 @@ Either do not use --enable-gl or enable the gtk HID.])
@@ -17,7 +17,7 @@ index 71ab1c4..c5de7041 100644
  
  	GLU_CFLAGS=
 -	GLU_LIBS=-lGLU
-+	GLU_LIBS=-lglu32 -lopengl32
++	GLU_LIBS="-lglu32 -lopengl32"
  
  	AC_DEFINE([ENABLE_GL], 1,
  		[Define to 1 if GL support is to be compiled in])
