@@ -1,7 +1,7 @@
-Bottom: f65c92f22cb4b0d9d29f0d887f8e0b1b56e24368
-Top:    4ff2b18c93b31a808f9ffd1ee18abaf97d421a01
+Bottom: 6daa4ce41fe1cd57c72d3fc5cbf10b03d6859e62
+Top:    2b7fd3e4206a29ed13b1428bc1c6e7590f8c2a47
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-12 01:50:33 +0100
+Date:   2011-09-12 01:56:57 +0100
 
 Draw polygons in a more intelligent order
 
@@ -36,10 +36,10 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index f2753d6..5a2d793 100644
+index ff7c27c..0cf2200 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -118,7 +118,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
+@@ -124,7 +124,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
    CHECK_IS_IN_CONTEXT ();
  
    buffer->use_vbo = true;
@@ -48,7 +48,7 @@ index f2753d6..5a2d793 100644
  
    if (buffer->use_vbo) {
      glGenBuffers (1, &buffer->vbo_id);
-@@ -815,14 +815,23 @@ do_hole (const BoxType *b, void *cl)
+@@ -821,14 +821,23 @@ do_hole (const BoxType *b, void *cl)
    return 1;
  }
  
@@ -73,7 +73,7 @@ index f2753d6..5a2d793 100644
    int stencil_bit;
  
    CHECK_IS_IN_CONTEXT ();
-@@ -839,14 +848,20 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -845,14 +854,20 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
      return;
    }
  
@@ -100,7 +100,7 @@ index f2753d6..5a2d793 100644
      }
  
    /* Flush out any existing geoemtry to be rendered */
-@@ -854,11 +869,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -860,11 +875,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
  
    glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                  GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
@@ -118,7 +118,7 @@ index f2753d6..5a2d793 100644
  
    /* Drawing operations now set our reference bit in the stencil buffer */
  
-@@ -882,7 +900,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -888,7 +906,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
