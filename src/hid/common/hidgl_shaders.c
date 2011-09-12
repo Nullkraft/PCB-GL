@@ -29,18 +29,50 @@
 #include <string.h>
 #include <stdio.h>
 
+#ifdef WIN32
+#   include <GL/gl.h>
+#   include <GL/glu.h>
+#   include "glext.h"
+#else
 /* The Linux OpenGL ABI 1.0 spec requires that we define
  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
  * in order to get prototypes:
  *   http://www.opengl.org/registry/ABI/
  */
-#define GL_GLEXT_PROTOTYPES 1
-#include <GL/gl.h>
-#include <GL/glu.h>
+#   define GL_GLEXT_PROTOTYPES 1
+#   include <GL/gl.h>
+#   include <GL/glu.h>
+#endif
+
 #include "hidgl_shaders.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
+#endif
+
+#ifdef WIN32
+extern PFNGLGENBUFFERSPROC         glGenBuffers;
+extern PFNGLDELETEBUFFERSPROC      glDeleteBuffers;
+extern PFNGLBINDBUFFERPROC         glBindBuffer;
+extern PFNGLBUFFERDATAPROC         glBufferData;
+extern PFNGLBUFFERSUBDATAPROC      glBufferSubData;
+extern PFNGLMAPBUFFERPROC          glMapBuffer;
+extern PFNGLUNMAPBUFFERPROC        glUnmapBuffer;
+
+extern PFNGLATTACHSHADERPROC       glAttachShader;
+extern PFNGLCOMPILESHADERPROC      glCompileShader;
+extern PFNGLCREATEPROGRAMPROC      glCreateProgram;
+extern PFNGLCREATESHADERPROC       glCreateShader;
+extern PFNGLDELETEPROGRAMPROC      glDeleteProgram;
+extern PFNGLDELETESHADERPROC       glDeleteShader;
+extern PFNGLGETPROGRAMINFOLOGPROC  glGetProgramInfoLog;
+extern PFNGLGETPROGRAMIVPROC       glGetProgramiv;
+extern PFNGLGETSHADERINFOLOGPROC   glGetShaderInfoLog;
+extern PFNGLGETSHADERIVPROC        glGetShaderiv;
+extern PFNGLISSHADERPROC           glIsShader;
+extern PFNGLLINKPROGRAMPROC        glLinkProgram;
+extern PFNGLSHADERSOURCEPROC       glShaderSource;
+extern PFNGLUSEPROGRAMPROC         glUseProgram;
 #endif
 
 /* Opaque data-structure keeping a shader object */
