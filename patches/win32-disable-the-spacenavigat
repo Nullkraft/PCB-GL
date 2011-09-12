@@ -1,5 +1,5 @@
 Bottom: 0a12913e0c140f238c152fc43de75713d9505d15
-Top:    4c137eb8c1f7b6bfddaf10dea88dd7df9618dc4b
+Top:    5ee88635807a574a198814a07fec8dd2c8ad46b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-12 17:07:47 +0100
 
@@ -8,6 +8,32 @@ Win32: Disable the SpaceNavigator code
 
 ---
 
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 158d646..2cefb48 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -591,8 +591,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+       /* Make sure drawing area has keyboard focus when we are in it.
+        */
+       gtk_widget_grab_focus (out->drawing_area);
+-      if (ghidgui->snavi)
+-        snavi_set_led (ghidgui->snavi, TRUE);
++      //if (ghidgui->snavi)
++      //  snavi_set_led (ghidgui->snavi, TRUE);
+     }
+   ghidgui->in_popup = FALSE;
+ 
+@@ -695,8 +695,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+ 	    }
+ 	  g_idle_add (ghid_pan_idle_cb, NULL);
+ 	}
+-      else if (ghidgui->snavi)
+-        snavi_set_led (ghidgui->snavi, FALSE);
++      //else if (ghidgui->snavi)
++      //  snavi_set_led (ghidgui->snavi, FALSE);
+     }
+ 
+   out->has_entered = FALSE;
 diff --git a/src/hid/gtk/snavi.c b/src/hid/gtk/snavi.c
 index 2f58f02..d5c5850 100644
 --- a/src/hid/gtk/snavi.c
