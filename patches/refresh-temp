@@ -1,0 +1,22 @@
+Bottom: 4769bc1c0cc225190f4be9380a9f32a317fbb18f
+Top:    f076cf0c5093e319bdc511b57fecfd228a555a44
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-12 02:00:10 +0100
+
+Refresh of win32-fix-for-define-in-borast
+
+---
+
+diff --git a/src/borast/borast-compiler-private.h b/src/borast/borast-compiler-private.h
+index f886f40..165b42e 100644
+--- a/src/borast/borast-compiler-private.h
++++ b/src/borast/borast-compiler-private.h
+@@ -160,7 +160,7 @@
+ #endif
+ 
+ #if (defined(__WIN32__) && !defined(__WINE__)) || defined(_MSC_VER)
+-#define snprintf _snprintf
++//#define snprintf _snprintf
+ #define popen _popen
+ #define pclose _pclose
+ #define hypot _hypot
