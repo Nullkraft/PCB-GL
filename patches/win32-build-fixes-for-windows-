@@ -1,4 +1,4 @@
-Bottom: 9d47ac621319f399eadcef0ddc1208377dad79d3
+Bottom: 5cadb4f36c6d629cc3c64e97ccb9e358b78c6954
 Top:    881555eb0a5fe10fd30fb3b41a285e777616594f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-11 22:17:23 +0100
@@ -215,51 +215,3 @@ index 8609afe..005d6f2 100644
  /* Opaque data-structure keeping a shader object */
  struct _hidgl_shader {
    char *name;
-diff --git a/src/hid/gtk/snavi.c b/src/hid/gtk/snavi.c
-index 2f58f02..d5c5850 100644
---- a/src/hid/gtk/snavi.c
-+++ b/src/hid/gtk/snavi.c
-@@ -12,6 +12,7 @@
-  *
-  */
- 
-+#if 0
- #include <stdio.h>
- #include <errno.h>
- #include <stdlib.h>
-@@ -21,9 +22,11 @@
- 
- #include <linux/types.h>
- #include <linux/input.h>
-+#endif
- 
- #include <glib.h>
- 
-+#if 0
- #define test_bit(bit, array)  (array [bit / 8] & (1 << (bit % 8)))
- 
- static void (*update_pan_cb)(int, int, int, gpointer);
-@@ -150,6 +153,7 @@ gboolean snavi_event (GIOChannel   *source,
- 
-   return TRUE;
- }
-+#endif
- 
- 
- GIOChannel *
-@@ -159,6 +163,9 @@ setup_snavi (void (*update_pan)(int, int, int, gpointer),
-              void (*button)(int, int, gpointer),
-              gpointer data)
- {
-+  return NULL;
-+
-+#if 0
-   GIOChannel *snavi;
- 
-   update_pan_cb = update_pan;
-@@ -186,4 +193,5 @@ setup_snavi (void (*update_pan)(int, int, int, gpointer),
-     }
- 
-   return snavi;
-+#endif
- }
