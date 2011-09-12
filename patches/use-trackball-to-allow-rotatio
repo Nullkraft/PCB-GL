@@ -1,7 +1,7 @@
-Bottom: a8d05fb2709ff96e1ac616fe859b7044624b9751
-Top:    002a1c94075da566f76dba97ef68c3acac615041
+Bottom: 8c6c2367060f8da8a339ca08e7bd6a724c79a520
+Top:    298a2ec644204d56d905068dff890605d203dd72
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-10 21:52:15 +0100
+Date:   2011-09-12 01:50:22 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -422,7 +422,7 @@ index e64ec7e..0938cf2 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 97746ad..93dee4f 100644
+index 35bdc69..e6a99d3 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -463,7 +463,7 @@ index 97746ad..93dee4f 100644
     * make_mode_buttons_and_toolbar (...);
     */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 6de2578..eb4b6fb 100644
+index dede39c..15be07e 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -297,7 +297,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
@@ -474,7 +474,7 @@ index 6de2578..eb4b6fb 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -504,6 +503,8 @@ void ghid_flush_debug_draw (void);
+@@ -505,6 +504,8 @@ void ghid_flush_debug_draw (void);
  void ghid_finish_debug_draw (void);
  bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
