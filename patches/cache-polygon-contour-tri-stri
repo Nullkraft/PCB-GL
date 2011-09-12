@@ -1,7 +1,7 @@
-Bottom: 9f63ea5f723815ad8d2494a2fc34d8250772547b
-Top:    1cb31fe2063f9fd9f62ebc14f598d5c9a99d6a04
+Bottom: f4e6a43a4a6993c57ae8eea818e0da65a0e64ea1
+Top:    93d19bf0ad2dfa2bfe4220b713fe68b4508e921a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-10 21:52:25 +0100
+Date:   2011-09-12 01:50:32 +0100
 
 Cache polygon contour tri-strip tesselations (HACK: IN THE CORE!)
 
@@ -115,10 +115,10 @@ index 5cccfbc..37a73c9 100644
 +  return BORAST_STATUS_SUCCESS;
 +}
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index ca97c99..7c3dba6 100644
+index 7ef3aeb..0dd14aa 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -676,9 +676,25 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
+@@ -674,9 +674,25 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
    free (vertices);
  }
  
@@ -144,7 +144,7 @@ index ca97c99..7c3dba6 100644
    borast_traps_t traps;
  
    /* If the contour is round, then call hidgl_fill_circle to draw it. */
-@@ -687,9 +703,108 @@ fill_contour (PLINE *contour)
+@@ -685,9 +701,108 @@ fill_contour (PLINE *contour)
      return;
    }
  

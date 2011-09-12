@@ -1,7 +1,7 @@
-Bottom: 77093ec355d3e36e129ade627badcd66e56dc829
-Top:    9f63ea5f723815ad8d2494a2fc34d8250772547b
+Bottom: 8bd9b63f4f60de3a1c8c1ce236dfd16da17e2c27
+Top:    f4e6a43a4a6993c57ae8eea818e0da65a0e64ea1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-10 21:52:24 +0100
+Date:   2011-09-12 01:50:31 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -60,10 +60,10 @@ index 8d053d5..f2c1290 100644
  	hid/common/trackball.h
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 6467b22..ca97c99 100644
+index b92c68e..7ef3aeb 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -63,6 +63,7 @@
+@@ -61,6 +61,7 @@
  
  triangle_buffer buffer;
  float global_depth = 0;
@@ -71,7 +71,7 @@ index 6467b22..ca97c99 100644
  
  static bool in_context = false;
  
-@@ -83,45 +84,151 @@ hidgl_in_context (bool is_in_context)
+@@ -81,45 +82,151 @@ hidgl_in_context (bool is_in_context)
    in_context = is_in_context;
  }
  
@@ -235,7 +235,7 @@ index 6467b22..ca97c99 100644
  hidgl_set_depth (float depth)
  {
    global_depth = depth;
-@@ -197,42 +304,34 @@ int calc_slices (float pix_radius, float sweep_angle)
+@@ -195,42 +302,34 @@ int calc_slices (float pix_radius, float sweep_angle)
    return (int)ceilf (slices);
  }
  
@@ -295,7 +295,7 @@ index 6467b22..ca97c99 100644
    int circular_caps = 0;
    int hairline = 0;
  
-@@ -245,30 +344,20 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
+@@ -243,30 +342,20 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
  
    deltax = x2 - x1;
    deltay = y2 - y1;
@@ -333,7 +333,7 @@ index 6467b22..ca97c99 100644
    switch (cap) {
      case Trace_Cap:
      case Round_Cap:
-@@ -277,26 +366,50 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
+@@ -275,26 +364,50 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
  
      case Square_Cap:
      case Beveled_Cap:
@@ -398,7 +398,7 @@ index 6467b22..ca97c99 100644
      }
  }
  
-@@ -375,10 +488,10 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
+@@ -373,10 +486,10 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
  
    draw_cap (width, x + rx * -cosf (start_angle_rad),
                     y + rx *  sinf (start_angle_rad),
@@ -411,7 +411,7 @@ index 6467b22..ca97c99 100644
  }
  
  void
-@@ -395,37 +508,20 @@ hidgl_draw_rect (Coord x1, Coord y1, Coord x2, Coord y2)
+@@ -393,37 +506,20 @@ hidgl_draw_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  
  
  void
@@ -459,7 +459,7 @@ index 6467b22..ca97c99 100644
  }
  
  #define MAX_COMBINED_MALLOCS 2500
-@@ -489,8 +585,6 @@ myBegin (GLenum type)
+@@ -487,8 +583,6 @@ myBegin (GLenum type)
    triangle_comp_idx = 0;
  }
  
@@ -468,7 +468,7 @@ index 6467b22..ca97c99 100644
  static void
  myVertex (GLdouble *vertex_data)
  {
-@@ -583,20 +677,14 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
+@@ -581,20 +675,14 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
  }
  
  static void
@@ -493,7 +493,7 @@ index 6467b22..ca97c99 100644
    }
  
    _borast_traps_init (&traps);
-@@ -604,14 +692,9 @@ fill_contour (PLINE *contour, double scale)
+@@ -602,14 +690,9 @@ fill_contour (PLINE *contour, double scale)
    _borast_traps_fini (&traps);
  }
  
@@ -508,7 +508,7 @@ index 6467b22..ca97c99 100644
    PLINE *curc = (PLINE *) b;
  
    /* Ignore the outer contour - we draw it first explicitly*/
-@@ -619,7 +702,7 @@ do_hole (const BoxType *b, void *cl)
+@@ -617,7 +700,7 @@ do_hole (const BoxType *b, void *cl)
      return 0;
    }
  
@@ -517,7 +517,7 @@ index 6467b22..ca97c99 100644
    return 1;
  }
  
-@@ -629,14 +712,11 @@ static int assigned_bits = 0;
+@@ -627,14 +710,11 @@ static int assigned_bits = 0;
  
  /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
  void
@@ -533,7 +533,7 @@ index 6467b22..ca97c99 100644
  
    if (poly->Clipped == NULL)
      {
-@@ -646,7 +726,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -644,7 +724,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  
    /* Special case non-holed polygons which don't require a stencil bit */
    if (poly->Clipped->contour_tree->size == 1) {
@@ -542,7 +542,7 @@ index 6467b22..ca97c99 100644
      return;
    }
  
-@@ -673,7 +753,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -671,7 +751,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  
    /* Drawing operations now set our reference bit in the stencil buffer */
  
@@ -551,7 +551,7 @@ index 6467b22..ca97c99 100644
    hidgl_flush_triangles (&buffer);
  
    glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
-@@ -689,7 +769,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -687,7 +767,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  
    /* Draw the polygon outer */
@@ -560,7 +560,7 @@ index 6467b22..ca97c99 100644
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
-@@ -702,14 +782,44 @@ void
+@@ -700,14 +780,44 @@ void
  hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  {
    CHECK_IS_IN_CONTEXT ();
@@ -608,7 +608,7 @@ index 6467b22..ca97c99 100644
    CHECK_IS_IN_CONTEXT ();
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
-@@ -725,6 +835,16 @@ hidgl_init (void)
+@@ -723,6 +833,16 @@ hidgl_init (void)
                "Cannot use stencil buffer to sub-composite layers.\n");
        /* Do we need to disable that somewhere? */
      }
