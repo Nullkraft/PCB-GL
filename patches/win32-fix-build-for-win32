@@ -1,5 +1,5 @@
 Bottom: 3a1896916513f26cbfba3b09537a14078e409c49
-Top:    30b7d6ccad518834472e0355c1d15949975d3abc
+Top:    943ae72fe5ca4cd3c4c38926f5ffbcba0dff174e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-12 17:01:57 +0100
 
@@ -8,6 +8,18 @@ Win32: Fix build for win32
 
 ---
 
+diff --git a/src/Makefile.am b/src/Makefile.am
+index f2c1290..fad9f27 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -197,6 +197,7 @@ LIBGTK_GL_SRCS= \
+ GL_SRCS= \
+ 	hid/common/hidgl.c \
+ 	hid/common/hidgl.h \
++	hid/common/glext.h \
+ 	hid/common/hidgl_shaders.c \
+ 	hid/common/hidgl_shaders.h \
+ 	hid/common/trackball.c \
 diff --git a/src/hid/common/glext.h b/src/hid/common/glext.h
 new file mode 100644
 index 0000000..0940021
