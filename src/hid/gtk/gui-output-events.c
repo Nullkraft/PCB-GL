@@ -591,8 +591,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
       /* Make sure drawing area has keyboard focus when we are in it.
        */
       gtk_widget_grab_focus (out->drawing_area);
-      if (ghidgui->snavi)
-        snavi_set_led (ghidgui->snavi, TRUE);
+      //if (ghidgui->snavi)
+      //  snavi_set_led (ghidgui->snavi, TRUE);
     }
   ghidgui->in_popup = FALSE;
 
@@ -695,8 +695,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	    }
 	  g_idle_add (ghid_pan_idle_cb, NULL);
 	}
-      else if (ghidgui->snavi)
-        snavi_set_led (ghidgui->snavi, FALSE);
+      //else if (ghidgui->snavi)
+      //  snavi_set_led (ghidgui->snavi, FALSE);
     }
 
   out->has_entered = FALSE;
