@@ -1,23 +1,11 @@
-Bottom: 2a74a050b1466e47c78a4ef5ec873834740f41bb
+Bottom: 638167fae4bda21b9b05dae2106771eda4a35bfb
 Top:    638167fae4bda21b9b05dae2106771eda4a35bfb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-12 01:58:54 +0100
+Date:   2011-09-12 02:01:25 +0100
 
 Win32: Build fixes for windows build
 
 
 ---
 
-diff --git a/src/borast/borast-compiler-private.h b/src/borast/borast-compiler-private.h
-index f886f40..165b42e 100644
---- a/src/borast/borast-compiler-private.h
-+++ b/src/borast/borast-compiler-private.h
-@@ -160,7 +160,7 @@
- #endif
- 
- #if (defined(__WIN32__) && !defined(__WINE__)) || defined(_MSC_VER)
--#define snprintf _snprintf
-+//#define snprintf _snprintf
- #define popen _popen
- #define pclose _pclose
- #define hypot _hypot
+
