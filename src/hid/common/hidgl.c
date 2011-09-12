@@ -147,10 +147,6 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
    */
   buffer->use_map = false;
 
-  /* If using VBOs (but not mapping), we only need to this once */
-  if (buffer->use_vbo && !buffer->use_map)
-    glBufferData (GL_ARRAY_BUFFER, BUFFER_SIZE, NULL, GL_STREAM_DRAW);
-
   buffer->triangle_array = NULL;
   hidgl_reset_triangle_array (buffer);
 }
@@ -188,10 +184,10 @@ hidgl_flush_triangles (triangle_buffer *buffer)
       glUnmapBuffer (GL_ARRAY_BUFFER);
       buffer->triangle_array = NULL;
     } else {
-      /* NB: We only upload the portion of the buffer we've used */
-      glBufferSubData (GL_ARRAY_BUFFER, 0,
-                       BUFFER_STRIDE * buffer->vertex_count,
-                       buffer->triangle_array);
+      glBufferData (GL_ARRAY_BUFFER,
+                    BUFFER_STRIDE * buffer->vertex_count,
+                    buffer->triangle_array,
+                    GL_STREAM_DRAW);
     }
   } else {
     data_pointer = buffer->triangle_array;
