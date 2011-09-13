@@ -1,0 +1,22 @@
+Bottom: 439e2c0206490027927f234a2493dd03a14ac490
+Top:    439e2c0206490027927f234a2493dd03a14ac490
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-13 01:01:45 +0100
+
+hid/gtk: Remove auto-pan feature (kill it with fire).
+
+This seems to be fairly universally unpopular on geda-user, and its
+implementation is a little fragile, often leading the board to pan off
+to some corner of the board as the poor user reaches for the layer
+selector or a menu without having remembered to click the feature off.
+
+The fact that the pan direction and speed was set the instant you leave
+the drawing window also made it particularly unhelpful. A proper
+implementation should have grabbed the mouse - or at least implemented
+some buffer zone in which the mouse could be used to give feedback on
+the pan direction.
+
+
+---
+
+
