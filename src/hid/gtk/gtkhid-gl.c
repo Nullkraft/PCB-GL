@@ -744,7 +744,6 @@ void
 ghid_show_crosshair (gboolean paint_new_location)
 {
   gint x, y, z;
-  gboolean draw_markers;
   int vcw = VCW * gport->view.coord_per_px;
   int vcd = VCD * gport->view.coord_per_px;
   static int done_once = 0;
@@ -776,33 +775,6 @@ ghid_show_crosshair (gboolean paint_new_location)
     {
       glBegin (GL_LINES);
       draw_crosshair (x, y, z);
-      glEnd ();
-    }
-
-  draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
-  if (x >= 0 && paint_new_location && draw_markers)
-    {
-      glBegin (GL_QUADS);
-      glVertex3i (SIDE_X (gport->view.x0),                            y - vcd,       z);
-      glVertex3i (SIDE_X (gport->view.x0),                            y - vcd + vcw, z);
-      glVertex3i (SIDE_X (gport->view.x0 + vcd),                      y - vcd + vcw, z);
-      glVertex3i (SIDE_X (gport->view.x0 + vcd),                      y - vcd,       z);
-
-      glVertex3i (SIDE_X (gport->view.x0 + gport->view.width),        y - vcd,       z);
-      glVertex3i (SIDE_X (gport->view.x0 + gport->view.width),        y - vcd + vcw, z);
-      glVertex3i (SIDE_X (gport->view.x0 + gport->view.width - vcd),  y - vcd + vcw, z);
-      glVertex3i (SIDE_X (gport->view.x0 + gport->view.width - vcd),  y - vcd,       z);
-
-      glVertex3i (x - vcd,       SIDE_Y (gport->view.y0),                            z);
-      glVertex3i (x - vcd,       SIDE_Y (gport->view.y0 + vcd),                      z);
-      glVertex3i (x - vcd + vcw, SIDE_Y (gport->view.y0 + vcd),                      z);
-      glVertex3i (x - vcd + vcw, SIDE_Y (gport->view.y0),                            z);
-
-      glVertex3i (x - vcd,       SIDE_Y (gport->view.y0 + gport->view.height - vcd), z);
-      glVertex3i (x - vcd,       SIDE_Y (gport->view.y0 + gport->view.height),       z);
-      glVertex3i (x - vcd + vcw, SIDE_Y (gport->view.y0 + gport->view.height),       z);
-      glVertex3i (x - vcd + vcw, SIDE_Y (gport->view.y0 + gport->view.height - vcd), z);
-
       glEnd ();
     }
 
