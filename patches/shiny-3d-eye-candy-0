@@ -1,7 +1,7 @@
-Bottom: 36f129738b46e1af25f94f9fede5e143537b24d2
-Top:    4455213bd3c1bc777f61b30f94d484a0fdfd50db
+Bottom: 02286da14f2d7df3ad3181b09f01f12a1addddfa
+Top:    b02a7947357be6f613ed2eba032af520bd38d3c5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-13 01:29:44 +0100
+Date:   2011-09-13 19:18:22 +0100
 
 Shiny 3D eye-candy
 
@@ -14,10 +14,10 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f7c2a11..645e122 100644
+index 5012ed7..f1d42ed 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -88,6 +88,79 @@ static void draw_lead_user (render_priv *priv);
+@@ -94,6 +94,79 @@ static void draw_lead_user (render_priv *priv);
  static void ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y);
  
  
@@ -97,7 +97,7 @@ index f7c2a11..645e122 100644
  static void
  start_subcomposite (void)
  {
-@@ -146,11 +219,15 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -152,11 +225,15 @@ ghid_set_layer (const char *name, int group, int empty)
    end_subcomposite ();
    start_subcomposite ();
  
@@ -113,7 +113,7 @@ index f7c2a11..645e122 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -775,7 +852,7 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -781,7 +858,7 @@ ghid_show_crosshair (gboolean paint_new_location)
      }
    x = gport->crosshair_x;
    y = gport->crosshair_y;
@@ -122,7 +122,7 @@ index f7c2a11..645e122 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -1035,6 +1112,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1041,6 +1118,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -132,7 +132,7 @@ index f7c2a11..645e122 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1511,7 +1591,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -1517,7 +1597,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
@@ -141,7 +141,7 @@ index f7c2a11..645e122 100644
  
    return true;
  }
-@@ -1527,11 +1607,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1533,11 +1613,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  
    *event_x = (last_modelview_matrix[0][0] * (float)pcb_x +
                last_modelview_matrix[1][0] * (float)pcb_y +

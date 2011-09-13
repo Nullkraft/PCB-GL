@@ -1,7 +1,7 @@
-Bottom: 00fc115ea69bf746ee5e95f4d10f8fff9240243c
-Top:    36f129738b46e1af25f94f9fede5e143537b24d2
+Bottom: 5973a0849cef3fa494a347ec46910990fcc8c38b
+Top:    02286da14f2d7df3ad3181b09f01f12a1addddfa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-13 01:29:44 +0100
+Date:   2011-09-13 19:18:21 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -9,11 +9,11 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d43a144..f7c2a11 100644
+index 3350856..5012ed7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -21,7 +21,9 @@
- #include <GL/gl.h>
+@@ -27,7 +27,9 @@
+ 
  #include <gtk/gtkgl.h>
  #include "hid/common/hidgl.h"
 +
@@ -22,7 +22,7 @@ index d43a144..f7c2a11 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -39,6 +41,15 @@ static hidGC current_gc = NULL;
+@@ -45,6 +47,15 @@ static hidGC current_gc = NULL;
  #define USE_GC(gc) if (!use_gc(gc)) return
  
  static int cur_mask = -1;
@@ -38,7 +38,7 @@ index d43a144..f7c2a11 100644
  
  typedef struct render_priv {
    GdkGLConfig *glconfig;
-@@ -74,6 +85,7 @@ hid_gc_struct;
+@@ -80,6 +91,7 @@ hid_gc_struct;
  
  
  static void draw_lead_user (render_priv *priv);
@@ -46,7 +46,7 @@ index d43a144..f7c2a11 100644
  
  
  static void
-@@ -881,6 +893,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -887,6 +899,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    render_priv *priv = port->render_priv;
    GtkAllocation allocation;
    BoxType region;
@@ -58,7 +58,7 @@ index d43a144..f7c2a11 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -906,18 +923,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -912,18 +929,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -86,7 +86,7 @@ index d43a144..f7c2a11 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -934,10 +953,64 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -940,10 +959,64 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilMask (0);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -155,7 +155,7 @@ index d43a144..f7c2a11 100644
  
    region.X1 = MAX (0, MIN (PCB->MaxWidth,  region.X1));
    region.X2 = MAX (0, MIN (PCB->MaxWidth,  region.X2));
-@@ -949,10 +1022,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -955,10 +1028,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.blue / 65535.);
  
    glBegin (GL_QUADS);
@@ -170,7 +170,7 @@ index d43a144..f7c2a11 100644
    glEnd ();
  
    ghid_draw_bg_image ();
-@@ -1052,7 +1125,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1058,7 +1131,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -179,7 +179,7 @@ index d43a144..f7c2a11 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1154,7 +1227,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1160,7 +1233,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -188,7 +188,7 @@ index d43a144..f7c2a11 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1272,11 +1345,173 @@ ghid_finish_debug_draw (void)
+@@ -1278,11 +1351,173 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
@@ -364,7 +364,7 @@ index d43a144..f7c2a11 100644
  
    return true;
  }
-@@ -1284,12 +1519,54 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+@@ -1290,12 +1525,54 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  bool
  ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  {

@@ -1,7 +1,7 @@
-Bottom: df434d7a59f5f9b220a7e0ea080a1072b4b81ae6
-Top:    144177983c9c795af8c12667cf1c8087f925c4bc
+Bottom: a74bd8dcb759d31eb16bfa660bb7d92ceb3adf3f
+Top:    8b8dee939b3afce1eecd6cd8ad606566ee872f1c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-12 17:01:49 +0100
+Date:   2011-09-13 19:18:26 +0100
 
 Bentley-Ottann test implementation
 
@@ -11,7 +11,7 @@ Code from cairo - intersection routines stripped out
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 71ab1c4..74d6e9e 100644
+index a802790..15862d2 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
@@ -5476,10 +5476,10 @@ index 0000000..ba0f8eb
 +
 +#endif
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 0bbd621..8e4ce4b 100644
+index 21edb5d..bb2b961 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -52,6 +52,7 @@
+@@ -61,6 +61,7 @@
  #include "hid.h"
  #include "hidgl.h"
  #include "rtree.h"
@@ -5487,7 +5487,7 @@ index 0bbd621..8e4ce4b 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -616,6 +617,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -625,6 +626,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    PLINE *contour;
    struct do_hole_info info;
    int stencil_bit;
