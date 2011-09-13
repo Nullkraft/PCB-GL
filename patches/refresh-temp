@@ -1,0 +1,22 @@
+Bottom: 4f5b25f0a23297c448d6a14e6361a94bd795288d
+Top:    19abe9467cc29ad334fda351bb5e35e81c1aaf74
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-13 01:25:10 +0100
+
+Refresh of hid-gtk-remove-redundant-and-m
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index d82d800..1f51fc1 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -760,8 +760,6 @@ ghid_show_crosshair (gboolean paint_new_location)
+   glEnable (GL_COLOR_LOGIC_OP);
+   glLogicOp (GL_XOR);
+ 
+-  hidgl_flush_triangles (&buffer);
+-
+   glColor3f (cross_color.red / 65535.,
+              cross_color.green / 65535.,
+              cross_color.blue / 65535.);
