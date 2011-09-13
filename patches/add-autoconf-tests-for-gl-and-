@@ -1,5 +1,5 @@
 Bottom: 0a774d94b2dd49defb046e47a870381f3c33a372
-Top:    d9dd29d7183680f1ec1c644c3e47f04c9840abe5
+Top:    73afcbe9293edf53861a49c2afbaec5a72b4a6c5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-13 18:08:50 +0100
 
@@ -10,6 +10,19 @@ These tests should give better cross platform support for our build.
 
 ---
 
+diff --git a/autogen.sh b/autogen.sh
+index 3eeeca2..166a3d0 100755
+--- a/autogen.sh
++++ b/autogen.sh
+@@ -84,7 +84,7 @@ rm -f po/Makefile.in.in.orig
+ #
+ 
+ echo "Running aclocal..."
+-aclocal $ACLOCAL_FLAGS || exit 1
++aclocal -I m4 $ACLOCAL_FLAGS || exit 1
+ echo "Done with aclocal"
+ 
+ echo "Running autoheader..."
 diff --git a/configure.ac b/configure.ac
 index 71ab1c4..a802790 100644
 --- a/configure.ac
