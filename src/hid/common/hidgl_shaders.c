@@ -29,18 +29,58 @@
 #include <string.h>
 #include <stdio.h>
 
-/* The Linux OpenGL ABI 1.0 spec requires that we define
- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
- * in order to get prototypes:
- *   http://www.opengl.org/registry/ABI/
- */
-#define GL_GLEXT_PROTOTYPES 1
-#include <GL/gl.h>
-#include <GL/glu.h>
+#ifndef WIN32
+    /* The Linux OpenGL ABI 1.0 spec requires that we define
+     * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+     * in order to get prototypes:
+     *   http://www.opengl.org/registry/ABI/
+     */
+#   define GL_GLEXT_PROTOTYPES 1
+#endif
+
+#ifdef HAVE_OPENGL_GL_H
+#   include <OpenGL/gl.h>
+#else
+#   include <GL/gl.h>
+#endif
+
+#ifdef HAVE_OPENGL_GLU_H
+#   include <OpenGL/glu.h>
+#else
+#   include <GL/glu.h>
+#endif
+
 #include "hidgl_shaders.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
+#endif
+
+#ifdef WIN32
+#   include "glext.h"
+
+extern PFNGLGENBUFFERSPROC         glGenBuffers;
+extern PFNGLDELETEBUFFERSPROC      glDeleteBuffers;
+extern PFNGLBINDBUFFERPROC         glBindBuffer;
+extern PFNGLBUFFERDATAPROC         glBufferData;
+extern PFNGLBUFFERSUBDATAPROC      glBufferSubData;
+extern PFNGLMAPBUFFERPROC          glMapBuffer;
+extern PFNGLUNMAPBUFFERPROC        glUnmapBuffer;
+
+extern PFNGLATTACHSHADERPROC       glAttachShader;
+extern PFNGLCOMPILESHADERPROC      glCompileShader;
+extern PFNGLCREATEPROGRAMPROC      glCreateProgram;
+extern PFNGLCREATESHADERPROC       glCreateShader;
+extern PFNGLDELETEPROGRAMPROC      glDeleteProgram;
+extern PFNGLDELETESHADERPROC       glDeleteShader;
+extern PFNGLGETPROGRAMINFOLOGPROC  glGetProgramInfoLog;
+extern PFNGLGETPROGRAMIVPROC       glGetProgramiv;
+extern PFNGLGETSHADERINFOLOGPROC   glGetShaderInfoLog;
+extern PFNGLGETSHADERIVPROC        glGetShaderiv;
+extern PFNGLISSHADERPROC           glIsShader;
+extern PFNGLLINKPROGRAMPROC        glLinkProgram;
+extern PFNGLSHADERSOURCEPROC       glShaderSource;
+extern PFNGLUSEPROGRAMPROC         glUseProgram;
 #endif
 
 /* Opaque data-structure keeping a shader object */
