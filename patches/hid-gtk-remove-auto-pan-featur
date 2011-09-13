@@ -1,5 +1,5 @@
 Bottom: 439e2c0206490027927f234a2493dd03a14ac490
-Top:    51e7d22254f5ec84fd72591aa24b42715adefd1b
+Top:    2a540220b1caae6d593fb8381d7c99b70d20da7d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-13 01:01:45 +0100
 
@@ -20,10 +20,20 @@ the pan direction.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 96e54a6..e06cfa1 100644
+index 96e54a6..2d2d4c7 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1028,7 +1028,6 @@ show_crosshair (gboolean paint_new_location)
+@@ -1017,9 +1017,6 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
+   prev = Crosshair.shape;
+ }
+ 
+-#define VCW 16
+-#define VCD 8
+-
+ static void
+ show_crosshair (gboolean paint_new_location)
+ {
+@@ -1028,7 +1025,6 @@ show_crosshair (gboolean paint_new_location)
    GtkStyle *style = gtk_widget_get_style (gport->drawing_area);
    gint x, y;
    static gint x_prev = -1, y_prev = -1;
@@ -31,7 +41,7 @@ index 96e54a6..e06cfa1 100644
    static GdkGC *xor_gc;
    static GdkColor cross_color;
  
-@@ -1051,45 +1050,16 @@ show_crosshair (gboolean paint_new_location)
+@@ -1051,45 +1047,16 @@ show_crosshair (gboolean paint_new_location)
    gdk_gc_set_foreground (xor_gc, &cross_color);
  
    if (x_prev >= 0 && !paint_new_location)
@@ -80,18 +90,27 @@ index 96e54a6..e06cfa1 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f5a99a9..49dc66e 100644
+index f5a99a9..d82d800 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -744,7 +744,6 @@ void
+@@ -737,16 +737,10 @@ draw_crosshair (gint x, gint y, gint z)
+   prev = Crosshair.shape;
+ }
+ 
+-#define VCW 16 /* Crosshair pan-marker width in pixels */
+-#define VCD 8  /* Crosshair pan-marker depth in pixels */
+-
+ void
  ghid_show_crosshair (gboolean paint_new_location)
  {
    gint x, y, z;
 -  gboolean draw_markers;
-   int vcw = VCW * gport->view.coord_per_px;
-   int vcd = VCD * gport->view.coord_per_px;
+-  int vcw = VCW * gport->view.coord_per_px;
+-  int vcd = VCD * gport->view.coord_per_px;
    static int done_once = 0;
-@@ -779,33 +778,6 @@ ghid_show_crosshair (gboolean paint_new_location)
+   static GdkColor cross_color;
+ 
+@@ -779,33 +773,6 @@ ghid_show_crosshair (gboolean paint_new_location)
        glEnd ();
      }
  
@@ -213,10 +232,18 @@ index 698f57a..dba0635 100644
  
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index c483c3c..fbda3ac 100644
+index c483c3c..b213d54 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -603,20 +603,6 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -52,7 +52,6 @@
+ 
+ #define TOOLTIP_UPDATE_DELAY 200
+ 
+-static gint x_pan_speed, y_pan_speed;
+ void
+ ghid_port_ranges_changed (void)
+ {
+@@ -603,26 +602,10 @@ ghid_port_window_enter_cb (GtkWidget * widget,
    return FALSE;
  }
  
@@ -237,7 +264,13 @@ index c483c3c..fbda3ac 100644
  gint
  ghid_port_window_leave_cb (GtkWidget * widget, 
                             GdkEventCrossing * ev, GHidPort * out)
-@@ -637,62 +623,6 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+ {
+-  Coord x0, y0, x, y, dx, dy, w, h;
+-  
+   /* printf("leave mode: %d detail: %d\n", ev->mode, ev->detail); */
+ 
+   /* Window leave events can also be triggered because of focus grabs. Some
+@@ -637,62 +620,6 @@ ghid_port_window_leave_cb (GtkWidget * widget,
        return FALSE;
      }
  
