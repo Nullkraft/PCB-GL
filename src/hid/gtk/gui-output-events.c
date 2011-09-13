@@ -148,45 +148,6 @@ ghid_note_event_location (GdkEventButton * ev)
   return moved;
 }
 
-gboolean
-have_crosshair_attachments (void)
-{
-  gboolean result = FALSE;
-
-  switch (Settings.Mode)
-    {
-    case COPY_MODE:
-    case MOVE_MODE:
-    case INSERTPOINT_MODE:
-      if (Crosshair.AttachedObject.Type != NO_TYPE)
-	result = TRUE;
-      break;
-    case PASTEBUFFER_MODE:
-    case VIA_MODE:
-      result = TRUE;
-      break;
-    case POLYGON_MODE:
-    case POLYGONHOLE_MODE:
-      if (Crosshair.AttachedLine.State != STATE_FIRST)
-	result = TRUE;
-      break;
-    case ARC_MODE:
-      if (Crosshair.AttachedBox.State != STATE_FIRST)
-	result = TRUE;
-      break;
-    case LINE_MODE:
-      if (Crosshair.AttachedLine.State != STATE_FIRST)
-	result = TRUE;
-      break;
-    default:
-      if (Crosshair.AttachedBox.State == STATE_SECOND
-	  || Crosshair.AttachedBox.State == STATE_THIRD)
-	result = TRUE;
-      break;
-    }
-  return result;
-}
-
 static gboolean
 ghid_idle_cb (gpointer data)
 {
