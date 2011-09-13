@@ -3,17 +3,17 @@ Top:    19abe9467cc29ad334fda351bb5e35e81c1aaf74
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-13 01:21:47 +0100
 
-hid/gtk: Remove redundant (and misplaced) hidgl_flush_triangles() call.
+hid/gtk: Remove misplaced (and redundant) hidgl_flush_triangles() call.
 
-If we were to flush the triangle buffer in show_crosshair(), we should
-do it before we set XOR mode on the GL context (assuming the buffer
-might be dirty when we are called), OR we should do it after we finish
-drawing (assuming we wish to leave the buffer clean when we return).
+If we were to flush the triangle buffer in ghid_show_crosshair(), we
+should do it before we set XOR mode on the GL context (assuming the
+buffer might be dirty when we are called), and we should do it after
+we finish drawing (if we wish to leave the buffer clean when we return).
 
 The location the flush was in before this commit is just plain wrong.
 
-As we currently have flushes of the triangle buffer wrapping the
-call to show_crosshair(), just leave the flushing out of this function.
+As we currently have flushes of the triangle buffer wrapping the call
+to ghid_show_crosshair(), just leave the flushing out of this function.
 
 Does this commit message provide an adequate example of simple patch,
 complex commit message phenomenon?
