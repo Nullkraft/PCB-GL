@@ -1,7 +1,7 @@
-Bottom: a2fb1a1ded505341ceb89434a3f784b8dd18410b
-Top:    5f42c9f4444dc77eaf363557b29efc505f48a918
+Bottom: 1b5744d9e2b2b8166bb967ba3ca05798343c65c8
+Top:    d2980eb52d27500a480f7bcbd1f17952da30a3fa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-13 01:29:41 +0100
+Date:   2011-09-13 19:18:19 +0100
 
 Demo of exporter specific export routine
 
@@ -766,10 +766,10 @@ index db21f85..801815d 100644
    gerber_hid.destroy_gc          = gerber_destroy_gc;
    gerber_hid.use_mask            = gerber_use_mask;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1f51fc1..3245798 100644
+index 15c9468..5adc913 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -112,8 +112,8 @@ end_subcomposite (void)
+@@ -118,8 +118,8 @@ end_subcomposite (void)
  }
  
  
@@ -780,7 +780,7 @@ index 1f51fc1..3245798 100644
  {
    render_priv *priv = gport->render_priv;
    int idx = group;
-@@ -862,6 +862,137 @@ ghid_screen_update (void)
+@@ -868,6 +868,137 @@ ghid_screen_update (void)
  {
  }
  
@@ -918,7 +918,7 @@ index 1f51fc1..3245798 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -949,7 +1080,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -955,7 +1086,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
