@@ -1,7 +1,7 @@
-Bottom: 5fe50ab0fb673024f6f5c2ab44fe7fca1d7e4d11
-Top:    d40650a98eaf2e78a30f6bf27e13b3a7d33ff497
+Bottom: 6b19fcff4b536afe5d25882b0493ebfa19ae94d4
+Top:    f2fc7a68a254719d930025afda3314217492edee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-13 01:39:41 +0100
+Date:   2011-09-13 19:21:41 +0100
 
 Play with perspective
 
@@ -9,10 +9,10 @@ Play with perspective
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 0cf2200..05dd2a6 100644
+index 38a2148..c2529d0 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -199,6 +199,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
+@@ -207,6 +207,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
    glEnableClientState (GL_TEXTURE_COORD_ARRAY);
    glEnableClientState (GL_VERTEX_ARRAY);
    glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
@@ -25,7 +25,7 @@ index 0cf2200..05dd2a6 100644
    glDisableClientState (GL_VERTEX_ARRAY);
    glDisableClientState (GL_TEXTURE_COORD_ARRAY);
  
-@@ -378,24 +384,31 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
+@@ -386,24 +392,31 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
    /* Don't bother capping hairlines */
    if (circular_caps && !hairline)
      {
@@ -76,7 +76,7 @@ index 0cf2200..05dd2a6 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6312b8f..6384bfd 100644
+index 8a27e4f..271ece6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,7 @@
@@ -87,7 +87,7 @@ index 6312b8f..6384bfd 100644
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
   * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-@@ -33,6 +34,8 @@
+@@ -39,6 +40,8 @@
  #include <dmalloc.h>
  #endif
  
@@ -96,7 +96,7 @@ index 6312b8f..6384bfd 100644
  RCSID ("$Id$");
  
  
-@@ -54,6 +57,10 @@ static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+@@ -60,6 +63,10 @@ static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                                {0.0, 1.0, 0.0, 0.0},
                                                {0.0, 0.0, 1.0, 0.0},
                                                {0.0, 0.0, 0.0, 1.0}};
@@ -107,7 +107,7 @@ index 6312b8f..6384bfd 100644
  static int global_view_2d = 1;
  
  typedef struct render_priv {
-@@ -90,7 +97,7 @@ hid_gc_struct;
+@@ -96,7 +103,7 @@ hid_gc_struct;
  
  
  static void draw_lead_user (render_priv *priv);
@@ -116,7 +116,7 @@ index 6312b8f..6384bfd 100644
  
  
  #define BOARD_THICKNESS         MM_TO_COORD(1.60)
-@@ -109,12 +116,15 @@ compute_depth (int group)
+@@ -115,12 +122,15 @@ compute_depth (int group)
    int middle_copper_group;
    int depth;
  
@@ -133,7 +133,7 @@ index 6312b8f..6384bfd 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -1555,7 +1565,8 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1561,7 +1571,8 @@ GhidDrawMask (int side, BoxType * screen)
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
@@ -143,7 +143,7 @@ index 6312b8f..6384bfd 100644
    SET_FLAG (FULLPOLYFLAG, &polygon);
    common_fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_Free (&polygon.Clipped);
-@@ -1777,7 +1788,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1783,7 +1794,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
    /* XXX: This isn't strictly correct, as I've ignored the matrix
@@ -152,7 +152,7 @@ index 6312b8f..6384bfd 100644
    /* NB: last_modelview_matrix is transposed in memory! */
    reverse_layers = (last_modelview_matrix[2][2] < 0);
  
-@@ -1941,6 +1952,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1947,6 +1958,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    Coord new_x, new_y;
    Coord min_depth;
    Coord max_depth;
@@ -165,7 +165,7 @@ index 6312b8f..6384bfd 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -1968,20 +1985,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1974,20 +1991,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -241,7 +241,7 @@ index 6312b8f..6384bfd 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -1990,7 +2052,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1996,7 +2058,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -250,7 +250,7 @@ index 6312b8f..6384bfd 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -2002,58 +2064,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2008,58 +2070,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -349,7 +349,7 @@ index 6312b8f..6384bfd 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2442,10 +2519,10 @@ ghid_finish_debug_draw (void)
+@@ -2448,10 +2525,10 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
@@ -363,7 +363,7 @@ index 6312b8f..6384bfd 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2473,9 +2550,9 @@ determinant_4x4 (float m[4][4])
+@@ -2479,9 +2556,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -375,7 +375,7 @@ index 6312b8f..6384bfd 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2540,96 +2617,157 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2546,96 +2623,157 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
