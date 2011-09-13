@@ -1,5 +1,5 @@
 Bottom: f2fc7a68a254719d930025afda3314217492edee
-Top:    373318c5562d8d193db0aed1a58b060956900e61
+Top:    1bebf376438500f10ecffb619322820c989931a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-13 19:21:42 +0100
 
@@ -11587,28 +11587,39 @@ index c2529d0..1a34ccc 100644
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
 diff --git a/src/hid/common/hidgl_shaders.c b/src/hid/common/hidgl_shaders.c
-index 8609afe..005d6f2 100644
+index 8609afe..209dc7c 100644
 --- a/src/hid/common/hidgl_shaders.c
 +++ b/src/hid/common/hidgl_shaders.c
-@@ -29,20 +29,52 @@
+@@ -29,20 +29,60 @@
  #include <string.h>
  #include <stdio.h>
  
-+#ifdef WIN32
-+#   include <GL/gl.h>
-+#   include <GL/glu.h>
-+#   include "glext.h"
-+#else
- /* The Linux OpenGL ABI 1.0 spec requires that we define
-  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-  * in order to get prototypes:
-  *   http://www.opengl.org/registry/ABI/
-  */
+-/* The Linux OpenGL ABI 1.0 spec requires that we define
+- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+- * in order to get prototypes:
+- *   http://www.opengl.org/registry/ABI/
+- */
 -#define GL_GLEXT_PROTOTYPES 1
 -#include <GL/gl.h>
 -#include <GL/glu.h>
++#ifndef WIN32
++    /* The Linux OpenGL ABI 1.0 spec requires that we define
++     * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
++     * in order to get prototypes:
++     *   http://www.opengl.org/registry/ABI/
++     */
 +#   define GL_GLEXT_PROTOTYPES 1
++#endif
++
++#ifdef HAVE_OPENGL_GL_H
++#   include <OpenGL/gl.h>
++#else
 +#   include <GL/gl.h>
++#endif
++
++#ifdef HAVE_OPENGL_GLU_H
++#   include <OpenGL/glu.h>
++#else
 +#   include <GL/glu.h>
 +#endif
 +
@@ -11619,6 +11630,8 @@ index 8609afe..005d6f2 100644
  #endif
  
 +#ifdef WIN32
++#   include "glext.h"
++
 +extern PFNGLGENBUFFERSPROC         glGenBuffers;
 +extern PFNGLDELETEBUFFERSPROC      glDeleteBuffers;
 +extern PFNGLBINDBUFFERPROC         glBindBuffer;
