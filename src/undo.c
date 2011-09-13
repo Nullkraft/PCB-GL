@@ -961,6 +961,7 @@ Undo (bool draw)
   UndoListTypePtr ptr;
   int Types = 0;
   int unique;
+  printf("undo: %d\n", draw);
 
   unique = TEST_FLAG (UNIQUENAMEFLAG, PCB);
   CLEAR_FLAG (UNIQUENAMEFLAG, PCB);
@@ -1126,6 +1127,8 @@ Redo (bool draw)
   UndoListTypePtr ptr;
   int Types = 0;
 
+  printf("redo: %d\n", draw);
+
   andDraw = draw;
   do
     {
@@ -1162,6 +1165,7 @@ void
 RestoreUndoSerialNumber (void)
 {
   Serial = SavedSerial;
+  printf("restore undo to %d\n", Serial);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1172,6 +1176,7 @@ SaveUndoSerialNumber (void)
 {
   Bumped = false;
   SavedSerial = Serial;
+  printf("save undo to %d\n", Serial);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1185,12 +1190,15 @@ IncrementUndoSerialNumber (void)
   if (!Locked)
     {
       /* don't increment if nothing was added */
-      if (UndoN == 0 || UndoList[UndoN - 1].Serial != Serial)
+      if (UndoN == 0 || UndoList[UndoN - 1].Serial != Serial) {
+        printf ("BAM\n");
 	return;
+      }
       Serial++;
       Bumped = true;
       SetChangedFlag (true);
     }
+  printf("increment undo locked=%d bump=%d\n", Locked, Serial);
 }
 
 /* ---------------------------------------------------------------------------
