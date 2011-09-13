@@ -1,5 +1,5 @@
 Bottom: 92ee129950dce65fd2af21095d18fe348778b89d
-Top:    ab7efa7b77344fd4a5c2e24144efe664d766d220
+Top:    a1128f73ba0d132d8036089132fa39683b3f4505
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-13 19:21:39 +0100
 
@@ -744,10 +744,10 @@ index 9a035d1..31d28e8 100644
  void hidgl_init (void);
 diff --git a/src/hid/common/hidgl_shaders.c b/src/hid/common/hidgl_shaders.c
 new file mode 100644
-index 0000000..8609afe
+index 0000000..fcf8c26
 --- /dev/null
 +++ b/src/hid/common/hidgl_shaders.c
-@@ -0,0 +1,165 @@
+@@ -0,0 +1,178 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -779,14 +779,27 @@ index 0000000..8609afe
 +#include <string.h>
 +#include <stdio.h>
 +
-+/* The Linux OpenGL ABI 1.0 spec requires that we define
-+ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-+ * in order to get prototypes:
-+ *   http://www.opengl.org/registry/ABI/
-+ */
-+#define GL_GLEXT_PROTOTYPES 1
-+#include <GL/gl.h>
-+#include <GL/glu.h>
++#ifndef WIN32
++    /* The Linux OpenGL ABI 1.0 spec requires that we define
++     * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
++     * in order to get prototypes:
++     *   http://www.opengl.org/registry/ABI/
++     */
++#   define GL_GLEXT_PROTOTYPES 1
++#endif
++
++#ifdef HAVE_OPENGL_GL_H
++#   include <OpenGL/gl.h>
++#else
++#   include <GL/gl.h>
++#endif
++
++#ifdef HAVE_OPENGL_GLU_H
++#   include <OpenGL/glu.h>
++#else
++#   include <GL/glu.h>
++#endif
++
 +#include "hidgl_shaders.h"
 +
 +#ifdef HAVE_LIBDMALLOC
