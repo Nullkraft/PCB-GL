@@ -1,7 +1,7 @@
-Bottom: 1afaa15a83c0abe89473723afc654fdbc14830d4
-Top:    0b206db087539b0904c3551008c6a4b7739ab505
+Bottom: cbbde4f3b922fd85a4aef27706fabf0a88fd029e
+Top:    22654ec28dbe78fc314164485e58d77551906601
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-12 17:01:47 +0100
+Date:   2011-09-13 01:29:46 +0100
 
 Major re-write to drawing routines
 
@@ -76,7 +76,7 @@ index cec3a16..f6dc31f 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9b42f0f..6092a93 100644
+index 645e122..a4aeb1f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -221,7 +221,7 @@ index 9b42f0f..6092a93 100644
  }
  
  static void
-@@ -971,6 +990,10 @@ ghid_start_drawing (GHidPort *port)
+@@ -936,6 +955,10 @@ ghid_start_drawing (GHidPort *port)
  
    port->render_priv->in_context = true;
  
@@ -232,7 +232,7 @@ index 9b42f0f..6092a93 100644
    return TRUE;
  }
  
-@@ -989,6 +1012,14 @@ ghid_end_drawing (GHidPort *port)
+@@ -954,6 +977,14 @@ ghid_end_drawing (GHidPort *port)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
@@ -247,7 +247,7 @@ index 9b42f0f..6092a93 100644
  }
  
  void
-@@ -996,6 +1027,854 @@ ghid_screen_update (void)
+@@ -961,6 +992,854 @@ ghid_screen_update (void)
  {
  }
  
@@ -1102,7 +1102,7 @@ index 9b42f0f..6092a93 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1066,8 +1945,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1031,8 +1910,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1113,7 +1113,7 @@ index 9b42f0f..6092a93 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1133,18 +2012,50 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1098,18 +1977,50 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  

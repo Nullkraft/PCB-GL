@@ -1,7 +1,7 @@
-Bottom: f8ccb4b1b1ce7a0829f562917be2783f69147a0c
-Top:    51ac903b362b27f0a1d90b1a2f97e4e7f2e8b88c
+Bottom: 36f129738b46e1af25f94f9fede5e143537b24d2
+Top:    4455213bd3c1bc777f61b30f94d484a0fdfd50db
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-12 17:01:46 +0100
+Date:   2011-09-13 01:29:44 +0100
 
 Shiny 3D eye-candy
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0938cf2..9b42f0f 100644
+index f7c2a11..645e122 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -88,6 +88,79 @@ static void draw_lead_user (render_priv *priv);
@@ -113,7 +113,7 @@ index 0938cf2..9b42f0f 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -781,7 +858,7 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -775,7 +852,7 @@ ghid_show_crosshair (gboolean paint_new_location)
      }
    x = gport->crosshair_x;
    y = gport->crosshair_y;
@@ -122,7 +122,7 @@ index 0938cf2..9b42f0f 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -1070,6 +1147,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1035,6 +1112,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -132,7 +132,7 @@ index 0938cf2..9b42f0f 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1546,7 +1626,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -1511,7 +1591,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
@@ -141,7 +141,7 @@ index 0938cf2..9b42f0f 100644
  
    return true;
  }
-@@ -1562,11 +1642,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1527,11 +1607,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  
    *event_x = (last_modelview_matrix[0][0] * (float)pcb_x +
                last_modelview_matrix[1][0] * (float)pcb_y +
