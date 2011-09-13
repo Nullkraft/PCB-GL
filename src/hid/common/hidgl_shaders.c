@@ -29,18 +29,24 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef WIN32
-#   include <GL/gl.h>
-#   include <GL/glu.h>
-#   include "glext.h"
-#else
-/* The Linux OpenGL ABI 1.0 spec requires that we define
- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
- * in order to get prototypes:
- *   http://www.opengl.org/registry/ABI/
- */
+#ifndef WIN32
+    /* The Linux OpenGL ABI 1.0 spec requires that we define
+     * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+     * in order to get prototypes:
+     *   http://www.opengl.org/registry/ABI/
+     */
 #   define GL_GLEXT_PROTOTYPES 1
+#endif
+
+#ifdef HAVE_OPENGL_GL_H
+#   include <OpenGL/gl.h>
+#else
 #   include <GL/gl.h>
+#endif
+
+#ifdef HAVE_OPENGL_GLU_H
+#   include <OpenGL/glu.h>
+#else
 #   include <GL/glu.h>
 #endif
 
@@ -51,6 +57,8 @@
 #endif
 
 #ifdef WIN32
+#   include "glext.h"
+
 extern PFNGLGENBUFFERSPROC         glGenBuffers;
 extern PFNGLDELETEBUFFERSPROC      glDeleteBuffers;
 extern PFNGLBINDBUFFERPROC         glBindBuffer;
