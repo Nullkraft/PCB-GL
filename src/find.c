@@ -3534,7 +3534,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
           drc = false;
           Bloat = -PCB->Shrink;
           TheFlag = SELECTEDFLAG;
-          RestoreUndoSerialNumber ();
+//          RestoreUndoSerialNumber ();
           ListStart (What, ptr1, ptr2, ptr3);
           DoIt (true, true);
           DumpList ();
@@ -3588,7 +3588,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       User = true;
       drc = false;
       Bloat = 0;
-      RestoreUndoSerialNumber ();
+//      RestoreUndoSerialNumber ();
       TheFlag = SELECTEDFLAG;
       ListStart (What, ptr1, ptr2, ptr3);
       DoIt (true, true);
