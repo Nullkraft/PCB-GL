@@ -224,6 +224,8 @@ static void GotoError (void);
 static void
 append_drc_violation (DrcViolationType *violation)
 {
+  printf ("append drc violation ------\n");
+#if 1
   if (gui->drc_gui != NULL)
     {
       gui->drc_gui->append_drc_violation (violation);
@@ -235,7 +237,7 @@ append_drc_violation (DrcViolationType *violation)
       append_drc_dialog_message (_("%m+near %$mD\n"),
                                  Settings.grid_unit->allow,
                                  violation->x, violation->y);
-      GotoError ();
+//      GotoError ();
     }
 
   if (gui->drc_gui == NULL || gui->drc_gui->log_drc_violations )
@@ -245,6 +247,8 @@ append_drc_violation (DrcViolationType *violation)
                Settings.grid_unit->allow,
                violation->x, violation->y);
     }
+#endif
+  printf ("append drc violation ------\n");
 }
 /*
  * message when asked about continuing DRC checks after next 
@@ -267,8 +271,9 @@ throw_drc_dialog(void)
     {
       /* Fallback to formatting the violation message as text */
       append_drc_dialog_message (DRC_CONTINUE);
-      r = gui->confirm_dialog (drc_dialog_message->str, DRC_CANCEL, DRC_NEXT);
+//      r = gui->confirm_dialog (drc_dialog_message->str, DRC_CANCEL, DRC_NEXT);
       reset_drc_dialog_message();
+      r = 1;
     }
   return r;
 }
