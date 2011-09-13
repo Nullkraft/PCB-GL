@@ -1,51 +1,11 @@
-Bottom: 37e2b98c2e56efc8f06fa69403c752bcc9f2ba11
-Top:    dca739522f4f823f7b4bb8139c7269490be73b1a
+Bottom: 42326e4116d5bed0ae088b5cc7587d93bd9ca1d1
+Top:    42326e4116d5bed0ae088b5cc7587d93bd9ca1d1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-12 17:01:52 +0100
+Date:   2011-09-13 19:18:29 +0100
 
 PCB+GL: Fix GL headers for Win32
 
 
 ---
 
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index b92c68e..835ee44 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -32,14 +32,21 @@
- #include <math.h>
- #include <assert.h>
- 
--/* The Linux OpenGL ABI 1.0 spec requires that we define
-- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-- * in order to get prototypes:
-- *   http://www.opengl.org/registry/ABI/
-- */
--#define GL_GLEXT_PROTOTYPES 1
--#include <GL/gl.h>
--#include <GL/glu.h>
-+#ifdef WIN32
-+#   define WIN32_LEAN_AND_MEAN 1
-+#   include <windows.h>
-+#   include <GL/gl.h>
-+#   include <GL/glu.h>
-+#else
-+    /* The Linux OpenGL ABI 1.0 spec requires that we define
-+     * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-+     * in order to get prototypes:
-+     *   http://www.opengl.org/registry/ABI/
-+     */
-+#   define GL_GLEXT_PROTOTYPES 1
-+#   include <GL/gl.h>
-+#   include <GL/glu.h>
-+#endif
- 
- #include "action.h"
- #include "crosshair.h"
-@@ -58,7 +65,6 @@
- #include <dmalloc.h>
- #endif
- 
--
- triangle_buffer buffer;
- float global_depth = 0;
+
