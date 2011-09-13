@@ -1,0 +1,56 @@
+Bottom: 19abe9467cc29ad334fda351bb5e35e81c1aaf74
+Top:    0a774d94b2dd49defb046e47a870381f3c33a372
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-13 18:11:47 +0100
+
+Refresh of remove-the-m4-directory-from-t
+
+---
+
+diff --git a/.gitignore b/.gitignore
+index 57f69fe..41f5aa1 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -3,7 +3,6 @@ Makefile.in
+ *.cache
+ /config.*
+ /configure
+-/m4
+ /aclocal.m4
+ ABOUT-NLS
+ /intl
+diff --git a/m4/.gitignore b/m4/.gitignore
+new file mode 100644
+index 0000000..7bba957
+--- /dev/null
++++ b/m4/.gitignore
+@@ -0,0 +1,29 @@
++codeset.m4
++gettext.m4
++glibc21.m4
++iconv.m4
++intdiv0.m4
++intmax.m4
++inttypes_h.m4
++inttypes.m4
++inttypes-pri.m4
++isc-posix.m4
++lcmessage.m4
++lib-ld.m4
++lib-link.m4
++lib-prefix.m4
++longdouble.m4
++longlong.m4
++m4_ax_func_mkdir.m4
++nls.m4
++po.m4
++printf-posix.m4
++progtest.m4
++signed.m4
++size_max.m4
++stdint_h.m4
++uintmax_t.m4
++ulonglong.m4
++wchar_t.m4
++wint_t.m4
++xsize.m4
