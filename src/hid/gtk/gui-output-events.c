@@ -52,7 +52,6 @@
 
 #define TOOLTIP_UPDATE_DELAY 200
 
-static gint x_pan_speed, y_pan_speed;
 void
 ghid_port_ranges_changed (void)
 {
@@ -607,8 +606,6 @@ gint
 ghid_port_window_leave_cb (GtkWidget * widget, 
                            GdkEventCrossing * ev, GHidPort * out)
 {
-  Coord x0, y0, x, y, dx, dy, w, h;
-  
   /* printf("leave mode: %d detail: %d\n", ev->mode, ev->detail); */
 
   /* Window leave events can also be triggered because of focus grabs. Some

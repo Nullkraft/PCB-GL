@@ -1017,9 +1017,6 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
   prev = Crosshair.shape;
 }
 
-#define VCW 16
-#define VCD 8
-
 static void
 show_crosshair (gboolean paint_new_location)
 {

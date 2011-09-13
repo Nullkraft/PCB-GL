@@ -737,15 +737,10 @@ draw_crosshair (gint x, gint y, gint z)
   prev = Crosshair.shape;
 }
 
-#define VCW 16 /* Crosshair pan-marker width in pixels */
-#define VCD 8  /* Crosshair pan-marker depth in pixels */
-
 void
 ghid_show_crosshair (gboolean paint_new_location)
 {
   gint x, y, z;
-  int vcw = VCW * gport->view.coord_per_px;
-  int vcd = VCD * gport->view.coord_per_px;
   static int done_once = 0;
   static GdkColor cross_color;
 
