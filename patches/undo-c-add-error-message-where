@@ -1,5 +1,5 @@
 Bottom: d584b4b1c2416f18c5564bd31225cba9138d84a9
-Top:    3edded9a42dad188c814b8a3227a45eeaf5d17a1
+Top:    fb19f003dc1f917d4ad2e32c9b2db10378e75042
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-14 23:27:45 +0100
 
@@ -21,41 +21,53 @@ call which temporarily disables IncrementUndoSerialNumber(), and a
 ---
 
 diff --git a/src/undo.c b/src/undo.c
-index 7832600..38fd1bd 100644
+index 7832600..17bebb9 100644
 --- a/src/undo.c
 +++ b/src/undo.c
-@@ -76,6 +76,8 @@
+@@ -76,6 +76,9 @@
  
  RCSID ("$Id$");
  
-+static bool added_undo_whilst_bumped = false;
++static bool between_increment_and_restore = false;
++static bool added_undo_between_increment_and_restore = false;
 +
  /* ---------------------------------------------------------------------------
   * some local data types
   */
-@@ -254,6 +256,9 @@ GetUndoSlot (int CommandType, int ID, int Kind)
+@@ -254,6 +257,9 @@ GetUndoSlot (int CommandType, int ID, int Kind)
  	break;
        }
  
-+  if (Bumped)
-+    added_undo_whilst_bumped = true;
++  if (between_increment_and_restore)
++    added_undo_between_increment_and_restore = true;
 +
    /* copy typefield and serial number to the list */
    ptr = &UndoList[UndoN++];
    ptr->Type = CommandType;
-@@ -1177,6 +1182,8 @@ Redo (bool draw)
+@@ -1177,6 +1183,10 @@ Redo (bool draw)
  void
  RestoreUndoSerialNumber (void)
  {
-+  if (added_undo_whilst_bumped)
++  if (added_undo_between_increment_and_restore)
 +    Message (_("ERROR: Operations were added to the Undo stack with an incorrect serial number\n"));
++  between_increment_and_restore = false;
++  added_undo_between_increment_and_restore = false;
    Serial = SavedSerial;
  }
  
-@@ -1187,6 +1194,7 @@ void
+@@ -1187,6 +1197,8 @@ void
  SaveUndoSerialNumber (void)
  {
    Bumped = false;
-+  added_undo_whilst_bumped = false;
++  between_increment_and_restore = false;
++  added_undo_between_increment_and_restore = false;
    SavedSerial = Serial;
+ }
+ 
+@@ -1205,6 +1217,7 @@ IncrementUndoSerialNumber (void)
+         SetChangedFlag (true);
+       Serial++;
+       Bumped = true;
++      between_increment_and_restore = true;
+     }
  }
