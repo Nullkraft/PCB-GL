@@ -260,6 +260,7 @@ GetUndoSlot (int CommandType, int ID, int Kind)
   ptr->Kind = Kind;
   ptr->ID = ID;
   ptr->Serial = Serial;
+  printf ("Got undo slot - new UndoN is %li, serial is %i\n", UndoN, Serial);
   return (ptr);
 }
 
@@ -537,8 +538,10 @@ UndoFlag (UndoListTypePtr Entry)
       FlagType f1, f2;
       PinTypePtr pin = (PinTypePtr) ptr2;
 
-      if (TEST_FLAG (LOCKFLAG, pin))
+      if (TEST_FLAG (LOCKFLAG, pin)) {
+        printf ("OBJECT IS LOCKED.. FAIL\n");
 	return (false);
+      }
 
       swap = pin->Flags;
 
@@ -961,7 +964,7 @@ Undo (bool draw)
   UndoListTypePtr ptr;
   int Types = 0;
   int unique;
-  printf("undo: %d\n", draw);
+  printf("undo: %d - current serial is %i, UndoN is %li\n", draw, Serial, UndoN);
 
   unique = TEST_FLAG (UNIQUENAMEFLAG, PCB);
   CLEAR_FLAG (UNIQUENAMEFLAG, PCB);
@@ -972,6 +975,7 @@ Undo (bool draw)
     {
       if (!UndoN)
 	{
+          printf ("FOOBAR\n");
 	  if (!Serial)
 	    Message (_("Nothing to undo - buffer is empty\n"));
 	  else
@@ -985,6 +989,7 @@ Undo (bool draw)
       ptr = &UndoList[UndoN - 1];
       if (ptr->Serial != Serial - 1)
 	{
+          printf ("******************************************\n");
 	  Message (_("Undo bad serial number %d expecting %d\n"),
 		   ptr->Serial, Serial - 1);
 	  Serial = ptr->Serial + 1;
@@ -1112,7 +1117,11 @@ PerformUndo (UndoListTypePtr ptr)
       if (UndoMirror (ptr))
 	return (UNDO_MIRROR);
       break;
+
+    default:
+      printf ("WTF - unhandled undo case: %i\n", ptr->Type);
     }
+  printf ("OK - some undo failed -> FAIL\n");
   return 0;
 }
 
