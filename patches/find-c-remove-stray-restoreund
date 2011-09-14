@@ -1,0 +1,21 @@
+Bottom: 5955592b21d684213b510d83627ae9ac35cd5ec7
+Top:    5955592b21d684213b510d83627ae9ac35cd5ec7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-14 23:02:02 +0100
+
+find.c: Remove stray RestoreUndoSerialNumber() calls
+
+These will cause havoc with the undo system, as we don't actually
+save a serial number to restore to.
+
+Until a commit efd212c1deb264e9a7f2be17e9338fbb60e22cc0 we were
+saving a serial number at the start of each "ResetConnections (true);"
+call, and it would have been that serial number which got restored.
+
+With this and some other fixes to the undo system, these restores
+are no longer required.
+
+
+---
+
+
