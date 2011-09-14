@@ -1184,6 +1184,7 @@ RestoreUndoSerialNumber (void)
 {
   if (added_undo_whilst_bumped)
     Message (_("ERROR: Operations were added to the Undo stack with an incorrect serial number\n"));
+  added_undo_whilst_bumped = false;
   Serial = SavedSerial;
 }
 
