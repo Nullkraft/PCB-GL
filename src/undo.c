@@ -1200,14 +1200,11 @@ IncrementUndoSerialNumber (void)
 {
   if (!Locked)
     {
-#if 0
-      /* don't increment if nothing was added */
-      if (UndoN == 0 || UndoList[UndoN - 1].Serial != Serial)
-	return;
-#endif
+      /* Set the changed flag if anything was added prior to this bump */
+      if (UndoN > 0 && UndoList[UndoN - 1].Serial == Serial)
+        SetChangedFlag (true);
       Serial++;
       Bumped = true;
-      SetChangedFlag (true);
     }
 }
 
