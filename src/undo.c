@@ -266,6 +266,7 @@ GetUndoSlot (int CommandType, int ID, int Kind)
   ptr->Kind = Kind;
   ptr->ID = ID;
   ptr->Serial = Serial;
+  printf ("Got undo slot - new UndoN is %li, serial is %i\n", UndoN, Serial);
   return (ptr);
 }
 
@@ -940,6 +941,8 @@ Undo (bool draw)
   int unique;
   bool error_undoing = false;
 
+  printf("undo: %d - current serial is %i, UndoN is %li\n", draw, Serial, UndoN);
+
   unique = TEST_FLAG (UNIQUENAMEFLAG, PCB);
   CLEAR_FLAG (UNIQUENAMEFLAG, PCB);
 
@@ -1109,7 +1112,11 @@ PerformUndo (UndoListTypePtr ptr)
       if (UndoMirror (ptr))
 	return (UNDO_MIRROR);
       break;
+
+    default:
+      printf ("WTF - unhandled undo case: %i\n", ptr->Type);
     }
+  printf ("OK - some undo failed -> FAIL\n");
   return 0;
 }
 
@@ -1124,6 +1131,8 @@ Redo (bool draw)
   UndoListTypePtr ptr;
   int Types = 0;
   bool error_undoing = false;
+
+  printf("redo: %d\n", draw);
 
   andDraw = draw;
 
@@ -1188,6 +1197,7 @@ RestoreUndoSerialNumber (void)
   between_increment_and_restore = false;
   added_undo_between_increment_and_restore = false;
   Serial = SavedSerial;
+  printf("restore undo to %d\n", Serial);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1200,6 +1210,7 @@ SaveUndoSerialNumber (void)
   between_increment_and_restore = false;
   added_undo_between_increment_and_restore = false;
   SavedSerial = Serial;
+  printf("save undo to %d\n", Serial);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1215,10 +1226,13 @@ IncrementUndoSerialNumber (void)
       /* Set the changed flag if anything was added prior to this bump */
       if (UndoN > 0 && UndoList[UndoN - 1].Serial == Serial)
         SetChangedFlag (true);
+      else
+        printf ("INFO: IncrementUndoSerialNumber without any changes\n");
       Serial++;
       Bumped = true;
       between_increment_and_restore = true;
     }
+  printf("increment undo locked=%d bump=%d\n", Locked, Serial);
 }
 
 /* ---------------------------------------------------------------------------
