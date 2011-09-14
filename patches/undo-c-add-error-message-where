@@ -17,6 +17,10 @@ An better alternative might be to implement a "LockUndoSerialNumber()"
 call which temporarily disables IncrementUndoSerialNumber(), and a
 "UnlockUndoSerialNumber()" call which re-enables its increment function.
 
+Better yet - we could make these functions nestable, so we need not
+worry whether some action uses this new feature internally when we are
+also using it.
+
 
 ---
 
