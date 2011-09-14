@@ -1,7 +1,7 @@
-Bottom: 09fa862d8c12899825303243076d24d3b121a4e5
-Top:    051731289aa2e8effd42519a54b8e135c0bff4b2
+Bottom: 27d628b613db49b958d4ec1735eab8ef193802a9
+Top:    b86e6c70f22bda40845324d9f6ee4d875419e257
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-14 08:51:26 +0100
+Date:   2011-09-14 08:57:40 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -534,10 +534,10 @@ index d927cf8..bc137ea 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index deb9e65..c244cd7 100644
+index a06dde1..d46fdbf 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1207,7 +1207,7 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
+@@ -1203,7 +1203,7 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
@@ -546,7 +546,7 @@ index deb9e65..c244cd7 100644
    FontTypePtr font = &PCB->Font;
  
    while (string && *string)
-@@ -1215,11 +1215,12 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
+@@ -1211,11 +1211,12 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
        /* draw lines if symbol is valid and data is present */
        if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
  	{
@@ -832,7 +832,7 @@ index 96c9cc9..9c3ad0b 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 4383ee5..833b5f7 100644
+index 2fa4aa3..2995e03 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -935,6 +935,7 @@ static void
