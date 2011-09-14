@@ -1,5 +1,5 @@
 Bottom: 21e3769952adca5e2d8d62c6bc3a716f85cc9fc2
-Top:    db3613ef4dc88fb89276af6618dfb4960d2897c5
+Top:    d899c851f79c918fd38353f03a10579aa99e9dd6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-14 21:58:28 +0100
 
@@ -25,7 +25,7 @@ Closes-bug: lp-xxxxxx (bdale's DRC corruption bug)
 ---
 
 diff --git a/src/undo.c b/src/undo.c
-index fe3a6c7..7580310 100644
+index fe3a6c7..c20d78f 100644
 --- a/src/undo.c
 +++ b/src/undo.c
 @@ -932,50 +932,71 @@ Undo (bool draw)
@@ -206,15 +206,18 @@ index fe3a6c7..7580310 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1155,9 +1200,11 @@ IncrementUndoSerialNumber (void)
+@@ -1155,12 +1200,11 @@ IncrementUndoSerialNumber (void)
  {
    if (!Locked)
      {
-+#if 0
-       /* don't increment if nothing was added */
-       if (UndoN == 0 || UndoList[UndoN - 1].Serial != Serial)
- 	return;
-+#endif
+-      /* don't increment if nothing was added */
+-      if (UndoN == 0 || UndoList[UndoN - 1].Serial != Serial)
+-	return;
++      /* Set the changed flag if anything was added prior to this bump */
++      if (UndoN > 0 && UndoList[UndoN - 1].Serial == Serial)
++        SetChangedFlag (true);
        Serial++;
        Bumped = true;
-       SetChangedFlag (true);
+-      SetChangedFlag (true);
+     }
+ }
