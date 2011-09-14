@@ -76,7 +76,8 @@
 
 RCSID ("$Id$");
 
-static bool added_undo_whilst_bumped = false;
+static bool between_increment_and_restore = false;
+static bool added_undo_between_increment_and_restore = false;
 
 /* ---------------------------------------------------------------------------
  * some local data types
@@ -256,8 +257,8 @@ GetUndoSlot (int CommandType, int ID, int Kind)
 	break;
       }
 
-  if (Bumped)
-    added_undo_whilst_bumped = true;
+  if (between_increment_and_restore)
+    added_undo_between_increment_and_restore = true;
 
   /* copy typefield and serial number to the list */
   ptr = &UndoList[UndoN++];
@@ -1182,8 +1183,10 @@ Redo (bool draw)
 void
 RestoreUndoSerialNumber (void)
 {
-  if (added_undo_whilst_bumped)
+  if (added_undo_between_increment_and_restore)
     Message (_("ERROR: Operations were added to the Undo stack with an incorrect serial number\n"));
+  between_increment_and_restore = false;
+  added_undo_between_increment_and_restore = false;
   Serial = SavedSerial;
 }
 
@@ -1194,7 +1197,8 @@ void
 SaveUndoSerialNumber (void)
 {
   Bumped = false;
-  added_undo_whilst_bumped = false;
+  between_increment_and_restore = false;
+  added_undo_between_increment_and_restore = false;
   SavedSerial = Serial;
 }
 
@@ -1213,6 +1217,7 @@ IncrementUndoSerialNumber (void)
         SetChangedFlag (true);
       Serial++;
       Bumped = true;
+      between_increment_and_restore = true;
     }
 }
 
