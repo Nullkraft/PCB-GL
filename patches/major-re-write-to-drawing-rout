@@ -1,5 +1,5 @@
-Bottom: 8926bf538577c68e5e515d7c489e0a17548681b9
-Top:    38b33da636bf134fee48382c7b83539c40337f87
+Bottom: 92582deae40668ae104514c21bfda3bf4c1a018f
+Top:    810b7888ad0d465d9c9c55512917401f9c602d6d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-13 19:18:24 +0100
 
@@ -23,7 +23,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 99f20a9..c0fcbf1 100644
+index b5dafe3..9e9bdbe 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -84,8 +84,8 @@ static bool doing_assy = false;
@@ -37,7 +37,7 @@ index 99f20a9..c0fcbf1 100644
  
  
  /*---------------------------------------------------------------------------
-@@ -548,7 +548,7 @@ DrawEverything (const BoxType *drawn_area)
+@@ -455,7 +455,7 @@ DrawEverything (const BoxType *drawn_area)
      }
  }
  
@@ -46,7 +46,7 @@ index 99f20a9..c0fcbf1 100644
  DrawEMark (ElementTypePtr e, Coord X, Coord Y, bool invisible)
  {
    Coord mark_size = EMARK_SIZE;
-@@ -719,7 +719,7 @@ DrawPaste (int side, const BoxType *drawn_area)
+@@ -626,7 +626,7 @@ DrawPaste (int side, const BoxType *drawn_area)
    ENDALL_LOOP;
  }
  
