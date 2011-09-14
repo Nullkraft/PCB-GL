@@ -1,5 +1,5 @@
 Bottom: 27d628b613db49b958d4ec1735eab8ef193802a9
-Top:    fe0d260a5327d2e63f8d3b1d0f184af042125e66
+Top:    54454f9e327621906b6b9f55b476e4f4e45885f1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-14 08:52:45 +0100
 
@@ -22,7 +22,7 @@ index 7adb424..0f72bd2 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index a06dde1..99f20a9 100644
+index a06dde1..b5dafe3 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -41,6 +41,7 @@
@@ -92,7 +92,8 @@ index a06dde1..99f20a9 100644
  
  static void
 -_draw_pv_name (PinType *pv)
--{
++set_pv_color (PinType *pv, int type)
+ {
 -  BoxType box;
 -  bool vert;
 -  TextType text;
@@ -159,8 +160,7 @@ index a06dde1..99f20a9 100644
 -
 -static void
 -draw_via (PinTypePtr via, bool draw_hole)
-+set_pv_color (PinType *pv, int type)
- {
+-{
 -  SetPVColor (via, VIA_TYPE);
 -  _draw_pv (via, draw_hole);
 -}
@@ -306,20 +306,100 @@ index a06dde1..99f20a9 100644
    }
    END_LOOP;
  }
-@@ -397,6 +228,7 @@ EMark_callback (const BoxType * b, void *cl)
+@@ -397,165 +228,15 @@ EMark_callback (const BoxType * b, void *cl)
  }
  
  static int
-+<<<<<<< current
- hole_callback (const BoxType * b, void *cl)
- {
-   PinTypePtr pv = (PinTypePtr) b;
-@@ -487,75 +319,17 @@ line_callback (const BoxType * b, void *cl)
- }
- 
- static int
-+=======
-+>>>>>>> patched
+-hole_callback (const BoxType * b, void *cl)
+-{
+-  PinTypePtr pv = (PinTypePtr) b;
+-  int plated = cl ? *(int *) cl : -1;
+-
+-  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
+-      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
+-    return 1;
+-
+-  if (TEST_FLAG (THINDRAWFLAG, PCB))
+-    {
+-      if (!TEST_FLAG (HOLEFLAG, pv))
+-        {
+-          gui->set_line_cap (Output.fgGC, Round_Cap);
+-          gui->set_line_width (Output.fgGC, 0);
+-          gui->draw_arc (Output.fgGC,
+-                         pv->X, pv->Y, pv->DrillingHole / 2,
+-                         pv->DrillingHole / 2, 0, 360);
+-        }
+-    }
+-  else
+-    gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
+-
+-  if (TEST_FLAG (HOLEFLAG, pv))
+-    {
+-      if (TEST_FLAG (WARNFLAG, pv))
+-        gui->set_color (Output.fgGC, PCB->WarnColor);
+-      else if (TEST_FLAG (SELECTEDFLAG, pv))
+-        gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
+-      else
+-        gui->set_color (Output.fgGC, Settings.BlackColor);
+-
+-      gui->set_line_cap (Output.fgGC, Round_Cap);
+-      gui->set_line_width (Output.fgGC, 0);
+-      gui->draw_arc (Output.fgGC,
+-                     pv->X, pv->Y, pv->DrillingHole / 2,
+-                     pv->DrillingHole / 2, 0, 360);
+-    }
+-  return 1;
+-}
+-
+-void
+-DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
+-{
+-  int plated = -1;
+-
+-  if ( draw_plated && !draw_unplated) plated = 1;
+-  if (!draw_plated &&  draw_unplated) plated = 0;
+-
+-  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
+-  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+-}
+-
+-static void
+-_draw_line (LineType *line)
+-{
+-  gui->set_line_cap (Output.fgGC, Trace_Cap);
+-  if (TEST_FLAG (THINDRAWFLAG, PCB))
+-    gui->set_line_width (Output.fgGC, 0);
+-  else
+-    gui->set_line_width (Output.fgGC, line->Thickness);
+-
+-  gui->draw_line (Output.fgGC,
+-		  line->Point1.X, line->Point1.Y,
+-		  line->Point2.X, line->Point2.Y);
+-}
+-
+-static void
+-draw_line (LayerType *layer, LineType *line)
+-{
+-  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
+-    {
+-      if (TEST_FLAG (SELECTEDFLAG, line))
+-        gui->set_color (Output.fgGC, layer->SelectedColor);
+-      else
+-        gui->set_color (Output.fgGC, PCB->ConnectedColor);
+-    }
+-  else
+-    gui->set_color (Output.fgGC, layer->Color);
+-  _draw_line (line);
+-}
+-
+-static int
+-line_callback (const BoxType * b, void *cl)
+-{
+-  draw_line ((LayerType *) cl, (LineType *) b);
+-  return 1;
+-}
+-
+-static int
  rat_callback (const BoxType * b, void *cl)
  {
    RatType *rat = (RatType *)b;
@@ -340,10 +420,7 @@ index a06dde1..99f20a9 100644
 -  if (TEST_FLAG(VIAFLAG, rat))
 -    {
 -      int w = rat->Thickness;
-+  if (TEST_FLAG (SELECTEDFLAG, rat))   gui->set_color (Output.fgGC, PCB->RatSelectedColor);
-+  else if (TEST_FLAG (FOUNDFLAG, rat)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-+  else                                 gui->set_color (Output.fgGC, PCB->RatColor);
- 
+-
 -      if (TEST_FLAG (THINDRAWFLAG, PCB))
 -        gui->set_line_width (Output.fgGC, 0);
 -      else
@@ -387,7 +464,10 @@ index a06dde1..99f20a9 100644
 -
 -  _draw_arc (arc);
 -}
--
++  if (TEST_FLAG (SELECTEDFLAG, rat))   gui->set_color (Output.fgGC, PCB->RatSelectedColor);
++  else if (TEST_FLAG (FOUNDFLAG, rat)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
++  else                                 gui->set_color (Output.fgGC, PCB->RatColor);
+ 
 -static int
 -arc_callback (const BoxType * b, void *cl)
 -{
@@ -396,7 +476,7 @@ index a06dde1..99f20a9 100644
    return 1;
  }
  
-@@ -575,12 +349,14 @@ draw_element_package (ElementType *element)
+@@ -575,12 +256,14 @@ draw_element_package (ElementType *element)
    /* draw lines, arcs, text and pins */
    ELEMENTLINE_LOOP (element);
    {
@@ -413,7 +493,7 @@ index a06dde1..99f20a9 100644
    }
    END_LOOP;
  }
-@@ -659,7 +435,7 @@ DrawEverything (const BoxType *drawn_area)
+@@ -659,7 +342,7 @@ DrawEverything (const BoxType *drawn_area)
  	{
  	  r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
  	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
@@ -422,7 +502,7 @@ index a06dde1..99f20a9 100644
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
        gui->end_layer ();
-@@ -682,20 +458,20 @@ DrawEverything (const BoxType *drawn_area)
+@@ -682,20 +365,20 @@ DrawEverything (const BoxType *drawn_area)
  
    /* Draw pins, pads, vias below silk */
    if (gui->gui)
@@ -446,7 +526,7 @@ index a06dde1..99f20a9 100644
            gui->end_layer ();
          }
      }
-@@ -815,110 +591,27 @@ DrawEMark (ElementTypePtr e, Coord X, Coord Y, bool invisible)
+@@ -815,110 +498,27 @@ DrawEMark (ElementTypePtr e, Coord X, Coord Y, bool invisible)
      }
  }
  
@@ -564,7 +644,7 @@ index a06dde1..99f20a9 100644
    return 1;
  }
  
-@@ -940,7 +633,7 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -940,7 +540,7 @@ DrawSilk (int side, const BoxType * drawn_area)
      {
        gui->use_mask (HID_MASK_BEFORE);
  #endif
@@ -573,7 +653,7 @@ index a06dde1..99f20a9 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -948,14 +641,14 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -948,14 +548,14 @@ DrawSilk (int side, const BoxType * drawn_area)
      }
  
    gui->use_mask (HID_MASK_CLEAR);
@@ -592,7 +672,7 @@ index a06dde1..99f20a9 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -998,9 +691,9 @@ DrawMask (int side, const BoxType *screen)
+@@ -998,9 +598,9 @@ DrawMask (int side, const BoxType *screen)
        gui->use_mask (HID_MASK_CLEAR);
      }
  
@@ -605,7 +685,7 @@ index a06dde1..99f20a9 100644
  
    if (thin)
      gui->set_color (Output.pmGC, "erase");
-@@ -1020,13 +713,8 @@ DrawPaste (int side, const BoxType *drawn_area)
+@@ -1020,13 +620,8 @@ DrawPaste (int side, const BoxType *drawn_area)
    gui->set_color (Output.fgGC, PCB->ElementColor);
    ALLPAD_LOOP (PCB->Data);
    {
@@ -621,7 +701,7 @@ index a06dde1..99f20a9 100644
    }
    ENDALL_LOOP;
  }
-@@ -1048,61 +736,6 @@ DrawRats (const BoxType *drawn_area)
+@@ -1048,61 +643,6 @@ DrawRats (const BoxType *drawn_area)
      gui->use_mask (HID_MASK_OFF);
  }
  
@@ -683,7 +763,7 @@ index a06dde1..99f20a9 100644
  /* ---------------------------------------------------------------------------
   * draws one layer group.  If the exporter is not a GUI,
   * also draws the pins / pads / vias in this layer group.
-@@ -1124,13 +757,13 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -1124,13 +664,13 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
            strcmp (Layer->Name, "route") == 0)
          rv = 0;
        if (layernum < max_copper_layer && Layer->On)
@@ -699,7 +779,7 @@ index a06dde1..99f20a9 100644
  }
  
  static void
-@@ -1195,6 +828,20 @@ GatherPadName (PadTypePtr Pad)
+@@ -1195,6 +735,20 @@ GatherPadName (PadTypePtr Pad)
    return;
  }
  
