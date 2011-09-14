@@ -1,0 +1,30 @@
+Bottom: db3613ef4dc88fb89276af6618dfb4960d2897c5
+Top:    d899c851f79c918fd38353f03a10579aa99e9dd6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-14 23:04:17 +0100
+
+Refresh of undo-c-handle-undo-failures-in
+
+---
+
+diff --git a/src/undo.c b/src/undo.c
+index 7580310..c20d78f 100644
+--- a/src/undo.c
++++ b/src/undo.c
+@@ -1200,14 +1200,11 @@ IncrementUndoSerialNumber (void)
+ {
+   if (!Locked)
+     {
+-#if 0
+-      /* don't increment if nothing was added */
+-      if (UndoN == 0 || UndoList[UndoN - 1].Serial != Serial)
+-	return;
+-#endif
++      /* Set the changed flag if anything was added prior to this bump */
++      if (UndoN > 0 && UndoList[UndoN - 1].Serial == Serial)
++        SetChangedFlag (true);
+       Serial++;
+       Bumped = true;
+-      SetChangedFlag (true);
+     }
+ }
