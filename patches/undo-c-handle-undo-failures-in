@@ -1,5 +1,5 @@
 Bottom: 21e3769952adca5e2d8d62c6bc3a716f85cc9fc2
-Top:    d899c851f79c918fd38353f03a10579aa99e9dd6
+Top:    1677cda502ea3d2ee6fe2e16e11cdc07dfa35bee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-14 21:58:28 +0100
 
@@ -25,7 +25,7 @@ Closes-bug: lp-xxxxxx (bdale's DRC corruption bug)
 ---
 
 diff --git a/src/undo.c b/src/undo.c
-index fe3a6c7..c20d78f 100644
+index fe3a6c7..7832600 100644
 --- a/src/undo.c
 +++ b/src/undo.c
 @@ -932,50 +932,71 @@ Undo (bool draw)
@@ -69,9 +69,9 @@ index fe3a6c7..c20d78f 100644
 -       * and loop over all entries with the same serial number
 +  if (ptr->Serial > Serial)
 +    {
-+      Messasge (_("ERROR: Bad undo serial number %d in undo stack - expecting %d or lower\n"
-+                  "       Please save your work and report this bug.\n"),
-+                prt->Serial, Serial);
++      Message (_("ERROR: Bad undo serial number %d in undo stack - expecting %d or lower\n"
++                 "       Please save your work and report this bug.\n"),
++               ptr->Serial, Serial);
 +
 +      /* It is likely that the serial number got corrupted through some bad
 +       * use of the SaveUndoSerialNumber() / RestoreUndoSerialNumber() APIs.
@@ -113,7 +113,7 @@ index fe3a6c7..c20d78f 100644
 +  UnlockUndo ();
 +
 +  if (error_undoing)
-+    Messasge (_("ERROR: Failed to undo some operations\n"));
++    Message (_("ERROR: Failed to undo some operations\n"));
 +
    if (Types && andDraw)
      Draw ();
@@ -156,9 +156,9 @@ index fe3a6c7..c20d78f 100644
 -       * and loop over all entries with the same serial number
 +  if (ptr->Serial < Serial)
 +    {
-+      Messasge (_("ERROR: Bad undo serial number %d in redo stack - expecting %d or higher\n"
-+                  "       Please save your work and report this bug.\n"),
-+                prt->Serial, Serial);
++      Message (_("ERROR: Bad undo serial number %d in redo stack - expecting %d or higher\n"
++                 "       Please save your work and report this bug.\n"),
++               ptr->Serial, Serial);
 +
 +      /* It is likely that the serial number got corrupted through some bad
 +       * use of the SaveUndoSerialNumber() / RestoreUndoSerialNumber() APIs.
@@ -196,7 +196,7 @@ index fe3a6c7..c20d78f 100644
 +  UnlockUndo ();
 +
 +  if (error_undoing)
-+    Messasge (_("ERROR: Failed to redo some operations\n"));
++    Message (_("ERROR: Failed to redo some operations\n"));
 +
    if (Types && andDraw)
      Draw ();
