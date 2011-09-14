@@ -13,6 +13,12 @@ where every sub-undo operation with that serial number fails.
 Remove the confusing do-loop which decrements the serial number in the
 failure case, and return some sensible error message instead.
 
+This patch also removes the code which looked like it was intended to
+loop over the undo stack until a serial number was found to operate on.
+It is advantageous for code like the DRC to be able to add increment
+the undo serial number, then safely perform an Undo - even if there were
+no changes logged in the undo system during the previous serial number.
+
 
 ---
 
