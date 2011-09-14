@@ -1,5 +1,5 @@
-Bottom: 27d628b613db49b958d4ec1735eab8ef193802a9
-Top:    4def70162dc07e26b63482e176ee22b7f48020fb
+Bottom: 09fa862d8c12899825303243076d24d3b121a4e5
+Top:    5955592b21d684213b510d83627ae9ac35cd5ec7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-14 21:40:27 +0100
 
@@ -9,7 +9,7 @@ gtk: Fix ghid_zoom_view_fit() to work when the board is flipped.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 2fa4aa3..488f971 100644
+index 4383ee5..e0cfbc9 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -128,9 +128,10 @@ ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
