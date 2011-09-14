@@ -1,0 +1,80 @@
+Bottom: 1677cda502ea3d2ee6fe2e16e11cdc07dfa35bee
+Top:    d565098d734c3971d119f42bfff0a5f96f78ea65
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-14 23:18:39 +0100
+
+Refresh of debug-undo-c
+
+---
+
+diff --git a/src/undo.c b/src/undo.c
+index 7832600..b7aaa1d 100644
+--- a/src/undo.c
++++ b/src/undo.c
+@@ -260,6 +260,7 @@ GetUndoSlot (int CommandType, int ID, int Kind)
+   ptr->Kind = Kind;
+   ptr->ID = ID;
+   ptr->Serial = Serial;
++  printf ("Got undo slot - new UndoN is %li, serial is %i\n", UndoN, Serial);
+   return (ptr);
+ }
+ 
+@@ -934,6 +935,8 @@ Undo (bool draw)
+   int unique;
+   bool error_undoing = false;
+ 
++  printf("undo: %d - current serial is %i, UndoN is %li\n", draw, Serial, UndoN);
++
+   unique = TEST_FLAG (UNIQUENAMEFLAG, PCB);
+   CLEAR_FLAG (UNIQUENAMEFLAG, PCB);
+ 
+@@ -1103,7 +1106,11 @@ PerformUndo (UndoListTypePtr ptr)
+       if (UndoMirror (ptr))
+ 	return (UNDO_MIRROR);
+       break;
++
++    default:
++      printf ("WTF - unhandled undo case: %i\n", ptr->Type);
+     }
++  printf ("OK - some undo failed -> FAIL\n");
+   return 0;
+ }
+ 
+@@ -1119,6 +1126,8 @@ Redo (bool draw)
+   int Types = 0;
+   bool error_undoing = false;
+ 
++  printf("redo: %d\n", draw);
++
+   andDraw = draw;
+ 
+   if (RedoN == 0)
+@@ -1178,6 +1187,7 @@ void
+ RestoreUndoSerialNumber (void)
+ {
+   Serial = SavedSerial;
++  printf("restore undo to %d\n", Serial);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1188,6 +1198,7 @@ SaveUndoSerialNumber (void)
+ {
+   Bumped = false;
+   SavedSerial = Serial;
++  printf("save undo to %d\n", Serial);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1203,9 +1214,12 @@ IncrementUndoSerialNumber (void)
+       /* Set the changed flag if anything was added prior to this bump */
+       if (UndoN > 0 && UndoList[UndoN - 1].Serial == Serial)
+         SetChangedFlag (true);
++      else
++        printf ("INFO: IncrementUndoSerialNumber without any changes\n");
+       Serial++;
+       Bumped = true;
+     }
++  printf("increment undo locked=%d bump=%d\n", Locked, Serial);
+ }
+ 
+ /* ---------------------------------------------------------------------------
