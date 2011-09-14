@@ -3,18 +3,19 @@ Top:    3edded9a42dad188c814b8a3227a45eeaf5d17a1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-14 23:27:45 +0100
 
-undo.c: Add error message where {Save,Restore}UndoSerialNumber() fails
+undo.c: Add error message where RestoreUndoSerialNumber() will break things
 
-If any operations are added logged for Undo between a call to
-IncrementUndoSerialNumber() and call for RestoreUndoSerialNumber(),
-those operations will now be in the undo stack with an inconsistent
-serial number.
+If operations are addded to the undo stack between a call to
+IncrementUndoSerialNumber() and a subsequent call for
+RestoreUndoSerialNumber(), those added operations will be placed in the
+undo stack with an inconsistent serial number.
 
 The {Save,Restore}UndoSerialNumber() API is pretty fragile in this
-regard, and we should avoid using it where possible. An alternative
-might be to implement a "LockUndoSerialNumber()" call which temporarily
-disables IncrementUndoSerialNumber(), and a UnlockUndoSerialNumber()
-call which restores its function.
+regard, and we should avoid using it where possible.
+
+An better alternative might be to implement a "LockUndoSerialNumber()"
+call which temporarily disables IncrementUndoSerialNumber(), and a
+"UnlockUndoSerialNumber()" call which re-enables its increment function.
 
 
 ---
