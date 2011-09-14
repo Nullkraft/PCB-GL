@@ -3,7 +3,10 @@ Top:    9b39cc8168a511519c13368cfd5619850586bcc3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-15 00:24:17 +0100
 
-WIP: Fix some undo bugs
+report.c: Don't leave actions in the undo stack (and not increment the serial)
+
+These actions would have been lumped in with whatever actions were next
+added to the undo stack.
 
 
 ---
