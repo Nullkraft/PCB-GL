@@ -76,6 +76,8 @@
 
 RCSID ("$Id$");
 
+static bool added_undo_whilst_bumped = false;
+
 /* ---------------------------------------------------------------------------
  * some local data types
  */
@@ -253,6 +255,9 @@ GetUndoSlot (int CommandType, int ID, int Kind)
       default:
 	break;
       }
+
+  if (Bumped)
+    added_undo_whilst_bumped = true;
 
   /* copy typefield and serial number to the list */
   ptr = &UndoList[UndoN++];
@@ -1177,6 +1182,8 @@ Redo (bool draw)
 void
 RestoreUndoSerialNumber (void)
 {
+  if (added_undo_whilst_bumped)
+    Message (_("ERROR: Operations were added to the Undo stack with an incorrect serial number\n"));
   Serial = SavedSerial;
 }
 
@@ -1187,6 +1194,7 @@ void
 SaveUndoSerialNumber (void)
 {
   Bumped = false;
+  added_undo_whilst_bumped = false;
   SavedSerial = Serial;
 }
 
