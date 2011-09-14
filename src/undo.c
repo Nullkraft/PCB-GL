@@ -958,9 +958,9 @@ Undo (bool draw)
 
   if (ptr->Serial > Serial)
     {
-      Messasge (_("ERROR: Bad undo serial number %d in undo stack - expecting %d or lower\n"
-                  "       Please save your work and report this bug.\n"),
-                prt->Serial, Serial);
+      Message (_("ERROR: Bad undo serial number %d in undo stack - expecting %d or lower\n"
+                 "       Please save your work and report this bug.\n"),
+               ptr->Serial, Serial);
 
       /* It is likely that the serial number got corrupted through some bad
        * use of the SaveUndoSerialNumber() / RestoreUndoSerialNumber() APIs.
@@ -987,7 +987,7 @@ Undo (bool draw)
   UnlockUndo ();
 
   if (error_undoing)
-    Messasge (_("ERROR: Failed to undo some operations\n"));
+    Message (_("ERROR: Failed to undo some operations\n"));
 
   if (Types && andDraw)
     Draw ();
@@ -1131,9 +1131,9 @@ Redo (bool draw)
 
   if (ptr->Serial < Serial)
     {
-      Messasge (_("ERROR: Bad undo serial number %d in redo stack - expecting %d or higher\n"
-                  "       Please save your work and report this bug.\n"),
-                prt->Serial, Serial);
+      Message (_("ERROR: Bad undo serial number %d in redo stack - expecting %d or higher\n"
+                 "       Please save your work and report this bug.\n"),
+               ptr->Serial, Serial);
 
       /* It is likely that the serial number got corrupted through some bad
        * use of the SaveUndoSerialNumber() / RestoreUndoSerialNumber() APIs.
@@ -1163,7 +1163,7 @@ Redo (bool draw)
   UnlockUndo ();
 
   if (error_undoing)
-    Messasge (_("ERROR: Failed to redo some operations\n"));
+    Message (_("ERROR: Failed to redo some operations\n"));
 
   if (Types && andDraw)
     Draw ();
