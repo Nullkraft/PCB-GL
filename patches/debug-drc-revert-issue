@@ -1,5 +1,5 @@
 Bottom: 27d628b613db49b958d4ec1735eab8ef193802a9
-Top:    4a6c3ec4e6780abe731323c17920230bd2ca63d4
+Top:    c69a92bb1f37ef17085f795852ec3bd3feede3f5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-14 00:11:00 +0100
 
@@ -9,10 +9,48 @@ Debug DRC revert issue
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 6edd29d..753180d 100644
+index 6edd29d..c9fd784 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3534,7 +3534,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -224,6 +224,8 @@ static void GotoError (void);
+ static void
+ append_drc_violation (DrcViolationType *violation)
+ {
++  printf ("append drc violation ------\n");
++#if 1
+   if (gui->drc_gui != NULL)
+     {
+       gui->drc_gui->append_drc_violation (violation);
+@@ -235,7 +237,7 @@ append_drc_violation (DrcViolationType *violation)
+       append_drc_dialog_message (_("%m+near %$mD\n"),
+                                  Settings.grid_unit->allow,
+                                  violation->x, violation->y);
+-      GotoError ();
++//      GotoError ();
+     }
+ 
+   if (gui->drc_gui == NULL || gui->drc_gui->log_drc_violations )
+@@ -245,6 +247,8 @@ append_drc_violation (DrcViolationType *violation)
+                Settings.grid_unit->allow,
+                violation->x, violation->y);
+     }
++#endif
++  printf ("append drc violation ------\n");
+ }
+ /*
+  * message when asked about continuing DRC checks after next 
+@@ -267,8 +271,9 @@ throw_drc_dialog(void)
+     {
+       /* Fallback to formatting the violation message as text */
+       append_drc_dialog_message (DRC_CONTINUE);
+-      r = gui->confirm_dialog (drc_dialog_message->str, DRC_CANCEL, DRC_NEXT);
++//      r = gui->confirm_dialog (drc_dialog_message->str, DRC_CANCEL, DRC_NEXT);
+       reset_drc_dialog_message();
++      r = 1;
+     }
+   return r;
+ }
+@@ -3534,7 +3539,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
            drc = false;
            Bloat = -PCB->Shrink;
            TheFlag = SELECTEDFLAG;
@@ -21,7 +59,7 @@ index 6edd29d..753180d 100644
            ListStart (What, ptr1, ptr2, ptr3);
            DoIt (true, true);
            DumpList ();
-@@ -3588,7 +3588,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3588,7 +3593,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
        User = true;
        drc = false;
        Bloat = 0;
@@ -246,18 +284,66 @@ index ce0210c..9f37599 100644
    violation_renderer = gtk_cell_renderer_text_new ();
    gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (drc_list),
 diff --git a/src/undo.c b/src/undo.c
-index 576b9cb..02333cf 100644
+index 576b9cb..9c992c8 100644
 --- a/src/undo.c
 +++ b/src/undo.c
-@@ -961,6 +961,7 @@ Undo (bool draw)
+@@ -260,6 +260,7 @@ GetUndoSlot (int CommandType, int ID, int Kind)
+   ptr->Kind = Kind;
+   ptr->ID = ID;
+   ptr->Serial = Serial;
++  printf ("Got undo slot - new UndoN is %li, serial is %i\n", UndoN, Serial);
+   return (ptr);
+ }
+ 
+@@ -537,8 +538,10 @@ UndoFlag (UndoListTypePtr Entry)
+       FlagType f1, f2;
+       PinTypePtr pin = (PinTypePtr) ptr2;
+ 
+-      if (TEST_FLAG (LOCKFLAG, pin))
++      if (TEST_FLAG (LOCKFLAG, pin)) {
++        printf ("OBJECT IS LOCKED.. FAIL\n");
+ 	return (false);
++      }
+ 
+       swap = pin->Flags;
+ 
+@@ -961,6 +964,7 @@ Undo (bool draw)
    UndoListTypePtr ptr;
    int Types = 0;
    int unique;
-+  printf("undo: %d\n", draw);
++  printf("undo: %d - current serial is %i, UndoN is %li\n", draw, Serial, UndoN);
  
    unique = TEST_FLAG (UNIQUENAMEFLAG, PCB);
    CLEAR_FLAG (UNIQUENAMEFLAG, PCB);
-@@ -1126,6 +1127,8 @@ Redo (bool draw)
+@@ -971,6 +975,7 @@ Undo (bool draw)
+     {
+       if (!UndoN)
+ 	{
++          printf ("FOOBAR\n");
+ 	  if (!Serial)
+ 	    Message (_("Nothing to undo - buffer is empty\n"));
+ 	  else
+@@ -984,6 +989,7 @@ Undo (bool draw)
+       ptr = &UndoList[UndoN - 1];
+       if (ptr->Serial != Serial - 1)
+ 	{
++          printf ("******************************************\n");
+ 	  Message (_("Undo bad serial number %d expecting %d\n"),
+ 		   ptr->Serial, Serial - 1);
+ 	  Serial = ptr->Serial + 1;
+@@ -1111,7 +1117,11 @@ PerformUndo (UndoListTypePtr ptr)
+       if (UndoMirror (ptr))
+ 	return (UNDO_MIRROR);
+       break;
++
++    default:
++      printf ("WTF - unhandled undo case: %i\n", ptr->Type);
+     }
++  printf ("OK - some undo failed -> FAIL\n");
+   return 0;
+ }
+ 
+@@ -1126,6 +1136,8 @@ Redo (bool draw)
    UndoListTypePtr ptr;
    int Types = 0;
  
@@ -266,7 +352,7 @@ index 576b9cb..02333cf 100644
    andDraw = draw;
    do
      {
-@@ -1162,6 +1165,7 @@ void
+@@ -1162,6 +1174,7 @@ void
  RestoreUndoSerialNumber (void)
  {
    Serial = SavedSerial;
@@ -274,7 +360,7 @@ index 576b9cb..02333cf 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1172,6 +1176,7 @@ SaveUndoSerialNumber (void)
+@@ -1172,6 +1185,7 @@ SaveUndoSerialNumber (void)
  {
    Bumped = false;
    SavedSerial = Serial;
@@ -282,7 +368,7 @@ index 576b9cb..02333cf 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1185,12 +1190,15 @@ IncrementUndoSerialNumber (void)
+@@ -1185,12 +1199,15 @@ IncrementUndoSerialNumber (void)
    if (!Locked)
      {
        /* don't increment if nothing was added */
