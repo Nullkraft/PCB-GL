@@ -783,6 +783,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
   RestoreUndoSerialNumber ();
   ResetFoundLinesAndPolygons (true);
   RestoreUndoSerialNumber ();
+  IncrementUndoSerialNumber ();
 
 #if defined(USE_RE)
       use_re = 1;
@@ -805,6 +806,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
 	      regerror (result, &elt_pattern, errorstring, 128);
 	      Message (_("regexp error: %s\n"), errorstring);
 	      regfree (&elt_pattern);
+              Undo (true);
 	      return (1);
 	    }
 #endif
@@ -812,6 +814,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
 	  if ((elt_pattern = re_comp (tofind)) != NULL)
 	    {
 	      Message (_("re_comp error: %s\n"), elt_pattern);
+              Undo (true);
 	      return (false);
 	    }
 #endif
@@ -862,6 +865,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
   if (!net_found)
     {
       gui->log ("No net named %s\n", tofind);
+      Undo (true);
       return 1;
     }
 #ifdef HAVE_REGCOMP
@@ -875,11 +879,13 @@ ReportNetLengthByName (char *tofind, int x, int y)
   if (!found && net_found)
   {
       gui->log ("Net found, but no lines or arcs were flagged.\n");
+      Undo (true);
       return 1;
   }
   else if (!found)
   {
       gui->log ("Net not found.\n");
+      Undo (true);
       return 1;
   }
 
@@ -891,6 +897,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
     else
       gui->log ("Net length: %s\n", buf);
   }
+  Undo (true);
   return 0;
 }
 
