@@ -803,16 +803,16 @@ ReportNetLengthByName (char *tofind, int x, int y)
 	      regerror (result, &elt_pattern, errorstring, 128);
 	      Message (_("regexp error: %s\n"), errorstring);
 	      regfree (&elt_pattern);
-              retval = 1;
-              goto out;
+	      retval = 1;
+	      goto out;
 	    }
 #endif
 #if defined(HAVE_RE_COMP)
 	  if ((elt_pattern = re_comp (tofind)) != NULL)
 	    {
 	      Message (_("re_comp error: %s\n"), elt_pattern);
-              retval = 1;
-              goto out:
+	      retval = 1;
+	      goto out:
 	    }
 #endif
 	}
