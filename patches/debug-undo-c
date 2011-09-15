@@ -1,5 +1,5 @@
-Bottom: 1677cda502ea3d2ee6fe2e16e11cdc07dfa35bee
-Top:    d565098d734c3971d119f42bfff0a5f96f78ea65
+Bottom: 51cf32067f75f468cd29adb02276e26cac47e4cf
+Top:    652de24927e3ebb298f237e9adbdf3c36f13c0a4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-14 23:17:52 +0100
 
@@ -9,10 +9,10 @@ Debug undo.c
 ---
 
 diff --git a/src/undo.c b/src/undo.c
-index 7832600..b7aaa1d 100644
+index 17bebb9..7d5b22d 100644
 --- a/src/undo.c
 +++ b/src/undo.c
-@@ -260,6 +260,7 @@ GetUndoSlot (int CommandType, int ID, int Kind)
+@@ -266,6 +266,7 @@ GetUndoSlot (int CommandType, int ID, int Kind)
    ptr->Kind = Kind;
    ptr->ID = ID;
    ptr->Serial = Serial;
@@ -20,7 +20,7 @@ index 7832600..b7aaa1d 100644
    return (ptr);
  }
  
-@@ -934,6 +935,8 @@ Undo (bool draw)
+@@ -940,6 +941,8 @@ Undo (bool draw)
    int unique;
    bool error_undoing = false;
  
@@ -29,7 +29,7 @@ index 7832600..b7aaa1d 100644
    unique = TEST_FLAG (UNIQUENAMEFLAG, PCB);
    CLEAR_FLAG (UNIQUENAMEFLAG, PCB);
  
-@@ -1103,7 +1106,11 @@ PerformUndo (UndoListTypePtr ptr)
+@@ -1109,7 +1112,11 @@ PerformUndo (UndoListTypePtr ptr)
        if (UndoMirror (ptr))
  	return (UNDO_MIRROR);
        break;
@@ -41,7 +41,7 @@ index 7832600..b7aaa1d 100644
    return 0;
  }
  
-@@ -1119,6 +1126,8 @@ Redo (bool draw)
+@@ -1125,6 +1132,8 @@ Redo (bool draw)
    int Types = 0;
    bool error_undoing = false;
  
@@ -50,23 +50,23 @@ index 7832600..b7aaa1d 100644
    andDraw = draw;
  
    if (RedoN == 0)
-@@ -1178,6 +1187,7 @@ void
- RestoreUndoSerialNumber (void)
- {
+@@ -1188,6 +1197,7 @@ RestoreUndoSerialNumber (void)
+   between_increment_and_restore = false;
+   added_undo_between_increment_and_restore = false;
    Serial = SavedSerial;
 +  printf("restore undo to %d\n", Serial);
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1188,6 +1198,7 @@ SaveUndoSerialNumber (void)
- {
-   Bumped = false;
+@@ -1200,6 +1210,7 @@ SaveUndoSerialNumber (void)
+   between_increment_and_restore = false;
+   added_undo_between_increment_and_restore = false;
    SavedSerial = Serial;
 +  printf("save undo to %d\n", Serial);
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1203,9 +1214,12 @@ IncrementUndoSerialNumber (void)
+@@ -1215,10 +1226,13 @@ IncrementUndoSerialNumber (void)
        /* Set the changed flag if anything was added prior to this bump */
        if (UndoN > 0 && UndoList[UndoN - 1].Serial == Serial)
          SetChangedFlag (true);
@@ -74,6 +74,7 @@ index 7832600..b7aaa1d 100644
 +        printf ("INFO: IncrementUndoSerialNumber without any changes\n");
        Serial++;
        Bumped = true;
+       between_increment_and_restore = true;
      }
 +  printf("increment undo locked=%d bump=%d\n", Locked, Serial);
  }
