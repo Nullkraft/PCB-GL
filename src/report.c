@@ -761,6 +761,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
   LibraryMenuType *net;
   ConnectionType conn;
   int net_found = 0;
+  int retval = 0;
 #if defined(USE_RE)
   int use_re = 0;
 #endif
@@ -778,11 +779,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
   if (!tofind)
     return 1;
 
-  SaveUndoSerialNumber ();
-  ResetFoundPinsViasAndPads (true);
-  RestoreUndoSerialNumber ();
-  ResetFoundLinesAndPolygons (true);
-  RestoreUndoSerialNumber ();
+  ResetConnections (true);
   IncrementUndoSerialNumber ();
 
 #if defined(USE_RE)
@@ -806,16 +803,16 @@ ReportNetLengthByName (char *tofind, int x, int y)
 	      regerror (result, &elt_pattern, errorstring, 128);
 	      Message (_("regexp error: %s\n"), errorstring);
 	      regfree (&elt_pattern);
-              Undo (true);
-	      return (1);
+              retval = 1;
+              goto out;
 	    }
 #endif
 #if defined(HAVE_RE_COMP)
 	  if ((elt_pattern = re_comp (tofind)) != NULL)
 	    {
 	      Message (_("re_comp error: %s\n"), elt_pattern);
-              Undo (true);
-	      return (false);
+              retval = 1;
+              goto out:
 	    }
 #endif
 	}
@@ -865,9 +862,10 @@ ReportNetLengthByName (char *tofind, int x, int y)
   if (!net_found)
     {
       gui->log ("No net named %s\n", tofind);
-      Undo (true);
-      return 1;
+      retval = 1;
+      goto out;
     }
+
 #ifdef HAVE_REGCOMP
   if (use_re)
     regfree (&elt_pattern);
@@ -876,18 +874,16 @@ ReportNetLengthByName (char *tofind, int x, int y)
   length = XYtoNetLength (x, y, &found);
   netname = net->Name + 2;
 
-  if (!found && net_found)
-  {
-      gui->log ("Net found, but no lines or arcs were flagged.\n");
-      Undo (true);
-      return 1;
-  }
-  else if (!found)
-  {
-      gui->log ("Net not found.\n");
-      Undo (true);
-      return 1;
-  }
+  if (!found)
+    {
+      if (net_found)
+        gui->log ("Net found, but no lines or arcs were flagged.\n");
+      else
+        gui->log ("Net not found.\n");
+
+      retval = 1;
+      goto out;
+    }
 
   {
     char buf[50];
@@ -897,8 +893,12 @@ ReportNetLengthByName (char *tofind, int x, int y)
     else
       gui->log ("Net length: %s\n", buf);
   }
+  retval = 0;
+
+out:
   Undo (true);
-  return 0;
+
+  return retval;
 }
 
 /* ---------------------------------------------------------------------------
