@@ -793,7 +793,6 @@ ReportNetLengthByName (char *tofind, int x, int y)
   LibraryMenuType *net;
   ConnectionType conn;
   int net_found = 0;
-  int retval = 1;
 #if defined(USE_RE)
   int use_re = 0;
 #endif
@@ -924,8 +923,6 @@ ReportNetLengthByName (char *tofind, int x, int y)
       return 1;
     }
 
-  retval = 0;
-
   {
     char buf[50];
     pcb_sprintf(buf, "%$m*", Settings.grid_unit->suffix, length);
@@ -935,7 +932,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
       gui->log ("Net length: %s\n", buf);
   }
 
-  return retval;
+  return 0;
 }
 
 /* ---------------------------------------------------------------------------
