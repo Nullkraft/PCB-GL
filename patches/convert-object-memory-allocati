@@ -1,7 +1,7 @@
-Bottom: 27d628b613db49b958d4ec1735eab8ef193802a9
-Top:    b86e6c70f22bda40845324d9f6ee4d875419e257
+Bottom: 571d495c353e70715cf3a2dc9b7f11a66138f81e
+Top:    93f659243a5cb06facd509337d028f5f834d6e30
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-14 08:57:40 +0100
+Date:   2011-09-15 01:49:25 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -832,10 +832,10 @@ index 96c9cc9..9c3ad0b 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 2fa4aa3..2995e03 100644
+index 488f971..b759542 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -935,6 +935,7 @@ static void
+@@ -936,6 +936,7 @@ static void
  ghid_attributes_revert ()
  {
    int i;
@@ -843,7 +843,7 @@ index 2fa4aa3..2995e03 100644
  
    ghid_attributes_need_rows (attributes_list->Number);
  
-@@ -948,11 +949,14 @@ ghid_attributes_revert ()
+@@ -949,11 +950,14 @@ ghid_attributes_revert ()
      }
  
    /* Fill in values */
@@ -861,7 +861,7 @@ index 2fa4aa3..2995e03 100644
  #if 0
  #endif
      }
-@@ -1020,28 +1024,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
+@@ -1021,28 +1025,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
        if (response == GTK_RESPONSE_OK)
  	{
  	  int i;
@@ -2129,7 +2129,7 @@ index a66e349..b564787 100644
  void FreePCBMemory (PCBTypePtr);
  void FreeBoxListMemory (BoxListTypePtr);
 diff --git a/src/report.c b/src/report.c
-index 4d5e27b..df8ae16 100644
+index 0e89425..afaa4ea 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -334,14 +334,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
@@ -2195,10 +2195,10 @@ index e5310b0..f9387c7 100644
        NET_LOOP(netlist);
        {
 diff --git a/src/undo.c b/src/undo.c
-index 576b9cb..8984124 100644
+index 17bebb9..3231cd6 100644
 --- a/src/undo.c
 +++ b/src/undo.c
-@@ -162,7 +162,7 @@ UndoListType, *UndoListTypePtr;
+@@ -165,7 +165,7 @@ UndoListType, *UndoListTypePtr;
   * some local variables
   */
  static DataTypePtr RemoveList = NULL;	/* list of removed objects */
@@ -2207,7 +2207,7 @@ index 576b9cb..8984124 100644
  static int Serial = 1,		/* serial number */
    SavedSerial;
  static size_t UndoN, RedoN,	/* number of entries */
-@@ -200,13 +200,15 @@ static int PerformUndo (UndoListTypePtr);
+@@ -203,13 +203,15 @@ static int PerformUndo (UndoListTypePtr);
  /* ---------------------------------------------------------------------------
   * adds a command plus some data to the undo list
   */
@@ -2225,7 +2225,7 @@ index 576b9cb..8984124 100644
  
  #ifdef DEBUG_ID
    if (SearchObjectByID (PCB->Data, &ptr1, &ptr2, &ptr3, ID, Kind) == NO_TYPE)
-@@ -214,53 +216,59 @@ GetUndoSlot (int CommandType, int ID, int Kind)
+@@ -217,56 +219,62 @@ GetUndoSlot (int CommandType, int ID, int Kind)
  	     Kind);
  #endif
  
@@ -2306,6 +2306,9 @@ index 576b9cb..8984124 100644
 -      }
 +  g_list_free (iter);
  
+   if (between_increment_and_restore)
+     added_undo_between_increment_and_restore = true;
+ 
    /* copy typefield and serial number to the list */
 -  ptr = &UndoList[UndoN++];
 +  ptr = g_slice_new0 (UndoListType);
@@ -2320,7 +2323,7 @@ index 576b9cb..8984124 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -899,50 +907,35 @@ static bool
+@@ -876,50 +884,35 @@ static bool
  UndoNetlistChange (UndoListTypePtr Entry)
  {
    NetlistChangeTypePtr l = & Entry->Data.NetlistChange;
@@ -2387,7 +2390,7 @@ index 576b9cb..8984124 100644
  
    *lib = *saved;
  
-@@ -1612,7 +1605,8 @@ void
+@@ -1640,7 +1633,8 @@ void
  AddNetlistLibToUndoList (LibraryTypePtr lib)
  {
    UndoListTypePtr undo;
@@ -2397,7 +2400,7 @@ index 576b9cb..8984124 100644
    LibraryTypePtr old;
    
    if (!Locked)
-@@ -1625,7 +1619,6 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
+@@ -1653,7 +1647,6 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
        undo->Data.NetlistChange.old = (LibraryTypePtr)malloc (sizeof (LibraryTypePtr));
        old = undo->Data.NetlistChange.old;
        old->MenuN = lib->MenuN;
@@ -2405,7 +2408,7 @@ index 576b9cb..8984124 100644
        old->Menu = (LibraryMenuTypePtr)malloc (old->MenuMax * sizeof (LibraryMenuType));
        if (old->Menu == NULL)
  	{
-@@ -1634,21 +1627,15 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
+@@ -1662,21 +1655,15 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
  	}
  
        /* iterate over each net */
@@ -2433,7 +2436,7 @@ index 576b9cb..8984124 100644
  	  old->Menu[i].Entry = 
  	    (LibraryEntryTypePtr)malloc (old->Menu[i].EntryMax * sizeof (LibraryEntryType));
  	  if (old->Menu[i].Entry == NULL)
-@@ -1658,39 +1645,19 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
+@@ -1686,39 +1673,19 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
  	    }
  	  
  	  /* iterate over each pin on the net */
