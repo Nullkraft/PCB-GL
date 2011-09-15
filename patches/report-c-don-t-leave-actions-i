@@ -8,8 +8,6 @@ report.c: Don't leave actions in the undo stack (and not increment the serial)
 Some actions in ReportNetLengthByName() would have been lumped in with
 whatever actions were next added to the undo stack.
 
-FIXME: Could probably clean this up with a goto end; type tear-down for the
-Undo at exit.
 
 
 ---
