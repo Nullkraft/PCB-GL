@@ -1,0 +1,16 @@
+Bottom: 571d495c353e70715cf3a2dc9b7f11a66138f81e
+Top:    571d495c353e70715cf3a2dc9b7f11a66138f81e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-15 12:55:47 +0100
+
+Fix m4 -> newlib conversion
+
+Some of the M4 macros used arguments, and where the *.list files
+separated these from the macro name with : rather than a space,
+the converter was naming the resulting footprint using only the
+last argument of the macro.
+
+
+---
+
+
