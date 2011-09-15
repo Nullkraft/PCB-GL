@@ -607,7 +607,7 @@ ReportAllNetLengths (int argc, char **argv, Coord x, Coord y)
    * by resetting the connections with ResetConnections() before
    * calling Undo() at the end of the procedure.
    */
-  ResetConnections (false);
+  ResetConnections (true);
   IncrementUndoSerialNumber ();
 
   for (ni = 0; ni < PCB->NetlistLib.MenuN; ni++)
@@ -677,7 +677,7 @@ ReportAllNetLengths (int argc, char **argv, Coord x, Coord y)
     }
 
   ResetConnections (false);
-  Undo (false);
+  Undo (true);
   return 0;
 }
 
@@ -698,7 +698,7 @@ ReportNetLength (int argc, char **argv, Coord x, Coord y)
    * by resetting the connections with ResetConnections() before
    * calling Undo() at the end of the procedure.
    */
-  ResetConnections (false);
+  ResetConnections (true);
   IncrementUndoSerialNumber ();
 
   length = XYtoNetLength (x, y, &found);
@@ -706,7 +706,7 @@ ReportNetLength (int argc, char **argv, Coord x, Coord y)
   if (!found)
     {
       ResetConnections (false);
-      Undo (false);
+      Undo (true);
       gui->log ("No net under cursor.\n");
       return 1;
     }
@@ -768,7 +768,7 @@ ReportNetLength (int argc, char **argv, Coord x, Coord y)
 
 got_net_name:
   ResetConnections (false);
-  Undo (false);
+  Undo (true);
 
   {
     char buf[50];
@@ -905,14 +905,14 @@ ReportNetLengthByName (char *tofind, int x, int y)
    * by resetting the connections with ResetConnections() before
    * calling Undo() when we are finished.
    */
-  ResetConnections (false);
+  ResetConnections (true);
   IncrementUndoSerialNumber ();
 
   length = XYtoNetLength (x, y, &found);
   netname = net->Name + 2;
 
   ResetConnections (false);
-  Undo (false);
+  Undo (true);
 
   if (!found)
     {
