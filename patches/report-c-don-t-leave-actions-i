@@ -1,5 +1,5 @@
 Bottom: bb40f238ebc35e3fd23c878b13798ff1a082fcea
-Top:    dc2232cbe4b5f59458b29964d9cf41ff87ed4e3b
+Top:    67ca83e6669a7335c983e1a20288ddc424957f60
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-15 00:24:17 +0100
 
@@ -13,7 +13,7 @@ whatever actions were next added to the undo stack.
 ---
 
 diff --git a/src/report.c b/src/report.c
-index cf3635b..07d7d94 100644
+index cf3635b..0467e80 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -761,6 +761,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
@@ -43,8 +43,8 @@ index cf3635b..07d7d94 100644
  	      Message (_("regexp error: %s\n"), errorstring);
  	      regfree (&elt_pattern);
 -	      return (1);
-+              retval = 1;
-+              goto out;
++	      retval = 1;
++	      goto out;
  	    }
  #endif
  #if defined(HAVE_RE_COMP)
@@ -52,8 +52,8 @@ index cf3635b..07d7d94 100644
  	    {
  	      Message (_("re_comp error: %s\n"), elt_pattern);
 -	      return (1);
-+              retval = 1;
-+              goto out:
++	      retval = 1;
++	      goto out:
  	    }
  #endif
  	}
