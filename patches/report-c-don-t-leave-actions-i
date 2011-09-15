@@ -1,5 +1,5 @@
 Bottom: bb40f238ebc35e3fd23c878b13798ff1a082fcea
-Top:    37692ac50d9ee0acb890f90ca6ba1988b4de7774
+Top:    905ac12cbaea5c273addbd2d35b534abd333a176
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-15 00:24:17 +0100
 
@@ -27,7 +27,7 @@ data for. We then Undo() these changes before we leave the function.
 ---
 
 diff --git a/src/report.c b/src/report.c
-index cf3635b..48f46c3 100644
+index cf3635b..d461bd2 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -545,6 +545,10 @@ ReportFoundPins (int argc, char **argv, Coord x, Coord y)
@@ -147,15 +147,7 @@ index cf3635b..48f46c3 100644
    return 0;
  }
  
-@@ -761,6 +793,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
-   LibraryMenuType *net;
-   ConnectionType conn;
-   int net_found = 0;
-+  int retval = 1;
- #if defined(USE_RE)
-   int use_re = 0;
- #endif
-@@ -778,12 +811,6 @@ ReportNetLengthByName (char *tofind, int x, int y)
+@@ -778,12 +810,6 @@ ReportNetLengthByName (char *tofind, int x, int y)
    if (!tofind)
      return 1;
  
@@ -168,7 +160,7 @@ index cf3635b..48f46c3 100644
  #if defined(USE_RE)
        use_re = 1;
        for (i = 0; i < PCB->NetlistLib.MenuN; i++)
-@@ -864,24 +891,40 @@ ReportNetLengthByName (char *tofind, int x, int y)
+@@ -864,24 +890,38 @@ ReportNetLengthByName (char *tofind, int x, int y)
        gui->log ("No net named %s\n", tofind);
        return 1;
      }
@@ -213,18 +205,13 @@ index cf3635b..48f46c3 100644
        return 1;
 -  }
 +    }
-+
-+  retval = 0;
  
    {
      char buf[50];
-@@ -891,7 +934,8 @@ ReportNetLengthByName (char *tofind, int x, int y)
+@@ -891,6 +931,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
      else
        gui->log ("Net length: %s\n", buf);
    }
--  return 0;
 +
-+  return retval;
+   return 0;
  }
- 
- /* ---------------------------------------------------------------------------
