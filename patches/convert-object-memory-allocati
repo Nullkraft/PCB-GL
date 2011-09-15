@@ -1,7 +1,7 @@
-Bottom: 571d495c353e70715cf3a2dc9b7f11a66138f81e
-Top:    93f659243a5cb06facd509337d028f5f834d6e30
+Bottom: 905ac12cbaea5c273addbd2d35b534abd333a176
+Top:    4a20cfe0ee4df1153337d8488f7e453690e8f5bf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-15 01:49:25 +0100
+Date:   2011-09-15 18:01:03 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -2129,7 +2129,7 @@ index a66e349..b564787 100644
  void FreePCBMemory (PCBTypePtr);
  void FreeBoxListMemory (BoxListTypePtr);
 diff --git a/src/report.c b/src/report.c
-index 0e89425..afaa4ea 100644
+index d461bd2..de1e163 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -334,14 +334,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
