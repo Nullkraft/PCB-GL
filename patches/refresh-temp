@@ -1,0 +1,39 @@
+Bottom: 37692ac50d9ee0acb890f90ca6ba1988b4de7774
+Top:    905ac12cbaea5c273addbd2d35b534abd333a176
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-15 17:56:12 +0100
+
+Refresh of report-c-don-t-leave-actions-i
+
+---
+
+diff --git a/src/report.c b/src/report.c
+index 48f46c3..d461bd2 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -793,7 +793,6 @@ ReportNetLengthByName (char *tofind, int x, int y)
+   LibraryMenuType *net;
+   ConnectionType conn;
+   int net_found = 0;
+-  int retval = 1;
+ #if defined(USE_RE)
+   int use_re = 0;
+ #endif
+@@ -924,8 +923,6 @@ ReportNetLengthByName (char *tofind, int x, int y)
+       return 1;
+     }
+ 
+-  retval = 0;
+-
+   {
+     char buf[50];
+     pcb_sprintf(buf, "%$m*", Settings.grid_unit->suffix, length);
+@@ -935,7 +932,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
+       gui->log ("Net length: %s\n", buf);
+   }
+ 
+-  return retval;
++  return 0;
+ }
+ 
+ /* ---------------------------------------------------------------------------
