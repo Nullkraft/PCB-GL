@@ -1,0 +1,22 @@
+Bottom: 843b269db50b197b8dde9a1c84a314e33bfeb77f
+Top:    bb40f238ebc35e3fd23c878b13798ff1a082fcea
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-15 17:07:03 +0100
+
+Refresh of report-c-return-1-for-all-fail
+
+---
+
+diff --git a/src/report.c b/src/report.c
+index 4d5e27b..cf3635b 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -812,7 +812,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
+ 	  if ((elt_pattern = re_comp (tofind)) != NULL)
+ 	    {
+ 	      Message (_("re_comp error: %s\n"), elt_pattern);
+-	      return (false);
++	      return (1);
+ 	    }
+ #endif
+ 	}
