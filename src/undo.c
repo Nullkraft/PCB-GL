@@ -1125,6 +1125,8 @@ Redo (bool draw)
   int Types = 0;
   bool error_undoing = false;
 
+  printf("redo: %d\n", draw);
+
   andDraw = draw;
 
   if (RedoN == 0)
@@ -1188,6 +1190,7 @@ RestoreUndoSerialNumber (void)
   between_increment_and_restore = false;
   added_undo_between_increment_and_restore = false;
   Serial = SavedSerial;
+  printf("restore undo to %d\n", Serial);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1200,6 +1203,7 @@ SaveUndoSerialNumber (void)
   between_increment_and_restore = false;
   added_undo_between_increment_and_restore = false;
   SavedSerial = Serial;
+  printf("save undo to %d\n", Serial);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1219,6 +1223,7 @@ IncrementUndoSerialNumber (void)
       Bumped = true;
       between_increment_and_restore = true;
     }
+  printf("increment undo locked=%d bump=%d\n", Locked, Serial);
 }
 
 /* ---------------------------------------------------------------------------
