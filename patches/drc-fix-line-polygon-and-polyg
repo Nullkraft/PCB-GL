@@ -1,7 +1,7 @@
-Bottom: 28448e4ed774b44dfbc8bf2182317319aceb6f73
-Top:    1d7d9a59cafe2c4188dd4e2f4c1e7568885e3822
+Bottom: 79eb0402aaf0d10b6835d2b6a2736d88ea515e91
+Top:    5dc07cc4fc0e384095ea4ba467501f9d807c0e56
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-14 08:57:53 +0100
+Date:   2011-09-15 01:50:06 +0100
 
 drc: Fix line <-> polygon and polygon <-> polygon tests tests
 
@@ -33,7 +33,7 @@ rely on the half-bloat being added in various places.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 4724169..be2df67 100644
+index e842fd9..f748c8d 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -760,10 +760,10 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
