@@ -556,6 +556,10 @@ XYtoNetLength (Coord x, Coord y, int *found)
 
   length = 0;
   *found = 0;
+
+  /* NB: The third argument here, 'false' ensures LookupConnection
+   *     does not add its changes to the undo system.
+   */
   LookupConnection (x, y, false, PCB->Grid, FOUNDFLAG);
 
   ALLLINE_LOOP (PCB->Data);
@@ -664,6 +668,7 @@ ReportAllNetLengths (int argc, char **argv, Coord x, Coord y)
 
           length = XYtoNetLength (x, y, &found);
 
+          /* Reset connectors for the next lookup */
           ResetConnections (false);
 
           pcb_sprintf(buf, "%$m*", units_name, length);
@@ -893,18 +898,21 @@ ReportNetLengthByName (char *tofind, int x, int y)
 #endif
 
   /* Reset all connection flags and save an undo-state to get back
-   * to the state the board was in when we started this function.
+   * to the state the board was in when we started.
    *
    * After this, we don't add any changes to the undo system, but
    * ensure we get back to a point where we can Undo() our changes
    * by resetting the connections with ResetConnections() before
-   * calling Undo() at the end of the procedure.
+   * calling Undo() when we are finished.
    */
   ResetConnections (false);
   IncrementUndoSerialNumber ();
 
   length = XYtoNetLength (x, y, &found);
   netname = net->Name + 2;
+
+  ResetConnections (false);
+  Undo (false);
 
   if (!found)
     {
@@ -913,7 +921,7 @@ ReportNetLengthByName (char *tofind, int x, int y)
       else
         gui->log ("Net not found.\n");
 
-      goto out;
+      return 1;
     }
 
   retval = 0;
@@ -926,10 +934,6 @@ ReportNetLengthByName (char *tofind, int x, int y)
     else
       gui->log ("Net length: %s\n", buf);
   }
-
-out:
-  ResetConnections (false);
-  Undo (false);
 
   return retval;
 }
