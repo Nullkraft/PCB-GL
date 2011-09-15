@@ -3,11 +3,25 @@ Top:    37692ac50d9ee0acb890f90ca6ba1988b4de7774
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-15 00:24:17 +0100
 
-report.c: Don't leave actions in the undo stack (and not increment the serial)
+report.c: Don't leave actions in the undo stack or change the user's flags
 
-Some actions in ReportNetLengthByName() would have been lumped in with
-whatever actions were next added to the undo stack.
+Some actions in ReportNetLength*() would have been lumped in with
+whatever actions were next added to the undo stack. These functions
+also left the user's board with a different "FOUND" flags on various
+items.
 
+In the case of the "Report(AllNetLenths)" action, a very long undo stack
+would be created, which is not very helpful to the user.
+
+These changes hide the internal flag changes made during the net length
+calculation from the undo system.
+
+We are able to get back to the inital board state because we save the
+operations caused by our initial RestConnections() on the undo stack.
+After we have done our work (modifying various flags in the process),
+we reset the flags again (this time bypassing the Undo system), so the
+board is consistent with the ResetConnections() call we DID save undo
+data for. We then Undo() these changes before we leave the function.
 
 
 ---
