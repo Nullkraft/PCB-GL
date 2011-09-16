@@ -1,0 +1,13 @@
+Bottom: 07074737c4ae795c4b9683fbf9ccf1d130d9a769
+Top:    07074737c4ae795c4b9683fbf9ccf1d130d9a769
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-16 16:48:41 +0100
+
+hid/gtk: Fix LC_NUMERIC locale on Win32
+
+We need to use "C", not "POSIX".
+
+
+---
+
+
