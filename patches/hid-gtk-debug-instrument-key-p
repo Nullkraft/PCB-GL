@@ -1,5 +1,5 @@
 Bottom: 302889983c0bd369a64bd415a0d35062a0559bbb
-Top:    295449b4cfad231456d2dff640b7da7cc6d73aac
+Top:    07074737c4ae795c4b9683fbf9ccf1d130d9a769
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-16 13:24:53 +0100
 
@@ -9,27 +9,27 @@ hid/gtk: DEBUG: Instrument key presses received by the main window
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 20e8e03..ccbeb54 100644
+index 20e8e03..3b6cc5a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -200,6 +200,8 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
    extern  void ghid_hotkey_cb (int);
    GdkModifierType state;
  
-+  printf ("DEBUG: ghid_port_key_press_cb() keysym presssed was %i\n", ksym);
++  gui->log ("DEBUG: ghid_port_key_press_cb() keysym presssed was %i\n", ksym);
 +
    if (ghid_is_modifier_key_sym (ksym))
      ghid_note_event_location (NULL);
  
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 35bdc69..d800359 100644
+index 35bdc69..1489031 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -367,6 +367,7 @@ ghid_menu_cb (GtkAction *action, const Resource *node)
    for (i = 1; i < node->c; i++)
      if (resource_type (node->v[i]) == 10)
        {
-+        printf ("DEBUG: ghid_menu_cb() Resource '%s'\n", node->v[i].value);
++        gui->log ("DEBUG: ghid_menu_cb() Resource '%s'\n", node->v[i].value);
  #ifdef DEBUG_MENUS
          printf ("    %s\n", node->v[i].value);
  #endif
