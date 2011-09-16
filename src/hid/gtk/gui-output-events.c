@@ -200,6 +200,8 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
   extern  void ghid_hotkey_cb (int);
   GdkModifierType state;
 
+  gui->log ("DEBUG: ghid_port_key_press_cb() keysym presssed was %i\n", ksym);
+
   if (ghid_is_modifier_key_sym (ksym))
     ghid_note_event_location (NULL);
 
