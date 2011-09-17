@@ -1,5 +1,5 @@
-Bottom: 206218e7d615048485b790000210276d87523fe3
-Top:    e2fe82cccd3daadbb3c9347bfe7addca6dfd8805
+Bottom: 3bf1f85f839e36f2e139275bee8e8f5e0a7ad4d1
+Top:    3bf1f85f839e36f2e139275bee8e8f5e0a7ad4d1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-17 16:03:30 +0100
 
@@ -8,30 +8,4 @@ Fix segfaults when specifying empty options.
 
 ---
 
-diff --git a/src/main.c b/src/main.c
-index ddd5675..31c2384 100644
---- a/src/main.c
-+++ b/src/main.c
-@@ -1442,7 +1442,9 @@ REGISTER_ATTRIBUTES (main_attribute_list)
- {
-   char *tmps;
- 
--  if (Settings.LibraryCommand[0] != PCB_DIR_SEPARATOR_C && Settings.LibraryCommand[0] != '.')
-+  if (Settings.LibraryCommand[0] != '\0' &&
-+      Settings.LibraryCommand[0] != PCB_DIR_SEPARATOR_C &&
-+      Settings.LibraryCommand[0] != '.')
-     {
-       Settings.LibraryCommand
- 	=
-@@ -1450,8 +1452,9 @@ REGISTER_ATTRIBUTES (main_attribute_list)
- 		Settings.LibraryCommand,
- 		NULL);
-     }
--  if (Settings.LibraryContentsCommand[0] != PCB_DIR_SEPARATOR_C
--      && Settings.LibraryContentsCommand[0] != '.')
-+  if (Settings.LibraryContentsCommand[0] != '\0' &&
-+      Settings.LibraryContentsCommand[0] != PCB_DIR_SEPARATOR_C &&
-+      Settings.LibraryContentsCommand[0] != '.')
-     {
-       Settings.LibraryContentsCommand
- 	=
+
