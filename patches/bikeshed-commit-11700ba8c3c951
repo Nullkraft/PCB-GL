@@ -1,5 +1,5 @@
 Bottom: 848bbf72a8a90c5da969bb520a084e2548fbaf4e
-Top:    e046a0917dbcdabceab41e7ba3f82490a8b7bf17
+Top:    206218e7d615048485b790000210276d87523fe3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-17 15:13:09 +0100
 
@@ -34,7 +34,7 @@ index a9575b1..8888432 100644
        /*  First load the M4 stuff.  The variable Settings.LibraryPath
         *  points to it.
 diff --git a/src/main.c b/src/main.c
-index 3f692e4..270aae3 100644
+index 3f692e4..ddd5675 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -1122,13 +1122,14 @@ Defaults to @code{"QueryLibrary.sh '%p' '%f' %a"}
@@ -43,7 +43,7 @@ index 3f692e4..270aae3 100644
  Command to query the contents of the library. @*
 -Defaults to @code{"ListLibraryContents.sh %p %f"} or, on Windows, *NONE*
 +Defaults to @code{"ListLibraryContents.sh %p %f"} or,
-+on Windows builds, an empty string.
++on Windows builds, an empty string (to disable this feature).
  @end ftable
  %end-doc
  */
