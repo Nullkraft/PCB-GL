@@ -1,5 +1,5 @@
-Bottom: bf65db668196ba40e3d026a221616fa73ab2b637
-Top:    d99b027b905ece2c94fce36219e8f6d26463ce45
+Bottom: 35b39c5b63c207bd0f6df652bc06e0b81f1aa140
+Top:    848bbf72a8a90c5da969bb520a084e2548fbaf4e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-17 14:52:41 +0100
 
@@ -23,10 +23,10 @@ Affects-bug: lp-843577
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 1489031..9cf26c4 100644
+index 35bdc69..98bfcfe 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -1701,13 +1701,13 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -1700,13 +1700,13 @@ ghid_parse_arguments (int *argc, char ***argv)
    /* Do our own setlocale() stufff since we want to override LC_NUMERIC   
     */
    gtk_set_locale ();
