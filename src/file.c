@@ -1414,7 +1414,7 @@ ReadLibraryContents (void)
   LibraryEntryTypePtr entry;
 
   /* If we don't have a command to execute to find the library contents,
-   * quit now. This is used by default on Windows builds (set in main.c),
+   * skip this. This is used by default on Windows builds (set in main.c),
    * as we can't normally run shell scripts or expect to have m4 present.
    */
   if (*Settings.LibraryContentsCommand != '\0')
