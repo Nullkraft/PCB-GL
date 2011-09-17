@@ -1,0 +1,23 @@
+Bottom: cffc9e58e47c37254dbb18212098bfbbad0c5e2f
+Top:    3bf1f85f839e36f2e139275bee8e8f5e0a7ad4d1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-17 16:16:50 +0100
+
+Refresh of don-t-adjust-the-library-comma
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index 8888432..c22f5c5 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -1417,7 +1417,8 @@ ReadLibraryContents (void)
+    * skip this. This is used by default on Windows builds (set in main.c),
+    * as we can't normally run shell scripts or expect to have m4 present.
+    */
+-  if (*Settings.LibraryContentsCommand != '\0')
++  if (Settings.LibraryContentsCommand != NULL &&
++      Settings.LibraryContentsCommand[0] != '\0')
+     {
+       /*  First load the M4 stuff.  The variable Settings.LibraryPath
+        *  points to it.
