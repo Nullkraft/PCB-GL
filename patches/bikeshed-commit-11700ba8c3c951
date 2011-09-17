@@ -1,5 +1,5 @@
 Bottom: 848bbf72a8a90c5da969bb520a084e2548fbaf4e
-Top:    848bbf72a8a90c5da969bb520a084e2548fbaf4e
+Top:    9fd44465a4fa3112dfd2b08fa8f75a8dd2220d93
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-17 15:13:09 +0100
 
@@ -11,4 +11,46 @@ string to imply "don't use this feature" is better than "*NONE*".
 
 ---
 
-
+diff --git a/src/file.c b/src/file.c
+index a9575b1..baf3696 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -1413,12 +1413,11 @@ ReadLibraryContents (void)
+   LibraryMenuTypePtr menu = NULL;
+   LibraryEntryTypePtr entry;
+ 
+-
+-  /* On Windows, the magic string '*NONE*' is set in main.c as we
+-     normally cannot run shell scripts or expect to have m4.  This
+-     allows the user to still override it if they have a
+-     windows-compatible library generator.  */
+-  if (strcmp (Settings.LibraryContentsCommand, "*NONE*"))
++  /* If we don't have a command to execute to find the library contents,
++   * quit now. This is used by default on Windows builds (set in main.c),
++   * as we can't normally run shell scripts or expect to have m4 present.
++   */
++  if (*Settings.LibraryContentsCommand != '\0')
+     {
+       /*  First load the M4 stuff.  The variable Settings.LibraryPath
+        *  points to it.
+diff --git a/src/main.c b/src/main.c
+index 3f692e4..270aae3 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -1122,13 +1122,14 @@ Defaults to @code{"QueryLibrary.sh '%p' '%f' %a"}
+ @ftable @code
+ @item --lib-contents-command <string>
+ Command to query the contents of the library. @*
+-Defaults to @code{"ListLibraryContents.sh %p %f"} or, on Windows, *NONE*
++Defaults to @code{"ListLibraryContents.sh %p %f"} or,
++on Windows builds, an empty string.
+ @end ftable
+ %end-doc
+ */
+   SSET (LibraryContentsCommand,
+ #ifdef __WIN32__
+-	"*NONE*",
++	"",
+ #else
+ 	"ListLibraryContents.sh '%p' '%f'",
+ #endif
