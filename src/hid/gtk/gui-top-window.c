@@ -367,6 +367,7 @@ ghid_menu_cb (GtkAction *action, const Resource *node)
   for (i = 1; i < node->c; i++)
     if (resource_type (node->v[i]) == 10)
       {
+        gui->log ("DEBUG: ghid_menu_cb() Resource '%s'\n", node->v[i].value);
 #ifdef DEBUG_MENUS
         printf ("    %s\n", node->v[i].value);
 #endif
