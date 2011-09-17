@@ -1,5 +1,5 @@
 Bottom: 848bbf72a8a90c5da969bb520a084e2548fbaf4e
-Top:    9fd44465a4fa3112dfd2b08fa8f75a8dd2220d93
+Top:    e046a0917dbcdabceab41e7ba3f82490a8b7bf17
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-17 15:13:09 +0100
 
@@ -12,7 +12,7 @@ string to imply "don't use this feature" is better than "*NONE*".
 ---
 
 diff --git a/src/file.c b/src/file.c
-index a9575b1..baf3696 100644
+index a9575b1..8888432 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -1413,12 +1413,11 @@ ReadLibraryContents (void)
@@ -26,7 +26,7 @@ index a9575b1..baf3696 100644
 -     windows-compatible library generator.  */
 -  if (strcmp (Settings.LibraryContentsCommand, "*NONE*"))
 +  /* If we don't have a command to execute to find the library contents,
-+   * quit now. This is used by default on Windows builds (set in main.c),
++   * skip this. This is used by default on Windows builds (set in main.c),
 +   * as we can't normally run shell scripts or expect to have m4 present.
 +   */
 +  if (*Settings.LibraryContentsCommand != '\0')
