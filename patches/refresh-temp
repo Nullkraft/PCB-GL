@@ -1,0 +1,28 @@
+Bottom: 07074737c4ae795c4b9683fbf9ccf1d130d9a769
+Top:    064f2ccc10b2f25a49e8e5a7f7cc60a9444b3847
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-17 14:52:38 +0100
+
+Refresh of hid-gtk-fix-lc_numeric-locale-
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 1489031..9cf26c4 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1701,13 +1701,13 @@ ghid_parse_arguments (int *argc, char ***argv)
+   /* Do our own setlocale() stufff since we want to override LC_NUMERIC   
+    */
+   gtk_set_locale ();
+-  setlocale (LC_NUMERIC, "POSIX");	/* use decimal point instead of comma */
++  setlocale (LC_NUMERIC, "C");	/* use decimal point instead of comma */
+ #endif
+ 
+   /*
+    * Prevent gtk_init() and gtk_init_check() from automatically
+    * calling setlocale (LC_ALL, "") which would undo LC_NUMERIC if ENABLE_NLS
+-   * We also don't want locale set if no ENABLE_NLS to keep POSIX LC_NUMERIC.
++   * We also don't want locale set if no ENABLE_NLS to keep "C" LC_NUMERIC.
+    */
+   gtk_disable_setlocale ();
