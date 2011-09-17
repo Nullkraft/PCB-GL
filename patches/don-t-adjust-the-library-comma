@@ -3,10 +3,16 @@ Top:    206218e7d615048485b790000210276d87523fe3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-17 16:08:59 +0100
 
-Don't adjust the Library command settings if they are an empty string
+Don't adjust the Library command settings if they are NULL, or
+an empty string.
 
-(Fixup for commit 31df66e87a810aac852139da9119b15c47fa8c71
+(The empty string part is a fixup for
+commit 31df66e87a810aac852139da9119b15c47fa8c71
  - this will teach me for bikeshedding)
+
+The NULL part should fix bug lp-852598
+
+Closes-bug: lp-852598
 
 
 ---
