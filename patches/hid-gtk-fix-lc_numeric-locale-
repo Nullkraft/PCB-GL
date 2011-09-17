@@ -3,9 +3,21 @@ Top:    d99b027b905ece2c94fce36219e8f6d26463ce45
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-17 14:52:41 +0100
 
-hid/gtk: Fix LC_NUMERIC locale on Win32
+hid/gtk: Set the LC_NUMERIC locale to "C" rather than "POSIX"
 
-We need to use "C", not "POSIX".
+This value is supported on Win32 platforms, whereas "POSIX" doesn't
+appear to have any effect.
+
+This was one possible way to fix the "zoom doesn't work" bug on Win32
+for locales which use "," as the decimal separator.
+
+DJ fixed the Zoom action to be locale independent in
+commit fd5399c67b988f2f7c9d1a0b4ab7c13bc2e95158, which worked around
+the problem for this particular action, but I feel it would be best
+that we made our locale handling consistent between Linux and Win32
+as well.
+
+Affects-bug: lp-843577
 
 
 ---
