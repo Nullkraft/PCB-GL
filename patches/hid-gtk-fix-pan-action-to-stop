@@ -7,7 +7,7 @@ hid/gtk: Fix Pan action to stop after button release outside window
 
 Previously, we required in-view coordinates to stop and start the
 pan-action, and when the button was released outside the viewport,
-the code was querying the user to click at a particular loacation.
+the code was querying the user to click at a particular location.
 
 Since the pan action doesn't even use the passed in coordinates,
 simply remove the requirement for the x-y coordinates from this
