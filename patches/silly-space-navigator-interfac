@@ -1,7 +1,7 @@
-Bottom: 9456a22d952e0f544e969c4d8300350a49b8a2e2
-Top:    d84927a68b7d4c0bcdc8a82792576f308c4ea905
+Bottom: 706d58a6d4f8a53ae3314c76187ec0b718170468
+Top:    084e205a0f21e93370a5b09bbc46417dd33aaff8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-16 13:45:31 +0100
+Date:   2011-09-19 11:33:45 +0100
 
 Silly space navigator interface to allow funky views
 
@@ -27,7 +27,7 @@ index 45aa6f5..2a566ab 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 488f971..113f954 100644
+index 544b6a2..6ab4993 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -119,7 +119,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
@@ -104,7 +104,7 @@ index 20e8e03..8c32c68 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index e6a99d3..4dc2c22 100644
+index 9b606b2..cdaea8f 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -124,6 +124,7 @@ a zoom in/out.
