@@ -1,5 +1,5 @@
 Bottom: f95b51bdd92c6ec907832424b57c4db23fc62228
-Top:    05f7433239d6f65a43530aec5704b0e64c3edebd
+Top:    df84d673488108827efcb8e687a392ef5e85bf44
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-02-01 21:58:58 +0000
 
@@ -190,7 +190,7 @@ index 7e63811..de533de 100644
     {"Auto-zero delta measurements" checked=localref Display(ToggleLocalRef)}
     {"New lines, arcs clear polygons" checked=clearnew Display(ToggleClearLine)}
 diff --git a/src/move.c b/src/move.c
-index 6b6359a..dd4f46d 100644
+index 6b6359a..b745973 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -34,6 +34,7 @@
@@ -233,7 +233,7 @@ index 6b6359a..dd4f46d 100644
    RubberbandTypePtr ptr;
    void *ptr2;
 +  int   n;
-+  LocationType PreMoveObjX, PreMoveObjY;
++  Coord PreMoveObjX, PreMoveObjY;
 +
 +  dprintf("MoveObjectAndRubberband\n");
 +  if (Type == LINE_TYPE) {
@@ -257,7 +257,7 @@ index 6b6359a..dd4f46d 100644
      {
 -      /* first clear any marks that we made in the line flags */
 -      CLEAR_FLAG (RUBBERENDFLAG, ptr->Line);
-+      LocationType dX, dY;
++      Coord dX, dY;
 +
 +      dX = DX; dY = DY;
 +
@@ -325,7 +325,7 @@ index 6b6359a..dd4f46d 100644
 +      n = Crosshair.AttachedObject.RubberbandN;
 +      ptr = Crosshair.AttachedObject.Rubberband;
 +      while(n) {
-+	LocationType nudgeX, nudgeY;
++	Coord nudgeX, nudgeY;
 +	LineTypePtr line = (LineTypePtr)Ptr3;
 +	PointType PointOut;
 +	PointTypePtr nudge;
@@ -406,7 +406,7 @@ index 6b6359a..dd4f46d 100644
 +	PointTypePtr lineA_p2, lineB_p2; /* inital p2 points before move */
 +	LineTypePtr lineA = ptr->Line;
 +	LineTypePtr lineB;
-+	LocationType dX, dY;
++	Coord dX, dY;
 +	int ignore;
 +	PinType pin;
 +
@@ -570,7 +570,7 @@ index 7e6e8bd..6ebb0d3 100644
     {"Auto-zero delta measurements" checked=localref Display(ToggleLocalRef)}
     {"New lines, arcs clear polygons" checked=clearnew Display(ToggleClearLine)}
 diff --git a/src/rubberband.c b/src/rubberband.c
-index 4fe166c..1b20c59 100644
+index 4fe166c..544efd8 100644
 --- a/src/rubberband.c
 +++ b/src/rubberband.c
 @@ -34,6 +34,7 @@
@@ -593,7 +593,7 @@ index 4fe166c..1b20c59 100644
  						 PolygonTypePtr);
  static void CheckLinePointForRat (LayerTypePtr, PointTypePtr);
  static int rubber_callback (const BoxType * b, void *cl);
-+static int rb_sign(LocationType x);
++static int rb_sign(Coord x);
 +static int LineAttachedCallback (const BoxType * b, void *cl);
  
  struct rubber_info
@@ -605,7 +605,7 @@ index 4fe166c..1b20c59 100644
 +struct AttachedInfo
 +{
 +  int radius;
-+  LocationType X, Y;
++  Coord X, Y;
 +  LineTypePtr  line;
 +  BoxType      box;
 +  LayerTypePtr layer;
@@ -624,7 +624,7 @@ index 4fe166c..1b20c59 100644
 +/* centre zero rubber band sign function */
 +
 +int
-+rbsgn(LocationType x)
++rbsgn(Coord x)
 +{
 +  if (x > 0) return  1;
 +  if (x < 0) return -1;
@@ -662,8 +662,8 @@ index 4fe166c..1b20c59 100644
 +MovePointGivenRubberBandMode(PointTypePtr PointOut,
 +			    PointTypePtr Point,
 +			    LineTypePtr Line,
-+			    LocationType dx,
-+			    LocationType dy,
++			    Coord dx,
++			    Coord dy,
 +			    int Type,
 +			    int Diagonal)
 +{
@@ -745,8 +745,8 @@ index 4fe166c..1b20c59 100644
 +void
 +MoveLineGivenRubberBandMode(LineTypePtr LineOut,
 +			    LineTypePtr Line,
-+			    LocationType dx,
-+			    LocationType dy,
++			    Coord dx,
++			    Coord dy,
 +			    CrosshairType CrossHair
 +)
 +{
@@ -843,8 +843,8 @@ index 4fe166c..1b20c59 100644
 +}
 +
 +void RestrictMovementGivenRubberBandMode(LineTypePtr Line,
-+					 LocationType *dx,
-+					 LocationType *dy)
++					 Coord *dx,
++					 Coord *dy)
 +{
 +  /* return default when rubberband mode off */
 +
@@ -893,7 +893,7 @@ index 4fe166c..1b20c59 100644
 +  LineTypePtr AttachedLine;
 +  Cardinal group;
 +  struct AttachedInfo info;
-+  BDimension t = Line->Thickness / 2;
++  Coord t = Line->Thickness / 2;
 +
 +  /* lookup layergroup and check all visible lines in this group */
 +  info.radius = Line->Thickness / 2;
@@ -944,11 +944,11 @@ index 4fe166c..1b20c59 100644
 +  return NULL; /* no attached line at LinePoint */
 +}
 +
-+int PointInsidePin(PinTypePtr Pin, LocationType x, LocationType y)
++int PointInsidePin(PinTypePtr Pin, Coord x, Coord y)
 +{
 +  float dist;
-+  LocationType x1,x2,y1,y2;
-+  BDimension t = Pin->Thickness / 2;
++  Coord x1,x2,y1,y2;
++  Coord t = Pin->Thickness / 2;
 +
 +  dprintf("  PointInsidePin\n");
 +  dprintf("    (%d,%d) r = %d\n", Pin->X, Pin->Y, t);
@@ -1011,7 +1011,7 @@ index 4fe166c..1b20c59 100644
 +{
 +  struct rubber_info info;
 +  Cardinal n;
-+  BDimension t = Pin->Thickness / 2;
++  Coord t = Pin->Thickness / 2;
 +
 +  info.box.X1 = Pin->X - t;
 +  info.box.X2 = Pin->X + t;
@@ -1022,7 +1022,7 @@ index 4fe166c..1b20c59 100644
 +    info.radius = 0;
 +*/
 diff --git a/src/rubberband.h b/src/rubberband.h
-index 9e671bf..8513073 100644
+index 9e671bf..cad6baf 100644
 --- a/src/rubberband.h
 +++ b/src/rubberband.h
 @@ -35,5 +35,31 @@
@@ -1032,27 +1032,27 @@ index 9e671bf..8513073 100644
 +void MovePointGivenRubberBandMode(PointTypePtr PointOut,
 +			          PointTypePtr Point,
 +				  LineTypePtr Line,
-+			          LocationType dx,
-+			          LocationType dy,
++			          Coord dx,
++			          Coord dy,
 +				  int Type,
 +				  int Diagonal);
 +void MoveLineGivenRubberBandMode(LineTypePtr LineOut,
 +				 LineTypePtr Line,
-+				 LocationType dx,
-+				 LocationType dy,
++				 Coord dx,
++				 Coord dy,
 +				 CrosshairType CrossHair);
 +int IsHorizontal(LineTypePtr Line);
 +int IsVertical(LineTypePtr Line);
 +int IsDiagonal(LineTypePtr Line);
 +void RestrictMovementGivenRubberBandMode(LineTypePtr Line,
-+					 LocationType *dx,
-+					 LocationType *dy);
++					 Coord *dx,
++					 Coord *dy);
 +LineTypePtr
 +FindLineAttachedToPoint (LayerTypePtr Layer,
 +			 LineTypePtr  Line,
 +			 PointTypePtr LinePoint);
 +int
-+PointInsidePin(PinTypePtr Pin, LocationType x, LocationType y);
++PointInsidePin(PinTypePtr Pin, Coord x, Coord y);
 +int
 +BothEndsWithinPad(PadTypePtr Pad, LineTypePtr Line);
  
