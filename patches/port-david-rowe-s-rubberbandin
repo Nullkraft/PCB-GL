@@ -1,5 +1,5 @@
-Bottom: 24d71741d1b1a5f7864b76d2a1114ce850c85250
-Top:    41a8ec9d1750855c293c1daa017f2009d3dcacbb
+Bottom: f95b51bdd92c6ec907832424b57c4db23fc62228
+Top:    05f7433239d6f65a43530aec5704b0e64c3edebd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-02-01 21:58:58 +0000
 
@@ -9,7 +9,7 @@ Port David Rowe's rubberbanding patch to git HEAD
 ---
 
 diff --git a/src/action.c b/src/action.c
-index faa1f21..2e92f4a 100644
+index 2edb9a9..06a2f92 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -194,6 +194,7 @@ typedef enum
@@ -59,10 +59,10 @@ index faa1f21..2e92f4a 100644
  	  notify_crosshair_change (false);
  	  TOGGLE_FLAG (SWAPSTARTDIRFLAG, PCB);
 diff --git a/src/const.h b/src/const.h
-index 0885871..e786cdb 100644
+index f029821..3742769 100644
 --- a/src/const.h
 +++ b/src/const.h
-@@ -292,6 +292,7 @@ When set, element names are not drawn.
+@@ -297,6 +297,7 @@ When set, element names are not drawn.
  #define ONLYNAMESFLAG           0x00080000
  #define NEWFULLPOLYFLAG         0x00100000
  #define HIDENAMESFLAG           0x00200000
@@ -166,10 +166,10 @@ index d927cf8..e9c2515 100644
        else if (ptr->MovedPoint == &ptr->Line->Point1)
  	XORDrawAttachedLine (ptr->Line->Point1.X + dx,
 diff --git a/src/global.h b/src/global.h
-index a3a4ac1..3dfb44d 100644
+index 96c9cc9..66425bb 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -675,6 +675,7 @@ typedef struct			/* some resources... */
+@@ -682,6 +682,7 @@ typedef struct			/* some resources... */
      StipplePolygons,		/* draw polygons with stipple */
      AllDirectionLines,		/* enable lines to all directions */
      RubberBandMode,		/* move, rotate use rubberband connections */
@@ -178,7 +178,7 @@ index a3a4ac1..3dfb44d 100644
      ShowDRC,			/* show drc region on crosshair */
      AutoDRC,			/* */
 diff --git a/src/gpcb-menu.res.in b/src/gpcb-menu.res.in
-index 9e48d73..4b014df 100644
+index 7e63811..de533de 100644
 --- a/src/gpcb-menu.res.in
 +++ b/src/gpcb-menu.res.in
 @@ -205,6 +205,7 @@ MainMenu =
