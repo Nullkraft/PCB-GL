@@ -38,27 +38,27 @@ void LookupRatLines (int, void *, void *, void *);
 void MovePointGivenRubberBandMode(PointTypePtr PointOut,
 			          PointTypePtr Point,
 				  LineTypePtr Line,
-			          LocationType dx,
-			          LocationType dy,
+			          Coord dx,
+			          Coord dy,
 				  int Type,
 				  int Diagonal);
 void MoveLineGivenRubberBandMode(LineTypePtr LineOut,
 				 LineTypePtr Line,
-				 LocationType dx,
-				 LocationType dy,
+				 Coord dx,
+				 Coord dy,
 				 CrosshairType CrossHair);
 int IsHorizontal(LineTypePtr Line);
 int IsVertical(LineTypePtr Line);
 int IsDiagonal(LineTypePtr Line);
 void RestrictMovementGivenRubberBandMode(LineTypePtr Line,
-					 LocationType *dx,
-					 LocationType *dy);
+					 Coord *dx,
+					 Coord *dy);
 LineTypePtr
 FindLineAttachedToPoint (LayerTypePtr Layer,
 			 LineTypePtr  Line,
 			 PointTypePtr LinePoint);
 int
-PointInsidePin(PinTypePtr Pin, LocationType x, LocationType y);
+PointInsidePin(PinTypePtr Pin, Coord x, Coord y);
 int
 BothEndsWithinPad(PadTypePtr Pad, LineTypePtr Line);
 

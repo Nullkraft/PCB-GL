@@ -800,7 +800,7 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
   RubberbandTypePtr ptr;
   void *ptr2;
   int   n;
-  LocationType PreMoveObjX, PreMoveObjY;
+  Coord PreMoveObjX, PreMoveObjY;
 
   dprintf("MoveObjectAndRubberband\n");
   if (Type == LINE_TYPE) {
@@ -820,7 +820,7 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
   n = Crosshair.AttachedObject.RubberbandN;
   while (n)
     {
-      LocationType dX, dY;
+      Coord dX, dY;
 
       dX = DX; dY = DY;
 
@@ -885,7 +885,7 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
       n = Crosshair.AttachedObject.RubberbandN;
       ptr = Crosshair.AttachedObject.Rubberband;
       while(n) {
-	LocationType nudgeX, nudgeY;
+	Coord nudgeX, nudgeY;
 	LineTypePtr line = (LineTypePtr)Ptr3;
 	PointType PointOut;
 	PointTypePtr nudge;
@@ -966,7 +966,7 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
 	PointTypePtr lineA_p2, lineB_p2; /* inital p2 points before move */
 	LineTypePtr lineA = ptr->Line;
 	LineTypePtr lineB;
-	LocationType dX, dY;
+	Coord dX, dY;
 	int ignore;
 	PinType pin;
 

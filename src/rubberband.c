@@ -77,7 +77,7 @@ static void CheckPolygonForRubberbandConnection (LayerTypePtr,
 						 PolygonTypePtr);
 static void CheckLinePointForRat (LayerTypePtr, PointTypePtr);
 static int rubber_callback (const BoxType * b, void *cl);
-static int rb_sign(LocationType x);
+static int rb_sign(Coord x);
 static int LineAttachedCallback (const BoxType * b, void *cl);
 
 struct rubber_info
@@ -92,7 +92,7 @@ struct rubber_info
 struct AttachedInfo
 {
   int radius;
-  LocationType X, Y;
+  Coord X, Y;
   LineTypePtr  line;
   BoxType      box;
   LayerTypePtr layer;
@@ -602,7 +602,7 @@ LookupRatLines (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
 /* centre zero rubber band sign function */
 
 int
-rbsgn(LocationType x)
+rbsgn(Coord x)
 {
   if (x > 0) return  1;
   if (x < 0) return -1;
@@ -640,8 +640,8 @@ void
 MovePointGivenRubberBandMode(PointTypePtr PointOut,
 			    PointTypePtr Point,
 			    LineTypePtr Line,
-			    LocationType dx,
-			    LocationType dy,
+			    Coord dx,
+			    Coord dy,
 			    int Type,
 			    int Diagonal)
 {
@@ -723,8 +723,8 @@ MovePointGivenRubberBandMode(PointTypePtr PointOut,
 void
 MoveLineGivenRubberBandMode(LineTypePtr LineOut,
 			    LineTypePtr Line,
-			    LocationType dx,
-			    LocationType dy,
+			    Coord dx,
+			    Coord dy,
 			    CrosshairType CrossHair
 )
 {
@@ -821,8 +821,8 @@ MoveLineGivenRubberBandMode(LineTypePtr LineOut,
 }
 
 void RestrictMovementGivenRubberBandMode(LineTypePtr Line,
-					 LocationType *dx,
-					 LocationType *dy)
+					 Coord *dx,
+					 Coord *dy)
 {
   /* return default when rubberband mode off */
 
@@ -871,7 +871,7 @@ FindLineAttachedToPoint (LayerTypePtr Layer,
   LineTypePtr AttachedLine;
   Cardinal group;
   struct AttachedInfo info;
-  BDimension t = Line->Thickness / 2;
+  Coord t = Line->Thickness / 2;
 
   /* lookup layergroup and check all visible lines in this group */
   info.radius = Line->Thickness / 2;
@@ -922,11 +922,11 @@ FindLineAttachedToPoint (LayerTypePtr Layer,
   return NULL; /* no attached line at LinePoint */
 }
 
-int PointInsidePin(PinTypePtr Pin, LocationType x, LocationType y)
+int PointInsidePin(PinTypePtr Pin, Coord x, Coord y)
 {
   float dist;
-  LocationType x1,x2,y1,y2;
-  BDimension t = Pin->Thickness / 2;
+  Coord x1,x2,y1,y2;
+  Coord t = Pin->Thickness / 2;
 
   dprintf("  PointInsidePin\n");
   dprintf("    (%d,%d) r = %d\n", Pin->X, Pin->Y, t);
@@ -989,7 +989,7 @@ int PointIsInsidePin(PinTypePtr Pin)
 {
   struct rubber_info info;
   Cardinal n;
-  BDimension t = Pin->Thickness / 2;
+  Coord t = Pin->Thickness / 2;
 
   info.box.X1 = Pin->X - t;
   info.box.X2 = Pin->X + t;
