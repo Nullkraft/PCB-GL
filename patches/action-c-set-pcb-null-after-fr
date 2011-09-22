@@ -1,5 +1,5 @@
 Bottom: f95b51bdd92c6ec907832424b57c4db23fc62228
-Top:    f95b51bdd92c6ec907832424b57c4db23fc62228
+Top:    ea39e0b0c11e4b4cf25d4b20cb96ec8626544274
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-23 00:51:06 +0100
 
@@ -44,4 +44,15 @@ Which is seen when starting an new layout from within PCB.
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index 2edb9a9..62c53e3 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -5899,6 +5899,7 @@ ActionNew (int argc, char **argv, Coord x, Coord y)
+       if (PCB->Changed && Settings.SaveInTMP)
+ 	SaveInTMP ();
+       RemovePCB (PCB);
++      PCB = NULL;
+       PCB = CreateNewPCB (true);
+       PCB->Data->LayerN = DEF_LAYER;
+       CreateNewPCBPost (PCB, 1);
