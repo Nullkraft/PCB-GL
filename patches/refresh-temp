@@ -1,0 +1,21 @@
+Bottom: ea39e0b0c11e4b4cf25d4b20cb96ec8626544274
+Top:    ec3ba4fef44f270a73b80e71762fb4aeb8b8fc12
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-23 00:56:15 +0100
+
+Refresh of create-c-paper-over-a-bug-with
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index c843582..a199acc 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -191,7 +191,6 @@ CreateNewPCB (bool SetDefaultNames)
+     style->index = n;
+   }
+   END_LOOP;
+-  hid_action ("RouteStylesChanged");
+   ptr->Zoom = Settings.Zoom;
+   ptr->MaxWidth = Settings.MaxWidth;
+   ptr->MaxHeight = Settings.MaxHeight;
