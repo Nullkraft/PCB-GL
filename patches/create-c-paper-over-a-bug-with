@@ -1,0 +1,39 @@
+Bottom: ea39e0b0c11e4b4cf25d4b20cb96ec8626544274
+Top:    ea39e0b0c11e4b4cf25d4b20cb96ec8626544274
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-23 00:56:12 +0100
+
+create.c: Paper over a bug with the route style selector..
+
+The route style selector is hanging onto pointers of the
+current PCB's route styles. When the action "RouteStylesChanged"
+is called, these are compared against the current route style
+to identify which one the GUI should show as selected.
+
+When this call comes from within CreateNewPCB, and the OLD
+PCB has already been free'd, this causes valgrind output,
+such as:
+
+    ==22404== Invalid read of size 8
+    ==22404==    at 0x4D82B3: ghid_route_style_selector_sync (ghid-route-style-selector.c:594)
+    ==22404==    by 0x4BAB28: RouteStylesChanged (gtkhid-main.c:1157)
+    ==22404==    by 0x49E0D3: hid_actionv (actions.c:247)
+    ==22404==    by 0x447B7B: CreateNewPCB (create.c:194)
+    ==22404==    by 0x4273E8: ActionNew (action.c:5902)
+    ==22404==  Address 0xd3c4458 is 13,880 bytes inside a block of size 14,120 free'd
+    ==22404==    at 0x4C282E0: free (vg_replace_malloc.c:366)
+    ==22404==    by 0x4273DE: ActionNew (action.c:5901)
+
+
+Strictly speaking though - since CreateNewPCB does not directly
+assign to the current PCB variable - it has no business in calling
+the "RouteStylesChanged" action anyway.
+
+Suitable update is taken care of later on in ActionNew(), as it
+calls the "PCBChanged" action - the GTK implementation of which
+in turn updates the route selector correctly.
+
+
+---
+
+
