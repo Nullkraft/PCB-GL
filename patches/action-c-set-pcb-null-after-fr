@@ -18,26 +18,9 @@ Fixes valgrind output such as:
     ==22404==    by 0x447973: CreateDefaultFont (create.c:941)
     ==22404==    by 0x447C58: CreateNewPCB (create.c:211)
     ==22404==    by 0x4273E8: ActionNew (action.c:5902)
-    ==22404==    by 0x49E0D3: hid_actionv (actions.c:247)
-    ==22404==    by 0x49E483: hid_parse_actionstring (actions.c:331)
-    ==22404==    by 0x4CCDE8: ghid_menu_cb (gui-top-window.c:373)
-    ==22404==    by 0x6B35253: g_closure_invoke (gclosure.c:774)
-    ==22404==    by 0x6B484FA: signal_emit_unlocked_R (gsignal.c:3272)
-    ==22404==    by 0x6B51B16: g_signal_emit_valist (gsignal.c:3003)
-    ==22404==    by 0x6B51CE1: g_signal_emit (gsignal.c:3060)
     ==22404==  Address 0xd3c4538 is 14,104 bytes inside a block of size 14,120 free'd
     ==22404==    at 0x4C282E0: free (vg_replace_malloc.c:366)
     ==22404==    by 0x4273DE: ActionNew (action.c:5901)
-    ==22404==    by 0x49E0D3: hid_actionv (actions.c:247)
-    ==22404==    by 0x49E483: hid_parse_actionstring (actions.c:331)
-    ==22404==    by 0x4CCDE8: ghid_menu_cb (gui-top-window.c:373)
-    ==22404==    by 0x6B35253: g_closure_invoke (gclosure.c:774)
-    ==22404==    by 0x6B484FA: signal_emit_unlocked_R (gsignal.c:3272)
-    ==22404==    by 0x6B51B16: g_signal_emit_valist (gsignal.c:3003)
-    ==22404==    by 0x6B51CE1: g_signal_emit (gsignal.c:3060)
-    ==22404==    by 0x5A821D2: _gtk_action_emit_activate (gtkaction.c:794)
-    ==22404==    by 0x6B35253: g_closure_invoke (gclosure.c:774)
-    ==22404==    by 0x6B47CD6: signal_emit_unlocked_R (gsignal.c:3202)
 
 Which is seen when starting an new layout from within PCB.
 
