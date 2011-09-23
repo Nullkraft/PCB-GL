@@ -6,8 +6,8 @@ Date:   2011-09-23 00:51:06 +0100
 action.c: Set PCB = NULL; after freeing it in ActionNew()
 
 When we call CreateNewPCB(), it trips over some code which wants
-to access the current PCB variable in order to determine whether
-to auto-save at exit. The code in question does check if PCB is
+to access the current PCB in order to determine whether to
+auto-save at exit. The code in question does check if PCB is
 NULL first, so this is a sufficient fix for this case.
 
 Fixes valgrind output such as:
@@ -23,6 +23,8 @@ Fixes valgrind output such as:
     ==22404==    by 0x4273DE: ActionNew (action.c:5901)
 
 Which is seen when starting an new layout from within PCB.
+
+Affects-bug: lp-856909
 
 
 ---
