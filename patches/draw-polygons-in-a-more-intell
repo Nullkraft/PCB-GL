@@ -1,7 +1,7 @@
-Bottom: 5189383365de064d4c098fede63bcf6bc10b3f41
-Top:    c15ba8dee16d49179d8e750a6c51f1c4adbbf567
+Bottom: 0a036870e89a07551a5c8680ae50cee0760c5ae7
+Top:    a023f608d0267c1439aa68bab216a0aa8c94b73e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-19 11:33:52 +0100
+Date:   2011-09-23 01:09:31 +0100
 
 Draw polygons in a more intelligent order
 
@@ -129,7 +129,7 @@ index b9e1b28..38a2148 100644
    glPopAttrib ();                               /* Restore the stencil buffer op and function */
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bc83fc4..8a27e4f 100644
+index c052420..f5af077 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1467,11 +1467,28 @@ struct poly_info
