@@ -1,7 +1,7 @@
-Bottom: f95b51bdd92c6ec907832424b57c4db23fc62228
-Top:    7c6afe8ba1ff1cc0f6833d5b6e391bd2d7c6379f
+Bottom: ec3ba4fef44f270a73b80e71762fb4aeb8b8fc12
+Top:    8e4cff5af406f8c9fa4cea55fb215dd2e48438e9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-19 11:33:29 +0100
+Date:   2011-09-23 01:09:10 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 2edb9a9..42e13f3 100644
+index 62c53e3..78fab63 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1898,37 +1898,39 @@ static int
@@ -108,7 +108,7 @@ index 2edb9a9..42e13f3 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatTypePtr) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6910,22 +6914,26 @@ find_element_by_refdes (char *refdes)
+@@ -6911,22 +6915,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListTypePtr list, const char *name)
  {
@@ -431,10 +431,10 @@ index 29ac62f..318482f 100644
    Dest->MarkX = Src->MarkX + dx;
    Dest->MarkY = Src->MarkY + dy;
 diff --git a/src/create.c b/src/create.c
-index c843582..2363df1 100644
+index a199acc..fead88e 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -909,25 +909,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
+@@ -908,25 +908,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
  		       Coord X1, Coord Y1,
  		       Coord X2, Coord Y2, Coord Thickness)
  {
@@ -465,7 +465,7 @@ index c843582..2363df1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -996,16 +990,17 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
+@@ -995,16 +989,17 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
  /* ---------------------------------------------------------------------------
   * Add an attribute to a list.
   */
