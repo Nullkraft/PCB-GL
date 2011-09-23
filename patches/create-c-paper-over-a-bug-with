@@ -3,7 +3,7 @@ Top:    ec3ba4fef44f270a73b80e71762fb4aeb8b8fc12
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-23 00:56:12 +0100
 
-create.c: Paper over a bug with the route style selector..
+create.c: Don't emit RouteStylesChanged from within CreateNewPCB()
 
 The route style selector is hanging onto pointers of the
 current PCB's route styles. When the action "RouteStylesChanged"
@@ -11,8 +11,8 @@ is called, these are compared against the current route style
 to identify which one the GUI should show as selected.
 
 When this call comes from within CreateNewPCB, and the OLD
-PCB has already been free'd, this causes valgrind output,
-such as:
+PCB has already been free'd, this causes free'd memory to be read,
+resulting in valgrind output such as:
 
     ==22404== Invalid read of size 8
     ==22404==    at 0x4D82B3: ghid_route_style_selector_sync (ghid-route-style-selector.c:594)
@@ -32,6 +32,8 @@ the "RouteStylesChanged" action anyway.
 Suitable update is taken care of later on in ActionNew(), as it
 calls the "PCBChanged" action - the GTK implementation of which
 in turn updates the route selector correctly.
+
+Closes-bug: lp-856909
 
 
 ---
