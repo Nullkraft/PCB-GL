@@ -672,10 +672,10 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
       double wide = MAX (0.5 * i->pv->Thickness + Bloat, 0);
       if (TEST_FLAG (SQUAREFLAG, i->pv))
         {
-          Coord x1 = i->pv->X - (i->pv->Thickness + 1 + Bloat) / 2;
-          Coord x2 = i->pv->X + (i->pv->Thickness + 1 + Bloat) / 2;
-          Coord y1 = i->pv->Y - (i->pv->Thickness + 1 + Bloat) / 2;
-          Coord y2 = i->pv->Y + (i->pv->Thickness + 1 + Bloat) / 2;
+          Coord x1 = i->pv->X - (i->pv->Thickness + 1) / 2 - Bloat;
+          Coord x2 = i->pv->X + (i->pv->Thickness + 1) / 2 + Bloat;
+          Coord y1 = i->pv->Y - (i->pv->Thickness + 1) / 2 - Bloat;
+          Coord y2 = i->pv->Y + (i->pv->Thickness + 1) / 2 + Bloat;
           if (IsRectangleInPolygon (x1, y1, x2, y2, polygon)
               && ADD_POLYGON_TO_LIST (i->layer, polygon, i->flag))
             longjmp (i->env, 1);
@@ -1028,10 +1028,10 @@ pv_poly_callback (const BoxType * b, void *cl)
       if (TEST_FLAG (SQUAREFLAG, pv))
         {
           Coord x1, x2, y1, y2;
-          x1 = pv->X - (PIN_SIZE (pv) + 1 + Bloat) / 2;
-          x2 = pv->X + (PIN_SIZE (pv) + 1 + Bloat) / 2;
-          y1 = pv->Y - (PIN_SIZE (pv) + 1 + Bloat) / 2;
-          y2 = pv->Y + (PIN_SIZE (pv) + 1 + Bloat) / 2;
+          x1 = pv->X - (PIN_SIZE (pv) + 1) / 2 - Bloat;
+          x2 = pv->X + (PIN_SIZE (pv) + 1) / 2 + Bloat;
+          y1 = pv->Y - (PIN_SIZE (pv) + 1) / 2 - Bloat;
+          y2 = pv->Y + (PIN_SIZE (pv) + 1) / 2 + Bloat;
           if (IsRectangleInPolygon (x1, y1, x2, y2, i->polygon)
               && ADD_PV_TO_LIST (pv, i->flag))
             longjmp (i->env, 1);
@@ -2387,7 +2387,7 @@ IsLineInPolygon (LineType *Line, PolygonType *Polygon)
     return false;
   if (TEST_FLAG(SQUAREFLAG,Line)&&(Line->Point1.X==Line->Point2.X||Line->Point1.Y==Line->Point2.Y))
      {
-       Coord wid = (Line->Thickness + Bloat + 1) / 2;
+       Coord wid = (Line->Thickness + 1) / 2 + Bloat;
        Coord x1, x2, y1, y2;
 
        x1 = MIN (Line->Point1.X, Line->Point2.X) - wid;
@@ -2401,7 +2401,7 @@ IsLineInPolygon (LineType *Line, PolygonType *Polygon)
       && Box->Y1 <= Polygon->Clipped->contours->ymax + Bloat
       && Box->Y2 >= Polygon->Clipped->contours->ymin - Bloat)
     {
-      if (!(lp = LinePoly (Line, Line->Thickness + Bloat)))
+      if (!(lp = LinePoly (Line, Line->Thickness + 2 * Bloat)))
         return FALSE;           /* error */
       return isects (lp, Polygon, true);
     }
@@ -2460,12 +2460,7 @@ IsPolygonInPolygon (PolygonType *P1, PolygonType *P2)
 
               line.Point1.X = v->point[0];
               line.Point1.Y = v->point[1];
-              line.Thickness = Bloat;
-              /* Another Bloat is added by IsLineInPolygon, making the correct
-               * 2x Bloat. Ideally we would change it there, but doing so
-               * breaks some other DRC checks which rely on the broken behaviour
-               * in IsLineInPolygon.
-               */
+              line.Thickness = 0; /* Bloat is added by IsLineInPolygon */
               line.Clearance = 0;
               line.Flags = NoFlags ();
               for (v = v->next; v != &c->head; v = v->next)
