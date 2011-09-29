@@ -1,0 +1,22 @@
+Bottom: dde615809015620d4059fb2e2e1ebf625decb818
+Top:    fc017e2c8dc453fcd9ae68b66db4643e0acdf236
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-29 20:15:22 +0100
+
+Refresh of hid-gtk-better-encapsulate-som
+
+---
+
+diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
+index 746b9d7..72ec44d 100644
+--- a/src/hid/gtk/ghid-layer-selector.c
++++ b/src/hid/gtk/ghid-layer-selector.c
+@@ -343,8 +343,6 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
+   ls->selection_changed_sig_id =
+     g_signal_connect (ls->selection, "changed",
+                       G_CALLBACK (selection_changed_cb), ls);
+-
+-  return GTK_WIDGET (ls);
+ }
+ 
+ static void
