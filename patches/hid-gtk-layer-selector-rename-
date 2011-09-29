@@ -1,0 +1,15 @@
+Bottom: b2ad3f732b168d3d2088409b69976b3ada525124
+Top:    b2ad3f732b168d3d2088409b69976b3ada525124
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-29 20:32:13 +0100
+
+hid/gtk: Layer selector - Rename "activatable" to "selectable"
+
+GTK has a special meaning for the word "activatable", meaning that the item
+can be double-clicked, or "activated" by hitting enter on it. We use it to
+mean selectable - so change the code to make this clear.
+
+
+---
+
+
