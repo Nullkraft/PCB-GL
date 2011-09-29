@@ -1,5 +1,5 @@
 Bottom: 85f47d534ffbd18edbbda3df9e0a82ddb93c5429
-Top:    fb775d628cf30e088dc8e24f55c752ed8e2cfa7c
+Top:    ab8af38f1d0ae344a785bc290b2e4ff40b11f253
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 15:39:31 +0100
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5012ed7..f1d42ed 100644
+index 5012ed7..05b10c3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -94,6 +94,79 @@ static void draw_lead_user (render_priv *priv);
@@ -132,7 +132,42 @@ index 5012ed7..f1d42ed 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1517,7 +1597,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -1151,11 +1231,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   ghid_invalidate_current_gc ();
+   glPushMatrix ();
+   glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
+-            (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px, 1);
++            (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px,
++            ((port->view.flip_x == port->view.flip_y) ? 1. : -1.) / port->view.coord_per_px);
+   glTranslatef (gport->view.flip_x ? gport->view.x0 - PCB->MaxWidth  :
+                                     -gport->view.x0,
+                 gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
+                                     -gport->view.y0, 0);
++
++  hidgl_set_depth (0.);
+   hid_expose_callback (&ghid_hid, NULL, &pinout->element);
+   hidgl_flush_triangles (&buffer);
+   glPopMatrix ();
+@@ -1252,7 +1335,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   ghid_invalidate_current_gc ();
+   glPushMatrix ();
+   glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
+-            (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px, 1);
++            (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px,
++            ((port->view.flip_x == port->view.flip_y) ? 1. : -1.) / port->view.coord_per_px);
+   glTranslatef (gport->view.flip_x ? gport->view.x0 - PCB->MaxWidth  :
+                                     -gport->view.x0,
+                 gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
+@@ -1319,7 +1403,7 @@ ghid_request_debug_draw (void)
+   glPushMatrix ();
+   glScalef ((port->view.flip_x ? -1. : 1.) / port->view.coord_per_px,
+             (port->view.flip_y ? -1. : 1.) / port->view.coord_per_px,
+-            (port->view.flip_x == port->view.flip_y) ? 1. : -1.);
++            ((port->view.flip_x == port->view.flip_y) ? 1. : -1.) / port->view.coord_per_px);
+   glTranslatef (port->view.flip_x ? port->view.x0 - PCB->MaxWidth  :
+                              -port->view.x0,
+                 port->view.flip_y ? port->view.y0 - PCB->MaxHeight :
+@@ -1517,7 +1601,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
@@ -141,7 +176,7 @@ index 5012ed7..f1d42ed 100644
  
    return true;
  }
-@@ -1533,11 +1613,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1533,11 +1617,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  
    *event_x = (last_modelview_matrix[0][0] * (float)pcb_x +
                last_modelview_matrix[1][0] * (float)pcb_y +
