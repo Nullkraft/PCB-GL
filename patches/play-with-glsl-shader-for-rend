@@ -1,7 +1,7 @@
-Bottom: 5cec551659b2dfe486d809d6239d24d67ff3a009
-Top:    edf039142240bd000ffff2fb3317f25edd159501
+Bottom: 5b1d6328833ee01e8944d3fa010a015006bb1126
+Top:    ff9c3146fa32896e333de7fdb020526e18251ec4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-23 01:09:56 +0100
+Date:   2011-09-29 16:18:58 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -968,7 +968,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4b673e8..c052420 100644
+index d07f4f8..1c5a8a7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -319,6 +319,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -998,7 +998,7 @@ index 4b673e8..c052420 100644
  }
  
  void
-@@ -1663,9 +1665,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1665,9 +1667,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
  #define MIN_FACES_PER_CYL 6
  #define MAX_FACES_PER_CYL 360
    float radius = vr;
@@ -1009,7 +1009,7 @@ index 4b673e8..c052420 100644
    int i;
    int slices;
  
-@@ -1680,19 +1680,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1682,19 +1682,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
    z1 = compute_depth (from_layer);
    z2 = compute_depth (to_layer);
  
@@ -1046,7 +1046,7 @@ index 4b673e8..c052420 100644
  }
  
  struct cyl_info {
-@@ -2109,6 +2117,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2111,6 +2119,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    draw_lead_user (priv);
  
@@ -1055,7 +1055,7 @@ index 4b673e8..c052420 100644
    check_gl_drawing_ok_hack = false;
    hidgl_in_context (false);
    ghid_end_drawing (port);
-@@ -2202,7 +2212,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2204,7 +2214,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
