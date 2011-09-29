@@ -83,14 +83,6 @@ static bool in_context = false;
   } while (0)
 
 void
-hidgl_in_context (bool is_in_context)
-{
-  if (in_context == is_in_context)
-    fprintf (stderr, "hidgl: hidgl_in_context called with nested value!\n");
-  in_context = is_in_context;
-}
-
-void
 hidgl_init_triangle_array (triangle_buffer *buffer)
 {
   buffer->triangle_count = 0;

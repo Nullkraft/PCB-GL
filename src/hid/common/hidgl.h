@@ -33,7 +33,6 @@ typedef struct {
 extern triangle_buffer buffer;
 extern float global_depth;
 
-void hidgl_in_context (bool is_in_context);
 void hidgl_init_triangle_array (triangle_buffer *buffer);
 void hidgl_flush_triangles (triangle_buffer *buffer);
 void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
