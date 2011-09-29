@@ -561,12 +561,10 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
   free (vertices);
 }
 
-void
-tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices,
-                   double scale)
+static void
+fill_contour (PLINE *contour, double scale)
 {
-  VNODE *vn = &contour->head;
-  int offset = 0;
+  borast_traps_t traps;
 
   /* If the contour is round, and hidgl_fill_circle would use
    * less slices than we have vertices to draw it, then call
@@ -580,22 +578,12 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices,
     }
   }
 
-  gluTessBeginPolygon (tobj, NULL);
-  gluTessBeginContour (tobj);
-  do {
-    vertices [0 + offset] = vn->point[0];
-    vertices [1 + offset] = vn->point[1];
-    vertices [2 + offset] = 0.;
-    gluTessVertex (tobj, &vertices [offset], &vertices [offset]);
-    offset += 3;
-  } while ((vn = vn->next) != &contour->head);
-  gluTessEndContour (tobj);
-  gluTessEndPolygon (tobj);
+  _borast_traps_init (&traps);
+  bo_contour_to_traps (contour, &traps);
+  _borast_traps_fini (&traps);
 }
 
 struct do_hole_info {
-  GLUtesselator *tobj;
-  GLdouble *vertices;
   double scale;
 };
 
@@ -610,7 +598,7 @@ do_hole (const BoxType *b, void *cl)
     return 0;
   }
 
-  tesselate_contour (info->tobj, curc, info->vertices, info->scale);
+  fill_contour (curc, info->scale);
   return 1;
 }
 
@@ -622,17 +610,8 @@ static int assigned_bits = 0;
 void
 hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
 {
-  int vertex_count = 0;
-  PLINE *contour;
   struct do_hole_info info;
   int stencil_bit;
-  borast_traps_t traps;
-
-  _borast_traps_init (&traps);
-  bo_poly_to_traps (poly->Clipped, &traps);
-  _borast_traps_fini (&traps);
-
-  return;
 
   info.scale = scale;
   global_scale = scale;
@@ -643,31 +622,25 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
       return;
     }
 
+  /* Special case non-holed polygons which don't require a stencil bit */
+  if (poly->Clipped->contour_tree->size == 1) {
+    fill_contour (poly->Clipped->contours, scale);
+    return;
+  }
+
+  /* Polygon has holes */
+
   stencil_bit = hidgl_assign_clear_stencil_bit ();
   if (!stencil_bit)
     {
       printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
+      /* XXX: Could use the GLU tesselator or the full BO polygon tesselator */
       return;
     }
 
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
-  /* Walk the polygon structure, counting vertices */
-  /* This gives an upper bound on the amount of storage required */
-  for (contour = poly->Clipped->contours;
-       contour != NULL; contour = contour->next)
-    vertex_count = MAX (vertex_count, contour->Count);
-
-  info.vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
-  info.tobj = gluNewTess ();
-  gluTessCallback(info.tobj, GLU_TESS_BEGIN,   (_GLUfuncptr)myBegin);
-  gluTessCallback(info.tobj, GLU_TESS_VERTEX,  (_GLUfuncptr)myVertex);
-  gluTessCallback(info.tobj, GLU_TESS_COMBINE, (_GLUfuncptr)myCombine);
-  gluTessCallback(info.tobj, GLU_TESS_ERROR,   (_GLUfuncptr)myError);
-
-  glPushAttrib (GL_STENCIL_BUFFER_BIT);                 /* Save the write mask etc.. for final restore */
-  glEnable (GL_STENCIL_TEST);
   glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                 GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
   glStencilMask (stencil_bit);                          /* Only write to our stencil bit */
@@ -682,11 +655,11 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   hidgl_flush_triangles (&buffer);
 
   glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
+  glPushAttrib (GL_STENCIL_BUFFER_BIT);         /* Save the stencil op and function */
 
-  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);    /* This allows us to toggle the bit on any subcompositing bitplane */
+  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);    /* This allows us to toggle the bit on the subcompositing bitplane */
                                                 /* If the stencil test has passed, we know that bit is 0, so we're */
                                                 /* effectively just setting it to 1. */
-
   glStencilFunc (GL_GEQUAL, 0, assigned_bits);  /* Pass stencil test if all assigned bits clear, */
                                                 /* reference is all assigned bits so we set */
                                                 /* any bits permitted by the stencil writemask */
@@ -694,17 +667,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
 
   /* Draw the polygon outer */
-  tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices, scale);
+  fill_contour (poly->Clipped->contours, scale);
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */
   hidgl_return_stencil_bit (stencil_bit);
 
-  glPopAttrib ();                               /* Restore the stencil buffer write-mask etc.. */
-
-  gluDeleteTess (info.tobj);
-  myFreeCombined ();
-  free (info.vertices);
+  glPopAttrib ();                               /* Restore the stencil buffer op and function */
 }
 
 void
