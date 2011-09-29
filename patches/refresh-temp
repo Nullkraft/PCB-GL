@@ -1,0 +1,40 @@
+Bottom: 5e37ee82b34f68795aedd2232c2f039d0fb17bed
+Top:    e4cd8f818fa48cef9207862ec9632279b635f0bb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-29 16:14:01 +0100
+
+Refresh of hid-gtk-fix-z-coordinate-scali
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index dc1e6b8..e559c4f 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1067,7 +1067,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   glPushMatrix ();
+   glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
+             (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px,
+-            ((port->view.flip_x == port->view.flip_y) ? 1. : -1.) / port->view.coord_per_px);
++            ((gport->view.flip_x == gport->view.flip_y) ? 1. : -1.) / gport->view.coord_per_px);
+   glTranslatef (gport->view.flip_x ? gport->view.x0 - PCB->MaxWidth  :
+                                     -gport->view.x0,
+                 gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
+@@ -1170,7 +1170,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   glPushMatrix ();
+   glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
+             (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px,
+-            ((port->view.flip_x == port->view.flip_y) ? 1. : -1.) / port->view.coord_per_px);
++            ((gport->view.flip_x == gport->view.flip_y) ? 1. : -1.) / gport->view.coord_per_px);
+   glTranslatef (gport->view.flip_x ? gport->view.x0 - PCB->MaxWidth  :
+                                     -gport->view.x0,
+                 gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
+@@ -1237,7 +1237,7 @@ ghid_request_debug_draw (void)
+   glPushMatrix ();
+   glScalef ((port->view.flip_x ? -1. : 1.) / port->view.coord_per_px,
+             (port->view.flip_y ? -1. : 1.) / port->view.coord_per_px,
+-            ((port->view.flip_x == port->view.flip_y) ? 1. : -1.) / port->view.coord_per_px);
++            ((gport->view.flip_x == port->view.flip_y) ? 1. : -1.) / gport->view.coord_per_px);
+   glTranslatef (port->view.flip_x ? port->view.x0 - PCB->MaxWidth  :
+                              -port->view.x0,
+                 port->view.flip_y ? port->view.y0 - PCB->MaxHeight :
