@@ -1,5 +1,5 @@
 Bottom: 300fd159e061484be8045ca1865291d4d8883548
-Top:    ac9ad592c8a7cde0bd066992e7a47a9582e41e2c
+Top:    038e2275bad1080b81cad3845d8cc6353dafc7cd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 16:18:53 +0100
 
@@ -9,7 +9,7 @@ Hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 07626fe..b211284 100644
+index 07626fe..dd7f772 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -493,6 +493,15 @@ set_gl_color_for_gc (hidGC gc)
@@ -22,7 +22,7 @@ index 07626fe..b211284 100644
 +   * current_colorname set to NULL, so we don't NOOP the
 +   * next set_gl_color_for_gc call.
 +   */
-+  if(!priv->in_context)
++  if (!priv->in_context)
 +    return;
 +
    priv->current_colorname = strdup (gc->colorname);
@@ -42,7 +42,7 @@ index 07626fe..b211284 100644
    static int done_once = 0;
    static GdkColor cross_color;
  
-+  if(!priv->in_context)
++  if (!priv->in_context)
 +    return;
 +
    if (!done_once)
