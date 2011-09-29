@@ -515,15 +515,16 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
 
   new_layer = malloc (sizeof (*new_layer));
 
-  gtk_list_store_set (ls->list_store, &iter,
-                      STRUCT_COL, new_layer,
-                      USER_ID_COL, user_id,
-                      VISIBLE_COL, visible,
-                      COLOR_COL, color_string,
-                      TEXT_COL, name,
-                      FONT_COL, activatable ? NULL : "Italic",
+  gtk_list_store_set (ls->list_store,
+                      &iter,
+                      STRUCT_COL,      new_layer,
+                      USER_ID_COL,     user_id,
+                      VISIBLE_COL,     visible,
+                      COLOR_COL,       color_string,
+                      TEXT_COL,        name,
+                      FONT_COL,        activatable ? NULL : "Italic",
                       ACTIVATABLE_COL, activatable,
-                      SEPARATOR_COL, FALSE,
+                      SEPARATOR_COL,   FALSE,
                       -1);
 
   /* -- Setup new actions -- */
