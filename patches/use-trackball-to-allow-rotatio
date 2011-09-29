@@ -1,7 +1,7 @@
-Bottom: cd8ad195b57fe04f3001cff4ecf5175ea19f5b77
-Top:    a0480518c09e679a3c3f31baf0fee1b602a31669
+Bottom: ba3a9fd93a93ec30f7e01021836f158a523e25d7
+Top:    91d330bb2ff6850c21b3b754039f3031e3e5e7f6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-29 19:04:06 +0100
+Date:   2011-09-29 23:14:38 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -422,7 +422,7 @@ index 55bcda2..2e1998f 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 98bfcfe..9b606b2 100644
+index ee79f1a..941a047 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -433,7 +433,7 @@ index 98bfcfe..9b606b2 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1215,6 +1216,10 @@ ghid_build_pcb_top_window (void)
+@@ -1242,6 +1243,10 @@ ghid_build_pcb_top_window (void)
    GtkWidget *vbox_main, *hbox_middle, *hbox;
    GtkWidget *vbox, *frame;
    GtkWidget *label;
@@ -444,7 +444,7 @@ index 98bfcfe..9b606b2 100644
    GHidPort *port = &ghid_port;
    GtkWidget *scrolled;
  
-@@ -1290,6 +1295,17 @@ ghid_build_pcb_top_window (void)
+@@ -1320,6 +1325,17 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX(vbox), ghidgui->layer_selector,
                        FALSE, FALSE, 0);
  
@@ -463,7 +463,7 @@ index 98bfcfe..9b606b2 100644
     * make_mode_buttons_and_toolbar (...);
     */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 5ba5aeb..e9a5ef9 100644
+index ea49bee..585387e 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -296,7 +296,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
@@ -474,7 +474,7 @@ index 5ba5aeb..e9a5ef9 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -504,6 +503,8 @@ void ghid_flush_debug_draw (void);
+@@ -503,6 +502,8 @@ void ghid_flush_debug_draw (void);
  void ghid_finish_debug_draw (void);
  bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
