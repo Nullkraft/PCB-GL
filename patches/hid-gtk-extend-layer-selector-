@@ -1,5 +1,5 @@
-Bottom: ee2ec1736de73c9f4e3690770e1545adb4e0c0f4
-Top:    ede00b8f02796535a32c5d52d9688cd8df285613
+Bottom: dde615809015620d4059fb2e2e1ebf625decb818
+Top:    dff77d22a3491d6ee35f13f3eddbc32075ffb810
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 19:39:34 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Extend layer selector to allow editing layer names in situ
 ---
 
 diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
-index b575816..432b443 100644
+index 746b9d7..4ad12cc 100644
 --- a/src/hid/gtk/ghid-layer-selector.c
 +++ b/src/hid/gtk/ghid-layer-selector.c
 @@ -40,6 +40,7 @@ enum {
@@ -20,7 +20,7 @@ index b575816..432b443 100644
    ACTIVATABLE_COL,
    SEPARATOR_COL,
    N_COLS
-@@ -302,20 +303,31 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
+@@ -301,20 +302,31 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
  
    renderer1 = ghid_cell_renderer_visibility_new ();
    renderer2 = gtk_cell_renderer_text_new ();
@@ -60,7 +60,7 @@ index b575816..432b443 100644
    gtk_tree_view_insert_column (GTK_TREE_VIEW (ls), opacity_col, -1);
    gtk_tree_view_insert_column (GTK_TREE_VIEW (ls), name_col, -1);
    gtk_tree_view_set_model (GTK_TREE_VIEW (ls), GTK_TREE_MODEL (ls->list_store));
-@@ -513,6 +525,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+@@ -512,6 +524,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
                            COLOR_COL, color_string,
                            TEXT_COL, name,
                            FONT_COL, activatable ? NULL : "Italic",
@@ -68,7 +68,7 @@ index b575816..432b443 100644
                            ACTIVATABLE_COL, activatable,
                            SEPARATOR_COL, FALSE,
                            -1);
-@@ -532,6 +545,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+@@ -531,6 +544,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
                            COLOR_COL, color_string,
                            TEXT_COL, name,
                            FONT_COL, activatable ? NULL : "Italic",
