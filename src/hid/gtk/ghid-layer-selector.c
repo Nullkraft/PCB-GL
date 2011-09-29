@@ -302,6 +302,7 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
 
   renderer1 = ghid_cell_renderer_visibility_new ();
   renderer2 = gtk_cell_renderer_text_new ();
+  g_object_set (renderer2, "editable-set", TRUE, NULL);
 
   opacity_col = gtk_tree_view_column_new_with_attributes ("", renderer1,
                                                           "active", VISIBLE_COL,
@@ -309,6 +310,7 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
   name_col = gtk_tree_view_column_new_with_attributes ("", renderer2,
                                                        "text", TEXT_COL,
                                                        "font", FONT_COL,
+                                                       "editable", EDITABLE_COL,
                                                        NULL);
 
   ls = g_object_new (GHID_LAYER_SELECTOR_TYPE, NULL);
