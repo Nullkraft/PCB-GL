@@ -3,7 +3,12 @@ Top:    ccb4a73ebea1fcf66d5680b28657c9a3262e2886
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 23:02:10 +0100
 
-hid/gtk: Don't use dup_string where it would mixing g_free() and free()
+hid/gtk: Don't use dup_string where doing so would mix g_free() and free()
+
+The core uses malloc(), strdup(), free() etc..
+The GTK HID primarily uses g_malloc(), g_strdup(), g_free() etc..
+
+Mixing them can lead to bad behaviour and hard to debug crashes.
 
 
 ---
