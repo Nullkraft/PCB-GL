@@ -29,6 +29,7 @@ static void menu_pick_cb (GtkRadioAction *action, struct _layer *ldata);
 enum {
   SELECT_LAYER_SIGNAL,
   TOGGLE_LAYER_SIGNAL,
+  RENAME_LAYER_SIGNAL,
   LAST_SIGNAL
 };
 
@@ -74,6 +75,7 @@ struct _GHidLayerSelectorClass
 
   void (* select_layer) (GHidLayerSelector *, gint);
   void (* toggle_layer) (GHidLayerSelector *, gint);
+  void (* rename_layer) (GHidLayerSelector *, gint, gchar *);
 };
 
 struct _layer
@@ -85,6 +87,42 @@ struct _layer
   GtkRadioAction  *pick_action;
   GtkTreeRowReference *rref;
 };
+
+static void
+g_cclosure_user_marshal_VOID__INT_STRING (GClosure     *closure,
+                                          GValue       *return_value G_GNUC_UNUSED,
+                                          guint         n_param_values,
+                                          const GValue *param_values,
+                                          gpointer      invocation_hint G_GNUC_UNUSED,
+                                          gpointer      marshal_data)
+{
+  typedef void (*GMarshalFunc_VOID__INT_STRING) (gpointer     data1,
+                                                 gint         arg_1,
+                                                 gpointer     arg_2,
+                                                 gpointer     data2);
+  register GMarshalFunc_VOID__INT_STRING callback;
+  register GCClosure *cc = (GCClosure*) closure;
+  register gpointer data1, data2;
+
+  g_return_if_fail (n_param_values == 3);
+
+  if (G_CCLOSURE_SWAP_DATA (closure))
+    {
+      data1 = closure->data;
+      data2 = g_value_peek_pointer (param_values + 0);
+    }
+  else
+    {
+      data1 = g_value_peek_pointer (param_values + 0);
+      data2 = closure->data;
+    }
+  callback = (GMarshalFunc_VOID__INT_STRING) (marshal_data ? marshal_data : cc->callback);
+
+  callback (data1,
+            g_value_get_int (param_values + 1),
+            (char *)g_value_get_string (param_values + 2),
+            data2);
+}
 
 /*! \brief Deletes the action and accelerator from a layer */
 static void
@@ -244,6 +282,30 @@ selection_changed_cb (GtkTreeSelection *selection, GHidLayerSelector *ls)
     }
 }
 
+/*! \brief Callback for when a layer name has been edited  */
+static void
+layer_name_edited_cb (GtkCellRendererText *renderer,
+                      gchar               *path,
+                      gchar               *new_text,
+                      gpointer             user_data)
+{
+  GHidLayerSelector *ls = user_data;
+  GtkTreeIter iter;
+  int user_id;
+
+  if (!gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (ls->list_store), &iter, path))
+    return;
+
+  gtk_tree_model_get (GTK_TREE_MODEL (ls->list_store),
+                      &iter,
+                      USER_ID_COL, &user_id,
+                      -1);
+
+  g_signal_emit (ls, ghid_layer_selector_signals[RENAME_LAYER_SIGNAL],
+                 0, user_id, new_text);
+}
+
+
 /*! \brief Callback for menu actions: sync layer selection list, emit signal */
 static void
 menu_view_cb (GtkToggleAction *action, struct _layer *ldata)
@@ -302,6 +364,8 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
   renderer1 = ghid_cell_renderer_visibility_new ();
   renderer2 = gtk_cell_renderer_text_new ();
   g_object_set (renderer2, "editable-set", TRUE, NULL);
+  g_signal_connect (renderer2, "edited",
+                    G_CALLBACK (layer_name_edited_cb), ls);
 
   opacity_col = gtk_tree_view_column_new_with_attributes ("",
                                                           renderer1,
@@ -376,6 +440,14 @@ ghid_layer_selector_class_init (GHidLayerSelectorClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__INT, G_TYPE_NONE,
                   1, G_TYPE_INT);
+  ghid_layer_selector_signals[RENAME_LAYER_SIGNAL] =
+    g_signal_new ("rename-layer",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (GHidLayerSelectorClass, rename_layer),
+                  NULL, NULL,
+                  g_cclosure_user_marshal_VOID__INT_STRING, G_TYPE_NONE,
+                  2, G_TYPE_INT, G_TYPE_STRING);
 
   object_class->finalize = ghid_layer_selector_finalize;
 }

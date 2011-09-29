@@ -555,6 +555,24 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
   ghid_invalidate_all ();
 }
 
+/*! \brief Callback for GHidLayerSelector layer renaming */
+static void
+layer_selector_rename_callback (GHidLayerSelector *ls,
+                                int layer_id,
+                                char *new_name,
+                                void *userdata)
+{
+  LayerType *layer = LAYER_PTR (layer_id);
+
+  /* Check for a legal layer name - for now, allow anything non-empty */
+  if (new_name[0] == '\0')
+    return;
+
+  free (layer->Name);
+  layer->Name = strdup (new_name);
+  ghid_layer_buttons_update ();
+}
+
 /*! \brief Callback for GHidLayerSelector layer toggling */
 static void
 layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
@@ -1254,11 +1272,14 @@ ghid_build_pcb_top_window (void)
   ghidgui->layer_selector = ghid_layer_selector_new ();
   make_layer_buttons (ghidgui->layer_selector);
   make_virtual_layer_buttons (ghidgui->layer_selector);
-  g_signal_connect (G_OBJECT (ghidgui->layer_selector), "select_layer",
+  g_signal_connect (G_OBJECT (ghidgui->layer_selector), "select-layer",
                     G_CALLBACK (layer_selector_select_callback),
                     NULL);
-  g_signal_connect (G_OBJECT (ghidgui->layer_selector), "toggle_layer",
+  g_signal_connect (G_OBJECT (ghidgui->layer_selector), "toggle-layer",
                     G_CALLBACK (layer_selector_toggle_callback),
+                    NULL);
+  g_signal_connect (G_OBJECT (ghidgui->layer_selector), "rename-layer",
+                    G_CALLBACK (layer_selector_rename_callback),
                     NULL);
   /* Build main menu */
   ghidgui->menu_bar = ghid_load_menus ();
