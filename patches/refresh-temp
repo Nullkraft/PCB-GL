@@ -1,0 +1,29 @@
+Bottom: b1c3c026d04a6fb4347a5b25406590cdc1bd8c8e
+Top:    9e7708cdd935686631aa76ead1b2156cd07c94f5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-29 19:52:07 +0100
+
+Refresh of hid-gtk-extend-layer-selector-
+
+---
+
+diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
+index e3121fe..a3fcb19 100644
+--- a/src/hid/gtk/ghid-layer-selector.c
++++ b/src/hid/gtk/ghid-layer-selector.c
+@@ -392,6 +392,7 @@ ghid_layer_selector_new (void)
+ 
+   renderer1 = ghid_cell_renderer_visibility_new ();
+   renderer2 = gtk_cell_renderer_text_new ();
++  g_object_set (renderer2, "editable-set", TRUE, NULL);
+ 
+   opacity_col = gtk_tree_view_column_new_with_attributes ("", renderer1,
+                                                           "active", VISIBLE_COL,
+@@ -399,6 +400,7 @@ ghid_layer_selector_new (void)
+   name_col = gtk_tree_view_column_new_with_attributes ("", renderer2,
+                                                        "text", TEXT_COL,
+                                                        "font", FONT_COL,
++                                                       "editable", EDITABLE_COL,
+                                                        NULL);
+ 
+   ls = g_object_new (GHID_LAYER_SELECTOR_TYPE, NULL);
