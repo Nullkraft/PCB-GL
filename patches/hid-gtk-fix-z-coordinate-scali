@@ -1,5 +1,5 @@
 Bottom: 91adc28b3c2d2d9c435ed5d834a310da3f297f1c
-Top:    5e37ee82b34f68795aedd2232c2f039d0fb17bed
+Top:    e4cd8f818fa48cef9207862ec9632279b635f0bb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 16:10:42 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Fix z-coordinate scaling for GL views.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 15c9468..dc1e6b8 100644
+index 15c9468..e559c4f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1066,11 +1066,13 @@ ghid_pinout_preview_expose (GtkWidget *widget,
@@ -18,7 +18,7 @@ index 15c9468..dc1e6b8 100644
    glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
 -            (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px, 1);
 +            (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px,
-+            ((port->view.flip_x == port->view.flip_y) ? 1. : -1.) / port->view.coord_per_px);
++            ((gport->view.flip_x == gport->view.flip_y) ? 1. : -1.) / gport->view.coord_per_px);
    glTranslatef (gport->view.flip_x ? gport->view.x0 - PCB->MaxWidth  :
                                      -gport->view.x0,
                  gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
@@ -33,7 +33,7 @@ index 15c9468..dc1e6b8 100644
    glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
 -            (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px, 1);
 +            (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px,
-+            ((port->view.flip_x == port->view.flip_y) ? 1. : -1.) / port->view.coord_per_px);
++            ((gport->view.flip_x == gport->view.flip_y) ? 1. : -1.) / gport->view.coord_per_px);
    glTranslatef (gport->view.flip_x ? gport->view.x0 - PCB->MaxWidth  :
                                      -gport->view.x0,
                  gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
@@ -42,7 +42,7 @@ index 15c9468..dc1e6b8 100644
    glScalef ((port->view.flip_x ? -1. : 1.) / port->view.coord_per_px,
              (port->view.flip_y ? -1. : 1.) / port->view.coord_per_px,
 -            (port->view.flip_x == port->view.flip_y) ? 1. : -1.);
-+            ((port->view.flip_x == port->view.flip_y) ? 1. : -1.) / port->view.coord_per_px);
++            ((gport->view.flip_x == port->view.flip_y) ? 1. : -1.) / gport->view.coord_per_px);
    glTranslatef (port->view.flip_x ? port->view.x0 - PCB->MaxWidth  :
                               -port->view.x0,
                  port->view.flip_y ? port->view.y0 - PCB->MaxHeight :
