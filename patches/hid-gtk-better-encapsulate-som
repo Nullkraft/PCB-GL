@@ -1,5 +1,5 @@
 Bottom: 60963978c092ba81de859e28fd4955b639db2923
-Top:    ee2ec1736de73c9f4e3690770e1545adb4e0c0f4
+Top:    dde615809015620d4059fb2e2e1ebf625decb818
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 19:51:16 +0100
 
@@ -13,10 +13,10 @@ trouble of subclassing a widget in the first place.
 ---
 
 diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
-index 840cd98..b575816 100644
+index 840cd98..746b9d7 100644
 --- a/src/hid/gtk/ghid-layer-selector.c
 +++ b/src/hid/gtk/ghid-layer-selector.c
-@@ -290,11 +290,62 @@ menu_pick_cb (GtkRadioAction *action, struct _layer *ldata)
+@@ -290,11 +290,61 @@ menu_pick_cb (GtkRadioAction *action, struct _layer *ldata)
      }
  }
  
@@ -30,7 +30,6 @@ index 840cd98..b575816 100644
 +  GtkCellRenderer *renderer2;
 +  GtkTreeViewColumn *opacity_col;
 +  GtkTreeViewColumn *name_col;
-+  GHidLayerSelector *ls;
 +
 +  renderer1 = ghid_cell_renderer_visibility_new ();
 +  renderer2 = gtk_cell_renderer_text_new ();
@@ -81,7 +80,7 @@ index 840cd98..b575816 100644
  }
  
  static void
-@@ -383,55 +434,7 @@ ghid_layer_selector_get_type (void)
+@@ -383,55 +433,7 @@ ghid_layer_selector_get_type (void)
  GtkWidget *
  ghid_layer_selector_new (void)
  {
