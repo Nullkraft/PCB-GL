@@ -499,7 +499,7 @@ set_gl_color_for_gc (hidGC gc)
    * current_colorname set to NULL, so we don't NOOP the
    * next set_gl_color_for_gc call.
    */
-  if(!priv->in_context)
+  if (!priv->in_context)
     return;
 
   priv->current_colorname = strdup (gc->colorname);
@@ -861,7 +861,7 @@ draw_crosshair (render_priv *priv)
   static int done_once = 0;
   static GdkColor cross_color;
 
-  if(!priv->in_context)
+  if (!priv->in_context)
     return;
 
   if (!done_once)
