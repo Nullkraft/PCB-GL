@@ -1,5 +1,5 @@
-Bottom: f95b51bdd92c6ec907832424b57c4db23fc62228
-Top:    df84d673488108827efcb8e687a392ef5e85bf44
+Bottom: c03f9f375388919fe8d8e14dce9f99d36b7b830f
+Top:    70b72ed7dc17599f842633d39bc3d0ba0ccda594
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-02-01 21:58:58 +0000
 
@@ -9,7 +9,7 @@ Port David Rowe's rubberbanding patch to git HEAD
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 2edb9a9..06a2f92 100644
+index 62c53e3..0614581 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -194,6 +194,7 @@ typedef enum
@@ -71,7 +71,7 @@ index f029821..3742769 100644
  /* ---------------------------------------------------------------------------
   * object types
 diff --git a/src/create.c b/src/create.c
-index c843582..816a591 100644
+index a199acc..950c27a 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -165,6 +165,8 @@ CreateNewPCB (bool SetDefaultNames)
@@ -83,7 +83,7 @@ index c843582..816a591 100644
    if (Settings.SwapStartDirection)
      SET_FLAG (SWAPSTARTDIRFLAG, ptr);
    if (Settings.UniqueNames)
-@@ -954,7 +956,7 @@ CreateNewRubberbandEntry (LayerTypePtr Layer,
+@@ -953,7 +955,7 @@ CreateNewRubberbandEntry (LayerTypePtr Layer,
  
    /* we toggle the RUBBERENDFLAG of the line to determine if */
    /* both points are being moved. */
