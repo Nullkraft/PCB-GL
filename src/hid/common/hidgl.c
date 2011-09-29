@@ -83,14 +83,6 @@ static bool in_context = false;
   } while (0)
 
 void
-hidgl_in_context (bool is_in_context)
-{
-  if (in_context == is_in_context)
-    fprintf (stderr, "hidgl: hidgl_in_context called with nested value!\n");
-  in_context = is_in_context;
-}
-
-void
 hidgl_init_triangle_array (triangle_buffer *buffer)
 {
   buffer->triangle_count = 0;
@@ -732,6 +724,26 @@ hidgl_init (void)
               "Cannot use stencil buffer to sub-composite layers.\n");
       /* Do we need to disable that somewhere? */
     }
+}
+
+void
+hidgl_start_render (void)
+{
+  if (in_context)
+    fprintf (stderr, "hidgl: hidgl_start_render() - Already in rendering context!\n");
+
+  in_context = true;
+  hidgl_init ();
+  hidgl_init_triangle_array (&buffer);
+}
+
+void
+hidgl_finish_render (void)
+{
+  if (!in_context)
+    fprintf (stderr, "hidgl: hidgl_finish_render() - Not currently in rendering context!\n");
+
+  in_context = false;
 }
 
 int
