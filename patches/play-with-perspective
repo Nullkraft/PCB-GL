@@ -1,5 +1,5 @@
-Bottom: 8714a571acfe7857997d9cdde1dad6e31f75225d
-Top:    d9572b5e27d51ea95f1f2dca640a572b0352b44c
+Bottom: 082f1dc61273ab1a787c6dac037c532fa2d3645c
+Top:    a7b521cd438669dbc79dbefcc50d58011807de2f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 16:19:25 +0100
 
@@ -76,7 +76,7 @@ index fa53dd1..3a45da5 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ce77a31..a93f6b5 100644
+index 584bc21..fa06c53 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,7 @@
@@ -349,7 +349,7 @@ index ce77a31..a93f6b5 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2422,10 +2499,10 @@ ghid_finish_debug_draw (void)
+@@ -2421,10 +2498,10 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
@@ -363,7 +363,7 @@ index ce77a31..a93f6b5 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2453,9 +2530,9 @@ determinant_4x4 (float m[4][4])
+@@ -2452,9 +2529,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -375,7 +375,7 @@ index ce77a31..a93f6b5 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2520,96 +2597,157 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2519,96 +2596,157 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
