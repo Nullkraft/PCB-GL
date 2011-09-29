@@ -1,7 +1,7 @@
-Bottom: c03f9f375388919fe8d8e14dce9f99d36b7b830f
+Bottom: b88eede76576b8053be41f410159979f788f773b
 Top:    b88eede76576b8053be41f410159979f788f773b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-29 16:18:49 +0100
+Date:   2011-09-29 19:04:05 +0100
 
 draw.c: Expose some drawing APIs for the HIDs to use directly...
 
@@ -16,105 +16,4 @@ Exposes:
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index deb9e65..a06dde1 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -83,14 +83,10 @@ static bool doing_assy = false;
-  */
- static void DrawEverything (const BoxType *);
- static void DrawPPV (int group, const BoxType *);
--static void DrawLayerGroup (int, const BoxType *);
- static void AddPart (void *);
- static void SetPVColor (PinTypePtr, int);
- static void DrawEMark (ElementTypePtr, Coord, Coord, bool);
--static void DrawMask (int side, const BoxType *);
--static void DrawPaste (int side, const BoxType *);
- static void DrawRats (const BoxType *);
--static void DrawSilk (int side, const BoxType *);
- 
- /*--------------------------------------------------------------------------------------
-  * setup color for pin or via
-@@ -442,7 +438,7 @@ hole_callback (const BoxType * b, void *cl)
-   return 1;
- }
- 
--static void
-+void
- DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
- {
-   int plated = -1;
-@@ -604,7 +600,7 @@ element_callback (const BoxType * b, void *cl)
-  * prints assembly drawing.
-  */
- 
--static void
-+void
- PrintAssembly (int side, const BoxType * drawn_area)
- {
-   int side_group = GetLayerGroupNumberByNumber (max_copper_layer + side);
-@@ -930,7 +926,7 @@ clearPad_callback (const BoxType * b, void *cl)
-  * Draws silk layer.
-  */
- 
--static void
-+void
- DrawSilk (int side, const BoxType * drawn_area)
- {
- #if 0
-@@ -989,7 +985,7 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
- /* ---------------------------------------------------------------------------
-  * draws solder mask layer - this will cover nearly everything
-  */
--static void
-+void
- DrawMask (int side, const BoxType *screen)
- {
-   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
-@@ -1018,7 +1014,7 @@ DrawMask (int side, const BoxType *screen)
- /* ---------------------------------------------------------------------------
-  * draws solder paste layer for a given side of the board
-  */
--static void
-+void
- DrawPaste (int side, const BoxType *drawn_area)
- {
-   gui->set_color (Output.fgGC, PCB->ElementColor);
-@@ -1111,7 +1107,7 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
-  * draws one layer group.  If the exporter is not a GUI,
-  * also draws the pins / pads / vias in this layer group.
-  */
--static void
-+void
- DrawLayerGroup (int group, const BoxType *drawn_area)
- {
-   int i, rv = 1;
-diff --git a/src/draw.h b/src/draw.h
-index ef32ebb..d92dee5 100644
---- a/src/draw.h
-+++ b/src/draw.h
-@@ -71,4 +71,11 @@ void EraseElementPinsAndPads (ElementTypePtr);
- void EraseElementName (ElementTypePtr);
- void EraseObject (int, void *, void *);
- 
-+void DrawLayerGroup (int side, const BoxType *drawn_area);
-+void DrawPaste (int side, const BoxType *drawn_area);
-+void DrawSilk (int side, const BoxType *drawn_area);
-+void DrawMask (int side, const BoxType *drawn_area);
-+void DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area);
-+void PrintAssembly (int side, const BoxType *drawn_area);
-+
- #endif
-diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index a83ee2e..544b6a2 100644
---- a/src/hid/gtk/gtkhid-main.c
-+++ b/src/hid/gtk/gtkhid-main.c
-@@ -1936,7 +1936,8 @@ N_("Bring up the popup menu specified by @code{MenuName}.\n"
- 
- This just pops up the specified menu.  The menu must have been defined
- as a named subresource of the Popups resource in the menu resource
--file.
-+file. The second, optional (and ignored) argument represents the mouse
-+button number which is triggering the popup.
- 
- %end-doc */
+
