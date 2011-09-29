@@ -1469,11 +1469,28 @@ struct poly_info
 };
 
 static int
-poly_callback (const BoxType * b, void *cl)
+poly_callback_no_clear (const BoxType * b, void *cl)
 {
   struct poly_info *i = (struct poly_info *) cl;
+  PolygonType *polygon = (PolygonType *) b;
 
-  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b, i->drawn_area);
+  if (TEST_FLAG (CLEARPOLYFLAG, polygon))
+    return 0;
+
+  DrawPlainPolygon (i->Layer, polygon, i->drawn_area);
+  return 1;
+}
+
+static int
+poly_callback_clearing (const BoxType * b, void *cl)
+{
+  struct poly_info *i = (struct poly_info *) cl;
+  PolygonType *polygon = (PolygonType *) b;
+
+  if (!TEST_FLAG (CLEARPOLYFLAG, polygon))
+    return 0;
+
+  DrawPlainPolygon (i->Layer, polygon, i->drawn_area);
   return 1;
 }
 
@@ -1608,7 +1625,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
       if (Layer->PolygonN) {
         info.Layer = Layer;
         info.drawn_area = screen;
-        r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+        r_search (Layer->polygon_tree, screen, NULL, poly_callback_no_clear, &info);
+        r_search (Layer->polygon_tree, screen, NULL, poly_callback_clearing, &info);
 
         /* HACK: Subcomposite polygons separately from other layer primitives */
         /* Reset the compositing */
