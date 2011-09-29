@@ -1,0 +1,101 @@
+Bottom: a0d56bce90afbcb8db621bf199a81d52841b99e9
+Top:    df07b8f3980d6639fe589f3071685a0eae007204
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-29 23:01:30 +0100
+
+Refresh of hid-gtk-extend-layer-selector-
+
+---
+
+diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
+index 306c1ea..1afd211 100644
+--- a/src/hid/gtk/ghid-layer-selector.c
++++ b/src/hid/gtk/ghid-layer-selector.c
+@@ -284,6 +284,38 @@ selection_changed_cb (GtkTreeSelection *selection, GHidLayerSelector *ls)
+ 
+ /*! \brief Callback for when a layer name has been edited  */
+ static void
++layer_name_editing_started_cb (GtkCellRenderer *renderer,
++                               GtkCellEditable *editable,
++                               gchar           *path,
++                               gpointer         user_data)
++{
++  /* When editing begins, we need to detach PCB's accelerators
++   * so they don't steal all the user's keystrokes.
++   *
++   * XXX: We should not have to do this within a simple widget,
++   *
++   *      and this quick hack workaround breaks the widget's
++   *      abstraction from the rest of the application :(
++   */
++  ghid_remove_accel_groups (GTK_WINDOW (gport->top_window), ghidgui);
++}
++
++/*! \brief Callback for when layer name editing has been canceled */
++static void
++layer_name_editing_canceled_cb (GtkCellRenderer *renderer,
++                                 gpointer         user_data)
++{
++  /* Put PCB's accelerators back.
++   *
++   * XXX: We should not have to do this within a simple widget,
++   *      and this quick hack workaround breaks the widget's
++   *      abstraction from the rest of the application :(
++   */
++  ghid_install_accel_groups (GTK_WINDOW (gport->top_window), ghidgui);
++}
++
++/*! \brief Callback for when a layer name has been edited  */
++static void
+ layer_name_edited_cb (GtkCellRendererText *renderer,
+                       gchar               *path,
+                       gchar               *new_text,
+@@ -293,6 +325,14 @@ layer_name_edited_cb (GtkCellRendererText *renderer,
+   GtkTreeIter iter;
+   int user_id;
+ 
++  /* Put PCB's accelerators back.
++   *
++   * XXX: We should not have to do this within a simple widget,
++   *      and this quick hack workaround breaks the widget's
++   *      abstraction from the rest of the application :(
++   */
++  ghid_install_accel_groups (GTK_WINDOW (gport->top_window), ghidgui);
++
+   if (!gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (ls->list_store), &iter, path))
+     return;
+ 
+@@ -364,6 +404,10 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
+   renderer1 = ghid_cell_renderer_visibility_new ();
+   renderer2 = gtk_cell_renderer_text_new ();
+   g_object_set (renderer2, "editable-set", TRUE, NULL);
++  g_signal_connect (renderer2, "editing-started",
++                    G_CALLBACK (layer_name_editing_started_cb), ls);
++  g_signal_connect (renderer2, "editing-canceled",
++                    G_CALLBACK (layer_name_editing_canceled_cb), ls);
+   g_signal_connect (renderer2, "edited",
+                     G_CALLBACK (layer_name_edited_cb), ls);
+ 
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 7327a15..629bc3c 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -568,9 +568,18 @@ layer_selector_rename_callback (GHidLayerSelector *ls,
+   if (new_name[0] == '\0')
+     return;
+ 
++  /* Don't bother if the name is identical to the current one */
++  if (strcmp (layer->Name, new_name) == 0)
++    return;
++
+   free (layer->Name);
+   layer->Name = strdup (new_name);
+   ghid_layer_buttons_update ();
++  if (!PCB->Changed)
++    {
++      SetChangedFlag (true);
++      ghid_window_set_name_label (PCB->Name);
++    }
+ }
+ 
+ /*! \brief Callback for GHidLayerSelector layer toggling */
