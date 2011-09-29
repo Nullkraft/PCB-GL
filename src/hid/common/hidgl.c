@@ -56,6 +56,34 @@
 #   include <GL/glu.h>
 #endif
 
+#ifdef WIN32
+#   include "glext.h"
+
+PFNGLGENBUFFERSPROC         glGenBuffers        = NULL;
+PFNGLDELETEBUFFERSPROC      glDeleteBuffers     = NULL;
+PFNGLBINDBUFFERPROC         glBindBuffer        = NULL;
+PFNGLBUFFERDATAPROC         glBufferData        = NULL;
+PFNGLBUFFERSUBDATAPROC      glBufferSubData     = NULL;
+PFNGLMAPBUFFERPROC          glMapBuffer         = NULL;
+PFNGLUNMAPBUFFERPROC        glUnmapBuffer       = NULL;
+
+PFNGLATTACHSHADERPROC       glAttachShader      = NULL;
+PFNGLCOMPILESHADERPROC      glCompileShader     = NULL;
+PFNGLCREATEPROGRAMPROC      glCreateProgram     = NULL;
+PFNGLCREATESHADERPROC       glCreateShader      = NULL;
+PFNGLDELETEPROGRAMPROC      glDeleteProgram     = NULL;
+PFNGLDELETESHADERPROC       glDeleteShader      = NULL;
+PFNGLGETPROGRAMINFOLOGPROC  glGetProgramInfoLog = NULL;
+PFNGLGETPROGRAMIVPROC       glGetProgramiv      = NULL;
+PFNGLGETSHADERINFOLOGPROC   glGetShaderInfoLog  = NULL;
+PFNGLGETSHADERIVPROC        glGetShaderiv       = NULL;
+PFNGLISSHADERPROC           glIsShader          = NULL;
+PFNGLLINKPROGRAMPROC        glLinkProgram       = NULL;
+PFNGLSHADERSOURCEPROC       glShaderSource      = NULL;
+PFNGLUSEPROGRAMPROC         glUseProgram        = NULL;
+
+#endif
+
 #include "action.h"
 #include "crosshair.h"
 #include "data.h"
@@ -974,6 +1002,32 @@ hidgl_init (void)
 
   if (done_once)
     return;
+
+#ifdef WIN32
+  glGenBuffers        = (PFNGLGENBUFFERSPROC)        wglGetProcAddress ("glGenBuffers");
+  glDeleteBuffers     = (PFNGLDELETEBUFFERSPROC)     wglGetProcAddress ("glDeleteBuffers");
+  glBindBuffer        = (PFNGLBINDBUFFERPROC)        wglGetProcAddress ("glBindBuffer");
+  glBufferData        = (PFNGLBUFFERDATAPROC)        wglGetProcAddress ("glBufferData");
+  glBufferSubData     = (PFNGLBUFFERSUBDATAPROC)     wglGetProcAddress ("glBufferSubData");
+  glMapBuffer         = (PFNGLMAPBUFFERPROC)         wglGetProcAddress ("glMapBuffer");
+  glUnmapBuffer       = (PFNGLUNMAPBUFFERPROC)       wglGetProcAddress ("glUnmapBuffer");
+
+  glAttachShader      = (PFNGLATTACHSHADERPROC)      wglGetProcAddress ("glAttachShader");
+  glCompileShader     = (PFNGLCOMPILESHADERPROC)     wglGetProcAddress ("glCompileShader");
+  glCreateProgram     = (PFNGLCREATEPROGRAMPROC)     wglGetProcAddress ("glCreateProgram");
+  glCreateShader      = (PFNGLCREATESHADERPROC)      wglGetProcAddress ("glCreateShader");
+  glDeleteProgram     = (PFNGLDELETEPROGRAMPROC)     wglGetProcAddress ("glDeleteProgram");
+  glDeleteShader      = (PFNGLDELETESHADERPROC)      wglGetProcAddress ("glDeleteShader");
+  glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC) wglGetProcAddress ("glGetProgramInfoLog");
+  glGetProgramiv      = (PFNGLGETPROGRAMIVPROC)      wglGetProcAddress ("glGetProgramiv");
+  glGetShaderInfoLog  = (PFNGLGETSHADERINFOLOGPROC)  wglGetProcAddress ("glGetShaderInfoLog");
+  glGetShaderiv       = (PFNGLGETSHADERIVPROC)       wglGetProcAddress ("glGetShaderiv");
+  glIsShader          = (PFNGLISSHADERPROC)          wglGetProcAddress ("glIsShader");
+  glLinkProgram       = (PFNGLLINKPROGRAMPROC)       wglGetProcAddress ("glLinkProgram");
+  glShaderSource      = (PFNGLSHADERSOURCEPROC)      wglGetProcAddress ("glShaderSource");
+  glUseProgram        = (PFNGLUSEPROGRAMPROC)        wglGetProcAddress ("glUseProgram");
+#endif
+
 
   CHECK_IS_IN_CONTEXT ();
   glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
