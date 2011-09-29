@@ -1911,8 +1911,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   gtk_widget_get_allocation (widget, &allocation);
 
   ghid_start_drawing (port);
-
-  hidgl_init ();
+  hidgl_start_render ();
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
@@ -2030,7 +2029,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
              port->bg_color.green / 65535.,
              port->bg_color.blue / 65535.);
 
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
 
   /* Setup stenciling */
@@ -2092,6 +2090,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   draw_lead_user (priv);
 
+  hidgl_finish_render ();
   ghid_end_drawing (port);
 
   g_timer_start (priv->time_since_expose);
@@ -2154,6 +2153,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
     return FALSE;
   }
+  hidgl_start_render ();
   gport->render_priv->in_context = true;
 
   glEnable (GL_BLEND);
@@ -2180,11 +2180,9 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
   hidgl_reset_stencil_usage ();
 
   /* call the drawing routine */
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   glPushMatrix ();
   glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
@@ -2204,6 +2202,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
     gdk_gl_drawable_swap_buffers (pGlDrawable);
   else
     glFlush ();
+
+  hidgl_finish_render ();
 
   /* end drawing to current GL-context */
   gport->render_priv->in_context = false;
@@ -2261,6 +2261,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
     return NULL;
   }
+  hidgl_start_render ();
   gport->render_priv->in_context = true;
 
   glEnable (GL_BLEND);
@@ -2288,7 +2289,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   hidgl_reset_stencil_usage ();
 
   /* call the drawing routine */
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   glPushMatrix ();
   glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
@@ -2314,6 +2314,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   glPopMatrix ();
 
   glFlush ();
+
+  hidgl_finish_render ();
 
   /* end drawing to current GL-context */
   gport->render_priv->in_context = false;
@@ -2341,6 +2343,7 @@ ghid_request_debug_draw (void)
   gtk_widget_get_allocation (widget, &allocation);
 
   ghid_start_drawing (port);
+  hidgl_start_render ();
 
   glViewport (0, 0, allocation.width, allocation.height);
 
@@ -2351,7 +2354,6 @@ ghid_request_debug_draw (void)
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
 
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
 
   /* Setup stenciling */
@@ -2389,6 +2391,7 @@ ghid_finish_debug_draw (void)
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
+  hidgl_finish_render ();
   ghid_end_drawing (gport);
 }
 
