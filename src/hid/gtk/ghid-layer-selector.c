@@ -327,6 +327,7 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
   ls->accel_group = gtk_accel_group_new ();
   ls->action_group = gtk_action_group_new ("LayerSelector");
   ls->n_actions = 0;
+
   for (i = 0; i < 20; ++i)
     ls->accel_available[i] = TRUE;
 
