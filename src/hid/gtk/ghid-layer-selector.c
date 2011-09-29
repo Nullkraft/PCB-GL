@@ -311,8 +311,6 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
                                                        "font", FONT_COL,
                                                        NULL);
 
-  ls = g_object_new (GHID_LAYER_SELECTOR_TYPE, NULL);
-
   /* action index, active, color, text, font, is_separator */
   ls->list_store = gtk_list_store_new (N_COLS, G_TYPE_POINTER, G_TYPE_INT,
                                        G_TYPE_BOOLEAN, G_TYPE_STRING,
