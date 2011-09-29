@@ -384,19 +384,24 @@ GtkWidget *
 ghid_layer_selector_new (void)
 {
   int i;
-  GtkCellRenderer *renderer1 = ghid_cell_renderer_visibility_new ();
-  GtkCellRenderer *renderer2 = gtk_cell_renderer_text_new ();
-  GtkTreeViewColumn *opacity_col =
-      gtk_tree_view_column_new_with_attributes ("", renderer1,
-                                                "active", VISIBLE_COL,
-                                                "color", COLOR_COL, NULL);
-  GtkTreeViewColumn *name_col =
-      gtk_tree_view_column_new_with_attributes ("", renderer2,
-                                                "text", TEXT_COL,
-                                                "font", FONT_COL,
-                                                NULL);
+  GtkCellRenderer *renderer1;
+  GtkCellRenderer *renderer2;
+  GtkTreeViewColumn *opacity_col;
+  GtkTreeViewColumn *name_col;
+  GHidLayerSelector *ls;
 
-  GHidLayerSelector *ls = g_object_new (GHID_LAYER_SELECTOR_TYPE, NULL);
+  renderer1 = ghid_cell_renderer_visibility_new ();
+  renderer2 = gtk_cell_renderer_text_new ();
+
+  opacity_col = gtk_tree_view_column_new_with_attributes ("", renderer1,
+                                                          "active", VISIBLE_COL,
+                                                          "color", COLOR_COL, NULL);
+  name_col = gtk_tree_view_column_new_with_attributes ("", renderer2,
+                                                       "text", TEXT_COL,
+                                                       "font", FONT_COL,
+                                                       NULL);
+
+  ls = g_object_new (GHID_LAYER_SELECTOR_TYPE, NULL);
 
   /* action index, active, color, text, font, is_separator */
   ls->list_store = gtk_list_store_new (N_COLS, G_TYPE_POINTER, G_TYPE_INT,
