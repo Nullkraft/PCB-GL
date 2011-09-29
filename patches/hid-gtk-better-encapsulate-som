@@ -1,5 +1,5 @@
 Bottom: 60963978c092ba81de859e28fd4955b639db2923
-Top:    dde615809015620d4059fb2e2e1ebf625decb818
+Top:    fc017e2c8dc453fcd9ae68b66db4643e0acdf236
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 19:51:16 +0100
 
@@ -13,10 +13,10 @@ trouble of subclassing a widget in the first place.
 ---
 
 diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
-index 840cd98..746b9d7 100644
+index 840cd98..72ec44d 100644
 --- a/src/hid/gtk/ghid-layer-selector.c
 +++ b/src/hid/gtk/ghid-layer-selector.c
-@@ -290,11 +290,61 @@ menu_pick_cb (GtkRadioAction *action, struct _layer *ldata)
+@@ -290,11 +290,59 @@ menu_pick_cb (GtkRadioAction *action, struct _layer *ldata)
      }
  }
  
@@ -75,12 +75,10 @@ index 840cd98..746b9d7 100644
 +  ls->selection_changed_sig_id =
 +    g_signal_connect (ls->selection, "changed",
 +                      G_CALLBACK (selection_changed_cb), ls);
-+
-+  return GTK_WIDGET (ls);
  }
  
  static void
-@@ -383,55 +433,7 @@ ghid_layer_selector_get_type (void)
+@@ -383,55 +431,7 @@ ghid_layer_selector_get_type (void)
  GtkWidget *
  ghid_layer_selector_new (void)
  {
