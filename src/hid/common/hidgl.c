@@ -703,6 +703,18 @@ hidgl_init (void)
     }
 }
 
+void
+hidgl_start_render (void)
+{
+  hidgl_init ();
+  hidgl_init_triangle_array (&buffer);
+}
+
+void
+hidgl_finish_render (void)
+{
+}
+
 int
 hidgl_stencil_bits (void)
 {
