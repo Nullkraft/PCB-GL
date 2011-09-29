@@ -1099,7 +1099,8 @@ _draw_pv_name (PinType *pv)
   gui->set_color (Output.fgGC, PCB->PinNameColor);
 
   text.Flags = NoFlags ();
-  text.Scale = pv->Thickness / 80;
+  /* Set font height to approx 56% of pin thickness */
+  text.Scale = 56 * pv->Thickness / FONT_CAPHEIGHT;
   text.X = box.X1;
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
@@ -1196,7 +1197,8 @@ draw_pad_name (PadType *pad)
   gui->set_color (Output.fgGC, PCB->PinNameColor);
 
   text.Flags = NoFlags ();
-  text.Scale = pad->Thickness / 50;
+  /* Set font height to approx 90% of pad thickness */
+  text.Scale = 90 * pad->Thickness / FONT_CAPHEIGHT;
   text.X = box.X1;
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
