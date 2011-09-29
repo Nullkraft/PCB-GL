@@ -1,5 +1,5 @@
 Bottom: b2ad3f732b168d3d2088409b69976b3ada525124
-Top:    b2ad3f732b168d3d2088409b69976b3ada525124
+Top:    9f6d0b71f3c6dc781cc6910fcaf1254d83a83978
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 20:38:13 +0100
 
@@ -8,4 +8,24 @@ hid/gtk: Layer selector - remove unused variable
 
 ---
 
-
+diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
+index 7648261..ca5abe9 100644
+--- a/src/hid/gtk/ghid-layer-selector.c
++++ b/src/hid/gtk/ghid-layer-selector.c
+@@ -64,8 +64,6 @@ struct _GHidLayerSelector
+ 
+   gboolean accel_available[20];
+ 
+-  gboolean last_activatable;
+-
+   gulong selection_changed_sig_id;
+ };
+ 
+@@ -320,7 +318,6 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
+   gtk_tree_view_set_model (GTK_TREE_VIEW (ls), GTK_TREE_MODEL (ls->list_store));
+   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (ls), FALSE);
+ 
+-  ls->last_activatable = TRUE;
+   ls->visibility_column = opacity_col;
+   ls->selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (ls));
+   ls->accel_group = gtk_accel_group_new ();
