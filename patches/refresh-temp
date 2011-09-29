@@ -1,0 +1,21 @@
+Bottom: cfbda9f29d2b48b11d2d3de02bd00fc79bf09091
+Top:    60963978c092ba81de859e28fd4955b639db2923
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-29 20:02:11 +0100
+
+Refresh of hid-gtk-don-t-refleak-the-acce
+
+---
+
+diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
+index 639e2be..840cd98 100644
+--- a/src/hid/gtk/ghid-layer-selector.c
++++ b/src/hid/gtk/ghid-layer-selector.c
+@@ -431,8 +431,6 @@ ghid_layer_selector_new (void)
+     g_signal_connect (ls->selection, "changed",
+                       G_CALLBACK (selection_changed_cb), ls);
+ 
+-  g_object_ref (ls->accel_group);
+-
+   return GTK_WIDGET (ls);
+ }
