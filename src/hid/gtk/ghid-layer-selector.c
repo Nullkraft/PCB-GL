@@ -576,6 +576,7 @@ ghid_layer_selector_new (void)
  *  \param [in] color_string  The color of the layer on selector
  *  \param [in] visibile      Whether the layer is visible
  *  \param [in] selectable    Whether the layer appears in menus and can be selected
+ *  \param [in] renameable    Whether the layer is renameable
  */
 void
 ghid_layer_selector_add_layer (GHidLayerSelector *ls,
@@ -584,7 +585,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
                                const gchar *color_string,
                                gboolean visible,
                                gboolean selectable,
-                               gboolean builtin)
+                               gboolean renameable)
 {
   struct _layer *new_layer = NULL;
   gchar *pname, *vname;
@@ -652,7 +653,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
                       COLOR_COL,       color_string,
                       TEXT_COL,        name,
                       FONT_COL,        selectable ? NULL : "Italic",
-                      EDITABLE_COL,    !builtin,
+                      EDITABLE_COL,    renameable,
                       SELECTABLE_COL,  selectable,
                       SEPARATOR_COL,   FALSE,
                       -1);
