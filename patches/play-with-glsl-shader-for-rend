@@ -1,7 +1,7 @@
-Bottom: e6a7a8ce46a2bf56ca46f1eb755e60e99ee9b51c
+Bottom: e27f3e069f209f66448a87080e805f4e525c9262
 Top:    1fbcd6680329505a3aba0e4b7a72ef1579e16102
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-29 17:37:07 +0100
+Date:   2011-09-29 17:38:32 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -997,7 +997,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d8552f6..f40db60 100644
+index 9aedaa6..f40db60 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -318,6 +318,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1009,15 +1009,6 @@ index d8552f6..f40db60 100644
    glDisable (GL_STENCIL_TEST);
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -499,7 +501,7 @@ set_gl_color_for_gc (hidGC gc)
-    * current_colorname set to NULL, so we don't NOOP the
-    * next set_gl_color_for_gc call.
-    */
--  if(!priv->in_context)
-+  if (!priv->in_context)
-     return;
- 
-   priv->current_colorname = strdup (gc->colorname);
 @@ -687,7 +689,7 @@ ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
  {
    USE_GC (gc);
@@ -1036,15 +1027,6 @@ index d8552f6..f40db60 100644
  }
  
  void
-@@ -861,7 +863,7 @@ draw_crosshair (render_priv *priv)
-   static int done_once = 0;
-   static GdkColor cross_color;
- 
--  if(!priv->in_context)
-+  if (!priv->in_context)
-     return;
- 
-   if (!done_once)
 @@ -1649,9 +1651,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
  #define MIN_FACES_PER_CYL 6
  #define MAX_FACES_PER_CYL 360
