@@ -40,6 +40,7 @@ enum {
   COLOR_COL,
   TEXT_COL,
   FONT_COL,
+  EDITABLE_COL,
   ACTIVATABLE_COL,
   SEPARATOR_COL,
   N_COLS
@@ -304,22 +305,29 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
   renderer2 = gtk_cell_renderer_text_new ();
   g_object_set (renderer2, "editable-set", TRUE, NULL);
 
-  opacity_col = gtk_tree_view_column_new_with_attributes ("", renderer1,
+  opacity_col = gtk_tree_view_column_new_with_attributes ("",
+                                                          renderer1,
                                                           "active", VISIBLE_COL,
-                                                          "color", COLOR_COL, NULL);
-  name_col = gtk_tree_view_column_new_with_attributes ("", renderer2,
+                                                          "color",  COLOR_COL,
+                                                          NULL);
+  name_col = gtk_tree_view_column_new_with_attributes ("",
+                                                       renderer2,
                                                        "text", TEXT_COL,
                                                        "font", FONT_COL,
                                                        "editable", EDITABLE_COL,
                                                        NULL);
 
-  ls = g_object_new (GHID_LAYER_SELECTOR_TYPE, NULL);
+  ls->list_store = gtk_list_store_new (N_COLS,
+                 /* STRUCT_COL      */ G_TYPE_POINTER,
+                 /* USER_ID_COL     */ G_TYPE_INT,
+                 /* VISIBLE_COL     */ G_TYPE_BOOLEAN,
+                 /* COLOR_COL       */ G_TYPE_STRING,
+                 /* TEXT_COL        */ G_TYPE_STRING,
+                 /* FONT_COL        */ G_TYPE_STRING,
+                 /* EDITABLE_COL    */ G_TYPE_BOOLEAN,
+                 /* ACTIVATABLE_COL */ G_TYPE_BOOLEAN,
+                 /* SEPARATOR_COL   */ G_TYPE_BOOLEAN);
 
-  /* action index, active, color, text, font, is_separator */
-  ls->list_store = gtk_list_store_new (N_COLS, G_TYPE_POINTER, G_TYPE_INT,
-                                       G_TYPE_BOOLEAN, G_TYPE_STRING,
-                                       G_TYPE_STRING, G_TYPE_STRING,
-                                       G_TYPE_BOOLEAN, G_TYPE_BOOLEAN);
   gtk_tree_view_insert_column (GTK_TREE_VIEW (ls), opacity_col, -1);
   gtk_tree_view_insert_column (GTK_TREE_VIEW (ls), name_col, -1);
   gtk_tree_view_set_model (GTK_TREE_VIEW (ls), GTK_TREE_MODEL (ls->list_store));
@@ -516,6 +524,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
                           COLOR_COL, color_string,
                           TEXT_COL, name,
                           FONT_COL, activatable ? NULL : "Italic",
+                          EDITABLE_COL, activatable,
                           ACTIVATABLE_COL, activatable,
                           SEPARATOR_COL, FALSE,
                           -1);
@@ -535,6 +544,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
                           COLOR_COL, color_string,
                           TEXT_COL, name,
                           FONT_COL, activatable ? NULL : "Italic",
+                          EDITABLE_COL, activatable,
                           ACTIVATABLE_COL, activatable,
                           -1);
     }
