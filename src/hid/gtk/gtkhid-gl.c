@@ -45,7 +45,6 @@ RCSID ("$Id$");
 extern HID ghid_hid;
 
 static hidGC current_gc = NULL;
-static bool check_gl_drawing_ok_hack = false;
 
 /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
 */
@@ -319,6 +318,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
       gport->grid_color.blue ^= gport->bg_color.blue;
     }
 
+  glTexCoord2f (0., 0.);
+
   glDisable (GL_STENCIL_TEST);
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
@@ -500,7 +501,7 @@ set_gl_color_for_gc (hidGC gc)
    * current_colorname set to NULL, so we don't NOOP the
    * next set_gl_color_for_gc call.
    */
-  if (!check_gl_drawing_ok_hack)
+  if (!priv->in_context)
     return;
 
   priv->current_colorname = strdup (gc->colorname);
@@ -579,9 +580,6 @@ set_gl_color_for_gc (hidGC gc)
     b = b * mult;
 #endif
   }
-
-  if(!priv->in_context)
-    return;
 
   hidgl_flush_triangles (&buffer);
   glColor4d (r, g, b, a);
@@ -691,7 +689,7 @@ ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
 {
   USE_GC (gc);
 
-  hidgl_fill_circle (cx, cy, radius, gport->view.coord_per_px);
+  hidgl_fill_circle (cx, cy, radius);
 }
 
 
@@ -708,7 +706,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   USE_GC (gc);
 
-  hidgl_fill_pcb_polygon (poly, clip_box, gport->view.coord_per_px);
+  hidgl_fill_pcb_polygon (poly, clip_box);
 }
 
 void
@@ -859,29 +857,13 @@ draw_dozen_cross (gint x, gint y, gint z)
 }
 
 static void
-draw_crosshair (gint x, gint y, gint z)
-{
-  static enum crosshair_shape prev = Basic_Crosshair_Shape;
-
-  draw_right_cross (x, y, z);
-  if (prev == Union_Jack_Crosshair_Shape)
-    draw_slanted_cross (x, y, z);
-  if (prev == Dozen_Crosshair_Shape)
-    draw_dozen_cross (x, y, z);
-  prev = Crosshair.shape;
-}
-
-void
-ghid_show_crosshair (gboolean paint_new_location)
+draw_crosshair (render_priv *priv)
 {
   gint x, y, z;
   static int done_once = 0;
   static GdkColor cross_color;
 
-  if (!paint_new_location)
-    return;
-
-  if (!check_gl_drawing_ok_hack)
+  if (!priv->in_context)
     return;
 
   if (!done_once)
@@ -890,6 +872,7 @@ ghid_show_crosshair (gboolean paint_new_location)
       /* FIXME: when CrossColor changed from config */
       ghid_map_color_string (Settings.CrossColor, &cross_color);
     }
+
   x = gport->crosshair_x;
   y = gport->crosshair_y;
   z = global_depth;
@@ -901,12 +884,15 @@ ghid_show_crosshair (gboolean paint_new_location)
              cross_color.green / 65535.,
              cross_color.blue / 65535.);
 
-  if (x >= 0 && paint_new_location)
-    {
-      glBegin (GL_LINES);
-      draw_crosshair (x, y, z);
-      glEnd ();
-    }
+  glBegin (GL_LINES);
+
+  draw_right_cross (x, y, z);
+  if (Crosshair.shape == Union_Jack_Crosshair_Shape)
+    draw_slanted_cross (x, y, z);
+  if (Crosshair.shape == Dozen_Crosshair_Shape)
+    draw_dozen_cross (x, y, z);
+
+  glEnd ();
 
   glDisable (GL_COLOR_LOGIC_OP);
 }
@@ -1665,9 +1651,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
 #define MIN_FACES_PER_CYL 6
 #define MAX_FACES_PER_CYL 360
   float radius = vr;
-  float x1, y1;
-  float x2, y2;
-  float z1, z2;
+  float x, y, z1, z2;
   int i;
   int slices;
 
@@ -1682,19 +1666,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
   z1 = compute_depth (from_layer);
   z2 = compute_depth (to_layer);
 
-  x1 = vx + vr;
-  y1 = vy;
+  x = vx + vr;
+  y = vy;
 
-  hidgl_ensure_triangle_space (&buffer, 2 * slices);
+  hidgl_ensure_vertex_space (&buffer, 2 * slices + 2 + 2);
+
+  /* NB: Repeated first virtex to separate from other tri-strip */
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
+
   for (i = 0; i < slices; i++)
     {
-      x2 = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
-      y2 = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
-      hidgl_add_triangle_3D (&buffer, x1, y1, z1,  x2, y2, z1,  x1, y1, z2);
-      hidgl_add_triangle_3D (&buffer, x2, y2, z1,  x1, y1, z2,  x2, y2, z2);
-      x1 = x2;
-      y1 = y2;
+      x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
+      y = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
+
+      hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+      hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
     }
+
+  /* NB: Repeated last virtex to separate from other tri-strip */
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
 }
 
 struct cyl_info {
@@ -1927,10 +1919,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   gtk_widget_get_allocation (widget, &allocation);
 
   ghid_start_drawing (port);
-
-  hidgl_in_context (true);
-  hidgl_init ();
-  check_gl_drawing_ok_hack = true;
+  hidgl_start_render ();
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
@@ -2048,7 +2037,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
              port->bg_color.green / 65535.,
              port->bg_color.blue / 65535.);
 
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
 
   /* Setup stenciling */
@@ -2105,14 +2093,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   DrawMark ();
   hidgl_flush_triangles (&buffer);
 
-  ghid_show_crosshair (TRUE);
+  draw_crosshair (priv);
 
   hidgl_flush_triangles (&buffer);
 
   draw_lead_user (priv);
 
-  check_gl_drawing_ok_hack = false;
-  hidgl_in_context (false);
+  hidgl_finish_render ();
   ghid_end_drawing (port);
 
   g_timer_start (priv->time_since_expose);
@@ -2175,10 +2162,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
     return FALSE;
   }
+  hidgl_start_render ();
   gport->render_priv->in_context = true;
-
-  check_gl_drawing_ok_hack = true;
-  hidgl_in_context (true);
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -2204,11 +2189,9 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
   hidgl_reset_stencil_usage ();
 
   /* call the drawing routine */
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   glPushMatrix ();
   glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
@@ -2229,8 +2212,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   else
     glFlush ();
 
-  check_gl_drawing_ok_hack = false;
-  hidgl_in_context (false);
+  hidgl_finish_render ();
 
   /* end drawing to current GL-context */
   gport->render_priv->in_context = false;
@@ -2255,7 +2237,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   view_data save_view;
   int save_width, save_height;
   BoxType region;
-  bool save_check_gl_drawing_ok_hack;
 
   save_view = gport->view;
   save_width = gport->width;
@@ -2289,11 +2270,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
     return NULL;
   }
+  hidgl_start_render ();
   gport->render_priv->in_context = true;
-
-  save_check_gl_drawing_ok_hack = check_gl_drawing_ok_hack;
-  check_gl_drawing_ok_hack = true;
-  hidgl_in_context (true);
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -2320,7 +2298,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   hidgl_reset_stencil_usage ();
 
   /* call the drawing routine */
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   glPushMatrix ();
   glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
@@ -2347,8 +2324,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 
   glFlush ();
 
-  check_gl_drawing_ok_hack = save_check_gl_drawing_ok_hack;
-  hidgl_in_context (false);
+  hidgl_finish_render ();
 
   /* end drawing to current GL-context */
   gport->render_priv->in_context = false;
@@ -2376,6 +2352,7 @@ ghid_request_debug_draw (void)
   gtk_widget_get_allocation (widget, &allocation);
 
   ghid_start_drawing (port);
+  hidgl_start_render ();
 
   glViewport (0, 0, allocation.width, allocation.height);
 
@@ -2386,7 +2363,6 @@ ghid_request_debug_draw (void)
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
 
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
 
   /* Setup stenciling */
@@ -2424,6 +2400,7 @@ ghid_finish_debug_draw (void)
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
+  hidgl_finish_render ();
   ghid_end_drawing (gport);
 }
 
