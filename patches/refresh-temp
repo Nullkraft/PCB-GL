@@ -1,0 +1,40 @@
+Bottom: 63ab70b35a8fb7fed2366acb0b1d9dc3036bae07
+Top:    2f5426909d6437aba125522af040e774d49a7103
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-29 17:48:44 +0100
+
+Refresh of common-hidgl-add-api-to-initia
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index cc22c3b..17416d2 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -83,14 +83,6 @@ static bool in_context = false;
+   } while (0)
+ 
+ void
+-hidgl_in_context (bool is_in_context)
+-{
+-  if (in_context == is_in_context)
+-    fprintf (stderr, "hidgl: hidgl_in_context called with nested value!\n");
+-  in_context = is_in_context;
+-}
+-
+-void
+ hidgl_init_triangle_array (triangle_buffer *buffer)
+ {
+   buffer->triangle_count = 0;
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index 171a5a1..b5e7565 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -33,7 +33,6 @@ typedef struct {
+ extern triangle_buffer buffer;
+ extern float global_depth;
+ 
+-void hidgl_in_context (bool is_in_context);
+ void hidgl_init_triangle_array (triangle_buffer *buffer);
+ void hidgl_flush_triangles (triangle_buffer *buffer);
+ void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
