@@ -1,0 +1,15 @@
+Bottom: cfbda9f29d2b48b11d2d3de02bd00fc79bf09091
+Top:    cfbda9f29d2b48b11d2d3de02bd00fc79bf09091
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-29 19:51:16 +0100
+
+hid/gtk: Better encapsulate some of the layer selector initialisation
+
+The work we do within ghid_layer_selector_new() is better placed in the
+appropriate class initialiser functions, otherwise we needn't go to the
+trouble of subclassing a widget in the first place.
+
+
+---
+
+
