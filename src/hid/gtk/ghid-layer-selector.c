@@ -343,8 +343,6 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
   ls->selection_changed_sig_id =
     g_signal_connect (ls->selection, "changed",
                       G_CALLBACK (selection_changed_cb), ls);
-
-  return GTK_WIDGET (ls);
 }
 
 static void
