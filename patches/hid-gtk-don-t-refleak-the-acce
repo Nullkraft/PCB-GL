@@ -1,0 +1,14 @@
+Bottom: cfbda9f29d2b48b11d2d3de02bd00fc79bf09091
+Top:    cfbda9f29d2b48b11d2d3de02bd00fc79bf09091
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-29 20:01:23 +0100
+
+hid/gtk: Don't refleak the accel group created by the layer selector
+
+When the accel group is created, we have a reference to it - we don't need
+another.
+
+
+---
+
+
