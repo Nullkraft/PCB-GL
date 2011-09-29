@@ -1,5 +1,5 @@
-Bottom: 93ab45b7e946d18cbcc31e8695a01ff8b387fd3d
-Top:    16750837eb5c5e24bbe4da9e77115b4851ab7e63
+Bottom: 9a2d27efb4e20166897df571af9a438679d8c720
+Top:    573a8c559beaca530036ddafe2e11f5751d5d029
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 15:39:35 +0100
 
@@ -9,7 +9,7 @@ Hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3bf948f..b22c104 100644
+index 490a95f..078dc30 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -45,6 +45,7 @@ RCSID ("$Id$");
@@ -71,7 +71,7 @@ index 3bf948f..b22c104 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -2206,6 +2223,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2209,6 +2226,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    else
      glFlush ();
  
@@ -80,7 +80,7 @@ index 3bf948f..b22c104 100644
    /* end drawing to current GL-context */
    gport->render_priv->in_context = false;
    gdk_gl_drawable_gl_end (pGlDrawable);
-@@ -2229,6 +2248,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2232,6 +2251,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    view_data save_view;
    int save_width, save_height;
    BoxType region;
@@ -88,7 +88,7 @@ index 3bf948f..b22c104 100644
  
    save_view = gport->view;
    save_width = gport->width;
-@@ -2264,6 +2284,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2267,6 +2287,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    }
    gport->render_priv->in_context = true;
  
@@ -98,7 +98,7 @@ index 3bf948f..b22c104 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -2315,6 +2338,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2319,6 +2342,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glFlush ();
  
