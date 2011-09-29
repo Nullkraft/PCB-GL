@@ -799,22 +799,22 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
  
   layer_process (&color_string, &text, &active, LAYER_BUTTON_SILK);
   ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_SILK,
-                                 text, color_string, active, TRUE, TRUE);
+                                 text, color_string, active, TRUE, FALSE);
   layer_process (&color_string, &text, &active, LAYER_BUTTON_RATS);
   ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_RATS,
-                                 text, color_string, active, TRUE, TRUE);
+                                 text, color_string, active, TRUE, FALSE);
   layer_process (&color_string, &text, &active, LAYER_BUTTON_PINS);
   ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_PINS,
-                                 text, color_string, active, FALSE, TRUE);
+                                 text, color_string, active, FALSE, FALSE);
   layer_process (&color_string, &text, &active, LAYER_BUTTON_VIAS);
   ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_VIAS,
-                                 text, color_string, active, FALSE, TRUE);
+                                 text, color_string, active, FALSE, FALSE);
   layer_process (&color_string, &text, &active, LAYER_BUTTON_FARSIDE);
   ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_FARSIDE,
-                                 text, color_string, active, FALSE, TRUE);
+                                 text, color_string, active, FALSE, FALSE);
   layer_process (&color_string, &text, &active, LAYER_BUTTON_MASK);
   ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_MASK,
-                                 text, color_string, active, FALSE, TRUE);
+                                 text, color_string, active, FALSE, FALSE);
 }
 
 /*! \brief callback for ghid_layer_selector_update_colors */
@@ -848,7 +848,7 @@ make_layer_buttons (GtkWidget *layersel)
     {
       layer_process (&color_string, &text, &active, i);
       ghid_layer_selector_add_layer (GHID_LAYER_SELECTOR (layersel), i,
-                                     text, color_string, active, TRUE, FALSE);
+                                     text, color_string, active, TRUE, TRUE);
     }
 }
 
