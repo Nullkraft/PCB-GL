@@ -844,6 +844,8 @@ make_layer_buttons (GtkWidget *layersel)
   gchar *color_string;
   gboolean active = TRUE;
 
+  /* XXX: I want these in group order! */
+
   for (i = 0; i < max_copper_layer; ++i)
     {
       layer_process (&color_string, &text, &active, i);
