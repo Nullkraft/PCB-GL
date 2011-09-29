@@ -1,5 +1,5 @@
 Bottom: 8e32032dd7ceae4e91ef0e59de6fefada7bd3a3f
-Top:    a0d56bce90afbcb8db621bf199a81d52841b99e9
+Top:    df07b8f3980d6639fe589f3071685a0eae007204
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 19:39:34 +0100
 
@@ -12,7 +12,7 @@ grab many of the keystrokes we would like to see!
 ---
 
 diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
-index 43b0fa3..306c1ea 100644
+index 43b0fa3..1afd211 100644
 --- a/src/hid/gtk/ghid-layer-selector.c
 +++ b/src/hid/gtk/ghid-layer-selector.c
 @@ -29,6 +29,7 @@ static void menu_pick_cb (GtkRadioAction *action, struct _layer *ldata);
@@ -82,10 +82,42 @@ index 43b0fa3..306c1ea 100644
  /*! \brief Deletes the action and accelerator from a layer */
  static void
  free_ldata (GHidLayerSelector *ls, struct _layer *ldata)
-@@ -243,6 +282,30 @@ selection_changed_cb (GtkTreeSelection *selection, GHidLayerSelector *ls)
+@@ -243,6 +282,70 @@ selection_changed_cb (GtkTreeSelection *selection, GHidLayerSelector *ls)
      }
  }
  
++/*! \brief Callback for when a layer name has been edited  */
++static void
++layer_name_editing_started_cb (GtkCellRenderer *renderer,
++                               GtkCellEditable *editable,
++                               gchar           *path,
++                               gpointer         user_data)
++{
++  /* When editing begins, we need to detach PCB's accelerators
++   * so they don't steal all the user's keystrokes.
++   *
++   * XXX: We should not have to do this within a simple widget,
++   *
++   *      and this quick hack workaround breaks the widget's
++   *      abstraction from the rest of the application :(
++   */
++  ghid_remove_accel_groups (GTK_WINDOW (gport->top_window), ghidgui);
++}
++
++/*! \brief Callback for when layer name editing has been canceled */
++static void
++layer_name_editing_canceled_cb (GtkCellRenderer *renderer,
++                                 gpointer         user_data)
++{
++  /* Put PCB's accelerators back.
++   *
++   * XXX: We should not have to do this within a simple widget,
++   *      and this quick hack workaround breaks the widget's
++   *      abstraction from the rest of the application :(
++   */
++  ghid_install_accel_groups (GTK_WINDOW (gport->top_window), ghidgui);
++}
++
 +/*! \brief Callback for when a layer name has been edited  */
 +static void
 +layer_name_edited_cb (GtkCellRendererText *renderer,
@@ -96,6 +128,14 @@ index 43b0fa3..306c1ea 100644
 +  GHidLayerSelector *ls = user_data;
 +  GtkTreeIter iter;
 +  int user_id;
++
++  /* Put PCB's accelerators back.
++   *
++   * XXX: We should not have to do this within a simple widget,
++   *      and this quick hack workaround breaks the widget's
++   *      abstraction from the rest of the application :(
++   */
++  ghid_install_accel_groups (GTK_WINDOW (gport->top_window), ghidgui);
 +
 +  if (!gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (ls->list_store), &iter, path))
 +    return;
@@ -113,15 +153,20 @@ index 43b0fa3..306c1ea 100644
  /*! \brief Callback for menu actions: sync layer selection list, emit signal */
  static void
  menu_view_cb (GtkToggleAction *action, struct _layer *ldata)
-@@ -300,20 +363,33 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
+@@ -300,20 +403,37 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
  
    renderer1 = ghid_cell_renderer_visibility_new ();
    renderer2 = gtk_cell_renderer_text_new ();
+-
+-  opacity_col = gtk_tree_view_column_new_with_attributes ("", renderer1,
 +  g_object_set (renderer2, "editable-set", TRUE, NULL);
++  g_signal_connect (renderer2, "editing-started",
++                    G_CALLBACK (layer_name_editing_started_cb), ls);
++  g_signal_connect (renderer2, "editing-canceled",
++                    G_CALLBACK (layer_name_editing_canceled_cb), ls);
 +  g_signal_connect (renderer2, "edited",
 +                    G_CALLBACK (layer_name_edited_cb), ls);
- 
--  opacity_col = gtk_tree_view_column_new_with_attributes ("", renderer1,
++
 +  opacity_col = gtk_tree_view_column_new_with_attributes ("",
 +                                                          renderer1,
                                                            "active", VISIBLE_COL,
@@ -155,7 +200,7 @@ index 43b0fa3..306c1ea 100644
    gtk_tree_view_insert_column (GTK_TREE_VIEW (ls), opacity_col, -1);
    gtk_tree_view_insert_column (GTK_TREE_VIEW (ls), name_col, -1);
    gtk_tree_view_set_model (GTK_TREE_VIEW (ls), GTK_TREE_MODEL (ls->list_store));
-@@ -364,6 +440,14 @@ ghid_layer_selector_class_init (GHidLayerSelectorClass *klass)
+@@ -364,6 +484,14 @@ ghid_layer_selector_class_init (GHidLayerSelectorClass *klass)
                    NULL, NULL,
                    g_cclosure_marshal_VOID__INT, G_TYPE_NONE,
                    1, G_TYPE_INT);
@@ -170,7 +215,7 @@ index 43b0fa3..306c1ea 100644
  
    object_class->finalize = ghid_layer_selector_finalize;
  }
-@@ -455,7 +539,8 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+@@ -455,7 +583,8 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
                                 const gchar *name,
                                 const gchar *color_string,
                                 gboolean visible,
@@ -180,7 +225,7 @@ index 43b0fa3..306c1ea 100644
  {
    struct _layer *new_layer = NULL;
    gchar *pname, *vname;
-@@ -523,6 +608,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+@@ -523,6 +652,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
                        COLOR_COL,       color_string,
                        TEXT_COL,        name,
                        FONT_COL,        selectable ? NULL : "Italic",
@@ -203,10 +248,10 @@ index ff67800..1ed5e01 100644
  gint ghid_layer_selector_install_pick_items (GHidLayerSelector *ls,
                                               GtkMenuShell *shell, gint pos);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index cdaea8f..7327a15 100644
+index cdaea8f..629bc3c 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -555,6 +555,24 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -555,6 +555,33 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
    ghid_invalidate_all ();
  }
  
@@ -223,15 +268,24 @@ index cdaea8f..7327a15 100644
 +  if (new_name[0] == '\0')
 +    return;
 +
++  /* Don't bother if the name is identical to the current one */
++  if (strcmp (layer->Name, new_name) == 0)
++    return;
++
 +  free (layer->Name);
 +  layer->Name = strdup (new_name);
 +  ghid_layer_buttons_update ();
++  if (!PCB->Changed)
++    {
++      SetChangedFlag (true);
++      ghid_window_set_name_label (PCB->Name);
++    }
 +}
 +
  /*! \brief Callback for GHidLayerSelector layer toggling */
  static void
  layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
-@@ -774,22 +792,22 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
+@@ -774,22 +801,22 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
   
    layer_process (&color_string, &text, &active, LAYER_BUTTON_SILK);
    ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_SILK,
@@ -260,7 +314,7 @@ index cdaea8f..7327a15 100644
  }
  
  /*! \brief callback for ghid_layer_selector_update_colors */
-@@ -823,7 +841,7 @@ make_layer_buttons (GtkWidget *layersel)
+@@ -823,7 +850,7 @@ make_layer_buttons (GtkWidget *layersel)
      {
        layer_process (&color_string, &text, &active, i);
        ghid_layer_selector_add_layer (GHID_LAYER_SELECTOR (layersel), i,
@@ -269,7 +323,7 @@ index cdaea8f..7327a15 100644
      }
  }
  
-@@ -1254,12 +1272,15 @@ ghid_build_pcb_top_window (void)
+@@ -1254,12 +1281,15 @@ ghid_build_pcb_top_window (void)
    ghidgui->layer_selector = ghid_layer_selector_new ();
    make_layer_buttons (ghidgui->layer_selector);
    make_virtual_layer_buttons (ghidgui->layer_selector);
