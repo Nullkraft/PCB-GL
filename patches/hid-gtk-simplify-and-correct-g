@@ -5,6 +5,9 @@ Date:   2011-09-29 17:00:47 +0100
 
 hid/gtk: Simplify and correct ghid_show_crosshair() logic for the GL renderer
 
+Drop the always-true parameter we were passed, and combine the code from
+ghid_show_crosshair() and draw_crosshair() into one function.
+
 
 ---
 
