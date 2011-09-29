@@ -1,5 +1,5 @@
-Bottom: 8800da2053244b76aba0c6a8d665964b8a836ba7
-Top:    0aebe6a26e76ba0076ba7a0b14363a3c00315627
+Bottom: a0480518c09e679a3c3f31baf0fee1b602a31669
+Top:    1c1590c8b8fed5b2b3eff8cec129e88a57e3ef6d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 16:18:50 +0100
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1c7b39e..35d41c4 100644
+index 2e1998f..bb9fdd5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -94,6 +94,79 @@ static void draw_lead_user (render_priv *priv);
@@ -113,8 +113,8 @@ index 1c7b39e..35d41c4 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -781,7 +858,7 @@ ghid_show_crosshair (gboolean paint_new_location)
-     }
+@@ -766,7 +843,7 @@ draw_crosshair (render_priv *priv)
+ 
    x = gport->crosshair_x;
    y = gport->crosshair_y;
 -  z = 0;
@@ -122,7 +122,7 @@ index 1c7b39e..35d41c4 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -1041,6 +1118,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1029,6 +1106,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -132,7 +132,7 @@ index 1c7b39e..35d41c4 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1158,6 +1238,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1145,6 +1225,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                      -gport->view.y0, 0);
  
@@ -140,7 +140,7 @@ index 1c7b39e..35d41c4 100644
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1520,7 +1601,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -1507,7 +1588,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
@@ -149,7 +149,7 @@ index 1c7b39e..35d41c4 100644
  
    return true;
  }
-@@ -1536,11 +1617,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1523,11 +1604,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  
    *event_x = (last_modelview_matrix[0][0] * (float)pcb_x +
                last_modelview_matrix[1][0] * (float)pcb_y +
