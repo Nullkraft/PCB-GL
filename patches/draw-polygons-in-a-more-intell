@@ -1,5 +1,5 @@
-Bottom: 4f1904f201de67eb5d6e5836b78fe6b4b526c83e
-Top:    e51f10622854a60463a90794293d75116e08ebab
+Bottom: 08bb3a0d8944efed7373a8cd6f04ab7fca4bd232
+Top:    8714a571acfe7857997d9cdde1dad6e31f75225d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 16:19:25 +0100
 
@@ -36,10 +36,10 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index b9e1b28..38a2148 100644
+index c12c7e9..fa53dd1 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -132,7 +132,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
+@@ -124,7 +124,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
    CHECK_IS_IN_CONTEXT ();
  
    buffer->use_vbo = true;
@@ -48,7 +48,7 @@ index b9e1b28..38a2148 100644
  
    if (buffer->use_vbo) {
      glGenBuffers (1, &buffer->vbo_id);
-@@ -829,14 +829,23 @@ do_hole (const BoxType *b, void *cl)
+@@ -821,14 +821,23 @@ do_hole (const BoxType *b, void *cl)
    return 1;
  }
  
@@ -73,7 +73,7 @@ index b9e1b28..38a2148 100644
    int stencil_bit;
  
    CHECK_IS_IN_CONTEXT ();
-@@ -853,14 +862,20 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -845,14 +854,20 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
      return;
    }
  
@@ -100,7 +100,7 @@ index b9e1b28..38a2148 100644
      }
  
    /* Flush out any existing geoemtry to be rendered */
-@@ -868,11 +883,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -860,11 +875,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
  
    glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                  GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
@@ -118,7 +118,7 @@ index b9e1b28..38a2148 100644
  
    /* Drawing operations now set our reference bit in the stencil buffer */
  
-@@ -896,7 +914,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -888,7 +906,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
@@ -129,10 +129,10 @@ index b9e1b28..38a2148 100644
    glPopAttrib ();                               /* Restore the stencil buffer op and function */
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1c5a8a7..df53c3f 100644
+index d9b0ff7..ce77a31 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1469,11 +1469,28 @@ struct poly_info
+@@ -1453,11 +1453,28 @@ struct poly_info
  };
  
  static int
@@ -163,7 +163,7 @@ index 1c5a8a7..df53c3f 100644
    return 1;
  }
  
-@@ -1608,7 +1625,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1592,7 +1609,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.Layer = Layer;
          info.drawn_area = screen;
