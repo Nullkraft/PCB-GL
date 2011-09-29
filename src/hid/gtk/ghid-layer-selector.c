@@ -298,7 +298,6 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
   GtkCellRenderer *renderer2;
   GtkTreeViewColumn *opacity_col;
   GtkTreeViewColumn *name_col;
-  GHidLayerSelector *ls;
 
   renderer1 = ghid_cell_renderer_visibility_new ();
   renderer2 = gtk_cell_renderer_text_new ();
