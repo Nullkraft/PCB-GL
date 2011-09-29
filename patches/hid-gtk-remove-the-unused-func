@@ -1,7 +1,7 @@
-Bottom: 784cc2651f2f71341d4c5c301064263de08dc3f6
-Top:    30cdce5f8567a437129b430e0c883ba76e68f287
+Bottom: ccb4a73ebea1fcf66d5680b28657c9a3262e2886
+Top:    725c512d4101b9d06119f88818d859276709e106
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-29 22:13:13 +0100
+Date:   2011-09-29 23:02:11 +0100
 
 hid/gtk: Remove the unused function utf8_dup_string
 
@@ -48,10 +48,10 @@ index 7136fbb..0fcb5d2 100644
 -  return TRUE;
 -}
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 12f9bc2..5e72ba2 100644
+index 5ba5aeb..ea49bee 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -353,7 +353,6 @@ void make_route_style_buttons (GHidRouteStyleSelector *rss);
+@@ -347,7 +347,6 @@ void make_route_style_buttons (GHidRouteStyleSelector *rss);
  /* gui-utils.c
  */
  gboolean dup_string (gchar ** dst, const gchar * src);
