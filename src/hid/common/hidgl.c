@@ -870,26 +870,6 @@ hidgl_finish_render (void)
   in_context = false;
 }
 
-void
-hidgl_start_render (void)
-{
-  if (in_context)
-    fprintf (stderr, "hidgl: hidgl_start_render() - Already in rendering context!\n");
-
-  in_context = true;
-  hidgl_init ();
-  hidgl_init_triangle_array (&buffer);
-}
-
-void
-hidgl_finish_render (void)
-{
-  if (!in_context)
-    fprintf (stderr, "hidgl: hidgl_finish_render() - Not currently in rendering context!\n");
-
-  in_context = false;
-}
-
 int
 hidgl_stencil_bits (void)
 {
