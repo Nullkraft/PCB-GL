@@ -1,5 +1,5 @@
 Bottom: a470c050ca1ff5053ba2dcbdf5b2492445c4c18e
-Top:    a470c050ca1ff5053ba2dcbdf5b2492445c4c18e
+Top:    66479e20d092ed8b06d7bba2b73ba19bc7898b33
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 17:07:21 +0100
 
@@ -10,4 +10,55 @@ Pass the render_priv pointer instead - this is vaguely useful.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 2d2d4c7..8359711 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1018,9 +1018,8 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
+ }
+ 
+ static void
+-show_crosshair (gboolean paint_new_location)
++show_crosshair (render_priv *priv)
+ {
+-  render_priv *priv = gport->render_priv;
+   GdkWindow *window = gtk_widget_get_window (gport->drawing_area);
+   GtkStyle *style = gtk_widget_get_style (gport->drawing_area);
+   gint x, y;
+@@ -1041,15 +1040,16 @@ show_crosshair (gboolean paint_new_location)
+       /* FIXME: when CrossColor changed from config */
+       ghid_map_color_string (Settings.CrossColor, &cross_color);
+     }
+-  x = DRAW_X (gport->crosshair_x);
+-  y = DRAW_Y (gport->crosshair_y);
+ 
+   gdk_gc_set_foreground (xor_gc, &cross_color);
+ 
+   if (x_prev >= 0 && !paint_new_location)
+     draw_crosshair (xor_gc, x_prev, y_prev);
+ 
+-  if (x >= 0 && paint_new_location)
++  x = DRAW_X (gport->crosshair_x);
++  y = DRAW_Y (gport->crosshair_y);
++
++  if (x >= 0)
+     {
+       draw_crosshair (xor_gc, x, y);
+       x_prev = x;
+@@ -1115,7 +1115,7 @@ ghid_screen_update (void)
+ 
+   gdk_draw_drawable (window, priv->bg_gc, gport->pixmap,
+                      0, 0, 0, 0, gport->width, gport->height);
+-  show_crosshair (TRUE);
++  show_crosshair (priv);
+ }
+ 
+ gboolean
+@@ -1129,7 +1129,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   gdk_draw_drawable (window, priv->bg_gc, port->pixmap,
+                      ev->area.x, ev->area.y, ev->area.x, ev->area.y,
+                      ev->area.width, ev->area.height);
+-  show_crosshair (TRUE);
++  show_crosshair (priv);
+   return FALSE;
+ }
