@@ -639,7 +639,6 @@ nelma_finish_png()
 void 
 nelma_start_png_export()
 {
-#if 0
 	BoxType         region;
 
 	region.X1 = 0;
@@ -652,7 +651,6 @@ nelma_start_png_export()
 	lastcolor = -1;
 
 	hid_expose_callback(&nelma_hid, &region, 0);
-#endif
 }
 
 static void 

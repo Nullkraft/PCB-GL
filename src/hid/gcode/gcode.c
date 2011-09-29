@@ -358,7 +358,6 @@ gcode_finish_png ()
 void
 gcode_start_png_export ()
 {
-#if 0
   BoxType region;
 
   region.X1 = 0;
@@ -371,7 +370,6 @@ gcode_start_png_export ()
   lastcolor = -1;
 
   hid_expose_callback (&gcode_hid, &region, 0);
-#endif
 }
 
 static void

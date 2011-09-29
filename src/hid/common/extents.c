@@ -199,7 +199,7 @@ hid_extents_init (void)
 BoxType *
 hid_get_extents (void *item)
 {
-//  BoxType region;
+  BoxType region;
 
   /* As this isn't a real "HID", we need to ensure we are initialised. */
   hid_extents_init ();
@@ -209,13 +209,11 @@ hid_get_extents (void *item)
   box.X2 = -MAXINT;
   box.Y2 = -MAXINT;
 
-#if 0
   region.X1 = -MAXINT;
   region.Y1 = -MAXINT;
   region.X2 = MAXINT;
   region.Y2 = MAXINT;
   hid_expose_callback (&extents_hid, &region, item);
-#endif
 
   return &box;
 }
