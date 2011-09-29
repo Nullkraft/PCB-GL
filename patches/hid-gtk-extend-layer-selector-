@@ -5,6 +5,12 @@ Date:   2011-09-29 23:12:16 +0100
 
 hid/gtk: Extend layer selector to allow editing layer names in situ
 
+Contains an unfortunate abstraciton break in the layer selector in
+order to temporarily disable PCB's accelerators whilst the layer is
+being renamed. It would be lovely to fix this and make things cleaner
+in the future.
+
+
 ---
 
 diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
