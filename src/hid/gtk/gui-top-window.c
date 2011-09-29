@@ -568,9 +568,18 @@ layer_selector_rename_callback (GHidLayerSelector *ls,
   if (new_name[0] == '\0')
     return;
 
+  /* Don't bother if the name is identical to the current one */
+  if (strcmp (layer->Name, new_name) == 0)
+    return;
+
   free (layer->Name);
   layer->Name = strdup (new_name);
   ghid_layer_buttons_update ();
+  if (!PCB->Changed)
+    {
+      SetChangedFlag (true);
+      ghid_window_set_name_label (PCB->Name);
+    }
 }
 
 /*! \brief Callback for GHidLayerSelector layer toggling */

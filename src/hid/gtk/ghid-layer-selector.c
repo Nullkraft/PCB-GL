@@ -284,6 +284,38 @@ selection_changed_cb (GtkTreeSelection *selection, GHidLayerSelector *ls)
 
 /*! \brief Callback for when a layer name has been edited  */
 static void
+layer_name_editing_started_cb (GtkCellRenderer *renderer,
+                               GtkCellEditable *editable,
+                               gchar           *path,
+                               gpointer         user_data)
+{
+  /* When editing begins, we need to detach PCB's accelerators
+   * so they don't steal all the user's keystrokes.
+   *
+   * XXX: We should not have to do this within a simple widget,
+   *
+   *      and this quick hack workaround breaks the widget's
+   *      abstraction from the rest of the application :(
+   */
+  ghid_remove_accel_groups (GTK_WINDOW (gport->top_window), ghidgui);
+}
+
+/*! \brief Callback for when layer name editing has been canceled */
+static void
+layer_name_editing_canceled_cb (GtkCellRenderer *renderer,
+                                 gpointer         user_data)
+{
+  /* Put PCB's accelerators back.
+   *
+   * XXX: We should not have to do this within a simple widget,
+   *      and this quick hack workaround breaks the widget's
+   *      abstraction from the rest of the application :(
+   */
+  ghid_install_accel_groups (GTK_WINDOW (gport->top_window), ghidgui);
+}
+
+/*! \brief Callback for when a layer name has been edited  */
+static void
 layer_name_edited_cb (GtkCellRendererText *renderer,
                       gchar               *path,
                       gchar               *new_text,
@@ -292,6 +324,14 @@ layer_name_edited_cb (GtkCellRendererText *renderer,
   GHidLayerSelector *ls = user_data;
   GtkTreeIter iter;
   int user_id;
+
+  /* Put PCB's accelerators back.
+   *
+   * XXX: We should not have to do this within a simple widget,
+   *      and this quick hack workaround breaks the widget's
+   *      abstraction from the rest of the application :(
+   */
+  ghid_install_accel_groups (GTK_WINDOW (gport->top_window), ghidgui);
 
   if (!gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (ls->list_store), &iter, path))
     return;
@@ -364,6 +404,10 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
   renderer1 = ghid_cell_renderer_visibility_new ();
   renderer2 = gtk_cell_renderer_text_new ();
   g_object_set (renderer2, "editable-set", TRUE, NULL);
+  g_signal_connect (renderer2, "editing-started",
+                    G_CALLBACK (layer_name_editing_started_cb), ls);
+  g_signal_connect (renderer2, "editing-canceled",
+                    G_CALLBACK (layer_name_editing_canceled_cb), ls);
   g_signal_connect (renderer2, "edited",
                     G_CALLBACK (layer_name_edited_cb), ls);
 
