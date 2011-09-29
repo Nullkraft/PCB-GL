@@ -570,6 +570,8 @@ ghid_layer_selector_new (void)
  *  If the user_id passed already exists in the layer selector, that layer
  *  will have its data overwritten with the new stuff.
  *
+ * XXX: Add feature to mark adjacent layers which belong to the same group
+ *
  *  \param [in] ls            The selector to be acted on
  *  \param [in] user_id       An ID used to identify the layer; will be passed to selection/visibility callbacks
  *  \param [in] name          The name of the layer; will be used on selector and menus
