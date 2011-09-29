@@ -63,15 +63,6 @@
 #define	FROM_PCB_UNITS(v)	coord_to_unit (Settings.grid_unit, v)
 #define	TO_PCB_UNITS(v)		unit_to_coord (Settings.grid_unit, v)
 
-#define SIDE_X(x)         ((gport->view.flip_x ? PCB->MaxWidth - (x) : (x)))
-#define SIDE_Y(y)         ((gport->view.flip_y ? PCB->MaxHeight - (y) : (y)))
-
-#define	DRAW_X(x)         (gint)((SIDE_X(x) - gport->view.x0) / gport->view.coord_per_px)
-#define	DRAW_Y(y)         (gint)((SIDE_Y(y) - gport->view.y0) / gport->view.coord_per_px)
-
-#define	EVENT_TO_PCB_X(x) SIDE_X((gint)((x) * gport->view.coord_per_px + gport->view.x0))
-#define	EVENT_TO_PCB_Y(y) SIDE_Y((gint)((y) * gport->view.coord_per_px + gport->view.y0))
-
 /*
  * Used to intercept "special" hotkeys that gtk doesn't usually pass
  * on to the menu hotkeys.  We catch them and put them back where we
@@ -153,20 +144,6 @@ GhidGui;
 
 extern GhidGui _ghidgui, *ghidgui;
 
-typedef struct
-{
-  double coord_per_px; /* Zoom level described as PCB units per screen pixel */
-
-  Coord x0;
-  Coord y0;
-  Coord width;
-  Coord height;
-
-  bool flip_x;
-  bool flip_y;
-
-} view_data;
-
   /* The output viewport
    */
 typedef struct
@@ -175,7 +152,6 @@ typedef struct
    *drawing_area;		/* and its drawing area */
   GdkPixmap *pixmap, *mask;
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
-  gint width, height;
 
   struct render_priv *render_priv;
 
@@ -189,7 +165,6 @@ typedef struct
   gboolean has_entered;
   gboolean panning;
 
-  view_data view;
   Coord pcb_x, pcb_y;             /* PCB coordinates of the mouse pointer */
   Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair     */
 }
@@ -505,6 +480,7 @@ void ghid_finish_debug_draw (void);
 bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
 bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
 void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
+void ghid_pan_view_rel_to_visible (double fraction_x, double fraction_y);
 void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
 void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
 void ghid_zoom_view_fit (void);
@@ -525,59 +501,5 @@ extern GdkPixmap *XC_hand_source, *XC_hand_mask;
 extern GdkPixmap *XC_lock_source, *XC_lock_mask;
 extern GdkPixmap *XC_clock_source, *XC_clock_mask;
 
-
-/* Coordinate conversions */
-/* Px converts view->pcb, Vx converts pcb->view */
-static inline int
-Vx (Coord x)
-{
-  int rv;
-  if (gport->view.flip_x)
-    rv = (PCB->MaxWidth - x - gport->view.x0) / gport->view.coord_per_px + 0.5;
-  else
-    rv = (x - gport->view.x0) / gport->view.coord_per_px + 0.5;
-  return rv;
-}
-
-static inline int
-Vy (Coord y)
-{
-  int rv;
-  if (gport->view.flip_y)
-    rv = (PCB->MaxHeight - y - gport->view.y0) / gport->view.coord_per_px + 0.5;
-  else
-    rv = (y - gport->view.y0) / gport->view.coord_per_px + 0.5;
-  return rv;
-}
-
-static inline int
-Vz (Coord z)
-{
-  return z / gport->view.coord_per_px + 0.5;
-}
-
-static inline Coord
-Px (int x)
-{
-  Coord rv = x * gport->view.coord_per_px + gport->view.x0;
-  if (gport->view.flip_x)
-    rv = PCB->MaxWidth - (x * gport->view.coord_per_px + gport->view.x0);
-  return  rv;
-}
-
-static inline Coord
-Py (int y)
-{
-  Coord rv = y * gport->view.coord_per_px + gport->view.y0;
-  if (gport->view.flip_y)
-    rv = PCB->MaxHeight - (y * gport->view.coord_per_px + gport->view.y0);
-  return  rv;
-}
-
-static inline Coord
-Pz (int z)
-{
-  return (z * gport->view.coord_per_px);
-}
 
 #endif /* PCB_HID_GTK_GHID_H */
