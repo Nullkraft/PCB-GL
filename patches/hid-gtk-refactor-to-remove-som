@@ -1,5 +1,5 @@
 Bottom: fc017e2c8dc453fcd9ae68b66db4643e0acdf236
-Top:    3ff6770d7c8a78981340d2d9970980ac0eb081d8
+Top:    b2ad3f732b168d3d2088409b69976b3ada525124
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 20:18:32 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Refactor to remove some duplicated code in the layer selector
 ---
 
 diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
-index 72ec44d..248e2d3 100644
+index 72ec44d..7648261 100644
 --- a/src/hid/gtk/ghid-layer-selector.c
 +++ b/src/hid/gtk/ghid-layer-selector.c
 @@ -477,14 +477,15 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
@@ -54,7 +54,7 @@ index 72ec44d..248e2d3 100644
      }
    else
      {
-@@ -521,18 +511,21 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+@@ -521,18 +511,22 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
        gtk_tree_model_get (GTK_TREE_MODEL (ls->list_store), &iter,
                            STRUCT_COL, &new_layer, -1);
        free_ldata (ls, new_layer);
@@ -72,15 +72,16 @@ index 72ec44d..248e2d3 100644
  
 +  new_layer = malloc (sizeof (*new_layer));
 +
-+  gtk_list_store_set (ls->list_store, &iter,
-+                      STRUCT_COL, new_layer,
-+                      USER_ID_COL, user_id,
-+                      VISIBLE_COL, visible,
-+                      COLOR_COL, color_string,
-+                      TEXT_COL, name,
-+                      FONT_COL, activatable ? NULL : "Italic",
++  gtk_list_store_set (ls->list_store,
++                      &iter,
++                      STRUCT_COL,      new_layer,
++                      USER_ID_COL,     user_id,
++                      VISIBLE_COL,     visible,
++                      COLOR_COL,       color_string,
++                      TEXT_COL,        name,
++                      FONT_COL,        activatable ? NULL : "Italic",
 +                      ACTIVATABLE_COL, activatable,
-+                      SEPARATOR_COL, FALSE,
++                      SEPARATOR_COL,   FALSE,
 +                      -1);
 +
    /* -- Setup new actions -- */
