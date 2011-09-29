@@ -1,5 +1,5 @@
 Bottom: 9f6d0b71f3c6dc781cc6910fcaf1254d83a83978
-Top:    83cc9188c6c0ec02270462742d90dc21b11adea9
+Top:    d79d2bea76a710e50966923fbe7ce6c99e73ac84
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 20:32:13 +0100
 
@@ -180,3 +180,16 @@ index ca5abe9..43b0fa3 100644
              {
                gtk_tree_selection_select_iter (ls->selection, &iter);
                return TRUE;
+diff --git a/src/hid/gtk/ghid-layer-selector.h b/src/hid/gtk/ghid-layer-selector.h
+index 09fa182..ff67800 100644
+--- a/src/hid/gtk/ghid-layer-selector.h
++++ b/src/hid/gtk/ghid-layer-selector.h
+@@ -24,7 +24,7 @@ void ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+                                     const gchar *name,
+                                     const gchar *color_string,
+                                     gboolean visible,
+-                                    gboolean activatable);
++                                    gboolean selectable);
+ 
+ gint ghid_layer_selector_install_pick_items (GHidLayerSelector *ls,
+                                              GtkMenuShell *shell, gint pos);
