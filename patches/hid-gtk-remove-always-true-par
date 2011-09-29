@@ -5,7 +5,8 @@ Date:   2011-09-29 17:07:21 +0100
 
 hid/gtk: Remove always-true parameter from show_crosshair() in GDK renderer
 
-Pass the render_priv pointer instead - this is vaguely useful.
+Pass the render_priv pointer instead - this is vaguely useful. Also tidy the
+function a little to make it clearer.
 
 
 ---
