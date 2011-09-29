@@ -1,5 +1,5 @@
 Bottom: 6f2a456960849d37dc43a77ea476a67b658609e9
-Top:    7d477598a3023f00e634ca790d8a69d172b320c3
+Top:    99919cfc6b51fef26e833b8ca215ccc2f95d2b8d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 19:39:34 +0100
 
@@ -9,22 +9,71 @@ hid/gtk: Extend layer selector to allow editing layer names in situ
 ---
 
 diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
-index 8c7a713..6245b5c 100644
+index 8c7a713..295440b 100644
 --- a/src/hid/gtk/ghid-layer-selector.c
 +++ b/src/hid/gtk/ghid-layer-selector.c
-@@ -302,6 +302,7 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
+@@ -40,6 +40,7 @@ enum {
+   COLOR_COL,
+   TEXT_COL,
+   FONT_COL,
++  EDITABLE_COL,
+   ACTIVATABLE_COL,
+   SEPARATOR_COL,
+   N_COLS
+@@ -302,22 +303,31 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
  
    renderer1 = ghid_cell_renderer_visibility_new ();
    renderer2 = gtk_cell_renderer_text_new ();
 +  g_object_set (renderer2, "editable-set", TRUE, NULL);
  
-   opacity_col = gtk_tree_view_column_new_with_attributes ("", renderer1,
+-  opacity_col = gtk_tree_view_column_new_with_attributes ("", renderer1,
++  opacity_col = gtk_tree_view_column_new_with_attributes ("",
++                                                          renderer1,
                                                            "active", VISIBLE_COL,
-@@ -309,6 +310,7 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
-   name_col = gtk_tree_view_column_new_with_attributes ("", renderer2,
+-                                                          "color", COLOR_COL, NULL);
+-  name_col = gtk_tree_view_column_new_with_attributes ("", renderer2,
++                                                          "color",  COLOR_COL,
++                                                          NULL);
++  name_col = gtk_tree_view_column_new_with_attributes ("",
++                                                       renderer2,
                                                         "text", TEXT_COL,
                                                         "font", FONT_COL,
 +                                                       "editable", EDITABLE_COL,
                                                         NULL);
  
-   ls = g_object_new (GHID_LAYER_SELECTOR_TYPE, NULL);
+-  ls = g_object_new (GHID_LAYER_SELECTOR_TYPE, NULL);
++  ls->list_store = gtk_list_store_new (N_COLS,
++                 /* STRUCT_COL      */ G_TYPE_POINTER,
++                 /* USER_ID_COL     */ G_TYPE_INT,
++                 /* VISIBLE_COL     */ G_TYPE_BOOLEAN,
++                 /* COLOR_COL       */ G_TYPE_STRING,
++                 /* TEXT_COL        */ G_TYPE_STRING,
++                 /* FONT_COL        */ G_TYPE_STRING,
++                 /* EDITABLE_COL    */ G_TYPE_BOOLEAN,
++                 /* ACTIVATABLE_COL */ G_TYPE_BOOLEAN,
++                 /* SEPARATOR_COL   */ G_TYPE_BOOLEAN);
+ 
+-  /* action index, active, color, text, font, is_separator */
+-  ls->list_store = gtk_list_store_new (N_COLS, G_TYPE_POINTER, G_TYPE_INT,
+-                                       G_TYPE_BOOLEAN, G_TYPE_STRING,
+-                                       G_TYPE_STRING, G_TYPE_STRING,
+-                                       G_TYPE_BOOLEAN, G_TYPE_BOOLEAN);
+   gtk_tree_view_insert_column (GTK_TREE_VIEW (ls), opacity_col, -1);
+   gtk_tree_view_insert_column (GTK_TREE_VIEW (ls), name_col, -1);
+   gtk_tree_view_set_model (GTK_TREE_VIEW (ls), GTK_TREE_MODEL (ls->list_store));
+@@ -514,6 +524,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+                           COLOR_COL, color_string,
+                           TEXT_COL, name,
+                           FONT_COL, activatable ? NULL : "Italic",
++                          EDITABLE_COL, activatable,
+                           ACTIVATABLE_COL, activatable,
+                           SEPARATOR_COL, FALSE,
+                           -1);
+@@ -533,6 +544,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+                           COLOR_COL, color_string,
+                           TEXT_COL, name,
+                           FONT_COL, activatable ? NULL : "Italic",
++                          EDITABLE_COL, activatable,
+                           ACTIVATABLE_COL, activatable,
+                           -1);
+     }
