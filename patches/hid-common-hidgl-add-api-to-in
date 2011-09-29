@@ -1,43 +1,26 @@
-Bottom: a8c05b018b6f916066d1d60971e59b0f820c34e1
-Top:    2f5426909d6437aba125522af040e774d49a7103
+Bottom: 038e2275bad1080b81cad3845d8cc6353dafc7cd
+Top:    dfad8107a07ef2ffd830ea8e1c1853b349c352ee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-29 17:45:14 +0100
+Date:   2011-09-29 17:52:58 +0100
 
-common/hidgl: Add API to initialise a rendering pass
+hid/common/hidgl: Add API to initialise a rendering pass
 
+Serves as a place to perform any necessary initialisation within hidgl.c,
+saving lots of separate calls being made by its callers.
 
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 7a348c8..17416d2 100644
+index fa86bc7..6b20b07 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -83,14 +83,6 @@ static bool in_context = false;
-   } while (0)
- 
- void
--hidgl_in_context (bool is_in_context)
--{
--  if (in_context == is_in_context)
--    fprintf (stderr, "hidgl: hidgl_in_context called with nested value!\n");
--  in_context = is_in_context;
--}
--
--void
- hidgl_init_triangle_array (triangle_buffer *buffer)
- {
-   buffer->triangle_count = 0;
-@@ -734,6 +726,26 @@ hidgl_init (void)
+@@ -703,6 +703,18 @@ hidgl_init (void)
      }
  }
  
 +void
 +hidgl_start_render (void)
 +{
-+  if (in_context)
-+    fprintf (stderr, "hidgl: hidgl_start_render() - Already in rendering context!\n");
-+
-+  in_context = true;
 +  hidgl_init ();
 +  hidgl_init_triangle_array (&buffer);
 +}
@@ -45,28 +28,16 @@ index 7a348c8..17416d2 100644
 +void
 +hidgl_finish_render (void)
 +{
-+  if (!in_context)
-+    fprintf (stderr, "hidgl: hidgl_finish_render() - Not currently in rendering context!\n");
-+
-+  in_context = false;
 +}
 +
  int
  hidgl_stencil_bits (void)
  {
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 9a035d1..b5e7565 100644
+index 858270a..b5e7565 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -33,7 +33,6 @@ typedef struct {
- extern triangle_buffer buffer;
- extern float global_depth;
- 
--void hidgl_in_context (bool is_in_context);
- void hidgl_init_triangle_array (triangle_buffer *buffer);
- void hidgl_flush_triangles (triangle_buffer *buffer);
- void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
-@@ -78,6 +77,8 @@ void hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double
+@@ -77,6 +77,8 @@ void hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double
  void hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2);
  
  void hidgl_init (void);
@@ -76,21 +47,20 @@ index 9a035d1..b5e7565 100644
  int hidgl_assign_clear_stencil_bit (void);
  void hidgl_return_stencil_bit (int bit);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 26066fa..d55ac2d 100644
+index dd7f772..d55ac2d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1911,9 +1911,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1911,8 +1911,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    gtk_widget_get_allocation (widget, &allocation);
  
    ghid_start_drawing (port);
 -
--  hidgl_in_context (true);
 -  hidgl_init ();
 +  hidgl_start_render ();
  
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
-@@ -2031,7 +2029,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2030,7 +2029,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -98,28 +68,23 @@ index 26066fa..d55ac2d 100644
    ghid_invalidate_current_gc ();
  
    /* Setup stenciling */
-@@ -2093,7 +2090,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2092,6 +2090,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    draw_lead_user (priv);
  
--  hidgl_in_context (false);
 +  hidgl_finish_render ();
    ghid_end_drawing (port);
  
    g_timer_start (priv->time_since_expose);
-@@ -2156,10 +2153,9 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2154,6 +2153,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
      return FALSE;
    }
 +  hidgl_start_render ();
    gport->render_priv->in_context = true;
  
--  hidgl_in_context (true);
--
    glEnable (GL_BLEND);
-   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
- 
-@@ -2184,11 +2180,9 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2180,11 +2180,9 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -131,28 +96,24 @@ index 26066fa..d55ac2d 100644
    ghid_invalidate_current_gc ();
    glPushMatrix ();
    glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
-@@ -2209,7 +2203,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2205,6 +2203,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    else
      glFlush ();
  
--  hidgl_in_context (false);
 +  hidgl_finish_render ();
- 
++
    /* end drawing to current GL-context */
    gport->render_priv->in_context = false;
-@@ -2267,10 +2261,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   gdk_gl_drawable_gl_end (pGlDrawable);
+@@ -2261,6 +2261,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
      return NULL;
    }
 +  hidgl_start_render ();
    gport->render_priv->in_context = true;
  
--  hidgl_in_context (true);
--
    glEnable (GL_BLEND);
-   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
- 
-@@ -2296,7 +2289,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2288,7 +2289,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
@@ -160,16 +121,16 @@ index 26066fa..d55ac2d 100644
    ghid_invalidate_current_gc ();
    glPushMatrix ();
    glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
-@@ -2323,7 +2315,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2315,6 +2315,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glFlush ();
  
--  hidgl_in_context (false);
 +  hidgl_finish_render ();
- 
++
    /* end drawing to current GL-context */
    gport->render_priv->in_context = false;
-@@ -2351,6 +2343,7 @@ ghid_request_debug_draw (void)
+   gdk_gl_drawable_gl_end (gldrawable);
+@@ -2341,6 +2343,7 @@ ghid_request_debug_draw (void)
    gtk_widget_get_allocation (widget, &allocation);
  
    ghid_start_drawing (port);
@@ -177,7 +138,7 @@ index 26066fa..d55ac2d 100644
  
    glViewport (0, 0, allocation.width, allocation.height);
  
-@@ -2361,7 +2354,6 @@ ghid_request_debug_draw (void)
+@@ -2351,7 +2354,6 @@ ghid_request_debug_draw (void)
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -185,7 +146,7 @@ index 26066fa..d55ac2d 100644
    ghid_invalidate_current_gc ();
  
    /* Setup stenciling */
-@@ -2399,6 +2391,7 @@ ghid_finish_debug_draw (void)
+@@ -2389,6 +2391,7 @@ ghid_finish_debug_draw (void)
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
