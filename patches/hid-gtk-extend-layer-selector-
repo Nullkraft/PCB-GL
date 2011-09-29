@@ -1,15 +1,14 @@
 Bottom: af2a81e9919b4d402a094f9f2163a8682e46b558
-Top:    1c452145c58e5771645421b6d9e5aaa3f39ac7b7
+Top:    081d95eb5ac612b1f1136ba159a2ccb5716a75ee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-29 23:02:14 +0100
+Date:   2011-09-29 23:12:16 +0100
 
 hid/gtk: Extend layer selector to allow editing layer names in situ
-
 
 ---
 
 diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
-index 43b0fa3..1afd211 100644
+index 43b0fa3..432e57e 100644
 --- a/src/hid/gtk/ghid-layer-selector.c
 +++ b/src/hid/gtk/ghid-layer-selector.c
 @@ -29,6 +29,7 @@ static void menu_pick_cb (GtkRadioAction *action, struct _layer *ldata);
@@ -212,26 +211,34 @@ index 43b0fa3..1afd211 100644
  
    object_class->finalize = ghid_layer_selector_finalize;
  }
-@@ -455,7 +583,8 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+@@ -448,6 +576,7 @@ ghid_layer_selector_new (void)
+  *  \param [in] color_string  The color of the layer on selector
+  *  \param [in] visibile      Whether the layer is visible
+  *  \param [in] selectable    Whether the layer appears in menus and can be selected
++ *  \param [in] renameable    Whether the layer is renameable
+  */
+ void
+ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+@@ -455,7 +584,8 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
                                 const gchar *name,
                                 const gchar *color_string,
                                 gboolean visible,
 -                               gboolean selectable)
 +                               gboolean selectable,
-+                               gboolean builtin)
++                               gboolean renameable)
  {
    struct _layer *new_layer = NULL;
    gchar *pname, *vname;
-@@ -523,6 +652,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+@@ -523,6 +653,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
                        COLOR_COL,       color_string,
                        TEXT_COL,        name,
                        FONT_COL,        selectable ? NULL : "Italic",
-+                      EDITABLE_COL,    !builtin,
++                      EDITABLE_COL,    renameable,
                        SELECTABLE_COL,  selectable,
                        SEPARATOR_COL,   FALSE,
                        -1);
 diff --git a/src/hid/gtk/ghid-layer-selector.h b/src/hid/gtk/ghid-layer-selector.h
-index ff67800..1ed5e01 100644
+index ff67800..c89112d 100644
 --- a/src/hid/gtk/ghid-layer-selector.h
 +++ b/src/hid/gtk/ghid-layer-selector.h
 @@ -24,7 +24,8 @@ void ghid_layer_selector_add_layer (GHidLayerSelector *ls,
@@ -240,12 +247,12 @@ index ff67800..1ed5e01 100644
                                      gboolean visible,
 -                                    gboolean selectable);
 +                                    gboolean selectable,
-+                                    gboolean builtin);
++                                    gboolean renameable);
  
  gint ghid_layer_selector_install_pick_items (GHidLayerSelector *ls,
                                               GtkMenuShell *shell, gint pos);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 98bfcfe..4f25e72 100644
+index 98bfcfe..ee79f1a 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -553,6 +553,33 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
@@ -287,27 +294,27 @@ index 98bfcfe..4f25e72 100644
    layer_process (&color_string, &text, &active, LAYER_BUTTON_SILK);
    ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_SILK,
 -                                 text, color_string, active, TRUE);
-+                                 text, color_string, active, TRUE, TRUE);
++                                 text, color_string, active, TRUE, FALSE);
    layer_process (&color_string, &text, &active, LAYER_BUTTON_RATS);
    ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_RATS,
 -                                 text, color_string, active, TRUE);
-+                                 text, color_string, active, TRUE, TRUE);
++                                 text, color_string, active, TRUE, FALSE);
    layer_process (&color_string, &text, &active, LAYER_BUTTON_PINS);
    ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_PINS,
 -                                 text, color_string, active, FALSE);
-+                                 text, color_string, active, FALSE, TRUE);
++                                 text, color_string, active, FALSE, FALSE);
    layer_process (&color_string, &text, &active, LAYER_BUTTON_VIAS);
    ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_VIAS,
 -                                 text, color_string, active, FALSE);
-+                                 text, color_string, active, FALSE, TRUE);
++                                 text, color_string, active, FALSE, FALSE);
    layer_process (&color_string, &text, &active, LAYER_BUTTON_FARSIDE);
    ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_FARSIDE,
 -                                 text, color_string, active, FALSE);
-+                                 text, color_string, active, FALSE, TRUE);
++                                 text, color_string, active, FALSE, FALSE);
    layer_process (&color_string, &text, &active, LAYER_BUTTON_MASK);
    ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_MASK,
 -                                 text, color_string, active, FALSE);
-+                                 text, color_string, active, FALSE, TRUE);
++                                 text, color_string, active, FALSE, FALSE);
  }
  
  /*! \brief callback for ghid_layer_selector_update_colors */
@@ -316,7 +323,7 @@ index 98bfcfe..4f25e72 100644
        layer_process (&color_string, &text, &active, i);
        ghid_layer_selector_add_layer (GHID_LAYER_SELECTOR (layersel), i,
 -                                     text, color_string, active, TRUE);
-+                                     text, color_string, active, TRUE, FALSE);
++                                     text, color_string, active, TRUE, TRUE);
      }
  }
  
