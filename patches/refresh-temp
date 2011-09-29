@@ -1,0 +1,31 @@
+Bottom: ac9ad592c8a7cde0bd066992e7a47a9582e41e2c
+Top:    038e2275bad1080b81cad3845d8cc6353dafc7cd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-29 17:38:17 +0100
+
+Refresh of hack-to-avoid-gl-calls-when-we
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index b211284..dd7f772 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -499,7 +499,7 @@ set_gl_color_for_gc (hidGC gc)
+    * current_colorname set to NULL, so we don't NOOP the
+    * next set_gl_color_for_gc call.
+    */
+-  if(!priv->in_context)
++  if (!priv->in_context)
+     return;
+ 
+   priv->current_colorname = strdup (gc->colorname);
+@@ -861,7 +861,7 @@ draw_crosshair (render_priv *priv)
+   static int done_once = 0;
+   static GdkColor cross_color;
+ 
+-  if(!priv->in_context)
++  if (!priv->in_context)
+     return;
+ 
+   if (!done_once)
