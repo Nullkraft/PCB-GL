@@ -1,5 +1,5 @@
-Bottom: b1c3c026d04a6fb4347a5b25406590cdc1bd8c8e
-Top:    9e7708cdd935686631aa76ead1b2156cd07c94f5
+Bottom: 6f2a456960849d37dc43a77ea476a67b658609e9
+Top:    7d477598a3023f00e634ca790d8a69d172b320c3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 19:39:34 +0100
 
@@ -9,10 +9,10 @@ hid/gtk: Extend layer selector to allow editing layer names in situ
 ---
 
 diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
-index e3121fe..a3fcb19 100644
+index 8c7a713..6245b5c 100644
 --- a/src/hid/gtk/ghid-layer-selector.c
 +++ b/src/hid/gtk/ghid-layer-selector.c
-@@ -392,6 +392,7 @@ ghid_layer_selector_new (void)
+@@ -302,6 +302,7 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
  
    renderer1 = ghid_cell_renderer_visibility_new ();
    renderer2 = gtk_cell_renderer_text_new ();
@@ -20,7 +20,7 @@ index e3121fe..a3fcb19 100644
  
    opacity_col = gtk_tree_view_column_new_with_attributes ("", renderer1,
                                                            "active", VISIBLE_COL,
-@@ -399,6 +400,7 @@ ghid_layer_selector_new (void)
+@@ -309,6 +310,7 @@ ghid_layer_selector_init (GHidLayerSelector *ls)
    name_col = gtk_tree_view_column_new_with_attributes ("", renderer2,
                                                         "text", TEXT_COL,
                                                         "font", FONT_COL,
