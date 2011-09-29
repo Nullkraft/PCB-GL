@@ -8,7 +8,9 @@ hid/gtk: Don't use dup_string where doing so would mix g_free() and free()
 The core uses malloc(), strdup(), free() etc..
 The GTK HID primarily uses g_malloc(), g_strdup(), g_free() etc..
 
-Mixing them can lead to bad behaviour and hard to debug crashes.
+Mixing them can lead to bad behaviour and hard to debug crashes. This
+commit is not aimed at fixing any known bugs, but is "by inspection", as
+I spotted some of these when working on a layer selector patch.
 
 
 ---
