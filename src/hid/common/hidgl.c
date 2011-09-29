@@ -88,14 +88,6 @@ static bool in_context = false;
     } \
   } while (0)
 
-void
-hidgl_in_context (bool is_in_context)
-{
-  if (in_context == is_in_context)
-    fprintf (stderr, "hidgl: hidgl_in_context called with nested value!\n");
-  in_context = is_in_context;
-}
-
 #define BUFFER_STRIDE (5 * sizeof (GLfloat))
 #define BUFFER_SIZE (BUFFER_STRIDE * 3 * TRIANGLE_ARRAY_SIZE)
 
@@ -820,8 +812,6 @@ load_built_in_shaders (void)
           "}\n";
 
   circular_program = hidgl_shader_new ("circular_rendering", NULL, circular_fs_source);
-
-  hidgl_shader_activate (circular_program);
 }
 
 void
@@ -853,10 +843,31 @@ hidgl_init (void)
     goto done;
   }
 
-  load_built_in_shaders ();
-
 done:
   done_once = true;
+}
+
+void
+hidgl_start_render (void)
+{
+  if (in_context)
+    fprintf (stderr, "hidgl: hidgl_start_render() - Already in rendering context!\n");
+
+  in_context = true;
+  hidgl_init ();
+  hidgl_init_triangle_array (&buffer);
+  load_built_in_shaders ();
+  hidgl_shader_activate (circular_program);
+}
+
+void
+hidgl_finish_render (void)
+{
+  if (!in_context)
+    fprintf (stderr, "hidgl: hidgl_finish_render() - Not currently in rendering context!\n");
+
+  hidgl_shader_activate (NULL);
+  in_context = false;
 }
 
 int

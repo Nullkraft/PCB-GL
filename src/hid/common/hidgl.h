@@ -41,7 +41,6 @@ extern float global_depth;
 
 extern hidgl_shader *circular_program;
 
-void hidgl_in_context (bool is_in_context);
 void hidgl_init_triangle_array (triangle_buffer *buffer);
 void hidgl_finish_triangle_array (triangle_buffer *buffer);
 void hidgl_flush_triangles (triangle_buffer *buffer);
@@ -129,6 +128,8 @@ void hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box);
 void hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2);
 
 void hidgl_init (void);
+void hidgl_start_render (void);
+void hidgl_finish_render (void);
 int hidgl_stencil_bits (void);
 int hidgl_assign_clear_stencil_bit (void);
 void hidgl_return_stencil_bit (int bit);
