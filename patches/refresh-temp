@@ -1,0 +1,33 @@
+Bottom: 586a7cfcc2fb4a6e219b8eb8646c552b5c56fc5e
+Top:    a02fa4810c81150d94d76a6914ede919a00ef2fa
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-30 18:47:03 +0100
+
+Refresh of hid-common-hidgl-add-api-to-in
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 6b20b07..e6c2ba0 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -71,7 +71,7 @@
+ triangle_buffer buffer;
+ float global_depth = 0;
+ 
+-void
++static void
+ hidgl_init_triangle_array (triangle_buffer *buffer)
+ {
+   buffer->triangle_count = 0;
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index b5e7565..8d2c78c 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -33,7 +33,6 @@ typedef struct {
+ extern triangle_buffer buffer;
+ extern float global_depth;
+ 
+-void hidgl_init_triangle_array (triangle_buffer *buffer);
+ void hidgl_flush_triangles (triangle_buffer *buffer);
+ void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
