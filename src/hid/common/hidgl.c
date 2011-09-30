@@ -866,6 +866,7 @@ hidgl_finish_render (void)
   if (!in_context)
     fprintf (stderr, "hidgl: hidgl_finish_render() - Not currently in rendering context!\n");
 
+  hidgl_finish_triangle_array (&buffer);
   hidgl_shader_activate (NULL);
   in_context = false;
 }
