@@ -1,5 +1,5 @@
 Bottom: b88b928b7e0933ea7340137d8fafc8a6f06c8e08
-Top:    b1e27f9759a3aff134521e60bc4ed98ec9bc3660
+Top:    8320ea04dfbd0036e5af133b256f1a1039ecce3f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 23:14:49 +0100
 
@@ -60,7 +60,7 @@ index 8d053d5..f2c1290 100644
  	hid/common/trackball.h
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 5745f33..0649fac 100644
+index 5745f33..e3f30ea 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -75,6 +75,7 @@
@@ -630,10 +630,11 @@ index 5745f33..0649fac 100644
  }
  
  void
-@@ -748,6 +866,7 @@ hidgl_finish_render (void)
+@@ -748,6 +866,8 @@ hidgl_finish_render (void)
    if (!in_context)
      fprintf (stderr, "hidgl: hidgl_finish_render() - Not currently in rendering context!\n");
  
++  hidgl_finish_triangle_array (&buffer);
 +  hidgl_shader_activate (NULL);
    in_context = false;
  }
