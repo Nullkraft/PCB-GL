@@ -1,5 +1,5 @@
-Bottom: 7be679fc544d1efd1d8584b3c3e37961d9bfafe4
-Top:    235245a0f99333a1d2d7042d7437e9e6affa9bad
+Bottom: 8d1c63ebf590e71e54b474cad53a18c80a5f0589
+Top:    aeaf24532c7614a438b03db9202e2b471930c937
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 17:22:36 +0100
 
@@ -1286,10 +1286,10 @@ index 20e8e03..19ecbfb 100644
    out->has_entered = FALSE;
  
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 98bfcfe..31d8c72 100644
+index ee79f1a..5b373f2 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -1713,7 +1713,6 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -1743,7 +1743,6 @@ ghid_parse_arguments (int *argc, char ***argv)
    gtk_init (argc, argv);
  
    gport = &ghid_port;
@@ -1298,7 +1298,7 @@ index 98bfcfe..31d8c72 100644
  
    ghid_init_renderer (argc, argv, gport);
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 341b284..dc5f32c 100644
+index 7caa515..ed7c925 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -63,15 +63,6 @@
@@ -1354,7 +1354,7 @@ index 341b284..dc5f32c 100644
    Coord pcb_x, pcb_y;             /* PCB coordinates of the mouse pointer */
    Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair     */
  }
-@@ -505,6 +480,7 @@ void ghid_finish_debug_draw (void);
+@@ -504,6 +479,7 @@ void ghid_finish_debug_draw (void);
  bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
  void ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y);
@@ -1362,7 +1362,7 @@ index 341b284..dc5f32c 100644
  void ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom);
  void ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor);
  void ghid_zoom_view_fit (void);
-@@ -526,58 +502,4 @@ extern GdkPixmap *XC_lock_source, *XC_lock_mask;
+@@ -525,58 +501,4 @@ extern GdkPixmap *XC_lock_source, *XC_lock_mask;
  extern GdkPixmap *XC_clock_source, *XC_clock_mask;
  
  
