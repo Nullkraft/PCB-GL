@@ -71,7 +71,7 @@
 triangle_buffer buffer;
 float global_depth = 0;
 
-void
+static void
 hidgl_init_triangle_array (triangle_buffer *buffer)
 {
   buffer->triangle_count = 0;
