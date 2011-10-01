@@ -1344,7 +1344,7 @@ coord_intersect_prop (double ax, double ay,
   int wind_cda = coord_wind (cx, cy, dx, dy, ax, ay);
   int wind_cdb = coord_wind (cx, cy, dx, dy, bx, by);
 
-  /* If any of the lines are colinear, return false */
+  /* If any of the line end-points are colinear with the other line, return false */
   if (wind_abc == 0 || wind_abd == 0 || wind_cda == 0 || wind_cdb == 0)
     return false;
 
