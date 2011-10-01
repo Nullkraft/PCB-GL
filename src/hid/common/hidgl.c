@@ -814,12 +814,6 @@ load_built_in_shaders (void)
   circular_program = hidgl_shader_new ("circular_rendering", NULL, circular_fs_source);
 }
 
-static void
-unload_built_in_shaders (void)
-{
-  hidgl_shader_free (circular_program);
-}
-
 void
 hidgl_init (void)
 {
@@ -864,7 +858,6 @@ hidgl_start_render (void)
   in_context = true;
   hidgl_init ();
   hidgl_init_triangle_array (&buffer);
-//  load_built_in_shaders ();
   hidgl_shader_activate (circular_program);
 }
 
@@ -876,7 +869,6 @@ hidgl_finish_render (void)
 
   hidgl_finish_triangle_array (&buffer);
   hidgl_shader_activate (NULL);
-//  unload_built_in_shaders ();
   in_context = false;
 }
 

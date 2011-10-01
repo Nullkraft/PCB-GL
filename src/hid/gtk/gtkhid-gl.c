@@ -936,10 +936,19 @@ void
 ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
 {
   render_priv *priv = port->render_priv;
+  GdkGLContext *drawarea_glcontext;
+
+  /* NB: We share with the main rendering context so we can use the
+   *     same pixel shader etc..
+   */
+  if (widget == gport->drawing_area)
+    drawarea_glcontext = NULL;
+  else
+    drawarea_glcontext = gtk_widget_get_gl_context (gport->drawing_area);
 
   gtk_widget_set_gl_capability (widget,
                                 priv->glconfig,
-                                NULL,
+                                drawarea_glcontext,
                                 TRUE,
                                 GDK_GL_RGBA_TYPE);
 }
