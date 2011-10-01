@@ -1,0 +1,22 @@
+Bottom: ba1c798446f01b781bb0ddcf51ec0ea312ceffd4
+Top:    4375c54f688e0c854a82ab9a1c7140f6d6617d6b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-10-01 12:48:40 +0100
+
+Refresh of revert-change-change-c-to-trea
+
+---
+
+diff --git a/src/change.c b/src/change.c
+index 1ce9d9e..9787165 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -839,7 +839,7 @@ static void *
+ ChangeTextSize (LayerTypePtr Layer, TextTypePtr Text)
+ {
+   int value = (Absolute != 0 ? 0 : Text->Scale) +
+-              (double)(Absolute != 0 ? Absolute : Delta) * 100. / (double)FONT_CAPHEIGHT;
++              (double)(Absolute != 0 ? Absolute : Delta) / (double)FONT_CAPHEIGHT * 100.;
+ 
+   if (TEST_FLAG (LOCKFLAG, Text))
+     return (NULL);
