@@ -1,0 +1,21 @@
+Bottom: e45109111f8b2b105a6f18ea1d92707e1377dc24
+Top:    8454fc5e0e44c278f6a8a76c326c143097e4e3f2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-10-01 14:52:49 +0100
+
+Refresh of toporouter-c-re-write-coord_in
+
+---
+
+diff --git a/src/toporouter.c b/src/toporouter.c
+index 928df08..48bb306 100644
+--- a/src/toporouter.c
++++ b/src/toporouter.c
+@@ -1344,7 +1344,7 @@ coord_intersect_prop (double ax, double ay,
+   int wind_cda = coord_wind (cx, cy, dx, dy, ax, ay);
+   int wind_cdb = coord_wind (cx, cy, dx, dy, bx, by);
+ 
+-  /* If any of the lines are colinear, return false */
++  /* If any of the line end-points are colinear with the other line, return false */
+   if (wind_abc == 0 || wind_abd == 0 || wind_cda == 0 || wind_cdb == 0)
+     return false;
