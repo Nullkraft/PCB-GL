@@ -1,0 +1,33 @@
+Bottom: e0afc151f8aeca6b54cf44051b49e8664721a2ad
+Top:    e1c537680f8604351a746b52e83266c2f160373c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-10-01 13:51:43 +0100
+
+Refresh of toporouter-c-remove-unused-dou
+
+---
+
+diff --git a/src/toporouter.c b/src/toporouter.c
+index cbab571..4221937 100644
+--- a/src/toporouter.c
++++ b/src/toporouter.c
+@@ -1159,19 +1159,6 @@ wind(toporouter_spoint_t *p1, toporouter_spoint_t *p2, toporouter_spoint_t *p3)
+   return (rval > 0.0001) ? 1 : ((rval < -0.0001) ? -1 : 0);
+ }
+ 
+-/* wind_double:
+- * returns 1,0,-1 for counterclockwise, collinear or clockwise, respectively.
+- */
+-int 
+-wind_double(gdouble p1_x, gdouble p1_y, gdouble p2_x, gdouble p2_y, gdouble p3_x, gdouble p3_y) 
+-{
+-  double rval, dx1, dx2, dy1, dy2;
+-  dx1 = p2_x - p1_x; dy1 = p2_y - p1_y;
+-  dx2 = p3_x - p2_x; dy2 = p3_y - p2_y;
+-  rval = (dx1*dy2)-(dy1*dx2);
+-  return (rval > 0.0001) ? 1 : ((rval < -0.0001) ? -1 : 0);
+-}
+-
+ static inline void
+ print_toporouter_constraint(toporouter_constraint_t *tc) 
+ {
