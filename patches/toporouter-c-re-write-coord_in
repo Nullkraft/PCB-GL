@@ -1,5 +1,5 @@
 Bottom: a63621f3f4d5f67d12a39afb183c8eddb08f7d40
-Top:    e45109111f8b2b105a6f18ea1d92707e1377dc24
+Top:    8454fc5e0e44c278f6a8a76c326c143097e4e3f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-01 14:51:21 +0100
 
@@ -17,7 +17,7 @@ bool.
 ---
 
 diff --git a/src/toporouter.c b/src/toporouter.c
-index 9c7ba12..928df08 100644
+index 9c7ba12..48bb306 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
 @@ -1333,17 +1333,22 @@ vertex_outside_segment(toporouter_spoint_t *a, toporouter_spoint_t *b, gdouble r
@@ -46,7 +46,7 @@ index 9c7ba12..928df08 100644
 +  int wind_cda = coord_wind (cx, cy, dx, dy, ax, ay);
 +  int wind_cdb = coord_wind (cx, cy, dx, dy, bx, by);
 +
-+  /* If any of the lines are colinear, return false */
++  /* If any of the line end-points are colinear with the other line, return false */
 +  if (wind_abc == 0 || wind_abd == 0 || wind_cda == 0 || wind_cdb == 0)
 +    return false;
 +
