@@ -717,52 +717,19 @@ print_trace (void)
   free (strings);
 }
 */
+
 /* fills in x and y with coordinates of point from a towards b of distance d */
-void
-point_from_point_to_point(toporouter_vertex_t *a, toporouter_vertex_t *b, gdouble d, gdouble *x, gdouble *y)
+static void
+point_from_point_to_point (toporouter_vertex_t *a,
+                           toporouter_vertex_t *b,
+                           double d,
+                           double *x, double *y)
 {
-  gdouble dx = vx(b) - vx(a);
-  gdouble dy = vy(b) - vy(a);
-  gdouble theta = atan(fabs(dy/dx));
+  double theta = atan2 (vy(b) - vy(a), vx(b) - vx(a));
 
-//#ifdef DEBUG_EXPORT  
-  if(!finite(theta)) {
-//    printf("!finte(theta): a = %f,%f b = %f,%f d = %f\n", vx(a), vy(a), vx(b), vy(b), d);
-//    print_trace();
-    //TODO: this shouldn't happen, fix the hack
-    *x = vx(a);
-    *y = vy(a);
-    return;
-  }
-//#endif
-
-  g_assert(finite(theta));
-
-  *x = vx(a); *y = vy(a);
-
-  if( dx >= 0. ) {
-
-    if( dy >= 0. ) {
-      *x += d * cos(theta);
-      *y += d * sin(theta);
-    }else{
-      *x += d * cos(theta);
-      *y -= d * sin(theta);
-    }
-
-  }else{
-    
-    if( dy >= 0. ) {
-      *x -= d * cos(theta);
-      *y += d * sin(theta);
-    }else{
-      *x -= d * cos(theta);
-      *y -= d * sin(theta);
-    }
-
-  }
+  *x = vx(a) + d * cos (theta);
+  *y = vy(a) + d * sin (theta);
 }
-
 
 static inline gint
 coord_wind(gdouble ax, gdouble ay, gdouble bx, gdouble by, gdouble cx, gdouble cy) 
