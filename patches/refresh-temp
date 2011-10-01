@@ -1,0 +1,22 @@
+Bottom: 010967cd7c516d8b9f92d5fd3c1056d94d2c9879
+Top:    f26e5f5674582887941783976fd5cf1b8690129c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-10-01 13:18:27 +0100
+
+Refresh of toporouter-re-implement-point_
+
+---
+
+diff --git a/src/toporouter.c b/src/toporouter.c
+index 5a264ea..5f9336f 100644
+--- a/src/toporouter.c
++++ b/src/toporouter.c
+@@ -231,7 +231,7 @@ toporouter_arc_class(void)
+   return klass;
+ }
+ 
+-#define MARGIN 10.0f /* XXX: Not sure - seems to be used to offset cairo drawing - thus could be in Coords */
++#define MARGIN 10.0f
+ 
+ drawing_context_t *
+ toporouter_output_init(int w, int h, char *filename)
