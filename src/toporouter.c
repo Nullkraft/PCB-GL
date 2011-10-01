@@ -1178,36 +1178,39 @@ print_toporouter_vertex(toporouter_vertex_t *tv)
 
 /**
  * vertices_on_line:
- * Given vertex a, gradient m, and radius r: 
+ * Given vertex a, gradient m, and radius r:
  *
  * Return vertices on line of a & m at r from a
  */ 
-void
-vertices_on_line(toporouter_spoint_t *a, gdouble m, gdouble r, toporouter_spoint_t *b0, toporouter_spoint_t *b1)
+static void
+vertices_on_line (toporouter_spoint_t *a,
+                  double m,
+                  double r,
+                  toporouter_spoint_t *b0,
+                  toporouter_spoint_t *b1)
 {
 
-  gdouble c, temp;
-  
+  double c, dx;
+
   if(m == INFINITY || m == -INFINITY) {
-    b0->y = a->y + r;
-    b1->y = a->y - r;
 
     b0->x = a->x;
+    b0->y = a->y + r;
+
     b1->x = a->x;
-  
+    b1->y = a->y - r;
+
     return;
   }
 
-  c = a->y - (m * a->x);
+  c = a->y - m * a->x;
+  dx = r / sqrt (1 + pow (m, 2));
 
-  temp = sqrt( pow(r, 2) / ( 1 + pow(m, 2) ) );
+  b0->x = a->x + dx;
+  b0->y = m * b0->x + c;
 
-  b0->x = a->x + temp;
-  b1->x = a->x - temp;
-  
-  b0->y = b0->x * m + c;
-  b1->y = b1->x * m + c;
-
+  b1->x = a->x - dx;
+  b1->y = m * b1->x + c;
 }
 
 /**
