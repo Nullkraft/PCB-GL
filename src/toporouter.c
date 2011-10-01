@@ -796,71 +796,30 @@ coord_move_towards_coord_values (double ax, double ay,
 }
 
 /* moves vertex v d units in the direction of vertex p */
-void
-vertex_move_towards_point_values(GtsVertex *v, gdouble px, gdouble py, gdouble d, gdouble *x, gdouble *y) 
+static void
+vertex_move_towards_point_values (GtsVertex *v,
+                                  double px, double py,
+                                  double d,
+                                  double *x, double *y)
 {
-  gdouble dx = px - GTS_POINT(v)->x;
-  gdouble dy = py - GTS_POINT(v)->y;
-  gdouble theta = atan(fabs(dy/dx));
+  double theta = atan2 (py - GTS_POINT(v)->y, px - GTS_POINT(v)->x);
 
-  g_assert(finite(theta));
-
-  if( dx >= 0. ) {
-
-    if( dy >= 0. ) {
-      *x = GTS_POINT(v)->x + (d * cos(theta));
-      *y = GTS_POINT(v)->y + (d * sin(theta));
-    }else{
-      *x = GTS_POINT(v)->x + (d * cos(theta));
-      *y = GTS_POINT(v)->y - (d * sin(theta));
-    }
-
-  }else{
-    
-    if( dy >= 0. ) {
-      *x = GTS_POINT(v)->x - (d * cos(theta));
-      *y = GTS_POINT(v)->y + (d * sin(theta));
-    }else{
-      *x = GTS_POINT(v)->x - (d * cos(theta));
-      *y = GTS_POINT(v)->y - (d * sin(theta));
-    }
-
-  }
-
+  *x = GTS_POINT(v)->x + d * cos(theta);
+  *y = GTS_POINT(v)->y + d * sin(theta);
 }
 
 /* moves vertex v d units in the direction of vertex p */
-void
-vertex_move_towards_vertex_values(GtsVertex *v, GtsVertex *p, gdouble d, gdouble *x, gdouble *y) 
+static void
+vertex_move_towards_vertex_values (GtsVertex *v,
+                                   GtsVertex *p,
+                                   double d,
+                                   double *x, double *y)
 {
-  gdouble dx = GTS_POINT(p)->x - GTS_POINT(v)->x;
-  gdouble dy = GTS_POINT(p)->y - GTS_POINT(v)->y;
-  gdouble theta = atan(fabs(dy/dx));
+  double theta = atan2 (GTS_POINT(p)->y - GTS_POINT(v)->y,
+                        GTS_POINT(p)->x - GTS_POINT(v)->x);
 
-  g_assert(finite(theta));
-
-  if( dx >= 0. ) {
-
-    if( dy >= 0. ) {
-      *x = GTS_POINT(v)->x + (d * cos(theta));
-      *y = GTS_POINT(v)->y + (d * sin(theta));
-    }else{
-      *x = GTS_POINT(v)->x + (d * cos(theta));
-      *y = GTS_POINT(v)->y - (d * sin(theta));
-    }
-
-  }else{
-    
-    if( dy >= 0. ) {
-      *x = GTS_POINT(v)->x - (d * cos(theta));
-      *y = GTS_POINT(v)->y + (d * sin(theta));
-    }else{
-      *x = GTS_POINT(v)->x - (d * cos(theta));
-      *y = GTS_POINT(v)->y - (d * sin(theta));
-    }
-
-  }
-
+  *x = GTS_POINT(v)->x + d * cos (theta);
+  *y = GTS_POINT(v)->y + d * sin (theta);
 }
 
 #define tv_on_layer(v,l) (l == TOPOROUTER_BBOX(TOPOROUTER_VERTEX(v)->boxes->data)->layer)
@@ -2577,48 +2536,17 @@ visited_cmp(gconstpointer a, gconstpointer b)
   return 0;
 }
 
-gdouble 
-coord_xangle(gdouble ax, gdouble ay, gdouble bx, gdouble by) 
+static double
+coord_xangle (double ax, double ay,
+              double bx, double by)
 {
-  gdouble dx, dy, theta;
-
-  dx = fabs(ax - bx);
-  dy = fabs(ay - by);
-  
-  if(dx < EPSILON) {
-    theta = M_PI / 2.;
-  } else theta = atan(dy/dx);
-
-  if(by <= ay) {
-    if(bx < ax) theta = M_PI - theta;
-  }else{
-    if(bx < ax) theta += M_PI;
-    else theta = (2 * M_PI) - theta;
-  }
-  
-  return theta;  
+  return atan2 (ay - by, ax - bx);
 }
 
-gdouble 
-point_xangle(GtsPoint *a, GtsPoint *b) 
+static double
+point_xangle (GtsPoint *a, GtsPoint *b)
 {
-  gdouble dx, dy, theta;
-
-  dx = fabs(a->x - b->x);
-  dy = fabs(a->y - b->y);
-  
-  if(dx < EPSILON) {
-    theta = M_PI / 2.;
-  } else theta = atan(dy/dx);
-
-  if(b->y >= a->y) {
-    if(b->x < a->x) theta = M_PI - theta;
-  }else{
-    if(b->x < a->x) theta += M_PI;
-    else theta = (2 * M_PI) - theta;
-  }
-
-  return theta;  
+  return atan2 (a->y - b->y, a->x - b->x);
 }
 
 
@@ -5135,71 +5063,28 @@ routing_return:
 }
 
 /* moves vertex v d units in the direction of vertex p */
-void
-vertex_move_towards_point(GtsVertex *v, gdouble px, gdouble py, gdouble d) 
+static void
+vertex_move_towards_point (GtsVertex *v,
+                           double px, double py,
+                           double d)
 {
-  gdouble dx = px - GTS_POINT(v)->x;
-  gdouble dy = py - GTS_POINT(v)->y;
-  gdouble theta = atan(fabs(dy/dx));
+  double theta = atan2 (py - GTS_POINT(v)->y, px - GTS_POINT(v)->x);
 
-  g_assert(finite(theta));
-
-  if( dx >= 0. ) {
-
-    if( dy >= 0. ) {
-      GTS_POINT(v)->x += d * cos(theta);
-      GTS_POINT(v)->y += d * sin(theta);
-    }else{
-      GTS_POINT(v)->x += d * cos(theta);
-      GTS_POINT(v)->y -= d * sin(theta);
-    }
-
-  }else{
-    
-    if( dy >= 0. ) {
-      GTS_POINT(v)->x -= d * cos(theta);
-      GTS_POINT(v)->y += d * sin(theta);
-    }else{
-      GTS_POINT(v)->x -= d * cos(theta);
-      GTS_POINT(v)->y -= d * sin(theta);
-    }
-
-  }
-
+  GTS_POINT(v)->x += d * cos (theta);
+  GTS_POINT(v)->y += d * sin (theta);
 }
 
 /* moves vertex v d units in the direction of vertex p */
 void
-vertex_move_towards_vertex(GtsVertex *v, GtsVertex *p, gdouble d) 
+vertex_move_towards_vertex (GtsVertex *v,
+                            GtsVertex *p,
+                            double d)
 {
-  gdouble dx = GTS_POINT(p)->x - GTS_POINT(v)->x;
-  gdouble dy = GTS_POINT(p)->y - GTS_POINT(v)->y;
-  gdouble theta = atan(fabs(dy/dx));
+  double theta = atan2 (GTS_POINT(p)->y - GTS_POINT(v)->y,
+                        GTS_POINT(p)->x - GTS_POINT(v)->x);
 
-  g_assert(finite(theta));
-
-  if( dx >= 0. ) {
-
-    if( dy >= 0. ) {
-      GTS_POINT(v)->x += d * cos(theta);
-      GTS_POINT(v)->y += d * sin(theta);
-    }else{
-      GTS_POINT(v)->x += d * cos(theta);
-      GTS_POINT(v)->y -= d * sin(theta);
-    }
-
-  }else{
-    
-    if( dy >= 0. ) {
-      GTS_POINT(v)->x -= d * cos(theta);
-      GTS_POINT(v)->y += d * sin(theta);
-    }else{
-      GTS_POINT(v)->x -= d * cos(theta);
-      GTS_POINT(v)->y -= d * sin(theta);
-    }
-
-  }
-
+  GTS_POINT(v)->x += d * cos (theta);
+  GTS_POINT(v)->y += d * sin (theta);
 }
 
 
