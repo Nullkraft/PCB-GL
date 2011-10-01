@@ -1,5 +1,5 @@
-Bottom: e1c537680f8604351a746b52e83266c2f160373c
-Top:    d59c995dc8475542e2f8bfc404c254f082a354f0
+Bottom: d1069643dd43e7f9b714e2c55ddfb6495422433c
+Top:    a63621f3f4d5f67d12a39afb183c8eddb08f7d40
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-01 14:08:01 +0100
 
@@ -11,7 +11,7 @@ Should given an identical result, but with a couple fewer operations.
 ---
 
 diff --git a/src/toporouter.c b/src/toporouter.c
-index 4221937..224a6b9 100644
+index c6a5602..9c7ba12 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
 @@ -1178,70 +1178,75 @@ print_toporouter_vertex(toporouter_vertex_t *tv)
@@ -53,11 +53,11 @@ index 4221937..224a6b9 100644
    }
  
 -  c = a->y - (m * a->x);
--
--  temp = sqrt( pow(r, 2) / ( 1 + pow(m, 2) ) );
 +  c = a->y - m * a->x;
 +  dx = r / sqrt (1 + pow (m, 2));
  
+-  temp = sqrt( pow(r, 2) / ( 1 + pow(m, 2) ) );
+-
 -  b0->x = a->x + temp;
 -  b1->x = a->x - temp;
 -  
@@ -109,11 +109,11 @@ index 4221937..224a6b9 100644
    }
  
 -  c = ay - (m * ax);
+-
+-  temp = sqrt( pow(r, 2) / ( 1 + pow(m, 2) ) );
 +  c = ay - m * ax;
 +  dx = r / sqrt (1 + pow (m, 2));
  
--  temp = sqrt( pow(r, 2) / ( 1 + pow(m, 2) ) );
--
 -  *b0x = ax + temp;
 -  *b1x = ax - temp;
 -  
@@ -126,4 +126,4 @@ index 4221937..224a6b9 100644
 +  *b1y = m * *b1x + c;
  }
  
- /**
+ /*
