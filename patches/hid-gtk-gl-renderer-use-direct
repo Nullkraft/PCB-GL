@@ -1,7 +1,7 @@
-Bottom: b8cc71e1d873b99eafb2914ecd96ba5a0840cbba
+Bottom: 9ac79169608ef9af2e3bf70695faf3248cb9151e
 Top:    9ac79169608ef9af2e3bf70695faf3248cb9151e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-10-01 11:21:50 +0100
+Date:   2011-10-01 11:23:22 +0100
 
 hid/gtk: (GL Renderer) Use direct rendering for off-screen pixmaps
 
@@ -13,15 +13,4 @@ and the pixmap rendering code.
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index df0bf1d..47ba6b4 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -2243,7 +2243,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
-   pixmap = gdk_pixmap_new (NULL, width, height, depth);
-   glpixmap = gdk_pixmap_set_gl_capability (pixmap, glconfig, NULL);
-   gldrawable = GDK_GL_DRAWABLE (glpixmap);
--  glcontext = gdk_gl_context_new (gldrawable, NULL, FALSE, GDK_GL_RGBA_TYPE);
-+  glcontext = gdk_gl_context_new (gldrawable, NULL, TRUE, GDK_GL_RGBA_TYPE);
- 
-   /* Setup zoom factor for drawing routines */
+
