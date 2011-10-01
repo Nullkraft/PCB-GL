@@ -2217,7 +2217,7 @@ ActionSetValue (int argc, char **argv, Coord x, Coord y)
 
 	case F_Text:
 	case F_TextScale:
-	  value /= 45;
+	  value /= FONT_CAPHEIGHT;
 	  SetTextScale (absolute ? value : value + Settings.TextScale);
 	  break;
 	default:
