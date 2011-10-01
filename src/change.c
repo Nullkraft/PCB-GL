@@ -839,7 +839,7 @@ static void *
 ChangeTextSize (LayerTypePtr Layer, TextTypePtr Text)
 {
   int value = (Absolute != 0 ? 0 : Text->Scale) +
-              (double)(Absolute != 0 ? Absolute : Delta) * 100. / (double)FONT_CAPHEIGHT;
+              (double)(Absolute != 0 ? Absolute : Delta) / (double)FONT_CAPHEIGHT * 100.;
 
   if (TEST_FLAG (LOCKFLAG, Text))
     return (NULL);
