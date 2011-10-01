@@ -1,0 +1,66 @@
+Bottom: cd08fed68bccc971c2a6d56b1ed4cd8be4b92f15
+Top:    ece573d7a13d5807d23e90bfc6c80d750e489246
+Author: Andrew Poelstra <asp11@sfu.ca>
+Date:   2011-10-01 12:52:01 +0100
+
+Revert "Change change.c to treat text scale as mils" and fix harder..
+
+This reverts commit 9396377717f7c49cf38d753a35e32d004294b09e and
+fixes what was probably the underlying issue... I made a mistake in
+commit 2d21a8ad8f38e07b17450450a096f1ce4b3bef0e, such that it added
+the existing text scale when setting an "absolute" text size, but
+ignored it when setting a relative change. (Clearly backwards).
+
+Additionally, I've switched to computing the new value in double
+arithmetic to avoid a potential overflow when the input value is
+large and we are using a 32-bit Coord type.
+
+See commit 2d21a8ad8f38e07b17450450a096f1ce4b3bef0e for a description
+of how text scale is defined and used.
+
+If we want to change the definition of how our text is sized / scaled
+in the future, we need to change usage in many more places than the
+reverted commit touched.
+
+
+---
+
+diff --git a/src/change.c b/src/change.c
+index eca110e..61cb335 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -128,8 +128,8 @@ static void *ChangePolyClear (LayerTypePtr, PolygonTypePtr);
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
+  */
+-static Coord Delta;		/* change of size */
+-static Coord Absolute;		/* Absolute size */
++static int Delta;		/* change of size */
++static int Absolute;		/* Absolute size */
+ static char *NewName;		/* new name */
+ static ObjectFunctionType ChangeSizeFunctions = {
+   ChangeLineSize,
+@@ -838,8 +838,9 @@ ChangeArcClearSize (LayerTypePtr Layer, ArcTypePtr Arc)
+ static void *
+ ChangeTextSize (LayerTypePtr Layer, TextTypePtr Text)
+ {
+-  int value = Absolute ? COORD_TO_MIL (Absolute)
+-                       : Text->Scale + COORD_TO_MIL (Delta);
++  int value = (Absolute != 0 ? 0 : Text->Scale) +
++              (double)(Absolute != 0 ? Absolute : Delta)
++                / (double)FONT_CAPHEIGHT * 100.;
+ 
+   if (TEST_FLAG (LOCKFLAG, Text))
+     return (NULL);
+@@ -914,8 +915,9 @@ ChangeElementSize (ElementTypePtr Element)
+ static void *
+ ChangeElementNameSize (ElementTypePtr Element)
+ {
+-  int value = Absolute ? COORD_TO_MIL (Absolute)
+-                  : DESCRIPTION_TEXT (Element).Scale + COORD_TO_MIL (Delta);
++  int value = (Absolute != 0 ? 0 : DESCRIPTION_TEXT (Element).Scale) +
++              (double)(Absolute != 0 ? Absolute : Delta)
++                / (double)FONT_CAPHEIGHT * 100.;
+ 
+   if (TEST_FLAG (LOCKFLAG, &Element->Name[0]))
+     return (NULL);
