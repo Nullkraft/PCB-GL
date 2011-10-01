@@ -1,5 +1,5 @@
 Bottom: b8cc71e1d873b99eafb2914ecd96ba5a0840cbba
-Top:    4d789e9547b4b96147504ed4747f7c4562d86088
+Top:    2d2d02544f91fa852dbb6dd0a303180d603d93a3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-30 18:47:35 +0100
 
@@ -60,7 +60,7 @@ index 8d053d5..f2c1290 100644
  	hid/common/trackball.h
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 8215d7c..96d733c 100644
+index 8215d7c..876f5a8 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -75,6 +75,7 @@
@@ -432,13 +432,13 @@ index 8215d7c..96d733c 100644
 -
 -  if (slices > MAX_TRIANGLES_PER_CIRCLE)
 -    slices = MAX_TRIANGLES_PER_CIRCLE;
- 
+-
 -  hidgl_ensure_triangle_space (&buffer, slices);
-+  hidgl_ensure_vertex_space (&buffer, 6);
  
 -  last_x = vx + vr;
 -  last_y = vy;
--
++  hidgl_ensure_vertex_space (&buffer, 6);
+ 
 -  for (i = 0; i < slices; i++) {
 -    float x, y;
 -    x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
@@ -559,7 +559,7 @@ index 8215d7c..96d733c 100644
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
-@@ -706,14 +786,42 @@ void
+@@ -706,14 +786,48 @@ void
  hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  {
    CHECK_IS_IN_CONTEXT ();
@@ -592,6 +592,12 @@ index 8215d7c..96d733c 100644
 +          "}\n";
 +
 +  circular_program = hidgl_shader_new ("circular_rendering", NULL, circular_fs_source);
++}
++
++static void
++unload_built_in_shaders (void)
++{
++  hidgl_shader_free (circular_program);
  }
  
  void
@@ -605,7 +611,7 @@ index 8215d7c..96d733c 100644
    CHECK_IS_IN_CONTEXT ();
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
-@@ -729,6 +837,14 @@ hidgl_init (void)
+@@ -729,6 +843,16 @@ hidgl_init (void)
                "Cannot use stencil buffer to sub-composite layers.\n");
        /* Do we need to disable that somewhere? */
      }
@@ -615,26 +621,29 @@ index 8215d7c..96d733c 100644
 +    goto done;
 +  }
 +
++  load_built_in_shaders ();
++
 +done:
 +  done_once = true;
  }
  
  void
-@@ -740,6 +856,8 @@ hidgl_start_render (void)
+@@ -740,6 +864,8 @@ hidgl_start_render (void)
    in_context = true;
    hidgl_init ();
    hidgl_init_triangle_array (&buffer);
-+  load_built_in_shaders ();
++//  load_built_in_shaders ();
 +  hidgl_shader_activate (circular_program);
  }
  
  void
-@@ -748,6 +866,8 @@ hidgl_finish_render (void)
+@@ -748,6 +874,9 @@ hidgl_finish_render (void)
    if (!in_context)
      fprintf (stderr, "hidgl: hidgl_finish_render() - Not currently in rendering context!\n");
  
 +  hidgl_finish_triangle_array (&buffer);
 +  hidgl_shader_activate (NULL);
++//  unload_built_in_shaders ();
    in_context = false;
  }
  
@@ -978,7 +987,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index df0bf1d..f40db60 100644
+index df0bf1d..87b2d0b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -318,6 +318,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1056,3 +1065,32 @@ index df0bf1d..f40db60 100644
  }
  
  struct cyl_info {
+@@ -2223,6 +2231,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   GdkGLConfig *glconfig;
+   GdkPixmap *pixmap;
+   GdkGLPixmap *glpixmap;
++  GdkGLContext *drawarea_glcontext;
+   GdkGLContext* glcontext;
+   GdkGLDrawable* gldrawable;
+   view_data save_view;
+@@ -2236,6 +2245,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   /* Setup rendering context for drawing routines
+    */
+ 
++  /* NB: We share with the main rendering context so we can use the
++   *     same pixel shader etc..
++   */
++  drawarea_glcontext = gtk_widget_get_gl_context (gport->drawing_area);
++
+   glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
+                                         GDK_GL_MODE_STENCIL |
+                                         GDK_GL_MODE_SINGLE);
+@@ -2243,7 +2257,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   pixmap = gdk_pixmap_new (NULL, width, height, depth);
+   glpixmap = gdk_pixmap_set_gl_capability (pixmap, glconfig, NULL);
+   gldrawable = GDK_GL_DRAWABLE (glpixmap);
+-  glcontext = gdk_gl_context_new (gldrawable, NULL, FALSE, GDK_GL_RGBA_TYPE);
++  glcontext = gdk_gl_context_new (gldrawable, drawarea_glcontext,
++                                  FALSE, GDK_GL_RGBA_TYPE);
+ 
+   /* Setup zoom factor for drawing routines */
