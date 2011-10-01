@@ -783,44 +783,16 @@ sloppy_vertex_wind(GtsVertex *a, GtsVertex *b, GtsVertex *c)
 }
 
 /* moves vertex v d units in the direction of vertex p */
-void
-coord_move_towards_coord_values(gdouble ax, gdouble ay, gdouble px, gdouble py, gdouble d, gdouble *x, gdouble *y) 
+static void
+coord_move_towards_coord_values (double ax, double ay,
+                                 double px, double py,
+                                 double d,
+                                 double *x, double *y)
 {
-  gdouble dx = px - ax;
-  gdouble dy = py - ay;
-  gdouble theta = atan(fabs(dy/dx));
+  double theta = atan2 (py - ay, px - ax);
 
-
-  if(!finite(theta)) {
-    printf("!finite(theta) a = %f,%f p = %f,%f d = %f\n", 
-        ax, ay, px, py, d);
-
-  }
-
-  g_assert(finite(theta));
-
-  if( dx >= 0. ) {
-
-    if( dy >= 0. ) {
-      *x = ax + (d * cos(theta));
-      *y = ay + (d * sin(theta));
-    }else{
-      *x = ax + (d * cos(theta));
-      *y = ay - (d * sin(theta));
-    }
-
-  }else{
-    
-    if( dy >= 0. ) {
-      *x = ax - (d * cos(theta));
-      *y = ay + (d * sin(theta));
-    }else{
-      *x = ax - (d * cos(theta));
-      *y = ay - (d * sin(theta));
-    }
-
-  }
-
+  *x = ax + d * cos (theta);
+  *y = ay + d * sin (theta);
 }
 
 /* moves vertex v d units in the direction of vertex p */
