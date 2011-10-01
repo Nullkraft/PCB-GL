@@ -232,7 +232,7 @@ toporouter_arc_class(void)
   return klass;
 }
 
-#define MARGIN 10.0f
+#define MARGIN 10.0f /* XXX: Not sure - seems to be used to offset cairo drawing - thus could be in Coords */
 
 drawing_context_t *
 toporouter_output_init(int w, int h, char *filename) 
@@ -1156,20 +1156,7 @@ wind(toporouter_spoint_t *p1, toporouter_spoint_t *p2, toporouter_spoint_t *p3)
   dx1 = p2->x - p1->x; dy1 = p2->y - p1->y;
   dx2 = p3->x - p2->x; dy2 = p3->y - p2->y;
   rval = (dx1*dy2)-(dy1*dx2);
-  return (rval > 0.0001) ? 1 : ((rval < -0.0001) ? -1 : 0);
-}
-
-/* wind_double:
- * returns 1,0,-1 for counterclockwise, collinear or clockwise, respectively.
- */
-int 
-wind_double(gdouble p1_x, gdouble p1_y, gdouble p2_x, gdouble p2_y, gdouble p3_x, gdouble p3_y) 
-{
-  double rval, dx1, dx2, dy1, dy2;
-  dx1 = p2_x - p1_x; dy1 = p2_y - p1_y;
-  dx2 = p3_x - p2_x; dy2 = p3_y - p2_y;
-  rval = (dx1*dy2)-(dy1*dx2);
-  return (rval > 0.0001) ? 1 : ((rval < -0.0001) ? -1 : 0);
+  return (rval > 0.0001) ? 1 : ((rval < -0.0001) ? -1 : 0); /* XXX: Depends on PCB coordinate scaling */
 }
 
 static inline void
