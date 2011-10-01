@@ -1,0 +1,33 @@
+Bottom: 76a713c573e171e97706bd94e9fcc41aab07f6a9
+Top:    ba1c798446f01b781bb0ddcf51ec0ea312ceffd4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-10-01 12:37:42 +0100
+
+Refresh of revert-change-change-c-to-trea
+
+---
+
+diff --git a/src/change.c b/src/change.c
+index 5d44355..1ce9d9e 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -838,8 +838,8 @@ ChangeArcClearSize (LayerTypePtr Layer, ArcTypePtr Arc)
+ static void *
+ ChangeTextSize (LayerTypePtr Layer, TextTypePtr Text)
+ {
+-  int value = (Absolute != 0 ? Text->Scale : 0) +
+-              (Absolute != 0 ? Absolute : Delta) * 100 / FONT_CAPHEIGHT;
++  int value = (Absolute != 0 ? 0 : Text->Scale) +
++              (double)(Absolute != 0 ? Absolute : Delta) * 100. / (double)FONT_CAPHEIGHT;
+ 
+   if (TEST_FLAG (LOCKFLAG, Text))
+     return (NULL);
+@@ -914,7 +914,7 @@ ChangeElementSize (ElementTypePtr Element)
+ static void *
+ ChangeElementNameSize (ElementTypePtr Element)
+ {
+-  int value = (Absolute != 0 ? DESCRIPTION_TEXT (Element).Scale : 0) +
++  int value = (Absolute != 0 ? 0 : DESCRIPTION_TEXT (Element).Scale) +
+               (Absolute != 0 ? Absolute : Delta) * 100 / FONT_CAPHEIGHT;
+ 
+   if (TEST_FLAG (LOCKFLAG, &Element->Name[0]))
