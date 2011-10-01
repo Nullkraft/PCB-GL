@@ -1,0 +1,16 @@
+Bottom: b8cc71e1d873b99eafb2914ecd96ba5a0840cbba
+Top:    b8cc71e1d873b99eafb2914ecd96ba5a0840cbba
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-10-01 11:21:50 +0100
+
+hid/gtk: (GL Renderer) Use direct rendering for off-screen pixmaps
+
+We use direct rendering for the rest (where possible), so why slow down
+pixmap rendering. Also fixes a bug on my pcb+gl_experimental branch
+where pixel shaders can't be shared between the direct rendered widgets
+and the pixmap rendering code.
+
+
+---
+
+
