@@ -717,16 +717,19 @@ print_trace (void)
   free (strings);
 }
 */
+
 /* fills in x and y with coordinates of point from a towards b of distance d */
-void
-point_from_point_to_point(toporouter_vertex_t *a, toporouter_vertex_t *b, gdouble d, gdouble *x, gdouble *y)
+static void
+point_from_point_to_point (toporouter_vertex_t *a,
+                           toporouter_vertex_t *b,
+                           double d,
+                           double *x, double *y)
 {
   double theta = atan2 (vy(b) - vy(a), vx(b) - vx(a));
 
   *x = vx(a) + d * cos (theta);
   *y = vy(a) + d * sin (theta);
 }
-
 
 static inline gint
 coord_wind(gdouble ax, gdouble ay, gdouble bx, gdouble by, gdouble cx, gdouble cy) 
