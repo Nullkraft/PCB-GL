@@ -1,5 +1,5 @@
 Bottom: e1c537680f8604351a746b52e83266c2f160373c
-Top:    e1c537680f8604351a746b52e83266c2f160373c
+Top:    d1069643dd43e7f9b714e2c55ddfb6495422433c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-01 14:13:14 +0100
 
@@ -8,4 +8,48 @@ toporouter.c: Remove unused function points_on_line()
 
 ---
 
-
+diff --git a/src/toporouter.c b/src/toporouter.c
+index 4221937..c6a5602 100644
+--- a/src/toporouter.c
++++ b/src/toporouter.c
+@@ -1244,40 +1244,6 @@ coords_on_line(gdouble ax, gdouble ay, gdouble m, gdouble r, gdouble *b0x, gdoub
+ 
+ }
+ 
+-/**
+- * vertices_on_line:
+- * Given vertex a, gradient m, and radius r: 
+- *
+- * Return vertices on line of a & m at r from a
+- */ 
+-void
+-points_on_line(GtsPoint *a, gdouble m, gdouble r, GtsPoint *b0, GtsPoint *b1)
+-{
+-
+-  gdouble c, temp;
+-  
+-  if(m == INFINITY || m == -INFINITY) {
+-    b0->y = a->y + r;
+-    b1->y = a->y - r;
+-
+-    b0->x = a->x;
+-    b1->x = a->x;
+-  
+-    return;
+-  }
+-
+-  c = a->y - (m * a->x);
+-
+-  temp = sqrt( pow(r, 2) / ( 1 + pow(m, 2) ) );
+-
+-  b0->x = a->x + temp;
+-  b1->x = a->x - temp;
+-  
+-  b0->y = b0->x * m + c;
+-  b1->y = b1->x * m + c;
+-
+-}
+-
+ /*
+  * Returns gradient of segment given by a & b
+  */
