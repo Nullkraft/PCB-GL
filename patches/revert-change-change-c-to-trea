@@ -6,16 +6,21 @@ Date:   2011-10-01 12:20:08 +0100
 Revert "Change change.c to treat text scale as mils" and fix harder..
 
 This reverts commit 9396377717f7c49cf38d753a35e32d004294b09e and
-fixes what appears to have been the underlying issue - I made a
-mistake in commit 2d21a8ad8f38e07b17450450a096f1ce4b3bef0e, such that
-it added the existing text scale when setting an "absolute" text size,
-but ignored it when setting a relative change. (Clearly backwards).
+fixes what was probably the underlying issue... I made a mistake in
+commit 2d21a8ad8f38e07b17450450a096f1ce4b3bef0e, such that it added
+the existing text scale when setting an "absolute" text size, but
+ignored it when setting a relative change. (Clearly backwards).
+
+Additionally, I've switched to computing the new value in double
+arithmetic to avoid a potential overflow when the input value is
+large and we are using a 32-bit Coord type.
 
 See commit 2d21a8ad8f38e07b17450450a096f1ce4b3bef0e for a description
 of how text scale is defined and used.
 
-If we want to change this in the future, we need to change usage in
-many more places than this reverted commit touched.
+If we want to change the definition of how our text is sized / scaled
+in the future, we need to change usage in many more places than this
+reverted commit touched.
 
 
 ---
