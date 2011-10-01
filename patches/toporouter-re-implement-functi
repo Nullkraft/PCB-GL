@@ -1,5 +1,5 @@
-Bottom: d4b08189fdb10c3b1d5bc5b796b0285ec9e6c744
-Top:    18a5fc9a977a10f38104af891ede0a4920181d23
+Bottom: f2ba62bb03489f33055865980cf06942f66694a9
+Top:    1aef012868c491d970c4e5b6c1bce85ba64ab235
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-01 13:31:02 +0100
 
@@ -10,10 +10,10 @@ Simplifies and condenses the code a lot.
 ---
 
 diff --git a/src/toporouter.c b/src/toporouter.c
-index 1c4c332..139b3ca 100644
+index 9aef423..b732791 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
-@@ -717,53 +717,20 @@ print_trace (void)
+@@ -718,53 +718,20 @@ print_trace (void)
    free (strings);
  }
  */
@@ -77,7 +77,7 @@ index 1c4c332..139b3ca 100644
  static inline gint
  coord_wind(gdouble ax, gdouble ay, gdouble bx, gdouble by, gdouble cx, gdouble cy) 
  {
-@@ -816,78 +783,30 @@ sloppy_vertex_wind(GtsVertex *a, GtsVertex *b, GtsVertex *c)
+@@ -817,78 +784,30 @@ sloppy_vertex_wind(GtsVertex *a, GtsVertex *b, GtsVertex *c)
  }
  
  /* moves vertex v d units in the direction of vertex p */
@@ -173,7 +173,7 @@ index 1c4c332..139b3ca 100644
  }
  
  #define tv_on_layer(v,l) (l == TOPOROUTER_BBOX(TOPOROUTER_VERTEX(v)->boxes->data)->layer)
-@@ -2604,48 +2523,17 @@ visited_cmp(gconstpointer a, gconstpointer b)
+@@ -2605,48 +2524,17 @@ visited_cmp(gconstpointer a, gconstpointer b)
    return 0;
  }
  
@@ -229,7 +229,7 @@ index 1c4c332..139b3ca 100644
  }
  
  
-@@ -5163,36 +5051,15 @@ routing_return:
+@@ -5164,36 +5052,15 @@ routing_return:
  
  /* moves vertex v d units in the direction of vertex p */
  void
