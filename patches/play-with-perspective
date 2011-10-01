@@ -1,5 +1,5 @@
-Bottom: 10f8f0057f600fff0352505262b8b5529d5a06fb
-Top:    1d09007f5040155ef48bb05974f1e410efeec3ad
+Bottom: 9b36585ebfdc9b3fd4bb8c847424e6a7c181fee8
+Top:    3a7785ff8350a4838fbd7560c443d187dda512a8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-09-29 23:14:50 +0100
 
@@ -9,7 +9,7 @@ Play with perspective
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index fa53dd1..3a45da5 100644
+index 6a7c224..8ce3322 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -199,6 +199,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
@@ -76,7 +76,7 @@ index fa53dd1..3a45da5 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 584bc21..fa06c53 100644
+index 358d440..02d16a2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,7 @@
@@ -133,7 +133,7 @@ index 584bc21..fa06c53 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -1547,7 +1557,8 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1556,7 +1566,8 @@ GhidDrawMask (int side, BoxType * screen)
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
@@ -143,7 +143,7 @@ index 584bc21..fa06c53 100644
    SET_FLAG (FULLPOLYFLAG, &polygon);
    common_fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_Free (&polygon.Clipped);
-@@ -1769,7 +1780,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1778,7 +1789,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
    /* XXX: This isn't strictly correct, as I've ignored the matrix
@@ -152,7 +152,7 @@ index 584bc21..fa06c53 100644
    /* NB: last_modelview_matrix is transposed in memory! */
    reverse_layers = (last_modelview_matrix[2][2] < 0);
  
-@@ -1933,6 +1944,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1942,6 +1953,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    Coord new_x, new_y;
    Coord min_depth;
    Coord max_depth;
@@ -165,7 +165,7 @@ index 584bc21..fa06c53 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -1957,20 +1974,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1966,20 +1983,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -241,7 +241,7 @@ index 584bc21..fa06c53 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -1979,7 +2041,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1988,7 +2050,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -250,7 +250,7 @@ index 584bc21..fa06c53 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -1991,58 +2053,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2000,58 +2062,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -349,7 +349,7 @@ index 584bc21..fa06c53 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2421,10 +2498,10 @@ ghid_finish_debug_draw (void)
+@@ -2437,10 +2514,10 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
@@ -363,7 +363,7 @@ index 584bc21..fa06c53 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2452,9 +2529,9 @@ determinant_4x4 (float m[4][4])
+@@ -2468,9 +2545,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -375,7 +375,7 @@ index 584bc21..fa06c53 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2519,96 +2596,157 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2535,96 +2612,157 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
