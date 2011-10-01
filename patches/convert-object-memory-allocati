@@ -1,7 +1,7 @@
-Bottom: ece573d7a13d5807d23e90bfc6c80d750e489246
-Top:    86eeffe36efebf1e0213132364e018153307199b
+Bottom: cbf0581851114bf97c44f8a11b7c8915bfac1892
+Top:    9ffc0b989636f2cad3a369fa7af15652d8602849
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-10-01 12:58:47 +0100
+Date:   2011-10-01 19:23:16 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -2181,10 +2181,10 @@ index 96db234..08c7511 100644
        }
        END_LOOP;
 diff --git a/src/toporouter.c b/src/toporouter.c
-index e5310b0..f9387c7 100644
+index d31c788..c7a5602 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
-@@ -2799,7 +2799,8 @@ import_clusters(toporouter_t *r)
+@@ -2548,7 +2548,8 @@ import_clusters(toporouter_t *r)
    NETLIST_LOOP(&nets);
    {
      if(netlist->NetN > 0) {
