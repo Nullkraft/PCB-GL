@@ -7,7 +7,7 @@ Revert "Change change.c to treat text scale as mils" and fix harder..
 
 This reverts commit 9396377717f7c49cf38d753a35e32d004294b09e and
 fixes what was probably the underlying issue... I made a mistake in
-commit 2d21a8ad8f38e07b17450450a096f1ce4b3bef0e, such that it added
+commit 2d21a8ad8f38e07b17450450a096f1ce4b3bef0e such that it added
 the existing text scale when setting an "absolute" text size, but
 ignored it when setting a relative change. (Clearly backwards).
 
