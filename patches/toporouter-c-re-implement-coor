@@ -1,5 +1,5 @@
-Bottom: ef832a144d4961833e7d40e03c2116932a9e3d55
-Top:    cce23355f9db385014cc085d0efd91796af527c2
+Bottom: 251d6c3eddbbecaffe60b46c30a70d7cc633c184
+Top:    2522cd720f5432548e55a4a175b9a4d99c2904aa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-01 13:22:39 +0100
 
@@ -9,7 +9,7 @@ toporouter.c: Re-implement coord_move_towards_coord_values() with atan2
 ---
 
 diff --git a/src/toporouter.c b/src/toporouter.c
-index 9454062..686ca7e 100644
+index 61d94d5..fa2ce36 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
 @@ -783,44 +783,16 @@ sloppy_vertex_wind(GtsVertex *a, GtsVertex *b, GtsVertex *c)
