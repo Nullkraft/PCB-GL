@@ -1,5 +1,5 @@
 Bottom: 1aef012868c491d970c4e5b6c1bce85ba64ab235
-Top:    d1c89b8880e66b5118d53362958d27bc8b0f0601
+Top:    e4c1e203d205fb3d82196638cf79ea5d026f190c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-01 13:04:15 +0100
 
@@ -28,7 +28,7 @@ index c82e90a..f554fd4 100644
  #define INCH_TO_COORD(n)	(MIL_TO_COORD(n) * 1000.0)
  
 diff --git a/src/toporouter.c b/src/toporouter.c
-index b732791..38135a6 100644
+index b732791..fc5d62d 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
 @@ -232,7 +232,7 @@ toporouter_arc_class(void)
@@ -39,4 +39,20 @@ index b732791..38135a6 100644
 +#define MARGIN 10.0f /* XXX: Not sure - seems to be used to offset cairo drawing - thus could be in Coords */
  
  drawing_context_t *
- toporouter_output_init(int w, int h, char *filename)
+ toporouter_output_init(int w, int h, char *filename) 
+@@ -774,13 +774,13 @@ sloppy_point_wind(GtsPoint *a, GtsPoint *b, GtsPoint *c)
+   dx1 = b->x - a->x; dy1 = b->y - a->y;
+   dx2 = c->x - b->x; dy2 = c->y - b->y;
+   rval = (dx1*dy2)-(dy1*dx2);
+-  return (rval > 10.) ? 1 : ((rval < -10.) ? -1 : 0);
++  return (rval > 10.) ? 1 : ((rval < -10.) ? -1 : 0); /* XXX: Sloppiness depends on PCB's coordinate scaling */
+ }
+ 
+ static inline int
+ sloppy_vertex_wind(GtsVertex *a, GtsVertex *b, GtsVertex *c) 
+ {
+-  return point_wind(GTS_POINT(a), GTS_POINT(b), GTS_POINT(c));
++  return point_wind(GTS_POINT(a), GTS_POINT(b), GTS_POINT(c));  /* XXX: Clearly a thinko bug here - should call sloppy_point_wind */
+ }
+ 
+ /* moves vertex v d units in the direction of vertex p */
