@@ -838,8 +838,8 @@ ChangeArcClearSize (LayerTypePtr Layer, ArcTypePtr Arc)
 static void *
 ChangeTextSize (LayerTypePtr Layer, TextTypePtr Text)
 {
-  int value = (Absolute != 0 ? Text->Scale : 0) +
-              (Absolute != 0 ? Absolute : Delta) * 100 / FONT_CAPHEIGHT;
+  int value = (Absolute != 0 ? 0 : Text->Scale) +
+              (double)(Absolute != 0 ? Absolute : Delta) * 100. / (double)FONT_CAPHEIGHT;
 
   if (TEST_FLAG (LOCKFLAG, Text))
     return (NULL);
@@ -914,7 +914,7 @@ ChangeElementSize (ElementTypePtr Element)
 static void *
 ChangeElementNameSize (ElementTypePtr Element)
 {
-  int value = (Absolute != 0 ? DESCRIPTION_TEXT (Element).Scale : 0) +
+  int value = (Absolute != 0 ? 0 : DESCRIPTION_TEXT (Element).Scale) +
               (Absolute != 0 ? Absolute : Delta) * 100 / FONT_CAPHEIGHT;
 
   if (TEST_FLAG (LOCKFLAG, &Element->Name[0]))
