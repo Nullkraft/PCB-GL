@@ -1,5 +1,5 @@
 Bottom: 276082263b88ee01118b5d5289df296c18294ac1
-Top:    4375c54f688e0c854a82ab9a1c7140f6d6617d6b
+Top:    ef12221b9b980010ecf33567429f0b17dee2a194
 Author: Andrew Poelstra <asp11@sfu.ca>
 Date:   2011-10-01 12:20:08 +0100
 
@@ -26,7 +26,7 @@ reverted commit touched.
 ---
 
 diff --git a/src/change.c b/src/change.c
-index eca110e..9787165 100644
+index eca110e..61cb335 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -128,8 +128,8 @@ static void *ChangePolyClear (LayerTypePtr, PolygonTypePtr);
@@ -40,25 +40,27 @@ index eca110e..9787165 100644
  static char *NewName;		/* new name */
  static ObjectFunctionType ChangeSizeFunctions = {
    ChangeLineSize,
-@@ -838,8 +838,8 @@ ChangeArcClearSize (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -838,8 +838,9 @@ ChangeArcClearSize (LayerTypePtr Layer, ArcTypePtr Arc)
  static void *
  ChangeTextSize (LayerTypePtr Layer, TextTypePtr Text)
  {
 -  int value = Absolute ? COORD_TO_MIL (Absolute)
 -                       : Text->Scale + COORD_TO_MIL (Delta);
 +  int value = (Absolute != 0 ? 0 : Text->Scale) +
-+              (double)(Absolute != 0 ? Absolute : Delta) / (double)FONT_CAPHEIGHT * 100.;
++              (double)(Absolute != 0 ? Absolute : Delta)
++                / (double)FONT_CAPHEIGHT * 100.;
  
    if (TEST_FLAG (LOCKFLAG, Text))
      return (NULL);
-@@ -914,8 +914,8 @@ ChangeElementSize (ElementTypePtr Element)
+@@ -914,8 +915,9 @@ ChangeElementSize (ElementTypePtr Element)
  static void *
  ChangeElementNameSize (ElementTypePtr Element)
  {
 -  int value = Absolute ? COORD_TO_MIL (Absolute)
 -                  : DESCRIPTION_TEXT (Element).Scale + COORD_TO_MIL (Delta);
 +  int value = (Absolute != 0 ? 0 : DESCRIPTION_TEXT (Element).Scale) +
-+              (Absolute != 0 ? Absolute : Delta) * 100 / FONT_CAPHEIGHT;
++              (double)(Absolute != 0 ? Absolute : Delta)
++                / (double)FONT_CAPHEIGHT * 100.;
  
    if (TEST_FLAG (LOCKFLAG, &Element->Name[0]))
      return (NULL);
