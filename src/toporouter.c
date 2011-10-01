@@ -231,7 +231,7 @@ toporouter_arc_class(void)
   return klass;
 }
 
-#define MARGIN 10.0f /* XXX: Not sure - seems to be used to offset cairo drawing - thus could be in Coords */
+#define MARGIN 10.0f
 
 drawing_context_t *
 toporouter_output_init(int w, int h, char *filename) 
