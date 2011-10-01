@@ -232,7 +232,7 @@ toporouter_arc_class(void)
   return klass;
 }
 
-#define MARGIN 10.0f
+#define MARGIN 10.0f /* XXX: Not sure - seems to be used to offset cairo drawing - thus could be in Coords */
 
 drawing_context_t *
 toporouter_output_init(int w, int h, char *filename) 
@@ -774,13 +774,13 @@ sloppy_point_wind(GtsPoint *a, GtsPoint *b, GtsPoint *c)
   dx1 = b->x - a->x; dy1 = b->y - a->y;
   dx2 = c->x - b->x; dy2 = c->y - b->y;
   rval = (dx1*dy2)-(dy1*dx2);
-  return (rval > 10.) ? 1 : ((rval < -10.) ? -1 : 0);
+  return (rval > 10.) ? 1 : ((rval < -10.) ? -1 : 0); /* XXX: Sloppiness depends on PCB's coordinate scaling */
 }
 
 static inline int
 sloppy_vertex_wind(GtsVertex *a, GtsVertex *b, GtsVertex *c) 
 {
-  return point_wind(GTS_POINT(a), GTS_POINT(b), GTS_POINT(c));
+  return point_wind(GTS_POINT(a), GTS_POINT(b), GTS_POINT(c));  /* XXX: Clearly a thinko bug here - should call sloppy_point_wind */
 }
 
 /* moves vertex v d units in the direction of vertex p */
