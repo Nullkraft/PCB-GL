@@ -1,5 +1,5 @@
 Bottom: a63621f3f4d5f67d12a39afb183c8eddb08f7d40
-Top:    a63621f3f4d5f67d12a39afb183c8eddb08f7d40
+Top:    e45109111f8b2b105a6f18ea1d92707e1377dc24
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-01 14:51:21 +0100
 
@@ -16,4 +16,41 @@ bool.
 
 ---
 
-
+diff --git a/src/toporouter.c b/src/toporouter.c
+index 9c7ba12..928df08 100644
+--- a/src/toporouter.c
++++ b/src/toporouter.c
+@@ -1333,17 +1333,22 @@ vertex_outside_segment(toporouter_spoint_t *a, toporouter_spoint_t *b, gdouble r
+  * AB and CD must share a point interior to both segments.
+  * returns TRUE if AB properly intersects CD.
+  */
+-gint
+-coord_intersect_prop(gdouble ax, gdouble ay, gdouble bx, gdouble by, gdouble cx, gdouble cy, gdouble dx, gdouble dy)
+-{
+-  gint wind_abc = coord_wind(ax, ay, bx, by, cx, cy);
+-  gint wind_abd = coord_wind(ax, ay, bx, by, dx, dy);
+-  gint wind_cda = coord_wind(cx, cy, dx, dy, ax, ay);
+-  gint wind_cdb = coord_wind(cx, cy, dx, dy, bx, by);
+-
+-  if( !wind_abc || !wind_abd || !wind_cda || !wind_cdb ) return 0;
+-
+-  return ( wind_abc ^ wind_abd ) && ( wind_cda ^ wind_cdb );
++static bool
++coord_intersect_prop (double ax, double ay,
++                      double bx, double by,
++                      double cx, double cy,
++                      double dx, double dy)
++{
++  int wind_abc = coord_wind (ax, ay, bx, by, cx, cy);
++  int wind_abd = coord_wind (ax, ay, bx, by, dx, dy);
++  int wind_cda = coord_wind (cx, cy, dx, dy, ax, ay);
++  int wind_cdb = coord_wind (cx, cy, dx, dy, bx, by);
++
++  /* If any of the lines are colinear, return false */
++  if (wind_abc == 0 || wind_abd == 0 || wind_cda == 0 || wind_cdb == 0)
++    return false;
++
++  return (wind_abc != wind_abd) && (wind_cda != wind_cdb);
+ }
+ 
+ /* proper intersection:
