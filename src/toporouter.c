@@ -1333,17 +1333,22 @@ vertex_outside_segment(toporouter_spoint_t *a, toporouter_spoint_t *b, gdouble r
  * AB and CD must share a point interior to both segments.
  * returns TRUE if AB properly intersects CD.
  */
-gint
-coord_intersect_prop(gdouble ax, gdouble ay, gdouble bx, gdouble by, gdouble cx, gdouble cy, gdouble dx, gdouble dy)
+static bool
+coord_intersect_prop (double ax, double ay,
+                      double bx, double by,
+                      double cx, double cy,
+                      double dx, double dy)
 {
-  gint wind_abc = coord_wind(ax, ay, bx, by, cx, cy);
-  gint wind_abd = coord_wind(ax, ay, bx, by, dx, dy);
-  gint wind_cda = coord_wind(cx, cy, dx, dy, ax, ay);
-  gint wind_cdb = coord_wind(cx, cy, dx, dy, bx, by);
+  int wind_abc = coord_wind (ax, ay, bx, by, cx, cy);
+  int wind_abd = coord_wind (ax, ay, bx, by, dx, dy);
+  int wind_cda = coord_wind (cx, cy, dx, dy, ax, ay);
+  int wind_cdb = coord_wind (cx, cy, dx, dy, bx, by);
 
-  if( !wind_abc || !wind_abd || !wind_cda || !wind_cdb ) return 0;
+  /* If any of the line end-points are colinear with the other line, return false */
+  if (wind_abc == 0 || wind_abd == 0 || wind_cda == 0 || wind_cdb == 0)
+    return false;
 
-  return ( wind_abc ^ wind_abd ) && ( wind_cda ^ wind_cdb );
+  return (wind_abc != wind_abd) && (wind_cda != wind_cdb);
 }
 
 /* proper intersection:
