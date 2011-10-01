@@ -2231,6 +2231,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   GdkGLConfig *glconfig;
   GdkPixmap *pixmap;
   GdkGLPixmap *glpixmap;
+  GdkGLContext *drawarea_glcontext;
   GdkGLContext* glcontext;
   GdkGLDrawable* gldrawable;
   view_data save_view;
@@ -2244,6 +2245,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   /* Setup rendering context for drawing routines
    */
 
+  /* NB: We share with the main rendering context so we can use the
+   *     same pixel shader etc..
+   */
+  drawarea_glcontext = gtk_widget_get_gl_context (gport->drawing_area);
+
   glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                         GDK_GL_MODE_STENCIL |
                                         GDK_GL_MODE_SINGLE);
@@ -2251,7 +2257,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   pixmap = gdk_pixmap_new (NULL, width, height, depth);
   glpixmap = gdk_pixmap_set_gl_capability (pixmap, glconfig, NULL);
   gldrawable = GDK_GL_DRAWABLE (glpixmap);
-  glcontext = gdk_gl_context_new (gldrawable, NULL, FALSE, GDK_GL_RGBA_TYPE);
+  glcontext = gdk_gl_context_new (gldrawable, drawarea_glcontext,
+                                  FALSE, GDK_GL_RGBA_TYPE);
 
   /* Setup zoom factor for drawing routines */
 
