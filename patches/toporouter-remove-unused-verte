@@ -1,5 +1,5 @@
-Bottom: ef12221b9b980010ecf33567429f0b17dee2a194
-Top:    d4b08189fdb10c3b1d5bc5b796b0285ec9e6c744
+Bottom: 4977b9a4f1756d2a337e038303c1261f8da0b398
+Top:    f2ba62bb03489f33055865980cf06942f66694a9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-01 13:33:59 +0100
 
@@ -9,10 +9,10 @@ toporouter: Remove unused vertex_move_towards_point[_values]() functions
 ---
 
 diff --git a/src/toporouter.c b/src/toporouter.c
-index e5310b0..1c4c332 100644
+index a89679c..9aef423 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
-@@ -858,40 +858,6 @@ coord_move_towards_coord_values(gdouble ax, gdouble ay, gdouble px, gdouble py,
+@@ -859,40 +859,6 @@ coord_move_towards_coord_values(gdouble ax, gdouble ay, gdouble px, gdouble py,
  
  /* moves vertex v d units in the direction of vertex p */
  void
@@ -53,7 +53,7 @@ index e5310b0..1c4c332 100644
  vertex_move_towards_vertex_values(GtsVertex *v, GtsVertex *p, gdouble d, gdouble *x, gdouble *y) 
  {
    gdouble dx = GTS_POINT(p)->x - GTS_POINT(v)->x;
-@@ -5197,40 +5163,6 @@ routing_return:
+@@ -5198,40 +5164,6 @@ routing_return:
  
  /* moves vertex v d units in the direction of vertex p */
  void
