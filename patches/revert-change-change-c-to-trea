@@ -1,5 +1,5 @@
 Bottom: 276082263b88ee01118b5d5289df296c18294ac1
-Top:    76a713c573e171e97706bd94e9fcc41aab07f6a9
+Top:    ba1c798446f01b781bb0ddcf51ec0ea312ceffd4
 Author: Andrew Poelstra <asp11@sfu.ca>
 Date:   2011-10-01 12:20:08 +0100
 
@@ -26,7 +26,7 @@ reverted commit touched.
 ---
 
 diff --git a/src/change.c b/src/change.c
-index eca110e..5d44355 100644
+index eca110e..1ce9d9e 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -128,8 +128,8 @@ static void *ChangePolyClear (LayerTypePtr, PolygonTypePtr);
@@ -46,8 +46,8 @@ index eca110e..5d44355 100644
  {
 -  int value = Absolute ? COORD_TO_MIL (Absolute)
 -                       : Text->Scale + COORD_TO_MIL (Delta);
-+  int value = (Absolute != 0 ? Text->Scale : 0) +
-+              (Absolute != 0 ? Absolute : Delta) * 100 / FONT_CAPHEIGHT;
++  int value = (Absolute != 0 ? 0 : Text->Scale) +
++              (double)(Absolute != 0 ? Absolute : Delta) * 100. / (double)FONT_CAPHEIGHT;
  
    if (TEST_FLAG (LOCKFLAG, Text))
      return (NULL);
@@ -57,7 +57,7 @@ index eca110e..5d44355 100644
  {
 -  int value = Absolute ? COORD_TO_MIL (Absolute)
 -                  : DESCRIPTION_TEXT (Element).Scale + COORD_TO_MIL (Delta);
-+  int value = (Absolute != 0 ? DESCRIPTION_TEXT (Element).Scale : 0) +
++  int value = (Absolute != 0 ? 0 : DESCRIPTION_TEXT (Element).Scale) +
 +              (Absolute != 0 ? Absolute : Delta) * 100 / FONT_CAPHEIGHT;
  
    if (TEST_FLAG (LOCKFLAG, &Element->Name[0]))
