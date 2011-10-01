@@ -1,7 +1,7 @@
-Bottom: 05e8f43e60ef29b0be5ecb4cc8bc13ea5a348fa3
-Top:    39d45a2627e1af99eb0b9791ed71599cb744d5b4
+Bottom: ece573d7a13d5807d23e90bfc6c80d750e489246
+Top:    86eeffe36efebf1e0213132364e018153307199b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-10-01 11:24:41 +0100
+Date:   2011-10-01 12:55:18 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 62c53e3..78fab63 100644
+index 2a0be9e..eb44fd6 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1898,37 +1898,39 @@ static int
@@ -70,7 +70,7 @@ index 62c53e3..78fab63 100644
  	    }
  	}
      }
-@@ -3247,6 +3249,8 @@ static const char renumber_help[] =
+@@ -3250,6 +3252,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, Coord x, Coord y)
  {
@@ -79,7 +79,7 @@ index 62c53e3..78fab63 100644
    bool changed = false;
    ElementTypePtr *element_list;
    ElementTypePtr *locked_element_list;
-@@ -3584,6 +3588,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3587,6 +3591,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    free (element_list);
    free (cnt_list);
    return 0;
@@ -87,7 +87,7 @@ index 62c53e3..78fab63 100644
  }
  
  
-@@ -4586,16 +4591,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4589,16 +4594,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index 62c53e3..78fab63 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatTypePtr) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6911,22 +6915,26 @@ find_element_by_refdes (char *refdes)
+@@ -6914,22 +6918,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListTypePtr list, const char *name)
  {
