@@ -1,35 +1,11 @@
-Bottom: b21774fffc2a8b4434a20a1a0aa743335f58ca4b
-Top:    276082263b88ee01118b5d5289df296c18294ac1
+Bottom: ef12221b9b980010ecf33567429f0b17dee2a194
+Top:    ef12221b9b980010ecf33567429f0b17dee2a194
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-10-01 11:56:45 +0100
+Date:   2011-10-01 12:55:43 +0100
 
 action.c: Fix the SetValue(TextScale, ...) action after nanometer conversion
 
 
 ---
 
-diff --git a/src/action.c b/src/action.c
-index efb5aab..8a1e357 100644
---- a/src/action.c
-+++ b/src/action.c
-@@ -2173,6 +2173,7 @@ ActionSetValue (int argc, char **argv, Coord x, Coord y)
-   char *units = ARG (2);
-   bool absolute;			/* flag for 'absolute' value */
-   double value;
-+  int text_scale;
-   int err = 0;
- 
-   if (function && val)
-@@ -2217,8 +2218,10 @@ ActionSetValue (int argc, char **argv, Coord x, Coord y)
- 
- 	case F_Text:
- 	case F_TextScale:
--	  value /= 45;
--	  SetTextScale (absolute ? value : value + Settings.TextScale);
-+	  text_scale = value / (double)FONT_CAPHEIGHT * 100.;
-+	  if (!absolute)
-+	    text_scale += Settings.TextScale;
-+	  SetTextScale (text_scale);
- 	  break;
- 	default:
- 	  err = 1;
+
