@@ -1,7 +1,7 @@
-Bottom: 640759937f8c740ad535281b60720d96aaa7614f
-Top:    a02fa4810c81150d94d76a6914ede919a00ef2fa
+Bottom: eaa6bfd26b7a5957b78cf9d3160d5983106163b3
+Top:    3f47cacbd5237f7ff0106675dc2ef1cead0f8ded
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-09-29 23:14:44 +0100
+Date:   2011-10-01 11:23:08 +0100
 
 hid/common/hidgl: Add API to initialise a rendering pass
 
@@ -65,7 +65,7 @@ index 858270a..8d2c78c 100644
  int hidgl_assign_clear_stencil_bit (void);
  void hidgl_return_stencil_bit (int bit);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index dd7f772..d55ac2d 100644
+index 21a135f..74426fc 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1911,8 +1911,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
