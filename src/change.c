@@ -839,7 +839,8 @@ static void *
 ChangeTextSize (LayerTypePtr Layer, TextTypePtr Text)
 {
   int value = (Absolute != 0 ? 0 : Text->Scale) +
-              (double)(Absolute != 0 ? Absolute : Delta) / (double)FONT_CAPHEIGHT * 100.;
+              (double)(Absolute != 0 ? Absolute : Delta)
+                / (double)FONT_CAPHEIGHT * 100.;
 
   if (TEST_FLAG (LOCKFLAG, Text))
     return (NULL);
@@ -915,7 +916,8 @@ static void *
 ChangeElementNameSize (ElementTypePtr Element)
 {
   int value = (Absolute != 0 ? 0 : DESCRIPTION_TEXT (Element).Scale) +
-              (Absolute != 0 ? Absolute : Delta) * 100 / FONT_CAPHEIGHT;
+              (double)(Absolute != 0 ? Absolute : Delta)
+                / (double)FONT_CAPHEIGHT * 100.;
 
   if (TEST_FLAG (LOCKFLAG, &Element->Name[0]))
     return (NULL);
