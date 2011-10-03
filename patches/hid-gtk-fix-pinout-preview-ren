@@ -1,5 +1,5 @@
 Bottom: cbf0581851114bf97c44f8a11b7c8915bfac1892
-Top:    cbf0581851114bf97c44f8a11b7c8915bfac1892
+Top:    7ada0a0d44d6547b22354ce4c6ce7d2f96318663
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-03 22:09:28 +0100
 
@@ -8,4 +8,81 @@ hid/gtk: Fix pinout preview rendering for back-side elements
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 963b5d4..9f4250d 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1128,6 +1128,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   GtkAllocation allocation;
+   view_data save_view;
+   int save_width, save_height;
++  Coord save_max_width;
++  Coord save_max_height;
+   double xz, yz;
+   render_priv *priv = gport->render_priv;
+ 
+@@ -1137,6 +1139,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   save_view = gport->view;
+   save_width = gport->width;
+   save_height = gport->height;
++  save_max_width = PCB->MaxWidth;
++  save_max_height = PCB->MaxHeight;
+ 
+   gtk_widget_get_allocation (widget, &allocation);
+   xz = (double) pinout->x_max / allocation.width;
+@@ -1153,6 +1157,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   gport->view.height = allocation.height * gport->view.coord_per_px;
+   gport->view.x0 = (pinout->x_max - gport->view.width) / 2;
+   gport->view.y0 = (pinout->y_max - gport->view.height) / 2;
++  PCB->MaxWidth =  pinout->x_max;
++  PCB->MaxHeight = pinout->y_max;
+ 
+   /* clear background */
+   gdk_draw_rectangle (window, priv->bg_gc, TRUE,
+@@ -1165,6 +1171,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   gport->view = save_view;
+   gport->width = save_width;
+   gport->height = save_height;
++  PCB->MaxWidth = save_max_width;
++  PCB->MaxHeight = save_max_height;
+ 
+   return FALSE;
+ }
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 069380e..d372f8a 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -992,11 +992,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   GtkAllocation allocation;
+   view_data save_view;
+   int save_width, save_height;
++  Coord save_max_width;
++  Coord save_max_height;
+   double xz, yz;
+ 
+   save_view = gport->view;
+   save_width = gport->width;
+   save_height = gport->height;
++  save_max_width = PCB->MaxWidth;
++  save_max_height = PCB->MaxHeight;
+ 
+   /* Setup zoom factor for drawing routines */
+ 
+@@ -1014,6 +1018,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   gport->view.height = allocation.height * gport->view.coord_per_px;
+   gport->view.x0 = (pinout->x_max - gport->view.width) / 2;
+   gport->view.y0 = (pinout->y_max - gport->view.height) / 2;
++  PCB->MaxWidth = pinout->x_max;
++  PCB->MaxHeight = pinout->y_max;
+ 
+   /* make GL-context "current" */
+   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
+@@ -1076,6 +1082,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   gport->view = save_view;
+   gport->width = save_width;
+   gport->height = save_height;
++  PCB->MaxWidth = save_max_width;
++  PCB->MaxHeight = save_max_height;
+ 
+   return FALSE;
+ }
