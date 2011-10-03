@@ -338,9 +338,13 @@ static void
 ghid_draw_bg_image (void)
 {
   static GLuint texture_handle = 0;
+  GLuint current_program;
 
   if (!ghidgui->bg_pixbuf)
     return;
+
+  glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&current_program);
+  glUseProgram (0);
 
   if (texture_handle == 0)
     {
@@ -389,6 +393,8 @@ ghid_draw_bg_image (void)
   glEnd ();
 
   glDisable (GL_TEXTURE_2D);
+
+  glUseProgram (current_program);
 }
 
 void
