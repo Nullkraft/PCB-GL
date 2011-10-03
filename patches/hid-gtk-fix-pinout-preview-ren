@@ -5,6 +5,15 @@ Date:   2011-10-03 22:09:28 +0100
 
 hid/gtk: Fix pinout preview rendering for back-side elements
 
+NB: There are still some bugs, in that when the board view is flipped,
+this doesn't currently trigger a repaint of any preview widgets which
+are open. They will refresh with the updated coordinate system when
+they are next repainted. (Which might requre a resize of the window on
+a compositing window manager).
+
+Ideally we would track the correct view with the preview widget, but for
+now this is a simple fix.
+
 
 ---
 
