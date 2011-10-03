@@ -1,7 +1,7 @@
-Bottom: 6f9eced6517d3fa1033c2b4752f1b41a80fe8abf
-Top:    42dc81c0e5e7a00d586a2233e8bf8a99011e4257
+Bottom: 35e7da3c444473d1ef9e754c8fb1c456e26a0e1f
+Top:    c2cdd11f91bc4c9675f56c2789ae8c5344fa5b31
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-10-01 19:23:26 +0100
+Date:   2011-10-03 23:13:05 +0100
 
 Shiny 3D eye-candy
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 789aeed..28a8347 100644
+index 6e8cbd9..b9d082c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -94,6 +94,79 @@ static void draw_lead_user (render_priv *priv);
@@ -132,7 +132,7 @@ index 789aeed..28a8347 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1145,6 +1225,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1151,6 +1231,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                      -gport->view.y0, 0);
  
@@ -140,7 +140,7 @@ index 789aeed..28a8347 100644
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1507,7 +1588,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -1515,7 +1596,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
@@ -149,7 +149,7 @@ index 789aeed..28a8347 100644
  
    return true;
  }
-@@ -1523,11 +1604,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1531,11 +1612,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  
    *event_x = (last_modelview_matrix[0][0] * (float)pcb_x +
                last_modelview_matrix[1][0] * (float)pcb_y +

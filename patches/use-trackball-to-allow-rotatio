@@ -1,7 +1,7 @@
-Bottom: 1fbf39e3f166437b9db65dec2cee760e06be1d79
-Top:    6f9eced6517d3fa1033c2b4752f1b41a80fe8abf
+Bottom: 53ad9d11d722e816d6782d5b4ad8a6f102cd4ffd
+Top:    35e7da3c444473d1ef9e754c8fb1c456e26a0e1f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-10-01 19:23:26 +0100
+Date:   2011-10-03 23:13:05 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7548787..789aeed 100644
+index 99b8cfa..6e8cbd9 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -27,7 +27,9 @@
@@ -170,7 +170,7 @@ index 7548787..789aeed 100644
    glEnd ();
  
    ghid_draw_bg_image ();
-@@ -1045,7 +1118,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1051,7 +1124,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -179,7 +179,7 @@ index 7548787..789aeed 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1149,7 +1222,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1157,7 +1230,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -188,7 +188,7 @@ index 7548787..789aeed 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1268,11 +1341,173 @@ ghid_finish_debug_draw (void)
+@@ -1276,11 +1349,173 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
@@ -364,7 +364,7 @@ index 7548787..789aeed 100644
  
    return true;
  }
-@@ -1280,12 +1515,54 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+@@ -1288,12 +1523,54 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  bool
  ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  {
