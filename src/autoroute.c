@@ -1010,7 +1010,6 @@ CreateRouteData ()
     {
       layergroupboxes[i].Ptr = NULL;
       layergroupboxes[i].PtrN = 0;
-      layergroupboxes[i].PtrMax = 0;
       GROUP_LOOP (PCB->Data, i);
       {
 	if (layer->LineN || layer->ArcN)
