@@ -1,7 +1,7 @@
-Bottom: 58f1e12241e50c43802e94ccc91d3981203ad10b
-Top:    080cd60c0dba2d1ca41fb386da0da9fa6b1c8d41
+Bottom: ee975365d5834e693dcf698906d00523bd591eea
+Top:    ba1e6b42da47b5da8575ac2b2c88b824e7c688dc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-10-01 19:23:37 +0100
+Date:   2011-10-03 23:13:17 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -979,7 +979,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 47ba6b4..73dfc14 100644
+index 32edcf3..752cbe5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -318,6 +318,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1078,7 +1078,7 @@ index 47ba6b4..73dfc14 100644
  }
  
  struct cyl_info {
-@@ -2223,6 +2240,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2231,6 +2248,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    GdkGLConfig *glconfig;
    GdkPixmap *pixmap;
    GdkGLPixmap *glpixmap;
@@ -1086,7 +1086,7 @@ index 47ba6b4..73dfc14 100644
    GdkGLContext* glcontext;
    GdkGLDrawable* gldrawable;
    view_data save_view;
-@@ -2236,6 +2254,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2244,6 +2262,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    /* Setup rendering context for drawing routines
     */
  
@@ -1098,7 +1098,7 @@ index 47ba6b4..73dfc14 100644
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
                                          GDK_GL_MODE_SINGLE);
-@@ -2243,7 +2266,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2251,7 +2274,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
    glpixmap = gdk_pixmap_set_gl_capability (pixmap, glconfig, NULL);
    gldrawable = GDK_GL_DRAWABLE (glpixmap);
