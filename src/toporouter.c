@@ -6002,7 +6002,7 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
 
   if (v1 == v2 || path->next == NULL || TOPOROUTER_VERTEX (path->data) == v2) return NULL;
 
-  printf ("\nRB: line %f,%f %f,%f v1 = %f,%f v2 = %f,%f \n ", x0, y0, x1, y1, vx (v1), vy (v1), vx (v2), vy (v2));
+//  printf ("\nRB: line %f,%f %f,%f v1 = %f,%f v2 = %f,%f \n ", x0, y0, x1, y1, vx (v1), vy (v1), vx (v2), vy (v2));
   // if(v1->routingedge) print_edge(v1->routingedge);
   // if(v2->routingedge) print_edge(v2->routingedge);
 
@@ -6024,20 +6024,15 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
   for (i = path->next; i != NULL; i = g_list_next (i)) {
     toporouter_vertex_t *v = TOPOROUTER_VERTEX (i->data);
 
-    if (v == v2 || v == v1 || v->routingedge == NULL)
+    if (v->routingedge == NULL) {
+      printf ("Stopping at NULL routingedge\n");
       break;
-
-#ifdef DEBUG_RUBBERBAND
-//  if(debug) 
-//  printf("current v %f,%f - edge %f,%f %f,%f\n", vx(v), vy(v),
-//    vx(tedge_v1(v->routingedge)), vy(tedge_v1(v->routingedge)),
-//    vx(tedge_v2(v->routingedge)), vy(tedge_v2(v->routingedge))
-//    );
-#endif
+    }
 
     v1wind = coord_wind (x0, y0, x1, y1, vx (tedge_v1 (v->routingedge)), vy (tedge_v1 (v->routingedge)));
     v2wind = coord_wind (x0, y0, x1, y1, vx (tedge_v2 (v->routingedge)), vy (tedge_v2 (v->routingedge)));
 
+    /* Skip this routing edge if we are colinear with it */
     if (v1wind == 0 && v2wind == 0)
       continue;
 
@@ -6067,6 +6062,9 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
         TEST_AND_INSERT (tedge_v2 (v->routingedge));
       }
     }
+
+    /* Stop when we reach the end of the piece we are supposed to route */
+    if (v == v2 || v == v1) break;
   }
 
   arcs = g_list_sort (arcs, (GCompareFunc) compare_rubberband_arcs);
@@ -6141,9 +6139,8 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
 //  goto rubberband_insert_maxarc;
 //}
 
-
-  list1 = oproute_rubberband_segment (r, oproute, path, arc1, v1, newarc, newarc->v2, debug);
-  list2 = oproute_rubberband_segment (r, oproute, i->next, newarc, newarc->v1, arc2, v2, debug);
+  list1 = oproute_rubberband_segment (r, oproute, path, arc1, v1, newarc, newarc->v1, debug);
+  list2 = oproute_rubberband_segment (r, oproute, i->next, newarc, newarc->v2, arc2, v2, debug);
 
   if (list1) {
     GList *list = g_list_last (list1);
@@ -6152,7 +6149,10 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
     gdouble px = parc ? parc->x1 : vx (v1),
             py = parc ? parc->y1 : vy (v1);
 
-    if (coord_intersect_prop (px, py, testarc->x0, testarc->y0, testarc->x1, testarc->y1, newarc->x0, newarc->y0)) {
+    if (coord_intersect_prop (px,          py,
+                              testarc->x0, testarc->y0,
+                              testarc->x1, testarc->y1,
+                              newarc->x0,  newarc->y0)) {
       printf ("REMOVING ARC @ %f,%f\n", vx (testarc->centre), vy (testarc->centre));
       list1 = g_list_remove (list1, testarc);
       if (parc)
@@ -6507,9 +6507,9 @@ oproute_rubberband(toporouter_t *r, GList *path)
   oproute->arcs =
     oproute_rubberband_segment (r, oproute, path,
                                 TOPOROUTER_IS_ARC (oproute->term1) ? TOPOROUTER_ARC (oproute->term1) : NULL,
-                                TOPOROUTER_IS_ARC (oproute->term1) ? TOPOROUTER_ARC (oproute->term1)->v1 : oproute->term1,
+                                TOPOROUTER_IS_ARC (oproute->term1) ? TOPOROUTER_ARC (oproute->term1)->v2 : oproute->term1,
                                 TOPOROUTER_IS_ARC (oproute->term2) ? TOPOROUTER_ARC (oproute->term2) : NULL,
-                                TOPOROUTER_IS_ARC (oproute->term2) ? TOPOROUTER_ARC (oproute->term2)->v2 : oproute->term2,
+                                TOPOROUTER_IS_ARC (oproute->term2) ? TOPOROUTER_ARC (oproute->term2)->v1 : oproute->term2,
                                 false);
 
   oproute_check_all_loops(r, oproute);
