@@ -5050,28 +5050,32 @@ edge_min_spacing(GList *list, toporouter_edge_t *e, toporouter_vertex_t *v, guin
 }
 
 /* line segment is 1 & 2, point is 3 
-   returns 0 if v3 is outside seg
+   returns false if v3 is outside seg
 */
-guint
-vertex_line_normal_intersection(gdouble x1, gdouble y1, gdouble x2, gdouble y2, gdouble x3, gdouble y3, gdouble *x, gdouble *y)
+static bool
+vertex_line_normal_intersection (double x1, double y1,
+                                 double x2, double y2,
+                                 double x3, double y3,
+                                 double *x, double *y)
 {
-  gdouble m1 = cartesian_gradient(x1,y1,x2,y2);
-  gdouble m2 = perpendicular_gradient(m1);
-  gdouble c2 = (isinf(m2)) ? x3 : y3 - (m2 * x3);
-  gdouble c1 = (isinf(m1)) ? x1 : y1 - (m1 * x1);
+  double m1 = cartesian_gradient (x1, y1, x2, y2);
+  double m2 = perpendicular_gradient (m1);
+  double c2 = (isinf (m2)) ? x3 : y3 - (m2 * x3);
+  double c1 = (isinf (m1)) ? x1 : y1 - (m1 * x1);
 
-  if(isinf(m2))
+  if (isinf (m2))
     *x = x3;
-  else if(isinf(m1))
+  else if (isinf (m1))
     *x = x1;
   else
     *x = (c2 - c1) / (m1 - m2);
 
-  *y = (isinf(m2)) ? y1 : (m2 * (*x)) + c2;
+  *y = isinf (m2) ? y1 : (m2 * (*x)) + c2;
 
-  if(*x >= MIN(x1,x2) - EPSILON && *x <= MAX(x1,x2) + EPSILON && *y >= MIN(y1,y2) - EPSILON && *y <= MAX(y1,y2) + EPSILON) 
-    return 1;
-  return 0;
+  if (*x >= MIN (x1, x2) - EPSILON && *x <= MAX (x1, x2) + EPSILON &&
+      *y >= MIN (y1, y2) - EPSILON && *y <= MAX (y1, y2) + EPSILON)
+    return true;
+  return false;
 }
 
 void
@@ -5679,111 +5683,142 @@ toporouter_serpintine_new(gdouble x, gdouble y, gdouble x0, gdouble y0, gdouble 
 
 //#define DEBUG_RUBBERBAND 1
 
-gdouble
-check_non_intersect_vertex(gdouble x0, gdouble y0, gdouble x1, gdouble y1, toporouter_vertex_t *pathv, toporouter_vertex_t *arcv,
-    toporouter_vertex_t *opv, gint wind, gint *arcwind, gdouble *arcr, guint debug)
+static double
+check_non_intersect_vertex (double x0, double y0, double x1, double y1,
+                            toporouter_vertex_t *pathv,
+                            toporouter_vertex_t *arcv,
+                            toporouter_vertex_t *opv,
+                            int wind,
+                            int *arcwind,
+                            double *arcr,
+                            bool debug)
 {
-  gdouble ms, line_int_x, line_int_y, x, y, d = 0., m;
-  gdouble tx0, ty0, tx1, ty1;
-  gint wind1, wind2;
+  double ms, line_int_x, line_int_y, x, y, d = 0., m;
+  double tx0, ty0, tx1, ty1;
+  int wind1, wind2;
 
-  g_assert(pathv->routingedge);
+  g_assert (pathv->routingedge);
 
-  if(TOPOROUTER_IS_CONSTRAINT(pathv->routingedge)) { 
-    gdouble d = tvdistance(tedge_v1(pathv->routingedge), tedge_v2(pathv->routingedge)) / 2.;
+  if(TOPOROUTER_IS_CONSTRAINT (pathv->routingedge)) {
+    double d = tvdistance (tedge_v1 (pathv->routingedge), tedge_v2 (pathv->routingedge)) / 2.;
     ms = min_spacing(pathv, arcv);
-    if(ms > d) ms = d;
-  }else{
-    ms = edge_min_spacing(g_list_find(edge_routing(pathv->routingedge), pathv), pathv->routingedge, arcv, debug);
+    if (ms > d) ms = d;
+  } else {
+    ms = edge_min_spacing (g_list_find (edge_routing (pathv->routingedge), pathv), pathv->routingedge, arcv, debug);
   }
 
 
-  if(!vertex_line_normal_intersection(x0, y0, x1, y1, vx(arcv), vy(arcv), &line_int_x, &line_int_y)) {
+  if (!vertex_line_normal_intersection (x0, y0, x1, y1, vx (arcv), vy (arcv), &line_int_x, &line_int_y)) {
 
-    if(coord_distance2(x0, y0, line_int_x, line_int_y) < coord_distance2(x1, y1, line_int_x, line_int_y)) 
-    { line_int_x = x0; line_int_y = y0; }else{ line_int_x = x1; line_int_y = y1; }
+    /* If we didn't intersect on the line, pick the closer end */
+    if (coord_distance2 (x0, y0, line_int_x, line_int_y) <
+        coord_distance2 (x1, y1, line_int_x, line_int_y)) {
+      line_int_x = x0;
+      line_int_y = y0;
+    } else {
+      line_int_x = x1;
+      line_int_y = y1;
+    }
 
-    m = perpendicular_gradient(cartesian_gradient(vx(arcv), vy(arcv), line_int_x, line_int_y));
-  }else{
-    m = cartesian_gradient(x0, y0, x1, y1);
+    m = perpendicular_gradient (cartesian_gradient (vx (arcv), vy (arcv), line_int_x, line_int_y));
+
+  } else {
+    m = cartesian_gradient (x0, y0, x1, y1);
   }
 
-  coords_on_line(vx(arcv), vy(arcv), m, MIL_TO_COORD (1.), &tx0, &ty0, &tx1, &ty1);
+  coords_on_line (vx (arcv), vy (arcv), m, MIL_TO_COORD (1.), &tx0, &ty0, &tx1, &ty1);
 
-  wind1 = coord_wind(tx0, ty0, tx1, ty1, line_int_x, line_int_y);
-  wind2 = coord_wind(tx0, ty0, tx1, ty1, vx(opv), vy(opv)); 
+  wind1 = coord_wind (tx0, ty0, tx1, ty1, line_int_x, line_int_y);
+  wind2 = coord_wind (tx0, ty0, tx1, ty1, vx (opv), vy (opv));
 
-  if(!wind2 || wind1 == wind2) return -1.; 
+  if (wind2 == 0 || wind1 == wind2)
+    return -1.;
 
-  if(!wind) {
-    coords_on_line(line_int_x, line_int_y, perpendicular_gradient(m), ms, &tx0, &ty0, &tx1, &ty1);
-    if(coord_distance2(tx0, ty0, vx(opv), vy(opv)) < coord_distance2(tx1, ty1, vx(opv), vy(opv))) 
-    { x = tx0; y = ty0; }else{ x = tx1; y = ty1; }
-  }else{
+  if (wind == 0) {
+    coords_on_line (line_int_x, line_int_y, perpendicular_gradient (m), ms, &tx0, &ty0, &tx1, &ty1);
+
+    /* Pick the closer coordinate */
+    if (coord_distance2 (tx0, ty0, vx (opv), vy (opv)) <
+        coord_distance2 (tx1, ty1, vx (opv), vy (opv))) {
+      x = tx0;
+      y = ty0;
+    } else {
+      x = tx1;
+      y = ty1;
+    }
+
+  } else {
     toporouter_vertex_t *parent = pathv->parent, *child = pathv->child;
-    guint windtests = 0;
+    unsigned int windtests = 0;
 
-    d = coord_distance(vx(arcv), vy(arcv), line_int_x, line_int_y);
-    coord_move_towards_coord_values(line_int_x, line_int_y, vx(arcv), vy(arcv), ms + d, &x, &y);
-rewind_test:    
-    wind1 = coord_wind(line_int_x, line_int_y, x, y, vx(parent), vy(parent));
-    wind2 = coord_wind(line_int_x, line_int_y, x, y, vx(child), vy(child));
-    if(wind1 && wind2 && wind1 == wind2) {
+    d = coord_distance(vx (arcv), vy (arcv), line_int_x, line_int_y);
+    coord_move_towards_coord_values (line_int_x, line_int_y, vx (arcv), vy (arcv), ms + d, &x, &y);
+
+rewind_test:
+    wind1 = coord_wind (line_int_x, line_int_y, x, y, vx (parent), vy (parent));
+    wind2 = coord_wind (line_int_x, line_int_y, x, y, vx (child),  vy (child));
+
+    if (wind1 != 0 && wind2 != 0 && wind1 == wind2) {
 //      return -1.;
-      if(windtests++ == 2) return -1.;
 
-      if(parent->flags & VERTEX_FLAG_ROUTE) parent = parent->parent;
-      if(child->flags & VERTEX_FLAG_ROUTE) child = child->child;
+      if (windtests ++ == 2)
+        return -1.;
+
+      if (parent->flags & VERTEX_FLAG_ROUTE)
+        parent = parent->parent;
+
+      if (child->flags & VERTEX_FLAG_ROUTE)
+        child = child->child;
+
       goto rewind_test;
     }
   }
-
-
   *arcr = ms;
-  *arcwind = tvertex_wind(pathv->parent, pathv, arcv);
+  *arcwind = tvertex_wind (pathv->parent, pathv, arcv);
 
-#ifdef DEBUG_RUBBERBAND
-//if(debug) 
-//  printf("non-int check %f,%f ms %f d %f arcv %f,%f opv %f,%f\n", vx(arcv), vy(arcv), ms, d + ms,
-//    vx(arcv), vy(arcv), vx(opv), vy(opv));
-#endif
+//if (debug)
+//  printf("non-int check %f,%f ms %f d %f arcv %f,%f opv %f,%f\n",
+//         vx (arcv), vy (arcv), ms, d + ms, vx (arcv), vy (arcv), vx (opv), vy (opv));
 
   return d + ms;
 }
 
-gdouble
-check_intersect_vertex(gdouble x0, gdouble y0, gdouble x1, gdouble y1, toporouter_vertex_t *pathv, toporouter_vertex_t *arcv,
-    toporouter_vertex_t *opv, gint wind, gint *arcwind, gdouble *arcr, guint debug)
+static double
+check_intersect_vertex (double x0, double y0, double x1, double y1,
+                        toporouter_vertex_t *pathv,
+                        toporouter_vertex_t *arcv,
+                        toporouter_vertex_t *opv,
+                        int wind,
+                        int *arcwind,
+                        double *arcr,
+                        bool debug)
 {
-  gdouble ms, line_int_x, line_int_y, x, y, d = 0.;
+  double ms, line_int_x, line_int_y, x, y, d = 0.;
 
-  if(TOPOROUTER_IS_CONSTRAINT(pathv->routingedge)) {
-    gdouble d = tvdistance(tedge_v1(pathv->routingedge), tedge_v2(pathv->routingedge)) / 2.;
-    ms = min_spacing(pathv, arcv);
-    if(ms > d) ms = d;
-  }else {
-    ms = edge_min_spacing(g_list_find(edge_routing(pathv->routingedge), pathv), pathv->routingedge, arcv, debug);
+  if (TOPOROUTER_IS_CONSTRAINT (pathv->routingedge)) {
+    gdouble d = tvdistance (tedge_v1 (pathv->routingedge), tedge_v2 (pathv->routingedge)) / 2.;
+    ms = min_spacing (pathv, arcv);
+    if (ms > d) ms = d;
+  } else {
+    ms = edge_min_spacing (g_list_find (edge_routing (pathv->routingedge), pathv), pathv->routingedge, arcv, debug);
   }
 
-  if(!vertex_line_normal_intersection(x0, y0, x1, y1, vx(arcv), vy(arcv), &line_int_x, &line_int_y)) 
-    return -1.; 
-
-  d = coord_distance(line_int_x, line_int_y, vx(arcv), vy(arcv));
-
-
-  if(d > ms - EPSILON) 
+  if (!vertex_line_normal_intersection (x0, y0, x1, y1, vx(arcv), vy(arcv), &line_int_x, &line_int_y))
     return -1.;
 
-  coord_move_towards_coord_values(vx(arcv), vy(arcv), line_int_x, line_int_y, ms, &x, &y);
-  
+  d = coord_distance (line_int_x, line_int_y, vx (arcv), vy (arcv));
+
+  if (d > ms - EPSILON)
+    return -1.;
+
+  coord_move_towards_coord_values (vx (arcv), vy (arcv), line_int_x, line_int_y, ms, &x, &y);
+
   *arcr = ms;
-  *arcwind = tvertex_wind(pathv->parent, pathv, arcv);
-//  *arcwind = coord_wind(x0, y0, x, y, x1, y1);
-#ifdef DEBUG_RUBBERBAND
-//if(debug) 
-//  printf("int check %f,%f ms %f d %f arcv %f,%f opv %f,%f\n", vx(arcv), vy(arcv), ms, ms - d,
-//    vx(arcv), vy(arcv), vx(opv), vy(opv));
-#endif
+  *arcwind = tvertex_wind (pathv->parent, pathv, arcv);
+//  *arcwind = coord_wind (x0, y0, x, y, x1, y1);
+//  if (debug)
+//    printf ("int check %f,%f ms %f d %f arcv %f,%f opv %f,%f\n",
+//            vx (arcv), vy (arcv), ms, ms - d, vx (arcv), vy (arcv), vx (opv), vy (opv));
 
   return ms - d;
 }
@@ -5921,58 +5956,56 @@ check_adj_pushing_vertex(toporouter_oproute_t *oproute, gdouble x0, gdouble y0, 
 
 
 // path is t1 path
-GList *
-oproute_rubberband_segment(toporouter_t *r, toporouter_oproute_t *oproute, GList *path, gpointer t1, gpointer t2, guint debug)
+static GList *
+oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
+                            GList *path,
+                            toporouter_arc_t *arc1, toporouter_vertex_t *v1,
+                            toporouter_arc_t *arc2, toporouter_vertex_t *v2,
+                            bool debug)
 {
   gdouble x0, y0, x1, y1;
-  toporouter_vertex_t *v1, *v2, *av1, *av2; /* v{1,2} are the vertex terminals of the segment, or arc terminal centres */
-  toporouter_arc_t *arc1 = NULL, *arc2 = NULL, *newarc = NULL; /* arc{1,2} are the arc terminals of the segment, if they exist */
-  GList *i = path;
+  toporouter_vertex_t *av1, *av2; /* v{1,2} are the vertex terminals of the segment, or arc terminal centres */
+  toporouter_arc_t *newarc = NULL; /* arc{1,2} are the arc terminals of the segment, if they exist */
+  GList *i;
   GList *list1, *list2;
 
   GList *arcs = NULL;
   toporouter_rubberband_arc_t *max = NULL;
-    
+
   gdouble d, arcr;
   gint v1wind, v2wind, arcwind;
 
-  if(TOPOROUTER_IS_VERTEX(t1)) {
-    v1 = TOPOROUTER_VERTEX(t1);
-    x0 = vx(v1); y0 = vy(v1);
-  }else{
-    g_assert(TOPOROUTER_IS_ARC(t1));
-    arc1 = TOPOROUTER_ARC(t1);
-    v1 = TOPOROUTER_VERTEX(arc1->v1);
+  if (arc1 == NULL) {
+    x0 = vx (v1);
+    y0 = vy (v1);
+  } else {
+//    v1 = TOPOROUTER_VERTEX (arc1->v1);
     x0 = arc1->x1;
     y0 = arc1->y1;
   }
 
-  if(TOPOROUTER_IS_VERTEX(t2)) {
-    v2 = TOPOROUTER_VERTEX(t2);
-    x1 = vx(v2); y1 = vy(v2);
-  }else{
-    g_assert(TOPOROUTER_IS_ARC(t2));
-    arc2 = TOPOROUTER_ARC(t2);
-    v2 = TOPOROUTER_VERTEX(arc2->v2);
+  if (arc2 == NULL) {
+    x1 = vx (v2);
+    y1 = vy (v2);
+  } else {
+//    v2 = TOPOROUTER_VERTEX (arc2->v2);
     x1 = arc2->x0;
     y1 = arc2->y0;
   }
-  
-#define TEST_AND_INSERT(z) if(d > EPSILON) arcs = g_list_prepend(arcs, new_rubberband_arc(v, z, arcr, d, arcwind, i));
-#define ARC_CHECKS(z) (!(arc1 && arc1->centre == z) && !(arc2 && arc2->centre == z) && \
-  !(TOPOROUTER_IS_VERTEX(t1) && z == v1) && !(TOPOROUTER_IS_VERTEX(t2) && z == v2))    
 
-  if(v1 == v2 || !i->next || TOPOROUTER_VERTEX(i->data) == v2) return NULL;
+#define TEST_AND_INSERT(z) if (d > EPSILON) \
+                             arcs = g_list_prepend (arcs, new_rubberband_arc (v, z, arcr, d, arcwind, i));
+#define ARC_CHECKS(z) (!(arc1 != NULL && z == arc1->centre) && \
+                       !(arc2 != NULL && z == arc2->centre) && \
+                       !(arc1 == NULL && z == v1)           && \
+                       !(arc2 == NULL && z == v2))
 
-//#ifdef DEBUG_RUBBERBAND
-  if(debug) {
-    printf("\nRB: line %f,%f %f,%f v1 = %f,%f v2 = %f,%f \n ", x0, y0, x1, y1, vx(v1), vy(v1), vx(v2), vy(v2)); 
-//    if(v1->routingedge) print_edge(v1->routingedge);
-//    if(v2->routingedge) print_edge(v2->routingedge);
+  if (v1 == v2 || path->next == NULL || TOPOROUTER_VERTEX (path->data) == v2) return NULL;
 
-  }
-//#endif
-  
+  printf ("\nRB: line %f,%f %f,%f v1 = %f,%f v2 = %f,%f \n ", x0, y0, x1, y1, vx (v1), vy (v1), vx (v2), vy (v2));
+  // if(v1->routingedge) print_edge(v1->routingedge);
+  // if(v2->routingedge) print_edge(v2->routingedge);
+
   /* check the vectices adjacent to the terminal vectices for push against the segment */
 //if(TOPOROUTER_IS_VERTEX(t1)) {
 //  toporouter_vertex_t *arcc = NULL;
@@ -5987,12 +6020,12 @@ oproute_rubberband_segment(toporouter_t *r, toporouter_oproute_t *oproute, GList
 //  g_assert(arcc != v2);
 //  if(ARC_CHECKS(arcc) && d > EPSILON) arcs = g_list_prepend(arcs, new_rubberband_arc(v2, arcc, arcr, d, arcwind, g_list_last(path)->prev));
 //}
-  
-  i = i->next;
-  while(i) {
-    toporouter_vertex_t *v = TOPOROUTER_VERTEX(i->data);
 
-    if(v == v2 || v == v1 || !v->routingedge) break;
+  for (i = path->next; i != NULL; i = g_list_next (i)) {
+    toporouter_vertex_t *v = TOPOROUTER_VERTEX (i->data);
+
+    if (v == v2 || v == v1 || v->routingedge == NULL)
+      break;
 
 #ifdef DEBUG_RUBBERBAND
 //  if(debug) 
@@ -6001,87 +6034,96 @@ oproute_rubberband_segment(toporouter_t *r, toporouter_oproute_t *oproute, GList
 //    vx(tedge_v2(v->routingedge)), vy(tedge_v2(v->routingedge))
 //    );
 #endif
-    g_assert(v->routingedge);
-   
-    v1wind = coord_wind(x0, y0, x1, y1, vx(tedge_v1(v->routingedge)), vy(tedge_v1(v->routingedge)));
-    v2wind = coord_wind(x0, y0, x1, y1, vx(tedge_v2(v->routingedge)), vy(tedge_v2(v->routingedge)));
-//    if(debug) printf("\twinds: %d %d\n", v1wind, v2wind);
-    if(!v1wind && !v2wind) { i = i->next; continue; }
 
+    v1wind = coord_wind (x0, y0, x1, y1, vx (tedge_v1 (v->routingedge)), vy (tedge_v1 (v->routingedge)));
+    v2wind = coord_wind (x0, y0, x1, y1, vx (tedge_v2 (v->routingedge)), vy (tedge_v2 (v->routingedge)));
 
-    if(v1wind && v2wind && v1wind != v2wind) { /* edge is cutting through the current segment */ 
-      
-      if(ARC_CHECKS(tedge_v1(v->routingedge)) ){ /* edge v1 is not the centre of an arc terminal */
-        d = check_intersect_vertex(x0, y0, x1, y1, v, tedge_v1(v->routingedge), tedge_v2(v->routingedge), v1wind, &arcwind, &arcr, debug); 
-        TEST_AND_INSERT(tedge_v1(v->routingedge));
+    if (v1wind == 0 && v2wind == 0)
+      continue;
+
+    if (v1wind && v2wind && v1wind != v2wind) { /* edge is cutting through the current segment */ 
+
+      if (ARC_CHECKS (tedge_v1 (v->routingedge))) { /* edge v1 is not the centre of an arc terminal */
+        d = check_intersect_vertex (x0, y0,
+                                    x1, y1,
+                                    v, tedge_v1 (v->routingedge),
+                                    tedge_v2 (v->routingedge), v1wind, &arcwind, &arcr, debug);
+        TEST_AND_INSERT (tedge_v1 (v->routingedge));
       }
 
-      if(ARC_CHECKS(tedge_v2(v->routingedge)) ){ /* edge v2 is not the centre of an arc terminal */
-        d = check_intersect_vertex(x0, y0, x1, y1, v, tedge_v2(v->routingedge), tedge_v1(v->routingedge), v2wind, &arcwind, &arcr, debug);  
-        TEST_AND_INSERT(tedge_v2(v->routingedge));
+      if (ARC_CHECKS (tedge_v2 (v->routingedge))) { /* edge v2 is not the centre of an arc terminal */
+        d = check_intersect_vertex (x0, y0, x1, y1, v, tedge_v2 (v->routingedge), tedge_v1 (v->routingedge), v2wind, &arcwind, &arcr, debug);
+        TEST_AND_INSERT (tedge_v2 (v->routingedge));
       }
-    }else{ /* edge is on one side of the segment */
-      
-      if(ARC_CHECKS(tedge_v1(v->routingedge)) ){ /* edge v1 is not the centre of an arc terminal */
-        d = check_non_intersect_vertex(x0, y0, x1, y1, v, tedge_v1(v->routingedge), tedge_v2(v->routingedge), v1wind, &arcwind, &arcr, debug);  
-        TEST_AND_INSERT(tedge_v1(v->routingedge));
+    } else { /* edge is on one side of the segment */
+
+      if (ARC_CHECKS(tedge_v1 (v->routingedge))) { /* edge v1 is not the centre of an arc terminal */
+        d = check_non_intersect_vertex (x0, y0, x1, y1, v, tedge_v1 (v->routingedge), tedge_v2 (v->routingedge), v1wind, &arcwind, &arcr, debug);
+        TEST_AND_INSERT (tedge_v1 (v->routingedge));
       }
 
-      if(ARC_CHECKS(tedge_v2(v->routingedge)) ){ /* edge v2 is not the centre of an arc terminal */
-        d = check_non_intersect_vertex(x0, y0, x1, y1, v, tedge_v2(v->routingedge), tedge_v1(v->routingedge), v2wind, &arcwind, &arcr, debug);  
-        TEST_AND_INSERT(tedge_v2(v->routingedge));
+      if (ARC_CHECKS (tedge_v2 (v->routingedge))) { /* edge v2 is not the centre of an arc terminal */
+        d = check_non_intersect_vertex (x0, y0, x1, y1, v, tedge_v2 (v->routingedge), tedge_v1 (v->routingedge), v2wind, &arcwind, &arcr, debug);
+        TEST_AND_INSERT (tedge_v2 (v->routingedge));
       }
     }
-
-    i = i->next;
   }
 
-  arcs = g_list_sort(arcs, (GCompareFunc) compare_rubberband_arcs);
+  arcs = g_list_sort (arcs, (GCompareFunc) compare_rubberband_arcs);
+
 //rubberband_insert_maxarc:
-  if(!arcs) return NULL;
-  max = TOPOROUTER_RUBBERBAND_ARC(arcs->data); 
-  
-  av2 = max->pathv; i = max->list->next;
-  while(i) {
-    toporouter_vertex_t *v = TOPOROUTER_VERTEX(i->data);
-    if(v->routingedge && (tedge_v1(v->routingedge) == max->arcv || tedge_v2(v->routingedge) == max->arcv)) {
-      av2 = v; i = i->next; continue;
+
+  if (arcs == NULL)
+    return NULL;
+
+  max = TOPOROUTER_RUBBERBAND_ARC (arcs->data);
+
+  av2 = max->pathv;
+  for (i = max->list->next; i != NULL; i = g_list_next (i)) {
+    toporouter_vertex_t *v = TOPOROUTER_VERTEX (i->data);
+
+    if (v->routingedge && (tedge_v1 (v->routingedge) == max->arcv ||
+                           tedge_v2 (v->routingedge) == max->arcv)) {
+      av2 = v;
+      continue;
     }
     break;
   }
-  
-  av1 = max->pathv; i = max->list->prev;
-  while(i) {
+
+  av1 = max->pathv;
+  for (i = max->list->prev; i != NULL; i = g_list_previous (i)) {
     toporouter_vertex_t *v = TOPOROUTER_VERTEX(i->data);
-    if(v->routingedge && (tedge_v1(v->routingedge) == max->arcv || tedge_v2(v->routingedge) == max->arcv)) {
-      av1 = v; i = i->prev; continue;
+    if (v->routingedge && (tedge_v1(v->routingedge) == max->arcv ||
+                           tedge_v2(v->routingedge) == max->arcv)) {
+      av1 = v;
+      continue;
     }
     break;
   }
-//#ifdef DEBUG_RUBBERBAND
-  if(debug) 
-    printf("newarc @ %f,%f \t v1 = %f,%f v2 = %f,%f r = %f\n", vx(max->arcv), vy(max->arcv), vx(av1), vy(av1), vx(av2), vy(av2), max->r);
-//#endif
-  newarc = toporouter_arc_new(oproute, av1, av2, max->arcv, max->r, max->wind);
 
-  if(TOPOROUTER_IS_VERTEX(t1)) 
-    calculate_term_to_arc(TOPOROUTER_VERTEX(t1), newarc, 0);
-  else if(calculate_arc_to_arc(r, TOPOROUTER_ARC(t1), newarc)) { 
-    printf("\tERROR: best:  r = %f d = %f\n", max->r, max->d); 
-    printf("\tOPROUTE: %s\n", oproute->netlist);
-    print_vertex(oproute->term1);
-    print_vertex(oproute->term2);
-    return NULL; 
+  printf ("newarc @ %f,%f \t v1 = %f,%f v2 = %f,%f r = %f\n",
+          vx (max->arcv), vy (max->arcv), vx (av1), vy (av1), vx (av2), vy (av2), max->r);
+
+  newarc = toporouter_arc_new (oproute, av1, av2, max->arcv, max->r, max->wind);
+
+  if (arc1 == NULL) {
+    calculate_term_to_arc (v1, newarc, 0);
+  } else if (calculate_arc_to_arc (r, arc1, newarc)) {
+    printf ("\tERROR: best:  r = %f d = %f\n", max->r, max->d);
+    printf ("\tOPROUTE: %s\n", oproute->netlist);
+    print_vertex (oproute->term1);
+    print_vertex (oproute->term2);
+    return NULL;
   }
 
-  if(TOPOROUTER_IS_VERTEX(t2)) 
-    calculate_term_to_arc(TOPOROUTER_VERTEX(t2), newarc, 1);
-  else if(calculate_arc_to_arc(r, newarc, TOPOROUTER_ARC(t2))) { 
-    printf("\tERROR: best: r = %f d = %f\n", max->r, max->d); 
-    printf("\tOPROUTE: %s\n", oproute->netlist);
-    print_vertex(oproute->term1);
-    print_vertex(oproute->term2);
-    return NULL; 
+  if (arc2 == NULL) {
+    calculate_term_to_arc (v2, newarc, 1);
+  } else if (calculate_arc_to_arc (r, newarc, arc2)) {
+    printf ("\tERROR: best: r = %f d = %f\n", max->r, max->d); 
+    printf ("\tOPROUTE: %s\n", oproute->netlist);
+    print_vertex (oproute->term1);
+    print_vertex (oproute->term2);
+    return NULL;
   }
 
 //if(check_arc_for_loops(t1, newarc, t2)) {
@@ -6100,48 +6142,51 @@ oproute_rubberband_segment(toporouter_t *r, toporouter_oproute_t *oproute, GList
 //}
 
 
-  list1 = oproute_rubberband_segment(r, oproute, path, t1, newarc, debug);
-  list2 = oproute_rubberband_segment(r, oproute, i->next, newarc, t2, debug);
+  list1 = oproute_rubberband_segment (r, oproute, path, arc1, v1, newarc, newarc->v2, debug);
+  list2 = oproute_rubberband_segment (r, oproute, i->next, newarc, newarc->v1, arc2, v2, debug);
 
-  if(list1) {
-    GList *list = g_list_last(list1);
-    toporouter_arc_t *testarc = TOPOROUTER_ARC(list->data);
+  if (list1) {
+    GList *list = g_list_last (list1);
+    toporouter_arc_t *testarc = TOPOROUTER_ARC (list->data);
     toporouter_arc_t *parc = list->prev ? TOPOROUTER_ARC(list->prev->data) : arc1;
-    gdouble px = parc ? parc->x1 : vx(TOPOROUTER_VERTEX(t1)), py = parc ? parc->y1 : vy(TOPOROUTER_VERTEX(t1));
+    gdouble px = parc ? parc->x1 : vx (v1),
+            py = parc ? parc->y1 : vy (v1);
 
-    if(coord_intersect_prop(px, py, testarc->x0, testarc->y0, testarc->x1, testarc->y1, newarc->x0, newarc->y0)) {
-      list1 = g_list_remove(list1, testarc);
-      if(parc) calculate_arc_to_arc(r, parc, newarc);
-      else calculate_term_to_arc(TOPOROUTER_VERTEX(t1), newarc, 0);
-//#ifdef DEBUG_RUBBERBAND
-    if(debug)
-      printf("REMOVING ARC @ %f,%f\n", vx(testarc->centre), vy(testarc->centre));
-//#endif
+    if (coord_intersect_prop (px, py, testarc->x0, testarc->y0, testarc->x1, testarc->y1, newarc->x0, newarc->y0)) {
+      printf ("REMOVING ARC @ %f,%f\n", vx (testarc->centre), vy (testarc->centre));
+      list1 = g_list_remove (list1, testarc);
+      if (parc)
+        calculate_arc_to_arc (r, parc, newarc);
+      else
+        calculate_term_to_arc (v1, newarc, 0);
     }
   }
-  if(list2) {
+
+  if (list2) {
     toporouter_arc_t *testarc = TOPOROUTER_ARC(list2->data);
-    toporouter_arc_t *narc = list2->next ? TOPOROUTER_ARC(list2->next->data) : arc2;
-    gdouble nx = narc ? narc->x0 : vx(TOPOROUTER_VERTEX(t2)), ny = narc ? narc->y0 : vy(TOPOROUTER_VERTEX(t2));
+    toporouter_arc_t *narc = list2->next ? TOPOROUTER_ARC (list2->next->data) : arc2;
+    gdouble nx = narc ? narc->x0 : vx (v2),
+            ny = narc ? narc->y0 : vy (v2);
 
-    if(coord_intersect_prop(newarc->x1, newarc->y1, testarc->x0, testarc->y0, testarc->x1, testarc->y1, nx, ny)) {
-      list2 = g_list_remove(list2, testarc);
-      if(narc) calculate_arc_to_arc(r, newarc, narc);
-      else calculate_term_to_arc(TOPOROUTER_VERTEX(t2), newarc, 1);
-    
-//#ifdef DEBUG_RUBBERBAND
-    if(debug)
-      printf("REMOVING ARC @ %f,%f\n", vx(testarc->centre), vy(testarc->centre));
-//#endif
+    if (coord_intersect_prop (newarc->x1,  newarc->y1,
+                              testarc->x0, testarc->y0,
+                              testarc->x1, testarc->y1,
+                              nx,          ny)) {
+      printf("REMOVING ARC @ %f,%f\n", vx (testarc->centre), vy (testarc->centre));
+      list2 = g_list_remove (list2, testarc);
+      if (narc)
+        calculate_arc_to_arc (r, newarc, narc);
+      else
+        calculate_term_to_arc (v2, newarc, 1);
     }
   }
 
-  g_list_foreach(arcs, free_list_elements, NULL);
-  g_list_free(arcs);
+  g_list_foreach (arcs, free_list_elements, NULL);
+  g_list_free (arcs);
 
-  return g_list_concat(list1, g_list_prepend(list2, newarc));
+  return g_list_concat (list1, g_list_prepend (list2, newarc));
 }
-  
+
 void
 oproute_check_all_loops(toporouter_t *r, toporouter_oproute_t *oproute)
 {
@@ -6428,7 +6473,6 @@ path_speccut_restart:
       }
     }
 
-
     pv = v;
     i = i->next;
   }
@@ -6458,21 +6502,15 @@ oproute_rubberband(toporouter_t *r, GList *path)
   path_set_oproute(path, oproute);
 
 //  if(!strcmp(oproute->netlist, "  unnamed_net1")) 
-  oproute_path_speccut(oproute);
+//  oproute_path_speccut(oproute);
 
-#ifdef DEBUG_RUBBERBAND
-  if(strcmp(oproute->netlist, "  VCC3V3" == 0) &&
-     vx(oproute->term1) == MIL_TO_COORD (957.) &&
-     vy(oproute->term1) == MIL_TO_COORD (708.) &&
-     vx(oproute->term2) == MIL_TO_COORD (1967.) &&
-     vy(oproute->term2) == MIL_TO_COORD (673.))
-  {
-//    printf("OPROUTE %s - %f,%f %f,%f\n", oproute->netlist, vx(oproute->term1), vy(oproute->term1), vx(oproute->term2), vy(oproute->term2));
-//    print_path(path);
-    oproute->arcs = oproute_rubberband_segment(r, oproute, path, oproute->term1, oproute->term2, 1);
-  }else
-#endif    
-    oproute->arcs = oproute_rubberband_segment(r, oproute, path, oproute->term1, oproute->term2, 0);
+  oproute->arcs =
+    oproute_rubberband_segment (r, oproute, path,
+                                TOPOROUTER_IS_ARC (oproute->term1) ? TOPOROUTER_ARC (oproute->term1) : NULL,
+                                TOPOROUTER_IS_ARC (oproute->term1) ? TOPOROUTER_ARC (oproute->term1)->v1 : oproute->term1,
+                                TOPOROUTER_IS_ARC (oproute->term2) ? TOPOROUTER_ARC (oproute->term2) : NULL,
+                                TOPOROUTER_IS_ARC (oproute->term2) ? TOPOROUTER_ARC (oproute->term2)->v2 : oproute->term2,
+                                false);
 
   oproute_check_all_loops(r, oproute);
   return oproute;
@@ -7489,6 +7527,7 @@ hybrid_router(toporouter_t *r)
   Message(_("RUBIX router: %d nets remaining\n"), failcount);
   printf(_("RUBIX router: %d nets remaining\n"), failcount);
 
+#if 0
   r->flags |= TOPOROUTER_FLAG_GOFAR;
   
   for(guint i=0;i<6 && failcount;i++) {
@@ -7505,6 +7544,7 @@ hybrid_router(toporouter_t *r)
 
   failcount = roar_router(r, failcount, 2);
   detour_router(r);
+#endif
   
   return failcount;
 }
