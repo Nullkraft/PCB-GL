@@ -6503,7 +6503,7 @@ oproute_rubberband(toporouter_t *r, GList *path)
   path_set_oproute(path, oproute);
 
 //  if(!strcmp(oproute->netlist, "  unnamed_net1")) 
-  oproute_path_speccut(oproute);
+//  oproute_path_speccut(oproute);
 
   oproute->arcs =
     oproute_rubberband_segment (r, oproute, path,
