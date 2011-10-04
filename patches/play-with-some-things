@@ -1,5 +1,5 @@
 Bottom: b7a025988d5a36d6ff8316bdcb7b40f696564b85
-Top:    b9d37e284d109812bcaa6482aa70795eaf452ebf
+Top:    75faea28cbd6df0a462c998143ead171fb912412
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-04 19:19:46 +0100
 
@@ -9,7 +9,7 @@ Play with some things
 ---
 
 diff --git a/src/toporouter.c b/src/toporouter.c
-index be9d14f..f026d28 100644
+index be9d14f..be67f19 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
 @@ -6003,7 +6003,7 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
@@ -80,13 +80,7 @@ index be9d14f..f026d28 100644
        printf ("REMOVING ARC @ %f,%f\n", vx (testarc->centre), vy (testarc->centre));
        list1 = g_list_remove (list1, testarc);
        if (parc)
-@@ -6503,14 +6503,14 @@ oproute_rubberband(toporouter_t *r, GList *path)
-   path_set_oproute(path, oproute);
- 
- //  if(!strcmp(oproute->netlist, "  unnamed_net1")) 
--//  oproute_path_speccut(oproute);
-+  oproute_path_speccut(oproute);
- 
+@@ -6508,9 +6508,9 @@ oproute_rubberband(toporouter_t *r, GList *path)
    oproute->arcs =
      oproute_rubberband_segment (r, oproute, path,
                                  TOPOROUTER_IS_ARC (oproute->term1) ? TOPOROUTER_ARC (oproute->term1) : NULL,
