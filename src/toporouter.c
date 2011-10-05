@@ -5275,10 +5275,7 @@ calculate_term_to_arc(toporouter_vertex_t *v, toporouter_arc_t *arc, guint dir)
     if(!dir) { arc->x0 = a1x; arc->y0 = a1y; }
     else{ arc->x1 = a1x; arc->y1 = a1y; }
   }
-
 }
-
-
 
 // b1 is the projection in the direction of narc, while b2 is the perpendicular projection
 void
@@ -5804,13 +5801,17 @@ check_intersect_vertex (double x0, double y0, double x1, double y1,
     ms = edge_min_spacing (g_list_find (edge_routing (pathv->routingedge), pathv), pathv->routingedge, arcv, debug);
   }
 
-  if (!vertex_line_normal_intersection (x0, y0, x1, y1, vx(arcv), vy(arcv), &line_int_x, &line_int_y))
+  if (!vertex_line_normal_intersection (x0, y0, x1, y1, vx(arcv), vy(arcv), &line_int_x, &line_int_y)) {
+    printf ("FOO: A\n");
     return -1.;
+  }
 
   d = coord_distance (line_int_x, line_int_y, vx (arcv), vy (arcv));
 
-  if (d > ms - EPSILON)
+  if (d > ms - EPSILON) {
+    printf ("FOO: B\n");
     return -1.;
+  }
 
   coord_move_towards_coord_values (vx (arcv), vy (arcv), line_int_x, line_int_y, ms, &x, &y);
 
@@ -5976,6 +5977,12 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
   gdouble d, arcr;
   gint v1wind, v2wind, arcwind;
 
+  x0 = vx (v1);
+  y0 = vy (v1);
+  x1 = vx (v2);
+  y1 = vy (v2);
+
+#if 0
   if (arc1 == NULL) {
     x0 = vx (v1);
     y0 = vy (v1);
@@ -5993,6 +6000,7 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
     x1 = arc2->x0;
     y1 = arc2->y0;
   }
+#endif
 
 #define TEST_AND_INSERT(z) if (d > EPSILON) \
                              arcs = g_list_prepend (arcs, new_rubberband_arc (v, z, arcr, d, arcwind, i));
@@ -6003,24 +6011,9 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
 
   if (v1 == v2 || path->next == NULL || TOPOROUTER_VERTEX (path->data) == v2) return NULL;
 
-//  printf ("\nRB: line %f,%f %f,%f v1 = %f,%f v2 = %f,%f \n ", x0, y0, x1, y1, vx (v1), vy (v1), vx (v2), vy (v2));
+  printf ("\nRB: line %f,%f %f,%f v1 = %f,%f v2 = %f,%f \n ", x0, y0, x1, y1, vx (v1), vy (v1), vx (v2), vy (v2));
   // if(v1->routingedge) print_edge(v1->routingedge);
   // if(v2->routingedge) print_edge(v2->routingedge);
-
-  /* check the vectices adjacent to the terminal vectices for push against the segment */
-//if(TOPOROUTER_IS_VERTEX(t1)) {
-//  toporouter_vertex_t *arcc = NULL;
-//  d = check_adj_pushing_vertex(oproute, x0, y0, x1, y1, v1, &arcr, &arcwind, &arcc); 
-//  g_assert(arcc != v1);
-//  if(ARC_CHECKS(arcc) && d > EPSILON) arcs = g_list_prepend(arcs, new_rubberband_arc(v1, arcc, arcr, d, arcwind, path->next));
-//}
-//
-//if(TOPOROUTER_IS_VERTEX(t2)) {
-//  toporouter_vertex_t *arcc = NULL;
-//  d = check_adj_pushing_vertex(oproute, x0, y0, x1, y1, v2, &arcr, &arcwind, &arcc);
-//  g_assert(arcc != v2);
-//  if(ARC_CHECKS(arcc) && d > EPSILON) arcs = g_list_prepend(arcs, new_rubberband_arc(v2, arcc, arcr, d, arcwind, g_list_last(path)->prev));
-//}
 
   for (i = path->next; i != NULL; i = g_list_next (i)) {
     toporouter_vertex_t *v = TOPOROUTER_VERTEX (i->data);
@@ -6030,8 +6023,18 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
       break;
     }
 
-    v1wind = coord_wind (x0, y0, x1, y1, vx (tedge_v1 (v->routingedge)), vy (tedge_v1 (v->routingedge)));
-    v2wind = coord_wind (x0, y0, x1, y1, vx (tedge_v2 (v->routingedge)), vy (tedge_v2 (v->routingedge)));
+    if (v == v1) {
+      printf ("Skipping v1\n");
+      continue;
+    }
+
+    if (v == v2) {
+      printf ("Stopping at v2\n");
+      break;
+    }
+
+    v1wind = tvertex_wind (v1, v2, tedge_v1 (v->routingedge));
+    v2wind = tvertex_wind (v1, v2, tedge_v2 (v->routingedge));
 
     /* Skip this routing edge if we are colinear with it */
     if (v1wind == 0 && v2wind == 0)
@@ -6042,30 +6045,40 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
       if (ARC_CHECKS (tedge_v1 (v->routingedge))) { /* edge v1 is not the centre of an arc terminal */
         d = check_intersect_vertex (x0, y0,
                                     x1, y1,
-                                    v, tedge_v1 (v->routingedge),
+                                    v,
+                                    tedge_v1 (v->routingedge),
                                     tedge_v2 (v->routingedge), v1wind, &arcwind, &arcr, debug);
         TEST_AND_INSERT (tedge_v1 (v->routingedge));
       }
 
       if (ARC_CHECKS (tedge_v2 (v->routingedge))) { /* edge v2 is not the centre of an arc terminal */
-        d = check_intersect_vertex (x0, y0, x1, y1, v, tedge_v2 (v->routingedge), tedge_v1 (v->routingedge), v2wind, &arcwind, &arcr, debug);
+        d = check_intersect_vertex (x0, y0,
+                                    x1, y1,
+                                    v,
+                                    tedge_v2 (v->routingedge),
+                                    tedge_v1 (v->routingedge), v2wind, &arcwind, &arcr, debug);
         TEST_AND_INSERT (tedge_v2 (v->routingedge));
       }
     } else { /* edge is on one side of the segment */
 
       if (ARC_CHECKS(tedge_v1 (v->routingedge))) { /* edge v1 is not the centre of an arc terminal */
-        d = check_non_intersect_vertex (x0, y0, x1, y1, v, tedge_v1 (v->routingedge), tedge_v2 (v->routingedge), v1wind, &arcwind, &arcr, debug);
+        d = check_non_intersect_vertex (x0, y0,
+                                        x1, y1,
+                                        v,
+                                        tedge_v1 (v->routingedge),
+                                        tedge_v2 (v->routingedge), v1wind, &arcwind, &arcr, debug);
         TEST_AND_INSERT (tedge_v1 (v->routingedge));
       }
 
       if (ARC_CHECKS (tedge_v2 (v->routingedge))) { /* edge v2 is not the centre of an arc terminal */
-        d = check_non_intersect_vertex (x0, y0, x1, y1, v, tedge_v2 (v->routingedge), tedge_v1 (v->routingedge), v2wind, &arcwind, &arcr, debug);
+        d = check_non_intersect_vertex (x0, y0,
+                                        x1, y1,
+                                        v,
+                                        tedge_v2 (v->routingedge),
+                                        tedge_v1 (v->routingedge), v2wind, &arcwind, &arcr, debug);
         TEST_AND_INSERT (tedge_v2 (v->routingedge));
       }
     }
-
-    /* Stop when we reach the end of the piece we are supposed to route */
-    if (v == v2 || v == v1) break;
   }
 
   arcs = g_list_sort (arcs, (GCompareFunc) compare_rubberband_arcs);
@@ -7664,7 +7677,7 @@ toporouter (int argc, char **argv, Coord x, Coord y)
 //}
 
   hybrid_router(r);
-/*
+
   for(gint i=0;i<groupcount();i++) {
    gts_surface_foreach_edge(r->layers[i].surface, space_edge, NULL);
   }
@@ -7673,10 +7686,10 @@ toporouter (int argc, char **argv, Coord x, Coord y)
     for(i=0;i<groupcount();i++) {
       char buffer[256];
       sprintf(buffer, "route%d.png", i);
-      toporouter_draw_surface(r, r->layers[i].surface, buffer, 1024, 1024, 2, NULL, i, NULL);
+      toporouter_draw_surface(r, r->layers[i].surface, buffer, 10000, 10000, 2, NULL, i, NULL);
     }
   }
-*/
+
   toporouter_export(r);
   toporouter_free(r);
   
