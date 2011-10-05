@@ -1,7 +1,7 @@
-Bottom: 7ada0a0d44d6547b22354ce4c6ce7d2f96318663
-Top:    a48d0b934448547d45629b59e5e37ce017a0962b
+Bottom: f494aa70fad442a74b4b42e4cc58eabbc4dd57e4
+Top:    526504ff72e2228246527d4a9e13ef0b76a84912
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-10-03 23:12:52 +0100
+Date:   2011-10-05 23:09:27 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -495,7 +495,7 @@ index a199acc..fead88e 100644
 +  return attr;
  }
 diff --git a/src/crosshair.c b/src/crosshair.c
-index d927cf8..bc137ea 100644
+index b7bebec..a7fc21c 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -378,8 +378,7 @@ XORDrawInsertPointObject (void)
@@ -675,7 +675,7 @@ index dd64f63..69f9a0d 100644
        w = maxx + symbol->Delta + ox;
        CreateDrawnLineOnLayer (lwidth,
 diff --git a/src/global.h b/src/global.h
-index 96c9cc9..9c3ad0b 100644
+index 9f0390b..c0306ce 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -224,8 +224,8 @@ typedef struct
@@ -708,7 +708,7 @@ index 96c9cc9..9c3ad0b 100644
  
  };
  
-@@ -372,10 +370,9 @@ typedef struct
+@@ -374,10 +372,9 @@ typedef struct
   */
  typedef struct			/* a single symbol */
  {
@@ -721,7 +721,7 @@ index 96c9cc9..9c3ad0b 100644
    Coord Width, Height,		/* size of cell */
      Delta;			/* distance to next symbol */
  } SymbolType, *SymbolTypePtr;
-@@ -408,21 +405,18 @@ typedef struct			/* holds drill information */
+@@ -410,21 +407,18 @@ typedef struct			/* holds drill information */
  {
    Coord DrillSize;		/* this drill's diameter */
    Cardinal ElementN,		/* the number of elements using this drill size */
@@ -748,7 +748,7 @@ index 96c9cc9..9c3ad0b 100644
  } DrillInfoType, *DrillInfoTypePtr;
  
  typedef struct
-@@ -460,9 +454,8 @@ typedef struct
+@@ -462,9 +456,8 @@ typedef struct
    char *Name,			/* name of the menu entry */
     *directory,			/* Directory name library elements are from */
     *Style;			/* routing style */
@@ -760,7 +760,7 @@ index 96c9cc9..9c3ad0b 100644
    char flag;			/* used by the netlist window to enable/disable nets */
    char internal;		/* if set, this is an internal-only entry, not
  				   part of the global netlist. */
-@@ -471,8 +464,7 @@ typedef struct
+@@ -473,8 +466,7 @@ typedef struct
  typedef struct
  {
    Cardinal MenuN;               /* number of objects */
@@ -770,7 +770,7 @@ index 96c9cc9..9c3ad0b 100644
  } LibraryType, *LibraryTypePtr;
  
  
-@@ -573,9 +565,8 @@ typedef struct			/* currently attached object */
+@@ -575,9 +567,8 @@ typedef struct			/* currently attached object */
    void *Ptr1,			/* three pointers to data, see */
     *Ptr2,			/* search.c */
     *Ptr3;
@@ -782,7 +782,7 @@ index 96c9cc9..9c3ad0b 100644
  } AttachedObjectType, *AttachedObjectTypePtr;
  
  enum crosshair_shape
-@@ -731,38 +722,33 @@ typedef struct			/* holds a connection */
+@@ -733,38 +724,33 @@ typedef struct			/* holds a connection */
  
  typedef struct			/* holds a net of connections */
  {
@@ -1299,7 +1299,7 @@ index 025351f..322000d 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index a2a678e..94d4f97 100644
+index 3cc04a0..6a0b679 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -497,7 +497,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
@@ -1371,7 +1371,7 @@ index a2a678e..94d4f97 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1778,8 +1785,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1784,8 +1791,11 @@ GetGridLockCoordinates (int type, void *ptr1,
        *y = ((ElementTypePtr) ptr2)->MarkY;
        break;
      case POLYGON_TYPE:
@@ -1385,7 +1385,7 @@ index a2a678e..94d4f97 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -2062,10 +2072,13 @@ pcb_author (void)
+@@ -2068,10 +2078,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
