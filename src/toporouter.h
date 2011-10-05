@@ -66,6 +66,8 @@
 #define TOPOROUTER_FLAG_GOFAR         (1<<8)
 #define TOPOROUTER_FLAG_DETOUR        (1<<9)
 
+#undef TOPO_OUTPUT_ENABLED
+#define TOPO_OUTPUT_ENABLED 1
 #if TOPO_OUTPUT_ENABLED
   #include <cairo.h>
 #endif
