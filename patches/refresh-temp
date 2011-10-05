@@ -1,0 +1,166 @@
+Bottom: 3d63370386d21a26b1971d20b5de01fb5749a415
+Top:    5b50ae391beac04fb17005dc0bd651896aadc44e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-10-05 22:44:35 +0100
+
+Refresh of add-snapping-to-arc-end-points
+
+---
+
+diff --git a/globalconst.h b/globalconst.h
+index e8966ff..afba0d4 100755
+--- a/globalconst.h
++++ b/globalconst.h
+@@ -123,6 +123,8 @@
+ 						/* line points */
+ #define	MAX_POLYGON_POINT_DISTANCE	0	/* maximum distance when searching */
+ 						/* polygon points */
++#define	MAX_ARC_POINT_DISTANCE		0	/* maximum distance when searching */
++						/* arc points */
+ #define	MAX_ELEMENTNAMES		3	/* number of supported names of */
+ 						/* an element */
+ #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
+diff --git a/src/const.h b/src/const.h
+index c82e90a..a5f6f2d 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -323,6 +323,7 @@ When set, element names are not drawn.
+ 
+ #define LOCKED_TYPE 		0x10000	/* used to tell search to include locked items. */
+ #define NET_TYPE		0x20000 /* used to select whole net. */
++#define ARCPOINT_TYPE		0x40000
+ 
+ #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
+ #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
+diff --git a/src/crosshair.c b/src/crosshair.c
+index d927cf8..b7bebec 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1069,7 +1069,8 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+   ans = NO_TYPE;
+   if (TEST_FLAG (SNAPPINFLAG, PCB))
+     ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                                LINEPOINT_TYPE, &ptr1, &ptr2, &ptr3);
++                                LINEPOINT_TYPE | ARCPOINT_TYPE,
++                                &ptr1, &ptr2, &ptr3);
+ 
+   if (ans != NO_TYPE)
+     {
+@@ -1099,7 +1100,8 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+   if (Settings.Mode == ARROW_MODE)
+     {
+       ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                                  LINEPOINT_TYPE, &ptr1, &ptr2, &ptr3);
++                                  LINEPOINT_TYPE | ARCPOINT_TYPE,
++                                  &ptr1, &ptr2, &ptr3);
+       if (ans == NO_TYPE)
+         hid_action("PointCursor");
+       else if (!TEST_FLAG(SELECTEDFLAG, (LineType *)ptr2))
+diff --git a/src/global.h b/src/global.h
+index 96c9cc9..9f0390b 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -284,6 +284,8 @@ typedef struct			/* holds information about arcs */
+ {
+   ANYOBJECTFIELDS;
+   Coord Thickness, Clearance;
++  PointType Point1;
++  PointType Point2;
+   Coord Width, Height,		/* length of axis */
+     X, Y;			/* center coordinates */
+   Angle StartAngle, Delta;	/* the two limiting angles in degrees */
+diff --git a/src/search.c b/src/search.c
+index 60e8dde..c6db7c9 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -322,6 +322,8 @@ SearchRatLineByLocation (int locked, RatTypePtr * Line, RatTypePtr * Dummy1,
+ struct arc_info
+ {
+   ArcTypePtr *Arc, *Dummy;
++  PointTypePtr *Point;
++  double least;
+   jmp_buf env;
+   int locked;
+ };
+@@ -496,6 +498,66 @@ SearchLinePointByLocation (int locked, LayerTypePtr * Layer,
+   return false;
+ }
+ 
++static int
++arcpoint_callback (const BoxType * b, void *cl)
++{
++  ArcTypePtr arc = (ArcTypePtr) b;
++  struct arc_info *i = (struct arc_info *) cl;
++  int ret_val = 0;
++  double d;
++  Coord x, y;
++
++  if (TEST_FLAG (i->locked, arc))
++    return 0;
++
++  x = arc->X - (double)arc->Width  * cos ((double)arc->StartAngle * M_PI / 180.);
++  y = arc->Y + (double)arc->Height * sin ((double)arc->StartAngle * M_PI / 180.);
++
++  /* some stupid code to check both points */
++  d = Distance (PosX, PosY, x, y);
++  if (d < i->least)
++    {
++      i->least = d;
++      *i->Arc = arc;
++      *i->Point = &arc->Point1;
++      /* HACK */ arc->Point1.X = x; arc->Point1.Y = y; /* HACK */
++      ret_val = 1;
++    }
++
++  x = arc->X - (double)arc->Width  * cos ((double)(arc->StartAngle + arc->Delta) * M_PI / 180.);
++  y = arc->Y + (double)arc->Height * sin ((double)(arc->StartAngle + arc->Delta) * M_PI / 180.);
++
++  d = Distance (PosX, PosY, x, y);
++  if (d < i->least)
++    {
++      i->least = d;
++      *i->Arc = arc;
++      *i->Point = &arc->Point2;
++      /* HACK */ arc->Point2.X = x; arc->Point2.Y = y; /* HACK */
++      ret_val = 1;
++    }
++  return ret_val;
++}
++
++/* ---------------------------------------------------------------------------
++ * searches an arc-point on all the search layer
++ */
++static bool
++SearchArcPointByLocation (int locked, LayerType **Layer,
++                          ArcType **arc, PointType **Point)
++{
++  struct arc_info info;
++  *Layer = SearchLayer;
++  info.Arc = arc;
++  info.Point = Point;
++  *Point = NULL;
++  info.least = MAX_ARC_POINT_DISTANCE + SearchRadius;
++  info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
++  if (r_search
++      (SearchLayer->arc_tree, &SearchBox, NULL, arcpoint_callback, &info))
++    return true;
++  return false;
++}
+ /* ---------------------------------------------------------------------------
+  * searches a polygon-point on all layers that are switched on
+  * in layerstack order
+@@ -1215,6 +1277,14 @@ SearchObjectByLocation (unsigned Type,
+ 				       (LineTypePtr *) Result3))
+ 	    return (LINE_TYPE);
+ 
++	    if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
++	      Type & ARCPOINT_TYPE &&
++	      SearchArcPointByLocation (locked,
++					(LayerTypePtr *) Result1,
++					(ArcTypePtr *) Result2,
++					(PointTypePtr *) Result3))
++	    return (ARCPOINT_TYPE);
++
+ 	  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 && Type & ARC_TYPE &&
+ 	      SearchArcByLocation (locked,
+ 				   (LayerTypePtr *) Result1,
