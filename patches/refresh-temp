@@ -1,0 +1,94 @@
+Bottom: 287b6c92951b6990e4787e1796d92e9ff4852cf2
+Top:    f494aa70fad442a74b4b42e4cc58eabbc4dd57e4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-10-05 23:08:04 +0100
+
+Refresh of add-snapping-to-arc-end-points
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index a2a678e..3cc04a0 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -1529,6 +1529,12 @@ SetArcBoundingBox (ArcTypePtr Arc)
+   Arc->BoundingBox.Y1 -= width;
+   Arc->BoundingBox.Y2 += width;
+   close_box(&Arc->BoundingBox);
++
++  /* Update the arc end-points */
++  Arc->Point1.X = Arc->X - (double)Arc->Width  * ca1;
++  Arc->Point1.Y = Arc->Y + (double)Arc->Height * sa1;
++  Arc->Point2.X = Arc->X - (double)Arc->Width  * ca2;
++  Arc->Point2.Y = Arc->Y + (double)Arc->Height * sa2;
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/move.h b/src/move.h
+index e617eca..3daec3d 100644
+--- a/src/move.h
++++ b/src/move.h
+@@ -61,6 +61,8 @@
+ 	{ \
+ 		MOVE((a)->X,(a)->Y,(dx),(dy)) \
+ 		MOVE_BOX_LOWLEVEL(&((a)->BoundingBox),(dx),(dy));		\
++		MOVE((a)->Point1.X,(a)->Point1.Y,(dx),(dy))			\
++		MOVE((a)->Point2.X,(a)->Point2.Y,(dx),(dy))			\
+ 	}
+ /* Rather than mode the line bounding box, we set it so the point bounding
+  * boxes are updated too.
+diff --git a/src/rotate.c b/src/rotate.c
+index 11b8fd9..1763406 100644
+--- a/src/rotate.c
++++ b/src/rotate.c
+@@ -204,6 +204,8 @@ RotateArcLowLevel (ArcTypePtr Arc, Coord X, Coord Y, unsigned Number)
+       Arc->Height = save;
+     }
+   RotateBoxLowLevel (&Arc->BoundingBox, X, Y, Number);
++  ROTATE (Arc->Point1.X, Arc->Point1.Y, X, Y, Number);
++  ROTATE (Arc->Point2.X, Arc->Point2.Y, X, Y, Number);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/search.c b/src/search.c
+index c6db7c9..5d02a53 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -505,35 +505,25 @@ arcpoint_callback (const BoxType * b, void *cl)
+   struct arc_info *i = (struct arc_info *) cl;
+   int ret_val = 0;
+   double d;
+-  Coord x, y;
+ 
+   if (TEST_FLAG (i->locked, arc))
+     return 0;
+ 
+-  x = arc->X - (double)arc->Width  * cos ((double)arc->StartAngle * M_PI / 180.);
+-  y = arc->Y + (double)arc->Height * sin ((double)arc->StartAngle * M_PI / 180.);
+-
+-  /* some stupid code to check both points */
+-  d = Distance (PosX, PosY, x, y);
++  d = Distance (PosX, PosY, arc->Point1.X, arc->Point1.Y);
+   if (d < i->least)
+     {
+       i->least = d;
+       *i->Arc = arc;
+       *i->Point = &arc->Point1;
+-      /* HACK */ arc->Point1.X = x; arc->Point1.Y = y; /* HACK */
+       ret_val = 1;
+     }
+ 
+-  x = arc->X - (double)arc->Width  * cos ((double)(arc->StartAngle + arc->Delta) * M_PI / 180.);
+-  y = arc->Y + (double)arc->Height * sin ((double)(arc->StartAngle + arc->Delta) * M_PI / 180.);
+-
+-  d = Distance (PosX, PosY, x, y);
++  d = Distance (PosX, PosY, arc->Point2.X, arc->Point2.Y);
+   if (d < i->least)
+     {
+       i->least = d;
+       *i->Arc = arc;
+       *i->Point = &arc->Point2;
+-      /* HACK */ arc->Point2.X = x; arc->Point2.Y = y; /* HACK */
+       ret_val = 1;
+     }
+   return ret_val;
