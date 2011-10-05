@@ -505,35 +505,25 @@ arcpoint_callback (const BoxType * b, void *cl)
   struct arc_info *i = (struct arc_info *) cl;
   int ret_val = 0;
   double d;
-  Coord x, y;
 
   if (TEST_FLAG (i->locked, arc))
     return 0;
 
-  x = arc->X - (double)arc->Width  * cos ((double)arc->StartAngle * M_PI / 180.);
-  y = arc->Y + (double)arc->Height * sin ((double)arc->StartAngle * M_PI / 180.);
-
-  /* some stupid code to check both points */
-  d = Distance (PosX, PosY, x, y);
+  d = Distance (PosX, PosY, arc->Point1.X, arc->Point1.Y);
   if (d < i->least)
     {
       i->least = d;
       *i->Arc = arc;
       *i->Point = &arc->Point1;
-      /* HACK */ arc->Point1.X = x; arc->Point1.Y = y; /* HACK */
       ret_val = 1;
     }
 
-  x = arc->X - (double)arc->Width  * cos ((double)(arc->StartAngle + arc->Delta) * M_PI / 180.);
-  y = arc->Y + (double)arc->Height * sin ((double)(arc->StartAngle + arc->Delta) * M_PI / 180.);
-
-  d = Distance (PosX, PosY, x, y);
+  d = Distance (PosX, PosY, arc->Point2.X, arc->Point2.Y);
   if (d < i->least)
     {
       i->least = d;
       *i->Arc = arc;
       *i->Point = &arc->Point2;
-      /* HACK */ arc->Point2.X = x; arc->Point2.Y = y; /* HACK */
       ret_val = 1;
     }
   return ret_val;
