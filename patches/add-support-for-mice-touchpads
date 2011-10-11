@@ -1,43 +1,11 @@
-Bottom: 45c775e23e88f5fcc439de055725dc71fde56e6f
-Top:    a3cf8ede0a524e00e0ea4fca094f054d19b05b5f
+Bottom: f494aa70fad442a74b4b42e4cc58eabbc4dd57e4
+Top:    f494aa70fad442a74b4b42e4cc58eabbc4dd57e4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-10-11 20:45:09 +0100
+Date:   2011-10-11 22:31:45 +0100
 
 Add support for mice / touchpads with a left/right scroll-wheel
 
 
 ---
 
-diff --git a/src/gpcb-menu.res.in b/src/gpcb-menu.res.in
-index fd1015d..3626752 100644
---- a/src/gpcb-menu.res.in
-+++ b/src/gpcb-menu.res.in
-@@ -37,6 +37,13 @@ Mouse =
- # If you want zoom to center, do this instead.
-   #Up = { ctrl = {Zoom(0.8) Center()} }
-   #Down = { ctrl = {Zoom(1.25) Center()} }
-+
-+  scroll-left = {
-+    Scroll(left)
-+  }
-+  scroll-right = {
-+    Scroll(right)
-+  }
- }
- 
- MainMenu =
-diff --git a/src/hid/common/hid_resource.c b/src/hid/common/hid_resource.c
-index 842a058..a98dc46 100644
---- a/src/hid/common/hid_resource.c
-+++ b/src/hid/common/hid_resource.c
-@@ -71,6 +71,10 @@ button_name_to_num (const char *name)
-     return 4;
-   else if (strcasecmp (name, "down") == 0)
-     return 5;
-+  else if (strcasecmp (name, "scroll-left") == 0)
-+    return 6;
-+  else if (strcasecmp (name, "scroll-right") == 0)
-+    return 7;
-   else
-     return atoi (name);
- }
+
