@@ -1,7 +1,7 @@
-Bottom: e9457fdbd0d166fcdf765c8e7a9de4c7d90cb9dd
+Bottom: 500828c842c49b66412d3ff448bf881318e18fb1
 Top:    500828c842c49b66412d3ff448bf881318e18fb1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-10-26 22:35:14 +0100
+Date:   2011-10-26 22:36:33 +0100
 
 Fix computation of 45-degree edges when inserting a point into an edge
 
@@ -13,25 +13,4 @@ Reported-by: Gabriel Paubert <paubert@iram.es>
 
 ---
 
-diff --git a/src/insert.c b/src/insert.c
-index 514754f..42661ec 100644
---- a/src/insert.c
-+++ b/src/insert.c
-@@ -275,7 +275,7 @@ AdjustInsertPoint (void)
-     m1 = 2;			/* 2 signals infinite slope */
-   else
-     {
--      m = (double) (Crosshair.X - line->Point1.X) / (Crosshair.Y - line->Point1.Y);
-+      m = (double) (Crosshair.Y - line->Point1.Y) / (Crosshair.X - line->Point1.X);
-       m1 = 0;
-       if (m > TAN_30_DEGREE)
- 	m1 = (m > TAN_60_DEGREE) ? 2 : 1;
-@@ -286,7 +286,7 @@ AdjustInsertPoint (void)
-     m2 = 2;			/* 2 signals infinite slope */
-   else
-     {
--      m = (double) (Crosshair.X - line->Point1.X) / (Crosshair.Y - line->Point1.Y);
-+      m = (double) (Crosshair.Y - line->Point2.Y) / (Crosshair.X - line->Point2.X);
-       m2 = 0;
-       if (m > TAN_30_DEGREE)
- 	m2 = (m > TAN_60_DEGREE) ? 2 : 1;
+
