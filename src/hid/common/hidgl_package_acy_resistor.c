@@ -423,18 +423,19 @@ debug_basis_display ()
 
 /* b1{x,y,z} is the basis vector along "s" texture space */
 /* b2{x,y,z} is the basis vector along "t" texture space */
+/* mvm is the model view matrix (transposed in memory) */
 static void
 compute_light_vector (float b1x, float b1y, float b1z,
                       float b2x, float b2y, float b2z,
                       float *lx, float *ly, float *lz,
                       float *hx, float *hy, float *hz,
-                      float x,   float y,   float z)
+                      float x,   float y,   float z,
+                      GLfloat *mvm)
 {
   float b3x, b3y, b3z;
   float tb1x, tb1y, tb1z;
   float tb2x, tb2y, tb2z;
   float tb3x, tb3y, tb3z;
-  float mvm[16]; /* NB: TRANSPOSED IN MEMORY */
   /* NB: light_direction is a vector _TOWARDS_ the light source position */
 //  float light_direction[] = {-0.5, 1., -1.}; /* XXX: HARDCODEED! */
   float light_direction[] = {0.0, 0.0, 1.0}; /* XXX: HARDCODEED! */
@@ -457,9 +458,6 @@ compute_light_vector (float b1x, float b1y, float b1z,
   half_direction[0] = light_direction[0] + 0.;
   half_direction[1] = light_direction[1] + 0.;
   half_direction[2] = light_direction[2] + 1.;
-
-  /* XXX: Should cache this ourselves */
-  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)mvm);
 
   if (0)
     debug_basis_vector ((mvm[0] * x + mvm[4] * y + mvm[ 8] * z + mvm[12]) / mvm[15],
@@ -557,11 +555,12 @@ static void
 emit_vertex (float x,   float y,   float z,
              float b1x, float b1y, float b1z,
              float b2x, float b2y, float b2z,
-             float tex0_s, float tex1_s, float tex1_t)
+             float tex0_s, float tex1_s, float tex1_t,
+             GLfloat *mvm)
 {
   GLfloat lx, ly, lz;
   GLfloat hx, hy, hz;
-  compute_light_vector (b1x, b1y, b1z, b2x, b2y, b2z, &lx, &ly, &lz, &hx, &hy, &hz, x, y, z);
+  compute_light_vector (b1x, b1y, b1z, b2x, b2y, b2z, &lx, &ly, &lz, &hx, &hy, &hz, x, y, z, mvm);
   glColor3f (lx, ly, lz);
   glMultiTexCoord1f (GL_TEXTURE0, tex0_s);
   glMultiTexCoord2f (GL_TEXTURE1, tex1_s, tex1_t);
@@ -582,7 +581,8 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
            float      r, float      z,
            float next_r, float next_z,
            float tex0_s, float resistor_width,
-           enum geom_pos pos)
+           enum geom_pos pos,
+           GLfloat *mvm)
 {
   int repeat;
 
@@ -592,13 +592,13 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
     emit_vertex (r * cos_edge1, r * sin_edge1, z,
                  sin_edge1, -cos_edge1, 0,
                  cos_edge1 * (next_r - prev_r) / 2., sin_edge1 * (next_r - prev_r) / 2., (next_z - prev_z) / 2.,
-                 tex0_s, ang_edge1 / 2. / M_PI, tex0_s);
+                 tex0_s, ang_edge1 / 2. / M_PI, tex0_s, mvm);
 
   for (repeat = 0; repeat < ((pos == LAST) ? 2 : 1); repeat++)
     emit_vertex (r * cos_edge2, r * sin_edge2, z,
                  sin_edge2, -cos_edge2, 0,
                  cos_edge2 * (next_r - prev_r) / 2., sin_edge2 * (next_r - prev_r) / 2., (next_z - prev_z) / 2.,
-                 tex0_s, ang_edge2 / 2. / M_PI, tex0_s);
+                 tex0_s, ang_edge2 / 2. / M_PI, tex0_s, mvm);
 }
 
 
@@ -616,6 +616,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   float angle;
   GLfloat resistor_body_color[] = {0.31, 0.47, 0.64};
   GLfloat resistor_pin_color[] = {0.82, 0.82, 0.82};
+  GLfloat mvm[16];
 
   int strip;
   int no_strips = NUM_RESISTOR_STRIPS;
@@ -664,6 +665,9 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   glTranslatef (center_x, center_y, surface_depth + resistor_pin_bend_radius);
   glRotatef (angle * 180. / M_PI + 90, 0., 0., 1.);
   glRotatef (90, 1., 0., 0.);
+
+  /* Retrieve the resulting modelview matrix for the lighting calculations */
+  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)mvm);
 
   /* TEXTURE SETUP */
   glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
@@ -784,7 +788,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
                  strip_data[ring - 1].r, strip_data[ring - 1].z,
                  strip_data[ring    ].r, strip_data[ring    ].z,
                  strip_data[ring + 1].r, strip_data[ring + 1].z,
-                 strip_data[ring    ].tex0_s, resistor_width, pos);
+                 strip_data[ring    ].tex0_s, resistor_width, pos, mvm);
     }
   }
 #endif

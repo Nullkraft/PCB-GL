@@ -2267,6 +2267,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
   /* glStencilFunc (GL_GREATER, 1, 1); */           /* Draw only where stencil buffer is 0 */
 
+  glDepthMask (GL_FALSE);
 #if 0
   if (global_view_2d) {
     glBegin (GL_QUADS);
@@ -2299,6 +2300,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     glEnd ();
   }
 #endif
+  glDepthMask (GL_TRUE);
 
   ghid_draw_bg_image ();
 
