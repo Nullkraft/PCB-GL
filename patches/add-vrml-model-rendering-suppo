@@ -1,5 +1,5 @@
 Bottom: 6f874f86309af3e51178cd57c5958a08705996ac
-Top:    bcd2e275ca06ef659767eb9b936f73ec79ef490c
+Top:    c07826cc2137f33e5ba3083b084d59ba6117cfc5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -700,7 +700,7 @@ index 0000000..5a8bc27
 +
 +#endif /* __HIDGL_MATRIX_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
-index c2f552d..c54ff93 100644
+index c2f552d..577a4c4 100644
 --- a/src/hid/common/hidgl_package_acy_resistor.c
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
 @@ -20,11 +20,46 @@
@@ -759,7 +759,7 @@ index c2f552d..c54ff93 100644
  static GLfloat *debug_lines = NULL;
  static int no_debug_lines = 0;
  static int max_debug_lines = 0;
-@@ -601,36 +634,18 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
+@@ -601,36 +634,19 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
                   tex0_s, ang_edge2 / 2. / M_PI, tex0_s, mvm);
  }
  
@@ -782,6 +782,7 @@ index c2f552d..c54ff93 100644
 -  GLfloat resistor_pin_color[] = {0.82, 0.82, 0.82};
 -  GLfloat mvm[16];
 -
++  GLfloat mvm[16]; /* DOES NOT BELONG HERE */
 +  hidgl_geometry *geometry = hidgl_tristrip_geometry_new ();
    int strip;
    int no_strips = NUM_RESISTOR_STRIPS;
@@ -799,7 +800,7 @@ index c2f552d..c54ff93 100644
  
    /* XXX: Hard-coded magic */
    float resistor_pin_radius = MIL_TO_COORD (12.);
-@@ -643,100 +658,10 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -643,100 +659,14 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
    float resistor_taper2_offset = MIL_TO_COORD (33.);
    float resistor_bulge_offset = MIL_TO_COORD (45.);
    float resistor_bulge_width = MIL_TO_COORD (50.);
@@ -827,8 +828,9 @@ index c2f552d..c54ff93 100644
 -  glRotatef (90, 1., 0., 0.);
 -
 -  /* Retrieve the resulting modelview matrix for the lighting calculations */
--  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)mvm);
--
++  /* Retrieve the resulting modelview matrix for the lighting calculations  - DOES NOT BELONG HERE, GEOMETRY SHOULD BE STATIC */
+   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)mvm);
+ 
 -  /* TEXTURE SETUP */
 -  glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
 -  hidgl_shader_activate (resistor_program);
@@ -854,7 +856,7 @@ index c2f552d..c54ff93 100644
 -  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 -  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 -  glEnable (GL_TEXTURE_1D);
--
+ 
 -  glActiveTextureARB (GL_TEXTURE1_ARB);
 -  if (first_run) {
 -    glGenTextures (1, &texture2_resistor);
@@ -900,7 +902,7 @@ index c2f552d..c54ff93 100644
    glBegin (GL_TRIANGLE_STRIP);
  
    for (strip = 0; strip < no_strips; strip++) {
-@@ -791,39 +716,31 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -791,39 +721,31 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
                   strip_data[ring    ].tex0_s, resistor_width, pos, mvm);
      }
    }
@@ -958,7 +960,7 @@ index c2f552d..c54ff93 100644
    for (end = 0; end < 2; end++) {
      float end_sign = (end == 0) ? 1. : -1.;
  
-@@ -861,144 +778,210 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -861,144 +783,210 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
        glEnd ();
      }
  
@@ -1119,7 +1121,7 @@ index c2f552d..c54ff93 100644
 +  bool zero_ohm;
 +  static GLuint texture1;
 +  GLuint restore_sp;
-+
+ 
 +  /* XXX: Hard-coded magic */
 +  float resistor_bulge_radius = MIL_TO_COORD (43.);
 +  float resistor_pin_bend_radius = resistor_bulge_radius;
@@ -1133,7 +1135,7 @@ index c2f552d..c54ff93 100644
 +  center_x = first_pin->X + pin_delta_x / 2.;
 +  center_y = first_pin->Y + pin_delta_y / 2.;
 +  angle = atan2f (pin_delta_y, pin_delta_x);
- 
++
 +  /* TRANSFORM MATRIX */
    glPushMatrix ();
 -  glLoadIdentity ();
