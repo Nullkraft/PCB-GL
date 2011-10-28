@@ -1,0 +1,23 @@
+Bottom: 234724578b9ff4e3261cf0eb2e9d66633ea38263
+Top:    4b0a7974d69deff9a523d71a1853761d5d1029fd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-10-28 13:30:35 +0100
+
+Refresh of add-vrml-model-rendering-suppo
+
+---
+
+diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
+index ef41553..c23b3f2 100644
+--- a/src/hid/common/hidgl_package_acy_resistor.c
++++ b/src/hid/common/hidgl_package_acy_resistor.c
+@@ -906,8 +906,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+ 
+   center_x = first_pin->X + pin_delta_x / 2.;
+   center_y = first_pin->Y + pin_delta_y / 2.;
+-  angle = atan2f (second_pin->Y - first_pin->Y,
+-                  second_pin->X - first_pin->X);
++  angle = atan2f (pin_delta_y, pin_delta_x);
+ 
+   /* TRANSFORM MATRIX */
+   glPushMatrix ();
