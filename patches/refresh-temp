@@ -1,0 +1,32 @@
+Bottom: bcd2e275ca06ef659767eb9b936f73ec79ef490c
+Top:    c07826cc2137f33e5ba3083b084d59ba6117cfc5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-10-29 00:47:49 +0100
+
+Refresh of add-vrml-model-rendering-suppo
+
+---
+
+diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
+index c54ff93..577a4c4 100644
+--- a/src/hid/common/hidgl_package_acy_resistor.c
++++ b/src/hid/common/hidgl_package_acy_resistor.c
+@@ -643,6 +643,7 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
+ static hidgl_geometry *
+ body_geometry (float resistor_pin_spacing)
+ {
++  GLfloat mvm[16]; /* DOES NOT BELONG HERE */
+   hidgl_geometry *geometry = hidgl_tristrip_geometry_new ();
+   int strip;
+   int no_strips = NUM_RESISTOR_STRIPS;
+@@ -662,6 +663,10 @@ body_geometry (float resistor_pin_spacing)
+   float resistor_pin_bend_radius = resistor_bulge_radius;
+   float resistor_width = resistor_pin_spacing - 2. * resistor_pin_bend_radius;
+ 
++  /* Retrieve the resulting modelview matrix for the lighting calculations  - DOES NOT BELONG HERE, GEOMETRY SHOULD BE STATIC */
++  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)mvm);
++
++
+   glBegin (GL_TRIANGLE_STRIP);
+ 
+   for (strip = 0; strip < no_strips; strip++) {
