@@ -906,8 +906,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 
   center_x = first_pin->X + pin_delta_x / 2.;
   center_y = first_pin->Y + pin_delta_y / 2.;
-  angle = atan2f (second_pin->Y - first_pin->Y,
-                  second_pin->X - first_pin->X);
+  angle = atan2f (pin_delta_y, pin_delta_x);
 
   /* TRANSFORM MATRIX */
   glPushMatrix ();
