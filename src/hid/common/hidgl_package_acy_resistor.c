@@ -898,10 +898,16 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   float resistor_bulge_radius = MIL_TO_COORD (43.);
   float resistor_pin_bend_radius = resistor_bulge_radius;
 
-  center_x = (element->Pin[0].X + element->Pin[1].X) / 2.;
-  center_y = (element->Pin[0].Y + element->Pin[1].Y) / 2.;
-  angle = atan2f (element->Pin[1].Y - element->Pin[0].Y,
-                  element->Pin[1].X - element->Pin[0].X);
+  PinType *first_pin = element->Pin->data;
+  PinType *second_pin = g_list_next (element->Pin)->data;
+
+  Coord pin_delta_x = second_pin->X - first_pin->X;
+  Coord pin_delta_y = second_pin->Y - first_pin->Y;
+
+  center_x = first_pin->X + pin_delta_x / 2.;
+  center_y = first_pin->Y + pin_delta_y / 2.;
+  angle = atan2f (second_pin->Y - first_pin->Y,
+                  second_pin->X - first_pin->X);
 
   /* TRANSFORM MATRIX */
   glPushMatrix ();
