@@ -1,5 +1,5 @@
 Bottom: 680265e7759db43f397dcfe95d7e667d6c8b9189
-Top:    e9cafbb2d7ca5c19bcab5a9c101a036e0bcdc690
+Top:    234724578b9ff4e3261cf0eb2e9d66633ea38263
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -700,7 +700,7 @@ index 0000000..5a8bc27
 +
 +#endif /* __HIDGL_MATRIX_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
-index c785b61..9aa8bb0 100644
+index c785b61..ef41553 100644
 --- a/src/hid/common/hidgl_package_acy_resistor.c
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
 @@ -20,11 +20,46 @@
@@ -954,7 +954,7 @@ index c785b61..9aa8bb0 100644
    for (end = 0; end < 2; end++) {
      float end_sign = (end == 0) ? 1. : -1.;
  
-@@ -857,144 +778,201 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -857,144 +778,207 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
        glEnd ();
      }
  
@@ -1114,16 +1114,22 @@ index c785b61..9aa8bb0 100644
 +  bool zero_ohm;
 +  static GLuint texture1;
 +  GLuint restore_sp;
- 
++
 +  /* XXX: Hard-coded magic */
 +  float resistor_bulge_radius = MIL_TO_COORD (43.);
 +  float resistor_pin_bend_radius = resistor_bulge_radius;
 +
-+  center_x = (element->Pin[0].X + element->Pin[1].X) / 2.;
-+  center_y = (element->Pin[0].Y + element->Pin[1].Y) / 2.;
-+  angle = atan2f (element->Pin[1].Y - element->Pin[0].Y,
-+                  element->Pin[1].X - element->Pin[0].X);
++  PinType *first_pin = element->Pin->data;
++  PinType *second_pin = g_list_next (element->Pin)->data;
 +
++  Coord pin_delta_x = second_pin->X - first_pin->X;
++  Coord pin_delta_y = second_pin->Y - first_pin->Y;
++
++  center_x = first_pin->X + pin_delta_x / 2.;
++  center_y = first_pin->Y + pin_delta_y / 2.;
++  angle = atan2f (second_pin->Y - first_pin->Y,
++                  second_pin->X - first_pin->X);
+ 
 +  /* TRANSFORM MATRIX */
    glPushMatrix ();
 -  glLoadIdentity ();
