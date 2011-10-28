@@ -916,7 +916,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
   hidgl_flush_triangles (&buffer);
 
   glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
-                GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
+                GL_COLOR_BUFFER_BIT |                   /* the colour buffer write mask etc.. for part way restore */
+                GL_DEPTH_BUFFER_BIT);
   glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
   glDepthFunc (GL_ALWAYS);
   glDepthMask (GL_FALSE);

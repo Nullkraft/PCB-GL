@@ -2013,7 +2013,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
       /* Mask out drilled holes */
       hidgl_flush_triangles (&buffer);
-      glPushAttrib (GL_COLOR_BUFFER_BIT);
+      glPushAttrib (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       glColorMask (0, 0, 0, 0);
       glDepthMask (GL_FALSE);
       if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
