@@ -643,6 +643,7 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
 static hidgl_geometry *
 body_geometry (float resistor_pin_spacing)
 {
+  GLfloat mvm[16]; /* DOES NOT BELONG HERE */
   hidgl_geometry *geometry = hidgl_tristrip_geometry_new ();
   int strip;
   int no_strips = NUM_RESISTOR_STRIPS;
@@ -661,6 +662,10 @@ body_geometry (float resistor_pin_spacing)
 
   float resistor_pin_bend_radius = resistor_bulge_radius;
   float resistor_width = resistor_pin_spacing - 2. * resistor_pin_bend_radius;
+
+  /* Retrieve the resulting modelview matrix for the lighting calculations  - DOES NOT BELONG HERE, GEOMETRY SHOULD BE STATIC */
+  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)mvm);
+
 
   glBegin (GL_TRIANGLE_STRIP);
 
