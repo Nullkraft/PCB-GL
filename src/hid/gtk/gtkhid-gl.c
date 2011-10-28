@@ -2300,6 +2300,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     glEnd ();
   }
 #endif
+
   glDepthMask (GL_TRUE);
 
   ghid_draw_bg_image ();
