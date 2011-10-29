@@ -614,11 +614,11 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 
   float center_x, center_y;
   float angle;
-  GLfloat resistor_body_color[] = {0.31, 0.47, 0.64};
-  GLfloat resistor_pin_color[] = {0.82, 0.82, 0.82};
-  GLfloat resistor_warn_pin_color[] = {0.82, 0.20, 0.20};
-  GLfloat resistor_found_pin_color[] = {0.20, 0.82, 0.20};
-  GLfloat resistor_selected_pin_color[] = {0.00, 0.50, 0.82};
+  GLfloat resistor_body_color[] =         {0.31, 0.47, 0.64};
+  GLfloat resistor_pin_color[] =          {0.82, 0.82, 0.82};
+  GLfloat resistor_warn_pin_color[] =     {0.82, 0.20, 0.20};
+  GLfloat resistor_found_pin_color[] =    {0.20, 0.82, 0.20};
+  GLfloat resistor_selected_pin_color[] = {0.00, 0.70, 0.82};
   GLfloat *pin_color;
 
   GLfloat mvm[16];
@@ -832,13 +832,13 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
     pin = (end == 1) ? first_pin : second_pin;
 
     if (TEST_FLAG (WARNFLAG, pin))
-      pin_color = &resistor_warn_pin_color;
+      pin_color = resistor_warn_pin_color;
     else if (TEST_FLAG (SELECTEDFLAG, pin))
-      pin_color = &resistor_selected_pin_color;
+      pin_color = resistor_selected_pin_color;
     else if (TEST_FLAG (FOUNDFLAG, pin))
-      pin_color = &resistor_found_pin_color;
+      pin_color = resistor_found_pin_color;
     else
-      pin_color = &resistor_pin_color;
+      pin_color = resistor_pin_color;
 
     glColor3f (pin_color[0] / 1.5,
                pin_color[1] / 1.5,
