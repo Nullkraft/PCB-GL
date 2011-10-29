@@ -1,5 +1,5 @@
 Bottom: 7ebb5f72d48813bd0c35271132075c5a90581e80
-Top:    db208865d19bf396d5cd5ce75131df61b3585ade
+Top:    ba4ff3556919545d7b60a37fe71e7b44c446d725
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
 
@@ -513,7 +513,7 @@ index 9cfeed0..0b6d833 100644
  #endif /* PCB_HID_COMMON_HIDGL_H  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
 new file mode 100644
-index 0000000..9c52acf
+index 0000000..a4071c1
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
 @@ -0,0 +1,1021 @@
@@ -1133,11 +1133,11 @@ index 0000000..9c52acf
 +
 +  float center_x, center_y;
 +  float angle;
-+  GLfloat resistor_body_color[] = {0.31, 0.47, 0.64};
-+  GLfloat resistor_pin_color[] = {0.82, 0.82, 0.82};
-+  GLfloat resistor_warn_pin_color[] = {0.82, 0.20, 0.20};
-+  GLfloat resistor_found_pin_color[] = {0.20, 0.82, 0.20};
-+  GLfloat resistor_selected_pin_color[] = {0.00, 0.50, 0.82};
++  GLfloat resistor_body_color[] =         {0.31, 0.47, 0.64};
++  GLfloat resistor_pin_color[] =          {0.82, 0.82, 0.82};
++  GLfloat resistor_warn_pin_color[] =     {0.82, 0.20, 0.20};
++  GLfloat resistor_found_pin_color[] =    {0.20, 0.82, 0.20};
++  GLfloat resistor_selected_pin_color[] = {0.00, 0.70, 0.82};
 +  GLfloat *pin_color;
 +
 +  GLfloat mvm[16];
@@ -1351,13 +1351,13 @@ index 0000000..9c52acf
 +    pin = (end == 1) ? first_pin : second_pin;
 +
 +    if (TEST_FLAG (WARNFLAG, pin))
-+      pin_color = &resistor_warn_pin_color;
++      pin_color = resistor_warn_pin_color;
 +    else if (TEST_FLAG (SELECTEDFLAG, pin))
-+      pin_color = &resistor_selected_pin_color;
++      pin_color = resistor_selected_pin_color;
 +    else if (TEST_FLAG (FOUNDFLAG, pin))
-+      pin_color = &resistor_found_pin_color;
++      pin_color = resistor_found_pin_color;
 +    else
-+      pin_color = &resistor_pin_color;
++      pin_color = resistor_pin_color;
 +
 +    glColor3f (pin_color[0] / 1.5,
 +               pin_color[1] / 1.5,
