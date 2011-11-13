@@ -40,6 +40,7 @@ extern triangle_buffer buffer;
 extern float global_depth;
 
 extern hidgl_shader *circular_program;
+extern hidgl_shader *resistor_program;
 
 void hidgl_flush_triangles (triangle_buffer *buffer);
 void hidgl_ensure_vertex_space (triangle_buffer *buffer, int count);
@@ -132,5 +133,8 @@ int hidgl_stencil_bits (void);
 int hidgl_assign_clear_stencil_bit (void);
 void hidgl_return_stencil_bit (int bit);
 void hidgl_reset_stencil_usage (void);
+
+/* hidgl_pacakge_acy_resistor.c */
+void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
 
 #endif /* PCB_HID_COMMON_HIDGL_H  */
