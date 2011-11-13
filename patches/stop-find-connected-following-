@@ -1,0 +1,33 @@
+Bottom: d964cc621b8160a07ff08335ad6d03a24dc1abcf
+Top:    d964cc621b8160a07ff08335ad6d03a24dc1abcf
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-11-13 00:15:07 +0000
+
+Stop "find connected" following rat-lines. Fixes confusing output.
+
+Suppose we have two nets, A and B, and some components. If we connect
+a pin of a component which was supposed to be connected to net A, to
+net B, the "f" (find connected) action will falsely show the entirity
+of net A and net B connected to each other. In reality, the nets are
+not electrically connected, it is just the ratline between the
+mis-connected component pin (which is connected to Net B), and net A,
+where the ratline for that pin should end up.
+
+It MIGHT be better if we fix this bug by not adding rat-lines to shorted
+connections, as often those rat-lines would take some convoluted route
+through the copper of the net which is shorted to that connection
+end-point. These rat-line(s) would no longer be spatially associated
+with the mis-connected wiring, and encourage the user to further short
+net A and net B together to complete the ratline.
+
+This bug was a contributing factor to a mistake in a production board
+I made recently, where there as a last step in production, I added a short
+between two different ground planes (analogue and digital). The "find
+connected" action, "f" showed them connected together (as I expected),
+but unfortunately, due to a thermal I left out, they were not actually
+connected - despite PCB's green rendering suggesting that they were.
+
+
+---
+
+
