@@ -1,7 +1,7 @@
-Bottom: 83b906fc5b127261ee77d432bcbfe1787db0de04
-Top:    ecadb226c6066b729ddba62734d572b91651bb20
+Bottom: d096756af1f7004f439bb292f5e02f923d5e00ed
+Top:    1f2402f765abda8a48232de1521dce277c68dd83
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-10-26 22:36:15 +0100
+Date:   2011-11-13 00:19:05 +0000
 
 Demo of exporter specific export routine
 
@@ -928,7 +928,7 @@ index d372f8a..c003d42 100644
  
    ghid_draw_grid (&region);
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 7f2ae8b..243ca49 100644
+index b67d3cc..e95d539 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -35,7 +35,7 @@ RCSID ("$Id$");
@@ -1131,7 +1131,7 @@ index 7f2ae8b..243ca49 100644
  
    if (the_file)
      fprintf (the_file, "showpage\n");
-@@ -786,7 +823,7 @@ corner (FILE *fh, Coord x, Coord y, Coord dx, Coord dy)
+@@ -786,7 +823,7 @@ corner (FILE *fh, Coord x, Coord y, int dx, int dy)
  }
  
  static int
