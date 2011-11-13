@@ -10,7 +10,7 @@ a pin of a component which was supposed to be connected to net A, to
 net B, the "f" (find connected) action will falsely show the entirity
 of net A and net B connected to each other. In reality, the nets are
 not electrically connected, it is just the ratline between the
-mis-connected component pin (which is connected to Net B), and net A,
+mis-connected component pin (mis-connected to Net B), and net A,
 where the ratline for that pin should end up.
 
 It MIGHT be better if we fix this bug by not adding rat-lines to shorted
