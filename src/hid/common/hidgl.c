@@ -104,6 +104,7 @@ PFNGLUSEPROGRAMPROC         glUseProgram        = NULL;
 triangle_buffer buffer;
 float global_depth = 0;
 hidgl_shader *circular_program = NULL;
+hidgl_shader *resistor_program = NULL;
 
 static bool in_context = false;
 
@@ -915,8 +916,11 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
   hidgl_flush_triangles (&buffer);
 
   glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
-                GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
+                GL_COLOR_BUFFER_BIT |                   /* the colour buffer write mask etc.. for part way restore */
+                GL_DEPTH_BUFFER_BIT);
   glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
+  glDepthFunc (GL_ALWAYS);
+  glDepthMask (GL_FALSE);
 
   if (use_new_stencil)
     {
@@ -982,7 +986,34 @@ load_built_in_shaders (void)
           "  gl_FragColor = gl_Color;\n"
           "}\n";
 
+  char *resistor_fs_source =
+          "uniform sampler1D detail_tex;\n"
+          "uniform sampler2D bump_tex;\n"
+          "\n"
+          "void main()\n"
+          "{\n"
+          "  vec3 bumpNormal = texture2D (bump_tex, gl_TexCoord[1].st).rgb;\n"
+          "  vec3 detailColor = texture1D (detail_tex, gl_TexCoord[0].s).rgb;\n"
+          "\n"
+          "  /* Uncompress vectors ([0, 1] -> [-1, 1]) */\n"
+          "  vec3 lightVectorFinal = -1.0 + 2.0 * gl_Color.rgb;\n"
+          "  vec3 halfVectorFinal = -1.0 + 2.0 * gl_TexCoord[2].xyz;\n"
+          "  vec3 bumpNormalVectorFinal = -1.0 + 2.0 * bumpNormal;\n"
+          "\n"
+          "  /* Compute diffuse factor */\n"
+          "  float diffuse = clamp(dot(bumpNormalVectorFinal,\n"
+          "                            lightVectorFinal),0.0, 1.0);\n"
+          "  float specular = pow(clamp(dot(bumpNormalVectorFinal,\n"
+          "                                 halfVectorFinal), 0.0, 1.0),\n"
+          "                       2.0);\n"
+          "  specular *= 0.4;\n"
+          "\n"
+          "   gl_FragColor = vec4(detailColor * (0.3 + 0.7 * diffuse) + \n"
+          "                    vec3(specular, specular, specular), 1.0);\n"
+          "}\n";
+
   circular_program = hidgl_shader_new ("circular_rendering", NULL, circular_fs_source);
+  resistor_program = hidgl_shader_new ("resistor_rendering", NULL, resistor_fs_source);
 }
 
 void
