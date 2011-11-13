@@ -1560,7 +1560,7 @@ GhidDrawMask (int side, BoxType * screen)
   } else {
     glBindTexture (GL_TEXTURE_2D, texture);
   }
-  glUseProgram (0);
+  hidgl_shader_activate (NULL);
 
   if (1) {
     GLfloat s_params[] = {0.0001, 0., 0., 0.};
@@ -1841,6 +1841,11 @@ frontE_package_callback (const BoxType * b, void *cl)
       if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "cap_15000V_2500pF.fp") == 0) {
         int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
         hidgl_draw_350x800mil_cap (element, compute_depth (layer_group), BOARD_THICKNESS);
+      }
+
+      if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "VRML_TEST") == 0) {
+        int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
+        hidgl_draw_vrml (element, compute_depth (layer_group), BOARD_THICKNESS, "dummy_filename.wrl");
       }
     }
   return 1;
@@ -2755,125 +2760,27 @@ ghid_finish_debug_draw (void)
   ghid_end_drawing (gport, gport->drawing_area);
 }
 
-static double
-determinant_2x2 (double m[2][2])
-{
-  double det;
-  det = m[0][0] * m[1][1] -
-        m[0][1] * m[1][0];
-  return det;
-}
-
-#if 0
-static float
-determinant_4x4 (float m[4][4])
-{
-  float det;
-  det = m[0][3] * m[1][2] * m[2][1] * m[3][0]-m[0][2] * m[1][3] * m[2][1] * m[3][0] -
-        m[0][3] * m[1][1] * m[2][2] * m[3][0]+m[0][1] * m[1][3] * m[2][2] * m[3][0] +
-        m[0][2] * m[1][1] * m[2][3] * m[3][0]-m[0][1] * m[1][2] * m[2][3] * m[3][0] -
-        m[0][3] * m[1][2] * m[2][0] * m[3][1]+m[0][2] * m[1][3] * m[2][0] * m[3][1] +
-        m[0][3] * m[1][0] * m[2][2] * m[3][1]-m[0][0] * m[1][3] * m[2][2] * m[3][1] -
-        m[0][2] * m[1][0] * m[2][3] * m[3][1]+m[0][0] * m[1][2] * m[2][3] * m[3][1] +
-        m[0][3] * m[1][1] * m[2][0] * m[3][2]-m[0][1] * m[1][3] * m[2][0] * m[3][2] -
-        m[0][3] * m[1][0] * m[2][1] * m[3][2]+m[0][0] * m[1][3] * m[2][1] * m[3][2] +
-        m[0][1] * m[1][0] * m[2][3] * m[3][2]-m[0][0] * m[1][1] * m[2][3] * m[3][2] -
-        m[0][2] * m[1][1] * m[2][0] * m[3][3]+m[0][1] * m[1][2] * m[2][0] * m[3][3] +
-        m[0][2] * m[1][0] * m[2][1] * m[3][3]-m[0][0] * m[1][2] * m[2][1] * m[3][3] -
-        m[0][1] * m[1][0] * m[2][2] * m[3][3]+m[0][0] * m[1][1] * m[2][2] * m[3][3];
-   return det;
-}
-#endif
-
-static void
-invert_2x2 (double m[2][2], double out[2][2])
-{
-  double scale = 1 / determinant_2x2 (m);
-  out[0][0] =  m[1][1] * scale;
-  out[0][1] = -m[0][1] * scale;
-  out[1][0] = -m[1][0] * scale;
-  out[1][1] =  m[0][0] * scale;
-}
-
-#if 0
-static void
-invert_4x4 (float m[4][4], float out[4][4])
-{
-  float scale = 1 / determinant_4x4 (m);
-
-  out[0][0] = (m[1][2] * m[2][3] * m[3][1] - m[1][3] * m[2][2] * m[3][1] +
-               m[1][3] * m[2][1] * m[3][2] - m[1][1] * m[2][3] * m[3][2] -
-               m[1][2] * m[2][1] * m[3][3] + m[1][1] * m[2][2] * m[3][3]) * scale;
-  out[0][1] = (m[0][3] * m[2][2] * m[3][1] - m[0][2] * m[2][3] * m[3][1] -
-               m[0][3] * m[2][1] * m[3][2] + m[0][1] * m[2][3] * m[3][2] +
-               m[0][2] * m[2][1] * m[3][3] - m[0][1] * m[2][2] * m[3][3]) * scale;
-  out[0][2] = (m[0][2] * m[1][3] * m[3][1] - m[0][3] * m[1][2] * m[3][1] +
-               m[0][3] * m[1][1] * m[3][2] - m[0][1] * m[1][3] * m[3][2] -
-               m[0][2] * m[1][1] * m[3][3] + m[0][1] * m[1][2] * m[3][3]) * scale;
-  out[0][3] = (m[0][3] * m[1][2] * m[2][1] - m[0][2] * m[1][3] * m[2][1] -
-               m[0][3] * m[1][1] * m[2][2] + m[0][1] * m[1][3] * m[2][2] +
-               m[0][2] * m[1][1] * m[2][3] - m[0][1] * m[1][2] * m[2][3]) * scale;
-  out[1][0] = (m[1][3] * m[2][2] * m[3][0] - m[1][2] * m[2][3] * m[3][0] -
-               m[1][3] * m[2][0] * m[3][2] + m[1][0] * m[2][3] * m[3][2] +
-               m[1][2] * m[2][0] * m[3][3] - m[1][0] * m[2][2] * m[3][3]) * scale;
-  out[1][1] = (m[0][2] * m[2][3] * m[3][0] - m[0][3] * m[2][2] * m[3][0] +
-               m[0][3] * m[2][0] * m[3][2] - m[0][0] * m[2][3] * m[3][2] -
-               m[0][2] * m[2][0] * m[3][3] + m[0][0] * m[2][2] * m[3][3]) * scale;
-  out[1][2] = (m[0][3] * m[1][2] * m[3][0] - m[0][2] * m[1][3] * m[3][0] -
-               m[0][3] * m[1][0] * m[3][2] + m[0][0] * m[1][3] * m[3][2] +
-               m[0][2] * m[1][0] * m[3][3] - m[0][0] * m[1][2] * m[3][3]) * scale;
-  out[1][3] = (m[0][2] * m[1][3] * m[2][0] - m[0][3] * m[1][2] * m[2][0] +
-               m[0][3] * m[1][0] * m[2][2] - m[0][0] * m[1][3] * m[2][2] -
-               m[0][2] * m[1][0] * m[2][3] + m[0][0] * m[1][2] * m[2][3]) * scale;
-  out[2][0] = (m[1][1] * m[2][3] * m[3][0] - m[1][3] * m[2][1] * m[3][0] +
-               m[1][3] * m[2][0] * m[3][1] - m[1][0] * m[2][3] * m[3][1] -
-               m[1][1] * m[2][0] * m[3][3] + m[1][0] * m[2][1] * m[3][3]) * scale;
-  out[2][1] = (m[0][3] * m[2][1] * m[3][0] - m[0][1] * m[2][3] * m[3][0] -
-               m[0][3] * m[2][0] * m[3][1] + m[0][0] * m[2][3] * m[3][1] +
-               m[0][1] * m[2][0] * m[3][3] - m[0][0] * m[2][1] * m[3][3]) * scale;
-  out[2][2] = (m[0][1] * m[1][3] * m[3][0] - m[0][3] * m[1][1] * m[3][0] +
-               m[0][3] * m[1][0] * m[3][1] - m[0][0] * m[1][3] * m[3][1] -
-               m[0][1] * m[1][0] * m[3][3] + m[0][0] * m[1][1] * m[3][3]) * scale;
-  out[2][3] = (m[0][3] * m[1][1] * m[2][0] - m[0][1] * m[1][3] * m[2][0] -
-               m[0][3] * m[1][0] * m[2][1] + m[0][0] * m[1][3] * m[2][1] +
-               m[0][1] * m[1][0] * m[2][3] - m[0][0] * m[1][1] * m[2][3]) * scale;
-  out[3][0] = (m[1][2] * m[2][1] * m[3][0] - m[1][1] * m[2][2] * m[3][0] -
-               m[1][2] * m[2][0] * m[3][1] + m[1][0] * m[2][2] * m[3][1] +
-               m[1][1] * m[2][0] * m[3][2] - m[1][0] * m[2][1] * m[3][2]) * scale;
-  out[3][1] = (m[0][1] * m[2][2] * m[3][0] - m[0][2] * m[2][1] * m[3][0] +
-               m[0][2] * m[2][0] * m[3][1] - m[0][0] * m[2][2] * m[3][1] -
-               m[0][1] * m[2][0] * m[3][2] + m[0][0] * m[2][1] * m[3][2]) * scale;
-  out[3][2] = (m[0][2] * m[1][1] * m[3][0] - m[0][1] * m[1][2] * m[3][0] -
-               m[0][2] * m[1][0] * m[3][1] + m[0][0] * m[1][2] * m[3][1] +
-               m[0][1] * m[1][0] * m[3][2] - m[0][0] * m[1][1] * m[3][2]) * scale;
-  out[3][3] = (m[0][1] * m[1][2] * m[2][0] - m[0][2] * m[1][1] * m[2][0] +
-               m[0][2] * m[1][0] * m[2][1] - m[0][0] * m[1][2] * m[2][1] -
-               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
-}
-#endif
-
-
 static bool
 ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y)
 {
-  double mat[2][2];
-  double inv_mat[2][2];
-  double x, y;
-  double fvz;
-  double vpx, vpy;
-  double fvx, fvy;
+  float mat[2][2];
+  float inv_mat[2][2];
+  float x, y;
+  float fvz;
+  float vpx, vpy;
+  float fvx, fvy;
   GtkWidget *widget = gport->drawing_area;
 
   /* FIXME: Dirty kludge.. I know what our view parameters are here */
-  double aspect = (double)widget->allocation.width / (double)widget->allocation.height;
-  double width = 2. * aspect;
-  double height = 2.;
-  double near_plane = 1.;
-  /* double far_plane = 24.; */
+  float aspect = (float)widget->allocation.width / (float)widget->allocation.height;
+  float width = 2. * aspect;
+  float height = 2.;
+  float near_plane = 1.;
+  /* float far_plane = 24.; */
 
   /* This is nasty beyond words, but I'm lazy and translating directly
    * from some untested maths I derived which used this notation */
-  double A, B, C, D, E, F, G, H, I, J, K, L;
+  float A, B, C, D, E, F, G, H, I, J, K, L;
 
   /* NB: last_modelview_matrix is transposed in memory! */
   A = last_modelview_matrix[0][0];
