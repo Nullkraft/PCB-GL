@@ -168,7 +168,7 @@ netlist_find (LibraryMenuType * net, LibraryEntryType * pin)
   int x, y;
   if (pin_name_to_xy (net->Entry, &x, &y))
     return;
-  LookupConnection (x, y, 1, 1, FOUNDFLAG);
+  LookupConnection (x, y, 1, 1, FOUNDFLAG, true);
 }
 
 static void
@@ -177,7 +177,7 @@ netlist_select (LibraryMenuType * net, LibraryEntryType * pin)
   int x, y;
   if (pin_name_to_xy (net->Entry, &x, &y))
     return;
-  LookupConnection (x, y, 1, 1, SELECTEDFLAG);
+  LookupConnection (x, y, 1, 1, SELECTEDFLAG, true);
 }
 
 static void
