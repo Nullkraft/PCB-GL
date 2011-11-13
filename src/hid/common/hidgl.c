@@ -1133,6 +1133,8 @@ hidgl_init (void)
     printf ("Failed to initialise shader support\n");
 #endif
 
+  hidgl_init_acy_resistor ();
+
   called = true;
 }
 
