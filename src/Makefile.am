@@ -178,7 +178,16 @@ GL_SRCS= \
 	hid/common/hidgl.c \
 	hid/common/hidgl.h \
 	hid/common/glext.h \
+	hid/common/hidgl_geometry.c \
+	hid/common/hidgl_geometry.h \
+	hid/common/hidgl_material.c \
+	hid/common/hidgl_material.h \
+	hid/common/hidgl_matrix.c \
+	hid/common/hidgl_matrix.h \
 	hid/common/hidgl_package_acy_resistor.c \
+	hid/common/hidgl_package_vrml.c \
+	hid/common/hidgl_package_vrml_y.y \
+	hid/common/hidgl_package_vrml_l.l \
 	hid/common/hidgl_shaders.c \
 	hid/common/hidgl_shaders.h \
 	hid/common/trackball.c \

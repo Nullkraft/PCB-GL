@@ -30,6 +30,8 @@
 
 #include "hid_draw.h"
 #include "hidgl.h"
+#include "hidgl_material.h"
+#include "hidgl_geometry.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -48,6 +50,38 @@ extern PFNGLUNIFORM1IPROC          glUniform1i;
 extern PFNGLACTIVETEXTUREARBPROC   glActiveTextureARB;
 
 #endif
+
+typedef struct _hidgl_shape hidgl_shape;
+typedef struct _hidgl_transform hidgl_transform;
+
+hidgl_shape *hidgl_shape_new (hidgl_geometry *geometry, hidgl_material *material);
+hidgl_geometry *hidgl_tristrip_geometry_new ();
+hidgl_transform *hidgl_transform_new ();
+void hidgl_transform_rotate (hidgl_transform *transform, float angle, float x, float y, float z);
+void hidgl_transform_add_child (hidgl_transform *transform, hidgl_shape *shape);
+
+/* Static data we initialise for the model */
+typedef struct {
+  hidgl_transform *root;
+  hidgl_material *resistor_body_mat;
+  hidgl_material *resistor_pins_mat;
+  hidgl_material *selected_pins_mat;
+  hidgl_geometry *resistor_body_geom;
+  hidgl_geometry *resistor_pins_geom;
+  GLuint resistor_body_bump_texture;
+  GLuint zero_ohm_body_bump_texture;
+} model_data;
+
+static model_data model = {
+    .root = NULL,
+    .resistor_body_mat = NULL,
+    .resistor_pins_mat = NULL,
+    .selected_pins_mat = NULL,
+    .resistor_body_geom = NULL,
+    .resistor_pins_geom = NULL,
+    .resistor_body_bump_texture = 0,
+    .zero_ohm_body_bump_texture = 0
+};
 
 static int
 compute_offset (int x, int y, int width, int height)
@@ -435,8 +469,6 @@ setup_hvdiode_texture (ElementType *element, GLfloat *body_color)
 }
 
 
-static void invert_4x4 (float m[4][4], float out[4][4]);
-
 static GLfloat *debug_lines = NULL;
 static int no_debug_lines = 0;
 static int max_debug_lines = 0;
@@ -716,41 +748,19 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
                  tex0_s, ang_edge2 / 2. / M_PI, tex0_s, mvm);
 }
 
-
 #define NUM_RESISTOR_STRIPS 100
 #define NUM_PIN_RINGS 15
 
 /* XXX: HARDCODED MAGIC */
 #define BOARD_THICKNESS MM_TO_COORD (1.6)
 
-void
-hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness)
+static hidgl_geometry *
+body_geometry (float resistor_pin_spacing)
 {
-
-  float center_x, center_y;
-  float angle;
-  GLfloat resistor_body_color[] =         {0.31, 0.47, 0.64};
-  GLfloat resistor_pin_color[] =          {0.82, 0.82, 0.82};
-  GLfloat resistor_warn_pin_color[] =     {0.82, 0.20, 0.20};
-  GLfloat resistor_found_pin_color[] =    {0.20, 0.82, 0.20};
-  GLfloat resistor_selected_pin_color[] = {0.00, 0.70, 0.82};
-  GLfloat *pin_color;
-
-  GLfloat mvm[16];
-
+  GLfloat mvm[16]; /* DOES NOT BELONG HERE */
+  hidgl_geometry *geometry = hidgl_tristrip_geometry_new ();
   int strip;
   int no_strips = NUM_RESISTOR_STRIPS;
-  int ring;
-  int no_rings = NUM_PIN_RINGS;
-  int end;
-  bool zero_ohm;
-
-  static bool first_run = true;
-  static GLuint texture1;
-  static GLuint texture2_resistor;
-  static GLuint texture2_zero_ohm;
-
-  GLuint restore_sp;
 
   /* XXX: Hard-coded magic */
   float resistor_pin_radius = MIL_TO_COORD (12.);
@@ -763,101 +773,14 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   float resistor_taper2_offset = MIL_TO_COORD (33.);
   float resistor_bulge_offset = MIL_TO_COORD (45.);
   float resistor_bulge_width = MIL_TO_COORD (50.);
-  float resistor_pin_spacing = MIL_TO_COORD (400.);
-
-  float pin_penetration_depth = MIL_TO_COORD (30.) + board_thickness;
 
   float resistor_pin_bend_radius = resistor_bulge_radius;
   float resistor_width = resistor_pin_spacing - 2. * resistor_pin_bend_radius;
 
-  PinType *first_pin = element->Pin->data;
-  PinType *second_pin = g_list_next (element->Pin)->data;
-  PinType *pin;
-
-  Coord pin_delta_x = second_pin->X - first_pin->X;
-  Coord pin_delta_y = second_pin->Y - first_pin->Y;
-
-  center_x = first_pin->X + pin_delta_x / 2.;
-  center_y = first_pin->Y + pin_delta_y / 2.;
-  angle = atan2f (pin_delta_y, pin_delta_x);
-
-  /* TRANSFORM MATRIX */
-  glPushMatrix ();
-  glTranslatef (center_x, center_y, surface_depth + resistor_pin_bend_radius);
-  glRotatef (angle * 180. / M_PI + 90, 0., 0., 1.);
-  glRotatef (90, 1., 0., 0.);
-
-  /* Retrieve the resulting modelview matrix for the lighting calculations */
+  /* Retrieve the resulting modelview matrix for the lighting calculations  - DOES NOT BELONG HERE, GEOMETRY SHOULD BE STATIC */
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)mvm);
 
-  /* TEXTURE SETUP */
-  glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
-  hidgl_shader_activate (resistor_program);
 
-  {
-    GLuint program = hidgl_shader_get_program (resistor_program);
-    int tex0_location = glGetUniformLocation (program, "detail_tex");
-    int tex1_location = glGetUniformLocation (program, "bump_tex");
-    glUniform1i (tex0_location, 0);
-    glUniform1i (tex1_location, 1);
-  }
-
-  glActiveTextureARB (GL_TEXTURE0_ARB);
-//  if (first_run) {
-    glGenTextures (1, &texture1);
-    glBindTexture (GL_TEXTURE_1D, texture1);
-    zero_ohm = setup_resistor_texture (element, resistor_body_color, 3);
-//  } else {
-//    glBindTexture (GL_TEXTURE_1D, texture1);
-//  }
-  glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  glEnable (GL_TEXTURE_1D);
-
-  glActiveTextureARB (GL_TEXTURE1_ARB);
-  if (first_run) {
-    glGenTextures (1, &texture2_resistor);
-    glBindTexture (GL_TEXTURE_2D, texture2_resistor);
-    load_texture_from_png ("resistor_bump.png", true);
-
-    glGenTextures (1, &texture2_zero_ohm);
-    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohm);
-    load_texture_from_png ("zero_ohm_bump.png", true);
-  }
-  if (zero_ohm)
-    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohm);
-  else
-    glBindTexture (GL_TEXTURE_2D, texture2_resistor);
-
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-  glEnable (GL_TEXTURE_2D);
-  glActiveTextureARB (GL_TEXTURE0_ARB);
-
-  /* COLOR / MATERIAL SETUP */
-//  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-//  glEnable (GL_COLOR_MATERIAL);
-
-  glPushAttrib (GL_CURRENT_BIT);
-//  glColor4f (1., 1., 1., 1.);
-  glColor4f (0., 0., 1., 0.);
-
-  glDisable (GL_LIGHTING);
-
-  if (1) {
-    GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
-    GLfloat specular[] = {0.5f, 0.5f, 0.5f, 1.0f};
-    GLfloat shininess = 20.;
-    glMaterialfv (GL_FRONT_AND_BACK, GL_EMISSION, emission);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
-  }
-
-#if 1
   glBegin (GL_TRIANGLE_STRIP);
 
   for (strip = 0; strip < no_strips; strip++) {
@@ -912,38 +835,34 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
                  strip_data[ring    ].tex0_s, resistor_width, pos, mvm);
     }
   }
-#endif
-
   glEnd ();
 
-  glActiveTextureARB (GL_TEXTURE1_ARB);
-  glDisable (GL_TEXTURE_2D);
-  glBindTexture (GL_TEXTURE_2D, 0);
+  return geometry;
+}
 
-  glActiveTextureARB (GL_TEXTURE0_ARB);
-  glDisable (GL_TEXTURE_1D);
-  glBindTexture (GL_TEXTURE_1D, 0);
-  glDeleteTextures (1, &texture1);
+static hidgl_geometry *
+pins_geometry (float resistor_pin_spacing, float board_thickness)
+{
+  hidgl_geometry *geometry = hidgl_tristrip_geometry_new ();
+  int strip;
+  int no_strips = NUM_RESISTOR_STRIPS;
+  int ring;
+  int no_rings = NUM_PIN_RINGS;
+  int end;
 
-  glEnable (GL_LIGHTING);
+  /* XXX: Hard-coded magic */
+  float resistor_pin_radius = MIL_TO_COORD (12.);
+  float pin_penetration_depth = MIL_TO_COORD (30.) + board_thickness;
 
-  glUseProgram (0);
+  float resistor_bulge_radius = MIL_TO_COORD (43.);
+  float resistor_pin_bend_radius = resistor_bulge_radius;
+  float resistor_width = resistor_pin_spacing - 2. * resistor_pin_bend_radius;
 
-  /* COLOR / MATERIAL SETUP */
-  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-  glEnable (GL_COLOR_MATERIAL);
-
-  if (1) {
-//    GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
-    GLfloat specular[] = {0.5, 0.5, 0.5, 1.0};
-    GLfloat shininess = 120.;
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
-  }
-
+  float r = resistor_pin_bend_radius;
   for (end = 0; end < 2; end++) {
     float end_sign = (end == 0) ? 1. : -1.;
 
+#if 0
     pin = (end == 1) ? first_pin : second_pin;
 
     if (TEST_FLAG (WARNFLAG, pin))
@@ -958,6 +877,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
     glColor3f (pin_color[0] / 1.5,
                pin_color[1] / 1.5,
                pin_color[2] / 1.5);
+#endif
 
     for (ring = 0; ring < no_rings; ring++) {
 
@@ -993,73 +913,218 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
       glEnd ();
     }
 
-    if (1) {
-      float r = resistor_pin_bend_radius;
-      glBegin (GL_TRIANGLE_STRIP);
+    glBegin (GL_TRIANGLE_STRIP);
 
-      /* NB: We wrap back around to complete the last segment, so in effect
-       *     we draw no_strips + 1 strips.
-       */
-      for (strip = 0; strip < no_strips + 1; strip++) {
-        float strip_angle = strip * 2. * M_PI / no_strips;
+    /* NB: We wrap back around to complete the last segment, so in effect
+     *     we draw no_strips + 1 strips.
+     */
+    for (strip = 0; strip < no_strips + 1; strip++) {
+      float strip_angle = strip * 2. * M_PI / no_strips;
 
-        float x1 = resistor_pin_radius * cos (strip_angle);
-        float y1 = -r;
-        float z1 = resistor_pin_radius * sin (strip_angle) + (r + resistor_width / 2.) * end_sign;
+      float x1 = resistor_pin_radius * cos (strip_angle);
+      float y1 = -r;
+      float z1 = resistor_pin_radius * sin (strip_angle) + (r + resistor_width / 2.) * end_sign;
 
-        float x2 = resistor_pin_radius * cos (strip_angle);
-        float y2 = -r - pin_penetration_depth;
-        float z2 = resistor_pin_radius * sin (strip_angle) + (r + resistor_width / 2.) * end_sign;
+      float x2 = resistor_pin_radius * cos (strip_angle);
+      float y2 = -r - pin_penetration_depth;
+      float z2 = resistor_pin_radius * sin (strip_angle) + (r + resistor_width / 2.) * end_sign;
 
-        glNormal3f (cos (strip_angle), 0., sin (strip_angle));
-        glVertex3f (x1, y1, z1);
-        glNormal3f (cos (strip_angle), 0., sin (strip_angle));
-        glVertex3f (x2, y2, z2);
-      }
-      glEnd ();
+      glNormal3f (cos (strip_angle), 0., sin (strip_angle));
+      glVertex3f (x1, y1, z1);
+      glNormal3f (cos (strip_angle), 0., sin (strip_angle));
+      glVertex3f (x2, y2, z2);
     }
+    glEnd ();
 
-    if (1) {
-      float r = resistor_pin_bend_radius;
-      glBegin (GL_TRIANGLE_FAN);
+    glBegin (GL_TRIANGLE_FAN);
 
-      glNormal3f (0, 0., -1.);
-      glVertex3f (0, -r - pin_penetration_depth - resistor_pin_radius / 2., (r + resistor_width / 2.) * end_sign);
+    glNormal3f (0, 0., -1.);
+    glVertex3f (0, -r - pin_penetration_depth - resistor_pin_radius / 2., (r + resistor_width / 2.) * end_sign);
 
-      /* NB: We wrap back around to complete the last segment, so in effect
-       *     we draw no_strips + 1 strips.
-       */
-      for (strip = no_strips + 1; strip > 0; strip--) {
-        float strip_angle = strip * 2. * M_PI / no_strips;
+    /* NB: We wrap back around to complete the last segment, so in effect
+     *     we draw no_strips + 1 strips.
+     */
+    for (strip = no_strips + 1; strip > 0; strip--) {
+      float strip_angle = strip * 2. * M_PI / no_strips;
 
-        float x = resistor_pin_radius * cos (strip_angle);
-        float y = -r - pin_penetration_depth;
-        float z = resistor_pin_radius * sin (strip_angle) + (r + resistor_width / 2.) * end_sign;
+      float x = resistor_pin_radius * cos (strip_angle);
+      float y = -r - pin_penetration_depth;
+      float z = resistor_pin_radius * sin (strip_angle) + (r + resistor_width / 2.) * end_sign;
 
-        glNormal3f (cos (strip_angle), 0., sin (strip_angle));
-        glVertex3f (x, y, z);
-      }
-      glEnd ();
+      glNormal3f (cos (strip_angle), 0., sin (strip_angle));
+      glVertex3f (x, y, z);
     }
+    glEnd ();
   }
+
+  return geometry;
+}
+
+void
+hidgl_init_acy_resistor (void)
+{
+  hidgl_geometry *body_geom;
+  hidgl_geometry *pins_geom;
+  hidgl_shape *body_shape;
+  hidgl_shape *pins_shape;
+
+  GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
+  GLfloat specular[] = {0.5f, 0.5f, 0.5f, 1.0f};
+  GLfloat metal_pin_color[] =    {0.55f, 0.55f, 0.55f, 1.0f};
+  GLfloat warn_pin_color[] =     {0.82f, 0.20f, 0.20f, 1.0f};
+  GLfloat found_pin_color[] =    {0.20f, 0.82f, 0.20f, 1.0f};
+  GLfloat selected_pin_color[] = {0.00f, 0.70f, 0.82f, 1.0f};
+  GLfloat *pin_color = metal_pin_color;
+
+  /* Define the resistor body material */
+  model.resistor_body_mat = hidgl_material_new ("resistor_body");
+  hidgl_material_set_emission_color (model.resistor_body_mat, emission);
+  hidgl_material_set_specular_color (model.resistor_body_mat, specular);
+  hidgl_material_set_shininess (model.resistor_body_mat, 20.0f);
+  hidgl_material_set_shader (model.resistor_body_mat, resistor_program);
+
+  /* Define the resistor pins material */
+  model.resistor_pins_mat = hidgl_material_new ("resistor_pins");
+  hidgl_material_set_ambient_color (model.resistor_pins_mat, pin_color);
+  hidgl_material_set_diffuse_color (model.resistor_pins_mat, pin_color);
+  hidgl_material_set_emission_color (model.resistor_pins_mat, emission);
+  hidgl_material_set_specular_color (model.resistor_pins_mat, specular);
+  hidgl_material_set_shininess (model.resistor_pins_mat, 120.0f);
+
+  /* Define the resistor selected pin material */
+  model.selected_pins_mat = hidgl_material_new ("selected_pins");
+  hidgl_material_set_ambient_color (model.selected_pins_mat, selected_pin_color);
+  hidgl_material_set_diffuse_color (model.selected_pins_mat, selected_pin_color);
+  hidgl_material_set_emission_color (model.selected_pins_mat, emission);
+  hidgl_material_set_specular_color (model.selected_pins_mat, specular);
+  hidgl_material_set_shininess (model.selected_pins_mat, 120.0f);
+
+  /* Load bump mapping textures */
+  glGenTextures (1, &model.resistor_body_bump_texture);
+  glBindTexture (GL_TEXTURE_2D, model.resistor_body_bump_texture);
+  load_texture_from_png ("resistor_bump.png", true);
+
+  glGenTextures (1, &model.zero_ohm_body_bump_texture);
+  glBindTexture (GL_TEXTURE_2D, model.zero_ohm_body_bump_texture);
+  load_texture_from_png ("zero_ohm_bump.png", true);
+
+  /* Setup geometry and transforms */
+  model.root = hidgl_transform_new ();
+  hidgl_transform_rotate (model.root, 90., 1., 0., 0.);
+
+  body_geom = body_geometry (MIL_TO_COORD (400.));
+  pins_geom = pins_geometry (MIL_TO_COORD (400.), BOARD_THICKNESS);
+
+  body_shape = hidgl_shape_new (body_geom, model.resistor_body_mat);
+  pins_shape = hidgl_shape_new (pins_geom, model.resistor_pins_mat);
+
+  hidgl_transform_add_child (model.root, body_shape);
+  hidgl_transform_add_child (model.root, pins_shape);
+}
+
+void
+hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness)
+{
+  float center_x, center_y;
+  float angle;
+  GLfloat resistor_body_color[] = {0.31, 0.47, 0.64, 1.0};
+  GLfloat mvm[16];
+  bool zero_ohm;
+  static GLuint texture1;
+  GLuint restore_sp;
+
+  /* XXX: Hard-coded magic */
+  float resistor_bulge_radius = MIL_TO_COORD (43.);
+  float resistor_pin_bend_radius = resistor_bulge_radius;
+
+  PinType *first_pin = element->Pin->data;
+  PinType *second_pin = g_list_next (element->Pin)->data;
+
+  Coord pin_delta_x = second_pin->X - first_pin->X;
+  Coord pin_delta_y = second_pin->Y - first_pin->Y;
+
+  center_x = first_pin->X + pin_delta_x / 2.;
+  center_y = first_pin->Y + pin_delta_y / 2.;
+  angle = atan2f (pin_delta_y, pin_delta_x);
+
+  /* TRANSFORM MATRIX */
+  glPushMatrix ();
+  glTranslatef (center_x, center_y, surface_depth + resistor_pin_bend_radius);
+  glRotatef (angle * 180. / M_PI + 90, 0., 0., 1.);
+  glRotatef (90, 1., 0., 0.);
+
+  /* Retrieve the resulting modelview matrix for the lighting calculations */
+  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)mvm);
+
+  /* TEXTURE SETUP */
+  glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
+  hidgl_shader_activate (resistor_program);
+
+  {
+    GLuint program = hidgl_shader_get_program (resistor_program);
+    int tex0_location = glGetUniformLocation (program, "detail_tex");
+    int tex1_location = glGetUniformLocation (program, "bump_tex");
+    glUniform1i (tex0_location, 0);
+    glUniform1i (tex1_location, 1);
+  }
+
+  glActiveTextureARB (GL_TEXTURE0_ARB);
+  glGenTextures (1, &texture1);
+  glBindTexture (GL_TEXTURE_1D, texture1);
+  zero_ohm = setup_resistor_texture (element, resistor_body_color, 3);
+
+  glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glEnable (GL_TEXTURE_1D);
+
+  glActiveTextureARB (GL_TEXTURE1_ARB);
+  if (zero_ohm)
+    glBindTexture (GL_TEXTURE_2D, model.zero_ohm_body_bump_texture);
+  else
+    glBindTexture (GL_TEXTURE_2D, model.resistor_body_bump_texture);
+
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glEnable (GL_TEXTURE_2D);
+  glActiveTextureARB (GL_TEXTURE0_ARB);
+
+  glPushAttrib (GL_CURRENT_BIT);
+
+  glDisable (GL_LIGHTING);
+
+  hidgl_material_activate (model.resistor_body_mat);
+
+  /* Draw body */
+
+  glActiveTextureARB (GL_TEXTURE1_ARB);
+  glDisable (GL_TEXTURE_2D);
+  glBindTexture (GL_TEXTURE_2D, 0);
+
+  glActiveTextureARB (GL_TEXTURE0_ARB);
+  glDisable (GL_TEXTURE_1D);
+  glBindTexture (GL_TEXTURE_1D, 0);
+  glDeleteTextures (1, &texture1);
+
+  glEnable (GL_LIGHTING);
+
+  hidgl_material_activate (model.resistor_pins_mat);
+
+  /* Draw pins */
 
   glDisable (GL_COLOR_MATERIAL);
   glPopAttrib ();
 
   glDisable (GL_LIGHTING);
-//  glDisable (GL_DEPTH_TEST);
-
-  glPushMatrix ();
-  glLoadIdentity ();
-  debug_basis_display ();
-  glPopMatrix ();
-//  glEnable (GL_DEPTH_TEST);
 
   glPopMatrix ();
   glUseProgram (restore_sp);
-
-  first_run = false;
 }
+
+
 
 void
 hidgl_draw_800mil_resistor (ElementType *element, float surface_depth, float board_thickness)
@@ -2624,78 +2689,4 @@ hidgl_draw_350x800mil_cap (ElementType *element, float surface_depth, float boar
   glUseProgram (restore_sp);
 
   first_run = false;
-}
-
-static float
-determinant_4x4 (float m[4][4])
-{
-  float det;
-  det = m[0][3] * m[1][2] * m[2][1] * m[3][0]-m[0][2] * m[1][3] * m[2][1] * m[3][0] -
-        m[0][3] * m[1][1] * m[2][2] * m[3][0]+m[0][1] * m[1][3] * m[2][2] * m[3][0] +
-        m[0][2] * m[1][1] * m[2][3] * m[3][0]-m[0][1] * m[1][2] * m[2][3] * m[3][0] -
-        m[0][3] * m[1][2] * m[2][0] * m[3][1]+m[0][2] * m[1][3] * m[2][0] * m[3][1] +
-        m[0][3] * m[1][0] * m[2][2] * m[3][1]-m[0][0] * m[1][3] * m[2][2] * m[3][1] -
-        m[0][2] * m[1][0] * m[2][3] * m[3][1]+m[0][0] * m[1][2] * m[2][3] * m[3][1] +
-        m[0][3] * m[1][1] * m[2][0] * m[3][2]-m[0][1] * m[1][3] * m[2][0] * m[3][2] -
-        m[0][3] * m[1][0] * m[2][1] * m[3][2]+m[0][0] * m[1][3] * m[2][1] * m[3][2] +
-        m[0][1] * m[1][0] * m[2][3] * m[3][2]-m[0][0] * m[1][1] * m[2][3] * m[3][2] -
-        m[0][2] * m[1][1] * m[2][0] * m[3][3]+m[0][1] * m[1][2] * m[2][0] * m[3][3] +
-        m[0][2] * m[1][0] * m[2][1] * m[3][3]-m[0][0] * m[1][2] * m[2][1] * m[3][3] -
-        m[0][1] * m[1][0] * m[2][2] * m[3][3]+m[0][0] * m[1][1] * m[2][2] * m[3][3];
-   return det;
-}
-
-static void
-invert_4x4 (float m[4][4], float out[4][4])
-{
-  float scale = 1 / determinant_4x4 (m);
-
-  out[0][0] = (m[1][2] * m[2][3] * m[3][1] - m[1][3] * m[2][2] * m[3][1] +
-               m[1][3] * m[2][1] * m[3][2] - m[1][1] * m[2][3] * m[3][2] -
-               m[1][2] * m[2][1] * m[3][3] + m[1][1] * m[2][2] * m[3][3]) * scale;
-  out[0][1] = (m[0][3] * m[2][2] * m[3][1] - m[0][2] * m[2][3] * m[3][1] -
-               m[0][3] * m[2][1] * m[3][2] + m[0][1] * m[2][3] * m[3][2] +
-               m[0][2] * m[2][1] * m[3][3] - m[0][1] * m[2][2] * m[3][3]) * scale;
-  out[0][2] = (m[0][2] * m[1][3] * m[3][1] - m[0][3] * m[1][2] * m[3][1] +
-               m[0][3] * m[1][1] * m[3][2] - m[0][1] * m[1][3] * m[3][2] -
-               m[0][2] * m[1][1] * m[3][3] + m[0][1] * m[1][2] * m[3][3]) * scale;
-  out[0][3] = (m[0][3] * m[1][2] * m[2][1] - m[0][2] * m[1][3] * m[2][1] -
-               m[0][3] * m[1][1] * m[2][2] + m[0][1] * m[1][3] * m[2][2] +
-               m[0][2] * m[1][1] * m[2][3] - m[0][1] * m[1][2] * m[2][3]) * scale;
-  out[1][0] = (m[1][3] * m[2][2] * m[3][0] - m[1][2] * m[2][3] * m[3][0] -
-               m[1][3] * m[2][0] * m[3][2] + m[1][0] * m[2][3] * m[3][2] +
-               m[1][2] * m[2][0] * m[3][3] - m[1][0] * m[2][2] * m[3][3]) * scale;
-  out[1][1] = (m[0][2] * m[2][3] * m[3][0] - m[0][3] * m[2][2] * m[3][0] +
-               m[0][3] * m[2][0] * m[3][2] - m[0][0] * m[2][3] * m[3][2] -
-               m[0][2] * m[2][0] * m[3][3] + m[0][0] * m[2][2] * m[3][3]) * scale;
-  out[1][2] = (m[0][3] * m[1][2] * m[3][0] - m[0][2] * m[1][3] * m[3][0] -
-               m[0][3] * m[1][0] * m[3][2] + m[0][0] * m[1][3] * m[3][2] +
-               m[0][2] * m[1][0] * m[3][3] - m[0][0] * m[1][2] * m[3][3]) * scale;
-  out[1][3] = (m[0][2] * m[1][3] * m[2][0] - m[0][3] * m[1][2] * m[2][0] +
-               m[0][3] * m[1][0] * m[2][2] - m[0][0] * m[1][3] * m[2][2] -
-               m[0][2] * m[1][0] * m[2][3] + m[0][0] * m[1][2] * m[2][3]) * scale;
-  out[2][0] = (m[1][1] * m[2][3] * m[3][0] - m[1][3] * m[2][1] * m[3][0] +
-               m[1][3] * m[2][0] * m[3][1] - m[1][0] * m[2][3] * m[3][1] -
-               m[1][1] * m[2][0] * m[3][3] + m[1][0] * m[2][1] * m[3][3]) * scale;
-  out[2][1] = (m[0][3] * m[2][1] * m[3][0] - m[0][1] * m[2][3] * m[3][0] -
-               m[0][3] * m[2][0] * m[3][1] + m[0][0] * m[2][3] * m[3][1] +
-               m[0][1] * m[2][0] * m[3][3] - m[0][0] * m[2][1] * m[3][3]) * scale;
-  out[2][2] = (m[0][1] * m[1][3] * m[3][0] - m[0][3] * m[1][1] * m[3][0] +
-               m[0][3] * m[1][0] * m[3][1] - m[0][0] * m[1][3] * m[3][1] -
-               m[0][1] * m[1][0] * m[3][3] + m[0][0] * m[1][1] * m[3][3]) * scale;
-  out[2][3] = (m[0][3] * m[1][1] * m[2][0] - m[0][1] * m[1][3] * m[2][0] -
-               m[0][3] * m[1][0] * m[2][1] + m[0][0] * m[1][3] * m[2][1] +
-               m[0][1] * m[1][0] * m[2][3] - m[0][0] * m[1][1] * m[2][3]) * scale;
-  out[3][0] = (m[1][2] * m[2][1] * m[3][0] - m[1][1] * m[2][2] * m[3][0] -
-               m[1][2] * m[2][0] * m[3][1] + m[1][0] * m[2][2] * m[3][1] +
-               m[1][1] * m[2][0] * m[3][2] - m[1][0] * m[2][1] * m[3][2]) * scale;
-  out[3][1] = (m[0][1] * m[2][2] * m[3][0] - m[0][2] * m[2][1] * m[3][0] +
-               m[0][2] * m[2][0] * m[3][1] - m[0][0] * m[2][2] * m[3][1] -
-               m[0][1] * m[2][0] * m[3][2] + m[0][0] * m[2][1] * m[3][2]) * scale;
-  out[3][2] = (m[0][2] * m[1][1] * m[3][0] - m[0][1] * m[1][2] * m[3][0] -
-               m[0][2] * m[1][0] * m[3][1] + m[0][0] * m[1][2] * m[3][1] +
-               m[0][1] * m[1][0] * m[3][2] - m[0][0] * m[1][1] * m[3][2]) * scale;
-  out[3][3] = (m[0][1] * m[1][2] * m[2][0] - m[0][2] * m[1][1] * m[2][0] +
-               m[0][2] * m[1][0] * m[2][1] - m[0][0] * m[1][2] * m[2][1] -
-               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 }
