@@ -23,6 +23,7 @@
 #ifndef PCB_HID_COMMON_HIDGL_H
 #define PCB_HID_COMMON_HIDGL_H
 
+#include "hidgl_matrix.h"
 #include "hidgl_shaders.h"
 
 #define TRIANGLE_ARRAY_SIZE 30000
@@ -135,11 +136,15 @@ void hidgl_return_stencil_bit (int bit);
 void hidgl_reset_stencil_usage (void);
 
 /* hidgl_pacakge_acy_resistor.c */
+void hidgl_init_acy_resistor ();
 void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
 void hidgl_draw_800mil_resistor (ElementType *element, float surface_depth, float board_thickness);
 void hidgl_draw_2300mil_resistor (ElementType *element, float surface_depth, float board_thickness);
 void hidgl_draw_700mil_diode_smd (ElementType *element, float surface_depth, float board_thickness);
 void hidgl_draw_1650mil_cap (ElementType *element, float surface_depth, float board_thickness);
 void hidgl_draw_350x800mil_cap (ElementType *element, float surface_depth, float board_thickness);
+
+/* hidgl_pacakge_vrml.c */
+void hidgl_draw_vrml (ElementType *element, float surface_depth, float board_thickness, char *vrml_file);
 
 #endif /* PCB_HID_COMMON_HIDGL_H  */
