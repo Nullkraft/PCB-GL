@@ -71,6 +71,17 @@
 triangle_buffer buffer;
 float global_depth = 0;
 
+static bool in_context = false;
+
+#define CHECK_IS_IN_CONTEXT(retcode) \
+  do { \
+    if (!in_context) { \
+      fprintf (stderr, "hidgl: Drawing called out of context in function %s\n", \
+             __FUNCTION__); \
+      return retcode; \
+    } \
+  } while (0)
+
 static void
 hidgl_init_triangle_array (triangle_buffer *buffer)
 {
@@ -81,6 +92,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
 void
 hidgl_flush_triangles (triangle_buffer *buffer)
 {
+  CHECK_IS_IN_CONTEXT ();
   if (buffer->triangle_count == 0)
     return;
 
@@ -96,6 +108,7 @@ hidgl_flush_triangles (triangle_buffer *buffer)
 void
 hidgl_ensure_triangle_space (triangle_buffer *buffer, int count)
 {
+  CHECK_IS_IN_CONTEXT ();
   if (count > TRIANGLE_ARRAY_SIZE)
     {
       fprintf (stderr, "Not enough space in vertex buffer\n");
@@ -193,6 +206,7 @@ static void draw_cap (Coord width, Coord x, Coord y, Angle angle, double scale)
   int slices = calc_slices (radius / scale, M_PI);
   int i;
 
+  CHECK_IS_IN_CONTEXT ();
   if (slices < MIN_TRIANGLES_PER_CAP)
     slices = MIN_TRIANGLES_PER_CAP;
 
@@ -221,6 +235,7 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
   int circular_caps = 0;
   int hairline = 0;
 
+  CHECK_IS_IN_CONTEXT ();
   if (width == 0.0)
     hairline = 1;
 
@@ -304,6 +319,7 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
   int i;
   int hairline = 0;
 
+  CHECK_IS_IN_CONTEXT ();
   if (width == 0.0)
     hairline = 1;
 
@@ -367,6 +383,7 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
 void
 hidgl_draw_rect (Coord x1, Coord y1, Coord x2, Coord y2)
 {
+  CHECK_IS_IN_CONTEXT ();
   glBegin (GL_LINE_LOOP);
   glVertex3f (x1, y1, global_depth);
   glVertex3f (x1, y2, global_depth);
@@ -386,6 +403,7 @@ hidgl_fill_circle (Coord vx, Coord vy, Coord vr, double scale)
   int slices;
   int i;
 
+  CHECK_IS_IN_CONTEXT ();
   slices = calc_slices (vr / scale, 2 * M_PI);
 
   if (slices < MIN_TRIANGLES_PER_CIRCLE)
@@ -532,6 +550,8 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
   GLUtesselator *tobj;
   GLdouble *vertices;
 
+  CHECK_IS_IN_CONTEXT ();
+
   assert (n_coords > 0);
 
   vertices = malloc (sizeof(GLdouble) * n_coords * 3);
@@ -613,6 +633,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   struct do_hole_info info;
   int stencil_bit;
 
+  CHECK_IS_IN_CONTEXT ();
   info.scale = scale;
   global_scale = scale;
 
@@ -679,6 +700,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 void
 hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
 {
+  CHECK_IS_IN_CONTEXT ();
   hidgl_ensure_triangle_space (&buffer, 2);
   hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
   hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
@@ -687,6 +709,7 @@ hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
 void
 hidgl_init (void)
 {
+  CHECK_IS_IN_CONTEXT ();
   glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
 
   if (stencil_bits == 0)
@@ -706,6 +729,10 @@ hidgl_init (void)
 void
 hidgl_start_render (void)
 {
+  if (in_context)
+    fprintf (stderr, "hidgl: hidgl_start_render() - Already in rendering context!\n");
+
+  in_context = true;
   hidgl_init ();
   hidgl_init_triangle_array (&buffer);
 }
@@ -713,6 +740,10 @@ hidgl_start_render (void)
 void
 hidgl_finish_render (void)
 {
+  if (!in_context)
+    fprintf (stderr, "hidgl: hidgl_finish_render() - Not currently in rendering context!\n");
+
+  in_context = false;
 }
 
 int
@@ -724,6 +755,7 @@ hidgl_stencil_bits (void)
 static void
 hidgl_clean_unassigned_stencil (void)
 {
+  CHECK_IS_IN_CONTEXT ();
   glPushAttrib (GL_STENCIL_BUFFER_BIT);
   glStencilMask (~assigned_bits);
   glClearStencil (0);
