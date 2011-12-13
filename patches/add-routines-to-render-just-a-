@@ -1,7 +1,7 @@
-Bottom: 7ebd19c0850d9914df38fbf61fb8b81eeb23e0e5
-Top:    73ded0841a2f68f01f4b363a1d6a2e56b9298c3b
+Bottom: c7efa1433c6a57cf82b365d3b91ac33139d0b894
+Top:    314531b33e512f1f3b53af9777a5d903885adff6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-11-13 00:19:11 +0000
+Date:   2011-12-13 14:57:30 +0000
 
 Add routines to render just a single contour
 
@@ -11,7 +11,7 @@ Use them rather than the GLU tessellator
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index bb2b961..fa86bc7 100644
+index eb0705f..9f10b8c 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -561,12 +561,10 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
