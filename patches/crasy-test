@@ -1,7 +1,7 @@
-Bottom: 6ae34f8ace84d23a99c1f84df40ce1240678729d
-Top:    fe60c6e89667236f97d66605e113de9ea00f122e
+Bottom: 1415561d1bcc6b4377d93082188c72b2fe2d3d11
+Top:    e4ac8bbba1f8a9dcbbf894cc817a3b26dff62940
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-13 14:52:36 +0000
+Date:   2011-12-16 00:02:14 +0000
 
 Crasy test
 
@@ -1167,7 +1167,7 @@ index 0000000..25c33a1
 +
 +extern struct draw_funcs *dapi;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 9280af4..b6ab2b8 100644
+index be6a7c4..c0faf47 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -27,6 +27,7 @@
@@ -1178,7 +1178,7 @@ index 9280af4..b6ab2b8 100644
  
  #include "hid.h"
  #include "../hidint.h"
-@@ -830,7 +831,7 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -832,7 +833,7 @@ gerber_set_layer (const char *name, int group, int empty)
      {
        if (outline_layer
  	  && outline_layer != PCB->Data->Layer+idx)
