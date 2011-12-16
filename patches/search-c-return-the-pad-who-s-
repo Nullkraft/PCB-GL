@@ -1,0 +1,25 @@
+Bottom: 9ad0aa95aa46c022d13d8aebf17f0c0220743867
+Top:    9ad0aa95aa46c022d13d8aebf17f0c0220743867
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-16 00:55:14 +0000
+
+search.c: Return the pad who's center is closest to the queried coordinate
+
+When snapping to pads we often find the case where the search radius is
+wider than the spacing between pads. SearchPadByLocation() previously
+returned the first pad it found whthin the search area, meaning you could
+have the crosshair right above a particular pad, yet snap to a different
+pad due to it being within the search radius of the crosshair, and
+happening to be tested first by the r-tree search code.
+
+This proof of concept change makes SearchPadByLocation() return the pad
+whos center coordinate is closest to the center of the search location.
+
+This fixes another annoying snapping behaviour for some parts such as
+"0805", when operating with a fairly course grid. (NB: Search radius
+for snapping is related to the size of the current grid).
+
+
+---
+
+
