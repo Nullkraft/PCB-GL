@@ -1,0 +1,163 @@
+Bottom: 1415561d1bcc6b4377d93082188c72b2fe2d3d11
+Top:    e684622fe5946c7d756c6dbef4fcf726c48d78a1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-16 00:56:05 +0000
+
+Stop "find connected" following rat-lines. Fixes confusing output.
+
+Suppose we have two nets, A and B, and some components. If we connect
+a pin of a component which was supposed to be connected to net A, to
+net B, the "f" (find connected) action will falsely show the entirity
+of net A and net B connected to each other. In reality, the nets are
+not electrically connected, it is just the ratline between the
+mis-connected component pin (mis-connected to Net B), and net A,
+where the ratline for that pin should end up.
+
+It MIGHT be better if we fix this bug by not adding rat-lines to shorted
+connections, as often those rat-lines would take some convoluted route
+through the copper of the net which is shorted to that connection
+end-point. These rat-line(s) would no longer be spatially associated
+with the mis-connected wiring, and encourage the user to further short
+net A and net B together to complete the ratline.
+
+This bug was a contributing factor to a mistake in a production board
+I made recently, where there as a last step in production, I added a short
+between two different ground planes (analogue and digital). The "find
+connected" action, "f" showed them connected together (as I expected),
+but unfortunately, due to a thermal I left out, they were not actually
+connected - despite PCB's green rendering suggesting that they were.
+
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 2a0be9e..e1b2f07 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -894,7 +894,7 @@ NotifyLine (void)
+ 			       PIN_TYPE | PAD_TYPE | VIA_TYPE, &ptr1, &ptr2,
+ 			       &ptr3);
+ 	  LookupConnection (Crosshair.X, Crosshair.Y, true, 1,
+-			    FOUNDFLAG);
++			    FOUNDFLAG, true);
+ 	}
+       if (type == PIN_TYPE || type == VIA_TYPE)
+ 	{
+@@ -2304,7 +2304,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+ 	case F_Find:
+ 	  {
+ 	    gui->get_coords (_("Click on a connection"), &x, &y);
+-	    LookupConnection (x, y, true, 1, FOUNDFLAG);
++	    LookupConnection (x, y, true, 1, FOUNDFLAG, false);
+ 	    break;
+ 	  }
+ 
+@@ -2771,7 +2771,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+ 	      if (Crosshair.AttachedLine.State != STATE_FIRST)
+ 		LookupConnection (Crosshair.AttachedLine.Point1.X,
+ 				  Crosshair.AttachedLine.Point1.Y, true, 1,
+-				  FOUNDFLAG);
++				  FOUNDFLAG, true);
+ 	    }
+ 	  notify_crosshair_change (true);
+ 	  break;
+diff --git a/src/find.c b/src/find.c
+index 877deb4..dbd66c5 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3228,7 +3228,8 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3)
+  * also the action is marked as undoable if AndDraw is true
+  */
+ void
+-LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag)
++LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag,
++                  bool AndRats)
+ {
+   void *ptr1, *ptr2, *ptr3;
+   char *name;
+@@ -3242,10 +3243,9 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag)
+     = SearchObjectByLocation (LOOKUP_FIRST, &ptr1, &ptr2, &ptr3, X, Y, Range);
+   if (type == NO_TYPE)
+     {
+-      type
+-        =
+-        SearchObjectByLocation
+-        (LOOKUP_MORE, &ptr1, &ptr2, &ptr3, X, Y, Range);
++      type = SearchObjectByLocation (
++        LOOKUP_MORE & ~(AndRats ? RATLINE_TYPE : 0),
++        &ptr1, &ptr2, &ptr3, X, Y, Range);
+       if (type == NO_TYPE)
+         return;
+       if (type & SILK_TYPE)
+@@ -3258,11 +3258,9 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag)
+             return;
+         }
+     }
+-  else
+-    {
+-      name = ConnectionName (type, ptr1, ptr2);
+-      hid_actionl ("NetlistShow", name, NULL);
+-    }
++
++  name = ConnectionName (type, ptr1, ptr2);
++  hid_actionl ("NetlistShow", name, NULL);
+ 
+   TheFlag = which_flag;
+   User = AndDraw;
+@@ -3272,7 +3270,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag)
+    * This is step (1) from the description
+    */
+   ListStart (type, ptr1, ptr2, ptr3);
+-  DoIt (true, AndDraw);
++  DoIt (AndRats, AndDraw);
+   if (User)
+     IncrementUndoSerialNumber ();
+   User = false;
+diff --git a/src/find.h b/src/find.h
+index d2be7ac..d29cfbf 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -52,7 +52,7 @@ bool ArcPadIntersect (ArcTypePtr, PadTypePtr);
+ bool IsPolygonInPolygon (PolygonTypePtr, PolygonTypePtr);
+ void LookupElementConnections (ElementTypePtr, FILE *);
+ void LookupConnectionsToAllElements (FILE *);
+-void LookupConnection (Coord, Coord, bool, Coord, int);
++void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats);
+ void LookupUnusedPins (FILE *);
+ bool ResetFoundLinesAndPolygons (bool);
+ bool ResetFoundPinsViasAndPads (bool);
+diff --git a/src/netlist.c b/src/netlist.c
+index 06f0e77..35aaf6f 100644
+--- a/src/netlist.c
++++ b/src/netlist.c
+@@ -168,7 +168,7 @@ netlist_find (LibraryMenuType * net, LibraryEntryType * pin)
+   int x, y;
+   if (pin_name_to_xy (net->Entry, &x, &y))
+     return;
+-  LookupConnection (x, y, 1, 1, FOUNDFLAG);
++  LookupConnection (x, y, 1, 1, FOUNDFLAG, true);
+ }
+ 
+ static void
+@@ -177,7 +177,7 @@ netlist_select (LibraryMenuType * net, LibraryEntryType * pin)
+   int x, y;
+   if (pin_name_to_xy (net->Entry, &x, &y))
+     return;
+-  LookupConnection (x, y, 1, 1, SELECTEDFLAG);
++  LookupConnection (x, y, 1, 1, SELECTEDFLAG, true);
+ }
+ 
+ static void
+diff --git a/src/report.c b/src/report.c
+index d461bd2..fe14d9a 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -560,7 +560,7 @@ XYtoNetLength (Coord x, Coord y, int *found)
+   /* NB: The third argument here, 'false' ensures LookupConnection
+    *     does not add its changes to the undo system.
+    */
+-  LookupConnection (x, y, false, PCB->Grid, FOUNDFLAG);
++  LookupConnection (x, y, false, PCB->Grid, FOUNDFLAG, true);
+ 
+   ALLLINE_LOOP (PCB->Data);
+   {
