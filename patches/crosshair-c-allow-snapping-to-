@@ -1,0 +1,19 @@
+Bottom: acb0ae1496c00ff845a1915db12f6368d35f0ca4
+Top:    acb0ae1496c00ff845a1915db12f6368d35f0ca4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-16 00:22:33 +0000
+
+crosshair.c: Allow snapping to an object equi-distant with the current snap.
+
+This inequality adjustment means that when an element mark is on-grid, and
+the first-snap is a grid location snap, the test against the element mark
+will now pass, and mark the snap as a non-grid snap.
+
+This fixes the rather irritating bug where certain footprints, such as SMT
+resistors became impossible to grab by their element mark when that mark
+landed exactly on a grid point.
+
+
+---
+
+
