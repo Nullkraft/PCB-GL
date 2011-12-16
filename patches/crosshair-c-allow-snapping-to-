@@ -1,7 +1,7 @@
-Bottom: acb0ae1496c00ff845a1915db12f6368d35f0ca4
-Top:    7b66918a7dc384692d5431aed2b73634df79ed6f
+Bottom: 485d3177c7a08917bcc30e43e444b28fcf6bf752
+Top:    485d3177c7a08917bcc30e43e444b28fcf6bf752
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-16 00:22:33 +0000
+Date:   2011-12-16 00:57:57 +0000
 
 crosshair.c: Snap to later-tested objects equi-distant with the current snap.
 
@@ -16,16 +16,4 @@ landed exactly on a grid point.
 
 ---
 
-diff --git a/src/crosshair.c b/src/crosshair.c
-index b7bebec..3c6c46e 100644
---- a/src/crosshair.c
-+++ b/src/crosshair.c
-@@ -819,7 +819,7 @@ check_snap_object (struct snap_data *snap_data, Coord x, Coord y,
-   double sq_dist;
- 
-   sq_dist = crosshair_sq_dist (snap_data->crosshair, x, y);
--  if (sq_dist < snap_data->nearest_sq_dist ||
-+  if (sq_dist <= snap_data->nearest_sq_dist ||
-       (prefer_to_grid && snap_data->nearest_is_grid && !gui->shift_is_pressed()))
-     {
-       snap_data->x = x;
+
