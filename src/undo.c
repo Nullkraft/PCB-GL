@@ -165,7 +165,7 @@ UndoListType, *UndoListTypePtr;
  * some local variables
  */
 static DataTypePtr RemoveList = NULL;	/* list of removed objects */
-static UndoListTypePtr UndoList = NULL;	/* list of operations */
+static GList *UndoList = NULL;	/* list of operations */
 static int Serial = 1,		/* serial number */
   SavedSerial;
 static size_t UndoN, RedoN,	/* number of entries */
@@ -203,13 +203,15 @@ static int PerformUndo (UndoListTypePtr);
 /* ---------------------------------------------------------------------------
  * adds a command plus some data to the undo list
  */
-static UndoListTypePtr
+static UndoListType *
 GetUndoSlot (int CommandType, int ID, int Kind)
 {
-  UndoListTypePtr ptr;
+  UndoListType *ptr;
   void *ptr1, *ptr2, *ptr3;
   int type;
   static size_t limit = UNDO_WARNING_SIZE;
+  size_t size;
+  GList *iter;
 
 #ifdef DEBUG_ID
   if (SearchObjectByID (PCB->Data, &ptr1, &ptr2, &ptr3, ID, Kind) == NO_TYPE)
@@ -217,56 +219,62 @@ GetUndoSlot (int CommandType, int ID, int Kind)
 	     Kind);
 #endif
 
-  /* allocate memory */
-  if (UndoN >= UndoMax)
+  size = UndoN * sizeof (UndoListType);
+
+  /* ask user to flush the table because of it's size */
+  if (size > limit)
     {
-      size_t size;
-
-      UndoMax += STEP_UNDOLIST;
-      size = UndoMax * sizeof (UndoListType);
-      UndoList = (UndoListTypePtr) realloc (UndoList, size);
-      memset (&UndoList[UndoN], 0, STEP_REMOVELIST * sizeof (UndoListType));
-
-      /* ask user to flush the table because of it's size */
-      if (size > limit)
-	{
-	  limit = (size / UNDO_WARNING_SIZE + 1) * UNDO_WARNING_SIZE;
-	  Message (_("Size of 'undo-list' exceeds %li kb\n"),
-		   (long) (size >> 10));
-	}
+      limit = (size / UNDO_WARNING_SIZE + 1) * UNDO_WARNING_SIZE;
+      Message (_("Size of 'undo-list' exceeds %li kb\n"),
+               (long) (size >> 10));
     }
 
   /* free structures from the pruned redo list */
 
-  for (ptr = &UndoList[UndoN]; RedoN; ptr++, RedoN--)
-    switch (ptr->Type)
-      {
-      case UNDO_CHANGENAME:
-	free (ptr->Data.ChangeName.Name);
-	break;
-      case UNDO_REMOVE:
-	type =
-	  SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, ptr->ID,
-			    ptr->Kind);
-	if (type != NO_TYPE)
-	  {
-	    DestroyObject (RemoveList, type, ptr1, ptr2, ptr3);
-	  }
-	break;
-      default:
-	break;
-      }
+  for (iter = g_list_nth (UndoList, UndoN);
+       iter != NULL; iter = g_list_next (iter), RedoN--)
+    {
+      ptr = iter->data;
+
+      switch (ptr->Type)
+        {
+        case UNDO_CHANGENAME:
+          free (ptr->Data.ChangeName.Name);
+          break;
+        case UNDO_REMOVE:
+          type =
+            SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, ptr->ID,
+                              ptr->Kind);
+          if (type != NO_TYPE)
+            {
+              DestroyObject (RemoveList, type, ptr1, ptr2, ptr3);
+            }
+          break;
+        default:
+          break;
+        }
+      g_slice_free (UndoListType, ptr);
+    }
+
+  /* Break off and free the pruned redo list */
+  iter = g_list_nth (UndoList, UndoN);
+  iter->prev->next = NULL;
+  iter->prev = NULL;
+
+  g_list_free (iter);
 
   if (between_increment_and_restore)
     added_undo_between_increment_and_restore = true;
 
   /* copy typefield and serial number to the list */
-  ptr = &UndoList[UndoN++];
+  ptr = g_slice_new0 (UndoListType);
+  UndoList = g_list_append (UndoList, ptr);
+
   ptr->Type = CommandType;
   ptr->Kind = Kind;
   ptr->ID = ID;
   ptr->Serial = Serial;
-  return (ptr);
+  return ptr;
 }
 
 /* ---------------------------------------------------------------------------
@@ -876,50 +884,35 @@ static bool
 UndoNetlistChange (UndoListTypePtr Entry)
 {
   NetlistChangeTypePtr l = & Entry->Data.NetlistChange;
-  unsigned int i, j;
+  GList *i, *j;
   LibraryTypePtr lib, saved;
 
   lib = l->lib;
   saved = l->old;
 
   /* iterate over each net */
-  for (i = 0 ; i < lib->MenuN; i++)
+  for (i = lib->Menu; i != NULL; i = g_list_next (i))
     {
-      if (lib->Menu[i].Name)
-	free (lib->Menu[i].Name);
+      LibraryMenuType *menu = i->data;
 
-      if (lib->Menu[i].directory)
-	free (lib->Menu[i].directory);
-
-      if (lib->Menu[i].Style)
-	free (lib->Menu[i].Style);
+      free (menu->Name);
+      free (menu->directory);
+      free (menu->Style);
 
       /* iterate over each pin on the net */
-      for (j = 0; j < lib->Menu[i].EntryN; j++) {
-	
-	if (lib->Menu[i].Entry[j].ListEntry)
-	  free (lib->Menu[i].Entry[j].ListEntry);
-	
-	if (lib->Menu[i].Entry[j].AllocatedMemory)
-	  free (lib->Menu[i].Entry[j].AllocatedMemory);
-	
-	if (lib->Menu[i].Entry[j].Template)
-	  free (lib->Menu[i].Entry[j].Template);
-	
-	if (lib->Menu[i].Entry[j].Package)
-	  free (lib->Menu[i].Entry[j].Package);
-	
-	if (lib->Menu[i].Entry[j].Value)
-	  free (lib->Menu[i].Entry[j].Value);
-	
-	if (lib->Menu[i].Entry[j].Description)
-	  free (lib->Menu[i].Entry[j].Description);
-	
+      for (j = menu->Entry; j != NULL; j = g_list_next (j)) {
+        LibraryEntryType *entry = j->data;
+
+        free (entry->ListEntry);
+        free (entry->AllocatedMemory);
+        free (entry->Template);
+        free (entry->Package);
+        free (entry->Value);
+        free (entry->Description);
       }
     }
 
-  if (lib->Menu)
-    free (lib->Menu);
+  free (lib->Menu);
 
   *lib = *saved;
 
@@ -1640,7 +1633,8 @@ void
 AddNetlistLibToUndoList (LibraryTypePtr lib)
 {
   UndoListTypePtr undo;
-  unsigned int i, j;
+  int i, j;
+  GList *ii, *jj;
   LibraryTypePtr old;
   
   if (!Locked)
@@ -1653,7 +1647,6 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
       undo->Data.NetlistChange.old = (LibraryTypePtr)malloc (sizeof (LibraryTypePtr));
       old = undo->Data.NetlistChange.old;
       old->MenuN = lib->MenuN;
-      old->MenuMax = lib->MenuMax;
       old->Menu = (LibraryMenuTypePtr)malloc (old->MenuMax * sizeof (LibraryMenuType));
       if (old->Menu == NULL)
 	{
@@ -1662,21 +1655,15 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
 	}
 
       /* iterate over each net */
-      for (i = 0 ; i < lib->MenuN; i++)
+      for (ii = liib->Menu, i = 0; ii != NULL; ii = g_liist_next (ii), i++)
 	{
-	  old->Menu[i].EntryN = lib->Menu[i].EntryN;
-	  old->Menu[i].EntryMax = lib->Menu[i].EntryMax;
+	  MenuType *menu = ii->data;
 
-	  old->Menu[i].Name = 
-	    lib->Menu[i].Name ? strdup (lib->Menu[i].Name) : NULL;
-	  
-	  old->Menu[i].directory = 
-	    lib->Menu[i].directory ? strdup (lib->Menu[i].directory) : NULL;
-	  
-	  old->Menu[i].Style = 
-	    lib->Menu[i].Style ? strdup (lib->Menu[i].Style) : NULL;
+	  old->Menu[i].EntryN = menu->EntryN;
+	  old->Menu[i].Name = menu->Name ? strdup (menu->Name) : NULL;
+	  old->Menu[i].directory = menu->directory ? strdup (menu->directory) : NULL;
+	  old->Menu[i].Style = menu->Style ? strdup (menu->Style) : NULL;
 
-      
 	  old->Menu[i].Entry = 
 	    (LibraryEntryTypePtr)malloc (old->Menu[i].EntryMax * sizeof (LibraryEntryType));
 	  if (old->Menu[i].Entry == NULL)
@@ -1686,39 +1673,19 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
 	    }
 	  
 	  /* iterate over each pin on the net */
-	  for (j = 0; j < lib->Menu[i].EntryN; j++) {
+	  for (jj = menu->Entry, j = 0; jj != NULL; jj = g_list_next (jj), j++) {
+            LibraryEntryType *entry = jj->data;
 
-	    old->Menu[i].Entry[j].ListEntry = 
-	      lib->Menu[i].Entry[j].ListEntry ? 
-	      strdup (lib->Menu[i].Entry[j].ListEntry) :
-	      NULL;
-
-	    old->Menu[i].Entry[j].AllocatedMemory = 
-	      lib->Menu[i].Entry[j].AllocatedMemory ? 
-	      strdup (lib->Menu[i].Entry[j].AllocatedMemory) :
-	      NULL;
-
-	    old->Menu[i].Entry[j].Template = 
-	      lib->Menu[i].Entry[j].Template ? 
-	      strdup (lib->Menu[i].Entry[j].Template) :
-	      NULL;
-
-	    old->Menu[i].Entry[j].Package = 
-	      lib->Menu[i].Entry[j].Package ? 
-	      strdup (lib->Menu[i].Entry[j].Package) :
-	      NULL;
-
-	    old->Menu[i].Entry[j].Value = 
-	      lib->Menu[i].Entry[j].Value ? 
-	      strdup (lib->Menu[i].Entry[j].Value) :
-	      NULL;
-
-	    old->Menu[i].Entry[j].Description = 
-	      lib->Menu[i].Entry[j].Description ? 
-	      strdup (lib->Menu[i].Entry[j].Description) :
-	      NULL;
-	    
-
+	    old->Menu[i].Entry[j].ListEntry =
+              entry->ListEntry ? strdup (entry->ListEntry) : NULL;
+	    old->Menu[i].Entry[j].AllocatedMemory =
+              entry->AllocatedMemory ? strdup (entry->AllocatedMemory) : NULL;
+	    old->Menu[i].Entry[j].Template =
+	      entry->Template ? strdup (entry->Template) : NULL;
+	    old->Menu[i].Entry[j].Package = entry->Package ? strdup (entry->Package) : NULL;
+	    old->Menu[i].Entry[j].Value = entry->Value ? strdup (entry->Value) : NULL;
+	    old->Menu[i].Entry[j].Description =
+              entry->Description ? strdup (entry->Description) : NULL;
 	  }
 	}
 
