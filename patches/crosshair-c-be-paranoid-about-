@@ -1,0 +1,15 @@
+Bottom: 7b66918a7dc384692d5431aed2b73634df79ed6f
+Top:    7b66918a7dc384692d5431aed2b73634df79ed6f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-16 00:47:43 +0000
+
+crosshair.c: Be paranoid about overflow when finding an pad-center coordinates
+
+Not aiming to fix any particular bug here, but I noticed the potential
+overflow here and thought I'd fix it. Longer term, we perhaps ought to write
+some convenience functions for performing operations like this correctly.
+
+
+---
+
+
