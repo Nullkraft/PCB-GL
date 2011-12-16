@@ -1,0 +1,28 @@
+Bottom: 2cbc6c92812d6d03c8befc7475438c09fad3cf53
+Top:    7250e4ed08e6ffabeb1859e937216eedbc30d3e4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-16 00:56:10 +0000
+
+crosshair.c: Be paranoid about overflow when finding an pad-center coordinates
+
+Not aiming to fix any particular bug here, but I noticed the potential
+overflow here and thought I'd fix it. Longer term, we perhaps ought to write
+some convenience functions for performing operations like this correctly.
+
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 3c6c46e..a644cc7 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1026,8 +1026,8 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+   if (ans != NO_TYPE)
+     {
+       PadType *pad = (PadType *)ptr2;
+-      check_snap_object (&snap_data, (pad->Point1.X + pad->Point2.X) / 2,
+-                                     (pad->Point1.Y + pad->Point2.Y) / 2,
++      check_snap_object (&snap_data, pad->Point1.X + (pad->Point2.X - pad->Point1.X) / 2,
++                                     pad->Point1.Y + (pad->Point2.Y - pad->Point1.Y) / 2,
+                          true);
+     }
