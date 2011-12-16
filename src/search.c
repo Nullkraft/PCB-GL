@@ -193,7 +193,6 @@ pad_callback (const BoxType * b, void *cl)
     return 0;
 
   /* Determine how close our test-position was to the center of the pad  */
-  /* FIXME: This may not be a good enough heuristic */
   sq_dist = (PosX - (pad->Point1.X + (pad->Point2.X - pad->Point1.X) / 2)) *
             (PosX - (pad->Point1.X + (pad->Point2.X - pad->Point1.X) / 2)) +
             (PosY - (pad->Point1.Y + (pad->Point2.Y - pad->Point1.Y) / 2)) *
