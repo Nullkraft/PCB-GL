@@ -60,6 +60,7 @@
 #include "free_atexit.h"
 #include "polygon.h"
 #include "pcb-printf.h"
+#include "setjmp.h"
 #include "sweep.h"
 
 #include "hid/common/actions.h"
@@ -1966,7 +1967,7 @@ main (int argc, char *argv[])
   // bos_test_intersections ();
   my_cairo_test ();
 
-  // gui->do_export (0);
+  gui->do_export (0);
 
 #if HAVE_DBUS
   pcb_dbus_finish();
