@@ -1,5 +1,5 @@
 Bottom: 9ad0aa95aa46c022d13d8aebf17f0c0220743867
-Top:    8a16658700cbe91c59070540126f57bac5049796
+Top:    485d3177c7a08917bcc30e43e444b28fcf6bf752
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-16 00:55:14 +0000
 
@@ -23,7 +23,7 @@ for snapping is related to the size of the current grid).
 ---
 
 diff --git a/src/search.c b/src/search.c
-index 5d02a53..ebe94a6 100644
+index 5d02a53..5417462 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -106,6 +106,8 @@ struct ans_info
@@ -35,7 +35,7 @@ index 5d02a53..ebe94a6 100644
  };
  
  static int
-@@ -182,19 +184,29 @@ pad_callback (const BoxType * b, void *cl)
+@@ -182,19 +184,28 @@ pad_callback (const BoxType * b, void *cl)
    PadTypePtr pad = (PadTypePtr) b;
    struct ans_info *i = (struct ans_info *) cl;
    AnyObjectType *ptr1 = pad->Element;
@@ -50,7 +50,6 @@ index 5d02a53..ebe94a6 100644
  
 -  if (FRONT (pad) || i->BackToo)
 +  /* Determine how close our test-position was to the center of the pad  */
-+  /* FIXME: This may not be a good enough heuristic */
 +  sq_dist = (PosX - (pad->Point1.X + (pad->Point2.X - pad->Point1.X) / 2)) *
 +            (PosX - (pad->Point1.X + (pad->Point2.X - pad->Point1.X) / 2)) +
 +            (PosY - (pad->Point1.Y + (pad->Point2.Y - pad->Point1.Y) / 2)) *
@@ -74,7 +73,7 @@ index 5d02a53..ebe94a6 100644
    return 0;
  }
  
-@@ -216,11 +228,9 @@ SearchPadByLocation (int locked, ElementTypePtr * Element, PadTypePtr * Pad,
+@@ -216,11 +227,9 @@ SearchPadByLocation (int locked, ElementTypePtr * Element, PadTypePtr * Pad,
    info.ptr3 = (void **) Dummy;
    info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
    info.BackToo = (BackToo && PCB->InvisibleObjectsOn);
