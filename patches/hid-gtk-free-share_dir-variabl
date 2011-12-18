@@ -1,5 +1,5 @@
 Bottom: 97df7775911b302f295c23a25559d025fd1923b2
-Top:    97df7775911b302f295c23a25559d025fd1923b2
+Top:    9bd40fd5cd1a5f6de0da2b615bf5d49e82b30ddb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-18 17:32:45 +0000
 
@@ -10,4 +10,15 @@ hid/gtk: Free share_dir variable after use
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 6ab4993..b58698e 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2117,6 +2117,7 @@ hid_gtk_init ()
+   free (tmps);
+ #undef REST_OF_PATH
+   printf ("\"Share\" installation path is \"%s\"\n", share_dir);
++  free (share_dir);
+ #endif
+ 
+   memset (&ghid_hid, 0, sizeof (HID));
