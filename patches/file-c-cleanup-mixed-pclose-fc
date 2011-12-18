@@ -8,6 +8,8 @@ file.c: Cleanup mixed pclose() / fclose() in ReadNetlist()
 In the "Empty netlist file!" error path, we called pclose()
 unconditionally where we should have tested "used_popen" first.
 
+(Caught with cppcheck)
+
 
 ---
 
