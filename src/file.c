@@ -1405,7 +1405,6 @@ ParseLibraryTree (void)
   printf("Leaving ParseLibraryTree, found %d footprints.\n", n_footprints);
 #endif
 
-  free (libpaths);
   return n_footprints;
 }
 
@@ -1539,11 +1538,10 @@ ReadNetlist (char *filename)
   LibraryEntryTypePtr entry;
   int i, j, lines, kind;
   bool continued;
-  bool used_popen = false;
-  int retval = 0;
+  int used_popen = 0;
 
   if (!filename)
-    return 1;			/* nothing to do */
+    return (1);			/* nothing to do */
 
   Message (_("Importing PCB netlist %s\n"), filename);
 
@@ -1558,7 +1556,7 @@ ReadNetlist (char *filename)
     }
   else
     {
-      used_popen = true;
+      used_popen = 1;
       free (command);
       command = EvaluateFilename (Settings.RatCommand,
 				  Settings.RatPath, filename, NULL);
@@ -1567,7 +1565,7 @@ ReadNetlist (char *filename)
       if (*command == '\0' || (fp = popen (command, "r")) == NULL)
 	{
 	  PopenErrorMessage (command);
-	  return 1;
+	  return (1);
 	}
     }
   lines = 0;
@@ -1638,14 +1636,15 @@ ReadNetlist (char *filename)
   if (!lines)
     {
       Message (_("Empty netlist file!\n"));
-      retval = 1;
+      pclose (fp);
+      return (1);
     }
   if (used_popen)
     pclose (fp);
   else
     fclose (fp);
   sort_netlist ();
-  return retval;
+  return (0);
 }
 
 static int ReadEdifNetlist (char *filename);

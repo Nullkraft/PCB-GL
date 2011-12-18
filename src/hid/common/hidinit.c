@@ -117,7 +117,6 @@ hid_load_dir (char *dirname)
       free (path);
     }
   free (dirname);
-  closedir (dir);
 }
 
 void
