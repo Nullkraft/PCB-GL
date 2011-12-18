@@ -7,7 +7,7 @@ hid/common: Don't leak the dir resource in hid_load_dir()
 
 Add missing closedir() call.
 
-(Found with cppcheck)
+(Caught with cppcheck)
 
 
 ---
