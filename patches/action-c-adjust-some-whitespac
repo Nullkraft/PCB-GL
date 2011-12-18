@@ -1,5 +1,5 @@
 Bottom: e11eab01d2afaa0bdf6e58a3ad81b7f65fe23e78
-Top:    3c98e6ff297326e1cfc0e489cd651ed0c96259fb
+Top:    1f7bea9a55e17a2547032e2851a8b113dcd2ec1d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-18 22:04:25 +0000
 
@@ -16,7 +16,7 @@ this line. (Obviously it was not expanding macros before checking).
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 8a1e357..6c3ab45 100644
+index 8a1e357..9480355 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -2679,8 +2679,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
@@ -25,7 +25,7 @@ index 8a1e357..6c3ab45 100644
  	  notify_crosshair_change (false);
 -	  if TEST_FLAG
 -	    (ALLDIRECTIONFLAG, PCB)
-+	  if TEST_FLAG (ALLDIRECTIONFLAG, PCB)
++	  if (TEST_FLAG (ALLDIRECTIONFLAG, PCB))
  	    {
  	      TOGGLE_FLAG (ALLDIRECTIONFLAG, PCB);
  	      PCB->Clipping = 0;
