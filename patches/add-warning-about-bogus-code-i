@@ -1,5 +1,5 @@
 Bottom: 0259758746426b71cd983a2073616ca4d4a81135
-Top:    0259758746426b71cd983a2073616ca4d4a81135
+Top:    62f61d16aac571ef890114cbb571b6c3235a5a9f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-18 22:41:07 +0000
 
@@ -8,4 +8,15 @@ Add warning about bogus code in strflags.c
 
 ---
 
-
+diff --git a/src/strflags.c b/src/strflags.c
+index fd768af..998b92b 100644
+--- a/src/strflags.c
++++ b/src/strflags.c
+@@ -578,6 +578,7 @@ dump_flag (FlagType * f)
+ {
+   int l;
+   printf ("F:%08x T:[", f->f);
++#warning THIS NEXT LINE IS BOGUS, THE ARRAY IS HALF THIS LENGTH
+   for (l = 0; l < (MAX_LAYER + 7) / 8; l++)
+     printf (" %02x", f->t[l]);
+   printf ("]");
