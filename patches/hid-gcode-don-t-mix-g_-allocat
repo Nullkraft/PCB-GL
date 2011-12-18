@@ -1,5 +1,5 @@
 Bottom: a6f7969dbc150bf251f89237248f5aa7bd1fd70f
-Top:    259150d5ba4a31c22d5f4e23c73dd3f9211ed7ae
+Top:    c441b59ea669cdce6f3eda17dd06cd3cedb46376
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-18 17:15:07 +0000
 
@@ -10,6 +10,102 @@ Allocations from the g_*() functions shuold be free'd with g_free().
 
 ---
 
+diff --git a/src/file.c b/src/file.c
+index dd543aa..f71d1b0 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -1405,6 +1405,7 @@ ParseLibraryTree (void)
+   printf("Leaving ParseLibraryTree, found %d footprints.\n", n_footprints);
+ #endif
+ 
++  free (libpaths);
+   return n_footprints;
+ }
+ 
+@@ -1538,10 +1539,11 @@ ReadNetlist (char *filename)
+   LibraryEntryTypePtr entry;
+   int i, j, lines, kind;
+   bool continued;
+-  int used_popen = 0;
++  bool used_popen = false;
++  int retval = 0;
+ 
+   if (!filename)
+-    return (1);			/* nothing to do */
++    return 1;			/* nothing to do */
+ 
+   Message (_("Importing PCB netlist %s\n"), filename);
+ 
+@@ -1556,7 +1558,7 @@ ReadNetlist (char *filename)
+     }
+   else
+     {
+-      used_popen = 1;
++      used_popen = true;
+       free (command);
+       command = EvaluateFilename (Settings.RatCommand,
+ 				  Settings.RatPath, filename, NULL);
+@@ -1565,7 +1567,7 @@ ReadNetlist (char *filename)
+       if (*command == '\0' || (fp = popen (command, "r")) == NULL)
+ 	{
+ 	  PopenErrorMessage (command);
+-	  return (1);
++	  return 1;
+ 	}
+     }
+   lines = 0;
+@@ -1636,15 +1638,14 @@ ReadNetlist (char *filename)
+   if (!lines)
+     {
+       Message (_("Empty netlist file!\n"));
+-      pclose (fp);
+-      return (1);
++      retval = 1;
+     }
+   if (used_popen)
+     pclose (fp);
+   else
+     fclose (fp);
+   sort_netlist ();
+-  return (0);
++  return retval;
+ }
+ 
+ static int ReadEdifNetlist (char *filename);
+diff --git a/src/hid/common/hidinit.c b/src/hid/common/hidinit.c
+index 0bdd395..3695f7d 100644
+--- a/src/hid/common/hidinit.c
++++ b/src/hid/common/hidinit.c
+@@ -117,6 +117,7 @@ hid_load_dir (char *dirname)
+       free (path);
+     }
+   free (dirname);
++  closedir (dir);
+ }
+ 
+ void
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 9d88086..b08d90d 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -381,7 +381,7 @@ nogui_prompt_for (const char *msg, const char *default_string)
+   if (answer == NULL)
+     return strdup ((default_string != NULL) ? default_string : "");
+   else
+-    return strdup (answer);
++    return answer;
+ }
+ 
+ /* FIXME - this could use some enhancement to actually use the other
+@@ -402,7 +402,7 @@ nogui_fileselect (const char *title, const char *descr,
+   if (answer == NULL)
+     return (default_file != NULL) ? strdup (default_file) : NULL;
+   else
+-    return strdup (answer);
++    return answer;
+ }
+ 
+ static int
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
 index f12f6b6..40a3b36 100644
 --- a/src/hid/gcode/gcode.c
@@ -23,3 +119,28 @@ index f12f6b6..40a3b36 100644
  }
  
  static void
+diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
+index 432e57e..2b04063 100644
+--- a/src/hid/gtk/ghid-layer-selector.c
++++ b/src/hid/gtk/ghid-layer-selector.c
+@@ -643,7 +643,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+       free_ldata (ls, new_layer);
+     }
+ 
+-  new_layer = malloc (sizeof (*new_layer));
++  new_layer = g_malloc (sizeof (*new_layer));
+ 
+   gtk_list_store_set (ls->list_store,
+                       &iter,
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 6ab4993..b58698e 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2117,6 +2117,7 @@ hid_gtk_init ()
+   free (tmps);
+ #undef REST_OF_PATH
+   printf ("\"Share\" installation path is \"%s\"\n", share_dir);
++  free (share_dir);
+ #endif
+ 
+   memset (&ghid_hid, 0, sizeof (HID));
