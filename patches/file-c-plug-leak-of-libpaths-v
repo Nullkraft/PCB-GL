@@ -1,0 +1,23 @@
+Bottom: 330a0c166d935905e07498d473f0cac3f9868903
+Top:    dc5638e6c00979bf34eec4d09e98c4d03e5049f1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 17:58:44 +0000
+
+file.c: Plug leak of libpaths variable in ParseLibraryTree() function
+
+(Caught with cppcheck)
+
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index 501b735..29358d6 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -1402,6 +1402,7 @@ ParseLibraryTree (void)
+   printf("Leaving ParseLibraryTree, found %d footprints.\n", n_footprints);
+ #endif
+ 
++  free (libpaths);
+   return n_footprints;
+ }
