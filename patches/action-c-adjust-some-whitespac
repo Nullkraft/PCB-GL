@@ -1,0 +1,15 @@
+Bottom: e11eab01d2afaa0bdf6e58a3ad81b7f65fe23e78
+Top:    e11eab01d2afaa0bdf6e58a3ad81b7f65fe23e78
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 22:04:25 +0000
+
+action.c: Adjust some whitespace around a function call to keep cppcheck happy
+
+This whitespace fix avoids a false "syntax error" report from cppcheck, and
+allows us to continue checking the rest of the file. It also makes the code
+a little clearer.
+
+
+---
+
+
