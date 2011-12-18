@@ -952,7 +952,7 @@ use_gc (hidGC gc, int radius)
       if (aptr == NULL)
         pcb_fprintf (stderr, "error: aperture for width %$mS type %s is null\n",
                  linewidth, shape == ROUND ? "ROUND" : "SQUARE");
-      else if (f)
+      if (f)
 	fprintf (f, "G54D%d*", aptr->dCode);
     }
 }
