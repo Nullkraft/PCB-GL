@@ -1,5 +1,5 @@
 Bottom: c395e3da3639d7a6ca503d0910bcba8af2e597d5
-Top:    602178c30a5fa740ed32810ec59eec33c398d8ef
+Top:    8c375e2c39f6dd48607ee1775f317194ffa276c7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-18 23:05:09 +0000
 
@@ -13,7 +13,7 @@ Should fix sorting of drill holes by coordinate.
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index c0faf47..9579b7b 100644
+index c0faf47..820dfdc 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -631,8 +631,8 @@ drill_sort (const void *va, const void *vb)
@@ -27,3 +27,12 @@ index c0faf47..9579b7b 100644
  }
  
  static int
+@@ -955,7 +955,7 @@ use_gc (hidGC gc, int radius)
+       if (aptr == NULL)
+         pcb_fprintf (stderr, "error: aperture for width %$mS type %s is null\n",
+                  linewidth, shape == ROUND ? "ROUND" : "SQUARE");
+-      if (f)
++      else if (f)
+ 	fprintf (f, "G54D%d*", aptr->dCode);
+     }
+ #if 0
