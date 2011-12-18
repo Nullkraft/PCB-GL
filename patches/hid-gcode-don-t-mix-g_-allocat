@@ -1,5 +1,5 @@
 Bottom: a6f7969dbc150bf251f89237248f5aa7bd1fd70f
-Top:    38c82a71a02586c3777c5369078409d65e198246
+Top:    259150d5ba4a31c22d5f4e23c73dd3f9211ed7ae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-18 17:15:07 +0000
 
@@ -9,15 +9,15 @@ hid/gcode: Don't mix g_* allocations functions and free()
 ---
 
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index f12f6b6..cc4a689 100644
+index f12f6b6..40a3b36 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -558,6 +558,8 @@ gcode_do_export (HID_Attr_Val * options)
-           if (!gcode_f2)
-             {
-               perror (filename);
-+              free (filename);
-+              bm_free (bm);
-               return;
-             }
-           fprintf (gcode_f2, "(Created by G-code exporter)\n");
+@@ -388,7 +388,7 @@ gcode_start_png (const char *layername)
+ 
+   gcode_alloc_colors ();
+ 
+-  free (buf);
++  g_free (buf);
+ }
+ 
+ static void
