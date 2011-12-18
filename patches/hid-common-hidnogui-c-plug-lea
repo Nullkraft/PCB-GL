@@ -9,6 +9,8 @@ We forgot to free() the memory returned from read_stdin_line(). There is
 actually no need to strdup the answer anyway, so pass the returned value
 directly and let the caller free it.
 
+(Caught with cppcheck)
+
 
 ---
 
