@@ -1,0 +1,15 @@
+Bottom: 043fa6ab6b3ef538490004674f8581c179ee779b
+Top:    043fa6ab6b3ef538490004674f8581c179ee779b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 23:49:54 +0000
+
+src/action.c: Abort the Import(setnewport,mask) action if the mask isn't set
+
+This avoids using an uninitialised variable.
+
+(Caught by clang)
+
+
+---
+
+
