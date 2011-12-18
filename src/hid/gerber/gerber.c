@@ -632,7 +632,7 @@ drill_sort (const void *va, const void *vb)
     return a->diam - b->diam;
   if (a->x != b->x)
     return a->x - b->x;
-  return b->y - b->y;
+  return a->y - b->y;
 }
 
 static int
