@@ -7,6 +7,8 @@ hid/gcode: Fix mismatched g_strdup_printf() and free()
 
 Allocations from the g_*() functions shuold be free'd with g_free().
 
+(Caught with cppcheck)
+
 
 ---
 
