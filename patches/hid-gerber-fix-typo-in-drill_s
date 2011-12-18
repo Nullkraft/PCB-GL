@@ -1,5 +1,5 @@
 Bottom: c395e3da3639d7a6ca503d0910bcba8af2e597d5
-Top:    c395e3da3639d7a6ca503d0910bcba8af2e597d5
+Top:    cf7561af0d7ccb0c751a3c999735400fc232e862
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-18 23:05:09 +0000
 
@@ -10,4 +10,15 @@ Fixes sort on the x coordinate.
 
 ---
 
-
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index c0faf47..9f72176 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -631,7 +631,7 @@ drill_sort (const void *va, const void *vb)
+   if (a->diam != b->diam)
+     return a->diam - b->diam;
+   if (a->x != b->x)
+-    return a->x - a->x;
++    return a->x - b->x;
+   return b->y - b->y;
+ }
