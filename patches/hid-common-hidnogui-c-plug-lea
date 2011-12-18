@@ -1,0 +1,15 @@
+Bottom: 3f518c50d8354809224e4ab4b34e2a670885a71a
+Top:    3f518c50d8354809224e4ab4b34e2a670885a71a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 17:52:22 +0000
+
+hid/common/hidnogui.c: Plug leak in nogui_prompt_for and nogui_fileselect
+
+We forgot to free() the memory returned from read_stdin_line(). There is
+actually no need to strdup the answer anyway, so pass the returned value
+directly and let the caller free it.
+
+
+---
+
+
