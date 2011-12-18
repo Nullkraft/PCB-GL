@@ -1,7 +1,7 @@
-Bottom: a6f7969dbc150bf251f89237248f5aa7bd1fd70f
-Top:    259150d5ba4a31c22d5f4e23c73dd3f9211ed7ae
+Bottom: b7cd7f5f9d85f1b197f11db2a4462ee3ca681bfe
+Top:    b7cd7f5f9d85f1b197f11db2a4462ee3ca681bfe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-18 17:15:07 +0000
+Date:   2011-12-18 18:01:23 +0000
 
 hid/gcode: Fix mismatched g_strdup_printf() and free()
 
@@ -12,16 +12,4 @@ Allocations from the g_*() functions shuold be free'd with g_free().
 
 ---
 
-diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index f12f6b6..40a3b36 100644
---- a/src/hid/gcode/gcode.c
-+++ b/src/hid/gcode/gcode.c
-@@ -388,7 +388,7 @@ gcode_start_png (const char *layername)
- 
-   gcode_alloc_colors ();
- 
--  free (buf);
-+  g_free (buf);
- }
- 
- static void
+

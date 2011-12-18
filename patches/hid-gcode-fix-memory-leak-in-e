@@ -1,7 +1,7 @@
-Bottom: 259150d5ba4a31c22d5f4e23c73dd3f9211ed7ae
-Top:    97df7775911b302f295c23a25559d025fd1923b2
+Bottom: b7cd7f5f9d85f1b197f11db2a4462ee3ca681bfe
+Top:    b7cd7f5f9d85f1b197f11db2a4462ee3ca681bfe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-18 17:26:52 +0000
+Date:   2011-12-18 18:01:23 +0000
 
 hid/gcode: Fix memory leak in error path
 
@@ -10,16 +10,4 @@ hid/gcode: Fix memory leak in error path
 
 ---
 
-diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 40a3b36..17bbae1 100644
---- a/src/hid/gcode/gcode.c
-+++ b/src/hid/gcode/gcode.c
-@@ -558,6 +558,8 @@ gcode_do_export (HID_Attr_Val * options)
-           if (!gcode_f2)
-             {
-               perror (filename);
-+              free (filename);
-+              bm_free (bm);
-               return;
-             }
-           fprintf (gcode_f2, "(Created by G-code exporter)\n");
+
