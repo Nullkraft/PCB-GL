@@ -342,7 +342,7 @@ pad_callback (const BoxType * b, void *cl)
 static void
 draw_element_name (ElementType *element)
 {
-  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
+  if ((TEST_FLAG (HIDENAMESFLAG, PCB) /*&& gui->gui*/) ||
       TEST_FLAG (HIDENAMEFLAG, element))
     return;
   if (doing_pinout || doing_assy)
