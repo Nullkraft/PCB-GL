@@ -1,0 +1,22 @@
+Bottom: cf7561af0d7ccb0c751a3c999735400fc232e862
+Top:    602178c30a5fa740ed32810ec59eec33c398d8ef
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 23:07:19 +0000
+
+Refresh of hid-gerber-fix-typo-in-drill_s
+
+---
+
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 9f72176..9579b7b 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -632,7 +632,7 @@ drill_sort (const void *va, const void *vb)
+     return a->diam - b->diam;
+   if (a->x != b->x)
+     return a->x - b->x;
+-  return b->y - b->y;
++  return a->y - b->y;
+ }
+ 
+ static int
