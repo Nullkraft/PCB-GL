@@ -1,0 +1,15 @@
+Bottom: b7cd7f5f9d85f1b197f11db2a4462ee3ca681bfe
+Top:    b7cd7f5f9d85f1b197f11db2a4462ee3ca681bfe
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 17:48:06 +0000
+
+hid/common: Don't leak the dir resource in hid_load_dir()
+
+Add missing closedir() call.
+
+(Found with cppcheck)
+
+
+---
+
+
