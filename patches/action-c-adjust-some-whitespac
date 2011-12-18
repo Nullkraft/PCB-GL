@@ -3,11 +3,14 @@ Top:    3c98e6ff297326e1cfc0e489cd651ed0c96259fb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-18 22:04:25 +0000
 
-action.c: Adjust some whitespace around a function call to keep cppcheck happy
+action.c: Fixup some syntax so it appears as legal C before macro expansion
 
-This whitespace fix avoids a false "syntax error" report from cppcheck, and
-allows us to continue checking the rest of the file. It also makes the code
-a little clearer.
+"if TEST_FLAG (...) {" does not look like legal C until the TEST_FLAG macro
+is expanded. This works because the macro is wrapped with a () like all
+good function-like pre-processor macros.
+
+This bad style was upsetting cppcheck, which flagged up a syntax error for
+this line. (Obviously it was not expanding macros before checking).
 
 
 ---
