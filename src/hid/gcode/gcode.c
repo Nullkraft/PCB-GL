@@ -388,7 +388,7 @@ gcode_start_png (const char *layername)
 
   gcode_alloc_colors ();
 
-  free (buf);
+  g_free (buf);
 }
 
 static void
@@ -558,8 +558,6 @@ gcode_do_export (HID_Attr_Val * options)
           if (!gcode_f2)
             {
               perror (filename);
-              free (filename);
-              bm_free (bm);
               return;
             }
           fprintf (gcode_f2, "(Created by G-code exporter)\n");
