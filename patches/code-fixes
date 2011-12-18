@@ -1,4 +1,4 @@
-Bottom: 9bd40fd5cd1a5f6de0da2b615bf5d49e82b30ddb
+Bottom: 09e1fe8c92f5ecb3210d11fee8f5f9099ae272df
 Top:    b7cd7f5f9d85f1b197f11db2a4462ee3ca681bfe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-18 17:24:55 +0000
@@ -9,18 +9,10 @@ Code fixes
 ---
 
 diff --git a/src/file.c b/src/file.c
-index dd543aa..f71d1b0 100644
+index d649515..f71d1b0 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -1405,6 +1405,7 @@ ParseLibraryTree (void)
-   printf("Leaving ParseLibraryTree, found %d footprints.\n", n_footprints);
- #endif
- 
-+  free (libpaths);
-   return n_footprints;
- }
- 
-@@ -1538,10 +1539,11 @@ ReadNetlist (char *filename)
+@@ -1539,10 +1539,11 @@ ReadNetlist (char *filename)
    LibraryEntryTypePtr entry;
    int i, j, lines, kind;
    bool continued;
@@ -34,7 +26,7 @@ index dd543aa..f71d1b0 100644
  
    Message (_("Importing PCB netlist %s\n"), filename);
  
-@@ -1556,7 +1558,7 @@ ReadNetlist (char *filename)
+@@ -1557,7 +1558,7 @@ ReadNetlist (char *filename)
      }
    else
      {
@@ -43,7 +35,7 @@ index dd543aa..f71d1b0 100644
        free (command);
        command = EvaluateFilename (Settings.RatCommand,
  				  Settings.RatPath, filename, NULL);
-@@ -1565,7 +1567,7 @@ ReadNetlist (char *filename)
+@@ -1566,7 +1567,7 @@ ReadNetlist (char *filename)
        if (*command == '\0' || (fp = popen (command, "r")) == NULL)
  	{
  	  PopenErrorMessage (command);
@@ -52,7 +44,7 @@ index dd543aa..f71d1b0 100644
  	}
      }
    lines = 0;
-@@ -1636,15 +1638,14 @@ ReadNetlist (char *filename)
+@@ -1637,15 +1638,14 @@ ReadNetlist (char *filename)
    if (!lines)
      {
        Message (_("Empty netlist file!\n"));
