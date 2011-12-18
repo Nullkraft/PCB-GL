@@ -1,0 +1,29 @@
+Bottom: d5361c71426d10a300cb48a7c5074c838681ba5d
+Top:    60da932f8716017bf0351b424afae07878127ffa
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 17:58:51 +0000
+
+hid/gtk/ghid_layer_selector.c: Use g_malloc for the new_layer structure
+
+This eventually gets free'd with g_free(). We need match these allocations
+and de-allocations carefully, otherwise various corruption and crashes
+could occur.
+
+(Caught with cppcheck)
+
+
+---
+
+diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
+index 432e57e..2b04063 100644
+--- a/src/hid/gtk/ghid-layer-selector.c
++++ b/src/hid/gtk/ghid-layer-selector.c
+@@ -643,7 +643,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+       free_ldata (ls, new_layer);
+     }
+ 
+-  new_layer = malloc (sizeof (*new_layer));
++  new_layer = g_malloc (sizeof (*new_layer));
+ 
+   gtk_list_store_set (ls->list_store,
+                       &iter,
