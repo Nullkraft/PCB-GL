@@ -1,0 +1,22 @@
+Bottom: 602178c30a5fa740ed32810ec59eec33c398d8ef
+Top:    8c375e2c39f6dd48607ee1775f317194ffa276c7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 23:10:35 +0000
+
+Refresh of hid-gerber-fix-typo-in-drill_s
+
+---
+
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 9579b7b..820dfdc 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -955,7 +955,7 @@ use_gc (hidGC gc, int radius)
+       if (aptr == NULL)
+         pcb_fprintf (stderr, "error: aperture for width %$mS type %s is null\n",
+                  linewidth, shape == ROUND ? "ROUND" : "SQUARE");
+-      if (f)
++      else if (f)
+ 	fprintf (f, "G54D%d*", aptr->dCode);
+     }
+ #if 0
