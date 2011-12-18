@@ -3,9 +3,10 @@ Top:    74fb4ec10e731d25aec8f1398d2579c0a0054016
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-18 21:46:19 +0000
 
-hid/gtk: Fix copy+paste error breaking pad-center finding code
+hid/gtk: Fix broken pad-center finding code in the netlist window
 
-Looks like I made a copy+paste error in the netlist code.
+Looks like I made a copy+paste error in the code which shows the user
+the location of a particular netlist connection.
 
 (Caught with clang)
 
