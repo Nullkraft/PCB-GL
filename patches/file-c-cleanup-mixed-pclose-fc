@@ -1,0 +1,69 @@
+Bottom: dc5638e6c00979bf34eec4d09e98c4d03e5049f1
+Top:    52e815ff29403e919a8278c5c0ff7456fe06421b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 17:58:46 +0000
+
+file.c: Cleanup mixed pclose() / fclose() in ReadNetlist()
+
+In the "Empty netlist file!" error path, we called pclose()
+unconditionally where we should have tested "used_popen" first.
+
+(Caught with cppcheck)
+
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index 29358d6..92e719b 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -1536,10 +1536,11 @@ ReadNetlist (char *filename)
+   LibraryEntryTypePtr entry;
+   int i, j, lines, kind;
+   bool continued;
+-  int used_popen = 0;
++  bool used_popen = false;
++  int retval = 0;
+ 
+   if (!filename)
+-    return (1);			/* nothing to do */
++    return 1;			/* nothing to do */
+ 
+   Message (_("Importing PCB netlist %s\n"), filename);
+ 
+@@ -1554,7 +1555,7 @@ ReadNetlist (char *filename)
+     }
+   else
+     {
+-      used_popen = 1;
++      used_popen = true;
+       free (command);
+       command = EvaluateFilename (Settings.RatCommand,
+ 				  Settings.RatPath, filename, NULL);
+@@ -1563,7 +1564,7 @@ ReadNetlist (char *filename)
+       if (*command == '\0' || (fp = popen (command, "r")) == NULL)
+ 	{
+ 	  PopenErrorMessage (command);
+-	  return (1);
++	  return 1;
+ 	}
+     }
+   lines = 0;
+@@ -1634,15 +1635,14 @@ ReadNetlist (char *filename)
+   if (!lines)
+     {
+       Message (_("Empty netlist file!\n"));
+-      pclose (fp);
+-      return (1);
++      retval = 1;
+     }
+   if (used_popen)
+     pclose (fp);
+   else
+     fclose (fp);
+   sort_netlist ();
+-  return (0);
++  return retval;
+ }
+ 
+ static int ReadEdifNetlist (char *filename);
