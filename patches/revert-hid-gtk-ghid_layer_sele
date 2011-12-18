@@ -1,0 +1,25 @@
+Bottom: b7cd7f5f9d85f1b197f11db2a4462ee3ca681bfe
+Top:    d57e3afd8921c3acb0cf93ffb59125d6e9477c5a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 18:03:49 +0000
+
+Revert "hid/gtk/ghid_layer_selector.c: Use g_malloc for the new_layer structure"
+
+This reverts commit 38ac0fe9b2b4f758cbc2e67488c041706a034559.
+
+
+---
+
+diff --git a/src/hid/gtk/ghid-layer-selector.c b/src/hid/gtk/ghid-layer-selector.c
+index 2b04063..432e57e 100644
+--- a/src/hid/gtk/ghid-layer-selector.c
++++ b/src/hid/gtk/ghid-layer-selector.c
+@@ -643,7 +643,7 @@ ghid_layer_selector_add_layer (GHidLayerSelector *ls,
+       free_ldata (ls, new_layer);
+     }
+ 
+-  new_layer = g_malloc (sizeof (*new_layer));
++  new_layer = malloc (sizeof (*new_layer));
+ 
+   gtk_list_store_set (ls->list_store,
+                       &iter,
