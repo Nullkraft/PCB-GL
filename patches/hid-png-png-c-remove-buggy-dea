@@ -1,0 +1,16 @@
+Bottom: 9f58af7efb89068eb1a5b03f8916c657d4d6fa38
+Top:    9f58af7efb89068eb1a5b03f8916c657d4d6fa38
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 23:28:00 +0000
+
+hid/png/png.c: Remove buggy dead-code for swapping x1/x2 and y1/y2
+
+Since the png hid works, and this code is ineffective due to a typo,
+we probably ought to remove it.
+
+(Caught by clang)
+
+
+---
+
+
