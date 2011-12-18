@@ -1,0 +1,31 @@
+Bottom: 38c82a71a02586c3777c5369078409d65e198246
+Top:    259150d5ba4a31c22d5f4e23c73dd3f9211ed7ae
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 17:19:29 +0000
+
+Refresh of hid-gcode-don-t-mix-g_-allocat
+
+---
+
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index cc4a689..40a3b36 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -388,7 +388,7 @@ gcode_start_png (const char *layername)
+ 
+   gcode_alloc_colors ();
+ 
+-  free (buf);
++  g_free (buf);
+ }
+ 
+ static void
+@@ -558,8 +558,6 @@ gcode_do_export (HID_Attr_Val * options)
+           if (!gcode_f2)
+             {
+               perror (filename);
+-              free (filename);
+-              bm_free (bm);
+               return;
+             }
+           fprintf (gcode_f2, "(Created by G-code exporter)\n");
