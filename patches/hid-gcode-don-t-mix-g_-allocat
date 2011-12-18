@@ -3,7 +3,9 @@ Top:    259150d5ba4a31c22d5f4e23c73dd3f9211ed7ae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-18 17:15:07 +0000
 
-hid/gcode: Don't mix g_* allocations functions and free()
+hid/gcode: Fix mismatched g_strdup_printf() and free()
+
+Allocations from the g_*() functions shuold be free'd with g_free().
 
 
 ---
