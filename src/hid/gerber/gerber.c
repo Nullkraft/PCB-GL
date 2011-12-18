@@ -916,6 +916,9 @@ gerber_set_draw_xor (hidGC gc, int xor_)
 static void
 use_gc (hidGC gc, int radius)
 {
+  if (f == NULL)
+    return;
+
   if (radius)
     {
       radius *= 2;
@@ -924,7 +927,7 @@ use_gc (hidGC gc, int radius)
 	  Aperture *aptr = findAperture (curr_aptr_list, radius, ROUND);
 	  if (aptr == NULL)
 	    pcb_fprintf (stderr, "error: aperture for radius %$mS type ROUND is null\n", radius);
-	  else if (f && !is_drill)
+	  else if (!is_drill)
 	    fprintf (f, "G54D%d*", aptr->dCode);
 	  linewidth = radius;
 	  lastcap = Round_Cap;
@@ -952,7 +955,7 @@ use_gc (hidGC gc, int radius)
       if (aptr == NULL)
         pcb_fprintf (stderr, "error: aperture for width %$mS type %s is null\n",
                  linewidth, shape == ROUND ? "ROUND" : "SQUARE");
-      else if (f)
+      else
 	fprintf (f, "G54D%d*", aptr->dCode);
     }
 }
