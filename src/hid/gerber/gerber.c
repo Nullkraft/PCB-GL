@@ -631,8 +631,8 @@ drill_sort (const void *va, const void *vb)
   if (a->diam != b->diam)
     return a->diam - b->diam;
   if (a->x != b->x)
-    return a->x - a->x;
-  return b->y - b->y;
+    return a->x - b->x;
+  return a->y - b->y;
 }
 
 static int
@@ -955,7 +955,7 @@ use_gc (hidGC gc, int radius)
       if (aptr == NULL)
         pcb_fprintf (stderr, "error: aperture for width %$mS type %s is null\n",
                  linewidth, shape == ROUND ? "ROUND" : "SQUARE");
-      if (f)
+      else if (f)
 	fprintf (f, "G54D%d*", aptr->dCode);
     }
 #if 0
