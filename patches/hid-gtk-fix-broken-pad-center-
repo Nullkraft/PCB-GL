@@ -1,0 +1,28 @@
+Bottom: 88b4b1db95d2d340c69a9035a299195ce8cd627b
+Top:    427b0f07992393e7f509914326c002a3de929427
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-19 00:59:01 +0000
+
+hid/gtk: Fix broken pad-center finding code in the netlist window
+
+Looks like I made a copy+paste error in the code which shows the user
+the location of a particular netlist connection.
+
+(Caught with clang)
+
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 35b5427..f87491d 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -295,7 +295,7 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
+         {
+           PadTypePtr pad = (PadTypePtr) conn.ptr2;
+           x = pad->Point1.X + (pad->Point2.X - pad->Point1.X) / 2;
+-          y = pad->Point1.Y + (pad->Point2.Y - pad->Point2.Y) / 2;
++          y = pad->Point1.Y + (pad->Point2.Y - pad->Point1.Y) / 2;
+           gui->set_crosshair (x, y, 0);
+           ghid_lead_user_to_location (x, y);
+           break;
