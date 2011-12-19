@@ -1,0 +1,35 @@
+Bottom: 1c25f589d098fbe392183c02eeb645cdd4618135
+Top:    ea4ec4a7a8729dffe568947870eb33e2dd4c0d9a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-19 01:00:23 +0000
+
+src/action.c: Abort the Import(setnewport,mask) action if the mask isn't set
+
+This avoids using an uninitialised variable.
+
+(Caught by clang)
+
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index c1325ba..1005b17 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -7622,11 +7622,11 @@ ActionImport (int argc, char **argv, Coord x, Coord y)
+ 	}
+       else if (strcasecmp (xs, "mark") == 0)
+ 	{
+-	  if (Marked.status)
+-	    {
+-	      x = Marked.X;
+-	      y = Marked.Y;
+-	    }
++	  if (!Marked.status)
++	    return 0;
++
++	  x = Marked.X;
++	  y = Marked.Y;
+ 	}
+       else if (ys)
+ 	{
