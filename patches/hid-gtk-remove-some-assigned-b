@@ -1,0 +1,63 @@
+Bottom: 4775d466dea13beca70a0b5e34bd1037933c98ee
+Top:    f90154a6653c6669ada47d8dd8193f7e9ef97ac9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-19 00:59:29 +0000
+
+hid/gtk: Remove some assigned, but unused variables in the netlist window
+
+(Caught with clang)
+
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index f87491d..a847e6d 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -71,7 +71,6 @@ static GtkWidget	*disable_all_button;
+ 
+ static GtkTreeModel *node_model;
+ static GtkTreeView *node_treeview;
+-static GtkTreeSelection *node_selection;
+ 
+ static gboolean selection_holdoff;
+ 
+@@ -701,7 +700,6 @@ ghid_netlist_window_create (GHidPort * out)
+   GtkWidget *vbox, *hbox, *button, *label, *sep;
+   GtkTreeView *treeview;
+   GtkTreeModel *model;
+-  GtkTreeSelection *selection;
+   GtkCellRenderer *renderer;
+   GtkTreeViewColumn *column;
+ 
+@@ -760,10 +758,10 @@ ghid_netlist_window_create (GHidPort * out)
+    */
+   gtk_tree_view_expand_all (treeview);
+ 
+-  selection = ghid_scrolled_selection (treeview, hbox,
+-				       GTK_SELECTION_SINGLE,
+-				       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC,
+-				       net_selection_changed_cb, NULL);
++  ghid_scrolled_selection (treeview, hbox,
++                           GTK_SELECTION_SINGLE,
++                           GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC,
++                           net_selection_changed_cb, NULL);
+ 
+   /* Connect to the double click event.
+    */
+@@ -785,11 +783,10 @@ ghid_netlist_window_create (GHidPort * out)
+ 					       "text", NODE_NAME_COLUMN,
+ 					       NULL);
+ 
+-  selection = ghid_scrolled_selection (treeview, hbox,
+-				       GTK_SELECTION_SINGLE,
+-				       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC,
+-				       node_selection_changed_cb, NULL);
+-  node_selection = selection;
++  ghid_scrolled_selection (treeview, hbox,
++                           GTK_SELECTION_SINGLE,
++                           GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC,
++                           node_selection_changed_cb, NULL);
+ 
+   hbox = gtk_hbox_new (FALSE, 0);
+   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
