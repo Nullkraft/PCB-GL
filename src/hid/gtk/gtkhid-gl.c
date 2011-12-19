@@ -1520,6 +1520,7 @@ GhidDrawMask (int side, BoxType * screen)
   polygon.NoHoles = NULL;
   polygon.NoHolesValid = 0;
   polygon.BoundingBox = *screen;
+  polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
   poly_Free (&polygon.Clipped);
