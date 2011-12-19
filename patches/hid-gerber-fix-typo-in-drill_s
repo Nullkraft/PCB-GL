@@ -1,7 +1,7 @@
-Bottom: 52f2e8e5fbbdd5b1ad63646c6e172a4ae5f4ebec
-Top:    647a3995c2fd9a2e55919fbc8276ec02e8174a9a
+Bottom: 2e5ed82c06743dbc09d48578c5c87648a8352e6d
+Top:    2e5ed82c06743dbc09d48578c5c87648a8352e6d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-18 23:05:09 +0000
+Date:   2011-12-19 01:31:06 +0000
 
 hid/gerber: Fix a couple of typos in drill_sort routine
 
@@ -12,18 +12,4 @@ Should fix sorting of drill holes by coordinate.
 
 ---
 
-diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 18de0f7..1db3a55 100644
---- a/src/hid/gerber/gerber.c
-+++ b/src/hid/gerber/gerber.c
-@@ -629,8 +629,8 @@ drill_sort (const void *va, const void *vb)
-   if (a->diam != b->diam)
-     return a->diam - b->diam;
-   if (a->x != b->x)
--    return a->x - a->x;
--  return b->y - b->y;
-+    return a->x - b->x;
-+  return a->y - b->y;
- }
- 
- static int
+

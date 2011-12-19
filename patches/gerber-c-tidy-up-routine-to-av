@@ -1,7 +1,7 @@
-Bottom: 647a3995c2fd9a2e55919fbc8276ec02e8174a9a
-Top:    9f58af7efb89068eb1a5b03f8916c657d4d6fa38
+Bottom: 2e5ed82c06743dbc09d48578c5c87648a8352e6d
+Top:    2e5ed82c06743dbc09d48578c5c87648a8352e6d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-18 23:14:38 +0000
+Date:   2011-12-19 01:31:06 +0000
 
 gerber.c: Tidy up use_gc() routine to avoid a static anlysis warning
 
@@ -13,16 +13,4 @@ just NULL tested it.
 
 ---
 
-diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 1db3a55..d45bcea 100644
---- a/src/hid/gerber/gerber.c
-+++ b/src/hid/gerber/gerber.c
-@@ -952,7 +952,7 @@ use_gc (hidGC gc, int radius)
-       if (aptr == NULL)
-         pcb_fprintf (stderr, "error: aperture for width %$mS type %s is null\n",
-                  linewidth, shape == ROUND ? "ROUND" : "SQUARE");
--      if (f)
-+      else if (f)
- 	fprintf (f, "G54D%d*", aptr->dCode);
-     }
- }
+
