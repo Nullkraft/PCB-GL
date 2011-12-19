@@ -1,5 +1,5 @@
 Bottom: 2b1dcff1315d631062d158e6dcbe3c97b3927e7f
-Top:    2b1dcff1315d631062d158e6dcbe3c97b3927e7f
+Top:    c30125bf0048b79d7e71988a61b1d469683cb2bf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-19 01:24:59 +0000
 
@@ -10,4 +10,16 @@ hid/gerber: Fixup trailing zeros from commit b90fb6ae22ae83fdc0c802268dcbe74005b
 
 ---
 
-
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index be6a7c4..16619f1 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -674,7 +674,7 @@ gerber_set_layer (const char *name, int group, int empty)
+ 	    }
+           /* Notice the last zeroes are literal zeroes here, a  *
+            *  x10 scale factor.  v        v                     */
+-          pcb_fprintf (f, "X%06.00mlY%06.00ml\r\n",
++          pcb_fprintf (f, "X%06.0ml0Y%06.0ml0\r\n",
+ 		   gerberDrX (PCB, pending_drills[i].x),
+ 		   gerberDrY (PCB, pending_drills[i].y));
+ 	}
