@@ -1,5 +1,5 @@
 Bottom: 437532255737821250b96fe67339f2c4badecfb9
-Top:    437532255737821250b96fe67339f2c4badecfb9
+Top:    a4cd837fd30351e35d69c7eb8c9c7ee80672caae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-19 00:43:42 +0000
 
@@ -12,4 +12,42 @@ there are potential uses of uninitialised data.
 
 ---
 
-
+diff --git a/src/find.c b/src/find.c
+index e842fd9..c07c795 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -865,7 +865,7 @@ LookupLOConnectionsToLOList (bool AndRats)
+     {
+       lineposition[i] = LineList[i].Location;
+       polyposition[i] = PolygonList[i].Location;
+-      arcposition[i] = ArcList[i].Location;
++      arcposition[i]  = ArcList[i].Location;
+     }
+   for (i = 0; i < 2; i++)
+     padposition[i] = PadList[i].Location;
+@@ -951,18 +951,13 @@ LookupLOConnectionsToLOList (bool AndRats)
+        * may have changed the prior lists
+        */
+       done = !AndRats || ratposition >= RatList.Number;
+-      for (layer = 0; layer < max_copper_layer + 2; layer++)
+-        {
+-          if (layer < max_copper_layer)
+-            done = done &&
+-              lineposition[layer] >= LineList[layer].Number
+-              && arcposition[layer] >= ArcList[layer].Number
+-              && polyposition[layer] >= PolygonList[layer].Number;
+-          else
+-            done = done
+-              && padposition[layer - max_copper_layer] >=
+-              PadList[layer - max_copper_layer].Number;
+-        }
++      done = done && padposition[0] >= PadList[0].Number &&
++                     padposition[1] >= PadList[1].Number;
++      for (layer = 0; layer < max_copper_layer; layer++)
++        done = done &&
++               lineposition[layer] >= LineList[layer].Number &&
++               arcposition[layer]  >= ArcList[layer].Number &&
++               polyposition[layer] >= PolygonList[layer].Number;
+     }
+   while (!done);
+   return (false);
