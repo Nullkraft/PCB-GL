@@ -1,5 +1,5 @@
-Bottom: cedb74b5b2b3ebaea421918e167da22559aff4ef
-Top:    2ce12d4d62f7b8a74f95d66900c4459585768cda
+Bottom: 83e5afb8506ee89f3bc063c56fcb5a6f32a43862
+Top:    35988cb00137c55b0074129532fb80e6fd9790d0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-19 01:00:18 +0000
 
@@ -13,7 +13,7 @@ Should fix sorting of drill holes by coordinate.
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index ce20e3b..3930941 100644
+index 99f3185..5f5f349 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -628,8 +628,8 @@ drill_sort (const void *va, const void *vb)
