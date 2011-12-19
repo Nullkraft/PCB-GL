@@ -1,5 +1,5 @@
 Bottom: 1461549fe48276fc012fe125c0de3be2a8308cdf
-Top:    4772bc50d4dec905d9d0a23c20bd7cb6696dbe1f
+Top:    159b36f640c187856010320a7f040238bbfe6bee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-19 01:30:53 +0000
 
@@ -12,7 +12,7 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index feded94..516e571 100644
+index feded94..017eca6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -13,6 +13,7 @@
@@ -31,7 +31,7 @@ index feded94..516e571 100644
  
    OutputType *out = &Output;
  
-@@ -1513,7 +1515,18 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1513,7 +1515,19 @@ GhidDrawMask (int side, BoxType * screen)
    gui->use_mask (HID_MASK_AFTER);
    gui->set_color (out->fgGC, PCB->MaskColor);
    ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
@@ -41,6 +41,7 @@ index feded94..516e571 100644
 +  polygon.NoHoles = NULL;
 +  polygon.NoHolesValid = 0;
 +  polygon.BoundingBox = *screen;
++  polygon.Flags = NoFlags ();
 +  SET_FLAG (FULLPOLYFLAG, &polygon);
 +  common_fill_pcb_polygon (out->fgGC, &polygon, screen);
 +  poly_Free (&polygon.Clipped);
