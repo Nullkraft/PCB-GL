@@ -1,0 +1,24 @@
+Bottom: eaa41893158110a4df8aee7cd92bf1ab4c611d9d
+Top:    52f2e8e5fbbdd5b1ad63646c6e172a4ae5f4ebec
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-18 22:44:57 +0000
+
+hid/gtk/gtkhid-gl.c: Initialise flags variable to of polygon in GhidDrawMask()
+
+(Caught by clang)
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 4afaac7..67e610d 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1574,6 +1574,7 @@ GhidDrawMask (int side, BoxType * screen)
+   polygon.NoHolesValid = 0;
+   if (screen)
+     polygon.BoundingBox = *screen;
++  polygon.Flags = NoFlags ();
+   SET_FLAG (FULLPOLYFLAG, &polygon);
+   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
+   poly_Free (&polygon.Clipped);
