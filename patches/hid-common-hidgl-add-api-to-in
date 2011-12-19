@@ -1,5 +1,5 @@
-Bottom: 8787e1098e7ccd34c594e5c6e97a760d1a7cc77e
-Top:    4304800d04876d9f32bfb3d82f97e8e8661dd57a
+Bottom: c23803e56e58a9f6012273f5b9167878afa765f2
+Top:    f2d42418bcdf1a04286a34002261c2a8a32d9a9e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-19 01:30:54 +0000
 
@@ -65,10 +65,10 @@ index 858270a..8d2c78c 100644
  int hidgl_assign_clear_stencil_bit (void);
  void hidgl_return_stencil_bit (int bit);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ba87527..25c4bf7 100644
+index cfc4d3e..0ab30b0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1911,8 +1911,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1912,8 +1912,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    gtk_widget_get_allocation (widget, &allocation);
  
    ghid_start_drawing (port);
@@ -78,7 +78,7 @@ index ba87527..25c4bf7 100644
  
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
-@@ -2030,7 +2029,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2031,7 +2030,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -86,7 +86,7 @@ index ba87527..25c4bf7 100644
    ghid_invalidate_current_gc ();
  
    /* Setup stenciling */
-@@ -2092,6 +2090,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2093,6 +2091,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    draw_lead_user (priv);
  
@@ -94,7 +94,7 @@ index ba87527..25c4bf7 100644
    ghid_end_drawing (port);
  
    g_timer_start (priv->time_since_expose);
-@@ -2160,6 +2159,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2161,6 +2160,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
      return FALSE;
    }
@@ -102,7 +102,7 @@ index ba87527..25c4bf7 100644
    gport->render_priv->in_context = true;
  
    glEnable (GL_BLEND);
-@@ -2186,11 +2186,9 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2187,11 +2187,9 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -114,7 +114,7 @@ index ba87527..25c4bf7 100644
    ghid_invalidate_current_gc ();
    glPushMatrix ();
    glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
-@@ -2211,6 +2209,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2212,6 +2210,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    else
      glFlush ();
  
@@ -123,7 +123,7 @@ index ba87527..25c4bf7 100644
    /* end drawing to current GL-context */
    gport->render_priv->in_context = false;
    gdk_gl_drawable_gl_end (pGlDrawable);
-@@ -2269,6 +2269,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2270,6 +2270,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
      return NULL;
    }
@@ -131,7 +131,7 @@ index ba87527..25c4bf7 100644
    gport->render_priv->in_context = true;
  
    glEnable (GL_BLEND);
-@@ -2296,7 +2297,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2297,7 +2298,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
@@ -139,7 +139,7 @@ index ba87527..25c4bf7 100644
    ghid_invalidate_current_gc ();
    glPushMatrix ();
    glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
-@@ -2323,6 +2323,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2324,6 +2324,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glFlush ();
  
@@ -148,7 +148,7 @@ index ba87527..25c4bf7 100644
    /* end drawing to current GL-context */
    gport->render_priv->in_context = false;
    gdk_gl_drawable_gl_end (gldrawable);
-@@ -2349,6 +2351,7 @@ ghid_request_debug_draw (void)
+@@ -2350,6 +2352,7 @@ ghid_request_debug_draw (void)
    gtk_widget_get_allocation (widget, &allocation);
  
    ghid_start_drawing (port);
@@ -156,7 +156,7 @@ index ba87527..25c4bf7 100644
  
    glViewport (0, 0, allocation.width, allocation.height);
  
-@@ -2359,7 +2362,6 @@ ghid_request_debug_draw (void)
+@@ -2360,7 +2363,6 @@ ghid_request_debug_draw (void)
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -164,7 +164,7 @@ index ba87527..25c4bf7 100644
    ghid_invalidate_current_gc ();
  
    /* Setup stenciling */
-@@ -2397,6 +2399,7 @@ ghid_finish_debug_draw (void)
+@@ -2398,6 +2400,7 @@ ghid_finish_debug_draw (void)
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
