@@ -1,7 +1,7 @@
-Bottom: 60da932f8716017bf0351b424afae07878127ffa
-Top:    e9af2f49c2fdbe5c3046c5e869b794e00a3c3716
+Bottom: 3038a0f29cb30b2ae45da91054dec79d6bc2e21a
+Top:    3a5525cf31d0de4fa3bdf06f75b46963cfd46b92
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-18 18:00:56 +0000
+Date:   2011-12-19 01:26:20 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 2a0be9e..eb44fd6 100644
+index 69bf89d3..802d695 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1898,37 +1898,39 @@ static int
@@ -70,7 +70,7 @@ index 2a0be9e..eb44fd6 100644
  	    }
  	}
      }
-@@ -3250,6 +3252,8 @@ static const char renumber_help[] =
+@@ -3249,6 +3251,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, Coord x, Coord y)
  {
@@ -79,7 +79,7 @@ index 2a0be9e..eb44fd6 100644
    bool changed = false;
    ElementTypePtr *element_list;
    ElementTypePtr *locked_element_list;
-@@ -3587,6 +3591,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3586,6 +3590,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    free (element_list);
    free (cnt_list);
    return 0;
@@ -87,7 +87,7 @@ index 2a0be9e..eb44fd6 100644
  }
  
  
-@@ -4589,16 +4594,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4588,16 +4593,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index 2a0be9e..eb44fd6 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatTypePtr) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6914,22 +6918,26 @@ find_element_by_refdes (char *refdes)
+@@ -6913,22 +6917,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListTypePtr list, const char *name)
  {
@@ -897,10 +897,10 @@ index cc474cd..03c0cbd 100644
  
  	  break;
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 35b5427..ab65f8d 100644
+index a847e6d..e300833 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
-@@ -530,9 +530,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
+@@ -529,9 +529,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
  static void
  netlist_select_cb (GtkWidget * widget, gpointer data)
  {
@@ -911,7 +911,7 @@ index 35b5427..ab65f8d 100644
    gboolean select_flag = GPOINTER_TO_INT (data);
  
    if (!selected_net)
-@@ -543,9 +542,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+@@ -542,9 +541,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
    InitConnectionLookup ();
    ResetConnections (true);
  
@@ -925,7 +925,7 @@ index 35b5427..ab65f8d 100644
  
    SelectConnection (select_flag);
    ResetConnections (false);
-@@ -865,9 +867,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -862,9 +864,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
  {
    struct ggnfnn_task *task = (struct ggnfnn_task *)data;
    LibraryMenuType *net;
@@ -936,7 +936,7 @@ index 35b5427..ab65f8d 100644
    gboolean is_disabled;
  
    /* We only want to inspect leaf nodes in the tree */
-@@ -884,13 +885,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -881,13 +882,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
      return FALSE;
  
    /* Look for the node name in this net. */
@@ -955,7 +955,7 @@ index 35b5427..ab65f8d 100644
  
    return FALSE;
  }
-@@ -1010,7 +1014,7 @@ ghid_netlist_window_update (gboolean init_nodes)
+@@ -1007,7 +1011,7 @@ ghid_netlist_window_update (gboolean init_nodes)
  
    /* XXX Check if the select callback does this for us */
    if (init_nodes)
@@ -965,10 +965,10 @@ index 35b5427..ab65f8d 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 9659b66..0a89e25 100644
+index 9e75927..32c48f3 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -327,28 +327,26 @@ nelma_write_materials(FILE * out)
+@@ -325,28 +325,26 @@ nelma_write_materials(FILE * out)
  static void 
  nelma_write_nets(FILE * out)
  {
@@ -1003,7 +1003,7 @@ index 9659b66..0a89e25 100644
  
  			/* pin_name_to_xy(pin, &x, &y); */
  
-@@ -380,7 +378,7 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -378,7 +376,7 @@ nelma_write_layer(FILE * out, int z, int h,
  	LibraryMenuTypePtr net;
  	LibraryEntryTypePtr pin;
  
@@ -1012,7 +1012,7 @@ index 9659b66..0a89e25 100644
  
  	fprintf(out, "layer %s {\n", name);
  	fprintf(out, "\theight = %d\n", h);
-@@ -391,11 +389,11 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -389,11 +387,11 @@ nelma_write_layer(FILE * out, int z, int h,
  		fprintf(out, "\tobjects = {\n");
  		netlist = PCB->NetlistLib;
  
@@ -1028,7 +1028,7 @@ index 9659b66..0a89e25 100644
  
  				if (m != 0 || n != 0)
  					fprintf(out, ",\n");
-@@ -501,17 +499,17 @@ nelma_write_objects(FILE * out)
+@@ -499,17 +497,17 @@ nelma_write_objects(FILE * out)
  	LibraryMenuTypePtr net;
  	LibraryEntryTypePtr pin;
  
