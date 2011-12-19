@@ -1,69 +1,11 @@
-Bottom: ec201cc4f96ab623c5211cca5ee3cc9eb0bfba21
-Top:    cedb74b5b2b3ebaea421918e167da22559aff4ef
+Bottom: 068d5afc22029722bb5add0fd40b1448f0b8e651
+Top:    068d5afc22029722bb5add0fd40b1448f0b8e651
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-19 00:59:37 +0000
+Date:   2011-12-19 01:26:12 +0000
 
 hid/gerber: Remove dead colour selection code
 
 
 ---
 
-diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index be6a7c4..ce20e3b 100644
---- a/src/hid/gerber/gerber.c
-+++ b/src/hid/gerber/gerber.c
-@@ -304,7 +304,6 @@ static int pagecount = 0;
- static int linewidth = -1;
- static int lastgroup = -1;
- static int lastcap = -1;
--static int lastcolor = -1;
- static int print_group[MAX_LAYER];
- static int print_layer[MAX_LAYER];
- static int lastX, lastY;	/* the last X and Y coordinate */
-@@ -588,7 +587,6 @@ gerber_do_export (HID_Attr_Val * options)
-   linewidth = -1;
-   lastcap = -1;
-   lastgroup = -1;
--  lastcolor = -1;
- 
-   region.X1 = 0;
-   region.Y1 = 0;
-@@ -704,7 +702,6 @@ gerber_set_layer (const char *name, int group, int empty)
-       lastgroup = group;
-       lastX = -1;
-       lastY = -1;
--      lastcolor = 0;
-       linewidth = -1;
-       lastcap = -1;
- 
-@@ -957,30 +954,6 @@ use_gc (hidGC gc, int radius)
-       if (f)
- 	fprintf (f, "G54D%d*", aptr->dCode);
-     }
--#if 0
--  if (lastcolor != gc->color)
--    {
--      c = gc->color;
--      if (is_drill)
--	return;
--      if (is_mask)
--	c = (gc->erase ? 0 : 1);
--      lastcolor = gc->color;
--      if (f)
--	{
--	  if (c)
--	    {
--	      fprintf (f, "%%LN%s_C%d*%%\r\n", layername, lncount++);
--	      fprintf (f, "%%LPC*%%\r\n");
--	    }
--	  else
--	    {
--	      fprintf (f, "%%LN%s_D%d*%%\r\n", layername, lncount++);
--	      fprintf (f, "%%LPD*%%\r\n");
--	    }
--	}
--    }
--#endif
- }
- 
- static void
+

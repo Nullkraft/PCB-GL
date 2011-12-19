@@ -1,7 +1,7 @@
-Bottom: 55d775776e1c0864d7b7aaecda62a67b04d4ddb8
-Top:    d0761298972631c7ba9b254dd11624038092846c
+Bottom: 068d5afc22029722bb5add0fd40b1448f0b8e651
+Top:    068d5afc22029722bb5add0fd40b1448f0b8e651
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-19 01:00:26 +0000
+Date:   2011-12-19 01:26:15 +0000
 
 heap.c: Don't set the v variable twice to the same value in __upheap.
 
@@ -10,15 +10,4 @@ heap.c: Don't set the v variable twice to the same value in __upheap.
 
 ---
 
-diff --git a/src/heap.c b/src/heap.c
-index 9e0f35e..57a8208 100644
---- a/src/heap.c
-+++ b/src/heap.c
-@@ -159,7 +159,6 @@ __upheap (heap_t * heap, int k)
-   assert (heap && heap->size < heap->max);
-   assert (k <= heap->size);
- 
--  v = heap->element[k];
-   heap->element[0].cost = MIN_COST;
-   for (v = heap->element[k]; heap->element[k / 2].cost > v.cost; k = k / 2)
-     heap->element[k] = heap->element[k / 2];
+

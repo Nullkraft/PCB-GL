@@ -1,7 +1,7 @@
-Bottom: c42cf713736d21051f279c6845bc60cf10c7d342
-Top:    1c25f589d098fbe392183c02eeb645cdd4618135
+Bottom: 068d5afc22029722bb5add0fd40b1448f0b8e651
+Top:    068d5afc22029722bb5add0fd40b1448f0b8e651
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-19 01:00:21 +0000
+Date:   2011-12-19 01:26:14 +0000
 
 hid/png/png.c: Remove buggy code for swapping x1/x2 and y1/y2
 
@@ -13,26 +13,4 @@ we probably ought to remove it.
 
 ---
 
-diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index ff8931a..892696b 100644
---- a/src/hid/png/png.c
-+++ b/src/hid/png/png.c
-@@ -1425,18 +1425,6 @@ png_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
-   gdImageSetThickness (im, 0);
-   linewidth = 0;
- 
--  if (x1 > x2)
--    {
--      Coord t = x1;
--      x2 = x2;
--      x2 = t;
--    }
--  if (y1 > y2)
--    {
--      Coord t = y1;
--      y2 = y2;
--      y2 = t;
--    }
-   y1 -= bloat;
-   y2 += bloat;
-   SWAP_IF_SOLDER (y1, y2);
+
