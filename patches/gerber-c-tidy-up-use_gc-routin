@@ -1,0 +1,28 @@
+Bottom: 2ce12d4d62f7b8a74f95d66900c4459585768cda
+Top:    c42cf713736d21051f279c6845bc60cf10c7d342
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-19 01:00:20 +0000
+
+gerber.c: Tidy up use_gc() routine to avoid a static anlysis warning
+
+Don't unconditionally access the aptr variable right after we
+just NULL tested it.
+
+(Caught by clang)
+
+
+---
+
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 3930941..97a7c29 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -951,7 +951,7 @@ use_gc (hidGC gc, int radius)
+       if (aptr == NULL)
+         pcb_fprintf (stderr, "error: aperture for width %$mS type %s is null\n",
+                  linewidth, shape == ROUND ? "ROUND" : "SQUARE");
+-      if (f)
++      else if (f)
+ 	fprintf (f, "G54D%d*", aptr->dCode);
+     }
+ }
