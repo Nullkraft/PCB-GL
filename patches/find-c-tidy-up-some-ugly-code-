@@ -1,0 +1,53 @@
+Bottom: ea4ec4a7a8729dffe568947870eb33e2dd4c0d9a
+Top:    55d775776e1c0864d7b7aaecda62a67b04d4ddb8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-19 01:00:25 +0000
+
+find.c: Tidy up some ugly code in LookupLOConnectionsToLOList()
+
+Cleaned up whilst chasing some clang warnings. It appears there is no real
+problem here, as max_copper_layers is going to be >0 for any PCB. If not,
+there are potential uses of uninitialised data.
+
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 877deb4..cd2aff5 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -865,7 +865,7 @@ LookupLOConnectionsToLOList (bool AndRats)
+     {
+       lineposition[i] = LineList[i].Location;
+       polyposition[i] = PolygonList[i].Location;
+-      arcposition[i] = ArcList[i].Location;
++      arcposition[i]  = ArcList[i].Location;
+     }
+   for (i = 0; i < 2; i++)
+     padposition[i] = PadList[i].Location;
+@@ -951,18 +951,13 @@ LookupLOConnectionsToLOList (bool AndRats)
+        * may have changed the prior lists
+        */
+       done = !AndRats || ratposition >= RatList.Number;
+-      for (layer = 0; layer < max_copper_layer + 2; layer++)
+-        {
+-          if (layer < max_copper_layer)
+-            done = done &&
+-              lineposition[layer] >= LineList[layer].Number
+-              && arcposition[layer] >= ArcList[layer].Number
+-              && polyposition[layer] >= PolygonList[layer].Number;
+-          else
+-            done = done
+-              && padposition[layer - max_copper_layer] >=
+-              PadList[layer - max_copper_layer].Number;
+-        }
++      done = done && padposition[0] >= PadList[0].Number &&
++                     padposition[1] >= PadList[1].Number;
++      for (layer = 0; layer < max_copper_layer; layer++)
++        done = done &&
++               lineposition[layer] >= LineList[layer].Number &&
++               arcposition[layer]  >= ArcList[layer].Number &&
++               polyposition[layer] >= PolygonList[layer].Number;
+     }
+   while (!done);
+   return (false);
