@@ -1,0 +1,1634 @@
+Bottom: 8f14cd095ce7ebb50e88ff3c91f0de39a9e4d282
+Top:    57d7a3eca05bba75098d9b3c615218c1facfe4a7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-23 23:50:46 +0000
+
+Refresh of remove-remaining-rcs-id-identi
+
+---
+
+diff --git a/src/autoplace.c b/src/autoplace.c
+index 0e74b66..e7cdee8 100644
+--- a/src/autoplace.c
++++ b/src/autoplace.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -67,8 +65,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #define EXPANDRECTXY(r1, x1, y1, x2, y2) { \
+   r1->X1=MIN(r1->X1, x1); r1->Y1=MIN(r1->Y1, y1); \
+   r1->X2=MAX(r1->X2, x2); r1->Y2=MAX(r1->Y2, y2); \
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 34e01dc..374b6ac 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -86,8 +84,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* #defines to enable some debugging output */
+ /*
+ #define ROUTE_VERBOSE
+diff --git a/src/buffer.c b/src/buffer.c
+index ac2aa54..1f9293a 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -62,8 +60,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+diff --git a/src/change.c b/src/change.c
+index 61cb335..aaad7a2 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -63,8 +61,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+diff --git a/src/clip.c b/src/clip.c
+index f38c660..e4fef34 100644
+--- a/src/clip.c
++++ b/src/clip.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -45,8 +43,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* Clip the line to the clipBox
+  * return true if something to be drawn
+  * false if the whole thing is clipped
+diff --git a/src/command.c b/src/command.c
+index 963ed85..8055ec8 100644
+--- a/src/command.c
++++ b/src/command.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -57,8 +55,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* ---------------------------------------------------------------------- */
+ 
+ /*  %start-doc actions 00macros
+diff --git a/src/compat.c b/src/compat.c
+index e3acf2f..6092764 100644
+--- a/src/compat.c
++++ b/src/compat.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -34,8 +32,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #ifndef HAVE_EXPF
+ float
+ expf (float x)
+diff --git a/src/copy.c b/src/copy.c
+index 29ac62f..193bb52 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -57,8 +55,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+diff --git a/src/create.c b/src/create.c
+index 8d8344c..8a1effd 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -59,8 +57,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
+  */
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 177c9cc..055f390 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1,4 +1,3 @@
+-/* $Id$ */
+ /*
+  *                            COPYRIGHT
+  *
+@@ -52,8 +51,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ typedef struct
+ {
+   int x, y;
+diff --git a/src/data.c b/src/data.c
+index ebd9b29..702d9ca 100644
+--- a/src/data.c
++++ b/src/data.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -38,8 +36,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* ---------------------------------------------------------------------------
+  * some shared identifiers
+  */
+diff --git a/src/djopt.c b/src/djopt.c
+index 7b5a223..daeae0a 100644
+--- a/src/djopt.c
++++ b/src/djopt.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -50,8 +48,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #ifndef HAVE_RINT
+ #define rint(x)  (ceil((x) - 0.5))
+ #endif
+diff --git a/src/draw.c b/src/draw.c
+index a06dde1..a11c6e2 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -61,8 +59,6 @@
+ #define MAXINT (((unsigned int)(~0))>>1)
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #define	SMALL_SMALL_TEXT_SIZE	0
+ #define	SMALL_TEXT_SIZE			1
+ #define	NORMAL_TEXT_SIZE		2
+diff --git a/src/drill.c b/src/drill.c
+index a7a908b..efa9baa 100644
+--- a/src/drill.c
++++ b/src/drill.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -41,11 +39,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+-
+-
+ /*
+  * some local prototypes
+  */
+diff --git a/src/error.c b/src/error.c
+index f01420e..4e802a4 100644
+--- a/src/error.c
++++ b/src/error.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -61,9 +59,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ #define utf8_dup_string(a,b) *(a) = strdup(b)
+ 
+ /* ----------------------------------------------------------------------
+diff --git a/src/file.c b/src/file.c
+index 92e719b..c157659 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -100,8 +98,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
+ /* ---------------------------------------------------------------------------
+  * some local identifiers for OS without an atexit() or on_exit()
+diff --git a/src/find.c b/src/find.c
+index cd2aff5..fa03ba7 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *
+  *                            COPYRIGHT
+@@ -102,11 +100,6 @@
+ 
+ #undef DEBUG
+ 
+-RCSID ("$Id$");
+-
+-
+-
+-
+ /* ---------------------------------------------------------------------------
+  * some local macros
+  */
+diff --git a/src/flags.c b/src/flags.c
+index de77b68..d809ad5 100644
+--- a/src/flags.c
++++ b/src/flags.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -42,8 +40,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static int
+ FlagCurrentStyle (int dummy)
+ {
+diff --git a/src/fontmode.c b/src/fontmode.c
+index dd64f63..f218e7c 100644
+--- a/src/fontmode.c
++++ b/src/fontmode.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -52,8 +50,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* FIXME - we currently hardcode the grid and PCB size.  What we
+    should do in the future is scan the font for its extents, and size
+    the grid appropriately.  Also, when we convert back to a font, we
+diff --git a/src/global.h b/src/global.h
+index 029d63c..79c1456 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* definition of types
+@@ -823,8 +822,6 @@ struct drc_violation_st
+ #define ATTRIBUTE_UNUSED
+ #endif
+ 
+-#define RCSID(x) static char *rcsid  ATTRIBUTE_UNUSED = x
+-
+ /* ---------------------------------------------------------------------------
+  * Macros called by various action routines to show usage or to report
+  * a syntax error and fail
+diff --git a/src/heap.c b/src/heap.c
+index 57a8208..50b11c0 100644
+--- a/src/heap.c
++++ b/src/heap.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -48,9 +46,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ /* define this for more thorough self-checking of data structures */
+ #undef SLOW_ASSERTIONS
+ 
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index ca8caf0..8b969fa 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -27,8 +25,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* This is a text-line "batch" HID, which exists for scripting and
+    non-GUI needs.  */
+ 
+diff --git a/src/hid/bom/bom.c b/src/hid/bom/bom.c
+index b3529cd..1835439 100644
+--- a/src/hid/bom/bom.c
++++ b/src/hid/bom/bom.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -24,8 +22,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static HID_Attribute bom_options[] = {
+ /* %start-doc options "8 BOM Creation"
+ @ftable @code
+@@ -337,8 +333,6 @@ PrintBOM (void)
+     const char *fmt = "%c UTC";
+     strftime (utcTime, sizeof (utcTime), fmt, gmtime (&currenttime));
+   }
+-  fprintf (fp, "# $Id");
+-  fprintf (fp, "$\n");
+   fprintf (fp, "# PcbXY Version 1.0\n");
+   fprintf (fp, "# Date: %s\n", utcTime);
+   fprintf (fp, "# Author: %s\n", pcb_author ());
+@@ -504,8 +498,6 @@ PrintBOM (void)
+       return 1;
+     }
+ 
+-  fprintf (fp, "# $Id");
+-  fprintf (fp, "$\n");
+   fprintf (fp, "# PcbBOM Version 1.0\n");
+   fprintf (fp, "# Date: %s\n", utcTime);
+   fprintf (fp, "# Author: %s\n", pcb_author ());
+diff --git a/src/hid/common/actions.c b/src/hid/common/actions.c
+index 13bb129..abd86ae 100644
+--- a/src/hid/common/actions.c
++++ b/src/hid/common/actions.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -20,8 +18,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static HID_Action **all_actions = 0;
+ static int all_actions_sorted = 0;
+ static int n_actions = 0;
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index 6cdc135..d970c77 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -20,8 +18,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #ifndef MAXINT
+ #define MAXINT (((unsigned int)(~0))>>1)
+ #endif
+diff --git a/src/hid/common/flags.c b/src/hid/common/flags.c
+index 92032f9..9c87a54 100644
+--- a/src/hid/common/flags.c
++++ b/src/hid/common/flags.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -19,8 +17,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ typedef struct HID_FlagNode
+ {
+   struct HID_FlagNode *next;
+diff --git a/src/hid/common/hidinit.c b/src/hid/common/hidinit.c
+index 3695f7d..9f05800 100644
+--- a/src/hid/common/hidinit.c
++++ b/src/hid/common/hidinit.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -38,8 +36,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #define HID_DEF(x) extern void hid_ ## x ## _init(void);
+ #include "hid/common/hidlist.h"
+ #undef HID_DEF
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index b08d90d..d772e18 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -16,8 +14,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* This is the "gui" that is installed at startup, and is used when
+    there is no other real GUI to use.  For the most part, it just
+    stops the application from (1) crashing randomly, and (2) doing
+diff --git a/src/hid/gcode/curve.c b/src/hid/gcode/curve.c
+index abf85d7..24b927c 100644
+--- a/src/hid/gcode/curve.c
++++ b/src/hid/gcode/curve.c
+@@ -2,7 +2,7 @@
+    This file is part of Potrace. It is free software and it is covered
+    by the GNU General Public License. See the file COPYING for details. */
+ 
+-/* $Id: curve.c 147 2007-04-09 00:44:09Z selinger $ */
++/* curve.c 147 2007-04-09 00:44:09Z selinger */
+ /* private part of the path and curve data structures */
+ 
+ #include <stdio.h>
+diff --git a/src/hid/gcode/decompose.c b/src/hid/gcode/decompose.c
+index 0b42882..eeac028 100644
+--- a/src/hid/gcode/decompose.c
++++ b/src/hid/gcode/decompose.c
+@@ -2,7 +2,7 @@
+    This file is part of Potrace. It is free software and it is covered
+    by the GNU General Public License. See the file COPYING for details. */
+ 
+-/* $Id: decompose.c 146 2007-04-09 00:43:46Z selinger $ */
++/* decompose.c 146 2007-04-09 00:43:46Z selinger */
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+diff --git a/src/hid/gcode/trace.c b/src/hid/gcode/trace.c
+index 5d7c62e..9a3f743 100644
+--- a/src/hid/gcode/trace.c
++++ b/src/hid/gcode/trace.c
+@@ -4,7 +4,7 @@
+    This file is part of Potrace. It is free software and it is covered
+    by the GNU General Public License. See the file COPYING for details. */
+ 
+-/* $Id: trace.c 147 2007-04-09 00:44:09Z selinger $ */
++/* trace.c 147 2007-04-09 00:44:09Z selinger */
+ /* transform jaggy paths into smooth curves */
+ 
+ #include <stdio.h>
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 3973814..dd9c1c9 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -38,8 +36,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
+ 
+ /*----------------------------------------------------------------------------*/
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 9f4250d..8e6cf22 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -16,10 +14,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-
+-RCSID ("$Id$");
+-
+-
+ extern HID ghid_hid;
+ 
+ /* Sets priv->u_gc to the "right" GC to use (wrt mask or window)
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index d372f8a..7471afc 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -33,9 +31,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ extern HID ghid_hid;
+ 
+ static hidGC current_gc = NULL;
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index cc474cd..d8bf02c 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -26,10 +24,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-
+-RCSID ("$Id$");
+-
+-
+ static void
+ pan_common (GHidPort *port)
+ {
+diff --git a/src/hid/gtk/gui-command-window.c b/src/hid/gtk/gui-command-window.c
+index d913cae..25b0154 100644
+--- a/src/hid/gtk/gui-command-window.c
++++ b/src/hid/gtk/gui-command-window.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -42,8 +40,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static GtkWidget *command_window;
+ static GtkWidget *combo_vbox;
+ static GList *history_list;
+diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
+index 2a4fcd8..03fa15b 100644
+--- a/src/hid/gtk/gui-config.c
++++ b/src/hid/gtk/gui-config.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -58,9 +56,6 @@
+ 
+ extern int	MoveLayerAction(int argc, char **argv, int x, int y);
+ 
+-
+-RCSID ("$Id$");
+-
+ enum ConfigType
+ {
+   CONFIG_Boolean,
+diff --git a/src/hid/gtk/gui-dialog-print.c b/src/hid/gtk/gui-dialog-print.c
+index 5d7d003..b418688 100644
+--- a/src/hid/gtk/gui-dialog-print.c
++++ b/src/hid/gtk/gui-dialog-print.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -43,8 +41,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static GtkWidget *export_dialog = NULL;
+ 
+ static void
+diff --git a/src/hid/gtk/gui-dialog.c b/src/hid/gtk/gui-dialog.c
+index 1770bba..87ee906 100644
+--- a/src/hid/gtk/gui-dialog.c
++++ b/src/hid/gtk/gui-dialog.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -42,8 +40,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* ---------------------------------------------- */
+ gchar *
+ ghid_dialog_input (const char * prompt, const char * initial)
+diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
+index ce0210c..9cbc955 100644
+--- a/src/hid/gtk/gui-drc-window.c
++++ b/src/hid/gtk/gui-drc-window.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -47,8 +45,6 @@
+ #define VIOLATION_PIXMAP_PIXEL_BORDER 5
+ #define VIOLATION_PIXMAP_PCB_SIZE     MIL_TO_COORD (100)
+ 
+-RCSID ("$Id$");
+-
+ static GtkWidget *drc_window, *drc_list;
+ static GtkListStore *drc_list_model = NULL;
+ static int num_violations = 0;
+diff --git a/src/hid/gtk/gui-keyref-window.c b/src/hid/gtk/gui-keyref-window.c
+index 6eaf3eb..e2632ca 100644
+--- a/src/hid/gtk/gui-keyref-window.c
++++ b/src/hid/gtk/gui-keyref-window.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -38,8 +36,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static GtkWidget *keyref_window;
+ 
+ 
+diff --git a/src/hid/gtk/gui-library-window.c b/src/hid/gtk/gui-library-window.c
+index 96b5f1f..1d22dd4 100644
+--- a/src/hid/gtk/gui-library-window.c
++++ b/src/hid/gtk/gui-library-window.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -69,8 +67,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static GtkWidget *library_window;
+ 
+ #include "gui-pinout-preview.h"
+diff --git a/src/hid/gtk/gui-log-window.c b/src/hid/gtk/gui-log-window.c
+index 01daaee..46413c1 100644
+--- a/src/hid/gtk/gui-log-window.c
++++ b/src/hid/gtk/gui-log-window.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -40,8 +38,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static GtkWidget *log_window, *log_text;
+ static gboolean log_show_on_append = FALSE;
+ 
+diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
+index e84b276..bf3b79e 100644
+--- a/src/hid/gtk/gui-misc.c
++++ b/src/hid/gtk/gui-misc.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -43,8 +41,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #define CUSTOM_CURSOR_CLOCKWISE		(GDK_LAST_CURSOR + 10)
+ #define CUSTOM_CURSOR_DRAG			(GDK_LAST_CURSOR + 11)
+ #define CUSTOM_CURSOR_LOCK			(GDK_LAST_CURSOR + 12)
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index a847e6d..51192c6 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -64,8 +62,6 @@
+ 
+ #define NET_HIERARCHY_SEPARATOR "/"
+ 
+-RCSID ("$Id$");
+-
+ static GtkWidget	*netlist_window;
+ static GtkWidget	*disable_all_button;
+ 
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index 79fc0f2..3336945 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -49,8 +47,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* Just define a sensible scale, lets say (for example), 100 pixel per 150 mil */
+ #define SENSIBLE_VIEW_SCALE  (100. / MIL_TO_COORD (150.))
+ static void
+diff --git a/src/hid/gtk/gui-pinout-window.c b/src/hid/gtk/gui-pinout-window.c
+index 6433fb1..ea6e8bb 100644
+--- a/src/hid/gtk/gui-pinout-window.c
++++ b/src/hid/gtk/gui-pinout-window.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -49,9 +47,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ static void
+ pinout_close_cb (GtkWidget * widget, GtkWidget *top_window)
+ {
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index e876220..2335a74 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -128,8 +126,6 @@ a zoom in/out.
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static bool ignore_layer_update;
+ 
+ static GtkWidget *ghid_load_menus (void);
+diff --git a/src/hid/gtk/gui-utils.c b/src/hid/gtk/gui-utils.c
+index 0fcb5d2..f776f5c 100644
+--- a/src/hid/gtk/gui-utils.c
++++ b/src/hid/gtk/gui-utils.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -39,8 +37,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* Not a gui function, but no better place to put it...
+  */
+ gboolean
+diff --git a/src/hid/lesstif/dialogs.c b/src/hid/lesstif/dialogs.c
+index 5d744f9..59a44c8 100644
+--- a/src/hid/lesstif/dialogs.c
++++ b/src/hid/lesstif/dialogs.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -26,8 +24,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
+ 
+ static Arg args[30];
+diff --git a/src/hid/lesstif/library.c b/src/hid/lesstif/library.c
+index 029a023..3c8d7d7 100644
+--- a/src/hid/lesstif/library.c
++++ b/src/hid/lesstif/library.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -26,8 +24,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static Arg args[30];
+ static int n;
+ #define stdarg(t,v) XtSetArg(args[n], t, v); n++
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index c625fc2..f6d3098 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -39,8 +37,6 @@
+ 
+ #include <sys/poll.h>
+ 
+-RCSID ("$Id$");
+-
+ #ifndef XtRDouble
+ #define XtRDouble "Double"
+ #endif
+diff --git a/src/hid/lesstif/menu.c b/src/hid/lesstif/menu.c
+index 8c71c61..d761ce5 100644
+--- a/src/hid/lesstif/menu.c
++++ b/src/hid/lesstif/menu.c
+@@ -1,5 +1,3 @@
+-//* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -31,8 +29,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #ifndef R_OK
+ /* Common value for systems that don't define it.  */
+ #define R_OK 4
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index ce28539..572fba1 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -31,8 +29,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static Arg args[30];
+ static int n;
+ #define stdarg(t,v) XtSetArg(args[n], t, v); n++
+diff --git a/src/hid/lesstif/styles.c b/src/hid/lesstif/styles.c
+index 5ec19d8..824b7f3 100644
+--- a/src/hid/lesstif/styles.c
++++ b/src/hid/lesstif/styles.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -27,8 +25,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* There are three places where styles are kept:
+ 
+    First, the "active" style is in Settings.LineThickness et al.
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index fc9403b..a03b19c 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -24,8 +22,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
+ 
+ static HID_Attribute base_lpr_options[] = {
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 9e75927..fd0aa11 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -82,8 +82,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID("$Id$");
+-
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
+ 
+ /* Needed for PNG export */
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index a406f38..ba27023 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -26,8 +24,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented EPS function %s.\n", __FUNCTION__); abort()
+ 
+ /*----------------------------------------------------------------------------*/
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 6ecbc64..263a240 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+@@ -30,8 +28,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
+ 
+ static int ps_set_layer (const char *name, int group, int empty);
+diff --git a/src/insert.c b/src/insert.c
+index 42661ec..7e12874 100644
+--- a/src/insert.c
++++ b/src/insert.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -56,11 +54,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+-
+-
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+diff --git a/src/intersect.c b/src/intersect.c
+index a3ee03f..33b359d 100644
+--- a/src/intersect.c
++++ b/src/intersect.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -50,9 +48,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+diff --git a/src/line.c b/src/line.c
+index 22efc2b..6846b2d 100644
+--- a/src/line.c
++++ b/src/line.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -48,8 +46,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static double drc_lines (PointTypePtr end, bool way);
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/main.c b/src/main.c
+index 48e825c..e170f5a 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -78,9 +76,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ #define PCBLIBPATH ".:" PCBLIBDIR
+ 
+ 
+diff --git a/src/mirror.c b/src/mirror.c
+index c48ebf3..54c53cb 100644
+--- a/src/mirror.c
++++ b/src/mirror.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -54,11 +52,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+-
+-
+ /* ---------------------------------------------------------------------------
+  * mirrors the coordinates of an element
+  * an additional offset is passed
+diff --git a/src/misc.c b/src/misc.c
+index 3cc04a0..13ce8f6 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -80,9 +78,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ /*	forward declarations	*/
+ static char *BumpName (char *);
+ static void GetGridLockCoordinates (int, void *, void *, void *,
+diff --git a/src/move.c b/src/move.c
+index 56ced53..f1971d5 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -58,11 +56,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+-
+-
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+diff --git a/src/mtspace.c b/src/mtspace.c
+index a4bb314..8bb3a8c 100644
+--- a/src/mtspace.c
++++ b/src/mtspace.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -55,8 +53,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* mtspace data structures are built on r-trees. */
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/mymem.c b/src/mymem.c
+index 73b3ef7..2dd10a1 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -49,8 +47,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* ---------------------------------------------------------------------------
+  * local prototypes
+  */
+diff --git a/src/netlist.c b/src/netlist.c
+index 06f0e77..f467f52 100644
+--- a/src/netlist.c
++++ b/src/netlist.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -71,8 +69,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /*
+   int    PCB->NetlistLib.MenuN
+   char * PCB->NetlistLib.Menu[i].Name
+diff --git a/src/print.c b/src/print.c
+index 4c01721..6d984a6 100644
+--- a/src/print.c
++++ b/src/print.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -66,8 +64,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* ---------------------------------------------------------------------------
+  * prints a FAB drawing.
+  */
+diff --git a/src/puller.c b/src/puller.c
+index 959ac54..90f082a 100644
+--- a/src/puller.c
++++ b/src/puller.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -73,8 +71,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ #define abort1() fprintf(stderr, "abort at line %d\n", __LINE__), abort()
+ 
+ #define TRACE0 0
+diff --git a/src/rats.c b/src/rats.c
+index d2aa8bb..fc6948f 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -61,9 +59,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ #define TRIEDFIRST 0x1
+ #define BESTFOUND 0x2
+ 
+diff --git a/src/remove.c b/src/remove.c
+index 4554597..d38805f 100644
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -58,9 +56,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+diff --git a/src/rotate.c b/src/rotate.c
+index 1763406..99f379d 100644
+--- a/src/rotate.c
++++ b/src/rotate.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -56,11 +54,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+-
+-
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+diff --git a/src/rtree.c b/src/rtree.c
+index 680be3d..6558427 100644
+--- a/src/rtree.c
++++ b/src/rtree.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -53,9 +51,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ #define SLOW_ASSERTS
+ /* All rectangles are closed on the bottom left and open on the
+  * top right. i.e. they contain one corner point, but not the other.
+diff --git a/src/rubberband.c b/src/rubberband.c
+index 4fe166c..f5f7442 100644
+--- a/src/rubberband.c
++++ b/src/rubberband.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -59,9 +57,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+diff --git a/src/search.c b/src/search.c
+index 5417462..29271f0 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -54,9 +52,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+-
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
+  */
+diff --git a/src/select.c b/src/select.c
+index 96db234..31ea28d 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -59,8 +57,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* ---------------------------------------------------------------------------
+  * toggles the selection of any kind of object
+  * the different types are defined by search.h
+diff --git a/src/set.c b/src/set.c
+index 18fffa7..21351da 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -62,8 +60,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static int mode_position = 0;
+ static int mode_stack[MAX_MODESTACK_DEPTH];
+ 
+diff --git a/src/strflags.c b/src/strflags.c
+index 8f4912c..3699c53 100644
+--- a/src/strflags.c
++++ b/src/strflags.c
+@@ -1,4 +1,3 @@
+-/* $Id$ */
+ /*
+  *                            COPYRIGHT
+  *
+@@ -54,8 +53,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* Because all the macros expect it, that's why.  */
+ typedef struct
+ {
+diff --git a/src/thermal.c b/src/thermal.c
+index 03fee24..d2cfa95 100644
+--- a/src/thermal.c
++++ b/src/thermal.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -75,8 +73,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static PCBTypePtr pcb;
+ 
+ struct cent
+diff --git a/src/undo.c b/src/undo.c
+index 17bebb9..87e02aa 100644
+--- a/src/undo.c
++++ b/src/undo.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -74,8 +72,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static bool between_increment_and_restore = false;
+ static bool added_undo_between_increment_and_restore = false;
+ 
+diff --git a/src/vector.c b/src/vector.c
+index c039b89..aad1c62 100644
+--- a/src/vector.c
++++ b/src/vector.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -51,8 +49,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+diff --git a/src/vendor.c b/src/vendor.c
+index 2abcca0..f7b89f7 100644
+--- a/src/vendor.c
++++ b/src/vendor.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -64,8 +62,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ static void add_to_drills (char *);
+ static void apply_vendor_map (void);
+ static void process_skips (Resource *);
