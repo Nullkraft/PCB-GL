@@ -1,5 +1,5 @@
 Bottom: 8f14cd095ce7ebb50e88ff3c91f0de39a9e4d282
-Top:    3c0c3a13b66f4820c764a8b303a9e702a790de24
+Top:    b9cf4fe1853a72c207f58b7333506817b7272a67
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-23 23:37:58 +0000
 
@@ -1717,3 +1717,95 @@ index 2abcca0..f7b89f7 100644
  static void add_to_drills (char *);
  static void apply_vendor_map (void);
  static void process_skips (Resource *);
+diff --git a/tests/golden/hid_bom1/bom_general.bom b/tests/golden/hid_bom1/bom_general.bom
+index e069ea1..ee15f7b 100644
+--- a/tests/golden/hid_bom1/bom_general.bom
++++ b/tests/golden/hid_bom1/bom_general.bom
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbBOM Version 1.0
+ # Date: Wed Jun 24 21:42:21 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom1/bom_general.xy b/tests/golden/hid_bom1/bom_general.xy
+index dfcd7de..c391ac2 100644
+--- a/tests/golden/hid_bom1/bom_general.xy
++++ b/tests/golden/hid_bom1/bom_general.xy
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbXY Version 1.0
+ # Date: Wed Jun 24 21:42:21 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom2/bom_general.xy b/tests/golden/hid_bom2/bom_general.xy
+index c2c9ea2..56bf534 100644
+--- a/tests/golden/hid_bom2/bom_general.xy
++++ b/tests/golden/hid_bom2/bom_general.xy
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbXY Version 1.0
+ # Date: Wed Jun 24 21:42:22 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom2/test.bom b/tests/golden/hid_bom2/test.bom
+index c2677f5..895ee5b 100644
+--- a/tests/golden/hid_bom2/test.bom
++++ b/tests/golden/hid_bom2/test.bom
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbBOM Version 1.0
+ # Date: Wed Jun 24 21:42:22 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom3/bom_general.bom b/tests/golden/hid_bom3/bom_general.bom
+index c2677f5..895ee5b 100644
+--- a/tests/golden/hid_bom3/bom_general.bom
++++ b/tests/golden/hid_bom3/bom_general.bom
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbBOM Version 1.0
+ # Date: Wed Jun 24 21:42:22 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom3/test.xy b/tests/golden/hid_bom3/test.xy
+index c2c9ea2..56bf534 100644
+--- a/tests/golden/hid_bom3/test.xy
++++ b/tests/golden/hid_bom3/test.xy
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbXY Version 1.0
+ # Date: Wed Jun 24 21:42:22 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom4/bom_general.bom b/tests/golden/hid_bom4/bom_general.bom
+index bb246f5..b3cc77f 100644
+--- a/tests/golden/hid_bom4/bom_general.bom
++++ b/tests/golden/hid_bom4/bom_general.bom
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbBOM Version 1.0
+ # Date: Wed Jun 24 21:42:23 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom4/bom_general.xy b/tests/golden/hid_bom4/bom_general.xy
+index fb1350e..2933983 100644
+--- a/tests/golden/hid_bom4/bom_general.xy
++++ b/tests/golden/hid_bom4/bom_general.xy
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbXY Version 1.0
+ # Date: Wed Jun 24 21:42:23 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/run_tests.sh b/tests/run_tests.sh
+index 5bd4acb..b24bc65 100755
+--- a/tests/run_tests.sh
++++ b/tests/run_tests.sh
+@@ -1,7 +1,5 @@
+ #!/bin/sh
+ #
+-# $Id: run_tests.sh,v 1.8 2009/02/17 00:42:31 danmc Exp $
+-#
+ # Copyright (c) 2003, 2004, 2005, 2006, 2007, 2009, 2010 Dan McMahill
+ 
+ #  This program is free software; you can redistribute it and/or modify
+@@ -334,7 +332,6 @@ compare_bom() {
+ 
+     # an example BOM file is:
+ 
+-    #  # $Id$
+     #  # PcbBOM Version 1.0
+     #  # Date: Wed Jun 17 14:41:43 2009 UTC
+     #  # Author: Dan McMahill
