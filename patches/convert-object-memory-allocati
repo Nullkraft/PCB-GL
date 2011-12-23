@@ -1,7 +1,7 @@
-Bottom: 3038a0f29cb30b2ae45da91054dec79d6bc2e21a
-Top:    3a5525cf31d0de4fa3bdf06f75b46963cfd46b92
+Bottom: 1d8617026dd8983e62db33cfaa8dfb1abc313975
+Top:    feed99f0f28cf463ca3f22b1bb35dace03c1dcf7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-19 13:53:18 +0000
+Date:   2011-12-23 21:37:59 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -431,10 +431,10 @@ index 29ac62f..318482f 100644
    Dest->MarkX = Src->MarkX + dx;
    Dest->MarkY = Src->MarkY + dy;
 diff --git a/src/create.c b/src/create.c
-index a199acc..fead88e 100644
+index 8d8344c..0e21d8d 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -908,25 +908,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
+@@ -909,25 +909,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
  		       Coord X1, Coord Y1,
  		       Coord X2, Coord Y2, Coord Thickness)
  {
@@ -465,7 +465,7 @@ index a199acc..fead88e 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -995,16 +989,17 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
+@@ -996,16 +990,17 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
  /* ---------------------------------------------------------------------------
   * Add an attribute to a list.
   */
@@ -675,7 +675,7 @@ index dd64f63..69f9a0d 100644
        w = maxx + symbol->Delta + ox;
        CreateDrawnLineOnLayer (lwidth,
 diff --git a/src/global.h b/src/global.h
-index 9f0390b..c0306ce 100644
+index 8896901..0917ddc 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -224,8 +224,8 @@ typedef struct
@@ -721,7 +721,7 @@ index 9f0390b..c0306ce 100644
    Coord Width, Height,		/* size of cell */
      Delta;			/* distance to next symbol */
  } SymbolType, *SymbolTypePtr;
-@@ -410,21 +407,18 @@ typedef struct			/* holds drill information */
+@@ -411,21 +408,18 @@ typedef struct			/* holds drill information */
  {
    Coord DrillSize;		/* this drill's diameter */
    Cardinal ElementN,		/* the number of elements using this drill size */
@@ -748,7 +748,7 @@ index 9f0390b..c0306ce 100644
  } DrillInfoType, *DrillInfoTypePtr;
  
  typedef struct
-@@ -462,9 +456,8 @@ typedef struct
+@@ -463,9 +457,8 @@ typedef struct
    char *Name,			/* name of the menu entry */
     *directory,			/* Directory name library elements are from */
     *Style;			/* routing style */
@@ -760,7 +760,7 @@ index 9f0390b..c0306ce 100644
    char flag;			/* used by the netlist window to enable/disable nets */
    char internal;		/* if set, this is an internal-only entry, not
  				   part of the global netlist. */
-@@ -473,8 +466,7 @@ typedef struct
+@@ -474,8 +467,7 @@ typedef struct
  typedef struct
  {
    Cardinal MenuN;               /* number of objects */
@@ -770,7 +770,7 @@ index 9f0390b..c0306ce 100644
  } LibraryType, *LibraryTypePtr;
  
  
-@@ -575,9 +567,8 @@ typedef struct			/* currently attached object */
+@@ -576,9 +568,8 @@ typedef struct			/* currently attached object */
    void *Ptr1,			/* three pointers to data, see */
     *Ptr2,			/* search.c */
     *Ptr3;
@@ -782,7 +782,7 @@ index 9f0390b..c0306ce 100644
  } AttachedObjectType, *AttachedObjectTypePtr;
  
  enum crosshair_shape
-@@ -733,38 +724,33 @@ typedef struct			/* holds a connection */
+@@ -734,38 +725,33 @@ typedef struct			/* holds a connection */
  
  typedef struct			/* holds a net of connections */
  {
@@ -1404,7 +1404,7 @@ index 3cc04a0..6a0b679 100644
  }
  
 diff --git a/src/move.c b/src/move.c
-index 6b6359a..d8a4f3c 100644
+index 56ced53..5357ee7 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -794,7 +794,7 @@ void *
@@ -1416,8 +1416,8 @@ index 6b6359a..d8a4f3c 100644
    void *ptr2;
  
    /* setup offset */
-@@ -804,9 +804,11 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
-     return (NULL);
+@@ -802,9 +802,11 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+   DeltaY = DY;
  
    /* move all the lines... and reset the counter */
 -  ptr = Crosshair.AttachedObject.Rubberband;
@@ -1429,15 +1429,15 @@ index 6b6359a..d8a4f3c 100644
 +
        /* first clear any marks that we made in the line flags */
        CLEAR_FLAG (RUBBERENDFLAG, ptr->Line);
-       AddObjectToMoveUndoList (LINEPOINT_TYPE,
-@@ -814,7 +816,6 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
- 			       DY);
-       MoveLinePoint (ptr->Layer, ptr->Line, ptr->MovedPoint);
+       /* only update undo list if an actual movement happened */
+@@ -816,7 +818,6 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+           MoveLinePoint (ptr->Layer, ptr->Line, ptr->MovedPoint);
+         }
        Crosshair.AttachedObject.RubberbandN--;
 -      ptr++;
      }
  
-   AddObjectToMoveUndoList (Type, Ptr1, Ptr2, Ptr3, DX, DY);
+   if (DX == 0 && DY == 0)
 diff --git a/src/mymem.c b/src/mymem.c
 index 73b3ef7..57dc0e1 100644
 --- a/src/mymem.c
