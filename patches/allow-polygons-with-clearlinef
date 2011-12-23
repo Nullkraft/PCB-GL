@@ -1,7 +1,7 @@
-Bottom: d2916287c0ac5fad5746cae6d1dabae81177c634
-Top:    836683f1b7d8252e47e964e1b01838da220f77d4
+Bottom: 5e9c600a5ef88b004993ed010f09308a49ed8780
+Top:    e18eccd0a7f0717afce9b17bf5f978ce3af253b9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-19 13:53:36 +0000
+Date:   2011-12-23 21:40:15 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -184,7 +184,7 @@ index f418e1a..5e5d7ee 100644
    else
      gui->fill_pcb_polygon (Output.fgGC, polygon, drawn_area);
 diff --git a/src/move.c b/src/move.c
-index 6b6359a..164117f 100644
+index 56ced53..3f5ebce 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -353,10 +353,12 @@ MovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -216,7 +216,7 @@ index 6b6359a..164117f 100644
      {
        DrawPolygon (Layer, Polygon);
 diff --git a/src/polygon.c b/src/polygon.c
-index bf9a634..cb40e4d 100644
+index 4669b6c..181db8f 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -868,6 +868,20 @@ SubtractPad (PadType * pad, PolygonType * p)
@@ -330,8 +330,8 @@ index bf9a634..cb40e4d 100644
        /* the cast works equally well for lines and arcs */
        if (!TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
          return 0;
-@@ -1629,8 +1691,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
- {
+@@ -1632,8 +1694,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+ 
    if (type == POLYGON_TYPE)
      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
 -  else
@@ -340,8 +340,8 @@ index bf9a634..cb40e4d 100644
  }
  
  void
-@@ -1638,8 +1699,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
- {
+@@ -1644,8 +1705,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+ 
    if (type == POLYGON_TYPE)
      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
 -  else
