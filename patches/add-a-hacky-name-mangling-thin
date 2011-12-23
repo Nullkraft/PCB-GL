@@ -1,7 +1,7 @@
-Bottom: c5c464eb5ba8637a0fd24b452abb7f346b4d8d55
-Top:    ad3696534f4f657b6d5ee87ea49447f3a28f8d27
+Bottom: d6bf73854fb1c0b8417be97cd8e21260ca0fb321
+Top:    94fe80b62527fbf43f119949af38b833777a2592
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-19 13:53:33 +0000
+Date:   2011-12-23 21:40:10 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -20,7 +20,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index a199acc..76ecb98 100644
+index 8d8344c..bbcc8e3 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -40,7 +40,7 @@ index a199acc..76ecb98 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -662,6 +665,57 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
+@@ -663,6 +666,57 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
    return Polygon;
  }
  
@@ -98,7 +98,7 @@ index a199acc..76ecb98 100644
  /* ---------------------------------------------------------------------------
   * creates an new element
   * memory is allocated if needed
-@@ -678,6 +732,18 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+@@ -679,6 +733,18 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
    printf("Entered CreateNewElement.....\n");
  #endif
  
