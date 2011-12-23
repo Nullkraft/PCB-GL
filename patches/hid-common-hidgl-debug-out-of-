@@ -1,7 +1,7 @@
-Bottom: f2d42418bcdf1a04286a34002261c2a8a32d9a9e
-Top:    78504b6dd63b7bca94241ca82fda671a8b83f9e0
+Bottom: 7c9aa3e8cf3aa2df78e823933b54bb0a53d14b68
+Top:    f09d82a2cd0554a7917106bb5858a223be04770f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-19 01:30:54 +0000
+Date:   2011-12-23 21:38:17 +0000
 
 hid/common/hidgl: Debug out of context rendering
 
@@ -9,7 +9,7 @@ hid/common/hidgl: Debug out of context rendering
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index bda04d2..b166d26 100644
+index 9111373..b4d16a3 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -71,6 +71,17 @@
@@ -62,7 +62,7 @@ index bda04d2..b166d26 100644
    if (width == 0.0)
      hairline = 1;
  
-@@ -304,6 +319,7 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
+@@ -297,6 +312,7 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
    int i;
    int hairline = 0;
  
@@ -70,7 +70,7 @@ index bda04d2..b166d26 100644
    if (width == 0.0)
      hairline = 1;
  
-@@ -367,6 +383,7 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
+@@ -360,6 +376,7 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
  void
  hidgl_draw_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  {
@@ -78,7 +78,7 @@ index bda04d2..b166d26 100644
    glBegin (GL_LINE_LOOP);
    glVertex3f (x1, y1, global_depth);
    glVertex3f (x1, y2, global_depth);
-@@ -386,6 +403,7 @@ hidgl_fill_circle (Coord vx, Coord vy, Coord vr, double scale)
+@@ -379,6 +396,7 @@ hidgl_fill_circle (Coord vx, Coord vy, Coord vr, double scale)
    int slices;
    int i;
  
@@ -86,7 +86,7 @@ index bda04d2..b166d26 100644
    slices = calc_slices (vr / scale, 2 * M_PI);
  
    if (slices < MIN_TRIANGLES_PER_CIRCLE)
-@@ -532,6 +550,8 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
+@@ -525,6 +543,8 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
    GLUtesselator *tobj;
    GLdouble *vertices;
  
@@ -95,7 +95,7 @@ index bda04d2..b166d26 100644
    assert (n_coords > 0);
  
    vertices = malloc (sizeof(GLdouble) * n_coords * 3);
-@@ -613,6 +633,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -606,6 +626,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    struct do_hole_info info;
    int stencil_bit;
  
@@ -103,7 +103,7 @@ index bda04d2..b166d26 100644
    info.scale = scale;
    global_scale = scale;
  
-@@ -679,6 +700,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -672,6 +693,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  void
  hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  {
@@ -111,7 +111,7 @@ index bda04d2..b166d26 100644
    hidgl_ensure_triangle_space (&buffer, 2);
    hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
-@@ -687,6 +709,7 @@ hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
+@@ -680,6 +702,7 @@ hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  void
  hidgl_init (void)
  {
@@ -119,7 +119,7 @@ index bda04d2..b166d26 100644
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
    if (stencil_bits == 0)
-@@ -706,6 +729,10 @@ hidgl_init (void)
+@@ -699,6 +722,10 @@ hidgl_init (void)
  void
  hidgl_start_render (void)
  {
@@ -130,7 +130,7 @@ index bda04d2..b166d26 100644
    hidgl_init ();
    hidgl_init_triangle_array (&buffer);
  }
-@@ -713,6 +740,10 @@ hidgl_start_render (void)
+@@ -706,6 +733,10 @@ hidgl_start_render (void)
  void
  hidgl_finish_render (void)
  {
@@ -141,7 +141,7 @@ index bda04d2..b166d26 100644
  }
  
  int
-@@ -724,6 +755,7 @@ hidgl_stencil_bits (void)
+@@ -717,6 +748,7 @@ hidgl_stencil_bits (void)
  static void
  hidgl_clean_unassigned_stencil (void)
  {

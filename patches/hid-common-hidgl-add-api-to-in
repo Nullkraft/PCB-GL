@@ -1,7 +1,7 @@
-Bottom: c23803e56e58a9f6012273f5b9167878afa765f2
-Top:    f2d42418bcdf1a04286a34002261c2a8a32d9a9e
+Bottom: 11bccbce50912d95c939f96ce2ff4b426ea4afa5
+Top:    7c9aa3e8cf3aa2df78e823933b54bb0a53d14b68
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-19 01:30:54 +0000
+Date:   2011-12-23 21:38:17 +0000
 
 hid/common/hidgl: Add API to initialise a rendering pass
 
@@ -12,7 +12,7 @@ saving lots of separate calls being made by its callers.
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 9f10b8c..bda04d2 100644
+index e7435e7..9111373 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -71,7 +71,7 @@
@@ -24,7 +24,7 @@ index 9f10b8c..bda04d2 100644
  hidgl_init_triangle_array (triangle_buffer *buffer)
  {
    buffer->triangle_count = 0;
-@@ -703,6 +703,18 @@ hidgl_init (void)
+@@ -696,6 +696,18 @@ hidgl_init (void)
      }
  }
  

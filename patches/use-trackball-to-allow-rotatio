@@ -1,7 +1,7 @@
-Bottom: eac37b97e36ef0cdf49d71c51455925de45bde94
-Top:    630ba26481abebbaab9a3e06cc0d154eef7df76e
+Bottom: 080712816e47a2d9a0499d6839baf8298d3466c7
+Top:    190ed2e4d5fa2f18beefa194796c0639542589e8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-19 13:53:24 +0000
+Date:   2011-12-23 21:38:10 +0000
 
 Use trackball to allow rotation of 3D view
 
@@ -422,7 +422,7 @@ index 99b8cfa..6e8cbd9 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index ee79f1a..941a047 100644
+index e876220..750a701 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -433,7 +433,7 @@ index ee79f1a..941a047 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1242,6 +1243,10 @@ ghid_build_pcb_top_window (void)
+@@ -1245,6 +1246,10 @@ ghid_build_pcb_top_window (void)
    GtkWidget *vbox_main, *hbox_middle, *hbox;
    GtkWidget *vbox, *frame;
    GtkWidget *label;
@@ -444,7 +444,7 @@ index ee79f1a..941a047 100644
    GHidPort *port = &ghid_port;
    GtkWidget *scrolled;
  
-@@ -1320,6 +1325,17 @@ ghid_build_pcb_top_window (void)
+@@ -1323,6 +1328,17 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX(vbox), ghidgui->layer_selector,
                        FALSE, FALSE, 0);
  
