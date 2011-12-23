@@ -1,0 +1,22 @@
+Bottom: 3038a0f29cb30b2ae45da91054dec79d6bc2e21a
+Top:    3038a0f29cb30b2ae45da91054dec79d6bc2e21a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-23 21:31:35 +0000
+
+hid/common/hidgl.c: Simplify angle calculation for drawing line caps
+
+Make use of atan2 to avoid special casing horizontal lines, and move
+make the input variables doubles to be consistent with that function.
+Our use of "tanl" was inappropriate for the float input, dobule output
+variables we were using before (spotted by Dan McMahill).
+
+I have modified the semantic meaning of angle, to keep the more
+conventional angle = atan2 (dy, dx); geometry. This means the angle
+now refers to the angle of the line, not the angle of the line-cap
+start. (The angle is adjusted before passing into the cap drawing
+routines).
+
+
+---
+
+
