@@ -5,6 +5,34 @@ Date:   2011-12-24 00:54:25 +0000
 
 Fix crash upon pressing "f" hotkey (find connected) after a board revert.
 
+Reproduction of this crash (before fix!):
+
+1. Load a PCB with a netlist.
+2. Open the netlist window to initialise the netlist.
+3. File->Revert the PCB
+4. Hit "f" key whilst the croshair is over any pad
+
+Analysis:
+
+When you File->Revert the layout, the GTK GUI's netlist window is not
+cleared as the old layout is free'd (or as an equivalent cause..
+"NetlistChanged(0)" is not called the reverted layout is loaded).
+
+Having had the netlist window open before the revert, the
+data-structures in the GUI are initialised, but point to the pre-revert
+layout. They are not explicitly updated with a "NetlistChanged"
+notification, so when the user next hits "f" for find, it will try to
+use the stale pointers it already had.
+
+Fix:
+
+Call "NetlistChanged (0);" after free'ing the netlist memory. The
+"FreeNetlistMemory()" call only free's the individual nets, the parent
+netlist structure which points to that memory and identifies how many
+nets are present is zeroed by the FreeNetlistMemory() call, so we can
+safely call NetlistChanged() at this point, before we have reloaded a
+new netlist.
+
 
 ---
 
