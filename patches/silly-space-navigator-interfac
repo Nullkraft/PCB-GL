@@ -1,5 +1,5 @@
-Bottom: f418acbeeccc5ce27a53bffadc1e17c721536256
-Top:    11b7019e1397cd3ea18eaa738fc2bdc6042883e3
+Bottom: 1ff68d1e9814d1c286c1b4431d950f4760c238e0
+Top:    da2b2a28625ffe4b08033d35b9798988b24a3270
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 00:32:41 +0000
 
@@ -137,10 +137,10 @@ index 1359377..6802606 100644
  
    gtk_main ();
 diff --git a/src/hid/gtk/gui-trackball.c b/src/hid/gtk/gui-trackball.c
-index 4f65084..6a42f59 100644
+index 82cd560..6c4cb8a 100644
 --- a/src/hid/gtk/gui-trackball.c
 +++ b/src/hid/gtk/gui-trackball.c
-@@ -100,6 +100,38 @@ button_release_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
+@@ -96,6 +96,38 @@ button_release_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
  }
  
  
@@ -180,10 +180,10 @@ index 4f65084..6a42f59 100644
  motion_notify_cb (GtkWidget *widget, GdkEventMotion *ev, gpointer userdata)
  {
 diff --git a/src/hid/gtk/gui-trackball.h b/src/hid/gtk/gui-trackball.h
-index d6bd03c..3af647e 100644
+index 5c8a1f1..98d558d 100644
 --- a/src/hid/gtk/gui-trackball.h
 +++ b/src/hid/gtk/gui-trackball.h
-@@ -65,6 +65,7 @@ struct _GhidTrackball
+@@ -63,6 +63,7 @@ struct _GhidTrackball
  
  GType ghid_trackball_get_type (void);
  
