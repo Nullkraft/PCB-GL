@@ -37,22 +37,6 @@
 #include <stdlib.h>
 #include "global.h"
 
-/* ---------------------------------------------------------------------------
- * number of additional objects that are allocated with one system call
- */
-#define	STEP_ELEMENT		50
-#define STEP_DRILL		30
-#define STEP_POINT		100
-#define	STEP_SYMBOLLINE		10
-#define	STEP_SELECTORENTRY	128
-#define	STEP_REMOVELIST		500
-#define	STEP_UNDOLIST		500
-#define	STEP_POLYGONPOINT	10
-#define	STEP_POLYGONHOLEINDEX	10
-#define	STEP_LIBRARYMENU	10
-#define	STEP_LIBRARYENTRY	20
-#define	STEP_RUBBERBAND		100
-
 #define STRDUP(x) (((x) != NULL) ? strdup (x) : NULL)
 
 /* ---------------------------------------------------------------------------
@@ -85,8 +69,12 @@ LibraryEntryTypePtr GetLibraryEntryMemory (LibraryMenuTypePtr);
 ElementTypeHandle GetDrillElementMemory (DrillTypePtr);
 PinTypeHandle GetDrillPinMemory (DrillTypePtr);
 DrillTypePtr GetDrillInfoDrillMemory (DrillInfoTypePtr);
+void FreeDrillInfo (DrillInfoTypePtr);
 void **GetPointerMemory (PointerListTypePtr);
+AttributeTypePtr GetAttributeMemory (AttributeListTypePtr);
+void FreeAttribute (AttributeTypePtr);
 void FreePolygonMemory (PolygonTypePtr);
+void FreeAttributeListMemory (AttributeListTypePtr);
 void FreeElementMemory (ElementTypePtr);
 void FreePCBMemory (PCBTypePtr);
 void FreeBoxListMemory (BoxListTypePtr);

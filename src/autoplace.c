@@ -153,16 +153,17 @@ static void
 UpdateXY (NetListTypePtr Nets)
 {
   Cardinal SLayer, CLayer;
-  Cardinal i, j;
+  GList *i, *j;
   /* find layer groups of the component side and solder side */
   SLayer = GetLayerGroupNumberByNumber (solder_silk_layer);
   CLayer = GetLayerGroupNumberByNumber (component_silk_layer);
   /* update all nets */
-  for (i = 0; i < Nets->NetN; i++)
+  for (i = Nets->Net; i != NULL; i = g_list_next (i))
     {
-      for (j = 0; j < Nets->Net[i].ConnectionN; j++)
+      NetType *net = i->data;
+      for (j = net->Connection; j != NULL; j = g_list_next (j))
 	{
-	  ConnectionTypePtr c = &(Nets->Net[i].Connection[j]);
+	  ConnectionType *c = j->data;
 	  switch (c->type)
 	    {
 	    case PAD_TYPE:
@@ -191,7 +192,7 @@ UpdateXY (NetListTypePtr Nets)
 static PointerListType
 collectSelectedElements ()
 {
-  PointerListType list = { 0, 0, NULL };
+  PointerListType list = {0, NULL};
   ELEMENT_LOOP (PCB->Data);
   {
     if (TEST_FLAG (SELECTEDFLAG, element))
@@ -331,32 +332,38 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
   double delta3 = 0;		/* out of bounds penalty */
   double delta4 = 0;		/* alignment bonus */
   double delta5 = 0;		/* total area penalty */
-  Cardinal i, j;
+  int i;
+  GList *ii, *j;
   Coord minx, maxx, miny, maxy;
   bool allpads, allsameside;
   Cardinal thegroup;
-  BoxListType bounds = { 0, 0, NULL };	/* save bounding rectangles here */
-  BoxListType solderside = { 0, 0, NULL };	/* solder side component bounds */
-  BoxListType componentside = { 0, 0, NULL };	/* component side bounds */
+  BoxListType bounds = {0, NULL};	/* save bounding rectangles here */
+  BoxListType solderside = {0, NULL};	/* solder side component bounds */
+  BoxListType componentside = {0, NULL};	/* component side bounds */
   /* make sure the NetList have the proper updated X and Y coords */
   UpdateXY (Nets);
   /* wire length term.  approximated by half-perimeter of minimum
    * rectangle enclosing the net.  Note that we penalize vias in
    * all-SMD nets by making the rectangle a cube and weighting
    * the "layer height" of the net. */
-  for (i = 0; i < Nets->NetN; i++)
+  for (ii = Nets->Net; ii != NULL; ii = g_list_next (ii))
     {
-      NetTypePtr n = &Nets->Net[i];
+      NetType *n = ii->data;
+      ConnectionType *c;
+
       if (n->ConnectionN < 2)
 	continue;		/* no cost to go nowhere */
-      minx = maxx = n->Connection[0].X;
-      miny = maxy = n->Connection[0].Y;
-      thegroup = n->Connection[0].group;
-      allpads = (n->Connection[0].type == PAD_TYPE);
+
+      j = n->Connection;
+      c = j->data;
+      minx = maxx = c->X;
+      miny = maxy = c->Y;
+      thegroup = c->group;
+      allpads = (c->type == PAD_TYPE);
       allsameside = true;
-      for (j = 1; j < n->ConnectionN; j++)
+      for (; j != NULL; j = g_list_next (j))
 	{
-	  ConnectionTypePtr c = &(n->Connection[j]);
+	  c = j->data;
 	  MAKEMIN (minx, c->X);
 	  MAKEMAX (maxx, c->X);
 	  MAKEMIN (miny, c->Y);
@@ -507,10 +514,8 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
    * aligning to something far away isn't profitable */
   {
     /* create r tree */
-    PointerListType seboxes = { 0, 0, NULL }
-    , ceboxes =
-    {
-    0, 0, NULL};
+    PointerListType seboxes = {0, NULL};
+    PointerListType ceboxes = {0, NULL};
     struct ebox
     {
       BoxType box;
@@ -604,6 +609,12 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
   return W + (delta1 + delta2 + delta3 - delta4 + delta5);
 }
 
+void *
+random_pointer_from_list (PointerListType *pl)
+{
+  return g_list_nth_data (pl->Ptr, random () % pl->PtrN);
+}
+
 /* ---------------------------------------------------------------------------
  * Perturb:
  *  1) flip SMD from solder side to component side or vice-versa.
@@ -617,7 +628,7 @@ createPerturbation (PointerListTypePtr selected, double T)
 {
   PerturbationType pt = { 0 };
   /* pick element to perturb */
-  pt.element = (ElementTypePtr) selected->Ptr[random () % selected->PtrN];
+  pt.element = (ElementType*) random_pointer_from_list (selected);
   /* exchange, flip/rotate or shift? */
   switch (random () % ((selected->PtrN > 1) ? 3 : 2))
     {
@@ -655,10 +666,9 @@ createPerturbation (PointerListTypePtr selected, double T)
     case 2:
       {				/* exchange! */
 	pt.which = EXCHANGE;
-	pt.other = (ElementTypePtr)
-	  selected->Ptr[random () % (selected->PtrN - 1)];
-	if (pt.other == pt.element)
-	  pt.other = (ElementTypePtr) selected->Ptr[selected->PtrN - 1];
+	pt.other = pt.element;
+	while (pt.other == pt.element)
+	  pt.other = (ElementType*) random_pointer_from_list (selected);
 	/* don't allow exchanging a solderside-side SMD component
 	 * with a non-SMD component. */
 	if ((pt.element->PinN != 0 /* non-SMD */  &&
@@ -749,7 +759,7 @@ bool
 AutoPlaceSelected (void)
 {
   NetListTypePtr Nets;
-  PointerListType Selected = { 0, 0, NULL };
+  PointerListType Selected = {0, NULL};
   PerturbationType pt;
   double C0, T0;
   bool changed = false;
