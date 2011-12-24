@@ -11,6 +11,7 @@
 #include "draw.h"
 #include "draw_funcs.h"
 #include "rtree.h"
+#include "polygon.h"
 #include "gui-pinout-preview.h"
 
 /* The Linux OpenGL ABI 1.0 spec requires that we define
@@ -1487,6 +1488,7 @@ static void
 GhidDrawMask (int side, BoxType * screen)
 {
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+  PolygonType polygon;
 
   OutputType *out = &Output;
 
@@ -1508,7 +1510,19 @@ GhidDrawMask (int side, BoxType * screen)
   gui->use_mask (HID_MASK_AFTER);
   gui->set_color (out->fgGC, PCB->MaskColor);
   ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
-  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+
+  polygon.Clipped = board_outline_poly ();
+  polygon.NoHoles = NULL;
+  polygon.NoHolesValid = 0;
+  polygon.BoundingBox = *screen;
+  polygon.Flags = NoFlags ();
+  SET_FLAG (FULLPOLYFLAG, &polygon);
+  common_fill_pcb_polygon (out->fgGC, &polygon, screen);
+  poly_Free (&polygon.Clipped);
+  poly_FreeContours (&polygon.NoHoles);
+  /* THE GL fill_pcb_polygon doesn't work whilst masking */
+//  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
+//  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   ghid_set_alpha_mult (out->fgGC, 1.0);
 
   gui->use_mask (HID_MASK_OFF);
