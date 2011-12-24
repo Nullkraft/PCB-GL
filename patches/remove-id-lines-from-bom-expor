@@ -1,5 +1,5 @@
 Bottom: 846f25c3c1b3601d504e618680abfea3b2ad164a
-Top:    846f25c3c1b3601d504e618680abfea3b2ad164a
+Top:    6b42a130844d44959368aceff5671a4369fa0005
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 00:45:07 +0000
 
@@ -11,4 +11,121 @@ so these lines don't serve much purpose.
 
 ---
 
-
+diff --git a/doc/pcb.texi b/doc/pcb.texi
+index db214a2..0640fe9 100644
+--- a/doc/pcb.texi
++++ b/doc/pcb.texi
+@@ -5713,16 +5713,14 @@ R34, but not D34
+ @section File Format
+ The centroid output file is in a standard comma seperated values (CSV)
+ format.  Comment lines begin with a ``#''.  The output file contains a
+-header with an RCS Id tag (useful for those who will check the file
+-into a version control system), a version number for the file format,
+-some comments containing the author and title of the board, and a
+-comment describing the remainder of the file format.
++header with a version number for the file format, some comments
++containing the author and title of the board, and a comment describing
++the remainder of the file format.
+ 
+ An example centroid file is shown below.
+ 
+ @example
+ 
+-# @verb{ $ }Id@verb{ $ }
+ # PcbXY Version 1.0
+ # Date: Fri Jul 22 03:40:08 2005 UTC
+ # Author: PCB User
+diff --git a/src/hid/bom/bom.c b/src/hid/bom/bom.c
+index e67450a..1835439 100644
+--- a/src/hid/bom/bom.c
++++ b/src/hid/bom/bom.c
+@@ -333,8 +333,6 @@ PrintBOM (void)
+     const char *fmt = "%c UTC";
+     strftime (utcTime, sizeof (utcTime), fmt, gmtime (&currenttime));
+   }
+-  fprintf (fp, "# $Id");
+-  fprintf (fp, "$\n");
+   fprintf (fp, "# PcbXY Version 1.0\n");
+   fprintf (fp, "# Date: %s\n", utcTime);
+   fprintf (fp, "# Author: %s\n", pcb_author ());
+@@ -500,8 +498,6 @@ PrintBOM (void)
+       return 1;
+     }
+ 
+-  fprintf (fp, "# $Id");
+-  fprintf (fp, "$\n");
+   fprintf (fp, "# PcbBOM Version 1.0\n");
+   fprintf (fp, "# Date: %s\n", utcTime);
+   fprintf (fp, "# Author: %s\n", pcb_author ());
+diff --git a/tests/golden/hid_bom1/bom_general.bom b/tests/golden/hid_bom1/bom_general.bom
+index e069ea1..ee15f7b 100644
+--- a/tests/golden/hid_bom1/bom_general.bom
++++ b/tests/golden/hid_bom1/bom_general.bom
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbBOM Version 1.0
+ # Date: Wed Jun 24 21:42:21 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom1/bom_general.xy b/tests/golden/hid_bom1/bom_general.xy
+index dfcd7de..c391ac2 100644
+--- a/tests/golden/hid_bom1/bom_general.xy
++++ b/tests/golden/hid_bom1/bom_general.xy
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbXY Version 1.0
+ # Date: Wed Jun 24 21:42:21 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom2/bom_general.xy b/tests/golden/hid_bom2/bom_general.xy
+index c2c9ea2..56bf534 100644
+--- a/tests/golden/hid_bom2/bom_general.xy
++++ b/tests/golden/hid_bom2/bom_general.xy
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbXY Version 1.0
+ # Date: Wed Jun 24 21:42:22 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom2/test.bom b/tests/golden/hid_bom2/test.bom
+index c2677f5..895ee5b 100644
+--- a/tests/golden/hid_bom2/test.bom
++++ b/tests/golden/hid_bom2/test.bom
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbBOM Version 1.0
+ # Date: Wed Jun 24 21:42:22 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom3/bom_general.bom b/tests/golden/hid_bom3/bom_general.bom
+index c2677f5..895ee5b 100644
+--- a/tests/golden/hid_bom3/bom_general.bom
++++ b/tests/golden/hid_bom3/bom_general.bom
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbBOM Version 1.0
+ # Date: Wed Jun 24 21:42:22 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom3/test.xy b/tests/golden/hid_bom3/test.xy
+index c2c9ea2..56bf534 100644
+--- a/tests/golden/hid_bom3/test.xy
++++ b/tests/golden/hid_bom3/test.xy
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbXY Version 1.0
+ # Date: Wed Jun 24 21:42:22 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom4/bom_general.bom b/tests/golden/hid_bom4/bom_general.bom
+index bb246f5..b3cc77f 100644
+--- a/tests/golden/hid_bom4/bom_general.bom
++++ b/tests/golden/hid_bom4/bom_general.bom
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbBOM Version 1.0
+ # Date: Wed Jun 24 21:42:23 2009 UTC
+ # Author: Dan McMahill
+diff --git a/tests/golden/hid_bom4/bom_general.xy b/tests/golden/hid_bom4/bom_general.xy
+index fb1350e..2933983 100644
+--- a/tests/golden/hid_bom4/bom_general.xy
++++ b/tests/golden/hid_bom4/bom_general.xy
+@@ -1,4 +1,3 @@
+-# $Id$
+ # PcbXY Version 1.0
+ # Date: Wed Jun 24 21:42:23 2009 UTC
+ # Author: Dan McMahill
