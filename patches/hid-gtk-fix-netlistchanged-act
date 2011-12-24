@@ -5,7 +5,7 @@ Date:   2011-12-24 17:14:04 +0000
 
 hid/gtk: Fix NetlistChanged action crash when exporting from the commandline.
 
-I broke this in commit 7308f512307158944482227d58e66373fd023d62, when I
+I broke this in commit 7308f512307158944482227d58e66373fd023d62 when I
 added a missing notification to the GUI when free'ing the netlist. It turns
 out that a command-line invoked export (such as used to export images in the
 doc/ build) will hit this code-path, and provoke the GUI netlist window code
