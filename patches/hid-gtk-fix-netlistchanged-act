@@ -11,6 +11,9 @@ out that a command-line invoked export (such as used to export images in the
 doc/ build) will hit this code-path, and provoke the GUI netlist window code
 to try and update before the GUI is actually loaded.
 
+For now, lets fix this with a bandaid and just skip the netlist update if the
+GUI is not up.
+
 
 ---
 
