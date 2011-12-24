@@ -53,7 +53,6 @@ void DrawElementName (ElementTypePtr);
 void DrawElementPackage (ElementTypePtr);
 void DrawElementPinsAndPads (ElementTypePtr);
 void DrawObject (int, void *, void *);
-void DrawLayer (LayerTypePtr, const BoxType *);
 void EraseVia (PinTypePtr);
 void EraseRat (RatTypePtr);
 void EraseViaName (PinTypePtr);
