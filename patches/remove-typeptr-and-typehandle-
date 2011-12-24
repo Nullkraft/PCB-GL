@@ -1,5 +1,5 @@
 Bottom: ce1399e540529463306040edb4402df3ac40724d
-Top:    ce1399e540529463306040edb4402df3ac40724d
+Top:    4512ec2f0142b2c5b354f5153452d44c0bc90662
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 02:24:32 +0000
 
@@ -14,4 +14,1712 @@ so drop the aliases.
 
 ---
 
-
+diff --git a/src/buffer.h b/src/buffer.h
+index 6871216..6a264ea 100644
+--- a/src/buffer.h
++++ b/src/buffer.h
+@@ -35,20 +35,20 @@
+ /* ---------------------------------------------------------------------------
+  * prototypes
+  */
+-void SetBufferBoundingBox (BufferTypePtr);
+-void ClearBuffer (BufferTypePtr);
+-void AddSelectedToBuffer (BufferTypePtr, Coord, Coord, bool);
+-bool LoadElementToBuffer (BufferTypePtr, char *, bool);
+-bool ConvertBufferToElement (BufferTypePtr);
+-bool SmashBufferElement (BufferTypePtr);
+-bool LoadLayoutToBuffer (BufferTypePtr, char *);
+-void RotateBuffer (BufferTypePtr, BYTE);
++void SetBufferBoundingBox (BufferType *);
++void ClearBuffer (BufferType *);
++void AddSelectedToBuffer (BufferType *, Coord, Coord, bool);
++bool LoadElementToBuffer (BufferType *, char *, bool);
++bool ConvertBufferToElement (BufferType *);
++bool SmashBufferElement (BufferType *);
++bool LoadLayoutToBuffer (BufferType *, char *);
++void RotateBuffer (BufferType *, BYTE);
+ void SelectPasteBuffer (int);
+ void SwapBuffers (void);
+-void MirrorBuffer (BufferTypePtr);
++void MirrorBuffer (BufferType *);
+ void InitBuffers (void);
+-void *MoveObjectToBuffer (DataTypePtr, DataTypePtr, int, void *, void *, void *); 
+-void *CopyObjectToBuffer (DataTypePtr, DataTypePtr, int,
++void *MoveObjectToBuffer (DataType *, DataType *, int, void *, void *, void *); 
++void *CopyObjectToBuffer (DataType *, DataType *, int,
+ 			  void *, void *, void *);
+ 
+ /* This action is called from ActionElementAddIf() */
+diff --git a/src/change.h b/src/change.h
+index 3fd896d..f42842a 100644
+--- a/src/change.h
++++ b/src/change.h
+@@ -65,7 +65,7 @@
+         (PIN_TYPE | VIA_TYPE | PAD_TYPE)
+ 
+ bool ChangeLayoutName (char *);
+-bool ChangeLayerName (LayerTypePtr, char *);
++bool ChangeLayerName (LayerType *, char *);
+ bool ChangeSelectedSize (int, Coord, bool);
+ bool ChangeSelectedClearSize (int, Coord, bool);
+ bool ChangeSelected2ndSize (int, Coord, bool);
+@@ -83,9 +83,9 @@ bool ChangeSelectedOctagon (int);
+ bool SetSelectedOctagon (int);
+ bool ClrSelectedOctagon (int);
+ bool ChangeSelectedElementSide (void);
+-bool ChangeElementSide (ElementTypePtr, Coord);
+-bool ChangeHole (PinTypePtr);
+-bool ChangePaste (PadTypePtr);
++bool ChangeElementSide (ElementType *, Coord);
++bool ChangeHole (PinType *);
++bool ChangePaste (PadType *);
+ bool ChangeObjectSize (int, void *, void *, void *, Coord, bool);
+ bool ChangeObjectThermal (int, void *, void *, void *, int);
+ bool ChangeObjectClearSize (int, void *, void *, void *, Coord,
+@@ -110,7 +110,7 @@ void ChangePCBSize (Coord, Coord);
+ /* Change the specified text on an element, either on the board (give
+    PCB, PCB->Data) or in a buffer (give NULL, Buffer->Data).  The old
+    string is returned, and must be properly freed by the caller.  */
+-char *ChangeElementText (PCBType *pcb, DataType *data, ElementTypePtr Element,
++char *ChangeElementText (PCBType *pcb, DataType *data, ElementType *Element,
+ 			 int which, char *new_name);
+ 
+ #endif
+diff --git a/src/copy.h b/src/copy.h
+index af0b7ff..e9871fc 100644
+--- a/src/copy.h
++++ b/src/copy.h
+@@ -40,9 +40,9 @@
+ 	ELEMENT_TYPE | ELEMENTNAME_TYPE | POLYGON_TYPE | ARC_TYPE)
+ 
+ 
+-PolygonTypePtr CopyPolygonLowLevel (PolygonTypePtr, PolygonTypePtr);
+-ElementTypePtr CopyElementLowLevel (DataTypePtr, ElementTypePtr,
+-				    ElementTypePtr, bool, Coord, Coord);
++PolygonType * CopyPolygonLowLevel (PolygonType *, PolygonType *);
++ElementType * CopyElementLowLevel (DataType *, ElementType *,
++				    ElementType *, bool, Coord, Coord);
+ bool CopyPastebufferToLayout (Coord, Coord);
+ void *CopyObject (int, void *, void *, void *, Coord, Coord);
+ 
+diff --git a/src/create.h b/src/create.h
+index 13fa7dc..8c8040e 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -37,54 +37,54 @@
+    things.  */
+ void CreateBeLenient (bool);
+ 
+-DataTypePtr CreateNewBuffer (void);
+-void pcb_colors_from_settings (PCBTypePtr);
+-PCBTypePtr CreateNewPCB (bool);
++DataType * CreateNewBuffer (void);
++void pcb_colors_from_settings (PCBType *);
++PCBType * CreateNewPCB (bool);
+ /* Called after PCB->Data->LayerN is set.  Returns zero if no errors,
+    else nonzero.  */
+-int CreateNewPCBPost (PCBTypePtr, int /* set defaults */);
+-PinTypePtr CreateNewVia (DataTypePtr, Coord, Coord, Coord, Coord,
++int CreateNewPCBPost (PCBType *, int /* set defaults */);
++PinType * CreateNewVia (DataType *, Coord, Coord, Coord, Coord,
+ 			 Coord, Coord, char *, FlagType);
+-LineTypePtr CreateDrawnLineOnLayer (LayerTypePtr, Coord, Coord, Coord,
++LineType * CreateDrawnLineOnLayer (LayerType *, Coord, Coord, Coord,
+ 				    Coord, Coord, Coord, FlagType);
+-LineTypePtr CreateNewLineOnLayer (LayerTypePtr, Coord, Coord, Coord,
++LineType * CreateNewLineOnLayer (LayerType *, Coord, Coord, Coord,
+ 				  Coord, Coord, Coord, FlagType);
+-RatTypePtr CreateNewRat (DataTypePtr, Coord, Coord, Coord,
++RatType * CreateNewRat (DataType *, Coord, Coord, Coord,
+ 			 Coord, Cardinal, Cardinal, Coord, FlagType);
+-ArcTypePtr CreateNewArcOnLayer (LayerTypePtr, Coord, Coord, Coord, Coord,
++ArcType * CreateNewArcOnLayer (LayerType *, Coord, Coord, Coord, Coord,
+ 				Angle, Angle, Coord, Coord, FlagType);
+-PolygonTypePtr CreateNewPolygonFromRectangle (LayerTypePtr, Coord,
++PolygonType * CreateNewPolygonFromRectangle (LayerType *, Coord,
+ 					      Coord, Coord,
+ 					      Coord, FlagType);
+-TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, Coord,
++TextType * CreateNewText (LayerType *, FontType *, Coord,
+ 			   Coord, unsigned, int, char *, FlagType);
+-PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
+-PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
++PolygonType * CreateNewPolygon (LayerType *, FlagType);
++PointType * CreateNewPointInPolygon (PolygonType *,
+ 				      Coord, Coord);
+ PolygonType *CreateNewHoleInPolygon (PolygonType *polygon);
+ void RefdesMapInit (void);
+-ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
+-				 FontTypePtr, FlagType, char *, char *,
++ElementType * CreateNewElement (DataType *, ElementType *,
++				 FontType *, FlagType, char *, char *,
+ 				 char *, Coord, Coord, BYTE,
+ 				 int, FlagType, bool);
+-LineTypePtr CreateNewLineInElement (ElementTypePtr, Coord, Coord,
++LineType * CreateNewLineInElement (ElementType *, Coord, Coord,
+ 				    Coord, Coord, Coord);
+-ArcTypePtr CreateNewArcInElement (ElementTypePtr, Coord, Coord,
++ArcType * CreateNewArcInElement (ElementType *, Coord, Coord,
+ 				  Coord, Coord, Angle, Angle, Coord);
+-PinTypePtr CreateNewPin (ElementTypePtr, Coord, Coord,
++PinType * CreateNewPin (ElementType *, Coord, Coord,
+ 			 Coord, Coord, Coord, Coord,
+ 			 char *, char *, FlagType);
+-PadTypePtr CreateNewPad (ElementTypePtr, Coord, Coord,
++PadType * CreateNewPad (ElementType *, Coord, Coord,
+ 			 Coord, Coord, Coord, Coord,
+ 			 Coord, char *, char *, FlagType);
+-LineTypePtr CreateNewLineInSymbol (SymbolTypePtr, Coord, Coord,
++LineType * CreateNewLineInSymbol (SymbolType *, Coord, Coord,
+ 				   Coord, Coord, Coord);
+-void CreateDefaultFont (PCBTypePtr);
+-RubberbandTypePtr CreateNewRubberbandEntry (LayerTypePtr,
+-					    LineTypePtr, PointTypePtr);
+-LibraryMenuTypePtr CreateNewNet (LibraryTypePtr, char *, char *);
+-LibraryEntryTypePtr CreateNewConnection (LibraryMenuTypePtr, char *);
++void CreateDefaultFont (PCBType *);
++RubberbandType * CreateNewRubberbandEntry (LayerType *,
++					    LineType *, PointType *);
++LibraryMenuType * CreateNewNet (LibraryType *, char *, char *);
++LibraryEntryType * CreateNewConnection (LibraryMenuType *, char *);
+ 
+-AttributeTypePtr CreateNewAttribute (AttributeListTypePtr list, char *name, char *value);
++AttributeType * CreateNewAttribute (AttributeListType *list, char *name, char *value);
+ 
+ #endif
+diff --git a/src/data.h b/src/data.h
+index efb2ed1..28cbfda 100644
+--- a/src/data.h
++++ b/src/data.h
+@@ -43,7 +43,7 @@ extern MarkType Marked;
+ 
+ extern OutputType Output;
+ 
+-extern PCBTypePtr PCB;
++extern PCBType *PCB;
+ 
+ #define max_group (PCB->Data->LayerN)
+ #define max_copper_layer (PCB->Data->LayerN)
+diff --git a/src/draw.h b/src/draw.h
+index 8163002..e0d522f 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -36,37 +36,37 @@
+ 
+ void Draw (void);
+ void Redraw (void);
+-void DrawVia (PinTypePtr);
+-void DrawRat (RatTypePtr);
+-void DrawViaName (PinTypePtr);
+-void DrawPin (PinTypePtr);
+-void DrawPinName (PinTypePtr);
+-void DrawPad (PadTypePtr);
+-void DrawPadName (PadTypePtr);
+-void DrawLine (LayerTypePtr, LineTypePtr);
+-void DrawArc (LayerTypePtr, ArcTypePtr);
+-void DrawText (LayerTypePtr, TextTypePtr);
+-void DrawTextLowLevel (TextTypePtr, Coord);
+-void DrawPolygon (LayerTypePtr, PolygonTypePtr);
+-void DrawElement (ElementTypePtr);
+-void DrawElementName (ElementTypePtr);
+-void DrawElementPackage (ElementTypePtr);
+-void DrawElementPinsAndPads (ElementTypePtr);
++void DrawVia (PinType *);
++void DrawRat (RatType *);
++void DrawViaName (PinType *);
++void DrawPin (PinType *);
++void DrawPinName (PinType *);
++void DrawPad (PadType *);
++void DrawPadName (PadType *);
++void DrawLine (LayerType *, LineType *);
++void DrawArc (LayerType *, ArcType *);
++void DrawText (LayerType *, TextType *);
++void DrawTextLowLevel (TextType *, Coord);
++void DrawPolygon (LayerType *, PolygonType *);
++void DrawElement (ElementType *);
++void DrawElementName (ElementType *);
++void DrawElementPackage (ElementType *);
++void DrawElementPinsAndPads (ElementType *);
+ void DrawObject (int, void *, void *);
+-void EraseVia (PinTypePtr);
+-void EraseRat (RatTypePtr);
+-void EraseViaName (PinTypePtr);
+-void ErasePad (PadTypePtr);
+-void ErasePadName (PadTypePtr);
+-void ErasePin (PinTypePtr);
+-void ErasePinName (PinTypePtr);
+-void EraseLine (LineTypePtr);
+-void EraseArc (ArcTypePtr);
+-void EraseText (LayerTypePtr, TextTypePtr);
+-void ErasePolygon (PolygonTypePtr);
+-void EraseElement (ElementTypePtr);
+-void EraseElementPinsAndPads (ElementTypePtr);
+-void EraseElementName (ElementTypePtr);
++void EraseVia (PinType *);
++void EraseRat (RatType *);
++void EraseViaName (PinType *);
++void ErasePad (PadType *);
++void ErasePadName (PadType *);
++void ErasePin (PinType *);
++void ErasePinName (PinType *);
++void EraseLine (LineType *);
++void EraseArc (ArcType *);
++void EraseText (LayerType *, TextType *);
++void ErasePolygon (PolygonType *);
++void EraseElement (ElementType *);
++void EraseElementPinsAndPads (ElementType *);
++void EraseElementName (ElementType *);
+ void EraseObject (int, void *, void *);
+ 
+ void DrawLayerGroup (int side, const BoxType *drawn_area);
+@@ -77,13 +77,13 @@ void DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
+ void PrintAssembly (int side, const BoxType *drawn_area);
+ 
+ /* TEMPORARY */
+-void ClearPad (PadTypePtr, bool);
+-void DrawPinOrViaLowLevel (PinTypePtr, bool);
+-void DrawPlainPin (PinTypePtr, bool);
+-void DrawPlainVia (PinTypePtr, bool);
+-void DrawRegularText (LayerTypePtr, TextTypePtr);
+-void DrawEMark (ElementTypePtr, Coord, Coord, bool);
+-void DrawHole (PinTypePtr);
++void ClearPad (PadType *, bool);
++void DrawPinOrViaLowLevel (PinType *, bool);
++void DrawPlainPin (PinType *, bool);
++void DrawPlainVia (PinType *, bool);
++void DrawRegularText (LayerType *, TextType *);
++void DrawEMark (ElementType *, Coord, Coord, bool);
++void DrawHole (PinType *);
+ void DrawRats (const BoxType *);
+ /* TEMPORARY */
+ 
+diff --git a/src/drill.c b/src/drill.c
+index efa9baa..3f785e9 100644
+--- a/src/drill.c
++++ b/src/drill.c
+@@ -50,8 +50,8 @@ static void
+ FillDrill (DrillTypePtr Drill, ElementTypePtr Element, PinTypePtr Pin)
+ {
+   Cardinal n;
+-  ElementTypeHandle ptr;
+-  PinTypeHandle pin;
++  ElementType **ptr;
++  PinType **pin;
+ 
+   pin = GetDrillPinMemory (Drill);
+   *pin = Pin;
+@@ -89,11 +89,11 @@ InitializeDrill (DrillTypePtr drill, PinTypePtr pin, ElementTypePtr element)
+   drill->Pin = NULL;
+   drill->PinMax = 0;
+   ptr = (void *) GetDrillPinMemory (drill);
+-  *((PinTypeHandle) ptr) = pin;
++  *((PinType **) ptr) = pin;
+   if (element)
+     {
+       ptr = (void *) GetDrillElementMemory (drill);
+-      *((ElementTypeHandle) ptr) = element;
++      *((ElementType **) ptr) = element;
+       drill->PinCount = 1;
+     }
+   else
+diff --git a/src/drill.h b/src/drill.h
+index f155a72..e9c4e92 100644
+--- a/src/drill.h
++++ b/src/drill.h
+@@ -26,6 +26,6 @@
+  *
+  */
+ 
+-DrillInfoTypePtr GetDrillInfo (DataTypePtr);
+-void FreeDrillInfo (DrillInfoTypePtr);
+-void RoundDrillInfo (DrillInfoTypePtr, int);
++DrillInfoType * GetDrillInfo (DataType *);
++void FreeDrillInfo (DrillInfoType *);
++void RoundDrillInfo (DrillInfoType *, int);
+diff --git a/src/edif.y b/src/edif.y
+index cb31d9a..e5a606d 100644
+--- a/src/edif.y
++++ b/src/edif.y
+@@ -29,8 +29,8 @@
+ #include "global.h"
+ #include "data.h"
+ /* from mymem.h, not include because of the malloc junk */
+-LibraryMenuTypePtr GetLibraryMenuMemory (LibraryTypePtr);
+-LibraryEntryTypePtr GetLibraryEntryMemory (LibraryMenuTypePtr);
++LibraryMenuType * GetLibraryMenuMemory (LibraryType *);
++LibraryEntryType * GetLibraryEntryMemory (LibraryMenuType *);
+ 
+ /*
+  *	Local definitions.
+@@ -98,8 +98,8 @@ LibraryEntryTypePtr GetLibraryEntryMemory (LibraryMenuTypePtr);
+      str_pair* node;
+      char* buf;
+      char* p;
+-     LibraryEntryTypePtr entry;
+-     LibraryMenuTypePtr menu = GetLibraryMenuMemory (&PCB->NetlistLib);
++     LibraryEntryType *entry;
++     LibraryMenuType *menu = GetLibraryMenuMemory (&PCB->NetlistLib);
+ 
+      if ( !name->str1 )
+      {
+diff --git a/src/find.h b/src/find.h
+index 1d54111..6ccc81f 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -43,13 +43,13 @@
+ #define SILK_TYPE	\
+ 	(LINE_TYPE | ARC_TYPE | POLYGON_TYPE)
+ 
+-bool LineLineIntersect (LineTypePtr, LineTypePtr);
+-bool LineArcIntersect (LineTypePtr, ArcTypePtr);
+-bool PinLineIntersect (PinTypePtr, LineTypePtr);
+-bool LinePadIntersect (LineTypePtr, PadTypePtr);
+-bool ArcPadIntersect (ArcTypePtr, PadTypePtr);
+-bool IsPolygonInPolygon (PolygonTypePtr, PolygonTypePtr);
+-void LookupElementConnections (ElementTypePtr, FILE *);
++bool LineLineIntersect (LineType *, LineType *);
++bool LineArcIntersect (LineType *, ArcType *);
++bool PinLineIntersect (PinType *, LineType *);
++bool LinePadIntersect (LineType *, PadType *);
++bool ArcPadIntersect (ArcType *, PadType *);
++bool IsPolygonInPolygon (PolygonType *, PolygonType *);
++void LookupElementConnections (ElementType *, FILE *);
+ void LookupConnectionsToAllElements (FILE *);
+ void LookupConnection (Coord, Coord, bool, Coord, int);
+ void LookupUnusedPins (FILE *);
+@@ -66,9 +66,9 @@ void RatFindHook (int, void *, void *, void *, bool, bool);
+ void SaveFindFlag (int);
+ void RestoreFindFlag (void);
+ int DRCAll (void);
+-bool lineClear (LineTypePtr, Cardinal);
+-bool IsLineInPolygon (LineTypePtr, PolygonTypePtr);
+-bool IsArcInPolygon (ArcTypePtr, PolygonTypePtr);
+-bool IsPadInPolygon (PadTypePtr, PolygonTypePtr);
++bool lineClear (LineType *, Cardinal);
++bool IsLineInPolygon (LineType *, PolygonType *);
++bool IsArcInPolygon (ArcType *, PolygonType *);
++bool IsPadInPolygon (PadType *, PolygonType *);
+ 
+ #endif
+diff --git a/src/global.h b/src/global.h
+index 79c1456..7b28396 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -58,13 +58,13 @@
+ #include <glib.h>
+ 
+ /* Forward declarations for structures the HIDs need.  */
+-typedef struct BoxType BoxType, *BoxTypePtr;
+-typedef struct polygon_st PolygonType, *PolygonTypePtr;
+-typedef struct pad_st PadType, *PadTypePtr;
+-typedef struct pin_st PinType, *PinTypePtr, **PinTypeHandle;
+-typedef struct drc_violation_st DrcViolationType, *DrcViolationTypePtr;
++typedef struct BoxType BoxType;
++typedef struct polygon_st PolygonType;
++typedef struct pad_st PadType;
++typedef struct pin_st PinType;
++typedef struct drc_violation_st DrcViolationType;
+ typedef struct rtree rtree_t;
+-typedef struct AttributeListType AttributeListType, *AttributeListTypePtr;
++typedef struct AttributeListType AttributeListType;
+ 
+ typedef struct unit Unit;
+ typedef struct increments Increments;
+@@ -118,7 +118,7 @@ typedef struct
+ {
+   unsigned long f;		/* generic flags */
+   unsigned char t[(MAX_LAYER + 1) / 2];	/* thermals */
+-} FlagType, *FlagTypePtr;
++} FlagType;
+ 
+ #ifndef __GNUC__
+ #define __FUNCTION1(a,b) a ":" #b
+@@ -190,7 +190,7 @@ typedef struct			/* holds information about output window */
+     fgGC,			/* changed from some routines */
+     pmGC;			/* depth 1 pixmap GC to store clip */
+ }
+-OutputType, *OutputTypePtr;
++OutputType;
+ 
+ /* ----------------------------------------------------------------------
+  * layer group. A layer group identifies layers which are always switched
+@@ -200,7 +200,7 @@ typedef struct
+ {
+   Cardinal Number[MAX_LAYER],	/* number of entries per groups */
+     Entries[MAX_LAYER][MAX_LAYER + 2];
+-} LayerGroupType, *LayerGroupTypePtr;
++} LayerGroupType;
+ 
+ struct BoxType		/* a bounding box */
+ {
+@@ -212,13 +212,13 @@ typedef struct
+ {
+   Coord x, y;
+   Coord width, height;
+-} RectangleType, *RectangleTypePtr;
++} RectangleType;
+ 
+ typedef struct
+ {
+   char *name;
+   char *value;
+-} AttributeType, *AttributeTypePtr;
++} AttributeType;
+ 
+ struct AttributeListType
+ {
+@@ -234,24 +234,24 @@ struct AttributeListType
+    based on this. */
+ typedef struct {
+   ANYOBJECTFIELDS;
+-} AnyObjectType, *AnyObjectTypePtr;
++} AnyObjectType;
+ 
+ typedef struct			/* a line/polygon point */
+ {
+   Coord X, Y, X2, Y2;	/* so Point type can be cast as BoxType */
+   long int ID;
+-} PointType, *PointTypePtr;
++} PointType;
+ 
+ /* Lines, rats, pads, etc.  */
+ typedef struct {
+   ANYLINEFIELDS;
+-} AnyLineObjectType, *AnyLineObjectTypePtr;
++} AnyLineObjectType;
+ 
+ typedef struct			/* holds information about one line */
+ {
+   ANYLINEFIELDS;
+   char *Number;
+-} LineType, *LineTypePtr;
++} LineType;
+ 
+ typedef struct
+ {
+@@ -261,7 +261,7 @@ typedef struct
+   BYTE Direction;
+   char *TextString;		/* string */
+   void *Element;
+-} TextType, *TextTypePtr;
++} TextType;
+ 
+ struct polygon_st			/* holds information about a polygon */
+ {
+@@ -271,7 +271,7 @@ struct polygon_st			/* holds information about a polygon */
+   POLYAREA *Clipped;		/* the clipped region of this polygon */
+   PLINE *NoHoles;		/* the polygon broken into hole-less regions */
+   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
+-  PointTypePtr Points;		/* data */
++  PointType *Points;		/* data */
+   Cardinal *HoleIndex;		/* Index of hole data within the Points array */
+   Cardinal HoleIndexN;		/* number of holes in polygon */
+   Cardinal HoleIndexMax;	/* max number from malloc() */
+@@ -287,7 +287,7 @@ typedef struct			/* holds information about arcs */
+   Coord Width, Height,		/* length of axis */
+     X, Y;			/* center coordinates */
+   Angle StartAngle, Delta;	/* the two limiting angles in degrees */
+-} ArcType, *ArcTypePtr;
++} ArcType;
+ 
+ struct rtree
+ {
+@@ -313,13 +313,13 @@ typedef struct			/* holds information about one layer */
+   AttributeListType Attributes;
+   int no_drc; /* whether to ignore the layer when checking the design rules */
+ }
+-LayerType, *LayerTypePtr;
++LayerType;
+ 
+ typedef struct			/* a rat-line */
+ {
+   ANYLINEFIELDS;
+   Cardinal group1, group2;	/* the layer group each point is on */
+-} RatType, *RatTypePtr;
++} RatType;
+ 
+ struct pad_st			/* a SMD pad */
+ {
+@@ -365,20 +365,20 @@ typedef struct
+   GList *Arc;
+   BoxType VBox;
+   AttributeListType Attributes;
+-} ElementType, *ElementTypePtr, **ElementTypeHandle;
++} ElementType;
+ 
+ /* ---------------------------------------------------------------------------
+  * symbol and font related stuff
+  */
+ typedef struct			/* a single symbol */
+ {
+-  LineTypePtr Line;
++  LineType *Line;
+   bool Valid;
+   Cardinal LineN,		/* number of lines */
+     LineMax;
+   Coord Width, Height,		/* size of cell */
+     Delta;			/* distance to next symbol */
+-} SymbolType, *SymbolTypePtr;
++} SymbolType;
+ 
+ typedef struct			/* complete set of symbols */
+ {
+@@ -387,7 +387,7 @@ typedef struct			/* complete set of symbols */
+   BoxType DefaultSymbol;	/* the default symbol is a filled box */
+   SymbolType Symbol[MAX_FONTPOSITION + 1];
+   bool Valid;
+-} FontType, *FontTypePtr;
++} FontType;
+ 
+ typedef struct			/* holds all objects */
+ {
+@@ -403,7 +403,7 @@ typedef struct			/* holds all objects */
+   struct PCBType *pcb;
+   LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
+   int polyClip;
+-} DataType, *DataTypePtr;
++} DataType;
+ 
+ typedef struct			/* holds drill information */
+ {
+@@ -415,16 +415,16 @@ typedef struct			/* holds drill information */
+     UnplatedCount,		/* number of these holes that are unplated */
+     PinN,			/* number of drill coordinates in the list */
+     PinMax;			/* max number of coordinates from malloc() */
+-  PinTypePtr *Pin;		/* coordinates to drill */
+-  ElementTypePtr *Element;	/* a pointer to an array of element pointers */
+-} DrillType, *DrillTypePtr;
++  PinType **Pin;		/* coordinates to drill */
++  ElementType **Element;	/* a pointer to an array of element pointers */
++} DrillType;
+ 
+ typedef struct			/* holds a range of Drill Infos */
+ {
+   Cardinal DrillN,		/* number of drill sizes */
+     DrillMax;			/* max number from malloc() */
+-  DrillTypePtr Drill;		/* plated holes */
+-} DrillInfoType, *DrillInfoTypePtr;
++  DrillType *Drill;		/* plated holes */
++} DrillInfoType;
+ 
+ typedef struct
+ {
+@@ -434,7 +434,7 @@ typedef struct
+     Keepaway;			/* min. separation from other nets */
+   char *Name;
+   int index;
+-} RouteStyleType, *RouteStyleTypePtr;
++} RouteStyleType;
+ 
+ /* ---------------------------------------------------------------------------
+  * structure used by library routines
+@@ -448,8 +448,7 @@ typedef struct
+    *Package,			/* package */
+    *Value,			/* the value field */
+    *Description;		/* some descritional text */
+-} LibraryEntryType, *LibraryEntryTypePtr;
+-//typedef LibraryEntryType *LibraryEntryTypePtr;
++} LibraryEntryType;
+ 
+ /* If the internal flag is set, the only field that is valid is Name,
+    and the struct is allocated with malloc instead of
+@@ -463,18 +462,18 @@ typedef struct
+    *Style;			/* routing style */
+   Cardinal EntryN,		/* number of objects */
+     EntryMax;			/* number of reserved memory locations */
+-  LibraryEntryTypePtr Entry;	/* the entries */
++  LibraryEntryType *Entry;	/* the entries */
+   char flag;			/* used by the netlist window to enable/disable nets */
+   char internal;		/* if set, this is an internal-only entry, not
+ 				   part of the global netlist. */
+-} LibraryMenuType, *LibraryMenuTypePtr;
++} LibraryMenuType;
+ 
+ typedef struct
+ {
+   Cardinal MenuN;               /* number of objects */
+   Cardinal MenuMax;             /* number of reserved memory locations */
+-  LibraryMenuTypePtr Menu;      /* the entries */
+-} LibraryType, *LibraryTypePtr;
++  LibraryMenuType *Menu;      /* the entries */
++} LibraryType;
+ 
+ 
+   /* The PCBType struct holds information about board layout most of which is
+@@ -524,19 +523,19 @@ typedef struct PCBType
+   RouteStyleType RouteStyle[NUM_STYLES];
+   LibraryType NetlistLib;
+   AttributeListType Attributes;
+-  DataTypePtr Data;		/* entire database */
++  DataType *Data;		/* entire database */
+ 
+   bool is_footprint;		/* If set, the user has loaded a footprint, not a pcb. */
+ }
+-PCBType, *PCBTypePtr;
++PCBType;
+ 
+ typedef struct			/* information about the paste buffer */
+ {
+   Coord X, Y;			/* offset */
+   BoxType BoundingBox;
+-  DataTypePtr Data;		/* data; not all members of PCBType */
++  DataType *Data;		/* data; not all members of PCBType */
+   /* are used */
+-} BufferType, *BufferTypePtr;
++} BufferType;
+ 
+ /* ---------------------------------------------------------------------------
+  * some types for cursor drawing, setting of block and lines
+@@ -544,10 +543,10 @@ typedef struct			/* information about the paste buffer */
+  */
+ typedef struct			/* rubberband lines for element moves */
+ {
+-  LayerTypePtr Layer;		/* layer that holds the line */
+-  LineTypePtr Line;		/* the line itself */
+-  PointTypePtr MovedPoint;	/* and finally the point */
+-} RubberbandType, *RubberbandTypePtr;
++  LayerType *Layer;		/* layer that holds the line */
++  LineType *Line;		/* the line itself */
++  PointType *MovedPoint;	/* and finally the point */
++} RubberbandType;
+ 
+ typedef struct			/* current marked line */
+ {
+@@ -555,7 +554,7 @@ typedef struct			/* current marked line */
+     Point2;
+   long int State;
+   bool draw;
+-} AttachedLineType, *AttachedLineTypePtr;
++} AttachedLineType;
+ 
+ typedef struct			/* currently marked block */
+ {
+@@ -563,7 +562,7 @@ typedef struct			/* currently marked block */
+     Point2;
+   long int State;
+   bool otherway;
+-} AttachedBoxType, *AttachedBoxTypePtr;
++} AttachedBoxType;
+ 
+ typedef struct			/* currently attached object */
+ {
+@@ -576,8 +575,8 @@ typedef struct			/* currently attached object */
+    *Ptr3;
+   Cardinal RubberbandN,		/* number of lines in array */
+     RubberbandMax;
+-  RubberbandTypePtr Rubberband;
+-} AttachedObjectType, *AttachedObjectTypePtr;
++  RubberbandType *Rubberband;
++} AttachedObjectType;
+ 
+ enum crosshair_shape
+ {
+@@ -599,13 +598,13 @@ typedef struct			/* holds cursor information */
+   PolygonType AttachedPolygon;
+   AttachedObjectType AttachedObject;	/* data of attached objects */
+   enum crosshair_shape shape; 	/* shape of crosshair */
+-} CrosshairType, *CrosshairTypePtr;
++} CrosshairType;
+ 
+ typedef struct
+ {
+   bool status;
+   Coord X, Y;
+-} MarkType, *MarkTypePtr;
++} MarkType;
+ 
+ /* ---------------------------------------------------------------------------
+  * our resources
+@@ -696,26 +695,26 @@ typedef struct			/* some resources... */
+     AutoPlace;			/* flag which says we should force placement of the
+ 				   windows on startup */
+ }
+-SettingType, *SettingTypePtr;
++SettingType;
+ 
+ /* ----------------------------------------------------------------------
+  * pointer to low-level copy, move and rotate functions
+  */
+ typedef struct
+ {
+-  void *(*Line) (LayerTypePtr, LineTypePtr);
+-  void *(*Text) (LayerTypePtr, TextTypePtr);
+-  void *(*Polygon) (LayerTypePtr, PolygonTypePtr);
+-  void *(*Via) (PinTypePtr);
+-  void *(*Element) (ElementTypePtr);
+-  void *(*ElementName) (ElementTypePtr);
+-  void *(*Pin) (ElementTypePtr, PinTypePtr);
+-  void *(*Pad) (ElementTypePtr, PadTypePtr);
+-  void *(*LinePoint) (LayerTypePtr, LineTypePtr, PointTypePtr);
+-  void *(*Point) (LayerTypePtr, PolygonTypePtr, PointTypePtr);
+-  void *(*Arc) (LayerTypePtr, ArcTypePtr);
+-  void *(*Rat) (RatTypePtr);
+-} ObjectFunctionType, *ObjectFunctionTypePtr;
++  void *(*Line) (LayerType *, LineType *);
++  void *(*Text) (LayerType *, TextType *);
++  void *(*Polygon) (LayerType *, PolygonType *);
++  void *(*Via) (PinType *);
++  void *(*Element) (ElementType *);
++  void *(*ElementName) (ElementType *);
++  void *(*Pin) (ElementType *, PinType *);
++  void *(*Pad) (ElementType *, PadType *);
++  void *(*LinePoint) (LayerType *, LineType *, PointType *);
++  void *(*Point) (LayerType *, PolygonType *, PointType *);
++  void *(*Arc) (LayerType *, ArcType *);
++  void *(*Rat) (RatType *);
++} ObjectFunctionType;
+ 
+ /* ---------------------------------------------------------------------------
+  * structure used by device drivers
+@@ -728,44 +727,44 @@ typedef struct			/* holds a connection */
+   void *ptr1, *ptr2;		/* the object of the connection */
+   Cardinal group;		/* the layer group of the connection */
+   LibraryMenuType *menu;	/* the netmenu this *SHOULD* belong too */
+-} ConnectionType, *ConnectionTypePtr;
++} ConnectionType;
+ 
+ typedef struct			/* holds a net of connections */
+ {
+   Cardinal ConnectionN,		/* the number of connections contained */
+     ConnectionMax;		/* max connections from malloc */
+-  ConnectionTypePtr Connection;
+-  RouteStyleTypePtr Style;
+-} NetType, *NetTypePtr;
++  ConnectionType *Connection;
++  RouteStyleType *Style;
++} NetType;
+ 
+ typedef struct			/* holds a list of nets */
+ {
+   Cardinal NetN,		/* the number of subnets contained */
+     NetMax;			/* max subnets from malloc */
+-  NetTypePtr Net;
+-} NetListType, *NetListTypePtr;
++  NetType *Net;
++} NetListType;
+ 
+ typedef struct			/* holds a list of net lists */
+ {
+   Cardinal NetListN,		/* the number of net lists contained */
+     NetListMax;			/* max net lists from malloc */
+-  NetListTypePtr NetList;
+-} NetListListType, *NetListListTypePtr;
++  NetListType *NetList;
++} NetListListType;
+ 
+ typedef struct			/* holds a generic list of pointers */
+ {
+   Cardinal PtrN,		/* the number of pointers contained */
+     PtrMax;			/* max subnets from malloc */
+   void **Ptr;
+-} PointerListType, *PointerListTypePtr;
++} PointerListType;
+ 
+ typedef struct
+ {
+   Cardinal BoxN,		/* the number of boxes contained */
+     BoxMax;			/* max boxes from malloc */
+-  BoxTypePtr Box;
++  BoxType *Box;
+ 
+-} BoxListType, *BoxListTypePtr;
++} BoxListType;
+ 
+ struct drc_violation_st
+ {
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index cf96beb..1f42e0b 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -353,8 +353,8 @@ void make_route_style_buttons (GHidRouteStyleSelector *rss);
+ gboolean dup_string (gchar ** dst, const gchar * src);
+ void free_glist_and_data (GList ** list_head);
+ 
+-ModifierKeysState ghid_modifier_keys_state (GdkModifierType * state);
+-ButtonState ghid_button_state (GdkModifierType * state);
++ModifierKeysState ghid_modifier_keys_state (GdkModifierType *state);
++ButtonState ghid_button_state (GdkModifierType *state);
+ gboolean ghid_is_modifier_key_sym (gint ksym);
+ gboolean ghid_control_is_pressed (void);
+ gboolean ghid_mod1_is_pressed (void);
+@@ -469,7 +469,7 @@ void ghid_log (const char *fmt, ...);
+ void ghid_logv (const char *fmt, va_list args);
+ 
+ /* gui-pinout-window.c */
+-void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
++void ghid_pinout_window_show (GHidPort *out, ElementType *Element);
+ 
+ /* gtkhid-gdk.c AND gtkhid-gl.c */
+ int ghid_set_layer (const char *name, int group, int empty);
+diff --git a/src/insert.h b/src/insert.h
+index 2793edf..31fc6dc 100644
+--- a/src/insert.h
++++ b/src/insert.h
+@@ -39,6 +39,6 @@
+  */
+ void *InsertPointIntoObject (int, void *, void *, Cardinal *, Coord,
+ 			     Coord, bool, bool);
+-PointTypePtr AdjustInsertPoint (void);
++PointType * AdjustInsertPoint (void);
+ 
+ #endif
+diff --git a/src/intersect.h b/src/intersect.h
+index 7ed758e..f3e3205 100644
+--- a/src/intersect.h
++++ b/src/intersect.h
+@@ -37,7 +37,7 @@
+ 
+ #include "global.h"
+ 
+-double ComputeIntersectionArea (BoxListTypePtr boxlist);	/* will sort boxlist */
+-double ComputeUnionArea (BoxListTypePtr boxlist);
++double ComputeIntersectionArea (BoxListType *boxlist);	/* will sort boxlist */
++double ComputeUnionArea (BoxListType *boxlist);
+ 
+ #endif
+diff --git a/src/line.h b/src/line.h
+index 8a5e4d2..8552cae 100644
+--- a/src/line.h
++++ b/src/line.h
+@@ -38,6 +38,6 @@
+  */
+ void AdjustAttachedLine (void);
+ void AdjustTwoLine (bool);
+-void FortyFiveLine (AttachedLineTypePtr);
++void FortyFiveLine (AttachedLineType *);
+ void EnforceLineDRC (void);
+ #endif
+diff --git a/src/macro.h b/src/macro.h
+index 59c53ba..715f0c9 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -91,7 +91,7 @@
+ /* ---------------------------------------------------------------------------
+  * returns the object ID
+  */
+-#define	OBJECT_ID(p)		(((AnyObjectTypePtr) p)->ID)
++#define	OBJECT_ID(p)		(((AnyObjectType *) p)->ID)
+ 
+ /* ---------------------------------------------------------------------------
+  * access macro for current buffer
+@@ -170,7 +170,7 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define STYLE_LOOP(top)  do {                                       \
+         Cardinal n;                                                 \
+-        RouteStyleTypePtr style;                                    \
++        RouteStyleType *style;                                      \
+         for (n = 0; n < NUM_STYLES; n++)                            \
+         {                                                           \
+                 style = &(top)->RouteStyle[n]
+@@ -185,28 +185,28 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define DRILL_LOOP(top) do             {               \
+         Cardinal        n;                                      \
+-        DrillTypePtr    drill;                                  \
++        DrillType *drill;                                       \
+         for (n = 0; (top)->DrillN > 0 && n < (top)->DrillN; n++)                        \
+         {                                                       \
+                 drill = &(top)->Drill[n]
+ 
+ #define NETLIST_LOOP(top) do   {                         \
+         Cardinal        n;                                      \
+-        NetListTypePtr   netlist;                               \
++        NetListType *netlist;                                   \
+         for (n = (top)->NetListN-1; n != -1; n--)               \
+         {                                                       \
+                 netlist = &(top)->NetList[n]
+ 
+ #define NET_LOOP(top) do   {                             \
+         Cardinal        n;                                      \
+-        NetTypePtr   net;                                       \
++        NetType *net;                                           \
+         for (n = (top)->NetN-1; n != -1; n--)                   \
+         {                                                       \
+                 net = &(top)->Net[n]
+ 
+ #define CONNECTION_LOOP(net) do {                         \
+         Cardinal        n;                                      \
+-        ConnectionTypePtr       connection;                     \
++        ConnectionType *connection;                             \
+         for (n = (net)->ConnectionN-1; n != -1; n--)            \
+         {                                                       \
+                 connection = & (net)->Connection[n]
+@@ -229,7 +229,7 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define	ELEMENTTEXT_LOOP(element) do { 	\
+ 	Cardinal	n;				\
+-	TextTypePtr	text;				\
++	TextType *text;					\
+ 	for (n = MAX_ELEMENTNAMES-1; n != -1; n--)	\
+ 	{						\
+ 		text = &(element)->Name[n]
+@@ -308,7 +308,7 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define	POLYGONPOINT_LOOP(polygon) do	{	\
+ 	Cardinal			n;		\
+-	PointTypePtr	point;				\
++	PointType *point;				\
+ 	for (n = (polygon)->PointN-1; n != -1; n--)	\
+ 	{						\
+ 		point = &(polygon)->Points[n]
+@@ -325,49 +325,49 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define	ALLLINE_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		LINE_LOOP(layer)
+ 
+ #define ALLARC_LOOP(top) do {		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	for (l =0; l < max_copper_layer + 2; l++, layer++)		\
+ 	{ \
+ 		ARC_LOOP(layer)
+ 
+ #define	ALLPOLYGON_LOOP(top)	do {		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		POLYGON_LOOP(layer)
+ 
+ #define	COPPERLINE_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	for (l = 0; l < max_copper_layer; l++, layer++)	\
+ 	{ \
+ 		LINE_LOOP(layer)
+ 
+ #define COPPERARC_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	for (l =0; l < max_copper_layer; l++, layer++)		\
+ 	{ \
+ 		ARC_LOOP(layer)
+ 
+ #define	COPPERPOLYGON_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	for (l = 0; l < max_copper_layer; l++, layer++)	\
+ 	{ \
+ 		POLYGON_LOOP(layer)
+ 
+ #define	SILKLINE_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	layer += max_copper_layer;			\
+ 	for (l = 0; l < 2; l++, layer++)		\
+ 	{ \
+@@ -375,7 +375,7 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define SILKARC_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	layer += max_copper_layer;			\
+ 	for (l = 0; l < 2; l++, layer++)		\
+ 	{ \
+@@ -383,7 +383,7 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define	SILKPOLYGON_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	layer += max_copper_layer;			\
+ 	for (l = 0; l < 2; l++, layer++)		\
+ 	{ \
+@@ -391,14 +391,14 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define	ALLTEXT_LOOP(top)	do {		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		TEXT_LOOP(layer)
+ 
+ #define	VISIBLELINE_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		if (layer->On)				\
+@@ -406,7 +406,7 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define	VISIBLEARC_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		if (layer->On)				\
+@@ -414,7 +414,7 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define	VISIBLETEXT_LOOP(board) do	{		\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (board)->Data->Layer;		\
++	LayerType *layer = (board)->Data->Layer;		\
+ 	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+                 TEXT_LOOP(layer);                                      \
+@@ -422,7 +422,7 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define	VISIBLEPOLYGON_LOOP(top) do	{	\
+ 	Cardinal		l;			\
+-	LayerTypePtr	layer = (top)->Layer;		\
++	LayerType *layer = (top)->Layer;		\
+ 	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		if (layer->On)				\
+@@ -437,25 +437,25 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #define MENU_LOOP(top)	do {	\
+ 	Cardinal	l;			\
+-	LibraryMenuTypePtr menu;		\
++	LibraryMenuType *menu;			\
+ 	for (l = (top)->MenuN-1; l != -1; l--)	\
+ 	{					\
+ 		menu = &(top)->Menu[l]
+ 
+ #define ENTRY_LOOP(top) do	{	\
+ 	Cardinal	n;			\
+-	LibraryEntryTypePtr entry;		\
++	LibraryEntryType *entry;		\
+ 	for (n = (top)->EntryN-1; n != -1; n--)	\
+ 	{					\
+ 		entry = &(top)->Entry[n]
+ 
+ #define GROUP_LOOP(data, group) do { 	\
+ 	Cardinal entry; \
+-        for (entry = 0; entry < ((PCBTypePtr)(data->pcb))->LayerGroups.Number[(group)]; entry++) \
++        for (entry = 0; entry < ((PCBType *)(data->pcb))->LayerGroups.Number[(group)]; entry++) \
+         { \
+-		LayerTypePtr layer;		\
++		LayerType *layer;		\
+ 		Cardinal number; 		\
+-		number = ((PCBTypePtr)(data->pcb))->LayerGroups.Entries[(group)][entry]; \
++		number = ((PCBType *)(data->pcb))->LayerGroups.Entries[(group)][entry]; \
+ 		if (number >= max_copper_layer)	\
+ 		  continue;			\
+ 		layer = &data->Layer[number];
+@@ -464,7 +464,7 @@ extern int mem_any_set (unsigned char *, int);
+         Cardinal n; \
+ 	for (n = 0; n < ml; n++) \
+ 	{ \
+-	   LayerTypePtr layer = (&data->Layer[(n)]);
++	   LayerType *layer = (&data->Layer[(n)]);
+ 
+ 
+ #endif
+diff --git a/src/mirror.h b/src/mirror.h
+index 50f648a..97ea0bb 100644
+--- a/src/mirror.h
++++ b/src/mirror.h
+@@ -40,6 +40,6 @@
+ #define	MIRROR_TYPES	(TEXT_TYPE | ELEMENTNAME_TYPE)
+ 
+ 
+-void MirrorElementCoordinates (DataTypePtr, ElementTypePtr, Coord);
++void MirrorElementCoordinates (DataType *, ElementType *, Coord);
+ 
+ #endif
+diff --git a/src/misc.h b/src/misc.h
+index 2f34cfe..9ce0905 100644
+--- a/src/misc.h
++++ b/src/misc.h
+@@ -45,49 +45,49 @@ typedef struct {
+ double Distance (double x1, double y1, double x2, double y2);
+ Angle  NormalizeAngle (Angle a);
+ 
+-void r_delete_element (DataTypePtr, ElementTypePtr);
+-void SetLineBoundingBox (LineTypePtr);
+-void SetArcBoundingBox (ArcTypePtr);
+-void SetPointBoundingBox (PointTypePtr);
+-void SetPinBoundingBox (PinTypePtr);
+-void SetPadBoundingBox (PadTypePtr);
+-void SetPolygonBoundingBox (PolygonTypePtr);
+-void SetElementBoundingBox (DataTypePtr, ElementTypePtr, FontTypePtr);
+-bool IsDataEmpty (DataTypePtr);
+-bool IsLayerEmpty (LayerTypePtr);
++void r_delete_element (DataType *, ElementType *);
++void SetLineBoundingBox (LineType *);
++void SetArcBoundingBox (ArcType *);
++void SetPointBoundingBox (PointType *);
++void SetPinBoundingBox (PinType *);
++void SetPadBoundingBox (PadType *);
++void SetPolygonBoundingBox (PolygonType *);
++void SetElementBoundingBox (DataType *, ElementType *, FontType *);
++bool IsDataEmpty (DataType *);
++bool IsLayerEmpty (LayerType *);
+ bool IsLayerNumEmpty (int);
+ bool IsLayerGroupEmpty (int);
+ bool IsPasteEmpty (int);
+ void CountHoles (int *, int *, const BoxType *);
+-BoxTypePtr GetDataBoundingBox (DataTypePtr);
++BoxType * GetDataBoundingBox (DataType *);
+ void CenterDisplay (Coord, Coord);
+-void SetFontInfo (FontTypePtr);
++void SetFontInfo (FontType *);
+ char *make_route_string (RouteStyleType rs[], int n_styles);
+-int ParseGroupString (char *, LayerGroupTypePtr, int /* LayerN */);
+-int ParseRouteString (char *, RouteStyleTypePtr, const char *);
++int ParseGroupString (char *, LayerGroupType *, int /* LayerN */);
++int ParseRouteString (char *, RouteStyleType *, const char *);
+ void QuitApplication (void);
+ char *EvaluateFilename (char *, char *, char *, char *);
+ char *ExpandFilename (char *, char *);
+-void SetTextBoundingBox (FontTypePtr, TextTypePtr);
++void SetTextBoundingBox (FontType *, TextType *);
+ 
+ void SaveOutputWindow (void);
+-int GetLayerNumber (DataTypePtr, LayerTypePtr);
+-int GetLayerGroupNumberByPointer (LayerTypePtr);
++int GetLayerNumber (DataType *, LayerType *);
++int GetLayerGroupNumberByPointer (LayerType *);
+ int GetLayerGroupNumberByNumber (Cardinal);
+ int GetGroupOfLayer (int);
+ int ChangeGroupVisibility (int, bool, bool);
+ void LayerStringToLayerStack (char *);
+ 
+ 
+-BoxTypePtr GetObjectBoundingBox (int, void *, void *, void *);
++BoxType * GetObjectBoundingBox (int, void *, void *, void *);
+ void ResetStackAndVisibility (void);
+ void SaveStackAndVisibility (void);
+ void RestoreStackAndVisibility (void);
+ char *GetWorkingDirectory (char *);
+-void CreateQuotedString (DynamicStringTypePtr, char *);
+-BoxTypePtr GetArcEnds (ArcTypePtr);
+-void ChangeArcAngles (LayerTypePtr, ArcTypePtr, Angle, Angle);
+-char *UniqueElementName (DataTypePtr, char *);
++void CreateQuotedString (DynamicStringType *, char *);
++BoxType * GetArcEnds (ArcType *);
++void ChangeArcAngles (LayerType *, ArcType *, Angle, Angle);
++char *UniqueElementName (DataType *, char *);
+ void AttachForCopy (Coord, Coord);
+ double GetValue (const char *, const char *, bool *);
+ double GetValueEx (const char *, const char *, bool *, UnitList, const char *);
+@@ -124,7 +124,7 @@ FlagType MaskFlags (FlagType, unsigned int);
+ /* Returns group actually moved to (i.e. either group or previous) */
+ int MoveLayerToGroup (int layer, int group);
+ /* returns pointer to private buffer */
+-char *LayerGroupsToString (LayerGroupTypePtr);
++char *LayerGroupsToString (LayerGroupType *);
+ /* Make the current layer groups the default.  */
+ void MakeLayerGroupsDefault ();
+ 
+diff --git a/src/move.h b/src/move.h
+index 801a5cc..f91602e 100644
+--- a/src/move.h
++++ b/src/move.h
+@@ -94,13 +94,13 @@
+ /* ---------------------------------------------------------------------------
+  * prototypes
+  */
+-void MovePolygonLowLevel (PolygonTypePtr, Coord, Coord);
+-void MoveElementLowLevel (DataTypePtr, ElementTypePtr, Coord, Coord);
++void MovePolygonLowLevel (PolygonType *, Coord, Coord);
++void MoveElementLowLevel (DataType *, ElementType *, Coord, Coord);
+ void *MoveObject (int, void *, void *, void *, Coord, Coord);
+-void *MoveObjectToLayer (int, void *, void *, void *, LayerTypePtr, bool);
++void *MoveObjectToLayer (int, void *, void *, void *, LayerType *, bool);
+ void *MoveObjectAndRubberband (int, void *, void *, void *,
+ 			       Coord, Coord);
+-bool MoveSelectedObjectsToLayer (LayerTypePtr);
++bool MoveSelectedObjectsToLayer (LayerType *);
+ 
+ /* index is 0..MAX_LAYER-1.  If old_index is -1, a new layer is
+    inserted at that index.  If new_index is -1, the specified layer is
+diff --git a/src/mymem.c b/src/mymem.c
+index 42cf7bc..2eb8edb 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -471,7 +471,7 @@ GetLibraryEntryMemory (LibraryMenuTypePtr Menu)
+ /* ---------------------------------------------------------------------------
+  * get next slot for a DrillElement, allocates memory if necessary
+  */
+-ElementTypeHandle
++ElementType **
+ GetDrillElementMemory (DrillTypePtr Drill)
+ {
+   ElementTypePtr *element;
+@@ -494,7 +494,7 @@ GetDrillElementMemory (DrillTypePtr Drill)
+ /* ---------------------------------------------------------------------------
+  * get next slot for a DrillPoint, allocates memory if necessary
+  */
+-PinTypeHandle
++PinType **
+ GetDrillPinMemory (DrillTypePtr Drill)
+ {
+   PinTypePtr *pin;
+diff --git a/src/mymem.h b/src/mymem.h
+index 88c5628..46061a3 100644
+--- a/src/mymem.h
++++ b/src/mymem.h
+@@ -62,43 +62,43 @@ typedef struct
+ {
+   size_t MaxLength;
+   char *Data;
+-} DynamicStringType, *DynamicStringTypePtr;
++} DynamicStringType;
+ 
+-RubberbandTypePtr GetRubberbandMemory (void);
+-PinTypePtr GetPinMemory (ElementTypePtr);
+-PadTypePtr GetPadMemory (ElementTypePtr);
+-PinTypePtr GetViaMemory (DataTypePtr);
+-LineTypePtr GetLineMemory (LayerTypePtr);
+-ArcTypePtr GetArcMemory (LayerTypePtr);
+-RatTypePtr GetRatMemory (DataTypePtr);
+-TextTypePtr GetTextMemory (LayerTypePtr);
+-PolygonTypePtr GetPolygonMemory (LayerTypePtr);
+-PointTypePtr GetPointMemoryInPolygon (PolygonTypePtr);
+-Cardinal *GetHoleIndexMemoryInPolygon (PolygonTypePtr);
+-ElementTypePtr GetElementMemory (DataTypePtr);
+-BoxTypePtr GetBoxMemory (BoxListTypePtr);
+-ConnectionTypePtr GetConnectionMemory (NetTypePtr);
+-NetTypePtr GetNetMemory (NetListTypePtr);
+-NetListTypePtr GetNetListMemory (NetListListTypePtr);
+-LibraryMenuTypePtr GetLibraryMenuMemory (LibraryTypePtr);
+-LibraryEntryTypePtr GetLibraryEntryMemory (LibraryMenuTypePtr);
+-ElementTypeHandle GetDrillElementMemory (DrillTypePtr);
+-PinTypeHandle GetDrillPinMemory (DrillTypePtr);
+-DrillTypePtr GetDrillInfoDrillMemory (DrillInfoTypePtr);
+-void **GetPointerMemory (PointerListTypePtr);
+-void FreePolygonMemory (PolygonTypePtr);
+-void FreeElementMemory (ElementTypePtr);
+-void FreePCBMemory (PCBTypePtr);
+-void FreeBoxListMemory (BoxListTypePtr);
+-void FreeNetListListMemory (NetListListTypePtr);
+-void FreeNetListMemory (NetListTypePtr);
+-void FreeNetMemory (NetTypePtr);
+-void FreeDataMemory (DataTypePtr);
+-void FreeLibraryMemory (LibraryTypePtr);
+-void FreePointerListMemory (PointerListTypePtr);
+-void DSAddCharacter (DynamicStringTypePtr, char);
+-void DSAddString (DynamicStringTypePtr, const char *);
+-void DSClearString (DynamicStringTypePtr);
++RubberbandType * GetRubberbandMemory (void);
++PinType * GetPinMemory (ElementType *);
++PadType * GetPadMemory (ElementType *);
++PinType * GetViaMemory (DataType *);
++LineType * GetLineMemory (LayerType *);
++ArcType * GetArcMemory (LayerType *);
++RatType * GetRatMemory (DataType *);
++TextType * GetTextMemory (LayerType *);
++PolygonType * GetPolygonMemory (LayerType *);
++PointType * GetPointMemoryInPolygon (PolygonType *);
++Cardinal *GetHoleIndexMemoryInPolygon (PolygonType *);
++ElementType * GetElementMemory (DataType *);
++BoxType * GetBoxMemory (BoxListType *);
++ConnectionType * GetConnectionMemory (NetType *);
++NetType * GetNetMemory (NetListType *);
++NetListType * GetNetListMemory (NetListListType *);
++LibraryMenuType * GetLibraryMenuMemory (LibraryType *);
++LibraryEntryType * GetLibraryEntryMemory (LibraryMenuType *);
++ElementType **GetDrillElementMemory (DrillType *);
++PinType ** GetDrillPinMemory (DrillType *);
++DrillType * GetDrillInfoDrillMemory (DrillInfoType *);
++void **GetPointerMemory (PointerListType *);
++void FreePolygonMemory (PolygonType *);
++void FreeElementMemory (ElementType *);
++void FreePCBMemory (PCBType *);
++void FreeBoxListMemory (BoxListType *);
++void FreeNetListListMemory (NetListListType *);
++void FreeNetListMemory (NetListType *);
++void FreeNetMemory (NetType *);
++void FreeDataMemory (DataType *);
++void FreeLibraryMemory (LibraryType *);
++void FreePointerListMemory (PointerListType *);
++void DSAddCharacter (DynamicStringType *, char);
++void DSAddString (DynamicStringType *, const char *);
++void DSClearString (DynamicStringType *);
+ char *StripWhiteSpaceAndDup (const char *);
+ 
+ #ifdef NEED_STRDUP
+diff --git a/src/parse_l.h b/src/parse_l.h
+index dfeed70..d11b0c8 100644
+--- a/src/parse_l.h
++++ b/src/parse_l.h
+@@ -32,9 +32,9 @@
+ 
+ #include "global.h"
+ 
+-int ParsePCB (PCBTypePtr, char *);
+-int ParseElementFile (DataTypePtr, char *);
+-int ParseLibraryEntry (DataTypePtr, char *);
+-int ParseFont (FontTypePtr, char *);
++int ParsePCB (PCBType *, char *);
++int ParseElementFile (DataType *, char *);
++int ParseLibraryEntry (DataType *, char *);
++int ParseFont (FontType *, char *);
+ 
+ #endif
+diff --git a/src/parse_l.l b/src/parse_l.l
+index c0ec6a7..882fd2c 100644
+--- a/src/parse_l.l
++++ b/src/parse_l.l
+@@ -69,10 +69,10 @@
+ #endif
+ 
+ char			*yyfilename;	/* in this file */
+-PCBTypePtr		yyPCB;			/* used by parser */
+-DataTypePtr		yyData;
+-ElementTypePtr		yyElement;
+-FontTypePtr		yyFont;
++PCBType			*yyPCB;		/* used by parser */
++DataType		*yyData;
++ElementType		*yyElement;
++FontType		*yyFont;
+ 
+ static int parse_number (void);
+ 
+@@ -293,7 +293,8 @@ static int Parse(char *Executable, char *Path, char *Filename, char *Parameter)
+ /* ---------------------------------------------------------------------------
+  * initializes LEX and calls parser for a single element file
+  */
+-int ParseElementFile(DataTypePtr Ptr, char *Filename)
++int
++ParseElementFile (DataType *Ptr, char *Filename)
+ {
+ 	yyPCB = NULL;
+ 	yyData = Ptr;
+@@ -305,7 +306,8 @@ int ParseElementFile(DataTypePtr Ptr, char *Filename)
+ /* ---------------------------------------------------------------------------
+  * initializes LEX and calls parser for a single library entry
+  */
+-int ParseLibraryEntry(DataTypePtr Ptr, char *Template)
++int
++ParseLibraryEntry (DataType *Ptr, char *Template)
+ {
+ 	yyPCB = NULL;
+ 	yyData = Ptr;
+@@ -318,7 +320,8 @@ int ParseLibraryEntry(DataTypePtr Ptr, char *Template)
+ /* ---------------------------------------------------------------------------
+  * initializes LEX and calls parser for a complete board
+  */
+-int ParsePCB(PCBTypePtr Ptr, char *Filename)
++int
++ParsePCB (PCBType *Ptr, char *Filename)
+ {
+ 	yyPCB = Ptr;
+ 	yyData = NULL;
+@@ -330,7 +333,8 @@ int ParsePCB(PCBTypePtr Ptr, char *Filename)
+ /* ---------------------------------------------------------------------------
+  * initializes LEX and calls parser for a font
+  */
+-int ParseFont(FontTypePtr Ptr, char *Filename)
++int
++ParseFont (FontType *Ptr, char *Filename)
+ {
+ 	int r = 0;
+ 	char *path, *p;
+diff --git a/src/parse_y.y b/src/parse_y.y
+index adc2387..2ae9f6c 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -59,24 +59,24 @@
+ # include <dmalloc.h> /* see http://dmalloc.com */
+ #endif
+ 
+-static	LayerTypePtr	Layer;
+-static	PolygonTypePtr	Polygon;
+-static	SymbolTypePtr	Symbol;
++static	LayerType	*Layer;
++static	PolygonType	*Polygon;
++static	SymbolType	*Symbol;
+ static	int		pin_num;
+-static	LibraryMenuTypePtr	Menu;
++static	LibraryMenuType	*Menu;
+ static	bool			LayerFlag[MAX_LAYER + 2];
+ 
+-extern	char			*yytext;		/* defined by LEX */
+-extern	PCBTypePtr		yyPCB;
+-extern	DataTypePtr		yyData;
+-extern	ElementTypePtr	yyElement;
+-extern	FontTypePtr		yyFont;
+-extern	int				yylineno;		/* linenumber */
+-extern	char			*yyfilename;	/* in this file */
++extern	char		*yytext;		/* defined by LEX */
++extern	PCBType		*yyPCB;
++extern	DataType	*yyData;
++extern	ElementType	*yyElement;
++extern	FontType	*yyFont;
++extern	int		yylineno;		/* linenumber */
++extern	char		*yyfilename;	/* in this file */
+ 
+ static char *layer_group_string; 
+ 
+-static AttributeListTypePtr attr_list; 
++static AttributeListType *attr_list; 
+ 
+ int yyerror(const char *s);
+ int yylex();
+@@ -191,7 +191,7 @@ parsepcb
+ 		  pcbdata
+ 		  pcbnetlist
+ 			{
+-			  PCBTypePtr pcb_save = PCB;
++			  PCBType *pcb_save = PCB;
+ 
+ 			  if (layer_group_string == NULL)
+ 			    layer_group_string = Settings.Groups;
+@@ -1062,7 +1062,7 @@ text_newformat
+ 			{
+ 				if ($8 & ONSILKFLAG)
+ 				{
+-					LayerTypePtr lay = &yyData->Layer[yyData->LayerN +
++					LayerType *lay = &yyData->Layer[yyData->LayerN +
+ 						(($8 & ONSOLDERFLAG) ? SOLDER_LAYER : COMPONENT_LAYER)];
+ 
+ 					CreateNewText(lay ,yyFont, OU ($3), OU ($4), $5, $6, $7,
+@@ -1087,7 +1087,7 @@ text_hi_format
+ 				 */
+ 				if ($8.f & ONSILKFLAG)
+ 				{
+-					LayerTypePtr lay = &yyData->Layer[yyData->LayerN +
++					LayerType *lay = &yyData->Layer[yyData->LayerN +
+ 						(($8.f & ONSOLDERFLAG) ? SOLDER_LAYER : COMPONENT_LAYER)];
+ 
+ 					CreateNewText(lay, yyFont, NU ($3), NU ($4), $5, $6, $7, $8);
+diff --git a/src/polygon.h b/src/polygon.h
+index 6672ca4..eef86f2 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -49,13 +49,13 @@
+ /* Prototypes */
+ 
+ void polygon_init (void);
+-Cardinal polygon_point_idx (PolygonTypePtr polygon, PointTypePtr point);
+-Cardinal polygon_point_contour (PolygonTypePtr polygon, Cardinal point);
+-Cardinal prev_contour_point (PolygonTypePtr polygon, Cardinal point);
+-Cardinal next_contour_point (PolygonTypePtr polygon, Cardinal point);
+-Cardinal GetLowestDistancePolygonPoint (PolygonTypePtr,
++Cardinal polygon_point_idx (PolygonType * polygon, PointType * point);
++Cardinal polygon_point_contour (PolygonType * polygon, Cardinal point);
++Cardinal prev_contour_point (PolygonType * polygon, Cardinal point);
++Cardinal next_contour_point (PolygonType * polygon, Cardinal point);
++Cardinal GetLowestDistancePolygonPoint (PolygonType *,
+ 					Coord, Coord);
+-bool RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
++bool RemoveExcessPolygonPoints (LayerType *, PolygonType *);
+ void GoToPreviousPoint (void);
+ void ClosePolygon (void);
+ void CopyAttachedPolygonToLayer (void);
+@@ -63,7 +63,7 @@ int PolygonHoles (PolygonType *ptr, const BoxType *range,
+ 		  int (*callback) (PLINE *, void *user_data),
+                   void *user_data);
+ int PlowsPolygon (DataType *, int, void *, void *,
+-		  int (*callback) (DataTypePtr, LayerTypePtr, PolygonTypePtr, int, void *, void *));
++		  int (*callback) (DataType *, LayerType *, PolygonType *, int, void *, void *));
+ void ComputeNoHoles (PolygonType *poly);
+ POLYAREA * ContourToPoly (PLINE *);
+ POLYAREA * PolygonToPoly (PolygonType *);
+@@ -79,11 +79,11 @@ int InitClip(DataType *d, LayerType *l, PolygonType *p);
+ void RestoreToPolygon(DataType *, int, void *, void *);
+ void ClearFromPolygon(DataType *, int, void *, void *);
+ 
+-bool IsPointInPolygon (Coord, Coord, Coord, PolygonTypePtr);
+-bool IsPointInPolygonIgnoreHoles (Coord, Coord, PolygonTypePtr);
+-bool IsRectangleInPolygon (Coord, Coord, Coord, Coord, PolygonTypePtr);
+-bool isects (POLYAREA *, PolygonTypePtr, bool);
+-bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
++bool IsPointInPolygon (Coord, Coord, Coord, PolygonType *);
++bool IsPointInPolygonIgnoreHoles (Coord, Coord, PolygonType *);
++bool IsRectangleInPolygon (Coord, Coord, Coord, Coord, PolygonType *);
++bool isects (POLYAREA *, PolygonType *, bool);
++bool MorphPolygon (LayerType *, PolygonType *);
+ void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
+                           void (*emit) (PLINE *, void *), void *user_data);
+ void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
+diff --git a/src/rats.h b/src/rats.h
+index 16e5338..dc7479b 100644
+--- a/src/rats.h
++++ b/src/rats.h
+@@ -35,16 +35,16 @@
+ #include "global.h"
+ 
+ /* This one is actually in netlist.h, but it's used by rats.c */
+-LibraryMenuTypePtr netnode_to_netname (char *nodename);
+-LibraryMenuTypePtr netname_to_netname (char *netname);
++LibraryMenuType * netnode_to_netname (char *nodename);
++LibraryMenuType * netname_to_netname (char *netname);
+ 
+-RatTypePtr AddNet (void);
++RatType * AddNet (void);
+ char *ConnectionName (int, void *, void *);
+ 
+-bool AddAllRats (bool, void (*)(register ConnectionTypePtr, register ConnectionTypePtr, register RouteStyleTypePtr));
+-bool SeekPad (LibraryEntryTypePtr, ConnectionTypePtr, bool);
++bool AddAllRats (bool, void (*)(register ConnectionType *, register ConnectionType *, register RouteStyleType *));
++bool SeekPad (LibraryEntryType *, ConnectionType *, bool);
+ 
+-NetListTypePtr ProcNetlist (LibraryTypePtr);
++NetListType * ProcNetlist (LibraryType *);
+ NetListListType CollectSubnets (bool);
+ 
+ #endif
+diff --git a/src/remove.h b/src/remove.h
+index 9066428..f1f4596 100644
+--- a/src/remove.h
++++ b/src/remove.h
+@@ -39,16 +39,16 @@
+ 	(VIA_TYPE | LINEPOINT_TYPE | LINE_TYPE | TEXT_TYPE | ELEMENT_TYPE |	\
+ 	POLYGONPOINT_TYPE | POLYGON_TYPE | RATLINE_TYPE | ARC_TYPE)
+ 
+-void *RemoveLine (LayerTypePtr, LineTypePtr);
+-void *RemoveArc (LayerTypePtr, ArcTypePtr);
+-void *RemovePolygon (LayerTypePtr, PolygonTypePtr);
+-void *RemoveText (LayerTypePtr, TextTypePtr);
+-void *RemoveElement (ElementTypePtr);
++void *RemoveLine (LayerType *, LineType *);
++void *RemoveArc (LayerType *, ArcType *);
++void *RemovePolygon (LayerType *, PolygonType *);
++void *RemoveText (LayerType *, TextType *);
++void *RemoveElement (ElementType *);
+ void ClearRemoveList (void);
+-void RemovePCB (PCBTypePtr);
++void RemovePCB (PCBType *);
+ bool RemoveSelected (void);
+ bool DeleteRats (bool);
+ void *RemoveObject (int, void *, void *, void *);
+-void *DestroyObject (DataTypePtr, int, void *, void *, void *);
++void *DestroyObject (DataType *, int, void *, void *, void *);
+ 
+ #endif
+diff --git a/src/rotate.h b/src/rotate.h
+index 2ac060e..85a9361 100644
+--- a/src/rotate.h
++++ b/src/rotate.h
+@@ -54,17 +54,17 @@
+ #define	ROTATE_VIA_LOWLEVEL(v,x0,y0,n)	ROTATE((v)->X,(v)->Y,(x0),(y0),(n))
+ #define	ROTATE_PIN_LOWLEVEL(p,x0,y0,n)	ROTATE((p)->X,(p)->Y,(x0),(y0),(n))
+ #define	ROTATE_PAD_LOWLEVEL(p,x0,y0,n)	\
+-	RotateLineLowLevel(((LineTypePtr) (p)),(x0),(y0),(n))
++	RotateLineLowLevel(((LineType *) (p)),(x0),(y0),(n))
+ 
+ #define	ROTATE_TYPES	(ELEMENT_TYPE | TEXT_TYPE | ELEMENTNAME_TYPE | ARC_TYPE)
+ 
+ 
+-void RotateLineLowLevel (LineTypePtr, Coord, Coord, unsigned);
+-void RotateArcLowLevel (ArcTypePtr, Coord, Coord, unsigned);
+-void RotateBoxLowLevel (BoxTypePtr, Coord, Coord, unsigned);
+-void RotateTextLowLevel (TextTypePtr, Coord, Coord, unsigned);
+-void RotatePolygonLowLevel (PolygonTypePtr, Coord, Coord, unsigned);
+-void RotateElementLowLevel (DataTypePtr, ElementTypePtr, Coord, Coord, unsigned);
++void RotateLineLowLevel (LineType *, Coord, Coord, unsigned);
++void RotateArcLowLevel (ArcType *, Coord, Coord, unsigned);
++void RotateBoxLowLevel (BoxType *, Coord, Coord, unsigned);
++void RotateTextLowLevel (TextType *, Coord, Coord, unsigned);
++void RotatePolygonLowLevel (PolygonType *, Coord, Coord, unsigned);
++void RotateElementLowLevel (DataType *, ElementType *, Coord, Coord, unsigned);
+ void *RotateObject (int, void *, void *, void *, Coord, Coord,
+ 		    unsigned);
+ void RotateScreenObject (Coord, Coord, unsigned);
+diff --git a/src/search.h b/src/search.h
+index 30553dd..bdf460e 100644
+--- a/src/search.h
++++ b/src/search.h
+@@ -49,7 +49,7 @@
+ 	(POINT_IN_BOX((l)->Point1.X,(l)->Point1.Y,(b)) &&	\
+ 	POINT_IN_BOX((l)->Point2.X,(l)->Point2.Y,(b)))
+ 
+-#define	PAD_IN_BOX(p,b)	LINE_IN_BOX((LineTypePtr)(p),(b))
++#define	PAD_IN_BOX(p,b)	LINE_IN_BOX((LineType *)(p),(b))
+ 
+ #define	BOX_IN_BOX(b1,b)	\
+ 	((b1)->X1 >= (b)->X1 && (b1)->X2 <= (b)->X2 &&	\
+@@ -70,19 +70,19 @@
+ /* ---------------------------------------------------------------------------
+  * prototypes
+  */
+-bool IsPointOnLine (Coord, Coord, Coord, LineTypePtr);
+-bool IsPointOnPin (Coord, Coord, Coord, PinTypePtr);
+-bool IsPointOnArc (Coord, Coord, Coord, ArcTypePtr);
+-bool IsPointOnLineEnd (Coord, Coord, RatTypePtr);
+-bool IsLineInRectangle (Coord, Coord, Coord, Coord, LineTypePtr);
+-bool IsLineInQuadrangle (PointType p[4], LineTypePtr Line);
+-bool IsArcInRectangle (Coord, Coord, Coord, Coord, ArcTypePtr);
+-bool IsPointInPad (Coord, Coord, Coord, PadTypePtr);
+-bool IsPointInBox (Coord, Coord, BoxTypePtr, Coord);
++bool IsPointOnLine (Coord, Coord, Coord, LineType *);
++bool IsPointOnPin (Coord, Coord, Coord, PinType *);
++bool IsPointOnArc (Coord, Coord, Coord, ArcType *);
++bool IsPointOnLineEnd (Coord, Coord, RatType *);
++bool IsLineInRectangle (Coord, Coord, Coord, Coord, LineType *);
++bool IsLineInQuadrangle (PointType p[4], LineType * Line);
++bool IsArcInRectangle (Coord, Coord, Coord, Coord, ArcType *);
++bool IsPointInPad (Coord, Coord, Coord, PadType *);
++bool IsPointInBox (Coord, Coord, BoxType *, Coord);
+ int SearchObjectByLocation (unsigned, void **, void **, void **, Coord, Coord, Coord);
+ int SearchScreen (Coord, Coord, int, void **, void **, void **);
+ int SearchScreenGridSlop (Coord, Coord, int, void **, void **, void **);
+-int SearchObjectByID (DataTypePtr, void **, void **, void **, int, int);
+-ElementTypePtr SearchElementByName (DataTypePtr, char *);
++int SearchObjectByID (DataType *, void **, void **, void **, int, int);
++ElementType * SearchElementByName (DataType *, char *);
+ 
+ #endif
+diff --git a/src/select.h b/src/select.h
+index 6d91278..3e0369f 100644
+--- a/src/select.h
++++ b/src/select.h
+@@ -37,9 +37,9 @@
+ 	 PIN_TYPE | PAD_TYPE | ELEMENTNAME_TYPE | RATLINE_TYPE | ARC_TYPE)
+ 
+ bool SelectObject (void);
+-bool SelectBlock (BoxTypePtr, bool);
+-bool SelectedOperation (ObjectFunctionTypePtr, bool, int);
+-void *ObjectOperation (ObjectFunctionTypePtr, int, void *, void *, void *);
++bool SelectBlock (BoxType *, bool);
++bool SelectedOperation (ObjectFunctionType *, bool, int);
++void *ObjectOperation (ObjectFunctionType *, int, void *, void *, void *);
+ bool SelectConnection (bool);
+ 
+ #if defined(HAVE_REGCOMP) || defined(HAVE_RE_COMP)
+diff --git a/src/thermal.h b/src/thermal.h
+index b252f4f..c476420 100644
+--- a/src/thermal.h
++++ b/src/thermal.h
+@@ -40,6 +40,6 @@
+ #include "global.h"
+ #include "mymem.h"
+ 
+-POLYAREA * ThermPoly (PCBTypePtr, PinTypePtr, Cardinal);
++POLYAREA * ThermPoly (PCBType *, PinType *, Cardinal);
+ 
+ #endif
+diff --git a/src/undo.h b/src/undo.h
+index 2ec6442..f415c3c 100644
+--- a/src/undo.h
++++ b/src/undo.h
+@@ -64,7 +64,7 @@ void AddObjectToMaskSizeUndoList (int, void *, void *, void *);
+ void AddObjectToChangeAnglesUndoList (int, void *, void *, void *);
+ void AddObjectToClearPolyUndoList (int, void *, void *, void *, bool);
+ void AddLayerChangeToUndoList (int, int);
+-void AddNetlistLibToUndoList (LibraryTypePtr);
++void AddNetlistLibToUndoList (LibraryType *);
+ void LockUndo (void);
+ void UnlockUndo (void);
+ bool Undoing (void);
+diff --git a/src/vendor.h b/src/vendor.h
+index 9706448..26e3dc5 100644
+--- a/src/vendor.h
++++ b/src/vendor.h
+@@ -24,6 +24,6 @@
+ #define PCB_VENDOR_H
+ 
+ int vendorDrillMap (int);
+-bool vendorIsElementMappable (ElementTypePtr);
++bool vendorIsElementMappable (ElementType *);
+ 
+ #endif /* __VENDOR_H__ */
