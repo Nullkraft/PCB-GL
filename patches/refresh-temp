@@ -1,0 +1,40 @@
+Bottom: 779daa7ad4e354d24543bdb5cb423e370d985e8d
+Top:    2c366c2226906fbe6a591768da4ad1efc4272f37
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-24 16:30:06 +0000
+
+Refresh of board-outline-polygon-generati
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 1139f8a..3311b09 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1971,7 +1971,7 @@ struct clip_outline_info {
+ static int
+ arc_outline_callback (const BoxType * b, void *cl)
+ {
+-  ArcTypePtr arc = (ArcTypePtr)b;
++  ArcType *arc = (ArcType *)b;
+   struct clip_outline_info *info = cl;
+   POLYAREA *np, *res;
+ 
+@@ -1987,7 +1987,7 @@ arc_outline_callback (const BoxType * b, void *cl)
+ static int
+ line_outline_callback (const BoxType * b, void *cl)
+ {
+-  LineTypePtr line = (LineTypePtr)b;
++  LineType *line = (LineType *)b;
+   struct clip_outline_info *info = cl;
+   POLYAREA *np, *res;
+ 
+@@ -2026,7 +2026,7 @@ POLYAREA *board_outline_poly ()
+   int i;
+   int count;
+   int found_outline = 0;
+-  LayerTypePtr Layer = NULL;
++  LayerType *Layer = NULL;
+   BoxType region;
+   struct clip_outline_info info;
+   POLYAREA *whole_world;
