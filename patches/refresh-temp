@@ -1,0 +1,104 @@
+Bottom: 09d8bf1b24974afa6da6cd028f5da64c02a3a689
+Top:    9c06b1413da926e9095f263ccb24d639cd162230
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-24 15:59:20 +0000
+
+Refresh of demo-of-exporter-specific-expo
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 56cf914..edf2cc0 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -486,7 +486,7 @@ common_draw_helpers_init (HID *hid)
+ struct pin_info
+ {
+   bool arg;
+-  LayerTypePtr Layer;
++  LayerType *Layer;
+ };
+ 
+ /* ---------------------------------------------------------------------------
+@@ -494,7 +494,7 @@ struct pin_info
+  */
+ #if 0
+ void
+-DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
++DrawLayerCommon (LayerType *Layer, const BoxType * screen, bool clear_pins)
+ {
+   struct pin_info info;
+ 
+@@ -541,7 +541,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+ {
+   int i, rv = 1;
+   int layernum;
+-  LayerTypePtr Layer;
++  LayerType *Layer;
+   int n_entries = PCB->LayerGroups.Number[group];
+   Cardinal *layers = PCB->LayerGroups.Entries[group];
+ 
+@@ -570,7 +570,7 @@ typedef struct
+ static int
+ hole_counting_callback (const BoxType * b, void *cl)
+ {
+-  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
+   HoleCountStruct *hcs = cl;
+   if (TEST_FLAG (HOLEFLAG, pin))
+     hcs->nunplated++;
+@@ -593,28 +593,28 @@ count_holes (BoxType *region, int *plated, int *unplated)
+ static int
+ hole_callback (const BoxType * b, void *cl)
+ {
+-  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
+   int plated = cl ? *(int *) cl : -1;
+ 
+   if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
+       (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
+     return 1;
+ 
+-  //DrawHole ((PinTypePtr) b);
++  //DrawHole ((PinType *) b);
+   return 1;
+ }
+ 
+ static int
+ pin_callback (const BoxType * b, void *cl)
+ {
+-  //DrawPlainPin ((PinTypePtr) b, false);
++  //DrawPlainPin ((PinType *) b, false);
+   return 1;
+ }
+ 
+ static int
+ pad_callback (const BoxType * b, void *cl)
+ {
+-  //PadTypePtr pad = (PadTypePtr) b;
++  //PadType *pad = (PadType *) b;
+   //if (FRONT (pad))
+     //DrawPad (pad, 0);
+   return 1;
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index f692beb..29838cf 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -496,7 +496,7 @@ typedef struct
+ static int
+ hole_counting_callback (const BoxType * b, void *cl)
+ {
+-  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
+   HoleCountStruct *hcs = cl;
+   if (TEST_FLAG (HOLEFLAG, pin))
+     hcs->nunplated++;
+@@ -519,7 +519,7 @@ count_holes (BoxType *region, int *plated, int *unplated)
+ static int
+ hole_callback (const BoxType * b, void *cl)
+ {
+-  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
+   bool plated = *(bool *)cl;
+ 
+   if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
