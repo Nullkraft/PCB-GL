@@ -1,5 +1,5 @@
-Bottom: c38795f28f5751676c23d503f7c60364194c7b1c
-Top:    8a2978c12b61ba799f3eaf6b5dc64b059a1fcd8f
+Bottom: 96312bdf0c37dcf4bb698130f0656ec24388fe9e
+Top:    ce515a164a6eb9cd33f55f86d5b85027f864b090
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 02:03:27 +0000
 
@@ -9,7 +9,7 @@ TMP FIXES
 ---
 
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index 19bce70..f418e1a 100644
+index e2f37d0..5dfcb66 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
 @@ -432,8 +432,12 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
@@ -50,7 +50,7 @@ index 19bce70..f418e1a 100644
        if (IsLayerEmpty (layer))
          {
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 2d02908..a28ccb7 100644
+index 116d494..92eec00 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -997,7 +997,6 @@ ps_set_layer (const char *name, int group, int empty)
