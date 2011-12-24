@@ -58,13 +58,13 @@
 #include <glib.h>
 
 /* Forward declarations for structures the HIDs need.  */
-typedef struct BoxType BoxType, *BoxTypePtr;
-typedef struct polygon_st PolygonType, *PolygonTypePtr;
-typedef struct pad_st PadType, *PadTypePtr;
-typedef struct pin_st PinType, *PinTypePtr, **PinTypeHandle;
-typedef struct drc_violation_st DrcViolationType, *DrcViolationTypePtr;
+typedef struct BoxType BoxType;
+typedef struct polygon_st PolygonType;
+typedef struct pad_st PadType;
+typedef struct pin_st PinType;
+typedef struct drc_violation_st DrcViolationType;
 typedef struct rtree rtree_t;
-typedef struct AttributeListType AttributeListType, *AttributeListTypePtr;
+typedef struct AttributeListType AttributeListType;
 
 typedef struct unit Unit;
 typedef struct increments Increments;
@@ -118,7 +118,7 @@ typedef struct
 {
   unsigned long f;		/* generic flags */
   unsigned char t[(MAX_LAYER + 1) / 2];	/* thermals */
-} FlagType, *FlagTypePtr;
+} FlagType;
 
 #ifndef __GNUC__
 #define __FUNCTION1(a,b) a ":" #b
@@ -190,7 +190,7 @@ typedef struct			/* holds information about output window */
     fgGC,			/* changed from some routines */
     pmGC;			/* depth 1 pixmap GC to store clip */
 }
-OutputType, *OutputTypePtr;
+OutputType;
 
 /* ----------------------------------------------------------------------
  * layer group. A layer group identifies layers which are always switched
@@ -200,7 +200,7 @@ typedef struct
 {
   Cardinal Number[MAX_LAYER],	/* number of entries per groups */
     Entries[MAX_LAYER][MAX_LAYER + 2];
-} LayerGroupType, *LayerGroupTypePtr;
+} LayerGroupType;
 
 struct BoxType		/* a bounding box */
 {
@@ -212,13 +212,13 @@ typedef struct
 {
   Coord x, y;
   Coord width, height;
-} RectangleType, *RectangleTypePtr;
+} RectangleType;
 
 typedef struct
 {
   char *name;
   char *value;
-} AttributeType, *AttributeTypePtr;
+} AttributeType;
 
 struct AttributeListType
 {
@@ -234,24 +234,24 @@ struct AttributeListType
    based on this. */
 typedef struct {
   ANYOBJECTFIELDS;
-} AnyObjectType, *AnyObjectTypePtr;
+} AnyObjectType;
 
 typedef struct			/* a line/polygon point */
 {
   Coord X, Y, X2, Y2;	/* so Point type can be cast as BoxType */
   long int ID;
-} PointType, *PointTypePtr;
+} PointType;
 
 /* Lines, rats, pads, etc.  */
 typedef struct {
   ANYLINEFIELDS;
-} AnyLineObjectType, *AnyLineObjectTypePtr;
+} AnyLineObjectType;
 
 typedef struct			/* holds information about one line */
 {
   ANYLINEFIELDS;
   char *Number;
-} LineType, *LineTypePtr;
+} LineType;
 
 typedef struct
 {
@@ -261,7 +261,7 @@ typedef struct
   BYTE Direction;
   char *TextString;		/* string */
   void *Element;
-} TextType, *TextTypePtr;
+} TextType;
 
 struct polygon_st			/* holds information about a polygon */
 {
@@ -271,7 +271,7 @@ struct polygon_st			/* holds information about a polygon */
   POLYAREA *Clipped;		/* the clipped region of this polygon */
   PLINE *NoHoles;		/* the polygon broken into hole-less regions */
   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
-  PointTypePtr Points;		/* data */
+  PointType *Points;		/* data */
   Cardinal *HoleIndex;		/* Index of hole data within the Points array */
   Cardinal HoleIndexN;		/* number of holes in polygon */
   Cardinal HoleIndexMax;	/* max number from malloc() */
@@ -287,7 +287,7 @@ typedef struct			/* holds information about arcs */
   Coord Width, Height,		/* length of axis */
     X, Y;			/* center coordinates */
   Angle StartAngle, Delta;	/* the two limiting angles in degrees */
-} ArcType, *ArcTypePtr;
+} ArcType;
 
 struct rtree
 {
@@ -313,13 +313,13 @@ typedef struct			/* holds information about one layer */
   AttributeListType Attributes;
   int no_drc; /* whether to ignore the layer when checking the design rules */
 }
-LayerType, *LayerTypePtr;
+LayerType;
 
 typedef struct			/* a rat-line */
 {
   ANYLINEFIELDS;
   Cardinal group1, group2;	/* the layer group each point is on */
-} RatType, *RatTypePtr;
+} RatType;
 
 struct pad_st			/* a SMD pad */
 {
@@ -365,20 +365,20 @@ typedef struct
   GList *Arc;
   BoxType VBox;
   AttributeListType Attributes;
-} ElementType, *ElementTypePtr, **ElementTypeHandle;
+} ElementType;
 
 /* ---------------------------------------------------------------------------
  * symbol and font related stuff
  */
 typedef struct			/* a single symbol */
 {
-  LineTypePtr Line;
+  LineType *Line;
   bool Valid;
   Cardinal LineN,		/* number of lines */
     LineMax;
   Coord Width, Height,		/* size of cell */
     Delta;			/* distance to next symbol */
-} SymbolType, *SymbolTypePtr;
+} SymbolType;
 
 typedef struct			/* complete set of symbols */
 {
@@ -387,7 +387,7 @@ typedef struct			/* complete set of symbols */
   BoxType DefaultSymbol;	/* the default symbol is a filled box */
   SymbolType Symbol[MAX_FONTPOSITION + 1];
   bool Valid;
-} FontType, *FontTypePtr;
+} FontType;
 
 typedef struct			/* holds all objects */
 {
@@ -403,7 +403,7 @@ typedef struct			/* holds all objects */
   struct PCBType *pcb;
   LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
   int polyClip;
-} DataType, *DataTypePtr;
+} DataType;
 
 typedef struct			/* holds drill information */
 {
@@ -415,16 +415,16 @@ typedef struct			/* holds drill information */
     UnplatedCount,		/* number of these holes that are unplated */
     PinN,			/* number of drill coordinates in the list */
     PinMax;			/* max number of coordinates from malloc() */
-  PinTypePtr *Pin;		/* coordinates to drill */
-  ElementTypePtr *Element;	/* a pointer to an array of element pointers */
-} DrillType, *DrillTypePtr;
+  PinType **Pin;		/* coordinates to drill */
+  ElementType **Element;	/* a pointer to an array of element pointers */
+} DrillType;
 
 typedef struct			/* holds a range of Drill Infos */
 {
   Cardinal DrillN,		/* number of drill sizes */
     DrillMax;			/* max number from malloc() */
-  DrillTypePtr Drill;		/* plated holes */
-} DrillInfoType, *DrillInfoTypePtr;
+  DrillType *Drill;		/* plated holes */
+} DrillInfoType;
 
 typedef struct
 {
@@ -434,7 +434,7 @@ typedef struct
     Keepaway;			/* min. separation from other nets */
   char *Name;
   int index;
-} RouteStyleType, *RouteStyleTypePtr;
+} RouteStyleType;
 
 /* ---------------------------------------------------------------------------
  * structure used by library routines
@@ -448,8 +448,7 @@ typedef struct
    *Package,			/* package */
    *Value,			/* the value field */
    *Description;		/* some descritional text */
-} LibraryEntryType, *LibraryEntryTypePtr;
-//typedef LibraryEntryType *LibraryEntryTypePtr;
+} LibraryEntryType;
 
 /* If the internal flag is set, the only field that is valid is Name,
    and the struct is allocated with malloc instead of
@@ -463,18 +462,18 @@ typedef struct
    *Style;			/* routing style */
   Cardinal EntryN,		/* number of objects */
     EntryMax;			/* number of reserved memory locations */
-  LibraryEntryTypePtr Entry;	/* the entries */
+  LibraryEntryType *Entry;	/* the entries */
   char flag;			/* used by the netlist window to enable/disable nets */
   char internal;		/* if set, this is an internal-only entry, not
 				   part of the global netlist. */
-} LibraryMenuType, *LibraryMenuTypePtr;
+} LibraryMenuType;
 
 typedef struct
 {
   Cardinal MenuN;               /* number of objects */
   Cardinal MenuMax;             /* number of reserved memory locations */
-  LibraryMenuTypePtr Menu;      /* the entries */
-} LibraryType, *LibraryTypePtr;
+  LibraryMenuType *Menu;      /* the entries */
+} LibraryType;
 
 
   /* The PCBType struct holds information about board layout most of which is
@@ -524,19 +523,19 @@ typedef struct PCBType
   RouteStyleType RouteStyle[NUM_STYLES];
   LibraryType NetlistLib;
   AttributeListType Attributes;
-  DataTypePtr Data;		/* entire database */
+  DataType *Data;		/* entire database */
 
   bool is_footprint;		/* If set, the user has loaded a footprint, not a pcb. */
 }
-PCBType, *PCBTypePtr;
+PCBType;
 
 typedef struct			/* information about the paste buffer */
 {
   Coord X, Y;			/* offset */
   BoxType BoundingBox;
-  DataTypePtr Data;		/* data; not all members of PCBType */
+  DataType *Data;		/* data; not all members of PCBType */
   /* are used */
-} BufferType, *BufferTypePtr;
+} BufferType;
 
 /* ---------------------------------------------------------------------------
  * some types for cursor drawing, setting of block and lines
@@ -544,10 +543,10 @@ typedef struct			/* information about the paste buffer */
  */
 typedef struct			/* rubberband lines for element moves */
 {
-  LayerTypePtr Layer;		/* layer that holds the line */
-  LineTypePtr Line;		/* the line itself */
-  PointTypePtr MovedPoint;	/* and finally the point */
-} RubberbandType, *RubberbandTypePtr;
+  LayerType *Layer;		/* layer that holds the line */
+  LineType *Line;		/* the line itself */
+  PointType *MovedPoint;	/* and finally the point */
+} RubberbandType;
 
 typedef struct			/* current marked line */
 {
@@ -555,7 +554,7 @@ typedef struct			/* current marked line */
     Point2;
   long int State;
   bool draw;
-} AttachedLineType, *AttachedLineTypePtr;
+} AttachedLineType;
 
 typedef struct			/* currently marked block */
 {
@@ -563,7 +562,7 @@ typedef struct			/* currently marked block */
     Point2;
   long int State;
   bool otherway;
-} AttachedBoxType, *AttachedBoxTypePtr;
+} AttachedBoxType;
 
 typedef struct			/* currently attached object */
 {
@@ -576,8 +575,8 @@ typedef struct			/* currently attached object */
    *Ptr3;
   Cardinal RubberbandN,		/* number of lines in array */
     RubberbandMax;
-  RubberbandTypePtr Rubberband;
-} AttachedObjectType, *AttachedObjectTypePtr;
+  RubberbandType *Rubberband;
+} AttachedObjectType;
 
 enum crosshair_shape
 {
@@ -599,13 +598,13 @@ typedef struct			/* holds cursor information */
   PolygonType AttachedPolygon;
   AttachedObjectType AttachedObject;	/* data of attached objects */
   enum crosshair_shape shape; 	/* shape of crosshair */
-} CrosshairType, *CrosshairTypePtr;
+} CrosshairType;
 
 typedef struct
 {
   bool status;
   Coord X, Y;
-} MarkType, *MarkTypePtr;
+} MarkType;
 
 /* ---------------------------------------------------------------------------
  * our resources
@@ -696,26 +695,26 @@ typedef struct			/* some resources... */
     AutoPlace;			/* flag which says we should force placement of the
 				   windows on startup */
 }
-SettingType, *SettingTypePtr;
+SettingType;
 
 /* ----------------------------------------------------------------------
  * pointer to low-level copy, move and rotate functions
  */
 typedef struct
 {
-  void *(*Line) (LayerTypePtr, LineTypePtr);
-  void *(*Text) (LayerTypePtr, TextTypePtr);
-  void *(*Polygon) (LayerTypePtr, PolygonTypePtr);
-  void *(*Via) (PinTypePtr);
-  void *(*Element) (ElementTypePtr);
-  void *(*ElementName) (ElementTypePtr);
-  void *(*Pin) (ElementTypePtr, PinTypePtr);
-  void *(*Pad) (ElementTypePtr, PadTypePtr);
-  void *(*LinePoint) (LayerTypePtr, LineTypePtr, PointTypePtr);
-  void *(*Point) (LayerTypePtr, PolygonTypePtr, PointTypePtr);
-  void *(*Arc) (LayerTypePtr, ArcTypePtr);
-  void *(*Rat) (RatTypePtr);
-} ObjectFunctionType, *ObjectFunctionTypePtr;
+  void *(*Line) (LayerType *, LineType *);
+  void *(*Text) (LayerType *, TextType *);
+  void *(*Polygon) (LayerType *, PolygonType *);
+  void *(*Via) (PinType *);
+  void *(*Element) (ElementType *);
+  void *(*ElementName) (ElementType *);
+  void *(*Pin) (ElementType *, PinType *);
+  void *(*Pad) (ElementType *, PadType *);
+  void *(*LinePoint) (LayerType *, LineType *, PointType *);
+  void *(*Point) (LayerType *, PolygonType *, PointType *);
+  void *(*Arc) (LayerType *, ArcType *);
+  void *(*Rat) (RatType *);
+} ObjectFunctionType;
 
 /* ---------------------------------------------------------------------------
  * structure used by device drivers
@@ -728,44 +727,44 @@ typedef struct			/* holds a connection */
   void *ptr1, *ptr2;		/* the object of the connection */
   Cardinal group;		/* the layer group of the connection */
   LibraryMenuType *menu;	/* the netmenu this *SHOULD* belong too */
-} ConnectionType, *ConnectionTypePtr;
+} ConnectionType;
 
 typedef struct			/* holds a net of connections */
 {
   Cardinal ConnectionN,		/* the number of connections contained */
     ConnectionMax;		/* max connections from malloc */
-  ConnectionTypePtr Connection;
-  RouteStyleTypePtr Style;
-} NetType, *NetTypePtr;
+  ConnectionType *Connection;
+  RouteStyleType *Style;
+} NetType;
 
 typedef struct			/* holds a list of nets */
 {
   Cardinal NetN,		/* the number of subnets contained */
     NetMax;			/* max subnets from malloc */
-  NetTypePtr Net;
-} NetListType, *NetListTypePtr;
+  NetType *Net;
+} NetListType;
 
 typedef struct			/* holds a list of net lists */
 {
   Cardinal NetListN,		/* the number of net lists contained */
     NetListMax;			/* max net lists from malloc */
-  NetListTypePtr NetList;
-} NetListListType, *NetListListTypePtr;
+  NetListType *NetList;
+} NetListListType;
 
 typedef struct			/* holds a generic list of pointers */
 {
   Cardinal PtrN,		/* the number of pointers contained */
     PtrMax;			/* max subnets from malloc */
   void **Ptr;
-} PointerListType, *PointerListTypePtr;
+} PointerListType;
 
 typedef struct
 {
   Cardinal BoxN,		/* the number of boxes contained */
     BoxMax;			/* max boxes from malloc */
-  BoxTypePtr Box;
+  BoxType *Box;
 
-} BoxListType, *BoxListTypePtr;
+} BoxListType;
 
 struct drc_violation_st
 {

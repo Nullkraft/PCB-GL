@@ -50,8 +50,8 @@ static void
 FillDrill (DrillTypePtr Drill, ElementTypePtr Element, PinTypePtr Pin)
 {
   Cardinal n;
-  ElementTypeHandle ptr;
-  PinTypeHandle pin;
+  ElementType **ptr;
+  PinType **pin;
 
   pin = GetDrillPinMemory (Drill);
   *pin = Pin;
@@ -89,11 +89,11 @@ InitializeDrill (DrillTypePtr drill, PinTypePtr pin, ElementTypePtr element)
   drill->Pin = NULL;
   drill->PinMax = 0;
   ptr = (void *) GetDrillPinMemory (drill);
-  *((PinTypeHandle) ptr) = pin;
+  *((PinType **) ptr) = pin;
   if (element)
     {
       ptr = (void *) GetDrillElementMemory (drill);
-      *((ElementTypeHandle) ptr) = element;
+      *((ElementType **) ptr) = element;
       drill->PinCount = 1;
     }
   else

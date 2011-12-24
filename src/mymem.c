@@ -471,7 +471,7 @@ GetLibraryEntryMemory (LibraryMenuTypePtr Menu)
 /* ---------------------------------------------------------------------------
  * get next slot for a DrillElement, allocates memory if necessary
  */
-ElementTypeHandle
+ElementType **
 GetDrillElementMemory (DrillTypePtr Drill)
 {
   ElementTypePtr *element;
@@ -494,7 +494,7 @@ GetDrillElementMemory (DrillTypePtr Drill)
 /* ---------------------------------------------------------------------------
  * get next slot for a DrillPoint, allocates memory if necessary
  */
-PinTypeHandle
+PinType **
 GetDrillPinMemory (DrillTypePtr Drill)
 {
   PinTypePtr *pin;
