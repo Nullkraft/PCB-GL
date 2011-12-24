@@ -214,7 +214,7 @@ ComputeIntersectionArea (BoxListType *boxlist)
 double
 ComputeUnionArea (BoxListType *boxlist)
 {
-  BoxType **rectLeft, *rectRight;
+  BoxType **rectLeft, **rectRight;
   Cardinal i, j;
   LocationList yCoords;
   SegmentTree segtree;
@@ -283,13 +283,15 @@ ComputeUnionArea (BoxListType *boxlist)
 static int
 compareleft (const void *ptr1, const void *ptr2)
 {
-  BoxType **b1 = (BoxType **) ptr1, *b2 = (BoxType **) ptr2;
+  BoxType **b1 = (BoxType **) ptr1;
+  BoxType **b2 = (BoxType **) ptr2;
   return (*b1)->X1 - (*b2)->X1;
 }
 static int
 compareright (const void *ptr1, const void *ptr2)
 {
-  BoxType **b1 = (BoxType **) ptr1, *b2 = (BoxType **) ptr2;
+  BoxType **b1 = (BoxType **) ptr1;
+  BoxType **b2 = (BoxType **) ptr2;
   return (*b1)->X2 - (*b2)->X2;
 }
 static int

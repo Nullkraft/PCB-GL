@@ -84,7 +84,7 @@ static void SwapBuffer (BufferType *);
 /* ---------------------------------------------------------------------------
  * some local identifiers
  */
-static DataType *Dest, Source;
+static DataType *Dest, *Source;
 
 static ObjectFunctionType AddBufferFunctions = {
   AddLineToBuffer,
@@ -861,7 +861,7 @@ SmashBufferElement (BufferType *Buffer)
 {
   ElementType *element;
   Cardinal group;
-  LayerType *clayer, slayer;
+  LayerType *clayer, *slayer;
 
   if (Buffer->Data->ElementN != 1)
     {

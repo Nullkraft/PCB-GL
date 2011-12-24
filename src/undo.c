@@ -81,14 +81,12 @@ static bool added_undo_between_increment_and_restore = false;
 typedef struct			/* information about a change command */
 {
   char *Name;
-}
-ChangeNameType, *ChangeNameType *;
+} ChangeNameType;
 
 typedef struct			/* information about a move command */
 {
   Coord DX, DY;		/* movement vector */
-}
-MoveType, *MoveType *;
+} MoveType;
 
 typedef struct			/* information about removed polygon points */
 {
@@ -96,42 +94,36 @@ typedef struct			/* information about removed polygon points */
   int ID;
   Cardinal Index;		/* index in a polygons array of points */
   bool last_in_contour;		/* Whether the point was the last in its contour */
-}
-RemovedPointType, *RemovedPointType *;
+} RemovedPointType;
 
 typedef struct			/* information about rotation */
 {
   Coord CenterX, CenterY;	/* center of rotation */
   Cardinal Steps;		/* number of steps */
-}
-RotateType, *RotateType *;
+} RotateType;
 
 typedef struct			/* information about moves between layers */
 {
   Cardinal OriginalLayer;	/* the index of the original layer */
-}
-MoveToLayerType, *MoveToLayerType *;
+} MoveToLayerType;
 
 typedef struct			/* information about layer changes */
 {
   int old_index;
   int new_index;
-}
-LayerChangeType, *LayerChangeType *;
+} LayerChangeType;
 
 typedef struct			/* information about poly clear/restore */
 {
   bool Clear;		/* true was clear, false was restore */
   LayerType *Layer;
-}
-ClearPolyType, *ClearPolyType *;
+} ClearPolyType;
 
 typedef struct			/* information about netlist lib changes */
 {
   LibraryType *old;
   LibraryType *lib;
-}
-NetlistChangeType, *NetlistChangeType *;
+} NetlistChangeType;
 
 typedef struct			/* holds information about an operation */
 {
@@ -154,8 +146,7 @@ typedef struct			/* holds information about an operation */
     long int CopyID;
   }
   Data;
-}
-UndoListType, *UndoListType *;
+} UndoListType;
 
 /* ---------------------------------------------------------------------------
  * some local variables
@@ -873,7 +864,7 @@ UndoNetlistChange (UndoListType *Entry)
 {
   NetlistChangeType *l = & Entry->Data.NetlistChange;
   unsigned int i, j;
-  LibraryType *lib, saved;
+  LibraryType *lib, *saved;
 
   lib = l->lib;
   saved = l->old;

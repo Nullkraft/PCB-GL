@@ -325,7 +325,7 @@ SearchRatLineByLocation (int locked, RatType ** Line, RatType ** Dummy1,
  */
 struct arc_info
 {
-  ArcType **Arc, *Dummy;
+  ArcType **Arc, **Dummy;
   PointType **Point;
   double least;
   jmp_buf env;

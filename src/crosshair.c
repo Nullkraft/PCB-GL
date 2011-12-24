@@ -496,7 +496,7 @@ XORDrawMoveOrCopyObject (void)
   ptr = Crosshair.AttachedObject.Rubberband;
   while (i)
     {
-      PointType *point1, point2;
+      PointType *point1, *point2;
 
       if (TEST_FLAG (VIAFLAG, ptr->Line))
 	{

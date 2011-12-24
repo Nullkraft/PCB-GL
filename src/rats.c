@@ -450,7 +450,7 @@ CheckShorts (LibraryMenuType *theNet)
 static bool
 GatherSubnets (NetListType *Netl, bool NoWarn, bool AndRats)
 {
-  NetType *a, b;
+  NetType *a, *b;
   ConnectionType *conn;
   Cardinal m, n;
   bool Warned = false;
@@ -558,12 +558,12 @@ DrawShortestRats (NetListType *Netl, void (*funcp) (register ConnectionType *, r
 {
   RatType *line;
   register float distance, temp;
-  register ConnectionType *conn1, conn2, firstpoint, secondpoint;
+  register ConnectionType *conn1, *conn2, *firstpoint, *secondpoint;
   PolygonType *polygon;
   bool changed = false;
   bool havepoints;
   Cardinal n, m, j;
-  NetType *next, subnet, theSubnet = NULL;
+  NetType *next, *subnet, *theSubnet = NULL;
 
   /* This is just a sanity check, to make sure we're passed
    * *something*.
@@ -725,7 +725,7 @@ DrawShortestRats (NetListType *Netl, void (*funcp) (register ConnectionType *, r
 bool
 AddAllRats (bool SelectedOnly, void (*funcp) (register ConnectionType *, register ConnectionType *, register RouteStyleType *))
 {
-  NetListType *Nets, Wantlist;
+  NetListType *Nets, *Wantlist;
   NetType *lonesome;
   ConnectionType *onepin;
   bool changed, Warned = false;
@@ -820,7 +820,7 @@ NetListListType
 CollectSubnets (bool SelectedOnly)
 {
   NetListListType result = { 0, 0, NULL };
-  NetListType *Nets, Wantlist;
+  NetListType *Nets, *Wantlist;
   NetType *lonesome;
   ConnectionType *onepin;
 

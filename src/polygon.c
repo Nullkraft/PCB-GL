@@ -1271,7 +1271,7 @@ Cardinal
 GetLowestDistancePolygonPoint (PolygonType *Polygon, Coord X, Coord Y)
 {
   double mindistance = (double) MAX_COORD * MAX_COORD;
-  PointType *ptr1, ptr2;
+  PointType *ptr1, *ptr2;
   Cardinal n, result = 0;
 
   /* we calculate the distance to each segment and choose the

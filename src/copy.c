@@ -333,8 +333,8 @@ CopyPastebufferToLayout (Coord X, Coord Y)
   /* paste all layers */
   for (i = 0; i < max_copper_layer + 2; i++)
     {
-      LayerType *sourcelayer = &PASTEBUFFER->Data->Layer[i],
-	destlayer = LAYER_PTR (i);
+      LayerType *sourcelayer = &PASTEBUFFER->Data->Layer[i];
+      LayerType *destlayer = LAYER_PTR (i);
 
       if (destlayer->On)
 	{

@@ -278,8 +278,7 @@ typedef struct
   Cardinal Location,            /* currently used position */
     DrawLocation, Number,       /* number of objects in list */
     Size;
-}
-ListType, *ListType *;
+} ListType;
 
 /* ---------------------------------------------------------------------------
  * some local identifiers

@@ -342,7 +342,7 @@ void
 SetElementBoundingBox (DataType *Data, ElementType *Element,
                        FontType *Font)
 {
-  BoxType *box, vbox;
+  BoxType *box, *vbox;
 
   if (Data && Data->element_tree)
     r_delete_entry (Data->element_tree, (BoxType *) Element);
