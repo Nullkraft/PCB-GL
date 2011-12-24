@@ -4798,10 +4798,10 @@ ActionToggleStripHierarchy (int argc, char **argv, Coord x, Coord y)
 				      &ptr1, &ptr2, &ptr3)) != NO_TYPE)
 	      {
 		AddObjectToFlagUndoList (type, ptr1, ptr2, ptr3);
-		EraseElementName ((ElementTypePtr) ptr2);
-		TOGGLE_FLAG (HIDENAMEFLAG, (ElementTypePtr) ptr2);
+		EraseElementName ((ElementType *) ptr2);
+		TOGGLE_FLAG (HIDENAMEFLAG, (ElementType *) ptr2);
 /* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
-		DrawElementName ((ElementTypePtr) ptr2);
+		DrawElementName ((ElementType *) ptr2);
 		Draw ();
 		IncrementUndoSerialNumber ();
 	      }

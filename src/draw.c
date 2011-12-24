@@ -152,7 +152,7 @@ pad_callback (const BoxType * b, void *cl)
 }
 
 static void
-DrawStrippedText (ElementTypePtr Element, int min_width)
+DrawStrippedText (ElementType *Element, int min_width)
 {
   TextType text;
   TextType *text_ptr;
