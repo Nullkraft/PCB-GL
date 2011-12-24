@@ -1,7 +1,7 @@
-Bottom: 7f0f9f2f884896abdf66b01f460d6c4b78cc15bd
-Top:    13f0842fd5863812f020d64593182a6b84168e22
+Bottom: 98417fe73d4b8ce9136fed11ab799d34634802ec
+Top:    b60a84b729551b5e72cd2c5cc0c903eb191fdda1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-23 21:38:02 +0000
+Date:   2011-12-24 00:32:26 +0000
 
 Bentley-Ottann test implementation
 
@@ -192,10 +192,10 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 7adb424..0753d46 100644
+index 47035f6..fed435b 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -41,6 +41,33 @@ PCB_SRCS = \
+@@ -39,6 +39,33 @@ PCB_SRCS = \
  	box.h \
  	buffer.c \
  	buffer.h \
@@ -229,7 +229,7 @@ index 7adb424..0753d46 100644
  	change.c \
  	change.h \
  	clip.c \
-@@ -78,6 +105,8 @@ PCB_SRCS = \
+@@ -76,6 +103,8 @@ PCB_SRCS = \
  	free_atexit.c \
  	free_atexit.h \
  	global.h \
@@ -238,7 +238,7 @@ index 7adb424..0753d46 100644
  	heap.c \
  	heap.h \
  	hid.h \
-@@ -138,6 +167,8 @@ PCB_SRCS = \
+@@ -136,6 +165,8 @@ PCB_SRCS = \
  	set.h \
  	strflags.c \
  	strflags.h \
@@ -13833,10 +13833,10 @@ index 0000000..bb5ff35
 +
 +#endif /* __G_PQUEUE_H__ */
 diff --git a/src/main.c b/src/main.c
-index 48e825c..e7daa4e 100644
+index e170f5a..c9273ac 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -60,6 +60,7 @@
+@@ -58,6 +58,7 @@
  #include "free_atexit.h"
  #include "polygon.h"
  #include "pcb-printf.h"
@@ -13844,7 +13844,7 @@ index 48e825c..e7daa4e 100644
  
  #include "hid/common/actions.h"
  
-@@ -1750,6 +1751,7 @@ char *program_directory = 0;
+@@ -1745,6 +1746,7 @@ char *program_directory = 0;
  
  #include "dolists.h"
  
@@ -13852,7 +13852,7 @@ index 48e825c..e7daa4e 100644
  int
  main (int argc, char *argv[])
  {
-@@ -1961,11 +1963,16 @@ main (int argc, char *argv[])
+@@ -1956,11 +1958,16 @@ main (int argc, char *argv[])
            UNKNOWN (Settings.GnetlistProgram));
  #endif
  
