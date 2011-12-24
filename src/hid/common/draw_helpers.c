@@ -486,7 +486,7 @@ common_draw_helpers_init (HID *hid)
 struct pin_info
 {
   bool arg;
-  LayerTypePtr Layer;
+  LayerType *Layer;
 };
 
 /* ---------------------------------------------------------------------------
@@ -494,7 +494,7 @@ struct pin_info
  */
 #if 0
 void
-DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+DrawLayerCommon (LayerType *Layer, const BoxType * screen, bool clear_pins)
 {
   struct pin_info info;
 
@@ -541,7 +541,7 @@ DrawLayerGroup (int group, const BoxType * screen)
 {
   int i, rv = 1;
   int layernum;
-  LayerTypePtr Layer;
+  LayerType *Layer;
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
@@ -570,7 +570,7 @@ typedef struct
 static int
 hole_counting_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pin = (PinTypePtr) b;
+  PinType *pin = (PinType *) b;
   HoleCountStruct *hcs = cl;
   if (TEST_FLAG (HOLEFLAG, pin))
     hcs->nunplated++;
@@ -593,28 +593,28 @@ count_holes (BoxType *region, int *plated, int *unplated)
 static int
 hole_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pin = (PinTypePtr) b;
+  PinType *pin = (PinType *) b;
   int plated = cl ? *(int *) cl : -1;
 
   if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
       (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
     return 1;
 
-  //DrawHole ((PinTypePtr) b);
+  //DrawHole ((PinType *) b);
   return 1;
 }
 
 static int
 pin_callback (const BoxType * b, void *cl)
 {
-  //DrawPlainPin ((PinTypePtr) b, false);
+  //DrawPlainPin ((PinType *) b, false);
   return 1;
 }
 
 static int
 pad_callback (const BoxType * b, void *cl)
 {
-  //PadTypePtr pad = (PadTypePtr) b;
+  //PadType *pad = (PadType *) b;
   //if (FRONT (pad))
     //DrawPad (pad, 0);
   return 1;

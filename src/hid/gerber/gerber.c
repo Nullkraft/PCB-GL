@@ -496,7 +496,7 @@ typedef struct
 static int
 hole_counting_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pin = (PinTypePtr) b;
+  PinType *pin = (PinType *) b;
   HoleCountStruct *hcs = cl;
   if (TEST_FLAG (HOLEFLAG, pin))
     hcs->nunplated++;
@@ -519,7 +519,7 @@ count_holes (BoxType *region, int *plated, int *unplated)
 static int
 hole_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pin = (PinTypePtr) b;
+  PinType *pin = (PinType *) b;
   bool plated = *(bool *)cl;
 
   if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
