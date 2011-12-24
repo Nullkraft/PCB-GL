@@ -118,7 +118,7 @@ CopyElementLowLevel (DataTypePtr Data, ElementTypePtr Dest,
 		     ElementTypePtr Src, bool uniqueName, Coord dx,
 		     Coord dy)
 {
-  int i;
+  GList *iter;
   /* release old memory if necessary */
   if (Dest)
     FreeElementMemory (Dest);
@@ -168,10 +168,11 @@ CopyElementLowLevel (DataTypePtr Data, ElementTypePtr Dest,
   }
   END_LOOP;
 
-  for (i=0; i<Src->Attributes.Number; i++)
-    CreateNewAttribute (& Dest->Attributes,
-			Src->Attributes.List[i].name,
-			Src->Attributes.List[i].value);
+  for (iter = Src->Attributes.List; iter != NULL; iter = g_list_next (iter))
+    {
+      AttributeType *attr = iter->data;
+      CreateNewAttribute (&Dest->Attributes, attr->name, attr->value);
+    }
 
   Dest->MarkX = Src->MarkX + dx;
   Dest->MarkY = Src->MarkY + dy;
