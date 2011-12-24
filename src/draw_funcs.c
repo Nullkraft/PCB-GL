@@ -366,7 +366,7 @@ via_callback (const BoxType * b, void *cl)
 static int
 pad_callback (const BoxType * b, void *cl)
 {
-  PadTypePtr pad = (PadTypePtr) b;
+  PadType *pad = (PadType *) b;
   int *side = cl;
 
   if (ON_SIDE (pad, *side))

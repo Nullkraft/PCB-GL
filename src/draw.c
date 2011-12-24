@@ -80,7 +80,7 @@ static bool doing_assy = false;
  */
 static void DrawEverything (const BoxType *);
 static void AddPart (void *);
-/* static */ void DrawEMark (ElementTypePtr, Coord, Coord, bool);
+/* static */ void DrawEMark (ElementType *, Coord, Coord, bool);
 /* static */ void DrawRats (const BoxType *);
 
 
@@ -135,7 +135,7 @@ set_pv_color (PinType *pv, int type)
 static int
 pad_callback (const BoxType * b, void *cl)
 {
-  PadTypePtr pad = (PadTypePtr) b;
+  PadType *pad = (PadType *) b;
   int *side = cl;
 
   if (ON_SIDE (pad, *side))
@@ -152,7 +152,7 @@ pad_callback (const BoxType * b, void *cl)
 }
 
 static void
-DrawStrippedText (ElementTypePtr Element, int min_width)
+DrawStrippedText (ElementType *Element, int min_width)
 {
   TextType text;
   TextType *text_ptr;
@@ -197,8 +197,8 @@ draw_element_name (ElementType *element)
 static int
 name_callback (const BoxType * b, void *cl)
 {
-  TextTypePtr text = (TextTypePtr) b;
-  ElementTypePtr element = (ElementTypePtr) text->Element;
+  TextType *text = (TextType *) b;
+  ElementType *element = (ElementType *) text->Element;
   int *side = cl;
 
   if (TEST_FLAG (HIDENAMEFLAG, element))
@@ -243,7 +243,7 @@ draw_element_pins_and_pads (ElementType *element)
 static int
 EMark_callback (const BoxType * b, void *cl)
 {
-  ElementTypePtr element = (ElementTypePtr) b;
+  ElementType *element = (ElementType *) b;
 
   DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
   return 1;
@@ -293,7 +293,7 @@ draw_element_package (ElementType *element)
 static int
 element_callback (const BoxType * b, void *cl)
 {
-  ElementTypePtr element = (ElementTypePtr) b;
+  ElementType *element = (ElementType *) b;
   int *side = cl;
 
   if (ON_SIDE (element, *side))
@@ -478,7 +478,7 @@ DrawEverything (const BoxType *drawn_area)
 }
 
 /* static */ void
-DrawEMark (ElementTypePtr e, Coord X, Coord Y, bool invisible)
+DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
 {
   Coord mark_size = EMARK_SIZE;
   if (!PCB->InvisibleObjectsOn && invisible)
@@ -537,7 +537,7 @@ via_mask_callback (const BoxType * b, void *cl)
 static int
 pad_mask_callback (const BoxType * b, void *cl)
 {
-  PadTypePtr pad = (PadTypePtr) b;
+  PadType *pad = (PadType *) b;
   int *side = cl;
   if (ON_SIDE (pad, *side))
     dapi->draw_pad_mask (pad, NULL, NULL);
@@ -674,7 +674,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
 {
   int i, rv = 1;
   int layernum;
-  LayerTypePtr Layer;
+  LayerType *Layer;
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
@@ -696,7 +696,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
 }
 
 static void
-GatherPVName (PinTypePtr Ptr)
+GatherPVName (PinType *Ptr)
 {
   BoxType box;
   bool vert = TEST_FLAG (EDGE2FLAG, Ptr);
@@ -726,7 +726,7 @@ GatherPVName (PinTypePtr Ptr)
 }
 
 static void
-GatherPadName (PadTypePtr Pad)
+GatherPadName (PadType *Pad)
 {
   BoxType box;
   bool vert;
@@ -775,19 +775,19 @@ _draw_line (LineType *line)
  * lowlevel drawing routine for text objects
  */
 void
-DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
+DrawTextLowLevel (TextType *Text, Coord min_line_width)
 {
   Coord x = 0;
   unsigned char *string = (unsigned char *) Text->TextString;
   Cardinal n;
-  FontTypePtr font = &PCB->Font;
+  FontType *font = &PCB->Font;
 
   while (string && *string)
     {
       /* draw lines if symbol is valid and data is present */
       if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
 	{
-	  LineTypePtr line = font->Symbol[*string].Line;
+	  LineType *line = font->Symbol[*string].Line;
 	  LineType newline;
 
 	  for (n = font->Symbol[*string].LineN; n; n--, line++)
@@ -858,7 +858,7 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
  * draw a via object
  */
 void
-DrawVia (PinTypePtr Via)
+DrawVia (PinType *Via)
 {
   AddPart (Via);
   if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
@@ -869,7 +869,7 @@ DrawVia (PinTypePtr Via)
  * draws the name of a via
  */
 void
-DrawViaName (PinTypePtr Via)
+DrawViaName (PinType *Via)
 {
   GatherPVName (Via);
 }
@@ -878,7 +878,7 @@ DrawViaName (PinTypePtr Via)
  * draw a pin object
  */
 void
-DrawPin (PinTypePtr Pin)
+DrawPin (PinType *Pin)
 {
   AddPart (Pin);
   if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
@@ -890,7 +890,7 @@ DrawPin (PinTypePtr Pin)
  * draws the name of a pin
  */
 void
-DrawPinName (PinTypePtr Pin)
+DrawPinName (PinType *Pin)
 {
   GatherPVName (Pin);
 }
@@ -899,7 +899,7 @@ DrawPinName (PinTypePtr Pin)
  * draw a pad object
  */
 void
-DrawPad (PadTypePtr Pad)
+DrawPad (PadType *Pad)
 {
   AddPart (Pad);
   if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, Pad))
@@ -910,7 +910,7 @@ DrawPad (PadTypePtr Pad)
  * draws the name of a pad
  */
 void
-DrawPadName (PadTypePtr Pad)
+DrawPadName (PadType *Pad)
 {
   GatherPadName (Pad);
 }
@@ -919,7 +919,7 @@ DrawPadName (PadTypePtr Pad)
  * draws a line on a layer
  */
 void
-DrawLine (LayerTypePtr Layer, LineTypePtr Line)
+DrawLine (LayerType *Layer, LineType *Line)
 {
   AddPart (Line);
 }
@@ -928,7 +928,7 @@ DrawLine (LayerTypePtr Layer, LineTypePtr Line)
  * draws a ratline
  */
 void
-DrawRat (RatTypePtr Rat)
+DrawRat (RatType *Rat)
 {
   if (Settings.RatThickness < 20)
     Rat->Thickness = pixel_slop * Settings.RatThickness;
@@ -953,7 +953,7 @@ DrawRat (RatTypePtr Rat)
  * draws an arc on a layer
  */
 void
-DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
+DrawArc (LayerType *Layer, ArcType *Arc)
 {
   AddPart (Arc);
 }
@@ -962,7 +962,7 @@ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
  * draws a text on a layer
  */
 void
-DrawText (LayerTypePtr Layer, TextTypePtr Text)
+DrawText (LayerType *Layer, TextType *Text)
 {
   AddPart (Text);
 }
@@ -972,7 +972,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text)
  * draws a polygon on a layer
  */
 void
-DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+DrawPolygon (LayerType *Layer, PolygonType *Polygon)
 {
   AddPart (Polygon);
 }
@@ -981,7 +981,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  * draws an element
  */
 void
-DrawElement (ElementTypePtr Element)
+DrawElement (ElementType *Element)
 {
   DrawElementPackage (Element);
   DrawElementName (Element);
@@ -992,7 +992,7 @@ DrawElement (ElementTypePtr Element)
  * draws the name of an element
  */
 void
-DrawElementName (ElementTypePtr Element)
+DrawElementName (ElementType *Element)
 {
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
@@ -1003,7 +1003,7 @@ DrawElementName (ElementTypePtr Element)
  * draws the package of an element
  */
 void
-DrawElementPackage (ElementTypePtr Element)
+DrawElementPackage (ElementType *Element)
 {
   ELEMENTLINE_LOOP (Element);
   {
@@ -1021,7 +1021,7 @@ DrawElementPackage (ElementTypePtr Element)
  * draw pins of an element
  */
 void
-DrawElementPinsAndPads (ElementTypePtr Element)
+DrawElementPinsAndPads (ElementType *Element)
 {
   PAD_LOOP (Element);
   {
@@ -1040,7 +1040,7 @@ DrawElementPinsAndPads (ElementTypePtr Element)
  * erase a via
  */
 void
-EraseVia (PinTypePtr Via)
+EraseVia (PinType *Via)
 {
   AddPart (Via);
   if (TEST_FLAG (DISPLAYNAMEFLAG, Via))
@@ -1051,7 +1051,7 @@ EraseVia (PinTypePtr Via)
  * erase a ratline
  */
 void
-EraseRat (RatTypePtr Rat)
+EraseRat (RatType *Rat)
 {
   if (TEST_FLAG(VIAFLAG, Rat))
     {
@@ -1074,7 +1074,7 @@ EraseRat (RatTypePtr Rat)
  * erase a via name
  */
 void
-EraseViaName (PinTypePtr Via)
+EraseViaName (PinType *Via)
 {
   GatherPVName (Via);
 }
@@ -1083,7 +1083,7 @@ EraseViaName (PinTypePtr Via)
  * erase a pad object
  */
 void
-ErasePad (PadTypePtr Pad)
+ErasePad (PadType *Pad)
 {
   AddPart (Pad);
   if (TEST_FLAG (DISPLAYNAMEFLAG, Pad))
@@ -1094,7 +1094,7 @@ ErasePad (PadTypePtr Pad)
  * erase a pad name
  */
 void
-ErasePadName (PadTypePtr Pad)
+ErasePadName (PadType *Pad)
 {
   GatherPadName (Pad);
 }
@@ -1103,7 +1103,7 @@ ErasePadName (PadTypePtr Pad)
  * erase a pin object
  */
 void
-ErasePin (PinTypePtr Pin)
+ErasePin (PinType *Pin)
 {
   AddPart (Pin);
   if (TEST_FLAG (DISPLAYNAMEFLAG, Pin))
@@ -1114,7 +1114,7 @@ ErasePin (PinTypePtr Pin)
  * erase a pin name
  */
 void
-ErasePinName (PinTypePtr Pin)
+ErasePinName (PinType *Pin)
 {
   GatherPVName (Pin);
 }
@@ -1123,7 +1123,7 @@ ErasePinName (PinTypePtr Pin)
  * erases a line on a layer
  */
 void
-EraseLine (LineTypePtr Line)
+EraseLine (LineType *Line)
 {
   AddPart (Line);
 }
@@ -1132,7 +1132,7 @@ EraseLine (LineTypePtr Line)
  * erases an arc on a layer
  */
 void
-EraseArc (ArcTypePtr Arc)
+EraseArc (ArcType *Arc)
 {
   if (!Arc->Thickness)
     return;
@@ -1143,7 +1143,7 @@ EraseArc (ArcTypePtr Arc)
  * erases a text on a layer
  */
 void
-EraseText (LayerTypePtr Layer, TextTypePtr Text)
+EraseText (LayerType *Layer, TextType *Text)
 {
   AddPart (Text);
 }
@@ -1152,7 +1152,7 @@ EraseText (LayerTypePtr Layer, TextTypePtr Text)
  * erases a polygon on a layer
  */
 void
-ErasePolygon (PolygonTypePtr Polygon)
+ErasePolygon (PolygonType *Polygon)
 {
   AddPart (Polygon);
 }
@@ -1161,7 +1161,7 @@ ErasePolygon (PolygonTypePtr Polygon)
  * erases an element
  */
 void
-EraseElement (ElementTypePtr Element)
+EraseElement (ElementType *Element)
 {
   ELEMENTLINE_LOOP (Element);
   {
@@ -1181,7 +1181,7 @@ EraseElement (ElementTypePtr Element)
  * erases all pins and pads of an element
  */
 void
-EraseElementPinsAndPads (ElementTypePtr Element)
+EraseElementPinsAndPads (ElementType *Element)
 {
   PIN_LOOP (Element);
   {
@@ -1199,7 +1199,7 @@ EraseElementPinsAndPads (ElementTypePtr Element)
  * erases the name of an element
  */
 void
-EraseElementName (ElementTypePtr Element)
+EraseElementName (ElementType *Element)
 {
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
@@ -1214,29 +1214,29 @@ EraseObject (int type, void *lptr, void *ptr)
     {
     case VIA_TYPE:
     case PIN_TYPE:
-      ErasePin ((PinTypePtr) ptr);
+      ErasePin ((PinType *) ptr);
       break;
     case TEXT_TYPE:
     case ELEMENTNAME_TYPE:
-      EraseText ((LayerTypePtr)lptr, (TextTypePtr) ptr);
+      EraseText ((LayerType *)lptr, (TextType *) ptr);
       break;
     case POLYGON_TYPE:
-      ErasePolygon ((PolygonTypePtr) ptr);
+      ErasePolygon ((PolygonType *) ptr);
       break;
     case ELEMENT_TYPE:
-      EraseElement ((ElementTypePtr) ptr);
+      EraseElement ((ElementType *) ptr);
       break;
     case LINE_TYPE:
     case ELEMENTLINE_TYPE:
     case RATLINE_TYPE:
-      EraseLine ((LineTypePtr) ptr);
+      EraseLine ((LineType *) ptr);
       break;
     case PAD_TYPE:
-      ErasePad ((PadTypePtr) ptr);
+      ErasePad ((PadType *) ptr);
       break;
     case ARC_TYPE:
     case ELEMENTARC_TYPE:
-      EraseArc ((ArcTypePtr) ptr);
+      EraseArc ((ArcType *) ptr);
       break;
     default:
       Message ("hace: Internal ERROR, trying to erase an unknown type\n");
@@ -1252,51 +1252,51 @@ DrawObject (int type, void *ptr1, void *ptr2)
     {
     case VIA_TYPE:
       if (PCB->ViaOn)
-	DrawVia ((PinTypePtr) ptr2);
+	DrawVia ((PinType *) ptr2);
       break;
     case LINE_TYPE:
-      if (((LayerTypePtr) ptr1)->On)
-	DrawLine ((LayerTypePtr) ptr1, (LineTypePtr) ptr2);
+      if (((LayerType *) ptr1)->On)
+	DrawLine ((LayerType *) ptr1, (LineType *) ptr2);
       break;
     case ARC_TYPE:
-      if (((LayerTypePtr) ptr1)->On)
-	DrawArc ((LayerTypePtr) ptr1, (ArcTypePtr) ptr2);
+      if (((LayerType *) ptr1)->On)
+	DrawArc ((LayerType *) ptr1, (ArcType *) ptr2);
       break;
     case TEXT_TYPE:
-      if (((LayerTypePtr) ptr1)->On)
-	DrawText ((LayerTypePtr) ptr1, (TextTypePtr) ptr2);
+      if (((LayerType *) ptr1)->On)
+	DrawText ((LayerType *) ptr1, (TextType *) ptr2);
       break;
     case POLYGON_TYPE:
-      if (((LayerTypePtr) ptr1)->On)
-	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
+      if (((LayerType *) ptr1)->On)
+	DrawPolygon ((LayerType *) ptr1, (PolygonType *) ptr2);
       break;
     case ELEMENT_TYPE:
       if (PCB->ElementOn &&
-	  (FRONT ((ElementTypePtr) ptr2) || PCB->InvisibleObjectsOn))
-	DrawElement ((ElementTypePtr) ptr2);
+	  (FRONT ((ElementType *) ptr2) || PCB->InvisibleObjectsOn))
+	DrawElement ((ElementType *) ptr2);
       break;
     case RATLINE_TYPE:
       if (PCB->RatOn)
-	DrawRat ((RatTypePtr) ptr2);
+	DrawRat ((RatType *) ptr2);
       break;
     case PIN_TYPE:
       if (PCB->PinOn)
-	DrawPin ((PinTypePtr) ptr2);
+	DrawPin ((PinType *) ptr2);
       break;
     case PAD_TYPE:
       if (PCB->PinOn)
-	DrawPad ((PadTypePtr) ptr2);
+	DrawPad ((PadType *) ptr2);
       break;
     case ELEMENTNAME_TYPE:
       if (PCB->ElementOn &&
-	  (FRONT ((ElementTypePtr) ptr2) || PCB->InvisibleObjectsOn))
-	DrawElementName ((ElementTypePtr) ptr1);
+	  (FRONT ((ElementType *) ptr2) || PCB->InvisibleObjectsOn))
+	DrawElementName ((ElementType *) ptr1);
       break;
     }
 }
 
 static void
-draw_element (ElementTypePtr element)
+draw_element (ElementType *element)
 {
   draw_element_package (element);
   draw_element_name (element);
