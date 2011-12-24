@@ -1,5 +1,5 @@
 Bottom: 6b42a130844d44959368aceff5671a4369fa0005
-Top:    6b42a130844d44959368aceff5671a4369fa0005
+Top:    a2a1f17dc6b908f0033d11b39e720dad30ac1393
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 00:54:25 +0000
 
@@ -8,4 +8,15 @@ Fix crash upon pressing "f" hotkey (find connected) after a board revert.
 
 ---
 
-
+diff --git a/src/mymem.c b/src/mymem.c
+index 2dd10a1..f7939e7 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -677,6 +677,7 @@ FreePCBMemory (PCBType *pcb)
+   for (i = 0; i <= MAX_FONTPOSITION; i++)
+     free (pcb->Font.Symbol[i].Line);
+   FreeLibraryMemory (&pcb->NetlistLib);
++  NetlistChanged (0);
+   FreeAttributeListMemory (&pcb->Attributes);
+   /* clear struct */
+   memset (pcb, 0, sizeof (PCBType));
