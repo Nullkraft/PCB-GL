@@ -333,6 +333,8 @@ PrintBOM (void)
     const char *fmt = "%c UTC";
     strftime (utcTime, sizeof (utcTime), fmt, gmtime (&currenttime));
   }
+  fprintf (fp, "# $Id");
+  fprintf (fp, "$\n");
   fprintf (fp, "# PcbXY Version 1.0\n");
   fprintf (fp, "# Date: %s\n", utcTime);
   fprintf (fp, "# Author: %s\n", pcb_author ());
@@ -498,6 +500,8 @@ PrintBOM (void)
       return 1;
     }
 
+  fprintf (fp, "# $Id");
+  fprintf (fp, "$\n");
   fprintf (fp, "# PcbBOM Version 1.0\n");
   fprintf (fp, "# Date: %s\n", utcTime);
   fprintf (fp, "# Author: %s\n", pcb_author ());
