@@ -1,5 +1,5 @@
-Bottom: 5301ba181d4306b1ee62e2d99ada16914490097d
-Top:    1f0dc64c14a64b86104fbe870b8a5f58f7b1040c
+Bottom: 4ec11b8e87fa142edeadb1293d5238c1d680a4a0
+Top:    593bccf03527348219bff1b68f8737280800ef2e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 02:03:31 +0000
 
@@ -12,10 +12,10 @@ so revert them so I can build a release.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7f7867b..f7cc15b 100644
+index 2e02bd7..2e12c07 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1802,7 +1802,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1802,7 +1802,7 @@ ghid_draw_everything (BoxType *drawn_area)
    }
  
    /* draw all layers in layerstack order */
