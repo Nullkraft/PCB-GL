@@ -1,0 +1,701 @@
+Bottom: b9cf4fe1853a72c207f58b7333506817b7272a67
+Top:    08f7c613dcf94852bb1b8a4bc7fbb63334abeddc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-24 00:05:37 +0000
+
+Refresh of remove-remaining-rcs-id-identi
+
+---
+
+diff --git a/globalconst.h b/globalconst.h
+index afba0d4..e0779d5 100755
+--- a/globalconst.h
++++ b/globalconst.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* global constants
+diff --git a/src/action.h b/src/action.h
+index 83089f3..4b93ef8 100644
+--- a/src/action.h
++++ b/src/action.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for action routines
+diff --git a/src/autoplace.h b/src/autoplace.h
+index 5133cf0..75e4c8f 100644
+--- a/src/autoplace.h
++++ b/src/autoplace.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/autoroute.h b/src/autoroute.h
+index d659349..256a495 100644
+--- a/src/autoroute.h
++++ b/src/autoroute.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/box.h b/src/box.h
+index 1c8311a..943b316 100644
+--- a/src/box.h
++++ b/src/box.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/buffer.h b/src/buffer.h
+index e589fd4..6871216 100644
+--- a/src/buffer.h
++++ b/src/buffer.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for buffer handling routines
+diff --git a/src/change.h b/src/change.h
+index 64c44ff..3fd896d 100644
+--- a/src/change.h
++++ b/src/change.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes to change object properties
+diff --git a/src/clip.h b/src/clip.h
+index c06d64f..aaec5a8 100644
+--- a/src/clip.h
++++ b/src/clip.h
+@@ -23,7 +23,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for inserting points into objects
+diff --git a/src/command.h b/src/command.h
+index 5517993..5018f28 100644
+--- a/src/command.h
++++ b/src/command.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for command execution
+diff --git a/src/compat.h b/src/compat.h
+index 9afa02c..ff83161 100644
+--- a/src/compat.h
++++ b/src/compat.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/const.h b/src/const.h
+index 078f83f..7d732e8 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* global source constants
+diff --git a/src/copy.h b/src/copy.h
+index e65c272..af0b7ff 100644
+--- a/src/copy.h
++++ b/src/copy.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for copy routines
+diff --git a/src/create.h b/src/create.h
+index ccab272..faebe52 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for create routines
+diff --git a/src/crosshair.h b/src/crosshair.h
+index 8c42067..2dd5e7e 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for crosshair routines
+diff --git a/src/data.h b/src/data.h
+index 502acdd..efb2ed1 100644
+--- a/src/data.h
++++ b/src/data.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* common identifiers
+diff --git a/src/djopt.h b/src/djopt.h
+index bc337af..15014c1 100644
+--- a/src/djopt.h
++++ b/src/djopt.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/dolists.h b/src/dolists.h
+index d16f055..3b7c663 100644
+--- a/src/dolists.h
++++ b/src/dolists.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #undef REGISTER_ACTIONS
+ #undef REGISTER_ATTRIBUTES
+ #undef REGISTER_FLAGS
+diff --git a/src/draw.h b/src/draw.h
+index d92dee5..cc0822f 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for drawing routines
+diff --git a/src/drill.h b/src/drill.h
+index 862ff08..f155a72 100644
+--- a/src/drill.h
++++ b/src/drill.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/error.h b/src/error.h
+index 8409767..8cd99a2 100644
+--- a/src/error.h
++++ b/src/error.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for error and debug functions
+diff --git a/src/find.h b/src/find.h
+index d2be7ac..1d54111 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes connection search routines
+diff --git a/src/heap.h b/src/heap.h
+index 381c7b2..85e6a53 100644
+--- a/src/heap.h
++++ b/src/heap.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/hid/gcode/decompose.h b/src/hid/gcode/decompose.h
+index 333003e..9c11429 100644
+--- a/src/hid/gcode/decompose.h
++++ b/src/hid/gcode/decompose.h
+@@ -2,7 +2,7 @@
+    This file is part of Potrace. It is free software and it is covered
+    by the GNU General Public License. See the file COPYING for details. */
+ 
+-/* $Id: decompose.h 147 2007-04-09 00:44:09Z selinger $ */
++/* decompose.h 147 2007-04-09 00:44:09Z selinger */
+ 
+ #ifndef DECOMPOSE_H
+ #define DECOMPOSE_H
+diff --git a/src/hid/gcode/gcode.h b/src/hid/gcode/gcode.h
+index ae9d7a0..e0db890 100644
+--- a/src/hid/gcode/gcode.h
++++ b/src/hid/gcode/gcode.h
+@@ -1,3 +1 @@
+-/* $Id: nelma.h,v 1.2 2007/04/20 11:31:15 danmc Exp $ */
+-
+ extern HID gcode_hid;
+diff --git a/src/hid/gcode/lists.h b/src/hid/gcode/lists.h
+index 3513184..60d42e6 100644
+--- a/src/hid/gcode/lists.h
++++ b/src/hid/gcode/lists.h
+@@ -2,7 +2,7 @@
+    This file is part of Potrace. It is free software and it is covered
+    by the GNU General Public License. See the file COPYING for details. */
+ 
+-/* $Id: lists.h 147 2007-04-09 00:44:09Z selinger $ */
++/* lists.h 147 2007-04-09 00:44:09Z selinger */
+ 
+ #ifndef PCB_HID_GCODE_LISTS_H
+ #define PCB_HID_GCODE_LISTS_H
+diff --git a/src/hid/gcode/trace.h b/src/hid/gcode/trace.h
+index d55fd3e..ead6d50 100644
+--- a/src/hid/gcode/trace.h
++++ b/src/hid/gcode/trace.h
+@@ -2,7 +2,7 @@
+    This file is part of Potrace. It is free software and it is covered
+    by the GNU General Public License. See the file COPYING for details. */
+ 
+-/* $Id: trace.h 147 2007-04-09 00:44:09Z selinger $ */
++/* trace.h 147 2007-04-09 00:44:09Z selinger */
+ 
+ #ifndef TRACE_H
+ #define TRACE_H
+diff --git a/src/hid/gtk/gtkhid.h b/src/hid/gtk/gtkhid.h
+index f55845b..d6e9887 100644
+--- a/src/hid/gtk/gtkhid.h
++++ b/src/hid/gtk/gtkhid.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifndef PCB_HID_GTK_GTKHID_H
+ #define PCB_HID_GTK_GTKHID_H
+ 
+diff --git a/src/hid/gtk/gui-drc-window.h b/src/hid/gtk/gui-drc-window.h
+index 8b3558a..367cb8f 100644
+--- a/src/hid/gtk/gui-drc-window.h
++++ b/src/hid/gtk/gui-drc-window.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/hid/gtk/gui-pinout-preview.h b/src/hid/gtk/gui-pinout-preview.h
+index 77fdd1b..1f21e80 100644
+--- a/src/hid/gtk/gui-pinout-preview.h
++++ b/src/hid/gtk/gui-pinout-preview.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index ea49bee..788553e 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/hid/hidint.h b/src/hid/hidint.h
+index b986f78..8d62d6b 100644
+--- a/src/hid/hidint.h
++++ b/src/hid/hidint.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /* HID internal interfaces.  These may ONLY be called from the HID
+    modules, not from the common PCB code.  */
+ 
+diff --git a/src/hid/lesstif/lesstif.h b/src/hid/lesstif/lesstif.h
+index 235bf57..ccbe89b 100644
+--- a/src/hid/lesstif/lesstif.h
++++ b/src/hid/lesstif/lesstif.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #define app_context lesstif_app_context
+ #define appwidget lesstif_appwidget
+ #define display lesstif_display
+diff --git a/src/hid/lesstif/xincludes.h b/src/hid/lesstif/xincludes.h
+index af1314c..d8e7b09 100644
+--- a/src/hid/lesstif/xincludes.h
++++ b/src/hid/lesstif/xincludes.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  * Some of the X headers are not very friendly in terms of namespace.
+  * For example, X.h typedef's Mask but we use Mask in the core of pcb
+diff --git a/src/hid/png/png.h b/src/hid/png/png.h
+index e528753..bdd06e1 100644
+--- a/src/hid/png/png.h
++++ b/src/hid/png/png.h
+@@ -1,3 +1 @@
+-/* $Id$ */
+-
+ extern void png_hid_export_to_file (FILE *, HID_Attr_Val *);
+diff --git a/src/hid/ps/ps.h b/src/hid/ps/ps.h
+index 661eaa8..a6ea013 100644
+--- a/src/hid/ps/ps.h
++++ b/src/hid/ps/ps.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ extern HID ps_hid;
+ extern void ps_hid_export_to_file (FILE *, HID_Attr_Val *);
+ extern void ps_start_file (FILE *);
+diff --git a/src/insert.h b/src/insert.h
+index 0476e8d..2793edf 100644
+--- a/src/insert.h
++++ b/src/insert.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for inserting points into objects
+diff --git a/src/intersect.h b/src/intersect.h
+index 2c1e7f5..7ed758e 100644
+--- a/src/intersect.h
++++ b/src/intersect.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/line.h b/src/line.h
+index 82db33a..8a5e4d2 100644
+--- a/src/line.h
++++ b/src/line.h
+@@ -23,7 +23,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for inserting points into objects
+diff --git a/src/macro.h b/src/macro.h
+index 025351f..59c53ba 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* some commonly used macros not related to a special C-file
+diff --git a/src/mirror.h b/src/mirror.h
+index da61744..50f648a 100644
+--- a/src/mirror.h
++++ b/src/mirror.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes to change objects mirror flag
+diff --git a/src/misc.h b/src/misc.h
+index a0220c0..2f34cfe 100644
+--- a/src/misc.h
++++ b/src/misc.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for misc routines
+diff --git a/src/move.h b/src/move.h
+index 3daec3d..801a5cc 100644
+--- a/src/move.h
++++ b/src/move.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for move routines
+diff --git a/src/mtspace.h b/src/mtspace.h
+index c169170..baf368f 100644
+--- a/src/mtspace.h
++++ b/src/mtspace.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/mymem.h b/src/mymem.h
+index a66e349..88c5628 100644
+--- a/src/mymem.h
++++ b/src/mymem.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for memory routines
+diff --git a/src/parse_l.h b/src/parse_l.h
+index eb01528..dfeed70 100644
+--- a/src/parse_l.h
++++ b/src/parse_l.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* just defines common parser identifiers
+diff --git a/src/polygon.h b/src/polygon.h
+index bdbef46..e5d1ace 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for polygon editing routines
+diff --git a/src/print.h b/src/print.h
+index 2215aea..85943f3 100644
+--- a/src/print.h
++++ b/src/print.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for printing routines
+diff --git a/src/rats.h b/src/rats.h
+index 9479fe0..16e5338 100644
+--- a/src/rats.h
++++ b/src/rats.h
+@@ -24,7 +24,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for rats routines
+diff --git a/src/remove.h b/src/remove.h
+index 1fc8890..9066428 100644
+--- a/src/remove.h
++++ b/src/remove.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for remove routines
+diff --git a/src/report.h b/src/report.h
+index 6d0184e..c995cde 100644
+--- a/src/report.h
++++ b/src/report.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ #ifndef PCB_REPORT_H
+diff --git a/src/resource.h b/src/resource.h
+index 119d615..9385e6a 100644
+--- a/src/resource.h
++++ b/src/resource.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ #ifndef PCB_RESOURCE_H
+ #define PCB_RESOURCE_H
+ 
+diff --git a/src/rotate.h b/src/rotate.h
+index 7748b19..2ac060e 100644
+--- a/src/rotate.h
++++ b/src/rotate.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for transform routines
+diff --git a/src/rtree.h b/src/rtree.h
+index cb23307..d44de09 100644
+--- a/src/rtree.h
++++ b/src/rtree.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/rubberband.h b/src/rubberband.h
+index 9e671bf..e281f3f 100644
+--- a/src/rubberband.h
++++ b/src/rubberband.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for rubberband routines
+diff --git a/src/search.h b/src/search.h
+index b1a6196..30553dd 100644
+--- a/src/search.h
++++ b/src/search.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for search routines
+diff --git a/src/select.h b/src/select.h
+index f3edde6..6d91278 100644
+--- a/src/select.h
++++ b/src/select.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for select routines
+diff --git a/src/set.h b/src/set.h
+index 4bfe6ec..d3b9a1f 100644
+--- a/src/set.h
++++ b/src/set.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for update routines
+diff --git a/src/strflags.h b/src/strflags.h
+index da16b64..a5f5b44 100644
+--- a/src/strflags.h
++++ b/src/strflags.h
+@@ -1,4 +1,3 @@
+-/* $Id$ */
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/thermal.h b/src/thermal.h
+index 67c04e0..b252f4f 100644
+--- a/src/thermal.h
++++ b/src/thermal.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for thermal routines
+diff --git a/src/undo.h b/src/undo.h
+index a6cd324..2ec6442 100644
+--- a/src/undo.h
++++ b/src/undo.h
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ /* prototypes for undo routines
+diff --git a/src/vector.h b/src/vector.h
+index 344118d..b6b6de1 100644
+--- a/src/vector.h
++++ b/src/vector.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+diff --git a/src/vendor.h b/src/vendor.h
+index aba4148..9706448 100644
+--- a/src/vendor.h
++++ b/src/vendor.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
