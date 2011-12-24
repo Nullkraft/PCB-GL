@@ -1,5 +1,5 @@
-Bottom: 4d15488994752eb39951fd1b39110ae67ec199ec
-Top:    fbc6a273ca48bbcbf69c0d01203a8e27089f2400
+Bottom: 180a070c1aa3385cb5dbaa83622085eff0935a1b
+Top:    ef3f289e71316c91201f4db06f51651beb941948
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 02:03:28 +0000
 
@@ -27,7 +27,7 @@ index 36ebed4..1c41dfc 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index d8bf02c..0fd7572 100644
+index db7d831..b195f00 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -113,7 +113,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
@@ -40,7 +40,7 @@ index d8bf02c..0fd7572 100644
  {
    ghid_zoom_view_abs (center_x, center_y, gport->view.coord_per_px * factor);
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 20e8e03..8c32c68 100644
+index 2ca39de..ba73c39 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -192,7 +192,7 @@ index 5c8a1f1..98d558d 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 2688438..cf96beb 100644
+index cf1dd47..1f42e0b 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -146,6 +146,8 @@ typedef struct
