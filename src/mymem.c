@@ -427,15 +427,23 @@ LibraryMenuTypePtr
 GetLibraryMenuMemory (LibraryTypePtr lib)
 {
   LibraryMenuTypePtr menu = lib->Menu;
+  int incr = STEP_LIBRARYMENU;
 
   /* realloc new memory if necessary and clear it */
   if (lib->MenuN >= lib->MenuMax)
     {
-      lib->MenuMax += STEP_LIBRARYMENU;
+      if (lib->MenuMax == 0)
+        incr = 1;
+      else if (lib->MenuMax == 1)
+        incr = 1;
+      else
+        incr = 1;
+      lib->MenuMax += incr;
       menu = (LibraryMenuTypePtr)realloc (menu, lib->MenuMax * sizeof (LibraryMenuType));
+      if (menu != lib->Menu)
+        printf ("Reallocing LibraryMenuMemory, moved from %p to %p\n", lib->Menu, menu);
       lib->Menu = menu;
-      memset (menu + lib->MenuN, 0,
-	      STEP_LIBRARYMENU * sizeof (LibraryMenuType));
+      memset (menu + lib->MenuN, 0, incr * sizeof (LibraryMenuType));
     }
   return (menu + lib->MenuN++);
 }
