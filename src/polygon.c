@@ -1971,7 +1971,7 @@ struct clip_outline_info {
 static int
 arc_outline_callback (const BoxType * b, void *cl)
 {
-  ArcTypePtr arc = (ArcTypePtr)b;
+  ArcType *arc = (ArcType *)b;
   struct clip_outline_info *info = cl;
   POLYAREA *np, *res;
 
@@ -1987,7 +1987,7 @@ arc_outline_callback (const BoxType * b, void *cl)
 static int
 line_outline_callback (const BoxType * b, void *cl)
 {
-  LineTypePtr line = (LineTypePtr)b;
+  LineType *line = (LineType *)b;
   struct clip_outline_info *info = cl;
   POLYAREA *np, *res;
 
@@ -2026,7 +2026,7 @@ POLYAREA *board_outline_poly ()
   int i;
   int count;
   int found_outline = 0;
-  LayerTypePtr Layer = NULL;
+  LayerType *Layer = NULL;
   BoxType region;
   struct clip_outline_info info;
   POLYAREA *whole_world;
