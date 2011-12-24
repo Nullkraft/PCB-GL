@@ -1,5 +1,5 @@
 Bottom: ce1399e540529463306040edb4402df3ac40724d
-Top:    4512ec2f0142b2c5b354f5153452d44c0bc90662
+Top:    25ebeb6be07560eaa01a63f8d6f3a4b2db65b439
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 02:24:32 +0000
 
@@ -14,6 +14,848 @@ so drop the aliases.
 
 ---
 
+diff --git a/src/action.c b/src/action.c
+index 8a0939c..bb75808 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -216,7 +216,7 @@ typedef struct			/* used to identify subfunctions */
+   char *Identifier;
+   FunctionID ID;
+ }
+-FunctionType, *FunctionTypePtr;
++FunctionType;
+ 
+ /* --------------------------------------------------------------------------- */
+ 
+@@ -295,10 +295,10 @@ either round or, if the octagon flag is set, octagonal.
+  * some local identifiers
+  */
+ static PointType InsertedPoint;
+-static LayerTypePtr lastLayer;
++static LayerType *lastLayer;
+ static struct
+ {
+-  PolygonTypePtr poly;
++  PolygonType *poly;
+   LineType line;
+ }
+ fake;
+@@ -823,7 +823,7 @@ AdjustAttachedBox (void)
+ void
+ AdjustAttachedObjects (void)
+ {
+-  PointTypePtr pnt;
++  PointType *pnt;
+   switch (Settings.Mode)
+     {
+       /* update at least an attached block (selection) */
+@@ -897,13 +897,13 @@ NotifyLine (void)
+       if (type == PIN_TYPE || type == VIA_TYPE)
+ 	{
+ 	  Crosshair.AttachedLine.Point1.X =
+-	    Crosshair.AttachedLine.Point2.X = ((PinTypePtr) ptr2)->X;
++	    Crosshair.AttachedLine.Point2.X = ((PinType *) ptr2)->X;
+ 	  Crosshair.AttachedLine.Point1.Y =
+-	    Crosshair.AttachedLine.Point2.Y = ((PinTypePtr) ptr2)->Y;
++	    Crosshair.AttachedLine.Point2.Y = ((PinType *) ptr2)->Y;
+ 	}
+       else if (type == PAD_TYPE)
+ 	{
+-	  PadTypePtr pad = (PadTypePtr) ptr2;
++	  PadType *pad = (PadType *) ptr2;
+ 	  double d1 = Distance (Crosshair.X, Crosshair.Y, pad->Point1.X, pad->Point1.Y);
+ 	  double d2 = Distance (Crosshair.X, Crosshair.Y, pad->Point2.X, pad->Point2.Y);
+ 	  if (d2 < d1)
+@@ -996,7 +996,7 @@ NotifyMode (void)
+ 	  {
+ 	    type = SearchScreen (Note.X, Note.Y, test, &ptr1, &ptr2, &ptr3);
+ 	    if (!Note.Hit && (type & MOVE_TYPES) &&
+-		!TEST_FLAG (LOCKFLAG, (PinTypePtr) ptr2))
++		!TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
+ 	      {
+ 		Note.Hit = type;
+ 		Note.ptr1 = ptr1;
+@@ -1004,7 +1004,7 @@ NotifyMode (void)
+ 		Note.ptr3 = ptr3;
+ 	      }
+ 	    if (!Note.Moving && (type & SELECT_TYPES) &&
+-		TEST_FLAG (SELECTEDFLAG, (PinTypePtr) ptr2))
++		TEST_FLAG (SELECTEDFLAG, (PinType *) ptr2))
+ 	      Note.Moving = true;
+ 	    if ((Note.Hit && Note.Moving) || type == NO_TYPE)
+ 	      break;
+@@ -1014,7 +1014,7 @@ NotifyMode (void)
+ 
+     case VIA_MODE:
+       {
+-	PinTypePtr via;
++	PinType *via;
+ 
+ 	if (!PCB->ViaOn)
+ 	  {
+@@ -1052,7 +1052,7 @@ NotifyMode (void)
+ 	  case STATE_SECOND:
+ 	  case STATE_THIRD:
+ 	    {
+-	      ArcTypePtr arc;
++	      ArcType *arc;
+ 	      Coord wx, wy;
+ 	      Angle sa, dir;
+ 
+@@ -1105,7 +1105,7 @@ NotifyMode (void)
+ 							       CLEARLINEFLAG :
+ 							       0))))
+ 		{
+-		  BoxTypePtr bx;
++		  BoxType *bx;
+ 
+ 		  bx = GetArcEnds (arc);
+ 		  Crosshair.AttachedBox.Point1.X =
+@@ -1129,7 +1129,7 @@ NotifyMode (void)
+ 	type = SearchScreen (Note.X, Note.Y, LOCK_TYPES, &ptr1, &ptr2, &ptr3);
+ 	if (type == ELEMENT_TYPE)
+ 	  {
+-	    ElementTypePtr element = (ElementTypePtr) ptr2;
++	    ElementType *element = (ElementType *) ptr2;
+ 
+ 	    TOGGLE_FLAG (LOCKFLAG, element);
+ 	    PIN_LOOP (element);
+@@ -1154,7 +1154,7 @@ NotifyMode (void)
+ 	  }
+ 	else if (type != NO_TYPE)
+ 	  {
+-	    TextTypePtr thing = (TextTypePtr) ptr3;
++	    TextType *thing = (TextType *) ptr3;
+ 	    TOGGLE_FLAG (LOCKFLAG, thing);
+ 	    if (TEST_FLAG (LOCKFLAG, thing)
+ 		&& TEST_FLAG (SELECTEDFLAG, thing))
+@@ -1174,17 +1174,17 @@ NotifyMode (void)
+ 	      =
+ 	      SearchScreen (Note.X, Note.Y, PIN_TYPES, &ptr1, &ptr2,
+ 			    &ptr3)) != NO_TYPE)
+-	    && !TEST_FLAG (HOLEFLAG, (PinTypePtr) ptr3))
++	    && !TEST_FLAG (HOLEFLAG, (PinType *) ptr3))
+ 	  {
+ 	    if (gui->shift_is_pressed ())
+ 	      {
+-		int tstyle = GET_THERM (INDEXOFCURRENT, (PinTypePtr) ptr3);
++		int tstyle = GET_THERM (INDEXOFCURRENT, (PinType *) ptr3);
+ 		tstyle++;
+ 		if (tstyle > 5)
+ 		  tstyle = 1;
+ 		ChangeObjectThermal (type, ptr1, ptr2, ptr3, tstyle);
+ 	      }
+-	    else if (GET_THERM (INDEXOFCURRENT, (PinTypePtr) ptr3))
++	    else if (GET_THERM (INDEXOFCURRENT, (PinType *) ptr3))
+ 	      ChangeObjectThermal (type, ptr1, ptr2, ptr3, 0);
+ 	    else
+ 	      ChangeObjectThermal (type, ptr1, ptr2, ptr3, PCB->ThermStyle);
+@@ -1213,7 +1213,7 @@ NotifyMode (void)
+ 
+       if (PCB->RatDraw)
+ 	{
+-	  RatTypePtr line;
++	  RatType *line;
+ 	  if ((line = AddNet ()))
+ 	    {
+ 	      addedLines++;
+@@ -1231,7 +1231,7 @@ NotifyMode (void)
+       else
+ 	/* create line if both ends are determined && length != 0 */
+ 	{
+-	  LineTypePtr line;
++	  LineType *line;
+ 	  int maybe_found_flag;
+ 
+ 	  if (PCB->Clipping
+@@ -1273,7 +1273,7 @@ NotifyMode (void)
+ 						       PCB) ? CLEARLINEFLAG :
+ 						      0)))) != NULL)
+ 	    {
+-	      PinTypePtr via;
++	      PinType *via;
+ 
+ 	      addedLines++;
+ 	      AddObjectToCreateUndoList (LINE_TYPE, CURRENT, line, line);
+@@ -1355,7 +1355,7 @@ NotifyMode (void)
+ 	  Crosshair.AttachedBox.Point1.X != Crosshair.AttachedBox.Point2.X &&
+ 	  Crosshair.AttachedBox.Point1.Y != Crosshair.AttachedBox.Point2.Y)
+ 	{
+-	  PolygonTypePtr polygon;
++	  PolygonType *polygon;
+ 
+ 	  int flags = CLEARPOLYFLAG;
+ 	  if (TEST_FLAG (NEWFULLPOLYFLAG, PCB))
+@@ -1393,7 +1393,7 @@ NotifyMode (void)
+ 	  {
+ 	    if (strlen(string) > 0)
+ 	      {
+-		TextTypePtr text;
++		TextType *text;
+ 		int flag = CLEARLINEFLAG;
+ 
+ 		if (GetLayerGroupNumberByNumber (INDEXOFCURRENT) ==
+@@ -1416,7 +1416,7 @@ NotifyMode (void)
+ 
+     case POLYGON_MODE:
+       {
+-	PointTypePtr points = Crosshair.AttachedPolygon.Points;
++	PointType *points = Crosshair.AttachedPolygon.Points;
+ 	Cardinal n = Crosshair.AttachedPolygon.PointN;
+ 
+ 	/* do update of position; use the 'LINE_MODE' mechanism */
+@@ -1464,7 +1464,7 @@ NotifyMode (void)
+ 
+ 	    if (Crosshair.AttachedObject.Type != NO_TYPE)
+ 	      {
+-		if (TEST_FLAG (LOCKFLAG, (PolygonTypePtr)
++		if (TEST_FLAG (LOCKFLAG, (PolygonType *)
+ 			       Crosshair.AttachedObject.Ptr2))
+ 		  {
+ 		    Message (_("Sorry, the object is locked\n"));
+@@ -1479,7 +1479,7 @@ NotifyMode (void)
+             /* second notify, insert new point into object */
+           case STATE_SECOND:
+             {
+-	      PointTypePtr points = Crosshair.AttachedPolygon.Points;
++	      PointType *points = Crosshair.AttachedPolygon.Points;
+ 	      Cardinal n = Crosshair.AttachedPolygon.PointN;
+ 	      POLYAREA *original, *new_hole, *result;
+ 	      FlagType Flags;
+@@ -1548,7 +1548,7 @@ NotifyMode (void)
+     case PASTEBUFFER_MODE:
+       {
+ 	TextType estr[MAX_ELEMENTNAMES];
+-	ElementTypePtr e = 0;
++	ElementType *e = 0;
+ 
+ 	if (gui->shift_is_pressed ())
+ 	  {
+@@ -1557,7 +1557,7 @@ NotifyMode (void)
+ 			    &ptr3);
+ 	    if (type == ELEMENT_TYPE)
+ 	      {
+-		e = (ElementTypePtr) ptr1;
++		e = (ElementType *) ptr1;
+ 		if (e)
+ 		  {
+ 		    int i;
+@@ -1580,7 +1580,7 @@ NotifyMode (void)
+ 	    if (type == ELEMENT_TYPE && ptr1)
+ 	      {
+ 		int i, save_n;
+-		e = (ElementTypePtr) ptr1;
++		e = (ElementType *) ptr1;
+ 
+ 		save_n = NAME_INDEX (PCB);
+ 
+@@ -1608,14 +1608,14 @@ NotifyMode (void)
+ 	   SearchScreen (Note.X, Note.Y, REMOVE_TYPES, &ptr1, &ptr2,
+ 			 &ptr3)) != NO_TYPE)
+ 	{
+-	  if (TEST_FLAG (LOCKFLAG, (LineTypePtr) ptr2))
++	  if (TEST_FLAG (LOCKFLAG, (LineType *) ptr2))
+ 	    {
+ 	      Message (_("Sorry, the object is locked\n"));
+ 	      break;
+ 	    }
+ 	  if (type == ELEMENT_TYPE)
+ 	    {
+-	      RubberbandTypePtr ptr;
++	      RubberbandType *ptr;
+ 	      int i;
+ 
+ 	      Crosshair.AttachedObject.RubberbandN = 0;
+@@ -1624,7 +1624,7 @@ NotifyMode (void)
+ 	      for (i = 0; i < Crosshair.AttachedObject.RubberbandN; i++)
+ 		{
+ 		  if (PCB->RatOn)
+-		    EraseRat ((RatTypePtr) ptr->Line);
++		    EraseRat ((RatType *) ptr->Line);
+                   if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
+ 		    MoveObjectToRemoveUndoList (RATLINE_TYPE,
+ 					        ptr->Line, ptr->Line,
+@@ -1666,7 +1666,7 @@ NotifyMode (void)
+ 	    if (Crosshair.AttachedObject.Type != NO_TYPE)
+ 	      {
+ 		if (Settings.Mode == MOVE_MODE &&
+-		    TEST_FLAG (LOCKFLAG, (PinTypePtr)
++		    TEST_FLAG (LOCKFLAG, (PinType *)
+ 			       Crosshair.AttachedObject.Ptr2))
+ 		  {
+ 		    Message (_("Sorry, the object is locked\n"));
+@@ -1720,7 +1720,7 @@ NotifyMode (void)
+ 
+ 	  if (Crosshair.AttachedObject.Type != NO_TYPE)
+ 	    {
+-	      if (TEST_FLAG (LOCKFLAG, (PolygonTypePtr)
++	      if (TEST_FLAG (LOCKFLAG, (PolygonType *)
+ 			     Crosshair.AttachedObject.Ptr2))
+ 		{
+ 		  Message (_("Sorry, the object is locked\n"));
+@@ -1733,7 +1733,7 @@ NotifyMode (void)
+ 		  if (Crosshair.AttachedObject.Type == POLYGON_TYPE)
+ 		    {
+ 		      fake.poly =
+-			(PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
++			(PolygonType *) Crosshair.AttachedObject.Ptr2;
+ 		      polyIndex =
+ 			GetLowestDistancePolygonPoint (fake.poly, Note.X,
+ 						       Note.Y);
+@@ -1955,7 +1955,7 @@ static int
+ ActionFlip (int argc, char **argv, Coord x, Coord y)
+ {
+   char *function = ARG (0);
+-  ElementTypePtr element;
++  ElementType *element;
+   void *ptrtmp;
+   int err = 0;
+ 
+@@ -1967,7 +1967,7 @@ ActionFlip (int argc, char **argv, Coord x, Coord y)
+ 	  if ((SearchScreen (x, y, ELEMENT_TYPE,
+ 			     &ptrtmp, &ptrtmp, &ptrtmp)) != NO_TYPE)
+ 	    {
+-	      element = (ElementTypePtr) ptrtmp;
++	      element = (ElementType *) ptrtmp;
+ 	      ChangeElementSide (element, 2 * Crosshair.Y - PCB->MaxHeight);
+ 	      IncrementUndoSerialNumber ();
+ 	      Draw ();
+@@ -2821,7 +2821,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+ 	  /* display the pinout of an element */
+ 	case F_Pinout:
+ 	  {
+-	    ElementTypePtr element;
++	    ElementType *element;
+ 	    void *ptrtmp;
+ 	    Coord x, y;
+ 
+@@ -2830,7 +2830,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+ 		 (x, y, ELEMENT_TYPE, &ptrtmp,
+ 		  &ptrtmp, &ptrtmp)) != NO_TYPE)
+ 	      {
+-		element = (ElementTypePtr) ptrtmp;
++		element = (ElementType *) ptrtmp;
+ 		gui->show_item (element);
+ 	      }
+ 	    break;
+@@ -2847,7 +2847,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+ 				  (void **) &ptr3))
+ 	      {
+ 	      case ELEMENT_TYPE:
+-		PIN_LOOP ((ElementTypePtr) ptr1);
++		PIN_LOOP ((ElementType *) ptr1);
+ 		{
+ 		  if (TEST_FLAG (DISPLAYNAMEFLAG, pin))
+ 		    ErasePinName (pin);
+@@ -2857,7 +2857,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+ 		  TOGGLE_FLAG (DISPLAYNAMEFLAG, pin);
+ 		}
+ 		END_LOOP;
+-		PAD_LOOP ((ElementTypePtr) ptr1);
++		PAD_LOOP ((ElementType *) ptr1);
+ 		{
+ 		  if (TEST_FLAG (DISPLAYNAMEFLAG, pad))
+ 		    ErasePadName (pad);
+@@ -2873,35 +2873,35 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+ 		break;
+ 
+ 	      case PIN_TYPE:
+-		if (TEST_FLAG (DISPLAYNAMEFLAG, (PinTypePtr) ptr2))
+-		  ErasePinName ((PinTypePtr) ptr2);
++		if (TEST_FLAG (DISPLAYNAMEFLAG, (PinType *) ptr2))
++		  ErasePinName ((PinType *) ptr2);
+ 		else
+-		  DrawPinName ((PinTypePtr) ptr2);
++		  DrawPinName ((PinType *) ptr2);
+ 		AddObjectToFlagUndoList (PIN_TYPE, ptr1, ptr2, ptr3);
+-		TOGGLE_FLAG (DISPLAYNAMEFLAG, (PinTypePtr) ptr2);
++		TOGGLE_FLAG (DISPLAYNAMEFLAG, (PinType *) ptr2);
+ 		SetChangedFlag (true);
+ 		IncrementUndoSerialNumber ();
+ 		Draw ();
+ 		break;
+ 
+ 	      case PAD_TYPE:
+-		if (TEST_FLAG (DISPLAYNAMEFLAG, (PadTypePtr) ptr2))
+-		  ErasePadName ((PadTypePtr) ptr2);
++		if (TEST_FLAG (DISPLAYNAMEFLAG, (PadType *) ptr2))
++		  ErasePadName ((PadType *) ptr2);
+ 		else
+-		  DrawPadName ((PadTypePtr) ptr2);
++		  DrawPadName ((PadType *) ptr2);
+ 		AddObjectToFlagUndoList (PAD_TYPE, ptr1, ptr2, ptr3);
+-		TOGGLE_FLAG (DISPLAYNAMEFLAG, (PadTypePtr) ptr2);
++		TOGGLE_FLAG (DISPLAYNAMEFLAG, (PadType *) ptr2);
+ 		SetChangedFlag (true);
+ 		IncrementUndoSerialNumber ();
+ 		Draw ();
+ 		break;
+ 	      case VIA_TYPE:
+-		if (TEST_FLAG (DISPLAYNAMEFLAG, (PinTypePtr) ptr2))
+-		  EraseViaName ((PinTypePtr) ptr2);
++		if (TEST_FLAG (DISPLAYNAMEFLAG, (PinType *) ptr2))
++		  EraseViaName ((PinType *) ptr2);
+ 		else
+-		  DrawViaName ((PinTypePtr) ptr2);
++		  DrawViaName ((PinType *) ptr2);
+ 		AddObjectToFlagUndoList (VIA_TYPE, ptr1, ptr2, ptr3);
+-		TOGGLE_FLAG (DISPLAYNAMEFLAG, (PinTypePtr) ptr2);
++		TOGGLE_FLAG (DISPLAYNAMEFLAG, (PinType *) ptr2);
+ 		SetChangedFlag (true);
+ 		IncrementUndoSerialNumber ();
+ 		Draw ();
+@@ -3248,8 +3248,8 @@ static int
+ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+ {
+   bool changed = false;
+-  ElementTypePtr *element_list;
+-  ElementTypePtr *locked_element_list;
++  ElementType **element_list;
++  ElementType **locked_element_list;
+   unsigned int i, j, k, cnt, lock_cnt;
+   unsigned int tmpi;
+   size_t sz;
+@@ -3329,8 +3329,8 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+    *
+    * We'll actually renumber things in the 2nd pass.
+    */
+-  element_list = (ElementType **)calloc (PCB->Data->ElementN, sizeof (ElementTypePtr));
+-  locked_element_list = (ElementType **)calloc (PCB->Data->ElementN, sizeof (ElementTypePtr));
++  element_list = (ElementType **)calloc (PCB->Data->ElementN, sizeof (ElementType *));
++  locked_element_list = (ElementType **)calloc (PCB->Data->ElementN, sizeof (ElementType *));
+   was = (char **)calloc (PCB->Data->ElementN, sizeof (char *));
+   is = (char **)calloc (PCB->Data->ElementN, sizeof (char *));
+   if (element_list == NULL || locked_element_list == NULL || was == NULL
+@@ -3752,7 +3752,7 @@ static int
+ ActionAddRats (int argc, char **argv, Coord x, Coord y)
+ {
+   char *function = ARG (0);
+-  RatTypePtr shorty;
++  RatType *shorty;
+   float len, small;
+ 
+   if (function)
+@@ -4063,7 +4063,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
+ 	    if ((type =
+ 		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
+ 			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
+-	      if (TEST_FLAG (LOCKFLAG, (PinTypePtr) ptr2))
++	      if (TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
+ 		Message (_("Sorry, the object is locked\n"));
+ 	    if (ChangeObjectSize (type, ptr1, ptr2, ptr3, value, absolute))
+ 	      SetChangedFlag (true);
+@@ -4593,7 +4593,7 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+ 		    SetChangedFlag (true);
+ 		    if (type == ELEMENT_TYPE)
+ 		      {
+-			RubberbandTypePtr ptr;
++			RubberbandType *ptr;
+ 			int i;
+ 
+ 			RestoreUndoSerialNumber ();
+@@ -4604,7 +4604,7 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+ 			     i++, ptr++)
+ 			  {
+ 			    if (PCB->RatOn)
+-			      EraseRat ((RatTypePtr) ptr->Line);
++			      EraseRat ((RatType *) ptr->Line);
+ 			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
+ 							ptr->Line, ptr->Line,
+ 							ptr->Line);
+@@ -4729,9 +4729,9 @@ ActionToggleHideName (int argc, char **argv, Coord x, Coord y)
+ 				      &ptr1, &ptr2, &ptr3)) != NO_TYPE)
+ 	      {
+ 		AddObjectToFlagUndoList (type, ptr1, ptr2, ptr3);
+-		EraseElementName ((ElementTypePtr) ptr2);
+-		TOGGLE_FLAG (HIDENAMEFLAG, (ElementTypePtr) ptr2);
+-		DrawElementName ((ElementTypePtr) ptr2);
++		EraseElementName ((ElementType *) ptr2);
++		TOGGLE_FLAG (HIDENAMEFLAG, (ElementType *) ptr2);
++		DrawElementName ((ElementType *) ptr2);
+ 		Draw ();
+ 		IncrementUndoSerialNumber ();
+ 	      }
+@@ -4798,10 +4798,10 @@ ActionToggleStripHierarchy (int argc, char **argv, Coord x, Coord y)
+ 				      &ptr1, &ptr2, &ptr3)) != NO_TYPE)
+ 	      {
+ 		AddObjectToFlagUndoList (type, ptr1, ptr2, ptr3);
+-		EraseElementName ((ElementTypePtr) ptr2);
+-		TOGGLE_FLAG (HIDENAMEFLAG, (ElementTypePtr) ptr2);
++		EraseElementName ((ElementType *) ptr2);
++		TOGGLE_FLAG (HIDENAMEFLAG, (ElementType *) ptr2);
+ /* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
+-		DrawElementName ((ElementTypePtr) ptr2);
++		DrawElementName ((ElementType *) ptr2);
+ 		Draw ();
+ 		IncrementUndoSerialNumber ();
+ 	      }
+@@ -5296,7 +5296,7 @@ ActionChangeHole (int argc, char **argv, Coord x, Coord y)
+ 	    gui->get_coords (_("Select an Object"), &x, &y);
+ 	    if ((type = SearchScreen (x, y, VIA_TYPE,
+ 				      &ptr1, &ptr2, &ptr3)) != NO_TYPE
+-		&& ChangeHole ((PinTypePtr) ptr3))
++		&& ChangeHole ((PinType *) ptr3))
+ 	      IncrementUndoSerialNumber ();
+ 	    break;
+ 	  }
+@@ -5344,7 +5344,7 @@ ActionChangePaste (int argc, char **argv, Coord x, Coord y)
+ 	    gui->get_coords (_("Select an Object"), &x, &y);
+ 	    if ((type = SearchScreen (x, y, PAD_TYPE,
+ 				      &ptr1, &ptr2, &ptr3)) != NO_TYPE
+-		&& ChangePaste ((PadTypePtr) ptr3))
++		&& ChangePaste ((PadType *) ptr3))
+ 	      IncrementUndoSerialNumber ();
+ 	    break;
+ 	  }
+@@ -5799,7 +5799,7 @@ ActionSaveTo (int argc, char **argv, Coord x, Coord y)
+ 
+   if (strcasecmp (function, "ElementConnections") == 0)
+     {
+-      ElementTypePtr element;
++      ElementType *element;
+       void *ptrtmp;
+       FILE *fp;
+       bool result;
+@@ -5807,7 +5807,7 @@ ActionSaveTo (int argc, char **argv, Coord x, Coord y)
+       if ((SearchScreen (Crosshair.X, Crosshair.Y, ELEMENT_TYPE,
+ 			 &ptrtmp, &ptrtmp, &ptrtmp)) != NO_TYPE)
+ 	{
+-	  element = (ElementTypePtr) ptrtmp;
++	  element = (ElementType *) ptrtmp;
+ 	  if ((fp =
+ 	       CheckAndOpenFile (name, true, false, &result, NULL)) != NULL)
+ 	    {
+@@ -6275,13 +6275,13 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
+ 	    {
+ 	      int type;
+ 	      void *ptr1, *ptr3, *ptrtmp;
+-	      LineTypePtr ptr2;
++	      LineType *ptr2;
+ 	      /* this search is guaranteed to succeed */
+ 	      SearchObjectByLocation (LINE_TYPE | RATLINE_TYPE, &ptr1,
+ 				      &ptrtmp, &ptr3,
+ 				      Crosshair.AttachedLine.Point1.X,
+ 				      Crosshair.AttachedLine.Point1.Y, 0);
+-	      ptr2 = (LineTypePtr) ptrtmp;
++	      ptr2 = (LineType *) ptrtmp;
+ 
+ 	      /* save both ends of line */
+ 	      Crosshair.AttachedLine.Point2.X = ptr2->Point1.X;
+@@ -6313,7 +6313,7 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
+ 					  &ptr3,
+ 					  Crosshair.AttachedLine.Point2.X,
+ 					  Crosshair.AttachedLine.Point2.Y, 0);
+-		  ptr2 = (LineTypePtr) ptrtmp;
++		  ptr2 = (LineType *) ptrtmp;
+ 	          if (TEST_FLAG (AUTODRCFLAG, PCB))
+ 		    {
+ 		      /* undo loses FOUNDFLAG */
+@@ -6340,8 +6340,8 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
+ 					  &ptr3,
+ 					  Crosshair.AttachedLine.Point1.X,
+ 					  Crosshair.AttachedLine.Point1.Y, 0);
+-		  ptr2 = (LineTypePtr) ptrtmp;
+-		  lastLayer = (LayerTypePtr) ptr1;
++		  ptr2 = (LineType *) ptrtmp;
++		  lastLayer = (LayerType *) ptr1;
+ 		}
+ 	      notify_crosshair_change (true);
+ 	      return 0;
+@@ -6358,12 +6358,12 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
+ 	  if (Crosshair.AttachedBox.State == STATE_THIRD)
+ 	    {
+ 	      void *ptr1, *ptr2, *ptr3;
+-	      BoxTypePtr bx;
++	      BoxType *bx;
+ 	      /* guaranteed to succeed */
+ 	      SearchObjectByLocation (ARC_TYPE, &ptr1, &ptr2, &ptr3,
+ 				      Crosshair.AttachedBox.Point1.X,
+ 				      Crosshair.AttachedBox.Point1.Y, 0);
+-	      bx = GetArcEnds ((ArcTypePtr) ptr2);
++	      bx = GetArcEnds ((ArcType *) ptr2);
+ 	      Crosshair.AttachedBox.Point1.X =
+ 		Crosshair.AttachedBox.Point2.X = bx->X1;
+ 	      Crosshair.AttachedBox.Point1.Y =
+@@ -6639,7 +6639,7 @@ ActionSetSame (int argc, char **argv, Coord x, Coord y)
+ {
+   void *ptr1, *ptr2, *ptr3;
+   int type;
+-  LayerTypePtr layer = CURRENT;
++  LayerType *layer = CURRENT;
+ 
+   type = SearchScreen (x, y, CLONE_TYPES, &ptr1, &ptr2, &ptr3);
+ /* set layer current and size from line or arc */
+@@ -6647,9 +6647,9 @@ ActionSetSame (int argc, char **argv, Coord x, Coord y)
+     {
+     case LINE_TYPE:
+       notify_crosshair_change (false);
+-      Settings.LineThickness = ((LineTypePtr) ptr2)->Thickness;
+-      Settings.Keepaway = ((LineTypePtr) ptr2)->Clearance / 2;
+-      layer = (LayerTypePtr) ptr1;
++      Settings.LineThickness = ((LineType *) ptr2)->Thickness;
++      Settings.Keepaway = ((LineType *) ptr2)->Clearance / 2;
++      layer = (LayerType *) ptr1;
+       if (Settings.Mode != LINE_MODE)
+ 	SetMode (LINE_MODE);
+       notify_crosshair_change (true);
+@@ -6658,9 +6658,9 @@ ActionSetSame (int argc, char **argv, Coord x, Coord y)
+ 
+     case ARC_TYPE:
+       notify_crosshair_change (false);
+-      Settings.LineThickness = ((ArcTypePtr) ptr2)->Thickness;
+-      Settings.Keepaway = ((ArcTypePtr) ptr2)->Clearance / 2;
+-      layer = (LayerTypePtr) ptr1;
++      Settings.LineThickness = ((ArcType *) ptr2)->Thickness;
++      Settings.Keepaway = ((ArcType *) ptr2)->Clearance / 2;
++      layer = (LayerType *) ptr1;
+       if (Settings.Mode != ARC_MODE)
+ 	SetMode (ARC_MODE);
+       notify_crosshair_change (true);
+@@ -6668,14 +6668,14 @@ ActionSetSame (int argc, char **argv, Coord x, Coord y)
+       break;
+ 
+     case POLYGON_TYPE:
+-      layer = (LayerTypePtr) ptr1;
++      layer = (LayerType *) ptr1;
+       break;
+ 
+     case VIA_TYPE:
+       notify_crosshair_change (false);
+-      Settings.ViaThickness = ((PinTypePtr) ptr2)->Thickness;
+-      Settings.ViaDrillingHole = ((PinTypePtr) ptr2)->DrillingHole;
+-      Settings.Keepaway = ((PinTypePtr) ptr2)->Clearance / 2;
++      Settings.ViaThickness = ((PinType *) ptr2)->Thickness;
++      Settings.ViaDrillingHole = ((PinType *) ptr2)->DrillingHole;
++      Settings.Keepaway = ((PinType *) ptr2)->Clearance / 2;
+       if (Settings.Mode != VIA_MODE)
+ 	SetMode (VIA_MODE);
+       notify_crosshair_change (true);
+@@ -6830,7 +6830,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
+ 	if ((type =
+ 	     SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
+ 			   &ptr1, &ptr2, &ptr3)) != NO_TYPE)
+-	  if (TEST_FLAG (LOCKFLAG, (PinTypePtr) ptr2))
++	  if (TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
+ 	    Message (_("Sorry, the object is locked\n"));
+ 	if (set_object (type, ptr1, ptr2, ptr3))
+ 	  SetChangedFlag (true);
+@@ -6987,7 +6987,7 @@ find_element_by_refdes (char *refdes)
+ }
+ 
+ static AttributeType *
+-lookup_attr (AttributeListTypePtr list, const char *name)
++lookup_attr (AttributeListType *list, const char *name)
+ {
+   int i;
+   for (i=0; i<list->Number; i++)
+@@ -6997,7 +6997,7 @@ lookup_attr (AttributeListTypePtr list, const char *name)
+ }
+ 
+ static void
+-delete_attr (AttributeListTypePtr list, AttributeType *attr)
++delete_attr (AttributeListType *list, AttributeType *attr)
+ {
+   int idx = attr - list->List;
+   if (idx < 0 || idx >= list->Number)
+@@ -8024,7 +8024,7 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
+ 	    if ((SearchScreen
+ 		 (x, y, ELEMENT_TYPE, &ptrtmp,
+ 		  &ptrtmp, &ptrtmp)) != NO_TYPE)
+-	      e = (ElementTypePtr) ptrtmp;
++	      e = (ElementType *) ptrtmp;
+ 	    else
+ 	      {
+ 		Message (_("No element found there\n"));
+diff --git a/src/autoplace.c b/src/autoplace.c
+index e7cdee8..21ab5f2 100644
+--- a/src/autoplace.c
++++ b/src/autoplace.c
+@@ -74,7 +74,7 @@
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+-static double ComputeCost (NetListTypePtr Nets, double T0, double T);
++static double ComputeCost (NetListType *Nets, double T0, double T);
+ 
+ /* ---------------------------------------------------------------------------
+  * some local types
+@@ -123,7 +123,7 @@ CostParameter =
+ 
+ typedef struct
+ {
+-  ElementTypePtr *element;
++  ElementType **element;
+   Cardinal elementN;
+ }
+ ElementPtrListType;
+@@ -133,11 +133,11 @@ enum ewhich
+ 
+ typedef struct
+ {
+-  ElementTypePtr element;
++  ElementType *element;
+   enum ewhich which;
+   Coord DX, DY;			/* for shift */
+   unsigned rotate;		/* for rotate/flip */
+-  ElementTypePtr other;		/* for exchange */
++  ElementType *other;		/* for exchange */
+ }
+ PerturbationType;
+ 
+@@ -150,7 +150,7 @@ PerturbationType;
+  * elements have possibly been moved, rotated, flipped, etc.
+  */
+ static void
+-UpdateXY (NetListTypePtr Nets)
++UpdateXY (NetListType *Nets)
+ {
+   Cardinal SLayer, CLayer;
+   Cardinal i, j;
+@@ -162,20 +162,20 @@ UpdateXY (NetListTypePtr Nets)
+     {
+       for (j = 0; j < Nets->Net[i].ConnectionN; j++)
+ 	{
+-	  ConnectionTypePtr c = &(Nets->Net[i].Connection[j]);
++	  ConnectionType *c = &(Nets->Net[i].Connection[j]);
+ 	  switch (c->type)
+ 	    {
+ 	    case PAD_TYPE:
+ 	      c->group = TEST_FLAG (ONSOLDERFLAG,
+-				    (ElementTypePtr) c->ptr1)
++				    (ElementType *) c->ptr1)
+ 		? SLayer : CLayer;
+-	      c->X = ((PadTypePtr) c->ptr2)->Point1.X;
+-	      c->Y = ((PadTypePtr) c->ptr2)->Point1.Y;
++	      c->X = ((PadType *) c->ptr2)->Point1.X;
++	      c->Y = ((PadType *) c->ptr2)->Point1.Y;
+ 	      break;
+ 	    case PIN_TYPE:
+ 	      c->group = SLayer;	/* any layer will do */
+-	      c->X = ((PinTypePtr) c->ptr2)->X;
+-	      c->Y = ((PinTypePtr) c->ptr2)->Y;
++	      c->X = ((PinType *) c->ptr2)->X;
++	      c->Y = ((PinType *) c->ptr2)->Y;
+ 	      break;
+ 	    default:
+ 	      Message ("Odd connection type encountered in " "UpdateXY");
+@@ -196,7 +196,7 @@ collectSelectedElements ()
+   {
+     if (TEST_FLAG (SELECTEDFLAG, element))
+       {
+-	ElementTypePtr *epp = (ElementTypePtr *) GetPointerMemory (&list);
++	ElementType **epp = (ElementType **) GetPointerMemory (&list);
+ 	*epp = element;
+       }
+   }
+@@ -208,10 +208,10 @@ collectSelectedElements ()
+ #include "create.h"
+ /* makes a line on the solder layer surrounding all boxes in blist */
+ static void
+-showboxes (BoxListTypePtr blist)
++showboxes (BoxListType *blist)
+ {
+   Cardinal i;
+-  LayerTypePtr SLayer = &(PCB->Data->Layer[solder_silk_layer]);
++  LayerType *SLayer = &(PCB->Data->Layer[solder_silk_layer]);
+   for (i = 0; i < blist->BoxN; i++)
+     {
+       CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,
+@@ -323,7 +323,7 @@ r_find_neighbor (rtree_t * rtree, const BoxType * box,
+  *  Marcel Dekker, Inc. 1993.  ISBN: 0-8247-8916-4 TK7868.P7.P57 1993
+  */
+ static double
+-ComputeCost (NetListTypePtr Nets, double T0, double T)
++ComputeCost (NetListType *Nets, double T0, double T)
+ {
+   double W = 0;			/* wire cost */
+   double delta1 = 0;		/* wire congestion penalty function */
+@@ -346,7 +346,7 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
+    * the "layer height" of the net. */
+   for (i = 0; i < Nets->NetN; i++)
+     {
+-      NetTypePtr n = &Nets->Net[i];
++      NetType *n = &Nets->Net[i];
+       if (n->ConnectionN < 2)
+ 	continue;		/* no cost to go nowhere */
+       minx = maxx = n->Connection[0].X;
+@@ -356,7 +356,7 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
+       allsameside = true;
+       for (j = 1; j < n->ConnectionN; j++)
+ 	{
+-	  ConnectionTypePtr c = &(n->Connection[j]);
++	  ConnectionType *c = &(n->Connection[j]);
+ 	  MAKEMIN (minx, c->X);
+ 	  MAKEMAX (maxx, c->X);
+ 	  MAKEMIN (miny, c->Y);
+@@ -368,7 +368,7 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
+ 	}
+       /* save bounding rectangle */
+       {
+-	BoxTypePtr box = GetBoxMemory (&bounds);
++	BoxType *box = GetBoxMemory (&bounds);
+ 	box->X1 = minx;
+ 	box->Y1 = miny;
+ 	box->X2 = maxx;
+@@ -393,10 +393,10 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
+ 
+   ELEMENT_LOOP (PCB->Data);
+   {
+-    BoxListTypePtr thisside;
+-    BoxListTypePtr otherside;
+-    BoxTypePtr box;
+-    BoxTypePtr lastbox = NULL;
++    BoxListType *thisside;
++    BoxListType *otherside;
++    BoxType *box;
++    BoxType *lastbox = NULL;
+     Coord thickness;
+     Coord clearance;
+     if (TEST_FLAG (ONSOLDERFLAG, element))
+@@ -514,7 +514,7 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
+     struct ebox
+     {
+       BoxType box;
+-      ElementTypePtr element;
++      ElementType *element;
+     };
+     direction_t dir[4] = { NORTH, EAST, SOUTH, WEST };
+     struct ebox **boxpp, *boxp;
+@@ -613,11 +613,11 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
+  *  -- Only perturb selected elements (need count/list of selected?) --
+  */
+ PerturbationType
+-createPerturbation (PointerListTypePtr selected, double T)
++createPerturbation (PointerListType *selected, double T)
+ {
+   PerturbationType pt = { 0 };
+   /* pick element to perturb */
+-  pt.element = (ElementTypePtr) selected->Ptr[random () % selected->PtrN];
++  pt.element = (ElementType *) selected->Ptr[random () % selected->PtrN];
+   /* exchange, flip/rotate or shift? */
+   switch (random () % ((selected->PtrN > 1) ? 3 : 2))
+     {
+@@ -655,10 +655,10 @@ createPerturbation (PointerListTypePtr selected, double T)
+     case 2:
+       {				/* exchange! */
+ 	pt.which = EXCHANGE;
+-	pt.other = (ElementTypePtr)
++	pt.other = (ElementType *)
+ 	  selected->Ptr[random () % (selected->PtrN - 1)];
+ 	if (pt.other == pt.element)
+-	  pt.other = (ElementTypePtr) selected->Ptr[selected->PtrN - 1];
++	  pt.other = (ElementType *) selected->Ptr[selected->PtrN - 1];
+ 	/* don't allow exchanging a solderside-side SMD component
+ 	 * with a non-SMD component. */
+ 	if ((pt.element->PinN != 0 /* non-SMD */  &&
+@@ -748,7 +748,7 @@ doPerturb (PerturbationType * pt, bool undo)
+ bool
+ AutoPlaceSelected (void)
+ {
+-  NetListTypePtr Nets;
++  NetListType *Nets;
+   PointerListType Selected = { 0, 0, NULL };
+   PerturbationType pt;
+   double C0, T0;
 diff --git a/src/buffer.h b/src/buffer.h
 index 6871216..6a264ea 100644
 --- a/src/buffer.h
@@ -187,6 +1029,19 @@ index 13fa7dc..8c8040e 100644
 +AttributeType * CreateNewAttribute (AttributeListType *list, char *name, char *value);
  
  #endif
+diff --git a/src/data.c b/src/data.c
+index 702d9ca..9d6588c 100644
+--- a/src/data.c
++++ b/src/data.c
+@@ -43,7 +43,7 @@
+ CrosshairType Crosshair;	/* information about cursor settings */
+ MarkType Marked;		/* a cross-hair mark */
+ OutputType Output;		/* some widgets ... used for drawing */
+-PCBTypePtr PCB;			/* pointer to layout struct */
++PCBType *PCB;			/* pointer to layout struct */
+ 
+ char *Progname;
+ SettingType Settings;
 diff --git a/src/data.h b/src/data.h
 index efb2ed1..28cbfda 100644
 --- a/src/data.h
@@ -827,6 +1682,284 @@ index 79c1456..7b28396 100644
  
  struct drc_violation_st
  {
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 2b9718b..a959206 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -89,7 +89,7 @@ static int current_mask;
+ static int flash_drills;
+ static int copy_outline_mode;
+ static int name_style;
+-static LayerTypePtr outline_layer;
++static LayerType *outline_layer;
+ 
+ enum ApertureShape
+ {
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 879d1c1..634a0d4 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -311,7 +311,7 @@ ghid_make_gc (void)
+ }
+ 
+ static void
+-ghid_draw_grid (BoxTypePtr drawn_area)
++ghid_draw_grid (BoxType *drawn_area)
+ {
+   if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
+     return;
+@@ -1022,14 +1022,14 @@ ghid_screen_update (void)
+ static int
+ EMark_callback (const BoxType * b, void *cl)
+ {
+-  ElementTypePtr element = (ElementTypePtr) b;
++  ElementType *element = (ElementType *) b;
+ 
+   DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
+   return 1;
+ }
+ 
+ static void
+-SetPVColor (PinTypePtr Pin, int Type)
++SetPVColor (PinType *Pin, int Type)
+ {
+   char *color;
+ 
+@@ -1066,7 +1066,7 @@ SetPVColor (PinTypePtr Pin, int Type)
+ }
+ 
+ static void
+-SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
++SetPVColor_inlayer (PinType *Pin, LayerType * Layer, int Type)
+ {
+   char *color;
+ 
+@@ -1130,7 +1130,7 @@ _draw_pv_name (PinType *pv)
+ }
+ 
+ static void
+-_draw_pv (PinTypePtr pv, bool draw_hole)
++_draw_pv (PinType *pv, bool draw_hole)
+ {
+   if (TEST_FLAG (THINDRAWFLAG, PCB))
+     gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
+@@ -1142,7 +1142,7 @@ _draw_pv (PinTypePtr pv, bool draw_hole)
+ }
+ 
+ static void
+-draw_pin (PinTypePtr pin, bool draw_hole)
++draw_pin (PinType *pin, bool draw_hole)
+ {
+   SetPVColor (pin, PIN_TYPE);
+   _draw_pv (pin, draw_hole);
+@@ -1151,7 +1151,7 @@ draw_pin (PinTypePtr pin, bool draw_hole)
+ static int
+ pin_callback (const BoxType * b, void *cl)
+ {
+-  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
+ 
+   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+     _draw_pv_name (pin);
+@@ -1162,7 +1162,7 @@ pin_callback (const BoxType * b, void *cl)
+ static int
+ pin_name_callback (const BoxType * b, void *cl)
+ {
+-  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
+ 
+   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+     _draw_pv_name (pin);
+@@ -1172,13 +1172,13 @@ pin_name_callback (const BoxType * b, void *cl)
+ static int
+ pin_inlayer_callback (const BoxType * b, void *cl)
+ {
+-  SetPVColor_inlayer ((PinTypePtr) b, cl, PIN_TYPE);
++  SetPVColor_inlayer ((PinType *) b, cl, PIN_TYPE);
+   _draw_pv ((PinType *) b, false);
+   return 1;
+ }
+ 
+ static void
+-draw_via (PinTypePtr via, bool draw_hole)
++draw_via (PinType *via, bool draw_hole)
+ {
+   SetPVColor (via, VIA_TYPE);
+   _draw_pv (via, draw_hole);
+@@ -1194,7 +1194,7 @@ via_callback (const BoxType * b, void *cl)
+ static int
+ via_inlayer_callback (const BoxType * b, void *cl)
+ {
+-  SetPVColor_inlayer ((PinTypePtr) b, cl, VIA_TYPE);
++  SetPVColor_inlayer ((PinType *) b, cl, VIA_TYPE);
+   _draw_pv ((PinType *) b, TEST_FLAG (THINDRAWFLAG, PCB));
+   return 1;
+ }
+@@ -1280,7 +1280,7 @@ draw_pad (PadType *pad)
+ static int
+ pad_callback (const BoxType * b, void *cl)
+ {
+-  PadTypePtr pad = (PadTypePtr) b;
++  PadType *pad = (PadType *) b;
+   int *side = cl;
+ 
+   if (ON_SIDE (pad, *side)) {
+@@ -1295,7 +1295,7 @@ pad_callback (const BoxType * b, void *cl)
+ static int
+ hole_callback (const BoxType * b, void *cl)
+ {
+-  PinTypePtr pv = (PinTypePtr) b;
++  PinType *pv = (PinType *) b;
+   int plated = cl ? *(int *) cl : -1;
+ 
+   if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
+@@ -1405,7 +1405,7 @@ draw_arc (LayerType *layer, ArcType *arc)
+ static int
+ arc_callback (const BoxType * b, void *cl)
+ {
+-  draw_arc ((LayerTypePtr) cl, (ArcTypePtr) b);
++  draw_arc ((LayerType *) cl, (ArcType *) b);
+   return 1;
+ }
+ 
+@@ -1430,7 +1430,7 @@ text_callback (const BoxType * b, void *cl)
+ }
+ 
+ static void
+-DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *drawn_area)
++DrawPlainPolygon (LayerType *Layer, PolygonType * Polygon, const BoxType *drawn_area)
+ {
+   static char *color;
+ 
+@@ -1468,7 +1468,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
+ 
+ struct poly_info
+ {
+-  LayerTypePtr Layer;
++  LayerType *Layer;
+   const BoxType *drawn_area;
+ };
+ 
+@@ -1501,7 +1501,7 @@ poly_callback_clearing (const BoxType * b, void *cl)
+ static int
+ clearPin_callback (const BoxType * b, void *cl)
+ {
+-  PinType *pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
+   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+     gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+   else
+@@ -1512,7 +1512,7 @@ clearPin_callback (const BoxType * b, void *cl)
+ static int
+ clearPad_callback (const BoxType * b, void *cl)
+ {
+-  PadTypePtr pad = (PadTypePtr) b;
++  PadType *pad = (PadType *) b;
+   int *side = cl;
+   if (ON_SIDE (pad, *side) && pad->Mask)
+     _draw_pad (Output.pmGC, pad, true, true);
+@@ -1522,7 +1522,7 @@ clearPad_callback (const BoxType * b, void *cl)
+ static int
+ clearPin_callback_solid (const BoxType * b, void *cl)
+ {
+-  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
+   gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+   return 1;
+ }
+@@ -1530,7 +1530,7 @@ clearPin_callback_solid (const BoxType * b, void *cl)
+ static int
+ clearPad_callback_solid (const BoxType * b, void *cl)
+ {
+-  PadTypePtr pad = (PadTypePtr) b;
++  PadType *pad = (PadType *) b;
+   int *side = cl;
+   if (ON_SIDE (pad, *side) && pad->Mask)
+     gui->fill_pcb_pad (Output.pmGC, pad, true, true);
+@@ -1589,7 +1589,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+   int layernum;
+   int side;
+   struct poly_info info;
+-  LayerTypePtr Layer;
++  LayerType *Layer;
+   int n_entries = PCB->LayerGroups.Number[group];
+   Cardinal *layers = PCB->LayerGroups.Entries[group];
+   int first_run = 1;
+@@ -1767,7 +1767,7 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
+ }
+ 
+ void
+-ghid_draw_everything (BoxTypePtr drawn_area)
++ghid_draw_everything (BoxType *drawn_area)
+ {
+   render_priv *priv = gport->render_priv;
+   int i, ngroups;
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 0fd7572..b195f00 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -653,7 +653,7 @@ ghid_fileselect (const char *title, const char *descr,
+ void
+ ghid_show_item (void *item)
+ {
+-  ghid_pinout_window_show (&ghid_port, (ElementTypePtr) item);
++  ghid_pinout_window_show (&ghid_port, (ElementType *) item);
+ }
+ 
+ void
+diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
+index 9cbc955..1613923 100644
+--- a/src/hid/gtk/gui-drc-window.c
++++ b/src/hid/gtk/gui-drc-window.c
+@@ -236,7 +236,7 @@ selection_changed_cb (GtkTreeSelection *selection, gpointer user_data)
+ 	case LINE_TYPE:
+ 	case ARC_TYPE:
+ 	case POLYGON_TYPE:
+-	  ChangeGroupVisibility (GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1), true, true);
++	  ChangeGroupVisibility (GetLayerNumber (PCB->Data, (LayerType *) ptr1), true, true);
+ 	}
+       DrawObject (object_type, ptr1, ptr2);
+     }
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 722783e..e213dd0 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -279,7 +279,7 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
+     switch (conn.type) {
+       case PIN_TYPE:
+         {
+-          PinTypePtr pin = (PinTypePtr) conn.ptr2;
++          PinType *pin = (PinType *) conn.ptr2;
+           x = pin->X;
+           y = pin->Y;
+           gui->set_crosshair (x, y, 0);
+@@ -288,7 +288,7 @@ node_selection_changed_cb (GtkTreeSelection * selection, gpointer data)
+         }
+       case PAD_TYPE:
+         {
+-          PadTypePtr pad = (PadTypePtr) conn.ptr2;
++          PadType *pad = (PadType *) conn.ptr2;
+           x = pad->Point1.X + (pad->Point2.X - pad->Point1.X) / 2;
+           y = pad->Point1.Y + (pad->Point2.Y - pad->Point1.Y) / 2;
+           gui->set_crosshair (x, y, 0);
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 8c32c68..ba73c39 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -411,11 +411,11 @@ describe_location (Coord X, Coord Y)
+ 
+   /* don't mess with silk objects! */
+   if (type & SILK_TYPE &&
+-      GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1) >= max_copper_layer)
++      GetLayerNumber (PCB->Data, (LayerType *) ptr1) >= max_copper_layer)
+     return NULL;
+ 
+   if (type == PIN_TYPE || type == PAD_TYPE)
+-    elename = (char *)UNKNOWN (NAMEONPCB_NAME ((ElementTypePtr) ptr1));
++    elename = (char *)UNKNOWN (NAMEONPCB_NAME ((ElementType *) ptr1));
+ 
+   pinname = ConnectionName (type, ptr1, ptr2);
+ 
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
 index cf96beb..1f42e0b 100644
 --- a/src/hid/gtk/gui.h
@@ -851,6 +1984,74 @@ index cf96beb..1f42e0b 100644
  
  /* gtkhid-gdk.c AND gtkhid-gl.c */
  int ghid_set_layer (const char *name, int group, int empty);
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index fd0aa11..048f476 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -324,8 +324,8 @@ static void
+ nelma_write_nets(FILE * out)
+ {
+ 	LibraryType     netlist;
+-	LibraryMenuTypePtr net;
+-	LibraryEntryTypePtr pin;
++	LibraryMenuType *net;
++	LibraryEntryType *pin;
+ 
+ 	int             n, m, i, idx;
+ 
+@@ -373,8 +373,8 @@ nelma_write_layer(FILE * out, int z, int h,
+ 		  char *mat)
+ {
+ 	LibraryType     netlist;
+-	LibraryMenuTypePtr net;
+-	LibraryEntryTypePtr pin;
++	LibraryMenuType *net;
++	LibraryEntryType *pin;
+ 
+ 	int             n, m;
+ 
+@@ -453,7 +453,7 @@ nelma_write_layers(FILE * out)
+ }
+ 
+ static void 
+-nelma_write_object(FILE * out, LibraryEntryTypePtr pin)
++nelma_write_object(FILE * out, LibraryEntryType *pin)
+ {
+ 	int             i, idx;
+ 	Coord           px = 0, py = 0;
+@@ -494,8 +494,8 @@ static void
+ nelma_write_objects(FILE * out)
+ {
+ 	LibraryType     netlist;
+-	LibraryMenuTypePtr net;
+-	LibraryEntryTypePtr pin;
++	LibraryMenuType *net;
++	LibraryEntryType *pin;
+ 
+ 	int             n, m;
+ 
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index a28ccb7..92eec00 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -62,7 +62,7 @@ typedef struct
+   char *name;
+   Coord Width, Height;
+   Coord MarginX, MarginY;
+-} MediaType, *MediaTypePtr;
++} MediaType;
+ 
+ /*
+  * Metric ISO sizes in mm.  See http://en.wikipedia.org/wiki/ISO_paper_sizes
+@@ -385,7 +385,7 @@ static struct {
+   bool drillcopper;
+   bool legend;
+ 
+-  LayerTypePtr outline_layer;
++  LayerType *outline_layer;
+ 
+   double scale_factor;
+ 
 diff --git a/src/insert.h b/src/insert.h
 index 2793edf..31fc6dc 100644
 --- a/src/insert.h
