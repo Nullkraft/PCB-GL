@@ -31,7 +31,7 @@
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
-static int ps_set_layer (const char *name, int group, int empty);
+static int set_layer (const char *name, int group, int empty);
 static void use_gc (hidGC gc);
 
 typedef struct hid_gc_struct
@@ -365,7 +365,6 @@ static struct {
   int pagecount;
   Coord linewidth;
   bool print_group[MAX_LAYER];
-  bool print_layer[MAX_LAYER];
   double fade_ratio;
   bool multi_file;
   Coord media_width, media_height, ps_width, ps_height;
@@ -389,8 +388,6 @@ static struct {
 
   double scale_factor;
 
-  BoxType region;
-
   HID_Attr_Val ps_values[NUM_OPTIONS];
 
   bool is_mask;
@@ -410,26 +407,6 @@ ps_get_export_options (int *n)
   if (n)
     *n = NUM_OPTIONS;
   return ps_attribute_list;
-}
-
-static int
-group_for_layer (int l)
-{
-  if (l < max_copper_layer + 2 && l >= 0)
-    return GetLayerGroupNumberByNumber (l);
-  /* else something unique */
-  return max_group + 3 + l;
-}
-
-static int
-layer_sort (const void *va, const void *vb)
-{
-  int a = *(int *) va;
-  int b = *(int *) vb;
-  int d = group_for_layer (b) - group_for_layer (a);
-  if (d)
-    return d;
-  return b - a;
 }
 
 void
@@ -586,6 +563,83 @@ psopen (const char *base, const char *which)
   return ps_open_file;
 }
 
+void
+ps_expose (void)
+{
+  HID *old_gui = gui;
+  int group;
+  int nplated, nunplated;
+  bool paste_empty;
+
+  gui = &ps_hid;
+  Output.fgGC = gui->make_gc ();
+  Output.bgGC = gui->make_gc ();
+  Output.pmGC = gui->make_gc ();
+
+  gui->set_color (Output.pmGC, "erase");
+  gui->set_color (Output.bgGC, "drill");
+
+  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+
+  /* draw all copper layers in group order */
+  for (group = 0; group < max_copper_layer; group++)
+    {
+      if (!global.print_group[group])
+        continue;
+
+      if (set_layer (0, group, 0))
+        if (DrawLayerGroup (group, NULL))
+          DrawPPV (group, NULL);
+    }
+
+  CountHoles (&nplated, &nunplated, NULL);
+
+  if (nplated && set_layer ("plated-drill", SL (PDRILL, 0), 0))
+    DrawHoles (true, false, NULL);
+
+  if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0), 0))
+    DrawHoles (false, true, NULL);
+
+  if (set_layer ("componentmask", SL (MASK, TOP), 0))
+    DrawMask (COMPONENT_LAYER, NULL);
+
+  if (set_layer ("soldermask", SL (MASK, BOTTOM), 0))
+    DrawMask (SOLDER_LAYER, NULL);
+
+  if (set_layer ("topsilk", SL (SILK, TOP), 0))
+    DrawSilk (COMPONENT_LAYER, NULL);
+
+  if (set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
+    DrawSilk (SOLDER_LAYER, NULL);
+
+  paste_empty = IsPasteEmpty (COMPONENT_LAYER);
+  if (set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
+    DrawPaste (COMPONENT_LAYER, NULL);
+
+  paste_empty = IsPasteEmpty (SOLDER_LAYER);
+  if (set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
+    DrawPaste (SOLDER_LAYER, NULL);
+
+  doing_assy = true;
+
+  if (set_layer ("topassembly", SL (ASSY, TOP), 0))
+    PrintAssembly (COMPONENT_LAYER, NULL);
+
+  if (set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
+    PrintAssembly (SOLDER_LAYER, NULL);
+
+  doing_assy = false;
+
+  if (set_layer ("fab", SL (FAB, 0), 0))
+    PrintFab (Output.fgGC);
+
+  gui->destroy_gc (Output.fgGC);
+  gui->destroy_gc (Output.bgGC);
+  gui->destroy_gc (Output.pmGC);
+  gui = old_gui;
+}
+
 /* This is used by other HIDs that use a postscript format, like lpr
    or eps.  */
 void
@@ -644,40 +698,23 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
     }
 
   memset (global.print_group, 0, sizeof (global.print_group));
-  memset (global.print_layer, 0, sizeof (global.print_layer));
-
   global.outline_layer = NULL;
-
   for (i = 0; i < max_copper_layer; i++)
     {
       LayerType *layer = PCB->Data->Layer + i;
-      if (layer->LineN || layer->TextN || layer->ArcN || layer->PolygonN)
-	global.print_group[GetLayerGroupNumberByNumber (i)] = 1;
+      global.print_group[GetLayerGroupNumberByNumber (i)] = !IsLayerEmpty (layer);
 
       if (strcmp (layer->Name, "outline") == 0 ||
-	  strcmp (layer->Name, "route") == 0)
-	{
-	  global.outline_layer = layer;
-	}
+          strcmp (layer->Name, "route") == 0)
+        global.outline_layer = layer;
     }
   global.print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
   global.print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
-  for (i = 0; i < max_copper_layer; i++)
-    if (global.print_group[GetLayerGroupNumberByNumber (i)])
-      global.print_layer[i] = 1;
-
-  memcpy (saved_layer_stack, LayerStack, sizeof (LayerStack));
-  qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_sort);
 
   global.linewidth = -1;
   /* reset static vars */
-  ps_set_layer (NULL, 0, -1);
+  set_layer (NULL, 0, -1);
   use_gc (NULL);
-
-  global.region.X1 = 0;
-  global.region.Y1 = 0;
-  global.region.X2 = PCB->MaxWidth;
-  global.region.Y2 = PCB->MaxHeight;
 
   if (!global.multi_file)
     {
@@ -690,13 +727,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 
       global.doing_toc = 1;
       global.pagecount = 1;  /* 'pagecount' is modified by hid_expose_callback() call */
-      hid_expose_callback (&ps_hid, &global.region, 0);
+      ps_expose ();
     }
 
   global.pagecount = 1; /* Reset 'pagecount' if single file */
   global.doing_toc = 0;
-  ps_set_layer (NULL, 0, -1);  /* reset static vars */
-  hid_expose_callback (&ps_hid, &global.region, 0);
+  set_layer (NULL, 0, -1);  /* reset static vars */
+  ps_expose ();
 
   if (the_file)
     fprintf (the_file, "showpage\n");
@@ -782,7 +819,7 @@ corner (FILE *fh, Coord x, Coord y, int dx, int dy)
 }
 
 static int
-ps_set_layer (const char *name, int group, int empty)
+set_layer (const char *name, int group, int empty)
 {
   static int lastgroup = -1;
   time_t currenttime;
@@ -797,21 +834,11 @@ ps_set_layer (const char *name, int group, int empty)
   if (empty)
     return 0;
 
-  if (idx >= 0 && idx < max_copper_layer && !global.print_layer[idx])
-    return 0;
-
-  if (strcmp (name, "invisible") == 0)
-    return 0;
-
   global.is_drill = (SL_TYPE (idx) == SL_PDRILL || SL_TYPE (idx) == SL_UDRILL);
   global.is_mask  = (SL_TYPE (idx) == SL_MASK);
   global.is_assy  = (SL_TYPE (idx) == SL_ASSY);
   global.is_copper = (SL_TYPE (idx) == 0);
   global.is_paste  = (SL_TYPE (idx) == SL_PASTE);
-#if 0
-  printf ("Layer %s group %d drill %d mask %d\n", name, group, global.is_drill,
-	  global.is_mask);
-#endif
 
   if (global.doing_toc)
     {
@@ -1003,7 +1030,7 @@ ps_set_layer (const char *name, int group, int empty)
       strcmp (name, "route") != 0
       )
     {
-      dapi->draw_layer (global.outline_layer, &global.region, NULL);
+      dapi->draw_layer (global.outline_layer, NULL, NULL);
     }
 
   return 1;
@@ -1494,7 +1521,6 @@ void ps_ps_init (HID *hid)
   hid->get_export_options = ps_get_export_options;
   hid->do_export          = ps_do_export;
   hid->parse_arguments    = ps_parse_arguments;
-  hid->set_layer          = ps_set_layer;
   hid->make_gc            = ps_make_gc;
   hid->destroy_gc         = ps_destroy_gc;
   hid->use_mask           = ps_use_mask;
@@ -1508,7 +1534,6 @@ void ps_ps_init (HID *hid)
   hid->draw_rect          = ps_draw_rect;
   hid->fill_circle        = ps_fill_circle;
   hid->fill_polygon       = ps_fill_polygon;
-  hid->fill_pcb_polygon   = ps_fill_pcb_polygon;
   hid->fill_rect          = ps_fill_rect;
   hid->calibrate          = ps_calibrate;
   hid->set_crosshair      = ps_set_crosshair;
