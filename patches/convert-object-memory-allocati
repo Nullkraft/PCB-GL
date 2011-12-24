@@ -1,7 +1,7 @@
-Bottom: 5f2689fca0b3019d119d4c2a704cafec73cf205e
-Top:    6d2335cdd5f059fa01e56a2b731c8e8cc5ca4ee0
+Bottom: c3972894ac587422352563595bd7fbe982c7ae5e
+Top:    d31183d2a4614704d82958c963a9db0fce107018
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-24 01:13:28 +0000
+Date:   2011-12-24 01:36:59 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -2195,7 +2195,7 @@ index d31c788..c7a5602 100644
        NET_LOOP(netlist);
        {
 diff --git a/src/undo.c b/src/undo.c
-index 87e02aa..3f9ab15 100644
+index c3fc57e..9ec61e3 100644
 --- a/src/undo.c
 +++ b/src/undo.c
 @@ -161,7 +161,7 @@ UndoListType, *UndoListTypePtr;
@@ -2401,7 +2401,7 @@ index 87e02aa..3f9ab15 100644
    
    if (!Locked)
 @@ -1649,7 +1643,6 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
-       undo->Data.NetlistChange.old = (LibraryTypePtr)malloc (sizeof (LibraryTypePtr));
+       undo->Data.NetlistChange.old = (LibraryTypePtr)malloc (sizeof (LibraryType));
        old = undo->Data.NetlistChange.old;
        old->MenuN = lib->MenuN;
 -      old->MenuMax = lib->MenuMax;
