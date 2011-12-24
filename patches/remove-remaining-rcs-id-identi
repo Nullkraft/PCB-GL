@@ -1,5 +1,5 @@
 Bottom: 68231d1b512e0f4fabd602fc53e98dbfa110504e
-Top:    d640f969f7f61a5d5d21d27e76952f494776d53c
+Top:    417fc4c88c560a3593fa85ddad1fec150f915b35
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-23 23:37:58 +0000
 
@@ -15,6 +15,38 @@ NB: This alters the BOM and XY exporter output, as they previously
 
 ---
 
+diff --git a/Makefile.am b/Makefile.am
+index c6927f1..6f9a94d 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,5 +1,4 @@
+ ## -*- makefile -*-
+-## $Id$
+ ##
+ ## Top level automake file for PCB
+ 
+diff --git a/README.cvs_branches b/README.cvs_branches
+index 41bf60a..00c025f 100644
+--- a/README.cvs_branches
++++ b/README.cvs_branches
+@@ -1,6 +1,3 @@
+-# $Id$
+-#
+-
+ usermenu - cvs branch where Dan is working on allowing the gtk HID
+            to load its menus from a menu resource file like the lesstif
+ 	   HID.  No guarantees that this branch will even build, much less
+diff --git a/README_FILES/Makefile.am b/README_FILES/Makefile.am
+index ca74b2d..78f0801 100644
+--- a/README_FILES/Makefile.am
++++ b/README_FILES/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ EXTRA_DIST= \
+ 	CHANGES \
+ 	Tools \
 diff --git a/acinclude.m4 b/acinclude.m4
 index 9ab3758..dab11df 100644
 --- a/acinclude.m4
@@ -200,6 +232,47 @@ index e462abe..737a06d 100644
  This file is the start of a wish list of features/improvements in no particular
  order.
  
+diff --git a/example/Makefile.am b/example/Makefile.am
+index 9f7b034..6a14876 100644
+--- a/example/Makefile.am
++++ b/example/Makefile.am
+@@ -1,5 +1,3 @@
+-## $Id$
+-
+ examplesdir=	@docdir@/examples
+ examples_DATA=	${EXAMPLES}
+ 
+diff --git a/example/libraries/Makefile.am b/example/libraries/Makefile.am
+index 21392aa..9a33712 100644
+--- a/example/libraries/Makefile.am
++++ b/example/libraries/Makefile.am
+@@ -1,5 +1,3 @@
+-## $Id$
+-
+ examplesdir=	@docdir@/examples/libraries
+ examples_DATA=	${EXAMPLES}
+ 
+diff --git a/example/libraries/example.inc b/example/libraries/example.inc
+index 2ee0ec6..32c43b4 100644
+--- a/example/libraries/example.inc
++++ b/example/libraries/example.inc
+@@ -1,5 +1,4 @@
+ # -*- m4 -*-
+-# $Id$
+ #
+ # Example .inc file
+ 
+diff --git a/example/libraries/example.m4 b/example/libraries/example.m4
+index 2253a3c..ff2641d 100644
+--- a/example/libraries/example.m4
++++ b/example/libraries/example.m4
+@@ -1,6 +1,5 @@
+ divert(-1)
+ # -*- m4 -*-
+-# $Id$
+ #
+ define(`Description_my_RC0402', 
+   ``Standard SMT resistor/capacitor (0402)'')
 diff --git a/globalconst.h b/globalconst.h
 index afba0d4..e0779d5 100755
 --- a/globalconst.h
@@ -212,6 +285,948 @@ index afba0d4..e0779d5 100755
   */
  
  /* global constants
+diff --git a/lib/CreateLibrary.sh.in b/lib/CreateLibrary.sh.in
+index 13ffa5e..6dd4f39 100755
+--- a/lib/CreateLibrary.sh.in
++++ b/lib/CreateLibrary.sh.in
+@@ -23,7 +23,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # creates a library
+ #
+diff --git a/lib/CreateLibraryContents.sh.in b/lib/CreateLibraryContents.sh.in
+index ccba4a3..8f38224 100755
+--- a/lib/CreateLibraryContents.sh.in
++++ b/lib/CreateLibraryContents.sh.in
+@@ -23,7 +23,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # create all objects as defined in passed list_files
+ #
+diff --git a/lib/ListLibraryContents.sh.in b/lib/ListLibraryContents.sh.in
+index cee49df..9e453b7 100755
+--- a/lib/ListLibraryContents.sh.in
++++ b/lib/ListLibraryContents.sh.in
+@@ -23,7 +23,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # list the contents of a library
+ #
+diff --git a/lib/QueryLibrary.sh.in b/lib/QueryLibrary.sh.in
+index b5bed20..f053ced 100755
+--- a/lib/QueryLibrary.sh.in
++++ b/lib/QueryLibrary.sh.in
+@@ -23,7 +23,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # query a library
+ #
+diff --git a/lib/TTL_74xx_DIL.list b/lib/TTL_74xx_DIL.list
+index e51b4bc..7fbaac4 100755
+--- a/lib/TTL_74xx_DIL.list
++++ b/lib/TTL_74xx_DIL.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/TTL_74xx_DIL.m4 b/lib/TTL_74xx_DIL.m4
+index df52b7f..ca3fe0f 100755
+--- a/lib/TTL_74xx_DIL.m4
++++ b/lib/TTL_74xx_DIL.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ define(`Description_7400_dil', ``4 dual-NAND'')
+ define(`Param1_7400_dil', 14)
+diff --git a/lib/amp.inc b/lib/amp.inc
+index cca93b9..e1fcf55 100644
+--- a/lib/amp.inc
++++ b/lib/amp.inc
+@@ -1,6 +1,5 @@
+ # -*- m4 -*-
+ #
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/amphenol.inc b/lib/amphenol.inc
+index e41f874..b88ed39 100755
+--- a/lib/amphenol.inc
++++ b/lib/amphenol.inc
+@@ -1,6 +1,5 @@
+ # -*- m4 -*-
+ #
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/amphenol.list b/lib/amphenol.list
+index 1393b15..d2690d2 100755
+--- a/lib/amphenol.list
++++ b/lib/amphenol.list
+@@ -1,4 +1,3 @@
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/amphenol.m4 b/lib/amphenol.m4
+index fb499cf..c2c4f3c 100755
+--- a/lib/amphenol.m4
++++ b/lib/amphenol.m4
+@@ -1,5 +1,4 @@
+ divert(-1)
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/bourns.inc b/lib/bourns.inc
+index 0ebc298..23eee32 100644
+--- a/lib/bourns.inc
++++ b/lib/bourns.inc
+@@ -1,6 +1,5 @@
+ # -*- m4 -*-
+ #
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/candk.inc b/lib/candk.inc
+index 94e59b9..6ad6072 100644
+--- a/lib/candk.inc
++++ b/lib/candk.inc
+@@ -1,6 +1,5 @@
+ # -*- m4 -*-
+ #
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/common.m4 b/lib/common.m4
+index bc619c8..4c1f494 100644
+--- a/lib/common.m4
++++ b/lib/common.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # common defines for packages
+ #
+diff --git a/lib/connector.inc b/lib/connector.inc
+index 3bd8195..689f204 100755
+--- a/lib/connector.inc
++++ b/lib/connector.inc
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # connector packages
+ 
+diff --git a/lib/connector.list b/lib/connector.list
+index d38e622..0af58a8 100755
+--- a/lib/connector.list
++++ b/lib/connector.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/connector.m4 b/lib/connector.m4
+index a264c19..ae1575c 100755
+--- a/lib/connector.m4
++++ b/lib/connector.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ define(`Description_connector2', `connector 2x1 pins')
+ define(`Param1_connector2', 1)
+diff --git a/lib/crystal.list b/lib/crystal.list
+index ad9c265..da0c7b4 100755
+--- a/lib/crystal.list
++++ b/lib/crystal.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/crystal.m4 b/lib/crystal.m4
+index bf2979d..cf7e4b2 100755
+--- a/lib/crystal.m4
++++ b/lib/crystal.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ define(`Description_crystal_300', `crystal 300mil')
+ define(`Param1_crystal_300', 300)
+diff --git a/lib/cts.inc b/lib/cts.inc
+index cf0b648..e1f281c 100644
+--- a/lib/cts.inc
++++ b/lib/cts.inc
+@@ -1,6 +1,5 @@
+ # -*- m4 -*-
+ #
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/dil.inc b/lib/dil.inc
+index d1cde4a..6a75e0a 100755
+--- a/lib/dil.inc
++++ b/lib/dil.inc
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # DIL packages
+ 
+diff --git a/lib/geda.inc b/lib/geda.inc
+index d25dd1d..985c18a 100644
+--- a/lib/geda.inc
++++ b/lib/geda.inc
+@@ -1,5 +1,4 @@
+ # -*- m4 -*-
+-#   $Id$
+ #
+ #   gEDA compatible footprint names
+ #
+diff --git a/lib/gen_geda_list.awk b/lib/gen_geda_list.awk
+index 0770b47..fc73e5a 100755
+--- a/lib/gen_geda_list.awk
++++ b/lib/gen_geda_list.awk
+@@ -1,7 +1,5 @@
+ #!/usr/bin/awk -f
+ #
+-# $Id$
+-#
+ # Script to regenerate geda.list from geda.inc
+ #
+ # Usage:
+diff --git a/lib/gen_geda_m4.awk b/lib/gen_geda_m4.awk
+index 88994de..ccbf4d8 100755
+--- a/lib/gen_geda_m4.awk
++++ b/lib/gen_geda_m4.awk
+@@ -1,7 +1,5 @@
+ #!/usr/bin/awk -f
+ #
+-# $Id$
+-#
+ # Script to regenerate geda.m4 from geda.inc
+ #
+ # Usage:
+diff --git a/lib/gen_list.awk b/lib/gen_list.awk
+index 5a9e8cd..b3d672e 100755
+--- a/lib/gen_list.awk
++++ b/lib/gen_list.awk
+@@ -1,7 +1,5 @@
+ #!/usr/bin/awk -f
+ #
+-# $Id$
+-#
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/gen_m4.awk b/lib/gen_m4.awk
+index 2b16867..544f686 100755
+--- a/lib/gen_m4.awk
++++ b/lib/gen_m4.awk
+@@ -1,7 +1,5 @@
+ #!/usr/bin/awk -f
+ #
+-# $Id$
+-#
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/generic.list b/lib/generic.list
+index bc31768..2fc70ab 100755
+--- a/lib/generic.list
++++ b/lib/generic.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/generic.m4 b/lib/generic.m4
+index cd19fcd..a08cac0 100755
+--- a/lib/generic.m4
++++ b/lib/generic.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ define(`Description_generic8_dil', ``generic'')
+ define(`Param1_generic8_dil', 8)
+diff --git a/lib/jerry.list b/lib/jerry.list
+index 903e853..6d03af9 100644
+--- a/lib/jerry.list
++++ b/lib/jerry.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ 
+ #  Arcade machine parts needed by Scott "Jerry" Lawrence
+ #   jsl@absynth.com
+diff --git a/lib/jerry.m4 b/lib/jerry.m4
+index f3f742c..28dd30f 100644
+--- a/lib/jerry.m4
++++ b/lib/jerry.m4
+@@ -23,8 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+-#
+ 
+ #  Arcade machine parts needed by Scott "Jerry" Lawrence
+ #   jsl@absynth.com
+diff --git a/lib/johnstech.inc b/lib/johnstech.inc
+index 926a3ad..0a11fee 100644
+--- a/lib/johnstech.inc
++++ b/lib/johnstech.inc
+@@ -1,5 +1,4 @@
+ # -*- m4 -*-
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/linear.list b/lib/linear.list
+index 80eabe3..ab120fd 100755
+--- a/lib/linear.list
++++ b/lib/linear.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/linear.m4 b/lib/linear.m4
+index ba01501..5b8e695 100755
+--- a/lib/linear.m4
++++ b/lib/linear.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ define(`Description_MAX222_dil', `high-speed dual RS232 driver w. shutdown')
+ define(`Param1_MAX222_dil', 18)
+diff --git a/lib/logic.list b/lib/logic.list
+index 8777e57..9f59eb5 100755
+--- a/lib/logic.list
++++ b/lib/logic.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/logic.m4 b/lib/logic.m4
+index 517767a..15a2cb1 100755
+--- a/lib/logic.m4
++++ b/lib/logic.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # ------------------------------------------------------------------------
+ # based on mail by Olaf Kaluza (olaf@criseis.ruhr.de)
+diff --git a/lib/lsi.list b/lib/lsi.list
+index d805435..b98afdf 100755
+--- a/lib/lsi.list
++++ b/lib/lsi.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/lsi.m4 b/lib/lsi.m4
+index c495f90..99dd15c 100755
+--- a/lib/lsi.m4
++++ b/lib/lsi.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # ----------------------------------------------------------------------
+ # several different microcontrollers from the PIC family
+diff --git a/lib/m4lib_to_newlib.sh b/lib/m4lib_to_newlib.sh
+index 09499b6..6ca4b81 100644
+--- a/lib/m4lib_to_newlib.sh
++++ b/lib/m4lib_to_newlib.sh
+@@ -1,7 +1,4 @@
+ #!/bin/sh
+-#
+-# $Id$
+-#
+ 
+ # This script is used to extract all elements from an "oldlib" (M4)
+ # style library and place them in individual "newlib" style files.
+diff --git a/lib/memory.list b/lib/memory.list
+index 00e7b88..ed58e7f 100755
+--- a/lib/memory.list
++++ b/lib/memory.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/memory.m4 b/lib/memory.m4
+index 8bdceeb..7af73fb 100755
+--- a/lib/memory.m4
++++ b/lib/memory.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ define(`Description_27512_dil', `EPROM 64Kx8')
+ define(`Param1_27512_dil', 28)
+diff --git a/lib/minicircuits.inc b/lib/minicircuits.inc
+index 22174a5..9ec6218 100644
+--- a/lib/minicircuits.inc
++++ b/lib/minicircuits.inc
+@@ -1,6 +1,5 @@
+ # -*- m4 -*-
+ #
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/misc.inc b/lib/misc.inc
+index 380d511..f34a3fc 100755
+--- a/lib/misc.inc
++++ b/lib/misc.inc
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # misc packages
+ #
+diff --git a/lib/nichicon.inc b/lib/nichicon.inc
+index 545e1d4..f96c151 100644
+--- a/lib/nichicon.inc
++++ b/lib/nichicon.inc
+@@ -1,6 +1,5 @@
+ # -*- m4 -*-
+ #
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/optek.inc b/lib/optek.inc
+index 943f0c4..711ecde 100644
+--- a/lib/optek.inc
++++ b/lib/optek.inc
+@@ -1,6 +1,5 @@
+ # -*- m4 -*-
+ #
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/optical.list b/lib/optical.list
+index 8fa292b..1a78dfb 100755
+--- a/lib/optical.list
++++ b/lib/optical.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/optical.m4 b/lib/optical.m4
+index 92b6a17..24a7f52 100755
+--- a/lib/optical.m4
++++ b/lib/optical.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # most (all at the beginning) of the data was provided by
+ # Volker Bosch (bosch@iema.e-technik.uni-stuttgart.de)
+diff --git a/lib/panasonic.inc b/lib/panasonic.inc
+index 5c3b85a..b539cd6 100644
+--- a/lib/panasonic.inc
++++ b/lib/panasonic.inc
+@@ -1,6 +1,5 @@
+ # -*- m4 -*-
+ #
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/pci.inc b/lib/pci.inc
+index 762749e..23d9189 100644
+--- a/lib/pci.inc
++++ b/lib/pci.inc
+@@ -1,5 +1,3 @@
+-# $Id$
+-#
+ # Definitions for PCI boards
+ # by D.J. Barrow dj_barrow@ariasoft.ie
+ #
+diff --git a/lib/pci.list b/lib/pci.list
+index 0ddcb59..44f9fbd 100644
+--- a/lib/pci.list
++++ b/lib/pci.list
+@@ -1,6 +1,3 @@
+-# $Id$
+-#
+-
+ PCI5V_AVE_HEIGHT:PCI5V_AVE_HEIGHT:PCI5V_AVE_HEIGHT
+ PCI5V_MIN_HEIGHT:PCI5V_MIN_HEIGHT:PCI5V_MIN_HEIGHT
+ PCI5V_MAX_HEIGHT:PCI5V_MAX_HEIGHT:PCI5V_MAX_HEIGHT
+diff --git a/lib/pci.m4 b/lib/pci.m4
+index 632ec7d..4dfa176 100644
+--- a/lib/pci.m4
++++ b/lib/pci.m4
+@@ -1,5 +1,4 @@
+ divert(-1)
+-# $Id$
+ #
+ # Definitions for PCI boards
+ # by D.J. Barrow dj_barrow@ariasoft.ie
+diff --git a/lib/plcc.inc b/lib/plcc.inc
+index 5e1a1dc..cbe7458 100755
+--- a/lib/plcc.inc
++++ b/lib/plcc.inc
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # PLCC packages
+ #
+diff --git a/lib/png_diff.sh b/lib/png_diff.sh
+index 478c19c..ee557fd 100755
+--- a/lib/png_diff.sh
++++ b/lib/png_diff.sh
+@@ -1,7 +1,5 @@
+ #!/bin/sh
+ #
+-# $Id$
+-#
+ # Copyright (c) 2003, 2004, 2005, 2006, 2007 Dan McMahill
+ 
+ #  This program is free software; you can redistribute it and/or modify
+diff --git a/lib/qfn.inc b/lib/qfn.inc
+index d8fb50f..5710cc6 100644
+--- a/lib/qfn.inc
++++ b/lib/qfn.inc
+@@ -1,5 +1,4 @@
+ # -*- m4 -*-
+-# $Id$
+ #                            COPYRIGHT
+ #
+ #   PCB, interactive printed circuit board design
+diff --git a/lib/qfp-ui.in b/lib/qfp-ui.in
+index f6261a1..fe0b8d0 100755
+--- a/lib/qfp-ui.in
++++ b/lib/qfp-ui.in
+@@ -1,6 +1,5 @@
+ #!@WISH@ -f
+ 
+-# $Id$
+ #
+ # User Interface that generates custom QFP and SOIC packages for pcb-1.6.3
+ # Invoked from a line like
+diff --git a/lib/qfp.inc b/lib/qfp.inc
+index 0ceaeed..a0598d4 100644
+--- a/lib/qfp.inc
++++ b/lib/qfp.inc
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ #  QFP packages
+ #
+diff --git a/lib/qfp2.inc b/lib/qfp2.inc
+index 04f6aa2..130f237 100644
+--- a/lib/qfp2.inc
++++ b/lib/qfp2.inc
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ #  QFP packages
+ #
+diff --git a/lib/qfpdj.inc b/lib/qfpdj.inc
+index 51e30b1..98c5d5b 100644
+--- a/lib/qfpdj.inc
++++ b/lib/qfpdj.inc
+@@ -24,7 +24,6 @@
+ #   Improvments by D.J. Barrow dj_barrow@ariasoft.ie
+ #   Further improved by W. Kazubski <wk@ire.pw.edu.pl>
+ # 
+-#   RCS: $Id$
+ #
+ #  QFP packages
+ #
+diff --git a/lib/resistor_0.25W.list b/lib/resistor_0.25W.list
+index 3c68234..71e27dc 100755
+--- a/lib/resistor_0.25W.list
++++ b/lib/resistor_0.25W.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/resistor_0.25W.m4 b/lib/resistor_0.25W.m4
+index 3487ab6..b83a624 100755
+--- a/lib/resistor_0.25W.m4
++++ b/lib/resistor_0.25W.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ define(`Description_r_025', ``R 0.25W'')
+ 
+diff --git a/lib/resistor_adjust.list b/lib/resistor_adjust.list
+index a211622..b6d2657 100644
+--- a/lib/resistor_adjust.list
++++ b/lib/resistor_adjust.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/resistor_adjust.m4 b/lib/resistor_adjust.m4
+index ec13611..10def9f 100644
+--- a/lib/resistor_adjust.m4
++++ b/lib/resistor_adjust.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # most (all at the beginning) of the data was provided by
+ # Volker Bosch (bosch@iema.e-technik.uni-stuttgart.de)
+diff --git a/lib/resistor_array.list b/lib/resistor_array.list
+index f659ba8..32ed7af 100755
+--- a/lib/resistor_array.list
++++ b/lib/resistor_array.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/resistor_array.m4 b/lib/resistor_array.m4
+index bdf96e0..a939410 100755
+--- a/lib/resistor_array.m4
++++ b/lib/resistor_array.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ 
+ # ----------------------------------------------------------------------
+ # resistor array without common pin
+diff --git a/lib/rules.inc b/lib/rules.inc
+index aee42f9..244e592 100644
+--- a/lib/rules.inc
++++ b/lib/rules.inc
+@@ -1,5 +1,4 @@
+ #
+-#   $Id$
+ #
+ #   design rule definitions --
+ #   tune design rules here
+diff --git a/lib/smt.inc b/lib/smt.inc
+index ace76a0..eba644a 100644
+--- a/lib/smt.inc
++++ b/lib/smt.inc
+@@ -1,5 +1,4 @@
+ # -*- m4 -*-
+-#   $Id$
+ #
+ #   surface mounted components
+ #
+diff --git a/lib/texas_inst_amplifier.list b/lib/texas_inst_amplifier.list
+index 531aaad..4776a48 100755
+--- a/lib/texas_inst_amplifier.list
++++ b/lib/texas_inst_amplifier.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/texas_inst_amplifier.m4 b/lib/texas_inst_amplifier.m4
+index 01c2ea5..47572f1 100755
+--- a/lib/texas_inst_amplifier.m4
++++ b/lib/texas_inst_amplifier.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ define(`Description_TL070_dil', `Single low noise JFET input operational amplifier')
+ define(`Param1_TL070_dil', 8)
+diff --git a/lib/texas_inst_voltage_reg.list b/lib/texas_inst_voltage_reg.list
+index 862cea9..100e641 100644
+--- a/lib/texas_inst_voltage_reg.list
++++ b/lib/texas_inst_voltage_reg.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ #
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/texas_inst_voltage_reg.m4 b/lib/texas_inst_voltage_reg.m4
+index a6fdb2f..5a1052c 100644
+--- a/lib/texas_inst_voltage_reg.m4
++++ b/lib/texas_inst_voltage_reg.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ #
+-#   RCS: $Id$
+ #
+ #
+ define(`Description_uA7905C',`-5V 1.5A voltage regulator')
+diff --git a/lib/transistor.list b/lib/transistor.list
+index 2e7d339..f814079 100755
+--- a/lib/transistor.list
++++ b/lib/transistor.list
+@@ -22,7 +22,6 @@
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # mask package values...
+ #
+diff --git a/lib/transistor.m4 b/lib/transistor.m4
+index fa33af6..fa112fe 100755
+--- a/lib/transistor.m4
++++ b/lib/transistor.m4
+@@ -23,7 +23,6 @@ divert(-1)
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+ # 
+-#   RCS: $Id$
+ #
+ # most data by Volker Bosch (bosch@iema.e-technik.uni-stuttgart.de
+ #
+diff --git a/newlib/2_pin_thru-hole_packages/Makefile.am b/newlib/2_pin_thru-hole_packages/Makefile.am
+index 18f59ed..bc67252 100644
+--- a/newlib/2_pin_thru-hole_packages/Makefile.am
++++ b/newlib/2_pin_thru-hole_packages/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ pcblibsubdir= @PCBTREEDIR@/2_pin_thru-hole_packages
+ pcblibsub_DATA= ${COMPONENTS}
+ COMPONENTS= \
+diff --git a/newlib/Makefile.am b/newlib/Makefile.am
+index e38b946..da5dc95 100644
+--- a/newlib/Makefile.am
++++ b/newlib/Makefile.am
+@@ -1,5 +1,3 @@
+-## $Id$
+-##
+ ## Top level 'newlib' automake file
+ 
+ SUBDIRS=\
+diff --git a/newlib/connectors/Makefile.am b/newlib/connectors/Makefile.am
+index b1d56c8..b261d4d 100644
+--- a/newlib/connectors/Makefile.am
++++ b/newlib/connectors/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ pcblibsubdir= @PCBTREEDIR@/connectors
+ pcblibsub_DATA= ${COMPONENTS}
+ COMPONENTS= \
+diff --git a/newlib/crystal/Makefile.am b/newlib/crystal/Makefile.am
+index a45bf12..f91a2d2 100644
+--- a/newlib/crystal/Makefile.am
++++ b/newlib/crystal/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ pcblibsubdir= @PCBTREEDIR@/crystal
+ pcblibsub_DATA= ${COMPONENTS}
+ COMPONENTS= \
+diff --git a/newlib/electro-optics/Makefile.am b/newlib/electro-optics/Makefile.am
+index 5003ae8..c84c7fd 100644
+--- a/newlib/electro-optics/Makefile.am
++++ b/newlib/electro-optics/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ pcblibsubdir= @PCBTREEDIR@/electro-optics
+ pcblibsub_DATA= ${COMPONENTS}
+ COMPONENTS= \
+diff --git a/newlib/headers/Makefile.am b/newlib/headers/Makefile.am
+index 6a196bf..b543e09 100644
+--- a/newlib/headers/Makefile.am
++++ b/newlib/headers/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ pcblibsubdir= @PCBTREEDIR@/headers
+ pcblibsub_DATA= ${COMPONENTS}
+ COMPONENTS= \
+diff --git a/newlib/keystone/Makefile.am b/newlib/keystone/Makefile.am
+index 295f064..e0cde83 100644
+--- a/newlib/keystone/Makefile.am
++++ b/newlib/keystone/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ pcblibsubdir= @PCBTREEDIR@/keystone
+ pcblibsub_DATA= ${COMPONENTS}
+ COMPONENTS= \
+diff --git a/newlib/msp430/Makefile.am b/newlib/msp430/Makefile.am
+index ae9ac11..08471b2 100644
+--- a/newlib/msp430/Makefile.am
++++ b/newlib/msp430/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ pcblibsubdir= @PCBTREEDIR@/msp430
+ pcblibsub_DATA= ${COMPONENTS}
+ COMPONENTS= \
+diff --git a/newlib/not_vetted_ingo/Makefile.am b/newlib/not_vetted_ingo/Makefile.am
+index 580e9c8..1b8f3fe 100644
+--- a/newlib/not_vetted_ingo/Makefile.am
++++ b/newlib/not_vetted_ingo/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ pcblibsubdir= @PCBTREEDIR@/not_vetted_ingo
+ pcblibsub_DATA= ${COMPONENTS}
+ COMPONENTS= \
+diff --git a/newlib/sockets/Makefile.am b/newlib/sockets/Makefile.am
+index 5cf859f..15b4e57 100644
+--- a/newlib/sockets/Makefile.am
++++ b/newlib/sockets/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ pcblibsubdir= @PCBTREEDIR@/sockets
+ pcblibsub_DATA= ${COMPONENTS}
+ COMPONENTS=
+diff --git a/newlib/tests/Makefile.am b/newlib/tests/Makefile.am
+index 0be6654..356d9ba 100644
+--- a/newlib/tests/Makefile.am
++++ b/newlib/tests/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ pcblibsubdir= @PCBTREEDIR@/tests
+ pcblibsub_DATA= ${COMPONENTS}
+ COMPONENTS= \
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 7adb424..47035f6 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -1,6 +1,4 @@
+ ## -*- makefile -*-
+-## $Id$
+-##
+ 
+ SUBDIRS=	icons
+ 
 diff --git a/src/action.h b/src/action.h
 index 83089f3..4b93ef8 100644
 --- a/src/action.h
@@ -805,6 +1820,17 @@ index dd64f63..f218e7c 100644
  /* FIXME - we currently hardcode the grid and PCB size.  What we
     should do in the future is scan the font for its extents, and size
     the grid appropriately.  Also, when we convert back to a font, we
+diff --git a/src/gather-actions b/src/gather-actions
+index f024158..d8b9e9d 100644
+--- a/src/gather-actions
++++ b/src/gather-actions
+@@ -1,6 +1,5 @@
+ #!/usr/bin/perl
+ # -*- perl -*-
+-#  $Id$
+ #
+ #                            COPYRIGHT
+ #  PCB, interactive printed circuit board design
 diff --git a/src/global.h b/src/global.h
 index 029d63c..79c1456 100644
 --- a/src/global.h
@@ -1290,6 +2316,28 @@ index 8b3558a..367cb8f 100644
  /*
   *                            COPYRIGHT
   *
+diff --git a/src/hid/gtk/gui-icons-misc.data b/src/hid/gtk/gui-icons-misc.data
+index 0d121b9..f0d2ec7 100644
+--- a/src/hid/gtk/gui-icons-misc.data
++++ b/src/hid/gtk/gui-icons-misc.data
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ 
+diff --git a/src/hid/gtk/gui-icons-mode-buttons.data b/src/hid/gtk/gui-icons-mode-buttons.data
+index be040f1..19e9ce8 100644
+--- a/src/hid/gtk/gui-icons-mode-buttons.data
++++ b/src/hid/gtk/gui-icons-mode-buttons.data
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
 diff --git a/src/hid/gtk/gui-keyref-window.c b/src/hid/gtk/gui-keyref-window.c
 index 6eaf3eb..e2632ca 100644
 --- a/src/hid/gtk/gui-keyref-window.c
@@ -1714,6 +2762,27 @@ index 661eaa8..a6ea013 100644
  extern HID ps_hid;
  extern void ps_hid_export_to_file (FILE *, HID_Attr_Val *);
  extern void ps_start_file (FILE *);
+diff --git a/src/icon.data b/src/icon.data
+index 7e55e93..470b2c8 100644
+--- a/src/icon.data
++++ b/src/icon.data
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ #define icon_width 32
+ #define icon_height 32
+diff --git a/src/icons/Makefile.am b/src/icons/Makefile.am
+index 23cc5a4..f2c29ff 100644
+--- a/src/icons/Makefile.am
++++ b/src/icons/Makefile.am
+@@ -1,4 +1,2 @@
+-## $Id$
+-
+ EXTRA_DIST= hand.dat hcurs.dat lcurs.dat lock.dat
+ 
 diff --git a/src/insert.c b/src/insert.c
 index 42661ec..7e12874 100644
 --- a/src/insert.c
@@ -1907,6 +2976,18 @@ index a0220c0..2f34cfe 100644
   */
  
  /* prototypes for misc routines
+diff --git a/src/mode_icon.data b/src/mode_icon.data
+index e88866e..40e587e 100644
+--- a/src/mode_icon.data
++++ b/src/mode_icon.data
+@@ -22,7 +22,6 @@
+  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+  *  Thomas.Nau@rz.uni-ulm.de
+  *
+- *  RCS: $Id$
+  */
+ 
+ #define BufferModeIcon_width 21
 diff --git a/src/move.c b/src/move.c
 index 56ced53..f1971d5 100644
 --- a/src/move.c
@@ -2070,6 +3151,20 @@ index 8cf1888..adc2387 100644
  static	LayerTypePtr	Layer;
  static	PolygonTypePtr	Polygon;
  static	SymbolTypePtr	Symbol;
+diff --git a/src/pcbtest.sh.in b/src/pcbtest.sh.in
+index e1e97b2..516a526 100755
+--- a/src/pcbtest.sh.in
++++ b/src/pcbtest.sh.in
+@@ -22,9 +22,6 @@
+ #   Contact addresses for paper mail and Email:
+ #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ #   Thomas.Nau@rz.uni-ulm.de
+-# 
+-#   RCS: $Id$
+-#
+ #
+ #
+ # starts a test installation of pcb
 diff --git a/src/polygon.h b/src/polygon.h
 index bdbef46..e5d1ace 100644
 --- a/src/polygon.h
@@ -2686,3 +3781,47 @@ index 5bd4acb..b24bc65 100755
      #  # PcbBOM Version 1.0
      #  # Date: Wed Jun 17 14:41:43 2009 UTC
      #  # Author: Dan McMahill
+diff --git a/tools/Makefile.am b/tools/Makefile.am
+index f350471..3900614 100644
+--- a/tools/Makefile.am
++++ b/tools/Makefile.am
+@@ -1,6 +1,3 @@
+-## $Id$
+-##
+-
+ ## XXX the tools should probably be cleaned up a bit and installed
+ ## in ${exec_prefix}/bin  (by bin_SCRIPTS and bin_PROGRAMS)
+ 
+diff --git a/tools/MergePCBPS b/tools/MergePCBPS
+index 8785d28..8d63529 100755
+--- a/tools/MergePCBPS
++++ b/tools/MergePCBPS
+@@ -1,7 +1,5 @@
+ #!/bin/sh
+ #
+-# $Id$
+-#
+ # merges PostScript files created by pcb (version >= 1.4.2) into
+ # a single file for backward compatibility
+ #
+diff --git a/tools/Merge_dimPCBPS b/tools/Merge_dimPCBPS
+index 08c559e..84ce3ab 100755
+--- a/tools/Merge_dimPCBPS
++++ b/tools/Merge_dimPCBPS
+@@ -1,7 +1,5 @@
+ #!/bin/sh
+ #
+-# $Id$
+-#
+ # merges PostScript files created by pcb (version >= 1.4.2) into
+ # a single file for backward compatibility
+ #
+diff --git a/tutorial/Makefile.am b/tutorial/Makefile.am
+index 85daeac..2b9320f 100644
+--- a/tutorial/Makefile.am
++++ b/tutorial/Makefile.am
+@@ -1,5 +1,3 @@
+-## $Id$
+-
+ tutdir=	@docdir@/tutorial
+ tut_DATA=	${TUTORIALS}
