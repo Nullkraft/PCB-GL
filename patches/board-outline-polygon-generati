@@ -1,5 +1,5 @@
 Bottom: a0622015d498e84970e5fdca5b8e3a424651bc43
-Top:    779daa7ad4e354d24543bdb5cb423e370d985e8d
+Top:    2c366c2226906fbe6a591768da4ad1efc4272f37
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 02:03:29 +0000
 
@@ -53,7 +53,7 @@ index f93674b..f916878 100644
  
    gui->use_mask (HID_MASK_OFF);
 diff --git a/src/polygon.c b/src/polygon.c
-index 2d3e9e4..1139f8a 100644
+index 2d3e9e4..3311b09 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -79,6 +79,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -80,7 +80,7 @@ index 2d3e9e4..1139f8a 100644
 +static int
 +arc_outline_callback (const BoxType * b, void *cl)
 +{
-+  ArcTypePtr arc = (ArcTypePtr)b;
++  ArcType *arc = (ArcType *)b;
 +  struct clip_outline_info *info = cl;
 +  POLYAREA *np, *res;
 +
@@ -96,7 +96,7 @@ index 2d3e9e4..1139f8a 100644
 +static int
 +line_outline_callback (const BoxType * b, void *cl)
 +{
-+  LineTypePtr line = (LineTypePtr)b;
++  LineType *line = (LineType *)b;
 +  struct clip_outline_info *info = cl;
 +  POLYAREA *np, *res;
 +
@@ -135,7 +135,7 @@ index 2d3e9e4..1139f8a 100644
 +  int i;
 +  int count;
 +  int found_outline = 0;
-+  LayerTypePtr Layer = NULL;
++  LayerType *Layer = NULL;
 +  BoxType region;
 +  struct clip_outline_info info;
 +  POLYAREA *whole_world;
