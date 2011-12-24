@@ -36,37 +36,37 @@
 
 void Draw (void);
 void Redraw (void);
-void DrawVia (PinTypePtr);
-void DrawRat (RatTypePtr);
-void DrawViaName (PinTypePtr);
-void DrawPin (PinTypePtr);
-void DrawPinName (PinTypePtr);
-void DrawPad (PadTypePtr);
-void DrawPadName (PadTypePtr);
-void DrawLine (LayerTypePtr, LineTypePtr);
-void DrawArc (LayerTypePtr, ArcTypePtr);
-void DrawText (LayerTypePtr, TextTypePtr);
-void DrawTextLowLevel (TextTypePtr, Coord);
-void DrawPolygon (LayerTypePtr, PolygonTypePtr);
-void DrawElement (ElementTypePtr);
-void DrawElementName (ElementTypePtr);
-void DrawElementPackage (ElementTypePtr);
-void DrawElementPinsAndPads (ElementTypePtr);
+void DrawVia (PinType *);
+void DrawRat (RatType *);
+void DrawViaName (PinType *);
+void DrawPin (PinType *);
+void DrawPinName (PinType *);
+void DrawPad (PadType *);
+void DrawPadName (PadType *);
+void DrawLine (LayerType *, LineType *);
+void DrawArc (LayerType *, ArcType *);
+void DrawText (LayerType *, TextType *);
+void DrawTextLowLevel (TextType *, Coord);
+void DrawPolygon (LayerType *, PolygonType *);
+void DrawElement (ElementType *);
+void DrawElementName (ElementType *);
+void DrawElementPackage (ElementType *);
+void DrawElementPinsAndPads (ElementType *);
 void DrawObject (int, void *, void *);
-void EraseVia (PinTypePtr);
-void EraseRat (RatTypePtr);
-void EraseViaName (PinTypePtr);
-void ErasePad (PadTypePtr);
-void ErasePadName (PadTypePtr);
-void ErasePin (PinTypePtr);
-void ErasePinName (PinTypePtr);
-void EraseLine (LineTypePtr);
-void EraseArc (ArcTypePtr);
-void EraseText (LayerTypePtr, TextTypePtr);
-void ErasePolygon (PolygonTypePtr);
-void EraseElement (ElementTypePtr);
-void EraseElementPinsAndPads (ElementTypePtr);
-void EraseElementName (ElementTypePtr);
+void EraseVia (PinType *);
+void EraseRat (RatType *);
+void EraseViaName (PinType *);
+void ErasePad (PadType *);
+void ErasePadName (PadType *);
+void ErasePin (PinType *);
+void ErasePinName (PinType *);
+void EraseLine (LineType *);
+void EraseArc (ArcType *);
+void EraseText (LayerType *, TextType *);
+void ErasePolygon (PolygonType *);
+void EraseElement (ElementType *);
+void EraseElementPinsAndPads (ElementType *);
+void EraseElementName (ElementType *);
 void EraseObject (int, void *, void *);
 
 void DrawLayerGroup (int side, const BoxType *drawn_area);
@@ -77,13 +77,13 @@ void DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
 void PrintAssembly (int side, const BoxType *drawn_area);
 
 /* TEMPORARY */
-void ClearPad (PadTypePtr, bool);
-void DrawPinOrViaLowLevel (PinTypePtr, bool);
-void DrawPlainPin (PinTypePtr, bool);
-void DrawPlainVia (PinTypePtr, bool);
-void DrawRegularText (LayerTypePtr, TextTypePtr);
-void DrawEMark (ElementTypePtr, Coord, Coord, bool);
-void DrawHole (PinTypePtr);
+void ClearPad (PadType *, bool);
+void DrawPinOrViaLowLevel (PinType *, bool);
+void DrawPlainPin (PinType *, bool);
+void DrawPlainVia (PinType *, bool);
+void DrawRegularText (LayerType *, TextType *);
+void DrawEMark (ElementType *, Coord, Coord, bool);
+void DrawHole (PinType *);
 void DrawRats (const BoxType *);
 /* TEMPORARY */
 
