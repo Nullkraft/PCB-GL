@@ -1,7 +1,7 @@
-Bottom: 1e125a248b0ab7c7634c5eba08548e27857f64ab
-Top:    a8d98deaa62239062043dd2870ce9ce9bfe77c16
+Bottom: 1b77abfe9114b8bffd1295a8ae1646d80a51b1e3
+Top:    dc0257140767a294eef001fcaa8a492879ee36ae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-24 02:03:33 +0000
+Date:   2011-12-24 16:30:50 +0000
 
 bdale patch
 
@@ -9,7 +9,7 @@ bdale patch
 ---
 
 diff --git a/src/action.c b/src/action.c
-index b1c33ab..fb8ff49 100644
+index affefba..8509967 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -7975,6 +7975,71 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
@@ -95,7 +95,7 @@ index b1c33ab..fb8ff49 100644
  
  REGISTER_ACTIONS (action_action_list)
 diff --git a/src/polygon.c b/src/polygon.c
-index 4669b6c..0a374a7 100644
+index 3311b09..2da9024 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -1965,8 +1965,8 @@ struct clip_outline_info {
