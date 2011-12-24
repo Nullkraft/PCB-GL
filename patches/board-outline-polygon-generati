@@ -1,7 +1,7 @@
-Bottom: 860f75ccdcac968dee0600829a61da11678a69ac
-Top:    046c96d886c0412fbb25484461b2b51a7fe24dbc
+Bottom: 018c61f2734d9aa440ccc6d4fc2fd09fea73dc42
+Top:    df865b9ae11a96d544e7bd736bc450bd010fce3e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-23 21:38:16 +0000
+Date:   2011-12-24 00:32:44 +0000
 
 Board outline polygon generation
 
@@ -12,10 +12,10 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index feded94..017eca6 100644
+index 34be21b..263800d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -13,6 +13,7 @@
+@@ -11,6 +11,7 @@
  #include "draw.h"
  #include "draw_funcs.h"
  #include "rtree.h"
@@ -23,7 +23,7 @@ index feded94..017eca6 100644
  #include "gui-pinout-preview.h"
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
-@@ -1492,6 +1493,7 @@ static void
+@@ -1487,6 +1488,7 @@ static void
  GhidDrawMask (int side, BoxType * screen)
  {
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
@@ -31,7 +31,7 @@ index feded94..017eca6 100644
  
    OutputType *out = &Output;
  
-@@ -1513,7 +1515,19 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1508,7 +1510,19 @@ GhidDrawMask (int side, BoxType * screen)
    gui->use_mask (HID_MASK_AFTER);
    gui->set_color (out->fgGC, PCB->MaskColor);
    ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
@@ -238,10 +238,10 @@ index 1114e33..4669b6c 100644
 +  return clipped;
 +}
 diff --git a/src/polygon.h b/src/polygon.h
-index bdbef46..b22556a 100644
+index e5d1ace..6672ca4 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
-@@ -88,5 +88,5 @@ bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
+@@ -87,5 +87,5 @@ bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
  void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
                            void (*emit) (PLINE *, void *), void *user_data);
  void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);

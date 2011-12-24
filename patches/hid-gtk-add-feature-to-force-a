@@ -1,7 +1,7 @@
-Bottom: b480a0c06ac186959ee0181ff68af38f6da2c167
-Top:    cd82059d3c61a7763430fb6bf9884f4b3796be4b
+Bottom: 873545f734dc2562bfa829cd5a7704fc5aff04db
+Top:    d5d1d9bba017f9593d9fbc4551f3b017737517a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-23 21:38:09 +0000
+Date:   2011-12-24 00:32:35 +0000
 
 hid/gtk: Add feature to force an immediate redraw if framerate is low
 
@@ -16,10 +16,10 @@ mainloop is not hit until the auto-routing operation is fully complete.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d372f8a..99b8cfa 100644
+index 7471afc..5101752 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -53,6 +53,7 @@ typedef struct render_priv {
+@@ -48,6 +48,7 @@ typedef struct render_priv {
    int subcomposite_stencil_bit;
    char *current_colorname;
    double current_alpha_mult;
@@ -27,7 +27,7 @@ index d372f8a..99b8cfa 100644
  
    /* Feature for leading the user to a particular location */
    guint lead_user_timeout;
-@@ -614,10 +615,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
+@@ -609,10 +610,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
    ghid_invalidate_all ();
  }
  
@@ -45,7 +45,7 @@ index d372f8a..99b8cfa 100644
  }
  
  void
-@@ -775,6 +783,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -770,6 +778,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  
    port->render_priv = priv = g_new0 (render_priv, 1);
  
@@ -54,7 +54,7 @@ index d372f8a..99b8cfa 100644
    gtk_gl_init(argc, argv);
  
    /* setup GL-context */
-@@ -961,6 +971,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -956,6 +966,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_end_drawing (port);
  

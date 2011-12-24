@@ -1,7 +1,7 @@
-Bottom: 596eef3b264009d86aa4443bac99ed3d3361c2d5
-Top:    c5990b138ba209bc30dff6567f29fd0ad8016672
+Bottom: 9900e049a2cfb61eca25f2b73593b9d6b31d6f3a
+Top:    00471f9341df4d23ea9eed47ae225ee50f69e556
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-23 21:38:11 +0000
+Date:   2011-12-24 00:32:37 +0000
 
 Fix outline drawing to only apply on copper layers
 
@@ -16,10 +16,10 @@ This partially reverts commit 294494e56695251e63c0da9f243d6f59447f1c9f
 ---
 
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index b67d3cc..a9ed8cc 100644
+index ffdca7f..2d02908 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -1001,10 +1001,11 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -997,10 +997,11 @@ ps_set_layer (const char *name, int group, int empty)
       we want to "print outlines", and we have an outline layer,
       print the outline layer on this layer also.  */
    if (global.outline &&
