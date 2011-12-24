@@ -1,7 +1,7 @@
-Bottom: be1dc7d79cd27a817e87bb44aa79287e7fbd68ad
-Top:    1961bd6cb6ff62b39b9284709ece597f3625c509
+Bottom: 01b56d3f125c467cd8798de62734d65f1e912b0f
+Top:    05e623de94329d0210eb751ce11fa0971354540f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-24 15:42:34 +0000
+Date:   2011-12-24 18:22:50 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -825,10 +825,10 @@ index 7b28396..97e1992 100644
  } BoxListType;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index db7d831..260642d 100644
+index eb0ad14..2821d5f 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -930,6 +930,7 @@ static void
+@@ -928,6 +928,7 @@ static void
  ghid_attributes_revert ()
  {
    int i;
@@ -836,7 +836,7 @@ index db7d831..260642d 100644
  
    ghid_attributes_need_rows (attributes_list->Number);
  
-@@ -943,11 +944,14 @@ ghid_attributes_revert ()
+@@ -941,11 +942,14 @@ ghid_attributes_revert ()
      }
  
    /* Fill in values */
@@ -854,7 +854,7 @@ index db7d831..260642d 100644
  #if 0
  #endif
      }
-@@ -1015,28 +1019,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
+@@ -1013,28 +1017,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
        if (response == GTK_RESPONSE_OK)
  	{
  	  int i;
@@ -890,7 +890,7 @@ index db7d831..260642d 100644
  
  	  break;
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 447b10e..4f693ca 100644
+index 249066f..ab5758d 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
 @@ -525,9 +525,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
