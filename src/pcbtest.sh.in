@@ -84,7 +84,9 @@ if test $use_gdb = yes ; then
 	cat > $tmpf << EOF
 set args $arg_list
 EOF
-	exec gdb -x $tmpf ./pcb
+        export G_SLICE=all
+        valgrind ./pcb $arg_list
+	#exec gdb -x $tmpf ./pcb
 	rm -fr $tmpd
 else
 	exec @TOP_BUILDDIR@/src/pcb $arg_list
