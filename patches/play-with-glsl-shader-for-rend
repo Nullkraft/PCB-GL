@@ -1,7 +1,7 @@
-Bottom: 1e125a248b0ab7c7634c5eba08548e27857f64ab
-Top:    b78ce39448c734d29d9f0f8c7d007492825ecfe0
+Bottom: 1b77abfe9114b8bffd1295a8ae1646d80a51b1e3
+Top:    4e809ab642960b8722bdebc9f4a93c49383ea897
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-24 02:03:34 +0000
+Date:   2011-12-24 16:30:51 +0000
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -970,10 +970,10 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8e6e420..dc84b89 100644
+index 1ad7d45..8a3da57 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -313,6 +313,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -313,6 +313,8 @@ ghid_draw_grid (BoxType *drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
