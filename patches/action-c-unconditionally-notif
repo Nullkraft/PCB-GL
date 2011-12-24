@@ -1,0 +1,14 @@
+Bottom: a2a1f17dc6b908f0033d11b39e720dad30ac1393
+Top:    a2a1f17dc6b908f0033d11b39e720dad30ac1393
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-24 01:05:56 +0000
+
+action.c: Unconditionally notify NetlistChanged() when loading new netlist
+
+We need to call NetlistChanged() even if the loading failed, otherwise
+the GUI is not informed that we free'd the old netlist.
+
+
+---
+
+
