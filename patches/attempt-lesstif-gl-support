@@ -1,7 +1,7 @@
-Bottom: 5e9c600a5ef88b004993ed010f09308a49ed8780
-Top:    355d010612f8eb807e951a547f33993a565df162
+Bottom: d9fe171df90500cd91867469455804f4732d7075
+Top:    361ac444bbec6da526a12553f1ea11c0353a122a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-23 21:40:14 +0000
+Date:   2011-12-24 00:40:27 +0000
 
 Attempt lesstif GL support
 
@@ -66,10 +66,10 @@ index 15862d2..51267b3 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index a4b34ee..d69fb75 100644
+index f6d3098..3eedfbc 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -30,10 +30,14 @@
+@@ -27,10 +27,14 @@
  #include "hid.h"
  #include "../hidint.h"
  #include "hid/common/hidnogui.h"
@@ -84,7 +84,7 @@ index a4b34ee..d69fb75 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -50,12 +54,25 @@ RCSID ("$Id$");
+@@ -45,12 +49,25 @@
  #define MAX_ZOOM_SCALE	10
  #define UUNIT	Settings.grid_unit->allow
  
@@ -111,7 +111,7 @@ index a4b34ee..d69fb75 100644
    EndCapStyle cap;
    char xor_set;
    char erase;
-@@ -1595,18 +1612,154 @@ lesstif_show_crosshair (int show)
+@@ -1590,18 +1607,154 @@ lesstif_show_crosshair (int show)
    showing = show;
  }
  
@@ -268,7 +268,7 @@ index a4b34ee..d69fb75 100644
  }
  
  static void
-@@ -1800,6 +1953,23 @@ make_message (char *name, Widget left, int resizeable)
+@@ -1795,6 +1948,23 @@ make_message (char *name, Widget left, int resizeable)
  }
  
  static void
@@ -292,7 +292,7 @@ index a4b34ee..d69fb75 100644
  lesstif_do_export (HID_Attr_Val * options)
  {
    Dimension width, height;
-@@ -1843,12 +2013,20 @@ lesstif_do_export (HID_Attr_Val * options)
+@@ -1838,12 +2008,20 @@ lesstif_do_export (HID_Attr_Val * options)
  
    n = 0;
    do_color (Settings.BackgroundColor, XmNbackground);
@@ -318,7 +318,7 @@ index a4b34ee..d69fb75 100644
    /* A regular callback won't work here, because lesstif swallows any
       Ctrl<Button>1 event.  */
    XtAddEventHandler (work_area,
-@@ -2038,6 +2216,17 @@ lesstif_parse_arguments (int *argc, char ***argv)
+@@ -2033,6 +2211,17 @@ lesstif_parse_arguments (int *argc, char ***argv)
    XtResource *new_resources;
    val_union *new_values;
    int render_event, render_error;
@@ -336,7 +336,7 @@ index a4b34ee..d69fb75 100644
  
    XtSetTypeConverter (XtRString,
  		      XtRDouble,
-@@ -2192,7 +2381,7 @@ lesstif_parse_arguments (int *argc, char ***argv)
+@@ -2187,7 +2376,7 @@ lesstif_parse_arguments (int *argc, char ***argv)
  
    appwidget = XtAppInitialize (&app_context,
  			       "Pcb",
@@ -345,7 +345,7 @@ index a4b34ee..d69fb75 100644
  
    display = XtDisplay (appwidget);
    screen_s = XtScreen (appwidget);
-@@ -2494,7 +2683,8 @@ static int need_redraw = 0;
+@@ -2489,7 +2678,8 @@ static int need_redraw = 0;
  static Boolean
  idle_proc (XtPointer dummy)
  {
@@ -355,7 +355,7 @@ index a4b34ee..d69fb75 100644
      {
        int mx, my;
        BoxType region;
-@@ -2898,7 +3088,7 @@ idle_proc (XtPointer dummy)
+@@ -2893,7 +3083,7 @@ idle_proc (XtPointer dummy)
  
    lesstif_update_widget_flags ();
  
@@ -364,7 +364,7 @@ index a4b34ee..d69fb75 100644
    idle_proc_set = 0;
    return True;
  }
-@@ -2915,11 +3105,22 @@ lesstif_need_idle_proc ()
+@@ -2910,11 +3100,22 @@ lesstif_need_idle_proc ()
  static void
  lesstif_invalidate_lr (int l, int r, int t, int b)
  {
@@ -387,7 +387,7 @@ index a4b34ee..d69fb75 100644
  }
  
  void
-@@ -3181,6 +3382,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3176,6 +3377,7 @@ lesstif_set_color (hidGC gc, const char *name)
      }
  }
  
@@ -395,7 +395,7 @@ index a4b34ee..d69fb75 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3244,242 +3446,456 @@ set_gc (hidGC gc)
+@@ -3239,242 +3441,456 @@ set_gc (hidGC gc)
  			  join);
      }
  }
@@ -1041,7 +1041,7 @@ index a4b34ee..d69fb75 100644
  }
  
  static void
-@@ -4038,6 +4454,7 @@ lesstif_finish_debug_draw (void)
+@@ -4033,6 +4449,7 @@ lesstif_finish_debug_draw (void)
     */
  }
  
@@ -1049,7 +1049,7 @@ index a4b34ee..d69fb75 100644
  #include "dolists.h"
  
  void
-@@ -4064,17 +4481,19 @@ hid_lesstif_init ()
+@@ -4059,17 +4476,19 @@ hid_lesstif_init ()
    lesstif_hid.set_layer               = lesstif_set_layer;
    lesstif_hid.make_gc                 = lesstif_make_gc;
    lesstif_hid.destroy_gc              = lesstif_destroy_gc;
