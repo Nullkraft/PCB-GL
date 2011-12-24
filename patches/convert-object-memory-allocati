@@ -1,7 +1,7 @@
-Bottom: 846f25c3c1b3601d504e618680abfea3b2ad164a
-Top:    3cee4d61859b8e9742ddd86d51cb3ed4e4ea9a0a
+Bottom: 5f2689fca0b3019d119d4c2a704cafec73cf205e
+Top:    6d2335cdd5f059fa01e56a2b731c8e8cc5ca4ee0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-24 00:32:23 +0000
+Date:   2011-12-24 01:13:28 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 665ae91..e9a964f 100644
+index b1c33ab..0bbc4bd 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1896,37 +1896,39 @@ static int
@@ -1439,7 +1439,7 @@ index f1971d5..72f0362 100644
  
    if (DX == 0 && DY == 0)
 diff --git a/src/mymem.c b/src/mymem.c
-index 2dd10a1..c095c29 100644
+index f7939e7..8253572 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -34,8 +34,6 @@
@@ -2061,7 +2061,7 @@ index 2dd10a1..c095c29 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -764,24 +793,9 @@ FreeDataMemory (DataType *data)
+@@ -765,24 +794,9 @@ FreeDataMemory (DataType *data)
   * releases the memory that's allocated by the library
   */
  void
