@@ -87,5 +87,5 @@ bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
 void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
                           void (*emit) (PLINE *, void *), void *user_data);
 void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
-
+POLYAREA *board_outline_poly ();
 #endif
