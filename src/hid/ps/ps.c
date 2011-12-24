@@ -997,7 +997,6 @@ ps_set_layer (const char *name, int group, int empty)
      we want to "print outlines", and we have an outline layer,
      print the outline layer on this layer also.  */
   if (global.outline &&
-      global.is_copper &&
       global.outline_layer != NULL &&
       global.outline_layer != PCB->Data->Layer+idx &&
       strcmp (name, "outline") &&
