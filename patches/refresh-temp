@@ -1,0 +1,51 @@
+Bottom: 08f7c613dcf94852bb1b8a4bc7fbb63334abeddc
+Top:    8c4cffccbc148e88253553b8b24b4bba6d0819f1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-24 00:08:56 +0000
+
+Refresh of remove-remaining-rcs-id-identi
+
+---
+
+diff --git a/acinclude.m4 b/acinclude.m4
+index 9ab3758..dab11df 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -1,5 +1,3 @@
+-dnl $Id$
+-dnl
+ dnl the FC_* macros were copied from the freeciv program.  The use here
+ dnl is to figure out if we need -DNARROWPROTO and the correct setting
+ dnl for FUNCPROTO.  Without these set right, it has been observed that
+diff --git a/autogen.sh b/autogen.sh
+index 166a3d0..0de878c 100755
+--- a/autogen.sh
++++ b/autogen.sh
+@@ -1,7 +1,5 @@
+ #! /bin/sh
+ #
+-# $Id$
+-#
+ # Run the various GNU autotools to bootstrap the build
+ # system.  Should only need to be done once.
+ 
+diff --git a/doc/ascii2texi.awk b/doc/ascii2texi.awk
+index fd0e415..b8e3a72 100755
+--- a/doc/ascii2texi.awk
++++ b/doc/ascii2texi.awk
+@@ -1,7 +1,4 @@
+ #!/usr/bin/awk -f
+-#
+-# $Id$
+-#
+ 
+ BEGIN {
+ 	first = 1;
+@@ -23,7 +20,6 @@ BEGIN {
+ first == 1 {
+ 	first = 0;
+ 	printf("@c Generated file.  Do not edit directly\n");
+-	printf("@c $" "Id" "$\n");
+ 	printf("@multitable @columnfractions ");
+ 	for(i = 1 ; i <= 2*ncol ; i = i + 1) {
+ 		printf("%.3g ", 0.5 / ncol);
