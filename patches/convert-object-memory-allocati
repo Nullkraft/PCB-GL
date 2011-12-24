@@ -1,7 +1,7 @@
-Bottom: 1d8617026dd8983e62db33cfaa8dfb1abc313975
-Top:    feed99f0f28cf463ca3f22b1bb35dace03c1dcf7
+Bottom: 846f25c3c1b3601d504e618680abfea3b2ad164a
+Top:    3cee4d61859b8e9742ddd86d51cb3ed4e4ea9a0a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-23 21:37:59 +0000
+Date:   2011-12-24 00:32:23 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,10 +9,10 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 69bf89d3..802d695 100644
+index 665ae91..e9a964f 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1898,37 +1898,39 @@ static int
+@@ -1896,37 +1896,39 @@ static int
  ActionDumpLibrary (int argc, char **argv, Coord x, Coord y)
  {
    int i, j;
@@ -70,7 +70,7 @@ index 69bf89d3..802d695 100644
  	    }
  	}
      }
-@@ -3249,6 +3251,8 @@ static const char renumber_help[] =
+@@ -3247,6 +3249,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, Coord x, Coord y)
  {
@@ -79,7 +79,7 @@ index 69bf89d3..802d695 100644
    bool changed = false;
    ElementTypePtr *element_list;
    ElementTypePtr *locked_element_list;
-@@ -3586,6 +3590,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3584,6 +3588,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    free (element_list);
    free (cnt_list);
    return 0;
@@ -87,7 +87,7 @@ index 69bf89d3..802d695 100644
  }
  
  
-@@ -4588,16 +4593,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4586,16 +4591,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index 69bf89d3..802d695 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatTypePtr) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6913,22 +6917,26 @@ find_element_by_refdes (char *refdes)
+@@ -6911,22 +6915,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListTypePtr list, const char *name)
  {
@@ -146,10 +146,10 @@ index 69bf89d3..802d695 100644
  
  /* ---------------------------------------------------------------- */
 diff --git a/src/autoplace.c b/src/autoplace.c
-index 0e74b66..fa0417e 100644
+index e7cdee8..34cd6d3 100644
 --- a/src/autoplace.c
 +++ b/src/autoplace.c
-@@ -157,16 +157,17 @@ static void
+@@ -153,16 +153,17 @@ static void
  UpdateXY (NetListTypePtr Nets)
  {
    Cardinal SLayer, CLayer;
@@ -171,7 +171,7 @@ index 0e74b66..fa0417e 100644
  	  switch (c->type)
  	    {
  	    case PAD_TYPE:
-@@ -195,7 +196,7 @@ UpdateXY (NetListTypePtr Nets)
+@@ -191,7 +192,7 @@ UpdateXY (NetListTypePtr Nets)
  static PointerListType
  collectSelectedElements ()
  {
@@ -180,7 +180,7 @@ index 0e74b66..fa0417e 100644
    ELEMENT_LOOP (PCB->Data);
    {
      if (TEST_FLAG (SELECTEDFLAG, element))
-@@ -335,32 +336,38 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
+@@ -331,32 +332,38 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
    double delta3 = 0;		/* out of bounds penalty */
    double delta4 = 0;		/* alignment bonus */
    double delta5 = 0;		/* total area penalty */
@@ -231,7 +231,7 @@ index 0e74b66..fa0417e 100644
  	  MAKEMIN (minx, c->X);
  	  MAKEMAX (maxx, c->X);
  	  MAKEMIN (miny, c->Y);
-@@ -511,10 +518,8 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
+@@ -507,10 +514,8 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
     * aligning to something far away isn't profitable */
    {
      /* create r tree */
@@ -244,7 +244,7 @@ index 0e74b66..fa0417e 100644
      struct ebox
      {
        BoxType box;
-@@ -608,6 +613,12 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
+@@ -604,6 +609,12 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
    return W + (delta1 + delta2 + delta3 - delta4 + delta5);
  }
  
@@ -257,7 +257,7 @@ index 0e74b66..fa0417e 100644
  /* ---------------------------------------------------------------------------
   * Perturb:
   *  1) flip SMD from solder side to component side or vice-versa.
-@@ -621,7 +632,7 @@ createPerturbation (PointerListTypePtr selected, double T)
+@@ -617,7 +628,7 @@ createPerturbation (PointerListTypePtr selected, double T)
  {
    PerturbationType pt = { 0 };
    /* pick element to perturb */
@@ -266,7 +266,7 @@ index 0e74b66..fa0417e 100644
    /* exchange, flip/rotate or shift? */
    switch (random () % ((selected->PtrN > 1) ? 3 : 2))
      {
-@@ -659,10 +670,9 @@ createPerturbation (PointerListTypePtr selected, double T)
+@@ -655,10 +666,9 @@ createPerturbation (PointerListTypePtr selected, double T)
      case 2:
        {				/* exchange! */
  	pt.which = EXCHANGE;
@@ -280,7 +280,7 @@ index 0e74b66..fa0417e 100644
  	/* don't allow exchanging a solderside-side SMD component
  	 * with a non-SMD component. */
  	if ((pt.element->PinN != 0 /* non-SMD */  &&
-@@ -753,7 +763,7 @@ bool
+@@ -749,7 +759,7 @@ bool
  AutoPlaceSelected (void)
  {
    NetListTypePtr Nets;
@@ -290,10 +290,10 @@ index 0e74b66..fa0417e 100644
    double C0, T0;
    bool changed = false;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 34e01dc..eb13036 100644
+index 374b6ac..375b182 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
-@@ -1010,7 +1010,6 @@ CreateRouteData ()
+@@ -1006,7 +1006,6 @@ CreateRouteData ()
      {
        layergroupboxes[i].Ptr = NULL;
        layergroupboxes[i].PtrN = 0;
@@ -302,10 +302,10 @@ index 34e01dc..eb13036 100644
        {
  	if (layer->LineN || layer->ArcN)
 diff --git a/src/buffer.c b/src/buffer.c
-index ac2aa54..604a781 100644
+index 1f9293a..93de5f9 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -605,47 +605,55 @@ void
+@@ -601,47 +601,55 @@ void
  make_footprint_hash ()
  {
    int i, j;
@@ -372,7 +372,7 @@ index ac2aa54..604a781 100644
  
  #ifdef DEBUG
  /* 	      printf(" ... found file footprint %s\n",  fp); */
-@@ -657,7 +665,7 @@ make_footprint_hash ()
+@@ -653,7 +661,7 @@ make_footprint_hash ()
  	  else 
            /* m4 */
  	    {
@@ -381,7 +381,7 @@ index ac2aa54..604a781 100644
  	      if (fp)
  		{
  		  footprint_hash[num_entries].footprint = strdup (fp+1);
-@@ -668,7 +676,7 @@ make_footprint_hash ()
+@@ -664,7 +672,7 @@ make_footprint_hash ()
  		}
  	      else
  		{
@@ -390,7 +390,7 @@ index ac2aa54..604a781 100644
  		  footprint_hash[num_entries].footprint = fp;
  		  footprint_hash[num_entries].footprint_allocated = 0;
  		}
-@@ -745,8 +753,8 @@ LoadFootprintByName (BufferTypePtr Buffer, char *Footprint)
+@@ -741,8 +749,8 @@ LoadFootprintByName (BufferTypePtr Buffer, char *Footprint)
        return 1;
      }
  
@@ -402,10 +402,10 @@ index ac2aa54..604a781 100644
    if (entry->Template == (char *) -1)
      {
 diff --git a/src/copy.c b/src/copy.c
-index 29ac62f..318482f 100644
+index 193bb52..b292d06 100644
 --- a/src/copy.c
 +++ b/src/copy.c
-@@ -122,7 +122,7 @@ CopyElementLowLevel (DataTypePtr Data, ElementTypePtr Dest,
+@@ -118,7 +118,7 @@ CopyElementLowLevel (DataTypePtr Data, ElementTypePtr Dest,
  		     ElementTypePtr Src, bool uniqueName, Coord dx,
  		     Coord dy)
  {
@@ -414,7 +414,7 @@ index 29ac62f..318482f 100644
    /* release old memory if necessary */
    if (Dest)
      FreeElementMemory (Dest);
-@@ -172,10 +172,11 @@ CopyElementLowLevel (DataTypePtr Data, ElementTypePtr Dest,
+@@ -168,10 +168,11 @@ CopyElementLowLevel (DataTypePtr Data, ElementTypePtr Dest,
    }
    END_LOOP;
  
@@ -431,10 +431,10 @@ index 29ac62f..318482f 100644
    Dest->MarkX = Src->MarkX + dx;
    Dest->MarkY = Src->MarkY + dy;
 diff --git a/src/create.c b/src/create.c
-index 8d8344c..0e21d8d 100644
+index 8a1effd..e7b7b82 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -909,25 +909,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
+@@ -905,25 +905,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
  		       Coord X1, Coord Y1,
  		       Coord X2, Coord Y2, Coord Thickness)
  {
@@ -465,7 +465,7 @@ index 8d8344c..0e21d8d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -996,16 +990,17 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
+@@ -992,16 +986,17 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
  /* ---------------------------------------------------------------------------
   * Add an attribute to a list.
   */
@@ -495,10 +495,10 @@ index 8d8344c..0e21d8d 100644
 +  return attr;
  }
 diff --git a/src/crosshair.c b/src/crosshair.c
-index a644cc7..73a58a3 100644
+index 055f390..05cd900 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -378,8 +378,7 @@ XORDrawInsertPointObject (void)
+@@ -373,8 +373,7 @@ XORDrawInsertPointObject (void)
  static void
  XORDrawMoveOrCopyObject (void)
  {
@@ -508,7 +508,7 @@ index a644cc7..73a58a3 100644
    Coord dx = Crosshair.X - Crosshair.AttachedObject.X,
      dy = Crosshair.Y - Crosshair.AttachedObject.Y;
  
-@@ -497,11 +496,10 @@ XORDrawMoveOrCopyObject (void)
+@@ -492,11 +491,10 @@ XORDrawMoveOrCopyObject (void)
      }
  
    /* draw the attached rubberband lines too */
@@ -523,7 +523,7 @@ index a644cc7..73a58a3 100644
  
        if (TEST_FLAG (VIAFLAG, ptr->Line))
  	{
-@@ -529,9 +527,6 @@ XORDrawMoveOrCopyObject (void)
+@@ -524,9 +522,6 @@ XORDrawMoveOrCopyObject (void)
  			     ptr->Line->Point1.Y + dy,
  			     ptr->Line->Point2.X + dx,
  			     ptr->Line->Point2.Y + dy, ptr->Line->Thickness);
@@ -534,10 +534,10 @@ index a644cc7..73a58a3 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index a06dde1..d46fdbf 100644
+index a11c6e2..e4a0f61 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1203,7 +1203,7 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
+@@ -1199,7 +1199,7 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
@@ -546,7 +546,7 @@ index a06dde1..d46fdbf 100644
    FontTypePtr font = &PCB->Font;
  
    while (string && *string)
-@@ -1211,11 +1211,12 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
+@@ -1207,11 +1207,12 @@ DrawTextLowLevel (TextTypePtr Text, Coord min_line_width)
        /* draw lines if symbol is valid and data is present */
        if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
  	{
@@ -564,10 +564,10 @@ index a06dde1..d46fdbf 100644
  	      newline = *line;
  	      newline.Point1.X = SCALE_TEXT (newline.Point1.X + x, Text->Scale);
 diff --git a/src/drill.c b/src/drill.c
-index a7a908b..46e8f80 100644
+index efa9baa..5d4c168 100644
 --- a/src/drill.c
 +++ b/src/drill.c
-@@ -90,11 +90,9 @@ InitializeDrill (DrillTypePtr drill, PinTypePtr pin, ElementTypePtr element)
+@@ -83,11 +83,9 @@ InitializeDrill (DrillTypePtr drill, PinTypePtr pin, ElementTypePtr element)
    drill->ViaCount = 0;
    drill->PinCount = 0;
    drill->UnplatedCount = 0;
@@ -579,7 +579,7 @@ index a7a908b..46e8f80 100644
    ptr = (void *) GetDrillPinMemory (drill);
    *((PinTypeHandle) ptr) = pin;
    if (element)
-@@ -166,9 +164,8 @@ GetDrillInfo (DataTypePtr top)
+@@ -159,9 +157,8 @@ GetDrillInfo (DataTypePtr top)
  		}
  	    }
  	    END_LOOP;
@@ -591,7 +591,7 @@ index a7a908b..46e8f80 100644
  		Drill = GetDrillInfoDrillMemory (AllDrills);
  		InitializeDrill (Drill, pin, element);
  	      }
-@@ -231,8 +228,7 @@ RoundDrillInfo (DrillInfoTypePtr d, int roundto)
+@@ -224,8 +221,7 @@ RoundDrillInfo (DrillInfoTypePtr d, int roundto)
  	{
  	  int ei, ej;
  
@@ -601,7 +601,7 @@ index a7a908b..46e8f80 100644
  	  if (d->Drill[i].ElementMax)
  	    {
  	      d->Drill[i].Element = (ElementTypePtr *)realloc (d->Drill[i].Element,
-@@ -280,16 +276,3 @@ RoundDrillInfo (DrillInfoTypePtr d, int roundto)
+@@ -273,16 +269,3 @@ RoundDrillInfo (DrillInfoTypePtr d, int roundto)
  	}
      }
  }
@@ -619,10 +619,10 @@ index a7a908b..46e8f80 100644
 -  free (Drills);
 -}
 diff --git a/src/fontmode.c b/src/fontmode.c
-index dd64f63..69f9a0d 100644
+index f218e7c..be2fad6 100644
 --- a/src/fontmode.c
 +++ b/src/fontmode.c
-@@ -82,6 +82,7 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
+@@ -78,6 +78,7 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
    SymbolType *symbol;
    LayerTypePtr lfont, lorig, lwidth, lgrid;
    int s, l;
@@ -630,7 +630,7 @@ index dd64f63..69f9a0d 100644
  
    if (hid_actionl ("New", "Font", 0))
      return 1;
-@@ -128,25 +129,26 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
+@@ -124,25 +125,26 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
        miny = MIL_TO_COORD (5);
        maxy = font->MaxHeight;
  
@@ -675,10 +675,10 @@ index dd64f63..69f9a0d 100644
        w = maxx + symbol->Delta + ox;
        CreateDrawnLineOnLayer (lwidth,
 diff --git a/src/global.h b/src/global.h
-index 8896901..0917ddc 100644
+index 79c1456..15013f6 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -224,8 +224,8 @@ typedef struct
+@@ -222,8 +222,8 @@ typedef struct
  
  struct AttributeListType
  {
@@ -689,7 +689,7 @@ index 8896901..0917ddc 100644
  };
  
  /* ---------------------------------------------------------------------------
-@@ -268,15 +268,13 @@ typedef struct
+@@ -266,15 +266,13 @@ typedef struct
  struct polygon_st			/* holds information about a polygon */
  {
    ANYOBJECTFIELDS;
@@ -708,7 +708,7 @@ index 8896901..0917ddc 100644
  
  };
  
-@@ -374,10 +372,9 @@ typedef struct
+@@ -372,10 +370,9 @@ typedef struct
   */
  typedef struct			/* a single symbol */
  {
@@ -721,7 +721,7 @@ index 8896901..0917ddc 100644
    Coord Width, Height,		/* size of cell */
      Delta;			/* distance to next symbol */
  } SymbolType, *SymbolTypePtr;
-@@ -411,21 +408,18 @@ typedef struct			/* holds drill information */
+@@ -409,21 +406,18 @@ typedef struct			/* holds drill information */
  {
    Coord DrillSize;		/* this drill's diameter */
    Cardinal ElementN,		/* the number of elements using this drill size */
@@ -748,7 +748,7 @@ index 8896901..0917ddc 100644
  } DrillInfoType, *DrillInfoTypePtr;
  
  typedef struct
-@@ -463,9 +457,8 @@ typedef struct
+@@ -461,9 +455,8 @@ typedef struct
    char *Name,			/* name of the menu entry */
     *directory,			/* Directory name library elements are from */
     *Style;			/* routing style */
@@ -760,7 +760,7 @@ index 8896901..0917ddc 100644
    char flag;			/* used by the netlist window to enable/disable nets */
    char internal;		/* if set, this is an internal-only entry, not
  				   part of the global netlist. */
-@@ -474,8 +467,7 @@ typedef struct
+@@ -472,8 +465,7 @@ typedef struct
  typedef struct
  {
    Cardinal MenuN;               /* number of objects */
@@ -770,7 +770,7 @@ index 8896901..0917ddc 100644
  } LibraryType, *LibraryTypePtr;
  
  
-@@ -576,9 +568,8 @@ typedef struct			/* currently attached object */
+@@ -574,9 +566,8 @@ typedef struct			/* currently attached object */
    void *Ptr1,			/* three pointers to data, see */
     *Ptr2,			/* search.c */
     *Ptr3;
@@ -782,7 +782,7 @@ index 8896901..0917ddc 100644
  } AttachedObjectType, *AttachedObjectTypePtr;
  
  enum crosshair_shape
-@@ -734,38 +725,33 @@ typedef struct			/* holds a connection */
+@@ -732,38 +723,33 @@ typedef struct			/* holds a connection */
  
  typedef struct			/* holds a net of connections */
  {
@@ -832,10 +832,10 @@ index 8896901..0917ddc 100644
  } BoxListType, *BoxListTypePtr;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index cc474cd..03c0cbd 100644
+index d8bf02c..34d332c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -936,6 +936,7 @@ static void
+@@ -930,6 +930,7 @@ static void
  ghid_attributes_revert ()
  {
    int i;
@@ -843,7 +843,7 @@ index cc474cd..03c0cbd 100644
  
    ghid_attributes_need_rows (attributes_list->Number);
  
-@@ -949,11 +950,14 @@ ghid_attributes_revert ()
+@@ -943,11 +944,14 @@ ghid_attributes_revert ()
      }
  
    /* Fill in values */
@@ -861,7 +861,7 @@ index cc474cd..03c0cbd 100644
  #if 0
  #endif
      }
-@@ -1021,28 +1025,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
+@@ -1015,28 +1019,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
        if (response == GTK_RESPONSE_OK)
  	{
  	  int i;
@@ -897,10 +897,10 @@ index cc474cd..03c0cbd 100644
  
  	  break;
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index a847e6d..e300833 100644
+index 51192c6..6b3b605 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
-@@ -529,9 +529,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
+@@ -525,9 +525,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
  static void
  netlist_select_cb (GtkWidget * widget, gpointer data)
  {
@@ -911,7 +911,7 @@ index a847e6d..e300833 100644
    gboolean select_flag = GPOINTER_TO_INT (data);
  
    if (!selected_net)
-@@ -542,9 +541,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+@@ -538,9 +537,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
    InitConnectionLookup ();
    ResetConnections (true);
  
@@ -925,7 +925,7 @@ index a847e6d..e300833 100644
  
    SelectConnection (select_flag);
    ResetConnections (false);
-@@ -862,9 +864,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -858,9 +860,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
  {
    struct ggnfnn_task *task = (struct ggnfnn_task *)data;
    LibraryMenuType *net;
@@ -936,7 +936,7 @@ index a847e6d..e300833 100644
    gboolean is_disabled;
  
    /* We only want to inspect leaf nodes in the tree */
-@@ -881,13 +882,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -877,13 +878,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
      return FALSE;
  
    /* Look for the node name in this net. */
@@ -955,7 +955,7 @@ index a847e6d..e300833 100644
  
    return FALSE;
  }
-@@ -1007,7 +1011,7 @@ ghid_netlist_window_update (gboolean init_nodes)
+@@ -1003,7 +1007,7 @@ ghid_netlist_window_update (gboolean init_nodes)
  
    /* XXX Check if the select callback does this for us */
    if (init_nodes)
@@ -965,10 +965,10 @@ index a847e6d..e300833 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 9e75927..32c48f3 100644
+index fd0aa11..a91688e 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -325,28 +325,26 @@ nelma_write_materials(FILE * out)
+@@ -323,28 +323,26 @@ nelma_write_materials(FILE * out)
  static void 
  nelma_write_nets(FILE * out)
  {
@@ -1003,7 +1003,7 @@ index 9e75927..32c48f3 100644
  
  			/* pin_name_to_xy(pin, &x, &y); */
  
-@@ -378,7 +376,7 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -376,7 +374,7 @@ nelma_write_layer(FILE * out, int z, int h,
  	LibraryMenuTypePtr net;
  	LibraryEntryTypePtr pin;
  
@@ -1012,7 +1012,7 @@ index 9e75927..32c48f3 100644
  
  	fprintf(out, "layer %s {\n", name);
  	fprintf(out, "\theight = %d\n", h);
-@@ -389,11 +387,11 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -387,11 +385,11 @@ nelma_write_layer(FILE * out, int z, int h,
  		fprintf(out, "\tobjects = {\n");
  		netlist = PCB->NetlistLib;
  
@@ -1028,7 +1028,7 @@ index 9e75927..32c48f3 100644
  
  				if (m != 0 || n != 0)
  					fprintf(out, ",\n");
-@@ -499,17 +497,17 @@ nelma_write_objects(FILE * out)
+@@ -497,17 +495,17 @@ nelma_write_objects(FILE * out)
  	LibraryMenuTypePtr net;
  	LibraryEntryTypePtr pin;
  
@@ -1052,10 +1052,10 @@ index 9e75927..32c48f3 100644
  			nelma_write_object(out, pin);
  		}
 diff --git a/src/intersect.c b/src/intersect.c
-index a3ee03f..d24936e 100644
+index 33b359d..01580e3 100644
 --- a/src/intersect.c
 +++ b/src/intersect.c
-@@ -90,18 +90,20 @@ LocationList;
+@@ -85,18 +85,20 @@ LocationList;
   * Create a sorted list of unique y coords from a BoxList.
   */
  static LocationList
@@ -1080,7 +1080,7 @@ index a3ee03f..d24936e 100644
      }
    qsort (yCoords.p, yCoords.size, sizeof (*yCoords.p), comparepos);
    /* count uniq y coords */
-@@ -202,12 +204,15 @@ deleteSegment (SegmentTree * st, int n, Coord Y1, Coord Y2)
+@@ -197,12 +199,15 @@ deleteSegment (SegmentTree * st, int n, Coord Y1, Coord Y2)
  double
  ComputeIntersectionArea (BoxListTypePtr boxlist)
  {
@@ -1100,7 +1100,7 @@ index a3ee03f..d24936e 100644
    /* intersection area is aggregate - union. */
    return area * 0.0001 - ComputeUnionArea (boxlist);
  }
-@@ -221,6 +226,7 @@ ComputeUnionArea (BoxListTypePtr boxlist)
+@@ -216,6 +221,7 @@ ComputeUnionArea (BoxListTypePtr boxlist)
  {
    BoxTypePtr *rectLeft, *rectRight;
    Cardinal i, j;
@@ -1108,7 +1108,7 @@ index a3ee03f..d24936e 100644
    LocationList yCoords;
    SegmentTree segtree;
    Coord lastX;
-@@ -236,11 +242,12 @@ ComputeUnionArea (BoxListTypePtr boxlist)
+@@ -231,11 +237,12 @@ ComputeUnionArea (BoxListTypePtr boxlist)
    /* create sorted list of left and right X coordinates of rectangles */
    rectLeft = (BoxTypePtr *)calloc (boxlist->BoxN, sizeof (*rectLeft));
    rectRight = (BoxTypePtr *)calloc (boxlist->BoxN, sizeof (*rectRight));
@@ -1126,7 +1126,7 @@ index a3ee03f..d24936e 100644
    qsort (rectLeft, boxlist->BoxN, sizeof (*rectLeft), compareleft);
    qsort (rectRight, boxlist->BoxN, sizeof (*rectRight), compareright);
 diff --git a/src/macro.h b/src/macro.h
-index 025351f..322000d 100644
+index 59c53ba..a76711b 100644
 --- a/src/macro.h
 +++ b/src/macro.h
 @@ -14,7 +14,7 @@
@@ -1138,7 +1138,7 @@ index 025351f..322000d 100644
   *  along with this program; if not, write to the Free Software
   *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
   *
-@@ -184,33 +184,37 @@ extern int mem_any_set (unsigned char *, int);
+@@ -183,33 +183,37 @@ extern int mem_any_set (unsigned char *, int);
         __iter = __next, __next = g_list_next (__iter), n++) {       \
      PinType *via = __iter->data;
  
@@ -1203,7 +1203,7 @@ index 025351f..322000d 100644
  
  #define ELEMENT_LOOP(top) do {                                      \
    GList *__iter, *__next;                                           \
-@@ -418,7 +422,7 @@ extern int mem_any_set (unsigned char *, int);
+@@ -417,7 +421,7 @@ extern int mem_any_set (unsigned char *, int);
  	LayerTypePtr	layer = (board)->Data->Layer;		\
  	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
  	{ \
@@ -1212,7 +1212,7 @@ index 025351f..322000d 100644
                    if (TEXT_IS_VISIBLE((board), layer, text))
  
  #define	VISIBLEPOLYGON_LOOP(top) do	{	\
-@@ -429,43 +433,48 @@ extern int mem_any_set (unsigned char *, int);
+@@ -428,43 +432,48 @@ extern int mem_any_set (unsigned char *, int);
  		if (layer->On)				\
  			POLYGON_LOOP(layer)
  
@@ -1299,10 +1299,10 @@ index 025351f..322000d 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index 3cc04a0..6a0b679 100644
+index 13ce8f6..3403845 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -497,7 +497,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
+@@ -492,7 +492,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
  {
    SymbolTypePtr symbol = FontPtr->Symbol;
    unsigned char *s = (unsigned char *) Text->TextString;
@@ -1311,7 +1311,7 @@ index 3cc04a0..6a0b679 100644
    int space;
  
    Coord minx, miny, maxx, maxy, tx;
-@@ -524,7 +524,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
+@@ -519,7 +519,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
        if (*s <= MAX_FONTPOSITION && symbol[*s].Valid)
          {
            LineTypePtr line = symbol[*s].Line;
@@ -1320,7 +1320,7 @@ index 3cc04a0..6a0b679 100644
              {
                /* Clamp the width of text lines at the minimum thickness.
                 * NB: Divide 4 in thickness calculation is comprised of a factor
-@@ -817,9 +817,9 @@ CenterDisplay (Coord X, Coord Y)
+@@ -812,9 +812,9 @@ CenterDisplay (Coord X, Coord Y)
  void
  SetFontInfo (FontTypePtr Ptr)
  {
@@ -1332,7 +1332,7 @@ index 3cc04a0..6a0b679 100644
    Coord totalminy = MAX_COORD;
  
    /* calculate cell with and height (is at least DEFAULT_CELLSIZE)
-@@ -838,8 +838,9 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -833,8 +833,9 @@ SetFontInfo (FontTypePtr Ptr)
  
        minx = miny = MAX_COORD;
        maxx = maxy = 0;
@@ -1343,7 +1343,7 @@ index 3cc04a0..6a0b679 100644
            minx = MIN (minx, line->Point1.X);
            miny = MIN (miny, line->Point1.Y);
            minx = MIN (minx, line->Point2.X);
-@@ -851,8 +852,11 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -846,8 +847,11 @@ SetFontInfo (FontTypePtr Ptr)
          }
  
        /* move symbol to left edge */
@@ -1357,7 +1357,7 @@ index 3cc04a0..6a0b679 100644
  
        /* set symbol bounding box with a minimum cell size of (1,1) */
        symbol->Width = maxx - minx + 1;
-@@ -869,8 +873,11 @@ SetFontInfo (FontTypePtr Ptr)
+@@ -864,8 +868,11 @@ SetFontInfo (FontTypePtr Ptr)
      if (symbol->Valid)
        {
          symbol->Height -= totalminy;
@@ -1371,7 +1371,7 @@ index 3cc04a0..6a0b679 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1784,8 +1791,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1779,8 +1786,11 @@ GetGridLockCoordinates (int type, void *ptr1,
        *y = ((ElementTypePtr) ptr2)->MarkY;
        break;
      case POLYGON_TYPE:
@@ -1385,7 +1385,7 @@ index 3cc04a0..6a0b679 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -2068,10 +2078,13 @@ pcb_author (void)
+@@ -2063,10 +2073,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
@@ -1404,10 +1404,10 @@ index 3cc04a0..6a0b679 100644
  }
  
 diff --git a/src/move.c b/src/move.c
-index 56ced53..5357ee7 100644
+index f1971d5..72f0362 100644
 --- a/src/move.c
 +++ b/src/move.c
-@@ -794,7 +794,7 @@ void *
+@@ -787,7 +787,7 @@ void *
  MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
  			 Coord DX, Coord DY)
  {
@@ -1416,7 +1416,7 @@ index 56ced53..5357ee7 100644
    void *ptr2;
  
    /* setup offset */
-@@ -802,9 +802,11 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+@@ -795,9 +795,11 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
    DeltaY = DY;
  
    /* move all the lines... and reset the counter */
@@ -1430,7 +1430,7 @@ index 56ced53..5357ee7 100644
        /* first clear any marks that we made in the line flags */
        CLEAR_FLAG (RUBBERENDFLAG, ptr->Line);
        /* only update undo list if an actual movement happened */
-@@ -816,7 +818,6 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+@@ -809,7 +811,6 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
            MoveLinePoint (ptr->Layer, ptr->Line, ptr->MovedPoint);
          }
        Crosshair.AttachedObject.RubberbandN--;
@@ -1439,10 +1439,10 @@ index 56ced53..5357ee7 100644
  
    if (DX == 0 && DY == 0)
 diff --git a/src/mymem.c b/src/mymem.c
-index 73b3ef7..57dc0e1 100644
+index 2dd10a1..c095c29 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
-@@ -36,8 +36,6 @@
+@@ -34,8 +34,6 @@
  
  #include "global.h"
  
@@ -1451,7 +1451,7 @@ index 73b3ef7..57dc0e1 100644
  #include "data.h"
  #include "error.h"
  #include "mymem.h"
-@@ -70,128 +68,126 @@ g_list_free_full (GList *list, GDestroyNotify free_func)
+@@ -66,128 +64,126 @@ g_list_free_full (GList *list, GDestroyNotify free_func)
  /* ---------------------------------------------------------------------------
   * get next slot for a rubberband connection, allocates memory if necessary
   */
@@ -1658,7 +1658,7 @@ index 73b3ef7..57dc0e1 100644
  }
  /* ---------------------------------------------------------------------------
   * get next slot for a pin, allocates memory if necessary
-@@ -365,21 +361,22 @@ FreePolygon (PolygonType *data)
+@@ -361,21 +357,22 @@ FreePolygon (PolygonType *data)
   * gets the next slot for a point in a polygon struct, allocates memory
   * if necessary
   */
@@ -1694,7 +1694,7 @@ index 73b3ef7..57dc0e1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -387,20 +384,21 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
+@@ -383,20 +380,21 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
   * if necessary
   */
  Cardinal *
@@ -1728,7 +1728,7 @@ index 73b3ef7..57dc0e1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -425,106 +423,142 @@ FreeElement (ElementType *data)
+@@ -421,106 +419,142 @@ FreeElement (ElementType *data)
  }
  
  /* ---------------------------------------------------------------------------
@@ -1939,7 +1939,7 @@ index 73b3ef7..57dc0e1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -550,79 +584,74 @@ FreePolygonMemory (PolygonType *polygon)
+@@ -546,79 +580,74 @@ FreePolygonMemory (PolygonType *polygon)
   * frees memory used by a box list
   */
  void
@@ -2061,7 +2061,7 @@ index 73b3ef7..57dc0e1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -768,24 +797,9 @@ FreeDataMemory (DataType *data)
+@@ -764,24 +793,9 @@ FreeDataMemory (DataType *data)
   * releases the memory that's allocated by the library
   */
  void
@@ -2089,10 +2089,10 @@ index 73b3ef7..57dc0e1 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/mymem.h b/src/mymem.h
-index a66e349..b564787 100644
+index 88c5628..da4a0b2 100644
 --- a/src/mymem.h
 +++ b/src/mymem.h
-@@ -38,22 +38,6 @@
+@@ -37,22 +37,6 @@
  #include <stdlib.h>
  #include "global.h"
  
@@ -2115,7 +2115,7 @@ index a66e349..b564787 100644
  #define STRDUP(x) (((x) != NULL) ? strdup (x) : NULL)
  
  /* ---------------------------------------------------------------------------
-@@ -86,8 +70,12 @@ LibraryEntryTypePtr GetLibraryEntryMemory (LibraryMenuTypePtr);
+@@ -85,8 +69,12 @@ LibraryEntryTypePtr GetLibraryEntryMemory (LibraryMenuTypePtr);
  ElementTypeHandle GetDrillElementMemory (DrillTypePtr);
  PinTypeHandle GetDrillPinMemory (DrillTypePtr);
  DrillTypePtr GetDrillInfoDrillMemory (DrillInfoTypePtr);
@@ -2150,10 +2150,10 @@ index d461bd2..de1e163 100644
  		 GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1),
  		 TEST_FLAG (LOCKFLAG, Polygon) ? "It is LOCKED.\n" : "");
 diff --git a/src/select.c b/src/select.c
-index 96db234..08c7511 100644
+index 31ea28d..caac3a6 100644
 --- a/src/select.c
 +++ b/src/select.c
-@@ -968,18 +968,20 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -964,18 +964,20 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
  
        MENU_LOOP (&PCB->NetlistLib);
        {
@@ -2195,10 +2195,10 @@ index d31c788..c7a5602 100644
        NET_LOOP(netlist);
        {
 diff --git a/src/undo.c b/src/undo.c
-index 17bebb9..3231cd6 100644
+index 87e02aa..3f9ab15 100644
 --- a/src/undo.c
 +++ b/src/undo.c
-@@ -165,7 +165,7 @@ UndoListType, *UndoListTypePtr;
+@@ -161,7 +161,7 @@ UndoListType, *UndoListTypePtr;
   * some local variables
   */
  static DataTypePtr RemoveList = NULL;	/* list of removed objects */
@@ -2207,7 +2207,7 @@ index 17bebb9..3231cd6 100644
  static int Serial = 1,		/* serial number */
    SavedSerial;
  static size_t UndoN, RedoN,	/* number of entries */
-@@ -203,13 +203,15 @@ static int PerformUndo (UndoListTypePtr);
+@@ -199,13 +199,15 @@ static int PerformUndo (UndoListTypePtr);
  /* ---------------------------------------------------------------------------
   * adds a command plus some data to the undo list
   */
@@ -2225,7 +2225,7 @@ index 17bebb9..3231cd6 100644
  
  #ifdef DEBUG_ID
    if (SearchObjectByID (PCB->Data, &ptr1, &ptr2, &ptr3, ID, Kind) == NO_TYPE)
-@@ -217,56 +219,62 @@ GetUndoSlot (int CommandType, int ID, int Kind)
+@@ -213,56 +215,62 @@ GetUndoSlot (int CommandType, int ID, int Kind)
  	     Kind);
  #endif
  
@@ -2323,7 +2323,7 @@ index 17bebb9..3231cd6 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -876,50 +884,35 @@ static bool
+@@ -872,50 +880,35 @@ static bool
  UndoNetlistChange (UndoListTypePtr Entry)
  {
    NetlistChangeTypePtr l = & Entry->Data.NetlistChange;
@@ -2390,7 +2390,7 @@ index 17bebb9..3231cd6 100644
  
    *lib = *saved;
  
-@@ -1640,7 +1633,8 @@ void
+@@ -1636,7 +1629,8 @@ void
  AddNetlistLibToUndoList (LibraryTypePtr lib)
  {
    UndoListTypePtr undo;
@@ -2400,7 +2400,7 @@ index 17bebb9..3231cd6 100644
    LibraryTypePtr old;
    
    if (!Locked)
-@@ -1653,7 +1647,6 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
+@@ -1649,7 +1643,6 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
        undo->Data.NetlistChange.old = (LibraryTypePtr)malloc (sizeof (LibraryTypePtr));
        old = undo->Data.NetlistChange.old;
        old->MenuN = lib->MenuN;
@@ -2408,7 +2408,7 @@ index 17bebb9..3231cd6 100644
        old->Menu = (LibraryMenuTypePtr)malloc (old->MenuMax * sizeof (LibraryMenuType));
        if (old->Menu == NULL)
  	{
-@@ -1662,21 +1655,15 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
+@@ -1658,21 +1651,15 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
  	}
  
        /* iterate over each net */
@@ -2436,7 +2436,7 @@ index 17bebb9..3231cd6 100644
  	  old->Menu[i].Entry = 
  	    (LibraryEntryTypePtr)malloc (old->Menu[i].EntryMax * sizeof (LibraryEntryType));
  	  if (old->Menu[i].Entry == NULL)
-@@ -1686,39 +1673,19 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
+@@ -1682,39 +1669,19 @@ AddNetlistLibToUndoList (LibraryTypePtr lib)
  	    }
  	  
  	  /* iterate over each pin on the net */
