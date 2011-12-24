@@ -1,7 +1,7 @@
-Bottom: d6bf73854fb1c0b8417be97cd8e21260ca0fb321
-Top:    94fe80b62527fbf43f119949af38b833777a2592
+Bottom: 248294984ad74f920703cfc65ddc26e9174d73d9
+Top:    0b7cdee97e1473ca175b982c7cbbc1a198a8b4a8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-23 21:40:10 +0000
+Date:   2011-12-24 00:40:23 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -20,10 +20,10 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 8d8344c..bbcc8e3 100644
+index 8a1effd..4907a36 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -37,6 +37,7 @@
+@@ -35,6 +35,7 @@
  #include <memory.h>
  #include <setjmp.h>
  #include <stdlib.h>
@@ -31,7 +31,7 @@ index 8d8344c..bbcc8e3 100644
  
  #include "global.h"
  
-@@ -55,6 +56,8 @@
+@@ -53,6 +54,8 @@
  #include "undo.h"
  #include "vendor.h"
  
@@ -40,7 +40,7 @@ index 8d8344c..bbcc8e3 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -663,6 +666,57 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
+@@ -659,6 +662,57 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
    return Polygon;
  }
  
@@ -98,7 +98,7 @@ index 8d8344c..bbcc8e3 100644
  /* ---------------------------------------------------------------------------
   * creates an new element
   * memory is allocated if needed
-@@ -679,6 +733,18 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+@@ -675,6 +729,18 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
    printf("Entered CreateNewElement.....\n");
  #endif
  
@@ -118,10 +118,10 @@ index 8d8344c..bbcc8e3 100644
      Element = GetElementMemory (Data);
  
 diff --git a/src/create.h b/src/create.h
-index ccab272..6c74228 100644
+index faebe52..13fa7dc 100644
 --- a/src/create.h
 +++ b/src/create.h
-@@ -63,6 +63,7 @@ PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
+@@ -62,6 +62,7 @@ PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
  PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
  				      Coord, Coord);
  PolygonType *CreateNewHoleInPolygon (PolygonType *polygon);
@@ -130,10 +130,10 @@ index ccab272..6c74228 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, Coord, Coord, BYTE,
 diff --git a/src/file.c b/src/file.c
-index 92e719b..f71d1b0 100644
+index c157659..774380d 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -409,6 +409,9 @@ real_load_pcb (char *Filename, bool revert)
+@@ -405,6 +405,9 @@ real_load_pcb (char *Filename, bool revert)
    /* mark the default font invalid to know if the file has one */
    newPCB->Font.Valid = false;
  

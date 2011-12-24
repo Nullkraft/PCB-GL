@@ -1,7 +1,7 @@
-Bottom: 40aba3722b0bbbb4c4ee577e7860f7d4df56d13c
-Top:    d6bf73854fb1c0b8417be97cd8e21260ca0fb321
+Bottom: 4d1a3ac1a484ed358d9af5d6b952e146ac2443bc
+Top:    248294984ad74f920703cfc65ddc26e9174d73d9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-23 21:40:10 +0000
+Date:   2011-12-24 00:40:23 +0000
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -17,10 +17,10 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 69bf89d3..7c40864 100644
+index 665ae91..a2be72e 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -3409,9 +3409,16 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3407,9 +3407,16 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
        /* If there is no refdes, maybe just spit out a warning */
        if (NAMEONPCB_NAME (element_list[i]))
  	{
@@ -38,7 +38,7 @@ index 69bf89d3..7c40864 100644
  	  while (tmps[j] && (tmps[j] < '0' || tmps[j] > '9')
  		 && tmps[j] != '?')
  	    j++;
-@@ -4765,6 +4772,77 @@ ActionToggleHideName (int argc, char **argv, Coord x, Coord y)
+@@ -4763,6 +4770,77 @@ ActionToggleHideName (int argc, char **argv, Coord x, Coord y)
  
  /* --------------------------------------------------------------------------- */
  
@@ -116,7 +116,7 @@ index 69bf89d3..7c40864 100644
  static const char changejoin_syntax[] =
    "ChangeJoin(ToggleObject|SelectedLines|SelectedArcs|Selected)";
  
-@@ -8121,6 +8199,9 @@ HID_Action action_action_list[] = {
+@@ -8119,6 +8197,9 @@ HID_Action action_action_list[] = {
    {"ToggleHideName", 0, ActionToggleHideName,
     togglehidename_help, togglehidename_syntax}
    ,
@@ -127,10 +127,10 @@ index 69bf89d3..7c40864 100644
     undo_help, undo_syntax}
    ,
 diff --git a/src/const.h b/src/const.h
-index 078f83f..a5f6f2d 100644
+index 7d732e8..e11ca17 100644
 --- a/src/const.h
 +++ b/src/const.h
-@@ -179,6 +179,8 @@ Marker used internally to avoid revisiting an object.
+@@ -178,6 +178,8 @@ Marker used internally to avoid revisiting an object.
  @item 0x10000 nopaste
  For pads, set to prevent a solderpaste stencil opening for the
  pad.  Primarily used for pads used as fiducials.
@@ -139,7 +139,7 @@ index 078f83f..a5f6f2d 100644
  @end table
  %end-doc */
  
-@@ -215,6 +217,7 @@ pad.  Primarily used for pads used as fiducials.
+@@ -214,6 +216,7 @@ pad.  Primarily used for pads used as fiducials.
  #define EDGE2FLAG               0x4000	/* Padr.Point2 is closer to outside edge */
  					/* also pinout text for pins is vertical */
  #define VISITFLAG		0x8000  /* marker to avoid re-visiting an object */
@@ -148,10 +148,10 @@ index 078f83f..a5f6f2d 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index 9e9bdbe..9b2f76e 100644
+index 73a81f5..c6ebd14 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -156,6 +156,32 @@ pad_callback (const BoxType * b, void *cl)
+@@ -152,6 +152,32 @@ pad_callback (const BoxType * b, void *cl)
  }
  
  static void
@@ -184,7 +184,7 @@ index 9e9bdbe..9b2f76e 100644
  draw_element_name (ElementType *element)
  {
    if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
-@@ -169,7 +195,7 @@ draw_element_name (ElementType *element)
+@@ -165,7 +191,7 @@ draw_element_name (ElementType *element)
      gui->set_color (Output.fgGC, PCB->ElementColor);
    else
      gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
@@ -194,10 +194,10 @@ index 9e9bdbe..9b2f76e 100644
  
  static int
 diff --git a/src/strflags.c b/src/strflags.c
-index 8f4912c..fd768af 100644
+index 3699c53..6cb6548 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
-@@ -98,6 +98,7 @@ static FlagBitsType object_flagbits[] = {
+@@ -95,6 +95,7 @@ static FlagBitsType object_flagbits[] = {
    { CLEARPOLYFLAG, N ("clearpoly"), POLYGON_TYPE },
    { HIDENAMEFLAG, N ("hidename"), ELEMENT_TYPE },
    { DISPLAYNAMEFLAG, N ("showname"), ELEMENT_TYPE },

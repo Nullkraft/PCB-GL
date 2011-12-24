@@ -1,7 +1,7 @@
-Bottom: e7eb1c62279b9abe2a17c608e53984756a5b737c
-Top:    3fcb2484dd6aefb1a60d8e764cbc184e42a30e96
+Bottom: c16287b27a1c1793816d0b8a2fb2ab62818f5db3
+Top:    3652ad6d630b6ab20ec5d44566b04ee875548661
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-23 21:40:12 +0000
+Date:   2011-12-24 00:40:25 +0000
 
 DEBUG FIND CRASH
 
@@ -9,10 +9,10 @@ DEBUG FIND CRASH
 ---
 
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index a847e6d..711bcc5 100644
+index 51192c6..722783e 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
-@@ -344,6 +344,9 @@ net_model_create (void)
+@@ -340,6 +340,9 @@ net_model_create (void)
    int path_depth;
    int try_depth;
  
@@ -22,7 +22,7 @@ index a847e6d..711bcc5 100644
    store = gtk_tree_store_new (N_NET_COLUMNS,
  			      G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
  
-@@ -425,6 +428,7 @@ net_model_create (void)
+@@ -421,6 +424,7 @@ net_model_create (void)
  			NET_ENABLED_COLUMN, menu->flag ? "" : "*",
  			NET_NAME_COLUMN, path_segments[path_depth - 1],
  			NET_LIBRARY_COLUMN, menu, -1);
@@ -30,7 +30,7 @@ index a847e6d..711bcc5 100644
      g_strfreev (path_segments);
    }
    END_LOOP;
-@@ -1013,6 +1017,7 @@ ghid_netlist_window_update (gboolean init_nodes)
+@@ -1009,6 +1013,7 @@ ghid_netlist_window_update (gboolean init_nodes)
  static gint
  GhidNetlistChanged (int argc, char **argv, Coord x, Coord y)
  {
@@ -39,10 +39,10 @@ index a847e6d..711bcc5 100644
    ghid_netlist_window_update (TRUE);
    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (disable_all_button),
 diff --git a/src/mymem.c b/src/mymem.c
-index 73b3ef7..d4f3d2a 100644
+index 2dd10a1..ad7c05e 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
-@@ -431,15 +431,23 @@ LibraryMenuTypePtr
+@@ -427,15 +427,23 @@ LibraryMenuTypePtr
  GetLibraryMenuMemory (LibraryTypePtr lib)
  {
    LibraryMenuTypePtr menu = lib->Menu;
@@ -70,10 +70,10 @@ index 73b3ef7..d4f3d2a 100644
    return (menu + lib->MenuN++);
  }
 diff --git a/src/pcbtest.sh.in b/src/pcbtest.sh.in
-index e1e97b2..bdc2673 100755
+index 516a526..d2779ba 100755
 --- a/src/pcbtest.sh.in
 +++ b/src/pcbtest.sh.in
-@@ -87,7 +87,9 @@ if test $use_gdb = yes ; then
+@@ -84,7 +84,9 @@ if test $use_gdb = yes ; then
  	cat > $tmpf << EOF
  set args $arg_list
  EOF
@@ -85,10 +85,10 @@ index e1e97b2..bdc2673 100755
  else
  	exec @TOP_BUILDDIR@/src/pcb $arg_list
 diff --git a/src/rtree.c b/src/rtree.c
-index 680be3d..d2fe549 100644
+index 6558427..ef22984 100644
 --- a/src/rtree.c
 +++ b/src/rtree.c
-@@ -464,9 +464,9 @@ __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
+@@ -459,9 +459,9 @@ __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
  {
    assert (node);
    /** assert that starting_region is well formed */
