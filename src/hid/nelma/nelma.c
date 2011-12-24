@@ -323,28 +323,26 @@ nelma_write_materials(FILE * out)
 static void 
 nelma_write_nets(FILE * out)
 {
-	LibraryType     netlist;
 	LibraryMenuTypePtr net;
 	LibraryEntryTypePtr pin;
+	GList *n, *m;
 
-	int             n, m, i, idx;
+	int             i, idx;
 
 	const char     *ext;
 
-	netlist = PCB->NetlistLib;
-
 	fprintf(out, "\n/* **** Nets **** */\n\n");
 
-	for (n = 0; n < netlist.MenuN; n++) {
-		net = &netlist.Menu[n];
+	for (n = PCB->NetlistLib.Menu; n != NULL; n = g_list_next (n)) {
+		net = n->data;
 
 		/* Weird, but correct */
 		fprintf(out, "net %s {\n", &net->Name[2]);
 
 		fprintf(out, "\tobjects = {\n");
 
-		for (m = 0; m < net->EntryN; m++) {
-			pin = &net->Entry[m];
+		for (m = net->Entry; m != NULL; m = g_list_next (m)) {
+			pin = m->data;
 
 			/* pin_name_to_xy(pin, &x, &y); */
 
@@ -376,7 +374,7 @@ nelma_write_layer(FILE * out, int z, int h,
 	LibraryMenuTypePtr net;
 	LibraryEntryTypePtr pin;
 
-	int             n, m;
+	GList *n, *m;
 
 	fprintf(out, "layer %s {\n", name);
 	fprintf(out, "\theight = %d\n", h);
@@ -387,11 +385,11 @@ nelma_write_layer(FILE * out, int z, int h,
 		fprintf(out, "\tobjects = {\n");
 		netlist = PCB->NetlistLib;
 
-		for (n = 0; n < netlist.MenuN; n++) {
-			net = &netlist.Menu[n];
+		for (n = PCB->NetlistLib.Menu; n != NULL; n = g_list_next (n)) {
+			net = n->data;
 
-			for (m = 0; m < net->EntryN; m++) {
-				pin = &net->Entry[m];
+			for (m = net->Entry; m != NULL; m = g_list_next (m)) {
+				pin = m->data;
 
 				if (m != 0 || n != 0)
 					fprintf(out, ",\n");
@@ -497,17 +495,17 @@ nelma_write_objects(FILE * out)
 	LibraryMenuTypePtr net;
 	LibraryEntryTypePtr pin;
 
-	int             n, m;
+	GList *n, *m;
 
 	netlist = PCB->NetlistLib;
 
 	fprintf(out, "\n/* **** Objects **** */\n\n");
 
-	for (n = 0; n < netlist.MenuN; n++) {
-		net = &netlist.Menu[n];
+	for (n = PCB->NetlistLib.Menu; n != NULL; n = g_list_next (n)) {
+		net = n->data;
 
-		for (m = 0; m < net->EntryN; m++) {
-			pin = &net->Entry[m];
+		for (m = net->Entry; m != NULL; m = g_list_next (m)) {
+			pin = m->data;
 
 			nelma_write_object(out, pin);
 		}
