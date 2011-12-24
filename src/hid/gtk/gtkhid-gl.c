@@ -1114,7 +1114,7 @@ draw_pin (PinType *pin, bool draw_hole)
 static int
 pin_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pin = (PinTypePtr) b;
+  PinType *pin = (PinType *) b;
 
   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
     _draw_pv_name (pin);
@@ -1125,7 +1125,7 @@ pin_callback (const BoxType * b, void *cl)
 static int
 pin_name_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pin = (PinTypePtr) b;
+  PinType *pin = (PinType *) b;
 
   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
     _draw_pv_name (pin);
