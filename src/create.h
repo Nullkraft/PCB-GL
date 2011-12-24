@@ -62,6 +62,7 @@ PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
 PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
 				      Coord, Coord);
 PolygonType *CreateNewHoleInPolygon (PolygonType *polygon);
+void RefdesMapInit (void);
 ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
 				 FontTypePtr, FlagType, char *, char *,
 				 char *, Coord, Coord, BYTE,
