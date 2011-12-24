@@ -1,0 +1,38 @@
+Bottom: fd8c8a13b746afb0a2799c0b1416c3a112353d66
+Top:    f3e93a6f59647ecbd24dd2f235fb16a57c0b18f5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-24 00:39:52 +0000
+
+Refresh of add-virtual-trackball-code
+
+---
+
+diff --git a/src/hid/gtk/gui-trackball.c b/src/hid/gtk/gui-trackball.c
+index 4f65084..82cd560 100644
+--- a/src/hid/gtk/gui-trackball.c
++++ b/src/hid/gtk/gui-trackball.c
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
+@@ -47,8 +45,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-RCSID ("$Id$");
+-
+ enum {
+   ROTATION_CHANGED,
+   VIEW_2D_CHANGED,
+diff --git a/src/hid/gtk/gui-trackball.h b/src/hid/gtk/gui-trackball.h
+index d6bd03c..5c8a1f1 100644
+--- a/src/hid/gtk/gui-trackball.h
++++ b/src/hid/gtk/gui-trackball.h
+@@ -1,5 +1,3 @@
+-/* $Id$ */
+-
+ /*
+  *                            COPYRIGHT
+  *
