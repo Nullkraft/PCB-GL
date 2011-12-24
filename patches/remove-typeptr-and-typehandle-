@@ -1,0 +1,17 @@
+Bottom: ce1399e540529463306040edb4402df3ac40724d
+Top:    ce1399e540529463306040edb4402df3ac40724d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-24 02:24:32 +0000
+
+Remove TypePtr and TypeHandle typedef aliases to types
+
+Coverity already caught several bugs where we mixed up the various
+FooType FooTypePtr and FooTypeHandle types when passing to sizeof().
+
+Personally I find it much easier to follow FooType * and FooType **,
+so drop the aliases.
+
+
+---
+
+
