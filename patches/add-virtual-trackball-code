@@ -1,5 +1,5 @@
 Bottom: d5d1d9bba017f9593d9fbc4551f3b017737517a0
-Top:    fd8c8a13b746afb0a2799c0b1416c3a112353d66
+Top:    f3e93a6f59647ecbd24dd2f235fb16a57c0b18f5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 00:32:35 +0000
 
@@ -459,12 +459,10 @@ index 0000000..ed0c267
 +
 diff --git a/src/hid/gtk/gui-trackball.c b/src/hid/gtk/gui-trackball.c
 new file mode 100644
-index 0000000..4f65084
+index 0000000..82cd560
 --- /dev/null
 +++ b/src/hid/gtk/gui-trackball.c
-@@ -0,0 +1,392 @@
-+/* $Id$ */
-+
+@@ -0,0 +1,388 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -511,8 +509,6 @@ index 0000000..4f65084
 +#ifdef HAVE_LIBDMALLOC
 +#include <dmalloc.h>
 +#endif
-+
-+RCSID ("$Id$");
 +
 +enum {
 +  ROTATION_CHANGED,
@@ -857,12 +853,10 @@ index 0000000..4f65084
 +}
 diff --git a/src/hid/gtk/gui-trackball.h b/src/hid/gtk/gui-trackball.h
 new file mode 100644
-index 0000000..d6bd03c
+index 0000000..5c8a1f1
 --- /dev/null
 +++ b/src/hid/gtk/gui-trackball.h
-@@ -0,0 +1,70 @@
-+/* $Id$ */
-+
+@@ -0,0 +1,68 @@
 +/*
 + *                            COPYRIGHT
 + *
