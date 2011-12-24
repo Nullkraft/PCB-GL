@@ -1,7 +1,7 @@
-Bottom: 5e9c600a5ef88b004993ed010f09308a49ed8780
-Top:    e18eccd0a7f0717afce9b17bf5f978ce3af253b9
+Bottom: d9fe171df90500cd91867469455804f4732d7075
+Top:    8a6f05aeabc534c460c85a36e90dd3441aca89b6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-23 21:40:15 +0000
+Date:   2011-12-24 00:40:29 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -28,10 +28,10 @@ polygon fill.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index ac2aa54..19bd801 100644
+index 1f9293a..ec77374 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -366,6 +366,7 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
+@@ -362,6 +362,7 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
  {
    LayerType *lay = &Dest->Layer[GetLayerNumber (Source, layer)];
  
@@ -39,7 +39,7 @@ index ac2aa54..19bd801 100644
    r_delete_entry (layer->polygon_tree, (BoxType *)polygon);
  
    layer->Polygon = g_list_remove (layer->Polygon, polygon);
-@@ -378,6 +379,7 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
+@@ -374,6 +375,7 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
    if (!lay->polygon_tree)
      lay->polygon_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (lay->polygon_tree, (BoxType *)polygon, 0);
@@ -48,10 +48,10 @@ index ac2aa54..19bd801 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 61cb335..f02b50e 100644
+index aaad7a2..d6ba019 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -124,6 +124,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
+@@ -120,6 +120,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
  static void *SetTextJoin (LayerTypePtr, TextTypePtr);
  static void *ClrTextJoin (LayerTypePtr, TextTypePtr);
  static void *ChangePolyClear (LayerTypePtr, PolygonTypePtr);
@@ -61,7 +61,7 @@ index 61cb335..f02b50e 100644
  
  /* ---------------------------------------------------------------------------
   * some local identifiers
-@@ -218,7 +221,7 @@ static ObjectFunctionType ChangeSquareFunctions = {
+@@ -214,7 +217,7 @@ static ObjectFunctionType ChangeSquareFunctions = {
  static ObjectFunctionType ChangeJoinFunctions = {
    ChangeLineJoin,
    ChangeTextJoin,
@@ -70,7 +70,7 @@ index 61cb335..f02b50e 100644
    NULL,
    NULL,
    NULL,
-@@ -278,7 +281,7 @@ static ObjectFunctionType SetSquareFunctions = {
+@@ -274,7 +277,7 @@ static ObjectFunctionType SetSquareFunctions = {
  static ObjectFunctionType SetJoinFunctions = {
    SetLineJoin,
    SetTextJoin,
@@ -79,7 +79,7 @@ index 61cb335..f02b50e 100644
    NULL,
    NULL,
    NULL,
-@@ -320,7 +323,7 @@ static ObjectFunctionType ClrSquareFunctions = {
+@@ -316,7 +319,7 @@ static ObjectFunctionType ClrSquareFunctions = {
  static ObjectFunctionType ClrJoinFunctions = {
    ClrLineJoin,
    ClrTextJoin,
@@ -88,7 +88,7 @@ index 61cb335..f02b50e 100644
    NULL,
    NULL,
    NULL,
-@@ -1244,6 +1247,31 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1240,6 +1243,31 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
  }
  
  /* ---------------------------------------------------------------------------
@@ -120,7 +120,7 @@ index 61cb335..f02b50e 100644
   * sets the clearance flag of a text
   */
  static void *
-@@ -1255,6 +1283,17 @@ SetTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1251,6 +1279,17 @@ SetTextJoin (LayerTypePtr Layer, TextTypePtr Text)
  }
  
  /* ---------------------------------------------------------------------------
@@ -138,7 +138,7 @@ index 61cb335..f02b50e 100644
   * clears the clearance flag of a text
   */
  static void *
-@@ -1266,6 +1305,17 @@ ClrTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1262,6 +1301,17 @@ ClrTextJoin (LayerTypePtr Layer, TextTypePtr Text)
  }
  
  /* ---------------------------------------------------------------------------
@@ -157,10 +157,10 @@ index 61cb335..f02b50e 100644
   */
  static void *
 diff --git a/src/change.h b/src/change.h
-index 64c44ff..6ff788d 100644
+index 3fd896d..1f6ffbd 100644
 --- a/src/change.h
 +++ b/src/change.h
-@@ -57,7 +57,7 @@
+@@ -56,7 +56,7 @@
  	(ELEMENT_TYPE | PIN_TYPE | VIA_TYPE)
  
  #define CHANGEJOIN_TYPES	\
@@ -184,10 +184,10 @@ index f418e1a..5e5d7ee 100644
    else
      gui->fill_pcb_polygon (Output.fgGC, polygon, drawn_area);
 diff --git a/src/move.c b/src/move.c
-index 56ced53..3f5ebce 100644
+index f1971d5..65e4111 100644
 --- a/src/move.c
 +++ b/src/move.c
-@@ -353,10 +353,12 @@ MovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -346,10 +346,12 @@ MovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
      {
        ErasePolygon (Polygon);
      }
@@ -200,7 +200,7 @@ index 56ced53..3f5ebce 100644
    if (Layer->On)
      {
        DrawPolygon (Layer, Polygon);
-@@ -416,12 +418,14 @@ MovePolygonPoint (LayerTypePtr Layer, PolygonTypePtr Polygon,
+@@ -409,12 +411,14 @@ MovePolygonPoint (LayerTypePtr Layer, PolygonTypePtr Polygon,
      {
        ErasePolygon (Polygon);
      }
