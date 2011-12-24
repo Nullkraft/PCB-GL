@@ -1,5 +1,5 @@
 Bottom: ce515a164a6eb9cd33f55f86d5b85027f864b090
-Top:    457a1835377500699f3a020cbbb708d0def27ed3
+Top:    48e88917c8b2f8e3002c2e98abe3ad1d381a3654
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 02:03:27 +0000
 
@@ -56,7 +56,7 @@ index 70de43e..10c8ed7 100644
  {
    /*
 diff --git a/src/draw.h b/src/draw.h
-index 7064946..9bc0784 100644
+index 7064946..e0d522f 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -76,4 +76,15 @@ void DrawMask (int side, const BoxType *drawn_area);
@@ -64,19 +64,19 @@ index 7064946..9bc0784 100644
  void PrintAssembly (int side, const BoxType *drawn_area);
  
 +/* TEMPORARY */
-+void ClearPad (PadTypePtr, bool);
-+void DrawPinOrViaLowLevel (PinTypePtr, bool);
-+void DrawPlainPin (PinTypePtr, bool);
-+void DrawPlainVia (PinTypePtr, bool);
-+void DrawRegularText (LayerTypePtr, TextTypePtr);
-+void DrawEMark (ElementTypePtr, Coord, Coord, bool);
-+void DrawHole (PinTypePtr);
++void ClearPad (PadType *, bool);
++void DrawPinOrViaLowLevel (PinType *, bool);
++void DrawPlainPin (PinType *, bool);
++void DrawPlainVia (PinType *, bool);
++void DrawRegularText (LayerType *, TextType *);
++void DrawEMark (ElementType *, Coord, Coord, bool);
++void DrawHole (PinType *);
 +void DrawRats (const BoxType *);
 +/* TEMPORARY */
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bedbe32..31bce4d 100644
+index bedbe32..f848476 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -254,14 +254,14 @@ index bedbe32..31bce4d 100644
 +static int
 +EMark_callback (const BoxType * b, void *cl)
 +{
-+  ElementTypePtr element = (ElementTypePtr) b;
++  ElementType *element = (ElementType *) b;
 +
 +  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
 +  return 1;
 +}
 +
 +static void
-+SetPVColor (PinTypePtr Pin, int Type)
++SetPVColor (PinType *Pin, int Type)
 +{
 +  char *color;
 +
@@ -298,7 +298,7 @@ index bedbe32..31bce4d 100644
 +}
 +
 +static void
-+SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
++SetPVColor_inlayer (PinType *Pin, LayerType *Layer, int Type)
 +{
 +  char *color;
 +
@@ -362,7 +362,7 @@ index bedbe32..31bce4d 100644
 +}
 +
 +static void
-+_draw_pv (PinTypePtr pv, bool draw_hole)
++_draw_pv (PinType *pv, bool draw_hole)
 +{
 +  if (TEST_FLAG (THINDRAWFLAG, PCB))
 +    gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
@@ -374,7 +374,7 @@ index bedbe32..31bce4d 100644
 +}
 +
 +static void
-+draw_pin (PinTypePtr pin, bool draw_hole)
++draw_pin (PinType *pin, bool draw_hole)
 +{
 +  SetPVColor (pin, PIN_TYPE);
 +  _draw_pv (pin, draw_hole);
@@ -390,13 +390,13 @@ index bedbe32..31bce4d 100644
 +static int
 +pin_inlayer_callback (const BoxType * b, void *cl)
 +{
-+  SetPVColor_inlayer ((PinTypePtr) b, cl, PIN_TYPE);
++  SetPVColor_inlayer ((PinType *) b, cl, PIN_TYPE);
 +  _draw_pv ((PinType *) b, false);
 +  return 1;
 +}
 +
 +static void
-+draw_via (PinTypePtr via, bool draw_hole)
++draw_via (PinType *via, bool draw_hole)
 +{
 +  SetPVColor (via, VIA_TYPE);
 +  _draw_pv (via, draw_hole);
@@ -412,7 +412,7 @@ index bedbe32..31bce4d 100644
 +static int
 +via_inlayer_callback (const BoxType * b, void *cl)
 +{
-+  SetPVColor_inlayer ((PinTypePtr) b, cl, VIA_TYPE);
++  SetPVColor_inlayer ((PinType *) b, cl, VIA_TYPE);
 +  _draw_pv ((PinType *) b, TEST_FLAG (THINDRAWFLAG, PCB));
 +  return 1;
 +}
@@ -498,7 +498,7 @@ index bedbe32..31bce4d 100644
 +static int
 +pad_callback (const BoxType * b, void *cl)
 +{
-+  PadTypePtr pad = (PadTypePtr) b;
++  PadType *pad = (PadType *) b;
 +  int *side = cl;
 +
 +  if (ON_SIDE (pad, *side))
@@ -510,7 +510,7 @@ index bedbe32..31bce4d 100644
 +static int
 +hole_callback (const BoxType * b, void *cl)
 +{
-+  PinTypePtr pv = (PinTypePtr) b;
++  PinType *pv = (PinType *) b;
 +  int plated = cl ? *(int *) cl : -1;
 +
 +  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
@@ -620,7 +620,7 @@ index bedbe32..31bce4d 100644
 +static int
 +arc_callback (const BoxType * b, void *cl)
 +{
-+  draw_arc ((LayerTypePtr) cl, (ArcTypePtr) b);
++  draw_arc ((LayerType *) cl, (ArcType *) b);
 +  return 1;
 +}
 +
@@ -645,7 +645,7 @@ index bedbe32..31bce4d 100644
 +}
 +
 +static void
-+DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *drawn_area)
++DrawPlainPolygon (LayerType *Layer, PolygonType *Polygon, const BoxType *drawn_area)
 +{
 +  static char *color;
 +
@@ -683,7 +683,7 @@ index bedbe32..31bce4d 100644
 +
 +struct poly_info
 +{
-+  LayerTypePtr Layer;
++  LayerType *Layer;
 +  const BoxType *drawn_area;
 +};
 +
@@ -692,14 +692,14 @@ index bedbe32..31bce4d 100644
 +{
 +  struct poly_info *i = (struct poly_info *) cl;
 +
-+  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b, i->drawn_area);
++  DrawPlainPolygon (i->Layer, (PolygonType *) b, i->drawn_area);
 +  return 1;
 +}
 +
 +static int
 +clearPin_callback (const BoxType * b, void *cl)
 +{
-+  PinType *pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
 +  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
 +    gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
 +  else
@@ -710,7 +710,7 @@ index bedbe32..31bce4d 100644
 +static int
 +clearPad_callback (const BoxType * b, void *cl)
 +{
-+  PadTypePtr pad = (PadTypePtr) b;
++  PadType *pad = (PadType *) b;
 +  int *side = cl;
 +  if (ON_SIDE (pad, *side) && pad->Mask)
 +    _draw_pad (Output.pmGC, pad, true, true);
@@ -720,7 +720,7 @@ index bedbe32..31bce4d 100644
 +static int
 +clearPin_callback_solid (const BoxType * b, void *cl)
 +{
-+  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
 +  gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
 +  return 1;
 +}
@@ -728,7 +728,7 @@ index bedbe32..31bce4d 100644
 +static int
 +clearPad_callback_solid (const BoxType * b, void *cl)
 +{
-+  PadTypePtr pad = (PadTypePtr) b;
++  PadType *pad = (PadType *) b;
 +  int *side = cl;
 +  if (ON_SIDE (pad, *side) && pad->Mask)
 +    gui->fill_pcb_pad (Output.pmGC, pad, true, true);
@@ -773,7 +773,7 @@ index bedbe32..31bce4d 100644
 +  int layernum;
 +  int side;
 +  struct poly_info info;
-+  LayerTypePtr Layer;
++  LayerType *Layer;
 +  int n_entries = PCB->LayerGroups.Number[group];
 +  Cardinal *layers = PCB->LayerGroups.Entries[group];
 +  int first_run = 1;
@@ -941,7 +941,7 @@ index bedbe32..31bce4d 100644
 +}
 +
 +void
-+ghid_draw_everything (BoxTypePtr drawn_area)
++ghid_draw_everything (BoxType *drawn_area)
 +{
 +  render_priv *priv = gport->render_priv;
 +  int i, ngroups;
