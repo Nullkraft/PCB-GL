@@ -1,0 +1,23 @@
+Bottom: 31afbc3b578d3df9f9bb440bd0defa44c47b6a4d
+Top:    923a59f751ef5a438528586054bc60ead4a003fc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-24 17:25:40 +0000
+
+Refresh of hid-gtk-fix-netlistchanged-act
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 447b10e..922a03c 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -1009,6 +1009,9 @@ ghid_netlist_window_update (gboolean init_nodes)
+ static gint
+ GhidNetlistChanged (int argc, char **argv, Coord x, Coord y)
+ {
++  if (!ghidgui->is_up)
++    return 0;
++
+   loading_new_netlist = TRUE;
+   ghid_netlist_window_update (TRUE);
+   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (disable_all_button),
