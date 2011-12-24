@@ -14,6 +14,10 @@ to try and update before the GUI is actually loaded.
 For now, lets fix this with a bandaid and just skip the netlist update if the
 GUI is not up.
 
+A brief inspection of the code (and test for the doc/ build) suggests that the
+Lesstif HID is not affected by this problem. (It has similar code to avoid
+creating the netlist window if the main window is not already created).
+
 
 ---
 
