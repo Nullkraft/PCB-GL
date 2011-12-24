@@ -340,6 +340,9 @@ net_model_create (void)
   int path_depth;
   int try_depth;
 
+  printf ("net_model_create for NetlistLib %p, %i entries starting at %p\n",
+          &PCB->NetlistLib, PCB->NetlistLib.MenuN, PCB->NetlistLib.Menu);
+
   store = gtk_tree_store_new (N_NET_COLUMNS,
 			      G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
@@ -421,6 +424,7 @@ net_model_create (void)
 			NET_ENABLED_COLUMN, menu->flag ? "" : "*",
 			NET_NAME_COLUMN, path_segments[path_depth - 1],
 			NET_LIBRARY_COLUMN, menu, -1);
+    printf ("  Adding net %s at %p\n", path_segments[path_depth - 1], menu);
     g_strfreev (path_segments);
   }
   END_LOOP;
@@ -1009,6 +1013,7 @@ ghid_netlist_window_update (gboolean init_nodes)
 static gint
 GhidNetlistChanged (int argc, char **argv, Coord x, Coord y)
 {
+  printf ("GhidNetlistChanged called\n");
   loading_new_netlist = TRUE;
   ghid_netlist_window_update (TRUE);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (disable_all_button),
