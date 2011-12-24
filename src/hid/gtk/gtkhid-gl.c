@@ -311,7 +311,7 @@ ghid_make_gc (void)
 }
 
 static void
-ghid_draw_grid (BoxTypePtr drawn_area)
+ghid_draw_grid (BoxType *drawn_area)
 {
   if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
     return;
@@ -1022,14 +1022,14 @@ ghid_screen_update (void)
 static int
 EMark_callback (const BoxType * b, void *cl)
 {
-  ElementTypePtr element = (ElementTypePtr) b;
+  ElementType *element = (ElementType *) b;
 
   DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
   return 1;
 }
 
 static void
-SetPVColor (PinTypePtr Pin, int Type)
+SetPVColor (PinType *Pin, int Type)
 {
   char *color;
 
@@ -1066,7 +1066,7 @@ SetPVColor (PinTypePtr Pin, int Type)
 }
 
 static void
-SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
+SetPVColor_inlayer (PinType *Pin, LayerType * Layer, int Type)
 {
   char *color;
 
@@ -1130,7 +1130,7 @@ _draw_pv_name (PinType *pv)
 }
 
 static void
-_draw_pv (PinTypePtr pv, bool draw_hole)
+_draw_pv (PinType *pv, bool draw_hole)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB))
     gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
@@ -1142,7 +1142,7 @@ _draw_pv (PinTypePtr pv, bool draw_hole)
 }
 
 static void
-draw_pin (PinTypePtr pin, bool draw_hole)
+draw_pin (PinType *pin, bool draw_hole)
 {
   SetPVColor (pin, PIN_TYPE);
   _draw_pv (pin, draw_hole);
@@ -1151,7 +1151,7 @@ draw_pin (PinTypePtr pin, bool draw_hole)
 static int
 pin_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pin = (PinTypePtr) b;
+  PinType *pin = (PinType *) b;
 
   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
     _draw_pv_name (pin);
@@ -1162,7 +1162,7 @@ pin_callback (const BoxType * b, void *cl)
 static int
 pin_name_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pin = (PinTypePtr) b;
+  PinType *pin = (PinType *) b;
 
   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
     _draw_pv_name (pin);
@@ -1172,13 +1172,13 @@ pin_name_callback (const BoxType * b, void *cl)
 static int
 pin_inlayer_callback (const BoxType * b, void *cl)
 {
-  SetPVColor_inlayer ((PinTypePtr) b, cl, PIN_TYPE);
+  SetPVColor_inlayer ((PinType *) b, cl, PIN_TYPE);
   _draw_pv ((PinType *) b, false);
   return 1;
 }
 
 static void
-draw_via (PinTypePtr via, bool draw_hole)
+draw_via (PinType *via, bool draw_hole)
 {
   SetPVColor (via, VIA_TYPE);
   _draw_pv (via, draw_hole);
@@ -1194,7 +1194,7 @@ via_callback (const BoxType * b, void *cl)
 static int
 via_inlayer_callback (const BoxType * b, void *cl)
 {
-  SetPVColor_inlayer ((PinTypePtr) b, cl, VIA_TYPE);
+  SetPVColor_inlayer ((PinType *) b, cl, VIA_TYPE);
   _draw_pv ((PinType *) b, TEST_FLAG (THINDRAWFLAG, PCB));
   return 1;
 }
@@ -1280,7 +1280,7 @@ draw_pad (PadType *pad)
 static int
 pad_callback (const BoxType * b, void *cl)
 {
-  PadTypePtr pad = (PadTypePtr) b;
+  PadType *pad = (PadType *) b;
   int *side = cl;
 
   if (ON_SIDE (pad, *side)) {
@@ -1295,7 +1295,7 @@ pad_callback (const BoxType * b, void *cl)
 static int
 hole_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pv = (PinTypePtr) b;
+  PinType *pv = (PinType *) b;
   int plated = cl ? *(int *) cl : -1;
 
   if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
@@ -1405,7 +1405,7 @@ draw_arc (LayerType *layer, ArcType *arc)
 static int
 arc_callback (const BoxType * b, void *cl)
 {
-  draw_arc ((LayerTypePtr) cl, (ArcTypePtr) b);
+  draw_arc ((LayerType *) cl, (ArcType *) b);
   return 1;
 }
 
@@ -1430,7 +1430,7 @@ text_callback (const BoxType * b, void *cl)
 }
 
 static void
-DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *drawn_area)
+DrawPlainPolygon (LayerType *Layer, PolygonType * Polygon, const BoxType *drawn_area)
 {
   static char *color;
 
@@ -1468,7 +1468,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
 
 struct poly_info
 {
-  LayerTypePtr Layer;
+  LayerType *Layer;
   const BoxType *drawn_area;
 };
 
@@ -1501,7 +1501,7 @@ poly_callback_clearing (const BoxType * b, void *cl)
 static int
 clearPin_callback (const BoxType * b, void *cl)
 {
-  PinType *pin = (PinTypePtr) b;
+  PinType *pin = (PinType *) b;
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
     gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
   else
@@ -1512,7 +1512,7 @@ clearPin_callback (const BoxType * b, void *cl)
 static int
 clearPad_callback (const BoxType * b, void *cl)
 {
-  PadTypePtr pad = (PadTypePtr) b;
+  PadType *pad = (PadType *) b;
   int *side = cl;
   if (ON_SIDE (pad, *side) && pad->Mask)
     _draw_pad (Output.pmGC, pad, true, true);
@@ -1522,7 +1522,7 @@ clearPad_callback (const BoxType * b, void *cl)
 static int
 clearPin_callback_solid (const BoxType * b, void *cl)
 {
-  PinTypePtr pin = (PinTypePtr) b;
+  PinType *pin = (PinType *) b;
   gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
   return 1;
 }
@@ -1530,7 +1530,7 @@ clearPin_callback_solid (const BoxType * b, void *cl)
 static int
 clearPad_callback_solid (const BoxType * b, void *cl)
 {
-  PadTypePtr pad = (PadTypePtr) b;
+  PadType *pad = (PadType *) b;
   int *side = cl;
   if (ON_SIDE (pad, *side) && pad->Mask)
     gui->fill_pcb_pad (Output.pmGC, pad, true, true);
@@ -1589,7 +1589,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
   int layernum;
   int side;
   struct poly_info info;
-  LayerTypePtr Layer;
+  LayerType *Layer;
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
   int first_run = 1;
@@ -1767,7 +1767,7 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
 }
 
 void
-ghid_draw_everything (BoxTypePtr drawn_area)
+ghid_draw_everything (BoxType *drawn_area)
 {
   render_priv *priv = gport->render_priv;
   int i, ngroups;
