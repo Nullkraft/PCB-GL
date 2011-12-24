@@ -1,0 +1,173 @@
+Bottom: 0b29982bdc35cf0bf6f6323b4db0e5e63b5b03c7
+Top:    a34d015d2c6a48e033d3d118f6777a0c83f794af
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-12-24 16:36:09 +0000
+
+Refresh of add-a-hacky-name-mangling-thin
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index 9ed7caa..99dce64 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -35,6 +35,7 @@
+ #include <memory.h>
+ #include <setjmp.h>
+ #include <stdlib.h>
++#include <stdio.h>
+ 
+ #include "global.h"
+ 
+@@ -53,6 +54,8 @@
+ #include "undo.h"
+ #include "vendor.h"
+ 
++#include <glib.h>
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -659,6 +662,57 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
+   return Polygon;
+ }
+ 
++static char *refdes_map_file = "refdes.map";
++static GHashTable *refdes_map_table = NULL;
++
++void RefdesMapInit (void)
++{
++  FILE *mapfile;
++  char *from = NULL;
++  char *to = NULL;
++
++  refdes_map_table = g_hash_table_new_full (g_str_hash, g_str_equal,
++                                            g_free, g_free);
++
++  if (refdes_map_file == NULL)
++    return;
++
++  printf ("Refdes map file %s\n", refdes_map_file);
++
++  mapfile = fopen (refdes_map_file, "rb");
++
++  if (mapfile == NULL) {
++    fprintf(stderr, "Could not open [%s]\n", refdes_map_file);
++    return;
++  }
++
++  while (!feof(mapfile) && !ferror(mapfile)) {
++    free (from);
++    free (to);
++
++    from = NULL;
++    to = NULL;
++
++    fscanf (mapfile, "%ms %ms\n", &from, &to);
++
++    if (from == NULL || to == NULL)
++      continue;
++
++    g_hash_table_insert (refdes_map_table, g_strdup (from), g_strdup (to));
++
++    printf ("Stashing rename command: %s to %s\n", from, to);
++  }
++
++  free (to);
++  free (from);
++}
++
++
++char *RefdesMapMap (char *from)
++{
++  return g_hash_table_lookup (refdes_map_table, from);
++}
++
+ /* ---------------------------------------------------------------------------
+  * creates an new element
+  * memory is allocated if needed
+@@ -675,6 +729,18 @@ CreateNewElement (DataType *Data, ElementType *Element,
+   printf("Entered CreateNewElement.....\n");
+ #endif
+ 
++  /* HACK: Mapping between refdes */
++  if (NameOnPCB != NULL) {
++    char *to;
++    to = RefdesMapMap (NameOnPCB);
++    if (to != NULL) {
++//      free (NameOnPCB);
++      printf ("Mapping name from %s to %s\n", NameOnPCB, to);
++      NameOnPCB = malloc (sizeof (char) * (strlen (to) + 1));
++      strcpy (NameOnPCB, to);
++    }
++  }
++
+   if (!Element)
+     Element = GetElementMemory (Data);
+ 
+diff --git a/src/create.h b/src/create.h
+index 4872514..3397091 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -43,26 +43,27 @@ PCBType * CreateNewPCB (bool);
+ /* Called after PCB->Data->LayerN is set.  Returns zero if no errors,
+    else nonzero.  */
+ int CreateNewPCBPost (PCBType *, int /* set defaults */);
+-PinType * CreateNewVia (DataType *, Coord, Coord, Coord, Coord, Coord, Coord, char *, FlagType);
+-LineType * CreateDrawnLineOnLayer (LayerType *, Coord, Coord, Coord, Coord, Coord, Coord, FlagType);
+-LineType * CreateNewLineOnLayer (LayerType *, Coord, Coord, Coord, Coord, Coord, Coord, FlagType);
+-RatType * CreateNewRat (DataType *, Coord, Coord, Coord, Coord, Cardinal, Cardinal, Coord, FlagType);
+-ArcType * CreateNewArcOnLayer (LayerType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord, Coord, FlagType);
+-PolygonType * CreateNewPolygonFromRectangle (LayerType *, Coord, Coord, Coord, Coord, FlagType);
+-TextType * CreateNewText (LayerType *, FontType *, Coord, Coord, unsigned, int, char *, FlagType);
+-PolygonType * CreateNewPolygon (LayerType *, FlagType);
+-PointType * CreateNewPointInPolygon (PolygonType *, Coord, Coord);
+-PolygonType * CreateNewHoleInPolygon (PolygonType *polygon);
+-ElementType * CreateNewElement (DataType *, ElementType *, FontType *, FlagType, char *, char *, char *, Coord, Coord, BYTE, int, FlagType, bool);
+-LineType * CreateNewLineInElement (ElementType *, Coord, Coord, Coord, Coord, Coord);
+-ArcType * CreateNewArcInElement (ElementType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord);
+-PinType * CreateNewPin (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord, char *, char *, FlagType);
+-PadType * CreateNewPad (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord, Coord, char *, char *, FlagType);
+-LineType * CreateNewLineInSymbol (SymbolType *, Coord, Coord, Coord, Coord, Coord);
++PinType *CreateNewVia (DataType *, Coord, Coord, Coord, Coord, Coord, Coord, char *, FlagType);
++LineType *CreateDrawnLineOnLayer (LayerType *, Coord, Coord, Coord, Coord, Coord, Coord, FlagType);
++LineType *CreateNewLineOnLayer (LayerType *, Coord, Coord, Coord, Coord, Coord, Coord, FlagType);
++RatType *CreateNewRat (DataType *, Coord, Coord, Coord, Coord, Cardinal, Cardinal, Coord, FlagType);
++ArcType *CreateNewArcOnLayer (LayerType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord, Coord, FlagType);
++PolygonType *CreateNewPolygonFromRectangle (LayerType *, Coord, Coord, Coord, Coord, FlagType);
++TextType *CreateNewText (LayerType *, FontType *, Coord, Coord, unsigned, int, char *, FlagType);
++PolygonType *CreateNewPolygon (LayerType *, FlagType);
++PointType *CreateNewPointInPolygon (PolygonType *, Coord, Coord);
++PolygonType *CreateNewHoleInPolygon (PolygonType *polygon);
++void RefdesMapInit (void);
++ElementType *CreateNewElement (DataType *, ElementType *, FontType *, FlagType, char *, char *, char *, Coord, Coord, BYTE, int, FlagType, bool);
++LineType *CreateNewLineInElement (ElementType *, Coord, Coord, Coord, Coord, Coord);
++ArcType *CreateNewArcInElement (ElementType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord);
++PinType *CreateNewPin (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord, char *, char *, FlagType);
++PadType *CreateNewPad (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord, Coord, char *, char *, FlagType);
++LineType *CreateNewLineInSymbol (SymbolType *, Coord, Coord, Coord, Coord, Coord);
+ void CreateDefaultFont (PCBType *);
+-RubberbandType * CreateNewRubberbandEntry (LayerType *, LineType *, PointType *);
+-LibraryMenuType * CreateNewNet (LibraryType *, char *, char *);
+-LibraryEntryType * CreateNewConnection (LibraryMenuType *, char *);
+-AttributeType * CreateNewAttribute (AttributeListType *list, char *name, char *value);
++RubberbandType *CreateNewRubberbandEntry (LayerType *, LineType *, PointType *);
++LibraryMenuType *CreateNewNet (LibraryType *, char *, char *);
++LibraryEntryType *CreateNewConnection (LibraryMenuType *, char *);
++AttributeType *CreateNewAttribute (AttributeListType *list, char *name, char *value);
+ 
+ #endif
+diff --git a/src/file.c b/src/file.c
+index 1f5c406..13e9ca4 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -405,6 +405,9 @@ real_load_pcb (char *Filename, bool revert)
+   /* mark the default font invalid to know if the file has one */
+   newPCB->Font.Valid = false;
+ 
++  /* Hack, load the mapping file */
++  RefdesMapInit ();
++
+   /* new data isn't added to the undo list */
+   if (!ParsePCB (PCB, new_filename))
+     {
