@@ -1,5 +1,5 @@
-Bottom: 492ec6bb4c55c3cf351f73f396eb9f5daa739ccd
-Top:    538072ec4338fff7eed2a6c083025d046c2a08db
+Bottom: 7a96d41c02880210fb761b53ba846abc4a4e581b
+Top:    d17232dde539b9eb4e01a4efe6de94e97339ea0b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:21 +0000
 
@@ -9,10 +9,10 @@ Add VRML model rendering support
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index c878d36..0ef474a 100644
+index e9eca99..88e2d11 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -198,7 +198,16 @@ GL_SRCS= \
+@@ -196,7 +196,16 @@ GL_SRCS= \
  	hid/common/hidgl.c \
  	hid/common/hidgl.h \
  	hid/common/glext.h \
@@ -30,7 +30,7 @@ index c878d36..0ef474a 100644
  	hid/common/hidgl_shaders.h \
  	hid/common/trackball.c \
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 2169c14..a6f4fa5 100644
+index f19257d..22d244a 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -1072,6 +1072,7 @@ hidgl_init (void)
@@ -2600,10 +2600,10 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c0606da..af39fe1 100644
+index ed9a620..69063fe 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1622,7 +1622,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1617,7 +1617,7 @@ GhidDrawMask (int side, BoxType * screen)
    } else {
      glBindTexture (GL_TEXTURE_2D, texture);
    }
@@ -2612,7 +2612,7 @@ index c0606da..af39fe1 100644
  
    if (1) {
      GLfloat s_params[] = {0.0001, 0., 0., 0.};
-@@ -1868,6 +1868,11 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1864,6 +1864,11 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
@@ -2624,7 +2624,7 @@ index c0606da..af39fe1 100644
      }
    return 1;
  }
-@@ -2744,125 +2749,27 @@ ghid_finish_debug_draw (void)
+@@ -2740,125 +2745,27 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
