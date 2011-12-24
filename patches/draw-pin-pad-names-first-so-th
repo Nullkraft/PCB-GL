@@ -1,5 +1,5 @@
 Bottom: e0a41110ac6c4c00d2d15b1be8f1c317bca58c45
-Top:    e7dd73e915a9d3b7614eb8a42cd477af6ff51bdd
+Top:    804a15a8607a49c368a25890eadd3b4e9a8b8243
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 02:03:28 +0000
 
@@ -19,7 +19,7 @@ the pads.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 27b6370..bba2bda 100644
+index 27b6370..f93674b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1114,7 +1114,21 @@ draw_pin (PinType *pin, bool draw_hole)
@@ -27,7 +27,7 @@ index 27b6370..bba2bda 100644
  pin_callback (const BoxType * b, void *cl)
  {
 -  draw_pin ((PinType *)b, false);
-+  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
 +
 +  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
 +    _draw_pv_name (pin);
@@ -38,7 +38,7 @@ index 27b6370..bba2bda 100644
 +static int
 +pin_name_callback (const BoxType * b, void *cl)
 +{
-+  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
 +
 +  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
 +    _draw_pv_name (pin);
