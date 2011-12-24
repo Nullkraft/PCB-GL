@@ -1,5 +1,5 @@
 Bottom: 68231d1b512e0f4fabd602fc53e98dbfa110504e
-Top:    f5c9b3555024669513c4e51a6d32d3833aff39af
+Top:    d640f969f7f61a5d5d21d27e76952f494776d53c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-23 23:37:58 +0000
 
@@ -57,6 +57,149 @@ index fd0e415..b8e3a72 100755
  	printf("@multitable @columnfractions ");
  	for(i = 1 ; i <= 2*ncol ; i = i + 1) {
  		printf("%.3g ", 0.5 / ncol);
+diff --git a/doc/eps2png b/doc/eps2png
+index d235dc4..893b7a3 100755
+--- a/doc/eps2png
++++ b/doc/eps2png
+@@ -1,7 +1,5 @@
+ #!/usr/bin/perl
+ 
+-my $RCS_Id = '$Id$ ';
+-
+ # Author          : Johan Vromans
+ # Created On      : Tue Sep 15 15:59:04 1992
+ # Last Modified By: Johan Vromans
+diff --git a/doc/extract-docs b/doc/extract-docs
+index a25de8e..1d0759e 100755
+--- a/doc/extract-docs
++++ b/doc/extract-docs
+@@ -1,8 +1,6 @@
+ #!/usr/bin/perl
+ # -*- perl -*-
+ #
+-# $Id$
+-#
+ #################################################################
+ # This script extracts special comments from the source. It assembles
+ # them in texinfo files that are included in the manual.  
+diff --git a/doc/fractional_size.tab b/doc/fractional_size.tab
+index eb68f6f..2687519 100644
+--- a/doc/fractional_size.tab
++++ b/doc/fractional_size.tab
+@@ -1,6 +1,3 @@
+-# $Id$
+-#
+-
+ 1/64		.0156
+ 1/32		.0313
+ 3/64		.0469
+diff --git a/doc/gs/gs.texi b/doc/gs/gs.texi
+index b3cda3f..744642d 100644
+--- a/doc/gs/gs.texi
++++ b/doc/gs/gs.texi
+@@ -1,5 +1,4 @@
+ \input texinfo    @c -*-texinfo-*-
+-@comment RCS: $Id$
+ @comment %**start of header
+ @setfilename gs.info
+ @settitle Getting Started With PCB
+diff --git a/doc/gs/print-eps.scm b/doc/gs/print-eps.scm
+index 427267d..4538610 100644
+--- a/doc/gs/print-eps.scm
++++ b/doc/gs/print-eps.scm
+@@ -1,5 +1,3 @@
+-;; $Id$
+-;;
+ ;; This file may be used to print gschem schematics from the
+ ;; command line.  Typical usage is:
+ ;;
+diff --git a/doc/ideas/database.txt b/doc/ideas/database.txt
+index 380d1c9..d69139b 100644
+--- a/doc/ideas/database.txt
++++ b/doc/ideas/database.txt
+@@ -1,7 +1,3 @@
+-# $Id$
+-#
+-#
+-
+ Please note that this document is a work in progress and
+ currently represents a proposal for a future enhancement.
+ The goal of this document is to define what changes need
+diff --git a/doc/ideas/keepouts.txt b/doc/ideas/keepouts.txt
+index 741d696..abfb483 100644
+--- a/doc/ideas/keepouts.txt
++++ b/doc/ideas/keepouts.txt
+@@ -1,7 +1,3 @@
+-# $Id$
+-#
+-#
+-
+ Please note that this document is a work in progress and
+ currently represents a proposal for a future enhancement.
+ The goal of this document is to define what the keepout
+diff --git a/doc/letter_size.tab b/doc/letter_size.tab
+index 9d7459c..29b633b 100644
+--- a/doc/letter_size.tab
++++ b/doc/letter_size.tab
+@@ -1,6 +1,3 @@
+-# $Id$
+-#
+-
+ A		.2340
+ B		.2380
+ C		.2420
+diff --git a/doc/metric_size.tab b/doc/metric_size.tab
+index 3db5222..cfa464e 100644
+--- a/doc/metric_size.tab
++++ b/doc/metric_size.tab
+@@ -1,6 +1,3 @@
+-# $Id$
+-#
+-
+ 0.20_mm  	.00787
+ 0.25_mm 	.00984
+ 0.30_mm  	.0118
+diff --git a/doc/pcb.texi b/doc/pcb.texi
+index 850b748..db214a2 100644
+--- a/doc/pcb.texi
++++ b/doc/pcb.texi
+@@ -1,5 +1,4 @@
+ \input texinfo    @c -*-texinfo-*-
+-@comment RCS: $Id$
+ @comment %**start of header
+ @setfilename pcb.info
+ @settitle Pcb
+diff --git a/doc/refcard.tex b/doc/refcard.tex
+index 8072351..a735e1c 100644
+--- a/doc/refcard.tex
++++ b/doc/refcard.tex
+@@ -1,4 +1,3 @@
+-% $Id$
+ %
+ %                            COPYRIGHT
+ %
+diff --git a/doc/wire_size.tab b/doc/wire_size.tab
+index d72997f..8f57752 100644
+--- a/doc/wire_size.tab
++++ b/doc/wire_size.tab
+@@ -1,6 +1,3 @@
+-# $Id$
+-#
+-
+ 97		.0059
+ 96		.0063
+ 95		.0067
+diff --git a/doc/wishlist.txt b/doc/wishlist.txt
+index e462abe..737a06d 100644
+--- a/doc/wishlist.txt
++++ b/doc/wishlist.txt
+@@ -1,6 +1,3 @@
+-#  $Id$
+-#
+-
+ This file is the start of a wish list of features/improvements in no particular
+ order.
+ 
 diff --git a/globalconst.h b/globalconst.h
 index afba0d4..e0779d5 100755
 --- a/globalconst.h
