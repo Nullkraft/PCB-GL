@@ -1,5 +1,5 @@
 Bottom: 8ef77c4774630012c8abca353cbcaba55cfb0c5e
-Top:    8ef77c4774630012c8abca353cbcaba55cfb0c5e
+Top:    a7fba734ee6fefae25385834f43e2ef50945186c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 01:38:52 +0000
 
@@ -12,4 +12,16 @@ Coverity-cid: 239
 
 ---
 
-
+diff --git a/src/djopt.c b/src/djopt.c
+index daeae0a..a377508 100644
+--- a/src/djopt.c
++++ b/src/djopt.c
+@@ -1331,7 +1331,7 @@ orthopull_1 (corner_s * c, int fdir, int rdir, int any_sel)
+       if (ln >= lm)
+ 	{
+ 	  lm = ln + 10;
+-	  ls = (line_s **) realloc (ls, lm * sizeof (line_s));
++	  ls = (line_s **) realloc (ls, lm * sizeof (line_s *));
+ 	}
+       ls[ln++] = l;
+       c2 = other_corner (l, c2);
