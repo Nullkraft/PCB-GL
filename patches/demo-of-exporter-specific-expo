@@ -1,5 +1,5 @@
 Bottom: a5356433d6aeea7d644f6bc368129f2eceaa4c11
-Top:    09d8bf1b24974afa6da6cd028f5da64c02a3a689
+Top:    9c06b1413da926e9095f263ccb24d639cd162230
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-24 02:03:24 +0000
 
@@ -9,7 +9,7 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 03e82d8..56cf914 100644
+index 03e82d8..edf2cc0 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -1,6 +1,11 @@
@@ -33,7 +33,7 @@ index 03e82d8..56cf914 100644
 +struct pin_info
 +{
 +  bool arg;
-+  LayerTypePtr Layer;
++  LayerType *Layer;
 +};
 +
 +/* ---------------------------------------------------------------------------
@@ -41,7 +41,7 @@ index 03e82d8..56cf914 100644
 + */
 +#if 0
 +void
-+DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
++DrawLayerCommon (LayerType *Layer, const BoxType * screen, bool clear_pins)
 +{
 +  struct pin_info info;
 +
@@ -88,7 +88,7 @@ index 03e82d8..56cf914 100644
 +{
 +  int i, rv = 1;
 +  int layernum;
-+  LayerTypePtr Layer;
++  LayerType *Layer;
 +  int n_entries = PCB->LayerGroups.Number[group];
 +  Cardinal *layers = PCB->LayerGroups.Entries[group];
 +
@@ -117,7 +117,7 @@ index 03e82d8..56cf914 100644
 +static int
 +hole_counting_callback (const BoxType * b, void *cl)
 +{
-+  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
 +  HoleCountStruct *hcs = cl;
 +  if (TEST_FLAG (HOLEFLAG, pin))
 +    hcs->nunplated++;
@@ -140,28 +140,28 @@ index 03e82d8..56cf914 100644
 +static int
 +hole_callback (const BoxType * b, void *cl)
 +{
-+  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
 +  int plated = cl ? *(int *) cl : -1;
 +
 +  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
 +      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
 +    return 1;
 +
-+  //DrawHole ((PinTypePtr) b);
++  //DrawHole ((PinType *) b);
 +  return 1;
 +}
 +
 +static int
 +pin_callback (const BoxType * b, void *cl)
 +{
-+  //DrawPlainPin ((PinTypePtr) b, false);
++  //DrawPlainPin ((PinType *) b, false);
 +  return 1;
 +}
 +
 +static int
 +pad_callback (const BoxType * b, void *cl)
 +{
-+  //PadTypePtr pad = (PadTypePtr) b;
++  //PadType *pad = (PadType *) b;
 +  //if (FRONT (pad))
 +    //DrawPad (pad, 0);
 +  return 1;
@@ -251,7 +251,7 @@ index 03e82d8..56cf914 100644
 +    PrintFab (Output.fgGC);
 +}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index a959206..f692beb 100644
+index a959206..29838cf 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -23,9 +23,11 @@
@@ -315,7 +315,7 @@ index a959206..f692beb 100644
 +static int
 +hole_counting_callback (const BoxType * b, void *cl)
 +{
-+  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
 +  HoleCountStruct *hcs = cl;
 +  if (TEST_FLAG (HOLEFLAG, pin))
 +    hcs->nunplated++;
@@ -338,7 +338,7 @@ index a959206..f692beb 100644
 +static int
 +hole_callback (const BoxType * b, void *cl)
 +{
-+  PinTypePtr pin = (PinTypePtr) b;
++  PinType *pin = (PinType *) b;
 +  bool plated = *(bool *)cl;
 +
 +  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
