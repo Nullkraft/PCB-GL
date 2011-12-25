@@ -342,8 +342,6 @@ static void draw_cap (Coord width, int x, int y, double angle)
 {
   float radius = width / 2.;
 
-return;
-
   CHECK_IS_IN_CONTEXT ();
 
   hidgl_ensure_vertex_space (&buffer, 6);
@@ -397,7 +395,7 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
   switch (cap) {
     case Trace_Cap:
     case Round_Cap:
-      circular_caps = 0;
+      circular_caps = 1;
       break;
 
     case Square_Cap:
