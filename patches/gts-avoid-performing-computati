@@ -8,8 +8,10 @@ gts: Avoid performing computations with side-effects in g_assert statements
 g_assert (like assert), can be disabled at build time, so assertions
 should therefore not contain any expressions which have side-effects.
 
-Coverity caught a number of these in the copy gts library we have embedded,
-fix them by separating the computation and the assertion test.
+Coverity caught a number of these in the copy gts library we have embedded.
+There were also a couple which coverity didn't complain about, which appear
+to be the same class of problem. Fix them by separating the computation and
+the assertion test, adding a temporary result variable as necessary.
 
 Coverity-cid: 56
 Coverity-cid: 57
