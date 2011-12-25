@@ -388,12 +388,14 @@ guint gts_delaunay_refine (GtsSurface * surface,
   GTS_OBJECT (surface)->reserved = heap;
 
   while (steiner_max-- != 0 && (f = gts_eheap_remove_top (heap, NULL))) {
+    GtsVertex *add_vertex_returned;
     GtsVertex * c = 
       GTS_VERTEX (gts_triangle_circumcircle_center (GTS_TRIANGLE (f),
 		  GTS_POINT_CLASS (surface->vertex_class)));
     EHEAP_PAIR (f) = NULL;
     g_assert (c != NULL);
-    g_assert (gts_delaunay_add_vertex (surface, c, f) == NULL);
+    add_vertex_returned = gts_delaunay_add_vertex (surface, c, f);
+    g_assert (add_vertex_returned == NULL);
 
     vertex_encroaches (c, surface, encroached, encroaches, encroach_data);
     if (!gts_fifo_is_empty (encroached)) {

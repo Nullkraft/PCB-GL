@@ -947,7 +947,8 @@ GtsSplit * gts_split_new (GtsSplitClass * klass,
 #else
   v1 = GTS_SPLIT_V1 (vs);
   v2 = GTS_SPLIT_V2 (vs);
-  g_assert ((e = GTS_EDGE (gts_vertices_are_connected (v1, v2))));
+  e = GTS_EDGE (gts_vertices_are_connected (v1, v2));
+  g_assert (e != NULL);
   i = e->triangles;
   vs->ncf = g_slist_length (i);
   g_assert (vs->ncf > 0);
