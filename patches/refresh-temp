@@ -1,0 +1,58 @@
+Bottom: aca5ed0f7c6c8b31c7626f92e72dfef531d38271
+Top:    cfd227c7e119fe002974cde3b81658553caeba61
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2011-12-25 00:47:01 +0000
+
+Refresh of hid-gtk-avoid-warnings-when-ne
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 35e39b5..f8a02ed 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -342,6 +342,8 @@ static void draw_cap (Coord width, int x, int y, double angle)
+ {
+   float radius = width / 2.;
+ 
++return;
++
+   CHECK_IS_IN_CONTEXT ();
+ 
+   hidgl_ensure_vertex_space (&buffer, 6);
+@@ -395,7 +397,7 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
+   switch (cap) {
+     case Trace_Cap:
+     case Round_Cap:
+-      circular_caps = 1;
++      circular_caps = 0;
+       break;
+ 
+     case Square_Cap:
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 249066f..e2c08d5 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -699,11 +699,6 @@ ghid_netlist_window_create (GHidPort * out)
+   GtkCellRenderer *renderer;
+   GtkTreeViewColumn *column;
+ 
+-  /* No point in putting up the window if no netlist is loaded.
+-   */
+-  if (!PCB->NetlistLib.MenuN)
+-    return;
+-
+   if (netlist_window)
+     return;
+ 
+@@ -1014,6 +1009,10 @@ GhidNetlistChanged (int argc, char **argv, Coord x, Coord y)
+   if (ghidgui == NULL || !ghidgui->is_up)
+     return 0;
+ 
++  /* There is no need to update if the netlist window isn't open */
++  if (netlist_window == NULL)
++    return 0;
++
+   loading_new_netlist = TRUE;
+   ghid_netlist_window_update (TRUE);
+   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (disable_all_button),
