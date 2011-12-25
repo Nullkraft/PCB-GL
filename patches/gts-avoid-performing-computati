@@ -1,5 +1,5 @@
 Bottom: b1cc1e0693ef0bc07f26c8f7fa9449dea037e5c0
-Top:    8dca273cb18cc2fea3d8d06835fe420e9304b84d
+Top:    4bd219d3eae193abfef2eacc8d4a573e7d6b7fd6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2011-12-25 01:10:57 +0000
 
@@ -43,7 +43,7 @@ index 7ada15d..eb0b1f8 100644
    m[0][3] = 0; m[1][3] = 0.; m[2][3] = 0.; m[3][3] = 1.;
  
 diff --git a/gts/refine.c b/gts/refine.c
-index 293eb11..d972868 100644
+index 293eb11..eab585d 100644
 --- a/gts/refine.c
 +++ b/gts/refine.c
 @@ -191,6 +191,7 @@ static gint split_encroached (GtsSurface * surface,
@@ -67,8 +67,24 @@ index 293eb11..d972868 100644
  
      if (boundary)
        gts_object_destroy (GTS_OBJECT (s));
+@@ -385,12 +388,14 @@ guint gts_delaunay_refine (GtsSurface * surface,
+   GTS_OBJECT (surface)->reserved = heap;
+ 
+   while (steiner_max-- != 0 && (f = gts_eheap_remove_top (heap, NULL))) {
++    GtsVertex *add_vertex_returned;
+     GtsVertex * c = 
+       GTS_VERTEX (gts_triangle_circumcircle_center (GTS_TRIANGLE (f),
+ 		  GTS_POINT_CLASS (surface->vertex_class)));
+     EHEAP_PAIR (f) = NULL;
+     g_assert (c != NULL);
+-    g_assert (gts_delaunay_add_vertex (surface, c, f) == NULL);
++    add_vertex_returned = gts_delaunay_add_vertex (surface, c, f);
++    g_assert (add_vertex_returned == NULL);
+ 
+     vertex_encroaches (c, surface, encroached, encroaches, encroach_data);
+     if (!gts_fifo_is_empty (encroached)) {
 diff --git a/gts/split.c b/gts/split.c
-index 43fea3a..2980cb5 100644
+index 43fea3a..b7bee77 100644
 --- a/gts/split.c
 +++ b/gts/split.c
 @@ -253,9 +253,10 @@ static CFace * cface_new (GtsFace * f,
@@ -95,6 +111,16 @@ index 43fea3a..2980cb5 100644
  
  #ifdef DEBUG
    fprintf (stderr, "collapsing %p: v1: %p v2: %p v: %p\n", vs, v1, v2, v);
+@@ -945,7 +947,8 @@ GtsSplit * gts_split_new (GtsSplitClass * klass,
+ #else
+   v1 = GTS_SPLIT_V1 (vs);
+   v2 = GTS_SPLIT_V2 (vs);
+-  g_assert ((e = GTS_EDGE (gts_vertices_are_connected (v1, v2))));
++  e = GTS_EDGE (gts_vertices_are_connected (v1, v2));
++  g_assert (e != NULL);
+   i = e->triangles;
+   vs->ncf = g_slist_length (i);
+   g_assert (vs->ncf > 0);
 diff --git a/gts/vopt.c b/gts/vopt.c
 index d772af9..4bc448e 100644
 --- a/gts/vopt.c
