@@ -1,0 +1,20 @@
+Bottom: aca5ed0f7c6c8b31c7626f92e72dfef531d38271
+Top:    aca5ed0f7c6c8b31c7626f92e72dfef531d38271
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2011-12-25 00:46:57 +0000
+
+hid/gtk: Avoid warnings when netlist window is not created.
+
+1. When the NetlistChanged action is fired, we should only update if the
+   netlist window is visible. (It will be created up to date when the
+   user asks for it).
+
+2. Always show the netlist window when requested, even if it has no
+   entries. This is good for consistent UI behaviour anyway, as the user
+   should be shown a blank netlist window if they request it.. even if
+   the is no content to display.
+
+
+---
+
+
