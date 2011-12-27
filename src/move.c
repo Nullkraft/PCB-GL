@@ -1064,15 +1064,15 @@ MoveLayer (int old_index, int new_index)
 	}
     }
 
-  for (g = 0; g < MAX_LAYER; g++)
-    if (PCB->LayerGroups.Number[g] == 0)
+  for (g = 1; g < MAX_LAYER; g++)
+    if (PCB->LayerGroups.Number[g - 1] == 0)
       {
-	memmove (&PCB->LayerGroups.Number[g],
-		 &PCB->LayerGroups.Number[g + 1],
-		 (MAX_LAYER - g - 1) * sizeof (PCB->LayerGroups.Number[g]));
-	memmove (&PCB->LayerGroups.Entries[g],
-		 &PCB->LayerGroups.Entries[g + 1],
-		 (MAX_LAYER - g - 1) * sizeof (PCB->LayerGroups.Entries[g]));
+	memmove (&PCB->LayerGroups.Number[g - 1],
+		 &PCB->LayerGroups.Number[g],
+		 (MAX_LAYER - g) * sizeof (PCB->LayerGroups.Number[g]));
+	memmove (&PCB->LayerGroups.Entries[g - 1],
+		 &PCB->LayerGroups.Entries[g],
+		 (MAX_LAYER - g) * sizeof (PCB->LayerGroups.Entries[g]));
       }
 
   hid_action ("LayersChanged");
