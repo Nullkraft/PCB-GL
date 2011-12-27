@@ -1,0 +1,22 @@
+Bottom: ad20f06180db60d742b3b5caea7c40271d22d810
+Top:    eb83317c3a43f5f0d8522e23106a012b400b21af
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2011-12-27 01:11:38 +0000
+
+Refresh of move-c-fix-off-by-one-in-memor
+
+---
+
+diff --git a/src/move.c b/src/move.c
+index 8f7045d..ad5c7c8 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -1064,7 +1064,7 @@ MoveLayer (int old_index, int new_index)
+ 	}
+     }
+ 
+-  for (g = 0; g < MAX_LAYER; g++)
++  for (g = 0; g < MAX_LAYER - 1; g++)
+     if (PCB->LayerGroups.Number[g] == 0)
+       {
+ 	memmove (&PCB->LayerGroups.Number[g],
