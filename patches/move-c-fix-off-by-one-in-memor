@@ -1,0 +1,19 @@
+Bottom: ad20f06180db60d742b3b5caea7c40271d22d810
+Top:    ad20f06180db60d742b3b5caea7c40271d22d810
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2011-12-27 01:11:29 +0000
+
+move.c: Fix off-by one in memory copy loop.
+
+Shorten the loop so we don't don't try to memcopy a zero length chunk
+off the end of our array. Might have been harmless, but lets not take
+the chance.
+
+(Caught by Coverity).
+
+Coverity-CID: 12
+
+
+---
+
+
