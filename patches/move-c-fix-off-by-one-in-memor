@@ -5,7 +5,7 @@ Date:   2011-12-27 01:11:29 +0000
 
 move.c: Fix off-by one in memory copy loop.
 
-Shorten the loop so we don't don't try to memcopy a zero length chunk
+Shorten the loop so we don't don't try to memmove a zero length chunk
 off the end of our array. Might have been harmless, but lets not take
 the chance.
 
