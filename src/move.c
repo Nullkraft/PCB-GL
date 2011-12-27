@@ -1064,7 +1064,7 @@ MoveLayer (int old_index, int new_index)
 	}
     }
 
-  for (g = 0; g < MAX_LAYER; g++)
+  for (g = 0; g < MAX_LAYER - 1; g++)
     if (PCB->LayerGroups.Number[g] == 0)
       {
 	memmove (&PCB->LayerGroups.Number[g],
