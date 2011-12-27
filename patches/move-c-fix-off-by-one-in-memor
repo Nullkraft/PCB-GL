@@ -1,5 +1,5 @@
 Bottom: ad20f06180db60d742b3b5caea7c40271d22d810
-Top:    eb83317c3a43f5f0d8522e23106a012b400b21af
+Top:    c852e3e4a2489c6e6eed81336ff876c61a775610
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2011-12-27 01:11:29 +0000
 
@@ -17,15 +17,30 @@ Coverity-CID: 12
 ---
 
 diff --git a/src/move.c b/src/move.c
-index 8f7045d..ad5c7c8 100644
+index 8f7045d..b1c82af 100644
 --- a/src/move.c
 +++ b/src/move.c
-@@ -1064,7 +1064,7 @@ MoveLayer (int old_index, int new_index)
+@@ -1064,15 +1064,15 @@ MoveLayer (int old_index, int new_index)
  	}
      }
  
 -  for (g = 0; g < MAX_LAYER; g++)
-+  for (g = 0; g < MAX_LAYER - 1; g++)
-     if (PCB->LayerGroups.Number[g] == 0)
+-    if (PCB->LayerGroups.Number[g] == 0)
++  for (g = 1; g < MAX_LAYER; g++)
++    if (PCB->LayerGroups.Number[g - 1] == 0)
        {
- 	memmove (&PCB->LayerGroups.Number[g],
+-	memmove (&PCB->LayerGroups.Number[g],
+-		 &PCB->LayerGroups.Number[g + 1],
+-		 (MAX_LAYER - g - 1) * sizeof (PCB->LayerGroups.Number[g]));
+-	memmove (&PCB->LayerGroups.Entries[g],
+-		 &PCB->LayerGroups.Entries[g + 1],
+-		 (MAX_LAYER - g - 1) * sizeof (PCB->LayerGroups.Entries[g]));
++	memmove (&PCB->LayerGroups.Number[g - 1],
++		 &PCB->LayerGroups.Number[g],
++		 (MAX_LAYER - g) * sizeof (PCB->LayerGroups.Number[g]));
++	memmove (&PCB->LayerGroups.Entries[g - 1],
++		 &PCB->LayerGroups.Entries[g],
++		 (MAX_LAYER - g) * sizeof (PCB->LayerGroups.Entries[g]));
+       }
+ 
+   hid_action ("LayersChanged");
