@@ -1,0 +1,35 @@
+Bottom: 29a1e50adb13bc03bb0bb08dc869c4d66ce2e78f
+Top:    3456a5fb8b1d34653e919bfb859090a9479837c3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-01-03 23:34:27 +0000
+
+Refresh of update-the-crosshair-constrain
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 0394f2f..425b52b 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -1226,6 +1226,7 @@ RotateBuffer (BufferType *Buffer, BYTE Number)
+   /* finally the origin and the bounding box */
+   ROTATE (Buffer->X, Buffer->Y, Buffer->X, Buffer->Y, Number);
+   RotateBoxLowLevel (&Buffer->BoundingBox, Buffer->X, Buffer->Y, Number);
++  SetCrosshairRangeToBuffer (Buffer);
+ }
+ 
+ static void
+@@ -1360,6 +1361,7 @@ FreeRotateBuffer (BufferType *Buffer, Angle angle)
+   ENDALL_LOOP;
+ 
+   SetBufferBoundingBox (Buffer);
++  SetCrosshairRangeToBuffer (Buffer);
+ }
+ 
+ 
+@@ -1475,6 +1477,7 @@ MirrorBuffer (BufferType *Buffer)
+   }
+   ENDALL_LOOP;
+   SetBufferBoundingBox (Buffer);
++  SetCrosshairRangeToBuffer (Buffer);
+ }
