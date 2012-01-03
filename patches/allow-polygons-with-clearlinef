@@ -1,7 +1,7 @@
-Bottom: b264c6850b4ccfb9bc4c4eac36791717e0e97bd8
-Top:    07f676af51b9c2248032677779fec1d4ac53ec80
+Bottom: ca2edd09187d791bd85eb7b798e70e3b50d8482e
+Top:    2e357c4e14909ad500bd9a341b2f0200df04cb22
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-26 16:28:50 +0000
+Date:   2012-01-03 23:46:13 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -28,7 +28,7 @@ polygon fill.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 0394f2f..034b924 100644
+index d311420..05ecbc8 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -362,6 +362,7 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
@@ -184,7 +184,7 @@ index 5dfcb66..068e8d9 100644
    else
      gui->fill_pcb_polygon (Output.fgGC, polygon, drawn_area);
 diff --git a/src/move.c b/src/move.c
-index 8f7045d..9e58f63 100644
+index d785823..cb2b24a 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -346,10 +346,12 @@ MovePolygon (LayerType *Layer, PolygonType *Polygon)
