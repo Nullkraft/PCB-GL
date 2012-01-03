@@ -1,7 +1,7 @@
-Bottom: ad20f06180db60d742b3b5caea7c40271d22d810
-Top:    5d0e430962dc12b04fc529c85efc676348c2c88d
+Bottom: 6a1f2d92952e2aefd1aae51b58f7f2c81c5b9b8d
+Top:    9335caf68f1c7dfb15fe52e4c68765fd2fd869d2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-12-26 16:28:20 +0000
+Date:   2012-01-03 23:42:14 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -302,7 +302,7 @@ index 8081262..6e37aa3 100644
        {
  	if (layer->LineN || layer->ArcN)
 diff --git a/src/buffer.c b/src/buffer.c
-index 0394f2f..85357b2 100644
+index d311420..2803b16 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -601,47 +601,55 @@ void
@@ -1391,7 +1391,7 @@ index f675079..6ac2f53 100644
  }
  
 diff --git a/src/move.c b/src/move.c
-index 8f7045d..586f571 100644
+index d785823..2b4d56f 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -787,7 +787,7 @@ void *
