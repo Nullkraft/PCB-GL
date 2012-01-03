@@ -1009,8 +1009,8 @@ MoveLayer (int old_index, int new_index)
 	       &PCB->Data->Layer[old_index + 1],
 	       (max_copper_layer + 2 - old_index - 1) * sizeof (LayerType));
       memset (&PCB->Data->Layer[max_copper_layer + 2 - 1], 0, sizeof (LayerType));
-      memmove (&groups[old_index],
-	       &groups[old_index + 1],
+      memmove (&group_of_layer[old_index],
+	       &group_of_layer[old_index + 1],
 	       (max_copper_layer + 2 - old_index - 1) * sizeof (int));
       for (l = 0; l < max_copper_layer; l++)
 	if (LayerStack[l] == old_index)
@@ -1032,8 +1032,8 @@ MoveLayer (int old_index, int new_index)
 	  memmove (&PCB->Data->Layer[old_index],
 		   &PCB->Data->Layer[old_index + 1],
 		   (new_index - old_index) * sizeof (LayerType));
-	  memmove (&groups[old_index],
-		   &groups[old_index + 1],
+	  memmove (&group_of_layer[old_index],
+		   &group_of_layer[old_index + 1],
 		   (new_index - old_index) * sizeof (int));
 	}
       else
@@ -1041,8 +1041,8 @@ MoveLayer (int old_index, int new_index)
 	  memmove (&PCB->Data->Layer[new_index + 1],
 		   &PCB->Data->Layer[new_index],
 		   (old_index - new_index) * sizeof (LayerType));
-	  memmove (&groups[new_index + 1],
-		   &groups[new_index],
+	  memmove (&group_of_layer[new_index + 1],
+		   &group_of_layer[new_index],
 		   (old_index - new_index) * sizeof (int));
 	}
       memcpy (&PCB->Data->Layer[new_index], &saved_layer, sizeof (LayerType));
