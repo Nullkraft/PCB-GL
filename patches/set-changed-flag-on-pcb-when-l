@@ -1,5 +1,5 @@
 Bottom: 2e83395ca638a4c33c17aa4f13e53351581a34b7
-Top:    2e83395ca638a4c33c17aa4f13e53351581a34b7
+Top:    857efb4e84a763419ba7a963cc97fed8c4232f62
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-12 22:27:52 +0000
 
@@ -8,4 +8,23 @@ Set changed flag on PCB when locking / unlocking objects
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index 92ded0f..1bd01ea 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -1150,6 +1150,7 @@ NotifyMode (void)
+ 	     */
+ 	    DrawElement (element);
+ 	    Draw ();
++	    SetChangedFlag (true);
+ //	    hid_actionl ("Report", "Object", NULL);
+ 	  }
+ 	else if (type != NO_TYPE)
+@@ -1164,6 +1165,7 @@ NotifyMode (void)
+ 		DrawObject (type, ptr1, ptr2);
+ 		Draw ();
+ 	      }
++	    SetChangedFlag (true);
+ //	    hid_actionl ("Report", "Object", NULL);
+ 	  }
+ 	break;
