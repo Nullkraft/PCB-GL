@@ -787,7 +787,7 @@ void *
 MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
 			 Coord DX, Coord DY)
 {
-  RubberbandType *ptr;
+  GList *iter;
   void *ptr2;
 
   /* setup offset */
@@ -795,9 +795,11 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
   DeltaY = DY;
 
   /* move all the lines... and reset the counter */
-  ptr = Crosshair.AttachedObject.Rubberband;
-  while (Crosshair.AttachedObject.RubberbandN)
+  for (iter = Crosshair.AttachedObject.Rubberband;
+       iter != NULL; iter = g_list_next (iter))
     {
+      RubberbandType *ptr = iter->data;
+
       /* first clear any marks that we made in the line flags */
       CLEAR_FLAG (RUBBERENDFLAG, ptr->Line);
       /* only update undo list if an actual movement happened */
@@ -809,7 +811,6 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
           MoveLinePoint (ptr->Layer, ptr->Line, ptr->MovedPoint);
         }
       Crosshair.AttachedObject.RubberbandN--;
-      ptr++;
     }
 
   if (DX == 0 && DY == 0)
