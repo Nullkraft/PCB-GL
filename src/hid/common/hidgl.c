@@ -657,6 +657,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                 GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
   glStencilMask (stencil_bit);                          /* Only write to our stencil bit */
   glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, ref value is our bit */
+  glEnable (GL_STENCIL_TEST);                           /* Enable the stencil test, just in case it wasn't already on */
   glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
 
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           /* Stencil pass => replace stencil value */
