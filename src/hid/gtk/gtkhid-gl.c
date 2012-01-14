@@ -488,6 +488,15 @@ set_gl_color_for_gc (hidGC gc)
     return;
 
   free (priv->current_colorname);
+  priv->current_colorname = NULL;
+
+  /* If we can't set the GL colour right now, quit with
+   * current_colorname set to NULL, so we don't NOOP the
+   * next set_gl_color_for_gc call.
+   */
+  if (!priv->in_context)
+    return;
+
   priv->current_colorname = strdup (gc->colorname);
   priv->current_alpha_mult = gc->alpha_mult;
 
@@ -564,9 +573,6 @@ set_gl_color_for_gc (hidGC gc)
     b = b * mult;
 #endif
   }
-
-  if(!priv->in_context)
-    return;
 
   hidgl_flush_triangles (&buffer);
   glColor4d (r, g, b, a);
@@ -849,6 +855,9 @@ draw_crosshair (render_priv *priv)
   gint x, y, z;
   static int done_once = 0;
   static GdkColor cross_color;
+
+  if (!priv->in_context)
+    return;
 
   if (!done_once)
     {
