@@ -945,8 +945,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_invalidate_current_gc ();
 
-  DrawAttached ();
-  DrawMark ();
+  DrawAttached (NULL);
+  DrawMark (NULL);
   hidgl_flush_triangles (&buffer);
 
   draw_crosshair (priv);
