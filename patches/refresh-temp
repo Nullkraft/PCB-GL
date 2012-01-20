@@ -1,0 +1,183 @@
+Bottom: d44e51cd8cc4c3f5fd9eee26cc3699874980573c
+Top:    600bc0585a476e914a8754af4be6597a43d3b8f0
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-01-20 18:28:38 +0000
+
+Refresh of butcher-the-xor-crosshair-draw
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index b012ffb..9f67d9b 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -145,7 +145,7 @@ XORDrawMoveOrCopyObject (void)
+       {
+         PinType *via = (PinType *)Crosshair.AttachedObject.Ptr1;
+         dapi->set_draw_offset (dx, dy);
+-        thindraw_pcb_via (via);
++        dapi->draw_pcb_via (via);
+         break;
+       }
+ 
+@@ -153,7 +153,7 @@ XORDrawMoveOrCopyObject (void)
+       {
+         LineType *line = (LineType *)Crosshair.AttachedObject.Ptr2;
+         dapi->set_draw_offset (dx, dy);
+-        thindraw_pcb_line (line);
++        dapi->draw_pcb_line (line);
+         break;
+       }
+ 
+@@ -161,7 +161,7 @@ XORDrawMoveOrCopyObject (void)
+       {
+         ArcType *arc = (ArcType *)Crosshair.AttachedObject.Ptr2;
+         dapi->set_draw_offset (dx, dy);
+-        thindraw_pcb_arc (arc);
++        dapi->draw_pcb_arc (arc);
+         break;
+       }
+ 
+@@ -169,7 +169,7 @@ XORDrawMoveOrCopyObject (void)
+       {
+         PolygonType *poly = (PolygonType *)Crosshair.AttachedObject.Ptr2;
+         dapi->set_draw_offset (dx, dy);
+-        thindraw_pcb_polygon (poly);
++        dapi->draw_pcb_polygon (poly);
+         break;
+       }
+ 
+@@ -190,7 +190,7 @@ XORDrawMoveOrCopyObject (void)
+             draw_line.Point2.Y += dy;
+           }
+ 
+-        thindraw_pcb_line (&draw_line);
++        dapi->draw_pcb_line (&draw_line);
+         break;
+       }
+ 
+@@ -247,7 +247,7 @@ XORDrawMoveOrCopyObject (void)
+         ElementType *element = (ElementType *) Crosshair.AttachedObject.Ptr2;
+ 
+         dapi->set_draw_offset (dx, dy);
+-        thindraw_pcb_element (element);
++        dapi->draw_pcb_element (element);
+         break;
+       }
+     }
+@@ -276,12 +276,12 @@ XORDrawMoveOrCopyObject (void)
+               draw_line.Point2.Y += dy;
+             }
+ 
+-          thindraw_pcb_line (draw_line);
++          dapi->draw_pcb_line (draw_line);
+         }
+       else if (ptr->MovedPoint == &ptr->Line->Point1) /* XXX: What is this conditional for ?? */
+         {
+           dapi->set_draw_offset (dx, dy);
+-          thindraw_pcb_line (ptr->Line);
++          dapi->draw_pcb_line (ptr->Line);
+         }
+ 
+       ptr++;
+@@ -309,14 +309,14 @@ DrawAttached (void)
+         via.Mask = 0;
+         via.Flags = NoFlags ();
+ 
+-        gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, true, false);
++        dapi->draw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, true, false);
+ 
+         if (TEST_FLAG (SHOWDRCFLAG, PCB))
+           {
+             /* XXX: Naughty cheat - use the mask to draw DRC clearance! */
+             via.Mask = Settings.ViaThickness + PCB->Bloat * 2;
+             gui->set_color (Crosshair.GC, Settings.CrossColor);
+-            gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, false, true);
++            dapi->draw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, false, true);
+             gui->set_color (Crosshair.GC, Settings.CrosshairColor);
+           }
+         break;
+@@ -333,7 +333,7 @@ DrawAttached (void)
+ 
+       /* draw attached polygon only if in POLYGON_MODE or POLYGONHOLE_MODE */
+       if (Crosshair.AttachedPolygon.PointN > 1)
+-        thindraw_pcb_polygon (&Crosshair.AttachedPolygon);
++        dapi->draw_pcb_polygon (&Crosshair.AttachedPolygon);
+       break;
+ 
+     case ARC_MODE:
+@@ -346,13 +346,13 @@ DrawAttached (void)
+         if (!make_arc_from_crosshair (&arc, Settings.LineThickness))
+           break;
+ 
+-        thindraw_pcb_arc (&arc);
++        dapi->draw_pcb_arc (&arc);
+         if (TEST_FLAG (SHOWDRCFLAG, PCB))
+           {
+             if (!make_arc_from_crosshair (&arc, Settings.LineThickness + 2 * (PCB->Bloat + 1)))
+               break;
+             gui->set_color (Crosshair.GC, Settings.CrossColor);
+-            thindraw_pcb_arc (&arc);
++            dapi->draw_pcb_arc (&arc);
+             gui->set_color (Crosshair.GC, Settings.CrosshairColor);
+           }
+ 
+@@ -364,31 +364,39 @@ DrawAttached (void)
+       if (Crosshair.AttachedLine.State != STATE_FIRST &&
+           Crosshair.AttachedLine.draw)
+         {
+-          LineType draw_line = Crosshair.AttachedLine;
++          /* Make a dummy line structure to draw from */
++          LineType draw_line;
++
++          draw_line.Point1 = Crosshair.AttachedLine.Point1;
++          draw_line.Point2 = Crosshair.AttachedLine.Point2;
++          draw_line.Thickness = Settings.LineThickness;
++          draw_line.Clearance = 2 * Settings.Keepaway;
++          draw_line.Flags = NoFlags ();
+ 
+           draw_line.Thickness = PCB->RatDraw ? 10 : Settings.LineThickness;
+-          thindraw_pcb_line (draw_line);
++          dapi->draw_pcb_line (draw_line);
+ 
+           if (PCB->Clipping)
+             {
+               draw_line.Point1.X = Crosshair.X;
+               draw_line.Point1.Y = Crosshair.Y;
+-              thindraw_pcb_line (draw_line);
++              dapi->draw_pcb_line (draw_line);
+             }
+ 
+           if (TEST_FLAG (SHOWDRCFLAG, PCB))
+             {
+               gui->set_color (Crosshair.GC, Settings.CrossColor);
+ 
+-              draw_line = Crosshair.AttachedLine;
++              draw_line.Point1 = Crosshair.AttachedLine.Point1;
++              draw_line.Point2 = Crosshair.AttachedLine.Point2;
+               draw_line.Thickness = PCB->RatDraw ? 10 : Settings.LineThickness + 2 * (PCB->Bloat + 1);
+-              thindraw_pcb_line (draw_line);
++              dapi->draw_pcb_line (draw_line);
+ 
+               if (PCB->Clipping)
+                 {
+                   draw_line.Point1.X = Crosshair.X;
+                   draw_line.Point1.Y = Crosshair.Y;
+-                  thindraw_pcb_line (draw_line);
++                  dapi->draw_pcb_line (draw_line);
+                 }
+ 
+               gui->set_color (Crosshair.GC, Settings.CrosshairColor);
+@@ -401,9 +409,9 @@ DrawAttached (void)
+        *     they draw, so we will have to make some distinction as to which routines may
+        *     set this (and not call them from inside one another!)
+        */
+-      dapi->set_draw_offset (Crosshair.X - Buffer->X,
+-                             Crosshair.Y - Buffer->Y);
+-      thindraw_pcb_buffer (PASTEBUFFER);
++      dapi->set_draw_offset (Crosshair.X - PASTEBUFFER->X,
++                             Crosshair.Y - PASTEBUFFER->Y);
++      dapi->draw_pcb_buffer (PASTEBUFFER);
+       break;
+ 
+     case COPY_MODE:
