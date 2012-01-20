@@ -380,7 +380,7 @@ DrawAttached (void)
             {
               gui->set_color (Crosshair.GC, Settings.CrossColor);
 
-              draw_line = Crisshair.AttachedLine;
+              draw_line = Crosshair.AttachedLine;
               draw_line.Thickness = PCB->RatDraw ? 10 : Settings.LineThickness + 2 * (PCB->Bloat + 1);
               thindraw_pcb_line (draw_line);
 
