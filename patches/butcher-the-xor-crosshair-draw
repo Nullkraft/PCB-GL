@@ -1,5 +1,5 @@
 Bottom: eefa43641cda28f17197c794311125103b11ff0a
-Top:    93618208aa33153ce4b7eef1f9f4ad32668523e5
+Top:    d44e51cd8cc4c3f5fd9eee26cc3699874980573c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-16 01:03:06 +0000
 
@@ -9,7 +9,7 @@ Butcher the XOR / Crosshair drawing code
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index f0526b8..22c1c0d 100644
+index f0526b8..b012ffb 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -51,302 +51,54 @@
@@ -736,7 +736,7 @@ index f0526b8..22c1c0d 100644
 +            {
 +              gui->set_color (Crosshair.GC, Settings.CrossColor);
 +
-+              draw_line = Crisshair.AttachedLine;
++              draw_line = Crosshair.AttachedLine;
 +              draw_line.Thickness = PCB->RatDraw ? 10 : Settings.LineThickness + 2 * (PCB->Bloat + 1);
 +              thindraw_pcb_line (draw_line);
 +
