@@ -1,5 +1,5 @@
 Bottom: 8009e4f2fbaea4a869cb63b4a2bf37f4aadbe2e5
-Top:    c17a44afac2b49983f78fdda0427eb4831144bad
+Top:    a4cd04bb24388cb04482fe4cbe42cb6abe732f9f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-21 19:01:13 +0000
 
@@ -8,6 +8,32 @@ Other drawing API changes
 
 ---
 
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 1a4d1ad..b00bf66 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -297,10 +297,6 @@ draw_move_or_copy_object (DrawAPI *dapi)
+ void
+ DrawAttached (DrawAPI *dapi)
+ {
+-  /* DEBUG ONLY */
+-  if (dapi == NULL)
+-    return;
+-
+   dapi->gc = dapi->gapi->make_gc ();
+ 
+   dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
+@@ -460,10 +456,6 @@ DrawAttached (DrawAPI *dapi)
+ void
+ DrawMark (DrawAPI *dapi)
+ {
+-  /* DEBUG ONLY */
+-  if (dapi == NULL)
+-    return;
+-
+   /* Mark is not drawn when it is not set */
+   if (!Marked.status)
+     return;
 diff --git a/src/data.c b/src/data.c
 index 9d6588c..6f88522 100644
 --- a/src/data.c
@@ -2031,7 +2057,7 @@ index 2181718..af3f825 100644
    gerber_hid.set_crosshair       = gerber_set_crosshair;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2f6ad95..256a77e 100644
+index 2f6ad95..0ce5d96 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -590,7 +590,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -2065,6 +2091,44 @@ index 2f6ad95..256a77e 100644
  
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+@@ -945,7 +945,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+-  hid_expose_callback (&ghid_hid, &region, 0);
++//  hid_expose_callback (&ghid_hid, &region, 0);
+   hidgl_flush_triangles (&buffer);
+ 
+   ghid_draw_grid (&region);
+@@ -957,8 +957,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+     dapi = outline_draw_new (gui);
+     dapi->set_draw_offset = hidgl_set_draw_offset;
+ 
+-    DrawAttached (dapi);
+-    DrawMark (dapi);
++//    DrawAttached (dapi);
++//    DrawMark (dapi);
+   }
+   hidgl_flush_triangles (&buffer);
+ 
+@@ -1074,7 +1074,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+                 gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
+                                     -gport->view.y0, 0);
+ 
+-  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
++//  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
+   hidgl_flush_triangles (&buffer);
+   glPopMatrix ();
+ 
+@@ -1189,7 +1189,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+ 
+-  hid_expose_callback (&ghid_hid, &region, NULL);
++//  hid_expose_callback (&ghid_hid, &region, NULL);
+   hidgl_flush_triangles (&buffer);
+   glPopMatrix ();
+ 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
 index eb0ad14..5aab60b 100644
 --- a/src/hid/gtk/gtkhid-main.c
@@ -2086,6 +2150,34 @@ index eb0ad14..5aab60b 100644
    ghid_hid.calibrate                = ghid_calibrate;
    ghid_hid.shift_is_pressed         = ghid_shift_is_pressed;
    ghid_hid.control_is_pressed       = ghid_control_is_pressed;
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index f6d3098..99b3058 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -2582,6 +2582,7 @@ idle_proc (XtPointer dummy)
+       pixmap = window;
+       if (crosshair_on)
+         {
++          lesstif_set_draw_xor (gc, true);
+           DrawAttached ();
+           DrawMark ();
+         }
+@@ -2951,6 +2952,7 @@ lesstif_notify_crosshair_change (bool changes_complete)
+     {
+       save_pixmap = pixmap;
+       pixmap = window;
++      lesstif_set_draw_xor (gc, true);
+       DrawAttached ();
+       pixmap = save_pixmap;
+     }
+@@ -4019,6 +4021,7 @@ lesstif_flush_debug_draw (void)
+   pixmap = window;
+   if (crosshair_on)
+     {
++      lesstif_set_draw_xor (gc, true);
+       DrawAttached ();
+       DrawMark ();
+     }
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
 index 048f476..560b031 100644
 --- a/src/hid/nelma/nelma.c
@@ -2207,7 +2299,7 @@ index ebab761..bb90ea8 100644
    hid->set_crosshair      = ps_set_crosshair;
  }
 diff --git a/src/outline_draw.c b/src/outline_draw.c
-index 6da1b82..45ffdee 100644
+index 6da1b82..df1d8b0 100644
 --- a/src/outline_draw.c
 +++ b/src/outline_draw.c
 @@ -239,6 +239,7 @@ outline_draw_pcb_buffer (DrawAPI *dapi, BufferType *Buffer)
@@ -2218,15 +2310,17 @@ index 6da1b82..45ffdee 100644
  static void
  outline_draw_pcb_pv (DrawAPI *dapi, PinType *pin)
  {
-@@ -256,6 +257,7 @@ outline_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
+@@ -256,21 +257,22 @@ outline_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
  {
    dapi->gapi->thindraw_pcb_pad (dapi->gc, pad, false, false);
  }
 +#endif
  
- DrawAPI *outline_draw_new (HID *gapi)
+-DrawAPI *outline_draw_new (HID *gapi)
++DrawAPI *outline_draw_new (GraphicsAPI *gapi)
  {
-@@ -264,13 +266,13 @@ DrawAPI *outline_draw_new (HID *gapi)
+   DrawAPI *dapi;
+ 
    dapi = g_new0 (DrawAPI, 1);
    dapi->gapi = gapi;
  
