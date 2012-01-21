@@ -1,5 +1,5 @@
 Bottom: d840d03e34731ad766bce025efbbc8cf8ec16dfb
-Top:    1b074ac0f7b32825d8447f106bffe21194c9ce16
+Top:    54c20b84519429afbf61c963d0cd7aed0872625f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-16 01:03:06 +0000
 
@@ -940,11 +940,11 @@ index f3133ec..f79aee1 100644
    hidgl_flush_triangles (&buffer);
  
    draw_crosshair (priv);
-diff --git a/src/thindraw.c b/src/thindraw.c
+diff --git a/src/outline_draw.c b/src/outline_draw.c
 new file mode 100644
 index 0000000..f8bed53
 --- /dev/null
-+++ b/src/thindraw.c
++++ b/src/outline_draw.c
 @@ -0,0 +1,236 @@
 +/*
 + *                            COPYRIGHT
