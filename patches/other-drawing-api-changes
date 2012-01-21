@@ -1,5 +1,5 @@
-Bottom: 8009e4f2fbaea4a869cb63b4a2bf37f4aadbe2e5
-Top:    a4cd04bb24388cb04482fe4cbe42cb6abe732f9f
+Bottom: ed14952d182c8d24fa4ec40c45f90fc6a429334b
+Top:    f656ac14dd0faef32b86ae189b101378c07734a2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-21 19:01:13 +0000
 
@@ -1422,7 +1422,7 @@ index 7b28396..35b8b22 100644
   * layer group. A layer group identifies layers which are always switched
   * on/off together.
 diff --git a/src/hid.h b/src/hid.h
-index 2266b6c..5da3d0b 100644
+index 78e6c85..182e695 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -321,6 +321,7 @@ typedef enum
@@ -1433,7 +1433,7 @@ index 2266b6c..5da3d0b 100644
      /* Make an empty graphics context.  */
        hidGC (*make_gc) (void);
      void (*destroy_gc) (hidGC gc_);
-@@ -380,7 +381,7 @@ typedef enum
+@@ -379,7 +380,7 @@ typedef enum
      void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
      void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
      void (*fill_rect) (hidGC gc_, Coord x1_, Coord y1_, Coord x2_, Coord y2_);
@@ -1442,7 +1442,7 @@ index 2266b6c..5da3d0b 100644
  
      /* This is for the printer.  If you call this for the GUI, xval and
         yval are ignored, and a dialog pops up to lead you through the
-@@ -617,7 +618,7 @@ typedef enum
+@@ -616,7 +617,7 @@ typedef enum
     Do *not* assume that the hid that is passed is the GUI hid.  This
     callback is also used for printing and exporting. */
    struct BoxType;
@@ -1946,10 +1946,10 @@ index 03e82d8..3e3e514 100644
 +  dapi->draw_pcb_via_mask = common_thindraw_pcb_pv_mask;
  }
 diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
-index d970c77..4c1adb6 100644
+index 0df42f0..564436b 100644
 --- a/src/hid/common/extents.c
 +++ b/src/hid/common/extents.c
-@@ -175,6 +175,7 @@ hid_extents_init (void)
+@@ -170,6 +170,7 @@ hid_extents_init (void)
    extents_hid.poly_before         = 1;
  
    extents_hid.set_layer           = extents_set_layer;
@@ -1957,7 +1957,7 @@ index d970c77..4c1adb6 100644
    extents_hid.make_gc             = extents_make_gc;
    extents_hid.destroy_gc          = extents_destroy_gc;
    extents_hid.use_mask            = extents_use_mask;
-@@ -188,6 +189,7 @@ hid_extents_init (void)
+@@ -182,6 +183,7 @@ hid_extents_init (void)
    extents_hid.fill_circle         = extents_fill_circle;
    extents_hid.fill_polygon        = extents_fill_polygon;
    extents_hid.fill_rect           = extents_fill_rect;
@@ -1966,10 +1966,10 @@ index d970c77..4c1adb6 100644
    initialised = true;
  }
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index d772e18..8d220ce 100644
+index 5685d60..0796293 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
-@@ -454,6 +454,7 @@ common_nogui_init (HID *hid)
+@@ -448,6 +448,7 @@ common_nogui_init (HID *hid)
    hid->invalidate_all =       nogui_invalidate_all;
    hid->set_layer =            nogui_set_layer;
    hid->end_layer =            nogui_end_layer;
@@ -1977,7 +1977,7 @@ index d772e18..8d220ce 100644
    hid->make_gc =              nogui_make_gc;
    hid->destroy_gc =           nogui_destroy_gc;
    hid->use_mask =             nogui_use_mask;
-@@ -473,6 +474,7 @@ common_nogui_init (HID *hid)
+@@ -466,6 +467,7 @@ common_nogui_init (HID *hid)
    hid->fill_pcb_pv =          nogui_fill_pcb_pv;
    hid->thindraw_pcb_pv =      nogui_thindraw_pcb_pv;
    hid->fill_rect =            nogui_fill_rect;
@@ -1986,10 +1986,10 @@ index d772e18..8d220ce 100644
    hid->shift_is_pressed =     nogui_shift_is_pressed;
    hid->control_is_pressed =   nogui_control_is_pressed;
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index a3e1bfd..4f44d9f 100644
+index 38fc21e..32f6350 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -1173,6 +1173,7 @@ hid_gcode_init ()
+@@ -1167,6 +1167,7 @@ hid_gcode_init ()
    gcode_hid.do_export           = gcode_do_export;
    gcode_hid.parse_arguments     = gcode_parse_arguments;
    gcode_hid.set_layer           = gcode_set_layer;
@@ -1997,7 +1997,7 @@ index a3e1bfd..4f44d9f 100644
    gcode_hid.make_gc             = gcode_make_gc;
    gcode_hid.destroy_gc          = gcode_destroy_gc;
    gcode_hid.use_mask            = gcode_use_mask;
-@@ -1187,6 +1188,7 @@ hid_gcode_init ()
+@@ -1180,6 +1181,7 @@ hid_gcode_init ()
    gcode_hid.fill_circle         = gcode_fill_circle;
    gcode_hid.fill_polygon        = gcode_fill_polygon;
    gcode_hid.fill_rect           = gcode_fill_rect;
@@ -2006,10 +2006,10 @@ index a3e1bfd..4f44d9f 100644
    gcode_hid.set_crosshair       = gcode_set_crosshair;
  
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 2181718..af3f825 100644
+index f9c0e29..dff9b81 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -825,9 +825,10 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -824,9 +824,10 @@ gerber_set_layer (const char *name, int group, int empty)
      {
        if (outline_layer
  	  && outline_layer != PCB->Data->Layer+idx)
@@ -2021,7 +2021,7 @@ index 2181718..af3f825 100644
  	  hidGC gc = gui->make_gc ();
  	  printf("name %s idx %d\n", name, idx);
  	  if (SL_TYPE (idx) == SL_SILK)
-@@ -841,6 +842,7 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -840,6 +841,7 @@ gerber_set_layer (const char *name, int group, int empty)
  	  gui->draw_line (gc, PCB->MaxWidth, 0, PCB->MaxWidth, PCB->MaxHeight);
  	  gui->draw_line (gc, 0, PCB->MaxHeight, PCB->MaxWidth, PCB->MaxHeight);
  	  gui->destroy_gc (gc);
@@ -2029,7 +2029,7 @@ index 2181718..af3f825 100644
  	}
      }
  
-@@ -1155,8 +1157,8 @@ gerber_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -1148,8 +1150,8 @@ gerber_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
    int firstTime = 1;
    Coord startX = 0, startY = 0;
  
@@ -2040,7 +2040,7 @@ index 2181718..af3f825 100644
  
    use_gc (gc, 10 * 100);
    if (!f)
-@@ -1249,6 +1251,7 @@ hid_gerber_init ()
+@@ -1242,6 +1244,7 @@ hid_gerber_init ()
    gerber_hid.do_export           = gerber_do_export;
    gerber_hid.parse_arguments     = gerber_parse_arguments;
    gerber_hid.set_layer           = gerber_set_layer;
@@ -2048,7 +2048,7 @@ index 2181718..af3f825 100644
    gerber_hid.make_gc             = gerber_make_gc;
    gerber_hid.destroy_gc          = gerber_destroy_gc;
    gerber_hid.use_mask            = gerber_use_mask;
-@@ -1262,6 +1265,7 @@ hid_gerber_init ()
+@@ -1254,6 +1257,7 @@ hid_gerber_init ()
    gerber_hid.fill_circle         = gerber_fill_circle;
    gerber_hid.fill_polygon        = gerber_fill_polygon;
    gerber_hid.fill_rect           = gerber_fill_rect;
@@ -2057,10 +2057,10 @@ index 2181718..af3f825 100644
    gerber_hid.set_crosshair       = gerber_set_crosshair;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2f6ad95..0ce5d96 100644
+index 4013b2e..bbf99b1 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -590,7 +590,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -563,7 +563,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  void
  ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
@@ -2069,7 +2069,7 @@ index 2f6ad95..0ce5d96 100644
    ghid_set_alpha_mult (gc, 0.25);
    ghid_fill_pcb_polygon (gc, poly, clip_box);
    ghid_set_alpha_mult (gc, 1.0);
-@@ -785,8 +785,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -758,8 +758,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  
    /* Setup HID function pointers specific to the GL renderer*/
    ghid_hid.end_layer = ghid_end_layer;
@@ -2080,7 +2080,7 @@ index 2f6ad95..0ce5d96 100644
  }
  
  void
-@@ -877,8 +877,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -850,8 +850,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
@@ -2091,7 +2091,7 @@ index 2f6ad95..0ce5d96 100644
  
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-@@ -945,7 +945,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -918,7 +918,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
@@ -2100,7 +2100,7 @@ index 2f6ad95..0ce5d96 100644
    hidgl_flush_triangles (&buffer);
  
    ghid_draw_grid (&region);
-@@ -957,8 +957,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -930,8 +930,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      dapi = outline_draw_new (gui);
      dapi->set_draw_offset = hidgl_set_draw_offset;
  
@@ -2111,7 +2111,7 @@ index 2f6ad95..0ce5d96 100644
    }
    hidgl_flush_triangles (&buffer);
  
-@@ -1074,7 +1074,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1047,7 +1047,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                      -gport->view.y0, 0);
  
@@ -2120,7 +2120,7 @@ index 2f6ad95..0ce5d96 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -1189,7 +1189,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1162,7 +1162,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
    region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
  
@@ -2130,7 +2130,7 @@ index 2f6ad95..0ce5d96 100644
    glPopMatrix ();
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index eb0ad14..5aab60b 100644
+index fc899c5..587d91a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -2131,6 +2131,7 @@ hid_gtk_init ()
@@ -2141,7 +2141,7 @@ index eb0ad14..5aab60b 100644
    ghid_hid.make_gc                  = ghid_make_gc;
    ghid_hid.destroy_gc               = ghid_destroy_gc;
    ghid_hid.use_mask                 = ghid_use_mask;
-@@ -2144,7 +2145,7 @@ hid_gtk_init ()
+@@ -2143,7 +2144,7 @@ hid_gtk_init ()
    ghid_hid.fill_circle              = ghid_fill_circle;
    ghid_hid.fill_polygon             = ghid_fill_polygon;
    ghid_hid.fill_rect                = ghid_fill_rect;
@@ -2179,10 +2179,10 @@ index f6d3098..99b3058 100644
        DrawMark ();
      }
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 048f476..560b031 100644
+index 402e0d0..c0618ed 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -1050,6 +1050,7 @@ hid_nelma_init()
+@@ -1044,6 +1044,7 @@ hid_nelma_init()
    nelma_hid.do_export           = nelma_do_export;
    nelma_hid.parse_arguments     = nelma_parse_arguments;
    nelma_hid.set_layer           = nelma_set_layer;
@@ -2190,7 +2190,7 @@ index 048f476..560b031 100644
    nelma_hid.make_gc             = nelma_make_gc;
    nelma_hid.destroy_gc          = nelma_destroy_gc;
    nelma_hid.use_mask            = nelma_use_mask;
-@@ -1064,6 +1065,7 @@ hid_nelma_init()
+@@ -1057,6 +1058,7 @@ hid_nelma_init()
    nelma_hid.fill_circle         = nelma_fill_circle;
    nelma_hid.fill_polygon        = nelma_fill_polygon;
    nelma_hid.fill_rect           = nelma_fill_rect;
@@ -2199,7 +2199,7 @@ index 048f476..560b031 100644
    nelma_hid.set_crosshair       = nelma_set_crosshair;
  
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 892696b..926c43d 100644
+index b1efc67..9e95ae3 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -1189,10 +1189,10 @@ png_use_mask (int use_it)
@@ -2217,7 +2217,7 @@ index 892696b..926c43d 100644
    if (use_it)
      {
        if (mask_im == NULL)
-@@ -1643,6 +1643,7 @@ hid_png_init ()
+@@ -1637,6 +1637,7 @@ hid_png_init ()
    png_hid.do_export           = png_do_export;
    png_hid.parse_arguments     = png_parse_arguments;
    png_hid.set_layer           = png_set_layer;
@@ -2225,7 +2225,7 @@ index 892696b..926c43d 100644
    png_hid.make_gc             = png_make_gc;
    png_hid.destroy_gc          = png_destroy_gc;
    png_hid.use_mask            = png_use_mask;
-@@ -1656,6 +1657,7 @@ hid_png_init ()
+@@ -1649,6 +1650,7 @@ hid_png_init ()
    png_hid.fill_circle         = png_fill_circle;
    png_hid.fill_polygon        = png_fill_polygon;
    png_hid.fill_rect           = png_fill_rect;
@@ -2234,10 +2234,10 @@ index 892696b..926c43d 100644
    png_hid.set_crosshair       = png_set_crosshair;
  
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index ba27023..fb03beb 100644
+index e7b79df..a977545 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
-@@ -441,6 +441,7 @@ eps_destroy_gc (hidGC gc)
+@@ -440,6 +440,7 @@ eps_destroy_gc (hidGC gc)
  static void
  eps_use_mask (int use_it)
  {
@@ -2245,7 +2245,7 @@ index ba27023..fb03beb 100644
    static int mask_pending = 0;
    switch (use_it)
      {
-@@ -462,6 +463,7 @@ eps_use_mask (int use_it)
+@@ -461,6 +462,7 @@ eps_use_mask (int use_it)
  	}
        break;
      }
@@ -2253,7 +2253,7 @@ index ba27023..fb03beb 100644
  }
  
  static void
-@@ -676,6 +678,7 @@ hid_eps_init ()
+@@ -669,6 +671,7 @@ hid_eps_init ()
    eps_hid.do_export           = eps_do_export;
    eps_hid.parse_arguments     = eps_parse_arguments;
    eps_hid.set_layer           = eps_set_layer;
@@ -2261,7 +2261,7 @@ index ba27023..fb03beb 100644
    eps_hid.make_gc             = eps_make_gc;
    eps_hid.destroy_gc          = eps_destroy_gc;
    eps_hid.use_mask            = eps_use_mask;
-@@ -689,6 +692,7 @@ hid_eps_init ()
+@@ -681,6 +684,7 @@ hid_eps_init ()
    eps_hid.fill_circle         = eps_fill_circle;
    eps_hid.fill_polygon        = eps_fill_polygon;
    eps_hid.fill_rect           = eps_fill_rect;
@@ -2270,7 +2270,7 @@ index ba27023..fb03beb 100644
    eps_hid.set_crosshair       = eps_set_crosshair;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index ebab761..bb90ea8 100644
+index 69517e8..305adb1 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -1002,7 +1002,7 @@ ps_set_layer (const char *name, int group, int empty)
@@ -2282,7 +2282,7 @@ index ebab761..bb90ea8 100644
      }
  
    return 1;
-@@ -1494,6 +1494,7 @@ void ps_ps_init (HID *hid)
+@@ -1488,6 +1488,7 @@ void ps_ps_init (HID *hid)
    hid->do_export          = ps_do_export;
    hid->parse_arguments    = ps_parse_arguments;
    hid->set_layer          = ps_set_layer;
@@ -2290,7 +2290,7 @@ index ebab761..bb90ea8 100644
    hid->make_gc            = ps_make_gc;
    hid->destroy_gc         = ps_destroy_gc;
    hid->use_mask           = ps_use_mask;
-@@ -1509,6 +1510,7 @@ void ps_ps_init (HID *hid)
+@@ -1502,6 +1503,7 @@ void ps_ps_init (HID *hid)
    hid->fill_polygon       = ps_fill_polygon;
    hid->fill_pcb_polygon   = ps_fill_pcb_polygon;
    hid->fill_rect          = ps_fill_rect;
