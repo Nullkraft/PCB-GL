@@ -590,7 +590,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 void
 ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
-  common_thindraw_pcb_polygon (gc, poly, clip_box);
+  //common_thindraw_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, 0.25);
   ghid_fill_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, 1.0);
@@ -785,8 +785,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 
   /* Setup HID function pointers specific to the GL renderer*/
   ghid_hid.end_layer = ghid_end_layer;
-  ghid_hid.fill_pcb_polygon = ghid_fill_pcb_polygon;
-  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+//  ghid_hid.fill_pcb_polygon = ghid_fill_pcb_polygon;
+//  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 }
 
 void
@@ -877,8 +877,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
   /* TODO: We could use the GLU tessellator though */
-  if (hidgl_stencil_bits() == 0)
-    ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
+//  if (hidgl_stencil_bits() == 0)
+//    ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -945,7 +945,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
-  hid_expose_callback (&ghid_hid, &region, 0);
+//  hid_expose_callback (&ghid_hid, &region, 0);
   hidgl_flush_triangles (&buffer);
 
   ghid_draw_grid (&region);
@@ -957,8 +957,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     dapi = outline_draw_new (gui);
     dapi->set_draw_offset = hidgl_set_draw_offset;
 
-    DrawAttached (dapi);
-    DrawMark (dapi);
+//    DrawAttached (dapi);
+//    DrawMark (dapi);
   }
   hidgl_flush_triangles (&buffer);
 
@@ -1074,7 +1074,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                 gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                     -gport->view.y0, 0);
 
-  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
+//  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
@@ -1189,7 +1189,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
 
-  hid_expose_callback (&ghid_hid, &region, NULL);
+//  hid_expose_callback (&ghid_hid, &region, NULL);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 

@@ -2582,6 +2582,7 @@ idle_proc (XtPointer dummy)
       pixmap = window;
       if (crosshair_on)
         {
+          lesstif_set_draw_xor (gc, true);
           DrawAttached ();
           DrawMark ();
         }
@@ -2951,6 +2952,7 @@ lesstif_notify_crosshair_change (bool changes_complete)
     {
       save_pixmap = pixmap;
       pixmap = window;
+      lesstif_set_draw_xor (gc, true);
       DrawAttached ();
       pixmap = save_pixmap;
     }
@@ -4019,6 +4021,7 @@ lesstif_flush_debug_draw (void)
   pixmap = window;
   if (crosshair_on)
     {
+      lesstif_set_draw_xor (gc, true);
       DrawAttached ();
       DrawMark ();
     }
