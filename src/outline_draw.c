@@ -239,6 +239,7 @@ outline_draw_pcb_buffer (DrawAPI *dapi, BufferType *Buffer)
     }
 }
 
+#if 0
 static void
 outline_draw_pcb_pv (DrawAPI *dapi, PinType *pin)
 {
@@ -256,21 +257,22 @@ outline_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
 {
   dapi->gapi->thindraw_pcb_pad (dapi->gc, pad, false, false);
 }
+#endif
 
-DrawAPI *outline_draw_new (HID *gapi)
+DrawAPI *outline_draw_new (GraphicsAPI *gapi)
 {
   DrawAPI *dapi;
 
   dapi = g_new0 (DrawAPI, 1);
   dapi->gapi = gapi;
 
-  dapi->draw_pcb_pin          = outline_draw_pcb_pv;
-  dapi->draw_pcb_pin_mask     = outline_draw_pcb_pv_mask;
+  dapi->draw_pcb_pin          = NULL; //outline_draw_pcb_pv;
+  dapi->draw_pcb_pin_mask     = NULL; //outline_draw_pcb_pv_mask;
   dapi->draw_pcb_pin_hole     = NULL;
-  dapi->draw_pcb_via          = outline_draw_pcb_pv;
-  dapi->draw_pcb_via_mask     = outline_draw_pcb_pv_mask;
+  dapi->draw_pcb_via          = NULL; //outline_draw_pcb_pv;
+  dapi->draw_pcb_via_mask     = NULL; //outline_draw_pcb_pv_mask;
   dapi->draw_pcb_via_hole     = NULL;
-  dapi->draw_pcb_pad          = outline_draw_pcb_pad;
+  dapi->draw_pcb_pad          = NULL; //outline_draw_pcb_pad;
   dapi->draw_pcb_pad_mask     = NULL;
   dapi->draw_pcb_pad_paste    = NULL;
   dapi->draw_pcb_line         = outline_draw_pcb_line;

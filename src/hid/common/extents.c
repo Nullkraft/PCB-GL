@@ -170,6 +170,7 @@ hid_extents_init (void)
   extents_hid.poly_before         = 1;
 
   extents_hid.set_layer           = extents_set_layer;
+#if 0
   extents_hid.make_gc             = extents_make_gc;
   extents_hid.destroy_gc          = extents_destroy_gc;
   extents_hid.use_mask            = extents_use_mask;
@@ -182,6 +183,7 @@ hid_extents_init (void)
   extents_hid.fill_circle         = extents_fill_circle;
   extents_hid.fill_polygon        = extents_fill_polygon;
   extents_hid.fill_rect           = extents_fill_rect;
+#endif
 
   initialised = true;
 }
@@ -203,7 +205,7 @@ hid_get_extents (void *item)
   region.Y1 = -MAXINT;
   region.X2 = MAXINT;
   region.Y2 = MAXINT;
-  hid_expose_callback (&extents_hid, &region, item);
+//  hid_expose_callback (&extents_hid, &region, item);
 
   return &box;
 }
