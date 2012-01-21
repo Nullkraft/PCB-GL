@@ -259,7 +259,7 @@ outline_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
 }
 #endif
 
-DrawAPI *outline_draw_new (HID *gapi)
+DrawAPI *outline_draw_new (GraphicsAPI *gapi)
 {
   DrawAPI *dapi;
 
