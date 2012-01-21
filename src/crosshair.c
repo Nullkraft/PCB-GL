@@ -297,10 +297,6 @@ draw_move_or_copy_object (DrawAPI *dapi)
 void
 DrawAttached (DrawAPI *dapi)
 {
-  /* DEBUG ONLY */
-  if (dapi == NULL)
-    return;
-
   dapi->gc = dapi->gapi->make_gc ();
 
   dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
@@ -460,10 +456,6 @@ DrawAttached (DrawAPI *dapi)
 void
 DrawMark (DrawAPI *dapi)
 {
-  /* DEBUG ONLY */
-  if (dapi == NULL)
-    return;
-
   /* Mark is not drawn when it is not set */
   if (!Marked.status)
     return;
