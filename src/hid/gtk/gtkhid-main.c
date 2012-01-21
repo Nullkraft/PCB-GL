@@ -2073,6 +2073,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
 #include <winreg.h>
 #endif
 
+GraphicsAPI ghid_gapi;
 HID ghid_hid;
 
 void
@@ -2131,18 +2132,19 @@ hid_gtk_init ()
   ghid_hid.notify_crosshair_change  = ghid_notify_crosshair_change;
   ghid_hid.notify_mark_change       = ghid_notify_mark_change;
   ghid_hid.set_layer                = ghid_set_layer;
-  ghid_hid.make_gc                  = ghid_make_gc;
-  ghid_hid.destroy_gc               = ghid_destroy_gc;
-  ghid_hid.use_mask                 = ghid_use_mask;
-  ghid_hid.set_color                = ghid_set_color;
-  ghid_hid.set_line_cap             = ghid_set_line_cap;
-  ghid_hid.set_line_width           = ghid_set_line_width;
-  ghid_hid.draw_line                = ghid_draw_line;
-  ghid_hid.draw_arc                 = ghid_draw_arc;
-  ghid_hid.draw_rect                = ghid_draw_rect;
-  ghid_hid.fill_circle              = ghid_fill_circle;
-  ghid_hid.fill_polygon             = ghid_fill_polygon;
-  ghid_hid.fill_rect                = ghid_fill_rect;
+
+  ghid_gapi.make_gc                  = ghid_make_gc;
+  ghid_gapi.destroy_gc               = ghid_destroy_gc;
+  ghid_gapi.use_mask                 = ghid_use_mask;
+  ghid_gapi.set_color                = ghid_set_color;
+  ghid_gapi.set_line_cap             = ghid_set_line_cap;
+  ghid_gapi.set_line_width           = ghid_set_line_width;
+  ghid_gapi.draw_line                = ghid_draw_line;
+  ghid_gapi.draw_arc                 = ghid_draw_arc;
+  ghid_gapi.draw_rect                = ghid_draw_rect;
+  ghid_gapi.fill_circle              = ghid_fill_circle;
+  ghid_gapi.fill_polygon             = ghid_fill_polygon;
+  ghid_gapi.fill_rect                = ghid_fill_rect;
 
   ghid_hid.calibrate                = ghid_calibrate;
   ghid_hid.shift_is_pressed         = ghid_shift_is_pressed;
