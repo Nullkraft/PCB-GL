@@ -1,5 +1,5 @@
-Bottom: d840d03e34731ad766bce025efbbc8cf8ec16dfb
-Top:    02a19aac5b0c053f3e70a4e13d9a6482b9897222
+Bottom: d68ad2ed8140164da5d0c7f8a2cd210d4d0c65af
+Top:    d6fc0eb1a4fe4f3464898c8bdaf66fe372367c2b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-21 20:03:41 +0000
 
@@ -167,27 +167,6 @@ index 2181718..f9c0e29 100644
    gerber_hid.draw_line           = gerber_draw_line;
    gerber_hid.draw_arc            = gerber_draw_arc;
    gerber_hid.draw_rect           = gerber_draw_rect;
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f3133ec..560b365 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -488,16 +488,6 @@ ghid_set_line_width (hidGC gc, Coord width)
-   gc->width = width;
- }
- 
--
--void
--ghid_set_draw_xor (hidGC gc, int xor)
--{
--  /* NOT IMPLEMENTED */
--
--  /* Only presently called when setting up a crosshair GC.
--   * We manage our own drawing model for that anyway. */
--}
--
- void
- ghid_set_draw_faded (hidGC gc, int faded)
- {
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
 index eb0ad14..fc899c5 100644
 --- a/src/hid/gtk/gtkhid-main.c
