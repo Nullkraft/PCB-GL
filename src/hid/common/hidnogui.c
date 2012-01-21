@@ -105,12 +105,6 @@ nogui_set_line_width (hidGC gc, Coord width)
 }
 
 static void
-nogui_set_draw_xor (hidGC gc, int xor_)
-{
-  CRASH;
-}
-
-static void
 nogui_set_draw_faded (hidGC gc, int faded)
 {
 }
@@ -460,7 +454,6 @@ common_nogui_init (HID *hid)
   hid->set_color =            nogui_set_color;
   hid->set_line_cap =         nogui_set_line_cap;
   hid->set_line_width =       nogui_set_line_width;
-  hid->set_draw_xor =         nogui_set_draw_xor;
   hid->set_draw_faded =       nogui_set_draw_faded;
   hid->draw_line =            nogui_draw_line;
   hid->draw_arc =             nogui_draw_arc;

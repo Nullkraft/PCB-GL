@@ -2137,7 +2137,6 @@ hid_gtk_init ()
   ghid_hid.set_color                = ghid_set_color;
   ghid_hid.set_line_cap             = ghid_set_line_cap;
   ghid_hid.set_line_width           = ghid_set_line_width;
-  ghid_hid.set_draw_xor             = ghid_set_draw_xor;
   ghid_hid.draw_line                = ghid_draw_line;
   ghid_hid.draw_arc                 = ghid_draw_arc;
   ghid_hid.draw_rect                = ghid_draw_rect;
