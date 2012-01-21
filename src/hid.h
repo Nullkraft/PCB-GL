@@ -357,7 +357,6 @@ typedef enum
        line style is helpful.  */
     void (*set_line_cap) (hidGC gc_, EndCapStyle style_);
     void (*set_line_width) (hidGC gc_, Coord width_);
-    void (*set_draw_xor) (hidGC gc_, int xor_);
     /* Blends 20% or so color with 80% background.  Only used for
        assembly drawings so far. */
     void (*set_draw_faded) (hidGC gc_, int faded_);
