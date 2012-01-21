@@ -689,13 +689,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 
       global.doing_toc = 1;
       global.pagecount = 1;  /* 'pagecount' is modified by hid_expose_callback() call */
-      hid_expose_callback (&ps_hid, &global.region, 0);
+//      hid_expose_callback (&ps_hid, &global.region, 0);
     }
 
   global.pagecount = 1; /* Reset 'pagecount' if single file */
   global.doing_toc = 0;
   ps_set_layer (NULL, 0, -1);  /* reset static vars */
-  hid_expose_callback (&ps_hid, &global.region, 0);
+//  hid_expose_callback (&ps_hid, &global.region, 0);
 
   if (the_file)
     fprintf (the_file, "showpage\n");
@@ -999,10 +999,11 @@ ps_set_layer (const char *name, int group, int empty)
       global.outline_layer != NULL &&
       global.outline_layer != PCB->Data->Layer+idx &&
       strcmp (name, "outline") != 0 &&
-      strcmp (name, "route") != 0
-      )
+      strcmp (name, "route")   != 0)
     {
-      DrawLayer (global.outline_layer, &global.region);
+      DrawAPI *dapi = NULL;
+      dapi->set_clip_box (dapi, &global.region);
+      dapi->draw_pcb_layer (dapi, global.outline_layer);
     }
 
   return 1;
@@ -1488,6 +1489,7 @@ void ps_ps_init (HID *hid)
   hid->do_export          = ps_do_export;
   hid->parse_arguments    = ps_parse_arguments;
   hid->set_layer          = ps_set_layer;
+#if 0
   hid->make_gc            = ps_make_gc;
   hid->destroy_gc         = ps_destroy_gc;
   hid->use_mask           = ps_use_mask;
@@ -1502,6 +1504,7 @@ void ps_ps_init (HID *hid)
   hid->fill_polygon       = ps_fill_polygon;
   hid->fill_pcb_polygon   = ps_fill_pcb_polygon;
   hid->fill_rect          = ps_fill_rect;
+#endif
   hid->calibrate          = ps_calibrate;
   hid->set_crosshair      = ps_set_crosshair;
 }
