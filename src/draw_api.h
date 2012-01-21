@@ -46,8 +46,8 @@ struct DrawAPI {
 //  void (*draw_ppv)         (DrawAPI *, LayerType *, int);
 //  void (*draw_holes)       (DrawAPI *,              int);
   void (*draw_pcb_element)     (DrawAPI *, ElementType *);
-  void (*draw_pcb_layer)       (DrawAPI *, LayerType *,                const BoxType *, void *);
-  void (*draw_pcb_layer_group) (DrawAPI *, LayerType *,                const BoxType *, void *);
+  void (*draw_pcb_layer)       (DrawAPI *, LayerType *);
+  void (*draw_pcb_layer_group) (DrawAPI *, int);
   void (*draw_pcb_buffer)      (DrawAPI *, BufferType *);
   void (*set_draw_offset)      (DrawAPI *, Coord, Coord);
   void (*set_clip_box)         (DrawAPI *, const BoxType *);
