@@ -1,0 +1,317 @@
+Bottom: d840d03e34731ad766bce025efbbc8cf8ec16dfb
+Top:    02a19aac5b0c053f3e70a4e13d9a6482b9897222
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-01-21 21:13:32 +0000
+
+Refresh of remove-hid-set_draw_xor-api
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index f0526b8..f6498f7 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1174,7 +1174,6 @@ InitCrosshair (void)
+   Crosshair.GC = gui->make_gc ();
+ 
+   gui->set_color (Crosshair.GC, Settings.CrosshairColor);
+-  gui->set_draw_xor (Crosshair.GC, 1);
+   gui->set_line_cap (Crosshair.GC, Trace_Cap);
+   gui->set_line_width (Crosshair.GC, 1);
+ 
+diff --git a/src/hid.h b/src/hid.h
+index 2266b6c..78e6c85 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -357,7 +357,6 @@ typedef enum
+        line style is helpful.  */
+     void (*set_line_cap) (hidGC gc_, EndCapStyle style_);
+     void (*set_line_width) (hidGC gc_, Coord width_);
+-    void (*set_draw_xor) (hidGC gc_, int xor_);
+     /* Blends 20% or so color with 80% background.  Only used for
+        assembly drawings so far. */
+     void (*set_draw_faded) (hidGC gc_, int faded_);
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 8b969fa..7435c9c 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -200,11 +200,6 @@ batch_set_line_width (hidGC gc, Coord width)
+ }
+ 
+ static void
+-batch_set_draw_xor (hidGC gc, int xor_set)
+-{
+-}
+-
+-static void
+ batch_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+ {
+ }
+@@ -351,7 +346,6 @@ hid_batch_init ()
+   batch_hid.set_color             = batch_set_color;
+   batch_hid.set_line_cap          = batch_set_line_cap;
+   batch_hid.set_line_width        = batch_set_line_width;
+-  batch_hid.set_draw_xor          = batch_set_draw_xor;
+   batch_hid.draw_line             = batch_draw_line;
+   batch_hid.draw_arc              = batch_draw_arc;
+   batch_hid.draw_rect             = batch_draw_rect;
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index d970c77..0df42f0 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -91,11 +91,6 @@ extents_set_line_width (hidGC gc, Coord width)
+   gc->width = width;
+ }
+ 
+-static void
+-extents_set_draw_xor (hidGC gc, int xor_)
+-{
+-}
+-
+ #define PEX(x,w) if (box.X1 > (x)-(w)) box.X1 = (x)-(w); \
+ 	if (box.X2 < (x)+(w)) box.X2 = (x)+(w)
+ #define PEY(y,w) if (box.Y1 > (y)-(w)) box.Y1 = (y)-(w); \
+@@ -181,7 +176,6 @@ hid_extents_init (void)
+   extents_hid.set_color           = extents_set_color;
+   extents_hid.set_line_cap        = extents_set_line_cap;
+   extents_hid.set_line_width      = extents_set_line_width;
+-  extents_hid.set_draw_xor        = extents_set_draw_xor;
+   extents_hid.draw_line           = extents_draw_line;
+   extents_hid.draw_arc            = extents_draw_arc;
+   extents_hid.draw_rect           = extents_draw_rect;
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index d772e18..5685d60 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -105,12 +105,6 @@ nogui_set_line_width (hidGC gc, Coord width)
+ }
+ 
+ static void
+-nogui_set_draw_xor (hidGC gc, int xor_)
+-{
+-  CRASH;
+-}
+-
+-static void
+ nogui_set_draw_faded (hidGC gc, int faded)
+ {
+ }
+@@ -460,7 +454,6 @@ common_nogui_init (HID *hid)
+   hid->set_color =            nogui_set_color;
+   hid->set_line_cap =         nogui_set_line_cap;
+   hid->set_line_width =       nogui_set_line_width;
+-  hid->set_draw_xor =         nogui_set_draw_xor;
+   hid->set_draw_faded =       nogui_set_draw_faded;
+   hid->draw_line =            nogui_draw_line;
+   hid->draw_arc =             nogui_draw_arc;
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index a3e1bfd..38fc21e 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -828,12 +828,6 @@ gcode_set_line_width (hidGC gc, Coord width)
+ }
+ 
+ static void
+-gcode_set_draw_xor (hidGC gc, int xor_)
+-{
+-  ;
+-}
+-
+-static void
+ gcode_set_draw_faded (hidGC gc, int faded)
+ {
+ }
+@@ -1179,7 +1173,6 @@ hid_gcode_init ()
+   gcode_hid.set_color           = gcode_set_color;
+   gcode_hid.set_line_cap        = gcode_set_line_cap;
+   gcode_hid.set_line_width      = gcode_set_line_width;
+-  gcode_hid.set_draw_xor        = gcode_set_draw_xor;
+   gcode_hid.set_draw_faded      = gcode_set_draw_faded;
+   gcode_hid.draw_line           = gcode_draw_line;
+   gcode_hid.draw_arc            = gcode_draw_arc;
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 2181718..f9c0e29 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -52,7 +52,6 @@ static void gerber_use_mask (int use_it);
+ static void gerber_set_color (hidGC gc, const char *name);
+ static void gerber_set_line_cap (hidGC gc, EndCapStyle style);
+ static void gerber_set_line_width (hidGC gc, Coord width);
+-static void gerber_set_draw_xor (hidGC gc, int _xor);
+ static void gerber_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+ static void gerber_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height, Angle start_angle, Angle delta_angle);
+ static void gerber_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+@@ -903,12 +902,6 @@ gerber_set_line_width (hidGC gc, Coord width)
+ }
+ 
+ static void
+-gerber_set_draw_xor (hidGC gc, int xor_)
+-{
+-  ;
+-}
+-
+-static void
+ use_gc (hidGC gc, int radius)
+ {
+   if (radius)
+@@ -1255,7 +1248,6 @@ hid_gerber_init ()
+   gerber_hid.set_color           = gerber_set_color;
+   gerber_hid.set_line_cap        = gerber_set_line_cap;
+   gerber_hid.set_line_width      = gerber_set_line_width;
+-  gerber_hid.set_draw_xor        = gerber_set_draw_xor;
+   gerber_hid.draw_line           = gerber_draw_line;
+   gerber_hid.draw_arc            = gerber_draw_arc;
+   gerber_hid.draw_rect           = gerber_draw_rect;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index f3133ec..560b365 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -488,16 +488,6 @@ ghid_set_line_width (hidGC gc, Coord width)
+   gc->width = width;
+ }
+ 
+-
+-void
+-ghid_set_draw_xor (hidGC gc, int xor)
+-{
+-  /* NOT IMPLEMENTED */
+-
+-  /* Only presently called when setting up a crosshair GC.
+-   * We manage our own drawing model for that anyway. */
+-}
+-
+ void
+ ghid_set_draw_faded (hidGC gc, int faded)
+ {
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index eb0ad14..fc899c5 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2137,7 +2137,6 @@ hid_gtk_init ()
+   ghid_hid.set_color                = ghid_set_color;
+   ghid_hid.set_line_cap             = ghid_set_line_cap;
+   ghid_hid.set_line_width           = ghid_set_line_width;
+-  ghid_hid.set_draw_xor             = ghid_set_draw_xor;
+   ghid_hid.draw_line                = ghid_draw_line;
+   ghid_hid.draw_arc                 = ghid_draw_arc;
+   ghid_hid.draw_rect                = ghid_draw_rect;
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 34b4c11..bcba674 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -475,7 +475,6 @@ void ghid_use_mask (int use_it);
+ void ghid_set_color (hidGC gc, const char *name);
+ void ghid_set_line_cap (hidGC gc, EndCapStyle style);
+ void ghid_set_line_width (hidGC gc, Coord width);
+-void ghid_set_draw_xor (hidGC gc, int _xor);
+ void ghid_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+ void ghid_draw_arc (hidGC gc, Coord cx, Coord cy, Coord xradius, Coord yradius,
+                     Angle start_angle, Angle delta_angle);
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 048f476..402e0d0 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -819,12 +819,6 @@ nelma_set_line_width(hidGC gc, Coord width)
+ }
+ 
+ static void
+-nelma_set_draw_xor(hidGC gc, int xor_)
+-{
+-	;
+-}
+-
+-static void
+ nelma_set_draw_faded(hidGC gc, int faded)
+ {
+ }
+@@ -1056,7 +1050,6 @@ hid_nelma_init()
+   nelma_hid.set_color           = nelma_set_color;
+   nelma_hid.set_line_cap        = nelma_set_line_cap;
+   nelma_hid.set_line_width      = nelma_set_line_width;
+-  nelma_hid.set_draw_xor        = nelma_set_draw_xor;
+   nelma_hid.set_draw_faded      = nelma_set_draw_faded;
+   nelma_hid.draw_line           = nelma_draw_line;
+   nelma_hid.draw_arc            = nelma_draw_arc;
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 892696b..b1efc67 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -1290,12 +1290,6 @@ png_set_line_width (hidGC gc, Coord width)
+ }
+ 
+ static void
+-png_set_draw_xor (hidGC gc, int xor_)
+-{
+-  ;
+-}
+-
+-static void
+ use_gc (hidGC gc)
+ {
+   int need_brush = 0;
+@@ -1649,7 +1643,6 @@ hid_png_init ()
+   png_hid.set_color           = png_set_color;
+   png_hid.set_line_cap        = png_set_line_cap;
+   png_hid.set_line_width      = png_set_line_width;
+-  png_hid.set_draw_xor        = png_set_draw_xor;
+   png_hid.draw_line           = png_draw_line;
+   png_hid.draw_arc            = png_draw_arc;
+   png_hid.draw_rect           = png_draw_rect;
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index ba27023..e7b79df 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -39,7 +39,6 @@ static void eps_use_mask (int use_it);
+ static void eps_set_color (hidGC gc, const char *name);
+ static void eps_set_line_cap (hidGC gc, EndCapStyle style);
+ static void eps_set_line_width (hidGC gc, Coord width);
+-static void eps_set_draw_xor (hidGC gc, int _xor);
+ static void eps_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+ static void eps_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+ static void eps_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height, Angle start_angle, Angle delta_angle);
+@@ -514,12 +513,6 @@ eps_set_line_width (hidGC gc, Coord width)
+ }
+ 
+ static void
+-eps_set_draw_xor (hidGC gc, int xor_)
+-{
+-  ;
+-}
+-
+-static void
+ use_gc (hidGC gc)
+ {
+   if (linewidth != gc->width)
+@@ -682,7 +675,6 @@ hid_eps_init ()
+   eps_hid.set_color           = eps_set_color;
+   eps_hid.set_line_cap        = eps_set_line_cap;
+   eps_hid.set_line_width      = eps_set_line_width;
+-  eps_hid.set_draw_xor        = eps_set_draw_xor;
+   eps_hid.draw_line           = eps_draw_line;
+   eps_hid.draw_arc            = eps_draw_arc;
+   eps_hid.draw_rect           = eps_draw_rect;
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index ebab761..69517e8 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1066,12 +1066,6 @@ ps_set_line_width (hidGC gc, Coord width)
+ }
+ 
+ static void
+-ps_set_draw_xor (hidGC gc, int xor_)
+-{
+-  ;
+-}
+-
+-static void
+ ps_set_draw_faded (hidGC gc, int faded)
+ {
+   gc->faded = faded;
+@@ -1500,7 +1494,6 @@ void ps_ps_init (HID *hid)
+   hid->set_color          = ps_set_color;
+   hid->set_line_cap       = ps_set_line_cap;
+   hid->set_line_width     = ps_set_line_width;
+-  hid->set_draw_xor       = ps_set_draw_xor;
+   hid->set_draw_faded     = ps_set_draw_faded;
+   hid->draw_line          = ps_draw_line;
+   hid->draw_arc           = ps_draw_arc;
