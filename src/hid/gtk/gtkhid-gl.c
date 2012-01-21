@@ -590,7 +590,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 void
 ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
-  common_thindraw_pcb_polygon (gc, poly, clip_box);
+  //common_thindraw_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, 0.25);
   ghid_fill_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, 1.0);
@@ -785,8 +785,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 
   /* Setup HID function pointers specific to the GL renderer*/
   ghid_hid.end_layer = ghid_end_layer;
-  ghid_hid.fill_pcb_polygon = ghid_fill_pcb_polygon;
-  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+//  ghid_hid.fill_pcb_polygon = ghid_fill_pcb_polygon;
+//  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 }
 
 void
@@ -877,8 +877,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
   /* TODO: We could use the GLU tessellator though */
-  if (hidgl_stencil_bits() == 0)
-    ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
+//  if (hidgl_stencil_bits() == 0)
+//    ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
