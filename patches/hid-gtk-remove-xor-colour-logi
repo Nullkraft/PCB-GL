@@ -1,5 +1,5 @@
 Bottom: eefa43641cda28f17197c794311125103b11ff0a
-Top:    04f4dddaa30295126675db3dce56b71cb3bccc02
+Top:    354dbb14fd2be465d26fc0e496bf084453d1560f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-21 21:26:23 +0000
 
@@ -11,7 +11,7 @@ This code was not being used, so remove it.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f3133ec..71754a5 100644
+index f3133ec..45b9b72 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -68,7 +68,6 @@ typedef struct hid_gc_struct
@@ -52,20 +52,3 @@ index f3133ec..71754a5 100644
        r = cc->red;
        g = cc->green;
        b = cc->blue;
-@@ -488,16 +471,6 @@ ghid_set_line_width (hidGC gc, Coord width)
-   gc->width = width;
- }
- 
--
--void
--ghid_set_draw_xor (hidGC gc, int xor)
--{
--  /* NOT IMPLEMENTED */
--
--  /* Only presently called when setting up a crosshair GC.
--   * We manage our own drawing model for that anyway. */
--}
--
- void
- ghid_set_draw_faded (hidGC gc, int faded)
- {
