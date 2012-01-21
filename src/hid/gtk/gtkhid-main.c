@@ -2131,6 +2131,7 @@ hid_gtk_init ()
   ghid_hid.notify_crosshair_change  = ghid_notify_crosshair_change;
   ghid_hid.notify_mark_change       = ghid_notify_mark_change;
   ghid_hid.set_layer                = ghid_set_layer;
+#if 0
   ghid_hid.make_gc                  = ghid_make_gc;
   ghid_hid.destroy_gc               = ghid_destroy_gc;
   ghid_hid.use_mask                 = ghid_use_mask;
@@ -2144,7 +2145,7 @@ hid_gtk_init ()
   ghid_hid.fill_circle              = ghid_fill_circle;
   ghid_hid.fill_polygon             = ghid_fill_polygon;
   ghid_hid.fill_rect                = ghid_fill_rect;
-
+#endif
   ghid_hid.calibrate                = ghid_calibrate;
   ghid_hid.shift_is_pressed         = ghid_shift_is_pressed;
   ghid_hid.control_is_pressed       = ghid_control_is_pressed;

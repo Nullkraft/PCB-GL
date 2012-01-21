@@ -1002,7 +1002,7 @@ ps_set_layer (const char *name, int group, int empty)
       strcmp (name, "route") != 0
       )
     {
-      DrawLayer (global.outline_layer, &global.region);
+      DrawLayer (NULL, global.outline_layer, &global.region);
     }
 
   return 1;
@@ -1494,6 +1494,7 @@ void ps_ps_init (HID *hid)
   hid->do_export          = ps_do_export;
   hid->parse_arguments    = ps_parse_arguments;
   hid->set_layer          = ps_set_layer;
+#if 0
   hid->make_gc            = ps_make_gc;
   hid->destroy_gc         = ps_destroy_gc;
   hid->use_mask           = ps_use_mask;
@@ -1509,6 +1510,7 @@ void ps_ps_init (HID *hid)
   hid->fill_polygon       = ps_fill_polygon;
   hid->fill_pcb_polygon   = ps_fill_pcb_polygon;
   hid->fill_rect          = ps_fill_rect;
+#endif
   hid->calibrate          = ps_calibrate;
   hid->set_crosshair      = ps_set_crosshair;
 }
