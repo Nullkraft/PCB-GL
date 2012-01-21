@@ -321,6 +321,7 @@ typedef enum
        written).  Angles are always in degrees, with 0 being "right"
        (positive X) and 90 being "up" (positive Y).  */
 
+#if 0
     /* Make an empty graphics context.  */
       hidGC (*make_gc) (void);
     void (*destroy_gc) (hidGC gc_);
@@ -379,7 +380,7 @@ typedef enum
     void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
     void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
     void (*fill_rect) (hidGC gc_, Coord x1_, Coord y1_, Coord x2_, Coord y2_);
-
+#endif
 
     /* This is for the printer.  If you call this for the GUI, xval and
        yval are ignored, and a dialog pops up to lead you through the
@@ -616,7 +617,7 @@ typedef enum
    Do *not* assume that the hid that is passed is the GUI hid.  This
    callback is also used for printing and exporting. */
   struct BoxType;
-  void hid_expose_callback (HID * hid_, struct BoxType *region_, void *item_);
+//  void hid_expose_callback (DrawAPI *dapi, struct BoxType *region_, void *item_);
 
 /* This is initially set to a "no-gui" gui, and later reset by
    main. hid_expose_callback also temporarily set it for drawing. */
