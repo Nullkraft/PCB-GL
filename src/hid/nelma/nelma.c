@@ -645,7 +645,7 @@ nelma_start_png_export()
 	linewidth = -1;
 	lastbrush = (gdImagePtr)((void *) -1);
 
-	hid_expose_callback(&nelma_hid, &region, 0);
+//	hid_expose_callback(&nelma_hid, &region, 0);
 }
 
 static void 
@@ -1044,6 +1044,7 @@ hid_nelma_init()
   nelma_hid.do_export           = nelma_do_export;
   nelma_hid.parse_arguments     = nelma_parse_arguments;
   nelma_hid.set_layer           = nelma_set_layer;
+#if 0
   nelma_hid.make_gc             = nelma_make_gc;
   nelma_hid.destroy_gc          = nelma_destroy_gc;
   nelma_hid.use_mask            = nelma_use_mask;
@@ -1057,6 +1058,7 @@ hid_nelma_init()
   nelma_hid.fill_circle         = nelma_fill_circle;
   nelma_hid.fill_polygon        = nelma_fill_polygon;
   nelma_hid.fill_rect           = nelma_fill_rect;
+#endif
   nelma_hid.calibrate           = nelma_calibrate;
   nelma_hid.set_crosshair       = nelma_set_crosshair;
 

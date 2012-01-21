@@ -31,6 +31,7 @@
 #define	PCB_DRAW_H
 
 #include "global.h"
+#include "draw_api.h"
 
 /*bool	SwitchDrawingWindow(double, GdkDrawable *, gboolean, gboolean);*/
 
@@ -46,14 +47,13 @@ void DrawPadName (PadType *);
 void DrawLine (LayerType *, LineType *);
 void DrawArc (LayerType *, ArcType *);
 void DrawText (LayerType *, TextType *);
-void DrawTextLowLevel (TextType *, Coord);
+void DrawTextLowLevel (DrawAPI *dapi, TextType *, Coord);
 void DrawPolygon (LayerType *, PolygonType *);
 void DrawElement (ElementType *);
 void DrawElementName (ElementType *);
 void DrawElementPackage (ElementType *);
 void DrawElementPinsAndPads (ElementType *);
 void DrawObject (int, void *, void *);
-void DrawLayer (LayerType *, const BoxType *);
 void EraseVia (PinType *);
 void EraseRat (RatType *);
 void EraseViaName (PinType *);
@@ -70,11 +70,11 @@ void EraseElementPinsAndPads (ElementType *);
 void EraseElementName (ElementType *);
 void EraseObject (int, void *, void *);
 
-void DrawLayerGroup (int side, const BoxType *drawn_area);
-void DrawPaste (int side, const BoxType *drawn_area);
-void DrawSilk (int side, const BoxType *drawn_area);
-void DrawMask (int side, const BoxType *drawn_area);
-void DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area);
-void PrintAssembly (int side, const BoxType *drawn_area);
+void DrawPaste (DrawAPI *dapi, int side);
+void DrawSilk (DrawAPI *dapi, int side);
+void DrawMask (DrawAPI *dapi, int side);
+void DrawHoles (DrawAPI *dapi, bool draw_plated, bool draw_unplated);
+
+DrawAPI *draw_api_new (void);
 
 #endif

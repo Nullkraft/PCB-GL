@@ -28,6 +28,8 @@ typedef struct GraphicsAPI GraphicsAPI;
 
 struct DrawAPI {
   /* Virtual functions */
+
+  /* Isolated calls, corresponding to actual copper / mask / paste features. These don't call other dapi's */
   void (*draw_pcb_pin)         (DrawAPI *, PinType *);
   void (*draw_pcb_pin_mask)    (DrawAPI *, PinType *);
   void (*draw_pcb_pin_hole)    (DrawAPI *, PinType *);
@@ -38,27 +40,42 @@ struct DrawAPI {
   void (*draw_pcb_pad_mask)    (DrawAPI *, LayerType *, PadType *);
   void (*draw_pcb_pad_paste)   (DrawAPI *, LayerType *, PadType *);
   void (*draw_pcb_line)        (DrawAPI *, LayerType *, LineType *);
-//  void (*draw_rat)         (DrawAPI *,              RatType *);
   void (*draw_pcb_arc)         (DrawAPI *, LayerType *, ArcType *);
   void (*draw_pcb_text)        (DrawAPI *, LayerType *, TextType *);
   void (*draw_pcb_polygon)     (DrawAPI *, LayerType *, PolygonType *);
 
-//  void (*draw_ppv)         (DrawAPI *, LayerType *, int);
-//  void (*draw_holes)       (DrawAPI *,              int);
+//  void (*draw_rat)             (DrawAPI *,              RatType *);
+
+  /* May call other dapi functions */
   void (*draw_pcb_element)     (DrawAPI *, ElementType *);
-  void (*draw_pcb_layer)       (DrawAPI *, LayerType *,                const BoxType *, void *);
-  void (*draw_pcb_layer_group) (DrawAPI *, LayerType *,                const BoxType *, void *);
+
+  /* Operates by calling other functions */
+//  void (*draw_holes)           (DrawAPI *,              int);
+//  void (*draw_ppv)             (DrawAPI *, LayerType *, int);
+  void (*draw_pcb_layer)       (DrawAPI *, LayerType *);
+  void (*draw_pcb_layer_group) (DrawAPI *, int);
+  void (*draw_mask_layer)      (DrawAPI *, int);
+  void (*draw_paste_layer)     (DrawAPI *, int);
+  void (*draw_silk_layer)      (DrawAPI *, int);
   void (*draw_pcb_buffer)      (DrawAPI *, BufferType *);
+  void (*draw_everything)      (DrawAPI *);
+  void (*draw_pinout_preview)  (DrawAPI *, ElementType *);
+
+  /* Setup dapi API rendering parameters */
   void (*set_draw_offset)      (DrawAPI *, Coord, Coord);
   void (*set_clip_box)         (DrawAPI *, const BoxType *);
 
   /* Member variables */
-  GraphicsAPI *gapi;
-  hidGC gc;
-  hidGC fg_gc;
-  hidGC bg_gc;
-  hidGC pm_gc;
-  BoxType *clip_box;
+  const BoxType *clip_box; /* Clipping box for the current drawing operation                  */
+  bool doing_overlay_text; /* Override for colour / style of overlay text such as pin names   */
+  bool doing_pinout;       /* Override for visibility / style when drawing a pinout preview   */
+  bool doing_assy;         /* Override for visibility / style when making an assembly drawing */
+
+  GraphicsAPI *gapi;       /* <--- This should be in a subclass of the base dapi, but nevermind */
+  hidGC gc;                /* <--- This should be in a subclass of the base dapi, but nevermind */
+  hidGC fg_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
+  hidGC bg_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
+  hidGC pm_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
 };
 
 enum mask_mode {
