@@ -1174,7 +1174,6 @@ InitCrosshair (void)
   Crosshair.GC = gui->make_gc ();
 
   gui->set_color (Crosshair.GC, Settings.CrosshairColor);
-  gui->set_draw_xor (Crosshair.GC, 1);
   gui->set_line_cap (Crosshair.GC, Trace_Cap);
   gui->set_line_width (Crosshair.GC, 1);
 

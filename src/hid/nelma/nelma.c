@@ -819,12 +819,6 @@ nelma_set_line_width(hidGC gc, Coord width)
 }
 
 static void
-nelma_set_draw_xor(hidGC gc, int xor_)
-{
-	;
-}
-
-static void
 nelma_set_draw_faded(hidGC gc, int faded)
 {
 }
@@ -1056,7 +1050,6 @@ hid_nelma_init()
   nelma_hid.set_color           = nelma_set_color;
   nelma_hid.set_line_cap        = nelma_set_line_cap;
   nelma_hid.set_line_width      = nelma_set_line_width;
-  nelma_hid.set_draw_xor        = nelma_set_draw_xor;
   nelma_hid.set_draw_faded      = nelma_set_draw_faded;
   nelma_hid.draw_line           = nelma_draw_line;
   nelma_hid.draw_arc            = nelma_draw_arc;
