@@ -1,5 +1,5 @@
 Bottom: eefa43641cda28f17197c794311125103b11ff0a
-Top:    d840d03e34731ad766bce025efbbc8cf8ec16dfb
+Top:    131fd9469a1ab71d16aaf185ee733809ea2ce4db
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-20 19:31:28 +0000
 
@@ -8,6 +8,27 @@ Fiddle with line snapping
 
 ---
 
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index f3133ec..560b365 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -488,16 +488,6 @@ ghid_set_line_width (hidGC gc, Coord width)
+   gc->width = width;
+ }
+ 
+-
+-void
+-ghid_set_draw_xor (hidGC gc, int xor)
+-{
+-  /* NOT IMPLEMENTED */
+-
+-  /* Only presently called when setting up a crosshair GC.
+-   * We manage our own drawing model for that anyway. */
+-}
+-
+ void
+ ghid_set_draw_faded (hidGC gc, int faded)
+ {
 diff --git a/src/line.c b/src/line.c
 index 8898238..47e3125 100644
 --- a/src/line.c
