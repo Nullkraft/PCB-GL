@@ -1,0 +1,30 @@
+Bottom: d840d03e34731ad766bce025efbbc8cf8ec16dfb
+Top:    131fd9469a1ab71d16aaf185ee733809ea2ce4db
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-01-21 21:24:26 +0000
+
+Refresh of fiddle-with-line-snapping
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index f3133ec..560b365 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -488,16 +488,6 @@ ghid_set_line_width (hidGC gc, Coord width)
+   gc->width = width;
+ }
+ 
+-
+-void
+-ghid_set_draw_xor (hidGC gc, int xor)
+-{
+-  /* NOT IMPLEMENTED */
+-
+-  /* Only presently called when setting up a crosshair GC.
+-   * We manage our own drawing model for that anyway. */
+-}
+-
+ void
+ ghid_set_draw_faded (hidGC gc, int faded)
+ {
