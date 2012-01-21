@@ -1,0 +1,15 @@
+Bottom: d840d03e34731ad766bce025efbbc8cf8ec16dfb
+Top:    d840d03e34731ad766bce025efbbc8cf8ec16dfb
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-01-21 20:03:41 +0000
+
+Remove HID->set_draw_xor() API
+
+This is only used for drawing the reference mark and objects attached
+to the cursor. Rather than have the core setup the XOR drawing mode,
+let the GUI set what it wants.
+
+
+---
+
+
