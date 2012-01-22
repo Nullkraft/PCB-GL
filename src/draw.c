@@ -124,7 +124,7 @@ set_color_for_via (DrawAPI *dapi, PinType *via)
 }
 
 static void
-set_color_for_pad (DrawAPI *dapi, Layer *layer, PadType *pad)
+set_color_for_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
 {
   char *color = PCB->PinColor;
 

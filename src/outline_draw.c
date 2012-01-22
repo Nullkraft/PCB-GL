@@ -122,10 +122,10 @@ outline_draw_pcb_arc (DrawAPI *dapi, LayerType *layer, ArcType *arc)
 }
 
 static void
-outline_draw_pcb_text (DrawAPI *dapi, LayerType *layer, TextType *text, coord min_width)
+outline_draw_pcb_text (DrawAPI *dapi, LayerType *layer, TextType *text, Coord min_width)
 {
   BoxType *box = &text->BoundingBox;
-  gui->draw_rect (Crosshair.GC, box->X1, box->Y1, box->X2, box->Y2);
+  dapi->gapi->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
 }
 
 /* ---------------------------------------------------------------------------
