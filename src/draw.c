@@ -990,7 +990,8 @@ draw_mask_layer (DrawAPI *dapi, int side)
   info.side = side;
 
   if (thin)
-    dapi->gapi->set_color (dapi->pm_gc, PCB->MaskColor);
+//    dapi->gapi->set_color (dapi->pm_gc, PCB->MaskColor);
+    dapi->gapi->set_color (dapi->fg_gc, PCB->MaskColor);
   else
     {
       DrawMaskBoardArea (dapi, HID_MASK_BEFORE);
@@ -1002,7 +1003,8 @@ draw_mask_layer (DrawAPI *dapi, int side)
   r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_mask_callback, &info);
 
   if (thin)
-    dapi->gapi->set_color (dapi->pm_gc, "erase");
+//    dapi->gapi->set_color (dapi->pm_gc, "erase");
+    dapi->gapi->set_color (dapi->fg_gc, "erase");
   else
     {
       DrawMaskBoardArea (dapi, HID_MASK_AFTER);

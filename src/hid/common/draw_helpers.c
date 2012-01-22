@@ -543,7 +543,8 @@ common_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
 static void
 common_draw_pcb_pad_mask (DrawAPI *dapi, LayerType *layer, PadType *pad)
 {
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
+  if (TEST_FLAG (THINDRAWFLAG,     PCB) ||
+      TEST_FLAG (THINDRAWPOLYFLAG, PCB))
     common_thindraw_pcb_pad_mask (dapi, layer, pad);
   else
     common_fill_pcb_pad_mask (dapi, layer, pad);
@@ -570,7 +571,8 @@ common_draw_pcb_pv (DrawAPI *dapi, PinType *pv)
 static void
 common_draw_pcb_pv_mask (DrawAPI *dapi, PinType *pv)
 {
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
+  if (TEST_FLAG (THINDRAWFLAG,     PCB) ||
+      TEST_FLAG (THINDRAWPOLYFLAG, PCB))
     common_thindraw_pcb_pv_mask (dapi, pv);
   else
     common_fill_pcb_pv_mask (dapi, pv);
