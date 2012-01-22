@@ -1,5 +1,5 @@
 Bottom: ed14952d182c8d24fa4ec40c45f90fc6a429334b
-Top:    551be10c085f3b44e5a965bf11baf7e1cacba35d
+Top:    9d5a42bffb936f64c6920365dfb2f2af1aa3f567
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-21 19:01:13 +0000
 
@@ -60,7 +60,7 @@ index 28cbfda..94c035f 100644
  
  #define max_group (PCB->Data->LayerN)
 diff --git a/src/draw.c b/src/draw.c
-index ae1e99a..7a01fc0 100644
+index ae1e99a..050a15f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -77,18 +77,16 @@ static bool doing_assy = false;
@@ -131,14 +131,14 @@ index ae1e99a..7a01fc0 100644
 -    gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
 -  else
 -    gui->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
--
--  if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
--    _draw_pv_name (pv);
--}
 +  SetPVColor (dapi, pin, PIN_TYPE);
 +//  dapi->draw_pcb_pin (dapi, pin, draw_hole, false);
 +  dapi->draw_pcb_pin (dapi, pin);
  
+-  if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
+-    _draw_pv_name (pv);
+-}
+-
 -static void
 -draw_pin (PinType *pin, bool draw_hole)
 -{
@@ -196,7 +196,7 @@ index ae1e99a..7a01fc0 100644
  
    text.Flags = NoFlags ();
    /* Set font height to approx 90% of pin thickness */
-@@ -283,202 +280,217 @@ draw_pad_name (PadType *pad)
+@@ -283,73 +280,83 @@ draw_pad_name (PadType *pad)
    text.Y = box.Y1;
    text.Direction = vert ? 1 : 0;
  
@@ -301,18 +301,13 @@ index ae1e99a..7a01fc0 100644
 +  DrawTextLowLevel (dapi, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
  }
  
-+struct name_info {
-+  DrawAPI *dapi;
-+  int side;
-+};
-+
  static int
- name_callback (const BoxType * b, void *cl)
+@@ -357,128 +364,128 @@ name_callback (const BoxType * b, void *cl)
  {
    TextType *text = (TextType *) b;
    ElementType *element = (ElementType *) text->Element;
 -  int *side = cl;
-+  struct name_info *info = cl;
++  struct side_info *info = cl;
 +  DrawAPI *dapi = info->dapi;
  
    if (TEST_FLAG (HIDENAMEFLAG, element))
@@ -492,7 +487,7 @@ index ae1e99a..7a01fc0 100644
    return 1;
  }
  
-@@ -486,16 +498,17 @@ static int
+@@ -486,16 +493,17 @@ static int
  rat_callback (const BoxType * b, void *cl)
  {
    RatType *rat = (RatType *)b;
@@ -513,7 +508,7 @@ index ae1e99a..7a01fc0 100644
  
    if (Settings.RatThickness < 20)
      rat->Thickness = pixel_slop * Settings.RatThickness;
-@@ -505,78 +518,81 @@ rat_callback (const BoxType * b, void *cl)
+@@ -505,78 +513,81 @@ rat_callback (const BoxType * b, void *cl)
        int w = rat->Thickness;
  
        if (TEST_FLAG (THINDRAWFLAG, PCB))
@@ -581,7 +576,7 @@ index ae1e99a..7a01fc0 100644
 +  struct layer_info *info = cl;
 +  DrawAPI *dapi = info->dapi;
 +
-+  draw_arc (dapi, (LayerType *) cl, (ArcType *) b);
++  draw_arc (dapi, info->layer, (ArcType *) b);
    return 1;
  }
  
@@ -617,7 +612,7 @@ index ae1e99a..7a01fc0 100644
    }
    END_LOOP;
  }
-@@ -585,10 +601,11 @@ static int
+@@ -585,10 +596,11 @@ static int
  element_callback (const BoxType * b, void *cl)
  {
    ElementType *element = (ElementType *) b;
@@ -632,7 +627,7 @@ index ae1e99a..7a01fc0 100644
    return 1;
  }
  
-@@ -596,18 +613,18 @@ element_callback (const BoxType * b, void *cl)
+@@ -596,18 +608,18 @@ element_callback (const BoxType * b, void *cl)
   * prints assembly drawing.
   */
  
@@ -653,11 +648,11 @@ index ae1e99a..7a01fc0 100644
  
    /* draw package */
 -  DrawSilk (side, drawn_area);
-+  DrawSilk (dapi, side);
++  dapi->draw_silk_layer (dapi, side);
    doing_assy = false;
  }
  
-@@ -615,9 +632,9 @@ PrintAssembly (int side, const BoxType * drawn_area)
+@@ -615,9 +627,9 @@ PrintAssembly (int side, const BoxType * drawn_area)
   * initializes some identifiers for a new zoom factor and redraws whole screen
   */
  static void
@@ -669,34 +664,31 @@ index ae1e99a..7a01fc0 100644
    int component, solder;
    /* This is the list of layer groups we will draw.  */
    int do_group[MAX_LAYER];
-@@ -650,14 +667,21 @@ DrawEverything (const BoxType *drawn_area)
+@@ -650,14 +662,18 @@ DrawEverything (const BoxType *drawn_area)
    if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
        && gui->set_layer ("invisible", SL (INVISIBLE, 0), 0))
      {
 -      side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
-+      struct side_info info;
++      struct side_info side_info;
 +
-+      info.dapi = dapi;
-+      info.side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
++      side_info.dapi = dapi;
++      side_info.side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
 +
        if (PCB->ElementOn)
  	{
 -	  r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
 -	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
 -	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
-+          struct name_info name_info;
-+          info.dapi = dapi;
-+          info.side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
-+	  r_search (PCB->Data->element_tree, dapi->clip_box, NULL, element_callback, &name_info);
-+	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], dapi->clip_box, NULL, name_callback, &name_info);
-+	  dapi->draw_pcb_layer (dapi, &(PCB->Data->Layer[max_copper_layer + info.side]));
++	  r_search (PCB->Data->element_tree, dapi->clip_box, NULL, element_callback, &side_info);
++	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], dapi->clip_box, NULL, name_callback, &side_info);
++	  dapi->draw_pcb_layer (dapi, &(PCB->Data->Layer[max_copper_layer + side_info.side]));
  	}
 -      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-+      r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_callback, &info);
++      r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_callback, &side_info);
        gui->end_layer ();
      }
  
-@@ -668,7 +692,7 @@ DrawEverything (const BoxType *drawn_area)
+@@ -668,7 +684,7 @@ DrawEverything (const BoxType *drawn_area)
  
        if (gui->set_layer (0, group, 0))
          {
@@ -705,7 +697,7 @@ index ae1e99a..7a01fc0 100644
            gui->end_layer ();
          }
      }
-@@ -678,20 +702,20 @@ DrawEverything (const BoxType *drawn_area)
+@@ -678,20 +694,20 @@ DrawEverything (const BoxType *drawn_area)
  
    /* Draw pins, pads, vias below silk */
    if (gui->gui)
@@ -730,37 +722,37 @@ index ae1e99a..7a01fc0 100644
            gui->end_layer ();
          }
      }
-@@ -699,25 +723,25 @@ DrawEverything (const BoxType *drawn_area)
+@@ -699,25 +715,25 @@ DrawEverything (const BoxType *drawn_area)
    /* Draw the solder mask if turned on */
    if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
      {
 -      DrawMask (COMPONENT_LAYER, drawn_area);
-+      DrawMask (dapi, COMPONENT_LAYER);
++      dapi->draw_solder_mask (dapi, COMPONENT_LAYER);
        gui->end_layer ();
      }
  
    if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
      {
 -      DrawMask (SOLDER_LAYER, drawn_area);
-+      DrawMask (dapi, SOLDER_LAYER);
++      dapi->draw_solder_mask (dapi, SOLDER_LAYER);
        gui->end_layer ();
      }
  
    if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
      {
 -      DrawSilk (COMPONENT_LAYER, drawn_area);
-+      DrawSilk (dapi, COMPONENT_LAYER);
++      dapi->draw_silk_layer (dapi, COMPONENT_LAYER);
        gui->end_layer ();
      }
  
    if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
      {
 -      DrawSilk (SOLDER_LAYER, drawn_area);
-+      DrawSilk (dapi, SOLDER_LAYER);
++      dapi->draw_silk_layer (dapi, SOLDER_LAYER);
        gui->end_layer ();
      }
  
-@@ -725,12 +749,11 @@ DrawEverything (const BoxType *drawn_area)
+@@ -725,12 +741,11 @@ DrawEverything (const BoxType *drawn_area)
      {
        /* Draw element Marks */
        if (PCB->PinOn)
@@ -775,7 +767,7 @@ index ae1e99a..7a01fc0 100644
            gui->end_layer ();
          }
      }
-@@ -738,38 +761,38 @@ DrawEverything (const BoxType *drawn_area)
+@@ -738,38 +753,38 @@ DrawEverything (const BoxType *drawn_area)
    paste_empty = IsPasteEmpty (COMPONENT_LAYER);
    if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
      {
@@ -820,7 +812,7 @@ index ae1e99a..7a01fc0 100644
  {
    Coord mark_size = EMARK_SIZE;
    if (!PCB->InvisibleObjectsOn && invisible)
-@@ -790,14 +813,13 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+@@ -790,14 +805,13 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
        mark_size = MIN (mark_size, pad0->Thickness / 2);
      }
  
@@ -842,7 +834,7 @@ index ae1e99a..7a01fc0 100644
  
    /*
     * If an element is locked, place a "L" on top of the "diamond".
-@@ -806,8 +828,8 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+@@ -806,8 +820,8 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
     */
    if (TEST_FLAG (LOCKFLAG, e) )
      {
@@ -853,7 +845,7 @@ index ae1e99a..7a01fc0 100644
      }
  }
  
-@@ -816,61 +838,71 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+@@ -816,61 +830,71 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
   * otherwise drawing depends on PCB->PinOn and PCB->ViaOn
   */
  static void
@@ -943,7 +935,7 @@ index ae1e99a..7a01fc0 100644
    PolygonType *polygon = (PolygonType *)b;
    static char *color;
  
-@@ -878,31 +910,27 @@ poly_callback (const BoxType * b, void *cl)
+@@ -878,31 +902,27 @@ poly_callback (const BoxType * b, void *cl)
      return 0;
  
    if (TEST_FLAG (SELECTEDFLAG, polygon))
@@ -983,7 +975,7 @@ index ae1e99a..7a01fc0 100644
      }
  
    return 1;
-@@ -912,9 +940,11 @@ static int
+@@ -912,9 +932,11 @@ static int
  clearPad_callback (const BoxType * b, void *cl)
  {
    PadType *pad = (PadType *) b;
@@ -998,22 +990,22 @@ index ae1e99a..7a01fc0 100644
    return 1;
  }
  
-@@ -923,8 +953,13 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -923,8 +945,13 @@ clearPad_callback (const BoxType * b, void *cl)
   */
  
  void
 -DrawSilk (int side, const BoxType * drawn_area)
-+DrawSilk (DrawAPI *dapi, int side)
++draw_silk_layer (DrawAPI *dapi, int side)
  {
-+  struct name_info name_info;
++  struct side_info side_info;
 +
-+  name_info.dapi = dapi;
-+  name_info.side = side;
++  side_info.dapi = dapi;
++  side_info.side = side;
 +
  #if 0
    /* This code is used when you want to mask silk to avoid exposed
       pins and pads.  We decided it was a bad idea to do this
-@@ -934,76 +969,80 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -934,76 +961,80 @@ DrawSilk (int side, const BoxType * drawn_area)
  #if 0
    if (gui->poly_before)
      {
@@ -1025,8 +1017,8 @@ index ae1e99a..7a01fc0 100644
        /* draw package */
 -      r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
 -      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-+      r_search (PCB->Data->element_tree, dapi->clip_box, NULL, element_callback, &side);
-+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], dapi->clip_box, NULL, name_callback, &name_info);
++      r_search (PCB->Data->element_tree, dapi->clip_box, NULL, element_callback, &side_info);
++      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], dapi->clip_box, NULL, name_callback, &side_info);
  #if 0
      }
  
@@ -1044,7 +1036,8 @@ index ae1e99a..7a01fc0 100644
 +      DrawLayer (dapi, LAYER_PTR (max_copper_layer + layer), drawn_area);
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
-       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
+-      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
++      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side_info);
      }
 -  gui->use_mask (HID_MASK_OFF);
 +  dapi->gapi->use_mask (HID_MASK_OFF);
@@ -1079,9 +1072,10 @@ index ae1e99a..7a01fc0 100644
  /* ---------------------------------------------------------------------------
   * draws solder mask layer - this will cover nearly everything
   */
- void
+-void
 -DrawMask (int side, const BoxType *screen)
-+DrawMask (DrawAPI *dapi, int side)
++static void
++draw_solder_mask (DrawAPI *dapi, int side)
  {
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
 +  struct side_info info;
@@ -1119,7 +1113,7 @@ index ae1e99a..7a01fc0 100644
      }
  }
  
-@@ -1011,24 +1050,24 @@ DrawMask (int side, const BoxType *screen)
+@@ -1011,24 +1042,24 @@ DrawMask (int side, const BoxType *screen)
   * draws solder paste layer for a given side of the board
   */
  void
@@ -1149,7 +1143,7 @@ index ae1e99a..7a01fc0 100644
  {
    /*
     * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
-@@ -1038,64 +1077,59 @@ DrawRats (const BoxType *drawn_area)
+@@ -1038,64 +1069,59 @@ DrawRats (const BoxType *drawn_area)
    int can_mask = strcmp(gui->name, "lesstif") == 0;
  
    if (can_mask)
@@ -1239,7 +1233,7 @@ index ae1e99a..7a01fc0 100644
      }
  }
  
-@@ -1103,30 +1137,30 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
+@@ -1103,30 +1129,30 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
   * draws one layer group.  If the exporter is not a GUI,
   * also draws the pins / pads / vias in this layer group.
   */
@@ -1279,7 +1273,7 @@ index ae1e99a..7a01fc0 100644
  }
  
  static void
-@@ -1195,7 +1229,7 @@ GatherPadName (PadType *Pad)
+@@ -1195,7 +1221,7 @@ GatherPadName (PadType *Pad)
   * lowlevel drawing routine for text objects
   */
  void
@@ -1288,7 +1282,7 @@ index ae1e99a..7a01fc0 100644
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
-@@ -1239,7 +1273,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
+@@ -1239,7 +1265,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
  	      newline.Point1.Y += Text->Y;
  	      newline.Point2.X += Text->X;
  	      newline.Point2.Y += Text->Y;
@@ -1297,7 +1291,7 @@ index ae1e99a..7a01fc0 100644
  	    }
  
  	  /* move on to next cursor position */
-@@ -1263,9 +1297,8 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
+@@ -1263,9 +1289,8 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
  	  defaultsymbol.Y1 += Text->Y;
  	  defaultsymbol.X2 += Text->X;
  	  defaultsymbol.Y2 += Text->Y;
@@ -1309,7 +1303,7 @@ index ae1e99a..7a01fc0 100644
  
  	  /* move on to next cursor position */
  	  x += size;
-@@ -1716,11 +1749,22 @@ DrawObject (int type, void *ptr1, void *ptr2)
+@@ -1716,41 +1741,109 @@ DrawObject (int type, void *ptr1, void *ptr2)
  }
  
  static void
@@ -1336,12 +1330,13 @@ index ae1e99a..7a01fc0 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1728,29 +1772,56 @@ draw_element (ElementType *element)
+  * HID drawing callback.
   */
  
- void
+-void
 -hid_expose_callback (HID * hid, BoxType * region, void *item)
-+hid_expose_callback (DrawAPI *dapi, BoxType * region, void *item)
++static void
++draw_everything (DrawAPI *dapi)
  {
 -  HID *old_gui = gui;
 +  dapi->fg_gc = dapi->gapi->make_gc ();
@@ -1357,31 +1352,53 @@ index ae1e99a..7a01fc0 100644
  
 -  hid->set_color (Output.pmGC, "erase");
 -  hid->set_color (Output.bgGC, "drill");
-+  dapi->set_clip_box (dapi, region);
++  DrawEverything (dapi);
  
-   if (item)
-     {
-       doing_pinout = true;
+-  if (item)
+-    {
+-      doing_pinout = true;
 -      draw_element ((ElementType *)item);
-+      dapi->draw_pcb_element (dapi, (ElementType *)item);
-       doing_pinout = false;
-     }
-   else
+-      doing_pinout = false;
+-    }
+-  else
 -    DrawEverything (region);
-+    DrawEverything (dapi);
- 
--  gui->destroy_gc (Output.fgGC);
--  gui->destroy_gc (Output.bgGC);
--  gui->destroy_gc (Output.pmGC);
--  gui = old_gui;
 +  dapi->gapi->destroy_gc (dapi->fg_gc);
 +  dapi->gapi->destroy_gc (dapi->bg_gc);
 +  dapi->gapi->destroy_gc (dapi->pm_gc);
 +}
 +
-+void
-+draw_dapi_init (DrawAPI *dapi)
++static void
++draw_pinout_preview (DrawAPI *dapi, ElementType *element)
 +{
++  dapi->fg_gc = dapi->gapi->make_gc ();
++  dapi->bg_gc = dapi->gapi->make_gc ();
++  dapi->pm_gc = dapi->gapi->make_gc ();
++
++  dapi->gapi->set_color (dapi->pm_gc, "erase");
++  dapi->gapi->set_color (dapi->bg_gc, "drill");
++
++  doing_pinout = true;
++  dapi->draw_pcb_element (dapi, element);
++  doing_pinout = false;
++
++  dapi->gapi->destroy_gc (dapi->fg_gc);
++  dapi->gapi->destroy_gc (dapi->bg_gc);
++  dapi->gapi->destroy_gc (dapi->pm_gc);
++}
++
++static void
++set_clip_box (DrawAPI *dapi, const BoxType *clip_box)
++{
++  dapi->clip_box = clip_box;
++}
++
++DrawAPI *
++draw_api_new (void)
++{
++  DrawAPI *dapi;
++
++  dapi = g_new0 (DrawAPI, 1);
++
 +#if 0
 +  dapi->draw_pcb_pin         =
 +  dapi->draw_pcb_pin_mask    =
@@ -1401,14 +1418,28 @@ index ae1e99a..7a01fc0 100644
 +  dapi->draw_pcb_element     = draw_pcb_element;
 +  dapi->draw_pcb_layer       = draw_pcb_layer;
 +  dapi->draw_pcb_layer_group = draw_pcb_layer_group;
++  dapi->draw_solder_mask     = draw_solder_mask;
++#if 0
++  dapi->draw_solder_paste    =
++#endif
++  dapi->draw_silk_layer      = draw_silk_layer; /* Hmm - should be able to do this by layer number, even if not layer group */
++  /* But it would mean special casing diving into element silk from teh draw_pcb_layer function */
++  dapi->draw_everything      = draw_everything;
++  dapi->draw_pinout_preview  = draw_pinout_preview;
 +#if 0
 +  dapi->draw_pcb_buffer      =
 +  dapi->set_draw_offset      =
-+  dapi->set_clip_box         =
 +#endif
++  dapi->set_clip_box         = set_clip_box;
+ 
+-  gui->destroy_gc (Output.fgGC);
+-  gui->destroy_gc (Output.bgGC);
+-  gui->destroy_gc (Output.pmGC);
+-  gui = old_gui;
++  return dapi;
  }
 diff --git a/src/draw.h b/src/draw.h
-index c7ffa97..e053d2a 100644
+index c7ffa97..97d182a 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -31,6 +31,7 @@
@@ -1435,7 +1466,7 @@ index c7ffa97..e053d2a 100644
  void EraseVia (PinType *);
  void EraseRat (RatType *);
  void EraseViaName (PinType *);
-@@ -70,11 +70,9 @@ void EraseElementPinsAndPads (ElementType *);
+@@ -70,11 +70,11 @@ void EraseElementPinsAndPads (ElementType *);
  void EraseElementName (ElementType *);
  void EraseObject (int, void *, void *);
  
@@ -1449,13 +1480,15 @@ index c7ffa97..e053d2a 100644
 +void DrawSilk (DrawAPI *dapi, int side);
 +void DrawMask (DrawAPI *dapi, int side);
 +void DrawHoles (DrawAPI *dapi, bool draw_plated, bool draw_unplated);
++
++DrawAPI *draw_api_new (void);
  
  #endif
 diff --git a/src/draw_api.h b/src/draw_api.h
-index 48e938f..2959e73 100644
+index 48e938f..901f27f 100644
 --- a/src/draw_api.h
 +++ b/src/draw_api.h
-@@ -46,8 +46,8 @@ struct DrawAPI {
+@@ -46,9 +46,16 @@ struct DrawAPI {
  //  void (*draw_ppv)         (DrawAPI *, LayerType *, int);
  //  void (*draw_holes)       (DrawAPI *,              int);
    void (*draw_pcb_element)     (DrawAPI *, ElementType *);
@@ -1463,9 +1496,26 @@ index 48e938f..2959e73 100644
 -  void (*draw_pcb_layer_group) (DrawAPI *, LayerType *,                const BoxType *, void *);
 +  void (*draw_pcb_layer)       (DrawAPI *, LayerType *);
 +  void (*draw_pcb_layer_group) (DrawAPI *, int);
++  void (*draw_solder_mask)     (DrawAPI *, int);
++  void (*draw_solder_paste)    (DrawAPI *, int);
++  void (*draw_silk_layer)      (DrawAPI *, int);
++
    void (*draw_pcb_buffer)      (DrawAPI *, BufferType *);
++  void (*draw_everything)      (DrawAPI *);
++
++  void (*draw_pinout_preview)  (DrawAPI *, ElementType *);
    void (*set_draw_offset)      (DrawAPI *, Coord, Coord);
    void (*set_clip_box)         (DrawAPI *, const BoxType *);
+ 
+@@ -58,7 +65,7 @@ struct DrawAPI {
+   hidGC fg_gc;
+   hidGC bg_gc;
+   hidGC pm_gc;
+-  BoxType *clip_box;
++  const BoxType *clip_box;
+ };
+ 
+ enum mask_mode {
 diff --git a/src/global.h b/src/global.h
 index 7b28396..35b8b22 100644
 --- a/src/global.h
@@ -2013,7 +2063,7 @@ index 03e82d8..3e3e514 100644
 +  dapi->draw_pcb_via_mask = common_thindraw_pcb_pv_mask;
  }
 diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
-index 0df42f0..564436b 100644
+index 0df42f0..e6c1671 100644
 --- a/src/hid/common/extents.c
 +++ b/src/hid/common/extents.c
 @@ -170,6 +170,7 @@ hid_extents_init (void)
@@ -2031,6 +2081,15 @@ index 0df42f0..564436b 100644
 +#endif
  
    initialised = true;
+ }
+@@ -203,7 +205,7 @@ hid_get_extents (void *item)
+   region.Y1 = -MAXINT;
+   region.X2 = MAXINT;
+   region.Y2 = MAXINT;
+-  hid_expose_callback (&extents_hid, &region, item);
++//  hid_expose_callback (&extents_hid, &region, item);
+ 
+   return &box;
  }
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
 index 5685d60..0796293 100644
@@ -2053,9 +2112,18 @@ index 5685d60..0796293 100644
    hid->shift_is_pressed =     nogui_shift_is_pressed;
    hid->control_is_pressed =   nogui_control_is_pressed;
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 38fc21e..32f6350 100644
+index 38fc21e..ef682d8 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
+@@ -420,7 +420,7 @@ gcode_start_png_export ()
+   linewidth = -1;
+   lastbrush = (gdImagePtr)((void *) -1);
+ 
+-  hid_expose_callback (&gcode_hid, &region, 0);
++//  hid_expose_callback (&gcode_hid, &region, 0);
+ }
+ 
+ static void
 @@ -1167,6 +1167,7 @@ hid_gcode_init ()
    gcode_hid.do_export           = gcode_do_export;
    gcode_hid.parse_arguments     = gcode_parse_arguments;
@@ -2073,9 +2141,23 @@ index 38fc21e..32f6350 100644
    gcode_hid.set_crosshair       = gcode_set_crosshair;
  
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index f9c0e29..034d21a 100644
+index f9c0e29..8ba3515 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
+@@ -594,11 +594,11 @@ gerber_do_export (HID_Attr_Val * options)
+   lastgroup = -1;
+   layer_list_idx = 0;
+   finding_apertures = 1;
+-  hid_expose_callback (&gerber_hid, &region, 0);
++//  hid_expose_callback (&gerber_hid, &region, 0);
+ 
+   layer_list_idx = 0;
+   finding_apertures = 0;
+-  hid_expose_callback (&gerber_hid, &region, 0);
++//  hid_expose_callback (&gerber_hid, &region, 0);
+ 
+   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
+ 
 @@ -824,9 +824,14 @@ gerber_set_layer (const char *name, int group, int empty)
      {
        if (outline_layer
@@ -2127,11 +2209,50 @@ index f9c0e29..034d21a 100644
    gerber_hid.calibrate           = gerber_calibrate;
    gerber_hid.set_crosshair       = gerber_set_crosshair;
  
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 8e6cf22..6ab0254 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -785,7 +785,7 @@ redraw_region (GdkRectangle *rect)
+ 
+   ghid_draw_bg_image();
+ 
+-  hid_expose_callback (&ghid_hid, &region, 0);
++//  hid_expose_callback (&ghid_hid, &region, 0);
+   ghid_draw_grid ();
+ 
+   /* In some cases we are called with the crosshair still off */
+@@ -1159,7 +1159,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+                       0, 0, allocation.width, allocation.height);
+ 
+   /* call the drawing routine */
+-  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
++//  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
+ 
+   gport->drawable = save_drawable;
+   gport->view = save_view;
+@@ -1216,7 +1216,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+ 
+-  hid_expose_callback (&ghid_hid, &region, NULL);
++//  hid_expose_callback (&ghid_hid, &region, NULL);
+ 
+   gport->drawable = save_drawable;
+   gport->view = save_view;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4013b2e..bbf99b1 100644
+index 4013b2e..977f042 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -563,7 +563,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -32,6 +32,7 @@
+ #include <dmalloc.h>
+ #endif
+ 
++extern GraphicsAPI ghid_gapi;
+ extern HID ghid_hid;
+ 
+ static hidGC current_gc = NULL;
+@@ -563,7 +564,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  void
  ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
@@ -2140,7 +2261,7 @@ index 4013b2e..bbf99b1 100644
    ghid_set_alpha_mult (gc, 0.25);
    ghid_fill_pcb_polygon (gc, poly, clip_box);
    ghid_set_alpha_mult (gc, 1.0);
-@@ -758,8 +758,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -758,8 +759,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  
    /* Setup HID function pointers specific to the GL renderer*/
    ghid_hid.end_layer = ghid_end_layer;
@@ -2151,7 +2272,20 @@ index 4013b2e..bbf99b1 100644
  }
  
  void
-@@ -850,8 +850,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -840,6 +841,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   render_priv *priv = port->render_priv;
+   GtkAllocation allocation;
+   BoxType region;
++  DrawAPI *dapi;
++
++  dapi = draw_api_new ();
++  dapi->gapi = &ghid_gapi;
++  dapi->gc = dapi->gapi->make_gc ();
++  common_draw_helpers_init (dapi);
+ 
+   gtk_widget_get_allocation (widget, &allocation);
+ 
+@@ -850,8 +857,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
@@ -2162,16 +2296,18 @@ index 4013b2e..bbf99b1 100644
  
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-@@ -918,7 +918,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -918,7 +925,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
 -  hid_expose_callback (&ghid_hid, &region, 0);
++  dapi->set_clip_box (dapi, &region);
++  dapi->draw_everything (dapi);
 +//  hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
    ghid_draw_grid (&region);
-@@ -930,8 +930,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -930,8 +939,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      dapi = outline_draw_new (gui);
      dapi->set_draw_offset = hidgl_set_draw_offset;
  
@@ -2182,7 +2318,7 @@ index 4013b2e..bbf99b1 100644
    }
    hidgl_flush_triangles (&buffer);
  
-@@ -1047,7 +1047,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1047,7 +1056,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                      -gport->view.y0, 0);
  
@@ -2191,7 +2327,7 @@ index 4013b2e..bbf99b1 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -1162,7 +1162,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1162,7 +1171,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
    region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
  
@@ -2201,30 +2337,71 @@ index 4013b2e..bbf99b1 100644
    glPopMatrix ();
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index fc899c5..587d91a 100644
+index fc899c5..d4a0ccc 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2131,6 +2131,7 @@ hid_gtk_init ()
+@@ -2073,6 +2073,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
+ #include <winreg.h>
+ #endif
+ 
++GraphicsAPI ghid_gapi;
+ HID ghid_hid;
+ 
+ void
+@@ -2131,18 +2132,19 @@ hid_gtk_init ()
    ghid_hid.notify_crosshair_change  = ghid_notify_crosshair_change;
    ghid_hid.notify_mark_change       = ghid_notify_mark_change;
    ghid_hid.set_layer                = ghid_set_layer;
-+#if 0
-   ghid_hid.make_gc                  = ghid_make_gc;
-   ghid_hid.destroy_gc               = ghid_destroy_gc;
-   ghid_hid.use_mask                 = ghid_use_mask;
-@@ -2143,7 +2144,7 @@ hid_gtk_init ()
-   ghid_hid.fill_circle              = ghid_fill_circle;
-   ghid_hid.fill_polygon             = ghid_fill_polygon;
-   ghid_hid.fill_rect                = ghid_fill_rect;
--
-+#endif
+-  ghid_hid.make_gc                  = ghid_make_gc;
+-  ghid_hid.destroy_gc               = ghid_destroy_gc;
+-  ghid_hid.use_mask                 = ghid_use_mask;
+-  ghid_hid.set_color                = ghid_set_color;
+-  ghid_hid.set_line_cap             = ghid_set_line_cap;
+-  ghid_hid.set_line_width           = ghid_set_line_width;
+-  ghid_hid.draw_line                = ghid_draw_line;
+-  ghid_hid.draw_arc                 = ghid_draw_arc;
+-  ghid_hid.draw_rect                = ghid_draw_rect;
+-  ghid_hid.fill_circle              = ghid_fill_circle;
+-  ghid_hid.fill_polygon             = ghid_fill_polygon;
+-  ghid_hid.fill_rect                = ghid_fill_rect;
++
++  ghid_gapi.make_gc                  = ghid_make_gc;
++  ghid_gapi.destroy_gc               = ghid_destroy_gc;
++  ghid_gapi.use_mask                 = ghid_use_mask;
++  ghid_gapi.set_color                = ghid_set_color;
++  ghid_gapi.set_line_cap             = ghid_set_line_cap;
++  ghid_gapi.set_line_width           = ghid_set_line_width;
++  ghid_gapi.draw_line                = ghid_draw_line;
++  ghid_gapi.draw_arc                 = ghid_draw_arc;
++  ghid_gapi.draw_rect                = ghid_draw_rect;
++  ghid_gapi.fill_circle              = ghid_fill_circle;
++  ghid_gapi.fill_polygon             = ghid_fill_polygon;
++  ghid_gapi.fill_rect                = ghid_fill_rect;
+ 
    ghid_hid.calibrate                = ghid_calibrate;
    ghid_hid.shift_is_pressed         = ghid_shift_is_pressed;
-   ghid_hid.control_is_pressed       = ghid_control_is_pressed;
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index f6d3098..99b3058 100644
+index f6d3098..3cf390e 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
+@@ -821,7 +821,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
+   do
+     {
+       XFillRectangle (display, pixmap, bg_gc, 0, 0, view_width, view_height);
+-      hid_expose_callback (&lesstif_hid, &region, 0);
++//      hid_expose_callback (&lesstif_hid, &region, 0);
+       XSync (display, 0);
+       time (&end);
+       i++;
+@@ -2572,7 +2572,7 @@ idle_proc (XtPointer dummy)
+ 	    }
+ 	}
+       DrawBackgroundImage();
+-      hid_expose_callback (&lesstif_hid, &region, 0);
++//      hid_expose_callback (&lesstif_hid, &region, 0);
+       draw_grid ();
+       lesstif_use_mask (0);
+       show_crosshair (0); /* To keep the drawn / not drawn info correct */
 @@ -2582,6 +2582,7 @@ idle_proc (XtPointer dummy)
        pixmap = window;
        if (crosshair_on)
@@ -2241,6 +2418,15 @@ index f6d3098..99b3058 100644
        DrawAttached ();
        pixmap = save_pixmap;
      }
+@@ -3777,7 +3779,7 @@ pinout_callback (Widget da, PinoutData * pd,
+   region.Y2 = PCB->MaxHeight;
+ 
+   XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);
+-  hid_expose_callback (&lesstif_hid, &region, pd->item);
++//  hid_expose_callback (&lesstif_hid, &region, pd->item);
+ 
+   pinout = 0;
+   view_left_x = save_vx;
 @@ -4019,6 +4021,7 @@ lesstif_flush_debug_draw (void)
    pixmap = window;
    if (crosshair_on)
@@ -2250,9 +2436,18 @@ index f6d3098..99b3058 100644
        DrawMark ();
      }
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 402e0d0..c0618ed 100644
+index 402e0d0..c8266ce 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
+@@ -645,7 +645,7 @@ nelma_start_png_export()
+ 	linewidth = -1;
+ 	lastbrush = (gdImagePtr)((void *) -1);
+ 
+-	hid_expose_callback(&nelma_hid, &region, 0);
++//	hid_expose_callback(&nelma_hid, &region, 0);
+ }
+ 
+ static void 
 @@ -1044,6 +1044,7 @@ hid_nelma_init()
    nelma_hid.do_export           = nelma_do_export;
    nelma_hid.parse_arguments     = nelma_parse_arguments;
@@ -2270,9 +2465,18 @@ index 402e0d0..c0618ed 100644
    nelma_hid.set_crosshair       = nelma_set_crosshair;
  
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index b1efc67..9e95ae3 100644
+index b1efc67..3b0ae8c 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
+@@ -543,7 +543,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+ 	}
+     }
+ 
+-  hid_expose_callback (&png_hid, bounds, 0);
++//  hid_expose_callback (&png_hid, bounds, 0);
+ 
+   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
+   PCB->Flags = save_flags;
 @@ -1189,10 +1189,10 @@ png_use_mask (int use_it)
    if (photo_mode)
      return;
@@ -2305,9 +2509,18 @@ index b1efc67..9e95ae3 100644
    png_hid.set_crosshair       = png_set_crosshair;
  
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index e7b79df..a977545 100644
+index e7b79df..9e0e2b5 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
+@@ -305,7 +305,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   fprintf (f,
+ 	   "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
+ 
+-  hid_expose_callback (&eps_hid, bounds, 0);
++//  hid_expose_callback (&eps_hid, bounds, 0);
+ 
+   fprintf (f, "showpage\n");
+ 
 @@ -440,6 +440,7 @@ eps_destroy_gc (hidGC gc)
  static void
  eps_use_mask (int use_it)
@@ -2341,9 +2554,25 @@ index e7b79df..a977545 100644
    eps_hid.set_crosshair       = eps_set_crosshair;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 69517e8..624eb7c 100644
+index 69517e8..441c85c 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
+@@ -689,13 +689,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+ 
+       global.doing_toc = 1;
+       global.pagecount = 1;  /* 'pagecount' is modified by hid_expose_callback() call */
+-      hid_expose_callback (&ps_hid, &global.region, 0);
++//      hid_expose_callback (&ps_hid, &global.region, 0);
+     }
+ 
+   global.pagecount = 1; /* Reset 'pagecount' if single file */
+   global.doing_toc = 0;
+   ps_set_layer (NULL, 0, -1);  /* reset static vars */
+-  hid_expose_callback (&ps_hid, &global.region, 0);
++//  hid_expose_callback (&ps_hid, &global.region, 0);
+ 
+   if (the_file)
+     fprintf (the_file, "showpage\n");
 @@ -999,10 +999,11 @@ ps_set_layer (const char *name, int group, int empty)
        global.outline_layer != NULL &&
        global.outline_layer != PCB->Data->Layer+idx &&
