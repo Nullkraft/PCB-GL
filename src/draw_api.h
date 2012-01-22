@@ -48,7 +48,14 @@ struct DrawAPI {
   void (*draw_pcb_element)     (DrawAPI *, ElementType *);
   void (*draw_pcb_layer)       (DrawAPI *, LayerType *);
   void (*draw_pcb_layer_group) (DrawAPI *, int);
+  void (*draw_solder_mask)     (DrawAPI *, int);
+  void (*draw_solder_paste)    (DrawAPI *, int);
+  void (*draw_silk_layer)      (DrawAPI *, int);
+
   void (*draw_pcb_buffer)      (DrawAPI *, BufferType *);
+  void (*draw_everything)      (DrawAPI *);
+
+  void (*draw_pinout_preview)  (DrawAPI *, ElementType *);
   void (*set_draw_offset)      (DrawAPI *, Coord, Coord);
   void (*set_clip_box)         (DrawAPI *, const BoxType *);
 
@@ -58,7 +65,7 @@ struct DrawAPI {
   hidGC fg_gc;
   hidGC bg_gc;
   hidGC pm_gc;
-  BoxType *clip_box;
+  const BoxType *clip_box;
 };
 
 enum mask_mode {

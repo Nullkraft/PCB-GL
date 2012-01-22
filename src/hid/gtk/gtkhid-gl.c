@@ -32,6 +32,7 @@
 #include <dmalloc.h>
 #endif
 
+extern GraphicsAPI ghid_gapi;
 extern HID ghid_hid;
 
 static hidGC current_gc = NULL;
@@ -840,6 +841,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   render_priv *priv = port->render_priv;
   GtkAllocation allocation;
   BoxType region;
+  DrawAPI *dapi;
+
+  dapi = draw_api_new ();
+  dapi->gapi = &ghid_gapi;
+  dapi->gc = dapi->gapi->make_gc ();
+  common_draw_helpers_init (dapi);
 
   gtk_widget_get_allocation (widget, &allocation);
 
@@ -918,6 +925,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
+  dapi->set_clip_box (dapi, &region);
+  dapi->draw_everything (dapi);
 //  hid_expose_callback (&ghid_hid, &region, 0);
   hidgl_flush_triangles (&buffer);
 

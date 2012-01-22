@@ -75,4 +75,6 @@ void DrawSilk (DrawAPI *dapi, int side);
 void DrawMask (DrawAPI *dapi, int side);
 void DrawHoles (DrawAPI *dapi, bool draw_plated, bool draw_unplated);
 
+DrawAPI *draw_api_new (void);
+
 #endif

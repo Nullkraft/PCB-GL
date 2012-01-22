@@ -359,17 +359,12 @@ draw_element_name (DrawAPI *dapi, ElementType *element)
   DrawTextLowLevel (dapi, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
 }
 
-struct name_info {
-  DrawAPI *dapi;
-  int side;
-};
-
 static int
 name_callback (const BoxType * b, void *cl)
 {
   TextType *text = (TextType *) b;
   ElementType *element = (ElementType *) text->Element;
-  struct name_info *info = cl;
+  struct side_info *info = cl;
   DrawAPI *dapi = info->dapi;
 
   if (TEST_FLAG (HIDENAMEFLAG, element))
@@ -567,7 +562,7 @@ arc_callback (const BoxType * b, void *cl)
   struct layer_info *info = cl;
   DrawAPI *dapi = info->dapi;
 
-  draw_arc (dapi, (LayerType *) cl, (ArcType *) b);
+  draw_arc (dapi, info->layer, (ArcType *) b);
   return 1;
 }
 
@@ -624,7 +619,7 @@ PrintAssembly (DrawAPI *dapi, int side)
   dapi->gapi->set_draw_faded (dapi->fg_gc, 0);
 
   /* draw package */
-  DrawSilk (dapi, side);
+  dapi->draw_silk_layer (dapi, side);
   doing_assy = false;
 }
 
@@ -667,21 +662,18 @@ DrawEverything (DrawAPI *dapi)
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
       && gui->set_layer ("invisible", SL (INVISIBLE, 0), 0))
     {
-      struct side_info info;
+      struct side_info side_info;
 
-      info.dapi = dapi;
-      info.side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
+      side_info.dapi = dapi;
+      side_info.side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
 
       if (PCB->ElementOn)
 	{
-          struct name_info name_info;
-          info.dapi = dapi;
-          info.side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
-	  r_search (PCB->Data->element_tree, dapi->clip_box, NULL, element_callback, &name_info);
-	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], dapi->clip_box, NULL, name_callback, &name_info);
-	  dapi->draw_pcb_layer (dapi, &(PCB->Data->Layer[max_copper_layer + info.side]));
+	  r_search (PCB->Data->element_tree, dapi->clip_box, NULL, element_callback, &side_info);
+	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], dapi->clip_box, NULL, name_callback, &side_info);
+	  dapi->draw_pcb_layer (dapi, &(PCB->Data->Layer[max_copper_layer + side_info.side]));
 	}
-      r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_callback, &info);
+      r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_callback, &side_info);
       gui->end_layer ();
     }
 
@@ -723,25 +715,25 @@ DrawEverything (DrawAPI *dapi)
   /* Draw the solder mask if turned on */
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
     {
-      DrawMask (dapi, COMPONENT_LAYER);
+      dapi->draw_solder_mask (dapi, COMPONENT_LAYER);
       gui->end_layer ();
     }
 
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
     {
-      DrawMask (dapi, SOLDER_LAYER);
+      dapi->draw_solder_mask (dapi, SOLDER_LAYER);
       gui->end_layer ();
     }
 
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
     {
-      DrawSilk (dapi, COMPONENT_LAYER);
+      dapi->draw_silk_layer (dapi, COMPONENT_LAYER);
       gui->end_layer ();
     }
 
   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
     {
-      DrawSilk (dapi, SOLDER_LAYER);
+      dapi->draw_silk_layer (dapi, SOLDER_LAYER);
       gui->end_layer ();
     }
 
@@ -953,12 +945,12 @@ clearPad_callback (const BoxType * b, void *cl)
  */
 
 void
-DrawSilk (DrawAPI *dapi, int side)
+draw_silk_layer (DrawAPI *dapi, int side)
 {
-  struct name_info name_info;
+  struct side_info side_info;
 
-  name_info.dapi = dapi;
-  name_info.side = side;
+  side_info.dapi = dapi;
+  side_info.side = side;
 
 #if 0
   /* This code is used when you want to mask silk to avoid exposed
@@ -973,8 +965,8 @@ DrawSilk (DrawAPI *dapi, int side)
 #endif
       dapi->draw_pcb_layer (dapi, LAYER_PTR (max_copper_layer + side));
       /* draw package */
-      r_search (PCB->Data->element_tree, dapi->clip_box, NULL, element_callback, &side);
-      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], dapi->clip_box, NULL, name_callback, &name_info);
+      r_search (PCB->Data->element_tree, dapi->clip_box, NULL, element_callback, &side_info);
+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], dapi->clip_box, NULL, name_callback, &side_info);
 #if 0
     }
 
@@ -989,7 +981,7 @@ DrawSilk (DrawAPI *dapi, int side)
       DrawLayer (dapi, LAYER_PTR (max_copper_layer + layer), drawn_area);
       /* draw package */
       r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
-      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side_info);
     }
   dapi->gapi->use_mask (HID_MASK_OFF);
 #endif
@@ -1016,8 +1008,8 @@ DrawMaskBoardArea (DrawAPI *dapi, int mask_type)
 /* ---------------------------------------------------------------------------
  * draws solder mask layer - this will cover nearly everything
  */
-void
-DrawMask (DrawAPI *dapi, int side)
+static void
+draw_solder_mask (DrawAPI *dapi, int side)
 {
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
   struct side_info info;
@@ -1771,8 +1763,8 @@ draw_pcb_element (DrawAPI *dapi, ElementType *element)
  * HID drawing callback.
  */
 
-void
-hid_expose_callback (DrawAPI *dapi, BoxType * region, void *item)
+static void
+draw_everything (DrawAPI *dapi)
 {
   dapi->fg_gc = dapi->gapi->make_gc ();
   dapi->bg_gc = dapi->gapi->make_gc ();
@@ -1781,25 +1773,45 @@ hid_expose_callback (DrawAPI *dapi, BoxType * region, void *item)
   dapi->gapi->set_color (dapi->pm_gc, "erase");
   dapi->gapi->set_color (dapi->bg_gc, "drill");
 
-  dapi->set_clip_box (dapi, region);
-
-  if (item)
-    {
-      doing_pinout = true;
-      dapi->draw_pcb_element (dapi, (ElementType *)item);
-      doing_pinout = false;
-    }
-  else
-    DrawEverything (dapi);
+  DrawEverything (dapi);
 
   dapi->gapi->destroy_gc (dapi->fg_gc);
   dapi->gapi->destroy_gc (dapi->bg_gc);
   dapi->gapi->destroy_gc (dapi->pm_gc);
 }
 
-void
-draw_dapi_init (DrawAPI *dapi)
+static void
+draw_pinout_preview (DrawAPI *dapi, ElementType *element)
 {
+  dapi->fg_gc = dapi->gapi->make_gc ();
+  dapi->bg_gc = dapi->gapi->make_gc ();
+  dapi->pm_gc = dapi->gapi->make_gc ();
+
+  dapi->gapi->set_color (dapi->pm_gc, "erase");
+  dapi->gapi->set_color (dapi->bg_gc, "drill");
+
+  doing_pinout = true;
+  dapi->draw_pcb_element (dapi, element);
+  doing_pinout = false;
+
+  dapi->gapi->destroy_gc (dapi->fg_gc);
+  dapi->gapi->destroy_gc (dapi->bg_gc);
+  dapi->gapi->destroy_gc (dapi->pm_gc);
+}
+
+static void
+set_clip_box (DrawAPI *dapi, const BoxType *clip_box)
+{
+  dapi->clip_box = clip_box;
+}
+
+DrawAPI *
+draw_api_new (void)
+{
+  DrawAPI *dapi;
+
+  dapi = g_new0 (DrawAPI, 1);
+
 #if 0
   dapi->draw_pcb_pin         =
   dapi->draw_pcb_pin_mask    =
@@ -1819,9 +1831,19 @@ draw_dapi_init (DrawAPI *dapi)
   dapi->draw_pcb_element     = draw_pcb_element;
   dapi->draw_pcb_layer       = draw_pcb_layer;
   dapi->draw_pcb_layer_group = draw_pcb_layer_group;
+  dapi->draw_solder_mask     = draw_solder_mask;
+#if 0
+  dapi->draw_solder_paste    =
+#endif
+  dapi->draw_silk_layer      = draw_silk_layer; /* Hmm - should be able to do this by layer number, even if not layer group */
+  /* But it would mean special casing diving into element silk from teh draw_pcb_layer function */
+  dapi->draw_everything      = draw_everything;
+  dapi->draw_pinout_preview  = draw_pinout_preview;
 #if 0
   dapi->draw_pcb_buffer      =
   dapi->set_draw_offset      =
-  dapi->set_clip_box         =
 #endif
+  dapi->set_clip_box         = set_clip_box;
+
+  return dapi;
 }
