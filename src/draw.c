@@ -1009,7 +1009,7 @@ draw_mask_layer (DrawAPI *dapi, int side)
 static void
 draw_paste_layer (DrawAPI *dapi, int side)
 {
-  dapi->gapi->set_color (dapi->fg_gc, PCB->ElementColor);
+  dapi->gapi->set_color (dapi->fg_gc, PCB->ElementColor); /* XXX: DO WE NEED THIS? */
   ALLPAD_LOOP (PCB->Data);
   {
     if (ON_SIDE (pad, side))
@@ -1094,8 +1094,9 @@ draw_pcb_layer (DrawAPI *dapi, LayerType *layer)
 static void
 draw_pcb_layer_group (DrawAPI *dapi, int group)
 {
-  int i, rv = 1;
+  int i;
   int layernum;
+  bool draw_ppv = false;
   LayerType *layer;
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
@@ -1104,16 +1105,14 @@ draw_pcb_layer_group (DrawAPI *dapi, int group)
     {
       layernum = layers[i];
       layer = PCB->Data->Layer + layers[i];
-      if (strcmp (layer->Name, "outline") == 0 ||
-          strcmp (layer->Name, "route") == 0)
-        rv = 0;
+      if (strcmp (layer->Name, "outline") != 0 &&
+          strcmp (layer->Name, "route")   != 0)
+        draw_ppv = !gui->gui;
       if (layernum < max_copper_layer && layer->On)
         dapi->draw_pcb_layer (dapi, layer);
     }
-  if (n_entries > 1)
-    rv = 1;
 
-  if (rv && !gui->gui)
+  if (draw_ppv)
     DrawPPV (dapi, group);
 }
 
