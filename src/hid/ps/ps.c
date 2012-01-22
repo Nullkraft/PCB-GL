@@ -999,10 +999,11 @@ ps_set_layer (const char *name, int group, int empty)
       global.outline_layer != NULL &&
       global.outline_layer != PCB->Data->Layer+idx &&
       strcmp (name, "outline") != 0 &&
-      strcmp (name, "route") != 0
-      )
+      strcmp (name, "route")   != 0)
     {
-      DrawLayer (NULL, global.outline_layer, &global.region);
+      DrawAPI *dapi = NULL;
+      dapi->set_clip_box (dapi, &global.region);
+      dapi->draw_pcb_layer (dapi, global.outline_layer);
     }
 
   return 1;

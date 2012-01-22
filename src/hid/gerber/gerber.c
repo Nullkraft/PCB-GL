@@ -824,7 +824,11 @@ gerber_set_layer (const char *name, int group, int empty)
     {
       if (outline_layer
 	  && outline_layer != PCB->Data->Layer+idx)
-	DrawLayer (NULL, outline_layer, &region);
+        {
+          DrawAPI *dapi = NULL;
+          dapi->set_clip_box (dapi, &region);
+          dapi->draw_pcb_layer (dapi, outline_layer);
+        }
       else if (!outline_layer)
 	{
 #if 0

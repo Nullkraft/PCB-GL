@@ -54,7 +54,6 @@ void DrawElementName (ElementType *);
 void DrawElementPackage (ElementType *);
 void DrawElementPinsAndPads (ElementType *);
 void DrawObject (int, void *, void *);
-void DrawLayer (DrawAPI *, LayerType *, const BoxType *);
 void EraseVia (PinType *);
 void EraseRat (RatType *);
 void EraseViaName (PinType *);
@@ -71,11 +70,9 @@ void EraseElementPinsAndPads (ElementType *);
 void EraseElementName (ElementType *);
 void EraseObject (int, void *, void *);
 
-void DrawLayerGroup (DrawAPI *dapi, int side, const BoxType *drawn_area);
-void DrawPaste (DrawAPI *dapi, int side, const BoxType *drawn_area);
-void DrawSilk (DrawAPI *dapi, int side, const BoxType *drawn_area);
-void DrawMask (DrawAPI *dapi, int side, const BoxType *drawn_area);
-void DrawHoles (DrawAPI *dapi, bool draw_plated, bool draw_unplated, const BoxType *drawn_area);
-void PrintAssembly (DrawAPI *dapi, int side, const BoxType *drawn_area);
+void DrawPaste (DrawAPI *dapi, int side);
+void DrawSilk (DrawAPI *dapi, int side);
+void DrawMask (DrawAPI *dapi, int side);
+void DrawHoles (DrawAPI *dapi, bool draw_plated, bool draw_unplated);
 
 #endif
