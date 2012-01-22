@@ -1,5 +1,5 @@
 Bottom: bd38ba82f0fc035947323acdcc39f555f4ea8afc
-Top:    dabf474f7c0e6f3bdac85b46f909266d8d70e8a6
+Top:    5ec6d3ef1756ed0ece94a823e935dc021fe2be06
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-21 19:01:13 +0000
 
@@ -60,7 +60,7 @@ index 28cbfda..94c035f 100644
  
  #define max_group (PCB->Data->LayerN)
 diff --git a/src/draw.c b/src/draw.c
-index ae1e99a..9fe8c77 100644
+index ae1e99a..fc47717 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -71,59 +71,76 @@
@@ -158,7 +158,7 @@ index ae1e99a..9fe8c77 100644
 +}
 +
 +static void
-+set_color_for_pad (DrawAPI *dapi, Layer *layer, PadType *pad)
++set_color_for_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
 +{
 +  char *color = PCB->PinColor;
 +
@@ -2930,7 +2930,7 @@ index 69517e8..441c85c 100644
    hid->set_crosshair      = ps_set_crosshair;
  }
 diff --git a/src/outline_draw.c b/src/outline_draw.c
-index 6da1b82..3ec45f8 100644
+index 6da1b82..0341b04 100644
 --- a/src/outline_draw.c
 +++ b/src/outline_draw.c
 @@ -121,6 +121,13 @@ outline_draw_pcb_arc (DrawAPI *dapi, LayerType *layer, ArcType *arc)
@@ -2938,10 +2938,10 @@ index 6da1b82..3ec45f8 100644
  }
  
 +static void
-+outline_draw_pcb_text (DrawAPI *dapi, LayerType *layer, TextType *text, coord min_width)
++outline_draw_pcb_text (DrawAPI *dapi, LayerType *layer, TextType *text, Coord min_width)
 +{
 +  BoxType *box = &text->BoundingBox;
-+  gui->draw_rect (Crosshair.GC, box->X1, box->Y1, box->X2, box->Y2);
++  dapi->gapi->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
 +}
 +
  /* ---------------------------------------------------------------------------
