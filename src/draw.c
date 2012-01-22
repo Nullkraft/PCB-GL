@@ -1798,10 +1798,15 @@ draw_api_new (void)
   dapi->set_color_for_pin     = set_color_for_pin;
   dapi->set_color_for_via     = set_color_for_via;
   dapi->set_color_for_pad     = set_color_for_pad;
-  dapi->set_color_for_line    = set_color_for_line;
-  dapi->set_color_for_arc     = set_color_for_arc;
-  dapi->set_color_for_text    = set_color_for_text;
-  dapi->set_color_for_polygon = set_color_for_polygon;
+
+  /* The following types can be on copper layer, silk layers, selected, found,
+   * warned, they can be drawn as overlay text. We sould consisder whether
+   * any of these need to be split up into multiple hooks.
+   */
+  dapi->set_color_for_line    = NULL; // set_color_for_line;
+  dapi->set_color_for_arc     = NULL; // set_color_for_arc;
+  dapi->set_color_for_text    = NULL; // set_color_for_text;
+  dapi->set_color_for_polygon = NULL; // set_color_for_polygon;
 #if 0
   dapi->draw_rat              =
 #endif

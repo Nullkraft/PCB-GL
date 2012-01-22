@@ -98,7 +98,7 @@ text_at (DrawAPI *dapi, int x, int y, int align, char *fmt, ...)
   t.X -= w * (align & 3) / 2;
   if (t.X < 0)
     t.X = 0;
-  DrawTextLowLevel (dapi, &t, 0);
+  dapi->draw_pcb_text (dapi, NULL, &t, 0);
   if (align & 8)
     dapi->gapi->draw_line (dapi->gc, t.X,     t.Y + SCALE_TEXT (font->MaxHeight, t.Scale) + MIL_TO_COORD(10),
                                      t.X + w, t.Y + SCALE_TEXT (font->MaxHeight, t.Scale) + MIL_TO_COORD(10));
@@ -318,18 +318,20 @@ PrintFab (DrawAPI *dapi)
       dapi->gapi->set_line_width (dapi->gc, MIL_TO_COORD(10));
       LINE_LOOP (layer);
       {
+        // dapi->draw_pcb_line (dapi, layer, line);
         dapi->gapi->draw_line (dapi->gc, line->Point1.X, line->Point1.Y, line->Point2.X, line->Point2.Y);
       }
       END_LOOP;
       ARC_LOOP (layer);
       {
+        // dapi->draw_pcb_arc (dapi, layer, arc);
         dapi->gapi->draw_arc (dapi->gc, arc->X, arc->Y,
                               arc->Width, arc->Height, arc->StartAngle, arc->Delta);
       }
       END_LOOP;
       TEXT_LOOP (layer);
       {
-	DrawTextLowLevel (dapi, text, 0);
+        dapi->draw_pcb_text (dapi, layer, text, 0);
       }
       END_LOOP;
       dapi->gapi->set_line_width (dapi->gc, FAB_LINE_W);
