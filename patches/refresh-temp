@@ -1,0 +1,22 @@
+Bottom: eefa43641cda28f17197c794311125103b11ff0a
+Top:    20883699aa69bd794547ccf6f5a05a02ace62104
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-01-22 13:31:55 +0000
+
+Refresh of draw-c-fix-type-of-thin_draw-p
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 03e82d8..46d3822 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -321,7 +321,7 @@ FloatPolyType;
+ 
+ static void
+ draw_octagon_poly (hidGC gc, Coord X, Coord Y,
+-                   Coord Thickness, Coord thin_draw)
++                   Coord Thickness, bool thin_draw)
+ {
+   static FloatPolyType p[8] = {
+     { 0.5,               -TAN_22_5_DEGREE_2},
