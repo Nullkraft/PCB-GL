@@ -1,0 +1,57 @@
+Bottom: bada76301e5f26789d023483c598878f2ae8b7da
+Top:    5aad621e271892ce4f24838f53c70432d7b1f8f9
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-01-22 16:40:12 +0000
+
+Refresh of other-drawing-api-changes
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 41dc647..5de5942 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -990,7 +990,8 @@ draw_mask_layer (DrawAPI *dapi, int side)
+   info.side = side;
+ 
+   if (thin)
+-    dapi->gapi->set_color (dapi->pm_gc, PCB->MaskColor);
++//    dapi->gapi->set_color (dapi->pm_gc, PCB->MaskColor);
++    dapi->gapi->set_color (dapi->fg_gc, PCB->MaskColor);
+   else
+     {
+       DrawMaskBoardArea (dapi, HID_MASK_BEFORE);
+@@ -1002,7 +1003,8 @@ draw_mask_layer (DrawAPI *dapi, int side)
+   r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_mask_callback, &info);
+ 
+   if (thin)
+-    dapi->gapi->set_color (dapi->pm_gc, "erase");
++//    dapi->gapi->set_color (dapi->pm_gc, "erase");
++    dapi->gapi->set_color (dapi->fg_gc, "erase");
+   else
+     {
+       DrawMaskBoardArea (dapi, HID_MASK_AFTER);
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 72831c3..5292ee3 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -543,7 +543,8 @@ common_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
+ static void
+ common_draw_pcb_pad_mask (DrawAPI *dapi, LayerType *layer, PadType *pad)
+ {
+-  if (TEST_FLAG (THINDRAWFLAG, PCB))
++  if (TEST_FLAG (THINDRAWFLAG,     PCB) ||
++      TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+     common_thindraw_pcb_pad_mask (dapi, layer, pad);
+   else
+     common_fill_pcb_pad_mask (dapi, layer, pad);
+@@ -570,7 +571,8 @@ common_draw_pcb_pv (DrawAPI *dapi, PinType *pv)
+ static void
+ common_draw_pcb_pv_mask (DrawAPI *dapi, PinType *pv)
+ {
+-  if (TEST_FLAG (THINDRAWFLAG, PCB))
++  if (TEST_FLAG (THINDRAWFLAG,     PCB) ||
++      TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+     common_thindraw_pcb_pv_mask (dapi, pv);
+   else
+     common_fill_pcb_pv_mask (dapi, pv);
