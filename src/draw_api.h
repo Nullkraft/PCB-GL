@@ -66,12 +66,16 @@ struct DrawAPI {
   void (*set_clip_box)         (DrawAPI *, const BoxType *);
 
   /* Member variables */
+  const BoxType *clip_box; /* Clipping box for the current drawing operation                  */
+  bool doing_overlay_text; /* Override for colour / style of overlay text such as pin names   */
+  bool doing_pinout;       /* Override for visibility / style when drawing a pinout preview   */
+  bool doing_assy;         /* Override for visibility / style when making an assembly drawing */
+
   GraphicsAPI *gapi;       /* <--- This should be in a subclass of the base dapi, but nevermind */
   hidGC gc;                /* <--- This should be in a subclass of the base dapi, but nevermind */
   hidGC fg_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
   hidGC bg_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
   hidGC pm_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
-  const BoxType *clip_box;
 };
 
 enum mask_mode {

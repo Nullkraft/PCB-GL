@@ -71,9 +71,6 @@
  */
 static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
 
-static int doing_pinout = 0;
-static bool doing_assy = false;
-
 /* ---------------------------------------------------------------------------
  * some local prototypes
  */
@@ -92,7 +89,7 @@ SetPVColor (DrawAPI *dapi, PinType *Pin, int Type)
 
   if (Type == VIA_TYPE)
     {
-      if (!doing_pinout
+      if (!dapi->doing_pinout
 	  && TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
 	{
 	  if (TEST_FLAG (WARNFLAG, Pin))
@@ -107,7 +104,7 @@ SetPVColor (DrawAPI *dapi, PinType *Pin, int Type)
     }
   else
     {
-      if (!doing_pinout
+      if (!dapi->doing_pinout
 	  && TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
 	{
 	  if (TEST_FLAG (WARNFLAG, Pin))
@@ -195,11 +192,10 @@ _draw_pv_name (DrawAPI *dapi, PinType *pv)
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
 
-  if (gui->gui)
-    doing_pinout++;
+  g_warn_if_fail (dapi->doing_overlay_text == false);
+  dapi->doing_overlay_text = gui->gui;
   DrawTextLowLevel (dapi, &text, 0);
-  if (gui->gui)
-    doing_pinout--;
+  dapi->doing_overlay_text = false;
 }
 
 static void
@@ -286,7 +282,7 @@ draw_pad_name (DrawAPI *dapi, PadType *pad)
 static void
 draw_pad (DrawAPI *dapi, PadType *pad)
 {
-  if (doing_pinout)
+  if (dapi->doing_pinout)
    dapi->gapi->set_color (dapi->fg_gc, PCB->PinColor);
   else if (TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, pad))
    {
@@ -304,7 +300,7 @@ draw_pad (DrawAPI *dapi, PadType *pad)
 
   dapi->draw_pcb_pad (dapi, NULL, pad);
 
-  if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, pad))
+  if (dapi->doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, pad))
     draw_pad_name (dapi, pad);
 }
 
@@ -331,7 +327,7 @@ draw_element_name (DrawAPI *dapi, ElementType *element)
   if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
       TEST_FLAG (HIDENAMEFLAG, element))
     return;
-  if (doing_pinout || doing_assy)
+  if (dapi->doing_overlay_text || dapi->doing_pinout || dapi->doing_assy)
     dapi->gapi->set_color (dapi->fg_gc, PCB->ElementColor);
   else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, element)))
     dapi->gapi->set_color (dapi->fg_gc, PCB->ElementSelectedColor);
@@ -553,7 +549,7 @@ static void
 draw_element_package (DrawAPI *dapi, ElementType *element)
 {
   /* set color and draw lines, arcs, text and pins */
-  if (doing_pinout || doing_assy)
+  if (dapi->doing_pinout || dapi->doing_assy)
     dapi->gapi->set_color (dapi->fg_gc, PCB->ElementColor);
   else if (TEST_FLAG (SELECTEDFLAG, element))
     dapi->gapi->set_color (dapi->fg_gc, PCB->ElementSelectedColor);
@@ -596,14 +592,15 @@ PrintAssembly (DrawAPI *dapi, int side)
 {
   int side_group = GetLayerGroupNumberByNumber (max_copper_layer + side);
 
-  doing_assy = true;
+  g_warn_if_fail (dapi->doing_assy == false);
+  dapi->doing_assy = true;
   dapi->gapi->set_draw_faded (dapi->fg_gc, 1);
   dapi->draw_pcb_layer_group (dapi, side_group);
   dapi->gapi->set_draw_faded (dapi->fg_gc, 0);
 
   /* draw package */
   dapi->draw_silk_layer (dapi, side);
-  doing_assy = false;
+  dapi->doing_assy = false;
 }
 
 /* ---------------------------------------------------------------------------
@@ -850,7 +847,7 @@ DrawPPV (DrawAPI *dapi, int group)
       r_search (PCB->Data->via_tree, dapi->clip_box, NULL, via_callback, dapi);
       r_search (PCB->Data->via_tree, dapi->clip_box, NULL, hole_callback, &hole_info);
     }
-  if (PCB->PinOn || doing_assy)
+  if (PCB->PinOn || dapi->doing_assy)
     r_search (PCB->Data->pin_tree, dapi->clip_box, NULL, hole_callback, &hole_info);
 }
 
@@ -1296,8 +1293,7 @@ void
 DrawPin (PinType *Pin)
 {
   AddPart (Pin);
-  if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
-      || doing_pinout)
+  if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin)))
     DrawPinName (Pin);
 }
 
@@ -1317,7 +1313,7 @@ void
 DrawPad (PadType *Pad)
 {
   AddPart (Pad);
-  if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, Pad))
+  if (TEST_FLAG (DISPLAYNAMEFLAG, Pad))
     DrawPadName (Pad);
 }
 
@@ -1440,7 +1436,7 @@ DrawElementPinsAndPads (ElementType *Element)
 {
   PAD_LOOP (Element);
   {
-    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+    if (FRONT (pad) || PCB->InvisibleObjectsOn)
       DrawPad (pad);
   }
   END_LOOP;
@@ -1718,7 +1714,7 @@ draw_pcb_element (DrawAPI *dapi, ElementType *element)
 
   PAD_LOOP (element);
   {
-    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+    if (dapi->doing_pinout || dapi->doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
       draw_pad (dapi, pad);
   }
   END_LOOP;
@@ -1760,9 +1756,10 @@ draw_pinout_preview (DrawAPI *dapi, ElementType *element)
   dapi->gapi->set_color (dapi->pm_gc, "erase");
   dapi->gapi->set_color (dapi->bg_gc, "drill");
 
-  doing_pinout = true;
+  g_warn_if_fail (dapi->doing_pinout == false);
+  dapi->doing_pinout = true;
   dapi->draw_pcb_element (dapi, element);
-  doing_pinout = false;
+  dapi->doing_pinout = false;
 
   dapi->gapi->destroy_gc (dapi->fg_gc);
   dapi->gapi->destroy_gc (dapi->bg_gc);

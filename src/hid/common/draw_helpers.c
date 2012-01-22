@@ -2,6 +2,7 @@
 #include "hid.h"
 #include "polygon.h"
 #include "draw_api.h"
+#include "data.h"    /* <-- For nasty global "PCB" */
 
 static void
 fill_contour (DrawAPI *dapi, PLINE *pl)
@@ -19,7 +20,7 @@ fill_contour (DrawAPI *dapi, PLINE *pl)
       y[i++] = v->point[1];
     }
 
-  dapi->gapi->fill_polygon (dapi->gc, n, x, y);
+  dapi->gapi->fill_polygon (dapi->fg_gc, n, x, y);
 
   free (x);
   free (y);
@@ -32,13 +33,13 @@ thindraw_contour (DrawAPI *dapi, PLINE *pl)
   Coord last_x, last_y;
   Coord this_x, this_y;
 
-  dapi->gapi->set_line_width (dapi->gc, 0);
-  dapi->gapi->set_line_cap (dapi->gc, Round_Cap);
+  dapi->gapi->set_line_width (dapi->fg_gc, 0);
+  dapi->gapi->set_line_cap (dapi->fg_gc, Round_Cap);
 
   /* If the contour is round, use an arc drawing routine. */
   if (pl->is_round)
     {
-      dapi->gapi->draw_arc (dapi->gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
+      dapi->gapi->draw_arc (dapi->fg_gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
       return;
     }
 
@@ -55,8 +56,8 @@ thindraw_contour (DrawAPI *dapi, PLINE *pl)
       this_x = v->point[0];
       this_y = v->point[1];
 
-      dapi->gapi->draw_line (dapi->gc, last_x, last_y, this_x, this_y);
-      // dapi->gapi->fill_circle (dapi->gc, this_x, this_y, 30);
+      dapi->gapi->draw_line (dapi->fg_gc, last_x, last_y, this_x, this_y);
+      // dapi->gapi->fill_circle (dapi->fg_gc, this_x, this_y, 30);
 
       last_x = this_x;
       last_y = this_y;
@@ -212,8 +213,8 @@ thindraw_pcb_pad (DrawAPI *dapi, PadType *pad, Coord w)
       x1 = x2; x2 = temp_x;
       y1 = y2; y2 = temp_y;
     }
-  dapi->gapi->set_line_cap (dapi->gc, Round_Cap);
-  dapi->gapi->set_line_width (dapi->gc, 0);
+  dapi->gapi->set_line_cap (dapi->fg_gc, Round_Cap);
+  dapi->gapi->set_line_width (dapi->fg_gc, 0);
   if (TEST_FLAG (SQUAREFLAG, pad))
     {
       /* slanted square pad */
@@ -229,14 +230,14 @@ thindraw_pcb_pad (DrawAPI *dapi, PadType *pad, Coord w)
       tx = t * cos (theta + M_PI / 4) * sqrt (2.0);
       ty = t * sin (theta + M_PI / 4) * sqrt (2.0);
 
-      dapi->gapi->draw_line (dapi->gc, x1 - tx, y1 - ty, x2 + ty, y2 - tx);
-      dapi->gapi->draw_line (dapi->gc, x2 + ty, y2 - tx, x2 + tx, y2 + ty);
-      dapi->gapi->draw_line (dapi->gc, x2 + tx, y2 + ty, x1 - ty, y1 + tx);
-      dapi->gapi->draw_line (dapi->gc, x1 - ty, y1 + tx, x1 - tx, y1 - ty);
+      dapi->gapi->draw_line (dapi->fg_gc, x1 - tx, y1 - ty, x2 + ty, y2 - tx);
+      dapi->gapi->draw_line (dapi->fg_gc, x2 + ty, y2 - tx, x2 + tx, y2 + ty);
+      dapi->gapi->draw_line (dapi->fg_gc, x2 + tx, y2 + ty, x1 - ty, y1 + tx);
+      dapi->gapi->draw_line (dapi->fg_gc, x1 - ty, y1 + tx, x1 - tx, y1 - ty);
     }
   else if (x1 == x2 && y1 == y2)
     {
-      dapi->gapi->draw_arc (dapi->gc, x1, y1, t, t, 0, 360);
+      dapi->gapi->draw_arc (dapi->fg_gc, x1, y1, t, t, 0, 360);
     }
   else
     {
@@ -250,14 +251,14 @@ thindraw_pcb_pad (DrawAPI *dapi, PadType *pad, Coord w)
       ox = dy * h + 0.5 * SGN (dy);
       oy = -(dx * h + 0.5 * SGN (dx));
 
-      dapi->gapi->draw_line (dapi->gc, x1 + ox, y1 + oy, x2 + ox, y2 + oy);
+      dapi->gapi->draw_line (dapi->fg_gc, x1 + ox, y1 + oy, x2 + ox, y2 + oy);
 
       if (abs (ox) >= pixel_slop || abs (oy) >= pixel_slop)
         {
           Angle angle = atan2 (dx, dy) * 57.295779;
-          dapi->gapi->draw_line (dapi->gc, x1 - ox, y1 - oy, x2 - ox, y2 - oy);
-          dapi->gapi->draw_arc (dapi->gc, x1, y1, t, t, angle - 180, 180);
-          dapi->gapi->draw_arc (dapi->gc, x2, y2, t, t, angle, 180);
+          dapi->gapi->draw_line (dapi->fg_gc, x1 - ox, y1 - oy, x2 - ox, y2 - oy);
+          dapi->gapi->draw_arc (dapi->fg_gc, x1, y1, t, t, angle - 180, 180);
+          dapi->gapi->draw_arc (dapi->fg_gc, x2, y2, t, t, angle, 180);
         }
     }
 }
@@ -295,21 +296,21 @@ fill_pcb_pad (DrawAPI *dapi, PadType *pad, Coord w)
           b = pad->Point1.Y - w / 2;
           r = l + w;
           t = b + w;
-          dapi->gapi->fill_rect (dapi->gc, l, b, r, t);
+          dapi->gapi->fill_rect (dapi->fg_gc, l, b, r, t);
         }
       else
         {
-          dapi->gapi->fill_circle (dapi->gc, pad->Point1.X, pad->Point1.Y, w / 2);
+          dapi->gapi->fill_circle (dapi->fg_gc, pad->Point1.X, pad->Point1.Y, w / 2);
         }
     }
   else
     {
-      dapi->gapi->set_line_cap (dapi->gc, TEST_FLAG (SQUAREFLAG, pad) ?
-                                          Square_Cap : Round_Cap);
-      dapi->gapi->set_line_width (dapi->gc, w);
+      dapi->gapi->set_line_cap (dapi->fg_gc, TEST_FLAG (SQUAREFLAG, pad) ?
+                                               Square_Cap : Round_Cap);
+      dapi->gapi->set_line_width (dapi->fg_gc, w);
 
-      dapi->gapi->draw_line (dapi->gc, pad->Point1.X, pad->Point1.Y,
-                                       pad->Point2.X, pad->Point2.Y);
+      dapi->gapi->draw_line (dapi->fg_gc, pad->Point1.X, pad->Point1.Y,
+                                          pad->Point2.X, pad->Point2.Y);
     }
 }
 
@@ -519,8 +520,87 @@ common_thindraw_pcb_pv_hole (DrawAPI *dapi, PinType *pv)
   dapi->gapi->draw_arc (dapi->bg_gc, pv->X, pv->Y, r, r, 0, 360);
 }
 
+static void
+common_draw_pcb_polygon (DrawAPI *dapi, LayerType *layer, PolygonType *poly)
+{
+  if (TEST_FLAG (THINDRAWFLAG,     PCB) ||
+      TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+    common_thindraw_pcb_polygon (dapi, layer, poly);
+  else
+    common_fill_pcb_polygon (dapi, layer, poly);
+
+}
+
+static void
+common_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    common_thindraw_pcb_pad (dapi, layer, pad);
+  else
+    common_fill_pcb_pad (dapi, layer, pad);
+}
+
+static void
+common_draw_pcb_pad_mask (DrawAPI *dapi, LayerType *layer, PadType *pad)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    common_thindraw_pcb_pad_mask (dapi, layer, pad);
+  else
+    common_fill_pcb_pad_mask (dapi, layer, pad);
+}
+
+static void
+common_draw_pcb_pad_paste (DrawAPI *dapi, LayerType *layer, PadType *pad)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    common_thindraw_pcb_pad_paste (dapi, layer, pad);
+  else
+    common_fill_pcb_pad_paste (dapi, layer, pad);
+}
+
+static void
+common_draw_pcb_pv (DrawAPI *dapi, PinType *pv)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    common_thindraw_pcb_pv (dapi, pv);
+  else
+    common_fill_pcb_pv (dapi, pv);
+}
+
+static void
+common_draw_pcb_pv_mask (DrawAPI *dapi, PinType *pv)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    common_thindraw_pcb_pv_mask (dapi, pv);
+  else
+    common_fill_pcb_pv_mask (dapi, pv);
+}
+
+static void
+common_draw_pcb_pv_hole (DrawAPI *dapi, PinType *pv)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    common_thindraw_pcb_pv_hole (dapi, pv);
+  else
+    common_fill_pcb_pv_hole (dapi, pv);
+}
+
 void
 common_draw_helpers_init (DrawAPI *dapi)
+{
+  dapi->draw_pcb_polygon   = common_draw_pcb_polygon;
+  dapi->draw_pcb_pad       = common_draw_pcb_pad;
+  dapi->draw_pcb_pad_mask  = common_draw_pcb_pad_mask;
+  dapi->draw_pcb_pad_paste = common_draw_pcb_pad_paste;
+  dapi->draw_pcb_pin       = common_draw_pcb_pv;
+  dapi->draw_pcb_pin_mask  = common_draw_pcb_pv_mask;
+  dapi->draw_pcb_pin_hole  = common_draw_pcb_pv_hole;
+  dapi->draw_pcb_via       = common_draw_pcb_pv;
+  dapi->draw_pcb_via_mask  = common_draw_pcb_pv_mask;
+}
+
+void
+common_fill_helpers_init (DrawAPI *dapi)
 {
   dapi->draw_pcb_polygon   = common_fill_pcb_polygon;
   dapi->draw_pcb_pad       = common_fill_pcb_pad;
