@@ -197,11 +197,8 @@ common_thindraw_pcb_polygon (DrawAPI *dapi, LayerType *layer,
 }
 
 static void
-thindraw_pcb_pad (DrawAPI *dapi, PadType *pad, bool clear, bool mask)
+thindraw_pcb_pad (DrawAPI *dapi, PadType *pad, Coord w)
 {
-  Coord w = clear ? (mask ? pad->Mask
-                          : pad->Thickness + pad->Clearance)
-                  : pad->Thickness;
   Coord x1, y1, x2, y2;
   Coord t = w / 2;
   x1 = pad->Point1.X;
@@ -268,22 +265,26 @@ thindraw_pcb_pad (DrawAPI *dapi, PadType *pad, bool clear, bool mask)
 static void
 common_thindraw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
 {
-  thindraw_pcb_pad (dapi, pad, true, false);
+  thindraw_pcb_pad (dapi, pad, pad->Thickness);
 }
 
 static void
 common_thindraw_pcb_pad_mask (DrawAPI *dapi, LayerType *layer, PadType *pad)
 {
-  thindraw_pcb_pad (dapi, pad, true, true);
+  if (pad->Mask > 0)
+    thindraw_pcb_pad (dapi, pad, pad->Mask);
 }
 
 static void
-fill_pcb_pad (DrawAPI *dapi, PadType *pad, bool clear, bool mask)
+common_thindraw_pcb_pad_paste (DrawAPI *dapi, LayerType *layer, PadType *pad)
 {
-  Coord w = clear ? (mask ? pad->Mask
-                          : pad->Thickness + pad->Clearance)
-                  : pad->Thickness;
+  if (!TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
+    thindraw_pcb_pad (dapi, pad, MIN (pad->Thickness, pad->Mask));
+}
 
+static void
+fill_pcb_pad (DrawAPI *dapi, PadType *pad, Coord w)
+{
   if (pad->Point1.X == pad->Point2.X &&
       pad->Point1.Y == pad->Point2.Y)
     {
@@ -315,13 +316,21 @@ fill_pcb_pad (DrawAPI *dapi, PadType *pad, bool clear, bool mask)
 static void
 common_fill_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
 {
-  fill_pcb_pad (dapi, pad, true, false);
+  fill_pcb_pad (dapi, pad, pad->Thickness);
 }
 
 static void
 common_fill_pcb_pad_mask (DrawAPI *dapi, LayerType *layer, PadType *pad)
 {
-  fill_pcb_pad (dapi, pad, true, true);
+  if (pad->Mask > 0)
+    fill_pcb_pad (dapi, pad, pad->Mask);
+}
+
+static void
+common_fill_pcb_pad_paste (DrawAPI *dapi, LayerType *layer, PadType *pad)
+{
+  if (!TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
+    fill_pcb_pad (dapi, pad, MIN (pad->Thickness, pad->Mask));
 }
 
 
@@ -347,7 +356,7 @@ FloatPolyType;
 
 static void
 draw_octagon_poly (DrawAPI *dapi, Coord X, Coord Y,
-                   Coord Thickness, Coord thin_draw)
+                   Coord Thickness, bool thin_draw)
 {
   static FloatPolyType p[8] = {
     { 0.5,               -TAN_22_5_DEGREE_2},
@@ -385,22 +394,21 @@ draw_octagon_poly (DrawAPI *dapi, Coord X, Coord Y,
   if (thin_draw)
     {
       int i;
-      dapi->gapi->set_line_cap (dapi->gc, Round_Cap);
-      dapi->gapi->set_line_width (dapi->gc, 0);
+      dapi->gapi->set_line_cap (dapi->fg_gc, Round_Cap);
+      dapi->gapi->set_line_width (dapi->fg_gc, 0);
       polygon_x[8] = X + scaled_x[0];
       polygon_y[8] = Y + scaled_y[0];
       for (i = 0; i < 8; i++)
-        dapi->gapi->draw_line (dapi->gc, polygon_x[i    ], polygon_y[i    ],
-                                         polygon_x[i + 1], polygon_y[i + 1]);
+        dapi->gapi->draw_line (dapi->fg_gc, polygon_x[i    ], polygon_y[i    ],
+                                            polygon_x[i + 1], polygon_y[i + 1]);
     }
   else
-    dapi->gapi->fill_polygon (dapi->gc, 8, polygon_x, polygon_y);
+    dapi->gapi->fill_polygon (dapi->fg_gc, 8, polygon_x, polygon_y);
 }
 
 static void
-fill_pcb_pv (DrawAPI *dapi, PinType *pv, bool drawHole, bool mask)
+fill_pcb_pv (DrawAPI *dapi, HIDGC gc, PinType *pv, Coord w, bool drawHole)
 {
-  Coord w = mask ? pv->Mask : pv->Thickness;
   Coord r = w / 2;
 
   if (TEST_FLAG (HOLEFLAG, pv))
@@ -439,19 +447,18 @@ fill_pcb_pv (DrawAPI *dapi, PinType *pv, bool drawHole, bool mask)
 static void
 common_fill_pcb_pv (DrawAPI *dapi, PinType *pv)
 {
-  fill_pcb_pv (dapi, pv, true, false);
+  fill_pcb_pv (dapi, dapi->fg_gc, pv, pv->Thickness, true);
 }
 
 static void
 common_fill_pcb_pv_mask (DrawAPI *dapi, PinType *pv)
 {
-  fill_pcb_pv (dapi, pv, true, true);
+  fill_pcb_pv (dapi, dapi->bg_gc, pv, pv->Mask, true);
 }
 
 static void
-thindraw_pcb_pv (DrawAPI *dapi, PinType *pv, bool drawHole, bool mask)
+thindraw_pcb_pv (DrawAPI *dapi, PinType *pv, Coord w, bool drawHole)
 {
-  Coord w = mask ? pv->Mask : pv->Thickness;
   Coord r = w / 2;
 
   if (TEST_FLAG (HOLEFLAG, pv))
@@ -507,36 +514,40 @@ thindraw_pcb_pv (DrawAPI *dapi, PinType *pv, bool drawHole, bool mask)
 static void
 common_thindraw_pcb_pv (DrawAPI *dapi, PinType *pv)
 {
-  thindraw_pcb_pv (dapi, pv, true, false);
+  thindraw_pcb_pv (dapi, pv, pv->Thickness, true);
 }
 
 static void
 common_thindraw_pcb_pv_mask (DrawAPI *dapi, PinType *pv)
 {
-  thindraw_pcb_pv (dapi, pv, true, true);
+  thindraw_pcb_pv (dapi, pv, pv->Mask, true);
 }
 
 
 void
 common_draw_helpers_init (DrawAPI *dapi)
 {
-  dapi->draw_pcb_polygon  = common_fill_pcb_polygon;
-  dapi->draw_pcb_pad      = common_fill_pcb_pad;
-  dapi->draw_pcb_pad_mask = common_fill_pcb_pad_mask;
-  dapi->draw_pcb_pin      = common_fill_pcb_pv;
-  dapi->draw_pcb_pin_mask = common_fill_pcb_pv_mask;
-  dapi->draw_pcb_via      = common_fill_pcb_pv;
-  dapi->draw_pcb_via_mask = common_fill_pcb_pv_mask;
+  dapi->draw_pcb_polygon   = common_fill_pcb_polygon;
+  dapi->draw_pcb_pad       = common_fill_pcb_pad;
+  dapi->draw_pcb_pad_mask  = common_fill_pcb_pad_mask;
+  dapi->draw_pcb_pad_paste = common_fill_pcb_pad_paste;
+  dapi->draw_pcb_pin       = common_fill_pcb_pv;
+  dapi->draw_pcb_pin_mask  = common_fill_pcb_pv_mask;
+  dapi->draw_pcb_pin_hole  = common_fill_pcb_pv_mask;
+  dapi->draw_pcb_via       = common_fill_pcb_pv;
+  dapi->draw_pcb_via_mask  = common_fill_pcb_pv_mask;
 }
 
 void
 common_thindraw_helpers_init (DrawAPI *dapi)
 {
-  dapi->draw_pcb_polygon  = common_thindraw_pcb_polygon;
-  dapi->draw_pcb_pad      = common_thindraw_pcb_pad;
-  dapi->draw_pcb_pad_mask = common_thindraw_pcb_pad_mask;
-  dapi->draw_pcb_pin      = common_thindraw_pcb_pv;
-  dapi->draw_pcb_pin_mask = common_thindraw_pcb_pv_mask;
-  dapi->draw_pcb_via      = common_thindraw_pcb_pv;
-  dapi->draw_pcb_via_mask = common_thindraw_pcb_pv_mask;
+  dapi->draw_pcb_polygon   = common_thindraw_pcb_polygon;
+  dapi->draw_pcb_pad       = common_thindraw_pcb_pad;
+  dapi->draw_pcb_pad_mask  = common_thindraw_pcb_pad_mask;
+  dapi->draw_pcb_pad_paste = common_thindraw_pcb_pad_paste;
+  dapi->draw_pcb_pin       = common_thindraw_pcb_pv;
+  dapi->draw_pcb_pin_mask  = common_thindraw_pcb_pv_mask;
+  dapi->draw_pcb_pin_hole  = common_thindraw_pcb_pv_hole;
+  dapi->draw_pcb_via       = common_thindraw_pcb_pv;
+  dapi->draw_pcb_via_mask  = common_thindraw_pcb_pv_mask;
 }

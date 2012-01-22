@@ -284,23 +284,6 @@ draw_pad_name (DrawAPI *dapi, PadType *pad)
 }
 
 static void
-_draw_pad (DrawAPI *dapi, PadType *pad, bool clear, bool mask)
-{
-  if (clear && !mask && pad->Clearance <= 0)
-    return;
-
-  dapi->draw_pcb_pad (dapi, NULL, pad);
-
-#if 0
-  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
-      (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
-    dapi->thindraw_pcb_pad (dapi->gc, pad, clear, mask);
-  else
-    dapi->fill_pcb_pad (dapi->gc, pad, clear, mask);
-#endif
-}
-
-static void
 draw_pad (DrawAPI *dapi, PadType *pad)
 {
   if (doing_pinout)
@@ -319,7 +302,7 @@ draw_pad (DrawAPI *dapi, PadType *pad)
   else
    dapi->gapi->set_color (dapi->fg_gc, PCB->InvisibleObjectsColor);
 
-  _draw_pad (dapi, pad, false, false);
+  dapi->draw_pcb_pad (dapi, NULL, pad);
 
   if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, pad))
     draw_pad_name (dapi, pad);
@@ -715,13 +698,13 @@ DrawEverything (DrawAPI *dapi)
   /* Draw the solder mask if turned on */
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
     {
-      dapi->draw_solder_mask (dapi, COMPONENT_LAYER);
+      dapi->draw_mask_layer (dapi, COMPONENT_LAYER);
       gui->end_layer ();
     }
 
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
     {
-      dapi->draw_solder_mask (dapi, SOLDER_LAYER);
+      dapi->draw_mask_layer (dapi, SOLDER_LAYER);
       gui->end_layer ();
     }
 
@@ -753,14 +736,14 @@ DrawEverything (DrawAPI *dapi)
   paste_empty = IsPasteEmpty (COMPONENT_LAYER);
   if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
     {
-      DrawPaste (dapi, COMPONENT_LAYER);
+      dapi->draw_paste_layer (dapi, COMPONENT_LAYER);
       gui->end_layer ();
     }
 
   paste_empty = IsPasteEmpty (SOLDER_LAYER);
   if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
     {
-      DrawPaste (dapi, SOLDER_LAYER);
+      dapi->draw_paste_layer (dapi, SOLDER_LAYER);
       gui->end_layer ();
     }
 
@@ -872,25 +855,6 @@ DrawPPV (DrawAPI *dapi, int group)
 }
 
 static int
-clearPin_callback (const BoxType * b, void *cl)
-{
-  PinType *pin = (PinType *) b;
-  struct side_info *info = cl;
-  DrawAPI *dapi = info->dapi;
-
-  dapi->draw_pcb_pin (dapi, pin);
-
-#if 0
-  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    dapi->thindraw_pcb_pv (dapi->pm_gc, dapi->pm_gc, pin, false, true);
-  else
-    dapi->fill_pcb_pv (dapi->pm_gc, dapi->pm_gc, pin, false, true);
-#endif
-
-  return 1;
-}
-
-static int
 poly_callback (const BoxType * b, void *cl)
 {
   struct layer_info *info = cl;
@@ -929,14 +893,25 @@ poly_callback (const BoxType * b, void *cl)
 }
 
 static int
-clearPad_callback (const BoxType * b, void *cl)
+pin_mask_callback (const BoxType * b, void *cl)
+{
+  PinType *pin = (PinType *) b;
+  struct side_info *info = cl;
+
+  info->dapi->draw_pcb_pin_mask (info->dapi, pin);
+  return 1;
+}
+
+static int
+pad_mask_callback (const BoxType * b, void *cl)
 {
   PadType *pad = (PadType *) b;
   struct side_info *info = cl;
-  DrawAPI *dapi = info->dapi;
 
-  if (ON_SIDE (pad, info->side) && pad->Mask)
-    _draw_pad (dapi, pad, true, true);
+  if (!ON_SIDE (pad, info->side))
+    return 0;
+
+  info->dapi->draw_pcb_pad_mask (info->dapi, NULL, pad);
   return 1;
 }
 
@@ -971,9 +946,9 @@ draw_silk_layer (DrawAPI *dapi, int side)
     }
 
   dapi->gapi->use_mask (HID_MASK_CLEAR);
-  r_search (PCB->Data->pin_tree, drawn_area, NULL, clearPin_callback, NULL);
-  r_search (PCB->Data->via_tree, drawn_area, NULL, clearPin_callback, NULL);
-  r_search (PCB->Data->pad_tree, drawn_area, NULL, clearPad_callback, &side);
+  r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_mask_callback, NULL);
+  r_search (PCB->Data->via_tree, drawn_area, NULL, pin_mask_callback, NULL);
+  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_mask_callback, &side);
 
   if (gui->poly_after)
     {
@@ -1009,7 +984,7 @@ DrawMaskBoardArea (DrawAPI *dapi, int mask_type)
  * draws solder mask layer - this will cover nearly everything
  */
 static void
-draw_solder_mask (DrawAPI *dapi, int side)
+draw_mask_layer (DrawAPI *dapi, int side)
 {
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
   struct side_info info;
@@ -1025,9 +1000,9 @@ draw_solder_mask (DrawAPI *dapi, int side)
       dapi->gapi->use_mask (HID_MASK_CLEAR);
     }
 
-  r_search (PCB->Data->pin_tree, dapi->clip_box, NULL, clearPin_callback, &info);
-  r_search (PCB->Data->via_tree, dapi->clip_box, NULL, clearPin_callback, &info);
-  r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, clearPad_callback, &info);
+  r_search (PCB->Data->pin_tree, dapi->clip_box, NULL, pin_mask_callback, &info);
+  r_search (PCB->Data->via_tree, dapi->clip_box, NULL, pin_mask_callback, &info);
+  r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_mask_callback, &info);
 
   if (thin)
     dapi->gapi->set_color (dapi->pm_gc, "erase");
@@ -1041,19 +1016,14 @@ draw_solder_mask (DrawAPI *dapi, int side)
 /* ---------------------------------------------------------------------------
  * draws solder paste layer for a given side of the board
  */
-void
-DrawPaste (DrawAPI *dapi, int side)
+static void
+draw_paste_layer (DrawAPI *dapi, int side)
 {
   dapi->gapi->set_color (dapi->fg_gc, PCB->ElementColor);
   ALLPAD_LOOP (PCB->Data);
   {
-    if (ON_SIDE (pad, side) && !TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
-      {
-        if (pad->Mask < pad->Thickness)
-          _draw_pad (dapi, pad, true, true);
-        else
-          _draw_pad (dapi, pad, false, false);
-      }
+    if (ON_SIDE (pad, side))
+      dapi->draw_pcb_pad_paste (dapi, NULL, pad);
   }
   ENDALL_LOOP;
 }
@@ -1823,18 +1793,17 @@ draw_api_new (void)
   dapi->draw_pcb_pad_mask    =
   dapi->draw_pcb_pad_paste   =
   dapi->draw_pcb_line        =
-  dapi->draw_rat             =
   dapi->draw_pcb_arc         =
   dapi->draw_pcb_text        =
   dapi->draw_pcb_polygon     =
+
+  dapi->draw_rat             =
 #endif
   dapi->draw_pcb_element     = draw_pcb_element;
   dapi->draw_pcb_layer       = draw_pcb_layer;
   dapi->draw_pcb_layer_group = draw_pcb_layer_group;
-  dapi->draw_solder_mask     = draw_solder_mask;
-#if 0
-  dapi->draw_solder_paste    =
-#endif
+  dapi->draw_mask_layer      = draw_mask_layer;
+  dapi->draw_paste_layer     = draw_paste_layer;
   dapi->draw_silk_layer      = draw_silk_layer; /* Hmm - should be able to do this by layer number, even if not layer group */
   /* But it would mean special casing diving into element silk from teh draw_pcb_layer function */
   dapi->draw_everything      = draw_everything;
