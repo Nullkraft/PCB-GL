@@ -3,7 +3,9 @@ Top:    eefa43641cda28f17197c794311125103b11ff0a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-22 13:30:07 +0000
 
-draw.c: Fix type of thin_draw parameter to octagon_poly routine.
+hid/common/draw_helpers.c: Fix prototype to draw_octagon_poly()
+
+The thin_draw parameter is a bool, not a Coord.
 
 
 ---
