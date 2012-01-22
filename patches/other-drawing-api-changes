@@ -1,5 +1,5 @@
 Bottom: bd38ba82f0fc035947323acdcc39f555f4ea8afc
-Top:    3783139efedab3ea13b321ae215ddbba2c8980e0
+Top:    dc047562cd6bbfe34b5123cbcd4fcedfc221919a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-21 19:01:13 +0000
 
@@ -60,7 +60,7 @@ index 28cbfda..94c035f 100644
  
  #define max_group (PCB->Data->LayerN)
 diff --git a/src/draw.c b/src/draw.c
-index ae1e99a..fde150f 100644
+index ae1e99a..85b6d42 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -71,59 +71,76 @@
@@ -1208,7 +1208,7 @@ index ae1e99a..fde150f 100644
 +draw_paste_layer (DrawAPI *dapi, int side)
  {
 -  gui->set_color (Output.fgGC, PCB->ElementColor);
-+  dapi->gapi->set_color (dapi->fg_gc, PCB->ElementColor);
++  dapi->gapi->set_color (dapi->fg_gc, PCB->ElementColor); /* XXX: DO WE NEED THIS? */
    ALLPAD_LOOP (PCB->Data);
    {
 -    if (ON_SIDE (pad, side) && !TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
@@ -1322,7 +1322,7 @@ index ae1e99a..fde150f 100644
      }
  }
  
-@@ -1103,30 +1091,30 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
+@@ -1103,30 +1091,29 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
   * draws one layer group.  If the exporter is not a GUI,
   * also draws the pins / pads / vias in this layer group.
   */
@@ -1331,9 +1331,11 @@ index ae1e99a..fde150f 100644
 +static void
 +draw_pcb_layer_group (DrawAPI *dapi, int group)
  {
-   int i, rv = 1;
+-  int i, rv = 1;
++  int i;
    int layernum;
 -  LayerType *Layer;
++  bool draw_ppv = false;
 +  LayerType *layer;
    int n_entries = PCB->LayerGroups.Number[group];
    Cardinal *layers = PCB->LayerGroups.Entries[group];
@@ -1344,25 +1346,27 @@ index ae1e99a..fde150f 100644
 -      Layer = PCB->Data->Layer + layers[i];
 -      if (strcmp (Layer->Name, "outline") == 0 ||
 -          strcmp (Layer->Name, "route") == 0)
-+      layer = PCB->Data->Layer + layers[i];
-+      if (strcmp (layer->Name, "outline") == 0 ||
-+          strcmp (layer->Name, "route") == 0)
-         rv = 0;
+-        rv = 0;
 -      if (layernum < max_copper_layer && Layer->On)
 -        DrawLayer (Layer, drawn_area);
++      layer = PCB->Data->Layer + layers[i];
++      if (strcmp (layer->Name, "outline") != 0 &&
++          strcmp (layer->Name, "route")   != 0)
++        draw_ppv = !gui->gui;
 +      if (layernum < max_copper_layer && layer->On)
 +        dapi->draw_pcb_layer (dapi, layer);
      }
-   if (n_entries > 1)
-     rv = 1;
+-  if (n_entries > 1)
+-    rv = 1;
  
-   if (rv && !gui->gui)
+-  if (rv && !gui->gui)
 -    DrawPPV (group, drawn_area);
++  if (draw_ppv)
 +    DrawPPV (dapi, group);
  }
  
  static void
-@@ -1195,7 +1183,7 @@ GatherPadName (PadType *Pad)
+@@ -1195,7 +1182,7 @@ GatherPadName (PadType *Pad)
   * lowlevel drawing routine for text objects
   */
  void
@@ -1371,7 +1375,7 @@ index ae1e99a..fde150f 100644
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
-@@ -1239,7 +1227,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
+@@ -1239,7 +1226,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
  	      newline.Point1.Y += Text->Y;
  	      newline.Point2.X += Text->X;
  	      newline.Point2.Y += Text->Y;
@@ -1380,7 +1384,7 @@ index ae1e99a..fde150f 100644
  	    }
  
  	  /* move on to next cursor position */
-@@ -1263,9 +1251,8 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
+@@ -1263,9 +1250,8 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
  	  defaultsymbol.Y1 += Text->Y;
  	  defaultsymbol.X2 += Text->X;
  	  defaultsymbol.Y2 += Text->Y;
@@ -1392,7 +1396,7 @@ index ae1e99a..fde150f 100644
  
  	  /* move on to next cursor position */
  	  x += size;
-@@ -1301,8 +1288,7 @@ void
+@@ -1301,8 +1287,7 @@ void
  DrawPin (PinType *Pin)
  {
    AddPart (Pin);
@@ -1402,7 +1406,7 @@ index ae1e99a..fde150f 100644
      DrawPinName (Pin);
  }
  
-@@ -1322,7 +1308,7 @@ void
+@@ -1322,7 +1307,7 @@ void
  DrawPad (PadType *Pad)
  {
    AddPart (Pad);
@@ -1411,7 +1415,7 @@ index ae1e99a..fde150f 100644
      DrawPadName (Pad);
  }
  
-@@ -1445,7 +1431,7 @@ DrawElementPinsAndPads (ElementType *Element)
+@@ -1445,7 +1430,7 @@ DrawElementPinsAndPads (ElementType *Element)
  {
    PAD_LOOP (Element);
    {
@@ -1420,7 +1424,7 @@ index ae1e99a..fde150f 100644
        DrawPad (pad);
    }
    END_LOOP;
-@@ -1716,41 +1702,128 @@ DrawObject (int type, void *ptr1, void *ptr2)
+@@ -1716,41 +1701,128 @@ DrawObject (int type, void *ptr1, void *ptr2)
  }
  
  static void
