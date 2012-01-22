@@ -1,5 +1,5 @@
 Bottom: bd38ba82f0fc035947323acdcc39f555f4ea8afc
-Top:    5ec6d3ef1756ed0ece94a823e935dc021fe2be06
+Top:    3783139efedab3ea13b321ae215ddbba2c8980e0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-21 19:01:13 +0000
 
@@ -60,7 +60,7 @@ index 28cbfda..94c035f 100644
  
  #define max_group (PCB->Data->LayerN)
 diff --git a/src/draw.c b/src/draw.c
-index ae1e99a..fc47717 100644
+index ae1e99a..fde150f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -71,59 +71,76 @@
@@ -296,7 +296,9 @@ index ae1e99a..fc47717 100644
  {
 -  if (clear && !mask && pad->Clearance <= 0)
 -    return;
--
++  dapi->set_color_for_pad (dapi, NULL, pad);
++  dapi->draw_pcb_pad (dapi, NULL, pad);
+ 
 -  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
 -      (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
 -    gui->thindraw_pcb_pad (gc, pad, clear, mask);
@@ -324,9 +326,7 @@ index ae1e99a..fc47717 100644
 -   gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
 -
 -  _draw_pad (Output.fgGC, pad, false, false);
-+  dapi->set_color_for_pad (dapi, NULL, pad);
-+  dapi->draw_pcb_pad (dapi, NULL, pad);
- 
+-
 -  if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, pad))
 -    draw_pad_name (pad);
 +  if (dapi->doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, pad))
@@ -488,17 +488,17 @@ index ae1e99a..fc47717 100644
  {
 -  int plated = -1;
 +  struct hole_info info;
- 
--  if ( draw_plated && !draw_unplated) plated = 1;
--  if (!draw_plated &&  draw_unplated) plated = 0;
++
 +  info.dapi = dapi;
 +  info.plated = -1;
  
--  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
--  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+-  if ( draw_plated && !draw_unplated) plated = 1;
+-  if (!draw_plated &&  draw_unplated) plated = 0;
 +  if ( draw_plated && !draw_unplated) info.plated = 1;
 +  if (!draw_plated &&  draw_unplated) info.plated = 0;
-+
+ 
+-  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
+-  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
 +  r_search (PCB->Data->pin_tree, dapi->clip_box, NULL, hole_callback, &info);
 +  r_search (PCB->Data->via_tree, dapi->clip_box, NULL, hole_callback, &info);
  }
@@ -1279,12 +1279,12 @@ index ae1e99a..fc47717 100644
  {
 -  struct poly_info info = {screen, Layer};
 +  struct layer_info info;
-+
-+  info.dapi = dapi;
-+  info.layer = layer;
  
 -  /* print the non-clearing polys */
 -  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
++  info.dapi = dapi;
++  info.layer = layer;
++
 +  r_search (layer->polygon_tree, dapi->clip_box, NULL, poly_callback, &info);
  
    if (TEST_FLAG (CHECKPLANESFLAG, PCB))
@@ -1420,7 +1420,7 @@ index ae1e99a..fc47717 100644
        DrawPad (pad);
    }
    END_LOOP;
-@@ -1716,41 +1702,123 @@ DrawObject (int type, void *ptr1, void *ptr2)
+@@ -1716,41 +1702,128 @@ DrawObject (int type, void *ptr1, void *ptr2)
  }
  
  static void
@@ -1541,10 +1541,15 @@ index ae1e99a..fc47717 100644
 +  dapi->set_color_for_pin     = set_color_for_pin;
 +  dapi->set_color_for_via     = set_color_for_via;
 +  dapi->set_color_for_pad     = set_color_for_pad;
-+  dapi->set_color_for_line    = set_color_for_line;
-+  dapi->set_color_for_arc     = set_color_for_arc;
-+  dapi->set_color_for_text    = set_color_for_text;
-+  dapi->set_color_for_polygon = set_color_for_polygon;
++
++  /* The following types can be on copper layer, silk layers, selected, found,
++   * warned, they can be drawn as overlay text. We sould consisder whether
++   * any of these need to be split up into multiple hooks.
++   */
++  dapi->set_color_for_line    = NULL; // set_color_for_line;
++  dapi->set_color_for_arc     = NULL; // set_color_for_arc;
++  dapi->set_color_for_text    = NULL; // set_color_for_text;
++  dapi->set_color_for_polygon = NULL; // set_color_for_polygon;
 +#if 0
 +  dapi->draw_rat              =
 +#endif
@@ -1570,7 +1575,7 @@ index ae1e99a..fc47717 100644
 +  return dapi;
  }
 diff --git a/src/draw.h b/src/draw.h
-index c7ffa97..2697b0d 100644
+index c7ffa97..8ad0a78 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -31,6 +31,7 @@
@@ -1581,12 +1586,11 @@ index c7ffa97..2697b0d 100644
  
  /*bool	SwitchDrawingWindow(double, GdkDrawable *, gboolean, gboolean);*/
  
-@@ -46,14 +47,13 @@ void DrawPadName (PadType *);
+@@ -46,14 +47,12 @@ void DrawPadName (PadType *);
  void DrawLine (LayerType *, LineType *);
  void DrawArc (LayerType *, ArcType *);
  void DrawText (LayerType *, TextType *);
 -void DrawTextLowLevel (TextType *, Coord);
-+void DrawTextLowLevel (DrawAPI *dapi, TextType *, Coord);
  void DrawPolygon (LayerType *, PolygonType *);
  void DrawElement (ElementType *);
  void DrawElementName (ElementType *);
@@ -1597,7 +1601,7 @@ index c7ffa97..2697b0d 100644
  void EraseVia (PinType *);
  void EraseRat (RatType *);
  void EraseViaName (PinType *);
-@@ -70,11 +70,6 @@ void EraseElementPinsAndPads (ElementType *);
+@@ -70,11 +69,6 @@ void EraseElementPinsAndPads (ElementType *);
  void EraseElementName (ElementType *);
  void EraseObject (int, void *, void *);
  
@@ -2999,7 +3003,7 @@ index 6da1b82..0341b04 100644
  
    dapi->draw_pcb_element      = outline_draw_pcb_element;
 diff --git a/src/print.c b/src/print.c
-index 972d13e..85a0ea6 100644
+index 972d13e..25956ad 100644
 --- a/src/print.c
 +++ b/src/print.c
 @@ -73,22 +73,9 @@
@@ -3031,7 +3035,7 @@ index 972d13e..85a0ea6 100644
    if (t.X < 0)
      t.X = 0;
 -  DrawTextLowLevel (&t, 0);
-+  DrawTextLowLevel (dapi, &t, 0);
++  dapi->draw_pcb_text (dapi, NULL, &t, 0);
    if (align & 8)
 -    fab_line (gc, t.X,
 -              t.Y + SCALE_TEXT (font->MaxHeight, t.Scale) + MIL_TO_COORD(10),
@@ -3254,7 +3258,7 @@ index 972d13e..85a0ea6 100644
  	       "Board outline is the centerline of this %f mil"
  	       " rectangle - 0,0 to %f,%f mils",
  	       COORD_TO_MIL(FAB_LINE_W), COORD_TO_MIL(PCB->MaxWidth), COORD_TO_MIL(PCB->MaxHeight));
-@@ -331,33 +315,32 @@ PrintFab (hidGC gc)
+@@ -331,33 +315,34 @@ PrintFab (hidGC gc)
    else
      {
        LayerType *layer = LAYER_PTR (i);
@@ -3264,6 +3268,7 @@ index 972d13e..85a0ea6 100644
        {
 -	gui->draw_line (gc, line->Point1.X, line->Point1.Y,
 -			line->Point2.X, line->Point2.Y);
++        // dapi->draw_pcb_line (dapi, layer, line);
 +        dapi->gapi->draw_line (dapi->gc, line->Point1.X, line->Point1.Y, line->Point2.X, line->Point2.Y);
        }
        END_LOOP;
@@ -3271,6 +3276,7 @@ index 972d13e..85a0ea6 100644
        {
 -	gui->draw_arc (gc, arc->X, arc->Y, arc->Width,
 -		       arc->Height, arc->StartAngle, arc->Delta);
++        // dapi->draw_pcb_arc (dapi, layer, arc);
 +        dapi->gapi->draw_arc (dapi->gc, arc->X, arc->Y,
 +                              arc->Width, arc->Height, arc->StartAngle, arc->Delta);
        }
@@ -3278,7 +3284,7 @@ index 972d13e..85a0ea6 100644
        TEXT_LOOP (layer);
        {
 -	DrawTextLowLevel (text, 0);
-+	DrawTextLowLevel (dapi, text, 0);
++        dapi->draw_pcb_text (dapi, layer, text, 0);
        }
        END_LOOP;
 -      gui->set_line_width (gc, FAB_LINE_W);
