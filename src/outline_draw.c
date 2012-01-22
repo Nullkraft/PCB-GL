@@ -121,6 +121,13 @@ outline_draw_pcb_arc (DrawAPI *dapi, LayerType *layer, ArcType *arc)
                           arc->Width, arc->Height, arc->StartAngle, arc->Delta);
 }
 
+static void
+outline_draw_pcb_text (DrawAPI *dapi, LayerType *layer, TextType *text, coord min_width)
+{
+  BoxType *box = &text->BoundingBox;
+  gui->draw_rect (Crosshair.GC, box->X1, box->Y1, box->X2, box->Y2);
+}
+
 /* ---------------------------------------------------------------------------
  * draws the elements of a loaded circuit which is to be merged in
  */
@@ -207,7 +214,7 @@ outline_draw_pcb_buffer (DrawAPI *dapi, BufferType *Buffer)
         END_LOOP;
         TEXT_LOOP (layer);
         {
-          dapi->draw_pcb_text (dapi, layer, text);
+          dapi->draw_pcb_text (dapi, layer, text, 0);
         }
         END_LOOP;
         POLYGON_LOOP (layer);
@@ -277,6 +284,7 @@ DrawAPI *outline_draw_new (GraphicsAPI *gapi)
   dapi->draw_pcb_pad_paste    = NULL;
   dapi->draw_pcb_line         = outline_draw_pcb_line;
   dapi->draw_pcb_arc          = outline_draw_pcb_arc;
+  dapi->draw_pcb_text         = outline_draw_pcb_text;
   dapi->draw_pcb_polygon      = outline_draw_pcb_polygon;
 
   dapi->draw_pcb_element      = outline_draw_pcb_element;

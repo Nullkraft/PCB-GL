@@ -79,43 +79,65 @@ static void AddPart (void *);
 static void DrawEMark (DrawAPI *dapi, ElementType *, Coord, Coord, bool);
 static void DrawRats (DrawAPI *dapi);
 
+struct side_info {
+  DrawAPI *dapi;
+  int side;
+};
+
 /*--------------------------------------------------------------------------------------
- * setup color for pin or via
+ * setup color for various objects
  */
 static void
-SetPVColor (DrawAPI *dapi, PinType *Pin, int Type)
+set_color_for_pin (DrawAPI *dapi, PinType *pin)
 {
-  char *color;
+  char *color = PCB->PinColor;
 
-  if (Type == VIA_TYPE)
+  if (!dapi->doing_pinout)
     {
-      if (!dapi->doing_pinout
-	  && TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
-	{
-	  if (TEST_FLAG (WARNFLAG, Pin))
-	    color = PCB->WarnColor;
-	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
-	    color = PCB->ViaSelectedColor;
-	  else
-	    color = PCB->ConnectedColor;
-	}
-      else
-	color = PCB->ViaColor;
+      if (TEST_FLAG (WARNFLAG, pin))
+        color = PCB->WarnColor;
+      else if (TEST_FLAG (SELECTEDFLAG, pin))
+        color = PCB->PinSelectedColor;
+      else if (TEST_FLAG (FOUNDFLAG, pin))
+        color = PCB->ConnectedColor;
     }
-  else
+
+  dapi->gapi->set_color (dapi->fg_gc, color);
+}
+
+static void
+set_color_for_via (DrawAPI *dapi, PinType *via)
+{
+  char *color = PCB->ViaColor;
+
+  if (!dapi->doing_pinout)
     {
-      if (!dapi->doing_pinout
-	  && TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
-	{
-	  if (TEST_FLAG (WARNFLAG, Pin))
-	    color = PCB->WarnColor;
-	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
-	    color = PCB->PinSelectedColor;
-	  else
-	    color = PCB->ConnectedColor;
-	}
-      else
-	color = PCB->PinColor;
+      if (TEST_FLAG (WARNFLAG, via))
+        color = PCB->WarnColor;
+      else if (TEST_FLAG (SELECTEDFLAG, via))
+        color = PCB->ViaSelectedColor;
+      else if (TEST_FLAG (FOUNDFLAG, via))
+        color = PCB->ConnectedColor;
+    }
+
+  dapi->gapi->set_color (dapi->fg_gc, color);
+}
+
+static void
+set_color_for_pad (DrawAPI *dapi, Layer *layer, PadType *pad)
+{
+  char *color = PCB->PinColor;
+
+  if (!dapi->doing_pinout)
+    {
+      if (TEST_FLAG (WARNFLAG, pad))
+        color = PCB->WarnColor;
+      else if (TEST_FLAG (SELECTEDFLAG, pad))
+        color = PCB->PinSelectedColor;
+      else if (TEST_FLAG (FOUNDFLAG, pad))
+        color = PCB->ConnectedColor;
+      else if (!FRONT (pad))
+        color = PCB->InvisibleObjectsColor;
     }
 
   dapi->gapi->set_color (dapi->fg_gc, color);
@@ -194,46 +216,35 @@ _draw_pv_name (DrawAPI *dapi, PinType *pv)
 
   g_warn_if_fail (dapi->doing_overlay_text == false);
   dapi->doing_overlay_text = gui->gui;
-  DrawTextLowLevel (dapi, &text, 0);
+  dapi->draw_pcb_text (dapi, NULL, &text, 0);
   dapi->doing_overlay_text = false;
-}
-
-static void
-draw_pin (DrawAPI *dapi, PinType *pin, bool draw_hole)
-{
-  SetPVColor (dapi, pin, PIN_TYPE);
-//  dapi->draw_pcb_pin (dapi, pin, draw_hole, false);
-  dapi->draw_pcb_pin (dapi, pin);
-
-  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
-    _draw_pv_name (dapi, pin);
 }
 
 static int
 pin_callback (const BoxType * b, void *cl)
 {
   DrawAPI *dapi = cl;
-  draw_pin (dapi, (PinType *)b, false);
+  PinType *pin = (PinType *)b;
+
+  dapi->set_color_for_pin (dapi, pin);
+  dapi->draw_pcb_pin (dapi, pin);
+
+  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+    _draw_pv_name (dapi, pin);
   return 1;
-}
-
-static void
-draw_via (DrawAPI *dapi, PinType *via, bool draw_hole)
-{
-  SetPVColor (dapi, via, VIA_TYPE);
-//  dapi->draw_pcb_via (dapi, via, draw_hole, false);
-  dapi->draw_pcb_via (dapi, via);
-
-  if (!TEST_FLAG (HOLEFLAG, via) && TEST_FLAG (DISPLAYNAMEFLAG, via))
-    _draw_pv_name (dapi, via);
 }
 
 static int
 via_callback (const BoxType * b, void *cl)
 {
   DrawAPI *dapi = cl;
+  PinType *via = (PinType *)b;
 
-  draw_via (dapi, (PinType *)b, false);
+  dapi->set_color_for_via (dapi, via);
+  dapi->draw_pcb_via (dapi, via);
+
+  if (!TEST_FLAG (HOLEFLAG, via) && TEST_FLAG (DISPLAYNAMEFLAG, via))
+    _draw_pv_name (dapi, via);
   return 1;
 }
 
@@ -276,38 +287,18 @@ draw_pad_name (DrawAPI *dapi, PadType *pad)
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
 
-  DrawTextLowLevel (dapi, &text, 0);
+  dapi->draw_pcb_text (dapi, NULL, &text, 0);
 }
 
 static void
 draw_pad (DrawAPI *dapi, PadType *pad)
 {
-  if (dapi->doing_pinout)
-   dapi->gapi->set_color (dapi->fg_gc, PCB->PinColor);
-  else if (TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, pad))
-   {
-     if (TEST_FLAG (WARNFLAG, pad))
-       dapi->gapi->set_color (dapi->fg_gc, PCB->WarnColor);
-     else if (TEST_FLAG (SELECTEDFLAG, pad))
-       dapi->gapi->set_color (dapi->fg_gc, PCB->PinSelectedColor);
-     else
-       dapi->gapi->set_color (dapi->fg_gc, PCB->ConnectedColor);
-   }
-  else if (FRONT (pad))
-   dapi->gapi->set_color (dapi->fg_gc, PCB->PinColor);
-  else
-   dapi->gapi->set_color (dapi->fg_gc, PCB->InvisibleObjectsColor);
-
+  dapi->set_color_for_pad (dapi, NULL, pad);
   dapi->draw_pcb_pad (dapi, NULL, pad);
 
   if (dapi->doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, pad))
     draw_pad_name (dapi, pad);
 }
-
-struct side_info {
-  DrawAPI *dapi;
-  int side;
-};
 
 static int
 pad_callback (const BoxType * b, void *cl)
@@ -335,7 +326,8 @@ draw_element_name (DrawAPI *dapi, ElementType *element)
     dapi->gapi->set_color (dapi->fg_gc, PCB->ElementColor);
   else
     dapi->gapi->set_color (dapi->fg_gc, PCB->InvisibleObjectsColor);
-  DrawTextLowLevel (dapi, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
+
+  dapi->draw_pcb_text (dapi, NULL, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
 }
 
 static int
@@ -495,8 +487,7 @@ rat_callback (const BoxType * b, void *cl)
         dapi->gapi->set_line_width (dapi->fg_gc, 0);
       else
         dapi->gapi->set_line_width (dapi->fg_gc, w);
-      dapi->gapi->draw_arc (dapi->fg_gc, rat->Point1.X, rat->Point1.Y,
-                     w * 2, w * 2, 0, 360);
+      dapi->gapi->draw_arc (dapi->fg_gc, rat->Point1.X, rat->Point1.Y, w * 2, w * 2, 0, 360);
     }
   else
     _draw_line (dapi, (LineType *) rat);
@@ -1056,12 +1047,14 @@ text_callback (const BoxType * b, void *cl)
     dapi->gapi->set_color (dapi->fg_gc, info->layer->SelectedColor);
   else
     dapi->gapi->set_color (dapi->fg_gc, info->layer->Color);
+
   if (info->layer == &PCB->Data->SILKLAYER ||
       info->layer == &PCB->Data->BACKSILKLAYER)
     min_silk_line = PCB->minSlk;
   else
     min_silk_line = PCB->minWid;
-  DrawTextLowLevel (dapi, text, min_silk_line);
+
+  dapi->draw_pcb_text (dapi, info->layer, text, min_silk_line);
   return 1;
 }
 
@@ -1190,7 +1183,7 @@ GatherPadName (PadType *Pad)
  * lowlevel drawing routine for text objects
  */
 void
-DrawTextLowLevel (DrawAPI *dapi, TextType *Text, Coord min_line_width)
+draw_pcb_text (DrawAPI *dapi, LayerType *layer, TextType *Text, Coord min_line_width)
 {
   Coord x = 0;
   unsigned char *string = (unsigned char *) Text->TextString;
@@ -1716,13 +1709,17 @@ draw_pcb_element (DrawAPI *dapi, ElementType *element)
 
   PAD_LOOP (element);
   {
-    if (dapi->doing_pinout || dapi->doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
-      draw_pad (dapi, pad);
+    draw_pad (dapi, pad);
   }
   END_LOOP;
   PIN_LOOP (element);
   {
-    draw_pin (dapi, pin, true);
+    dapi->set_color_for_pin (dapi, pin);
+    dapi->draw_pcb_pin (dapi, pin);
+
+    if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+      _draw_pv_name (dapi, pin);
+    dapi->draw_pcb_pin_hole (dapi, pin);
   }
   END_LOOP;
 }
@@ -1782,36 +1779,46 @@ draw_api_new (void)
   dapi = g_new0 (DrawAPI, 1);
 
 #if 0
-  dapi->draw_pcb_pin         =
-  dapi->draw_pcb_pin_mask    =
-  dapi->draw_pcb_pin_hole    =
-  dapi->draw_pcb_via         =
-  dapi->draw_pcb_via_mask    =
-  dapi->draw_pcb_via_hole    =
-  dapi->draw_pcb_pad         =
-  dapi->draw_pcb_pad_mask    =
-  dapi->draw_pcb_pad_paste   =
-  dapi->draw_pcb_line        =
-  dapi->draw_pcb_arc         =
-  dapi->draw_pcb_text        =
-  dapi->draw_pcb_polygon     =
-
-  dapi->draw_rat             =
+  dapi->draw_pcb_pin          =
+  dapi->draw_pcb_pin_mask     =
+  dapi->draw_pcb_pin_hole     =
+  dapi->draw_pcb_via          =
+  dapi->draw_pcb_via_mask     =
+  dapi->draw_pcb_via_hole     =
+  dapi->draw_pcb_pad          =
+  dapi->draw_pcb_pad_mask     =
+  dapi->draw_pcb_pad_paste    =
+  dapi->draw_pcb_line         =
+  dapi->draw_pcb_arc          =
 #endif
-  dapi->draw_pcb_element     = draw_pcb_element;
-  dapi->draw_pcb_layer       = draw_pcb_layer;
-  dapi->draw_pcb_layer_group = draw_pcb_layer_group;
-  dapi->draw_mask_layer      = draw_mask_layer;
-  dapi->draw_paste_layer     = draw_paste_layer;
-  dapi->draw_silk_layer      = draw_silk_layer; /* Hmm - should be able to do this by layer number, even if not layer group */
-  /* But it would mean special casing diving into element silk from teh draw_pcb_layer function */
-  dapi->draw_everything      = draw_everything;
-  dapi->draw_pinout_preview  = draw_pinout_preview;
+  dapi->draw_pcb_text         = draw_pcb_text;
 #if 0
-  dapi->draw_pcb_buffer      =
-  dapi->set_draw_offset      =
+  dapi->draw_pcb_polygon      =
 #endif
-  dapi->set_clip_box         = set_clip_box;
+  dapi->set_color_for_pin     = set_color_for_pin;
+  dapi->set_color_for_via     = set_color_for_via;
+  dapi->set_color_for_pad     = set_color_for_pad;
+  dapi->set_color_for_line    = set_color_for_line;
+  dapi->set_color_for_arc     = set_color_for_arc;
+  dapi->set_color_for_text    = set_color_for_text;
+  dapi->set_color_for_polygon = set_color_for_polygon;
+#if 0
+  dapi->draw_rat              =
+#endif
+  dapi->draw_pcb_element      = draw_pcb_element;
+  dapi->draw_pcb_layer        = draw_pcb_layer;
+  dapi->draw_pcb_layer_group  = draw_pcb_layer_group;
+  dapi->draw_mask_layer       = draw_mask_layer;
+  dapi->draw_paste_layer      = draw_paste_layer;
+  dapi->draw_silk_layer       = draw_silk_layer; /* Hmm - should be able to do this by layer number, even if not layer group */
+  /* But it would mean special casing diving into element silk from teh draw_pcb_layer function */
+  dapi->draw_everything       = draw_everything;
+  dapi->draw_pinout_preview   = draw_pinout_preview;
+#if 0
+  dapi->draw_pcb_buffer       =
+  dapi->set_draw_offset       =
+#endif
+  dapi->set_clip_box          = set_clip_box;
 
   return dapi;
 }
