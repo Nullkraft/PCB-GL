@@ -1,5 +1,5 @@
 Bottom: bd38ba82f0fc035947323acdcc39f555f4ea8afc
-Top:    bada76301e5f26789d023483c598878f2ae8b7da
+Top:    5aad621e271892ce4f24838f53c70432d7b1f8f9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-21 19:01:13 +0000
 
@@ -60,7 +60,7 @@ index 28cbfda..94c035f 100644
  
  #define max_group (PCB->Data->LayerN)
 diff --git a/src/draw.c b/src/draw.c
-index ae1e99a..41dc647 100644
+index ae1e99a..5de5942 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -71,30 +71,25 @@
@@ -1037,7 +1037,7 @@ index ae1e99a..41dc647 100644
  #if 0
    /* This code is used when you want to mask silk to avoid exposed
       pins and pads.  We decided it was a bad idea to do this
-@@ -934,101 +933,100 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -934,101 +933,102 @@ DrawSilk (int side, const BoxType * drawn_area)
  #if 0
    if (gui->poly_before)
      {
@@ -1120,7 +1120,8 @@ index ae1e99a..41dc647 100644
  
    if (thin)
 -    gui->set_color (Output.pmGC, PCB->MaskColor);
-+    dapi->gapi->set_color (dapi->pm_gc, PCB->MaskColor);
++//    dapi->gapi->set_color (dapi->pm_gc, PCB->MaskColor);
++    dapi->gapi->set_color (dapi->fg_gc, PCB->MaskColor);
    else
      {
 -      DrawMaskBoardArea (HID_MASK_BEFORE, screen);
@@ -1138,7 +1139,8 @@ index ae1e99a..41dc647 100644
  
    if (thin)
 -    gui->set_color (Output.pmGC, "erase");
-+    dapi->gapi->set_color (dapi->pm_gc, "erase");
++//    dapi->gapi->set_color (dapi->pm_gc, "erase");
++    dapi->gapi->set_color (dapi->fg_gc, "erase");
    else
      {
 -      DrawMaskBoardArea (HID_MASK_AFTER, screen);
@@ -1179,7 +1181,7 @@ index ae1e99a..41dc647 100644
  {
    /*
     * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
-@@ -1038,64 +1036,59 @@ DrawRats (const BoxType *drawn_area)
+@@ -1038,64 +1038,59 @@ DrawRats (const BoxType *drawn_area)
    int can_mask = strcmp(gui->name, "lesstif") == 0;
  
    if (can_mask)
@@ -1269,7 +1271,7 @@ index ae1e99a..41dc647 100644
      }
  }
  
-@@ -1103,30 +1096,30 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
+@@ -1103,30 +1098,30 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
   * draws one layer group.  If the exporter is not a GUI,
   * also draws the pins / pads / vias in this layer group.
   */
@@ -1309,7 +1311,7 @@ index ae1e99a..41dc647 100644
  }
  
  static void
-@@ -1195,7 +1188,7 @@ GatherPadName (PadType *Pad)
+@@ -1195,7 +1190,7 @@ GatherPadName (PadType *Pad)
   * lowlevel drawing routine for text objects
   */
  void
@@ -1318,7 +1320,7 @@ index ae1e99a..41dc647 100644
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
-@@ -1239,7 +1232,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
+@@ -1239,7 +1234,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
  	      newline.Point1.Y += Text->Y;
  	      newline.Point2.X += Text->X;
  	      newline.Point2.Y += Text->Y;
@@ -1327,7 +1329,7 @@ index ae1e99a..41dc647 100644
  	    }
  
  	  /* move on to next cursor position */
-@@ -1263,9 +1256,8 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
+@@ -1263,9 +1258,8 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
  	  defaultsymbol.Y1 += Text->Y;
  	  defaultsymbol.X2 += Text->X;
  	  defaultsymbol.Y2 += Text->Y;
@@ -1339,7 +1341,7 @@ index ae1e99a..41dc647 100644
  
  	  /* move on to next cursor position */
  	  x += size;
-@@ -1301,8 +1293,7 @@ void
+@@ -1301,8 +1295,7 @@ void
  DrawPin (PinType *Pin)
  {
    AddPart (Pin);
@@ -1349,7 +1351,7 @@ index ae1e99a..41dc647 100644
      DrawPinName (Pin);
  }
  
-@@ -1322,7 +1313,7 @@ void
+@@ -1322,7 +1315,7 @@ void
  DrawPad (PadType *Pad)
  {
    AddPart (Pad);
@@ -1358,7 +1360,7 @@ index ae1e99a..41dc647 100644
      DrawPadName (Pad);
  }
  
-@@ -1445,7 +1436,7 @@ DrawElementPinsAndPads (ElementType *Element)
+@@ -1445,7 +1438,7 @@ DrawElementPinsAndPads (ElementType *Element)
  {
    PAD_LOOP (Element);
    {
@@ -1367,7 +1369,7 @@ index ae1e99a..41dc647 100644
        DrawPad (pad);
    }
    END_LOOP;
-@@ -1716,41 +1707,109 @@ DrawObject (int type, void *ptr1, void *ptr2)
+@@ -1716,41 +1709,109 @@ DrawObject (int type, void *ptr1, void *ptr2)
  }
  
  static void
@@ -1668,7 +1670,7 @@ index 78e6c85..182e695 100644
  /* This is initially set to a "no-gui" gui, and later reset by
     main. hid_expose_callback also temporarily set it for drawing. */
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 46d3822..72831c3 100644
+index 46d3822..5292ee3 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -1,9 +1,11 @@
@@ -2114,7 +2116,7 @@ index 46d3822..72831c3 100644
    if (TEST_FLAG (SQUAREFLAG, pv))
      {
        Coord l = pv->X - r;
-@@ -437,42 +476,153 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+@@ -437,42 +476,155 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
        Coord r = l + w;
        Coord t = b + w;
  
@@ -2203,7 +2205,8 @@ index 46d3822..72831c3 100644
 +static void
 +common_draw_pcb_pad_mask (DrawAPI *dapi, LayerType *layer, PadType *pad)
 +{
-+  if (TEST_FLAG (THINDRAWFLAG, PCB))
++  if (TEST_FLAG (THINDRAWFLAG,     PCB) ||
++      TEST_FLAG (THINDRAWPOLYFLAG, PCB))
 +    common_thindraw_pcb_pad_mask (dapi, layer, pad);
 +  else
 +    common_fill_pcb_pad_mask (dapi, layer, pad);
@@ -2230,7 +2233,8 @@ index 46d3822..72831c3 100644
 +static void
 +common_draw_pcb_pv_mask (DrawAPI *dapi, PinType *pv)
 +{
-+  if (TEST_FLAG (THINDRAWFLAG, PCB))
++  if (TEST_FLAG (THINDRAWFLAG,     PCB) ||
++      TEST_FLAG (THINDRAWPOLYFLAG, PCB))
 +    common_thindraw_pcb_pv_mask (dapi, pv);
 +  else
 +    common_fill_pcb_pv_mask (dapi, pv);
