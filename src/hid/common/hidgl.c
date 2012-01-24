@@ -650,6 +650,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 
   glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
   glPushAttrib (GL_STENCIL_BUFFER_BIT);         /* Save the stencil op and function */
+  glEnable (GL_STENCIL_TEST);                   /* Enable the stencil test, just in case it wasn't already on */
 
   glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);    /* This allows us to toggle the bit on the subcompositing bitplane */
                                                 /* If the stencil test has passed, we know that bit is 0, so we're */
