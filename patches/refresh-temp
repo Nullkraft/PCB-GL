@@ -1,0 +1,112 @@
+Bottom: dc047562cd6bbfe34b5123cbcd4fcedfc221919a
+Top:    f2786d65743591d787b365d80adbd3a12f8b7cae
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-01-24 18:22:45 +0000
+
+Refresh of other-drawing-api-changes
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 85b6d42..0fdc59b 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -917,11 +917,13 @@ draw_silk_layer (DrawAPI *dapi, int side)
+ 
+ #if 0
+   /* This code is used when you want to mask silk to avoid exposed
+-     pins and pads.  We decided it was a bad idea to do this
+-     unconditionally, but the code remains.  */
+-#endif
++   * pins and pads.  We decided it was a bad idea to do this
++   * unconditionally, but the code remains.
++   *
++   * Note that many exporters (notably gerber, ps, eps), do not support the
++   * masking API, so this code won't actually work.
++   */
+ 
+-#if 0
+   if (gui->poly_before)
+     {
+       dapi->gapi->use_mask (HID_MASK_BEFORE);
+@@ -981,22 +983,19 @@ draw_mask_layer (DrawAPI *dapi, int side)
+   info.side = side;
+ 
+   if (thin)
+-//    dapi->gapi->set_color (dapi->pm_gc, PCB->MaskColor);
+     dapi->gapi->set_color (dapi->fg_gc, PCB->MaskColor);
+   else
+     {
+       DrawMaskBoardArea (dapi, HID_MASK_BEFORE);
+       dapi->gapi->use_mask (HID_MASK_CLEAR);
++      dapi->gapi->set_color (dapi->fg_gc, "erase"); /* <-- XXX: This might not be needed */
+     }
+ 
+   r_search (PCB->Data->pin_tree, dapi->clip_box, NULL, pin_mask_callback, &info);
+   r_search (PCB->Data->via_tree, dapi->clip_box, NULL, pin_mask_callback, &info);
+   r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_mask_callback, &info);
+ 
+-  if (thin)
+-//    dapi->gapi->set_color (dapi->pm_gc, "erase");
+-    dapi->gapi->set_color (dapi->fg_gc, "erase");
+-  else
++  if (!thin)
+     {
+       DrawMaskBoardArea (dapi, HID_MASK_AFTER);
+       dapi->gapi->use_mask (HID_MASK_OFF);
+@@ -1079,7 +1078,7 @@ draw_pcb_layer (DrawAPI *dapi, LayerType *layer)
+      auto-outline magically disappear when you first add something to
+      the "outline" layer.  */
+   if (IsLayerEmpty (layer) && (strcmp (layer->Name, "outline") == 0 ||
+-                               strcmp (layer->Name, "route") == 0))
++                               strcmp (layer->Name, "route")   == 0))
+     {
+       dapi->gapi->set_color (dapi->fg_gc, layer->Color);
+       dapi->gapi->set_line_width (dapi->fg_gc, PCB->minWid);
+@@ -1732,16 +1731,13 @@ draw_everything (DrawAPI *dapi)
+ {
+   dapi->fg_gc = dapi->gapi->make_gc ();
+   dapi->bg_gc = dapi->gapi->make_gc ();
+-  dapi->pm_gc = dapi->gapi->make_gc ();
+ 
+-  dapi->gapi->set_color (dapi->pm_gc, "erase");
+   dapi->gapi->set_color (dapi->bg_gc, "drill");
+ 
+   DrawEverything (dapi);
+ 
+   dapi->gapi->destroy_gc (dapi->fg_gc);
+   dapi->gapi->destroy_gc (dapi->bg_gc);
+-  dapi->gapi->destroy_gc (dapi->pm_gc);
+ }
+ 
+ static void
+@@ -1749,9 +1745,7 @@ draw_pinout_preview (DrawAPI *dapi, ElementType *element)
+ {
+   dapi->fg_gc = dapi->gapi->make_gc ();
+   dapi->bg_gc = dapi->gapi->make_gc ();
+-  dapi->pm_gc = dapi->gapi->make_gc ();
+ 
+-  dapi->gapi->set_color (dapi->pm_gc, "erase");
+   dapi->gapi->set_color (dapi->bg_gc, "drill");
+ 
+   g_warn_if_fail (dapi->doing_pinout == false);
+@@ -1761,7 +1755,6 @@ draw_pinout_preview (DrawAPI *dapi, ElementType *element)
+ 
+   dapi->gapi->destroy_gc (dapi->fg_gc);
+   dapi->gapi->destroy_gc (dapi->bg_gc);
+-  dapi->gapi->destroy_gc (dapi->pm_gc);
+ }
+ 
+ static void
+diff --git a/src/draw_api.h b/src/draw_api.h
+index c994fc5..84a9073 100644
+--- a/src/draw_api.h
++++ b/src/draw_api.h
+@@ -85,7 +85,6 @@ struct DrawAPI {
+   hidGC gc;                /* <--- This should be in a subclass of the base dapi, but nevermind */
+   hidGC fg_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
+   hidGC bg_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
+-  hidGC pm_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
+ };
+ 
+ enum mask_mode {
