@@ -1,5 +1,5 @@
-Bottom: f01839b82d095c7b78a1d6cb1f5e4e30923848d6
-Top:    f0be57c7d95f85d5a3e6804056420e2395d82454
+Bottom: 50e3a5f42e6ff17c4eecfd4e363d11df61555f0a
+Top:    2a7de9582e0c9ae37cdc1b8ec5417f642abcb6ce
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-01-14 17:32:23 +0000
 
@@ -9,7 +9,7 @@ hid/common/hidgl: Debug out of context rendering
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 6795efd..2fdbd9c 100644
+index b74edd0..8170fc3 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -71,6 +71,17 @@
@@ -103,7 +103,7 @@ index 6795efd..2fdbd9c 100644
    info.scale = scale;
    global_scale = scale;
  
-@@ -673,6 +694,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -674,6 +695,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  void
  hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  {
@@ -111,7 +111,7 @@ index 6795efd..2fdbd9c 100644
    hidgl_ensure_triangle_space (&buffer, 2);
    hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
-@@ -681,6 +703,7 @@ hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
+@@ -682,6 +704,7 @@ hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  void
  hidgl_init (void)
  {
@@ -119,7 +119,7 @@ index 6795efd..2fdbd9c 100644
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
    if (stencil_bits == 0)
-@@ -700,6 +723,10 @@ hidgl_init (void)
+@@ -701,6 +724,10 @@ hidgl_init (void)
  void
  hidgl_start_render (void)
  {
@@ -130,7 +130,7 @@ index 6795efd..2fdbd9c 100644
    hidgl_init ();
    hidgl_init_triangle_array (&buffer);
  }
-@@ -707,6 +734,10 @@ hidgl_start_render (void)
+@@ -708,6 +735,10 @@ hidgl_start_render (void)
  void
  hidgl_finish_render (void)
  {
@@ -141,7 +141,7 @@ index 6795efd..2fdbd9c 100644
  }
  
  int
-@@ -718,6 +749,7 @@ hidgl_stencil_bits (void)
+@@ -719,6 +750,7 @@ hidgl_stencil_bits (void)
  static void
  hidgl_clean_unassigned_stencil (void)
  {

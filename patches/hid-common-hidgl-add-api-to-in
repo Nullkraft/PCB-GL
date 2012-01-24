@@ -1,5 +1,5 @@
-Bottom: f6fa1932cbf5e150ae0ad7f2eefbf221255358df
-Top:    f01839b82d095c7b78a1d6cb1f5e4e30923848d6
+Bottom: 9177b7f0920625b40e364fe0ea49df506bbbd4b3
+Top:    50e3a5f42e6ff17c4eecfd4e363d11df61555f0a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-01-14 17:32:23 +0000
 
@@ -12,7 +12,7 @@ saving lots of separate calls being made by its callers.
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 965f2b7..6795efd 100644
+index 7d4e9a5..b74edd0 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -71,7 +71,7 @@
@@ -24,7 +24,7 @@ index 965f2b7..6795efd 100644
  hidgl_init_triangle_array (triangle_buffer *buffer)
  {
    buffer->triangle_count = 0;
-@@ -697,6 +697,18 @@ hidgl_init (void)
+@@ -698,6 +698,18 @@ hidgl_init (void)
      }
  }
  
