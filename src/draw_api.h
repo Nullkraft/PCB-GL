@@ -85,7 +85,6 @@ struct DrawAPI {
   hidGC gc;                /* <--- This should be in a subclass of the base dapi, but nevermind */
   hidGC fg_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
   hidGC bg_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
-  hidGC pm_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
 };
 
 enum mask_mode {
