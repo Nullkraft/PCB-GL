@@ -1,5 +1,5 @@
 Bottom: 6802484e0d3ed1dca7feacfd326ad42eda3663bb
-Top:    6802484e0d3ed1dca7feacfd326ad42eda3663bb
+Top:    4273d057fcc6466883201fe3507891563e6e85b7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-01-14 17:32:24 +0000
 
@@ -11,4 +11,16 @@ so revert them so I can build a release.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index e2b5a3d..1ad7d45 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1802,7 +1802,7 @@ ghid_draw_everything (BoxType *drawn_area)
+   }
+ 
+   /* draw all layers in layerstack order */
+-#define FADE_FACTOR 0.8
++#define FADE_FACTOR 1
+   number_phys_on_top = max_phys_group - min_phys_group;
+   for (i = ngroups - 1; i >= 0; i--) {
+     bool is_this_physical = drawn_groups[i] >= min_phys_group &&
