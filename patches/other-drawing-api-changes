@@ -1,5 +1,5 @@
 Bottom: bd38ba82f0fc035947323acdcc39f555f4ea8afc
-Top:    dc047562cd6bbfe34b5123cbcd4fcedfc221919a
+Top:    f2786d65743591d787b365d80adbd3a12f8b7cae
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-01-21 19:01:13 +0000
 
@@ -60,7 +60,7 @@ index 28cbfda..94c035f 100644
  
  #define max_group (PCB->Data->LayerN)
 diff --git a/src/draw.c b/src/draw.c
-index ae1e99a..85b6d42 100644
+index ae1e99a..0fdc59b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -71,59 +71,76 @@
@@ -296,9 +296,7 @@ index ae1e99a..85b6d42 100644
  {
 -  if (clear && !mask && pad->Clearance <= 0)
 -    return;
-+  dapi->set_color_for_pad (dapi, NULL, pad);
-+  dapi->draw_pcb_pad (dapi, NULL, pad);
- 
+-
 -  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
 -      (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
 -    gui->thindraw_pcb_pad (gc, pad, clear, mask);
@@ -326,7 +324,9 @@ index ae1e99a..85b6d42 100644
 -   gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
 -
 -  _draw_pad (Output.fgGC, pad, false, false);
--
++  dapi->set_color_for_pad (dapi, NULL, pad);
++  dapi->draw_pcb_pad (dapi, NULL, pad);
+ 
 -  if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, pad))
 -    draw_pad_name (pad);
 +  if (dapi->doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, pad))
@@ -1071,7 +1071,7 @@ index ae1e99a..85b6d42 100644
    return 1;
  }
  
-@@ -923,8 +908,13 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -923,112 +908,117 @@ clearPad_callback (const BoxType * b, void *cl)
   */
  
  void
@@ -1085,9 +1085,17 @@ index ae1e99a..85b6d42 100644
 +
  #if 0
    /* This code is used when you want to mask silk to avoid exposed
-      pins and pads.  We decided it was a bad idea to do this
-@@ -934,101 +924,102 @@ DrawSilk (int side, const BoxType * drawn_area)
- #if 0
+-     pins and pads.  We decided it was a bad idea to do this
+-     unconditionally, but the code remains.  */
+-#endif
++   * pins and pads.  We decided it was a bad idea to do this
++   * unconditionally, but the code remains.
++   *
++   * Note that many exporters (notably gerber, ps, eps), do not support the
++   * masking API, so this code won't actually work.
++   */
+ 
+-#if 0
    if (gui->poly_before)
      {
 -      gui->use_mask (HID_MASK_BEFORE);
@@ -1169,7 +1177,6 @@ index ae1e99a..85b6d42 100644
  
    if (thin)
 -    gui->set_color (Output.pmGC, PCB->MaskColor);
-+//    dapi->gapi->set_color (dapi->pm_gc, PCB->MaskColor);
 +    dapi->gapi->set_color (dapi->fg_gc, PCB->MaskColor);
    else
      {
@@ -1177,6 +1184,7 @@ index ae1e99a..85b6d42 100644
 -      gui->use_mask (HID_MASK_CLEAR);
 +      DrawMaskBoardArea (dapi, HID_MASK_BEFORE);
 +      dapi->gapi->use_mask (HID_MASK_CLEAR);
++      dapi->gapi->set_color (dapi->fg_gc, "erase"); /* <-- XXX: This might not be needed */
      }
  
 -  r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
@@ -1186,11 +1194,10 @@ index ae1e99a..85b6d42 100644
 +  r_search (PCB->Data->via_tree, dapi->clip_box, NULL, pin_mask_callback, &info);
 +  r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_mask_callback, &info);
  
-   if (thin)
+-  if (thin)
 -    gui->set_color (Output.pmGC, "erase");
-+//    dapi->gapi->set_color (dapi->pm_gc, "erase");
-+    dapi->gapi->set_color (dapi->fg_gc, "erase");
-   else
+-  else
++  if (!thin)
      {
 -      DrawMaskBoardArea (HID_MASK_AFTER, screen);
 -      gui->use_mask (HID_MASK_OFF);
@@ -1230,7 +1237,7 @@ index ae1e99a..85b6d42 100644
  {
    /*
     * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
-@@ -1038,64 +1029,61 @@ DrawRats (const BoxType *drawn_area)
+@@ -1038,64 +1028,61 @@ DrawRats (const BoxType *drawn_area)
    int can_mask = strcmp(gui->name, "lesstif") == 0;
  
    if (can_mask)
@@ -1279,12 +1286,12 @@ index ae1e99a..85b6d42 100644
  {
 -  struct poly_info info = {screen, Layer};
 +  struct layer_info info;
++
++  info.dapi = dapi;
++  info.layer = layer;
  
 -  /* print the non-clearing polys */
 -  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
-+  info.dapi = dapi;
-+  info.layer = layer;
-+
 +  r_search (layer->polygon_tree, dapi->clip_box, NULL, poly_callback, &info);
  
    if (TEST_FLAG (CHECKPLANESFLAG, PCB))
@@ -1309,7 +1316,7 @@ index ae1e99a..85b6d42 100644
 -      && (strcmp (Layer->Name, "outline") == 0
 -	  || strcmp (Layer->Name, "route") == 0))
 +  if (IsLayerEmpty (layer) && (strcmp (layer->Name, "outline") == 0 ||
-+                               strcmp (layer->Name, "route") == 0))
++                               strcmp (layer->Name, "route")   == 0))
      {
 -      gui->set_color (Output.fgGC, Layer->Color);
 -      gui->set_line_width (Output.fgGC, PCB->minWid);
@@ -1322,7 +1329,7 @@ index ae1e99a..85b6d42 100644
      }
  }
  
-@@ -1103,30 +1091,29 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
+@@ -1103,30 +1090,29 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
   * draws one layer group.  If the exporter is not a GUI,
   * also draws the pins / pads / vias in this layer group.
   */
@@ -1366,7 +1373,7 @@ index ae1e99a..85b6d42 100644
  }
  
  static void
-@@ -1195,7 +1182,7 @@ GatherPadName (PadType *Pad)
+@@ -1195,7 +1181,7 @@ GatherPadName (PadType *Pad)
   * lowlevel drawing routine for text objects
   */
  void
@@ -1375,7 +1382,7 @@ index ae1e99a..85b6d42 100644
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
-@@ -1239,7 +1226,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
+@@ -1239,7 +1225,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
  	      newline.Point1.Y += Text->Y;
  	      newline.Point2.X += Text->X;
  	      newline.Point2.Y += Text->Y;
@@ -1384,7 +1391,7 @@ index ae1e99a..85b6d42 100644
  	    }
  
  	  /* move on to next cursor position */
-@@ -1263,9 +1250,8 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
+@@ -1263,9 +1249,8 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
  	  defaultsymbol.Y1 += Text->Y;
  	  defaultsymbol.X2 += Text->X;
  	  defaultsymbol.Y2 += Text->Y;
@@ -1396,7 +1403,7 @@ index ae1e99a..85b6d42 100644
  
  	  /* move on to next cursor position */
  	  x += size;
-@@ -1301,8 +1287,7 @@ void
+@@ -1301,8 +1286,7 @@ void
  DrawPin (PinType *Pin)
  {
    AddPart (Pin);
@@ -1406,7 +1413,7 @@ index ae1e99a..85b6d42 100644
      DrawPinName (Pin);
  }
  
-@@ -1322,7 +1307,7 @@ void
+@@ -1322,7 +1306,7 @@ void
  DrawPad (PadType *Pad)
  {
    AddPart (Pad);
@@ -1415,7 +1422,7 @@ index ae1e99a..85b6d42 100644
      DrawPadName (Pad);
  }
  
-@@ -1445,7 +1430,7 @@ DrawElementPinsAndPads (ElementType *Element)
+@@ -1445,7 +1429,7 @@ DrawElementPinsAndPads (ElementType *Element)
  {
    PAD_LOOP (Element);
    {
@@ -1424,7 +1431,7 @@ index ae1e99a..85b6d42 100644
        DrawPad (pad);
    }
    END_LOOP;
-@@ -1716,41 +1701,128 @@ DrawObject (int type, void *ptr1, void *ptr2)
+@@ -1716,41 +1700,122 @@ DrawObject (int type, void *ptr1, void *ptr2)
  }
  
  static void
@@ -1466,13 +1473,11 @@ index ae1e99a..85b6d42 100644
 -  HID *old_gui = gui;
 +  dapi->fg_gc = dapi->gapi->make_gc ();
 +  dapi->bg_gc = dapi->gapi->make_gc ();
-+  dapi->pm_gc = dapi->gapi->make_gc ();
  
 -  gui = hid;
 -  Output.fgGC = gui->make_gc ();
 -  Output.bgGC = gui->make_gc ();
 -  Output.pmGC = gui->make_gc ();
-+  dapi->gapi->set_color (dapi->pm_gc, "erase");
 +  dapi->gapi->set_color (dapi->bg_gc, "drill");
  
 -  hid->set_color (Output.pmGC, "erase");
@@ -1489,7 +1494,6 @@ index ae1e99a..85b6d42 100644
 -    DrawEverything (region);
 +  dapi->gapi->destroy_gc (dapi->fg_gc);
 +  dapi->gapi->destroy_gc (dapi->bg_gc);
-+  dapi->gapi->destroy_gc (dapi->pm_gc);
 +}
 +
 +static void
@@ -1497,9 +1501,7 @@ index ae1e99a..85b6d42 100644
 +{
 +  dapi->fg_gc = dapi->gapi->make_gc ();
 +  dapi->bg_gc = dapi->gapi->make_gc ();
-+  dapi->pm_gc = dapi->gapi->make_gc ();
 +
-+  dapi->gapi->set_color (dapi->pm_gc, "erase");
 +  dapi->gapi->set_color (dapi->bg_gc, "drill");
 +
 +  g_warn_if_fail (dapi->doing_pinout == false);
@@ -1509,7 +1511,6 @@ index ae1e99a..85b6d42 100644
 +
 +  dapi->gapi->destroy_gc (dapi->fg_gc);
 +  dapi->gapi->destroy_gc (dapi->bg_gc);
-+  dapi->gapi->destroy_gc (dapi->pm_gc);
 +}
 +
 +static void
@@ -1619,10 +1620,10 @@ index c7ffa97..8ad0a78 100644
  
  #endif
 diff --git a/src/draw_api.h b/src/draw_api.h
-index 48e938f..c994fc5 100644
+index 48e938f..84a9073 100644
 --- a/src/draw_api.h
 +++ b/src/draw_api.h
-@@ -28,37 +28,64 @@ typedef struct GraphicsAPI GraphicsAPI;
+@@ -28,37 +28,63 @@ typedef struct GraphicsAPI GraphicsAPI;
  
  struct DrawAPI {
    /* Virtual functions */
@@ -1710,7 +1711,6 @@ index 48e938f..c994fc5 100644
 +  hidGC gc;                /* <--- This should be in a subclass of the base dapi, but nevermind */
 +  hidGC fg_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
 +  hidGC bg_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
-+  hidGC pm_gc;             /* <--- This should be in a subclass of the base dapi, but nevermind */
  };
  
  enum mask_mode {
