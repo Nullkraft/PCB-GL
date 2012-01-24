@@ -1,0 +1,21 @@
+Bottom: aec480d4a540348a304c5b1d13bd537cd7bd6ce8
+Top:    79575a17402f01079802f50a15415ca4f986491d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-01-24 19:06:36 +0000
+
+Refresh of add-routines-to-render-just-a-
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 6948c33..7d4e9a5 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -638,6 +638,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+                 GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
+   glStencilMask (stencil_bit);                          /* Only write to our stencil bit */
+   glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, ref value is our bit */
++  glEnable (GL_STENCIL_TEST);                           /* Enable the stencil test, just in case it wasn't already on */
+   glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
+ 
+   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           /* Stencil pass => replace stencil value */
