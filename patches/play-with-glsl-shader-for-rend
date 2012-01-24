@@ -1,7 +1,7 @@
-Bottom: 84dd2fc26a005256e1582be7c29faa3217407833
-Top:    d239bc8375a148c107e3d9807252cc7d07591d89
+Bottom: fc33d78857878f4f457ee7e95d5817ebd4055b8f
+Top:    dbe31b5c90aa2e00b40b239ffdf29290d6980769
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-01-14 17:32:25 +0000
+Date:   2012-01-24 19:09:56 +0000
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -60,7 +60,7 @@ index d5b53c5..f39020f 100644
  	hid/common/trackball.h
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 0f54593..b066849 100644
+index f7287ce..d831a25 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -75,6 +75,7 @@
@@ -532,7 +532,7 @@ index 0f54593..b066849 100644
      return;
    }
  
-@@ -670,7 +757,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -671,7 +758,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  
    /* Drawing operations now set our reference bit in the stencil buffer */
  
@@ -541,7 +541,7 @@ index 0f54593..b066849 100644
    hidgl_flush_triangles (&buffer);
  
    glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
-@@ -686,7 +773,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -688,7 +775,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  
    /* Draw the polygon outer */
@@ -550,7 +550,7 @@ index 0f54593..b066849 100644
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
-@@ -699,14 +786,42 @@ void
+@@ -701,14 +788,42 @@ void
  hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  {
    CHECK_IS_IN_CONTEXT ();
@@ -596,7 +596,7 @@ index 0f54593..b066849 100644
    CHECK_IS_IN_CONTEXT ();
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
-@@ -722,6 +837,16 @@ hidgl_init (void)
+@@ -724,6 +839,16 @@ hidgl_init (void)
                "Cannot use stencil buffer to sub-composite layers.\n");
        /* Do we need to disable that somewhere? */
      }
@@ -613,7 +613,7 @@ index 0f54593..b066849 100644
  }
  
  void
-@@ -733,6 +858,7 @@ hidgl_start_render (void)
+@@ -735,6 +860,7 @@ hidgl_start_render (void)
    in_context = true;
    hidgl_init ();
    hidgl_init_triangle_array (&buffer);
@@ -621,7 +621,7 @@ index 0f54593..b066849 100644
  }
  
  void
-@@ -741,6 +867,8 @@ hidgl_finish_render (void)
+@@ -743,6 +869,8 @@ hidgl_finish_render (void)
    if (!in_context)
      fprintf (stderr, "hidgl: hidgl_finish_render() - Not currently in rendering context!\n");
  
