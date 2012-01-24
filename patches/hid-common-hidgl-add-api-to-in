@@ -1,5 +1,5 @@
-Bottom: b3c566975806bf9d6bec1c0217e607ac95e343a0
-Top:    04b216b314e9c7707d914394ed8827d0e6857345
+Bottom: f6fa1932cbf5e150ae0ad7f2eefbf221255358df
+Top:    f01839b82d095c7b78a1d6cb1f5e4e30923848d6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-01-14 17:32:23 +0000
 
@@ -12,7 +12,7 @@ saving lots of separate calls being made by its callers.
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index e7435e7..9111373 100644
+index 965f2b7..6795efd 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -71,7 +71,7 @@
@@ -24,7 +24,7 @@ index e7435e7..9111373 100644
  hidgl_init_triangle_array (triangle_buffer *buffer)
  {
    buffer->triangle_count = 0;
-@@ -696,6 +696,18 @@ hidgl_init (void)
+@@ -697,6 +697,18 @@ hidgl_init (void)
      }
  }
  
@@ -65,7 +65,7 @@ index 858270a..8d2c78c 100644
  int hidgl_assign_clear_stencil_bit (void);
  void hidgl_return_stencil_bit (int bit);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d205fc2..5831b4b 100644
+index fd29eb1..e2b5a3d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1907,8 +1907,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
