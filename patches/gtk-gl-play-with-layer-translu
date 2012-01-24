@@ -1,5 +1,5 @@
 Bottom: 0b529c2a6cd49df987839cef3f12767efc5077f4
-Top:    545bb076e065f57a83c7b22f82321632fc670091
+Top:    4f65043f159cac2c35993b4116ab0f3c23868b84
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-01-14 17:32:23 +0000
 
@@ -8,18 +8,6 @@ gtk/gl: Play with layer translucency
 
 ---
 
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 15273a6..43ed213 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -657,6 +657,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
-                 GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
-   glStencilMask (stencil_bit);                          /* Only write to our stencil bit */
-   glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, ref value is our bit */
-+  glEnable (GL_STENCIL_TEST);                           /* Enable the stencil test, just in case it wasn't already on */
-   glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
- 
-   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           /* Stencil pass => replace stencil value */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index f848476..893e43e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
