@@ -1,5 +1,5 @@
 Bottom: cf9cfd50dd3a7f48a83d2b2a802d40ff382108a9
-Top:    718b7e8505d2deffbcbb5af3e04717491bcf639b
+Top:    7f892f4a9f9371062046584a28214c30fb330189
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-10-21 11:34:25 +0100
 
@@ -9,10 +9,10 @@ Introduce hacky code to switch cursor when over a line we might drag
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index f0526b8..fa587fe 100644
+index f0526b8..2c754a2 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -1097,11 +1097,63 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+@@ -1097,11 +1097,66 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
        ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
                                    LINEPOINT_TYPE | ARCPOINT_TYPE,
                                    &ptr1, &ptr2, &ptr3);
@@ -21,7 +21,8 @@ index f0526b8..fa587fe 100644
 -      else if (!TEST_FLAG(SELECTEDFLAG, (LineType *)ptr2))
 -        hid_actionl("PointCursor","True", NULL);
 +      if (ans != NO_TYPE && !TEST_FLAG(SELECTEDFLAG, (LineType *)ptr2)) {
-+        gui->endpoint_cursor ();
++        if (gui->endpoint_cursor != NULL)
++          gui->endpoint_cursor ();
 +        goto common_tail;
 +      }
 +
@@ -68,13 +69,15 @@ index f0526b8..fa587fe 100644
 +                break;
 +            }
 +
-+            gui->grip_cursor (allowed_directions);
++            if (gui->grip_cursor != NULL)
++              gui->grip_cursor (allowed_directions);
 +            goto common_tail;
 +          }
 +        }
 +
      }
-+  gui->normal_cursor ();
++  if (gui->normal_cursor != NULL)
++    gui->normal_cursor ();
 +
 +common_tail:
  
