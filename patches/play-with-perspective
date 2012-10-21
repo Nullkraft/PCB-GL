@@ -1,7 +1,7 @@
-Bottom: 4d098e8639b4c9fd51b1be7c98be07781eea5179
-Top:    c7efaffe48450bfb6c51a311f4e3875a306cb02e
+Bottom: b11c89b7f30c8655ce3e8a6744d935af29e71896
+Top:    e7eca7ad42774a5755795b7bf3bf46400f9a9546
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-01-14 17:32:26 +0000
+Date:   2012-10-21 11:34:23 +0100
 
 Play with perspective
 
@@ -76,7 +76,7 @@ index 105c46a..d471fb6 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9a9a0cc..a181823 100644
+index 4d7bc3e..ce699e2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -13,6 +13,7 @@
@@ -107,7 +107,7 @@ index 9a9a0cc..a181823 100644
  static int global_view_2d = 1;
  
  typedef struct render_priv {
-@@ -90,7 +97,7 @@ hid_gc_struct;
+@@ -89,7 +96,7 @@ hid_gc_struct;
  
  
  static void draw_lead_user (render_priv *priv);
@@ -116,7 +116,7 @@ index 9a9a0cc..a181823 100644
  
  
  #define BOARD_THICKNESS         MM_TO_COORD(1.60)
-@@ -109,12 +116,15 @@ compute_depth (int group)
+@@ -108,12 +115,15 @@ compute_depth (int group)
    int middle_copper_group;
    int depth;
  
@@ -133,7 +133,7 @@ index 9a9a0cc..a181823 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -1557,7 +1567,8 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1540,7 +1550,8 @@ GhidDrawMask (int side, BoxType * screen)
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
@@ -143,7 +143,7 @@ index 9a9a0cc..a181823 100644
    polygon.Flags = NoFlags ();
    SET_FLAG (FULLPOLYFLAG, &polygon);
    common_fill_pcb_polygon (out->fgGC, &polygon, screen);
-@@ -1780,7 +1791,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1763,7 +1774,7 @@ ghid_draw_everything (BoxType *drawn_area)
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
    /* XXX: This isn't strictly correct, as I've ignored the matrix
@@ -152,7 +152,7 @@ index 9a9a0cc..a181823 100644
    /* NB: last_modelview_matrix is transposed in memory! */
    reverse_layers = (last_modelview_matrix[2][2] < 0);
  
-@@ -1944,6 +1955,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1927,6 +1938,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    Coord new_x, new_y;
    Coord min_depth;
    Coord max_depth;
@@ -165,7 +165,7 @@ index 9a9a0cc..a181823 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -1968,20 +1985,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1951,20 +1968,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -241,7 +241,7 @@ index 9a9a0cc..a181823 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -1990,7 +2052,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1973,7 +2035,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -250,7 +250,7 @@ index 9a9a0cc..a181823 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -2002,58 +2064,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1985,58 +2047,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -349,7 +349,7 @@ index 9a9a0cc..a181823 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2447,10 +2524,10 @@ ghid_finish_debug_draw (void)
+@@ -2430,10 +2507,10 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
@@ -363,7 +363,7 @@ index 9a9a0cc..a181823 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2478,9 +2555,9 @@ determinant_4x4 (float m[4][4])
+@@ -2461,9 +2538,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -375,7 +375,7 @@ index 9a9a0cc..a181823 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2545,96 +2622,157 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2528,96 +2605,157 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
