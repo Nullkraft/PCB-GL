@@ -1,7 +1,7 @@
-Bottom: 84dd2fc26a005256e1582be7c29faa3217407833
-Top:    4075fdc83b102e5d701477705affda4574ebcca1
+Bottom: 3ac3faa7fb5d30207b9e69285893ee4c9a57cecb
+Top:    c2b87db82d89ed67c50eb80b2c875fb7e45c8d7e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-01-14 17:32:28 +0000
+Date:   2012-10-21 11:34:27 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -48,7 +48,7 @@ index d311420..05ecbc8 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index f7d571c..2a16bbd 100644
+index 7e95672..ae70f94 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -120,6 +120,9 @@ static void *ChangeTextJoin (LayerType *, TextType *);
@@ -157,7 +157,7 @@ index f7d571c..2a16bbd 100644
   */
  static void *
 diff --git a/src/change.h b/src/change.h
-index f42842a..887a713 100644
+index 5d59362..a8f0de8 100644
 --- a/src/change.h
 +++ b/src/change.h
 @@ -56,7 +56,7 @@
@@ -170,7 +170,7 @@ index f42842a..887a713 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index 5dfcb66..068e8d9 100644
+index 2f0a5d6..a6834f2 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
 @@ -166,7 +166,8 @@ draw_poly (PolygonType *polygon, const BoxType *drawn_area, void *userdata)
