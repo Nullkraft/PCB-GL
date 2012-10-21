@@ -1,5 +1,5 @@
 Bottom: 9a80be4707d4e06e33ef2e1204c58b2a8622a826
-Top:    b360dcf555b3cf72152307a94f6f8764811d2f59
+Top:    41a0d83cbf54124a0516e96ab946e03c6deec8c3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-10-21 11:17:18 +0100
 
@@ -735,7 +735,7 @@ index c7ffa97..7064946 100644
  void EraseViaName (PinType *);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
 new file mode 100644
-index 0000000..e21c1bb
+index 0000000..0fd47f5
 --- /dev/null
 +++ b/src/draw_funcs.c
 @@ -0,0 +1,404 @@
@@ -865,7 +865,7 @@ index 0000000..e21c1bb
 +static void
 +draw_rat (RatType *rat, const BoxType *drawn_area, void *userdata)
 +{
-+  if (Settings.RatThickness < 20)
++  if (Settings.RatThickness < 100)
 +    rat->Thickness = pixel_slop * Settings.RatThickness;
 +  /* rats.c set VIAFLAG if this rat goes to a containing poly: draw a donut */
 +  if (TEST_FLAG(VIAFLAG, rat))
