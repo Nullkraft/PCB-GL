@@ -1,5 +1,5 @@
-Bottom: b7e6bd20ed5c383494ff870eaf7e68a2089b5108
-Top:    ee367972346929ff72161e25b162055ec963eb98
+Bottom: 02ead61c2eb9d5aa7b91084f1d62081194390bcc
+Top:    dbb174db049ef678ff2aa8c8ec4c7c75f8437fc4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-01-24 19:09:52 +0000
 
@@ -9,7 +9,7 @@ DRAW_FUNCS: Attempt at different render order for PCB+GL
 ---
 
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index 31d2092..e2f37d0 100644
+index 535500d..279577d 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
 @@ -433,12 +433,25 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)

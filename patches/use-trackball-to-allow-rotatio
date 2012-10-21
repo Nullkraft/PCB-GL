@@ -1,5 +1,5 @@
-Bottom: 4fae032fd764b22554c055ede49f4ae22279ae03
-Top:    e4b160422c3a8ae715b9aeb986f64c4209984e3a
+Bottom: 8e55ee64bc870b62a8ec737f0332d33a354d7f70
+Top:    cdc0cdc56d475b6ae4f8b772437295ef2f1c23a5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-01-24 19:09:52 +0000
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5da6a1a..43650fd 100644
+index c66ce49..939886a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -25,7 +25,9 @@
@@ -38,7 +38,7 @@ index 5da6a1a..43650fd 100644
  
  typedef struct render_priv {
    GdkGLConfig *glconfig;
-@@ -75,6 +86,7 @@ hid_gc_struct;
+@@ -74,6 +85,7 @@ hid_gc_struct;
  
  
  static void draw_lead_user (render_priv *priv);
@@ -46,7 +46,7 @@ index 5da6a1a..43650fd 100644
  
  
  static void
-@@ -870,6 +882,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -853,6 +865,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    render_priv *priv = port->render_priv;
    GtkAllocation allocation;
    BoxType region;
@@ -58,7 +58,7 @@ index 5da6a1a..43650fd 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -895,18 +912,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -878,18 +895,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -86,7 +86,7 @@ index 5da6a1a..43650fd 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -923,10 +942,64 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -906,10 +925,64 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilMask (0);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -155,7 +155,7 @@ index 5da6a1a..43650fd 100644
  
    region.X1 = MAX (0, MIN (PCB->MaxWidth,  region.X1));
    region.X2 = MAX (0, MIN (PCB->MaxWidth,  region.X2));
-@@ -938,10 +1011,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -921,10 +994,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.blue / 65535.);
  
    glBegin (GL_QUADS);
@@ -170,7 +170,7 @@ index 5da6a1a..43650fd 100644
    glEnd ();
  
    ghid_draw_bg_image ();
-@@ -1046,7 +1119,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1029,7 +1102,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -179,7 +179,7 @@ index 5da6a1a..43650fd 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1152,7 +1225,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1135,7 +1208,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -188,7 +188,7 @@ index 5da6a1a..43650fd 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1271,11 +1344,173 @@ ghid_finish_debug_draw (void)
+@@ -1254,11 +1327,173 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  
@@ -364,7 +364,7 @@ index 5da6a1a..43650fd 100644
  
    return true;
  }
-@@ -1283,12 +1518,54 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+@@ -1266,12 +1501,54 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  bool
  ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  {
@@ -422,7 +422,7 @@ index 5da6a1a..43650fd 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 20)  /* 20fps (in ms) */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 2335a74..1359377 100644
+index 786024e..aa6d8e6 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -121,6 +121,7 @@ a zoom in/out.
@@ -463,7 +463,7 @@ index 2335a74..1359377 100644
     * make_mode_buttons_and_toolbar (...);
     */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 34b4c11..7c043b4 100644
+index f2585f7..77fa4d4 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -296,7 +296,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
@@ -474,7 +474,7 @@ index 34b4c11..7c043b4 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -503,6 +502,8 @@ void ghid_flush_debug_draw (void);
+@@ -505,6 +504,8 @@ void ghid_flush_debug_draw (void);
  void ghid_finish_debug_draw (void);
  bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);

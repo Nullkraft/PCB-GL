@@ -1,5 +1,5 @@
-Bottom: c35057cab1ac23493608608ef599b9aad1173ac9
-Top:    bcb3a0f1e6a57358183cdc0e79a3c4fc84dd8759
+Bottom: 91d74124a2aa4e606b516ff3047bc06c96bac234
+Top:    14d9ee9712697326b7d10759f717ccf31c52f063
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-01-24 19:09:53 +0000
 
@@ -27,7 +27,7 @@ index 36ebed4..1c41dfc 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index eb0ad14..721c551 100644
+index 88b9360..2a1e89c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -113,7 +113,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
@@ -104,7 +104,7 @@ index 2ca39de..ba73c39 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 1359377..6802606 100644
+index aa6d8e6..5daee80 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -122,6 +122,7 @@ a zoom in/out.
@@ -192,7 +192,7 @@ index 5c8a1f1..98d558d 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 7c043b4..d885864 100644
+index 77fa4d4..56f69f5 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -148,6 +148,7 @@ typedef struct
@@ -222,7 +222,7 @@ index 7c043b4..d885864 100644
  
  /* gui-dialog.c function prototypes.
  */
-@@ -509,6 +515,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
+@@ -511,6 +517,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
  void ghid_cancel_lead_user (void);
  
  /* gtkhid-main.c */

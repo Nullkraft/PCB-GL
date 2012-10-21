@@ -1,5 +1,5 @@
-Bottom: 99e04e8c5b6e06c0c0f151fd580471ec6295ca9d
-Top:    db8310298ad621638e88a7d3d4315e890bf7bcea
+Bottom: 5dfb8280c2dfe62d09bd4a7b613cbf62f06653f3
+Top:    dd59bf1dbc4e3548f84e74c7370feea7824a466e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-01-24 19:09:53 +0000
 
@@ -23,7 +23,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 70de43e..10c8ed7 100644
+index 6bef14b..81cda9d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -80,8 +80,8 @@ static bool doing_assy = false;
@@ -76,7 +76,7 @@ index 7064946..e0d522f 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bedbe32..f848476 100644
+index f36174e..148c373 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -89,7 +89,7 @@ index bedbe32..f848476 100644
  #include "gui-pinout-preview.h"
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
-@@ -198,64 +201,78 @@ end_subcomposite (void)
+@@ -197,64 +200,78 @@ end_subcomposite (void)
    priv->subcomposite_stencil_bit = 0;
  }
  
@@ -205,7 +205,7 @@ index bedbe32..f848476 100644
  }
  
  static void
-@@ -295,6 +312,7 @@ ghid_draw_grid (BoxType *drawn_area)
+@@ -294,6 +311,7 @@ ghid_draw_grid (BoxType *drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
@@ -213,7 +213,7 @@ index bedbe32..f848476 100644
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
  
-@@ -305,6 +323,7 @@ ghid_draw_grid (BoxType *drawn_area)
+@@ -304,6 +322,7 @@ ghid_draw_grid (BoxType *drawn_area)
    hidgl_draw_grid (drawn_area);
  
    glDisable (GL_COLOR_LOGIC_OP);
@@ -221,7 +221,7 @@ index bedbe32..f848476 100644
  }
  
  static void
-@@ -925,6 +944,10 @@ ghid_start_drawing (GHidPort *port)
+@@ -908,6 +927,10 @@ ghid_start_drawing (GHidPort *port)
  
    port->render_priv->in_context = true;
  
@@ -232,7 +232,7 @@ index bedbe32..f848476 100644
    return TRUE;
  }
  
-@@ -943,6 +966,14 @@ ghid_end_drawing (GHidPort *port)
+@@ -926,6 +949,14 @@ ghid_end_drawing (GHidPort *port)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
@@ -247,7 +247,7 @@ index bedbe32..f848476 100644
  }
  
  void
-@@ -950,6 +981,856 @@ ghid_screen_update (void)
+@@ -933,6 +964,856 @@ ghid_screen_update (void)
  {
  }
  
@@ -1104,7 +1104,7 @@ index bedbe32..f848476 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1020,8 +1901,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1003,8 +1884,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1115,7 +1115,7 @@ index bedbe32..f848476 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1087,18 +1968,50 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1070,18 +1951,50 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
