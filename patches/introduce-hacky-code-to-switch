@@ -1,7 +1,7 @@
-Bottom: 670fff90e3d8835bfa6c7ee0b08fd2a01938399a
-Top:    64ace2facef6453da680363e0b3656edcf69db6b
+Bottom: cf9cfd50dd3a7f48a83d2b2a802d40ff382108a9
+Top:    718b7e8505d2deffbcbb5af3e04717491bcf639b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-02-19 15:31:28 +0000
+Date:   2012-10-21 11:34:25 +0100
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -118,7 +118,7 @@ index 2266b6c..40b434a 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 721c551..d1e04b4 100644
+index 2a1e89c..2320fcd 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1137,6 +1137,16 @@ static int PointCursor (int argc, char **argv, Coord x, Coord y)
@@ -138,7 +138,7 @@ index 721c551..d1e04b4 100644
  /* ---------------------------------------------------------------------- */
  
  static int
-@@ -2179,6 +2189,10 @@ hid_gtk_init ()
+@@ -2192,6 +2202,10 @@ hid_gtk_init ()
    ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
    ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
  
@@ -184,7 +184,7 @@ index bf3b79e..f0c4d39 100644
  ghid_mode_cursor (int Mode)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index d885864..90e0ad8 100644
+index 56f69f5..d8eccb8 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -263,6 +263,7 @@ void ghid_cursor_position_relative_label_set_text (gchar * text);
