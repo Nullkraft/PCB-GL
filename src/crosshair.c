@@ -1098,7 +1098,8 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
                                   LINEPOINT_TYPE | ARCPOINT_TYPE,
                                   &ptr1, &ptr2, &ptr3);
       if (ans != NO_TYPE && !TEST_FLAG(SELECTEDFLAG, (LineType *)ptr2)) {
-        gui->endpoint_cursor ();
+        if (gui->endpoint_cursor != NULL)
+          gui->endpoint_cursor ();
         goto common_tail;
       }
 
@@ -1145,13 +1146,15 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
                 break;
             }
 
-            gui->grip_cursor (allowed_directions);
+            if (gui->grip_cursor != NULL)
+              gui->grip_cursor (allowed_directions);
             goto common_tail;
           }
         }
 
     }
-  gui->normal_cursor ();
+  if (gui->normal_cursor != NULL)
+    gui->normal_cursor ();
 
 common_tail:
 
