@@ -1,7 +1,7 @@
-Bottom: 2c7745ac0cc3cf79944be7e297b0cfee1bd9a4cf
-Top:    f4c635a7fdc36a712122a66985a30544afa561c7
+Bottom: f84c4ea35a9aa2d26b2bc1f08704b8f878ddb3a9
+Top:    d6889951f472c7ace952c96b0888bbffc397e285
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-01-24 19:09:48 +0000
+Date:   2012-10-21 11:17:16 +0100
 
 Bentley-Ottann test implementation
 
@@ -13833,7 +13833,7 @@ index 0000000..bb5ff35
 +
 +#endif /* __G_PQUEUE_H__ */
 diff --git a/src/main.c b/src/main.c
-index e170f5a..c9273ac 100644
+index 3ab4d56..4ff52b9 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -58,6 +58,7 @@
@@ -13844,7 +13844,7 @@ index e170f5a..c9273ac 100644
  
  #include "hid/common/actions.h"
  
-@@ -1745,6 +1746,7 @@ char *program_directory = 0;
+@@ -1846,6 +1847,7 @@ char *program_directory = 0;
  
  #include "dolists.h"
  
@@ -13852,7 +13852,7 @@ index e170f5a..c9273ac 100644
  int
  main (int argc, char *argv[])
  {
-@@ -1956,11 +1958,16 @@ main (int argc, char *argv[])
+@@ -2059,11 +2061,16 @@ main (int argc, char *argv[])
            UNKNOWN (Settings.GnetlistProgram));
  #endif
  
