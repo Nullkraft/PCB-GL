@@ -1,7 +1,7 @@
-Bottom: 20883699aa69bd794547ccf6f5a05a02ace62104
-Top:    d88a7c9da47cf1f68e1d0dbbc32391ad3d14f723
+Bottom: 9a80be4707d4e06e33ef2e1204c58b2a8622a826
+Top:    3320c67fe95e2efffca218880275e849ca99264f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-01-24 19:09:47 +0000
+Date:   2012-10-21 11:17:14 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 700bf29..9787674 100644
+index b29d40b..50061a7 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1898,37 +1898,39 @@ static int
@@ -70,7 +70,7 @@ index 700bf29..9787674 100644
  	    }
  	}
      }
-@@ -3249,6 +3251,8 @@ static const char renumber_help[] =
+@@ -3255,6 +3257,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, Coord x, Coord y)
  {
@@ -79,7 +79,7 @@ index 700bf29..9787674 100644
    bool changed = false;
    ElementType **element_list;
    ElementType **locked_element_list;
-@@ -3586,6 +3590,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3592,6 +3596,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    free (element_list);
    free (cnt_list);
    return 0;
@@ -87,7 +87,7 @@ index 700bf29..9787674 100644
  }
  
  
-@@ -4588,16 +4593,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4600,16 +4605,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index 700bf29..9787674 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatType *) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6913,22 +6917,26 @@ find_element_by_refdes (char *refdes)
+@@ -6925,22 +6929,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListType *list, const char *name)
  {
@@ -290,7 +290,7 @@ index 21ab5f2..94c9e25 100644
    double C0, T0;
    bool changed = false;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 8081262..6e37aa3 100644
+index 494b09f..404422a 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -1006,7 +1006,6 @@ CreateRouteData ()
@@ -527,7 +527,7 @@ index f0526b8..dc237b1 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index ae1e99a..0ce798a 100644
+index 3738f6a..65cc3b9 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1199,7 +1199,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
@@ -668,7 +668,7 @@ index e09f825..0f05326 100644
        w = maxx + symbol->Delta + ox;
        CreateDrawnLineOnLayer (lwidth,
 diff --git a/src/global.h b/src/global.h
-index 7b28396..97e1992 100644
+index d027ae2..26607d4 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -222,8 +222,8 @@ typedef struct
@@ -763,7 +763,7 @@ index 7b28396..97e1992 100644
  } LibraryType;
  
  
-@@ -573,9 +565,8 @@ typedef struct			/* currently attached object */
+@@ -578,9 +570,8 @@ typedef struct			/* currently attached object */
    void *Ptr1,			/* three pointers to data, see */
     *Ptr2,			/* search.c */
     *Ptr3;
@@ -775,7 +775,7 @@ index 7b28396..97e1992 100644
  } AttachedObjectType;
  
  enum crosshair_shape
-@@ -731,38 +722,33 @@ typedef struct			/* holds a connection */
+@@ -736,38 +727,33 @@ typedef struct			/* holds a connection */
  
  typedef struct			/* holds a net of connections */
  {
@@ -825,7 +825,7 @@ index 7b28396..97e1992 100644
  } BoxListType;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index eb0ad14..2821d5f 100644
+index 88b9360..3171ec0 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -928,6 +928,7 @@ static void
@@ -1286,10 +1286,10 @@ index 715f0c9..659af87 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index f675079..6ac2f53 100644
+index 5c43754..126b252 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -492,7 +492,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
+@@ -494,7 +494,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
  {
    SymbolType *symbol = FontPtr->Symbol;
    unsigned char *s = (unsigned char *) Text->TextString;
@@ -1298,7 +1298,7 @@ index f675079..6ac2f53 100644
    int space;
  
    Coord minx, miny, maxx, maxy, tx;
-@@ -519,7 +519,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
+@@ -521,7 +521,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
        if (*s <= MAX_FONTPOSITION && symbol[*s].Valid)
          {
            LineType *line = symbol[*s].Line;
@@ -1307,7 +1307,7 @@ index f675079..6ac2f53 100644
              {
                /* Clamp the width of text lines at the minimum thickness.
                 * NB: Divide 4 in thickness calculation is comprised of a factor
-@@ -812,9 +812,9 @@ CenterDisplay (Coord X, Coord Y)
+@@ -814,9 +814,9 @@ CenterDisplay (Coord X, Coord Y)
  void
  SetFontInfo (FontType *Ptr)
  {
@@ -1319,7 +1319,7 @@ index f675079..6ac2f53 100644
    Coord totalminy = MAX_COORD;
  
    /* calculate cell with and height (is at least DEFAULT_CELLSIZE)
-@@ -833,8 +833,9 @@ SetFontInfo (FontType *Ptr)
+@@ -835,8 +835,9 @@ SetFontInfo (FontType *Ptr)
  
        minx = miny = MAX_COORD;
        maxx = maxy = 0;
@@ -1330,7 +1330,7 @@ index f675079..6ac2f53 100644
            minx = MIN (minx, line->Point1.X);
            miny = MIN (miny, line->Point1.Y);
            minx = MIN (minx, line->Point2.X);
-@@ -846,8 +847,11 @@ SetFontInfo (FontType *Ptr)
+@@ -848,8 +849,11 @@ SetFontInfo (FontType *Ptr)
          }
  
        /* move symbol to left edge */
@@ -1344,7 +1344,7 @@ index f675079..6ac2f53 100644
  
        /* set symbol bounding box with a minimum cell size of (1,1) */
        symbol->Width = maxx - minx + 1;
-@@ -864,8 +868,11 @@ SetFontInfo (FontType *Ptr)
+@@ -866,8 +870,11 @@ SetFontInfo (FontType *Ptr)
      if (symbol->Valid)
        {
          symbol->Height -= totalminy;
@@ -1358,7 +1358,7 @@ index f675079..6ac2f53 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1779,8 +1786,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1781,8 +1788,11 @@ GetGridLockCoordinates (int type, void *ptr1,
        *y = ((ElementType *) ptr2)->MarkY;
        break;
      case POLYGON_TYPE:
@@ -1372,7 +1372,7 @@ index f675079..6ac2f53 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -2063,10 +2073,13 @@ pcb_author (void)
+@@ -2065,10 +2075,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
