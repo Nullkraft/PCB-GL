@@ -124,7 +124,7 @@ draw_line (LineType *line, const BoxType *drawn_area, void *userdata)
 static void
 draw_rat (RatType *rat, const BoxType *drawn_area, void *userdata)
 {
-  if (Settings.RatThickness < 20)
+  if (Settings.RatThickness < 100)
     rat->Thickness = pixel_slop * Settings.RatThickness;
   /* rats.c set VIAFLAG if this rat goes to a containing poly: draw a donut */
   if (TEST_FLAG(VIAFLAG, rat))
