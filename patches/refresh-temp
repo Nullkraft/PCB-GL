@@ -1,0 +1,22 @@
+Bottom: 41d3003ab59c5fa33abe098014f98e1fd736f597
+Top:    594e5601e46b72e5c4d860e1e6c15a19e0f3973a
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-10-21 11:32:29 +0100
+
+Refresh of crasy-test
+
+---
+
+diff --git a/src/draw_funcs.c b/src/draw_funcs.c
+index 31d2092..535500d 100644
+--- a/src/draw_funcs.c
++++ b/src/draw_funcs.c
+@@ -124,7 +124,7 @@ draw_line (LineType *line, const BoxType *drawn_area, void *userdata)
+ static void
+ draw_rat (RatType *rat, const BoxType *drawn_area, void *userdata)
+ {
+-  if (Settings.RatThickness < 20)
++  if (Settings.RatThickness < 100)
+     rat->Thickness = pixel_slop * Settings.RatThickness;
+   /* rats.c set VIAFLAG if this rat goes to a containing poly: draw a donut */
+   if (TEST_FLAG(VIAFLAG, rat))
