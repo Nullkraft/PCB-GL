@@ -1836,7 +1836,7 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
 static int
 frontE_package_callback (const BoxType * b, void *cl)
 {
-  ElementTypePtr element = (ElementTypePtr) b;
+  ElementType *element = (ElementType *) b;
 
   if (FRONT (element))
     {
@@ -1857,7 +1857,7 @@ frontE_package_callback (const BoxType * b, void *cl)
 }
 
 static void
-ghid_draw_packages (BoxTypePtr drawn_area)
+ghid_draw_packages (BoxType *drawn_area)
 {
   /* XXX: Just the front elements for now */
   r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_package_callback, NULL);
