@@ -1,5 +1,5 @@
 Bottom: 5db83853e83b9b56fcbf51a415f0dca51248ad25
-Top:    e366cf8d2cb8a5940db636f322475db4e4cbd09f
+Top:    3a1dcfb81a4f659843abc458ee0d2b145a05eca3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:20 +0000
 
@@ -1550,7 +1550,7 @@ index 0000000..a4071c1
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1478884..d14b1da 100644
+index 1478884..97b2991 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -338,6 +338,47 @@ ghid_draw_grid (BoxType *drawn_area)
@@ -1715,7 +1715,7 @@ index 1478884..d14b1da 100644
 +static int
 +frontE_package_callback (const BoxType * b, void *cl)
 +{
-+  ElementTypePtr element = (ElementTypePtr) b;
++  ElementType *element = (ElementType *) b;
 +
 +  if (FRONT (element))
 +    {
@@ -1731,7 +1731,7 @@ index 1478884..d14b1da 100644
 +}
 +
 +static void
-+ghid_draw_packages (BoxTypePtr drawn_area)
++ghid_draw_packages (BoxType *drawn_area)
 +{
 +  /* XXX: Just the front elements for now */
 +  r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_package_callback, NULL);
