@@ -1,5 +1,5 @@
 Bottom: e366cf8d2cb8a5940db636f322475db4e4cbd09f
-Top:    773281ca70643fa49edf1d8592e95f2a4ebf02af
+Top:    580443b5252dcf4f3696f6a897824d4a0b069356
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:21 +0000
 
@@ -2600,7 +2600,7 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d14b1da..0739d02 100644
+index d14b1da..72ddeea 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1600,7 +1600,7 @@ GhidDrawMask (int side, BoxType * screen)
@@ -2612,7 +2612,16 @@ index d14b1da..0739d02 100644
  
    if (1) {
      GLfloat s_params[] = {0.0001, 0., 0., 0.};
-@@ -1847,6 +1847,11 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1836,7 +1836,7 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
+ static int
+ frontE_package_callback (const BoxType * b, void *cl)
+ {
+-  ElementTypePtr element = (ElementTypePtr) b;
++  ElementType *element = (ElementType *) b;
+ 
+   if (FRONT (element))
+     {
+@@ -1847,12 +1847,17 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
@@ -2624,6 +2633,13 @@ index d14b1da..0739d02 100644
      }
    return 1;
  }
+ 
+ static void
+-ghid_draw_packages (BoxTypePtr drawn_area)
++ghid_draw_packages (BoxType *drawn_area)
+ {
+   /* XXX: Just the front elements for now */
+   r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_package_callback, NULL);
 @@ -2723,125 +2728,27 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
