@@ -1,0 +1,31 @@
+Bottom: 773281ca70643fa49edf1d8592e95f2a4ebf02af
+Top:    580443b5252dcf4f3696f6a897824d4a0b069356
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-08 16:04:21 -0500
+
+Refresh of add-vrml-model-rendering-suppo
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 0739d02..72ddeea 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1836,7 +1836,7 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
+ static int
+ frontE_package_callback (const BoxType * b, void *cl)
+ {
+-  ElementTypePtr element = (ElementTypePtr) b;
++  ElementType *element = (ElementType *) b;
+ 
+   if (FRONT (element))
+     {
+@@ -1857,7 +1857,7 @@ frontE_package_callback (const BoxType * b, void *cl)
+ }
+ 
+ static void
+-ghid_draw_packages (BoxTypePtr drawn_area)
++ghid_draw_packages (BoxType *drawn_area)
+ {
+   /* XXX: Just the front elements for now */
+   r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_package_callback, NULL);
