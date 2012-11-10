@@ -1,5 +1,5 @@
-Bottom: f711517ad03041e058620bead58ad2ed57cf1126
-Top:    1ebcd35bfd332d182d05a6f909bb1d75a1cb7f74
+Bottom: ed2a6b2e421fb8e3d5254284bbba61a960147c7c
+Top:    adc4cdf754cfdca46004bd757676d2d26bbd63f1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:19:49 +0100
 
@@ -9,7 +9,7 @@ hid/png: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index f00d407..12a2f11 100644
+index c7c0efd..4af0cad 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -37,6 +37,7 @@
@@ -30,7 +30,7 @@ index f00d407..12a2f11 100644
  static int print_group[MAX_LAYER];
  static int print_layer[MAX_LAYER];
  
-@@ -415,10 +414,196 @@ layer_sort (const void *va, const void *vb)
+@@ -521,10 +520,196 @@ layer_sort (const void *va, const void *vb)
    return b - a;
  }
  
@@ -227,7 +227,7 @@ index f00d407..12a2f11 100644
  static void
  parse_bloat (const char *str)
  {
-@@ -526,8 +711,6 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -632,8 +817,6 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
      }
    linewidth = -1;
    lastbrush = (gdImagePtr)((void *) -1);
@@ -236,7 +236,7 @@ index f00d407..12a2f11 100644
    show_solder_side = Settings.ShowSolderSide;
  
    in_mono = options[HA_mono].int_value;
-@@ -543,7 +726,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -649,7 +832,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
  	}
      }
  
@@ -245,7 +245,7 @@ index f00d407..12a2f11 100644
  
    memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
    PCB->Flags = save_flags;
-@@ -1014,154 +1197,6 @@ png_parse_arguments (int *argc, char ***argv)
+@@ -1188,154 +1371,6 @@ png_parse_arguments (int *argc, char ***argv)
    hid_parse_command_line (argc, argv);
  }
  
@@ -400,7 +400,7 @@ index f00d407..12a2f11 100644
  static hidGC
  png_make_gc (void)
  {
-@@ -1651,7 +1686,6 @@ hid_png_init ()
+@@ -1815,7 +1850,6 @@ hid_png_init ()
    png_hid.get_export_options  = png_get_export_options;
    png_hid.do_export           = png_do_export;
    png_hid.parse_arguments     = png_parse_arguments;
