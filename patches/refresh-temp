@@ -1,0 +1,477 @@
+Bottom: c6db419ded5a3e2072a93350ce13b2e1c4650bd9
+Top:    210fa2e0e4d5f6f4719eedabd2702c9a8db44fa3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-10 17:43:40 -0500
+
+Refresh of hid-ps-don-t-use-the-core-s-dr
+
+---
+
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 605bf23..d4a3d10 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -30,6 +30,7 @@
+ 
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
+ 
++static bool set_layer (const char *name, int group);
+ static void use_gc (hidGC gc);
+ 
+ typedef struct hid_gc_struct
+@@ -561,8 +562,223 @@ psopen (const char *base, const char *which)
+   return ps_open_file;
+ }
+ 
++void
++ps_expose (void)
++{
++  HID *old_gui = gui;
++  int group;
++  int nplated, nunplated;
++  bool empty;
++
++  gui = &ps_hid;
++  Output.fgGC = gui->make_gc ();
++  Output.bgGC = gui->make_gc ();
++  Output.pmGC = gui->make_gc ();
++
++  gui->set_color (Output.pmGC, "erase");
++  gui->set_color (Output.bgGC, "drill");
++
++  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
++  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
++
++  /* draw all copper layers in group order */
++  for (group = 0; group < max_copper_layer; group++)
++    {
++      if (!global.print_group[group])
++        continue;
++
++      if (set_layer (0, group))
++        DrawLayerGroup (group, NULL);
++    }
++
++  CountHoles (&nplated, &nunplated, NULL);
++
++  if (nplated && set_layer ("plated-drill", SL (PDRILL, 0)))
++    DrawHoles (true, false, NULL);
++
++  if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0)))
++    DrawHoles (false, true, NULL);
++
++  if (set_layer ("componentmask", SL (MASK, TOP)))
++    DrawMask (COMPONENT_LAYER, NULL);
++
++  if (set_layer ("soldermask", SL (MASK, BOTTOM)))
++    DrawMask (SOLDER_LAYER, NULL);
++
++  if (set_layer ("topsilk", SL (SILK, TOP)))
++    DrawSilk (COMPONENT_LAYER, NULL);
++
++  if (set_layer ("bottomsilk", SL (SILK, BOTTOM)))
++    DrawSilk (SOLDER_LAYER, NULL);
++
++  empty = IsPasteEmpty (COMPONENT_LAYER);
++  if (!empty && set_layer ("toppaste", SL (PASTE, TOP)))
++    DrawPaste (COMPONENT_LAYER, NULL);
++
++  empty = IsPasteEmpty (SOLDER_LAYER);
++  if (!empty && set_layer ("bottompaste", SL (PASTE, BOTTOM)))
++    DrawPaste (SOLDER_LAYER, NULL);
++
++  if (set_layer ("topassembly", SL (ASSY, TOP)))
++    PrintAssembly (COMPONENT_LAYER, NULL);
++
++  if (set_layer ("bottomassembly", SL (ASSY, BOTTOM)))
++    PrintAssembly (SOLDER_LAYER, NULL);
++
++  if (set_layer ("fab", SL (FAB, 0)))
++    PrintFab (Output.fgGC);
++
++  gui->destroy_gc (Output.fgGC);
++  gui->destroy_gc (Output.bgGC);
++  gui->destroy_gc (Output.pmGC);
++  gui = old_gui;
++}
++
++/* This is used by other HIDs that use a postscript format, like lpr
++   or eps.  */
++void
++ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
++{
++  int i;
++  FlagType save_thindraw;
++
++  save_thindraw = PCB->Flags;
++  CLEAR_FLAG(THINDRAWFLAG, PCB);
++  CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
++  CLEAR_FLAG(CHECKPLANESFLAG, PCB);
++
++  global.f = the_file;
++  global.drill_helper = options[HA_drillhelper].int_value;
++  global.align_marks  = options[HA_alignmarks].int_value;
++  global.outline      = options[HA_outline].int_value;
++  global.mirror       = options[HA_mirror].int_value;
++  global.fillpage     = options[HA_fillpage].int_value;
++  global.automirror   = options[HA_automirror].int_value;
++  global.incolor      = options[HA_color].int_value;
++  global.bloat        = options[HA_psbloat].coord_value;
++  global.invert       = options[HA_psinvert].int_value;
++  global.fade_ratio   = CLAMP (options[HA_psfade].real_value, 0, 1);
++  global.media_idx    = options[HA_media].int_value;
++  global.media_width  = media_data[global.media_idx].Width;
++  global.media_height = media_data[global.media_idx].Height;
++  global.ps_width     = global.media_width
++                        - 2.0 * media_data[global.media_idx].MarginX;
++  global.ps_height    = global.media_height
++                        - 2.0 * media_data[global.media_idx].MarginY;
++  global.scale_factor = options[HA_scale].real_value;
++  global.calibration_x = options[HA_xcalib].real_value;
++  global.calibration_y = options[HA_ycalib].real_value;
++  global.drillcopper  = options[HA_drillcopper].int_value;
++  global.legend       = options[HA_legend].int_value;
++
++  if (the_file)
++    ps_start_file (the_file);
++
++  if (global.fillpage)
++    {
++      double zx, zy;
++      if (PCB->MaxWidth > PCB->MaxHeight)
++	{
++	  zx = global.ps_height / PCB->MaxWidth;
++	  zy = global.ps_width  / PCB->MaxHeight;
++	}
++      else
++	{
++	  zx = global.ps_height / PCB->MaxHeight;
++	  zy = global.ps_width  / PCB->MaxWidth;
++	}
++      global.scale_factor *= MIN (zx, zy);
++    }
++
++  memset (global.print_group, 0, sizeof (global.print_group));
++  global.outline_layer = NULL;
++  for (i = 0; i < max_copper_layer; i++)
++    {
++      LayerType *layer = PCB->Data->Layer + i;
++      global.print_group[GetLayerGroupNumberByNumber (i)] = !IsLayerEmpty (layer);
++
++      if (strcmp (layer->Name, "outline") == 0 ||
++          strcmp (layer->Name, "route") == 0)
++        global.outline_layer = layer;
++    }
++  global.print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
++  global.print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
++
++  global.pagecount = 0;
++  global.linewidth = -1;
++  use_gc (NULL);
++
++
++  if (!global.multi_file)
++    {
++      global.doing_toc = 1;
++      ps_expose ();
++      global.pagecount = 1; /* Reset 'pagecount' if single file */
++    }
++
++  global.doing_toc = 0;
++  ps_expose ();
++
++  if (the_file)
++    fprintf (the_file, "showpage\n");
++
++  PCB->Flags = save_thindraw;
++}
++
++static void
++ps_do_export (HID_Attr_Val * options)
++{
++  FILE *fh;
++  int save_ons[MAX_LAYER + 2];
++  int i;
++
++  if (!options)
++    {
++      ps_get_export_options (0);
++      for (i = 0; i < NUM_OPTIONS; i++)
++	global.ps_values[i] = ps_attribute_list[i].default_val;
++      options = global.ps_values;
++    }
++
++  global.filename = options[HA_psfile].str_value;
++  if (!global.filename)
++    global.filename = "pcb-out.ps";
++
++  global.multi_file = options[HA_multifile].int_value;
++
++  if (global.multi_file)
++    fh = 0;
++  else
++    {
++      fh = psopen (global.filename, "toc");
++      if (!fh)
++	{
++	  perror (global.filename);
++	  return;
++	}
++    }
++
++  hid_save_and_show_layer_ons (save_ons);
++  ps_hid_export_to_file (fh, options);
++  hid_restore_layer_ons (save_ons);
++
++  global.multi_file = 0;
++  if (fh)
++    {
++      ps_end_file (fh);
++      fclose (fh);
++    }
++}
++
++static void
++ps_parse_arguments (int *argc, char ***argv)
++{
++  hid_register_attributes (ps_attribute_list, NUM_OPTIONS);
++  hid_parse_command_line (argc, argv);
++}
++
+ static void
+-corner (FILE *fh, Coord x, Coord y, Coord dx, Coord dy)
++corner (FILE *fh, Coord x, Coord y, int dx, int dy)
+ {
+   Coord len   = MIL_TO_COORD (2000);
+   Coord len2  = MIL_TO_COORD (200);
+@@ -576,7 +792,7 @@ corner (FILE *fh, Coord x, Coord y, Coord dx, Coord dy)
+    * of the thick line.
+    */
+ 
+-  pcb_fprintf (fh, "gsave %mi setlinewidth %mi %mi translate %mi %mi scale\n",
++  pcb_fprintf (fh, "gsave %mi setlinewidth %mi %mi translate %d %d scale\n",
+                thick * 2, x, y, dx, dy);
+   pcb_fprintf (fh, "%mi %mi moveto %mi %mi %mi 0 90 arc %mi %mi lineto\n",
+                len, thick, thick, thick, len2 + thick, thick, len);
+@@ -789,221 +1005,6 @@ set_layer (const char *name, int group)
+   return true;
+ }
+ 
+-void
+-ps_expose (void)
+-{
+-  HID *old_gui = gui;
+-  int group;
+-  int nplated, nunplated;
+-  bool empty;
+-
+-  gui = &ps_hid;
+-  Output.fgGC = gui->make_gc ();
+-  Output.bgGC = gui->make_gc ();
+-  Output.pmGC = gui->make_gc ();
+-
+-  gui->set_color (Output.pmGC, "erase");
+-  gui->set_color (Output.bgGC, "drill");
+-
+-  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+-  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+-
+-  /* draw all copper layers in group order */
+-  for (group = 0; group < max_copper_layer; group++)
+-    {
+-      if (!global.print_group[group])
+-        continue;
+-
+-      if (set_layer (0, group))
+-        DrawLayerGroup (group, NULL);
+-    }
+-
+-  CountHoles (&nplated, &nunplated, NULL);
+-
+-  if (nplated && set_layer ("plated-drill", SL (PDRILL, 0)))
+-    DrawHoles (true, false, NULL);
+-
+-  if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0)))
+-    DrawHoles (false, true, NULL);
+-
+-  if (set_layer ("componentmask", SL (MASK, TOP)))
+-    DrawMask (COMPONENT_LAYER, NULL);
+-
+-  if (set_layer ("soldermask", SL (MASK, BOTTOM)))
+-    DrawMask (SOLDER_LAYER, NULL);
+-
+-  if (set_layer ("topsilk", SL (SILK, TOP)))
+-    DrawSilk (COMPONENT_LAYER, NULL);
+-
+-  if (set_layer ("bottomsilk", SL (SILK, BOTTOM)))
+-    DrawSilk (SOLDER_LAYER, NULL);
+-
+-  empty = IsPasteEmpty (COMPONENT_LAYER);
+-  if (!empty && set_layer ("toppaste", SL (PASTE, TOP)))
+-    DrawPaste (COMPONENT_LAYER, NULL);
+-
+-  empty = IsPasteEmpty (SOLDER_LAYER);
+-  if (!empty && set_layer ("bottompaste", SL (PASTE, BOTTOM)))
+-    DrawPaste (SOLDER_LAYER, NULL);
+-
+-  if (set_layer ("topassembly", SL (ASSY, TOP)))
+-    PrintAssembly (COMPONENT_LAYER, NULL);
+-
+-  if (set_layer ("bottomassembly", SL (ASSY, BOTTOM)))
+-    PrintAssembly (SOLDER_LAYER, NULL);
+-
+-  if (set_layer ("fab", SL (FAB, 0)))
+-    PrintFab (Output.fgGC);
+-
+-  gui->destroy_gc (Output.fgGC);
+-  gui->destroy_gc (Output.bgGC);
+-  gui->destroy_gc (Output.pmGC);
+-  gui = old_gui;
+-}
+-
+-/* This is used by other HIDs that use a postscript format, like lpr
+-   or eps.  */
+-void
+-ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+-{
+-  int i;
+-  FlagType save_thindraw;
+-
+-  save_thindraw = PCB->Flags;
+-  CLEAR_FLAG(THINDRAWFLAG, PCB);
+-  CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
+-  CLEAR_FLAG(CHECKPLANESFLAG, PCB);
+-
+-  global.f = the_file;
+-  global.drill_helper = options[HA_drillhelper].int_value;
+-  global.align_marks  = options[HA_alignmarks].int_value;
+-  global.outline      = options[HA_outline].int_value;
+-  global.mirror       = options[HA_mirror].int_value;
+-  global.fillpage     = options[HA_fillpage].int_value;
+-  global.automirror   = options[HA_automirror].int_value;
+-  global.incolor      = options[HA_color].int_value;
+-  global.bloat        = options[HA_psbloat].coord_value;
+-  global.invert       = options[HA_psinvert].int_value;
+-  global.fade_ratio   = CLAMP (options[HA_psfade].real_value, 0, 1);
+-  global.media_idx    = options[HA_media].int_value;
+-  global.media_width  = media_data[global.media_idx].Width;
+-  global.media_height = media_data[global.media_idx].Height;
+-  global.ps_width     = global.media_width
+-                        - 2.0 * media_data[global.media_idx].MarginX;
+-  global.ps_height    = global.media_height
+-                        - 2.0 * media_data[global.media_idx].MarginY;
+-  global.scale_factor = options[HA_scale].real_value;
+-  global.calibration_x = options[HA_xcalib].real_value;
+-  global.calibration_y = options[HA_ycalib].real_value;
+-  global.drillcopper  = options[HA_drillcopper].int_value;
+-  global.legend       = options[HA_legend].int_value;
+-
+-  if (the_file)
+-    ps_start_file (the_file);
+-
+-  if (global.fillpage)
+-    {
+-      double zx, zy;
+-      if (PCB->MaxWidth > PCB->MaxHeight)
+-	{
+-	  zx = global.ps_height / PCB->MaxWidth;
+-	  zy = global.ps_width  / PCB->MaxHeight;
+-	}
+-      else
+-	{
+-	  zx = global.ps_height / PCB->MaxHeight;
+-	  zy = global.ps_width  / PCB->MaxWidth;
+-	}
+-      global.scale_factor *= MIN (zx, zy);
+-    }
+-
+-  memset (global.print_group, 0, sizeof (global.print_group));
+-  global.outline_layer = NULL;
+-  for (i = 0; i < max_copper_layer; i++)
+-    {
+-      LayerType *layer = PCB->Data->Layer + i;
+-      global.print_group[GetLayerGroupNumberByNumber (i)] = !IsLayerEmpty (layer);
+-
+-      if (strcmp (layer->Name, "outline") == 0 ||
+-          strcmp (layer->Name, "route") == 0)
+-        global.outline_layer = layer;
+-    }
+-  global.print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
+-  global.print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
+-
+-  global.pagecount = 0;
+-  global.linewidth = -1;
+-  use_gc (NULL);
+-
+-
+-  if (!global.multi_file)
+-    {
+-      global.doing_toc = 1;
+-      ps_expose ();
+-      global.pagecount = 1; /* Reset 'pagecount' if single file */
+-    }
+-
+-  global.doing_toc = 0;
+-  ps_expose ();
+-
+-  if (the_file)
+-    fprintf (the_file, "showpage\n");
+-
+-  PCB->Flags = save_thindraw;
+-}
+-
+-static void
+-ps_do_export (HID_Attr_Val * options)
+-{
+-  FILE *fh;
+-  int save_ons[MAX_LAYER + 2];
+-  int i;
+-
+-  if (!options)
+-    {
+-      ps_get_export_options (0);
+-      for (i = 0; i < NUM_OPTIONS; i++)
+-	global.ps_values[i] = ps_attribute_list[i].default_val;
+-      options = global.ps_values;
+-    }
+-
+-  global.filename = options[HA_psfile].str_value;
+-  if (!global.filename)
+-    global.filename = "pcb-out.ps";
+-
+-  global.multi_file = options[HA_multifile].int_value;
+-
+-  if (global.multi_file)
+-    fh = 0;
+-  else
+-    {
+-      fh = psopen (global.filename, "toc");
+-      if (!fh)
+-	{
+-	  perror (global.filename);
+-	  return;
+-	}
+-    }
+-
+-  hid_save_and_show_layer_ons (save_ons);
+-  ps_hid_export_to_file (fh, options);
+-  hid_restore_layer_ons (save_ons);
+-
+-  global.multi_file = 0;
+-  if (fh)
+-    {
+-      ps_end_file (fh);
+-      fclose (fh);
+-    }
+-}
+-
+-static void
+-ps_parse_arguments (int *argc, char ***argv)
+-{
+-  hid_register_attributes (ps_attribute_list, NUM_OPTIONS);
+-  hid_parse_command_line (argc, argv);
+-}
+-
+ static hidGC
+ ps_make_gc (void)
+ {
