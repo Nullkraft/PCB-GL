@@ -30,6 +30,7 @@
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
+static bool set_layer (const char *name, int group);
 static void use_gc (hidGC gc);
 
 typedef struct hid_gc_struct
@@ -561,234 +562,6 @@ psopen (const char *base, const char *which)
   return ps_open_file;
 }
 
-static void
-corner (FILE *fh, Coord x, Coord y, Coord dx, Coord dy)
-{
-  Coord len   = MIL_TO_COORD (2000);
-  Coord len2  = MIL_TO_COORD (200);
-  Coord thick = 0;
-  /*
-   * Originally 'thick' used thicker lines.  Currently is uses
-   * Postscript's "device thin" line - i.e. zero width means one
-   * device pixel.  The code remains in case you want to make them
-   * thicker - it needs to offset everything so that the *edge* of the
-   * thick line lines up with the edge of the board, not the *center*
-   * of the thick line.
-   */
-
-  pcb_fprintf (fh, "gsave %mi setlinewidth %mi %mi translate %mi %mi scale\n",
-               thick * 2, x, y, dx, dy);
-  pcb_fprintf (fh, "%mi %mi moveto %mi %mi %mi 0 90 arc %mi %mi lineto\n",
-               len, thick, thick, thick, len2 + thick, thick, len);
-  if (dx < 0 && dy < 0)
-    pcb_fprintf (fh, "%mi %mi moveto 0 %mi rlineto\n", len2 * 2 + thick, thick, -len2);
-  fprintf (fh, "stroke grestore\n");
-}
-
-static bool
-set_layer (const char *name, int group)
-{
-  double boffset;
-  int mirror_this = 0;
-
-  int idx = (group >= 0 && group < max_group)
-            ? PCB->LayerGroups.Entries[group][0]
-            : group;
-  if (name == 0)
-    name = PCB->Data->Layer[idx].Name;
-
-  global.is_drill = (SL_TYPE (idx) == SL_PDRILL || SL_TYPE (idx) == SL_UDRILL);
-  global.is_mask  = (SL_TYPE (idx) == SL_MASK);
-  global.is_assy  = (SL_TYPE (idx) == SL_ASSY);
-  global.is_copper = (SL_TYPE (idx) == 0);
-  global.is_paste  = (SL_TYPE (idx) == SL_PASTE);
-
-  global.pagecount ++;
-
-  if (global.doing_toc)
-    {
-      if (global.pagecount == 1)
-        {
-          time_t currenttime = time (NULL);
-        /* %%Page DSC requires both a label and an ordinal */
-          fprintf (global.f, "%%%%Page: TableOfContents %d\n", global.pagecount);
-          fprintf (global.f, "/Times-Roman findfont 24 scalefont setfont\n");
-          fprintf (global.f, "/rightshow { /s exch def s stringwidth pop -1 mul 0 rmoveto s show } def\n");
-          fprintf (global.f, "/y 72 9 mul def /toc { 100 y moveto show /y y 24 sub def } bind def\n");
-          fprintf (global.f, "/tocp { /y y 12 sub def 90 y moveto rightshow } bind def\n");
-
-          fprintf (global.f, "30 30 moveto (%s) show\n", PCB->Filename);
-          fprintf (global.f, "(%d.) tocp\n", global.pagecount);
-          fprintf (global.f, "(Table of Contents \\(This Page\\)) toc\n" );
-          fprintf (global.f, "(Created on %s) toc\n", asctime (localtime (&currenttime)));
-          fprintf (global.f, "( ) tocp\n" );
-        }
-
-      fprintf (global.f, "(%d.) tocp\n", global.pagecount);
-      fprintf (global.f, "(%s) toc\n", name);
-      return false;
-    }
-
-  /* If there was a previous page, flush it out */
-  if (global.pagecount > 1)
-    fprintf (global.f, "showpage\n");
-
-  if (global.multi_file)
-    {
-      if (global.f)
-        {
-          ps_end_file (global.f);
-          fclose (global.f);
-        }
-      global.f = psopen (global.filename, layer_type_to_file_name (idx, FNS_fixed));
-      if (!global.f)
-      {
-        perror (global.filename);
-        return false;
-      }
-
-      ps_start_file (global.f);
-    }
-
-  /*
-   * %%Page DSC comment marks the beginning of the PostScript
-   * language instructions that describe a particular
-   * page. %%Page: requires two arguments: a page label and a
-   * sequential page number. The label may be anything, but the
-   * ordinal page number must reflect the position of that page in
-   * the body of the PostScript file and must start with 1, not 0.
-   */
-  fprintf (global.f, "%%%%Page: %s %d\n", layer_type_to_file_name (idx, FNS_fixed), global.pagecount);
-
-  if (global.mirror)
-    mirror_this = !mirror_this;
-
-  if (global.automirror &&
-      ((idx >= 0 && group == GetLayerGroupNumberByNumber (solder_silk_layer)) ||
-       (idx < 0 && SL_SIDE (idx) == SL_BOTTOM_SIDE)))
-    mirror_this = !mirror_this;
-
-  fprintf (global.f, "/Helvetica findfont 10 scalefont setfont\n");
-  if (global.legend)
-    {
-      fprintf (global.f, "30 30 moveto (%s) show\n", PCB->Filename);
-      fprintf (global.f, "30 41 moveto (%s%s%s) show\n",
-               PCB->Name != NULL ? PCB->Name : "",
-               PCB->Name != NULL ? ", "      : "",
-               layer_type_to_file_name (idx, FNS_fixed));
-
-      if (mirror_this)
-        fprintf (global.f, "( \\(mirrored\\)) show\n");
-
-      if (global.fillpage)
-        fprintf (global.f, "(, not to scale) show\n");
-      else
-        fprintf (global.f, "(, scale = 1:%.3f) show\n", global.scale_factor);
-    }
-  fprintf (global.f, "newpath\n");
-
-  pcb_fprintf (global.f, "72 72 scale %mi %mi translate\n",
-               global.media_width / 2, global.media_height / 2);
-
-  boffset = global.media_height / 2;
-  if (PCB->MaxWidth > PCB->MaxHeight)
-    {
-      fprintf (global.f, "90 rotate\n");
-      boffset = global.media_width / 2;
-      fprintf (global.f, "%g %g scale %% calibration\n", global.calibration_y, global.calibration_x);
-    }
-  else
-    fprintf (global.f, "%g %g scale %% calibration\n", global.calibration_x, global.calibration_y);
-
-  if (mirror_this)
-    fprintf (global.f, "1 -1 scale\n");
-
-  fprintf (global.f, "%g dup neg scale\n",
-           (SL_TYPE (idx) == SL_FAB) ? 1.0 : global.scale_factor);
-  pcb_fprintf (global.f, "%mi %mi translate\n", -PCB->MaxWidth / 2, -PCB->MaxHeight / 2);
-
-  /* Keep the drill list from falling off the left edge of the paper,
-   * even if it means some of the board falls off the right edge.
-   * If users don't want to make smaller boards, or use fewer drill
-   * sizes, they can always ignore this sheet. */
-  if (SL_TYPE (idx) == SL_FAB) {
-    Coord natural = boffset - MIL_TO_COORD(500) - PCB->MaxHeight / 2;
-    Coord needed  = PrintFab_overhang ();
-    pcb_fprintf (global.f, "%% PrintFab overhang natural %mi, needed %mi\n", natural, needed);
-    if (needed > natural)
-      pcb_fprintf (global.f, "0 %mi translate\n", needed - natural);
-  }
-
-  if (global.invert)
-    {
-      fprintf (global.f, "/gray { 1 exch sub setgray } bind def\n");
-      fprintf (global.f,
-               "/rgb { 1 1 3 { pop 1 exch sub 3 1 roll } for setrgbcolor } bind def\n");
-    }
-  else
-    {
-      fprintf (global.f, "/gray { setgray } bind def\n");
-      fprintf (global.f, "/rgb { setrgbcolor } bind def\n");
-    }
-
-  if ((global.outline && !global.outline_layer) || global.invert)
-    {
-      pcb_fprintf (global.f,
-                   "0 setgray 0 setlinewidth 0 0 moveto 0 "
-                   "%mi lineto %mi %mi lineto %mi 0 lineto closepath %s\n",
-                   PCB->MaxHeight, PCB->MaxWidth, PCB->MaxHeight, PCB->MaxWidth,
-                   global.invert ? "fill" : "stroke");
-    }
-
-  if (global.align_marks)
-    {
-      corner (global.f, 0, 0, -1, -1);
-      corner (global.f, PCB->MaxWidth, 0, 1, -1);
-      corner (global.f, PCB->MaxWidth, PCB->MaxHeight, 1, 1);
-      corner (global.f, 0, PCB->MaxHeight, -1, 1);
-    }
-
-  global.linewidth = -1;
-  use_gc (NULL);  /* reset static vars */
-
-  fprintf (global.f,
-          "/ts 1 def\n"
-          "/ty ts neg def /tx 0 def /Helvetica findfont ts scalefont setfont\n"
-          "/t { moveto lineto stroke } bind def\n"
-          "/dr { /y2 exch def /x2 exch def /y1 exch def /x1 exch def\n"
-          "      x1 y1 moveto x1 y2 lineto x2 y2 lineto x2 y1 lineto closepath stroke } bind def\n"
-          "/r { /y2 exch def /x2 exch def /y1 exch def /x1 exch def\n"
-          "     x1 y1 moveto x1 y2 lineto x2 y2 lineto x2 y1 lineto closepath fill } bind def\n"
-          "/c { 0 360 arc fill } bind def\n"
-          "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
-  if (global.drill_helper)
-    pcb_fprintf (global.f,
-                "/dh { gsave %mi setlinewidth 0 gray %mi 0 360 arc stroke grestore} bind def\n",
-                (Coord) MIN_PINORVIAHOLE, (Coord) (MIN_PINORVIAHOLE * 3 / 2));
-#if 0
-  /* Try to outsmart ps2pdf's heuristics for page rotation, by putting
-   * text on all pages -- even if that text is blank */
-  if (SL_TYPE (idx) != SL_FAB)
-    fprintf (global.f,
-	     "gsave tx ty translate 1 -1 scale 0 0 moveto (Layer %s) show grestore newpath /ty ty ts sub def\n",
-	     name);
-  else
-    fprintf (global.f, "gsave tx ty translate 1 -1 scale 0 0 moveto ( ) show grestore newpath /ty ty ts sub def\n");
-#endif
-
-  /* If we're printing a layer other than the outline layer, and
-     we want to "print outlines", and we have an outline layer,
-     print the outline layer on this layer also.  */
-  if (global.outline &&
-      global.outline_layer != NULL &&
-      global.outline_layer != PCB->Data->Layer+idx &&
-      strcmp (name, "outline") != 0 &&
-      strcmp (name, "route") != 0)
-    DrawLayer (global.outline_layer, NULL);
-
-  return true;
-}
-
 void
 ps_expose (void)
 {
@@ -1002,6 +775,234 @@ ps_parse_arguments (int *argc, char ***argv)
 {
   hid_register_attributes (ps_attribute_list, NUM_OPTIONS);
   hid_parse_command_line (argc, argv);
+}
+
+static void
+corner (FILE *fh, Coord x, Coord y, int dx, int dy)
+{
+  Coord len   = MIL_TO_COORD (2000);
+  Coord len2  = MIL_TO_COORD (200);
+  Coord thick = 0;
+  /*
+   * Originally 'thick' used thicker lines.  Currently is uses
+   * Postscript's "device thin" line - i.e. zero width means one
+   * device pixel.  The code remains in case you want to make them
+   * thicker - it needs to offset everything so that the *edge* of the
+   * thick line lines up with the edge of the board, not the *center*
+   * of the thick line.
+   */
+
+  pcb_fprintf (fh, "gsave %mi setlinewidth %mi %mi translate %d %d scale\n",
+               thick * 2, x, y, dx, dy);
+  pcb_fprintf (fh, "%mi %mi moveto %mi %mi %mi 0 90 arc %mi %mi lineto\n",
+               len, thick, thick, thick, len2 + thick, thick, len);
+  if (dx < 0 && dy < 0)
+    pcb_fprintf (fh, "%mi %mi moveto 0 %mi rlineto\n", len2 * 2 + thick, thick, -len2);
+  fprintf (fh, "stroke grestore\n");
+}
+
+static bool
+set_layer (const char *name, int group)
+{
+  double boffset;
+  int mirror_this = 0;
+
+  int idx = (group >= 0 && group < max_group)
+            ? PCB->LayerGroups.Entries[group][0]
+            : group;
+  if (name == 0)
+    name = PCB->Data->Layer[idx].Name;
+
+  global.is_drill = (SL_TYPE (idx) == SL_PDRILL || SL_TYPE (idx) == SL_UDRILL);
+  global.is_mask  = (SL_TYPE (idx) == SL_MASK);
+  global.is_assy  = (SL_TYPE (idx) == SL_ASSY);
+  global.is_copper = (SL_TYPE (idx) == 0);
+  global.is_paste  = (SL_TYPE (idx) == SL_PASTE);
+
+  global.pagecount ++;
+
+  if (global.doing_toc)
+    {
+      if (global.pagecount == 1)
+        {
+          time_t currenttime = time (NULL);
+        /* %%Page DSC requires both a label and an ordinal */
+          fprintf (global.f, "%%%%Page: TableOfContents %d\n", global.pagecount);
+          fprintf (global.f, "/Times-Roman findfont 24 scalefont setfont\n");
+          fprintf (global.f, "/rightshow { /s exch def s stringwidth pop -1 mul 0 rmoveto s show } def\n");
+          fprintf (global.f, "/y 72 9 mul def /toc { 100 y moveto show /y y 24 sub def } bind def\n");
+          fprintf (global.f, "/tocp { /y y 12 sub def 90 y moveto rightshow } bind def\n");
+
+          fprintf (global.f, "30 30 moveto (%s) show\n", PCB->Filename);
+          fprintf (global.f, "(%d.) tocp\n", global.pagecount);
+          fprintf (global.f, "(Table of Contents \\(This Page\\)) toc\n" );
+          fprintf (global.f, "(Created on %s) toc\n", asctime (localtime (&currenttime)));
+          fprintf (global.f, "( ) tocp\n" );
+        }
+
+      fprintf (global.f, "(%d.) tocp\n", global.pagecount);
+      fprintf (global.f, "(%s) toc\n", name);
+      return false;
+    }
+
+  /* If there was a previous page, flush it out */
+  if (global.pagecount > 1)
+    fprintf (global.f, "showpage\n");
+
+  if (global.multi_file)
+    {
+      if (global.f)
+        {
+          ps_end_file (global.f);
+          fclose (global.f);
+        }
+      global.f = psopen (global.filename, layer_type_to_file_name (idx, FNS_fixed));
+      if (!global.f)
+      {
+        perror (global.filename);
+        return false;
+      }
+
+      ps_start_file (global.f);
+    }
+
+  /*
+   * %%Page DSC comment marks the beginning of the PostScript
+   * language instructions that describe a particular
+   * page. %%Page: requires two arguments: a page label and a
+   * sequential page number. The label may be anything, but the
+   * ordinal page number must reflect the position of that page in
+   * the body of the PostScript file and must start with 1, not 0.
+   */
+  fprintf (global.f, "%%%%Page: %s %d\n", layer_type_to_file_name (idx, FNS_fixed), global.pagecount);
+
+  if (global.mirror)
+    mirror_this = !mirror_this;
+
+  if (global.automirror &&
+      ((idx >= 0 && group == GetLayerGroupNumberByNumber (solder_silk_layer)) ||
+       (idx < 0 && SL_SIDE (idx) == SL_BOTTOM_SIDE)))
+    mirror_this = !mirror_this;
+
+  fprintf (global.f, "/Helvetica findfont 10 scalefont setfont\n");
+  if (global.legend)
+    {
+      fprintf (global.f, "30 30 moveto (%s) show\n", PCB->Filename);
+      fprintf (global.f, "30 41 moveto (%s%s%s) show\n",
+               PCB->Name != NULL ? PCB->Name : "",
+               PCB->Name != NULL ? ", "      : "",
+               layer_type_to_file_name (idx, FNS_fixed));
+
+      if (mirror_this)
+        fprintf (global.f, "( \\(mirrored\\)) show\n");
+
+      if (global.fillpage)
+        fprintf (global.f, "(, not to scale) show\n");
+      else
+        fprintf (global.f, "(, scale = 1:%.3f) show\n", global.scale_factor);
+    }
+  fprintf (global.f, "newpath\n");
+
+  pcb_fprintf (global.f, "72 72 scale %mi %mi translate\n",
+               global.media_width / 2, global.media_height / 2);
+
+  boffset = global.media_height / 2;
+  if (PCB->MaxWidth > PCB->MaxHeight)
+    {
+      fprintf (global.f, "90 rotate\n");
+      boffset = global.media_width / 2;
+      fprintf (global.f, "%g %g scale %% calibration\n", global.calibration_y, global.calibration_x);
+    }
+  else
+    fprintf (global.f, "%g %g scale %% calibration\n", global.calibration_x, global.calibration_y);
+
+  if (mirror_this)
+    fprintf (global.f, "1 -1 scale\n");
+
+  fprintf (global.f, "%g dup neg scale\n",
+           (SL_TYPE (idx) == SL_FAB) ? 1.0 : global.scale_factor);
+  pcb_fprintf (global.f, "%mi %mi translate\n", -PCB->MaxWidth / 2, -PCB->MaxHeight / 2);
+
+  /* Keep the drill list from falling off the left edge of the paper,
+   * even if it means some of the board falls off the right edge.
+   * If users don't want to make smaller boards, or use fewer drill
+   * sizes, they can always ignore this sheet. */
+  if (SL_TYPE (idx) == SL_FAB) {
+    Coord natural = boffset - MIL_TO_COORD(500) - PCB->MaxHeight / 2;
+    Coord needed  = PrintFab_overhang ();
+    pcb_fprintf (global.f, "%% PrintFab overhang natural %mi, needed %mi\n", natural, needed);
+    if (needed > natural)
+      pcb_fprintf (global.f, "0 %mi translate\n", needed - natural);
+  }
+
+  if (global.invert)
+    {
+      fprintf (global.f, "/gray { 1 exch sub setgray } bind def\n");
+      fprintf (global.f,
+               "/rgb { 1 1 3 { pop 1 exch sub 3 1 roll } for setrgbcolor } bind def\n");
+    }
+  else
+    {
+      fprintf (global.f, "/gray { setgray } bind def\n");
+      fprintf (global.f, "/rgb { setrgbcolor } bind def\n");
+    }
+
+  if ((global.outline && !global.outline_layer) || global.invert)
+    {
+      pcb_fprintf (global.f,
+                   "0 setgray 0 setlinewidth 0 0 moveto 0 "
+                   "%mi lineto %mi %mi lineto %mi 0 lineto closepath %s\n",
+                   PCB->MaxHeight, PCB->MaxWidth, PCB->MaxHeight, PCB->MaxWidth,
+                   global.invert ? "fill" : "stroke");
+    }
+
+  if (global.align_marks)
+    {
+      corner (global.f, 0, 0, -1, -1);
+      corner (global.f, PCB->MaxWidth, 0, 1, -1);
+      corner (global.f, PCB->MaxWidth, PCB->MaxHeight, 1, 1);
+      corner (global.f, 0, PCB->MaxHeight, -1, 1);
+    }
+
+  global.linewidth = -1;
+  use_gc (NULL);  /* reset static vars */
+
+  fprintf (global.f,
+          "/ts 1 def\n"
+          "/ty ts neg def /tx 0 def /Helvetica findfont ts scalefont setfont\n"
+          "/t { moveto lineto stroke } bind def\n"
+          "/dr { /y2 exch def /x2 exch def /y1 exch def /x1 exch def\n"
+          "      x1 y1 moveto x1 y2 lineto x2 y2 lineto x2 y1 lineto closepath stroke } bind def\n"
+          "/r { /y2 exch def /x2 exch def /y1 exch def /x1 exch def\n"
+          "     x1 y1 moveto x1 y2 lineto x2 y2 lineto x2 y1 lineto closepath fill } bind def\n"
+          "/c { 0 360 arc fill } bind def\n"
+          "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
+  if (global.drill_helper)
+    pcb_fprintf (global.f,
+                "/dh { gsave %mi setlinewidth 0 gray %mi 0 360 arc stroke grestore} bind def\n",
+                (Coord) MIN_PINORVIAHOLE, (Coord) (MIN_PINORVIAHOLE * 3 / 2));
+#if 0
+  /* Try to outsmart ps2pdf's heuristics for page rotation, by putting
+   * text on all pages -- even if that text is blank */
+  if (SL_TYPE (idx) != SL_FAB)
+    fprintf (global.f,
+	     "gsave tx ty translate 1 -1 scale 0 0 moveto (Layer %s) show grestore newpath /ty ty ts sub def\n",
+	     name);
+  else
+    fprintf (global.f, "gsave tx ty translate 1 -1 scale 0 0 moveto ( ) show grestore newpath /ty ty ts sub def\n");
+#endif
+
+  /* If we're printing a layer other than the outline layer, and
+     we want to "print outlines", and we have an outline layer,
+     print the outline layer on this layer also.  */
+  if (global.outline &&
+      global.outline_layer != NULL &&
+      global.outline_layer != PCB->Data->Layer+idx &&
+      strcmp (name, "outline") != 0 &&
+      strcmp (name, "route") != 0)
+    DrawLayer (global.outline_layer, NULL);
+
+  return true;
 }
 
 static hidGC
