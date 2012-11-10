@@ -1,7 +1,7 @@
-Bottom: c654b8077ff654adbdcdafc9dabe4095f1346a63
-Top:    0fd92f78af32c21feb179b48c265eee8c242a716
+Bottom: 7d8b7396b3a47acd07eeebcc7baf35360bd47709
+Top:    7d8b7396b3a47acd07eeebcc7baf35360bd47709
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-10 16:54:10 -0500
+Date:   2012-11-10 17:20:13 -0500
 
 hid/gtk: Add feature to force an immediate redraw if framerate is low
 
@@ -15,50 +15,4 @@ mainloop is not hit until the auto-routing operation is fully complete.
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 45b9b72..c66ce49 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -48,6 +48,7 @@ typedef struct render_priv {
-   int subcomposite_stencil_bit;
-   char *current_colorname;
-   double current_alpha_mult;
-+  GTimer *time_since_expose;
- 
-   /* Feature for leading the user to a particular location */
-   guint lead_user_timeout;
-@@ -592,10 +593,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
-   ghid_invalidate_all ();
- }
- 
-+#define MAX_ELAPSED (50. / 1000.) /* 50ms */
- void
- ghid_invalidate_all ()
- {
-+  render_priv *priv = gport->render_priv;
-+  double elapsed = g_timer_elapsed (priv->time_since_expose, NULL);
-+
-   ghid_draw_area_update (gport, NULL);
-+
-+  if (elapsed > MAX_ELAPSED)
-+    gdk_window_process_all_updates ();
- }
- 
- void
-@@ -753,6 +761,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
- 
-   port->render_priv = priv = g_new0 (render_priv, 1);
- 
-+  priv->time_since_expose = g_timer_new ();
-+
-   gtk_gl_init(argc, argv);
- 
-   /* setup GL-context */
-@@ -939,6 +949,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
- 
-   ghid_end_drawing (port);
- 
-+  g_timer_start (priv->time_since_expose);
-+
-   return FALSE;
- }
+
