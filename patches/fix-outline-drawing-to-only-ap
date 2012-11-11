@@ -5,12 +5,14 @@ Date:   2012-11-10 20:43:13 -0500
 
 Fix outline drawing to only apply on copper layers
 
-This matches comments in the code, and fixes (removes) outline drawing
-on the solder mask prints.
+This matches the old comments in the code, and fixes (removes) outline
+drawing on the solder mask prints.
 
 This partially reverts commit 294494e56695251e63c0da9f243d6f59447f1c9f
+"Fix PS rect/outline logic", which changed the logic, and
+commit d2458383a60b670ad1c42163ac24fcc63fcab457 where I changed
+the comment to match the code.
 
-"Fix PS rect/outline logic"
 
 
 ---
