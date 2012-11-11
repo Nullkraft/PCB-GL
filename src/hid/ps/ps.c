@@ -1000,8 +1000,8 @@ ps_set_layer (const char *name, int group, int empty)
       global.is_copper &&
       global.outline_layer != NULL &&
       global.outline_layer != PCB->Data->Layer+idx &&
-      strcmp (name, "outline") &&
-      strcmp (name, "route")
+      strcmp (name, "outline") != 0 &&
+      strcmp (name, "route") != 0
       )
     {
       dapi->draw_layer (global.outline_layer, &global.region, NULL);
