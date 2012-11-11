@@ -2008,7 +2008,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
              port->bg_color.green / 65535.,
              port->bg_color.blue / 65535.);
 
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
 
   /* Setup stenciling */
