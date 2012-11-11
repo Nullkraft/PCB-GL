@@ -1,0 +1,24 @@
+Bottom: c1d2a82e96998a0a95ebfe5c64bb294609dc4807
+Top:    ef1fa9ffda8b19e3240b7305cef3708adf4e50ea
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-10 23:07:32 -0500
+
+Refresh of fix-outline-drawing-to-only-ap
+
+---
+
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index bbc5524..6339408 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -993,8 +993,8 @@ ps_set_layer (const char *name, int group, int empty)
+     fprintf (global.f, "gsave tx ty translate 1 -1 scale 0 0 moveto ( ) show grestore newpath /ty ty ts sub def\n");
+ #endif
+ 
+-  /* If we're printing a layer other than the outline layer, and
+-     we want to "print outlines", and we have an outline layer,
++  /* If we're printing a copper layer other than the outline layer,
++     and we want to "print outlines", and we have an outline layer,
+      print the outline layer on this layer also.  */
+   if (global.outline &&
+       global.is_copper &&
