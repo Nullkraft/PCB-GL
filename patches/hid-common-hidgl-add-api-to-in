@@ -1,4 +1,4 @@
-Bottom: efe4916fcbc7f0bc27eade3f57c946daa6c13a2b
+Bottom: b352af05d3e4d4214c18501745b91bb28d391c16
 Top:    b352af05d3e4d4214c18501745b91bb28d391c16
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-10 23:27:34 -0500
@@ -11,15 +11,4 @@ saving lots of separate calls being made by its callers.
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3ab4c40..1fb6ccc 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -2008,7 +2008,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-              port->bg_color.green / 65535.,
-              port->bg_color.blue / 65535.);
- 
--  hidgl_init_triangle_array (&buffer);
-   ghid_invalidate_current_gc ();
- 
-   /* Setup stenciling */
+
