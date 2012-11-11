@@ -1,7 +1,7 @@
-Bottom: 963f26399abfc788cc23656fb012261005874041
-Top:    4a9b49f4f655abe52193a061c628d6ace77faa68
+Bottom: 7c904aa7780cdffbc7aceb4c128eb23c2c0dbc04
+Top:    72a3940c9325acf05aad00410a7b0b9f4fa3f561
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-10 20:43:12 -0500
+Date:   2012-11-10 23:08:47 -0500
 
 Demo of exporter specific export routine
 
@@ -934,7 +934,7 @@ index 939886a..eafc8d0 100644
  
    ghid_draw_grid (&region);
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 4bc02cc..4f87a12 100644
+index 6339408..49195a0 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -31,7 +31,7 @@
@@ -1168,7 +1168,7 @@ index 4bc02cc..4f87a12 100644
  
    if (global.doing_toc)
      {
-@@ -1003,7 +1030,7 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -1004,7 +1031,7 @@ ps_set_layer (const char *name, int group, int empty)
        strcmp (name, "route") != 0
        )
      {
@@ -1177,7 +1177,7 @@ index 4bc02cc..4f87a12 100644
      }
  
    return 1;
-@@ -1494,7 +1521,6 @@ void ps_ps_init (HID *hid)
+@@ -1495,7 +1522,6 @@ void ps_ps_init (HID *hid)
    hid->get_export_options = ps_get_export_options;
    hid->do_export          = ps_do_export;
    hid->parse_arguments    = ps_parse_arguments;
@@ -1185,7 +1185,7 @@ index 4bc02cc..4f87a12 100644
    hid->make_gc            = ps_make_gc;
    hid->destroy_gc         = ps_destroy_gc;
    hid->use_mask           = ps_use_mask;
-@@ -1508,7 +1534,6 @@ void ps_ps_init (HID *hid)
+@@ -1509,7 +1535,6 @@ void ps_ps_init (HID *hid)
    hid->draw_rect          = ps_draw_rect;
    hid->fill_circle        = ps_fill_circle;
    hid->fill_polygon       = ps_fill_polygon;
