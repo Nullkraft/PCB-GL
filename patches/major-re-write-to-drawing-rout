@@ -1,5 +1,5 @@
 Bottom: 753de4ca8282821bdb1e708b723a4788d124271c
-Top:    69e3dcf28287801f30ffcf0042088956542177ff
+Top:    57ab8ad9fdc1e5dafc80dabf43b1209a830f6b7a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-10 23:53:34 -0500
 
@@ -76,7 +76,7 @@ index 7064946..e0d522f 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2c445de..c9e8004 100644
+index 2c445de..c4bf4e5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -1115,7 +1115,7 @@ index 2c445de..c9e8004 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1069,17 +1950,50 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1069,17 +1950,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1125,7 +1125,6 @@ index 2c445de..c9e8004 100644
 -  glVertex3i (PCB->MaxWidth, PCB->MaxHeight, -50);
 -  glVertex3i (0,             PCB->MaxHeight, -50);
 -  glEnd ();
-+  hidgl_init_triangle_array (&buffer);
 +  ghid_invalidate_current_gc ();
 +
 +  /* Setup stenciling */
