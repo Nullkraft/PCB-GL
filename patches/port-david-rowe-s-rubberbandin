@@ -1,5 +1,5 @@
 Bottom: aebf5c64c1b3d24f7bb3aa6ef0965276e4610f37
-Top:    c97e48b61744efc6bdd63bf987379c6babd49714
+Top:    3a3a2ee6a9081bae707864bdf508bd01c80f9040
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-02-01 21:58:58 +0000
 
@@ -93,18 +93,19 @@ index 9ed7caa..fba6cff 100644
    ptr->Line = Line;
    ptr->MovedPoint = MovedPoint;
 diff --git a/src/crosshair.c b/src/crosshair.c
-index f0526b8..f8d462f 100644
+index f0526b8..263c585 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -44,6 +44,7 @@
+@@ -44,13 +44,17 @@
  #include "line.h"
  #include "misc.h"
  #include "mymem.h"
 +#include "rubberband.h"
  #include "search.h"
  #include "polygon.h"
++#include "pcb-printf.h"
  
-@@ -51,6 +52,8 @@
+ #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
  
@@ -113,7 +114,7 @@ index f0526b8..f8d462f 100644
  typedef struct
  {
    int x, y;
-@@ -375,8 +378,10 @@ XORDrawMoveOrCopyObject (void)
+@@ -375,8 +379,10 @@ XORDrawMoveOrCopyObject (void)
  {
    RubberbandType *ptr;
    Cardinal i;
@@ -125,7 +126,7 @@ index f0526b8..f8d462f 100644
  
    switch (Crosshair.AttachedObject.Type)
      {
-@@ -390,10 +395,18 @@ XORDrawMoveOrCopyObject (void)
+@@ -390,10 +396,18 @@ XORDrawMoveOrCopyObject (void)
      case LINE_TYPE:
        {
  	LineType *line = (LineType *) Crosshair.AttachedObject.Ptr2;
@@ -147,7 +148,7 @@ index f0526b8..f8d462f 100644
  	break;
        }
  
-@@ -515,9 +528,14 @@ XORDrawMoveOrCopyObject (void)
+@@ -515,9 +529,14 @@ XORDrawMoveOrCopyObject (void)
  	      point1 = &ptr->Line->Point1;
  	      point2 = &ptr->Line->Point2;
  	    }
@@ -575,7 +576,7 @@ index 84c4a45..5a75ed8 100644
     {"Auto-zero delta measurements" checked=localref Display(ToggleLocalRef)}
     {"New lines, arcs clear polygons" checked=clearnew Display(ToggleClearLine)}
 diff --git a/src/rubberband.c b/src/rubberband.c
-index cd2c4f6..d01926c 100644
+index cd2c4f6..398c072 100644
 --- a/src/rubberband.c
 +++ b/src/rubberband.c
 @@ -32,6 +32,7 @@
@@ -586,7 +587,13 @@ index cd2c4f6..d01926c 100644
  #include <stdlib.h>
  #ifdef HAVE_STRING_H
  #include <string.h>
-@@ -57,6 +58,8 @@
+@@ -52,11 +53,14 @@
+ #include "rubberband.h"
+ #include "rtree.h"
+ #include "search.h"
++#include "pcb-printf.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
  
@@ -595,7 +602,7 @@ index cd2c4f6..d01926c 100644
  /* ---------------------------------------------------------------------------
   * some local prototypes
   */
-@@ -70,6 +73,8 @@ static void CheckPolygonForRubberbandConnection (LayerType *,
+@@ -70,6 +74,8 @@ static void CheckPolygonForRubberbandConnection (LayerType *,
  						 PolygonType *);
  static void CheckLinePointForRat (LayerType *, PointType *);
  static int rubber_callback (const BoxType * b, void *cl);
@@ -604,7 +611,7 @@ index cd2c4f6..d01926c 100644
  
  struct rubber_info
  {
-@@ -80,6 +85,17 @@ struct rubber_info
+@@ -80,6 +86,17 @@ struct rubber_info
    LayerType *layer;
  };
  
@@ -616,13 +623,13 @@ index cd2c4f6..d01926c 100644
 +  BoxType      box;
 +  LayerType   *layer;
 +  int          nAttached;
-+  LineTypeP   *AttachedLine;
++  LineType    *AttachedLine;
 +};
 +
  static int
  rubber_callback (const BoxType * b, void *cl)
  {
-@@ -578,3 +594,404 @@ LookupRatLines (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+@@ -578,3 +595,404 @@ LookupRatLines (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
        break;
      }
  }
