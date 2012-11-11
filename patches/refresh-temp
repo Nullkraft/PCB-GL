@@ -1,0 +1,42 @@
+Bottom: c97e48b61744efc6bdd63bf987379c6babd49714
+Top:    3a3a2ee6a9081bae707864bdf508bd01c80f9040
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-10 21:15:52 -0500
+
+Refresh of port-david-rowe-s-rubberbandin
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index f8d462f..263c585 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -47,6 +47,7 @@
+ #include "rubberband.h"
+ #include "search.h"
+ #include "polygon.h"
++#include "pcb-printf.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+diff --git a/src/rubberband.c b/src/rubberband.c
+index d01926c..398c072 100644
+--- a/src/rubberband.c
++++ b/src/rubberband.c
+@@ -53,6 +53,7 @@
+ #include "rubberband.h"
+ #include "rtree.h"
+ #include "search.h"
++#include "pcb-printf.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -93,7 +94,7 @@ struct AttachedInfo
+   BoxType      box;
+   LayerType   *layer;
+   int          nAttached;
+-  LineTypeP   *AttachedLine;
++  LineType    *AttachedLine;
+ };
+ 
+ static int
