@@ -1,0 +1,21 @@
+Bottom: 69e3dcf28287801f30ffcf0042088956542177ff
+Top:    57ab8ad9fdc1e5dafc80dabf43b1209a830f6b7a
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-11 00:02:15 -0500
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index c9e8004..c4bf4e5 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1950,7 +1950,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+              port->bg_color.green / 65535.,
+              port->bg_color.blue / 65535.);
+ 
+-  hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+ 
+   /* Setup stenciling */
