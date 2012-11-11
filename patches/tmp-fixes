@@ -1,5 +1,5 @@
-Bottom: ea982dcbee5936daeda6492810167e6e420e16a9
-Top:    7e85544cadbf04074a1f88484645f993dcb5544a
+Bottom: ef1fa9ffda8b19e3240b7305cef3708adf4e50ea
+Top:    d46389d161f0b273f70f9f4421577a0475c1750a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-10 20:43:13 -0500
 
@@ -50,14 +50,14 @@ index 279577d..2f0a5d6 100644
        if (IsLayerEmpty (layer))
          {
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 8927fa4..f6157ce 100644
+index 6339408..e2d673a 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -997,7 +997,6 @@ ps_set_layer (const char *name, int group, int empty)
-      we want to "print outlines", and we have an outline layer,
+      and we want to "print outlines", and we have an outline layer,
       print the outline layer on this layer also.  */
    if (global.outline &&
 -      global.is_copper &&
        global.outline_layer != NULL &&
        global.outline_layer != PCB->Data->Layer+idx &&
-       strcmp (name, "outline") &&
+       strcmp (name, "outline") != 0 &&
