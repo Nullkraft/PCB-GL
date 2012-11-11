@@ -53,6 +53,7 @@
 #include "rubberband.h"
 #include "rtree.h"
 #include "search.h"
+#include "pcb-printf.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -93,7 +94,7 @@ struct AttachedInfo
   BoxType      box;
   LayerType   *layer;
   int          nAttached;
-  LineTypeP   *AttachedLine;
+  LineType    *AttachedLine;
 };
 
 static int
