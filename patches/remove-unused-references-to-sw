@@ -1,5 +1,5 @@
 Bottom: d0f8482bd49f710a743467ce6b2db9aec334dd6a
-Top:    d0f8482bd49f710a743467ce6b2db9aec334dd6a
+Top:    c864730768c48b7ade42d27adf1cbdfe013d2306
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-13 23:57:20 +0000
 
@@ -8,4 +8,32 @@ Remove unused references to SwitchDrawingWindow()
 
 ---
 
-
+diff --git a/src/djopt.c b/src/djopt.c
+index 42f2c34..682d662 100644
+--- a/src/djopt.c
++++ b/src/djopt.c
+@@ -2918,11 +2918,6 @@ ActionDJopt (int argc, char **argv, Coord x, Coord y)
+   int layn, saved = 0;
+   corner_s *c;
+ 
+-#ifdef ENDIF
+-  SwitchDrawingWindow (PCB->Zoom, Output.drawing_area->window,
+-		       Settings.ShowSolderSide, false);
+-#endif
+-
+   hid_action("Busy");
+ 
+   lines = 0;
+diff --git a/src/draw.h b/src/draw.h
+index c7ffa97..fc19b1a 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -32,8 +32,6 @@
+ 
+ #include "global.h"
+ 
+-/*bool	SwitchDrawingWindow(double, GdkDrawable *, gboolean, gboolean);*/
+-
+ void Draw (void);
+ void Redraw (void);
+ void DrawVia (PinType *);
