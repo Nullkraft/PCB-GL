@@ -1,5 +1,5 @@
-Bottom: f732980cbadb489d5c2596bbc7d9050ce5507a46
-Top:    9e70be1b8803b9af2b130c59cfff4b3996e77e05
+Bottom: 8ea1374737fb621d017ba14b9c00f0d4fd7b08d9
+Top:    0be5fd3abda0cd5edfc96dfbe01edc9fe60b8934
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 12:47:44 +0100
 
@@ -26,7 +26,7 @@ index 8afd735..327c2b0 100644
  
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9f67180..e9c1f4e 100644
+index 731d3b5..d8fdafe 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -818,7 +818,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
@@ -38,7 +38,7 @@ index 9f67180..e9c1f4e 100644
  }
  
  void
-@@ -908,8 +908,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -907,8 +907,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
@@ -50,10 +50,10 @@ index 9f67180..e9c1f4e 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 2dba77c..085abaf 100644
+index c5cf97a..c8fa02f 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -1503,7 +1503,7 @@ void ps_ps_init (HID *hid)
+@@ -1504,7 +1504,7 @@ void ps_ps_init (HID *hid)
    hid->draw_rect          = ps_draw_rect;
    hid->fill_circle        = ps_fill_circle;
    hid->fill_polygon       = ps_fill_polygon;
