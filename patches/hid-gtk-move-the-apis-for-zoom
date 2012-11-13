@@ -1,5 +1,5 @@
-Bottom: 990db8c5c1f2d421dd31f3a2f7ef1d4d91050832
-Top:    a1545090280958eb23bcbc019887648d6b6f2fd9
+Bottom: 533b85d4aed26b2ac784984d3f9c351aa3e47a4e
+Top:    3d27b1379a2087db5e1a99fbfe3aa3ffcbe29734
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:23 +0100
 
@@ -144,10 +144,10 @@ index 8e6cf22..0ef40b4 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 5)   /* 5fps (in ms) */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e9c1f4e..4306f1a 100644
+index d8fdafe..b0ccd13 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1547,6 +1547,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1550,6 +1550,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
    return true;
  }
  
