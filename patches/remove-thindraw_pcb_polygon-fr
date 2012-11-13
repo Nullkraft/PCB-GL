@@ -1,5 +1,5 @@
-Bottom: 648f4444138acc389c43195e2a6264fef7f103e4
-Top:    35b006d97bccb31477ac2336441937115c44973b
+Bottom: 99745e80392def715969908d7212edb46511a2f1
+Top:    ed8952ed03b34561dbcb470adc4154f1ead8b9a8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 01:26:19 +0100
 
@@ -128,7 +128,7 @@ index d772e18..bb96bd9 100644
    hid->thindraw_pcb_pad =     nogui_thindraw_pcb_pad;
    hid->fill_pcb_pv =          nogui_fill_pcb_pv;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 939886a..9f67180 100644
+index a1c6e5b..731d3b5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -575,20 +575,49 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
@@ -201,7 +201,7 @@ index 939886a..9f67180 100644
  }
  
  void
-@@ -881,7 +909,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -880,7 +908,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
    if (hidgl_stencil_bits() == 0)
@@ -223,10 +223,10 @@ index 88b9360..b09d16b 100644
  
    ghid_hid.calibrate                = ghid_calibrate;
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index d4a3d10..2dba77c 100644
+index 9eb7eb5..c5cf97a 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -1239,7 +1239,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -1240,7 +1240,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
  }
  
  static void
@@ -235,7 +235,7 @@ index d4a3d10..2dba77c 100644
  {
    /* Ignore clip_box, just draw everything */
  
-@@ -1503,7 +1503,7 @@ void ps_ps_init (HID *hid)
+@@ -1504,7 +1504,7 @@ void ps_ps_init (HID *hid)
    hid->draw_rect          = ps_draw_rect;
    hid->fill_circle        = ps_fill_circle;
    hid->fill_polygon       = ps_fill_polygon;

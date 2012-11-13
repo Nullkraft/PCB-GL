@@ -1,5 +1,5 @@
-Bottom: 747d4554de2c9979ee7644ccff0d9921444125d5
-Top:    1605b73831ca1defb9c08e94824387a760004564
+Bottom: d0f8482bd49f710a743467ce6b2db9aec334dd6a
+Top:    143a2a679eb571b26ed6504b2187844ce7532efb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:19:47 +0100
 
@@ -9,7 +9,7 @@ hid/ps: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 31eea9d..d4a3d10 100644
+index 5587347..9eb7eb5 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -30,7 +30,7 @@
@@ -578,7 +578,7 @@ index 31eea9d..d4a3d10 100644
  #if 0
    /* Try to outsmart ps2pdf's heuristics for page rotation, by putting
     * text on all pages -- even if that text is blank */
-@@ -999,13 +999,10 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -1000,13 +1000,10 @@ ps_set_layer (const char *name, int group, int empty)
        global.outline_layer != NULL &&
        global.outline_layer != PCB->Data->Layer+idx &&
        strcmp (name, "outline") != 0 &&
@@ -595,7 +595,7 @@ index 31eea9d..d4a3d10 100644
  }
  
  static hidGC
-@@ -1493,7 +1490,6 @@ void ps_ps_init (HID *hid)
+@@ -1494,7 +1491,6 @@ void ps_ps_init (HID *hid)
    hid->get_export_options = ps_get_export_options;
    hid->do_export          = ps_do_export;
    hid->parse_arguments    = ps_parse_arguments;
