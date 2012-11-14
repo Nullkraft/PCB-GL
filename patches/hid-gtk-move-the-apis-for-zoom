@@ -1,5 +1,5 @@
-Bottom: 754bcafbd7dc2e1d3aa6d6227d8a57edf24cf881
-Top:    6cb66521bcca0c632f09bf56565e314b75627c6b
+Bottom: 1aac419c0aa93144d719ac3c6e5c7ca0e4b7fefb
+Top:    c7edc40ecb3d3d6b398e4a3bc3ac07d5b1c18cb7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 13:35:23 +0100
 
@@ -144,7 +144,7 @@ index 8e6cf22..0ef40b4 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 5)   /* 5fps (in ms) */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d8fdafe..b0ccd13 100644
+index 5043866..9eca6f3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1550,6 +1550,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
@@ -275,7 +275,7 @@ index d8fdafe..b0ccd13 100644
  ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
  {
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index b09d16b..2f24e97 100644
+index 88b9360..ee141a0 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -24,126 +24,6 @@
