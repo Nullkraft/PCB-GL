@@ -418,7 +418,7 @@ per screen pixel, N means @math{2^N} mils per screen pixel, etc.  The
 first variant accepts floating point numbers.  The special value
 "1000" means "zoom to fit"
 
-This value is currently ignored by PCB
+This field is ignored by PCB.
 @end table
 
 %end-doc */
