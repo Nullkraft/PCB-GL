@@ -1,5 +1,5 @@
 Bottom: b0ee408136569761d1b16490abed515ba5c2204b
-Top:    38d8efa5c4871ecc7d53042245a9045be3389f65
+Top:    aef96a9917f4a4cfc4fd070651d25779faa680aa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-14 21:59:49 +0000
 
@@ -214,6 +214,18 @@ index 77fa4d4..e6a95e8 100644
  void ghid_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
  void ghid_draw_arc (hidGC gc, Coord cx, Coord cy, Coord xradius, Coord yradius,
                      Angle start_angle, Angle delta_angle);
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 04d9f6c..17f2b4b 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -4063,7 +4063,6 @@ hid_lesstif_init ()
+   lesstif_hid.set_color               = lesstif_set_color;
+   lesstif_hid.set_line_cap            = lesstif_set_line_cap;
+   lesstif_hid.set_line_width          = lesstif_set_line_width;
+-  lesstif_hid.set_draw_xor            = lesstif_set_draw_xor;
+   lesstif_hid.draw_line               = lesstif_draw_line;
+   lesstif_hid.draw_arc                = lesstif_draw_arc;
+   lesstif_hid.draw_rect               = lesstif_draw_rect;
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
 index 048f476..402e0d0 100644
 --- a/src/hid/nelma/nelma.c
