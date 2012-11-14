@@ -1,7 +1,7 @@
-Bottom: 753de4ca8282821bdb1e708b723a4788d124271c
-Top:    57ab8ad9fdc1e5dafc80dabf43b1209a830f6b7a
+Bottom: 405b53310e6dcbd971bc7aacad4f5d976c385266
+Top:    0590b1b02f4d70d6647faa94c48863bfe50e52f7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-10 23:53:34 -0500
+Date:   2012-11-14 01:27:36 +0000
 
 Major re-write to drawing routines
 
@@ -56,10 +56,10 @@ index 6bef14b..81cda9d 100644
  {
    /*
 diff --git a/src/draw.h b/src/draw.h
-index 7064946..e0d522f 100644
+index ca7723d..79b5115 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -76,4 +76,15 @@ void DrawMask (int side, const BoxType *drawn_area);
+@@ -74,4 +74,15 @@ void DrawMask (int side, const BoxType *drawn_area);
  void DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area);
  void PrintAssembly (int side, const BoxType *drawn_area);
  
