@@ -1,5 +1,5 @@
 Bottom: 066432c464105291dabcdaf7fb7e0cff9e168ad1
-Top:    54ef9ca3b5f1ca0cead35af367732d1081884806
+Top:    c37562012b51295e3ca822eb82e1451181fb6dd4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 01:26:19 +0100
 
@@ -11,7 +11,7 @@ Just pass call the same function for all polygons, let the HID decide.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 3738f6a..25d78d6 100644
+index 3738f6a..53c00a7 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -872,38 +872,8 @@ poly_callback (const BoxType * b, void *cl)
@@ -50,15 +50,15 @@ index 3738f6a..25d78d6 100644
 -           poly.Clipped = poly.Clipped->f)
 -        gui->thindraw_pcb_polygon (Output.fgGC, &poly, i->drawn_area);
 -    }
-+  gui->draw_polygon (Output.fgGC, polygon, i->drawn_area);
++  gui->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
  
    return 1;
  }
 diff --git a/src/hid.h b/src/hid.h
-index 2266b6c..8afd735 100644
+index 2266b6c..cc82222 100644
 --- a/src/hid.h
 +++ b/src/hid.h
-@@ -371,10 +371,8 @@ typedef enum
+@@ -371,10 +371,7 @@ typedef enum
      void (*draw_rect) (hidGC gc_, Coord x1_, Coord y1_, Coord x2_, Coord y2_);
      void (*fill_circle) (hidGC gc_, Coord cx_, Coord cy_, Coord radius_);
      void (*fill_polygon) (hidGC gc_, int n_coords_, Coord *x_, Coord *y_);
@@ -66,13 +66,12 @@ index 2266b6c..8afd735 100644
 -                              const BoxType *clip_box);
 -    void (*thindraw_pcb_polygon) (hidGC gc_, PolygonType *poly,
 -                                  const BoxType *clip_box);
-+    void (*draw_polygon) (hidGC gc_, PolygonType *poly,
-+                          const BoxType *clip_box);
++    void (*draw_pcb_polygon) (hidGC gc_, PolygonType *poly, const BoxType *clip_box);
      void (*fill_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
      void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
      void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 46d3822..75ec4b8 100644
+index 46d3822..862a947 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -140,7 +140,7 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
@@ -80,7 +79,7 @@ index 46d3822..75ec4b8 100644
  
  void
 -common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
-+common_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++common_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
    if (!poly->NoHolesValid)
      {
@@ -90,23 +89,23 @@ index 46d3822..75ec4b8 100644
  {
 -  hid->fill_pcb_polygon     = common_fill_pcb_polygon;
 -  hid->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
-+  hid->draw_polygon         = common_draw_polygon;
++  hid->draw_pcb_polygon     = common_draw_pcb_polygon;
    hid->fill_pcb_pad         = common_fill_pcb_pad;
    hid->thindraw_pcb_pad     = common_thindraw_pcb_pad;
    hid->fill_pcb_pv          = common_fill_pcb_pv;
 diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
-index 8243fe4..cedc958 100644
+index 8243fe4..05bf19d 100644
 --- a/src/hid/common/draw_helpers.h
 +++ b/src/hid/common/draw_helpers.h
 @@ -1,5 +1,4 @@
 -void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
 -                              const BoxType *clip_box);
-+void common_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box);
++void common_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box);
  void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
                                    const BoxType *clip_box);
  void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index d772e18..bb96bd9 100644
+index d772e18..c43a9e0 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -147,7 +147,7 @@ nogui_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
@@ -114,7 +113,7 @@ index d772e18..bb96bd9 100644
  
  static void
 -nogui_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
-+nogui_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++nogui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
    CRASH;
  }
@@ -123,12 +122,12 @@ index d772e18..bb96bd9 100644
    hid->fill_circle =          nogui_fill_circle;
    hid->fill_polygon =         nogui_fill_polygon;
 -  hid->fill_pcb_polygon =     nogui_fill_pcb_polygon;
-+  hid->draw_polygon =         nogui_draw_polygon;
++  hid->draw_pcb_polygon =     nogui_draw_pcb_polygon;
    hid->fill_pcb_pad =         nogui_fill_pcb_pad;
    hid->thindraw_pcb_pad =     nogui_thindraw_pcb_pad;
    hid->fill_pcb_pv =          nogui_fill_pcb_pv;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a1c6e5b..731d3b5 100644
+index a1c6e5b..ab57d87 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -575,20 +575,49 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
@@ -136,7 +135,7 @@ index a1c6e5b..731d3b5 100644
  
  void
 -ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
-+ghid_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++ghid_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
 +  static char *color;
    USE_GC (gc);
@@ -197,7 +196,7 @@ index a1c6e5b..731d3b5 100644
    ghid_hid.end_layer = ghid_end_layer;
 -  ghid_hid.fill_pcb_polygon = ghid_fill_pcb_polygon;
 -  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
-+  ghid_hid.draw_polygon = ghid_draw_polygon;
++  ghid_hid.draw_pcb_polygon = ghid_draw_pcb_polygon;
  }
  
  void
@@ -206,12 +205,12 @@ index a1c6e5b..731d3b5 100644
    /* TODO: We could use the GLU tessellator though */
    if (hidgl_stencil_bits() == 0)
 -    ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
-+    ghid_hid.draw_polygon = common_draw_polygon;
++    ghid_hid.draw_pcb_polygon = common_draw_pcb_polygon;
  
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 9eb7eb5..c5cf97a 100644
+index 9eb7eb5..20347ff 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -1240,7 +1240,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
@@ -219,7 +218,7 @@ index 9eb7eb5..c5cf97a 100644
  
  static void
 -ps_fill_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
-+ps_draw_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
++ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
  {
    /* Ignore clip_box, just draw everything */
  
@@ -228,7 +227,7 @@ index 9eb7eb5..c5cf97a 100644
    hid->fill_circle        = ps_fill_circle;
    hid->fill_polygon       = ps_fill_polygon;
 -  hid->fill_pcb_polygon   = ps_fill_pcb_polygon;
-+  hid->draw_polygon       = ps_draw_polygon;
++  hid->draw_pcb_polygon   = ps_draw_pcb_polygon;
    hid->fill_rect          = ps_fill_rect;
    hid->calibrate          = ps_calibrate;
    hid->set_crosshair      = ps_set_crosshair;
