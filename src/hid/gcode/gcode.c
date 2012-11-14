@@ -1233,12 +1233,6 @@ gcode_set_line_width (hidGC gc, Coord width)
 }
 
 static void
-gcode_set_draw_xor (hidGC gc, int xor_)
-{
-  ;
-}
-
-static void
 gcode_set_draw_faded (hidGC gc, int faded)
 {
 }
@@ -1601,7 +1595,6 @@ hid_gcode_init ()
   gcode_graphics.set_color      = gcode_set_color;
   gcode_graphics.set_line_cap   = gcode_set_line_cap;
   gcode_graphics.set_line_width = gcode_set_line_width;
-  gcode_graphics.set_draw_xor   = gcode_set_draw_xor;
   gcode_graphics.set_draw_faded = gcode_set_draw_faded;
   gcode_graphics.draw_line      = gcode_draw_line;
   gcode_graphics.draw_arc       = gcode_draw_arc;
