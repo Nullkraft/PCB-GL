@@ -1,7 +1,7 @@
-Bottom: f7ee4bbc904c5408ec01913af0fcc0683a46db65
-Top:    ae7ae046264d375a41937a68504d159eb9e73ac3
+Bottom: b1590f235ab951c223682abe66de51597a8b82e1
+Top:    3f21be54406fe05dd0a8fe0432e2087f53ea8c3f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-14 21:55:37 +0000
+Date:   2012-11-14 23:58:45 +0000
 
 Add a demonstration model for rendering ACY series resistors
 
@@ -14,7 +14,7 @@ Oops, nasty hack due to unknown code changes on merge. Left merge comments comme
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 9edbc7f..e9eca99 100644
+index 9840979..5d721e3 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -196,6 +196,7 @@ GL_SRCS= \
@@ -1550,7 +1550,7 @@ index 0000000..a4071c1
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1478884..97b2991 100644
+index c016fed..edd079d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -338,6 +338,47 @@ ghid_draw_grid (BoxType *drawn_area)
@@ -1601,7 +1601,7 @@ index 1478884..97b2991 100644
  static void
  ghid_draw_bg_image (void)
  {
-@@ -421,6 +462,7 @@ ghid_use_mask (int use_it)
+@@ -421,6 +462,7 @@ ghid_use_mask (enum mask_mode mode)
      case HID_MASK_CLEAR:
        /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
        glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
@@ -1609,7 +1609,7 @@ index 1478884..97b2991 100644
        glEnable (GL_STENCIL_TEST);                           /* Enable Stencil test */
        stencil_bit = hidgl_assign_clear_stencil_bit();       /* Get a new (clean) bitplane to stencil with */
        glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, write stencil_bit */
-@@ -431,6 +473,7 @@ ghid_use_mask (int use_it)
+@@ -431,6 +473,7 @@ ghid_use_mask (enum mask_mode mode)
      case HID_MASK_AFTER:
        /* Drawing operations as masked to areas where the stencil buffer is '0' */
        glColorMask (1, 1, 1, 1);                   /* Enable drawing of r, g, b & a */
