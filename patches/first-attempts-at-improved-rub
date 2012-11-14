@@ -1,7 +1,7 @@
-Bottom: f467b3b013038317aa2e6b9efe0d4552c0d79db2
-Top:    478dde18fb179fa4cdddce0620ea9bf1b3d4b05d
+Bottom: 317f86db2aeee7f31b59d62219d0128b577d0d79
+Top:    a9368ba5bc2351968e9562aa2bdb067d73bf6815
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-11-11 00:04:27 -0500
+Date:   2012-11-14 01:27:43 +0000
 
 First attempts at improved rubberbanding logic
 
@@ -9,10 +9,10 @@ First attempts at improved rubberbanding logic
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 99dce64..1b5f73a 100644
+index 7770e49..c9f8d80 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -1010,7 +1010,7 @@ CreateDefaultFont (PCBType *pcb)
+@@ -1009,7 +1009,7 @@ CreateDefaultFont (PCBType *pcb)
   */
  RubberbandType *
  CreateNewRubberbandEntry (LayerType *Layer,
@@ -21,7 +21,7 @@ index 99dce64..1b5f73a 100644
  {
    RubberbandType *ptr = GetRubberbandMemory ();
  
-@@ -1020,6 +1020,7 @@ CreateNewRubberbandEntry (LayerType *Layer,
+@@ -1019,6 +1019,7 @@ CreateNewRubberbandEntry (LayerType *Layer,
    ptr->Layer = Layer;
    ptr->Line = Line;
    ptr->MovedPoint = MovedPoint;
@@ -259,10 +259,10 @@ index 2c754a2..49fd172 100644
        ptr++;
        i--;
 diff --git a/src/global.h b/src/global.h
-index d027ae2..5475ef8 100644
+index 7b966dc..e47cb38 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -551,6 +551,7 @@ typedef struct			/* rubberband lines for element moves */
+@@ -550,6 +550,7 @@ typedef struct			/* rubberband lines for element moves */
    LayerType *Layer;		/* layer that holds the line */
    LineType *Line;		/* the line itself */
    PointType *MovedPoint;	/* and finally the point */

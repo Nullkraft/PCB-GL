@@ -1,7 +1,7 @@
-Bottom: 9a7a3c9f28d6c5c178608899698324a8798fcf19
-Top:    86b8df907041ac5f1ac6f76f16ee7432b42de365
+Bottom: c24d67bd75e8ff22f6baad2110d0645b032d8b09
+Top:    eb3601b229208e391e0a85672684aabd50ebd36d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-11 00:04:26 -0500
+Date:   2012-11-14 01:27:42 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -20,7 +20,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 9ed7caa..99dce64 100644
+index b39ff65..7770e49 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -35,6 +35,7 @@
@@ -40,7 +40,7 @@ index 9ed7caa..99dce64 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -659,6 +662,57 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
+@@ -658,6 +661,57 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
    return Polygon;
  }
  
@@ -98,7 +98,7 @@ index 9ed7caa..99dce64 100644
  /* ---------------------------------------------------------------------------
   * creates an new element
   * memory is allocated if needed
-@@ -675,6 +729,18 @@ CreateNewElement (DataType *Data, ElementType *Element,
+@@ -674,6 +728,18 @@ CreateNewElement (DataType *Data, ElementType *Element,
    printf("Entered CreateNewElement.....\n");
  #endif
  
@@ -130,7 +130,7 @@ index 4872514..97616fd 100644
  LineType * CreateNewLineInElement (ElementType *, Coord, Coord, Coord, Coord, Coord);
  ArcType * CreateNewArcInElement (ElementType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord);
 diff --git a/src/file.c b/src/file.c
-index 1f5c406..13e9ca4 100644
+index 01d3b39..6f4b979 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -405,6 +405,9 @@ real_load_pcb (char *Filename, bool revert)
