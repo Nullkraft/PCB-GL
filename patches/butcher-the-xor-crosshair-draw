@@ -1,7 +1,7 @@
-Bottom: 8d5638a05d2a71e22a54c7905299eeba5bf46ff8
-Top:    bd38ba82f0fc035947323acdcc39f555f4ea8afc
+Bottom: 38d8efa5c4871ecc7d53042245a9045be3389f65
+Top:    9ca04cfcc0470001d26d1eb31a52fc54faa58678
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-01-16 01:03:06 +0000
+Date:   2012-11-14 21:59:50 +0000
 
 Butcher the XOR / Crosshair drawing code
 
@@ -9,7 +9,7 @@ Butcher the XOR / Crosshair drawing code
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 47035f6..2fd7d9a 100644
+index eb3ab62..081d553 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -61,6 +61,9 @@ PCB_SRCS = \
@@ -1066,7 +1066,7 @@ index 0000000..48e938f
 +
 +#endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 71754a5..4013b2e 100644
+index 529a571..9949a6a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -9,6 +9,7 @@
@@ -1077,7 +1077,7 @@ index 71754a5..4013b2e 100644
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
   * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-@@ -824,6 +825,12 @@ ghid_screen_update (void)
+@@ -846,6 +847,12 @@ ghid_screen_update (void)
  {
  }
  
@@ -1090,7 +1090,7 @@ index 71754a5..4013b2e 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -918,8 +925,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -999,8 +1006,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_invalidate_current_gc ();
  
