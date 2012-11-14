@@ -493,11 +493,13 @@ common_nogui_graphics_init (HID_DRAW_API *graphics)
   graphics->fill_polygon =    nogui_fill_polygon;
   graphics->fill_rect =       nogui_fill_rect;
 
+#if 0
   graphics->fill_pcb_polygon = nogui_fill_pcb_polygon;
   graphics->fill_pcb_pad =     nogui_fill_pcb_pad;
   graphics->thindraw_pcb_pad = nogui_thindraw_pcb_pad;
   graphics->fill_pcb_pv =      nogui_fill_pcb_pv;
   graphics->thindraw_pcb_pv =  nogui_thindraw_pcb_pv;
+#endif
 }
 
 static HID nogui_hid;
@@ -513,7 +515,7 @@ hid_nogui_get_hid (void)
   nogui_hid.name        = "nogui";
   nogui_hid.description = "Default GUI when no other GUI is present.  "
                           "Does nothing.";
-  nogui_hid.graphics    = &nogui_graphics;
+//  nogui_hid.graphics    = &nogui_graphics;
 
   common_nogui_init (&nogui_hid);
   common_nogui_graphics_init (&nogui_graphics);

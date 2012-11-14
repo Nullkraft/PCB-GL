@@ -181,17 +181,6 @@ typedef struct
 	PointType	Point1,		\
 			Point2
 
-/* ---------------------------------------------------------------------------
- * some useful values of our widgets
- */
-typedef struct			/* holds information about output window */
-{
-  hidGC bgGC,			/* background and foreground; */
-    fgGC,			/* changed from some routines */
-    pmGC;			/* depth 1 pixmap GC to store clip */
-}
-OutputType;
-
 /* ----------------------------------------------------------------------
  * layer group. A layer group identifies layers which are always switched
  * on/off together.
