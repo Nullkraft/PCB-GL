@@ -1,5 +1,5 @@
-Bottom: 6cb66521bcca0c632f09bf56565e314b75627c6b
-Top:    0661962452b8dee5a26d6b37a8df1dc4eddc5900
+Bottom: c7edc40ecb3d3d6b398e4a3bc3ac07d5b1c18cb7
+Top:    c0ede3bcf70b2054e6c55ddc5b37cf8c8f87aecb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 17:22:36 +0100
 
@@ -791,7 +791,7 @@ index 0ef40b4..1182be2 100644
    /* Pan the board so the center location remains in the same place */
    ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b0ccd13..4ce0101 100644
+index 9eca6f3..79fb4bf 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -41,6 +41,19 @@ static hidGC current_gc = NULL;
@@ -920,13 +920,13 @@ index b0ccd13..4ce0101 100644
  
 @@ -577,6 +640,7 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
  void
- ghid_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ ghid_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
 +  render_priv *priv = gport->render_priv;
    static char *color;
    USE_GC (gc);
  
-@@ -600,11 +664,11 @@ ghid_draw_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -600,11 +664,11 @@ ghid_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
      {
        common_thindraw_pcb_polygon (gc, poly, clip_box);
        ghid_set_alpha_mult (gc, 0.25);
@@ -1344,7 +1344,7 @@ index b0ccd13..4ce0101 100644
  
    hidgl_flush_triangles (&buffer);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 2f24e97..881501a 100644
+index ee141a0..774ae95 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1473,8 +1473,8 @@ Center(int argc, char **argv, Coord pcb_x, Coord pcb_y)
