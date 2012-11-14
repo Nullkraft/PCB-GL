@@ -448,11 +448,13 @@ common_nogui_init (HID *hid)
   hid->invalidate_all =       nogui_invalidate_all;
   hid->set_layer =            nogui_set_layer;
   hid->end_layer =            nogui_end_layer;
+#if 0
   hid->fill_pcb_polygon =     nogui_fill_pcb_polygon;
   hid->fill_pcb_pad =         nogui_fill_pcb_pad;
   hid->thindraw_pcb_pad =     nogui_thindraw_pcb_pad;
   hid->fill_pcb_pv =          nogui_fill_pcb_pv;
   hid->thindraw_pcb_pv =      nogui_thindraw_pcb_pv;
+#endif
   hid->calibrate =            nogui_calibrate;
   hid->shift_is_pressed =     nogui_shift_is_pressed;
   hid->control_is_pressed =   nogui_control_is_pressed;
