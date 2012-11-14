@@ -369,17 +369,7 @@ typedef enum
     void (*end_layer) (void);
 
 
-    HID_DRAW_API *graphics;
-
-    void (*fill_pcb_polygon) (hidGC gc_, PolygonType *poly,
-                              const BoxType *clip_box);
-    void (*thindraw_pcb_polygon) (hidGC gc_, PolygonType *poly,
-                                  const BoxType *clip_box);
-    void (*fill_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
-    void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
-    void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
-    void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
-
+//    HID_DRAW_API *graphics;
 
     /* This is for the printer.  If you call this for the GUI, xval and
        yval are ignored, and a dialog pops up to lead you through the
@@ -616,7 +606,7 @@ typedef enum
    Do *not* assume that the hid that is passed is the GUI hid.  This
    callback is also used for printing and exporting. */
   struct BoxType;
-  void hid_expose_callback (HID * hid_, struct BoxType *region_, void *item_);
+//  void hid_expose_callback (DrawAPI *dapi, struct BoxType *region_, void *item_);
 
 /* This is initially set to a "no-gui" gui, and later reset by
    main. hid_expose_callback also temporarily set it for drawing. */

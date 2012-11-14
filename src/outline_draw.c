@@ -121,6 +121,13 @@ outline_draw_pcb_arc (DrawAPI *dapi, LayerType *layer, ArcType *arc)
                               arc->Width, arc->Height, arc->StartAngle, arc->Delta);
 }
 
+static void
+outline_draw_pcb_text (DrawAPI *dapi, LayerType *layer, TextType *text, Coord min_width)
+{
+  BoxType *box = &text->BoundingBox;
+  dapi->graphics->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
+}
+
 /* ---------------------------------------------------------------------------
  * draws the elements of a loaded circuit which is to be merged in
  */
@@ -207,7 +214,7 @@ outline_draw_pcb_buffer (DrawAPI *dapi, BufferType *Buffer)
         END_LOOP;
         TEXT_LOOP (layer);
         {
-          dapi->draw_pcb_text (dapi, layer, text);
+          dapi->draw_pcb_text (dapi, layer, text, 0);
         }
         END_LOOP;
         POLYGON_LOOP (layer);
@@ -239,6 +246,7 @@ outline_draw_pcb_buffer (DrawAPI *dapi, BufferType *Buffer)
     }
 }
 
+#if 0
 static void
 outline_draw_pcb_pv (DrawAPI *dapi, PinType *pin)
 {
@@ -256,6 +264,7 @@ outline_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
 {
   dapi->graphics->thindraw_pcb_pad (dapi->gc, pad, false, false);
 }
+#endif
 
 DrawAPI *outline_draw_new (HID_DRAW_API *graphics)
 {
@@ -264,17 +273,18 @@ DrawAPI *outline_draw_new (HID_DRAW_API *graphics)
   dapi = g_new0 (DrawAPI, 1);
   dapi->graphics = graphics;
 
-  dapi->draw_pcb_pin          = outline_draw_pcb_pv;
-  dapi->draw_pcb_pin_mask     = outline_draw_pcb_pv_mask;
+  dapi->draw_pcb_pin          = NULL; //outline_draw_pcb_pv;
+  dapi->draw_pcb_pin_mask     = NULL; //outline_draw_pcb_pv_mask;
   dapi->draw_pcb_pin_hole     = NULL;
-  dapi->draw_pcb_via          = outline_draw_pcb_pv;
-  dapi->draw_pcb_via_mask     = outline_draw_pcb_pv_mask;
+  dapi->draw_pcb_via          = NULL; //outline_draw_pcb_pv;
+  dapi->draw_pcb_via_mask     = NULL; //outline_draw_pcb_pv_mask;
   dapi->draw_pcb_via_hole     = NULL;
-  dapi->draw_pcb_pad          = outline_draw_pcb_pad;
+  dapi->draw_pcb_pad          = NULL; //outline_draw_pcb_pad;
   dapi->draw_pcb_pad_mask     = NULL;
   dapi->draw_pcb_pad_paste    = NULL;
   dapi->draw_pcb_line         = outline_draw_pcb_line;
   dapi->draw_pcb_arc          = outline_draw_pcb_arc;
+  dapi->draw_pcb_text         = outline_draw_pcb_text;
   dapi->draw_pcb_polygon      = outline_draw_pcb_polygon;
 
   dapi->draw_pcb_element      = outline_draw_pcb_element;

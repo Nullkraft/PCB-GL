@@ -143,7 +143,7 @@ hid_lpr_init ()
   lpr_hid.parse_arguments     = lpr_parse_arguments;
   lpr_hid.calibrate           = lpr_calibrate;
 
-  lpr_hid.graphics            = &lpr_graphics;
+//  lpr_hid.graphics            = &lpr_graphics;
 
   hid_register_hid (&lpr_hid);
 }
