@@ -1,7 +1,7 @@
-Bottom: a6a949a7f2839f3661c6c1b3335c2f95cc43ba3b
-Top:    e41b45808200bdc497c12f92ca9a7e36c8403fc8
+Bottom: 7aa907548bb3058aa24eb1ddf096a30ffc16d4de
+Top:    4b1e717a4259eeba594fb258b250c34306975290
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-11-14 20:03:54 +0000
+Date:   2012-11-14 21:55:39 +0000
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -106,7 +106,7 @@ index 2dd5e7e..d35807a 100644
  void notify_crosshair_change (bool changes_complete);
  void notify_mark_change (bool changes_complete);
 diff --git a/src/hid.h b/src/hid.h
-index 2266b6c..40b434a 100644
+index 28daf1d..c1bc141 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -580,6 +580,10 @@ typedef enum
@@ -121,7 +121,7 @@ index 2266b6c..40b434a 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 2a1e89c..2320fcd 100644
+index 4a80d25..daf2910 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1137,6 +1137,16 @@ static int PointCursor (int argc, char **argv, Coord x, Coord y)
