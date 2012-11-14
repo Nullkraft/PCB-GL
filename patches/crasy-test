@@ -1,7 +1,7 @@
-Bottom: b0ee408136569761d1b16490abed515ba5c2204b
-Top:    495745a24ad80785da61492eea708f2f6979735d
+Bottom: 01327ac4e9c6c7167d35ab3536bc5e4b516522ca
+Top:    1ebbc528946975568b343643d7519b42907fefe2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-14 21:55:32 +0000
+Date:   2012-11-14 23:58:39 +0000
 
 Crasy test
 
@@ -9,7 +9,7 @@ Crasy test
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index eb3ab62..36ebed4 100644
+index 269ee78..89ac430 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -61,6 +61,8 @@ PCB_SRCS = \
@@ -1346,7 +1346,7 @@ index 0000000..ba4982d
 +
 +extern struct draw_funcs *dapi;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 79c0447..312e0a5 100644
+index 8d73c7e..2915c8c 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -25,6 +25,7 @@
@@ -1367,7 +1367,7 @@ index 79c0447..312e0a5 100644
  	{
  	  hidGC gc = gui->make_gc ();
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 5587347..6339408 100644
+index a192423..3309b22 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -15,6 +15,7 @@
