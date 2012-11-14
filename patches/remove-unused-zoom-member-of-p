@@ -1,5 +1,5 @@
 Bottom: c864730768c48b7ade42d27adf1cbdfe013d2306
-Top:    c864730768c48b7ade42d27adf1cbdfe013d2306
+Top:    05ec30e1863e26e5e89fc8250249eec539e1cdbc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-14 00:08:06 +0000
 
@@ -8,4 +8,67 @@ Remove unused ->Zoom member of PCB data-structure
 
 ---
 
-
+diff --git a/src/create.c b/src/create.c
+index 9ed7caa..b39ff65 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -188,7 +188,6 @@ CreateNewPCB (bool SetDefaultNames)
+     style->index = n;
+   }
+   END_LOOP;
+-  ptr->Zoom = Settings.Zoom;
+   ptr->MaxWidth = Settings.MaxWidth;
+   ptr->MaxHeight = Settings.MaxHeight;
+   ptr->ID = ID++;
+diff --git a/src/global.h b/src/global.h
+index d027ae2..7b966dc 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -520,8 +520,7 @@ typedef struct PCBType
+     ExtentMaxX, ExtentMaxY;
+ 
+   Coord Grid;			/* used grid with offsets */
+-  double Zoom,			/* zoom factor */
+-    IsleArea,			/* minimum poly island to retain */
++  double IsleArea,		/* minimum poly island to retain */
+     ThermScale;			/* scale factor used with thermals */
+   FontType Font;
+   LayerGroupType LayerGroups;
+@@ -648,9 +647,7 @@ typedef struct			/* some resources... */
+     Shrink, minWid, minSlk, minDrill, minRing;
+   int TextScale;		/* text scaling in % */
+   Coord Grid;			/* grid in pcb-units */
+-  double Zoom,
+-    IsleArea,    		/* polygon min area */
+-    PinoutZoom;			/* same for pinout windows */
++  double IsleArea;		/* polygon min area */
+   int PinoutNameLength,		/* max displayed length of a pinname */
+     Volume,			/* the speakers volume -100..100 */
+     CharPerLine,		/* width of an output line in characters */
+diff --git a/src/parse_y.y b/src/parse_y.y
+index 8b8a3f5..d913596 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -415,6 +415,8 @@ The current zoom factor.  Note that a zoom factor of "0" means 1 mil
+ per screen pixel, N means @math{2^N} mils per screen pixel, etc.  The
+ first variant accepts floating point numbers.  The special value
+ "1000" means "zoom to fit"
++
++This value is currently ignored by PCB
+ @end table
+ 
+ %end-doc */
+@@ -424,13 +426,11 @@ pcbcursor
+ 			{
+ 				yyPCB->CursorX = OU ($3);
+ 				yyPCB->CursorY = OU ($4);
+-				yyPCB->Zoom = $5*2;
+ 			}
+ 		| T_CURSOR '[' measure measure number ']'
+ 			{
+ 				yyPCB->CursorX = NU ($3);
+ 				yyPCB->CursorY = NU ($4);
+-				yyPCB->Zoom = $5;
+ 			}
+ 		|
+ 		;
