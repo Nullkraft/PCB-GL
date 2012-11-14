@@ -4063,7 +4063,6 @@ hid_lesstif_init ()
   lesstif_hid.set_color               = lesstif_set_color;
   lesstif_hid.set_line_cap            = lesstif_set_line_cap;
   lesstif_hid.set_line_width          = lesstif_set_line_width;
-  lesstif_hid.set_draw_xor            = lesstif_set_draw_xor;
   lesstif_hid.draw_line               = lesstif_draw_line;
   lesstif_hid.draw_arc                = lesstif_draw_arc;
   lesstif_hid.draw_rect               = lesstif_draw_rect;
