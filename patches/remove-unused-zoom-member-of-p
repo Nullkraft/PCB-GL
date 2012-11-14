@@ -1,5 +1,5 @@
-Bottom: c864730768c48b7ade42d27adf1cbdfe013d2306
-Top:    05ec30e1863e26e5e89fc8250249eec539e1cdbc
+Bottom: 60cff8234bb07c8f19396ef0ff0fe3853c10b8f8
+Top:    1f334c4e963fa1503aacfdbd188ed1f1ba5443f0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-14 00:08:06 +0000
 
@@ -46,10 +46,10 @@ index d027ae2..7b966dc 100644
      Volume,			/* the speakers volume -100..100 */
      CharPerLine,		/* width of an output line in characters */
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 8b8a3f5..d913596 100644
+index 63f0e27..fbe13cf 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
-@@ -415,6 +415,8 @@ The current zoom factor.  Note that a zoom factor of "0" means 1 mil
+@@ -417,6 +417,8 @@ The current zoom factor.  Note that a zoom factor of "0" means 1 mil
  per screen pixel, N means @math{2^N} mils per screen pixel, etc.  The
  first variant accepts floating point numbers.  The special value
  "1000" means "zoom to fit"
@@ -58,7 +58,7 @@ index 8b8a3f5..d913596 100644
  @end table
  
  %end-doc */
-@@ -424,13 +426,11 @@ pcbcursor
+@@ -426,13 +428,11 @@ pcbcursor
  			{
  				yyPCB->CursorX = OU ($3);
  				yyPCB->CursorY = OU ($4);
