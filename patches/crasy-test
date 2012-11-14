@@ -1,7 +1,7 @@
-Bottom: b0ee408136569761d1b16490abed515ba5c2204b
-Top:    e6c8c4572dd785b162bca727764f24951c12d2d1
+Bottom: 01327ac4e9c6c7167d35ab3536bc5e4b516522ca
+Top:    e8ed848536b2fef92f2f640600fa94f414f4ab6c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-14 21:55:31 +0000
+Date:   2012-11-14 23:58:38 +0000
 
 Crasy test
 
@@ -11,7 +11,7 @@ Note that this throws away code to draw pad and pin names
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index eb3ab62..36ebed4 100644
+index 269ee78..89ac430 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -61,6 +61,8 @@ PCB_SRCS = \
@@ -1167,7 +1167,7 @@ index 0000000..25c33a1
 +
 +extern struct draw_funcs *dapi;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 79c0447..312e0a5 100644
+index 8d73c7e..2915c8c 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -25,6 +25,7 @@
@@ -1188,7 +1188,7 @@ index 79c0447..312e0a5 100644
  	{
  	  hidGC gc = gui->make_gc ();
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 5587347..6339408 100644
+index a192423..3309b22 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -15,6 +15,7 @@

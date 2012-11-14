@@ -1,7 +1,7 @@
-Bottom: e6c8c4572dd785b162bca727764f24951c12d2d1
-Top:    afe7030dfb7de78a28fe1194e49cba89bbb45afe
+Bottom: e8ed848536b2fef92f2f640600fa94f414f4ab6c
+Top:    0163a802ab3d308a7ecb854ec575201c7d8066e9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-14 21:55:31 +0000
+Date:   2012-11-14 23:58:38 +0000
 
 Demo of exporter specific export routine
 
@@ -251,7 +251,7 @@ index 46d3822..0f61cab 100644
 +    PrintFab (Output.fgGC);
 +}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 312e0a5..578fc92 100644
+index 2915c8c..74227fb 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -23,9 +23,11 @@
@@ -274,7 +274,7 @@ index 312e0a5..578fc92 100644
 +static int set_layer (const char *name, int group, int empty);
  static hidGC gerber_make_gc (void);
  static void gerber_destroy_gc (hidGC gc);
- static void gerber_use_mask (int use_it);
+ static void gerber_use_mask (enum mask_mode mode);
 @@ -405,26 +407,6 @@ gerber_get_export_options (int *n)
    return gerber_options;
  }
@@ -563,7 +563,7 @@ index 312e0a5..578fc92 100644
        n_pending_drills = max_pending_drills = 0;
        pending_drills = NULL;
 @@ -710,7 +804,7 @@ gerber_set_layer (const char *name, int group, int empty)
-   current_mask = 0;
+   current_mask = HID_MASK_OFF;
  #if 0
    printf ("Layer %s group %d drill %d mask %d\n", name, group, is_drill,
 -	  is_mask);
@@ -772,7 +772,7 @@ index 312e0a5..578fc92 100644
    gerber_hid.destroy_gc          = gerber_destroy_gc;
    gerber_hid.use_mask            = gerber_use_mask;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a1c6e5b..79cf3e1 100644
+index 1913210..aac2709 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -125,8 +125,8 @@ end_subcomposite (void)
@@ -934,7 +934,7 @@ index a1c6e5b..79cf3e1 100644
  
    ghid_draw_grid (&region);
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 6339408..49195a0 100644
+index 3309b22..da11588 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -31,7 +31,7 @@
