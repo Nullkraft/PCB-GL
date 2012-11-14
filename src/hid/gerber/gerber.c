@@ -621,11 +621,11 @@ gerber_do_export (HID_Attr_Val * options)
   lastgroup = -1;
   layer_list_idx = 0;
   finding_apertures = 1;
-  hid_expose_callback (&gerber_hid, &region, 0);
+//  hid_expose_callback (&gerber_hid, &region, 0);
 
   layer_list_idx = 0;
   finding_apertures = 0;
-  hid_expose_callback (&gerber_hid, &region, 0);
+//  hid_expose_callback (&gerber_hid, &region, 0);
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
 
@@ -853,9 +853,14 @@ gerber_set_layer (const char *name, int group, int empty)
     {
       if (outline_layer
 	  && outline_layer != PCB->Data->Layer+idx)
-	DrawLayer (outline_layer, &region);
+        {
+          DrawAPI *dapi = NULL;
+          dapi->set_clip_box (dapi, &region);
+          dapi->draw_pcb_layer (dapi, outline_layer);
+        }
       else if (!outline_layer)
 	{
+#if 0
 	  hidGC gc = gui->make_gc ();
 	  printf("name %s idx %d\n", name, idx);
 	  if (SL_TYPE (idx) == SL_SILK)
@@ -869,6 +874,7 @@ gerber_set_layer (const char *name, int group, int empty)
 	  gui->draw_line (gc, PCB->MaxWidth, 0, PCB->MaxWidth, PCB->MaxHeight);
 	  gui->draw_line (gc, 0, PCB->MaxHeight, PCB->MaxWidth, PCB->MaxHeight);
 	  gui->destroy_gc (gc);
+#endif
 	}
     }
 
@@ -1177,8 +1183,8 @@ gerber_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
   int firstTime = 1;
   Coord startX = 0, startY = 0;
 
-  if (is_mask && current_mask == HID_MASK_BEFORE)
-    return;
+//  if (is_mask && current_mask == HID_MASK_BEFORE)
+//    return;
 
   use_gc (gc, 10 * 100);
   if (!f)
@@ -1271,6 +1277,7 @@ hid_gerber_init ()
   gerber_hid.do_export           = gerber_do_export;
   gerber_hid.parse_arguments     = gerber_parse_arguments;
   gerber_hid.set_layer           = gerber_set_layer;
+#if 0
   gerber_hid.make_gc             = gerber_make_gc;
   gerber_hid.destroy_gc          = gerber_destroy_gc;
   gerber_hid.use_mask            = gerber_use_mask;
@@ -1283,6 +1290,7 @@ hid_gerber_init ()
   gerber_hid.fill_circle         = gerber_fill_circle;
   gerber_hid.fill_polygon        = gerber_fill_polygon;
   gerber_hid.fill_rect           = gerber_fill_rect;
+#endif
   gerber_hid.calibrate           = gerber_calibrate;
   gerber_hid.set_crosshair       = gerber_set_crosshair;
 

@@ -461,7 +461,7 @@ gcode_start_png_export ()
   linewidth = -1;
   lastbrush = (gdImagePtr)((void *) -1);
 
-  hid_expose_callback (&gcode_hid, &region, 0);
+//  hid_expose_callback (&gcode_hid, &region, 0);
 }
 
 static FILE *
@@ -1582,6 +1582,7 @@ hid_gcode_init ()
   gcode_hid.do_export           = gcode_do_export;
   gcode_hid.parse_arguments     = gcode_parse_arguments;
   gcode_hid.set_layer           = gcode_set_layer;
+#if 0
   gcode_hid.make_gc             = gcode_make_gc;
   gcode_hid.destroy_gc          = gcode_destroy_gc;
   gcode_hid.use_mask            = gcode_use_mask;
@@ -1595,6 +1596,7 @@ hid_gcode_init ()
   gcode_hid.fill_circle         = gcode_fill_circle;
   gcode_hid.fill_polygon        = gcode_fill_polygon;
   gcode_hid.fill_rect           = gcode_fill_rect;
+#endif
   gcode_hid.calibrate           = gcode_calibrate;
   gcode_hid.set_crosshair       = gcode_set_crosshair;
 
