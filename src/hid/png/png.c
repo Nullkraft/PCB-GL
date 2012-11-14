@@ -649,7 +649,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 	}
     }
 
-  hid_expose_callback (&png_hid, bounds, 0);
+//  hid_expose_callback (&png_hid, bounds, 0);
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
   PCB->Flags = save_flags;
@@ -1362,10 +1362,10 @@ png_use_mask (int use_it)
   if (photo_mode)
     return;
 
-  if (use_it == HID_MASK_CLEAR)
-    {
-      return;
-    }
+//  if (use_it == HID_MASK_CLEAR)
+//    {
+//      return;
+//    }
   if (use_it)
     {
       if (mask_im == NULL)
@@ -1810,6 +1810,7 @@ hid_png_init ()
   png_hid.do_export           = png_do_export;
   png_hid.parse_arguments     = png_parse_arguments;
   png_hid.set_layer           = png_set_layer;
+#if 0
   png_hid.make_gc             = png_make_gc;
   png_hid.destroy_gc          = png_destroy_gc;
   png_hid.use_mask            = png_use_mask;
@@ -1822,6 +1823,7 @@ hid_png_init ()
   png_hid.fill_circle         = png_fill_circle;
   png_hid.fill_polygon        = png_fill_polygon;
   png_hid.fill_rect           = png_fill_rect;
+#endif
   png_hid.calibrate           = png_calibrate;
   png_hid.set_crosshair       = png_set_crosshair;
 
