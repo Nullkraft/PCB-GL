@@ -1,0 +1,21 @@
+Bottom: 38d8efa5c4871ecc7d53042245a9045be3389f65
+Top:    aef96a9917f4a4cfc4fd070651d25779faa680aa
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-14 22:13:25 +0000
+
+Refresh of remove-hid-set_draw_xor-api
+
+---
+
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 04d9f6c..17f2b4b 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -4063,7 +4063,6 @@ hid_lesstif_init ()
+   lesstif_hid.set_color               = lesstif_set_color;
+   lesstif_hid.set_line_cap            = lesstif_set_line_cap;
+   lesstif_hid.set_line_width          = lesstif_set_line_width;
+-  lesstif_hid.set_draw_xor            = lesstif_set_draw_xor;
+   lesstif_hid.draw_line               = lesstif_draw_line;
+   lesstif_hid.draw_arc                = lesstif_draw_arc;
+   lesstif_hid.draw_rect               = lesstif_draw_rect;
