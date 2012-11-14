@@ -1,5 +1,5 @@
-Bottom: a1545090280958eb23bcbc019887648d6b6f2fd9
-Top:    aebf5c64c1b3d24f7bb3aa6ef0965276e4610f37
+Bottom: 6cb66521bcca0c632f09bf56565e314b75627c6b
+Top:    0661962452b8dee5a26d6b37a8df1dc4eddc5900
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-27 17:22:36 +0100
 
@@ -791,7 +791,7 @@ index 0ef40b4..1182be2 100644
    /* Pan the board so the center location remains in the same place */
    ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4306f1a..b084834 100644
+index b0ccd13..4ce0101 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -41,6 +41,19 @@ static hidGC current_gc = NULL;
@@ -952,7 +952,7 @@ index 4306f1a..b084834 100644
  }
  
  gboolean
-@@ -929,13 +998,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -928,13 +997,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -973,7 +973,7 @@ index 4306f1a..b084834 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
    glEnable (GL_STENCIL_TEST);
-@@ -1077,21 +1146,19 @@ gboolean
+@@ -1076,21 +1145,19 @@ gboolean
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
  {
@@ -997,7 +997,7 @@ index 4306f1a..b084834 100644
  
    /* Setup zoom factor for drawing routines */
  
-@@ -1099,16 +1166,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1098,16 +1165,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    xz = (double) pinout->x_max / allocation.width;
    yz = (double) pinout->y_max / allocation.height;
    if (xz > yz)
@@ -1021,8 +1021,8 @@ index 4306f1a..b084834 100644
    PCB->MaxWidth = pinout->x_max;
    PCB->MaxHeight = pinout->y_max;
  
-@@ -1149,14 +1214,13 @@ ghid_pinout_preview_expose (GtkWidget *widget,
-   hidgl_init_triangle_array (&buffer);
+@@ -1147,14 +1212,13 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   /* call the drawing routine */
    ghid_invalidate_current_gc ();
    glPushMatrix ();
 -  glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
@@ -1099,7 +1099,7 @@ index 4306f1a..b084834 100644
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
 @@ -1254,18 +1312,18 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
-   hidgl_init_triangle_array (&buffer);
+   /* call the drawing routine */
    ghid_invalidate_current_gc ();
    glPushMatrix ();
 -  glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
@@ -1129,7 +1129,7 @@ index 4306f1a..b084834 100644
  
    region.X1 = MAX (0, MIN (PCB->MaxWidth,  region.X1));
    region.X2 = MAX (0, MIN (PCB->MaxWidth,  region.X2));
-@@ -1287,9 +1345,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1289,9 +1347,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    g_object_unref (glconfig);
    g_object_unref (glcontext);
  
@@ -1140,7 +1140,7 @@ index 4306f1a..b084834 100644
  
    return pixmap;
  }
-@@ -1298,6 +1354,7 @@ HID *
+@@ -1300,6 +1356,7 @@ HID *
  ghid_request_debug_draw (void)
  {
    GHidPort *port = gport;
@@ -1148,7 +1148,7 @@ index 4306f1a..b084834 100644
    GtkWidget *widget = port->drawing_area;
    GtkAllocation allocation;
  
-@@ -1321,13 +1378,13 @@ ghid_request_debug_draw (void)
+@@ -1323,13 +1380,13 @@ ghid_request_debug_draw (void)
    glDisable (GL_STENCIL_TEST);
  
    glPushMatrix ();
@@ -1169,7 +1169,7 @@ index 4306f1a..b084834 100644
  
    return &ghid_hid;
  }
-@@ -1548,7 +1605,7 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1551,7 +1608,7 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  }
  
  static void
@@ -1178,7 +1178,7 @@ index 4306f1a..b084834 100644
  {
    int event_x, event_y;
  
-@@ -1557,10 +1614,10 @@ pan_common (GHidPort *port)
+@@ -1560,10 +1617,10 @@ pan_common (GHidPort *port)
    ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
  
    /* Don't pan so far the board is completely off the screen */
@@ -1193,7 +1193,7 @@ index 4306f1a..b084834 100644
  
    /* Fix up noted event coordinates to match where we clamped. Alternatively
     * we could call ghid_note_event_location (NULL); to get a new pointer
-@@ -1569,8 +1626,8 @@ pan_common (GHidPort *port)
+@@ -1572,8 +1629,8 @@ pan_common (GHidPort *port)
    ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
  
    ghidgui->adjustment_changed_holdoff = TRUE;
@@ -1204,7 +1204,7 @@ index 4306f1a..b084834 100644
    ghidgui->adjustment_changed_holdoff = FALSE;
  
    ghid_port_ranges_changed();
-@@ -1579,33 +1636,49 @@ pan_common (GHidPort *port)
+@@ -1582,33 +1639,49 @@ pan_common (GHidPort *port)
  void
  ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  {
@@ -1262,7 +1262,7 @@ index 4306f1a..b084834 100644
    double min_zoom, max_zoom;
    double xtmp, ytmp;
  
-@@ -1614,24 +1687,24 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1617,24 +1690,24 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
     * the entire board just fits inside the viewport
     */
    min_zoom = 1;
@@ -1296,7 +1296,7 @@ index 4306f1a..b084834 100644
  
    ghid_set_status_line_label ();
  }
-@@ -1639,28 +1712,32 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1642,28 +1715,32 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  void
  ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
  {
@@ -1334,7 +1334,7 @@ index 4306f1a..b084834 100644
  
    /* Pan the board so the center location remains in the same place */
    ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
-@@ -1734,7 +1811,7 @@ draw_lead_user (render_priv *priv)
+@@ -1737,7 +1814,7 @@ draw_lead_user (render_priv *priv)
  
        /* Draw an arc at radius */
        hidgl_draw_arc (width, priv->lead_user_x, priv->lead_user_y,
