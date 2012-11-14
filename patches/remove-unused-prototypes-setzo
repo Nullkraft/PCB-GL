@@ -1,0 +1,16 @@
+Bottom: a704d701863d9f9215e9818cc69b2eb7c3beb376
+Top:    a704d701863d9f9215e9818cc69b2eb7c3beb376
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-14 00:24:21 +0000
+
+Remove unused prototypes SetZoom and RedrawZoom, along with old #ifdef'd code
+
+SetZoom() was removed in commit 94e927e03850bfc0e8a0f3b161ae99b6784747f0
+
+There were a few references to SetZoom left under an #ifdef HAVE_LIBSTROKE,
+which will not work, so I have commented those as well.
+
+
+---
+
+
