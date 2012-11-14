@@ -1,0 +1,22 @@
+Bottom: 1f334c4e963fa1503aacfdbd188ed1f1ba5443f0
+Top:    a704d701863d9f9215e9818cc69b2eb7c3beb376
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-14 00:17:26 +0000
+
+Refresh of remove-unused-zoom-member-of-p
+
+---
+
+diff --git a/src/parse_y.y b/src/parse_y.y
+index fbe13cf..0942230 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -418,7 +418,7 @@ per screen pixel, N means @math{2^N} mils per screen pixel, etc.  The
+ first variant accepts floating point numbers.  The special value
+ "1000" means "zoom to fit"
+ 
+-This value is currently ignored by PCB
++This field is ignored by PCB.
+ @end table
+ 
+ %end-doc */
