@@ -847,12 +847,14 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
   double min_multiplier = 1.0;
   double max_multiplier = 0.0;
 
-  if (Type == LINE_TYPE)
+  if (Type == LINE_TYPE) {
     moving_line = Ptr2;
+//    CLEAR_FLAG (RUBBERENDFLAG, moving_line);
+  }
 
   /* first clear any marks that we made in the line flags */
   for (i = 0, ptr = Crosshair.AttachedObject.Rubberband;
-       i > Crosshair.AttachedObject.RubberbandN;
+       i < Crosshair.AttachedObject.RubberbandN;
        i++, ptr++)
     CLEAR_FLAG (RUBBERENDFLAG, ptr->Line);
 
