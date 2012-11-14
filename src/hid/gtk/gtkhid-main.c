@@ -2180,9 +2180,9 @@ hid_gtk_init ()
   ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
   ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
 
-  ghid_hid.graphics                 = &ghid_graphics;
+//  ghid_hid.graphics                 = &ghid_graphics;
 
-  common_draw_helpers_init (&ghid_graphics);
+//  common_draw_helpers_init (&ghid_graphics);
 
   ghid_graphics.make_gc             = ghid_make_gc;
   ghid_graphics.destroy_gc          = ghid_destroy_gc;
