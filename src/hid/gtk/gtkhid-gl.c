@@ -1008,7 +1008,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   {
     DrawAPI *dapi;
-    dapi = outline_draw_new (gui);
+    dapi = outline_draw_new (gui->graphics);
     dapi->set_draw_offset = hidgl_set_draw_offset;
 
     DrawAttached (dapi);

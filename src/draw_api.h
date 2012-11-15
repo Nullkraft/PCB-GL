@@ -53,7 +53,8 @@ struct DrawAPI {
   void (*set_clip_box)         (DrawAPI *, const BoxType *);
 
   /* Member variables */
-  GraphicsAPI *graphics;
+//  GraphicsAPI *graphics;
+  HID_DRAW_API *graphics;
   hidGC gc;
   hidGC fg_gc;
   hidGC bg_gc;
@@ -70,6 +71,7 @@ enum mask_mode {
 };
 #endif
 
+#if 0
 struct GraphicsAPI {
   /* Make an empty graphics context. */
   hidGC (*make_gc) (void);
@@ -110,6 +112,7 @@ struct GraphicsAPI {
   void (*fill_polygon)         (hidGC gc, int n_coords, Coord *x, Coord *y);
   void (*fill_rect)            (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
 };
+#endif
 
 #if 0
   void (*fill_pcb_polygon)     (hidGC gc, PolygonType *poly, const BoxType *clip_box);

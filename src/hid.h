@@ -232,16 +232,13 @@ typedef enum
     int (*throw_drc_dialog) (void);
   } HID_DRC_GUI;
 
-#if 1
   enum mask_mode {
     HID_MASK_OFF    = 0, /* Flush the buffer and return to non-mask operation. */
     HID_MASK_BEFORE = 1, /* Polygons being drawn before clears.                */
     HID_MASK_CLEAR  = 2, /* Clearances being drawn.                            */
     HID_MASK_AFTER  = 3, /* Polygons being drawn after clears.                 */
   };
-#endif
 
-#if 0
 /* Low level drawing API */
   typedef struct
   {
@@ -285,7 +282,6 @@ typedef enum
     void (*fill_rect)    (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
 
   } HID_DRAW_API;
-#endif
 
 
   typedef struct hid_st HID;
@@ -373,7 +369,7 @@ typedef enum
     void (*end_layer) (void);
 
 
-//    HID_DRAW_API *graphics;
+    HID_DRAW_API *graphics;
 
     void (*fill_pcb_polygon) (hidGC gc_, PolygonType *poly,
                               const BoxType *clip_box);

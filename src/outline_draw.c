@@ -257,12 +257,12 @@ outline_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
   dapi->graphics->thindraw_pcb_pad (dapi->gc, pad, false, false);
 }
 
-DrawAPI *outline_draw_new (HID *hid)
+DrawAPI *outline_draw_new (HID_DRAW_API *graphics)
 {
   DrawAPI *dapi;
 
   dapi = g_new0 (DrawAPI, 1);
-  dapi->graphics = hid; /* XXX */
+  dapi->graphics = graphics;
 
   dapi->draw_pcb_pin          = outline_draw_pcb_pv;
   dapi->draw_pcb_pin_mask     = outline_draw_pcb_pv_mask;
