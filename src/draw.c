@@ -127,10 +127,10 @@ set_pv_color (PinType *pv, int type)
 {
   if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
   else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
-                                                                                         : PCB->PinSelectedColor);
+                                                                                                   : PCB->PinSelectedColor);
   else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
   else                                   gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor
-                                                                                         : PCB->PinColor);
+                                                                                                   : PCB->PinColor);
 }
 
 static int
