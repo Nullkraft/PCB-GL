@@ -309,6 +309,7 @@ LIBGTK_SRCS = \
 	hid/gtk/gtkhid-main.c \
 	hid/gtk/gtkhid.h \
 	hid/gtk/gui.h \
+	hid/gtk/bga-wizard.c \
 	hid/gtk/gui-command-window.c \
 	hid/gtk/gui-config.c \
 	hid/gtk/gui-dialog-print.c \
