@@ -546,7 +546,7 @@ hole_callback (const BoxType * b, void *cl)
       (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
     return 1;
 
-  gui->fill_circle (Output.bgGC, pin->X, pin->Y, pin->DrillingHole / 2);
+  gui->graphics->fill_circle (Output.bgGC, pin->X, pin->Y, pin->DrillingHole / 2);
   return 1;
 }
 
@@ -570,12 +570,12 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
   hidGC savepm = Output.pmGC;
 
   gui = hid;
-  Output.fgGC = gui->make_gc ();
-  Output.bgGC = gui->make_gc ();
-  Output.pmGC = gui->make_gc ();
+  Output.fgGC = gui->graphics->make_gc ();
+  Output.bgGC = gui->graphics->make_gc ();
+  Output.pmGC = gui->graphics->make_gc ();
 
-  hid->set_color (Output.pmGC, "erase");
-  hid->set_color (Output.bgGC, "drill");
+  hid->graphics->set_color (Output.pmGC, "erase");
+  hid->graphics->set_color (Output.bgGC, "drill");
 
   memset (print_group, 0, sizeof (print_group));
   for (i = 0; i < max_copper_layer; i++)
@@ -625,11 +625,11 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
     DrawPaste (SOLDER_LAYER, drawn_area);
 
   if (set_layer ("fab", SL (FAB, 0), 0))
-    PrintFab ();
+    PrintFab (Output.fgGC);
 
-  gui->destroy_gc (Output.fgGC);
-  gui->destroy_gc (Output.bgGC);
-  gui->destroy_gc (Output.pmGC);
+  gui->graphics->destroy_gc (Output.fgGC);
+  gui->graphics->destroy_gc (Output.bgGC);
+  gui->graphics->destroy_gc (Output.pmGC);
   gui = old_gui;
   Output.fgGC = savefg;
   Output.bgGC = savebg;

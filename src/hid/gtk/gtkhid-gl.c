@@ -9,6 +9,9 @@
 #include "../hidint.h"
 #include "gui.h"
 #include "gui-pinout-preview.h"
+#include "draw.h"
+#include "draw_funcs.h"
+#include "rtree.h"
 
 /* The Linux OpenGL ABI 1.0 spec requires that we define
  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
@@ -870,12 +873,12 @@ ghid_expose (const BoxType *drawn_area)
   HID *old_gui = gui;
 
   gui = &ghid_hid;
-  Output.fgGC = gui->make_gc ();
-  Output.bgGC = gui->make_gc ();
-  Output.pmGC = gui->make_gc ();
+  Output.fgGC = gui->graphics->make_gc ();
+  Output.bgGC = gui->graphics->make_gc ();
+  Output.pmGC = gui->graphics->make_gc ();
 
-  gui->set_color (Output.pmGC, "erase");
-  gui->set_color (Output.bgGC, "drill");
+  gui->graphics->set_color (Output.pmGC, "erase");
+  gui->graphics->set_color (Output.bgGC, "drill");
 
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
@@ -981,9 +984,9 @@ ghid_expose (const BoxType *drawn_area)
       gui->end_layer ();
     }
 
-  gui->destroy_gc (Output.fgGC);
-  gui->destroy_gc (Output.bgGC);
-  gui->destroy_gc (Output.pmGC);
+  gui->graphics->destroy_gc (Output.fgGC);
+  gui->graphics->destroy_gc (Output.bgGC);
+  gui->graphics->destroy_gc (Output.pmGC);
   gui = old_gui;
 }
 

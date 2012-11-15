@@ -572,12 +572,12 @@ ps_expose (void)
   bool paste_empty;
 
   gui = &ps_hid;
-  Output.fgGC = gui->make_gc ();
-  Output.bgGC = gui->make_gc ();
-  Output.pmGC = gui->make_gc ();
+  Output.fgGC = gui->graphics->make_gc ();
+  Output.bgGC = gui->graphics->make_gc ();
+  Output.pmGC = gui->graphics->make_gc ();
 
-  gui->set_color (Output.pmGC, "erase");
-  gui->set_color (Output.bgGC, "drill");
+  gui->graphics->set_color (Output.pmGC, "erase");
+  gui->graphics->set_color (Output.bgGC, "drill");
 
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
@@ -634,9 +634,9 @@ ps_expose (void)
   if (set_layer ("fab", SL (FAB, 0), 0))
     PrintFab (Output.fgGC);
 
-  gui->destroy_gc (Output.fgGC);
-  gui->destroy_gc (Output.bgGC);
-  gui->destroy_gc (Output.pmGC);
+  gui->graphics->destroy_gc (Output.fgGC);
+  gui->graphics->destroy_gc (Output.bgGC);
+  gui->graphics->destroy_gc (Output.pmGC);
   gui = old_gui;
 }
 
