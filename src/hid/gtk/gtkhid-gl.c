@@ -594,7 +594,7 @@ ghid_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
     color = layer->Color;
 #endif
 
-  gui->set_color (Output.fgGC, color);
+  gui->graphics->set_color (Output.fgGC, color);
 
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
     {
