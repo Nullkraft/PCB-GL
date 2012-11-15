@@ -1,5 +1,5 @@
 Bottom: 2d11a022a79cc9dbb318dda4e8508b0c5124fcee
-Top:    e80d5b85ada43a0c6d87988ba0ed140395d0bfc5
+Top:    6bb933fd49224c099cfa1421310c068e6cf23583
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-05-11 12:31:46 +0100
 
@@ -22,7 +22,7 @@ index 5d721e3..bb3513c 100644
  	hid/gtk/ghid-coord-entry.c \
 diff --git a/src/hid/gtk/bga-wizard.c b/src/hid/gtk/bga-wizard.c
 new file mode 100644
-index 0000000..c8518d1
+index 0000000..e475192
 --- /dev/null
 +++ b/src/hid/gtk/bga-wizard.c
 @@ -0,0 +1,159 @@
@@ -170,7 +170,7 @@ index 0000000..c8518d1
 +int
 +bga_wizard_action (int argc, char **argv, int px, int pz)
 +{
-+  if (!ghidgui || !ghidgui->ui_manager)
++  if (!ghidgui || !ghidgui->menu_bar)
 +    return 0;
 +
 +  demo_assistant ();
