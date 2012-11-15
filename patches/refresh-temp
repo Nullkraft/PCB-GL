@@ -1,0 +1,425 @@
+Bottom: 53bf0a4caca34d24dd48f990a33558d973f3fb92
+Top:    4be63ec8758712875b8a822638f785b95547ce25
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-15 03:11:27 +0000
+
+Refresh of other-drawing-api-changes
+
+---
+
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index 8243fe4..24294a4 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -6,4 +6,4 @@ void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_fill_pcb_pv (hidGC gc, PinType *pv, bool drawHole, bool mask);
+ void common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+-void common_draw_helpers_init (HID *hid);
++void common_draw_helpers_init (DrawAPI *dapi);
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index d81b430..6bc7c1f 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -12,6 +12,7 @@
+ 
+ #include "hid.h"
+ #include "../hidint.h"
++#include "draw_api.h"
+ #include "hid/common/draw_helpers.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+@@ -164,7 +165,7 @@ hid_extents_init (void)
+   memset (&extents_hid, 0, sizeof (HID));
+   memset (&extents_graphics, 0, sizeof (HID_DRAW_API));
+ 
+-  common_draw_helpers_init (&extents_hid);
++//  common_draw_helpers_init (&extents_hid);
+ 
+   extents_hid.struct_size         = sizeof (HID);
+   extents_hid.name                = "extents-extents";
+@@ -173,7 +174,7 @@ hid_extents_init (void)
+ 
+   extents_hid.set_layer           = extents_set_layer;
+ 
+-  extents_hid.graphics            = &extents_graphics;
++//  extents_hid.graphics            = &extents_graphics;
+ 
+   extents_graphics.make_gc        = extents_make_gc;
+   extents_graphics.destroy_gc     = extents_destroy_gc;
+@@ -194,7 +195,7 @@ hid_extents_init (void)
+ BoxType *
+ hid_get_extents (void *item)
+ {
+-  BoxType region;
++//  BoxType region;
+ 
+   /* As this isn't a real "HID", we need to ensure we are initialised. */
+   hid_extents_init ();
+@@ -204,11 +205,13 @@ hid_get_extents (void *item)
+   box.X2 = -MAXINT;
+   box.Y2 = -MAXINT;
+ 
++#if 0
+   region.X1 = -MAXINT;
+   region.Y1 = -MAXINT;
+   region.X2 = MAXINT;
+   region.Y2 = MAXINT;
+-//  hid_expose_callback (&extents_hid, &region, item);
++  hid_expose_callback (&extents_hid, &region, item);
++#endif
+ 
+   return &box;
+ }
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 6639e88..443ac92 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -514,7 +514,7 @@ hid_nogui_get_hid (void)
+   nogui_hid.name        = "nogui";
+   nogui_hid.description = "Default GUI when no other GUI is present.  "
+                           "Does nothing.";
+-  nogui_hid.graphics    = &nogui_graphics;
++//  nogui_hid.graphics    = &nogui_graphics;
+ 
+   common_nogui_init (&nogui_hid);
+   common_nogui_graphics_init (&nogui_graphics);
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index aa16627..5be7406 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -56,6 +56,7 @@
+ #include "../hidint.h"
+ #include <gd.h>
+ #include "hid/common/hidnogui.h"
++#include "draw_api.h"
+ #include "hid/common/draw_helpers.h"
+ #include "bitmap.h"
+ #include "curve.h"
+@@ -454,6 +455,7 @@ gcode_finish_png (const char *layername)
+ static void
+ gcode_start_png_export ()
+ {
++#if 0
+   BoxType region;
+ 
+   region.X1 = PCB->ExtentMinX;
+@@ -464,7 +466,8 @@ gcode_start_png_export ()
+   linewidth = -1;
+   lastbrush = (gdImagePtr)((void *) -1);
+ 
+-//  hid_expose_callback (&gcode_hid, &region, 0);
++  hid_expose_callback (&gcode_hid, &region, 0);
++#endif
+ }
+ 
+ static FILE *
+@@ -1572,7 +1575,7 @@ hid_gcode_init ()
+   memset (&gcode_graphics, 0, sizeof (HID_DRAW_API));
+ 
+   common_nogui_init (&gcode_hid);
+-  common_draw_helpers_init (&gcode_hid);
++//  common_draw_helpers_init (&gcode_hid);
+ 
+   gcode_hid.struct_size         = sizeof (HID);
+   gcode_hid.name                = "gcode";
+@@ -1587,7 +1590,7 @@ hid_gcode_init ()
+   gcode_hid.calibrate           = gcode_calibrate;
+   gcode_hid.set_crosshair       = gcode_set_crosshair;
+ 
+-  gcode_hid.graphics            = &gcode_graphics;
++//  gcode_hid.graphics            = &gcode_graphics;
+ 
+   gcode_graphics.make_gc        = gcode_make_gc;
+   gcode_graphics.destroy_gc     = gcode_destroy_gc;
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 2a78634..cf4fd16 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -860,23 +860,22 @@ gerber_set_layer (const char *name, int group, int empty)
+           dapi->draw_pcb_layer (dapi, outline_layer);
+         }
+       else if (!outline_layer)
+-	{
+-#if 0
+-	  hidGC gc = gui->graphics->make_gc ();
+-	  printf("name %s idx %d\n", name, idx);
+-	  if (SL_TYPE (idx) == SL_SILK)
+-	    gui->graphics->set_line_width (gc, PCB->minSlk);
+-	  else if (group >= 0)
+-	    gui->graphics->set_line_width (gc, PCB->minWid);
+-	  else
+-	    gui->graphics->set_line_width (gc, AUTO_OUTLINE_WIDTH);
+-	  gui->graphics->draw_line (gc, 0, 0, PCB->MaxWidth, 0);
+-	  gui->graphics->draw_line (gc, 0, 0, 0, PCB->MaxHeight);
+-	  gui->graphics->draw_line (gc, PCB->MaxWidth, 0, PCB->MaxWidth, PCB->MaxHeight);
+-	  gui->graphics->draw_line (gc, 0, PCB->MaxHeight, PCB->MaxWidth, PCB->MaxHeight);
+-	  gui->graphics->destroy_gc (gc);
+-#endif
+-	}
++        {
++          DrawAPI *dapi = NULL;
++          hidGC gc = dapi->graphics->make_gc ();
++          printf("name %s idx %d\n", name, idx);
++          if (SL_TYPE (idx) == SL_SILK)
++            dapi->graphics->set_line_width (gc, PCB->minSlk);
++          else if (group >= 0)
++            dapi->graphics->set_line_width (gc, PCB->minWid);
++          else
++            dapi->graphics->set_line_width (gc, AUTO_OUTLINE_WIDTH);
++          dapi->graphics->draw_line (gc, 0, 0, PCB->MaxWidth, 0);
++          dapi->graphics->draw_line (gc, 0, 0, 0, PCB->MaxHeight);
++          dapi->graphics->draw_line (gc, PCB->MaxWidth, 0, PCB->MaxWidth, PCB->MaxHeight);
++          dapi->graphics->draw_line (gc, 0, PCB->MaxHeight, PCB->MaxWidth, PCB->MaxHeight);
++          dapi->graphics->destroy_gc (gc);
++      }
+     }
+ 
+   return 1;
+@@ -1268,7 +1267,7 @@ hid_gerber_init ()
+   memset (&gerber_graphics, 0, sizeof (gerber_graphics));
+ 
+   common_nogui_init (&gerber_hid);
+-  common_draw_helpers_init (&gerber_hid);
++//  common_draw_helpers_init (&gerber_hid);
+ 
+   gerber_hid.struct_size         = sizeof (gerber_hid);
+   gerber_hid.name                = "gerber";
+@@ -1282,7 +1281,7 @@ hid_gerber_init ()
+   gerber_hid.calibrate           = gerber_calibrate;
+   gerber_hid.set_crosshair       = gerber_set_crosshair;
+ 
+-  gerber_hid.graphics            = &gerber_graphics;
++//  gerber_hid.graphics            = &gerber_graphics;
+ 
+   gerber_graphics.make_gc        = gerber_make_gc;
+   gerber_graphics.destroy_gc     = gerber_destroy_gc;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 4329855..0b26c1e 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -9,6 +9,7 @@
+ #include "../hidint.h"
+ #include "gui.h"
+ #include "gui-pinout-preview.h"
++#include "draw.h"
+ #include "outline_draw.h"
+ 
+ /* The Linux OpenGL ABI 1.0 spec requires that we define
+@@ -34,8 +35,8 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-extern GraphicsAPI ghid_gapi;
+ extern HID ghid_hid;
++extern HID_DRAW_API ghid_graphics;
+ 
+ static hidGC current_gc = NULL;
+ 
+@@ -872,8 +873,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   DrawAPI *dapi;
+ 
+   dapi = draw_api_new ();
+-  dapi->gapi = &ghid_gapi;
+-  dapi->gc = dapi->gapi->make_gc ();
++  dapi->graphics = &ghid_graphics;
++  dapi->gc = dapi->graphics->make_gc ();
+   common_draw_helpers_init (dapi);
+ 
+   gtk_widget_get_allocation (widget, &allocation);
+@@ -1018,7 +1019,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   {
+     DrawAPI *dapi;
+-    dapi = outline_draw_new (gui->graphics);
++    dapi = outline_draw_new (&ghid_graphics);
+     dapi->set_draw_offset = hidgl_set_draw_offset;
+ 
+ //    DrawAttached (dapi);
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 2391a21..698034c 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2087,7 +2087,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
+ #endif
+ 
+ HID ghid_hid;
+-static HID_DRAW_API ghid_graphics;
++HID_DRAW_API ghid_graphics;
+ 
+ void
+ hid_gtk_init ()
+@@ -2130,7 +2130,7 @@ hid_gtk_init ()
+   memset (&ghid_graphics, 0, sizeof (HID_DRAW_API));
+ 
+   common_nogui_init (&ghid_hid);
+-  common_draw_helpers_init (&ghid_hid);
++//  common_draw_helpers_init (&ghid_hid);
+ 
+   ghid_hid.struct_size              = sizeof (HID);
+   ghid_hid.name                     = "gtk";
+@@ -2181,7 +2181,7 @@ hid_gtk_init ()
+   ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
+   ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
+ 
+-  ghid_hid.graphics                 = &ghid_graphics;
++//  ghid_hid.graphics                 = &ghid_graphics;
+ 
+   ghid_graphics.make_gc             = ghid_make_gc;
+   ghid_graphics.destroy_gc          = ghid_destroy_gc;
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index b33773e..bf7d6f6 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -143,7 +143,7 @@ hid_lpr_init ()
+   lpr_hid.parse_arguments     = lpr_parse_arguments;
+   lpr_hid.calibrate           = lpr_calibrate;
+ 
+-  lpr_hid.graphics            = &lpr_graphics;
++//  lpr_hid.graphics            = &lpr_graphics;
+ 
+   hid_register_hid (&lpr_hid);
+ }
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 33237ea..a89ce81 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -72,6 +72,7 @@
+ #include "hid.h"
+ #include "../hidint.h"
+ #include "hid/common/hidnogui.h"
++#include "draw_api.h"
+ #include "hid/common/draw_helpers.h"
+ 
+ #include <gd.h>
+@@ -636,6 +637,7 @@ nelma_finish_png()
+ void 
+ nelma_start_png_export()
+ {
++#if 0
+ 	BoxType         region;
+ 
+ 	region.X1 = 0;
+@@ -646,7 +648,8 @@ nelma_start_png_export()
+ 	linewidth = -1;
+ 	lastbrush = (gdImagePtr)((void *) -1);
+ 
+-//	hid_expose_callback(&nelma_hid, &region, 0);
++	hid_expose_callback(&nelma_hid, &region, 0);
++#endif
+ }
+ 
+ static void 
+@@ -1034,7 +1037,7 @@ hid_nelma_init()
+   memset (&nelma_graphics, 0, sizeof (HID_DRAW_API));
+ 
+   common_nogui_init (&nelma_hid);
+-  common_draw_helpers_init (&nelma_hid);
++//  common_draw_helpers_init (&nelma_hid);
+ 
+   nelma_hid.struct_size         = sizeof (HID);
+   nelma_hid.name                = "nelma";
+@@ -1049,7 +1052,7 @@ hid_nelma_init()
+   nelma_hid.calibrate           = nelma_calibrate;
+   nelma_hid.set_crosshair       = nelma_set_crosshair;
+ 
+-  nelma_hid.graphics            = &nelma_graphics;
++//  nelma_hid.graphics            = &nelma_graphics;
+ 
+   nelma_graphics.make_gc        = nelma_make_gc;
+   nelma_graphics.destroy_gc     = nelma_destroy_gc;
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 625b10b..1168067 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -43,6 +43,7 @@
+ #include "hid.h"
+ #include "../hidint.h"
+ #include "hid/common/hidnogui.h"
++#include "draw_api.h"
+ #include "hid/common/draw_helpers.h"
+ #include "png.h"
+ 
+@@ -1800,7 +1801,7 @@ hid_png_init ()
+   memset (&png_graphics, 0, sizeof (HID_DRAW_API));
+ 
+   common_nogui_init (&png_hid);
+-  common_draw_helpers_init (&png_hid);
++//  common_draw_helpers_init (&png_hid);
+ 
+   png_hid.struct_size = sizeof (HID);
+   png_hid.name        = "png";
+@@ -1815,7 +1816,7 @@ hid_png_init ()
+   png_hid.calibrate           = png_calibrate;
+   png_hid.set_crosshair       = png_set_crosshair;
+ 
+-  png_hid.graphics            = &png_graphics;
++//  png_hid.graphics            = &png_graphics;
+ 
+   png_graphics.make_gc        = png_make_gc;
+   png_graphics.destroy_gc     = png_destroy_gc;
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 79cf973..310bdc0 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -16,6 +16,7 @@
+ #include "hid.h"
+ #include "../hidint.h"
+ #include "hid/common/hidnogui.h"
++#include "draw_api.h"
+ #include "hid/common/draw_helpers.h"
+ #include "../ps/ps.h"
+ #include "hid/common/hidinit.h"
+@@ -665,7 +666,7 @@ hid_eps_init ()
+   memset (&eps_graphics, 0, sizeof (HID_DRAW_API));
+ 
+   common_nogui_init (&eps_hid);
+-  common_draw_helpers_init (&eps_hid);
++//  common_draw_helpers_init (&eps_hid);
+ 
+   eps_hid.struct_size         = sizeof (HID);
+   eps_hid.name                = "eps";
+@@ -680,7 +681,7 @@ hid_eps_init ()
+   eps_hid.calibrate           = eps_calibrate;
+   eps_hid.set_crosshair       = eps_set_crosshair;
+ 
+-  eps_hid.graphics            = &eps_graphics;
++//  eps_hid.graphics            = &eps_graphics;
+ 
+   eps_graphics.make_gc        = eps_make_gc;
+   eps_graphics.destroy_gc     = eps_destroy_gc;
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index ae5e4ae..c9322ab 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1520,7 +1520,7 @@ hid_ps_init ()
+   memset (&ps_graphics, 0, sizeof (HID_DRAW_API));
+ 
+   common_nogui_init (&ps_hid);
+-  common_draw_helpers_init (&ps_hid);
++//  common_draw_helpers_init (&ps_hid);
+   ps_ps_init (&ps_hid);
+   ps_ps_graphics_init (&ps_graphics);
+ 
+@@ -1530,7 +1530,7 @@ hid_ps_init ()
+   ps_hid.exporter           = 1;
+   ps_hid.poly_before        = 1;
+ 
+-  ps_hid.graphics           = &ps_graphics;
++//  ps_hid.graphics           = &ps_graphics;
+ 
+   hid_register_hid (&ps_hid);
+ 
+diff --git a/src/outline_draw.c b/src/outline_draw.c
+index 5061d3e..ed46508 100644
+--- a/src/outline_draw.c
++++ b/src/outline_draw.c
+@@ -125,7 +125,7 @@ static void
+ outline_draw_pcb_text (DrawAPI *dapi, LayerType *layer, TextType *text, Coord min_width)
+ {
+   BoxType *box = &text->BoundingBox;
+-  dapi->gapi->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
++  dapi->graphics->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
+ }
+ 
+ /* ---------------------------------------------------------------------------
