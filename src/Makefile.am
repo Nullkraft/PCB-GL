@@ -307,15 +307,15 @@ LIBGTK_SRCS = \
 	hid/gtk/ghid-main-menu.h \
 	hid/gtk/ghid-route-style-selector.c \
 	hid/gtk/ghid-route-style-selector.h \
-	hid/gtk/gtkhid.h \
 	hid/gtk/gtkhid-main.c \
+	hid/gtk/gtkhid.h \
+	hid/gtk/gui.h \
 	hid/gtk/gui-command-window.c \
 	hid/gtk/gui-config.c \
-	hid/gtk/gui-dialog.c \
 	hid/gtk/gui-dialog-print.c \
+	hid/gtk/gui-dialog.c \
 	hid/gtk/gui-drc-window.c \
 	hid/gtk/gui-drc-window.h \
-	hid/gtk/gui.h \
 	hid/gtk/gui-keyref-window.c \
 	hid/gtk/gui-library-window.c \
 	hid/gtk/gui-library-window.h \
