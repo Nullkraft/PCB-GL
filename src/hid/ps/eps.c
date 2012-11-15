@@ -16,6 +16,7 @@
 #include "hid.h"
 #include "../hidint.h"
 #include "hid/common/hidnogui.h"
+#include "draw_api.h"
 #include "hid/common/draw_helpers.h"
 #include "../ps/ps.h"
 #include "hid/common/hidinit.h"
@@ -665,7 +666,7 @@ hid_eps_init ()
   memset (&eps_graphics, 0, sizeof (HID_DRAW_API));
 
   common_nogui_init (&eps_hid);
-  common_draw_helpers_init (&eps_hid);
+//  common_draw_helpers_init (&eps_hid);
 
   eps_hid.struct_size         = sizeof (HID);
   eps_hid.name                = "eps";
@@ -680,7 +681,7 @@ hid_eps_init ()
   eps_hid.calibrate           = eps_calibrate;
   eps_hid.set_crosshair       = eps_set_crosshair;
 
-  eps_hid.graphics            = &eps_graphics;
+//  eps_hid.graphics            = &eps_graphics;
 
   eps_graphics.make_gc        = eps_make_gc;
   eps_graphics.destroy_gc     = eps_destroy_gc;

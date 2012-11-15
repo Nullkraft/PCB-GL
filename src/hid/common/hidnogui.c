@@ -514,7 +514,7 @@ hid_nogui_get_hid (void)
   nogui_hid.name        = "nogui";
   nogui_hid.description = "Default GUI when no other GUI is present.  "
                           "Does nothing.";
-  nogui_hid.graphics    = &nogui_graphics;
+//  nogui_hid.graphics    = &nogui_graphics;
 
   common_nogui_init (&nogui_hid);
   common_nogui_graphics_init (&nogui_graphics);

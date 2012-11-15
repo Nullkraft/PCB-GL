@@ -43,6 +43,7 @@
 #include "hid.h"
 #include "../hidint.h"
 #include "hid/common/hidnogui.h"
+#include "draw_api.h"
 #include "hid/common/draw_helpers.h"
 #include "png.h"
 
@@ -1800,7 +1801,7 @@ hid_png_init ()
   memset (&png_graphics, 0, sizeof (HID_DRAW_API));
 
   common_nogui_init (&png_hid);
-  common_draw_helpers_init (&png_hid);
+//  common_draw_helpers_init (&png_hid);
 
   png_hid.struct_size = sizeof (HID);
   png_hid.name        = "png";
@@ -1815,7 +1816,7 @@ hid_png_init ()
   png_hid.calibrate           = png_calibrate;
   png_hid.set_crosshair       = png_set_crosshair;
 
-  png_hid.graphics            = &png_graphics;
+//  png_hid.graphics            = &png_graphics;
 
   png_graphics.make_gc        = png_make_gc;
   png_graphics.destroy_gc     = png_destroy_gc;

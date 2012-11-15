@@ -860,23 +860,22 @@ gerber_set_layer (const char *name, int group, int empty)
           dapi->draw_pcb_layer (dapi, outline_layer);
         }
       else if (!outline_layer)
-	{
-#if 0
-	  hidGC gc = gui->graphics->make_gc ();
-	  printf("name %s idx %d\n", name, idx);
-	  if (SL_TYPE (idx) == SL_SILK)
-	    gui->graphics->set_line_width (gc, PCB->minSlk);
-	  else if (group >= 0)
-	    gui->graphics->set_line_width (gc, PCB->minWid);
-	  else
-	    gui->graphics->set_line_width (gc, AUTO_OUTLINE_WIDTH);
-	  gui->graphics->draw_line (gc, 0, 0, PCB->MaxWidth, 0);
-	  gui->graphics->draw_line (gc, 0, 0, 0, PCB->MaxHeight);
-	  gui->graphics->draw_line (gc, PCB->MaxWidth, 0, PCB->MaxWidth, PCB->MaxHeight);
-	  gui->graphics->draw_line (gc, 0, PCB->MaxHeight, PCB->MaxWidth, PCB->MaxHeight);
-	  gui->graphics->destroy_gc (gc);
-#endif
-	}
+        {
+          DrawAPI *dapi = NULL;
+          hidGC gc = dapi->graphics->make_gc ();
+          printf("name %s idx %d\n", name, idx);
+          if (SL_TYPE (idx) == SL_SILK)
+            dapi->graphics->set_line_width (gc, PCB->minSlk);
+          else if (group >= 0)
+            dapi->graphics->set_line_width (gc, PCB->minWid);
+          else
+            dapi->graphics->set_line_width (gc, AUTO_OUTLINE_WIDTH);
+          dapi->graphics->draw_line (gc, 0, 0, PCB->MaxWidth, 0);
+          dapi->graphics->draw_line (gc, 0, 0, 0, PCB->MaxHeight);
+          dapi->graphics->draw_line (gc, PCB->MaxWidth, 0, PCB->MaxWidth, PCB->MaxHeight);
+          dapi->graphics->draw_line (gc, 0, PCB->MaxHeight, PCB->MaxWidth, PCB->MaxHeight);
+          dapi->graphics->destroy_gc (gc);
+      }
     }
 
   return 1;
@@ -1268,7 +1267,7 @@ hid_gerber_init ()
   memset (&gerber_graphics, 0, sizeof (gerber_graphics));
 
   common_nogui_init (&gerber_hid);
-  common_draw_helpers_init (&gerber_hid);
+//  common_draw_helpers_init (&gerber_hid);
 
   gerber_hid.struct_size         = sizeof (gerber_hid);
   gerber_hid.name                = "gerber";
@@ -1282,7 +1281,7 @@ hid_gerber_init ()
   gerber_hid.calibrate           = gerber_calibrate;
   gerber_hid.set_crosshair       = gerber_set_crosshair;
 
-  gerber_hid.graphics            = &gerber_graphics;
+//  gerber_hid.graphics            = &gerber_graphics;
 
   gerber_graphics.make_gc        = gerber_make_gc;
   gerber_graphics.destroy_gc     = gerber_destroy_gc;

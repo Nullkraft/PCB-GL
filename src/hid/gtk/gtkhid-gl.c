@@ -9,6 +9,7 @@
 #include "../hidint.h"
 #include "gui.h"
 #include "gui-pinout-preview.h"
+#include "draw.h"
 #include "outline_draw.h"
 
 /* The Linux OpenGL ABI 1.0 spec requires that we define
@@ -34,8 +35,8 @@
 #include <dmalloc.h>
 #endif
 
-extern GraphicsAPI ghid_gapi;
 extern HID ghid_hid;
+extern HID_DRAW_API ghid_graphics;
 
 static hidGC current_gc = NULL;
 
@@ -872,8 +873,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   DrawAPI *dapi;
 
   dapi = draw_api_new ();
-  dapi->gapi = &ghid_gapi;
-  dapi->gc = dapi->gapi->make_gc ();
+  dapi->graphics = &ghid_graphics;
+  dapi->gc = dapi->graphics->make_gc ();
   common_draw_helpers_init (dapi);
 
   gtk_widget_get_allocation (widget, &allocation);
@@ -1018,7 +1019,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   {
     DrawAPI *dapi;
-    dapi = outline_draw_new (gui->graphics);
+    dapi = outline_draw_new (&ghid_graphics);
     dapi->set_draw_offset = hidgl_set_draw_offset;
 
 //    DrawAttached (dapi);

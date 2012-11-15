@@ -125,7 +125,7 @@ static void
 outline_draw_pcb_text (DrawAPI *dapi, LayerType *layer, TextType *text, Coord min_width)
 {
   BoxType *box = &text->BoundingBox;
-  dapi->gapi->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
+  dapi->graphics->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
 }
 
 /* ---------------------------------------------------------------------------
