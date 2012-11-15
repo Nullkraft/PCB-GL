@@ -119,7 +119,6 @@ a zoom in/out.
 #include "vendor.h"
 #include "free_atexit.h"
 
-#include "gui-icons-mode-buttons.data"
 #include "gui-icons-misc.data"
 #include "gui-trackball.h"
 #include "snavi.h"
@@ -946,26 +945,25 @@ typedef struct
   guint toolbar_button_cb_id;
   gchar *name;
   gint mode;
-  gchar **xpm;
 }
 ModeButton;
 
 
 static ModeButton mode_buttons[] = {
-  {NULL, NULL, 0, 0, "via", VIA_MODE, via},
-  {NULL, NULL, 0, 0, "line", LINE_MODE, line},
-  {NULL, NULL, 0, 0, "arc", ARC_MODE, arc},
-  {NULL, NULL, 0, 0, "text", TEXT_MODE, text},
-  {NULL, NULL, 0, 0, "rectangle", RECTANGLE_MODE, rect},
-  {NULL, NULL, 0, 0, "polygon", POLYGON_MODE, poly},
-  {NULL, NULL, 0, 0, "polygonhole", POLYGONHOLE_MODE, polyhole},
-  {NULL, NULL, 0, 0, "buffer", PASTEBUFFER_MODE, buf},
-  {NULL, NULL, 0, 0, "remove", REMOVE_MODE, del},
-  {NULL, NULL, 0, 0, "rotate", ROTATE_MODE, rot},
-  {NULL, NULL, 0, 0, "insertPoint", INSERTPOINT_MODE, ins},
-  {NULL, NULL, 0, 0, "thermal", THERMAL_MODE, thrm},
-  {NULL, NULL, 0, 0, "select", ARROW_MODE, sel},
-  {NULL, NULL, 0, 0, "lock", LOCK_MODE, lock}
+  {NULL, NULL, 0, 0, "via",         VIA_MODE        },
+  {NULL, NULL, 0, 0, "line",        LINE_MODE       },
+  {NULL, NULL, 0, 0, "arc",         ARC_MODE        },
+  {NULL, NULL, 0, 0, "text",        TEXT_MODE       },
+  {NULL, NULL, 0, 0, "rectangle",   RECTANGLE_MODE  },
+  {NULL, NULL, 0, 0, "polygon",     POLYGON_MODE    },
+  {NULL, NULL, 0, 0, "polygonhole", POLYGONHOLE_MODE},
+  {NULL, NULL, 0, 0, "buffer",      PASTEBUFFER_MODE},
+  {NULL, NULL, 0, 0, "remove",      REMOVE_MODE     },
+  {NULL, NULL, 0, 0, "rotate",      ROTATE_MODE     },
+  {NULL, NULL, 0, 0, "insertPoint", INSERTPOINT_MODE},
+  {NULL, NULL, 0, 0, "thermal",     THERMAL_MODE    },
+  {NULL, NULL, 0, 0, "select",      ARROW_MODE      },
+  {NULL, NULL, 0, 0, "lock",        LOCK_MODE       }
 };
 
 static gint n_mode_buttons = G_N_ELEMENTS (mode_buttons);
@@ -1055,10 +1053,10 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
   GtkToolItem *tool_item;
   GtkWidget *vbox, *hbox = NULL;
   GtkWidget *image;
-  GdkPixbuf *pixbuf;
   GSList *group = NULL;
   GSList *toolbar_group = NULL;
   ModeButton *mb;
+  char *icon_name;
   int i;
 
   *mode_toolbar = gtk_toolbar_new ();
@@ -1094,15 +1092,29 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
       gtk_container_add (GTK_CONTAINER (tool_item), mb->toolbar_button);
       gtk_toolbar_insert (GTK_TOOLBAR (*mode_toolbar), tool_item, -1);
 
+#if 0
+      GtkIconFactory *icon_factory;
+      GtkIconSet *icon_set;
+      GdkPixbuf *pixbuf;
+      GError *error = NULL;
+
+      icon_factory = gtk_icon_factory_new ();
+      gtk_icon_factory_add_default (icon_factory);
+
+      pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/arc.png", &error);
+      icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+      gtk_icon_factory_add (icon_factory, "pcb-tool-arc", icon_set);
+#endif
+
       /* Load the image for the button, create GtkImage widgets for both
        * the grid button and the toolbar button, then pack into the buttons
        */
-      pixbuf = gdk_pixbuf_new_from_xpm_data ((const char **) mb->xpm);
-      image = gtk_image_new_from_pixbuf (pixbuf);
+      icon_name = g_strdup_printf ("pcb-tool-%s", mb->name);
+      image = gtk_image_new_from_stock (icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
       gtk_container_add (GTK_CONTAINER (mb->button), image);
-      image = gtk_image_new_from_pixbuf (pixbuf);
+      image = gtk_image_new_from_stock (icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
       gtk_container_add (GTK_CONTAINER (mb->toolbar_button), image);
-      g_object_unref (pixbuf);
+      g_free (icon_name);
 
       if (strcmp (mb->name, "select") == 0)
         {
