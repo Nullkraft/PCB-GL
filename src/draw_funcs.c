@@ -49,15 +49,15 @@ static void
 draw_hole (PinType *pv, const BoxType *drawn_area, void *userdata)
 {
   if (!TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
+    gui->graphics->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
 
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (HOLEFLAG, pv))
     {
-      gui->set_line_cap (Output.fgGC, Round_Cap);
-      gui->set_line_width (Output.fgGC, 0);
+      gui->graphics->set_line_cap (Output.fgGC, Round_Cap);
+      gui->graphics->set_line_width (Output.fgGC, 0);
 
-      gui->draw_arc (Output.fgGC, pv->X, pv->Y,
-                     pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
+      gui->graphics->draw_arc (Output.fgGC, pv->X, pv->Y,
+                               pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
     }
 }
 
@@ -104,15 +104,15 @@ draw_pad_paste (PadType *pad, const BoxType *drawn_area, void *userdata)
 static void
 _draw_line (LineType *line)
 {
-  gui->set_line_cap (Output.fgGC, Trace_Cap);
+  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
   if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->set_line_width (Output.fgGC, 0);
+    gui->graphics->set_line_width (Output.fgGC, 0);
   else
-    gui->set_line_width (Output.fgGC, line->Thickness);
+    gui->graphics->set_line_width (Output.fgGC, line->Thickness);
 
-  gui->draw_line (Output.fgGC,
-                  line->Point1.X, line->Point1.Y,
-                  line->Point2.X, line->Point2.Y);
+  gui->graphics->draw_line (Output.fgGC,
+                            line->Point1.X, line->Point1.Y,
+                            line->Point2.X, line->Point2.Y);
 }
 
 static void
@@ -132,11 +132,11 @@ draw_rat (RatType *rat, const BoxType *drawn_area, void *userdata)
       int w = rat->Thickness;
 
       if (TEST_FLAG (THINDRAWFLAG, PCB))
-        gui->set_line_width (Output.fgGC, 0);
+        gui->graphics->set_line_width (Output.fgGC, 0);
       else
-        gui->set_line_width (Output.fgGC, w);
-      gui->draw_arc (Output.fgGC, rat->Point1.X, rat->Point1.Y,
-                     w * 2, w * 2, 0, 360);
+        gui->graphics->set_line_width (Output.fgGC, w);
+      gui->graphics->draw_arc (Output.fgGC, rat->Point1.X, rat->Point1.Y,
+                               w * 2, w * 2, 0, 360);
     }
   else
     _draw_line ((LineType *) rat);
@@ -149,13 +149,13 @@ draw_arc (ArcType *arc, const BoxType *drawn_area, void *userdata)
     return;
 
   if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->set_line_width (Output.fgGC, 0);
+    gui->graphics->set_line_width (Output.fgGC, 0);
   else
-    gui->set_line_width (Output.fgGC, arc->Thickness);
-  gui->set_line_cap (Output.fgGC, Trace_Cap);
+    gui->graphics->set_line_width (Output.fgGC, arc->Thickness);
+  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
 
-  gui->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
-                 arc->Height, arc->StartAngle, arc->Delta);
+  gui->graphics->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
+                           arc->Height, arc->StartAngle, arc->Delta);
 }
 
 static void
@@ -191,9 +191,9 @@ line_callback (const BoxType * b, void *cl)
   LayerType *layer = cl;
   LineType *line = (LineType *)b;
 
-  if (TEST_FLAG (SELECTEDFLAG, line))   gui->set_color (Output.fgGC, layer->SelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, line)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  else                                  gui->set_color (Output.fgGC, layer->Color);
+  if (TEST_FLAG (SELECTEDFLAG, line))   gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
+  else if (TEST_FLAG (FOUNDFLAG, line)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+  else                                  gui->graphics->set_color (Output.fgGC, layer->Color);
 
   dapi->draw_line (line, NULL, NULL);
   return 1;
@@ -205,9 +205,9 @@ arc_callback (const BoxType * b, void *cl)
   LayerType *layer = cl;
   ArcType *arc = (ArcType *)b;
 
-  if (TEST_FLAG (SELECTEDFLAG, arc))   gui->set_color (Output.fgGC, layer->SelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, arc)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  else                                 gui->set_color (Output.fgGC, layer->Color);
+  if (TEST_FLAG (SELECTEDFLAG, arc))   gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
+  else if (TEST_FLAG (FOUNDFLAG, arc)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+  else                                 gui->graphics->set_color (Output.fgGC, layer->Color);
 
   dapi->draw_arc (arc, NULL, NULL);
   return 1;
@@ -224,9 +224,9 @@ poly_callback (const BoxType * b, void *cl)
   struct poly_info *i = cl;
   PolygonType *polygon = (PolygonType *)b;
 
-  if (TEST_FLAG (SELECTEDFLAG, polygon))   gui->set_color (Output.fgGC, i->layer->SelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, polygon)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  else                                     gui->set_color (Output.fgGC, i->layer->Color);
+  if (TEST_FLAG (SELECTEDFLAG, polygon))   gui->graphics->set_color (Output.fgGC, i->layer->SelectedColor);
+  else if (TEST_FLAG (FOUNDFLAG, polygon)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+  else                                     gui->graphics->set_color (Output.fgGC, i->layer->Color);
 
   dapi->draw_poly (polygon, i->drawn_area, NULL);
   return 1;
@@ -240,9 +240,9 @@ text_callback (const BoxType * b, void *cl)
   int min_silk_line;
 
   if (TEST_FLAG (SELECTEDFLAG, text))
-    gui->set_color (Output.fgGC, layer->SelectedColor);
+    gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
   else
-    gui->set_color (Output.fgGC, layer->Color);
+    gui->graphics->set_color (Output.fgGC, layer->Color);
   if (layer == &PCB->Data->SILKLAYER ||
       layer == &PCB->Data->BACKSILKLAYER)
     min_silk_line = PCB->minSlk;
@@ -255,11 +255,11 @@ text_callback (const BoxType * b, void *cl)
 static void
 set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
 {
-  if (TEST_FLAG (WARNFLAG, pv))          gui->set_color (Output.fgGC, PCB->WarnColor);
-  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+  if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                          : PCB->PinSelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  else                                   gui->set_color (Output.fgGC, layer->Color);
+  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+  else                                   gui->graphics->set_color (Output.fgGC, layer->Color);
 }
 
 static int
@@ -290,10 +290,10 @@ pad_inlayer_callback (const BoxType * b, void *cl)
 
   if (ON_SIDE (pad, side))
     {
-      if (TEST_FLAG (WARNFLAG, pad))          gui->set_color (Output.fgGC, PCB->WarnColor);
-      else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
-      else if (TEST_FLAG (FOUNDFLAG, pad))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
-      else                                    gui->set_color (Output.fgGC, layer->Color);
+      if (TEST_FLAG (WARNFLAG, pad))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+      else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
+      else if (TEST_FLAG (FOUNDFLAG, pad))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+      else                                    gui->graphics->set_color (Output.fgGC, layer->Color);
 
       dapi->draw_pad (pad, NULL, NULL);
     }
@@ -310,9 +310,9 @@ pin_hole_callback (const BoxType * b, void *cl)
       (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
     return 1;
 
-  if (TEST_FLAG (WARNFLAG, pin))          gui->set_color (Output.fgGC, PCB->WarnColor);
-  else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
-  else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
+  if (TEST_FLAG (WARNFLAG, pin))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+  else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
+  else                                    gui->graphics->set_color (Output.fgGC, Settings.BlackColor);
 
   dapi->draw_pin_hole (pin, NULL, NULL);
   return 1;
@@ -328,9 +328,9 @@ via_hole_callback (const BoxType * b, void *cl)
       (plated == 1 &&  TEST_FLAG (HOLEFLAG, via)))
     return 1;
 
-  if (TEST_FLAG (WARNFLAG, via))          gui->set_color (Output.fgGC, PCB->WarnColor);
-  else if (TEST_FLAG (SELECTEDFLAG, via)) gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
-  else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
+  if (TEST_FLAG (WARNFLAG, via))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+  else if (TEST_FLAG (SELECTEDFLAG, via)) gui->graphics->set_color (Output.fgGC, PCB->ViaSelectedColor);
+  else                                    gui->graphics->set_color (Output.fgGC, Settings.BlackColor);
 
   dapi->draw_via_hole (via, NULL, NULL);
   return 1;
@@ -339,11 +339,11 @@ via_hole_callback (const BoxType * b, void *cl)
 static void
 set_pv_color (PinType *pv, int type)
 {
-  if (TEST_FLAG (WARNFLAG, pv))          gui->set_color (Output.fgGC, PCB->WarnColor);
-  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+  if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                          : PCB->PinSelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  else                                   gui->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor
+  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+  else                                   gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor
                                                                                          : PCB->PinColor);
 }
 
@@ -366,16 +366,16 @@ via_callback (const BoxType * b, void *cl)
 static int
 pad_callback (const BoxType * b, void *cl)
 {
-  PadTypePtr pad = (PadTypePtr) b;
+  PadType *pad = (PadType *) b;
   int *side = cl;
 
   if (ON_SIDE (pad, *side))
     {
-      if (TEST_FLAG (WARNFLAG, pad))          gui->set_color (Output.fgGC, PCB->WarnColor);
-      else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
-      else if (TEST_FLAG (FOUNDFLAG, pad))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
-      else if (FRONT (pad))                   gui->set_color (Output.fgGC, PCB->PinColor);
-      else                                    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+      if (TEST_FLAG (WARNFLAG, pad))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+      else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
+      else if (TEST_FLAG (FOUNDFLAG, pad))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+      else if (FRONT (pad))                   gui->graphics->set_color (Output.fgGC, PCB->PinColor);
+      else                                    gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
 
       dapi->draw_pad (pad, NULL, NULL);
     }
@@ -452,9 +452,9 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
     {
       if (IsLayerEmpty (layer))
         {
-          gui->set_color (Output.fgGC, layer->Color);
-          gui->set_line_width (Output.fgGC, PCB->minWid);
-          gui->draw_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+          gui->graphics->set_color (Output.fgGC, layer->Color);
+          gui->graphics->set_line_width (Output.fgGC, PCB->minWid);
+          gui->graphics->draw_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
         }
       return;
     }

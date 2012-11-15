@@ -1,3 +1,7 @@
+#include "global.h"
+#include "data.h"
+#include "polygon.h"
+
 static void
 fill_contour (PLINE *pl)
 {
@@ -14,7 +18,7 @@ fill_contour (PLINE *pl)
       y[i++] = v->point[1];
     }
 
-  gui->fill_polygon (Output.fgGC, n, x, y);
+  gui->graphics->fill_polygon (Output.fgGC, n, x, y);
 
   free (x);
   free (y);
@@ -27,13 +31,13 @@ thindraw_contour (PLINE *pl, void *userdata)
   Coord last_x, last_y;
   Coord this_x, this_y;
 
-  gui->set_line_width (Output.fgGC, 0);
-  gui->set_line_cap (Output.fgGC, Round_Cap);
+  gui->graphics->set_line_width (Output.fgGC, 0);
+  gui->graphics->set_line_cap (Output.fgGC, Round_Cap);
 
   /* If the contour is round, use an arc drawing routine. */
   if (pl->is_round)
     {
-      gui->draw_arc (Output.fgGC, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
+      gui->graphics->draw_arc (Output.fgGC, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
       return;
     }
 
@@ -50,7 +54,7 @@ thindraw_contour (PLINE *pl, void *userdata)
       this_x = v->point[0];
       this_y = v->point[1];
 
-      gui->draw_line (Output.fgGC, last_x, last_y, this_x, this_y);
+      gui->graphics->draw_line (Output.fgGC, last_x, last_y, this_x, this_y);
 
       last_x = this_x;
       last_y = this_y;
@@ -176,10 +180,12 @@ fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, void *userdata)
     }
 }
 
-static void
-thindraw_hole_cb (PLINE *pl, void *user_data)
+static int
+thindraw_hole_cb (PLINE *pl, void *userdata)
 {
   thindraw_contour (pl, userdata);
+
+  return 0;
 }
 
 static void
@@ -189,16 +195,16 @@ thindraw_poly (PolygonType *poly, const BoxType *drawn_area, void *userdata)
   PolygonHoles (poly, drawn_area, thindraw_hole_cb, userdata);
 }
 
-static void
-common_gui_draw_poly (PolygonType *poly, const BoxType *drawn_area, void *userdata)
+/* static */ void
+common_gui_draw_poly (PolygonType *polygon, const BoxType *drawn_area, void *userdata)
 {
-  if (!poly->Clipped)
+  if (!polygon->Clipped)
     return;
 
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    thindraw_poly (poly, drawn_area, userdata);
+    thindraw_poly (polygon, drawn_area, userdata);
   else
-    fill_pcb_polygon (poly, drawn_area, userdata);
+    fill_pcb_polygon (polygon, drawn_area, userdata);
 
   /* If checking planes, thin-draw any pieces which have been clipped away */
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
@@ -208,16 +214,16 @@ common_gui_draw_poly (PolygonType *poly, const BoxType *drawn_area, void *userda
       for (poly.Clipped = polygon->Clipped->f;
            poly.Clipped != polygon->Clipped;
            poly.Clipped = poly.Clipped->f)
-        thindraw_poly (poly, drawn_area, userdata);
+        thindraw_poly (&poly, drawn_area, userdata);
     }
 }
 
-static void
-common_exporter_draw_poly (PolygonType *poly, const BoxType *drawn_area, void *userdata)
+/* static */ void
+common_exporter_draw_poly (PolygonType *polygon, const BoxType *drawn_area, void *userdata)
 {
-  if (!poly->Clipped)
+  if (!polygon->Clipped)
     return;
 
-  fill_pcb_polygon (poly, drawn_area, userdata);
+  fill_pcb_polygon (polygon, drawn_area, userdata);
 }
 
