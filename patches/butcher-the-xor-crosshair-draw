@@ -1,5 +1,5 @@
 Bottom: 611951f32d8a47112e4b76c3035723317529644f
-Top:    37c3f2f39da9b7048da7b09da9ff0a8b7efe1eba
+Top:    60ec07440f9c4557e0946f9265b6dbf0285122fb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-14 21:59:50 +0000
 
@@ -23,10 +23,10 @@ index 269ee78..3649c17 100644
  	drill.h \
  	edif.y \
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 191295d..7777693 100644
+index 191295d..283da2b 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -51,444 +51,207 @@
+@@ -51,444 +51,206 @@
  #include <dmalloc.h>
  #endif
  
@@ -34,7 +34,7 @@ index 191295d..7777693 100644
 -{
 -  int x, y;
 -} point;
- 
+-
 -/* ---------------------------------------------------------------------------
 - * some local prototypes
 - */
@@ -48,14 +48,12 @@ index 191295d..7777693 100644
 -
 -static void
 -thindraw_moved_pv (PinType *pv, Coord x, Coord y)
-+static bool
-+make_arc_from_crosshair (ArcType *arc, Coord thick)
- {
+-{
 -  /* Make a copy of the pin structure, moved to the correct position */
 -  PinType moved_pv = *pv;
 -  moved_pv.X += x;
 -  moved_pv.Y += y;
--
+ 
 -  gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pv, true, false);
 -}
 -
@@ -82,7 +80,9 @@ index 191295d..7777693 100644
 - */
 -static void
 -XORDrawAttachedArc (Coord thick)
--{
++static bool
++make_arc_from_crosshair (ArcType *arc, Coord thick)
+ {
 -  ArcType arc;
 -  BoxType *bx;
    Coord wx, wy;
@@ -297,7 +297,9 @@ index 191295d..7777693 100644
 -    if (PCB->Data->Layer[i].On)
 -      {
 -	LayerType *layer = &Buffer->Data->Layer[i];
--
++  LineType *line;
++  PointType *point;
+ 
 -	LINE_LOOP (layer);
 -	{
 -/*
@@ -335,8 +337,8 @@ index 191295d..7777693 100644
 -	}
 -	END_LOOP;
 -      }
-+  LineType *line;
-+  PointType *point;
++  line  = (LineType  *)Crosshair.AttachedObject.Ptr2;
++  point = (PointType *)Crosshair.AttachedObject.Ptr3;
  
 -  /* draw elements if visible */
 -  if (PCB->PinOn && PCB->ElementOn)
@@ -355,9 +357,7 @@ index 191295d..7777693 100644
 -  }
 -  END_LOOP;
 -}
-+  line  = (LineType  *)Crosshair.AttachedObject.Ptr2;
-+  point = (PointType *)Crosshair.AttachedObject.Ptr3;
- 
+-
 -/* ---------------------------------------------------------------------------
 - * draws the rubberband to insert points into polygons/lines/...
 - */
@@ -529,12 +529,12 @@ index 191295d..7777693 100644
 +        /* XXX: Could do this by adjusting a copy polygon and drawing the entirity of that */
 +
 +        /* draw the two segments */
-+        dapi->gapi->draw_line (dapi->gc,
-+                               polygon->Points[prev].X, polygon->Points[prev].Y,
-+                               point->X + dx, point->Y + dy);
-+        dapi->gapi->draw_line (dapi->gc,
-+                               point->X + dx, point->Y + dy,
-+                               polygon->Points[next].X, polygon->Points[next].Y);
++        dapi->graphics->draw_line (dapi->gc,
++                                   polygon->Points[prev].X, polygon->Points[prev].Y,
++                                   point->X + dx, point->Y + dy);
++        dapi->graphics->draw_line (dapi->gc,
++                                   point->X + dx, point->Y + dy,
++                                   polygon->Points[next].X, polygon->Points[next].Y);
 +        break;
        }
  
@@ -551,8 +551,7 @@ index 191295d..7777693 100644
 +        /* locate the element "mark" and draw an association line from crosshair to it */
 +        ElementType *element = (ElementType *) Crosshair.AttachedObject.Ptr1;
 +
-+        dapi->gapi->draw_line (dapi->gc,
-+                               element->MarkX, element->MarkY, Crosshair.X, Crosshair.Y);
++        dapi->graphics->draw_line (dapi->gc, element->MarkX, element->MarkY, Crosshair.X, Crosshair.Y);
 +        /* fall through to move the text as a box outline */
        }
      case TEXT_TYPE:
@@ -568,7 +567,7 @@ index 191295d..7777693 100644
 +
 +        dapi->set_draw_offset (dapi, dx, dy);
 +        /* XXX: DOES THIS WORK IN CONJUNCTION WITH THE ABOVE? */
-+        dapi->gapi->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
++        dapi->graphics->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
 +        break;
        }
  
@@ -588,7 +587,7 @@ index 191295d..7777693 100644
      }
  
    /* draw the attached rubberband lines too */
-@@ -496,34 +259,32 @@ XORDrawMoveOrCopyObject (void)
+@@ -496,34 +258,32 @@ XORDrawMoveOrCopyObject (void)
    ptr = Crosshair.AttachedObject.Rubberband;
    while (i)
      {
@@ -648,7 +647,7 @@ index 191295d..7777693 100644
  
        ptr++;
        i--;
-@@ -534,8 +295,19 @@ XORDrawMoveOrCopyObject (void)
+@@ -534,8 +294,19 @@ XORDrawMoveOrCopyObject (void)
   * draws additional stuff that follows the crosshair
   */
  void
@@ -659,17 +658,17 @@ index 191295d..7777693 100644
 +  if (dapi == NULL)
 +    return;
 +
-+  dapi->gc = dapi->gapi->make_gc ();
++  dapi->gc = dapi->graphics->make_gc ();
 +
-+  dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
-+  dapi->gapi->set_draw_xor (dapi->gc, 1);
-+  dapi->gapi->set_line_cap (dapi->gc, Trace_Cap);
-+  dapi->gapi->set_line_width (dapi->gc, 1);
++  dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
++  dapi->graphics->set_draw_xor (dapi->gc, 1);
++  dapi->graphics->set_line_cap (dapi->gc, Trace_Cap);
++  dapi->graphics->set_line_width (dapi->gc, 1);
 +
    switch (Settings.Mode)
      {
      case VIA_MODE:
-@@ -550,15 +322,15 @@ DrawAttached (void)
+@@ -550,15 +321,15 @@ DrawAttached (void)
          via.Mask = 0;
          via.Flags = NoFlags ();
  
@@ -683,13 +682,13 @@ index 191295d..7777693 100644
 -            gui->graphics->set_color (Crosshair.GC, Settings.CrossColor);
 -            gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, false, true);
 -            gui->graphics->set_color (Crosshair.GC, Settings.CrosshairColor);
-+            dapi->gapi->set_color (dapi->gc, Settings.CrossColor);
++            dapi->graphics->set_color (dapi->gc, Settings.CrossColor);
 +            dapi->draw_pcb_via_mask (dapi, &via);
-+            dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
++            dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
            }
          break;
        }
-@@ -568,81 +340,100 @@ DrawAttached (void)
+@@ -568,81 +339,100 @@ DrawAttached (void)
      case POLYGONHOLE_MODE:
        /* draw only if starting point is set */
        if (Crosshair.AttachedLine.State != STATE_FIRST)
@@ -698,9 +697,9 @@ index 191295d..7777693 100644
 -                                  Crosshair.AttachedLine.Point1.Y,
 -                                  Crosshair.AttachedLine.Point2.X,
 -                                  Crosshair.AttachedLine.Point2.Y);
-+        dapi->gapi->draw_line (dapi->gc,
-+                               Crosshair.AttachedLine.Point1.X, Crosshair.AttachedLine.Point1.Y,
-+                               Crosshair.AttachedLine.Point2.X, Crosshair.AttachedLine.Point2.Y);
++        dapi->graphics->draw_line (dapi->gc,
++                                   Crosshair.AttachedLine.Point1.X, Crosshair.AttachedLine.Point1.Y,
++                                   Crosshair.AttachedLine.Point2.X, Crosshair.AttachedLine.Point2.Y);
  
        /* draw attached polygon only if in POLYGON_MODE or POLYGONHOLE_MODE */
        if (Crosshair.AttachedPolygon.PointN > 1)
@@ -737,9 +736,9 @@ index 191295d..7777693 100644
 +          {
 +            if (!make_arc_from_crosshair (&arc, Settings.LineThickness + 2 * (PCB->Bloat + 1)))
 +              break;
-+            dapi->gapi->set_color (dapi->gc, Settings.CrossColor);
++            dapi->graphics->set_color (dapi->gc, Settings.CrossColor);
 +            dapi->draw_pcb_arc (dapi, NULL, &arc);
-+            dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
++            dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
 +          }
 +
 +        break;
@@ -802,7 +801,7 @@ index 191295d..7777693 100644
 +
 +          if (TEST_FLAG (SHOWDRCFLAG, PCB))
 +            {
-+              dapi->gapi->set_color (dapi->gc, Settings.CrossColor);
++              dapi->graphics->set_color (dapi->gc, Settings.CrossColor);
 +
 +              draw_line.Point1 = Crosshair.AttachedLine.Point1;
 +              draw_line.Point2 = Crosshair.AttachedLine.Point2;
@@ -816,7 +815,7 @@ index 191295d..7777693 100644
 +                  dapi->draw_pcb_line (dapi, NULL, &draw_line);
 +                }
 +
-+              dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
++              dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
 +            }
 +        }
        break;
@@ -844,19 +843,19 @@ index 191295d..7777693 100644
        break;
      }
  
-@@ -656,8 +447,10 @@ DrawAttached (void)
+@@ -656,8 +446,10 @@ DrawAttached (void)
        y1 = Crosshair.AttachedBox.Point1.Y;
        x2 = Crosshair.AttachedBox.Point2.X;
        y2 = Crosshair.AttachedBox.Point2.Y;
 -      gui->graphics->draw_rect (Crosshair.GC, x1, y1, x2, y2);
-+      dapi->gapi->draw_rect (dapi->gc, x1, y1, x2, y2);
++      dapi->graphics->draw_rect (dapi->gc, x1, y1, x2, y2);
      }
 +
-+  dapi->gapi->destroy_gc (dapi->gc);
++  dapi->graphics->destroy_gc (dapi->gc);
  }
  
  
-@@ -665,20 +458,28 @@ DrawAttached (void)
+@@ -665,20 +457,29 @@ DrawAttached (void)
   * draw the marker position
   */
  void
@@ -879,18 +878,19 @@ index 191295d..7777693 100644
 -                  Marked.X + MARK_SIZE,
 -                  Marked.Y - MARK_SIZE,
 -                  Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
-+  dapi->gc = dapi->gapi->make_gc ();
++  dapi->gc = dapi->graphics->make_gc ();
 +
-+  dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
-+  dapi->gapi->set_draw_xor (dapi->gc, 1);
-+  dapi->gapi->set_line_cap (dapi->gc, Trace_Cap);
-+  dapi->gapi->set_line_width (dapi->gc, 1);
++  dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
++  dapi->graphics->set_draw_xor (dapi->gc, 1);
++  dapi->graphics->set_line_cap (dapi->gc, Trace_Cap);
++  dapi->graphics->set_line_width (dapi->gc, 1);
 +
-+  dapi->gapi->draw_line (dapi->gc, Marked.X - MARK_SIZE, Marked.Y - MARK_SIZE,
-+                                   Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
-+  dapi->gapi->draw_line (dapi->gc, Marked.X + MARK_SIZE, Marked.Y - MARK_SIZE,
-+                                   Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
-+  dapi->gapi->destroy_gc (dapi->gc);
++  dapi->graphics->draw_line (dapi->gc, Marked.X - MARK_SIZE, Marked.Y - MARK_SIZE,
++                                       Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
++  dapi->graphics->draw_line (dapi->gc, Marked.X + MARK_SIZE, Marked.Y - MARK_SIZE,
++                                       Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
++  dapi->graphics->destroy_gc (dapi->gc);
++
  }
  
  /* ---------------------------------------------------------------------------
@@ -940,10 +940,10 @@ index 2dd5e7e..3825057 100644
  void SetCrosshairRange (Coord, Coord, Coord, Coord);
 diff --git a/src/draw_api.h b/src/draw_api.h
 new file mode 100644
-index 0000000..48e938f
+index 0000000..fc7e924
 --- /dev/null
 +++ b/src/draw_api.h
-@@ -0,0 +1,121 @@
+@@ -0,0 +1,123 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -999,7 +999,7 @@ index 0000000..48e938f
 +  void (*set_clip_box)         (DrawAPI *, const BoxType *);
 +
 +  /* Member variables */
-+  GraphicsAPI *gapi;
++  GraphicsAPI *graphics;
 +  hidGC gc;
 +  hidGC fg_gc;
 +  hidGC bg_gc;
@@ -1007,12 +1007,14 @@ index 0000000..48e938f
 +  BoxType *clip_box;
 +};
 +
++#if 0
 +enum mask_mode {
 +  HID_MASK_OFF    = 0, /* Flush the buffer and return to non-mask operation. */
 +  HID_MASK_BEFORE = 1, /* Polygons being drawn before clears.                */
 +  HID_MASK_CLEAR  = 2, /* Clearances being drawn.                            */
 +  HID_MASK_AFTER  = 3, /* Polygons being drawn after clears.                 */
 +};
++#endif
 +
 +struct GraphicsAPI {
 +  /* Make an empty graphics context. */
@@ -1065,6 +1067,44 @@ index 0000000..48e938f
 +#endif
 +
 +#endif
+diff --git a/src/hid.h b/src/hid.h
+index c64c3bd..59bee9c 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -232,13 +232,16 @@ typedef enum
+     int (*throw_drc_dialog) (void);
+   } HID_DRC_GUI;
+ 
++#if 1
+   enum mask_mode {
+     HID_MASK_OFF    = 0, /* Flush the buffer and return to non-mask operation. */
+     HID_MASK_BEFORE = 1, /* Polygons being drawn before clears.                */
+     HID_MASK_CLEAR  = 2, /* Clearances being drawn.                            */
+     HID_MASK_AFTER  = 3, /* Polygons being drawn after clears.                 */
+   };
++#endif
+ 
++#if 0
+ /* Low level drawing API */
+   typedef struct
+   {
+@@ -282,6 +285,7 @@ typedef enum
+     void (*fill_rect)    (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+ 
+   } HID_DRAW_API;
++#endif
+ 
+ 
+   typedef struct hid_st HID;
+@@ -369,7 +373,7 @@ typedef enum
+     void (*end_layer) (void);
+ 
+ 
+-    HID_DRAW_API *graphics;
++//    HID_DRAW_API *graphics;
+ 
+     void (*fill_pcb_polygon) (hidGC gc_, PolygonType *poly,
+                               const BoxType *clip_box);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index c05ed35..5bd1ce5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
@@ -1109,7 +1149,7 @@ index c05ed35..5bd1ce5 100644
    draw_crosshair (priv);
 diff --git a/src/outline_draw.c b/src/outline_draw.c
 new file mode 100644
-index 0000000..6da1b82
+index 0000000..3cdeb1e
 --- /dev/null
 +++ b/src/outline_draw.c
 @@ -0,0 +1,288 @@
@@ -1170,9 +1210,9 @@ index 0000000..6da1b82
 +  for (i = 0; i < polygon->PointN; i++)
 +    {
 +      Cardinal next = next_contour_point (polygon, i);
-+      dapi->gapi->draw_line (dapi->gc,
-+                             polygon->Points[   i].X, polygon->Points[   i].Y,
-+                             polygon->Points[next].X, polygon->Points[next].Y);
++      dapi->graphics->draw_line (dapi->gc,
++                                 polygon->Points[   i].X, polygon->Points[   i].Y,
++                                 polygon->Points[next].X, polygon->Points[next].Y);
 +    }
 +}
 +
@@ -1194,18 +1234,18 @@ index 0000000..6da1b82
 +
 +  ox =   dy * h + 0.5 * SGN (dy);
 +  oy = -(dx * h + 0.5 * SGN (dx));
-+  dapi->gapi->draw_line (dapi->gc, line->Point1.X + ox, line->Point1.Y + oy,
-+                                   line->Point2.X + ox, line->Point2.Y + oy);
++  dapi->graphics->draw_line (dapi->gc, line->Point1.X + ox, line->Point1.Y + oy,
++                                       line->Point2.X + ox, line->Point2.Y + oy);
 +
 +  if (abs (ox) >= pixel_slop || abs (oy) >= pixel_slop)
 +    {
 +      Angle angle = atan2 (dx, dy) * 57.295779;
-+      dapi->gapi->draw_line (dapi->gc, line->Point1.X - ox, line->Point1.Y - oy,
-+                                       line->Point2.X - ox, line->Point2.Y - oy);
-+      dapi->gapi->draw_arc (dapi->gc, line->Point1.X, line->Point1.Y,
-+                                      thick / 2, thick / 2, angle - 180, 180);
-+      dapi->gapi->draw_arc (dapi->gc, line->Point2.X, line->Point2.Y,
-+                                      thick / 2, thick / 2, angle, 180);
++      dapi->graphics->draw_line (dapi->gc, line->Point1.X - ox, line->Point1.Y - oy,
++                                           line->Point2.X - ox, line->Point2.Y - oy);
++      dapi->graphics->draw_arc (dapi->gc, line->Point1.X, line->Point1.Y,
++                                          thick / 2, thick / 2, angle - 180, 180);
++      dapi->graphics->draw_arc (dapi->gc, line->Point2.X, line->Point2.Y,
++                                          thick / 2, thick / 2, angle, 180);
 +    }
 +}
 +
@@ -1215,25 +1255,25 @@ index 0000000..6da1b82
 +  if (arc->Width > pixel_slop)
 +    {
 +      BoxType *bx = GetArcEnds (arc);
-+      dapi->gapi->draw_arc (dapi->gc, arc->X, arc->Y,
-+                            arc->Width + arc->Thickness, arc->Height + arc->Thickness,
-+                            arc->StartAngle, arc->Delta);
++      dapi->graphics->draw_arc (dapi->gc, arc->X, arc->Y,
++                                arc->Width + arc->Thickness, arc->Height + arc->Thickness,
++                                arc->StartAngle, arc->Delta);
 +
-+      dapi->gapi->draw_arc (dapi->gc, arc->X, arc->Y,
-+                            arc->Width - arc->Thickness, arc->Height - arc->Thickness,
-+                            arc->StartAngle, arc->Delta);
++      dapi->graphics->draw_arc (dapi->gc, arc->X, arc->Y,
++                                arc->Width - arc->Thickness, arc->Height - arc->Thickness,
++                                arc->StartAngle, arc->Delta);
 +
-+      dapi->gapi->draw_arc (dapi->gc, bx->X1, bx->Y1,
-+                            arc->Thickness, arc->Thickness,
-+                            arc->StartAngle, -180 * SGN (arc->Delta));
++      dapi->graphics->draw_arc (dapi->gc, bx->X1, bx->Y1,
++                                arc->Thickness, arc->Thickness,
++                                arc->StartAngle, -180 * SGN (arc->Delta));
 +
-+      dapi->gapi->draw_arc (dapi->gc, bx->X2, bx->Y2,
-+                            arc->Thickness, arc->Thickness,
-+                            arc->StartAngle + arc->Delta, 180 * SGN (arc->Delta));
++      dapi->graphics->draw_arc (dapi->gc, bx->X2, bx->Y2,
++                                arc->Thickness, arc->Thickness,
++                                arc->StartAngle + arc->Delta, 180 * SGN (arc->Delta));
 +    }
 +  else
-+    dapi->gapi->draw_arc (dapi->gc, arc->X, arc->Y,
-+                          arc->Width, arc->Height, arc->StartAngle, arc->Delta);
++    dapi->graphics->draw_arc (dapi->gc, arc->X, arc->Y,
++                              arc->Width, arc->Height, arc->StartAngle, arc->Delta);
 +}
 +
 +/* ---------------------------------------------------------------------------
@@ -1245,14 +1285,14 @@ index 0000000..6da1b82
 +  /* if no silkscreen, draw the bounding box */
 +  if (Element->ArcN == 0 && Element->LineN == 0)
 +    {
-+      dapi->gapi->draw_line (dapi->gc, Element->BoundingBox.X1, Element->BoundingBox.Y1,
-+                                    Element->BoundingBox.X1, Element->BoundingBox.Y2);
-+      dapi->gapi->draw_line (dapi->gc, Element->BoundingBox.X1, Element->BoundingBox.Y2,
-+                                    Element->BoundingBox.X2, Element->BoundingBox.Y2);
-+      dapi->gapi->draw_line (dapi->gc, Element->BoundingBox.X2, Element->BoundingBox.Y2,
-+                                    Element->BoundingBox.X2, Element->BoundingBox.Y1);
-+      dapi->gapi->draw_line (dapi->gc, Element->BoundingBox.X2, Element->BoundingBox.Y1,
-+                                    Element->BoundingBox.X1, Element->BoundingBox.Y1);
++      dapi->graphics->draw_line (dapi->gc, Element->BoundingBox.X1, Element->BoundingBox.Y1,
++                                           Element->BoundingBox.X1, Element->BoundingBox.Y2);
++      dapi->graphics->draw_line (dapi->gc, Element->BoundingBox.X1, Element->BoundingBox.Y2,
++                                           Element->BoundingBox.X2, Element->BoundingBox.Y2);
++      dapi->graphics->draw_line (dapi->gc, Element->BoundingBox.X2, Element->BoundingBox.Y2,
++                                           Element->BoundingBox.X2, Element->BoundingBox.Y1);
++      dapi->graphics->draw_line (dapi->gc, Element->BoundingBox.X2, Element->BoundingBox.Y1,
++                                           Element->BoundingBox.X1, Element->BoundingBox.Y1);
 +    }
 +  else
 +    {
@@ -1286,14 +1326,14 @@ index 0000000..6da1b82
 +  END_LOOP;
 +
 +  /* Element mark */
-+  dapi->gapi->draw_line (dapi->gc, Element->MarkX - EMARK_SIZE, Element->MarkY,
-+                                   Element->MarkX,              Element->MarkY - EMARK_SIZE);
-+  dapi->gapi->draw_line (dapi->gc, Element->MarkX + EMARK_SIZE, Element->MarkY,
-+                                   Element->MarkX,              Element->MarkY - EMARK_SIZE);
-+  dapi->gapi->draw_line (dapi->gc, Element->MarkX - EMARK_SIZE, Element->MarkY,
-+                                   Element->MarkX,              Element->MarkY + EMARK_SIZE);
-+  dapi->gapi->draw_line (dapi->gc, Element->MarkX + EMARK_SIZE, Element->MarkY,
-+                                   Element->MarkX,              Element->MarkY + EMARK_SIZE);
++  dapi->graphics->draw_line (dapi->gc, Element->MarkX - EMARK_SIZE, Element->MarkY,
++                                       Element->MarkX,              Element->MarkY - EMARK_SIZE);
++  dapi->graphics->draw_line (dapi->gc, Element->MarkX + EMARK_SIZE, Element->MarkY,
++                                       Element->MarkX,              Element->MarkY - EMARK_SIZE);
++  dapi->graphics->draw_line (dapi->gc, Element->MarkX - EMARK_SIZE, Element->MarkY,
++                                       Element->MarkX,              Element->MarkY + EMARK_SIZE);
++  dapi->graphics->draw_line (dapi->gc, Element->MarkX + EMARK_SIZE, Element->MarkY,
++                                       Element->MarkX,              Element->MarkY + EMARK_SIZE);
 +}
 +
 +/* ---------------------------------------------------------------------------
@@ -1357,27 +1397,27 @@ index 0000000..6da1b82
 +static void
 +outline_draw_pcb_pv (DrawAPI *dapi, PinType *pin)
 +{
-+  dapi->gapi->thindraw_pcb_pv (dapi->gc, dapi->gc, pin, true, false);
++  dapi->graphics->thindraw_pcb_pv (dapi->gc, dapi->gc, pin, true, false);
 +}
 +
 +static void
 +outline_draw_pcb_pv_mask (DrawAPI *dapi, PinType *pin)
 +{
-+  dapi->gapi->thindraw_pcb_pv (dapi->gc, dapi->gc, pin, true, true);
++  dapi->graphics->thindraw_pcb_pv (dapi->gc, dapi->gc, pin, true, true);
 +}
 +
 +static void
 +outline_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
 +{
-+  dapi->gapi->thindraw_pcb_pad (dapi->gc, pad, false, false);
++  dapi->graphics->thindraw_pcb_pad (dapi->gc, pad, false, false);
 +}
 +
-+DrawAPI *outline_draw_new (HID *gapi)
++DrawAPI *outline_draw_new (HID *hid)
 +{
 +  DrawAPI *dapi;
 +
 +  dapi = g_new0 (DrawAPI, 1);
-+  dapi->gapi = gapi;
++  dapi->graphics = hid; /* XXX */
 +
 +  dapi->draw_pcb_pin          = outline_draw_pcb_pv;
 +  dapi->draw_pcb_pin_mask     = outline_draw_pcb_pv_mask;
