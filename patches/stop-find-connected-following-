@@ -1,5 +1,5 @@
-Bottom: b7cd7f5f9d85f1b197f11db2a4462ee3ca681bfe
-Top:    b4bd06629cb1bd20707d6f590bd15cdbcf3da037
+Bottom: 6bba067412803fa6955b210331d18246e7cd5bf4
+Top:    7178d06c2557e29b583fad75f7cc4f205114cd8a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-12-16 00:57:57 +0000
 
@@ -31,10 +31,10 @@ connected - despite PCB's green rendering suggesting that they were.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 8a1e357..c734f1a 100644
+index 5fa49dc..a70e4dd 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -894,7 +894,7 @@ NotifyLine (void)
+@@ -872,7 +872,7 @@ NotifyLine (void)
  			       PIN_TYPE | PAD_TYPE | VIA_TYPE, &ptr1, &ptr2,
  			       &ptr3);
  	  LookupConnection (Crosshair.X, Crosshair.Y, true, 1,
@@ -43,7 +43,7 @@ index 8a1e357..c734f1a 100644
  	}
        if (type == PIN_TYPE || type == VIA_TYPE)
  	{
-@@ -2304,7 +2304,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+@@ -2288,7 +2288,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
  	case F_Find:
  	  {
  	    gui->get_coords (_("Click on a connection"), &x, &y);
@@ -52,7 +52,7 @@ index 8a1e357..c734f1a 100644
  	    break;
  	  }
  
-@@ -2771,7 +2771,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+@@ -2754,7 +2754,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
  	      if (Crosshair.AttachedLine.State != STATE_FIRST)
  		LookupConnection (Crosshair.AttachedLine.Point1.X,
  				  Crosshair.AttachedLine.Point1.Y, true, 1,
@@ -62,10 +62,10 @@ index 8a1e357..c734f1a 100644
  	  notify_crosshair_change (true);
  	  break;
 diff --git a/src/find.c b/src/find.c
-index e842fd9..d5e759a 100644
+index a6e003d..5318a52 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3233,7 +3233,8 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3)
+@@ -3221,7 +3221,8 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3)
   * also the action is marked as undoable if AndDraw is true
   */
  void
@@ -75,7 +75,7 @@ index e842fd9..d5e759a 100644
  {
    void *ptr1, *ptr2, *ptr3;
    char *name;
-@@ -3247,10 +3248,9 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag)
+@@ -3235,10 +3236,9 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag)
      = SearchObjectByLocation (LOOKUP_FIRST, &ptr1, &ptr2, &ptr3, X, Y, Range);
    if (type == NO_TYPE)
      {
@@ -89,7 +89,7 @@ index e842fd9..d5e759a 100644
        if (type == NO_TYPE)
          return;
        if (type & SILK_TYPE)
-@@ -3263,11 +3263,9 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag)
+@@ -3251,11 +3251,9 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag)
              return;
          }
      }
@@ -104,7 +104,7 @@ index e842fd9..d5e759a 100644
  
    TheFlag = which_flag;
    User = AndDraw;
-@@ -3277,7 +3275,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag)
+@@ -3265,7 +3263,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag)
     * This is step (1) from the description
     */
    ListStart (type, ptr1, ptr2, ptr3);
@@ -114,12 +114,12 @@ index e842fd9..d5e759a 100644
      IncrementUndoSerialNumber ();
    User = false;
 diff --git a/src/find.h b/src/find.h
-index d2be7ac..d29cfbf 100644
+index 6ccc81f..ab4021a 100644
 --- a/src/find.h
 +++ b/src/find.h
-@@ -52,7 +52,7 @@ bool ArcPadIntersect (ArcTypePtr, PadTypePtr);
- bool IsPolygonInPolygon (PolygonTypePtr, PolygonTypePtr);
- void LookupElementConnections (ElementTypePtr, FILE *);
+@@ -51,7 +51,7 @@ bool ArcPadIntersect (ArcType *, PadType *);
+ bool IsPolygonInPolygon (PolygonType *, PolygonType *);
+ void LookupElementConnections (ElementType *, FILE *);
  void LookupConnectionsToAllElements (FILE *);
 -void LookupConnection (Coord, Coord, bool, Coord, int);
 +void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats);
@@ -127,10 +127,10 @@ index d2be7ac..d29cfbf 100644
  bool ResetFoundLinesAndPolygons (bool);
  bool ResetFoundPinsViasAndPads (bool);
 diff --git a/src/netlist.c b/src/netlist.c
-index 06f0e77..35aaf6f 100644
+index d47f7d2..4a17eec 100644
 --- a/src/netlist.c
 +++ b/src/netlist.c
-@@ -168,7 +168,7 @@ netlist_find (LibraryMenuType * net, LibraryEntryType * pin)
+@@ -164,7 +164,7 @@ netlist_find (LibraryMenuType * net, LibraryEntryType * pin)
    int x, y;
    if (pin_name_to_xy (net->Entry, &x, &y))
      return;
@@ -139,7 +139,7 @@ index 06f0e77..35aaf6f 100644
  }
  
  static void
-@@ -177,7 +177,7 @@ netlist_select (LibraryMenuType * net, LibraryEntryType * pin)
+@@ -173,7 +173,7 @@ netlist_select (LibraryMenuType * net, LibraryEntryType * pin)
    int x, y;
    if (pin_name_to_xy (net->Entry, &x, &y))
      return;
@@ -149,7 +149,7 @@ index 06f0e77..35aaf6f 100644
  
  static void
 diff --git a/src/report.c b/src/report.c
-index d461bd2..fe14d9a 100644
+index 64db36a..fa33060 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -560,7 +560,7 @@ XYtoNetLength (Coord x, Coord y, int *found)
