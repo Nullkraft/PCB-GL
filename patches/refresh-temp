@@ -1,0 +1,41 @@
+Bottom: 77620410ff2c453e9ceb8a92ff0d42696569fecf
+Top:    62b8205caeb617d7d661dc92c0ad1b6d60e0ba19
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-15 01:54:41 +0000
+
+Refresh of bga-wizard
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index fb029ab..a2d4ed7 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -296,6 +296,7 @@ libgtk_a_CPPFLAGS = -I./hid/gtk
+ LIBGTK_SRCS = \
+ 	dolists.h \
+ 	hid/hidint.h \
++	hid/gtk/bga-wizard.c \
+ 	hid/gtk/ghid-cell-renderer-visibility.c \
+ 	hid/gtk/ghid-cell-renderer-visibility.h \
+ 	hid/gtk/ghid-coord-entry.c \
+@@ -306,16 +307,15 @@ LIBGTK_SRCS = \
+ 	hid/gtk/ghid-main-menu.h \
+ 	hid/gtk/ghid-route-style-selector.c \
+ 	hid/gtk/ghid-route-style-selector.h \
+-	hid/gtk/gtkhid-main.c \
+ 	hid/gtk/gtkhid.h \
+-	hid/gtk/gui.h \
+-	hid/gtk/bga-wizard.c \
++	hid/gtk/gtkhid-main.c \
+ 	hid/gtk/gui-command-window.c \
+ 	hid/gtk/gui-config.c \
+-	hid/gtk/gui-dialog-print.c \
+ 	hid/gtk/gui-dialog.c \
++	hid/gtk/gui-dialog-print.c \
+ 	hid/gtk/gui-drc-window.c \
+ 	hid/gtk/gui-drc-window.h \
++	hid/gtk/gui.h \
+ 	hid/gtk/gui-keyref-window.c \
+ 	hid/gtk/gui-library-window.c \
+ 	hid/gtk/gui-library-window.h \
