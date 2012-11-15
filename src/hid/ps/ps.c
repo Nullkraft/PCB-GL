@@ -1492,7 +1492,7 @@ void ps_ps_init (HID *hid)
   hid->get_export_options = ps_get_export_options;
   hid->do_export          = ps_do_export;
   hid->parse_arguments    = ps_parse_arguments;
-  hid->draw_pcb_polygon   = ps_draw_pcb_polygon;
+//  hid->draw_pcb_polygon   = ps_draw_pcb_polygon;
   hid->calibrate          = ps_calibrate;
   hid->set_crosshair      = ps_set_crosshair;
 }
