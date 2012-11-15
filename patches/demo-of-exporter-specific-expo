@@ -1,5 +1,5 @@
 Bottom: 056b9d84d0e722a063b7b150bbc824de05884693
-Top:    eaa8d1abb6be77a485773d8844020ce56d3e9119
+Top:    d8848a4ce318259509ddd1efbf021092244144c5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-14 23:58:38 +0000
 
@@ -251,7 +251,7 @@ index 0d0851d..51bed41 100644
 +    PrintFab (Output.fgGC);
 +}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index eb667e3..04390e0 100644
+index eb667e3..4e57eab 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -23,9 +23,11 @@
@@ -345,7 +345,7 @@ index eb667e3..04390e0 100644
 +      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
 +    return 1;
 +
-+  gui->fill_circle (Output.bgGC, pin->X, pin->Y, pin->DrillingHole / 2);
++  gui->graphics->fill_circle (Output.bgGC, pin->X, pin->Y, pin->DrillingHole / 2);
 +  return 1;
 +}
 +
@@ -369,12 +369,12 @@ index eb667e3..04390e0 100644
 +  hidGC savepm = Output.pmGC;
 +
 +  gui = hid;
-+  Output.fgGC = gui->make_gc ();
-+  Output.bgGC = gui->make_gc ();
-+  Output.pmGC = gui->make_gc ();
++  Output.fgGC = gui->graphics->make_gc ();
++  Output.bgGC = gui->graphics->make_gc ();
++  Output.pmGC = gui->graphics->make_gc ();
 +
-+  hid->set_color (Output.pmGC, "erase");
-+  hid->set_color (Output.bgGC, "drill");
++  hid->graphics->set_color (Output.pmGC, "erase");
++  hid->graphics->set_color (Output.bgGC, "drill");
 +
 +  memset (print_group, 0, sizeof (print_group));
 +  for (i = 0; i < max_copper_layer; i++)
@@ -424,11 +424,11 @@ index eb667e3..04390e0 100644
 +    DrawPaste (SOLDER_LAYER, drawn_area);
 +
 +  if (set_layer ("fab", SL (FAB, 0), 0))
-+    PrintFab ();
++    PrintFab (Output.fgGC);
 +
-+  gui->destroy_gc (Output.fgGC);
-+  gui->destroy_gc (Output.bgGC);
-+  gui->destroy_gc (Output.pmGC);
++  gui->graphics->destroy_gc (Output.fgGC);
++  gui->graphics->destroy_gc (Output.bgGC);
++  gui->graphics->destroy_gc (Output.pmGC);
 +  gui = old_gui;
 +  Output.fgGC = savefg;
 +  Output.bgGC = savebg;
@@ -772,10 +772,20 @@ index eb667e3..04390e0 100644
    gerber_hid.set_crosshair       = gerber_set_crosshair;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1913210..aac2709 100644
+index 1913210..07ab004 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -125,8 +125,8 @@ end_subcomposite (void)
+@@ -9,6 +9,9 @@
+ #include "../hidint.h"
+ #include "gui.h"
+ #include "gui-pinout-preview.h"
++#include "draw.h"
++#include "draw_funcs.h"
++#include "rtree.h"
+ 
+ /* The Linux OpenGL ABI 1.0 spec requires that we define
+  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+@@ -125,8 +128,8 @@ end_subcomposite (void)
  }
  
  
@@ -786,7 +796,7 @@ index 1913210..aac2709 100644
  {
    render_priv *priv = gport->render_priv;
    int idx = group;
-@@ -856,6 +856,137 @@ ghid_screen_update (void)
+@@ -856,6 +859,137 @@ ghid_screen_update (void)
  {
  }
  
@@ -804,12 +814,12 @@ index 1913210..aac2709 100644
 +  HID *old_gui = gui;
 +
 +  gui = &ghid_hid;
-+  Output.fgGC = gui->make_gc ();
-+  Output.bgGC = gui->make_gc ();
-+  Output.pmGC = gui->make_gc ();
++  Output.fgGC = gui->graphics->make_gc ();
++  Output.bgGC = gui->graphics->make_gc ();
++  Output.pmGC = gui->graphics->make_gc ();
 +
-+  gui->set_color (Output.pmGC, "erase");
-+  gui->set_color (Output.bgGC, "drill");
++  gui->graphics->set_color (Output.pmGC, "erase");
++  gui->graphics->set_color (Output.bgGC, "drill");
 +
 +  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
 +  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
@@ -915,16 +925,16 @@ index 1913210..aac2709 100644
 +      gui->end_layer ();
 +    }
 +
-+  gui->destroy_gc (Output.fgGC);
-+  gui->destroy_gc (Output.bgGC);
-+  gui->destroy_gc (Output.pmGC);
++  gui->graphics->destroy_gc (Output.fgGC);
++  gui->graphics->destroy_gc (Output.bgGC);
++  gui->graphics->destroy_gc (Output.pmGC);
 +  gui = old_gui;
 +}
 +
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1002,7 +1133,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1002,7 +1136,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_draw_bg_image ();
  
    ghid_invalidate_current_gc ();
@@ -934,7 +944,7 @@ index 1913210..aac2709 100644
  
    ghid_draw_grid (&region);
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index d4a19bb..25bd3e5 100644
+index d4a19bb..1dad937 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -31,7 +31,7 @@
@@ -1003,12 +1013,12 @@ index d4a19bb..25bd3e5 100644
 +  bool paste_empty;
 +
 +  gui = &ps_hid;
-+  Output.fgGC = gui->make_gc ();
-+  Output.bgGC = gui->make_gc ();
-+  Output.pmGC = gui->make_gc ();
++  Output.fgGC = gui->graphics->make_gc ();
++  Output.bgGC = gui->graphics->make_gc ();
++  Output.pmGC = gui->graphics->make_gc ();
 +
-+  gui->set_color (Output.pmGC, "erase");
-+  gui->set_color (Output.bgGC, "drill");
++  gui->graphics->set_color (Output.pmGC, "erase");
++  gui->graphics->set_color (Output.bgGC, "drill");
 +
 +  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
 +  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
@@ -1065,9 +1075,9 @@ index d4a19bb..25bd3e5 100644
 +  if (set_layer ("fab", SL (FAB, 0), 0))
 +    PrintFab (Output.fgGC);
 +
-+  gui->destroy_gc (Output.fgGC);
-+  gui->destroy_gc (Output.bgGC);
-+  gui->destroy_gc (Output.pmGC);
++  gui->graphics->destroy_gc (Output.fgGC);
++  gui->graphics->destroy_gc (Output.bgGC);
++  gui->graphics->destroy_gc (Output.pmGC);
 +  gui = old_gui;
 +}
 +
