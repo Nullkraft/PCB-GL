@@ -1,7 +1,7 @@
-Bottom: 01327ac4e9c6c7167d35ab3536bc5e4b516522ca
-Top:    306aee41da91b478d6dc39b0dc2c9d362afea0a0
+Bottom: 64c4c83cf29b2096c9ef132b60407693530762ce
+Top:    88287c84c79056ee7ed39edbd292fe0887df6532
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-14 23:58:35 +0000
+Date:   2012-11-15 01:04:31 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -290,7 +290,7 @@ index 21ab5f2..94c9e25 100644
    double C0, T0;
    bool changed = false;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 494b09f..404422a 100644
+index a2a64c6..0baac2b 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -1006,7 +1006,6 @@ CreateRouteData ()
@@ -490,7 +490,7 @@ index b39ff65..76992d2 100644
 +  return attr;
  }
 diff --git a/src/crosshair.c b/src/crosshair.c
-index f0526b8..dc237b1 100644
+index 937e506..c6b16a0 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -373,8 +373,7 @@ XORDrawInsertPointObject (void)
@@ -527,7 +527,7 @@ index f0526b8..dc237b1 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index 3738f6a..65cc3b9 100644
+index 683d394..c2335e6 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1199,7 +1199,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
@@ -825,7 +825,7 @@ index 7b966dc..88dc04e 100644
  } BoxListType;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index bf1885a..372388c 100644
+index 4e8f0fe..4352295 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -928,6 +928,7 @@ static void
@@ -958,10 +958,10 @@ index e2c08d5..eb405db 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index fe71234..4abec51 100644
+index dfaf3f5..b8df986 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -323,28 +323,26 @@ nelma_write_materials(FILE * out)
+@@ -324,28 +324,26 @@ nelma_write_materials(FILE * out)
  static void 
  nelma_write_nets(FILE * out)
  {
@@ -996,7 +996,7 @@ index fe71234..4abec51 100644
  
  			/* pin_name_to_xy(pin, &x, &y); */
  
-@@ -376,7 +374,7 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -377,7 +375,7 @@ nelma_write_layer(FILE * out, int z, int h,
  	LibraryMenuType *net;
  	LibraryEntryType *pin;
  
@@ -1005,7 +1005,7 @@ index fe71234..4abec51 100644
  
  	fprintf(out, "layer %s {\n", name);
  	fprintf(out, "\theight = %d\n", h);
-@@ -387,11 +385,11 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -388,11 +386,11 @@ nelma_write_layer(FILE * out, int z, int h,
  		fprintf(out, "\tobjects = {\n");
  		netlist = PCB->NetlistLib;
  
@@ -1021,7 +1021,7 @@ index fe71234..4abec51 100644
  
  				if (m != 0 || n != 0)
  					fprintf(out, ",\n");
-@@ -497,17 +495,17 @@ nelma_write_objects(FILE * out)
+@@ -498,17 +496,17 @@ nelma_write_objects(FILE * out)
  	LibraryMenuType *net;
  	LibraryEntryType *pin;
  
