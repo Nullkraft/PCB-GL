@@ -1,0 +1,22 @@
+Bottom: b2237587c1b2677cccb360f5d7a35c2749f94072
+Top:    f0e2063022bc260607761a8a8b3f0234d0273bb7
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-15 00:45:37 +0000
+
+Refresh of remove-thindraw_pcb_polygon-fr
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 955fb80..a06911e 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -594,7 +594,7 @@ ghid_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+     color = layer->Color;
+ #endif
+ 
+-  gui->set_color (Output.fgGC, color);
++  gui->graphics->set_color (Output.fgGC, color);
+ 
+   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+     {
