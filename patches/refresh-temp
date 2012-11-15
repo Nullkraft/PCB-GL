@@ -1,0 +1,26 @@
+Bottom: b6412c64fa76ad32ed9f052c2436080c58392566
+Top:    155e1c70fe42c2e21f6806583bd6829ad00e2f5a
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-15 01:12:46 +0000
+
+Refresh of crasy-test
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 047db70..a485ed2 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -127,10 +127,10 @@ set_pv_color (PinType *pv, int type)
+ {
+   if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+   else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+-                                                                                         : PCB->PinSelectedColor);
++                                                                                                   : PCB->PinSelectedColor);
+   else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+   else                                   gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor
+-                                                                                         : PCB->PinColor);
++                                                                                                   : PCB->PinColor);
+ }
+ 
+ static int
