@@ -35,6 +35,6 @@
 #include "global.h"
 
 int PrintFab_overhang(void);
-void PrintFab (hidGC gc);
+void PrintFab (DrawAPI *dapi);
 
 #endif

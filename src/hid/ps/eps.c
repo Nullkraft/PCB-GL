@@ -309,7 +309,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   fprintf (f,
 	   "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
 
-  hid_expose_callback (&eps_hid, bounds, 0);
+//  hid_expose_callback (&eps_hid, bounds, 0);
 
   fprintf (f, "showpage\n");
 
@@ -444,6 +444,7 @@ eps_destroy_gc (hidGC gc)
 static void
 eps_use_mask (enum mask_mode mode)
 {
+#if 0
   static int mask_pending = 0;
   switch (mode)
     {
@@ -466,6 +467,7 @@ eps_use_mask (enum mask_mode mode)
 	}
       break;
     }
+#endif
 }
 
 static void

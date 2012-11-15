@@ -650,7 +650,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 	}
     }
 
-  hid_expose_callback (&png_hid, bounds, 0);
+//  hid_expose_callback (&png_hid, bounds, 0);
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
   PCB->Flags = save_flags;
@@ -1363,10 +1363,10 @@ png_use_mask (enum mask_mode mode)
   if (photo_mode)
     return;
 
-  if (mode == HID_MASK_CLEAR)
-    {
-      return;
-    }
+//  if (mode == HID_MASK_CLEAR)
+//    {
+//      return;
+//    }
   if (mode != HID_MASK_OFF)
     {
       if (mask_im == NULL)
