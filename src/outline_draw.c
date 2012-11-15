@@ -55,9 +55,9 @@ outline_draw_pcb_polygon (DrawAPI *dapi, LayerType *layer, PolygonType *polygon)
   for (i = 0; i < polygon->PointN; i++)
     {
       Cardinal next = next_contour_point (polygon, i);
-      dapi->gapi->draw_line (dapi->gc,
-                             polygon->Points[   i].X, polygon->Points[   i].Y,
-                             polygon->Points[next].X, polygon->Points[next].Y);
+      dapi->graphics->draw_line (dapi->gc,
+                                 polygon->Points[   i].X, polygon->Points[   i].Y,
+                                 polygon->Points[next].X, polygon->Points[next].Y);
     }
 }
 
@@ -79,18 +79,18 @@ outline_draw_pcb_line (DrawAPI *dapi, LayerType *layer, LineType *line)
 
   ox =   dy * h + 0.5 * SGN (dy);
   oy = -(dx * h + 0.5 * SGN (dx));
-  dapi->gapi->draw_line (dapi->gc, line->Point1.X + ox, line->Point1.Y + oy,
-                                   line->Point2.X + ox, line->Point2.Y + oy);
+  dapi->graphics->draw_line (dapi->gc, line->Point1.X + ox, line->Point1.Y + oy,
+                                       line->Point2.X + ox, line->Point2.Y + oy);
 
   if (abs (ox) >= pixel_slop || abs (oy) >= pixel_slop)
     {
       Angle angle = atan2 (dx, dy) * 57.295779;
-      dapi->gapi->draw_line (dapi->gc, line->Point1.X - ox, line->Point1.Y - oy,
-                                       line->Point2.X - ox, line->Point2.Y - oy);
-      dapi->gapi->draw_arc (dapi->gc, line->Point1.X, line->Point1.Y,
-                                      thick / 2, thick / 2, angle - 180, 180);
-      dapi->gapi->draw_arc (dapi->gc, line->Point2.X, line->Point2.Y,
-                                      thick / 2, thick / 2, angle, 180);
+      dapi->graphics->draw_line (dapi->gc, line->Point1.X - ox, line->Point1.Y - oy,
+                                           line->Point2.X - ox, line->Point2.Y - oy);
+      dapi->graphics->draw_arc (dapi->gc, line->Point1.X, line->Point1.Y,
+                                          thick / 2, thick / 2, angle - 180, 180);
+      dapi->graphics->draw_arc (dapi->gc, line->Point2.X, line->Point2.Y,
+                                          thick / 2, thick / 2, angle, 180);
     }
 }
 
@@ -100,25 +100,25 @@ outline_draw_pcb_arc (DrawAPI *dapi, LayerType *layer, ArcType *arc)
   if (arc->Width > pixel_slop)
     {
       BoxType *bx = GetArcEnds (arc);
-      dapi->gapi->draw_arc (dapi->gc, arc->X, arc->Y,
-                            arc->Width + arc->Thickness, arc->Height + arc->Thickness,
-                            arc->StartAngle, arc->Delta);
+      dapi->graphics->draw_arc (dapi->gc, arc->X, arc->Y,
+                                arc->Width + arc->Thickness, arc->Height + arc->Thickness,
+                                arc->StartAngle, arc->Delta);
 
-      dapi->gapi->draw_arc (dapi->gc, arc->X, arc->Y,
-                            arc->Width - arc->Thickness, arc->Height - arc->Thickness,
-                            arc->StartAngle, arc->Delta);
+      dapi->graphics->draw_arc (dapi->gc, arc->X, arc->Y,
+                                arc->Width - arc->Thickness, arc->Height - arc->Thickness,
+                                arc->StartAngle, arc->Delta);
 
-      dapi->gapi->draw_arc (dapi->gc, bx->X1, bx->Y1,
-                            arc->Thickness, arc->Thickness,
-                            arc->StartAngle, -180 * SGN (arc->Delta));
+      dapi->graphics->draw_arc (dapi->gc, bx->X1, bx->Y1,
+                                arc->Thickness, arc->Thickness,
+                                arc->StartAngle, -180 * SGN (arc->Delta));
 
-      dapi->gapi->draw_arc (dapi->gc, bx->X2, bx->Y2,
-                            arc->Thickness, arc->Thickness,
-                            arc->StartAngle + arc->Delta, 180 * SGN (arc->Delta));
+      dapi->graphics->draw_arc (dapi->gc, bx->X2, bx->Y2,
+                                arc->Thickness, arc->Thickness,
+                                arc->StartAngle + arc->Delta, 180 * SGN (arc->Delta));
     }
   else
-    dapi->gapi->draw_arc (dapi->gc, arc->X, arc->Y,
-                          arc->Width, arc->Height, arc->StartAngle, arc->Delta);
+    dapi->graphics->draw_arc (dapi->gc, arc->X, arc->Y,
+                              arc->Width, arc->Height, arc->StartAngle, arc->Delta);
 }
 
 /* ---------------------------------------------------------------------------
@@ -130,14 +130,14 @@ outline_draw_pcb_element (DrawAPI *dapi, ElementType *Element)
   /* if no silkscreen, draw the bounding box */
   if (Element->ArcN == 0 && Element->LineN == 0)
     {
-      dapi->gapi->draw_line (dapi->gc, Element->BoundingBox.X1, Element->BoundingBox.Y1,
-                                    Element->BoundingBox.X1, Element->BoundingBox.Y2);
-      dapi->gapi->draw_line (dapi->gc, Element->BoundingBox.X1, Element->BoundingBox.Y2,
-                                    Element->BoundingBox.X2, Element->BoundingBox.Y2);
-      dapi->gapi->draw_line (dapi->gc, Element->BoundingBox.X2, Element->BoundingBox.Y2,
-                                    Element->BoundingBox.X2, Element->BoundingBox.Y1);
-      dapi->gapi->draw_line (dapi->gc, Element->BoundingBox.X2, Element->BoundingBox.Y1,
-                                    Element->BoundingBox.X1, Element->BoundingBox.Y1);
+      dapi->graphics->draw_line (dapi->gc, Element->BoundingBox.X1, Element->BoundingBox.Y1,
+                                           Element->BoundingBox.X1, Element->BoundingBox.Y2);
+      dapi->graphics->draw_line (dapi->gc, Element->BoundingBox.X1, Element->BoundingBox.Y2,
+                                           Element->BoundingBox.X2, Element->BoundingBox.Y2);
+      dapi->graphics->draw_line (dapi->gc, Element->BoundingBox.X2, Element->BoundingBox.Y2,
+                                           Element->BoundingBox.X2, Element->BoundingBox.Y1);
+      dapi->graphics->draw_line (dapi->gc, Element->BoundingBox.X2, Element->BoundingBox.Y1,
+                                           Element->BoundingBox.X1, Element->BoundingBox.Y1);
     }
   else
     {
@@ -171,14 +171,14 @@ outline_draw_pcb_element (DrawAPI *dapi, ElementType *Element)
   END_LOOP;
 
   /* Element mark */
-  dapi->gapi->draw_line (dapi->gc, Element->MarkX - EMARK_SIZE, Element->MarkY,
-                                   Element->MarkX,              Element->MarkY - EMARK_SIZE);
-  dapi->gapi->draw_line (dapi->gc, Element->MarkX + EMARK_SIZE, Element->MarkY,
-                                   Element->MarkX,              Element->MarkY - EMARK_SIZE);
-  dapi->gapi->draw_line (dapi->gc, Element->MarkX - EMARK_SIZE, Element->MarkY,
-                                   Element->MarkX,              Element->MarkY + EMARK_SIZE);
-  dapi->gapi->draw_line (dapi->gc, Element->MarkX + EMARK_SIZE, Element->MarkY,
-                                   Element->MarkX,              Element->MarkY + EMARK_SIZE);
+  dapi->graphics->draw_line (dapi->gc, Element->MarkX - EMARK_SIZE, Element->MarkY,
+                                       Element->MarkX,              Element->MarkY - EMARK_SIZE);
+  dapi->graphics->draw_line (dapi->gc, Element->MarkX + EMARK_SIZE, Element->MarkY,
+                                       Element->MarkX,              Element->MarkY - EMARK_SIZE);
+  dapi->graphics->draw_line (dapi->gc, Element->MarkX - EMARK_SIZE, Element->MarkY,
+                                       Element->MarkX,              Element->MarkY + EMARK_SIZE);
+  dapi->graphics->draw_line (dapi->gc, Element->MarkX + EMARK_SIZE, Element->MarkY,
+                                       Element->MarkX,              Element->MarkY + EMARK_SIZE);
 }
 
 /* ---------------------------------------------------------------------------
@@ -242,27 +242,27 @@ outline_draw_pcb_buffer (DrawAPI *dapi, BufferType *Buffer)
 static void
 outline_draw_pcb_pv (DrawAPI *dapi, PinType *pin)
 {
-  dapi->gapi->thindraw_pcb_pv (dapi->gc, dapi->gc, pin, true, false);
+  dapi->graphics->thindraw_pcb_pv (dapi->gc, dapi->gc, pin, true, false);
 }
 
 static void
 outline_draw_pcb_pv_mask (DrawAPI *dapi, PinType *pin)
 {
-  dapi->gapi->thindraw_pcb_pv (dapi->gc, dapi->gc, pin, true, true);
+  dapi->graphics->thindraw_pcb_pv (dapi->gc, dapi->gc, pin, true, true);
 }
 
 static void
 outline_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
 {
-  dapi->gapi->thindraw_pcb_pad (dapi->gc, pad, false, false);
+  dapi->graphics->thindraw_pcb_pad (dapi->gc, pad, false, false);
 }
 
-DrawAPI *outline_draw_new (HID *gapi)
+DrawAPI *outline_draw_new (HID *hid)
 {
   DrawAPI *dapi;
 
   dapi = g_new0 (DrawAPI, 1);
-  dapi->gapi = gapi;
+  dapi->graphics = hid; /* XXX */
 
   dapi->draw_pcb_pin          = outline_draw_pcb_pv;
   dapi->draw_pcb_pin_mask     = outline_draw_pcb_pv_mask;

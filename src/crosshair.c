@@ -212,12 +212,12 @@ draw_move_or_copy_object (DrawAPI *dapi)
         /* XXX: Could do this by adjusting a copy polygon and drawing the entirity of that */
 
         /* draw the two segments */
-        dapi->gapi->draw_line (dapi->gc,
-                               polygon->Points[prev].X, polygon->Points[prev].Y,
-                               point->X + dx, point->Y + dy);
-        dapi->gapi->draw_line (dapi->gc,
-                               point->X + dx, point->Y + dy,
-                               polygon->Points[next].X, polygon->Points[next].Y);
+        dapi->graphics->draw_line (dapi->gc,
+                                   polygon->Points[prev].X, polygon->Points[prev].Y,
+                                   point->X + dx, point->Y + dy);
+        dapi->graphics->draw_line (dapi->gc,
+                                   point->X + dx, point->Y + dy,
+                                   polygon->Points[next].X, polygon->Points[next].Y);
         break;
       }
 
@@ -226,8 +226,7 @@ draw_move_or_copy_object (DrawAPI *dapi)
         /* locate the element "mark" and draw an association line from crosshair to it */
         ElementType *element = (ElementType *) Crosshair.AttachedObject.Ptr1;
 
-        dapi->gapi->draw_line (dapi->gc,
-                               element->MarkX, element->MarkY, Crosshair.X, Crosshair.Y);
+        dapi->graphics->draw_line (dapi->gc, element->MarkX, element->MarkY, Crosshair.X, Crosshair.Y);
         /* fall through to move the text as a box outline */
       }
     case TEXT_TYPE:
@@ -237,7 +236,7 @@ draw_move_or_copy_object (DrawAPI *dapi)
 
         dapi->set_draw_offset (dapi, dx, dy);
         /* XXX: DOES THIS WORK IN CONJUNCTION WITH THE ABOVE? */
-        dapi->gapi->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
+        dapi->graphics->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
         break;
       }
 
@@ -301,12 +300,12 @@ DrawAttached (DrawAPI *dapi)
   if (dapi == NULL)
     return;
 
-  dapi->gc = dapi->gapi->make_gc ();
+  dapi->gc = dapi->graphics->make_gc ();
 
-  dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
-  dapi->gapi->set_draw_xor (dapi->gc, 1);
-  dapi->gapi->set_line_cap (dapi->gc, Trace_Cap);
-  dapi->gapi->set_line_width (dapi->gc, 1);
+  dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
+  dapi->graphics->set_draw_xor (dapi->gc, 1);
+  dapi->graphics->set_line_cap (dapi->gc, Trace_Cap);
+  dapi->graphics->set_line_width (dapi->gc, 1);
 
   switch (Settings.Mode)
     {
@@ -328,9 +327,9 @@ DrawAttached (DrawAPI *dapi)
           {
             /* XXX: Naughty cheat - use the mask to draw DRC clearance! */
             via.Mask = Settings.ViaThickness + PCB->Bloat * 2;
-            dapi->gapi->set_color (dapi->gc, Settings.CrossColor);
+            dapi->graphics->set_color (dapi->gc, Settings.CrossColor);
             dapi->draw_pcb_via_mask (dapi, &via);
-            dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
+            dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
           }
         break;
       }
@@ -340,9 +339,9 @@ DrawAttached (DrawAPI *dapi)
     case POLYGONHOLE_MODE:
       /* draw only if starting point is set */
       if (Crosshair.AttachedLine.State != STATE_FIRST)
-        dapi->gapi->draw_line (dapi->gc,
-                               Crosshair.AttachedLine.Point1.X, Crosshair.AttachedLine.Point1.Y,
-                               Crosshair.AttachedLine.Point2.X, Crosshair.AttachedLine.Point2.Y);
+        dapi->graphics->draw_line (dapi->gc,
+                                   Crosshair.AttachedLine.Point1.X, Crosshair.AttachedLine.Point1.Y,
+                                   Crosshair.AttachedLine.Point2.X, Crosshair.AttachedLine.Point2.Y);
 
       /* draw attached polygon only if in POLYGON_MODE or POLYGONHOLE_MODE */
       if (Crosshair.AttachedPolygon.PointN > 1)
@@ -364,9 +363,9 @@ DrawAttached (DrawAPI *dapi)
           {
             if (!make_arc_from_crosshair (&arc, Settings.LineThickness + 2 * (PCB->Bloat + 1)))
               break;
-            dapi->gapi->set_color (dapi->gc, Settings.CrossColor);
+            dapi->graphics->set_color (dapi->gc, Settings.CrossColor);
             dapi->draw_pcb_arc (dapi, NULL, &arc);
-            dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
+            dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
           }
 
         break;
@@ -398,7 +397,7 @@ DrawAttached (DrawAPI *dapi)
 
           if (TEST_FLAG (SHOWDRCFLAG, PCB))
             {
-              dapi->gapi->set_color (dapi->gc, Settings.CrossColor);
+              dapi->graphics->set_color (dapi->gc, Settings.CrossColor);
 
               draw_line.Point1 = Crosshair.AttachedLine.Point1;
               draw_line.Point2 = Crosshair.AttachedLine.Point2;
@@ -412,7 +411,7 @@ DrawAttached (DrawAPI *dapi)
                   dapi->draw_pcb_line (dapi, NULL, &draw_line);
                 }
 
-              dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
+              dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
             }
         }
       break;
@@ -447,10 +446,10 @@ DrawAttached (DrawAPI *dapi)
       y1 = Crosshair.AttachedBox.Point1.Y;
       x2 = Crosshair.AttachedBox.Point2.X;
       y2 = Crosshair.AttachedBox.Point2.Y;
-      dapi->gapi->draw_rect (dapi->gc, x1, y1, x2, y2);
+      dapi->graphics->draw_rect (dapi->gc, x1, y1, x2, y2);
     }
 
-  dapi->gapi->destroy_gc (dapi->gc);
+  dapi->graphics->destroy_gc (dapi->gc);
 }
 
 
@@ -468,18 +467,19 @@ DrawMark (DrawAPI *dapi)
   if (!Marked.status)
     return;
 
-  dapi->gc = dapi->gapi->make_gc ();
+  dapi->gc = dapi->graphics->make_gc ();
 
-  dapi->gapi->set_color (dapi->gc, Settings.CrosshairColor);
-  dapi->gapi->set_draw_xor (dapi->gc, 1);
-  dapi->gapi->set_line_cap (dapi->gc, Trace_Cap);
-  dapi->gapi->set_line_width (dapi->gc, 1);
+  dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
+  dapi->graphics->set_draw_xor (dapi->gc, 1);
+  dapi->graphics->set_line_cap (dapi->gc, Trace_Cap);
+  dapi->graphics->set_line_width (dapi->gc, 1);
 
-  dapi->gapi->draw_line (dapi->gc, Marked.X - MARK_SIZE, Marked.Y - MARK_SIZE,
-                                   Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
-  dapi->gapi->draw_line (dapi->gc, Marked.X + MARK_SIZE, Marked.Y - MARK_SIZE,
-                                   Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
-  dapi->gapi->destroy_gc (dapi->gc);
+  dapi->graphics->draw_line (dapi->gc, Marked.X - MARK_SIZE, Marked.Y - MARK_SIZE,
+                                       Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
+  dapi->graphics->draw_line (dapi->gc, Marked.X + MARK_SIZE, Marked.Y - MARK_SIZE,
+                                       Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
+  dapi->graphics->destroy_gc (dapi->gc);
+
 }
 
 /* ---------------------------------------------------------------------------
