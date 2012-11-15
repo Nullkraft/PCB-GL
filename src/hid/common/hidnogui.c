@@ -105,12 +105,6 @@ nogui_set_line_width (hidGC gc, Coord width)
 }
 
 static void
-nogui_set_draw_xor (hidGC gc, int xor_)
-{
-  CRASH;
-}
-
-static void
 nogui_set_draw_faded (hidGC gc, int faded)
 {
 }
@@ -454,6 +448,21 @@ common_nogui_init (HID *hid)
   hid->invalidate_all =       nogui_invalidate_all;
   hid->set_layer =            nogui_set_layer;
   hid->end_layer =            nogui_end_layer;
+<<<<<<< current
+=======
+  hid->make_gc =              nogui_make_gc;
+  hid->destroy_gc =           nogui_destroy_gc;
+  hid->use_mask =             nogui_use_mask;
+  hid->set_color =            nogui_set_color;
+  hid->set_line_cap =         nogui_set_line_cap;
+  hid->set_line_width =       nogui_set_line_width;
+  hid->set_draw_faded =       nogui_set_draw_faded;
+  hid->draw_line =            nogui_draw_line;
+  hid->draw_arc =             nogui_draw_arc;
+  hid->draw_rect =            nogui_draw_rect;
+  hid->fill_circle =          nogui_fill_circle;
+  hid->fill_polygon =         nogui_fill_polygon;
+>>>>>>> patched
   hid->fill_pcb_polygon =     nogui_fill_pcb_polygon;
   hid->fill_pcb_pad =         nogui_fill_pcb_pad;
   hid->thindraw_pcb_pad =     nogui_thindraw_pcb_pad;
@@ -496,7 +505,6 @@ common_nogui_graphics_init (HID_DRAW_API *graphics)
   graphics->set_color =       nogui_set_color;
   graphics->set_line_cap =    nogui_set_line_cap;
   graphics->set_line_width =  nogui_set_line_width;
-  graphics->set_draw_xor =    nogui_set_draw_xor;
   graphics->set_draw_faded =  nogui_set_draw_faded;
   graphics->draw_line =       nogui_draw_line;
   graphics->draw_arc =        nogui_draw_arc;
