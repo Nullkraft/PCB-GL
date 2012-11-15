@@ -1,5 +1,5 @@
 Bottom: 58eb8a575a7148a0d208c6e83cbc55ce51e0179f
-Top:    b2237587c1b2677cccb360f5d7a35c2749f94072
+Top:    f0e2063022bc260607761a8a8b3f0234d0273bb7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 01:26:19 +0100
 
@@ -127,7 +127,7 @@ index 0792df9..67b9e3a 100644
    hid->thindraw_pcb_pad =     nogui_thindraw_pcb_pad;
    hid->fill_pcb_pv =          nogui_fill_pcb_pv;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1913210..955fb80 100644
+index 1913210..a06911e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -575,20 +575,49 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
@@ -156,7 +156,7 @@ index 1913210..955fb80 100644
 +    color = layer->Color;
 +#endif
 +
-+  gui->set_color (Output.fgGC, color);
++  gui->graphics->set_color (Output.fgGC, color);
 +
 +  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
 +    {
