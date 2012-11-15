@@ -142,7 +142,7 @@ static const char bga_wizard_help[] =
 int
 bga_wizard_action (int argc, char **argv, int px, int pz)
 {
-  if (!ghidgui || !ghidgui->ui_manager)
+  if (!ghidgui || !ghidgui->menu_bar)
     return 0;
 
   demo_assistant ();
