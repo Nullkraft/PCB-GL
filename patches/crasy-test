@@ -1,5 +1,5 @@
 Bottom: 64c4c83cf29b2096c9ef132b60407693530762ce
-Top:    155e1c70fe42c2e21f6806583bd6829ad00e2f5a
+Top:    056b9d84d0e722a063b7b150bbc824de05884693
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-15 01:04:34 +0000
 
@@ -24,7 +24,7 @@ index 269ee78..89ac430 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index 683d394..a485ed2 100644
+index 683d394..0d0ad6d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -39,6 +39,7 @@
@@ -495,7 +495,17 @@ index 683d394..a485ed2 100644
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
        gui->end_layer ();
-@@ -852,69 +582,26 @@ DrawPPV (int group, const BoxType *drawn_area)
+@@ -790,8 +520,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+       mark_size = MIN (mark_size, pad0->Thickness / 2);
+     }
+ 
+-  gui->graphics->set_color (Output.fgGC,
+-		  invisible ? PCB->InvisibleMarkColor : PCB->ElementColor);
++  gui->graphics->set_color (Output.fgGC, invisible ? PCB->InvisibleMarkColor : PCB->ElementColor);
+   gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
+   gui->graphics->set_line_width (Output.fgGC, 0);
+   gui->graphics->draw_line (Output.fgGC, X - mark_size, Y, X, Y - mark_size);
+@@ -852,69 +581,26 @@ DrawPPV (int group, const BoxType *drawn_area)
  }
  
  static int
@@ -572,7 +582,7 @@ index 683d394..a485ed2 100644
    return 1;
  }
  
-@@ -936,22 +623,22 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -936,22 +622,22 @@ DrawSilk (int side, const BoxType * drawn_area)
      {
        gui->graphics->use_mask (HID_MASK_BEFORE);
  #endif
@@ -602,7 +612,7 @@ index 683d394..a485ed2 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -994,9 +681,9 @@ DrawMask (int side, const BoxType *screen)
+@@ -994,9 +680,9 @@ DrawMask (int side, const BoxType *screen)
        gui->graphics->use_mask (HID_MASK_CLEAR);
      }
  
@@ -615,7 +625,7 @@ index 683d394..a485ed2 100644
  
    if (thin)
      gui->graphics->set_color (Output.pmGC, "erase");
-@@ -1016,13 +703,8 @@ DrawPaste (int side, const BoxType *drawn_area)
+@@ -1016,13 +702,8 @@ DrawPaste (int side, const BoxType *drawn_area)
    gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
    ALLPAD_LOOP (PCB->Data);
    {
@@ -631,7 +641,7 @@ index 683d394..a485ed2 100644
    }
    ENDALL_LOOP;
  }
-@@ -1044,61 +726,6 @@ DrawRats (const BoxType *drawn_area)
+@@ -1044,61 +725,6 @@ DrawRats (const BoxType *drawn_area)
      gui->graphics->use_mask (HID_MASK_OFF);
  }
  
@@ -693,7 +703,7 @@ index 683d394..a485ed2 100644
  /* ---------------------------------------------------------------------------
   * draws one layer group.  If the exporter is not a GUI,
   * also draws the pins / pads / vias in this layer group.
-@@ -1120,7 +747,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -1120,7 +746,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
            strcmp (Layer->Name, "route") == 0)
          rv = 0;
        if (layernum < max_copper_layer && Layer->On)
@@ -702,7 +712,7 @@ index 683d394..a485ed2 100644
      }
    if (n_entries > 1)
      rv = 1;
-@@ -1191,6 +818,20 @@ GatherPadName (PadType *Pad)
+@@ -1191,6 +817,20 @@ GatherPadName (PadType *Pad)
    return;
  }
  
