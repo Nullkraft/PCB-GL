@@ -1,5 +1,5 @@
 Bottom: 64c4c83cf29b2096c9ef132b60407693530762ce
-Top:    b6412c64fa76ad32ed9f052c2436080c58392566
+Top:    155e1c70fe42c2e21f6806583bd6829ad00e2f5a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-15 01:04:34 +0000
 
@@ -24,7 +24,7 @@ index 269ee78..89ac430 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index 683d394..047db70 100644
+index 683d394..a485ed2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -39,6 +39,7 @@
@@ -151,10 +151,10 @@ index 683d394..047db70 100644
 -  _draw_pv (pin, draw_hole);
 +  if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
 +  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
-+                                                                                         : PCB->PinSelectedColor);
++                                                                                                   : PCB->PinSelectedColor);
 +  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
 +  else                                   gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor
-+                                                                                         : PCB->PinColor);
++                                                                                                   : PCB->PinColor);
  }
  
  static int
