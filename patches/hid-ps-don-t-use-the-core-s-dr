@@ -1,5 +1,5 @@
 Bottom: 64c4c83cf29b2096c9ef132b60407693530762ce
-Top:    e669b8e92b6a47e0663e1c4be088cbac2ce8a268
+Top:    9944c68795ecae5a956612b446fe33e83d80eba8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:19:47 +0100
 
@@ -9,7 +9,7 @@ hid/ps: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index d665e6c..5f262d9 100644
+index d665e6c..5098dbc 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -30,7 +30,7 @@
@@ -78,12 +78,12 @@ index d665e6c..5f262d9 100644
 +  bool empty;
 +
 +  gui = &ps_hid;
-+  Output.fgGC = gui->make_gc ();
-+  Output.bgGC = gui->make_gc ();
-+  Output.pmGC = gui->make_gc ();
++  Output.fgGC = gui->graphics->make_gc ();
++  Output.bgGC = gui->graphics->make_gc ();
++  Output.pmGC = gui->graphics->make_gc ();
 +
-+  gui->set_color (Output.pmGC, "erase");
-+  gui->set_color (Output.bgGC, "drill");
++  gui->graphics->set_color (Output.pmGC, "erase");
++  gui->graphics->set_color (Output.bgGC, "drill");
 +
 +  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
 +  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
@@ -135,9 +135,9 @@ index d665e6c..5f262d9 100644
 +  if (set_layer ("fab", SL (FAB, 0)))
 +    PrintFab (Output.fgGC);
 +
-+  gui->destroy_gc (Output.fgGC);
-+  gui->destroy_gc (Output.bgGC);
-+  gui->destroy_gc (Output.pmGC);
++  gui->graphics->destroy_gc (Output.fgGC);
++  gui->graphics->destroy_gc (Output.bgGC);
++  gui->graphics->destroy_gc (Output.pmGC);
 +  gui = old_gui;
 +}
 +
