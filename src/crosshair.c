@@ -303,7 +303,7 @@ DrawAttached (DrawAPI *dapi)
   dapi->gc = dapi->graphics->make_gc ();
 
   dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
-  dapi->graphics->set_draw_xor (dapi->gc, 1);
+//  dapi->graphics->set_draw_xor (dapi->gc, 1);
   dapi->graphics->set_line_cap (dapi->gc, Trace_Cap);
   dapi->graphics->set_line_width (dapi->gc, 1);
 
@@ -470,7 +470,7 @@ DrawMark (DrawAPI *dapi)
   dapi->gc = dapi->graphics->make_gc ();
 
   dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
-  dapi->graphics->set_draw_xor (dapi->gc, 1);
+//  dapi->graphics->set_draw_xor (dapi->gc, 1);
   dapi->graphics->set_line_cap (dapi->gc, Trace_Cap);
   dapi->graphics->set_line_width (dapi->gc, 1);
 
