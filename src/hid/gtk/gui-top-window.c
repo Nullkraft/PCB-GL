@@ -127,6 +127,10 @@ a zoom in/out.
 #include <dmalloc.h>
 #endif
 
+#include <X11/extensions/XInput2.h>
+#include <gdk/gdkx.h>
+#include <X11/Xlib.h>
+
 static bool ignore_layer_update;
 
 static GtkWidget *ghid_load_menus (void);
@@ -1702,6 +1706,51 @@ ghid_get_export_options (int *n_ret)
   return ghid_attribute_list;
 }
 
+int xi_opcode = -1;
+
+static void
+handle_motion_event (XIDeviceEvent *event)
+{
+  double *val;
+  int i;
+
+  printf ("XI2 motion event!!\n");
+
+  printf("    root: %.2f/%.2f\n", event->root_x, event->root_y);
+  printf("    event: %.2f/%.2f\n", event->event_x, event->event_y);
+
+  val = event->valuators.values;
+  for (i = 0; i < event->valuators.mask_len * 8; i++)
+      if (XIMaskIsSet(event->valuators.mask, i))
+          printf("        %i: %.2f\n", i, *val++);
+
+}
+
+static GdkFilterReturn
+event_filter (GdkXEvent *xevent, GdkEvent *event, gpointer data)
+{
+  XGenericEventCookie *cookie = &((XEvent *)xevent)->xcookie;
+
+  Display *display = ((XAnyEvent *)xevent)->display;
+
+  if (XGetEventData (display, cookie)) {
+
+    if (cookie->type == GenericEvent &&
+        cookie->extension == xi_opcode) {
+
+      if (cookie->evtype == XI_Motion) {
+        handle_motion_event ((XIDeviceEvent*)cookie->data);
+
+        return GDK_FILTER_REMOVE;
+      }
+
+    }
+
+    XFreeEventData (display, cookie);
+  }
+  return GDK_FILTER_CONTINUE;
+}
+
   /* Create top level window for routines that will need top_window
      |  before ghid_create_pcb_widgets() is called.
    */
@@ -1711,6 +1760,11 @@ ghid_parse_arguments (int *argc, char ***argv)
   GtkWidget *window;
   gint i;
   GdkPixbuf *icon;
+
+  int major = 2, minor = 0;
+  int event, err;
+  GdkDisplay *gdkdisplay;
+  Display* display;
 
   /* on windows we need to figure out the installation directory */
 #ifdef WIN32
@@ -1757,6 +1811,27 @@ ghid_parse_arguments (int *argc, char ***argv)
 
   gtk_init (argc, argv);
 
+  gdkdisplay = gdk_display_get_default ();
+  display = (gdkdisplay != NULL) ? GDK_DISPLAY_XDISPLAY(gdkdisplay) : NULL;
+
+  if (display == NULL)
+    return;
+
+
+  if (!XQueryExtension(display, "XInputExtension", &xi_opcode, &event, &err)) {
+    fprintf (stderr, "X Input extension not available.\n");
+    xi_opcode = -1;
+//    return;
+  }
+
+  if (XIQueryVersion(display, &major, &minor) == BadRequest) {
+    fprintf (stderr, "XInput2 not supported in the server.\n");
+    xi_opcode = -1;
+//    return;
+  }
+
+  gdk_window_add_filter (NULL, &event_filter, NULL);
+
   gport = &ghid_port;
   gport->view.coord_per_px = 300.0;
   pixel_slop = 300;
@@ -1793,6 +1868,27 @@ ghid_parse_arguments (int *argc, char ***argv)
 
   gtk_widget_show_all (gport->top_window);
   ghidgui->creating = TRUE;
+
+  {
+    XIEventMask evmask;
+
+    gint len = XIMaskLen (XI_LASTEVENT);
+    guchar *mask = g_new0 (guchar, len);
+
+    XISetMask (mask, XI_Motion);
+
+    evmask.deviceid = 2; /* the default cursor */
+    evmask.mask_len = len;
+    evmask.mask = mask;
+
+    XISelectEvents (GDK_WINDOW_XDISPLAY (window->window),
+                    GDK_WINDOW_XID (window->window),
+                    &evmask, 1);
+
+    g_free (mask);
+
+  }
+
 }
 
 void
