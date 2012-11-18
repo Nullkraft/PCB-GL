@@ -1,5 +1,5 @@
 Bottom: 29fdce8ff347d12b7922de2da224ed2905974ae3
-Top:    e7b95a1f10b817e091f5fcbb8e22b74c6b249bc2
+Top:    cf8dfbfe86ca9ba7a86922892ec5b5ff73dfeda4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-17 22:20:42 +0000
 
@@ -9,7 +9,7 @@ XI2 HACK TEST
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index aa6d8e6..35e2f50 100644
+index aa6d8e6..6c12d30 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -127,6 +127,10 @@ a zoom in/out.
@@ -23,7 +23,7 @@ index aa6d8e6..35e2f50 100644
  static bool ignore_layer_update;
  
  static GtkWidget *ghid_load_menus (void);
-@@ -1702,6 +1706,46 @@ ghid_get_export_options (int *n_ret)
+@@ -1702,6 +1706,51 @@ ghid_get_export_options (int *n_ret)
    return ghid_attribute_list;
  }
  
@@ -32,13 +32,18 @@ index aa6d8e6..35e2f50 100644
 +static void
 +handle_motion_event (XIDeviceEvent *event)
 +{
-+  printf ("XI2 motion event!!\n");
++  double *val;
++  int i;
 +
-+  if (event == NULL) return;
++  printf ("XI2 motion event!!\n");
 +
 +  printf("    root: %.2f/%.2f\n", event->root_x, event->root_y);
 +  printf("    event: %.2f/%.2f\n", event->event_x, event->event_y);
 +
++  val = event->valuators.values;
++  for (i = 0; i < event->valuators.mask_len * 8; i++)
++      if (XIMaskIsSet(event->valuators.mask, i))
++          printf("        %i: %.2f\n", i, *val++);
 +
 +}
 +
@@ -70,7 +75,7 @@ index aa6d8e6..35e2f50 100644
    /* Create top level window for routines that will need top_window
       |  before ghid_create_pcb_widgets() is called.
     */
-@@ -1712,6 +1756,11 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -1712,6 +1761,11 @@ ghid_parse_arguments (int *argc, char ***argv)
    gint i;
    GdkPixbuf *icon;
  
@@ -82,7 +87,7 @@ index aa6d8e6..35e2f50 100644
    /* on windows we need to figure out the installation directory */
  #ifdef WIN32
    char * tmps;
-@@ -1757,6 +1806,27 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -1757,6 +1811,27 @@ ghid_parse_arguments (int *argc, char ***argv)
  
    gtk_init (argc, argv);
  
@@ -110,7 +115,7 @@ index aa6d8e6..35e2f50 100644
    gport = &ghid_port;
    gport->view.coord_per_px = 300.0;
    pixel_slop = 300;
-@@ -1793,6 +1863,27 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -1793,6 +1868,27 @@ ghid_parse_arguments (int *argc, char ***argv)
  
    gtk_widget_show_all (gport->top_window);
    ghidgui->creating = TRUE;
