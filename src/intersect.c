@@ -90,13 +90,15 @@ createSortedYList (BoxListType *boxlist)
   LocationList yCoords;
   Coord last;
   int i, n;
+  GList *ii;
   /* create sorted list of Y coordinates */
   yCoords.size = 2 * boxlist->BoxN;
   yCoords.p = (Coord *)calloc (yCoords.size, sizeof (*yCoords.p));
-  for (i = 0; i < boxlist->BoxN; i++)
+  for (ii = boxlist->Box, i = 0; ii != NULL; ii = g_list_next (ii), i++)
     {
-      yCoords.p[2 * i] = boxlist->Box[i].Y1;
-      yCoords.p[2 * i + 1] = boxlist->Box[i].Y2;
+      BoxType *box = ii->data;
+      yCoords.p[2 * i + 0] = box->Y1;
+      yCoords.p[2 * i + 1] = box->Y2;
     }
   qsort (yCoords.p, yCoords.size, sizeof (*yCoords.p), comparepos);
   /* count uniq y coords */
@@ -197,12 +199,15 @@ deleteSegment (SegmentTree * st, int n, Coord Y1, Coord Y2)
 double
 ComputeIntersectionArea (BoxListType *boxlist)
 {
-  Cardinal i;
+  GList *i;
   double area = 0.0;
   /* first get the aggregate area. */
-  for (i = 0; i < boxlist->BoxN; i++)
-    area += (double) (boxlist->Box[i].X2 - boxlist->Box[i].X1) *
-      (double) (boxlist->Box[i].Y2 - boxlist->Box[i].Y1);
+  for (i = boxlist->Box; i != NULL; i = g_list_next (i))
+    {
+      BoxType *box = i->data;
+      area += (double) (box->X2 - box->X1) *
+              (double) (box->Y2 - box->Y1);
+    }
   /* intersection area is aggregate - union. */
   return area * 0.0001 - ComputeUnionArea (boxlist);
 }
@@ -216,6 +221,7 @@ ComputeUnionArea (BoxListType *boxlist)
 {
   BoxType **rectLeft, **rectRight;
   Cardinal i, j;
+  GList *ii;
   LocationList yCoords;
   SegmentTree segtree;
   Coord lastX;
@@ -231,11 +237,12 @@ ComputeUnionArea (BoxListType *boxlist)
   /* create sorted list of left and right X coordinates of rectangles */
   rectLeft = (BoxType **)calloc (boxlist->BoxN, sizeof (*rectLeft));
   rectRight = (BoxType **)calloc (boxlist->BoxN, sizeof (*rectRight));
-  for (i = 0; i < boxlist->BoxN; i++)
+  for (ii = boxlist->Box, i = 0; ii != NULL; ii = g_list_next (ii), i++)
     {
-      assert (boxlist->Box[i].X1 <= boxlist->Box[i].X2);
-      assert (boxlist->Box[i].Y1 <= boxlist->Box[i].Y2);
-      rectLeft[i] = rectRight[i] = &boxlist->Box[i];
+      BoxType *box = ii->data;
+      assert (boxlist->Box[i].X1 <= box->X2);
+      assert (boxlist->Box[i].Y1 <= box->Y2);
+      rectLeft[i] = rectRight[i] = box;
     }
   qsort (rectLeft, boxlist->BoxN, sizeof (*rectLeft), compareleft);
   qsort (rectRight, boxlist->BoxN, sizeof (*rectRight), compareright);
