@@ -1711,13 +1711,18 @@ int xi_opcode = -1;
 static void
 handle_motion_event (XIDeviceEvent *event)
 {
-  printf ("XI2 motion event!!\n");
+  double *val;
+  int i;
 
-  if (event == NULL) return;
+  printf ("XI2 motion event!!\n");
 
   printf("    root: %.2f/%.2f\n", event->root_x, event->root_y);
   printf("    event: %.2f/%.2f\n", event->event_x, event->event_y);
 
+  val = event->valuators.values;
+  for (i = 0; i < event->valuators.mask_len * 8; i++)
+      if (XIMaskIsSet(event->valuators.mask, i))
+          printf("        %i: %.2f\n", i, *val++);
 
 }
 
