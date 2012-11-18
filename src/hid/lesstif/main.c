@@ -4450,7 +4450,6 @@ lesstif_finish_debug_draw (void)
    */
 }
 
-
 #include "dolists.h"
 
 void
