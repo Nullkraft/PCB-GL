@@ -129,6 +129,7 @@ hid_lpr_init ()
   memset (&lpr_graphics, 0, sizeof (HID_DRAW_API));
 
   common_nogui_init (&lpr_hid);
+  common_draw_helpers_init (&lpr_graphics);
   ps_ps_init (&lpr_hid);
   ps_ps_graphics_init (&lpr_graphics);
 
