@@ -1,5 +1,5 @@
 Bottom: ce6d06010e69c839677f6d45ffef405228f06e15
-Top:    703fa5cee0ffd57a5871914a938d05d7d9193190
+Top:    943b18cf655bb6c3b7d8ffacd06d89687a5e9d04
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 00:49:05 +0000
 
@@ -226,18 +226,6 @@ index 4e8f0fe..8fc142f 100644
    ghid_hid.graphics                 = &ghid_graphics;
  
    ghid_graphics.make_gc             = ghid_make_gc;
-diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index af719fd..6c6f26c 100644
---- a/src/hid/gtk/gui.h
-+++ b/src/hid/gtk/gui.h
-@@ -484,6 +484,7 @@ void ghid_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
- void ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius);
- void ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y);
- void ghid_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
-+void ghid_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *drawn_area);
- void ghid_invalidate_lr (int left, int right, int top, int bottom);
- void ghid_invalidate_all ();
- void ghid_notify_crosshair_change (bool changes_complete);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
 index 5261ee4..d95e391 100644
 --- a/src/hid/lesstif/main.c
