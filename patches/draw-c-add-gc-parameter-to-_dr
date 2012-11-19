@@ -5,8 +5,7 @@ Date:   2012-11-19 22:51:17 +0000
 
 draw.c: Add gc parameter to _draw_line() function
 
-This should help clear up some mess when we convert this to a
-nicer API later.
+Avoid it assuming the correct GC is Output.fgGC
 
 
 ---
