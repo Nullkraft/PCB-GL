@@ -1,5 +1,5 @@
 Bottom: 8fff7a9bec693af39b2971f52b8ea87d4a7a714a
-Top:    3919bc16ef132887486aa9af6d7f6e256186ddc4
+Top:    ae67715850c1e4254aeeb6d7eba594746b80123d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 22:47:43 +0000
 
@@ -12,7 +12,7 @@ API later.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index dad41a7..3325334 100644
+index dad41a7..9b45887 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -199,7 +199,7 @@ _draw_pv_name (PinType *pv)
@@ -60,6 +60,15 @@ index dad41a7..3325334 100644
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
+@@ -1238,7 +1238,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
+ 	      newline.Point1.Y += Text->Y;
+ 	      newline.Point2.X += Text->X;
+ 	      newline.Point2.Y += Text->Y;
+-	      _draw_line (Output.fgGC, &newline);
++	      _draw_line (gc, &newline);
+ 	    }
+ 
+ 	  /* move on to next cursor position */
 @@ -1262,7 +1262,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
  	  defaultsymbol.Y1 += Text->Y;
  	  defaultsymbol.X2 += Text->X;
