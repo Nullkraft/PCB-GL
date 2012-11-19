@@ -240,7 +240,9 @@ typedef enum
   };
 
 /* Low level drawing API */
-  typedef struct
+  typedef struct HID_DRAW_API HID_DRAW_API;
+
+  struct HID_DRAW_API
   {
     /* Drawing Functions.  Coordinates and distances are ALWAYS in PCB's
        default coordinates (1 nm at the time this comment was written).
@@ -250,6 +252,7 @@ typedef enum
     /* Make an empty graphics context.  */
     hidGC (*make_gc) (void);
     void (*destroy_gc) (hidGC gc_);
+    void (*use_gc) (HID_DRAW_API *dapi, hidGC gc);
     void (*use_mask) (enum mask_mode mode);
 
     /* Set a color.  Names can be like "red" or "#rrggbb" or special
@@ -282,7 +285,8 @@ typedef enum
     void (*fill_polygon) (hidGC gc, int n_coords_, Coord *x, Coord *y);
     void (*fill_rect)    (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
 
-  } HID_DRAW_API;
+
+  };
 
 
   typedef struct hid_st HID;
@@ -639,5 +643,17 @@ typedef enum
 #if defined(__cplusplus) && __cplusplus
 }
 #endif
+
+static void
+pr_set_line_width (HID_DRAW_API *pr, Coord width)
+{
+  pr->set_line_width (pr, width);
+}
+
+static void
+pr_set_line_cap (HID_DRAW_API *pr, EndCapStyle style)
+{
+  pr->set_line_cap (pr, style);
+}
 
 #endif
