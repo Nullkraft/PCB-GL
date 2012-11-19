@@ -1,5 +1,5 @@
 Bottom: ce6d06010e69c839677f6d45ffef405228f06e15
-Top:    db4b4b0e025559e959e5b6666caaea981a2cda44
+Top:    703fa5cee0ffd57a5871914a938d05d7d9193190
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 00:49:05 +0000
 
@@ -58,10 +58,37 @@ index d7974e5..258d5e1b 100644
      void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
      void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 0d0851d..a854435 100644
+index 0d0851d..427b0f1 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -469,8 +469,7 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+@@ -140,6 +140,26 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
+ #undef BOUNDS_INSIDE_CLIP_THRESHOLD
+ 
+ void
++common_gui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++{
++  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
++    common_thindraw_pcb_polygon (gc, polygon, drawn_area);
++  else
++    common_fill_pcb_polygon (gc, polygon, drawn_area);
++
++  /* If checking planes, thin-draw any pieces which have been clipped away */
++  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
++    {
++      PolygonType poly = *polygon;
++
++      for (poly.Clipped = polygon->Clipped->f;
++           poly.Clipped != polygon->Clipped;
++           poly.Clipped = poly.Clipped->f)
++        common_thindraw_pcb_polygon (gc, &poly, drawn_area);
++    }
++}
++
++void
+ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
+   if (!poly->NoHolesValid)
+@@ -469,8 +489,7 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
  void
  common_draw_helpers_init (HID *hid)
  {
@@ -71,6 +98,21 @@ index 0d0851d..a854435 100644
    hid->fill_pcb_pad         = common_fill_pcb_pad;
    hid->thindraw_pcb_pad     = common_thindraw_pcb_pad;
    hid->fill_pcb_pv          = common_fill_pcb_pv;
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index 8243fe4..0d16415 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -1,7 +1,6 @@
+-void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+-                              const BoxType *clip_box);
+-void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+-                                  const BoxType *clip_box);
++void common_gui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box);
++void common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box);
++void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+ void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_fill_pcb_pv (hidGC gc, PinType *pv, bool drawHole, bool mask);
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
 index 0792df9..67b9e3a 100644
 --- a/src/hid/common/hidnogui.c
@@ -93,39 +135,8 @@ index 0792df9..67b9e3a 100644
    hid->fill_pcb_pad =         nogui_fill_pcb_pad;
    hid->thindraw_pcb_pad =     nogui_thindraw_pcb_pad;
    hid->fill_pcb_pv =          nogui_fill_pcb_pv;
-diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 6c159b4..c061361 100644
---- a/src/hid/gtk/gtkhid-gdk.c
-+++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -699,6 +699,26 @@ ghid_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
- }
- 
- static void
-+ghid_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *drawn_area)
-+{
-+  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-+    common_thindraw_pcb_polygon (gc, polygon, drawn_area);
-+  else
-+    common_fill_pcb_polygon (gc, polygon, drawn_area);
-+
-+  /* If checking planes, thin-draw any pieces which have been clipped away */
-+  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
-+    {
-+      PolygonType poly = *polygon;
-+
-+      for (poly.Clipped = polygon->Clipped->f;
-+           poly.Clipped != polygon->Clipped;
-+           poly.Clipped = poly.Clipped->f)
-+        common_thindraw_pcb_polygon (gc, &poly, drawn_area);
-+    }
-+}
-+
-+static void
- redraw_region (GdkRectangle *rect)
- {
-   int eleft, eright, etop, ebottom;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1913210..f34562e 100644
+index 1913210..54ecebd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -574,20 +574,20 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
@@ -189,7 +200,7 @@ index 1913210..f34562e 100644
    ghid_hid.end_layer = ghid_end_layer;
 -  ghid_hid.fill_pcb_polygon = ghid_fill_pcb_polygon;
 -  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
-+/* XXX: ONLY GL SPECIFIC FOR THE FILL ROUTINE  ghid_hid.draw_pcb_polygon = ghid_draw_pcb_polygon; */
++  ghid_hid.draw_pcb_polygon = ghid_draw_pcb_polygon;
  }
  
  void
@@ -198,59 +209,44 @@ index 1913210..f34562e 100644
    /* TODO: We could use the GLU tessellator though */
    if (hidgl_stencil_bits() == 0)
 -    ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
-+    ghid_hid.draw_pcb_polygon = common_draw_pcb_polygon; /* XXX: THIS WILL KILL THE RENDERING THINDRAW FUNCTIONALITY TOO */
++    ghid_hid.draw_pcb_polygon = common_gui_draw_pcb_polygon;
  
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 4e8f0fe..7b07561 100644
+index 4e8f0fe..8fc142f 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -2181,6 +2181,8 @@ hid_gtk_init ()
    ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
    ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
  
-+  ghid_hid.draw_pcb_polygon         = ghid_draw_pcb_polygon;
++  ghid_hid.draw_pcb_polygon         = common_gui_draw_pcb_polygon;
 +
    ghid_hid.graphics                 = &ghid_graphics;
  
    ghid_graphics.make_gc             = ghid_make_gc;
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index af719fd..6c6f26c 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -484,6 +484,7 @@ void ghid_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+ void ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius);
+ void ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y);
+ void ghid_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
++void ghid_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *drawn_area);
+ void ghid_invalidate_lr (int left, int right, int top, int bottom);
+ void ghid_invalidate_all ();
+ void ghid_notify_crosshair_change (bool changes_complete);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 5261ee4..189fbc3 100644
+index 5261ee4..d95e391 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3479,6 +3479,26 @@ lesstif_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
- }
- 
- static void
-+lesstif_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *drawn_area)
-+{
-+  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-+    common_thindraw_pcb_polygon (gc, polygon, drawn_area);
-+  else
-+    common_fill_pcb_polygon (gc, polygon, drawn_area);
-+
-+  /* If checking planes, thin-draw any pieces which have been clipped away */
-+  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
-+    {
-+      PolygonType poly = *polygon;
-+
-+      for (poly.Clipped = polygon->Clipped->f;
-+           poly.Clipped != polygon->Clipped;
-+           poly.Clipped = poly.Clipped->f)
-+        common_thindraw_pcb_polygon (gc, &poly, drawn_area);
-+    }
-+}
-+
-+static void
- lesstif_calibrate (double xval, double yval)
- {
-   CRASH;
-@@ -4090,6 +4110,8 @@ hid_lesstif_init ()
+@@ -4090,6 +4090,8 @@ hid_lesstif_init ()
    lesstif_hid.flush_debug_draw        = lesstif_flush_debug_draw;
    lesstif_hid.finish_debug_draw       = lesstif_finish_debug_draw;
  
-+  lesstif_hid.draw_pcb_polygon        = lesstif_draw_pcb_polygon;
++  lesstif_hid.draw_pcb_polygon        = common_gui_draw_pcb_polygon;
 +
    lesstif_hid.graphics                = &lesstif_graphics;
  
