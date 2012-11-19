@@ -2181,6 +2181,8 @@ hid_gtk_init ()
   ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
   ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
 
+  ghid_hid.draw_pcb_polygon         = common_gui_draw_pcb_polygon;
+
   ghid_hid.graphics                 = &ghid_graphics;
 
   ghid_graphics.make_gc             = ghid_make_gc;
