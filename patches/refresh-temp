@@ -1,0 +1,42 @@
+Bottom: 5d923f7040a4c90069bf8d7473ff81b5a705f4f2
+Top:    db4b4b0e025559e959e5b6666caaea981a2cda44
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-19 00:48:26 +0000
+
+Refresh of remove-thindraw_pcb_polygon-fr
+
+---
+
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index 05bf19d..8243fe4 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -1,4 +1,5 @@
+-void common_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box);
++void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
++                              const BoxType *clip_box);
+ void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+                                   const BoxType *clip_box);
+ void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 8fb158f..f34562e 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -811,7 +811,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ 
+   /* Setup HID function pointers specific to the GL renderer*/
+   ghid_hid.end_layer = ghid_end_layer;
+-  ghid_hid.draw_pcb_polygon = ghid_draw_pcb_polygon;
++/* XXX: ONLY GL SPECIFIC FOR THE FILL ROUTINE  ghid_hid.draw_pcb_polygon = ghid_draw_pcb_polygon; */
+ }
+ 
+ void
+@@ -901,7 +901,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+      we can't use the hidgl polygon drawing routine */
+   /* TODO: We could use the GLU tessellator though */
+   if (hidgl_stencil_bits() == 0)
+-    ghid_hid.draw_pcb_polygon = common_draw_pcb_polygon;
++    ghid_hid.draw_pcb_polygon = common_draw_pcb_polygon; /* XXX: THIS WILL KILL THE RENDERING THINDRAW FUNCTIONALITY TOO */
+ 
+   glEnable (GL_BLEND);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
