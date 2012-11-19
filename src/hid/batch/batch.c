@@ -332,7 +332,7 @@ hid_batch_init ()
   memset (&batch_hid, 0, sizeof (HID));
 
   common_nogui_init (&batch_hid);
-  common_draw_helpers_init (&batch_hid);
+  common_draw_helpers_init (&batch_graphics);
 
   batch_hid.struct_size           = sizeof (HID);
   batch_hid.name                  = "batch";
