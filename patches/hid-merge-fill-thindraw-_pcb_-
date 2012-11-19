@@ -1,0 +1,15 @@
+Bottom: 1622a70dcb0ee968dd8c0302d5f9516c76b7f27c
+Top:    1622a70dcb0ee968dd8c0302d5f9516c76b7f27c
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-19 23:01:48 +0000
+
+HID: Merge {fill/thindraw}_pcb_* APIs into HID_DRAW_API structure
+
+I wanted to keep these separate from the pure graphics APIs, but
+after poking at this more and more, it seems hard to justify why
+we should do that.
+
+
+---
+
+
