@@ -3,7 +3,7 @@ Top:    29fdce8ff347d12b7922de2da224ed2905974ae3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 22:47:43 +0000
 
-Add hidGC parameter to various draw.c functions which were missing it
+draw.c: Add hidGC parameter to DrawTextLowLevel() function
 
 Try to avoid too much delta as we convert these functions to a sensible
 API later.
