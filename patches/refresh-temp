@@ -1,0 +1,25 @@
+Bottom: 24c64a3ff4dd51d2d551a76aa799dd8ebe70bc9e
+Top:    100bc633a64e2a73d8d9f8f51ad8d43eb8bd8df6
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-19 00:38:05 +0000
+
+Refresh of push-special-case-thindraw-vs-
+
+---
+
+diff --git a/src/hid.h b/src/hid.h
+index d7974e5..501f94b 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -372,10 +372,8 @@ typedef enum
+ 
+     HID_DRAW_API *graphics;
+ 
+-    void (*fill_pcb_polygon) (hidGC gc_, PolygonType *poly,
++    void (*draw_pcb_polygon) (hidGC gc_, PolygonType *poly,
+                               const BoxType *clip_box);
+-    void (*thindraw_pcb_polygon) (hidGC gc_, PolygonType *poly,
+-                                  const BoxType *clip_box);
+     void (*fill_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
+     void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
+     void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
