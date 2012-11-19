@@ -1,5 +1,5 @@
-Bottom: 1622a70dcb0ee968dd8c0302d5f9516c76b7f27c
-Top:    9deb6bf070013a255417da1b2c82dcdfb075aff8
+Bottom: f152e24cae7e3d7296980f047805bf5daf58e087
+Top:    2ad7b7eb230ab13fee62e7413d6a27a5e74ecca2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 23:01:48 +0000
 
@@ -50,11 +50,11 @@ index d7974e5..6135750 100644
         yval are ignored, and a dialog pops up to lead you through the
         calibration procedure.  For the printer, if xval and yval are
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index f49bc19..0644f00 100644
+index 57911c2..b8f679e 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
-@@ -332,7 +332,7 @@ hid_batch_init ()
-   memset (&batch_hid, 0, sizeof (HID));
+@@ -334,7 +334,7 @@ hid_batch_init ()
+   memset (&batch_graphics, 0, sizeof (HID_DRAW_API));
  
    common_nogui_init (&batch_hid);
 -  common_draw_helpers_init (&batch_hid);
