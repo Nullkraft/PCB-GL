@@ -699,26 +699,6 @@ ghid_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 }
 
 static void
-ghid_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *drawn_area)
-{
-  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    common_thindraw_pcb_polygon (gc, polygon, drawn_area);
-  else
-    common_fill_pcb_polygon (gc, polygon, drawn_area);
-
-  /* If checking planes, thin-draw any pieces which have been clipped away */
-  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
-    {
-      PolygonType poly = *polygon;
-
-      for (poly.Clipped = polygon->Clipped->f;
-           poly.Clipped != polygon->Clipped;
-           poly.Clipped = poly.Clipped->f)
-        common_thindraw_pcb_polygon (gc, &poly, drawn_area);
-    }
-}
-
-static void
 redraw_region (GdkRectangle *rect)
 {
   int eleft, eright, etop, ebottom;

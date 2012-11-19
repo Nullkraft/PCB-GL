@@ -140,6 +140,26 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
 #undef BOUNDS_INSIDE_CLIP_THRESHOLD
 
 void
+common_gui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+    common_thindraw_pcb_polygon (gc, polygon, drawn_area);
+  else
+    common_fill_pcb_polygon (gc, polygon, drawn_area);
+
+  /* If checking planes, thin-draw any pieces which have been clipped away */
+  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
+    {
+      PolygonType poly = *polygon;
+
+      for (poly.Clipped = polygon->Clipped->f;
+           poly.Clipped != polygon->Clipped;
+           poly.Clipped = poly.Clipped->f)
+        common_thindraw_pcb_polygon (gc, &poly, drawn_area);
+    }
+}
+
+void
 common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   if (!poly->NoHolesValid)
