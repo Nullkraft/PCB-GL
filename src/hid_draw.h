@@ -64,3 +64,5 @@ struct hid_draw_st
   void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
 
 };
+
+/* HELLO WORLD.. TRIVIAL CHANGE TO AVOID "stg clean" CLEANING THIS COMMIT WITH A USEFUL COMMIT MESSAGE */
