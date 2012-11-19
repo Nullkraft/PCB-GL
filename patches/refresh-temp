@@ -1,0 +1,29 @@
+Bottom: f152e24cae7e3d7296980f047805bf5daf58e087
+Top:    3b074bf5245e6007114fb305b02f837b1c1c6ade
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-19 23:31:47 +0000
+
+Refresh of hid-lpr-initiialise-common-dra
+
+---
+
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index b33773e..027394d 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -16,6 +16,7 @@
+ #include "../hidint.h"
+ #include "../ps/ps.h"
+ #include "hid/common/hidnogui.h"
++#include "hid/common/draw_helpers.h"
+ #include "hid/common/hidinit.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+@@ -130,6 +131,7 @@ hid_lpr_init ()
+ 
+   common_nogui_init (&lpr_hid);
+   ps_ps_init (&lpr_hid);
++  common_draw_helpers_init (&lpr_hid);
+   ps_ps_graphics_init (&lpr_graphics);
+ 
+   lpr_hid.struct_size         = sizeof (HID);
