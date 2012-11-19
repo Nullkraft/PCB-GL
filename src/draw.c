@@ -885,25 +885,7 @@ poly_callback (const BoxType * b, void *cl)
     color = i->layer->Color;
   gui->graphics->set_color (Output.fgGC, color);
 
-  if (gui->thindraw_pcb_polygon != NULL &&
-      (TEST_FLAG (THINDRAWFLAG, PCB) ||
-       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
-    gui->thindraw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
-  else
-    gui->fill_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
-
-  /* If checking planes, thin-draw any pieces which have been clipped away */
-  if (gui->thindraw_pcb_polygon != NULL &&
-      TEST_FLAG (CHECKPLANESFLAG, PCB) &&
-      !TEST_FLAG (FULLPOLYFLAG, polygon))
-    {
-      PolygonType poly = *polygon;
-
-      for (poly.Clipped = polygon->Clipped->f;
-           poly.Clipped != polygon->Clipped;
-           poly.Clipped = poly.Clipped->f)
-        gui->thindraw_pcb_polygon (Output.fgGC, &poly, i->drawn_area);
-    }
+  gui->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
 
   return 1;
 }

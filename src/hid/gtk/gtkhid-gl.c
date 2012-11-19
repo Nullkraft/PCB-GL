@@ -574,20 +574,20 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
   hidgl_fill_polygon (n_coords, x, y);
 }
 
-void
-ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+static void
+_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   USE_GC (gc);
 
   hidgl_fill_pcb_polygon (poly, clip_box, gport->view.coord_per_px);
 }
 
-void
-ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+static void
+_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   common_thindraw_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, 0.25);
-  ghid_fill_pcb_polygon (gc, poly, clip_box);
+  _fill_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, 1.0);
 }
 
@@ -597,6 +597,28 @@ ghid_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
   USE_GC (gc);
 
   hidgl_fill_rect (x1, y1, x2, y2);
+}
+
+static void
+ghid_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *drawn_area)
+{
+  USE_GC (gc);
+
+  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+    _thindraw_pcb_polygon (gc, polygon, drawn_area);
+  else
+    _fill_pcb_polygon (gc, polygon, drawn_area);
+
+  /* If checking planes, thin-draw any pieces which have been clipped away */
+  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
+    {
+      PolygonType poly = *polygon;
+
+      for (poly.Clipped = polygon->Clipped->f;
+           poly.Clipped != polygon->Clipped;
+           poly.Clipped = poly.Clipped->f)
+        _thindraw_pcb_polygon (gc, &poly, drawn_area);
+    }
 }
 
 void
@@ -789,8 +811,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 
   /* Setup HID function pointers specific to the GL renderer*/
   ghid_hid.end_layer = ghid_end_layer;
-  ghid_hid.fill_pcb_polygon = ghid_fill_pcb_polygon;
-  ghid_hid.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+/* XXX: ONLY GL SPECIFIC FOR THE FILL ROUTINE  ghid_hid.draw_pcb_polygon = ghid_draw_pcb_polygon; */
 }
 
 void
@@ -880,7 +901,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      we can't use the hidgl polygon drawing routine */
   /* TODO: We could use the GLU tessellator though */
   if (hidgl_stencil_bits() == 0)
-    ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
+    ghid_hid.draw_pcb_polygon = common_draw_pcb_polygon; /* XXX: THIS WILL KILL THE RENDERING THINDRAW FUNCTIONALITY TOO */
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
