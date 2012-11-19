@@ -1,0 +1,25 @@
+Bottom: 29fdce8ff347d12b7922de2da224ed2905974ae3
+Top:    29fdce8ff347d12b7922de2da224ed2905974ae3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-19 21:49:35 +0000
+
+Split out drawing routines into vfunc table for possible replacement
+
+The aim here is to indirect calls to the various drawing routines such
+that a GUI or renderer implementation may swap out different parts of
+the rendering operation at will without having to re-implement the
+entire drawing stack from scratch.
+
+Each drawing API call will now be passed the drawing API structure as
+its first parameter, so we don't rely on this being a global.
+
+As a further clean-up, the graphics context being used by the rendering
+routines is now a member of the vfunc table structure. We currently
+retain the old Output.*gc members, but only use them (where necessary)
+to update the ->gc member of the drawing API structure as rendering
+progresses.
+
+
+---
+
+
