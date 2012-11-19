@@ -1,5 +1,5 @@
 Bottom: ce6d06010e69c839677f6d45ffef405228f06e15
-Top:    100bc633a64e2a73d8d9f8f51ad8d43eb8bd8df6
+Top:    5d0346634d3790ea31d6cd57dc0c9b0044fbfae1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 00:37:09 +0000
 
@@ -58,6 +58,20 @@ index d7974e5..501f94b 100644
      void (*fill_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
      void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
      void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 0d0851d..a854435 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -469,8 +469,7 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+ void
+ common_draw_helpers_init (HID *hid)
+ {
+-  hid->fill_pcb_polygon     = common_fill_pcb_polygon;
+-  hid->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
++  hid->draw_pcb_polygon     = common_fill_pcb_polygon;
+   hid->fill_pcb_pad         = common_fill_pcb_pad;
+   hid->thindraw_pcb_pad     = common_thindraw_pcb_pad;
+   hid->fill_pcb_pv          = common_fill_pcb_pv;
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
 index 6c159b4..c061361 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
