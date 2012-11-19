@@ -1526,7 +1526,7 @@ hid_ps_init ()
   memset (&ps_graphics, 0, sizeof (HID_DRAW_API));
 
   common_nogui_init (&ps_hid);
-  common_draw_helpers_init (&ps_hid);
+  common_draw_helpers_init (&ps_graphics);
   ps_ps_init (&ps_hid);
   ps_ps_graphics_init (&ps_graphics);
 
