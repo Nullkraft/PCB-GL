@@ -1496,7 +1496,6 @@ void ps_ps_init (HID *hid)
   hid->do_export          = ps_do_export;
   hid->parse_arguments    = ps_parse_arguments;
   hid->set_layer          = ps_set_layer;
-  hid->fill_pcb_polygon   = ps_fill_pcb_polygon;
   hid->calibrate          = ps_calibrate;
   hid->set_crosshair      = ps_set_crosshair;
 }
@@ -1517,6 +1516,8 @@ void ps_ps_graphics_init (HID_DRAW_API *graphics)
   graphics->fill_circle        = ps_fill_circle;
   graphics->fill_polygon       = ps_fill_polygon;
   graphics->fill_rect          = ps_fill_rect;
+
+  graphics->fill_pcb_polygon   = ps_fill_pcb_polygon;
 }
 
 void
