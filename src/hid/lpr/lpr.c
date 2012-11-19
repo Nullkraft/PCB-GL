@@ -16,6 +16,7 @@
 #include "../hidint.h"
 #include "../ps/ps.h"
 #include "hid/common/hidnogui.h"
+#include "hid/common/draw_helpers.h"
 #include "hid/common/hidinit.h"
 
 #ifdef HAVE_LIBDMALLOC
@@ -130,6 +131,7 @@ hid_lpr_init ()
 
   common_nogui_init (&lpr_hid);
   ps_ps_init (&lpr_hid);
+  common_draw_helpers_init (&lpr_hid);
   ps_ps_graphics_init (&lpr_graphics);
 
   lpr_hid.struct_size         = sizeof (HID);
