@@ -3,11 +3,19 @@ Top:    3b074bf5245e6007114fb305b02f837b1c1c6ade
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 23:28:17 +0000
 
-hid/lpr: Initiialise common drawing helpers
+hid/lpr: Don't initiialise the graphics API vtable
 
-Just being picky here.. I spent ages wondering why the old code didn't segfault,
-and it turns out that when we actually go to render, we call into the ps HID
+Just being picky here..
+
+I spent ages trying to work out why the old code didn't segfault, given
+it does not call common_draw_helpers_init() to setup the various pad,
+pin and polygon drawing routines.
+
+It turns out that when we actually go to export, we call into the ps HID
 directly - and ignore the lpr.c HID vtables.
+
+Lets avoid confusion by partly setting up the lpr vtables, and leave the
+graphics HID member as NULL.
 
 
 ---
