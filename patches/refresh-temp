@@ -1,0 +1,562 @@
+Bottom: 9a878aabd39520f704333e664e41d87a73a56498
+Top:    a849231b2c61c3a5838c4ef2a123559c0866969d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-20 02:02:44 +0000
+
+Refresh of split-out-drawing-routines-int
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 65a94fb..1079c5f 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -36,6 +36,7 @@
+ #include <math.h>
+ 
+ #include "global.h"
++#include "hid_draw.h"
+ 
+ #include "crosshair.h"
+ #include "data.h"
+diff --git a/src/draw.c b/src/draw.c
+index e4d59f5..4283810 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -33,6 +33,7 @@
+ #endif
+ 
+ #include "global.h"
++#include "hid_draw.h"
+ 
+ /*#include "clip.h"*/
+ #include "compat.h"
+@@ -199,7 +200,7 @@ _draw_pv_name (PinType *pv)
+ 
+   if (gui->gui)
+     doing_pinout++;
+-  DrawTextLowLevel (Output.fgGC, &text, 0);
++  gui->graphics->draw_pcb_text (Output.fgGC, &text, 0);
+   if (gui->gui)
+     doing_pinout--;
+ }
+@@ -283,7 +284,7 @@ draw_pad_name (PadType *pad)
+   text.Y = box.Y1;
+   text.Direction = vert ? 1 : 0;
+ 
+-  DrawTextLowLevel (Output.fgGC, &text, 0);
++  gui->graphics->draw_pcb_text (Output.fgGC, &text, 0);
+ }
+ 
+ static void
+@@ -349,7 +350,7 @@ draw_element_name (ElementType *element)
+     gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
+   else
+     gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+-  DrawTextLowLevel (Output.fgGC, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
++  gui->graphics->draw_pcb_text (Output.fgGC, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
+ }
+ 
+ static int
+@@ -447,19 +448,6 @@ DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
+ }
+ 
+ static void
+-_draw_line (hidGC gc, LineType *line)
+-{
+-  gui->graphics->set_line_cap (gc, Trace_Cap);
+-  if (TEST_FLAG (THINDRAWFLAG, PCB))
+-    gui->graphics->set_line_width (gc, 0);
+-  else
+-    gui->graphics->set_line_width (gc, line->Thickness);
+-
+-  gui->graphics->draw_line (gc, line->Point1.X, line->Point1.Y,
+-                                line->Point2.X, line->Point2.Y);
+-}
+-
+-static void
+ draw_line (LayerType *layer, LineType *line)
+ {
+   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
+@@ -471,7 +459,7 @@ draw_line (LayerType *layer, LineType *line)
+     }
+   else
+     gui->graphics->set_color (Output.fgGC, layer->Color);
+-  _draw_line (Output.fgGC, line);
++  gui->graphics->draw_pcb_line (Output.fgGC, line);
+ }
+ 
+ static int
+@@ -511,7 +499,7 @@ rat_callback (const BoxType * b, void *cl)
+                                w * 2, w * 2, 0, 360);
+     }
+   else
+-    _draw_line (Output.fgGC, (LineType *) rat);
++    gui->graphics->draw_pcb_line (Output.fgGC, (LineType *) rat);
+   return 1;
+ }
+ 
+@@ -570,7 +558,7 @@ draw_element_package (ElementType *element)
+   /* draw lines, arcs, text and pins */
+   ELEMENTLINE_LOOP (element);
+   {
+-    _draw_line (Output.fgGC, line);
++    gui->graphics->draw_pcb_line (Output.fgGC, line);
+   }
+   END_LOOP;
+   ARC_LOOP (element);
+@@ -1059,7 +1047,7 @@ text_callback (const BoxType * b, void *cl)
+     min_silk_line = PCB->minSlk;
+   else
+     min_silk_line = PCB->minWid;
+-  DrawTextLowLevel (Output.fgGC, text, min_silk_line);
++  gui->graphics->draw_pcb_text (Output.fgGC, text, min_silk_line);
+   return 1;
+ }
+ 
+@@ -1191,89 +1179,6 @@ GatherPadName (PadType *Pad)
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * lowlevel drawing routine for text objects
+- */
+-void
+-DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
+-{
+-  Coord x = 0;
+-  unsigned char *string = (unsigned char *) Text->TextString;
+-  Cardinal n;
+-  FontType *font = &PCB->Font;
+-
+-  while (string && *string)
+-    {
+-      /* draw lines if symbol is valid and data is present */
+-      if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
+-	{
+-	  LineType *line = font->Symbol[*string].Line;
+-	  LineType newline;
+-
+-	  for (n = font->Symbol[*string].LineN; n; n--, line++)
+-	    {
+-	      /* create one line, scale, move, rotate and swap it */
+-	      newline = *line;
+-	      newline.Point1.X = SCALE_TEXT (newline.Point1.X + x, Text->Scale);
+-	      newline.Point1.Y = SCALE_TEXT (newline.Point1.Y, Text->Scale);
+-	      newline.Point2.X = SCALE_TEXT (newline.Point2.X + x, Text->Scale);
+-	      newline.Point2.Y = SCALE_TEXT (newline.Point2.Y, Text->Scale);
+-	      newline.Thickness = SCALE_TEXT (newline.Thickness, Text->Scale / 2);
+-	      if (newline.Thickness < min_line_width)
+-		newline.Thickness = min_line_width;
+-
+-	      RotateLineLowLevel (&newline, 0, 0, Text->Direction);
+-
+-	      /* the labels of SMD objects on the bottom
+-	       * side haven't been swapped yet, only their offset
+-	       */
+-	      if (TEST_FLAG (ONSOLDERFLAG, Text))
+-		{
+-		  newline.Point1.X = SWAP_SIGN_X (newline.Point1.X);
+-		  newline.Point1.Y = SWAP_SIGN_Y (newline.Point1.Y);
+-		  newline.Point2.X = SWAP_SIGN_X (newline.Point2.X);
+-		  newline.Point2.Y = SWAP_SIGN_Y (newline.Point2.Y);
+-		}
+-	      /* add offset and draw line */
+-	      newline.Point1.X += Text->X;
+-	      newline.Point1.Y += Text->Y;
+-	      newline.Point2.X += Text->X;
+-	      newline.Point2.Y += Text->Y;
+-	      _draw_line (gc, &newline);
+-	    }
+-
+-	  /* move on to next cursor position */
+-	  x += (font->Symbol[*string].Width + font->Symbol[*string].Delta);
+-	}
+-      else
+-	{
+-	  /* the default symbol is a filled box */
+-	  BoxType defaultsymbol = PCB->Font.DefaultSymbol;
+-	  Coord size = (defaultsymbol.X2 - defaultsymbol.X1) * 6 / 5;
+-
+-	  defaultsymbol.X1 = SCALE_TEXT (defaultsymbol.X1 + x, Text->Scale);
+-	  defaultsymbol.Y1 = SCALE_TEXT (defaultsymbol.Y1, Text->Scale);
+-	  defaultsymbol.X2 = SCALE_TEXT (defaultsymbol.X2 + x, Text->Scale);
+-	  defaultsymbol.Y2 = SCALE_TEXT (defaultsymbol.Y2, Text->Scale);
+-
+-	  RotateBoxLowLevel (&defaultsymbol, 0, 0, Text->Direction);
+-
+-	  /* add offset and draw box */
+-	  defaultsymbol.X1 += Text->X;
+-	  defaultsymbol.Y1 += Text->Y;
+-	  defaultsymbol.X2 += Text->X;
+-	  defaultsymbol.Y2 += Text->Y;
+-	  gui->graphics->fill_rect (gc,
+-	                            defaultsymbol.X1, defaultsymbol.Y1,
+-	                            defaultsymbol.X2, defaultsymbol.Y2);
+-
+-	  /* move on to next cursor position */
+-	  x += size;
+-	}
+-      string++;
+-    }
+-}
+-
+-/* ---------------------------------------------------------------------------
+  * draw a via object
+  */
+ void
+diff --git a/src/draw.h b/src/draw.h
+index 88e2349..b58e5cb 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -44,7 +44,6 @@ void DrawPadName (PadType *);
+ void DrawLine (LayerType *, LineType *);
+ void DrawArc (LayerType *, ArcType *);
+ void DrawText (LayerType *, TextType *);
+-void DrawTextLowLevel (hidGC gc, TextType *, Coord);
+ void DrawPolygon (LayerType *, PolygonType *);
+ void DrawElement (ElementType *);
+ void DrawElementName (ElementType *);
+diff --git a/src/hid.h b/src/hid.h
+index 6135750..05cf3e6 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -3,6 +3,7 @@
+ 
+ #include <stdarg.h>
+ 
++
+ /* Human Interface Device */
+ 
+ /*
+@@ -232,69 +233,8 @@ typedef enum
+     int (*throw_drc_dialog) (void);
+   } HID_DRC_GUI;
+ 
+-  enum mask_mode {
+-    HID_MASK_OFF    = 0, /* Flush the buffer and return to non-mask operation. */
+-    HID_MASK_BEFORE = 1, /* Polygons being drawn before clears.                */
+-    HID_MASK_CLEAR  = 2, /* Clearances being drawn.                            */
+-    HID_MASK_AFTER  = 3, /* Polygons being drawn after clears.                 */
+-  };
+-
+-/* Low level drawing API */
+-  typedef struct
+-  {
+-    /* Drawing Functions.  Coordinates and distances are ALWAYS in PCB's
+-       default coordinates (1 nm at the time this comment was written).
+-       Angles are always in degrees, with 0 being "right" (positive X)
+-       and 90 being "up" (positive Y).  */
+-
+-    /* Make an empty graphics context.  */
+-    hidGC (*make_gc) (void);
+-    void (*destroy_gc) (hidGC gc_);
+-    void (*use_mask) (enum mask_mode mode);
+-
+-    /* Set a color.  Names can be like "red" or "#rrggbb" or special
+-       names like "erase".  *Always* use the "erase" color for removing
+-       ink (like polygon reliefs or thermals), as you cannot rely on
+-       knowing the background color or special needs of the HID.  Always
+-       use the "drill" color to draw holes.  You may assume this is
+-       cheap enough to call inside the redraw callback, but not cheap
+-       enough to call for each item drawn. */
+-    void (*set_color) (hidGC gc, const char *name);
+-
+-    /* Set the line style.  While calling this is cheap, calling it with
+-       different values each time may be expensive, so grouping items by
+-       line style is helpful.  */
+-    void (*set_line_cap) (hidGC gc, EndCapStyle style);
+-    void (*set_line_width) (hidGC gc, Coord width);
+-    void (*set_draw_xor) (hidGC gc, int xor_);
+-
+-    /* Blends 20% or so color with 80% background.  Only used for
+-       assembly drawings so far. */
+-    void (*set_draw_faded) (hidGC gc, int faded);
+-
+-    /* The usual drawing functions.  "draw" means to use segments of the
+-       given width, whereas "fill" means to fill to a zero-width
+-       outline.  */
+-    void (*draw_line)    (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+-    void (*draw_arc)     (hidGC gc, Coord cx, Coord cy, Coord xradius, Coord yradius, Angle start_angle, Angle delta_angle);
+-    void (*draw_rect)    (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+-    void (*fill_circle)  (hidGC gc, Coord cx, Coord cy, Coord radius);
+-    void (*fill_polygon) (hidGC gc, int n_coords_, Coord *x, Coord *y);
+-    void (*fill_rect)    (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+-
+-    /* The following APIs render using PCB data-structures, not immediate parameters */
+-
+-    void (*fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+-    void (*thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+-    void (*fill_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
+-    void (*thindraw_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
+-    void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+-    void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+-
+-  } HID_DRAW_API;
+-
+-
+   typedef struct hid_st HID;
++  typedef struct hid_draw_api_st HID_DRAW_API;
+ 
+ /* This is the main HID structure.  */
+   struct hid_st
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 5344500..c8378b0 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -1,7 +1,108 @@
+ #include "global.h"
+ #include "hid.h"
++#include "hid_draw.h"
++#include "data.h" /* For nasty global "PCB" variable */
++#include "rotate.h" /* For RotateLineLowLevel() */
+ #include "polygon.h"
+ 
++
++static void
++common_draw_pcb_line (hidGC gc, LineType *line)
++{
++  gui->graphics->set_line_cap (gc, Trace_Cap);
++  if (TEST_FLAG (THINDRAWFLAG, PCB))
++    gui->graphics->set_line_width (gc, 0);
++  else
++    gui->graphics->set_line_width (gc, line->Thickness);
++
++  gui->graphics->draw_line (gc,
++                            line->Point1.X, line->Point1.Y,
++                            line->Point2.X, line->Point2.Y);
++}
++
++/* ---------------------------------------------------------------------------
++ * drawing routine for text objects
++ */
++static void
++common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
++{
++  Coord x = 0;
++  unsigned char *string = (unsigned char *) Text->TextString;
++  Cardinal n;
++  FontType *font = &PCB->Font;
++
++  while (string && *string)
++    {
++      /* draw lines if symbol is valid and data is present */
++      if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
++        {
++          LineType *line = font->Symbol[*string].Line;
++          LineType newline;
++
++          for (n = font->Symbol[*string].LineN; n; n--, line++)
++            {
++              /* create one line, scale, move, rotate and swap it */
++              newline = *line;
++              newline.Point1.X = SCALE_TEXT (newline.Point1.X + x, Text->Scale);
++              newline.Point1.Y = SCALE_TEXT (newline.Point1.Y, Text->Scale);
++              newline.Point2.X = SCALE_TEXT (newline.Point2.X + x, Text->Scale);
++              newline.Point2.Y = SCALE_TEXT (newline.Point2.Y, Text->Scale);
++              newline.Thickness = SCALE_TEXT (newline.Thickness, Text->Scale / 2);
++              if (newline.Thickness < min_line_width)
++                newline.Thickness = min_line_width;
++
++              RotateLineLowLevel (&newline, 0, 0, Text->Direction);
++
++              /* the labels of SMD objects on the bottom
++               * side haven't been swapped yet, only their offset
++               */
++              if (TEST_FLAG (ONSOLDERFLAG, Text))
++                {
++                  newline.Point1.X = SWAP_SIGN_X (newline.Point1.X);
++                  newline.Point1.Y = SWAP_SIGN_Y (newline.Point1.Y);
++                  newline.Point2.X = SWAP_SIGN_X (newline.Point2.X);
++                  newline.Point2.Y = SWAP_SIGN_Y (newline.Point2.Y);
++                }
++              /* add offset and draw line */
++              newline.Point1.X += Text->X;
++              newline.Point1.Y += Text->Y;
++              newline.Point2.X += Text->X;
++              newline.Point2.Y += Text->Y;
++              gui->graphics->draw_pcb_line (gc, &newline);
++            }
++
++          /* move on to next cursor position */
++          x += (font->Symbol[*string].Width + font->Symbol[*string].Delta);
++        }
++      else
++        {
++          /* the default symbol is a filled box */
++          BoxType defaultsymbol = PCB->Font.DefaultSymbol;
++          Coord size = (defaultsymbol.X2 - defaultsymbol.X1) * 6 / 5;
++
++          defaultsymbol.X1 = SCALE_TEXT (defaultsymbol.X1 + x, Text->Scale);
++          defaultsymbol.Y1 = SCALE_TEXT (defaultsymbol.Y1, Text->Scale);
++          defaultsymbol.X2 = SCALE_TEXT (defaultsymbol.X2 + x, Text->Scale);
++          defaultsymbol.Y2 = SCALE_TEXT (defaultsymbol.Y2, Text->Scale);
++
++          RotateBoxLowLevel (&defaultsymbol, 0, 0, Text->Direction);
++
++          /* add offset and draw box */
++          defaultsymbol.X1 += Text->X;
++          defaultsymbol.Y1 += Text->Y;
++          defaultsymbol.X2 += Text->X;
++          defaultsymbol.Y2 += Text->Y;
++          gui->graphics->fill_rect (gc,
++                                    defaultsymbol.X1, defaultsymbol.Y1,
++                                    defaultsymbol.X2, defaultsymbol.Y2);
++
++          /* move on to next cursor position */
++          x += size;
++        }
++      string++;
++    }
++}
++
+ static void
+ fill_contour (hidGC gc, PLINE *pl)
+ {
+@@ -469,6 +570,9 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+ void
+ common_draw_helpers_init (HID_DRAW_API *dapi)
+ {
++  dapi->draw_pcb_line        = common_draw_pcb_line;
++  dapi->draw_pcb_text        = common_draw_pcb_text;
++
+   dapi->fill_pcb_polygon     = common_fill_pcb_polygon;
+   dapi->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
+   dapi->fill_pcb_pad         = common_fill_pcb_pad;
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index 82d7955..e497573 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -11,6 +11,7 @@
+ #include "data.h"
+ 
+ #include "hid.h"
++#include "hid_draw.h"
+ #include "../hidint.h"
+ #include "hid/common/draw_helpers.h"
+ 
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 2123ad0..db38f56 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -9,6 +9,7 @@
+ 
+ #include "global.h"
+ #include "hid.h"
++#include "hid_draw.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 952621f..f62ceb6 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -53,6 +53,7 @@
+ #include "rats.h"
+ 
+ #include "hid.h"
++#include "hid_draw.h"
+ #include "../hidint.h"
+ #include <gd.h>
+ #include "hid/common/hidnogui.h"
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 5f5aebc..66c4ed1 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -27,6 +27,7 @@
+ #include "pcb-printf.h"
+ 
+ #include "hid.h"
++#include "hid_draw.h"
+ #include "../hidint.h"
+ #include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 94441fe..fc238f5 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -25,6 +25,7 @@
+ #include "error.h"
+ 
+ #include "hid.h"
++#include "hid_draw.h"
+ #include "../hidint.h"
+ #include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 6c837be..31aa902 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -70,6 +70,7 @@
+ #include "rats.h"
+ 
+ #include "hid.h"
++#include "hid_draw.h"
+ #include "../hidint.h"
+ #include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 62cb62f..d333495 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -41,6 +41,7 @@
+ #include "misc.h"
+ 
+ #include "hid.h"
++#include "hid_draw.h"
+ #include "../hidint.h"
+ #include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 1a43106..b5994c6 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -14,6 +14,7 @@
+ #include "pcb-printf.h"
+ 
+ #include "hid.h"
++#include "hid_draw.h"
+ #include "../hidint.h"
+ #include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 6930507..7015ffd 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -17,6 +17,7 @@
+ #include "pcb-printf.h"
+ 
+ #include "hid.h"
++#include "hid_draw.h"
+ #include "../hidint.h"
+ #include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+diff --git a/src/print.c b/src/print.c
+index 27e1c98..69328e7 100644
+--- a/src/print.c
++++ b/src/print.c
+@@ -38,6 +38,7 @@
+ #endif
+ 
+ #include "global.h"
++#include "hid_draw.h"
+ 
+ #include <time.h>
+ #ifdef HAVE_UNISTD_H
+@@ -111,7 +112,7 @@ text_at (hidGC gc, int x, int y, int align, char *fmt, ...)
+   t.X -= w * (align & 3) / 2;
+   if (t.X < 0)
+     t.X = 0;
+-  DrawTextLowLevel (gc, &t, 0);
++  gui->graphics->draw_pcb_text (gc, &t, 0);
+   if (align & 8)
+     fab_line (gc, t.X,
+               t.Y + SCALE_TEXT (font->MaxHeight, t.Scale) + MIL_TO_COORD(10),
+@@ -346,7 +347,7 @@ PrintFab (hidGC gc)
+       END_LOOP;
+       TEXT_LOOP (layer);
+       {
+-	DrawTextLowLevel (gc, text, 0);
++	gui->graphics->draw_pcb_text (gc, text, 0);
+       }
+       END_LOOP;
+       gui->graphics->set_line_width (gc, FAB_LINE_W);
