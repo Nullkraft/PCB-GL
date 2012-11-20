@@ -5,6 +5,12 @@ Date:   2012-11-20 02:03:38 +0000
 
 autoroute.c: Destroy debug graphics context when we're finished with it
 
+I caught this one by inspection, as we don't tend to build with autorouter
+debugging enabled. I tested quickly before comitting, and this change
+doesn't break anything. This said, I couldn't see any debug rendering
+output either (before or after this patch).. so that might be broken
+somewhere.
+
 
 ---
 
