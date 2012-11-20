@@ -5334,7 +5334,7 @@ donerouting:
 #ifdef ROUTE_DEBUG
   if (ddraw != NULL)
     {
-      ddraw->destroy_gc (ar_gc);
+      ddraw->graphics->destroy_gc (ar_gc);
       ddraw->finish_debug_draw ();
     }
 #endif
