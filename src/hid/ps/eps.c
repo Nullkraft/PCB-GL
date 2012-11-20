@@ -39,7 +39,6 @@ static void eps_use_mask (enum mask_mode mode);
 static void eps_set_color (hidGC gc, const char *name);
 static void eps_set_line_cap (hidGC gc, EndCapStyle style);
 static void eps_set_line_width (hidGC gc, Coord width);
-static void eps_set_draw_xor (hidGC gc, int _xor);
 static void eps_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
 static void eps_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
 static void eps_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height, Angle start_angle, Angle delta_angle);
@@ -519,12 +518,6 @@ eps_set_line_width (hidGC gc, Coord width)
 }
 
 static void
-eps_set_draw_xor (hidGC gc, int xor_)
-{
-  ;
-}
-
-static void
 use_gc (hidGC gc)
 {
   if (linewidth != gc->width)
@@ -693,7 +686,6 @@ hid_eps_init ()
   eps_graphics.set_color      = eps_set_color;
   eps_graphics.set_line_cap   = eps_set_line_cap;
   eps_graphics.set_line_width = eps_set_line_width;
-  eps_graphics.set_draw_xor   = eps_set_draw_xor;
   eps_graphics.draw_line      = eps_draw_line;
   eps_graphics.draw_arc       = eps_draw_arc;
   eps_graphics.draw_rect      = eps_draw_rect;
