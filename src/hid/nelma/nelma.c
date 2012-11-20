@@ -72,6 +72,7 @@
 #include "hid.h"
 #include "../hidint.h"
 #include "hid/common/hidnogui.h"
+#include "draw_api.h"
 #include "hid/common/draw_helpers.h"
 
 #include <gd.h>
@@ -636,6 +637,7 @@ nelma_finish_png()
 void 
 nelma_start_png_export()
 {
+#if 0
 	BoxType         region;
 
 	region.X1 = 0;
@@ -647,6 +649,7 @@ nelma_start_png_export()
 	lastbrush = (gdImagePtr)((void *) -1);
 
 	hid_expose_callback(&nelma_hid, &region, 0);
+#endif
 }
 
 static void 
@@ -1034,7 +1037,7 @@ hid_nelma_init()
   memset (&nelma_graphics, 0, sizeof (HID_DRAW_API));
 
   common_nogui_init (&nelma_hid);
-  common_draw_helpers_init (&nelma_graphics);
+//  common_draw_helpers_init (&nelma_graphics);
 
   nelma_hid.struct_size         = sizeof (HID);
   nelma_hid.name                = "nelma";
@@ -1049,7 +1052,7 @@ hid_nelma_init()
   nelma_hid.calibrate           = nelma_calibrate;
   nelma_hid.set_crosshair       = nelma_set_crosshair;
 
-  nelma_hid.graphics            = &nelma_graphics;
+//  nelma_hid.graphics            = &nelma_graphics;
 
   nelma_graphics.make_gc        = nelma_make_gc;
   nelma_graphics.destroy_gc     = nelma_destroy_gc;

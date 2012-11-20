@@ -31,6 +31,7 @@
 #define	PCB_DRAW_H
 
 #include "global.h"
+#include "draw_api.h"
 
 void Draw (void);
 void Redraw (void);
@@ -44,14 +45,12 @@ void DrawPadName (PadType *);
 void DrawLine (LayerType *, LineType *);
 void DrawArc (LayerType *, ArcType *);
 void DrawText (LayerType *, TextType *);
-void DrawTextLowLevel (hidGC gc, TextType *, Coord);
 void DrawPolygon (LayerType *, PolygonType *);
 void DrawElement (ElementType *);
 void DrawElementName (ElementType *);
 void DrawElementPackage (ElementType *);
 void DrawElementPinsAndPads (ElementType *);
 void DrawObject (int, void *, void *);
-void DrawLayer (LayerType *, const BoxType *);
 void EraseVia (PinType *);
 void EraseRat (RatType *);
 void EraseViaName (PinType *);
@@ -68,11 +67,6 @@ void EraseElementPinsAndPads (ElementType *);
 void EraseElementName (ElementType *);
 void EraseObject (int, void *, void *);
 
-void DrawLayerGroup (int side, const BoxType *drawn_area);
-void DrawPaste (int side, const BoxType *drawn_area);
-void DrawSilk (int side, const BoxType *drawn_area);
-void DrawMask (int side, const BoxType *drawn_area);
-void DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area);
-void PrintAssembly (int side, const BoxType *drawn_area);
+DrawAPI *draw_api_new (void);
 
 #endif
