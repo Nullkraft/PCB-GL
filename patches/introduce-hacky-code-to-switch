@@ -1,5 +1,5 @@
-Bottom: 414f944b853f1edb2e2d203df0be2200391b145a
-Top:    662ca96175d12f21070221ff8f9ac3615bbf33e6
+Bottom: c131aafb9a6f8b6579514ad68edc5613393009df
+Top:    3f773bda3fddedc1ea6c17c297a98d1c6618caac
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-18 20:53:25 +0000
 
@@ -9,7 +9,7 @@ Introduce hacky code to switch cursor when over a line we might drag
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 937e506..12b9854 100644
+index 65a94fb..85d16ee 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -1097,11 +1097,66 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
@@ -106,10 +106,10 @@ index 2dd5e7e..d35807a 100644
  void notify_crosshair_change (bool changes_complete);
  void notify_mark_change (bool changes_complete);
 diff --git a/src/hid.h b/src/hid.h
-index d7974e5..a4a90bd 100644
+index 6135750..406ce4b 100644
 --- a/src/hid.h
 +++ b/src/hid.h
-@@ -580,6 +580,10 @@ typedef enum
+@@ -579,6 +579,10 @@ typedef enum
  
      /* Notification to the GUI that the PCB file has been renamed. */
      void (*notify_filename_changed) (void);
@@ -121,7 +121,7 @@ index d7974e5..a4a90bd 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 26719ca..e8c6301 100644
+index 2bbded9..961f2f3 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1137,6 +1137,16 @@ static int PointCursor (int argc, char **argv, Coord x, Coord y)
@@ -141,7 +141,7 @@ index 26719ca..e8c6301 100644
  /* ---------------------------------------------------------------------- */
  
  static int
-@@ -2181,6 +2191,10 @@ hid_gtk_init ()
+@@ -2180,6 +2190,10 @@ hid_gtk_init ()
    ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
    ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
  
@@ -151,7 +151,7 @@ index 26719ca..e8c6301 100644
 +
    ghid_hid.graphics                 = &ghid_graphics;
  
-   ghid_graphics.make_gc             = ghid_make_gc;
+   common_draw_helpers_init (&ghid_graphics);
 diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
 index bf3b79e..f0c4d39 100644
 --- a/src/hid/gtk/gui-misc.c
