@@ -30,7 +30,9 @@
 #ifndef	PCB_CROSSHAIR_H
 #define	PCB_CROSSHAIR_H
 
+/* Naughty */
 #include "global.h"
+#include "draw_api.h"
 
 /* ---------------------------------------------------------------------------
  * all possible states of an attached object
@@ -44,8 +46,8 @@ void notify_crosshair_change (bool changes_complete);
 void notify_mark_change (bool changes_complete);
 void HideCrosshair (void);
 void RestoreCrosshair (void);
-void DrawAttached (void);
-void DrawMark (void);
+void DrawAttached (DrawAPI *);
+void DrawMark (DrawAPI *);
 void MoveCrosshairRelative (Coord, Coord);
 bool MoveCrosshairAbsolute (Coord, Coord);
 void SetCrosshairRange (Coord, Coord, Coord, Coord);
