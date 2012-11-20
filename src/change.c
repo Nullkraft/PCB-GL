@@ -1246,7 +1246,7 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
  * changes the clearance flag of a polygon
  */
 static void *
-ChangePolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
+ChangePolyJoin (LayerType *Layer, PolygonType *poly)
 {
   if (TEST_FLAG (LOCKFLAG, poly))
     return (NULL);
@@ -1282,7 +1282,7 @@ SetTextJoin (LayerType *Layer, TextType *Text)
  * sets the clearance flag of a polygon
  */
 static void *
-SetPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
+SetPolyJoin (LayerType *Layer, PolygonType *poly)
 {
   if (TEST_FLAG (LOCKFLAG, poly) || TEST_FLAG (CLEARLINEFLAG, poly))
     return (NULL);
@@ -1304,7 +1304,7 @@ ClrTextJoin (LayerType *Layer, TextType *Text)
  * clears the clearance flag of a polygon
  */
 static void *
-ClrPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
+ClrPolyJoin (LayerType *Layer, PolygonType *poly)
 {
   if (TEST_FLAG (LOCKFLAG, poly) || !TEST_FLAG (CLEARLINEFLAG, poly))
     return (NULL);
