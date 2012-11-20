@@ -57,6 +57,7 @@
 #include "../hidint.h"
 #include <gd.h>
 #include "hid/common/hidnogui.h"
+#include "draw_api.h"
 #include "hid/common/draw_helpers.h"
 #include "bitmap.h"
 #include "curve.h"
@@ -455,6 +456,7 @@ gcode_finish_png (const char *layername)
 static void
 gcode_start_png_export ()
 {
+#if 0
   BoxType region;
 
   region.X1 = PCB->ExtentMinX;
@@ -466,6 +468,7 @@ gcode_start_png_export ()
   lastbrush = (gdImagePtr)((void *) -1);
 
   hid_expose_callback (&gcode_hid, &region, 0);
+#endif
 }
 
 static FILE *
@@ -1573,7 +1576,7 @@ hid_gcode_init ()
   memset (&gcode_graphics, 0, sizeof (HID_DRAW));
 
   common_nogui_init (&gcode_hid);
-  common_draw_helpers_init (&gcode_graphics);
+//  common_draw_helpers_init (&gcode_graphics);
 
   gcode_hid.struct_size         = sizeof (HID);
   gcode_hid.name                = "gcode";
@@ -1588,7 +1591,7 @@ hid_gcode_init ()
   gcode_hid.calibrate           = gcode_calibrate;
   gcode_hid.set_crosshair       = gcode_set_crosshair;
 
-  gcode_hid.graphics            = &gcode_graphics;
+//  gcode_hid.graphics            = &gcode_graphics;
 
   gcode_graphics.make_gc        = gcode_make_gc;
   gcode_graphics.destroy_gc     = gcode_destroy_gc;
