@@ -72,31 +72,66 @@
  */
 static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
 
-static int doing_pinout = 0;
-static bool doing_assy = false;
-
 /* ---------------------------------------------------------------------------
  * some local prototypes
  */
-static void DrawEverything (const BoxType *);
-static void DrawPPV (int group, const BoxType *);
+static void DrawPPV (DrawAPI *dapi, int group);
 static void AddPart (void *);
-static void DrawEMark (ElementType *, Coord, Coord, bool);
-static void DrawRats (const BoxType *);
+static void DrawEMark (DrawAPI *dapi, ElementType *, Coord, Coord, bool);
+static void DrawRats (DrawAPI *dapi);
 
+struct side_info {
+  DrawAPI *dapi;
+  int side;
+};
+
+/*--------------------------------------------------------------------------------------
+ * setup color for various objects
+ */
 static void
 set_object_color (AnyObjectType *obj,
                   char *warn_color, char *selected_color,
                   char *found_color, char *normal_color)
 {
-  char *color;
+  char *color = PCB->PinColor;
 
   if      (warn_color     != NULL && TEST_FLAG (WARNFLAG,     obj)) color = warn_color;
   else if (selected_color != NULL && TEST_FLAG (SELECTEDFLAG, obj)) color = selected_color;
   else if (found_color    != NULL && TEST_FLAG (FOUNDFLAG,    obj)) color = found_color;
   else                                                              color = normal_color;
 
-  gui->graphics->set_color (Output.fgGC, color);
+  dapi->graphics->set_color (dapi->fg_gc, color);
+}
+
+static void
+set_color_for_pin (DrawAPI *dapi, PinType *pin)
+{
+  if (doing_pinout)
+    dapi->graphics->set_color (dapi->fg_gc, PCB->PinColor);
+  else
+    set_object_color ((AnyObjectType *)pin, PCB->WarnColor,
+                      PCB->PinSelectedColor, PCB->ConnectedColor, PCB->PinColor);
+}
+
+static void
+set_color_for_via (DrawAPI *dapi, PinType *via)
+{
+  if (doing_pinout)
+    dapi->graphics->set_color (dapi->fg_gc, PCB->ViaColor);
+  else
+    set_object_color ((AnyObjectType *)via, PCB->WarnColor,
+                      PCB->ViaSelectedColor, PCB->ConnectedColor, PCB->ViaColor);
+}
+
+static void
+set_color_for_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
+{
+  if (doing_pinout)
+    dapi->graphics->set_color (dapi->fg_gc, PCB->PinColor);
+  else
+    set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
+                      PCB->PinSelectedColor, PCB->ConnectedColor,
+                      FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 }
 
 static void
@@ -143,7 +178,7 @@ Redraw (void)
 }
 
 static void
-_draw_pv_name (PinType *pv)
+_draw_pv_name (DrawAPI *dapi, PinType *pv)
 {
   BoxType box;
   bool vert;
@@ -167,7 +202,7 @@ _draw_pv_name (PinType *pv)
       box.Y1 = pv->Y - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
     }
 
-  gui->graphics->set_color (Output.fgGC, PCB->PinNameColor);
+  dapi->graphics->set_color (dapi->fg_gc, PCB->PinNameColor);
 
   text.Flags = NoFlags ();
   /* Set font height to approx 56% of pin thickness */
@@ -176,67 +211,42 @@ _draw_pv_name (PinType *pv)
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
 
-  if (gui->gui)
-    doing_pinout++;
-  DrawTextLowLevel (Output.fgGC, &text, 0);
-  if (gui->gui)
-    doing_pinout--;
-}
-
-static void
-_draw_pv (PinType *pv, bool draw_hole)
-{
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->graphics->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
-  else
-    gui->graphics->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
-
-  if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
-    _draw_pv_name (pv);
-}
-
-static void
-draw_pin (PinType *pin, bool draw_hole)
-{
-  if (doing_pinout)
-    gui->graphics->set_color (Output.fgGC, PCB->PinColor);
-  else
-    set_object_color ((AnyObjectType *)pin,
-                      PCB->WarnColor, PCB->PinSelectedColor,
-                      PCB->ConnectedColor, PCB->PinColor);
-
-  _draw_pv (pin, draw_hole);
+  g_warn_if_fail (dapi->doing_overlay_text == false);
+  dapi->doing_overlay_text = gui->gui;
+  dapi->draw_pcb_text (dapi, NULL, &text, 0);
+  dapi->doing_overlay_text = false;
 }
 
 static int
 pin_callback (const BoxType * b, void *cl)
 {
-  draw_pin ((PinType *)b, false);
+  DrawAPI *dapi = cl;
+  PinType *pin = (PinType *)b;
+
+  dapi->set_color_for_pin (dapi, pin);
+  dapi->draw_pcb_pin (dapi, pin);
+
+  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+    _draw_pv_name (dapi, pin);
   return 1;
-}
-
-static void
-draw_via (PinType *via, bool draw_hole)
-{
-  if (doing_pinout)
-    gui->graphics->set_color (Output.fgGC, PCB->ViaColor);
-  else
-    set_object_color ((AnyObjectType *)via,
-                      PCB->WarnColor, PCB->ViaSelectedColor,
-                      PCB->ConnectedColor, PCB->ViaColor);
-
-  _draw_pv (via, draw_hole);
 }
 
 static int
 via_callback (const BoxType * b, void *cl)
 {
-  draw_via ((PinType *)b, false);
+  DrawAPI *dapi = cl;
+  PinType *via = (PinType *)b;
+
+  dapi->set_color_for_via (dapi, via);
+  dapi->draw_pcb_via (dapi, via);
+
+  if (!TEST_FLAG (HOLEFLAG, via) && TEST_FLAG (DISPLAYNAMEFLAG, via))
+    _draw_pv_name (dapi, via);
   return 1;
 }
 
 static void
-draw_pad_name (PadType *pad)
+draw_pad_name (DrawAPI *dapi, PadType *pad)
 {
   BoxType box;
   bool vert;
@@ -265,7 +275,7 @@ draw_pad_name (PadType *pad)
       box.Y1 += Settings.PinoutTextOffsetY;
     }
 
-  gui->graphics->set_color (Output.fgGC, PCB->PinNameColor);
+  dapi->graphics->set_color (dapi->fg_gc, PCB->PinNameColor);
 
   text.Flags = NoFlags ();
   /* Set font height to approx 90% of pin thickness */
@@ -274,64 +284,47 @@ draw_pad_name (PadType *pad)
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
 
-  DrawTextLowLevel (Output.fgGC, &text, 0);
+  dapi->draw_pcb_text (dapi, NULL, &text, 0);
 }
 
 static void
-_draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+draw_pad (DrawAPI *dapi, PadType *pad)
 {
-  if (clear && !mask && pad->Clearance <= 0)
-    return;
+  dapi->set_color_for_pad (dapi, NULL, pad);
+  dapi->draw_pcb_pad (dapi, NULL, pad);
 
-  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
-      (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
-    gui->graphics->thindraw_pcb_pad (gc, pad, clear, mask);
-  else
-    gui->graphics->fill_pcb_pad (gc, pad, clear, mask);
-}
-
-static void
-draw_pad (PadType *pad)
-{
-  if (doing_pinout)
-    gui->graphics->set_color (Output.fgGC, PCB->PinColor);
-  else
-    set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
-                      PCB->PinSelectedColor, PCB->ConnectedColor,
-                      FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
-
-  _draw_pad (Output.fgGC, pad, false, false);
-
-  if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, pad))
-    draw_pad_name (pad);
+  if (dapi->doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, pad))
+    draw_pad_name (dapi, pad);
 }
 
 static int
 pad_callback (const BoxType * b, void *cl)
 {
   PadType *pad = (PadType *) b;
-  int *side = cl;
+  struct side_info *info = cl;
+  DrawAPI *dapi = info->dapi;
 
-  if (ON_SIDE (pad, *side))
-    draw_pad (pad);
+  if (ON_SIDE (pad, info->side))
+    draw_pad (dapi, pad);
   return 1;
 }
 
 static void
-draw_element_name (ElementType *element)
+draw_element_name (DrawAPI *dapi, ElementType *element)
 {
   if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
       TEST_FLAG (HIDENAMEFLAG, element))
     return;
-  if (doing_pinout || doing_assy)
-    gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
+  if (dapi->doing_overlay_text || dapi->doing_pinout || dapi->doing_assy)
+    dapi->graphics->set_color (dapi->fg_gc, PCB->ElementColor);
   else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, element)))
-    gui->graphics->set_color (Output.fgGC, PCB->ElementSelectedColor);
+    dapi->graphics->set_color (dapi->fg_gc, PCB->ElementSelectedColor);
   else if (FRONT (element))
-    gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
+    dapi->graphics->set_color (dapi->fg_gc, PCB->ElementColor);
   else
-    gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-  DrawTextLowLevel (Output.fgGC, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
+    dapi->graphics->set_color (dapi->fg_gc, PCB->InvisibleObjectsColor);
+
+  dapi->draw_pcb_text (dapi, NULL, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
 }
 
 static int
@@ -339,64 +332,55 @@ name_callback (const BoxType * b, void *cl)
 {
   TextType *text = (TextType *) b;
   ElementType *element = (ElementType *) text->Element;
-  int *side = cl;
+  struct side_info *info = cl;
+  DrawAPI *dapi = info->dapi;
 
   if (TEST_FLAG (HIDENAMEFLAG, element))
     return 0;
 
-  if (ON_SIDE (element, *side))
-    draw_element_name (element);
+  if (ON_SIDE (element, info->side))
+    draw_element_name (dapi, element);
   return 0;
-}
-
-static void
-draw_element_pins_and_pads (ElementType *element)
-{
-  PAD_LOOP (element);
-  {
-    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
-      draw_pad (pad);
-  }
-  END_LOOP;
-  PIN_LOOP (element);
-  {
-    draw_pin (pin, true);
-  }
-  END_LOOP;
 }
 
 static int
 EMark_callback (const BoxType * b, void *cl)
 {
+  DrawAPI *dapi = cl;
   ElementType *element = (ElementType *) b;
 
-  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
+  DrawEMark (dapi, element, element->MarkX, element->MarkY, !FRONT (element));
   return 1;
 }
+
+struct hole_info {
+  DrawAPI *dapi;
+  int plated;
+};
 
 static int
 hole_callback (const BoxType * b, void *cl)
 {
   PinType *pv = (PinType *) b;
-  int plated = cl ? *(int *) cl : -1;
+  struct hole_info *info = cl;
+  DrawAPI *dapi = info->dapi;
 
-  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
-      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
+  if ((info->plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
+      (info->plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
     return 1;
 
   if (TEST_FLAG (THINDRAWFLAG, PCB))
     {
       if (!TEST_FLAG (HOLEFLAG, pv))
         {
-          gui->graphics->set_line_cap (Output.fgGC, Round_Cap);
-          gui->graphics->set_line_width (Output.fgGC, 0);
-          gui->graphics->draw_arc (Output.fgGC,
-                                   pv->X, pv->Y, pv->DrillingHole / 2,
-                                   pv->DrillingHole / 2, 0, 360);
+          dapi->graphics->set_line_cap (dapi->fg_gc, Round_Cap);
+          dapi->graphics->set_line_width (dapi->fg_gc, 0);
+          dapi->graphics->draw_arc (dapi->fg_gc, pv->X, pv->Y, pv->DrillingHole / 2,
+                                    pv->DrillingHole / 2, 0, 360);
         }
     }
   else
-    gui->graphics->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
+    dapi->graphics->fill_circle (dapi->bg_gc, pv->X, pv->Y, pv->DrillingHole / 2);
 
   if (TEST_FLAG (HOLEFLAG, pv))
     {
@@ -404,51 +388,61 @@ hole_callback (const BoxType * b, void *cl)
                         PCB->WarnColor, PCB->ViaSelectedColor,
                         NULL, Settings.BlackColor);
 
-      gui->graphics->set_line_cap (Output.fgGC, Round_Cap);
-      gui->graphics->set_line_width (Output.fgGC, 0);
-      gui->graphics->draw_arc (Output.fgGC,
-                               pv->X, pv->Y, pv->DrillingHole / 2,
-                               pv->DrillingHole / 2, 0, 360);
+      dapi->graphics->set_line_cap (dapi->fg_gc, Round_Cap);
+      dapi->graphics->set_line_width (dapi->fg_gc, 0);
+      dapi->graphics->draw_arc (dapi->fg_gc, pv->X, pv->Y, pv->DrillingHole / 2,
+                                pv->DrillingHole / 2, 0, 360);
     }
   return 1;
 }
 
 void
-DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
+DrawHoles (DrawAPI *dapi, bool draw_plated, bool draw_unplated)
 {
-  int plated = -1;
+  struct hole_info info;
 
-  if ( draw_plated && !draw_unplated) plated = 1;
-  if (!draw_plated &&  draw_unplated) plated = 0;
+  info.dapi = dapi;
+  info.plated = -1;
 
-  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
-  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+  if ( draw_plated && !draw_unplated) info.plated = 1;
+  if (!draw_plated &&  draw_unplated) info.plated = 0;
+
+  r_search (PCB->Data->pin_tree, dapi->clip_box, NULL, hole_callback, &info);
+  r_search (PCB->Data->via_tree, dapi->clip_box, NULL, hole_callback, &info);
 }
 
 static void
-_draw_line (hidGC gc, LineType *line)
+_draw_line (DrawAPI *dapi, LineType *line)
 {
-  gui->graphics->set_line_cap (gc, Trace_Cap);
+  dapi->graphics->set_line_cap (dapi->fg_gc, Trace_Cap);
   if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->graphics->set_line_width (gc, 0);
+    dapi->graphics->set_line_width (dapi->fg_gc, 0);
   else
-    gui->graphics->set_line_width (gc, line->Thickness);
+    dapi->graphics->set_line_width (dapi->fg_gc, line->Thickness);
 
-  gui->graphics->draw_line (gc, line->Point1.X, line->Point1.Y,
-                                line->Point2.X, line->Point2.Y);
+  dapi->graphics->draw_line (dapi->fg_gc, line->Point1.X, line->Point1.Y,
+                                          line->Point2.X, line->Point2.Y);
 }
 
 static void
-draw_line (LayerType *layer, LineType *line)
+draw_line (DrawAPI *dapi, LayerType *layer, LineType *line)
 {
   set_layer_object_color (layer, (AnyObjectType *) line);
-  _draw_line (Output.fgGC, line);
+  _draw_line (dapi, line);
 }
+
+struct layer_info {
+  DrawAPI *dapi;
+  LayerType *layer;
+};
 
 static int
 line_callback (const BoxType * b, void *cl)
 {
-  draw_line ((LayerType *) cl, (LineType *) b);
+  struct layer_info *info = cl;
+
+  DrawAPI *dapi = info->dapi;
+  draw_line (dapi, info->layer, (LineType *) b);
   return 1;
 }
 
@@ -456,6 +450,7 @@ static int
 rat_callback (const BoxType * b, void *cl)
 {
   RatType *rat = (RatType *)b;
+  DrawAPI *dapi = cl;
 
   set_object_color ((AnyObjectType *) rat, NULL, PCB->RatSelectedColor,
                     PCB->ConnectedColor, PCB->RatColor);
@@ -468,69 +463,71 @@ rat_callback (const BoxType * b, void *cl)
       int w = rat->Thickness;
 
       if (TEST_FLAG (THINDRAWFLAG, PCB))
-        gui->graphics->set_line_width (Output.fgGC, 0);
+        dapi->graphics->set_line_width (dapi->fg_gc, 0);
       else
-        gui->graphics->set_line_width (Output.fgGC, w);
-      gui->graphics->draw_arc (Output.fgGC, rat->Point1.X, rat->Point1.Y,
-                               w * 2, w * 2, 0, 360);
+        dapi->graphics->set_line_width (dapi->fg_gc, w);
+      dapi->graphics->draw_arc (dapi->fg_gc, rat->Point1.X, rat->Point1.Y, w * 2, w * 2, 0, 360);
     }
   else
-    _draw_line (Output.fgGC, (LineType *) rat);
+    _draw_line (dapi, (LineType *) rat);
   return 1;
 }
 
 static void
-_draw_arc (ArcType *arc)
+_draw_arc (DrawAPI *dapi, ArcType *arc)
 {
   if (!arc->Thickness)
     return;
 
   if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->graphics->set_line_width (Output.fgGC, 0);
+    dapi->graphics->set_line_width (dapi->fg_gc, 0);
   else
-    gui->graphics->set_line_width (Output.fgGC, arc->Thickness);
-  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
+    dapi->graphics->set_line_width (dapi->fg_gc, arc->Thickness);
+  dapi->graphics->set_line_cap (dapi->fg_gc, Trace_Cap);
 
-  gui->graphics->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
-                           arc->Height, arc->StartAngle, arc->Delta);
+  dapi->graphics->draw_arc (dapi->fg_gc, arc->X, arc->Y, arc->Width,
+                            arc->Height, arc->StartAngle, arc->Delta);
 }
 
 static void
-draw_arc (LayerType *layer, ArcType *arc)
+draw_arc (DrawAPI *dapi, LayerType *layer, ArcType *arc)
 {
   set_layer_object_color (layer, (AnyObjectType *) arc);
-  _draw_arc (arc);
+  _draw_arc (dapi, arc);
 }
 
 static int
 arc_callback (const BoxType * b, void *cl)
 {
-  draw_arc ((LayerType *) cl, (ArcType *) b);
+  struct layer_info *info = cl;
+  DrawAPI *dapi = info->dapi;
+
+  draw_arc (dapi, info->layer, (ArcType *) b);
   return 1;
 }
 
 static void
-draw_element_package (ElementType *element)
+draw_element_package (DrawAPI *dapi, ElementType *element)
 {
   /* set color and draw lines, arcs, text and pins */
-  if (doing_pinout || doing_assy)
-    gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
+  if (dapi->doing_pinout || dapi->doing_assy)
+    dapi->graphics->set_color (dapi->fg_gc, PCB->ElementColor);
   else if (TEST_FLAG (SELECTEDFLAG, element))
-    gui->graphics->set_color (Output.fgGC, PCB->ElementSelectedColor);
+    dapi->graphics->set_color (dapi->fg_gc, PCB->ElementSelectedColor);
   else if (FRONT (element))
-    gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
+    dapi->graphics->set_color (dapi->fg_gc, PCB->ElementColor);
   else
-    gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+    dapi->graphics->set_color (dapi->fg_gc, PCB->InvisibleObjectsColor);
 
   /* draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (element);
   {
-    _draw_line (Output.fgGC, line);
+    _draw_line (dapi, line);
   }
   END_LOOP;
   ARC_LOOP (element);
   {
-    _draw_arc (arc);
+    _draw_arc (dapi, arc);
   }
   END_LOOP;
 }
@@ -539,10 +536,11 @@ static int
 element_callback (const BoxType * b, void *cl)
 {
   ElementType *element = (ElementType *) b;
-  int *side = cl;
+  struct side_info *info = cl;
+  DrawAPI *dapi = info->dapi;
 
-  if (ON_SIDE (element, *side))
-    draw_element_package (element);
+  if (ON_SIDE (element, info->side))
+    draw_element_package (dapi, element);
   return 1;
 }
 
@@ -550,28 +548,29 @@ element_callback (const BoxType * b, void *cl)
  * prints assembly drawing.
  */
 
-void
-PrintAssembly (int side, const BoxType * drawn_area)
+static void
+PrintAssembly (DrawAPI *dapi, int side)
 {
   int side_group = GetLayerGroupNumberByNumber (max_copper_layer + side);
 
-  doing_assy = true;
-  gui->graphics->set_draw_faded (Output.fgGC, 1);
-  DrawLayerGroup (side_group, drawn_area);
-  gui->graphics->set_draw_faded (Output.fgGC, 0);
+  g_warn_if_fail (dapi->doing_assy == false);
+  dapi->doing_assy = true;
+  dapi->graphics->set_draw_faded (dapi->fg_gc, 1);
+  dapi->draw_pcb_layer_group (dapi, side_group);
+  dapi->graphics->set_draw_faded (dapi->fg_gc, 0);
 
   /* draw package */
-  DrawSilk (side, drawn_area);
-  doing_assy = false;
+  dapi->draw_silk_layer (dapi, side);
+  dapi->doing_assy = false;
 }
 
 /* ---------------------------------------------------------------------------
  * initializes some identifiers for a new zoom factor and redraws whole screen
  */
 static void
-DrawEverything (const BoxType *drawn_area)
+DrawEverything (DrawAPI *dapi)
 {
-  int i, ngroups, side;
+  int i, ngroups;
   int component, solder;
   /* This is the list of layer groups we will draw.  */
   int do_group[MAX_LAYER];
@@ -604,14 +603,18 @@ DrawEverything (const BoxType *drawn_area)
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
       && gui->set_layer ("invisible", SL (INVISIBLE, 0), 0))
     {
-      side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
+      struct side_info side_info;
+
+      side_info.dapi = dapi;
+      side_info.side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
+
       if (PCB->ElementOn)
 	{
-	  r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
-	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
+	  r_search (PCB->Data->element_tree, dapi->clip_box, NULL, element_callback, &side_info);
+	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], dapi->clip_box, NULL, name_callback, &side_info);
+	  dapi->draw_pcb_layer (dapi, &(PCB->Data->Layer[max_copper_layer + side_info.side]));
 	}
-      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+      r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_callback, &side_info);
       gui->end_layer ();
     }
 
@@ -622,7 +625,7 @@ DrawEverything (const BoxType *drawn_area)
 
       if (gui->set_layer (0, group, 0))
         {
-          DrawLayerGroup (group, drawn_area);
+          dapi->draw_pcb_layer_group (dapi, group);
           gui->end_layer ();
         }
     }
@@ -632,20 +635,20 @@ DrawEverything (const BoxType *drawn_area)
 
   /* Draw pins, pads, vias below silk */
   if (gui->gui)
-    DrawPPV (SWAP_IDENT ? solder : component, drawn_area);
+    DrawPPV (dapi, SWAP_IDENT ? solder : component);
   else
     {
-      CountHoles (&plated, &unplated, drawn_area);
+      CountHoles (&plated, &unplated, dapi->clip_box);
 
       if (plated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
         {
-          DrawHoles (true, false, drawn_area);
+          DrawHoles (dapi, true, false);
           gui->end_layer ();
         }
 
       if (unplated && gui->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
         {
-          DrawHoles (false, true, drawn_area);
+          DrawHoles (dapi, false, true);
           gui->end_layer ();
         }
     }
@@ -653,25 +656,25 @@ DrawEverything (const BoxType *drawn_area)
   /* Draw the solder mask if turned on */
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
     {
-      DrawMask (COMPONENT_LAYER, drawn_area);
+      dapi->draw_mask_layer (dapi, COMPONENT_LAYER);
       gui->end_layer ();
     }
 
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
     {
-      DrawMask (SOLDER_LAYER, drawn_area);
+      dapi->draw_mask_layer (dapi, SOLDER_LAYER);
       gui->end_layer ();
     }
 
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
     {
-      DrawSilk (COMPONENT_LAYER, drawn_area);
+      dapi->draw_silk_layer (dapi, COMPONENT_LAYER);
       gui->end_layer ();
     }
 
   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
     {
-      DrawSilk (SOLDER_LAYER, drawn_area);
+      dapi->draw_silk_layer (dapi, SOLDER_LAYER);
       gui->end_layer ();
     }
 
@@ -679,12 +682,11 @@ DrawEverything (const BoxType *drawn_area)
     {
       /* Draw element Marks */
       if (PCB->PinOn)
-	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
-		  NULL);
+	r_search (PCB->Data->element_tree, dapi->clip_box, NULL, EMark_callback, dapi);
       /* Draw rat lines on top */
       if (gui->set_layer ("rats", SL (RATS, 0), 0))
         {
-          DrawRats(drawn_area);
+          DrawRats (dapi);
           gui->end_layer ();
         }
     }
@@ -692,38 +694,38 @@ DrawEverything (const BoxType *drawn_area)
   paste_empty = IsPasteEmpty (COMPONENT_LAYER);
   if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
     {
-      DrawPaste (COMPONENT_LAYER, drawn_area);
+      dapi->draw_paste_layer (dapi, COMPONENT_LAYER);
       gui->end_layer ();
     }
 
   paste_empty = IsPasteEmpty (SOLDER_LAYER);
   if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
     {
-      DrawPaste (SOLDER_LAYER, drawn_area);
+      dapi->draw_paste_layer (dapi, SOLDER_LAYER);
       gui->end_layer ();
     }
 
   if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
     {
-      PrintAssembly (COMPONENT_LAYER, drawn_area);
+      PrintAssembly (dapi, COMPONENT_LAYER);
       gui->end_layer ();
     }
 
   if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
     {
-      PrintAssembly (SOLDER_LAYER, drawn_area);
+      PrintAssembly (dapi, SOLDER_LAYER);
       gui->end_layer ();
     }
 
   if (gui->set_layer ("fab", SL (FAB, 0), 0))
     {
-      PrintFab (Output.fgGC);
+      PrintFab (dapi);
       gui->end_layer ();
     }
 }
 
 static void
-DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+DrawEMark (DrawAPI *dapi, ElementType *e, Coord X, Coord Y, bool invisible)
 {
   Coord mark_size = EMARK_SIZE;
   if (!PCB->InvisibleObjectsOn && invisible)
@@ -744,14 +746,13 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
       mark_size = MIN (mark_size, pad0->Thickness / 2);
     }
 
-  gui->graphics->set_color (Output.fgGC,
-		  invisible ? PCB->InvisibleMarkColor : PCB->ElementColor);
-  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
-  gui->graphics->set_line_width (Output.fgGC, 0);
-  gui->graphics->draw_line (Output.fgGC, X - mark_size, Y, X, Y - mark_size);
-  gui->graphics->draw_line (Output.fgGC, X + mark_size, Y, X, Y - mark_size);
-  gui->graphics->draw_line (Output.fgGC, X - mark_size, Y, X, Y + mark_size);
-  gui->graphics->draw_line (Output.fgGC, X + mark_size, Y, X, Y + mark_size);
+  dapi->graphics->set_color (dapi->fg_gc, invisible ? PCB->InvisibleMarkColor : PCB->ElementColor);
+  dapi->graphics->set_line_cap (dapi->fg_gc, Trace_Cap);
+  dapi->graphics->set_line_width (dapi->fg_gc, 0);
+  dapi->graphics->draw_line (dapi->fg_gc, X - mark_size, Y, X, Y - mark_size);
+  dapi->graphics->draw_line (dapi->fg_gc, X + mark_size, Y, X, Y - mark_size);
+  dapi->graphics->draw_line (dapi->fg_gc, X - mark_size, Y, X, Y + mark_size);
+  dapi->graphics->draw_line (dapi->fg_gc, X + mark_size, Y, X, Y + mark_size);
 
   /*
    * If an element is locked, place a "L" on top of the "diamond".
@@ -760,8 +761,8 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
    */
   if (TEST_FLAG (LOCKFLAG, e) )
     {
-      gui->graphics->draw_line (Output.fgGC, X, Y, X + 2 * mark_size, Y);
-      gui->graphics->draw_line (Output.fgGC, X, Y, X, Y - 4* mark_size);
+      dapi->graphics->draw_line (dapi->fg_gc, X, Y, X + 2 * mark_size, Y);
+      dapi->graphics->draw_line (dapi->fg_gc, X, Y, X, Y - 4* mark_size);
     }
 }
 
@@ -770,98 +771,98 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
  * otherwise drawing depends on PCB->PinOn and PCB->ViaOn
  */
 static void
-DrawPPV (int group, const BoxType *drawn_area)
+DrawPPV (DrawAPI *dapi, int group)
 {
   int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
   int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
-  int side;
+  struct hole_info hole_info;
+
+  hole_info.dapi = dapi;
+  hole_info.plated = -1;
 
   if (PCB->PinOn || !gui->gui)
     {
+      struct side_info side_info;
+      side_info.dapi = dapi;
+
       /* draw element pins */
-      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+      r_search (PCB->Data->pin_tree, dapi->clip_box, NULL, pin_callback, dapi);
 
       /* draw element pads */
       if (group == component_group)
         {
-          side = COMPONENT_LAYER;
-          r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+          side_info.side = COMPONENT_LAYER;
+          r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_callback, &side_info);
         }
 
       if (group == solder_group)
         {
-          side = SOLDER_LAYER;
-          r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+          side_info.side = SOLDER_LAYER;
+          r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_callback, &side_info);
         }
     }
 
   /* draw vias */
   if (PCB->ViaOn || !gui->gui)
     {
-      r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
-      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+      r_search (PCB->Data->via_tree, dapi->clip_box, NULL, via_callback, dapi);
+      r_search (PCB->Data->via_tree, dapi->clip_box, NULL, hole_callback, &hole_info);
     }
-  if (PCB->PinOn || doing_assy)
-    r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
+  if (PCB->PinOn || dapi->doing_assy)
+    r_search (PCB->Data->pin_tree, dapi->clip_box, NULL, hole_callback, &hole_info);
 }
-
-static int
-clearPin_callback (const BoxType * b, void *cl)
-{
-  PinType *pin = (PinType *) b;
-  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    gui->graphics->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
-  else
-    gui->graphics->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
-  return 1;
-}
-
-struct poly_info {
-  const BoxType *drawn_area;
-  LayerType *layer;
-};
 
 static int
 poly_callback (const BoxType * b, void *cl)
 {
-  struct poly_info *i = cl;
+  struct layer_info *info = cl;
+  DrawAPI *dapi = info->dapi;
   PolygonType *polygon = (PolygonType *)b;
 
   if (!polygon->Clipped)
     return 0;
 
-  set_layer_object_color (i->layer, (AnyObjectType *) polygon);
+  set_layer_object_color (info->layer, (AnyObjectType *) polygon);
 
-  if (gui->graphics->thindraw_pcb_polygon != NULL &&
-      (TEST_FLAG (THINDRAWFLAG, PCB) ||
-       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
-    gui->graphics->thindraw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
-  else
-    gui->graphics->fill_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
+  dapi->draw_pcb_polygon (dapi, info->layer, polygon);
 
   /* If checking planes, thin-draw any pieces which have been clipped away */
-  if (gui->graphics->thindraw_pcb_polygon != NULL &&
-      TEST_FLAG (CHECKPLANESFLAG, PCB) &&
+  if ( TEST_FLAG (CHECKPLANESFLAG, PCB) &&
       !TEST_FLAG (FULLPOLYFLAG, polygon))
     {
       PolygonType poly = *polygon;
 
+      /* XXX: SET FLAG TO MAKE THE GUI THINDRAW */
+
       for (poly.Clipped = polygon->Clipped->f;
            poly.Clipped != polygon->Clipped;
            poly.Clipped = poly.Clipped->f)
-        gui->graphics->thindraw_pcb_polygon (Output.fgGC, &poly, i->drawn_area);
+        dapi->draw_pcb_polygon (dapi, info->layer, &poly);
     }
 
   return 1;
 }
 
 static int
-clearPad_callback (const BoxType * b, void *cl)
+pin_mask_callback (const BoxType * b, void *cl)
+{
+  PinType *pin = (PinType *) b;
+  struct side_info *info = cl;
+
+  info->dapi->draw_pcb_pin_mask (info->dapi, pin);
+  return 1;
+}
+
+static int
+pad_mask_callback (const BoxType * b, void *cl)
 {
   PadType *pad = (PadType *) b;
-  int *side = cl;
-  if (ON_SIDE (pad, *side) && pad->Mask)
-    _draw_pad (Output.pmGC, pad, true, true);
+  struct side_info *info = cl;
+
+  if (!ON_SIDE (pad, info->side))
+    return 0;
+
+  info->dapi->draw_pcb_pad_mask (info->dapi, NULL, pad);
   return 1;
 }
 
@@ -870,112 +871,117 @@ clearPad_callback (const BoxType * b, void *cl)
  */
 
 void
-DrawSilk (int side, const BoxType * drawn_area)
+draw_silk_layer (DrawAPI *dapi, int side)
 {
-#if 0
-  /* This code is used when you want to mask silk to avoid exposed
-     pins and pads.  We decided it was a bad idea to do this
-     unconditionally, but the code remains.  */
-#endif
+  struct side_info side_info;
+
+  side_info.dapi = dapi;
+  side_info.side = side;
 
 #if 0
+  /* This code is used when you want to mask silk to avoid exposed
+   * pins and pads.  We decided it was a bad idea to do this
+   * unconditionally, but the code remains.
+   *
+   * Note that many exporters (notably gerber, ps, eps), do not support the
+   * masking API, so this code won't actually work.
+   */
+
   if (gui->poly_before)
     {
-      gui->graphics->use_mask (HID_MASK_BEFORE);
+      dapi->graphics->use_mask (HID_MASK_BEFORE);
 #endif
-      DrawLayer (LAYER_PTR (max_copper_layer + side), drawn_area);
+      dapi->draw_pcb_layer (dapi, LAYER_PTR (max_copper_layer + side));
       /* draw package */
-      r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
-      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
+      r_search (PCB->Data->element_tree, dapi->clip_box, NULL, element_callback, &side_info);
+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], dapi->clip_box, NULL, name_callback, &side_info);
 #if 0
     }
 
-  gui->graphics->use_mask (HID_MASK_CLEAR);
-  r_search (PCB->Data->pin_tree, drawn_area, NULL, clearPin_callback, NULL);
-  r_search (PCB->Data->via_tree, drawn_area, NULL, clearPin_callback, NULL);
-  r_search (PCB->Data->pad_tree, drawn_area, NULL, clearPad_callback, &side);
+  dapi->graphics->use_mask (HID_MASK_CLEAR);
+  r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_mask_callback, NULL);
+  r_search (PCB->Data->via_tree, drawn_area, NULL, pin_mask_callback, NULL);
+  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_mask_callback, &side);
 
   if (gui->poly_after)
     {
-      gui->graphics->use_mask (HID_MASK_AFTER);
-      DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
+      dapi->graphics->use_mask (HID_MASK_AFTER);
+      DrawLayer (dapi, LAYER_PTR (max_copper_layer + layer), drawn_area);
       /* draw package */
       r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
-      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side_info);
     }
-  gui->graphics->use_mask (HID_MASK_OFF);
+  dapi->graphics->use_mask (HID_MASK_OFF);
 #endif
 }
 
 
 static void
-DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
+DrawMaskBoardArea (DrawAPI *dapi, int mask_type)
 {
   /* Skip the mask drawing if the GUI doesn't want this type */
   if ((mask_type == HID_MASK_BEFORE && !gui->poly_before) ||
       (mask_type == HID_MASK_AFTER  && !gui->poly_after))
     return;
 
-  gui->graphics->use_mask (mask_type);
-  gui->graphics->set_color (Output.fgGC, PCB->MaskColor);
-  if (drawn_area == NULL)
-    gui->graphics->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+  dapi->graphics->use_mask (mask_type);
+  dapi->graphics->set_color (dapi->fg_gc, PCB->MaskColor);
+  if (dapi->clip_box == NULL)
+    dapi->graphics->fill_rect (dapi->fg_gc, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   else
-    gui->graphics->fill_rect (Output.fgGC, drawn_area->X1, drawn_area->Y1,
-                                           drawn_area->X2, drawn_area->Y2);
+    dapi->graphics->fill_rect (dapi->fg_gc, dapi->clip_box->X1, dapi->clip_box->Y1,
+                                            dapi->clip_box->X2, dapi->clip_box->Y2);
 }
 
 /* ---------------------------------------------------------------------------
  * draws solder mask layer - this will cover nearly everything
  */
-void
-DrawMask (int side, const BoxType *screen)
+static void
+draw_mask_layer (DrawAPI *dapi, int side)
 {
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+  struct side_info info;
+
+  info.dapi = dapi;
+  info.side = side;
 
   if (thin)
-    gui->graphics->set_color (Output.pmGC, PCB->MaskColor);
+    dapi->graphics->set_color (dapi->fg_gc, PCB->MaskColor);
   else
     {
-      DrawMaskBoardArea (HID_MASK_BEFORE, screen);
-      gui->graphics->use_mask (HID_MASK_CLEAR);
+      DrawMaskBoardArea (dapi, HID_MASK_BEFORE);
+      dapi->graphics->use_mask (HID_MASK_CLEAR);
+      dapi->graphics->set_color (dapi->fg_gc, "erase"); /* <-- XXX: This might not be needed */
     }
 
-  r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
-  r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
-  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
+  r_search (PCB->Data->pin_tree, dapi->clip_box, NULL, pin_mask_callback, &info);
+  r_search (PCB->Data->via_tree, dapi->clip_box, NULL, pin_mask_callback, &info);
+  r_search (PCB->Data->pad_tree, dapi->clip_box, NULL, pad_mask_callback, &info);
 
-  if (thin)
-    gui->graphics->set_color (Output.pmGC, "erase");
-  else
+  if (!thin)
     {
-      DrawMaskBoardArea (HID_MASK_AFTER, screen);
-      gui->graphics->use_mask (HID_MASK_OFF);
+      DrawMaskBoardArea (dapi, HID_MASK_AFTER);
+      dapi->graphics->use_mask (HID_MASK_OFF);
     }
 }
 
 /* ---------------------------------------------------------------------------
  * draws solder paste layer for a given side of the board
  */
-void
-DrawPaste (int side, const BoxType *drawn_area)
+static void
+draw_paste_layer (DrawAPI *dapi, int side)
 {
-  gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
+  dapi->graphics->set_color (dapi->fg_gc, PCB->ElementColor); /* XXX: DO WE NEED THIS? */
   ALLPAD_LOOP (PCB->Data);
   {
-    if (ON_SIDE (pad, side) && !TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
-      {
-        if (pad->Mask < pad->Thickness)
-          _draw_pad (Output.fgGC, pad, true, true);
-        else
-          _draw_pad (Output.fgGC, pad, false, false);
-      }
+    if (ON_SIDE (pad, side))
+      dapi->draw_pcb_pad_paste (dapi, NULL, pad);
   }
   ENDALL_LOOP;
 }
 
 static void
-DrawRats (const BoxType *drawn_area)
+DrawRats (DrawAPI *dapi)
 {
   /*
    * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
@@ -985,64 +991,61 @@ DrawRats (const BoxType *drawn_area)
   int can_mask = strcmp(gui->name, "lesstif") == 0;
 
   if (can_mask)
-    gui->graphics->use_mask (HID_MASK_CLEAR);
-  r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
+    dapi->graphics->use_mask (HID_MASK_CLEAR);
+  r_search (PCB->Data->rat_tree, dapi->clip_box, NULL, rat_callback, dapi);
   if (can_mask)
-    gui->graphics->use_mask (HID_MASK_OFF);
+    dapi->graphics->use_mask (HID_MASK_OFF);
 }
 
 static int
 text_callback (const BoxType * b, void *cl)
 {
-  LayerType *layer = cl;
+  struct layer_info *info = cl;
+  DrawAPI *dapi = info->dapi;
   TextType *text = (TextType *)b;
   int min_silk_line;
 
   if (TEST_FLAG (SELECTEDFLAG, text))
-    gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
+    dapi->graphics->set_color (dapi->fg_gc, info->layer->SelectedColor);
   else
-    gui->graphics->set_color (Output.fgGC, layer->Color);
-  if (layer == &PCB->Data->SILKLAYER ||
-      layer == &PCB->Data->BACKSILKLAYER)
+    dapi->graphics->set_color (dapi->fg_gc, info->layer->Color);
+
+  if (info->layer == &PCB->Data->SILKLAYER ||
+      info->layer == &PCB->Data->BACKSILKLAYER)
     min_silk_line = PCB->minSlk;
   else
     min_silk_line = PCB->minWid;
-  DrawTextLowLevel (Output.fgGC, text, min_silk_line);
+
+  dapi->draw_pcb_text (dapi, info->layer, text, min_silk_line);
   return 1;
 }
 
-void
-DrawLayer (LayerType *Layer, const BoxType *screen)
+static void
+draw_pcb_layer (DrawAPI *dapi, LayerType *layer)
 {
-  struct poly_info info = {screen, Layer};
+  struct layer_info info;
 
-  /* print the non-clearing polys */
-  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+  info.dapi = dapi;
+  info.layer = layer;
+
+  r_search (layer->polygon_tree, dapi->clip_box, NULL, poly_callback, &info);
 
   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
 
-  /* draw all visible lines this layer */
-  r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
-
-  /* draw the layer arcs on screen */
-  r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
-
-  /* draw the layer text on screen */
-  r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
+  r_search (layer->line_tree,    dapi->clip_box, NULL, line_callback, &info);
+  r_search (layer->arc_tree,     dapi->clip_box, NULL, arc_callback,  &info);
+  r_search (layer->text_tree,    dapi->clip_box, NULL, text_callback, &info);
 
   /* We should check for gui->gui here, but it's kinda cool seeing the
      auto-outline magically disappear when you first add something to
      the "outline" layer.  */
-  if (IsLayerEmpty (Layer)
-      && (strcmp (Layer->Name, "outline") == 0
-	  || strcmp (Layer->Name, "route") == 0))
+  if (IsLayerEmpty (layer) && (strcmp (layer->Name, "outline") == 0 ||
+                               strcmp (layer->Name, "route")   == 0))
     {
-      gui->graphics->set_color (Output.fgGC, Layer->Color);
-      gui->graphics->set_line_width (Output.fgGC, PCB->minWid);
-      gui->graphics->draw_rect (Output.fgGC,
-                                0, 0,
-                                PCB->MaxWidth, PCB->MaxHeight);
+      dapi->graphics->set_color (dapi->fg_gc, layer->Color);
+      dapi->graphics->set_line_width (dapi->fg_gc, PCB->minWid);
+      dapi->graphics->draw_rect (dapi->fg_gc, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
     }
 }
 
@@ -1050,30 +1053,29 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
  * draws one layer group.  If the exporter is not a GUI,
  * also draws the pins / pads / vias in this layer group.
  */
-void
-DrawLayerGroup (int group, const BoxType *drawn_area)
+static void
+draw_pcb_layer_group (DrawAPI *dapi, int group)
 {
-  int i, rv = 1;
+  int i;
   int layernum;
-  LayerType *Layer;
+  bool draw_ppv = false;
+  LayerType *layer;
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
   for (i = n_entries - 1; i >= 0; i--)
     {
       layernum = layers[i];
-      Layer = PCB->Data->Layer + layers[i];
-      if (strcmp (Layer->Name, "outline") == 0 ||
-          strcmp (Layer->Name, "route") == 0)
-        rv = 0;
-      if (layernum < max_copper_layer && Layer->On)
-        DrawLayer (Layer, drawn_area);
+      layer = PCB->Data->Layer + layers[i];
+      if (strcmp (layer->Name, "outline") != 0 &&
+          strcmp (layer->Name, "route")   != 0)
+        draw_ppv = !gui->gui;
+      if (layernum < max_copper_layer && layer->On)
+        dapi->draw_pcb_layer (dapi, layer);
     }
-  if (n_entries > 1)
-    rv = 1;
 
-  if (rv && !gui->gui)
-    DrawPPV (group, drawn_area);
+  if (draw_ppv)
+    DrawPPV (dapi, group);
 }
 
 static void
@@ -1142,7 +1144,7 @@ GatherPadName (PadType *Pad)
  * lowlevel drawing routine for text objects
  */
 void
-DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
+draw_pcb_text (DrawAPI *dapi, LayerType *layer, TextType *Text, Coord min_line_width)
 {
   Coord x = 0;
   unsigned char *string = (unsigned char *) Text->TextString;
@@ -1186,7 +1188,7 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
 	      newline.Point1.Y += Text->Y;
 	      newline.Point2.X += Text->X;
 	      newline.Point2.Y += Text->Y;
-	      _draw_line (gc, &newline);
+	      _draw_line (dapi, &newline);
 	    }
 
 	  /* move on to next cursor position */
@@ -1210,9 +1212,8 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
 	  defaultsymbol.Y1 += Text->Y;
 	  defaultsymbol.X2 += Text->X;
 	  defaultsymbol.Y2 += Text->Y;
-	  gui->graphics->fill_rect (gc,
-	                            defaultsymbol.X1, defaultsymbol.Y1,
-	                            defaultsymbol.X2, defaultsymbol.Y2);
+	  dapi->graphics->fill_rect (dapi->fg_gc, defaultsymbol.X1, defaultsymbol.Y1,
+	                                          defaultsymbol.X2, defaultsymbol.Y2);
 
 	  /* move on to next cursor position */
 	  x += size;
@@ -1248,8 +1249,7 @@ void
 DrawPin (PinType *Pin)
 {
   AddPart (Pin);
-  if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
-      || doing_pinout)
+  if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin)))
     DrawPinName (Pin);
 }
 
@@ -1269,7 +1269,7 @@ void
 DrawPad (PadType *Pad)
 {
   AddPart (Pad);
-  if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, Pad))
+  if (TEST_FLAG (DISPLAYNAMEFLAG, Pad))
     DrawPadName (Pad);
 }
 
@@ -1392,7 +1392,7 @@ DrawElementPinsAndPads (ElementType *Element)
 {
   PAD_LOOP (Element);
   {
-    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+    if (FRONT (pad) || PCB->InvisibleObjectsOn)
       DrawPad (pad);
   }
   END_LOOP;
@@ -1663,41 +1663,122 @@ DrawObject (int type, void *ptr1, void *ptr2)
 }
 
 static void
-draw_element (ElementType *element)
+draw_pcb_element (DrawAPI *dapi, ElementType *element)
 {
-  draw_element_package (element);
-  draw_element_name (element);
-  draw_element_pins_and_pads (element);
+  draw_element_package (dapi, element);
+  draw_element_name (dapi, element);
+
+  PAD_LOOP (element);
+  {
+    draw_pad (dapi, pad);
+  }
+  END_LOOP;
+  PIN_LOOP (element);
+  {
+    dapi->set_color_for_pin (dapi, pin);
+    dapi->draw_pcb_pin (dapi, pin);
+
+    if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+      _draw_pv_name (dapi, pin);
+    dapi->draw_pcb_pin_hole (dapi, pin);
+  }
+  END_LOOP;
 }
 
 /* ---------------------------------------------------------------------------
  * HID drawing callback.
  */
 
-void
-hid_expose_callback (HID * hid, BoxType * region, void *item)
+static void
+draw_everything (DrawAPI *dapi)
 {
-  HID *old_gui = gui;
+  dapi->fg_gc = dapi->graphics->make_gc ();
+  dapi->bg_gc = dapi->graphics->make_gc ();
 
-  gui = hid;
-  Output.fgGC = gui->graphics->make_gc ();
-  Output.bgGC = gui->graphics->make_gc ();
-  Output.pmGC = gui->graphics->make_gc ();
+  dapi->graphics->set_color (dapi->bg_gc, "drill");
 
-  hid->graphics->set_color (Output.pmGC, "erase");
-  hid->graphics->set_color (Output.bgGC, "drill");
+  DrawEverything (dapi);
 
-  if (item)
-    {
-      doing_pinout = true;
-      draw_element ((ElementType *)item);
-      doing_pinout = false;
-    }
-  else
-    DrawEverything (region);
+  dapi->graphics->destroy_gc (dapi->fg_gc);
+  dapi->graphics->destroy_gc (dapi->bg_gc);
+}
 
-  gui->graphics->destroy_gc (Output.fgGC);
-  gui->graphics->destroy_gc (Output.bgGC);
-  gui->graphics->destroy_gc (Output.pmGC);
-  gui = old_gui;
+static void
+draw_pinout_preview (DrawAPI *dapi, ElementType *element)
+{
+  dapi->fg_gc = dapi->graphics->make_gc ();
+  dapi->bg_gc = dapi->graphics->make_gc ();
+
+  dapi->graphics->set_color (dapi->bg_gc, "drill");
+
+  g_warn_if_fail (dapi->doing_pinout == false);
+  dapi->doing_pinout = true;
+  dapi->draw_pcb_element (dapi, element);
+  dapi->doing_pinout = false;
+
+  dapi->graphics->destroy_gc (dapi->fg_gc);
+  dapi->graphics->destroy_gc (dapi->bg_gc);
+}
+
+static void
+set_clip_box (DrawAPI *dapi, const BoxType *clip_box)
+{
+  dapi->clip_box = clip_box;
+}
+
+DrawAPI *
+draw_api_new (void)
+{
+  DrawAPI *dapi;
+
+  dapi = g_new0 (DrawAPI, 1);
+
+#if 0
+  dapi->draw_pcb_pin          =
+  dapi->draw_pcb_pin_mask     =
+  dapi->draw_pcb_pin_hole     =
+  dapi->draw_pcb_via          =
+  dapi->draw_pcb_via_mask     =
+  dapi->draw_pcb_via_hole     =
+  dapi->draw_pcb_pad          =
+  dapi->draw_pcb_pad_mask     =
+  dapi->draw_pcb_pad_paste    =
+  dapi->draw_pcb_line         =
+  dapi->draw_pcb_arc          =
+#endif
+  dapi->draw_pcb_text         = draw_pcb_text;
+#if 0
+  dapi->draw_pcb_polygon      =
+#endif
+  dapi->set_color_for_pin     = set_color_for_pin;
+  dapi->set_color_for_via     = set_color_for_via;
+  dapi->set_color_for_pad     = set_color_for_pad;
+
+  /* The following types can be on copper layer, silk layers, selected, found,
+   * warned, they can be drawn as overlay text. We sould consisder whether
+   * any of these need to be split up into multiple hooks.
+   */
+  dapi->set_color_for_line    = NULL; // set_color_for_line;
+  dapi->set_color_for_arc     = NULL; // set_color_for_arc;
+  dapi->set_color_for_text    = NULL; // set_color_for_text;
+  dapi->set_color_for_polygon = NULL; // set_color_for_polygon;
+#if 0
+  dapi->draw_rat              =
+#endif
+  dapi->draw_pcb_element      = draw_pcb_element;
+  dapi->draw_pcb_layer        = draw_pcb_layer;
+  dapi->draw_pcb_layer_group  = draw_pcb_layer_group;
+  dapi->draw_mask_layer       = draw_mask_layer;
+  dapi->draw_paste_layer      = draw_paste_layer;
+  dapi->draw_silk_layer       = draw_silk_layer; /* Hmm - should be able to do this by layer number, even if not layer group */
+  /* But it would mean special casing diving into element silk from teh draw_pcb_layer function */
+  dapi->draw_everything       = draw_everything;
+  dapi->draw_pinout_preview   = draw_pinout_preview;
+#if 0
+  dapi->draw_pcb_buffer       =
+  dapi->set_draw_offset       =
+#endif
+  dapi->set_clip_box          = set_clip_box;
+
+  return dapi;
 }
