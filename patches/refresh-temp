@@ -1,0 +1,21 @@
+Bottom: d758fda92eede87bd646cccab0d7b44e46348c48
+Top:    c6e2e0f1a6eb1c72991420b7a7ae9a4c4c4d618f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-20 00:31:15 +0000
+
+Refresh of hid-merge-fill-thindraw-_pcb_-
+
+---
+
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index 9a6c88f..a03b19c 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -127,7 +127,6 @@ hid_lpr_init ()
+   memset (&lpr_hid, 0, sizeof (HID));
+ 
+   common_nogui_init (&lpr_hid);
+-  common_draw_helpers_init (&lpr_graphics);
+   ps_ps_init (&lpr_hid);
+ 
+   lpr_hid.struct_size         = sizeof (HID);
