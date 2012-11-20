@@ -1,7 +1,7 @@
-Bottom: b2c547fbd1bbc742527fb4a5720721c3b18dad89
-Top:    4c36c81263969be7910ad6fd116e0e7f2d0e265a
+Bottom: 461a73664b5f33d5d24c5d9376f9a441d97f7d73
+Top:    00a084a755b1a312cf3c8f73237c96206e478035
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-18 20:53:22 +0000
+Date:   2012-11-20 02:54:05 +0000
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -970,10 +970,10 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 17018df..d3d225e 100644
+index b825182..6383c7b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -312,6 +312,8 @@ ghid_draw_grid (BoxType *drawn_area)
+@@ -313,6 +313,8 @@ ghid_draw_grid (BoxType *drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
@@ -982,7 +982,7 @@ index 17018df..d3d225e 100644
    glDisable (GL_STENCIL_TEST);
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -330,10 +332,14 @@ static void
+@@ -331,10 +333,14 @@ static void
  ghid_draw_bg_image (void)
  {
    static GLuint texture_handle = 0;
@@ -997,7 +997,7 @@ index 17018df..d3d225e 100644
    if (texture_handle == 0)
      {
        int width =             gdk_pixbuf_get_width (ghidgui->bg_pixbuf);
-@@ -381,6 +387,8 @@ ghid_draw_bg_image (void)
+@@ -382,6 +388,8 @@ ghid_draw_bg_image (void)
    glEnd ();
  
    glDisable (GL_TEXTURE_2D);
@@ -1006,7 +1006,7 @@ index 17018df..d3d225e 100644
  }
  
  void
-@@ -665,7 +673,7 @@ ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
+@@ -666,7 +674,7 @@ ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
  {
    USE_GC (gc);
  
@@ -1015,7 +1015,7 @@ index 17018df..d3d225e 100644
  }
  
  
-@@ -682,7 +690,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -683,7 +691,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
    USE_GC (gc);
  
@@ -1024,7 +1024,7 @@ index 17018df..d3d225e 100644
  }
  
  void
-@@ -912,10 +920,19 @@ void
+@@ -913,10 +921,19 @@ void
  ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
  {
    render_priv *priv = port->render_priv;
@@ -1045,7 +1045,7 @@ index 17018df..d3d225e 100644
                                  TRUE,
                                  GDK_GL_RGBA_TYPE);
  }
-@@ -1628,9 +1645,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1629,9 +1646,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
  #define MIN_FACES_PER_CYL 6
  #define MAX_FACES_PER_CYL 360
    float radius = vr;
@@ -1056,7 +1056,7 @@ index 17018df..d3d225e 100644
    int i;
    int slices;
  
-@@ -1645,19 +1660,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1646,19 +1661,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
    z1 = compute_depth (from_layer);
    z2 = compute_depth (to_layer);
  
@@ -1093,7 +1093,7 @@ index 17018df..d3d225e 100644
  }
  
  struct cyl_info {
-@@ -2210,6 +2233,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2211,6 +2234,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    GdkGLConfig *glconfig;
    GdkPixmap *pixmap;
    GdkGLPixmap *glpixmap;
@@ -1101,7 +1101,7 @@ index 17018df..d3d225e 100644
    GdkGLContext* glcontext;
    GdkGLDrawable* gldrawable;
    view_data save_view;
-@@ -2223,6 +2247,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2224,6 +2248,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    /* Setup rendering context for drawing routines
     */
  
@@ -1113,7 +1113,7 @@ index 17018df..d3d225e 100644
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
                                          GDK_GL_MODE_SINGLE);
-@@ -2230,7 +2259,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2231,7 +2260,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
    glpixmap = gdk_pixmap_set_gl_capability (pixmap, glconfig, NULL);
    gldrawable = GDK_GL_DRAWABLE (glpixmap);
