@@ -1,7 +1,7 @@
-Bottom: 29fdce8ff347d12b7922de2da224ed2905974ae3
-Top:    b182bae6bdf0b4b872277210c6a1e4ee3b369695
+Bottom: 9e4f91cc8f76e52016c05171ea496f1435e8ce6f
+Top:    efe6da08548374ab670099b0e7b74de26cd51748
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-18 20:53:14 +0000
+Date:   2012-11-20 02:33:22 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -290,7 +290,7 @@ index 21ab5f2..94c9e25 100644
    double C0, T0;
    bool changed = false;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index a2a64c6..0baac2b 100644
+index d7d6aa1..a12c96a 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -1006,7 +1006,6 @@ CreateRouteData ()
@@ -490,7 +490,7 @@ index b39ff65..76992d2 100644
 +  return attr;
  }
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 937e506..c6b16a0 100644
+index 65a94fb..a047bb5 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -373,8 +373,7 @@ XORDrawInsertPointObject (void)
@@ -527,10 +527,10 @@ index 937e506..c6b16a0 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index 683d394..c2335e6 100644
+index e4d59f5..fca90dd 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1199,7 +1199,7 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
+@@ -1198,7 +1198,7 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
@@ -539,7 +539,7 @@ index 683d394..c2335e6 100644
    FontType *font = &PCB->Font;
  
    while (string && *string)
-@@ -1207,11 +1207,12 @@ DrawTextLowLevel (TextType *Text, Coord min_line_width)
+@@ -1206,11 +1206,12 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
        /* draw lines if symbol is valid and data is present */
        if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
  	{
@@ -825,7 +825,7 @@ index 7b966dc..88dc04e 100644
  } BoxListType;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 4e8f0fe..4352295 100644
+index 61b1070..0ddb45f 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -928,6 +928,7 @@ static void
@@ -958,7 +958,7 @@ index e2c08d5..eb405db 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index dfaf3f5..b8df986 100644
+index 6c837be..041d568 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -324,28 +324,26 @@ nelma_write_materials(FILE * out)
