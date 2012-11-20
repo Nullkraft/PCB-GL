@@ -1,7 +1,7 @@
-Bottom: c131aafb9a6f8b6579514ad68edc5613393009df
-Top:    3f773bda3fddedc1ea6c17c297a98d1c6618caac
+Bottom: 8d285f79a7e68b39c808a553d08336b0f9f6b8c2
+Top:    5f9f417b331cc1525ce9d6526f5da2563bd771f6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-11-18 20:53:25 +0000
+Date:   2012-11-20 03:21:30 +0000
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -121,7 +121,7 @@ index 6135750..406ce4b 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 2bbded9..961f2f3 100644
+index 51ddde6..a2c4980 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1137,6 +1137,16 @@ static int PointCursor (int argc, char **argv, Coord x, Coord y)
@@ -141,7 +141,7 @@ index 2bbded9..961f2f3 100644
  /* ---------------------------------------------------------------------- */
  
  static int
-@@ -2180,6 +2190,10 @@ hid_gtk_init ()
+@@ -2181,6 +2191,10 @@ hid_gtk_init ()
    ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
    ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
  
@@ -151,7 +151,7 @@ index 2bbded9..961f2f3 100644
 +
    ghid_hid.graphics                 = &ghid_graphics;
  
-   common_draw_helpers_init (&ghid_graphics);
+   ghid_graphics.make_gc             = ghid_make_gc;
 diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
 index bf3b79e..f0c4d39 100644
 --- a/src/hid/gtk/gui-misc.c
