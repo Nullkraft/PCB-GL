@@ -1,7 +1,7 @@
-Bottom: 2aec7b590ed2c55b869c6663475e388c43101df5
-Top:    0399d887078149f3df784754b49e9d517a68933a
+Bottom: 9e4f91cc8f76e52016c05171ea496f1435e8ce6f
+Top:    863b1f58768442392bb7d78f86f4100f8905e7cb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-15 03:14:36 +0000
+Date:   2012-11-20 03:04:17 +0000
 
 hid/gtk: Move the APIs for zooming / panning into the renderers
 
@@ -144,10 +144,10 @@ index 6c159b4..507ad16 100644
  #define LEAD_USER_WIDTH           0.2          /* millimeters */
  #define LEAD_USER_PERIOD          (1000 / 5)   /* 5fps (in ms) */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1913210..3fc4621 100644
+index 665a1a4..5b88d18 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1522,6 +1522,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1523,6 +1523,126 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
    return true;
  }
  
@@ -275,7 +275,7 @@ index 1913210..3fc4621 100644
  ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
  {
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 4e8f0fe..83750c9 100644
+index 61b1070..3761285 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -24,126 +24,6 @@

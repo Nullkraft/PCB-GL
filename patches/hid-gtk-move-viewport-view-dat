@@ -1,7 +1,7 @@
-Bottom: 0399d887078149f3df784754b49e9d517a68933a
-Top:    c64491f747e5c0a308638229fa3a6c8ba2af3a05
+Bottom: 863b1f58768442392bb7d78f86f4100f8905e7cb
+Top:    42cf06a571dfa1667a9a423e644c4d8af31e3bf1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-15 03:14:36 +0000
+Date:   2012-11-20 03:04:18 +0000
 
 hid/gtk: Move viewport view data into renderer specific code.
 
@@ -792,10 +792,10 @@ index 507ad16..ea43664 100644
    /* Pan the board so the center location remains in the same place */
    ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3fc4621..ad43167 100644
+index 5b88d18..18e3112 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -41,6 +41,19 @@ static hidGC current_gc = NULL;
+@@ -42,6 +42,19 @@ static hidGC current_gc = NULL;
  */
  #define USE_GC(gc) if (!use_gc(gc)) return
  
@@ -815,7 +815,7 @@ index 3fc4621..ad43167 100644
  static enum mask_mode cur_mask = HID_MASK_OFF;
  static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                      {0.0, 1.0, 0.0, 0.0},
-@@ -52,6 +65,21 @@ static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+@@ -53,6 +66,21 @@ static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                                {0.0, 0.0, 0.0, 1.0}};
  static int global_view_2d = 1;
  
@@ -837,7 +837,7 @@ index 3fc4621..ad43167 100644
  typedef struct render_priv {
    GdkGLConfig *glconfig;
    bool trans_lines;
-@@ -61,6 +89,8 @@ typedef struct render_priv {
+@@ -62,6 +90,8 @@ typedef struct render_priv {
    double current_alpha_mult;
    GTimer *time_since_expose;
  
@@ -846,7 +846,7 @@ index 3fc4621..ad43167 100644
    /* Feature for leading the user to a particular location */
    guint lead_user_timeout;
    GTimer *lead_user_timer;
-@@ -87,6 +117,36 @@ hid_gc_struct;
+@@ -88,6 +118,36 @@ hid_gc_struct;
  static void draw_lead_user (render_priv *priv);
  static void ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y);
  
@@ -883,7 +883,7 @@ index 3fc4621..ad43167 100644
  
  static void
  start_subcomposite (void)
-@@ -533,19 +593,21 @@ use_gc (hidGC gc)
+@@ -534,19 +594,21 @@ use_gc (hidGC gc)
  void
  ghid_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
  {
@@ -907,7 +907,7 @@ index 3fc4621..ad43167 100644
  }
  
  void
-@@ -560,9 +622,10 @@ ghid_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+@@ -561,9 +623,10 @@ ghid_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
  void
  ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
  {
@@ -919,7 +919,7 @@ index 3fc4621..ad43167 100644
  }
  
  
-@@ -577,9 +640,11 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -578,9 +641,11 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
  void
  ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
@@ -932,7 +932,7 @@ index 3fc4621..ad43167 100644
  }
  
  void
-@@ -816,6 +881,11 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
+@@ -817,6 +882,11 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
  void
  ghid_drawing_area_configure_hook (GHidPort *port)
  {
@@ -944,7 +944,7 @@ index 3fc4621..ad43167 100644
  }
  
  gboolean
-@@ -900,13 +970,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -901,13 +971,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -965,7 +965,7 @@ index 3fc4621..ad43167 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
    glEnable (GL_STENCIL_TEST);
-@@ -1048,21 +1118,19 @@ gboolean
+@@ -1049,21 +1119,19 @@ gboolean
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
  {
@@ -989,7 +989,7 @@ index 3fc4621..ad43167 100644
  
    /* Setup zoom factor for drawing routines */
  
-@@ -1070,16 +1138,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1071,16 +1139,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    xz = (double) pinout->x_max / allocation.width;
    yz = (double) pinout->y_max / allocation.height;
    if (xz > yz)
@@ -1013,7 +1013,7 @@ index 3fc4621..ad43167 100644
    PCB->MaxWidth = pinout->x_max;
    PCB->MaxHeight = pinout->y_max;
  
-@@ -1119,14 +1185,13 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1120,14 +1186,13 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    /* call the drawing routine */
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -1035,7 +1035,7 @@ index 3fc4621..ad43167 100644
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1142,9 +1207,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1143,9 +1208,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    gport->render_priv->in_context = false;
    gdk_gl_drawable_gl_end (pGlDrawable);
  
@@ -1046,7 +1046,7 @@ index 3fc4621..ad43167 100644
    PCB->MaxWidth = save_max_width;
    PCB->MaxHeight = save_max_height;
  
-@@ -1155,18 +1218,16 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1156,18 +1219,16 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  GdkPixmap *
  ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
  {
@@ -1067,7 +1067,7 @@ index 3fc4621..ad43167 100644
  
    /* Setup rendering context for drawing routines
     */
-@@ -1182,15 +1243,13 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1183,15 +1244,13 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    /* Setup zoom factor for drawing routines */
  
@@ -1090,7 +1090,7 @@ index 3fc4621..ad43167 100644
  
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
-@@ -1226,18 +1285,18 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1227,18 +1286,18 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    /* call the drawing routine */
    ghid_invalidate_current_gc ();
    glPushMatrix ();
@@ -1121,7 +1121,7 @@ index 3fc4621..ad43167 100644
  
    region.X1 = MAX (0, MIN (PCB->MaxWidth,  region.X1));
    region.X2 = MAX (0, MIN (PCB->MaxWidth,  region.X2));
-@@ -1261,9 +1320,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1262,9 +1321,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    g_object_unref (glconfig);
    g_object_unref (glcontext);
  
@@ -1132,7 +1132,7 @@ index 3fc4621..ad43167 100644
  
    return pixmap;
  }
-@@ -1272,6 +1329,7 @@ HID *
+@@ -1273,6 +1330,7 @@ HID *
  ghid_request_debug_draw (void)
  {
    GHidPort *port = gport;
@@ -1140,7 +1140,7 @@ index 3fc4621..ad43167 100644
    GtkWidget *widget = port->drawing_area;
    GtkAllocation allocation;
  
-@@ -1295,13 +1353,13 @@ ghid_request_debug_draw (void)
+@@ -1296,13 +1354,13 @@ ghid_request_debug_draw (void)
    glDisable (GL_STENCIL_TEST);
  
    glPushMatrix ();
@@ -1161,7 +1161,7 @@ index 3fc4621..ad43167 100644
  
    return &ghid_hid;
  }
-@@ -1523,7 +1581,7 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1524,7 +1582,7 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  }
  
  static void
@@ -1170,7 +1170,7 @@ index 3fc4621..ad43167 100644
  {
    int event_x, event_y;
  
-@@ -1532,10 +1590,10 @@ pan_common (GHidPort *port)
+@@ -1533,10 +1591,10 @@ pan_common (GHidPort *port)
    ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
  
    /* Don't pan so far the board is completely off the screen */
@@ -1185,7 +1185,7 @@ index 3fc4621..ad43167 100644
  
    /* Fix up noted event coordinates to match where we clamped. Alternatively
     * we could call ghid_note_event_location (NULL); to get a new pointer
-@@ -1544,8 +1602,8 @@ pan_common (GHidPort *port)
+@@ -1545,8 +1603,8 @@ pan_common (GHidPort *port)
    ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
  
    ghidgui->adjustment_changed_holdoff = TRUE;
@@ -1196,7 +1196,7 @@ index 3fc4621..ad43167 100644
    ghidgui->adjustment_changed_holdoff = FALSE;
  
    ghid_port_ranges_changed();
-@@ -1554,33 +1612,49 @@ pan_common (GHidPort *port)
+@@ -1555,33 +1613,49 @@ pan_common (GHidPort *port)
  void
  ghid_pan_view_abs (Coord pcb_x, Coord pcb_y, int widget_x, int widget_y)
  {
@@ -1254,7 +1254,7 @@ index 3fc4621..ad43167 100644
    double min_zoom, max_zoom;
    double xtmp, ytmp;
  
-@@ -1589,24 +1663,24 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1590,24 +1664,24 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
     * the entire board just fits inside the viewport
     */
    min_zoom = 1;
@@ -1288,7 +1288,7 @@ index 3fc4621..ad43167 100644
  
    ghid_set_status_line_label ();
  }
-@@ -1614,28 +1688,32 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
+@@ -1615,28 +1689,32 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
  void
  ghid_zoom_view_rel (Coord center_x, Coord center_y, double factor)
  {
@@ -1326,7 +1326,7 @@ index 3fc4621..ad43167 100644
  
    /* Pan the board so the center location remains in the same place */
    ghid_pan_view_abs (center_x, center_y, widget_x, widget_y);
-@@ -1709,7 +1787,7 @@ draw_lead_user (render_priv *priv)
+@@ -1710,7 +1788,7 @@ draw_lead_user (render_priv *priv)
  
        /* Draw an arc at radius */
        hidgl_draw_arc (width, priv->lead_user_x, priv->lead_user_y,
@@ -1336,7 +1336,7 @@ index 3fc4621..ad43167 100644
  
    hidgl_flush_triangles (&buffer);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 83750c9..a8feba6 100644
+index 3761285..fe6a9ee 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1473,8 +1473,8 @@ Center(int argc, char **argv, Coord pcb_x, Coord pcb_y)
