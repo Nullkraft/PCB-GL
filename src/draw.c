@@ -33,6 +33,7 @@
 #endif
 
 #include "global.h"
+#include "hid_draw.h"
 
 /*#include "clip.h"*/
 #include "compat.h"
@@ -199,7 +200,7 @@ _draw_pv_name (PinType *pv)
 
   if (gui->gui)
     doing_pinout++;
-  DrawTextLowLevel (Output.fgGC, &text, 0);
+  gui->graphics->draw_pcb_text (Output.fgGC, &text, 0);
   if (gui->gui)
     doing_pinout--;
 }
@@ -283,7 +284,7 @@ draw_pad_name (PadType *pad)
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
 
-  DrawTextLowLevel (Output.fgGC, &text, 0);
+  gui->graphics->draw_pcb_text (Output.fgGC, &text, 0);
 }
 
 static void
@@ -349,7 +350,7 @@ draw_element_name (ElementType *element)
     gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
   else
     gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-  DrawTextLowLevel (Output.fgGC, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
+  gui->graphics->draw_pcb_text (Output.fgGC, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
 }
 
 static int
@@ -447,19 +448,6 @@ DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
 }
 
 static void
-_draw_line (hidGC gc, LineType *line)
-{
-  gui->graphics->set_line_cap (gc, Trace_Cap);
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->graphics->set_line_width (gc, 0);
-  else
-    gui->graphics->set_line_width (gc, line->Thickness);
-
-  gui->graphics->draw_line (gc, line->Point1.X, line->Point1.Y,
-                                line->Point2.X, line->Point2.Y);
-}
-
-static void
 draw_line (LayerType *layer, LineType *line)
 {
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
@@ -471,7 +459,7 @@ draw_line (LayerType *layer, LineType *line)
     }
   else
     gui->graphics->set_color (Output.fgGC, layer->Color);
-  _draw_line (Output.fgGC, line);
+  gui->graphics->draw_pcb_line (Output.fgGC, line);
 }
 
 static int
@@ -511,7 +499,7 @@ rat_callback (const BoxType * b, void *cl)
                                w * 2, w * 2, 0, 360);
     }
   else
-    _draw_line (Output.fgGC, (LineType *) rat);
+    gui->graphics->draw_pcb_line (Output.fgGC, (LineType *) rat);
   return 1;
 }
 
@@ -570,7 +558,7 @@ draw_element_package (ElementType *element)
   /* draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (element);
   {
-    _draw_line (Output.fgGC, line);
+    gui->graphics->draw_pcb_line (Output.fgGC, line);
   }
   END_LOOP;
   ARC_LOOP (element);
@@ -1059,7 +1047,7 @@ text_callback (const BoxType * b, void *cl)
     min_silk_line = PCB->minSlk;
   else
     min_silk_line = PCB->minWid;
-  DrawTextLowLevel (Output.fgGC, text, min_silk_line);
+  gui->graphics->draw_pcb_text (Output.fgGC, text, min_silk_line);
   return 1;
 }
 
@@ -1188,89 +1176,6 @@ GatherPadName (PadType *Pad)
 
   AddPart (&box);
   return;
-}
-
-/* ---------------------------------------------------------------------------
- * lowlevel drawing routine for text objects
- */
-void
-DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
-{
-  Coord x = 0;
-  unsigned char *string = (unsigned char *) Text->TextString;
-  Cardinal n;
-  FontType *font = &PCB->Font;
-
-  while (string && *string)
-    {
-      /* draw lines if symbol is valid and data is present */
-      if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
-	{
-	  LineType *line = font->Symbol[*string].Line;
-	  LineType newline;
-
-	  for (n = font->Symbol[*string].LineN; n; n--, line++)
-	    {
-	      /* create one line, scale, move, rotate and swap it */
-	      newline = *line;
-	      newline.Point1.X = SCALE_TEXT (newline.Point1.X + x, Text->Scale);
-	      newline.Point1.Y = SCALE_TEXT (newline.Point1.Y, Text->Scale);
-	      newline.Point2.X = SCALE_TEXT (newline.Point2.X + x, Text->Scale);
-	      newline.Point2.Y = SCALE_TEXT (newline.Point2.Y, Text->Scale);
-	      newline.Thickness = SCALE_TEXT (newline.Thickness, Text->Scale / 2);
-	      if (newline.Thickness < min_line_width)
-		newline.Thickness = min_line_width;
-
-	      RotateLineLowLevel (&newline, 0, 0, Text->Direction);
-
-	      /* the labels of SMD objects on the bottom
-	       * side haven't been swapped yet, only their offset
-	       */
-	      if (TEST_FLAG (ONSOLDERFLAG, Text))
-		{
-		  newline.Point1.X = SWAP_SIGN_X (newline.Point1.X);
-		  newline.Point1.Y = SWAP_SIGN_Y (newline.Point1.Y);
-		  newline.Point2.X = SWAP_SIGN_X (newline.Point2.X);
-		  newline.Point2.Y = SWAP_SIGN_Y (newline.Point2.Y);
-		}
-	      /* add offset and draw line */
-	      newline.Point1.X += Text->X;
-	      newline.Point1.Y += Text->Y;
-	      newline.Point2.X += Text->X;
-	      newline.Point2.Y += Text->Y;
-	      _draw_line (gc, &newline);
-	    }
-
-	  /* move on to next cursor position */
-	  x += (font->Symbol[*string].Width + font->Symbol[*string].Delta);
-	}
-      else
-	{
-	  /* the default symbol is a filled box */
-	  BoxType defaultsymbol = PCB->Font.DefaultSymbol;
-	  Coord size = (defaultsymbol.X2 - defaultsymbol.X1) * 6 / 5;
-
-	  defaultsymbol.X1 = SCALE_TEXT (defaultsymbol.X1 + x, Text->Scale);
-	  defaultsymbol.Y1 = SCALE_TEXT (defaultsymbol.Y1, Text->Scale);
-	  defaultsymbol.X2 = SCALE_TEXT (defaultsymbol.X2 + x, Text->Scale);
-	  defaultsymbol.Y2 = SCALE_TEXT (defaultsymbol.Y2, Text->Scale);
-
-	  RotateBoxLowLevel (&defaultsymbol, 0, 0, Text->Direction);
-
-	  /* add offset and draw box */
-	  defaultsymbol.X1 += Text->X;
-	  defaultsymbol.Y1 += Text->Y;
-	  defaultsymbol.X2 += Text->X;
-	  defaultsymbol.Y2 += Text->Y;
-	  gui->graphics->fill_rect (gc,
-	                            defaultsymbol.X1, defaultsymbol.Y1,
-	                            defaultsymbol.X2, defaultsymbol.Y2);
-
-	  /* move on to next cursor position */
-	  x += size;
-	}
-      string++;
-    }
 }
 
 /* ---------------------------------------------------------------------------
