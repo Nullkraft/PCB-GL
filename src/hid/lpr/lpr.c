@@ -127,7 +127,6 @@ hid_lpr_init ()
   memset (&lpr_hid, 0, sizeof (HID));
 
   common_nogui_init (&lpr_hid);
-  common_draw_helpers_init (&lpr_graphics);
   ps_ps_init (&lpr_hid);
 
   lpr_hid.struct_size         = sizeof (HID);
