@@ -299,7 +299,7 @@ draw_element_package (ElementType *element)
   /* draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (element);
   {
-    //_draw_line (line);
+    //_draw_line (Output.fgGC, line);
     dapi->draw_line (line, NULL, NULL);
   }
   END_LOOP;
