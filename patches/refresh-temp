@@ -1,0 +1,22 @@
+Bottom: f662f07843423b221fb61150ec1deffe3981a1c8
+Top:    9e4f91cc8f76e52016c05171ea496f1435e8ce6f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-20 02:14:03 +0000
+
+Refresh of autoroute-c-destroy-debug-grap
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index ad02e82..d7d6aa1 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -5334,7 +5334,7 @@ donerouting:
+ #ifdef ROUTE_DEBUG
+   if (ddraw != NULL)
+     {
+-      ddraw->destroy_gc (ar_gc);
++      ddraw->graphics->destroy_gc (ar_gc);
+       ddraw->finish_debug_draw ();
+     }
+ #endif
