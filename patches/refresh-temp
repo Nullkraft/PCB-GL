@@ -1,0 +1,40 @@
+Bottom: 90380f18c6f7848ad94e7ad3898f4dccc0737155
+Top:    bff28adfcdf43a5695b845a7750f0f0218309b9e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-20 03:00:29 +0000
+
+Refresh of allow-polygons-with-clearlinef
+
+---
+
+diff --git a/src/change.c b/src/change.c
+index ae70f94..abfe69f 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -1246,7 +1246,7 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
+  * changes the clearance flag of a polygon
+  */
+ static void *
+-ChangePolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
++ChangePolyJoin (LayerType *Layer, PolygonType *poly)
+ {
+   if (TEST_FLAG (LOCKFLAG, poly))
+     return (NULL);
+@@ -1282,7 +1282,7 @@ SetTextJoin (LayerType *Layer, TextType *Text)
+  * sets the clearance flag of a polygon
+  */
+ static void *
+-SetPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
++SetPolyJoin (LayerType *Layer, PolygonType *poly)
+ {
+   if (TEST_FLAG (LOCKFLAG, poly) || TEST_FLAG (CLEARLINEFLAG, poly))
+     return (NULL);
+@@ -1304,7 +1304,7 @@ ClrTextJoin (LayerType *Layer, TextType *Text)
+  * clears the clearance flag of a polygon
+  */
+ static void *
+-ClrPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
++ClrPolyJoin (LayerType *Layer, PolygonType *poly)
+ {
+   if (TEST_FLAG (LOCKFLAG, poly) || !TEST_FLAG (CLEARLINEFLAG, poly))
+     return (NULL);
