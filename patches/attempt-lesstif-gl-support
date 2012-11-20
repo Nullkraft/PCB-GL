@@ -1,7 +1,7 @@
-Bottom: 461a73664b5f33d5d24c5d9376f9a441d97f7d73
-Top:    5b73424d5105d38ca5b1fd29c8731bf3067f7182
+Bottom: 62a8b211fcb6654acd45743a978f5cf09acef34d
+Top:    77587ddd3b32465cca7937558841835b27691c92
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-20 03:02:16 +0000
+Date:   2012-11-20 03:21:32 +0000
 
 Attempt lesstif GL support
 
@@ -66,7 +66,7 @@ index 17a721f..6f6fb94 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 94441fe..c2cccfc 100644
+index f1b8308..e3f6caf 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -27,10 +27,14 @@
@@ -1041,7 +1041,7 @@ index 94441fe..c2cccfc 100644
  }
  
  static void
-@@ -4095,17 +4511,19 @@ hid_lesstif_init ()
+@@ -4094,17 +4510,19 @@ hid_lesstif_init ()
  
    lesstif_graphics.make_gc             = lesstif_make_gc;
    lesstif_graphics.destroy_gc          = lesstif_destroy_gc;
