@@ -1,5 +1,5 @@
-Bottom: 0d6efde2d09ad25ca741df9bf5063904b641b4b3
-Top:    4f395d7c04040ef0abeeb90fbea6c38688c495e6
+Bottom: 41077469582aa0064c73da0bd68953a53a93fd2e
+Top:    994efffd497022807d59ed503ea43b9afce1cfee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-18 20:53:20 +0000
 
@@ -9,10 +9,10 @@ Hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f38e844..0298c6c 100644
+index 9184d03..37c3574 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -485,6 +485,15 @@ set_gl_color_for_gc (hidGC gc)
+@@ -486,6 +486,15 @@ set_gl_color_for_gc (hidGC gc)
      return;
  
    free (priv->current_colorname);
@@ -28,7 +28,7 @@ index f38e844..0298c6c 100644
    priv->current_colorname = strdup (gc->colorname);
    priv->current_alpha_mult = gc->alpha_mult;
  
-@@ -548,9 +557,6 @@ set_gl_color_for_gc (hidGC gc)
+@@ -549,9 +558,6 @@ set_gl_color_for_gc (hidGC gc)
  #endif
    }
  
@@ -38,7 +38,7 @@ index f38e844..0298c6c 100644
    hidgl_flush_triangles (&buffer);
    glColor4d (r, g, b, a);
  }
-@@ -833,6 +839,9 @@ draw_crosshair (render_priv *priv)
+@@ -834,6 +840,9 @@ draw_crosshair (render_priv *priv)
    static int done_once = 0;
    static GdkColor cross_color;
  
