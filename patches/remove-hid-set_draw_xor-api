@@ -1,7 +1,7 @@
-Bottom: 9e4f91cc8f76e52016c05171ea496f1435e8ce6f
-Top:    fe55cc4d3a400514abee8d55cd3105e9684826f7
+Bottom: 056954672b70e791b446fa649fe6667ac2c7013e
+Top:    05a35149174a585acc20faf0b0570483ef7588b8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-11-20 03:05:50 +0000
+Date:   2012-11-20 03:20:44 +0000
 
 Remove HID->set_draw_xor() API
 
@@ -191,10 +191,10 @@ index 665a1a4..54e736d 100644
  ghid_set_draw_faded (hidGC gc, int faded)
  {
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 61b1070..6fff548 100644
+index d1e3114..58a3523 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2190,7 +2190,6 @@ hid_gtk_init ()
+@@ -2189,7 +2189,6 @@ hid_gtk_init ()
    ghid_graphics.set_color           = ghid_set_color;
    ghid_graphics.set_line_cap        = ghid_set_line_cap;
    ghid_graphics.set_line_width      = ghid_set_line_width;
@@ -215,10 +215,10 @@ index af719fd..41a12b7 100644
  void ghid_draw_arc (hidGC gc, Coord cx, Coord cy, Coord xradius, Coord yradius,
                      Angle start_angle, Angle delta_angle);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 94441fe..043d83e 100644
+index f1b8308..6f545c3 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4099,7 +4099,6 @@ hid_lesstif_init ()
+@@ -4098,7 +4098,6 @@ hid_lesstif_init ()
    lesstif_graphics.set_color           = lesstif_set_color;
    lesstif_graphics.set_line_cap        = lesstif_set_line_cap;
    lesstif_graphics.set_line_width      = lesstif_set_line_width;
