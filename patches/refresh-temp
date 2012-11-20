@@ -1,0 +1,51 @@
+Bottom: 9e4f91cc8f76e52016c05171ea496f1435e8ce6f
+Top:    056954672b70e791b446fa649fe6667ac2c7013e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-20 03:19:41 +0000
+
+Refresh of revert-moving-common_draw_help
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 61b1070..d1e3114 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2130,6 +2130,7 @@ hid_gtk_init ()
+   memset (&ghid_graphics, 0, sizeof (HID_DRAW_API));
+ 
+   common_nogui_init (&ghid_hid);
++  common_draw_helpers_init (&ghid_graphics);
+ 
+   ghid_hid.struct_size              = sizeof (HID);
+   ghid_hid.name                     = "gtk";
+@@ -2182,8 +2183,6 @@ hid_gtk_init ()
+ 
+   ghid_hid.graphics                 = &ghid_graphics;
+ 
+-  common_draw_helpers_init (&ghid_graphics);
+-
+   ghid_graphics.make_gc             = ghid_make_gc;
+   ghid_graphics.destroy_gc          = ghid_destroy_gc;
+   ghid_graphics.use_mask            = ghid_use_mask;
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 94441fe..f1b8308 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -4043,6 +4043,7 @@ hid_lesstif_init ()
+   memset (&lesstif_graphics, 0, sizeof (HID_DRAW_API));
+ 
+   common_nogui_init (&lesstif_hid);
++  common_draw_helpers_init (&lesstif_graphics);
+ 
+   lesstif_hid.struct_size             = sizeof (HID);
+   lesstif_hid.name                    = "lesstif";
+@@ -4091,8 +4092,6 @@ hid_lesstif_init ()
+ 
+   lesstif_hid.graphics                = &lesstif_graphics;
+ 
+-  common_draw_helpers_init (&lesstif_graphics);
+-
+   lesstif_graphics.make_gc             = lesstif_make_gc;
+   lesstif_graphics.destroy_gc          = lesstif_destroy_gc;
+   lesstif_graphics.use_mask            = lesstif_use_mask;
