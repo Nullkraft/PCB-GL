@@ -55,12 +55,14 @@
 void
 ghid_port_ranges_changed (void)
 {
+#if 0
   GtkAdjustment *h_adj, *v_adj;
 
   h_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
   v_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
   gport->view.x0 = gtk_adjustment_get_value (h_adj);
   gport->view.y0 = gtk_adjustment_get_value (v_adj);
+#endif
 
   ghid_invalidate_all ();
 }
@@ -71,6 +73,7 @@ ghid_port_ranges_changed (void)
 void
 ghid_port_ranges_scale (void)
 {
+#if 0
   GtkAdjustment *adj;
   gdouble page_size;
 
@@ -100,6 +103,7 @@ ghid_port_ranges_scale (void)
                             page_size / 100.0,              /* step_increment */
                             page_size / 10.0,               /* page_increment */
                             page_size);                     /* page_size      */
+#endif
 }
 
 
@@ -352,14 +356,11 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 {
   static gboolean first_time_done;
 
-  gport->width = ev->width;
-  gport->height = ev->height;
-
   if (gport->pixmap)
     gdk_pixmap_unref (gport->pixmap);
 
   gport->pixmap = gdk_pixmap_new (gtk_widget_get_window (widget),
-				  gport->width, gport->height, -1);
+				  ev->width, ev->height, -1);
   gport->drawable = gport->pixmap;
 
   if (!first_time_done)
@@ -507,24 +508,20 @@ gint
 ghid_port_window_motion_cb (GtkWidget * widget,
 			    GdkEventMotion * ev, GHidPort * out)
 {
-  gdouble dx, dy;
-  static gint x_prev = -1, y_prev = -1;
-
   gdk_event_request_motions (ev);
 
   if (out->panning)
     {
-      dx = gport->view.coord_per_px * (x_prev - ev->x);
-      dy = gport->view.coord_per_px * (y_prev - ev->y);
-      if (x_prev > 0)
-        ghid_pan_view_rel (dx, dy);
-      x_prev = ev->x;
-      y_prev = ev->y;
+      /* gport->pcb_x and gport->pcb_y will correspond to where the user
+       * grabbed the board. Move the board so that location lands where
+       * the mouse pointer now is, as indicated by the event.
+       */
+      ghid_pan_view_abs (gport->pcb_x, gport->pcb_y, ev->x, ev->y);
+
       return FALSE;
     }
-  x_prev = y_prev = -1;
-  ghid_note_event_location ((GdkEventButton *)ev);
 
+  ghid_note_event_location ((GdkEventButton *)ev);
   queue_tooltip_update (out);
 
   return FALSE;
@@ -577,9 +574,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
    */
 
   if(ev->mode != GDK_CROSSING_NORMAL)
-    {
-      return FALSE;
-    }
+    return FALSE;
 
   out->has_entered = FALSE;
 
