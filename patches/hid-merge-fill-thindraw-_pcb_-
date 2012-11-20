@@ -1,5 +1,5 @@
-Bottom: f152e24cae7e3d7296980f047805bf5daf58e087
-Top:    cbc46621ad6abc1a41987e35b29406455c6b86d8
+Bottom: 100e266652f60367706725e156902c99f6fcd27b
+Top:    d758fda92eede87bd646cccab0d7b44e46348c48
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 23:01:48 +0000
 
@@ -219,17 +219,17 @@ index 5261ee4..94441fe 100644
    lesstif_graphics.destroy_gc          = lesstif_destroy_gc;
    lesstif_graphics.use_mask            = lesstif_use_mask;
 diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
-index b33773e..7aecc51 100644
+index a03b19c..9a6c88f 100644
 --- a/src/hid/lpr/lpr.c
 +++ b/src/hid/lpr/lpr.c
-@@ -129,6 +129,7 @@ hid_lpr_init ()
-   memset (&lpr_graphics, 0, sizeof (HID_DRAW_API));
+@@ -127,6 +127,7 @@ hid_lpr_init ()
+   memset (&lpr_hid, 0, sizeof (HID));
  
    common_nogui_init (&lpr_hid);
 +  common_draw_helpers_init (&lpr_graphics);
    ps_ps_init (&lpr_hid);
-   ps_ps_graphics_init (&lpr_graphics);
  
+   lpr_hid.struct_size         = sizeof (HID);
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
 index dfaf3f5..6c837be 100644
 --- a/src/hid/nelma/nelma.c
