@@ -43,6 +43,7 @@
 #include "hid.h"
 #include "../hidint.h"
 #include "hid/common/hidnogui.h"
+#include "draw_api.h"
 #include "hid/common/draw_helpers.h"
 #include "png.h"
 
@@ -650,7 +651,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 	}
     }
 
-  hid_expose_callback (&png_hid, bounds, 0);
+//  hid_expose_callback (&png_hid, bounds, 0);
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
   PCB->Flags = save_flags;
@@ -1363,10 +1364,10 @@ png_use_mask (enum mask_mode mode)
   if (photo_mode)
     return;
 
-  if (mode == HID_MASK_CLEAR)
-    {
-      return;
-    }
+//  if (mode == HID_MASK_CLEAR)
+//    {
+//      return;
+//    }
   if (mode != HID_MASK_OFF)
     {
       if (mask_im == NULL)
@@ -1800,7 +1801,7 @@ hid_png_init ()
   memset (&png_graphics, 0, sizeof (HID_DRAW_API));
 
   common_nogui_init (&png_hid);
-  common_draw_helpers_init (&png_graphics);
+//  common_draw_helpers_init (&png_graphics);
 
   png_hid.struct_size = sizeof (HID);
   png_hid.name        = "png";
@@ -1815,7 +1816,7 @@ hid_png_init ()
   png_hid.calibrate           = png_calibrate;
   png_hid.set_crosshair       = png_set_crosshair;
 
-  png_hid.graphics            = &png_graphics;
+//  png_hid.graphics            = &png_graphics;
 
   png_graphics.make_gc        = png_make_gc;
   png_graphics.destroy_gc     = png_destroy_gc;

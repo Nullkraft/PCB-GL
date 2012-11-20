@@ -73,22 +73,9 @@
 #define DRILL_MARK_SIZE	MIL_TO_COORD(16)
 #define FAB_LINE_W      MIL_TO_COORD(8)
 
-static void
-fab_line (hidGC gc, int x1, int y1, int x2, int y2)
-{
-  gui->graphics->draw_line (gc, x1, y1, x2, y2);
-}
-
-static void
-fab_circle (hidGC gc, int x, int y, int r)
-{
-  gui->graphics->draw_arc (gc, x, y, r, r, 0, 180);
-  gui->graphics->draw_arc (gc, x, y, r, r, 180, 180);
-}
-
 /* align is 0=left, 1=center, 2=right, add 8 for underline */
 static void
-text_at (hidGC gc, int x, int y, int align, char *fmt, ...)
+text_at (DrawAPI *dapi, int x, int y, int align, char *fmt, ...)
 {
   char tmp[512];
   int w = 0, i;
@@ -111,17 +98,15 @@ text_at (hidGC gc, int x, int y, int align, char *fmt, ...)
   t.X -= w * (align & 3) / 2;
   if (t.X < 0)
     t.X = 0;
-  DrawTextLowLevel (gc, &t, 0);
+  dapi->draw_pcb_text (dapi, NULL, &t, 0);
   if (align & 8)
-    fab_line (gc, t.X,
-              t.Y + SCALE_TEXT (font->MaxHeight, t.Scale) + MIL_TO_COORD(10),
-              t.X + w,
-              t.Y + SCALE_TEXT (font->MaxHeight, t.Scale) + MIL_TO_COORD(10));
+    dapi->graphics->draw_line (dapi->gc, t.X,     t.Y + SCALE_TEXT (font->MaxHeight, t.Scale) + MIL_TO_COORD(10),
+                                     t.X + w, t.Y + SCALE_TEXT (font->MaxHeight, t.Scale) + MIL_TO_COORD(10));
 }
 
 /* Y, +, X, circle, square */
 static void
-drill_sym (hidGC gc, int idx, int x, int y)
+drill_sym (DrawAPI *dapi, int idx, int x, int y)
 {
   int type = idx % 5;
   int size = idx / 5;
@@ -130,60 +115,61 @@ drill_sym (hidGC gc, int idx, int x, int y)
   switch (type)
     {
     case 0:			/* Y */ ;
-      fab_line (gc, x, y, x, y + s2);
-      fab_line (gc, x, y, x + s2 * 13 / 15, y - s2 / 2);
-      fab_line (gc, x, y, x - s2 * 13 / 15, y - s2 / 2);
+      dapi->graphics->draw_line (dapi->gc, x, y, x, y + s2);
+      dapi->graphics->draw_line (dapi->gc, x, y, x + s2 * 13 / 15, y - s2 / 2);
+      dapi->graphics->draw_line (dapi->gc, x, y, x - s2 * 13 / 15, y - s2 / 2);
       for (i = 1; i <= size; i++)
-        fab_circle (gc, x, y, i * DRILL_MARK_SIZE);
+        dapi->graphics->draw_arc (dapi->gc, x, y, i * DRILL_MARK_SIZE, i * DRILL_MARK_SIZE, 0, 360);
       break;
     case 1:			/* + */
       ;
-      fab_line (gc, x, y - s2, x, y + s2);
-      fab_line (gc, x - s2, y, x + s2, y);
+      dapi->graphics->draw_line (dapi->gc, x, y - s2, x, y + s2);
+      dapi->graphics->draw_line (dapi->gc, x - s2, y, x + s2, y);
       for (i = 1; i <= size; i++)
         {
-          fab_line (gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
-                        x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE);
-          fab_line (gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
-                        x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
-          fab_line (gc, x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE,
-                        x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
-          fab_line (gc, x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
-                        x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
+                                           x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
+                                           x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE,
+                                           x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
+                                           x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
         }
       break;
     case 2:			/* X */ ;
-      fab_line (gc, x - s2 * 3 / 4, y - s2 * 3 / 4, x + s2 * 3 / 4,
-		y + s2 * 3 / 4);
-      fab_line (gc, x - s2 * 3 / 4, y + s2 * 3 / 4, x + s2 * 3 / 4,
-		y - s2 * 3 / 4);
+      dapi->graphics->draw_line (dapi->gc, x - s2 * 3 / 4, y - s2 * 3 / 4,
+                                       x + s2 * 3 / 4, y + s2 * 3 / 4);
+      dapi->graphics->draw_line (dapi->gc, x - s2 * 3 / 4, y + s2 * 3 / 4,
+                                       x + s2 * 3 / 4, y - s2 * 3 / 4);
       for (i = 1; i <= size; i++)
         {
-          fab_line (gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
-                        x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE);
-          fab_line (gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
-                        x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
-          fab_line (gc, x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE,
-                        x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
-          fab_line (gc, x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
-                        x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
+                                           x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
+                                           x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE,
+                                           x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
+                                           x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
         }
       break;
     case 3:			/* circle */ ;
       for (i = 0; i <= size; i++)
-        fab_circle (gc, x, y, (i + 1) * DRILL_MARK_SIZE - DRILL_MARK_SIZE / 2);
+        dapi->graphics->draw_arc (dapi->gc, x, y, (i + 1) * DRILL_MARK_SIZE - DRILL_MARK_SIZE / 2,
+                                              (i + 1) * DRILL_MARK_SIZE - DRILL_MARK_SIZE / 2, 0, 360);
       break;
     case 4:			/* square */
       for (i = 1; i <= size + 1; i++)
         {
-          fab_line (gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
-                        x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE);
-          fab_line (gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
-                        x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
-          fab_line (gc, x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE,
-                        x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
-          fab_line (gc, x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
-                        x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
+                                           x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x - i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
+                                           x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x - i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE,
+                                           x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
+          dapi->graphics->draw_line (dapi->gc, x + i * DRILL_MARK_SIZE, y - i * DRILL_MARK_SIZE,
+                                           x + i * DRILL_MARK_SIZE, y + i * DRILL_MARK_SIZE);
         }
       break;
     }
@@ -216,7 +202,7 @@ PrintFab_overhang (void)
 }
 
 void
-PrintFab (hidGC gc)
+PrintFab (DrawAPI *dapi)
 {
   DrillInfoType *AllDrills;
   int i, n, yoff, total_drills = 0, ds = 0;
@@ -239,7 +225,7 @@ PrintFab (hidGC gc)
       yoff -= (4 - ds) * TEXT_LINE;
     }
 
-  gui->graphics->set_line_width (gc, FAB_LINE_W);
+  dapi->graphics->set_line_width (dapi->gc, FAB_LINE_W);
 
   for (n = AllDrills->DrillN - 1; n >= 0; n--)
     {
@@ -249,16 +235,16 @@ PrintFab (hidGC gc)
 	plated_sym = --ds;
       if (drill->UnplatedCount)
 	unplated_sym = --ds;
-      gui->graphics->set_color (gc, PCB->PinColor);
+      dapi->graphics->set_color (dapi->gc, PCB->PinColor);
       for (i = 0; i < drill->PinN; i++)
-	drill_sym (gc, TEST_FLAG (HOLEFLAG, drill->Pin[i]) ?
+	drill_sym (dapi, TEST_FLAG (HOLEFLAG, drill->Pin[i]) ?
 		   unplated_sym : plated_sym, drill->Pin[i]->X,
 		   drill->Pin[i]->Y);
       if (plated_sym != -1)
 	{
-	  drill_sym (gc, plated_sym, TEXT_SIZE, yoff + TEXT_SIZE / 4);
-	  text_at (gc, MIL_TO_COORD(1350), yoff, MIL_TO_COORD(2), "YES");
-	  text_at (gc, MIL_TO_COORD(980), yoff, MIL_TO_COORD(2), "%d",
+	  drill_sym (dapi, plated_sym, TEXT_SIZE, yoff + TEXT_SIZE / 4);
+	  text_at (dapi, MIL_TO_COORD(1350), yoff, MIL_TO_COORD(2), "YES");
+	  text_at (dapi, MIL_TO_COORD(980), yoff, MIL_TO_COORD(2), "%d",
 		   drill->PinCount + drill->ViaCount - drill->UnplatedCount);
 
 	  if (unplated_sym != -1)
@@ -266,28 +252,28 @@ PrintFab (hidGC gc)
 	}
       if (unplated_sym != -1)
 	{
-	  drill_sym (gc, unplated_sym, TEXT_SIZE, yoff + TEXT_SIZE / 4);
-	  text_at (gc, MIL_TO_COORD(1400), yoff, MIL_TO_COORD(2), "NO");
-	  text_at (gc, MIL_TO_COORD(980), yoff, MIL_TO_COORD(2), "%d", drill->UnplatedCount);
+	  drill_sym (dapi, unplated_sym, TEXT_SIZE, yoff + TEXT_SIZE / 4);
+	  text_at (dapi, MIL_TO_COORD(1400), yoff, MIL_TO_COORD(2), "NO");
+	  text_at (dapi, MIL_TO_COORD(980), yoff, MIL_TO_COORD(2), "%d", drill->UnplatedCount);
 	}
-      gui->graphics->set_color (gc, PCB->ElementColor);
-      text_at (gc, MIL_TO_COORD(450), yoff, MIL_TO_COORD(2), "%0.3f",
+      dapi->graphics->set_color (dapi->gc, PCB->ElementColor);
+      text_at (dapi, MIL_TO_COORD(450), yoff, MIL_TO_COORD(2), "%0.3f",
 	       COORD_TO_INCH(drill->DrillSize) + 0.0004);
       if (plated_sym != -1 && unplated_sym != -1)
-	text_at (gc, MIL_TO_COORD(450), yoff + TEXT_LINE, MIL_TO_COORD(2), "%0.3f",
+	text_at (dapi, MIL_TO_COORD(450), yoff + TEXT_LINE, MIL_TO_COORD(2), "%0.3f",
 	         COORD_TO_INCH(drill->DrillSize) + 0.0004);
       yoff -= TEXT_LINE;
       total_drills += drill->PinCount;
       total_drills += drill->ViaCount;
     }
 
-  gui->graphics->set_color (gc, PCB->ElementColor);
-  text_at (gc, 0, yoff, MIL_TO_COORD(9), "Symbol");
-  text_at (gc, MIL_TO_COORD(410), yoff, MIL_TO_COORD(9), "Diam. (Inch)");
-  text_at (gc, MIL_TO_COORD(950), yoff, MIL_TO_COORD(9), "Count");
-  text_at (gc, MIL_TO_COORD(1300), yoff, MIL_TO_COORD(9), "Plated?");
+  dapi->graphics->set_color (dapi->gc, PCB->ElementColor);
+  text_at (dapi, 0, yoff, MIL_TO_COORD(9), "Symbol");
+  text_at (dapi, MIL_TO_COORD(410), yoff, MIL_TO_COORD(9), "Diam. (Inch)");
+  text_at (dapi, MIL_TO_COORD(950), yoff, MIL_TO_COORD(9), "Count");
+  text_at (dapi, MIL_TO_COORD(1300), yoff, MIL_TO_COORD(9), "Plated?");
   yoff -= TEXT_LINE;
-  text_at (gc, 0, yoff, 0,
+  text_at (dapi, 0, yoff, 0,
 	   "There are %d different drill sizes used in this layout, %d holes total",
 	   AllDrills->DrillN, total_drills);
   /* Create a portable timestamp. */
@@ -311,19 +297,17 @@ PrintFab (hidGC gc)
     }
   if (i == max_copper_layer)
     {
-      gui->graphics->set_line_width (gc,  MIL_TO_COORD(10));
-      gui->graphics->draw_line (gc, 0, 0, PCB->MaxWidth, 0);
-      gui->graphics->draw_line (gc, 0, 0, 0, PCB->MaxHeight);
-      gui->graphics->draw_line (gc, PCB->MaxWidth, 0, PCB->MaxWidth,
-		      PCB->MaxHeight);
-      gui->graphics->draw_line (gc, 0, PCB->MaxHeight, PCB->MaxWidth,
-		      PCB->MaxHeight);
+      dapi->graphics->set_line_width (dapi->gc,  MIL_TO_COORD(10));
+      dapi->graphics->draw_line (dapi->gc, 0, 0, PCB->MaxWidth, 0);
+      dapi->graphics->draw_line (dapi->gc, 0, 0, 0, PCB->MaxHeight);
+      dapi->graphics->draw_line (dapi->gc, PCB->MaxWidth, 0, PCB->MaxWidth, PCB->MaxHeight);
+      dapi->graphics->draw_line (dapi->gc, 0, PCB->MaxHeight, PCB->MaxWidth, PCB->MaxHeight);
       /*FPrintOutline (); */
-      gui->graphics->set_line_width (gc, FAB_LINE_W);
-      text_at (gc, MIL_TO_COORD(2000), yoff, 0,
+      dapi->graphics->set_line_width (dapi->gc, FAB_LINE_W);
+      text_at (dapi, MIL_TO_COORD(2000), yoff, 0,
 	       "Maximum Dimensions: %f mils wide, %f mils high",
 	       COORD_TO_MIL(PCB->MaxWidth), COORD_TO_MIL(PCB->MaxHeight));
-      text_at (gc, PCB->MaxWidth / 2, PCB->MaxHeight + MIL_TO_COORD(20), 1,
+      text_at (dapi, PCB->MaxWidth / 2, PCB->MaxHeight + MIL_TO_COORD(20), 1,
 	       "Board outline is the centerline of this %f mil"
 	       " rectangle - 0,0 to %f,%f mils",
 	       COORD_TO_MIL(FAB_LINE_W), COORD_TO_MIL(PCB->MaxWidth), COORD_TO_MIL(PCB->MaxHeight));
@@ -331,33 +315,34 @@ PrintFab (hidGC gc)
   else
     {
       LayerType *layer = LAYER_PTR (i);
-      gui->graphics->set_line_width (gc, MIL_TO_COORD(10));
+      dapi->graphics->set_line_width (dapi->gc, MIL_TO_COORD(10));
       LINE_LOOP (layer);
       {
-	gui->graphics->draw_line (gc, line->Point1.X, line->Point1.Y,
-			line->Point2.X, line->Point2.Y);
+        // dapi->draw_pcb_line (dapi, layer, line);
+        dapi->graphics->draw_line (dapi->gc, line->Point1.X, line->Point1.Y, line->Point2.X, line->Point2.Y);
       }
       END_LOOP;
       ARC_LOOP (layer);
       {
-	gui->graphics->draw_arc (gc, arc->X, arc->Y, arc->Width,
-		       arc->Height, arc->StartAngle, arc->Delta);
+        // dapi->draw_pcb_arc (dapi, layer, arc);
+        dapi->graphics->draw_arc (dapi->gc, arc->X, arc->Y,
+                                  arc->Width, arc->Height, arc->StartAngle, arc->Delta);
       }
       END_LOOP;
       TEXT_LOOP (layer);
       {
-	DrawTextLowLevel (gc, text, 0);
+        dapi->draw_pcb_text (dapi, layer, text, 0);
       }
       END_LOOP;
-      gui->graphics->set_line_width (gc, FAB_LINE_W);
-      text_at (gc, PCB->MaxWidth / 2, PCB->MaxHeight + MIL_TO_COORD(20), 1,
+      dapi->graphics->set_line_width (dapi->gc, FAB_LINE_W);
+      text_at (dapi, PCB->MaxWidth / 2, PCB->MaxHeight + MIL_TO_COORD(20), 1,
 	       "Board outline is the centerline of this path");
     }
   yoff -= TEXT_LINE;
-  text_at (gc, MIL_TO_COORD(2000), yoff, 0, "Date: %s", utcTime);
+  text_at (dapi, MIL_TO_COORD(2000), yoff, 0, "Date: %s", utcTime);
   yoff -= TEXT_LINE;
-  text_at (gc, MIL_TO_COORD(2000), yoff, 0, "Author: %s", pcb_author ());
+  text_at (dapi, MIL_TO_COORD(2000), yoff, 0, "Author: %s", pcb_author ());
   yoff -= TEXT_LINE;
-  text_at (gc, MIL_TO_COORD(2000), yoff, 0,
+  text_at (dapi, MIL_TO_COORD(2000), yoff, 0,
 	   "Title: %s - Fabrication Drawing", UNKNOWN (PCB->Name));
 }
