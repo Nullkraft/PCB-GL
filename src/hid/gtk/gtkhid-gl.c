@@ -9,6 +9,7 @@
 #include "../hidint.h"
 #include "gui.h"
 #include "gui-pinout-preview.h"
+#include "outline_draw.h"
 
 /* The Linux OpenGL ABI 1.0 spec requires that we define
  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
@@ -847,6 +848,12 @@ ghid_screen_update (void)
 {
 }
 
+static void
+hidgl_set_draw_offset (DrawAPI *dapi, Coord x, Coord y)
+{
+  /* TODO: Fiddle with transformation matrix! */
+}
+
 #define Z_NEAR 3.0
 gboolean
 ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -1000,8 +1007,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_invalidate_current_gc ();
 
-  DrawAttached ();
-  DrawMark ();
+  {
+    DrawAPI *dapi;
+    dapi = outline_draw_new (gui->graphics);
+    dapi->set_draw_offset = hidgl_set_draw_offset;
+
+    DrawAttached (dapi);
+    DrawMark (dapi);
+  }
   hidgl_flush_triangles (&buffer);
 
   draw_crosshair (priv);

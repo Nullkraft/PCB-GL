@@ -51,444 +51,206 @@
 #include <dmalloc.h>
 #endif
 
-typedef struct
+
+static bool
+make_arc_from_crosshair (ArcType *arc, Coord thick)
 {
-  int x, y;
-} point;
-
-/* ---------------------------------------------------------------------------
- * some local prototypes
- */
-static void XORPolygon (PolygonType *, Coord, Coord);
-static void XORDrawElement (ElementType *, Coord, Coord);
-static void XORDrawBuffer (BufferType *);
-static void XORDrawInsertPointObject (void);
-static void XORDrawMoveOrCopyObject (void);
-static void XORDrawAttachedLine (Coord, Coord, Coord, Coord, Coord);
-static void XORDrawAttachedArc (Coord);
-
-static void
-thindraw_moved_pv (PinType *pv, Coord x, Coord y)
-{
-  /* Make a copy of the pin structure, moved to the correct position */
-  PinType moved_pv = *pv;
-  moved_pv.X += x;
-  moved_pv.Y += y;
-
-  gui->graphics->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pv, true, false);
-}
-
-/* ---------------------------------------------------------------------------
- * creates a tmp polygon with coordinates converted to screen system
- */
-static void
-XORPolygon (PolygonType *polygon, Coord dx, Coord dy)
-{
-  Cardinal i;
-  for (i = 0; i < polygon->PointN; i++)
-    {
-      Cardinal next = next_contour_point (polygon, i);
-      gui->graphics->draw_line (Crosshair.GC,
-                                polygon->Points[i].X + dx,
-                                polygon->Points[i].Y + dy,
-                                polygon->Points[next].X + dx,
-                                polygon->Points[next].Y + dy);
-    }
-}
-
-/*-----------------------------------------------------------
- * Draws the outline of an arc
- */
-static void
-XORDrawAttachedArc (Coord thick)
-{
-  ArcType arc;
-  BoxType *bx;
   Coord wx, wy;
   Angle sa, dir;
-  Coord wid = thick / 2;
 
   wx = Crosshair.X - Crosshair.AttachedBox.Point1.X;
   wy = Crosshair.Y - Crosshair.AttachedBox.Point1.Y;
+
   if (wx == 0 && wy == 0)
-    return;
-  arc.X = Crosshair.AttachedBox.Point1.X;
-  arc.Y = Crosshair.AttachedBox.Point1.Y;
+    return false;
+
+  memset (arc, 0, sizeof (*arc));
+
+  arc->X = Crosshair.AttachedBox.Point1.X;
+  arc->Y = Crosshair.AttachedBox.Point1.Y;
+
   if (XOR (Crosshair.AttachedBox.otherway, abs (wy) > abs (wx)))
     {
-      arc.X = Crosshair.AttachedBox.Point1.X + abs (wy) * SGNZ (wx);
+      arc->X = Crosshair.AttachedBox.Point1.X + abs (wy) * SGNZ (wx);
       sa = (wx >= 0) ? 0 : 180;
 #ifdef ARC45
       if (abs (wy) >= 2 * abs (wx))
-	dir = (SGNZ (wx) == SGNZ (wy)) ? 45 : -45;
+        dir = (SGNZ (wx) == SGNZ (wy)) ? 45 : -45;
       else
 #endif
-	dir = (SGNZ (wx) == SGNZ (wy)) ? 90 : -90;
+        dir = (SGNZ (wx) == SGNZ (wy)) ? 90 : -90;
     }
   else
     {
-      arc.Y = Crosshair.AttachedBox.Point1.Y + abs (wx) * SGNZ (wy);
+      arc->Y = Crosshair.AttachedBox.Point1.Y + abs (wx) * SGNZ (wy);
       sa = (wy >= 0) ? -90 : 90;
 #ifdef ARC45
       if (abs (wx) >= 2 * abs (wy))
-	dir = (SGNZ (wx) == SGNZ (wy)) ? -45 : 45;
+        dir = (SGNZ (wx) == SGNZ (wy)) ? -45 : 45;
       else
 #endif
-	dir = (SGNZ (wx) == SGNZ (wy)) ? -90 : 90;
+        dir = (SGNZ (wx) == SGNZ (wy)) ? -90 : 90;
       wy = wx;
     }
+
   wy = abs (wy);
-  arc.StartAngle = sa;
-  arc.Delta = dir;
-  arc.Width = arc.Height = wy;
-  bx = GetArcEnds (&arc);
-  /*  sa = sa - 180; */
-  gui->graphics->draw_arc (Crosshair.GC, arc.X, arc.Y, wy + wid, wy + wid, sa, dir);
-  if (wid > pixel_slop)
-    {
-      gui->graphics->draw_arc (Crosshair.GC, arc.X, arc.Y, wy - wid, wy - wid, sa, dir);
-      gui->graphics->draw_arc (Crosshair.GC, bx->X1, bx->Y1, wid, wid, sa,      -180 * SGN (dir));
-      gui->graphics->draw_arc (Crosshair.GC, bx->X2, bx->Y2, wid, wid, sa + dir, 180 * SGN (dir));
-    }
-}
+  arc->StartAngle = sa;
+  arc->Delta = dir;
+  arc->Width = arc->Height = wy;
+  arc->Thickness = thick;
 
-/*-----------------------------------------------------------
- * Draws the outline of a line
- */
-static void
-XORDrawAttachedLine (Coord x1, Coord y1, Coord x2, Coord y2, Coord thick)
-{
-  Coord dx, dy, ox, oy;
-  double h;
-
-  dx = x2 - x1;
-  dy = y2 - y1;
-  if (dx != 0 || dy != 0)
-    h = 0.5 * thick / sqrt (SQUARE (dx) + SQUARE (dy));
-  else
-    h = 0.0;
-  ox = dy * h + 0.5 * SGN (dy);
-  oy = -(dx * h + 0.5 * SGN (dx));
-  gui->graphics->draw_line (Crosshair.GC, x1 + ox, y1 + oy, x2 + ox, y2 + oy);
-  if (abs (ox) >= pixel_slop || abs (oy) >= pixel_slop)
-    {
-      Angle angle = atan2 (dx, dy) * 57.295779;
-      gui->graphics->draw_line (Crosshair.GC, x1 - ox, y1 - oy, x2 - ox, y2 - oy);
-      gui->graphics->draw_arc (Crosshair.GC, x1, y1, thick / 2, thick / 2, angle - 180, 180);
-      gui->graphics->draw_arc (Crosshair.GC, x2, y2, thick / 2, thick / 2, angle, 180);
-    }
-}
-
-/* ---------------------------------------------------------------------------
- * draws the elements of a loaded circuit which is to be merged in
- */
-static void
-XORDrawElement (ElementType *Element, Coord DX, Coord DY)
-{
-  /* if no silkscreen, draw the bounding box */
-  if (Element->ArcN == 0 && Element->LineN == 0)
-    {
-      gui->graphics->draw_line (Crosshair.GC,
-                                DX + Element->BoundingBox.X1,
-                                DY + Element->BoundingBox.Y1,
-                                DX + Element->BoundingBox.X1,
-                                DY + Element->BoundingBox.Y2);
-      gui->graphics->draw_line (Crosshair.GC,
-                                DX + Element->BoundingBox.X1,
-                                DY + Element->BoundingBox.Y2,
-                                DX + Element->BoundingBox.X2,
-                                DY + Element->BoundingBox.Y2);
-      gui->graphics->draw_line (Crosshair.GC,
-                                DX + Element->BoundingBox.X2,
-                                DY + Element->BoundingBox.Y2,
-                                DX + Element->BoundingBox.X2,
-                                DY + Element->BoundingBox.Y1);
-      gui->graphics->draw_line (Crosshair.GC,
-                                DX + Element->BoundingBox.X2,
-                                DY + Element->BoundingBox.Y1,
-                                DX + Element->BoundingBox.X1,
-                                DY + Element->BoundingBox.Y1);
-    }
-  else
-    {
-      ELEMENTLINE_LOOP (Element);
-      {
-        gui->graphics->draw_line (Crosshair.GC,
-                                  DX + line->Point1.X,
-                                  DY + line->Point1.Y,
-                                  DX + line->Point2.X,
-                                  DY + line->Point2.Y);
-      }
-      END_LOOP;
-
-      /* arc coordinates and angles have to be converted to X11 notation */
-      ARC_LOOP (Element);
-      {
-        gui->graphics->draw_arc (Crosshair.GC,
-                                 DX + arc->X,
-                                 DY + arc->Y,
-                                 arc->Width, arc->Height, arc->StartAngle, arc->Delta);
-      }
-      END_LOOP;
-    }
-  /* pin coordinates and angles have to be converted to X11 notation */
-  PIN_LOOP (Element);
-  {
-    thindraw_moved_pv (pin, DX, DY);
-  }
-  END_LOOP;
-
-  /* pads */
-  PAD_LOOP (Element);
-  {
-    if (PCB->InvisibleObjectsOn ||
-        (TEST_FLAG (ONSOLDERFLAG, pad) != 0) == Settings.ShowSolderSide)
-      {
-        /* Make a copy of the pad structure, moved to the correct position */
-        PadType moved_pad = *pad;
-        moved_pad.Point1.X += DX; moved_pad.Point1.Y += DY;
-        moved_pad.Point2.X += DX; moved_pad.Point2.Y += DY;
-
-        gui->graphics->thindraw_pcb_pad (Crosshair.GC, &moved_pad, false, false);
-      }
-  }
-  END_LOOP;
-  /* mark */
-  gui->graphics->draw_line (Crosshair.GC,
-                            Element->MarkX + DX - EMARK_SIZE,
-                            Element->MarkY + DY,
-                            Element->MarkX + DX,
-                            Element->MarkY + DY - EMARK_SIZE);
-  gui->graphics->draw_line (Crosshair.GC,
-                            Element->MarkX + DX + EMARK_SIZE,
-                            Element->MarkY + DY,
-                            Element->MarkX + DX,
-                            Element->MarkY + DY - EMARK_SIZE);
-  gui->graphics->draw_line (Crosshair.GC,
-                            Element->MarkX + DX - EMARK_SIZE,
-                            Element->MarkY + DY,
-                            Element->MarkX + DX,
-                            Element->MarkY + DY + EMARK_SIZE);
-  gui->graphics->draw_line (Crosshair.GC,
-                            Element->MarkX + DX + EMARK_SIZE,
-                            Element->MarkY + DY,
-                            Element->MarkX + DX,
-                            Element->MarkY + DY + EMARK_SIZE);
-}
-
-/* ---------------------------------------------------------------------------
- * draws all visible and attached objects of the pastebuffer
- */
-static void
-XORDrawBuffer (BufferType *Buffer)
-{
-  Cardinal i;
-  Coord x, y;
-
-  /* set offset */
-  x = Crosshair.X - Buffer->X;
-  y = Crosshair.Y - Buffer->Y;
-
-  /* draw all visible layers */
-  for (i = 0; i < max_copper_layer + 2; i++)
-    if (PCB->Data->Layer[i].On)
-      {
-	LayerType *layer = &Buffer->Data->Layer[i];
-
-	LINE_LOOP (layer);
-	{
-/*
-				XORDrawAttachedLine(x +line->Point1.X,
-					y +line->Point1.Y, x +line->Point2.X,
-					y +line->Point2.Y, line->Thickness);
-*/
-	gui->graphics->draw_line (Crosshair.GC,
-	                          x + line->Point1.X, y + line->Point1.Y,
-	                          x + line->Point2.X, y + line->Point2.Y);
-	}
-	END_LOOP;
-	ARC_LOOP (layer);
-	{
-	  gui->graphics->draw_arc (Crosshair.GC,
-	                           x + arc->X,
-	                           y + arc->Y,
-	                           arc->Width,
-	                           arc->Height, arc->StartAngle, arc->Delta);
-	}
-	END_LOOP;
-	TEXT_LOOP (layer);
-	{
-	  BoxType *box = &text->BoundingBox;
-	  gui->graphics->draw_rect (Crosshair.GC,
-	                            x + box->X1, y + box->Y1, x + box->X2, y + box->Y2);
-	}
-	END_LOOP;
-	/* the tmp polygon has n+1 points because the first
-	 * and the last one are set to the same coordinates
-	 */
-	POLYGON_LOOP (layer);
-	{
-	  XORPolygon (polygon, x, y);
-	}
-	END_LOOP;
-      }
-
-  /* draw elements if visible */
-  if (PCB->PinOn && PCB->ElementOn)
-    ELEMENT_LOOP (Buffer->Data);
-  {
-    if (FRONT (element) || PCB->InvisibleObjectsOn)
-      XORDrawElement (element, x, y);
-  }
-  END_LOOP;
-
-  /* and the vias */
-  if (PCB->ViaOn)
-    VIA_LOOP (Buffer->Data);
-  {
-    thindraw_moved_pv (via, x, y);
-  }
-  END_LOOP;
+  return true;
 }
 
 /* ---------------------------------------------------------------------------
  * draws the rubberband to insert points into polygons/lines/...
  */
 static void
-XORDrawInsertPointObject (void)
+XORDrawInsertPointObject (DrawAPI *dapi)
 {
-  LineType *line = (LineType *) Crosshair.AttachedObject.Ptr2;
-  PointType *point = (PointType *) Crosshair.AttachedObject.Ptr3;
+  LineType *line;
+  PointType *point;
 
-  if (Crosshair.AttachedObject.Type != NO_TYPE)
-    {
-      gui->graphics->draw_line (Crosshair.GC, point->X, point->Y, line->Point1.X, line->Point1.Y);
-      gui->graphics->draw_line (Crosshair.GC, point->X, point->Y, line->Point2.X, line->Point2.Y);
-    }
+  line  = (LineType  *)Crosshair.AttachedObject.Ptr2;
+  point = (PointType *)Crosshair.AttachedObject.Ptr3;
+
+  if (Crosshair.AttachedObject.Type == NO_TYPE)
+    return;
+
+  dapi->graphics->draw_line (dapi->gc, point->X, point->Y, line->Point1.X, line->Point1.Y);
+  dapi->graphics->draw_line (dapi->gc, point->X, point->Y, line->Point2.X, line->Point2.Y);
 }
 
 /* ---------------------------------------------------------------------------
  * draws the attached object while in MOVE_MODE or COPY_MODE
  */
 static void
-XORDrawMoveOrCopyObject (void)
+draw_move_or_copy_object (DrawAPI *dapi)
 {
   RubberbandType *ptr;
   Cardinal i;
-  Coord dx = Crosshair.X - Crosshair.AttachedObject.X,
-    dy = Crosshair.Y - Crosshair.AttachedObject.Y;
+  Coord dx, dy;
+
+  dx = Crosshair.X - Crosshair.AttachedObject.X;
+  dy = Crosshair.Y - Crosshair.AttachedObject.Y;
+
+  /* NB: We don't reset this.. other rendering routines are expected to do so before
+   *     they draw, so we will have to make some distinction as to which routines may
+   *     set this (and not call them from inside one another!)
+   */
+  // dapi->set_draw_offset (dapi, dx, dy);
 
   switch (Crosshair.AttachedObject.Type)
     {
     case VIA_TYPE:
       {
-        PinType *via = (PinType *) Crosshair.AttachedObject.Ptr1;
-        thindraw_moved_pv (via, dx, dy);
+        PinType *via = (PinType *)Crosshair.AttachedObject.Ptr1;
+        dapi->set_draw_offset (dapi, dx, dy);
+        dapi->draw_pcb_via (dapi, via);
         break;
       }
 
     case LINE_TYPE:
       {
-	LineType *line = (LineType *) Crosshair.AttachedObject.Ptr2;
-
-	XORDrawAttachedLine (line->Point1.X + dx, line->Point1.Y + dy,
-			     line->Point2.X + dx, line->Point2.Y + dy,
-			     line->Thickness);
-	break;
+        LineType *line = (LineType *)Crosshair.AttachedObject.Ptr2;
+        dapi->set_draw_offset (dapi, dx, dy);
+        dapi->draw_pcb_line (dapi, NULL, line);
+        break;
       }
 
     case ARC_TYPE:
       {
-	ArcType *Arc = (ArcType *) Crosshair.AttachedObject.Ptr2;
-
-	gui->graphics->draw_arc (Crosshair.GC,
-	                         Arc->X + dx,
-	                         Arc->Y + dy,
-	                         Arc->Width, Arc->Height, Arc->StartAngle, Arc->Delta);
-	break;
+        ArcType *arc = (ArcType *)Crosshair.AttachedObject.Ptr2;
+        dapi->set_draw_offset (dapi, dx, dy);
+        dapi->draw_pcb_arc (dapi, NULL, arc);
+        break;
       }
 
     case POLYGON_TYPE:
       {
-	PolygonType *polygon =
-	  (PolygonType *) Crosshair.AttachedObject.Ptr2;
-
-	/* the tmp polygon has n+1 points because the first
-	 * and the last one are set to the same coordinates
-	 */
-	XORPolygon (polygon, dx, dy);
-	break;
+        PolygonType *poly = (PolygonType *)Crosshair.AttachedObject.Ptr2;
+        dapi->set_draw_offset (dapi, dx, dy);
+        dapi->draw_pcb_polygon (dapi, NULL, poly);
+        break;
       }
 
     case LINEPOINT_TYPE:
       {
-	LineType *line;
-	PointType *point;
+        PointType *point   = (PointType *) Crosshair.AttachedObject.Ptr3;
+        LineType *old_line = (LineType  *) Crosshair.AttachedObject.Ptr2;
+        LineType draw_line = *old_line;
 
-	line = (LineType *) Crosshair.AttachedObject.Ptr2;
-	point = (PointType *) Crosshair.AttachedObject.Ptr3;
-	if (point == &line->Point1)
-	  XORDrawAttachedLine (point->X + dx,
-			       point->Y + dy, line->Point2.X,
-			       line->Point2.Y, line->Thickness);
-	else
-	  XORDrawAttachedLine (point->X + dx,
-			       point->Y + dy, line->Point1.X,
-			       line->Point1.Y, line->Thickness);
-	break;
+        if (point == &old_line->Point1)
+          {
+            draw_line.Point1.X += dx;
+            draw_line.Point1.Y += dy;
+          }
+        else
+          {
+            draw_line.Point2.X += dx;
+            draw_line.Point2.Y += dy;
+          }
+
+        dapi->draw_pcb_line (dapi, NULL, &draw_line);
+        break;
       }
 
     case POLYGONPOINT_TYPE:
       {
-	PolygonType *polygon;
-	PointType *point;
-	Cardinal point_idx, prev, next;
+        PolygonType *polygon;
+        PointType *point;
+        Cardinal point_idx, prev, next;
 
-	polygon = (PolygonType *) Crosshair.AttachedObject.Ptr2;
-	point = (PointType *) Crosshair.AttachedObject.Ptr3;
-	point_idx = polygon_point_idx (polygon, point);
+        polygon = (PolygonType *) Crosshair.AttachedObject.Ptr2;
+        point = (PointType *) Crosshair.AttachedObject.Ptr3;
+        point_idx = polygon_point_idx (polygon, point);
 
-	/* get previous and following point */
-	prev = prev_contour_point (polygon, point_idx);
-	next = next_contour_point (polygon, point_idx);
+        /* get previous and following point */
+        prev = prev_contour_point (polygon, point_idx);
+        next = next_contour_point (polygon, point_idx);
 
-	/* draw the two segments */
-	gui->graphics->draw_line (Crosshair.GC,
-	                          polygon->Points[prev].X, polygon->Points[prev].Y,
-	                          point->X + dx, point->Y + dy);
-	gui->graphics->draw_line (Crosshair.GC,
-	                          point->X + dx, point->Y + dy,
-	                          polygon->Points[next].X, polygon->Points[next].Y);
-	break;
+        /* XXX: Could do this by adjusting a copy polygon and drawing the entirity of that */
+
+        /* draw the two segments */
+        dapi->graphics->draw_line (dapi->gc,
+                                   polygon->Points[prev].X, polygon->Points[prev].Y,
+                                   point->X + dx, point->Y + dy);
+        dapi->graphics->draw_line (dapi->gc,
+                                   point->X + dx, point->Y + dy,
+                                   polygon->Points[next].X, polygon->Points[next].Y);
+        break;
       }
 
     case ELEMENTNAME_TYPE:
       {
-	/* locate the element "mark" and draw an association line from crosshair to it */
-	ElementType *element =
-	  (ElementType *) Crosshair.AttachedObject.Ptr1;
+        /* locate the element "mark" and draw an association line from crosshair to it */
+        ElementType *element = (ElementType *) Crosshair.AttachedObject.Ptr1;
 
-	gui->graphics->draw_line (Crosshair.GC,
-	                          element->MarkX,
-	                          element->MarkY, Crosshair.X, Crosshair.Y);
-	/* fall through to move the text as a box outline */
+        dapi->graphics->draw_line (dapi->gc, element->MarkX, element->MarkY, Crosshair.X, Crosshair.Y);
+        /* fall through to move the text as a box outline */
       }
     case TEXT_TYPE:
       {
-	TextType *text = (TextType *) Crosshair.AttachedObject.Ptr2;
-	BoxType *box = &text->BoundingBox;
-	gui->graphics->draw_rect (Crosshair.GC,
-	                          box->X1 + dx,
-	                          box->Y1 + dy, box->X2 + dx, box->Y2 + dy);
-	break;
+        TextType *text = (TextType *) Crosshair.AttachedObject.Ptr2;
+        BoxType *box = &text->BoundingBox;
+
+        dapi->set_draw_offset (dapi, dx, dy);
+        /* XXX: DOES THIS WORK IN CONJUNCTION WITH THE ABOVE? */
+        dapi->graphics->draw_rect (dapi->gc, box->X1, box->Y1, box->X2, box->Y2);
+        break;
       }
 
       /* pin/pad movements result in moving an element */
     case PAD_TYPE:
     case PIN_TYPE:
     case ELEMENT_TYPE:
-      XORDrawElement ((ElementType *) Crosshair.AttachedObject.Ptr2, dx, dy);
-      break;
+      {
+        ElementType *element = (ElementType *) Crosshair.AttachedObject.Ptr2;
+
+        dapi->set_draw_offset (dapi, dx, dy);
+        dapi->draw_pcb_element (dapi, element);
+        break;
+      }
     }
 
   /* draw the attached rubberband lines too */
@@ -496,34 +258,32 @@ XORDrawMoveOrCopyObject (void)
   ptr = Crosshair.AttachedObject.Rubberband;
   while (i)
     {
-      PointType *point1, *point2;
-
+      /* If this rat going to a polygon, do not draw for rubberband */
       if (TEST_FLAG (VIAFLAG, ptr->Line))
-	{
-	  /* this is a rat going to a polygon.  do not draw for rubberband */;
-	}
-      else if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
-	{
-	  /* 'point1' is always the fix-point */
-	  if (ptr->MovedPoint == &ptr->Line->Point1)
-	    {
-	      point1 = &ptr->Line->Point2;
-	      point2 = &ptr->Line->Point1;
-	    }
-	  else
-	    {
-	      point1 = &ptr->Line->Point1;
-	      point2 = &ptr->Line->Point2;
-	    }
-	  XORDrawAttachedLine (point1->X,
-			       point1->Y, point2->X + dx,
-			       point2->Y + dy, ptr->Line->Thickness);
-	}
-      else if (ptr->MovedPoint == &ptr->Line->Point1)
-	XORDrawAttachedLine (ptr->Line->Point1.X + dx,
-			     ptr->Line->Point1.Y + dy,
-			     ptr->Line->Point2.X + dx,
-			     ptr->Line->Point2.Y + dy, ptr->Line->Thickness);
+        continue;
+
+      if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
+        {
+          LineType draw_line = *ptr->Line;
+
+          if (ptr->MovedPoint == &ptr->Line->Point1)
+            {
+              draw_line.Point1.X += dx;
+              draw_line.Point1.Y += dy;
+            }
+          else
+            {
+              draw_line.Point2.X += dx;
+              draw_line.Point2.Y += dy;
+            }
+
+          dapi->draw_pcb_line (dapi, NULL, &draw_line);
+        }
+      else if (ptr->MovedPoint == &ptr->Line->Point1) /* XXX: What is this conditional for ?? */
+        {
+          dapi->set_draw_offset (dapi, dx, dy);
+          dapi->draw_pcb_line (dapi, NULL, ptr->Line);
+        }
 
       ptr++;
       i--;
@@ -534,8 +294,19 @@ XORDrawMoveOrCopyObject (void)
  * draws additional stuff that follows the crosshair
  */
 void
-DrawAttached (void)
+DrawAttached (DrawAPI *dapi)
 {
+  /* DEBUG ONLY */
+  if (dapi == NULL)
+    return;
+
+  dapi->gc = dapi->graphics->make_gc ();
+
+  dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
+//  dapi->graphics->set_draw_xor (dapi->gc, 1);
+  dapi->graphics->set_line_cap (dapi->gc, Trace_Cap);
+  dapi->graphics->set_line_width (dapi->gc, 1);
+
   switch (Settings.Mode)
     {
     case VIA_MODE:
@@ -550,15 +321,15 @@ DrawAttached (void)
         via.Mask = 0;
         via.Flags = NoFlags ();
 
-        gui->graphics->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, true, false);
+        dapi->draw_pcb_via (dapi, &via);
 
         if (TEST_FLAG (SHOWDRCFLAG, PCB))
           {
             /* XXX: Naughty cheat - use the mask to draw DRC clearance! */
             via.Mask = Settings.ViaThickness + PCB->Bloat * 2;
-            gui->graphics->set_color (Crosshair.GC, Settings.CrossColor);
-            gui->graphics->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, false, true);
-            gui->graphics->set_color (Crosshair.GC, Settings.CrosshairColor);
+            dapi->graphics->set_color (dapi->gc, Settings.CrossColor);
+            dapi->draw_pcb_via_mask (dapi, &via);
+            dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
           }
         break;
       }
@@ -568,81 +339,100 @@ DrawAttached (void)
     case POLYGONHOLE_MODE:
       /* draw only if starting point is set */
       if (Crosshair.AttachedLine.State != STATE_FIRST)
-        gui->graphics->draw_line (Crosshair.GC,
-                                  Crosshair.AttachedLine.Point1.X,
-                                  Crosshair.AttachedLine.Point1.Y,
-                                  Crosshair.AttachedLine.Point2.X,
-                                  Crosshair.AttachedLine.Point2.Y);
+        dapi->graphics->draw_line (dapi->gc,
+                                   Crosshair.AttachedLine.Point1.X, Crosshair.AttachedLine.Point1.Y,
+                                   Crosshair.AttachedLine.Point2.X, Crosshair.AttachedLine.Point2.Y);
 
       /* draw attached polygon only if in POLYGON_MODE or POLYGONHOLE_MODE */
       if (Crosshair.AttachedPolygon.PointN > 1)
-	{
-	  XORPolygon (&Crosshair.AttachedPolygon, 0, 0);
-	}
+        dapi->draw_pcb_polygon (dapi, NULL, &Crosshair.AttachedPolygon);
       break;
 
     case ARC_MODE:
-      if (Crosshair.AttachedBox.State != STATE_FIRST)
-	{
-	  XORDrawAttachedArc (Settings.LineThickness);
-	  if (TEST_FLAG (SHOWDRCFLAG, PCB))
-	    {
-	      gui->graphics->set_color (Crosshair.GC, Settings.CrossColor);
-	      XORDrawAttachedArc (Settings.LineThickness +
-				  2 * (PCB->Bloat + 1));
-	      gui->graphics->set_color (Crosshair.GC, Settings.CrosshairColor);
-	    }
+      {
+        ArcType arc;
 
-	}
-      break;
+        if (Crosshair.AttachedBox.State == STATE_FIRST)
+          break;
+
+        if (!make_arc_from_crosshair (&arc, Settings.LineThickness))
+          break;
+
+        dapi->draw_pcb_arc (dapi, NULL, &arc);
+        if (TEST_FLAG (SHOWDRCFLAG, PCB))
+          {
+            if (!make_arc_from_crosshair (&arc, Settings.LineThickness + 2 * (PCB->Bloat + 1)))
+              break;
+            dapi->graphics->set_color (dapi->gc, Settings.CrossColor);
+            dapi->draw_pcb_arc (dapi, NULL, &arc);
+            dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
+          }
+
+        break;
+      }
 
     case LINE_MODE:
       /* draw only if starting point exists and the line has length */
       if (Crosshair.AttachedLine.State != STATE_FIRST &&
-	  Crosshair.AttachedLine.draw)
-	{
-	  XORDrawAttachedLine (Crosshair.AttachedLine.Point1.X,
-			       Crosshair.AttachedLine.Point1.Y,
-			       Crosshair.AttachedLine.Point2.X,
-			       Crosshair.AttachedLine.Point2.Y,
-			       PCB->RatDraw ? 10 : Settings.LineThickness);
-	  /* draw two lines ? */
-	  if (PCB->Clipping)
-	    XORDrawAttachedLine (Crosshair.AttachedLine.Point2.X,
-				 Crosshair.AttachedLine.Point2.Y,
-				 Crosshair.X, Crosshair.Y,
-				 PCB->RatDraw ? 10 : Settings.LineThickness);
-	  if (TEST_FLAG (SHOWDRCFLAG, PCB))
-	    {
-	      gui->graphics->set_color (Crosshair.GC, Settings.CrossColor);
-	      XORDrawAttachedLine (Crosshair.AttachedLine.Point1.X,
-				   Crosshair.AttachedLine.Point1.Y,
-				   Crosshair.AttachedLine.Point2.X,
-				   Crosshair.AttachedLine.Point2.Y,
-				   PCB->RatDraw ? 10 : Settings.LineThickness
-				   + 2 * (PCB->Bloat + 1));
-	      if (PCB->Clipping)
-		XORDrawAttachedLine (Crosshair.AttachedLine.Point2.X,
-				     Crosshair.AttachedLine.Point2.Y,
-				     Crosshair.X, Crosshair.Y,
-				     PCB->RatDraw ? 10 : Settings.
-				     LineThickness + 2 * (PCB->Bloat + 1));
-	      gui->graphics->set_color (Crosshair.GC, Settings.CrosshairColor);
-	    }
-	}
+          Crosshair.AttachedLine.draw)
+        {
+          /* Make a dummy line structure to draw from */
+          LineType draw_line;
+
+          draw_line.Point1 = Crosshair.AttachedLine.Point1;
+          draw_line.Point2 = Crosshair.AttachedLine.Point2;
+          draw_line.Thickness = Settings.LineThickness;
+          draw_line.Clearance = 2 * Settings.Keepaway;
+          draw_line.Flags = NoFlags ();
+
+          draw_line.Thickness = PCB->RatDraw ? 10 : Settings.LineThickness;
+          dapi->draw_pcb_line (dapi, NULL, &draw_line);
+
+          if (PCB->Clipping)
+            {
+              draw_line.Point1.X = Crosshair.X;
+              draw_line.Point1.Y = Crosshair.Y;
+              dapi->draw_pcb_line (dapi, NULL, &draw_line);
+            }
+
+          if (TEST_FLAG (SHOWDRCFLAG, PCB))
+            {
+              dapi->graphics->set_color (dapi->gc, Settings.CrossColor);
+
+              draw_line.Point1 = Crosshair.AttachedLine.Point1;
+              draw_line.Point2 = Crosshair.AttachedLine.Point2;
+              draw_line.Thickness = PCB->RatDraw ? 10 : Settings.LineThickness + 2 * (PCB->Bloat + 1);
+              dapi->draw_pcb_line (dapi, NULL, &draw_line);
+
+              if (PCB->Clipping)
+                {
+                  draw_line.Point1.X = Crosshair.X;
+                  draw_line.Point1.Y = Crosshair.Y;
+                  dapi->draw_pcb_line (dapi, NULL, &draw_line);
+                }
+
+              dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
+            }
+        }
       break;
 
     case PASTEBUFFER_MODE:
-      XORDrawBuffer (PASTEBUFFER);
+      /* NB: We don't reset this.. other rendering routines are expected to do so before
+       *     they draw, so we will have to make some distinction as to which routines may
+       *     set this (and not call them from inside one another!)
+       */
+      dapi->set_draw_offset (dapi, Crosshair.X - PASTEBUFFER->X,
+                             Crosshair.Y - PASTEBUFFER->Y);
+      dapi->draw_pcb_buffer (dapi, PASTEBUFFER);
       break;
 
     case COPY_MODE:
     case MOVE_MODE:
-      XORDrawMoveOrCopyObject ();
+      draw_move_or_copy_object (dapi);
       break;
 
     case INSERTPOINT_MODE:
-      XORDrawInsertPointObject ();
+      XORDrawInsertPointObject (dapi);
       break;
     }
 
@@ -656,8 +446,10 @@ DrawAttached (void)
       y1 = Crosshair.AttachedBox.Point1.Y;
       x2 = Crosshair.AttachedBox.Point2.X;
       y2 = Crosshair.AttachedBox.Point2.Y;
-      gui->graphics->draw_rect (Crosshair.GC, x1, y1, x2, y2);
+      dapi->graphics->draw_rect (dapi->gc, x1, y1, x2, y2);
     }
+
+  dapi->graphics->destroy_gc (dapi->gc);
 }
 
 
@@ -665,20 +457,29 @@ DrawAttached (void)
  * draw the marker position
  */
 void
-DrawMark (void)
+DrawMark (DrawAPI *dapi)
 {
+  /* DEBUG ONLY */
+  if (dapi == NULL)
+    return;
+
   /* Mark is not drawn when it is not set */
   if (!Marked.status)
     return;
 
-  gui->graphics->draw_line (Crosshair.GC,
-                  Marked.X - MARK_SIZE,
-                  Marked.Y - MARK_SIZE,
-                  Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
-  gui->graphics->draw_line (Crosshair.GC,
-                  Marked.X + MARK_SIZE,
-                  Marked.Y - MARK_SIZE,
-                  Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
+  dapi->gc = dapi->graphics->make_gc ();
+
+  dapi->graphics->set_color (dapi->gc, Settings.CrosshairColor);
+//  dapi->graphics->set_draw_xor (dapi->gc, 1);
+  dapi->graphics->set_line_cap (dapi->gc, Trace_Cap);
+  dapi->graphics->set_line_width (dapi->gc, 1);
+
+  dapi->graphics->draw_line (dapi->gc, Marked.X - MARK_SIZE, Marked.Y - MARK_SIZE,
+                                       Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
+  dapi->graphics->draw_line (dapi->gc, Marked.X + MARK_SIZE, Marked.Y - MARK_SIZE,
+                                       Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
+  dapi->graphics->destroy_gc (dapi->gc);
+
 }
 
 /* ---------------------------------------------------------------------------
@@ -1171,12 +972,6 @@ SetCrosshairRange (Coord MinX, Coord MinY, Coord MaxX, Coord MaxY)
 void
 InitCrosshair (void)
 {
-  Crosshair.GC = gui->graphics->make_gc ();
-
-  gui->graphics->set_color (Crosshair.GC, Settings.CrosshairColor);
-  gui->graphics->set_line_cap (Crosshair.GC, Trace_Cap);
-  gui->graphics->set_line_width (Crosshair.GC, 1);
-
   /* set initial shape */
   Crosshair.shape = Basic_Crosshair_Shape;
 
@@ -1196,5 +991,4 @@ void
 DestroyCrosshair (void)
 {
   FreePolygonMemory (&Crosshair.AttachedPolygon);
-  gui->graphics->destroy_gc (Crosshair.GC);
 }
