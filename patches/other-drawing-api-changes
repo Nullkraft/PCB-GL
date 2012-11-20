@@ -1,5 +1,5 @@
 Bottom: 44ee51bcdda5b204d2160db3c298086b0738b0d2
-Top:    642a0086ec29df8ce45f9f8d981bf303d97f1472
+Top:    7e158c6c97b7855af2f8ec91f0c17139358d2361
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-14 21:59:50 +0000
 
@@ -2750,25 +2750,21 @@ index 95aa233..2548c25 100644
    glPopMatrix ();
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 6fff548..44b7916 100644
+index 6fff548..8c544d3 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2180,6 +2180,7 @@ hid_gtk_init ()
+@@ -2180,9 +2180,9 @@ hid_gtk_init ()
    ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
    ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
  
-+#if 0
-   ghid_hid.graphics                 = &ghid_graphics;
+-  ghid_hid.graphics                 = &ghid_graphics;
++//  ghid_hid.graphics                 = &ghid_graphics;
  
-   common_draw_helpers_init (&ghid_graphics);
-@@ -2196,6 +2197,7 @@ hid_gtk_init ()
-   ghid_graphics.fill_circle         = ghid_fill_circle;
-   ghid_graphics.fill_polygon        = ghid_fill_polygon;
-   ghid_graphics.fill_rect           = ghid_fill_rect;
-+#endif
+-  common_draw_helpers_init (&ghid_graphics);
++//  common_draw_helpers_init (&ghid_graphics);
  
-   hid_register_hid (&ghid_hid);
- #include "gtk_lists.h"
+   ghid_graphics.make_gc             = ghid_make_gc;
+   ghid_graphics.destroy_gc          = ghid_destroy_gc;
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
 index 043d83e..e1db86a 100644
 --- a/src/hid/lesstif/main.c
