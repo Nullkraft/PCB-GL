@@ -1,5 +1,5 @@
 Bottom: 461a73664b5f33d5d24c5d9376f9a441d97f7d73
-Top:    90380f18c6f7848ad94e7ad3898f4dccc0737155
+Top:    bff28adfcdf43a5695b845a7750f0f0218309b9e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-20 02:57:55 +0000
 
@@ -48,7 +48,7 @@ index d311420..05ecbc8 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 7e95672..ae70f94 100644
+index 7e95672..abfe69f 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -120,6 +120,9 @@ static void *ChangeTextJoin (LayerType *, TextType *);
@@ -95,7 +95,7 @@ index 7e95672..ae70f94 100644
 + * changes the clearance flag of a polygon
 + */
 +static void *
-+ChangePolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
++ChangePolyJoin (LayerType *Layer, PolygonType *poly)
 +{
 +  if (TEST_FLAG (LOCKFLAG, poly))
 +    return (NULL);
@@ -127,7 +127,7 @@ index 7e95672..ae70f94 100644
 + * sets the clearance flag of a polygon
 + */
 +static void *
-+SetPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
++SetPolyJoin (LayerType *Layer, PolygonType *poly)
 +{
 +  if (TEST_FLAG (LOCKFLAG, poly) || TEST_FLAG (CLEARLINEFLAG, poly))
 +    return (NULL);
@@ -145,7 +145,7 @@ index 7e95672..ae70f94 100644
 + * clears the clearance flag of a polygon
 + */
 +static void *
-+ClrPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
++ClrPolyJoin (LayerType *Layer, PolygonType *poly)
 +{
 +  if (TEST_FLAG (LOCKFLAG, poly) || !TEST_FLAG (CLEARLINEFLAG, poly))
 +    return (NULL);
