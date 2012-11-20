@@ -5,7 +5,9 @@ Date:   2012-11-19 23:28:17 +0000
 
 hid/lpr: Initiialise common drawing helpers
 
-Avoids a segfault printing designs with polygons
+Just being picky here.. I spent ages wondering why the old code didn't segfault,
+and it turns out that when we actually go to render, we call into the ps HID
+directly - and ignore the lpr.c HID vtables.
 
 
 ---
