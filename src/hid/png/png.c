@@ -1464,12 +1464,6 @@ png_set_line_width (hidGC gc, Coord width)
 }
 
 static void
-png_set_draw_xor (hidGC gc, int xor_)
-{
-  ;
-}
-
-static void
 use_gc (hidGC gc)
 {
   int need_brush = 0;
@@ -1829,7 +1823,6 @@ hid_png_init ()
   png_graphics.set_color      = png_set_color;
   png_graphics.set_line_cap   = png_set_line_cap;
   png_graphics.set_line_width = png_set_line_width;
-  png_graphics.set_draw_xor   = png_set_draw_xor;
   png_graphics.draw_line      = png_draw_line;
   png_graphics.draw_arc       = png_draw_arc;
   png_graphics.draw_rect      = png_draw_rect;
