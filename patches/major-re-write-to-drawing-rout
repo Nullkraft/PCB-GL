@@ -1,5 +1,5 @@
-Bottom: f295b2654243a5471ca12f9f8ae835a5513df185
-Top:    d4f22b2434a853e117a851096abf6aa0e1233e67
+Bottom: 53a47aab9b556f4f46daca1c8330ed494deb5618
+Top:    78568b5015cd15b627e20f97327d6b2e320c509b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-21 21:21:36 +0000
 
@@ -23,7 +23,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 00d550b..5e32e05 100644
+index e9062a7..124bbd2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -81,8 +81,8 @@ static bool doing_assy = false;
@@ -56,10 +56,10 @@ index 00d550b..5e32e05 100644
  {
    /*
 diff --git a/src/draw.h b/src/draw.h
-index 40fae00..f980794 100644
+index 0cb0f88..a5a49ab 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -74,4 +74,15 @@ void DrawMask (int side, const BoxType *drawn_area);
+@@ -73,4 +73,15 @@ void DrawMask (int side, const BoxType *drawn_area);
  void DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area);
  void PrintAssembly (int side, const BoxType *drawn_area);
  
