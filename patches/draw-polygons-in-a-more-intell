@@ -1,7 +1,7 @@
-Bottom: e66729a0ef53d0aea593fff5103a157d127aab6d
-Top:    36703e83d5e160e697b0289db0b8d62218c0e7c8
+Bottom: fe11187c3a9d7912ad4b5afcdadf062fab33a90e
+Top:    064ad1f66a3cfbb182483d2fb132848180b6cb77
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-21 22:15:00 +0000
+Date:   2012-11-21 22:27:35 +0000
 
 Draw polygons in a more intelligent order
 
@@ -130,10 +130,10 @@ index b31d74f..105c46a 100644
    glPopAttrib ();                               /* Restore the stencil buffer op and function */
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6346f62..9158bd7 100644
+index 69b1f15..78c0358 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1447,11 +1447,28 @@ struct poly_info
+@@ -1417,11 +1417,28 @@ struct poly_info
  };
  
  static int
@@ -164,7 +164,7 @@ index 6346f62..9158bd7 100644
    return 1;
  }
  
-@@ -1587,7 +1604,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1557,7 +1574,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.Layer = Layer;
          info.drawn_area = screen;
