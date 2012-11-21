@@ -1,5 +1,5 @@
 Bottom: e65b1735c8b77d515ec29478985323ecf74db060
-Top:    a994f901a8e58815eec46639d56fae587c2daff7
+Top:    6dc47b167350bde0b71f1207a47fb701465925ea
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 21:49:35 +0000
 
@@ -334,6 +334,20 @@ index c1de57b..2e09e1e 100644
    graphics->fill_pcb_polygon     = common_fill_pcb_polygon;
    graphics->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
    graphics->fill_pcb_pad         = common_fill_pcb_pad;
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index 28fc50f..5b1f7e9 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -51,6 +51,9 @@ struct hid_draw_st
+ 
+   /* The following APIs render using PCB data-structures, not immediate parameters */
+ 
++  void (*draw_pcb_line) (hidGC gc, LineType *line);
++  void (*draw_pcb_text) (hidGC gc, TextType *, Coord);
++
+   void (*fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+   void (*thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+   void (*fill_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
 diff --git a/src/print.c b/src/print.c
 index fc6f9ff..69328e7 100644
 --- a/src/print.c
