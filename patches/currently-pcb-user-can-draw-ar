@@ -1,5 +1,5 @@
 Bottom: 2f30210c63546db6488c195c7655365cf47fb9a0
-Top:    6061949ea93ceec5ee787e93b486625c2fa6ce8c
+Top:    89165446dc46374bd8200cc32b53d7ce32487ca4
 Author: Ineiev <ineiev@gmail.com>
 Date:   2012-11-21 01:56:30 +0000
 
@@ -307,7 +307,7 @@ index 96ecae7..647d844 100644
        /* undo the last destructive operation */
        if (Undo (true))
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 65a94fb..aab9de1 100644
+index 65a94fb..c53216f 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -96,6 +96,82 @@ XORPolygon (PolygonType *polygon, Coord dx, Coord dy)
@@ -393,8 +393,11 @@ index 65a94fb..aab9de1 100644
  /*-----------------------------------------------------------
   * Draws the outline of an arc
   */
-@@ -107,48 +183,29 @@ XORDrawAttachedArc (Coord thick)
-   Coord wx, wy;
+@@ -104,49 +180,29 @@ XORDrawAttachedArc (Coord thick)
+ {
+   ArcType arc;
+   BoxType *bx;
+-  Coord wx, wy;
    Angle sa, dir;
    Coord wid = thick / 2;
 +  Coord r;
@@ -452,12 +455,9 @@ index 65a94fb..aab9de1 100644
 -      gui->graphics->draw_arc (Crosshair.GC, arc.X, arc.Y, wy - wid, wy - wid, sa, dir);
 +      gui->graphics->draw_arc (Crosshair.GC, arc.X, arc.Y, r - wid, r - wid, sa, dir);
        gui->graphics->draw_arc (Crosshair.GC, bx->X1, bx->Y1, wid, wid, sa,      -180 * SGN (dir));
--      gui->graphics->draw_arc (Crosshair.GC, bx->X2, bx->Y2, wid, wid, sa + dir, 180 * SGN (dir));
-+      gui->graphics0>draw_arc (Crosshair.GC, bx->X2, bx->Y2, wid, wid, sa + dir, 180 * SGN (dir));
+       gui->graphics->draw_arc (Crosshair.GC, bx->X2, bx->Y2, wid, wid, sa + dir, 180 * SGN (dir));
      }
- }
- 
-@@ -582,9 +639,18 @@ DrawAttached (void)
+@@ -582,9 +638,18 @@ DrawAttached (void)
        break;
  
      case ARC_MODE:
