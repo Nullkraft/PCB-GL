@@ -653,11 +653,12 @@ DrawAttached (void)
 	   Crosshair.X, Crosshair.Y, 1);
 	  if (TEST_FLAG (SHOWDRCFLAG, PCB))
 	    {
-	      gui->graphics set_color (Crosshair.GC, Settings.CrossColor);
+	      gui->graphics->set_color (Crosshair.GC, Settings.CrossColor);
 	      XORDrawAttachedArc (Settings.LineThickness +
 				  2 * (PCB->Bloat + 1));
 	      gui->graphics->set_color (Crosshair.GC, Settings.CrosshairColor);
 	    }
+
 	}
       break;
 
