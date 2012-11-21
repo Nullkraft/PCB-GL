@@ -1,5 +1,5 @@
 Bottom: b77828531ff0db382daec1aea72efe570302a1f1
-Top:    11987c07fbebad608967f966cf2f0c1136a64808
+Top:    3f0afa425501b7381a471dd870205c9568ec5aea
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-21 20:26:36 +0000
 
@@ -111,6 +111,17 @@ index e2d0ab8..003b6a4 100644
  
  /* This is the main HID structure.  */
    struct hid_st
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 6c6320a..c1de57b 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -1,5 +1,6 @@
+ #include "global.h"
+ #include "hid.h"
++#include "hid_draw.h"
+ #include "polygon.h"
+ 
+ static void
 diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
 index a5b662e..665d206 100644
 --- a/src/hid/common/extents.c
@@ -159,6 +170,18 @@ index ccb7faa..b9830e6 100644
  #include "../hidint.h"
  #include "hid/common/hidnogui.h"
  #include "hid/common/draw_helpers.h"
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index af719fd..2bbd2de 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -27,6 +27,7 @@
+ 
+ #include "global.h"
+ #include "hid.h"
++#include "hid_draw.h"
+ #include "hid/common/hid_resource.h"
+ 
+ #include "data.h"
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
 index ea793b8..3e2fa01 100644
 --- a/src/hid/lesstif/main.c
