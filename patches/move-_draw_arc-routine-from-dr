@@ -1,0 +1,14 @@
+Bottom: f61b8cbd1b4501b444875ed3889515991b0deae4
+Top:    f61b8cbd1b4501b444875ed3889515991b0deae4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-21 21:58:43 +0000
+
+Move _draw_arc() routine from draw.c into HID_DRAW API
+
+The API is now called draw_pcb_arc, and the default implementation
+resides in hid/common/draw_helpers.c
+
+
+---
+
+
