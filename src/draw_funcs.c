@@ -5,6 +5,7 @@
 #include "rtree.h"
 #include "draw_funcs.h"
 #include "draw.h"
+#include "hid_draw.h"
 
 static void
 _draw_pv (PinType *pv, bool draw_hole)
