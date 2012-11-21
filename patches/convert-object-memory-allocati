@@ -1,7 +1,7 @@
-Bottom: 55706d20a0ce520850139fc2c7f2859726fec2e0
-Top:    3bafc4762ccfdeee673df0efbb1668db0c22cd2b
+Bottom: e65b1735c8b77d515ec29478985323ecf74db060
+Top:    8f52ed2043482555982a97136d8b3c3eef320280
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-21 02:44:57 +0000
+Date:   2012-11-21 21:21:30 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,10 +9,10 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 6da9419..ce56613 100644
+index 96ecae7..b6ce6a1 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1889,37 +1889,39 @@ static int
+@@ -1878,37 +1878,39 @@ static int
  ActionDumpLibrary (int argc, char **argv, Coord x, Coord y)
  {
    int i, j;
@@ -70,7 +70,7 @@ index 6da9419..ce56613 100644
  	    }
  	}
      }
-@@ -3246,6 +3248,8 @@ static const char renumber_help[] =
+@@ -3235,6 +3237,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, Coord x, Coord y)
  {
@@ -79,7 +79,7 @@ index 6da9419..ce56613 100644
    bool changed = false;
    ElementType **element_list;
    ElementType **locked_element_list;
-@@ -3583,6 +3587,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3572,6 +3576,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    free (element_list);
    free (cnt_list);
    return 0;
@@ -87,7 +87,7 @@ index 6da9419..ce56613 100644
  }
  
  
-@@ -4591,16 +4596,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4580,16 +4585,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index 6da9419..ce56613 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatType *) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6924,22 +6928,26 @@ find_element_by_refdes (char *refdes)
+@@ -6905,22 +6909,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListType *list, const char *name)
  {
@@ -490,10 +490,10 @@ index b39ff65..76992d2 100644
 +  return attr;
  }
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 9f5512b..a08232d 100644
+index 1079c5f..e51fa84 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -429,8 +429,7 @@ XORDrawInsertPointObject (void)
+@@ -374,8 +374,7 @@ XORDrawInsertPointObject (void)
  static void
  XORDrawMoveOrCopyObject (void)
  {
@@ -503,7 +503,7 @@ index 9f5512b..a08232d 100644
    Coord dx = Crosshair.X - Crosshair.AttachedObject.X,
      dy = Crosshair.Y - Crosshair.AttachedObject.Y;
  
-@@ -548,10 +547,9 @@ XORDrawMoveOrCopyObject (void)
+@@ -493,10 +492,9 @@ XORDrawMoveOrCopyObject (void)
      }
  
    /* draw the attached rubberband lines too */
@@ -516,7 +516,7 @@ index 9f5512b..a08232d 100644
        PointType *point1, *point2;
  
        if (TEST_FLAG (VIAFLAG, ptr->Line))
-@@ -580,9 +578,6 @@ XORDrawMoveOrCopyObject (void)
+@@ -525,9 +523,6 @@ XORDrawMoveOrCopyObject (void)
  			     ptr->Line->Point1.Y + dy,
  			     ptr->Line->Point2.X + dx,
  			     ptr->Line->Point2.Y + dy, ptr->Line->Thickness);
@@ -527,10 +527,10 @@ index 9f5512b..a08232d 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index e4d59f5..fca90dd 100644
+index 32aacd5..3f4b1ab 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1198,7 +1198,7 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
+@@ -1199,7 +1199,7 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
@@ -539,7 +539,7 @@ index e4d59f5..fca90dd 100644
    FontType *font = &PCB->Font;
  
    while (string && *string)
-@@ -1206,11 +1206,12 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
+@@ -1207,11 +1207,12 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
        /* draw lines if symbol is valid and data is present */
        if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
  	{
@@ -825,7 +825,7 @@ index 7b966dc..88dc04e 100644
  } BoxListType;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index d1e3114..4138b63 100644
+index f12fba3..5dc4f31 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -928,6 +928,7 @@ static void
@@ -958,10 +958,10 @@ index e2c08d5..eb405db 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 6c837be..041d568 100644
+index 7151f82..371d1ca 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -324,28 +324,26 @@ nelma_write_materials(FILE * out)
+@@ -325,28 +325,26 @@ nelma_write_materials(FILE * out)
  static void 
  nelma_write_nets(FILE * out)
  {
@@ -996,7 +996,7 @@ index 6c837be..041d568 100644
  
  			/* pin_name_to_xy(pin, &x, &y); */
  
-@@ -377,7 +375,7 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -378,7 +376,7 @@ nelma_write_layer(FILE * out, int z, int h,
  	LibraryMenuType *net;
  	LibraryEntryType *pin;
  
@@ -1005,7 +1005,7 @@ index 6c837be..041d568 100644
  
  	fprintf(out, "layer %s {\n", name);
  	fprintf(out, "\theight = %d\n", h);
-@@ -388,11 +386,11 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -389,11 +387,11 @@ nelma_write_layer(FILE * out, int z, int h,
  		fprintf(out, "\tobjects = {\n");
  		netlist = PCB->NetlistLib;
  
@@ -1021,7 +1021,7 @@ index 6c837be..041d568 100644
  
  				if (m != 0 || n != 0)
  					fprintf(out, ",\n");
-@@ -498,17 +496,17 @@ nelma_write_objects(FILE * out)
+@@ -499,17 +497,17 @@ nelma_write_objects(FILE * out)
  	LibraryMenuType *net;
  	LibraryEntryType *pin;
  
