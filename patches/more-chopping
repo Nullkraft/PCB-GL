@@ -1,5 +1,5 @@
-Bottom: 50054f3a1a54ac3d40c94887dbfe5ca6470476e7
-Top:    408634fc9e2cbd40a6233ce415450d9a9525078a
+Bottom: 64843cf7aa063acf543fd67e19ee6537ee411834
+Top:    64843cf7aa063acf543fd67e19ee6537ee411834
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 12:47:44 +0100
 
@@ -8,57 +8,4 @@ more chopping
 
 ---
 
-diff --git a/src/hid.h b/src/hid.h
-index 258d5e1b..4f9f506 100644
---- a/src/hid.h
-+++ b/src/hid.h
-@@ -372,12 +372,6 @@ typedef enum
- 
-     HID_DRAW_API *graphics;
- 
--    void (*draw_pcb_polygon) (hidGC gc_, PolygonType *poly, const BoxType *clip_box);
--    void (*fill_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
--    void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
--    void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
--    void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
--
- 
-     /* This is for the printer.  If you call this for the GUI, xval and
-        yval are ignored, and a dialog pops up to lead you through the
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 54ecebd..4017b0d 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -811,7 +811,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
- 
-   /* Setup HID function pointers specific to the GL renderer*/
-   ghid_hid.end_layer = ghid_end_layer;
--  ghid_hid.draw_pcb_polygon = ghid_draw_pcb_polygon;
-+//  ghid_hid.draw_pcb_polygon = ghid_draw_pcb_polygon;
- }
- 
- void
-@@ -900,8 +900,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   /* If we don't have any stencil bits available,
-      we can't use the hidgl polygon drawing routine */
-   /* TODO: We could use the GLU tessellator though */
--  if (hidgl_stencil_bits() == 0)
--    ghid_hid.draw_pcb_polygon = common_gui_draw_pcb_polygon;
-+//  if (hidgl_stencil_bits() == 0)
-+//    ghid_hid.draw_pcb_polygon = common_gui_draw_pcb_polygon;
- 
-   glEnable (GL_BLEND);
-   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index c617776..6b9774f 100644
---- a/src/hid/ps/ps.c
-+++ b/src/hid/ps/ps.c
-@@ -1492,7 +1492,7 @@ void ps_ps_init (HID *hid)
-   hid->get_export_options = ps_get_export_options;
-   hid->do_export          = ps_do_export;
-   hid->parse_arguments    = ps_parse_arguments;
--  hid->draw_pcb_polygon   = ps_draw_pcb_polygon;
-+//  hid->draw_pcb_polygon   = ps_draw_pcb_polygon;
-   hid->calibrate          = ps_calibrate;
-   hid->set_crosshair      = ps_set_crosshair;
- }
+
