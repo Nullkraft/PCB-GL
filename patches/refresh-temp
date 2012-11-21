@@ -1,0 +1,26 @@
+Bottom: 0e8a35f50ed1585fa6b4ad784fbaaa29c79e6360
+Top:    6061949ea93ceec5ee787e93b486625c2fa6ce8c
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-21 01:59:54 +0000
+
+Refresh of currently-pcb-user-can-draw-ar
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 15d1385..aab9de1 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -653,11 +653,12 @@ DrawAttached (void)
+ 	   Crosshair.X, Crosshair.Y, 1);
+ 	  if (TEST_FLAG (SHOWDRCFLAG, PCB))
+ 	    {
+-	      gui->graphics set_color (Crosshair.GC, Settings.CrossColor);
++	      gui->graphics->set_color (Crosshair.GC, Settings.CrossColor);
+ 	      XORDrawAttachedArc (Settings.LineThickness +
+ 				  2 * (PCB->Bloat + 1));
+ 	      gui->graphics->set_color (Crosshair.GC, Settings.CrosshairColor);
+ 	    }
++
+ 	}
+       break;
