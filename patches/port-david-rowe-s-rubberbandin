@@ -1,5 +1,5 @@
-Bottom: 16527ffcc5f9af97911a9a7c357279d47858967b
-Top:    bc9703bded2a15c5ce1e42234bde7fa638a4cc36
+Bottom: e2e328780484bb0a8a042a4edc5641601df66f03
+Top:    48c27cd4fdf546e8d0fa40941f123e2a2cc5ae1f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-02-01 21:58:58 +0000
 
@@ -9,7 +9,7 @@ Port David Rowe's rubberbanding patch to git HEAD
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 96ecae7..72f511a 100644
+index 6da9419..d90d8a5 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -192,6 +192,7 @@ typedef enum
@@ -28,7 +28,7 @@ index 96ecae7..72f511a 100644
    {"ToggleStartDirection", F_ToggleStartDirection},
    {"ToggleSnapPin", F_ToggleSnapPin},
    {"ToggleThindraw", F_ToggleThindraw},
-@@ -2456,6 +2458,7 @@ static const char display_syntax[] =
+@@ -2467,6 +2469,7 @@ static const char display_syntax[] =
    "Display(Grid|Redraw)\n"
    "Display(CycleClip|CycleCrosshair|Toggle45Degree|ToggleStartDirection)\n"
    "Display(ToggleGrid|ToggleRubberBandMode|ToggleUniqueNames)\n"
@@ -36,7 +36,7 @@ index 96ecae7..72f511a 100644
    "Display(ToggleMask|ToggleName|ToggleClearLine|ToggleFullPoly|ToggleSnapPin)\n"
    "Display(ToggleThindraw|ToggleThindrawPoly|ToggleOrthoMove|ToggleLocalRef)\n"
    "Display(ToggleCheckPlanes|ToggleShowDRC|ToggleAutoDRC)\n"
-@@ -2493,6 +2496,10 @@ Changes crosshair drawing.  Crosshair may accept form of 4-ray,
+@@ -2504,6 +2507,10 @@ Changes crosshair drawing.  Crosshair may accept form of 4-ray,
  @item ToggleRubberBandMode
  If set, moving an object moves all the lines attached to it too.
  
@@ -47,7 +47,7 @@ index 96ecae7..72f511a 100644
  @item ToggleStartDirection
  If set, each time you set a point in a line, the Clip toggles between
  orth-angle and angle-ortho.
-@@ -2690,6 +2697,10 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+@@ -2701,6 +2708,10 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
  	  notify_crosshair_change (true);
  	  break;
  
@@ -93,10 +93,10 @@ index b39ff65..5c1301a 100644
    ptr->Line = Line;
    ptr->MovedPoint = MovedPoint;
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 937e506..9f53f44 100644
+index a7c0ae1..b37cf38 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -44,13 +44,17 @@
+@@ -45,13 +45,17 @@
  #include "line.h"
  #include "misc.h"
  #include "mymem.h"
@@ -114,7 +114,7 @@ index 937e506..9f53f44 100644
  typedef struct
  {
    int x, y;
-@@ -375,8 +379,10 @@ XORDrawMoveOrCopyObject (void)
+@@ -432,8 +436,10 @@ XORDrawMoveOrCopyObject (void)
  {
    RubberbandType *ptr;
    Cardinal i;
@@ -126,7 +126,7 @@ index 937e506..9f53f44 100644
  
    switch (Crosshair.AttachedObject.Type)
      {
-@@ -390,10 +396,18 @@ XORDrawMoveOrCopyObject (void)
+@@ -447,10 +453,18 @@ XORDrawMoveOrCopyObject (void)
      case LINE_TYPE:
        {
  	LineType *line = (LineType *) Crosshair.AttachedObject.Ptr2;
@@ -148,7 +148,7 @@ index 937e506..9f53f44 100644
  	break;
        }
  
-@@ -515,9 +529,14 @@ XORDrawMoveOrCopyObject (void)
+@@ -572,9 +586,14 @@ XORDrawMoveOrCopyObject (void)
  	      point1 = &ptr->Line->Point1;
  	      point2 = &ptr->Line->Point2;
  	    }
