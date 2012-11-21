@@ -1,7 +1,7 @@
-Bottom: ce4af841ce3030131076df581f330015ea4798aa
-Top:    81f370f55dd92cdd63d6b754b87f0efc172cf563
+Bottom: 1c92df1a9d16b50307422a8fda01e5381f7b749c
+Top:    d4ffae942816b16ca7598e9ff77ef36cb4e1bafb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-21 21:21:34 +0000
+Date:   2012-11-21 21:56:03 +0000
 
 Demo of exporter specific export routine
 
@@ -9,11 +9,11 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 2e09e1e..9217f78 100644
+index c888247..cdc4056 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -4,6 +4,11 @@
- #include "data.h" /* For nasty global "PCB" variable */
+ #include "data.h" /* For global "PCB" variable */
  #include "rotate.h" /* For RotateLineLowLevel() */
  #include "polygon.h"
 +#include "rtree.h"
