@@ -1,5 +1,5 @@
 Bottom: f183b36f2feaee878d4d60f58f81206333ab9593
-Top:    c939273aa2f357eaf752d05a6826b3e99c4a75ae
+Top:    3f5e1d917dfaeeb9650072d2dc589ee4f755e4cd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-21 21:56:04 +0000
 
@@ -76,7 +76,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 68bc08e..436c06a 100644
+index 68bc08e..0b9e171 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -128,12 +128,12 @@ index 68bc08e..436c06a 100644
 -
 -  end_subcomposite ();
 -  start_subcomposite ();
--
--  /* Drawing is already flushed by {start,end}_subcomposite */
--  hidgl_set_depth (compute_depth (group));
 +  bool group_visible = false;
 +  bool subcomposite = true;
  
+-  /* Drawing is already flushed by {start,end}_subcomposite */
+-  hidgl_set_depth (compute_depth (group));
+-
 -  if (idx >= 0 && idx < max_copper_layer + 2)
 +  if (group >= 0 && group < max_group)
      {
@@ -247,7 +247,7 @@ index 68bc08e..436c06a 100644
  }
  
  void
-@@ -934,6 +965,856 @@ ghid_screen_update (void)
+@@ -934,6 +965,826 @@ ghid_screen_update (void)
  {
  }
  
@@ -550,20 +550,6 @@ index 68bc08e..436c06a 100644
 +}
 +
 +static void
-+_draw_line (LineType *line)
-+{
-+  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
-+  if (TEST_FLAG (THINDRAWFLAG, PCB))
-+    gui->graphics->set_line_width (Output.fgGC, 0);
-+  else
-+    gui->graphics->set_line_width (Output.fgGC, line->Thickness);
-+
-+  gui->graphics->draw_line (Output.fgGC,
-+		  line->Point1.X, line->Point1.Y,
-+		  line->Point2.X, line->Point2.Y);
-+}
-+
-+static void
 +draw_line (LayerType *layer, LineType *line)
 +{
 +  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
@@ -575,7 +561,7 @@ index 68bc08e..436c06a 100644
 +    }
 +  else
 +    gui->graphics->set_color (Output.fgGC, layer->Color);
-+  _draw_line (line);
++  gui->graphics->draw_pcb_line (Output.fgGC, line);
 +}
 +
 +static int
@@ -583,22 +569,6 @@ index 68bc08e..436c06a 100644
 +{
 +  draw_line ((LayerType *) cl, (LineType *) b);
 +  return 1;
-+}
-+
-+static void
-+_draw_arc (ArcType *arc)
-+{
-+  if (!arc->Thickness)
-+    return;
-+
-+  if (TEST_FLAG (THINDRAWFLAG, PCB))
-+    gui->graphics->set_line_width (Output.fgGC, 0);
-+  else
-+    gui->graphics->set_line_width (Output.fgGC, arc->Thickness);
-+  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
-+
-+  gui->graphics->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
-+                 arc->Height, arc->StartAngle, arc->Delta);
 +}
 +
 +static void
@@ -614,7 +584,7 @@ index 68bc08e..436c06a 100644
 +  else
 +    gui->graphics->set_color (Output.fgGC, layer->Color);
 +
-+  _draw_arc (arc);
++  gui->graphics->draw_pcb_arc (Output.fgGC, arc);
 +}
 +
 +static int
@@ -1104,7 +1074,7 @@ index 68bc08e..436c06a 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1003,8 +1884,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1003,8 +1854,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1115,7 +1085,7 @@ index 68bc08e..436c06a 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1070,17 +1951,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1070,17 +1921,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
