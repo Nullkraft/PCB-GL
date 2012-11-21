@@ -1,0 +1,24 @@
+Bottom: 3f0afa425501b7381a471dd870205c9568ec5aea
+Top:    e65b1735c8b77d515ec29478985323ecf74db060
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-21 20:57:18 +0000
+
+Refresh of move-hid-drawing-api-prototype
+
+---
+
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index 39fe87b..28fc50f 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -51,10 +51,6 @@ struct hid_draw_st
+ 
+   /* The following APIs render using PCB data-structures, not immediate parameters */
+ 
+-
+-  void (*draw_pcb_line) (hidGC gc, LineType *line);
+-  void (*draw_pcb_text) (hidGC gc, TextType *, Coord);
+-
+   void (*fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+   void (*thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+   void (*fill_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
