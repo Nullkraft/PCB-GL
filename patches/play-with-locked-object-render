@@ -1,7 +1,7 @@
-Bottom: 4b9c84ee764f18efe51d73a95ce26e2b85409549
-Top:    9ec3c96263f9b825c0c45aa511c95e0d987426da
+Bottom: bf719d3fa7d1bf4cda7866a9b7400c316f7240bf
+Top:    9a4aadd42fdd31c694e69d8ef8c720168498e12e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-11-21 21:21:44 +0000
+Date:   2012-11-21 21:25:57 +0000
 
 Play with locked object rendering
 
@@ -70,19 +70,19 @@ index 7f02288..5293d42 100644
    gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
    gui->graphics->set_line_width (Output.fgGC, 0);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index ccb84b8..976f1aa 100644
+index e4a1d86..8ec613c 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
-@@ -6,6 +6,8 @@
- #include "draw_funcs.h"
+@@ -7,6 +7,8 @@
  #include "draw.h"
+ #include "hid_draw.h"
  
 +void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
 +
  static void
  _draw_pv (PinType *pv, bool draw_hole)
  {
-@@ -190,6 +192,7 @@ line_callback (const BoxType * b, void *cl)
+@@ -191,6 +193,7 @@ line_callback (const BoxType * b, void *cl)
    LayerType *layer = cl;
    LineType *line = (LineType *)b;
  
@@ -90,7 +90,7 @@ index ccb84b8..976f1aa 100644
    if (TEST_FLAG (SELECTEDFLAG, line))   gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
    else if (TEST_FLAG (FOUNDFLAG, line)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
    else                                  gui->graphics->set_color (Output.fgGC, layer->Color);
-@@ -204,6 +207,7 @@ arc_callback (const BoxType * b, void *cl)
+@@ -205,6 +208,7 @@ arc_callback (const BoxType * b, void *cl)
    LayerType *layer = cl;
    ArcType *arc = (ArcType *)b;
  
@@ -98,7 +98,7 @@ index ccb84b8..976f1aa 100644
    if (TEST_FLAG (SELECTEDFLAG, arc))   gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
    else if (TEST_FLAG (FOUNDFLAG, arc)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
    else                                 gui->graphics->set_color (Output.fgGC, layer->Color);
-@@ -223,6 +227,7 @@ poly_callback (const BoxType * b, void *cl)
+@@ -224,6 +228,7 @@ poly_callback (const BoxType * b, void *cl)
    struct poly_info *i = cl;
    PolygonType *polygon = (PolygonType *)b;
  
@@ -106,7 +106,7 @@ index ccb84b8..976f1aa 100644
    if (TEST_FLAG (SELECTEDFLAG, polygon))   gui->graphics->set_color (Output.fgGC, i->layer->SelectedColor);
    else if (TEST_FLAG (FOUNDFLAG, polygon)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
    else                                     gui->graphics->set_color (Output.fgGC, i->layer->Color);
-@@ -238,6 +243,7 @@ text_callback (const BoxType * b, void *cl)
+@@ -239,6 +244,7 @@ text_callback (const BoxType * b, void *cl)
    TextType *text = (TextType *)b;
    int min_silk_line;
  
@@ -114,7 +114,7 @@ index ccb84b8..976f1aa 100644
    if (TEST_FLAG (SELECTEDFLAG, text))
      gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
    else
-@@ -254,6 +260,7 @@ text_callback (const BoxType * b, void *cl)
+@@ -255,6 +261,7 @@ text_callback (const BoxType * b, void *cl)
  static void
  set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
  {
@@ -122,7 +122,7 @@ index ccb84b8..976f1aa 100644
    if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
    else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                                     : PCB->PinSelectedColor);
-@@ -289,6 +296,7 @@ pad_inlayer_callback (const BoxType * b, void *cl)
+@@ -290,6 +297,7 @@ pad_inlayer_callback (const BoxType * b, void *cl)
  
    if (ON_SIDE (pad, side))
      {
@@ -130,7 +130,7 @@ index ccb84b8..976f1aa 100644
        if (TEST_FLAG (WARNFLAG, pad))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
        else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
        else if (TEST_FLAG (FOUNDFLAG, pad))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
-@@ -309,6 +317,7 @@ pin_hole_callback (const BoxType * b, void *cl)
+@@ -310,6 +318,7 @@ pin_hole_callback (const BoxType * b, void *cl)
        (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
      return 1;
  
@@ -138,7 +138,7 @@ index ccb84b8..976f1aa 100644
    if (TEST_FLAG (WARNFLAG, pin))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
    else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
    else                                    gui->graphics->set_color (Output.fgGC, Settings.BlackColor);
-@@ -327,6 +336,7 @@ via_hole_callback (const BoxType * b, void *cl)
+@@ -328,6 +337,7 @@ via_hole_callback (const BoxType * b, void *cl)
        (plated == 1 &&  TEST_FLAG (HOLEFLAG, via)))
      return 1;
  
@@ -146,7 +146,7 @@ index ccb84b8..976f1aa 100644
    if (TEST_FLAG (WARNFLAG, via))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
    else if (TEST_FLAG (SELECTEDFLAG, via)) gui->graphics->set_color (Output.fgGC, PCB->ViaSelectedColor);
    else                                    gui->graphics->set_color (Output.fgGC, Settings.BlackColor);
-@@ -338,6 +348,7 @@ via_hole_callback (const BoxType * b, void *cl)
+@@ -339,6 +349,7 @@ via_hole_callback (const BoxType * b, void *cl)
  static void
  set_pv_color (PinType *pv, int type)
  {
@@ -154,7 +154,7 @@ index ccb84b8..976f1aa 100644
    if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
    else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                                     : PCB->PinSelectedColor);
-@@ -370,6 +381,7 @@ pad_callback (const BoxType * b, void *cl)
+@@ -371,6 +382,7 @@ pad_callback (const BoxType * b, void *cl)
  
    if (ON_SIDE (pad, *side))
      {
