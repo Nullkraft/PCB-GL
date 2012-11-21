@@ -1,5 +1,5 @@
-Bottom: c6bde6ba34ff8468346cb7c34ec7d895efd2b24a
-Top:    816b2cfebbaa843c96972fcc4bdd5c51942ae58f
+Bottom: b35b78097799271d43be30dc8c44f22dbd48ee56
+Top:    cb1bb0fc27005f81c8769b7e889200bbc85e4526
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-21 21:56:04 +0000
 
@@ -9,10 +9,10 @@ DRAW_FUNCS: Attempt at different render order for PCB+GL
 ---
 
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index ded1b2b..8b4c147 100644
+index f881685..274eecb 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
-@@ -433,12 +433,25 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+@@ -410,12 +410,25 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
    int group = GetLayerGroupNumberByPointer (layer);
    struct poly_info info = {drawn_area, layer};
  
@@ -38,7 +38,7 @@ index ded1b2b..8b4c147 100644
    r_search (layer->line_tree, drawn_area, NULL, line_callback, layer);
    r_search (layer->arc_tree,  drawn_area, NULL, arc_callback,  layer);
    r_search (layer->text_tree, drawn_area, NULL, text_callback, layer);
-@@ -474,8 +487,6 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+@@ -451,8 +464,6 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
  
    /* draw vias */
    r_search (PCB->Data->via_tree, drawn_area, NULL, via_inlayer_callback, layer);
