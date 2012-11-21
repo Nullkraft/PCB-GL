@@ -1,6 +1,7 @@
 #include "global.h"
 #include "data.h"
 #include "polygon.h"
+#include "hid_draw.h"
 
 static void
 fill_contour (PLINE *pl)
