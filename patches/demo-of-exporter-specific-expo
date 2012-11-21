@@ -1,5 +1,5 @@
-Bottom: 1c92df1a9d16b50307422a8fda01e5381f7b749c
-Top:    d4ffae942816b16ca7598e9ff77ef36cb4e1bafb
+Bottom: 53f8c235a64cc8cc969b34f65f24f7cab1c289cf
+Top:    15ee7febbb8806075131038eee8606340b8939c6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-21 21:56:03 +0000
 
@@ -9,7 +9,7 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index c888247..cdc4056 100644
+index f6fbe71..521c2b9 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -4,6 +4,11 @@
@@ -24,7 +24,7 @@ index c888247..cdc4056 100644
  
  
  static void
-@@ -580,3 +585,225 @@ common_draw_helpers_init (HID_DRAW *graphics)
+@@ -596,3 +601,225 @@ common_draw_helpers_init (HID_DRAW *graphics)
    graphics->fill_pcb_pv          = common_fill_pcb_pv;
    graphics->thindraw_pcb_pv      = common_thindraw_pcb_pv;
  }
