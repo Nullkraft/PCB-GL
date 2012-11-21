@@ -1226,7 +1226,7 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
 	      newline.Point1.Y += Text->Y;
 	      newline.Point2.X += Text->X;
 	      newline.Point2.Y += Text->Y;
-	      _draw_line (gc, &newline);
+	      gui->graphics->draw_pcb_line (gc, &newline);
 	    }
 
 	  /* move on to next cursor position */
