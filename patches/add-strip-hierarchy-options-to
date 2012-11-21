@@ -1,7 +1,7 @@
-Bottom: 4683fbca62793048b96e9155b250028cb7b1c781
-Top:    079572a9950855af28510cbcf761b21da363f39a
+Bottom: 3f9d022fc2a0d726b25ec5c02976c0b6ab9bb6c2
+Top:    4c9f78fbb5ba715dd96817e95c72c66f112a33dc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-21 21:56:10 +0000
+Date:   2012-11-21 22:15:02 +0000
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -148,7 +148,7 @@ index 7d732e8..e11ca17 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index 124bbd2..3d1932e 100644
+index 60d85fb..ecfc9c5 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -153,6 +153,32 @@ pad_callback (const BoxType * b, void *cl)
