@@ -2181,8 +2181,6 @@ hid_gtk_init ()
   ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
   ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
 
-  ghid_hid.draw_pcb_polygon         = common_gui_draw_pcb_polygon;
-
   ghid_hid.graphics                 = &ghid_graphics;
 
   ghid_graphics.make_gc             = ghid_make_gc;
@@ -2198,6 +2196,8 @@ hid_gtk_init ()
   ghid_graphics.fill_circle         = ghid_fill_circle;
   ghid_graphics.fill_polygon        = ghid_fill_polygon;
   ghid_graphics.fill_rect           = ghid_fill_rect;
+
+  ghid_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
 
   hid_register_hid (&ghid_hid);
 #include "gtk_lists.h"

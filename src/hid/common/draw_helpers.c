@@ -4,6 +4,7 @@
 #include "data.h" /* For nasty global "PCB" variable */
 #include "rotate.h" /* For RotateLineLowLevel() */
 #include "polygon.h"
+#include "draw_helpers.h"
 
 
 static void
@@ -241,12 +242,12 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
 #undef BOUNDS_INSIDE_CLIP_THRESHOLD
 
 void
-common_gui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip_box)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    common_thindraw_pcb_polygon (gc, polygon, drawn_area);
+    common_thindraw_pcb_polygon (gc, polygon, clip_box);
   else
-    common_fill_pcb_polygon (gc, polygon, drawn_area);
+    common_fill_pcb_polygon (gc, polygon, clip_box);
 
   /* If checking planes, thin-draw any pieces which have been clipped away */
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
@@ -256,7 +257,7 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_bo
       for (poly.Clipped = polygon->Clipped->f;
            poly.Clipped != polygon->Clipped;
            poly.Clipped = poly.Clipped->f)
-        common_thindraw_pcb_polygon (gc, &poly, drawn_area);
+        common_thindraw_pcb_polygon (gc, &poly, clip_box);
     }
 }
 
