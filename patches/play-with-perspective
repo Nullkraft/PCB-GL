@@ -1,7 +1,7 @@
-Bottom: d7be4606503159bb14603da30654bb48f7993731
-Top:    7bda89364609e79cb21c9d0c61331f88d62e8be5
+Bottom: 13398e19dfd87b52a0ec013d62326a1f4c5da954
+Top:    1e81701a731ed8afea1d5065fa6a4cb371f81d54
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-21 02:45:07 +0000
+Date:   2012-11-21 21:21:41 +0000
 
 Play with perspective
 
@@ -76,7 +76,7 @@ index 105c46a..d471fb6 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 98d3b53..be104b4 100644
+index 97bafc8..70f19bd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -13,6 +13,7 @@
@@ -94,7 +94,7 @@ index 98d3b53..be104b4 100644
 +//#define VIEW_ORTHO
 +
  extern HID ghid_hid;
- extern HID_DRAW_API ghid_graphics;
+ extern HID_DRAW ghid_graphics;
  
 @@ -55,6 +58,10 @@ static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                                {0.0, 1.0, 0.0, 0.0},
