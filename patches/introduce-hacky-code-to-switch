@@ -1,7 +1,7 @@
-Bottom: f9eb97974515567f89bff8eea61dff690c4149df
-Top:    16dd524fe2531cb6488a14dde26cb6b6c2c71ae6
+Bottom: 478b7481323096f2d75b0d4024e50bad781e5409
+Top:    35b5258de2e3522fd23e4a8d4a47ffb724d7856c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-11-21 02:45:10 +0000
+Date:   2012-11-21 21:21:43 +0000
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -9,10 +9,10 @@ Introduce hacky code to switch cursor when over a line we might drag
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 9f5512b..ed87e42 100644
+index 1079c5f..1bb75ea 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -1162,11 +1162,66 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+@@ -1098,11 +1098,66 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
        ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
                                    LINEPOINT_TYPE | ARCPOINT_TYPE,
                                    &ptr1, &ptr2, &ptr3);
@@ -84,7 +84,7 @@ index 9f5512b..ed87e42 100644
    if (Settings.Mode == LINE_MODE
        && Crosshair.AttachedLine.State != STATE_FIRST
 diff --git a/src/crosshair.h b/src/crosshair.h
-index 0ae8be7..40f4410 100644
+index 2dd5e7e..d35807a 100644
 --- a/src/crosshair.h
 +++ b/src/crosshair.h
 @@ -39,6 +39,17 @@
@@ -106,10 +106,10 @@ index 0ae8be7..40f4410 100644
  void notify_crosshair_change (bool changes_complete);
  void notify_mark_change (bool changes_complete);
 diff --git a/src/hid.h b/src/hid.h
-index 6135750..406ce4b 100644
+index 003b6a4..2aa7c8d 100644
 --- a/src/hid.h
 +++ b/src/hid.h
-@@ -579,6 +579,10 @@ typedef enum
+@@ -518,6 +518,10 @@ typedef enum
  
      /* Notification to the GUI that the PCB file has been renamed. */
      void (*notify_filename_changed) (void);
@@ -121,7 +121,7 @@ index 6135750..406ce4b 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 51ddde6..a2c4980 100644
+index e731e2f..2527640 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1137,6 +1137,16 @@ static int PointCursor (int argc, char **argv, Coord x, Coord y)
@@ -187,10 +187,10 @@ index bf3b79e..f0c4d39 100644
  ghid_mode_cursor (int Mode)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c05346c..8f6c0a4 100644
+index ab7ca61..840bd4e 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -263,6 +263,7 @@ void ghid_cursor_position_relative_label_set_text (gchar * text);
+@@ -264,6 +264,7 @@ void ghid_cursor_position_relative_label_set_text (gchar * text);
  void ghid_hand_cursor (void);
  void ghid_point_cursor (void);
  void ghid_watch_cursor (void);

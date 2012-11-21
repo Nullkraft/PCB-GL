@@ -1,7 +1,7 @@
-Bottom: 79a5fe8a8963bc70b0170881343b8c10868b037c
-Top:    4d4e2597328358f3834b08be0969b6f9162a04ad
+Bottom: 4b9c84ee764f18efe51d73a95ce26e2b85409549
+Top:    9ec3c96263f9b825c0c45aa511c95e0d987426da
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-11-21 02:45:10 +0000
+Date:   2012-11-21 21:21:44 +0000
 
 Play with locked object rendering
 
@@ -14,10 +14,10 @@ the exercise is to determine whether the usability is better or not.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index e0d8cd1..a627ecc 100644
+index 81e7c1f..a70e4dd 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1142,7 +1142,6 @@ NotifyMode (void)
+@@ -1131,7 +1131,6 @@ NotifyMode (void)
  	    DrawElement (element);
  	    Draw ();
  	    SetChangedFlag (true);
@@ -25,7 +25,7 @@ index e0d8cd1..a627ecc 100644
  	  }
  	else if (type != NO_TYPE)
  	  {
-@@ -1157,7 +1156,6 @@ NotifyMode (void)
+@@ -1146,7 +1145,6 @@ NotifyMode (void)
  		Draw ();
  	      }
  	    SetChangedFlag (true);
@@ -34,10 +34,10 @@ index e0d8cd1..a627ecc 100644
  	break;
        }
 diff --git a/src/draw.c b/src/draw.c
-index 27cc367..d1af49b 100644
+index 7f02288..5293d42 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -177,12 +177,15 @@ DrawStrippedText (hidGC gc, ElementType *Element, int min_width)
+@@ -178,12 +178,15 @@ DrawStrippedText (hidGC gc, ElementType *Element, int min_width)
    DrawTextLowLevel (gc, text_ptr, min_width);
  }
  
@@ -53,7 +53,7 @@ index 27cc367..d1af49b 100644
    if (doing_pinout || doing_assy)
      gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
    else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, element)))
-@@ -265,6 +268,7 @@ rat_callback (const BoxType * b, void *cl)
+@@ -266,6 +269,7 @@ rat_callback (const BoxType * b, void *cl)
  static void
  draw_element_package (ElementType *element)
  {
@@ -61,7 +61,7 @@ index 27cc367..d1af49b 100644
    /* set color and draw lines, arcs, text and pins */
    if (doing_pinout || doing_assy)
      gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
-@@ -499,6 +503,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+@@ -500,6 +504,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
        mark_size = MIN (mark_size, pad0->Thickness / 2);
      }
  
@@ -163,7 +163,7 @@ index ccb84b8..976f1aa 100644
        else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
        else if (TEST_FLAG (FOUNDFLAG, pad))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 844680e..3e53c60 100644
+index bd26b41..f4846ae 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -71,6 +71,8 @@ typedef struct render_priv {
