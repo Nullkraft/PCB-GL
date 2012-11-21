@@ -1,5 +1,5 @@
 Bottom: e65b1735c8b77d515ec29478985323ecf74db060
-Top:    e65b1735c8b77d515ec29478985323ecf74db060
+Top:    d41bb4ce7402f63336a9806a3ed08231b6f7adca
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-21 21:46:48 +0000
 
@@ -8,4 +8,105 @@ Move _draw_line() routine from draw.c into HID_DRAW API
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 32aacd5..8d01922 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -448,19 +448,6 @@ DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
+ }
+ 
+ static void
+-_draw_line (hidGC gc, LineType *line)
+-{
+-  gui->graphics->set_line_cap (gc, Trace_Cap);
+-  if (TEST_FLAG (THINDRAWFLAG, PCB))
+-    gui->graphics->set_line_width (gc, 0);
+-  else
+-    gui->graphics->set_line_width (gc, line->Thickness);
+-
+-  gui->graphics->draw_line (gc, line->Point1.X, line->Point1.Y,
+-                                line->Point2.X, line->Point2.Y);
+-}
+-
+-static void
+ draw_line (LayerType *layer, LineType *line)
+ {
+   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
+@@ -472,7 +459,7 @@ draw_line (LayerType *layer, LineType *line)
+     }
+   else
+     gui->graphics->set_color (Output.fgGC, layer->Color);
+-  _draw_line (Output.fgGC, line);
++  gui->graphics->draw_pcb_line (Output.fgGC, line);
+ }
+ 
+ static int
+@@ -512,7 +499,7 @@ rat_callback (const BoxType * b, void *cl)
+                                w * 2, w * 2, 0, 360);
+     }
+   else
+-    _draw_line (Output.fgGC, (LineType *) rat);
++    gui->graphics->draw_pcb_line (Output.fgGC, (LineType *) rat);
+   return 1;
+ }
+ 
+@@ -571,7 +558,7 @@ draw_element_package (ElementType *element)
+   /* draw lines, arcs, text and pins */
+   ELEMENTLINE_LOOP (element);
+   {
+-    _draw_line (Output.fgGC, line);
++    gui->graphics->draw_pcb_line (Output.fgGC, line);
+   }
+   END_LOOP;
+   ARC_LOOP (element);
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index c1de57b..7d97b2f 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -1,8 +1,24 @@
+ #include "global.h"
+ #include "hid.h"
+ #include "hid_draw.h"
++#include "data.h" /* For global "PCB" variable */
+ #include "polygon.h"
+ 
++
++static void
++common_draw_pcb_line (hidGC gc, LineType *line)
++{
++  gui->graphics->set_line_cap (gc, Trace_Cap);
++  if (TEST_FLAG (THINDRAWFLAG, PCB))
++    gui->graphics->set_line_width (gc, 0);
++  else
++    gui->graphics->set_line_width (gc, line->Thickness);
++
++  gui->graphics->draw_line (gc,
++                            line->Point1.X, line->Point1.Y,
++                            line->Point2.X, line->Point2.Y);
++}
++
+ static void
+ fill_contour (hidGC gc, PLINE *pl)
+ {
+@@ -470,6 +486,8 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+ void
+ common_draw_helpers_init (HID_DRAW *graphics)
+ {
++  graphics->draw_pcb_line        = common_draw_pcb_line;
++
+   graphics->fill_pcb_polygon     = common_fill_pcb_polygon;
+   graphics->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
+   graphics->fill_pcb_pad         = common_fill_pcb_pad;
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index 28fc50f..0d950ee 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -51,6 +51,8 @@ struct hid_draw_st
+ 
+   /* The following APIs render using PCB data-structures, not immediate parameters */
+ 
++  void (*draw_pcb_line) (hidGC gc, LineType *line);
++
+   void (*fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+   void (*thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+   void (*fill_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
