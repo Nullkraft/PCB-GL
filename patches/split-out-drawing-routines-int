@@ -1,5 +1,5 @@
 Bottom: eb9787c938548b4041728cf1029a905cd4edc2ad
-Top:    eb9787c938548b4041728cf1029a905cd4edc2ad
+Top:    0768d516bf7a156b80bbfe47e1751be2a74cea11
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 21:49:35 +0000
 
@@ -26,4 +26,13 @@ XXX: XXX: XXX: NO IT ISNT!!!
 
 ---
 
-
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index 5b1f7e9..61e9013 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -62,3 +62,5 @@ struct hid_draw_st
+   void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+ 
+ };
++
++/* HELLO WORLD.. TRIVIAL CHANGE TO AVOID "stg clean" CLEANING THIS COMMIT WITH A USEFUL COMMIT MESSAGE */
