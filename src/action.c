@@ -1045,7 +1045,7 @@ NotifyMode (void)
 
               arc = 0;
 	      if (gui->shift_is_pressed ())
-		{ 
+		{
 		  void rebase_attached_arc (Coord *preserved_dir);
 		  Coord cx,cy,x,y;
 
@@ -1061,7 +1061,7 @@ NotifyMode (void)
 		      if (Crosshair.AttachedLine.State == STATE_SECOND)
 			rebase_attached_arc (&preserved_dir);
 		    }
- 		  else
+		  else
 		    break;
 		}
 
@@ -1081,7 +1081,7 @@ NotifyMode (void)
 
 	      if (!gui->shift_is_pressed ()
 		  || Crosshair.AttachedLine.State == STATE_SECOND)
-	        arc = CreateNewArcOnLayer 
+	        arc = CreateNewArcOnLayer
 		      (CURRENT, arcx, arcy, r, r, sa, dir,
 		       Settings.LineThickness, 2 * Settings.Keepaway,
 		       MakeFlags (TEST_FLAG (CLEARNEWFLAG, PCB)

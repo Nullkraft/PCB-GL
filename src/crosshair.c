@@ -639,10 +639,10 @@ DrawAttached (void)
 
     case ARC_MODE:
       if (Crosshair.AttachedBox.State == STATE_SECOND)
-	XORDrawAttachedLine
-	(Crosshair.AttachedLine.Point1.X,
-	 Crosshair.AttachedLine.Point1.Y,
-	 Crosshair.X, Crosshair.Y, Settings.LineThickness);
+	XORDrawAttachedLine (Crosshair.AttachedLine.Point1.X,
+	                     Crosshair.AttachedLine.Point1.Y,
+	                     Crosshair.X, Crosshair.Y,
+	                     Settings.LineThickness);
       if (Crosshair.AttachedBox.State == STATE_THIRD)
 	{
 	  XORDrawAttachedArc (Settings.LineThickness);

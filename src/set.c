@@ -284,7 +284,7 @@ SetMode (int Mode)
       Crosshair.AttachedLine.Point1.Y = Crosshair.AttachedLine.Point2.Y;
       Crosshair.AttachedLine.Point2.X = x;
       Crosshair.AttachedLine.Point2.Y = y;
-      
+
       AdjustAttachedObjects ();
     }
   else if (Settings.Mode == ARC_MODE && Mode == LINE_MODE &&
@@ -308,7 +308,7 @@ SetMode (int Mode)
   else if (Settings.Mode == ARC_MODE && (Mode == ARC_MODE || Mode == LINE_MODE))
      {
        if(Crosshair.AttachedLine.State == STATE_SECOND)
-         {/* begin the next segment at the end of the previous */ 
+         {/* begin the next segment at the end of the previous */
 	      double angle;
 	      Coord sa, r, center_x, center_y, end_x, end_y;
 
@@ -329,7 +329,7 @@ SetMode (int Mode)
 		  Crosshair.AttachedLine.State = STATE_FIRST;
 		  Crosshair.AttachedBox.State = STATE_THIRD;
 		}
-	      
+
 	      if (Mode == LINE_MODE)
 		{
 		  Crosshair.AttachedLine.Point1.X = end_x;
