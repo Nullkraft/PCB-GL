@@ -504,22 +504,6 @@ rat_callback (const BoxType * b, void *cl)
 }
 
 static void
-_draw_arc (ArcType *arc)
-{
-  if (!arc->Thickness)
-    return;
-
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->graphics->set_line_width (Output.fgGC, 0);
-  else
-    gui->graphics->set_line_width (Output.fgGC, arc->Thickness);
-  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
-
-  gui->graphics->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
-                           arc->Height, arc->StartAngle, arc->Delta);
-}
-
-static void
 draw_arc (LayerType *layer, ArcType *arc)
 {
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, arc))
@@ -532,7 +516,7 @@ draw_arc (LayerType *layer, ArcType *arc)
   else
     gui->graphics->set_color (Output.fgGC, layer->Color);
 
-  _draw_arc (arc);
+  gui->graphics->draw_pcb_arc (Output.fgGC, arc);
 }
 
 static int
@@ -563,7 +547,7 @@ draw_element_package (ElementType *element)
   END_LOOP;
   ARC_LOOP (element);
   {
-    _draw_arc (arc);
+    gui->graphics->draw_pcb_arc (Output.fgGC, arc);
   }
   END_LOOP;
 }
