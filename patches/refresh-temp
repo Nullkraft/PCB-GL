@@ -1,0 +1,100 @@
+Bottom: f61b8cbd1b4501b444875ed3889515991b0deae4
+Top:    825dbe82b9b85f6a3d2525eea369ec9a97787f50
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-21 22:03:32 +0000
+
+Refresh of move-_draw_arc-routine-from-dr
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 0e03427..aa13ebf 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -504,22 +504,6 @@ rat_callback (const BoxType * b, void *cl)
+ }
+ 
+ static void
+-_draw_arc (ArcType *arc)
+-{
+-  if (!arc->Thickness)
+-    return;
+-
+-  if (TEST_FLAG (THINDRAWFLAG, PCB))
+-    gui->graphics->set_line_width (Output.fgGC, 0);
+-  else
+-    gui->graphics->set_line_width (Output.fgGC, arc->Thickness);
+-  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
+-
+-  gui->graphics->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
+-                           arc->Height, arc->StartAngle, arc->Delta);
+-}
+-
+-static void
+ draw_arc (LayerType *layer, ArcType *arc)
+ {
+   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, arc))
+@@ -532,7 +516,7 @@ draw_arc (LayerType *layer, ArcType *arc)
+   else
+     gui->graphics->set_color (Output.fgGC, layer->Color);
+ 
+-  _draw_arc (arc);
++  gui->graphics->draw_pcb_arc (Output.fgGC, arc);
+ }
+ 
+ static int
+@@ -563,7 +547,7 @@ draw_element_package (ElementType *element)
+   END_LOOP;
+   ARC_LOOP (element);
+   {
+-    _draw_arc (arc);
++    gui->graphics->draw_pcb_arc (Output.fgGC, arc);
+   }
+   END_LOOP;
+ }
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 7d97b2f..774c10a 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -20,6 +20,21 @@ common_draw_pcb_line (hidGC gc, LineType *line)
+ }
+ 
+ static void
++common_draw_pcb_arc (hidGC gc, ArcType *arc)
++{
++  if (!arc->Thickness)
++    return;
++
++  if (TEST_FLAG (THINDRAWFLAG, PCB))
++    gui->graphics->set_line_width (gc, 0);
++  else
++    gui->graphics->set_line_width (gc, arc->Thickness);
++  gui->graphics->set_line_cap (gc, Trace_Cap);
++
++  gui->graphics->draw_arc (gc, arc->X, arc->Y, arc->Width, arc->Height, arc->StartAngle, arc->Delta);
++}
++
++static void
+ fill_contour (hidGC gc, PLINE *pl)
+ {
+   Coord *x, *y, n, i = 0;
+@@ -487,6 +502,7 @@ void
+ common_draw_helpers_init (HID_DRAW *graphics)
+ {
+   graphics->draw_pcb_line        = common_draw_pcb_line;
++  graphics->draw_pcb_arc         = common_draw_pcb_arc;
+ 
+   graphics->fill_pcb_polygon     = common_fill_pcb_polygon;
+   graphics->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index 0d950ee..b5081b2 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -52,6 +52,7 @@ struct hid_draw_st
+   /* The following APIs render using PCB data-structures, not immediate parameters */
+ 
+   void (*draw_pcb_line) (hidGC gc, LineType *line);
++  void (*draw_pcb_arc) (hidGC gc, ArcType *arc);
+ 
+   void (*fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+   void (*thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
