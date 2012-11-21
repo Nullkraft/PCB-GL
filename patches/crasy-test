@@ -1,7 +1,7 @@
-Bottom: 55706d20a0ce520850139fc2c7f2859726fec2e0
-Top:    eb05dc3aae5a90f3d7898f6a95abce7c9e972ec0
+Bottom: e65b1735c8b77d515ec29478985323ecf74db060
+Top:    5be9037dcd86e2694f8498b6c37d1af35eb5fbd1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-21 02:45:02 +0000
+Date:   2012-11-21 21:21:34 +0000
 
 Crasy test
 
@@ -24,10 +24,10 @@ index 269ee78..89ac430 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index e4d59f5..bfa7ebd 100644
+index 32aacd5..6cc1f3d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -39,6 +39,7 @@
+@@ -40,6 +40,7 @@
  #include "crosshair.h"
  #include "data.h"
  #include "draw.h"
@@ -35,7 +35,7 @@ index e4d59f5..bfa7ebd 100644
  #include "error.h"
  #include "mymem.h"
  #include "misc.h"
-@@ -80,51 +81,9 @@ static bool doing_assy = false;
+@@ -81,51 +82,9 @@ static bool doing_assy = false;
  static void DrawEverything (const BoxType *);
  static void DrawPPV (int group, const BoxType *);
  static void AddPart (void *);
@@ -87,7 +87,7 @@ index e4d59f5..bfa7ebd 100644
  
  /*---------------------------------------------------------------------------
   *  Adds the update rect to the update region
-@@ -164,166 +123,32 @@ Redraw (void)
+@@ -165,166 +124,32 @@ Redraw (void)
  }
  
  static void
@@ -265,7 +265,7 @@ index e4d59f5..bfa7ebd 100644
  static int
  pad_callback (const BoxType * b, void *cl)
  {
-@@ -331,7 +156,15 @@ pad_callback (const BoxType * b, void *cl)
+@@ -332,7 +157,15 @@ pad_callback (const BoxType * b, void *cl)
    int *side = cl;
  
    if (ON_SIDE (pad, *side))
@@ -282,7 +282,7 @@ index e4d59f5..bfa7ebd 100644
    return 1;
  }
  
-@@ -373,12 +206,27 @@ draw_element_pins_and_pads (ElementType *element)
+@@ -374,12 +207,27 @@ draw_element_pins_and_pads (ElementType *element)
    PAD_LOOP (element);
    {
      if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
@@ -312,7 +312,7 @@ index e4d59f5..bfa7ebd 100644
    }
    END_LOOP;
  }
-@@ -402,35 +250,11 @@ hole_callback (const BoxType * b, void *cl)
+@@ -403,35 +251,11 @@ hole_callback (const BoxType * b, void *cl)
        (plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
      return 1;
  
@@ -352,7 +352,7 @@ index e4d59f5..bfa7ebd 100644
    return 1;
  }
  
-@@ -446,111 +270,16 @@ DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
+@@ -447,111 +271,16 @@ DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
    r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
  }
  
@@ -468,7 +468,7 @@ index e4d59f5..bfa7ebd 100644
    return 1;
  }
  
-@@ -570,12 +299,14 @@ draw_element_package (ElementType *element)
+@@ -571,12 +300,14 @@ draw_element_package (ElementType *element)
    /* draw lines, arcs, text and pins */
    ELEMENTLINE_LOOP (element);
    {
@@ -485,7 +485,7 @@ index e4d59f5..bfa7ebd 100644
    }
    END_LOOP;
  }
-@@ -654,7 +385,7 @@ DrawEverything (const BoxType *drawn_area)
+@@ -655,7 +386,7 @@ DrawEverything (const BoxType *drawn_area)
  	{
  	  r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
  	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
@@ -494,7 +494,7 @@ index e4d59f5..bfa7ebd 100644
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
        gui->end_layer ();
-@@ -789,8 +520,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+@@ -790,8 +521,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
        mark_size = MIN (mark_size, pad0->Thickness / 2);
      }
  
@@ -504,7 +504,7 @@ index e4d59f5..bfa7ebd 100644
    gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
    gui->graphics->set_line_width (Output.fgGC, 0);
    gui->graphics->draw_line (Output.fgGC, X - mark_size, Y, X, Y - mark_size);
-@@ -851,69 +581,26 @@ DrawPPV (int group, const BoxType *drawn_area)
+@@ -852,69 +582,26 @@ DrawPPV (int group, const BoxType *drawn_area)
  }
  
  static int
@@ -581,7 +581,7 @@ index e4d59f5..bfa7ebd 100644
    return 1;
  }
  
-@@ -935,22 +622,22 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -936,22 +623,22 @@ DrawSilk (int side, const BoxType * drawn_area)
      {
        gui->graphics->use_mask (HID_MASK_BEFORE);
  #endif
@@ -611,7 +611,7 @@ index e4d59f5..bfa7ebd 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -993,9 +680,9 @@ DrawMask (int side, const BoxType *screen)
+@@ -994,9 +681,9 @@ DrawMask (int side, const BoxType *screen)
        gui->graphics->use_mask (HID_MASK_CLEAR);
      }
  
@@ -624,7 +624,7 @@ index e4d59f5..bfa7ebd 100644
  
    if (thin)
      gui->graphics->set_color (Output.pmGC, "erase");
-@@ -1015,13 +702,8 @@ DrawPaste (int side, const BoxType *drawn_area)
+@@ -1016,13 +703,8 @@ DrawPaste (int side, const BoxType *drawn_area)
    gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
    ALLPAD_LOOP (PCB->Data);
    {
@@ -640,7 +640,7 @@ index e4d59f5..bfa7ebd 100644
    }
    ENDALL_LOOP;
  }
-@@ -1043,61 +725,6 @@ DrawRats (const BoxType *drawn_area)
+@@ -1044,61 +726,6 @@ DrawRats (const BoxType *drawn_area)
      gui->graphics->use_mask (HID_MASK_OFF);
  }
  
@@ -702,7 +702,7 @@ index e4d59f5..bfa7ebd 100644
  /* ---------------------------------------------------------------------------
   * draws one layer group.  If the exporter is not a GUI,
   * also draws the pins / pads / vias in this layer group.
-@@ -1119,7 +746,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -1120,7 +747,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
            strcmp (Layer->Name, "route") == 0)
          rv = 0;
        if (layernum < max_copper_layer && Layer->On)
@@ -711,7 +711,7 @@ index e4d59f5..bfa7ebd 100644
      }
    if (n_entries > 1)
      rv = 1;
-@@ -1190,6 +817,19 @@ GatherPadName (PadType *Pad)
+@@ -1191,6 +818,19 @@ GatherPadName (PadType *Pad)
    return;
  }
  
@@ -1177,7 +1177,7 @@ index 0000000..25c33a1
 +
 +extern struct draw_funcs *dapi;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 5f5aebc..12e50fb 100644
+index b9830e6..89b2508 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -25,6 +25,7 @@
@@ -1187,8 +1187,8 @@ index 5f5aebc..12e50fb 100644
 +#include "draw_funcs.h"
  
  #include "hid.h"
- #include "../hidint.h"
-@@ -855,7 +856,7 @@ gerber_set_layer (const char *name, int group, int empty)
+ #include "hid_draw.h"
+@@ -856,7 +857,7 @@ gerber_set_layer (const char *name, int group, int empty)
      {
        if (outline_layer
  	  && outline_layer != PCB->Data->Layer+idx)
@@ -1198,7 +1198,7 @@ index 5f5aebc..12e50fb 100644
  	{
  	  hidGC gc = gui->graphics->make_gc ();
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 6930507..a0cfa00 100644
+index 597ff6d..674b755 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -15,6 +15,7 @@
@@ -1208,8 +1208,8 @@ index 6930507..a0cfa00 100644
 +#include "draw_funcs.h"
  
  #include "hid.h"
- #include "../hidint.h"
-@@ -1003,7 +1004,7 @@ ps_set_layer (const char *name, int group, int empty)
+ #include "hid_draw.h"
+@@ -1004,7 +1005,7 @@ ps_set_layer (const char *name, int group, int empty)
        strcmp (name, "route") != 0
        )
      {
