@@ -52,6 +52,7 @@ struct hid_draw_st
   /* The following APIs render using PCB data-structures, not immediate parameters */
 
   void (*draw_pcb_line) (hidGC gc, LineType *line);
+  void (*draw_pcb_text) (hidGC gc, TextType *, Coord);
 
   void (*fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
   void (*thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
