@@ -1264,20 +1264,6 @@ hole_callback (const BoxType * b, void *cl)
 }
 
 static void
-_draw_line (LineType *line)
-{
-  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->graphics->set_line_width (Output.fgGC, 0);
-  else
-    gui->graphics->set_line_width (Output.fgGC, line->Thickness);
-
-  gui->graphics->draw_line (Output.fgGC,
-		  line->Point1.X, line->Point1.Y,
-		  line->Point2.X, line->Point2.Y);
-}
-
-static void
 draw_line (LayerType *layer, LineType *line)
 {
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
@@ -1289,7 +1275,7 @@ draw_line (LayerType *layer, LineType *line)
     }
   else
     gui->graphics->set_color (Output.fgGC, layer->Color);
-  _draw_line (line);
+  gui->graphics->draw_pcb_line (Output.fgGC, line);
 }
 
 static int
@@ -1297,22 +1283,6 @@ line_callback (const BoxType * b, void *cl)
 {
   draw_line ((LayerType *) cl, (LineType *) b);
   return 1;
-}
-
-static void
-_draw_arc (ArcType *arc)
-{
-  if (!arc->Thickness)
-    return;
-
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->graphics->set_line_width (Output.fgGC, 0);
-  else
-    gui->graphics->set_line_width (Output.fgGC, arc->Thickness);
-  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
-
-  gui->graphics->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
-                 arc->Height, arc->StartAngle, arc->Delta);
 }
 
 static void
@@ -1328,7 +1298,7 @@ draw_arc (LayerType *layer, ArcType *arc)
   else
     gui->graphics->set_color (Output.fgGC, layer->Color);
 
-  _draw_arc (arc);
+  gui->graphics->draw_pcb_arc (Output.fgGC, arc);
 }
 
 static int
