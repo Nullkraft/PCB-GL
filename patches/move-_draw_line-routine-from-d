@@ -1,5 +1,5 @@
 Bottom: e65b1735c8b77d515ec29478985323ecf74db060
-Top:    d41bb4ce7402f63336a9806a3ed08231b6f7adca
+Top:    f61b8cbd1b4501b444875ed3889515991b0deae4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-21 21:46:48 +0000
 
@@ -9,7 +9,7 @@ Move _draw_line() routine from draw.c into HID_DRAW API
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 32aacd5..8d01922 100644
+index 32aacd5..0e03427 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -448,19 +448,6 @@ DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
@@ -59,6 +59,15 @@ index 32aacd5..8d01922 100644
    }
    END_LOOP;
    ARC_LOOP (element);
+@@ -1239,7 +1226,7 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
+ 	      newline.Point1.Y += Text->Y;
+ 	      newline.Point2.X += Text->X;
+ 	      newline.Point2.Y += Text->Y;
+-	      _draw_line (gc, &newline);
++	      gui->graphics->draw_pcb_line (gc, &newline);
+ 	    }
+ 
+ 	  /* move on to next cursor position */
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
 index c1de57b..7d97b2f 100644
 --- a/src/hid/common/draw_helpers.c
