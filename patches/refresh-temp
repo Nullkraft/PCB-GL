@@ -1,0 +1,102 @@
+Bottom: 6cc08f3942a05f8777fb95deaf0b6eadfd3645c5
+Top:    a6d5cf5f447e422f2e5fa0301efc7c20f5a386e5
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-21 21:17:07 +0000
+
+Refresh of drawing-api-refactor
+
+---
+
+diff --git a/src/draw_funcs.c b/src/draw_funcs.c
+index b417747..bd4e5b8 100644
+--- a/src/draw_funcs.c
++++ b/src/draw_funcs.c
+@@ -5,14 +5,15 @@
+ #include "rtree.h"
+ #include "draw_funcs.h"
+ #include "draw.h"
++#include "hid_draw.h"
+ 
+ static void
+ _draw_pv (PinType *pv, bool draw_hole)
+ {
+   if (TEST_FLAG (THINDRAWFLAG, PCB))
+-    gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
++    gui->graphics->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
+   else
+-    gui->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
++    gui->graphics->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
+ }
+ 
+ static void
+@@ -25,9 +26,9 @@ static void
+ draw_pin_mask (PinType *pin, const BoxType *drawn_area, void *userdata)
+ {
+   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+-    gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
++    gui->graphics->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+   else
+-    gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
++    gui->graphics->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+ }
+ 
+ static void
+@@ -40,9 +41,9 @@ static void
+ draw_via_mask (PinType *via, const BoxType *drawn_area, void *userdata)
+ {
+   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+-    gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
++    gui->graphics->thindraw_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
+   else
+-    gui->fill_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
++    gui->graphics->fill_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
+ }
+ 
+ static void
+@@ -69,9 +70,9 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+ 
+   if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+       (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+-    gui->thindraw_pcb_pad (gc, pad, clear, mask);
++    gui->graphics->thindraw_pcb_pad (gc, pad, clear, mask);
+   else
+-    gui->fill_pcb_pad (gc, pad, clear, mask);
++    gui->graphics->fill_pcb_pad (gc, pad, clear, mask);
+ }
+ 
+ static void
+@@ -164,25 +165,7 @@ draw_poly (PolygonType *polygon, const BoxType *drawn_area, void *userdata)
+   if (!polygon->Clipped)
+     return;
+ 
+-  if (gui->thindraw_pcb_polygon != NULL &&
+-      (TEST_FLAG (THINDRAWFLAG, PCB) ||
+-       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+-    gui->thindraw_pcb_polygon (Output.fgGC, polygon, drawn_area);
+-  else
+-    gui->fill_pcb_polygon (Output.fgGC, polygon, drawn_area);
+-
+-  /* If checking planes, thin-draw any pieces which have been clipped away */
+-  if (gui->thindraw_pcb_polygon != NULL &&
+-      TEST_FLAG (CHECKPLANESFLAG, PCB) &&
+-      !TEST_FLAG (FULLPOLYFLAG, polygon))
+-    {
+-      PolygonType poly = *polygon;
+-
+-      for (poly.Clipped = polygon->Clipped->f;
+-           poly.Clipped != polygon->Clipped;
+-           poly.Clipped = poly.Clipped->f)
+-        gui->thindraw_pcb_polygon (Output.fgGC, &poly, drawn_area);
+-    }
++  gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, drawn_area);
+ }
+ 
+ static int
+@@ -248,7 +231,7 @@ text_callback (const BoxType * b, void *cl)
+     min_silk_line = PCB->minSlk;
+   else
+     min_silk_line = PCB->minWid;
+-  DrawTextLowLevel (text, min_silk_line);
++  gui->graphics->draw_pcb_text (Output.fgGC, text, min_silk_line);
+   return 1;
+ }
