@@ -81,8 +81,8 @@ static bool doing_assy = false;
  */
 static void DrawEverything (const BoxType *);
 static void AddPart (void *);
-static void DrawEMark (ElementType *, Coord, Coord, bool);
-static void DrawRats (const BoxType *);
+/* static */ void DrawEMark (ElementType *, Coord, Coord, bool);
+/* static */ void DrawRats (const BoxType *);
 
 
 /*---------------------------------------------------------------------------
@@ -452,7 +452,7 @@ DrawEverything (const BoxType *drawn_area)
     }
 }
 
-static void
+/* static */ void
 DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
 {
   Coord mark_size = EMARK_SIZE;
@@ -622,7 +622,7 @@ DrawPaste (int side, const BoxType *drawn_area)
   ENDALL_LOOP;
 }
 
-static void
+/* static */ void
 DrawRats (const BoxType *drawn_area)
 {
   /*
