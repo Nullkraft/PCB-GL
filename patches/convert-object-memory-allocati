@@ -1,7 +1,7 @@
-Bottom: eb9787c938548b4041728cf1029a905cd4edc2ad
-Top:    bcc417925e344c02fe0d36a93527f9e0dc8c72ba
+Bottom: d10bb2001450134db25e8e8d526aecad5d9cbaa5
+Top:    7c7ed91182ee6c62f85813b9771bcff2ce43ddc6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-21 21:55:59 +0000
+Date:   2012-11-21 22:05:30 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -795,10 +795,10 @@ index 7b966dc..88dc04e 100644
  } BoxListType;
  
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index c888247..253d08a 100644
+index f6fbe71..24df1fb 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -28,7 +28,7 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
+@@ -43,7 +43,7 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
@@ -807,7 +807,7 @@ index c888247..253d08a 100644
    FontType *font = &PCB->Font;
  
    while (string && *string)
-@@ -36,11 +36,12 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
+@@ -51,11 +51,12 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
        /* draw lines if symbol is valid and data is present */
        if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
          {
