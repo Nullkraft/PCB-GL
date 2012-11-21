@@ -1,7 +1,7 @@
-Bottom: 8ef0c31cf2996e18618f2d470b74878a5b962f1f
-Top:    5adaeb62c73716e19d6c87004cbb10ea47809cfa
+Bottom: 1a0c7c7ed72ec72b19e80682ef7097cdc296ee50
+Top:    79a5fe8a8963bc70b0170881343b8c10868b037c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-11-20 23:18:18 +0000
+Date:   2012-11-21 02:45:10 +0000
 
 More rubberbanding algorithm tweaks
 
@@ -9,10 +9,10 @@ More rubberbanding algorithm tweaks
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 24e977f..e9afc67 100644
+index d4c4cbb..eaca349 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -448,11 +448,12 @@ XORDrawMoveOrCopyObject (void)
+@@ -504,11 +504,12 @@ XORDrawMoveOrCopyObject (void)
  
      case LINE_TYPE:
        {
@@ -26,7 +26,7 @@ index 24e977f..e9afc67 100644
  
          /* draw the attached rubberband lines too */
          i = Crosshair.AttachedObject.RubberbandN;
-@@ -470,6 +471,13 @@ XORDrawMoveOrCopyObject (void)
+@@ -526,6 +527,13 @@ XORDrawMoveOrCopyObject (void)
                                       ptr->Line->Point1.X,        ptr->Line->Point1.Y,
                                       ptr->Line->Point2.X,        ptr->Line->Point2.Y,
                                       NULL, NULL, &multiplier);
@@ -40,7 +40,7 @@ index 24e977f..e9afc67 100644
                  if (multiplier < min_multiplier)
                    {
                      min_multiplier = multiplier;
-@@ -487,6 +495,10 @@ XORDrawMoveOrCopyObject (void)
+@@ -543,6 +551,10 @@ XORDrawMoveOrCopyObject (void)
            }
  
          /* If no constraints from the rubber band lines, then keep the old endpoints */
@@ -51,7 +51,7 @@ index 24e977f..e9afc67 100644
  #if 0
          if (!set_min)
            min_multiplier = 0.0;
-@@ -600,6 +612,7 @@ XORDrawMoveOrCopyObject (void)
+@@ -656,6 +668,7 @@ XORDrawMoveOrCopyObject (void)
    /* draw the attached rubberband lines too */
    i = Crosshair.AttachedObject.RubberbandN;
    ptr = Crosshair.AttachedObject.Rubberband;
@@ -59,7 +59,7 @@ index 24e977f..e9afc67 100644
    while (i)
      {
        PointType *point1, *point2;
-@@ -609,6 +622,7 @@ XORDrawMoveOrCopyObject (void)
+@@ -665,6 +678,7 @@ XORDrawMoveOrCopyObject (void)
  	  /* this is a rat going to a polygon.  do not draw for rubberband */;
  	}
        else if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
@@ -67,7 +67,7 @@ index 24e977f..e9afc67 100644
  	{
            if (Crosshair.AttachedObject.Type == LINE_TYPE)
              {
-@@ -647,17 +661,18 @@ XORDrawMoveOrCopyObject (void)
+@@ -703,17 +717,18 @@ XORDrawMoveOrCopyObject (void)
                    point1 = &ptr->Line->Point1;
                    point2 = &ptr->Line->Point2;
                  }

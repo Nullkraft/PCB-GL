@@ -1,7 +1,7 @@
-Bottom: 4527c73b8545f52c8c28e728e762c26bf573baa2
-Top:    3dfaf40973eaf5aae40f7f627d9445af1816983a
+Bottom: f9eb97974515567f89bff8eea61dff690c4149df
+Top:    16dd524fe2531cb6488a14dde26cb6b6c2c71ae6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-11-20 23:18:18 +0000
+Date:   2012-11-21 02:45:10 +0000
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -9,10 +9,10 @@ Introduce hacky code to switch cursor when over a line we might drag
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 65a94fb..85d16ee 100644
+index 9f5512b..ed87e42 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -1097,11 +1097,66 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+@@ -1162,11 +1162,66 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
        ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
                                    LINEPOINT_TYPE | ARCPOINT_TYPE,
                                    &ptr1, &ptr2, &ptr3);
@@ -84,7 +84,7 @@ index 65a94fb..85d16ee 100644
    if (Settings.Mode == LINE_MODE
        && Crosshair.AttachedLine.State != STATE_FIRST
 diff --git a/src/crosshair.h b/src/crosshair.h
-index 2dd5e7e..d35807a 100644
+index 0ae8be7..40f4410 100644
 --- a/src/crosshair.h
 +++ b/src/crosshair.h
 @@ -39,6 +39,17 @@
