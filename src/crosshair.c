@@ -429,8 +429,7 @@ XORDrawInsertPointObject (void)
 static void
 XORDrawMoveOrCopyObject (void)
 {
-  RubberbandType *ptr;
-  Cardinal i;
+  GList *i;
   Coord dx = Crosshair.X - Crosshair.AttachedObject.X,
     dy = Crosshair.Y - Crosshair.AttachedObject.Y;
 
@@ -548,10 +547,9 @@ XORDrawMoveOrCopyObject (void)
     }
 
   /* draw the attached rubberband lines too */
-  i = Crosshair.AttachedObject.RubberbandN;
-  ptr = Crosshair.AttachedObject.Rubberband;
-  while (i)
+  for (i = Crosshair.AttachedObject.Rubberband; i != NULL; i = g_list_next (i))
     {
+      RubberbandType *ptr = i->data;
       PointType *point1, *point2;
 
       if (TEST_FLAG (VIAFLAG, ptr->Line))
@@ -580,9 +578,6 @@ XORDrawMoveOrCopyObject (void)
 			     ptr->Line->Point1.Y + dy,
 			     ptr->Line->Point2.X + dx,
 			     ptr->Line->Point2.Y + dy, ptr->Line->Thickness);
-
-      ptr++;
-      i--;
     }
 }
 
