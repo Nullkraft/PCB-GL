@@ -1,0 +1,21 @@
+Bottom: e9468a8e7a2fbe230800b12707576014f98d0661
+Top:    ba0e70190fb3bf01c2b68f3cb458ca754132910a
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-21 21:24:35 +0000
+
+Refresh of crasy-test
+
+---
+
+diff --git a/src/draw_funcs.c b/src/draw_funcs.c
+index 770292e..7284ceb 100644
+--- a/src/draw_funcs.c
++++ b/src/draw_funcs.c
+@@ -5,6 +5,7 @@
+ #include "rtree.h"
+ #include "draw_funcs.h"
+ #include "draw.h"
++#include "hid_draw.h"
+ 
+ static void
+ _draw_pv (PinType *pv, bool draw_hole)
