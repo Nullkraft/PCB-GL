@@ -3,7 +3,7 @@ Top:    6dc47b167350bde0b71f1207a47fb701465925ea
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 21:49:35 +0000
 
-Split out drawing routines into vfunc table for possible replacement
+Push drawing routines into the HID_DRAW API for possible replacement
 
 The aim here is to indirect calls to the various drawing routines such
 that a GUI or renderer implementation may swap out different parts of
@@ -13,11 +13,15 @@ entire drawing stack from scratch.
 Each drawing API call will now be passed the drawing API structure as
 its first parameter, so we don't rely on this being a global.
 
+XXX: XXX: XXX: NO IT ISNT!!!
+
 As a further clean-up, the graphics context being used by the rendering
 routines is now a member of the vfunc table structure. We currently
 retain the old Output.*gc members, but only use them (where necessary)
 to update the ->gc member of the drawing API structure as rendering
 progresses.
+
+XXX: XXX: XXX: NO IT ISNT!!!
 
 
 ---
