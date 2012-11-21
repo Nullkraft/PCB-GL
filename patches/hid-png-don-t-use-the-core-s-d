@@ -1,5 +1,5 @@
-Bottom: 627c65b8bda04bf6bf8c2f58decb6f6ac5b14ba6
-Top:    ce6d06010e69c839677f6d45ffef405228f06e15
+Bottom: ffb3f7dcdb01a250a7db686d7bae0b0f7a714c98
+Top:    fa49fd51486dd56316d356d0742c33404f86f154
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:19:49 +0100
 
@@ -9,7 +9,7 @@ hid/png: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 848bac7..9f6ae49 100644
+index 2b27740..590aad3 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -37,6 +37,7 @@
@@ -20,7 +20,7 @@ index 848bac7..9f6ae49 100644
  #include "error.h"
  #include "misc.h"
  
-@@ -108,9 +109,7 @@ static color_struct *black = NULL, *white = NULL;
+@@ -109,9 +110,7 @@ static color_struct *black = NULL, *white = NULL;
  static gdImagePtr im = NULL, master_im, mask_im = NULL;
  static FILE *f = 0;
  static int linewidth = -1;
@@ -30,7 +30,7 @@ index 848bac7..9f6ae49 100644
  static int print_group[MAX_LAYER];
  static int print_layer[MAX_LAYER];
  
-@@ -522,10 +521,196 @@ layer_sort (const void *va, const void *vb)
+@@ -523,10 +522,196 @@ layer_sort (const void *va, const void *vb)
    return b - a;
  }
  
@@ -227,7 +227,7 @@ index 848bac7..9f6ae49 100644
  static void
  parse_bloat (const char *str)
  {
-@@ -633,8 +818,6 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -634,8 +819,6 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
      }
    linewidth = -1;
    lastbrush = (gdImagePtr)((void *) -1);
@@ -236,7 +236,7 @@ index 848bac7..9f6ae49 100644
    show_solder_side = Settings.ShowSolderSide;
  
    in_mono = options[HA_mono].int_value;
-@@ -650,7 +833,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -651,7 +834,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
  	}
      }
  
@@ -245,7 +245,7 @@ index 848bac7..9f6ae49 100644
  
    memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
    PCB->Flags = save_flags;
-@@ -1189,154 +1372,6 @@ png_parse_arguments (int *argc, char ***argv)
+@@ -1190,154 +1373,6 @@ png_parse_arguments (int *argc, char ***argv)
    hid_parse_command_line (argc, argv);
  }
  
@@ -400,7 +400,7 @@ index 848bac7..9f6ae49 100644
  static hidGC
  png_make_gc (void)
  {
-@@ -1817,7 +1852,6 @@ hid_png_init ()
+@@ -1818,7 +1853,6 @@ hid_png_init ()
    png_hid.get_export_options  = png_get_export_options;
    png_hid.do_export           = png_do_export;
    png_hid.parse_arguments     = png_parse_arguments;

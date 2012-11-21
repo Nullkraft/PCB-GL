@@ -1,5 +1,5 @@
-Bottom: 91e0dbe88b749ef12527a048cd1c4ef7675c8bc3
-Top:    627c65b8bda04bf6bf8c2f58decb6f6ac5b14ba6
+Bottom: 82a7c1730a00e4a486240daf71840c6fab0a8f92
+Top:    ffb3f7dcdb01a250a7db686d7bae0b0f7a714c98
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-29 23:19:48 +0100
 
@@ -9,7 +9,7 @@ hid/gerber: Don't use the core's drawing functions
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index b884c51..0eb5a27 100644
+index b9830e6..557a3ba 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -25,6 +25,7 @@
@@ -19,8 +19,8 @@ index b884c51..0eb5a27 100644
 +#include "print.h"
  
  #include "hid.h"
- #include "../hidint.h"
-@@ -45,7 +46,7 @@
+ #include "hid_draw.h"
+@@ -46,7 +47,7 @@
  static HID_Attribute * gerber_get_export_options (int *n);
  static void gerber_do_export (HID_Attr_Val * options);
  static void gerber_parse_arguments (int *argc, char ***argv);
@@ -29,7 +29,7 @@ index b884c51..0eb5a27 100644
  static hidGC gerber_make_gc (void);
  static void gerber_destroy_gc (hidGC gc);
  static void gerber_use_mask (enum mask_mode mode);
-@@ -308,7 +309,6 @@ static int lncount = 0;
+@@ -309,7 +310,6 @@ static int lncount = 0;
  static int finding_apertures = 0;
  static int pagecount = 0;
  static int linewidth = -1;
@@ -37,7 +37,7 @@ index b884c51..0eb5a27 100644
  static int lastcap = -1;
  static int print_group[MAX_LAYER];
  static int print_layer[MAX_LAYER];
-@@ -405,26 +405,6 @@ gerber_get_export_options (int *n)
+@@ -406,26 +406,6 @@ gerber_get_export_options (int *n)
    return gerber_options;
  }
  
@@ -64,7 +64,7 @@ index b884c51..0eb5a27 100644
  static void
  maybe_close_f (FILE *f)
  {
-@@ -525,12 +505,88 @@ assign_file_suffix (char *dest, int idx)
+@@ -526,12 +506,88 @@ assign_file_suffix (char *dest, int idx)
  }
  
  static void
@@ -155,7 +155,7 @@ index b884c51..0eb5a27 100644
    FlagType save_thindraw;
  
    save_thindraw = PCB->Flags;
-@@ -590,27 +646,22 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -591,27 +647,22 @@ gerber_do_export (HID_Attr_Val * options)
    else
      {
        memset (print_group, 0, sizeof (print_group));
@@ -194,7 +194,7 @@ index b884c51..0eb5a27 100644
  
    region.X1 = 0;
    region.Y1 = 0;
-@@ -620,20 +671,16 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -621,20 +672,16 @@ gerber_do_export (HID_Attr_Val * options)
    pagecount = 1;
    resetApertures ();
  
@@ -217,7 +217,7 @@ index b884c51..0eb5a27 100644
    PCB->Flags = save_thindraw;
  }
  
-@@ -656,26 +703,26 @@ drill_sort (const void *va, const void *vb)
+@@ -657,26 +704,26 @@ drill_sort (const void *va, const void *vb)
    return a->y - b->y;
  }
  
@@ -256,7 +256,7 @@ index b884c51..0eb5a27 100644
    flash_drills = 0;
    if (strcmp (name, "outline") == 0 ||
        strcmp (name, "route") == 0)
-@@ -686,20 +733,20 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -687,20 +734,20 @@ gerber_set_layer (const char *name, int group, int empty)
        int i;
        /* dump pending drills in sequence */
        qsort (pending_drills, n_pending_drills, sizeof (pending_drills[0]),
@@ -288,7 +288,7 @@ index b884c51..0eb5a27 100644
        free (pending_drills);
        n_pending_drills = max_pending_drills = 0;
        pending_drills = NULL;
-@@ -708,127 +755,111 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -709,127 +756,111 @@ gerber_set_layer (const char *name, int group, int empty)
    is_drill = (SL_TYPE (idx) == SL_PDRILL || SL_TYPE (idx) == SL_UDRILL);
    is_mask = (SL_TYPE (idx) == SL_MASK);
    current_mask = HID_MASK_OFF;
@@ -501,7 +501,7 @@ index b884c51..0eb5a27 100644
  
   emit_outline:
    /* If we're printing a copper layer other than the outline layer,
-@@ -841,37 +872,37 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -842,37 +873,37 @@ gerber_set_layer (const char *name, int group, int empty)
    if (copy_outline_mode == COPY_OUTLINE_SILK
        && SL_TYPE (idx) == SL_SILK)
      want_outline = 1;
@@ -566,7 +566,7 @@ index b884c51..0eb5a27 100644
      }
  
    return 1;
-@@ -1279,7 +1310,6 @@ hid_gerber_init ()
+@@ -1280,7 +1311,6 @@ hid_gerber_init ()
    gerber_hid.get_export_options  = gerber_get_export_options;
    gerber_hid.do_export           = gerber_do_export;
    gerber_hid.parse_arguments     = gerber_parse_arguments;
