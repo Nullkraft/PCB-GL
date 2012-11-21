@@ -1,5 +1,5 @@
-Bottom: bf719d3fa7d1bf4cda7866a9b7400c316f7240bf
-Top:    9a4aadd42fdd31c694e69d8ef8c720168498e12e
+Bottom: 0af9e59120cbddef099e18ad18e7d80b36b3a8f8
+Top:    6ec3b61086be1aa84f2db5d28e8788cf14ea482c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-21 21:25:57 +0000
 
@@ -34,11 +34,11 @@ index 81e7c1f..a70e4dd 100644
  	break;
        }
 diff --git a/src/draw.c b/src/draw.c
-index 7f02288..5293d42 100644
+index 3d1932e..78ba8ad 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -178,12 +178,15 @@ DrawStrippedText (hidGC gc, ElementType *Element, int min_width)
-   DrawTextLowLevel (gc, text_ptr, min_width);
+   gui->graphics->draw_pcb_text (gc, text_ptr, min_width);
  }
  
 +void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
@@ -70,7 +70,7 @@ index 7f02288..5293d42 100644
    gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
    gui->graphics->set_line_width (Output.fgGC, 0);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index e4a1d86..8ec613c 100644
+index 97d84ee..e91f135 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
 @@ -7,6 +7,8 @@
@@ -163,7 +163,7 @@ index e4a1d86..8ec613c 100644
        else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
        else if (TEST_FLAG (FOUNDFLAG, pad))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bd26b41..f4846ae 100644
+index b4acc8d..13f9d09 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -71,6 +71,8 @@ typedef struct render_priv {
