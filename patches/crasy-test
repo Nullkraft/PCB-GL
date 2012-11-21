@@ -1,5 +1,5 @@
 Bottom: e65b1735c8b77d515ec29478985323ecf74db060
-Top:    e9468a8e7a2fbe230800b12707576014f98d0661
+Top:    ba0e70190fb3bf01c2b68f3cb458ca754132910a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-21 21:21:35 +0000
 
@@ -824,10 +824,10 @@ index 88e2349..40fae00 100644
  void EraseViaName (PinType *);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
 new file mode 100644
-index 0000000..770292e
+index 0000000..7284ceb
 --- /dev/null
 +++ b/src/draw_funcs.c
-@@ -0,0 +1,500 @@
+@@ -0,0 +1,501 @@
 +
 +#include "global.h"
 +#include "data.h"
@@ -835,6 +835,7 @@ index 0000000..770292e
 +#include "rtree.h"
 +#include "draw_funcs.h"
 +#include "draw.h"
++#include "hid_draw.h"
 +
 +static void
 +_draw_pv (PinType *pv, bool draw_hole)
