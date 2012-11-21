@@ -7,6 +7,8 @@
 #include "draw.h"
 #include "hid_draw.h"
 
+void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
+
 static void
 _draw_pv (PinType *pv, bool draw_hole)
 {
@@ -191,6 +193,7 @@ line_callback (const BoxType * b, void *cl)
   LayerType *layer = cl;
   LineType *line = (LineType *)b;
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)line);
   if (TEST_FLAG (SELECTEDFLAG, line))   gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
   else if (TEST_FLAG (FOUNDFLAG, line)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
   else                                  gui->graphics->set_color (Output.fgGC, layer->Color);
@@ -205,6 +208,7 @@ arc_callback (const BoxType * b, void *cl)
   LayerType *layer = cl;
   ArcType *arc = (ArcType *)b;
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)arc);
   if (TEST_FLAG (SELECTEDFLAG, arc))   gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
   else if (TEST_FLAG (FOUNDFLAG, arc)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
   else                                 gui->graphics->set_color (Output.fgGC, layer->Color);
@@ -224,6 +228,7 @@ poly_callback (const BoxType * b, void *cl)
   struct poly_info *i = cl;
   PolygonType *polygon = (PolygonType *)b;
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)polygon);
   if (TEST_FLAG (SELECTEDFLAG, polygon))   gui->graphics->set_color (Output.fgGC, i->layer->SelectedColor);
   else if (TEST_FLAG (FOUNDFLAG, polygon)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
   else                                     gui->graphics->set_color (Output.fgGC, i->layer->Color);
@@ -239,6 +244,7 @@ text_callback (const BoxType * b, void *cl)
   TextType *text = (TextType *)b;
   int min_silk_line;
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)text);
   if (TEST_FLAG (SELECTEDFLAG, text))
     gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
   else
@@ -255,6 +261,7 @@ text_callback (const BoxType * b, void *cl)
 static void
 set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
 {
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pv);
   if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
   else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                                    : PCB->PinSelectedColor);
@@ -290,6 +297,7 @@ pad_inlayer_callback (const BoxType * b, void *cl)
 
   if (ON_SIDE (pad, side))
     {
+      ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pad);
       if (TEST_FLAG (WARNFLAG, pad))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
       else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
       else if (TEST_FLAG (FOUNDFLAG, pad))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
@@ -310,6 +318,7 @@ pin_hole_callback (const BoxType * b, void *cl)
       (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
     return 1;
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pin);
   if (TEST_FLAG (WARNFLAG, pin))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
   else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
   else                                    gui->graphics->set_color (Output.fgGC, Settings.BlackColor);
@@ -328,6 +337,7 @@ via_hole_callback (const BoxType * b, void *cl)
       (plated == 1 &&  TEST_FLAG (HOLEFLAG, via)))
     return 1;
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)via);
   if (TEST_FLAG (WARNFLAG, via))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
   else if (TEST_FLAG (SELECTEDFLAG, via)) gui->graphics->set_color (Output.fgGC, PCB->ViaSelectedColor);
   else                                    gui->graphics->set_color (Output.fgGC, Settings.BlackColor);
@@ -339,6 +349,7 @@ via_hole_callback (const BoxType * b, void *cl)
 static void
 set_pv_color (PinType *pv, int type)
 {
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pv);
   if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
   else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                                    : PCB->PinSelectedColor);
@@ -371,6 +382,7 @@ pad_callback (const BoxType * b, void *cl)
 
   if (ON_SIDE (pad, *side))
     {
+      ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pad);
       if (TEST_FLAG (WARNFLAG, pad))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
       else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
       else if (TEST_FLAG (FOUNDFLAG, pad))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
