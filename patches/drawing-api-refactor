@@ -1,5 +1,5 @@
 Bottom: 64843cf7aa063acf543fd67e19ee6537ee411834
-Top:    a6d5cf5f447e422f2e5fa0301efc7c20f5a386e5
+Top:    4c1992842aa0428834fb578c8dc279d3154fc1ac
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-08-28 01:01:57 +0100
 
@@ -540,13 +540,14 @@ index 0000000..ba4982d
 +extern struct draw_funcs *dapi;
 diff --git a/src/gui_draw.c b/src/gui_draw.c
 new file mode 100644
-index 0000000..1a3e608
+index 0000000..cf0cb29
 --- /dev/null
 +++ b/src/gui_draw.c
-@@ -0,0 +1,229 @@
+@@ -0,0 +1,230 @@
 +#include "global.h"
 +#include "data.h"
 +#include "polygon.h"
++#include "hid_draw.h"
 +
 +static void
 +fill_contour (PLINE *pl)
