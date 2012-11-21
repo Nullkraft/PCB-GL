@@ -1,5 +1,5 @@
 Bottom: fa49fd51486dd56316d356d0742c33404f86f154
-Top:    561ff6bba7e5232274b5acbf7b6a16d34b400711
+Top:    1d7c9857c0b8be7dc31593da4d2647068d4cc1ce
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 00:49:05 +0000
 
@@ -42,19 +42,27 @@ index 4283810..7995f6c 100644
    return 1;
  }
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 2e09e1e..ddd7294 100644
+index 2e09e1e..96db6cc 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -241,6 +241,26 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
+@@ -4,6 +4,7 @@
+ #include "data.h" /* For nasty global "PCB" variable */
+ #include "rotate.h" /* For RotateLineLowLevel() */
+ #include "polygon.h"
++#include "draw_helpers.h"
+ 
+ 
+ static void
+@@ -241,6 +242,26 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
  #undef BOUNDS_INSIDE_CLIP_THRESHOLD
  
  void
-+common_gui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip_box)
 +{
 +  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-+    common_thindraw_pcb_polygon (gc, polygon, drawn_area);
++    common_thindraw_pcb_polygon (gc, polygon, clip_box);
 +  else
-+    common_fill_pcb_polygon (gc, polygon, drawn_area);
++    common_fill_pcb_polygon (gc, polygon, clip_box);
 +
 +  /* If checking planes, thin-draw any pieces which have been clipped away */
 +  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
@@ -64,7 +72,7 @@ index 2e09e1e..ddd7294 100644
 +      for (poly.Clipped = polygon->Clipped->f;
 +           poly.Clipped != polygon->Clipped;
 +           poly.Clipped = poly.Clipped->f)
-+        common_thindraw_pcb_polygon (gc, &poly, drawn_area);
++        common_thindraw_pcb_polygon (gc, &poly, clip_box);
 +    }
 +}
 +
@@ -72,7 +80,7 @@ index 2e09e1e..ddd7294 100644
  common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
    if (!poly->NoHolesValid)
-@@ -573,8 +593,7 @@ common_draw_helpers_init (HID_DRAW *graphics)
+@@ -573,8 +594,7 @@ common_draw_helpers_init (HID_DRAW *graphics)
    graphics->draw_pcb_line        = common_draw_pcb_line;
    graphics->draw_pcb_text        = common_draw_pcb_text;
  
@@ -83,10 +91,10 @@ index 2e09e1e..ddd7294 100644
    graphics->thindraw_pcb_pad     = common_thindraw_pcb_pad;
    graphics->fill_pcb_pv          = common_fill_pcb_pv;
 diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
-index 1e6cb7d..673b248 100644
+index 1e6cb7d..1b59945 100644
 --- a/src/hid/common/draw_helpers.h
 +++ b/src/hid/common/draw_helpers.h
-@@ -1,7 +1,6 @@
+@@ -1,9 +1,8 @@
 -void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
 -                              const BoxType *clip_box);
 -void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
@@ -96,7 +104,10 @@ index 1e6cb7d..673b248 100644
 +void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box);
  void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
  void common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
- void common_fill_pcb_pv (hidGC gc, PinType *pv, bool drawHole, bool mask);
+-void common_fill_pcb_pv (hidGC gc, PinType *pv, bool drawHole, bool mask);
++void common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc,  PinType *pv, bool drawHole, bool mask);
+ void common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+ void common_draw_helpers_init (HID_DRAW *graphics);
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
 index bab0bff..e9662d1 100644
 --- a/src/hid/common/hidnogui.c
@@ -198,18 +209,18 @@ index 43172c1..9638bb8 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index f12fba3..234c061 100644
+index f12fba3..8e39be4 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2181,6 +2181,8 @@ hid_gtk_init ()
-   ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
-   ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
+@@ -2197,6 +2197,8 @@ hid_gtk_init ()
+   ghid_graphics.fill_polygon        = ghid_fill_polygon;
+   ghid_graphics.fill_rect           = ghid_fill_rect;
  
-+  ghid_hid.draw_pcb_polygon         = common_gui_draw_pcb_polygon;
++  ghid_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
 +
-   ghid_hid.graphics                 = &ghid_graphics;
- 
-   ghid_graphics.make_gc             = ghid_make_gc;
+   hid_register_hid (&ghid_hid);
+ #include "gtk_lists.h"
+ }
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
 index 3e2fa01..7caccee 100644
 --- a/src/hid/lesstif/main.c
