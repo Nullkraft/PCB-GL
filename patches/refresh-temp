@@ -1,0 +1,90 @@
+Bottom: 89165446dc46374bd8200cc32b53d7ce32487ca4
+Top:    55706d20a0ce520850139fc2c7f2859726fec2e0
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-21 02:06:53 +0000
+
+Refresh of currently-pcb-user-can-draw-ar
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 647d844..6da9419 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -1045,7 +1045,7 @@ NotifyMode (void)
+ 
+               arc = 0;
+ 	      if (gui->shift_is_pressed ())
+-		{ 
++		{
+ 		  void rebase_attached_arc (Coord *preserved_dir);
+ 		  Coord cx,cy,x,y;
+ 
+@@ -1061,7 +1061,7 @@ NotifyMode (void)
+ 		      if (Crosshair.AttachedLine.State == STATE_SECOND)
+ 			rebase_attached_arc (&preserved_dir);
+ 		    }
+- 		  else
++		  else
+ 		    break;
+ 		}
+ 
+@@ -1081,7 +1081,7 @@ NotifyMode (void)
+ 
+ 	      if (!gui->shift_is_pressed ()
+ 		  || Crosshair.AttachedLine.State == STATE_SECOND)
+-	        arc = CreateNewArcOnLayer 
++	        arc = CreateNewArcOnLayer
+ 		      (CURRENT, arcx, arcy, r, r, sa, dir,
+ 		       Settings.LineThickness, 2 * Settings.Keepaway,
+ 		       MakeFlags (TEST_FLAG (CLEARNEWFLAG, PCB)
+diff --git a/src/crosshair.c b/src/crosshair.c
+index c53216f..9f5512b 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -639,10 +639,10 @@ DrawAttached (void)
+ 
+     case ARC_MODE:
+       if (Crosshair.AttachedBox.State == STATE_SECOND)
+-	XORDrawAttachedLine
+-	(Crosshair.AttachedLine.Point1.X,
+-	 Crosshair.AttachedLine.Point1.Y,
+-	 Crosshair.X, Crosshair.Y, Settings.LineThickness);
++	XORDrawAttachedLine (Crosshair.AttachedLine.Point1.X,
++	                     Crosshair.AttachedLine.Point1.Y,
++	                     Crosshair.X, Crosshair.Y,
++	                     Settings.LineThickness);
+       if (Crosshair.AttachedBox.State == STATE_THIRD)
+ 	{
+ 	  XORDrawAttachedArc (Settings.LineThickness);
+diff --git a/src/set.c b/src/set.c
+index 133a56a..156d8f9 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -284,7 +284,7 @@ SetMode (int Mode)
+       Crosshair.AttachedLine.Point1.Y = Crosshair.AttachedLine.Point2.Y;
+       Crosshair.AttachedLine.Point2.X = x;
+       Crosshair.AttachedLine.Point2.Y = y;
+-      
++
+       AdjustAttachedObjects ();
+     }
+   else if (Settings.Mode == ARC_MODE && Mode == LINE_MODE &&
+@@ -308,7 +308,7 @@ SetMode (int Mode)
+   else if (Settings.Mode == ARC_MODE && (Mode == ARC_MODE || Mode == LINE_MODE))
+      {
+        if(Crosshair.AttachedLine.State == STATE_SECOND)
+-         {/* begin the next segment at the end of the previous */ 
++         {/* begin the next segment at the end of the previous */
+ 	      double angle;
+ 	      Coord sa, r, center_x, center_y, end_x, end_y;
+ 
+@@ -329,7 +329,7 @@ SetMode (int Mode)
+ 		  Crosshair.AttachedLine.State = STATE_FIRST;
+ 		  Crosshair.AttachedBox.State = STATE_THIRD;
+ 		}
+-	      
++
+ 	      if (Mode == LINE_MODE)
+ 		{
+ 		  Crosshair.AttachedLine.Point1.X = end_x;
