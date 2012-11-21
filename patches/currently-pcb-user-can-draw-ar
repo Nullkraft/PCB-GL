@@ -1,5 +1,5 @@
 Bottom: 2f30210c63546db6488c195c7655365cf47fb9a0
-Top:    89165446dc46374bd8200cc32b53d7ce32487ca4
+Top:    55706d20a0ce520850139fc2c7f2859726fec2e0
 Author: Ineiev <ineiev@gmail.com>
 Date:   2012-11-21 01:56:30 +0000
 
@@ -116,7 +116,7 @@ index 7608c28..b7faa56 100644
  @node Polygons
  @subsection Polygons and Rectangles
 diff --git a/src/action.c b/src/action.c
-index 96ecae7..647d844 100644
+index 96ecae7..6da9419 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1022,70 +1022,82 @@ NotifyMode (void)
@@ -146,7 +146,10 @@ index 96ecae7..647d844 100644
  	      ArcType *arc;
 -	      Coord wx, wy;
 -	      Angle sa, dir;
--
++	      Coord arcx, arcy, sa, dir;
++	      Coord preserved_dir;
++	      Coord r;
+ 
 -	      wx = Note.X - Crosshair.AttachedBox.Point1.X;
 -	      wy = Note.Y - Crosshair.AttachedBox.Point1.Y;
 -	      if (XOR (Crosshair.AttachedBox.otherway, abs (wy) > abs (wx)))
@@ -162,24 +165,15 @@ index 96ecae7..647d844 100644
 -		    dir = (SGNZ (wx) == SGNZ (wy)) ? 90 : -90;
 -		}
 -	      else
--		{
++              arc = 0;
++	      if (gui->shift_is_pressed ())
+ 		{
 -		  Crosshair.AttachedBox.Point2.Y =
 -		    Crosshair.AttachedBox.Point1.Y + abs (wx) * SGNZ (wy);
 -		  sa = (wy >= 0) ? -90 : 90;
 -#ifdef ARC45
 -		  if (abs (wx) / 2 >= abs (wy))
 -		    dir = (SGNZ (wx) == SGNZ (wy)) ? -45 : 45;
--		  else
--#endif
--		    dir = (SGNZ (wx) == SGNZ (wy)) ? -90 : 90;
--		  wy = wx;
-+	      Coord arcx, arcy, sa, dir;
-+	      Coord preserved_dir;
-+	      Coord r;
-+
-+              arc = 0;
-+	      if (gui->shift_is_pressed ())
-+		{ 
 +		  void rebase_attached_arc (Coord *preserved_dir);
 +		  Coord cx,cy,x,y;
 +
@@ -195,7 +189,10 @@ index 96ecae7..647d844 100644
 +		      if (Crosshair.AttachedLine.State == STATE_SECOND)
 +			rebase_attached_arc (&preserved_dir);
 +		    }
-+ 		  else
+ 		  else
+-#endif
+-		    dir = (SGNZ (wx) == SGNZ (wy)) ? -90 : 90;
+-		  wy = wx;
 +		    break;
  		}
 -	      if (abs (wy) > 0 && (arc = CreateNewArcOnLayer (CURRENT,
@@ -236,7 +233,7 @@ index 96ecae7..647d844 100644
 +
 +	      if (!gui->shift_is_pressed ()
 +		  || Crosshair.AttachedLine.State == STATE_SECOND)
-+	        arc = CreateNewArcOnLayer 
++	        arc = CreateNewArcOnLayer
 +		      (CURRENT, arcx, arcy, r, r, sa, dir,
 +		       Settings.LineThickness, 2 * Settings.Keepaway,
 +		       MakeFlags (TEST_FLAG (CLEARNEWFLAG, PCB)
@@ -314,7 +311,7 @@ index 96ecae7..647d844 100644
        /* undo the last destructive operation */
        if (Undo (true))
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 65a94fb..c53216f 100644
+index 65a94fb..9f5512b 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -96,6 +96,82 @@ XORPolygon (PolygonType *polygon, Coord dx, Coord dy)
@@ -470,10 +467,10 @@ index 65a94fb..c53216f 100644
      case ARC_MODE:
 -      if (Crosshair.AttachedBox.State != STATE_FIRST)
 +      if (Crosshair.AttachedBox.State == STATE_SECOND)
-+	XORDrawAttachedLine
-+	(Crosshair.AttachedLine.Point1.X,
-+	 Crosshair.AttachedLine.Point1.Y,
-+	 Crosshair.X, Crosshair.Y, Settings.LineThickness);
++	XORDrawAttachedLine (Crosshair.AttachedLine.Point1.X,
++	                     Crosshair.AttachedLine.Point1.Y,
++	                     Crosshair.X, Crosshair.Y,
++	                     Settings.LineThickness);
 +      if (Crosshair.AttachedBox.State == STATE_THIRD)
  	{
  	  XORDrawAttachedArc (Settings.LineThickness);
@@ -496,7 +493,7 @@ index 2dd5e7e..0ae8be7 100644
  
  #endif
 diff --git a/src/set.c b/src/set.c
-index 21351da..133a56a 100644
+index 21351da..156d8f9 100644
 --- a/src/set.c
 +++ b/src/set.c
 @@ -238,6 +238,7 @@ void
@@ -541,7 +538,7 @@ index 21351da..133a56a 100644
 +      Crosshair.AttachedLine.Point1.Y = Crosshair.AttachedLine.Point2.Y;
 +      Crosshair.AttachedLine.Point2.X = x;
 +      Crosshair.AttachedLine.Point2.Y = y;
-+      
++
        AdjustAttachedObjects ();
      }
    else if (Settings.Mode == ARC_MODE && Mode == LINE_MODE &&
@@ -571,7 +568,7 @@ index 21351da..133a56a 100644
 +  else if (Settings.Mode == ARC_MODE && (Mode == ARC_MODE || Mode == LINE_MODE))
 +     {
 +       if(Crosshair.AttachedLine.State == STATE_SECOND)
-+         {/* begin the next segment at the end of the previous */ 
++         {/* begin the next segment at the end of the previous */
 +	      double angle;
 +	      Coord sa, r, center_x, center_y, end_x, end_y;
 +
@@ -592,7 +589,7 @@ index 21351da..133a56a 100644
 +		  Crosshair.AttachedLine.State = STATE_FIRST;
 +		  Crosshair.AttachedBox.State = STATE_THIRD;
 +		}
-+	      
++
 +	      if (Mode == LINE_MODE)
 +		{
 +		  Crosshair.AttachedLine.Point1.X = end_x;
