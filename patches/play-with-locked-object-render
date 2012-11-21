@@ -1,7 +1,7 @@
-Bottom: ce94ac447f4f6b8b62660be443ddf2438738857f
-Top:    a8c4ff866c00b6a9b7b6d07e2db53f6dc36f8a61
+Bottom: 79ae7fa380aff48a493fa2d85090578c9a62fa5e
+Top:    b8d1c6944268ae6b7e78a2f1b4c56d7beadf17ca
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-11-21 22:15:03 +0000
+Date:   2012-11-21 22:27:39 +0000
 
 Play with locked object rendering
 
@@ -163,7 +163,7 @@ index 1f3be1a..fada06d 100644
        else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
        else if (TEST_FLAG (FOUNDFLAG, pad))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b4acc8d..13f9d09 100644
+index bd1ab43..4075d7d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -71,6 +71,8 @@ typedef struct render_priv {
@@ -331,7 +331,7 @@ index b4acc8d..13f9d09 100644
        if (TEST_FLAG (WARNFLAG, pv))
          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
        else if (TEST_FLAG (SELECTEDFLAG, pv))
-@@ -1335,6 +1397,7 @@ _draw_line (LineType *line)
+@@ -1321,6 +1383,7 @@ hole_callback (const BoxType * b, void *cl)
  static void
  draw_line (LayerType *layer, LineType *line)
  {
@@ -339,7 +339,7 @@ index b4acc8d..13f9d09 100644
    if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
      {
        if (TEST_FLAG (SELECTEDFLAG, line))
-@@ -1373,6 +1436,7 @@ _draw_arc (ArcType *arc)
+@@ -1343,6 +1406,7 @@ line_callback (const BoxType * b, void *cl)
  static void
  draw_arc (LayerType *layer, ArcType *arc)
  {
@@ -347,7 +347,7 @@ index b4acc8d..13f9d09 100644
    if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, arc))
      {
        if (TEST_FLAG (SELECTEDFLAG, arc))
-@@ -1400,6 +1464,7 @@ text_callback (const BoxType * b, void *cl)
+@@ -1370,6 +1434,7 @@ text_callback (const BoxType * b, void *cl)
    TextType *text = (TextType *)b;
    int min_silk_line;
  
@@ -355,7 +355,7 @@ index b4acc8d..13f9d09 100644
    if (TEST_FLAG (SELECTEDFLAG, text))
      gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
    else
-@@ -1427,6 +1492,7 @@ DrawPlainPolygon (LayerType *Layer, PolygonType *Polygon, const BoxType *drawn_a
+@@ -1397,6 +1462,7 @@ DrawPlainPolygon (LayerType *Layer, PolygonType *Polygon, const BoxType *drawn_a
      color = PCB->ConnectedColor;
    else
      color = Layer->Color;
@@ -363,7 +363,7 @@ index b4acc8d..13f9d09 100644
    gui->graphics->set_color (Output.fgGC, color);
  
    if (gui->graphics->thindraw_pcb_polygon != NULL &&
-@@ -1733,6 +1799,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
+@@ -1703,6 +1769,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
    else
      color = "drill";
  
