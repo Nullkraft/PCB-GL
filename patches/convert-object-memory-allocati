@@ -1,7 +1,7 @@
-Bottom: 2f30210c63546db6488c195c7655365cf47fb9a0
-Top:    8da6928e8b42a2c957c9bed8f048a897ac796085
+Bottom: 55706d20a0ce520850139fc2c7f2859726fec2e0
+Top:    3bafc4762ccfdeee673df0efbb1668db0c22cd2b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-20 23:18:03 +0000
+Date:   2012-11-21 02:44:57 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,10 +9,10 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 96ecae7..b6ce6a1 100644
+index 6da9419..ce56613 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1878,37 +1878,39 @@ static int
+@@ -1889,37 +1889,39 @@ static int
  ActionDumpLibrary (int argc, char **argv, Coord x, Coord y)
  {
    int i, j;
@@ -70,7 +70,7 @@ index 96ecae7..b6ce6a1 100644
  	    }
  	}
      }
-@@ -3235,6 +3237,8 @@ static const char renumber_help[] =
+@@ -3246,6 +3248,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, Coord x, Coord y)
  {
@@ -79,7 +79,7 @@ index 96ecae7..b6ce6a1 100644
    bool changed = false;
    ElementType **element_list;
    ElementType **locked_element_list;
-@@ -3572,6 +3576,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3583,6 +3587,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    free (element_list);
    free (cnt_list);
    return 0;
@@ -87,7 +87,7 @@ index 96ecae7..b6ce6a1 100644
  }
  
  
-@@ -4580,16 +4585,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4591,16 +4596,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index 96ecae7..b6ce6a1 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatType *) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6905,22 +6909,26 @@ find_element_by_refdes (char *refdes)
+@@ -6924,22 +6928,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListType *list, const char *name)
  {
@@ -490,10 +490,10 @@ index b39ff65..76992d2 100644
 +  return attr;
  }
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 65a94fb..a047bb5 100644
+index 9f5512b..a08232d 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -373,8 +373,7 @@ XORDrawInsertPointObject (void)
+@@ -429,8 +429,7 @@ XORDrawInsertPointObject (void)
  static void
  XORDrawMoveOrCopyObject (void)
  {
@@ -503,7 +503,7 @@ index 65a94fb..a047bb5 100644
    Coord dx = Crosshair.X - Crosshair.AttachedObject.X,
      dy = Crosshair.Y - Crosshair.AttachedObject.Y;
  
-@@ -492,10 +491,9 @@ XORDrawMoveOrCopyObject (void)
+@@ -548,10 +547,9 @@ XORDrawMoveOrCopyObject (void)
      }
  
    /* draw the attached rubberband lines too */
@@ -516,7 +516,7 @@ index 65a94fb..a047bb5 100644
        PointType *point1, *point2;
  
        if (TEST_FLAG (VIAFLAG, ptr->Line))
-@@ -524,9 +522,6 @@ XORDrawMoveOrCopyObject (void)
+@@ -580,9 +578,6 @@ XORDrawMoveOrCopyObject (void)
  			     ptr->Line->Point1.Y + dy,
  			     ptr->Line->Point2.X + dx,
  			     ptr->Line->Point2.Y + dy, ptr->Line->Thickness);
