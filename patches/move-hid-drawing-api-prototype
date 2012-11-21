@@ -1,0 +1,15 @@
+Bottom: 2f30210c63546db6488c195c7655365cf47fb9a0
+Top:    2f30210c63546db6488c195c7655365cf47fb9a0
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-21 20:26:36 +0000
+
+Move HID drawing API prototypes into a separate header file
+
+Due to the mess of places we define various things in and the order
+we pull in headers, we cannot easily create APIs in hid.h which rely
+on being passed PCB data-structures.
+
+
+---
+
+
