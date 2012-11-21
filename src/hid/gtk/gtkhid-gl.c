@@ -1072,7 +1072,7 @@ _draw_pv_name (PinType *pv)
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
 
-  DrawTextLowLevel (Output.fgGC, &text, 0);
+  gui->graphics->draw_pcb_text (Output.fgGC, &text, 0);
 }
 
 static void
@@ -1170,7 +1170,7 @@ draw_pad_name (PadType *pad)
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
 
-  DrawTextLowLevel (Output.fgGC, &text, 0);
+  gui->graphics->draw_pcb_text (Output.fgGC, &text, 0);
 }
 
 static void
@@ -1354,7 +1354,7 @@ text_callback (const BoxType * b, void *cl)
     min_silk_line = PCB->minSlk;
   else
     min_silk_line = PCB->minWid;
-  DrawTextLowLevel (Output.fgGC, text, min_silk_line);
+  gui->graphics->draw_pcb_text (Output.fgGC, text, min_silk_line);
   return 1;
 }
 
