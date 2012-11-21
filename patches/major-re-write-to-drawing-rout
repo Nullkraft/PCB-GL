@@ -1,7 +1,7 @@
-Bottom: 1b207b86c54fbd64be42d03d6808fd74ff5b2f32
-Top:    a424921aa515b255a50a1a482dee141bd80cfb5c
+Bottom: 09c1225685ff03df02afad634ec068c645b375d6
+Top:    eee68da2b313b8e2ed0c3e8f55fa0db77a2c87f6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-21 02:45:03 +0000
+Date:   2012-11-21 21:21:36 +0000
 
 Major re-write to drawing routines
 
@@ -23,10 +23,10 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index f2d4ef7..c0a866f 100644
+index 00d550b..5e32e05 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -80,8 +80,8 @@ static bool doing_assy = false;
+@@ -81,8 +81,8 @@ static bool doing_assy = false;
   */
  static void DrawEverything (const BoxType *);
  static void AddPart (void *);
@@ -37,7 +37,7 @@ index f2d4ef7..c0a866f 100644
  
  
  /*---------------------------------------------------------------------------
-@@ -451,7 +451,7 @@ DrawEverything (const BoxType *drawn_area)
+@@ -452,7 +452,7 @@ DrawEverything (const BoxType *drawn_area)
      }
  }
  
@@ -46,7 +46,7 @@ index f2d4ef7..c0a866f 100644
  DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
  {
    Coord mark_size = EMARK_SIZE;
-@@ -621,7 +621,7 @@ DrawPaste (int side, const BoxType *drawn_area)
+@@ -622,7 +622,7 @@ DrawPaste (int side, const BoxType *drawn_area)
    ENDALL_LOOP;
  }
  
@@ -76,7 +76,7 @@ index 40fae00..f980794 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9be712e..b09393b 100644
+index 68bc08e..5e491cb 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@

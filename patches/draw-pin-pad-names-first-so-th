@@ -1,7 +1,7 @@
-Bottom: 806243fba3ab50da9a8ec42b78368b1553afb115
-Top:    880f73107f8d5baa44aa884e6381995011d78e73
+Bottom: aa94c3aaa31c959d1b3cd5350f902d0a72ab58fa
+Top:    e4e070776f18019f1aee4c5bdfe3d10b9d5f1627
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-21 02:45:03 +0000
+Date:   2012-11-21 21:21:36 +0000
 
 Draw pin / pad names first, so they don't get masked by the pad
 
@@ -19,7 +19,7 @@ the pads.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c875779..f04a320 100644
+index 1a589ef..af787c7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1098,7 +1098,21 @@ draw_pin (PinType *pin, bool draw_hole)

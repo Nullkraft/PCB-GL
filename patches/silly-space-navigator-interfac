@@ -1,7 +1,7 @@
-Bottom: 880f73107f8d5baa44aa884e6381995011d78e73
-Top:    45c18cec5bbd114d509ac44ce5ae1f03840b3aba
+Bottom: e4e070776f18019f1aee4c5bdfe3d10b9d5f1627
+Top:    6f123a72570a393e586eaaf196e2ae8096098b43
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-21 02:45:03 +0000
+Date:   2012-11-21 21:21:36 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -27,7 +27,7 @@ index 89ac430..5e757e0 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index d1e3114..51ddde6 100644
+index f12fba3..e731e2f 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -113,7 +113,7 @@ ghid_zoom_view_abs (Coord center_x, Coord center_y, double new_zoom)
@@ -192,10 +192,10 @@ index 5c8a1f1..98d558d 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index af719fd..c05346c 100644
+index 2bbd2de..ab7ca61 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -148,6 +148,7 @@ typedef struct
+@@ -149,6 +149,7 @@ typedef struct
      netlist_window_height, history_size, settings_mode;
  
    bool is_up;
@@ -203,7 +203,7 @@ index af719fd..c05346c 100644
  }
  GhidGui;
  
-@@ -173,6 +174,7 @@ typedef struct
+@@ -174,6 +175,7 @@ typedef struct
  {
    GtkWidget *top_window,	/* toplevel widget              */
     *drawing_area;		/* and its drawing area */
@@ -211,7 +211,7 @@ index af719fd..c05346c 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -300,6 +302,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -301,6 +303,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
@@ -222,7 +222,7 @@ index af719fd..c05346c 100644
  
  /* gui-dialog.c function prototypes.
  */
-@@ -511,6 +517,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
+@@ -512,6 +518,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
  void ghid_cancel_lead_user (void);
  
  /* gtkhid-main.c */
