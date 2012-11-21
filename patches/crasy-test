@@ -1,5 +1,5 @@
 Bottom: d10bb2001450134db25e8e8d526aecad5d9cbaa5
-Top:    53f8c235a64cc8cc969b34f65f24f7cab1c289cf
+Top:    9001193e192b1b930f56297b496363d60f30ee1b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-21 22:05:34 +0000
 
@@ -696,10 +696,10 @@ index b58e5cb..0cb0f88 100644
  void EraseViaName (PinType *);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
 new file mode 100644
-index 0000000..4ff1e3e
+index 0000000..aa8819d
 --- /dev/null
 +++ b/src/draw_funcs.c
-@@ -0,0 +1,405 @@
+@@ -0,0 +1,381 @@
 +
 +#include "global.h"
 +#include "data.h"
@@ -805,23 +805,9 @@ index 0000000..4ff1e3e
 +}
 +
 +static void
-+_draw_line (LineType *line)
-+{
-+  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
-+  if (TEST_FLAG (THINDRAWFLAG, PCB))
-+    gui->graphics->set_line_width (Output.fgGC, 0);
-+  else
-+    gui->graphics->set_line_width (Output.fgGC, line->Thickness);
-+
-+  gui->graphics->draw_line (Output.fgGC,
-+                            line->Point1.X, line->Point1.Y,
-+                            line->Point2.X, line->Point2.Y);
-+}
-+
-+static void
 +draw_line (LineType *line, const BoxType *drawn_area, void *userdata)
 +{
-+  _draw_line (line);
++  gui->graphics->draw_pcb_line (Output.fgGC, line);
 +}
 +
 +static void
@@ -842,23 +828,13 @@ index 0000000..4ff1e3e
 +                               w * 2, w * 2, 0, 360);
 +    }
 +  else
-+    _draw_line ((LineType *) rat);
++    gui->graphics->draw_pcb_line (Output.fgGC, (LineType *) rat);
 +}
 +
 +static void
 +draw_arc (ArcType *arc, const BoxType *drawn_area, void *userdata)
 +{
-+  if (!arc->Thickness)
-+    return;
-+
-+  if (TEST_FLAG (THINDRAWFLAG, PCB))
-+    gui->graphics->set_line_width (Output.fgGC, 0);
-+  else
-+    gui->graphics->set_line_width (Output.fgGC, arc->Thickness);
-+  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
-+
-+  gui->graphics->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
-+                           arc->Height, arc->StartAngle, arc->Delta);
++  gui->graphics->draw_pcb_arc (Output.fgGC, arc);
 +}
 +
 +static void
