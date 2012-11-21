@@ -103,23 +103,9 @@ draw_pad_paste (PadType *pad, const BoxType *drawn_area, void *userdata)
 }
 
 static void
-_draw_line (LineType *line)
-{
-  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->graphics->set_line_width (Output.fgGC, 0);
-  else
-    gui->graphics->set_line_width (Output.fgGC, line->Thickness);
-
-  gui->graphics->draw_line (Output.fgGC,
-                            line->Point1.X, line->Point1.Y,
-                            line->Point2.X, line->Point2.Y);
-}
-
-static void
 draw_line (LineType *line, const BoxType *drawn_area, void *userdata)
 {
-  _draw_line (line);
+  gui->graphics->draw_pcb_line (Output.fgGC, line);
 }
 
 static void
@@ -140,23 +126,13 @@ draw_rat (RatType *rat, const BoxType *drawn_area, void *userdata)
                                w * 2, w * 2, 0, 360);
     }
   else
-    _draw_line ((LineType *) rat);
+    gui->graphics->draw_pcb_line (Output.fgGC, (LineType *) rat);
 }
 
 static void
 draw_arc (ArcType *arc, const BoxType *drawn_area, void *userdata)
 {
-  if (!arc->Thickness)
-    return;
-
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->graphics->set_line_width (Output.fgGC, 0);
-  else
-    gui->graphics->set_line_width (Output.fgGC, arc->Thickness);
-  gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
-
-  gui->graphics->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
-                           arc->Height, arc->StartAngle, arc->Delta);
+  gui->graphics->draw_pcb_arc (Output.fgGC, arc);
 }
 
 static void
