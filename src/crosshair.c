@@ -180,7 +180,6 @@ XORDrawAttachedArc (Coord thick)
 {
   ArcType arc;
   BoxType *bx;
-  Coord wx, wy;
   Angle sa, dir;
   Coord wid = thick / 2;
   Coord r;
@@ -205,7 +204,7 @@ XORDrawAttachedArc (Coord thick)
     {
       gui->graphics->draw_arc (Crosshair.GC, arc.X, arc.Y, r - wid, r - wid, sa, dir);
       gui->graphics->draw_arc (Crosshair.GC, bx->X1, bx->Y1, wid, wid, sa,      -180 * SGN (dir));
-      gui->graphics0>draw_arc (Crosshair.GC, bx->X2, bx->Y2, wid, wid, sa + dir, 180 * SGN (dir));
+      gui->graphics->draw_arc (Crosshair.GC, bx->X2, bx->Y2, wid, wid, sa + dir, 180 * SGN (dir));
     }
 }
 
