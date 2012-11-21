@@ -1,5 +1,5 @@
-Bottom: 5be9037dcd86e2694f8498b6c37d1af35eb5fbd1
-Top:    9845f28ad5ce7b15cf98cca65af9d17644a45c35
+Bottom: ce4af841ce3030131076df581f330015ea4798aa
+Top:    81f370f55dd92cdd63d6b754b87f0efc172cf563
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-21 21:21:34 +0000
 
@@ -9,12 +9,12 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index c1de57b..59e73e5 100644
+index 2e09e1e..9217f78 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -2,6 +2,11 @@
- #include "hid.h"
- #include "hid_draw.h"
+@@ -4,6 +4,11 @@
+ #include "data.h" /* For nasty global "PCB" variable */
+ #include "rotate.h" /* For RotateLineLowLevel() */
  #include "polygon.h"
 +#include "rtree.h"
 +#include "misc.h"
@@ -22,9 +22,9 @@ index c1de57b..59e73e5 100644
 +#include "data.h" /* FIXME */
 +#include "draw.h" /* FIXME */
  
+ 
  static void
- fill_contour (hidGC gc, PLINE *pl)
-@@ -477,3 +482,225 @@ common_draw_helpers_init (HID_DRAW *graphics)
+@@ -580,3 +585,225 @@ common_draw_helpers_init (HID_DRAW *graphics)
    graphics->fill_pcb_pv          = common_fill_pcb_pv;
    graphics->thindraw_pcb_pv      = common_thindraw_pcb_pv;
  }
