@@ -1,5 +1,5 @@
 Bottom: b77828531ff0db382daec1aea72efe570302a1f1
-Top:    3f0afa425501b7381a471dd870205c9568ec5aea
+Top:    e65b1735c8b77d515ec29478985323ecf74db060
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-21 20:26:36 +0000
 
@@ -244,10 +244,10 @@ index f40c66d..597ff6d 100644
  #include "hid/common/draw_helpers.h"
 diff --git a/src/hid_draw.h b/src/hid_draw.h
 new file mode 100644
-index 0000000..39fe87b
+index 0000000..28fc50f
 --- /dev/null
 +++ b/src/hid_draw.h
-@@ -0,0 +1,65 @@
+@@ -0,0 +1,61 @@
 +enum mask_mode {
 +  HID_MASK_OFF    = 0, /* Flush the buffer and return to non-mask operation. */
 +  HID_MASK_BEFORE = 1, /* Polygons being drawn before clears.                */
@@ -300,10 +300,6 @@ index 0000000..39fe87b
 +  void (*fill_rect)    (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
 +
 +  /* The following APIs render using PCB data-structures, not immediate parameters */
-+
-+
-+  void (*draw_pcb_line) (hidGC gc, LineType *line);
-+  void (*draw_pcb_text) (hidGC gc, TextType *, Coord);
 +
 +  void (*fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
 +  void (*thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
