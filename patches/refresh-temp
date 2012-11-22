@@ -1,0 +1,58 @@
+Bottom: ecc1739d6d5cdc103bebca1e1413215e128fffdc
+Top:    5606272fdecc6b05a5740e5ca9175b2da177ba08
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-22 01:32:25 +0000
+
+Refresh of test-an-idea
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 10012cd..eac14f4 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -425,17 +425,15 @@ DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
+   r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+ }
+ 
+-static void
+-draw_line (LayerType *layer, LineType *line)
++static int
++line_callback (const BoxType * b, void *cl)
+ {
++  LayerType *layer = (LayerType *) cl;
++  LineType *line = (LineType *) b;
++
+   set_layer_object_color (layer, (AnyObjectType *) line);
+   gui->graphics->draw_pcb_line (Output.fgGC, line);
+-}
+ 
+-static int
+-line_callback (const BoxType * b, void *cl)
+-{
+-  draw_line ((LayerType *) cl, (LineType *) b);
+   return 1;
+ }
+ 
+@@ -466,17 +464,15 @@ rat_callback (const BoxType * b, void *cl)
+   return 1;
+ }
+ 
+-static void
+-draw_arc (LayerType *layer, ArcType *arc)
++static int
++arc_callback (const BoxType * b, void *cl)
+ {
++  LayerType *layer = (LayerType *) cl;
++  ArcType *arc =  (ArcType *) b;
++
+   set_layer_object_color (layer, (AnyObjectType *) arc);
+   gui->graphics->draw_pcb_arc (Output.fgGC, arc);
+-}
+ 
+-static int
+-arc_callback (const BoxType * b, void *cl)
+-{
+-  draw_arc ((LayerType *) cl, (ArcType *) b);
+   return 1;
+ }
