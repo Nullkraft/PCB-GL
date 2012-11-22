@@ -1,5 +1,5 @@
-Bottom: 3d2f6536bceb7455a1300af49a7d698b0978d7b7
-Top:    3ddb5d3ad87b755b62d3efbbf170de9689daeffa
+Bottom: a9da5d7eaa88ad600f981ea5961f8f1429f2e33b
+Top:    ae01bff2e0eb5a79132e8fc3b77dfafa68094145
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 00:49:05 +0000
 
@@ -235,10 +235,10 @@ index 3e2fa01..7caccee 100644
  
    lesstif_graphics.make_gc             = lesstif_make_gc;
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 9b7eab0..d4e771f 100644
+index 597ff6d..9a95854 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -1241,7 +1241,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -1244,7 +1244,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
  }
  
  static void
@@ -247,7 +247,7 @@ index 9b7eab0..d4e771f 100644
  {
    /* Ignore clip_box, just draw everything */
  
-@@ -1514,7 +1514,7 @@ void ps_ps_graphics_init (HID_DRAW *graphics)
+@@ -1518,7 +1518,7 @@ void ps_ps_graphics_init (HID_DRAW *graphics)
    graphics->fill_polygon       = ps_fill_polygon;
    graphics->fill_rect          = ps_fill_rect;
  
