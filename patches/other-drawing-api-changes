@@ -1,5 +1,5 @@
 Bottom: eb3b6bb07d110ffb8d3f46299f1ffb4a9acce058
-Top:    21b89b4719f5438f3351e1caa66b34ed7b489122
+Top:    2e8d8dc5b4fb33d80ddf6922ededde937fa7abcf
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-20 03:20:45 +0000
 
@@ -60,10 +60,10 @@ index 28cbfda..94c035f 100644
  
  #define max_group (PCB->Data->LayerN)
 diff --git a/src/draw.c b/src/draw.c
-index f31f50f..bdfdf2a 100644
+index f31f50f..a5d8b08 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -72,31 +72,66 @@
+@@ -72,18 +72,22 @@
   */
  static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
  
@@ -93,13 +93,7 @@ index f31f50f..bdfdf2a 100644
  static void
  set_object_color (AnyObjectType *obj,
                    char *warn_color, char *selected_color,
-                   char *found_color, char *normal_color)
- {
--  char *color;
-+  char *color = PCB->PinColor;
- 
-   if      (warn_color     != NULL && TEST_FLAG (WARNFLAG,     obj)) color = warn_color;
-   else if (selected_color != NULL && TEST_FLAG (SELECTEDFLAG, obj)) color = selected_color;
+@@ -96,7 +100,38 @@ set_object_color (AnyObjectType *obj,
    else if (found_color    != NULL && TEST_FLAG (FOUNDFLAG,    obj)) color = found_color;
    else                                                              color = normal_color;
  
