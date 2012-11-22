@@ -823,7 +823,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
   do
     {
       XFillRectangle (display, pixmap, bg_gc, 0, 0, view_width, view_height);
-      hid_expose_callback (&lesstif_hid, &region, 0);
+//      hid_expose_callback (&lesstif_hid, &region, 0);
       XSync (display, 0);
       time (&end);
       i++;
@@ -2574,7 +2574,7 @@ idle_proc (XtPointer dummy)
 	    }
 	}
       DrawBackgroundImage();
-      hid_expose_callback (&lesstif_hid, &region, 0);
+//      hid_expose_callback (&lesstif_hid, &region, 0);
       draw_grid ();
       lesstif_use_mask (0);
       show_crosshair (0); /* To keep the drawn / not drawn info correct */
@@ -2584,6 +2584,7 @@ idle_proc (XtPointer dummy)
       pixmap = window;
       if (crosshair_on)
         {
+          lesstif_set_draw_xor (gc, true);
           DrawAttached ();
           DrawMark ();
         }
@@ -2953,6 +2954,7 @@ lesstif_notify_crosshair_change (bool changes_complete)
     {
       save_pixmap = pixmap;
       pixmap = window;
+      lesstif_set_draw_xor (gc, true);
       DrawAttached ();
       pixmap = save_pixmap;
     }
@@ -3779,7 +3781,7 @@ pinout_callback (Widget da, PinoutData * pd,
   region.Y2 = PCB->MaxHeight;
 
   XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);
-  hid_expose_callback (&lesstif_hid, &region, pd->item);
+//  hid_expose_callback (&lesstif_hid, &region, pd->item);
 
   pinout = 0;
   view_left_x = save_vx;
@@ -4021,6 +4023,7 @@ lesstif_flush_debug_draw (void)
   pixmap = window;
   if (crosshair_on)
     {
+      lesstif_set_draw_xor (gc, true);
       DrawAttached ();
       DrawMark ();
     }

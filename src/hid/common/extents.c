@@ -13,6 +13,7 @@
 #include "hid.h"
 #include "hid_draw.h"
 #include "../hidint.h"
+#include "draw_api.h"
 #include "hid/common/draw_helpers.h"
 
 #ifdef HAVE_LIBDMALLOC
@@ -165,7 +166,7 @@ hid_extents_init (void)
   memset (&extents_hid, 0, sizeof (HID));
   memset (&extents_graphics, 0, sizeof (HID_DRAW));
 
-  common_draw_helpers_init (&extents_graphics);
+//  common_draw_helpers_init (&extents_graphics);
 
   extents_hid.struct_size         = sizeof (HID);
   extents_hid.name                = "extents-extents";
@@ -174,7 +175,7 @@ hid_extents_init (void)
 
   extents_hid.set_layer           = extents_set_layer;
 
-  extents_hid.graphics            = &extents_graphics;
+//  extents_hid.graphics            = &extents_graphics;
 
   extents_graphics.make_gc        = extents_make_gc;
   extents_graphics.destroy_gc     = extents_destroy_gc;
@@ -195,7 +196,7 @@ hid_extents_init (void)
 BoxType *
 hid_get_extents (void *item)
 {
-  BoxType region;
+//  BoxType region;
 
   /* As this isn't a real "HID", we need to ensure we are initialised. */
   hid_extents_init ();
@@ -205,11 +206,13 @@ hid_get_extents (void *item)
   box.X2 = -MAXINT;
   box.Y2 = -MAXINT;
 
+#if 0
   region.X1 = -MAXINT;
   region.Y1 = -MAXINT;
   region.X2 = MAXINT;
   region.Y2 = MAXINT;
   hid_expose_callback (&extents_hid, &region, item);
+#endif
 
   return &box;
 }
