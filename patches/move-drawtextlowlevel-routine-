@@ -1,5 +1,5 @@
-Bottom: 825dbe82b9b85f6a3d2525eea369ec9a97787f50
-Top:    d10bb2001450134db25e8e8d526aecad5d9cbaa5
+Bottom: a1b058e1bfa6acbb032b93946d089ee924722ab8
+Top:    6dc80f96e3668a316bd723b97a44f57d9944cd9b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-21 21:53:07 +0000
 
@@ -12,10 +12,10 @@ resides in hid/common/draw_helpers.c
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index aa13ebf..c6f1c60 100644
+index c9c2d60..2702876 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -200,7 +200,7 @@ _draw_pv_name (PinType *pv)
+@@ -199,7 +199,7 @@ _draw_pv_name (PinType *pv)
  
    if (gui->gui)
      doing_pinout++;
@@ -24,7 +24,7 @@ index aa13ebf..c6f1c60 100644
    if (gui->gui)
      doing_pinout--;
  }
-@@ -284,7 +284,7 @@ draw_pad_name (PadType *pad)
+@@ -283,7 +283,7 @@ draw_pad_name (PadType *pad)
    text.Y = box.Y1;
    text.Direction = vert ? 1 : 0;
  
@@ -33,7 +33,7 @@ index aa13ebf..c6f1c60 100644
  }
  
  static void
-@@ -350,7 +350,7 @@ draw_element_name (ElementType *element)
+@@ -349,7 +349,7 @@ draw_element_name (ElementType *element)
      gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
    else
      gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
@@ -42,7 +42,7 @@ index aa13ebf..c6f1c60 100644
  }
  
  static int
-@@ -1031,7 +1031,7 @@ text_callback (const BoxType * b, void *cl)
+@@ -1030,7 +1030,7 @@ text_callback (const BoxType * b, void *cl)
      min_silk_line = PCB->minSlk;
    else
      min_silk_line = PCB->minWid;
@@ -51,7 +51,7 @@ index aa13ebf..c6f1c60 100644
    return 1;
  }
  
-@@ -1163,89 +1163,6 @@ GatherPadName (PadType *Pad)
+@@ -1162,89 +1162,6 @@ GatherPadName (PadType *Pad)
  }
  
  /* ---------------------------------------------------------------------------
