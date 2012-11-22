@@ -1,5 +1,5 @@
-Bottom: e65b1735c8b77d515ec29478985323ecf74db060
-Top:    f61b8cbd1b4501b444875ed3889515991b0deae4
+Bottom: 1fe2deb24347daba4f4d727b8f66346536f12ad6
+Top:    84db5766a5df939a8647ffb1a2c792c5225f776b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-21 21:46:48 +0000
 
@@ -12,10 +12,10 @@ resides in hid/common/draw_helpers.c
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 32aacd5..0e03427 100644
+index ca29442..a5b5183 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -448,19 +448,6 @@ DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
+@@ -447,19 +447,6 @@ DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area)
  }
  
  static void
@@ -35,7 +35,7 @@ index 32aacd5..0e03427 100644
  draw_line (LayerType *layer, LineType *line)
  {
    if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
-@@ -472,7 +459,7 @@ draw_line (LayerType *layer, LineType *line)
+@@ -471,7 +458,7 @@ draw_line (LayerType *layer, LineType *line)
      }
    else
      gui->graphics->set_color (Output.fgGC, layer->Color);
@@ -44,7 +44,7 @@ index 32aacd5..0e03427 100644
  }
  
  static int
-@@ -512,7 +499,7 @@ rat_callback (const BoxType * b, void *cl)
+@@ -511,7 +498,7 @@ rat_callback (const BoxType * b, void *cl)
                                 w * 2, w * 2, 0, 360);
      }
    else
@@ -53,7 +53,7 @@ index 32aacd5..0e03427 100644
    return 1;
  }
  
-@@ -571,7 +558,7 @@ draw_element_package (ElementType *element)
+@@ -570,7 +557,7 @@ draw_element_package (ElementType *element)
    /* draw lines, arcs, text and pins */
    ELEMENTLINE_LOOP (element);
    {
@@ -62,7 +62,7 @@ index 32aacd5..0e03427 100644
    }
    END_LOOP;
    ARC_LOOP (element);
-@@ -1239,7 +1226,7 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
+@@ -1238,7 +1225,7 @@ DrawTextLowLevel (hidGC gc, TextType *Text, Coord min_line_width)
  	      newline.Point1.Y += Text->Y;
  	      newline.Point2.X += Text->X;
  	      newline.Point2.Y += Text->Y;
