@@ -93,7 +93,7 @@ set_object_color (AnyObjectType *obj,
                   char *warn_color, char *selected_color,
                   char *found_color, char *normal_color)
 {
-  char *color = PCB->PinColor;
+  char *color;
 
   if      (warn_color     != NULL && TEST_FLAG (WARNFLAG,     obj)) color = warn_color;
   else if (selected_color != NULL && TEST_FLAG (SELECTEDFLAG, obj)) color = selected_color;
