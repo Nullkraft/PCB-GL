@@ -1,5 +1,5 @@
-Bottom: 05a35149174a585acc20faf0b0570483ef7588b8
-Top:    fdb5c787811ad4037e4d1d6047c6750a5bfd54e7
+Bottom: b97da33cc37ade9f9a0b4989df5d99959859493d
+Top:    eb3b6bb07d110ffb8d3f46299f1ffb4a9acce058
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-20 03:20:45 +0000
 
@@ -23,10 +23,10 @@ index 269ee78..3649c17 100644
  	drill.h \
  	edif.y \
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 8c03b77..b809d6b 100644
+index 1f4eb3f..90eb5f2 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -51,444 +51,206 @@
+@@ -52,444 +52,206 @@
  #include <dmalloc.h>
  #endif
  
@@ -587,7 +587,7 @@ index 8c03b77..b809d6b 100644
      }
  
    /* draw the attached rubberband lines too */
-@@ -496,34 +258,32 @@ XORDrawMoveOrCopyObject (void)
+@@ -497,34 +259,32 @@ XORDrawMoveOrCopyObject (void)
    ptr = Crosshair.AttachedObject.Rubberband;
    while (i)
      {
@@ -647,7 +647,7 @@ index 8c03b77..b809d6b 100644
  
        ptr++;
        i--;
-@@ -534,8 +294,19 @@ XORDrawMoveOrCopyObject (void)
+@@ -535,8 +295,19 @@ XORDrawMoveOrCopyObject (void)
   * draws additional stuff that follows the crosshair
   */
  void
@@ -668,7 +668,7 @@ index 8c03b77..b809d6b 100644
    switch (Settings.Mode)
      {
      case VIA_MODE:
-@@ -550,15 +321,15 @@ DrawAttached (void)
+@@ -551,15 +322,15 @@ DrawAttached (void)
          via.Mask = 0;
          via.Flags = NoFlags ();
  
@@ -688,7 +688,7 @@ index 8c03b77..b809d6b 100644
            }
          break;
        }
-@@ -568,81 +339,100 @@ DrawAttached (void)
+@@ -569,81 +340,100 @@ DrawAttached (void)
      case POLYGONHOLE_MODE:
        /* draw only if starting point is set */
        if (Crosshair.AttachedLine.State != STATE_FIRST)
@@ -843,7 +843,7 @@ index 8c03b77..b809d6b 100644
        break;
      }
  
-@@ -656,8 +446,10 @@ DrawAttached (void)
+@@ -657,8 +447,10 @@ DrawAttached (void)
        y1 = Crosshair.AttachedBox.Point1.Y;
        x2 = Crosshair.AttachedBox.Point2.X;
        y2 = Crosshair.AttachedBox.Point2.Y;
@@ -855,7 +855,7 @@ index 8c03b77..b809d6b 100644
  }
  
  
-@@ -665,20 +457,29 @@ DrawAttached (void)
+@@ -666,20 +458,29 @@ DrawAttached (void)
   * draw the marker position
   */
  void
@@ -894,7 +894,7 @@ index 8c03b77..b809d6b 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1171,12 +972,6 @@ SetCrosshairRange (Coord MinX, Coord MinY, Coord MaxX, Coord MaxY)
+@@ -1172,12 +973,6 @@ SetCrosshairRange (Coord MinX, Coord MinY, Coord MaxX, Coord MaxY)
  void
  InitCrosshair (void)
  {
@@ -907,7 +907,7 @@ index 8c03b77..b809d6b 100644
    /* set initial shape */
    Crosshair.shape = Basic_Crosshair_Shape;
  
-@@ -1196,5 +991,4 @@ void
+@@ -1197,5 +992,4 @@ void
  DestroyCrosshair (void)
  {
    FreePolygonMemory (&Crosshair.AttachedPolygon);
@@ -1071,7 +1071,7 @@ index 0000000..69091c8
 +
 +#endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 54e736d..95aa233 100644
+index 5affe9a..cf2c072 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -9,6 +9,7 @@
