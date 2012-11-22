@@ -1,5 +1,5 @@
-Bottom: f61b8cbd1b4501b444875ed3889515991b0deae4
-Top:    825dbe82b9b85f6a3d2525eea369ec9a97787f50
+Bottom: 84db5766a5df939a8647ffb1a2c792c5225f776b
+Top:    a1b058e1bfa6acbb032b93946d089ee924722ab8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-21 21:58:43 +0000
 
@@ -12,10 +12,10 @@ resides in hid/common/draw_helpers.c
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 0e03427..aa13ebf 100644
+index a5b5183..c9c2d60 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -504,22 +504,6 @@ rat_callback (const BoxType * b, void *cl)
+@@ -503,22 +503,6 @@ rat_callback (const BoxType * b, void *cl)
  }
  
  static void
@@ -38,7 +38,7 @@ index 0e03427..aa13ebf 100644
  draw_arc (LayerType *layer, ArcType *arc)
  {
    if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, arc))
-@@ -532,7 +516,7 @@ draw_arc (LayerType *layer, ArcType *arc)
+@@ -531,7 +515,7 @@ draw_arc (LayerType *layer, ArcType *arc)
    else
      gui->graphics->set_color (Output.fgGC, layer->Color);
  
@@ -47,7 +47,7 @@ index 0e03427..aa13ebf 100644
  }
  
  static int
-@@ -563,7 +547,7 @@ draw_element_package (ElementType *element)
+@@ -562,7 +546,7 @@ draw_element_package (ElementType *element)
    END_LOOP;
    ARC_LOOP (element);
    {
