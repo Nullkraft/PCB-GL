@@ -296,10 +296,8 @@ draw_pad (PadType *pad)
   if (doing_pinout)
     gui->graphics->set_color (Output.fgGC, PCB->PinColor);
   else
-    set_object_color ((AnyObjectType *)pad,
-                      PCB->WarnColor,
-                      PCB->PinSelectedColor,
-                      PCB->ConnectedColor,
+    set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
+                      PCB->PinSelectedColor, PCB->ConnectedColor,
                       FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 
   _draw_pad (Output.fgGC, pad, false, false);
