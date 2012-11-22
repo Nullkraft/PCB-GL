@@ -1,5 +1,5 @@
-Bottom: fa49fd51486dd56316d356d0742c33404f86f154
-Top:    1d7c9857c0b8be7dc31593da4d2647068d4cc1ce
+Bottom: 31b5080248e477e11474070e4e387500cd2ef2d0
+Top:    18b51233b514080b4df72d159da8bf3461e5bc15
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 00:49:05 +0000
 
@@ -11,12 +11,12 @@ functionality a little cleaner.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 4283810..7995f6c 100644
+index d70963e..4a28844 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -872,25 +872,7 @@ poly_callback (const BoxType * b, void *cl)
-     color = i->layer->Color;
-   gui->graphics->set_color (Output.fgGC, color);
+@@ -799,25 +799,7 @@ poly_callback (const BoxType * b, void *cl)
+ 
+   set_layer_object_color (i->layer, (AnyObjectType *) polygon);
  
 -  if (gui->graphics->thindraw_pcb_polygon != NULL &&
 -      (TEST_FLAG (THINDRAWFLAG, PCB) ||
@@ -42,18 +42,18 @@ index 4283810..7995f6c 100644
    return 1;
  }
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 2e09e1e..96db6cc 100644
+index f6fbe71..7d25803 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -4,6 +4,7 @@
- #include "data.h" /* For nasty global "PCB" variable */
+ #include "data.h" /* For global "PCB" variable */
  #include "rotate.h" /* For RotateLineLowLevel() */
  #include "polygon.h"
 +#include "draw_helpers.h"
  
  
  static void
-@@ -241,6 +242,26 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
+@@ -256,6 +257,26 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
  #undef BOUNDS_INSIDE_CLIP_THRESHOLD
  
  void
@@ -80,8 +80,8 @@ index 2e09e1e..96db6cc 100644
  common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
    if (!poly->NoHolesValid)
-@@ -573,8 +594,7 @@ common_draw_helpers_init (HID_DRAW *graphics)
-   graphics->draw_pcb_line        = common_draw_pcb_line;
+@@ -589,8 +610,7 @@ common_draw_helpers_init (HID_DRAW *graphics)
+   graphics->draw_pcb_arc         = common_draw_pcb_arc;
    graphics->draw_pcb_text        = common_draw_pcb_text;
  
 -  graphics->fill_pcb_polygon     = common_fill_pcb_polygon;
@@ -257,11 +257,11 @@ index 9b7eab0..d4e771f 100644
  
  void
 diff --git a/src/hid_draw.h b/src/hid_draw.h
-index 5b1f7e9..c02979e 100644
+index 9c08c8d..70b59de 100644
 --- a/src/hid_draw.h
 +++ b/src/hid_draw.h
-@@ -54,8 +54,7 @@ struct hid_draw_st
-   void (*draw_pcb_line) (hidGC gc, LineType *line);
+@@ -55,8 +55,7 @@ struct hid_draw_st
+   void (*draw_pcb_arc) (hidGC gc, ArcType *arc);
    void (*draw_pcb_text) (hidGC gc, TextType *, Coord);
  
 -  void (*fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
