@@ -53,7 +53,6 @@ static void gerber_use_mask (enum mask_mode mode);
 static void gerber_set_color (hidGC gc, const char *name);
 static void gerber_set_line_cap (hidGC gc, EndCapStyle style);
 static void gerber_set_line_width (hidGC gc, Coord width);
-static void gerber_set_draw_xor (hidGC gc, int _xor);
 static void gerber_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
 static void gerber_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height, Angle start_angle, Angle delta_angle);
 static void gerber_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
@@ -934,12 +933,6 @@ gerber_set_line_width (hidGC gc, Coord width)
 }
 
 static void
-gerber_set_draw_xor (hidGC gc, int xor_)
-{
-  ;
-}
-
-static void
 use_gc (hidGC gc, int radius)
 {
   if (radius)
@@ -1292,7 +1285,6 @@ hid_gerber_init ()
   gerber_graphics.set_color      = gerber_set_color;
   gerber_graphics.set_line_cap   = gerber_set_line_cap;
   gerber_graphics.set_line_width = gerber_set_line_width;
-  gerber_graphics.set_draw_xor   = gerber_set_draw_xor;
   gerber_graphics.draw_line      = gerber_draw_line;
   gerber_graphics.draw_arc       = gerber_draw_arc;
   gerber_graphics.draw_rect      = gerber_draw_rect;

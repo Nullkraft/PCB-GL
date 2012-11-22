@@ -485,16 +485,6 @@ ghid_set_line_width (hidGC gc, Coord width)
   gc->width = width;
 }
 
-
-void
-ghid_set_draw_xor (hidGC gc, int xor)
-{
-  /* NOT IMPLEMENTED */
-
-  /* Only presently called when setting up a crosshair GC.
-   * We manage our own drawing model for that anyway. */
-}
-
 void
 ghid_set_draw_faded (hidGC gc, int faded)
 {

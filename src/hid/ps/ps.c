@@ -1068,12 +1068,6 @@ ps_set_line_width (hidGC gc, Coord width)
 }
 
 static void
-ps_set_draw_xor (hidGC gc, int xor_)
-{
-  ;
-}
-
-static void
 ps_set_draw_faded (hidGC gc, int faded)
 {
   gc->faded = faded;
@@ -1509,7 +1503,6 @@ void ps_ps_graphics_init (HID_DRAW *graphics)
   graphics->set_color          = ps_set_color;
   graphics->set_line_cap       = ps_set_line_cap;
   graphics->set_line_width     = ps_set_line_width;
-  graphics->set_draw_xor       = ps_set_draw_xor;
   graphics->set_draw_faded     = ps_set_draw_faded;
   graphics->draw_line          = ps_draw_line;
   graphics->draw_arc           = ps_draw_arc;

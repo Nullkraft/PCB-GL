@@ -4099,7 +4099,6 @@ hid_lesstif_init ()
   lesstif_graphics.set_color           = lesstif_set_color;
   lesstif_graphics.set_line_cap        = lesstif_set_line_cap;
   lesstif_graphics.set_line_width      = lesstif_set_line_width;
-  lesstif_graphics.set_draw_xor        = lesstif_set_draw_xor;
   lesstif_graphics.draw_line           = lesstif_draw_line;
   lesstif_graphics.draw_arc            = lesstif_draw_arc;
   lesstif_graphics.draw_rect           = lesstif_draw_rect;
