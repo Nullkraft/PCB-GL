@@ -1,0 +1,26 @@
+Bottom: b797fa4d2ec8b7c7c328ae61a9d72c01a97c5694
+Top:    ef91d82e44cbbccf8225e067bacf6085aabe4415
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-22 01:29:32 +0000
+
+Refresh of test
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index a5c3ef6..fe4f00a 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -296,10 +296,8 @@ draw_pad (PadType *pad)
+   if (doing_pinout)
+     gui->graphics->set_color (Output.fgGC, PCB->PinColor);
+   else
+-    set_object_color ((AnyObjectType *)pad,
+-                      PCB->WarnColor,
+-                      PCB->PinSelectedColor,
+-                      PCB->ConnectedColor,
++    set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
++                      PCB->PinSelectedColor, PCB->ConnectedColor,
+                       FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
+ 
+   _draw_pad (Output.fgGC, pad, false, false);
