@@ -100,7 +100,7 @@ set_object_color (AnyObjectType *obj,
 }
 
 static void
-set_layer_object_color (Layer *layer, AnyObjectType *obj)
+set_layer_object_color (LayerType *layer, AnyObjectType *obj)
 {
   set_object_color (obj, NULL, layer->SelectedColor, PCB->ConnectedColor, layer->Color);
 }
@@ -400,7 +400,7 @@ hole_callback (const BoxType * b, void *cl)
 
   if (TEST_FLAG (HOLEFLAG, pv))
     {
-      set_object_color ((AnyObjectType *obj),
+      set_object_color ((AnyObjectType *) pv,
                         PCB->WarnColor, PCB->ViaSelectedColor,
                         NULL, Settings.BlackColor);
 
@@ -826,12 +826,11 @@ poly_callback (const BoxType * b, void *cl)
 {
   struct poly_info *i = cl;
   PolygonType *polygon = (PolygonType *)b;
-  static char *color;
 
   if (!polygon->Clipped)
     return 0;
 
-  set_layer_object_color (layer, (AnyObjectType *) polygon);
+  set_layer_object_color (i->layer, (AnyObjectType *) polygon);
 
   if (gui->graphics->thindraw_pcb_polygon != NULL &&
       (TEST_FLAG (THINDRAWFLAG, PCB) ||
