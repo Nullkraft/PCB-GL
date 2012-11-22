@@ -71,6 +71,8 @@ typedef struct render_priv {
   int subcomposite_stencil_bit;
   char *current_colorname;
   double current_alpha_mult;
+  double current_brightness;
+  double current_saturation;
   GTimer *time_since_expose;
 
   /* Feature for leading the user to a particular location */
@@ -90,6 +92,8 @@ typedef struct hid_gc_struct
 
   const char *colorname;
   double alpha_mult;
+  double brightness;
+  double saturation;
   Coord width;
   gint cap, join;
 }
@@ -307,6 +311,8 @@ ghid_make_gc (void)
   rv->me_pointer = &ghid_hid;
   rv->colorname = Settings.BackgroundColor;
   rv->alpha_mult = 1.0;
+  rv->brightness = 1.0;
+  rv->saturation = 1.0;
   return rv;
 }
 
@@ -497,10 +503,13 @@ set_gl_color_for_gc (hidGC gc)
   hidval cval;
   ColorCache *cc;
   double r, g, b, a;
+  double luminance;
 
   if (priv->current_colorname != NULL &&
       strcmp (priv->current_colorname, gc->colorname) == 0 &&
-      priv->current_alpha_mult == gc->alpha_mult)
+      priv->current_alpha_mult == gc->alpha_mult &&
+      priv->current_brightness == gc->brightness &&
+      priv->current_saturation == gc->saturation)
     return;
 
   free (priv->current_colorname);
@@ -515,6 +524,8 @@ set_gl_color_for_gc (hidGC gc)
 
   priv->current_colorname = strdup (gc->colorname);
   priv->current_alpha_mult = gc->alpha_mult;
+  priv->current_brightness = gc->brightness;
+  priv->current_saturation = gc->saturation;
 
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -576,6 +587,18 @@ set_gl_color_for_gc (hidGC gc)
 #endif
   }
 
+  r *= gc->brightness;
+  g *= gc->brightness;
+  b *= gc->brightness;
+
+  /* B/W Equivalent brightness */
+  luminance = (r + g + b) / 3.0;
+
+  /* Fade between B/W and colour */
+  r = r * gc->saturation + luminance * (1.0 - gc->saturation);
+  g = g * gc->saturation + luminance * (1.0 - gc->saturation);
+  b = b * gc->saturation + luminance * (1.0 - gc->saturation);
+
   hidgl_flush_triangles (&buffer);
   glColor4d (r, g, b, a);
 }
@@ -591,6 +614,20 @@ void
 ghid_set_alpha_mult (hidGC gc, double alpha_mult)
 {
   gc->alpha_mult = alpha_mult;
+  set_gl_color_for_gc (gc);
+}
+
+static void
+ghid_set_saturation (hidGC gc, double saturation)
+{
+  gc->saturation = saturation;
+  set_gl_color_for_gc (gc);
+}
+
+static void
+ghid_set_brightness (hidGC gc, double brightness)
+{
+  gc->brightness = brightness;
   set_gl_color_for_gc (gc);
 }
 
@@ -1003,6 +1040,25 @@ ghid_screen_update (void)
 {
 }
 
+void
+ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
+{
+  /* Only apply effects to locked objects when in "lock" mode */
+  if (Settings.Mode == LOCK_MODE &&
+      TEST_FLAG (LOCKFLAG, object))
+    {
+      ghid_set_alpha_mult (gc, 0.8);
+      ghid_set_saturation (gc, 0.3);
+      ghid_set_brightness (gc, 0.7);
+    }
+  else
+    {
+      ghid_set_alpha_mult (gc, 1.0);
+      ghid_set_saturation (gc, 1.0);
+      ghid_set_brightness (gc, 1.0);
+    }
+}
+
 static int
 EMark_callback (const BoxType * b, void *cl)
 {
@@ -1046,6 +1102,7 @@ SetPVColor (PinType *Pin, int Type)
 	color = PCB->PinColor;
     }
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)Pin);
   gui->graphics->set_color (Output.fgGC, color);
 }
 
@@ -1073,6 +1130,7 @@ SetPVColor_inlayer (PinType *Pin, LayerType *Layer, int Type)
         color = Layer->Color;
     }
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)Pin);
   gui->graphics->set_color (Output.fgGC, color);
 }
 
@@ -1101,6 +1159,7 @@ _draw_pv_name (PinType *pv)
       box.Y1 = pv->Y - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
     }
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pv);
   gui->graphics->set_color (Output.fgGC, PCB->PinNameColor);
 
   text.Flags = NoFlags ();
@@ -1213,6 +1272,7 @@ draw_pad_name (PadType *pad)
       box.Y1 += Settings.PinoutTextOffsetY;
     }
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pad);
   gui->graphics->set_color (Output.fgGC, PCB->PinNameColor);
 
   text.Flags = NoFlags ();
@@ -1241,6 +1301,7 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 static void
 draw_pad (PadType *pad)
 {
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pad);
   if (TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, pad))
    {
      if (TEST_FLAG (WARNFLAG, pad))
@@ -1302,6 +1363,7 @@ hole_callback (const BoxType * b, void *cl)
 
   if (TEST_FLAG (HOLEFLAG, pv))
     {
+    ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pv);
       if (TEST_FLAG (WARNFLAG, pv))
         gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
       else if (TEST_FLAG (SELECTEDFLAG, pv))
@@ -1321,6 +1383,7 @@ hole_callback (const BoxType * b, void *cl)
 static void
 draw_line (LayerType *layer, LineType *line)
 {
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)line);
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
     {
       if (TEST_FLAG (SELECTEDFLAG, line))
@@ -1343,6 +1406,7 @@ line_callback (const BoxType * b, void *cl)
 static void
 draw_arc (LayerType *layer, ArcType *arc)
 {
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)arc);
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, arc))
     {
       if (TEST_FLAG (SELECTEDFLAG, arc))
@@ -1370,6 +1434,7 @@ text_callback (const BoxType * b, void *cl)
   TextType *text = (TextType *)b;
   int min_silk_line;
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)text);
   if (TEST_FLAG (SELECTEDFLAG, text))
     gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
   else
@@ -1397,6 +1462,7 @@ DrawPlainPolygon (LayerType *Layer, PolygonType *Polygon, const BoxType *drawn_a
     color = PCB->ConnectedColor;
   else
     color = Layer->Color;
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)Polygon);
   gui->graphics->set_color (Output.fgGC, color);
 
   if (gui->graphics->thindraw_pcb_polygon != NULL &&
@@ -1703,6 +1769,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
   else
     color = "drill";
 
+  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)Pin);
   gui->graphics->set_color (Output.fgGC, color);
   DrawDrillChannel (Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
   return 0;
