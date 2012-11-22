@@ -100,12 +100,6 @@ set_object_color (AnyObjectType *obj,
   gui->graphics->set_color (Output.fgGC, color);
 }
 
-static void
-set_layer_object_color (LayerType *layer, AnyObjectType *obj)
-{
-  set_object_color (obj, NULL, layer->SelectedColor, PCB->ConnectedColor, layer->Color);
-}
-
 /*---------------------------------------------------------------------------
  *  Adds the update rect to the update region
  */
