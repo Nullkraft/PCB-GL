@@ -33,7 +33,6 @@ struct hid_draw_st
      line style is helpful.  */
   void (*set_line_cap) (hidGC gc, EndCapStyle style);
   void (*set_line_width) (hidGC gc, Coord width);
-  void (*set_draw_xor) (hidGC gc, int xor_);
 
   /* Blends 20% or so color with 80% background.  Only used for
      assembly drawings so far. */

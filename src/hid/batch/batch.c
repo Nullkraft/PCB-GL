@@ -200,11 +200,6 @@ batch_set_line_width (hidGC gc, Coord width)
 }
 
 static void
-batch_set_draw_xor (hidGC gc, int xor_set)
-{
-}
-
-static void
 batch_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
 }
@@ -370,7 +365,6 @@ hid_batch_init ()
   batch_graphics.set_color        = batch_set_color;
   batch_graphics.set_line_cap     = batch_set_line_cap;
   batch_graphics.set_line_width   = batch_set_line_width;
-  batch_graphics.set_draw_xor     = batch_set_draw_xor;
   batch_graphics.draw_line        = batch_draw_line;
   batch_graphics.draw_arc         = batch_draw_arc;
   batch_graphics.draw_rect        = batch_draw_rect;
