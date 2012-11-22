@@ -36,6 +36,7 @@
 #include "crosshair.h"
 #include "data.h"
 #include "draw.h"
+#include "hid_draw.h"
 #include "line.h"
 #include "misc.h"
 #include "polygon.h"
@@ -257,7 +258,7 @@ outline_draw_pcb_pad (DrawAPI *dapi, LayerType *layer, PadType *pad)
   dapi->graphics->thindraw_pcb_pad (dapi->gc, pad, false, false);
 }
 
-DrawAPI *outline_draw_new (HID_DRAW_API *graphics)
+DrawAPI *outline_draw_new (HID_DRAW *graphics)
 {
   DrawAPI *dapi;
 
