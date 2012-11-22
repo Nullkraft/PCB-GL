@@ -1,5 +1,5 @@
 Bottom: b97da33cc37ade9f9a0b4989df5d99959859493d
-Top:    794a7ccd18fea22a0006c5b1e8a9c8d11e7e13b3
+Top:    2a4e739b0664e4299db3dc28752b881f82f8ab62
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-20 03:20:45 +0000
 
@@ -1114,10 +1114,10 @@ index 5affe9a..cf2c072 100644
    draw_crosshair (priv);
 diff --git a/src/outline_draw.c b/src/outline_draw.c
 new file mode 100644
-index 0000000..e8731a0
+index 0000000..c591146
 --- /dev/null
 +++ b/src/outline_draw.c
-@@ -0,0 +1,288 @@
+@@ -0,0 +1,289 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -1156,6 +1156,7 @@ index 0000000..e8731a0
 +#include "crosshair.h"
 +#include "data.h"
 +#include "draw.h"
++#include "hid_draw.h"
 +#include "line.h"
 +#include "misc.h"
 +#include "polygon.h"
@@ -1377,7 +1378,7 @@ index 0000000..e8731a0
 +  dapi->graphics->thindraw_pcb_pad (dapi->gc, pad, false, false);
 +}
 +
-+DrawAPI *outline_draw_new (HID_DRAW_API *graphics)
++DrawAPI *outline_draw_new (HID_DRAW *graphics)
 +{
 +  DrawAPI *dapi;
 +
