@@ -1,5 +1,5 @@
-Bottom: cb1bb0fc27005f81c8769b7e889200bbc85e4526
-Top:    f183b36f2feaee878d4d60f58f81206333ab9593
+Bottom: 993539c2ef1ed3b9fed91ce413bf169c01235445
+Top:    664e828fa956e84be09165a71ee516d7c092bd8e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-21 21:56:04 +0000
 
@@ -9,10 +9,10 @@ TMP FIXES
 ---
 
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index 274eecb..1f3be1a 100644
+index ebc2827..31f91df 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
-@@ -409,8 +409,12 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+@@ -412,8 +412,12 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
    int layer_num = GetLayerNumber (PCB->Data, layer);
    int group = GetLayerGroupNumberByPointer (layer);
    struct poly_info info = {drawn_area, layer};
@@ -26,7 +26,7 @@ index 274eecb..1f3be1a 100644
      {
        r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, NULL);
        r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, NULL);
-@@ -422,12 +426,6 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+@@ -425,12 +429,6 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
    if (TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
  
@@ -39,7 +39,7 @@ index 274eecb..1f3be1a 100644
    /* draw all visible lines this layer */
    r_search (layer->line_tree, drawn_area, NULL, line_callback, layer);
    r_search (layer->arc_tree,  drawn_area, NULL, arc_callback,  layer);
-@@ -437,8 +435,7 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+@@ -440,8 +438,7 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
       auto-outline magically disappear when you first add something to
       the "outline" layer.  */
  
