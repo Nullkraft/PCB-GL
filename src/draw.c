@@ -144,11 +144,9 @@ pad_callback (const BoxType * b, void *cl)
 
   if (ON_SIDE (pad, *side))
     {
-      if (TEST_FLAG (WARNFLAG, pad))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
-      else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
-      else if (TEST_FLAG (FOUNDFLAG, pad))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
-      else if (FRONT (pad))                   gui->graphics->set_color (Output.fgGC, PCB->PinColor);
-      else                                    gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+      set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
+                        PCB->PinSelectedColor, PCB->ConnectedColor,
+                        FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 
       dapi->draw_pad (pad, NULL, NULL);
     }
@@ -194,11 +192,9 @@ draw_element_pins_and_pads (ElementType *element)
   {
     if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
       {
-        if (TEST_FLAG (WARNFLAG, pad))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
-        else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
-        else if (TEST_FLAG (FOUNDFLAG, pad))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
-        else if (FRONT (pad))                   gui->graphics->set_color (Output.fgGC, PCB->PinColor);
-        else                                    gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+        set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
+                          PCB->PinSelectedColor, PCB->ConnectedColor,
+                          FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 
         dapi->draw_pad (pad, NULL, NULL);
       }
@@ -206,16 +202,13 @@ draw_element_pins_and_pads (ElementType *element)
   END_LOOP;
   PIN_LOOP (element);
   {
-    if (TEST_FLAG (WARNFLAG, pin))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
-    else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
-    else if (TEST_FLAG (FOUNDFLAG, pin))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
-    else                                    gui->graphics->set_color (Output.fgGC, PCB->PinColor);
+    set_object_color ((AnyObjectType *)pin, PCB->WarnColor,
+                      PCB->PinSelectedColor, PCB->ConnectedColor, PCB->PinColor);
 
     dapi->draw_pin (pin, NULL, NULL);
 
-    if (TEST_FLAG (WARNFLAG, pin))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
-    else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
-    else                                    gui->graphics->set_color (Output.fgGC, Settings.BlackColor);
+    set_object_color ((AnyObjectType *)pin, PCB->WarnColor,
+                      PCB->PinSelectedColor, NULL, Settings.BlackColor);
 
     dapi->draw_pin_hole (pin, NULL, NULL);
   }
