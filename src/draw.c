@@ -81,7 +81,6 @@ static bool doing_assy = false;
 static void DrawEverything (const BoxType *);
 static void DrawPPV (int group, const BoxType *);
 static void AddPart (void *);
-static void SetPVColor (PinType *, int);
 static void DrawEMark (ElementType *, Coord, Coord, bool);
 static void DrawRats (const BoxType *);
 
