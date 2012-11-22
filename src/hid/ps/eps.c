@@ -17,6 +17,7 @@
 #include "hid_draw.h"
 #include "../hidint.h"
 #include "hid/common/hidnogui.h"
+#include "draw_api.h"
 #include "hid/common/draw_helpers.h"
 #include "../ps/ps.h"
 #include "hid/common/hidinit.h"
@@ -310,7 +311,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   fprintf (f,
 	   "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
 
-  hid_expose_callback (&eps_hid, bounds, 0);
+//  hid_expose_callback (&eps_hid, bounds, 0);
 
   fprintf (f, "showpage\n");
 
@@ -445,6 +446,7 @@ eps_destroy_gc (hidGC gc)
 static void
 eps_use_mask (enum mask_mode mode)
 {
+#if 0
   static int mask_pending = 0;
   switch (mode)
     {
@@ -467,6 +469,7 @@ eps_use_mask (enum mask_mode mode)
 	}
       break;
     }
+#endif
 }
 
 static void
@@ -664,7 +667,7 @@ hid_eps_init ()
   memset (&eps_graphics, 0, sizeof (HID_DRAW));
 
   common_nogui_init (&eps_hid);
-  common_draw_helpers_init (&eps_graphics);
+//  common_draw_helpers_init (&eps_graphics);
 
   eps_hid.struct_size         = sizeof (HID);
   eps_hid.name                = "eps";
@@ -679,7 +682,7 @@ hid_eps_init ()
   eps_hid.calibrate           = eps_calibrate;
   eps_hid.set_crosshair       = eps_set_crosshair;
 
-  eps_hid.graphics            = &eps_graphics;
+//  eps_hid.graphics            = &eps_graphics;
 
   eps_graphics.make_gc        = eps_make_gc;
   eps_graphics.destroy_gc     = eps_destroy_gc;
