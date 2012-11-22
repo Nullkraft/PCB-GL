@@ -54,7 +54,7 @@ struct DrawAPI {
 
   /* Member variables */
 //  GraphicsAPI *graphics;
-  HID_DRAW_API *graphics;
+  HID_DRAW *graphics;
   hidGC gc;
   hidGC fg_gc;
   hidGC bg_gc;
