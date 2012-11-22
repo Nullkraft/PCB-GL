@@ -1,5 +1,5 @@
 Bottom: e65b1735c8b77d515ec29478985323ecf74db060
-Top:    ef91d82e44cbbccf8225e067bacf6085aabe4415
+Top:    fc40da3010945a7c8f4d29d5aefc1e48e8eb64f7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-22 01:18:22 +0000
 
@@ -9,7 +9,7 @@ draw.c: Refactor color setting code to be more compact
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 32aacd5..fe4f00a 100644
+index 32aacd5..f31f50f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -81,52 +81,30 @@ static bool doing_assy = false;
@@ -70,7 +70,7 @@ index 32aacd5..fe4f00a 100644
  }
  
 +static void
-+set_layer_object_color (Layer *layer, AnyObjectType *obj)
++set_layer_object_color (LayerType *layer, AnyObjectType *obj)
 +{
 +  set_object_color (obj, NULL, layer->SelectedColor, PCB->ConnectedColor, layer->Color);
 +}
@@ -143,7 +143,7 @@ index 32aacd5..fe4f00a 100644
 -        gui->graphics->set_color (Output.fgGC, PCB->ViaSelectedColor);
 -      else
 -        gui->graphics->set_color (Output.fgGC, Settings.BlackColor);
-+      set_object_color ((AnyObjectType *obj),
++      set_object_color ((AnyObjectType *) pv,
 +                        PCB->WarnColor, PCB->ViaSelectedColor,
 +                        NULL, Settings.BlackColor);
  
@@ -202,7 +202,12 @@ index 32aacd5..fe4f00a 100644
    _draw_arc (arc);
  }
  
-@@ -877,13 +831,7 @@ poly_callback (const BoxType * b, void *cl)
+@@ -872,18 +826,11 @@ poly_callback (const BoxType * b, void *cl)
+ {
+   struct poly_info *i = cl;
+   PolygonType *polygon = (PolygonType *)b;
+-  static char *color;
+ 
    if (!polygon->Clipped)
      return 0;
  
@@ -213,7 +218,7 @@ index 32aacd5..fe4f00a 100644
 -  else
 -    color = i->layer->Color;
 -  gui->graphics->set_color (Output.fgGC, color);
-+  set_layer_object_color (layer, (AnyObjectType *) polygon);
++  set_layer_object_color (i->layer, (AnyObjectType *) polygon);
  
    if (gui->graphics->thindraw_pcb_polygon != NULL &&
        (TEST_FLAG (THINDRAWFLAG, PCB) ||
