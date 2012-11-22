@@ -1,5 +1,5 @@
 Bottom: e65b1735c8b77d515ec29478985323ecf74db060
-Top:    fd4845459ea4dbfd72a502ba7df3b433ee6b42bb
+Top:    b797fa4d2ec8b7c7c328ae61a9d72c01a97c5694
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-22 01:18:22 +0000
 
@@ -9,7 +9,7 @@ draw.c: Refactor color setting code to be more compact
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 32aacd5..d4afb9d 100644
+index 32aacd5..a5c3ef6 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -81,52 +81,30 @@ static bool doing_assy = false;
@@ -61,7 +61,7 @@ index 32aacd5..d4afb9d 100644
 -      else
 -	color = PCB->PinColor;
 -    }
-+       if (warn_color     != NULL && TEST_FLAG (WARNFLAG,     obj)) color = warn_color;
++  if      (warn_color     != NULL && TEST_FLAG (WARNFLAG,     obj)) color = warn_color;
 +  else if (selected_color != NULL && TEST_FLAG (SELECTEDFLAG, obj)) color = selected_color;
 +  else if (found_color    != NULL && TEST_FLAG (FOUNDFLAG,    obj)) color = found_color;
 +  else                                                              color = normal_color;
