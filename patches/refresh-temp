@@ -1,0 +1,26 @@
+Bottom: 039793033bdca2a3b3902a421ba686ce204dc2d2
+Top:    58c9a4aa0d5fe46e3db5c29d857ac2b88f6ae253
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-22 02:04:08 +0000
+
+Refresh of crasy-test
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 10e9b9c..f64b90f 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -100,12 +100,6 @@ set_object_color (AnyObjectType *obj,
+   gui->graphics->set_color (Output.fgGC, color);
+ }
+ 
+-static void
+-set_layer_object_color (LayerType *layer, AnyObjectType *obj)
+-{
+-  set_object_color (obj, NULL, layer->SelectedColor, PCB->ConnectedColor, layer->Color);
+-}
+-
+ /*---------------------------------------------------------------------------
+  *  Adds the update rect to the update region
+  */
