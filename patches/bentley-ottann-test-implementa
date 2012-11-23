@@ -1,7 +1,7 @@
-Bottom: 7e92aac917bd21361ee56baf27edf8ea6c485095
-Top:    98d1185e42d3f580905ee6103f71c5caa8392223
+Bottom: b77f8de6f67ca9b6a8f9e23389d4d9917710b63f
+Top:    e35487516cba2c8cc84b7cfe240b7b511d5cbf84
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-22 18:22:53 +0000
+Date:   2012-11-23 17:37:27 +0000
 
 Bentley-Ottann test implementation
 
@@ -192,7 +192,7 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 269ee78..5a233cf 100644
+index 602ebaa..4670a9a 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -39,6 +39,33 @@ PCB_SRCS = \
@@ -238,7 +238,7 @@ index 269ee78..5a233cf 100644
  	heap.c \
  	heap.h \
  	hid.h \
-@@ -136,6 +165,8 @@ PCB_SRCS = \
+@@ -137,6 +166,8 @@ PCB_SRCS = \
  	set.h \
  	strflags.c \
  	strflags.h \
