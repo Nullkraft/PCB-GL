@@ -28,6 +28,10 @@
 #   include <GL/gl.h>
 #endif
 
+#ifdef WIN32
+#   include "hid/common/glext.h"
+#endif
+
 #include <gtk/gtkgl.h>
 #include "hid/common/hidgl.h"
 
