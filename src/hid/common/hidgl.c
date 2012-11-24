@@ -573,21 +573,17 @@ static GLenum tessVertexType;
 static int stashed_vertices;
 static int triangle_comp_idx;
 
+#ifndef CALLBACK
+#define CALLBACK
+#endif
 
-static void
+static void CALLBACK
 myError (GLenum errno)
 {
   printf ("gluTess error: %s\n", gluErrorString (errno));
 }
 
-static void
-myFreeCombined ()
-{
-  while (combined_num_to_free)
-    free (combined_to_free [-- combined_num_to_free]);
-}
-
-static void
+static void CALLBACK
 myCombine ( GLdouble coords[3], void *vertex_data[4], GLfloat weight[4], void **dataOut )
 {
 #define MAX_COMBINED_VERTICES 2500
@@ -618,7 +614,7 @@ myCombine ( GLdouble coords[3], void *vertex_data[4], GLfloat weight[4], void **
   *dataOut = new_vertex;
 }
 
-static void
+static void CALLBACK
 myBegin (GLenum type)
 {
   tessVertexType = type;
@@ -626,7 +622,7 @@ myBegin (GLenum type)
   triangle_comp_idx = 0;
 }
 
-static void
+static void CALLBACK
 myVertex (GLdouble *vertex_data)
 {
   static GLfloat triangle_vertices [2 * 3];
@@ -677,6 +673,13 @@ myVertex (GLdouble *vertex_data)
     }
   else
     printf ("Vertex received with unknown type\n");
+}
+
+static void
+myFreeCombined ()
+{
+  while (combined_num_to_free)
+    free (combined_to_free [-- combined_num_to_free]);
 }
 
 void
