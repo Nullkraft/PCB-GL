@@ -3,7 +3,13 @@ Top:    2df63eed6fc10f06bab0907f60826597d633a9d4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-24 18:53:59 +0000
 
-Fix Win32 use of gluTess* functions
+hidgl: Fixup signature gluTessCallback functions to work on Win32
+
+On windows these callbacks are invoked using stdcall calling convention
+and we need to annotate then with the "CALLBACK" macro to achieve this.
+
+If we ever end up using glew.h, we can probably drop the #ifndef CALLBACK
+check which #defines CALLBACK to an empty string on other platforms.
 
 
 ---
