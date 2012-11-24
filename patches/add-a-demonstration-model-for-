@@ -1,5 +1,5 @@
-Bottom: d339b4424107b26b23730895f793cc59890d2bac
-Top:    38537c5cde32470c4696bce058605ee615ed3c5d
+Bottom: e013b4cd84c703382f3b399eea44f8df802d13be
+Top:    752e41d21494f8d7e9520639150b24ab6a60c3f9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-15 01:46:46 +0000
 
@@ -434,7 +434,7 @@ literal 0
 HcmV?d00001
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 494f1a7..b85a954 100644
+index d9e4e42..93c3ebf 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -104,6 +104,7 @@ PFNGLUSEPROGRAMPROC         glUseProgram        = NULL;
@@ -445,7 +445,7 @@ index 494f1a7..b85a954 100644
  
  static bool in_context = false;
  
-@@ -915,9 +916,20 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
+@@ -918,9 +919,20 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
    hidgl_flush_triangles (&buffer);
  
    glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
@@ -467,7 +467,7 @@ index 494f1a7..b85a954 100644
  
    if (use_new_stencil)
      {
-@@ -984,7 +996,34 @@ load_built_in_shaders (void)
+@@ -987,7 +999,34 @@ load_built_in_shaders (void)
            "  gl_FragColor = gl_Color;\n"
            "}\n";
  
