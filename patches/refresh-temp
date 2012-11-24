@@ -1,0 +1,25 @@
+Bottom: f9b3403e60e789e07cfc61d710a1e79f92fcee72
+Top:    371f7ed7a4f972d93a5aea4ccf5f86259e1cfd25
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-24 23:03:54 +0000
+
+Refresh of win32-fix-build-for-win32
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index c27554d..b3e97b1 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -30,6 +30,12 @@
+ #   include <GL/gl.h>
+ #endif
+ 
++#ifdef WIN32
++#   include "hid/common/glext.h"
++
++extern PFNGLUSEPROGRAMPROC         glUseProgram;
++#endif
++
+ #include <gtk/gtkgl.h>
+ #include "hid/common/hidgl.h"
