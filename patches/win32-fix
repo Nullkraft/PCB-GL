@@ -1,5 +1,5 @@
 Bottom: 57e5712fe046d7e516825252e01b3e89d954c8ea
-Top:    f1e2de638128e8eb84bb6a46bdf9f7e05fd3b58f
+Top:    eb08cdab4df5f73bc04b957bd8b51f696adb2de1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-24 19:09:45 +0000
 
@@ -9,10 +9,26 @@ Win32 FIX
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f736c54..f1018b0 100644
+index f736c54..b847ae7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -28,6 +28,10 @@
+@@ -15,19 +15,25 @@
+ #include "gui-pinout-preview.h"
+ #include "pcb-printf.h"
+ 
++#ifndef WIN32
+ /* The Linux OpenGL ABI 1.0 spec requires that we define
+  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+  * in order to get prototypes:
+  *   http://www.opengl.org/registry/ABI/
+  */
++#   define GL_GLEXT_PROTOTYPES 1
++#endif
+ 
+-#define GL_GLEXT_PROTOTYPES 1
+ #ifdef HAVE_OPENGL_GL_H
+ #   include <OpenGL/gl.h>
+ #else
  #   include <GL/gl.h>
  #endif
  
