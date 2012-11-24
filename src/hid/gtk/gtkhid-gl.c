@@ -15,17 +15,23 @@
 #include "gui-pinout-preview.h"
 #include "pcb-printf.h"
 
+#ifndef WIN32
 /* The Linux OpenGL ABI 1.0 spec requires that we define
  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
  * in order to get prototypes:
  *   http://www.opengl.org/registry/ABI/
  */
+#   define GL_GLEXT_PROTOTYPES 1
+#endif
 
-#define GL_GLEXT_PROTOTYPES 1
 #ifdef HAVE_OPENGL_GL_H
 #   include <OpenGL/gl.h>
 #else
 #   include <GL/gl.h>
+#endif
+
+#ifdef WIN32
+#   include "hid/common/glext.h"
 #endif
 
 #include <gtk/gtkgl.h>
