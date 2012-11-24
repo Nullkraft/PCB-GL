@@ -1,24 +1,11 @@
-Bottom: eb56ba69ff669d2d67d1f999b42a5fcbc265cbf0
-Top:    eb08cdab4df5f73bc04b957bd8b51f696adb2de1
+Bottom: 1daae73c761f75c2b261c8cbe6410322573d87b5
+Top:    1daae73c761f75c2b261c8cbe6410322573d87b5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-11-24 23:02:09 +0000
+Date:   2012-11-24 23:04:10 +0000
 
 Win32 FIX
 
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d4595b3..b847ae7 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -30,6 +30,10 @@
- #   include <GL/gl.h>
- #endif
- 
-+#ifdef WIN32
-+#   include "hid/common/glext.h"
-+#endif
-+
- #include <gtk/gtkgl.h>
- #include "hid/common/hidgl.h"
+
