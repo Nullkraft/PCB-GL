@@ -1,0 +1,30 @@
+Bottom: 21ac8e622187930afbf020bf5f32f790ffc97fbb
+Top:    e42c9a9333e3b34fc54773e2825c8f30ad444538
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-24 23:01:02 +0000
+
+Refresh of play-with-glsl-shader-for-rend
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 69b1f15..586acc7 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -14,13 +14,15 @@
+ #include "polygon.h"
+ #include "gui-pinout-preview.h"
+ 
++#ifndef WIN32
+ /* The Linux OpenGL ABI 1.0 spec requires that we define
+  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+  * in order to get prototypes:
+  *   http://www.opengl.org/registry/ABI/
+  */
++#   define GL_GLEXT_PROTOTYPES 1
++#endif
+ 
+-#define GL_GLEXT_PROTOTYPES 1
+ #ifdef HAVE_OPENGL_GL_H
+ #   include <OpenGL/gl.h>
+ #else
