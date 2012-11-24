@@ -1,5 +1,5 @@
 Bottom: 6313b317e46490f3bc665643b9407c9f8a9a8311
-Top:    6313b317e46490f3bc665643b9407c9f8a9a8311
+Top:    2d8664ed48f538eabfc7d3b0ec5bb5e365021672
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 10:34:59 +0000
 
@@ -10,4 +10,97 @@ Debug polygon stuff
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 231094e..2ba8854 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -975,7 +975,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ 
+   /* Setup HID function pointers specific to the GL renderer*/
+   ghid_hid.end_layer = ghid_end_layer;
+-  ghid_graphics.fill_pcb_polygon = ghid_fill_pcb_polygon;
++//  ghid_graphics.fill_pcb_polygon = ghid_fill_pcb_polygon;
+   ghid_graphics.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+ }
+ 
+diff --git a/src/polygon.c b/src/polygon.c
+index 3311b09..74a7b7f 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1147,8 +1147,10 @@ UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
+ 
+   if (!np)
+     return 0;
++  printf ("Unsubtract call\n");
+   if (!Unsubtract (np, p))
+     return 0;
++  printf ("DONE call\n");
+   clearPoly (PCB->Data, l, p, (const BoxType *) arc, 2 * UNSUBTRACT_BLOAT);
+   return 1;
+ }
+diff --git a/src/polygon1.c b/src/polygon1.c
+index b9d654c..6a9a42b 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2425,10 +2425,15 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+     {
+ 
+ #ifdef DEBUG
+-      if (!poly_Valid (a))
++      if (!poly_Valid (a)) {
++        printf ("Polygon A fubar\n");
++        *(char *)0 = 0;
+ 	return -1;
+-      if (!poly_Valid (b))
++      }
++      if (!poly_Valid (b)) {
++        printf ("Polygon B fubar\n");
+ 	return -1;
++      }
+ #endif
+       M_POLYAREA_intersect (&e, a, b, TRUE);
+ 
+@@ -3251,12 +3256,14 @@ poly_Valid (POLYAREA * p)
+ {
+   PLINE *c;
+ 
+-  if ((p == NULL) || (p->contours == NULL))
++  if ((p == NULL) || (p->contours == NULL)) {
++    printf ("p or p->contours was NULL\n");
+     return FALSE;
++  }
+ 
+   if (p->contours->Flags.orient == PLF_INV || poly_ChkContour (p->contours))
+     {
+-#ifndef NDEBUG
++//#ifndef NDEBUG
+       VNODE *v, *n;
+       DEBUGP ("Invalid Outer PLINE\n");
+       if (p->contours->Flags.orient == PLF_INV)
+@@ -3271,7 +3278,7 @@ poly_Valid (POLYAREA * p)
+ 		   v->point[0], v->point[1], n->point[0], n->point[1]);
+ 	}
+       while ((v = v->next) != &p->contours->head);
+-#endif
++//#endif
+       return FALSE;
+     }
+   for (c = p->contours->next; c != NULL; c = c->next)
+@@ -3279,7 +3286,7 @@ poly_Valid (POLYAREA * p)
+       if (c->Flags.orient == PLF_DIR ||
+ 	  poly_ChkContour (c) || !poly_ContourInContour (p->contours, c))
+ 	{
+-#ifndef NDEBUG
++//#ifndef NDEBUG
+ 	  VNODE *v, *n;
+ 	  DEBUGP ("Invalid Inner PLINE orient = %d\n", c->Flags.orient);
+ 	  if (c->Flags.orient == PLF_DIR)
+@@ -3296,7 +3303,7 @@ poly_Valid (POLYAREA * p)
+ 		       v->point[0], v->point[1], n->point[0], n->point[1]);
+ 	    }
+ 	  while ((v = v->next) != &c->head);
+-#endif
++//#endif
+ 	  return FALSE;
+ 	}
+     }
