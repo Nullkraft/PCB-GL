@@ -1,5 +1,5 @@
-Bottom: bb3ee773e070c754fa652128180fa80e9875a2ee
-Top:    af01548d2ffd730e3981ce7fa096fa0ae65c1087
+Bottom: 5dd4bbf8e8b75bac5713528a6787c204c6476c0f
+Top:    5dd4bbf8e8b75bac5713528a6787c204c6476c0f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 18:18:38 +0000
 
@@ -8,56 +8,4 @@ Benchmark no-holes dicer performance
 
 ---
 
-diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 1c7ead9..76dcccf 100644
---- a/src/hid/common/draw_helpers.c
-+++ b/src/hid/common/draw_helpers.c
-@@ -143,6 +143,8 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
-             we are dicing for every case. Some GUIs
-             rely on this, and need their flags fixing. */
- 
-+  NoHolesPolygonDicer (poly, clip_box, fill_contour_cb, gc);
-+#if 0
-   if (!poly->NoHolesValid)
-     {
-       /* If enough of the polygon is on-screen, compute the entire
-@@ -166,6 +168,7 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
-             fill_clipped_contour (gc, pl, clip_box);
-         }
-     }
-+#endif
- 
-   /* Draw other parts of the polygon if fullpoly flag is set */
-   /* NB: No "NoHoles" cache for these */
-diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index dffbd68..878249c 100644
---- a/src/hid/ps/ps.c
-+++ b/src/hid/ps/ps.c
-@@ -418,6 +418,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
-   int i;
-   static int saved_layer_stack[MAX_LAYER];
-   FlagType save_thindraw;
-+  clock_t start, end;
-+  double elapsed;
- 
-   save_thindraw = PCB->Flags;
-   CLEAR_FLAG(THINDRAWFLAG, PCB);
-@@ -510,6 +512,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
-   region.X2 = PCB->MaxWidth;
-   region.Y2 = PCB->MaxHeight;
- 
-+  start = clock ();
-+
-   if (! multi_file)
-     {
-       fprintf (f, "%%%%Page: TableOfContents 1\n");  /* %%Page DSC requires both a label and an ordinal */
-@@ -530,6 +534,10 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
-   lastgroup = -1;
-   hid_expose_callback (&ps_hid, &region, 0);
- 
-+  end = clock ();
-+  elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
-+  printf ("Printing file took %f\n", elapsed);
-+
-   if (f)
-     fprintf (f, "showpage\n");
+
