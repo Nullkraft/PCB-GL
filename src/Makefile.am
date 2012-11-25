@@ -75,6 +75,8 @@ PCB_SRCS = \
 	fontmode.c \
 	free_atexit.c \
 	free_atexit.h \
+	gerber_import.c \
+	gerber_import.h \
 	global.h \
 	heap.c \
 	heap.h \
