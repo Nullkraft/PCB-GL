@@ -1,0 +1,21 @@
+Bottom: 7cc083b4c8358004bd13184fa90ac2cdb4c48c41
+Top:    fa8bf236032a6911f02ffecf40da83d4f5171e73
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-02 13:03:14 +0000
+
+Refresh of hid-common-fix-including-draw_
+
+---
+
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index 1e6cb7d..95c2dc1 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -4,6 +4,6 @@ void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+                                   const BoxType *clip_box);
+ void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+-void common_fill_pcb_pv (hidGC gc, PinType *pv, bool drawHole, bool mask);
++void common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+ void common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+ void common_draw_helpers_init (HID_DRAW *graphics);
