@@ -1,7 +1,7 @@
-Bottom: a52fff43a00ef7782f2bed16ecc75238cfab664d
-Top:    12d023dd0e53f198a95b195ae82e893860c3c538
+Bottom: 3159dd6d8df231eeff5eec88274679b7afd5f91a
+Top:    8b1aa5d0a75d2ce39c71c238866a1563ef37dbf4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-24 18:58:14 +0000
+Date:   2012-12-02 13:51:43 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -795,10 +795,10 @@ index 7b966dc..88dc04e 100644
  } BoxListType;
  
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index f6fbe71..24df1fb 100644
+index 9ea5094..7db6a12 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -43,7 +43,7 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
+@@ -44,7 +44,7 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
  {
    Coord x = 0;
    unsigned char *string = (unsigned char *) Text->TextString;
@@ -807,7 +807,7 @@ index f6fbe71..24df1fb 100644
    FontType *font = &PCB->Font;
  
    while (string && *string)
-@@ -51,11 +51,12 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
+@@ -52,11 +52,12 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
        /* draw lines if symbol is valid and data is present */
        if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
          {
@@ -825,7 +825,7 @@ index f6fbe71..24df1fb 100644
                newline = *line;
                newline.Point1.X = SCALE_TEXT (newline.Point1.X + x, Text->Scale);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index f12fba3..5dc4f31 100644
+index 8e39be4..c1a1879 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -928,6 +928,7 @@ static void
