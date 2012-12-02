@@ -1,5 +1,5 @@
-Bottom: 752e41d21494f8d7e9520639150b24ab6a60c3f9
-Top:    8d4d9355c5d290fb86c37be972a54bf3dacd144e
+Bottom: 7f224cc9ffeb9a198a06893d4880494c4f061d1d
+Top:    99f96f1ecdf1bf7e6d1ebc96b0987f3776d32b61
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:21 +0000
 
@@ -30,10 +30,10 @@ index 021485f..dd0c686 100644
  	hid/common/hidgl_shaders.h \
  	hid/common/trackball.c \
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 93c3ebf..07e5b73 100644
+index c75f874..8e1cbc1 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -1085,6 +1085,7 @@ hidgl_init (void)
+@@ -1082,6 +1082,7 @@ hidgl_init (void)
    }
  
    load_built_in_shaders ();
@@ -2600,10 +2600,10 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 634db3e..3c51667 100644
+index ee05f7d..c043911 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1571,7 +1571,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1496,7 +1496,7 @@ GhidDrawMask (int side, BoxType * screen)
    } else {
      glBindTexture (GL_TEXTURE_2D, texture);
    }
@@ -2612,7 +2612,7 @@ index 634db3e..3c51667 100644
  
    if (1) {
      GLfloat s_params[] = {0.0001, 0., 0., 0.};
-@@ -1818,6 +1818,11 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1743,6 +1743,11 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
@@ -2624,7 +2624,7 @@ index 634db3e..3c51667 100644
      }
    return 1;
  }
-@@ -2694,125 +2699,27 @@ ghid_finish_debug_draw (void)
+@@ -2619,125 +2624,27 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport);
  }
  

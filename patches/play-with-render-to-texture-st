@@ -1,5 +1,5 @@
-Bottom: 8d4d9355c5d290fb86c37be972a54bf3dacd144e
-Top:    d8204efb07c56f29259b761a1b4eb4e766f18fd5
+Bottom: 99f96f1ecdf1bf7e6d1ebc96b0987f3776d32b61
+Top:    8447784520be0843d689a0cd08e014d2e4fe078e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-26 16:50:13 +0000
 
@@ -9,10 +9,10 @@ Play with render to texture stuff
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3c51667..231094e 100644
+index c043911..987338d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -49,6 +49,9 @@ static hidGC current_gc = NULL;
+@@ -57,6 +57,9 @@ static hidGC current_gc = NULL;
  */
  #define USE_GC(gc) if (!use_gc(gc)) return
  
@@ -22,7 +22,7 @@ index 3c51667..231094e 100644
  static enum mask_mode cur_mask = HID_MASK_OFF;
  static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                      {0.0, 1.0, 0.0, 0.0},
-@@ -81,6 +84,15 @@ typedef struct render_priv {
+@@ -89,6 +92,15 @@ typedef struct render_priv {
    Coord lead_user_x;
    Coord lead_user_y;
  
@@ -38,7 +38,7 @@ index 3c51667..231094e 100644
  } render_priv;
  
  
-@@ -176,6 +188,7 @@ compute_depth (int group)
+@@ -184,6 +196,7 @@ compute_depth (int group)
    return depth;
  }
  
@@ -46,7 +46,7 @@ index 3c51667..231094e 100644
  static void
  start_subcomposite (void)
  {
-@@ -325,7 +338,7 @@ ghid_draw_grid (BoxType *drawn_area)
+@@ -333,7 +346,7 @@ ghid_draw_grid (BoxType *drawn_area)
  
    glTexCoord2f (0., 0.);
  
@@ -55,7 +55,7 @@ index 3c51667..231094e 100644
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
  
-@@ -336,7 +349,7 @@ ghid_draw_grid (BoxType *drawn_area)
+@@ -344,7 +357,7 @@ ghid_draw_grid (BoxType *drawn_area)
    hidgl_draw_grid (drawn_area);
  
    glDisable (GL_COLOR_LOGIC_OP);
@@ -64,7 +64,7 @@ index 3c51667..231094e 100644
  }
  
  /* XXX: Refactor this into hidgl common routines */
-@@ -573,10 +586,13 @@ set_gl_color_for_gc (hidGC gc)
+@@ -581,10 +594,13 @@ set_gl_color_for_gc (hidGC gc)
        r = gport->offlimits_color.red   / 65535.;
        g = gport->offlimits_color.green / 65535.;
        b = gport->offlimits_color.blue  / 65535.;
@@ -79,7 +79,7 @@ index 3c51667..231094e 100644
        if (hid_cache_color (0, gc->colorname, &cval, &cache))
          cc = (ColorCache *) cval.ptr;
        else
-@@ -972,6 +988,41 @@ ghid_shutdown_renderer (GHidPort *port)
+@@ -980,6 +996,41 @@ ghid_shutdown_renderer (GHidPort *port)
  }
  
  void
@@ -121,7 +121,7 @@ index 3c51667..231094e 100644
  ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
  {
    render_priv *priv = port->render_priv;
-@@ -1323,7 +1374,8 @@ pad_callback (const BoxType * b, void *cl)
+@@ -1310,7 +1361,8 @@ pad_callback (const BoxType * b, void *cl)
  static int
  hole_callback (const BoxType * b, void *cl)
  {
@@ -131,7 +131,7 @@ index 3c51667..231094e 100644
    int plated = cl ? *(int *) cl : -1;
  
    if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
-@@ -1359,6 +1411,26 @@ hole_callback (const BoxType * b, void *cl)
+@@ -1342,6 +1394,26 @@ hole_callback (const BoxType * b, void *cl)
                       pv->X, pv->Y, pv->DrillingHole / 2,
                       pv->DrillingHole / 2, 0, 360);
      }
@@ -158,7 +158,7 @@ index 3c51667..231094e 100644
    return 1;
  }
  
-@@ -1651,19 +1723,6 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1576,19 +1648,6 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
  
        first_run = 0;
  
@@ -177,8 +177,8 @@ index 3c51667..231094e 100644
 -
        /* draw all polygons on this layer */
        if (Layer->PolygonN) {
-         info.Layer = Layer;
-@@ -1673,39 +1732,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+         info.layer = Layer;
+@@ -1598,39 +1657,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
  
          /* HACK: Subcomposite polygons separately from other layer primitives */
          /* Reset the compositing */
@@ -220,7 +220,7 @@ index 3c51667..231094e 100644
        }
  
        if (TEST_FLAG (CHECKPLANESFLAG, PCB))
-@@ -1714,6 +1742,33 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1639,6 +1667,33 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
        r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
        r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
        r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
@@ -254,7 +254,7 @@ index 3c51667..231094e 100644
      }
    }
  
-@@ -1834,6 +1889,161 @@ ghid_draw_packages (BoxType *drawn_area)
+@@ -1759,6 +1814,161 @@ ghid_draw_packages (BoxType *drawn_area)
    r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_package_callback, NULL);
  }
  
@@ -416,7 +416,7 @@ index 3c51667..231094e 100644
  void
  ghid_draw_everything (BoxType *drawn_area)
  {
-@@ -1937,8 +2147,66 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1862,8 +2072,66 @@ ghid_draw_everything (BoxType *drawn_area)
      if (is_this_physical)
        number_phys_on_top --;
  
@@ -485,7 +485,7 @@ index 3c51667..231094e 100644
  
  #if 1
      if (!global_view_2d && is_this_physical && is_next_physical) {
-@@ -1956,6 +2224,78 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1881,6 +2149,78 @@ ghid_draw_everything (BoxType *drawn_area)
  
    ghid_set_alpha_mult (Output.fgGC, 1.0);
  
@@ -564,7 +564,7 @@ index 3c51667..231094e 100644
    if (TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
  
-@@ -1965,22 +2305,22 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1890,22 +2230,22 @@ ghid_draw_everything (BoxType *drawn_area)
    if (global_view_2d) {
      start_subcomposite ();
  
@@ -596,7 +596,7 @@ index 3c51667..231094e 100644
      end_subcomposite ();
    }
  
-@@ -2008,6 +2348,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1933,6 +2273,7 @@ ghid_draw_everything (BoxType *drawn_area)
    }
  
    Settings.ShowSolderSide = save_show_solder;
@@ -604,7 +604,7 @@ index 3c51667..231094e 100644
  }
  
  #define Z_NEAR 3.0
-@@ -2030,12 +2371,47 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1955,12 +2296,47 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 1, 0,
                       0, 0, 0, 1};
    bool horizon_problem = false;
@@ -652,7 +652,7 @@ index 3c51667..231094e 100644
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
-@@ -2114,9 +2490,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2039,9 +2415,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadMatrixf ((GLfloat *)last_modelview_matrix);
  #endif
  
@@ -665,7 +665,7 @@ index 3c51667..231094e 100644
    glClearColor (port->bg_color.red / 65535.,
                  port->bg_color.green / 65535.,
                  port->bg_color.blue / 65535.,
-@@ -2378,6 +2754,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2303,6 +2679,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    draw_lead_user (priv);
  
