@@ -1,0 +1,262 @@
+Bottom: da06a059f825c2853591df152a7d6270633abfc5
+Top:    7faf22b4d37fa331dcd4944c24e4ef6bdc9d549b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-02 15:03:21 +0000
+
+Refresh of squash-into-drawing-functions-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 272b470..35b7392 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -975,67 +975,56 @@ EMark_callback (const BoxType * b, void *cl)
+ }
+ 
+ static void
+-SetPVColor (PinType *Pin, int Type)
++set_object_color (AnyObjectType *obj,
++                  char *warn_color, char *selected_color,
++                  char *found_color, char *normal_color)
+ {
+   char *color;
+ 
+-  if (Type == VIA_TYPE)
+-    {
+-      if (TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
+-	{
+-	  if (TEST_FLAG (WARNFLAG, Pin))
+-	    color = PCB->WarnColor;
+-	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+-	    color = PCB->ViaSelectedColor;
+-	  else
+-	    color = PCB->ConnectedColor;
+-	}
+-      else
+-	color = PCB->ViaColor;
+-    }
+-  else
+-    {
+-      if (TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
+-	{
+-	  if (TEST_FLAG (WARNFLAG, Pin))
+-	    color = PCB->WarnColor;
+-	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+-	    color = PCB->PinSelectedColor;
+-	  else
+-	    color = PCB->ConnectedColor;
+-	}
+-      else
+-	color = PCB->PinColor;
+-    }
++  if      (warn_color     != NULL && TEST_FLAG (WARNFLAG,     obj)) color = warn_color;
++  else if (selected_color != NULL && TEST_FLAG (SELECTEDFLAG, obj)) color = selected_color;
++  else if (found_color    != NULL && TEST_FLAG (FOUNDFLAG,    obj)) color = found_color;
++  else                                                              color = normal_color;
+ 
+   gui->graphics->set_color (Output.fgGC, color);
+ }
+ 
+ static void
+-SetPVColor_inlayer (PinType *Pin, LayerType *Layer, int Type)
++set_layer_object_color (LayerType *layer, AnyObjectType *obj)
+ {
+-  char *color;
++  set_object_color (obj, NULL, layer->SelectedColor, PCB->ConnectedColor, layer->Color);
++}
+ 
+-  if (TEST_FLAG (WARNFLAG, Pin))
+-    color = PCB->WarnColor;
+-  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+-    color = (Type == VIA_TYPE) ? PCB->ViaSelectedColor : PCB->PinSelectedColor;
+-  else if (TEST_FLAG (FOUNDFLAG, Pin))
+-    color = PCB->ConnectedColor;
++static void
++set_pv_color (PinType *pv, int type)
++{
++  if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
++  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
++                                                                                                   : PCB->PinSelectedColor);
++  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
++  else                                   gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor :
++                                                                                                     PCB->PinColor);
++}
++
++static void
++set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
++{
++  if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
++  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
++                                                                                                   : PCB->PinSelectedColor);
++  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+   else
+     {
+       int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+       int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
+-      int this_group      = GetLayerGroupNumberByPointer (Layer);
++      int this_group      = GetLayerGroupNumberByPointer (layer);
+ 
+       if (this_group == component_group || this_group == solder_group)
+-        color = (SWAP_IDENT == (this_group == solder_group))
+-                  ? PCB->ViaColor : PCB->InvisibleObjectsColor;
++        gui->graphics->set_color (Output.fgGC, (SWAP_IDENT == (this_group == solder_group)) ?
++                                                  PCB->ViaColor : PCB->InvisibleObjectsColor);
+       else
+-        color = Layer->Color;
++        gui->graphics->set_color (Output.fgGC, layer->Color);
+     }
+-
+-  gui->graphics->set_color (Output.fgGC, color);
+ }
+ 
+ static void
+@@ -1090,7 +1079,7 @@ _draw_pv (PinType *pv, bool draw_hole)
+ static void
+ draw_pin (PinType *pin, bool draw_hole)
+ {
+-  SetPVColor (pin, PIN_TYPE);
++  set_pv_color (pin, PIN_TYPE);
+   _draw_pv (pin, draw_hole);
+ }
+ 
+@@ -1104,7 +1093,7 @@ pin_callback (const BoxType * b, void *cl)
+ static int
+ pin_inlayer_callback (const BoxType * b, void *cl)
+ {
+-  SetPVColor_inlayer ((PinType *) b, cl, PIN_TYPE);
++  set_pv_inlayer_color ((PinType *) b, cl, PIN_TYPE);
+   _draw_pv ((PinType *) b, false);
+   return 1;
+ }
+@@ -1112,7 +1101,7 @@ pin_inlayer_callback (const BoxType * b, void *cl)
+ static void
+ draw_via (PinType *via, bool draw_hole)
+ {
+-  SetPVColor (via, VIA_TYPE);
++  set_pv_color (via, VIA_TYPE);
+   _draw_pv (via, draw_hole);
+ }
+ 
+@@ -1126,7 +1115,7 @@ via_callback (const BoxType * b, void *cl)
+ static int
+ via_inlayer_callback (const BoxType * b, void *cl)
+ {
+-  SetPVColor_inlayer ((PinType *) b, cl, VIA_TYPE);
++  set_pv_inlayer_color ((PinType *) b, cl, VIA_TYPE);
+   _draw_pv ((PinType *) b, TEST_FLAG (THINDRAWFLAG, PCB));
+   return 1;
+ }
+@@ -1189,19 +1178,9 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+ static void
+ draw_pad (PadType *pad)
+ {
+-  if (TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, pad))
+-   {
+-     if (TEST_FLAG (WARNFLAG, pad))
+-       gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+-     else if (TEST_FLAG (SELECTEDFLAG, pad))
+-       gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
+-     else
+-       gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+-   }
+-  else if (FRONT (pad))
+-   gui->graphics->set_color (Output.fgGC, PCB->PinColor);
+-  else
+-   gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
++  set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
++                    PCB->PinSelectedColor, PCB->ConnectedColor,
++                    FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
+ 
+   _draw_pad (Output.fgGC, pad, false, false);
+ 
+@@ -1247,12 +1226,8 @@ hole_callback (const BoxType * b, void *cl)
+ 
+   if (TEST_FLAG (HOLEFLAG, pv))
+     {
+-      if (TEST_FLAG (WARNFLAG, pv))
+-        gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+-      else if (TEST_FLAG (SELECTEDFLAG, pv))
+-        gui->graphics->set_color (Output.fgGC, PCB->ViaSelectedColor);
+-      else
+-        gui->graphics->set_color (Output.fgGC, Settings.BlackColor);
++      set_object_color ((AnyObjectType *) pv, PCB->WarnColor,
++                        PCB->ViaSelectedColor, NULL, Settings.BlackColor);
+ 
+       gui->graphics->set_line_cap (Output.fgGC, Round_Cap);
+       gui->graphics->set_line_width (Output.fgGC, 0);
+@@ -1263,48 +1238,25 @@ hole_callback (const BoxType * b, void *cl)
+   return 1;
+ }
+ 
+-static void
+-draw_line (LayerType *layer, LineType *line)
+-{
+-  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
+-    {
+-      if (TEST_FLAG (SELECTEDFLAG, line))
+-        gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
+-      else
+-        gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+-    }
+-  else
+-    gui->graphics->set_color (Output.fgGC, layer->Color);
+-  gui->graphics->draw_pcb_line (Output.fgGC, line);
+-}
+-
+ static int
+ line_callback (const BoxType * b, void *cl)
+ {
+-  draw_line ((LayerType *) cl, (LineType *) b);
+-  return 1;
+-}
+-
+-static void
+-draw_arc (LayerType *layer, ArcType *arc)
+-{
+-  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, arc))
+-    {
+-      if (TEST_FLAG (SELECTEDFLAG, arc))
+-        gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
+-      else
+-        gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+-    }
+-  else
+-    gui->graphics->set_color (Output.fgGC, layer->Color);
++  LayerType *layer = cl;
++  LineType *line = (LineType *)b;
+ 
+-  gui->graphics->draw_pcb_arc (Output.fgGC, arc);
++  set_layer_object_color (layer, (AnyObjectType *) line);
++  gui->graphics->draw_pcb_line (Output.fgGC, line);
++  return 1;
+ }
+ 
+ static int
+ arc_callback (const BoxType * b, void *cl)
+ {
+-  draw_arc ((LayerType *) cl, (ArcType *) b);
++  LayerType *layer = cl;
++  ArcType *arc = (ArcType *)b;
++
++  set_layer_object_color (layer, (AnyObjectType *) arc);
++  gui->graphics->draw_pcb_arc (Output.fgGC, arc);
+   return 1;
+ }
+ 
+@@ -1339,14 +1291,9 @@ poly_callback (const BoxType * b, void *cl)
+ {
+   struct poly_info *i = (struct poly_info *) cl;
+   PolygonType *polygon = (PolygonType *)b;
+-  static char *color;
+-
+-  if      (TEST_FLAG (SELECTEDFLAG, Polygon)) color = i->Layer->SelectedColor;
+-  else if (TEST_FLAG (FOUNDFLAG,    Polygon)) color = PCB->ConnectedColor;
+-  else                                        color = i->Layer->Color;
+-  gui->graphics->set_color (Output.fgGC, color);
+ 
+-  gui->graphics->draw_pcb_polygon (Output.fgGC, Polygon, i->drawn_area);
++  set_layer_object_color (i->layer, (AnyObjectType *) polygon);
++  gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
+   return 1;
+ }
