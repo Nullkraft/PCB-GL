@@ -1,5 +1,5 @@
 Bottom: cf71a33c46de119f5f955a11cc61a8da2f4fcfc1
-Top:    45ab001e012dd5f6c374f5f39d912f6c71411c08
+Top:    da06a059f825c2853591df152a7d6270633abfc5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-24 18:58:19 +0000
 
@@ -76,7 +76,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ba9863a..aa3d2b0 100644
+index ba9863a..272b470 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -128,12 +128,12 @@ index ba9863a..aa3d2b0 100644
 -
 -  end_subcomposite ();
 -  start_subcomposite ();
+-
+-  /* Drawing is already flushed by {start,end}_subcomposite */
+-  hidgl_set_depth (compute_depth (group));
 +  bool group_visible = false;
 +  bool subcomposite = true;
  
--  /* Drawing is already flushed by {start,end}_subcomposite */
--  hidgl_set_depth (compute_depth (group));
--
 -  if (idx >= 0 && idx < max_copper_layer + 2)
 +  if (group >= 0 && group < max_group)
      {
@@ -247,7 +247,7 @@ index ba9863a..aa3d2b0 100644
  }
  
  void
-@@ -934,6 +965,826 @@ ghid_screen_update (void)
+@@ -934,6 +965,796 @@ ghid_screen_update (void)
  {
  }
  
@@ -614,43 +614,6 @@ index ba9863a..aa3d2b0 100644
 +  return 1;
 +}
 +
-+static void
-+DrawPlainPolygon (LayerType *Layer, PolygonType *Polygon, const BoxType *drawn_area)
-+{
-+  static char *color;
-+
-+  if (!Polygon->Clipped)
-+    return;
-+
-+  if (TEST_FLAG (SELECTEDFLAG, Polygon))
-+    color = Layer->SelectedColor;
-+  else if (TEST_FLAG (FOUNDFLAG, Polygon))
-+    color = PCB->ConnectedColor;
-+  else
-+    color = Layer->Color;
-+  gui->graphics->set_color (Output.fgGC, color);
-+
-+  if (gui->graphics->thindraw_pcb_polygon != NULL &&
-+      (TEST_FLAG (THINDRAWFLAG, PCB) ||
-+       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
-+    gui->graphics->thindraw_pcb_polygon (Output.fgGC, Polygon, drawn_area);
-+  else
-+    gui->graphics->fill_pcb_polygon (Output.fgGC, Polygon, drawn_area);
-+
-+  /* If checking planes, thin-draw any pieces which have been clipped away */
-+  if (gui->graphics->thindraw_pcb_polygon != NULL &&
-+      TEST_FLAG (CHECKPLANESFLAG, PCB) &&
-+      !TEST_FLAG (FULLPOLYFLAG, Polygon))
-+    {
-+      PolygonType poly = *Polygon;
-+
-+      for (poly.Clipped = Polygon->Clipped->f;
-+           poly.Clipped != Polygon->Clipped;
-+           poly.Clipped = poly.Clipped->f)
-+        gui->graphics->thindraw_pcb_polygon (Output.fgGC, &poly, drawn_area);
-+    }
-+}
-+
 +struct poly_info
 +{
 +  LayerType *Layer;
@@ -661,8 +624,15 @@ index ba9863a..aa3d2b0 100644
 +poly_callback (const BoxType * b, void *cl)
 +{
 +  struct poly_info *i = (struct poly_info *) cl;
++  PolygonType *polygon = (PolygonType *)b;
++  static char *color;
 +
-+  DrawPlainPolygon (i->Layer, (PolygonType *) b, i->drawn_area);
++  if      (TEST_FLAG (SELECTEDFLAG, Polygon)) color = i->Layer->SelectedColor;
++  else if (TEST_FLAG (FOUNDFLAG,    Polygon)) color = PCB->ConnectedColor;
++  else                                        color = i->Layer->Color;
++  gui->graphics->set_color (Output.fgGC, color);
++
++  gui->graphics->draw_pcb_polygon (Output.fgGC, Polygon, i->drawn_area);
 +  return 1;
 +}
 +
@@ -1074,7 +1044,7 @@ index ba9863a..aa3d2b0 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1003,8 +1854,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1003,8 +1824,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1085,7 +1055,7 @@ index ba9863a..aa3d2b0 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1070,17 +1921,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1070,17 +1891,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
