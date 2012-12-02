@@ -603,6 +603,9 @@ ghid_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 static void
 ghid_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *drawn_area)
 {
+  if (polygon->Clipped == NULL)
+    return;
+
   USE_GC (gc);
 
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
