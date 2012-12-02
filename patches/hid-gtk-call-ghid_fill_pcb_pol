@@ -1,0 +1,15 @@
+Bottom: 78d76d841f4c64ec0108d514c53c6c6798564362
+Top:    78d76d841f4c64ec0108d514c53c6c6798564362
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-02 13:30:20 +0000
+
+hid/gtk: Call ghid_fill_pcb_polygon via (HID_DRAW *)->fill_pcb_polygon()
+
+This indirection allows a more graceful fallback in the case where we
+run out of stencil bits and replace our (HID_DRAW *)->fill_pcb_polygon()
+vfunc pointer with the common_fill_pcb_polygon() implementation.
+
+
+---
+
+
