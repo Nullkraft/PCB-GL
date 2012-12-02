@@ -1282,7 +1282,7 @@ text_callback (const BoxType * b, void *cl)
 
 struct poly_info
 {
-  LayerType *Layer;
+  LayerType *layer;
   const BoxType *drawn_area;
 };
 
@@ -1414,7 +1414,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
 
       /* draw all polygons on this layer */
       if (Layer->PolygonN) {
-        info.Layer = Layer;
+        info.layer = Layer;
         info.drawn_area = screen;
         r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
 
