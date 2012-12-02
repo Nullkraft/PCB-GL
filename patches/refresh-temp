@@ -1,0 +1,21 @@
+Bottom: 1ed0c2bdf9e556d37e4bb39b43eb16c2a827bc45
+Top:    3dafd9aa938500d732002575f4bc9c4e1a91b1b4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-02 13:00:50 +0000
+
+Refresh of split-out-drawing-routines-int
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index f6fbe71..02473be 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -4,6 +4,7 @@
+ #include "data.h" /* For global "PCB" variable */
+ #include "rotate.h" /* For RotateLineLowLevel() */
+ #include "polygon.h"
++#include "draw_helpers.h"
+ 
+ 
+ static void
