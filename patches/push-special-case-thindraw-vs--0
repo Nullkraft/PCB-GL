@@ -8,7 +8,7 @@ Add (HID_DRAW *)->draw_pcb_polygon() API
 This pushes special case thindraw vs. fill handling out of the core,
 and into each individual HID implementation. We retain the old
 implementation as a helper function, common_gui_draw_pcb_polygon()
-in hid/common/draw_helpers.c,
+in hid/common/draw_helpers.c.
 
 This keeps the API more consistent between polygons and other object
 types by introducing the new (HID_DRAW *)->draw_pcb_polygon() API.
