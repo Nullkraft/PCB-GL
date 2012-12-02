@@ -1,0 +1,22 @@
+Bottom: 324c9032f2dbab2b41f23e50cfdd34c2fb0530c5
+Top:    e60970fdce203573c39315d8cf13ab5e4df305de
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-02 14:08:12 +0000
+
+Refresh of move-polygon-clipped-test-out-
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 17b1868..e737fcf 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -282,7 +282,7 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
+ void
+ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
+-  if (polygon->Clipped == NULL)
++  if (poly->Clipped == NULL)
+     return;
+ 
+   if (!poly->NoHolesValid)
