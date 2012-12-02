@@ -1,0 +1,30 @@
+Bottom: 7faf22b4d37fa331dcd4944c24e4ef6bdc9d549b
+Top:    2b6070751ea696b03958ada2ee37ce811e0b6b7d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-02 15:04:54 +0000
+
+Refresh of squash-into-drawing-functions-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 35b7392..e2ee1d8 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1282,7 +1282,7 @@ text_callback (const BoxType * b, void *cl)
+ 
+ struct poly_info
+ {
+-  LayerType *Layer;
++  LayerType *layer;
+   const BoxType *drawn_area;
+ };
+ 
+@@ -1414,7 +1414,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+ 
+       /* draw all polygons on this layer */
+       if (Layer->PolygonN) {
+-        info.Layer = Layer;
++        info.layer = Layer;
+         info.drawn_area = screen;
+         r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
