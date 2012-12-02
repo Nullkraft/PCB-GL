@@ -282,7 +282,7 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
 void
 common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
-  if (polygon->Clipped == NULL)
+  if (poly->Clipped == NULL)
     return;
 
   if (!poly->NoHolesValid)
