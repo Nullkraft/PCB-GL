@@ -1,7 +1,7 @@
-Bottom: f12f194f7909b1ae135618e857b4133a01f04b28
-Top:    371f7ed7a4f972d93a5aea4ccf5f86259e1cfd25
+Bottom: 8bfb744e8e8d3126bcd8411ab3817734a8be7806
+Top:    54dda96ed00c087a75957edd825dc442a62ed3f3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-23 17:37:34 +0000
+Date:   2012-12-02 14:24:19 +0000
 
 Win32: Fix build for win32
 
@@ -11515,7 +11515,7 @@ index 0000000..0940021
 +
 +#endif
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 3db9bf9..d9e4e42 100644
+index cc54dd0..d187915 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -56,6 +56,34 @@
@@ -11553,7 +11553,7 @@ index 3db9bf9..d9e4e42 100644
  #include "action.h"
  #include "crosshair.h"
  #include "data.h"
-@@ -970,6 +998,32 @@ hidgl_init (void)
+@@ -967,6 +995,32 @@ hidgl_init (void)
    if (done_once)
      return;
  
@@ -11625,7 +11625,7 @@ index fcf8c26..209dc7c 100644
  struct _hidgl_shader {
    char *name;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c27554d..b3e97b1 100644
+index 9c6e775..6cc9306 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -30,6 +30,12 @@

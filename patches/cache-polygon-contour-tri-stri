@@ -1,7 +1,7 @@
-Bottom: e42c9a9333e3b34fc54773e2825c8f30ad444538
-Top:    0031126d3e82b2727617281511c867e18320fdd7
+Bottom: 8bebd0c309f2311fc3a44e222486d08c22fc8818
+Top:    dd48674fdad100759da5d60a469418e54c3c0c93
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-23 17:37:34 +0000
+Date:   2012-12-02 14:24:18 +0000
 
 Cache polygon contour tri-strip tesselations (HACK: IN THE CORE!)
 
@@ -115,7 +115,7 @@ index 5cccfbc..37a73c9 100644
 +  return BORAST_STATUS_SUCCESS;
 +}
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 882036f..d8d02a2 100644
+index 8c646be..021a1e7 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -683,9 +683,25 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)

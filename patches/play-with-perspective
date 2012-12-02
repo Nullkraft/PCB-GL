@@ -1,7 +1,7 @@
-Bottom: b5effb3f5ee5f32f1a29cc1c120755897ff27c02
-Top:    f12f194f7909b1ae135618e857b4133a01f04b28
+Bottom: 45e6c07db9a6ceb1efbda110d817940586bb5739
+Top:    8bfb744e8e8d3126bcd8411ab3817734a8be7806
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-11-23 17:37:34 +0000
+Date:   2012-12-02 14:24:19 +0000
 
 Play with perspective
 
@@ -9,7 +9,7 @@ Play with perspective
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 5090ce0..3db9bf9 100644
+index 6286eb4..cc54dd0 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -199,6 +199,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
@@ -76,7 +76,7 @@ index 5090ce0..3db9bf9 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 045af82..c27554d 100644
+index 709f988..9c6e775 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -13,6 +13,7 @@
