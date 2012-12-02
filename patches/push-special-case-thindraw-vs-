@@ -3,10 +3,20 @@ Top:    cce85b8bde24ba07e84c15a9b8ff2bfc8a68112e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 00:49:05 +0000
 
-Push special case thindraw vs. fill polygon handling into the GUIs
+Remove (HID_DRAW *)->{fill,thindraw}_pcb_polygon() APIs.
 
-This causes some code duplication, but it keeps the GUI specific
-functionality a little cleaner.
+These were used as an implementation detail of the
+common_gui_draw_pcb_polygon implementation of (HID_DRAW *)->draw_pcb_polygon().
+
+They were initially kept as they allowed renders (such as the OpenGL port)
+to special case either the fill or thindraw logic without having to
+duplicate the (minimal) remaining logic in common_gui_draw_pcb_polygon().
+
+To keep the HID_DRAW API cleaner, I'm removing this now, forcing any
+GUI which wishes to over-ride either the fill or thindraw routine to
+re-implement the whole ->draw_pcb_polygon() entrypoint. This causes some
+minor code duplication, but it keeps the outer API a little cleaner.
+
 
 ---
 
