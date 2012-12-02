@@ -1,5 +1,5 @@
 Bottom: c32cf80c504833d5fa2f32b5d11ebda138ac8a79
-Top:    cce85b8bde24ba07e84c15a9b8ff2bfc8a68112e
+Top:    c0c964bd124f49ffdc3ea51f527201e84931b17f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 00:49:05 +0000
 
@@ -56,7 +56,7 @@ index 9ea5094..1c85d5c 100644
    graphics->thindraw_pcb_pad     = common_thindraw_pcb_pad;
    graphics->fill_pcb_pv          = common_fill_pcb_pv;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9124ba5..9638bb8 100644
+index 9124ba5..04f1e05 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -575,20 +575,20 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
@@ -66,7 +66,7 @@ index 9124ba5..9638bb8 100644
 -void
 -ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 +static void
-+_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
    USE_GC (gc);
  
@@ -76,12 +76,12 @@ index 9124ba5..9638bb8 100644
 -void
 -ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 +static void
-+_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
    common_thindraw_pcb_polygon (gc, poly, clip_box);
    ghid_set_alpha_mult (gc, 0.25);
 -  gui->graphics->fill_pcb_polygon (gc, poly, clip_box);
-+  _fill_pcb_polygon (gc, poly, clip_box);
++  fill_pcb_polygon (gc, poly, clip_box);
    ghid_set_alpha_mult (gc, 1.0);
  }
  
@@ -95,9 +95,9 @@ index 9124ba5..9638bb8 100644
 +  USE_GC (gc);
 +
 +  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-+    _thindraw_pcb_polygon (gc, polygon, drawn_area);
++    thindraw_pcb_polygon (gc, polygon, drawn_area);
 +  else
-+    _fill_pcb_polygon (gc, polygon, drawn_area);
++    fill_pcb_polygon (gc, polygon, drawn_area);
 +
 +  /* If checking planes, thin-draw any pieces which have been clipped away */
 +  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
@@ -107,7 +107,7 @@ index 9124ba5..9638bb8 100644
 +      for (poly.Clipped = polygon->Clipped->f;
 +           poly.Clipped != polygon->Clipped;
 +           poly.Clipped = poly.Clipped->f)
-+        _thindraw_pcb_polygon (gc, &poly, drawn_area);
++        thindraw_pcb_polygon (gc, &poly, drawn_area);
 +    }
 +}
 +
