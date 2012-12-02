@@ -54,7 +54,6 @@ struct hid_draw_st
   void (*draw_pcb_line) (hidGC gc, LineType *line);
   void (*draw_pcb_arc) (hidGC gc, ArcType *arc);
   void (*draw_pcb_text) (hidGC gc, TextType *, Coord);
-
   void (*draw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
   void (*fill_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
   void (*thindraw_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
