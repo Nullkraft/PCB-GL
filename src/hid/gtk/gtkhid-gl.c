@@ -576,7 +576,7 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 }
 
 static void
-_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   USE_GC (gc);
 
@@ -584,11 +584,11 @@ _fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 }
 
 static void
-_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   common_thindraw_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, 0.25);
-  _fill_pcb_polygon (gc, poly, clip_box);
+  fill_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, 1.0);
 }
 
@@ -606,9 +606,9 @@ ghid_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *drawn_area
   USE_GC (gc);
 
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    _thindraw_pcb_polygon (gc, polygon, drawn_area);
+    thindraw_pcb_polygon (gc, polygon, drawn_area);
   else
-    _fill_pcb_polygon (gc, polygon, drawn_area);
+    fill_pcb_polygon (gc, polygon, drawn_area);
 
   /* If checking planes, thin-draw any pieces which have been clipped away */
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
@@ -618,7 +618,7 @@ ghid_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *drawn_area
       for (poly.Clipped = polygon->Clipped->f;
            poly.Clipped != polygon->Clipped;
            poly.Clipped = poly.Clipped->f)
-        _thindraw_pcb_polygon (gc, &poly, drawn_area);
+        thindraw_pcb_polygon (gc, &poly, drawn_area);
     }
 }
 
