@@ -1,5 +1,5 @@
 Bottom: 834a8f0ae692ed2eb623a6ffcacb5b6f30b1e047
-Top:    c9274c595cf5ae68ca692820deb69760b7cd1461
+Top:    206e1412f7d5b99ecf17a9f625fc95924d650a15
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 00:49:05 +0000
 
@@ -56,7 +56,7 @@ index bf374ee..d39eee0 100644
    graphics->thindraw_pcb_pad     = common_thindraw_pcb_pad;
    graphics->fill_pcb_pv          = common_fill_pcb_pv;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9124ba5..04f1e05 100644
+index 9124ba5..bdd2e9b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -575,20 +575,20 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
@@ -85,13 +85,16 @@ index 9124ba5..04f1e05 100644
    ghid_set_alpha_mult (gc, 1.0);
  }
  
-@@ -600,6 +600,28 @@ ghid_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+@@ -600,6 +600,31 @@ ghid_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
    hidgl_fill_rect (x1, y1, x2, y2);
  }
  
 +static void
 +ghid_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *drawn_area)
 +{
++  if (polygon->Clipped == NULL)
++    return;
++
 +  USE_GC (gc);
 +
 +  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
@@ -114,7 +117,7 @@ index 9124ba5..04f1e05 100644
  void
  ghid_invalidate_lr (int left, int right, int top, int bottom)
  {
-@@ -790,8 +812,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -790,8 +815,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  
    /* Setup HID function pointers specific to the GL renderer*/
    ghid_hid.end_layer = ghid_end_layer;
@@ -124,7 +127,7 @@ index 9124ba5..04f1e05 100644
  }
  
  void
-@@ -881,7 +902,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -881,7 +905,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
    if (hidgl_stencil_bits() == 0)
