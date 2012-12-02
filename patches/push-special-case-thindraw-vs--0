@@ -1,0 +1,20 @@
+Bottom: fa8bf236032a6911f02ffecf40da83d4f5171e73
+Top:    fa8bf236032a6911f02ffecf40da83d4f5171e73
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-02 13:20:23 +0000
+
+Push special case thindraw vs. fill polygon handling into the GUIs
+
+This keeps the API more consistent between polygons and other object
+types by introducing the new (HID_DRAW *)->draw_pcb_polygon() API.
+
+I've left the (HID_DRAW *)->{fill,thindraw}_pcb_polygon() APIs for
+now, as it means we can avoid a little code duplucation between the
+GUIs. We may consider removing (or hiding) these APIs at some point,
+as they are now _NOT_ intended to be called from outside of the
+GUI's (HID_DRAW *)->draw_pcb_polygon() implementation.
+
+
+---
+
+
