@@ -1,5 +1,5 @@
 Bottom: 3159dd6d8df231eeff5eec88274679b7afd5f91a
-Top:    e60970fdce203573c39315d8cf13ab5e4df305de
+Top:    503b8d85341e58292dcaa7af38191083b414ee5d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-02 14:03:45 +0000
 
@@ -25,7 +25,7 @@ index 4a28844..a2e86a8 100644
  
    gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 9ea5094..e737fcf 100644
+index 9ea5094..bf374ee 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -259,6 +259,9 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
@@ -48,3 +48,13 @@ index 9ea5094..e737fcf 100644
    if (!poly->NoHolesValid)
      {
        /* If enough of the polygon is on-screen, compute the entire
+@@ -328,6 +334,9 @@ void
+ common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+                              const BoxType *clip_box)
+ {
++  if (poly->Clipped == NULL)
++    return;
++
+   thindraw_contour (gc, poly->Clipped->contours);
+   PolygonHoles (poly, clip_box, thindraw_hole_cb, gc);
+ }
