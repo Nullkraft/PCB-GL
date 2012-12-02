@@ -1328,43 +1328,6 @@ text_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-static void
-DrawPlainPolygon (LayerType *Layer, PolygonType *Polygon, const BoxType *drawn_area)
-{
-  static char *color;
-
-  if (!Polygon->Clipped)
-    return;
-
-  if (TEST_FLAG (SELECTEDFLAG, Polygon))
-    color = Layer->SelectedColor;
-  else if (TEST_FLAG (FOUNDFLAG, Polygon))
-    color = PCB->ConnectedColor;
-  else
-    color = Layer->Color;
-  gui->graphics->set_color (Output.fgGC, color);
-
-  if (gui->graphics->thindraw_pcb_polygon != NULL &&
-      (TEST_FLAG (THINDRAWFLAG, PCB) ||
-       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
-    gui->graphics->thindraw_pcb_polygon (Output.fgGC, Polygon, drawn_area);
-  else
-    gui->graphics->fill_pcb_polygon (Output.fgGC, Polygon, drawn_area);
-
-  /* If checking planes, thin-draw any pieces which have been clipped away */
-  if (gui->graphics->thindraw_pcb_polygon != NULL &&
-      TEST_FLAG (CHECKPLANESFLAG, PCB) &&
-      !TEST_FLAG (FULLPOLYFLAG, Polygon))
-    {
-      PolygonType poly = *Polygon;
-
-      for (poly.Clipped = Polygon->Clipped->f;
-           poly.Clipped != Polygon->Clipped;
-           poly.Clipped = poly.Clipped->f)
-        gui->graphics->thindraw_pcb_polygon (Output.fgGC, &poly, drawn_area);
-    }
-}
-
 struct poly_info
 {
   LayerType *Layer;
@@ -1375,8 +1338,15 @@ static int
 poly_callback (const BoxType * b, void *cl)
 {
   struct poly_info *i = (struct poly_info *) cl;
+  PolygonType *polygon = (PolygonType *)b;
+  static char *color;
 
-  DrawPlainPolygon (i->Layer, (PolygonType *) b, i->drawn_area);
+  if      (TEST_FLAG (SELECTEDFLAG, Polygon)) color = i->Layer->SelectedColor;
+  else if (TEST_FLAG (FOUNDFLAG,    Polygon)) color = PCB->ConnectedColor;
+  else                                        color = i->Layer->Color;
+  gui->graphics->set_color (Output.fgGC, color);
+
+  gui->graphics->draw_pcb_polygon (Output.fgGC, Polygon, i->drawn_area);
   return 1;
 }
 
