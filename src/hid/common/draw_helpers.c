@@ -334,6 +334,9 @@ void
 common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
                              const BoxType *clip_box)
 {
+  if (poly->Clipped == NULL)
+    return;
+
   thindraw_contour (gc, poly->Clipped->contours);
   PolygonHoles (poly, clip_box, thindraw_hole_cb, gc);
 }
