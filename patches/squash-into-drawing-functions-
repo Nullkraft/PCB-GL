@@ -1,5 +1,5 @@
 Bottom: da06a059f825c2853591df152a7d6270633abfc5
-Top:    7faf22b4d37fa331dcd4944c24e4ef6bdc9d549b
+Top:    2b6070751ea696b03958ada2ee37ce811e0b6b7d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-02 15:03:20 +0000
 
@@ -9,7 +9,7 @@ squash into drawing functions rewrite
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 272b470..35b7392 100644
+index 272b470..e2ee1d8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -975,67 +975,56 @@ EMark_callback (const BoxType * b, void *cl)
@@ -245,6 +245,15 @@ index 272b470..35b7392 100644
    return 1;
  }
  
+@@ -1330,7 +1282,7 @@ text_callback (const BoxType * b, void *cl)
+ 
+ struct poly_info
+ {
+-  LayerType *Layer;
++  LayerType *layer;
+   const BoxType *drawn_area;
+ };
+ 
 @@ -1339,14 +1291,9 @@ poly_callback (const BoxType * b, void *cl)
  {
    struct poly_info *i = (struct poly_info *) cl;
@@ -261,3 +270,12 @@ index 272b470..35b7392 100644
 +  gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
    return 1;
  }
+ 
+@@ -1467,7 +1414,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+ 
+       /* draw all polygons on this layer */
+       if (Layer->PolygonN) {
+-        info.Layer = Layer;
++        info.layer = Layer;
+         info.drawn_area = screen;
+         r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
