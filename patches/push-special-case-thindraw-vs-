@@ -1,5 +1,5 @@
-Bottom: c32cf80c504833d5fa2f32b5d11ebda138ac8a79
-Top:    c0c964bd124f49ffdc3ea51f527201e84931b17f
+Bottom: 834a8f0ae692ed2eb623a6ffcacb5b6f30b1e047
+Top:    c9274c595cf5ae68ca692820deb69760b7cd1461
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 00:49:05 +0000
 
@@ -21,12 +21,12 @@ minor code duplication, but it keeps the outer API a little cleaner.
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 9ea5094..1c85d5c 100644
+index bf374ee..d39eee0 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -260,9 +260,9 @@ void
- common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip_box)
- {
+@@ -263,9 +263,9 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
+     return;
+ 
    if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
 -    gui->graphics->thindraw_pcb_polygon (gc, polygon, clip_box);
 +    common_thindraw_pcb_polygon (gc, polygon, clip_box);
@@ -36,7 +36,7 @@ index 9ea5094..1c85d5c 100644
  
    /* If checking planes, thin-draw any pieces which have been clipped away */
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
-@@ -272,7 +272,7 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
+@@ -275,7 +275,7 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
        for (poly.Clipped = polygon->Clipped->f;
             poly.Clipped != polygon->Clipped;
             poly.Clipped = poly.Clipped->f)
@@ -45,7 +45,7 @@ index 9ea5094..1c85d5c 100644
      }
  }
  
-@@ -611,8 +611,7 @@ common_draw_helpers_init (HID_DRAW *graphics)
+@@ -620,8 +620,7 @@ common_draw_helpers_init (HID_DRAW *graphics)
    graphics->draw_pcb_text        = common_draw_pcb_text;
    graphics->draw_pcb_polygon     = common_fill_pcb_polygon; /* Default is the non-GUI case */
  
