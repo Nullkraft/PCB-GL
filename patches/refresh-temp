@@ -1,0 +1,90 @@
+Bottom: 21e74e922743dd0bd8699cb5d8382bdddb2b6086
+Top:    f02dd6fb273405af53a4e6dbd6b6a0ea2568ca53
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-04 13:34:45 +0000
+
+Refresh of fix-hacky-acy-resistor-models-
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index c75f874..2c6724c 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -82,6 +82,12 @@ PFNGLLINKPROGRAMPROC        glLinkProgram       = NULL;
+ PFNGLSHADERSOURCEPROC       glShaderSource      = NULL;
+ PFNGLUSEPROGRAMPROC         glUseProgram        = NULL;
+ 
++PFNGLMULTITEXCOORD1FPROC    glMultiTexCoord1f    = NULL;
++PFNGLMULTITEXCOORD2FPROC    glMultiTexCoord2f    = NULL;
++PFNGLMULTITEXCOORD3FPROC    glMultiTexCoord3f    = NULL;
++PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation = NULL;
++PFNGLUNIFORM1IPROC          glUniform1i          = NULL;
++PFNGLACTIVETEXTUREARBPROC   glActiveTextureARB   = NULL;
+ #endif
+ 
+ #include "action.h"
+@@ -1057,6 +1063,14 @@ hidgl_init (void)
+   glLinkProgram       = (PFNGLLINKPROGRAMPROC)       wglGetProcAddress ("glLinkProgram");
+   glShaderSource      = (PFNGLSHADERSOURCEPROC)      wglGetProcAddress ("glShaderSource");
+   glUseProgram        = (PFNGLUSEPROGRAMPROC)        wglGetProcAddress ("glUseProgram");
++
++  glMultiTexCoord1f    = (PFNGLMULTITEXCOORD1FPROC)    wglGetProcAddress ("glMultiTexCoord1f");
++  glMultiTexCoord2f    = (PFNGLMULTITEXCOORD2FPROC)    wglGetProcAddress ("glMultiTexCoord2f");
++  glMultiTexCoord3f    = (PFNGLMULTITEXCOORD3FPROC)    wglGetProcAddress ("glMultiTexCoord3f");
++  glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress ("glGetUniformLocation");
++  glUniform1i          = (PFNGLUNIFORM1IPROC)          wglGetProcAddress ("glUniform1i");
++  glActiveTextureARB   = (PFNGLACTIVETEXTUREARBPROC)   wglGetProcAddress ("glActiveTextureARB");
++
+ #endif
+ 
+ 
+diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
+index 6ebfdf3..c13a1fd 100644
+--- a/src/hid/common/hidgl_package_acy_resistor.c
++++ b/src/hid/common/hidgl_package_acy_resistor.c
+@@ -11,13 +11,21 @@
+ #include <gdk-pixbuf/gdk-pixbuf.h>
+ #include "data.h"
+ 
++#ifndef WIN32
+ /* The Linux OpenGL ABI 1.0 spec requires that we define
+  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+  * in order to get prototypes:
+  *   http://www.opengl.org/registry/ABI/
+  */
+-#define GL_GLEXT_PROTOTYPES 1
+-#include <GL/gl.h>
++#   define GL_GLEXT_PROTOTYPES 1
++#   include <GL/gl.h>
++#endif
++
++#ifdef HAVE_OPENGL_GL_H
++#   include <OpenGL/gl.h>
++#else
++#   include <GL/gl.h>
++#endif
+ 
+ #include "hidgl.h"
+ 
+@@ -25,6 +33,20 @@
+ #include <dmalloc.h>
+ #endif
+ 
++#ifdef WIN32
++#   include "hid/common/glext.h"
++
++extern PFNGLUSEPROGRAMPROC         glUseProgram;
++
++extern PFNGLMULTITEXCOORD1FPROC    glMultiTexCoord1f;
++extern PFNGLMULTITEXCOORD2FPROC    glMultiTexCoord2f;
++extern PFNGLMULTITEXCOORD3FPROC    glMultiTexCoord3f;
++extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
++extern PFNGLUNIFORM1IPROC          glUniform1i;
++extern PFNGLACTIVETEXTUREARBPROC   glActiveTextureARB;
++
++#endif
++
+ static int
+ compute_offset (int x, int y, int width, int height)
+ {
