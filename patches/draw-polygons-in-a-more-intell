@@ -1,5 +1,5 @@
-Bottom: 2a4ea3ecbb0ccbc964aaaec6b678e214251cbd0a
-Top:    3a5ef1bfca1b6d130f45d717f2d2217143d963b5
+Bottom: 19c8f174f8291f430be1eb75c79c29667d99e917
+Top:    5a36ce3a2572e88b88fe46616b99354f7d4ff5ad
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-12-02 15:06:43 +0000
 
@@ -36,7 +36,7 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 12ab777..6286eb4 100644
+index babca8c..5a293fa 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -124,7 +124,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
@@ -73,7 +73,7 @@ index 12ab777..6286eb4 100644
    int stencil_bit;
  
    CHECK_IS_IN_CONTEXT ();
-@@ -845,14 +854,20 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -846,14 +855,20 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
      return;
    }
  
@@ -100,7 +100,7 @@ index 12ab777..6286eb4 100644
      }
  
    /* Flush out any existing geoemtry to be rendered */
-@@ -860,12 +875,15 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -861,12 +876,15 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
  
    glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                  GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
@@ -119,7 +119,7 @@ index 12ab777..6286eb4 100644
  
    /* Drawing operations now set our reference bit in the stencil buffer */
  
-@@ -890,7 +908,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -910,7 +928,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
@@ -130,7 +130,7 @@ index 12ab777..6286eb4 100644
    glPopAttrib ();                               /* Restore the stencil buffer op and function */
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d0146c5..7527bd4 100644
+index 8aac491..348a54c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1334,10 +1334,27 @@ struct poly_info
@@ -163,7 +163,7 @@ index d0146c5..7527bd4 100644
  
    set_layer_object_color (i->layer, (AnyObjectType *) polygon);
    gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
-@@ -1476,7 +1493,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1481,7 +1498,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.layer = Layer;
          info.drawn_area = screen;
