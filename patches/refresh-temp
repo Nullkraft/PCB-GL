@@ -1,0 +1,23 @@
+Bottom: 7f224cc9ffeb9a198a06893d4880494c4f061d1d
+Top:    18a989f93d2d16e6b0eccc775c166033c6d49ebe
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-04 01:26:06 +0000
+
+Refresh of add-a-demonstration-model-for-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index ee05f7d..5c8f70c 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2284,7 +2284,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+     glPopMatrix ();
+   }
+ 
+-  ghid_draw_packages (&region);
++  if (!global_view_2d)
++    ghid_draw_packages (&region);
+ 
+   glDisable (GL_CULL_FACE);
+   glDisable (GL_DEPTH_TEST);
