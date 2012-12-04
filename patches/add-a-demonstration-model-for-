@@ -1,5 +1,5 @@
 Bottom: 2f6183000f0f1062dd2fc73afe6edda84fa7a166
-Top:    04c5d19ea3841a81ac6d4f55cf8659df55fa98c5
+Top:    db56de53568112381dea143f5d827c1d3bcabd7d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-15 01:46:46 +0000
 
@@ -552,10 +552,10 @@ index 9cfeed0..0b6d833 100644
  #endif /* PCB_HID_COMMON_HIDGL_H  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
 new file mode 100644
-index 0000000..4a803eb
+index 0000000..cef76d3
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
-@@ -0,0 +1,1075 @@
+@@ -0,0 +1,1083 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -879,6 +879,14 @@ index 0000000..4a803eb
 +  int texel;
 +  int i;
 +  bool is_zero_ohm;
++
++  if (TEST_FLAG (SELECTEDFLAG, element)) {
++    GLfloat selected_color[] = {0.00, 0.70, 0.82};
++    float mix_color_ratio = 0.5;
++    res_body_color[0] = res_body_color[0] * (1 - mix_color_ratio) + selected_color[0] * mix_color_ratio;
++    res_body_color[1] = res_body_color[1] * (1 - mix_color_ratio) + selected_color[1] * mix_color_ratio;
++    res_body_color[2] = res_body_color[2] * (1 - mix_color_ratio) + selected_color[2] * mix_color_ratio;
++  }
 +
 +  stripes = malloc (no_stripes * sizeof (int));
 +  resistor_value_to_stripes (element, no_stripes, stripes, &mul, &tol);
