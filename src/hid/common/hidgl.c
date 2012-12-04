@@ -642,7 +642,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
     return;
 
   /* Special case non-holed polygons which don't require a stencil bit */
-  if (poly->Clipped->contour_tree->size == 1) {
+  if (poly->Clipped->contour_tree->size == 1 &&
+      poly->Clipped->f == poly->Clipped) {
     fill_contour (poly->Clipped->contours, scale);
     return;
   }
@@ -672,6 +673,16 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   /* Drawing operations now set our reference bit in the stencil buffer */
 
   r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+  if (TEST_FLAG (FULLPOLYFLAG, poly))
+    {
+      PolygonType p = *poly;
+
+      for (p.Clipped = poly->Clipped->f;
+           p.Clipped != poly->Clipped;
+           p.Clipped = p.Clipped->f)
+        r_search (p.Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+    }
+
   hidgl_flush_triangles (&buffer);
 
   glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
@@ -689,6 +700,15 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 
   /* Draw the polygon outer */
   fill_contour (poly->Clipped->contours, scale);
+  if (TEST_FLAG (FULLPOLYFLAG, poly))
+    {
+      PolygonType p = *poly;
+
+      for (p.Clipped = poly->Clipped->f;
+           p.Clipped != poly->Clipped;
+           p.Clipped = p.Clipped->f)
+        fill_contour (p.Clipped->contours, scale);
+    }
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */
