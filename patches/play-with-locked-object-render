@@ -1,7 +1,7 @@
-Bottom: 550b946d92314daafde6509997fe786bef21fec8
-Top:    e91e8b115adfaa345fceb6bef8cfba68f9ef0762
+Bottom: 153077da61251c1a074022bc15dd3c7a2a3c8b17
+Top:    c04a4ba597cd578d18b795cee8217ad16d2f7ea9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-12-04 20:33:45 +0000
+Date:   2012-12-04 22:40:20 +0000
 
 Play with locked object rendering
 
@@ -171,7 +171,7 @@ index 36f4392..8b3b779 100644
                          PCB->PinSelectedColor, PCB->ConnectedColor,
                          FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5389e2e..37679dc 100644
+index d57045b..f95816b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -79,6 +79,8 @@ typedef struct render_priv {
@@ -389,7 +389,7 @@ index 5389e2e..37679dc 100644
    set_layer_object_color (i->layer, (AnyObjectType *) polygon);
    gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
    return 1;
-@@ -1716,6 +1786,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
+@@ -1717,6 +1787,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
    else
      color = "drill";
  
