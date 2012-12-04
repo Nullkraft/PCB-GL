@@ -2284,7 +2284,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     glPopMatrix ();
   }
 
-  ghid_draw_packages (&region);
+  if (!global_view_2d)
+    ghid_draw_packages (&region);
 
   glDisable (GL_CULL_FACE);
   glDisable (GL_DEPTH_TEST);
