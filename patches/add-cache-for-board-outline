@@ -1,5 +1,5 @@
 Bottom: 70423eed4e88ff708627cddd4ab1352ec863816b
-Top:    fbda33be55a92f6aa7ed6296172ae7b366741ce9
+Top:    8697b6c85cf5ce89fb64e98f454c119ffa063d51
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-04 22:22:13 +0000
 
@@ -76,10 +76,10 @@ index 3de31f6..22a2764 100644
    {
      free (via->Name);
 diff --git a/src/polygon.c b/src/polygon.c
-index 3311b09..bb33330 100644
+index 3311b09..39b2253 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1642,8 +1642,18 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1642,6 +1642,16 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
    if (!Data->polyClip)
      return;
  
@@ -94,8 +94,5 @@ index 3311b09..bb33330 100644
 +    }
 +
    if (type == POLYGON_TYPE)
--    InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
-+    InitClip (PCB->Data, (LayerType *)ptr1, (PolygonType *) ptr2);
+     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
    else
-     PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow);
- }
