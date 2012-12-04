@@ -1,5 +1,5 @@
-Bottom: a66a862dbf5e43c9a95e7d8503085f9fd12778d4
-Top:    a9ebe83118420901b7d145e5ffb59b0ed7be10d9
+Bottom: 70423eed4e88ff708627cddd4ab1352ec863816b
+Top:    33c580ad45e8bd6e8bd28812b3c1ab8e9b3dfe96
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-04 22:22:13 +0000
 
@@ -33,10 +33,10 @@ index 7b966dc..c5ddce9 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0b42adb..62aa4b2 100644
+index 153122f..50194dd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1391,14 +1391,22 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1382,14 +1382,22 @@ GhidDrawMask (int side, BoxType * screen)
    gui->graphics->set_color (out->fgGC, PCB->MaskColor);
    ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
  
