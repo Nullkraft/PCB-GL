@@ -1,0 +1,27 @@
+Bottom: 04c5d19ea3841a81ac6d4f55cf8659df55fa98c5
+Top:    db56de53568112381dea143f5d827c1d3bcabd7d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-04 20:33:32 +0000
+
+Refresh of add-a-demonstration-model-for-
+
+---
+
+diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
+index 4a803eb..cef76d3 100644
+--- a/src/hid/common/hidgl_package_acy_resistor.c
++++ b/src/hid/common/hidgl_package_acy_resistor.c
+@@ -322,6 +322,14 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color, int no_st
+   int i;
+   bool is_zero_ohm;
+ 
++  if (TEST_FLAG (SELECTEDFLAG, element)) {
++    GLfloat selected_color[] = {0.00, 0.70, 0.82};
++    float mix_color_ratio = 0.5;
++    res_body_color[0] = res_body_color[0] * (1 - mix_color_ratio) + selected_color[0] * mix_color_ratio;
++    res_body_color[1] = res_body_color[1] * (1 - mix_color_ratio) + selected_color[1] * mix_color_ratio;
++    res_body_color[2] = res_body_color[2] * (1 - mix_color_ratio) + selected_color[2] * mix_color_ratio;
++  }
++
+   stripes = malloc (no_stripes * sizeof (int));
+   resistor_value_to_stripes (element, no_stripes, stripes, &mul, &tol);
