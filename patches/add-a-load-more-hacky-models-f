@@ -1,5 +1,5 @@
-Bottom: a134a35bd0a8721be715e7e5c1619dc45f262cfc
-Top:    81e3a7e0e35fed364a113e4eb5c9939dbf9285a8
+Bottom: 04c5d19ea3841a81ac6d4f55cf8659df55fa98c5
+Top:    4cbdc23a02a619e2cda3cc670fc42bd04bb2671c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-04 01:22:09 +0000
 
@@ -23,10 +23,10 @@ index 0b6d833..b0f80d7 100644
  
  #endif /* PCB_HID_COMMON_HIDGL_H  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
-index 2f8f46b..9fcda05 100644
+index 4a803eb..ecc881b 100644
 --- a/src/hid/common/hidgl_package_acy_resistor.c
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
-@@ -352,6 +352,43 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color, int no_st
+@@ -374,6 +374,43 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color, int no_st
    return false;
  }
  
@@ -70,7 +70,7 @@ index 2f8f46b..9fcda05 100644
  static void invert_4x4 (float m[4][4], float out[4][4]);
  
  static GLfloat *debug_lines = NULL;
-@@ -978,6 +1015,1260 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -1000,6 +1037,1260 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
    first_run = false;
  }
  
