@@ -1,0 +1,42 @@
+Bottom: 91ab1ca3ebb66c2108955c4df2b218bf3bf3c67f
+Top:    7412a26e23809fc329e978939cc90f6ce8c1210f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-04 01:23:52 +0000
+
+Refresh of disable-texturing-the-board-s-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 632c4d1..7b00e56 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1489,6 +1489,7 @@ GhidDrawMask (int side, BoxType * screen)
+   gui->graphics->set_color (out->fgGC, PCB->MaskColor);
+   ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
+ 
++#if 0
+   if (first_run) {
+     glGenTextures (1, &texture);
+     glBindTexture (GL_TEXTURE_2D, texture);
+@@ -1516,6 +1517,7 @@ GhidDrawMask (int side, BoxType * screen)
+   glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glEnable (GL_TEXTURE_2D);
++#endif
+ 
+   polygon.Clipped = board_outline_poly ();
+   polygon.NoHoles = NULL;
+@@ -1532,10 +1534,12 @@ GhidDrawMask (int side, BoxType * screen)
+ //  gui->graphics->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+   ghid_set_alpha_mult (out->fgGC, 1.0);
+   hidgl_flush_triangles (&buffer);
++#if 0
+   glDisable (GL_TEXTURE_GEN_S);
+   glDisable (GL_TEXTURE_GEN_T);
+   glBindTexture (GL_TEXTURE_2D, 0);
+   glDisable (GL_TEXTURE_2D);
++#endif
+   hidgl_shader_activate (circular_program);
+ 
+   gui->graphics->use_mask (HID_MASK_OFF);
