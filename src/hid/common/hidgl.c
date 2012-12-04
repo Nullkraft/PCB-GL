@@ -82,6 +82,12 @@ PFNGLLINKPROGRAMPROC        glLinkProgram       = NULL;
 PFNGLSHADERSOURCEPROC       glShaderSource      = NULL;
 PFNGLUSEPROGRAMPROC         glUseProgram        = NULL;
 
+PFNGLMULTITEXCOORD1FPROC    glMultiTexCoord1f    = NULL;
+PFNGLMULTITEXCOORD2FPROC    glMultiTexCoord2f    = NULL;
+PFNGLMULTITEXCOORD3FPROC    glMultiTexCoord3f    = NULL;
+PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation = NULL;
+PFNGLUNIFORM1IPROC          glUniform1i          = NULL;
+PFNGLACTIVETEXTUREARBPROC   glActiveTextureARB   = NULL;
 #endif
 
 #include "action.h"
@@ -1057,6 +1063,14 @@ hidgl_init (void)
   glLinkProgram       = (PFNGLLINKPROGRAMPROC)       wglGetProcAddress ("glLinkProgram");
   glShaderSource      = (PFNGLSHADERSOURCEPROC)      wglGetProcAddress ("glShaderSource");
   glUseProgram        = (PFNGLUSEPROGRAMPROC)        wglGetProcAddress ("glUseProgram");
+
+  glMultiTexCoord1f    = (PFNGLMULTITEXCOORD1FPROC)    wglGetProcAddress ("glMultiTexCoord1f");
+  glMultiTexCoord2f    = (PFNGLMULTITEXCOORD2FPROC)    wglGetProcAddress ("glMultiTexCoord2f");
+  glMultiTexCoord3f    = (PFNGLMULTITEXCOORD3FPROC)    wglGetProcAddress ("glMultiTexCoord3f");
+  glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress ("glGetUniformLocation");
+  glUniform1i          = (PFNGLUNIFORM1IPROC)          wglGetProcAddress ("glUniform1i");
+  glActiveTextureARB   = (PFNGLACTIVETEXTUREARBPROC)   wglGetProcAddress ("glActiveTextureARB");
+
 #endif
 
 
