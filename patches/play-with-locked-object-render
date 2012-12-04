@@ -1,7 +1,7 @@
-Bottom: 1147d7a46a69c5841994ebdf82784d4af0028822
-Top:    0682b8bfe1753a688b7deb95627afcef8cae93f4
+Bottom: 8a1983985822b8bc6b1a8c648a1ea9c7ce34b5f6
+Top:    f33d93589fddd033fe1d54b2f6f4c68fe0581052
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-12-02 15:11:17 +0000
+Date:   2012-12-04 01:37:42 +0000
 
 Play with locked object rendering
 
@@ -171,7 +171,7 @@ index 36f4392..8b3b779 100644
                          PCB->PinSelectedColor, PCB->ConnectedColor,
                          FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 600af48..43c4808 100644
+index 5389e2e..37679dc 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -79,6 +79,8 @@ typedef struct render_priv {
@@ -201,7 +201,7 @@ index 600af48..43c4808 100644
    return rv;
  }
  
-@@ -505,10 +511,13 @@ set_gl_color_for_gc (hidGC gc)
+@@ -548,10 +554,13 @@ set_gl_color_for_gc (hidGC gc)
    hidval cval;
    ColorCache *cc;
    double r, g, b, a;
@@ -216,7 +216,7 @@ index 600af48..43c4808 100644
      return;
  
    free (priv->current_colorname);
-@@ -523,6 +532,8 @@ set_gl_color_for_gc (hidGC gc)
+@@ -566,6 +575,8 @@ set_gl_color_for_gc (hidGC gc)
  
    priv->current_colorname = strdup (gc->colorname);
    priv->current_alpha_mult = gc->alpha_mult;
@@ -225,7 +225,7 @@ index 600af48..43c4808 100644
  
    if (gport->colormap == NULL)
      gport->colormap = gtk_widget_get_colormap (gport->top_window);
-@@ -584,6 +595,18 @@ set_gl_color_for_gc (hidGC gc)
+@@ -627,6 +638,18 @@ set_gl_color_for_gc (hidGC gc)
  #endif
    }
  
@@ -244,7 +244,7 @@ index 600af48..43c4808 100644
    hidgl_flush_triangles (&buffer);
    glColor4d (r, g, b, a);
  }
-@@ -602,6 +625,20 @@ ghid_set_alpha_mult (hidGC gc, double alpha_mult)
+@@ -645,6 +668,20 @@ ghid_set_alpha_mult (hidGC gc, double alpha_mult)
    set_gl_color_for_gc (gc);
  }
  
@@ -265,7 +265,7 @@ index 600af48..43c4808 100644
  void
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
-@@ -1011,6 +1048,25 @@ ghid_screen_update (void)
+@@ -1055,6 +1092,25 @@ ghid_screen_update (void)
  {
  }
  
@@ -291,7 +291,7 @@ index 600af48..43c4808 100644
  static int
  EMark_callback (const BoxType * b, void *cl)
  {
-@@ -1032,6 +1088,7 @@ set_object_color (AnyObjectType *obj,
+@@ -1076,6 +1132,7 @@ set_object_color (AnyObjectType *obj,
    else if (found_color    != NULL && TEST_FLAG (FOUNDFLAG,    obj)) color = found_color;
    else                                                              color = normal_color;
  
@@ -299,7 +299,7 @@ index 600af48..43c4808 100644
    gui->graphics->set_color (Output.fgGC, color);
  }
  
-@@ -1044,6 +1101,8 @@ set_layer_object_color (LayerType *layer, AnyObjectType *obj)
+@@ -1088,6 +1145,8 @@ set_layer_object_color (LayerType *layer, AnyObjectType *obj)
  static void
  set_pv_color (PinType *pv, int type)
  {
@@ -308,7 +308,7 @@ index 600af48..43c4808 100644
    if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
    else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                                     : PCB->PinSelectedColor);
-@@ -1055,6 +1114,8 @@ set_pv_color (PinType *pv, int type)
+@@ -1099,6 +1158,8 @@ set_pv_color (PinType *pv, int type)
  static void
  set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
  {
@@ -317,7 +317,7 @@ index 600af48..43c4808 100644
    if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
    else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                                     : PCB->PinSelectedColor);
-@@ -1098,6 +1159,7 @@ _draw_pv_name (PinType *pv)
+@@ -1142,6 +1203,7 @@ _draw_pv_name (PinType *pv)
        box.Y1 = pv->Y - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
      }
  
@@ -325,7 +325,7 @@ index 600af48..43c4808 100644
    gui->graphics->set_color (Output.fgGC, PCB->PinNameColor);
  
    text.Flags = NoFlags ();
-@@ -1210,6 +1272,7 @@ draw_pad_name (PadType *pad)
+@@ -1254,6 +1316,7 @@ draw_pad_name (PadType *pad)
        box.Y1 += Settings.PinoutTextOffsetY;
      }
  
@@ -333,7 +333,7 @@ index 600af48..43c4808 100644
    gui->graphics->set_color (Output.fgGC, PCB->PinNameColor);
  
    text.Flags = NoFlags ();
-@@ -1238,6 +1301,7 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+@@ -1282,6 +1345,7 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
  static void
  draw_pad (PadType *pad)
  {
@@ -341,7 +341,7 @@ index 600af48..43c4808 100644
    set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
                      PCB->PinSelectedColor, PCB->ConnectedColor,
                      FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
-@@ -1289,6 +1353,7 @@ hole_callback (const BoxType * b, void *cl)
+@@ -1333,6 +1397,7 @@ hole_callback (const BoxType * b, void *cl)
  
    if (TEST_FLAG (HOLEFLAG, pv))
      {
@@ -349,7 +349,7 @@ index 600af48..43c4808 100644
        set_object_color ((AnyObjectType *) pv, PCB->WarnColor,
                          PCB->ViaSelectedColor, NULL, Settings.BlackColor);
  
-@@ -1307,6 +1372,7 @@ line_callback (const BoxType * b, void *cl)
+@@ -1351,6 +1416,7 @@ line_callback (const BoxType * b, void *cl)
    LayerType *layer = cl;
    LineType *line = (LineType *)b;
  
@@ -357,7 +357,7 @@ index 600af48..43c4808 100644
    set_layer_object_color (layer, (AnyObjectType *) line);
    gui->graphics->draw_pcb_line (Output.fgGC, line);
    return 1;
-@@ -1318,6 +1384,7 @@ arc_callback (const BoxType * b, void *cl)
+@@ -1362,6 +1428,7 @@ arc_callback (const BoxType * b, void *cl)
    LayerType *layer = cl;
    ArcType *arc = (ArcType *)b;
  
@@ -365,7 +365,7 @@ index 600af48..43c4808 100644
    set_layer_object_color (layer, (AnyObjectType *) arc);
    gui->graphics->draw_pcb_arc (Output.fgGC, arc);
    return 1;
-@@ -1330,6 +1397,7 @@ text_callback (const BoxType * b, void *cl)
+@@ -1374,6 +1441,7 @@ text_callback (const BoxType * b, void *cl)
    TextType *text = (TextType *)b;
    int min_silk_line;
  
@@ -373,7 +373,7 @@ index 600af48..43c4808 100644
    if (TEST_FLAG (SELECTEDFLAG, text))
      gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
    else
-@@ -1358,6 +1426,7 @@ poly_callback_no_clear (const BoxType * b, void *cl)
+@@ -1402,6 +1470,7 @@ poly_callback_no_clear (const BoxType * b, void *cl)
    if (TEST_FLAG (CLEARPOLYFLAG, polygon))
      return 0;
  
@@ -381,7 +381,7 @@ index 600af48..43c4808 100644
    set_layer_object_color (i->layer, (AnyObjectType *) polygon);
    gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
    return 1;
-@@ -1372,6 +1441,7 @@ poly_callback_clearing (const BoxType * b, void *cl)
+@@ -1416,6 +1485,7 @@ poly_callback_clearing (const BoxType * b, void *cl)
    if (!TEST_FLAG (CLEARPOLYFLAG, polygon))
      return 0;
  
@@ -389,7 +389,7 @@ index 600af48..43c4808 100644
    set_layer_object_color (i->layer, (AnyObjectType *) polygon);
    gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
    return 1;
-@@ -1628,6 +1698,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
+@@ -1716,6 +1786,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
    else
      color = "drill";
  
