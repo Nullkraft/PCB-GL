@@ -1,4 +1,4 @@
-Bottom: 04c5d19ea3841a81ac6d4f55cf8659df55fa98c5
+Bottom: db56de53568112381dea143f5d827c1d3bcabd7d
 Top:    2a7b75ae8c87a686aacd446550ece627df56e518
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-04 01:22:09 +0000
@@ -23,25 +23,10 @@ index 0b6d833..b0f80d7 100644
  
  #endif /* PCB_HID_COMMON_HIDGL_H  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
-index 4a803eb..4e4766f 100644
+index cef76d3..4e4766f 100644
 --- a/src/hid/common/hidgl_package_acy_resistor.c
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
-@@ -322,6 +322,14 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color, int no_st
-   int i;
-   bool is_zero_ohm;
- 
-+  if (TEST_FLAG (SELECTEDFLAG, element)) {
-+    GLfloat selected_color[] = {0.00, 0.70, 0.82};
-+    float mix_color_ratio = 0.5;
-+    res_body_color[0] = res_body_color[0] * (1 - mix_color_ratio) + selected_color[0] * mix_color_ratio;
-+    res_body_color[1] = res_body_color[1] * (1 - mix_color_ratio) + selected_color[1] * mix_color_ratio;
-+    res_body_color[2] = res_body_color[2] * (1 - mix_color_ratio) + selected_color[2] * mix_color_ratio;
-+  }
-+
-   stripes = malloc (no_stripes * sizeof (int));
-   resistor_value_to_stripes (element, no_stripes, stripes, &mul, &tol);
- 
-@@ -374,6 +382,58 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color, int no_st
+@@ -382,6 +382,58 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color, int no_st
    return false;
  }
  
@@ -100,7 +85,7 @@ index 4a803eb..4e4766f 100644
  static void invert_4x4 (float m[4][4], float out[4][4]);
  
  static GLfloat *debug_lines = NULL;
-@@ -1000,6 +1060,1260 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -1008,6 +1060,1260 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
    first_run = false;
  }
  
