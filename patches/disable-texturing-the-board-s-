@@ -1,5 +1,5 @@
-Bottom: 2a7b75ae8c87a686aacd446550ece627df56e518
-Top:    303a9fa2ca947c09235280177367b0ca60eec86b
+Bottom: 2e3a369b287be0f4a6d33b9cc0c11e0a21ddb4b7
+Top:    44af28d2774b2889e355dc6bccadde1134b94b4d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-04 01:22:23 +0000
 
@@ -9,7 +9,7 @@ Disable texturing the board's soldermask
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 80960bd..5389e2e 100644
+index d57045b..99ef4e2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1489,6 +1489,7 @@ GhidDrawMask (int side, BoxType * screen)
@@ -26,10 +26,10 @@ index 80960bd..5389e2e 100644
    glEnable (GL_TEXTURE_2D);
 +#endif
  
-   polygon.Clipped = board_outline_poly ();
-   polygon.NoHoles = NULL;
-@@ -1532,10 +1534,12 @@ GhidDrawMask (int side, BoxType * screen)
- //  gui->graphics->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+   if (!PCB->Data->outline_valid) {
+ 
+@@ -1537,10 +1539,12 @@ GhidDrawMask (int side, BoxType * screen)
+   poly_FreeContours (&polygon.NoHoles);
    ghid_set_alpha_mult (out->fgGC, 1.0);
    hidgl_flush_triangles (&buffer);
 +#if 0
