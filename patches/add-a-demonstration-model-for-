@@ -1,5 +1,5 @@
 Bottom: 2f6183000f0f1062dd2fc73afe6edda84fa7a166
-Top:    a134a35bd0a8721be715e7e5c1619dc45f262cfc
+Top:    04c5d19ea3841a81ac6d4f55cf8659df55fa98c5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-15 01:46:46 +0000
 
@@ -434,10 +434,23 @@ literal 0
 HcmV?d00001
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index d187915..c75f874 100644
+index d187915..2c6724c 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -104,6 +104,7 @@ PFNGLUSEPROGRAMPROC         glUseProgram        = NULL;
+@@ -82,6 +82,12 @@ PFNGLLINKPROGRAMPROC        glLinkProgram       = NULL;
+ PFNGLSHADERSOURCEPROC       glShaderSource      = NULL;
+ PFNGLUSEPROGRAMPROC         glUseProgram        = NULL;
+ 
++PFNGLMULTITEXCOORD1FPROC    glMultiTexCoord1f    = NULL;
++PFNGLMULTITEXCOORD2FPROC    glMultiTexCoord2f    = NULL;
++PFNGLMULTITEXCOORD3FPROC    glMultiTexCoord3f    = NULL;
++PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation = NULL;
++PFNGLUNIFORM1IPROC          glUniform1i          = NULL;
++PFNGLACTIVETEXTUREARBPROC   glActiveTextureARB   = NULL;
+ #endif
+ 
+ #include "action.h"
+@@ -104,6 +110,7 @@ PFNGLUSEPROGRAMPROC         glUseProgram        = NULL;
  triangle_buffer buffer;
  float global_depth = 0;
  hidgl_shader *circular_program = NULL;
@@ -445,7 +458,7 @@ index d187915..c75f874 100644
  
  static bool in_context = false;
  
-@@ -915,9 +916,20 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
+@@ -915,9 +922,20 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
    hidgl_flush_triangles (&buffer);
  
    glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
@@ -467,7 +480,7 @@ index d187915..c75f874 100644
  
    if (use_new_stencil)
      {
-@@ -984,7 +996,34 @@ load_built_in_shaders (void)
+@@ -984,7 +1002,34 @@ load_built_in_shaders (void)
            "  gl_FragColor = gl_Color;\n"
            "}\n";
  
@@ -502,6 +515,21 @@ index d187915..c75f874 100644
  }
  
  void
+@@ -1018,6 +1063,14 @@ hidgl_init (void)
+   glLinkProgram       = (PFNGLLINKPROGRAMPROC)       wglGetProcAddress ("glLinkProgram");
+   glShaderSource      = (PFNGLSHADERSOURCEPROC)      wglGetProcAddress ("glShaderSource");
+   glUseProgram        = (PFNGLUSEPROGRAMPROC)        wglGetProcAddress ("glUseProgram");
++
++  glMultiTexCoord1f    = (PFNGLMULTITEXCOORD1FPROC)    wglGetProcAddress ("glMultiTexCoord1f");
++  glMultiTexCoord2f    = (PFNGLMULTITEXCOORD2FPROC)    wglGetProcAddress ("glMultiTexCoord2f");
++  glMultiTexCoord3f    = (PFNGLMULTITEXCOORD3FPROC)    wglGetProcAddress ("glMultiTexCoord3f");
++  glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC) wglGetProcAddress ("glGetUniformLocation");
++  glUniform1i          = (PFNGLUNIFORM1IPROC)          wglGetProcAddress ("glUniform1i");
++  glActiveTextureARB   = (PFNGLACTIVETEXTUREARBPROC)   wglGetProcAddress ("glActiveTextureARB");
++
+ #endif
+ 
+ 
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
 index 9cfeed0..0b6d833 100644
 --- a/src/hid/common/hidgl.h
@@ -524,10 +552,10 @@ index 9cfeed0..0b6d833 100644
  #endif /* PCB_HID_COMMON_HIDGL_H  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
 new file mode 100644
-index 0000000..2f8f46b
+index 0000000..4a803eb
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
-@@ -0,0 +1,1053 @@
+@@ -0,0 +1,1075 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -542,18 +570,40 @@ index 0000000..2f8f46b
 +#include <gdk-pixbuf/gdk-pixbuf.h>
 +#include "data.h"
 +
++#ifndef WIN32
 +/* The Linux OpenGL ABI 1.0 spec requires that we define
 + * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
 + * in order to get prototypes:
 + *   http://www.opengl.org/registry/ABI/
 + */
-+#define GL_GLEXT_PROTOTYPES 1
-+#include <GL/gl.h>
++#   define GL_GLEXT_PROTOTYPES 1
++#   include <GL/gl.h>
++#endif
++
++#ifdef HAVE_OPENGL_GL_H
++#   include <OpenGL/gl.h>
++#else
++#   include <GL/gl.h>
++#endif
 +
 +#include "hidgl.h"
 +
 +#ifdef HAVE_LIBDMALLOC
 +#include <dmalloc.h>
++#endif
++
++#ifdef WIN32
++#   include "hid/common/glext.h"
++
++extern PFNGLUSEPROGRAMPROC         glUseProgram;
++
++extern PFNGLMULTITEXCOORD1FPROC    glMultiTexCoord1f;
++extern PFNGLMULTITEXCOORD2FPROC    glMultiTexCoord2f;
++extern PFNGLMULTITEXCOORD3FPROC    glMultiTexCoord3f;
++extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
++extern PFNGLUNIFORM1IPROC          glUniform1i;
++extern PFNGLACTIVETEXTUREARBPROC   glActiveTextureARB;
++
 +#endif
 +
 +static int
