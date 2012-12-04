@@ -322,6 +322,14 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color, int no_st
   int i;
   bool is_zero_ohm;
 
+  if (TEST_FLAG (SELECTEDFLAG, element)) {
+    GLfloat selected_color[] = {0.00, 0.70, 0.82};
+    float mix_color_ratio = 0.5;
+    res_body_color[0] = res_body_color[0] * (1 - mix_color_ratio) + selected_color[0] * mix_color_ratio;
+    res_body_color[1] = res_body_color[1] * (1 - mix_color_ratio) + selected_color[1] * mix_color_ratio;
+    res_body_color[2] = res_body_color[2] * (1 - mix_color_ratio) + selected_color[2] * mix_color_ratio;
+  }
+
   stripes = malloc (no_stripes * sizeof (int));
   resistor_value_to_stripes (element, no_stripes, stripes, &mul, &tol);
 
@@ -380,6 +388,14 @@ setup_resistor_2300mil_texture (ElementType *element, GLfloat *res_body_color)
   GLfloat tex_data[32][3];
   int texel;
 
+  if (TEST_FLAG (SELECTEDFLAG, element)) {
+    GLfloat selected_color[] = {0.00, 0.70, 0.82};
+    float mix_color_ratio = 0.5;
+    res_body_color[0] = res_body_color[0] * (1 - mix_color_ratio) + selected_color[0] * mix_color_ratio;
+    res_body_color[1] = res_body_color[1] * (1 - mix_color_ratio) + selected_color[1] * mix_color_ratio;
+    res_body_color[2] = res_body_color[2] * (1 - mix_color_ratio) + selected_color[2] * mix_color_ratio;
+  }
+
   for (texel = 0; texel < sizeof (tex_data) / sizeof (GLfloat[3]); texel++) {
     tex_data[texel][0] = res_body_color[0];
     tex_data[texel][1] = res_body_color[1];
@@ -394,6 +410,14 @@ setup_hvdiode_texture (ElementType *element, GLfloat *body_color)
 {
   GLfloat tex_data[32][3];
   int texel;
+
+  if (TEST_FLAG (SELECTEDFLAG, element)) {
+    GLfloat selected_color[] = {0.00, 0.70, 0.82};
+    float mix_color_ratio = 0.5;
+    body_color[0] = body_color[0] * (1 - mix_color_ratio) + selected_color[0] * mix_color_ratio;
+    body_color[1] = body_color[1] * (1 - mix_color_ratio) + selected_color[1] * mix_color_ratio;
+    body_color[2] = body_color[2] * (1 - mix_color_ratio) + selected_color[2] * mix_color_ratio;
+  }
 
   for (texel = 0; texel < sizeof (tex_data) / sizeof (GLfloat[3]); texel++) {
     tex_data[texel][0] = body_color[0];
