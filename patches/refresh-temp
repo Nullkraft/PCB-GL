@@ -1,0 +1,200 @@
+Bottom: 18a989f93d2d16e6b0eccc775c166033c6d49ebe
+Top:    a134a35bd0a8721be715e7e5c1619dc45f262cfc
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-04 20:00:06 +0000
+
+Refresh of add-a-demonstration-model-for-
+
+---
+
+diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
+index a4071c1..2f8f46b 100644
+--- a/src/hid/common/hidgl_package_acy_resistor.c
++++ b/src/hid/common/hidgl_package_acy_resistor.c
+@@ -8,6 +8,7 @@
+ #include <string.h>
+ #include <math.h>
+ #include <stdbool.h>
++#include <assert.h>
+ #include <gdk-pixbuf/gdk-pixbuf.h>
+ #include "data.h"
+ 
+@@ -184,20 +185,21 @@ resistor_string_to_value (char *string)
+ }
+ 
+ static void
+-resistor_value_to_stripes (ElementType *element, int *st1, int *st2, int *st3, int *mul, int *tol)
++resistor_value_to_stripes (ElementType *element, int no_stripes, int *stripes, int *mul, int *tol)
+ {
+   char *value_string = element->Name[VALUE_INDEX].TextString;
+   double value;
+   double order_of_magnitude;
+-  int no_stripes = 3; /* XXX: Hard-coded, but so are the function arguments, so whatever.. */
++  int sigfigs;
++  int i;
+ 
+   /* XXX: Don't know tolerenace, so assume 1% */
+   *tol = 2;
+ 
+   if (value_string == NULL) {
+-    *st1 = 0;
+-    *st2 = 0;
+-    *st3 = 0;
++    stripes[0] = 0;
++    stripes[1] = 0;
++    stripes[2] = 0;
+     *mul = 0;
+     return;
+   }
+@@ -209,25 +211,33 @@ resistor_value_to_stripes (ElementType *element, int *st1, int *st2, int *st3, i
+   if (*mul < 0 || *mul > 9) {
+     /* Resistor multiplier out of range, e.g. zero ohm links */
+     *mul = 2; /* PUT BLACK */
+-    *st1 = 0;
+-    *st2 = 0;
+-    *st3 = 0;
++    stripes[0] = 0;
++    stripes[1] = 0;
++    stripes[2] = 0;
+     return;
+   }
+ 
+-  /* Color the first three significant digits */
+-  /* Normalise to 0-9 */
+-  value /= pow (10., (int)order_of_magnitude);
+-  *st1 = (int)value;
+-  value -= *st1;
++  /* Round to no_stripes significant figures */
++  value /= pow (10., (int)order_of_magnitude - no_stripes + 1);
++  sigfigs = (int)(value + 0.5);
++  value = round (value);
+ 
+-  value *= 10.;
+-  *st2 = (int)value;
+-  value -= *st2;
++  /* Start with all the sigfigs in the least significant stripes, then
++   * proceed stripe by stripe subtracting anything which can carry over
++   * into the next most significant stripe.
++   *
++   * NB: Stripe 0 is the most significant
++   */
++  stripes[no_stripes - 1] = sigfigs;
+ 
+-  value *= 10.;
+-  *st3 = (int)value;
+-  value -= *st3;
++  for (i = no_stripes - 1; i > 0; i--) {
++    stripes [i - 1] = stripes[i] / 10;
++    stripes [i] -= 10 * stripes[i - 1];
++
++    assert (stripes[i] >= 0 && stripes[i] <= 9);
++  }
++
++  assert (stripes[0] >= 0 && stripes[0] <= 9);
+ }
+ 
+ static void
+@@ -249,7 +259,7 @@ setup_zero_ohm_texture (GLfloat *res_body_color)
+ }
+ 
+ static bool
+-setup_resistor_texture (ElementType *element, GLfloat *res_body_color)
++setup_resistor_texture (ElementType *element, GLfloat *res_body_color, int no_stripes)
+ {
+   GLfloat val_color[10][3] = {{0.00, 0.00, 0.00},
+                               {0.52, 0.26, 0.00},
+@@ -280,43 +290,65 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color)
+                               {0.00, 0.91, 0.00},  /* 0.5%  */
+                               {0.00, 0.00, 1.00},  /* 0.25% */
+                               {0.68, 0.00, 0.68}}; /* 0.1%  */
+-  int st1 = 0;
+-  int st2 = 3;
+-  int st3 = 4;
+-  int mul = 2;
+-  int tol = 2;
++
++  int *stripes;
++  int mul;
++  int tol;
+ 
+   GLfloat tex_data[32][3];
+-  int strip;
++  int texel;
++  int i;
++  bool is_zero_ohm;
+ 
+-  resistor_value_to_stripes (element, &st1, &st2, &st3, &mul, &tol);
++  stripes = malloc (no_stripes * sizeof (int));
++  resistor_value_to_stripes (element, no_stripes, stripes, &mul, &tol);
+ 
+-  if (st1 == 0 && st2 == 0 && st3 == 0) {
++  is_zero_ohm = true;
++
++  for (i = 0; i < no_stripes; i++) {
++    if (stripes[i] != 0)
++      is_zero_ohm = false;
++  }
++
++  if (is_zero_ohm) {
+     setup_zero_ohm_texture (res_body_color);
++    free (stripes);
+     return true;
+   }
+ 
+-  for (strip = 0; strip < sizeof (tex_data) / sizeof (GLfloat[3]); strip++) {
+-    tex_data[strip][0] = res_body_color[0];
+-    tex_data[strip][1] = res_body_color[1];
+-    tex_data[strip][2] = res_body_color[2];
++  for (texel = 0; texel < sizeof (tex_data) / sizeof (GLfloat[3]); texel++) {
++    tex_data[texel][0] = res_body_color[0];
++    tex_data[texel][1] = res_body_color[1];
++    tex_data[texel][2] = res_body_color[2];
++  }
++
++  if (no_stripes == 2) {
++    tex_data[ 7][0] = val_color[stripes[0]][0];  tex_data[ 7][1] = val_color[stripes[0]][1];  tex_data[ 7][2] = val_color[stripes[0]][2];
++    tex_data[10][0] = val_color[stripes[1]][0];  tex_data[10][1] = val_color[stripes[1]][1];  tex_data[10][2] = val_color[stripes[1]][2];
++    tex_data[14][0] = mul_color[mul]       [0];  tex_data[14][1] = mul_color[mul]       [1];  tex_data[14][2] = mul_color[mul]       [2];
++    tex_data[24][0] = tol_color[tol]       [0];  tex_data[24][1] = tol_color[tol]       [1];  tex_data[24][2] = tol_color[tol]       [2];
+   }
+ 
+-  tex_data[ 7][0] = val_color[st1][0];  tex_data[ 7][1] = val_color[st1][1];  tex_data[ 7][2] = val_color[st1][2];
++  if (no_stripes == 3) {
++
++    tex_data[ 7][0] = val_color[stripes[0]][0];  tex_data[ 7][1] = val_color[stripes[0]][1];  tex_data[ 7][2] = val_color[stripes[0]][2];
+ 
+-  tex_data[10][0] = val_color[st2][0];  tex_data[10][1] = val_color[st2][1];  tex_data[10][2] = val_color[st2][2];
+-  tex_data[11][0] = val_color[st2][0];  tex_data[11][1] = val_color[st2][1];  tex_data[11][2] = val_color[st2][2];
++    tex_data[10][0] = val_color[stripes[1]][0];  tex_data[10][1] = val_color[stripes[1]][1];  tex_data[10][2] = val_color[stripes[1]][2];
++    tex_data[11][0] = val_color[stripes[1]][0];  tex_data[11][1] = val_color[stripes[1]][1];  tex_data[11][2] = val_color[stripes[1]][2];
+ 
+-  tex_data[14][0] = val_color[st3][0];  tex_data[14][1] = val_color[st3][1];  tex_data[14][2] = val_color[st3][2];
+-  tex_data[15][0] = val_color[st3][0];  tex_data[15][1] = val_color[st3][1];  tex_data[15][2] = val_color[st3][2];
++    tex_data[14][0] = val_color[stripes[2]][0];  tex_data[14][1] = val_color[stripes[2]][1];  tex_data[14][2] = val_color[stripes[2]][2];
++    tex_data[15][0] = val_color[stripes[2]][0];  tex_data[15][1] = val_color[stripes[2]][1];  tex_data[15][2] = val_color[stripes[2]][2];
+ 
+-  tex_data[18][0] = mul_color[mul][0];  tex_data[18][1] = mul_color[mul][1];  tex_data[18][2] = mul_color[mul][2];
+-  tex_data[19][0] = mul_color[mul][0];  tex_data[19][1] = mul_color[mul][1];  tex_data[19][2] = mul_color[mul][2];
++    tex_data[18][0] = mul_color[mul]       [0];  tex_data[18][1] = mul_color[mul]       [1];  tex_data[18][2] = mul_color[mul]       [2];
++    tex_data[19][0] = mul_color[mul]       [0];  tex_data[19][1] = mul_color[mul]       [1];  tex_data[19][2] = mul_color[mul]       [2];
++
++    tex_data[24][0] = tol_color[tol]       [0];  tex_data[24][1] = tol_color[tol]       [1];  tex_data[24][2] = tol_color[tol]       [2];
++  }
+ 
+-  tex_data[24][0] = tol_color[tol][0];  tex_data[24][1] = tol_color[tol][1];  tex_data[24][2] = tol_color[tol][2];
+ 
+   glTexImage1D (GL_TEXTURE_1D, 0, GL_RGB, 32, 0, GL_RGB, GL_FLOAT, tex_data);
+ 
++  free (stripes);
+   return false;
+ }
+ 
+@@ -691,7 +723,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+ //  if (first_run) {
+     glGenTextures (1, &texture1);
+     glBindTexture (GL_TEXTURE_1D, texture1);
+-    zero_ohm = setup_resistor_texture (element, resistor_body_color);
++    zero_ohm = setup_resistor_texture (element, resistor_body_color, 3);
+ //  } else {
+ //    glBindTexture (GL_TEXTURE_1D, texture1);
+ //  }
