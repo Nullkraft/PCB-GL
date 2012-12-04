@@ -12,18 +12,40 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include "data.h"
 
+#ifndef WIN32
 /* The Linux OpenGL ABI 1.0 spec requires that we define
  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
  * in order to get prototypes:
  *   http://www.opengl.org/registry/ABI/
  */
-#define GL_GLEXT_PROTOTYPES 1
-#include <GL/gl.h>
+#   define GL_GLEXT_PROTOTYPES 1
+#   include <GL/gl.h>
+#endif
+
+#ifdef HAVE_OPENGL_GL_H
+#   include <OpenGL/gl.h>
+#else
+#   include <GL/gl.h>
+#endif
 
 #include "hidgl.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
+#endif
+
+#ifdef WIN32
+#   include "hid/common/glext.h"
+
+extern PFNGLUSEPROGRAMPROC         glUseProgram;
+
+extern PFNGLMULTITEXCOORD1FPROC    glMultiTexCoord1f;
+extern PFNGLMULTITEXCOORD2FPROC    glMultiTexCoord2f;
+extern PFNGLMULTITEXCOORD3FPROC    glMultiTexCoord3f;
+extern PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+extern PFNGLUNIFORM1IPROC          glUniform1i;
+extern PFNGLACTIVETEXTUREARBPROC   glActiveTextureARB;
+
 #endif
 
 static int
