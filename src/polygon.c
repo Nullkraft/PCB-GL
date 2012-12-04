@@ -1653,7 +1653,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
     }
 
   if (type == POLYGON_TYPE)
-    InitClip (PCB->Data, (LayerType *)ptr1, (PolygonType *) ptr2);
+    InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
   else
     PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow);
 }
