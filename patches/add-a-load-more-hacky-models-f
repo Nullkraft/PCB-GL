@@ -1,5 +1,5 @@
 Bottom: 04c5d19ea3841a81ac6d4f55cf8659df55fa98c5
-Top:    4cbdc23a02a619e2cda3cc670fc42bd04bb2671c
+Top:    e043f69a76b3e8277146c058fed950c44011ee56
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-04 01:22:09 +0000
 
@@ -23,10 +23,10 @@ index 0b6d833..b0f80d7 100644
  
  #endif /* PCB_HID_COMMON_HIDGL_H  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
-index 4a803eb..ecc881b 100644
+index 4a803eb..4883778 100644
 --- a/src/hid/common/hidgl_package_acy_resistor.c
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
-@@ -374,6 +374,43 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color, int no_st
+@@ -374,6 +374,42 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color, int no_st
    return false;
  }
  
@@ -34,12 +34,12 @@ index 4a803eb..ecc881b 100644
 +setup_resistor_2300mil_texture (ElementType *element, GLfloat *res_body_color)
 +{
 +  GLfloat tex_data[32][3];
-+  int strip;
++  int texel;
 +
-+  for (strip = 0; strip < sizeof (tex_data) / sizeof (GLfloat[3]); strip++) {
-+    tex_data[strip][0] = res_body_color[0];
-+    tex_data[strip][1] = res_body_color[1];
-+    tex_data[strip][2] = res_body_color[2];
++  for (texel = 0; texel < sizeof (tex_data) / sizeof (GLfloat[3]); texel++) {
++    tex_data[texel][0] = res_body_color[0];
++    tex_data[texel][1] = res_body_color[1];
++    tex_data[texel][2] = res_body_color[2];
 +  }
 +
 +  glTexImage1D (GL_TEXTURE_1D, 0, GL_RGB, 32, 0, GL_RGB, GL_FLOAT, tex_data);
@@ -49,12 +49,12 @@ index 4a803eb..ecc881b 100644
 +setup_hvdiode_texture (ElementType *element, GLfloat *body_color)
 +{
 +  GLfloat tex_data[32][3];
-+  int strip;
++  int texel;
 +
-+  for (strip = 0; strip < sizeof (tex_data) / sizeof (GLfloat[3]); strip++) {
-+    tex_data[strip][0] = body_color[0];
-+    tex_data[strip][1] = body_color[1];
-+    tex_data[strip][2] = body_color[2];
++  for (texel = 0; texel < sizeof (tex_data) / sizeof (GLfloat[3]); texel++) {
++    tex_data[texel][0] = body_color[0];
++    tex_data[texel][1] = body_color[1];
++    tex_data[texel][2] = body_color[2];
 +  }
 +
 +  /* Draw the stripe */
@@ -62,7 +62,6 @@ index 4a803eb..ecc881b 100644
 +
 +  glTexImage1D (GL_TEXTURE_1D, 0, GL_RGB, 32, 0, GL_RGB, GL_FLOAT, tex_data);
 +
-+  free (stripes);
 +  return false;
 +}
 +
@@ -70,7 +69,7 @@ index 4a803eb..ecc881b 100644
  static void invert_4x4 (float m[4][4], float out[4][4]);
  
  static GLfloat *debug_lines = NULL;
-@@ -1000,6 +1037,1260 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -1000,6 +1036,1260 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
    first_run = false;
  }
  
