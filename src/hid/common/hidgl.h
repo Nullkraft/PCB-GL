@@ -140,5 +140,6 @@ void hidgl_draw_800mil_resistor (ElementType *element, float surface_depth, floa
 void hidgl_draw_2300mil_resistor (ElementType *element, float surface_depth, float board_thickness);
 void hidgl_draw_700mil_diode_smd (ElementType *element, float surface_depth, float board_thickness);
 void hidgl_draw_1650mil_cap (ElementType *element, float surface_depth, float board_thickness);
+void hidgl_draw_350x800mil_cap (ElementType *element, float surface_depth, float board_thickness);
 
 #endif /* PCB_HID_COMMON_HIDGL_H  */

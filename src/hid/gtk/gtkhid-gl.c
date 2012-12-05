@@ -1768,6 +1768,11 @@ frontE_package_callback (const BoxType * b, void *cl)
         int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
         hidgl_draw_1650mil_cap (element, compute_depth (layer_group), BOARD_THICKNESS);
       }
+
+      if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "cap_15000V_2500pF.fp") == 0) {
+        int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
+        hidgl_draw_350x800mil_cap (element, compute_depth (layer_group), BOARD_THICKNESS);
+      }
     }
   return 1;
 }
