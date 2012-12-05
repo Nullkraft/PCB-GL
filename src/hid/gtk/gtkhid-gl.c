@@ -1614,9 +1614,12 @@ fill_outline_hole_cb (PLINE *pl, void *user_data)
 {
   struct outline_info *info = (struct outline_info *)user_data;
   PolygonType polygon;
+  PLINE *pl_copy = NULL;
 
-  poly_InvContour (pl);
-  polygon.Clipped = ContourToPoly (pl);
+  poly_CopyContour (&pl_copy, pl);
+  poly_InvContour (pl_copy);
+  polygon.Clipped = poly_Create ();
+  poly_InclContour (polygon.Clipped, pl_copy);
 
 //  if (polygon.Clipped->contours == NULL)
 //    return 0;
@@ -1632,11 +1635,7 @@ fill_outline_hole_cb (PLINE *pl, void *user_data)
 
   poly_FreeContours (&polygon.NoHoles);
 
-  /* Don't free the PLINE */
-  polygon.Clipped->contours = NULL;
   poly_Free (&polygon.Clipped);
-
-  poly_InvContour (pl);
 
   return 0;
 }
