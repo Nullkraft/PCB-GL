@@ -1,7 +1,7 @@
-Bottom: 69c655994e71af522643f99474add76742e8cc73
-Top:    f3005de843cc1aba0545747ebced9e2f6867756b
+Bottom: 263f2fbbbfc687ee902ccd5da4226645a11a9065
+Top:    e570f2c37461602b067f6cd38899bea622bdcbe4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-12-02 14:19:13 +0000
+Date:   2012-12-07 19:39:58 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -431,10 +431,10 @@ index 9d92ced..9b6454e 100644
    Dest->MarkX = Src->MarkX + dx;
    Dest->MarkY = Src->MarkY + dy;
 diff --git a/src/create.c b/src/create.c
-index b39ff65..76992d2 100644
+index 7919b43..e2fddb8 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -904,25 +904,19 @@ CreateNewLineInSymbol (SymbolType *Symbol,
+@@ -908,25 +908,19 @@ CreateNewLineInSymbol (SymbolType *Symbol,
  		       Coord X1, Coord Y1,
  		       Coord X2, Coord Y2, Coord Thickness)
  {
@@ -465,7 +465,7 @@ index b39ff65..76992d2 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -994,13 +988,14 @@ CreateNewConnection (LibraryMenuType *net, char *conn)
+@@ -998,13 +992,14 @@ CreateNewConnection (LibraryMenuType *net, char *conn)
  AttributeType *
  CreateNewAttribute (AttributeListType *list, char *name, char *value)
  {
