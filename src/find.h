@@ -51,7 +51,7 @@ bool ArcPadIntersect (ArcType *, PadType *);
 bool IsPolygonInPolygon (PolygonType *, PolygonType *);
 void LookupElementConnections (ElementType *, FILE *);
 void LookupConnectionsToAllElements (FILE *);
-void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats);
+void LookupConnection (Coord, Coord, bool, Coord, int);
 void LookupUnusedPins (FILE *);
 bool ResetFoundLinesAndPolygons (bool);
 bool ResetFoundPinsViasAndPads (bool);
