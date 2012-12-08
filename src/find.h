@@ -50,7 +50,7 @@ bool LinePadIntersect (LineType *, PadType *);
 bool ArcPadIntersect (ArcType *, PadType *);
 void LookupElementConnections (ElementType *, FILE *);
 void LookupConnectionsToAllElements (FILE *);
-void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats);
+void LookupConnection (Coord, Coord, bool, Coord, int);
 void LookupUnusedPins (FILE *);
 bool ResetFoundLinesAndPolygons (bool, int flag);
 bool ResetFoundPinsViasAndPads (bool, int flag);
