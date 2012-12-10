@@ -2291,32 +2291,54 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	  {
 	    gui->get_coords (_("Click on a connection"), &x, &y);
 	    LookupConnection (x, y, true, 1, FOUNDFLAG, false);
+	    LookupConnection (x, y, true, 1, RATFOUNDFLAG, true);
 	    break;
 	  }
 
 	case F_ResetLinesAndPolygons:
-	  if (ResetFoundLinesAndPolygons (true, FOUNDFLAG))
-	    {
-	      IncrementUndoSerialNumber ();
-	      Draw ();
-	    }
-	  break;
+	  {
+	    bool change = false;
+
+	    change = ResetFoundLinesAndPolygons (true, RATFOUNDFLAG) || change;
+	    change = ResetFoundLinesAndPolygons (true, FOUNDFLAG) || change;
+
+	    if (change)
+	      {
+	        IncrementUndoSerialNumber ();
+	        Draw ();
+	      }
+	    break;
+	  }
 
 	case F_ResetPinsViasAndPads:
-	  if (ResetFoundPinsViasAndPads (true, FOUNDFLAG))
-	    {
-	      IncrementUndoSerialNumber ();
-	      Draw ();
-	    }
-	  break;
+	  {
+	    bool change = false;
+
+	    change = ResetFoundPinsViasAndPads (true, RATFOUNDFLAG) || change;
+	    change = ResetFoundPinsViasAndPads (true, FOUNDFLAG) || change;
+
+	    if (change)
+	      {
+	        IncrementUndoSerialNumber ();
+	        Draw ();
+	      }
+	    break;
+	  }
 
 	case F_Reset:
-	  if (ResetConnections (true, FOUNDFLAG))
-	    {
-	      IncrementUndoSerialNumber ();
-	      Draw ();
-	    }
-	  break;
+	  {
+	    bool change = false;
+
+	    change = ResetConnections (true, RATFOUNDFLAG) || change;
+	    change = ResetConnections (true, FOUNDFLAG) || change;
+
+	    if (change)
+	      {
+	        IncrementUndoSerialNumber ();
+	        Draw ();
+	      }
+	    break;
+	  }
 	}
       return 0;
     }
