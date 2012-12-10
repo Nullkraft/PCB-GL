@@ -2317,7 +2317,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	case F_ResetPinsViasAndPads:
 	  {
 	    bool change = false;
-	
+
 	    SaveFindFlag (RATFOUNDFLAG);
 	    change = ResetFoundPinsViasAndPads (true) || change;
 	    RestoreFindFlag ();
