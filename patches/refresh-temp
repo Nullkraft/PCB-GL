@@ -1,0 +1,22 @@
+Bottom: 940ddcd11cf15cc7815fb287466b9dc3847956be
+Top:    56639d9ce0870c67e476caa5dcc4d7a114ebd47f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-10 01:19:58 +0000
+
+Refresh of add-split-colouring-for-find-a
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 7e89b2d..66dca55 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2317,7 +2317,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+ 	case F_ResetPinsViasAndPads:
+ 	  {
+ 	    bool change = false;
+-	
++
+ 	    SaveFindFlag (RATFOUNDFLAG);
+ 	    change = ResetFoundPinsViasAndPads (true) || change;
+ 	    RestoreFindFlag ();
