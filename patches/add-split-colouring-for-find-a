@@ -1,5 +1,5 @@
 Bottom: 263f2fbbbfc687ee902ccd5da4226645a11a9065
-Top:    b03266668ec1aaf0e51f7ea46d430ee1c89867de
+Top:    9cbf10f870975545bc2c57ad9caf62a852ac7d32
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-10 01:19:10 +0000
 
@@ -16,7 +16,7 @@ if all rat-lines were implemented.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 96ecae7..5e806b5 100644
+index 96ecae7..b5a65b3 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -2291,32 +2291,66 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
@@ -36,14 +36,14 @@ index 96ecae7..5e806b5 100644
 -	  break;
 +	  {
 +	    bool change = false;
-+	
++
 +	    SaveFindFlag (RATFOUNDFLAG);
 +	    change = ResetFoundLinesAndPolygons (true) || change;
 +	    RestoreFindFlag ();
 +	    SaveFindFlag (FOUNDFLAG);
 +	    change = ResetFoundLinesAndPolygons (true) || change;
 +	    RestoreFindFlag ();
-+	
++
 +	    if (change)
 +	      {
 +	        IncrementUndoSerialNumber ();
@@ -59,7 +59,6 @@ index 96ecae7..5e806b5 100644
 -	      Draw ();
 -	    }
 -	  break;
--
 +	  {
 +	    bool change = false;
 +	
@@ -69,7 +68,7 @@ index 96ecae7..5e806b5 100644
 +	    SaveFindFlag (FOUNDFLAG);
 +	    change = ResetFoundPinsViasAndPads (true) || change;
 +	    RestoreFindFlag ();
-+	
++
 +	    if (change)
 +	      {
 +	        IncrementUndoSerialNumber ();
@@ -77,7 +76,7 @@ index 96ecae7..5e806b5 100644
 +	      }
 +	    break;
 +	  }
-+	
+ 
  	case F_Reset:
 -	  if (ResetConnections (true))
 -	    {
@@ -94,7 +93,7 @@ index 96ecae7..5e806b5 100644
 +	    SaveFindFlag (FOUNDFLAG);
 +	    change = ResetConnections (true) || change;
 +	    RestoreFindFlag ();
-+	
++
 +	    if (change)
 +	      {
 +	        IncrementUndoSerialNumber ();
