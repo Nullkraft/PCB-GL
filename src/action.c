@@ -2298,14 +2298,14 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	case F_ResetLinesAndPolygons:
 	  {
 	    bool change = false;
-	
+
 	    SaveFindFlag (RATFOUNDFLAG);
 	    change = ResetFoundLinesAndPolygons (true) || change;
 	    RestoreFindFlag ();
 	    SaveFindFlag (FOUNDFLAG);
 	    change = ResetFoundLinesAndPolygons (true) || change;
 	    RestoreFindFlag ();
-	
+
 	    if (change)
 	      {
 	        IncrementUndoSerialNumber ();
@@ -2324,7 +2324,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	    SaveFindFlag (FOUNDFLAG);
 	    change = ResetFoundPinsViasAndPads (true) || change;
 	    RestoreFindFlag ();
-	
+
 	    if (change)
 	      {
 	        IncrementUndoSerialNumber ();
@@ -2332,7 +2332,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	      }
 	    break;
 	  }
-	
+
 	case F_Reset:
 	  {
 	    bool change = false;
@@ -2343,7 +2343,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	    SaveFindFlag (FOUNDFLAG);
 	    change = ResetConnections (true) || change;
 	    RestoreFindFlag ();
-	
+
 	    if (change)
 	      {
 	        IncrementUndoSerialNumber ();
