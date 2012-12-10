@@ -2336,7 +2336,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	case F_Reset:
 	  {
 	    bool change = false;
-	
+
 	    SaveFindFlag (RATFOUNDFLAG);
 	    change = ResetConnections (true) || change;
 	    RestoreFindFlag ();
