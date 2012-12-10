@@ -94,6 +94,7 @@ set_object_color (AnyObjectType *obj,
   if      (warn_color     != NULL && TEST_FLAG (WARNFLAG,     obj)) color = warn_color;
   else if (selected_color != NULL && TEST_FLAG (SELECTEDFLAG, obj)) color = selected_color;
   else if (found_color    != NULL && TEST_FLAG (FOUNDFLAG,    obj)) color = found_color;
+  else if (found_color    != NULL && TEST_FLAG (RATFOUNDFLAG, obj)) color = "#FF00FF";
   else                                                              color = normal_color;
 
   gui->graphics->set_color (Output.fgGC, color);

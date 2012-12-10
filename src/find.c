@@ -315,10 +315,10 @@ static bool LookupLOConnectionsToPVList (bool);
 static bool LookupLOConnectionsToLOList (bool);
 static bool LookupPVConnectionsToLOList (bool);
 static bool LookupPVConnectionsToPVList (void);
-static bool LookupLOConnectionsToLine (LineType *, Cardinal, bool);
-static bool LookupLOConnectionsToPad (PadType *, Cardinal);
-static bool LookupLOConnectionsToPolygon (PolygonType *, Cardinal);
-static bool LookupLOConnectionsToArc (ArcType *, Cardinal);
+static bool LookupLOConnectionsToLine (LineType *, Cardinal, bool, bool);
+static bool LookupLOConnectionsToPad (PadType *, Cardinal, bool);
+static bool LookupLOConnectionsToPolygon (PolygonType *, Cardinal, bool);
+static bool LookupLOConnectionsToArc (ArcType *, Cardinal, bool);
 static bool LookupLOConnectionsToRatEnd (PointType *, Cardinal);
 static bool IsRatPointOnLineEnd (PointType *, LineType *);
 static bool ArcArcIntersect (ArcType *, ArcType *);
@@ -917,21 +917,21 @@ LookupLOConnectionsToLOList (bool AndRats)
                   position = &lineposition[layer];
                   for (; *position < LineList[layer].Number; (*position)++)
                     if (LookupLOConnectionsToLine
-                        (LINELIST_ENTRY (layer, *position), group, true))
+                        (LINELIST_ENTRY (layer, *position), group, true, AndRats))
                       return (true);
 
                   /* try all new arcs */
                   position = &arcposition[layer];
                   for (; *position < ArcList[layer].Number; (*position)++)
                     if (LookupLOConnectionsToArc
-                        (ARCLIST_ENTRY (layer, *position), group))
+                        (ARCLIST_ENTRY (layer, *position), group, AndRats))
                       return (true);
 
                   /* try all new polygons */
                   position = &polyposition[layer];
                   for (; *position < PolygonList[layer].Number; (*position)++)
                     if (LookupLOConnectionsToPolygon
-                        (POLYGONLIST_ENTRY (layer, *position), group))
+                        (POLYGONLIST_ENTRY (layer, *position), group, AndRats))
                       return (true);
                 }
               else
@@ -947,7 +947,7 @@ LookupLOConnectionsToLOList (bool AndRats)
                   position = &padposition[layer];
                   for (; *position < PadList[layer].Number; (*position)++)
                     if (LookupLOConnectionsToPad
-                        (PADLIST_ENTRY (layer, *position), group))
+                        (PADLIST_ENTRY (layer, *position), group, AndRats))
                       return (true);
                 }
             }
@@ -1780,7 +1780,7 @@ LOCtoArcPad_callback (const BoxType * b, void *cl)
  * Xij means Xj at arc i
  */
 static bool
-LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup)
+LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
 {
   Cardinal entry;
   struct lo_info info;
@@ -1911,7 +1911,7 @@ LOCtoLinePad_callback (const BoxType * b, void *cl)
  */
 static bool
 LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
-                           bool PolysTo)
+                           bool PolysTo, bool AndRats)
 {
   Cardinal entry;
   struct lo_info info;
@@ -1919,12 +1919,16 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
   info.line = *Line;
   info.layer = LayerGroup;
   EXPAND_BOUNDS (&info.line)
-  /* add the new rat lines */
-  if (setjmp (info.env) == 0)
-    r_search (PCB->Data->rat_tree, &info.line.BoundingBox, NULL,
-              LOCtoLineRat_callback, &info);
-  else
-    return true;
+
+  if (AndRats)
+    {
+      /* add the new rat lines */
+      if (setjmp (info.env) == 0)
+        r_search (PCB->Data->rat_tree, &info.line.BoundingBox, NULL,
+                  LOCtoLineRat_callback, &info);
+      else
+        return true;
+    }
 
   /* loop over all layers of the group */
   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
@@ -2180,23 +2184,27 @@ LOCtoPadPad_callback (const BoxType * b, void *cl)
  * layergroup. All found connections are added to the list
  */
 static bool
-LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
+LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
 {
   Cardinal entry;
   struct lo_info info;
 
   if (!TEST_FLAG (SQUAREFLAG, Pad))
-    return (LookupLOConnectionsToLine ((LineType *) Pad, LayerGroup, false));
+    return (LookupLOConnectionsToLine ((LineType *) Pad, LayerGroup, false, AndRats));
 
   info.pad = *Pad;
   EXPAND_BOUNDS (&info.pad);
   /* add the new rat lines */
   info.layer = LayerGroup;
-  if (setjmp (info.env) == 0)
-    r_search (PCB->Data->rat_tree, &info.pad.BoundingBox, NULL,
-              LOCtoPadRat_callback, &info);
-  else
-    return true;
+
+  if (AndRats)
+    {
+      if (setjmp (info.env) == 0)
+        r_search (PCB->Data->rat_tree, &info.pad.BoundingBox, NULL,
+                  LOCtoPadRat_callback, &info);
+      else
+        return true;
+    }
 
   /* loop over all layers of the group */
   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
@@ -2314,7 +2322,7 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
  * on the given layergroup. All found connections are added to the list
  */
 static bool
-LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
+LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool AndRats)
 {
   Cardinal entry;
   struct lo_info info;
@@ -2324,12 +2332,17 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
   info.polygon = *Polygon;
   EXPAND_BOUNDS (&info.polygon);
   info.layer = LayerGroup;
+
   /* check rats */
-  if (setjmp (info.env) == 0)
-    r_search (PCB->Data->rat_tree, (BoxType *) & info.polygon, NULL,
-              LOCtoPolyRat_callback, &info);
-  else
-    return true;
+  if (AndRats)
+    {
+      if (setjmp (info.env) == 0)
+        r_search (PCB->Data->rat_tree, (BoxType *) & info.polygon, NULL,
+                  LOCtoPolyRat_callback, &info);
+      else
+        return true;
+    }
+
 /* loop over all layers of the group */
   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
     {
