@@ -107,6 +107,7 @@ typedef enum
   F_ClearAndRedraw,
   F_ClearList,
   F_Close,
+  F_Found,
   F_Connection,
   F_Convert,
   F_Copy,
@@ -341,6 +342,7 @@ static FunctionType Functions[] = {
   {"ClearAndRedraw", F_ClearAndRedraw},
   {"ClearList", F_ClearList},
   {"Close", F_Close},
+  {"Found", F_Found},
   {"Connection", F_Connection},
   {"Convert", F_Convert},
   {"Copy", F_Copy},
@@ -2290,12 +2292,13 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	case F_Find:
 	  {
 	    gui->get_coords (_("Click on a connection"), &x, &y);
-	    LookupConnection (x, y, true, 1, FOUNDFLAG, false);
+	    LookupConnection (x, y, true, 1, FOUNDFLAG, true);
+	    LookupConnection (x, y, true, 1, CONNECTEDFLAG, false);
 	    break;
 	  }
 
 	case F_ResetLinesAndPolygons:
-	  if (ResetFoundLinesAndPolygons (true, FOUNDFLAG))
+	  if (ResetFoundLinesAndPolygons (true, FOUNDFLAG | CONNECTEDFLAG))
 	    {
 	      IncrementUndoSerialNumber ();
 	      Draw ();
@@ -2303,7 +2306,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	  break;
 
 	case F_ResetPinsViasAndPads:
-	  if (ResetFoundPinsViasAndPads (true, FOUNDFLAG))
+	  if (ResetFoundPinsViasAndPads (true, FOUNDFLAG | CONNECTEDFLAG))
 	    {
 	      IncrementUndoSerialNumber ();
 	      Draw ();
@@ -2311,7 +2314,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	  break;
 
 	case F_Reset:
-	  if (ResetConnections (true, FOUNDFLAG))
+	  if (ResetConnections (true, FOUNDFLAG | CONNECTEDFLAG))
 	    {
 	      IncrementUndoSerialNumber ();
 	      Draw ();
@@ -5315,8 +5318,11 @@ Selects all objects in a rectangle indicated by the cursor.
 @item All
 Selects all objects on the board.
 
-@item Connection
+@item Found
 Selects all connections with the ``found'' flag set.
+
+@item Connection
+Selects all connections with the ``connected'' flag set.
 
 @item Convert
 Converts the selected objects to an element.  This uses the highest
@@ -5422,9 +5428,19 @@ ActionSelect (int argc, char **argv, Coord x, Coord y)
 	    break;
 	  }
 
-	  /* all found connections */
-	case F_Connection:
+	  /* all logical connections */
+	case F_Found:
 	  if (SelectByFlag (FOUNDFLAG, true))
+	    {
+              Draw ();
+	      IncrementUndoSerialNumber ();
+	      SetChangedFlag (true);
+	    }
+	  break;
+
+	  /* all physical connections */
+	case F_Connection:
+	  if (SelectByFlag (CONNECTEDFLAG, true))
 	    {
               Draw ();
 	      IncrementUndoSerialNumber ();
@@ -5601,9 +5617,19 @@ ActionUnselect (int argc, char **argv, Coord x, Coord y)
 	    break;
 	  }
 
-	  /* all found connections */
-	case F_Connection:
+	  /* all logical connections */
+	case F_Found:
 	  if (SelectByFlag (FOUNDFLAG, false))
+	    {
+              Draw ();
+	      IncrementUndoSerialNumber ();
+	      SetChangedFlag (true);
+	    }
+	  break;
+
+	  /* all physical connections */
+	case F_Connection:
+	  if (SelectByFlag (CONNECTEDFLAG, false))
 	    {
               Draw ();
 	      IncrementUndoSerialNumber ();
