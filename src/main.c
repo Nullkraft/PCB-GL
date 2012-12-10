@@ -765,7 +765,17 @@ Color to indicate connections. Default: @samp{#00ff00}
 %end-doc
 */
   COLOR (ConnectedColor, "#00ff00", "connected-color",
-	 "color to indicate connections"),
+	 "color to indicate physically connected objects"),
+
+/* %start-doc options "3 Colors"
+@ftable @code
+@item --connected-color <string>
+Color to indicate connections. Default: @samp{#00ff00}
+@end ftable
+%end-doc
+*/
+  COLOR (FoundColor, "#ff00ff", "found-color",
+	 "color to indicate logically connected objects"),
 
 /* %start-doc options "3 Colors"
 @ftable @code
