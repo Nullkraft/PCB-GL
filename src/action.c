@@ -2292,12 +2292,13 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	case F_Find:
 	  {
 	    gui->get_coords (_("Click on a connection"), &x, &y);
-	    LookupConnection (x, y, true, 1, FOUNDFLAG, false);
+	    LookupConnection (x, y, true, 1, CONNECTEDFLAG, false);
+	    LookupConnection (x, y, true, 1, FOUNDFLAG, true);
 	    break;
 	  }
 
 	case F_ResetLinesAndPolygons:
-	  if (ClearFlagOnLinesAndPolygons (true, FOUNDFLAG))
+	  if (ClearFlagOnLinesAndPolygons (true, CONNECTEDFLAG | FOUNDFLAG))
 	    {
 	      IncrementUndoSerialNumber ();
 	      Draw ();
@@ -2305,7 +2306,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	  break;
 
 	case F_ResetPinsViasAndPads:
-	  if (ClearFlagOnPinsViasAndPads (true, FOUNDFLAG))
+	  if (ClearFlagOnPinsViasAndPads (true, CONNECTEDFLAG | FOUNDFLAG))
 	    {
 	      IncrementUndoSerialNumber ();
 	      Draw ();
@@ -2313,7 +2314,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	  break;
 
 	case F_Reset:
-	  if (ClearFlagOnAllObjects (true, FOUNDFLAG))
+	  if (ClearFlagOnAllObjects (true, CONNECTEDFLAG | FOUNDFLAG))
 	    {
 	      IncrementUndoSerialNumber ();
 	      Draw ();
