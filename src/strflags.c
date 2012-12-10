@@ -108,7 +108,8 @@ static FlagBitsType object_flagbits[] = {
   { LOCKFLAG, N ("lock"), ALL_TYPES },
   { EDGE2FLAG, N ("edge2"), ALL_TYPES },
   { FULLPOLYFLAG, N ("fullpoly"), POLYGON_TYPE},
-  { NOPASTEFLAG, N ("nopaste"), PAD_TYPE }
+  { NOPASTEFLAG, N ("nopaste"), PAD_TYPE },
+  { RATFOUNDFLAG, N ("ratfound"), ALL_TYPES }
 };
 
 static FlagBitsType pcb_flagbits[] = {
