@@ -40,6 +40,7 @@ bool SelectObject (void);
 bool SelectBlock (BoxType *, bool);
 bool SelectedOperation (ObjectFunctionType *, bool, int);
 void *ObjectOperation (ObjectFunctionType *, int, void *, void *, void *);
+bool SelectFound (bool);
 bool SelectConnection (bool);
 
 #if defined(HAVE_REGCOMP) || defined(HAVE_RE_COMP)
