@@ -703,7 +703,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
         fill_polyarea (pa, clip_box, scale);
     }
-
 }
 
 void
