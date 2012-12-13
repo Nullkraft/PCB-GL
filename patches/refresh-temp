@@ -1,0 +1,61 @@
+Bottom: d117145e34eece4f076c4724779f2a36ef612b91
+Top:    8094eb4161833274dd06658d4a10c48b99e38e23
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-13 02:26:18 +0000
+
+Refresh of draw-polygons-in-a-more-intell
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index f74d287..fb6a054 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -836,10 +836,8 @@ static int dirty_bits = 0;
+ static int assigned_bits = 0;
+ 
+ static void
+-fill_polyarea (POLYAREA *pa, const BoxType *clip_box /*, bool force_new_stencil */)
++fill_polyarea (POLYAREA *pa, const BoxType *clip_box, bool use_new_stencil)
+ {
+-  bool force_new_stencil = false;
+-  bool use_new_stencil;
+   int stencil_bit;
+ 
+   CHECK_IS_IN_CONTEXT ();
+@@ -850,11 +848,9 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box /*, bool force_new_stencil
+     return;
+   }
+ 
+-  /* Polygon has holes.. does it have any user-drawn holes?
++  /* Polygon has holes.. does it have any user-drawn holes? (caller tells us)
+    * If so, it must be masked with a _new_ stencil bit.
+    */
+-  use_new_stencil = force_new_stencil | polygon_contains_user_holes (poly);
+-
+   if (use_new_stencil)
+     {
+       stencil_bit = hidgl_assign_clear_stencil_bit ();
+@@ -913,17 +909,21 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box /*, bool force_new_stencil
+ void
+ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+ {
++  bool use_new_stencil;
++
+   if (poly->Clipped == NULL)
+     return;
+ 
+-  fill_polyarea (poly->Clipped, clip_box);
++  use_new_stencil = polygon_contains_user_holes (poly);
++
++  fill_polyarea (poly->Clipped, clip_box, use_new_stencil);
+ 
+   if (TEST_FLAG (FULLPOLYFLAG, poly))
+     {
+       POLYAREA *pa;
+ 
+       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
+-        fill_polyarea (pa, clip_box);
++        fill_polyarea (pa, clip_box, use_new_stencil);
+     }
+ }
