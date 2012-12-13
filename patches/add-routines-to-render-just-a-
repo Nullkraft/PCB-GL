@@ -1,5 +1,5 @@
 Bottom: 13344f9c257c11863832801f204470daf541d23c
-Top:    a84b0f9f1e1ce603277a6e8b4ebbdfcb1f1c09d5
+Top:    94b2bc6b721bc3fc8913576f08588412f57ee57a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-12-13 01:56:57 +0000
 
@@ -11,7 +11,7 @@ Use them rather than the GLU tessellator
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 4f8ac1a..80b9203 100644
+index 4f8ac1a..bccc246 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -557,12 +557,10 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
@@ -86,7 +86,7 @@ index 4f8ac1a..80b9203 100644
  
 +  /* Special case non-holed polygons which don't require a stencil bit */
 +  if (pa->contour_tree->size == 1) {
-+    fill_contour (poly->Clipped->contours, scale);
++    fill_contour (pa->contours, scale);
 +    return;
 +  }
 +
@@ -146,7 +146,7 @@ index 4f8ac1a..80b9203 100644
    /* Draw the polygon outer */
 -  tesselate_contour (info.tobj, pa->contours, info.vertices, scale);
 -
-+  fill_contour (poly->Clipped->contours, scale);
++  fill_contour (pa->contours, scale);
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
