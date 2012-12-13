@@ -1,5 +1,5 @@
 Bottom: 4c626480ee6f389ef6fc90e10322fc6a1ef4a069
-Top:    7ecf2b45f165fc231b58a4a16e600aaded1ab659
+Top:    4c626480ee6f389ef6fc90e10322fc6a1ef4a069
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-07 19:40:07 +0000
 
@@ -8,23 +8,4 @@ hidgl: Fix polygon render to support "FULLPOLY" polygons
 
 ---
 
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index a54952c..3e150ee 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -688,6 +688,15 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
- 
-   /* Draw the polygon outer */
-   fill_contour (poly->Clipped->contours, scale);
-+  if (TEST_FLAG (FULLPOLYFLAG, poly))
-+    {
-+      PolygonType p = *poly;
-+
-+      for (p.Clipped = poly->Clipped->f;
-+           p.Clipped != poly->Clipped;
-+           p.Clipped = p.Clipped->f)
-+        fill_contour (p.Clipped->contours, scale);
-+    }
-   hidgl_flush_triangles (&buffer);
- 
-   /* Unassign our stencil buffer bit */
+
