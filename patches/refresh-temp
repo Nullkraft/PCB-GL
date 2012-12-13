@@ -1,0 +1,146 @@
+Bottom: c6f5fe28e75a87f56570d98979d7f9fe026f53e6
+Top:    b2a61c45de24d6a68d6b13767a4cdd0945d68b52
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-13 02:12:18 +0000
+
+Refresh of draw-polygons-in-a-more-intell
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index dbb6c93..5243151 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -124,7 +124,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
+   CHECK_IS_IN_CONTEXT ();
+ 
+   buffer->use_vbo = true;
+-  // buffer->use_vbo = false;
++  /* buffer->use_vbo = false; */
+ 
+   if (buffer->use_vbo) {
+     glGenBuffers (1, &buffer->vbo_id);
+@@ -824,13 +824,22 @@ do_hole (const BoxType *b, void *cl)
+   return 1;
+ }
+ 
++static bool
++polygon_contains_user_holes (PolygonType *polygon)
++{
++  return (polygon->HoleIndexN > 0);
++}
++
++
+ static GLint stencil_bits;
+ static int dirty_bits = 0;
+ static int assigned_bits = 0;
+ 
+ static void
+-fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
++fill_polyarea (POLYAREA *pa, const BoxType *clip_box /*, bool force_new_stencil */)
+ {
++  bool force_new_stencil = false;
++  bool use_new_stencil;
+   int stencil_bit;
+ 
+   CHECK_IS_IN_CONTEXT ();
+@@ -841,14 +850,20 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
+     return;
+   }
+ 
+-  /* Polygon has holes */
++  /* Polygon has holes.. does it have any user-drawn holes?
++   * If so, it must be masked with a _new_ stencil bit.
++   */
++  use_new_stencil = force_new_stencil | polygon_contains_user_holes (poly);
+ 
+-  stencil_bit = hidgl_assign_clear_stencil_bit ();
+-  if (!stencil_bit)
++  if (use_new_stencil)
+     {
+-      printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
+-      /* XXX: Could use the GLU tesselator or the full BO polygon tesselator */
+-      return;
++      stencil_bit = hidgl_assign_clear_stencil_bit ();
++      if (!stencil_bit)
++        {
++          printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
++          /* XXX: Could use the GLU tesselator or the full BO polygon tesselator */
++          return;
++        }
+     }
+ 
+   /* Flush out any existing geoemtry to be rendered */
+@@ -856,12 +871,15 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
+ 
+   glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
+                 GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
+-  glStencilMask (stencil_bit);                          /* Only write to our stencil bit */
+-  glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, ref value is our bit */
+   glEnable (GL_STENCIL_TEST);                           /* Enable the stencil test, just in case it wasn't already on */
+   glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
+ 
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           /* Stencil pass => replace stencil value */
++  if (use_new_stencil)
++    {
++      glStencilMask (stencil_bit);                            /* Only write to our stencil bit */
++      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    /* Always pass stencil test, ref value is our bit */
++      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);             /* Stencil pass => replace stencil value */
++    }
+ 
+   /* Drawing operations now set our reference bit in the stencil buffer */
+ 
+@@ -886,7 +904,8 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
+   hidgl_flush_triangles (&buffer);
+ 
+   /* Unassign our stencil buffer bit */
+-  hidgl_return_stencil_bit (stencil_bit);
++  if (use_new_stencil)
++    hidgl_return_stencil_bit (stencil_bit);
+ 
+   glPopAttrib ();                               /* Restore the stencil buffer op and function */
+ }
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 8aac491..348a54c 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1334,10 +1334,27 @@ struct poly_info
+ };
+ 
+ static int
+-poly_callback (const BoxType * b, void *cl)
++poly_callback_no_clear (const BoxType * b, void *cl)
+ {
+   struct poly_info *i = (struct poly_info *) cl;
+-  PolygonType *polygon = (PolygonType *)b;
++  PolygonType *polygon = (PolygonType *) b;
++
++  if (TEST_FLAG (CLEARPOLYFLAG, polygon))
++    return 0;
++
++  set_layer_object_color (i->layer, (AnyObjectType *) polygon);
++  gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
++  return 1;
++}
++
++static int
++poly_callback_clearing (const BoxType * b, void *cl)
++{
++  struct poly_info *i = (struct poly_info *) cl;
++  PolygonType *polygon = (PolygonType *) b;
++
++  if (!TEST_FLAG (CLEARPOLYFLAG, polygon))
++    return 0;
+ 
+   set_layer_object_color (i->layer, (AnyObjectType *) polygon);
+   gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
+@@ -1481,7 +1498,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+       if (Layer->PolygonN) {
+         info.layer = Layer;
+         info.drawn_area = screen;
+-        r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
++        r_search (Layer->polygon_tree, screen, NULL, poly_callback_no_clear, &info);
++        r_search (Layer->polygon_tree, screen, NULL, poly_callback_clearing, &info);
+ 
+         /* HACK: Subcomposite polygons separately from other layer primitives */
+         /* Reset the compositing */
