@@ -613,7 +613,7 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
 
   /* Special case non-holed polygons which don't require a stencil bit */
   if (pa->contour_tree->size == 1) {
-    fill_contour (poly->Clipped->contours, scale);
+    fill_contour (pa->contours, scale);
     return;
   }
 
@@ -658,7 +658,7 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
 
   /* Draw the polygon outer */
-  fill_contour (poly->Clipped->contours, scale);
+  fill_contour (pa->contours, scale);
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */
