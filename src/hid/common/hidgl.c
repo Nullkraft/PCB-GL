@@ -611,9 +611,6 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
   info.scale = scale;
   global_scale = scale;
 
-  if (poly->Clipped == NULL)
-    return;
-
   /* Special case non-holed polygons which don't require a stencil bit */
   if (pa->contour_tree->size == 1) {
     fill_contour (poly->Clipped->contours, scale);
