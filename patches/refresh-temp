@@ -1,0 +1,23 @@
+Bottom: 0a1516a72d81a4062d72f8ed8e32d88d9669c90c
+Top:    a84b0f9f1e1ce603277a6e8b4ebbdfcb1f1c09d5
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-13 02:05:46 +0000
+
+Refresh of add-routines-to-render-just-a-
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 2a71f16..80b9203 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -611,9 +611,6 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
+   info.scale = scale;
+   global_scale = scale;
+ 
+-  if (poly->Clipped == NULL)
+-    return;
+-
+   /* Special case non-holed polygons which don't require a stencil bit */
+   if (pa->contour_tree->size == 1) {
+     fill_contour (poly->Clipped->contours, scale);
