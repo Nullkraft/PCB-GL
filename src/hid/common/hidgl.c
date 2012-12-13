@@ -781,19 +781,19 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
 }
 
 void
-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
 {
   if (poly->Clipped == NULL)
     return;
 
-  fill_polyarea (poly->Clipped, clip_box, scale);
+  fill_polyarea (poly->Clipped, clip_box);
 
   if (TEST_FLAG (FULLPOLYFLAG, poly))
     {
       POLYAREA *pa;
 
       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
-        fill_polyarea (pa, clip_box, scale);
+        fill_polyarea (pa, clip_box);
     }
 }
 
