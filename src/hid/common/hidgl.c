@@ -914,7 +914,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
   if (poly->Clipped == NULL)
     return;
 
-  use_new_stencil = polygon_contains_user_holes (poly);
+  use_new_stencil = polygon_contains_user_holes (poly) ||
+                    TEST_FLAG (FULLPOLYFLAG, poly);
 
   fill_polyarea (poly->Clipped, clip_box, use_new_stencil);
 
