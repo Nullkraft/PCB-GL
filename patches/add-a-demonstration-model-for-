@@ -1,5 +1,5 @@
-Bottom: a8e59658f9dafb2b32aa77b6a626c859e9ba2649
-Top:    7102b1a32b7160656e8d4a028d2395b0dd3ef42e
+Bottom: 1a89b3e1e34314d47122d15c0f1fb55d8f53c8a9
+Top:    d0fc523ca5ab884d88646fb127561090c0adf6ec
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-12-13 02:26:46 +0000
 
@@ -434,7 +434,7 @@ literal 0
 HcmV?d00001
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index b9fea0b..76a6815 100644
+index 0e1e5dd..0c4ac20 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -82,6 +82,12 @@ PFNGLLINKPROGRAMPROC        glLinkProgram       = NULL;
@@ -480,7 +480,7 @@ index b9fea0b..76a6815 100644
  
    if (use_new_stencil)
      {
-@@ -997,7 +1015,34 @@ load_built_in_shaders (void)
+@@ -998,7 +1016,34 @@ load_built_in_shaders (void)
            "  gl_FragColor = gl_Color;\n"
            "}\n";
  
@@ -515,7 +515,7 @@ index b9fea0b..76a6815 100644
  }
  
  void
-@@ -1031,6 +1076,14 @@ hidgl_init (void)
+@@ -1032,6 +1077,14 @@ hidgl_init (void)
    glLinkProgram       = (PFNGLLINKPROGRAMPROC)       wglGetProcAddress ("glLinkProgram");
    glShaderSource      = (PFNGLSHADERSOURCEPROC)      wglGetProcAddress ("glShaderSource");
    glUseProgram        = (PFNGLUSEPROGRAMPROC)        wglGetProcAddress ("glUseProgram");
