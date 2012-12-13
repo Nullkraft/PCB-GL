@@ -33,6 +33,12 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
     mask out clearance for everything at once.
 
 
+XXXXX: BUG: FIXME: This breaks "fullpoly" rendering of nested polygons. A
+hole in the first POLYAREA masks into the stencil so the second POLYAREA
+cannot overlay that hole. We need to treat "fullpoly" polygons as if they
+might contain user holes.
+
+
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
