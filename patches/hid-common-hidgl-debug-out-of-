@@ -1,5 +1,5 @@
-Bottom: eae01709f5803586afc9b8b1ede3b90bf3216f1c
-Top:    e57668376150fd680bbba1e3f6d6080f83925432
+Bottom: 98814cf9d431d2381ad5506674cedf958d160581
+Top:    ca43bac8f658d14090835c67840438e1cc0f90ed
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-12-07 19:40:06 +0000
 
@@ -9,7 +9,7 @@ hid/common/hidgl: Debug out of context rendering
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 85eafea..d3683e8 100644
+index 2a71f16..e556ef5 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -71,6 +71,17 @@
@@ -95,7 +95,7 @@ index 85eafea..d3683e8 100644
    assert (n_coords > 0);
  
    vertices = malloc (sizeof(GLdouble) * n_coords * 3);
-@@ -609,6 +629,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -608,6 +628,7 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
    struct do_hole_info info;
    int stencil_bit;
  
@@ -103,7 +103,7 @@ index 85eafea..d3683e8 100644
    info.scale = scale;
    global_scale = scale;
  
-@@ -674,6 +695,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -690,6 +711,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  void
  hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  {
@@ -111,7 +111,7 @@ index 85eafea..d3683e8 100644
    hidgl_ensure_triangle_space (&buffer, 2);
    hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
-@@ -682,6 +704,7 @@ hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
+@@ -698,6 +720,7 @@ hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  void
  hidgl_init (void)
  {
@@ -119,7 +119,7 @@ index 85eafea..d3683e8 100644
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
    if (stencil_bits == 0)
-@@ -701,6 +724,10 @@ hidgl_init (void)
+@@ -717,6 +740,10 @@ hidgl_init (void)
  void
  hidgl_start_render (void)
  {
@@ -130,7 +130,7 @@ index 85eafea..d3683e8 100644
    hidgl_init ();
    hidgl_init_triangle_array (&buffer);
  }
-@@ -708,6 +735,10 @@ hidgl_start_render (void)
+@@ -724,6 +751,10 @@ hidgl_start_render (void)
  void
  hidgl_finish_render (void)
  {
@@ -141,7 +141,7 @@ index 85eafea..d3683e8 100644
  }
  
  int
-@@ -719,6 +750,7 @@ hidgl_stencil_bits (void)
+@@ -735,6 +766,7 @@ hidgl_stencil_bits (void)
  static void
  hidgl_clean_unassigned_stencil (void)
  {
