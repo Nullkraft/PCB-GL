@@ -688,15 +688,6 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
 
   /* Draw the polygon outer */
   fill_contour (poly->Clipped->contours, scale);
-  if (TEST_FLAG (FULLPOLYFLAG, poly))
-    {
-      PolygonType p = *poly;
-
-      for (p.Clipped = poly->Clipped->f;
-           p.Clipped != poly->Clipped;
-           p.Clipped = p.Clipped->f)
-        fill_contour (p.Clipped->contours, scale);
-    }
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */
