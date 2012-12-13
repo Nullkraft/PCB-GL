@@ -1,5 +1,5 @@
 Bottom: 13344f9c257c11863832801f204470daf541d23c
-Top:    0a1516a72d81a4062d72f8ed8e32d88d9669c90c
+Top:    a84b0f9f1e1ce603277a6e8b4ebbdfcb1f1c09d5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-12-13 01:56:57 +0000
 
@@ -11,7 +11,7 @@ Use them rather than the GLU tessellator
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 4f8ac1a..2a71f16 100644
+index 4f8ac1a..80b9203 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -557,12 +557,10 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
@@ -65,7 +65,7 @@ index 4f8ac1a..2a71f16 100644
    return 1;
  }
  
-@@ -617,49 +605,39 @@ static int assigned_bits = 0;
+@@ -617,49 +605,36 @@ static int assigned_bits = 0;
  static void
  fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
  {
@@ -84,9 +84,6 @@ index 4f8ac1a..2a71f16 100644
    info.scale = scale;
    global_scale = scale;
  
-+  if (poly->Clipped == NULL)
-+    return;
-+
 +  /* Special case non-holed polygons which don't require a stencil bit */
 +  if (pa->contour_tree->size == 1) {
 +    fill_contour (poly->Clipped->contours, scale);
@@ -128,7 +125,7 @@ index 4f8ac1a..2a71f16 100644
    glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
  
    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           /* Stencil pass => replace stencil value */
-@@ -670,11 +648,12 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
+@@ -670,11 +645,12 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
    hidgl_flush_triangles (&buffer);
  
    glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
@@ -143,7 +140,7 @@ index 4f8ac1a..2a71f16 100644
    glStencilFunc (GL_GEQUAL, 0, assigned_bits);  /* Pass stencil test if all assigned bits clear, */
                                                  /* reference is all assigned bits so we set */
                                                  /* any bits permitted by the stencil writemask */
-@@ -682,18 +661,13 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
+@@ -682,18 +658,13 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  
    /* Draw the polygon outer */
