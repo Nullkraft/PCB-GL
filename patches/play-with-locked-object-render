@@ -1,5 +1,5 @@
-Bottom: 0eabebbf1a2f38e0f65f8c36831905325550358a
-Top:    b56ae08f9bcff93de19f448eec6ee163392ed714
+Bottom: 6d1e81508690632f8b7400c5132cc7a9a690161e
+Top:    6d4e98599581b709f4c63dd7009d8daed754d1ad
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-13 02:13:56 +0000
 
@@ -14,7 +14,7 @@ the exercise is to determine whether the usability is better or not.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 81e7c1f..a70e4dd 100644
+index 720e3b1..47445d6 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1131,7 +1131,6 @@ NotifyMode (void)
@@ -34,10 +34,10 @@ index 81e7c1f..a70e4dd 100644
  	break;
        }
 diff --git a/src/draw.c b/src/draw.c
-index 4b7079a..4cb2b2e 100644
+index 2ebe968..e04dc9f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -179,12 +179,15 @@ DrawStrippedText (hidGC gc, ElementType *Element, int min_width)
+@@ -180,12 +180,15 @@ DrawStrippedText (hidGC gc, ElementType *Element, int min_width)
    gui->graphics->draw_pcb_text (gc, text_ptr, min_width);
  }
  
@@ -53,7 +53,7 @@ index 4b7079a..4cb2b2e 100644
    if (doing_pinout || doing_assy)
      gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
    else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, element)))
-@@ -265,6 +268,7 @@ rat_callback (const BoxType * b, void *cl)
+@@ -266,6 +269,7 @@ rat_callback (const BoxType * b, void *cl)
  static void
  draw_element_package (ElementType *element)
  {
@@ -61,7 +61,7 @@ index 4b7079a..4cb2b2e 100644
    /* set color and draw lines, arcs, text and pins */
    if (doing_pinout || doing_assy)
      gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
-@@ -499,6 +503,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+@@ -500,6 +504,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
        mark_size = MIN (mark_size, pad0->Thickness / 2);
      }
  
