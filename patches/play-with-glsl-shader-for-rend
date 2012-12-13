@@ -1,5 +1,5 @@
 Bottom: 7f64dd163d98f0e431aab8660dee3d8fb812a043
-Top:    470fee1ec4e62ec6547b0941677ab03d45f32e4e
+Top:    d40953181708c1ca48d1a95b4a09754946c88ef4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-12-13 02:08:38 +0000
 
@@ -60,7 +60,7 @@ index 68b3bb4..846b58c 100644
  	hid/common/trackball.h
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 838b9db..612cf1a 100644
+index 838b9db..3694c52 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -75,6 +75,7 @@
@@ -546,6 +546,29 @@ index 838b9db..612cf1a 100644
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
+@@ -694,19 +781,19 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
+ }
+ 
+ void
+-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
++hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+ {
+   if (poly->Clipped == NULL)
+     return;
+ 
+-  fill_polyarea (poly->Clipped, clip_box, scale);
++  fill_polyarea (poly->Clipped, clip_box);
+ 
+   if (TEST_FLAG (FULLPOLYFLAG, poly))
+     {
+       POLYAREA *pa;
+ 
+       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
+-        fill_polyarea (pa, clip_box, scale);
++        fill_polyarea (pa, clip_box);
+     }
+ }
+ 
 @@ -714,14 +801,42 @@ void
  hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
  {
