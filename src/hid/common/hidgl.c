@@ -613,7 +613,6 @@ static GLint stencil_bits;
 static int dirty_bits = 0;
 static int assigned_bits = 0;
 
-/* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
 void
 hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
 {
@@ -664,6 +663,16 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   /* Drawing operations now set our reference bit in the stencil buffer */
 
   r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+  if (TEST_FLAG (FULLPOLYFLAG, poly))
+    {
+      PolygonType p = *poly;
+
+      for (p.Clipped = poly->Clipped->f;
+           p.Clipped != poly->Clipped;
+           p.Clipped = p.Clipped->f)
+        r_search (p.Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+    }
+
   hidgl_flush_triangles (&buffer);
 
   glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
@@ -680,6 +689,16 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 
   /* Draw the polygon outer */
   tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices, scale);
+  if (TEST_FLAG (FULLPOLYFLAG, poly))
+    {
+      PolygonType p = *poly;
+
+      for (p.Clipped = poly->Clipped->f;
+           p.Clipped != poly->Clipped;
+           p.Clipped = p.Clipped->f)
+        tesselate_contour (info.tobj, p.Clipped->contours, info.vertices, scale);
+    }
+
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */
