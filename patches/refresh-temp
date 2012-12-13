@@ -1,0 +1,35 @@
+Bottom: 470fee1ec4e62ec6547b0941677ab03d45f32e4e
+Top:    d40953181708c1ca48d1a95b4a09754946c88ef4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-13 02:21:03 +0000
+
+Refresh of play-with-glsl-shader-for-rend
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 612cf1a..3694c52 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -781,19 +781,19 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
+ }
+ 
+ void
+-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
++hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+ {
+   if (poly->Clipped == NULL)
+     return;
+ 
+-  fill_polyarea (poly->Clipped, clip_box, scale);
++  fill_polyarea (poly->Clipped, clip_box);
+ 
+   if (TEST_FLAG (FULLPOLYFLAG, poly))
+     {
+       POLYAREA *pa;
+ 
+       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
+-        fill_polyarea (pa, clip_box, scale);
++        fill_polyarea (pa, clip_box);
+     }
+ }
