@@ -1,7 +1,7 @@
-Bottom: 263f2fbbbfc687ee902ccd5da4226645a11a9065
-Top:    e570f2c37461602b067f6cd38899bea622bdcbe4
+Bottom: 4e37d1a24ca55fc17f8a096b813467c85eec8c90
+Top:    e66357ac7cb23f21bbb5e5745c3a76b61ab9cbec
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-12-07 19:39:58 +0000
+Date:   2012-12-13 01:56:50 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -795,7 +795,7 @@ index 7b966dc..88dc04e 100644
  } BoxListType;
  
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index bf374ee..a29baa9 100644
+index 685b614..87222cf 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -44,7 +44,7 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
