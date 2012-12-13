@@ -1244,7 +1244,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 }
 
 static void
-ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
+draw_polyarea (hidGC gc, POLYAREA * pa, const BoxType * clip_box)
 {
   /* Ignore clip_box, just draw everything */
 
@@ -1254,7 +1254,7 @@ ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
 
   use_gc (gc);
 
-  pl = poly->Clipped->contours;
+  pl = pa->contours;
 
   do
     {
@@ -1270,6 +1270,21 @@ ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
   while ((pl = pl->next) != NULL);
 
   fprintf (global.f, "fill\n");
+}
+
+static void
+ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
+{
+  use_gc (gc);
+
+  draw_polyarea (gc, poly->Clipped, clip_box);
+  if (TEST_FLAG (FULLPOLYFLAG, poly))
+    {
+      POLYAREA *pa;
+
+      for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
+        fill_polyarea (pa, clip_box, scale);
+    }
 }
 
 static void
