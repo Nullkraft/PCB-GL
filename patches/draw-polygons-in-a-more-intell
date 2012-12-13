@@ -1,5 +1,5 @@
 Bottom: 6ec14efc171346730a815dd6ca07351c803d0773
-Top:    d117145e34eece4f076c4724779f2a36ef612b91
+Top:    8094eb4161833274dd06658d4a10c48b99e38e23
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-12-07 19:40:09 +0000
 
@@ -36,7 +36,7 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 56a3d3a..f74d287 100644
+index 56a3d3a..fb6a054 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -124,7 +124,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
@@ -48,7 +48,7 @@ index 56a3d3a..f74d287 100644
  
    if (buffer->use_vbo) {
      glGenBuffers (1, &buffer->vbo_id);
-@@ -824,13 +824,22 @@ do_hole (const BoxType *b, void *cl)
+@@ -824,12 +824,19 @@ do_hole (const BoxType *b, void *cl)
    return 1;
  }
  
@@ -65,25 +65,21 @@ index 56a3d3a..f74d287 100644
  
  static void
 -fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
-+fill_polyarea (POLYAREA *pa, const BoxType *clip_box /*, bool force_new_stencil */)
++fill_polyarea (POLYAREA *pa, const BoxType *clip_box, bool use_new_stencil)
  {
-+  bool force_new_stencil = false;
-+  bool use_new_stencil;
    int stencil_bit;
  
-   CHECK_IS_IN_CONTEXT ();
-@@ -841,14 +850,20 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
+@@ -841,14 +848,18 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
      return;
    }
  
 -  /* Polygon has holes */
-+  /* Polygon has holes.. does it have any user-drawn holes?
-+   * If so, it must be masked with a _new_ stencil bit.
-+   */
-+  use_new_stencil = force_new_stencil | polygon_contains_user_holes (poly);
- 
+-
 -  stencil_bit = hidgl_assign_clear_stencil_bit ();
 -  if (!stencil_bit)
++  /* Polygon has holes.. does it have any user-drawn holes? (caller tells us)
++   * If so, it must be masked with a _new_ stencil bit.
++   */
 +  if (use_new_stencil)
      {
 -      printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
@@ -99,7 +95,7 @@ index 56a3d3a..f74d287 100644
      }
  
    /* Flush out any existing geoemtry to be rendered */
-@@ -856,12 +871,15 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
+@@ -856,12 +867,15 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
  
    glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                  GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
@@ -118,7 +114,7 @@ index 56a3d3a..f74d287 100644
  
    /* Drawing operations now set our reference bit in the stencil buffer */
  
-@@ -886,7 +904,8 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
+@@ -886,7 +900,8 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
@@ -128,6 +124,30 @@ index 56a3d3a..f74d287 100644
  
    glPopAttrib ();                               /* Restore the stencil buffer op and function */
  }
+@@ -894,17 +909,21 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
+ void
+ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+ {
++  bool use_new_stencil;
++
+   if (poly->Clipped == NULL)
+     return;
+ 
+-  fill_polyarea (poly->Clipped, clip_box);
++  use_new_stencil = polygon_contains_user_holes (poly);
++
++  fill_polyarea (poly->Clipped, clip_box, use_new_stencil);
+ 
+   if (TEST_FLAG (FULLPOLYFLAG, poly))
+     {
+       POLYAREA *pa;
+ 
+       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
+-        fill_polyarea (pa, clip_box);
++        fill_polyarea (pa, clip_box, use_new_stencil);
+     }
+ }
+ 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index 8aac491..348a54c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
