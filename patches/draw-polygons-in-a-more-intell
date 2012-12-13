@@ -1,5 +1,5 @@
 Bottom: d79f593f2f6f7a44cf577f4ed0f31021aee9afe6
-Top:    a7a4e2898b5cea41e3f03bc78fc9e4f2504e2659
+Top:    97f1212a1e259cfe5fe72aa256376091084c1b04
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-12-13 02:26:45 +0000
 
@@ -42,7 +42,7 @@ same polygon being drawn inside that hole. In this regard, we need to treat
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 56a3d3a..fb6a054 100644
+index 56a3d3a..115b353 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -124,7 +124,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
@@ -130,7 +130,7 @@ index 56a3d3a..fb6a054 100644
  
    glPopAttrib ();                               /* Restore the stencil buffer op and function */
  }
-@@ -894,17 +909,21 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
+@@ -894,17 +909,22 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box)
  void
  hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
  {
@@ -140,7 +140,8 @@ index 56a3d3a..fb6a054 100644
      return;
  
 -  fill_polyarea (poly->Clipped, clip_box);
-+  use_new_stencil = polygon_contains_user_holes (poly);
++  use_new_stencil = polygon_contains_user_holes (poly) ||
++                    TEST_FLAG (FULLPOLYFLAG, poly);
 +
 +  fill_polyarea (poly->Clipped, clip_box, use_new_stencil);
  
