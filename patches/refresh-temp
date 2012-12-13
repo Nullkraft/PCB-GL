@@ -1,0 +1,53 @@
+Bottom: db7f3a0df52500c5a7dcafb181c8d13330eb4096
+Top:    a1c68c4fd90f0a3990d49e968206cdbd8a428083
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-13 01:22:19 +0000
+
+Refresh of hid-ps-add-support-for-properl
+
+---
+
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 9a95854..09db3b2 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1244,7 +1244,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+ }
+ 
+ static void
+-ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
++draw_polyarea (hidGC gc, POLYAREA * pa, const BoxType * clip_box)
+ {
+   /* Ignore clip_box, just draw everything */
+ 
+@@ -1254,7 +1254,7 @@ ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
+ 
+   use_gc (gc);
+ 
+-  pl = poly->Clipped->contours;
++  pl = pa->contours;
+ 
+   do
+     {
+@@ -1273,6 +1273,21 @@ ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
+ }
+ 
+ static void
++ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
++{
++  use_gc (gc);
++
++  draw_polyarea (gc, poly->Clipped, clip_box);
++  if (TEST_FLAG (FULLPOLYFLAG, poly))
++    {
++      POLYAREA *pa;
++
++      for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
++        fill_polyarea (pa, clip_box, scale);
++    }
++}
++
++static void
+ ps_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+ {
+   use_gc (gc);
