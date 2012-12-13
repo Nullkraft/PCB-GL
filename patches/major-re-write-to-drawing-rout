@@ -1,7 +1,7 @@
-Bottom: 188ac35ced6d4875bb6b967d0e2e52746735a0d8
-Top:    e432996669809a4e175c84a0fa5dff10b47af3a5
+Bottom: 59f83eb8fbc46c3dfb01818186cdc1b9c60c93fe
+Top:    b30895ed8004d60f929b1484e8c34d88fe9f37a0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-12-13 01:56:56 +0000
+Date:   2012-12-13 02:26:41 +0000
 
 Major re-write to drawing routines
 
@@ -23,7 +23,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 13f1f45..bc76e26 100644
+index 838672a..a229dc1 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -81,8 +81,8 @@ static bool doing_assy = false;
@@ -37,7 +37,7 @@ index 13f1f45..bc76e26 100644
  
  static void
  set_object_color (AnyObjectType *obj,
-@@ -451,7 +451,7 @@ DrawEverything (const BoxType *drawn_area)
+@@ -452,7 +452,7 @@ DrawEverything (const BoxType *drawn_area)
      }
  }
  
@@ -46,7 +46,7 @@ index 13f1f45..bc76e26 100644
  DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
  {
    Coord mark_size = EMARK_SIZE;
-@@ -621,7 +621,7 @@ DrawPaste (int side, const BoxType *drawn_area)
+@@ -622,7 +622,7 @@ DrawPaste (int side, const BoxType *drawn_area)
    ENDALL_LOOP;
  }
  

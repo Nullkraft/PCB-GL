@@ -1,7 +1,7 @@
-Bottom: 4e37d1a24ca55fc17f8a096b813467c85eec8c90
-Top:    090154176ef8d529893924768111a054fb3bf2df
+Bottom: 5be0e885dff9ab6025e025d1a008609958a6f8e4
+Top:    b0689a02d64d2d4a523d352a063aa157b0c7f104
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-12-13 01:56:55 +0000
+Date:   2012-12-13 02:26:41 +0000
 
 Crasy test
 
@@ -22,7 +22,7 @@ index 602ebaa..bb577df 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index a2e86a8..13f1f45 100644
+index 2b56791..838672a 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -40,6 +40,7 @@
@@ -41,7 +41,7 @@ index a2e86a8..13f1f45 100644
  static void AddPart (void *);
  static void DrawEMark (ElementType *, Coord, Coord, bool);
  static void DrawRats (const BoxType *);
-@@ -99,12 +99,6 @@ set_object_color (AnyObjectType *obj,
+@@ -100,12 +100,6 @@ set_object_color (AnyObjectType *obj,
    gui->graphics->set_color (Output.fgGC, color);
  }
  
@@ -54,7 +54,7 @@ index a2e86a8..13f1f45 100644
  /*---------------------------------------------------------------------------
   *  Adds the update rect to the update region
   */
-@@ -142,170 +136,6 @@ Redraw (void)
+@@ -143,170 +137,6 @@ Redraw (void)
    gui->invalidate_all ();
  }
  
@@ -225,7 +225,7 @@ index a2e86a8..13f1f45 100644
  static int
  pad_callback (const BoxType * b, void *cl)
  {
-@@ -313,7 +143,13 @@ pad_callback (const BoxType * b, void *cl)
+@@ -314,7 +144,13 @@ pad_callback (const BoxType * b, void *cl)
    int *side = cl;
  
    if (ON_SIDE (pad, *side))
@@ -240,7 +240,7 @@ index a2e86a8..13f1f45 100644
    return 1;
  }
  
-@@ -355,12 +191,26 @@ draw_element_pins_and_pads (ElementType *element)
+@@ -356,12 +192,26 @@ draw_element_pins_and_pads (ElementType *element)
    PAD_LOOP (element);
    {
      if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
@@ -269,7 +269,7 @@ index a2e86a8..13f1f45 100644
    }
    END_LOOP;
  }
-@@ -375,69 +225,6 @@ EMark_callback (const BoxType * b, void *cl)
+@@ -376,69 +226,6 @@ EMark_callback (const BoxType * b, void *cl)
  }
  
  static int
@@ -339,7 +339,7 @@ index a2e86a8..13f1f45 100644
  rat_callback (const BoxType * b, void *cl)
  {
    RatType *rat = (RatType *)b;
-@@ -445,34 +232,7 @@ rat_callback (const BoxType * b, void *cl)
+@@ -446,34 +233,7 @@ rat_callback (const BoxType * b, void *cl)
    set_object_color ((AnyObjectType *) rat, NULL, PCB->RatSelectedColor,
                      PCB->ConnectedColor, PCB->RatColor);
  
@@ -375,7 +375,7 @@ index a2e86a8..13f1f45 100644
    return 1;
  }
  
-@@ -492,12 +252,14 @@ draw_element_package (ElementType *element)
+@@ -493,12 +253,14 @@ draw_element_package (ElementType *element)
    /* draw lines, arcs, text and pins */
    ELEMENTLINE_LOOP (element);
    {
@@ -392,7 +392,7 @@ index a2e86a8..13f1f45 100644
    }
    END_LOOP;
  }
-@@ -576,7 +338,7 @@ DrawEverything (const BoxType *drawn_area)
+@@ -577,7 +339,7 @@ DrawEverything (const BoxType *drawn_area)
  	{
  	  r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
  	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
@@ -401,7 +401,7 @@ index a2e86a8..13f1f45 100644
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
        gui->end_layer ();
-@@ -599,20 +361,20 @@ DrawEverything (const BoxType *drawn_area)
+@@ -600,20 +362,20 @@ DrawEverything (const BoxType *drawn_area)
  
    /* Draw pins, pads, vias below silk */
    if (gui->gui)
@@ -425,7 +425,7 @@ index a2e86a8..13f1f45 100644
            gui->end_layer ();
          }
      }
-@@ -711,8 +473,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+@@ -712,8 +474,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
        mark_size = MIN (mark_size, pad0->Thickness / 2);
      }
  
@@ -435,7 +435,7 @@ index a2e86a8..13f1f45 100644
    gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
    gui->graphics->set_line_width (Output.fgGC, 0);
    gui->graphics->draw_line (Output.fgGC, X - mark_size, Y, X, Y - mark_size);
-@@ -732,82 +493,27 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+@@ -733,82 +494,27 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
      }
  }
  
@@ -525,7 +525,7 @@ index a2e86a8..13f1f45 100644
    return 1;
  }
  
-@@ -829,22 +535,22 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -830,22 +536,22 @@ DrawSilk (int side, const BoxType * drawn_area)
      {
        gui->graphics->use_mask (HID_MASK_BEFORE);
  #endif
@@ -555,7 +555,7 @@ index a2e86a8..13f1f45 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -887,9 +593,9 @@ DrawMask (int side, const BoxType *screen)
+@@ -888,9 +594,9 @@ DrawMask (int side, const BoxType *screen)
        gui->graphics->use_mask (HID_MASK_CLEAR);
      }
  
@@ -568,7 +568,7 @@ index a2e86a8..13f1f45 100644
  
    if (thin)
      gui->graphics->set_color (Output.pmGC, "erase");
-@@ -909,13 +615,8 @@ DrawPaste (int side, const BoxType *drawn_area)
+@@ -910,13 +616,8 @@ DrawPaste (int side, const BoxType *drawn_area)
    gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
    ALLPAD_LOOP (PCB->Data);
    {
@@ -584,7 +584,7 @@ index a2e86a8..13f1f45 100644
    }
    ENDALL_LOOP;
  }
-@@ -937,61 +638,6 @@ DrawRats (const BoxType *drawn_area)
+@@ -938,61 +639,6 @@ DrawRats (const BoxType *drawn_area)
      gui->graphics->use_mask (HID_MASK_OFF);
  }
  
@@ -646,7 +646,7 @@ index a2e86a8..13f1f45 100644
  /* ---------------------------------------------------------------------------
   * draws one layer group.  If the exporter is not a GUI,
   * also draws the pins / pads / vias in this layer group.
-@@ -1013,13 +659,13 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -1014,13 +660,13 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
            strcmp (Layer->Name, "route") == 0)
          rv = 0;
        if (layernum < max_copper_layer && Layer->On)
