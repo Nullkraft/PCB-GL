@@ -1,5 +1,5 @@
 Bottom: 56639d9ce0870c67e476caa5dcc4d7a114ebd47f
-Top:    61b795bc48b6ae582b8f6b40bff3c6dbd0000e04
+Top:    487cbacb2d8c3318ee3cdc076ba9ef5b9665ffa9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-13 00:43:51 +0000
 
@@ -12,48 +12,82 @@ a bad batch of boards), so it is about time I fixed this.
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 73e85ce..4e167f6 100644
+index 73e85ce..1522816 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -613,7 +613,6 @@ static GLint stencil_bits;
+@@ -613,9 +613,8 @@ static GLint stencil_bits;
  static int dirty_bits = 0;
  static int assigned_bits = 0;
  
 -/* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
- void
- hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+-void
+-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
++static void
++fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
  {
-@@ -664,6 +663,16 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   int vertex_count = 0;
+   PLINE *contour;
+@@ -625,9 +624,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   info.scale = scale;
+   global_scale = scale;
+ 
+-  if (poly->Clipped == NULL)
+-    return;
+-
+   stencil_bit = hidgl_assign_clear_stencil_bit ();
+   if (!stencil_bit)
+     {
+@@ -640,8 +636,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+ 
+   /* Walk the polygon structure, counting vertices */
+   /* This gives an upper bound on the amount of storage required */
+-  for (contour = poly->Clipped->contours;
+-       contour != NULL; contour = contour->next)
++  for (contour = pa->contours; contour != NULL; contour = contour->next)
+     vertex_count = MAX (vertex_count, contour->Count);
+ 
+   info.vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
+@@ -663,7 +658,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+ 
    /* Drawing operations now set our reference bit in the stencil buffer */
  
-   r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
-+  if (TEST_FLAG (FULLPOLYFLAG, poly))
-+    {
-+      PolygonType p = *poly;
-+
-+      for (p.Clipped = poly->Clipped->f;
-+           p.Clipped != poly->Clipped;
-+           p.Clipped = p.Clipped->f)
-+        r_search (p.Clipped->contour_tree, clip_box, NULL, do_hole, &info);
-+    }
-+
+-  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
++  r_search (pa->contour_tree, clip_box, NULL, do_hole, &info);
    hidgl_flush_triangles (&buffer);
  
    glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
-@@ -680,6 +689,16 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -679,7 +674,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   /* Drawing operations as masked to areas where the stencil buffer is '0' */
  
    /* Draw the polygon outer */
-   tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices, scale);
-+  if (TEST_FLAG (FULLPOLYFLAG, poly))
-+    {
-+      PolygonType p = *poly;
-+
-+      for (p.Clipped = poly->Clipped->f;
-+           p.Clipped != poly->Clipped;
-+           p.Clipped = p.Clipped->f)
-+        tesselate_contour (info.tobj, p.Clipped->contours, info.vertices, scale);
-+    }
+-  tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices, scale);
++  tesselate_contour (info.tobj, pa->contours, info.vertices, scale);
 +
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
+@@ -693,6 +689,24 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+ }
+ 
+ void
++hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
++{
++  if (poly->Clipped == NULL)
++    return;
++
++  fill_polyarea (poly->Clipped, clip_box, scale);
++
++  if (TEST_FLAG (FULLPOLYFLAG, poly))
++    {
++      POLYAREA *pa;
++
++      for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
++        fill_polyarea (pa, clip_box, scale);
++    }
++
++}
++
++void
+ hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
+ {
+   hidgl_ensure_triangle_space (&buffer, 2);
