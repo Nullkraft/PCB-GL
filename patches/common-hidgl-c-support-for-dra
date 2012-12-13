@@ -1,5 +1,5 @@
 Bottom: 263f2fbbbfc687ee902ccd5da4226645a11a9065
-Top:    db7f3a0df52500c5a7dcafb181c8d13330eb4096
+Top:    8cc529b4d6c0752b8d725e9ce847191a50f0da65
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-13 00:43:51 +0000
 
@@ -12,7 +12,7 @@ a bad batch of boards), so it is about time I fixed this.
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 73e85ce..1522816 100644
+index 73e85ce..ac68ce0 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -613,9 +613,8 @@ static GLint stencil_bits;
@@ -66,7 +66,7 @@ index 73e85ce..1522816 100644
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
-@@ -693,6 +689,24 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -693,6 +689,23 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  }
  
  void
@@ -84,7 +84,6 @@ index 73e85ce..1522816 100644
 +      for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
 +        fill_polyarea (pa, clip_box, scale);
 +    }
-+
 +}
 +
 +void
