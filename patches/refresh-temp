@@ -1,0 +1,21 @@
+Bottom: db7f3a0df52500c5a7dcafb181c8d13330eb4096
+Top:    8cc529b4d6c0752b8d725e9ce847191a50f0da65
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-13 01:22:26 +0000
+
+Refresh of common-hidgl-c-support-for-dra
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 1522816..ac68ce0 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -703,7 +703,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
+         fill_polyarea (pa, clip_box, scale);
+     }
+-
+ }
+ 
+ void
