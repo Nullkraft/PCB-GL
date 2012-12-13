@@ -872,7 +872,7 @@ NotifyLine (void)
 			       PIN_TYPE | PAD_TYPE | VIA_TYPE, &ptr1, &ptr2,
 			       &ptr3);
 	  LookupConnection (Crosshair.X, Crosshair.Y, true, 1,
-			    FOUNDFLAG, true);
+			    FOUNDFLAG);
 	}
       if (type == PIN_TYPE || type == VIA_TYPE)
 	{
@@ -2288,8 +2288,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	case F_Find:
 	  {
 	    gui->get_coords (_("Click on a connection"), &x, &y);
-	    LookupConnection (x, y, true, 1, FOUNDFLAG, false);
-	    LookupConnection (x, y, true, 1, RATFOUNDFLAG, true);
+	    LookupConnection (x, y, true, 1, FOUNDFLAG);
 	    break;
 	  }
 
@@ -2297,9 +2296,6 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	  {
 	    bool change = false;
 
-	    SaveFindFlag (RATFOUNDFLAG);
-	    change = ResetFoundLinesAndPolygons (true) || change;
-	    RestoreFindFlag ();
 	    SaveFindFlag (FOUNDFLAG);
 	    change = ResetFoundLinesAndPolygons (true) || change;
 	    RestoreFindFlag ();
@@ -2316,9 +2312,6 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	  {
 	    bool change = false;
 
-	    SaveFindFlag (RATFOUNDFLAG);
-	    change = ResetFoundPinsViasAndPads (true) || change;
-	    RestoreFindFlag ();
 	    SaveFindFlag (FOUNDFLAG);
 	    change = ResetFoundPinsViasAndPads (true) || change;
 	    RestoreFindFlag ();
@@ -2335,9 +2328,6 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	  {
 	    bool change = false;
 
-	    SaveFindFlag (RATFOUNDFLAG);
-	    change = ResetConnections (true) || change;
-	    RestoreFindFlag ();
 	    SaveFindFlag (FOUNDFLAG);
 	    change = ResetConnections (true) || change;
 	    RestoreFindFlag ();
@@ -2788,7 +2778,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
 	      if (Crosshair.AttachedLine.State != STATE_FIRST)
 		LookupConnection (Crosshair.AttachedLine.Point1.X,
 				  Crosshair.AttachedLine.Point1.Y, true, 1,
-				  FOUNDFLAG, true);
+				  FOUNDFLAG);
 	    }
 	  notify_crosshair_change (true);
 	  break;
