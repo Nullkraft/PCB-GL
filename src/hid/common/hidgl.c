@@ -613,8 +613,8 @@ static GLint stencil_bits;
 static int dirty_bits = 0;
 static int assigned_bits = 0;
 
-void
-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+static void
+fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
 {
   int vertex_count = 0;
   PLINE *contour;
@@ -623,9 +623,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 
   info.scale = scale;
   global_scale = scale;
-
-  if (poly->Clipped == NULL)
-    return;
 
   stencil_bit = hidgl_assign_clear_stencil_bit ();
   if (!stencil_bit)
@@ -639,8 +636,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 
   /* Walk the polygon structure, counting vertices */
   /* This gives an upper bound on the amount of storage required */
-  for (contour = poly->Clipped->contours;
-       contour != NULL; contour = contour->next)
+  for (contour = pa->contours; contour != NULL; contour = contour->next)
     vertex_count = MAX (vertex_count, contour->Count);
 
   info.vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
@@ -662,17 +658,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 
   /* Drawing operations now set our reference bit in the stencil buffer */
 
-  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
-  if (TEST_FLAG (FULLPOLYFLAG, poly))
-    {
-      PolygonType p = *poly;
-
-      for (p.Clipped = poly->Clipped->f;
-           p.Clipped != poly->Clipped;
-           p.Clipped = p.Clipped->f)
-        r_search (p.Clipped->contour_tree, clip_box, NULL, do_hole, &info);
-    }
-
+  r_search (pa->contour_tree, clip_box, NULL, do_hole, &info);
   hidgl_flush_triangles (&buffer);
 
   glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
@@ -688,16 +674,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
 
   /* Draw the polygon outer */
-  tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices, scale);
-  if (TEST_FLAG (FULLPOLYFLAG, poly))
-    {
-      PolygonType p = *poly;
-
-      for (p.Clipped = poly->Clipped->f;
-           p.Clipped != poly->Clipped;
-           p.Clipped = p.Clipped->f)
-        tesselate_contour (info.tobj, p.Clipped->contours, info.vertices, scale);
-    }
+  tesselate_contour (info.tobj, pa->contours, info.vertices, scale);
 
   hidgl_flush_triangles (&buffer);
 
@@ -709,6 +686,24 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   gluDeleteTess (info.tobj);
   myFreeCombined ();
   free (info.vertices);
+}
+
+void
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+{
+  if (poly->Clipped == NULL)
+    return;
+
+  fill_polyarea (poly->Clipped, clip_box, scale);
+
+  if (TEST_FLAG (FULLPOLYFLAG, poly))
+    {
+      POLYAREA *pa;
+
+      for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
+        fill_polyarea (pa, clip_box, scale);
+    }
+
 }
 
 void
