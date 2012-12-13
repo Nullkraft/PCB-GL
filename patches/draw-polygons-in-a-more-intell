@@ -33,10 +33,10 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
     mask out clearance for everything at once.
 
 
-XXXXX: BUG: FIXME: This breaks "fullpoly" rendering of nested polygons. A
-hole in the first POLYAREA masks into the stencil so the second POLYAREA
-cannot overlay that hole. We need to treat "fullpoly" polygons as if they
-might contain user holes.
+V2: We have to force a new stencil bit for each piece of a "fullpoly" polygon
+as a hole in the first POLYAREA should not prevent a second POLYAREA of the
+same polygon being drawn inside that hole. In this regard, we need to treat
+"fullpoly" polygons as if they contained user holes.
 
 
 ---
