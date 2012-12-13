@@ -1,5 +1,5 @@
 Bottom: 8cc529b4d6c0752b8d725e9ce847191a50f0da65
-Top:    8cc529b4d6c0752b8d725e9ce847191a50f0da65
+Top:    08c12f7aaf55eff2895ccaf1e1edcc597cbe3054
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-13 01:48:26 +0000
 
@@ -8,4 +8,28 @@ hid/common/draw_helpers.c: Fix thindraw for "fullpoly" polygons
 
 ---
 
-
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index bf374ee..685b614 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -339,6 +339,20 @@ common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+ 
+   thindraw_contour (gc, poly->Clipped->contours);
+   PolygonHoles (poly, clip_box, thindraw_hole_cb, gc);
++
++  /* Draw other parts of the polygon if fullpoly flag is set */
++  if (TEST_FLAG (FULLPOLYFLAG, poly))
++    {
++      PolygonType p = *poly;
++
++      for (p.Clipped = poly->Clipped->f;
++           p.Clipped != poly->Clipped;
++           p.Clipped = p.Clipped->f)
++        {
++          thindraw_contour (gc, p.Clipped->contours);
++          PolygonHoles (&p, clip_box, thindraw_hole_cb, gc);
++        }
++    }
+ }
+ 
+ void
