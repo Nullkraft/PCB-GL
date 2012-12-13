@@ -1,7 +1,7 @@
-Bottom: 161175ddb421055635c102c79b6d99a94aadcafc
-Top:    7ef5dcb0954985dfbff64b751c8a536ccfc4e5d4
+Bottom: 40fc13f9833a5e4fabe5be9aa978d025c0d513b0
+Top:    88110b69a5b873768d5427c6c7edd30671e06fbb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-12-07 19:40:03 +0000
+Date:   2012-12-13 01:56:54 +0000
 
 Demo of exporter specific export routine
 
@@ -9,7 +9,7 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index bf374ee..c305237 100644
+index 685b614..b2e3ff0 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -5,6 +5,11 @@
@@ -24,7 +24,7 @@ index bf374ee..c305237 100644
  
  
  static void
-@@ -627,3 +632,225 @@ common_draw_helpers_init (HID_DRAW *graphics)
+@@ -641,3 +646,225 @@ common_draw_helpers_init (HID_DRAW *graphics)
    graphics->fill_pcb_pv          = common_fill_pcb_pv;
    graphics->thindraw_pcb_pv      = common_thindraw_pcb_pv;
  }
@@ -944,7 +944,7 @@ index 9124ba5..4ddb796 100644
  
    ghid_draw_grid (&region);
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 2987e35..87b54c1 100644
+index f9b41d2..a78611b 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -32,7 +32,7 @@
@@ -1187,7 +1187,7 @@ index 2987e35..87b54c1 100644
      }
  
    return 1;
-@@ -1497,7 +1524,6 @@ void ps_ps_init (HID *hid)
+@@ -1510,7 +1537,6 @@ void ps_ps_init (HID *hid)
    hid->get_export_options = ps_get_export_options;
    hid->do_export          = ps_do_export;
    hid->parse_arguments    = ps_parse_arguments;
