@@ -1,5 +1,5 @@
 Bottom: 02611204597d30f04886d63f142d6258db2e330f
-Top:    02611204597d30f04886d63f142d6258db2e330f
+Top:    3a05641b6cd8d88136bcf3c81629ae2e7ee4ab72
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-10 01:19:10 +0000
 
@@ -15,4 +15,356 @@ if all rat-lines were implemented.
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index fdcf8aa..8bea940 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2291,32 +2291,54 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+ 	  {
+ 	    gui->get_coords (_("Click on a connection"), &x, &y);
+ 	    LookupConnection (x, y, true, 1, FOUNDFLAG, false);
++	    LookupConnection (x, y, true, 1, RATFOUNDFLAG, true);
+ 	    break;
+ 	  }
+ 
+ 	case F_ResetLinesAndPolygons:
+-	  if (ResetFoundLinesAndPolygons (true, FOUNDFLAG))
+-	    {
+-	      IncrementUndoSerialNumber ();
+-	      Draw ();
+-	    }
+-	  break;
++	  {
++	    bool change = false;
++
++	    change = ResetFoundLinesAndPolygons (true, RATFOUNDFLAG) || change;
++	    change = ResetFoundLinesAndPolygons (true, FOUNDFLAG) || change;
++
++	    if (change)
++	      {
++	        IncrementUndoSerialNumber ();
++	        Draw ();
++	      }
++	    break;
++	  }
+ 
+ 	case F_ResetPinsViasAndPads:
+-	  if (ResetFoundPinsViasAndPads (true, FOUNDFLAG))
+-	    {
+-	      IncrementUndoSerialNumber ();
+-	      Draw ();
+-	    }
+-	  break;
++	  {
++	    bool change = false;
++
++	    change = ResetFoundPinsViasAndPads (true, RATFOUNDFLAG) || change;
++	    change = ResetFoundPinsViasAndPads (true, FOUNDFLAG) || change;
++
++	    if (change)
++	      {
++	        IncrementUndoSerialNumber ();
++	        Draw ();
++	      }
++	    break;
++	  }
+ 
+ 	case F_Reset:
+-	  if (ResetConnections (true, FOUNDFLAG))
+-	    {
+-	      IncrementUndoSerialNumber ();
+-	      Draw ();
+-	    }
+-	  break;
++	  {
++	    bool change = false;
++
++	    change = ResetConnections (true, RATFOUNDFLAG) || change;
++	    change = ResetConnections (true, FOUNDFLAG) || change;
++
++	    if (change)
++	      {
++	        IncrementUndoSerialNumber ();
++	        Draw ();
++	      }
++	    break;
++	  }
+ 	}
+       return 0;
+     }
+diff --git a/src/const.h b/src/const.h
+index 7d732e8..c6bb881 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -181,39 +181,40 @@ pad.  Primarily used for pads used as fiducials.
+ @end table
+ %end-doc */
+ 
+-#define	NOFLAG			0x0000
+-#define	PINFLAG			0x0001	/* is a pin */
+-#define	VIAFLAG			0x0002	/* is a via */
+-#define	FOUNDFLAG		0x0004	/* used by 'FindConnection()' */
+-#define HOLEFLAG		0x0008	/* pin or via is only a hole */
+-#define NOPASTEFLAG		0x0008  /* pad should not receive
+-					   solderpaste.  This is to
+-					   support fiducials */
+-#define RATFLAG                 0x0010	/* indicates line is a rat line */
+-#define PININPOLYFLAG           0x0010	/* pin found inside poly - same as */
++#define	NOFLAG			  0x0000
++#define	PINFLAG			  0x0001	/* is a pin */
++#define	VIAFLAG			  0x0002	/* is a via */
++#define	FOUNDFLAG		  0x0004	/* used by 'FindConnection()' */
++#define HOLEFLAG		  0x0008	/* pin or via is only a hole */
++#define NOPASTEFLAG		  0x0008	/* pad should not receive
++						   solderpaste.  This is to
++						   support fiducials */
++#define RATFLAG                   0x0010	/* indicates line is a rat line */
++#define PININPOLYFLAG             0x0010	/* pin found inside poly - same as */
+ 						/* rat line since not used on lines */
+-#define CLEARPOLYFLAG           0x0010	/* pins/vias clear these polygons */
+-#define HIDENAMEFLAG		0x0010	/* hide the element name */
+-#define	DISPLAYNAMEFLAG		0x0020	/* display the names of pins/pads */
+-					/* of an element */
+-#define CLEARLINEFLAG		0x0020	/* line doesn't touch polygons */
+-#define FULLPOLYFLAG            0x0020	/* full polygon is drawn (i.e. all parts instead of only the biggest one) */
+-#define	SELECTEDFLAG		0x0040	/* object has been selected */
+-#define	ONSOLDERFLAG		0x0080	/* element is on bottom side */
+-#define AUTOFLAG		0x0080	/* line/via created by auto-router */
+-#define	SQUAREFLAG		0x0100	/* pin is square, not round */
+-#define RUBBERENDFLAG		0x0200	/* indicates one end already rubber */
+-					/* banding same as warn flag */
+-					/* since pins/pads won't use it */
+-#define WARNFLAG		0x0200	/* Warning for pin/via/pad */
+-#define USETHERMALFLAG		0x0400	/* draw pin, via with thermal fingers */
+-#define ONSILKFLAG              0x0400	/* old files use this to indicate silk */
+-#define OCTAGONFLAG		0x0800	/* draw pin/via as octagon instead of round */
+-#define DRCFLAG			0x1000	/* flag like FOUND flag for DRC checking */
+-#define LOCKFLAG                0x2000	/* object locked in place */
+-#define EDGE2FLAG               0x4000	/* Padr.Point2 is closer to outside edge */
+-					/* also pinout text for pins is vertical */
+-#define VISITFLAG		0x8000  /* marker to avoid re-visiting an object */
++#define CLEARPOLYFLAG             0x0010	/* pins/vias clear these polygons */
++#define HIDENAMEFLAG		  0x0010	/* hide the element name */
++#define	DISPLAYNAMEFLAG		  0x0020	/* display the names of pins/pads */
++						/* of an element */
++#define CLEARLINEFLAG		  0x0020	/* line doesn't touch polygons */
++#define FULLPOLYFLAG              0x0020	/* full polygon is drawn (i.e. all parts instead of only the biggest one) */
++#define	SELECTEDFLAG		  0x0040	/* object has been selected */
++#define	ONSOLDERFLAG		  0x0080	/* element is on bottom side */
++#define AUTOFLAG		  0x0080	/* line/via created by auto-router */
++#define	SQUAREFLAG		  0x0100	/* pin is square, not round */
++#define RUBBERENDFLAG		  0x0200	/* indicates one end already rubber */
++						/* banding same as warn flag */
++						/* since pins/pads won't use it */
++#define WARNFLAG		  0x0200	/* Warning for pin/via/pad */
++#define USETHERMALFLAG		  0x0400	/* draw pin, via with thermal fingers */
++#define ONSILKFLAG                0x0400	/* old files use this to indicate silk */
++#define OCTAGONFLAG		  0x0800	/* draw pin/via as octagon instead of round */
++#define DRCFLAG			  0x1000	/* flag like FOUND flag for DRC checking */
++#define LOCKFLAG                  0x2000	/* object locked in place */
++#define EDGE2FLAG                 0x4000	/* Padr.Point2 is closer to outside edge */
++						/* also pinout text for pins is vertical */
++#define VISITFLAG		  0x8000	/* marker to avoid re-visiting an object */
++#define	RATFOUNDFLAG		0x010000	/* used by 'FindConnection()' */
+ /* ---------------------------------------------------------------------------
+  * PCB flags
+  */
+diff --git a/src/draw.c b/src/draw.c
+index a2e86a8..2b56791 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -94,6 +94,7 @@ set_object_color (AnyObjectType *obj,
+   if      (warn_color     != NULL && TEST_FLAG (WARNFLAG,     obj)) color = warn_color;
+   else if (selected_color != NULL && TEST_FLAG (SELECTEDFLAG, obj)) color = selected_color;
+   else if (found_color    != NULL && TEST_FLAG (FOUNDFLAG,    obj)) color = found_color;
++  else if (found_color    != NULL && TEST_FLAG (RATFOUNDFLAG, obj)) color = "#FF00FF";
+   else                                                              color = normal_color;
+ 
+   gui->graphics->set_color (Output.fgGC, color);
+diff --git a/src/find.c b/src/find.c
+index ffbde1f..43c34ab 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -303,10 +303,10 @@ static bool LookupLOConnectionsToPVList (bool);
+ static bool LookupLOConnectionsToLOList (bool);
+ static bool LookupPVConnectionsToLOList (bool);
+ static bool LookupPVConnectionsToPVList (void);
+-static bool LookupLOConnectionsToLine (LineType *, Cardinal, bool);
+-static bool LookupLOConnectionsToPad (PadType *, Cardinal);
+-static bool LookupLOConnectionsToPolygon (PolygonType *, Cardinal);
+-static bool LookupLOConnectionsToArc (ArcType *, Cardinal);
++static bool LookupLOConnectionsToLine (LineType *, Cardinal, bool, bool);
++static bool LookupLOConnectionsToPad (PadType *, Cardinal, bool);
++static bool LookupLOConnectionsToPolygon (PolygonType *, Cardinal, bool);
++static bool LookupLOConnectionsToArc (ArcType *, Cardinal, bool);
+ static bool LookupLOConnectionsToRatEnd (PointType *, Cardinal);
+ static bool IsRatPointOnLineEnd (PointType *, LineType *);
+ static bool ArcArcIntersect (ArcType *, ArcType *);
+@@ -903,21 +903,21 @@ LookupLOConnectionsToLOList (bool AndRats)
+                   position = &lineposition[layer];
+                   for (; *position < LineList[layer].Number; (*position)++)
+                     if (LookupLOConnectionsToLine
+-                        (LINELIST_ENTRY (layer, *position), group, true))
++                        (LINELIST_ENTRY (layer, *position), group, true, AndRats))
+                       return (true);
+ 
+                   /* try all new arcs */
+                   position = &arcposition[layer];
+                   for (; *position < ArcList[layer].Number; (*position)++)
+                     if (LookupLOConnectionsToArc
+-                        (ARCLIST_ENTRY (layer, *position), group))
++                        (ARCLIST_ENTRY (layer, *position), group, AndRats))
+                       return (true);
+ 
+                   /* try all new polygons */
+                   position = &polyposition[layer];
+                   for (; *position < PolygonList[layer].Number; (*position)++)
+                     if (LookupLOConnectionsToPolygon
+-                        (POLYGONLIST_ENTRY (layer, *position), group))
++                        (POLYGONLIST_ENTRY (layer, *position), group, AndRats))
+                       return (true);
+                 }
+               else
+@@ -933,7 +933,7 @@ LookupLOConnectionsToLOList (bool AndRats)
+                   position = &padposition[layer];
+                   for (; *position < PadList[layer].Number; (*position)++)
+                     if (LookupLOConnectionsToPad
+-                        (PADLIST_ENTRY (layer, *position), group))
++                        (PADLIST_ENTRY (layer, *position), group, AndRats))
+                       return (true);
+                 }
+             }
+@@ -1787,7 +1787,7 @@ LOCtoArcPad_callback (const BoxType * b, void *cl)
+  * Xij means Xj at arc i
+  */
+ static bool
+-LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup)
++LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
+ {
+   Cardinal entry;
+   struct lo_info info;
+@@ -1918,7 +1918,7 @@ LOCtoLinePad_callback (const BoxType * b, void *cl)
+  */
+ static bool
+ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+-                           bool PolysTo)
++                           bool PolysTo, bool AndRats)
+ {
+   Cardinal entry;
+   struct lo_info info;
+@@ -1926,12 +1926,16 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+   info.line = *Line;
+   info.layer = LayerGroup;
+   EXPAND_BOUNDS (&info.line)
+-  /* add the new rat lines */
+-  if (setjmp (info.env) == 0)
+-    r_search (PCB->Data->rat_tree, &info.line.BoundingBox, NULL,
+-              LOCtoLineRat_callback, &info);
+-  else
+-    return true;
++
++  if (AndRats)
++    {
++      /* add the new rat lines */
++      if (setjmp (info.env) == 0)
++        r_search (PCB->Data->rat_tree, &info.line.BoundingBox, NULL,
++                  LOCtoLineRat_callback, &info);
++      else
++        return true;
++    }
+ 
+   /* loop over all layers of the group */
+   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
+@@ -2283,23 +2287,27 @@ LOCtoPadPad_callback (const BoxType * b, void *cl)
+  * layergroup. All found connections are added to the list
+  */
+ static bool
+-LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
++LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
+ {
+   Cardinal entry;
+   struct lo_info info;
+ 
+   if (!TEST_FLAG (SQUAREFLAG, Pad))
+-    return (LookupLOConnectionsToLine ((LineType *) Pad, LayerGroup, false));
++    return (LookupLOConnectionsToLine ((LineType *) Pad, LayerGroup, false, AndRats));
+ 
+   info.pad = *Pad;
+   EXPAND_BOUNDS (&info.pad);
+   /* add the new rat lines */
+   info.layer = LayerGroup;
+-  if (setjmp (info.env) == 0)
+-    r_search (PCB->Data->rat_tree, &info.pad.BoundingBox, NULL,
+-              LOCtoPadRat_callback, &info);
+-  else
+-    return true;
++
++  if (AndRats)
++    {
++      if (setjmp (info.env) == 0)
++        r_search (PCB->Data->rat_tree, &info.pad.BoundingBox, NULL,
++                  LOCtoPadRat_callback, &info);
++      else
++        return true;
++    }
+ 
+   /* loop over all layers of the group */
+   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
+@@ -2417,7 +2425,7 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
+  * on the given layergroup. All found connections are added to the list
+  */
+ static bool
+-LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
++LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool AndRats)
+ {
+   Cardinal entry;
+   struct lo_info info;
+@@ -2427,12 +2435,17 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
+   info.polygon = *Polygon;
+   EXPAND_BOUNDS (&info.polygon);
+   info.layer = LayerGroup;
++
+   /* check rats */
+-  if (setjmp (info.env) == 0)
+-    r_search (PCB->Data->rat_tree, (BoxType *) & info.polygon, NULL,
+-              LOCtoPolyRat_callback, &info);
+-  else
+-    return true;
++  if (AndRats)
++    {
++      if (setjmp (info.env) == 0)
++        r_search (PCB->Data->rat_tree, (BoxType *) & info.polygon, NULL,
++                  LOCtoPolyRat_callback, &info);
++      else
++        return true;
++    }
++
+ /* loop over all layers of the group */
+   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
+     {
+diff --git a/src/strflags.c b/src/strflags.c
+index 3699c53..8c2cecb 100644
+--- a/src/strflags.c
++++ b/src/strflags.c
+@@ -108,7 +108,8 @@ static FlagBitsType object_flagbits[] = {
+   { LOCKFLAG, N ("lock"), ALL_TYPES },
+   { EDGE2FLAG, N ("edge2"), ALL_TYPES },
+   { FULLPOLYFLAG, N ("fullpoly"), POLYGON_TYPE},
+-  { NOPASTEFLAG, N ("nopaste"), PAD_TYPE }
++  { NOPASTEFLAG, N ("nopaste"), PAD_TYPE },
++  { RATFOUNDFLAG, N ("ratfound"), ALL_TYPES }
+ };
+ 
+ static FlagBitsType pcb_flagbits[] = {
+diff --git a/src/undo.h b/src/undo.h
+index f415c3c..f59c6fe 100644
+--- a/src/undo.h
++++ b/src/undo.h
+@@ -33,7 +33,7 @@
+ #include "global.h"
+ 
+ #define DRAW_FLAGS	(RATFLAG | SELECTEDFLAG | SQUAREFLAG \
+-			| HIDENAMEFLAG | HOLEFLAG | OCTAGONFLAG | FOUNDFLAG | CLEARLINEFLAG)
++			| HIDENAMEFLAG | HOLEFLAG | OCTAGONFLAG | FOUNDFLAG | RATFOUNDFLAG | CLEARLINEFLAG)
+ 
+ 											/* different layers */
