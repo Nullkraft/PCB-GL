@@ -1,5 +1,5 @@
 Bottom: dd1db958c1441ef479849fb0d73b8016be627f98
-Top:    d21ed0ee2d0e358a08e1926537cc46ada62529c4
+Top:    32a4f1e57c822647aaea85798ab17269348c3ad7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-14 18:13:16 +0000
 
@@ -51,7 +51,7 @@ index 96ecae7..e77ed2a 100644
  		  IncrementUndoSerialNumber ();
  		  Draw ();
 diff --git a/src/find.c b/src/find.c
-index 8f95f80..3248947 100644
+index 8f95f80..d03bc8c 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -3100,7 +3100,7 @@ LookupElementConnections (ElementType *Element, FILE * FP)
@@ -59,7 +59,7 @@ index 8f95f80..3248947 100644
    User = true;
    TheFlag = FOUNDFLAG;
 -  ResetConnections (true);
-+  ResetConnections (true, TheFlag);
++  ResetConnections (true, FOUNDFLAG);
    InitConnectionLookup ();
    PrintElementConnections (Element, FP, true);
    SetChangedFlag (true);
@@ -68,7 +68,7 @@ index 8f95f80..3248947 100644
    User = false;
    TheFlag = FOUNDFLAG;
 -  ResetConnections (false);
-+  ResetConnections (false, TheFlag);
++  ResetConnections (false, FOUNDFLAG);
    InitConnectionLookup ();
  
    ELEMENT_LOOP (PCB->Data);
@@ -77,13 +77,13 @@ index 8f95f80..3248947 100644
      SEPARATE (FP);
      if (Settings.ResetAfterElement && n != 1)
 -      ResetConnections (false);
-+      ResetConnections (false, TheFlag);
++      ResetConnections (false, FOUNDFLAG);
    }
    END_LOOP;
    if (Settings.RingBellWhenFinished)
      gui->beep ();
 -  ResetConnections (false);
-+  ResetConnections (false, TheFlag);
++  ResetConnections (false, FOUNDFLAG);
    FreeConnectionLookupMemory ();
    Redraw ();
  }
