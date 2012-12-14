@@ -1,5 +1,5 @@
 Bottom: 02611204597d30f04886d63f142d6258db2e330f
-Top:    02611204597d30f04886d63f142d6258db2e330f
+Top:    b4821caf549bb77d6139c5ae912bd98e11931672
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-14 18:43:37 +0000
 
@@ -11,4 +11,37 @@ pre-clean before we call it.
 
 ---
 
-
+diff --git a/src/autoroute.c b/src/autoroute.c
+index b58aa60..e92f5d7 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -1023,10 +1023,15 @@ CreateRouteData ()
+    *
+    * this saves on searching the trees to find the nets
+    */
+-  /* use the DRCFLAG to mark objects as they are entered */
+-  ResetConnections (false, DRCFLAG);
+   Nets = CollectSubnets (false);
+   {
++    /* use the DRCFLAG to mark objects as they are entered */
++
++    /* We don't need to reset DRCFLAG on the objects yet, as they
++     * should start with it clear.
++     */
++    // ResetConnections (false, DRCFLAG);
++
+     routebox_t *last_net = NULL;
+     NETLIST_LOOP (&Nets);
+     {
+diff --git a/src/toporouter.c b/src/toporouter.c
+index 7f2081b..75ce82b 100644
+--- a/src/toporouter.c
++++ b/src/toporouter.c
+@@ -2543,7 +2543,6 @@ void
+ import_clusters(toporouter_t *r)
+ {
+   NetListListType nets;
+-  ResetConnections (false, DRCFLAG); /* XXX: NOT SET? */
+   nets = CollectSubnets(false);
+   NETLIST_LOOP(&nets);
+   {
