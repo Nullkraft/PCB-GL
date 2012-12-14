@@ -2297,12 +2297,8 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	  {
 	    bool change = false;
 
-	    SaveFindFlag (RATFOUNDFLAG);
-	    change = ResetFoundLinesAndPolygons (true) || change;
-	    RestoreFindFlag ();
-	    SaveFindFlag (FOUNDFLAG);
-	    change = ResetFoundLinesAndPolygons (true) || change;
-	    RestoreFindFlag ();
+	    change = ResetFoundLinesAndPolygons (true, RATFOUNDFLAG) || change;
+	    change = ResetFoundLinesAndPolygons (true, FOUNDFLAG) || change;
 
 	    if (change)
 	      {
