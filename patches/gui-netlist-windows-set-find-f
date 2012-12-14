@@ -3,7 +3,7 @@ Top:    d3cfd0a08a93367d126e26d3e5e4354d7960c189
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-14 19:41:47 +0000
 
-GUI Netlist windows, Set find flag to FOUNDFLAG explicitly - we rely on it
+(GTK, Lesstif): Netlist window - Set find flag to FOUNDFLAG explicitly
 
 Our "Select net" functionality depends on find.c's "TheFlag" variable being
 set to FOUNDFLAG. In some circumstances (e.g. after a DRC check), this may
