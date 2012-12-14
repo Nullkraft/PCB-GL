@@ -3100,7 +3100,7 @@ LookupElementConnections (ElementType *Element, FILE * FP)
   /* reset all currently marked connections */
   User = true;
   TheFlag = FOUNDFLAG;
-  ResetConnections (true, TheFlag);
+  ResetConnections (true, FOUNDFLAG);
   InitConnectionLookup ();
   PrintElementConnections (Element, FP, true);
   SetChangedFlag (true);
@@ -3121,7 +3121,7 @@ LookupConnectionsToAllElements (FILE * FP)
   /* reset all currently marked connections */
   User = false;
   TheFlag = FOUNDFLAG;
-  ResetConnections (false, TheFlag);
+  ResetConnections (false, FOUNDFLAG);
   InitConnectionLookup ();
 
   ELEMENT_LOOP (PCB->Data);
@@ -3131,12 +3131,12 @@ LookupConnectionsToAllElements (FILE * FP)
       break;
     SEPARATE (FP);
     if (Settings.ResetAfterElement && n != 1)
-      ResetConnections (false, TheFlag);
+      ResetConnections (false, FOUNDFLAG);
   }
   END_LOOP;
   if (Settings.RingBellWhenFinished)
     gui->beep ();
-  ResetConnections (false, TheFlag);
+  ResetConnections (false, FOUNDFLAG);
   FreeConnectionLookupMemory ();
   Redraw ();
 }
