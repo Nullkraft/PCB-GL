@@ -1,0 +1,23 @@
+Bottom: 6f4be71c5cde5b650bd3c66ca4879d1a02851ff1
+Top:    6f4be71c5cde5b650bd3c66ca4879d1a02851ff1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-14 18:55:00 +0000
+
+autoroute.c: Remove unnecessary call to ResetConnections()
+
+This is not required to call CollectSubnets, (as the rats.c internal
+function GatherSubnets() cleans the flag from objects before it uses
+it).
+
+We also use DRCFLAG to mark nets in CreateRouteData(), however:
+
+1. We should be able to assume the DRCFLAG is clear on all objects at the
+   point we un-necessary to reset it.
+
+2. We call GatherSubnets() after we reset the DRCFLAG contents, and
+   that leaves the objects in a clean state without that flag set.
+
+
+---
+
+
