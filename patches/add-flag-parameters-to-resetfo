@@ -1,5 +1,5 @@
 Bottom: d3cfd0a08a93367d126e26d3e5e4354d7960c189
-Top:    302d33d5bb32c5145371cfd44c4a21d5852e6c1f
+Top:    4642fd5d9551f510facefb874421a15b49150ffc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-14 18:13:16 +0000
 
@@ -51,7 +51,7 @@ index 96ecae7..e77ed2a 100644
  		  IncrementUndoSerialNumber ();
  		  Draw ();
 diff --git a/src/find.c b/src/find.c
-index 3f68165..274a0f5 100644
+index 3f68165..d692cc1 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -3100,7 +3100,7 @@ LookupElementConnections (ElementType *Element, FILE * FP)
@@ -92,7 +92,7 @@ index 3f68165..274a0f5 100644
    /* reset all currently marked connections */
    User = true;
 -  ResetConnections (true);
-+#warning WHAT IS THEFLAG SET TO??
++  TheFlag = FOUNDFLAG;
 +  ResetConnections (true, TheFlag);
    InitConnectionLookup ();
  
