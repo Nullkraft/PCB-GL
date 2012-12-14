@@ -1,0 +1,14 @@
+Bottom: 02611204597d30f04886d63f142d6258db2e330f
+Top:    02611204597d30f04886d63f142d6258db2e330f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-14 18:43:37 +0000
+
+autoroute.c, toporouter.c: Remove unnecessary ResetConnections() call
+
+CollectSubnets() deals with all this internally, we don't need to
+pre-clean before we call it.
+
+
+---
+
+
