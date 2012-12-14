@@ -1,0 +1,14 @@
+Bottom: d3cfd0a08a93367d126e26d3e5e4354d7960c189
+Top:    d3cfd0a08a93367d126e26d3e5e4354d7960c189
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-14 19:53:59 +0000
+
+find.c: Set TheFlag to FOUNDFLAG explicitly in LookupUnusedPins()
+
+We relied on it being set to an appropriate value, instead set it to
+FOUNDFLAG, similar to how LookupElementConnections() does.
+
+
+---
+
+
