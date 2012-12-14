@@ -1,0 +1,15 @@
+Bottom: 6815f7191adc7c5872ea7865d7af6ed44eb90b5d
+Top:    6815f7191adc7c5872ea7865d7af6ed44eb90b5d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-14 19:41:47 +0000
+
+GUI Netlist windows, Set find flag to FOUNDFLAG explicitly - we rely on it
+
+Our "Select net" functionality depends on find.c's "TheFlag" variable being
+set to FOUNDFLAG. In some circumstances (e.g. after a DRC check), this may
+not be the case, and selecting nets from the netlist window breaks.
+
+
+---
+
+
