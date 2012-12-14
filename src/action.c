@@ -2748,7 +2748,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
 	  TOGGLE_FLAG (AUTODRCFLAG, PCB);
 	  if (TEST_FLAG (AUTODRCFLAG, PCB) && Settings.Mode == LINE_MODE)
 	    {
-	      if (ResetConnections (true))
+	      if (ResetConnections (true, FOUNDFLAG))
 		{
 		  IncrementUndoSerialNumber ();
 		  Draw ();
