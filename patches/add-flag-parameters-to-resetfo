@@ -1,5 +1,5 @@
-Bottom: 791212eccf3dbce475eda9edae566cd58458de2e
-Top:    dc6613c5a6fbf8b6f35bccf380a9961184e266c5
+Bottom: 6815f7191adc7c5872ea7865d7af6ed44eb90b5d
+Top:    3b4dda0b1692755f9a28b8a7f3943e3b8712ea4a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-14 18:13:16 +0000
 
@@ -341,12 +341,12 @@ index fa33060..a5e45de 100644
  
    if (!found)
 diff --git a/src/select.c b/src/select.c
-index 4cdc008..31693ef 100644
+index ca6a660..32161ec 100644
 --- a/src/select.c
 +++ b/src/select.c
-@@ -960,7 +960,12 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
-   if (Type & NET_TYPE)
+@@ -961,7 +961,12 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
      {
+       SaveFindFlag (FOUNDFLAG);
        InitConnectionLookup ();
 -      changed = ResetConnections (true) || changed;
 +      //changed = ResetConnections (true) || changed;
@@ -358,7 +358,7 @@ index 4cdc008..31693ef 100644
  
        MENU_LOOP (&PCB->NetlistLib);
        {
-@@ -981,7 +986,12 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -982,7 +987,12 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
        END_LOOP;
  
        changed = SelectConnection (Flag) || changed;
@@ -370,8 +370,8 @@ index 4cdc008..31693ef 100644
 +        changed = ResetConnections (false, TheFlag) || changed;
 +      }
        FreeConnectionLookupMemory ();
+       RestoreFindFlag ();
      }
- 
 diff --git a/src/set.c b/src/set.c
 index 21351da..f1b6c94 100644
 --- a/src/set.c
