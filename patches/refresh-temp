@@ -1,0 +1,20 @@
+Bottom: d3cfd0a08a93367d126e26d3e5e4354d7960c189
+Top:    93a44f7fba678c8e651d71c362057ad07d60fb08
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-14 19:54:12 +0000
+
+Refresh of find-c-set-theflag-to-foundfla
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 3f68165..8f95f80 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3294,6 +3294,7 @@ LookupUnusedPins (FILE * FP)
+ {
+   /* reset all currently marked connections */
+   User = true;
++  TheFlag = FOUNDFLAG;
+   ResetConnections (true);
+   InitConnectionLookup ();
