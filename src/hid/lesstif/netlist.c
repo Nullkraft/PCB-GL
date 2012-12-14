@@ -132,7 +132,7 @@ nbcb_select_common (LibraryMenuType *net, int pos, int select_flag)
   ConnectionType conn;
   int i;
 
-  SaveFindFlag (FOUND);
+  SaveFindFlag (FOUNDFLAG);
   InitConnectionLookup ();
   ResetConnections (true);
 
