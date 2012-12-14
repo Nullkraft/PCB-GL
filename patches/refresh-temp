@@ -1,0 +1,199 @@
+Bottom: 1785357bf3e79b74693937df6b639a87c981e945
+Top:    8303c127907d0f81aa6be6ddaf240dafb8414d8e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-14 18:40:04 +0000
+
+Refresh of add-flag-parameters-to-resetfo
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index d7d6aa1..b58aa60 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -1024,7 +1024,7 @@ CreateRouteData ()
+    * this saves on searching the trees to find the nets
+    */
+   /* use the DRCFLAG to mark objects as they are entered */
+-  ResetConnections (false);
++  ResetConnections (false, DRCFLAG);
+   Nets = CollectSubnets (false);
+   {
+     routebox_t *last_net = NULL;
+diff --git a/src/find.c b/src/find.c
+index 3f68165..ffbde1f 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3100,7 +3100,7 @@ LookupElementConnections (ElementType *Element, FILE * FP)
+   /* reset all currently marked connections */
+   User = true;
+   TheFlag = FOUNDFLAG;
+-  ResetConnections (true);
++  ResetConnections (true, TheFlag);
+   InitConnectionLookup ();
+   PrintElementConnections (Element, FP, true);
+   SetChangedFlag (true);
+@@ -3121,7 +3121,7 @@ LookupConnectionsToAllElements (FILE * FP)
+   /* reset all currently marked connections */
+   User = false;
+   TheFlag = FOUNDFLAG;
+-  ResetConnections (false);
++  ResetConnections (false, TheFlag);
+   InitConnectionLookup ();
+ 
+   ELEMENT_LOOP (PCB->Data);
+@@ -3131,12 +3131,12 @@ LookupConnectionsToAllElements (FILE * FP)
+       break;
+     SEPARATE (FP);
+     if (Settings.ResetAfterElement && n != 1)
+-      ResetConnections (false);
++      ResetConnections (false, TheFlag);
+   }
+   END_LOOP;
+   if (Settings.RingBellWhenFinished)
+     gui->beep ();
+-  ResetConnections (false);
++  ResetConnections (false, TheFlag);
+   FreeConnectionLookupMemory ();
+   Redraw ();
+ }
+@@ -3294,7 +3294,8 @@ LookupUnusedPins (FILE * FP)
+ {
+   /* reset all currently marked connections */
+   User = true;
+-  ResetConnections (true);
++#warning WHAT IS THEFLAG SET TO??
++  ResetConnections (true, TheFlag);
+   InitConnectionLookup ();
+ 
+   ELEMENT_LOOP (PCB->Data);
+@@ -3319,8 +3320,9 @@ LookupUnusedPins (FILE * FP)
+  * resets all used flags of pins and vias
+  */
+ bool
+-ResetFoundPinsViasAndPads (bool AndDraw)
++ResetFoundPinsViasAndPads (bool AndDraw, int flag)
+ {
++#warning OBEY THE FLAG
+   bool change = false;
+ 
+   VIA_LOOP (PCB->Data);
+@@ -3375,8 +3377,9 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+  * resets all used flags of LOs
+  */
+ bool
+-ResetFoundLinesAndPolygons (bool AndDraw)
++ResetFoundLinesAndPolygons (bool AndDraw, int flag)
+ {
++#warning OBEY THE FLAG
+   bool change = false;
+ 
+   RAT_LOOP (PCB->Data);
+@@ -3440,12 +3443,12 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+  * resets all found connections
+  */
+ bool
+-ResetConnections (bool AndDraw)
++ResetConnections (bool AndDraw, int flag)
+ {
+   bool change = false;
+ 
+-  change = ResetFoundPinsViasAndPads  (AndDraw) || change;
+-  change = ResetFoundLinesAndPolygons (AndDraw) || change;
++  change = ResetFoundPinsViasAndPads  (AndDraw, flag) || change;
++  change = ResetFoundLinesAndPolygons (AndDraw, flag) || change;
+ 
+   return change;
+ }
+@@ -3515,7 +3518,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+           DumpList ();
+           /* make the flag changes undoable */
+           TheFlag = FOUNDFLAG | SELECTEDFLAG;
+-          ResetConnections (false);
++          ResetConnections (false, TheFlag);
+           User = true;
+           drc = false;
+           Bloat = -PCB->Shrink;
+@@ -3559,7 +3562,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+     }
+   /* now check the bloated condition */
+   drc = false;
+-  ResetConnections (false);
++  ResetConnections (false, TheFlag);
+   TheFlag = FOUNDFLAG;
+   ListStart (What, ptr1, ptr2, ptr3);
+   Bloat = PCB->Bloat;
+@@ -3569,7 +3572,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+       DumpList ();
+       /* make the flag changes undoable */
+       TheFlag = FOUNDFLAG | SELECTEDFLAG;
+-      ResetConnections (false);
++      ResetConnections (false, TheFlag);
+       User = true;
+       drc = false;
+       Bloat = 0;
+@@ -3620,7 +3623,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+   drc = false;
+   DumpList ();
+   TheFlag = FOUNDFLAG | SELECTEDFLAG;
+-  ResetConnections (false);
++  ResetConnections (false, TheFlag);
+   return (false);
+ }
+ 
+@@ -3777,7 +3780,7 @@ DRCAll (void)
+ 
+   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
+ 
+-  if (ResetConnections (true))
++  if (ResetConnections (true, TheFlag))
+     {
+       IncrementUndoSerialNumber ();
+       Draw ();
+@@ -3831,7 +3834,7 @@ DRCAll (void)
+   END_LOOP;
+ 
+   TheFlag = (IsBad) ? DRCFLAG : (FOUNDFLAG | DRCFLAG | SELECTEDFLAG);
+-  ResetConnections (false);
++  ResetConnections (false, TheFlag);
+   TheFlag = SELECTEDFLAG;
+   /* check minimum widths and polygon clearances */
+   if (!IsBad)
+diff --git a/src/find.h b/src/find.h
+index ab4021a..b74a668 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -53,9 +53,9 @@ void LookupElementConnections (ElementType *, FILE *);
+ void LookupConnectionsToAllElements (FILE *);
+ void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats);
+ void LookupUnusedPins (FILE *);
+-bool ResetFoundLinesAndPolygons (bool);
+-bool ResetFoundPinsViasAndPads (bool);
+-bool ResetConnections (bool);
++bool ResetFoundLinesAndPolygons (bool, int flag);
++bool ResetFoundPinsViasAndPads (bool, int flag);
++bool ResetConnections (bool, int flag);
+ void InitConnectionLookup (void);
+ void InitComponentLookup (void);
+ void InitLayoutLookup (void);
+diff --git a/src/rats.c b/src/rats.c
+index 29c5e00..114e7c4 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -458,7 +458,7 @@ GatherSubnets (NetListType *Netl, bool NoWarn, bool AndRats)
+   for (m = 0; Netl->NetN > 0 && m < Netl->NetN; m++)
+     {
+       a = &Netl->Net[m];
+-      ResetConnections (false);
++      ResetConnections (false, DRCFLAG);
+       RatFindHook (a->Connection[0].type, a->Connection[0].ptr1,
+ 		   a->Connection[0].ptr2, a->Connection[0].ptr2, false,
+ 		   AndRats);
+@@ -537,7 +537,7 @@ GatherSubnets (NetListType *Netl, bool NoWarn, bool AndRats)
+       if (!NoWarn)
+ 	Warned |= CheckShorts (a->Connection[0].menu);
+     }
+-  ResetConnections (false);
++  ResetConnections (false, DRCFLAG);
+   return (Warned);
+ }
