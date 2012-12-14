@@ -1,0 +1,13 @@
+Bottom: 4e37d1a24ca55fc17f8a096b813467c85eec8c90
+Top:    4e37d1a24ca55fc17f8a096b813467c85eec8c90
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-14 18:48:55 +0000
+
+toporouter.c: Remove un-necessary call to ResetConnections()
+
+This is not required by the APIs we call, so remove it for clarity.
+
+
+---
+
+
