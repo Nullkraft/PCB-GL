@@ -1,5 +1,5 @@
 Bottom: d3cfd0a08a93367d126e26d3e5e4354d7960c189
-Top:    c4ac103cf102ea870c8007fd16640b6d06933f5b
+Top:    d6c7e53dd3bcd641b725ee689dcd8fe486e32861
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-14 18:13:16 +0000
 
@@ -215,6 +215,48 @@ index ab4021a..b74a668 100644
  void InitConnectionLookup (void);
  void InitComponentLookup (void);
  void InitLayoutLookup (void);
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index af2ca1c..f446871 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -537,14 +537,14 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+ 
+   SaveFindFlag (FOUNDFLAG);
+   InitConnectionLookup ();
+-  ResetConnections (true);
++  ResetConnections (true, FOUNDFLAG);
+ 
+   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
+ 
+   SelectConnection (select_flag);
+-  ResetConnections (false);
++  ResetConnections (false, FOUNDFLAG);
+   FreeConnectionLookupMemory ();
+   RestoreFindFlag ();
+   IncrementUndoSerialNumber ();
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index c53a9b7..decb7bc 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -134,14 +134,14 @@ nbcb_select_common (LibraryMenuType *net, int pos, int select_flag)
+ 
+   SaveFindFlag (FOUND);
+   InitConnectionLookup ();
+-  ResetConnections (true);
++  ResetConnections (true, FOUNDFLAG);
+ 
+   for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
+ 
+   SelectConnection (select_flag);
+-  ResetConnections (false);
++  ResetConnections (false, FOUNDFLAG);
+   FreeConnectionLookupMemory ();
+   RestoreFindFlag ();
+   IncrementUndoSerialNumber ();
 diff --git a/src/rats.c b/src/rats.c
 index 29c5e00..114e7c4 100644
 --- a/src/rats.c
