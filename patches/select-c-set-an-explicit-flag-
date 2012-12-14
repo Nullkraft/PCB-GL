@@ -1,0 +1,15 @@
+Bottom: 4e37d1a24ca55fc17f8a096b813467c85eec8c90
+Top:    4e37d1a24ca55fc17f8a096b813467c85eec8c90
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-14 19:30:06 +0000
+
+select.c: Set an explicit flag to search using when selecting nets by name
+
+If find.c's "TheFlag" variable is not equal to FOUNDFLAG, our code for
+selecting nets by name did not work. This could happen, for example - after
+a DRC check, where "TheFlag" appears to be left equal to SELECTEDFLAG.
+
+
+---
+
+
