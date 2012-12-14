@@ -1,5 +1,5 @@
 Bottom: 4e37d1a24ca55fc17f8a096b813467c85eec8c90
-Top:    4e37d1a24ca55fc17f8a096b813467c85eec8c90
+Top:    6f4be71c5cde5b650bd3c66ca4879d1a02851ff1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-14 18:48:55 +0000
 
@@ -10,4 +10,15 @@ This is not required by the APIs we call, so remove it for clarity.
 
 ---
 
-
+diff --git a/src/toporouter.c b/src/toporouter.c
+index 0a83569..75ce82b 100644
+--- a/src/toporouter.c
++++ b/src/toporouter.c
+@@ -2543,7 +2543,6 @@ void
+ import_clusters(toporouter_t *r)
+ {
+   NetListListType nets;
+-  ResetConnections (false);
+   nets = CollectSubnets(false);
+   NETLIST_LOOP(&nets);
+   {
