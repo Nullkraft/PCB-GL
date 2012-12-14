@@ -1023,10 +1023,15 @@ CreateRouteData ()
    *
    * this saves on searching the trees to find the nets
    */
-  /* use the DRCFLAG to mark objects as they are entered */
-  ResetConnections (false, DRCFLAG);
   Nets = CollectSubnets (false);
   {
+    /* use the DRCFLAG to mark objects as they are entered */
+
+    /* We don't need to reset DRCFLAG on the objects yet, as they
+     * should start with it clear.
+     */
+    // ResetConnections (false, DRCFLAG);
+
     routebox_t *last_net = NULL;
     NETLIST_LOOP (&Nets);
     {
