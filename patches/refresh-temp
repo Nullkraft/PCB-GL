@@ -1,0 +1,40 @@
+Bottom: 4e37d1a24ca55fc17f8a096b813467c85eec8c90
+Top:    1785357bf3e79b74693937df6b639a87c981e945
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-14 18:14:26 +0000
+
+Refresh of add-flag-parameters-to-resetfo
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 96ecae7..fdcf8aa 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2295,7 +2295,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+ 	  }
+ 
+ 	case F_ResetLinesAndPolygons:
+-	  if (ResetFoundLinesAndPolygons (true))
++	  if (ResetFoundLinesAndPolygons (true, FOUNDFLAG))
+ 	    {
+ 	      IncrementUndoSerialNumber ();
+ 	      Draw ();
+@@ -2303,7 +2303,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+ 	  break;
+ 
+ 	case F_ResetPinsViasAndPads:
+-	  if (ResetFoundPinsViasAndPads (true))
++	  if (ResetFoundPinsViasAndPads (true, FOUNDFLAG))
+ 	    {
+ 	      IncrementUndoSerialNumber ();
+ 	      Draw ();
+@@ -2311,7 +2311,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+ 	  break;
+ 
+ 	case F_Reset:
+-	  if (ResetConnections (true))
++	  if (ResetConnections (true, FOUNDFLAG))
+ 	    {
+ 	      IncrementUndoSerialNumber ();
+ 	      Draw ();
