@@ -284,7 +284,7 @@ typedef struct
  * some local identifiers
  */
 static Coord Bloat = 0;
-static int TheFlag = FOUNDFLAG;
+/*static */int TheFlag = FOUNDFLAG;
 static int OldFlag = FOUNDFLAG;
 static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
 static int thing_type;
@@ -3100,7 +3100,7 @@ LookupElementConnections (ElementType *Element, FILE * FP)
   /* reset all currently marked connections */
   User = true;
   TheFlag = FOUNDFLAG;
-  ResetConnections (true);
+  ResetConnections (true, TheFlag);
   InitConnectionLookup ();
   PrintElementConnections (Element, FP, true);
   SetChangedFlag (true);
@@ -3121,7 +3121,7 @@ LookupConnectionsToAllElements (FILE * FP)
   /* reset all currently marked connections */
   User = false;
   TheFlag = FOUNDFLAG;
-  ResetConnections (false);
+  ResetConnections (false, TheFlag);
   InitConnectionLookup ();
 
   ELEMENT_LOOP (PCB->Data);
@@ -3131,12 +3131,12 @@ LookupConnectionsToAllElements (FILE * FP)
       break;
     SEPARATE (FP);
     if (Settings.ResetAfterElement && n != 1)
-      ResetConnections (false);
+      ResetConnections (false, TheFlag);
   }
   END_LOOP;
   if (Settings.RingBellWhenFinished)
     gui->beep ();
-  ResetConnections (false);
+  ResetConnections (false, TheFlag);
   FreeConnectionLookupMemory ();
   Redraw ();
 }
@@ -3294,7 +3294,8 @@ LookupUnusedPins (FILE * FP)
 {
   /* reset all currently marked connections */
   User = true;
-  ResetConnections (true);
+#warning WHAT IS THEFLAG SET TO??
+  ResetConnections (true, TheFlag);
   InitConnectionLookup ();
 
   ELEMENT_LOOP (PCB->Data);
@@ -3319,8 +3320,9 @@ LookupUnusedPins (FILE * FP)
  * resets all used flags of pins and vias
  */
 bool
-ResetFoundPinsViasAndPads (bool AndDraw)
+ResetFoundPinsViasAndPads (bool AndDraw, int flag)
 {
+#warning OBEY THE FLAG
   bool change = false;
 
   VIA_LOOP (PCB->Data);
@@ -3375,8 +3377,9 @@ ResetFoundPinsViasAndPads (bool AndDraw)
  * resets all used flags of LOs
  */
 bool
-ResetFoundLinesAndPolygons (bool AndDraw)
+ResetFoundLinesAndPolygons (bool AndDraw, int flag)
 {
+#warning OBEY THE FLAG
   bool change = false;
 
   RAT_LOOP (PCB->Data);
@@ -3440,12 +3443,12 @@ ResetFoundLinesAndPolygons (bool AndDraw)
  * resets all found connections
  */
 bool
-ResetConnections (bool AndDraw)
+ResetConnections (bool AndDraw, int flag)
 {
   bool change = false;
 
-  change = ResetFoundPinsViasAndPads  (AndDraw) || change;
-  change = ResetFoundLinesAndPolygons (AndDraw) || change;
+  change = ResetFoundPinsViasAndPads  (AndDraw, flag) || change;
+  change = ResetFoundLinesAndPolygons (AndDraw, flag) || change;
 
   return change;
 }
@@ -3515,7 +3518,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
           DumpList ();
           /* make the flag changes undoable */
           TheFlag = FOUNDFLAG | SELECTEDFLAG;
-          ResetConnections (false);
+          ResetConnections (false, TheFlag);
           User = true;
           drc = false;
           Bloat = -PCB->Shrink;
@@ -3559,7 +3562,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
     }
   /* now check the bloated condition */
   drc = false;
-  ResetConnections (false);
+  ResetConnections (false, TheFlag);
   TheFlag = FOUNDFLAG;
   ListStart (What, ptr1, ptr2, ptr3);
   Bloat = PCB->Bloat;
@@ -3569,7 +3572,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       DumpList ();
       /* make the flag changes undoable */
       TheFlag = FOUNDFLAG | SELECTEDFLAG;
-      ResetConnections (false);
+      ResetConnections (false, TheFlag);
       User = true;
       drc = false;
       Bloat = 0;
@@ -3620,7 +3623,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
   drc = false;
   DumpList ();
   TheFlag = FOUNDFLAG | SELECTEDFLAG;
-  ResetConnections (false);
+  ResetConnections (false, TheFlag);
   return (false);
 }
 
@@ -3777,7 +3780,7 @@ DRCAll (void)
 
   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
 
-  if (ResetConnections (true))
+  if (ResetConnections (true, TheFlag))
     {
       IncrementUndoSerialNumber ();
       Draw ();
@@ -3831,7 +3834,7 @@ DRCAll (void)
   END_LOOP;
 
   TheFlag = (IsBad) ? DRCFLAG : (FOUNDFLAG | DRCFLAG | SELECTEDFLAG);
-  ResetConnections (false);
+  ResetConnections (false, TheFlag);
   TheFlag = SELECTEDFLAG;
   /* check minimum widths and polygon clearances */
   if (!IsBad)
