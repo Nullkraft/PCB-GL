@@ -1,5 +1,5 @@
 Bottom: d3cfd0a08a93367d126e26d3e5e4354d7960c189
-Top:    d6c7e53dd3bcd641b725ee689dcd8fe486e32861
+Top:    1d5006aadc74ad1ef44c5f5a451e8a0c1957dafb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-14 18:13:16 +0000
 
@@ -51,18 +51,9 @@ index 96ecae7..e77ed2a 100644
  		  IncrementUndoSerialNumber ();
  		  Draw ();
 diff --git a/src/find.c b/src/find.c
-index 3f68165..32fe7fe 100644
+index 3f68165..ffbde1f 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -284,7 +284,7 @@ typedef struct
-  * some local identifiers
-  */
- static Coord Bloat = 0;
--static int TheFlag = FOUNDFLAG;
-+/*static */int TheFlag = FOUNDFLAG;
- static int OldFlag = FOUNDFLAG;
- static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
- static int thing_type;
 @@ -3100,7 +3100,7 @@ LookupElementConnections (ElementType *Element, FILE * FP)
    /* reset all currently marked connections */
    User = true;
