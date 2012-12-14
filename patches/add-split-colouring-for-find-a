@@ -1,5 +1,5 @@
-Bottom: 02611204597d30f04886d63f142d6258db2e330f
-Top:    3a05641b6cd8d88136bcf3c81629ae2e7ee4ab72
+Bottom: a39c007dbb11e086a8a719c3f393a01e4ccd9a63
+Top:    f2fbc00b37a653aaaa13d3939915be3314ba55e2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-10 01:19:10 +0000
 
@@ -16,7 +16,7 @@ if all rat-lines were implemented.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index fdcf8aa..8bea940 100644
+index e77ed2a..9be97eb 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -2291,32 +2291,54 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
@@ -182,7 +182,7 @@ index a2e86a8..2b56791 100644
  
    gui->graphics->set_color (Output.fgGC, color);
 diff --git a/src/find.c b/src/find.c
-index ffbde1f..43c34ab 100644
+index 3248947..504e336 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -303,10 +303,10 @@ static bool LookupLOConnectionsToPVList (bool);
