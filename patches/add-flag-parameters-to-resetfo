@@ -1,5 +1,5 @@
-Bottom: 93a44f7fba678c8e651d71c362057ad07d60fb08
-Top:    a39c007dbb11e086a8a719c3f393a01e4ccd9a63
+Bottom: dd1db958c1441ef479849fb0d73b8016be627f98
+Top:    d21ed0ee2d0e358a08e1926537cc46ada62529c4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-14 18:13:16 +0000
 
@@ -317,12 +317,12 @@ index af2ca1c..f446871 100644
    RestoreFindFlag ();
    IncrementUndoSerialNumber ();
 diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
-index c53a9b7..decb7bc 100644
+index 6687341..4e741e8 100644
 --- a/src/hid/lesstif/netlist.c
 +++ b/src/hid/lesstif/netlist.c
 @@ -134,14 +134,14 @@ nbcb_select_common (LibraryMenuType *net, int pos, int select_flag)
  
-   SaveFindFlag (FOUND);
+   SaveFindFlag (FOUNDFLAG);
    InitConnectionLookup ();
 -  ResetConnections (true);
 +  ResetConnections (true, FOUNDFLAG);
