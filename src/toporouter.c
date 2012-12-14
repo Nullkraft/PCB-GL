@@ -2543,7 +2543,7 @@ void
 import_clusters(toporouter_t *r)
 {
   NetListListType nets;
-  ResetConnections (false);
+  ResetConnections (false, DRCFLAG); /* XXX: NOT SET? */
   nets = CollectSubnets(false);
   NETLIST_LOOP(&nets);
   {
