@@ -1,5 +1,5 @@
 Bottom: d3cfd0a08a93367d126e26d3e5e4354d7960c189
-Top:    1d5006aadc74ad1ef44c5f5a451e8a0c1957dafb
+Top:    302d33d5bb32c5145371cfd44c4a21d5852e6c1f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-14 18:13:16 +0000
 
@@ -51,7 +51,7 @@ index 96ecae7..e77ed2a 100644
  		  IncrementUndoSerialNumber ();
  		  Draw ();
 diff --git a/src/find.c b/src/find.c
-index 3f68165..ffbde1f 100644
+index 3f68165..274a0f5 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -3100,7 +3100,7 @@ LookupElementConnections (ElementType *Element, FILE * FP)
@@ -97,29 +97,119 @@ index 3f68165..ffbde1f 100644
    InitConnectionLookup ();
  
    ELEMENT_LOOP (PCB->Data);
-@@ -3319,8 +3320,9 @@ LookupUnusedPins (FILE * FP)
+@@ -3319,17 +3320,17 @@ LookupUnusedPins (FILE * FP)
   * resets all used flags of pins and vias
   */
  bool
 -ResetFoundPinsViasAndPads (bool AndDraw)
 +ResetFoundPinsViasAndPads (bool AndDraw, int flag)
  {
-+#warning OBEY THE FLAG
    bool change = false;
  
    VIA_LOOP (PCB->Data);
-@@ -3375,8 +3377,9 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+   {
+-    if (TEST_FLAG (TheFlag, via))
++    if (TEST_FLAG (flag, via))
+       {
+         if (AndDraw)
+           AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+-        CLEAR_FLAG (TheFlag, via);
++        CLEAR_FLAG (flag, via);
+         if (AndDraw)
+           DrawVia (via);
+         change = true;
+@@ -3340,11 +3341,11 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+   {
+     PIN_LOOP (element);
+     {
+-      if (TEST_FLAG (TheFlag, pin))
++      if (TEST_FLAG (flag, pin))
+         {
+           if (AndDraw)
+             AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+-          CLEAR_FLAG (TheFlag, pin);
++          CLEAR_FLAG (flag, pin);
+           if (AndDraw)
+             DrawPin (pin);
+           change = true;
+@@ -3353,11 +3354,11 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+     END_LOOP;
+     PAD_LOOP (element);
+     {
+-      if (TEST_FLAG (TheFlag, pad))
++      if (TEST_FLAG (flag, pad))
+         {
+           if (AndDraw)
+             AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
+-          CLEAR_FLAG (TheFlag, pad);
++          CLEAR_FLAG (flag, pad);
+           if (AndDraw)
+             DrawPad (pad);
+           change = true;
+@@ -3375,17 +3376,17 @@ ResetFoundPinsViasAndPads (bool AndDraw)
   * resets all used flags of LOs
   */
  bool
 -ResetFoundLinesAndPolygons (bool AndDraw)
 +ResetFoundLinesAndPolygons (bool AndDraw, int flag)
  {
-+#warning OBEY THE FLAG
    bool change = false;
  
    RAT_LOOP (PCB->Data);
-@@ -3440,12 +3443,12 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   {
+-    if (TEST_FLAG (TheFlag, line))
++    if (TEST_FLAG (flag, line))
+       {
+         if (AndDraw)
+           AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
+-        CLEAR_FLAG (TheFlag, line);
++        CLEAR_FLAG (flag, line);
+         if (AndDraw)
+           DrawRat (line);
+         change = true;
+@@ -3394,11 +3395,11 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   END_LOOP;
+   COPPERLINE_LOOP (PCB->Data);
+   {
+-    if (TEST_FLAG (TheFlag, line))
++    if (TEST_FLAG (flag, line))
+       {
+         if (AndDraw)
+           AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
+-        CLEAR_FLAG (TheFlag, line);
++        CLEAR_FLAG (flag, line);
+         if (AndDraw)
+           DrawLine (layer, line);
+         change = true;
+@@ -3407,11 +3408,11 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   ENDALL_LOOP;
+   COPPERARC_LOOP (PCB->Data);
+   {
+-    if (TEST_FLAG (TheFlag, arc))
++    if (TEST_FLAG (flag, arc))
+       {
+         if (AndDraw)
+           AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
+-        CLEAR_FLAG (TheFlag, arc);
++        CLEAR_FLAG (flag, arc);
+         if (AndDraw)
+           DrawArc (layer, arc);
+         change = true;
+@@ -3420,11 +3421,11 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   ENDALL_LOOP;
+   COPPERPOLYGON_LOOP (PCB->Data);
+   {
+-    if (TEST_FLAG (TheFlag, polygon))
++    if (TEST_FLAG (flag, polygon))
+       {
+         if (AndDraw)
+           AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+-        CLEAR_FLAG (TheFlag, polygon);
++        CLEAR_FLAG (flag, polygon);
+         if (AndDraw)
+           DrawPolygon (layer, polygon);
+         change = true;
+@@ -3440,12 +3441,12 @@ ResetFoundLinesAndPolygons (bool AndDraw)
   * resets all found connections
   */
  bool
@@ -135,7 +225,7 @@ index 3f68165..ffbde1f 100644
  
    return change;
  }
-@@ -3515,7 +3518,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3515,7 +3516,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
            DumpList ();
            /* make the flag changes undoable */
            TheFlag = FOUNDFLAG | SELECTEDFLAG;
@@ -144,7 +234,7 @@ index 3f68165..ffbde1f 100644
            User = true;
            drc = false;
            Bloat = -PCB->Shrink;
-@@ -3559,7 +3562,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3559,7 +3560,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
      }
    /* now check the bloated condition */
    drc = false;
@@ -153,7 +243,7 @@ index 3f68165..ffbde1f 100644
    TheFlag = FOUNDFLAG;
    ListStart (What, ptr1, ptr2, ptr3);
    Bloat = PCB->Bloat;
-@@ -3569,7 +3572,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3569,7 +3570,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
        DumpList ();
        /* make the flag changes undoable */
        TheFlag = FOUNDFLAG | SELECTEDFLAG;
@@ -162,7 +252,7 @@ index 3f68165..ffbde1f 100644
        User = true;
        drc = false;
        Bloat = 0;
-@@ -3620,7 +3623,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3620,7 +3621,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
    drc = false;
    DumpList ();
    TheFlag = FOUNDFLAG | SELECTEDFLAG;
@@ -171,7 +261,7 @@ index 3f68165..ffbde1f 100644
    return (false);
  }
  
-@@ -3777,7 +3780,7 @@ DRCAll (void)
+@@ -3777,7 +3778,7 @@ DRCAll (void)
  
    TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
  
@@ -180,7 +270,7 @@ index 3f68165..ffbde1f 100644
      {
        IncrementUndoSerialNumber ();
        Draw ();
-@@ -3831,7 +3834,7 @@ DRCAll (void)
+@@ -3831,7 +3832,7 @@ DRCAll (void)
    END_LOOP;
  
    TheFlag = (IsBad) ? DRCFLAG : (FOUNDFLAG | DRCFLAG | SELECTEDFLAG);
