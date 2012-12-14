@@ -1,0 +1,183 @@
+Bottom: 406281971b15268373af476924dcf0f1711c3eb1
+Top:    dc6613c5a6fbf8b6f35bccf380a9961184e266c5
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-14 19:28:33 +0000
+
+Refresh of add-flag-parameters-to-resetfo
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index fdcf8aa..e77ed2a 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2748,7 +2748,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+ 	  TOGGLE_FLAG (AUTODRCFLAG, PCB);
+ 	  if (TEST_FLAG (AUTODRCFLAG, PCB) && Settings.Mode == LINE_MODE)
+ 	    {
+-	      if (ResetConnections (true))
++	      if (ResetConnections (true, FOUNDFLAG))
+ 		{
+ 		  IncrementUndoSerialNumber ();
+ 		  Draw ();
+diff --git a/src/find.c b/src/find.c
+index ffbde1f..32fe7fe 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -284,7 +284,7 @@ typedef struct
+  * some local identifiers
+  */
+ static Coord Bloat = 0;
+-static int TheFlag = FOUNDFLAG;
++/*static */int TheFlag = FOUNDFLAG;
+ static int OldFlag = FOUNDFLAG;
+ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
+ static int thing_type;
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index e2c08d5..52479ff 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -536,14 +536,24 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+     node_selected_net = NULL;
+ 
+   InitConnectionLookup ();
+-  ResetConnections (true);
++  //ResetConnections (true);
++  {
++    extern int TheFlag;
++    printf ("gui-netlist-window.c: THE FLAG IS %i\n", TheFlag);
++    ResetConnections (true, TheFlag);
++  }
+ 
+   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
+ 
+   SelectConnection (select_flag);
+-  ResetConnections (false);
++  //ResetConnections (false);
++  {
++    extern int TheFlag;
++    printf ("gui-netlist-window.c: THE FLAG IS %i\n", TheFlag);
++    ResetConnections (false, TheFlag);
++  }
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
+   Draw ();
+diff --git a/src/report.c b/src/report.c
+index fa33060..a5e45de 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -607,7 +607,7 @@ ReportAllNetLengths (int argc, char **argv, Coord x, Coord y)
+    * by resetting the connections with ResetConnections() before
+    * calling Undo() at the end of the procedure.
+    */
+-  ResetConnections (true);
++  ResetConnections (true, FOUNDFLAG);
+   IncrementUndoSerialNumber ();
+ 
+   for (ni = 0; ni < PCB->NetlistLib.MenuN; ni++)
+@@ -669,14 +669,14 @@ ReportAllNetLengths (int argc, char **argv, Coord x, Coord y)
+           length = XYtoNetLength (x, y, &found);
+ 
+           /* Reset connectors for the next lookup */
+-          ResetConnections (false);
++          ResetConnections (false, FOUNDFLAG);
+ 
+           pcb_sprintf(buf, "%$m*", units_name, length);
+           gui->log("Net %s length %s\n", netname, buf);
+         }
+     }
+ 
+-  ResetConnections (false);
++  ResetConnections (false, FOUNDFLAG);
+   Undo (true);
+   return 0;
+ }
+@@ -698,14 +698,14 @@ ReportNetLength (int argc, char **argv, Coord x, Coord y)
+    * by resetting the connections with ResetConnections() before
+    * calling Undo() at the end of the procedure.
+    */
+-  ResetConnections (true);
++  ResetConnections (true, FOUNDFLAG);
+   IncrementUndoSerialNumber ();
+ 
+   length = XYtoNetLength (x, y, &found);
+ 
+   if (!found)
+     {
+-      ResetConnections (false);
++      ResetConnections (false, FOUNDFLAG);
+       Undo (true);
+       gui->log ("No net under cursor.\n");
+       return 1;
+@@ -767,7 +767,7 @@ ReportNetLength (int argc, char **argv, Coord x, Coord y)
+   END_LOOP;
+ 
+ got_net_name:
+-  ResetConnections (false);
++  ResetConnections (false, FOUNDFLAG);
+   Undo (true);
+ 
+   {
+@@ -904,13 +904,13 @@ ReportNetLengthByName (char *tofind, int x, int y)
+    * by resetting the connections with ResetConnections() before
+    * calling Undo() when we are finished.
+    */
+-  ResetConnections (true);
++  ResetConnections (true, FOUNDFLAG);
+   IncrementUndoSerialNumber ();
+ 
+   length = XYtoNetLength (x, y, &found);
+   netname = net->Name + 2;
+ 
+-  ResetConnections (false);
++  ResetConnections (false, FOUNDFLAG);
+   Undo (true);
+ 
+   if (!found)
+diff --git a/src/select.c b/src/select.c
+index 4cdc008..31693ef 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -960,7 +960,12 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+   if (Type & NET_TYPE)
+     {
+       InitConnectionLookup ();
+-      changed = ResetConnections (true) || changed;
++      //changed = ResetConnections (true) || changed;
++      {
++        extern int TheFlag;
++        printf ("select.c: THE FLAG IS %i\n", TheFlag);
++        changed = ResetConnections (true, TheFlag) || changed;
++      }
+ 
+       MENU_LOOP (&PCB->NetlistLib);
+       {
+@@ -981,7 +986,12 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+       END_LOOP;
+ 
+       changed = SelectConnection (Flag) || changed;
+-      changed = ResetConnections (false) || changed;
++      //changed = ResetConnections (false, TheFlag) || changed;
++      {
++        extern int TheFlag;
++        printf ("select.c: THE FLAG IS %i\n", TheFlag);
++        changed = ResetConnections (false, TheFlag) || changed;
++      }
+       FreeConnectionLookupMemory ();
+     }
+ 
+diff --git a/src/set.c b/src/set.c
+index 21351da..f1b6c94 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -300,7 +300,7 @@ SetMode (int Mode)
+       Crosshair.AttachedLine.State = STATE_FIRST;
+       if (Mode == LINE_MODE && TEST_FLAG (AUTODRCFLAG, PCB))
+ 	{
+-	  if (ResetConnections (true))
++	  if (ResetConnections (true, FOUNDFLAG))
+ 	    {
+ 	      IncrementUndoSerialNumber ();
+ 	      Draw ();
