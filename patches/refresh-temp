@@ -1,0 +1,49 @@
+Bottom: 6815f7191adc7c5872ea7865d7af6ed44eb90b5d
+Top:    d3cfd0a08a93367d126e26d3e5e4354d7960c189
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-14 19:41:52 +0000
+
+Refresh of gui-netlist-windows-set-find-f
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index e2c08d5..af2ca1c 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -535,6 +535,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+   if (selected_net == node_selected_net)
+     node_selected_net = NULL;
+ 
++  SaveFindFlag (FOUNDFLAG);
+   InitConnectionLookup ();
+   ResetConnections (true);
+ 
+@@ -545,6 +546,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+   SelectConnection (select_flag);
+   ResetConnections (false);
+   FreeConnectionLookupMemory ();
++  RestoreFindFlag ();
+   IncrementUndoSerialNumber ();
+   Draw ();
+ }
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index ba2cd4b..c53a9b7 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -132,6 +132,7 @@ nbcb_select_common (LibraryMenuType *net, int pos, int select_flag)
+   ConnectionType conn;
+   int i;
+ 
++  SaveFindFlag (FOUND);
+   InitConnectionLookup ();
+   ResetConnections (true);
+ 
+@@ -142,6 +143,7 @@ nbcb_select_common (LibraryMenuType *net, int pos, int select_flag)
+   SelectConnection (select_flag);
+   ResetConnections (false);
+   FreeConnectionLookupMemory ();
++  RestoreFindFlag ();
+   IncrementUndoSerialNumber ();
+   Draw ();
+ }
