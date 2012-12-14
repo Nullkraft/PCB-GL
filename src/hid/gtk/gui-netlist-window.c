@@ -535,26 +535,18 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
   if (selected_net == node_selected_net)
     node_selected_net = NULL;
 
+  SaveFindFlag (FOUNDFLAG);
   InitConnectionLookup ();
-  //ResetConnections (true);
-  {
-    extern int TheFlag;
-    printf ("gui-netlist-window.c: THE FLAG IS %i\n", TheFlag);
-    ResetConnections (true, TheFlag);
-  }
+  ResetConnections (true);
 
   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
     if (SeekPad (entry, &conn, false))
       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
 
   SelectConnection (select_flag);
-  //ResetConnections (false);
-  {
-    extern int TheFlag;
-    printf ("gui-netlist-window.c: THE FLAG IS %i\n", TheFlag);
-    ResetConnections (false, TheFlag);
-  }
+  ResetConnections (false);
   FreeConnectionLookupMemory ();
+  RestoreFindFlag ();
   IncrementUndoSerialNumber ();
   Draw ();
 }
