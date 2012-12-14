@@ -1,5 +1,5 @@
 Bottom: 6815f7191adc7c5872ea7865d7af6ed44eb90b5d
-Top:    3b4dda0b1692755f9a28b8a7f3943e3b8712ea4a
+Top:    d368ffa61d4f438c63152f377eae210092a99150
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-14 18:13:16 +0000
 
@@ -341,34 +341,24 @@ index fa33060..a5e45de 100644
  
    if (!found)
 diff --git a/src/select.c b/src/select.c
-index ca6a660..32161ec 100644
+index ca6a660..3074075 100644
 --- a/src/select.c
 +++ b/src/select.c
-@@ -961,7 +961,12 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -961,7 +961,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
      {
        SaveFindFlag (FOUNDFLAG);
        InitConnectionLookup ();
 -      changed = ResetConnections (true) || changed;
-+      //changed = ResetConnections (true) || changed;
-+      {
-+        extern int TheFlag;
-+        printf ("select.c: THE FLAG IS %i\n", TheFlag);
-+        changed = ResetConnections (true, TheFlag) || changed;
-+      }
++      changed = ResetConnections (true, FOUNDFLAG) || changed;
  
        MENU_LOOP (&PCB->NetlistLib);
        {
-@@ -982,7 +987,12 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -982,7 +982,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
        END_LOOP;
  
        changed = SelectConnection (Flag) || changed;
 -      changed = ResetConnections (false) || changed;
-+      //changed = ResetConnections (false, TheFlag) || changed;
-+      {
-+        extern int TheFlag;
-+        printf ("select.c: THE FLAG IS %i\n", TheFlag);
-+        changed = ResetConnections (false, TheFlag) || changed;
-+      }
++      changed = ResetConnections (false, FOUNDFLAG) || changed;
        FreeConnectionLookupMemory ();
        RestoreFindFlag ();
      }
