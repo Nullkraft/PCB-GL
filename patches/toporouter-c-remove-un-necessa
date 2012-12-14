@@ -5,7 +5,12 @@ Date:   2012-12-14 18:48:55 +0000
 
 toporouter.c: Remove un-necessary call to ResetConnections()
 
-This is not required by the APIs we call, so remove it for clarity.
+This is not required by the call to CollectSubnets() which follows it,
+and we don't have any other requirement to clear flags.
+
+Futhermore, as toporouter.c does not setup which flag is being operated
+on, the effect of this call will depend on which flag has been left in
+"TheFlag" variable in find.c.
 
 
 ---
