@@ -1,7 +1,7 @@
-Bottom: 5be0e885dff9ab6025e025d1a008609958a6f8e4
-Top:    b39e53d1efab94dac43b79c26cd80f4f8990376e
+Bottom: 90979a367ed6be48494281c4760b22e2c7b56e25
+Top:    2b7d5ddd17e97f52409c02b5b9cd5c662f97fb06
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-12-13 02:26:36 +0000
+Date:   2012-12-15 18:58:42 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 66dca55..7383ca2 100644
+index 9be97eb..75c0a6c 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1878,37 +1878,39 @@ static int
@@ -70,7 +70,7 @@ index 66dca55..7383ca2 100644
  	    }
  	}
      }
-@@ -3269,6 +3271,8 @@ static const char renumber_help[] =
+@@ -3257,6 +3259,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, Coord x, Coord y)
  {
@@ -79,7 +79,7 @@ index 66dca55..7383ca2 100644
    bool changed = false;
    ElementType **element_list;
    ElementType **locked_element_list;
-@@ -3606,6 +3610,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3594,6 +3598,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    free (element_list);
    free (cnt_list);
    return 0;
@@ -87,7 +87,7 @@ index 66dca55..7383ca2 100644
  }
  
  
-@@ -4614,16 +4619,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4602,16 +4607,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index 66dca55..7383ca2 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatType *) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6939,22 +6943,26 @@ find_element_by_refdes (char *refdes)
+@@ -6927,22 +6931,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListType *list, const char *name)
  {
@@ -290,7 +290,7 @@ index 21ab5f2..94c9e25 100644
    double C0, T0;
    bool changed = false;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index d7d6aa1..a12c96a 100644
+index ce75794..1cbe90c 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -1006,7 +1006,6 @@ CreateRouteData ()
@@ -890,7 +890,7 @@ index 8e39be4..c1a1879 100644
  
  	  break;
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index e2c08d5..eb405db 100644
+index f446871..61e6688 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
 @@ -525,9 +525,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
@@ -904,9 +904,9 @@ index e2c08d5..eb405db 100644
    gboolean select_flag = GPOINTER_TO_INT (data);
  
    if (!selected_net)
-@@ -538,9 +537,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+@@ -539,9 +538,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
    InitConnectionLookup ();
-   ResetConnections (true);
+   ResetConnections (true, FOUNDFLAG);
  
 -  for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
 +  for (iter = selected_net->Entry; iter != NULL; iter = g_list_next (iter)) {
@@ -917,8 +917,8 @@ index e2c08d5..eb405db 100644
 +  }
  
    SelectConnection (select_flag);
-   ResetConnections (false);
-@@ -853,9 +855,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+   ResetConnections (false, FOUNDFLAG);
+@@ -855,9 +857,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
  {
    struct ggnfnn_task *task = (struct ggnfnn_task *)data;
    LibraryMenuType *net;
@@ -929,7 +929,7 @@ index e2c08d5..eb405db 100644
    gboolean is_disabled;
  
    /* We only want to inspect leaf nodes in the tree */
-@@ -872,13 +873,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -874,13 +875,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
      return FALSE;
  
    /* Look for the node name in this net. */
@@ -948,7 +948,7 @@ index e2c08d5..eb405db 100644
  
    return FALSE;
  }
-@@ -998,7 +1002,7 @@ ghid_netlist_window_update (gboolean init_nodes)
+@@ -1000,7 +1004,7 @@ ghid_netlist_window_update (gboolean init_nodes)
  
    /* XXX Check if the select callback does this for us */
    if (init_nodes)
@@ -2138,7 +2138,7 @@ index 46061a3..c036559 100644
  void FreePCBMemory (PCBType *);
  void FreeBoxListMemory (BoxListType *);
 diff --git a/src/report.c b/src/report.c
-index fa33060..089d620 100644
+index a5e45de..12d481b 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -334,14 +334,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
@@ -2159,10 +2159,10 @@ index fa33060..089d620 100644
  		 GetLayerNumber (PCB->Data, (LayerType *) ptr1),
  		 TEST_FLAG (LOCKFLAG, Polygon) ? "It is LOCKED.\n" : "");
 diff --git a/src/select.c b/src/select.c
-index 4cdc008..81747f5 100644
+index 3074075..5f2640f 100644
 --- a/src/select.c
 +++ b/src/select.c
-@@ -964,18 +964,20 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -965,18 +965,20 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
  
        MENU_LOOP (&PCB->NetlistLib);
        {
@@ -2190,10 +2190,10 @@ index 4cdc008..81747f5 100644
        }
        END_LOOP;
 diff --git a/src/toporouter.c b/src/toporouter.c
-index 0a83569..55e0f9e 100644
+index 75ce82b..503d3f5 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
-@@ -2548,7 +2548,8 @@ import_clusters(toporouter_t *r)
+@@ -2547,7 +2547,8 @@ import_clusters(toporouter_t *r)
    NETLIST_LOOP(&nets);
    {
      if(netlist->NetN > 0) {
