@@ -1,0 +1,21 @@
+Bottom: 01026523f11be09aa989c5f5fdcd3533393397b2
+Top:    07b760968010cd3557fe4c3a4cb0a84663bd0067
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-15 18:56:26 +0000
+
+Refresh of find-c-make-is-arc-line-pad-po
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 4734aac..a05c2cb 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -335,7 +335,6 @@ static bool IsLineInPolygon (LineType *, PolygonType *);
+ static bool IsPadInPolygon (PadType *, PolygonType *);
+ static bool IsPolygonInPolygon (PolygonType *, PolygonType *);
+ 
+-
+ /* ---------------------------------------------------------------------------
+  * some of the 'pad' routines are the same as for lines because the 'pad'
+  * struct starts with a line struct. See global.h for details
