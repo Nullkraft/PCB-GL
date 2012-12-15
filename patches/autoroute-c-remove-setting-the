@@ -1,7 +1,7 @@
-Bottom: dd1db958c1441ef479849fb0d73b8016be627f98
-Top:    b45843149c8079b6fd678e906e5f119ebcd0164e
+Bottom: c77e15879e929a7bcd9545d9e332138caa455fcb
+Top:    c77e15879e929a7bcd9545d9e332138caa455fcb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-12-14 20:17:29 +0000
+Date:   2012-12-15 18:32:39 +0000
 
 autoroute.c: Remove setting the Find flag to DRCFLAG
 
@@ -11,23 +11,4 @@ care of setting the appropriate flag.
 
 ---
 
-diff --git a/src/autoroute.c b/src/autoroute.c
-index 80aad25..ce75794 100644
---- a/src/autoroute.c
-+++ b/src/autoroute.c
-@@ -5183,7 +5183,6 @@ AutoRoute (bool selected)
-     }
-   if (PCB->Data->RatN == 0)
-     return (false);
--  SaveFindFlag (DRCFLAG);
-   rd = CreateRouteData ();
- 
-   if (1)
-@@ -5357,7 +5356,6 @@ donerouting:
- 
-       Redraw ();
-     }
--  RestoreFindFlag ();
- #if defined (ROUTE_DEBUG)
-   aabort = 0;
- #endif
+
