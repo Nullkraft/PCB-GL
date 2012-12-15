@@ -1,0 +1,51 @@
+Bottom: c77e15879e929a7bcd9545d9e332138caa455fcb
+Top:    4a7bc2e4af54986653be80be0428baa5582d7795
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-15 18:39:40 +0000
+
+Refresh of find-h-annotate-which-exported
+
+---
+
+diff --git a/src/find.h b/src/find.h
+index b74a668..a31f489 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -47,8 +47,8 @@ bool LineLineIntersect (LineType *, LineType *);
+ bool LineArcIntersect (LineType *, ArcType *);
+ bool PinLineIntersect (PinType *, LineType *);
+ bool LinePadIntersect (LineType *, PadType *);
+-bool ArcPadIntersect (ArcType *, PadType *);
+-bool IsPolygonInPolygon (PolygonType *, PolygonType *);
++/* NOT USED EXTERNALLY */ bool ArcPadIntersect (ArcType *, PadType *);
++/* NOT USED EXTERNALLY */ bool IsPolygonInPolygon (PolygonType *, PolygonType *);
+ void LookupElementConnections (ElementType *, FILE *);
+ void LookupConnectionsToAllElements (FILE *);
+ void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats);
+@@ -57,18 +57,18 @@ bool ResetFoundLinesAndPolygons (bool, int flag);
+ bool ResetFoundPinsViasAndPads (bool, int flag);
+ bool ResetConnections (bool, int flag);
+ void InitConnectionLookup (void);
+-void InitComponentLookup (void);
+-void InitLayoutLookup (void);
++/* NOT USED EXTERNALLY */ void InitComponentLookup (void);
++/* NOT USED EXTERNALLY */ void InitLayoutLookup (void);
+ void FreeConnectionLookupMemory (void);
+-void FreeComponentLookupMemory (void);
+-void FreeLayoutLookupMemory (void);
++/* NOT USED EXTERNALLY */ void FreeComponentLookupMemory (void);
++/* NOT USED EXTERNALLY */ void FreeLayoutLookupMemory (void);
+ void RatFindHook (int, void *, void *, void *, bool, bool);
+ void SaveFindFlag (int);
+ void RestoreFindFlag (void);
+ int DRCAll (void);
+-bool lineClear (LineType *, Cardinal);
+-bool IsLineInPolygon (LineType *, PolygonType *);
+-bool IsArcInPolygon (ArcType *, PolygonType *);
+-bool IsPadInPolygon (PadType *, PolygonType *);
++/* NOT USED */ bool lineClear (LineType *, Cardinal);
++/* NOT USED EXTERNALLY */ bool IsLineInPolygon (LineType *, PolygonType *);
++/* NOT USED EXTERNALLY */ bool IsArcInPolygon (ArcType *, PolygonType *);
++/* NOT USED EXTERNALLY */ bool IsPadInPolygon (PadType *, PolygonType *);
+ 
+ #endif
