@@ -1,5 +1,5 @@
 Bottom: 4dcbd8e547c863967eeb8678aca0d41859127772
-Top:    01026523f11be09aa989c5f5fdcd3533393397b2
+Top:    07b760968010cd3557fe4c3a4cb0a84663bd0067
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-15 18:52:22 +0000
 
@@ -12,10 +12,10 @@ compiler is more free to optimise their usage.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 6a1a7b4..4734aac 100644
+index 6a1a7b4..a05c2cb 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -330,6 +330,11 @@ static void GotoError (void);
+@@ -330,6 +330,10 @@ static void GotoError (void);
  static bool DRCFind (int, void *, void *, void *);
  static bool ListStart (int, void *, void *, void *);
  static bool SetThing (int, void *, void *, void *);
@@ -23,11 +23,10 @@ index 6a1a7b4..4734aac 100644
 +static bool IsLineInPolygon (LineType *, PolygonType *);
 +static bool IsPadInPolygon (PadType *, PolygonType *);
 +static bool IsPolygonInPolygon (PolygonType *, PolygonType *);
-+
  
  /* ---------------------------------------------------------------------------
   * some of the 'pad' routines are the same as for lines because the 'pad'
-@@ -2373,7 +2378,7 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
+@@ -2373,7 +2377,7 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
   * - check the two end points of the arc. If none of them matches
   * - check all segments of the polygon against the arc.
   */
@@ -36,7 +35,7 @@ index 6a1a7b4..4734aac 100644
  IsArcInPolygon (ArcType *Arc, PolygonType *Polygon)
  {
    BoxType *Box = (BoxType *) Arc;
-@@ -2405,7 +2410,7 @@ IsArcInPolygon (ArcType *Arc, PolygonType *Polygon)
+@@ -2405,7 +2409,7 @@ IsArcInPolygon (ArcType *Arc, PolygonType *Polygon)
   * - check the two end points of the line. If none of them matches
   * - check all segments of the polygon against the line.
   */
@@ -45,7 +44,7 @@ index 6a1a7b4..4734aac 100644
  IsLineInPolygon (LineType *Line, PolygonType *Polygon)
  {
    BoxType *Box = (BoxType *) Line;
-@@ -2444,7 +2449,7 @@ IsLineInPolygon (LineType *Line, PolygonType *Polygon)
+@@ -2444,7 +2448,7 @@ IsLineInPolygon (LineType *Line, PolygonType *Polygon)
   *
   * The polygon is assumed to already have been proven non-clearing
   */
@@ -54,7 +53,7 @@ index 6a1a7b4..4734aac 100644
  IsPadInPolygon (PadType *pad, PolygonType *polygon)
  {
      return IsLineInPolygon ((LineType *) pad, polygon);
-@@ -2456,7 +2461,7 @@ IsPadInPolygon (PadType *pad, PolygonType *polygon)
+@@ -2456,7 +2460,7 @@ IsPadInPolygon (PadType *pad, PolygonType *polygon)
   * First check all points out of P1 against P2 and vice versa.
   * If both fail check all lines of P1 against the ones of P2
   */
