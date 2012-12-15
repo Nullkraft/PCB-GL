@@ -1,5 +1,5 @@
 Bottom: 07b760968010cd3557fe4c3a4cb0a84663bd0067
-Top:    07b760968010cd3557fe4c3a4cb0a84663bd0067
+Top:    a7a59d0cecfc45a50545f4b86eb03c747132e91d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-15 18:39:38 +0000
 
@@ -8,4 +8,55 @@ find.h: Annotate which exported functions are not used!
 
 ---
 
-
+diff --git a/src/find.c b/src/find.c
+index a05c2cb..d7ea248 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -100,6 +100,18 @@
+ 
+ #undef DEBUG
+ 
++
++/* NOT USED EXTERNALLY */// bool ArcPadIntersect (ArcType *, PadType *);
++/* NOT USED EXTERNALLY */// void InitComponentLookup (void);
++/* NOT USED EXTERNALLY */// void InitLayoutLookup (void);
++/* NOT USED EXTERNALLY */// void FreeComponentLookupMemory (void);
++/* NOT USED EXTERNALLY */// void FreeLayoutLookupMemory (void);
++
++static bool IsArcInPolygon (ArcType *, PolygonType *);
++static bool IsLineInPolygon (LineType *, PolygonType *);
++static bool IsPadInPolygon (PadType *, PolygonType *);
++static bool IsPolygonInPolygon (PolygonType *, PolygonType *);
++
+ /* ---------------------------------------------------------------------------
+  * some local macros
+  */
+diff --git a/src/find.h b/src/find.h
+index 4c9279d..60a5d93 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -47,7 +47,7 @@ bool LineLineIntersect (LineType *, LineType *);
+ bool LineArcIntersect (LineType *, ArcType *);
+ bool PinLineIntersect (PinType *, LineType *);
+ bool LinePadIntersect (LineType *, PadType *);
+-bool ArcPadIntersect (ArcType *, PadType *);
++/* NOT USED EXTERNALLY */// bool ArcPadIntersect (ArcType *, PadType *);
+ void LookupElementConnections (ElementType *, FILE *);
+ void LookupConnectionsToAllElements (FILE *);
+ void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats);
+@@ -56,11 +56,11 @@ bool ResetFoundLinesAndPolygons (bool, int flag);
+ bool ResetFoundPinsViasAndPads (bool, int flag);
+ bool ResetConnections (bool, int flag);
+ void InitConnectionLookup (void);
+-void InitComponentLookup (void);
+-void InitLayoutLookup (void);
++/* NOT USED EXTERNALLY */// void InitComponentLookup (void);
++/* NOT USED EXTERNALLY */// void InitLayoutLookup (void);
+ void FreeConnectionLookupMemory (void);
+-void FreeComponentLookupMemory (void);
+-void FreeLayoutLookupMemory (void);
++/* NOT USED EXTERNALLY */// void FreeComponentLookupMemory (void);
++/* NOT USED EXTERNALLY */// void FreeLayoutLookupMemory (void);
+ void RatFindHook (int, void *, void *, void *, bool, bool);
+ void SaveFindFlag (int);
+ void RestoreFindFlag (void);
