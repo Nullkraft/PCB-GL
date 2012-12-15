@@ -335,7 +335,6 @@ static bool IsLineInPolygon (LineType *, PolygonType *);
 static bool IsPadInPolygon (PadType *, PolygonType *);
 static bool IsPolygonInPolygon (PolygonType *, PolygonType *);
 
-
 /* ---------------------------------------------------------------------------
  * some of the 'pad' routines are the same as for lines because the 'pad'
  * struct starts with a line struct. See global.h for details
