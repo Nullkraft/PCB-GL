@@ -47,7 +47,7 @@ bool LineLineIntersect (LineType *, LineType *);
 bool LineArcIntersect (LineType *, ArcType *);
 bool PinLineIntersect (PinType *, LineType *);
 bool LinePadIntersect (LineType *, PadType *);
-bool ArcPadIntersect (ArcType *, PadType *);
+/* NOT USED EXTERNALLY */// bool ArcPadIntersect (ArcType *, PadType *);
 void LookupElementConnections (ElementType *, FILE *);
 void LookupConnectionsToAllElements (FILE *);
 void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats);
