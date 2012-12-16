@@ -100,18 +100,6 @@
 
 #undef DEBUG
 
-
-/* NOT USED EXTERNALLY */// bool ArcPadIntersect (ArcType *, PadType *);
-/* NOT USED EXTERNALLY */// void InitComponentLookup (void);
-/* NOT USED EXTERNALLY */// void InitLayoutLookup (void);
-/* NOT USED EXTERNALLY */// void FreeComponentLookupMemory (void);
-/* NOT USED EXTERNALLY */// void FreeLayoutLookupMemory (void);
-
-static bool IsArcInPolygon (ArcType *, PolygonType *);
-static bool IsLineInPolygon (LineType *, PolygonType *);
-static bool IsPadInPolygon (PadType *, PolygonType *);
-static bool IsPolygonInPolygon (PolygonType *, PolygonType *);
-
 /* ---------------------------------------------------------------------------
  * some local macros
  */
