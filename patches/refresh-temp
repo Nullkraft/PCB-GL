@@ -1,0 +1,32 @@
+Bottom: a7a59d0cecfc45a50545f4b86eb03c747132e91d
+Top:    66f27c52d536b0cb5e811a199f618408156b013b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-16 12:33:40 +0000
+
+Refresh of find-h-annotate-which-exported
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index d7ea248..a05c2cb 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -100,18 +100,6 @@
+ 
+ #undef DEBUG
+ 
+-
+-/* NOT USED EXTERNALLY */// bool ArcPadIntersect (ArcType *, PadType *);
+-/* NOT USED EXTERNALLY */// void InitComponentLookup (void);
+-/* NOT USED EXTERNALLY */// void InitLayoutLookup (void);
+-/* NOT USED EXTERNALLY */// void FreeComponentLookupMemory (void);
+-/* NOT USED EXTERNALLY */// void FreeLayoutLookupMemory (void);
+-
+-static bool IsArcInPolygon (ArcType *, PolygonType *);
+-static bool IsLineInPolygon (LineType *, PolygonType *);
+-static bool IsPadInPolygon (PadType *, PolygonType *);
+-static bool IsPolygonInPolygon (PolygonType *, PolygonType *);
+-
+ /* ---------------------------------------------------------------------------
+  * some local macros
+  */
