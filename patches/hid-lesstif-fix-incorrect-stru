@@ -1,0 +1,36 @@
+Bottom: 07b760968010cd3557fe4c3a4cb0a84663bd0067
+Top:    3a455eb2744393fea1d7befeca0256d80d9f73ab
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-16 23:27:09 +0000
+
+hid/lesstif: Fix incorrect structure assignment due to bad refactoring.
+
+I should have built-tested all HIDs when I refectored this.. oops.
+
+Reported-by: Ralf Gerbig <rge@quengel.org>
+
+
+---
+
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 7caccee..1cdc545 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -4091,8 +4091,6 @@ hid_lesstif_init ()
+   lesstif_hid.flush_debug_draw        = lesstif_flush_debug_draw;
+   lesstif_hid.finish_debug_draw       = lesstif_finish_debug_draw;
+ 
+-  lesstif_hid.draw_pcb_polygon        = common_gui_draw_pcb_polygon;
+-
+   lesstif_hid.graphics                = &lesstif_graphics;
+ 
+   lesstif_graphics.make_gc             = lesstif_make_gc;
+@@ -4109,6 +4107,8 @@ hid_lesstif_init ()
+   lesstif_graphics.fill_polygon        = lesstif_fill_polygon;
+   lesstif_graphics.fill_rect           = lesstif_fill_rect;
+ 
++  lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
++
+   hid_register_hid (&lesstif_hid);
+ #include "lesstif_lists.h"
+ }
