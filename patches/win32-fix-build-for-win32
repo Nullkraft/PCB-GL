@@ -1,7 +1,7 @@
-Bottom: d908d49f892b39de14b83a3d8e6fc2daae3f3db1
-Top:    e045e5c57a7509f3047be0956bf9d33dde8957bb
+Bottom: 947edab5d449647cc1c8d4eb4ebf34be7295cee7
+Top:    3b08c4efa5ab1cc468ef52a990c6129a285c6091
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-12-17 00:02:16 +0000
+Date:   2012-12-17 21:36:00 +0000
 
 Win32: Fix build for win32
 
@@ -11625,7 +11625,7 @@ index fcf8c26..209dc7c 100644
  struct _hidgl_shader {
    char *name;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 81c0238..3815949 100644
+index a0d5f21..19fd6c9 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -30,6 +30,12 @@
