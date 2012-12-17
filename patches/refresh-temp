@@ -1,0 +1,31 @@
+Bottom: 0e91d7ff1647a40162d02c63cedda97b819dcbfa
+Top:    cd17c1491cae20a84bdecdae531bd82315797faf
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-17 21:38:25 +0000
+
+Refresh of port-ratfound-colouring-from-m
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 2e310ac..a573731 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1014,7 +1014,7 @@ set_pv_color (PinType *pv, int type)
+   else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+                                                                                                    : PCB->PinSelectedColor);
+   else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+-  else if (TEST_FLAG (RATFOUNDFLAG, pv)  gui->graphics->set_color (Output.fgGC, "#FF00FF");
++  else if (TEST_FLAG (RATFOUNDFLAG, pv)) gui->graphics->set_color (Output.fgGC, "#FF00FF");
+   else                                   gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor :
+                                                                                                      PCB->PinColor);
+ }
+@@ -1026,7 +1026,7 @@ set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
+   else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+                                                                                                    : PCB->PinSelectedColor);
+   else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+-  else if (TEST_FLAG (RATFOUNDFLAG, pv)  gui->graphics->set_color (Output.fgGC, "#FF00FF");
++  else if (TEST_FLAG (RATFOUNDFLAG, pv)) gui->graphics->set_color (Output.fgGC, "#FF00FF");
+   else
+     {
+       int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
