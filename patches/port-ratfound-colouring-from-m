@@ -1,5 +1,5 @@
 Bottom: 82d33a8e3eff0b3182c757d5063403c246bece5b
-Top:    0e91d7ff1647a40162d02c63cedda97b819dcbfa
+Top:    cd17c1491cae20a84bdecdae531bd82315797faf
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-17 21:34:49 +0000
 
@@ -9,7 +9,7 @@ Port RATFOUND colouring from master
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 13f9f30..2e310ac 100644
+index 13f9f30..a573731 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -995,6 +995,7 @@ set_object_color (AnyObjectType *obj,
@@ -24,7 +24,7 @@ index 13f9f30..2e310ac 100644
    else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                                     : PCB->PinSelectedColor);
    else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
-+  else if (TEST_FLAG (RATFOUNDFLAG, pv)  gui->graphics->set_color (Output.fgGC, "#FF00FF");
++  else if (TEST_FLAG (RATFOUNDFLAG, pv)) gui->graphics->set_color (Output.fgGC, "#FF00FF");
    else                                   gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor :
                                                                                                       PCB->PinColor);
  }
@@ -32,7 +32,7 @@ index 13f9f30..2e310ac 100644
    else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                                     : PCB->PinSelectedColor);
    else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
-+  else if (TEST_FLAG (RATFOUNDFLAG, pv)  gui->graphics->set_color (Output.fgGC, "#FF00FF");
++  else if (TEST_FLAG (RATFOUNDFLAG, pv)) gui->graphics->set_color (Output.fgGC, "#FF00FF");
    else
      {
        int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
