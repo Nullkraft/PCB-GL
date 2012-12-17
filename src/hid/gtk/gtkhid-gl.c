@@ -1014,7 +1014,7 @@ set_pv_color (PinType *pv, int type)
   else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                                    : PCB->PinSelectedColor);
   else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
-  else if (TEST_FLAG (RATFOUNDFLAG, pv)  gui->graphics->set_color (Output.fgGC, "#FF00FF");
+  else if (TEST_FLAG (RATFOUNDFLAG, pv)) gui->graphics->set_color (Output.fgGC, "#FF00FF");
   else                                   gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor :
                                                                                                      PCB->PinColor);
 }
@@ -1026,7 +1026,7 @@ set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
   else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                                    : PCB->PinSelectedColor);
   else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
-  else if (TEST_FLAG (RATFOUNDFLAG, pv)  gui->graphics->set_color (Output.fgGC, "#FF00FF");
+  else if (TEST_FLAG (RATFOUNDFLAG, pv)) gui->graphics->set_color (Output.fgGC, "#FF00FF");
   else
     {
       int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
