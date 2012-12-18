@@ -1,0 +1,60 @@
+Bottom: b153c46f928ef9901a988e8b47044b7cf3b3ebc5
+Top:    41d8934c86c931a8568293264d1b3c6b80101666
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-18 02:13:35 +0000
+
+Refresh of find-c-remove-unused-apis-save
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index b271191..2d8871f 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -285,7 +285,6 @@ typedef struct
+  */
+ static Coord Bloat = 0;
+ static int TheFlag = FOUNDFLAG;
+-static int OldFlag = FOUNDFLAG;
+ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
+ static int thing_type;
+ static bool User = false;    /* user action causing this */
+@@ -3496,25 +3495,6 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+   return (false);
+ }
+ 
+-/*----------------------------------------------------------------------------
+- * set up a temporary flag to use
+- */
+-void
+-SaveFindFlag (int NewFlag)
+-{
+-  OldFlag = TheFlag;
+-  TheFlag = NewFlag;
+-}
+-
+-/*----------------------------------------------------------------------------
+- * restore flag
+- */
+-void
+-RestoreFindFlag (void)
+-{
+-  TheFlag = OldFlag;
+-}
+-
+ /* DRC clearance callback */
+ 
+ static int
+diff --git a/src/find.h b/src/find.h
+index a4dc460..de0a8f8 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -62,8 +62,6 @@ void FreeConnectionLookupMemory (void);
+ void FreeComponentLookupMemory (void);
+ void FreeLayoutLookupMemory (void);
+ void RatFindHook (int, void *, void *, void *, bool, int flag, bool);
+-void SaveFindFlag (int);
+-void RestoreFindFlag (void);
+ int DRCAll (void);
+ 
+ #endif
