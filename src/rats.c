@@ -400,7 +400,7 @@ CheckShorts (LibraryMenuType *theNet)
   }
   ENDALL_LOOP;
   ALLPAD_LOOP (PCB->Data);
-  {CheckShorts
+  {
     if (TEST_FLAG (DRCFLAG, pad))
       {
 	warn = true;
