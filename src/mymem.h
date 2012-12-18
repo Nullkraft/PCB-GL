@@ -37,22 +37,6 @@
 #include <stdlib.h>
 #include "global.h"
 
-/* ---------------------------------------------------------------------------
- * number of additional objects that are allocated with one system call
- */
-#define	STEP_ELEMENT		50
-#define STEP_DRILL		30
-#define STEP_POINT		100
-#define	STEP_SYMBOLLINE		10
-#define	STEP_SELECTORENTRY	128
-#define	STEP_REMOVELIST		500
-#define	STEP_UNDOLIST		500
-#define	STEP_POLYGONPOINT	10
-#define	STEP_POLYGONHOLEINDEX	10
-#define	STEP_LIBRARYMENU	10
-#define	STEP_LIBRARYENTRY	20
-#define	STEP_RUBBERBAND		100
-
 #define STRDUP(x) (((x) != NULL) ? strdup (x) : NULL)
 
 /* ---------------------------------------------------------------------------
@@ -64,29 +48,33 @@ typedef struct
   char *Data;
 } DynamicStringType;
 
-RubberbandType * GetRubberbandMemory (void);
-PinType * GetPinMemory (ElementType *);
-PadType * GetPadMemory (ElementType *);
-PinType * GetViaMemory (DataType *);
-LineType * GetLineMemory (LayerType *);
-ArcType * GetArcMemory (LayerType *);
-RatType * GetRatMemory (DataType *);
-TextType * GetTextMemory (LayerType *);
-PolygonType * GetPolygonMemory (LayerType *);
-PointType * GetPointMemoryInPolygon (PolygonType *);
+RubberbandType *GetRubberbandMemory (void);
+PinType *GetPinMemory (ElementType *);
+PadType *GetPadMemory (ElementType *);
+PinType *GetViaMemory (DataType *);
+LineType *GetLineMemory (LayerType *);
+ArcType *GetArcMemory (LayerType *);
+RatType *GetRatMemory (DataType *);
+TextType *GetTextMemory (LayerType *);
+PolygonType *GetPolygonMemory (LayerType *);
+PointType *GetPointMemoryInPolygon (PolygonType *);
 Cardinal *GetHoleIndexMemoryInPolygon (PolygonType *);
-ElementType * GetElementMemory (DataType *);
-BoxType * GetBoxMemory (BoxListType *);
-ConnectionType * GetConnectionMemory (NetType *);
-NetType * GetNetMemory (NetListType *);
-NetListType * GetNetListMemory (NetListListType *);
-LibraryMenuType * GetLibraryMenuMemory (LibraryType *);
-LibraryEntryType * GetLibraryEntryMemory (LibraryMenuType *);
-ElementType **GetDrillElementMemory (DrillType *);
-PinType ** GetDrillPinMemory (DrillType *);
-DrillType * GetDrillInfoDrillMemory (DrillInfoType *);
+ElementType *GetElementMemory (DataType *);
+BoxType *GetBoxMemory (BoxListType *);
+ConnectionType *GetConnectionMemory (NetType *);
+NetType *GetNetMemory (NetListType *);
+NetListType *GetNetListMemory (NetListListType *);
+LibraryMenuType *GetLibraryMenuMemory (LibraryType *);
+LibraryEntryType *GetLibraryEntryMemory (LibraryMenuType *);
+ElementTypeHandle GetDrillElementMemory (DrillType *);
+PinTypeHandle GetDrillPinMemory (DrillType *);
+DrillType *GetDrillInfoDrillMemory (DrillInfoType *);
+void FreeDrillInfo (DrillInfoType *);
 void **GetPointerMemory (PointerListType *);
+AttributeType *GetAttributeMemory (AttributeListType *);
+void FreeAttribute (AttributeType *);
 void FreePolygonMemory (PolygonType *);
+void FreeAttributeListMemory (AttributeListType *);
 void FreeElementMemory (ElementType *);
 void FreePCBMemory (PCBType *);
 void FreeBoxListMemory (BoxListType *);
