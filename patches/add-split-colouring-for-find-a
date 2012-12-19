@@ -1,5 +1,5 @@
-Bottom: bfc5f2ae62edbdd95f1c42fdcc53bf54fb120fd0
-Top:    9d4440b6d5f4fbfca97dbeb9470f00a75ff6f4b5
+Bottom: 7cc97eb1064038cd1d4fc41b93858dcd3a14dcb9
+Top:    7cf459fd09212c473cbe59468512137a8970a040
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-10 01:19:10 +0000
 
@@ -182,10 +182,10 @@ index a2e86a8..2b56791 100644
  
    gui->graphics->set_color (Output.fgGC, color);
 diff --git a/src/find.c b/src/find.c
-index 2d8871f..3fbd646 100644
+index 964e8ae..a1d6bce 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -302,10 +302,10 @@ static bool LookupLOConnectionsToPVList (bool);
+@@ -305,10 +305,10 @@ static bool LookupLOConnectionsToPVList (bool);
  static bool LookupLOConnectionsToLOList (bool);
  static bool LookupPVConnectionsToLOList (bool);
  static bool LookupPVConnectionsToPVList (void);
@@ -200,7 +200,7 @@ index 2d8871f..3fbd646 100644
  static bool LookupLOConnectionsToRatEnd (PointType *, Cardinal);
  static bool IsRatPointOnLineEnd (PointType *, LineType *);
  static bool ArcArcIntersect (ArcType *, ArcType *);
-@@ -904,21 +904,21 @@ LookupLOConnectionsToLOList (bool AndRats)
+@@ -857,21 +857,21 @@ LookupLOConnectionsToLOList (bool AndRats)
                    position = &lineposition[layer];
                    for (; *position < LineList[layer].Number; (*position)++)
                      if (LookupLOConnectionsToLine
@@ -225,7 +225,7 @@ index 2d8871f..3fbd646 100644
                        return (true);
                  }
                else
-@@ -934,7 +934,7 @@ LookupLOConnectionsToLOList (bool AndRats)
+@@ -887,7 +887,7 @@ LookupLOConnectionsToLOList (bool AndRats)
                    position = &padposition[layer];
                    for (; *position < PadList[layer].Number; (*position)++)
                      if (LookupLOConnectionsToPad
@@ -234,7 +234,7 @@ index 2d8871f..3fbd646 100644
                        return (true);
                  }
              }
-@@ -1767,7 +1767,7 @@ LOCtoArcPad_callback (const BoxType * b, void *cl)
+@@ -1720,7 +1720,7 @@ LOCtoArcPad_callback (const BoxType * b, void *cl)
   * Xij means Xj at arc i
   */
  static bool
@@ -243,7 +243,7 @@ index 2d8871f..3fbd646 100644
  {
    Cardinal entry;
    struct lo_info info;
-@@ -1898,7 +1898,7 @@ LOCtoLinePad_callback (const BoxType * b, void *cl)
+@@ -1851,7 +1851,7 @@ LOCtoLinePad_callback (const BoxType * b, void *cl)
   */
  static bool
  LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
@@ -252,7 +252,7 @@ index 2d8871f..3fbd646 100644
  {
    Cardinal entry;
    struct lo_info info;
-@@ -1906,12 +1906,16 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+@@ -1859,12 +1859,16 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
    info.line = *Line;
    info.layer = LayerGroup;
    EXPAND_BOUNDS (&info.line)
@@ -275,7 +275,7 @@ index 2d8871f..3fbd646 100644
  
    /* loop over all layers of the group */
    for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
-@@ -2167,23 +2171,27 @@ LOCtoPadPad_callback (const BoxType * b, void *cl)
+@@ -2120,23 +2124,27 @@ LOCtoPadPad_callback (const BoxType * b, void *cl)
   * layergroup. All found connections are added to the list
   */
  static bool
@@ -310,7 +310,7 @@ index 2d8871f..3fbd646 100644
  
    /* loop over all layers of the group */
    for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
-@@ -2301,7 +2309,7 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
+@@ -2254,7 +2262,7 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
   * on the given layergroup. All found connections are added to the list
   */
  static bool
@@ -319,7 +319,7 @@ index 2d8871f..3fbd646 100644
  {
    Cardinal entry;
    struct lo_info info;
-@@ -2311,12 +2319,17 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
+@@ -2264,12 +2272,17 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
    info.polygon = *Polygon;
    EXPAND_BOUNDS (&info.polygon);
    info.layer = LayerGroup;
