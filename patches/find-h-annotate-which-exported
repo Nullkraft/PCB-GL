@@ -1,5 +1,5 @@
 Bottom: 457d34b04f8bf7d8314a3ea0b43ed65c321c8b32
-Top:    457d34b04f8bf7d8314a3ea0b43ed65c321c8b32
+Top:    3d3e3fb31f47af4d91253c7d18239c1e3259a7f9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-15 18:39:38 +0000
 
@@ -8,4 +8,16 @@ find.h: Annotate which exported functions are not used!
 
 ---
 
-
+diff --git a/src/find.h b/src/find.h
+index 9644727..7afe520 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -47,7 +47,7 @@ bool LineLineIntersect (LineType *, LineType *);
+ bool LineArcIntersect (LineType *, ArcType *);
+ bool PinLineIntersect (PinType *, LineType *);
+ bool LinePadIntersect (LineType *, PadType *);
+-bool ArcPadIntersect (ArcType *, PadType *);
++/* NOT USED EXTERNALLY */// bool ArcPadIntersect (ArcType *, PadType *);
+ void LookupElementConnections (ElementType *, FILE *);
+ void LookupConnectionsToAllElements (FILE *);
+ void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats);
