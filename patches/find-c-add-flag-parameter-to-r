@@ -8,6 +8,11 @@ find.c: Add flag parameter to RatFindHook() API.
 This saves us having to expose an API to save and restore the
 find.c static "theFlag" variable.
 
+The key difference (once the save/restore are removed), is that we
+then won't restore "TheFlag" variable after we are done. This will
+not matter as all entry-points in find.c now take a flag parameter
+and there should not be reentrancy in these calls.
+
 
 ---
 
