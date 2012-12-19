@@ -7,10 +7,10 @@ find.c: Make some setup / teardown functions not used outside of find.c static.
 
 This makes the following functions private to find.c:
 
-  InitComponentLookupData
-  InitLayoutLookupData
-  FreeComponentLookupData
-  FreeLayoutLookupData
+  InitComponentLookup
+  FreeComponentLookupMemory
+  InitLayoutLookup
+  FreeLayoutLookupMemory
 
 
 ---
