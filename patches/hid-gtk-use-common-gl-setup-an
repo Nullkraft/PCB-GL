@@ -1,5 +1,5 @@
 Bottom: 569982b91900dc870c7b5a560fd8eb02c0816aea
-Top:    0306df44b93d960dae38028fd6b086a1543e23b3
+Top:    b0ecaac03a4cee3fc35723b2693d5f56a0be1c5b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 20:33:01 +0000
 
@@ -9,7 +9,7 @@ hid/gtk: Use common GL setup and teardown code for different expose paths
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9124ba5..264aa43 100644
+index 9124ba5..dad2d61 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -820,9 +820,8 @@ ghid_drawing_area_configure_hook (GHidPort *port)
@@ -61,7 +61,7 @@ index 9124ba5..264aa43 100644
    GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
    GtkAllocation allocation;
    view_data save_view;
-@@ -1084,14 +1080,10 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1084,12 +1080,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    PCB->MaxWidth = pinout->x_max;
    PCB->MaxHeight = pinout->y_max;
  
@@ -73,11 +73,8 @@ index 9124ba5..264aa43 100644
    hidgl_start_render ();
 -  gport->render_priv->in_context = true;
  
--  glEnable (GL_BLEND);
-+//  glEnable (GL_BLEND);
+   glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
- 
-   glViewport (0, 0, allocation.width, allocation.height);
 @@ -1132,16 +1124,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
