@@ -1,0 +1,83 @@
+Bottom: 20fe7c6973d7285ef1da4d96fb7223c597d0896d
+Top:    5badde7164f7041e9249a7470e736ba3c6b9c16e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 16:39:57 +0000
+
+Refresh of copy-c-add-mask_flags-paramete
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index d311420..b8d34c6 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -214,7 +214,7 @@ AddElementToBuffer (ElementType *Element)
+   ElementType *element;
+ 
+   element = GetElementMemory (Dest);
+-  CopyElementLowLevel (Dest, element, Element, false, 0, 0);
++  CopyElementLowLevel (Dest, element, Element, false, 0, 0, FOUNDFLAG);
+   CLEAR_FLAG (ExtraFlag, element);
+   if (ExtraFlag)
+     {
+diff --git a/src/copy.c b/src/copy.c
+index 9d92ced..287a350 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -116,7 +116,7 @@ CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
+ ElementType *
+ CopyElementLowLevel (DataType *Data, ElementType *Dest,
+ 		     ElementType *Src, bool uniqueName, Coord dx,
+-		     Coord dy)
++		     Coord dy, int mask_flags)
+ {
+   int i;
+   /* release old memory if necessary */
+@@ -125,14 +125,14 @@ CopyElementLowLevel (DataType *Data, ElementType *Dest,
+ 
+   /* both coordinates and flags are the same */
+   Dest = CreateNewElement (Data, Dest, &PCB->Font,
+-			   MaskFlags (Src->Flags, FOUNDFLAG),
++			   MaskFlags (Src->Flags, mask_flags),
+ 			   DESCRIPTION_NAME (Src), NAMEONPCB_NAME (Src),
+ 			   VALUE_NAME (Src), DESCRIPTION_TEXT (Src).X + dx,
+ 			   DESCRIPTION_TEXT (Src).Y + dy,
+ 			   DESCRIPTION_TEXT (Src).Direction,
+ 			   DESCRIPTION_TEXT (Src).Scale,
+ 			   MaskFlags (DESCRIPTION_TEXT (Src).Flags,
+-				      FOUNDFLAG), uniqueName);
++				      mask_flags), uniqueName);
+ 
+   /* abort on error */
+   if (!Dest)
+@@ -149,7 +149,7 @@ CopyElementLowLevel (DataType *Data, ElementType *Dest,
+   {
+     CreateNewPin (Dest, pin->X + dx, pin->Y + dy, pin->Thickness,
+ 		  pin->Clearance, pin->Mask, pin->DrillingHole,
+-		  pin->Name, pin->Number, MaskFlags (pin->Flags, FOUNDFLAG));
++		  pin->Name, pin->Number, MaskFlags (pin->Flags, mask_flags));
+   }
+   END_LOOP;
+   PAD_LOOP (Src);
+@@ -157,7 +157,7 @@ CopyElementLowLevel (DataType *Data, ElementType *Dest,
+     CreateNewPad (Dest, pad->Point1.X + dx, pad->Point1.Y + dy,
+ 		  pad->Point2.X + dx, pad->Point2.Y + dy, pad->Thickness,
+ 		  pad->Clearance, pad->Mask, pad->Name, pad->Number,
+-		  MaskFlags (pad->Flags, FOUNDFLAG));
++		  MaskFlags (pad->Flags, mask_flags));
+   }
+   END_LOOP;
+   ARC_LOOP (Src);
+diff --git a/src/copy.h b/src/copy.h
+index e9871fc..9c65f32 100644
+--- a/src/copy.h
++++ b/src/copy.h
+@@ -41,8 +41,7 @@
+ 
+ 
+ PolygonType * CopyPolygonLowLevel (PolygonType *, PolygonType *);
+-ElementType * CopyElementLowLevel (DataType *, ElementType *,
+-				    ElementType *, bool, Coord, Coord);
++ElementType * CopyElementLowLevel (DataType *, ElementType *, ElementType *, bool, Coord, Coord, int mask_flags);
+ bool CopyPastebufferToLayout (Coord, Coord);
+ void *CopyObject (int, void *, void *, void *, Coord, Coord);
