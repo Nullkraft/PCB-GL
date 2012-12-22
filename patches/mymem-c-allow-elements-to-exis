@@ -8,6 +8,10 @@ mymem.c: Allow elements to exist independently of a buffer.
 If the DataType pointer to GetElementMemory is NULL, we allocate
 memory but don't add to the buffer's element list or counters.
 
+This is useful as it will allow rendering of pinout previews without
+needing separate (or static) memory allocation to hold the previewed
+Element.
+
 
 ---
 
