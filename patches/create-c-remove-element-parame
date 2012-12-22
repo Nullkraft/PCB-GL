@@ -1,5 +1,5 @@
 Bottom: 8ea8bb857314d10598c0e3b9b8013e1c4f72ba3d
-Top:    8ea8bb857314d10598c0e3b9b8013e1c4f72ba3d
+Top:    775aea68d3cf5c980123e2a8f46e29732d1bc0eb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 17:09:24 +0000
 
@@ -11,4 +11,57 @@ to do this when we have an API with "New" in the name!
 
 ---
 
-
+diff --git a/src/buffer.c b/src/buffer.c
+index 44b181c..f8f4749 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -969,7 +969,7 @@ ConvertBufferToElement (BufferType *Buffer)
+   if (Buffer->Data->pcb == 0)
+     Buffer->Data->pcb = PCB;
+ 
+-  Element = CreateNewElement (PCB->Data, NULL, &PCB->Font, NoFlags (),
++  Element = CreateNewElement (PCB->Data, &PCB->Font, NoFlags (),
+ 			      NULL, NULL, NULL, PASTEBUFFER->X,
+ 			      PASTEBUFFER->Y, 0, 100,
+ 			      MakeFlags (SWAP_IDENT ? ONSOLDERFLAG : NOFLAG),
+diff --git a/src/create.c b/src/create.c
+index 7919b43..992c49e 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -667,19 +667,18 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
+  * memory is allocated if needed
+  */
+ ElementType *
+-CreateNewElement (DataType *Data, ElementType *Element,
+-		  FontType *PCBFont,
+-		  FlagType Flags,
++CreateNewElement (DataType *Data, FontType *PCBFont, FlagType Flags,
+ 		  char *Description, char *NameOnPCB, char *Value,
+ 		  Coord TextX, Coord TextY, BYTE Direction,
+ 		  int TextScale, FlagType TextFlags, bool uniqueName)
+ {
++  ElementType *Element;
++
+ #ifdef DEBUG
+   printf("Entered CreateNewElement.....\n");
+ #endif
+ 
+-  if (!Element)
+-    Element = GetElementMemory (Data);
++  Element = GetElementMemory (Data);
+ 
+   /* copy values and set additional information */
+   TextScale = MAX (MIN_TEXTSCALE, TextScale);
+diff --git a/src/create.h b/src/create.h
+index 4872514..e9c2697 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -53,7 +53,7 @@ TextType * CreateNewText (LayerType *, FontType *, Coord, Coord, unsigned, int,
+ PolygonType * CreateNewPolygon (LayerType *, FlagType);
+ PointType * CreateNewPointInPolygon (PolygonType *, Coord, Coord);
+ PolygonType * CreateNewHoleInPolygon (PolygonType *polygon);
+-ElementType * CreateNewElement (DataType *, ElementType *, FontType *, FlagType, char *, char *, char *, Coord, Coord, BYTE, int, FlagType, bool);
++ElementType * CreateNewElement (DataType *, FontType *, FlagType, char *, char *, char *, Coord, Coord, BYTE, int, FlagType, bool);
+ LineType * CreateNewLineInElement (ElementType *, Coord, Coord, Coord, Coord, Coord);
+ ArcType * CreateNewArcInElement (ElementType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord);
+ PinType * CreateNewPin (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord, char *, char *, FlagType);
