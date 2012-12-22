@@ -1,0 +1,13 @@
+Bottom: 0306df44b93d960dae38028fd6b086a1543e23b3
+Top:    0306df44b93d960dae38028fd6b086a1543e23b3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 20:35:09 +0000
+
+hid/gtk: Disable GL alpha-blending for the pinout preview
+
+We aren't using subcompositing for this, so don't alpha-blend.
+
+
+---
+
+
