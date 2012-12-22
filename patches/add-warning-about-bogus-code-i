@@ -1,5 +1,5 @@
-Bottom: dd0a3babc2c0d4eff81d89d31a763b75cd824ccc
-Top:    3ff87638555ade345486c3fbfb01009cd769bbd7
+Bottom: 8f29a48836e07ad9ba4b1855d5ea7fb57ce91e97
+Top:    b093f7002842e4d72aa9be55a4a75ec783b62172
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-11-15 01:46:48 +0000
 
@@ -9,10 +9,10 @@ Add warning about bogus code in strflags.c
 ---
 
 diff --git a/src/strflags.c b/src/strflags.c
-index 6cb6548..e6ce175 100644
+index 3e57696..d6d6273 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
-@@ -575,6 +575,7 @@ dump_flag (FlagType * f)
+@@ -576,6 +576,7 @@ dump_flag (FlagType * f)
  {
    int l;
    printf ("F:%08x T:[", f->f);
