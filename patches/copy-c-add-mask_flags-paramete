@@ -1,5 +1,5 @@
 Bottom: 3c3a98d4ee95978cca9727aa82b5ac077cccaa81
-Top:    ea51a4a7b5316c5fc375408a8cacaecdaf79313b
+Top:    6902b45fea4e337dfe6e936cd7a8b9291b55f745
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 16:35:18 +0000
 
@@ -9,18 +9,37 @@ copy.c: Add mask_flags parameter to CopyLowLevel()
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 69f9beb..53c15f5 100644
+index 69f9beb..44b181c 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -214,7 +214,7 @@ AddElementToBuffer (ElementType *Element)
+@@ -214,26 +214,7 @@ AddElementToBuffer (ElementType *Element)
    ElementType *element;
  
    element = GetElementMemory (Dest);
 -  CopyElementLowLevel (Dest, element, Element, false, 0, 0);
-+  CopyElementLowLevel (Dest, element, Element, false, 0, 0, FOUNDFLAG);
-   CLEAR_FLAG (ExtraFlag, element);
-   if (ExtraFlag)
-     {
+-  CLEAR_FLAG (ExtraFlag, element);
+-  if (ExtraFlag)
+-    {
+-      ELEMENTTEXT_LOOP (element);
+-      {
+-	CLEAR_FLAG (ExtraFlag, text);
+-      }
+-      END_LOOP;
+-      PIN_LOOP (element);
+-      {
+-	CLEAR_FLAG (ExtraFlag, pin);
+-      }
+-      END_LOOP;
+-      PAD_LOOP (element);
+-      {
+-	CLEAR_FLAG (ExtraFlag, pad);
+-      }
+-      END_LOOP;
+-    }
++  CopyElementLowLevel (Dest, element, Element, false, 0, 0, FOUNDFLAG | ExtraFlag);
+   return (element);
+ }
+ 
 diff --git a/src/copy.c b/src/copy.c
 index 9d92ced..287a350 100644
 --- a/src/copy.c
