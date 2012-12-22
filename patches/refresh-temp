@@ -1,0 +1,60 @@
+Bottom: 8ea8bb857314d10598c0e3b9b8013e1c4f72ba3d
+Top:    c6f01591c0aced09c9638812a8ac5ef7de3cdd66
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 17:08:45 +0000
+
+Refresh of copy-c-remove-dest-variable-to
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 44b181c..79dd87a 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -211,11 +211,7 @@ AddPolygonToBuffer (LayerType *Layer, PolygonType *Polygon)
+ static void *
+ AddElementToBuffer (ElementType *Element)
+ {
+-  ElementType *element;
+-
+-  element = GetElementMemory (Dest);
+-  CopyElementLowLevel (Dest, element, Element, false, 0, 0, FOUNDFLAG | ExtraFlag);
+-  return (element);
++  return CopyElementLowLevel (Dest, Element, false, 0, 0, FOUNDFLAG | ExtraFlag);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/copy.c b/src/copy.c
+index a9be335..7a21171 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -114,14 +114,11 @@ CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
+  * if necessary
+  */
+ ElementType *
+-CopyElementLowLevel (DataType *Data, ElementType *Dest,
+-		     ElementType *Src, bool uniqueName, Coord dx,
+-		     Coord dy, int mask_flags)
++CopyElementLowLevel (DataType *Data, ElementType *Src,
++                     bool uniqueName, Coord dx, Coord dy, int mask_flags)
+ {
+   int i;
+-  /* release old memory if necessary */
+-  if (Dest)
+-    FreeElementMemory (Dest);
++  ElementType *Dest;
+ 
+   /* both coordinates and flags are the same */
+   Dest = CreateNewElement (Data, Dest, &PCB->Font,
+diff --git a/src/copy.h b/src/copy.h
+index 9c65f32..e7f39cf 100644
+--- a/src/copy.h
++++ b/src/copy.h
+@@ -41,7 +41,7 @@
+ 
+ 
+ PolygonType * CopyPolygonLowLevel (PolygonType *, PolygonType *);
+-ElementType * CopyElementLowLevel (DataType *, ElementType *, ElementType *, bool, Coord, Coord, int mask_flags);
++ElementType * CopyElementLowLevel (DataType *, ElementType *, bool, Coord, Coord, int mask_flags);
+ bool CopyPastebufferToLayout (Coord, Coord);
+ void *CopyObject (int, void *, void *, void *, Coord, Coord);
