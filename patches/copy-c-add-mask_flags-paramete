@@ -1,15 +1,16 @@
-Bottom: 3c3a98d4ee95978cca9727aa82b5ac077cccaa81
+Bottom: 20fe7c6973d7285ef1da4d96fb7223c597d0896d
 Top:    6902b45fea4e337dfe6e936cd7a8b9291b55f745
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-12-22 16:35:18 +0000
+Date:   2012-12-22 16:45:30 +0000
 
-copy.c: Add mask_flags parameter to CopyLowLevel()
+copy.c: Add mask_flags parameter to CopyElementLowLevel()
 
+This avoids us needing to unset ExtraFlags separately in buffer.c
 
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 69f9beb..44b181c 100644
+index d311420..44b181c 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -214,26 +214,7 @@ AddElementToBuffer (ElementType *Element)
@@ -27,12 +28,12 @@ index 69f9beb..44b181c 100644
 -      END_LOOP;
 -      PIN_LOOP (element);
 -      {
--	CLEAR_FLAG (ExtraFlag, pin);
+-	CLEAR_FLAG (FOUNDFLAG | ExtraFlag, pin);
 -      }
 -      END_LOOP;
 -      PAD_LOOP (element);
 -      {
--	CLEAR_FLAG (ExtraFlag, pad);
+-	CLEAR_FLAG (FOUNDFLAG | ExtraFlag, pad);
 -      }
 -      END_LOOP;
 -    }
