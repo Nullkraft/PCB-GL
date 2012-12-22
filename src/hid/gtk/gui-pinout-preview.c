@@ -86,8 +86,8 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
    * move element to a 5% offset from zero position
    * set all package lines/arcs to zero width
    */
-  pinout->element = CopyElementLowLevel (NULL, NULL, element, FALSE, 0, 0, FOUNDFLAG);
-  PIN_LOOP (pinout->element);
+  pinout->element = CopyElementLowLevel (NULL, element, FALSE, 0, 0, FOUNDFLAG);
+  PIN_LOOP (&pinout->element);
   {
     SET_FLAG (DISPLAYNAMEFLAG, pin);
   }
