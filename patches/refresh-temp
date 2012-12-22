@@ -1,0 +1,50 @@
+Bottom: a6654f391f55d5713f167f9196bcb828f894caeb
+Top:    a9fdb46ae22b73bb815ac9d8dc9878531c8cc19e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 17:24:27 +0000
+
+Refresh of copy-c-remove-dest-variable-to
+
+---
+
+diff --git a/src/copy.c b/src/copy.c
+index 7a21171..aaad13e 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -121,7 +121,7 @@ CopyElementLowLevel (DataType *Data, ElementType *Src,
+   ElementType *Dest;
+ 
+   /* both coordinates and flags are the same */
+-  Dest = CreateNewElement (Data, Dest, &PCB->Font,
++  Dest = CreateNewElement (Data, NULL, &PCB->Font,
+ 			   MaskFlags (Src->Flags, mask_flags),
+ 			   DESCRIPTION_NAME (Src), NAMEONPCB_NAME (Src),
+ 			   VALUE_NAME (Src), DESCRIPTION_TEXT (Src).X + dx,
+@@ -287,11 +287,9 @@ CopyElement (ElementType *Element)
+ 	 Element->Name[1].TextString);
+ #endif
+ 
+-  ElementType *element = CopyElementLowLevel (PCB->Data,
+-						NULL, Element,
+-						TEST_FLAG (UNIQUENAMEFLAG,
+-							   PCB), DeltaX,
+-						DeltaY, FOUNDFLAG);
++  ElementType *element = CopyElementLowLevel (PCB->Data, Element,
++                                              TEST_FLAG (UNIQUENAMEFLAG, PCB),
++                                              DeltaX, DeltaY, FOUNDFLAG);
+ 
+   /* this call clears the polygons */
+   AddObjectToCreateUndoList (ELEMENT_TYPE, element, element, element);
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index 8f57c6e..3961a48 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -66,7 +66,7 @@ pinout_set_view (GhidPinoutPreview * pinout)
+ static void
+ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
+ {
+-  if (pinout->element != NULL)
++  if (&pinout->element != NULL)
+     {
+       FreeElementMemory (&pinout->element);
+       g_slice_free (ElementType, pinout->element);
