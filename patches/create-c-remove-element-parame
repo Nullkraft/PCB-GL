@@ -1,5 +1,5 @@
 Bottom: fe0e7cad9acd6757d0f837dc52faee85f481026b
-Top:    7ff4dd3f9a273862b995721c80c5d7de75b3b1ed
+Top:    6c3048c884ad8ad307dc6d52ccc612b7e74b33b1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 17:09:24 +0000
 
@@ -27,6 +27,19 @@ index 79dd87a..2ed2794 100644
  			      NULL, NULL, NULL, PASTEBUFFER->X,
  			      PASTEBUFFER->Y, 0, 100,
  			      MakeFlags (SWAP_IDENT ? ONSOLDERFLAG : NOFLAG),
+diff --git a/src/copy.c b/src/copy.c
+index aaad13e..6c61412 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -121,7 +121,7 @@ CopyElementLowLevel (DataType *Data, ElementType *Src,
+   ElementType *Dest;
+ 
+   /* both coordinates and flags are the same */
+-  Dest = CreateNewElement (Data, NULL, &PCB->Font,
++  Dest = CreateNewElement (Data, &PCB->Font,
+ 			   MaskFlags (Src->Flags, mask_flags),
+ 			   DESCRIPTION_NAME (Src), NAMEONPCB_NAME (Src),
+ 			   VALUE_NAME (Src), DESCRIPTION_TEXT (Src).X + dx,
 diff --git a/src/create.c b/src/create.c
 index 7919b43..992c49e 100644
 --- a/src/create.c
