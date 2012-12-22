@@ -1,0 +1,14 @@
+Bottom: 20fe7c6973d7285ef1da4d96fb7223c597d0896d
+Top:    20fe7c6973d7285ef1da4d96fb7223c597d0896d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 16:40:46 +0000
+
+buffer.c: Don't re-mask FOUNDFLAG of a copied element
+
+The FOUNDFLAG is already masked by CopyElementLowlevel(), so don't
+bother repeating it here.
+
+
+---
+
+
