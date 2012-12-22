@@ -1083,8 +1083,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   ghid_start_drawing (gport, widget);
   hidgl_start_render ();
 
+#if 0  /* We disable alpha blending here, as hid_expose_callback() does not
+          call set_layer() as appropriate for us to sub-composite rendering
+          from each layer. If we leave alpha-blending on, it means text and
+          overlapping pads are rendered looking very ugly.
+
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
 
   glViewport (0, 0, allocation.width, allocation.height);
 
@@ -1108,6 +1114,11 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
   hidgl_reset_stencil_usage ();
+
+  /* Disable the stencil test until we need it - otherwise it gets dirty */
+  glDisable (GL_STENCIL_TEST);
+  glStencilMask (0);
+  glStencilFunc (GL_ALWAYS, 0, 0);
 
   /* call the drawing routine */
   ghid_invalidate_current_gc ();
