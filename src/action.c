@@ -107,6 +107,7 @@ typedef enum
   F_ClearAndRedraw,
   F_ClearList,
   F_Close,
+  F_Found,
   F_Connection,
   F_Convert,
   F_Copy,
