@@ -1,0 +1,22 @@
+Bottom: 0306df44b93d960dae38028fd6b086a1543e23b3
+Top:    b0ecaac03a4cee3fc35723b2693d5f56a0be1c5b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 20:35:19 +0000
+
+Refresh of hid-gtk-use-common-gl-setup-an
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 264aa43..dad2d61 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1083,7 +1083,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   ghid_start_drawing (gport, widget);
+   hidgl_start_render ();
+ 
+-//  glEnable (GL_BLEND);
++  glEnable (GL_BLEND);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 
+   glViewport (0, 0, allocation.width, allocation.height);
