@@ -807,6 +807,8 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
 {
   render_priv *priv = port->render_priv;
 
+  GTK_WIDGET_UNSET_FLAGS (GTK_WIDGET (widget), GTK_DOUBLE_BUFFERED);
+
   gtk_widget_set_gl_capability (widget,
                                 priv->glconfig,
                                 NULL,
