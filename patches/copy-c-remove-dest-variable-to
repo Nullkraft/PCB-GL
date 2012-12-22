@@ -5,9 +5,8 @@ Date:   2012-12-22 17:00:22 +0000
 
 copy.c: Remove "Dest" variable to CopyElementLowLevel() function
 
-We no longer require this, as all callers either pass NULL or go
-to the un-necessary effort of creating a structure in memory for
-CopyElementLowLevel to free immediately!
+We no longer require this, as all callers pass NULL in order that
+CopyElementLowLevel() allocates memory for the new element.
 
 
 ---
