@@ -114,14 +114,11 @@ CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
  * if necessary
  */
 ElementType *
-CopyElementLowLevel (DataType *Data, ElementType *Dest,
-		     ElementType *Src, bool uniqueName, Coord dx,
-		     Coord dy, int mask_flags)
+CopyElementLowLevel (DataType *Data, ElementType *Src,
+                     bool uniqueName, Coord dx, Coord dy, int mask_flags)
 {
   int i;
-  /* release old memory if necessary */
-  if (Dest)
-    FreeElementMemory (Dest);
+  ElementType *Dest;
 
   /* both coordinates and flags are the same */
   Dest = CreateNewElement (Data, Dest, &PCB->Font,
