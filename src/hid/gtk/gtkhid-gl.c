@@ -998,10 +998,11 @@ set_layer_object_color (LayerType *layer, AnyObjectType *obj)
 static void
 set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
 {
-  if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
-  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+  if (TEST_FLAG (WARNFLAG, pv))           gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+  else if (TEST_FLAG (SELECTEDFLAG, pv))  gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
                                                                                                    : PCB->PinSelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+  else if (TEST_FLAG (CONNECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+  else if (TEST_FLAG (FOUNDFLAG, pv))     gui->graphics->set_color (Output.fgGC, PCB->FoundColor);
   else
     {
       int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
@@ -1512,8 +1513,10 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
     color = PCB->WarnColor;
   else if (TEST_FLAG (SELECTEDFLAG, Pin))
     color = (Type == VIA_TYPE) ? PCB->ViaSelectedColor : PCB->PinSelectedColor;
-  else if (TEST_FLAG (FOUNDFLAG, Pin))
+  else if (TEST_FLAG (CONNECTEDFLAG, Pin))
     color = PCB->ConnectedColor;
+  else if (TEST_FLAG (FOUNDFLAG, Pin))
+    color = PCB->FoundColor;
   else
     color = "drill";
 
