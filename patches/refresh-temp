@@ -1,0 +1,39 @@
+Bottom: 87298eb6752fcca9cef63384a83b77a361b58cbc
+Top:    dc34b5d170c1fd38c11ccf073e7c3f129826ecd0
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 22:32:49 +0000
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 573edbe..7df381a 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -998,10 +998,11 @@ set_layer_object_color (LayerType *layer, AnyObjectType *obj)
+ static void
+ set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
+ {
+-  if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+-  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
++  if (TEST_FLAG (WARNFLAG, pv))           gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
++  else if (TEST_FLAG (SELECTEDFLAG, pv))  gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+                                                                                                    : PCB->PinSelectedColor);
+-  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
++  else if (TEST_FLAG (CONNECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
++  else if (TEST_FLAG (FOUNDFLAG, pv))     gui->graphics->set_color (Output.fgGC, PCB->FoundColor);
+   else
+     {
+       int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+@@ -1512,8 +1513,10 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
+     color = PCB->WarnColor;
+   else if (TEST_FLAG (SELECTEDFLAG, Pin))
+     color = (Type == VIA_TYPE) ? PCB->ViaSelectedColor : PCB->PinSelectedColor;
+-  else if (TEST_FLAG (FOUNDFLAG, Pin))
++  else if (TEST_FLAG (CONNECTEDFLAG, Pin))
+     color = PCB->ConnectedColor;
++  else if (TEST_FLAG (FOUNDFLAG, Pin))
++    color = PCB->FoundColor;
+   else
+     color = "drill";
