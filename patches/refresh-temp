@@ -1,0 +1,21 @@
+Bottom: 8b4c9dbb73063ff2b368cb694a315d0b64f5533d
+Top:    c06bec1fd8ff40e74e3d6294a2fdb42139e2b860
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 22:07:04 +0000
+
+Refresh of add-split-colouring-for-find-a
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 020563b..4e58c9b 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -107,6 +107,7 @@ typedef enum
+   F_ClearAndRedraw,
+   F_ClearList,
+   F_Close,
++  F_Found,
+   F_Connection,
+   F_Convert,
+   F_Copy,
