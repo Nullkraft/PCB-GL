@@ -1085,15 +1085,23 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   ghid_start_drawing (gport, widget);
   hidgl_start_render ();
 
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//  glEnable (GL_BLEND);
+//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glViewport (0, 0, allocation.width, allocation.height);
 
+#if 0
   glEnable (GL_SCISSOR_TEST);
   glScissor (ev->area.x,
              allocation.height - ev->area.height - ev->area.y,
              ev->area.width, ev->area.height);
+  printf ("EVT: %i, %i, w=%i, h=%i, Scissor setup: glScissor (%f, %f, %f, %f);\n",
+          ev->area.x, ev->area.y, ev->area.width, ev->area.height,
+             (double)ev->area.x,
+             (double)(allocation.height - ev->area.height - ev->area.y),
+             (double)ev->area.width,
+             (double)ev->area.height);
+#endif
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
