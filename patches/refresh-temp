@@ -1,0 +1,89 @@
+Bottom: 8ea8bb857314d10598c0e3b9b8013e1c4f72ba3d
+Top:    b39f24fdbaa4ce68982250c96203ee9ad263ad74
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 19:45:39 +0000
+
+Refresh of hid-lesstif-fix-pinout-preview
+
+---
+
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index 665d206..432e374 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -19,10 +19,6 @@
+ #include <dmalloc.h>
+ #endif
+ 
+-#ifndef MAXINT
+-#define MAXINT (((unsigned int)(~0))>>1)
+-#endif
+-
+ static BoxType box;
+ 
+ typedef struct hid_gc_struct
+@@ -198,6 +194,7 @@ hid_extents_init (void)
+   initialised = true;
+ }
+ 
++
+ BoxType *
+ hid_get_extents (void *item)
+ {
+@@ -206,15 +203,15 @@ hid_get_extents (void *item)
+   /* As this isn't a real "HID", we need to ensure we are initialised. */
+   hid_extents_init ();
+ 
+-  box.X1 = MAXINT;
+-  box.Y1 = MAXINT;
+-  box.X2 = -MAXINT;
+-  box.Y2 = -MAXINT;
++  box.X1 = COORD_MAX;
++  box.Y1 = COORD_MAX;
++  box.X2 = -COORD_MAX - 1;
++  box.Y2 = -COORD_MAX - 1;
+ 
+-  region.X1 = -MAXINT;
+-  region.Y1 = -MAXINT;
+-  region.X2 = MAXINT;
+-  region.Y2 = MAXINT;
++  region.X1 = -COORD_MAX - 1;
++  region.Y1 = -COORD_MAX - 1;
++  region.X2 = COORD_MAX;
++  region.Y2 = COORD_MAX;
+   hid_expose_callback (&extents_hid, &region, item);
+ 
+   return &box;
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 1cdc545..b649471 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -3746,8 +3746,8 @@ pinout_callback (Widget da, PinoutData * pd,
+       pd->window = XtWindow (da);
+       pd->v_width = w;
+       pd->v_height = h;
+-      pd->zoom = (pd->right - pd->left + 1) / (double) w;
+-      z = (pd->bottom - pd->top + 1) / (double) h;
++      pd->zoom = (double)(pd->right - pd->left + 1) / (double) w;
++      z = (double)(pd->bottom - pd->top + 1) / (double) h;
+       if (pd->zoom < z)
+ 	pd->zoom = z;
+ 
+@@ -3847,13 +3847,12 @@ lesstif_show_item (void *item)
+   XtAddCallback (pd->form, XmNunmapCallback, (XtCallbackProc) pinout_unmap,
+ 		 (XtPointer) pd);
+ 
+-  scale =
+-    sqrt (200.0 * 200.0 /
+-	  ((pd->right - pd->left + 1.0) * (pd->bottom - pd->top + 1.0)));
++  scale = 200.0 /
++    sqrt ((pd->right - pd->left + 1.0) * (pd->bottom - pd->top + 1.0));
+ 
+   n = 0;
+-  stdarg (XmNwidth, (int) (scale * (pd->right - pd->left + 1)));
+-  stdarg (XmNheight, (int) (scale * (pd->bottom - pd->top + 1)));
++  stdarg (XmNwidth, (int) (scale * (double)(pd->right - pd->left + 1)));
++  stdarg (XmNheight, (int) (scale * (double)(pd->bottom - pd->top + 1)));
+   stdarg (XmNleftAttachment, XmATTACH_FORM);
+   stdarg (XmNrightAttachment, XmATTACH_FORM);
+   stdarg (XmNtopAttachment, XmATTACH_FORM);
