@@ -1,5 +1,5 @@
 Bottom: cacfa4d5040977608eaed568c19c644482700f59
-Top:    87298eb6752fcca9cef63384a83b77a361b58cbc
+Top:    dc34b5d170c1fd38c11ccf073e7c3f129826ecd0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-19 01:37:47 +0000
 
@@ -76,7 +76,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index db819cb..573edbe 100644
+index db819cb..7df381a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -247,7 +247,7 @@ index db819cb..573edbe 100644
  }
  
  void
-@@ -934,6 +965,736 @@ ghid_screen_update (void)
+@@ -934,6 +965,739 @@ ghid_screen_update (void)
  {
  }
  
@@ -284,10 +284,11 @@ index db819cb..573edbe 100644
 +static void
 +set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
 +{
-+  if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
-+  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
++  if (TEST_FLAG (WARNFLAG, pv))           gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
++  else if (TEST_FLAG (SELECTEDFLAG, pv))  gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
 +                                                                                                   : PCB->PinSelectedColor);
-+  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
++  else if (TEST_FLAG (CONNECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
++  else if (TEST_FLAG (FOUNDFLAG, pv))     gui->graphics->set_color (Output.fgGC, PCB->FoundColor);
 +  else
 +    {
 +      int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
@@ -798,8 +799,10 @@ index db819cb..573edbe 100644
 +    color = PCB->WarnColor;
 +  else if (TEST_FLAG (SELECTEDFLAG, Pin))
 +    color = (Type == VIA_TYPE) ? PCB->ViaSelectedColor : PCB->PinSelectedColor;
-+  else if (TEST_FLAG (FOUNDFLAG, Pin))
++  else if (TEST_FLAG (CONNECTEDFLAG, Pin))
 +    color = PCB->ConnectedColor;
++  else if (TEST_FLAG (FOUNDFLAG, Pin))
++    color = PCB->FoundColor;
 +  else
 +    color = "drill";
 +
@@ -984,7 +987,7 @@ index db819cb..573edbe 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1003,8 +1764,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1003,8 +1767,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -995,7 +998,7 @@ index db819cb..573edbe 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1070,17 +1831,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1070,17 +1834,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
