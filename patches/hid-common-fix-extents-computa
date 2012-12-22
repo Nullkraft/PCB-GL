@@ -8,6 +8,8 @@ hid/common: Fix extents computation in nm units
 We still had some fallout from the nm units conversion here, using MAXINT
 rather than COORD_MAX for some bounds checking.
 
+This was completely breaking the lesstif HID pinout preview window.
+
 
 ---
 
