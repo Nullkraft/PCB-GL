@@ -1,5 +1,5 @@
-Bottom: 569982b91900dc870c7b5a560fd8eb02c0816aea
-Top:    b0ecaac03a4cee3fc35723b2693d5f56a0be1c5b
+Bottom: f9fe411506cafd413d4856be2b2443f268388f2c
+Top:    1931a152223c4d743989fc31dab80dd1dbc1ea28
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 20:33:01 +0000
 
@@ -9,7 +9,7 @@ hid/gtk: Use common GL setup and teardown code for different expose paths
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9124ba5..dad2d61 100644
+index 7d6714d..7df7007 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -820,9 +820,8 @@ ghid_drawing_area_configure_hook (GHidPort *port)
