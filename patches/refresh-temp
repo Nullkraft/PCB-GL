@@ -1,0 +1,38 @@
+Bottom: c6f01591c0aced09c9638812a8ac5ef7de3cdd66
+Top:    a6654f391f55d5713f167f9196bcb828f894caeb
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 17:18:36 +0000
+
+Refresh of copy-c-remove-dest-variable-to
+
+---
+
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index d354ff1..8f57c6e 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -66,9 +66,14 @@ pinout_set_view (GhidPinoutPreview * pinout)
+ static void
+ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
+ {
+-  if (element == NULL)
++  if (pinout->element != NULL)
+     {
+       FreeElementMemory (&pinout->element);
++      g_slice_free (ElementType, pinout->element);
++    }
++
++  if (element == NULL)
++    {
+       pinout->w_pixels = 0;
+       pinout->h_pixels = 0;
+       return;
+@@ -80,7 +85,7 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
+    * move element to a 5% offset from zero position
+    * set all package lines/arcs to zero width
+    */
+-  CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0, FOUNDFLAG);
++  pinout->element = CopyElementLowLevel (NULL, element, FALSE, 0, 0, FOUNDFLAG);
+   PIN_LOOP (&pinout->element);
+   {
+     SET_FLAG (DISPLAYNAMEFLAG, pin);
