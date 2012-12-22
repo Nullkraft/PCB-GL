@@ -66,9 +66,14 @@ pinout_set_view (GhidPinoutPreview * pinout)
 static void
 pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
 {
-  if (element == NULL)
+  if (&pinout->element != NULL)
     {
       FreeElementMemory (&pinout->element);
+      g_slice_free (ElementType, pinout->element);
+    }
+
+  if (element == NULL)
+    {
       pinout->w_pixels = 0;
       pinout->h_pixels = 0;
       return;
@@ -80,7 +85,7 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
    * move element to a 5% offset from zero position
    * set all package lines/arcs to zero width
    */
-  CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0, FOUNDFLAG);
+  pinout->element = CopyElementLowLevel (NULL, element, FALSE, 0, 0, FOUNDFLAG);
   PIN_LOOP (&pinout->element);
   {
     SET_FLAG (DISPLAYNAMEFLAG, pin);
