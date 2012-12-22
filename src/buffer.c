@@ -225,12 +225,12 @@ AddElementToBuffer (ElementType *Element)
       END_LOOP;
       PIN_LOOP (element);
       {
-	CLEAR_FLAG (FOUNDFLAG | ExtraFlag, pin);
+	CLEAR_FLAG (ExtraFlag, pin);
       }
       END_LOOP;
       PAD_LOOP (element);
       {
-	CLEAR_FLAG (FOUNDFLAG | ExtraFlag, pad);
+	CLEAR_FLAG (ExtraFlag, pad);
       }
       END_LOOP;
     }
