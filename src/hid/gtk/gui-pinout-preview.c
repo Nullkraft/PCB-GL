@@ -66,7 +66,7 @@ pinout_set_view (GhidPinoutPreview * pinout)
 static void
 pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
 {
-  if (pinout->element != NULL)
+  if (&pinout->element != NULL)
     {
       FreeElementMemory (&pinout->element);
       g_slice_free (ElementType, pinout->element);

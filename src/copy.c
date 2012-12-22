@@ -121,7 +121,7 @@ CopyElementLowLevel (DataType *Data, ElementType *Src,
   ElementType *Dest;
 
   /* both coordinates and flags are the same */
-  Dest = CreateNewElement (Data, Dest, &PCB->Font,
+  Dest = CreateNewElement (Data, NULL, &PCB->Font,
 			   MaskFlags (Src->Flags, mask_flags),
 			   DESCRIPTION_NAME (Src), NAMEONPCB_NAME (Src),
 			   VALUE_NAME (Src), DESCRIPTION_TEXT (Src).X + dx,
@@ -287,11 +287,9 @@ CopyElement (ElementType *Element)
 	 Element->Name[1].TextString);
 #endif
 
-  ElementType *element = CopyElementLowLevel (PCB->Data,
-						NULL, Element,
-						TEST_FLAG (UNIQUENAMEFLAG,
-							   PCB), DeltaX,
-						DeltaY, FOUNDFLAG);
+  ElementType *element = CopyElementLowLevel (PCB->Data, Element,
+                                              TEST_FLAG (UNIQUENAMEFLAG, PCB),
+                                              DeltaX, DeltaY, FOUNDFLAG);
 
   /* this call clears the polygons */
   AddObjectToCreateUndoList (ELEMENT_TYPE, element, element, element);
