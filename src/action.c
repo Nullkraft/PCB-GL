@@ -341,6 +341,7 @@ static FunctionType Functions[] = {
   {"ClearAndRedraw", F_ClearAndRedraw},
   {"ClearList", F_ClearList},
   {"Close", F_Close},
+  {"Found", F_Found},
   {"Connection", F_Connection},
   {"Convert", F_Convert},
   {"Copy", F_Copy},
@@ -2290,55 +2291,34 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
 	case F_Find:
 	  {
 	    gui->get_coords (_("Click on a connection"), &x, &y);
-	    LookupConnection (x, y, true, 1, FOUNDFLAG, false);
-	    LookupConnection (x, y, true, 1, RATFOUNDFLAG, true);
+	    LookupConnection (x, y, true, 1, FOUNDFLAG, true);
+	    LookupConnection (x, y, true, 1, CONNECTEDFLAG, false);
 	    break;
 	  }
 
 	case F_ResetLinesAndPolygons:
-	  {
-	    bool change = false;
-
-	    change = ResetFoundLinesAndPolygons (true, RATFOUNDFLAG) || change;
-	    change = ResetFoundLinesAndPolygons (true, FOUNDFLAG) || change;
-
-	    if (change)
-	      {
-	        IncrementUndoSerialNumber ();
-	        Draw ();
-	      }
-	    break;
-	  }
+	  if (ResetFoundLinesAndPolygons (true, FOUNDFLAG | CONNECTEDFLAG))
+	    {
+	      IncrementUndoSerialNumber ();
+	      Draw ();
+	    }
+	  break;
 
 	case F_ResetPinsViasAndPads:
-	  {
-	    bool change = false;
-
-	    change = ResetFoundPinsViasAndPads (true, RATFOUNDFLAG) || change;
-	    change = ResetFoundPinsViasAndPads (true, FOUNDFLAG) || change;
-
-	    if (change)
-	      {
-	        IncrementUndoSerialNumber ();
-	        Draw ();
-	      }
-	    break;
-	  }
+	  if (ResetFoundPinsViasAndPads (true, FOUNDFLAG | CONNECTEDFLAG))
+	    {
+	      IncrementUndoSerialNumber ();
+	      Draw ();
+	    }
+	  break;
 
 	case F_Reset:
-	  {
-	    bool change = false;
-
-	    change = ResetConnections (true, RATFOUNDFLAG) || change;
-	    change = ResetConnections (true, FOUNDFLAG) || change;
-
-	    if (change)
-	      {
-	        IncrementUndoSerialNumber ();
-	        Draw ();
-	      }
-	    break;
-	  }
+	  if (ResetConnections (true, FOUNDFLAG | CONNECTEDFLAG))
+	    {
+	      IncrementUndoSerialNumber ();
+	      Draw ();
+	    }
+	  break;
 	}
       return 0;
     }
@@ -5337,8 +5317,11 @@ Selects all objects in a rectangle indicated by the cursor.
 @item All
 Selects all objects on the board.
 
-@item Connection
+@item Found
 Selects all connections with the ``found'' flag set.
+
+@item Connection
+Selects all connections with the ``connected'' flag set.
 
 @item Convert
 Converts the selected objects to an element.  This uses the highest
@@ -5444,7 +5427,17 @@ ActionSelect (int argc, char **argv, Coord x, Coord y)
 	    break;
 	  }
 
-	  /* all found connections */
+	  /* all logical connections */
+	case F_Found:
+	  if (SelectFound (true))
+	    {
+              Draw ();
+	      IncrementUndoSerialNumber ();
+	      SetChangedFlag (true);
+	    }
+	  break;
+
+	  /* all physical connections */
 	case F_Connection:
 	  if (SelectConnection (true))
 	    {
@@ -5623,7 +5616,17 @@ ActionUnselect (int argc, char **argv, Coord x, Coord y)
 	    break;
 	  }
 
-	  /* all found connections */
+	  /* all logical connections */
+	case F_Found:
+	  if (SelectFound (false))
+	    {
+              Draw ();
+	      IncrementUndoSerialNumber ();
+	      SetChangedFlag (true);
+	    }
+	  break;
+
+	  /* all physical connections */
 	case F_Connection:
 	  if (SelectConnection (false))
 	    {
