@@ -1,5 +1,5 @@
 Bottom: 8ea8bb857314d10598c0e3b9b8013e1c4f72ba3d
-Top:    8d6bdb98ec22b83fdc6d9c711b74e9e8bccade69
+Top:    83c47bcba8b0bc4b70ac4bbf8ff847a230e6b77b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 17:34:52 +0000
 
@@ -13,6 +13,32 @@ to a newly allocated ElementType.
 
 ---
 
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 6c159b4..54e5598 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1159,7 +1159,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+                       0, 0, allocation.width, allocation.height);
+ 
+   /* call the drawing routine */
+-  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
++  hid_expose_callback (&ghid_hid, NULL, pinout->element);
+ 
+   gport->drawable = save_drawable;
+   gport->view = save_view;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 9124ba5..7d6714d 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1128,7 +1128,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+                 gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
+                                     -gport->view.y0, 0);
+ 
+-  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
++  hid_expose_callback (&ghid_hid, NULL, pinout->element);
+   hidgl_flush_triangles (&buffer);
+   glPopMatrix ();
+ 
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
 index d354ff1..2da94b5 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
