@@ -1,5 +1,5 @@
-Bottom: 686a8775b2abdcd5e14abdb2b3d6727a50b360c5
-Top:    1d228e8817c3221ae34ea90b83b297d4033e3b5a
+Bottom: c8e8e962dd875362f7b8014ed7c1323555f35b7f
+Top:    9b48b778a7c4e46101b5f830d7c1cc441bc2227c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-19 01:37:48 +0000
 
@@ -20,7 +20,7 @@ layer changes!
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 7b966dc..c5ddce9 100644
+index 91cb74a..2b4272f 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -403,6 +403,8 @@ typedef struct			/* holds all objects */
@@ -33,10 +33,10 @@ index 7b966dc..c5ddce9 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 153122f..50194dd 100644
+index 2265178..7af79d1 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1382,14 +1382,22 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1376,14 +1376,22 @@ GhidDrawMask (int side, BoxType * screen)
    gui->graphics->set_color (out->fgGC, PCB->MaskColor);
    ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
  
@@ -62,10 +62,10 @@ index 153122f..50194dd 100644
    /* THE GL fill_pcb_polygon doesn't work whilst masking */
  //  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
 diff --git a/src/mymem.c b/src/mymem.c
-index 3de31f6..22a2764 100644
+index b6b3c30..3c873cf 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
-@@ -695,6 +695,9 @@ FreeDataMemory (DataType *data)
+@@ -699,6 +699,9 @@ FreeDataMemory (DataType *data)
    if (data == NULL)
      return;
  
