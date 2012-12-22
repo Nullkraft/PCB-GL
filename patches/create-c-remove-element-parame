@@ -1,5 +1,5 @@
-Bottom: 510b3d95881375337a9bc3b0aaee65412494a4ce
-Top:    49658de8e9c02733e0915bea5971949dbcabd455
+Bottom: 60f79f0744d9937c08db67e3a2e41fc92d7c090e
+Top:    7ff4dd3f9a273862b995721c80c5d7de75b3b1ed
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 17:09:24 +0000
 
@@ -12,10 +12,10 @@ to do this when we have an API with "New" in the name!
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 44b181c..f8f4749 100644
+index 79dd87a..2ed2794 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -969,7 +969,7 @@ ConvertBufferToElement (BufferType *Buffer)
+@@ -965,7 +965,7 @@ ConvertBufferToElement (BufferType *Buffer)
    if (Buffer->Data->pcb == 0)
      Buffer->Data->pcb = PCB;
  
