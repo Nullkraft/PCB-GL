@@ -1,5 +1,5 @@
 Bottom: dc558b29b58b817bb5cd9c51d9a945b62f4283dd
-Top:    dc558b29b58b817bb5cd9c51d9a945b62f4283dd
+Top:    6cc8b4d0eeaf70df847e58f3710e9cb5b75e804b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 21:52:18 +0000
 
@@ -12,4 +12,26 @@ screen.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index ee0e7dc..23a8490 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1088,10 +1088,18 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+ 
+   glViewport (0, 0, allocation.width, allocation.height);
+ 
++#if 0
+   glEnable (GL_SCISSOR_TEST);
+   glScissor (ev->area.x,
+              allocation.height - ev->area.height - ev->area.y,
+              ev->area.width, ev->area.height);
++  printf ("EVT: %i, %i, w=%i, h=%i, Scissor setup: glScissor (%f, %f, %f, %f);\n",
++          ev->area.x, ev->area.y, ev->area.width, ev->area.height,
++             (double)ev->area.x,
++             (double)(allocation.height - ev->area.height - ev->area.y),
++             (double)ev->area.width,
++             (double)ev->area.height);
++#endif
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
