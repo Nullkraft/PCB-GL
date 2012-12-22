@@ -1,0 +1,22 @@
+Bottom: e9f8f860245bd7e40aaae9d2ca44ac5ee2f2a815
+Top:    60f79f0744d9937c08db67e3a2e41fc92d7c090e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 18:10:47 +0000
+
+Refresh of copy-c-remove-dest-variable-to
+
+---
+
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index 80e883e..2e0f2cd 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -87,7 +87,7 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
+    * set all package lines/arcs to zero width
+    */
+   pinout->element = CopyElementLowLevel (NULL, element, FALSE, 0, 0, FOUNDFLAG);
+-  PIN_LOOP (&pinout->element);
++  PIN_LOOP (pinout->element);
+   {
+     SET_FLAG (DISPLAYNAMEFLAG, pin);
+   }
