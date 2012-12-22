@@ -807,6 +807,8 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
 {
   render_priv *priv = port->render_priv;
 
+  GTK_WIDGET_UNSET_FLAGS (GTK_WIDGET (widget), GTK_DOUBLE_BUFFERED);
+
   gtk_widget_set_gl_capability (widget,
                                 priv->glconfig,
                                 NULL,
@@ -1088,10 +1090,18 @@ ghid_pinout_preview_expose (GtkWidget *widget,
 
   glViewport (0, 0, allocation.width, allocation.height);
 
+#if 0
   glEnable (GL_SCISSOR_TEST);
   glScissor (ev->area.x,
              allocation.height - ev->area.height - ev->area.y,
              ev->area.width, ev->area.height);
+  printf ("EVT: %i, %i, w=%i, h=%i, Scissor setup: glScissor (%f, %f, %f, %f);\n",
+          ev->area.x, ev->area.y, ev->area.width, ev->area.height,
+             (double)ev->area.x,
+             (double)(allocation.height - ev->area.height - ev->area.y),
+             (double)ev->area.width,
+             (double)ev->area.height);
+#endif
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
