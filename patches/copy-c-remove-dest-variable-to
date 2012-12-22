@@ -1,5 +1,5 @@
 Bottom: 8ea8bb857314d10598c0e3b9b8013e1c4f72ba3d
-Top:    a6654f391f55d5713f167f9196bcb828f894caeb
+Top:    a9fdb46ae22b73bb815ac9d8dc9878531c8cc19e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 17:00:22 +0000
 
@@ -30,10 +30,10 @@ index 44b181c..79dd87a 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/copy.c b/src/copy.c
-index a9be335..7a21171 100644
+index a9be335..aaad13e 100644
 --- a/src/copy.c
 +++ b/src/copy.c
-@@ -114,14 +114,11 @@ CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
+@@ -114,17 +114,14 @@ CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
   * if necessary
   */
  ElementType *
@@ -50,7 +50,26 @@ index a9be335..7a21171 100644
 +  ElementType *Dest;
  
    /* both coordinates and flags are the same */
-   Dest = CreateNewElement (Data, Dest, &PCB->Font,
+-  Dest = CreateNewElement (Data, Dest, &PCB->Font,
++  Dest = CreateNewElement (Data, NULL, &PCB->Font,
+ 			   MaskFlags (Src->Flags, mask_flags),
+ 			   DESCRIPTION_NAME (Src), NAMEONPCB_NAME (Src),
+ 			   VALUE_NAME (Src), DESCRIPTION_TEXT (Src).X + dx,
+@@ -290,11 +287,9 @@ CopyElement (ElementType *Element)
+ 	 Element->Name[1].TextString);
+ #endif
+ 
+-  ElementType *element = CopyElementLowLevel (PCB->Data,
+-						NULL, Element,
+-						TEST_FLAG (UNIQUENAMEFLAG,
+-							   PCB), DeltaX,
+-						DeltaY, FOUNDFLAG);
++  ElementType *element = CopyElementLowLevel (PCB->Data, Element,
++                                              TEST_FLAG (UNIQUENAMEFLAG, PCB),
++                                              DeltaX, DeltaY, FOUNDFLAG);
+ 
+   /* this call clears the polygons */
+   AddObjectToCreateUndoList (ELEMENT_TYPE, element, element, element);
 diff --git a/src/copy.h b/src/copy.h
 index 9c65f32..e7f39cf 100644
 --- a/src/copy.h
@@ -65,7 +84,7 @@ index 9c65f32..e7f39cf 100644
  void *CopyObject (int, void *, void *, void *, Coord, Coord);
  
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index d354ff1..8f57c6e 100644
+index d354ff1..3961a48 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -66,9 +66,14 @@ pinout_set_view (GhidPinoutPreview * pinout)
@@ -73,7 +92,7 @@ index d354ff1..8f57c6e 100644
  pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
  {
 -  if (element == NULL)
-+  if (pinout->element != NULL)
++  if (&pinout->element != NULL)
      {
        FreeElementMemory (&pinout->element);
 +      g_slice_free (ElementType, pinout->element);
