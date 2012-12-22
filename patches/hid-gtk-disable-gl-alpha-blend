@@ -1,4 +1,4 @@
-Bottom: b0ecaac03a4cee3fc35723b2693d5f56a0be1c5b
+Bottom: 313ca82105b6466b196b9314bc12e16a2db1a299
 Top:    8cc8c3b36a778681aaf5fe8295deb292cce4df06
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 20:35:09 +0000
@@ -11,19 +11,10 @@ We aren't using subcompositing for this, so don't alpha-blend.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index dad2d61..0467d0e 100644
+index ed739b4..0467d0e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -807,6 +807,8 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
- {
-   render_priv *priv = port->render_priv;
- 
-+  GTK_WIDGET_UNSET_FLAGS (GTK_WIDGET (widget), GTK_DOUBLE_BUFFERED);
-+
-   gtk_widget_set_gl_capability (widget,
-                                 priv->glconfig,
-                                 NULL,
-@@ -1083,15 +1085,23 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1085,15 +1085,23 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    ghid_start_drawing (gport, widget);
    hidgl_start_render ();
  
