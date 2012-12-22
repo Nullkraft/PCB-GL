@@ -1,0 +1,35 @@
+Bottom: 6902b45fea4e337dfe6e936cd7a8b9291b55f745
+Top:    8ea8bb857314d10598c0e3b9b8013e1c4f72ba3d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 16:48:24 +0000
+
+Refresh of copy-c-add-mask_flags-paramete
+
+---
+
+diff --git a/src/copy.c b/src/copy.c
+index 287a350..a9be335 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -294,7 +294,7 @@ CopyElement (ElementType *Element)
+ 						NULL, Element,
+ 						TEST_FLAG (UNIQUENAMEFLAG,
+ 							   PCB), DeltaX,
+-						DeltaY);
++						DeltaY, FOUNDFLAG);
+ 
+   /* this call clears the polygons */
+   AddObjectToCreateUndoList (ELEMENT_TYPE, element, element, element);
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index 3336945..d354ff1 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -80,7 +80,7 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
+    * move element to a 5% offset from zero position
+    * set all package lines/arcs to zero width
+    */
+-  CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0);
++  CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0, FOUNDFLAG);
+   PIN_LOOP (&pinout->element);
+   {
+     SET_FLAG (DISPLAYNAMEFLAG, pin);
