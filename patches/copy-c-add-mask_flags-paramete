@@ -1,5 +1,5 @@
 Bottom: 20fe7c6973d7285ef1da4d96fb7223c597d0896d
-Top:    6902b45fea4e337dfe6e936cd7a8b9291b55f745
+Top:    8ea8bb857314d10598c0e3b9b8013e1c4f72ba3d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 16:45:30 +0000
 
@@ -42,7 +42,7 @@ index d311420..44b181c 100644
  }
  
 diff --git a/src/copy.c b/src/copy.c
-index 9d92ced..287a350 100644
+index 9d92ced..a9be335 100644
 --- a/src/copy.c
 +++ b/src/copy.c
 @@ -116,7 +116,7 @@ CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
@@ -89,6 +89,15 @@ index 9d92ced..287a350 100644
    }
    END_LOOP;
    ARC_LOOP (Src);
+@@ -294,7 +294,7 @@ CopyElement (ElementType *Element)
+ 						NULL, Element,
+ 						TEST_FLAG (UNIQUENAMEFLAG,
+ 							   PCB), DeltaX,
+-						DeltaY);
++						DeltaY, FOUNDFLAG);
+ 
+   /* this call clears the polygons */
+   AddObjectToCreateUndoList (ELEMENT_TYPE, element, element, element);
 diff --git a/src/copy.h b/src/copy.h
 index e9871fc..9c65f32 100644
 --- a/src/copy.h
@@ -102,3 +111,17 @@ index e9871fc..9c65f32 100644
 +ElementType * CopyElementLowLevel (DataType *, ElementType *, ElementType *, bool, Coord, Coord, int mask_flags);
  bool CopyPastebufferToLayout (Coord, Coord);
  void *CopyObject (int, void *, void *, void *, Coord, Coord);
+ 
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index 3336945..d354ff1 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -80,7 +80,7 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
+    * move element to a 5% offset from zero position
+    * set all package lines/arcs to zero width
+    */
+-  CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0);
++  CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0, FOUNDFLAG);
+   PIN_LOOP (&pinout->element);
+   {
+     SET_FLAG (DISPLAYNAMEFLAG, pin);
