@@ -178,6 +178,8 @@ Marker used internally to avoid revisiting an object.
 @item 0x10000 nopaste
 For pads, set to prevent a solderpaste stencil opening for the
 pad.  Primarily used for pads used as fiducials.
+@item 0x20000 striphierarchy
+Strip hierarchy when displaying this element's refdes.
 @end table
 %end-doc */
 
@@ -215,6 +217,7 @@ pad.  Primarily used for pads used as fiducials.
 						/* also pinout text for pins is vertical */
 #define VISITFLAG		  0x8000	/* marker to avoid re-visiting an object */
 #define	CONNECTEDFLAG		0x010000	/* flag like FOUND flag, but used to identify physically connected objects (not rats) */
+#define STRIPHIERFLAG		0x020000	/* Strip hierarchy when displaying names */
 /* ---------------------------------------------------------------------------
  * PCB flags
  */
