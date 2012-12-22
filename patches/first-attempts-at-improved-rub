@@ -1,5 +1,5 @@
-Bottom: b1f10a83c1e00f3a0a9f7d994a85c98ba0b3b8c7
-Top:    a221f17049a9e9a6180134466a90c1ac8883a5c7
+Bottom: a670f358c8a7199d5fae713a01e041ac746a49c9
+Top:    ba304eebfd78c9b9ac10e334fea4c28dc669319b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-19 01:37:55 +0000
 
@@ -9,7 +9,7 @@ First attempts at improved rubberbanding logic
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 4b89bde..8f1875a 100644
+index acc6142..a1c8867 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -1013,7 +1013,7 @@ CreateDefaultFont (PCBType *pcb)
@@ -30,7 +30,7 @@ index 4b89bde..8f1875a 100644
  }
  
 diff --git a/src/create.h b/src/create.h
-index 97616fd..5b5eb85 100644
+index 04fe48e..fa49a1b 100644
 --- a/src/create.h
 +++ b/src/create.h
 @@ -61,7 +61,7 @@ PinType * CreateNewPin (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord,
@@ -259,7 +259,7 @@ index 1bb75ea..744b96f 100644
        ptr++;
        i--;
 diff --git a/src/global.h b/src/global.h
-index c5ddce9..8efdf75 100644
+index 2b4272f..b7996fd 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -552,6 +552,7 @@ typedef struct			/* rubberband lines for element moves */
