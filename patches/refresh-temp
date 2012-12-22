@@ -1,0 +1,112 @@
+Bottom: fe0e7cad9acd6757d0f837dc52faee85f481026b
+Top:    7ff4dd3f9a273862b995721c80c5d7de75b3b1ed
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 18:20:21 +0000
+
+Refresh of create-c-remove-element-parame
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 79dd87a..2ed2794 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -965,7 +965,7 @@ ConvertBufferToElement (BufferType *Buffer)
+   if (Buffer->Data->pcb == 0)
+     Buffer->Data->pcb = PCB;
+ 
+-  Element = CreateNewElement (PCB->Data, NULL, &PCB->Font, NoFlags (),
++  Element = CreateNewElement (PCB->Data, &PCB->Font, NoFlags (),
+ 			      NULL, NULL, NULL, PASTEBUFFER->X,
+ 			      PASTEBUFFER->Y, 0, 100,
+ 			      MakeFlags (SWAP_IDENT ? ONSOLDERFLAG : NOFLAG),
+diff --git a/src/create.c b/src/create.c
+index 7919b43..992c49e 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -667,19 +667,18 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
+  * memory is allocated if needed
+  */
+ ElementType *
+-CreateNewElement (DataType *Data, ElementType *Element,
+-		  FontType *PCBFont,
+-		  FlagType Flags,
++CreateNewElement (DataType *Data, FontType *PCBFont, FlagType Flags,
+ 		  char *Description, char *NameOnPCB, char *Value,
+ 		  Coord TextX, Coord TextY, BYTE Direction,
+ 		  int TextScale, FlagType TextFlags, bool uniqueName)
+ {
++  ElementType *Element;
++
+ #ifdef DEBUG
+   printf("Entered CreateNewElement.....\n");
+ #endif
+ 
+-  if (!Element)
+-    Element = GetElementMemory (Data);
++  Element = GetElementMemory (Data);
+ 
+   /* copy values and set additional information */
+   TextScale = MAX (MIN_TEXTSCALE, TextScale);
+diff --git a/src/create.h b/src/create.h
+index 4872514..e9c2697 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -53,7 +53,7 @@ TextType * CreateNewText (LayerType *, FontType *, Coord, Coord, unsigned, int,
+ PolygonType * CreateNewPolygon (LayerType *, FlagType);
+ PointType * CreateNewPointInPolygon (PolygonType *, Coord, Coord);
+ PolygonType * CreateNewHoleInPolygon (PolygonType *polygon);
+-ElementType * CreateNewElement (DataType *, ElementType *, FontType *, FlagType, char *, char *, char *, Coord, Coord, BYTE, int, FlagType, bool);
++ElementType * CreateNewElement (DataType *, FontType *, FlagType, char *, char *, char *, Coord, Coord, BYTE, int, FlagType, bool);
+ LineType * CreateNewLineInElement (ElementType *, Coord, Coord, Coord, Coord, Coord);
+ ArcType * CreateNewArcInElement (ElementType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord);
+ PinType * CreateNewPin (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord, char *, char *, FlagType);
+diff --git a/src/parse_y.y b/src/parse_y.y
+index 880371b..fdd6392 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -1258,7 +1258,7 @@ element_oldformat
+ 			 */
+ 		: T_ELEMENT '(' STRING STRING measure measure INTEGER ')' '('
+ 			{
+-				yyElement = CreateNewElement(yyData, NULL, yyFont, NoFlags(),
++				yyElement = CreateNewElement(yyData, yyFont, NoFlags(),
+ 					$3, $4, NULL, OU ($5), OU ($6), $7, 100, NoFlags(), false);
+ 				free ($3);
+ 				free ($4);
+@@ -1276,7 +1276,7 @@ element_1.3.4_format
+ 			 */
+ 		: T_ELEMENT '(' INTEGER STRING STRING measure measure measure measure INTEGER ')' '('
+ 			{
+-				yyElement = CreateNewElement(yyData, NULL, yyFont, OldFlags($3),
++				yyElement = CreateNewElement(yyData, yyFont, OldFlags($3),
+ 					$4, $5, NULL, OU ($6), OU ($7), IV ($8), IV ($9), OldFlags($10), false);
+ 				free ($4);
+ 				free ($5);
+@@ -1294,7 +1294,7 @@ element_newformat
+ 			 */
+ 		: T_ELEMENT '(' INTEGER STRING STRING STRING measure measure measure measure INTEGER ')' '('
+ 			{
+-				yyElement = CreateNewElement(yyData, NULL, yyFont, OldFlags($3),
++				yyElement = CreateNewElement(yyData, yyFont, OldFlags($3),
+ 					$4, $5, $6, OU ($7), OU ($8), IV ($9), IV ($10), OldFlags($11), false);
+ 				free ($4);
+ 				free ($5);
+@@ -1314,7 +1314,7 @@ element_1.7_format
+ 		: T_ELEMENT '(' INTEGER STRING STRING STRING measure measure
+ 			measure measure number number INTEGER ')' '('
+ 			{
+-				yyElement = CreateNewElement(yyData, NULL, yyFont, OldFlags($3),
++				yyElement = CreateNewElement(yyData, yyFont, OldFlags($3),
+ 					$4, $5, $6, OU ($7) + OU ($9), OU ($8) + OU ($10),
+ 					$11, $12, OldFlags($13), false);
+ 				yyElement->MarkX = OU ($7);
+@@ -1336,7 +1336,7 @@ element_hi_format
+ 		: T_ELEMENT '[' flags STRING STRING STRING measure measure
+ 			measure measure number number flags ']' '('
+ 			{
+-				yyElement = CreateNewElement(yyData, NULL, yyFont, $3,
++				yyElement = CreateNewElement(yyData, yyFont, $3,
+ 					$4, $5, $6, NU ($7) + NU ($9), NU ($8) + NU ($10),
+ 					$11, $12, $13, false);
+ 				yyElement->MarkX = NU ($7);
