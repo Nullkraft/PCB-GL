@@ -1,0 +1,21 @@
+Bottom: 0add66089bf60e858c0181e1e0ae8fa7c0727319
+Top:    569982b91900dc870c7b5a560fd8eb02c0816aea
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 20:15:29 +0000
+
+Refresh of draw-c-always-draw-pin-hole-na
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index a2e86a8..619ec3a 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -191,7 +191,7 @@ _draw_pv (PinType *pv, bool draw_hole)
+   else
+     gui->graphics->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
+ 
+-  if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
++  if ((!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv)) || doing_pinout)
+     _draw_pv_name (pv);
+ }
