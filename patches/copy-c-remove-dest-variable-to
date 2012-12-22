@@ -1,5 +1,5 @@
 Bottom: 510b3d95881375337a9bc3b0aaee65412494a4ce
-Top:    510b3d95881375337a9bc3b0aaee65412494a4ce
+Top:    e9f8f860245bd7e40aaae9d2ca44ac5ee2f2a815
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 17:00:22 +0000
 
@@ -12,4 +12,89 @@ CopyElementLowLevel to free immediately!
 
 ---
 
-
+diff --git a/src/buffer.c b/src/buffer.c
+index 44b181c..79dd87a 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -211,11 +211,7 @@ AddPolygonToBuffer (LayerType *Layer, PolygonType *Polygon)
+ static void *
+ AddElementToBuffer (ElementType *Element)
+ {
+-  ElementType *element;
+-
+-  element = GetElementMemory (Dest);
+-  CopyElementLowLevel (Dest, element, Element, false, 0, 0, FOUNDFLAG | ExtraFlag);
+-  return (element);
++  return CopyElementLowLevel (Dest, Element, false, 0, 0, FOUNDFLAG | ExtraFlag);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/copy.c b/src/copy.c
+index a9be335..aaad13e 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -114,17 +114,14 @@ CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
+  * if necessary
+  */
+ ElementType *
+-CopyElementLowLevel (DataType *Data, ElementType *Dest,
+-		     ElementType *Src, bool uniqueName, Coord dx,
+-		     Coord dy, int mask_flags)
++CopyElementLowLevel (DataType *Data, ElementType *Src,
++                     bool uniqueName, Coord dx, Coord dy, int mask_flags)
+ {
+   int i;
+-  /* release old memory if necessary */
+-  if (Dest)
+-    FreeElementMemory (Dest);
++  ElementType *Dest;
+ 
+   /* both coordinates and flags are the same */
+-  Dest = CreateNewElement (Data, Dest, &PCB->Font,
++  Dest = CreateNewElement (Data, NULL, &PCB->Font,
+ 			   MaskFlags (Src->Flags, mask_flags),
+ 			   DESCRIPTION_NAME (Src), NAMEONPCB_NAME (Src),
+ 			   VALUE_NAME (Src), DESCRIPTION_TEXT (Src).X + dx,
+@@ -290,11 +287,9 @@ CopyElement (ElementType *Element)
+ 	 Element->Name[1].TextString);
+ #endif
+ 
+-  ElementType *element = CopyElementLowLevel (PCB->Data,
+-						NULL, Element,
+-						TEST_FLAG (UNIQUENAMEFLAG,
+-							   PCB), DeltaX,
+-						DeltaY, FOUNDFLAG);
++  ElementType *element = CopyElementLowLevel (PCB->Data, Element,
++                                              TEST_FLAG (UNIQUENAMEFLAG, PCB),
++                                              DeltaX, DeltaY, FOUNDFLAG);
+ 
+   /* this call clears the polygons */
+   AddObjectToCreateUndoList (ELEMENT_TYPE, element, element, element);
+diff --git a/src/copy.h b/src/copy.h
+index 9c65f32..e7f39cf 100644
+--- a/src/copy.h
++++ b/src/copy.h
+@@ -41,7 +41,7 @@
+ 
+ 
+ PolygonType * CopyPolygonLowLevel (PolygonType *, PolygonType *);
+-ElementType * CopyElementLowLevel (DataType *, ElementType *, ElementType *, bool, Coord, Coord, int mask_flags);
++ElementType * CopyElementLowLevel (DataType *, ElementType *, bool, Coord, Coord, int mask_flags);
+ bool CopyPastebufferToLayout (Coord, Coord);
+ void *CopyObject (int, void *, void *, void *, Coord, Coord);
+ 
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index 2da94b5..80e883e 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -86,8 +86,8 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
+    * move element to a 5% offset from zero position
+    * set all package lines/arcs to zero width
+    */
+-  pinout->element = CopyElementLowLevel (NULL, NULL, element, FALSE, 0, 0, FOUNDFLAG);
+-  PIN_LOOP (pinout->element);
++  pinout->element = CopyElementLowLevel (NULL, element, FALSE, 0, 0, FOUNDFLAG);
++  PIN_LOOP (&pinout->element);
+   {
+     SET_FLAG (DISPLAYNAMEFLAG, pin);
+   }
