@@ -1,5 +1,5 @@
-Bottom: dbdad1f3394eca26ada78d19575925e26d205ac7
-Top:    43f79e479a9c0d72012d1e4a6261696dc7e1477e
+Bottom: cacfa4d5040977608eaed568c19c644482700f59
+Top:    450417ea4e8a6f8c1cc0335ba306c999f803522e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-19 01:37:47 +0000
 
@@ -23,7 +23,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 838672a..a229dc1 100644
+index 3945a52..d8f0514 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -81,8 +81,8 @@ static bool doing_assy = false;
@@ -36,8 +36,8 @@ index 838672a..a229dc1 100644
 +/* static */ void DrawRats (const BoxType *);
  
  static void
- set_object_color (AnyObjectType *obj,
-@@ -452,7 +452,7 @@ DrawEverything (const BoxType *drawn_area)
+ set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
+@@ -451,7 +451,7 @@ DrawEverything (const BoxType *drawn_area)
      }
  }
  
@@ -46,7 +46,7 @@ index 838672a..a229dc1 100644
  DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
  {
    Coord mark_size = EMARK_SIZE;
-@@ -622,7 +622,7 @@ DrawPaste (int side, const BoxType *drawn_area)
+@@ -621,7 +621,7 @@ DrawPaste (int side, const BoxType *drawn_area)
    ENDALL_LOOP;
  }
  
@@ -76,7 +76,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ba9863a..e2ee1d8 100644
+index db819cb..a139001 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -221,7 +221,7 @@ index ba9863a..e2ee1d8 100644
  }
  
  static void
-@@ -909,6 +928,10 @@ ghid_start_drawing (GHidPort *port)
+@@ -910,6 +929,10 @@ ghid_start_drawing (GHidPort *port, GtkWidget *widget)
  
    port->render_priv->in_context = true;
  
@@ -232,7 +232,7 @@ index ba9863a..e2ee1d8 100644
    return TRUE;
  }
  
-@@ -927,6 +950,14 @@ ghid_end_drawing (GHidPort *port)
+@@ -927,6 +950,14 @@ ghid_end_drawing (GHidPort *port, GtkWidget *widget)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
