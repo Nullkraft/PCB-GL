@@ -1083,7 +1083,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   ghid_start_drawing (gport, widget);
   hidgl_start_render ();
 
-//  glEnable (GL_BLEND);
+  glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glViewport (0, 0, allocation.width, allocation.height);
