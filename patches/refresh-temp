@@ -1,0 +1,22 @@
+Bottom: d77978be9ccc29f921d2e9330892682c7584d72b
+Top:    20fe7c6973d7285ef1da4d96fb7223c597d0896d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 15:56:56 +0000
+
+Refresh of select-c-rename-selectconnecti
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index de49802..103da0c 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -542,7 +542,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+     if (SeekPad (entry, &conn, false))
+       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, FOUNDFLAG, true);
+ 
+-  SelectByFlag (FOUND_FLAG, select_flag);
++  SelectByFlag (FOUNDFLAG, select_flag);
+   ResetConnections (false, FOUNDFLAG);
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
