@@ -214,7 +214,7 @@ AddElementToBuffer (ElementType *Element)
   ElementType *element;
 
   element = GetElementMemory (Dest);
-  CopyElementLowLevel (Dest, element, Element, false, 0, 0);
+  CopyElementLowLevel (Dest, element, Element, false, 0, 0, FOUNDFLAG);
   CLEAR_FLAG (ExtraFlag, element);
   if (ExtraFlag)
     {
