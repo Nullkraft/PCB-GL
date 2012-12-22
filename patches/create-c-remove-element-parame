@@ -5,7 +5,8 @@ Date:   2012-12-22 17:09:24 +0000
 
 create.c: Remove Element parameter to CreateNewElement()
 
-Lets always make a new element, it seems saner.
+Lets always make a new element, not re-use old memory. It seems saner
+to do this when we have an API with "New" in the name!
 
 
 ---
