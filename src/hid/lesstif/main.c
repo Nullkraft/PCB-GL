@@ -3746,8 +3746,8 @@ pinout_callback (Widget da, PinoutData * pd,
       pd->window = XtWindow (da);
       pd->v_width = w;
       pd->v_height = h;
-      pd->zoom = (pd->right - pd->left + 1) / (double) w;
-      z = (pd->bottom - pd->top + 1) / (double) h;
+      pd->zoom = (double)(pd->right - pd->left + 1) / (double) w;
+      z = (double)(pd->bottom - pd->top + 1) / (double) h;
       if (pd->zoom < z)
 	pd->zoom = z;
 
@@ -3847,13 +3847,12 @@ lesstif_show_item (void *item)
   XtAddCallback (pd->form, XmNunmapCallback, (XtCallbackProc) pinout_unmap,
 		 (XtPointer) pd);
 
-  scale =
-    sqrt (200.0 * 200.0 /
-	  ((pd->right - pd->left + 1.0) * (pd->bottom - pd->top + 1.0)));
+  scale = 200.0 /
+    sqrt ((pd->right - pd->left + 1.0) * (pd->bottom - pd->top + 1.0));
 
   n = 0;
-  stdarg (XmNwidth, (int) (scale * (pd->right - pd->left + 1)));
-  stdarg (XmNheight, (int) (scale * (pd->bottom - pd->top + 1)));
+  stdarg (XmNwidth, (int) (scale * (double)(pd->right - pd->left + 1)));
+  stdarg (XmNheight, (int) (scale * (double)(pd->bottom - pd->top + 1)));
   stdarg (XmNleftAttachment, XmATTACH_FORM);
   stdarg (XmNrightAttachment, XmATTACH_FORM);
   stdarg (XmNtopAttachment, XmATTACH_FORM);
