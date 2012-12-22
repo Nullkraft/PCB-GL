@@ -1,5 +1,5 @@
-Bottom: 313ca82105b6466b196b9314bc12e16a2db1a299
-Top:    8cc8c3b36a778681aaf5fe8295deb292cce4df06
+Bottom: b0ecaac03a4cee3fc35723b2693d5f56a0be1c5b
+Top:    6cc8b4d0eeaf70df847e58f3710e9cb5b75e804b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 20:35:09 +0000
 
@@ -11,10 +11,10 @@ We aren't using subcompositing for this, so don't alpha-blend.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ed739b4..0467d0e 100644
+index dad2d61..23a8490 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1085,15 +1085,23 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1083,15 +1083,23 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    ghid_start_drawing (gport, widget);
    hidgl_start_render ();
  
