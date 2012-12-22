@@ -294,7 +294,7 @@ CopyElement (ElementType *Element)
 						NULL, Element,
 						TEST_FLAG (UNIQUENAMEFLAG,
 							   PCB), DeltaX,
-						DeltaY);
+						DeltaY, FOUNDFLAG);
 
   /* this call clears the polygons */
   AddObjectToCreateUndoList (ELEMENT_TYPE, element, element, element);
