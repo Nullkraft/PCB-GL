@@ -1,5 +1,5 @@
 Bottom: b0ecaac03a4cee3fc35723b2693d5f56a0be1c5b
-Top:    6cc8b4d0eeaf70df847e58f3710e9cb5b75e804b
+Top:    dc558b29b58b817bb5cd9c51d9a945b62f4283dd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 20:35:09 +0000
 
@@ -11,10 +11,10 @@ We aren't using subcompositing for this, so don't alpha-blend.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index dad2d61..23a8490 100644
+index dad2d61..ee0e7dc 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1083,15 +1083,23 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1083,8 +1083,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    ghid_start_drawing (gport, widget);
    hidgl_start_render ();
  
@@ -24,19 +24,3 @@ index dad2d61..23a8490 100644
 +//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
    glViewport (0, 0, allocation.width, allocation.height);
- 
-+#if 0
-   glEnable (GL_SCISSOR_TEST);
-   glScissor (ev->area.x,
-              allocation.height - ev->area.height - ev->area.y,
-              ev->area.width, ev->area.height);
-+  printf ("EVT: %i, %i, w=%i, h=%i, Scissor setup: glScissor (%f, %f, %f, %f);\n",
-+          ev->area.x, ev->area.y, ev->area.width, ev->area.height,
-+             (double)ev->area.x,
-+             (double)(allocation.height - ev->area.height - ev->area.y),
-+             (double)ev->area.width,
-+             (double)ev->area.height);
-+#endif
- 
-   glMatrixMode (GL_PROJECTION);
-   glLoadIdentity ();
