@@ -1,0 +1,14 @@
+Bottom: b0ecaac03a4cee3fc35723b2693d5f56a0be1c5b
+Top:    b0ecaac03a4cee3fc35723b2693d5f56a0be1c5b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-22 21:50:00 +0000
+
+hid/gtk: (GL) Disable double buffering of the GTK drawing widgets
+
+ We already double buffer in GL, so we don't need GTK to "help" us here.
+This might speed rendering up a little?
+
+
+---
+
+
