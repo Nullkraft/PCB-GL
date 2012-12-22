@@ -1,5 +1,5 @@
 Bottom: cacfa4d5040977608eaed568c19c644482700f59
-Top:    450417ea4e8a6f8c1cc0335ba306c999f803522e
+Top:    87298eb6752fcca9cef63384a83b77a361b58cbc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-19 01:37:47 +0000
 
@@ -76,7 +76,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index db819cb..a139001 100644
+index db819cb..573edbe 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -247,7 +247,7 @@ index db819cb..a139001 100644
  }
  
  void
-@@ -934,6 +965,743 @@ ghid_screen_update (void)
+@@ -934,6 +965,736 @@ ghid_screen_update (void)
  {
  }
  
@@ -261,16 +261,16 @@ index db819cb..a139001 100644
 +}
 +
 +static void
-+set_object_color (AnyObjectType *obj,
-+                  char *warn_color, char *selected_color,
-+                  char *found_color, char *normal_color)
++set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
++                  char *connected_color, char *found_color, char *normal_color)
 +{
 +  char *color;
 +
-+  if      (warn_color     != NULL && TEST_FLAG (WARNFLAG,     obj)) color = warn_color;
-+  else if (selected_color != NULL && TEST_FLAG (SELECTEDFLAG, obj)) color = selected_color;
-+  else if (found_color    != NULL && TEST_FLAG (FOUNDFLAG,    obj)) color = found_color;
-+  else                                                              color = normal_color;
++  if      (warn_color      != NULL && TEST_FLAG (WARNFLAG,      obj)) color = warn_color;
++  else if (selected_color  != NULL && TEST_FLAG (SELECTEDFLAG,  obj)) color = selected_color;
++  else if (connected_color != NULL && TEST_FLAG (CONNECTEDFLAG, obj)) color = connected_color;
++  else if (found_color     != NULL && TEST_FLAG (FOUNDFLAG,     obj)) color = found_color;
++  else                                                                color = normal_color;
 +
 +  gui->graphics->set_color (Output.fgGC, color);
 +}
@@ -278,18 +278,7 @@ index db819cb..a139001 100644
 +static void
 +set_layer_object_color (LayerType *layer, AnyObjectType *obj)
 +{
-+  set_object_color (obj, NULL, layer->SelectedColor, PCB->ConnectedColor, layer->Color);
-+}
-+
-+static void
-+set_pv_color (PinType *pv, int type)
-+{
-+  if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
-+  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
-+                                                                                                   : PCB->PinSelectedColor);
-+  else if (TEST_FLAG (FOUNDFLAG, pv))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
-+  else                                   gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaColor :
-+                                                                                                     PCB->PinColor);
++  set_object_color (obj, NULL, layer->SelectedColor, PCB->ConnectedColor, PCB->FoundColor, layer->Color);
 +}
 +
 +static void
@@ -365,7 +354,9 @@ index db819cb..a139001 100644
 +static void
 +draw_pin (PinType *pin, bool draw_hole)
 +{
-+  set_pv_color (pin, PIN_TYPE);
++  set_object_color ((AnyObjectType *) pin, PCB->WarnColor, PCB->PinSelectedColor,
++                    PCB->ConnectedColor, PCB->FoundColor, PCB->PinColor);
++
 +  _draw_pv (pin, draw_hole);
 +}
 +
@@ -387,7 +378,9 @@ index db819cb..a139001 100644
 +static void
 +draw_via (PinType *via, bool draw_hole)
 +{
-+  set_pv_color (via, VIA_TYPE);
++  set_object_color ((AnyObjectType *) via, PCB->WarnColor, PCB->ViaSelectedColor,
++                    PCB->ConnectedColor, PCB->FoundColor, PCB->ViaColor);
++
 +  _draw_pv (via, draw_hole);
 +}
 +
@@ -465,7 +458,7 @@ index db819cb..a139001 100644
 +draw_pad (PadType *pad)
 +{
 +  set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
-+                    PCB->PinSelectedColor, PCB->ConnectedColor,
++                    PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
 +                    FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 +
 +  _draw_pad (Output.fgGC, pad, false, false);
@@ -513,7 +506,7 @@ index db819cb..a139001 100644
 +  if (TEST_FLAG (HOLEFLAG, pv))
 +    {
 +      set_object_color ((AnyObjectType *) pv, PCB->WarnColor,
-+                        PCB->ViaSelectedColor, NULL, Settings.BlackColor);
++                        PCB->ViaSelectedColor, NULL, NULL, Settings.BlackColor);
 +
 +      gui->graphics->set_line_cap (Output.fgGC, Round_Cap);
 +      gui->graphics->set_line_width (Output.fgGC, 0);
@@ -991,7 +984,7 @@ index db819cb..a139001 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1003,8 +1771,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1003,8 +1764,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1002,7 +995,7 @@ index db819cb..a139001 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1070,17 +1838,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1070,17 +1831,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
