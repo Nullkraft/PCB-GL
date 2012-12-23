@@ -615,10 +615,8 @@ ghid_invalidate_all ()
 
   ghid_draw_area_update (gport, NULL);
 
-#if 1
   if (elapsed > MAX_ELAPSED)
     gdk_window_process_all_updates ();
-#endif
 }
 
 void
@@ -1023,8 +1021,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_end_drawing (port, widget);
 
   g_timer_start (priv->time_since_expose);
-
-//  usleep (100000);
 
   return FALSE;
 }
