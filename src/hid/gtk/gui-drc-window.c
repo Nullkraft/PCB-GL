@@ -92,18 +92,6 @@ enum {
 
 
 static void
-unset_found_flags (int AndDraw)
-{
-  bool changed = ResetConnections (true, FOUNDFLAG);
-
-  if (changed && AndDraw)
-    {
-      IncrementUndoSerialNumber ();
-      Draw ();
-    }
-}
-
-static void
 selection_changed_cb (GtkTreeSelection *selection, gpointer user_data)
 {
   GtkTreeModel *model;
@@ -113,7 +101,11 @@ selection_changed_cb (GtkTreeSelection *selection, gpointer user_data)
 
   if (!gtk_tree_selection_get_selected (selection, &model, &iter))
     {
-      unset_found_flags (true);
+      if (ResetConnections (true, FOUNDFLAG))
+        {
+          IncrementUndoSerialNumber ();
+          Draw ();
+        }
       return;
     }
 
@@ -123,7 +115,7 @@ selection_changed_cb (GtkTreeSelection *selection, gpointer user_data)
 
   gtk_tree_model_get (model, &iter, DRC_VIOLATION_OBJ_COL, &violation, -1);
 
-  unset_found_flags (false);
+  ResetConnections (true, FOUNDFLAG);
 
   if (violation == NULL)
     return;
