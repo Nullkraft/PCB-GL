@@ -1,5 +1,5 @@
 Bottom: d87259c4dba294a2524e4b35fa46bd1bb880b11e
-Top:    889a2cce9d07af3e53a803f98987824775164192
+Top:    5432ac67408f3825825d4bde2a0f8df2f77fa276
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-23 17:43:27 +0000
 
@@ -12,10 +12,18 @@ we only need to take care of the undo buffer management at the end.
 ---
 
 diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
-index 1613923..f612184 100644
+index 1613923..5d4bb35 100644
 --- a/src/hid/gtk/gui-drc-window.c
 +++ b/src/hid/gtk/gui-drc-window.c
-@@ -93,98 +93,12 @@ enum {
+@@ -31,6 +31,7 @@
+ #include "error.h"
+ #include "search.h"
+ #include "draw.h"
++#include "find.h"
+ #include "pcb-printf.h"
+ #include "undo.h"
+ #include "set.h"
+@@ -93,98 +94,12 @@ enum {
  static void
  unset_found_flags (int AndDraw)
  {
