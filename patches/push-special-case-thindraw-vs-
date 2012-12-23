@@ -1,5 +1,5 @@
-Bottom: 834a8f0ae692ed2eb623a6ffcacb5b6f30b1e047
-Top:    206e1412f7d5b99ecf17a9f625fc95924d650a15
+Bottom: 22b31184ec20dcae52fdbba91edb1f627f341e0f
+Top:    41289eeea1c6ff3c5aad8af4ebd17c6be2d52980
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-11-19 00:49:05 +0000
 
@@ -21,7 +21,7 @@ minor code duplication, but it keeps the outer API a little cleaner.
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index bf374ee..d39eee0 100644
+index 685b614..d69e5a8 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -263,9 +263,9 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
@@ -45,7 +45,7 @@ index bf374ee..d39eee0 100644
      }
  }
  
-@@ -620,8 +620,7 @@ common_draw_helpers_init (HID_DRAW *graphics)
+@@ -634,8 +634,7 @@ common_draw_helpers_init (HID_DRAW *graphics)
    graphics->draw_pcb_text        = common_draw_pcb_text;
    graphics->draw_pcb_polygon     = common_fill_pcb_polygon; /* Default is the non-GUI case */
  
@@ -56,7 +56,7 @@ index bf374ee..d39eee0 100644
    graphics->thindraw_pcb_pad     = common_thindraw_pcb_pad;
    graphics->fill_pcb_pv          = common_fill_pcb_pv;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9124ba5..bdd2e9b 100644
+index ac695e8..8a11357 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -575,20 +575,20 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
@@ -127,7 +127,7 @@ index 9124ba5..bdd2e9b 100644
  }
  
  void
-@@ -881,7 +905,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -879,7 +903,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
    if (hidgl_stencil_bits() == 0)
