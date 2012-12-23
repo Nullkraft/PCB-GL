@@ -1,5 +1,5 @@
-Bottom: 206e1412f7d5b99ecf17a9f625fc95924d650a15
-Top:    0aee60976d434c572696dbc9afbe1e8d47c1a4a1
+Bottom: 41289eeea1c6ff3c5aad8af4ebd17c6be2d52980
+Top:    f8ea5549ad751ceda0d906622d9301511f7dffdc
 Author: Ineiev <ineiev@gmail.com>
 Date:   2012-11-21 01:56:30 +0000
 
@@ -114,10 +114,10 @@ index 7608c28..b7faa56 100644
  @node Polygons
  @subsection Polygons and Rectangles
 diff --git a/src/action.c b/src/action.c
-index 96ecae7..6da9419 100644
+index 4e58c9b..50e51d9 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1022,70 +1022,82 @@ NotifyMode (void)
+@@ -1024,70 +1024,82 @@ NotifyMode (void)
  	switch (Crosshair.AttachedBox.State)
  	  {
  	  case STATE_FIRST:
@@ -251,7 +251,7 @@ index 96ecae7..6da9419 100644
  
  		  bx = GetArcEnds (arc);
  		  Crosshair.AttachedBox.Point1.X =
-@@ -1094,10 +1106,9 @@ NotifyMode (void)
+@@ -1096,10 +1108,9 @@ NotifyMode (void)
  		    Crosshair.AttachedBox.Point2.Y = bx->Y2;
  		  AddObjectToCreateUndoList (ARC_TYPE, CURRENT, arc, arc);
  		  IncrementUndoSerialNumber ();
@@ -263,7 +263,7 @@ index 96ecae7..6da9419 100644
  		}
  	      break;
  	    }
-@@ -6273,21 +6284,29 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
+@@ -6299,21 +6310,29 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
  	    }
  	  if (Crosshair.AttachedBox.State == STATE_THIRD)
  	    {
@@ -491,7 +491,7 @@ index 2dd5e7e..0ae8be7 100644
  
  #endif
 diff --git a/src/set.c b/src/set.c
-index 21351da..156d8f9 100644
+index f1b6c94..2169151 100644
 --- a/src/set.c
 +++ b/src/set.c
 @@ -238,6 +238,7 @@ void
