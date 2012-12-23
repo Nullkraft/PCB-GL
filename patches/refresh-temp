@@ -1,0 +1,25 @@
+Bottom: 1931a152223c4d743989fc31dab80dd1dbc1ea28
+Top:    15a60afddbcd2bcb8f38b4e79eb5bd3238ec4121
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 00:26:50 +0000
+
+Refresh of hid-gtk-gl-start-with-the-sten
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 7df7007..4573b10 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1109,6 +1109,11 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+   hidgl_reset_stencil_usage ();
+ 
++  /* Disable the stencil test until we need it - otherwise it gets dirty */
++  glDisable (GL_STENCIL_TEST);
++  glStencilMask (0);
++  glStencilFunc (GL_ALWAYS, 0, 0);
++
+   /* call the drawing routine */
+   ghid_invalidate_current_gc ();
+   glPushMatrix ();
