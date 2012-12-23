@@ -3,7 +3,10 @@ Top:    638426a6678afbd6c58621a75a306c8d0de5d84e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-23 19:13:54 +0000
 
-Remove PINFLAG
+Remove PINFLAG, it is not required.
+
+As nowhere cares that PINFLAG is set, we can avoid the code to handle this
+and remove the flag.
 
 
 ---
