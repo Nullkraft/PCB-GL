@@ -791,7 +791,6 @@ CreateNewPin (ElementType *Element,
   pin->Number = STRDUP (Number);
   pin->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, pin);
-  SET_FLAG (PINFLAG, pin);
   pin->ID = ID++;
   pin->Element = Element;
 
