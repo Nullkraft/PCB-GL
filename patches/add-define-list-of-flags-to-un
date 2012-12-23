@@ -1,0 +1,16 @@
+Bottom: d87259c4dba294a2524e4b35fa46bd1bb880b11e
+Top:    d87259c4dba294a2524e4b35fa46bd1bb880b11e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 16:04:05 +0000
+
+Add #define list of flags to unset when copying into a buffer
+
+Previously, the removal of FOUNDFLAG was hard-coded in various places,
+lets consolidate the location to one header file, as when we split the
+FOUNDFLAG to differentiate logical and physical connectivity, we will
+only have one location to update.
+
+
+---
+
+
