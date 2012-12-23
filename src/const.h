@@ -178,6 +178,8 @@ pins, indicates that the pin is closer to a horizontal edge and thus
 pinout text should be vertical.
 @item 0x8000 marker
 Marker used internally to avoid revisiting an object.
+@item 0x10000 connected
+If set, this object has been as physically connected by @code{FindConnection()}.
 @end table
 %end-doc */
 
