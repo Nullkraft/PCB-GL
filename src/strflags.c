@@ -86,7 +86,6 @@ typedef struct
 } FlagBitsType;
 
 static FlagBitsType object_flagbits[] = {
-  { PINFLAG, N ("pin"), ALL_TYPES },
   { VIAFLAG, N ("via"), RATLINE_TYPES },
   { FOUNDFLAG, N ("found"), ALL_TYPES },
   { HOLEFLAG, N ("hole"), PIN_TYPES },
