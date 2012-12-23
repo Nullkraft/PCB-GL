@@ -1,7 +1,7 @@
-Bottom: 163bf5c1c02393f07c698c6c4489a9638a545d87
-Top:    d950987b3169332c61b5f5129ed2e220e6ea53c9
+Bottom: bb5116e2076171781b9850fae1df38760929597f
+Top:    0c340e0eea056f8da41b6899cc24c1db4a8bc42c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-12-22 22:49:15 +0000
+Date:   2012-12-23 00:44:40 +0000
 
 Play with perspective
 
@@ -76,7 +76,7 @@ index 115b353..eac2f1d 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7eea5e6..bcccb98 100644
+index 85cc198..3ab2ed8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -13,6 +13,7 @@
@@ -133,7 +133,7 @@ index 7eea5e6..bcccb98 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -1433,7 +1443,8 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1431,7 +1441,8 @@ GhidDrawMask (int side, BoxType * screen)
    polygon.Clipped = PCB->Data->outline;
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
@@ -143,7 +143,7 @@ index 7eea5e6..bcccb98 100644
    polygon.Flags = NoFlags ();
    SET_FLAG (FULLPOLYFLAG, &polygon);
    gui->graphics->fill_pcb_polygon (out->fgGC, &polygon, screen);
-@@ -1654,7 +1665,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1652,7 +1663,7 @@ ghid_draw_everything (BoxType *drawn_area)
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
    /* XXX: This isn't strictly correct, as I've ignored the matrix
@@ -152,7 +152,7 @@ index 7eea5e6..bcccb98 100644
    /* NB: last_modelview_matrix is transposed in memory! */
    reverse_layers = (last_modelview_matrix[2][2] < 0);
  
-@@ -1818,6 +1829,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1816,6 +1827,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    Coord new_x, new_y;
    Coord min_depth;
    Coord max_depth;
@@ -165,7 +165,7 @@ index 7eea5e6..bcccb98 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -1842,20 +1859,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1840,20 +1857,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -241,7 +241,7 @@ index 7eea5e6..bcccb98 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -1864,7 +1926,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1862,7 +1924,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -250,7 +250,7 @@ index 7eea5e6..bcccb98 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -1876,58 +1938,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1874,58 +1936,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -349,7 +349,7 @@ index 7eea5e6..bcccb98 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2315,10 +2392,10 @@ ghid_finish_debug_draw (void)
+@@ -2346,10 +2423,10 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport, gport->drawing_area);
  }
  
@@ -363,7 +363,7 @@ index 7eea5e6..bcccb98 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2346,9 +2423,9 @@ determinant_4x4 (float m[4][4])
+@@ -2377,9 +2454,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -375,7 +375,7 @@ index 7eea5e6..bcccb98 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2413,96 +2490,157 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2444,96 +2521,157 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
