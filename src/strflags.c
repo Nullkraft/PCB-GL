@@ -89,7 +89,6 @@ static FlagBitsType object_flagbits[] = {
   { VIAFLAG, N ("via"), RATLINE_TYPES },
   { FOUNDFLAG, N ("found"), ALL_TYPES },
   { HOLEFLAG, N ("hole"), PIN_TYPES },
-  { RATFLAG, N ("rat"), RATLINE_TYPE },
   { PININPOLYFLAG, N ("pininpoly"), PIN_TYPES | PAD_TYPE },
   { CLEARPOLYFLAG, N ("clearpoly"), POLYGON_TYPE },
   { HIDENAMEFLAG, N ("hidename"), ELEMENT_TYPE },
@@ -459,11 +458,6 @@ string_to_pcbflags (const char *flagstring,
  * Given a set of flags for a given type of object, return a string
  * which reflects those flags.  The only requirement is that this
  * string be parseable by string_to_flags.
- *
- * Note that this function knows a little about what kinds of flags
- * will be automatically set by parsing, so it won't (for example)
- * include the "rat" flag for RATLINE_TYPEs because it knows those get
- * forcibly set when vias are parsed.
  */
 
 static char *
@@ -478,15 +472,6 @@ common_flags_to_string (FlagType flags,
   char *buf, *bp;
 
   fh.Flags = flags;
-
-#ifndef FLAG_TEST
-  switch (object_type)
-    {
-    case RATLINE_TYPE:
-      CLEAR_FLAG (RATFLAG, &fh);
-      break;
-    }
-#endif
 
   savef = fh;
 

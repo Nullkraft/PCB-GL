@@ -466,7 +466,6 @@ CreateNewLineOnLayer (LayerType *Layer,
     return (Line);
   Line->ID = ID++;
   Line->Flags = Flags;
-  CLEAR_FLAG (RATFLAG, Line);
   Line->Thickness = Thickness;
   Line->Clearance = Clearance;
   Line->Point1.X = X1;
@@ -497,7 +496,6 @@ CreateNewRat (DataType *Data, Coord X1, Coord Y1,
 
   Line->ID = ID++;
   Line->Flags = Flags;
-  SET_FLAG (RATFLAG, Line);
   Line->Thickness = Thickness;
   Line->Point1.X = X1;
   Line->Point1.Y = Y1;
