@@ -1,5 +1,5 @@
-Bottom: f68a54bfbd42cbcbf1b9450b4a9cfbbc1740b31b
-Top:    a89c54d158bd9d39d109a69ebba244b444ce4d2b
+Bottom: d87259c4dba294a2524e4b35fa46bd1bb880b11e
+Top:    a3d95984d7f6659039e0d9edf45f55ff3b4e67b1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 16:02:05 +0000
 
@@ -17,10 +17,10 @@ objects.
 ---
 
 diff --git a/src/const.h b/src/const.h
-index de8c6ab..31a6ae8 100644
+index 3b4dbb5..cc3c450 100644
 --- a/src/const.h
 +++ b/src/const.h
-@@ -214,6 +214,7 @@ pad.  Primarily used for pads used as fiducials.
+@@ -214,6 +214,7 @@ Marker used internally to avoid revisiting an object.
  #define EDGE2FLAG               0x4000  /* Padr.Point2 is closer to outside edge */
                                          /* also pinout text for pins is vertical */
  #define VISITFLAG               0x8000  /* marker to avoid re-visiting an object */
