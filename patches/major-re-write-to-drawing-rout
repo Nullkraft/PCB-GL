@@ -1,7 +1,7 @@
-Bottom: cacfa4d5040977608eaed568c19c644482700f59
-Top:    dc34b5d170c1fd38c11ccf073e7c3f129826ecd0
+Bottom: 9eea7962ecfc1dea3db65477feb7c6f42555d5b8
+Top:    adc261b4f2545a74209a3f6d8ffebb209f129502
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-12-19 01:37:47 +0000
+Date:   2012-12-23 00:44:34 +0000
 
 Major re-write to drawing routines
 
@@ -76,7 +76,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index db819cb..7df381a 100644
+index f14ae42..151a815 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -221,7 +221,7 @@ index db819cb..7df381a 100644
  }
  
  static void
-@@ -910,6 +929,10 @@ ghid_start_drawing (GHidPort *port, GtkWidget *widget)
+@@ -908,6 +927,10 @@ ghid_start_drawing (GHidPort *port, GtkWidget *widget)
  
    port->render_priv->in_context = true;
  
@@ -232,7 +232,7 @@ index db819cb..7df381a 100644
    return TRUE;
  }
  
-@@ -927,6 +950,14 @@ ghid_end_drawing (GHidPort *port, GtkWidget *widget)
+@@ -925,6 +948,14 @@ ghid_end_drawing (GHidPort *port, GtkWidget *widget)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
@@ -247,7 +247,7 @@ index db819cb..7df381a 100644
  }
  
  void
-@@ -934,6 +965,739 @@ ghid_screen_update (void)
+@@ -932,6 +963,739 @@ ghid_screen_update (void)
  {
  }
  
@@ -987,7 +987,7 @@ index db819cb..7df381a 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1003,8 +1767,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1001,8 +1765,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -998,7 +998,7 @@ index db819cb..7df381a 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1070,17 +1834,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1068,17 +1832,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  

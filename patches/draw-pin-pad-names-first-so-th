@@ -1,7 +1,7 @@
-Bottom: 81b886e3deeb01ffb325c5c8272075a37728957a
-Top:    df30c7b2c9d3e951a8606b30a87d6868a444fda0
+Bottom: c67752399bad49ebed9c1d4c0d85773b5b70c63c
+Top:    4e3da2e985c178e5f228a46d96fdf10879b468f5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-12-19 01:37:48 +0000
+Date:   2012-12-23 00:44:34 +0000
 
 Draw pin / pad names first, so they don't get masked by the pad
 
@@ -19,10 +19,10 @@ the pads.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2523ae4..0ba1af3 100644
+index 9ef2b6b..f7ff170 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1079,7 +1079,21 @@ draw_pin (PinType *pin, bool draw_hole)
+@@ -1077,7 +1077,21 @@ draw_pin (PinType *pin, bool draw_hole)
  static int
  pin_callback (const BoxType * b, void *cl)
  {
@@ -45,7 +45,7 @@ index 2523ae4..0ba1af3 100644
    return 1;
  }
  
-@@ -1189,8 +1203,11 @@ pad_callback (const BoxType * b, void *cl)
+@@ -1187,8 +1201,11 @@ pad_callback (const BoxType * b, void *cl)
    PadType *pad = (PadType *) b;
    int *side = cl;
  
@@ -58,7 +58,7 @@ index 2523ae4..0ba1af3 100644
    return 1;
  }
  
-@@ -1432,6 +1449,9 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1430,6 +1447,9 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
  
        /* Draw pins, vias and pads on this layer */
        if (!global_view_2d && rv) {
