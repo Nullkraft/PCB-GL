@@ -489,9 +489,6 @@ common_flags_to_string (FlagType flags,
     case RATLINE_TYPE:
       CLEAR_FLAG (RATFLAG, &fh);
       break;
-    case PIN_TYPE:
-      CLEAR_FLAG (PINFLAG, &fh);
-      break;
     }
 #endif
 
