@@ -1,0 +1,58 @@
+Bottom: ed74914289ed9b60925a734574aa0eec2f788c41
+Top:    cb6e59f3758969b73221b090f18ebc910987fa09
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 20:58:39 +0000
+
+Refresh of add-split-colouring-for-find-a
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index b07dea6..a682f9d 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -102,7 +102,7 @@ set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
+ static void
+ set_layer_object_color (LayerType *layer, AnyObjectType *obj)
+ {
+-  set_object_color (obj, NULL, layer->SelectedColor, PCB->ConnectedColor, PCB->RatColor, layer->Color);
++  set_object_color (obj, NULL, layer->SelectedColor, PCB->ConnectedColor, PCB->FoundColor, layer->Color);
+ }
+ 
+ /*---------------------------------------------------------------------------
+@@ -203,7 +203,7 @@ draw_pin (PinType *pin, bool draw_hole)
+   else
+     set_object_color ((AnyObjectType *)pin,
+                       PCB->WarnColor, PCB->PinSelectedColor,
+-                      PCB->ConnectedColor, PCB->RatColor, PCB->PinColor);
++                      PCB->ConnectedColor, PCB->FoundColor, PCB->PinColor);
+ 
+   _draw_pv (pin, draw_hole);
+ }
+@@ -223,7 +223,7 @@ draw_via (PinType *via, bool draw_hole)
+   else
+     set_object_color ((AnyObjectType *)via,
+                       PCB->WarnColor, PCB->ViaSelectedColor,
+-                      PCB->ConnectedColor, PCB->RatColor, PCB->ViaColor);
++                      PCB->ConnectedColor, PCB->FoundColor, PCB->ViaColor);
+ 
+   _draw_pv (via, draw_hole);
+ }
+@@ -297,7 +297,7 @@ draw_pad (PadType *pad)
+     gui->graphics->set_color (Output.fgGC, PCB->PinColor);
+   else
+     set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
+-                      PCB->PinSelectedColor, PCB->ConnectedColor, PCB->RatColor,
++                      PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
+                       FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
+ 
+   _draw_pad (Output.fgGC, pad, false, false);
+@@ -443,7 +443,7 @@ rat_callback (const BoxType * b, void *cl)
+   RatType *rat = (RatType *)b;
+ 
+   set_object_color ((AnyObjectType *) rat, NULL, PCB->RatSelectedColor,
+-                    PCB->ConnectedColor, PCB->RatColor, PCB->RatColor);
++                    PCB->ConnectedColor, PCB->FoundColor, PCB->RatColor);
+ 
+   if (Settings.RatThickness < 100)
+     rat->Thickness = pixel_slop * Settings.RatThickness;
