@@ -1,0 +1,18 @@
+Bottom: 0b8167aaf50246bbdb74d12b8f4ca4d34ba955e7
+Top:    0b8167aaf50246bbdb74d12b8f4ca4d34ba955e7
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 02:41:31 +0000
+
+draw.c: Support for coloring objects with CONNECTEDFLAG set
+
+We now color objects with the FOUNDFLAG set in the FoundColor, not the
+ConnectedColor as we did previously. Unsurprisingly, objects with the
+CONNECTEDFLAG set get rendered in the ConnectedColor.
+
+CONNECTEDFLAG is tested before FOUNDFLAG, and takes precidence if an
+object has both flags set.
+
+
+---
+
+
