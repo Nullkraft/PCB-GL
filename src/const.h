@@ -127,8 +127,9 @@ without a copper annulus.
 For pads, set to prevent a solderpaste stencil opening for the
 pad.  Primarily used for pads used as fiducials.
 @item 0x0010 rat
-If set for a line, indicates that this line is a rat line instead of a
-copper trace.
+If set for a line (in an old PCB file), indicates that this line is a rat line
+instead of a copper trace. It is not used internally by PCB, and not assigned
+to rats.
 @item 0x0010 pininpoly
 For pins and pads, this flag is used internally to indicate that the
 pin or pad overlaps a polygon on some layer.
@@ -186,7 +187,7 @@ Marker used internally to avoid revisiting an object.
 #define NOPASTEFLAG             0x0008  /* pad should not receive
                                            solderpaste.  This is to
                                            support fiducials */
-#define RATFLAG                 0x0010  /* indicates line is a rat line */
+#define RATFLAG                 0x0010  /* indicates a line is a rat line when reading older PCB files. Not used internally */
 #define PININPOLYFLAG           0x0010  /* pin found inside poly - same as */
                                         /* rat line since not used on lines */
 #define CLEARPOLYFLAG           0x0010  /* pins/vias clear these polygons */
