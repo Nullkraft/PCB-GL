@@ -1,4 +1,4 @@
-Bottom: 18c89d887854c06d5365edff55525ef848db9e82
+Bottom: e1a138c3a9cded3652a5df511c8e736bca34b254
 Top:    d073a0230510bb25ab9ffe026de20ceabebae0a4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-10 01:19:10 +0000
@@ -16,26 +16,10 @@ if all rat-lines were implemented.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 6a2c43a..4e58c9b 100644
+index e79235d..4e58c9b 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -107,6 +107,7 @@ typedef enum
-   F_ClearAndRedraw,
-   F_ClearList,
-   F_Close,
-+  F_Found,
-   F_Connection,
-   F_Convert,
-   F_Copy,
-@@ -341,6 +342,7 @@ static FunctionType Functions[] = {
-   {"ClearAndRedraw", F_ClearAndRedraw},
-   {"ClearList", F_ClearList},
-   {"Close", F_Close},
-+  {"Found", F_Found},
-   {"Connection", F_Connection},
-   {"Convert", F_Convert},
-   {"Copy", F_Copy},
-@@ -2290,12 +2292,13 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+@@ -2292,12 +2292,13 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
  	case F_Find:
  	  {
  	    gui->get_coords (_("Click on a connection"), &x, &y);
@@ -51,7 +35,7 @@ index 6a2c43a..4e58c9b 100644
  	    {
  	      IncrementUndoSerialNumber ();
  	      Draw ();
-@@ -2303,7 +2306,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+@@ -2305,7 +2306,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
  	  break;
  
  	case F_ResetPinsViasAndPads:
@@ -60,7 +44,7 @@ index 6a2c43a..4e58c9b 100644
  	    {
  	      IncrementUndoSerialNumber ();
  	      Draw ();
-@@ -2311,7 +2314,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+@@ -2313,7 +2314,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
  	  break;
  
  	case F_Reset:
@@ -69,108 +53,6 @@ index 6a2c43a..4e58c9b 100644
  	    {
  	      IncrementUndoSerialNumber ();
  	      Draw ();
-@@ -5315,9 +5318,12 @@ Selects all objects in a rectangle indicated by the cursor.
- @item All
- Selects all objects on the board.
- 
--@item Connection
-+@item Found
- Selects all connections with the ``found'' flag set.
- 
-+@item Connection
-+Selects all connections with the ``connected'' flag set.
-+
- @item Convert
- Converts the selected objects to an element.  This uses the highest
- numbered paste buffer.
-@@ -5422,8 +5428,8 @@ ActionSelect (int argc, char **argv, Coord x, Coord y)
- 	    break;
- 	  }
- 
--	  /* all found connections */
--	case F_Connection:
-+	  /* all logical connections */
-+	case F_Found:
- 	  if (SelectByFlag (FOUNDFLAG, true))
- 	    {
-               Draw ();
-@@ -5432,6 +5438,16 @@ ActionSelect (int argc, char **argv, Coord x, Coord y)
- 	    }
- 	  break;
- 
-+	  /* all physical connections */
-+	case F_Connection:
-+	  if (SelectByFlag (CONNECTEDFLAG, true))
-+	    {
-+              Draw ();
-+	      IncrementUndoSerialNumber ();
-+	      SetChangedFlag (true);
-+	    }
-+	  break;
-+
- 	case F_Convert:
- 	  {
- 	    Coord x, y;
-@@ -5601,8 +5617,8 @@ ActionUnselect (int argc, char **argv, Coord x, Coord y)
- 	    break;
- 	  }
- 
--	  /* all found connections */
--	case F_Connection:
-+	  /* all logical connections */
-+	case F_Found:
- 	  if (SelectByFlag (FOUNDFLAG, false))
- 	    {
-               Draw ();
-@@ -5611,6 +5627,16 @@ ActionUnselect (int argc, char **argv, Coord x, Coord y)
- 	    }
- 	  break;
- 
-+	  /* all physical connections */
-+	case F_Connection:
-+	  if (SelectByFlag (CONNECTEDFLAG, false))
-+	    {
-+              Draw ();
-+	      IncrementUndoSerialNumber ();
-+	      SetChangedFlag (true);
-+	    }
-+	  break;
-+
- 	default:
- 	  AFAIL (unselect);
- 	  break;
-diff --git a/src/gpcb-menu.res.in b/src/gpcb-menu.res.in
-index f28edff..47bee40 100644
---- a/src/gpcb-menu.res.in
-+++ b/src/gpcb-menu.res.in
-@@ -233,9 +233,11 @@ MainMenu =
- #
-   {"Select" m=l
-    {"Select all visible" Select(All)}
-+   {"Select all found" Select(Found)}
-    {"Select all connected" Select(Connection)}
-    -
-    {"Unselect all" Unselect(All)}
-+   {"Unselect all found" Unselect(Found)}
-    {"Unselect all connected" Unselect(Connection)}
-    -
-    {"Select by name"
-diff --git a/src/pcb-menu.res.in b/src/pcb-menu.res.in
-index 84c4a45..e37bd7c 100644
---- a/src/pcb-menu.res.in
-+++ b/src/pcb-menu.res.in
-@@ -219,9 +219,11 @@ MainMenu =
- 
-   {Select
-    {"Select all visible objects" Select(All)}
-+   {"Select all found objects" Select(Found)}
-    {"Select all connected objects" Select(Connection)}
-    -
-    {"Unselect all objects" Unselect(All)}
-+   {"unselect all found objects" Unselect(Found)}
-    {"unselect all connected objects" Unselect(Connection)}
-    -
-    {"Select by name" foreground=grey50 sensitive=false}
 diff --git a/src/undo.h b/src/undo.h
 index f415c3c..c52b051 100644
 --- a/src/undo.h
