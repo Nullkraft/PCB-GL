@@ -1,0 +1,14 @@
+Bottom: 801d8630abba5450eb14d237677ee38b2bfbd05f
+Top:    801d8630abba5450eb14d237677ee38b2bfbd05f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 20:56:22 +0000
+
+find.c: Fix inverted logic in LookupConnection()
+
+When AndRats is true, we may consider starting with a ratline object,
+otherwise we do no. I got this backwards by mistake.
+
+
+---
+
+
