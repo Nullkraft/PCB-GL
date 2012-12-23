@@ -1,0 +1,33 @@
+Bottom: f81867e2fca55033ab02294b728749a1482fe334
+Top:    b88e92ff81c563ecf910989c05a777ed4c548ced
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 02:18:11 +0000
+
+Refresh of add-split-colouring-for-find-a
+
+---
+
+diff --git a/src/main.c b/src/main.c
+index 1939b01..d80612d 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -760,7 +760,7 @@ Color of selected rats. Default: @samp{#00ffff}
+ /* %start-doc options "3 Colors"
+ @ftable @code
+ @item --connected-color <string>
+-Color to indicate connections. Default: @samp{#00ff00}
++Color to indicate physical connections. Default: @samp{#00ff00}
+ @end ftable
+ %end-doc
+ */
+@@ -769,8 +769,8 @@ Color to indicate connections. Default: @samp{#00ff00}
+ 
+ /* %start-doc options "3 Colors"
+ @ftable @code
+-@item --connected-color <string>
+-Color to indicate connections. Default: @samp{#00ff00}
++@item --found-color <string>
++Color to indicate logical connections. Default: @samp{#ff00ff}
+ @end ftable
+ %end-doc
+ */
