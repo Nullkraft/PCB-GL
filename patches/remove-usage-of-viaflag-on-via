@@ -1,0 +1,15 @@
+Bottom: cb3bb45a40eeb62177b5e30d0f0a619962ad3931
+Top:    cb3bb45a40eeb62177b5e30d0f0a619962ad3931
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 19:12:20 +0000
+
+Remove usage of VIAFLAG on via objects.
+
+Nowhere cares, so avoid the code to handle this. The only use of the
+VIAFLAG now is for rats, where it is used to indicate a possible
+connection to a polygon using a via.
+
+
+---
+
+
