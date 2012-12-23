@@ -1,5 +1,5 @@
 Bottom: 89d1f7bd64ee5689c203515eeb805bc0ebdff2db
-Top:    5a00db801454baa6991a6b3be306f8b0a6e9455d
+Top:    ed74914289ed9b60925a734574aa0eec2f788c41
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-10 01:19:10 +0000
 
@@ -102,26 +102,3 @@ index a682f9d..b07dea6 100644
  
    if (Settings.RatThickness < 100)
      rat->Thickness = pixel_slop * Settings.RatThickness;
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ac695e8..9c389da 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -615,8 +615,10 @@ ghid_invalidate_all ()
- 
-   ghid_draw_area_update (gport, NULL);
- 
-+#if 1
-   if (elapsed > MAX_ELAPSED)
-     gdk_window_process_all_updates ();
-+#endif
- }
- 
- void
-@@ -1022,6 +1024,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
- 
-   g_timer_start (priv->time_since_expose);
- 
-+//  usleep (100000);
-+
-   return FALSE;
- }
