@@ -1,5 +1,5 @@
 Bottom: 2229c6ebccfaf8d13b79f9f03633437c6ce795f4
-Top:    f81867e2fca55033ab02294b728749a1482fe334
+Top:    b88e92ff81c563ecf910989c05a777ed4c548ced
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-10 01:19:10 +0000
 
@@ -348,10 +348,16 @@ index f28edff..47bee40 100644
     -
     {"Select by name"
 diff --git a/src/main.c b/src/main.c
-index 3ab4d56..1939b01 100644
+index 3ab4d56..d80612d 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -765,7 +765,17 @@ Color to indicate connections. Default: @samp{#00ff00}
+@@ -760,12 +760,22 @@ Color of selected rats. Default: @samp{#00ffff}
+ /* %start-doc options "3 Colors"
+ @ftable @code
+ @item --connected-color <string>
+-Color to indicate connections. Default: @samp{#00ff00}
++Color to indicate physical connections. Default: @samp{#00ff00}
+ @end ftable
  %end-doc
  */
    COLOR (ConnectedColor, "#00ff00", "connected-color",
@@ -360,8 +366,8 @@ index 3ab4d56..1939b01 100644
 +
 +/* %start-doc options "3 Colors"
 +@ftable @code
-+@item --connected-color <string>
-+Color to indicate connections. Default: @samp{#00ff00}
++@item --found-color <string>
++Color to indicate logical connections. Default: @samp{#ff00ff}
 +@end ftable
 +%end-doc
 +*/
