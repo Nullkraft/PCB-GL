@@ -1,7 +1,7 @@
-Bottom: 1fe6cab74008e92ab0661d46821b856dd851fc1b
-Top:    e930b654ee272b0611d2cc08a5796f20021b1d7a
+Bottom: 614f0bb0250f8cad40541409f44e4019cf9c6538
+Top:    de9d553cfb1c7115cd9c51fe15d20423fb0c9071
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-12-23 18:09:28 +0000
+Date:   2012-12-23 22:27:07 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 4e58c9b..214ba05 100644
+index 2d05a4d..ea95fb4 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1880,37 +1880,39 @@ static int
@@ -891,7 +891,7 @@ index 8e39be4..c1a1879 100644
  
  	  break;
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 103da0c..ee29aee 100644
+index 0454586..d095930 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
 @@ -525,9 +525,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
@@ -907,7 +907,7 @@ index 103da0c..ee29aee 100644
    if (!selected_net)
 @@ -538,9 +537,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
    InitConnectionLookup ();
-   ResetConnections (true, FOUNDFLAG);
+   ClearFlagOnAllObjects (true, FOUNDFLAG);
  
 -  for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
 +  for (iter = selected_net->Entry; iter != NULL; iter = g_list_next (iter)) {
@@ -918,7 +918,7 @@ index 103da0c..ee29aee 100644
 +  }
  
    SelectByFlag (FOUNDFLAG, select_flag);
-   ResetConnections (false, FOUNDFLAG);
+   ClearFlagOnAllObjects (false, FOUNDFLAG);
 @@ -853,9 +855,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
  {
    struct ggnfnn_task *task = (struct ggnfnn_task *)data;
@@ -2139,7 +2139,7 @@ index 46061a3..c036559 100644
  void FreePCBMemory (PCBType *);
  void FreeBoxListMemory (BoxListType *);
 diff --git a/src/report.c b/src/report.c
-index a5e45de..12d481b 100644
+index baa458d..c2c2b07 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -334,14 +334,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
@@ -2160,7 +2160,7 @@ index a5e45de..12d481b 100644
  		 GetLayerNumber (PCB->Data, (LayerType *) ptr1),
  		 TEST_FLAG (LOCKFLAG, Polygon) ? "It is LOCKED.\n" : "");
 diff --git a/src/select.c b/src/select.c
-index 3b1b670..903f59c 100644
+index 1762c76..971a6ce 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -966,18 +966,20 @@ SelectObjectByName (int Type, char *Pattern, bool select)
