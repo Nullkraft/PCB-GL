@@ -1,5 +1,5 @@
-Bottom: 1931a152223c4d743989fc31dab80dd1dbc1ea28
-Top:    c58c9c4f2d2a4955c2860b65aefa3f0e1c0c3466
+Bottom: 15a60afddbcd2bcb8f38b4e79eb5bd3238ec4121
+Top:    87423f82c99520be60821443978acef12f9203b0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 20:35:09 +0000
 
@@ -11,7 +11,7 @@ We aren't using subcompositing for this, so don't alpha-blend.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7df7007..02d3887 100644
+index 4573b10..51bdffa 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1083,8 +1083,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
@@ -29,7 +29,7 @@ index 7df7007..02d3887 100644
  
    glViewport (0, 0, allocation.width, allocation.height);
  
-@@ -1109,6 +1115,11 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1213,6 +1219,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
    hidgl_reset_stencil_usage ();
  
