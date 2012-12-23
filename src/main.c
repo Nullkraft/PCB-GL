@@ -760,7 +760,7 @@ Color of selected rats. Default: @samp{#00ffff}
 /* %start-doc options "3 Colors"
 @ftable @code
 @item --connected-color <string>
-Color to indicate connections. Default: @samp{#00ff00}
+Color to indicate physical connections. Default: @samp{#00ff00}
 @end ftable
 %end-doc
 */
@@ -769,8 +769,8 @@ Color to indicate connections. Default: @samp{#00ff00}
 
 /* %start-doc options "3 Colors"
 @ftable @code
-@item --connected-color <string>
-Color to indicate connections. Default: @samp{#00ff00}
+@item --found-color <string>
+Color to indicate logical connections. Default: @samp{#ff00ff}
 @end ftable
 %end-doc
 */
