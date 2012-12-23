@@ -31,6 +31,7 @@
 #include "error.h"
 #include "search.h"
 #include "draw.h"
+#include "find.h"
 #include "pcb-printf.h"
 #include "undo.h"
 #include "set.h"
@@ -93,98 +94,12 @@ enum {
 static void
 unset_found_flags (int AndDraw)
 {
-  int flag = FOUNDFLAG;
-  int change = 0;
+  bool changed = ResetConnections (true, FOUNDFLAG);
 
-  VIA_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (flag, via))
-      {
-	AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
-	CLEAR_FLAG (flag, via);
-	DrawVia (via);
-	change = true;
-      }
-  }
-  END_LOOP;
-  ELEMENT_LOOP (PCB->Data);
-  {
-    PIN_LOOP (element);
+  if (changed && AndDraw)
     {
-      if (TEST_FLAG (flag, pin))
-	{
-	  AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
-	  CLEAR_FLAG (flag, pin);
-	  DrawPin (pin);
-	  change = true;
-	}
-    }
-    END_LOOP;
-    PAD_LOOP (element);
-    {
-      if (TEST_FLAG (flag, pad))
-	{
-	  AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
-	  CLEAR_FLAG (flag, pad);
-	  DrawPad (pad);
-	  change = true;
-	}
-    }
-    END_LOOP;
-  }
-  END_LOOP;
-  RAT_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (flag, line))
-      {
-	AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
-	CLEAR_FLAG (flag, line);
-	DrawRat (line);
-	change = true;
-      }
-  }
-  END_LOOP;
-  COPPERLINE_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (flag, line))
-      {
-	AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
-	CLEAR_FLAG (flag, line);
-	DrawLine (layer, line);
-	change = true;
-      }
-  }
-  ENDALL_LOOP;
-  COPPERARC_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (flag, arc))
-      {
-	AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
-	CLEAR_FLAG (flag, arc);
-	DrawArc (layer, arc);
-	change = true;
-      }
-  }
-  ENDALL_LOOP;
-  COPPERPOLYGON_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (flag, polygon))
-      {
-	AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
-	CLEAR_FLAG (flag, polygon);
-	DrawPolygon (layer, polygon);
-	change = true;
-      }
-  }
-  ENDALL_LOOP;
-  if (change)
-    {
-      SetChangedFlag (true);
-      if (AndDraw)
-	{
-	  IncrementUndoSerialNumber ();
-	  Draw ();
-	}
+      IncrementUndoSerialNumber ();
+      Draw ();
     }
 }
 
