@@ -1,5 +1,5 @@
 Bottom: 9eea7962ecfc1dea3db65477feb7c6f42555d5b8
-Top:    adc261b4f2545a74209a3f6d8ffebb209f129502
+Top:    1435046ba8704c82bcb6e5a4a4d89d1f189389c3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-23 00:44:34 +0000
 
@@ -76,7 +76,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f14ae42..151a815 100644
+index f14ae42..b2b48c8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -221,33 +221,7 @@ index f14ae42..151a815 100644
  }
  
  static void
-@@ -908,6 +927,10 @@ ghid_start_drawing (GHidPort *port, GtkWidget *widget)
- 
-   port->render_priv->in_context = true;
- 
-+  Output.fgGC = gui->graphics->make_gc ();
-+  Output.bgGC = gui->graphics->make_gc ();
-+  Output.pmGC = gui->graphics->make_gc ();
-+
-   return TRUE;
- }
- 
-@@ -925,6 +948,14 @@ ghid_end_drawing (GHidPort *port, GtkWidget *widget)
- 
-   /* end drawing to current GL-context */
-   gdk_gl_drawable_gl_end (pGlDrawable);
-+
-+  gui->graphics->destroy_gc (Output.fgGC);
-+  gui->graphics->destroy_gc (Output.bgGC);
-+  gui->graphics->destroy_gc (Output.pmGC);
-+
-+  Output.fgGC = NULL;
-+  Output.bgGC = NULL;
-+  Output.pmGC = NULL;
- }
- 
- void
-@@ -932,6 +963,739 @@ ghid_screen_update (void)
+@@ -932,6 +951,739 @@ ghid_screen_update (void)
  {
  }
  
@@ -987,7 +961,18 @@ index f14ae42..151a815 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1001,8 +1765,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -952,6 +1704,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   ghid_start_drawing (port, widget);
+   hidgl_start_render ();
+ 
++  Output.fgGC = gui->graphics->make_gc ();
++  Output.bgGC = gui->graphics->make_gc ();
++  Output.pmGC = gui->graphics->make_gc ();
++
+   /* If we don't have any stencil bits available,
+      we can't use the hidgl polygon drawing routine */
+   /* TODO: We could use the GLU tessellator though */
+@@ -1001,8 +1757,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -998,7 +983,7 @@ index f14ae42..151a815 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1068,17 +1832,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1068,17 +1824,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1056,3 +1041,17 @@ index f14ae42..151a815 100644
    hidgl_flush_triangles (&buffer);
  
    /* Set the current depth to the right value for the layer we are editing */
+@@ -1100,6 +1888,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   hidgl_finish_render ();
+   ghid_end_drawing (port, widget);
+ 
++  gui->graphics->destroy_gc (Output.fgGC);
++  gui->graphics->destroy_gc (Output.bgGC);
++  gui->graphics->destroy_gc (Output.pmGC);
++
++  Output.fgGC = NULL;
++  Output.bgGC = NULL;
++  Output.pmGC = NULL;
+   g_timer_start (priv->time_since_expose);
+ 
+   return FALSE;
