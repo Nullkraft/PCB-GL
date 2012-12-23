@@ -1,5 +1,5 @@
 Bottom: f7665070eee7dad682c00e546bb19fb28242e431
-Top:    ddfb232cd8662ca03dc1fe9224976120a33be45f
+Top:    3ef61f8fb4c34bad16524fd56bd5a0541c917bb8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 20:35:09 +0000
 
@@ -11,7 +11,7 @@ We aren't using subcompositing for this, so don't alpha-blend.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 409dcac..ace9851 100644
+index 409dcac..be8f39e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1083,8 +1083,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
@@ -20,8 +20,8 @@ index 409dcac..ace9851 100644
  
 +#if 0  /* We disable alpha blending here, as hid_expose_callback() does not
 +        * call set_layer() as appropriate for us to sub-composite rendering
-+        * from each layer. If we leave alpha-blending on, it means text and
-+        * overlapping pads are rendered looking very ugly.
++        * from each layer when drawing a single element. If we leave alpha-
++        * blending on, it means text and overlapping pads are rendered ugly.
 +        */
 +
    glEnable (GL_BLEND);
