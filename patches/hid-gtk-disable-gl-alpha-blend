@@ -1,5 +1,5 @@
 Bottom: 15a60afddbcd2bcb8f38b4e79eb5bd3238ec4121
-Top:    87423f82c99520be60821443978acef12f9203b0
+Top:    ddfb232cd8662ca03dc1fe9224976120a33be45f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 20:35:09 +0000
 
@@ -11,17 +11,18 @@ We aren't using subcompositing for this, so don't alpha-blend.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4573b10..51bdffa 100644
+index 4573b10..ace9851 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1083,8 +1083,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1083,8 +1083,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    ghid_start_drawing (gport, widget);
    hidgl_start_render ();
  
 +#if 0  /* We disable alpha blending here, as hid_expose_callback() does not
-+          call set_layer() as appropriate for us to sub-composite rendering
-+          from each layer. If we leave alpha-blending on, it means text and
-+          overlapping pads are rendered looking very ugly.
++        * call set_layer() as appropriate for us to sub-composite rendering
++        * from each layer. If we leave alpha-blending on, it means text and
++        * overlapping pads are rendered looking very ugly.
++        */
 +
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -29,7 +30,7 @@ index 4573b10..51bdffa 100644
  
    glViewport (0, 0, allocation.width, allocation.height);
  
-@@ -1213,6 +1219,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1213,6 +1220,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
    hidgl_reset_stencil_usage ();
  
