@@ -1,0 +1,32 @@
+Bottom: 5a00db801454baa6991a6b3be306f8b0a6e9455d
+Top:    ed74914289ed9b60925a734574aa0eec2f788c41
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 20:58:27 +0000
+
+Refresh of add-split-colouring-for-find-a
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 9c389da..ac695e8 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -615,10 +615,8 @@ ghid_invalidate_all ()
+ 
+   ghid_draw_area_update (gport, NULL);
+ 
+-#if 1
+   if (elapsed > MAX_ELAPSED)
+     gdk_window_process_all_updates ();
+-#endif
+ }
+ 
+ void
+@@ -1024,8 +1022,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   g_timer_start (priv->time_since_expose);
+ 
+-//  usleep (100000);
+-
+   return FALSE;
+ }
