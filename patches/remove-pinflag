@@ -1,5 +1,5 @@
-Bottom: cb3bb45a40eeb62177b5e30d0f0a619962ad3931
-Top:    a946e49d590386c431ddecde7d86e9362fa790c1
+Bottom: edbddd22f9dcc0f354bf616adaaac8e02ed0adac
+Top:    638426a6678afbd6c58621a75a306c8d0de5d84e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-23 19:13:54 +0000
 
@@ -9,10 +9,10 @@ Remove PINFLAG
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 992c49e..be328cc 100644
+index 617fc4e..e1ab2a1 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -792,7 +792,6 @@ CreateNewPin (ElementType *Element,
+@@ -791,7 +791,6 @@ CreateNewPin (ElementType *Element,
    pin->Number = STRDUP (Number);
    pin->Flags = Flags;
    CLEAR_FLAG (WARNFLAG, pin);
@@ -21,10 +21,10 @@ index 992c49e..be328cc 100644
    pin->Element = Element;
  
 diff --git a/src/strflags.c b/src/strflags.c
-index 3699c53..9b5eb46 100644
+index d803e7e..8da69e2 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
-@@ -489,9 +489,6 @@ common_flags_to_string (FlagType flags,
+@@ -486,9 +486,6 @@ common_flags_to_string (FlagType flags,
      case RATLINE_TYPE:
        CLEAR_FLAG (RATFLAG, &fh);
        break;
