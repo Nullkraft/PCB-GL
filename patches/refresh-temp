@@ -1,0 +1,34 @@
+Bottom: cb3bb45a40eeb62177b5e30d0f0a619962ad3931
+Top:    a946e49d590386c431ddecde7d86e9362fa790c1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 19:15:20 +0000
+
+Refresh of remove-pinflag
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index 992c49e..be328cc 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -792,7 +792,6 @@ CreateNewPin (ElementType *Element,
+   pin->Number = STRDUP (Number);
+   pin->Flags = Flags;
+   CLEAR_FLAG (WARNFLAG, pin);
+-  SET_FLAG (PINFLAG, pin);
+   pin->ID = ID++;
+   pin->Element = Element;
+ 
+diff --git a/src/strflags.c b/src/strflags.c
+index 3699c53..9b5eb46 100644
+--- a/src/strflags.c
++++ b/src/strflags.c
+@@ -489,9 +489,6 @@ common_flags_to_string (FlagType flags,
+     case RATLINE_TYPE:
+       CLEAR_FLAG (RATFLAG, &fh);
+       break;
+-    case PIN_TYPE:
+-      CLEAR_FLAG (PINFLAG, &fh);
+-      break;
+     }
+ #endif
