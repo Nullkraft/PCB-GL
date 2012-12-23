@@ -1,0 +1,49 @@
+Bottom: e380b793890e52fd731b792fa255d2dd74fc4f21
+Top:    7cc927c58f0987a54391ccfe30a4f5d096810ad3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 22:20:20 +0000
+
+Refresh of rename-resetfound-linesandpoly
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 6a2c43a..834a273 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2295,7 +2295,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+ 	  }
+ 
+ 	case F_ResetLinesAndPolygons:
+-	  if (ResetFoundLinesAndPolygons (true, FOUNDFLAG))
++	  if (ClearFlagOnLinesAndPolygons (true, FOUNDFLAG))
+ 	    {
+ 	      IncrementUndoSerialNumber ();
+ 	      Draw ();
+@@ -2303,7 +2303,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+ 	  break;
+ 
+ 	case F_ResetPinsViasAndPads:
+-	  if (ResetFoundPinsViasAndPads (true, FOUNDFLAG))
++	  if (ClearFlagOnPinsViasAndPads (true, FOUNDFLAG))
+ 	    {
+ 	      IncrementUndoSerialNumber ();
+ 	      Draw ();
+@@ -2311,7 +2311,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
+ 	  break;
+ 
+ 	case F_Reset:
+-	  if (ResetConnections (true, FOUNDFLAG))
++	  if (ClearFlagOnAllObjects (true, FOUNDFLAG))
+ 	    {
+ 	      IncrementUndoSerialNumber ();
+ 	      Draw ();
+@@ -2748,7 +2748,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+ 	  TOGGLE_FLAG (AUTODRCFLAG, PCB);
+ 	  if (TEST_FLAG (AUTODRCFLAG, PCB) && Settings.Mode == LINE_MODE)
+ 	    {
+-	      if (ResetConnections (true, FOUNDFLAG))
++	      if (ClearFlagOnAllObjects (true, FOUNDFLAG))
+ 		{
+ 		  IncrementUndoSerialNumber ();
+ 		  Draw ();
