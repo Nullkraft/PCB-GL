@@ -1,4 +1,4 @@
-Bottom: 801d8630abba5450eb14d237677ee38b2bfbd05f
+Bottom: 89d1f7bd64ee5689c203515eeb805bc0ebdff2db
 Top:    5a00db801454baa6991a6b3be306f8b0a6e9455d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-10 01:19:10 +0000
@@ -102,19 +102,6 @@ index a682f9d..b07dea6 100644
  
    if (Settings.RatThickness < 100)
      rat->Thickness = pixel_slop * Settings.RatThickness;
-diff --git a/src/find.c b/src/find.c
-index a1d6bce..3622777 100644
---- a/src/find.c
-+++ b/src/find.c
-@@ -3067,7 +3067,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag,
-   if (type == NO_TYPE)
-     {
-       type = SearchObjectByLocation (
--        LOOKUP_MORE & ~(AndRats ? RATLINE_TYPE : 0),
-+        LOOKUP_MORE & ~(AndRats ? 0 : RATLINE_TYPE),
-         &ptr1, &ptr2, &ptr3, X, Y, Range);
-       if (type == NO_TYPE)
-         return;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index ac695e8..9c389da 100644
 --- a/src/hid/gtk/gtkhid-gl.c
