@@ -878,7 +878,6 @@ SmashBufferElement (BufferType *Buffer)
   PIN_LOOP (element);
   {
     FlagType f = NoFlags ();
-    AddFlags (f, VIAFLAG);
     if (TEST_FLAG (HOLEFLAG, pin))
       AddFlags (f, HOLEFLAG);
 
@@ -981,7 +980,7 @@ ConvertBufferToElement (BufferType *Buffer)
       CreateNewPin (Element, via->X, via->Y, via->Thickness,
 		    via->Clearance, via->Mask, via->DrillingHole,
 		    NULL, via->Name, MaskFlags (via->Flags,
-						VIAFLAG | NOCOPY_FLAGS |
+						NOCOPY_FLAGS |
 						SELECTEDFLAG | WARNFLAG));
     else
       {
@@ -989,8 +988,8 @@ ConvertBufferToElement (BufferType *Buffer)
 	CreateNewPin (Element, via->X, via->Y, via->Thickness,
 		      via->Clearance, via->Mask, via->DrillingHole,
 		      NULL, num, MaskFlags (via->Flags,
-					    VIAFLAG | NOCOPY_FLAGS | SELECTEDFLAG
-					    | WARNFLAG));
+					    NOCOPY_FLAGS |
+					    SELECTEDFLAG | WARNFLAG));
       }
     hasParts = true;
   }

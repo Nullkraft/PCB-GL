@@ -87,7 +87,7 @@ typedef struct
 
 static FlagBitsType object_flagbits[] = {
   { PINFLAG, N ("pin"), ALL_TYPES },
-  { VIAFLAG, N ("via"), ALL_TYPES },
+  { VIAFLAG, N ("via"), RATLINE_TYPES },
   { FOUNDFLAG, N ("found"), ALL_TYPES },
   { HOLEFLAG, N ("hole"), PIN_TYPES },
   { RATFLAG, N ("rat"), RATLINE_TYPE },
@@ -463,7 +463,7 @@ string_to_pcbflags (const char *flagstring,
  *
  * Note that this function knows a little about what kinds of flags
  * will be automatically set by parsing, so it won't (for example)
- * include the "via" flag for VIA_TYPEs because it knows those get
+ * include the "rat" flag for RATLINE_TYPEs because it knows those get
  * forcibly set when vias are parsed.
  */
 
@@ -483,9 +483,6 @@ common_flags_to_string (FlagType flags,
 #ifndef FLAG_TEST
   switch (object_type)
     {
-    case VIA_TYPE:
-      CLEAR_FLAG (VIAFLAG, &fh);
-      break;
     case RATLINE_TYPE:
       CLEAR_FLAG (RATFLAG, &fh);
       break;
