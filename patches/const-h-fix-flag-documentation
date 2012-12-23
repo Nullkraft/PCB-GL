@@ -1,5 +1,5 @@
 Bottom: 2229c6ebccfaf8d13b79f9f03633437c6ce795f4
-Top:    2229c6ebccfaf8d13b79f9f03633437c6ce795f4
+Top:    5ee67935d638bdeedb01affea2537919a4411408
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-23 02:32:53 +0000
 
@@ -10,4 +10,26 @@ We were listing the wrong flag value for this flag.
 
 ---
 
-
+diff --git a/src/const.h b/src/const.h
+index 7d732e8..922a719 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -125,6 +125,9 @@ If set, this object has been found by @code{FindConnection()}.
+ @item 0x0008 hole
+ For pins and vias, this flag means that the pin or via is a hole
+ without a copper annulus.
++@item 0x0008 nopaste
++For pads, set to prevent a solderpaste stencil opening for the
++pad.  Primarily used for pads used as fiducials.
+ @item 0x0010 rat
+ If set for a line, indicates that this line is a rat line instead of a
+ copper trace.
+@@ -175,9 +178,6 @@ pins, indicates that the pin is closer to a horizontal edge and thus
+ pinout text should be vertical.
+ @item 0x8000 marker
+ Marker used internally to avoid revisiting an object.
+-@item 0x10000 nopaste
+-For pads, set to prevent a solderpaste stencil opening for the
+-pad.  Primarily used for pads used as fiducials.
+ @end table
+ %end-doc */
