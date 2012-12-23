@@ -1,0 +1,14 @@
+Bottom: d87259c4dba294a2524e4b35fa46bd1bb880b11e
+Top:    d87259c4dba294a2524e4b35fa46bd1bb880b11e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 17:43:27 +0000
+
+hid/gtk/gui-drc-window.c: Refactor unset_found_flags() to use ResetConnections()
+
+There is a lot of code in this function which matches ResetConnections(),
+we only need to take care of the undo buffer management at the end.
+
+
+---
+
+
