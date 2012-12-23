@@ -1,5 +1,5 @@
 Bottom: f68a54bfbd42cbcbf1b9450b4a9cfbbc1740b31b
-Top:    f68a54bfbd42cbcbf1b9450b4a9cfbbc1740b31b
+Top:    a89c54d158bd9d39d109a69ebba244b444ce4d2b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 16:02:05 +0000
 
@@ -16,4 +16,29 @@ objects.
 
 ---
 
-
+diff --git a/src/const.h b/src/const.h
+index de8c6ab..31a6ae8 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -214,6 +214,7 @@ pad.  Primarily used for pads used as fiducials.
+ #define EDGE2FLAG               0x4000  /* Padr.Point2 is closer to outside edge */
+                                         /* also pinout text for pins is vertical */
+ #define VISITFLAG               0x8000  /* marker to avoid re-visiting an object */
++#define CONNECTEDFLAG          0x10000  /* flag like FOUND flag, but used to identify physically connected objects (not rats) */
+ /* ---------------------------------------------------------------------------
+  * PCB flags
+  */
+diff --git a/src/strflags.c b/src/strflags.c
+index 3699c53..f29da5b 100644
+--- a/src/strflags.c
++++ b/src/strflags.c
+@@ -108,7 +108,8 @@ static FlagBitsType object_flagbits[] = {
+   { LOCKFLAG, N ("lock"), ALL_TYPES },
+   { EDGE2FLAG, N ("edge2"), ALL_TYPES },
+   { FULLPOLYFLAG, N ("fullpoly"), POLYGON_TYPE},
+-  { NOPASTEFLAG, N ("nopaste"), PAD_TYPE }
++  { NOPASTEFLAG, N ("nopaste"), PAD_TYPE },
++  { CONNECTEDFLAG, N ("connected"), ALL_TYPES }
+ };
+ 
+ static FlagBitsType pcb_flagbits[] = {
