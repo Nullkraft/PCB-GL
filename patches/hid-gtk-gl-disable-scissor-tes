@@ -1,5 +1,5 @@
 Bottom: ddfb232cd8662ca03dc1fe9224976120a33be45f
-Top:    711d46ca9c18dfcafbe49829cde838c60cc9598c
+Top:    bc06df54a97c73ae05cd2e62749385aa4a798c8d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 21:52:18 +0000
 
@@ -16,18 +16,34 @@ to address what is really going on here.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ace9851..e35f11e 100644
+index ace9851..adedbb8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1095,10 +1095,18 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1095,10 +1095,34 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glViewport (0, 0, allocation.width, allocation.height);
  
-+#if 0
++#if 0  /* We disable the scissor test here, as it is interacting badly with
++        * being handed expose events which don't cover the whole window.
++        * As we have a double-buffered GL window, we end up with unintialised
++        * contents remaining in the unpainted areas (outside the scissor
++        * region), and these are being flipped onto the screen.
++        *
++        * The debugging code below shows multiple expose events when the
++        * window is shown the first time, some of which are very small.
++        *
++        * XXX: There is clearly a perforamnce issue here, in that we may
++        *      be rendering the preview more times, and over a larger area
++        *      than is really required.
++        */
++
    glEnable (GL_SCISSOR_TEST);
    glScissor (ev->area.x,
               allocation.height - ev->area.height - ev->area.y,
               ev->area.width, ev->area.height);
++#endif
++
++#ifdef DEBUG
 +  printf ("EVT: %i, %i, w=%i, h=%i, Scissor setup: glScissor (%f, %f, %f, %f);\n",
 +          ev->area.x, ev->area.y, ev->area.width, ev->area.height,
 +             (double)ev->area.x,
