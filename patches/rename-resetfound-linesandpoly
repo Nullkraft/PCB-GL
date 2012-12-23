@@ -1,5 +1,5 @@
 Bottom: cb3bb45a40eeb62177b5e30d0f0a619962ad3931
-Top:    7cc927c58f0987a54391ccfe30a4f5d096810ad3
+Top:    5519bea65aaa71062ba8c593f9da4a012d138da8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-23 22:17:03 +0000
 
@@ -206,3 +206,203 @@ index 9644727..4cc68f8 100644
  void InitConnectionLookup (void);
  void FreeConnectionLookupMemory (void);
  void RatFindHook (int, void *, void *, void *, bool, int flag, bool);
+diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
+index 70b3a5d..ab929bd 100644
+--- a/src/hid/gtk/gui-drc-window.c
++++ b/src/hid/gtk/gui-drc-window.c
+@@ -101,7 +101,7 @@ selection_changed_cb (GtkTreeSelection *selection, gpointer user_data)
+ 
+   if (!gtk_tree_selection_get_selected (selection, &model, &iter))
+     {
+-      if (ResetConnections (true, FOUNDFLAG))
++      if (ClearFlagOnAllObjects (true, FOUNDFLAG))
+         {
+           IncrementUndoSerialNumber ();
+           Draw ();
+@@ -115,7 +115,7 @@ selection_changed_cb (GtkTreeSelection *selection, gpointer user_data)
+ 
+   gtk_tree_model_get (model, &iter, DRC_VIOLATION_OBJ_COL, &violation, -1);
+ 
+-  ResetConnections (true, FOUNDFLAG);
++  ClearFlagOnAllObjects (true, FOUNDFLAG);
+ 
+   if (violation == NULL)
+     return;
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 103da0c..0454586 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -536,14 +536,14 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+     node_selected_net = NULL;
+ 
+   InitConnectionLookup ();
+-  ResetConnections (true, FOUNDFLAG);
++  ClearFlagOnAllObjects (true, FOUNDFLAG);
+ 
+   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, FOUNDFLAG, true);
+ 
+   SelectByFlag (FOUNDFLAG, select_flag);
+-  ResetConnections (false, FOUNDFLAG);
++  ClearFlagOnAllObjects (false, FOUNDFLAG);
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
+   Draw ();
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index 8104ecd..598d106 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -133,14 +133,14 @@ nbcb_select_common (LibraryMenuType *net, int pos, int select_flag)
+   int i;
+ 
+   InitConnectionLookup ();
+-  ResetConnections (true, FOUNDFLAG);
++  ClearFlagOnAllObjects (true, FOUNDFLAG);
+ 
+   for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, FOUNDFLAG, true);
+ 
+   SelectByFlag (FOUNDFLAG, select_flag);
+-  ResetConnections (false, FOUNDFLAG);
++  ClearFlagOnAllObjects (false, FOUNDFLAG);
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
+   Draw ();
+diff --git a/src/rats.c b/src/rats.c
+index 9a1c70f..fb1d41f 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -458,7 +458,7 @@ GatherSubnets (NetListType *Netl, bool NoWarn, bool AndRats)
+   for (m = 0; Netl->NetN > 0 && m < Netl->NetN; m++)
+     {
+       a = &Netl->Net[m];
+-      ResetConnections (false, DRCFLAG);
++      ClearFlagOnAllObjects (false, DRCFLAG);
+       RatFindHook (a->Connection[0].type, a->Connection[0].ptr1,
+                    a->Connection[0].ptr2, a->Connection[0].ptr2,
+                    false, DRCFLAG, AndRats);
+@@ -537,7 +537,7 @@ GatherSubnets (NetListType *Netl, bool NoWarn, bool AndRats)
+       if (!NoWarn)
+ 	Warned |= CheckShorts (a->Connection[0].menu);
+     }
+-  ResetConnections (false, DRCFLAG);
++  ClearFlagOnAllObjects (false, DRCFLAG);
+   return (Warned);
+ }
+ 
+diff --git a/src/report.c b/src/report.c
+index a5e45de..baa458d 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -546,7 +546,7 @@ ReportFoundPins (int argc, char **argv, Coord x, Coord y)
+ }
+ 
+ /* Assumes that we start with a blank connection state,
+- * e.g. ResetConnections() has been run.
++ * e.g. ClearFlagOnAllObjects() has been run.
+  * Does not add its own changes to the undo system
+  */
+ static double
+@@ -604,10 +604,10 @@ ReportAllNetLengths (int argc, char **argv, Coord x, Coord y)
+    *
+    * After this, we don't add any changes to the undo system, but
+    * ensure we get back to a point where we can Undo() our changes
+-   * by resetting the connections with ResetConnections() before
++   * by resetting the connections with ClearFlagOnAllObjects() before
+    * calling Undo() at the end of the procedure.
+    */
+-  ResetConnections (true, FOUNDFLAG);
++  ClearFlagOnAllObjects (true, FOUNDFLAG);
+   IncrementUndoSerialNumber ();
+ 
+   for (ni = 0; ni < PCB->NetlistLib.MenuN; ni++)
+@@ -669,14 +669,14 @@ ReportAllNetLengths (int argc, char **argv, Coord x, Coord y)
+           length = XYtoNetLength (x, y, &found);
+ 
+           /* Reset connectors for the next lookup */
+-          ResetConnections (false, FOUNDFLAG);
++          ClearFlagOnAllObjects (false, FOUNDFLAG);
+ 
+           pcb_sprintf(buf, "%$m*", units_name, length);
+           gui->log("Net %s length %s\n", netname, buf);
+         }
+     }
+ 
+-  ResetConnections (false, FOUNDFLAG);
++  ClearFlagOnAllObjects (false, FOUNDFLAG);
+   Undo (true);
+   return 0;
+ }
+@@ -695,17 +695,17 @@ ReportNetLength (int argc, char **argv, Coord x, Coord y)
+    *
+    * After this, we don't add any changes to the undo system, but
+    * ensure we get back to a point where we can Undo() our changes
+-   * by resetting the connections with ResetConnections() before
++   * by resetting the connections with ClearFlagOnAllObjects() before
+    * calling Undo() at the end of the procedure.
+    */
+-  ResetConnections (true, FOUNDFLAG);
++  ClearFlagOnAllObjects (true, FOUNDFLAG);
+   IncrementUndoSerialNumber ();
+ 
+   length = XYtoNetLength (x, y, &found);
+ 
+   if (!found)
+     {
+-      ResetConnections (false, FOUNDFLAG);
++      ClearFlagOnAllObjects (false, FOUNDFLAG);
+       Undo (true);
+       gui->log ("No net under cursor.\n");
+       return 1;
+@@ -767,7 +767,7 @@ ReportNetLength (int argc, char **argv, Coord x, Coord y)
+   END_LOOP;
+ 
+ got_net_name:
+-  ResetConnections (false, FOUNDFLAG);
++  ClearFlagOnAllObjects (false, FOUNDFLAG);
+   Undo (true);
+ 
+   {
+@@ -901,16 +901,16 @@ ReportNetLengthByName (char *tofind, int x, int y)
+    *
+    * After this, we don't add any changes to the undo system, but
+    * ensure we get back to a point where we can Undo() our changes
+-   * by resetting the connections with ResetConnections() before
++   * by resetting the connections with ClearFlagOnAllObjects() before
+    * calling Undo() when we are finished.
+    */
+-  ResetConnections (true, FOUNDFLAG);
++  ClearFlagOnAllObjects (true, FOUNDFLAG);
+   IncrementUndoSerialNumber ();
+ 
+   length = XYtoNetLength (x, y, &found);
+   netname = net->Name + 2;
+ 
+-  ResetConnections (false, FOUNDFLAG);
++  ClearFlagOnAllObjects (false, FOUNDFLAG);
+   Undo (true);
+ 
+   if (!found)
+diff --git a/src/select.c b/src/select.c
+index 3b1b670..1762c76 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -962,7 +962,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
+   if (Type & NET_TYPE)
+     {
+       InitConnectionLookup ();
+-      changed = ResetConnections (true, FOUNDFLAG) || changed;
++      changed = ClearFlagOnAllObjects (true, FOUNDFLAG) || changed;
+ 
+       MENU_LOOP (&PCB->NetlistLib);
+       {
+@@ -983,7 +983,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
+       END_LOOP;
+ 
+       changed = SelectByFlag (FOUNDFLAG, select) || changed;
+-      changed = ResetConnections (false, FOUNDFLAG) || changed;
++      changed = ClearFlagOnAllObjects (false, FOUNDFLAG) || changed;
+       FreeConnectionLookupMemory ();
+     }
