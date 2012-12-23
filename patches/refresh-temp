@@ -1,0 +1,21 @@
+Bottom: a3d95984d7f6659039e0d9edf45f55ff3b4e67b1
+Top:    d0ee2a91bf52996cd27ecee64e40fc40f4f8f55b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-23 02:36:16 +0000
+
+Refresh of add-a-new-flag-connected-conne
+
+---
+
+diff --git a/src/const.h b/src/const.h
+index cc3c450..4d270ff 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -178,6 +178,8 @@ pins, indicates that the pin is closer to a horizontal edge and thus
+ pinout text should be vertical.
+ @item 0x8000 marker
+ Marker used internally to avoid revisiting an object.
++@item 0x10000 connected
++If set, this object has been as physically connected by @code{FindConnection()}.
+ @end table
+ %end-doc */
