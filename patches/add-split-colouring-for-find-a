@@ -1,4 +1,4 @@
-Bottom: e1a138c3a9cded3652a5df511c8e736bca34b254
+Bottom: f2e4d344dc57f6627b80fc474649abd78cb69afb
 Top:    d073a0230510bb25ab9ffe026de20ceabebae0a4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-10 01:19:10 +0000
@@ -53,15 +53,3 @@ index e79235d..4e58c9b 100644
  	    {
  	      IncrementUndoSerialNumber ();
  	      Draw ();
-diff --git a/src/undo.h b/src/undo.h
-index f415c3c..c52b051 100644
---- a/src/undo.h
-+++ b/src/undo.h
-@@ -33,7 +33,7 @@
- #include "global.h"
- 
- #define DRAW_FLAGS	(RATFLAG | SELECTEDFLAG | SQUAREFLAG \
--			| HIDENAMEFLAG | HOLEFLAG | OCTAGONFLAG | FOUNDFLAG | CLEARLINEFLAG)
-+			| HIDENAMEFLAG | HOLEFLAG | OCTAGONFLAG | CONNECTEDFLAG | FOUNDFLAG | CLEARLINEFLAG)
- 
- 											/* different layers */
