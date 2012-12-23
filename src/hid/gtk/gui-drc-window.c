@@ -31,6 +31,7 @@
 #include "error.h"
 #include "search.h"
 #include "draw.h"
+#include "find.h"
 #include "pcb-printf.h"
 #include "undo.h"
 #include "set.h"
