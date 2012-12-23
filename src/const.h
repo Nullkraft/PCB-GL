@@ -119,7 +119,7 @@ the numeric value followed by the symbolic name.
 @item 0x0001 pin
 If set, this object is a pin.  This flag is for internal use only.
 @item 0x0002 via
-Likewise, for vias.
+Set on a rat if it should connect to a polygon with a via / pin and a thermal.
 @item 0x0004 found
 If set, this object has been found by @code{FindConnection()}.
 @item 0x0008 hole
@@ -183,7 +183,7 @@ Marker used internally to avoid revisiting an object.
 
 #define NOFLAG                  0x0000
 #define PINFLAG                 0x0001  /* is a pin */
-#define VIAFLAG                 0x0002  /* is a via */
+#define VIAFLAG                 0x0002  /* a rat should connect to a polygon with a via */
 #define FOUNDFLAG               0x0004  /* used by 'FindConnection()' */
 #define HOLEFLAG                0x0008  /* pin or via is only a hole */
 #define NOPASTEFLAG             0x0008  /* pad should not receive

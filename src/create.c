@@ -274,7 +274,6 @@ CreateNewVia (DataType *Data,
   Via->Name = STRDUP (Name);
   Via->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, Via);
-  SET_FLAG (VIAFLAG, Via);
   Via->ID = ID++;
 
   /* 
