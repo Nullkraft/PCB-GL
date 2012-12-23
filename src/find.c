@@ -3067,8 +3067,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag,
   if (type == NO_TYPE)
     {
       type = SearchObjectByLocation (
-        LOOKUP_MORE & ~(AndRats ? 0 /* RATLINE_TYPE */: /*0 
-                                                        */ RATLINE_TYPE),
+        LOOKUP_MORE & ~(AndRats ? 0 : RATLINE_TYPE),
         &ptr1, &ptr2, &ptr3, X, Y, Range);
       if (type == NO_TYPE)
         return;
