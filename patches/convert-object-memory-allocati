@@ -1,7 +1,7 @@
-Bottom: aff826758adfa3e8482a1059fde63343f3944455
-Top:    dc22d77e7a190471562c730cf766a9b43bd824f7
+Bottom: 1fe6cab74008e92ab0661d46821b856dd851fc1b
+Top:    e930b654ee272b0611d2cc08a5796f20021b1d7a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-12-23 02:56:03 +0000
+Date:   2012-12-23 18:09:28 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -302,7 +302,7 @@ index ce75794..1cbe90c 100644
        {
  	if (layer->LineN || layer->ArcN)
 diff --git a/src/buffer.c b/src/buffer.c
-index 2ed2794..19005c8 100644
+index d5cb7c8..f0e3057 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -578,47 +578,55 @@ void
@@ -402,7 +402,7 @@ index 2ed2794..19005c8 100644
    if (entry->Template == (char *) -1)
      {
 diff --git a/src/copy.c b/src/copy.c
-index 6c61412..1942646 100644
+index b0cd9c8..20f07f1 100644
 --- a/src/copy.c
 +++ b/src/copy.c
 @@ -117,8 +117,8 @@ ElementType *
