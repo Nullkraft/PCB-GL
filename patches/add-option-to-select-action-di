@@ -1,5 +1,5 @@
 Bottom: 18c89d887854c06d5365edff55525ef848db9e82
-Top:    18c89d887854c06d5365edff55525ef848db9e82
+Top:    e1a138c3a9cded3652a5df511c8e736bca34b254
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-23 02:50:56 +0000
 
@@ -18,4 +18,125 @@ with the CONNECTED flag set, (not the FOUND flag as it did previously).
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index 6a2c43a..e79235d 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -107,6 +107,7 @@ typedef enum
+   F_ClearAndRedraw,
+   F_ClearList,
+   F_Close,
++  F_Found,
+   F_Connection,
+   F_Convert,
+   F_Copy,
+@@ -341,6 +342,7 @@ static FunctionType Functions[] = {
+   {"ClearAndRedraw", F_ClearAndRedraw},
+   {"ClearList", F_ClearList},
+   {"Close", F_Close},
++  {"Found", F_Found},
+   {"Connection", F_Connection},
+   {"Convert", F_Convert},
+   {"Copy", F_Copy},
+@@ -5315,9 +5317,12 @@ Selects all objects in a rectangle indicated by the cursor.
+ @item All
+ Selects all objects on the board.
+ 
+-@item Connection
++@item Found
+ Selects all connections with the ``found'' flag set.
+ 
++@item Connection
++Selects all connections with the ``connected'' flag set.
++
+ @item Convert
+ Converts the selected objects to an element.  This uses the highest
+ numbered paste buffer.
+@@ -5422,8 +5427,8 @@ ActionSelect (int argc, char **argv, Coord x, Coord y)
+ 	    break;
+ 	  }
+ 
+-	  /* all found connections */
+-	case F_Connection:
++	  /* all logical connections */
++	case F_Found:
+ 	  if (SelectByFlag (FOUNDFLAG, true))
+ 	    {
+               Draw ();
+@@ -5432,6 +5437,16 @@ ActionSelect (int argc, char **argv, Coord x, Coord y)
+ 	    }
+ 	  break;
+ 
++	  /* all physical connections */
++	case F_Connection:
++	  if (SelectByFlag (CONNECTEDFLAG, true))
++	    {
++              Draw ();
++	      IncrementUndoSerialNumber ();
++	      SetChangedFlag (true);
++	    }
++	  break;
++
+ 	case F_Convert:
+ 	  {
+ 	    Coord x, y;
+@@ -5601,8 +5616,8 @@ ActionUnselect (int argc, char **argv, Coord x, Coord y)
+ 	    break;
+ 	  }
+ 
+-	  /* all found connections */
+-	case F_Connection:
++	  /* all logical connections */
++	case F_Found:
+ 	  if (SelectByFlag (FOUNDFLAG, false))
+ 	    {
+               Draw ();
+@@ -5611,6 +5626,16 @@ ActionUnselect (int argc, char **argv, Coord x, Coord y)
+ 	    }
+ 	  break;
+ 
++	  /* all physical connections */
++	case F_Connection:
++	  if (SelectByFlag (CONNECTEDFLAG, false))
++	    {
++              Draw ();
++	      IncrementUndoSerialNumber ();
++	      SetChangedFlag (true);
++	    }
++	  break;
++
+ 	default:
+ 	  AFAIL (unselect);
+ 	  break;
+diff --git a/src/gpcb-menu.res.in b/src/gpcb-menu.res.in
+index f28edff..47bee40 100644
+--- a/src/gpcb-menu.res.in
++++ b/src/gpcb-menu.res.in
+@@ -233,9 +233,11 @@ MainMenu =
+ #
+   {"Select" m=l
+    {"Select all visible" Select(All)}
++   {"Select all found" Select(Found)}
+    {"Select all connected" Select(Connection)}
+    -
+    {"Unselect all" Unselect(All)}
++   {"Unselect all found" Unselect(Found)}
+    {"Unselect all connected" Unselect(Connection)}
+    -
+    {"Select by name"
+diff --git a/src/pcb-menu.res.in b/src/pcb-menu.res.in
+index 84c4a45..e37bd7c 100644
+--- a/src/pcb-menu.res.in
++++ b/src/pcb-menu.res.in
+@@ -219,9 +219,11 @@ MainMenu =
+ 
+   {Select
+    {"Select all visible objects" Select(All)}
++   {"Select all found objects" Select(Found)}
+    {"Select all connected objects" Select(Connection)}
+    -
+    {"Unselect all objects" Unselect(All)}
++   {"unselect all found objects" Unselect(Found)}
+    {"unselect all connected objects" Unselect(Connection)}
+    -
+    {"Select by name" foreground=grey50 sensitive=false}
