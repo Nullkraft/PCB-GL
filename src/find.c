@@ -268,7 +268,6 @@ typedef struct
  * some local identifiers
  */
 static Coord Bloat = 0;
-static int TheFlag = FOUNDFLAG;
 static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
 static int thing_type;
 static bool User = false;    /* user action causing this */
