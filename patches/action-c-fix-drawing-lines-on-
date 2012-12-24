@@ -1,0 +1,14 @@
+Bottom: 336be8fce9aa64b49656ef5fb327f195b89a3cac
+Top:    336be8fce9aa64b49656ef5fb327f195b89a3cac
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-24 00:16:22 +0000
+
+action.c: Fix drawing lines on silkscreen with auto-enforce DRC enabled
+
+The auto-enforce DRC code was not incorrectly setting FOUNDFLAG on one of
+each pair of line-segments drawn with a mouse-click.
+
+
+---
+
+
