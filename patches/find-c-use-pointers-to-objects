@@ -7,7 +7,11 @@ find.c: Use pointers to objects, not shallow copies of their structures
 
 We don't modify the objects, so we don't need to copy them around.
 
-^^^^^^^^^^^ XXXXX:: TURNS OUT WE DO.. WTF?
+^^^^^^^^^^^ XXXXX:: TURNS OUT WE DID.. WTF.
+
+I have now made the bounds adjustmenet for the r_search a separate box,
+however I have NOT yet completely checked we did not accidentally rely
+upon a bloated bounding box in any of the callbacks.
 
 
 ---
