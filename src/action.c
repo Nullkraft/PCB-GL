@@ -873,8 +873,8 @@ NotifyLine (void)
 	  type = SearchScreen (Crosshair.X, Crosshair.Y,
 			       PIN_TYPE | PAD_TYPE | VIA_TYPE, &ptr1, &ptr2,
 			       &ptr3);
-	  LookupConnection (Crosshair.X, Crosshair.Y, true, 1,
-			    FOUNDFLAG, true);
+	  LookupConnection (Crosshair.X, Crosshair.Y, true, 1, CONNECTEDFLAG, false);
+	  LookupConnection (Crosshair.X, Crosshair.Y, true, 1, FOUNDFLAG, true);
 	}
       if (type == PIN_TYPE || type == VIA_TYPE)
 	{
@@ -1235,7 +1235,7 @@ NotifyMode (void)
 
 	  if (TEST_FLAG (AUTODRCFLAG, PCB)
 	      && ! TEST_SILK_LAYER (CURRENT))
-	    maybe_found_flag = FOUNDFLAG;
+	    maybe_found_flag = CONNECTEDFLAG | FOUNDFLAG;
 	  else
 	    maybe_found_flag = 0;
 
@@ -1304,7 +1304,7 @@ NotifyMode (void)
 					  2 * Settings.Keepaway,
 					  MakeFlags ((TEST_FLAG
 						      (AUTODRCFLAG,
-						       PCB) ? FOUNDFLAG : 0) |
+						       PCB) ? CONNECTEDFLAG | FOUNDFLAG : 0) |
 						     (TEST_FLAG
 						      (CLEARNEWFLAG,
 						       PCB) ? CLEARLINEFLAG :
@@ -1324,6 +1324,7 @@ NotifyMode (void)
 		  PCB->Clipping ^= 3;
 		}
 	    }
+          LookupConnection (Note.X, Note.Y, true, 1, CONNECTEDFLAG, false);
 	  Draw ();
 	}
       break;
@@ -2751,15 +2752,20 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
 	  TOGGLE_FLAG (AUTODRCFLAG, PCB);
 	  if (TEST_FLAG (AUTODRCFLAG, PCB) && Settings.Mode == LINE_MODE)
 	    {
-	      if (ClearFlagOnAllObjects (true, FOUNDFLAG))
+	      if (ClearFlagOnAllObjects (true, CONNECTEDFLAG | FOUNDFLAG))
 		{
 		  IncrementUndoSerialNumber ();
 		  Draw ();
 		}
 	      if (Crosshair.AttachedLine.State != STATE_FIRST)
-		LookupConnection (Crosshair.AttachedLine.Point1.X,
-				  Crosshair.AttachedLine.Point1.Y, true, 1,
-				  FOUNDFLAG, true);
+		{
+		  LookupConnection (Crosshair.AttachedLine.Point1.X,
+		                    Crosshair.AttachedLine.Point1.Y,
+		                    true, 1, CONNECTEDFLAG, false);
+		  LookupConnection (Crosshair.AttachedLine.Point1.X,
+		                    Crosshair.AttachedLine.Point1.Y,
+		                    true, 1, FOUNDFLAG, true);
+		}
 	    }
 	  notify_crosshair_change (true);
 	  break;
@@ -6259,6 +6265,7 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
 	          if (TEST_FLAG (AUTODRCFLAG, PCB))
 		    {
 		      /* undo loses FOUNDFLAG */
+		      SET_FLAG(CONNECTEDFLAG, ptr2);
 		      SET_FLAG(FOUNDFLAG, ptr2);
 		      DrawLine (CURRENT, ptr2);
 		    }
