@@ -3087,8 +3087,7 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3, int flag)
  * also the action is marked as undoable if AndDraw is true
  */
 void
-LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
-                  bool AndRats)
+LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int connected_flag, int found_flag)
 {
   void *ptr1, *ptr2, *ptr3;
   char *name;
