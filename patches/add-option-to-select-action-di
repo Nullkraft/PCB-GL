@@ -1,5 +1,5 @@
-Bottom: fb7c26b81aee549cc5ef32d38c42fb37b0341565
-Top:    780841ce57bacb9260a16ab819d125f7a6271623
+Bottom: 9c84f3a7023d4e81713ca05f022a84a620c2cc09
+Top:    ec305c9c015bff08902295b7e781f1106b48c3a9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-23 02:50:56 +0000
 
@@ -19,7 +19,7 @@ with the CONNECTED flag set, (not the FOUND flag as it did previously).
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 834a273..8c7051b 100644
+index 7390484..189e020 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -107,6 +107,7 @@ typedef enum
@@ -38,7 +38,7 @@ index 834a273..8c7051b 100644
    {"Connection", F_Connection},
    {"Convert", F_Convert},
    {"Copy", F_Copy},
-@@ -5315,9 +5317,12 @@ Selects all objects in a rectangle indicated by the cursor.
+@@ -5305,9 +5307,12 @@ Selects all objects in a rectangle indicated by the cursor.
  @item All
  Selects all objects on the board.
  
@@ -52,7 +52,7 @@ index 834a273..8c7051b 100644
  @item Convert
  Converts the selected objects to an element.  This uses the highest
  numbered paste buffer.
-@@ -5422,8 +5427,8 @@ ActionSelect (int argc, char **argv, Coord x, Coord y)
+@@ -5412,8 +5417,8 @@ ActionSelect (int argc, char **argv, Coord x, Coord y)
  	    break;
  	  }
  
@@ -63,7 +63,7 @@ index 834a273..8c7051b 100644
  	  if (SelectByFlag (FOUNDFLAG, true))
  	    {
                Draw ();
-@@ -5432,6 +5437,16 @@ ActionSelect (int argc, char **argv, Coord x, Coord y)
+@@ -5422,6 +5427,16 @@ ActionSelect (int argc, char **argv, Coord x, Coord y)
  	    }
  	  break;
  
@@ -80,7 +80,7 @@ index 834a273..8c7051b 100644
  	case F_Convert:
  	  {
  	    Coord x, y;
-@@ -5601,8 +5616,8 @@ ActionUnselect (int argc, char **argv, Coord x, Coord y)
+@@ -5591,8 +5606,8 @@ ActionUnselect (int argc, char **argv, Coord x, Coord y)
  	    break;
  	  }
  
@@ -91,7 +91,7 @@ index 834a273..8c7051b 100644
  	  if (SelectByFlag (FOUNDFLAG, false))
  	    {
                Draw ();
-@@ -5611,6 +5626,16 @@ ActionUnselect (int argc, char **argv, Coord x, Coord y)
+@@ -5601,6 +5616,16 @@ ActionUnselect (int argc, char **argv, Coord x, Coord y)
  	    }
  	  break;
  
