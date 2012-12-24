@@ -8,6 +8,8 @@ action.c: Fix drawing lines on silkscreen with auto-enforce DRC enabled
 The auto-enforce DRC code was not incorrectly setting FOUNDFLAG on one of
 each pair of line-segments drawn with a mouse-click.
 
+Completes the fix from commit aa7196dc29a761ecddda1a40d68fedf39ab78c31
+
 Affects-bug: lp-699291
 
 
