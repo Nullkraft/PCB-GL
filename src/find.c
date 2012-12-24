@@ -104,12 +104,6 @@
  * some local macros
  */
 
-#define EXPAND_BOUNDS(p) if (Bloat > 0) {\
-       (p)->BoundingBox.X1 -= Bloat; \
-       (p)->BoundingBox.X2 += Bloat; \
-       (p)->BoundingBox.Y1 -= Bloat; \
-       (p)->BoundingBox.Y2 += Bloat;}
-
 #define	SEPARATE(FP)							\
 	{											\
 		int	i;									\
@@ -397,6 +391,22 @@ static bool
 ADD_POLYGON_TO_LIST (Cardinal L, PolygonType *Ptr)
 {
   return add_object_to_list (&PolygonList[L], POLYGON_TYPE, LAYER_PTR (L), Ptr, Ptr);
+}
+
+static BoxType
+expand_bounds (BoxType *box_in)
+{
+  BoxType box_out = *box_in;
+
+  if (Bloat > 0)
+    {
+      box_out.X1 -= Bloat;
+      box_out.X2 += Bloat;
+      box_out.Y1 -= Bloat;
+      box_out.Y2 += Bloat;
+    }
+
+  return box_out;
 }
 
 bool
@@ -723,44 +733,50 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
 static bool
 LookupLOConnectionsToPVList (bool AndRats)
 {
-  Cardinal layer;
+  Cardinal layer_no;
   struct pv_info info;
 
   /* loop over all PVs currently on list */
   while (PVList.Location < PVList.Number)
     {
+      BoxType search_box;
+
       /* get pointer to data */
       info.pv = *(PVLIST_ENTRY (PVList.Location));
-      EXPAND_BOUNDS (&info.pv);
+      search_box = expand_bounds (&info.pv.BoundingBox);
 
       /* check pads */
       if (setjmp (info.env) == 0)
-        r_search (PCB->Data->pad_tree, (BoxType *) & info.pv, NULL,
+        r_search (PCB->Data->pad_tree, &search_box, NULL,
                   LOCtoPVpad_callback, &info);
       else
         return true;
 
       /* now all lines, arcs and polygons of the several layers */
-      for (layer = 0; layer < max_copper_layer; layer++)
+      for (layer_no = 0; layer_no < max_copper_layer; layer_no++)
         {
-          if (LAYER_PTR (layer)->no_drc)
+          LayerType *layer = LAYER_PTR (layer_no);
+
+          if (layer->no_drc)
              continue;
-          info.layer = layer;
+
+          info.layer = layer_no;
+
           /* add touching lines */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->line_tree, (BoxType *) & info.pv,
+            r_search (layer->line_tree, &search_box,
                       NULL, LOCtoPVline_callback, &info);
           else
             return true;
           /* add touching arcs */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->arc_tree, (BoxType *) & info.pv,
+            r_search (layer->arc_tree, &search_box,
                       NULL, LOCtoPVarc_callback, &info);
           else
             return true;
           /* check all polygons */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->polygon_tree, (BoxType *) & info.pv,
+            r_search (layer->polygon_tree, &search_box,
                       NULL, LOCtoPVpoly_callback, &info);
           else
             return true;
@@ -769,7 +785,7 @@ LookupLOConnectionsToPVList (bool AndRats)
       if (AndRats)
         {
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->rat_tree, (BoxType *) & info.pv, NULL,
+            r_search (PCB->Data->rat_tree, &search_box, NULL,
                       LOCtoPVrat_callback, &info);
           else
             return true;
@@ -933,16 +949,19 @@ LookupPVConnectionsToPVList (void)
   save_place = PVList.Location;
   while (PVList.Location < PVList.Number)
     {
+      BoxType search_box;
+
       /* get pointer to data */
       info.pv = *(PVLIST_ENTRY (PVList.Location));
-      EXPAND_BOUNDS (&info.pv);
+      search_box = expand_bounds ((BoxType *)&info.pv);
+
       if (setjmp (info.env) == 0)
-        r_search (PCB->Data->via_tree, (BoxType *) & info.pv, NULL,
+        r_search (PCB->Data->via_tree, &search_box, NULL,
                   pv_pv_callback, &info);
       else
         return true;
       if (setjmp (info.env) == 0)
-        r_search (PCB->Data->pin_tree, (BoxType *) & info.pv, NULL,
+        r_search (PCB->Data->pin_tree, &search_box, NULL,
                   pv_pv_callback, &info);
       else
         return true;
@@ -1102,15 +1121,18 @@ LookupPVConnectionsToLOList (bool AndRats)
       /* check all lines */
       while (LineList[layer].Location < LineList[layer].Number)
         {
+          BoxType search_box;
+
           info.line = *(LINELIST_ENTRY (layer, LineList[layer].Location));
-          EXPAND_BOUNDS (&info.line);
+          search_box = expand_bounds ((BoxType *)&info.line);
+
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->via_tree, (BoxType *) & info.line, NULL,
+            r_search (PCB->Data->via_tree, &search_box, NULL,
                       pv_line_callback, &info);
           else
             return true;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pin_tree, (BoxType *) & info.line, NULL,
+            r_search (PCB->Data->pin_tree, &search_box, NULL,
                       pv_line_callback, &info);
           else
             return true;
@@ -1120,15 +1142,18 @@ LookupPVConnectionsToLOList (bool AndRats)
       /* check all arcs */
       while (ArcList[layer].Location < ArcList[layer].Number)
         {
+          BoxType search_box;
+
           info.arc = *(ARCLIST_ENTRY (layer, ArcList[layer].Location));
-          EXPAND_BOUNDS (&info.arc);
+          search_box = expand_bounds ((BoxType *)&info.arc);
+
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->via_tree, (BoxType *) & info.arc, NULL,
+            r_search (PCB->Data->via_tree, &search_box, NULL,
                       pv_arc_callback, &info);
           else
             return true;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pin_tree, (BoxType *) & info.arc, NULL,
+            r_search (PCB->Data->pin_tree, &search_box, NULL,
                       pv_arc_callback, &info);
           else
             return true;
@@ -1139,16 +1164,18 @@ LookupPVConnectionsToLOList (bool AndRats)
       info.layer = layer;
       while (PolygonList[layer].Location < PolygonList[layer].Number)
         {
-          info.polygon =
-            *(POLYGONLIST_ENTRY (layer, PolygonList[layer].Location));
-          EXPAND_BOUNDS (&info.polygon);
+          BoxType search_box;
+
+          info.polygon = *(POLYGONLIST_ENTRY (layer, PolygonList[layer].Location));
+          search_box = expand_bounds ((BoxType *)&info.polygon);
+
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->via_tree, (BoxType *) & info.polygon, NULL,
+            r_search (PCB->Data->via_tree, &search_box, NULL,
                       pv_poly_callback, &info);
           else
             return true;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pin_tree, (BoxType *) & info.polygon, NULL,
+            r_search (PCB->Data->pin_tree, &search_box, NULL,
                       pv_poly_callback, &info);
           else
             return true;
@@ -1171,15 +1198,18 @@ LookupPVConnectionsToLOList (bool AndRats)
        */
       while (PadList[layer].Location < PadList[layer].Number)
         {
+          BoxType search_box;
+
           info.pad = *(PADLIST_ENTRY (layer, PadList[layer].Location));
-          EXPAND_BOUNDS (&info.pad);
+          search_box = expand_bounds ((BoxType *)&info.pad);
+
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->via_tree, (BoxType *) & info.pad, NULL,
+            r_search (PCB->Data->via_tree, &search_box, NULL,
                       pv_pad_callback, &info);
           else
             return true;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pin_tree, (BoxType *) & info.pad, NULL,
+            r_search (PCB->Data->pin_tree, &search_box, NULL,
                       pv_pad_callback, &info);
           else
             return true;
@@ -1700,9 +1730,11 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup)
 {
   Cardinal entry;
   struct lo_info info;
+  BoxType search_box;
 
   info.arc = *Arc;
-  EXPAND_BOUNDS (&info.arc);
+  search_box = expand_bounds ((BoxType *)&info.arc);
+
   /* loop over all layers of the group */
   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
     {
@@ -1717,13 +1749,13 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup)
           info.layer = layer;
           /* add arcs */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->line_tree, &info.arc.BoundingBox,
+            r_search (LAYER_PTR (layer)->line_tree, &search_box,
                       NULL, LOCtoArcLine_callback, &info);
           else
             return true;
 
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->arc_tree, &info.arc.BoundingBox,
+            r_search (LAYER_PTR (layer)->arc_tree, &search_box,
                       NULL, LOCtoArcArc_callback, &info);
           else
             return true;
@@ -1742,7 +1774,7 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup)
         {
           info.layer = layer - max_copper_layer;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pad_tree, &info.arc.BoundingBox, NULL,
+            r_search (PCB->Data->pad_tree, &search_box, NULL,
                       LOCtoArcPad_callback, &info);
           else
             return true;
@@ -1831,13 +1863,15 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
 {
   Cardinal entry;
   struct lo_info info;
+  BoxType search_box;
 
-  info.line = *Line;
   info.layer = LayerGroup;
-  EXPAND_BOUNDS (&info.line)
+  info.line = *Line;
+  search_box = expand_bounds ((BoxType *)&info.line);
+
   /* add the new rat lines */
   if (setjmp (info.env) == 0)
-    r_search (PCB->Data->rat_tree, &info.line.BoundingBox, NULL,
+    r_search (PCB->Data->rat_tree, &search_box, NULL,
               LOCtoLineRat_callback, &info);
   else
     return true;
@@ -1855,13 +1889,13 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
           info.layer = layer;
           /* add lines */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->line_tree, (BoxType *) & info.line,
+            r_search (LAYER_PTR (layer)->line_tree, &search_box,
                       NULL, LOCtoLineLine_callback, &info);
           else
             return true;
           /* add arcs */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->arc_tree, (BoxType *) & info.line,
+            r_search (LAYER_PTR (layer)->arc_tree, &search_box,
                       NULL, LOCtoLineArc_callback, &info);
           else
             return true;
@@ -1885,7 +1919,7 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
           /* handle special 'pad' layers */
           info.layer = layer - max_copper_layer;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pad_tree, &info.line.BoundingBox, NULL,
+            r_search (PCB->Data->pad_tree, &search_box, NULL,
                       LOCtoLinePad_callback, &info);
           else
             return true;
@@ -2100,16 +2134,19 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
 {
   Cardinal entry;
   struct lo_info info;
+  BoxType search_box;
 
   if (!TEST_FLAG (SQUAREFLAG, Pad))
     return (LookupLOConnectionsToLine ((LineType *) Pad, LayerGroup, false));
 
   info.pad = *Pad;
-  EXPAND_BOUNDS (&info.pad);
+  search_box = expand_bounds ((BoxType *)&info.pad);
+
   /* add the new rat lines */
   info.layer = LayerGroup;
+
   if (setjmp (info.env) == 0)
-    r_search (PCB->Data->rat_tree, &info.pad.BoundingBox, NULL,
+    r_search (PCB->Data->rat_tree, &search_box, NULL,
               LOCtoPadRat_callback, &info);
   else
     return true;
@@ -2126,19 +2163,19 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
           info.layer = layer;
           /* add lines */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->line_tree, &info.pad.BoundingBox,
+            r_search (LAYER_PTR (layer)->line_tree, &search_box,
                       NULL, LOCtoPadLine_callback, &info);
           else
             return true;
           /* add arcs */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->arc_tree, &info.pad.BoundingBox,
+            r_search (LAYER_PTR (layer)->arc_tree, &search_box,
                       NULL, LOCtoPadArc_callback, &info);
           else
             return true;
           /* add polygons */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->polygon_tree, &info.pad.BoundingBox,
+            r_search (LAYER_PTR (layer)->polygon_tree, &search_box,
                       NULL, LOCtoPadPoly_callback, &info);
           else
             return true;
@@ -2148,7 +2185,7 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
           /* handle special 'pad' layers */
           info.layer = layer - max_copper_layer;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pad_tree, (BoxType *) & info.pad, NULL,
+            r_search (PCB->Data->pad_tree, &search_box, NULL,
                       LOCtoPadPad_callback, &info);
           else
             return true;
@@ -2234,18 +2271,21 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
 {
   Cardinal entry;
   struct lo_info info;
+  BoxType search_box;
 
   if (!Polygon->Clipped)
     return false;
   info.polygon = *Polygon;
-  EXPAND_BOUNDS (&info.polygon);
+  search_box = expand_bounds ((BoxType *)&info.polygon);
+
   info.layer = LayerGroup;
   /* check rats */
   if (setjmp (info.env) == 0)
-    r_search (PCB->Data->rat_tree, (BoxType *) & info.polygon, NULL,
+    r_search (PCB->Data->rat_tree, &search_box, NULL,
               LOCtoPolyRat_callback, &info);
   else
     return true;
+
 /* loop over all layers of the group */
   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
     {
@@ -2272,15 +2312,14 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
           info.layer = layer;
           /* check all lines */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->line_tree,
-                      (BoxType *) & info.polygon, NULL,
+            r_search (LAYER_PTR (layer)->line_tree, &search_box, NULL,
                       LOCtoPolyLine_callback, &info);
           else
             return true;
           /* check all arcs */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->arc_tree, (BoxType *) & info.polygon,
-                      NULL, LOCtoPolyArc_callback, &info);
+            r_search (LAYER_PTR (layer)->arc_tree, &search_box, NULL,
+                      LOCtoPolyArc_callback, &info);
           else
             return true;
         }
@@ -2288,8 +2327,8 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
         {
           info.layer = layer - max_copper_layer;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pad_tree, (BoxType *) & info.polygon,
-                      NULL, LOCtoPolyPad_callback, &info);
+            r_search (PCB->Data->pad_tree, &search_box, NULL,
+                      LOCtoPolyPad_callback, &info);
           else
             return true;
         }
