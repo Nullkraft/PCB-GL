@@ -1,5 +1,5 @@
 Bottom: 4c46f70e93a4c2c096f9852eef7eb8383d0a9d9e
-Top:    4c46f70e93a4c2c096f9852eef7eb8383d0a9d9e
+Top:    16d59423817af4597d3400925cc85c8ff80fde8c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-24 02:10:49 +0000
 
@@ -8,4 +8,25 @@ find.c: Remove unused function pv_touch_callback()
 
 ---
 
-
+diff --git a/src/find.c b/src/find.c
+index 8c0f404..34247a1 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -1225,17 +1225,6 @@ LookupPVConnectionsToLOList (bool AndRats)
+   return (false);
+ }
+ 
+-int
+-pv_touch_callback (const BoxType * b, void *cl)
+-{
+-  PinType *pin = (PinType *) b;
+-  struct lo_info *i = (struct lo_info *) cl;
+-
+-  if (!TEST_FLAG (TheFlag, pin) && PinLineIntersect (pin, &i->line))
+-    longjmp (i->env, 1);
+-  return 0;
+-}
+-
+ /* reduce arc start angle and delta to 0..360 */
+ static void
+ normalize_angles (Angle *sa, Angle *d)
