@@ -1,0 +1,839 @@
+Bottom: e957df95d6f291ab84df6ff8abe314cbecc43452
+Top:    d112773b365eb8edcfd6558258ca9beb5b961578
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-24 02:12:59 +0000
+
+Refresh of find-c-use-pointers-to-objects
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 30eb0ff..0e0b431 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -104,12 +104,6 @@
+  * some local macros
+  */
+ 
+-#define EXPAND_BOUNDS(p) if (Bloat > 0) {\
+-       (p)->BoundingBox.X1 -= Bloat; \
+-       (p)->BoundingBox.X2 += Bloat; \
+-       (p)->BoundingBox.Y1 -= Bloat; \
+-       (p)->BoundingBox.Y2 += Bloat;}
+-
+ #define	SEPARATE(FP)							\
+ 	{											\
+ 		int	i;									\
+@@ -412,6 +406,22 @@ ADD_POLYGON_TO_LIST (Cardinal L, PolygonType *Ptr)
+   return add_object_to_list (&PolygonList[L], POLYGON_TYPE, LAYER_PTR (L), Ptr, Ptr);
+ }
+ 
++static BoxType
++expand_bounds (BoxType *box_in)
++{
++  BoxType box_out = *box_in;
++
++  if (Bloat > 0)
++    {
++      box_out.X1 -= Bloat;
++      box_out.X2 += Bloat;
++      box_out.Y1 -= Bloat;
++      box_out.Y2 += Bloat;
++    }
++
++  return box_out;
++}
++
+ bool
+ PinLineIntersect (PinType *PV, LineType *Line)
+ {
+@@ -626,7 +636,7 @@ InitLayoutLookup (void)
+ struct pv_info
+ {
+   Cardinal layer;
+-  PinType pv;
++  PinType *pv;
+   jmp_buf env;
+ };
+ 
+@@ -636,8 +646,8 @@ LOCtoPVline_callback (const BoxType * b, void *cl)
+   LineType *line = (LineType *) b;
+   struct pv_info *i = (struct pv_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, line) && PinLineIntersect (&i->pv, line) &&
+-      !TEST_FLAG (HOLEFLAG, &i->pv))
++  if (!TEST_FLAG (TheFlag, line) && PinLineIntersect (i->pv, line) &&
++      !TEST_FLAG (HOLEFLAG, i->pv))
+     {
+       if (ADD_LINE_TO_LIST (i->layer, line))
+         longjmp (i->env, 1);
+@@ -651,8 +661,8 @@ LOCtoPVarc_callback (const BoxType * b, void *cl)
+   ArcType *arc = (ArcType *) b;
+   struct pv_info *i = (struct pv_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, arc) && IS_PV_ON_ARC (&i->pv, arc) &&
+-      !TEST_FLAG (HOLEFLAG, &i->pv))
++  if (!TEST_FLAG (TheFlag, arc) && IS_PV_ON_ARC (i->pv, arc) &&
++      !TEST_FLAG (HOLEFLAG, i->pv))
+     {
+       if (ADD_ARC_TO_LIST (i->layer, arc))
+         longjmp (i->env, 1);
+@@ -666,8 +676,8 @@ LOCtoPVpad_callback (const BoxType * b, void *cl)
+   PadType *pad = (PadType *) b;
+   struct pv_info *i = (struct pv_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, pad) && IS_PV_ON_PAD (&i->pv, pad) &&
+-      !TEST_FLAG (HOLEFLAG, &i->pv) &&
++  if (!TEST_FLAG (TheFlag, pad) && IS_PV_ON_PAD (i->pv, pad) &&
++      !TEST_FLAG (HOLEFLAG, i->pv) &&
+       ADD_PAD_TO_LIST (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER :
+                        COMPONENT_LAYER, pad))
+     longjmp (i->env, 1);
+@@ -680,7 +690,7 @@ LOCtoPVrat_callback (const BoxType * b, void *cl)
+   RatType *rat = (RatType *) b;
+   struct pv_info *i = (struct pv_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, rat) && IS_PV_ON_RAT (&i->pv, rat) &&
++  if (!TEST_FLAG (TheFlag, rat) && IS_PV_ON_RAT (i->pv, rat) &&
+       ADD_RAT_TO_LIST (rat))
+     longjmp (i->env, 1);
+   return 0;
+@@ -697,31 +707,31 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
+    * because it might not be inside the polygon, or it could
+    * be on an edge such that it doesn't actually touch.
+    */
+-  if (!TEST_FLAG (TheFlag, polygon) && !TEST_FLAG (HOLEFLAG, &i->pv) &&
+-                                       (TEST_THERM (i->layer, &i->pv) ||
++  if (!TEST_FLAG (TheFlag, polygon) && !TEST_FLAG (HOLEFLAG, i->pv) &&
++                                       (TEST_THERM (i->layer, i->pv) ||
+                                         !TEST_FLAG (CLEARPOLYFLAG,
+                                                     polygon)
+-                                        || !i->pv.Clearance))
++                                        || !i->pv->Clearance))
+     {
+-      double wide = MAX (0.5 * i->pv.Thickness + Bloat, 0);
+-      if (TEST_FLAG (SQUAREFLAG, &i->pv))
++      double wide = MAX (0.5 * i->pv->Thickness + Bloat, 0);
++      if (TEST_FLAG (SQUAREFLAG, i->pv))
+         {
+-          Coord x1 = i->pv.X - (i->pv.Thickness + 1 + Bloat) / 2;
+-          Coord x2 = i->pv.X + (i->pv.Thickness + 1 + Bloat) / 2;
+-          Coord y1 = i->pv.Y - (i->pv.Thickness + 1 + Bloat) / 2;
+-          Coord y2 = i->pv.Y + (i->pv.Thickness + 1 + Bloat) / 2;
++          Coord x1 = i->pv->X - (i->pv->Thickness + 1 + Bloat) / 2;
++          Coord x2 = i->pv->X + (i->pv->Thickness + 1 + Bloat) / 2;
++          Coord y1 = i->pv->Y - (i->pv->Thickness + 1 + Bloat) / 2;
++          Coord y2 = i->pv->Y + (i->pv->Thickness + 1 + Bloat) / 2;
+           if (IsRectangleInPolygon (x1, y1, x2, y2, polygon)
+               && ADD_POLYGON_TO_LIST (i->layer, polygon))
+             longjmp (i->env, 1);
+         }
+-      else if (TEST_FLAG (OCTAGONFLAG, &i->pv))
++      else if (TEST_FLAG (OCTAGONFLAG, i->pv))
+         {
+-          POLYAREA *oct = OctagonPoly (i->pv.X, i->pv.Y, i->pv.Thickness / 2);
++          POLYAREA *oct = OctagonPoly (i->pv->X, i->pv->Y, i->pv->Thickness / 2);
+           if (isects (oct, polygon, true)
+               && ADD_POLYGON_TO_LIST (i->layer, polygon))
+             longjmp (i->env, 1);
+         }
+-      else if (IsPointInPolygon (i->pv.X, i->pv.Y, wide,
++      else if (IsPointInPolygon (i->pv->X, i->pv->Y, wide,
+                                  polygon)
+                && ADD_POLYGON_TO_LIST (i->layer, polygon))
+         longjmp (i->env, 1);
+@@ -736,45 +746,47 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
+ static bool
+ LookupLOConnectionsToPVList (bool AndRats)
+ {
+-  Cardinal layer;
++  Cardinal layer_no;
+   struct pv_info info;
+ 
+   /* loop over all PVs currently on list */
+   while (PVList.Location < PVList.Number)
+     {
++      BoxType search_box;
++
+       /* get pointer to data */
+-      info.pv = *(PVLIST_ENTRY (PVList.Location));
+-      EXPAND_BOUNDS (&info.pv);
++      info.pv = PVLIST_ENTRY (PVList.Location);
++      search_box = expand_bounds (&info.pv->BoundingBox);
+ 
+       /* check pads */
+       if (setjmp (info.env) == 0)
+-        r_search (PCB->Data->pad_tree, (BoxType *) & info.pv, NULL,
+-                  LOCtoPVpad_callback, &info);
++        r_search (PCB->Data->pad_tree, &search_box, NULL, LOCtoPVpad_callback, &info);
+       else
+         return true;
+ 
+       /* now all lines, arcs and polygons of the several layers */
+-      for (layer = 0; layer < max_copper_layer; layer++)
++      for (layer_no = 0; layer_no < max_copper_layer; layer_no++)
+         {
+-          if (LAYER_PTR (layer)->no_drc)
++          LayerType *layer = LAYER_PTR (layer_no);
++
++          if (layer->no_drc)
+              continue;
+-          info.layer = layer;
++
++          info.layer = layer_no;
++
+           /* add touching lines */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->line_tree, (BoxType *) & info.pv,
+-                      NULL, LOCtoPVline_callback, &info);
++            r_search (layer->line_tree, &search_box, NULL, LOCtoPVline_callback, &info);
+           else
+             return true;
+           /* add touching arcs */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->arc_tree, (BoxType *) & info.pv,
+-                      NULL, LOCtoPVarc_callback, &info);
++            r_search (layer->arc_tree, &search_box, NULL, LOCtoPVarc_callback, &info);
+           else
+             return true;
+           /* check all polygons */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->polygon_tree, (BoxType *) & info.pv,
+-                      NULL, LOCtoPVpoly_callback, &info);
++            r_search (layer->polygon_tree, &search_box, NULL, LOCtoPVpoly_callback, &info);
+           else
+             return true;
+         }
+@@ -782,8 +794,7 @@ LookupLOConnectionsToPVList (bool AndRats)
+       if (AndRats)
+         {
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->rat_tree, (BoxType *) & info.pv, NULL,
+-                      LOCtoPVrat_callback, &info);
++            r_search (PCB->Data->rat_tree, &search_box, NULL, LOCtoPVrat_callback, &info);
+           else
+             return true;
+         }
+@@ -915,9 +926,9 @@ pv_pv_callback (const BoxType * b, void *cl)
+   PinType *pin = (PinType *) b;
+   struct pv_info *i = (struct pv_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, pin) && PV_TOUCH_PV (&i->pv, pin))
++  if (!TEST_FLAG (TheFlag, pin) && PV_TOUCH_PV (i->pv, pin))
+     {
+-      if (TEST_FLAG (HOLEFLAG, pin) || TEST_FLAG (HOLEFLAG, &i->pv))
++      if (TEST_FLAG (HOLEFLAG, pin) || TEST_FLAG (HOLEFLAG, i->pv))
+         {
+           SET_FLAG (WARNFLAG, pin);
+           Settings.RatWarn = true;
+@@ -946,17 +957,18 @@ LookupPVConnectionsToPVList (void)
+   save_place = PVList.Location;
+   while (PVList.Location < PVList.Number)
+     {
++      BoxType search_box;
++
+       /* get pointer to data */
+-      info.pv = *(PVLIST_ENTRY (PVList.Location));
+-      EXPAND_BOUNDS (&info.pv);
++      info.pv = PVLIST_ENTRY (PVList.Location);
++      search_box = expand_bounds ((BoxType *)info.pv);
++
+       if (setjmp (info.env) == 0)
+-        r_search (PCB->Data->via_tree, (BoxType *) & info.pv, NULL,
+-                  pv_pv_callback, &info);
++        r_search (PCB->Data->via_tree, &search_box, NULL, pv_pv_callback, &info);
+       else
+         return true;
+       if (setjmp (info.env) == 0)
+-        r_search (PCB->Data->pin_tree, (BoxType *) & info.pv, NULL,
+-                  pv_pv_callback, &info);
++        r_search (PCB->Data->pin_tree, &search_box, NULL, pv_pv_callback, &info);
+       else
+         return true;
+       PVList.Location++;
+@@ -968,11 +980,11 @@ LookupPVConnectionsToPVList (void)
+ struct lo_info
+ {
+   Cardinal layer;
+-  LineType line;
+-  PadType pad;
+-  ArcType arc;
+-  PolygonType polygon;
+-  RatType rat;
++  LineType *line;
++  PadType *pad;
++  ArcType *arc;
++  PolygonType *polygon;
++  RatType *rat;
+   jmp_buf env;
+ };
+ 
+@@ -982,7 +994,7 @@ pv_line_callback (const BoxType * b, void *cl)
+   PinType *pv = (PinType *) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, pv) && PinLineIntersect (pv, &i->line))
++  if (!TEST_FLAG (TheFlag, pv) && PinLineIntersect (pv, i->line))
+     {
+       if (TEST_FLAG (HOLEFLAG, pv))
+         {
+@@ -1002,7 +1014,7 @@ pv_pad_callback (const BoxType * b, void *cl)
+   PinType *pv = (PinType *) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, pv) && IS_PV_ON_PAD (pv, &i->pad))
++  if (!TEST_FLAG (TheFlag, pv) && IS_PV_ON_PAD (pv, i->pad))
+     {
+       if (TEST_FLAG (HOLEFLAG, pv))
+         {
+@@ -1022,7 +1034,7 @@ pv_arc_callback (const BoxType * b, void *cl)
+   PinType *pv = (PinType *) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, pv) && IS_PV_ON_ARC (pv, &i->arc))
++  if (!TEST_FLAG (TheFlag, pv) && IS_PV_ON_ARC (pv, i->arc))
+     {
+       if (TEST_FLAG (HOLEFLAG, pv))
+         {
+@@ -1045,7 +1057,7 @@ pv_poly_callback (const BoxType * b, void *cl)
+   /* note that holes in polygons are ok, so they don't generate warnings. */
+   if (!TEST_FLAG (TheFlag, pv) && !TEST_FLAG (HOLEFLAG, pv) &&
+                                   (TEST_THERM (i->layer, pv) ||
+-                                   !TEST_FLAG (CLEARPOLYFLAG, &i->polygon) ||
++                                   !TEST_FLAG (CLEARPOLYFLAG, i->polygon) ||
+                                    !pv->Clearance))
+     {
+       if (TEST_FLAG (SQUAREFLAG, pv))
+@@ -1055,20 +1067,20 @@ pv_poly_callback (const BoxType * b, void *cl)
+           x2 = pv->X + (PIN_SIZE (pv) + 1 + Bloat) / 2;
+           y1 = pv->Y - (PIN_SIZE (pv) + 1 + Bloat) / 2;
+           y2 = pv->Y + (PIN_SIZE (pv) + 1 + Bloat) / 2;
+-          if (IsRectangleInPolygon (x1, y1, x2, y2, &i->polygon)
++          if (IsRectangleInPolygon (x1, y1, x2, y2, i->polygon)
+               && ADD_PV_TO_LIST (pv))
+             longjmp (i->env, 1);
+         }
+       else if (TEST_FLAG (OCTAGONFLAG, pv))
+         {
+           POLYAREA *oct = OctagonPoly (pv->X, pv->Y, PIN_SIZE (pv) / 2);
+-          if (isects (oct, &i->polygon, true) && ADD_PV_TO_LIST (pv))
++          if (isects (oct, i->polygon, true) && ADD_PV_TO_LIST (pv))
+             longjmp (i->env, 1);
+         }
+       else
+         {
+           if (IsPointInPolygon
+-              (pv->X, pv->Y, PIN_SIZE (pv) * 0.5 + Bloat, &i->polygon)
++              (pv->X, pv->Y, PIN_SIZE (pv) * 0.5 + Bloat, i->polygon)
+               && ADD_PV_TO_LIST (pv))
+             longjmp (i->env, 1);
+         }
+@@ -1083,7 +1095,7 @@ pv_rat_callback (const BoxType * b, void *cl)
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+   /* rats can't cause DRC so there is no early exit */
+-  if (!TEST_FLAG (TheFlag, pv) && IS_PV_ON_RAT (pv, &i->rat))
++  if (!TEST_FLAG (TheFlag, pv) && IS_PV_ON_RAT (pv, i->rat))
+     ADD_PV_TO_LIST (pv);
+   return 0;
+ }
+@@ -1115,16 +1127,17 @@ LookupPVConnectionsToLOList (bool AndRats)
+       /* check all lines */
+       while (LineList[layer].Location < LineList[layer].Number)
+         {
+-          info.line = *(LINELIST_ENTRY (layer, LineList[layer].Location));
+-          EXPAND_BOUNDS (&info.line);
++          BoxType search_box;
++
++          info.line = LINELIST_ENTRY (layer, LineList[layer].Location);
++          search_box = expand_bounds ((BoxType *)info.line);
++
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->via_tree, (BoxType *) & info.line, NULL,
+-                      pv_line_callback, &info);
++            r_search (PCB->Data->via_tree, &search_box, NULL, pv_line_callback, &info);
+           else
+             return true;
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->pin_tree, (BoxType *) & info.line, NULL,
+-                      pv_line_callback, &info);
++            r_search (PCB->Data->pin_tree, &search_box, NULL, pv_line_callback, &info);
+           else
+             return true;
+           LineList[layer].Location++;
+@@ -1133,16 +1146,17 @@ LookupPVConnectionsToLOList (bool AndRats)
+       /* check all arcs */
+       while (ArcList[layer].Location < ArcList[layer].Number)
+         {
+-          info.arc = *(ARCLIST_ENTRY (layer, ArcList[layer].Location));
+-          EXPAND_BOUNDS (&info.arc);
++          BoxType search_box;
++
++          info.arc = ARCLIST_ENTRY (layer, ArcList[layer].Location);
++          search_box = expand_bounds ((BoxType *)info.arc);
++
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->via_tree, (BoxType *) & info.arc, NULL,
+-                      pv_arc_callback, &info);
++            r_search (PCB->Data->via_tree, &search_box, NULL, pv_arc_callback, &info);
+           else
+             return true;
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->pin_tree, (BoxType *) & info.arc, NULL,
+-                      pv_arc_callback, &info);
++            r_search (PCB->Data->pin_tree, &search_box, NULL, pv_arc_callback, &info);
+           else
+             return true;
+           ArcList[layer].Location++;
+@@ -1152,17 +1166,17 @@ LookupPVConnectionsToLOList (bool AndRats)
+       info.layer = layer;
+       while (PolygonList[layer].Location < PolygonList[layer].Number)
+         {
+-          info.polygon =
+-            *(POLYGONLIST_ENTRY (layer, PolygonList[layer].Location));
+-          EXPAND_BOUNDS (&info.polygon);
++          BoxType search_box;
++
++          info.polygon = POLYGONLIST_ENTRY (layer, PolygonList[layer].Location);
++          search_box = expand_bounds ((BoxType *)info.polygon);
++
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->via_tree, (BoxType *) & info.polygon, NULL,
+-                      pv_poly_callback, &info);
++            r_search (PCB->Data->via_tree, &search_box, NULL, pv_poly_callback, &info);
+           else
+             return true;
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->pin_tree, (BoxType *) & info.polygon, NULL,
+-                      pv_poly_callback, &info);
++            r_search (PCB->Data->pin_tree, &search_box, NULL, pv_poly_callback, &info);
+           else
+             return true;
+           PolygonList[layer].Location++;
+@@ -1184,16 +1198,17 @@ LookupPVConnectionsToLOList (bool AndRats)
+        */
+       while (PadList[layer].Location < PadList[layer].Number)
+         {
+-          info.pad = *(PADLIST_ENTRY (layer, PadList[layer].Location));
+-          EXPAND_BOUNDS (&info.pad);
++          BoxType search_box;
++
++          info.pad = PADLIST_ENTRY (layer, PadList[layer].Location);
++          search_box = expand_bounds ((BoxType *)info.pad);
++
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->via_tree, (BoxType *) & info.pad, NULL,
+-                      pv_pad_callback, &info);
++            r_search (PCB->Data->via_tree, &search_box, NULL, pv_pad_callback, &info);
+           else
+             return true;
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->pin_tree, (BoxType *) & info.pad, NULL,
+-                      pv_pad_callback, &info);
++            r_search (PCB->Data->pin_tree, &search_box, NULL, pv_pad_callback, &info);
+           else
+             return true;
+           PadList[layer].Location++;
+@@ -1209,14 +1224,14 @@ LookupPVConnectionsToLOList (bool AndRats)
+     {
+       while (RatList.Location < RatList.Number)
+         {
+-          info.rat = *(RATLIST_ENTRY (RatList.Location));
+-          r_search_pt (PCB->Data->via_tree, & info.rat.Point1, 1, NULL,
++          info.rat = RATLIST_ENTRY (RatList.Location);
++          r_search_pt (PCB->Data->via_tree, & info.rat->Point1, 1, NULL,
+                     pv_rat_callback, &info);
+-          r_search_pt (PCB->Data->via_tree, & info.rat.Point2, 1, NULL,
++          r_search_pt (PCB->Data->via_tree, & info.rat->Point2, 1, NULL,
+                     pv_rat_callback, &info);
+-          r_search_pt (PCB->Data->pin_tree, & info.rat.Point1, 1, NULL,
++          r_search_pt (PCB->Data->pin_tree, & info.rat->Point1, 1, NULL,
+                     pv_rat_callback, &info);
+-          r_search_pt (PCB->Data->pin_tree, & info.rat.Point2, 1, NULL,
++          r_search_pt (PCB->Data->pin_tree, & info.rat->Point2, 1, NULL,
+                     pv_rat_callback, &info);
+ 
+           RatList.Location++;
+@@ -1664,7 +1679,7 @@ LOCtoArcLine_callback (const BoxType * b, void *cl)
+   LineType *line = (LineType *) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, line) && LineArcIntersect (line, &i->arc))
++  if (!TEST_FLAG (TheFlag, line) && LineArcIntersect (line, i->arc))
+     {
+       if (ADD_LINE_TO_LIST (i->layer, line))
+         longjmp (i->env, 1);
+@@ -1680,7 +1695,7 @@ LOCtoArcArc_callback (const BoxType * b, void *cl)
+ 
+   if (!arc->Thickness)
+     return 0;
+-  if (!TEST_FLAG (TheFlag, arc) && ArcArcIntersect (&i->arc, arc))
++  if (!TEST_FLAG (TheFlag, arc) && ArcArcIntersect (i->arc, arc))
+     {
+       if (ADD_ARC_TO_LIST (i->layer, arc))
+         longjmp (i->env, 1);
+@@ -1696,7 +1711,7 @@ LOCtoArcPad_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (TheFlag, pad) && i->layer ==
+       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
+-      && ArcPadIntersect (&i->arc, pad) && ADD_PAD_TO_LIST (i->layer, pad))
++      && ArcPadIntersect (i->arc, pad) && ADD_PAD_TO_LIST (i->layer, pad))
+     longjmp (i->env, 1);
+   return 0;
+ }
+@@ -1713,9 +1728,11 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
+ {
+   Cardinal entry;
+   struct lo_info info;
++  BoxType search_box;
++
++  info.arc = Arc;
++  search_box = expand_bounds ((BoxType *)info.arc);
+ 
+-  info.arc = *Arc;
+-  EXPAND_BOUNDS (&info.arc);
+   /* loop over all layers of the group */
+   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
+     {
+@@ -1730,14 +1747,12 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
+           info.layer = layer;
+           /* add arcs */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->line_tree, &info.arc.BoundingBox,
+-                      NULL, LOCtoArcLine_callback, &info);
++            r_search (LAYER_PTR (layer)->line_tree, &search_box, NULL, LOCtoArcLine_callback, &info);
+           else
+             return true;
+ 
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->arc_tree, &info.arc.BoundingBox,
+-                      NULL, LOCtoArcArc_callback, &info);
++            r_search (LAYER_PTR (layer)->arc_tree, &search_box, NULL, LOCtoArcArc_callback, &info);
+           else
+             return true;
+ 
+@@ -1755,8 +1770,7 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
+         {
+           info.layer = layer - max_copper_layer;
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->pad_tree, &info.arc.BoundingBox, NULL,
+-                      LOCtoArcPad_callback, &info);
++            r_search (PCB->Data->pad_tree, &search_box, NULL, LOCtoArcPad_callback, &info);
+           else
+             return true;
+         }
+@@ -1770,7 +1784,7 @@ LOCtoLineLine_callback (const BoxType * b, void *cl)
+   LineType *line = (LineType *) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, line) && LineLineIntersect (&i->line, line))
++  if (!TEST_FLAG (TheFlag, line) && LineLineIntersect (i->line, line))
+     {
+       if (ADD_LINE_TO_LIST (i->layer, line))
+         longjmp (i->env, 1);
+@@ -1786,7 +1800,7 @@ LOCtoLineArc_callback (const BoxType * b, void *cl)
+ 
+   if (!arc->Thickness)
+     return 0;
+-  if (!TEST_FLAG (TheFlag, arc) && LineArcIntersect (&i->line, arc))
++  if (!TEST_FLAG (TheFlag, arc) && LineArcIntersect (i->line, arc))
+     {
+       if (ADD_ARC_TO_LIST (i->layer, arc))
+         longjmp (i->env, 1);
+@@ -1803,13 +1817,13 @@ LOCtoLineRat_callback (const BoxType * b, void *cl)
+   if (!TEST_FLAG (TheFlag, rat))
+     {
+       if ((rat->group1 == i->layer)
+-          && IsRatPointOnLineEnd (&rat->Point1, &i->line))
++          && IsRatPointOnLineEnd (&rat->Point1, i->line))
+         {
+           if (ADD_RAT_TO_LIST (rat))
+             longjmp (i->env, 1);
+         }
+       else if ((rat->group2 == i->layer)
+-               && IsRatPointOnLineEnd (&rat->Point2, &i->line))
++               && IsRatPointOnLineEnd (&rat->Point2, i->line))
+         {
+           if (ADD_RAT_TO_LIST (rat))
+             longjmp (i->env, 1);
+@@ -1826,7 +1840,7 @@ LOCtoLinePad_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (TheFlag, pad) && i->layer ==
+       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
+-      && LinePadIntersect (&i->line, pad) && ADD_PAD_TO_LIST (i->layer, pad))
++      && LinePadIntersect (i->line, pad) && ADD_PAD_TO_LIST (i->layer, pad))
+     longjmp (i->env, 1);
+   return 0;
+ }
+@@ -1844,17 +1858,17 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+ {
+   Cardinal entry;
+   struct lo_info info;
++  BoxType search_box;
+ 
+-  info.line = *Line;
+   info.layer = LayerGroup;
+-  EXPAND_BOUNDS (&info.line)
++  info.line = Line;
++  search_box = expand_bounds ((BoxType *)info.line);
+ 
+   if (AndRats)
+     {
+       /* add the new rat lines */
+       if (setjmp (info.env) == 0)
+-        r_search (PCB->Data->rat_tree, &info.line.BoundingBox, NULL,
+-                  LOCtoLineRat_callback, &info);
++        r_search (PCB->Data->rat_tree, &search_box, NULL, LOCtoLineRat_callback, &info);
+       else
+         return true;
+     }
+@@ -1872,14 +1886,12 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+           info.layer = layer;
+           /* add lines */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->line_tree, (BoxType *) & info.line,
+-                      NULL, LOCtoLineLine_callback, &info);
++            r_search (LAYER_PTR (layer)->line_tree, &search_box, NULL, LOCtoLineLine_callback, &info);
+           else
+             return true;
+           /* add arcs */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->arc_tree, (BoxType *) & info.line,
+-                      NULL, LOCtoLineArc_callback, &info);
++            r_search (LAYER_PTR (layer)->arc_tree, &search_box,  NULL, LOCtoLineArc_callback, &info);
+           else
+             return true;
+           /* now check all polygons */
+@@ -1902,8 +1914,7 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+           /* handle special 'pad' layers */
+           info.layer = layer - max_copper_layer;
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->pad_tree, &info.line.BoundingBox, NULL,
+-                      LOCtoLinePad_callback, &info);
++            r_search (PCB->Data->pad_tree, &search_box, NULL, LOCtoLinePad_callback, &info);
+           else
+             return true;
+         }
+@@ -2024,7 +2035,7 @@ LOCtoPadLine_callback (const BoxType * b, void *cl)
+   LineType *line = (LineType *) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, line) && LinePadIntersect (line, &i->pad))
++  if (!TEST_FLAG (TheFlag, line) && LinePadIntersect (line, i->pad))
+     {
+       if (ADD_LINE_TO_LIST (i->layer, line))
+         longjmp (i->env, 1);
+@@ -2040,7 +2051,7 @@ LOCtoPadArc_callback (const BoxType * b, void *cl)
+ 
+   if (!arc->Thickness)
+     return 0;
+-  if (!TEST_FLAG (TheFlag, arc) && ArcPadIntersect (arc, &i->pad))
++  if (!TEST_FLAG (TheFlag, arc) && ArcPadIntersect (arc, i->pad))
+     {
+       if (ADD_ARC_TO_LIST (i->layer, arc))
+         longjmp (i->env, 1);
+@@ -2056,9 +2067,9 @@ LOCtoPadPoly_callback (const BoxType * b, void *cl)
+ 
+ 
+   if (!TEST_FLAG (TheFlag, polygon) &&
+-      (!TEST_FLAG (CLEARPOLYFLAG, polygon) || !i->pad.Clearance))
++      (!TEST_FLAG (CLEARPOLYFLAG, polygon) || !i->pad->Clearance))
+     {
+-      if (IsPadInPolygon (&i->pad, polygon) &&
++      if (IsPadInPolygon (i->pad, polygon) &&
+           ADD_POLYGON_TO_LIST (i->layer, polygon))
+         longjmp (i->env, 1);
+     }
+@@ -2074,19 +2085,19 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
+   if (!TEST_FLAG (TheFlag, rat))
+     {
+       if (rat->group1 == i->layer &&
+-	  ((rat->Point1.X == i->pad.Point1.X && rat->Point1.Y == i->pad.Point1.Y) ||
+-	   (rat->Point1.X == i->pad.Point2.X && rat->Point1.Y == i->pad.Point2.Y) ||
+-	   (rat->Point1.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
+-	    rat->Point1.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)))
++	  ((rat->Point1.X == i->pad->Point1.X && rat->Point1.Y == i->pad->Point1.Y) ||
++	   (rat->Point1.X == i->pad->Point2.X && rat->Point1.Y == i->pad->Point2.Y) ||
++	   (rat->Point1.X == (i->pad->Point1.X + i->pad->Point2.X) / 2 &&
++	    rat->Point1.Y == (i->pad->Point1.Y + i->pad->Point2.Y) / 2)))
+         {
+           if (ADD_RAT_TO_LIST (rat))
+             longjmp (i->env, 1);
+         }
+       else if (rat->group2 == i->layer &&
+-	       ((rat->Point2.X == i->pad.Point1.X && rat->Point2.Y == i->pad.Point1.Y) ||
+-		(rat->Point2.X == i->pad.Point2.X && rat->Point2.Y == i->pad.Point2.Y) ||
+-		(rat->Point2.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
+-		 rat->Point2.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)))
++	       ((rat->Point2.X == i->pad->Point1.X && rat->Point2.Y == i->pad->Point1.Y) ||
++		(rat->Point2.X == i->pad->Point2.X && rat->Point2.Y == i->pad->Point2.Y) ||
++		(rat->Point2.X == (i->pad->Point1.X + i->pad->Point2.X) / 2 &&
++		 rat->Point2.Y == (i->pad->Point1.Y + i->pad->Point2.Y) / 2)))
+         {
+           if (ADD_RAT_TO_LIST (rat))
+             longjmp (i->env, 1);
+@@ -2103,7 +2114,7 @@ LOCtoPadPad_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (TheFlag, pad) && i->layer ==
+       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
+-      && PadPadIntersect (pad, &i->pad) && ADD_PAD_TO_LIST (i->layer, pad))
++      && PadPadIntersect (pad, i->pad) && ADD_PAD_TO_LIST (i->layer, pad))
+     longjmp (i->env, 1);
+   return 0;
+ }
+@@ -2117,20 +2128,21 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
+ {
+   Cardinal entry;
+   struct lo_info info;
++  BoxType search_box;
+ 
+   if (!TEST_FLAG (SQUAREFLAG, Pad))
+     return (LookupLOConnectionsToLine ((LineType *) Pad, LayerGroup, false, AndRats));
+ 
+-  info.pad = *Pad;
+-  EXPAND_BOUNDS (&info.pad);
++  info.pad = Pad;
++  search_box = expand_bounds ((BoxType *)info.pad);
++
+   /* add the new rat lines */
+   info.layer = LayerGroup;
+ 
+   if (AndRats)
+     {
+       if (setjmp (info.env) == 0)
+-        r_search (PCB->Data->rat_tree, &info.pad.BoundingBox, NULL,
+-                  LOCtoPadRat_callback, &info);
++        r_search (PCB->Data->rat_tree, &search_box, NULL, LOCtoPadRat_callback, &info);
+       else
+         return true;
+     }
+@@ -2147,20 +2159,17 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
+           info.layer = layer;
+           /* add lines */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->line_tree, &info.pad.BoundingBox,
+-                      NULL, LOCtoPadLine_callback, &info);
++            r_search (LAYER_PTR (layer)->line_tree, &search_box, NULL, LOCtoPadLine_callback, &info);
+           else
+             return true;
+           /* add arcs */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->arc_tree, &info.pad.BoundingBox,
+-                      NULL, LOCtoPadArc_callback, &info);
++            r_search (LAYER_PTR (layer)->arc_tree, &search_box, NULL, LOCtoPadArc_callback, &info);
+           else
+             return true;
+           /* add polygons */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->polygon_tree, &info.pad.BoundingBox,
+-                      NULL, LOCtoPadPoly_callback, &info);
++            r_search (LAYER_PTR (layer)->polygon_tree, &search_box, NULL, LOCtoPadPoly_callback, &info);
+           else
+             return true;
+         }
+@@ -2169,8 +2178,7 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
+           /* handle special 'pad' layers */
+           info.layer = layer - max_copper_layer;
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->pad_tree, (BoxType *) & info.pad, NULL,
+-                      LOCtoPadPad_callback, &info);
++            r_search (PCB->Data->pad_tree, &search_box, NULL, LOCtoPadPad_callback, &info);
+           else
+             return true;
+         }
+@@ -2185,7 +2193,7 @@ LOCtoPolyLine_callback (const BoxType * b, void *cl)
+   LineType *line = (LineType *) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, line) && IsLineInPolygon (line, &i->polygon))
++  if (!TEST_FLAG (TheFlag, line) && IsLineInPolygon (line, i->polygon))
+     {
+       if (ADD_LINE_TO_LIST (i->layer, line))
+         longjmp (i->env, 1);
+@@ -2201,7 +2209,7 @@ LOCtoPolyArc_callback (const BoxType * b, void *cl)
+ 
+   if (!arc->Thickness)
+     return 0;
+-  if (!TEST_FLAG (TheFlag, arc) && IsArcInPolygon (arc, &i->polygon))
++  if (!TEST_FLAG (TheFlag, arc) && IsArcInPolygon (arc, i->polygon))
+     {
+       if (ADD_ARC_TO_LIST (i->layer, arc))
+         longjmp (i->env, 1);
+@@ -2217,7 +2225,7 @@ LOCtoPolyPad_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (TheFlag, pad) && i->layer ==
+       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
+-      && IsPadInPolygon (pad, &i->polygon))
++      && IsPadInPolygon (pad, i->polygon))
+     {
+       if (ADD_PAD_TO_LIST (i->layer, pad))
+         longjmp (i->env, 1);
+@@ -2233,11 +2241,11 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (TheFlag, rat))
+     {
+-      if ((rat->Point1.X == (i->polygon.Clipped->contours->head.point[0]) &&
+-           rat->Point1.Y == (i->polygon.Clipped->contours->head.point[1]) &&
++      if ((rat->Point1.X == (i->polygon->Clipped->contours->head.point[0]) &&
++           rat->Point1.Y == (i->polygon->Clipped->contours->head.point[1]) &&
+            rat->group1 == i->layer) ||
+-          (rat->Point2.X == (i->polygon.Clipped->contours->head.point[0]) &&
+-           rat->Point2.Y == (i->polygon.Clipped->contours->head.point[1]) &&
++          (rat->Point2.X == (i->polygon->Clipped->contours->head.point[0]) &&
++           rat->Point2.Y == (i->polygon->Clipped->contours->head.point[1]) &&
+            rat->group2 == i->layer))
+         if (ADD_RAT_TO_LIST (rat))
+           longjmp (i->env, 1);
+@@ -2255,19 +2263,20 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool An
+ {
+   Cardinal entry;
+   struct lo_info info;
++  BoxType search_box;
+ 
+   if (!Polygon->Clipped)
+     return false;
+-  info.polygon = *Polygon;
+-  EXPAND_BOUNDS (&info.polygon);
++  info.polygon = Polygon;
++  search_box = expand_bounds ((BoxType *)info.polygon);
++
+   info.layer = LayerGroup;
+ 
+   /* check rats */
+   if (AndRats)
+     {
+       if (setjmp (info.env) == 0)
+-        r_search (PCB->Data->rat_tree, (BoxType *) & info.polygon, NULL,
+-                  LOCtoPolyRat_callback, &info);
++        r_search (PCB->Data->rat_tree, &search_box, NULL, LOCtoPolyRat_callback, &info);
+       else
+         return true;
+     }
+@@ -2298,15 +2307,12 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool An
+           info.layer = layer;
+           /* check all lines */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->line_tree,
+-                      (BoxType *) & info.polygon, NULL,
+-                      LOCtoPolyLine_callback, &info);
++            r_search (LAYER_PTR (layer)->line_tree, &search_box, NULL, LOCtoPolyLine_callback, &info);
+           else
+             return true;
+           /* check all arcs */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->arc_tree, (BoxType *) & info.polygon,
+-                      NULL, LOCtoPolyArc_callback, &info);
++            r_search (LAYER_PTR (layer)->arc_tree, &search_box, NULL, LOCtoPolyArc_callback, &info);
+           else
+             return true;
+         }
+@@ -2314,8 +2320,7 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool An
+         {
+           info.layer = layer - max_copper_layer;
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->pad_tree, (BoxType *) & info.polygon,
+-                      NULL, LOCtoPolyPad_callback, &info);
++            r_search (PCB->Data->pad_tree, &search_box, NULL, LOCtoPolyPad_callback, &info);
+           else
+             return true;
+         }
