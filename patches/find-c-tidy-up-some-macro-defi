@@ -1,5 +1,5 @@
 Bottom: 6a6183b76ec5f92f7e57d9e41cd4f4b0b2a0b119
-Top:    6a6183b76ec5f92f7e57d9e41cd4f4b0b2a0b119
+Top:    6824ce2612271ccfc34e5dd0b2f6b3784194d87b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-24 01:43:18 +0000
 
@@ -10,4 +10,41 @@ find.c: Tidy up some macro definitions
 
 ---
 
-
+diff --git a/src/find.c b/src/find.c
+index c1151fa..3b551d4 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -113,26 +113,13 @@
+ 		fputc('\n', (FP));						\
+ 	}
+ 
+-#define	LIST_ENTRY(list,I)	\
+-	(((AnyObjectType **)list->Data)[(I)])
+-
+-#define	PADLIST_ENTRY(L,I)	\
+-	(((PadType **)PadList[(L)].Data)[(I)])
+-
+-#define	LINELIST_ENTRY(L,I)	\
+-	(((LineType **)LineList[(L)].Data)[(I)])
+-
+-#define	ARCLIST_ENTRY(L,I)	\
+-	(((ArcType **)ArcList[(L)].Data)[(I)])
+-
+-#define RATLIST_ENTRY(I)	\
+-	(((RatType **)RatList.Data)[(I)])
+-
+-#define	POLYGONLIST_ENTRY(L,I)	\
+-	(((PolygonType **)PolygonList[(L)].Data)[(I)])
+-
+-#define	PVLIST_ENTRY(I)	\
+-	(((PinType **)PVList.Data)[(I)])
++#define LIST_ENTRY(list,I)      (((AnyObjectType **)list->Data)[(I)])
++#define PADLIST_ENTRY(L,I)      (((PadType **)PadList[(L)].Data)[(I)])
++#define LINELIST_ENTRY(L,I)     (((LineType **)LineList[(L)].Data)[(I)])
++#define ARCLIST_ENTRY(L,I)      (((ArcType **)ArcList[(L)].Data)[(I)])
++#define RATLIST_ENTRY(I)        (((RatType **)RatList.Data)[(I)])
++#define POLYGONLIST_ENTRY(L,I)  (((PolygonType **)PolygonList[(L)].Data)[(I)])
++#define PVLIST_ENTRY(I)         (((PinType **)PVList.Data)[(I)])
+ 
+ #define IS_PV_ON_RAT(PV, Rat) \
+ 	(IsPointOnLineEnd((PV)->X,(PV)->Y, (Rat)))
