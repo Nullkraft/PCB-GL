@@ -1,5 +1,5 @@
-Bottom: 6824ce2612271ccfc34e5dd0b2f6b3784194d87b
-Top:    9b7286b347f015e4030f5608faefce9e62064dee
+Bottom: f38ce59333518ddbd20919f0e5b2953edf3716c1
+Top:    2d7d896cee2e25449805245dc88096ac38cec3e9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-24 00:45:33 +0000
 
@@ -9,7 +9,7 @@ find.c: Pass flags to sub-functions without using static variable "TheFlag".
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 3b551d4..e10cde2 100644
+index 8f4434e..e96dc99 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -268,7 +268,6 @@ typedef struct
