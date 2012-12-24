@@ -1,5 +1,5 @@
-Bottom: e957df95d6f291ab84df6ff8abe314cbecc43452
-Top:    4cfafd4e6db4bd651c0b26d35379f6043f2c1156
+Bottom: 42e3ff660d84ced553cc548744c06e22a76ce720
+Top:    cee0dbc705c8cfaaa1315f6c6dd3d74320e0e3d2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-24 02:14:27 +0000
 
@@ -12,7 +12,7 @@ avoid passing inconsistent objects to lower level functions.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 30eb0ff..7982258 100644
+index 13e53d3..f56c947 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -104,12 +104,6 @@
@@ -28,7 +28,7 @@ index 30eb0ff..7982258 100644
  #define	SEPARATE(FP)							\
  	{											\
  		int	i;									\
-@@ -412,6 +406,22 @@ ADD_POLYGON_TO_LIST (Cardinal L, PolygonType *Ptr)
+@@ -399,6 +393,22 @@ ADD_POLYGON_TO_LIST (Cardinal L, PolygonType *Ptr)
    return add_object_to_list (&PolygonList[L], POLYGON_TYPE, LAYER_PTR (L), Ptr, Ptr);
  }
  
@@ -51,7 +51,7 @@ index 30eb0ff..7982258 100644
  bool
  PinLineIntersect (PinType *PV, LineType *Line)
  {
-@@ -736,45 +746,47 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
+@@ -723,45 +733,47 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
  static bool
  LookupLOConnectionsToPVList (bool AndRats)
  {
@@ -112,7 +112,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
          }
-@@ -782,8 +794,7 @@ LookupLOConnectionsToPVList (bool AndRats)
+@@ -769,8 +781,7 @@ LookupLOConnectionsToPVList (bool AndRats)
        if (AndRats)
          {
            if (setjmp (info.env) == 0)
@@ -122,7 +122,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
          }
-@@ -946,17 +957,18 @@ LookupPVConnectionsToPVList (void)
+@@ -933,17 +944,18 @@ LookupPVConnectionsToPVList (void)
    save_place = PVList.Location;
    while (PVList.Location < PVList.Number)
      {
@@ -146,7 +146,7 @@ index 30eb0ff..7982258 100644
        else
          return true;
        PVList.Location++;
-@@ -1115,16 +1127,17 @@ LookupPVConnectionsToLOList (bool AndRats)
+@@ -1102,16 +1114,17 @@ LookupPVConnectionsToLOList (bool AndRats)
        /* check all lines */
        while (LineList[layer].Location < LineList[layer].Number)
          {
@@ -169,7 +169,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
            LineList[layer].Location++;
-@@ -1133,16 +1146,17 @@ LookupPVConnectionsToLOList (bool AndRats)
+@@ -1120,16 +1133,17 @@ LookupPVConnectionsToLOList (bool AndRats)
        /* check all arcs */
        while (ArcList[layer].Location < ArcList[layer].Number)
          {
@@ -192,7 +192,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
            ArcList[layer].Location++;
-@@ -1152,17 +1166,17 @@ LookupPVConnectionsToLOList (bool AndRats)
+@@ -1139,17 +1153,17 @@ LookupPVConnectionsToLOList (bool AndRats)
        info.layer = layer;
        while (PolygonList[layer].Location < PolygonList[layer].Number)
          {
@@ -217,7 +217,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
            PolygonList[layer].Location++;
-@@ -1184,16 +1198,17 @@ LookupPVConnectionsToLOList (bool AndRats)
+@@ -1171,16 +1185,17 @@ LookupPVConnectionsToLOList (bool AndRats)
         */
        while (PadList[layer].Location < PadList[layer].Number)
          {
@@ -240,7 +240,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
            PadList[layer].Location++;
-@@ -1713,9 +1728,11 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
+@@ -1700,9 +1715,11 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
  {
    Cardinal entry;
    struct lo_info info;
@@ -253,7 +253,7 @@ index 30eb0ff..7982258 100644
    /* loop over all layers of the group */
    for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
      {
-@@ -1730,14 +1747,12 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
+@@ -1717,14 +1734,12 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
            info.layer = layer;
            /* add arcs */
            if (setjmp (info.env) == 0)
@@ -270,7 +270,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
  
-@@ -1755,8 +1770,7 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
+@@ -1742,8 +1757,7 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
          {
            info.layer = layer - max_copper_layer;
            if (setjmp (info.env) == 0)
@@ -280,7 +280,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
          }
-@@ -1844,17 +1858,17 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+@@ -1831,17 +1845,17 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
  {
    Cardinal entry;
    struct lo_info info;
@@ -302,7 +302,7 @@ index 30eb0ff..7982258 100644
        else
          return true;
      }
-@@ -1872,14 +1886,12 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+@@ -1859,14 +1873,12 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
            info.layer = layer;
            /* add lines */
            if (setjmp (info.env) == 0)
@@ -319,7 +319,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
            /* now check all polygons */
-@@ -1902,8 +1914,7 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+@@ -1889,8 +1901,7 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
            /* handle special 'pad' layers */
            info.layer = layer - max_copper_layer;
            if (setjmp (info.env) == 0)
@@ -329,7 +329,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
          }
-@@ -2117,20 +2128,21 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
+@@ -2104,20 +2115,21 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
  {
    Cardinal entry;
    struct lo_info info;
@@ -354,7 +354,7 @@ index 30eb0ff..7982258 100644
        else
          return true;
      }
-@@ -2147,20 +2159,17 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
+@@ -2134,20 +2146,17 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
            info.layer = layer;
            /* add lines */
            if (setjmp (info.env) == 0)
@@ -378,7 +378,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
          }
-@@ -2169,8 +2178,7 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
+@@ -2156,8 +2165,7 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
            /* handle special 'pad' layers */
            info.layer = layer - max_copper_layer;
            if (setjmp (info.env) == 0)
@@ -388,7 +388,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
          }
-@@ -2255,19 +2263,20 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool An
+@@ -2242,19 +2250,20 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool An
  {
    Cardinal entry;
    struct lo_info info;
@@ -412,7 +412,7 @@ index 30eb0ff..7982258 100644
        else
          return true;
      }
-@@ -2298,15 +2307,12 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool An
+@@ -2285,15 +2294,12 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool An
            info.layer = layer;
            /* check all lines */
            if (setjmp (info.env) == 0)
@@ -430,7 +430,7 @@ index 30eb0ff..7982258 100644
            else
              return true;
          }
-@@ -2314,8 +2320,7 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool An
+@@ -2301,8 +2307,7 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool An
          {
            info.layer = layer - max_copper_layer;
            if (setjmp (info.env) == 0)

@@ -1,5 +1,5 @@
-Bottom: c9b9be3568ac7d36556bfac9694adc2315c689fa
-Top:    9c98ee83841297f7f4eb39324b160ee0c5b30b61
+Bottom: 549c425764b9d6e7833d7a1378d3e66de7662941
+Top:    e910c045dca5d0b79b052e4be7df93d35ce7d37c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-23 20:56:22 +0000
 
@@ -12,10 +12,10 @@ otherwise we do no. I got this backwards by mistake.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 30f7365..30eb0ff 100644
+index da41973..13e53d3 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3056,7 +3056,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag,
+@@ -3043,7 +3043,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag,
    if (type == NO_TYPE)
      {
        type = SearchObjectByLocation (
