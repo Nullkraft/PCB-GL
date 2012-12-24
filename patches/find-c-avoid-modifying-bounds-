@@ -1,0 +1,14 @@
+Bottom: e957df95d6f291ab84df6ff8abe314cbecc43452
+Top:    e957df95d6f291ab84df6ff8abe314cbecc43452
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-24 02:14:27 +0000
+
+find.c: Avoid modifying bounds of the objects we are passing down
+
+Bloat the bounding box into a local BoxType structure instead, to
+avoid passing inconsistent objects to lower level functions.
+
+
+---
+
+
