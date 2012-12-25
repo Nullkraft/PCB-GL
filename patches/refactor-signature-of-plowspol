@@ -1,5 +1,5 @@
 Bottom: f38ce59333518ddbd20919f0e5b2953edf3716c1
-Top:    f38ce59333518ddbd20919f0e5b2953edf3716c1
+Top:    73732076108a4004cc42785a74f87cc9952d2d23
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-25 12:40:46 +0000
 
@@ -11,4 +11,131 @@ without resorting to nasty workarounds like global variables.
 
 ---
 
-
+diff --git a/src/find.c b/src/find.c
+index 8f4434e..33af2e2 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3638,7 +3638,7 @@ DRCAll (void)
+       COPPERLINE_LOOP (PCB->Data);
+       {
+         /* check line clearances in polygons */
+-        PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback);
++        PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback, NULL);
+         if (IsBad)
+           break;
+         if (line->Thickness < PCB->minWid)
+@@ -3680,7 +3680,7 @@ DRCAll (void)
+     {
+       COPPERARC_LOOP (PCB->Data);
+       {
+-        PlowsPolygon (PCB->Data, ARC_TYPE, layer, arc, drc_callback);
++        PlowsPolygon (PCB->Data, ARC_TYPE, layer, arc, drc_callback, NULL);
+         if (IsBad)
+           break;
+         if (arc->Thickness < PCB->minWid)
+@@ -3722,7 +3722,7 @@ DRCAll (void)
+     {
+       ALLPIN_LOOP (PCB->Data);
+       {
+-        PlowsPolygon (PCB->Data, PIN_TYPE, element, pin, drc_callback);
++        PlowsPolygon (PCB->Data, PIN_TYPE, element, pin, drc_callback, NULL);
+         if (IsBad)
+           break;
+         if (!TEST_FLAG (HOLEFLAG, pin) &&
+@@ -3796,7 +3796,7 @@ DRCAll (void)
+     {
+       ALLPAD_LOOP (PCB->Data);
+       {
+-        PlowsPolygon (PCB->Data, PAD_TYPE, element, pad, drc_callback);
++        PlowsPolygon (PCB->Data, PAD_TYPE, element, pad, drc_callback, NULL);
+         if (IsBad)
+           break;
+         if (pad->Thickness < PCB->minWid)
+@@ -3838,7 +3838,7 @@ DRCAll (void)
+     {
+       VIA_LOOP (PCB->Data);
+       {
+-        PlowsPolygon (PCB->Data, VIA_TYPE, via, via, drc_callback);
++        PlowsPolygon (PCB->Data, VIA_TYPE, via, via, drc_callback, NULL);
+         if (IsBad)
+           break;
+         if (!TEST_FLAG (HOLEFLAG, via) &&
+diff --git a/src/polygon.c b/src/polygon.c
+index 2d3e9e4..e63391f 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1463,7 +1463,7 @@ struct plow_info
+ 
+ static int
+ subtract_plow (DataType *Data, LayerType *Layer, PolygonType *Polygon,
+-               int type, void *ptr1, void *ptr2)
++               int type, void *ptr1, void *ptr2, void *userdata)
+ {
+   if (!Polygon->Clipped)
+     return 0;
+@@ -1496,7 +1496,7 @@ subtract_plow (DataType *Data, LayerType *Layer, PolygonType *Polygon,
+ 
+ static int
+ add_plow (DataType *Data, LayerType *Layer, PolygonType *Polygon,
+-          int type, void *ptr1, void *ptr2)
++          int type, void *ptr1, void *ptr2, void *userdata)
+ {
+   switch (type)
+     {
+@@ -1536,7 +1536,8 @@ int
+ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+               int (*call_back) (DataType *data, LayerType *lay,
+                                 PolygonType *poly, int type, void *ptr1,
+-                                void *ptr2))
++                                void *ptr2),
++              void *userddata)
+ {
+   BoxType sb = ((PinType *) ptr2)->BoundingBox;
+   int r = 0;
+@@ -1609,12 +1610,12 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+       {
+         PIN_LOOP ((ElementType *) ptr1);
+         {
+-          PlowsPolygon (Data, PIN_TYPE, ptr1, pin, call_back);
++          PlowsPolygon (Data, PIN_TYPE, ptr1, pin, call_back, userdata);
+         }
+         END_LOOP;
+         PAD_LOOP ((ElementType *) ptr1);
+         {
+-          PlowsPolygon (Data, PAD_TYPE, ptr1, pad, call_back);
++          PlowsPolygon (Data, PAD_TYPE, ptr1, pad, call_back, userdata);
+         }
+         END_LOOP;
+       }
+@@ -1632,7 +1633,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+   if (type == POLYGON_TYPE)
+     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
+   else
+-    PlowsPolygon (Data, type, ptr1, ptr2, add_plow);
++    PlowsPolygon (Data, type, ptr1, ptr2, add_plow, NULL);
+ }
+ 
+ void
+@@ -1644,7 +1645,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+   if (type == POLYGON_TYPE)
+     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
+   else
+-    PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow);
++    PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow, NULL);
+ }
+ 
+ bool
+diff --git a/src/polygon.h b/src/polygon.h
+index c217653..8d1b2b1 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -63,7 +63,8 @@ int PolygonHoles (PolygonType *ptr, const BoxType *range,
+ 		  int (*callback) (PLINE *, void *user_data),
+                   void *user_data);
+ int PlowsPolygon (DataType *, int, void *, void *,
+-		  int (*callback) (DataType *, LayerType *, PolygonType *, int, void *, void *));
++                  int (*callback) (DataType *, LayerType *, PolygonType *, int, void *, void *),
++                  void *userdata);
+ void ComputeNoHoles (PolygonType *poly);
+ POLYAREA * ContourToPoly (PLINE *);
+ POLYAREA * PolygonToPoly (PolygonType *);
