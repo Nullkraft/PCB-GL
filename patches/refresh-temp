@@ -1,0 +1,629 @@
+Bottom: ef59addd15622686f528e6eaa06b1a24feadcbed
+Top:    56952ad4f56f7f27250e6ea75421aed512a5d90a
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-25 13:47:28 +0000
+
+Refresh of encapsulate-the-find-setup-in-
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index ff4d428..880e5e0 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -264,6 +264,13 @@ typedef struct
+     Size;
+ } ListType;
+ 
++struct find_setup
++{
++  int flag;
++  bool user;
++  bool drc;
++};
++
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
+  */
+@@ -326,7 +333,7 @@ ArcPadIntersect (ArcType *Arc, PadType *Pad)
+ 
+ static bool
+ add_object_to_list (ListType *list, int type, void *ptr1, void *ptr2, void *ptr3,
+-                    struct find_setup setup)
++                    struct find_setup *setup)
+ {
+   AnyObjectType *object = (AnyObjectType *)ptr2;
+ 
+@@ -348,40 +355,40 @@ add_object_to_list (ListType *list, int type, void *ptr1, void *ptr2, void *ptr3
+ }
+ 
+ static bool
+-ADD_PV_TO_LIST (PinType *Pin, int flag)
++ADD_PV_TO_LIST (PinType *Pin, struct find_setup *setup)
+ {
+   return add_object_to_list (&PVList, Pin->Element ? PIN_TYPE : VIA_TYPE,
+-                             Pin->Element ? Pin->Element : Pin, Pin, Pin, flag);
++                             Pin->Element ? Pin->Element : Pin, Pin, Pin, setup);
+ }
+ 
+ static bool
+-ADD_PAD_TO_LIST (Cardinal L, PadType *Pad, int flag)
++ADD_PAD_TO_LIST (Cardinal L, PadType *Pad, struct find_setup *setup)
+ { 
+-  return add_object_to_list (&PadList[L], PAD_TYPE, Pad->Element, Pad, Pad, flag);
++  return add_object_to_list (&PadList[L], PAD_TYPE, Pad->Element, Pad, Pad, setup);
+ }
+ 
+ static bool
+-ADD_LINE_TO_LIST (Cardinal L, LineType *Ptr, int flag)
++ADD_LINE_TO_LIST (Cardinal L, LineType *Ptr, struct find_setup *setup)
+ {
+-  return add_object_to_list (&LineList[L], LINE_TYPE, LAYER_PTR (L), Ptr, Ptr, flag);
++  return add_object_to_list (&LineList[L], LINE_TYPE, LAYER_PTR (L), Ptr, Ptr, setup);
+ }
+ 
+ static bool
+-ADD_ARC_TO_LIST (Cardinal L, ArcType *Ptr, int flag)
++ADD_ARC_TO_LIST (Cardinal L, ArcType *Ptr, struct find_setup *setup)
+ {
+-  return add_object_to_list (&ArcList[L], ARC_TYPE, LAYER_PTR (L), Ptr, Ptr, flag);
++  return add_object_to_list (&ArcList[L], ARC_TYPE, LAYER_PTR (L), Ptr, Ptr, setup);
+ }
+ 
+ static bool
+-ADD_RAT_TO_LIST (RatType *Ptr, int flag)
++ADD_RAT_TO_LIST (RatType *Ptr, struct find_setup *setup)
+ {
+-  return add_object_to_list (&RatList, RATLINE_TYPE, Ptr, Ptr, Ptr, flag);
++  return add_object_to_list (&RatList, RATLINE_TYPE, Ptr, Ptr, Ptr, setup);
+ }
+ 
+ static bool
+-ADD_POLYGON_TO_LIST (Cardinal L, PolygonType *Ptr, int flag)
++ADD_POLYGON_TO_LIST (Cardinal L, PolygonType *Ptr, struct find_setup *setup)
+ {
+-  return add_object_to_list (&PolygonList[L], POLYGON_TYPE, LAYER_PTR (L), Ptr, Ptr, flag);
++  return add_object_to_list (&PolygonList[L], POLYGON_TYPE, LAYER_PTR (L), Ptr, Ptr, setup);
+ }
+ 
+ static BoxType
+@@ -611,11 +618,6 @@ InitLayoutLookup (void)
+   RatList.Number = 0;
+ }
+ 
+-struct find_setup
+-{
+-  int flag
+-};
+-
+ struct pv_info
+ {
+   struct find_setup setup;
+@@ -633,7 +635,7 @@ LOCtoPVline_callback (const BoxType * b, void *cl)
+   if (!TEST_FLAG (i->setup.flag, line) && PinLineIntersect (i->pv, line) &&
+       !TEST_FLAG (HOLEFLAG, i->pv))
+     {
+-      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
++      if (ADD_LINE_TO_LIST (i->layer, line, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -648,7 +650,7 @@ LOCtoPVarc_callback (const BoxType * b, void *cl)
+   if (!TEST_FLAG (i->setup.flag, arc) && IS_PV_ON_ARC (i->pv, arc) &&
+       !TEST_FLAG (HOLEFLAG, i->pv))
+     {
+-      if (ADD_ARC_TO_LIST (i->layer, arc, i->setup.flag))
++      if (ADD_ARC_TO_LIST (i->layer, arc, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -663,7 +665,7 @@ LOCtoPVpad_callback (const BoxType * b, void *cl)
+   if (!TEST_FLAG (i->setup.flag, pad) && IS_PV_ON_PAD (i->pv, pad) &&
+       !TEST_FLAG (HOLEFLAG, i->pv) &&
+       ADD_PAD_TO_LIST (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER :
+-                       COMPONENT_LAYER, pad, i->setup.flag))
++                       COMPONENT_LAYER, pad, &i->setup))
+     longjmp (i->env, 1);
+   return 0;
+ }
+@@ -675,7 +677,7 @@ LOCtoPVrat_callback (const BoxType * b, void *cl)
+   struct pv_info *i = (struct pv_info *) cl;
+ 
+   if (!TEST_FLAG (i->setup.flag, rat) && IS_PV_ON_RAT (i->pv, rat) &&
+-      ADD_RAT_TO_LIST (rat, i->setup.flag))
++      ADD_RAT_TO_LIST (rat, &i->setup))
+     longjmp (i->env, 1);
+   return 0;
+ }
+@@ -705,19 +707,19 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
+           Coord y1 = i->pv->Y - (i->pv->Thickness + 1 + Bloat) / 2;
+           Coord y2 = i->pv->Y + (i->pv->Thickness + 1 + Bloat) / 2;
+           if (IsRectangleInPolygon (x1, y1, x2, y2, polygon)
+-              && ADD_POLYGON_TO_LIST (i->layer, polygon, i->setup.flag))
++              && ADD_POLYGON_TO_LIST (i->layer, polygon, &i->setup))
+             longjmp (i->env, 1);
+         }
+       else if (TEST_FLAG (OCTAGONFLAG, i->pv))
+         {
+           POLYAREA *oct = OctagonPoly (i->pv->X, i->pv->Y, i->pv->Thickness / 2);
+           if (isects (oct, polygon, true)
+-              && ADD_POLYGON_TO_LIST (i->layer, polygon, i->setup.flag))
++              && ADD_POLYGON_TO_LIST (i->layer, polygon, &i->setup))
+             longjmp (i->env, 1);
+         }
+       else if (IsPointInPolygon (i->pv->X, i->pv->Y, wide,
+                                  polygon)
+-               && ADD_POLYGON_TO_LIST (i->layer, polygon, i->setup.flag))
++               && ADD_POLYGON_TO_LIST (i->layer, polygon, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -923,7 +925,7 @@ pv_pv_callback (const BoxType * b, void *cl)
+           else
+             Message (_("WARNING: Hole too close to via.\n"));
+         }
+-      else if (ADD_PV_TO_LIST (pin, i->setup.flag))
++      else if (ADD_PV_TO_LIST (pin, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -938,7 +940,8 @@ LookupPVConnectionsToPVList (int flag)
+   Cardinal save_place;
+   struct pv_info info;
+ 
+-  info.flag = flag;
++  info.setup = setup;
++  setup.flag = flag;
+ 
+   /* loop over all PVs on list */
+   save_place = PVList.Location;
+@@ -990,7 +993,7 @@ pv_line_callback (const BoxType * b, void *cl)
+           Settings.RatWarn = true;
+           Message (_("WARNING: Hole too close to line.\n"));
+         }
+-      else if (ADD_PV_TO_LIST (pv, i->setup.flag))
++      else if (ADD_PV_TO_LIST (pv, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -1010,7 +1013,7 @@ pv_pad_callback (const BoxType * b, void *cl)
+           Settings.RatWarn = true;
+           Message (_("WARNING: Hole too close to pad.\n"));
+         }
+-      else if (ADD_PV_TO_LIST (pv, i->setup.flag))
++      else if (ADD_PV_TO_LIST (pv, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -1030,7 +1033,7 @@ pv_arc_callback (const BoxType * b, void *cl)
+           Settings.RatWarn = true;
+           Message (_("WARNING: Hole touches arc.\n"));
+         }
+-      else if (ADD_PV_TO_LIST (pv, i->setup.flag))
++      else if (ADD_PV_TO_LIST (pv, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -1056,20 +1059,20 @@ pv_poly_callback (const BoxType * b, void *cl)
+           y1 = pv->Y - (PIN_SIZE (pv) + 1 + Bloat) / 2;
+           y2 = pv->Y + (PIN_SIZE (pv) + 1 + Bloat) / 2;
+           if (IsRectangleInPolygon (x1, y1, x2, y2, i->polygon)
+-              && ADD_PV_TO_LIST (pv, i->setup.flag))
++              && ADD_PV_TO_LIST (pv, &i->setup))
+             longjmp (i->env, 1);
+         }
+       else if (TEST_FLAG (OCTAGONFLAG, pv))
+         {
+           POLYAREA *oct = OctagonPoly (pv->X, pv->Y, PIN_SIZE (pv) / 2);
+-          if (isects (oct, i->polygon, true) && ADD_PV_TO_LIST (pv, i->setup.flag))
++          if (isects (oct, i->polygon, true) && ADD_PV_TO_LIST (pv, &i->setup))
+             longjmp (i->env, 1);
+         }
+       else
+         {
+           if (IsPointInPolygon
+               (pv->X, pv->Y, PIN_SIZE (pv) * 0.5 + Bloat, i->polygon)
+-              && ADD_PV_TO_LIST (pv, i->setup.flag))
++              && ADD_PV_TO_LIST (pv, &i->setup))
+             longjmp (i->env, 1);
+         }
+     }
+@@ -1084,7 +1087,7 @@ pv_rat_callback (const BoxType * b, void *cl)
+ 
+   /* rats can't cause DRC so there is no early exit */
+   if (!TEST_FLAG (i->setup.flag, pv) && IS_PV_ON_RAT (pv, i->rat))
+-    ADD_PV_TO_LIST (pv, i->setup.flag);
++    ADD_PV_TO_LIST (pv, &i->setup);
+   return 0;
+ }
+ 
+@@ -1098,7 +1101,8 @@ LookupPVConnectionsToLOList (int flag, bool AndRats)
+   Cardinal layer;
+   struct lo_info info;
+ 
+-  info.flag = flag;
++  info.setup = setup;
++  setup.flag = flag;
+ 
+   /* loop over all layers */
+   for (layer = 0; layer < max_copper_layer; layer++)
+@@ -1671,7 +1675,7 @@ LOCtoArcLine_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (i->setup.flag, line) && LineArcIntersect (line, i->arc))
+     {
+-      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
++      if (ADD_LINE_TO_LIST (i->layer, line, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -1687,7 +1691,7 @@ LOCtoArcArc_callback (const BoxType * b, void *cl)
+     return 0;
+   if (!TEST_FLAG (i->setup.flag, arc) && ArcArcIntersect (i->arc, arc))
+     {
+-      if (ADD_ARC_TO_LIST (i->layer, arc, i->setup.flag))
++      if (ADD_ARC_TO_LIST (i->layer, arc, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -1701,7 +1705,7 @@ LOCtoArcPad_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (i->setup.flag, pad) && i->layer ==
+       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
+-      && ArcPadIntersect (i->arc, pad) && ADD_PAD_TO_LIST (i->layer, pad, i->setup.flag))
++      && ArcPadIntersect (i->arc, pad) && ADD_PAD_TO_LIST (i->layer, pad, &i->setup))
+     longjmp (i->env, 1);
+   return 0;
+ }
+@@ -1720,7 +1724,8 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, int flag, bool AndR
+   struct lo_info info;
+   BoxType search_box;
+ 
+-  info.flag = flag;
++  info.setup = setup;
++  setup.flag = flag;
+   info.arc = Arc;
+   search_box = expand_bounds ((BoxType *)info.arc);
+ 
+@@ -1753,7 +1758,7 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, int flag, bool AndR
+             {
+               PolygonType *polygon = i->data;
+               if (!TEST_FLAG (flag, polygon) && IsArcInPolygon (Arc, polygon)
+-                  && ADD_POLYGON_TO_LIST (layer, polygon, flag))
++                  && ADD_POLYGON_TO_LIST (layer, polygon, &setup))
+                 return true;
+             }
+         }
+@@ -1777,7 +1782,7 @@ LOCtoLineLine_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (i->setup.flag, line) && LineLineIntersect (i->line, line))
+     {
+-      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
++      if (ADD_LINE_TO_LIST (i->layer, line, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -1793,7 +1798,7 @@ LOCtoLineArc_callback (const BoxType * b, void *cl)
+     return 0;
+   if (!TEST_FLAG (i->setup.flag, arc) && LineArcIntersect (i->line, arc))
+     {
+-      if (ADD_ARC_TO_LIST (i->layer, arc, i->setup.flag))
++      if (ADD_ARC_TO_LIST (i->layer, arc, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -1810,13 +1815,13 @@ LOCtoLineRat_callback (const BoxType * b, void *cl)
+       if ((rat->group1 == i->layer)
+           && IsRatPointOnLineEnd (&rat->Point1, i->line))
+         {
+-          if (ADD_RAT_TO_LIST (rat, i->setup.flag))
++          if (ADD_RAT_TO_LIST (rat, &i->setup))
+             longjmp (i->env, 1);
+         }
+       else if ((rat->group2 == i->layer)
+                && IsRatPointOnLineEnd (&rat->Point2, i->line))
+         {
+-          if (ADD_RAT_TO_LIST (rat, i->setup.flag))
++          if (ADD_RAT_TO_LIST (rat, &i->setup))
+             longjmp (i->env, 1);
+         }
+     }
+@@ -1831,7 +1836,7 @@ LOCtoLinePad_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (i->setup.flag, pad) && i->layer ==
+       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
+-      && LinePadIntersect (i->line, pad) && ADD_PAD_TO_LIST (i->layer, pad, i->setup.flag))
++      && LinePadIntersect (i->line, pad) && ADD_PAD_TO_LIST (i->layer, pad, &i->setup))
+     longjmp (i->env, 1);
+   return 0;
+ }
+@@ -1851,8 +1856,9 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+   struct lo_info info;
+   BoxType search_box;
+ 
+-  info.flag = flag;
+-  info.layer = LayerGroup;
++  info.setup = setup;
++  setup.flag = flag;
++  setup.layer = LayerGroup;
+   info.line = Line;
+   search_box = expand_bounds ((BoxType *)info.line);
+ 
+@@ -1895,7 +1901,7 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+                 {
+                   PolygonType *polygon = i->data;
+                   if (!TEST_FLAG (flag, polygon) && IsLineInPolygon (Line, polygon)
+-                      && ADD_POLYGON_TO_LIST (layer, polygon, flag))
++                      && ADD_POLYGON_TO_LIST (layer, polygon, &setup))
+                     return true;
+                 }
+             }
+@@ -1932,7 +1938,7 @@ LOCtoRat_callback (const BoxType * b, void *cl)
+         line->Point1.Y == i->Point->Y) ||
+        (line->Point2.X == i->Point->X && line->Point2.Y == i->Point->Y)))
+     {
+-      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
++      if (ADD_LINE_TO_LIST (i->layer, line, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -1947,7 +1953,7 @@ PolygonToRat_callback (const BoxType * b, void *cl)
+       (i->Point->X == polygon->Clipped->contours->head.point[0]) &&
+       (i->Point->Y == polygon->Clipped->contours->head.point[1]))
+     {
+-      if (ADD_POLYGON_TO_LIST (i->layer, polygon, i->setup.flag))
++      if (ADD_POLYGON_TO_LIST (i->layer, polygon, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -1965,7 +1971,7 @@ LOCtoPad_callback (const BoxType * b, void *cl)
+        (pad->Point2.X == i->Point->X && pad->Point2.Y == i->Point->Y) ||
+        ((pad->Point1.X + pad->Point2.X) / 2 == i->Point->X &&
+         (pad->Point1.Y + pad->Point2.Y) / 2 == i->Point->Y)) &&
+-      ADD_PAD_TO_LIST (i->layer, pad, i->setup.flag))
++      ADD_PAD_TO_LIST (i->layer, pad, &i->setup))
+     longjmp (i->env, 1);
+   return 0;
+ }
+@@ -1983,7 +1989,8 @@ LookupLOConnectionsToRatEnd (PointType *Point, Cardinal LayerGroup, int flag)
+   Cardinal entry;
+   struct rat_info info;
+ 
+-  info.flag = flag;
++  info.setup = setup;
++  setup.flag = flag;
+   info.Point = Point;
+   /* loop over all layers of this group */
+   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
+@@ -2030,7 +2037,7 @@ LOCtoPadLine_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (i->setup.flag, line) && LinePadIntersect (line, i->pad))
+     {
+-      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
++      if (ADD_LINE_TO_LIST (i->layer, line, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -2046,7 +2053,7 @@ LOCtoPadArc_callback (const BoxType * b, void *cl)
+     return 0;
+   if (!TEST_FLAG (i->setup.flag, arc) && ArcPadIntersect (arc, i->pad))
+     {
+-      if (ADD_ARC_TO_LIST (i->layer, arc, i->setup.flag))
++      if (ADD_ARC_TO_LIST (i->layer, arc, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -2063,7 +2070,7 @@ LOCtoPadPoly_callback (const BoxType * b, void *cl)
+       (!TEST_FLAG (CLEARPOLYFLAG, polygon) || !i->pad->Clearance))
+     {
+       if (IsPadInPolygon (i->pad, polygon) &&
+-          ADD_POLYGON_TO_LIST (i->layer, polygon, i->setup.flag))
++          ADD_POLYGON_TO_LIST (i->layer, polygon, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -2083,7 +2090,7 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
+ 	   (rat->Point1.X == (i->pad->Point1.X + i->pad->Point2.X) / 2 &&
+ 	    rat->Point1.Y == (i->pad->Point1.Y + i->pad->Point2.Y) / 2)))
+         {
+-          if (ADD_RAT_TO_LIST (rat, i->setup.flag))
++          if (ADD_RAT_TO_LIST (rat, &i->setup))
+             longjmp (i->env, 1);
+         }
+       else if (rat->group2 == i->layer &&
+@@ -2092,7 +2099,7 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
+ 		(rat->Point2.X == (i->pad->Point1.X + i->pad->Point2.X) / 2 &&
+ 		 rat->Point2.Y == (i->pad->Point1.Y + i->pad->Point2.Y) / 2)))
+         {
+-          if (ADD_RAT_TO_LIST (rat, i->setup.flag))
++          if (ADD_RAT_TO_LIST (rat, &i->setup))
+             longjmp (i->env, 1);
+         }
+     }
+@@ -2107,7 +2114,7 @@ LOCtoPadPad_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (i->setup.flag, pad) && i->layer ==
+       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
+-      && PadPadIntersect (pad, i->pad) && ADD_PAD_TO_LIST (i->layer, pad, i->setup.flag))
++      && PadPadIntersect (pad, i->pad) && ADD_PAD_TO_LIST (i->layer, pad, &i->setup))
+     longjmp (i->env, 1);
+   return 0;
+ }
+@@ -2126,7 +2133,8 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, int flag, bool AndR
+   if (!TEST_FLAG (SQUAREFLAG, Pad))
+     return (LookupLOConnectionsToLine ((LineType *) Pad, LayerGroup, flag, false, AndRats));
+ 
+-  info.flag = flag;
++  info.setup = setup;
++  setup.flag = flag;
+   info.pad = Pad;
+   search_box = expand_bounds ((BoxType *)info.pad);
+ 
+@@ -2189,7 +2197,7 @@ LOCtoPolyLine_callback (const BoxType * b, void *cl)
+ 
+   if (!TEST_FLAG (i->setup.flag, line) && IsLineInPolygon (line, i->polygon))
+     {
+-      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
++      if (ADD_LINE_TO_LIST (i->layer, line, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -2205,7 +2213,7 @@ LOCtoPolyArc_callback (const BoxType * b, void *cl)
+     return 0;
+   if (!TEST_FLAG (i->setup.flag, arc) && IsArcInPolygon (arc, i->polygon))
+     {
+-      if (ADD_ARC_TO_LIST (i->layer, arc, i->setup.flag))
++      if (ADD_ARC_TO_LIST (i->layer, arc, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -2221,7 +2229,7 @@ LOCtoPolyPad_callback (const BoxType * b, void *cl)
+       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
+       && IsPadInPolygon (pad, i->polygon))
+     {
+-      if (ADD_PAD_TO_LIST (i->layer, pad, i->setup.flag))
++      if (ADD_PAD_TO_LIST (i->layer, pad, &i->setup))
+         longjmp (i->env, 1);
+     }
+   return 0;
+@@ -2241,7 +2249,7 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
+           (rat->Point2.X == (i->polygon->Clipped->contours->head.point[0]) &&
+            rat->Point2.Y == (i->polygon->Clipped->contours->head.point[1]) &&
+            rat->group2 == i->layer))
+-        if (ADD_RAT_TO_LIST (rat, i->setup.flag))
++        if (ADD_RAT_TO_LIST (rat, &i->setup))
+           longjmp (i->env, 1);
+     }
+   return 0;
+@@ -2262,7 +2270,8 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, int fla
+   if (!Polygon->Clipped)
+     return false;
+ 
+-  info.flag = flag;
++  info.setup = setup;
++  setup.flag = flag;
+   info.polygon = Polygon;
+   search_box = expand_bounds ((BoxType *)info.polygon);
+ 
+@@ -2296,7 +2305,7 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, int fla
+               PolygonType *polygon = i->data;
+               if (!TEST_FLAG (flag, polygon)
+                   && IsPolygonInPolygon (polygon, Polygon)
+-                  && ADD_POLYGON_TO_LIST (layer, polygon, flag))
++                  && ADD_POLYGON_TO_LIST (layer, polygon, &setup))
+                 return true;
+             }
+ 
+@@ -2632,10 +2641,10 @@ DoIt (int flag, bool AndRats, bool AndDraw)
+       /* lookup connections; these are the steps (2) to (4)
+        * from the description
+        */
+-      newone = LookupPVConnectionsToPVList (flag) ||
+-               LookupLOConnectionsToPVList (flag, AndRats) ||
+-               LookupLOConnectionsToLOList (flag, AndRats) ||
+-               LookupPVConnectionsToLOList (flag, AndRats);
++      newone = LookupPVConnectionsToPVList (setup) ||
++               LookupLOConnectionsToPVList (setup, AndRats) ||
++               LookupLOConnectionsToLOList (setup, AndRats) ||
++               LookupPVConnectionsToLOList (setup, AndRats);
+       if (AndDraw)
+         DrawNewConnections ();
+     }
+@@ -2665,7 +2674,7 @@ PrintAndSelectUnusedPinsAndPadsOfElement (ElementType *Element, FILE * FP, int f
+         if (!TEST_FLAG (flag, pin) && FP)
+           {
+             int i;
+-            if (ADD_PV_TO_LIST (pin, flag))
++            if (ADD_PV_TO_LIST (pin, &setup))
+               return true;
+             DoIt (flag, true, true);
+             number = PadList[COMPONENT_LAYER].Number
+@@ -2709,7 +2718,7 @@ PrintAndSelectUnusedPinsAndPadsOfElement (ElementType *Element, FILE * FP, int f
+       {
+         int i;
+         if (ADD_PAD_TO_LIST (TEST_FLAG (ONSOLDERFLAG, pad)
+-                             ? SOLDER_LAYER : COMPONENT_LAYER, pad, flag))
++                             ? SOLDER_LAYER : COMPONENT_LAYER, pad, &setup))
+           return true;
+         DoIt (flag, true, true);
+         number = PadList[COMPONENT_LAYER].Number
+@@ -2799,7 +2808,7 @@ PrintElementConnections (ElementType *Element, FILE * FP, int flag, bool AndDraw
+         fputs ("\t\t__CHECKED_BEFORE__\n\t}\n", FP);
+         continue;
+       }
+-    if (ADD_PV_TO_LIST (pin, flag))
++    if (ADD_PV_TO_LIST (pin, &setup))
+       return true;
+     DoIt (flag, true, AndDraw);
+     /* printout all found connections */
+@@ -2824,7 +2833,7 @@ PrintElementConnections (ElementType *Element, FILE * FP, int flag, bool AndDraw
+         continue;
+       }
+     layer = TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER;
+-    if (ADD_PAD_TO_LIST (layer, pad, flag))
++    if (ADD_PAD_TO_LIST (layer, pad, &setup))
+       return true;
+     DoIt (flag, true, AndDraw);
+     /* print all found connections */
+@@ -2976,14 +2985,14 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3, int flag)
+     case PIN_TYPE:
+     case VIA_TYPE:
+       {
+-        if (ADD_PV_TO_LIST ((PinType *) ptr2, flag))
++        if (ADD_PV_TO_LIST ((PinType *) ptr2, &setup))
+           return true;
+         break;
+       }
+ 
+     case RATLINE_TYPE:
+       {
+-        if (ADD_RAT_TO_LIST ((RatType *) ptr1, flag))
++        if (ADD_RAT_TO_LIST ((RatType *) ptr1, &setup))
+           return true;
+         break;
+       }
+@@ -2993,7 +3002,7 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3, int flag)
+         int layer = GetLayerNumber (PCB->Data,
+                                     (LayerType *) ptr1);
+ 
+-        if (ADD_LINE_TO_LIST (layer, (LineType *) ptr2, flag))
++        if (ADD_LINE_TO_LIST (layer, (LineType *) ptr2, &setup))
+           return true;
+         break;
+       }
+@@ -3003,7 +3012,7 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3, int flag)
+         int layer = GetLayerNumber (PCB->Data,
+                                     (LayerType *) ptr1);
+ 
+-        if (ADD_ARC_TO_LIST (layer, (ArcType *) ptr2, flag))
++        if (ADD_ARC_TO_LIST (layer, (ArcType *) ptr2, &setup))
+           return true;
+         break;
+       }
+@@ -3013,7 +3022,7 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3, int flag)
+         int layer = GetLayerNumber (PCB->Data,
+                                     (LayerType *) ptr1);
+ 
+-        if (ADD_POLYGON_TO_LIST (layer, (PolygonType *) ptr2, flag))
++        if (ADD_POLYGON_TO_LIST (layer, (PolygonType *) ptr2, &setup))
+           return true;
+         break;
+       }
+@@ -3023,7 +3032,7 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3, int flag)
+         PadType *pad = (PadType *) ptr2;
+         if (ADD_PAD_TO_LIST
+             (TEST_FLAG
+-             (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER, pad, flag))
++             (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER, pad, &setup))
+           return true;
+         break;
+       }
+@@ -3645,7 +3654,8 @@ DRCAll (void)
+   flag = (IsBad) ? DRCFLAG : (FOUNDFLAG | DRCFLAG | SELECTEDFLAG);
+   ClearFlagOnAllObjects (false, flag);
+   flag = SELECTEDFLAG;
+-  info.flag = flag;
++  info.setup = setup;
++  setup.flag = flag;
+   /* check minimum widths and polygon clearances */
+   if (!IsBad)
+     {
