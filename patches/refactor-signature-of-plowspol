@@ -1,0 +1,14 @@
+Bottom: f38ce59333518ddbd20919f0e5b2953edf3716c1
+Top:    f38ce59333518ddbd20919f0e5b2953edf3716c1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-25 12:40:46 +0000
+
+Refactor signature of PlowsPolygon callback to take userdata
+
+This allows callers to pass arbitrary data into their callbacks
+without resorting to nasty workarounds like global variables.
+
+
+---
+
+
