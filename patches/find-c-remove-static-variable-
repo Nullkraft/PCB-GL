@@ -3,7 +3,11 @@ Top:    a130d0899b3d1e671d173ee19a640f368c018b4a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-25 13:47:45 +0000
 
-find.c: Remove static variable IsBad
+find.c: Remove file-global "IsBad", use PlowsPolygons() userdata instead
+
+This variable was used to communicate state from the drc_callback(),
+however now the PlowsPolygons() callback signature includes an opaque
+pointer to userdata, we can avoid that.
 
 
 ---
