@@ -1463,7 +1463,7 @@ struct plow_info
 
 static int
 subtract_plow (DataType *Data, LayerType *Layer, PolygonType *Polygon,
-               int type, void *ptr1, void *ptr2)
+               int type, void *ptr1, void *ptr2, void *userdata)
 {
   if (!Polygon->Clipped)
     return 0;
@@ -1496,7 +1496,7 @@ subtract_plow (DataType *Data, LayerType *Layer, PolygonType *Polygon,
 
 static int
 add_plow (DataType *Data, LayerType *Layer, PolygonType *Polygon,
-          int type, void *ptr1, void *ptr2)
+          int type, void *ptr1, void *ptr2, void *userdata)
 {
   switch (type)
     {
@@ -1536,7 +1536,8 @@ int
 PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
               int (*call_back) (DataType *data, LayerType *lay,
                                 PolygonType *poly, int type, void *ptr1,
-                                void *ptr2))
+                                void *ptr2),
+              void *userddata)
 {
   BoxType sb = ((PinType *) ptr2)->BoundingBox;
   int r = 0;
@@ -1609,12 +1610,12 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
       {
         PIN_LOOP ((ElementType *) ptr1);
         {
-          PlowsPolygon (Data, PIN_TYPE, ptr1, pin, call_back);
+          PlowsPolygon (Data, PIN_TYPE, ptr1, pin, call_back, userdata);
         }
         END_LOOP;
         PAD_LOOP ((ElementType *) ptr1);
         {
-          PlowsPolygon (Data, PAD_TYPE, ptr1, pad, call_back);
+          PlowsPolygon (Data, PAD_TYPE, ptr1, pad, call_back, userdata);
         }
         END_LOOP;
       }
@@ -1632,7 +1633,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
   if (type == POLYGON_TYPE)
     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
   else
-    PlowsPolygon (Data, type, ptr1, ptr2, add_plow);
+    PlowsPolygon (Data, type, ptr1, ptr2, add_plow, NULL);
 }
 
 void
@@ -1644,7 +1645,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
   if (type == POLYGON_TYPE)
     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
   else
-    PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow);
+    PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow, NULL);
 }
 
 bool
