@@ -1,5 +1,5 @@
-Bottom: 179bbe01c7f79b6cba3a78579773268feb27410a
-Top:    052be7207a822d750f2de1311e32b67700b720a4
+Bottom: 61142cda97ffe292c991af8d2def87ca9e3ac314
+Top:    aed812450035340b1f3477081869b69aabe5f44e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-05 22:00:06 +0100
 
@@ -9,10 +9,10 @@ Temp
 ---
 
 diff --git a/src/toporouter.c b/src/toporouter.c
-index baeb7e4..f432abe 100644
+index 65dac6b..4638ea0 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
-@@ -5275,11 +5275,8 @@ calculate_term_to_arc(toporouter_vertex_t *v, toporouter_arc_t *arc, guint dir)
+@@ -5274,11 +5274,8 @@ calculate_term_to_arc(toporouter_vertex_t *v, toporouter_arc_t *arc, guint dir)
      if(!dir) { arc->x0 = a1x; arc->y0 = a1y; }
      else{ arc->x1 = a1x; arc->y1 = a1y; }
    }
@@ -24,7 +24,7 @@ index baeb7e4..f432abe 100644
  // b1 is the projection in the direction of narc, while b2 is the perpendicular projection
  void
  arc_ortho_projections(toporouter_arc_t *arc, toporouter_arc_t *narc, gdouble *b1, gdouble *b2)
-@@ -5804,13 +5801,17 @@ check_intersect_vertex (double x0, double y0, double x1, double y1,
+@@ -5803,13 +5800,17 @@ check_intersect_vertex (double x0, double y0, double x1, double y1,
      ms = edge_min_spacing (g_list_find (edge_routing (pathv->routingedge), pathv), pathv->routingedge, arcv, debug);
    }
  
@@ -44,7 +44,7 @@ index baeb7e4..f432abe 100644
  
    coord_move_towards_coord_values (vx (arcv), vy (arcv), line_int_x, line_int_y, ms, &x, &y);
  
-@@ -5976,6 +5977,12 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
+@@ -5975,6 +5976,12 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
    gdouble d, arcr;
    gint v1wind, v2wind, arcwind;
  
@@ -57,7 +57,7 @@ index baeb7e4..f432abe 100644
    if (arc1 == NULL) {
      x0 = vx (v1);
      y0 = vy (v1);
-@@ -5993,6 +6000,7 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
+@@ -5992,6 +5999,7 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
      x1 = arc2->x0;
      y1 = arc2->y0;
    }
@@ -65,7 +65,7 @@ index baeb7e4..f432abe 100644
  
  #define TEST_AND_INSERT(z) if (d > EPSILON) \
                               arcs = g_list_prepend (arcs, new_rubberband_arc (v, z, arcr, d, arcwind, i));
-@@ -6003,25 +6011,10 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
+@@ -6002,25 +6010,10 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
  
    if (v1 == v2 || path->next == NULL || TOPOROUTER_VERTEX (path->data) == v2) return NULL;
  
@@ -92,7 +92,7 @@ index baeb7e4..f432abe 100644
    for (i = path->next; i != NULL; i = g_list_next (i)) {
      toporouter_vertex_t *v = TOPOROUTER_VERTEX (i->data);
  
-@@ -6030,8 +6023,18 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
+@@ -6029,8 +6022,18 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
        break;
      }
  
@@ -113,7 +113,7 @@ index baeb7e4..f432abe 100644
  
      /* Skip this routing edge if we are colinear with it */
      if (v1wind == 0 && v2wind == 0)
-@@ -6042,30 +6045,40 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
+@@ -6041,30 +6044,40 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
        if (ARC_CHECKS (tedge_v1 (v->routingedge))) { /* edge v1 is not the centre of an arc terminal */
          d = check_intersect_vertex (x0, y0,
                                      x1, y1,
@@ -161,7 +161,7 @@ index baeb7e4..f432abe 100644
    }
  
    arcs = g_list_sort (arcs, (GCompareFunc) compare_rubberband_arcs);
-@@ -7664,7 +7677,7 @@ toporouter (int argc, char **argv, Coord x, Coord y)
+@@ -7663,7 +7676,7 @@ toporouter (int argc, char **argv, Coord x, Coord y)
  //}
  
    hybrid_router(r);
@@ -170,7 +170,7 @@ index baeb7e4..f432abe 100644
    for(gint i=0;i<groupcount();i++) {
     gts_surface_foreach_edge(r->layers[i].surface, space_edge, NULL);
    }
-@@ -7673,10 +7686,10 @@ toporouter (int argc, char **argv, Coord x, Coord y)
+@@ -7672,10 +7685,10 @@ toporouter (int argc, char **argv, Coord x, Coord y)
      for(i=0;i<groupcount();i++) {
        char buffer[256];
        sprintf(buffer, "route%d.png", i);
