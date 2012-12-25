@@ -3446,7 +3446,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
 
 static int
 drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
-              int type, void *ptr1, void *ptr2)
+              int type, void *ptr1, void *ptr2, void *userdata)
 {
   char *message;
   Coord x, y;

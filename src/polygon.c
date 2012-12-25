@@ -1536,8 +1536,8 @@ int
 PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
               int (*call_back) (DataType *data, LayerType *lay,
                                 PolygonType *poly, int type, void *ptr1,
-                                void *ptr2),
-              void *userddata)
+                                void *ptr2, void *userdata),
+              void *userdata)
 {
   BoxType sb = ((PinType *) ptr2)->BoundingBox;
   int r = 0;
