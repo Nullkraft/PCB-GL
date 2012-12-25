@@ -273,7 +273,6 @@ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
 static int thing_type;
 static bool User = false;    /* user action causing this */
 static bool drc = false;     /* whether to stop if finding something not found */
-//static bool IsBad = false;
 static Cardinal drcerr_count;   /* count of drc errors */
 static Cardinal TotalP, TotalV, NumberOfPads[2];
 static ListType LineList[MAX_LAYER],    /* list of objects to */
@@ -3540,11 +3539,10 @@ doIsBad:
   pcb_drc_violation_free (violation);
   free (object_id_list);
   free (object_type_list);
+
   if (!throw_drc_dialog())
-    {
-      IsBad = true;
-      return 1;
-    }
+    return 1;
+
   IncrementUndoSerialNumber ();
   Undo (true);
   return 0;
@@ -3641,7 +3639,7 @@ DRCAll (void)
         /* check line clearances in polygons */
         if (PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback, NULL))
           {
-            Isbad = true;
+            IsBad = true;
             break;
           }
         if (line->Thickness < PCB->minWid)
