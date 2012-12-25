@@ -273,7 +273,6 @@ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
 static int thing_type;
 static bool User = false;    /* user action causing this */
 static bool drc = false;     /* whether to stop if finding something not found */
-static bool IsBad = false;
 static Cardinal drcerr_count;   /* count of drc errors */
 static Cardinal TotalP, TotalV, NumberOfPads[2];
 static ListType LineList[MAX_LAYER],    /* list of objects to */
@@ -3530,11 +3529,10 @@ doIsBad:
   pcb_drc_violation_free (violation);
   free (object_id_list);
   free (object_type_list);
+
   if (!throw_drc_dialog())
-    {
-      IsBad = true;
-      return 1;
-    }
+    return 1;
+
   IncrementUndoSerialNumber ();
   Undo (true);
   return 0;
@@ -3554,6 +3552,7 @@ DRCAll (void)
   DrcViolationType *violation;
   int tmpcnt;
   int nopastecnt = 0;
+  bool IsBad;
 
   reset_drc_dialog_message();
 
@@ -3628,9 +3627,11 @@ DRCAll (void)
       COPPERLINE_LOOP (PCB->Data);
       {
         /* check line clearances in polygons */
-        PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback);
-        if (IsBad)
-          break;
+        if (PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback))
+          {
+            IsBad = true;
+            break;
+          }
         if (line->Thickness < PCB->minWid)
           {
             AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
@@ -3670,9 +3671,11 @@ DRCAll (void)
     {
       COPPERARC_LOOP (PCB->Data);
       {
-        PlowsPolygon (PCB->Data, ARC_TYPE, layer, arc, drc_callback);
-        if (IsBad)
-          break;
+        if (PlowsPolygon (PCB->Data, ARC_TYPE, layer, arc, drc_callback))
+          {
+            IsBad = true;
+            break;
+          }
         if (arc->Thickness < PCB->minWid)
           {
             AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
@@ -3712,9 +3715,11 @@ DRCAll (void)
     {
       ALLPIN_LOOP (PCB->Data);
       {
-        PlowsPolygon (PCB->Data, PIN_TYPE, element, pin, drc_callback);
-        if (IsBad)
-          break;
+        if (PlowsPolygon (PCB->Data, PIN_TYPE, element, pin, drc_callback))
+          {
+            IsBad = true;
+            break;
+          }
         if (!TEST_FLAG (HOLEFLAG, pin) &&
             pin->Thickness - pin->DrillingHole < 2 * PCB->minRing)
           {
@@ -3786,9 +3791,11 @@ DRCAll (void)
     {
       ALLPAD_LOOP (PCB->Data);
       {
-        PlowsPolygon (PCB->Data, PAD_TYPE, element, pad, drc_callback);
-        if (IsBad)
-          break;
+        if (PlowsPolygon (PCB->Data, PAD_TYPE, element, pad, drc_callback))
+          {
+            IsBad = true;
+            break;
+          }
         if (pad->Thickness < PCB->minWid)
           {
             AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
@@ -3828,9 +3835,11 @@ DRCAll (void)
     {
       VIA_LOOP (PCB->Data);
       {
-        PlowsPolygon (PCB->Data, VIA_TYPE, via, via, drc_callback);
-        if (IsBad)
-          break;
+        if (PlowsPolygon (PCB->Data, VIA_TYPE, via, via, drc_callback))
+          {
+            IsBad = true;
+            break;
+          }
         if (!TEST_FLAG (HOLEFLAG, via) &&
             via->Thickness - via->DrillingHole < 2 * PCB->minRing)
           {
