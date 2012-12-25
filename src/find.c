@@ -3445,7 +3445,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
 
 static int
 drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
-              int type, void *ptr1, void *ptr2)
+              int type, void *ptr1, void *ptr2, void *userdata)
 {
   char *message;
   Coord x, y;
@@ -3637,7 +3637,7 @@ DRCAll (void)
       COPPERLINE_LOOP (PCB->Data);
       {
         /* check line clearances in polygons */
-        if (PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback))
+        if (PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback, NULL))
           {
             IsBad = true;
             break;
@@ -3681,7 +3681,7 @@ DRCAll (void)
     {
       COPPERARC_LOOP (PCB->Data);
       {
-        if (PlowsPolygon (PCB->Data, ARC_TYPE, layer, arc, drc_callback))
+        if (PlowsPolygon (PCB->Data, ARC_TYPE, layer, arc, drc_callback, NULL))
           {
             IsBad = true;
             break;
@@ -3725,7 +3725,7 @@ DRCAll (void)
     {
       ALLPIN_LOOP (PCB->Data);
       {
-        if (PlowsPolygon (PCB->Data, PIN_TYPE, element, pin, drc_callback))
+        if (PlowsPolygon (PCB->Data, PIN_TYPE, element, pin, drc_callback, NULL))
           {
             IsBad = true;
             break;
@@ -3801,7 +3801,7 @@ DRCAll (void)
     {
       ALLPAD_LOOP (PCB->Data);
       {
-        if (PlowsPolygon (PCB->Data, PAD_TYPE, element, pad, drc_callback))
+        if (PlowsPolygon (PCB->Data, PAD_TYPE, element, pad, drc_callback, NULL))
           {
             IsBad = true;
             break;
@@ -3845,7 +3845,7 @@ DRCAll (void)
     {
       VIA_LOOP (PCB->Data);
       {
-        if (PlowsPolygon (PCB->Data, VIA_TYPE, via, via, drc_callback))
+        if (PlowsPolygon (PCB->Data, VIA_TYPE, via, via, drc_callback, NULL))
           {
             IsBad = true;
             break;
