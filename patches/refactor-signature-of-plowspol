@@ -1,5 +1,5 @@
 Bottom: f38ce59333518ddbd20919f0e5b2953edf3716c1
-Top:    73732076108a4004cc42785a74f87cc9952d2d23
+Top:    a130d0899b3d1e671d173ee19a640f368c018b4a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-25 12:40:46 +0000
 
@@ -12,9 +12,18 @@ without resorting to nasty workarounds like global variables.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 8f4434e..33af2e2 100644
+index 8f4434e..c2219ee 100644
 --- a/src/find.c
 +++ b/src/find.c
+@@ -3446,7 +3446,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+ 
+ static int
+ drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
+-              int type, void *ptr1, void *ptr2)
++              int type, void *ptr1, void *ptr2, void *userdata)
+ {
+   char *message;
+   Coord x, y;
 @@ -3638,7 +3638,7 @@ DRCAll (void)
        COPPERLINE_LOOP (PCB->Data);
        {
@@ -61,7 +70,7 @@ index 8f4434e..33af2e2 100644
            break;
          if (!TEST_FLAG (HOLEFLAG, via) &&
 diff --git a/src/polygon.c b/src/polygon.c
-index 2d3e9e4..e63391f 100644
+index 2d3e9e4..755a625 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -1463,7 +1463,7 @@ struct plow_info
@@ -87,8 +96,8 @@ index 2d3e9e4..e63391f 100644
                int (*call_back) (DataType *data, LayerType *lay,
                                  PolygonType *poly, int type, void *ptr1,
 -                                void *ptr2))
-+                                void *ptr2),
-+              void *userddata)
++                                void *ptr2, void *userdata),
++              void *userdata)
  {
    BoxType sb = ((PinType *) ptr2)->BoundingBox;
    int r = 0;
@@ -126,7 +135,7 @@ index 2d3e9e4..e63391f 100644
  
  bool
 diff --git a/src/polygon.h b/src/polygon.h
-index c217653..8d1b2b1 100644
+index c217653..64d9a36 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -63,7 +63,8 @@ int PolygonHoles (PolygonType *ptr, const BoxType *range,
@@ -134,7 +143,7 @@ index c217653..8d1b2b1 100644
                    void *user_data);
  int PlowsPolygon (DataType *, int, void *, void *,
 -		  int (*callback) (DataType *, LayerType *, PolygonType *, int, void *, void *));
-+                  int (*callback) (DataType *, LayerType *, PolygonType *, int, void *, void *),
++                  int (*callback) (DataType *, LayerType *, PolygonType *, int, void *, void *, void *),
 +                  void *userdata);
  void ComputeNoHoles (PolygonType *poly);
  POLYAREA * ContourToPoly (PLINE *);
