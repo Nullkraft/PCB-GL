@@ -1,5 +1,5 @@
-Bottom: 25e56e4528e829b3950a854efc0ce7b0e6b08dbf
-Top:    179bbe01c7f79b6cba3a78579773268feb27410a
+Bottom: 63e1f1ca860ed36b215decc68b00964360c49332
+Top:    61142cda97ffe292c991af8d2def87ca9e3ac314
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-04 19:19:46 +0100
 
@@ -9,10 +9,10 @@ Play with some things
 ---
 
 diff --git a/src/toporouter.c b/src/toporouter.c
-index a4fab2a..baeb7e4 100644
+index 6591a0f..65dac6b 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
-@@ -6003,7 +6003,7 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
+@@ -6002,7 +6002,7 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
  
    if (v1 == v2 || path->next == NULL || TOPOROUTER_VERTEX (path->data) == v2) return NULL;
  
@@ -21,7 +21,7 @@ index a4fab2a..baeb7e4 100644
    // if(v1->routingedge) print_edge(v1->routingedge);
    // if(v2->routingedge) print_edge(v2->routingedge);
  
-@@ -6025,20 +6025,15 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
+@@ -6024,20 +6024,15 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
    for (i = path->next; i != NULL; i = g_list_next (i)) {
      toporouter_vertex_t *v = TOPOROUTER_VERTEX (i->data);
  
@@ -46,7 +46,7 @@ index a4fab2a..baeb7e4 100644
      if (v1wind == 0 && v2wind == 0)
        continue;
  
-@@ -6068,6 +6063,9 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
+@@ -6067,6 +6062,9 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
          TEST_AND_INSERT (tedge_v2 (v->routingedge));
        }
      }
@@ -56,7 +56,7 @@ index a4fab2a..baeb7e4 100644
    }
  
    arcs = g_list_sort (arcs, (GCompareFunc) compare_rubberband_arcs);
-@@ -6142,9 +6140,8 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
+@@ -6141,9 +6139,8 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
  //  goto rubberband_insert_maxarc;
  //}
  
@@ -68,7 +68,7 @@ index a4fab2a..baeb7e4 100644
  
    if (list1) {
      GList *list = g_list_last (list1);
-@@ -6153,7 +6150,10 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
+@@ -6152,7 +6149,10 @@ oproute_rubberband_segment (toporouter_t *r, toporouter_oproute_t *oproute,
      gdouble px = parc ? parc->x1 : vx (v1),
              py = parc ? parc->y1 : vy (v1);
  
@@ -80,7 +80,7 @@ index a4fab2a..baeb7e4 100644
        printf ("REMOVING ARC @ %f,%f\n", vx (testarc->centre), vy (testarc->centre));
        list1 = g_list_remove (list1, testarc);
        if (parc)
-@@ -6508,9 +6508,9 @@ oproute_rubberband(toporouter_t *r, GList *path)
+@@ -6507,9 +6507,9 @@ oproute_rubberband(toporouter_t *r, GList *path)
    oproute->arcs =
      oproute_rubberband_segment (r, oproute, path,
                                  TOPOROUTER_IS_ARC (oproute->term1) ? TOPOROUTER_ARC (oproute->term1) : NULL,
