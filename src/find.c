@@ -270,8 +270,8 @@ typedef struct
 static Coord Bloat = 0;
 static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
 static int thing_type;
-static bool User = false;    /* user action causing this */
-static bool drc = false;     /* whether to stop if finding something not found */
+//static bool User = false;    /* user action causing this */
+//static bool drc = false;     /* whether to stop if finding something not found */
 static bool IsBad = false;
 static Cardinal drcerr_count;   /* count of drc errors */
 static Cardinal TotalP, TotalV, NumberOfPads[2];
@@ -325,14 +325,15 @@ ArcPadIntersect (ArcType *Arc, PadType *Pad)
 }
 
 static bool
-add_object_to_list (ListType *list, int type, void *ptr1, void *ptr2, void *ptr3, int flag)
+add_object_to_list (ListType *list, int type, void *ptr1, void *ptr2, void *ptr3,
+                    struct find_setup setup)
 {
   AnyObjectType *object = (AnyObjectType *)ptr2;
 
-  if (User)
+  if (setup->user)
     AddObjectToFlagUndoList (type, ptr1, ptr2, ptr3);
 
-  SET_FLAG (flag, object);
+  SET_FLAG (setup->flag, object);
   LIST_ENTRY (list, list->Number) = object;
   list->Number++;
 
@@ -341,7 +342,7 @@ add_object_to_list (ListType *list, int type, void *ptr1, void *ptr2, void *ptr3
     printf ("add_object_to_list overflow! type=%i num=%d size=%d\n", type, list.Number, list.Size);
 #endif
 
-  if (drc && !TEST_FLAG (SELECTEDFLAG, object))
+  if (setup->drc && !TEST_FLAG (SELECTEDFLAG, object))
     return (SetThing (type, ptr1, ptr2, ptr3));
   return false;
 }
@@ -610,11 +611,16 @@ InitLayoutLookup (void)
   RatList.Number = 0;
 }
 
+struct find_setup
+{
+  int flag
+};
+
 struct pv_info
 {
+  struct find_setup setup;
   Cardinal layer;
   PinType *pv;
-  int flag;
   jmp_buf env;
 };
 
@@ -624,10 +630,10 @@ LOCtoPVline_callback (const BoxType * b, void *cl)
   LineType *line = (LineType *) b;
   struct pv_info *i = (struct pv_info *) cl;
 
-  if (!TEST_FLAG (i->flag, line) && PinLineIntersect (i->pv, line) &&
+  if (!TEST_FLAG (i->setup.flag, line) && PinLineIntersect (i->pv, line) &&
       !TEST_FLAG (HOLEFLAG, i->pv))
     {
-      if (ADD_LINE_TO_LIST (i->layer, line, i->flag))
+      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -639,10 +645,10 @@ LOCtoPVarc_callback (const BoxType * b, void *cl)
   ArcType *arc = (ArcType *) b;
   struct pv_info *i = (struct pv_info *) cl;
 
-  if (!TEST_FLAG (i->flag, arc) && IS_PV_ON_ARC (i->pv, arc) &&
+  if (!TEST_FLAG (i->setup.flag, arc) && IS_PV_ON_ARC (i->pv, arc) &&
       !TEST_FLAG (HOLEFLAG, i->pv))
     {
-      if (ADD_ARC_TO_LIST (i->layer, arc, i->flag))
+      if (ADD_ARC_TO_LIST (i->layer, arc, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -654,10 +660,10 @@ LOCtoPVpad_callback (const BoxType * b, void *cl)
   PadType *pad = (PadType *) b;
   struct pv_info *i = (struct pv_info *) cl;
 
-  if (!TEST_FLAG (i->flag, pad) && IS_PV_ON_PAD (i->pv, pad) &&
+  if (!TEST_FLAG (i->setup.flag, pad) && IS_PV_ON_PAD (i->pv, pad) &&
       !TEST_FLAG (HOLEFLAG, i->pv) &&
       ADD_PAD_TO_LIST (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER :
-                       COMPONENT_LAYER, pad, i->flag))
+                       COMPONENT_LAYER, pad, i->setup.flag))
     longjmp (i->env, 1);
   return 0;
 }
@@ -668,8 +674,8 @@ LOCtoPVrat_callback (const BoxType * b, void *cl)
   RatType *rat = (RatType *) b;
   struct pv_info *i = (struct pv_info *) cl;
 
-  if (!TEST_FLAG (i->flag, rat) && IS_PV_ON_RAT (i->pv, rat) &&
-      ADD_RAT_TO_LIST (rat, i->flag))
+  if (!TEST_FLAG (i->setup.flag, rat) && IS_PV_ON_RAT (i->pv, rat) &&
+      ADD_RAT_TO_LIST (rat, i->setup.flag))
     longjmp (i->env, 1);
   return 0;
 }
@@ -685,7 +691,7 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
    * because it might not be inside the polygon, or it could
    * be on an edge such that it doesn't actually touch.
    */
-  if (!TEST_FLAG (i->flag, polygon) && !TEST_FLAG (HOLEFLAG, i->pv) &&
+  if (!TEST_FLAG (i->setup.flag, polygon) && !TEST_FLAG (HOLEFLAG, i->pv) &&
                                        (TEST_THERM (i->layer, i->pv) ||
                                         !TEST_FLAG (CLEARPOLYFLAG,
                                                     polygon)
@@ -699,19 +705,19 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
           Coord y1 = i->pv->Y - (i->pv->Thickness + 1 + Bloat) / 2;
           Coord y2 = i->pv->Y + (i->pv->Thickness + 1 + Bloat) / 2;
           if (IsRectangleInPolygon (x1, y1, x2, y2, polygon)
-              && ADD_POLYGON_TO_LIST (i->layer, polygon, i->flag))
+              && ADD_POLYGON_TO_LIST (i->layer, polygon, i->setup.flag))
             longjmp (i->env, 1);
         }
       else if (TEST_FLAG (OCTAGONFLAG, i->pv))
         {
           POLYAREA *oct = OctagonPoly (i->pv->X, i->pv->Y, i->pv->Thickness / 2);
           if (isects (oct, polygon, true)
-              && ADD_POLYGON_TO_LIST (i->layer, polygon, i->flag))
+              && ADD_POLYGON_TO_LIST (i->layer, polygon, i->setup.flag))
             longjmp (i->env, 1);
         }
       else if (IsPointInPolygon (i->pv->X, i->pv->Y, wide,
                                  polygon)
-               && ADD_POLYGON_TO_LIST (i->layer, polygon, i->flag))
+               && ADD_POLYGON_TO_LIST (i->layer, polygon, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -722,12 +728,12 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
  * the appropriate list and the 'used' flag is set
  */
 static bool
-LookupLOConnectionsToPVList (int flag, bool AndRats)
+LookupLOConnectionsToPVList (struct find_setup setup, bool AndRats)
 {
   Cardinal layer_no;
   struct pv_info info;
 
-  info.flag = flag;
+  info.setup = setup;
 
   /* loop over all PVs currently on list */
   while (PVList.Location < PVList.Number)
@@ -906,7 +912,7 @@ pv_pv_callback (const BoxType * b, void *cl)
   PinType *pin = (PinType *) b;
   struct pv_info *i = (struct pv_info *) cl;
 
-  if (!TEST_FLAG (i->flag, pin) && PV_TOUCH_PV (i->pv, pin))
+  if (!TEST_FLAG (i->setup.flag, pin) && PV_TOUCH_PV (i->pv, pin))
     {
       if (TEST_FLAG (HOLEFLAG, pin) || TEST_FLAG (HOLEFLAG, i->pv))
         {
@@ -917,7 +923,7 @@ pv_pv_callback (const BoxType * b, void *cl)
           else
             Message (_("WARNING: Hole too close to via.\n"));
         }
-      else if (ADD_PV_TO_LIST (pin, i->flag))
+      else if (ADD_PV_TO_LIST (pin, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -960,13 +966,13 @@ LookupPVConnectionsToPVList (int flag)
 
 struct lo_info
 {
+  struct find_setup setup;
   Cardinal layer;
   LineType *line;
   PadType *pad;
   ArcType *arc;
   PolygonType *polygon;
   RatType *rat;
-  int flag;
   jmp_buf env;
 };
 
@@ -976,7 +982,7 @@ pv_line_callback (const BoxType * b, void *cl)
   PinType *pv = (PinType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, pv) && PinLineIntersect (pv, i->line))
+  if (!TEST_FLAG (i->setup.flag, pv) && PinLineIntersect (pv, i->line))
     {
       if (TEST_FLAG (HOLEFLAG, pv))
         {
@@ -984,7 +990,7 @@ pv_line_callback (const BoxType * b, void *cl)
           Settings.RatWarn = true;
           Message (_("WARNING: Hole too close to line.\n"));
         }
-      else if (ADD_PV_TO_LIST (pv, i->flag))
+      else if (ADD_PV_TO_LIST (pv, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -996,7 +1002,7 @@ pv_pad_callback (const BoxType * b, void *cl)
   PinType *pv = (PinType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, pv) && IS_PV_ON_PAD (pv, i->pad))
+  if (!TEST_FLAG (i->setup.flag, pv) && IS_PV_ON_PAD (pv, i->pad))
     {
       if (TEST_FLAG (HOLEFLAG, pv))
         {
@@ -1004,7 +1010,7 @@ pv_pad_callback (const BoxType * b, void *cl)
           Settings.RatWarn = true;
           Message (_("WARNING: Hole too close to pad.\n"));
         }
-      else if (ADD_PV_TO_LIST (pv, i->flag))
+      else if (ADD_PV_TO_LIST (pv, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -1016,7 +1022,7 @@ pv_arc_callback (const BoxType * b, void *cl)
   PinType *pv = (PinType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, pv) && IS_PV_ON_ARC (pv, i->arc))
+  if (!TEST_FLAG (i->setup.flag, pv) && IS_PV_ON_ARC (pv, i->arc))
     {
       if (TEST_FLAG (HOLEFLAG, pv))
         {
@@ -1024,7 +1030,7 @@ pv_arc_callback (const BoxType * b, void *cl)
           Settings.RatWarn = true;
           Message (_("WARNING: Hole touches arc.\n"));
         }
-      else if (ADD_PV_TO_LIST (pv, i->flag))
+      else if (ADD_PV_TO_LIST (pv, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -1037,7 +1043,7 @@ pv_poly_callback (const BoxType * b, void *cl)
   struct lo_info *i = (struct lo_info *) cl;
 
   /* note that holes in polygons are ok, so they don't generate warnings. */
-  if (!TEST_FLAG (i->flag, pv) && !TEST_FLAG (HOLEFLAG, pv) &&
+  if (!TEST_FLAG (i->setup.flag, pv) && !TEST_FLAG (HOLEFLAG, pv) &&
                                   (TEST_THERM (i->layer, pv) ||
                                    !TEST_FLAG (CLEARPOLYFLAG, i->polygon) ||
                                    !pv->Clearance))
@@ -1050,20 +1056,20 @@ pv_poly_callback (const BoxType * b, void *cl)
           y1 = pv->Y - (PIN_SIZE (pv) + 1 + Bloat) / 2;
           y2 = pv->Y + (PIN_SIZE (pv) + 1 + Bloat) / 2;
           if (IsRectangleInPolygon (x1, y1, x2, y2, i->polygon)
-              && ADD_PV_TO_LIST (pv, i->flag))
+              && ADD_PV_TO_LIST (pv, i->setup.flag))
             longjmp (i->env, 1);
         }
       else if (TEST_FLAG (OCTAGONFLAG, pv))
         {
           POLYAREA *oct = OctagonPoly (pv->X, pv->Y, PIN_SIZE (pv) / 2);
-          if (isects (oct, i->polygon, true) && ADD_PV_TO_LIST (pv, i->flag))
+          if (isects (oct, i->polygon, true) && ADD_PV_TO_LIST (pv, i->setup.flag))
             longjmp (i->env, 1);
         }
       else
         {
           if (IsPointInPolygon
               (pv->X, pv->Y, PIN_SIZE (pv) * 0.5 + Bloat, i->polygon)
-              && ADD_PV_TO_LIST (pv, i->flag))
+              && ADD_PV_TO_LIST (pv, i->setup.flag))
             longjmp (i->env, 1);
         }
     }
@@ -1077,8 +1083,8 @@ pv_rat_callback (const BoxType * b, void *cl)
   struct lo_info *i = (struct lo_info *) cl;
 
   /* rats can't cause DRC so there is no early exit */
-  if (!TEST_FLAG (i->flag, pv) && IS_PV_ON_RAT (pv, i->rat))
-    ADD_PV_TO_LIST (pv, i->flag);
+  if (!TEST_FLAG (i->setup.flag, pv) && IS_PV_ON_RAT (pv, i->rat))
+    ADD_PV_TO_LIST (pv, i->setup.flag);
   return 0;
 }
 
@@ -1663,9 +1669,9 @@ LOCtoArcLine_callback (const BoxType * b, void *cl)
   LineType *line = (LineType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, line) && LineArcIntersect (line, i->arc))
+  if (!TEST_FLAG (i->setup.flag, line) && LineArcIntersect (line, i->arc))
     {
-      if (ADD_LINE_TO_LIST (i->layer, line, i->flag))
+      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -1679,9 +1685,9 @@ LOCtoArcArc_callback (const BoxType * b, void *cl)
 
   if (!arc->Thickness)
     return 0;
-  if (!TEST_FLAG (i->flag, arc) && ArcArcIntersect (i->arc, arc))
+  if (!TEST_FLAG (i->setup.flag, arc) && ArcArcIntersect (i->arc, arc))
     {
-      if (ADD_ARC_TO_LIST (i->layer, arc, i->flag))
+      if (ADD_ARC_TO_LIST (i->layer, arc, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -1693,9 +1699,9 @@ LOCtoArcPad_callback (const BoxType * b, void *cl)
   PadType *pad = (PadType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, pad) && i->layer ==
+  if (!TEST_FLAG (i->setup.flag, pad) && i->layer ==
       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
-      && ArcPadIntersect (i->arc, pad) && ADD_PAD_TO_LIST (i->layer, pad, i->flag))
+      && ArcPadIntersect (i->arc, pad) && ADD_PAD_TO_LIST (i->layer, pad, i->setup.flag))
     longjmp (i->env, 1);
   return 0;
 }
@@ -1769,9 +1775,9 @@ LOCtoLineLine_callback (const BoxType * b, void *cl)
   LineType *line = (LineType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, line) && LineLineIntersect (i->line, line))
+  if (!TEST_FLAG (i->setup.flag, line) && LineLineIntersect (i->line, line))
     {
-      if (ADD_LINE_TO_LIST (i->layer, line, i->flag))
+      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -1785,9 +1791,9 @@ LOCtoLineArc_callback (const BoxType * b, void *cl)
 
   if (!arc->Thickness)
     return 0;
-  if (!TEST_FLAG (i->flag, arc) && LineArcIntersect (i->line, arc))
+  if (!TEST_FLAG (i->setup.flag, arc) && LineArcIntersect (i->line, arc))
     {
-      if (ADD_ARC_TO_LIST (i->layer, arc, i->flag))
+      if (ADD_ARC_TO_LIST (i->layer, arc, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -1799,18 +1805,18 @@ LOCtoLineRat_callback (const BoxType * b, void *cl)
   RatType *rat = (RatType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, rat))
+  if (!TEST_FLAG (i->setup.flag, rat))
     {
       if ((rat->group1 == i->layer)
           && IsRatPointOnLineEnd (&rat->Point1, i->line))
         {
-          if (ADD_RAT_TO_LIST (rat, i->flag))
+          if (ADD_RAT_TO_LIST (rat, i->setup.flag))
             longjmp (i->env, 1);
         }
       else if ((rat->group2 == i->layer)
                && IsRatPointOnLineEnd (&rat->Point2, i->line))
         {
-          if (ADD_RAT_TO_LIST (rat, i->flag))
+          if (ADD_RAT_TO_LIST (rat, i->setup.flag))
             longjmp (i->env, 1);
         }
     }
@@ -1823,9 +1829,9 @@ LOCtoLinePad_callback (const BoxType * b, void *cl)
   PadType *pad = (PadType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, pad) && i->layer ==
+  if (!TEST_FLAG (i->setup.flag, pad) && i->layer ==
       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
-      && LinePadIntersect (i->line, pad) && ADD_PAD_TO_LIST (i->layer, pad, i->flag))
+      && LinePadIntersect (i->line, pad) && ADD_PAD_TO_LIST (i->layer, pad, i->setup.flag))
     longjmp (i->env, 1);
   return 0;
 }
@@ -1909,9 +1915,9 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
 
 struct rat_info
 {
+  struct find_setup setup;
   Cardinal layer;
   PointType *Point;
-  int flag;
   jmp_buf env;
 };
 
@@ -1921,12 +1927,12 @@ LOCtoRat_callback (const BoxType * b, void *cl)
   LineType *line = (LineType *) b;
   struct rat_info *i = (struct rat_info *) cl;
 
-  if (!TEST_FLAG (i->flag, line) &&
+  if (!TEST_FLAG (i->setup.flag, line) &&
       ((line->Point1.X == i->Point->X &&
         line->Point1.Y == i->Point->Y) ||
        (line->Point2.X == i->Point->X && line->Point2.Y == i->Point->Y)))
     {
-      if (ADD_LINE_TO_LIST (i->layer, line, i->flag))
+      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -1937,11 +1943,11 @@ PolygonToRat_callback (const BoxType * b, void *cl)
   PolygonType *polygon = (PolygonType *) b;
   struct rat_info *i = (struct rat_info *) cl;
 
-  if (!TEST_FLAG (i->flag, polygon) && polygon->Clipped &&
+  if (!TEST_FLAG (i->setup.flag, polygon) && polygon->Clipped &&
       (i->Point->X == polygon->Clipped->contours->head.point[0]) &&
       (i->Point->Y == polygon->Clipped->contours->head.point[1]))
     {
-      if (ADD_POLYGON_TO_LIST (i->layer, polygon, i->flag))
+      if (ADD_POLYGON_TO_LIST (i->layer, polygon, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -1953,13 +1959,13 @@ LOCtoPad_callback (const BoxType * b, void *cl)
   PadType *pad = (PadType *) b;
   struct rat_info *i = (struct rat_info *) cl;
 
-  if (!TEST_FLAG (i->flag, pad) && i->layer ==
+  if (!TEST_FLAG (i->setup.flag, pad) && i->layer ==
 	(TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER) &&
       ((pad->Point1.X == i->Point->X && pad->Point1.Y == i->Point->Y) ||
        (pad->Point2.X == i->Point->X && pad->Point2.Y == i->Point->Y) ||
        ((pad->Point1.X + pad->Point2.X) / 2 == i->Point->X &&
         (pad->Point1.Y + pad->Point2.Y) / 2 == i->Point->Y)) &&
-      ADD_PAD_TO_LIST (i->layer, pad, i->flag))
+      ADD_PAD_TO_LIST (i->layer, pad, i->setup.flag))
     longjmp (i->env, 1);
   return 0;
 }
@@ -2022,9 +2028,9 @@ LOCtoPadLine_callback (const BoxType * b, void *cl)
   LineType *line = (LineType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, line) && LinePadIntersect (line, i->pad))
+  if (!TEST_FLAG (i->setup.flag, line) && LinePadIntersect (line, i->pad))
     {
-      if (ADD_LINE_TO_LIST (i->layer, line, i->flag))
+      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -2038,9 +2044,9 @@ LOCtoPadArc_callback (const BoxType * b, void *cl)
 
   if (!arc->Thickness)
     return 0;
-  if (!TEST_FLAG (i->flag, arc) && ArcPadIntersect (arc, i->pad))
+  if (!TEST_FLAG (i->setup.flag, arc) && ArcPadIntersect (arc, i->pad))
     {
-      if (ADD_ARC_TO_LIST (i->layer, arc, i->flag))
+      if (ADD_ARC_TO_LIST (i->layer, arc, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -2053,11 +2059,11 @@ LOCtoPadPoly_callback (const BoxType * b, void *cl)
   struct lo_info *i = (struct lo_info *) cl;
 
 
-  if (!TEST_FLAG (i->flag, polygon) &&
+  if (!TEST_FLAG (i->setup.flag, polygon) &&
       (!TEST_FLAG (CLEARPOLYFLAG, polygon) || !i->pad->Clearance))
     {
       if (IsPadInPolygon (i->pad, polygon) &&
-          ADD_POLYGON_TO_LIST (i->layer, polygon, i->flag))
+          ADD_POLYGON_TO_LIST (i->layer, polygon, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -2069,7 +2075,7 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
   RatType *rat = (RatType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, rat))
+  if (!TEST_FLAG (i->setup.flag, rat))
     {
       if (rat->group1 == i->layer &&
 	  ((rat->Point1.X == i->pad->Point1.X && rat->Point1.Y == i->pad->Point1.Y) ||
@@ -2077,7 +2083,7 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
 	   (rat->Point1.X == (i->pad->Point1.X + i->pad->Point2.X) / 2 &&
 	    rat->Point1.Y == (i->pad->Point1.Y + i->pad->Point2.Y) / 2)))
         {
-          if (ADD_RAT_TO_LIST (rat, i->flag))
+          if (ADD_RAT_TO_LIST (rat, i->setup.flag))
             longjmp (i->env, 1);
         }
       else if (rat->group2 == i->layer &&
@@ -2086,7 +2092,7 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
 		(rat->Point2.X == (i->pad->Point1.X + i->pad->Point2.X) / 2 &&
 		 rat->Point2.Y == (i->pad->Point1.Y + i->pad->Point2.Y) / 2)))
         {
-          if (ADD_RAT_TO_LIST (rat, i->flag))
+          if (ADD_RAT_TO_LIST (rat, i->setup.flag))
             longjmp (i->env, 1);
         }
     }
@@ -2099,9 +2105,9 @@ LOCtoPadPad_callback (const BoxType * b, void *cl)
   PadType *pad = (PadType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, pad) && i->layer ==
+  if (!TEST_FLAG (i->setup.flag, pad) && i->layer ==
       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
-      && PadPadIntersect (pad, i->pad) && ADD_PAD_TO_LIST (i->layer, pad, i->flag))
+      && PadPadIntersect (pad, i->pad) && ADD_PAD_TO_LIST (i->layer, pad, i->setup.flag))
     longjmp (i->env, 1);
   return 0;
 }
@@ -2181,9 +2187,9 @@ LOCtoPolyLine_callback (const BoxType * b, void *cl)
   LineType *line = (LineType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, line) && IsLineInPolygon (line, i->polygon))
+  if (!TEST_FLAG (i->setup.flag, line) && IsLineInPolygon (line, i->polygon))
     {
-      if (ADD_LINE_TO_LIST (i->layer, line, i->flag))
+      if (ADD_LINE_TO_LIST (i->layer, line, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -2197,9 +2203,9 @@ LOCtoPolyArc_callback (const BoxType * b, void *cl)
 
   if (!arc->Thickness)
     return 0;
-  if (!TEST_FLAG (i->flag, arc) && IsArcInPolygon (arc, i->polygon))
+  if (!TEST_FLAG (i->setup.flag, arc) && IsArcInPolygon (arc, i->polygon))
     {
-      if (ADD_ARC_TO_LIST (i->layer, arc, i->flag))
+      if (ADD_ARC_TO_LIST (i->layer, arc, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -2211,11 +2217,11 @@ LOCtoPolyPad_callback (const BoxType * b, void *cl)
   PadType *pad = (PadType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, pad) && i->layer ==
+  if (!TEST_FLAG (i->setup.flag, pad) && i->layer ==
       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
       && IsPadInPolygon (pad, i->polygon))
     {
-      if (ADD_PAD_TO_LIST (i->layer, pad, i->flag))
+      if (ADD_PAD_TO_LIST (i->layer, pad, i->setup.flag))
         longjmp (i->env, 1);
     }
   return 0;
@@ -2227,7 +2233,7 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
   RatType *rat = (RatType *) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  if (!TEST_FLAG (i->flag, rat))
+  if (!TEST_FLAG (i->setup.flag, rat))
     {
       if ((rat->Point1.X == (i->polygon->Clipped->contours->head.point[0]) &&
            rat->Point1.Y == (i->polygon->Clipped->contours->head.point[1]) &&
@@ -2235,7 +2241,7 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
           (rat->Point2.X == (i->polygon->Clipped->contours->head.point[0]) &&
            rat->Point2.Y == (i->polygon->Clipped->contours->head.point[1]) &&
            rat->group2 == i->layer))
-        if (ADD_RAT_TO_LIST (rat, i->flag))
+        if (ADD_RAT_TO_LIST (rat, i->setup.flag))
           longjmp (i->env, 1);
     }
   return 0;
@@ -2917,7 +2923,7 @@ void
 LookupElementConnections (ElementType *Element, FILE * FP)
 {
   /* reset all currently marked connections */
-  User = true;
+  setup.user = true;
   ClearFlagOnAllObjects (true, FOUNDFLAG);
   InitConnectionLookup ();
   PrintElementConnections (Element, FP, FOUNDFLAG, true);
@@ -2926,7 +2932,7 @@ LookupElementConnections (ElementType *Element, FILE * FP)
     gui->beep ();
   FreeConnectionLookupMemory ();
   IncrementUndoSerialNumber ();
-  User = false;
+  setup.user = false;
   Draw ();
 }
 
@@ -2937,7 +2943,7 @@ void
 LookupConnectionsToAllElements (FILE * FP)
 {
   /* reset all currently marked connections */
-  User = false;
+  setup.user = false;
   ClearFlagOnAllObjects (false, FOUNDFLAG);
   InitConnectionLookup ();
 
@@ -3067,7 +3073,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
   name = ConnectionName (type, ptr1, ptr2);
   hid_actionl ("NetlistShow", name, NULL);
 
-  User = AndDraw;
+  setup.user = AndDraw;
   InitConnectionLookup ();
 
   /* now add the object to the appropriate list and start scanning
@@ -3075,9 +3081,9 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
    */
   ListStart (type, ptr1, ptr2, ptr3, flag);
   DoIt (flag, AndRats, AndDraw);
-  if (User)
+  if (setup.user)
     IncrementUndoSerialNumber ();
-  User = false;
+  setup.user = false;
 
   /* we are done */
   if (AndDraw)
@@ -3095,11 +3101,11 @@ void
 RatFindHook (int type, void *ptr1, void *ptr2, void *ptr3,
              bool undo, int flag, bool AndRats)
 {
-  User = undo;
+  setup.user = undo;
   DumpList ();
   ListStart (type, ptr1, ptr2, ptr3, flag);
   DoIt (flag, AndRats, false);
-  User = false;
+  setup.user = false;
 }
 
 /* ---------------------------------------------------------------------------
@@ -3109,7 +3115,7 @@ void
 LookupUnusedPins (FILE * FP)
 {
   /* reset all currently marked connections */
-  User = true;
+  setup.user = true;
   ClearFlagOnAllObjects (true, FOUNDFLAG);
   InitConnectionLookup ();
 
@@ -3127,7 +3133,7 @@ LookupUnusedPins (FILE * FP)
     gui->beep ();
   FreeConnectionLookupMemory ();
   IncrementUndoSerialNumber ();
-  User = false;
+  setip.user = false;
   Draw ();
 }
 
@@ -3303,7 +3309,7 @@ DumpList (void)
 
 struct drc_info
 {
-  int flag;
+  struct find_setup setup;
 };
 
 /*-----------------------------------------------------------------------------
@@ -3331,15 +3337,15 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       flag = FOUNDFLAG;
       ListStart (What, ptr1, ptr2, ptr3, flag);
       Bloat = 0;
-      drc = true;               /* abort the search if we find anything not already found */
+      setup.drc = true;  /* abort the search if we find anything not already found */
       if (DoIt (flag, true, false))
         {
           DumpList ();
           /* make the flag changes undoable */
           flag = FOUNDFLAG | SELECTEDFLAG;
           ClearFlagOnAllObjects (false, flag);
-          User = true;
-          drc = false;
+          setup.user = true;
+          setup.drc = false;
           Bloat = -PCB->Shrink;
           flag = SELECTEDFLAG;
           ListStart (What, ptr1, ptr2, ptr3, flag);
@@ -3348,11 +3354,11 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
           ListStart (What, ptr1, ptr2, ptr3, flag);
           flag = FOUNDFLAG;
           Bloat = 0;
-          drc = true;
+          setup.drc = true;
           DoIt (flag, true, true);
           DumpList ();
-          User = false;
-          drc = false;
+          setup.user = false;
+          setup.drc = false;
           drcerr_count++;
           LocateError (&x, &y);
           BuildObjectList (&object_count, &object_id_list, &object_type_list);
@@ -3380,20 +3386,20 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       DumpList ();
     }
   /* now check the bloated condition */
-  drc = false;
+  setup.drc = false;
   ClearFlagOnAllObjects (false, flag);
   flag = FOUNDFLAG;
   ListStart (What, ptr1, ptr2, ptr3, flag);
   Bloat = PCB->Bloat;
-  drc = true;
+  setup.drc = true;
   while (DoIt (flag, true, false))
     {
       DumpList ();
       /* make the flag changes undoable */
       flag = FOUNDFLAG | SELECTEDFLAG;
       ClearFlagOnAllObjects (false, flag);
-      User = true;
-      drc = false;
+      setup.user = true;
+      setup.drc = false;
       Bloat = 0;
       flag = SELECTEDFLAG;
       ListStart (What, ptr1, ptr2, ptr3, flag);
@@ -3402,7 +3408,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       flag = FOUNDFLAG;
       ListStart (What, ptr1, ptr2, ptr3, flag);
       Bloat = PCB->Bloat;
-      drc = true;
+      setup.drc = true;
       DoIt (flag, true, true);
       DumpList ();
       drcerr_count++;
@@ -3423,8 +3429,8 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       pcb_drc_violation_free (violation);
       free (object_id_list);
       free (object_type_list);
-      User = false;
-      drc = false;
+      setup.user = false;
+      setup.drc = false;
       if (!throw_drc_dialog())
         return (true);
       IncrementUndoSerialNumber ();
@@ -3435,11 +3441,11 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       ListStart (thing_type, thing_ptr1, thing_ptr2, thing_ptr3, flag);
       DoIt (flag, true, true);
       DumpList ();
-      drc = true;
+      setup.drc = true;
       Bloat = PCB->Bloat;
       ListStart (What, ptr1, ptr2, ptr3, flag);
     }
-  drc = false;
+  setup.drc = false;
   DumpList ();
   flag = FOUNDFLAG | SELECTEDFLAG;
   ClearFlagOnAllObjects (false, flag);
@@ -3475,7 +3481,7 @@ drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
       if (line->Clearance < 2 * PCB->Bloat)
         {
           AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
-          SET_FLAG (i->flag, line);
+          SET_FLAG (i->setup.flag, line);
           message = _("Line with insufficient clearance inside polygon\n");
           goto doIsBad;
         }
@@ -3484,7 +3490,7 @@ drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
       if (arc->Clearance < 2 * PCB->Bloat)
         {
           AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
-          SET_FLAG (i->flag, arc);
+          SET_FLAG (i->setup.flag, arc);
           message = _("Arc with insufficient clearance inside polygon\n");
           goto doIsBad;
         }
@@ -3494,7 +3500,7 @@ drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
 	if (IsPadInPolygon(pad,polygon))
 	  {
 	    AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
-	    SET_FLAG (i->flag, pad);
+	    SET_FLAG (i->setup.flag, pad);
 	    message = _("Pad with insufficient clearance inside polygon\n");
 	    goto doIsBad;
 	  }
@@ -3503,7 +3509,7 @@ drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
       if (pin->Clearance && pin->Clearance < 2 * PCB->Bloat)
         {
           AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
-          SET_FLAG (i->flag, pin);
+          SET_FLAG (i->setup.flag, pin);
           message = _("Pin with insufficient clearance inside polygon\n");
           goto doIsBad;
         }
@@ -3512,7 +3518,7 @@ drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
       if (pin->Clearance && pin->Clearance < 2 * PCB->Bloat)
         {
           AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
-          SET_FLAG (i->flag, pin);
+          SET_FLAG (i->setup.flag, pin);
           message = _("Via with insufficient clearance inside polygon\n");
           goto doIsBad;
         }
@@ -3589,7 +3595,7 @@ DRCAll (void)
       Draw ();
     }
 
-  User = false;
+  setup.user = false;
 
   ELEMENT_LOOP (PCB->Data);
   {
