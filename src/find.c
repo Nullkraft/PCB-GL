@@ -956,11 +956,13 @@ LookupPVConnectionsToPVList (void)
       search_box = expand_bounds ((BoxType *)&info.pv);
 
       if (setjmp (info.env) == 0)
-        r_search (PCB->Data->via_tree, &search_box, NULL, pv_pv_callback, &info);
+        r_search (PCB->Data->via_tree, &search_box, NULL,
+                  pv_pv_callback, &info);
       else
         return true;
       if (setjmp (info.env) == 0)
-        r_search (PCB->Data->pin_tree, &search_box, NULL, pv_pv_callback, &info);
+        r_search (PCB->Data->pin_tree, &search_box, NULL,
+                  pv_pv_callback, &info);
       else
         return true;
       PVList.Location++;
@@ -1125,11 +1127,13 @@ LookupPVConnectionsToLOList (bool AndRats)
           search_box = expand_bounds ((BoxType *)&info.line);
 
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->via_tree, &search_box, NULL, pv_line_callback, &info);
+            r_search (PCB->Data->via_tree, &search_box, NULL,
+                      pv_line_callback, &info);
           else
             return true;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pin_tree, &search_box, NULL, pv_line_callback, &info);
+            r_search (PCB->Data->pin_tree, &search_box, NULL,
+                      pv_line_callback, &info);
           else
             return true;
           LineList[layer].Location++;
@@ -1144,11 +1148,13 @@ LookupPVConnectionsToLOList (bool AndRats)
           search_box = expand_bounds ((BoxType *)&info.arc);
 
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->via_tree, &search_box, NULL, pv_arc_callback, &info);
+            r_search (PCB->Data->via_tree, &search_box, NULL,
+                      pv_arc_callback, &info);
           else
             return true;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pin_tree, &search_box, NULL, pv_arc_callback, &info);
+            r_search (PCB->Data->pin_tree, &search_box, NULL,
+                      pv_arc_callback, &info);
           else
             return true;
           ArcList[layer].Location++;
@@ -1164,11 +1170,13 @@ LookupPVConnectionsToLOList (bool AndRats)
           search_box = expand_bounds ((BoxType *)&info.polygon);
 
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->via_tree, &search_box, NULL, pv_poly_callback, &info);
+            r_search (PCB->Data->via_tree, &search_box, NULL,
+                      pv_poly_callback, &info);
           else
             return true;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pin_tree, &search_box, NULL, pv_poly_callback, &info);
+            r_search (PCB->Data->pin_tree, &search_box, NULL,
+                      pv_poly_callback, &info);
           else
             return true;
           PolygonList[layer].Location++;
