@@ -1,0 +1,40 @@
+Bottom: 843167b4d0ab273fdf0423addf271d9c9b98fe6d
+Top:    f86687aa07b13f57f19368dcae31b74f55db8886
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-27 20:14:23 +0000
+
+Refresh of refactor-signature-of-plowspol
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 755a625..5f17fd0 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1458,7 +1458,8 @@ struct plow_info
+   LayerType *layer;
+   DataType *data;
+   int (*callback) (DataType *, LayerType *, PolygonType *, int, void *,
+-                   void *);
++                   void *, void *);
++  void *userdata;
+ };
+ 
+ static int
+@@ -1528,7 +1529,7 @@ plow_callback (const BoxType * b, void *cl)
+ 
+   if (TEST_FLAG (CLEARPOLYFLAG, polygon))
+     return plow->callback (plow->data, plow->layer, polygon, plow->type,
+-                           plow->ptr1, plow->ptr2);
++                           plow->ptr1, plow->ptr2, plow->userdata);
+   return 0;
+ }
+ 
+@@ -1548,6 +1549,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+   info.ptr2 = ptr2;
+   info.data = Data;
+   info.callback = call_back;
++  info.userdata = userdata;
+   switch (type)
+     {
+     case PIN_TYPE:
