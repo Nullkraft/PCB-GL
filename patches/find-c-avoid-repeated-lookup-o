@@ -3,7 +3,10 @@ Top:    c78b6f0ee912b644b1d9ed2af6a8abb1470cb546
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-27 19:33:11 +0000
 
-find.c: Avoid repeated lookup of layer pointer by layer number
+find.c: Avoid repeated lookup of layer pointer by number
+
+Rename a few "layer" varaibles to "layer_no", and re-use "layer"
+where necessary as a LayerType *, rather than a Cardinal.
 
 
 ---
