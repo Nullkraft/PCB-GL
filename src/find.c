@@ -733,7 +733,7 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
 static bool
 LookupLOConnectionsToPVList (bool AndRats)
 {
-  Cardinal layer_no;
+  Cardinal layer;
   struct pv_info info;
 
   /* loop over all PVs currently on list */
@@ -753,14 +753,12 @@ LookupLOConnectionsToPVList (bool AndRats)
         return true;
 
       /* now all lines, arcs and polygons of the several layers */
-      for (layer_no = 0; layer_no < max_copper_layer; layer_no++)
+      for (layer = 0; layer < max_copper_layer; layer++)
         {
-          LayerType *layer = LAYER_PTR (layer_no);
-
-          if (layer->no_drc)
+          if (LAYER_PTR (layer)->no_drc)
              continue;
 
-          info.layer = layer_no;
+          info.layer = layer;
 
           /* add touching lines */
           if (setjmp (info.env) == 0)
