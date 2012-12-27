@@ -1,0 +1,40 @@
+Bottom: 5a4d5f1457e75441ac6a7d5832d1c25c9798fb5a
+Top:    c242e18aff365623d67a6fe23318c82084522b89
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-27 19:31:58 +0000
+
+Refresh of find-c-avoid-modifying-bounds-
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 3d46deb..ee17784 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -733,7 +733,7 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
+ static bool
+ LookupLOConnectionsToPVList (bool AndRats)
+ {
+-  Cardinal layer_no;
++  Cardinal layer;
+   struct pv_info info;
+ 
+   /* loop over all PVs currently on list */
+@@ -753,14 +753,12 @@ LookupLOConnectionsToPVList (bool AndRats)
+         return true;
+ 
+       /* now all lines, arcs and polygons of the several layers */
+-      for (layer_no = 0; layer_no < max_copper_layer; layer_no++)
++      for (layer = 0; layer < max_copper_layer; layer++)
+         {
+-          LayerType *layer = LAYER_PTR (layer_no);
+-
+-          if (layer->no_drc)
++          if (LAYER_PTR (layer)->no_drc)
+              continue;
+ 
+-          info.layer = layer_no;
++          info.layer = layer;
+ 
+           /* add touching lines */
+           if (setjmp (info.env) == 0)
