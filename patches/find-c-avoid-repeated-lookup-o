@@ -1,5 +1,5 @@
 Bottom: 972d95f14bea58046380afbadee2106aac8095aa
-Top:    e09e3098e31fd895bdc0331725d7e93f8f53d4d2
+Top:    01884644a9dd0808c72d178121523931a801dc07
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-27 19:33:11 +0000
 
@@ -12,7 +12,7 @@ where necessary as a LayerType *, rather than a Cardinal.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 3d1e596..ee473d4 100644
+index 3d1e596..dae0a11 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -723,7 +723,7 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
@@ -176,7 +176,7 @@ index 3d1e596..ee473d4 100644
          }
      }
  
-@@ -1706,41 +1711,43 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup)
+@@ -1706,41 +1711,42 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup)
    /* loop over all layers of the group */
    for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
      {
@@ -212,8 +212,8 @@ index 3d1e596..ee473d4 100644
  
            /* now check all polygons */
 -          for (i = PCB->Data->Layer[layer].Polygon;
-+          for (i = layer->Polygon;
-                i != NULL; i = g_list_next (i))
+-               i != NULL; i = g_list_next (i))
++          for (i = layer->Polygon; i != NULL; i = g_list_next (i))
              {
                PolygonType *polygon = i->data;
                if (!TEST_FLAG (TheFlag, polygon) && IsArcInPolygon (Arc, polygon)
@@ -229,7 +229,7 @@ index 3d1e596..ee473d4 100644
            if (setjmp (info.env) == 0)
              r_search (PCB->Data->pad_tree, &info.arc.BoundingBox, NULL,
                        LOCtoArcPad_callback, &info);
-@@ -1845,23 +1852,25 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+@@ -1845,23 +1851,25 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
    /* loop over all layers of the group */
    for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
      {
@@ -261,13 +261,13 @@ index 3d1e596..ee473d4 100644
                        NULL, LOCtoLineArc_callback, &info);
            else
              return true;
-@@ -1869,13 +1878,13 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+@@ -1869,13 +1877,12 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
            if (PolysTo)
              {
                GList *i;
 -              for (i = PCB->Data->Layer[layer].Polygon;
-+              for (i = layer->Polygon;
-                    i != NULL; i = g_list_next (i))
+-                   i != NULL; i = g_list_next (i))
++              for (i = layer->Polygon; i != NULL; i = g_list_next (i))
                  {
                    PolygonType *polygon = i->data;
                    if (!TEST_FLAG
@@ -277,7 +277,7 @@ index 3d1e596..ee473d4 100644
                      return true;
                  }
              }
-@@ -1883,7 +1892,7 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+@@ -1883,7 +1890,7 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
        else
          {
            /* handle special 'pad' layers */
@@ -286,7 +286,7 @@ index 3d1e596..ee473d4 100644
            if (setjmp (info.env) == 0)
              r_search (PCB->Data->pad_tree, &info.line.BoundingBox, NULL,
                        LOCtoLinePad_callback, &info);
-@@ -1967,30 +1976,32 @@ LookupLOConnectionsToRatEnd (PointType *Point, Cardinal LayerGroup)
+@@ -1967,30 +1974,32 @@ LookupLOConnectionsToRatEnd (PointType *Point, Cardinal LayerGroup)
    /* loop over all layers of this group */
    for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
      {
@@ -326,7 +326,7 @@ index 3d1e596..ee473d4 100644
            if (setjmp (info.env) == 0)
              r_search_pt (PCB->Data->pad_tree, Point, 1, NULL,
                        LOCtoPad_callback, &info);
-@@ -2117,28 +2128,30 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
+@@ -2117,28 +2126,30 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
    /* loop over all layers of the group */
    for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
      {
@@ -364,7 +364,7 @@ index 3d1e596..ee473d4 100644
                        NULL, LOCtoPadPoly_callback, &info);
            else
              return true;
-@@ -2146,7 +2159,7 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
+@@ -2146,7 +2157,7 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
        else
          {
            /* handle special 'pad' layers */
@@ -373,7 +373,7 @@ index 3d1e596..ee473d4 100644
            if (setjmp (info.env) == 0)
              r_search (PCB->Data->pad_tree, (BoxType *) & info.pad, NULL,
                        LOCtoPadPad_callback, &info);
-@@ -2249,44 +2262,45 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
+@@ -2249,44 +2260,45 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
  /* loop over all layers of the group */
    for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
      {
