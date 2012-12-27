@@ -1,0 +1,94 @@
+Bottom: e7e4e262ec89f12cd4084b3e554e43ad81eb2974
+Top:    d96b1ce2f370d54aef9970a12320b0421c57a784
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-27 19:27:46 +0000
+
+Refresh of find-c-avoid-modifying-bounds-
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 6ba3009..cd89fe0 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -2146,7 +2146,8 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
+   info.layer = LayerGroup;
+ 
+   if (setjmp (info.env) == 0)
+-    r_search (PCB->Data->rat_tree, &search_box, NULL, LOCtoPadRat_callback, &info);
++    r_search (PCB->Data->rat_tree, &search_box, NULL,
++              LOCtoPadRat_callback, &info);
+   else
+     return true;
+ 
+@@ -2162,17 +2163,20 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
+           info.layer = layer;
+           /* add lines */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->line_tree, &search_box, NULL, LOCtoPadLine_callback, &info);
++            r_search (LAYER_PTR (layer)->line_tree, &search_box,
++                      NULL, LOCtoPadLine_callback, &info);
+           else
+             return true;
+           /* add arcs */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->arc_tree, &search_box, NULL, LOCtoPadArc_callback, &info);
++            r_search (LAYER_PTR (layer)->arc_tree, &search_box,
++                      NULL, LOCtoPadArc_callback, &info);
+           else
+             return true;
+           /* add polygons */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->polygon_tree, &search_box, NULL, LOCtoPadPoly_callback, &info);
++            r_search (LAYER_PTR (layer)->polygon_tree, &search_box,
++                      NULL, LOCtoPadPoly_callback, &info);
+           else
+             return true;
+         }
+@@ -2181,7 +2185,8 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
+           /* handle special 'pad' layers */
+           info.layer = layer - max_copper_layer;
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->pad_tree, &search_box, NULL, LOCtoPadPad_callback, &info);
++            r_search (PCB->Data->pad_tree, &search_box, NULL,
++                      LOCtoPadPad_callback, &info);
+           else
+             return true;
+         }
+@@ -2276,7 +2281,8 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
+   info.layer = LayerGroup;
+   /* check rats */
+   if (setjmp (info.env) == 0)
+-    r_search (PCB->Data->rat_tree, &search_box, NULL, LOCtoPolyRat_callback, &info);
++    r_search (PCB->Data->rat_tree, &search_box, NULL,
++              LOCtoPolyRat_callback, &info);
+   else
+     return true;
+ 
+@@ -2306,12 +2312,14 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
+           info.layer = layer;
+           /* check all lines */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->line_tree, &search_box, NULL, LOCtoPolyLine_callback, &info);
++            r_search (LAYER_PTR (layer)->line_tree, &search_box, NULL,
++                      LOCtoPolyLine_callback, &info);
+           else
+             return true;
+           /* check all arcs */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->arc_tree, &search_box, NULL, LOCtoPolyArc_callback, &info);
++            r_search (LAYER_PTR (layer)->arc_tree, &search_box, NULL,
++                      LOCtoPolyArc_callback, &info);
+           else
+             return true;
+         }
+@@ -2319,7 +2327,8 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
+         {
+           info.layer = layer - max_copper_layer;
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->pad_tree, &search_box, NULL, LOCtoPolyPad_callback, &info);
++            r_search (PCB->Data->pad_tree, &search_box, NULL,
++                      LOCtoPolyPad_callback, &info);
+           else
+             return true;
+         }
