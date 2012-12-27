@@ -1749,14 +1749,14 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup)
           info.layer = layer;
           /* add arcs */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->line_tree, &search_box, NULL,
-                      LOCtoArcLine_callback, &info);
+            r_search (LAYER_PTR (layer)->line_tree, &search_box,
+                      NULL, LOCtoArcLine_callback, &info);
           else
             return true;
 
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->arc_tree, &search_box, NULL,
-                      LOCtoArcArc_callback, &info);
+            r_search (LAYER_PTR (layer)->arc_tree, &search_box,
+                      NULL, LOCtoArcArc_callback, &info);
           else
             return true;
 
@@ -1889,14 +1889,14 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
           info.layer = layer;
           /* add lines */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->line_tree, &search_box, NULL,
-                      LOCtoLineLine_callback, &info);
+            r_search (LAYER_PTR (layer)->line_tree, &search_box,
+                      NULL, LOCtoLineLine_callback, &info);
           else
             return true;
           /* add arcs */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->arc_tree, &search_box, NULL,
-                      LOCtoLineArc_callback, &info);
+            r_search (LAYER_PTR (layer)->arc_tree, &search_box,
+                      NULL, LOCtoLineArc_callback, &info);
           else
             return true;
           /* now check all polygons */
