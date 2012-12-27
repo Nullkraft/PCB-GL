@@ -1,0 +1,33 @@
+Bottom: e09e3098e31fd895bdc0331725d7e93f8f53d4d2
+Top:    01884644a9dd0808c72d178121523931a801dc07
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-27 19:55:49 +0000
+
+Refresh of find-c-avoid-repeated-lookup-o
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index ee473d4..dae0a11 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -1736,8 +1736,7 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup)
+             return true;
+ 
+           /* now check all polygons */
+-          for (i = layer->Polygon;
+-               i != NULL; i = g_list_next (i))
++          for (i = layer->Polygon; i != NULL; i = g_list_next (i))
+             {
+               PolygonType *polygon = i->data;
+               if (!TEST_FLAG (TheFlag, polygon) && IsArcInPolygon (Arc, polygon)
+@@ -1878,8 +1877,7 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
+           if (PolysTo)
+             {
+               GList *i;
+-              for (i = layer->Polygon;
+-                   i != NULL; i = g_list_next (i))
++              for (i = layer->Polygon; i != NULL; i = g_list_next (i))
+                 {
+                   PolygonType *polygon = i->data;
+                   if (!TEST_FLAG
