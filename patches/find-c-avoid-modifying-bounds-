@@ -1,5 +1,5 @@
 Bottom: 972d95f14bea58046380afbadee2106aac8095aa
-Top:    f83affe7c238b82b8e9c82f4d5f15b8c379e8c32
+Top:    8056b5c93aa56b0526e544bdbe39a58171bb395b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-24 02:14:27 +0000
 
@@ -12,7 +12,7 @@ avoid passing inconsistent objects to lower level functions.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 3d1e596..7f9afd8 100644
+index 3d1e596..be88bab 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -104,12 +104,6 @@
@@ -51,7 +51,7 @@ index 3d1e596..7f9afd8 100644
  bool
  PinLineIntersect (PinType *PV, LineType *Line)
  {
-@@ -723,45 +733,51 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
+@@ -723,44 +733,50 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
  static bool
  LookupLOConnectionsToPVList (bool AndRats)
  {
@@ -93,37 +93,35 @@ index 3d1e596..7f9afd8 100644
            /* add touching lines */
            if (setjmp (info.env) == 0)
 -            r_search (LAYER_PTR (layer)->line_tree, (BoxType *) & info.pv,
--                      NULL, LOCtoPVline_callback, &info);
-+            r_search (layer->line_tree, &search_box, NULL,
-+                      LOCtoPVline_callback, &info);
++            r_search (layer->line_tree, &search_box,
+                       NULL, LOCtoPVline_callback, &info);
            else
              return true;
            /* add touching arcs */
            if (setjmp (info.env) == 0)
 -            r_search (LAYER_PTR (layer)->arc_tree, (BoxType *) & info.pv,
--                      NULL, LOCtoPVarc_callback, &info);
-+            r_search (layer->arc_tree, &search_box, NULL,
-+                      LOCtoPVarc_callback, &info);
++            r_search (layer->arc_tree, &search_box,
+                       NULL, LOCtoPVarc_callback, &info);
            else
              return true;
            /* check all polygons */
            if (setjmp (info.env) == 0)
 -            r_search (LAYER_PTR (layer)->polygon_tree, (BoxType *) & info.pv,
--                      NULL, LOCtoPVpoly_callback, &info);
-+            r_search (layer->polygon_tree, &search_box, NULL,
-+                      LOCtoPVpoly_callback, &info);
++            r_search (layer->polygon_tree, &search_box,
+                       NULL, LOCtoPVpoly_callback, &info);
            else
              return true;
-         }
-@@ -769,7 +785,7 @@ LookupLOConnectionsToPVList (bool AndRats)
+@@ -769,8 +785,8 @@ LookupLOConnectionsToPVList (bool AndRats)
        if (AndRats)
          {
            if (setjmp (info.env) == 0)
 -            r_search (PCB->Data->rat_tree, (BoxType *) & info.pv, NULL,
-+            r_search (PCB->Data->rat_tree, &search_box, NULL,
-                       LOCtoPVrat_callback, &info);
+-                      LOCtoPVrat_callback, &info);
++            r_search (PCB->Data->rat_tree, &search_box,
++                      NULL, LOCtoPVrat_callback, &info);
            else
              return true;
+         }
 @@ -933,17 +949,18 @@ LookupPVConnectionsToPVList (void)
    save_place = PVList.Location;
    while (PVList.Location < PVList.Number)
