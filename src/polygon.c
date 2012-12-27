@@ -1458,7 +1458,8 @@ struct plow_info
   LayerType *layer;
   DataType *data;
   int (*callback) (DataType *, LayerType *, PolygonType *, int, void *,
-                   void *);
+                   void *, void *);
+  void *userdata;
 };
 
 static int
@@ -1528,7 +1529,7 @@ plow_callback (const BoxType * b, void *cl)
 
   if (TEST_FLAG (CLEARPOLYFLAG, polygon))
     return plow->callback (plow->data, plow->layer, polygon, plow->type,
-                           plow->ptr1, plow->ptr2);
+                           plow->ptr1, plow->ptr2, plow->userdata);
   return 0;
 }
 
@@ -1548,6 +1549,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
   info.ptr2 = ptr2;
   info.data = Data;
   info.callback = call_back;
+  info.userdata = userdata;
   switch (type)
     {
     case PIN_TYPE:
