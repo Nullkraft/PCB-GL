@@ -1,5 +1,5 @@
-Bottom: 59fe858d4fc5625a6a9b8a816691d191e7f3ad92
-Top:    b9d9b229bba5c175ae092b3c3dc22c57820b73d9
+Bottom: c2f476597d83bdfccbeb29282925851fd96516b7
+Top:    496f97c7bd5ac739655d0c54fe1f1943b6829a1a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-24 00:43:17 +0000
 
@@ -9,10 +9,10 @@ find.c: Alter LookupConnection to lookup inc./excl. rat-connections in one pass
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 32122d3..7cedf79 100644
+index bae29b9..4bbf16a 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3047,8 +3047,7 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3, int flag)
+@@ -3072,8 +3072,7 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3, int flag)
   * also the action is marked as undoable if AndDraw is true
   */
  void
