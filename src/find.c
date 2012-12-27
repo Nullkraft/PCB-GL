@@ -1736,8 +1736,7 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup)
             return true;
 
           /* now check all polygons */
-          for (i = layer->Polygon;
-               i != NULL; i = g_list_next (i))
+          for (i = layer->Polygon; i != NULL; i = g_list_next (i))
             {
               PolygonType *polygon = i->data;
               if (!TEST_FLAG (TheFlag, polygon) && IsArcInPolygon (Arc, polygon)
@@ -1878,8 +1877,7 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
           if (PolysTo)
             {
               GList *i;
-              for (i = layer->Polygon;
-                   i != NULL; i = g_list_next (i))
+              for (i = layer->Polygon; i != NULL; i = g_list_next (i))
                 {
                   PolygonType *polygon = i->data;
                   if (!TEST_FLAG
