@@ -2289,8 +2289,8 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
   info.layer = LayerGroup;
   /* check rats */
   if (setjmp (info.env) == 0)
-    r_search (PCB->Data->rat_tree, &search_box,
-              NULL, LOCtoPolyRat_callback, &info);
+    r_search (PCB->Data->rat_tree, &search_box, NULL,
+              LOCtoPolyRat_callback, &info);
   else
     return true;
 
