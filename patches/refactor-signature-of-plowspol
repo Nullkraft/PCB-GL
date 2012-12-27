@@ -1,5 +1,5 @@
-Bottom: 5d9ca632b9772a9d6e3bf28779f9e56226478053
-Top:    64f0aba74c84b5586ef7fa0e7ce167273aeec466
+Bottom: 609a8abb23e8eadabe5bfdc4ea2dee0f607c3fbc
+Top:    843167b4d0ab273fdf0423addf271d9c9b98fe6d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-25 12:40:46 +0000
 
@@ -12,10 +12,10 @@ without resorting to nasty workarounds like global variables.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 029a2e1..268b54e 100644
+index bea37c2..b5f7fdf 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3445,7 +3445,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3485,7 +3485,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
  
  static int
  drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
@@ -24,7 +24,7 @@ index 029a2e1..268b54e 100644
  {
    char *message;
    Coord x, y;
-@@ -3637,7 +3637,7 @@ DRCAll (void)
+@@ -3677,7 +3677,7 @@ DRCAll (void)
        COPPERLINE_LOOP (PCB->Data);
        {
          /* check line clearances in polygons */
@@ -33,7 +33,7 @@ index 029a2e1..268b54e 100644
            {
              IsBad = true;
              break;
-@@ -3681,7 +3681,7 @@ DRCAll (void)
+@@ -3721,7 +3721,7 @@ DRCAll (void)
      {
        COPPERARC_LOOP (PCB->Data);
        {
@@ -42,7 +42,7 @@ index 029a2e1..268b54e 100644
            {
              IsBad = true;
              break;
-@@ -3725,7 +3725,7 @@ DRCAll (void)
+@@ -3765,7 +3765,7 @@ DRCAll (void)
      {
        ALLPIN_LOOP (PCB->Data);
        {
@@ -51,7 +51,7 @@ index 029a2e1..268b54e 100644
            {
              IsBad = true;
              break;
-@@ -3801,7 +3801,7 @@ DRCAll (void)
+@@ -3841,7 +3841,7 @@ DRCAll (void)
      {
        ALLPAD_LOOP (PCB->Data);
        {
@@ -60,7 +60,7 @@ index 029a2e1..268b54e 100644
            {
              IsBad = true;
              break;
-@@ -3845,7 +3845,7 @@ DRCAll (void)
+@@ -3885,7 +3885,7 @@ DRCAll (void)
      {
        VIA_LOOP (PCB->Data);
        {
