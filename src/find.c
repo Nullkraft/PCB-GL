@@ -785,8 +785,8 @@ LookupLOConnectionsToPVList (bool AndRats)
       if (AndRats)
         {
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->rat_tree, &search_box,
-                      NULL, LOCtoPVrat_callback, &info);
+            r_search (PCB->Data->rat_tree, &search_box, NULL,
+                      LOCtoPVrat_callback, &info);
           else
             return true;
         }
