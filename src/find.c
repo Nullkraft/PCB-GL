@@ -764,20 +764,20 @@ LookupLOConnectionsToPVList (bool AndRats)
 
           /* add touching lines */
           if (setjmp (info.env) == 0)
-            r_search (layer->line_tree, &search_box, NULL,
-                      LOCtoPVline_callback, &info);
+            r_search (layer->line_tree, &search_box,
+                      NULL, LOCtoPVline_callback, &info);
           else
             return true;
           /* add touching arcs */
           if (setjmp (info.env) == 0)
-            r_search (layer->arc_tree, &search_box, NULL,
-                      LOCtoPVarc_callback, &info);
+            r_search (layer->arc_tree, &search_box,
+                      NULL, LOCtoPVarc_callback, &info);
           else
             return true;
           /* check all polygons */
           if (setjmp (info.env) == 0)
-            r_search (layer->polygon_tree, &search_box, NULL,
-                      LOCtoPVpoly_callback, &info);
+            r_search (layer->polygon_tree, &search_box,
+                      NULL, LOCtoPVpoly_callback, &info);
           else
             return true;
         }
@@ -785,8 +785,8 @@ LookupLOConnectionsToPVList (bool AndRats)
       if (AndRats)
         {
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->rat_tree, &search_box, NULL,
-                      LOCtoPVrat_callback, &info);
+            r_search (PCB->Data->rat_tree, &search_box,
+                      NULL, LOCtoPVrat_callback, &info);
           else
             return true;
         }
