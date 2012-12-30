@@ -3172,7 +3172,7 @@ LookupUnusedPins (FILE * FP)
     gui->beep ();
   FreeConnectionLookupMemory ();
   IncrementUndoSerialNumber ();
-  setip.user = false;
+  setup.user = false;
   Draw ();
 }
 
