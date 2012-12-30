@@ -6254,7 +6254,7 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
 		  ptr2 = (LineType *) ptrtmp;
 	          if (TEST_FLAG (AUTODRCFLAG, PCB))
 		    {
-		      /* undo loses FOUNDFLAG */
+		      /* undo loses CONNECTEDFLAG and FOUNDFLAG */
 		      SET_FLAG(CONNECTEDFLAG, ptr2);
 		      SET_FLAG(FOUNDFLAG, ptr2);
 		      DrawLine (CURRENT, ptr2);
