@@ -1314,7 +1314,8 @@ NotifyMode (void)
 		  PCB->Clipping ^= 3;
 		}
 	    }
-          LookupConnection (Note.X, Note.Y, true, 1, CONNECTEDFLAG, false);
+	  if (TEST_FLAG (AUTODRCFLAG, PCB) && !TEST_SILK_LAYER (CURRENT))
+	    LookupConnection (Note.X, Note.Y, true, 1, CONNECTEDFLAG, false);
 	  Draw ();
 	}
       break;
