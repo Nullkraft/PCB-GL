@@ -264,7 +264,7 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
 
   if (TEST_FLAG (THINDRAWFLAG,     PCB) ||
       TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
-      TEST_FLAG (CLEARLINEFLAG,    PCB) ||)
+      TEST_FLAG (CLEARLINEFLAG,    PCB))
     gui->graphics->thindraw_pcb_polygon (gc, polygon, clip_box);
   else
     gui->graphics->fill_pcb_polygon (gc, polygon, clip_box);
