@@ -1,5 +1,5 @@
 Bottom: 6bcf73039854ff80a580942bf1a5c9be654d5f75
-Top:    aeb9305e3535eefa172def2f985caca4ddfb058d
+Top:    949f9d0eb39d8568be2b8bb051296d7277999143
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-24 00:13:41 +0000
 
@@ -9,7 +9,7 @@ Fix auto-enforce DRC with split connection colouring
 ---
 
 diff --git a/src/action.c b/src/action.c
-index bfafd6f..116bb83 100644
+index bfafd6f..1d6d8f9 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -873,8 +873,8 @@ NotifyLine (void)
@@ -32,15 +32,16 @@ index bfafd6f..116bb83 100644
  
  	  if (TEST_FLAG (CLEARNEWFLAG, PCB))
  	    line_flags |= CLEARLINEFLAG;
-@@ -1314,6 +1314,7 @@ NotifyMode (void)
+@@ -1314,6 +1314,8 @@ NotifyMode (void)
  		  PCB->Clipping ^= 3;
  		}
  	    }
-+          LookupConnection (Note.X, Note.Y, true, 1, CONNECTEDFLAG, false);
++	  if (TEST_FLAG (AUTODRCFLAG, PCB) && !TEST_SILK_LAYER (CURRENT))
++	    LookupConnection (Note.X, Note.Y, true, 1, CONNECTEDFLAG, false);
  	  Draw ();
  	}
        break;
-@@ -2741,15 +2742,20 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+@@ -2741,15 +2743,20 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
  	  TOGGLE_FLAG (AUTODRCFLAG, PCB);
  	  if (TEST_FLAG (AUTODRCFLAG, PCB) && Settings.Mode == LINE_MODE)
  	    {
@@ -65,7 +66,7 @@ index bfafd6f..116bb83 100644
  	    }
  	  notify_crosshair_change (true);
  	  break;
-@@ -6248,7 +6254,8 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
+@@ -6248,7 +6255,8 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
  		  ptr2 = (LineType *) ptrtmp;
  	          if (TEST_FLAG (AUTODRCFLAG, PCB))
  		    {
