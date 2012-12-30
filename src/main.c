@@ -770,11 +770,11 @@ Color to indicate physical connections. Default: @samp{#00ff00}
 /* %start-doc options "3 Colors"
 @ftable @code
 @item --found-color <string>
-Color to indicate logical connections. Default: @samp{#ff00ff}
+Color to indicate logical connections. Default: @samp{#00ff00}
 @end ftable
 %end-doc
 */
-  COLOR (FoundColor, "#ff00ff", "found-color",
+  COLOR (FoundColor, "#00ff00", "found-color",
 	 "color to indicate logically connected objects"),
 
 /* %start-doc options "3 Colors"
