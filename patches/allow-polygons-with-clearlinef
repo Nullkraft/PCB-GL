@@ -1,5 +1,5 @@
 Bottom: 0de3952498ca6217d9225804ebe21efe840327f4
-Top:    bb0ead6c8d5a049996ec8bff4177d0f778577864
+Top:    c50899f57171b8e99a6c9eec28bfb6bbae89565c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2012-12-30 11:20:42 +0000
 
@@ -156,7 +156,7 @@ index 5d59362..a8f0de8 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 685b614..f8c5fc6 100644
+index 685b614..2d858be 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -262,7 +262,9 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
@@ -166,7 +166,7 @@ index 685b614..f8c5fc6 100644
 -  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
 +  if (TEST_FLAG (THINDRAWFLAG,     PCB) ||
 +      TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
-+      TEST_FLAG (CLEARLINEFLAG,    PCB) ||)
++      TEST_FLAG (CLEARLINEFLAG,    PCB))
      gui->graphics->thindraw_pcb_polygon (gc, polygon, clip_box);
    else
      gui->graphics->fill_pcb_polygon (gc, polygon, clip_box);
