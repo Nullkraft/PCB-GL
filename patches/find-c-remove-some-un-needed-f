@@ -1,5 +1,5 @@
 Bottom: 291c417d2a6d579ef1c6372e92e9843817748c35
-Top:    291c417d2a6d579ef1c6372e92e9843817748c35
+Top:    8e7763275343cec76c886177ec77088f52190d70
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-30 11:04:31 +0000
 
@@ -8,4 +8,43 @@ find.c: Remove some un-needed forward declarations of static functions
 
 ---
 
-
+diff --git a/src/find.c b/src/find.c
+index b5f7fdf..2b22abe 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -281,10 +281,6 @@ static ListType LineList[MAX_LAYER],    /* list of objects to */
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+-static bool LookupLOConnectionsToPVList (bool);
+-static bool LookupLOConnectionsToLOList (bool);
+-static bool LookupPVConnectionsToLOList (bool);
+-static bool LookupPVConnectionsToPVList (void);
+ static bool LookupLOConnectionsToLine (LineType *, Cardinal, bool, bool);
+ static bool LookupLOConnectionsToPad (PadType *, Cardinal, bool);
+ static bool LookupLOConnectionsToPolygon (PolygonType *, Cardinal, bool);
+@@ -293,24 +289,10 @@ static bool LookupLOConnectionsToRatEnd (PointType *, Cardinal);
+ static bool IsRatPointOnLineEnd (PointType *, LineType *);
+ static bool ArcArcIntersect (ArcType *, ArcType *);
+ static bool PrepareNextLoop (FILE *);
+-static bool PrintElementConnections (ElementType *, FILE *, bool);
+-static bool ListsEmpty (bool);
+-static bool DoIt (bool, bool);
+-static void PrintElementNameList (ElementType *, FILE *);
+-static void PrintConnectionElementName (ElementType *, FILE *);
+-static void PrintConnectionListEntry (char *, ElementType *,
+-                                      bool, FILE *);
+-static void PrintPadConnections (Cardinal, FILE *, bool);
+-static void PrintPinConnections (FILE *, bool);
+-static bool PrintAndSelectUnusedPinsAndPadsOfElement (ElementType *,
+-                                                         FILE *);
+ static void DrawNewConnections (void);
+ static void DumpList (void);
+ static void LocateError (Coord *, Coord *);
+ static void BuildObjectList (int *, long int **, int **);
+-static void GotoError (void);
+-static bool DRCFind (int, void *, void *, void *);
+-static bool ListStart (int, void *, void *, void *);
+ static bool SetThing (int, void *, void *, void *);
+ static bool IsArcInPolygon (ArcType *, PolygonType *);
+ static bool IsLineInPolygon (LineType *, PolygonType *);
