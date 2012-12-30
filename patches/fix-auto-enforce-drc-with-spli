@@ -1,5 +1,5 @@
 Bottom: 6892f56fe9f60fcc26dd4b438a03925de7619f6e
-Top:    1be1919d74a3fbdbee35eceb33e5c829b0840569
+Top:    a1c9757586d5ae2af45e801d301014aaead72118
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-24 00:13:41 +0000
 
@@ -9,7 +9,7 @@ Fix auto-enforce DRC with split connection colouring
 ---
 
 diff --git a/src/action.c b/src/action.c
-index bfafd6f..6edfadf 100644
+index bfafd6f..116bb83 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -873,8 +873,8 @@ NotifyLine (void)
@@ -65,10 +65,12 @@ index bfafd6f..6edfadf 100644
  	    }
  	  notify_crosshair_change (true);
  	  break;
-@@ -6249,6 +6255,7 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
+@@ -6248,7 +6254,8 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
+ 		  ptr2 = (LineType *) ptrtmp;
  	          if (TEST_FLAG (AUTODRCFLAG, PCB))
  		    {
- 		      /* undo loses FOUNDFLAG */
+-		      /* undo loses FOUNDFLAG */
++		      /* undo loses CONNECTEDFLAG and FOUNDFLAG */
 +		      SET_FLAG(CONNECTEDFLAG, ptr2);
  		      SET_FLAG(FOUNDFLAG, ptr2);
  		      DrawLine (CURRENT, ptr2);
