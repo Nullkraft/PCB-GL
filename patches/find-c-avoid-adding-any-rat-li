@@ -1,5 +1,5 @@
-Bottom: b315cdb38da542396fa7392bb1909e1cb3689508
-Top:    803709fd86524a8f481b31299cd912b1e707d7a9
+Bottom: 8e761860f23e84f22834d20d35d3daa930782c33
+Top:    280c60267ad5a68f4cc06fd1990d852594424baa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-22 16:17:49 +0000
 
@@ -13,7 +13,7 @@ opposite end of the ratline.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index d6ec2ec..6fffb0d 100644
+index dfa77db..bea37c2 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -285,10 +285,10 @@ static bool LookupLOConnectionsToPVList (bool);
@@ -84,8 +84,8 @@ index d6ec2ec..6fffb0d 100644
    Cardinal entry;
    struct lo_info info;
 @@ -1871,12 +1871,15 @@ LookupLOConnectionsToLine (LineType *Line, Cardinal LayerGroup,
-   info.line = *Line;
-   search_box = expand_bounds ((BoxType *)&info.line);
+   info.line = Line;
+   search_box = expand_bounds ((BoxType *)info.line);
  
 -  /* add the new rat lines */
 -  if (setjmp (info.env) == 0)
@@ -120,8 +120,8 @@ index d6ec2ec..6fffb0d 100644
 -    return (LookupLOConnectionsToLine ((LineType *) Pad, LayerGroup, false));
 +    return (LookupLOConnectionsToLine ((LineType *) Pad, LayerGroup, false, AndRats));
  
-   info.pad = *Pad;
-   search_box = expand_bounds ((BoxType *)&info.pad);
+   info.pad = Pad;
+   search_box = expand_bounds ((BoxType *)info.pad);
 @@ -2150,11 +2153,14 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
    /* add the new rat lines */
    info.layer = LayerGroup;
@@ -152,7 +152,7 @@ index d6ec2ec..6fffb0d 100644
    Cardinal entry;
    struct lo_info info;
 @@ -2286,12 +2292,16 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
-   search_box = expand_bounds ((BoxType *)&info.polygon);
+   search_box = expand_bounds ((BoxType *)info.polygon);
  
    info.layer = LayerGroup;
 +

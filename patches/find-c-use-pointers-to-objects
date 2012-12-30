@@ -1,5 +1,5 @@
-Bottom: 479a7e9cd93dcf42671b02a5fec98ef7420242d1
-Top:    06b045eaee28f68625e1725b496d62d3f1888bf6
+Bottom: cbb8033e60f755ec64df59d5451fb4a55c15a8fc
+Top:    2fecba5b2ec87fb676a2586de494683400251442
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-24 00:50:46 +0000
 
@@ -12,7 +12,7 @@ the copied objects, so we can use pointers instead.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 6fffb0d..bea37c2 100644
+index dd38281..f2ae95b 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -622,7 +622,7 @@ InitLayoutLookup (void)
@@ -321,7 +321,7 @@ index 6fffb0d..bea37c2 100644
      longjmp (i->env, 1);
    return 0;
  }
-@@ -1733,8 +1733,8 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup, bool AndRats)
+@@ -1733,8 +1733,8 @@ LookupLOConnectionsToArc (ArcType *Arc, Cardinal LayerGroup)
    struct lo_info info;
    BoxType search_box;
  
@@ -384,9 +384,9 @@ index 6fffb0d..bea37c2 100644
 +  info.line = Line;
 +  search_box = expand_bounds ((BoxType *)info.line);
  
-   if (AndRats)
-     {
-@@ -2049,7 +2049,7 @@ LOCtoPadLine_callback (const BoxType * b, void *cl)
+   /* add the new rat lines */
+   if (setjmp (info.env) == 0)
+@@ -2046,7 +2046,7 @@ LOCtoPadLine_callback (const BoxType * b, void *cl)
    LineType *line = (LineType *) b;
    struct lo_info *i = (struct lo_info *) cl;
  
@@ -395,7 +395,7 @@ index 6fffb0d..bea37c2 100644
      {
        if (ADD_LINE_TO_LIST (i->layer, line))
          longjmp (i->env, 1);
-@@ -2065,7 +2065,7 @@ LOCtoPadArc_callback (const BoxType * b, void *cl)
+@@ -2062,7 +2062,7 @@ LOCtoPadArc_callback (const BoxType * b, void *cl)
  
    if (!arc->Thickness)
      return 0;
@@ -404,7 +404,7 @@ index 6fffb0d..bea37c2 100644
      {
        if (ADD_ARC_TO_LIST (i->layer, arc))
          longjmp (i->env, 1);
-@@ -2081,9 +2081,9 @@ LOCtoPadPoly_callback (const BoxType * b, void *cl)
+@@ -2078,9 +2078,9 @@ LOCtoPadPoly_callback (const BoxType * b, void *cl)
  
  
    if (!TEST_FLAG (TheFlag, polygon) &&
@@ -416,7 +416,7 @@ index 6fffb0d..bea37c2 100644
            ADD_POLYGON_TO_LIST (i->layer, polygon))
          longjmp (i->env, 1);
      }
-@@ -2099,19 +2099,19 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
+@@ -2096,19 +2096,19 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
    if (!TEST_FLAG (TheFlag, rat))
      {
        if (rat->group1 == i->layer &&
@@ -444,7 +444,7 @@ index 6fffb0d..bea37c2 100644
          {
            if (ADD_RAT_TO_LIST (rat))
              longjmp (i->env, 1);
-@@ -2128,7 +2128,7 @@ LOCtoPadPad_callback (const BoxType * b, void *cl)
+@@ -2125,7 +2125,7 @@ LOCtoPadPad_callback (const BoxType * b, void *cl)
  
    if (!TEST_FLAG (TheFlag, pad) && i->layer ==
        (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
@@ -453,9 +453,9 @@ index 6fffb0d..bea37c2 100644
      longjmp (i->env, 1);
    return 0;
  }
-@@ -2147,8 +2147,8 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup, bool AndRats)
+@@ -2144,8 +2144,8 @@ LookupLOConnectionsToPad (PadType *Pad, Cardinal LayerGroup)
    if (!TEST_FLAG (SQUAREFLAG, Pad))
-     return (LookupLOConnectionsToLine ((LineType *) Pad, LayerGroup, false, AndRats));
+     return (LookupLOConnectionsToLine ((LineType *) Pad, LayerGroup, false));
  
 -  info.pad = *Pad;
 -  search_box = expand_bounds ((BoxType *)&info.pad);
@@ -464,7 +464,7 @@ index 6fffb0d..bea37c2 100644
  
    /* add the new rat lines */
    info.layer = LayerGroup;
-@@ -2214,7 +2214,7 @@ LOCtoPolyLine_callback (const BoxType * b, void *cl)
+@@ -2208,7 +2208,7 @@ LOCtoPolyLine_callback (const BoxType * b, void *cl)
    LineType *line = (LineType *) b;
    struct lo_info *i = (struct lo_info *) cl;
  
@@ -473,7 +473,7 @@ index 6fffb0d..bea37c2 100644
      {
        if (ADD_LINE_TO_LIST (i->layer, line))
          longjmp (i->env, 1);
-@@ -2230,7 +2230,7 @@ LOCtoPolyArc_callback (const BoxType * b, void *cl)
+@@ -2224,7 +2224,7 @@ LOCtoPolyArc_callback (const BoxType * b, void *cl)
  
    if (!arc->Thickness)
      return 0;
@@ -482,7 +482,7 @@ index 6fffb0d..bea37c2 100644
      {
        if (ADD_ARC_TO_LIST (i->layer, arc))
          longjmp (i->env, 1);
-@@ -2246,7 +2246,7 @@ LOCtoPolyPad_callback (const BoxType * b, void *cl)
+@@ -2240,7 +2240,7 @@ LOCtoPolyPad_callback (const BoxType * b, void *cl)
  
    if (!TEST_FLAG (TheFlag, pad) && i->layer ==
        (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
@@ -491,7 +491,7 @@ index 6fffb0d..bea37c2 100644
      {
        if (ADD_PAD_TO_LIST (i->layer, pad))
          longjmp (i->env, 1);
-@@ -2262,11 +2262,11 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
+@@ -2256,11 +2256,11 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
  
    if (!TEST_FLAG (TheFlag, rat))
      {
@@ -507,7 +507,7 @@ index 6fffb0d..bea37c2 100644
             rat->group2 == i->layer))
          if (ADD_RAT_TO_LIST (rat))
            longjmp (i->env, 1);
-@@ -2288,8 +2288,8 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup, bool An
+@@ -2282,8 +2282,8 @@ LookupLOConnectionsToPolygon (PolygonType *Polygon, Cardinal LayerGroup)
  
    if (!Polygon->Clipped)
      return false;
@@ -517,3 +517,4 @@ index 6fffb0d..bea37c2 100644
 +  search_box = expand_bounds ((BoxType *)info.polygon);
  
    info.layer = LayerGroup;
+   /* check rats */
