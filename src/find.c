@@ -345,7 +345,7 @@ ADD_PV_TO_LIST (PinType *Pin, int flag)
 
 static bool
 ADD_PAD_TO_LIST (Cardinal L, PadType *Pad, int flag)
-{ 
+{
   return add_object_to_list (&PadList[L], PAD_TYPE, Pad->Element, Pad, Pad, flag);
 }
 
