@@ -1,7 +1,7 @@
-Bottom: d7aeaa65262933b961aa57e0760d569c5bcbcf48
-Top:    2b0a58d87525d7ef5b51d3b5e19bcaf291249096
+Bottom: 06b045eaee28f68625e1725b496d62d3f1888bf6
+Top:    06b045eaee28f68625e1725b496d62d3f1888bf6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-12-23 02:37:12 +0000
+Date:   2012-12-30 10:58:13 +0000
 
 Add FoundColor to resource settings, distinct from the Connected color
 
@@ -11,65 +11,4 @@ introduce this patch series without flip-flopping the renderered colours.
 
 ---
 
-diff --git a/src/create.c b/src/create.c
-index 992c49e..8b5c2b9 100644
---- a/src/create.c
-+++ b/src/create.c
-@@ -105,6 +105,7 @@ pcb_colors_from_settings (PCBType *ptr)
- 
-   /* copy default settings */
-   ptr->ConnectedColor = Settings.ConnectedColor;
-+  ptr->FoundColor = Settings.FoundColor;
-   ptr->ElementColor = Settings.ElementColor;
-   ptr->RatColor = Settings.RatColor;
-   ptr->InvisibleObjectsColor = Settings.InvisibleObjectsColor;
-diff --git a/src/global.h b/src/global.h
-index 7b966dc..91cb74a 100644
---- a/src/global.h
-+++ b/src/global.h
-@@ -505,7 +505,7 @@ typedef struct PCBType
-     *InvisibleObjectsColor,
-     *InvisibleMarkColor,
-     *ElementSelectedColor,
--    *RatSelectedColor, *ConnectedColor, *WarnColor, *MaskColor;
-+    *RatSelectedColor, *ConnectedColor, *FoundColor, *WarnColor, *MaskColor;
-   long CursorX,			/* cursor position as saved with layout */
-     CursorY, Clipping;
-   Coord Bloat,			/* drc sizes saved with layout */
-@@ -636,6 +636,7 @@ typedef struct			/* some resources... */
-     *ElementSelectedColor,
-     *RatSelectedColor,
-     *ConnectedColor,
-+    *FoundColor,
-     *OffLimitColor,
-     *GridColor,
-     *LayerColor[MAX_LAYER],
-diff --git a/src/main.c b/src/main.c
-index 3ab4d56..e41fc55 100644
---- a/src/main.c
-+++ b/src/main.c
-@@ -760,12 +760,22 @@ Color of selected rats. Default: @samp{#00ffff}
- /* %start-doc options "3 Colors"
- @ftable @code
- @item --connected-color <string>
--Color to indicate connections. Default: @samp{#00ff00}
-+Color to indicate physical connections. Default: @samp{#00ff00}
- @end ftable
- %end-doc
- */
-   COLOR (ConnectedColor, "#00ff00", "connected-color",
--	 "color to indicate connections"),
-+	 "color to indicate physically connected objects"),
-+
-+/* %start-doc options "3 Colors"
-+@ftable @code
-+@item --found-color <string>
-+Color to indicate logical connections. Default: @samp{#00ff00}
-+@end ftable
-+%end-doc
-+*/
-+  COLOR (FoundColor, "#00ff00", "found-color",
-+	 "color to indicate logically connected objects"),
- 
- /* %start-doc options "3 Colors"
- @ftable @code
+
