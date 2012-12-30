@@ -5,13 +5,8 @@ Date:   2012-12-24 00:50:46 +0000
 
 find.c: Use pointers to objects, not shallow copies of their structures
 
-We don't modify the objects, so we don't need to copy them around.
-
-^^^^^^^^^^^ XXXXX:: TURNS OUT WE DID.. WTF.
-
-I have now made the bounds adjustmenet for the r_search a separate box,
-however I have NOT yet completely checked we did not accidentally rely
-upon a bloated bounding box in any of the callbacks.
+Since commit 4658e4074b4446337467f99fa2b8f9b7147e7e01, we don't modify
+the copied objects, so we can use pointers instead.
 
 
 ---
