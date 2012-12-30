@@ -1,5 +1,5 @@
-Bottom: 229dc01b96505f2ca4bcedee3a89e092247a6617
-Top:    0dbc9a86a20e3dbc96feb1ccbdbd4287f2415691
+Bottom: b274849078f71405b6bcf4ccc1ee3768bccc3546
+Top:    b274849078f71405b6bcf4ccc1ee3768bccc3546
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-10 01:19:10 +0000
 
@@ -17,41 +17,4 @@ if all rat-lines were implemented.
 
 ---
 
-diff --git a/src/action.c b/src/action.c
-index 189e020..bfafd6f 100644
---- a/src/action.c
-+++ b/src/action.c
-@@ -2282,12 +2282,13 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
- 	case F_Find:
- 	  {
- 	    gui->get_coords (_("Click on a connection"), &x, &y);
--	    LookupConnection (x, y, true, 1, FOUNDFLAG, false);
-+	    LookupConnection (x, y, true, 1, CONNECTEDFLAG, false);
-+	    LookupConnection (x, y, true, 1, FOUNDFLAG, true);
- 	    break;
- 	  }
- 
- 	case F_ResetLinesAndPolygons:
--	  if (ClearFlagOnLinesAndPolygons (true, FOUNDFLAG))
-+	  if (ClearFlagOnLinesAndPolygons (true, CONNECTEDFLAG | FOUNDFLAG))
- 	    {
- 	      IncrementUndoSerialNumber ();
- 	      Draw ();
-@@ -2295,7 +2296,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
- 	  break;
- 
- 	case F_ResetPinsViasAndPads:
--	  if (ClearFlagOnPinsViasAndPads (true, FOUNDFLAG))
-+	  if (ClearFlagOnPinsViasAndPads (true, CONNECTEDFLAG | FOUNDFLAG))
- 	    {
- 	      IncrementUndoSerialNumber ();
- 	      Draw ();
-@@ -2303,7 +2304,7 @@ ActionConnection (int argc, char **argv, Coord x, Coord y)
- 	  break;
- 
- 	case F_Reset:
--	  if (ClearFlagOnAllObjects (true, FOUNDFLAG))
-+	  if (ClearFlagOnAllObjects (true, CONNECTEDFLAG | FOUNDFLAG))
- 	    {
- 	      IncrementUndoSerialNumber ();
- 	      Draw ();
+
