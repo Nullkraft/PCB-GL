@@ -1,5 +1,5 @@
 Bottom: 06b045eaee28f68625e1725b496d62d3f1888bf6
-Top:    06b045eaee28f68625e1725b496d62d3f1888bf6
+Top:    b274849078f71405b6bcf4ccc1ee3768bccc3546
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-30 10:58:13 +0000
 
@@ -11,4 +11,21 @@ introduce this patch series without flip-flopping the renderered colours.
 
 ---
 
-
+diff --git a/src/main.c b/src/main.c
+index d80612d..e41fc55 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -770,11 +770,11 @@ Color to indicate physical connections. Default: @samp{#00ff00}
+ /* %start-doc options "3 Colors"
+ @ftable @code
+ @item --found-color <string>
+-Color to indicate logical connections. Default: @samp{#ff00ff}
++Color to indicate logical connections. Default: @samp{#00ff00}
+ @end ftable
+ %end-doc
+ */
+-  COLOR (FoundColor, "#ff00ff", "found-color",
++  COLOR (FoundColor, "#00ff00", "found-color",
+ 	 "color to indicate logically connected objects"),
+ 
+ /* %start-doc options "3 Colors"
