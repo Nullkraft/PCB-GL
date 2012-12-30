@@ -1,5 +1,5 @@
 Bottom: 6879b9b8bd73ca4775e62992b3eb34a7d440a0c7
-Top:    457ab1dddf0780cfc9d687f60a8b3cc2b9de11a7
+Top:    bf23d4e44fce28ba64702edd40cd89e99e59a5a6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2012-12-23 02:37:12 +0000
 
@@ -45,7 +45,7 @@ index 7b966dc..91cb74a 100644
      *GridColor,
      *LayerColor[MAX_LAYER],
 diff --git a/src/main.c b/src/main.c
-index 3ab4d56..d80612d 100644
+index 3ab4d56..e41fc55 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -760,12 +760,22 @@ Color of selected rats. Default: @samp{#00ffff}
@@ -64,11 +64,11 @@ index 3ab4d56..d80612d 100644
 +/* %start-doc options "3 Colors"
 +@ftable @code
 +@item --found-color <string>
-+Color to indicate logical connections. Default: @samp{#ff00ff}
++Color to indicate logical connections. Default: @samp{#00ff00}
 +@end ftable
 +%end-doc
 +*/
-+  COLOR (FoundColor, "#ff00ff", "found-color",
++  COLOR (FoundColor, "#00ff00", "found-color",
 +	 "color to indicate logically connected objects"),
  
  /* %start-doc options "3 Colors"
