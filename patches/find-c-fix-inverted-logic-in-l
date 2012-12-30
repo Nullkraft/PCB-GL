@@ -1,7 +1,7 @@
-Bottom: 2fecba5b2ec87fb676a2586de494683400251442
-Top:    8e761860f23e84f22834d20d35d3daa930782c33
+Bottom: 06b045eaee28f68625e1725b496d62d3f1888bf6
+Top:    06b045eaee28f68625e1725b496d62d3f1888bf6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2012-12-23 20:56:22 +0000
+Date:   2012-12-30 10:58:12 +0000
 
 find.c: Fix inverted logic in LookupConnection()
 
@@ -11,16 +11,4 @@ otherwise we do no. I got this backwards by mistake.
 
 ---
 
-diff --git a/src/find.c b/src/find.c
-index f2ae95b..dfa77db 100644
---- a/src/find.c
-+++ b/src/find.c
-@@ -3077,7 +3077,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag,
-   if (type == NO_TYPE)
-     {
-       type = SearchObjectByLocation (
--        LOOKUP_MORE & ~(AndRats ? RATLINE_TYPE : 0),
-+        LOOKUP_MORE & ~(AndRats ? 0 : RATLINE_TYPE),
-         &ptr1, &ptr2, &ptr3, X, Y, Range);
-       if (type == NO_TYPE)
-         return;
+
