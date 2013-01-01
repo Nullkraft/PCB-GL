@@ -1,5 +1,5 @@
 Bottom: 3a40661e5f8d2b112707dba8ccea8740d28b1be2
-Top:    ef0b1bbd66c797420ef24be83b820119da5c6485
+Top:    d901bff8f644702c559d4ff810b2e8d765d3b3b6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-01 15:21:49 +0000
 
@@ -1150,7 +1150,7 @@ index 0000000..21d15cd
 +
 +#endif
 diff --git a/src/find.c b/src/find.c
-index 0f85f3e..0e367be 100644
+index 0f85f3e..4c897ee 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -77,7 +77,6 @@
@@ -1283,7 +1283,7 @@ index 0f85f3e..0e367be 100644
  /* ---------------------------------------------------------------------------
   * some local types
   *
-@@ -256,12 +140,11 @@ typedef struct
+@@ -256,12 +140,9 @@ typedef struct
  /* ---------------------------------------------------------------------------
   * some local identifiers
   */
@@ -1294,14 +1294,12 @@ index 0f85f3e..0e367be 100644
 -static bool drc = false;     /* whether to stop if finding something not found */
 -static Cardinal drcerr_count;   /* count of drc errors */
 +/* XXX */ static Coord Bloat = 0;
-+/* XXX */ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
-+/* XXX */ static int thing_type;
 +/* XXX */ static bool User = false;    /* user action causing this */
 +/* XXX */ static bool drc = false;     /* whether to stop if finding something not found */
  static Cardinal TotalP, TotalV;
  static ListType LineList[MAX_LAYER],    /* list of objects to */
    PolygonList[MAX_LAYER], ArcList[MAX_LAYER], PadList[2], RatList, PVList;
-@@ -278,13 +161,9 @@ static bool IsRatPointOnLineEnd (PointType *, LineType *);
+@@ -278,13 +159,9 @@ static bool IsRatPointOnLineEnd (PointType *, LineType *);
  static bool ArcArcIntersect (ArcType *, ArcType *);
  static bool PrepareNextLoop (FILE *);
  static void DrawNewConnections (void);
@@ -1316,7 +1314,24 @@ index 0f85f3e..0e367be 100644
  static bool IsPolygonInPolygon (PolygonType *, PolygonType *);
  
  /* ---------------------------------------------------------------------------
-@@ -2417,7 +2296,7 @@ IsLineInPolygon (LineType *Line, PolygonType *Polygon)
+@@ -397,7 +274,7 @@ PinLineIntersect (PinType *PV, LineType *Line)
+                                                                     (PadType *)Line);
+ }
+ 
+-
++#if 0
+ bool
+ SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
+ {
+@@ -412,6 +289,7 @@ SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
+     }
+   return true;
+ }
++#endif
+ 
+ bool
+ BoxBoxIntersection (BoxType *b1, BoxType *b2)
+@@ -2417,7 +2295,7 @@ IsLineInPolygon (LineType *Line, PolygonType *Polygon)
   *
   * The polygon is assumed to already have been proven non-clearing
   */
@@ -1325,7 +1340,7 @@ index 0f85f3e..0e367be 100644
  IsPadInPolygon (PadType *pad, PolygonType *polygon)
  {
      return IsLineInPolygon ((LineType *) pad, polygon);
-@@ -2636,7 +2515,7 @@ reassign_no_drc_flags (void)
+@@ -2636,7 +2514,7 @@ reassign_no_drc_flags (void)
  /* ---------------------------------------------------------------------------
   * loops till no more connections are found 
   */
@@ -1334,7 +1349,7 @@ index 0f85f3e..0e367be 100644
  DoIt (int flag, bool AndRats, bool AndDraw)
  {
    bool newone = false;
-@@ -2981,7 +2860,7 @@ LookupConnectionsToAllElements (FILE * FP)
+@@ -2981,7 +2859,7 @@ LookupConnectionsToAllElements (FILE * FP)
  /*---------------------------------------------------------------------------
   * add the starting object to the list of found objects
   */
@@ -1343,7 +1358,7 @@ index 0f85f3e..0e367be 100644
  ListStart (int type, void *ptr1, void *ptr2, void *ptr3, int flag)
  {
    DumpList ();
-@@ -3289,7 +3168,7 @@ ClearFlagOnAllObjects (bool AndDraw, int flag)
+@@ -3289,7 +3167,7 @@ ClearFlagOnAllObjects (bool AndDraw, int flag)
  /*----------------------------------------------------------------------------
   * Dumps the list contents
   */
@@ -1352,7 +1367,7 @@ index 0f85f3e..0e367be 100644
  DumpList (void)
  {
    Cardinal i;
-@@ -3321,878 +3200,6 @@ DumpList (void)
+@@ -3321,878 +3199,6 @@ DumpList (void)
    RatList.DrawLocation = 0;
  }
  
