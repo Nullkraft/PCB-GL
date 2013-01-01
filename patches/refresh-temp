@@ -1,0 +1,69 @@
+Bottom: fdbe904f935b7ec36492132deaba2eeff1199db2
+Top:    ef0b1bbd66c797420ef24be83b820119da5c6485
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-01 19:51:50 +0000
+
+Refresh of split-drc-routines-out-of-find
+
+---
+
+diff --git a/src/drc.c b/src/drc.c
+index ea8d0b3..57d525b 100644
+--- a/src/drc.c
++++ b/src/drc.c
+@@ -112,11 +112,11 @@ append_drc_dialog_message(const char *fmt, ...)
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
+  */
+-static Coord Bloat = 0;
+-static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
+-static int thing_type;
+-static bool User = false;    /* user action causing this */
+-static bool drc = false;     /* whether to stop if finding something not found */
++/* XXX */ static Coord Bloat = 0;
++/* XXX */ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
++/* XXX */ static int thing_type;
++/* XXX */ static bool User = false;    /* user action causing this */
++/* XXX */ static bool drc = false;     /* whether to stop if finding something not found */
+ static Cardinal drcerr_count;   /* count of drc errors */
+ 
+ /*----------------------------------------------------------------------------
+@@ -253,7 +253,7 @@ throw_drc_dialog(void)
+   return r;
+ }
+ 
+-bool
++/* XXX */ static bool
+ SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
+ {
+   thing_ptr1 = ptr1;
+diff --git a/src/find.c b/src/find.c
+index c38c967..0e367be 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -140,11 +140,11 @@ typedef struct
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
+  */
+-static Coord Bloat = 0;
+-static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
+-static int thing_type;
+-static bool User = false;    /* user action causing this */
+-static bool drc = false;     /* whether to stop if finding something not found */
++/* XXX */ static Coord Bloat = 0;
++/* XXX */ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
++/* XXX */ static int thing_type;
++/* XXX */ static bool User = false;    /* user action causing this */
++/* XXX */ static bool drc = false;     /* whether to stop if finding something not found */
+ static Cardinal TotalP, TotalV;
+ static ListType LineList[MAX_LAYER],    /* list of objects to */
+   PolygonList[MAX_LAYER], ArcList[MAX_LAYER], PadList[2], RatList, PVList;
+@@ -161,7 +161,7 @@ static bool IsRatPointOnLineEnd (PointType *, LineType *);
+ static bool ArcArcIntersect (ArcType *, ArcType *);
+ static bool PrepareNextLoop (FILE *);
+ static void DrawNewConnections (void);
+-static bool SetThing (int, void *, void *, void *);
++/* XXX */ static bool SetThing (int, void *, void *, void *);
+ static bool IsArcInPolygon (ArcType *, PolygonType *);
+ static bool IsLineInPolygon (LineType *, PolygonType *);
+ static bool IsPolygonInPolygon (PolygonType *, PolygonType *);
