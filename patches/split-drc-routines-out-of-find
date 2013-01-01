@@ -1,5 +1,5 @@
 Bottom: 3a40661e5f8d2b112707dba8ccea8740d28b1be2
-Top:    d901bff8f644702c559d4ff810b2e8d765d3b3b6
+Top:    3d23350e691eed44889e6e2d47a99fe6d38239b2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-01 15:21:49 +0000
 
@@ -1150,7 +1150,7 @@ index 0000000..21d15cd
 +
 +#endif
 diff --git a/src/find.c b/src/find.c
-index 0f85f3e..4c897ee 100644
+index 0f85f3e..16015dc 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -77,7 +77,6 @@
@@ -1307,7 +1307,7 @@ index 0f85f3e..4c897ee 100644
 -static void LocateError (Coord *, Coord *);
 -static void BuildObjectList (int *, long int **, int **);
 -static bool SetThing (int, void *, void *, void *);
-+/* XXX */ static bool SetThing (int, void *, void *, void *);
++///* XXX */ static bool SetThing (int, void *, void *, void *);
  static bool IsArcInPolygon (ArcType *, PolygonType *);
  static bool IsLineInPolygon (LineType *, PolygonType *);
 -static bool IsPadInPolygon (PadType *, PolygonType *);
