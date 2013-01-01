@@ -26,45 +26,11 @@
  */
 
 
-/*
- * short description:
- * - lists for pins and vias, lines, arcs, pads and for polygons are created.
- *   Every object that has to be checked is added to its list.
- *   Coarse searching is accomplished with the data rtrees.
- * - there's no 'speed-up' mechanism for polygons because they are not used
- *   as often as other objects 
- * - the maximum distance between line and pin ... would depend on the angle
- *   between them. To speed up computation the limit is set to one half
- *   of the thickness of the objects (cause of square pins).
- *
- * PV:  means pin or via (objects that connect layers)
- * LO:  all non PV objects (layer objects like lines, arcs, polygons, pads)
- *
- * 1. first, the LO or PV at the given coordinates is looked up
- * 2. all LO connections to that PV are looked up next
- * 3. lookup of all LOs connected to LOs from (2).
- *    This step is repeated until no more new connections are found.
- * 4. lookup all PVs connected to the LOs from (2) and (3)
- * 5. start again with (1) for all new PVs from (4)
- *
- * Intersection of line <--> circle:
- * - calculate the signed distance from the line to the center,
- *   return false if abs(distance) > R
- * - get the distance from the line <--> distancevector intersection to
- *   (X1,Y1) in range [0,1], return true if 0 <= distance <= 1
- * - depending on (r > 1.0 or r < 0.0) check the distance of X2,Y2 or X1,Y1
- *   to X,Y
- *
- * Intersection of line <--> line:
- * - see the description of 'LineLineIntersect()'
- */
-
-/* routines to find connections between pins, vias, lines...
- */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
+#include <stdio.h>
 #include <stdlib.h>
 #ifdef HAVE_STRING_H
 #include <string.h>
@@ -76,6 +42,7 @@
 #ifdef HAVE_SYS_TIMES_H
 #include <sys/times.h>
 #endif
+
 
 #include "global.h"
 
@@ -135,6 +102,121 @@
 #define	IS_PV_ON_PAD(PV,Pad) \
 	( IsPointInPad((PV)->X, (PV)->Y, MAX((PV)->Thickness/2 +Bloat,0), (Pad)))
 
+static DrcViolationType
+*pcb_drc_violation_new (const char *title,
+                        const char *explanation,
+                        Coord x, Coord y,
+                        Angle angle,
+                        bool have_measured,
+                        Coord measured_value,
+                        Coord required_value,
+                        int object_count,
+                        long int *object_id_list,
+                        int *object_type_list)
+{
+  DrcViolationType *violation = (DrcViolationType *)malloc (sizeof (DrcViolationType));
+
+  violation->title = strdup (title);
+  violation->explanation = strdup (explanation);
+  violation->x = x;
+  violation->y = y;
+  violation->angle = angle;
+  violation->have_measured = have_measured;
+  violation->measured_value = measured_value;
+  violation->required_value = required_value;
+  violation->object_count = object_count;
+  violation->object_id_list = object_id_list;
+  violation->object_type_list = object_type_list;
+
+  return violation;
+}
+
+static void
+pcb_drc_violation_free (DrcViolationType *violation)
+{
+  free (violation->title);
+  free (violation->explanation);
+  free (violation);
+}
+
+static GString *drc_dialog_message;
+static void
+reset_drc_dialog_message(void)
+{
+  if (drc_dialog_message)
+    g_string_free (drc_dialog_message, FALSE);
+  drc_dialog_message = g_string_new ("");
+  if (gui->drc_gui != NULL)
+    {
+      gui->drc_gui->reset_drc_dialog_message ();
+    }
+}
+static void
+append_drc_dialog_message(const char *fmt, ...)
+{
+  gchar *new_str;
+  va_list ap;
+  va_start (ap, fmt);
+  new_str = pcb_vprintf (fmt, ap);
+  g_string_append (drc_dialog_message, new_str);
+  va_end (ap);
+  g_free (new_str);
+}
+
+static void GotoError (void);
+
+static void
+append_drc_violation (DrcViolationType *violation)
+{
+  if (gui->drc_gui != NULL)
+    {
+      gui->drc_gui->append_drc_violation (violation);
+    }
+  else
+    {
+      /* Fallback to formatting the violation message as text */
+      append_drc_dialog_message ("%s\n", violation->title);
+      append_drc_dialog_message (_("%m+near %$mD\n"),
+                                 Settings.grid_unit->allow,
+                                 violation->x, violation->y);
+      GotoError ();
+    }
+
+  if (gui->drc_gui == NULL || gui->drc_gui->log_drc_violations )
+    {
+      Message (_("WARNING!  Design Rule error - %s\n"), violation->title);
+      Message (_("%m+near location %$mD\n"),
+               Settings.grid_unit->allow,
+               violation->x, violation->y);
+    }
+}
+/*
+ * message when asked about continuing DRC checks after next 
+ * violation is found.
+ */
+#define DRC_CONTINUE _("Press Next to continue DRC checking")
+#define DRC_NEXT _("Next")
+#define DRC_CANCEL _("Cancel")
+
+static int
+throw_drc_dialog(void)
+{
+  int r;
+
+  if (gui->drc_gui != NULL)
+    {
+      r = gui->drc_gui->throw_drc_dialog ();
+    }
+  else
+    {
+      /* Fallback to formatting the violation message as text */
+      append_drc_dialog_message (DRC_CONTINUE);
+      r = gui->confirm_dialog (drc_dialog_message->str, DRC_CANCEL, DRC_NEXT);
+      reset_drc_dialog_message();
+    }
+  return r;
+}
+
 /* ---------------------------------------------------------------------------
  * some local types
  *
@@ -157,6 +239,7 @@ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
 static int thing_type;
 static bool User = false;    /* user action causing this */
 static bool drc = false;     /* whether to stop if finding something not found */
+static Cardinal drcerr_count;   /* count of drc errors */
 static Cardinal TotalP, TotalV, NumberOfPads[2];
 static ListType LineList[MAX_LAYER],    /* list of objects to */
   PolygonList[MAX_LAYER], ArcList[MAX_LAYER], PadList[2], RatList, PVList;
@@ -171,9 +254,10 @@ static bool LookupLOConnectionsToArc (ArcType *, Cardinal, int, bool);
 static bool LookupLOConnectionsToRatEnd (PointType *, Cardinal, int);
 static bool IsRatPointOnLineEnd (PointType *, LineType *);
 static bool ArcArcIntersect (ArcType *, ArcType *);
-static bool PrepareNextLoop (FILE *);
 static void DrawNewConnections (void);
 static void DumpList (void);
+static void LocateError (Coord *, Coord *);
+static void BuildObjectList (int *, long int **, int **);
 static bool SetThing (int, void *, void *, void *);
 static bool IsArcInPolygon (ArcType *, PolygonType *);
 static bool IsLineInPolygon (LineType *, PolygonType *);
@@ -346,72 +430,6 @@ PV_TOUCH_PV (PinType *PV1, PinType *PV2)
   b2.Y1 = PV2->Y - t2;
   b2.Y2 = PV2->Y + t2;
   return BoxBoxIntersection (&b1, &b2);
-}
-
-/* ---------------------------------------------------------------------------
- * releases all allocated memory
- */
-static void
-FreeLayoutLookupMemory (void)
-{
-  Cardinal i;
-
-  for (i = 0; i < max_copper_layer; i++)
-    {
-      free (LineList[i].Data);
-      LineList[i].Data = NULL;
-      free (ArcList[i].Data);
-      ArcList[i].Data = NULL;
-      free (PolygonList[i].Data);
-      PolygonList[i].Data = NULL;
-    }
-  free (PVList.Data);
-  PVList.Data = NULL;
-  free (RatList.Data);
-  RatList.Data = NULL;
-}
-
-static void
-FreeComponentLookupMemory (void)
-{
-  free (PadList[0].Data);
-  PadList[0].Data = NULL;
-  free (PadList[1].Data);
-  PadList[1].Data = NULL;
-}
-
-/* ---------------------------------------------------------------------------
- * allocates memory for component related stacks ...
- * initializes index and sorts it by X1 and X2
- */
-static void
-InitComponentLookup (void)
-{
-  Cardinal i;
-
-  /* initialize pad data; start by counting the total number
-   * on each of the two possible layers
-   */
-  NumberOfPads[COMPONENT_LAYER] = NumberOfPads[SOLDER_LAYER] = 0;
-  ALLPAD_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (ONSOLDERFLAG, pad))
-      NumberOfPads[SOLDER_LAYER]++;
-    else
-      NumberOfPads[COMPONENT_LAYER]++;
-  }
-  ENDALL_LOOP;
-  for (i = 0; i < 2; i++)
-    {
-      /* allocate memory for working list */
-      PadList[i].Data = (void **)calloc (NumberOfPads[i], sizeof (PadType *));
-
-      /* clear some struct members */
-      PadList[i].Location = 0;
-      PadList[i].DrawLocation = 0;
-      PadList[i].Number = 0;
-      PadList[i].Size = NumberOfPads[i];
-    }
 }
 
 /* ---------------------------------------------------------------------------
@@ -2377,120 +2395,6 @@ IsPolygonInPolygon (PolygonType *P1, PolygonType *P2)
 }
 
 /* ---------------------------------------------------------------------------
- * writes the several names of an element to a file
- */
-static void
-PrintElementNameList (ElementType *Element, FILE * FP)
-{
-  static DynamicStringType cname, pname, vname;
-
-  CreateQuotedString (&cname, (char *)EMPTY (DESCRIPTION_NAME (Element)));
-  CreateQuotedString (&pname, (char *)EMPTY (NAMEONPCB_NAME (Element)));
-  CreateQuotedString (&vname, (char *)EMPTY (VALUE_NAME (Element)));
-  fprintf (FP, "(%s %s %s)\n", cname.Data, pname.Data, vname.Data);
-}
-
-/* ---------------------------------------------------------------------------
- * writes the several names of an element to a file
- */
-static void
-PrintConnectionElementName (ElementType *Element, FILE * FP)
-{
-  fputs ("Element", FP);
-  PrintElementNameList (Element, FP);
-  fputs ("{\n", FP);
-}
-
-/* ---------------------------------------------------------------------------
- * prints one {pin,pad,via}/element entry of connection lists
- */
-static void
-PrintConnectionListEntry (char *ObjName, ElementType *Element,
-                          bool FirstOne, FILE * FP)
-{
-  static DynamicStringType oname;
-
-  CreateQuotedString (&oname, ObjName);
-  if (FirstOne)
-    fprintf (FP, "\t%s\n\t{\n", oname.Data);
-  else
-    {
-      fprintf (FP, "\t\t%s ", oname.Data);
-      if (Element)
-        PrintElementNameList (Element, FP);
-      else
-        fputs ("(__VIA__)\n", FP);
-    }
-}
-
-/* ---------------------------------------------------------------------------
- * prints all found connections of a pads to file FP
- * the connections are stacked in 'PadList'
- */
-static void
-PrintPadConnections (Cardinal Layer, FILE * FP, bool IsFirst)
-{
-  Cardinal i;
-  PadType *ptr;
-
-  if (!PadList[Layer].Number)
-    return;
-
-  /* the starting pad */
-  if (IsFirst)
-    {
-      ptr = PADLIST_ENTRY (Layer, 0);
-      if (ptr != NULL)
-        PrintConnectionListEntry ((char *)UNKNOWN (ptr->Name), NULL, true, FP);
-      else
-        printf ("Skipping NULL ptr in 1st part of PrintPadConnections\n");
-    }
-
-  /* we maybe have to start with i=1 if we are handling the
-   * starting-pad itself
-   */
-  for (i = IsFirst ? 1 : 0; i < PadList[Layer].Number; i++)
-    {
-      ptr = PADLIST_ENTRY (Layer, i);
-      if (ptr != NULL)
-        PrintConnectionListEntry ((char *)EMPTY (ptr->Name), (ElementType *)ptr->Element, false, FP);
-      else
-        printf ("Skipping NULL ptr in 2nd part of PrintPadConnections\n");
-    }
-}
-
-/* ---------------------------------------------------------------------------
- * prints all found connections of a pin to file FP
- * the connections are stacked in 'PVList'
- */
-static void
-PrintPinConnections (FILE * FP, bool IsFirst)
-{
-  Cardinal i;
-  PinType *pv;
-
-  if (!PVList.Number)
-    return;
-
-  if (IsFirst)
-    {
-      /* the starting pin */
-      pv = PVLIST_ENTRY (0);
-      PrintConnectionListEntry ((char *)EMPTY (pv->Name), NULL, true, FP);
-    }
-
-  /* we maybe have to start with i=1 if we are handling the
-   * starting-pin itself
-   */
-  for (i = IsFirst ? 1 : 0; i < PVList.Number; i++)
-    {
-      /* get the elements name or assume that its a via */
-      pv = PVLIST_ENTRY (i);
-      PrintConnectionListEntry ((char *)EMPTY (pv->Name), (ElementType *)pv->Element, false, FP);
-    }
-}
-
-/* ---------------------------------------------------------------------------
  * checks if all lists of new objects are handled
  */
 static bool
@@ -2549,203 +2453,6 @@ DoIt (int flag, bool AndRats, bool AndDraw)
   if (AndDraw)
     Draw ();
   return (newone);
-}
-
-/* ---------------------------------------------------------------------------
- * prints all unused pins of an element to file FP
- */
-static bool
-PrintAndSelectUnusedPinsAndPadsOfElement (ElementType *Element, FILE * FP, int flag)
-{
-  bool first = true;
-  Cardinal number;
-  static DynamicStringType oname;
-
-  /* check all pins in element */
-
-  PIN_LOOP (Element);
-  {
-    if (!TEST_FLAG (HOLEFLAG, pin))
-      {
-        /* pin might have bee checked before, add to list if not */
-        if (!TEST_FLAG (flag, pin) && FP)
-          {
-            int i;
-            if (ADD_PV_TO_LIST (pin, flag))
-              return true;
-            DoIt (flag, true, true);
-            number = PadList[COMPONENT_LAYER].Number
-              + PadList[SOLDER_LAYER].Number + PVList.Number;
-            /* the pin has no connection if it's the only
-             * list entry; don't count vias
-             */
-            for (i = 0; i < PVList.Number; i++)
-              if (!PVLIST_ENTRY (i)->Element)
-                number--;
-            if (number == 1)
-              {
-                /* output of element name if not already done */
-                if (first)
-                  {
-                    PrintConnectionElementName (Element, FP);
-                    first = false;
-                  }
-
-                /* write name to list and draw selected object */
-                CreateQuotedString (&oname, (char *)EMPTY (pin->Name));
-                fprintf (FP, "\t%s\n", oname.Data);
-                SET_FLAG (SELECTEDFLAG, pin);
-                DrawPin (pin);
-              }
-
-            /* reset found objects for the next pin */
-            if (PrepareNextLoop (FP))
-              return (true);
-          }
-      }
-  }
-  END_LOOP;
-
-  /* check all pads in element */
-  PAD_LOOP (Element);
-  {
-    /* lookup pad in list */
-    /* pad might has bee checked before, add to list if not */
-    if (!TEST_FLAG (flag, pad) && FP)
-      {
-        int i;
-        if (ADD_PAD_TO_LIST (TEST_FLAG (ONSOLDERFLAG, pad)
-                             ? SOLDER_LAYER : COMPONENT_LAYER, pad, flag))
-          return true;
-        DoIt (flag, true, true);
-        number = PadList[COMPONENT_LAYER].Number
-          + PadList[SOLDER_LAYER].Number + PVList.Number;
-        /* the pin has no connection if it's the only
-         * list entry; don't count vias
-         */
-        for (i = 0; i < PVList.Number; i++)
-          if (!PVLIST_ENTRY (i)->Element)
-            number--;
-        if (number == 1)
-          {
-            /* output of element name if not already done */
-            if (first)
-              {
-                PrintConnectionElementName (Element, FP);
-                first = false;
-              }
-
-            /* write name to list and draw selected object */
-            CreateQuotedString (&oname, (char *)EMPTY (pad->Name));
-            fprintf (FP, "\t%s\n", oname.Data);
-            SET_FLAG (SELECTEDFLAG, pad);
-            DrawPad (pad);
-          }
-
-        /* reset found objects for the next pin */
-        if (PrepareNextLoop (FP))
-          return (true);
-      }
-  }
-  END_LOOP;
-
-  /* print separator if element has unused pins or pads */
-  if (!first)
-    {
-      fputs ("}\n\n", FP);
-      SEPARATE (FP);
-    }
-  return (false);
-}
-
-/* ---------------------------------------------------------------------------
- * resets some flags for looking up the next pin/pad
- */
-static bool
-PrepareNextLoop (FILE * FP)
-{
-  Cardinal layer;
-
-  /* reset found LOs for the next pin */
-  for (layer = 0; layer < max_copper_layer; layer++)
-    {
-      LineList[layer].Location = LineList[layer].Number = 0;
-      ArcList[layer].Location = ArcList[layer].Number = 0;
-      PolygonList[layer].Location = PolygonList[layer].Number = 0;
-    }
-
-  /* reset found pads */
-  for (layer = 0; layer < 2; layer++)
-    PadList[layer].Location = PadList[layer].Number = 0;
-
-  /* reset PVs */
-  PVList.Number = PVList.Location = 0;
-  RatList.Number = RatList.Location = 0;
-
-  return (false);
-}
-
-/* ---------------------------------------------------------------------------
- * finds all connections to the pins of the passed element.
- * The result is written to file FP
- * Returns true if operation was aborted
- */
-static bool
-PrintElementConnections (ElementType *Element, FILE * FP, int flag, bool AndDraw)
-{
-  PrintConnectionElementName (Element, FP);
-
-  /* check all pins in element */
-  PIN_LOOP (Element);
-  {
-    /* pin might have been checked before, add to list if not */
-    if (TEST_FLAG (flag, pin))
-      {
-        PrintConnectionListEntry ((char *)EMPTY (pin->Name), NULL, true, FP);
-        fputs ("\t\t__CHECKED_BEFORE__\n\t}\n", FP);
-        continue;
-      }
-    if (ADD_PV_TO_LIST (pin, flag))
-      return true;
-    DoIt (flag, true, AndDraw);
-    /* printout all found connections */
-    PrintPinConnections (FP, true);
-    PrintPadConnections (COMPONENT_LAYER, FP, false);
-    PrintPadConnections (SOLDER_LAYER, FP, false);
-    fputs ("\t}\n", FP);
-    if (PrepareNextLoop (FP))
-      return (true);
-  }
-  END_LOOP;
-
-  /* check all pads in element */
-  PAD_LOOP (Element);
-  {
-    Cardinal layer;
-    /* pad might have been checked before, add to list if not */
-    if (TEST_FLAG (flag, pad))
-      {
-        PrintConnectionListEntry ((char *)EMPTY (pad->Name), NULL, true, FP);
-        fputs ("\t\t__CHECKED_BEFORE__\n\t}\n", FP);
-        continue;
-      }
-    layer = TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER;
-    if (ADD_PAD_TO_LIST (layer, pad, flag))
-      return true;
-    DoIt (flag, true, AndDraw);
-    /* print all found connections */
-    PrintPadConnections (layer, FP, true);
-    PrintPadConnections (layer ==
-                         (COMPONENT_LAYER ? SOLDER_LAYER : COMPONENT_LAYER),
-                         FP, false);
-    PrintPinConnections (FP, false);
-    fputs ("\t}\n", FP);
-    if (PrepareNextLoop (FP))
-      return (true);
-  }
-  END_LOOP;
-  fputs ("}\n\n", FP);
-  return (false);
 }
 
 /* ---------------------------------------------------------------------------
@@ -2820,54 +2527,6 @@ DrawNewConnections (void)
         DrawRat (RATLIST_ENTRY (position));
       RatList.DrawLocation = RatList.Number;
     }
-}
-
-/* ---------------------------------------------------------------------------
- * find all connections to pins within one element
- */
-void
-LookupElementConnections (ElementType *Element, FILE * FP)
-{
-  /* reset all currently marked connections */
-  User = true;
-  ClearFlagOnAllObjects (true, FOUNDFLAG);
-  InitConnectionLookup ();
-  PrintElementConnections (Element, FP, FOUNDFLAG, true);
-  SetChangedFlag (true);
-  if (Settings.RingBellWhenFinished)
-    gui->beep ();
-  FreeConnectionLookupMemory ();
-  IncrementUndoSerialNumber ();
-  User = false;
-  Draw ();
-}
-
-/* ---------------------------------------------------------------------------
- * find all connections to pins of all element
- */
-void
-LookupConnectionsToAllElements (FILE * FP)
-{
-  /* reset all currently marked connections */
-  User = false;
-  ClearFlagOnAllObjects (false, FOUNDFLAG);
-  InitConnectionLookup ();
-
-  ELEMENT_LOOP (PCB->Data);
-  {
-    /* break if abort dialog returned true */
-    if (PrintElementConnections (element, FP, FOUNDFLAG, false))
-      break;
-    SEPARATE (FP);
-    if (Settings.ResetAfterElement && n != 1)
-      ClearFlagOnAllObjects (false, FOUNDFLAG);
-  }
-  END_LOOP;
-  if (Settings.RingBellWhenFinished)
-    gui->beep ();
-  ClearFlagOnAllObjects (false, FOUNDFLAG);
-  FreeConnectionLookupMemory ();
-  Redraw ();
 }
 
 /*---------------------------------------------------------------------------
@@ -2999,185 +2658,6 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
   FreeConnectionLookupMemory ();
 }
 
-/* ---------------------------------------------------------------------------
- * find connections for rats nesting
- * assumes InitConnectionLookup() has already been done
- */
-void
-RatFindHook (int type, void *ptr1, void *ptr2, void *ptr3,
-             bool undo, int flag, bool AndRats)
-{
-  User = undo;
-  DumpList ();
-  ListStart (type, ptr1, ptr2, ptr3, flag);
-  DoIt (flag, AndRats, false);
-  User = false;
-}
-
-/* ---------------------------------------------------------------------------
- * find all unused pins of all element
- */
-void
-LookupUnusedPins (FILE * FP)
-{
-  /* reset all currently marked connections */
-  User = true;
-  ClearFlagOnAllObjects (true, FOUNDFLAG);
-  InitConnectionLookup ();
-
-  ELEMENT_LOOP (PCB->Data);
-  {
-    /* break if abort dialog returned true;
-     * passing NULL as filedescriptor discards the normal output
-     */
-    if (PrintAndSelectUnusedPinsAndPadsOfElement (element, FP, FOUNDFLAG))
-      break;
-  }
-  END_LOOP;
-
-  if (Settings.RingBellWhenFinished)
-    gui->beep ();
-  FreeConnectionLookupMemory ();
-  IncrementUndoSerialNumber ();
-  User = false;
-  Draw ();
-}
-
-/* ---------------------------------------------------------------------------
- * resets all used flags of pins and vias
- */
-bool
-ClearFlagOnPinsViasAndPads (bool AndDraw, int flag)
-{
-  bool change = false;
-
-  VIA_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (flag, via))
-      {
-        if (AndDraw)
-          AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
-        CLEAR_FLAG (flag, via);
-        if (AndDraw)
-          DrawVia (via);
-        change = true;
-      }
-  }
-  END_LOOP;
-  ELEMENT_LOOP (PCB->Data);
-  {
-    PIN_LOOP (element);
-    {
-      if (TEST_FLAG (flag, pin))
-        {
-          if (AndDraw)
-            AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
-          CLEAR_FLAG (flag, pin);
-          if (AndDraw)
-            DrawPin (pin);
-          change = true;
-        }
-    }
-    END_LOOP;
-    PAD_LOOP (element);
-    {
-      if (TEST_FLAG (flag, pad))
-        {
-          if (AndDraw)
-            AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
-          CLEAR_FLAG (flag, pad);
-          if (AndDraw)
-            DrawPad (pad);
-          change = true;
-        }
-    }
-    END_LOOP;
-  }
-  END_LOOP;
-  if (change)
-    SetChangedFlag (true);
-  return change;
-}
-
-/* ---------------------------------------------------------------------------
- * resets all used flags of LOs
- */
-bool
-ClearFlagOnLinesAndPolygons (bool AndDraw, int flag)
-{
-  bool change = false;
-
-  RAT_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (flag, line))
-      {
-        if (AndDraw)
-          AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
-        CLEAR_FLAG (flag, line);
-        if (AndDraw)
-          DrawRat (line);
-        change = true;
-      }
-  }
-  END_LOOP;
-  COPPERLINE_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (flag, line))
-      {
-        if (AndDraw)
-          AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
-        CLEAR_FLAG (flag, line);
-        if (AndDraw)
-          DrawLine (layer, line);
-        change = true;
-      }
-  }
-  ENDALL_LOOP;
-  COPPERARC_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (flag, arc))
-      {
-        if (AndDraw)
-          AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
-        CLEAR_FLAG (flag, arc);
-        if (AndDraw)
-          DrawArc (layer, arc);
-        change = true;
-      }
-  }
-  ENDALL_LOOP;
-  COPPERPOLYGON_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (flag, polygon))
-      {
-        if (AndDraw)
-          AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
-        CLEAR_FLAG (flag, polygon);
-        if (AndDraw)
-          DrawPolygon (layer, polygon);
-        change = true;
-      }
-  }
-  ENDALL_LOOP;
-  if (change)
-    SetChangedFlag (true);
-  return change;
-}
-
-/* ---------------------------------------------------------------------------
- * resets all found connections
- */
-bool
-ClearFlagOnAllObjects (bool AndDraw, int flag)
-{
-  bool change = false;
-
-  change = ClearFlagOnPinsViasAndPads  (AndDraw, flag) || change;
-  change = ClearFlagOnLinesAndPolygons (AndDraw, flag) || change;
-
-  return change;
-}
-
 /*----------------------------------------------------------------------------
  * Dumps the list contents
  */
@@ -3213,16 +2693,874 @@ DumpList (void)
   RatList.DrawLocation = 0;
 }
 
-void
-InitConnectionLookup (void)
+struct drc_info
 {
-  InitComponentLookup ();
-  InitLayoutLookup ();
+  int flag;
+};
+
+/*-----------------------------------------------------------------------------
+ * Check for DRC violations on a single net starting from the pad or pin
+ * sees if the connectivity changes when everything is bloated, or shrunk
+ */
+static bool
+DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+{
+  Coord x, y;
+  int object_count;
+  long int *object_id_list;
+  int *object_type_list;
+  DrcViolationType *violation;
+  int flag;
+
+  if (PCB->Shrink != 0)
+    {
+      Bloat = -PCB->Shrink;
+      flag = DRCFLAG | SELECTEDFLAG;
+      ListStart (What, ptr1, ptr2, ptr3, flag);
+      DoIt (flag, true, false);
+      /* ok now the shrunk net has the SELECTEDFLAG set */
+      DumpList ();
+      flag = FOUNDFLAG;
+      ListStart (What, ptr1, ptr2, ptr3, flag);
+      Bloat = 0;
+      drc = true;               /* abort the search if we find anything not already found */
+      if (DoIt (flag, true, false))
+        {
+          DumpList ();
+          /* make the flag changes undoable */
+          flag = FOUNDFLAG | SELECTEDFLAG;
+          ClearFlagOnAllObjects (false, flag);
+          User = true;
+          drc = false;
+          Bloat = -PCB->Shrink;
+          flag = SELECTEDFLAG;
+          ListStart (What, ptr1, ptr2, ptr3, flag);
+          DoIt (flag, true, true);
+          DumpList ();
+          ListStart (What, ptr1, ptr2, ptr3, flag);
+          flag = FOUNDFLAG;
+          Bloat = 0;
+          drc = true;
+          DoIt (flag, true, true);
+          DumpList ();
+          User = false;
+          drc = false;
+          drcerr_count++;
+          LocateError (&x, &y);
+          BuildObjectList (&object_count, &object_id_list, &object_type_list);
+          violation = pcb_drc_violation_new (_("Potential for broken trace"),
+                                             _("Insufficient overlap between objects can lead to broken tracks\n"
+                                               "due to registration errors with old wheel style photo-plotters."),
+                                             x, y,
+                                             0,     /* ANGLE OF ERROR UNKNOWN */
+                                             FALSE, /* MEASUREMENT OF ERROR UNKNOWN */
+                                             0,     /* MAGNITUDE OF ERROR UNKNOWN */
+                                             PCB->Shrink,
+                                             object_count,
+                                             object_id_list,
+                                             object_type_list);
+          append_drc_violation (violation);
+          pcb_drc_violation_free (violation);
+          free (object_id_list);
+          free (object_type_list);
+
+          if (!throw_drc_dialog())
+            return (true);
+          IncrementUndoSerialNumber ();
+          Undo (true);
+        }
+      DumpList ();
+    }
+  /* now check the bloated condition */
+  drc = false;
+  ClearFlagOnAllObjects (false, flag);
+  flag = FOUNDFLAG;
+  ListStart (What, ptr1, ptr2, ptr3, flag);
+  Bloat = PCB->Bloat;
+  drc = true;
+  while (DoIt (flag, true, false))
+    {
+      DumpList ();
+      /* make the flag changes undoable */
+      flag = FOUNDFLAG | SELECTEDFLAG;
+      ClearFlagOnAllObjects (false, flag);
+      User = true;
+      drc = false;
+      Bloat = 0;
+      flag = SELECTEDFLAG;
+      ListStart (What, ptr1, ptr2, ptr3, flag);
+      DoIt (flag, true, true);
+      DumpList ();
+      flag = FOUNDFLAG;
+      ListStart (What, ptr1, ptr2, ptr3, flag);
+      Bloat = PCB->Bloat;
+      drc = true;
+      DoIt (flag, true, true);
+      DumpList ();
+      drcerr_count++;
+      LocateError (&x, &y);
+      BuildObjectList (&object_count, &object_id_list, &object_type_list);
+      violation = pcb_drc_violation_new (_("Copper areas too close"),
+                                         _("Circuits that are too close may bridge during imaging, etching,\n"
+                                           "plating, or soldering processes resulting in a direct short."),
+                                         x, y,
+                                         0,     /* ANGLE OF ERROR UNKNOWN */
+                                         FALSE, /* MEASUREMENT OF ERROR UNKNOWN */
+                                         0,     /* MAGNITUDE OF ERROR UNKNOWN */
+                                         PCB->Bloat,
+                                         object_count,
+                                         object_id_list,
+                                         object_type_list);
+      append_drc_violation (violation);
+      pcb_drc_violation_free (violation);
+      free (object_id_list);
+      free (object_type_list);
+      User = false;
+      drc = false;
+      if (!throw_drc_dialog())
+        return (true);
+      IncrementUndoSerialNumber ();
+      Undo (true);
+      /* highlight the rest of the encroaching net so it's not reported again */
+      flag |= SELECTEDFLAG;
+      Bloat = 0;
+      ListStart (thing_type, thing_ptr1, thing_ptr2, thing_ptr3, flag);
+      DoIt (flag, true, true);
+      DumpList ();
+      drc = true;
+      Bloat = PCB->Bloat;
+      ListStart (What, ptr1, ptr2, ptr3, flag);
+    }
+  drc = false;
+  DumpList ();
+  flag = FOUNDFLAG | SELECTEDFLAG;
+  ClearFlagOnAllObjects (false, flag);
+  return (false);
 }
 
-void
-FreeConnectionLookupMemory (void)
+/* DRC clearance callback */
+
+static int
+drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
+              int type, void *ptr1, void *ptr2, void *userdata)
 {
-  FreeComponentLookupMemory ();
-  FreeLayoutLookupMemory ();
+  struct drc_info *i = (struct drc_info *) userdata;
+  char *message;
+  Coord x, y;
+  int object_count;
+  long int *object_id_list;
+  int *object_type_list;
+  DrcViolationType *violation;
+
+  LineType *line = (LineType *) ptr2;
+  ArcType *arc = (ArcType *) ptr2;
+  PinType *pin = (PinType *) ptr2;
+  PadType *pad = (PadType *) ptr2;
+
+  thing_type = type;
+  thing_ptr1 = ptr1;
+  thing_ptr2 = ptr2;
+  thing_ptr3 = ptr2;
+  switch (type)
+    {
+    case LINE_TYPE:
+      if (line->Clearance < 2 * PCB->Bloat)
+        {
+          AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
+          SET_FLAG (i->flag, line);
+          message = _("Line with insufficient clearance inside polygon\n");
+          goto doIsBad;
+        }
+      break;
+    case ARC_TYPE:
+      if (arc->Clearance < 2 * PCB->Bloat)
+        {
+          AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
+          SET_FLAG (i->flag, arc);
+          message = _("Arc with insufficient clearance inside polygon\n");
+          goto doIsBad;
+        }
+      break;
+    case PAD_TYPE:
+      if (pad->Clearance && pad->Clearance < 2 * PCB->Bloat)
+	if (IsPadInPolygon(pad,polygon))
+	  {
+	    AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
+	    SET_FLAG (i->flag, pad);
+	    message = _("Pad with insufficient clearance inside polygon\n");
+	    goto doIsBad;
+	  }
+      break;
+    case PIN_TYPE:
+      if (pin->Clearance && pin->Clearance < 2 * PCB->Bloat)
+        {
+          AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
+          SET_FLAG (i->flag, pin);
+          message = _("Pin with insufficient clearance inside polygon\n");
+          goto doIsBad;
+        }
+      break;
+    case VIA_TYPE:
+      if (pin->Clearance && pin->Clearance < 2 * PCB->Bloat)
+        {
+          AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
+          SET_FLAG (i->flag, pin);
+          message = _("Via with insufficient clearance inside polygon\n");
+          goto doIsBad;
+        }
+      break;
+    default:
+      Message ("hace: Bad Plow object in callback\n");
+    }
+  return 0;
+
+doIsBad:
+  AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+  SET_FLAG (FOUNDFLAG, polygon);
+  DrawPolygon (layer, polygon);
+  DrawObject (type, ptr1, ptr2);
+  drcerr_count++;
+  LocateError (&x, &y);
+  BuildObjectList (&object_count, &object_id_list, &object_type_list);
+  violation = pcb_drc_violation_new (message,
+                                     _("Circuits that are too close may bridge during imaging, etching,\n"
+                                       "plating, or soldering processes resulting in a direct short."),
+                                     x, y,
+                                     0,     /* ANGLE OF ERROR UNKNOWN */
+                                     FALSE, /* MEASUREMENT OF ERROR UNKNOWN */
+                                     0,     /* MAGNITUDE OF ERROR UNKNOWN */
+                                     PCB->Bloat,
+                                     object_count,
+                                     object_id_list,
+                                     object_type_list);
+  append_drc_violation (violation);
+  pcb_drc_violation_free (violation);
+  free (object_id_list);
+  free (object_type_list);
+
+  if (!throw_drc_dialog())
+    return 1;
+
+  IncrementUndoSerialNumber ();
+  Undo (true);
+  return 0;
+}
+
+/*-----------------------------------------------------------------------------
+ * Check for DRC violations
+ * see if the connectivity changes when everything is bloated, or shrunk
+ */
+int
+DRCAll (void)
+{
+  Coord x, y;
+  int object_count;
+  long int *object_id_list;
+  int *object_type_list;
+  DrcViolationType *violation;
+  int tmpcnt;
+  int nopastecnt = 0;
+  bool IsBad;
+  int flag;
+  struct drc_info info;
+
+  reset_drc_dialog_message();
+
+  IsBad = false;
+  drcerr_count = 0;
+  SaveStackAndVisibility ();
+  ResetStackAndVisibility ();
+  hid_action ("LayersChanged");
+  InitConnectionLookup ();
+
+  flag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
+
+  if (ClearFlagOnAllObjects (true, flag))
+    {
+      IncrementUndoSerialNumber ();
+      Draw ();
+    }
+
+  User = false;
+
+  ELEMENT_LOOP (PCB->Data);
+  {
+    PIN_LOOP (element);
+    {
+      if (!TEST_FLAG (DRCFLAG, pin)
+          && DRCFind (PIN_TYPE, (void *) element, (void *) pin, (void *) pin))
+        {
+          IsBad = true;
+          break;
+        }
+    }
+    END_LOOP;
+    if (IsBad)
+      break;
+    PAD_LOOP (element);
+    {
+
+      /* count up how many pads have no solderpaste openings */
+      if (TEST_FLAG (NOPASTEFLAG, pad))
+	nopastecnt++;
+
+      if (!TEST_FLAG (DRCFLAG, pad)
+          && DRCFind (PAD_TYPE, (void *) element, (void *) pad, (void *) pad))
+        {
+          IsBad = true;
+          break;
+        }
+    }
+    END_LOOP;
+    if (IsBad)
+      break;
+  }
+  END_LOOP;
+  if (!IsBad)
+    VIA_LOOP (PCB->Data);
+  {
+    if (!TEST_FLAG (DRCFLAG, via)
+        && DRCFind (VIA_TYPE, (void *) via, (void *) via, (void *) via))
+      {
+        IsBad = true;
+        break;
+      }
+  }
+  END_LOOP;
+
+  flag = (IsBad) ? DRCFLAG : (FOUNDFLAG | DRCFLAG | SELECTEDFLAG);
+  ClearFlagOnAllObjects (false, flag);
+  flag = SELECTEDFLAG;
+  info.flag = flag;
+  /* check minimum widths and polygon clearances */
+  if (!IsBad)
+    {
+      COPPERLINE_LOOP (PCB->Data);
+      {
+        /* check line clearances in polygons */
+        if (PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback, &info))
+          {
+            IsBad = true;
+            break;
+          }
+        if (line->Thickness < PCB->minWid)
+          {
+            AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
+            SET_FLAG (flag, line);
+            DrawLine (layer, line);
+            drcerr_count++;
+            SetThing (LINE_TYPE, layer, line, line);
+            LocateError (&x, &y);
+            BuildObjectList (&object_count, &object_id_list, &object_type_list);
+            violation = pcb_drc_violation_new (_("Line width is too thin"),
+                                               _("Process specifications dictate a minimum feature-width\n"
+                                                 "that can reliably be reproduced"),
+                                               x, y,
+                                               0,    /* ANGLE OF ERROR UNKNOWN */
+                                               TRUE, /* MEASUREMENT OF ERROR KNOWN */
+                                               line->Thickness,
+                                               PCB->minWid,
+                                               object_count,
+                                               object_id_list,
+                                               object_type_list);
+            append_drc_violation (violation);
+            pcb_drc_violation_free (violation);
+            free (object_id_list);
+            free (object_type_list);
+            if (!throw_drc_dialog())
+              {
+                IsBad = true;
+                break;
+              }
+            IncrementUndoSerialNumber ();
+            Undo (false);
+          }
+      }
+      ENDALL_LOOP;
+    }
+  if (!IsBad)
+    {
+      COPPERARC_LOOP (PCB->Data);
+      {
+        if (PlowsPolygon (PCB->Data, ARC_TYPE, layer, arc, drc_callback, &info))
+          {
+            IsBad = true;
+            break;
+          }
+        if (arc->Thickness < PCB->minWid)
+          {
+            AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
+            SET_FLAG (flag, arc);
+            DrawArc (layer, arc);
+            drcerr_count++;
+            SetThing (ARC_TYPE, layer, arc, arc);
+            LocateError (&x, &y);
+            BuildObjectList (&object_count, &object_id_list, &object_type_list);
+            violation = pcb_drc_violation_new (_("Arc width is too thin"),
+                                               _("Process specifications dictate a minimum feature-width\n"
+                                                 "that can reliably be reproduced"),
+                                               x, y,
+                                               0,    /* ANGLE OF ERROR UNKNOWN */
+                                               TRUE, /* MEASUREMENT OF ERROR KNOWN */
+                                               arc->Thickness,
+                                               PCB->minWid,
+                                               object_count,
+                                               object_id_list,
+                                               object_type_list);
+            append_drc_violation (violation);
+            pcb_drc_violation_free (violation);
+            free (object_id_list);
+            free (object_type_list);
+            if (!throw_drc_dialog())
+              {
+                IsBad = true;
+                break;
+              }
+            IncrementUndoSerialNumber ();
+            Undo (false);
+          }
+      }
+      ENDALL_LOOP;
+    }
+  if (!IsBad)
+    {
+      ALLPIN_LOOP (PCB->Data);
+      {
+        if (PlowsPolygon (PCB->Data, PIN_TYPE, element, pin, drc_callback, &info))
+          {
+            IsBad = true;
+            break;
+          }
+        if (!TEST_FLAG (HOLEFLAG, pin) &&
+            pin->Thickness - pin->DrillingHole < 2 * PCB->minRing)
+          {
+            AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+            SET_FLAG (flag, pin);
+            DrawPin (pin);
+            drcerr_count++;
+            SetThing (PIN_TYPE, element, pin, pin);
+            LocateError (&x, &y);
+            BuildObjectList (&object_count, &object_id_list, &object_type_list);
+            violation = pcb_drc_violation_new (_("Pin annular ring too small"),
+                                               _("Annular rings that are too small may erode during etching,\n"
+                                                 "resulting in a broken connection"),
+                                               x, y,
+                                               0,    /* ANGLE OF ERROR UNKNOWN */
+                                               TRUE, /* MEASUREMENT OF ERROR KNOWN */
+                                               (pin->Thickness - pin->DrillingHole) / 2,
+                                               PCB->minRing,
+                                               object_count,
+                                               object_id_list,
+                                               object_type_list);
+            append_drc_violation (violation);
+            pcb_drc_violation_free (violation);
+            free (object_id_list);
+            free (object_type_list);
+            if (!throw_drc_dialog())
+              {
+                IsBad = true;
+                break;
+              }
+            IncrementUndoSerialNumber ();
+            Undo (false);
+          }
+        if (pin->DrillingHole < PCB->minDrill)
+          {
+            AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+            SET_FLAG (flag, pin);
+            DrawPin (pin);
+            drcerr_count++;
+            SetThing (PIN_TYPE, element, pin, pin);
+            LocateError (&x, &y);
+            BuildObjectList (&object_count, &object_id_list, &object_type_list);
+            violation = pcb_drc_violation_new (_("Pin drill size is too small"),
+                                               _("Process rules dictate the minimum drill size which can be used"),
+                                               x, y,
+                                               0,    /* ANGLE OF ERROR UNKNOWN */
+                                               TRUE, /* MEASUREMENT OF ERROR KNOWN */
+                                               pin->DrillingHole,
+                                               PCB->minDrill,
+                                               object_count,
+                                               object_id_list,
+                                               object_type_list);
+            append_drc_violation (violation);
+            pcb_drc_violation_free (violation);
+            free (object_id_list);
+            free (object_type_list);
+            if (!throw_drc_dialog())
+              {
+                IsBad = true;
+                break;
+              }
+            IncrementUndoSerialNumber ();
+            Undo (false);
+          }
+      }
+      ENDALL_LOOP;
+    }
+  if (!IsBad)
+    {
+      ALLPAD_LOOP (PCB->Data);
+      {
+        if (PlowsPolygon (PCB->Data, PAD_TYPE, element, pad, drc_callback, &info))
+          {
+            IsBad = true;
+            break;
+          }
+        if (pad->Thickness < PCB->minWid)
+          {
+            AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
+            SET_FLAG (flag, pad);
+            DrawPad (pad);
+            drcerr_count++;
+            SetThing (PAD_TYPE, element, pad, pad);
+            LocateError (&x, &y);
+            BuildObjectList (&object_count, &object_id_list, &object_type_list);
+            violation = pcb_drc_violation_new (_("Pad is too thin"),
+                                               _("Pads which are too thin may erode during etching,\n"
+                                                  "resulting in a broken or unreliable connection"),
+                                               x, y,
+                                               0,    /* ANGLE OF ERROR UNKNOWN */
+                                               TRUE, /* MEASUREMENT OF ERROR KNOWN */
+                                               pad->Thickness,
+                                               PCB->minWid,
+                                               object_count,
+                                               object_id_list,
+                                               object_type_list);
+            append_drc_violation (violation);
+            pcb_drc_violation_free (violation);
+            free (object_id_list);
+            free (object_type_list);
+            if (!throw_drc_dialog())
+              {
+                IsBad = true;
+                break;
+              }
+            IncrementUndoSerialNumber ();
+            Undo (false);
+          }
+      }
+      ENDALL_LOOP;
+    }
+  if (!IsBad)
+    {
+      VIA_LOOP (PCB->Data);
+      {
+        if (PlowsPolygon (PCB->Data, VIA_TYPE, via, via, drc_callback, &info))
+          {
+            IsBad = true;
+            break;
+          }
+        if (!TEST_FLAG (HOLEFLAG, via) &&
+            via->Thickness - via->DrillingHole < 2 * PCB->minRing)
+          {
+            AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+            SET_FLAG (flag, via);
+            DrawVia (via);
+            drcerr_count++;
+            SetThing (VIA_TYPE, via, via, via);
+            LocateError (&x, &y);
+            BuildObjectList (&object_count, &object_id_list, &object_type_list);
+            violation = pcb_drc_violation_new (_("Via annular ring too small"),
+                                               _("Annular rings that are too small may erode during etching,\n"
+                                                 "resulting in a broken connection"),
+                                               x, y,
+                                               0,    /* ANGLE OF ERROR UNKNOWN */
+                                               TRUE, /* MEASUREMENT OF ERROR KNOWN */
+                                               (via->Thickness - via->DrillingHole) / 2,
+                                               PCB->minRing,
+                                               object_count,
+                                               object_id_list,
+                                               object_type_list);
+            append_drc_violation (violation);
+            pcb_drc_violation_free (violation);
+            free (object_id_list);
+            free (object_type_list);
+            if (!throw_drc_dialog())
+              {
+                IsBad = true;
+                break;
+              }
+            IncrementUndoSerialNumber ();
+            Undo (false);
+          }
+        if (via->DrillingHole < PCB->minDrill)
+          {
+            AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+            SET_FLAG (flag, via);
+            DrawVia (via);
+            drcerr_count++;
+            SetThing (VIA_TYPE, via, via, via);
+            LocateError (&x, &y);
+            BuildObjectList (&object_count, &object_id_list, &object_type_list);
+            violation = pcb_drc_violation_new (_("Via drill size is too small"),
+                                               _("Process rules dictate the minimum drill size which can be used"),
+                                               x, y,
+                                               0,    /* ANGLE OF ERROR UNKNOWN */
+                                               TRUE, /* MEASUREMENT OF ERROR KNOWN */
+                                               via->DrillingHole,
+                                               PCB->minDrill,
+                                               object_count,
+                                               object_id_list,
+                                               object_type_list);
+            append_drc_violation (violation);
+            pcb_drc_violation_free (violation);
+            free (object_id_list);
+            free (object_type_list);
+            if (!throw_drc_dialog())
+              {
+                IsBad = true;
+                break;
+              }
+            IncrementUndoSerialNumber ();
+            Undo (false);
+          }
+      }
+      END_LOOP;
+    }
+
+  FreeConnectionLookupMemory ();
+  flag = FOUNDFLAG;
+  Bloat = 0;
+
+  /* check silkscreen minimum widths outside of elements */
+  /* XXX - need to check text and polygons too! */
+  flag = SELECTEDFLAG;
+  if (!IsBad)
+    {
+      SILKLINE_LOOP (PCB->Data);
+      {
+        if (line->Thickness < PCB->minSlk)
+          {
+            SET_FLAG (flag, line);
+            DrawLine (layer, line);
+            drcerr_count++;
+            SetThing (LINE_TYPE, layer, line, line);
+            LocateError (&x, &y);
+            BuildObjectList (&object_count, &object_id_list, &object_type_list);
+            violation = pcb_drc_violation_new (_("Silk line is too thin"),
+                                               _("Process specifications dictate a minimum silkscreen feature-width\n"
+                                                 "that can reliably be reproduced"),
+                                               x, y,
+                                               0,    /* ANGLE OF ERROR UNKNOWN */
+                                               TRUE, /* MEASUREMENT OF ERROR KNOWN */
+                                               line->Thickness,
+                                               PCB->minSlk,
+                                               object_count,
+                                               object_id_list,
+                                               object_type_list);
+            append_drc_violation (violation);
+            pcb_drc_violation_free (violation);
+            free (object_id_list);
+            free (object_type_list);
+            if (!throw_drc_dialog())
+              {
+                IsBad = true;
+                break;
+              }
+          }
+      }
+      ENDALL_LOOP;
+    }
+
+  /* check silkscreen minimum widths inside of elements */
+  /* XXX - need to check text and polygons too! */
+  flag = SELECTEDFLAG;
+  if (!IsBad)
+    {
+      ELEMENT_LOOP (PCB->Data);
+      {
+        tmpcnt = 0;
+        ELEMENTLINE_LOOP (element);
+        {
+          if (line->Thickness < PCB->minSlk)
+            tmpcnt++;
+        }
+        END_LOOP;
+        if (tmpcnt > 0)
+          {
+            char *title;
+            char *name;
+            char *buffer;
+            int buflen;
+
+            SET_FLAG (flag, element);
+            DrawElement (element);
+            drcerr_count++;
+            SetThing (ELEMENT_TYPE, element, element, element);
+            LocateError (&x, &y);
+            BuildObjectList (&object_count, &object_id_list, &object_type_list);
+
+            title = _("Element %s has %i silk lines which are too thin");
+            name = (char *)UNKNOWN (NAMEONPCB_NAME (element));
+
+            /* -4 is for the %s and %i place-holders */
+            /* +11 is the max printed length for a 32 bit integer */
+            /* +1 is for the \0 termination */
+            buflen = strlen (title) - 4 + strlen (name) + 11 + 1;
+            buffer = (char *)malloc (buflen);
+            snprintf (buffer, buflen, title, name, tmpcnt);
+
+            violation = pcb_drc_violation_new (buffer,
+                                               _("Process specifications dictate a minimum silkscreen\n"
+                                               "feature-width that can reliably be reproduced"),
+                                               x, y,
+                                               0,    /* ANGLE OF ERROR UNKNOWN */
+                                               TRUE, /* MEASUREMENT OF ERROR KNOWN */
+                                               0,    /* MINIMUM OFFENDING WIDTH UNKNOWN */
+                                               PCB->minSlk,
+                                               object_count,
+                                               object_id_list,
+                                               object_type_list);
+            free (buffer);
+            append_drc_violation (violation);
+            pcb_drc_violation_free (violation);
+            free (object_id_list);
+            free (object_type_list);
+            if (!throw_drc_dialog())
+              {
+                IsBad = true;
+                break;
+              }
+          }
+      }
+      END_LOOP;
+    }
+
+
+  if (IsBad)
+    {
+      IncrementUndoSerialNumber ();
+    }
+
+
+  RestoreStackAndVisibility ();
+  hid_action ("LayersChanged");
+  gui->invalidate_all ();
+
+  if (nopastecnt > 0) 
+    {
+      Message (_("Warning:  %d pad%s the nopaste flag set.\n"),
+	       nopastecnt,
+	       nopastecnt > 1 ? "s have" : " has");
+    }
+  return IsBad ? -drcerr_count : drcerr_count;
+}
+
+/*----------------------------------------------------------------------------
+ * Locate the coordinatates of offending item (thing)
+ */
+static void
+LocateError (Coord *x, Coord *y)
+{
+  switch (thing_type)
+    {
+    case LINE_TYPE:
+      {
+        LineType *line = (LineType *) thing_ptr3;
+        *x = (line->Point1.X + line->Point2.X) / 2;
+        *y = (line->Point1.Y + line->Point2.Y) / 2;
+        break;
+      }
+    case ARC_TYPE:
+      {
+        ArcType *arc = (ArcType *) thing_ptr3;
+        *x = arc->X;
+        *y = arc->Y;
+        break;
+      }
+    case POLYGON_TYPE:
+      {
+        PolygonType *polygon = (PolygonType *) thing_ptr3;
+        *x =
+          (polygon->Clipped->contours->xmin +
+           polygon->Clipped->contours->xmax) / 2;
+        *y =
+          (polygon->Clipped->contours->ymin +
+           polygon->Clipped->contours->ymax) / 2;
+        break;
+      }
+    case PIN_TYPE:
+    case VIA_TYPE:
+      {
+        PinType *pin = (PinType *) thing_ptr3;
+        *x = pin->X;
+        *y = pin->Y;
+        break;
+      }
+    case PAD_TYPE:
+      {
+        PadType *pad = (PadType *) thing_ptr3;
+        *x = (pad->Point1.X + pad->Point2.X) / 2;
+        *y = (pad->Point1.Y + pad->Point2.Y) / 2;
+        break;
+      }
+    case ELEMENT_TYPE:
+      {
+        ElementType *element = (ElementType *) thing_ptr3;
+        *x = element->MarkX;
+        *y = element->MarkY;
+        break;
+      }
+    default:
+      return;
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+ * Build a list of the of offending items by ID. (Currently just "thing")
+ */
+static void
+BuildObjectList (int *object_count, long int **object_id_list, int **object_type_list)
+{
+  *object_count = 0;
+  *object_id_list = NULL;
+  *object_type_list = NULL;
+
+  switch (thing_type)
+    {
+    case LINE_TYPE:
+    case ARC_TYPE:
+    case POLYGON_TYPE:
+    case PIN_TYPE:
+    case VIA_TYPE:
+    case PAD_TYPE:
+    case ELEMENT_TYPE:
+    case RATLINE_TYPE:
+      *object_count = 1;
+      *object_id_list = (long int *)malloc (sizeof (long int));
+      *object_type_list = (int *)malloc (sizeof (int));
+      **object_id_list = ((AnyObjectType *)thing_ptr3)->ID;
+      **object_type_list = thing_type;
+      return;
+
+    default:
+      fprintf (stderr,
+	       _("Internal error in BuildObjectList: unknown object type %i\n"),
+	       thing_type);
+    }
+}
+
+
+/*----------------------------------------------------------------------------
+ * center the display to show the offending item (thing)
+ */
+static void
+GotoError (void)
+{
+  Coord X, Y;
+
+  LocateError (&X, &Y);
+
+  switch (thing_type)
+    {
+    case LINE_TYPE:
+    case ARC_TYPE:
+    case POLYGON_TYPE:
+      ChangeGroupVisibility (
+          GetLayerNumber (PCB->Data, (LayerType *) thing_ptr1),
+          true, true);
+    }
+  CenterDisplay (X, Y);
 }
