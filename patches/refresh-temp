@@ -1,0 +1,22 @@
+Bottom: d901bff8f644702c559d4ff810b2e8d765d3b3b6
+Top:    3d23350e691eed44889e6e2d47a99fe6d38239b2
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-01 23:46:17 +0000
+
+Refresh of split-drc-routines-out-of-find
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 4c897ee..16015dc 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -159,7 +159,7 @@ static bool IsRatPointOnLineEnd (PointType *, LineType *);
+ static bool ArcArcIntersect (ArcType *, ArcType *);
+ static bool PrepareNextLoop (FILE *);
+ static void DrawNewConnections (void);
+-/* XXX */ static bool SetThing (int, void *, void *, void *);
++///* XXX */ static bool SetThing (int, void *, void *, void *);
+ static bool IsArcInPolygon (ArcType *, PolygonType *);
+ static bool IsLineInPolygon (LineType *, PolygonType *);
+ static bool IsPolygonInPolygon (PolygonType *, PolygonType *);
