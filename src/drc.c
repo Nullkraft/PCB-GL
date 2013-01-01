@@ -65,42 +65,6 @@
 #include <dmalloc.h>
 #endif
 
-#undef DEBUG
-
-/* ---------------------------------------------------------------------------
- * some local macros
- */
-
-#define	SEPARATE(FP)							\
-	{											\
-		int	i;									\
-		fputc('#', (FP));						\
-		for (i = Settings.CharPerLine; i; i--)	\
-			fputc('=', (FP));					\
-		fputc('\n', (FP));						\
-	}
-
-#define LIST_ENTRY(list,I)      (((AnyObjectType **)list->Data)[(I)])
-#define PADLIST_ENTRY(L,I)      (((PadType **)PadList[(L)].Data)[(I)])
-#define LINELIST_ENTRY(L,I)     (((LineType **)LineList[(L)].Data)[(I)])
-#define ARCLIST_ENTRY(L,I)      (((ArcType **)ArcList[(L)].Data)[(I)])
-#define RATLIST_ENTRY(I)        (((RatType **)RatList.Data)[(I)])
-#define POLYGONLIST_ENTRY(L,I)  (((PolygonType **)PolygonList[(L)].Data)[(I)])
-#define PVLIST_ENTRY(I)         (((PinType **)PVList.Data)[(I)])
-
-#define IS_PV_ON_RAT(PV, Rat) \
-	(IsPointOnLineEnd((PV)->X,(PV)->Y, (Rat)))
-
-#define IS_PV_ON_ARC(PV, Arc)	\
-	(TEST_FLAG(SQUAREFLAG, (PV)) ? \
-		IsArcInRectangle( \
-			(PV)->X -MAX(((PV)->Thickness+1)/2 +Bloat,0), (PV)->Y -MAX(((PV)->Thickness+1)/2 +Bloat,0), \
-			(PV)->X +MAX(((PV)->Thickness+1)/2 +Bloat,0), (PV)->Y +MAX(((PV)->Thickness+1)/2 +Bloat,0), \
-			(Arc)) : \
-		IsPointOnArc((PV)->X,(PV)->Y,MAX((PV)->Thickness/2.0 + Bloat,0.0), (Arc)))
-
-#define	IS_PV_ON_PAD(PV,Pad) \
-	( IsPointInPad((PV)->X, (PV)->Y, MAX((PV)->Thickness/2 +Bloat,0), (Pad)))
 
 static DrcViolationType
 *pcb_drc_violation_new (const char *title,
@@ -163,7 +127,97 @@ append_drc_dialog_message(const char *fmt, ...)
   g_free (new_str);
 }
 
-static void GotoError (void);
+/* ---------------------------------------------------------------------------
+ * some local identifiers
+ */
+static Coord Bloat = 0;
+static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
+static int thing_type;
+static bool User = false;    /* user action causing this */
+static bool drc = false;     /* whether to stop if finding something not found */
+static Cardinal drcerr_count;   /* count of drc errors */
+
+/*----------------------------------------------------------------------------
+ * Locate the coordinatates of offending item (thing)
+ */
+static void
+LocateError (Coord *x, Coord *y)
+{
+  switch (thing_type)
+    {
+    case LINE_TYPE:
+      {
+        LineType *line = (LineType *) thing_ptr3;
+        *x = (line->Point1.X + line->Point2.X) / 2;
+        *y = (line->Point1.Y + line->Point2.Y) / 2;
+        break;
+      }
+    case ARC_TYPE:
+      {
+        ArcType *arc = (ArcType *) thing_ptr3;
+        *x = arc->X;
+        *y = arc->Y;
+        break;
+      }
+    case POLYGON_TYPE:
+      {
+        PolygonType *polygon = (PolygonType *) thing_ptr3;
+        *x =
+          (polygon->Clipped->contours->xmin +
+           polygon->Clipped->contours->xmax) / 2;
+        *y =
+          (polygon->Clipped->contours->ymin +
+           polygon->Clipped->contours->ymax) / 2;
+        break;
+      }
+    case PIN_TYPE:
+    case VIA_TYPE:
+      {
+        PinType *pin = (PinType *) thing_ptr3;
+        *x = pin->X;
+        *y = pin->Y;
+        break;
+      }
+    case PAD_TYPE:
+      {
+        PadType *pad = (PadType *) thing_ptr3;
+        *x = (pad->Point1.X + pad->Point2.X) / 2;
+        *y = (pad->Point1.Y + pad->Point2.Y) / 2;
+        break;
+      }
+    case ELEMENT_TYPE:
+      {
+        ElementType *element = (ElementType *) thing_ptr3;
+        *x = element->MarkX;
+        *y = element->MarkY;
+        break;
+      }
+    default:
+      return;
+    }
+}
+
+/*----------------------------------------------------------------------------
+ * center the display to show the offending item (thing)
+ */
+static void
+GotoError (void)
+{
+  Coord X, Y;
+
+  LocateError (&X, &Y);
+
+  switch (thing_type)
+    {
+    case LINE_TYPE:
+    case ARC_TYPE:
+    case POLYGON_TYPE:
+      ChangeGroupVisibility (
+          GetLayerNumber (PCB->Data, (LayerType *) thing_ptr1),
+          true, true);
+    }
+  CenterDisplay (X, Y);
+}
 
 static void
 append_drc_violation (DrcViolationType *violation)
@@ -217,40 +271,6 @@ throw_drc_dialog(void)
   return r;
 }
 
-/* ---------------------------------------------------------------------------
- * some local types
- *
- * the two 'dummy' structs for PVs and Pads are necessary for creating
- * connection lists which include the element's name
- */
-typedef struct
-{
-  void **Data;                  /* pointer to index data */
-  Cardinal Location,            /* currently used position */
-    DrawLocation, Number,       /* number of objects in list */
-    Size;
-} ListType;
-
-/* ---------------------------------------------------------------------------
- * some local identifiers
- */
-static Coord Bloat = 0;
-static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
-static int thing_type;
-static bool User = false;    /* user action causing this */
-static bool drc = false;     /* whether to stop if finding something not found */
-static Cardinal drcerr_count;   /* count of drc errors */
-static ListType LineList[MAX_LAYER],    /* list of objects to */
-  PolygonList[MAX_LAYER], ArcList[MAX_LAYER], PadList[2], RatList, PVList;
-
-/* ---------------------------------------------------------------------------
- * some local prototypes
- */
-static void DumpList (void);
-static void LocateError (Coord *, Coord *);
-static void BuildObjectList (int *, long int **, int **);
-static bool SetThing (int, void *, void *, void *);
-
 bool
 SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
 {
@@ -266,67 +286,38 @@ SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
   return true;
 }
 
-struct pv_info
-{
-  Cardinal layer;
-  PinType *pv;
-  int flag;
-  jmp_buf env;
-};
-
-struct lo_info
-{
-  Cardinal layer;
-  LineType *line;
-  PadType *pad;
-  ArcType *arc;
-  PolygonType *polygon;
-  RatType *rat;
-  int flag;
-  jmp_buf env;
-};
-
-struct rat_info
-{
-  Cardinal layer;
-  PointType *Point;
-  int flag;
-  jmp_buf env;
-};
-
 /*----------------------------------------------------------------------------
- * Dumps the list contents
+ * Build a list of the of offending items by ID. (Currently just "thing")
  */
 static void
-DumpList (void)
+BuildObjectList (int *object_count, long int **object_id_list, int **object_type_list)
 {
-  Cardinal i;
+  *object_count = 0;
+  *object_id_list = NULL;
+  *object_type_list = NULL;
 
-  for (i = 0; i < 2; i++)
+  switch (thing_type)
     {
-      PadList[i].Number = 0;
-      PadList[i].Location = 0;
-      PadList[i].DrawLocation = 0;
-    }
+    case LINE_TYPE:
+    case ARC_TYPE:
+    case POLYGON_TYPE:
+    case PIN_TYPE:
+    case VIA_TYPE:
+    case PAD_TYPE:
+    case ELEMENT_TYPE:
+    case RATLINE_TYPE:
+      *object_count = 1;
+      *object_id_list = (long int *)malloc (sizeof (long int));
+      *object_type_list = (int *)malloc (sizeof (int));
+      **object_id_list = ((AnyObjectType *)thing_ptr3)->ID;
+      **object_type_list = thing_type;
+      return;
 
-  PVList.Number = 0;
-  PVList.Location = 0;
-
-  for (i = 0; i < max_copper_layer; i++)
-    {
-      LineList[i].Location = 0;
-      LineList[i].DrawLocation = 0;
-      LineList[i].Number = 0;
-      ArcList[i].Location = 0;
-      ArcList[i].DrawLocation = 0;
-      ArcList[i].Number = 0;
-      PolygonList[i].Location = 0;
-      PolygonList[i].DrawLocation = 0;
-      PolygonList[i].Number = 0;
+    default:
+      fprintf (stderr,
+	       _("Internal error in BuildObjectList: unknown object type %i\n"),
+	       thing_type);
     }
-  RatList.Number = 0;
-  RatList.Location = 0;
-  RatList.DrawLocation = 0;
 }
 
 struct drc_info
@@ -1081,122 +1072,4 @@ DRCAll (void)
 	       nopastecnt > 1 ? "s have" : " has");
     }
   return IsBad ? -drcerr_count : drcerr_count;
-}
-
-/*----------------------------------------------------------------------------
- * Locate the coordinatates of offending item (thing)
- */
-static void
-LocateError (Coord *x, Coord *y)
-{
-  switch (thing_type)
-    {
-    case LINE_TYPE:
-      {
-        LineType *line = (LineType *) thing_ptr3;
-        *x = (line->Point1.X + line->Point2.X) / 2;
-        *y = (line->Point1.Y + line->Point2.Y) / 2;
-        break;
-      }
-    case ARC_TYPE:
-      {
-        ArcType *arc = (ArcType *) thing_ptr3;
-        *x = arc->X;
-        *y = arc->Y;
-        break;
-      }
-    case POLYGON_TYPE:
-      {
-        PolygonType *polygon = (PolygonType *) thing_ptr3;
-        *x =
-          (polygon->Clipped->contours->xmin +
-           polygon->Clipped->contours->xmax) / 2;
-        *y =
-          (polygon->Clipped->contours->ymin +
-           polygon->Clipped->contours->ymax) / 2;
-        break;
-      }
-    case PIN_TYPE:
-    case VIA_TYPE:
-      {
-        PinType *pin = (PinType *) thing_ptr3;
-        *x = pin->X;
-        *y = pin->Y;
-        break;
-      }
-    case PAD_TYPE:
-      {
-        PadType *pad = (PadType *) thing_ptr3;
-        *x = (pad->Point1.X + pad->Point2.X) / 2;
-        *y = (pad->Point1.Y + pad->Point2.Y) / 2;
-        break;
-      }
-    case ELEMENT_TYPE:
-      {
-        ElementType *element = (ElementType *) thing_ptr3;
-        *x = element->MarkX;
-        *y = element->MarkY;
-        break;
-      }
-    default:
-      return;
-    }
-}
-
-
-/*----------------------------------------------------------------------------
- * Build a list of the of offending items by ID. (Currently just "thing")
- */
-static void
-BuildObjectList (int *object_count, long int **object_id_list, int **object_type_list)
-{
-  *object_count = 0;
-  *object_id_list = NULL;
-  *object_type_list = NULL;
-
-  switch (thing_type)
-    {
-    case LINE_TYPE:
-    case ARC_TYPE:
-    case POLYGON_TYPE:
-    case PIN_TYPE:
-    case VIA_TYPE:
-    case PAD_TYPE:
-    case ELEMENT_TYPE:
-    case RATLINE_TYPE:
-      *object_count = 1;
-      *object_id_list = (long int *)malloc (sizeof (long int));
-      *object_type_list = (int *)malloc (sizeof (int));
-      **object_id_list = ((AnyObjectType *)thing_ptr3)->ID;
-      **object_type_list = thing_type;
-      return;
-
-    default:
-      fprintf (stderr,
-	       _("Internal error in BuildObjectList: unknown object type %i\n"),
-	       thing_type);
-    }
-}
-
-
-/*----------------------------------------------------------------------------
- * center the display to show the offending item (thing)
- */
-static void
-GotoError (void)
-{
-  Coord X, Y;
-
-  LocateError (&X, &Y);
-
-  switch (thing_type)
-    {
-    case LINE_TYPE:
-    case ARC_TYPE:
-    case POLYGON_TYPE:
-      ChangeGroupVisibility (
-          GetLayerNumber (PCB->Data, (LayerType *) thing_ptr1),
-          true, true);
-    }
-  CenterDisplay (X, Y);
 }

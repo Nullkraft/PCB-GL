@@ -45,6 +45,7 @@
 
 bool IsPadInPolygon (PadType *, PolygonType *);
 bool ListStart (int type, void *ptr1, void *ptr2, void *ptr3, int flag);
+void DumpList (void);
 bool DoIt (int flag, bool AndRats, bool AndDraw);
 
 bool LineLineIntersect (LineType *, LineType *);

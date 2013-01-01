@@ -173,7 +173,6 @@ static bool IsRatPointOnLineEnd (PointType *, LineType *);
 static bool ArcArcIntersect (ArcType *, ArcType *);
 static bool PrepareNextLoop (FILE *);
 static void DrawNewConnections (void);
-static void DumpList (void);
 static bool SetThing (int, void *, void *, void *);
 static bool IsArcInPolygon (ArcType *, PolygonType *);
 static bool IsLineInPolygon (LineType *, PolygonType *);
@@ -3181,7 +3180,7 @@ ClearFlagOnAllObjects (bool AndDraw, int flag)
 /*----------------------------------------------------------------------------
  * Dumps the list contents
  */
-static void
+void
 DumpList (void)
 {
   Cardinal i;
