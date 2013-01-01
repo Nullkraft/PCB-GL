@@ -245,7 +245,7 @@ append_drc_violation (DrcViolationType *violation)
     }
 }
 /*
- * message when asked about continuing DRC checks after next 
+ * message when asked about continuing DRC checks after next
  * violation is found.
  */
 #define DRC_CONTINUE _("Press Next to continue DRC checking")
@@ -315,8 +315,8 @@ BuildObjectList (int *object_count, long int **object_id_list, int **object_type
 
     default:
       fprintf (stderr,
-	       _("Internal error in BuildObjectList: unknown object type %i\n"),
-	       thing_type);
+               _("Internal error in BuildObjectList: unknown object type %i\n"),
+               thing_type);
     }
 }
 
@@ -510,13 +510,13 @@ drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
       break;
     case PAD_TYPE:
       if (pad->Clearance && pad->Clearance < 2 * PCB->Bloat)
-	if (IsPadInPolygon(pad,polygon))
-	  {
-	    AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
-	    SET_FLAG (i->flag, pad);
-	    message = _("Pad with insufficient clearance inside polygon\n");
-	    goto doIsBad;
-	  }
+        if (IsPadInPolygon(pad,polygon))
+          {
+            AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
+            SET_FLAG (i->flag, pad);
+            message = _("Pad with insufficient clearance inside polygon\n");
+            goto doIsBad;
+          }
       break;
     case PIN_TYPE:
       if (pin->Clearance && pin->Clearance < 2 * PCB->Bloat)
@@ -629,7 +629,7 @@ DRCAll (void)
 
       /* count up how many pads have no solderpaste openings */
       if (TEST_FLAG (NOPASTEFLAG, pad))
-	nopastecnt++;
+        nopastecnt++;
 
       if (!TEST_FLAG (DRCFLAG, pad)
           && DRCFind (PAD_TYPE, (void *) element, (void *) pad, (void *) pad))
@@ -1065,11 +1065,11 @@ DRCAll (void)
   hid_action ("LayersChanged");
   gui->invalidate_all ();
 
-  if (nopastecnt > 0) 
+  if (nopastecnt > 0)
     {
       Message (_("Warning:  %d pad%s the nopaste flag set.\n"),
-	       nopastecnt,
-	       nopastecnt > 1 ? "s have" : " has");
+               nopastecnt,
+               nopastecnt > 1 ? "s have" : " has");
     }
   return IsBad ? -drcerr_count : drcerr_count;
 }
