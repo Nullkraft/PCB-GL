@@ -1,5 +1,5 @@
 Bottom: 2a48d320de7c438e40d0bb2e8b080e61f78f7922
-Top:    c5d07194228e1c0c9f0da820c45faa22a6da0cb4
+Top:    26fcaa26995fe8b04408d1568f23d3c4a0dcad71
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-01 15:21:49 +0000
 
@@ -35,10 +35,10 @@ index 1d6d8f9..c31414d 100644
  #include "find.h"
 diff --git a/src/drc.c b/src/drc.c
 new file mode 100644
-index 0000000..4d50218
+index 0000000..21332c6
 --- /dev/null
 +++ b/src/drc.c
-@@ -0,0 +1,1075 @@
+@@ -0,0 +1,1055 @@
 +/*
 + *
 + *                            COPYRIGHT
@@ -71,36 +71,16 @@ index 0000000..4d50218
 +#include "config.h"
 +#endif
 +
-+#include <stdio.h>
-+#include <stdlib.h>
-+#ifdef HAVE_STRING_H
-+#include <string.h>
-+#endif
-+#include <math.h>
-+#include <setjmp.h>
-+#include <assert.h>
-+
-+#ifdef HAVE_SYS_TIMES_H
-+#include <sys/times.h>
-+#endif
-+
-+
 +#include "global.h"
 +
-+#include "crosshair.h"
 +#include "data.h"
 +#include "draw.h"
 +#include "error.h"
 +#include "find.h"
-+#include "mymem.h"
 +#include "misc.h"
-+#include "rtree.h"
 +#include "polygon.h"
 +#include "pcb-printf.h"
-+#include "search.h"
-+#include "set.h"
 +#include "undo.h"
-+#include "rats.h"
 +
 +#ifdef HAVE_LIBDMALLOC
 +#include <dmalloc.h>
