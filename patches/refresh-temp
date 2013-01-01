@@ -1,0 +1,39 @@
+Bottom: ef0b1bbd66c797420ef24be83b820119da5c6485
+Top:    d901bff8f644702c559d4ff810b2e8d765d3b3b6
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-01 23:32:00 +0000
+
+Refresh of split-drc-routines-out-of-find
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 0e367be..4c897ee 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -141,8 +141,6 @@ typedef struct
+  * some local identifiers
+  */
+ /* XXX */ static Coord Bloat = 0;
+-/* XXX */ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
+-/* XXX */ static int thing_type;
+ /* XXX */ static bool User = false;    /* user action causing this */
+ /* XXX */ static bool drc = false;     /* whether to stop if finding something not found */
+ static Cardinal TotalP, TotalV;
+@@ -276,7 +274,7 @@ PinLineIntersect (PinType *PV, LineType *Line)
+                                                                     (PadType *)Line);
+ }
+ 
+-
++#if 0
+ bool
+ SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
+ {
+@@ -291,6 +289,7 @@ SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
+     }
+   return true;
+ }
++#endif
+ 
+ bool
+ BoxBoxIntersection (BoxType *b1, BoxType *b2)
