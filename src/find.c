@@ -140,11 +140,11 @@ typedef struct
 /* ---------------------------------------------------------------------------
  * some local identifiers
  */
-static Coord Bloat = 0;
-static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
-static int thing_type;
-static bool User = false;    /* user action causing this */
-static bool drc = false;     /* whether to stop if finding something not found */
+/* XXX */ static Coord Bloat = 0;
+/* XXX */ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
+/* XXX */ static int thing_type;
+/* XXX */ static bool User = false;    /* user action causing this */
+/* XXX */ static bool drc = false;     /* whether to stop if finding something not found */
 static Cardinal TotalP, TotalV;
 static ListType LineList[MAX_LAYER],    /* list of objects to */
   PolygonList[MAX_LAYER], ArcList[MAX_LAYER], PadList[2], RatList, PVList;
@@ -161,7 +161,7 @@ static bool IsRatPointOnLineEnd (PointType *, LineType *);
 static bool ArcArcIntersect (ArcType *, ArcType *);
 static bool PrepareNextLoop (FILE *);
 static void DrawNewConnections (void);
-static bool SetThing (int, void *, void *, void *);
+/* XXX */ static bool SetThing (int, void *, void *, void *);
 static bool IsArcInPolygon (ArcType *, PolygonType *);
 static bool IsLineInPolygon (LineType *, PolygonType *);
 static bool IsPolygonInPolygon (PolygonType *, PolygonType *);

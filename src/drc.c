@@ -112,11 +112,11 @@ append_drc_dialog_message(const char *fmt, ...)
 /* ---------------------------------------------------------------------------
  * some local identifiers
  */
-static Coord Bloat = 0;
-static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
-static int thing_type;
-static bool User = false;    /* user action causing this */
-static bool drc = false;     /* whether to stop if finding something not found */
+/* XXX */ static Coord Bloat = 0;
+/* XXX */ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
+/* XXX */ static int thing_type;
+/* XXX */ static bool User = false;    /* user action causing this */
+/* XXX */ static bool drc = false;     /* whether to stop if finding something not found */
 static Cardinal drcerr_count;   /* count of drc errors */
 
 /*----------------------------------------------------------------------------
@@ -253,7 +253,7 @@ throw_drc_dialog(void)
   return r;
 }
 
-bool
+/* XXX */ static bool
 SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
 {
   thing_ptr1 = ptr1;
