@@ -141,8 +141,6 @@ typedef struct
  * some local identifiers
  */
 /* XXX */ static Coord Bloat = 0;
-/* XXX */ static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
-/* XXX */ static int thing_type;
 /* XXX */ static bool User = false;    /* user action causing this */
 /* XXX */ static bool drc = false;     /* whether to stop if finding something not found */
 static Cardinal TotalP, TotalV;
@@ -276,7 +274,7 @@ PinLineIntersect (PinType *PV, LineType *Line)
                                                                     (PadType *)Line);
 }
 
-
+#if 0
 bool
 SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
 {
@@ -291,6 +289,7 @@ SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
     }
   return true;
 }
+#endif
 
 bool
 BoxBoxIntersection (BoxType *b1, BoxType *b2)
