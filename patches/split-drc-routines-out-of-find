@@ -1,5 +1,5 @@
 Bottom: 3a40661e5f8d2b112707dba8ccea8740d28b1be2
-Top:    f7735041583683b606c41fcda88d553dc22b41be
+Top:    fdbe904f935b7ec36492132deaba2eeff1199db2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-01 15:21:49 +0000
 
@@ -35,10 +35,10 @@ index 1d6d8f9..c31414d 100644
  #include "find.h"
 diff --git a/src/drc.c b/src/drc.c
 new file mode 100644
-index 0000000..21332c6
+index 0000000..ea8d0b3
 --- /dev/null
 +++ b/src/drc.c
-@@ -0,0 +1,1055 @@
+@@ -0,0 +1,1057 @@
 +/*
 + *
 + *                            COPYRIGHT
@@ -125,6 +125,7 @@ index 0000000..21332c6
 +}
 +
 +static GString *drc_dialog_message;
++
 +static void
 +reset_drc_dialog_message(void)
 +{
@@ -136,6 +137,7 @@ index 0000000..21332c6
 +      gui->drc_gui->reset_drc_dialog_message ();
 +    }
 +}
++
 +static void
 +append_drc_dialog_message(const char *fmt, ...)
 +{
