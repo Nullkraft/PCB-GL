@@ -1,5 +1,5 @@
 Bottom: 2a48d320de7c438e40d0bb2e8b080e61f78f7922
-Top:    e7305db37784e9cdb5fa91ef2adf155db5e711c7
+Top:    c5d07194228e1c0c9f0da820c45faa22a6da0cb4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-01 15:21:49 +0000
 
@@ -35,7 +35,7 @@ index 1d6d8f9..c31414d 100644
  #include "find.h"
 diff --git a/src/drc.c b/src/drc.c
 new file mode 100644
-index 0000000..551ec7b
+index 0000000..4d50218
 --- /dev/null
 +++ b/src/drc.c
 @@ -0,0 +1,1075 @@
@@ -286,7 +286,7 @@ index 0000000..551ec7b
 +    }
 +}
 +/*
-+ * message when asked about continuing DRC checks after next 
++ * message when asked about continuing DRC checks after next
 + * violation is found.
 + */
 +#define DRC_CONTINUE _("Press Next to continue DRC checking")
@@ -356,8 +356,8 @@ index 0000000..551ec7b
 +
 +    default:
 +      fprintf (stderr,
-+	       _("Internal error in BuildObjectList: unknown object type %i\n"),
-+	       thing_type);
++               _("Internal error in BuildObjectList: unknown object type %i\n"),
++               thing_type);
 +    }
 +}
 +
@@ -551,13 +551,13 @@ index 0000000..551ec7b
 +      break;
 +    case PAD_TYPE:
 +      if (pad->Clearance && pad->Clearance < 2 * PCB->Bloat)
-+	if (IsPadInPolygon(pad,polygon))
-+	  {
-+	    AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
-+	    SET_FLAG (i->flag, pad);
-+	    message = _("Pad with insufficient clearance inside polygon\n");
-+	    goto doIsBad;
-+	  }
++        if (IsPadInPolygon(pad,polygon))
++          {
++            AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
++            SET_FLAG (i->flag, pad);
++            message = _("Pad with insufficient clearance inside polygon\n");
++            goto doIsBad;
++          }
 +      break;
 +    case PIN_TYPE:
 +      if (pin->Clearance && pin->Clearance < 2 * PCB->Bloat)
@@ -670,7 +670,7 @@ index 0000000..551ec7b
 +
 +      /* count up how many pads have no solderpaste openings */
 +      if (TEST_FLAG (NOPASTEFLAG, pad))
-+	nopastecnt++;
++        nopastecnt++;
 +
 +      if (!TEST_FLAG (DRCFLAG, pad)
 +          && DRCFind (PAD_TYPE, (void *) element, (void *) pad, (void *) pad))
@@ -1106,11 +1106,11 @@ index 0000000..551ec7b
 +  hid_action ("LayersChanged");
 +  gui->invalidate_all ();
 +
-+  if (nopastecnt > 0) 
++  if (nopastecnt > 0)
 +    {
 +      Message (_("Warning:  %d pad%s the nopaste flag set.\n"),
-+	       nopastecnt,
-+	       nopastecnt > 1 ? "s have" : " has");
++               nopastecnt,
++               nopastecnt > 1 ? "s have" : " has");
 +    }
 +  return IsBad ? -drcerr_count : drcerr_count;
 +}
