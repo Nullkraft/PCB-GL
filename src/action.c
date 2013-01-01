@@ -49,6 +49,7 @@
 #include "crosshair.h"
 #include "data.h"
 #include "draw.h"
+#include "drc.h"
 #include "error.h"
 #include "file.h"
 #include "find.h"
