@@ -84,6 +84,7 @@ pcb_drc_violation_free (DrcViolationType *violation)
 }
 
 static GString *drc_dialog_message;
+
 static void
 reset_drc_dialog_message(void)
 {
@@ -95,6 +96,7 @@ reset_drc_dialog_message(void)
       gui->drc_gui->reset_drc_dialog_message ();
     }
 }
+
 static void
 append_drc_dialog_message(const char *fmt, ...)
 {
