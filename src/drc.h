@@ -27,11 +27,10 @@
 /* prototypes connection search routines
  */
 
-#ifndef	PCB_FIND_H
-#define	PCB_FIND_H
+#ifndef	PCB_DRC_H
+#define	PCB_DRC_H
 
-#include <stdio.h>		/* needed to define 'FILE *' */
-#include "global.h"
+//#include "global.h"
 
 /* ---------------------------------------------------------------------------
  * some local defines
@@ -43,25 +42,6 @@
 #define SILK_TYPE	\
 	(LINE_TYPE | ARC_TYPE | POLYGON_TYPE)
 
-bool IsPadInPolygon (PadType *, PolygonType *);
-bool ListStart (int type, void *ptr1, void *ptr2, void *ptr3, int flag);
-void DumpList (void);
-bool DoIt (int flag, bool AndRats, bool AndDraw);
-
-bool LineLineIntersect (LineType *, LineType *);
-bool LineArcIntersect (LineType *, ArcType *);
-bool PinLineIntersect (PinType *, LineType *);
-bool LinePadIntersect (LineType *, PadType *);
-bool ArcPadIntersect (ArcType *, PadType *);
-void LookupElementConnections (ElementType *, FILE *);
-void LookupConnectionsToAllElements (FILE *);
-void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats);
-void LookupUnusedPins (FILE *);
-bool ClearFlagOnLinesAndPolygons (bool, int flag);
-bool ClearFlagOnPinsViasAndPads (bool, int flag);
-bool ClearFlagOnAllObjects (bool, int flag);
-void InitConnectionLookup (void);
-void FreeConnectionLookupMemory (void);
-void RatFindHook (int, void *, void *, void *, bool, int flag, bool);
+int DRCAll (void);
 
 #endif
