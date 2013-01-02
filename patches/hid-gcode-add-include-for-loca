@@ -5,6 +5,9 @@ Date:   2013-01-01 23:43:00 +0000
 
 hid/gcode: Add #include for locale.h required for setlocale()
 
+For some very strange reason, this only caused a failure to build on my
+machine when compiled without optimisation (-O0).
+
 
 ---
 
