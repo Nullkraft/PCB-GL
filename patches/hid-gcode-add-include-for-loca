@@ -5,14 +5,13 @@ Date:   2013-01-01 23:43:00 +0000
 
 hid/gcode: Add a more direct "#include <locale.h>" for setlocale()
 
-For some reason, the lack of this include caused a failure to build on my
-machine when compiled without optimisation (-O0). With any optimisation
-turned on, the build works fine without the include.
+The lack of this include caused a failure to build on my machine when
+compiled without optimisation (-O0). With any optimisation turned on,
+the build would work without the include.
 
-I stripped gcode.c down to a small test-case calling setlocale, and
-discovered that the definition of setlocale and the various LC_* constants
-were being pulled in via global.h, which includes libintl.h, which in turn
-includes locale.h. I don't know why that include chain  fails with -O0.
+Having chased this strangeness down, it turns out that we were including
+libintl.h via global.h, and that libintl.h includes locale.h, IFF
+optimisation is turned on at the time it is pre-processed.
 
 
 ---
