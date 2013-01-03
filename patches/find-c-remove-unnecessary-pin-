@@ -7,8 +7,7 @@ find.c: Remove unnecessary PIN/VIA test from SetThing()
 
 This is not needed since commit d581a90edc7fb7c0b4c6351611cc4a6689d7620b
 which put similar code into ADD_PV_TO_LIST(), the only caller which
-could have previously resulted in a SetThing call with the wrong object
-type.
+could have previously resulted in a SetThing call with the wrong type.
 
 
 ---
