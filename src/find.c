@@ -401,15 +401,11 @@ PinLineIntersect (PinType *PV, LineType *Line)
 bool
 SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
 {
+  assert (! (type == PIN_TYPE && ptr1 == NULL));
   thing_ptr1 = ptr1;
   thing_ptr2 = ptr2;
   thing_ptr3 = ptr3;
   thing_type = type;
-  if (type == PIN_TYPE && ptr1 == NULL)
-    {
-      thing_ptr1 = ptr3;
-      thing_type = VIA_TYPE;
-    }
   return true;
 }
 
