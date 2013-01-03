@@ -6,7 +6,7 @@ Date:   2013-01-03 02:29:45 +0000
 configure.ac: Don't add GD_CFLAGS to CFLAGS, only CPPFLAGS
 
 GD_CFLAGS will almost certainly contain pre-processor flags, not strictly
-compiler flags.
+compiler flags. Leave CFLAGS uncluttered so the user may override it sensibly.
 
 
 ---
