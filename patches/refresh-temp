@@ -1,0 +1,83 @@
+Bottom: d55ecfa1de1cf81710f6c806a9408e8702143a0d
+Top:    b0708bc191b67666365f29d9c0698c15e9728bbb
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 20:15:45 +0000
+
+Refresh of add-the-bloat-as-a-parameter
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 8360659..bff8717 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3323,8 +3323,10 @@ struct drc_info
+ 
+ static void
+ start_do_it_and_dump (int type, void *ptr1, void *ptr2, void *ptr3,
+-                      int flag, bool AndDraw)
++                      int flag, bool AndDraw,
++                      Coord bloat)
+ {
++  Bloat = bloat;
+   ListStart (type, ptr1, ptr2, ptr3, flag);
+   DoIt (flag, true, AndDraw);
+   DumpList ();
+@@ -3346,8 +3348,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+ 
+   if (PCB->Shrink != 0)
+     {
+-      Bloat = -PCB->Shrink;
+-      start_do_it_and_dump (What, ptr1, ptr2, ptr3, DRCFLAG | SELECTEDFLAG, false);
++      start_do_it_and_dump (What, ptr1, ptr2, ptr3, DRCFLAG | SELECTEDFLAG, false, -PCB->Shrink);
+       /* ok now the shrunk net has the SELECTEDFLAG set */
+       ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
+       Bloat = 0;
+@@ -3359,11 +3360,9 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+           ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
+           User = true;
+           drc = false;
+-          Bloat = -PCB->Shrink;
+-          start_do_it_and_dump (What, ptr1, ptr2, ptr3, SELECTEDFLAG, true);
+-          Bloat = 0;
++          start_do_it_and_dump (What, ptr1, ptr2, ptr3, SELECTEDFLAG, true, -PCB->Shrink);
+           drc = true;
+-          start_do_it_and_dump (What, ptr1, ptr2, ptr3, FOUNDFLAG, true);
++          start_do_it_and_dump (What, ptr1, ptr2, ptr3, FOUNDFLAG, true, 0);
+           User = false;
+           drc = false;
+           drcerr_count++;
+@@ -3395,8 +3394,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+   /* now check the bloated condition */
+   drc = false;
+   ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
+-  Bloat = 0;
+-  start_do_it_and_dump (What, ptr1, ptr2, ptr3, SELECTEDFLAG, false);
++  start_do_it_and_dump (What, ptr1, ptr2, ptr3, SELECTEDFLAG, false, 0);
+   flag = FOUNDFLAG;
+   ListStart (What, ptr1, ptr2, ptr3, flag);
+   Bloat = PCB->Bloat;
+@@ -3408,11 +3406,9 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+       ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
+       User = true;
+       drc = false;
+-      Bloat = 0;
+-      start_do_it_and_dump (What, ptr1, ptr2, ptr3, SELECTEDFLAG, true);
+-      Bloat = PCB->Bloat;
++      start_do_it_and_dump (What, ptr1, ptr2, ptr3, SELECTEDFLAG, true, 0);
+       drc = true;
+-      start_do_it_and_dump (What, ptr1, ptr2, ptr3, FOUNDFLAG, true);
++      start_do_it_and_dump (What, ptr1, ptr2, ptr3, FOUNDFLAG, true, PCB->Bloat);
+       drcerr_count++;
+       LocateError (&x, &y);
+       BuildObjectList (&object_count, &object_id_list, &object_type_list);
+@@ -3439,8 +3435,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+       Undo (true);
+       /* highlight the rest of the encroaching net so it's not reported again */
+       flag = FOUNDFLAG | SELECTEDFLAG;
+-      Bloat = 0;
+-      start_do_it_and_dump (thing_type, thing_ptr1, thing_ptr2, thing_ptr3, flag, true);
++      start_do_it_and_dump (thing_type, thing_ptr1, thing_ptr2, thing_ptr3, flag, true, 0);
+       drc = true;
+       Bloat = PCB->Bloat;
+       ListStart (What, ptr1, ptr2, ptr3, flag);
