@@ -22,7 +22,7 @@ If the shrink test was not run, we left no reference for the boated test.
 We should clear FOUNDFLAG _and_ SELECTEDFLAG after the shrunk test, then
 construct a new reference to start with, using non-bloated geometry.
 
-This partly fies the behaviour of the bloated test, as it is now run
+This partly fixes the behaviour of the bloated test, as it is now run
 against a non-bloated reference, not a shrunk reference. This fixes
 false reports of "Copper areas too close" for track objects encountered
 after a "Potential for broken trace" warning.
