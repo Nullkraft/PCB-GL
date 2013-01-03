@@ -257,7 +257,7 @@ typedef struct
  * some local identifiers
  */
 static Coord Bloat = 0;
-static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
+//static void *thing_ptr1, *thing_ptr2, *thing_ptr3;
 static int thing_type;
 static bool User = false;    /* user action causing this */
 static bool drc = false;     /* whether to stop if finding something not found */
@@ -3397,6 +3397,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
     }
   /* now check the bloated condition */
   drc = false;
+#warning flag could be uninitialised here!
   ClearFlagOnAllObjects (false, flag);
   flag = FOUNDFLAG;
   ListStart (What, ptr1, ptr2, ptr3, flag);
@@ -3481,10 +3482,8 @@ drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
   PinType *pin = (PinType *) ptr2;
   PadType *pad = (PadType *) ptr2;
 
-  thing_type = type;
-  thing_ptr1 = ptr1;
-  thing_ptr2 = ptr2;
-  thing_ptr3 = ptr2;
+  SetFubarThing (type, ptr1, ptr2, ptr2); /* Note deliberate repeat of ptr2 */
+
   switch (type)
     {
     case LINE_TYPE:
