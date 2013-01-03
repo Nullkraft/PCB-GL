@@ -1,0 +1,20 @@
+Bottom: 5ace926590b7f1a0341595ed9cfb63b8e576401e
+Top:    400e803f70e229fc3f32cf84ff318fe6fc55b1a7
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 02:36:39 +0000
+
+Refresh of configure-ac-don-t-add-cflags-
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index 3cecd8b..39ae394 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1107,7 +1107,7 @@ AC_DEFINE_UNQUOTED([COORD_MAX],[$COORD_MAX],
+ 
+ # ------------- Complete set of CPPFLAGS and LIBS -------------------
+ 
+-CPPFLAGS="$X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
++CPPFLAGS="$X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $GD_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
+ LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS $CAIRO_LIBS $GTKGLEXT_LIBS $GLU_LIBS $GL_LIBS"
