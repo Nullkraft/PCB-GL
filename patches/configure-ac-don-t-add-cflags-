@@ -5,15 +5,13 @@ Date:   2013-01-03 02:04:25 +0000
 
 configure.ac: Fixup some confusion between CFLAGS and CPPFLAGS
 
-We were variously using CFLAGS for adding pre-processor includes to,
-where these should end up in the CPPFLAGS variable. Confusingly, their
+We were variously using CFLAGS for adding pre-processor includes, where
+these should really end up in the CPPFLAGS variable. Confusingly, their
 constituents tend to come from variables set by autoconf / pkgconfig
-expansions in the form of LIBNAME_CFLAGs.
+expansions in the form of LIBNAME_CFLAGS.
 
 Also ensure that we save and restore CPPFLAGS when we modify it during
 configure tests.
-
-
 
 
 ---
