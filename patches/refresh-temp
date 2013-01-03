@@ -1,0 +1,25 @@
+Bottom: 11a95c9592045318cd25a0fa4631ccbb0ea056fc
+Top:    8b57543a3a5dc8e27ef9e2cd3366c58231720f4e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 04:17:44 +0000
+
+Refresh of find-c-kill-setthing-with-fire
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 0f85f3e..327a96a 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -405,11 +405,7 @@ SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
+   thing_ptr2 = ptr2;
+   thing_ptr3 = ptr3;
+   thing_type = type;
+-  if (type == PIN_TYPE && ptr1 == NULL)
+-    {
+-      thing_ptr1 = ptr3;
+-      thing_type = VIA_TYPE;
+-    }
++  assert (! (type == PIN_TYPE && ptr1 == NULL))
+   return true;
+ }
