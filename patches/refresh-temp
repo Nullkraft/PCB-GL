@@ -1,0 +1,22 @@
+Bottom: 58344dc74451c5253a7236fdd0809977c34e981b
+Top:    ce3c0abe9def088fe89983109ef98f11710b5907
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 18:49:39 +0000
+
+Refresh of find-c-remove-flag-variable-in
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 4146362..1f49753 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3353,7 +3353,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+           drc = false;
+           Bloat = -PCB->Shrink;
+           ListStart (What, ptr1, ptr2, ptr3, SELECTEDFLAG);
+-          DoIt (flag, true, true);
++          DoIt (SELECTEDFLAG, true, true);
+           DumpList ();
+           ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
+           Bloat = 0;
