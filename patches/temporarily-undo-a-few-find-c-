@@ -1,5 +1,5 @@
-Bottom: b659f113056f82a4af447874d41bb1f81ee55030
-Top:    b857c6917ad1e7f3e08d704b2880a2a697545152
+Bottom: 8a8233d3202fa324442e33a10ac972898abb84ad
+Top:    e7686e967fd92cdf5a4e5cc33bfb257e0b801b51
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 19:26:54 +0000
 
@@ -9,7 +9,7 @@ Temporarily undo a few find.c changes
 ---
 
 diff --git a/src/find.c b/src/find.c
-index d11f77d..05081b0 100644
+index 6fba1da..70cc17f 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -257,7 +257,7 @@ typedef struct
@@ -21,7 +21,7 @@ index d11f77d..05081b0 100644
  static int thing_type;
  static bool User = false;    /* user action causing this */
  static bool drc = false;     /* whether to stop if finding something not found */
-@@ -3475,7 +3475,7 @@ drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
+@@ -3461,7 +3461,7 @@ drc_callback (DataType *data, LayerType *layer, PolygonType *polygon,
    PinType *pin = (PinType *) ptr2;
    PadType *pad = (PadType *) ptr2;
  
@@ -30,7 +30,7 @@ index d11f77d..05081b0 100644
  
    switch (type)
      {
-@@ -3660,7 +3660,7 @@ DRCAll (void)
+@@ -3646,7 +3646,7 @@ DRCAll (void)
              SET_FLAG (SELECTEDFLAG, line);
              DrawLine (layer, line);
              drcerr_count++;
@@ -39,7 +39,7 @@ index d11f77d..05081b0 100644
              LocateError (&x, &y);
              BuildObjectList (&object_count, &object_id_list, &object_type_list);
              violation = pcb_drc_violation_new (_("Line width is too thin"),
-@@ -3704,7 +3704,7 @@ DRCAll (void)
+@@ -3690,7 +3690,7 @@ DRCAll (void)
              SET_FLAG (SELECTEDFLAG, arc);
              DrawArc (layer, arc);
              drcerr_count++;
@@ -48,7 +48,7 @@ index d11f77d..05081b0 100644
              LocateError (&x, &y);
              BuildObjectList (&object_count, &object_id_list, &object_type_list);
              violation = pcb_drc_violation_new (_("Arc width is too thin"),
-@@ -3749,7 +3749,7 @@ DRCAll (void)
+@@ -3735,7 +3735,7 @@ DRCAll (void)
              SET_FLAG (SELECTEDFLAG, pin);
              DrawPin (pin);
              drcerr_count++;
@@ -57,7 +57,7 @@ index d11f77d..05081b0 100644
              LocateError (&x, &y);
              BuildObjectList (&object_count, &object_id_list, &object_type_list);
              violation = pcb_drc_violation_new (_("Pin annular ring too small"),
-@@ -3781,7 +3781,7 @@ DRCAll (void)
+@@ -3767,7 +3767,7 @@ DRCAll (void)
              SET_FLAG (SELECTEDFLAG, pin);
              DrawPin (pin);
              drcerr_count++;
@@ -66,7 +66,7 @@ index d11f77d..05081b0 100644
              LocateError (&x, &y);
              BuildObjectList (&object_count, &object_id_list, &object_type_list);
              violation = pcb_drc_violation_new (_("Pin drill size is too small"),
-@@ -3824,7 +3824,7 @@ DRCAll (void)
+@@ -3810,7 +3810,7 @@ DRCAll (void)
              SET_FLAG (SELECTEDFLAG, pad);
              DrawPad (pad);
              drcerr_count++;
@@ -75,7 +75,7 @@ index d11f77d..05081b0 100644
              LocateError (&x, &y);
              BuildObjectList (&object_count, &object_id_list, &object_type_list);
              violation = pcb_drc_violation_new (_("Pad is too thin"),
-@@ -3869,7 +3869,7 @@ DRCAll (void)
+@@ -3855,7 +3855,7 @@ DRCAll (void)
              SET_FLAG (SELECTEDFLAG, via);
              DrawVia (via);
              drcerr_count++;
@@ -84,7 +84,7 @@ index d11f77d..05081b0 100644
              LocateError (&x, &y);
              BuildObjectList (&object_count, &object_id_list, &object_type_list);
              violation = pcb_drc_violation_new (_("Via annular ring too small"),
-@@ -3901,7 +3901,7 @@ DRCAll (void)
+@@ -3887,7 +3887,7 @@ DRCAll (void)
              SET_FLAG (SELECTEDFLAG, via);
              DrawVia (via);
              drcerr_count++;
@@ -93,7 +93,7 @@ index d11f77d..05081b0 100644
              LocateError (&x, &y);
              BuildObjectList (&object_count, &object_id_list, &object_type_list);
              violation = pcb_drc_violation_new (_("Via drill size is too small"),
-@@ -3944,7 +3944,7 @@ DRCAll (void)
+@@ -3930,7 +3930,7 @@ DRCAll (void)
              SET_FLAG (SELECTEDFLAG, line);
              DrawLine (layer, line);
              drcerr_count++;
@@ -102,7 +102,7 @@ index d11f77d..05081b0 100644
              LocateError (&x, &y);
              BuildObjectList (&object_count, &object_id_list, &object_type_list);
              violation = pcb_drc_violation_new (_("Silk line is too thin"),
-@@ -3995,7 +3995,7 @@ DRCAll (void)
+@@ -3981,7 +3981,7 @@ DRCAll (void)
              SET_FLAG (SELECTEDFLAG, element);
              DrawElement (element);
              drcerr_count++;
