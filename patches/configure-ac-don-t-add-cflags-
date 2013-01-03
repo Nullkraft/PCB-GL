@@ -3,15 +3,15 @@ Top:    f6db665131989166508d7508428282697dffd14a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 02:04:25 +0000
 
-configure.ac: Fixup some confusion between CFLAGS and CPPFLAGS
+configure.ac: Use CPPFLAGS, not CFLAGS for our include directives.
 
-We were variously using CFLAGS for adding pre-processor includes, where
+We were previously using CFLAGS for adding pre-processor includes, where
 these should really end up in the CPPFLAGS variable. Confusingly, their
 constituents tend to come from variables set by autoconf / pkgconfig
 expansions in the form of LIBNAME_CFLAGS.
 
-Also ensure that we save and restore CPPFLAGS when we modify it during
-configure tests.
+Doing this allows the user to easily override CFLAGS at build time without
+needing to replicate the enture include path list.
 
 
 ---
