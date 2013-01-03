@@ -1,5 +1,5 @@
 Bottom: b857c6917ad1e7f3e08d704b2880a2a697545152
-Top:    f855831489d5369405572dbff78dd28ef4cf1081
+Top:    8a1a5839bfac3f0b22248d6ee27f1cad3340c924
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-01 15:21:49 +0000
 
@@ -35,10 +35,10 @@ index 1d6d8f9..c31414d 100644
  #include "find.h"
 diff --git a/src/drc.c b/src/drc.c
 new file mode 100644
-index 0000000..a250628
+index 0000000..bf3fda8
 --- /dev/null
 +++ b/src/drc.c
-@@ -0,0 +1,1042 @@
+@@ -0,0 +1,1037 @@
 +/*
 + *
 + *                            COPYRIGHT
@@ -301,11 +301,6 @@ index 0000000..a250628
 +  thing_ptr2 = ptr2;
 +  thing_ptr3 = ptr3;
 +  thing_type = type;
-+  if (type == PIN_TYPE && ptr1 == NULL)
-+    {
-+      thing_ptr1 = ptr3;
-+      thing_type = VIA_TYPE;
-+    }
 +  return true;
 +}
 +
