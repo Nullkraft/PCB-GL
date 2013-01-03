@@ -1,5 +1,5 @@
-Bottom: 1dea80a703036b8141e234ea76f2cf07059cf89f
-Top:    abb18303ae8bee4adfab6f1c69a9261dee7b6358
+Bottom: 376d80de1f8cd65cd6dd9f22f6dd7be5b0d0df5b
+Top:    c85cd283d15ca09eeb3035ff54cd6d5291a4e811
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 02:41:34 +0000
 
@@ -11,10 +11,10 @@ Ensure we add GD_CFLAGS to the the main flag list later instead.
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 8ed21a0..652f08a 100644
+index 63a2faa..5ea54c4 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -791,8 +791,10 @@ you will get lucky.
+@@ -792,8 +792,10 @@ you will get lucky.
  	# since some linux systems evidently install gdlib-config but fail to
  	# install the headers (nice), check for the header too and fail if it
  	# is not there.
@@ -25,7 +25,7 @@ index 8ed21a0..652f08a 100644
  	case $ac_cv_header_gd_h in
  	     no )
  		AC_MSG_ERROR([
-@@ -1105,7 +1107,7 @@ AC_DEFINE_UNQUOTED([COORD_MAX],[$COORD_MAX],
+@@ -1106,7 +1108,7 @@ AC_DEFINE_UNQUOTED([COORD_MAX],[$COORD_MAX],
  
  # ------------- Complete set of CFLAGS and LIBS -------------------
  
