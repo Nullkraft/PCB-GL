@@ -1,0 +1,13 @@
+Bottom: 219243c4faed4f2a67ac8efd645667d73acd330b
+Top:    219243c4faed4f2a67ac8efd645667d73acd330b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 02:01:30 +0000
+
+configure.ac: Don't add win32 build flags to both CPPFLAGS as well as CFLAGS
+
+These are compiler flags only, not preprocessor flags.
+
+
+---
+
+
