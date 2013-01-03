@@ -1,0 +1,14 @@
+Bottom: 60e610c3d34ae7a3f8d0125011d868f5cb382da7
+Top:    60e610c3d34ae7a3f8d0125011d868f5cb382da7
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 20:27:12 +0000
+
+find.c: The User varaible needs to die...
+
+Reduce its usage to where absolutely necessary... oh, what a surprise,
+another variable passing state down into add_object_to_list ()
+
+
+---
+
+
