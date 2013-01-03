@@ -1,0 +1,17 @@
+Bottom: ce3c0abe9def088fe89983109ef98f11710b5907
+Top:    ce3c0abe9def088fe89983109ef98f11710b5907
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 19:10:06 +0000
+
+find.c: OOPS, turns out we get an infinite loop with the last commit...
+
+We need to use a flag variable to change the flag we're playing with,
+otherwise we keep going around and around.
+
+No doubt there is a nicer way to fix this, but I'm not sure I completely
+understand the original intention of the code, or its exact requirements.
+
+
+---
+
+
