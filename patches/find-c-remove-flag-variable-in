@@ -9,6 +9,8 @@ This avoids confusion by making the flag passed to each call clearer.
 It removes several cases where we would set the variable, use it once,
 then change it for the next usage, making the code more succinct.
 
+XXX: THIS IS BUGGY, AS IT BREAKS A LOOP TERMINATION CONDITION
+
 
 ---
 
