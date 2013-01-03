@@ -1,0 +1,15 @@
+Bottom: 58344dc74451c5253a7236fdd0809977c34e981b
+Top:    58344dc74451c5253a7236fdd0809977c34e981b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 18:44:41 +0000
+
+find.c: Remove "flag" variable in DRCAll(), and pass explicitly each time.
+
+This avoids confusion by making the flag passed to each call clearer.
+It removes several cases where we would set the variable, use it once,
+then change it for the next usage, making the code more succinct.
+
+
+---
+
+
