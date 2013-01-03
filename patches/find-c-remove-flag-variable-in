@@ -1,0 +1,15 @@
+Bottom: ae9f4dbeacfeb5bd98658f9a56935c7e8a41566b
+Top:    ae9f4dbeacfeb5bd98658f9a56935c7e8a41566b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 18:32:15 +0000
+
+find.c: Remove "flag" variable in DRCFind(), and pass explicitly each time.
+
+This avoids confusion by making the flag passed to each call clearer.
+It helpfully removes some cases where we would set the variable, use it
+once, then change it for the next usage, making the code more succinct.
+
+
+---
+
+
