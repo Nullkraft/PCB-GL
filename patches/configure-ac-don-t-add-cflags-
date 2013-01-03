@@ -1,5 +1,5 @@
-Bottom: 1dea80a703036b8141e234ea76f2cf07059cf89f
-Top:    400e803f70e229fc3f32cf84ff318fe6fc55b1a7
+Bottom: f6db665131989166508d7508428282697dffd14a
+Top:    f6db665131989166508d7508428282697dffd14a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 02:04:25 +0000
 
@@ -16,28 +16,4 @@ configure tests.
 
 ---
 
-diff --git a/configure.ac b/configure.ac
-index 8ed21a0..39ae394 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -791,8 +791,10 @@ you will get lucky.
- 	# since some linux systems evidently install gdlib-config but fail to
- 	# install the headers (nice), check for the header too and fail if it
- 	# is not there.
-+	save_CPPFLAGS="$CPPFLAGS"
- 	CPPFLAGS="$CPPFLAGS $GD_CFLAGS"
- 	AC_CHECK_HEADERS(gd.h)
-+	CPPFLASS="$save_CPPFLAGS"
- 	case $ac_cv_header_gd_h in
- 	     no )
- 		AC_MSG_ERROR([
-@@ -1103,9 +1105,9 @@ AC_DEFINE_UNQUOTED([COORD_TYPE],[$COORD_TYPE],
- AC_DEFINE_UNQUOTED([COORD_MAX],[$COORD_MAX],
-   [Maximum value of coordinate type])
- 
--# ------------- Complete set of CFLAGS and LIBS -------------------
-+# ------------- Complete set of CPPFLAGS and LIBS -------------------
- 
--CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
-+CPPFLAGS="$X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $GD_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
- LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS $CAIRO_LIBS $GTKGLEXT_LIBS $GLU_LIBS $GL_LIBS"
+
