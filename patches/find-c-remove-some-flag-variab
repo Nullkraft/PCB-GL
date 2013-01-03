@@ -1,29 +1,27 @@
 Bottom: 0ff31ddc8f420fa015070d1cfaa2cd152825925d
-Top:    796eba69bd23379d352ce3178ad7b64bb9fce2ab
+Top:    b857c6917ad1e7f3e08d704b2880a2a697545152
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2013-01-03 18:32:15 +0000
+Date:   2013-01-03 19:57:47 +0000
 
-find.c: Remove "flag" variable in DRCFind(), and pass explicitly each time.
+find.c: Remove some "flag" variable usage in DRCFind()
 
-This avoids confusion by making the flag passed to each call clearer.
-It removes several cases where we would set the variable, use it once,
+Avoid confusion by passing *FLAG constants directly to some functions.
+This removes several cases where we would set the variable, use it once,
 then change it for the next usage, making the code more succinct.
 
-XXX: THIS IS BUGGY, AS IT BREAKS A LOOP TERMINATION CONDITION
-
+I was not able to remove the flag variable entirely, as the while loop
+calling DoIt() relies on it being changed inside the loop in order to
+terminate. It should be possible to re-write the loop exit condition if
+desired, but I'm not sure I completely understand the behaviour of the
+existing code yet.
 
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 2f4475f..686731d 100644
+index 2f4475f..05081b0 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3333,38 +3333,32 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
-   long int *object_id_list;
-   int *object_type_list;
-   DrcViolationType *violation;
--  int flag;
- 
+@@ -3338,33 +3338,28 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
    if (PCB->Shrink != 0)
      {
        Bloat = -PCB->Shrink;
@@ -66,7 +64,7 @@ index 2f4475f..686731d 100644
            DumpList ();
            User = false;
            drc = false;
-@@ -3396,35 +3390,29 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3396,12 +3391,10 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
      }
    /* now check the bloated condition */
    drc = false;
@@ -80,13 +78,9 @@ index 2f4475f..686731d 100644
 +  ListStart (What, ptr1, ptr2, ptr3, SELECTEDFLAG);
 +  DoIt (SELECTEDFLAG, true, false);
    DumpList ();
--  flag = FOUNDFLAG;
--  ListStart (What, ptr1, ptr2, ptr3, flag);
-+  ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
-   Bloat = PCB->Bloat;
-   drc = true;
--  while (DoIt (flag, true, false))
-+  while (DoIt (FOUNDFLAG, true, false))
+   flag = FOUNDFLAG;
+   ListStart (What, ptr1, ptr2, ptr3, flag);
+@@ -3411,20 +3404,17 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
      {
        DumpList ();
        /* make the flag changes undoable */
@@ -112,21 +106,16 @@ index 2f4475f..686731d 100644
        DumpList ();
        drcerr_count++;
        LocateError (&x, &y);
-@@ -3451,19 +3439,17 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3451,7 +3441,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
        IncrementUndoSerialNumber ();
        Undo (true);
        /* highlight the rest of the encroaching net so it's not reported again */
 -      flag |= SELECTEDFLAG;
++      flag = FOUNDFLAG | SELECTEDFLAG;
        Bloat = 0;
--      ListStart (thing_type, thing_ptr1, thing_ptr2, thing_ptr3, flag);
--      DoIt (flag, true, true);
-+      ListStart (thing_type, thing_ptr1, thing_ptr2, thing_ptr3, FOUNDFLAG | SELECTEDFLAG);
-+      DoIt (FOUNDFLAG | SELECTEDFLAG, true, true);
-       DumpList ();
-       drc = true;
-       Bloat = PCB->Bloat;
--      ListStart (What, ptr1, ptr2, ptr3, flag);
-+      ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG | SELECTEDFLAG);
+       ListStart (thing_type, thing_ptr1, thing_ptr2, thing_ptr3, flag);
+       DoIt (flag, true, true);
+@@ -3462,8 +3452,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
      }
    drc = false;
    DumpList ();
