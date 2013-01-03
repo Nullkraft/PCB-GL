@@ -1,0 +1,14 @@
+Bottom: 05d1c5cc048c15a4857528e0ff651d5f5f047951
+Top:    05d1c5cc048c15a4857528e0ff651d5f5f047951
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 04:04:36 +0000
+
+configure.ac: Test for libgd once, not per HID which uses it.
+
+This avoids some repeated tests, so should help to speed up the configure
+process a little.
+
+
+---
+
+
