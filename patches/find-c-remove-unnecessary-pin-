@@ -1,0 +1,16 @@
+Bottom: 11a95c9592045318cd25a0fa4631ccbb0ea056fc
+Top:    11a95c9592045318cd25a0fa4631ccbb0ea056fc
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 16:53:33 +0000
+
+find.c: Remove unnecessary PIN/VIA test from SetThing()
+
+This is not needed since commit d581a90edc7fb7c0b4c6351611cc4a6689d7620b
+which put similar code into ADD_PV_TO_LIST(), the only caller which
+could have previously resulted in a SetThing call with the wrong object
+type.
+
+
+---
+
+
