@@ -1,5 +1,5 @@
 Bottom: 1dea80a703036b8141e234ea76f2cf07059cf89f
-Top:    f6db665131989166508d7508428282697dffd14a
+Top:    abb18303ae8bee4adfab6f1c69a9261dee7b6358
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 02:41:34 +0000
 
@@ -11,7 +11,7 @@ Ensure we add GD_CFLAGS to the the main flag list later instead.
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 8ed21a0..7e8348b 100644
+index 8ed21a0..652f08a 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -791,8 +791,10 @@ you will get lucky.
@@ -30,5 +30,5 @@ index 8ed21a0..7e8348b 100644
  # ------------- Complete set of CFLAGS and LIBS -------------------
  
 -CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
-+CFLAGS="$X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $GD_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
++CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $GD_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
  LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS $CAIRO_LIBS $GTKGLEXT_LIBS $GLU_LIBS $GL_LIBS"
