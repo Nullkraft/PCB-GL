@@ -1,0 +1,21 @@
+Bottom: 56cbb0abc9747fb2ca103201fff1eab727ea41fe
+Top:    2b31961be768ba1fa92add7767840a4ef0ce43b1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 02:33:45 +0000
+
+Refresh of configure-ac-don-t-add-gd_cfla
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index 5fe1a81..46af266 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -789,7 +789,6 @@ you will get lucky.
+ 	# since some linux systems evidently install gdlib-config but fail to
+ 	# install the headers (nice), check for the header too and fail if it
+ 	# is not there.
+-	CFLAGS="$CFLAGS $GD_CFLAGS"
+ 	CPPFLAGS="$CPPFLAGS $GD_CFLAGS"
+ 	AC_CHECK_HEADERS(gd.h)
+ 	case $ac_cv_header_gd_h in
