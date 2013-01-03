@@ -1,5 +1,5 @@
 Bottom: 2b31961be768ba1fa92add7767840a4ef0ce43b1
-Top:    5ace926590b7f1a0341595ed9cfb63b8e576401e
+Top:    400e803f70e229fc3f32cf84ff318fe6fc55b1a7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 02:04:25 +0000
 
@@ -17,7 +17,7 @@ configure tests.
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 46af266..3cecd8b 100644
+index 46af266..39ae394 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -704,6 +704,7 @@ for e in $HIDLIST; do
@@ -57,5 +57,5 @@ index 46af266..3cecd8b 100644
 +# ------------- Complete set of CPPFLAGS and LIBS -------------------
  
 -CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
-+CPPFLAGS="$X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
++CPPFLAGS="$X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $GD_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
  LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS $CAIRO_LIBS $GTKGLEXT_LIBS $GLU_LIBS $GL_LIBS"
