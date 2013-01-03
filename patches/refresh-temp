@@ -1,0 +1,30 @@
+Bottom: ad1f8d9e5e01a36e4eb34f7dc7d4de978cfb7f0b
+Top:    0ea170dc9ebd7eb7f5698295321f155f1cca217f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 03:06:55 +0000
+
+Refresh of src-makefile-am-we-don-t-need-
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 602ebaa..66c957b 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -3,7 +3,6 @@
+ SUBDIRS=	icons
+ 
+ CC = @CC_OR_CXX@
+-AM_CFLAGS = @CC_OR_CXX_FLAGS@
+ 
+ pcbtreedir=	@PCBTREEDIR@
+ pcblibdir=	@PCBLIBDIR@
+@@ -26,7 +25,7 @@ bin_PROGRAMS=	pcb
+ if DEBUG_BUILD
+ # don't disable assert()
+ else
+-AM_CFLAGS += -DNDEBUG
++AM_CFLAGS= -DNDEBUG
+ endif
+ 
+ PCB_SRCS = \
