@@ -1,0 +1,13 @@
+Bottom: ad1f8d9e5e01a36e4eb34f7dc7d4de978cfb7f0b
+Top:    ad1f8d9e5e01a36e4eb34f7dc7d4de978cfb7f0b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 02:58:17 +0000
+
+src/Makefile.am: We don't need to set AM_CFLAGS to match CFLAGS
+
+It turns out that we were duplicating command-line flags un-necessarily.
+
+
+---
+
+
