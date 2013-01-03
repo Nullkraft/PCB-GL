@@ -1,0 +1,22 @@
+Bottom: 219243c4faed4f2a67ac8efd645667d73acd330b
+Top:    7cc96e1654304be6bef8d35bd46de0e053801b66
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 02:03:07 +0000
+
+Refresh of configure-ac-don-t-add-win32-b
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index 9c1b875..8e7a862 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -91,7 +91,7 @@ case $host in
+ 	*-*-mingw* )
+ 		WIN32=yes
+ 		CFLAGS="$CFLAGS ${MINGW_CFLAGS:--mms-bitfields -mwindows}"
+-		CPPFLAGS="$CPPFLAGS ${MINGW_CPPFLAGS:--mms-bitfields -mwindows}"
++		CPPFLAGS="$CPPFLAGS ${MINGW_CPPFLAGS}"
+ 		;;
+ 
+ 	* )
