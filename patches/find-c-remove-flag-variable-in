@@ -1,5 +1,5 @@
-Bottom: 4baa9f3e2cdcdfd30c2096881f95445230ff882b
-Top:    910d0f348176c17c1b92e4252c59660a2e782db3
+Bottom: 0ff31ddc8f420fa015070d1cfaa2cd152825925d
+Top:    796eba69bd23379d352ce3178ad7b64bb9fce2ab
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 18:32:15 +0000
 
@@ -15,7 +15,7 @@ XXX: THIS IS BUGGY, AS IT BREAKS A LOOP TERMINATION CONDITION
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 68b65d7..1f49753 100644
+index 2f4475f..686731d 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -3333,38 +3333,32 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
