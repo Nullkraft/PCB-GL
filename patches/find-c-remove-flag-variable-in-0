@@ -1,5 +1,5 @@
-Bottom: ce3c0abe9def088fe89983109ef98f11710b5907
-Top:    4a78291670cf6994fd235549a7a407b6b8c49633
+Bottom: 579709ad45c967007a3264fcdf2cd4198f841fa2
+Top:    996db1b717e67a922e484dda5fc9f6d62c65d5c8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 18:44:41 +0000
 
@@ -13,10 +13,10 @@ then change it for the next usage, making the code more succinct.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 1f49753..686731d 100644
+index 184e001..05081b0 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3574,7 +3574,6 @@ DRCAll (void)
+@@ -3577,7 +3577,6 @@ DRCAll (void)
    int tmpcnt;
    int nopastecnt = 0;
    bool IsBad;
@@ -24,7 +24,7 @@ index 1f49753..686731d 100644
    struct drc_info info;
  
    reset_drc_dialog_message();
-@@ -3586,9 +3585,7 @@ DRCAll (void)
+@@ -3589,9 +3588,7 @@ DRCAll (void)
    hid_action ("LayersChanged");
    InitConnectionLookup ();
  
@@ -35,7 +35,7 @@ index 1f49753..686731d 100644
      {
        IncrementUndoSerialNumber ();
        Draw ();
-@@ -3641,10 +3638,8 @@ DRCAll (void)
+@@ -3644,10 +3641,8 @@ DRCAll (void)
    }
    END_LOOP;
  
@@ -48,7 +48,7 @@ index 1f49753..686731d 100644
    /* check minimum widths and polygon clearances */
    if (!IsBad)
      {
-@@ -3659,7 +3654,7 @@ DRCAll (void)
+@@ -3662,7 +3657,7 @@ DRCAll (void)
          if (line->Thickness < PCB->minWid)
            {
              AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
@@ -57,7 +57,7 @@ index 1f49753..686731d 100644
              DrawLine (layer, line);
              drcerr_count++;
              SetThing (LINE_TYPE, layer, line, line);
-@@ -3703,7 +3698,7 @@ DRCAll (void)
+@@ -3706,7 +3701,7 @@ DRCAll (void)
          if (arc->Thickness < PCB->minWid)
            {
              AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
@@ -66,7 +66,7 @@ index 1f49753..686731d 100644
              DrawArc (layer, arc);
              drcerr_count++;
              SetThing (ARC_TYPE, layer, arc, arc);
-@@ -3748,7 +3743,7 @@ DRCAll (void)
+@@ -3751,7 +3746,7 @@ DRCAll (void)
              pin->Thickness - pin->DrillingHole < 2 * PCB->minRing)
            {
              AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
@@ -75,7 +75,7 @@ index 1f49753..686731d 100644
              DrawPin (pin);
              drcerr_count++;
              SetThing (PIN_TYPE, element, pin, pin);
-@@ -3780,7 +3775,7 @@ DRCAll (void)
+@@ -3783,7 +3778,7 @@ DRCAll (void)
          if (pin->DrillingHole < PCB->minDrill)
            {
              AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
@@ -84,7 +84,7 @@ index 1f49753..686731d 100644
              DrawPin (pin);
              drcerr_count++;
              SetThing (PIN_TYPE, element, pin, pin);
-@@ -3823,7 +3818,7 @@ DRCAll (void)
+@@ -3826,7 +3821,7 @@ DRCAll (void)
          if (pad->Thickness < PCB->minWid)
            {
              AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
@@ -93,7 +93,7 @@ index 1f49753..686731d 100644
              DrawPad (pad);
              drcerr_count++;
              SetThing (PAD_TYPE, element, pad, pad);
-@@ -3868,7 +3863,7 @@ DRCAll (void)
+@@ -3871,7 +3866,7 @@ DRCAll (void)
              via->Thickness - via->DrillingHole < 2 * PCB->minRing)
            {
              AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
@@ -102,7 +102,7 @@ index 1f49753..686731d 100644
              DrawVia (via);
              drcerr_count++;
              SetThing (VIA_TYPE, via, via, via);
-@@ -3900,7 +3895,7 @@ DRCAll (void)
+@@ -3903,7 +3898,7 @@ DRCAll (void)
          if (via->DrillingHole < PCB->minDrill)
            {
              AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
@@ -111,7 +111,7 @@ index 1f49753..686731d 100644
              DrawVia (via);
              drcerr_count++;
              SetThing (VIA_TYPE, via, via, via);
-@@ -3933,19 +3928,17 @@ DRCAll (void)
+@@ -3936,19 +3931,17 @@ DRCAll (void)
      }
  
    FreeConnectionLookupMemory ();
@@ -132,7 +132,7 @@ index 1f49753..686731d 100644
              DrawLine (layer, line);
              drcerr_count++;
              SetThing (LINE_TYPE, layer, line, line);
-@@ -3978,7 +3971,6 @@ DRCAll (void)
+@@ -3981,7 +3974,6 @@ DRCAll (void)
  
    /* check silkscreen minimum widths inside of elements */
    /* XXX - need to check text and polygons too! */
@@ -140,7 +140,7 @@ index 1f49753..686731d 100644
    if (!IsBad)
      {
        ELEMENT_LOOP (PCB->Data);
-@@ -3997,7 +3989,7 @@ DRCAll (void)
+@@ -4000,7 +3992,7 @@ DRCAll (void)
              char *buffer;
              int buflen;
  
