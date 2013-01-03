@@ -1,5 +1,5 @@
 Bottom: 70adcce0b3da9b172fe9b1dd4f908931a9c06ff3
-Top:    58344dc74451c5253a7236fdd0809977c34e981b
+Top:    ce3c0abe9def088fe89983109ef98f11710b5907
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 18:32:15 +0000
 
@@ -13,7 +13,7 @@ then change it for the next usage, making the code more succinct.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 68b65d7..4146362 100644
+index 68b65d7..1f49753 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -3333,38 +3333,32 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
@@ -50,8 +50,9 @@ index 68b65d7..4146362 100644
            Bloat = -PCB->Shrink;
 -          flag = SELECTEDFLAG;
 -          ListStart (What, ptr1, ptr2, ptr3, flag);
+-          DoIt (flag, true, true);
 +          ListStart (What, ptr1, ptr2, ptr3, SELECTEDFLAG);
-           DoIt (flag, true, true);
++          DoIt (SELECTEDFLAG, true, true);
            DumpList ();
 -          flag = FOUNDFLAG;
 -          ListStart (What, ptr1, ptr2, ptr3, flag);
