@@ -1,0 +1,14 @@
+Bottom: 2b31961be768ba1fa92add7767840a4ef0ce43b1
+Top:    2b31961be768ba1fa92add7767840a4ef0ce43b1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 02:37:57 +0000
+
+configure.ac: Save and restore CPPFLAGS either side of test for X11 stuff
+
+We add X_CFLAGS and X_LIBS to the main flag list later, so don't leave
+the CPPFLAGS variable with two copies.
+
+
+---
+
+
