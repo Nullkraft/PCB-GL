@@ -37,6 +37,41 @@ pads and vias, despite having already touched the geometry with the
 bloated test. To fix this, we need to separate the shrink and bloat tests
 into distinct passes, and set the DRCFLAG on objects during both tests.
 
+An example of this is the following test-case:
+
+FileVersion[20091103]
+PCB["" 65.000mm 15.0000mm]
+
+Grid[984.251969 0.0000 0.0000 1]
+PolyArea[3100.006200]
+Thermal[0.500000]
+DRC[0.5000mm 0.5000mm 0.5000mm 0.2500mm 0.4000mm 0.5000mm]
+Flags("nameonpcb,uniquename,clearnew,snappin")
+Groups("1,c:2,s:3:4")
+Styles["Signal,0.5000mm,1.0000mm,0.5000mm,0.2500mm:Power,25.00mil,60.00mil,35.00mil,10.00mil:Fat,40.00mil,60.00mil,35.00mil,10.00mil:Skinny,6.00mil,24.02mil,11.81mil,6.00mil"]
+
+Attribute("PCB::grid::unit" "mm")
+Attribute("PCB::grid::size" "0.2500mm")
+
+Via[9.7500mm 7.2500mm 1.6000mm 0.5000mm 0.0000 0.5000mm "" ""]
+Via[53.5000mm 7.2500mm 1.6000mm 0.5000mm 0.0000 0.5000mm "" ""]
+Layer(1 "top")
+(
+	Line[9.7500mm 8.5000mm 28.0000mm 8.5000mm 0.5000mm 0.5000mm "clearline"]
+	Line[9.7500mm 7.2500mm 9.7500mm 8.5000mm 0.5000mm 0.5000mm "clearline"]
+	Line[28.2500mm 8.5000mm 53.5000mm 8.5000mm 0.5000mm 0.5000mm "clearline"]
+	Line[53.5000mm 7.2500mm 53.5000mm 8.5000mm 0.5000mm 0.5000mm "clearline"]
+)
+Layer(2 "bottom")
+(
+)
+Layer(3 "silk")
+(
+)
+Layer(4 "silk")
+(
+)
+
 
 ---
 
