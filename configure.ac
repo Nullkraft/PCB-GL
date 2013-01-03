@@ -90,8 +90,8 @@ PCB_DIR_SEPARATOR_C='/'
 case $host in
 	*-*-mingw* )
 		WIN32=yes
-		CFLAGS="$CFLAGS ${MINGW_CFLAGS:--mms-bitfields -mwindows}"
-		CPPFLAGS="$CPPFLAGS ${MINGW_CPPFLAGS:--mms-bitfields -mwindows}"
+		CFLAGS="$CFLAGS --mms-bitfields -mwindows"
+		CPPFLAGS="$CPPFLAGS --mms-bitfields -mwindows"
 		;;
 
 	* )
