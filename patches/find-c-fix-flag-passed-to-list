@@ -1,0 +1,14 @@
+Bottom: ae9f4dbeacfeb5bd98658f9a56935c7e8a41566b
+Top:    ae9f4dbeacfeb5bd98658f9a56935c7e8a41566b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 18:41:15 +0000
+
+find.c: Fix flag passed to ListStart() in DRCFind().
+
+We should have set the flag before calling ListStart(), as it marks
+the first item with that flag.
+
+
+---
+
+
