@@ -1,0 +1,27 @@
+Bottom: 2eee8982fcd1e14263d58ade8080438507ed1862
+Top:    ae9f4dbeacfeb5bd98658f9a56935c7e8a41566b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 17:59:08 +0000
+
+Refresh of find-c-fix-possible-un-assigne
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index e63572e..9198df4 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3396,7 +3396,13 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+     }
+   /* now check the bloated condition */
+   drc = false;
++  flag = FOUNDFLAG | SELECTEDFLAG;
+   ClearFlagOnAllObjects (false, flag);
++  Bloat = 0;
++  flag = SELECTEDFLAG;
++  ListStart (What, ptr1, ptr2, ptr3, flag);
++  DoIt (flag, true, false);
++  DumpList ();
+   flag = FOUNDFLAG;
+   ListStart (What, ptr1, ptr2, ptr3, flag);
+   Bloat = PCB->Bloat;
