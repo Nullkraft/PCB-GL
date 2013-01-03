@@ -1,0 +1,24 @@
+Bottom: f855831489d5369405572dbff78dd28ef4cf1081
+Top:    8a1a5839bfac3f0b22248d6ee27f1cad3340c924
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 19:52:53 +0000
+
+Refresh of split-drc-routines-out-of-find
+
+---
+
+diff --git a/src/drc.c b/src/drc.c
+index a250628..bf3fda8 100644
+--- a/src/drc.c
++++ b/src/drc.c
+@@ -260,11 +260,6 @@ SetThing (int type, void *ptr1, void *ptr2, void *ptr3)
+   thing_ptr2 = ptr2;
+   thing_ptr3 = ptr3;
+   thing_type = type;
+-  if (type == PIN_TYPE && ptr1 == NULL)
+-    {
+-      thing_ptr1 = ptr3;
+-      thing_type = VIA_TYPE;
+-    }
+   return true;
+ }
