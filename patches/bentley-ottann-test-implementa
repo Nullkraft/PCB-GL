@@ -1,7 +1,7 @@
-Bottom: 5271f698d1752595bc0326a991cece7f81bd924a
-Top:    91797e481875d22896eacaac9d667bd9ed68c949
+Bottom: 3abac3c8845a3528155061aeb78f49023033ffdf
+Top:    f068990f0331b6a4c4fa7eadc64d3d51d3087be2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2012-12-30 11:20:32 +0000
+Date:   2013-01-03 22:56:53 +0000
 
 Bentley-Ottann test implementation
 
@@ -11,7 +11,7 @@ Code from cairo - intersection routines stripped out
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 1af732e..17a721f 100644
+index 322f412..0cd82eb 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
@@ -194,10 +194,10 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index dfc7e47..68b3bb4 100644
+index 76a5326..32e23e0 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -39,6 +39,22 @@ PCB_SRCS = \
+@@ -38,6 +38,22 @@ PCB_SRCS = \
  	box.h \
  	buffer.c \
  	buffer.h \
@@ -220,7 +220,7 @@ index dfc7e47..68b3bb4 100644
  	change.c \
  	change.h \
  	clip.c \
-@@ -139,6 +155,7 @@ PCB_SRCS = \
+@@ -138,6 +154,7 @@ PCB_SRCS = \
  	set.h \
  	strflags.c \
  	strflags.h \
