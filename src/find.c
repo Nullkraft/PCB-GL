@@ -3353,7 +3353,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
           drc = false;
           Bloat = -PCB->Shrink;
           ListStart (What, ptr1, ptr2, ptr3, SELECTEDFLAG);
-          DoIt (flag, true, true);
+          DoIt (SELECTEDFLAG, true, true);
           DumpList ();
           ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
           Bloat = 0;
