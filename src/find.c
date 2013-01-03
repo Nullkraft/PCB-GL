@@ -3333,38 +3333,32 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
   long int *object_id_list;
   int *object_type_list;
   DrcViolationType *violation;
-  int flag;
 
   if (PCB->Shrink != 0)
     {
       Bloat = -PCB->Shrink;
-      flag = DRCFLAG | SELECTEDFLAG;
-      ListStart (What, ptr1, ptr2, ptr3, flag);
-      DoIt (flag, true, false);
+      ListStart (What, ptr1, ptr2, ptr3, DRCFLAG | SELECTEDFLAG);
+      DoIt (DRCFLAG | SELECTEDFLAG, true, false);
       /* ok now the shrunk net has the SELECTEDFLAG set */
       DumpList ();
-      flag = FOUNDFLAG;
-      ListStart (What, ptr1, ptr2, ptr3, flag);
+      ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
       Bloat = 0;
       drc = true;               /* abort the search if we find anything not already found */
-      if (DoIt (flag, true, false))
+      if (DoIt (FOUNDFLAG, true, false))
         {
           DumpList ();
           /* make the flag changes undoable */
-          flag = FOUNDFLAG | SELECTEDFLAG;
-          ClearFlagOnAllObjects (false, flag);
+          ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
           User = true;
           drc = false;
           Bloat = -PCB->Shrink;
-          flag = SELECTEDFLAG;
-          ListStart (What, ptr1, ptr2, ptr3, flag);
-          DoIt (flag, true, true);
+          ListStart (What, ptr1, ptr2, ptr3, SELECTEDFLAG);
+          DoIt (SELECTEDFLAG, true, true);
           DumpList ();
-          flag = FOUNDFLAG;
-          ListStart (What, ptr1, ptr2, ptr3, flag);
+          ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
           Bloat = 0;
           drc = true;
-          DoIt (flag, true, true);
+          DoIt (FOUNDFLAG, true, true);
           DumpList ();
           User = false;
           drc = false;
@@ -3396,35 +3390,29 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
     }
   /* now check the bloated condition */
   drc = false;
-  flag = FOUNDFLAG | SELECTEDFLAG;
-  ClearFlagOnAllObjects (false, flag);
+  ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
   Bloat = 0;
-  flag = SELECTEDFLAG;
-  ListStart (What, ptr1, ptr2, ptr3, flag);
-  DoIt (flag, true, false);
+  ListStart (What, ptr1, ptr2, ptr3, SELECTEDFLAG);
+  DoIt (SELECTEDFLAG, true, false);
   DumpList ();
-  flag = FOUNDFLAG;
-  ListStart (What, ptr1, ptr2, ptr3, flag);
+  ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
   Bloat = PCB->Bloat;
   drc = true;
-  while (DoIt (flag, true, false))
+  while (DoIt (FOUNDFLAG, true, false))
     {
       DumpList ();
       /* make the flag changes undoable */
-      flag = FOUNDFLAG | SELECTEDFLAG;
-      ClearFlagOnAllObjects (false, flag);
+      ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
       User = true;
       drc = false;
       Bloat = 0;
-      flag = SELECTEDFLAG;
-      ListStart (What, ptr1, ptr2, ptr3, flag);
-      DoIt (flag, true, true);
+      ListStart (What, ptr1, ptr2, ptr3, SELECTEDFLAG);
+      DoIt (SELECTEDFLAG, true, true);
       DumpList ();
-      flag = FOUNDFLAG;
-      ListStart (What, ptr1, ptr2, ptr3, flag);
+      ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
       Bloat = PCB->Bloat;
       drc = true;
-      DoIt (flag, true, true);
+      DoIt (FOUNDFLAG, true, true);
       DumpList ();
       drcerr_count++;
       LocateError (&x, &y);
@@ -3451,19 +3439,17 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       IncrementUndoSerialNumber ();
       Undo (true);
       /* highlight the rest of the encroaching net so it's not reported again */
-      flag |= SELECTEDFLAG;
       Bloat = 0;
-      ListStart (thing_type, thing_ptr1, thing_ptr2, thing_ptr3, flag);
-      DoIt (flag, true, true);
+      ListStart (thing_type, thing_ptr1, thing_ptr2, thing_ptr3, FOUNDFLAG | SELECTEDFLAG);
+      DoIt (FOUNDFLAG | SELECTEDFLAG, true, true);
       DumpList ();
       drc = true;
       Bloat = PCB->Bloat;
-      ListStart (What, ptr1, ptr2, ptr3, flag);
+      ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG | SELECTEDFLAG);
     }
   drc = false;
   DumpList ();
-  flag = FOUNDFLAG | SELECTEDFLAG;
-  ClearFlagOnAllObjects (false, flag);
+  ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
   return (false);
 }
 
