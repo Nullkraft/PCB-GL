@@ -3,9 +3,14 @@ Top:    ad1f8d9e5e01a36e4eb34f7dc7d4de978cfb7f0b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 02:58:17 +0000
 
-src/Makefile.am: We don't need to set AM_CFLAGS to match CFLAGS
+src/Makefile.am: Don't need to set AM_CFLAGS to C_OR_CXX_FLAGS
 
-It turns out that we were duplicating command-line flags un-necessarily.
+We were duplicating command-line flags un-necessarily, and it does not
+stop the a build with the C++ compiler using CFLAGS, as was (in hindsight)
+the original intention before commit 72cdf2ecef3361a00fbd0ee3e540f7383e62272c
+
+We should not override CFLAGS in a Makefile as it prevents the user from
+setting CFLAGS at "make" time, so I'm removing this completely.
 
 
 ---
