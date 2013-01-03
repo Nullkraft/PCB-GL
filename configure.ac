@@ -791,8 +791,10 @@ you will get lucky.
 	# since some linux systems evidently install gdlib-config but fail to
 	# install the headers (nice), check for the header too and fail if it
 	# is not there.
+	save_CPPFLAGS="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GD_CFLAGS"
 	AC_CHECK_HEADERS(gd.h)
+	CPPFLASS="$save_CPPFLAGS"
 	case $ac_cv_header_gd_h in
 	     no )
 		AC_MSG_ERROR([
@@ -1103,9 +1105,9 @@ AC_DEFINE_UNQUOTED([COORD_TYPE],[$COORD_TYPE],
 AC_DEFINE_UNQUOTED([COORD_MAX],[$COORD_MAX],
   [Maximum value of coordinate type])
 
-# ------------- Complete set of CFLAGS and LIBS -------------------
+# ------------- Complete set of CPPFLAGS and LIBS -------------------
 
-CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
+CPPFLAGS="$X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $GD_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS $GL_CFLAGS"
 LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS $CAIRO_LIBS $GTKGLEXT_LIBS $GLU_LIBS $GL_LIBS"
 
 
