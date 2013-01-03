@@ -1,5 +1,5 @@
-Bottom: 219243c4faed4f2a67ac8efd645667d73acd330b
-Top:    8473f6535ff6d8df915148468f0283b415df3ad7
+Bottom: 7cc96e1654304be6bef8d35bd46de0e053801b66
+Top:    7cc96e1654304be6bef8d35bd46de0e053801b66
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 02:00:01 +0000
 
@@ -10,18 +10,4 @@ Add "-mms-bitfields -mwindows" for all mingw builds and remove the option to ove
 
 ---
 
-diff --git a/configure.ac b/configure.ac
-index 9c1b875..8e9d36d 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -90,8 +90,8 @@ PCB_DIR_SEPARATOR_C='/'
- case $host in
- 	*-*-mingw* )
- 		WIN32=yes
--		CFLAGS="$CFLAGS ${MINGW_CFLAGS:--mms-bitfields -mwindows}"
--		CPPFLAGS="$CPPFLAGS ${MINGW_CPPFLAGS:--mms-bitfields -mwindows}"
-+		CFLAGS="$CFLAGS --mms-bitfields -mwindows"
-+		CPPFLAGS="$CPPFLAGS --mms-bitfields -mwindows"
- 		;;
- 
- 	* )
+
