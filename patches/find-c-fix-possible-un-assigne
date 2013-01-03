@@ -13,31 +13,36 @@ the code called ClearFlagOnAllObjects() with the previously assigned
 "TheFlag". After the above commit, we would use "flag" unassigned.
 
 If the shrink test is executed, the "FOUNDFLAG" is cleared from objects,
-leaving the SELECTEDFLAG image on the net in question as a reference to
+leaving a SELECTEDFLAG image on the copper in question as a reference to
 compare against when considering the bloated geometry. (This is the wrong
 reference, as we should be comparing against the non-shrunk case).
 
-If the shrink test was not run, we left no reference for the boated test
+If the shrink test was not run, we left no reference for the boated test.
 
 We should clear FOUNDFLAG _and_ SELECTEDFLAG after the shrunk test, then
 construct a new reference to start with, using non-bloated geometry.
 
-This changes the behaviour of the test slightly, as it means the bloated
-portion of the test is run against a non-bloated reference, not a shrunk
-reference. This fixes false reports of "Copper areas too close" for track
-objects encountered after a "Potential for broken trace" warning.
+This partly fies the behaviour of the bloated test, as it is now run
+against a non-bloated reference, not a shrunk reference. This fixes
+false reports of "Copper areas too close" for track objects encountered
+after a "Potential for broken trace" warning.
 
-There are still a few issues with the bloated DRC test. One important one
+There are still other issues with the bloated DRC test. One important one
 is that it may run multiple times on the same geometry if a "Potential
 for broken trace" error is present, or if the "shrink" test is not run.
 
-In this case, only part (or none) of the track will get the DRCFLAG set
-by the "shrink" test, and DRCFind will be called repeatedly on all pins,
-pads and vias, despite having already touched the geometry with the
-bloated test. To fix this, we need to separate the shrink and bloat tests
-into distinct passes, and set the DRCFLAG on objects during both tests.
+The repeated runs are because in the "Potential for broken trace" case,
+only part of the track (or none if we skip the shrink test) will get the
+DRCFLAG set. DRCFind then will be called repeatedly on all pins, pads and
+vias, despite having already touched the geometry with the bloated test.
+To fix this, we need to separate the shrink and bloat tests into distinct
+passes, and set the DRCFLAG on objects during both tests. We can't simply
+set the DRCFLAG from the bloated test as it stands, as doing so would
+mask investigating "Potential for broken trace" cases after the first
+encountered.
 
-An example of this is the following test-case:
+An example of false "Copper areas too close" being fixed by this commit
+is the following test-case:
 
 FileVersion[20091103]
 PCB["" 65.000mm 15.0000mm]
