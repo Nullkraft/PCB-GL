@@ -3,7 +3,17 @@ Top:    7eda3bdd752c7cc4e36189102817f6b58363b82f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 02:04:25 +0000
 
-configure.ac: Don't add CFLAGS to CPPFLAGS, it isn't required
+configure.ac: Fixup some confusion between CFLAGS and CPPFLAGS
+
+We were variously using CFLAGS for adding pre-processor includes to,
+where these should end up in the CPPFLAGS variable. Confusingly, their
+constituents tend to come from variables set by autoconf / pkgconfig
+expansions in the form of LIBNAME_CFLAGs.
+
+Also ensure that we save and restore CPPFLAGS when we modify it during
+configure tests.
+
+
 
 
 ---
