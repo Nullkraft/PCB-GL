@@ -1,5 +1,5 @@
-Bottom: ad1f8d9e5e01a36e4eb34f7dc7d4de978cfb7f0b
-Top:    31a4cf6df3d0740c2cdd6e51dd3afb3abd06612b
+Bottom: 11a95c9592045318cd25a0fa4631ccbb0ea056fc
+Top:    067dd0cb183c0762518c3a6270f7145b90adbd66
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-01 15:21:49 +0000
 
@@ -9,10 +9,10 @@ Split drc routines out of find.c into new file drc.c
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 602ebaa..99cce9e 100644
+index 66c957b..05d6e3e 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -61,6 +61,8 @@ PCB_SRCS = \
+@@ -60,6 +60,8 @@ PCB_SRCS = \
  	dolists.h \
  	draw.c \
  	draw.h \
