@@ -3333,6 +3333,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
   long int *object_id_list;
   int *object_type_list;
   DrcViolationType *violation;
+  int flag;
 
   if (PCB->Shrink != 0)
     {
@@ -3395,10 +3396,11 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
   ListStart (What, ptr1, ptr2, ptr3, SELECTEDFLAG);
   DoIt (SELECTEDFLAG, true, false);
   DumpList ();
-  ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
+  flag = FOUNDFLAG;
+  ListStart (What, ptr1, ptr2, ptr3, flag);
   Bloat = PCB->Bloat;
   drc = true;
-  while (DoIt (FOUNDFLAG, true, false))
+  while (DoIt (flag, true, false))
     {
       DumpList ();
       /* make the flag changes undoable */
@@ -3439,13 +3441,14 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       IncrementUndoSerialNumber ();
       Undo (true);
       /* highlight the rest of the encroaching net so it's not reported again */
+      flag = FOUNDFLAG | SELECTEDFLAG;
       Bloat = 0;
-      ListStart (thing_type, thing_ptr1, thing_ptr2, thing_ptr3, FOUNDFLAG | SELECTEDFLAG);
-      DoIt (FOUNDFLAG | SELECTEDFLAG, true, true);
+      ListStart (thing_type, thing_ptr1, thing_ptr2, thing_ptr3, flag);
+      DoIt (flag, true, true);
       DumpList ();
       drc = true;
       Bloat = PCB->Bloat;
-      ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG | SELECTEDFLAG);
+      ListStart (What, ptr1, ptr2, ptr3, flag);
     }
   drc = false;
   DumpList ();
