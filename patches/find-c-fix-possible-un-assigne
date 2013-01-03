@@ -1,0 +1,24 @@
+Bottom: 2eee8982fcd1e14263d58ade8080438507ed1862
+Top:    2eee8982fcd1e14263d58ade8080438507ed1862
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2013-01-03 17:10:47 +0000
+
+find.c: Fix possible un-assigned use of "flag" in DRCFind()
+
+Caught by inspection.. no idea why the compiler didn't notice.
+
+Before commit 4cbfadfb7a496e60c25f47c88bdb374b4d3777bb, our local "flag"
+variable was the file-global "TheFlag". If the "shrink" test was not run,
+the code called ClearFlagOnAllObjects() with the previously assigned
+"TheFlag". After the above commit, we would just use "flag" unassigned.
+
+In this case, FOUNDFLAG | SELECTEDFLAG are probably the correct flags to
+clear, as it matches the final cleanup after the second test in DRCFind().
+
+This changes the behaviour of the ClearFlagOnAllObjects(), as up to this
+commiti, when the "shrink" test is run, the last "flag" used was FOUNDFLAG.
+
+
+---
+
+
