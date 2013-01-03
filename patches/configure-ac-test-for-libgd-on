@@ -6,7 +6,8 @@ Date:   2013-01-03 04:04:36 +0000
 configure.ac: Test for libgd once, not per HID which uses it.
 
 This avoids some repeated tests, so should help to speed up the configure
-process a little.
+process a little. This commit also enforces testing for the required PNG
+support in libgd if the gcode or nelma HIDs are selected.
 
 
 ---
