@@ -1,5 +1,5 @@
-Bottom: 7eda3bdd752c7cc4e36189102817f6b58363b82f
-Top:    56cbb0abc9747fb2ca103201fff1eab727ea41fe
+Bottom: 7cc96e1654304be6bef8d35bd46de0e053801b66
+Top:    ee2a8df4f5cae53c8b3835a341722597ab432d14
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-03 02:27:04 +0000
 
@@ -11,10 +11,10 @@ CFLAGS should work in its own right, and CPPFLAGS does not need a copy.
 ---
 
 diff --git a/configure.ac b/configure.ac
-index a293e3f..5fe1a81 100644
+index 8e7a862..5b202b1 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -704,7 +704,7 @@ for e in $HIDLIST; do
+@@ -705,7 +705,7 @@ for e in $HIDLIST; do
      case $e in
        lesstif )
  	AC_PATH_XTRA
