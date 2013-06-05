@@ -183,7 +183,7 @@ DrawStrippedText (hidGC gc, ElementType *Element, int min_width)
 static void
 draw_element_name (ElementType *element)
 {
-  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
+  if ((TEST_FLAG (HIDENAMESFLAG, PCB) /*&& gui->gui*/) ||
       TEST_FLAG (HIDENAMEFLAG, element))
     return;
   ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)element);
