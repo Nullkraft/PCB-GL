@@ -576,6 +576,7 @@ dump_flag (FlagType * f)
 {
   int l;
   printf ("F:%08x T:[", f->f);
+#warning THIS NEXT LINE IS BOGUS, THE ARRAY IS HALF THIS LENGTH
   for (l = 0; l < (MAX_LAYER + 7) / 8; l++)
     printf (" %02x", f->t[l]);
   printf ("]");
