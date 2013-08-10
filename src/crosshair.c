@@ -449,11 +449,12 @@ XORDrawMoveOrCopyObject (void)
 
     case LINE_TYPE:
       {
+//      while (0) {
         LineType *moving_line = Crosshair.AttachedObject.Ptr2;
         bool set_min = false;
         bool set_max = false;
         double min_multiplier = 0.0;
-        double max_multiplier = 1.0;
+        double max_multiplier = 0.0;
 
         /* draw the attached rubberband lines too */
         i = Crosshair.AttachedObject.RubberbandN;
@@ -471,6 +472,13 @@ XORDrawMoveOrCopyObject (void)
                                      ptr->Line->Point1.X,        ptr->Line->Point1.Y,
                                      ptr->Line->Point2.X,        ptr->Line->Point2.Y,
                                      NULL, NULL, &multiplier);
+                if (!set_min || !set_max)
+                  {
+                    min_multiplier = multiplier;
+                    max_multiplier = multiplier;
+                    set_min = true;
+                    set_max = true;
+                  }
                 if (multiplier < min_multiplier)
                   {
                     min_multiplier = multiplier;
@@ -488,6 +496,10 @@ XORDrawMoveOrCopyObject (void)
           }
 
         /* If no constraints from the rubber band lines, then keep the old endpoints */
+        if (min_multiplier == max_multiplier)
+          {
+            /* TODO: Restore free end-point? */
+          }
 #if 0
         if (!set_min)
           min_multiplier = 0.0;
@@ -601,6 +613,7 @@ XORDrawMoveOrCopyObject (void)
   /* draw the attached rubberband lines too */
   i = Crosshair.AttachedObject.RubberbandN;
   ptr = Crosshair.AttachedObject.Rubberband;
+//  while (i)
   while (i)
     {
       PointType *point1, *point2;
@@ -610,6 +623,7 @@ XORDrawMoveOrCopyObject (void)
 	  /* this is a rat going to a polygon.  do not draw for rubberband */;
 	}
       else if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
+//      else
 	{
           if (Crosshair.AttachedObject.Type == LINE_TYPE)
             {
@@ -648,17 +662,18 @@ XORDrawMoveOrCopyObject (void)
                   point1 = &ptr->Line->Point1;
                   point2 = &ptr->Line->Point2;
                 }
-
               XORDrawAttachedLine (point1->X,      point1->Y,
                                    point2->X + dx, point2->Y + dy,
                                    ptr->Line->Thickness);
             }
         }
+#if 1
       else if (ptr->MovedPoint == &ptr->Line->Point1)
         XORDrawAttachedLine (ptr->Line->Point1.X + dx,
                              ptr->Line->Point1.Y + dy,
                              ptr->Line->Point2.X + dx,
                              ptr->Line->Point2.Y + dy, ptr->Line->Thickness);
+#endif
 
       ptr++;
       i--;
