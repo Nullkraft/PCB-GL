@@ -1,7 +1,7 @@
-Bottom: 16e364bf0b8a2d94e7f57475639b54f475563a79
-Top:    be637cf8e606a1885b6e8c133625bf1e9fd21a8a
+Bottom: 30915a75df7d4e4a2b060c0bc331f1d2d70771e8
+Top:    ef9a83b841efdcd903e705610f69f7dafef5aecf
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2013-06-05 12:07:57 +0100
+Date:   2013-08-11 00:58:55 +0100
 
 Play with locked object rendering
 
@@ -171,7 +171,7 @@ index ebc73dd..5ff34bd 100644
                          PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
                          FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 10f11c7..c98dfe7 100644
+index 0cb92bd..b6beea1 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -79,6 +79,8 @@ typedef struct render_priv {

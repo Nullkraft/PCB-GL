@@ -1,7 +1,7 @@
-Bottom: 95b03438c3308b444926ef3b08a55a7f8f57af71
-Top:    d9b5704292a9e877765563591a60248778d997ef
+Bottom: a4fb76376e033720eecd6a83225aa3ee0132f28a
+Top:    fa70ed1c4e2f0c03f8c9a4490f76b73936997c27
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2013-06-05 12:07:57 +0100
+Date:   2013-08-11 00:58:56 +0100
 
 hid/gtk (GL): Add hacky code to render outline of board, and mask cutout geometry
 
@@ -9,7 +9,7 @@ hid/gtk (GL): Add hacky code to render outline of board, and mask cutout geometr
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a4fd1e2..5985318 100644
+index 5a98eed..753ad24 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1551,12 +1551,111 @@ clearPad_callback_solid (const BoxType * b, void *cl)

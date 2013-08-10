@@ -1,7 +1,7 @@
-Bottom: d3e105bd17c990ceb5126e98a07020e398de3d2d
-Top:    95b03438c3308b444926ef3b08a55a7f8f57af71
+Bottom: b27f0a91f3224647ad96a1e7ffceea45bc14360a
+Top:    a4fb76376e033720eecd6a83225aa3ee0132f28a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2013-06-05 12:07:57 +0100
+Date:   2013-08-11 00:58:55 +0100
 
 32bit: Fix GL HID zoom out, due to over-shooting Coord data-type
 
@@ -91,7 +91,7 @@ index 212814f..efe7076 100644
    return true;
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c98dfe7..a4fd1e2 100644
+index b6beea1..5a98eed 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -109,9 +109,51 @@ hid_gc_struct;
@@ -176,7 +176,7 @@ index c98dfe7..a4fd1e2 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2277,7 +2328,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2275,7 +2326,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glColor3f (1., 1., 1.);
  
    if (0) {
@@ -185,7 +185,7 @@ index c98dfe7..a4fd1e2 100644
      Coord z = max_depth;
  
      glBegin (GL_LINES);
-@@ -2842,7 +2893,7 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2840,7 +2891,7 @@ invert_4x4 (float m[4][4], float out[4][4])
  
  
  static bool
@@ -194,7 +194,7 @@ index c98dfe7..a4fd1e2 100644
  {
    double mat[2][2];
    double inv_mat[2][2];
-@@ -2914,8 +2965,11 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -2912,8 +2963,11 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  //  if (fvx < (double)-G_MAXINT/5.) {fvx = (double)-G_MAXINT/5.; printf ("fvx underflow clamped\n"); }
  //  if (fvy < (double)-G_MAXINT/5.) {fvy = (double)-G_MAXINT/5.; printf ("fvy underflow clamped\n"); }
  
@@ -208,7 +208,7 @@ index c98dfe7..a4fd1e2 100644
  
    {
      /* Reproject the computed board plane coordinates to eye space */
-@@ -2944,7 +2998,15 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -2942,7 +2996,15 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
