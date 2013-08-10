@@ -1,7 +1,7 @@
-Bottom: 814070070281d6119ff946bc3fede510d3f1a656
-Top:    5eb944d012bdf5c6b40b563a01c6016bfb2decb0
+Bottom: c4ff4ba71e24fbd39659cf6d0163ca44b805b898
+Top:    c4ff4ba71e24fbd39659cf6d0163ca44b805b898
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2013-06-05 12:07:54 +0100
+Date:   2013-08-11 00:56:52 +0100
 
 Revert "Just make a black background."
 
@@ -10,35 +10,4 @@ This reverts commit cf6c95ade3be149a5a8659bd13a80eedc4092fd2.
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7ed37b5..ae21713 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1916,9 +1916,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
- #endif
- 
-   glEnable (GL_STENCIL_TEST);
--  glClearColor (port->bg_color.red / 65535.,
--                port->bg_color.green / 65535.,
--                port->bg_color.blue / 65535.,
-+  glClearColor (port->offlimits_color.red / 65535.,
-+                port->offlimits_color.green / 65535.,
-+                port->offlimits_color.blue / 65535.,
-                 1.);
-   glStencilMask (~0);
-   glClearStencil (0);
-@@ -2021,7 +2021,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   /* Drawing operations as masked to areas where the stencil buffer is '0' */
-   /* glStencilFunc (GL_GREATER, 1, 1); */           /* Draw only where stencil buffer is 0 */
- 
--#if 0
-   if (global_view_2d) {
-     glBegin (GL_QUADS);
-     glVertex3i (0,             0,              0);
-@@ -2052,7 +2051,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-     }
-     glEnd ();
-   }
--#endif
- 
-   ghid_draw_bg_image ();
+
