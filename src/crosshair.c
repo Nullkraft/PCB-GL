@@ -385,6 +385,7 @@ line_line_intersect (double x1, double y1, double x2, double y2,
 
   if (x != NULL) *x = 0.0;
   if (y != NULL) *y = 0.0;
+  if (multiplier != NULL) *multiplier = 0.0;
 
   denom  = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
   numera = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
@@ -398,6 +399,7 @@ line_line_intersect (double x1, double y1, double x2, double y2,
         {
           if (x != NULL) *x = (x1 + x2) / 2;
           if (y != NULL) *y = (y1 + y2) / 2;
+          if (multiplier != NULL) *multiplier = 0.5;
           return true;
         }
       /* The line parallel */
@@ -451,10 +453,11 @@ XORDrawMoveOrCopyObject (void)
       {
 //      while (0) {
         LineType *moving_line = Crosshair.AttachedObject.Ptr2;
-        bool set_min = false;
-        bool set_max = false;
+        bool first_pass = true;
         double min_multiplier = 0.0;
         double max_multiplier = 0.0;
+        bool found_line_at_0_end = false;
+        bool found_line_at_1_end = false;
 
         /* draw the attached rubberband lines too */
         i = Crosshair.AttachedObject.RubberbandN;
@@ -467,33 +470,43 @@ XORDrawMoveOrCopyObject (void)
               {
                 double multiplier;
 
+                line_line_intersect (moving_line->Point1.X, moving_line->Point1.Y,
+                                     moving_line->Point2.X, moving_line->Point2.Y,
+                                     ptr->Line->Point1.X,   ptr->Line->Point1.Y,
+                                     ptr->Line->Point2.X,   ptr->Line->Point2.Y,
+                                     NULL, NULL, &multiplier);
+
+                if (fabs (multiplier - 0.0) < EPS)
+                  found_line_at_0_end = true;
+
+                if (fabs (multiplier - 1.0) < EPS)
+                  found_line_at_1_end = true;
+
                 line_line_intersect (moving_line->Point1.X + dx, moving_line->Point1.Y + dy,
                                      moving_line->Point2.X + dx, moving_line->Point2.Y + dy,
                                      ptr->Line->Point1.X,        ptr->Line->Point1.Y,
                                      ptr->Line->Point2.X,        ptr->Line->Point2.Y,
                                      NULL, NULL, &multiplier);
-                if (!set_min || !set_max)
+                if (first_pass)
                   {
                     min_multiplier = multiplier;
                     max_multiplier = multiplier;
-                    set_min = true;
-                    set_max = true;
+                    first_pass = false;
                   }
-                if (multiplier < min_multiplier)
-                  {
-                    min_multiplier = multiplier;
-                    set_min = true;
-                  }
-                if (multiplier > max_multiplier)
-                  {
-                    max_multiplier = multiplier;
-                    set_max = true;
-                  }
+                min_multiplier = MIN (min_multiplier, multiplier);
+                max_multiplier = MAX (max_multiplier, multiplier);
               }
 
             ptr++;
             i--;
           }
+
+
+        if (!found_line_at_0_end)
+          min_multiplier = MIN (min_multiplier, 0.0);
+
+        if (!found_line_at_1_end)
+          max_multiplier = MAX (max_multiplier, 1.0);
 
         /* If no constraints from the rubber band lines, then keep the old endpoints */
         if (min_multiplier == max_multiplier)
@@ -513,7 +526,9 @@ XORDrawMoveOrCopyObject (void)
                              moving_line->Point1.X + dx + max_multiplier * (moving_line->Point2.X - moving_line->Point1.X),
                              moving_line->Point1.Y + dy + max_multiplier * (moving_line->Point2.Y - moving_line->Point1.Y),
                              moving_line->Thickness);
+
         break;
+
       }
 
     case ARC_TYPE:
