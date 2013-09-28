@@ -1,5 +1,5 @@
 Bottom: c8e21a98a1deb9cd0c33618aae4842585eee87d2
-Top:    30915a75df7d4e4a2b060c0bc331f1d2d70771e8
+Top:    229acd4d5d7aed96ddd16fc44b16c84b27c1191b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-08-11 00:58:55 +0100
 
@@ -9,40 +9,90 @@ More rubberbanding algorithm tweaks
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 744b96f..35f8605 100644
+index 744b96f..a81b958 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -449,11 +449,12 @@ XORDrawMoveOrCopyObject (void)
+@@ -385,6 +385,7 @@ line_line_intersect (double x1, double y1, double x2, double y2,
+ 
+   if (x != NULL) *x = 0.0;
+   if (y != NULL) *y = 0.0;
++  if (multiplier != NULL) *multiplier = 0.0;
+ 
+   denom  = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+   numera = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+@@ -398,6 +399,7 @@ line_line_intersect (double x1, double y1, double x2, double y2,
+         {
+           if (x != NULL) *x = (x1 + x2) / 2;
+           if (y != NULL) *y = (y1 + y2) / 2;
++          if (multiplier != NULL) *multiplier = 0.5;
+           return true;
+         }
+       /* The line parallel */
+@@ -449,11 +451,13 @@ XORDrawMoveOrCopyObject (void)
  
      case LINE_TYPE:
        {
 +//      while (0) {
          LineType *moving_line = Crosshair.AttachedObject.Ptr2;
-         bool set_min = false;
-         bool set_max = false;
+-        bool set_min = false;
+-        bool set_max = false;
++        bool first_pass = true;
          double min_multiplier = 0.0;
 -        double max_multiplier = 1.0;
 +        double max_multiplier = 0.0;
++        bool found_line_at_0_end = false;
++        bool found_line_at_1_end = false;
  
          /* draw the attached rubberband lines too */
          i = Crosshair.AttachedObject.RubberbandN;
-@@ -471,6 +472,13 @@ XORDrawMoveOrCopyObject (void)
+@@ -466,28 +470,49 @@ XORDrawMoveOrCopyObject (void)
+               {
+                 double multiplier;
+ 
++                line_line_intersect (moving_line->Point1.X, moving_line->Point1.Y,
++                                     moving_line->Point2.X, moving_line->Point2.Y,
++                                     ptr->Line->Point1.X,   ptr->Line->Point1.Y,
++                                     ptr->Line->Point2.X,   ptr->Line->Point2.Y,
++                                     NULL, NULL, &multiplier);
++
++                if (fabs (multiplier - 0.0) < EPS)
++                  found_line_at_0_end = true;
++
++                if (fabs (multiplier - 1.0) < EPS)
++                  found_line_at_1_end = true;
++
+                 line_line_intersect (moving_line->Point1.X + dx, moving_line->Point1.Y + dy,
+                                      moving_line->Point2.X + dx, moving_line->Point2.Y + dy,
                                       ptr->Line->Point1.X,        ptr->Line->Point1.Y,
                                       ptr->Line->Point2.X,        ptr->Line->Point2.Y,
                                       NULL, NULL, &multiplier);
-+                if (!set_min || !set_max)
-+                  {
-+                    min_multiplier = multiplier;
-+                    max_multiplier = multiplier;
-+                    set_min = true;
-+                    set_max = true;
-+                  }
-                 if (multiplier < min_multiplier)
+-                if (multiplier < min_multiplier)
++                if (first_pass)
                    {
                      min_multiplier = multiplier;
-@@ -488,6 +496,10 @@ XORDrawMoveOrCopyObject (void)
+-                    set_min = true;
+-                  }
+-                if (multiplier > max_multiplier)
+-                  {
+                     max_multiplier = multiplier;
+-                    set_max = true;
++                    first_pass = false;
+                   }
++                min_multiplier = MIN (min_multiplier, multiplier);
++                max_multiplier = MAX (max_multiplier, multiplier);
+               }
+ 
+             ptr++;
+             i--;
            }
  
++
++        if (!found_line_at_0_end)
++          min_multiplier = MIN (min_multiplier, 0.0);
++
++        if (!found_line_at_1_end)
++          max_multiplier = MAX (max_multiplier, 1.0);
++
          /* If no constraints from the rubber band lines, then keep the old endpoints */
 +        if (min_multiplier == max_multiplier)
 +          {
@@ -51,7 +101,17 @@ index 744b96f..35f8605 100644
  #if 0
          if (!set_min)
            min_multiplier = 0.0;
-@@ -601,6 +613,7 @@ XORDrawMoveOrCopyObject (void)
+@@ -501,7 +526,9 @@ XORDrawMoveOrCopyObject (void)
+                              moving_line->Point1.X + dx + max_multiplier * (moving_line->Point2.X - moving_line->Point1.X),
+                              moving_line->Point1.Y + dy + max_multiplier * (moving_line->Point2.Y - moving_line->Point1.Y),
+                              moving_line->Thickness);
++
+         break;
++
+       }
+ 
+     case ARC_TYPE:
+@@ -601,6 +628,7 @@ XORDrawMoveOrCopyObject (void)
    /* draw the attached rubberband lines too */
    i = Crosshair.AttachedObject.RubberbandN;
    ptr = Crosshair.AttachedObject.Rubberband;
@@ -59,7 +119,7 @@ index 744b96f..35f8605 100644
    while (i)
      {
        PointType *point1, *point2;
-@@ -610,6 +623,7 @@ XORDrawMoveOrCopyObject (void)
+@@ -610,6 +638,7 @@ XORDrawMoveOrCopyObject (void)
  	  /* this is a rat going to a polygon.  do not draw for rubberband */;
  	}
        else if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
@@ -67,7 +127,7 @@ index 744b96f..35f8605 100644
  	{
            if (Crosshair.AttachedObject.Type == LINE_TYPE)
              {
-@@ -648,17 +662,18 @@ XORDrawMoveOrCopyObject (void)
+@@ -648,17 +677,18 @@ XORDrawMoveOrCopyObject (void)
                    point1 = &ptr->Line->Point1;
                    point2 = &ptr->Line->Point2;
                  }
@@ -88,12 +148,28 @@ index 744b96f..35f8605 100644
        ptr++;
        i--;
 diff --git a/src/move.c b/src/move.c
-index 3609c05..2377517 100644
+index 3609c05..dd5572e 100644
 --- a/src/move.c
 +++ b/src/move.c
-@@ -847,12 +847,14 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
-   double min_multiplier = 1.0;
+@@ -796,7 +796,7 @@ line_line_intersect (double x1, double y1, double x2, double y2,
+ 
+   if (x != NULL) *x = 0.0;
+   if (y != NULL) *y = 0.0;
+-  if (multiplier != NULL) *y = 0.0;
++  if (multiplier != NULL) *multiplier = 0.0;
+ 
+   denom  = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+   numera = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+@@ -844,15 +844,20 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+   LineType *moving_line = NULL;
+   void *ptr2;
+   int i;
+-  double min_multiplier = 1.0;
++  bool first_pass = true;
++  double min_multiplier = 0.0;
    double max_multiplier = 0.0;
++  bool found_line_at_0_end = false;
++  bool found_line_at_1_end = false;
  
 -  if (Type == LINE_TYPE)
 +  if (Type == LINE_TYPE) {
@@ -107,3 +183,51 @@ index 3609c05..2377517 100644
 +       i < Crosshair.AttachedObject.RubberbandN;
         i++, ptr++)
      CLEAR_FLAG (RUBBERENDFLAG, ptr->Line);
+ 
+@@ -873,6 +878,19 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+         {
+           double x, y, multiplier;
+ 
++          line_line_intersect (moving_line->Point1.X, moving_line->Point1.Y,
++                               moving_line->Point2.X, moving_line->Point2.Y,
++                               ptr->Line->Point1.X,   ptr->Line->Point1.Y,
++                               ptr->Line->Point2.X,   ptr->Line->Point2.Y,
++                               NULL,                  NULL,
++                               &multiplier);
++
++          if (fabs (multiplier - 0.0) < EPS)
++            found_line_at_0_end = true;
++
++          if (fabs (multiplier - 1.0) < EPS)
++            found_line_at_1_end = true;
++
+           line_line_intersect (moving_line->Point1.X + DX, moving_line->Point1.Y + DY,
+                                moving_line->Point2.X + DX, moving_line->Point2.Y + DY,
+                                ptr->Line->Point1.X,        ptr->Line->Point1.Y,
+@@ -880,6 +898,13 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+                                &x,                         &y,
+                                &multiplier);
+ 
++          if (first_pass)
++            {
++              min_multiplier = multiplier;
++              max_multiplier = multiplier;
++              first_pass = false;
++            }
++
+           min_multiplier = MIN (min_multiplier, multiplier);
+           max_multiplier = MAX (max_multiplier, multiplier);
+ 
+@@ -895,6 +920,12 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+       ptr++;
+     }
+ 
++    if (!found_line_at_0_end)
++      min_multiplier = MIN (min_multiplier, 0.0);
++
++    if (!found_line_at_1_end)
++      max_multiplier = MAX (max_multiplier, 1.0);
++
+   if (Type == LINE_TYPE)
+     {
+       Coord ldx, ldy;
