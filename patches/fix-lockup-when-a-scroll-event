@@ -1,7 +1,7 @@
-Bottom: f939bd77c28790909df4e164dbd4042f0b92af1b
+Bottom: e8b608cd1e09f6844690256baa65df119466a64c
 Top:    e8b608cd1e09f6844690256baa65df119466a64c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2013-10-27 16:53:40 +0000
+Date:   2013-10-27 16:54:31 +0000
 
 Fix lockup when a scroll event is received outside the drawing area
 
@@ -37,78 +37,4 @@ as this is what GTK's code does for gtk_dialog_run().
 
 ---
 
-diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
-index bf3b79e..3127692 100644
---- a/src/hid/gtk/gui-misc.c
-+++ b/src/hid/gtk/gui-misc.c
-@@ -324,7 +324,10 @@ run_get_location_loop (const gchar * message)
- 		      G_CALLBACK (loop_key_press_cb), &loop);
- 
-   loop = g_main_loop_new (NULL, FALSE);
-+
-+  GDK_THREADS_LEAVE ();
-   g_main_loop_run (loop);
-+  GDK_THREADS_ENTER ();
- 
-   g_main_loop_unref (loop);
- 
-diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 4df86e8..ba62d52 100644
---- a/src/hid/gtk/gui-top-window.c
-+++ b/src/hid/gtk/gui-top-window.c
-@@ -1438,8 +1438,6 @@ ghid_build_pcb_top_window (void)
- 
-   ghid_interface_input_signals_connect ();
- 
--  g_signal_connect (G_OBJECT (gport->drawing_area), "scroll_event",
--		    G_CALLBACK (ghid_port_window_mouse_scroll_cb), port);
-   g_signal_connect (G_OBJECT (gport->drawing_area), "enter_notify_event",
- 		    G_CALLBACK (ghid_port_window_enter_cb), port);
-   g_signal_connect (G_OBJECT (gport->drawing_area), "leave_notify_event",
-@@ -1471,8 +1469,11 @@ ghid_build_pcb_top_window (void)
-      |  During these times normal button/key presses are intercepted, either
-      |  by new signal handlers or the command_combo_box entry.
-    */
--static gulong button_press_handler, button_release_handler,
--  key_press_handler, key_release_handler;
-+static gulong button_press_handler;
-+static gulong button_release_handler;
-+static gulong scroll_event_handler;
-+static gulong key_press_handler;
-+static gulong key_release_handler;
- 
- void
- ghid_interface_input_signals_connect (void)
-@@ -1485,6 +1486,10 @@ ghid_interface_input_signals_connect (void)
-     g_signal_connect (G_OBJECT (gport->drawing_area), "button_release_event",
- 		      G_CALLBACK (ghid_port_button_release_cb), NULL);
- 
-+  scroll_event_handler =
-+    g_signal_connect (G_OBJECT (gport->drawing_area), "scroll_event",
-+		    G_CALLBACK (ghid_port_window_mouse_scroll_cb), NULL);
-+
-   key_press_handler =
-     g_signal_connect (G_OBJECT (gport->drawing_area), "key_press_event",
- 		      G_CALLBACK (ghid_port_key_press_cb), NULL);
-@@ -1503,15 +1508,20 @@ ghid_interface_input_signals_disconnect (void)
-   if (button_release_handler)
-     g_signal_handler_disconnect (gport->drawing_area, button_release_handler);
- 
-+  if (scroll_event_handler)
-+    g_signal_handler_disconnect (gport->drawing_area, scroll_event_handler);
-+
-   if (key_press_handler)
-     g_signal_handler_disconnect (gport->drawing_area, key_press_handler);
- 
-   if (key_release_handler)
-     g_signal_handler_disconnect (gport->drawing_area, key_release_handler);
- 
--  button_press_handler = button_release_handler = 0;
--  key_press_handler = key_release_handler = 0;
--
-+  button_press_handler = 0;
-+  button_release_handler = 0;
-+  scroll_event_handler = 0;
-+  key_press_handler = 0;
-+  key_release_handler = 0;
- }
+
