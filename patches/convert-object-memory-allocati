@@ -1,7 +1,7 @@
-Bottom: e49f9113a771d628cb53aa5bc56b67bbdfbc87df
-Top:    958a503dff109f0cf680e26d53ac0ca10ca13861
+Bottom: 63a13b806527e5589d3dca0330e50467eb98d5b6
+Top:    6419541bd6f1093a8a0e0d58c5ea6ff841dc9044
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2013-06-05 12:05:35 +0100
+Date:   2013-10-27 16:57:09 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,10 +9,10 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 1d6d8f9..2b37412 100644
+index a4ab2d0..a5e6ae4 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1872,37 +1872,39 @@ static int
+@@ -1885,37 +1885,39 @@ static int
  ActionDumpLibrary (int argc, char **argv, Coord x, Coord y)
  {
    int i, j;
@@ -70,7 +70,7 @@ index 1d6d8f9..2b37412 100644
  	    }
  	}
      }
-@@ -3235,6 +3237,8 @@ static const char renumber_help[] =
+@@ -3248,6 +3250,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, Coord x, Coord y)
  {
@@ -79,7 +79,7 @@ index 1d6d8f9..2b37412 100644
    bool changed = false;
    ElementType **element_list;
    ElementType **locked_element_list;
-@@ -3572,6 +3576,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3585,6 +3589,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    free (element_list);
    free (cnt_list);
    return 0;
@@ -87,7 +87,7 @@ index 1d6d8f9..2b37412 100644
  }
  
  
-@@ -4580,16 +4585,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4593,16 +4598,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index 1d6d8f9..2b37412 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatType *) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6929,22 +6933,26 @@ find_element_by_refdes (char *refdes)
+@@ -6942,22 +6946,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListType *list, const char *name)
  {
