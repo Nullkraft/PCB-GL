@@ -1,7 +1,7 @@
-Bottom: 1a99d7dfdcc223c663d39898aac53c1f5801255e
-Top:    62fd94bac86a2523595adaad3e3e4fd659b60e0a
+Bottom: 1662e4c90833e798facca8dcf0d268f9696ac482
+Top:    7703021a750d885a4800a464c3783e4ee3254881
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2013-08-11 00:58:55 +0100
+Date:   2013-10-27 16:57:21 +0000
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -153,7 +153,7 @@ index 3eab701..22d03bd 100644
  
    ghid_graphics.make_gc             = ghid_make_gc;
 diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
-index bf3b79e..f0c4d39 100644
+index 3127692..25f9a15 100644
 --- a/src/hid/gtk/gui-misc.c
 +++ b/src/hid/gtk/gui-misc.c
 @@ -143,6 +143,29 @@ ghid_watch_cursor (void)
