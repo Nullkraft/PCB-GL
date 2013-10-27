@@ -1,7 +1,7 @@
-Bottom: 21ed9b3389c5be5f0ab0028fb3666eaf9471ebd1
-Top:    a41df6208675d43dfa794612370e519219a8d002
+Bottom: 30dfc9df6eab133059f5c0723e92fc8b149bc35a
+Top:    7d421cd2ed62c327f5681827025326f8cff99301
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2013-06-05 12:07:50 +0100
+Date:   2013-10-27 16:57:14 +0000
 
 Bentley-Ottann test implementation
 
@@ -11,12 +11,12 @@ Code from cairo - intersection routines stripped out
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 322f412..0cd82eb 100644
+index aabd38f..9afffd8 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
  AC_GNU_SOURCE
- AM_CONFIG_HEADER([config.h])
+ AC_CONFIG_HEADERS([config.h])
  
 +m4_include(configure.ac.system)	dnl checks for system functions, headers, libs
 +
