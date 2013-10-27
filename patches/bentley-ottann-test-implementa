@@ -1,7 +1,7 @@
-Bottom: e49f9113a771d628cb53aa5bc56b67bbdfbc87df
-Top:    5336e117f9c029240f8d7debb81eb93ec7d67cae
+Bottom: 63a13b806527e5589d3dca0330e50467eb98d5b6
+Top:    656e613719de79b4795836ca3d30932e0ac3ec8b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2013-06-05 12:05:36 +0100
+Date:   2013-10-27 16:57:10 +0000
 
 Bentley-Ottann test implementation
 
@@ -9,12 +9,12 @@ Bentley-Ottann test implementation
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 322f412..0cd82eb 100644
+index aabd38f..9afffd8 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
  AC_GNU_SOURCE
- AM_CONFIG_HEADER([config.h])
+ AC_CONFIG_HEADERS([config.h])
  
 +m4_include(configure.ac.system)	dnl checks for system functions, headers, libs
 +
