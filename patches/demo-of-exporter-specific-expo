@@ -1,7 +1,7 @@
-Bottom: 78e717df5c1e5ba18c14c28a1eacdef674db65e4
-Top:    21da5335c3a6af37af1b8387b7719939b2425b02
+Bottom: 33b03e233c757f334fa955c8009e311e4ddaca94
+Top:    9f2abc3ae637bc34724c36f3c208137f49ade2bb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2013-10-27 16:57:12 +0000
+Date:   2014-02-25 19:43:43 -0500
 
 Demo of exporter specific export routine
 
@@ -251,7 +251,7 @@ index 685b614..b2e3ff0 100644
 +    PrintFab (Output.fgGC);
 +}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index ac7b967..504045d 100644
+index 0c57f09..a54b2b5 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -23,9 +23,11 @@
@@ -275,7 +275,7 @@ index ac7b967..504045d 100644
  static hidGC gerber_make_gc (void);
  static void gerber_destroy_gc (hidGC gc);
  static void gerber_use_mask (enum mask_mode mode);
-@@ -409,26 +411,6 @@ gerber_get_export_options (int *n)
+@@ -411,26 +413,6 @@ gerber_get_export_options (int *n)
    return gerber_options;
  }
  
@@ -302,7 +302,7 @@ index ac7b967..504045d 100644
  static void
  maybe_close_f (FILE *f)
  {
-@@ -528,13 +510,140 @@ assign_file_suffix (char *dest, int idx)
+@@ -588,13 +570,140 @@ assign_file_suffix (char *dest, int idx)
    strcat (dest, sext);
  }
  
@@ -445,7 +445,7 @@ index ac7b967..504045d 100644
    FlagType save_thindraw;
  
    save_thindraw = PCB->Flags;
-@@ -594,24 +703,20 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -654,24 +763,20 @@ gerber_do_export (HID_Attr_Val * options)
    else
      {
        memset (print_group, 0, sizeof (print_group));
@@ -481,7 +481,7 @@ index ac7b967..504045d 100644
    linewidth = -1;
    lastcap = -1;
    lastgroup = -1;
-@@ -627,17 +732,14 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -687,17 +792,14 @@ gerber_do_export (HID_Attr_Val * options)
    lastgroup = -1;
    layer_list_idx = 0;
    finding_apertures = 1;
@@ -501,7 +501,7 @@ index ac7b967..504045d 100644
    PCB->Flags = save_thindraw;
  }
  
-@@ -661,25 +763,17 @@ drill_sort (const void *va, const void *vb)
+@@ -721,25 +823,17 @@ drill_sort (const void *va, const void *vb)
  }
  
  static int
@@ -530,7 +530,7 @@ index ac7b967..504045d 100644
    flash_drills = 0;
    if (strcmp (name, "outline") == 0 ||
        strcmp (name, "route") == 0)
-@@ -690,18 +784,18 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -750,18 +844,18 @@ gerber_set_layer (const char *name, int group, int empty)
        int i;
        /* dump pending drills in sequence */
        qsort (pending_drills, n_pending_drills, sizeof (pending_drills[0]),
@@ -560,7 +560,7 @@ index ac7b967..504045d 100644
        free (pending_drills);
        n_pending_drills = max_pending_drills = 0;
        pending_drills = NULL;
-@@ -712,7 +806,7 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -772,7 +866,7 @@ gerber_set_layer (const char *name, int group, int empty)
    current_mask = HID_MASK_OFF;
  #if 0
    printf ("Layer %s group %d drill %d mask %d\n", name, group, is_drill,
@@ -569,7 +569,7 @@ index ac7b967..504045d 100644
  #endif
  
    if (group < 0 || group != lastgroup)
-@@ -734,10 +828,10 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -794,10 +888,10 @@ gerber_set_layer (const char *name, int group, int empty)
        aptr_list = setLayerApertureList (layer_list_idx++);
  
        if (finding_apertures)
@@ -582,7 +582,7 @@ index ac7b967..504045d 100644
  
        maybe_close_f (f);
        f = NULL;
-@@ -746,46 +840,46 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -806,46 +900,46 @@ gerber_set_layer (const char *name, int group, int empty)
        assign_file_suffix (filesuff, idx);
        f = fopen (filename, "wb");   /* Binary needed to force CR-LF */
        if (f == NULL) 
@@ -654,7 +654,7 @@ index ac7b967..504045d 100644
        fprintf (f, "G04 Creator: %s " VERSION " *\r\n", Progname);
        fprintf (f, "G04 CreationDate: %s *\r\n", utcTime);
  
-@@ -797,8 +891,8 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -857,8 +951,8 @@ gerber_set_layer (const char *name, int group, int empty)
  
        fprintf (f, "G04 Format: Gerber/RS-274X *\r\n");
        pcb_fprintf (f, metric ? "G04 PCB-Dimensions (mm): %.2mm %.2mm *\r\n" :
@@ -665,7 +665,7 @@ index ac7b967..504045d 100644
        fprintf (f, "G04 PCB-Coordinate-Origin: lower left *\r\n");
  
        /* Signal data in inches. */
-@@ -809,27 +903,27 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -869,27 +963,27 @@ gerber_set_layer (const char *name, int group, int empty)
  
        /* build a legal identifier. */
        if (layername)
@@ -704,7 +704,7 @@ index ac7b967..504045d 100644
      }
  
   emit_outline:
-@@ -845,10 +939,10 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -905,10 +999,10 @@ gerber_set_layer (const char *name, int group, int empty)
      want_outline = 1;
    if (copy_outline_mode == COPY_OUTLINE_ALL
        && (SL_TYPE (idx) == SL_SILK
@@ -719,7 +719,7 @@ index ac7b967..504045d 100644
      want_outline = 1;
  
    if (want_outline
-@@ -856,24 +950,24 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -916,24 +1010,24 @@ gerber_set_layer (const char *name, int group, int empty)
        && strcmp (name, "route"))
      {
        if (outline_layer
@@ -761,7 +761,7 @@ index ac7b967..504045d 100644
      }
  
    return 1;
-@@ -1281,7 +1375,6 @@ hid_gerber_init ()
+@@ -1341,7 +1435,6 @@ hid_gerber_init ()
    gerber_hid.get_export_options  = gerber_get_export_options;
    gerber_hid.do_export           = gerber_do_export;
    gerber_hid.parse_arguments     = gerber_parse_arguments;
@@ -942,7 +942,7 @@ index ac695e8..4982f77 100644
  
    ghid_draw_grid (&region);
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 116eac3..381d883 100644
+index 2c3037b..0cf049f 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -32,7 +32,7 @@
@@ -954,7 +954,7 @@ index 116eac3..381d883 100644
  static void use_gc (hidGC gc);
  
  typedef struct hid_gc_struct
-@@ -366,7 +366,6 @@ static struct {
+@@ -370,7 +370,6 @@ static struct {
    int pagecount;
    Coord linewidth;
    bool print_group[MAX_LAYER];
@@ -962,7 +962,7 @@ index 116eac3..381d883 100644
    double fade_ratio;
    bool multi_file;
    Coord media_width, media_height, ps_width, ps_height;
-@@ -390,8 +389,6 @@ static struct {
+@@ -394,8 +393,6 @@ static struct {
  
    double scale_factor;
  
@@ -971,7 +971,7 @@ index 116eac3..381d883 100644
    HID_Attr_Val ps_values[NUM_OPTIONS];
  
    bool is_mask;
-@@ -413,26 +410,6 @@ ps_get_export_options (int *n)
+@@ -417,26 +414,6 @@ ps_get_export_options (int *n)
    return ps_attribute_list;
  }
  
@@ -998,7 +998,7 @@ index 116eac3..381d883 100644
  void
  ps_start_file (FILE *f)
  {
-@@ -587,6 +564,83 @@ psopen (const char *base, const char *which)
+@@ -591,6 +568,83 @@ psopen (const char *base, const char *which)
    return ps_open_file;
  }
  
@@ -1082,7 +1082,7 @@ index 116eac3..381d883 100644
  /* This is used by other HIDs that use a postscript format, like lpr
     or eps.  */
  void
-@@ -645,41 +699,24 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -649,41 +703,24 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
      }
  
    memset (global.print_group, 0, sizeof (global.print_group));
@@ -1128,7 +1128,7 @@ index 116eac3..381d883 100644
    if (!global.multi_file)
      {
        /* %%Page DSC requires both a label and an ordinal */
-@@ -691,13 +728,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -695,13 +732,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
  
        global.doing_toc = 1;
        global.pagecount = 1;  /* 'pagecount' is modified by hid_expose_callback() call */
@@ -1145,7 +1145,7 @@ index 116eac3..381d883 100644
  
    if (the_file)
      fprintf (the_file, "showpage\n");
-@@ -783,7 +820,7 @@ corner (FILE *fh, Coord x, Coord y, int dx, int dy)
+@@ -787,7 +824,7 @@ corner (FILE *fh, Coord x, Coord y, int dx, int dy)
  }
  
  static int
@@ -1154,7 +1154,7 @@ index 116eac3..381d883 100644
  {
    static int lastgroup = -1;
    time_t currenttime;
-@@ -798,21 +835,11 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -802,21 +839,11 @@ ps_set_layer (const char *name, int group, int empty)
    if (empty)
      return 0;
  
@@ -1176,7 +1176,7 @@ index 116eac3..381d883 100644
  
    if (global.doing_toc)
      {
-@@ -1005,7 +1032,7 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -1009,7 +1036,7 @@ ps_set_layer (const char *name, int group, int empty)
        strcmp (name, "route") != 0
        )
      {
@@ -1185,7 +1185,7 @@ index 116eac3..381d883 100644
      }
  
    return 1;
-@@ -1509,7 +1536,6 @@ void ps_ps_init (HID *hid)
+@@ -1515,7 +1542,6 @@ void ps_ps_init (HID *hid)
    hid->get_export_options = ps_get_export_options;
    hid->do_export          = ps_do_export;
    hid->parse_arguments    = ps_parse_arguments;

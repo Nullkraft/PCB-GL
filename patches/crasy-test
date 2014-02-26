@@ -1,7 +1,7 @@
-Bottom: 63a13b806527e5589d3dca0330e50467eb98d5b6
-Top:    78e717df5c1e5ba18c14c28a1eacdef674db65e4
+Bottom: 44d098d5da6c639e790e5ad559b225305cf33349
+Top:    33b03e233c757f334fa955c8009e311e4ddaca94
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2013-10-27 16:57:12 +0000
+Date:   2014-02-25 19:43:42 -0500
 
 Crasy test
 
@@ -11,7 +11,7 @@ Note that this throws away code to draw pad and pin names
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 66c957b..db29c2e 100644
+index 033dae8..f6d019e 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -60,6 +60,8 @@ PCB_SRCS = \
@@ -999,7 +999,7 @@ index 0000000..25c33a1
 +
 +extern struct draw_funcs *dapi;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 6d7c7c1..ac7b967 100644
+index 657f9f1..0c57f09 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -25,6 +25,7 @@
@@ -1010,7 +1010,7 @@ index 6d7c7c1..ac7b967 100644
  
  #include "hid.h"
  #include "hid_draw.h"
-@@ -856,7 +857,7 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -916,7 +917,7 @@ gerber_set_layer (const char *name, int group, int empty)
      {
        if (outline_layer
  	  && outline_layer != PCB->Data->Layer+idx)
@@ -1020,7 +1020,7 @@ index 6d7c7c1..ac7b967 100644
  	{
  	  hidGC gc = gui->graphics->make_gc ();
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index c8b01e7..116eac3 100644
+index c7a1901..2c3037b 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -15,6 +15,7 @@
@@ -1031,7 +1031,7 @@ index c8b01e7..116eac3 100644
  
  #include "hid.h"
  #include "hid_draw.h"
-@@ -1004,7 +1005,7 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -1008,7 +1009,7 @@ ps_set_layer (const char *name, int group, int empty)
        strcmp (name, "route") != 0
        )
      {
