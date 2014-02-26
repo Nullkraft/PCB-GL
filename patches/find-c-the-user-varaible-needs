@@ -1,7 +1,7 @@
-Bottom: 78f973e1979685e846736a60c1af42d5184c85c6
-Top:    63a13b806527e5589d3dca0330e50467eb98d5b6
+Bottom: be31f984b5ec66e45ccfc5086e4c1901ede2f3ef
+Top:    44d098d5da6c639e790e5ad559b225305cf33349
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2013-10-27 16:54:32 +0000
+Date:   2014-02-25 19:43:37 -0500
 
 find.c: The User varaible needs to die...
 
@@ -12,7 +12,7 @@ another variable passing state down into add_object_to_list ()
 ---
 
 diff --git a/src/find.c b/src/find.c
-index af5aa3e..70cc17f 100644
+index 3747233..1c755f7 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -3090,7 +3090,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,

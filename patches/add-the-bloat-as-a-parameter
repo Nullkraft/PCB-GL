@@ -1,7 +1,7 @@
-Bottom: 6fed007fa3cfdbd73fb4f011959063447c8baa90
-Top:    eab0df2dc11c6866ffe44ed0f24a970b6f593f43
+Bottom: 1007e6bbde8cb0be8618e900c452ed53427c2760
+Top:    f47dd64ec519516ae4ac5db92c15ff00fcf688bd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2013-10-27 16:54:32 +0000
+Date:   2014-02-25 19:43:37 -0500
 
 Add the bloat as a parameter
 
@@ -11,7 +11,7 @@ Ok, this is nasty.. I'm obscuring setting of the global varaible... be careful!
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 8360659..bff8717 100644
+index 819fa44..aa7aabe 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -3323,8 +3323,10 @@ struct drc_info

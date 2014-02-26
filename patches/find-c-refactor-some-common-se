@@ -1,7 +1,7 @@
-Bottom: e8b608cd1e09f6844690256baa65df119466a64c
-Top:    6fed007fa3cfdbd73fb4f011959063447c8baa90
+Bottom: b085f28a8532295909ac1702c4f8c03cc05ad02a
+Top:    1007e6bbde8cb0be8618e900c452ed53427c2760
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2013-10-27 16:54:32 +0000
+Date:   2014-02-25 19:43:37 -0500
 
 find.c: Refactor some common sequences into a helper function
 
@@ -9,7 +9,7 @@ find.c: Refactor some common sequences into a helper function
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 05081b0..8360659 100644
+index 99893da..819fa44 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -3321,6 +3321,15 @@ struct drc_info
