@@ -1,7 +1,7 @@
-Bottom: 7703021a750d885a4800a464c3783e4ee3254881
-Top:    1c59494e1cc7113c5dc0f2e9e455160f74451397
+Bottom: e8aa61865ad5d67914bd87edd4b96bfd36037dbf
+Top:    c071a0b4adac2d46a2829d4d5000eacf292eaf2a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2013-10-27 16:57:21 +0000
+Date:   2014-02-25 19:43:51 -0500
 
 First attempts at improved rubberbanding logic
 
@@ -259,10 +259,10 @@ index 1bb75ea..744b96f 100644
        ptr++;
        i--;
 diff --git a/src/global.h b/src/global.h
-index 2b4272f..b7996fd 100644
+index 9964a44..f5b162b 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -552,6 +552,7 @@ typedef struct			/* rubberband lines for element moves */
+@@ -548,6 +548,7 @@ typedef struct			/* rubberband lines for element moves */
    LayerType *Layer;		/* layer that holds the line */
    LineType *Line;		/* the line itself */
    PointType *MovedPoint;	/* and finally the point */
