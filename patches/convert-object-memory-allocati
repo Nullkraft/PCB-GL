@@ -1,7 +1,7 @@
-Bottom: 44d098d5da6c639e790e5ad559b225305cf33349
-Top:    d0e0f40b2320b8ab206cdf3ac7941bc5d8b062d0
+Bottom: 4d9830e07d29a23344d4c7337f1011e3d1cc90f0
+Top:    9e1430bf687777bd2cf5803d62e886f74379ae45
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2014-02-25 19:43:39 -0500
+Date:   2014-05-15 18:09:28 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -639,7 +639,7 @@ index e09f825..0f05326 100644
        w = maxx + symbol->Delta + ox;
        CreateDrawnLineOnLayer (lwidth,
 diff --git a/src/global.h b/src/global.h
-index 4e0d2cc..5b54ba2 100644
+index 8103d1d..a4d273a 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -218,8 +218,8 @@ typedef struct
@@ -746,7 +746,7 @@ index 4e0d2cc..5b54ba2 100644
  } AttachedObjectType;
  
  enum crosshair_shape
-@@ -730,38 +721,33 @@ typedef struct			/* holds a connection */
+@@ -731,38 +722,33 @@ typedef struct			/* holds a connection */
  
  typedef struct			/* holds a net of connections */
  {
