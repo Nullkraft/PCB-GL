@@ -1,7 +1,7 @@
-Bottom: 48d970328442a027b014905c2db5b3d56fd676f4
-Top:    e4fdf3df863d148c8e74af8a6f7ea495adc42a0c
+Bottom: 2e65b6d962c451bcd70cf15470f0bc0741cdc28e
+Top:    4af2b929d9a38cfbafd74d588fa83614add3e34a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2014-02-25 19:43:52 -0500
+Date:   2014-05-15 18:09:41 +0100
 
 Win32: Disable the SpaceNavigator code
 
@@ -9,10 +9,10 @@ Win32: Disable the SpaceNavigator code
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 38f8a88..d40dd86 100644
+index e9d1538..9cb1c02 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -552,8 +552,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -554,8 +554,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -23,7 +23,7 @@ index 38f8a88..d40dd86 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -586,8 +586,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -588,8 +588,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
        return FALSE;
      }
  
