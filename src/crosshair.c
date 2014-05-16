@@ -1275,6 +1275,10 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
     {
       Crosshair.X = snap_data.x;
       Crosshair.Y = snap_data.y;
+
+      Crosshair.unsnapped_X = X;
+      Crosshair.unsnapped_Y = Y;
+      Crosshair.snapped_to_grid = snap_data.nearest_is_grid;
     }
 
   if (Settings.Mode == ARROW_MODE)

@@ -417,8 +417,8 @@ real_load_pcb (char *Filename, bool revert)
       ResetStackAndVisibility ();
 
       /* update cursor location */
-      Crosshair.X = CLAMP (PCB->CursorX, 0, PCB->MaxWidth);
-      Crosshair.Y = CLAMP (PCB->CursorY, 0, PCB->MaxHeight);
+      Crosshair.unsnapped_X = Crosshair.X = CLAMP (PCB->CursorX, 0, PCB->MaxWidth);
+      Crosshair.unsnapped_Y = Crosshair.Y = CLAMP (PCB->CursorY, 0, PCB->MaxHeight);
 
       /* update cursor confinement and output area (scrollbars) */
       ChangePCBSize (PCB->MaxWidth, PCB->MaxHeight);
