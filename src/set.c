@@ -97,7 +97,7 @@ SetLineSize (Coord Size)
     {
       Settings.LineThickness = Size;
       if (TEST_FLAG (AUTODRCFLAG, PCB))
-	FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
+	FitCrosshairIntoGrid (Crosshair.unsnapped_X, Crosshair.unsnapped_Y);
     }
 }
 
@@ -321,7 +321,7 @@ SetMode (int Mode)
   /* force a crosshair grid update because the valid range
    * may have changed
    */
-  FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
+  FitCrosshairIntoGrid (Crosshair.unsnapped_X, Crosshair.unsnapped_Y);
   notify_crosshair_change (true);
 }
 

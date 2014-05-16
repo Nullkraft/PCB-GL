@@ -70,13 +70,8 @@ SelectObject (void)
 
   bool changed = true;
 
-  /* Use the real mouse location if the snap is not to an interesting object location */
-  if (Crosshair.snapped_to_grid)
-    type = SearchScreen (Crosshair.unsnapped_X, Crosshair.unsnapped_Y, SELECT_TYPES,
-                         &ptr1, &ptr2, &ptr3);
-  else
-    type = SearchScreen (Crosshair.X, Crosshair.Y, SELECT_TYPES,
-                         &ptr1, &ptr2, &ptr3);
+  type = SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, SELECT_TYPES,
+                       &ptr1, &ptr2, &ptr3);
   if (type == NO_TYPE || TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
     return (false);
   switch (type)

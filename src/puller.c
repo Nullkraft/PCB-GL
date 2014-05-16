@@ -430,7 +430,7 @@ Puller (int argc, char **argv, Coord Ux, Coord Uy)
   double tangent;
   int new_delta_angle;
 
-  if (!find_pair (Crosshair.X, Crosshair.Y))
+  if (!find_pair (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y))
     if (!find_pair (Ux, Uy))
       return 0;
 

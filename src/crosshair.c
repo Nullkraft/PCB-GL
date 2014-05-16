@@ -1271,14 +1271,23 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
       check_snap_object (&snap_data, pnt->X, pnt->Y, true);
     }
 
+  Crosshair.unsnapped_X = X;
+  Crosshair.unsnapped_Y = Y;
+
   if (snap_data.x >= 0 && snap_data.y >= 0)
     {
       Crosshair.X = snap_data.x;
       Crosshair.Y = snap_data.y;
 
-      Crosshair.unsnapped_X = X;
-      Crosshair.unsnapped_Y = Y;
       Crosshair.snapped_to_grid = snap_data.nearest_is_grid;
+
+      Crosshair.obj_snapped_X = Crosshair.snapped_to_grid ? X : snap_data.x;
+      Crosshair.obj_snapped_Y = Crosshair.snapped_to_grid ? Y : snap_data.y;
+
+#if 0 /* BROKEN */
+      Crosshair.X = Crosshair.obj_snapped_X;
+      Crosshair.Y = Crosshair.obj_snapped_Y;
+#endif
     }
 
   if (Settings.Mode == ARROW_MODE)

@@ -596,6 +596,8 @@ typedef struct			/* holds cursor information */
   Coord X, Y,			/* position in PCB coordinates */
     MinX, MinY,			/* lowest and highest coordinates */
     MaxX, MaxY;
+  Coord obj_snapped_X;
+  Coord obj_snapped_Y;
   Coord unsnapped_X;
   Coord unsnapped_Y;
   bool snapped_to_grid;

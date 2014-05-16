@@ -2059,7 +2059,7 @@ ActionSetThermal (int argc, char **argv, Coord x, Coord y)
 	  {
 	  case F_Object:
 	    if ((type =
-		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGETHERMAL_TYPES,
+		 SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, CHANGETHERMAL_TYPES,
 			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
 	      {
 		ChangeObjectThermal (type, ptr1, ptr2, ptr3, kind);
@@ -2806,7 +2806,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
 	    Coord oldGrid = PCB->Grid;
 
 	    PCB->Grid = 1;
-	    if (MoveCrosshairAbsolute (Crosshair.X, Crosshair.Y))
+	    if (MoveCrosshairAbsolute (Crosshair.unsnapped_X, Crosshair.unsnapped_Y))
 	      notify_crosshair_change (true);	/* first notify was in MoveCrosshairAbs */
 	    SetGrid (oldGrid, true);
 	  }
@@ -2841,7 +2841,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
 	  {
 	    void *ptr1, *ptr2, *ptr3;
 
-	    switch (SearchScreen (Crosshair.X, Crosshair.Y,
+	    switch (SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y,
 				  ELEMENT_TYPE | PIN_TYPE | PAD_TYPE |
 				  VIA_TYPE, (void **) &ptr1, (void **) &ptr2,
 				  (void **) &ptr3))
@@ -3029,6 +3029,8 @@ ActionMode (int argc, char **argv, Coord x, Coord y)
 	  SetMode (LINE_MODE);
 	  break;
 	case F_Lock:
+//	  Note.X = Crosshair.obj_snapped_X;
+//	  Note.Y = Crosshair.obj_snapped_Y;
 	  SetMode (LOCK_MODE);
 	  break;
 	case F_Move:
@@ -3147,6 +3149,8 @@ ActionMode (int argc, char **argv, Coord x, Coord y)
 	  break;
 #endif
 	case F_Remove:
+//	  Note.X = Crosshair.obj_snapped_X;
+//	  Note.Y = Crosshair.obj_snapped_Y;
 	  SetMode (REMOVE_MODE);
 	  break;
 	case F_Rectangle:
@@ -3697,7 +3701,7 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
 	  {
 	    void *ptr1, *ptr2, *ptr3;
 
-	    if (SearchScreen (Crosshair.X, Crosshair.Y, ELEMENT_TYPE,
+	    if (SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, ELEMENT_TYPE,
 			      &ptr1, &ptr2, &ptr3) != NO_TYPE)
 	      {
 		Note.Buffer = Settings.BufferNumber;
@@ -3820,8 +3824,8 @@ ActionDelete (int argc, char **argv, Coord x, Coord y)
   char *function = ARG (0);
   int id = GetFunctionID (function);
 
-  Note.X = Crosshair.X;
-  Note.Y = Crosshair.Y;
+  Note.X = Crosshair.obj_snapped_X;
+  Note.Y = Crosshair.obj_snapped_Y;
 
   if (id == -1) /* no arg */
     {
@@ -4065,7 +4069,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
 	    void *ptr1, *ptr2, *ptr3;
 
 	    if ((type =
-		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
+		 SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, CHANGESIZE_TYPES,
 			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
 	      if (TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
 		Message (_("Sorry, the object is locked\n"));
@@ -5240,7 +5244,7 @@ ActionClearOctagon (int argc, char **argv, Coord x, Coord y)
 
 	    gui->get_coords (_("Select an Object"), &x, &y);
 	    if ((type =
-		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGEOCTAGON_TYPES,
+		 SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, CHANGEOCTAGON_TYPES,
 			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
 	      if (ClrObjectOctagon (type, ptr1, ptr2, ptr3))
 		SetChangedFlag (true);
@@ -5835,7 +5839,7 @@ ActionSaveTo (int argc, char **argv, Coord x, Coord y)
       FILE *fp;
       bool result;
 
-      if ((SearchScreen (Crosshair.X, Crosshair.Y, ELEMENT_TYPE,
+      if ((SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, ELEMENT_TYPE,
 			 &ptrtmp, &ptrtmp, &ptrtmp)) != NO_TYPE)
 	{
 	  element = (ElementType *) ptrtmp;
@@ -6357,7 +6361,7 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
 		  Crosshair.AttachedLine.Point1.Y =
 		    Crosshair.AttachedLine.Point2.Y = ptr2->Point2.Y;
 		}
-	      FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
+	      FitCrosshairIntoGrid (Crosshair.unsnapped_X, Crosshair.unsnapped_Y);
 	      AdjustAttachedObjects ();
 	      if (--addedLines == 0)
 		{
@@ -6861,7 +6865,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
 	void *ptr1, *ptr2, *ptr3;
 
 	if ((type =
-	     SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
+	     SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, CHANGESIZE_TYPES,
 			   &ptr1, &ptr2, &ptr3)) != NO_TYPE)
 	  if (TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
 	    Message (_("Sorry, the object is locked\n"));
