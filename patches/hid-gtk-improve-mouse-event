@@ -1,0 +1,54 @@
+Bottom: 1cb5efb6963c581ba7a2c054908612a793808d57
+Top:    9f3cd4852460d99c1dacf3b527baae9dc4cc80d9
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-05-16 20:51:00 +0100
+
+hid/gtk: Improve mouse event handling
+
+Lets pretend we never leave the drawing window, so we don't get bugged to
+click a location when we scroll outside of it during a drag.
+
+Also, use any event coordinates from the scroll event. Never hurts to have
+up to date coordinates!
+
+A better fix might be to check whether an implicit grab is in place in the
+leave event, if so, we can skip setting have_entered to false in that case.
+This may involve tracking whether we have a matching set of button pressed
+and button released events.
+
+X11 creates an implicit grab causing events to be delivered to the window
+where the a mouse-button was pressed down. Until that button is released,
+we have effectively NOT left the drawing widget, even though GDK/GTK
+helpfully send us a leave event as we cross its boundary.
+
+If there is an implicit grab when we leave the window, we should mark
+has_entered as FALSE when the offending mouse button is released.
+
+
+Owing to the possible complexitis here (no to mention when you consider
+multiple input devices etc..), I'm passing on this implementation for now!
+
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 9cb1c02..2520cc1 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -591,7 +591,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+   //if (out->has_entered && !ghidgui->in_popup && ghidgui->snavi != NULL)
+   //  snavi_set_led (ghidgui->snavi, FALSE);
+ 
+-  out->has_entered = FALSE;
++//  out->has_entered = FALSE;
+ 
+   ghid_screen_update ();
+ 
+@@ -626,6 +626,7 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+     default: button = -1;
+     }
+ 
++  ghid_note_event_location ((GdkEventButton *)ev);
+   do_mouse_action(button, mk);
+ 
+   return TRUE;
