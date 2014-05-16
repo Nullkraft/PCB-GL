@@ -1,0 +1,549 @@
+Bottom: 5422264ed75fcca5739c8a7030d7bea3ab405d5a
+Top:    92784cecd3433ecb24081f98b9f7052e6b98ec76
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-05-16 20:41:42 +0100
+
+Refresh of play-with-quad-edge-data
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 4c57deb..53ab0e9 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -191,7 +191,11 @@ LIBGTK_GDK_SRCS= \
+ LIBGTK_GL_SRCS= \
+ 	hid/gtk/gtkhid-gl.c \
+ 	hid/gtk/gui-trackball.c \
+-	hid/gtk/gui-trackball.h
++	hid/gtk/gui-trackball.h \
++	hid/gtk/quad.c \
++	hid/gtk/quad.h \
++	hid/gtk/quad_test.c \
++	hid/gtk/quad_test.h
+ 
+ GL_SRCS= \
+ 	hid/common/hidgl.c \
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 753ad24..316cf60 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -15,6 +15,9 @@
+ #include "gui-pinout-preview.h"
+ #include "pcb-printf.h"
+ 
++#include "quad.h"
++#include "quad_test.h"
++
+ #ifndef WIN32
+ /* The Linux OpenGL ABI 1.0 spec requires that we define
+  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+@@ -1048,6 +1051,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+   ghid_hid.end_layer = ghid_end_layer;
+   ghid_graphics.fill_pcb_polygon = ghid_fill_pcb_polygon;
+   ghid_graphics.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
++
++  quad_test_init ();
+ }
+ 
+ void
+@@ -2611,6 +2616,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glDisable (GL_LIGHTING);
+ 
+   draw_crosshair (priv);
++  draw_quad_debug ();
+ 
+   hidgl_flush_triangles (&buffer);
+ 
+diff --git a/src/hid/gtk/quad.c b/src/hid/gtk/quad.c
+new file mode 100644
+index 0000000..bfe3223
+--- /dev/null
++++ b/src/hid/gtk/quad.c
+@@ -0,0 +1,124 @@
++/* Implementation of the Guibas-Stolfi quad-edge structure. */
++
++/*
++** Written by J. Stolfi on april 1993, based on an original
++** implementation by Jim Roth (DEC CADM Advanced Group, May 1986).
++** See the copyright notice at the end of this file.
++*/
++/*
++** Modified to support 64-bit or 32-bit systems by Peter Clifton
++*/
++
++#include "quad.h"
++#include <memory.h>
++#include <malloc.h>
++
++#define MARK(e)  ((edge_struct *)((e) & ~3u))->mark
++
++/* Make a new edge: */
++
++static int global_edge_count = 0;
++
++edge_ref make_edge(void)
++  {
++    edge_ref e;
++
++    e = (edge_ref) malloc(sizeof(edge_struct));
++    ONEXT(e) = e;
++    SYMDNEXT(e) = SYM(e);
++    ROTRNEXT(e) = TOR(e);
++    TORLNEXT(e) = ROT(e);
++    MARK(e) = 0;
++    ID(e) = global_edge_count++;
++    return e;
++  }
++
++/* Delete an edge: */
++
++void destroy_edge(edge_ref e)
++  {
++    edge_ref f = SYM(e);
++    if (ONEXT(e) != e) splice(e, OPREV(e));
++    if (ONEXT(f) != f) splice(f, OPREV(f));
++    free((char *) ((e) & ~3u));
++  }
++
++/* Splice primitive: */
++
++void splice(edge_ref a, edge_ref b)
++  {
++    edge_ref ta, tb;
++    edge_ref alpha = ROT(ONEXT(a));
++    edge_ref beta = ROT(ONEXT(b));
++
++    ta = ONEXT(a);
++    tb = ONEXT(b);
++    ONEXT(a) = tb;
++    ONEXT(b) = ta;
++    ta = ONEXT(alpha);
++    tb = ONEXT(beta);
++    ONEXT(alpha) = tb;
++    ONEXT(beta) = ta;
++  }
++
++/* Enumerate edge quads */
++
++void quad_do_enum (
++    edge_ref a,
++    void visit_proc(edge_ref e, void *closure),
++    void *closure,
++    unsigned mark
++  );
++
++unsigned next_mark = 1;
++
++void quad_enum(
++    edge_ref a,
++    void visit_proc(edge_ref e, void *closure),
++    void *closure
++  )
++  {
++    unsigned mark = next_mark;
++    next_mark++;
++    if (next_mark == 0) next_mark = 1;
++    quad_do_enum(a, visit_proc, closure, mark);
++  }
++
++void quad_do_enum (
++    edge_ref e,
++    void visit_proc(edge_ref e, void *closure),
++    void *closure,
++    unsigned mark
++  )
++  {
++    while (MARK(e) != mark)
++      {
++        visit_proc(e, closure);
++        MARK(e) = mark;
++        quad_do_enum (ONEXT(SYM(e)), visit_proc, closure, mark);
++        e = ONEXT(e);
++      }
++  }
++
++/*
++** Copyright notice:
++**
++** Copyright 1996 Institute of Computing, Unicamp.
++**
++** Permission to use this software for any purpose is hereby granted,
++** provided that any substantial copy or mechanically derived version
++** of this file that is made available to other parties is accompanied
++** by this copyright notice in full, and is distributed under these same
++** terms.
++**
++** NOTE: this copyright notice does not claim to supersede any copyrights
++** that may apply to the original DEC implementation of the quad-edge
++** data structure.
++**
++** DISCLAIMER: This software is provided "as is" with no explicit or
++** implicit warranty of any kind.  Neither the authors nor their
++** employers can be held responsible for any losses or damages
++** that might be attributed to its use.
++**
++** End of copyright notice.
++*/
+diff --git a/src/hid/gtk/quad.h b/src/hid/gtk/quad.h
+new file mode 100644
+index 0000000..08ad318
+--- /dev/null
++++ b/src/hid/gtk/quad.h
+@@ -0,0 +1,102 @@
++/* Public type and operator definitions for the quad-edge data structure. */
++
++/* See
++**
++**   "Primitives for the Manipulation of General Subdivisions
++**   and the Computation of Voronoi Diagrams"
++**
++**   L. Guibas, J. Stolfi, ACM TOG, April 1985
++**
++** Originally written by Jim Roth (DEC CADM Advanced Group) on May 1986.
++** Modified by J. Stolfi on April 1993.
++** See the copyright notice at the end of this file.
++*/
++/*
++** Modified to support 64-bit or 32-bit systems by Peter Clifton
++*/
++
++#ifndef QUAD_H
++#define QUAD_H
++
++#include <stdint.h>
++
++/* Edge records: */
++
++typedef uintptr_t edge_ref;
++
++typedef struct {
++    edge_ref next[4];
++    void *data[4];
++    unsigned mark;
++    int id;
++  } edge_struct;
++
++/* Edge orientation operators: */
++
++#define ROT(e) (((e) & ~3u)+(((e) + 1) & 3u))
++#define SYM(e) (((e) & ~3u)+(((e) + 2) & 3u))
++#define TOR(e) (((e) & ~3u)+(((e) + 3) & 3u))
++
++/* Vertex/face walking operators: */
++
++#define ONEXT(e)    ((edge_struct *)((e) & ~3u))->next[((e) + 0) & 3u]
++#define ROTRNEXT(e) ((edge_struct *)((e) & ~3u))->next[((e) + 1) & 3u]
++#define SYMDNEXT(e) ((edge_struct *)((e) & ~3u))->next[((e) + 2) & 3u]
++#define TORLNEXT(e) ((edge_struct *)((e) & ~3u))->next[((e) + 3) & 3u]
++
++#define RNEXT(e) (TOR(ROTRNEXT(e)))
++#define DNEXT(e) (SYM(SYMDNEXT(e)))
++#define LNEXT(e) (ROT(TORLNEXT(e)))
++
++#define OPREV(e) (ROT(ROTRNEXT(e)))
++#define DPREV(e) (TOR(TORLNEXT(e)))
++#define RPREV(e) (SYMDNEXT(e))
++#define LPREV(e) (SYM(ONEXT(e)))
++
++/* Data pointers: */
++
++#define ODATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 0) & 3u]
++#define RDATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 1) & 3u]
++#define DDATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 2) & 3u]
++#define LDATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 3) & 3u]
++
++#define ID(e)    ((edge_struct *)((e) & ~3u))->id
++
++edge_ref make_edge(void);
++
++void destroy_edge(edge_ref e);
++
++void splice(edge_ref a, edge_ref b);
++
++void quad_enum(
++    edge_ref a,
++    void visit_proc(edge_ref e, void *closure),
++    void *closure
++  );
++  /*
++    Enumerates undirected primal edges reachable from $a$.
++
++    Calls visit_proc(e, closure) for every edge $e$ that can be reached from
++    edge $a$ by a chain of SYM and ONEXT calls; except that exactly one
++    of $e$ and SYM(e) is visited. */
++
++#endif
++
++/*
++** Copyright notice:
++**
++** Copyright 1996 Institute of Computing, Unicamp.
++**
++** Permission to use this software for any purpose is hereby granted,
++** provided that any substantial copy or mechanically derived version
++** of this file that is made available to other parties is accompanied
++** by this copyright notice in full, and is distributed under these same
++** terms.
++**
++** DISCLAIMER: This software is provided "as is" with no explicit or
++** implicit warranty of any kind.  Neither the authors nor their
++** employers can be held responsible for any losses or damages
++** that might be attributed to its use.
++**
++** End of copyright notice.
++*/
+diff --git a/src/hid/gtk/quad_test.c b/src/hid/gtk/quad_test.c
+new file mode 100644
+index 0000000..b73dbe4
+--- /dev/null
++++ b/src/hid/gtk/quad_test.c
+@@ -0,0 +1,240 @@
++#include "quad.h"
++
++#include <stdio.h>
++#include <stdlib.h>
++
++
++#ifndef WIN32
++/* The Linux OpenGL ABI 1.0 spec requires that we define
++ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
++ * in order to get prototypes:
++ *   http://www.opengl.org/registry/ABI/
++ */
++#   define GL_GLEXT_PROTOTYPES 1
++#endif
++
++#ifdef HAVE_OPENGL_GL_H
++#   include <OpenGL/gl.h>
++#else
++#   include <GL/gl.h>
++#endif
++
++
++static void
++print_edge_pointer_and_id (edge_ref e)
++{
++  //printf ("0x%jX, ID %i.%i", (uintmax_t)e, ID(e), e & 3u);
++  printf ("ID %i.%i", ID(e), (unsigned int)e & 3u);
++}
++
++static void
++debug_print_edge (edge_ref e, void *data)
++{
++  printf ("Edge ID %i.%i\n", ID(e), (int)e & 3u);
++//  printf ("Edge has pointer "); print_edge_pointer_and_id (e)       ; printf ("\n");
++  printf ("Edge ONEXT is "); print_edge_pointer_and_id (ONEXT(e)); printf ("\n");
++  printf ("Edge OPREV is "); print_edge_pointer_and_id (OPREV(e)); printf ("\n");
++  printf ("Edge DNEXT is "); print_edge_pointer_and_id (DNEXT(e)); printf ("\n");
++  printf ("Edge DPREV is "); print_edge_pointer_and_id (DPREV(e)); printf ("\n");
++  printf ("Edge RNEXT is "); print_edge_pointer_and_id (RNEXT(e)); printf ("\n");
++  printf ("Edge RPREV is "); print_edge_pointer_and_id (RPREV(e)); printf ("\n");
++  printf ("Edge LNEXT is "); print_edge_pointer_and_id (LNEXT(e)); printf ("\n");
++  printf ("Edge LPREV is "); print_edge_pointer_and_id (LPREV(e)); printf ("\n");
++
++#if 0
++  printf ("RAW POINTERS\n");
++  printf ("data[0] is "); print_edge_pointer_and_id (ONEXT   (e)); printf ("\n");
++  printf ("data[1] is "); print_edge_pointer_and_id (ROTRNEXT(e)); printf ("\n");
++  printf ("data[2] is "); print_edge_pointer_and_id (SYMDNEXT(e)); printf ("\n");
++  printf ("data[3] is "); print_edge_pointer_and_id (TORLNEXT(e)); printf ("\n");
++#endif
++}
++
++static int global_vertex_count;
++
++typedef struct
++{
++  float x;
++  float y;
++  float z;
++  int id;
++} vertex;
++
++static vertex *
++make_vertex (float x, float y, float z)
++{
++  vertex *v;
++
++  v = malloc (sizeof(vertex));
++  v->x = x;
++  v->y = y;
++  v->z = z;
++  v->id = global_vertex_count++;
++
++  return v;
++}
++
++#if 0
++static void
++destroy_vertex (vertex *v)
++{
++  free (v);
++}
++#endif
++
++edge_ref quad_test_cube = 0;
++
++void
++quad_test_init (void)
++{
++  vertex *cube_vertices[8];
++  edge_ref cube_edges[12];
++  //int i;
++
++  cube_edges[0] = make_edge ();
++  cube_edges[1] = make_edge ();
++  cube_edges[2] = make_edge ();
++  cube_edges[3] = make_edge ();
++  cube_edges[4] = make_edge ();
++  cube_edges[5] = make_edge ();
++  cube_edges[6] = make_edge ();
++  cube_edges[7] = make_edge ();
++  cube_edges[8] = make_edge ();
++  cube_edges[9] = make_edge ();
++  cube_edges[10] = make_edge ();
++  cube_edges[11] = make_edge ();
++
++  cube_vertices[0] = make_vertex (0., 0., 0.);
++  cube_vertices[1] = make_vertex (1., 0., 0.);
++  cube_vertices[2] = make_vertex (1., 0., -1.);
++  cube_vertices[3] = make_vertex (0., 0., -1.);
++  cube_vertices[4] = make_vertex (0., 1., 0.);
++  cube_vertices[5] = make_vertex (1., 1., 0.);
++  cube_vertices[6] = make_vertex (1., 1., -1.);
++  cube_vertices[7] = make_vertex (0., 1., -1.);
++
++  ODATA (cube_edges[0]) = cube_vertices[0];
++  DDATA (cube_edges[0]) = cube_vertices[1];
++  ODATA (cube_edges[1]) = cube_vertices[1];
++  DDATA (cube_edges[1]) = cube_vertices[2];
++  ODATA (cube_edges[2]) = cube_vertices[2];
++  DDATA (cube_edges[2]) = cube_vertices[3];
++  ODATA (cube_edges[3]) = cube_vertices[3];
++  DDATA (cube_edges[3]) = cube_vertices[0];
++
++  ODATA (cube_edges[4]) = cube_vertices[4];
++  DDATA (cube_edges[4]) = cube_vertices[5];
++  ODATA (cube_edges[5]) = cube_vertices[5];
++  DDATA (cube_edges[5]) = cube_vertices[6];
++  ODATA (cube_edges[6]) = cube_vertices[6];
++  DDATA (cube_edges[6]) = cube_vertices[7];
++  ODATA (cube_edges[7]) = cube_vertices[7];
++  DDATA (cube_edges[7]) = cube_vertices[4];
++
++  ODATA (cube_edges[ 8]) = cube_vertices[0];
++  DDATA (cube_edges[ 8]) = cube_vertices[4];
++  ODATA (cube_edges[ 9]) = cube_vertices[1];
++  DDATA (cube_edges[ 9]) = cube_vertices[5];
++  ODATA (cube_edges[10]) = cube_vertices[2];
++  DDATA (cube_edges[10]) = cube_vertices[6];
++  ODATA (cube_edges[11]) = cube_vertices[3];
++  DDATA (cube_edges[11]) = cube_vertices[7];
++
++  printf ("Hello world\n");
++
++  /* Edges around vertex 0 */
++  splice (cube_edges[0], cube_edges[8]);
++  splice (cube_edges[8], SYM(cube_edges[3]));
++
++  /* Edges around vertex 1 */
++  splice (cube_edges[1], cube_edges[9]);
++  splice (cube_edges[9], SYM(cube_edges[0]));
++
++  /* Edges around vertex 2 */
++  splice (cube_edges[2], cube_edges[10]);
++  splice (cube_edges[10], SYM(cube_edges[1]));
++
++  /* Edges around vertex 3 */
++  splice (cube_edges[3], cube_edges[11]);
++  splice (cube_edges[11], SYM(cube_edges[2]));
++
++  /* Edges around vertex 4 */
++  splice (cube_edges[4], SYM(cube_edges[7]));
++  splice (SYM(cube_edges[7]), SYM(cube_edges[8]));
++
++  /* Edges around vertex 5 */
++  splice (cube_edges[5], SYM(cube_edges[4]));
++  splice (SYM(cube_edges[4]), SYM(cube_edges[9]));
++
++  /* Edges around vertex 6 */
++  splice (cube_edges[6], SYM(cube_edges[5]));
++  splice (SYM(cube_edges[5]), SYM(cube_edges[10]));
++
++  /* Edges around vertex 7 */
++  splice (cube_edges[7], SYM(cube_edges[5]));
++  splice (SYM(cube_edges[6]), SYM(cube_edges[11]));
++
++#if 0
++  printf ("cube_edges[0] :\n");
++  debug_print_edge (cube_edges[0], NULL);
++  printf ("\n");
++  printf ("SYM(cube_edges[0]) :\n");
++  debug_print_edge (SYM(cube_edges[0]), NULL);
++#endif
++
++  printf ("\n");
++  printf ("Walking from cube_edges[0]\n");
++  quad_enum (cube_edges[0], debug_print_edge, NULL);
++
++  printf ("\n");
++  printf ("Walking from ROT(cube_edges[0])\n");
++  quad_enum (ROT(cube_edges[0]), debug_print_edge, NULL);
++
++#if 0
++  for (i = 0; i < 8; i++)
++    destroy_vertex (cube_vertices[i]);
++#endif
++
++  quad_test_cube = cube_edges[0];
++}
++
++#define XOFFSET 50000000
++#define YOFFSET 50000000
++#define ZOFFSET 0
++#define SCALE  10000000
++
++float colors[12][3] = {{1., 0., 0.},
++                       {1., 1., 0.},
++                       {0., 1., 0.},
++                       {0., 1., 1.},
++                       {0.5, 0., 0.},
++                       {0.5, 0.5, 0.},
++                       {0., 0.5, 0.},
++                       {0., 0.5, 0.5},
++                       {1., 0.5, 0.5},
++                       {1., 1., 0.5},
++                       {0.5, 1., 0.5},
++                       {0.5, 1., 1.}};
++
++static void
++draw_quad_edge (edge_ref e, void *data)
++{
++  int id = ID(e) % 12;
++
++  glColor3f (colors[id][0], colors[id][1], colors[id][2]);
++  glBegin (GL_LINES);
++  glVertex3i (XOFFSET + SCALE * ((vertex *)ODATA(e))->x,
++              YOFFSET - SCALE * ((vertex *)ODATA(e))->y,
++              ZOFFSET + SCALE * ((vertex *)ODATA(e))->z);
++  glVertex3i (XOFFSET + SCALE * ((vertex *)DDATA(e))->x,
++              YOFFSET - SCALE * ((vertex *)DDATA(e))->y,
++              ZOFFSET + SCALE * ((vertex *)DDATA(e))->z);
++  glEnd ();
++}
++
++void
++draw_quad_debug (void)
++{
++
++  quad_enum (quad_test_cube, draw_quad_edge, NULL);
++}
+diff --git a/src/hid/gtk/quad_test.h b/src/hid/gtk/quad_test.h
+new file mode 100644
+index 0000000..33ab12a
+--- /dev/null
++++ b/src/hid/gtk/quad_test.h
+@@ -0,0 +1,2 @@
++void quad_test_init (void);
++void draw_quad_debug (void);
