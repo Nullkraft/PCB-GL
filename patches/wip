@@ -1,0 +1,221 @@
+Bottom: 7b750585bbbd2509ab51efa6f2594914e4e5cc7b
+Top:    1cb5efb6963c581ba7a2c054908612a793808d57
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-05-16 20:51:00 +0100
+
+WIP
+
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 5d2b4df..f28cc17 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2059,7 +2059,7 @@ ActionSetThermal (int argc, char **argv, Coord x, Coord y)
+ 	  {
+ 	  case F_Object:
+ 	    if ((type =
+-		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGETHERMAL_TYPES,
++		 SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, CHANGETHERMAL_TYPES,
+ 			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
+ 	      {
+ 		ChangeObjectThermal (type, ptr1, ptr2, ptr3, kind);
+@@ -2806,7 +2806,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+ 	    Coord oldGrid = PCB->Grid;
+ 
+ 	    PCB->Grid = 1;
+-	    if (MoveCrosshairAbsolute (Crosshair.X, Crosshair.Y))
++	    if (MoveCrosshairAbsolute (Crosshair.unsnapped_X, Crosshair.unsnapped_Y))
+ 	      notify_crosshair_change (true);	/* first notify was in MoveCrosshairAbs */
+ 	    SetGrid (oldGrid, true);
+ 	  }
+@@ -2841,7 +2841,7 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
+ 	  {
+ 	    void *ptr1, *ptr2, *ptr3;
+ 
+-	    switch (SearchScreen (Crosshair.X, Crosshair.Y,
++	    switch (SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y,
+ 				  ELEMENT_TYPE | PIN_TYPE | PAD_TYPE |
+ 				  VIA_TYPE, (void **) &ptr1, (void **) &ptr2,
+ 				  (void **) &ptr3))
+@@ -3029,6 +3029,8 @@ ActionMode (int argc, char **argv, Coord x, Coord y)
+ 	  SetMode (LINE_MODE);
+ 	  break;
+ 	case F_Lock:
++//	  Note.X = Crosshair.obj_snapped_X;
++//	  Note.Y = Crosshair.obj_snapped_Y;
+ 	  SetMode (LOCK_MODE);
+ 	  break;
+ 	case F_Move:
+@@ -3147,6 +3149,8 @@ ActionMode (int argc, char **argv, Coord x, Coord y)
+ 	  break;
+ #endif
+ 	case F_Remove:
++//	  Note.X = Crosshair.obj_snapped_X;
++//	  Note.Y = Crosshair.obj_snapped_Y;
+ 	  SetMode (REMOVE_MODE);
+ 	  break;
+ 	case F_Rectangle:
+@@ -3697,7 +3701,7 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+ 	  {
+ 	    void *ptr1, *ptr2, *ptr3;
+ 
+-	    if (SearchScreen (Crosshair.X, Crosshair.Y, ELEMENT_TYPE,
++	    if (SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, ELEMENT_TYPE,
+ 			      &ptr1, &ptr2, &ptr3) != NO_TYPE)
+ 	      {
+ 		Note.Buffer = Settings.BufferNumber;
+@@ -3820,8 +3824,8 @@ ActionDelete (int argc, char **argv, Coord x, Coord y)
+   char *function = ARG (0);
+   int id = GetFunctionID (function);
+ 
+-  Note.X = Crosshair.X;
+-  Note.Y = Crosshair.Y;
++  Note.X = Crosshair.obj_snapped_X;
++  Note.Y = Crosshair.obj_snapped_Y;
+ 
+   if (id == -1) /* no arg */
+     {
+@@ -4065,7 +4069,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
+ 	    void *ptr1, *ptr2, *ptr3;
+ 
+ 	    if ((type =
+-		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
++		 SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, CHANGESIZE_TYPES,
+ 			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
+ 	      if (TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
+ 		Message (_("Sorry, the object is locked\n"));
+@@ -5240,7 +5244,7 @@ ActionClearOctagon (int argc, char **argv, Coord x, Coord y)
+ 
+ 	    gui->get_coords (_("Select an Object"), &x, &y);
+ 	    if ((type =
+-		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGEOCTAGON_TYPES,
++		 SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, CHANGEOCTAGON_TYPES,
+ 			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
+ 	      if (ClrObjectOctagon (type, ptr1, ptr2, ptr3))
+ 		SetChangedFlag (true);
+@@ -5835,7 +5839,7 @@ ActionSaveTo (int argc, char **argv, Coord x, Coord y)
+       FILE *fp;
+       bool result;
+ 
+-      if ((SearchScreen (Crosshair.X, Crosshair.Y, ELEMENT_TYPE,
++      if ((SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, ELEMENT_TYPE,
+ 			 &ptrtmp, &ptrtmp, &ptrtmp)) != NO_TYPE)
+ 	{
+ 	  element = (ElementType *) ptrtmp;
+@@ -6357,7 +6361,7 @@ ActionUndo (int argc, char **argv, Coord x, Coord y)
+ 		  Crosshair.AttachedLine.Point1.Y =
+ 		    Crosshair.AttachedLine.Point2.Y = ptr2->Point2.Y;
+ 		}
+-	      FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
++	      FitCrosshairIntoGrid (Crosshair.unsnapped_X, Crosshair.unsnapped_Y);
+ 	      AdjustAttachedObjects ();
+ 	      if (--addedLines == 0)
+ 		{
+@@ -6861,7 +6865,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
+ 	void *ptr1, *ptr2, *ptr3;
+ 
+ 	if ((type =
+-	     SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
++	     SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, CHANGESIZE_TYPES,
+ 			   &ptr1, &ptr2, &ptr3)) != NO_TYPE)
+ 	  if (TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
+ 	    Message (_("Sorry, the object is locked\n"));
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 4149f53..ed753e3 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1271,14 +1271,23 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+       check_snap_object (&snap_data, pnt->X, pnt->Y, true);
+     }
+ 
++  Crosshair.unsnapped_X = X;
++  Crosshair.unsnapped_Y = Y;
++
+   if (snap_data.x >= 0 && snap_data.y >= 0)
+     {
+       Crosshair.X = snap_data.x;
+       Crosshair.Y = snap_data.y;
+ 
+-      Crosshair.unsnapped_X = X;
+-      Crosshair.unsnapped_Y = Y;
+       Crosshair.snapped_to_grid = snap_data.nearest_is_grid;
++
++      Crosshair.obj_snapped_X = Crosshair.snapped_to_grid ? X : snap_data.x;
++      Crosshair.obj_snapped_Y = Crosshair.snapped_to_grid ? Y : snap_data.y;
++
++#if 0 /* BROKEN */
++      Crosshair.X = Crosshair.obj_snapped_X;
++      Crosshair.Y = Crosshair.obj_snapped_Y;
++#endif
+     }
+ 
+   if (Settings.Mode == ARROW_MODE)
+diff --git a/src/global.h b/src/global.h
+index 4c5ba27..49d858a 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -596,6 +596,8 @@ typedef struct			/* holds cursor information */
+   Coord X, Y,			/* position in PCB coordinates */
+     MinX, MinY,			/* lowest and highest coordinates */
+     MaxX, MaxY;
++  Coord obj_snapped_X;
++  Coord obj_snapped_Y;
+   Coord unsnapped_X;
+   Coord unsnapped_Y;
+   bool snapped_to_grid;
+diff --git a/src/puller.c b/src/puller.c
+index 64cb52a..5321050 100644
+--- a/src/puller.c
++++ b/src/puller.c
+@@ -430,7 +430,7 @@ Puller (int argc, char **argv, Coord Ux, Coord Uy)
+   double tangent;
+   int new_delta_angle;
+ 
+-  if (!find_pair (Crosshair.X, Crosshair.Y))
++  if (!find_pair (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y))
+     if (!find_pair (Ux, Uy))
+       return 0;
+ 
+diff --git a/src/select.c b/src/select.c
+index 7f15199..6594dc0 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -70,13 +70,8 @@ SelectObject (void)
+ 
+   bool changed = true;
+ 
+-  /* Use the real mouse location if the snap is not to an interesting object location */
+-  if (Crosshair.snapped_to_grid)
+-    type = SearchScreen (Crosshair.unsnapped_X, Crosshair.unsnapped_Y, SELECT_TYPES,
+-                         &ptr1, &ptr2, &ptr3);
+-  else
+-    type = SearchScreen (Crosshair.X, Crosshair.Y, SELECT_TYPES,
+-                         &ptr1, &ptr2, &ptr3);
++  type = SearchScreen (Crosshair.obj_snapped_X, Crosshair.obj_snapped_Y, SELECT_TYPES,
++                       &ptr1, &ptr2, &ptr3);
+   if (type == NO_TYPE || TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
+     return (false);
+   switch (type)
+diff --git a/src/set.c b/src/set.c
+index 9bf64b8..397cfa4 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -97,7 +97,7 @@ SetLineSize (Coord Size)
+     {
+       Settings.LineThickness = Size;
+       if (TEST_FLAG (AUTODRCFLAG, PCB))
+-	FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
++	FitCrosshairIntoGrid (Crosshair.unsnapped_X, Crosshair.unsnapped_Y);
+     }
+ }
+ 
+@@ -321,7 +321,7 @@ SetMode (int Mode)
+   /* force a crosshair grid update because the valid range
+    * may have changed
+    */
+-  FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
++  FitCrosshairIntoGrid (Crosshair.unsnapped_X, Crosshair.unsnapped_Y);
+   notify_crosshair_change (true);
+ }
