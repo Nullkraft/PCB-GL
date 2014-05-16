@@ -1,0 +1,68 @@
+Bottom: 62e0182b82296a1657125004ee096855457a0c6b
+Top:    d1dd5f63a976d72585be5906354cbb110982e60d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-05-16 20:47:13 +0100
+
+Remove MoveCrosshairRelative function and convert old usage to FitCrosshairIntoGrid()
+
+The two places this function was used passed (0, 0) as the position delta, and intend
+only to force a re-calculation of the grid-snap.
+
+Make the intent more clear by calling FitCrosshairIntoGrid() directly.
+
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 1079c5f..9a46801 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1113,15 +1113,6 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * move crosshair relative (has to be switched off)
+- */
+-void
+-MoveCrosshairRelative (Coord DeltaX, Coord DeltaY)
+-{
+-  FitCrosshairIntoGrid (Crosshair.X + DeltaX, Crosshair.Y + DeltaY);
+-}
+-
+-/* ---------------------------------------------------------------------------
+  * move crosshair absolute
+  * return true if the crosshair was moved from its existing position
+  */
+@@ -1162,7 +1153,7 @@ SetCrosshairRange (Coord MinX, Coord MinY, Coord MaxX, Coord MaxY)
+   Crosshair.MaxY = MIN (PCB->MaxHeight, MaxY);
+ 
+   /* force update of position */
+-  MoveCrosshairRelative (0, 0);
++  FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/crosshair.h b/src/crosshair.h
+index 2dd5e7e..87564f0 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -46,7 +46,6 @@ void HideCrosshair (void);
+ void RestoreCrosshair (void);
+ void DrawAttached (void);
+ void DrawMark (void);
+-void MoveCrosshairRelative (Coord, Coord);
+ bool MoveCrosshairAbsolute (Coord, Coord);
+ void SetCrosshairRange (Coord, Coord, Coord, Coord);
+ void InitCrosshair (void);
+diff --git a/src/set.c b/src/set.c
+index 324e625..9bf64b8 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -321,7 +321,7 @@ SetMode (int Mode)
+   /* force a crosshair grid update because the valid range
+    * may have changed
+    */
+-  MoveCrosshairRelative (0, 0);
++  FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
+   notify_crosshair_change (true);
+ }
