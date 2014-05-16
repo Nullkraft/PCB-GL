@@ -1,0 +1,23 @@
+Bottom: 19f87605f79395ff4c00dae5ef6c45f21ee392b3
+Top:    25173c25c88a5842531bb9c5f60a1eff457ead97
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-05-16 20:47:29 +0100
+
+puller.c: Fix trace printf in find_pair() to reflect actual arguments
+
+
+---
+
+diff --git a/src/puller.c b/src/puller.c
+index 7c9f0f9..666b94a 100644
+--- a/src/puller.c
++++ b/src/puller.c
+@@ -377,7 +377,7 @@ find_pair (int Px, int Py)
+   BoxType spot;
+ 
+ #if TRACE1
+-  pcb_printf ("\nPuller find_pair at %#mD\n", Crosshair.X, Crosshair.Y);
++  pcb_printf ("\nPuller find_pair at %#mD\n", Px, Py);
+ #endif
+ 
+   x = Px;
