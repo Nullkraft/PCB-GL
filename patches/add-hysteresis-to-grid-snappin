@@ -1,7 +1,7 @@
-Bottom: 89016a396c5d9b317066bef5099288da83ef66a9
-Top:    5422264ed75fcca5739c8a7030d7bea3ab405d5a
+Bottom: cf8421a40b5ad4c2728611035e5cf70fd2e8d6c0
+Top:    ae7ff6e9761a4447ea8f163a81a5cac49f11dd32
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-05-15 18:09:42 +0100
+Date:   2014-05-16 20:50:24 +0100
 
 Add hysteresis to grid-snapping
 
@@ -9,7 +9,7 @@ Add hysteresis to grid-snapping
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index a81b958..39b4120 100644
+index 6d80a99..a921c2b 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -1091,6 +1091,11 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
