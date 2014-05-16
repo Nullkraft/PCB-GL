@@ -1,0 +1,74 @@
+Bottom: 02bbf20b9b5464d17dfaf0fc9d6b1ea93d49b432
+Top:    7b750585bbbd2509ab51efa6f2594914e4e5cc7b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-05-16 20:51:00 +0100
+
+Try some different snapping heuristics
+
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index a921c2b..4149f53 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1275,6 +1275,10 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+     {
+       Crosshair.X = snap_data.x;
+       Crosshair.Y = snap_data.y;
++
++      Crosshair.unsnapped_X = X;
++      Crosshair.unsnapped_Y = Y;
++      Crosshair.snapped_to_grid = snap_data.nearest_is_grid;
+     }
+ 
+   if (Settings.Mode == ARROW_MODE)
+diff --git a/src/file.c b/src/file.c
+index 7788222..f71a6fb 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -417,8 +417,8 @@ real_load_pcb (char *Filename, bool revert)
+       ResetStackAndVisibility ();
+ 
+       /* update cursor location */
+-      Crosshair.X = CLAMP (PCB->CursorX, 0, PCB->MaxWidth);
+-      Crosshair.Y = CLAMP (PCB->CursorY, 0, PCB->MaxHeight);
++      Crosshair.unsnapped_X = Crosshair.X = CLAMP (PCB->CursorX, 0, PCB->MaxWidth);
++      Crosshair.unsnapped_Y = Crosshair.Y = CLAMP (PCB->CursorY, 0, PCB->MaxHeight);
+ 
+       /* update cursor confinement and output area (scrollbars) */
+       ChangePCBSize (PCB->MaxWidth, PCB->MaxHeight);
+diff --git a/src/global.h b/src/global.h
+index 8a0d6ee..4c5ba27 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -596,6 +596,9 @@ typedef struct			/* holds cursor information */
+   Coord X, Y,			/* position in PCB coordinates */
+     MinX, MinY,			/* lowest and highest coordinates */
+     MaxX, MaxY;
++  Coord unsnapped_X;
++  Coord unsnapped_Y;
++  bool snapped_to_grid;
+   AttachedLineType AttachedLine;	/* data of new lines... */
+   AttachedBoxType AttachedBox;
+   PolygonType AttachedPolygon;
+diff --git a/src/select.c b/src/select.c
+index 1762c76..7f15199 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -70,8 +70,13 @@ SelectObject (void)
+ 
+   bool changed = true;
+ 
+-  type = SearchScreen (Crosshair.X, Crosshair.Y, SELECT_TYPES,
+-		       &ptr1, &ptr2, &ptr3);
++  /* Use the real mouse location if the snap is not to an interesting object location */
++  if (Crosshair.snapped_to_grid)
++    type = SearchScreen (Crosshair.unsnapped_X, Crosshair.unsnapped_Y, SELECT_TYPES,
++                         &ptr1, &ptr2, &ptr3);
++  else
++    type = SearchScreen (Crosshair.X, Crosshair.Y, SELECT_TYPES,
++                         &ptr1, &ptr2, &ptr3);
+   if (type == NO_TYPE || TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
+     return (false);
+   switch (type)
