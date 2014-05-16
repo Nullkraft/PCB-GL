@@ -15,6 +15,9 @@
 #include "gui-pinout-preview.h"
 #include "pcb-printf.h"
 
+#include "quad.h"
+#include "quad_test.h"
+
 #ifndef WIN32
 /* The Linux OpenGL ABI 1.0 spec requires that we define
  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
@@ -1048,6 +1051,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   ghid_hid.end_layer = ghid_end_layer;
   ghid_graphics.fill_pcb_polygon = ghid_fill_pcb_polygon;
   ghid_graphics.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+
+  quad_test_init ();
 }
 
 void
@@ -2611,6 +2616,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glDisable (GL_LIGHTING);
 
   draw_crosshair (priv);
+  draw_quad_debug ();
 
   hidgl_flush_triangles (&buffer);
 
