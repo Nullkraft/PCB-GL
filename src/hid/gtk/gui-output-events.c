@@ -591,7 +591,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
   //if (out->has_entered && !ghidgui->in_popup && ghidgui->snavi != NULL)
   //  snavi_set_led (ghidgui->snavi, FALSE);
 
-  out->has_entered = FALSE;
+//  out->has_entered = FALSE;
 
   ghid_screen_update ();
 
@@ -626,6 +626,7 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
     default: button = -1;
     }
 
+  ghid_note_event_location ((GdkEventButton *)ev);
   do_mouse_action(button, mk);
 
   return TRUE;
