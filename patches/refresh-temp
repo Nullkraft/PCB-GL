@@ -1,0 +1,74 @@
+Bottom: 5b665d87d7c47179f2b1c7fbb466fa290a88e665
+Top:    aa538a6e0a9bf3fbed3df7ad58b11339e04fb628
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-05-17 14:55:19 +0100
+
+Refresh of play-with-quad-edge-data
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index d96e55f..f2d2f64 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -194,8 +194,6 @@ LIBGTK_GL_SRCS= \
+ 	hid/gtk/gui-trackball.h \
+ 	hid/gtk/quad.c \
+ 	hid/gtk/quad.h \
+-	hid/gtk/quad_test.c \
+-	hid/gtk/quad_test.h \
+ 	hid/gtk/vertex3d.c \
+ 	hid/gtk/vertex3d.h \
+ 	hid/gtk/face3d.c \
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 4e09896..50f98ec 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -16,7 +16,6 @@
+ #include "pcb-printf.h"
+ 
+ #include "quad.h"
+-//#include "quad_test.h"
+ #include "object3d.h"
+ 
+ #ifndef WIN32
+diff --git a/src/hid/gtk/object3d.c b/src/hid/gtk/object3d.c
+index 67b66bc..ddcf35e 100644
+--- a/src/hid/gtk/object3d.c
++++ b/src/hid/gtk/object3d.c
+@@ -33,6 +33,27 @@
+ 
+ static object3d *object3d_test_object = NULL;
+ 
++static void
++print_edge_id (edge_ref e)
++{
++  printf ("ID %i.%i", ID(e), (unsigned int)e & 3u);
++}
++
++static void
++debug_print_edge (edge_ref e, void *data)
++{
++  printf ("Edge ID %i.%i\n", ID(e), (int)e & 3u);
++
++  printf ("Edge ONEXT is "); print_edge_id (ONEXT(e)); printf ("\n");
++  printf ("Edge OPREV is "); print_edge_id (OPREV(e)); printf ("\n");
++  printf ("Edge DNEXT is "); print_edge_id (DNEXT(e)); printf ("\n");
++  printf ("Edge DPREV is "); print_edge_id (DPREV(e)); printf ("\n");
++  printf ("Edge RNEXT is "); print_edge_id (RNEXT(e)); printf ("\n");
++  printf ("Edge RPREV is "); print_edge_id (RPREV(e)); printf ("\n");
++  printf ("Edge LNEXT is "); print_edge_id (LNEXT(e)); printf ("\n");
++  printf ("Edge LPREV is "); print_edge_id (LPREV(e)); printf ("\n");
++}
++
+ void
+ object3d_test_init (void)
+ {
+@@ -109,6 +130,8 @@ object3d_create_test_cube (void)
+ 
+   }
+ 
++  quad_enum (cube_edges[0], debug_print_edge, NULL);
++
+   object = make_object3d ();
+   object->first_edge = cube_edges[0];
