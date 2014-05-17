@@ -16,7 +16,6 @@
 #include "pcb-printf.h"
 
 #include "quad.h"
-//#include "quad_test.h"
 #include "object3d.h"
 
 #ifndef WIN32

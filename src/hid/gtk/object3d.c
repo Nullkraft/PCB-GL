@@ -33,6 +33,27 @@
 
 static object3d *object3d_test_object = NULL;
 
+static void
+print_edge_id (edge_ref e)
+{
+  printf ("ID %i.%i", ID(e), (unsigned int)e & 3u);
+}
+
+static void
+debug_print_edge (edge_ref e, void *data)
+{
+  printf ("Edge ID %i.%i\n", ID(e), (int)e & 3u);
+
+  printf ("Edge ONEXT is "); print_edge_id (ONEXT(e)); printf ("\n");
+  printf ("Edge OPREV is "); print_edge_id (OPREV(e)); printf ("\n");
+  printf ("Edge DNEXT is "); print_edge_id (DNEXT(e)); printf ("\n");
+  printf ("Edge DPREV is "); print_edge_id (DPREV(e)); printf ("\n");
+  printf ("Edge RNEXT is "); print_edge_id (RNEXT(e)); printf ("\n");
+  printf ("Edge RPREV is "); print_edge_id (RPREV(e)); printf ("\n");
+  printf ("Edge LNEXT is "); print_edge_id (LNEXT(e)); printf ("\n");
+  printf ("Edge LPREV is "); print_edge_id (LPREV(e)); printf ("\n");
+}
+
 void
 object3d_test_init (void)
 {
@@ -108,6 +129,8 @@ object3d_create_test_cube (void)
     splice (SYM(cube_edges[4 + prev_vertex]), SYM(cube_edges[8 + i]));
 
   }
+
+  quad_enum (cube_edges[0], debug_print_edge, NULL);
 
   object = make_object3d ();
   object->first_edge = cube_edges[0];
