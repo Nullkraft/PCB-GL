@@ -2024,7 +2024,7 @@ delete_piece_cb (gpointer data, gpointer userdata)
   poly_Free (&piece);
 }
 
-POLYAREA *board_outline_poly ()
+POLYAREA *board_outline_poly (void)
 {
   int i;
   int count;
