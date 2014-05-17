@@ -1,5 +1,5 @@
 Bottom: 2aa879ba564942551d3072bfcc737be55dbf1f66
-Top:    5b665d87d7c47179f2b1c7fbb466fa290a88e665
+Top:    aa538a6e0a9bf3fbed3df7ad58b11339e04fb628
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-05-17 14:43:12 +0100
 
@@ -9,10 +9,10 @@ Play with quad-edge data-structure - using PCB as a framework for GL!
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 4c57deb..d96e55f 100644
+index 4c57deb..f2d2f64 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -191,7 +191,19 @@ LIBGTK_GDK_SRCS= \
+@@ -191,7 +191,17 @@ LIBGTK_GDK_SRCS= \
  LIBGTK_GL_SRCS= \
  	hid/gtk/gtkhid-gl.c \
  	hid/gtk/gui-trackball.c \
@@ -20,8 +20,6 @@ index 4c57deb..d96e55f 100644
 +	hid/gtk/gui-trackball.h \
 +	hid/gtk/quad.c \
 +	hid/gtk/quad.h \
-+	hid/gtk/quad_test.c \
-+	hid/gtk/quad_test.h \
 +	hid/gtk/vertex3d.c \
 +	hid/gtk/vertex3d.h \
 +	hid/gtk/face3d.c \
@@ -88,21 +86,20 @@ diff --git a/src/hid/gtk/face3d.h b/src/hid/gtk/face3d.h
 new file mode 100644
 index 0000000..e69de29
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b2de212..4e09896 100644
+index b2de212..50f98ec 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -15,6 +15,10 @@
+@@ -15,6 +15,9 @@
  #include "gui-pinout-preview.h"
  #include "pcb-printf.h"
  
 +#include "quad.h"
-+//#include "quad_test.h"
 +#include "object3d.h"
 +
  #ifndef WIN32
  /* The Linux OpenGL ABI 1.0 spec requires that we define
   * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-@@ -2256,6 +2260,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2256,6 +2259,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 1, 0,
                       0, 0, 0, 1};
    bool horizon_problem = false;
@@ -115,7 +112,7 @@ index b2de212..4e09896 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -2611,6 +2621,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2611,6 +2620,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (priv);
@@ -125,10 +122,10 @@ index b2de212..4e09896 100644
  
 diff --git a/src/hid/gtk/object3d.c b/src/hid/gtk/object3d.c
 new file mode 100644
-index 0000000..67b66bc
+index 0000000..ddcf35e
 --- /dev/null
 +++ b/src/hid/gtk/object3d.c
-@@ -0,0 +1,892 @@
+@@ -0,0 +1,915 @@
 +#include <stdio.h>
 +#include <stdlib.h>
 +#include <assert.h>
@@ -163,6 +160,27 @@ index 0000000..67b66bc
 +#define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
 +
 +static object3d *object3d_test_object = NULL;
++
++static void
++print_edge_id (edge_ref e)
++{
++  printf ("ID %i.%i", ID(e), (unsigned int)e & 3u);
++}
++
++static void
++debug_print_edge (edge_ref e, void *data)
++{
++  printf ("Edge ID %i.%i\n", ID(e), (int)e & 3u);
++
++  printf ("Edge ONEXT is "); print_edge_id (ONEXT(e)); printf ("\n");
++  printf ("Edge OPREV is "); print_edge_id (OPREV(e)); printf ("\n");
++  printf ("Edge DNEXT is "); print_edge_id (DNEXT(e)); printf ("\n");
++  printf ("Edge DPREV is "); print_edge_id (DPREV(e)); printf ("\n");
++  printf ("Edge RNEXT is "); print_edge_id (RNEXT(e)); printf ("\n");
++  printf ("Edge RPREV is "); print_edge_id (RPREV(e)); printf ("\n");
++  printf ("Edge LNEXT is "); print_edge_id (LNEXT(e)); printf ("\n");
++  printf ("Edge LPREV is "); print_edge_id (LPREV(e)); printf ("\n");
++}
 +
 +void
 +object3d_test_init (void)
@@ -239,6 +257,8 @@ index 0000000..67b66bc
 +    splice (SYM(cube_edges[4 + prev_vertex]), SYM(cube_edges[8 + i]));
 +
 +  }
++
++  quad_enum (cube_edges[0], debug_print_edge, NULL);
 +
 +  object = make_object3d ();
 +  object->first_edge = cube_edges[0];
