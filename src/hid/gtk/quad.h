@@ -12,7 +12,7 @@
 ** See the copyright notice at the end of this file.
 */
 /*
-** Modified to support 64-bit or 32-bit systems by Peter Clifton
+** Modified to support 64-bit or 32-bit systems, and data-fields extended by Peter Clifton
 */
 
 #ifndef QUAD_H
@@ -29,6 +29,7 @@ typedef struct {
     void *data[4];
     unsigned mark;
     int id;
+    void *undir_data[2];
   } edge_struct;
 
 /* Edge orientation operators: */
@@ -60,7 +61,8 @@ typedef struct {
 #define DDATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 2) & 3u]
 #define LDATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 3) & 3u]
 
-#define ID(e)    ((edge_struct *)((e) & ~3u))->id
+#define ID(e)         ((edge_struct *)((e) & ~3u))->id
+#define UNDIR_DATA(e) ((edge_struct *)((e) & ~3u))->undir_data[(e) & 1u]
 
 edge_ref make_edge(void);
 

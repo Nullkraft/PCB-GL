@@ -6,7 +6,7 @@
 ** See the copyright notice at the end of this file.
 */
 /*
-** Modified to support 64-bit or 32-bit systems by Peter Clifton
+** Modified to support 64-bit or 32-bit systems, and data-fields extended by Peter Clifton
 */
 
 #include "quad.h"
@@ -30,6 +30,8 @@ edge_ref make_edge(void)
     TORLNEXT(e) = ROT(e);
     MARK(e) = 0;
     ID(e) = global_edge_count++;
+    UNDIR_DATA(e) = NULL;
+    UNDIR_DATA(ROT(e)) = NULL;
     return e;
   }
 

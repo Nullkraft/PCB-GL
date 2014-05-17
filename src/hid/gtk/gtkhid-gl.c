@@ -16,7 +16,8 @@
 #include "pcb-printf.h"
 
 #include "quad.h"
-#include "quad_test.h"
+//#include "quad_test.h"
+#include "object3d.h"
 
 #ifndef WIN32
 /* The Linux OpenGL ABI 1.0 spec requires that we define
@@ -1051,8 +1052,6 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   ghid_hid.end_layer = ghid_end_layer;
   ghid_graphics.fill_pcb_polygon = ghid_fill_pcb_polygon;
   ghid_graphics.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
-
-  quad_test_init ();
 }
 
 void
@@ -1563,7 +1562,7 @@ ensure_board_outline (void)
     if (PCB->Data->outline != NULL)
       poly_Free (&PCB->Data->outline);
 
-    PCB->Data->outline = board_outline_poly ();
+    PCB->Data->outline = board_outline_poly (false);
     PCB->Data->outline_valid = true;
   }
 }
@@ -2261,6 +2260,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                      0, 0, 1, 0,
                      0, 0, 0, 1};
   bool horizon_problem = false;
+  static bool do_once = true;
+
+  if (do_once) {
+    do_once = false;
+    object3d_test_init ();
+  }
 
   gtk_widget_get_allocation (widget, &allocation);
 
@@ -2616,7 +2621,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glDisable (GL_LIGHTING);
 
   draw_crosshair (priv);
-  draw_quad_debug ();
+  object3d_draw_debug ();
 
   hidgl_flush_triangles (&buffer);
 
