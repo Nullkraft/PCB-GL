@@ -1,5 +1,5 @@
 Bottom: a4a17de0719791dff5c4e2a9f03d8ba498f381b1
-Top:    a4a17de0719791dff5c4e2a9f03d8ba498f381b1
+Top:    9732b293589ea90e000db4ad246935a1b27a7c86
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-05-17 14:46:00 +0100
 
@@ -8,4 +8,63 @@ polygon.c: Add option to include drills holes (from vias / pins) in the board ou
 
 ---
 
-
+diff --git a/src/polygon.c b/src/polygon.c
+index 17c7f5e..60b5e52 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2013,6 +2013,22 @@ line_outline_callback (const BoxType * b, void *cl)
+   return 1;
+ }
+ 
++static int
++pv_outline_callback (const BoxType * b, void *cl)
++{
++  PinType *pv = (PinType *)b;
++  struct clip_outline_info *info = cl;
++  POLYAREA *np, *res;
++
++  if (!(np = CirclePoly (pv->X, pv->Y, pv->DrillingHole / 2)))
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  info->poly = res;
++
++  return 1;
++}
++
+ static void
+ delete_piece_cb (gpointer data, gpointer userdata)
+ {
+@@ -2034,7 +2050,7 @@ delete_piece_cb (gpointer data, gpointer userdata)
+   poly_Free (&piece);
+ }
+ 
+-POLYAREA *board_outline_poly (void)
++POLYAREA *board_outline_poly (bool include_holes)
+ {
+   int i;
+   int count;
+@@ -2103,6 +2119,12 @@ POLYAREA *board_outline_poly (void)
+   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
+   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
+ 
++  if (include_holes)
++    {
++      r_search (PCB->Data->pin_tree, &region, NULL, pv_outline_callback, &info);
++      r_search (PCB->Data->via_tree, &region, NULL, pv_outline_callback, &info);
++    }
++
+   clipped = info.poly;
+ 
+   /* Now we just need to work out which pieces of polygon are inside
+diff --git a/src/polygon.h b/src/polygon.h
+index 30e5ea3..a02fd99 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -88,5 +88,5 @@ bool MorphPolygon (LayerType *, PolygonType *);
+ void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
+                           void (*emit) (PLINE *, void *), void *user_data);
+ void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
+-POLYAREA *board_outline_poly (void);
++POLYAREA *board_outline_poly (bool include_holes);
+ #endif
