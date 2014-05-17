@@ -1,5 +1,5 @@
 Bottom: 2aa879ba564942551d3072bfcc737be55dbf1f66
-Top:    cc81f8c284aa6a261a5e6761f6b03d1166400ef3
+Top:    1eb9153d8c6542bcaadb5b40c8663f0e285967b6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-05-17 14:55:30 +0100
 
@@ -9,7 +9,7 @@ Fix build warnings in gtkhid-gl.c
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b2de212..4ad2fb2 100644
+index b2de212..dfbab22 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -395,6 +395,7 @@ ghid_draw_grid (BoxType *drawn_area)
@@ -39,3 +39,12 @@ index b2de212..4ad2fb2 100644
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
  
    OutputType *out = &Output;
+@@ -1736,7 +1738,7 @@ GhidDrawMask (int side, BoxType * screen)
+ 
+   gui->graphics->use_mask (HID_MASK_OFF);
+ 
+-  first_run = false;
++//  first_run = false;
+ }
+ 
+ static void
