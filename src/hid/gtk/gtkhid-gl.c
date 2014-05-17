@@ -395,6 +395,7 @@ ghid_draw_grid (BoxType *drawn_area)
   glEnable (GL_STENCIL_TEST);
 }
 
+#if 0
 /* XXX: Refactor this into hidgl common routines */
 static void
 load_texture_from_png (char *filename)
@@ -435,6 +436,7 @@ load_texture_from_png (char *filename)
 
   g_object_unref (pixbuf);
 }
+#endif
 
 static void
 ghid_draw_bg_image (void)
@@ -1653,8 +1655,8 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
 static void
 GhidDrawMask (int side, BoxType * screen)
 {
-  static bool first_run = true;
-  static GLuint texture;
+//  static bool first_run = true;
+//  static GLuint texture;
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
 
   OutputType *out = &Output;
