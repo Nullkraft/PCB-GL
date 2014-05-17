@@ -1738,7 +1738,7 @@ GhidDrawMask (int side, BoxType * screen)
 
   gui->graphics->use_mask (HID_MASK_OFF);
 
-  first_run = false;
+//  first_run = false;
 }
 
 static void
