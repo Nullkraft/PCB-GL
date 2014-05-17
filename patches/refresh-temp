@@ -1,0 +1,33 @@
+Bottom: 5c99134140c152d2352b9e3ce942f93f7bcf6df7
+Top:    0e34457e9796fbc1f2cb1563046e5a0a92e35a86
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-05-17 14:42:08 +0100
+
+Refresh of board-outline-polygon-generati
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 73597ed..99b4c8b 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2024,7 +2024,7 @@ delete_piece_cb (gpointer data, gpointer userdata)
+   poly_Free (&piece);
+ }
+ 
+-POLYAREA *board_outline_poly ()
++POLYAREA *board_outline_poly (void)
+ {
+   int i;
+   int count;
+diff --git a/src/polygon.h b/src/polygon.h
+index 7c6b186..30e5ea3 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -88,5 +88,5 @@ bool MorphPolygon (LayerType *, PolygonType *);
+ void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
+                           void (*emit) (PLINE *, void *), void *user_data);
+ void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
+-POLYAREA *board_outline_poly ();
++POLYAREA *board_outline_poly (void);
+ #endif
