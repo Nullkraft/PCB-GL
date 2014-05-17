@@ -1,5 +1,5 @@
-Bottom: a4a17de0719791dff5c4e2a9f03d8ba498f381b1
-Top:    142c1c8eaa6e8569f3ebfc90a141b0fc1a482756
+Bottom: 2aa879ba564942551d3072bfcc737be55dbf1f66
+Top:    2c4d9eeb45f664fa290c27a30cded5cf9335c104
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-05-17 14:43:12 +0100
 
@@ -88,7 +88,7 @@ diff --git a/src/hid/gtk/face3d.h b/src/hid/gtk/face3d.h
 new file mode 100644
 index 0000000..e69de29
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 753ad24..4e09896 100644
+index b2de212..4e09896 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,10 @@
@@ -102,15 +102,6 @@ index 753ad24..4e09896 100644
  #ifndef WIN32
  /* The Linux OpenGL ABI 1.0 spec requires that we define
   * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-@@ -1558,7 +1562,7 @@ ensure_board_outline (void)
-     if (PCB->Data->outline != NULL)
-       poly_Free (&PCB->Data->outline);
- 
--    PCB->Data->outline = board_outline_poly ();
-+    PCB->Data->outline = board_outline_poly (false);
-     PCB->Data->outline_valid = true;
-   }
- }
 @@ -2256,6 +2260,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 1, 0,
                       0, 0, 0, 1};
