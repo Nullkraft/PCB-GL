@@ -17,6 +17,7 @@
 
 #include "quad.h"
 #include "vertex3d.h"
+#include "contour3d.h"
 #include "face3d.h"
 #include "appearance.h"
 #include "object3d.h"
