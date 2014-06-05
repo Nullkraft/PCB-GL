@@ -13,10 +13,10 @@ make_edge_info (bool is_stitch, bool is_round, float cx, float cy, float cz, flo
   info->is_round = is_round;
   info->cx = cx;
   info->cy = cy;
-  info->cy = cz;
+  info->cz = cz;
   info->nx = nx;
   info->ny = ny;
-  info->ny = nz;
+  info->nz = nz;
   info->radius = radius;
 
   return info;

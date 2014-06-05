@@ -460,7 +460,7 @@ object3d_export_to_step (object3d *object, char *filename)
           fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
                       "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
                       "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-                      "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i,  #%i,  #%i ) ;"
+                      "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i,  #%i,  #%i ) ; "
                       "#%i = CIRCLE ( 'NONE', #%i, %f ) ;\n",
                    next_step_identifier,     /* Center of the circle   */ info->cx, info->cy, info->cz, // <--- Center of coordinate placement
                    next_step_identifier + 1, /* Normal of circle?      */ 0.0, 0.0, -1.0, // <--- Z-axis direction of placement             /* XXX: PULL FROM FACE DATA */
@@ -561,7 +561,7 @@ object3d_export_to_step (object3d *object, char *filename)
         fprintf (f, "#%i, ", ((contour3d *)contour_iter->data)->face_bound_identifier);
       }
       fprintf (f, "#%i)", ((contour3d *)contour_iter->data)->face_bound_identifier);
-      fprintf (f, ", #%i, %s.T. ) ;\n", face->plane_identifier, face->plane_orientation_reversed ? ".F." : ".T.");
+      fprintf (f, ", #%i, %s ) ;\n", face->plane_identifier, face->plane_orientation_reversed ? ".F." : ".T.");
       face->face_identifier = next_step_identifier;
       next_step_identifier = next_step_identifier + 1;
     }
@@ -684,7 +684,7 @@ object3d_from_board_outline (void)
 
     object3d_add_face (board_object, faces[i]);
     /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
-    face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
+    face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
   }
 
   faces[npoints] = make_face3d (); /* bottom_face */
@@ -700,7 +700,7 @@ object3d_from_board_outline (void)
   object3d_add_face (board_object, faces[npoints + 1]);
 
   /* Pick the first bottom / top edge within the bottom / top face outer contour loop, and link it to the face */
-  face3d_add_contour (faces[npoints], make_contour3d (edges[0]));
+  face3d_add_contour (faces[npoints], make_contour3d (SYM(edges[0])));
   face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints]));
 
   ct = contour;
@@ -721,7 +721,7 @@ object3d_from_board_outline (void)
       ct_npoints = get_contour_npoints (ct);
 
       /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
-      face3d_add_contour (faces[npoints], make_contour3d (edges[i]));
+      face3d_add_contour (faces[npoints], make_contour3d (SYM(edges[i])));
       face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints + i]));
     }
 
@@ -754,6 +754,7 @@ object3d_from_board_outline (void)
      *     edges[2*npoints-3*npoints-1] are the upright edges, oriented from bottom to top
      */
 
+#if 0
     /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
     splice (edges[i], edges[npoints + i]);                         /* XXX: ???? */
     splice (edges[npoints + i], SYM(edges[next_i_around_ct]));     /* XXX: ???? */
@@ -761,6 +762,17 @@ object3d_from_board_outline (void)
     /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
     splice (edges[npoints + i], SYM(edges[npoints + next_i_around_ct]));
     splice (SYM(edges[npoints + next_i_around_ct]), SYM(edges[2 * npoints + i]));
+#endif
+
+#if 1
+    /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
+    splice (edges[i], edges[2 * npoints + i]);
+    splice (edges[2 * npoints + i], SYM(edges[prev_i_around_ct]));
+
+    /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
+    splice (SYM(edges[2 * npoints + i]), edges[npoints + i]);
+    splice (edges[npoints + i], SYM(edges[npoints + prev_i_around_ct]));
+#endif
 
     /* XXX: TOPOLOGY WILL BE OK, MAY NEED MORE INFO FOR GEOMETRY */
     /* XXX: DO WE NEED TO ASSIGN EXTRA INFORMATION TO CIRCULAR EDGES FOR RENDERING / EXPORT??? */
@@ -780,13 +792,13 @@ object3d_from_board_outline (void)
       UNDIR_DATA (edges[0 * npoints + i]) =
         make_edge_info (false /* Stitch? */, true, /* Circular */
                         COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), -COORD_TO_MM (HACK_BOARD_THICKNESS), /* Center of circle */
-                        0., 0., -1., /* Normal */
+                        0., 0., 1., /* Normal */
                         COORD_TO_MM (ct->radius)); /* Radius */
 
       UNDIR_DATA (edges[1 * npoints + i]) =
         make_edge_info (false /* Stitch? */, true, /* Circular */
                         COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* Center of circle */
-                        0., 0., 1., /* Normal */
+                        0., 0., -1., /* Normal */
                         COORD_TO_MM (ct->radius)); /* Radius */
 
       UNDIR_DATA (edges[2 * npoints + i]) =
