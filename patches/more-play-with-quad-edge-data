@@ -1,5 +1,5 @@
 Bottom: b39a7b1528b43318112a6a31959d6df687144444
-Top:    33711f70d0a0cdeb023ddcc62e368357705a4a11
+Top:    660793628ca46db91ce4f7ac1ec08c6425692ed5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-05 18:44:31 +0100
 
@@ -293,7 +293,7 @@ index 3ec9be8..5d6087e 100644
  
  #ifndef WIN32
 diff --git a/src/hid/gtk/object3d.c b/src/hid/gtk/object3d.c
-index 35f2330..b355d0e 100644
+index 35f2330..49462ca 100644
 --- a/src/hid/gtk/object3d.c
 +++ b/src/hid/gtk/object3d.c
 @@ -7,9 +7,10 @@
@@ -871,7 +871,7 @@ index 35f2330..b355d0e 100644
      }
  
    }
-@@ -688,3 +849,195 @@ object3d_test_board_outline (void)
+@@ -688,3 +849,183 @@ object3d_test_board_outline (void)
    object3d_export_to_step (board_outline, "object3d_test.step");
    destroy_object3d (board_outline);
  }
@@ -908,18 +908,6 @@ index 35f2330..b355d0e 100644
 +    npoints += get_contour_npoints (ct);
 +    ct = ct->next;
 +  }
-+
-+  /* We know how many edges and vertices we need now...
-+   *
-+   * let n = npoints
-+   * bodies = 1             (FOR NOW - just the first board outline)
-+   * vertices = 2n          (n-top, n-bottom)
-+   * edges = 3n             (n-top, n-bottom, n-sides)
-+   * faces = 2 + n          (1-top, 1-bottom, n-sides)
-+   *
-+   * holes = 0              (FOR NOW - just the outline, no holes)
-+   * holes = ncontours - 1  (LATER)
-+   */
 +
 +  board_object = make_object3d (PCB->Name);
 +  board_appearance = make_appearance ();
