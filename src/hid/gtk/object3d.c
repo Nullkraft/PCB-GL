@@ -823,10 +823,10 @@ object3d_from_board_outline (void)
 
       edge_info_set_round (UNDIR_DATA (edges[i]),
                            COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), -COORD_TO_MM (HACK_BOARD_THICKNESS), /* Center of circle */
-                           0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE (??) */
+                           0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
       edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
                            COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* Center of circle */
-                           0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius));
+                           0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
       edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
     }
 
