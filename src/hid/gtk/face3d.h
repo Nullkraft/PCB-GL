@@ -8,6 +8,8 @@ typedef struct {
   float ax, ay, az; /* Direction of the axis */
   float radius;
 
+  appearance *appear;
+
   /* STEP crap - to hell with encapsulation */
   int plane_identifier;
   bool plane_orientation_reversed;
@@ -19,3 +21,4 @@ face3d *make_face3d (void);
 void destroy_face3d (face3d *face);
 //void face3d_add_contour (face3d *face, edge_ref contour);
 void face3d_add_contour (face3d *face, contour3d *contour);
+void face3d_set_appearance (face3d *face, appearance *appear);

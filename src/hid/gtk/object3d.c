@@ -8,9 +8,9 @@
 #include "quad.h"
 #include "vertex3d.h"
 #include "contour3d.h"
+#include "appearance.h"
 #include "face3d.h"
 #include "edge3d.h"
-#include "appearance.h"
 #include "object3d.h"
 #include "polygon.h"
 #include "data.h"
@@ -295,8 +295,12 @@ object3d_export_to_step (object3d *object, char *filename)
   time_t currenttime;
   struct tm utc;
   int next_step_identifier;
+  int geometric_representation_context_identifier;
   int brep_identifier;
   int pcb_shell_identifier;
+  int brep_style_identifier;
+  GList *styled_item_identifiers = NULL;
+  GList *styled_item_iter;
   GList *face_iter;
   GList *edge_iter;
   GList *vertex_iter;
@@ -363,19 +367,34 @@ object3d_export_to_step (object3d *object, char *filename)
               "#17 =( NAMED_UNIT ( * ) SI_UNIT ( $, .STERADIAN. ) SOLID_ANGLE_UNIT ( ) );\n"
               "#18 =( GEOMETRIC_REPRESENTATION_CONTEXT ( 3 ) GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT ( ( #14 ) ) GLOBAL_UNIT_ASSIGNED_CONTEXT ( ( #15, #16, #17 ) ) REPRESENTATION_CONTEXT ( 'NONE', 'WORKASPACE' ) );\n");
 
-  /* BREP STUFF FROM #21 onwards say? */
   fprintf (f, "#19 = ADVANCED_BREP_SHAPE_REPRESENTATION ( '%s', ( /* Manifold_solid_brep */ #21, #13 ), #18 ) ;\n"
               "#20 = SHAPE_DEFINITION_REPRESENTATION ( #9, #19 ) ;\n",
               "test_pcb_absr_name");
 
+  geometric_representation_context_identifier = 18;
+
+  /* Save a place for the brep identifier */
   next_step_identifier = 21;
+  brep_identifier = next_step_identifier++;
+
+  /* Body style */
+  fprintf (f, "#22 = COLOUR_RGB ( '', %f, %f, %f ) ;\n", object->appear->r, object->appear->g, object->appear->b);
+  fprintf (f, "#23 = FILL_AREA_STYLE_COLOUR ( '', #22 ) ;\n"
+              "#24 = FILL_AREA_STYLE ('', ( #23 ) ) ;\n"
+              "#25 = SURFACE_STYLE_FILL_AREA ( #24 ) ;\n"
+              "#26 = SURFACE_SIDE_STYLE ('', ( #25 ) ) ;\n"
+              "#27 = SURFACE_STYLE_USAGE ( .BOTH. , #26 ) ;\n"
+              "#28 = PRESENTATION_STYLE_ASSIGNMENT ( ( #27 ) ) ;\n");
+  fprintf (f, "#29 = STYLED_ITEM ( 'NONE', ( #28 ), #%i ) ;\n", brep_identifier);
+  brep_style_identifier = 29;
+  fprintf (f, "#30 = PRESENTATION_LAYER_ASSIGNMENT (  '1', 'Layer 1', ( #%i ) ) ;\n", brep_style_identifier);
+
+  next_step_identifier = 31;
+  styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (brep_style_identifier));
 
 #define FWD 1
 #define REV 2
 #define ORIENTED_EDGE_IDENTIFIER(e) (((edge_info *)UNDIR_DATA (e))->edge_identifier + ((e & 2) ? REV : FWD))
-
-  /* Save a place for the brep identifier */
-  brep_identifier = next_step_identifier++;
 
   /* Define ininite planes corresponding to every planar face, and cylindrical surfaces for every cylindrical face */
 
@@ -564,6 +583,21 @@ object3d_export_to_step (object3d *object, char *filename)
       fprintf (f, ", #%i, %s ) ;\n", face->plane_identifier, face->plane_orientation_reversed ? ".F." : ".T.");
       face->face_identifier = next_step_identifier;
       next_step_identifier = next_step_identifier + 1;
+
+      if (face->appear != NULL) {
+        /* Face styles */
+        fprintf (f, "#%i = COLOUR_RGB ( '', %f, %f, %f ) ;\n",             next_step_identifier, face->appear->r, face->appear->g, face->appear->b);
+        fprintf (f, "#%i = FILL_AREA_STYLE_COLOUR ( '', #%i ) ;\n",        next_step_identifier + 1, next_step_identifier);
+        fprintf (f, "#%i = FILL_AREA_STYLE ('', ( #%i ) ) ;\n",            next_step_identifier + 2, next_step_identifier + 1);
+        fprintf (f, "#%i = SURFACE_STYLE_FILL_AREA ( #%i ) ;\n",           next_step_identifier + 3, next_step_identifier + 2);
+        fprintf (f, "#%i = SURFACE_SIDE_STYLE ('', ( #%i ) ) ;\n",         next_step_identifier + 4, next_step_identifier + 3);
+        fprintf (f, "#%i = SURFACE_STYLE_USAGE ( .BOTH. , #%i ) ;\n",      next_step_identifier + 5, next_step_identifier + 4);
+        fprintf (f, "#%i = PRESENTATION_STYLE_ASSIGNMENT ( ( #%i ) ) ;\n", next_step_identifier + 6, next_step_identifier + 5);
+        fprintf (f, "#%i = OVER_RIDING_STYLED_ITEM ( 'NONE', ( #%i ), #%i, #%i ) ;\n",
+                 next_step_identifier + 7, next_step_identifier + 6, face->face_identifier, brep_style_identifier);
+        styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (next_step_identifier + 7));
+        next_step_identifier = next_step_identifier + 8;
+      }
     }
 
   /* Closed shell which bounds the brep solid */
@@ -583,6 +617,19 @@ object3d_export_to_step (object3d *object, char *filename)
   /* Finally emit the brep solid definition */
   fprintf (f, "#%i = MANIFOLD_SOLID_BREP ( 'PCB outline', #%i ) ;\n", brep_identifier, pcb_shell_identifier);
 
+  /* Emit references to the styled and over_ridden styled items */
+  fprintf (f, "#%i = MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION (  '', ", next_step_identifier);
+  fprintf (f, "(");
+  for (styled_item_iter = styled_item_identifiers;
+       styled_item_iter != NULL && g_list_next (styled_item_iter) != NULL;
+       styled_item_iter = g_list_next (styled_item_iter)) {
+    fprintf (f, "#%i, ", GPOINTER_TO_INT (styled_item_iter->data));
+  }
+  fprintf (f, "#%i)", GPOINTER_TO_INT (styled_item_iter->data));
+  fprintf (f, ", #%i ) ;\n", geometric_representation_context_identifier);
+  next_step_identifier = next_step_identifier + 1;
+
+
 #undef FWD
 #undef REV
 #undef ORIENTED_EDGE_IDENTIFIER
@@ -598,6 +645,7 @@ object3d_from_board_outline (void)
 {
   object3d *board_object;
   appearance *board_appearance;
+  appearance *top_bot_appearance;
   POLYAREA *outline;
   PLINE *contour;
   PLINE *ct;
@@ -640,7 +688,9 @@ object3d_from_board_outline (void)
 
   board_object = make_object3d (PCB->Name);
   board_appearance = make_appearance ();
-  appearance_set_color (board_appearance, 1., 1., 0.);
+  top_bot_appearance = make_appearance ();
+  appearance_set_color (board_appearance,   1.0, 1.0, 0.6);
+  appearance_set_color (top_bot_appearance, 0.2, 0.8, 0.2);
 
   object3d_set_appearance (board_object, board_appearance);
 
@@ -691,12 +741,14 @@ object3d_from_board_outline (void)
   faces[npoints]->nx =  0.;
   faces[npoints]->ny =  0.;
   faces[npoints]->nz = -1.;
+  face3d_set_appearance (faces[npoints], top_bot_appearance);
   object3d_add_face (board_object, faces[npoints]);
 
   faces[npoints + 1] = make_face3d (); /* top_face */
   faces[npoints + 1]->nx = 0.;
   faces[npoints + 1]->ny = 0.;
   faces[npoints + 1]->nz = 1.;
+  face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
   object3d_add_face (board_object, faces[npoints + 1]);
 
   /* Pick the first bottom / top edge within the bottom / top face outer contour loop, and link it to the face */
