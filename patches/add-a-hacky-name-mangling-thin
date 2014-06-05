@@ -1,7 +1,7 @@
-Bottom: a9e7f23213eda7d99a312d18e6365bb32aef2247
-Top:    3122fb2c8c2d22dc7fdd33d062099f5fb05fc701
+Bottom: 41811a99f3a88c6f161cec6fe7b5d5cc7cbc14e6
+Top:    a79912f83a342d13f344e94fb3aebf851161e921
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2014-05-17 14:43:10 +0100
+Date:   2014-06-05 18:44:28 +0100
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -130,7 +130,7 @@ index e9c2697..04fe48e 100644
  LineType * CreateNewLineInElement (ElementType *, Coord, Coord, Coord, Coord, Coord);
  ArcType * CreateNewArcInElement (ElementType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord);
 diff --git a/src/file.c b/src/file.c
-index 0a5c1ff..7788222 100644
+index ca22071..72537c7 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -405,6 +405,9 @@ real_load_pcb (char *Filename, bool revert)
