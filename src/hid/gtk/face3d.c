@@ -23,14 +23,6 @@ destroy_face3d (face3d *face)
   g_free (face);
 }
 
-#if 0
-void
-face3d_add_contour (face3d *face, edge_ref contour)
-{
-  face->contours = g_list_append (face->contours, (void *)contour);
-}
-#endif
-
 void
 face3d_add_contour (face3d *face, contour3d *contour)
 {
@@ -41,4 +33,25 @@ void
 face3d_set_appearance (face3d *face, appearance *appear)
 {
   face->appear = appear;
+}
+
+void
+face3d_set_normal (face3d *face, float nx, float ny, float nz)
+{
+  face->nx = nx;
+  face->ny = ny;
+  face->nz = nz;
+}
+
+void
+face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius)
+{
+  face->is_cylindrical = true;
+  face->cx = cx;
+  face->cy = cy;
+  face->cz = cz;
+  face->ax = ax;
+  face->ay = ay;
+  face->az = az;
+  face->radius = radius;
 }

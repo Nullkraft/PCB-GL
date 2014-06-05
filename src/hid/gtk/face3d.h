@@ -19,6 +19,7 @@ typedef struct {
 
 face3d *make_face3d (void);
 void destroy_face3d (face3d *face);
-//void face3d_add_contour (face3d *face, edge_ref contour);
 void face3d_add_contour (face3d *face, contour3d *contour);
 void face3d_set_appearance (face3d *face, appearance *appear);
+void face3d_set_normal (face3d *face, float nx, float ny, float nz);
+void face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius);

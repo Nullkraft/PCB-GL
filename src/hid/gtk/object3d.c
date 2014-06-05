@@ -142,6 +142,7 @@ object3d_create_test_cube (void)
 
   for (i = 0; i < 12; i++) {
     cube_edges[i] = make_edge ();
+    UNDIR_DATA (cube_edges[i]) = make_edge_info ();
     object3d_add_edge (object, cube_edges[i]);
   }
 
@@ -725,6 +726,7 @@ object3d_from_board_outline (void)
   /* Define the edges */
   for (i = 0; i < 3 * npoints; i++) {
     edges[i] = make_edge ();
+    UNDIR_DATA (edges[i]) = make_edge_info ();
     object3d_add_edge (board_object, edges[i]);
   }
 
@@ -767,7 +769,6 @@ object3d_from_board_outline (void)
     /* Update which contour we're looking at */
     if (offset_in_ct == ct_npoints) {
       start_of_ct = i;
-      printf ("start_of_ct = %i\n", start_of_ct);
       offset_in_ct = 0;
       ct = ct->next;
       ct_npoints = get_contour_npoints (ct);
@@ -806,17 +807,6 @@ object3d_from_board_outline (void)
      *     edges[2*npoints-3*npoints-1] are the upright edges, oriented from bottom to top
      */
 
-#if 0
-    /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
-    splice (edges[i], edges[npoints + i]);                         /* XXX: ???? */
-    splice (edges[npoints + i], SYM(edges[next_i_around_ct]));     /* XXX: ???? */
-
-    /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
-    splice (edges[npoints + i], SYM(edges[npoints + next_i_around_ct]));
-    splice (SYM(edges[npoints + next_i_around_ct]), SYM(edges[2 * npoints + i]));
-#endif
-
-#if 1
     /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
     splice (edges[i], edges[2 * npoints + i]);
     splice (edges[2 * npoints + i], SYM(edges[prev_i_around_ct]));
@@ -824,56 +814,23 @@ object3d_from_board_outline (void)
     /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
     splice (SYM(edges[2 * npoints + i]), edges[npoints + i]);
     splice (edges[npoints + i], SYM(edges[npoints + prev_i_around_ct]));
-#endif
 
-    /* XXX: TOPOLOGY WILL BE OK, MAY NEED MORE INFO FOR GEOMETRY */
-    /* XXX: DO WE NEED TO ASSIGN EXTRA INFORMATION TO CIRCULAR EDGES FOR RENDERING / EXPORT??? */
     if (ct->is_round) {
-      faces[i]->is_cylindrical = true;
-      faces[i]->cx = COORD_TO_MM (ct->cx);
-      faces[i]->cy = COORD_TO_MM (ct->cy);
-      faces[i]->cz = 0.;
-      faces[i]->ax = 0.;
-      faces[i]->ay = 0.;
-      faces[i]->az = 1.;
-      /* XXX: Could line this up with the direction to the vertex in the corresponding circle edge */
-      faces[i]->nx = 1.;
-      faces[i]->ny = 0.;
-      faces[i]->nz = 0.;
-      faces[i]->radius = COORD_TO_MM (ct->radius);
-      UNDIR_DATA (edges[0 * npoints + i]) =
-        make_edge_info (false /* Stitch? */, true, /* Circular */
-                        COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), -COORD_TO_MM (HACK_BOARD_THICKNESS), /* Center of circle */
-                        0., 0., 1., /* Normal */
-                        COORD_TO_MM (ct->radius)); /* Radius */
 
-      UNDIR_DATA (edges[1 * npoints + i]) =
-        make_edge_info (false /* Stitch? */, true, /* Circular */
-                        COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* Center of circle */
-                        0., 0., -1., /* Normal */
-                        COORD_TO_MM (ct->radius)); /* Radius */
+      face3d_set_cylindrical (faces[i], COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* A point on the axis of the cylinder */
+                                        0., 0., 1.,                                     /* Direction of the cylindrical axis */
+                                        COORD_TO_MM (ct->radius));
+      face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
+                                /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 
-      UNDIR_DATA (edges[2 * npoints + i]) =
-        make_edge_info (true /* Stitch? */, false, /* Circular */
-                        0., 0., 0., /* No point in defining an cylinder axis center for the stitch edge */
-                        0., 0., 0., /* No point in defining a normal for the stitch edge - it has no meaning */
-                        0.);        /* No point in defining a cylinder radius for the stitch edge */
-    } else {
-      UNDIR_DATA (edges[0 * npoints + i]) =
-        make_edge_info (false /* Stitch? */, false, /* Circular */
-                        0., 0., 0., /* No point in defining an cylinder axis center for the stitch edge */
-                        0., 0., 0., /* No point in defining a normal for the stitch edge - it has no meaning */
-                        0.);        /* No point in defining a cylinder radius for the stitch edge */
-      UNDIR_DATA (edges[1 * npoints + i]) =
-        make_edge_info (false /* Stitch? */, false, /* Circular */
-                        0., 0., 0., /* No point in defining an cylinder axis center for the stitch edge */
-                        0., 0., 0., /* No point in defining a normal for the stitch edge - it has no meaning */
-                        0.);        /* No point in defining a cylinder radius for the stitch edge */
-      UNDIR_DATA (edges[2 * npoints + i]) =
-        make_edge_info (false /* Stitch? */, false, /* Circular */
-                        0., 0., 0., /* No point in defining an cylinder axis center for the stitch edge */
-                        0., 0., 0., /* No point in defining a normal for the stitch edge - it has no meaning */
-                        0.);        /* No point in defining a cylinder radius for the stitch edge */
+
+      edge_info_set_round (UNDIR_DATA (edges[i]),
+                           COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), -COORD_TO_MM (HACK_BOARD_THICKNESS), /* Center of circle */
+                           0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius));
+      edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
+                           COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* Center of circle */
+                           0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius));
+      edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
     }
 
   }
@@ -913,7 +870,6 @@ object3d_from_tracking (void)
   int ct_npoints;
 
   outline = board_outline_poly (true);
-  //outline = board_outline_poly (false); /* (FOR NOW - just the outline, no holes) */
   ncontours = 0;
   npoints = 0;
 
@@ -978,6 +934,7 @@ object3d_from_tracking (void)
   /* Define the edges */
   for (i = 0; i < 3 * npoints; i++) {
     edges[i] = make_edge ();
+    UNDIR_DATA (edges[i]) = make_edge_info ();
     object3d_add_edge (board_object, edges[i]);
   }
 
@@ -991,16 +948,12 @@ object3d_from_tracking (void)
   }
 
   faces[npoints] = make_face3d (); /* bottom_face */
-  faces[npoints]->nx =  0.;
-  faces[npoints]->ny =  0.;
-  faces[npoints]->nz = -1.;
+  face3d_set_normal (faces[npoints], 0., 0., -1.);
   face3d_set_appearance (faces[npoints], top_bot_appearance);
   object3d_add_face (board_object, faces[npoints]);
 
   faces[npoints + 1] = make_face3d (); /* top_face */
-  faces[npoints + 1]->nx = 0.;
-  faces[npoints + 1]->ny = 0.;
-  faces[npoints + 1]->nz = 1.;
+  face3d_set_normal (faces[npoints + 1], 0., 0., 1.);
   face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
   object3d_add_face (board_object, faces[npoints + 1]);
 
@@ -1020,7 +973,6 @@ object3d_from_tracking (void)
     /* Update which contour we're looking at */
     if (offset_in_ct == ct_npoints) {
       start_of_ct = i;
-      printf ("start_of_ct = %i\n", start_of_ct);
       offset_in_ct = 0;
       ct = ct->next;
       ct_npoints = get_contour_npoints (ct);
@@ -1035,9 +987,8 @@ object3d_from_tracking (void)
 
     /* Setup the face normals for the edges along the contour extrusion (top and bottom are handled separaetely) */
     /* Define the (non-normalized) face normal to point to the outside of the contour */
-    faces[i]->nx = vertices[next_i_around_ct]->y - vertices[i]->y;
-    faces[i]->ny = vertices[i]->x - vertices[next_i_around_ct]->x;
-    faces[i]->nz = 0.;
+    face3d_set_normal (faces[i], (vertices[next_i_around_ct]->y - vertices[i]->y),
+                                -(vertices[next_i_around_ct]->x - vertices[i]->x), 0.);
 
     /* Assign the appropriate vertex geometric data to each edge end */
     ODATA (edges[              i]) = vertices[0 * npoints + i];
@@ -1059,17 +1010,6 @@ object3d_from_tracking (void)
      *     edges[2*npoints-3*npoints-1] are the upright edges, oriented from bottom to top
      */
 
-#if 0
-    /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
-    splice (edges[i], edges[npoints + i]);                         /* XXX: ???? */
-    splice (edges[npoints + i], SYM(edges[next_i_around_ct]));     /* XXX: ???? */
-
-    /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
-    splice (edges[npoints + i], SYM(edges[npoints + next_i_around_ct]));
-    splice (SYM(edges[npoints + next_i_around_ct]), SYM(edges[2 * npoints + i]));
-#endif
-
-#if 1
     /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
     splice (edges[i], edges[2 * npoints + i]);
     splice (edges[2 * npoints + i], SYM(edges[prev_i_around_ct]));
@@ -1077,56 +1017,22 @@ object3d_from_tracking (void)
     /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
     splice (SYM(edges[2 * npoints + i]), edges[npoints + i]);
     splice (edges[npoints + i], SYM(edges[npoints + prev_i_around_ct]));
-#endif
 
-    /* XXX: TOPOLOGY WILL BE OK, MAY NEED MORE INFO FOR GEOMETRY */
-    /* XXX: DO WE NEED TO ASSIGN EXTRA INFORMATION TO CIRCULAR EDGES FOR RENDERING / EXPORT??? */
     if (ct->is_round) {
-      faces[i]->is_cylindrical = true;
-      faces[i]->cx = COORD_TO_MM (ct->cx);
-      faces[i]->cy = COORD_TO_MM (ct->cy);
-      faces[i]->cz = 0.;
-      faces[i]->ax = 0.;
-      faces[i]->ay = 0.;
-      faces[i]->az = 1.;
-      /* XXX: Could line this up with the direction to the vertex in the corresponding circle edge */
-      faces[i]->nx = 1.;
-      faces[i]->ny = 0.;
-      faces[i]->nz = 0.;
-      faces[i]->radius = COORD_TO_MM (ct->radius);
-      UNDIR_DATA (edges[0 * npoints + i]) =
-        make_edge_info (false /* Stitch? */, true, /* Circular */
-                        COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), -COORD_TO_MM (HACK_BOARD_THICKNESS), /* Center of circle */
-                        0., 0., 1., /* Normal */
-                        COORD_TO_MM (ct->radius)); /* Radius */
 
-      UNDIR_DATA (edges[1 * npoints + i]) =
-        make_edge_info (false /* Stitch? */, true, /* Circular */
-                        COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* Center of circle */
-                        0., 0., -1., /* Normal */
-                        COORD_TO_MM (ct->radius)); /* Radius */
+      face3d_set_cylindrical (faces[i], COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* A point on the axis of the cylinder */
+                                        0., 0., 1.,                                     /* Direction of the cylindrical axis */
+                                        COORD_TO_MM (ct->radius));
+      face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
+                                /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 
-      UNDIR_DATA (edges[2 * npoints + i]) =
-        make_edge_info (true /* Stitch? */, false, /* Circular */
-                        0., 0., 0., /* No point in defining an cylinder axis center for the stitch edge */
-                        0., 0., 0., /* No point in defining a normal for the stitch edge - it has no meaning */
-                        0.);        /* No point in defining a cylinder radius for the stitch edge */
-    } else {
-      UNDIR_DATA (edges[0 * npoints + i]) =
-        make_edge_info (false /* Stitch? */, false, /* Circular */
-                        0., 0., 0., /* No point in defining an cylinder axis center for the stitch edge */
-                        0., 0., 0., /* No point in defining a normal for the stitch edge - it has no meaning */
-                        0.);        /* No point in defining a cylinder radius for the stitch edge */
-      UNDIR_DATA (edges[1 * npoints + i]) =
-        make_edge_info (false /* Stitch? */, false, /* Circular */
-                        0., 0., 0., /* No point in defining an cylinder axis center for the stitch edge */
-                        0., 0., 0., /* No point in defining a normal for the stitch edge - it has no meaning */
-                        0.);        /* No point in defining a cylinder radius for the stitch edge */
-      UNDIR_DATA (edges[2 * npoints + i]) =
-        make_edge_info (false /* Stitch? */, false, /* Circular */
-                        0., 0., 0., /* No point in defining an cylinder axis center for the stitch edge */
-                        0., 0., 0., /* No point in defining a normal for the stitch edge - it has no meaning */
-                        0.);        /* No point in defining a cylinder radius for the stitch edge */
+      edge_info_set_round (UNDIR_DATA (edges[i]),
+                           COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), -COORD_TO_MM (HACK_BOARD_THICKNESS), /* Center of circle */
+                           0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius));
+      edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
+                           COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* Center of circle */
+                           0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius));
+      edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
     }
 
   }
