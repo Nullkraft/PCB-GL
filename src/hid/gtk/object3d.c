@@ -883,18 +883,6 @@ object3d_from_tracking (void)
     ct = ct->next;
   }
 
-  /* We know how many edges and vertices we need now...
-   *
-   * let n = npoints
-   * bodies = 1             (FOR NOW - just the first board outline)
-   * vertices = 2n          (n-top, n-bottom)
-   * edges = 3n             (n-top, n-bottom, n-sides)
-   * faces = 2 + n          (1-top, 1-bottom, n-sides)
-   *
-   * holes = 0              (FOR NOW - just the outline, no holes)
-   * holes = ncontours - 1  (LATER)
-   */
-
   board_object = make_object3d (PCB->Name);
   board_appearance = make_appearance ();
   top_bot_appearance = make_appearance ();
