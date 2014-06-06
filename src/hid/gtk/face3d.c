@@ -55,3 +55,9 @@ face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, fl
   face->az = az;
   face->radius = radius;
 }
+
+void
+face3d_set_surface_orientation_reversed (face3d *face)
+{
+  face->surface_orientation_reversed = true;
+}
