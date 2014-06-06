@@ -1,5 +1,5 @@
 Bottom: 0006f544e9e9283a7fdfdad55e1032a2af7737b0
-Top:    0006f544e9e9283a7fdfdad55e1032a2af7737b0
+Top:    f56719080774b3b05baf5ad7bed78a237c6155d5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-06 12:18:53 +0100
 
@@ -12,4 +12,15 @@ gedit to help give better platform consistency on Gnome systems.
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-dialog.c b/src/hid/gtk/gui-dialog.c
+index 56e0d25..9344abd 100644
+--- a/src/hid/gtk/gui-dialog.c
++++ b/src/hid/gtk/gui-dialog.c
+@@ -231,6 +231,7 @@ ghid_dialog_close_confirm ()
+                           GTK_STOCK_CANCEL,          GTK_RESPONSE_CANCEL,
+                           GTK_STOCK_SAVE,            GTK_RESPONSE_YES,
+                           NULL);
++  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
+ 
+   /* Set the alternative button order (ok, cancel, help) for other systems */
+   gtk_dialog_set_alternative_button_order(GTK_DIALOG(dialog),
