@@ -1,0 +1,15 @@
+Bottom: 0006f544e9e9283a7fdfdad55e1032a2af7737b0
+Top:    0006f544e9e9283a7fdfdad55e1032a2af7737b0
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-06 12:18:53 +0100
+
+hid/gtk: Focus file save dialog at exit to "Save", not "Close without saving".
+
+Avoids inadvertently loosing work when closing the application. "Cancel" would
+also be a safe choice of default focus, but the choice of "Save" is copied from
+gedit to help give better platform consistency on Gnome systems.
+
+
+---
+
+
