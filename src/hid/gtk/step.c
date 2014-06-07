@@ -1,8 +1,14 @@
 #include <glib.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "step.h"
 
+static char *
+step_bool (bool expr)
+{
+  return expr ? ".T." : ".F.";
+}
 
 step_file
 *step_output_file (FILE *f)
@@ -83,5 +89,29 @@ step_line (step_file *file, char *name, step_id pnt, step_id dir)
 {
   fprintf (file->f, "#%i = LINE ( '%s', #%i, %i ) ;\n",
                     file->next_id, name, pnt, dir);
+  return file->next_id++;
+}
+
+step_id
+step_vertex_point (step_file *file, char *name, step_id pnt)
+{
+  fprintf (file->f, "#%i = VERTEX_POINT ( '%s', #%i ) ;\n",
+                    file->next_id, name, pnt);
+  return file->next_id++;
+}
+
+step_id
+step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_end, step_id edge_geometry, bool same_sense)
+{
+  fprintf (file->f, "#%i = EDGE_CURVE ( '%s', #%i, #%i, #%i, %s ) ;\n",
+                    file->next_id, name, edge_start, edge_end, edge_geometry, step_bool (same_sense));
+  return file->next_id++;
+}
+
+step_id
+step_oriented_edge (step_file *file, char *name, step_id edge_element, bool orientation)
+{
+  fprintf (file->f, "#%i = ORIENTED_EDGE ( '%s', *, *, #%i, %s ) ;\n",
+                    file->next_id, name, edge_element, step_bool (orientation));
   return file->next_id++;
 }

@@ -483,22 +483,16 @@ object3d_export_to_step (object3d *object, char *filename)
         }
       else
         {
-          float  x,  y,  z;
-          float dx, dy, dz;
-
-          x = ((vertex3d *)ODATA (edge))->x;
-          y = ((vertex3d *)ODATA (edge))->y;
-          z = ((vertex3d *)ODATA (edge))->z;
-
-          dx = ((vertex3d *)DDATA (edge))->x - x;
-          dy = ((vertex3d *)DDATA (edge))->y - y;
-          dz = ((vertex3d *)DDATA (edge))->z - z;
+          vertex3d *ov = ODATA (edge);
+          vertex3d *dv = DDATA (edge);
 
           info->infinite_line_identifier =
             step_line (step, "NONE",
-                       step_cartesian_point (step, "NONE", x, y, z),            // <--- A point on the line
+                       step_cartesian_point (step, "NONE", ov->x, ov->y, ov->z),  // <--- A point on the line (the origin vertex)
                        step_vector (step, "NONE",
-                                    step_direction (step, "NONE", dx, dy, dz),  // <--- Direction along the line
+                                    step_direction (step, "NONE", dv->x - ov->x,
+                                                                  dv->y - ov->y,
+                                                                  dv->z - ov->z),  // <--- Direction along the line
                                     1000.0));     // <--- Arbitrary length in this direction for the parameterised coordinate "1".
         }
     }
@@ -508,10 +502,9 @@ object3d_export_to_step (object3d *object, char *filename)
     {
       vertex3d *vertex = vertex_iter->data;
 
-      fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ", step->next_id, vertex->x, vertex->y, vertex->z); /* Vertex coordinate  */ 
-      fprintf (f, "#%i = VERTEX_POINT ( 'NONE', #%i ) ;\n",             step->next_id + 1, step->next_id);
-      vertex->vertex_identifier = step->next_id + 1;
-      step->next_id = step->next_id + 2;
+      vertex->vertex_identifier = step_vertex_point (step, "NONE",
+                                                     step_cartesian_point (step, "NONE",
+                                                                           vertex->x, vertex->y, vertex->z));
     }
 
   /* Define the Edges */
@@ -519,15 +512,13 @@ object3d_export_to_step (object3d *object, char *filename)
     {
       edge_ref edge = (edge_ref)edge_iter->data;
       edge_info *info = UNDIR_DATA (edge);
+      step_id sv = ((vertex3d *)ODATA (edge))->vertex_identifier;
+      step_id ev = ((vertex3d *)DDATA (edge))->vertex_identifier;
 
-      int sv = ((vertex3d *)ODATA (edge))->vertex_identifier;
-      int ev = ((vertex3d *)DDATA (edge))->vertex_identifier;
-
-      fprintf (f, "#%i = EDGE_CURVE ( 'NONE', #%i, #%i, #%i, .T. ) ; ", step->next_id, sv, ev, info->infinite_line_identifier);
-      fprintf (f, "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .T. ) ; ",  step->next_id + 1, step->next_id);
-      fprintf (f, "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .F. ) ;\n", step->next_id + 2, step->next_id);
-      info->edge_identifier = step->next_id; /* Add 1 for same oriented, add 2 for back oriented */
-      step->next_id = step->next_id + 3;
+      /* XXX: The lookup of these edges by adding to info->edge_identifier requires the step_* functions to assign sequential identifiers */
+      info->edge_identifier = step_edge_curve (step, "NONE", sv, ev, info->infinite_line_identifier, true);
+      step_oriented_edge (step, "NONE", info->edge_identifier, true);  /* Add 1 to info->edge_identifier to find this (same) oriented edge */
+      step_oriented_edge (step, "NONE", info->edge_identifier, false); /* Add 2 to info->edge_identifier to find this (back) oriented edge */
     }
 
   /* Define the faces */
