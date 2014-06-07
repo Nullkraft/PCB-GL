@@ -1,5 +1,5 @@
 Bottom: ec30e6d36b91ca7416c885a03cf8f85ef6425a14
-Top:    3b81fa2d5e1f7dccc84be95c3d4ee49a3b02c508
+Top:    6fde05f36fa612f8a43f1f4617fb8edc085e79b5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-07 13:41:46 +0100
 
@@ -21,8 +21,106 @@ index 88d1209..2947e6e 100644
  	hid/gtk/quad.c \
  	hid/gtk/quad.h \
  	hid/gtk/vertex3d.c \
+diff --git a/src/hid/gtk/contour3d.c b/src/hid/gtk/contour3d.c
+index 6aa3189..a9976cc 100644
+--- a/src/hid/gtk/contour3d.c
++++ b/src/hid/gtk/contour3d.c
+@@ -1,6 +1,8 @@
+ #include <glib.h>
+ #include <stdbool.h>
++#include <stdio.h>
+ 
++#include "step.h"
+ #include "quad.h"
+ #include "contour3d.h"
+ 
+diff --git a/src/hid/gtk/contour3d.h b/src/hid/gtk/contour3d.h
+index 8ce8d8a..837e666 100644
+--- a/src/hid/gtk/contour3d.h
++++ b/src/hid/gtk/contour3d.h
+@@ -2,7 +2,7 @@ typedef struct {
+   edge_ref first_edge;
+ 
+   /* STEP crap - to hell with encapsulation */
+-  int face_bound_identifier;
++  step_id face_bound_identifier;
+ } contour3d;
+ 
+ contour3d *make_contour3d (edge_ref first_edge);
+diff --git a/src/hid/gtk/edge3d.c b/src/hid/gtk/edge3d.c
+index 9014125..2d34558 100644
+--- a/src/hid/gtk/edge3d.c
++++ b/src/hid/gtk/edge3d.c
+@@ -1,7 +1,9 @@
+ #include <stdbool.h>
+ #include <stdlib.h>
++#include <stdio.h>
+ #include <glib.h>
+ 
++#include "step.h"
+ #include "edge3d.h"
+ 
+ edge_info *
+diff --git a/src/hid/gtk/edge3d.h b/src/hid/gtk/edge3d.h
+index b91ff40..696ace3 100644
+--- a/src/hid/gtk/edge3d.h
++++ b/src/hid/gtk/edge3d.h
+@@ -14,8 +14,8 @@ typedef struct
+   float radius;
+ 
+   /* STEP crap - to hell with encapsulation */
+-  int infinite_line_identifier;
+-  int edge_identifier;
++  step_id infinite_line_identifier;
++  step_id edge_identifier;
+ } edge_info;
+ 
+ edge_info *make_edge_info (void);
+diff --git a/src/hid/gtk/face3d.c b/src/hid/gtk/face3d.c
+index ff20c3f..8e8f8c0 100644
+--- a/src/hid/gtk/face3d.c
++++ b/src/hid/gtk/face3d.c
+@@ -1,6 +1,8 @@
+ #include <glib.h>
+ #include <stdbool.h>
++#include <stdio.h>
+ 
++#include "step.h"
+ #include "quad.h"
+ #include "contour3d.h"
+ #include "appearance.h"
+diff --git a/src/hid/gtk/face3d.h b/src/hid/gtk/face3d.h
+index bb9cd31..44f6e88 100644
+--- a/src/hid/gtk/face3d.h
++++ b/src/hid/gtk/face3d.h
+@@ -11,10 +11,10 @@ typedef struct {
+   appearance *appear;
+ 
+   /* STEP crap - to hell with encapsulation */
+-  int surface_identifier;
++  step_id surface_identifier;
+   bool surface_orientation_reversed;
+-  int face_identifier;
+-  int face_bound_identifier;
++  step_id face_identifier;
++  step_id face_bound_identifier;
+ } face3d;
+ 
+ face3d *make_face3d (void);
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 5d6087e..eb163eb 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -15,6 +15,7 @@
+ #include "gui-pinout-preview.h"
+ #include "pcb-printf.h"
+ 
++#include "step.h"
+ #include "quad.h"
+ #include "vertex3d.h"
+ #include "contour3d.h"
 diff --git a/src/hid/gtk/object3d.c b/src/hid/gtk/object3d.c
-index 2b42e3a..a023ac9 100644
+index 2b42e3a..f990d05 100644
 --- a/src/hid/gtk/object3d.c
 +++ b/src/hid/gtk/object3d.c
 @@ -5,6 +5,7 @@
@@ -94,7 +192,7 @@ index 2b42e3a..a023ac9 100644
    styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (brep_style_identifier));
  
  #define FWD 1
-@@ -415,22 +418,23 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -415,22 +418,15 @@ object3d_export_to_step (object3d *object, char *filename)
        if (face->is_cylindrical)
          {
            /* CYLINDRICAL SURFACE NORMAL POINTS OUTWARDS AWAY FROM ITS AXIS.
@@ -115,14 +213,6 @@ index 2b42e3a..a023ac9 100644
 -
 -          face->surface_identifier = next_step_identifier + 4;
 -          next_step_identifier = next_step_identifier + 5;
-+          fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ",    step->next_id,     /* A point on the axis of the cylinder */ face->cx, face->cy, face->cz);
-+          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; ",    step->next_id + 1, /* Direction of the cylindrical axis */   face->ax, face->ay, face->az);
-+          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; ",    step->next_id + 2, /* A normal to the axis direction */      face->nx, face->ny, face->nz);
-+          fprintf (f, "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i, #%i, #%i ) ; ", step->next_id + 3, step->next_id, step->next_id + 1, step->next_id + 2);
-+          fprintf (f, "#%i = CYLINDRICAL_SURFACE ( 'NONE', #%i, %f ) ;\n",     step->next_id + 4, step->next_id + 3, face->radius);
-+          face->surface_identifier = step->next_id + 4;
-+          step->next_id = step->next_id + 5;
-+
 +          face->surface_identifier =
 +            step_cylindrical_surface (step, "NONE",
 +                                      step_axis2_placement_3d (step, "NONE",
@@ -133,7 +223,7 @@ index 2b42e3a..a023ac9 100644
          }
        else
          {
-@@ -460,19 +464,20 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -460,19 +456,12 @@ object3d_export_to_step (object3d *object, char *filename)
            ry = ((vertex3d *)DDATA (first_edge))->y - oy;
            rz = ((vertex3d *)DDATA (first_edge))->z - oz;
  
@@ -150,24 +240,16 @@ index 2b42e3a..a023ac9 100644
 -
 -          face->surface_identifier = next_step_identifier + 4;
 -          next_step_identifier = next_step_identifier + 5;
-+          fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "    , step->next_id,     /* A point on the plane. Forms 0,0 of its parameterised coords. */ ox, oy, oz);
-+          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "    , step->next_id + 1, /* An axis direction normal to the the face - Gives z-axis */      nx, ny, nz);
-+          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "    , step->next_id + 2, /* Reference x-axis, orthogonal to z-axis above */                 rx, ry, rz);
-+          fprintf (f, "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i, #%i, #%i ) ; " , step->next_id + 3, step->next_id, step->next_id + 1, step->next_id + 2);
-+          fprintf (f, "#%i = PLANE ( 'NONE',  #%i ) ;\n",                       step->next_id + 4, step->next_id + 3);
-+
-+          face->surface_identifier = step->next_id + 4;
-+          step->next_id = step->next_id + 5;
-+
-+          face->surface_identifier = step_plane (step, "NONE",
-+                                                 step_axis2_placement_3d (step, "NONE",
-+                                                                          step_cartesian_point (step, "NONE", ox, oy, oz),
-+                                                                                step_direction (step, "NONE", nx, ny, nz),
-+                                                                                step_direction (step, "NONE", rx, ry, rz)));
++          face->surface_identifier =
++            step_plane (step, "NONE",
++                        step_axis2_placement_3d (step, "NONE",
++                                                 step_cartesian_point (step, "NONE", ox, oy, oz),   /* A point on the plane. Forms 0,0 of its parameterised coords. */
++                                                       step_direction (step, "NONE", nx, ny, nz),   /* An axis direction normal to the the face - Gives z-axis */
++                                                       step_direction (step, "NONE", rx, ry, rz))); /* Reference x-axis, orthogonal to z-axis above */
          }
      }
  
-@@ -484,19 +489,20 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -484,19 +473,13 @@ object3d_export_to_step (object3d *object, char *filename)
  
        if (info->is_round)
          {
@@ -184,24 +266,17 @@ index 2b42e3a..a023ac9 100644
 -                   next_step_identifier + 4, next_step_identifier + 3, info->radius);
 -          info->infinite_line_identifier = next_step_identifier + 4;
 -          next_step_identifier = next_step_identifier + 5;
-+          fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ",      step->next_id,     /* Center of the circle   */ info->cx, info->cy, info->cz); // <--- Center of coordinate placement
-+          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; ",      step->next_id + 1, /* Normal of circle?      */ info->nx, info->ny, info->nz); // <--- Z-axis direction of placement
-+          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; ",      step->next_id + 2, /* ??????                 */ -1.0, 0.0, 0.0); // <--- Approximate X-axis direction of placement /* XXX: PULL FROM FACE DATA */
-+          fprintf (f, "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i,  #%i,  #%i ) ; ", step->next_id + 3, step->next_id, step->next_id + 1, step->next_id + 2);
-+          fprintf (f, "#%i = CIRCLE ( 'NONE', #%i, %f ) ;\n",                    step->next_id + 4, step->next_id + 3, info->radius);
-+          info->infinite_line_identifier = step->next_id + 4;
-+          step->next_id = step->next_id + 5;
-+
-+          info->infinite_line_identifier = step_circle (step, "NONE",
-+                                                        step_axis2_placement_3d (step, "NONE",
-+                                                                                 step_cartesian_point (step, "NONE", info->cx, info->cy, info->cz),  // <--- Center of coordinate placement
-+                                                                                       step_direction (step, "NONE", info->nx, info->ny, info->nz),  // <--- Z-axis direction of placement
-+                                                                                       step_direction (step, "NONE", -1.0,     0.0,      0.0)),      // <--- Approximate X-axis direction of placement /* XXX: PULL FROM FACE DATA */
++          info->infinite_line_identifier =
++            step_circle (step, "NONE",
++                         step_axis2_placement_3d (step, "NONE",
++                                                  step_cartesian_point (step, "NONE", info->cx, info->cy, info->cz),  // <--- Center of the circle
++                                                        step_direction (step, "NONE", info->nx, info->ny, info->nz),  // <--- Normal of the circle
++                                                        step_direction (step, "NONE", -1.0,     0.0,      0.0)),      // <--- Approximate X-axis direction of placement /* XXX: PULL FROM FACE DATA */
 +                                                        info->radius);
          }
        else
          {
-@@ -511,16 +517,12 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -511,16 +494,12 @@ object3d_export_to_step (object3d *object, char *filename)
            dy = ((vertex3d *)DDATA (edge))->y - y;
            dz = ((vertex3d *)DDATA (edge))->z - z;
  
@@ -215,16 +290,16 @@ index 2b42e3a..a023ac9 100644
 -                   next_step_identifier + 3, next_step_identifier, next_step_identifier + 2);
 -          info->infinite_line_identifier = next_step_identifier + 3;
 -          next_step_identifier = next_step_identifier + 4;
-+          fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ", step->next_id,     /* A point on the line         */  x,  y,  z);
-+          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; ", step->next_id + 1, /* A direction along the line  */ dx, dy, dz);
-+          fprintf (f, "#%i = VECTOR ( 'NONE', #%i, 1000.0 ) ; ",            step->next_id + 2, step->next_id + 1);
-+          fprintf (f, "#%i = LINE ( 'NONE', #%i, #%i ) ;\n",                step->next_id + 3, step->next_id, step->next_id + 2);
-+          info->infinite_line_identifier = step->next_id + 3;
-+          step->next_id = step->next_id + 4;
++          info->infinite_line_identifier =
++            step_line (step, "NONE",
++                       step_cartesian_point (step, "NONE", x, y, z),            // <--- A point on the line
++                       step_vector (step, "NONE",
++                                    step_direction (step, "NONE", dx, dy, dz),  // <--- Direction along the line
++                                    1000.0));     // <--- Arbitrary length in this direction for the parameterised coordinate "1".
          }
      }
  
-@@ -529,10 +531,10 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -529,10 +508,10 @@ object3d_export_to_step (object3d *object, char *filename)
      {
        vertex3d *vertex = vertex_iter->data;
  
@@ -239,7 +314,7 @@ index 2b42e3a..a023ac9 100644
      }
  
    /* Define the Edges */
-@@ -544,11 +546,11 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -544,11 +523,11 @@ object3d_export_to_step (object3d *object, char *filename)
        int sv = ((vertex3d *)ODATA (edge))->vertex_identifier;
        int ev = ((vertex3d *)DDATA (edge))->vertex_identifier;
  
@@ -256,7 +331,7 @@ index 2b42e3a..a023ac9 100644
      }
  
    /* Define the faces */
-@@ -563,7 +565,7 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -563,7 +542,7 @@ object3d_export_to_step (object3d *object, char *filename)
          contour3d *contour = contour_iter->data;
          edge_ref edge;
  
@@ -265,7 +340,7 @@ index 2b42e3a..a023ac9 100644
  
          /* Emit the edges.. */
          fprintf (f, "(");
-@@ -575,12 +577,12 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -575,12 +554,12 @@ object3d_export_to_step (object3d *object, char *filename)
          fprintf (f, "#%i)", ORIENTED_EDGE_IDENTIFIER(edge)); /* XXX: IS ORIENTATION GOING TO BE CORRECT?? */
          fprintf (f, " ) ; ");
  
@@ -282,7 +357,7 @@ index 2b42e3a..a023ac9 100644
        fprintf (f, "(");
        for (contour_iter = face->contours;
             contour_iter != NULL && g_list_next (contour_iter) != NULL;
-@@ -589,28 +591,28 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -589,28 +568,28 @@ object3d_export_to_step (object3d *object, char *filename)
        }
        fprintf (f, "#%i)", ((contour3d *)contour_iter->data)->face_bound_identifier);
        fprintf (f, ", #%i, %s ) ;\n", face->surface_identifier, face->surface_orientation_reversed ? ".F." : ".T.");
@@ -325,7 +400,7 @@ index 2b42e3a..a023ac9 100644
    fprintf (f, "#%i = CLOSED_SHELL ( 'NONE', ", pcb_shell_identifier);
    /* Emit the faces.. */
    fprintf (f, "(");
-@@ -626,7 +628,7 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -626,7 +605,7 @@ object3d_export_to_step (object3d *object, char *filename)
    fprintf (f, "#%i = MANIFOLD_SOLID_BREP ( 'PCB outline', #%i ) ;\n", brep_identifier, pcb_shell_identifier);
  
    /* Emit references to the styled and over_ridden styled items */
@@ -334,7 +409,7 @@ index 2b42e3a..a023ac9 100644
    fprintf (f, "(");
    for (styled_item_iter = styled_item_identifiers;
         styled_item_iter != NULL && g_list_next (styled_item_iter) != NULL;
-@@ -635,7 +637,7 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -635,7 +614,7 @@ object3d_export_to_step (object3d *object, char *filename)
    }
    fprintf (f, "#%i)", GPOINTER_TO_INT (styled_item_iter->data));
    fprintf (f, ", #%i ) ;\n", geometric_representation_context_identifier);
@@ -461,3 +536,42 @@ index 0000000..68f1b81
 +step_id step_circle (step_file *file, char *name, step_id position, double radius);
 +step_id step_vector (step_file *file, char *name, step_id orientation, double magnitude);
 +step_id step_line (step_file *file, char *name, step_id pnt, step_id dir);
+diff --git a/src/hid/gtk/vertex3d.c b/src/hid/gtk/vertex3d.c
+index 51db3a7..e8b8147 100644
+--- a/src/hid/gtk/vertex3d.c
++++ b/src/hid/gtk/vertex3d.c
+@@ -1,17 +1,10 @@
+ #include <stdlib.h>
++#include <stdio.h>
+ 
+-static int global_vertex3d_count;
+-
+-typedef struct
+-{
+-  float x;
+-  float y;
+-  float z;
+-  int id;
++#include "step.h"
++#include "vertex3d.h"
+ 
+-  /* STEP crap - to hell with encapsulation */
+-  int vertex_identifier;
+-} vertex3d;
++static int global_vertex3d_count;
+ 
+ vertex3d *
+ make_vertex3d (float x, float y, float z)
+diff --git a/src/hid/gtk/vertex3d.h b/src/hid/gtk/vertex3d.h
+index 278ae60..a150934 100644
+--- a/src/hid/gtk/vertex3d.h
++++ b/src/hid/gtk/vertex3d.h
+@@ -6,7 +6,7 @@ typedef struct
+   int id;
+ 
+   /* STEP crap - to hell with encapsulation */
+-  int vertex_identifier;
++  step_id vertex_identifier;
+ } vertex3d;
+ 
+ vertex3d *make_vertex3d (float x, float y, float z);
