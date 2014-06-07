@@ -1,5 +1,5 @@
 Bottom: ec30e6d36b91ca7416c885a03cf8f85ef6425a14
-Top:    6fde05f36fa612f8a43f1f4617fb8edc085e79b5
+Top:    ccd437c470a77723448066db8597f6bb18eaabb3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-07 13:41:46 +0100
 
@@ -120,7 +120,7 @@ index 5d6087e..eb163eb 100644
  #include "vertex3d.h"
  #include "contour3d.h"
 diff --git a/src/hid/gtk/object3d.c b/src/hid/gtk/object3d.c
-index 2b42e3a..f990d05 100644
+index 2b42e3a..66eace1 100644
 --- a/src/hid/gtk/object3d.c
 +++ b/src/hid/gtk/object3d.c
 @@ -5,6 +5,7 @@
@@ -249,7 +249,7 @@ index 2b42e3a..f990d05 100644
          }
      }
  
-@@ -484,19 +473,13 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -484,43 +473,27 @@ object3d_export_to_step (object3d *object, char *filename)
  
        if (info->is_round)
          {
@@ -276,10 +276,17 @@ index 2b42e3a..f990d05 100644
          }
        else
          {
-@@ -511,16 +494,12 @@ object3d_export_to_step (object3d *object, char *filename)
-           dy = ((vertex3d *)DDATA (edge))->y - y;
-           dz = ((vertex3d *)DDATA (edge))->z - z;
- 
+-          float  x,  y,  z;
+-          float dx, dy, dz;
+-
+-          x = ((vertex3d *)ODATA (edge))->x;
+-          y = ((vertex3d *)ODATA (edge))->y;
+-          z = ((vertex3d *)ODATA (edge))->z;
+-
+-          dx = ((vertex3d *)DDATA (edge))->x - x;
+-          dy = ((vertex3d *)DDATA (edge))->y - y;
+-          dz = ((vertex3d *)DDATA (edge))->z - z;
+-
 -          fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
 -                      "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
 -                      "#%i = VECTOR ( 'NONE', #%i, 1000.0 ) ; "
@@ -290,16 +297,21 @@ index 2b42e3a..f990d05 100644
 -                   next_step_identifier + 3, next_step_identifier, next_step_identifier + 2);
 -          info->infinite_line_identifier = next_step_identifier + 3;
 -          next_step_identifier = next_step_identifier + 4;
++          vertex3d *ov = ODATA (edge);
++          vertex3d *dv = DDATA (edge);
++
 +          info->infinite_line_identifier =
 +            step_line (step, "NONE",
-+                       step_cartesian_point (step, "NONE", x, y, z),            // <--- A point on the line
++                       step_cartesian_point (step, "NONE", ov->x, ov->y, ov->z),  // <--- A point on the line (the origin vertex)
 +                       step_vector (step, "NONE",
-+                                    step_direction (step, "NONE", dx, dy, dz),  // <--- Direction along the line
++                                    step_direction (step, "NONE", dv->x - ov->x,
++                                                                  dv->y - ov->y,
++                                                                  dv->z - ov->z),  // <--- Direction along the line
 +                                    1000.0));     // <--- Arbitrary length in this direction for the parameterised coordinate "1".
          }
      }
  
-@@ -529,10 +508,10 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -529,10 +502,9 @@ object3d_export_to_step (object3d *object, char *filename)
      {
        vertex3d *vertex = vertex_iter->data;
  
@@ -307,31 +319,35 @@ index 2b42e3a..f990d05 100644
 -      fprintf (f, "#%i = VERTEX_POINT ( 'NONE', #%i ) ;\n",             next_step_identifier + 1, next_step_identifier);
 -      vertex->vertex_identifier = next_step_identifier + 1;
 -      next_step_identifier = next_step_identifier + 2;
-+      fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ", step->next_id, vertex->x, vertex->y, vertex->z); /* Vertex coordinate  */ 
-+      fprintf (f, "#%i = VERTEX_POINT ( 'NONE', #%i ) ;\n",             step->next_id + 1, step->next_id);
-+      vertex->vertex_identifier = step->next_id + 1;
-+      step->next_id = step->next_id + 2;
++      vertex->vertex_identifier = step_vertex_point (step, "NONE",
++                                                     step_cartesian_point (step, "NONE",
++                                                                           vertex->x, vertex->y, vertex->z));
      }
  
    /* Define the Edges */
-@@ -544,11 +523,11 @@ object3d_export_to_step (object3d *object, char *filename)
-       int sv = ((vertex3d *)ODATA (edge))->vertex_identifier;
-       int ev = ((vertex3d *)DDATA (edge))->vertex_identifier;
+@@ -540,15 +512,13 @@ object3d_export_to_step (object3d *object, char *filename)
+     {
+       edge_ref edge = (edge_ref)edge_iter->data;
+       edge_info *info = UNDIR_DATA (edge);
++      step_id sv = ((vertex3d *)ODATA (edge))->vertex_identifier;
++      step_id ev = ((vertex3d *)DDATA (edge))->vertex_identifier;
  
+-      int sv = ((vertex3d *)ODATA (edge))->vertex_identifier;
+-      int ev = ((vertex3d *)DDATA (edge))->vertex_identifier;
+-
 -      fprintf (f, "#%i = EDGE_CURVE ( 'NONE', #%i, #%i, #%i, .T. ) ; ", next_step_identifier, sv, ev, info->infinite_line_identifier);
 -      fprintf (f, "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .T. ) ; ",    next_step_identifier + 1, next_step_identifier);
 -      fprintf (f, "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .F. ) ;\n",   next_step_identifier + 2, next_step_identifier);
 -      info->edge_identifier = next_step_identifier; /* Add 1 for same oriented, add 2 for back oriented */
 -      next_step_identifier = next_step_identifier + 3;
-+      fprintf (f, "#%i = EDGE_CURVE ( 'NONE', #%i, #%i, #%i, .T. ) ; ", step->next_id, sv, ev, info->infinite_line_identifier);
-+      fprintf (f, "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .T. ) ; ",  step->next_id + 1, step->next_id);
-+      fprintf (f, "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .F. ) ;\n", step->next_id + 2, step->next_id);
-+      info->edge_identifier = step->next_id; /* Add 1 for same oriented, add 2 for back oriented */
-+      step->next_id = step->next_id + 3;
++      /* XXX: The lookup of these edges by adding to info->edge_identifier requires the step_* functions to assign sequential identifiers */
++      info->edge_identifier = step_edge_curve (step, "NONE", sv, ev, info->infinite_line_identifier, true);
++      step_oriented_edge (step, "NONE", info->edge_identifier, true);  /* Add 1 to info->edge_identifier to find this (same) oriented edge */
++      step_oriented_edge (step, "NONE", info->edge_identifier, false); /* Add 2 to info->edge_identifier to find this (back) oriented edge */
      }
  
    /* Define the faces */
-@@ -563,7 +542,7 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -563,7 +533,7 @@ object3d_export_to_step (object3d *object, char *filename)
          contour3d *contour = contour_iter->data;
          edge_ref edge;
  
@@ -340,7 +356,7 @@ index 2b42e3a..f990d05 100644
  
          /* Emit the edges.. */
          fprintf (f, "(");
-@@ -575,12 +554,12 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -575,12 +545,12 @@ object3d_export_to_step (object3d *object, char *filename)
          fprintf (f, "#%i)", ORIENTED_EDGE_IDENTIFIER(edge)); /* XXX: IS ORIENTATION GOING TO BE CORRECT?? */
          fprintf (f, " ) ; ");
  
@@ -357,7 +373,7 @@ index 2b42e3a..f990d05 100644
        fprintf (f, "(");
        for (contour_iter = face->contours;
             contour_iter != NULL && g_list_next (contour_iter) != NULL;
-@@ -589,28 +568,28 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -589,28 +559,28 @@ object3d_export_to_step (object3d *object, char *filename)
        }
        fprintf (f, "#%i)", ((contour3d *)contour_iter->data)->face_bound_identifier);
        fprintf (f, ", #%i, %s ) ;\n", face->surface_identifier, face->surface_orientation_reversed ? ".F." : ".T.");
@@ -400,7 +416,7 @@ index 2b42e3a..f990d05 100644
    fprintf (f, "#%i = CLOSED_SHELL ( 'NONE', ", pcb_shell_identifier);
    /* Emit the faces.. */
    fprintf (f, "(");
-@@ -626,7 +605,7 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -626,7 +596,7 @@ object3d_export_to_step (object3d *object, char *filename)
    fprintf (f, "#%i = MANIFOLD_SOLID_BREP ( 'PCB outline', #%i ) ;\n", brep_identifier, pcb_shell_identifier);
  
    /* Emit references to the styled and over_ridden styled items */
@@ -409,7 +425,7 @@ index 2b42e3a..f990d05 100644
    fprintf (f, "(");
    for (styled_item_iter = styled_item_identifiers;
         styled_item_iter != NULL && g_list_next (styled_item_iter) != NULL;
-@@ -635,7 +614,7 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -635,7 +605,7 @@ object3d_export_to_step (object3d *object, char *filename)
    }
    fprintf (f, "#%i)", GPOINTER_TO_INT (styled_item_iter->data));
    fprintf (f, ", #%i ) ;\n", geometric_representation_context_identifier);
@@ -420,15 +436,21 @@ index 2b42e3a..f990d05 100644
             shape_representation_identifier, "test_pcb_absr_name", brep_identifier, geometric_representation_context_identifier);
 diff --git a/src/hid/gtk/step.c b/src/hid/gtk/step.c
 new file mode 100644
-index 0000000..b599c47
+index 0000000..3e4dfaa
 --- /dev/null
 +++ b/src/hid/gtk/step.c
-@@ -0,0 +1,87 @@
+@@ -0,0 +1,117 @@
 +#include <glib.h>
++#include <stdbool.h>
 +#include <stdio.h>
 +
 +#include "step.h"
 +
++static char *
++step_bool (bool expr)
++{
++  return expr ? ".T." : ".F.";
++}
 +
 +step_file
 +*step_output_file (FILE *f)
@@ -511,12 +533,36 @@ index 0000000..b599c47
 +                    file->next_id, name, pnt, dir);
 +  return file->next_id++;
 +}
++
++step_id
++step_vertex_point (step_file *file, char *name, step_id pnt)
++{
++  fprintf (file->f, "#%i = VERTEX_POINT ( '%s', #%i ) ;\n",
++                    file->next_id, name, pnt);
++  return file->next_id++;
++}
++
++step_id
++step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_end, step_id edge_geometry, bool same_sense)
++{
++  fprintf (file->f, "#%i = EDGE_CURVE ( '%s', #%i, #%i, #%i, %s ) ;\n",
++                    file->next_id, name, edge_start, edge_end, edge_geometry, step_bool (same_sense));
++  return file->next_id++;
++}
++
++step_id
++step_oriented_edge (step_file *file, char *name, step_id edge_element, bool orientation)
++{
++  fprintf (file->f, "#%i = ORIENTED_EDGE ( '%s', *, *, #%i, %s ) ;\n",
++                    file->next_id, name, edge_element, step_bool (orientation));
++  return file->next_id++;
++}
 diff --git a/src/hid/gtk/step.h b/src/hid/gtk/step.h
 new file mode 100644
-index 0000000..68f1b81
+index 0000000..ce4c096
 --- /dev/null
 +++ b/src/hid/gtk/step.h
-@@ -0,0 +1,19 @@
+@@ -0,0 +1,22 @@
 +typedef int step_id;
 +
 +typedef struct {
@@ -536,12 +582,16 @@ index 0000000..68f1b81
 +step_id step_circle (step_file *file, char *name, step_id position, double radius);
 +step_id step_vector (step_file *file, char *name, step_id orientation, double magnitude);
 +step_id step_line (step_file *file, char *name, step_id pnt, step_id dir);
++step_id step_vertex_point (step_file *file, char *name, step_id pnt);
++step_id step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_end, step_id edge_geometry, bool same_sense);
++step_id step_oriented_edge (step_file *file, char *name, step_id edge_element, bool orientation);
 diff --git a/src/hid/gtk/vertex3d.c b/src/hid/gtk/vertex3d.c
-index 51db3a7..e8b8147 100644
+index 51db3a7..8abe19f 100644
 --- a/src/hid/gtk/vertex3d.c
 +++ b/src/hid/gtk/vertex3d.c
-@@ -1,17 +1,10 @@
+@@ -1,17 +1,11 @@
  #include <stdlib.h>
++#include <stdbool.h>
 +#include <stdio.h>
  
 -static int global_vertex3d_count;
