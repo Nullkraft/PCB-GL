@@ -38,27 +38,6 @@
 
 static GList *object3d_test_objects = NULL;
 
-static void
-print_edge_id (edge_ref e)
-{
-  printf ("ID %i.%i", ID(e), (unsigned int)e & 3u);
-}
-
-static void
-debug_print_edge (edge_ref e, void *data)
-{
-  printf ("Edge ID %i.%i\n", ID(e), (int)e & 3u);
-
-  printf ("Edge ONEXT is "); print_edge_id (ONEXT(e)); printf ("\n");
-  printf ("Edge OPREV is "); print_edge_id (OPREV(e)); printf ("\n");
-  printf ("Edge DNEXT is "); print_edge_id (DNEXT(e)); printf ("\n");
-  printf ("Edge DPREV is "); print_edge_id (DPREV(e)); printf ("\n");
-  printf ("Edge RNEXT is "); print_edge_id (RNEXT(e)); printf ("\n");
-  printf ("Edge RPREV is "); print_edge_id (RPREV(e)); printf ("\n");
-  printf ("Edge LNEXT is "); print_edge_id (LNEXT(e)); printf ("\n");
-  printf ("Edge LPREV is "); print_edge_id (LPREV(e)); printf ("\n");
-}
-
 void
 object3d_test_init (void)
 {
@@ -417,24 +396,19 @@ object3d_export_to_step (object3d *object, char *filename)
       contour3d *contour = contour_iter->data;
       edge_ref edge;
       step_id edge_loop;
+      step_id_list edge_loop_edges = NULL;
 
-      edge_loop = step_edge_loop (step, "NONE", 
+      edge = contour->first_edge;
+      do {
+        edge_loop_edges = g_list_append (edge_loop_edges, GINT_TO_POINTER (ORIENTED_EDGE_IDENTIFIER (edge)));
+      } while (edge = LNEXT (edge), edge != contour->first_edge);
 
-      fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ", step->next_id);
+      edge_loop = step_edge_loop (step, "NONE", edge_loop_edges);
 
-      /* Emit the edges.. */
-      fprintf (f, "(");
-      for (edge = contour->first_edge;
-           edge != LPREV (contour->first_edge);
-           edge = LNEXT (edge)) {
-        fprintf (f, "#%i, ", ORIENTED_EDGE_IDENTIFIER(edge));
-      }
-      fprintf (f, "#%i)", ORIENTED_EDGE_IDENTIFIER(edge));
-      fprintf (f, " ) ; ");
-
-      fprintf (f, "#%i = FACE_%sBOUND ( 'NONE', #%i, .T. ) ;\n", step->next_id + 1, outer_contour ? "OUTER_" : "", step->next_id);
-      contour->face_bound_identifier = step->next_id + 1;
-      step->next_id = step->next_id + 2;
+      if (outer_contour)
+        contour->face_bound_identifier = step_face_outer_bound (step, "NONE", edge_loop, true);
+      else
+        contour->face_bound_identifier = step_face_bound (step, "NONE", edge_loop, true);
 
       face_contour_list = g_list_append (face_contour_list, GINT_TO_POINTER (contour->face_bound_identifier));
     }
