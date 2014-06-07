@@ -429,8 +429,7 @@ object3d_export_to_step (object3d *object, char *filename)
                    next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
                    next_step_identifier + 4, next_step_identifier + 3, face->radius);
 
-          face->plane_orientation_reversed = !face->flip_orientation; /* XXX: SHOULD WORK THIS OUT FROM THE EDGE CONTOUR */
-          face->plane_identifier = next_step_identifier + 4;
+          face->surface_identifier = next_step_identifier + 4;
           next_step_identifier = next_step_identifier + 5;
         }
       else
@@ -472,8 +471,7 @@ object3d_export_to_step (object3d *object, char *filename)
                    next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
                    next_step_identifier + 4, next_step_identifier + 3);
 
-          face->plane_orientation_reversed = false;
-          face->plane_identifier = next_step_identifier + 4;
+          face->surface_identifier = next_step_identifier + 4;
           next_step_identifier = next_step_identifier + 5;
         }
     }
@@ -590,7 +588,7 @@ object3d_export_to_step (object3d *object, char *filename)
         fprintf (f, "#%i, ", ((contour3d *)contour_iter->data)->face_bound_identifier);
       }
       fprintf (f, "#%i)", ((contour3d *)contour_iter->data)->face_bound_identifier);
-      fprintf (f, ", #%i, %s ) ;\n", face->plane_identifier, face->plane_orientation_reversed ? ".F." : ".T.");
+      fprintf (f, ", #%i, %s ) ;\n", face->surface_identifier, face->surface_orientation_reversed ? ".F." : ".T.");
       face->face_identifier = next_step_identifier;
       next_step_identifier = next_step_identifier + 1;
 
@@ -830,6 +828,7 @@ object3d_from_board_outline (void)
         face3d_set_cylindrical (faces[i], COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* A point on the axis of the cylinder */
                                           0., 0., 1.,                                     /* Direction of the cylindrical axis */
                                           COORD_TO_MM (ct->radius));
+        face3d_set_surface_orientation_reversed (faces[i]); /* XXX: Assuming this is a hole, the cylindrical surface normal points in the wrong direction - INCORRECT IF THIS IS THE OUTER CONTOUR!*/
         face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
                                   /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 
@@ -889,7 +888,6 @@ object3d_from_board_outline (void)
       face3d_set_cylindrical (cylinder_faces[0], 45., 45., 0., /* A point on the axis of the cylinder */
                                         0., 0., 1.,            /* Direction of the cylindrical axis */
                                         5.);                   /* Radius of cylinder */
-      face3d_set_flip_orientation (cylinder_faces[0]); /* XXX: HACK TO IDENTIFY THIS AS AN OUTSIDE CYLINDRICAL SURFACE, NOT INTERNAL AS ASSUMED OTHERWISE */
       face3d_set_normal (cylinder_faces[0], 1., 0., 0.);       /* A normal to the axis direction */
                                    /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
       object3d_add_face (board_object, cylinder_faces[0]);

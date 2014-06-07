@@ -57,7 +57,7 @@ face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, fl
 }
 
 void
-face3d_set_flip_orientation (face3d *face)
+face3d_set_surface_orientation_reversed (face3d *face)
 {
-  face->flip_orientation = true;
+  face->surface_orientation_reversed = true;
 }
