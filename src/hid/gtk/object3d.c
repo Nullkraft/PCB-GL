@@ -420,14 +420,6 @@ object3d_export_to_step (object3d *object, char *filename)
           /* CYLINDRICAL SURFACE NORMAL POINTS OUTWARDS AWAY FROM ITS AXIS.
            * face->surface_orientation_reversed NEEDS TO BE SET FOR HOLES IN THE SOLID
            */
-          fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ",    step->next_id,     /* A point on the axis of the cylinder */ face->cx, face->cy, face->cz);
-          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; ",    step->next_id + 1, /* Direction of the cylindrical axis */   face->ax, face->ay, face->az);
-          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; ",    step->next_id + 2, /* A normal to the axis direction */      face->nx, face->ny, face->nz);
-          fprintf (f, "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i, #%i, #%i ) ; ", step->next_id + 3, step->next_id, step->next_id + 1, step->next_id + 2);
-          fprintf (f, "#%i = CYLINDRICAL_SURFACE ( 'NONE', #%i, %f ) ;\n",     step->next_id + 4, step->next_id + 3, face->radius);
-          face->surface_identifier = step->next_id + 4;
-          step->next_id = step->next_id + 5;
-
           face->surface_identifier =
             step_cylindrical_surface (step, "NONE",
                                       step_axis2_placement_3d (step, "NONE",
@@ -464,20 +456,12 @@ object3d_export_to_step (object3d *object, char *filename)
           ry = ((vertex3d *)DDATA (first_edge))->y - oy;
           rz = ((vertex3d *)DDATA (first_edge))->z - oz;
 
-          fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "    , step->next_id,     /* A point on the plane. Forms 0,0 of its parameterised coords. */ ox, oy, oz);
-          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "    , step->next_id + 1, /* An axis direction normal to the the face - Gives z-axis */      nx, ny, nz);
-          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "    , step->next_id + 2, /* Reference x-axis, orthogonal to z-axis above */                 rx, ry, rz);
-          fprintf (f, "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i, #%i, #%i ) ; " , step->next_id + 3, step->next_id, step->next_id + 1, step->next_id + 2);
-          fprintf (f, "#%i = PLANE ( 'NONE',  #%i ) ;\n",                       step->next_id + 4, step->next_id + 3);
-
-          face->surface_identifier = step->next_id + 4;
-          step->next_id = step->next_id + 5;
-
-          face->surface_identifier = step_plane (step, "NONE",
-                                                 step_axis2_placement_3d (step, "NONE",
-                                                                          step_cartesian_point (step, "NONE", ox, oy, oz),
-                                                                                step_direction (step, "NONE", nx, ny, nz),
-                                                                                step_direction (step, "NONE", rx, ry, rz)));
+          face->surface_identifier =
+            step_plane (step, "NONE",
+                        step_axis2_placement_3d (step, "NONE",
+                                                 step_cartesian_point (step, "NONE", ox, oy, oz),   /* A point on the plane. Forms 0,0 of its parameterised coords. */
+                                                       step_direction (step, "NONE", nx, ny, nz),   /* An axis direction normal to the the face - Gives z-axis */
+                                                       step_direction (step, "NONE", rx, ry, rz))); /* Reference x-axis, orthogonal to z-axis above */
         }
     }
 
@@ -489,19 +473,12 @@ object3d_export_to_step (object3d *object, char *filename)
 
       if (info->is_round)
         {
-          fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ",      step->next_id,     /* Center of the circle   */ info->cx, info->cy, info->cz); // <--- Center of coordinate placement
-          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; ",      step->next_id + 1, /* Normal of circle?      */ info->nx, info->ny, info->nz); // <--- Z-axis direction of placement
-          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; ",      step->next_id + 2, /* ??????                 */ -1.0, 0.0, 0.0); // <--- Approximate X-axis direction of placement /* XXX: PULL FROM FACE DATA */
-          fprintf (f, "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i,  #%i,  #%i ) ; ", step->next_id + 3, step->next_id, step->next_id + 1, step->next_id + 2);
-          fprintf (f, "#%i = CIRCLE ( 'NONE', #%i, %f ) ;\n",                    step->next_id + 4, step->next_id + 3, info->radius);
-          info->infinite_line_identifier = step->next_id + 4;
-          step->next_id = step->next_id + 5;
-
-          info->infinite_line_identifier = step_circle (step, "NONE",
-                                                        step_axis2_placement_3d (step, "NONE",
-                                                                                 step_cartesian_point (step, "NONE", info->cx, info->cy, info->cz),  // <--- Center of coordinate placement
-                                                                                       step_direction (step, "NONE", info->nx, info->ny, info->nz),  // <--- Z-axis direction of placement
-                                                                                       step_direction (step, "NONE", -1.0,     0.0,      0.0)),      // <--- Approximate X-axis direction of placement /* XXX: PULL FROM FACE DATA */
+          info->infinite_line_identifier =
+            step_circle (step, "NONE",
+                         step_axis2_placement_3d (step, "NONE",
+                                                  step_cartesian_point (step, "NONE", info->cx, info->cy, info->cz),  // <--- Center of the circle
+                                                        step_direction (step, "NONE", info->nx, info->ny, info->nz),  // <--- Normal of the circle
+                                                        step_direction (step, "NONE", -1.0,     0.0,      0.0)),      // <--- Approximate X-axis direction of placement /* XXX: PULL FROM FACE DATA */
                                                         info->radius);
         }
       else
@@ -517,12 +494,12 @@ object3d_export_to_step (object3d *object, char *filename)
           dy = ((vertex3d *)DDATA (edge))->y - y;
           dz = ((vertex3d *)DDATA (edge))->z - z;
 
-          fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ", step->next_id,     /* A point on the line         */  x,  y,  z);
-          fprintf (f, "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; ", step->next_id + 1, /* A direction along the line  */ dx, dy, dz);
-          fprintf (f, "#%i = VECTOR ( 'NONE', #%i, 1000.0 ) ; ",            step->next_id + 2, step->next_id + 1);
-          fprintf (f, "#%i = LINE ( 'NONE', #%i, #%i ) ;\n",                step->next_id + 3, step->next_id, step->next_id + 2);
-          info->infinite_line_identifier = step->next_id + 3;
-          step->next_id = step->next_id + 4;
+          info->infinite_line_identifier =
+            step_line (step, "NONE",
+                       step_cartesian_point (step, "NONE", x, y, z),            // <--- A point on the line
+                       step_vector (step, "NONE",
+                                    step_direction (step, "NONE", dx, dy, dz),  // <--- Direction along the line
+                                    1000.0));     // <--- Arbitrary length in this direction for the parameterised coordinate "1".
         }
     }
 
