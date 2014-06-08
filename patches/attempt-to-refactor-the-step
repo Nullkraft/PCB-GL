@@ -1,5 +1,5 @@
 Bottom: ec30e6d36b91ca7416c885a03cf8f85ef6425a14
-Top:    69d15294161e589ef106168550b5028b765dda01
+Top:    d3977303ea4703c5b10ca9e45419e87117e07680
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-07 13:41:46 +0100
 
@@ -746,7 +746,7 @@ index ecdc721..26b87fe 100644
  void object3d_test_board_outline (void);
 diff --git a/src/hid/gtk/step.c b/src/hid/gtk/step.c
 new file mode 100644
-index 0000000..dfb1deb
+index 0000000..090a338
 --- /dev/null
 +++ b/src/hid/gtk/step.c
 @@ -0,0 +1,349 @@
@@ -932,7 +932,7 @@ index 0000000..dfb1deb
 +step_id
 +step_face_outer_bound (step_file *file, char *name, step_id bound, bool orientation)
 +{
-+  fprintf (file->f, "#%i = FACE_BOUND ( '%s', #%i, %s ) ;\n",
++  fprintf (file->f, "#%i = FACE_OUTER_BOUND ( '%s', #%i, %s ) ;\n",
 +                    file->next_id, name, bound, step_bool (orientation));
 +
 +  return file->next_id++;
