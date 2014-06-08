@@ -162,7 +162,7 @@ step_edge_loop (step_file *file, char *name, step_id_list edge_list)
 {
   fprintf (file->f, "#%i = EDGE_LOOP ( '%s', ", file->next_id, name);
   fprint_id_list (file->f, edge_list);
-  fprintf (file->f, " ) ; ");
+  fprintf (file->f, " ) ;\n");
   destroy_step_id_list (edge_list);
 
   return file->next_id++;
@@ -191,7 +191,7 @@ step_advanced_face (step_file *file, char *name, step_id_list bounds, step_id fa
 {
   fprintf (file->f, "#%i = ADVANCED_FACE ( '%s', ", file->next_id, name);
   fprint_id_list (file->f, bounds);
-  fprintf (file->f, ", #%i, %s ) ; ", face_geometry, step_bool (same_sense));
+  fprintf (file->f, ", #%i, %s ) ;\n", face_geometry, step_bool (same_sense));
   destroy_step_id_list (bounds);
 
   return file->next_id++;
