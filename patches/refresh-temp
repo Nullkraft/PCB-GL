@@ -1,0 +1,311 @@
+Bottom: da7843db838c2f9a5a09e97719b5b3e5985e69cb
+Top:    3b620fba260d222affdf81a24525cc61bcc4b96b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-08 17:30:09 +0100
+
+Refresh of well-on-the-way-to-completely
+
+---
+
+diff --git a/src/hid/gtk/object3d.c b/src/hid/gtk/object3d.c
+index 80d4b85..042ce4d 100644
+--- a/src/hid/gtk/object3d.c
++++ b/src/hid/gtk/object3d.c
+@@ -16,6 +16,7 @@
+ #include "polygon.h"
+ #include "data.h"
+ 
++#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
+ 
+ #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
+ #define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
+@@ -430,18 +431,10 @@ object3d_export_to_step (object3d *object, char *filename)
+ 
+       edge_loop = step_edge_loop (step, "NONE", edge_loop_edges);
+ 
+-#if 1
+       if (outer_contour)
+         contour->face_bound_identifier = step_face_outer_bound (step, "NONE", edge_loop, true);
+       else
+         contour->face_bound_identifier = step_face_bound (step, "NONE", edge_loop, true);
+-#endif
+-#if 0
+-      if (outer_contour)
+-        contour->face_bound_identifier = step_face_outer_bound (step, "NONE", edge_loop, false /*true*/);
+-      else
+-        contour->face_bound_identifier = step_face_bound (step, "NONE", edge_loop, false /*true*/);
+-#endif
+ 
+       face_contour_list = g_list_append (face_contour_list, GINT_TO_POINTER (contour->face_bound_identifier));
+     }
+@@ -580,13 +573,17 @@ object3d_from_board_outline (void)
+ 
+       object3d_add_face (board_object, faces[i]);
+       /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
++#ifdef REVERSED_PCB_CONTOURS
++      face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
++#else
+       face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
++#endif
+     }
+ 
+     faces[npoints] = make_face3d (); /* bottom_face */
+     face3d_set_normal (faces[npoints], 0., 0., -1.);
+     face3d_set_appearance (faces[npoints], top_bot_appearance);
+-//    object3d_add_face (board_object, faces[npoints]);
++    object3d_add_face (board_object, faces[npoints]);
+ 
+     faces[npoints + 1] = make_face3d (); /* top_face */
+     face3d_set_normal (faces[npoints + 1], 0., 0., 1.);
+@@ -594,13 +591,12 @@ object3d_from_board_outline (void)
+     object3d_add_face (board_object, faces[npoints + 1]);
+ 
+     /* Pick the first bottom / top edge within the bottom / top face outer contour loop, and link it to the face */
+-#if 0
+-    face3d_add_contour (faces[npoints], make_contour3d (SYM(edges[0])));
+-    face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints]));
+-#endif
+-#if 1
++#ifdef REVERSED_PCB_CONTOURS
+     face3d_add_contour (faces[npoints], make_contour3d (edges[0]));
+     face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints])));
++#else
++    face3d_add_contour (faces[npoints], make_contour3d (SYM(edges[0])));
++    face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints]));
+ #endif
+ 
+     ct = contour;
+@@ -620,13 +616,12 @@ object3d_from_board_outline (void)
+         ct_npoints = get_contour_npoints (ct);
+ 
+         /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
+-#if 0
+-        face3d_add_contour (faces[npoints], make_contour3d (SYM(edges[i])));
+-        face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints + i]));
+-#endif
+-#if 1
++#ifdef REVERSED_PCB_CONTOURS
+         face3d_add_contour (faces[npoints], make_contour3d (edges[i]));
+         face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints + i])));
++#else
++        face3d_add_contour (faces[npoints], make_contour3d (SYM(edges[i])));
++        face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints + i]));
+ #endif
+       }
+ 
+@@ -635,16 +630,12 @@ object3d_from_board_outline (void)
+ 
+       /* Setup the face normals for the edges along the contour extrusion (top and bottom are handled separaetely) */
+       /* Define the (non-normalized) face normal to point to the outside of the contour */
+-#if 0
+-      face3d_set_normal (faces[i], (vertices[next_i_around_ct]->y - vertices[i]->y),
+-                                  -(vertices[next_i_around_ct]->x - vertices[i]->x), 0.);
+-#endif
+-#if 1
++#if REVERSED_PCB_CONTOURS
++      /* Vertex ordering of the edge we're finding the normal to is reversed in this case */
+       face3d_set_normal (faces[i], -(vertices[next_i_around_ct]->y - vertices[i]->y),
+                                     (vertices[next_i_around_ct]->x - vertices[i]->x), 0.);
+-#endif
+-#if 0
+-      face3d_set_normal (faces[i], -(vertices[next_i_around_ct]->y - vertices[i]->y),
++#else
++      face3d_set_normal (faces[i],  (vertices[next_i_around_ct]->y - vertices[i]->y),
+                                    -(vertices[next_i_around_ct]->x - vertices[i]->x), 0.);
+ #endif
+ 
+@@ -655,21 +646,20 @@ object3d_from_board_outline (void)
+       DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
+       ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
+       DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
+-#if 0
+-      LDATA (edges[              i]) = faces[i];
+-      RDATA (edges[              i]) = faces[npoints];
+-      LDATA (edges[1 * npoints + i]) = faces[npoints + 1];
+-      RDATA (edges[1 * npoints + i]) = faces[i];
+-      LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
+-      RDATA (edges[2 * npoints + i]) = faces[i];
+-#endif
+-#if 1
++#if REVERSED_PCB_CONTOURS
+       RDATA (edges[              i]) = faces[i];
+       LDATA (edges[              i]) = faces[npoints];
+       RDATA (edges[1 * npoints + i]) = faces[npoints + 1];
+       LDATA (edges[1 * npoints + i]) = faces[i];
+       RDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
+       LDATA (edges[2 * npoints + i]) = faces[i];
++#else
++      LDATA (edges[              i]) = faces[i];
++      RDATA (edges[              i]) = faces[npoints];
++      LDATA (edges[1 * npoints + i]) = faces[npoints + 1];
++      RDATA (edges[1 * npoints + i]) = faces[i];
++      LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
++      RDATA (edges[2 * npoints + i]) = faces[i];
+ #endif
+ 
+       /* NB: Contours are counter clockwise in XY plane.
+@@ -678,16 +668,15 @@ object3d_from_board_outline (void)
+        *     edges[2*npoints-3*npoints-1] are the upright edges, oriented from bottom to top
+        */
+ 
+-#if 0 /* UNDERLYING DATA HAS CCW CONTOURS FOR OUTER, CW INNER */
++#ifdef REVERSED_PCB_CONTOURS  /* UNDERLYING DATA HAS CW CONTOURS FOR OUTER, CCW FOR INNER - E.g. PCB's polygons when translated into STEP coordinates */
+       /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
+-      splice (edges[i], edges[2 * npoints + i]);
+-      splice (edges[2 * npoints + i], SYM(edges[prev_i_around_ct]));
++      splice (SYM(edges[prev_i_around_ct]), edges[2 * npoints + i]);
++      splice (edges[2 * npoints + i], edges[i]);
+ 
+       /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
+-      splice (SYM(edges[2 * npoints + i]), edges[npoints + i]);
+-      splice (edges[npoints + i], SYM(edges[npoints + prev_i_around_ct]));
+-#endif
+-#if 0 /* UNDERLYING DATA HAS CCW CONTOURS FOR OUTER, CW INNER... alternative permutation for top vertex.. UNTESTED */
++      splice (edges[npoints + i], SYM(edges[2 * npoints + i]));
++      splice (SYM(edges[2 * npoints + i]), SYM(edges[npoints + prev_i_around_ct]));
++#else /* UNDERLYING DATA HAS CCW CONTOURS FOR OUTER, CW FOR INNER. E.g. PCB's raw coordinates in X, Y */
+       /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
+       splice (edges[i], edges[2 * npoints + i]);
+       splice (edges[2 * npoints + i], SYM(edges[prev_i_around_ct]));
+@@ -696,40 +685,6 @@ object3d_from_board_outline (void)
+       splice (SYM(edges[npoints + prev_i_around_ct]), SYM(edges[2 * npoints + i]));
+       splice (SYM(edges[2 * npoints + i]),  edges[npoints + i]);
+ #endif
+-#if 0 /* UNDERLYING DATA HAS CW CONTOURS FOR OUTER, CCW INNER - E.g. PCB's broken contours */
+-      /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
+-      splice (SYM(edges[i]), edges[2 * npoints + i]);
+-      splice (edges[2 * npoints + i], edges[prev_i_around_ct]);
+-
+-      /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
+-      splice (SYM(edges[2 * npoints + i]), SYM(edges[npoints + i]));
+-      splice (SYM(edges[npoints + i]), edges[npoints + prev_i_around_ct]);
+-#endif
+-#if 1 /* UNDERLYING DATA HAS CW CONTOURS FOR OUTER, CCW INNER - E.g. PCB's broken contours... alternative permutation for top vertex */
+-      /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
+-      splice (edges[i], edges[2 * npoints + i]);
+-      splice (edges[2 * npoints + i], SYM(edges[prev_i_around_ct]));
+-
+-      /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
+-      splice (edges[npoints + prev_i_around_ct], SYM(edges[2 * npoints + i]));
+-      splice (SYM(edges[2 * npoints + i]), SYM(edges[npoints + i]));
+-#endif
+-#if 0 /* UNDERLYING DATA HAS CW CONTOURS FOR OUTER, CCW INNER - E.g. PCB's broken contours... swap edge sequence */
+-#if 0
+-      /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
+-      splice (edges[prev_i_around_ct], edges[2 * npoints + i]);
+-      splice (edges[2 * npoints + i], SYM(edges[i]));
+-#endif
+-#if 1
+-      /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
+-      splice (edges[prev_i_around_ct], edges[2 * npoints + i]);
+-      splice (edges[2 * npoints + i], SYM(edges[i]));
+-#endif
+-
+-      /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
+-      splice (SYM(edges[npoints + i]), SYM(edges[2 * npoints + i]));
+-      splice (SYM(edges[2 * npoints + i]), edges[npoints + prev_i_around_ct]);
+-#endif
+ 
+       if (ct->is_round) {
+ 
+@@ -740,21 +695,20 @@ object3d_from_board_outline (void)
+         face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
+                                   /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
+ 
+-#if 0
++#ifdef REVERSED_PCB_CONTOURS
+         edge_info_set_round (UNDIR_DATA (edges[i]),
+                              COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, -HACK_BOARD_THICKNESS), /* Center of circle */
+-                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
++                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+         edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
+                              COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), 0., /* Center of circle */
+-                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+-#endif
+-#if 1
++                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
++#else
+         edge_info_set_round (UNDIR_DATA (edges[i]),
+                              COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, -HACK_BOARD_THICKNESS), /* Center of circle */
+-                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
++                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+         edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
+                              COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), 0., /* Center of circle */
+-                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
++                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+ #endif
+         edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
+       }
+@@ -771,17 +725,16 @@ object3d_from_board_outline (void)
+       /* Edge on top of board */
+       cylinder_edges[0] = make_edge ();
+       UNDIR_DATA (cylinder_edges[0]) = make_edge_info ();
+-#if 0
+-      edge_info_set_round (UNDIR_DATA (cylinder_edges[0]),
+-                           COORD_TO_STEP_X (PCB, MM_TO_COORD (45.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 0., /* Center of circle */
+-                            0.,   0., 1., /* Normal */
+-                            5.);         /* Radius */
+-#endif
+-#if 1
++#ifdef REVERSED_PCB_CONTOURS
+       edge_info_set_round (UNDIR_DATA (cylinder_edges[0]),
+                            COORD_TO_STEP_X (PCB, MM_TO_COORD (45.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 0., /* Center of circle */
+                             0.,   0., -1., /* Normal */
+                             5.);           /* Radius */
++#else
++      edge_info_set_round (UNDIR_DATA (cylinder_edges[0]),
++                           COORD_TO_STEP_X (PCB, MM_TO_COORD (45.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 0., /* Center of circle */
++                            0.,   0., 1., /* Normal */
++                            5.);         /* Radius */
+ #endif
+       object3d_add_edge (board_object, cylinder_edges[0]);
+ 
+diff --git a/src/hid/gtk/step.c b/src/hid/gtk/step.c
+index a9bd478..c5204e2 100644
+--- a/src/hid/gtk/step.c
++++ b/src/hid/gtk/step.c
+@@ -144,7 +144,7 @@ step_vertex_point (step_file *file, char *name, step_id pnt)
+ step_id
+ step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_end, step_id edge_geometry, bool same_sense)
+ {
+-  fprintf (file->f, "#%i = EDGE_CURVE ( '%s', #%i, #%i, #%i, %s ) ;\n",
++  fprintf (file->f, "\n#%i = EDGE_CURVE ( '%s', #%i, #%i, #%i, %s ) ; ",
+                     file->next_id, name, edge_start, edge_end, edge_geometry, step_bool (same_sense));
+   return file->next_id++;
+ }
+@@ -152,7 +152,7 @@ step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_e
+ step_id
+ step_oriented_edge (step_file *file, char *name, step_id edge_element, bool orientation)
+ {
+-  fprintf (file->f, "#%i = ORIENTED_EDGE ( '%s', *, *, #%i, %s ) ;\n",
++  fprintf (file->f, "#%i = ORIENTED_EDGE ( '%s', *, *, #%i, %s ) ; ",
+                     file->next_id, name, edge_element, step_bool (orientation));
+   return file->next_id++;
+ }
+@@ -162,7 +162,7 @@ step_edge_loop (step_file *file, char *name, step_id_list edge_list)
+ {
+   fprintf (file->f, "#%i = EDGE_LOOP ( '%s', ", file->next_id, name);
+   fprint_id_list (file->f, edge_list);
+-  fprintf (file->f, " ) ;\n");
++  fprintf (file->f, " ) ; ");
+   destroy_step_id_list (edge_list);
+ 
+   return file->next_id++;
+@@ -171,7 +171,7 @@ step_edge_loop (step_file *file, char *name, step_id_list edge_list)
+ step_id
+ step_face_bound (step_file *file, char *name, step_id bound, bool orientation)
+ {
+-  fprintf (file->f, "#%i = FACE_BOUND ( '%s', #%i, %s ) ;\n",
++  fprintf (file->f, "#%i = FACE_BOUND ( '%s', #%i, %s ) ; ",
+                     file->next_id, name, bound, step_bool (orientation));
+ 
+   return file->next_id++;
+@@ -180,7 +180,7 @@ step_face_bound (step_file *file, char *name, step_id bound, bool orientation)
+ step_id
+ step_face_outer_bound (step_file *file, char *name, step_id bound, bool orientation)
+ {
+-  fprintf (file->f, "#%i = FACE_BOUND ( '%s', #%i, %s ) ;\n",
++  fprintf (file->f, "#%i = FACE_OUTER_BOUND ( '%s', #%i, %s ) ;\n",
+                     file->next_id, name, bound, step_bool (orientation));
+ 
+   return file->next_id++;
