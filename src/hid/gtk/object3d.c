@@ -16,9 +16,13 @@
 #include "polygon.h"
 #include "data.h"
 
+#include "pcb-printf.h"
+
 #define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
 
 #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
+
+#ifdef REVERSED_PCB_CONTOURS
 #define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
 #define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((pcb)->MaxHeight - (y)))
 #define COORD_TO_STEP_Z(pcb, z) (COORD_TO_MM(                   (z)))
@@ -26,6 +30,17 @@
 #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
 #define STEP_Y_TO_COORD(pcb, y) ((pcb)->MaxHeight - MM_TO_COORD((y)))
 #define STEP_Z_TO_COORD(pcb, z) (MM_TO_COORD((z)))
+#else
+/* XXX: BROKEN UPSIDE DOWN OUTPUT */
+#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM((x)))
+#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((y)))
+#define COORD_TO_STEP_Z(pcb, z) (COORD_TO_MM((z)))
+
+#define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
+#define STEP_Y_TO_COORD(pcb, y) (MM_TO_COORD((y)))
+#define STEP_Z_TO_COORD(pcb, z) (MM_TO_COORD((z)))
+#endif
+
 
 #ifndef WIN32
 /* The Linux OpenGL ABI 1.0 spec requires that we define
@@ -102,7 +117,7 @@ object3d_add_face (object3d *object, face3d *face)
 }
 
 
-float colors[12][3] = {{1., 0., 0.},
+double colors[12][3] = {{1., 0., 0.},
                        {1., 1., 0.},
                        {0., 1., 0.},
                        {0., 1., 1.},
@@ -138,11 +153,11 @@ draw_quad_edge (edge_ref e, void *data)
       glBegin (GL_LINES);
       for (i = 0; i < CIRC_SEGS; i++) {
         /* XXX: THIS ASSUMES THE CIRCLE LIES IN THE X-Y PLANE */
-        glVertex3f (STEP_X_TO_COORD (PCB, info->cx + info->radius * cos (i * 2. * M_PI / (float)CIRC_SEGS)),
-                    STEP_Y_TO_COORD (PCB, info->cy + info->radius * sin (i * 2. * M_PI / (float)CIRC_SEGS)),
+        glVertex3f (STEP_X_TO_COORD (PCB, info->cx + info->radius * cos (i * 2. * M_PI / (double)CIRC_SEGS)),
+                    STEP_Y_TO_COORD (PCB, info->cy + info->radius * sin (i * 2. * M_PI / (double)CIRC_SEGS)),
                     STEP_Z_TO_COORD (PCB, info->cz));
-        glVertex3f (STEP_X_TO_COORD (PCB, info->cx + info->radius * cos ((i + 1) * 2. * M_PI / (float)CIRC_SEGS)),
-                    STEP_Y_TO_COORD (PCB, info->cy + info->radius * sin ((i + 1) * 2. * M_PI / (float)CIRC_SEGS)),
+        glVertex3f (STEP_X_TO_COORD (PCB, info->cx + info->radius * cos ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
+                    STEP_Y_TO_COORD (PCB, info->cy + info->radius * sin ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
                     STEP_Z_TO_COORD (PCB, info->cz));
       }
       glEnd ();
@@ -335,7 +350,7 @@ object3d_export_to_step (object3d *object, char *filename)
       vertex3d *ov = ODATA (outer_contour->first_edge);
       vertex3d *dv = DDATA (outer_contour->first_edge);
 
-      float rx, ry, rz;
+      double rx, ry, rz;
 
       rx = dv->x - ov->x;
       ry = dv->y - ov->y;
@@ -378,14 +393,30 @@ object3d_export_to_step (object3d *object, char *filename)
       vertex3d *ov = ODATA (edge);
       vertex3d *dv = DDATA (edge);
 
+      double dir_x, dir_y, dir_z;
+
+      dir_x = dv->x - ov->x;
+      dir_y = dv->y - ov->y;
+      dir_z = dv->z - ov->z;
+
+#if 1
+      /* XXX: This avoids the test file step_outline_test.pcb failing to display properly in freecad when coordinates are slightly rounded */
+      if (dir_x < EPSILON && -dir_x < EPSILON &&
+          dir_y < EPSILON && -dir_y < EPSILON &&
+          dir_z < EPSILON && -dir_z < EPSILON) {
+        printf ("EDGE TOO SHORT TO DETERMINE DIRECTION - GUESSING! Coords (%f, %f)\n", ov->x, ov->y);
+        pcb_printf ("Approx PCB coords of short edge: %#mr, %#mr\n", (Coord)STEP_X_TO_COORD (PCB, ov->x), (Coord)STEP_Y_TO_COORD (PCB, ov->y));
+        dir_x = 1.0; /* DUMMY TO AVOID A ZERO LENGTH DIRECTION VECTOR */
+      }
+#endif
+
       info->infinite_line_identifier =
         step_line (step, "NONE",
                    step_cartesian_point (step, "NONE", ov->x, ov->y, ov->z),  // <--- A point on the line (the origin vertex)
                    step_vector (step, "NONE",
-                                step_direction (step, "NONE", dv->x - ov->x,
-                                                              dv->y - ov->y,
-                                                              dv->z - ov->z),  // <--- Direction along the line
+                                step_direction (step, "NONE", dir_x, dir_y, dir_z), // <--- Direction along the line
                                 1000.0));     // <--- Arbitrary length in this direction for the parameterised coordinate "1".
+
     }
   }
 
@@ -715,7 +746,7 @@ object3d_from_board_outline (void)
 
     }
 
-    if (0) {
+    if (1) {
       /* Cylinder centers on 45x45mm, stitch vertex is at 40x45mm. Radius is thus 5mm */
 
       edge_ref cylinder_edges[3];
@@ -728,8 +759,8 @@ object3d_from_board_outline (void)
 #ifdef REVERSED_PCB_CONTOURS
       edge_info_set_round (UNDIR_DATA (cylinder_edges[0]),
                            COORD_TO_STEP_X (PCB, MM_TO_COORD (45.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 0., /* Center of circle */
-                            0.,   0., -1., /* Normal */
-                            5.);           /* Radius */
+                            0.,   0., 1., /* Normal */
+                            5.);          /* Radius */
 #else
       edge_info_set_round (UNDIR_DATA (cylinder_edges[0]),
                            COORD_TO_STEP_X (PCB, MM_TO_COORD (45.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 0., /* Center of circle */
