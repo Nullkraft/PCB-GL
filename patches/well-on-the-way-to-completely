@@ -1,4 +1,4 @@
-Bottom: 69d15294161e589ef106168550b5028b765dda01
+Bottom: d3977303ea4703c5b10ca9e45419e87117e07680
 Top:    3b620fba260d222affdf81a24525cc61bcc4b96b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-08 12:26:42 +0100
@@ -376,7 +376,7 @@ index a79d255..042ce4d 100644
        face3d_set_normal (cylinder_faces[0], 1., 0., 0.);       /* A normal to the axis direction */
                                     /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 diff --git a/src/hid/gtk/step.c b/src/hid/gtk/step.c
-index dfb1deb..c5204e2 100644
+index 090a338..c5204e2 100644
 --- a/src/hid/gtk/step.c
 +++ b/src/hid/gtk/step.c
 @@ -144,7 +144,7 @@ step_vertex_point (step_file *file, char *name, step_id pnt)
@@ -403,15 +403,6 @@ index dfb1deb..c5204e2 100644
  {
 -  fprintf (file->f, "#%i = FACE_BOUND ( '%s', #%i, %s ) ;\n",
 +  fprintf (file->f, "#%i = FACE_BOUND ( '%s', #%i, %s ) ; ",
-                     file->next_id, name, bound, step_bool (orientation));
- 
-   return file->next_id++;
-@@ -180,7 +180,7 @@ step_face_bound (step_file *file, char *name, step_id bound, bool orientation)
- step_id
- step_face_outer_bound (step_file *file, char *name, step_id bound, bool orientation)
- {
--  fprintf (file->f, "#%i = FACE_BOUND ( '%s', #%i, %s ) ;\n",
-+  fprintf (file->f, "#%i = FACE_OUTER_BOUND ( '%s', #%i, %s ) ;\n",
                      file->next_id, name, bound, step_bool (orientation));
  
    return file->next_id++;
