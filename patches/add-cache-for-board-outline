@@ -1,7 +1,7 @@
-Bottom: 71d0db042750bba7a6ef701cc2172d510941c13f
-Top:    06f252dd1055d17c109cc2a075060b3c5bbc8935
+Bottom: 930d862ca3044f6e73eaa7507b479eb5edccc0aa
+Top:    77d03b426519db4b5b62a3feacd0bb32546229d2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-06 12:19:54 +0100
+Date:   2014-06-13 00:07:39 +0100
 
 Add cache for board-outline
 
@@ -76,7 +76,7 @@ index b6b3c30..3c873cf 100644
    {
      free (via->Name);
 diff --git a/src/polygon.c b/src/polygon.c
-index 99b4c8b..17c7f5e 100644
+index cababe9..f367a92 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -1645,6 +1645,16 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
