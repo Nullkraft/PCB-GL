@@ -1,7 +1,7 @@
-Bottom: 56fbb1633563fc745e89d4a4b253a0ba3e4d0917
-Top:    ab2ef9673fd69be026e0bf34eb16c5558a1c0eb9
+Bottom: c80d160951f8ebb5b6335d759e39822db73e0601
+Top:    73940a795aeb81f3a3e837297153e2f3c4efa18a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-06 12:20:02 +0100
+Date:   2014-06-13 00:07:46 +0100
 
 polygon.c: Add option to include drills holes (from vias / pins) in the board outline
 
@@ -22,7 +22,7 @@ index 753ad24..b2de212 100644
    }
  }
 diff --git a/src/polygon.c b/src/polygon.c
-index 17c7f5e..60b5e52 100644
+index f367a92..4623b52 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -2013,6 +2013,22 @@ line_outline_callback (const BoxType * b, void *cl)
