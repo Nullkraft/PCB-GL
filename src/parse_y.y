@@ -1190,9 +1190,9 @@ polygonpoint
 			{
 				CreateNewPointInPolygon(Polygon, NU ($2), NU ($3), 0);
 			}
-		| '[' measure measure T_INCLUDED_ANGLE measure ']'
+		| '[' measure measure T_INCLUDED_ANGLE number ']'
 			{
-				CreateNewPointInPolygon(Polygon, NU ($2), NU ($3), NU ($5));
+				CreateNewPointInPolygon(Polygon, NU ($2), NU ($3), $5);
 			}
 		;
 

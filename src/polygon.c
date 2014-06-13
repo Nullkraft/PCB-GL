@@ -273,6 +273,33 @@ ContourToPoly (PLINE * contour)
   return p;
 }
 
+static void
+degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First point, already laid by caller */, Angle sweep)
+{
+  /* We don't re-add a point at v, nor do we add the last point, sweep degrees around from (X,Y)-v */
+  double e1, e2, t1;
+  int i, range;
+
+//  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+
+  /* move vector to origin */
+  e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
+  e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
+
+  /* NB: the caller added the first vertex, and will add the last vertex, hence the -1 */
+  range = POLY_CIRC_SEGS * sweep / 360 - 1;
+  for (i = 0; i < range; i++)
+    {
+      /* rotate the vector */
+      t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
+      e2 = rotate_circle_seg[2] * e1 + rotate_circle_seg[3] * e2;
+      e1 = t1;
+      v[0] = X + ROUND (e1);
+      v[1] = Y + ROUND (e2);
+      poly_InclVertex (c->head.prev, poly_CreateNode (v));
+    }
+}
+
 static POLYAREA *
 original_poly (PolygonType * p)
 {
@@ -303,7 +330,68 @@ original_poly (PolygonType * p)
           poly_InclVertex (contour->head.prev, poly_CreateNode (v));
         }
 
-      frac_circle (..);
+      if (p->Points[n].included_angle != 0)
+        {
+          Cardinal next_n;
+          Coord px, py;
+          Coord nx, ny;
+          Coord hx, hy;
+          Coord cx, cy;
+          double p_to_h_dist;
+          double c_to_h_dist;
+          double unit_hcx, unit_hcy;
+
+          next_n = n + 1;
+          if (next_n == p->PointN ||
+              (hole < p->HoleIndexN && next_n == p->HoleIndex[hole]))
+            next_n = (hole == 0) ? 0 : p->HoleIndex[hole - 1];
+
+          /* XXX: Compute center of arc */
+
+          px = p->Points[     n].X, py = p->Points[     n].Y;
+          nx = p->Points[next_n].X, ny = p->Points[next_n].Y;
+
+          /* Find the point halfway between the to points the arc spans */
+          hx = px + (nx - px) / 2;
+          hy = py + (ny - py) / 2;
+
+          /* The arc center lies on a line passing through hx, hy, perpendicular
+           * to the direction between our two end-points.
+           *
+           *              n
+           *            / |
+           *          /   |h
+           *    -----c----|-------------- line passing (hx, hy), perpendicular to p[n]-p[next_n]
+           *          \   |
+           *            \ |
+           *              p
+           *
+           *  Find cx, cy.
+           *
+           *  We know that c-p[n] = radius. (But we don't know that radius).
+           *  We have the included angle, /_ p[n].c.p[next_n]
+           *  |(hx,hy)-p[n]| = sin(angle/2) * radius
+           *
+           * tan(ang/2) = |(hx,hy)-p[n]| / |(hx,hy)-(cx,cy)|
+           *
+           * |(hx,hy)-(cx,cy)| = |(hx,hy)-p[n]| / tan(ang/2)
+           *
+           */
+
+          p_to_h_dist = sqrt (pow(nx - py, 2) + pow (ny - py, 2)) / 2.;
+          c_to_h_dist = p_to_h_dist / tan (TO_RADIANS (p->Points[n].included_angle) / 2.);
+
+          unit_hcx = (float)-(hy - py) / p_to_h_dist;
+          unit_hcy = (float)(hx - px) / p_to_h_dist;
+
+          cx = hx + unit_hcx * c_to_h_dist;
+          cy = hy + unit_hcy * c_to_h_dist;
+
+          // v[0] = cx, v[1] = cy;  /* DEBUG TO SHOW THE CENTER OF THE ARC */
+          // poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+
+          degree_circle (contour, cx, cy, v, p->Points[n].included_angle);
+        }
 
       /* Is current point last in contour? If so process it. */
       if (n == p->PointN - 1 ||
@@ -420,6 +508,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
       poly_InclVertex (c->head.prev, poly_CreateNode (v));
     }
 }
+
 
 /* create a circle approximation from lines */
 POLYAREA *
