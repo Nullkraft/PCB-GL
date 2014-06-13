@@ -1,5 +1,5 @@
 Bottom: ee553f29278b58f13870ec74d19708de73c99444
-Top:    508fab274cefc19dcabcdda17767bd64f7a8e531
+Top:    c129eab31243f1e259ee91e8c4463178b28b9918
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-13 01:22:11 +0100
 
@@ -9,18 +9,9 @@ Add support for arc segments in polygon object outline definitions
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 5d2b4df..7b41b7f 100644
+index 5d2b4df..184cefa 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1403,7 +1403,7 @@ NotifyMode (void)
- 
-     case POLYGON_MODE:
-       {
--	PointType *points = Crosshair.AttachedPolygon.Points;
-+	PointType *points = (/*TYPE HACK*/PointType *)Crosshair.AttachedPolygon.Points;
- 	Cardinal n = Crosshair.AttachedPolygon.PointN;
- 
- 	/* do update of position; use the 'LINE_MODE' mechanism */
 @@ -1428,7 +1428,8 @@ NotifyMode (void)
  	  {
  	    CreateNewPointInPolygon (&Crosshair.AttachedPolygon,
@@ -31,15 +22,6 @@ index 5d2b4df..7b41b7f 100644
  
  	    /* copy the coordinates */
  	    Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
-@@ -1466,7 +1467,7 @@ NotifyMode (void)
-             /* second notify, insert new point into object */
-           case STATE_SECOND:
-             {
--	      PointType *points = Crosshair.AttachedPolygon.Points;
-+	      PointType *points = (/*TYPE HACK*/PointType *)Crosshair.AttachedPolygon.Points;
- 	      Cardinal n = Crosshair.AttachedPolygon.PointN;
- 	      POLYAREA *original, *new_hole, *result;
- 	      FlagType Flags;
 @@ -1519,7 +1520,8 @@ NotifyMode (void)
  		{
  		  CreateNewPointInPolygon (&Crosshair.AttachedPolygon,
