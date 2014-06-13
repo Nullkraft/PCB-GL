@@ -1373,7 +1373,8 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
       line.Point1 = Polygon->Points[prev];
       line.Point2 = Polygon->Points[next];
       line.Thickness = 0;
-      if (IsPointOnLine (p->X, p->Y, 0.0, &line))
+      if (Polygon->Points[prev].included_angle == Polygon->Points[n].included_angle &&
+          IsPointOnLine (p->X, p->Y, 0.0, &line))
         {
           RemoveObject (POLYGONPOINT_TYPE, Layer, Polygon, p);
           changed = true;
