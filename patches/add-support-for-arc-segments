@@ -1,5 +1,5 @@
 Bottom: ee553f29278b58f13870ec74d19708de73c99444
-Top:    8919d8b519faa99e7c6eeaf55e257ba9d229c60c
+Top:    66e2b7d5e12aaa88b7e70d004fe368f8394465bc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-13 01:22:11 +0100
 
@@ -251,7 +251,7 @@ index 6cd4c7b..8e2225c 100644
  		;
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 4623b52..13aac8e 100644
+index 4623b52..c544ac6 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -111,6 +111,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -420,7 +420,17 @@ index 4623b52..13aac8e 100644
  /* create a circle approximation from lines */
  POLYAREA *
  CirclePoly (Coord x, Coord y, Coord radius)
-@@ -1837,9 +1957,9 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+@@ -1253,7 +1373,8 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
+       line.Point1 = Polygon->Points[prev];
+       line.Point2 = Polygon->Points[next];
+       line.Thickness = 0;
+-      if (IsPointOnLine (p->X, p->Y, 0.0, &line))
++      if (Polygon->Points[prev].included_angle == Polygon->Points[n].included_angle &&
++          IsPointOnLine (p->X, p->Y, 0.0, &line))
+         {
+           RemoveObject (POLYGONPOINT_TYPE, Layer, Polygon, p);
+           changed = true;
+@@ -1837,9 +1958,9 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
              return false;
            many = true;
            v = &p->contours->head;
@@ -432,7 +442,7 @@ index 4623b52..13aac8e 100644
            newone->BoundingBox.X1 = p->contours->xmin;
            newone->BoundingBox.X2 = p->contours->xmax + 1;
            newone->BoundingBox.Y1 = p->contours->ymin;
-@@ -1951,7 +2071,8 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1951,7 +2072,8 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
            do
              {
                CreateNewPointInPolygon (Polygon, node->point[0],
