@@ -1403,7 +1403,7 @@ NotifyMode (void)
 
     case POLYGON_MODE:
       {
-	PointType *points = (/*TYPE HACK*/PointType *)Crosshair.AttachedPolygon.Points;
+	PointType *points = Crosshair.AttachedPolygon.Points;
 	Cardinal n = Crosshair.AttachedPolygon.PointN;
 
 	/* do update of position; use the 'LINE_MODE' mechanism */
@@ -1467,7 +1467,7 @@ NotifyMode (void)
             /* second notify, insert new point into object */
           case STATE_SECOND:
             {
-	      PointType *points = (/*TYPE HACK*/PointType *)Crosshair.AttachedPolygon.Points;
+	      PointType *points = Crosshair.AttachedPolygon.Points;
 	      Cardinal n = Crosshair.AttachedPolygon.PointN;
 	      POLYAREA *original, *new_hole, *result;
 	      FlagType Flags;
