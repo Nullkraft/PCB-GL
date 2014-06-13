@@ -73,4 +73,15 @@ void DrawMask (int side, const BoxType *drawn_area);
 void DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area);
 void PrintAssembly (int side, const BoxType *drawn_area);
 
+/* TEMPORARY */
+void ClearPad (PadType *, bool);
+void DrawPinOrViaLowLevel (PinType *, bool);
+void DrawPlainPin (PinType *, bool);
+void DrawPlainVia (PinType *, bool);
+void DrawRegularText (LayerType *, TextType *);
+void DrawEMark (ElementType *, Coord, Coord, bool);
+void DrawHole (PinType *);
+void DrawRats (const BoxType *);
+/* TEMPORARY */
+
 #endif
