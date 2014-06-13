@@ -2510,6 +2510,7 @@ poly_IniContour (PLINE * c)
     return;
   /* bzero (c, sizeof(PLINE)); */
   c->head.next = c->head.prev = &c->head;
+#warning BROKEN ASSUMPTION of 32 BIT
   c->xmin = c->ymin = 0x7fffffff;
   c->xmax = c->ymax = 0x80000000;
   c->is_round = FALSE;
@@ -2903,6 +2904,7 @@ poly_InsideContour (PLINE * c, Vector p)
   info.f = 0;
   info.p[0] = ray.X1 = p[0];
   info.p[1] = ray.Y1 = p[1];
+#warning BROKEN ASSUMPTION of 32 BIT
   ray.X2 = 0x7fffffff;
   ray.Y2 = p[1] + 1;
   if (setjmp (info.env) == 0)
