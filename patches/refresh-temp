@@ -1,0 +1,22 @@
+Bottom: 35d5c157f5c994e1483f67deea52fb711f3c974a
+Top:    f07329892f45e30fb2eaf4b7a8b00cbff3d9a2b1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-13 01:54:26 +0100
+
+Refresh of fix-some-broken-assumptions
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 013b6aa..bd6352a 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -303,8 +303,6 @@ original_poly (PolygonType * p)
+           poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+         }
+ 
+-      frac_circle (..);
+-
+       /* Is current point last in contour? If so process it. */
+       if (n == p->PointN - 1 ||
+           (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
