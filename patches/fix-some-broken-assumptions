@@ -1,5 +1,5 @@
 Bottom: 6140dfe94e12f1d13290506b3e7725ba5901ded8
-Top:    6140dfe94e12f1d13290506b3e7725ba5901ded8
+Top:    508fab274cefc19dcabcdda17767bd64f7a8e531
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-13 01:22:41 +0100
 
@@ -8,4 +8,27 @@ Fix some broken assumptions regarding 32-bit integer coordinates in polygon1.c
 
 ---
 
-
+diff --git a/src/polygon1.c b/src/polygon1.c
+index b9d654c..7d6fab6 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2510,8 +2510,8 @@ poly_IniContour (PLINE * c)
+     return;
+   /* bzero (c, sizeof(PLINE)); */
+   c->head.next = c->head.prev = &c->head;
+-  c->xmin = c->ymin = 0x7fffffff;
+-  c->xmax = c->ymax = 0x80000000;
++  c->xmin = c->ymin = COORD_MAX;
++  c->xmax = c->ymax = -COORD_MAX - 1;
+   c->is_round = FALSE;
+   c->cx = 0;
+   c->cy = 0;
+@@ -2903,7 +2903,7 @@ poly_InsideContour (PLINE * c, Vector p)
+   info.f = 0;
+   info.p[0] = ray.X1 = p[0];
+   info.p[1] = ray.Y1 = p[1];
+-  ray.X2 = 0x7fffffff;
++  ray.X2 = COORD_MAX;
+   ray.Y2 = p[1] + 1;
+   if (setjmp (info.env) == 0)
+     r_search (c->tree, &ray, NULL, crossing, &info);
