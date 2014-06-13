@@ -180,7 +180,7 @@ InsertPointIntoPolygon (LayerType *Layer, PolygonType *Polygon)
    */
   ErasePolygon (Polygon);
   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
-  save = *CreateNewPointInPolygon (Polygon, InsertX, InsertY);
+  save = *CreateNewPointInPolygon (Polygon, InsertX, InsertY, 0);
   for (n = Polygon->PointN - 1; n > InsertAt; n--)
     Polygon->Points[n] = Polygon->Points[n - 1];
 
