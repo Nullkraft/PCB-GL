@@ -1,5 +1,5 @@
 Bottom: ee553f29278b58f13870ec74d19708de73c99444
-Top:    c129eab31243f1e259ee91e8c4463178b28b9918
+Top:    f2d5de1ac485d688b74f8aa2c5e34557c2419787
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-13 01:22:11 +0100
 
@@ -123,6 +123,23 @@ index 8a0d6ee..6e4bd9c 100644
  /* Lines, rats, pads, etc.  */
  typedef struct {
    ANYLINEFIELDS;
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 0c4ac20..559365c 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -749,10 +749,12 @@ fill_contour (PLINE *contour)
+   borast_traps_t traps;
+ 
+   /* If the contour is round, then call hidgl_fill_circle to draw it. */
++#if 0
+   if (contour->is_round) {
+     hidgl_fill_circle (contour->cx, contour->cy, contour->radius);
+     return;
+   }
++#endif
+ 
+   /* If we don't have a cached set of tri-strips, compute them */
+   if (contour->tristrip_vertices == NULL) {
 diff --git a/src/insert.c b/src/insert.c
 index a254998..8868d8b 100644
 --- a/src/insert.c
@@ -149,7 +166,7 @@ index 4f64880..a4e0a05 100644
  NetList		{ return(T_NETLIST); }
  Net		{ return(T_NET); }
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 6cd4c7b..a82eb5b 100644
+index 6cd4c7b..8e2225c 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -119,7 +119,7 @@ static Coord new_units (PLMeasure m);
@@ -173,26 +190,129 @@ index 6cd4c7b..a82eb5b 100644
 -				CreateNewPointInPolygon(Polygon, NU ($2), NU ($3));
 +				CreateNewPointInPolygon(Polygon, NU ($2), NU ($3), 0);
 +			}
-+		| '[' measure measure T_INCLUDED_ANGLE measure ']'
++		| '[' measure measure T_INCLUDED_ANGLE number ']'
 +			{
-+				CreateNewPointInPolygon(Polygon, NU ($2), NU ($3), NU ($5));
++				CreateNewPointInPolygon(Polygon, NU ($2), NU ($3), $5);
  			}
  		;
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 4623b52..013b6aa 100644
+index 4623b52..9a16e52 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -303,6 +303,8 @@ original_poly (PolygonType * p)
+@@ -273,6 +273,33 @@ ContourToPoly (PLINE * contour)
+   return p;
+ }
+ 
++static void
++degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First point, already laid by caller */, Angle sweep)
++{
++  /* We don't re-add a point at v, nor do we add the last point, sweep degrees around from (X,Y)-v */
++  double e1, e2, t1;
++  int i, range;
++
++//  poly_InclVertex (c->head.prev, poly_CreateNode (v));
++
++  /* move vector to origin */
++  e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
++  e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
++
++  /* NB: the caller added the first vertex, and will add the last vertex, hence the -1 */
++  range = POLY_CIRC_SEGS * sweep / 360 - 1;
++  for (i = 0; i < range; i++)
++    {
++      /* rotate the vector */
++      t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
++      e2 = rotate_circle_seg[2] * e1 + rotate_circle_seg[3] * e2;
++      e1 = t1;
++      v[0] = X + ROUND (e1);
++      v[1] = Y + ROUND (e2);
++      poly_InclVertex (c->head.prev, poly_CreateNode (v));
++    }
++}
++
+ static POLYAREA *
+ original_poly (PolygonType * p)
+ {
+@@ -303,6 +330,69 @@ original_poly (PolygonType * p)
            poly_InclVertex (contour->head.prev, poly_CreateNode (v));
          }
  
-+      frac_circle (..);
++      if (p->Points[n].included_angle != 0)
++        {
++          Cardinal next_n;
++          Coord px, py;
++          Coord nx, ny;
++          Coord hx, hy;
++          Coord cx, cy;
++          double p_to_h_dist;
++          double c_to_h_dist;
++          double unit_hcx, unit_hcy;
++
++          next_n = n + 1;
++          if (next_n == p->PointN ||
++              (hole < p->HoleIndexN && next_n == p->HoleIndex[hole]))
++            next_n = (hole == 0) ? 0 : p->HoleIndex[hole - 1];
++
++          /* XXX: Compute center of arc */
++
++          px = p->Points[     n].X, py = p->Points[     n].Y;
++          nx = p->Points[next_n].X, ny = p->Points[next_n].Y;
++
++          /* Find the point halfway between the to points the arc spans */
++          hx = px + (nx - px) / 2;
++          hy = py + (ny - py) / 2;
++
++          /* The arc center lies on a line passing through hx, hy, perpendicular
++           * to the direction between our two end-points.
++           *
++           *              n
++           *            / |
++           *          /   |h
++           *    -----c----|-------------- line passing (hx, hy), perpendicular to p[n]-p[next_n]
++           *          \   |
++           *            \ |
++           *              p
++           *
++           *  Find cx, cy.
++           *
++           *  We know that c-p[n] = radius. (But we don't know that radius).
++           *  We have the included angle, /_ p[n].c.p[next_n]
++           *  |(hx,hy)-p[n]| = sin(angle/2) * radius
++           *
++           * tan(ang/2) = |(hx,hy)-p[n]| / |(hx,hy)-(cx,cy)|
++           *
++           * |(hx,hy)-(cx,cy)| = |(hx,hy)-p[n]| / tan(ang/2)
++           *
++           */
++
++          p_to_h_dist = sqrt (pow(nx - py, 2) + pow (ny - py, 2)) / 2.;
++          c_to_h_dist = p_to_h_dist / tan (TO_RADIANS (p->Points[n].included_angle) / 2.);
++
++          unit_hcx = (float)-(hy - py) / p_to_h_dist;
++          unit_hcy = (float)(hx - px) / p_to_h_dist;
++
++          cx = hx + unit_hcx * c_to_h_dist;
++          cy = hy + unit_hcy * c_to_h_dist;
++
++          // v[0] = cx, v[1] = cy;  /* DEBUG TO SHOW THE CENTER OF THE ARC */
++          // poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++
++          degree_circle (contour, cx, cy, v, p->Points[n].included_angle);
++        }
 +
        /* Is current point last in contour? If so process it. */
        if (n == p->PointN - 1 ||
            (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
-@@ -1837,9 +1839,9 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+@@ -419,6 +509,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+     }
+ }
+ 
++
+ /* create a circle approximation from lines */
+ POLYAREA *
+ CirclePoly (Coord x, Coord y, Coord radius)
+@@ -1837,9 +1928,9 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
              return false;
            many = true;
            v = &p->contours->head;
@@ -204,7 +324,7 @@ index 4623b52..013b6aa 100644
            newone->BoundingBox.X1 = p->contours->xmin;
            newone->BoundingBox.X2 = p->contours->xmax + 1;
            newone->BoundingBox.Y1 = p->contours->ymin;
-@@ -1951,7 +1953,8 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1951,7 +2042,8 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
            do
              {
                CreateNewPointInPolygon (Polygon, node->point[0],
@@ -213,3 +333,37 @@ index 4623b52..013b6aa 100644
 +                                                0);
              }
            while ((node = node->next) != &pline->head);
+ 
+diff --git a/src/polygon.h b/src/polygon.h
+index a02fd99..369efea 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -37,11 +37,28 @@
+ #define POLY_CIRC_SEGS 40
+ #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
+ 
++#if 0
++/* THIS IS BROKEN:
++ *
++ * IT BREAKS THE CIRCULARITY OF CIRULAR CONTORS, AS THE FIRST
++ * FIRST VERTEX ADDED BY CirclePoly IS NOT RADIUS ADJUSTED.
++ *
++ * IT BREAKS CIRCULARITY OF ALIGMENT BETWEEN A LINE AND ITS END-CAPS,
++ * LEADING TO MORE COMPLEX CONTOURS FOR COMMON LINE-LINE INTERSECTIONS,
++ * SUCH AS 90 AND 45 DEGREE ANGLES
++ *
++ * IT WAS INTENDED TO AVOID DRC ERRORS WITH "TOO-CLOSE" FEATURES,
++ * BUT COULD OTHERWISE CAUSE THEM FOR "TOO THIN" FEATURES - INSIDE/OUTSIDE
++ * CONTOUR APPROXIMATION NEEDS TO BE CONTROLED DEPENDING ON THE REQUIREMENT
++ */
+ /* adjustment to make the segments outline the circle rather than connect
+  * points on the circle: 1 - cos (\alpha / 2) < (\alpha / 2) ^ 2 / 2
+  */
+ #define POLY_CIRC_RADIUS_ADJ (1.0 + M_PI / POLY_CIRC_SEGS_F * \
+                                     M_PI / POLY_CIRC_SEGS_F / 2.0)
++#else
++#define POLY_CIRC_RADIUS_ADJ 1.0
++#endif
+ 
+ /* polygon diverges from modelled arc no more than MAX_ARC_DEVIATION * thick */
+ #define POLY_ARC_MAX_DEVIATION 0.02
