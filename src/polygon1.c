@@ -2904,8 +2904,7 @@ poly_InsideContour (PLINE * c, Vector p)
   info.f = 0;
   info.p[0] = ray.X1 = p[0];
   info.p[1] = ray.Y1 = p[1];
-#warning BROKEN ASSUMPTION of 32 BIT
-  ray.X2 = 0x7fffffff;
+  ray.X2 = COORD_MAX;
   ray.Y2 = p[1] + 1;
   if (setjmp (info.env) == 0)
     r_search (c->tree, &ray, NULL, crossing, &info);
