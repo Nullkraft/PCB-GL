@@ -1,5 +1,5 @@
 Bottom: ee553f29278b58f13870ec74d19708de73c99444
-Top:    2fde68ac1990dc5aabf114542169fd51255a0d22
+Top:    8919d8b519faa99e7c6eeaf55e257ba9d229c60c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-13 01:22:11 +0100
 
@@ -24,7 +24,7 @@ EXTREME FEATURE IN EITHER THE +/-X or +/-Y DIRECTIONS.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 5d2b4df..184cefa 100644
+index 5d2b4df..5389ec9 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1428,7 +1428,8 @@ NotifyMode (void)
@@ -47,6 +47,22 @@ index 5d2b4df..184cefa 100644
  
  		  /* copy the coordinates */
  		  Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
+@@ -1742,13 +1744,13 @@ NotifyMode (void)
+ 	    InsertPointIntoObject (POLYGON_TYPE,
+ 				   Crosshair.AttachedObject.Ptr1, fake.poly,
+ 				   &polyIndex,
+-				   InsertedPoint.X, InsertedPoint.Y, false, false);
++				   InsertedPoint.X, InsertedPoint.Y, 0, false, false);
+ 	  else
+ 	    InsertPointIntoObject (Crosshair.AttachedObject.Type,
+ 				   Crosshair.AttachedObject.Ptr1,
+ 				   Crosshair.AttachedObject.Ptr2,
+ 				   &polyIndex,
+-				   InsertedPoint.X, InsertedPoint.Y, false, false);
++				   InsertedPoint.X, InsertedPoint.Y, 0, false, false);
+ 	  SetChangedFlag (true);
+ 
+ 	  /* reset identifiers */
 diff --git a/src/copy.c b/src/copy.c
 index b0cd9c8..a580e8e 100644
 --- a/src/copy.c
@@ -141,18 +157,56 @@ index 0c4ac20..559365c 100644
    /* If we don't have a cached set of tri-strips, compute them */
    if (contour->tristrip_vertices == NULL) {
 diff --git a/src/insert.c b/src/insert.c
-index a254998..8868d8b 100644
+index a254998..e3721c4 100644
 --- a/src/insert.c
 +++ b/src/insert.c
-@@ -180,7 +180,7 @@ InsertPointIntoPolygon (LayerType *Layer, PolygonType *Polygon)
+@@ -65,6 +65,7 @@ static void *InsertPointIntoRat (RatType *);
+  * some local identifiers
+  */
+ static Coord InsertX, InsertY;	/* used by local routines as offset */
++static Angle InsertIncludedAngle; /* Only used by polygon point insert */
+ static Cardinal InsertAt;
+ static bool InsertLast;
+ static bool Forcible;
+@@ -180,7 +181,7 @@ InsertPointIntoPolygon (LayerType *Layer, PolygonType *Polygon)
     */
    ErasePolygon (Polygon);
    r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
 -  save = *CreateNewPointInPolygon (Polygon, InsertX, InsertY);
-+  save = *CreateNewPointInPolygon (Polygon, InsertX, InsertY, 0);
++  save = *CreateNewPointInPolygon (Polygon, InsertX, InsertY, InsertIncludedAngle);
    for (n = Polygon->PointN - 1; n > InsertAt; n--)
      Polygon->Points[n] = Polygon->Points[n - 1];
  
+@@ -211,7 +212,7 @@ InsertPointIntoPolygon (LayerType *Layer, PolygonType *Polygon)
+  */
+ void *
+ InsertPointIntoObject (int Type, void *Ptr1, void *Ptr2, Cardinal * Ptr3,
+-		       Coord DX, Coord DY, bool Force,
++		       Coord DX, Coord DY, Angle included_angle, bool Force,
+ 		       bool insert_last)
+ {
+   void *ptr;
+@@ -219,6 +220,7 @@ InsertPointIntoObject (int Type, void *Ptr1, void *Ptr2, Cardinal * Ptr3,
+   /* setup offset */
+   InsertX = DX;
+   InsertY = DY;
++  InsertIncludedAngle = included_angle;
+   InsertAt = *Ptr3;
+   InsertLast = insert_last;
+   Forcible = Force;
+diff --git a/src/insert.h b/src/insert.h
+index 31fc6dc..6c530fb 100644
+--- a/src/insert.h
++++ b/src/insert.h
+@@ -38,7 +38,7 @@
+  * prototypes
+  */
+ void *InsertPointIntoObject (int, void *, void *, Cardinal *, Coord,
+-			     Coord, bool, bool);
++			     Coord, Angle, bool, bool);
+ PointType * AdjustInsertPoint (void);
+ 
+ #endif
 diff --git a/src/parse_l.l b/src/parse_l.l
 index 4f64880..a4e0a05 100644
 --- a/src/parse_l.l
@@ -421,3 +475,42 @@ index a02fd99..369efea 100644
  
  /* polygon diverges from modelled arc no more than MAX_ARC_DEVIATION * thick */
  #define POLY_ARC_MAX_DEVIATION 0.02
+diff --git a/src/undo.c b/src/undo.c
+index ca41c74..655264a 100644
+--- a/src/undo.c
++++ b/src/undo.c
+@@ -92,6 +92,7 @@ typedef struct			/* information about removed polygon points */
+ {
+   Coord X, Y;			/* data */
+   int ID;
++  Angle IncludedAngle;
+   Cardinal Index;		/* index in a polygons array of points */
+   bool last_in_contour;		/* Whether the point was the last in its contour */
+ } RemovedPointType;
+@@ -698,7 +699,9 @@ UndoRemovePoint (UndoListType *Entry)
+ 	InsertPointIntoObject (POLYGON_TYPE, layer, polygon,
+ 			       &Entry->Data.RemovedPoint.Index,
+ 			       Entry->Data.RemovedPoint.X,
+-			       Entry->Data.RemovedPoint.Y, true,
++			       Entry->Data.RemovedPoint.Y,
++			       Entry->Data.RemovedPoint.IncludedAngle,
++			       true,
+ 			       Entry->Data.RemovedPoint.last_in_contour);
+ 
+ 	polygon->Points[Entry->Data.RemovedPoint.Index].ID =
+@@ -758,6 +761,7 @@ UndoInsertPoint (UndoListType *Entry)
+ 	Entry->Data.RemovedPoint.X = pnt->X;
+ 	Entry->Data.RemovedPoint.Y = pnt->Y;
+ 	Entry->Data.RemovedPoint.ID = pnt->ID;
++	Entry->Data.RemovedPoint.IncludedAngle = pnt->included_angle;
+ 	Entry->ID = polygon->ID;
+ 	Entry->Kind = POLYGON_TYPE;
+ 	Entry->Type = UNDO_REMOVE_POINT;
+@@ -1338,6 +1342,7 @@ AddObjectToRemovePointUndoList (int Type,
+ 	    undo->Data.RemovedPoint.X = polygon->Points[index].X;
+ 	    undo->Data.RemovedPoint.Y = polygon->Points[index].Y;
+ 	    undo->Data.RemovedPoint.ID = polygon->Points[index].ID;
++	    undo->Data.RemovedPoint.IncludedAngle = polygon->Points[index].included_angle;
+ 	    undo->Data.RemovedPoint.Index = index;
+ 
+ 	    /* Check whether this point was at the end of its contour.
