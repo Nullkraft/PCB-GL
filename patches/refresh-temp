@@ -1,0 +1,31 @@
+Bottom: 508fab274cefc19dcabcdda17767bd64f7a8e531
+Top:    c129eab31243f1e259ee91e8c4463178b28b9918
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-13 02:04:20 +0100
+
+Refresh of add-support-for-arc-segments
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 7b41b7f..184cefa 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -1403,7 +1403,7 @@ NotifyMode (void)
+ 
+     case POLYGON_MODE:
+       {
+-	PointType *points = (/*TYPE HACK*/PointType *)Crosshair.AttachedPolygon.Points;
++	PointType *points = Crosshair.AttachedPolygon.Points;
+ 	Cardinal n = Crosshair.AttachedPolygon.PointN;
+ 
+ 	/* do update of position; use the 'LINE_MODE' mechanism */
+@@ -1467,7 +1467,7 @@ NotifyMode (void)
+             /* second notify, insert new point into object */
+           case STATE_SECOND:
+             {
+-	      PointType *points = (/*TYPE HACK*/PointType *)Crosshair.AttachedPolygon.Points;
++	      PointType *points = Crosshair.AttachedPolygon.Points;
+ 	      Cardinal n = Crosshair.AttachedPolygon.PointN;
+ 	      POLYAREA *original, *new_hole, *result;
+ 	      FlagType Flags;
