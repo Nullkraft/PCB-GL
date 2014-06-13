@@ -1,0 +1,108 @@
+Bottom: f2d5de1ac485d688b74f8aa2c5e34557c2419787
+Top:    2fde68ac1990dc5aabf114542169fd51255a0d22
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-13 04:19:15 +0100
+
+Refresh of add-support-for-arc-segments
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 9a16e52..13aac8e 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -111,6 +111,7 @@ dicer output is used for HIDs which cannot render things with holes
+ #define SUBTRACT_LINE_BATCH_SIZE 20
+ 
+ static double rotate_circle_seg[4];
++static double bw_rotate_circle_seg[4];
+ 
+ void
+ polygon_init (void)
+@@ -120,6 +121,9 @@ polygon_init (void)
+ 
+   rotate_circle_seg[0] = cos_ang;  rotate_circle_seg[1] = -sin_ang;
+   rotate_circle_seg[2] = sin_ang;  rotate_circle_seg[3] =  cos_ang;
++
++  bw_rotate_circle_seg[0] =  cos_ang;  bw_rotate_circle_seg[1] =  sin_ang;
++  bw_rotate_circle_seg[2] = -sin_ang;  bw_rotate_circle_seg[3] =  cos_ang;
+ }
+ 
+ Cardinal
+@@ -286,17 +290,35 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
+   e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
+   e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
+ 
+-  /* NB: the caller added the first vertex, and will add the last vertex, hence the -1 */
+-  range = POLY_CIRC_SEGS * sweep / 360 - 1;
+-  for (i = 0; i < range; i++)
++  if (sweep > 0)
+     {
+-      /* rotate the vector */
+-      t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
+-      e2 = rotate_circle_seg[2] * e1 + rotate_circle_seg[3] * e2;
+-      e1 = t1;
+-      v[0] = X + ROUND (e1);
+-      v[1] = Y + ROUND (e2);
+-      poly_InclVertex (c->head.prev, poly_CreateNode (v));
++      /* NB: the caller added the first vertex, and will add the last vertex, hence the -1 */
++      range = POLY_CIRC_SEGS * sweep / 360 - 1;
++      for (i = 0; i < range; i++)
++        {
++          /* rotate the vector */
++          t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
++          e2 = rotate_circle_seg[2] * e1 + rotate_circle_seg[3] * e2;
++          e1 = t1;
++          v[0] = X + ROUND (e1);
++          v[1] = Y + ROUND (e2);
++          poly_InclVertex (c->head.prev, poly_CreateNode (v));
++        }
++    }
++  else
++    {
++      /* NB: the caller added the first vertex, and will add the last vertex, hence the -1 */
++      range = POLY_CIRC_SEGS * -sweep / 360 - 1;
++      for (i = 0; i < range; i++)
++        {
++          /* rotate the vector */
++          t1 = bw_rotate_circle_seg[0] * e1 + bw_rotate_circle_seg[1] * e2;
++          e2 = bw_rotate_circle_seg[2] * e1 + bw_rotate_circle_seg[3] * e2;
++          e1 = t1;
++          v[0] = X + ROUND (e1);
++          v[1] = Y + ROUND (e2);
++          poly_InclVertex (c->head.prev, poly_CreateNode (v));
++        }
+     }
+ }
+ 
+@@ -318,8 +340,7 @@ original_poly (PolygonType * p)
+       /* No current contour? Make a new one starting at point */
+       /*   (or) Add point to existing contour */
+ 
+-      v[0] = p->Points[n].X;
+-      v[1] = p->Points[n].Y;
++      v[0] = p->Points[n].X, v[1] = p->Points[n].Y;
+       if (contour == NULL)
+         {
+           if ((contour = poly_NewContour (v)) == NULL)
+@@ -387,10 +408,18 @@ original_poly (PolygonType * p)
+           cx = hx + unit_hcx * c_to_h_dist;
+           cy = hy + unit_hcy * c_to_h_dist;
+ 
+-          // v[0] = cx, v[1] = cy;  /* DEBUG TO SHOW THE CENTER OF THE ARC */
+-          // poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++#if 0 /* DEBUG TO SHOW THE CENTER OF THE ARC */
++          v[0] = cx, v[1] = cy;
++          poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++          v[0] = p->Points[n].X, v[1] = p->Points[n].Y;
++#endif
+ 
+           degree_circle (contour, cx, cy, v, p->Points[n].included_angle);
++
++#if 0 /* DEBUG TO SHOW THE CENTER OF THE ARC */
++          v[0] = cx, v[1] = cy;  /* DEBUG TO SHOW THE CENTER OF THE ARC */
++          poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++#endif
+         }
+ 
+       /* Is current point last in contour? If so process it. */
