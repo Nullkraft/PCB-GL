@@ -2511,8 +2511,8 @@ poly_IniContour (PLINE * c)
   /* bzero (c, sizeof(PLINE)); */
   c->head.next = c->head.prev = &c->head;
 #warning BROKEN ASSUMPTION of 32 BIT
-  c->xmin = c->ymin = 0x7fffffff;
-  c->xmax = c->ymax = 0x80000000;
+  c->xmin = c->ymin = COORD_MAX;
+  c->xmax = c->ymax = -COORD_MAX - 1;
   c->is_round = FALSE;
   c->cx = 0;
   c->cy = 0;
