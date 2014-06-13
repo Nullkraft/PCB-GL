@@ -303,8 +303,6 @@ original_poly (PolygonType * p)
           poly_InclVertex (contour->head.prev, poly_CreateNode (v));
         }
 
-      frac_circle (..);
-
       /* Is current point last in contour? If so process it. */
       if (n == p->PointN - 1 ||
           (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
