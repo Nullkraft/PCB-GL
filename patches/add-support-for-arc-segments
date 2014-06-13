@@ -1,5 +1,5 @@
 Bottom: 8349f3d9dce738373092d047391386f1600ebef1
-Top:    5b76a802a8d39680ba270d27ab42350260065e53
+Top:    131551fb9b47bfc7b909d72692fcc8dfb91ea942
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-13 01:22:11 +0100
 
@@ -183,10 +183,19 @@ index 6cd4c7b..a82eb5b 100644
  		;
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 4623b52..bd6352a 100644
+index 4623b52..013b6aa 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1837,9 +1837,9 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+@@ -303,6 +303,8 @@ original_poly (PolygonType * p)
+           poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+         }
+ 
++      frac_circle (..);
++
+       /* Is current point last in contour? If so process it. */
+       if (n == p->PointN - 1 ||
+           (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
+@@ -1837,9 +1839,9 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
              return false;
            many = true;
            v = &p->contours->head;
@@ -198,7 +207,7 @@ index 4623b52..bd6352a 100644
            newone->BoundingBox.X1 = p->contours->xmin;
            newone->BoundingBox.X2 = p->contours->xmax + 1;
            newone->BoundingBox.Y1 = p->contours->ymin;
-@@ -1951,7 +1951,8 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1951,7 +1953,8 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
            do
              {
                CreateNewPointInPolygon (Polygon, node->point[0],
