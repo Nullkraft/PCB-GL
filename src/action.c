@@ -1428,7 +1428,8 @@ NotifyMode (void)
 	  {
 	    CreateNewPointInPolygon (&Crosshair.AttachedPolygon,
 				     Crosshair.AttachedLine.Point2.X,
-				     Crosshair.AttachedLine.Point2.Y);
+				     Crosshair.AttachedLine.Point2.Y,
+				     0);
 
 	    /* copy the coordinates */
 	    Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
@@ -1519,7 +1520,8 @@ NotifyMode (void)
 		{
 		  CreateNewPointInPolygon (&Crosshair.AttachedPolygon,
 					   Crosshair.AttachedLine.Point2.X,
-					   Crosshair.AttachedLine.Point2.Y);
+					   Crosshair.AttachedLine.Point2.Y,
+					   0);
 
 		  /* copy the coordinates */
 		  Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
