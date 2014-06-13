@@ -303,6 +303,8 @@ original_poly (PolygonType * p)
           poly_InclVertex (contour->head.prev, poly_CreateNode (v));
         }
 
+      frac_circle (..);
+
       /* Is current point last in contour? If so process it. */
       if (n == p->PointN - 1 ||
           (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
@@ -1837,9 +1839,9 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
             return false;
           many = true;
           v = &p->contours->head;
-          CreateNewPointInPolygon (newone, v->point[0], v->point[1]);
+          CreateNewPointInPolygon (newone, v->point[0], v->point[1], 0);
           for (v = v->next; v != &p->contours->head; v = v->next)
-            CreateNewPointInPolygon (newone, v->point[0], v->point[1]);
+            CreateNewPointInPolygon (newone, v->point[0], v->point[1], 0);
           newone->BoundingBox.X1 = p->contours->xmin;
           newone->BoundingBox.X2 = p->contours->xmax + 1;
           newone->BoundingBox.Y1 = p->contours->ymin;
@@ -1951,7 +1953,8 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
           do
             {
               CreateNewPointInPolygon (Polygon, node->point[0],
-                                                node->point[1]);
+                                                node->point[1],
+                                                0);
             }
           while ((node = node->next) != &pline->head);
 
