@@ -1,0 +1,16 @@
+Bottom: 17af5894205dfc9ea59313e543bc2af25ed04b68
+Top:    17af5894205dfc9ea59313e543bc2af25ed04b68
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-15 14:54:06 +0100
+
+Tag VNODEs with details of circular contour segments
+
+The idea here is to track that the PWL segments actually came from a
+particular underlying curve. This should allow us to reconstruct that
+curve (approximately at least) if these segments survive in the final
+polygon (are not intersected or removed by boolean operations).
+
+
+---
+
+
