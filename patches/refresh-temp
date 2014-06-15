@@ -1,0 +1,152 @@
+Bottom: 66e2b7d5e12aaa88b7e70d004fe368f8394465bc
+Top:    c58e2d593cef54c42faca3e54c37280932536e3d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-15 05:36:44 +0100
+
+Refresh of remove-function
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index a921c2b..7e0deef 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1008,8 +1008,9 @@ check_snap_offgrid_line (struct snap_data *snap_data,
+   /* Pick the nearest grid-point in the x or y direction
+    * to align with, then adjust until we hit the line
+    */
+-  ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                              LINE_TYPE, &ptr1, &ptr2, &ptr3);
++  ans = SearchObjectByLocation (LINE_TYPE, &ptr1, &ptr2, &ptr3,
++                                Crosshair.X, Crosshair.Y, PCB->Grid / 2);
++
+ 
+   if (ans == NO_TYPE)
+     return;
+@@ -1145,8 +1146,8 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+ 
+   ans = NO_TYPE;
+   if (!PCB->RatDraw)
+-    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                                ELEMENT_TYPE, &ptr1, &ptr2, &ptr3);
++    ans = SearchObjectByLocation (ELEMENT_TYPE, &ptr1, &ptr2, &ptr3,
++                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+ 
+   if (ans & ELEMENT_TYPE)
+     {
+@@ -1156,8 +1157,8 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+ 
+   ans = NO_TYPE;
+   if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
+-    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                                PAD_TYPE, &ptr1, &ptr2, &ptr3);
++    ans = SearchObjectByLocation (PAD_TYPE, &ptr1, &ptr2, &ptr3,
++                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+ 
+   /* Avoid self-snapping when moving */
+   if (ans != NO_TYPE &&
+@@ -1213,8 +1214,8 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+ 
+   ans = NO_TYPE;
+   if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
+-    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                                PIN_TYPE, &ptr1, &ptr2, &ptr3);
++    ans = SearchObjectByLocation (PIN_TYPE, &ptr1, &ptr2, &ptr3,
++                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+ 
+   /* Avoid self-snapping when moving */
+   if (ans != NO_TYPE &&
+@@ -1231,8 +1232,8 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+ 
+   ans = NO_TYPE;
+   if (TEST_FLAG (SNAPPINFLAG, PCB))
+-    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                                VIA_TYPE, &ptr1, &ptr2, &ptr3);
++    ans = SearchObjectByLocation (VIA_TYPE, &ptr1, &ptr2, &ptr3,
++                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+ 
+   /* Avoid snapping vias to any other vias */
+   if (Settings.Mode == MOVE_MODE &&
+@@ -1248,9 +1249,9 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+ 
+   ans = NO_TYPE;
+   if (TEST_FLAG (SNAPPINFLAG, PCB))
+-    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                                LINEPOINT_TYPE | ARCPOINT_TYPE,
+-                                &ptr1, &ptr2, &ptr3);
++    ans = SearchObjectByLocation (LINEPOINT_TYPE | ARCPOINT_TYPE,
++                                  &ptr1, &ptr2, &ptr3,
++                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+ 
+   if (ans != NO_TYPE)
+     {
+@@ -1262,8 +1263,8 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+ 
+   ans = NO_TYPE;
+   if (TEST_FLAG (SNAPPINFLAG, PCB))
+-    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                                POLYGONPOINT_TYPE, &ptr1, &ptr2, &ptr3);
++    ans = SearchObjectByLocation (POLYGONPOINT_TYPE, &ptr1, &ptr2, &ptr3,
++                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+ 
+   if (ans != NO_TYPE)
+     {
+@@ -1279,9 +1280,9 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+ 
+   if (Settings.Mode == ARROW_MODE)
+     {
+-      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                                  LINEPOINT_TYPE | ARCPOINT_TYPE,
+-                                  &ptr1, &ptr2, &ptr3);
++      ans = SearchObjectByLocation (LINEPOINT_TYPE | ARCPOINT_TYPE,
++                                    &ptr1, &ptr2, &ptr3,
++                                    Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+       if (ans != NO_TYPE && !TEST_FLAG(SELECTEDFLAG, (LineType *)ptr2)) {
+         if (gui->endpoint_cursor != NULL)
+           gui->endpoint_cursor ();
+@@ -1291,9 +1292,9 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+       if (TEST_FLAG (RUBBERBANDFLAG, PCB))
+         {
+ 
+-          ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                                      LINE_TYPE,
+-                                      &ptr1, &ptr2, &ptr3);
++          ans = SearchObjectByLocation (LINE_TYPE,
++                                        &ptr1, &ptr2, &ptr3,
++                                        Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+           if (ans != NO_TYPE) {
+             double angle;
+             int octant;
+diff --git a/src/search.c b/src/search.c
+index 5f4ea5e..c997c92 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -1617,17 +1617,3 @@ SearchScreen (Coord X, Coord Y, int Type, void **Result1,
+ 				X, Y, SLOP * pixel_slop);
+   return (ans);
+ }
+-
+-/* ---------------------------------------------------------------------------
+- * searches the cursor position for the type
+- */
+-int
+-SearchScreenGridSlop (Coord X, Coord Y, int Type, void **Result1,
+-	      void **Result2, void **Result3)
+-{
+-  int ans;
+-
+-  ans = SearchObjectByLocation (Type, Result1, Result2, Result3,
+-				X, Y, PCB->Grid / 2);
+-  return (ans);
+-}
+diff --git a/src/search.h b/src/search.h
+index bdf460e..b6488fc 100644
+--- a/src/search.h
++++ b/src/search.h
+@@ -81,7 +81,6 @@ bool IsPointInPad (Coord, Coord, Coord, PadType *);
+ bool IsPointInBox (Coord, Coord, BoxType *, Coord);
+ int SearchObjectByLocation (unsigned, void **, void **, void **, Coord, Coord, Coord);
+ int SearchScreen (Coord, Coord, int, void **, void **, void **);
+-int SearchScreenGridSlop (Coord, Coord, int, void **, void **, void **);
+ int SearchObjectByID (DataType *, void **, void **, void **, int, int);
+ ElementType * SearchElementByName (DataType *, char *);
