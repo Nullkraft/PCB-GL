@@ -1,5 +1,5 @@
 Bottom: 17af5894205dfc9ea59313e543bc2af25ed04b68
-Top:    0a7ef0434f824def5622eb33307ca44708b3c45c
+Top:    d2243a05243b79ca3492733e8928f68f65852c53
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-15 14:54:06 +0100
 
@@ -468,7 +468,7 @@ index 369efea..2ed2b62 100644
  
  #if 0
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 7d6fab6..8639614 100644
+index 7d6fab6..b0f4558 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -49,6 +49,7 @@
@@ -557,7 +557,7 @@ index 7d6fab6..8639614 100644
        /* Do insersion */
        task->new_node->prev = task->node_seg->v;
        task->new_node->next = task->node_seg->v->next;
-@@ -1615,25 +1657,44 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1615,25 +1657,45 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
    assert (*result == NULL);
    do
      {
@@ -578,6 +578,7 @@ index 7d6fab6..8639614 100644
 +#endif
        /* add edge to polygon */
 +//      if ((newn = poly_CreateNodeFull (cur->point, cur->is_round, cur->cx, cur->cy, cur->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
++      /* XXX: The cur->next part of the line below is somewhat tested, but was determined by trial and error */
 +      if ((newn = poly_CreateNodeFull (cur->point, (dir == FORW) ? cur->is_round : cur->next->is_round,
 +                                                   (dir == FORW) ? cur->cx       : cur->next->cx,
 +                                                   (dir == FORW) ? cur->cy       : cur->next->cy,
@@ -606,7 +607,7 @@ index 7d6fab6..8639614 100644
        /* Now mark the edge as included.  */
        newn = (dir == FORW ? cur : cur->prev);
        newn->Flags.mark = 1;
-@@ -1643,6 +1704,11 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1643,6 +1705,11 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
  
        /* Advance to the next edge.  */
        cur = (dir == FORW ? cur->next : cur->prev);
@@ -618,7 +619,7 @@ index 7d6fab6..8639614 100644
      }
    while (1);
    return err_ok;
-@@ -2293,6 +2359,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+@@ -2293,6 +2360,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
    return poly_Boolean_free (a, b, res, action);
  }				/* poly_Boolean */
  
@@ -627,7 +628,7 @@ index 7d6fab6..8639614 100644
  /* just like poly_Boolean but frees the input polys */
  int
  poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-@@ -2303,6 +2371,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2303,6 +2372,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    jmp_buf e;
    int code;
  
@@ -636,7 +637,7 @@ index 7d6fab6..8639614 100644
    *res = NULL;
  
    if (!a)
-@@ -2486,23 +2556,6 @@ node_neighbours (VNODE * a, VNODE * b)
+@@ -2486,23 +2557,6 @@ node_neighbours (VNODE * a, VNODE * b)
    return (a == b) || (a->next == b) || (b->next == a) || (a->next == b->next);
  }
  
@@ -660,7 +661,7 @@ index 7d6fab6..8639614 100644
  void
  poly_IniContour (PLINE * c)
  {
-@@ -2519,7 +2572,7 @@ poly_IniContour (PLINE * c)
+@@ -2519,7 +2573,7 @@ poly_IniContour (PLINE * c)
  }
  
  PLINE *
@@ -669,7 +670,7 @@ index 7d6fab6..8639614 100644
  {
    PLINE *res;
  
-@@ -2529,11 +2582,13 @@ poly_NewContour (Vector v)
+@@ -2529,11 +2583,13 @@ poly_NewContour (Vector v)
  
    poly_IniContour (res);
  
@@ -688,7 +689,7 @@ index 7d6fab6..8639614 100644
  
    return res;
  }
-@@ -2649,6 +2704,47 @@ flip_cb (const BoxType * b, void *cl)
+@@ -2649,6 +2705,47 @@ flip_cb (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -736,7 +737,7 @@ index 7d6fab6..8639614 100644
  void
  poly_InvContour (PLINE * c)
  {
-@@ -2657,16 +2753,46 @@ poly_InvContour (PLINE * c)
+@@ -2657,16 +2754,46 @@ poly_InvContour (PLINE * c)
    int r;
  #endif
  
@@ -783,7 +784,7 @@ index 7d6fab6..8639614 100644
    c->Flags.orient ^= 1;
    if (c->tree)
      {
-@@ -2706,11 +2832,13 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -2706,11 +2833,13 @@ poly_InclVertex (VNODE * after, VNODE * node)
    /* remove points on same line */
    if (node->prev->prev == node)
      return;			/* we don't have 3 points in the poly yet */
@@ -798,7 +799,7 @@ index 7d6fab6..8639614 100644
      {
        VNODE *t = node->prev;
        t->prev->next = node;
-@@ -2726,7 +2854,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2726,7 +2855,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    assert (src != NULL);
    *dst = NULL;
@@ -807,7 +808,7 @@ index 7d6fab6..8639614 100644
    if (*dst == NULL)
      return FALSE;
  
-@@ -2738,7 +2866,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2738,7 +2867,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    for (cur = src->head.next; cur != &src->head; cur = cur->next)
      {
