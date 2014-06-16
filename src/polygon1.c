@@ -1674,6 +1674,7 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
 #endif
       /* add edge to polygon */
 //      if ((newn = poly_CreateNodeFull (cur->point, cur->is_round, cur->cx, cur->cy, cur->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
+      /* XXX: The cur->next part of the line below is somewhat tested, but was determined by trial and error */
       if ((newn = poly_CreateNodeFull (cur->point, (dir == FORW) ? cur->is_round : cur->next->is_round,
                                                    (dir == FORW) ? cur->cx       : cur->next->cx,
                                                    (dir == FORW) ? cur->cy       : cur->next->cy,
