@@ -5,11 +5,18 @@ Date:   2014-06-26 21:12:40 +0100
 
 Replace {COMPONENT,SOLDER}_LAYER with {TOP,BOTTOM}_{SILK_LAYER,SIDE} depending on usage
 
-We used the previous constants to identify board sides, as well as an offset
-at the end of the layer array to find the silk-screen layers.
+We used the {COMPONENT,SOLDER}_LAYER constants for two distinct meanings:
 
-Split the usage to keep useage as a board SIDE integer and LAYER offset separate,
-and update the old component/solder terminology.
+1. To identify board sides, ie. use as an integer constant representing top / bottom
+2. As an offset at the end of the layer array to index the two silk-screen layers
+
+Split the usage of these constants as appropriate, so the difference in meaning
+is clear. {TOP,BOTTOM}_SIDE are used where we need an integer constant (1 and 0
+respectively) refering to the side of the board. This is used as a side specifier
+in draw.c, and for indexing arrays of pads per board-side in find.c.
+
+Usage as an offset into the layer for referencing the silk-screen layers is now
+{TOP,BOTTOM}_SILK_LAYER. The relevant offset of PCB->LayerN must still be added.
 
 
 ---
