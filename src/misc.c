@@ -1019,7 +1019,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
             case 'C':
             case 't':
             case 'T':
-              layer = LayerN + COMPONENT_LAYER;
+              layer = LayerN + TOP_LAYER;
               c_set = true;
               break;
 
@@ -1027,7 +1027,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
             case 'S':
             case 'b':
             case 'B':
-              layer = LayerN + SOLDER_LAYER;
+              layer = LayerN + BOTTOM_LAYER;
               s_set = true;
               break;
 
@@ -1037,7 +1037,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
               layer = atoi (s) - 1;
               break;
             }
-          if (layer > LayerN + MAX (SOLDER_LAYER, COMPONENT_LAYER) ||
+          if (layer > LayerN + MAX (BOTTOM_LAYER, TOP_LAYER) ||
               member >= LayerN + 1)
             goto error;
           groupnum[layer] = group;
@@ -1057,12 +1057,12 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
         s++;
     }
   if (!s_set)
-    LayerGroup->Entries[SOLDER_LAYER][LayerGroup->Number[SOLDER_LAYER]++] =
-      LayerN + SOLDER_LAYER;
+    LayerGroup->Entries[BOTTOM_LAYER][LayerGroup->Number[BOTTOM_LAYER]++] =
+      LayerN + BOTTOM_LAYER;
   if (!c_set)
     LayerGroup->
-      Entries[COMPONENT_LAYER][LayerGroup->Number[COMPONENT_LAYER]++] =
-      LayerN + COMPONENT_LAYER;
+      Entries[TOP_LAYER][LayerGroup->Number[TOP_LAYER]++] =
+      LayerN + TOP_LAYER;
 
   for (layer = 0; layer < LayerN && group < LayerN; layer++)
     if (groupnum[layer] == -1)
@@ -1335,7 +1335,7 @@ LayerStringToLayerStack (char *s)
   PCB->ViaOn = false;
   PCB->RatOn = false;
   CLEAR_FLAG (SHOWMASKFLAG, PCB);
-  Settings.ShowSolderSide = 0;
+  Settings.ShowBottomSide = 0;
 
   for (i=argn-1; i>=0; i--)
     {
@@ -1353,7 +1353,7 @@ LayerStringToLayerStack (char *s)
       else if (strcasecmp (args[i], "mask") == 0)
 	SET_FLAG (SHOWMASKFLAG, PCB);
       else if (strcasecmp (args[i], "solderside") == 0)
-	Settings.ShowSolderSide = 1;
+	Settings.ShowBottomSide = 1;
       else if (isdigit ((int) args[i][0]))
 	{
 	  lno = atoi (args[i]);
@@ -1541,7 +1541,7 @@ SetArcBoundingBox (ArcType *Arc)
 void
 ResetStackAndVisibility (void)
 {
-  int comp_group;
+  int top_group;
   Cardinal i;
 
   for (i = 0; i < max_copper_layer + 2; i++)
@@ -1557,8 +1557,8 @@ ResetStackAndVisibility (void)
   PCB->RatOn = true;
 
   /* Bring the component group to the front and make it active.  */
-  comp_group = GetLayerGroupNumberByNumber (component_silk_layer);
-  ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 1, 1);
+  top_group = GetLayerGroupNumberByNumber (top_silk_layer);
+  ChangeGroupVisibility (PCB->LayerGroups.Entries[top_group][0], 1, 1);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1961,10 +1961,10 @@ MoveLayerToGroup (int layer, int group)
   if (layer < 0 || layer > max_copper_layer + 1)
     return -1;
   prev = GetLayerGroupNumberByNumber (layer);
-  if ((layer == solder_silk_layer
-        && group == GetLayerGroupNumberByNumber (component_silk_layer))
-      || (layer == component_silk_layer
-          && group == GetLayerGroupNumberByNumber (solder_silk_layer))
+  if ((layer == bottom_silk_layer
+        && group == GetLayerGroupNumberByNumber (top_silk_layer))
+      || (layer == top_silk_layer
+          && group == GetLayerGroupNumberByNumber (bottom_silk_layer))
       || (group < 0 || group >= max_group) || (prev == group))
     return prev;
 
@@ -2000,11 +2000,11 @@ LayerGroupsToString (LayerGroupType *lg)
         for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry++)
           {
             int layer = PCB->LayerGroups.Entries[group][entry];
-            if (layer == component_silk_layer)
+            if (layer == top_silk_layer)
               {
                 *cp++ = 'c';
               }
-            else if (layer == solder_silk_layer)
+            else if (layer == bottom_silk_layer)
               {
                 *cp++ = 's';
               }
