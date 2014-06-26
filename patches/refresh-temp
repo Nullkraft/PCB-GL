@@ -1,0 +1,278 @@
+Bottom: c0d14cdb6d211a64403d4761d1d1b53b6a488393
+Top:    8964793ffc031d1754f0da46fef51db4d3443455
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-26 23:37:27 +0100
+
+Refresh of patch
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 7a797f3..d91b9f5 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -1386,7 +1386,9 @@ NotifyMode (void)
+ 		int flag = CLEARLINEFLAG;
+ 
+ 		if (GetLayerGroupNumberByNumber (INDEXOFCURRENT) ==
+-		    GetLayerGroupNumberByNumber (bottom_silk_layer))
++		    GetLayerGroupNumberByNumber (bottom_silk_layer) ||
++		    GetLayerGroupNumberByNumber (INDEXOFCURRENT) ==
++		    GetLayerGroupNumberByNumber (bottom_soldermask_layer))
+ 		  flag |= ONSOLDERFLAG;
+ 		if ((text = CreateNewText (CURRENT, &PCB->Font, Note.X,
+ 					   Note.Y, 0, Settings.TextScale,
+diff --git a/src/const.h b/src/const.h
+index 76db89a..193ebc8 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -36,11 +36,20 @@
+ #include "globalconst.h"
+ 
+ /* ---------------------------------------------------------------------------
++ * integer codings for the board sides.
++ */
++#define BOTTOM_SIDE             0
++#define TOP_SIDE                1
++
++
++/* ---------------------------------------------------------------------------
+  * the layer-numbers of the two additional special layers
+  * 'top' and 'bottom'. The offset of MAX_LAYER is not added
+  */
+-#define	BOTTOM_LAYER		0
+-#define	TOP_LAYER		1
++#define BOTTOM_SILK_LAYER       0
++#define TOP_SILK_LAYER          1
++#define BOTTOM_SOLDERMASK_LAYER 2
++#define TOP_SOLDERMASK_LAYER    3
+ 
+ /* ---------------------------------------------------------------------------
+  * misc constants
+diff --git a/src/data.h b/src/data.h
+index 06daf0c..89d9b87 100644
+--- a/src/data.h
++++ b/src/data.h
+@@ -47,8 +47,10 @@ extern PCBType *PCB;
+ 
+ #define max_group (PCB->Data->LayerN)
+ #define max_copper_layer (PCB->Data->LayerN)
+-#define bottom_silk_layer (max_copper_layer + BOTTOM_LAYER)
+-#define top_silk_layer (max_copper_layer + TOP_LAYER)
++#define bottom_silk_layer (max_copper_layer + BOTTOM_SILK_LAYER)
++#define top_silk_layer (max_copper_layer + TOP_SILK_LAYER)
++#define bottom_soldermask_layer (max_copper_layer + BOTTOM_SOLDERMASK_LAYER)
++#define top_soldermask_layer (max_copper_layer + TOP_SOLDERMASK_LAYER)
+ 
+ extern SettingType Settings;
+ 
+diff --git a/src/draw.c b/src/draw.c
+index fb5e4cc..048ecf1 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -571,7 +571,7 @@ DrawEverything (const BoxType *drawn_area)
+   if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
+       && gui->set_layer ("invisible", SL (INVISIBLE, 0), 0))
+     {
+-      side = SWAP_IDENT ? TOP_LAYER : BOTTOM_LAYER;
++      side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
+       if (PCB->ElementOn)
+ 	{
+ 	  r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
+@@ -620,25 +620,25 @@ DrawEverything (const BoxType *drawn_area)
+   /* Draw the solder mask if turned on */
+   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
+     {
+-      DrawMask (TOP_LAYER, drawn_area);
++      DrawMask (TOP_SIDE, drawn_area);
+       gui->end_layer ();
+     }
+ 
+   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
+     {
+-      DrawMask (BOTTOM_LAYER, drawn_area);
++      DrawMask (BOTTOM_SIDE, drawn_area);
+       gui->end_layer ();
+     }
+ 
+   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
+     {
+-      DrawSilk (TOP_LAYER, drawn_area);
++      DrawSilk (TOP_SIDE, drawn_area);
+       gui->end_layer ();
+     }
+ 
+   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
+     {
+-      DrawSilk (BOTTOM_LAYER, drawn_area);
++      DrawSilk (BOTTOM_SIDE, drawn_area);
+       gui->end_layer ();
+     }
+ 
+@@ -656,29 +656,29 @@ DrawEverything (const BoxType *drawn_area)
+         }
+     }
+ 
+-  paste_empty = IsPasteEmpty (TOP_LAYER);
++  paste_empty = IsPasteEmpty (TOP_SIDE);
+   if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
+     {
+-      DrawPaste (TOP_LAYER, drawn_area);
++      DrawPaste (TOP_SIDE, drawn_area);
+       gui->end_layer ();
+     }
+ 
+-  paste_empty = IsPasteEmpty (BOTTOM_LAYER);
++  paste_empty = IsPasteEmpty (BOTTOM_SIDE);
+   if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
+     {
+-      DrawPaste (BOTTOM_LAYER, drawn_area);
++      DrawPaste (BOTTOM_SIDE, drawn_area);
+       gui->end_layer ();
+     }
+ 
+   if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
+     {
+-      PrintAssembly (TOP_LAYER, drawn_area);
++      PrintAssembly (TOP_SIDE, drawn_area);
+       gui->end_layer ();
+     }
+ 
+   if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
+     {
+-      PrintAssembly (BOTTOM_LAYER, drawn_area);
++      PrintAssembly (BOTTOM_SIDE, drawn_area);
+       gui->end_layer ();
+     }
+ 
+@@ -751,13 +751,13 @@ DrawPPV (int group, const BoxType *drawn_area)
+       /* draw element pads */
+       if (group == top_group)
+         {
+-          side = TOP_LAYER;
++          side = TOP_SIDE;
+           r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+         }
+ 
+       if (group == bottom_group)
+         {
+-          side = BOTTOM_LAYER;
++          side = BOTTOM_SIDE;
+           r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+         }
+     }
+diff --git a/src/find.c b/src/find.c
+index 778ab16..a7867de 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -124,6 +124,9 @@
+ #define	IS_PV_ON_PAD(PV,Pad) \
+ 	( IsPointInPad((PV)->X, (PV)->Y, MAX((PV)->Thickness/2 +Bloat,0), (Pad)))
+ 
++#define BOTTOM_LAYER 0
++#define TOP_LAYER 1
++
+ static DrcViolationType
+ *pcb_drc_violation_new (const char *title,
+                         const char *explanation,
+diff --git a/src/fontmode.c b/src/fontmode.c
+index 4eabb9c..4afd3cd 100644
+--- a/src/fontmode.c
++++ b/src/fontmode.c
+@@ -88,8 +88,8 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
+   Settings.minWid = PCB->minWid = 1;
+   Settings.minSlk = PCB->minSlk = 1;
+ 
+-  MoveLayerToGroup (max_copper_layer + TOP_LAYER, 0);
+-  MoveLayerToGroup (max_copper_layer + BOTTOM_LAYER, 1);
++  MoveLayerToGroup (max_copper_layer + TOP_SILK_LAYER, 0);
++  MoveLayerToGroup (max_copper_layer + BOTTOM_SILK_LAYER, 1);
+ 
+   while (PCB->Data->LayerN > 4)
+     MoveLayer (4, -1);
+diff --git a/src/macro.h b/src/macro.h
+index 1b352e3..2f24077 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -152,11 +152,11 @@ extern int mem_any_set (unsigned char *, int);
+ 	((TEST_FLAG(ONSOLDERFLAG, (o)) != 0) == SWAP_IDENT)
+ 
+ /* ---------------------------------------------------------------------------
+- *  Determines if an object is on the given side. side is either BOTTOM_LAYER
+- *  or TOP_LAYER.
++ *  Determines if an object is on the given side. side is either BOTTOM_GROUP
++ *  or TOP_GROUP.
+  */
+ #define ON_SIDE(element, side) \
+-        (TEST_FLAG (ONSOLDERFLAG, element) == (side == BOTTOM_LAYER))
++        (TEST_FLAG (ONSOLDERFLAG, element) == (side == BOTTOM_SIDE))
+ 
+ /* ---------------------------------------------------------------------------
+  * some loop shortcuts
+diff --git a/src/misc.c b/src/misc.c
+index b23a6f2..a2e55f2 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -1019,7 +1019,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+             case 'C':
+             case 't':
+             case 'T':
+-              layer = LayerN + TOP_LAYER;
++              layer = LayerN + TOP_SILK_LAYER;
+               c_set = true;
+               break;
+ 
+@@ -1027,7 +1027,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+             case 'S':
+             case 'b':
+             case 'B':
+-              layer = LayerN + BOTTOM_LAYER;
++              layer = LayerN + BOTTOM_SILK_LAYER;
+               s_set = true;
+               break;
+ 
+@@ -1037,7 +1037,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+               layer = atoi (s) - 1;
+               break;
+             }
+-          if (layer > LayerN + MAX (BOTTOM_LAYER, TOP_LAYER) ||
++          if (layer >= LayerN + 2 ||
+               member >= LayerN + 1)
+             goto error;
+           groupnum[layer] = group;
+@@ -1058,11 +1058,11 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+     }
+   if (!s_set)
+     LayerGroup->Entries[BOTTOM_LAYER][LayerGroup->Number[BOTTOM_LAYER]++] =
+-      LayerN + BOTTOM_LAYER;
++      LayerN + BOTTOM_SILK_LAYER;
+   if (!c_set)
+     LayerGroup->
+       Entries[TOP_LAYER][LayerGroup->Number[TOP_LAYER]++] =
+-      LayerN + TOP_LAYER;
++      LayerN + TOP_SILK_LAYER;
+ 
+   for (layer = 0; layer < LayerN && group < LayerN; layer++)
+     if (groupnum[layer] == -1)
+diff --git a/src/parse_y.y b/src/parse_y.y
+index 6fc0724..72a0046 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -1060,7 +1060,7 @@ text_newformat
+ 				if ($8 & ONSILKFLAG)
+ 				{
+ 					LayerType *lay = &yyData->Layer[yyData->LayerN +
+-						(($8 & ONSOLDERFLAG) ? BOTTOM_LAYER : TOP_LAYER)];
++						(($8 & ONSOLDERFLAG) ? BOTTOM_SILK_LAYER : TOP_SILK_LAYER)];
+ 
+ 					CreateNewText(lay ,yyFont, OU ($3), OU ($4), $5, $6, $7,
+ 						      OldFlags($8));
+@@ -1085,7 +1085,7 @@ text_hi_format
+ 				if ($8.f & ONSILKFLAG)
+ 				{
+ 					LayerType *lay = &yyData->Layer[yyData->LayerN +
+-						(($8.f & ONSOLDERFLAG) ? BOTTOM_LAYER : TOP_LAYER)];
++						(($8.f & ONSOLDERFLAG) ? BOTTOM_SILK_LAYER : TOP_SILK_LAYER)];
+ 
+ 					CreateNewText(lay, yyFont, NU ($3), NU ($4), $5, $6, $7, $8);
+ 				}
