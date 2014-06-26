@@ -1,0 +1,18 @@
+Bottom: 9a27f370a41d69a2d22bafeeac4b711d27489dea
+Top:    9a27f370a41d69a2d22bafeeac4b711d27489dea
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-26 21:21:44 +0100
+
+Rename "{component,solder}_silk_layer" and "{top,bottom}_silk_layer"
+
+This will avoid confusion when we start adding "soldermask" layers.
+
+The resulting variables solder_soldermask_layer and component_soldermask_layer
+are not ideal (repeated use of the word solder), so lets start using "top_" and
+"bottom_" to define the board sides. The corresponding new layer names are then
+"top_soldermask_layer" and "bottom_soldermask_layer", which is less confusing.
+
+
+---
+
+
