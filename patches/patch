@@ -3,11 +3,13 @@ Top:    799817db26572836f175d32bdd60ba07cd85538c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 21:12:40 +0100
 
-Split {TOP,BOTTOM}_LAYER into {TOP,BOTTOM}_{SILK_LAYER,SIDE} depending on usage
+Replace {COMPONENT,SOLDER}_LAYER with {TOP,BOTTOM}_{SILK_LAYER,SIDE} depending on usage
 
 We used the previous constants to identify board sides, as well as an offset
-after all copper layers to find the silk-screen layers. Split the usage to
-keep useage as a board SIDE integer and LAYER offset separate.
+at the end of the layer array to find the silk-screen layers.
+
+Split the usage to keep useage as a board SIDE integer and LAYER offset separate,
+and update the old component/solder terminology.
 
 
 ---
