@@ -228,7 +228,7 @@ AdjustTwoLine (bool way)
 struct drc_info
 {
   LineType *line;
-  bool solder;
+  bool bottom;
   jmp_buf env;
 };
 
@@ -249,7 +249,7 @@ drcPad_callback (const BoxType * b, void *cl)
   PadType *pad = (PadType *) b;
   struct drc_info *i = (struct drc_info *) cl;
 
-  if (TEST_FLAG (ONSOLDERFLAG, pad) == i->solder &&
+  if (TEST_FLAG (ONSOLDERFLAG, pad) == i->bottom &&
       !TEST_FLAG (FOUNDFLAG, pad) && LinePadIntersect (i->line, pad))
     longjmp (i->env, 1);
   return 1;
@@ -294,7 +294,7 @@ drc_lines (PointType *end, bool way)
   Coord dx, dy, temp, last, length;
   Coord temp2, last2, length2;
   LineType line1, line2;
-  Cardinal group, comp;
+  Cardinal group, top_group;
   struct drc_info info;
   bool two_lines, x_is_long, blocker;
   PointType ans;
@@ -321,13 +321,13 @@ drc_lines (PointType *end, bool way)
       length = abs (dy);
     }
   group = GetGroupOfLayer (INDEXOFCURRENT);
-  comp = max_group + 10;	/* this out-of-range group might save a call */
-  if (GetLayerGroupNumberByNumber (solder_silk_layer) == group)
-    info.solder = true;
+  top_group = max_group + 10;	/* this out-of-range group might save a call */
+  if (GetLayerGroupNumberByNumber (bottom_silk_layer) == group)
+    info.bottom = true;
   else
     {
-      info.solder = false;
-      comp = GetLayerGroupNumberByNumber (component_silk_layer);
+      info.bottom = false;
+      top_group = GetLayerGroupNumberByNumber (top_silk_layer);
     }
   temp = length;
   /* assume the worst */
@@ -411,7 +411,7 @@ drc_lines (PointType *end, bool way)
 			drcVia_callback, &info);
 	      r_search (PCB->Data->pin_tree, &line1.BoundingBox, NULL,
 			drcVia_callback, &info);
-	      if (info.solder || comp == group)
+	      if (info.bottom || top_group == group)
 		r_search (PCB->Data->pad_tree, &line1.BoundingBox, NULL,
 			  drcPad_callback, &info);
 	      if (two_lines)
@@ -421,7 +421,7 @@ drc_lines (PointType *end, bool way)
 			    drcVia_callback, &info);
 		  r_search (PCB->Data->pin_tree, &line2.BoundingBox, NULL,
 			    drcVia_callback, &info);
-		  if (info.solder || comp == group)
+		  if (info.bottom || top_group == group)
 		    r_search (PCB->Data->pad_tree, &line2.BoundingBox, NULL,
 			      drcPad_callback, &info);
 		}
