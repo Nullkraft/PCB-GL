@@ -1702,8 +1702,8 @@ read_pads(toporouter_t *r, toporouter_layer_t *l, guint layer)
   GList *vlist = NULL;
   toporouter_bbox_t *bbox = NULL;
 
-  guint front = GetLayerGroupNumberByNumber (component_silk_layer);
-  guint back = GetLayerGroupNumberByNumber (solder_silk_layer);
+  guint front = GetLayerGroupNumberByNumber (top_silk_layer);
+  guint back = GetLayerGroupNumberByNumber (bottom_silk_layer);
 
 //  printf("read_pads: front = %d back = %d layer = %d\n", 
 //     front, back, layer);

@@ -472,13 +472,13 @@ assign_eagle_file_suffix (char *dest, int idx)
     default:
       group = GetLayerGroupNumberByNumber(idx);
       nlayers = PCB->LayerGroups.Number[group];
-      if (group == GetLayerGroupNumberByNumber(component_silk_layer))
+      if (group == GetLayerGroupNumberByNumber(top_silk_layer))
 	{
-	  suff = "cmp";
+	  suff = "cmp"; /* "Component layer" */
 	}
-      else if (group == GetLayerGroupNumberByNumber(solder_silk_layer))
+      else if (group == GetLayerGroupNumberByNumber(bottom_silk_layer))
 	{
-	  suff = "sol";
+	  suff = "sol"; /* "Solder layer" */
 	}
       else if (nlayers == 1
 	       && (strcmp (PCB->Data->Layer[idx].Name, "route") == 0 ||
@@ -527,11 +527,11 @@ assign_hackvana_file_suffix (char *dest, int idx)
     default:
       group = GetLayerGroupNumberByNumber(idx);
       nlayers = PCB->LayerGroups.Number[group];
-      if (group == GetLayerGroupNumberByNumber(component_silk_layer))
+      if (group == GetLayerGroupNumberByNumber(top_silk_layer))
       {
         suff = "gtl";
       }
-      else if (group == GetLayerGroupNumberByNumber(solder_silk_layer))
+      else if (group == GetLayerGroupNumberByNumber(bottom_silk_layer))
       {
         suff = "gbl";
       }
@@ -663,8 +663,8 @@ gerber_do_export (HID_Attr_Val * options)
       if (layer->LineN || layer->TextN || layer->ArcN || layer->PolygonN)
 	print_group[GetLayerGroupNumberByNumber (i)] = 1;
     }
-  print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
-  print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
+  print_group[GetLayerGroupNumberByNumber (bottom_silk_layer)] = 1;
+  print_group[GetLayerGroupNumberByNumber (top_silk_layer)] = 1;
   for (i = 0; i < max_copper_layer; i++)
     if (print_group[GetLayerGroupNumberByNumber (i)])
       print_layer[i] = 1;
