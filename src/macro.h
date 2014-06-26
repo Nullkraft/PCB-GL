@@ -152,13 +152,6 @@ extern int mem_any_set (unsigned char *, int);
 	((TEST_FLAG(ONSOLDERFLAG, (o)) != 0) == SWAP_IDENT)
 
 /* ---------------------------------------------------------------------------
- *  Determines if an object is on the given side. side is either BOTTOM_LAYER
- *  or TOP_LAYER.
- */
-#define ON_SIDE(element, side) \
-        (TEST_FLAG (ONSOLDERFLAG, element) == (side == BOTTOM_LAYER))
-
-/* ---------------------------------------------------------------------------
  * some loop shortcuts
  *
  * a pointer is created from index addressing because the base pointer
