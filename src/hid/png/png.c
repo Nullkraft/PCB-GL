@@ -68,11 +68,11 @@ static double bloat = 0;
 static double scale = 1;
 static Coord x_shift = 0;
 static Coord y_shift = 0;
-static int show_solder_side;
+static int show_bottom_side;
 #define SCALE(w)   ((int)round((w)/scale))
 #define SCALE_X(x) ((int)round(((x) - x_shift)/scale))
-#define SCALE_Y(y) ((int)round(((show_solder_side ? (PCB->MaxHeight-(y)) : (y)) - y_shift)/scale))
-#define SWAP_IF_SOLDER(a,b) do { Coord c; if (show_solder_side) { c=a; a=b; b=c; }} while (0)
+#define SCALE_Y(y) ((int)round(((show_bottom_side ? (PCB->MaxHeight-(y)) : (y)) - y_shift)/scale))
+#define SWAP_IF_SOLDER(a,b) do { Coord c; if (show_bottom_side) { c=a; a=b; b=c; }} while (0)
 
 /* Used to detect non-trivial outlines */
 #define NOT_EDGE_X(x) ((x) != 0 && (x) != PCB->MaxWidth)
@@ -502,7 +502,7 @@ png_get_export_options (int *n)
   return png_attribute_list;
 }
 
-static int comp_layer, solder_layer;
+static int top_group, bottom_group;
 
 static int
 group_for_layer (int l)
@@ -524,8 +524,8 @@ layer_sort (const void *va, const void *vb)
 
   if (a >= 0 && a <= max_copper_layer + 1)
     {
-      int aside = (al == solder_layer ? 0 : al == comp_layer ? 2 : 1);
-      int bside = (bl == solder_layer ? 0 : bl == comp_layer ? 2 : 1);
+      int aside = (al == bottom_group ? 0 : al == top_group ? 2 : 1);
+      int bside = (bl == bottom_group ? 0 : bl == top_group ? 2 : 1);
       if (bside != aside)
 	return bside - aside;
     }
@@ -556,7 +556,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 {
   int i;
   static int saved_layer_stack[MAX_LAYER];
-  int saved_show_solder_side;
+  int saved_show_bottom_side;
   BoxType region;
   FlagType save_flags;
 
@@ -581,15 +581,15 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
       if (layer->LineN || layer->TextN || layer->ArcN || layer->PolygonN)
 	print_group[GetLayerGroupNumberByNumber (i)] = 1;
     }
-  print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
-  print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
+  print_group[GetLayerGroupNumberByNumber (bottom_silk_layer)] = 1;
+  print_group[GetLayerGroupNumberByNumber (top_silk_layer)] = 1;
   for (i = 0; i < max_copper_layer; i++)
     if (print_group[GetLayerGroupNumberByNumber (i)])
       print_layer[i] = 1;
 
   memcpy (saved_layer_stack, LayerStack, sizeof (LayerStack));
   save_flags = PCB->Flags;
-  saved_show_solder_side = Settings.ShowSolderSide;
+  saved_show_bottom_side = Settings.ShowBottomSide;
 
   as_shown = options[HA_as_shown].int_value;
   fill_holes = options[HA_fill_holes].int_value;
@@ -597,10 +597,10 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   if (!options[HA_as_shown].int_value)
     {
       CLEAR_FLAG (SHOWMASKFLAG, PCB);
-      Settings.ShowSolderSide = 0;
+      Settings.ShowBottomSide = 0;
 
-      comp_layer = GetLayerGroupNumberByNumber (component_silk_layer);
-      solder_layer = GetLayerGroupNumberByNumber (solder_silk_layer);
+      top_group = GetLayerGroupNumberByNumber (top_silk_layer);
+      bottom_group = GetLayerGroupNumberByNumber (bottom_silk_layer);
       qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_sort);
 
       CLEAR_FLAG(THINDRAWFLAG, PCB);
@@ -611,19 +611,19 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 	  int i, n=0;
 	  SET_FLAG (SHOWMASKFLAG, PCB);
 	  photo_has_inners = 0;
-	  if (comp_layer < solder_layer)
-	    for (i = comp_layer; i <= solder_layer; i++)
+	  if (top_group < bottom_group)
+	    for (i = top_group; i <= bottom_group; i++)
 	      {
 		photo_groups[n++] = i;
-		if (i != comp_layer && i != solder_layer
+		if (i != top_group && i != bottom_group
 		    && ! IsLayerGroupEmpty (i))
 		  photo_has_inners = 1;
 	      }
 	  else
-	    for (i = comp_layer; i >= solder_layer; i--)
+	    for (i = top_group; i >= bottom_group; i--)
 	      {
 		photo_groups[n++] = i;
-		if (i != comp_layer && i != solder_layer
+		if (i != top_group && i != bottom_group
 		    && ! IsLayerGroupEmpty (i))
 		  photo_has_inners = 1;
 	      }
@@ -649,11 +649,11 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   lastbrush = (gdImagePtr)((void *) -1);
   lastcap = -1;
   lastgroup = -1;
-  show_solder_side = Settings.ShowSolderSide;
+  show_bottom_side = Settings.ShowBottomSide;
 
   in_mono = options[HA_mono].int_value;
 
-  if (!photo_mode && Settings.ShowSolderSide)
+  if (!photo_mode && Settings.ShowBottomSide)
     {
       int i, j;
       for (i=0, j=max_copper_layer-1; i<j; i++, j--)
@@ -668,7 +668,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
   PCB->Flags = save_flags;
-  Settings.ShowSolderSide = saved_show_solder_side;
+  Settings.ShowBottomSide = saved_show_bottom_side;
 }
 
 static void
@@ -1717,7 +1717,7 @@ png_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
    */
   start_angle = 180 - start_angle;
   delta_angle = -delta_angle;
-  if (show_solder_side)
+  if (show_bottom_side)
     {
       start_angle = - start_angle;
       delta_angle = -delta_angle;
