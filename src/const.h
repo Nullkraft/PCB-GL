@@ -39,8 +39,10 @@
  * the layer-numbers of the two additional special layers
  * 'top' and 'bottom'. The offset of MAX_LAYER is not added
  */
-#define	BOTTOM_LAYER		0
-#define	TOP_LAYER		1
+#define	BOTTOM_SILK_LAYER	0
+#define	TOP_SILK_LAYER		1
+#define	BOTTOM_SOLDERMASK_LAYER	2
+#define	TOP_SOLDERMASK_LAYER	3
 
 /* ---------------------------------------------------------------------------
  * misc constants
