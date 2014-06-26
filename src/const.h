@@ -36,11 +36,18 @@
 #include "globalconst.h"
 
 /* ---------------------------------------------------------------------------
+ * integer codings for the board sides.
+ */
+#define BOTTOM_SIDE             0
+#define TOP_SIDE                1
+
+
+/* ---------------------------------------------------------------------------
  * the layer-numbers of the two additional special layers
  * 'top' and 'bottom'. The offset of MAX_LAYER is not added
  */
-#define	BOTTOM_LAYER		0
-#define	TOP_LAYER		1
+#define BOTTOM_SILK_LAYER       0
+#define TOP_SILK_LAYER          1
 
 /* ---------------------------------------------------------------------------
  * misc constants
