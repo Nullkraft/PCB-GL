@@ -639,7 +639,7 @@ MoveTextToLayerLowLevel (LayerType *Source, TextType *text,
   Destination->Text = g_list_append (Destination->Text, text);
   Destination->TextN ++;
 
-  if (GetLayerGroupNumberByNumber (solder_silk_layer) ==
+  if (GetLayerGroupNumberByNumber (bottom_silk_layer) ==
       GetLayerGroupNumberByPointer (Destination))
     SET_FLAG (ONSOLDERFLAG, text);
   else
@@ -908,22 +908,22 @@ move_all_thermals (int old_index, int new_index)
 }
 
 static int
-LastLayerInComponentGroup (int layer)
+LastLayerInTopGroup (int layer)
 {
-  int cgroup = GetLayerGroupNumberByNumber(component_silk_layer);
+  int top_group = GetLayerGroupNumberByNumber(top_silk_layer);
   int lgroup = GetLayerGroupNumberByNumber(layer);
-  if (cgroup == lgroup
+  if (top_group == lgroup
       && PCB->LayerGroups.Number[lgroup] == 2)
     return 1;
   return 0;
 }
 
 static int
-LastLayerInSolderGroup (int layer)
+LastLayerInBottomGroup (int layer)
 {
-  int sgroup = GetLayerGroupNumberByNumber(solder_silk_layer);
+  int bottom_group = GetLayerGroupNumberByNumber(bottomsilk_layer);
   int lgroup = GetLayerGroupNumberByNumber(layer);
-  if (sgroup == lgroup
+  if (bottom_group == lgroup
       && PCB->LayerGroups.Number[lgroup] == 2)
     return 1;
   return 0;
@@ -955,14 +955,14 @@ MoveLayer (int old_index, int new_index)
     return 0;
 
   if (new_index == -1
-      && LastLayerInComponentGroup (old_index))
+      && LastLayerInTopGroup (old_index))
     {
       gui->confirm_dialog ("You can't delete the last top-side layer\n", "Ok", NULL);
       return 1;
     }
 
   if (new_index == -1
-      && LastLayerInSolderGroup (old_index))
+      && LastLayerInBottomGroup (old_index))
     {
       gui->confirm_dialog ("You can't delete the last bottom-side layer\n", "Ok", NULL);
       return 1;
