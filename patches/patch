@@ -3,15 +3,11 @@ Top:    938b7b3c8fbeb5be67b89fe70f57bd9531bf1282
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 21:12:40 +0100
 
-Add support for a two soldermask layers, defining regions of removed mask
+Split {TOP,BOTTOM}_LAYER into {TOP,BOTTOM}_{SILK_LAYER,SIDE} depending on usage
 
-File-format wise, these work similarly to how silk layers are supported now:
-
-Layer (1 to n "[NAME]")     # "ordinary" design layers
-Layer (n+1 "silk")          # top side
-Layer (n+2 "silk")          # bottom side
-Layer (n+3 "soldermask")    # top side
-Layer (n+4 "soldermask")    # bottom side
+We used the previous constants to identify board sides, as well as an offset
+after all copper layers to find the silk-screen layers. Split the usage to
+keep useage as a board SIDE integer and LAYER offset separate.
 
 
 ---
