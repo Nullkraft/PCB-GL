@@ -1,0 +1,27 @@
+Bottom: 4bbcb14e0681aad0a350fedd37f6fa80dd36ffe4
+Top:    18ba257f7e324bd157990032d7bc04a6bbabdf1e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-26 23:24:17 +0100
+
+Refresh of remove-on_side-macro
+
+---
+
+diff --git a/src/macro.h b/src/macro.h
+index 1b352e3..6fe625f 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -152,13 +152,6 @@ extern int mem_any_set (unsigned char *, int);
+ 	((TEST_FLAG(ONSOLDERFLAG, (o)) != 0) == SWAP_IDENT)
+ 
+ /* ---------------------------------------------------------------------------
+- *  Determines if an object is on the given side. side is either BOTTOM_LAYER
+- *  or TOP_LAYER.
+- */
+-#define ON_SIDE(element, side) \
+-        (TEST_FLAG (ONSOLDERFLAG, element) == (side == BOTTOM_LAYER))
+-
+-/* ---------------------------------------------------------------------------
+  * some loop shortcuts
+  *
+  * a pointer is created from index addressing because the base pointer
