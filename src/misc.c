@@ -1019,7 +1019,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
             case 'C':
             case 't':
             case 'T':
-              layer = LayerN + TOP_LAYER;
+              layer = LayerN + TOP_SILK_LAYER;
               c_set = true;
               break;
 
@@ -1027,7 +1027,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
             case 'S':
             case 'b':
             case 'B':
-              layer = LayerN + BOTTOM_LAYER;
+              layer = LayerN + BOTTOM_SILK_LAYER;
               s_set = true;
               break;
 
@@ -1037,7 +1037,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
               layer = atoi (s) - 1;
               break;
             }
-          if (layer > LayerN + MAX (BOTTOM_LAYER, TOP_LAYER) ||
+          if (layer >= LayerN + 2 ||
               member >= LayerN + 1)
             goto error;
           groupnum[layer] = group;
@@ -1058,11 +1058,11 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
     }
   if (!s_set)
     LayerGroup->Entries[BOTTOM_LAYER][LayerGroup->Number[BOTTOM_LAYER]++] =
-      LayerN + BOTTOM_LAYER;
+      LayerN + BOTTOM_SILK_LAYER;
   if (!c_set)
     LayerGroup->
       Entries[TOP_LAYER][LayerGroup->Number[TOP_LAYER]++] =
-      LayerN + TOP_LAYER;
+      LayerN + TOP_SILK_LAYER;
 
   for (layer = 0; layer < LayerN && group < LayerN; layer++)
     if (groupnum[layer] == -1)
