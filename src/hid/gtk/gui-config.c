@@ -1615,7 +1615,7 @@ edit_layer_button_cb(GtkWidget *widget, gchar *data)
 {
 	gchar	**argv;
 
-	if (PCB->RatDraw || PCB->SilkActive)
+	if (PCB->RatDraw || PCB->SilkActive || PCB->SolderMaskActive)
 		return;
 
 	argv = g_strsplit(data, ",", -1);
