@@ -37,10 +37,10 @@
 
 /* ---------------------------------------------------------------------------
  * the layer-numbers of the two additional special layers
- * 'component' and 'solder'. The offset of MAX_LAYER is not added
+ * 'top' and 'bottom'. The offset of MAX_LAYER is not added
  */
-#define	SOLDER_LAYER		0
-#define	COMPONENT_LAYER		1
+#define	BOTTOM_LAYER		0
+#define	TOP_LAYER		1
 
 /* ---------------------------------------------------------------------------
  * misc constants
