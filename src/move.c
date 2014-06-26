@@ -921,7 +921,7 @@ LastLayerInTopGroup (int layer)
 static int
 LastLayerInBottomGroup (int layer)
 {
-  int bottom_group = GetLayerGroupNumberByNumber(bottomsilk_layer);
+  int bottom_group = GetLayerGroupNumberByNumber(bottom_silk_layer);
   int lgroup = GetLayerGroupNumberByNumber(layer);
   if (bottom_group == lgroup
       && PCB->LayerGroups.Number[lgroup] == 2)
