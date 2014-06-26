@@ -243,7 +243,7 @@ XORDrawElement (ElementType *Element, Coord DX, Coord DY)
   PAD_LOOP (Element);
   {
     if (PCB->InvisibleObjectsOn ||
-        (TEST_FLAG (ONSOLDERFLAG, pad) != 0) == Settings.ShowSolderSide)
+        (TEST_FLAG (ONSOLDERFLAG, pad) != 0) == Settings.ShowBottomSide)
       {
         /* Make a copy of the pad structure, moved to the correct position */
         PadType moved_pad = *pad;
@@ -990,7 +990,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
       PadType *pad = (PadType *) ptr2;
       LayerType *desired_layer;
       Cardinal desired_group;
-      Cardinal SLayer, CLayer;
+      Cardinal bottom_group, top_group;
       int found_our_layer = false;
 
       desired_layer = CURRENT;
@@ -1000,10 +1000,10 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
           desired_layer = (LayerType *)Crosshair.AttachedObject.Ptr1;
         }
 
-      /* find layer groups of the component side and solder side */
-      SLayer = GetLayerGroupNumberByNumber (solder_silk_layer);
-      CLayer = GetLayerGroupNumberByNumber (component_silk_layer);
-      desired_group = TEST_FLAG (ONSOLDERFLAG, pad) ? SLayer : CLayer;
+      /* find layer groups of the top side and bottom side */
+      bottom_group = GetLayerGroupNumberByNumber (bottom_silk_layer);
+      top_group    = GetLayerGroupNumberByNumber (top_silk_layer);
+      desired_group = TEST_FLAG (ONSOLDERFLAG, pad) ? bottom_group : top_group;
 
       GROUP_LOOP (PCB->Data, desired_group);
       {
