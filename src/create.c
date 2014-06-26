@@ -154,6 +154,7 @@ CreateNewPCB (bool SetDefaultNames)
   ptr->ThermStyle = 4;
   ptr->IsleArea = 2.e8;
   ptr->SilkActive = false;
+  ptr->SolderMaskActive = false;
   ptr->RatDraw = false;
   SET_FLAG (NAMEONPCBFLAG, ptr);
   if (Settings.ShowNumber)
@@ -223,8 +224,10 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
       if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, DEF_LAYER))
 	return 1;
 
-      pcb->Data->Layer[top_silk_layer].Name = strdup ("silk");
-      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("silk");
+      pcb->Data->Layer[top_silk_layer].Name = strdup ("top silk");
+      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("bottom silk");
+      pcb->Data->Layer[top_soldermask_layer].Name = strdup ("top soldermask");
+      pcb->Data->Layer[bottom_soldermask_layer].Name = strdup ("bottom soldermask");
     }
   return 0;
 }
