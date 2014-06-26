@@ -156,7 +156,7 @@ extern int mem_any_set (unsigned char *, int);
  *  or TOP_GROUP.
  */
 #define ON_SIDE(element, side) \
-        (TEST_FLAG (ONSOLDERFLAG, element) == (side == BOTTOM_GROUP))
+        (TEST_FLAG (ONSOLDERFLAG, element) == (side == BOTTOM_SIDE))
 
 /* ---------------------------------------------------------------------------
  * some loop shortcuts
