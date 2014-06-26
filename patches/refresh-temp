@@ -1,0 +1,24 @@
+Bottom: 9a27f370a41d69a2d22bafeeac4b711d27489dea
+Top:    5ca0151b712404697f58ced4dd84c50483020263
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-26 21:13:32 +0100
+
+Refresh of patch
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index e496820..83bac07 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -1386,7 +1386,9 @@ NotifyMode (void)
+ 		int flag = CLEARLINEFLAG;
+ 
+ 		if (GetLayerGroupNumberByNumber (INDEXOFCURRENT) ==
+-		    GetLayerGroupNumberByNumber (solder_silk_layer))
++		    GetLayerGroupNumberByNumber (solder_silk_layer) ||
++		    GetLayerGroupNumberByNumber (INDEXOFCURRENT) ==
++		    GetLayerGroupNumberByNumber (bottom_soldermask_layer))
+ 		  flag |= ONSOLDERFLAG;
+ 		if ((text = CreateNewText (CURRENT, &PCB->Font, Note.X,
+ 					   Note.Y, 0, Settings.TextScale,
