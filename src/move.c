@@ -910,7 +910,7 @@ move_all_thermals (int old_index, int new_index)
 static int
 LastLayerInTopGroup (int layer)
 {
-  int top_group = GetLayerGroupNumberByNumber(max_group + TOP_LAYER);
+  int top_group = GetLayerGroupNumberByNumber(top_silk_layer);
   int lgroup = GetLayerGroupNumberByNumber(layer);
   if (top_group == lgroup
       && PCB->LayerGroups.Number[lgroup] == 2)
@@ -921,7 +921,7 @@ LastLayerInTopGroup (int layer)
 static int
 LastLayerInBottomGroup (int layer)
 {
-  int bottom_group = GetLayerGroupNumberByNumber(max_group + BOTTOM_LAYER);
+  int bottom_group = GetLayerGroupNumberByNumber(bottom_silk_layer);
   int lgroup = GetLayerGroupNumberByNumber(layer);
   if (bottom_group == lgroup
       && PCB->LayerGroups.Number[lgroup] == 2)
