@@ -1,5 +1,5 @@
 Bottom: 799817db26572836f175d32bdd60ba07cd85538c
-Top:    d5820dd1b6d9da43d13b33e6b6ed4d395225239c
+Top:    c0d14cdb6d211a64403d4761d1d1b53b6a488393
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 21:21:44 +0100
 
@@ -1669,7 +1669,7 @@ index 064c3e4..b23a6f2 100644
                  *cp++ = 's';
                }
 diff --git a/src/move.c b/src/move.c
-index cf2ab88..42b077c 100644
+index cf2ab88..c9e8628 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -639,7 +639,7 @@ MoveTextToLayerLowLevel (LayerType *Source, TextType *text,
@@ -1703,7 +1703,7 @@ index cf2ab88..42b077c 100644
 +LastLayerInBottomGroup (int layer)
  {
 -  int sgroup = GetLayerGroupNumberByNumber(solder_silk_layer);
-+  int bottom_group = GetLayerGroupNumberByNumber(bottomsilk_layer);
++  int bottom_group = GetLayerGroupNumberByNumber(bottom_silk_layer);
    int lgroup = GetLayerGroupNumberByNumber(layer);
 -  if (sgroup == lgroup
 +  if (bottom_group == lgroup
