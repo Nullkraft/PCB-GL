@@ -152,11 +152,11 @@ PerturbationType;
 static void
 UpdateXY (NetListType *Nets)
 {
-  Cardinal SLayer, CLayer;
+  Cardinal bottom_group, top_group;
   Cardinal i, j;
-  /* find layer groups of the component side and solder side */
-  SLayer = GetLayerGroupNumberByNumber (solder_silk_layer);
-  CLayer = GetLayerGroupNumberByNumber (component_silk_layer);
+  /* find layer groups of the top and bottom sides */
+  bottom_group = GetLayerGroupNumberByNumber (bottom_silk_layer);
+  top_group    = GetLayerGroupNumberByNumber (top_silk_layer);
   /* update all nets */
   for (i = 0; i < Nets->NetN; i++)
     {
@@ -167,13 +167,13 @@ UpdateXY (NetListType *Nets)
 	    {
 	    case PAD_TYPE:
 	      c->group = TEST_FLAG (ONSOLDERFLAG,
-				    (ElementType *) c->ptr1)
-		? SLayer : CLayer;
+	                            (ElementType *) c->ptr1)
+	        ? bottom_group : top_group;
 	      c->X = ((PadType *) c->ptr2)->Point1.X;
 	      c->Y = ((PadType *) c->ptr2)->Point1.Y;
 	      break;
 	    case PIN_TYPE:
-	      c->group = SLayer;	/* any layer will do */
+	      c->group = bottom_group;  /* any layer will do */
 	      c->X = ((PinType *) c->ptr2)->X;
 	      c->Y = ((PinType *) c->ptr2)->Y;
 	      break;
@@ -206,21 +206,21 @@ collectSelectedElements ()
 
 #if 0				/* only for debugging box lists */
 #include "create.h"
-/* makes a line on the solder layer surrounding all boxes in blist */
+/* makes a line on the bottom silk layer surrounding all boxes in blist */
 static void
 showboxes (BoxListType *blist)
 {
   Cardinal i;
-  LayerType *SLayer = &(PCB->Data->Layer[solder_silk_layer]);
+  LayerType *layer = &(PCB->Data->Layer[bottom_silk_layer]);
   for (i = 0; i < blist->BoxN; i++)
     {
-      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,
+      CreateNewLineOnLayer (layer, blist->Box[i].X1, blist->Box[i].Y1,
 			    blist->Box[i].X2, blist->Box[i].Y1, 1, 1, 0);
-      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y2,
+      CreateNewLineOnLayer (layer, blist->Box[i].X1, blist->Box[i].Y2,
 			    blist->Box[i].X2, blist->Box[i].Y2, 1, 1, 0);
-      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,
+      CreateNewLineOnLayer (layer, blist->Box[i].X1, blist->Box[i].Y1,
 			    blist->Box[i].X1, blist->Box[i].Y2, 1, 1, 0);
-      CreateNewLineOnLayer (SLayer, blist->Box[i].X2, blist->Box[i].Y1,
+      CreateNewLineOnLayer (layer, blist->Box[i].X2, blist->Box[i].Y1,
 			    blist->Box[i].X2, blist->Box[i].Y2, 1, 1, 0);
     }
 }
