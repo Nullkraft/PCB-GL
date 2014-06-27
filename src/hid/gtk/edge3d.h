@@ -14,8 +14,8 @@ typedef struct
   float radius;
 
   /* STEP crap - to hell with encapsulation */
-  int infinite_line_identifier;
-  int edge_identifier;
+  step_id infinite_line_identifier;
+  step_id edge_identifier;
 } edge_info;
 
 edge_info *make_edge_info (void);

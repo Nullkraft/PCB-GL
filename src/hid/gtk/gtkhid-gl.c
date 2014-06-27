@@ -15,6 +15,7 @@
 #include "gui-pinout-preview.h"
 #include "pcb-printf.h"
 
+#include "step.h"
 #include "quad.h"
 #include "vertex3d.h"
 #include "contour3d.h"
