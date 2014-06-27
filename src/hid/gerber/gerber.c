@@ -413,7 +413,7 @@ gerber_get_export_options (int *n)
 static int
 group_for_layer (int l)
 {
-  if (l < max_copper_layer + 2 && l >= 0)
+  if (l < max_copper_layer + EXTRA_LAYERS && l >= 0)
     return GetLayerGroupNumberByNumber (l);
   /* else something unique */
   return max_group + 3 + l;
@@ -593,7 +593,7 @@ gerber_do_export (HID_Attr_Val * options)
   const char *fnbase;
   int i;
   static int saved_layer_stack[MAX_LAYER];
-  int save_ons[MAX_LAYER + 2];
+  int save_ons[MAX_LAYER + EXTRA_LAYERS];
   FlagType save_thindraw;
 
   save_thindraw = PCB->Flags;
