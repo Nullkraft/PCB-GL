@@ -1,5 +1,5 @@
-Bottom: 8fa7c20e4cc121ba2c2073d63c1b9a5ebdf674af
-Top:    a555f0a7acdf23b66274cc4ef7645f552a98d0f5
+Bottom: e8ccc2044764be8e10a1e020b13a7ad622e717cb
+Top:    9bda1935a24762c6c08f0ac2538b63be8401dfc8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-05 18:44:15 +0100
 
@@ -11,10 +11,10 @@ Ok, this is nasty.. I'm obscuring setting of the global varaible... be careful!
 ---
 
 diff --git a/src/find.c b/src/find.c
-index c85a8ab..ac8e01d 100644
+index 2a20618..7980090 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3324,9 +3324,10 @@ struct drc_info
+@@ -3327,9 +3327,10 @@ struct drc_info
  static void
  start_do_it_and_dump (int type, void *ptr1, void *ptr2, void *ptr3,
                        int flag, bool AndDraw,
@@ -26,7 +26,7 @@ index c85a8ab..ac8e01d 100644
    ListStart (type, ptr1, ptr2, ptr3, flag);
    DoIt (flag, true, AndDraw);
    DumpList ();
-@@ -3348,7 +3349,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3351,7 +3352,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
  
    if (PCB->Shrink != 0)
      {
@@ -35,7 +35,7 @@ index c85a8ab..ac8e01d 100644
        /* ok now the shrunk net has the SELECTEDFLAG set */
        ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
        Bloat = 0;
-@@ -3359,10 +3360,8 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3362,10 +3363,8 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
            /* make the flag changes undoable */
            ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
            User = true;
@@ -48,7 +48,7 @@ index c85a8ab..ac8e01d 100644
            User = false;
            drc = false;
            drcerr_count++;
-@@ -3392,9 +3391,8 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3395,9 +3394,8 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
        DumpList ();
      }
    /* now check the bloated condition */
@@ -59,7 +59,7 @@ index c85a8ab..ac8e01d 100644
    flag = FOUNDFLAG;
    ListStart (What, ptr1, ptr2, ptr3, flag);
    Bloat = PCB->Bloat;
-@@ -3405,10 +3403,10 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3408,10 +3406,10 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
        /* make the flag changes undoable */
        ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
        User = true;
@@ -73,7 +73,7 @@ index c85a8ab..ac8e01d 100644
        drcerr_count++;
        LocateError (&x, &y);
        BuildObjectList (&object_count, &object_id_list, &object_type_list);
-@@ -3427,15 +3425,13 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3430,15 +3428,13 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
        pcb_drc_violation_free (violation);
        free (object_id_list);
        free (object_type_list);

@@ -1,5 +1,5 @@
-Bottom: 2f24440b6739ce33909bc30000a19112ce6f04d5
-Top:    24f641a4c67d2a03f34b63ca5209c7b589257f94
+Bottom: 2310009556c151e7946c70b6be58b2ddf24ae892
+Top:    ae392971e0fc56483cd5df8fcbdcacff8c62094e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-05 18:44:15 +0100
 
@@ -9,10 +9,10 @@ find.c: Refactor some common sequences into a helper function
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 778ab16..a20ed44 100644
+index bfc0e14..c765bb1 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3321,6 +3321,15 @@ struct drc_info
+@@ -3324,6 +3324,15 @@ struct drc_info
    int flag;
  };
  
@@ -28,7 +28,7 @@ index 778ab16..a20ed44 100644
  /*-----------------------------------------------------------------------------
   * Check for DRC violations on a single net starting from the pad or pin
   * sees if the connectivity changes when everything is bloated, or shrunk
-@@ -3338,10 +3347,8 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3341,10 +3350,8 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
    if (PCB->Shrink != 0)
      {
        Bloat = -PCB->Shrink;
@@ -40,7 +40,7 @@ index 778ab16..a20ed44 100644
        ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
        Bloat = 0;
        drc = true;               /* abort the search if we find anything not already found */
-@@ -3353,14 +3360,10 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3356,14 +3363,10 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
            User = true;
            drc = false;
            Bloat = -PCB->Shrink;
@@ -57,7 +57,7 @@ index 778ab16..a20ed44 100644
            User = false;
            drc = false;
            drcerr_count++;
-@@ -3393,9 +3396,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3396,9 +3399,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
    drc = false;
    ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
    Bloat = 0;
@@ -68,7 +68,7 @@ index 778ab16..a20ed44 100644
    flag = FOUNDFLAG;
    ListStart (What, ptr1, ptr2, ptr3, flag);
    Bloat = PCB->Bloat;
-@@ -3408,14 +3409,10 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3411,14 +3412,10 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
        User = true;
        drc = false;
        Bloat = 0;
@@ -85,7 +85,7 @@ index 778ab16..a20ed44 100644
        drcerr_count++;
        LocateError (&x, &y);
        BuildObjectList (&object_count, &object_id_list, &object_type_list);
-@@ -3443,9 +3440,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3446,9 +3443,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
        /* highlight the rest of the encroaching net so it's not reported again */
        flag = FOUNDFLAG | SELECTEDFLAG;
        Bloat = 0;

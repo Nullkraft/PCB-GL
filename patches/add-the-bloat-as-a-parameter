@@ -1,5 +1,5 @@
-Bottom: 24f641a4c67d2a03f34b63ca5209c7b589257f94
-Top:    8fa7c20e4cc121ba2c2073d63c1b9a5ebdf674af
+Bottom: ae392971e0fc56483cd5df8fcbdcacff8c62094e
+Top:    e8ccc2044764be8e10a1e020b13a7ad622e717cb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-05 18:44:15 +0100
 
@@ -11,10 +11,10 @@ Ok, this is nasty.. I'm obscuring setting of the global varaible... be careful!
 ---
 
 diff --git a/src/find.c b/src/find.c
-index a20ed44..c85a8ab 100644
+index c765bb1..2a20618 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3323,8 +3323,10 @@ struct drc_info
+@@ -3326,8 +3326,10 @@ struct drc_info
  
  static void
  start_do_it_and_dump (int type, void *ptr1, void *ptr2, void *ptr3,
@@ -26,7 +26,7 @@ index a20ed44..c85a8ab 100644
    ListStart (type, ptr1, ptr2, ptr3, flag);
    DoIt (flag, true, AndDraw);
    DumpList ();
-@@ -3346,8 +3348,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3349,8 +3351,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
  
    if (PCB->Shrink != 0)
      {
@@ -36,7 +36,7 @@ index a20ed44..c85a8ab 100644
        /* ok now the shrunk net has the SELECTEDFLAG set */
        ListStart (What, ptr1, ptr2, ptr3, FOUNDFLAG);
        Bloat = 0;
-@@ -3359,11 +3360,9 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3362,11 +3363,9 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
            ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
            User = true;
            drc = false;
@@ -50,7 +50,7 @@ index a20ed44..c85a8ab 100644
            User = false;
            drc = false;
            drcerr_count++;
-@@ -3395,8 +3394,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3398,8 +3397,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
    /* now check the bloated condition */
    drc = false;
    ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
@@ -60,7 +60,7 @@ index a20ed44..c85a8ab 100644
    flag = FOUNDFLAG;
    ListStart (What, ptr1, ptr2, ptr3, flag);
    Bloat = PCB->Bloat;
-@@ -3408,11 +3406,9 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3411,11 +3409,9 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
        ClearFlagOnAllObjects (false, FOUNDFLAG | SELECTEDFLAG);
        User = true;
        drc = false;
@@ -74,7 +74,7 @@ index a20ed44..c85a8ab 100644
        drcerr_count++;
        LocateError (&x, &y);
        BuildObjectList (&object_count, &object_id_list, &object_type_list);
-@@ -3439,8 +3435,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3442,8 +3438,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
        Undo (true);
        /* highlight the rest of the encroaching net so it's not reported again */
        flag = FOUNDFLAG | SELECTEDFLAG;
