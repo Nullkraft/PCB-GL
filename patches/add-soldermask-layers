@@ -1,5 +1,5 @@
 Bottom: 3fae07ed3c6fdf10454a4a6928df490b3095b605
-Top:    1c26e2db63c02bf6aa1e1391dcdf9405ec573254
+Top:    1cf63fe68290c03711ca9f2ee0d393ad3932485b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 23:38:01 +0100
 
@@ -39,10 +39,30 @@ index 67eb72d..5ee3bc6 100644
  /* ---------------------------------------------------------------------------
   * misc constants
 diff --git a/src/create.c b/src/create.c
-index 5ea94c8..982c3a3 100644
+index 5ea94c8..6b0865d 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -154,6 +154,7 @@ CreateNewPCB (bool SetDefaultNames)
+@@ -119,6 +119,7 @@ pcb_colors_from_settings (PCBType *ptr)
+   ptr->ViaSelectedColor = Settings.ViaSelectedColor;
+   ptr->WarnColor = Settings.WarnColor;
+   ptr->MaskColor = Settings.MaskColor;
++  ptr->MaskSelectedColor = Settings.MaskSelectedColor;
+   for (i = 0; i < MAX_LAYER; i++)
+     {
+       ptr->Data->Layer[i].Color = Settings.LayerColor[i];
+@@ -134,6 +135,11 @@ pcb_colors_from_settings (PCBType *ptr)
+     Settings.ElementColor : Settings.InvisibleObjectsColor;
+   ptr->Data->Layer[bottom_silk_layer].SelectedColor =
+     Settings.ElementSelectedColor;
++
++  ptr->Data->Layer[top_soldermask_layer].Color = Settings.MaskColor;
++  ptr->Data->Layer[top_soldermask_layer].SelectedColor = Settings.MaskSelectedColor;
++  ptr->Data->Layer[bottom_soldermask_layer].Color = Settings.MaskColor;
++  ptr->Data->Layer[bottom_soldermask_layer].SelectedColor = Settings.MaskSelectedColor;
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -154,6 +160,7 @@ CreateNewPCB (bool SetDefaultNames)
    ptr->ThermStyle = 4;
    ptr->IsleArea = 2.e8;
    ptr->SilkActive = false;
@@ -50,7 +70,7 @@ index 5ea94c8..982c3a3 100644
    ptr->RatDraw = false;
    SET_FLAG (NAMEONPCBFLAG, ptr);
    if (Settings.ShowNumber)
-@@ -223,8 +224,10 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
+@@ -223,8 +230,10 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
        if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, DEF_LAYER))
  	return 1;
  
@@ -90,7 +110,7 @@ index dee6bea..f675c43 100644
    r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
    r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
 diff --git a/src/global.h b/src/global.h
-index d168a46..f5cc05e 100644
+index d168a46..99b67d9 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -490,6 +490,7 @@ typedef struct PCBType
@@ -101,6 +121,24 @@ index d168a46..f5cc05e 100644
      RatDraw;			 /* we're drawing rats */
    char *ViaColor,		/* some colors */
     *ViaSelectedColor,
+@@ -501,7 +502,7 @@ typedef struct PCBType
+     *InvisibleObjectsColor,
+     *InvisibleMarkColor,
+     *ElementSelectedColor,
+-    *RatSelectedColor, *ConnectedColor, *FoundColor, *WarnColor, *MaskColor;
++    *RatSelectedColor, *ConnectedColor, *FoundColor, *WarnColor, *MaskColor, *MaskSelectedColor;
+   long CursorX,			/* cursor position as saved with layout */
+     CursorY, Clipping;
+   Coord Bloat,			/* drc sizes saved with layout */
+@@ -636,7 +637,7 @@ typedef struct			/* some resources... */
+     *OffLimitColor,
+     *GridColor,
+     *LayerColor[MAX_LAYER],
+-    *LayerSelectedColor[MAX_LAYER], *WarnColor, *MaskColor;
++    *LayerSelectedColor[MAX_LAYER], *WarnColor, *MaskColor, *MaskSelectedColor;
+   Coord ViaThickness,		/* some preset values */
+     ViaDrillingHole, LineThickness, RatThickness, Keepaway,	/* default size of a new layout */
+     MaxWidth, MaxHeight,
 diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
 index ed79d50..6000a2e 100644
 --- a/src/hid/gtk/gui-config.c
@@ -280,6 +318,26 @@ index 8ef45bc..a34693a 100644
  
  
  /* ---------------------------------------------------------------------------
+diff --git a/src/main.c b/src/main.c
+index 9521397..26334b2 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -861,6 +861,15 @@ Color of the mask layer. Default value is @code{"#ff0000"}
+ */
+   COLOR (MaskColor, "#ff0000", "mask-color", "color for solder mask"),
+ 
++/* %start-doc options "3 Colors"
++@ftable @code
++@item --mask-color <string>
++Color of the mask layer. Default value is @code{"#ff0000"}
++@end ftable
++%end-doc
++*/
++  COLOR (MaskSelectedColor, "#00ffff", "mask-selected-color", "color of selected solder mask cutouts"),
++
+ 
+ /* %start-doc options "5 Sizes"
+ All parameters should be given with an unit. If no unit is given, 1/100 mil
 diff --git a/src/misc.c b/src/misc.c
 index ab98370..4a65766 100644
 --- a/src/misc.c
