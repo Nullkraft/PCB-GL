@@ -1,0 +1,64 @@
+Bottom: 833d291a62c611b3c887f09b04d58ec640dda9df
+Top:    1c26e2db63c02bf6aa1e1391dcdf9405ec573254
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-27 03:57:19 +0100
+
+Refresh of add-soldermask-layers
+
+---
+
+diff --git a/src/search.c b/src/search.c
+index 5f4ea5e..7e9af2c 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -1234,18 +1234,26 @@ SearchObjectByLocation (unsigned Type,
+       HigherAvail = ELEMENT_TYPE;
+     }
+ 
+-  for (i = -1; i < max_copper_layer + 1; i++)
++  for (i = -2; i < max_copper_layer + 2; i++)
+     {
+-      if (i < 0)
++      if (i == -2)
++	SearchLayer = &PCB->Data->SOLDERMASKLAYER;
++      else if (i == -1)
+ 	SearchLayer = &PCB->Data->SILKLAYER;
+       else if (i < max_copper_layer)
+ 	SearchLayer = LAYER_ON_STACK (i);
+-      else
++      else if (i == max_copper_layer)
+ 	{
+ 	  SearchLayer = &PCB->Data->BACKSILKLAYER;
+ 	  if (!PCB->InvisibleObjectsOn)
+ 	    continue;
+ 	}
++      else if (i == max_copper_layer + 1)
++	{
++	  SearchLayer = &PCB->Data->BACKSOLDERMASKLAYER;
++	  if (!PCB->InvisibleObjectsOn)
++	    continue;
++	}
+       if (SearchLayer->On)
+ 	{
+ 	  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
+diff --git a/src/select.c b/src/select.c
+index 021453f..b684819 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -245,6 +245,16 @@ SelectBlock (BoxType *Box, bool select)
+ 	if (! (PCB->InvisibleObjectsOn || !select))
+ 	  continue;
+       }
++    if (layer == & PCB->Data->SOLDERMASKLAYER)
++      {
++	if (! (TEST_FLAG (SHOWMASKFLAG, PCB) || !select))
++	  continue;
++      }
++    if (layer == & PCB->Data->BACKSOLDERMASKLAYER)
++      {
++	if (! (TEST_FLAG (SHOWMASKFLAG, PCB) || !select))
++	  continue;
++      }
+     else
+       if (! (layer->On || !select))
+ 	continue;
