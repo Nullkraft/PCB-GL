@@ -397,11 +397,7 @@ typedef struct			/* holds all objects */
   rtree_t *via_tree, *element_tree, *pin_tree, *pad_tree, *name_tree[3],	/* for element names */
    *rat_tree;
   struct PCBType *pcb;
-<<<<<<< current
   LayerType Layer[MAX_LAYER + EXTRA_LAYERS];
-=======
-  LayerType Layer[MAX_LAYER + EXTRA_LAYERS];	/* add 2 silkscreen layers and 2 soldermask layers */
->>>>>>> patched
   int polyClip;
 } DataType;
 
