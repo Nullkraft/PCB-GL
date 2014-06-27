@@ -1,4 +1,4 @@
-Bottom: 3924b62979c81c6271048684f540692e0abf8342
+Bottom: 1a1a06cf7a3888ff2ad8409753312623a0b4de9b
 Top:    9cdb6088352c98f2f86a695e4ef474b4c1391249
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 23:47:22 +0100
@@ -690,42 +690,6 @@ index c7a1901..28dbcd5 100644
  	   || (idx < 0 && SL_SIDE (idx) == SL_BOTTOM_SIDE)))
  	mirror_this = !mirror_this;
  
-diff --git a/src/misc.c b/src/misc.c
-index 8d12706..de94eb9 100644
---- a/src/misc.c
-+++ b/src/misc.c
-@@ -1440,6 +1440,19 @@ GetLayerGroupNumberByNumber (Cardinal Layer)
- }
- 
- /* ---------------------------------------------------------------------------
-+ * returns the layergroup number for the passed side (TOP_LAYER or BOTTOM_LAYER)
-+ */
-+int
-+GetLayerGroupNumberBySide (int side)
-+{
-+  /* Find the relavant board side layer group by determining the
-+   * layer group associated with the relevant side's silk-screen
-+   */
-+  return GetLayerGroupNumberByNumber(
-+      side == TOP_SIDE ? component_silk_layer : solder_silk_layer);
-+}
-+
-+/* ---------------------------------------------------------------------------
-  * returns a pointer to an objects bounding box;
-  * data is valid until the routine is called again
-  */
-diff --git a/src/misc.h b/src/misc.h
-index 9ce0905..25db4dc 100644
---- a/src/misc.h
-+++ b/src/misc.h
-@@ -74,6 +74,7 @@ void SaveOutputWindow (void);
- int GetLayerNumber (DataType *, LayerType *);
- int GetLayerGroupNumberByPointer (LayerType *);
- int GetLayerGroupNumberByNumber (Cardinal);
-+int GetLayerGroupNumberBySide (int);
- int GetGroupOfLayer (int);
- int ChangeGroupVisibility (int, bool, bool);
- void LayerStringToLayerStack (char *);
 diff --git a/src/move.c b/src/move.c
 index cf2ab88..16eb73f 100644
 --- a/src/move.c
