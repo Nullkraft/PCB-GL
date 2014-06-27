@@ -1,0 +1,22 @@
+Bottom: 12b36903f1a572f84c765740c6a2ac2319a29a61
+Top:    089204504c7da7983115ee8a8e978be699bbf74c
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-27 04:59:07 +0100
+
+Refresh of draw-pin-pad-names-first-so-th
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 7ce7d14..9c3deaf 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1436,7 +1436,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+       /* Draw pins, vias and pads on this layer */
+       if (!global_view_2d && rv) {
+         if (PCB->PinOn &&
+-            (group == solder_group || group == component_group))
++            (group == bottom_group || group == top_group))
+           r_search (PCB->Data->pin_tree, screen, NULL, pin_name_callback, Layer);
+         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
+         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
