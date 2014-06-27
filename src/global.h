@@ -502,7 +502,7 @@ typedef struct PCBType
     *InvisibleObjectsColor,
     *InvisibleMarkColor,
     *ElementSelectedColor,
-    *RatSelectedColor, *ConnectedColor, *FoundColor, *WarnColor, *MaskColor;
+    *RatSelectedColor, *ConnectedColor, *FoundColor, *WarnColor, *MaskColor, *MaskSelectedColor;
   long CursorX,			/* cursor position as saved with layout */
     CursorY, Clipping;
   Coord Bloat,			/* drc sizes saved with layout */
@@ -637,7 +637,7 @@ typedef struct			/* some resources... */
     *OffLimitColor,
     *GridColor,
     *LayerColor[MAX_LAYER],
-    *LayerSelectedColor[MAX_LAYER], *WarnColor, *MaskColor;
+    *LayerSelectedColor[MAX_LAYER], *WarnColor, *MaskColor, *MaskSelectedColor;
   Coord ViaThickness,		/* some preset values */
     ViaDrillingHole, LineThickness, RatThickness, Keepaway,	/* default size of a new layout */
     MaxWidth, MaxHeight,

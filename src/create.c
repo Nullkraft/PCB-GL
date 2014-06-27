@@ -119,6 +119,7 @@ pcb_colors_from_settings (PCBType *ptr)
   ptr->ViaSelectedColor = Settings.ViaSelectedColor;
   ptr->WarnColor = Settings.WarnColor;
   ptr->MaskColor = Settings.MaskColor;
+  ptr->MaskSelectedColor = Settings.MaskSelectedColor;
   for (i = 0; i < MAX_LAYER; i++)
     {
       ptr->Data->Layer[i].Color = Settings.LayerColor[i];
@@ -134,6 +135,11 @@ pcb_colors_from_settings (PCBType *ptr)
     Settings.ElementColor : Settings.InvisibleObjectsColor;
   ptr->Data->Layer[bottom_silk_layer].SelectedColor =
     Settings.ElementSelectedColor;
+
+  ptr->Data->Layer[top_soldermask_layer].Color = Settings.MaskColor;
+  ptr->Data->Layer[top_soldermask_layer].SelectedColor = Settings.MaskSelectedColor;
+  ptr->Data->Layer[bottom_soldermask_layer].Color = Settings.MaskColor;
+  ptr->Data->Layer[bottom_soldermask_layer].SelectedColor = Settings.MaskSelectedColor;
 }
 
 /* ---------------------------------------------------------------------------
