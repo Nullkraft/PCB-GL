@@ -1,5 +1,5 @@
 Bottom: 1dae3f0c743763e0bac6a790ce8518578ccb28e9
-Top:    15aa268a411d1cf7647765b20d21e0f2645d1ccf
+Top:    3fae07ed3c6fdf10454a4a6928df490b3095b605
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-27 02:05:11 +0100
 
@@ -23,6 +23,19 @@ index 7067b8d..3b51ba1 100644
      {
        LayerType *layer = Buffer->Data->Layer + i;
        if (layer->TextN)
+diff --git a/src/const.h b/src/const.h
+index 08fe253..67eb72d 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -42,6 +42,8 @@
+ #define TOP_SIDE                1
+ 
+ 
++#define EXTRA_LAYERS 2 /* 2x silkscreen layers */
++
+ /* ---------------------------------------------------------------------------
+  * the layer-numbers of the two additional special (silkscreen) layers
+  * 'bottom' and 'top'. The offset of MAX_LAYER is not added
 diff --git a/src/copy.c b/src/copy.c
 index b0cd9c8..a0385db 100644
 --- a/src/copy.c
@@ -49,18 +62,6 @@ index 348afdd..16734c7 100644
      if (PCB->Data->Layer[i].On)
        {
  	LayerType *layer = &Buffer->Data->Layer[i];
-diff --git a/src/data.h b/src/data.h
-index 5d40d71..285ab2c 100644
---- a/src/data.h
-+++ b/src/data.h
-@@ -45,6 +45,7 @@ extern OutputType Output;
- 
- extern PCBType *PCB;
- 
-+#define EXTRA_LAYERS 2 /* 2x silkscreen layers */
- #define max_group (PCB->Data->LayerN)
- #define max_copper_layer (PCB->Data->LayerN)
- #define bottom_silk_layer (max_copper_layer + BOTTOM_SILK_LAYER)
 diff --git a/src/file.c b/src/file.c
 index ca22071..93014d1 100644
 --- a/src/file.c
