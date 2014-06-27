@@ -1,5 +1,5 @@
 Bottom: 3fae07ed3c6fdf10454a4a6928df490b3095b605
-Top:    9cca0d7b8efd4351af12572edb06d08fab4dfc3a
+Top:    4eb1f2e4bd04687ac4e603de337e8c2633a7d293
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 23:38:01 +0100
 
@@ -50,19 +50,3 @@ index 5d40d71..89d9b87 100644
 +#define top_soldermask_layer (max_copper_layer + TOP_SOLDERMASK_LAYER)
  
  extern SettingType Settings;
- 
-diff --git a/src/global.h b/src/global.h
-index d168a46..41f4988 100644
---- a/src/global.h
-+++ b/src/global.h
-@@ -397,7 +397,11 @@ typedef struct			/* holds all objects */
-   rtree_t *via_tree, *element_tree, *pin_tree, *pad_tree, *name_tree[3],	/* for element names */
-    *rat_tree;
-   struct PCBType *pcb;
-+<<<<<<< current
-   LayerType Layer[MAX_LAYER + EXTRA_LAYERS];
-+=======
-+  LayerType Layer[MAX_LAYER + EXTRA_LAYERS];	/* add 2 silkscreen layers and 2 soldermask layers */
-+>>>>>>> patched
-   int polyClip;
- } DataType;
