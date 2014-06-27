@@ -1,5 +1,5 @@
-Bottom: 3718a851c5562465caddba31ca2ea94894cfe418
-Top:    322680235f535c189722d7d5c78c31008c08bb2e
+Bottom: 628d58feab408b3897ef8670340ffb22ccf32cde
+Top:    cbc61076083d7da291d1bf3a36e68c1fd4b5506f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2014-06-13 01:59:11 +0100
 
@@ -9,7 +9,7 @@ Hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index dc2f783..e27f08c 100644
+index 4050f4e..b7c7473 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -486,6 +486,15 @@ set_gl_color_for_gc (hidGC gc)
