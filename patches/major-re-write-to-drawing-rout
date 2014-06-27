@@ -1,5 +1,5 @@
 Bottom: 4b46a0a661374b0521b11f491f13af1e78f3a8b4
-Top:    108cd0987739850b061d1144809894ba1c9773e9
+Top:    34b1dc0179ae1773e87456bfed962fee1ecfd9b1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-13 01:59:10 +0100
 
@@ -76,7 +76,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3a9f227..bec9a67 100644
+index 3a9f227..129ffc6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -632,8 +632,8 @@ index 3a9f227..bec9a67 100644
 +  int n_entries = PCB->LayerGroups.Number[group];
 +  Cardinal *layers = PCB->LayerGroups.Entries[group];
 +  int first_run = 1;
-+  int top_group = GetLayerGroupNumberByNumber (component_silk_layer);
-+  int bottom_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
++  int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
++  int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +
 +  if (!gui->set_layer (0, group, 0))
 +    return 0;
@@ -695,12 +695,12 @@ index 3a9f227..bec9a67 100644
 +        if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
 +        if (PCB->PinOn && group == top_group)
 +          {
-+            side = COMPONENT_LAYER;
++            side = TOP_SIDE;
 +            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
 +          }
 +        if (PCB->PinOn && group == bottom_group)
 +          {
-+            side = SOLDER_LAYER;
++            side = BOTTOM_SIDE;
 +            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
 +          }
 +      }
@@ -810,8 +810,8 @@ index 3a9f227..bec9a67 100644
 +  struct cyl_info cyl_info;
 +  int reverse_layers;
 +  int save_show_solder;
-+  int bottom_group;
 +  int top_group;
++  int bottom_group;
 +  int min_phys_group;
 +  int max_phys_group;
 +
@@ -825,14 +825,14 @@ index 3a9f227..bec9a67 100644
 +  /* NB: last_modelview_matrix is transposed in memory! */
 +  reverse_layers = (last_modelview_matrix[2][2] < 0);
 +
-+  save_show_solder = Settings.ShowSolderSide;
-+  Settings.ShowSolderSide = reverse_layers;
++  save_show_solder = Settings.ShowBottomSide;
++  Settings.ShowBottomSide = reverse_layers;
 +
 +  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
 +  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
 +
-+  bottom_group = GetLayerGroupNumberByNumber (solder_silk_layer);
-+  top_group = GetLayerGroupNumberByNumber (component_silk_layer);
++  top_group = GetLayerGroupNumberBySide (TOP_SIDE);
++  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +
 +  min_phys_group = MIN (bottom_group, top_group);
 +  max_phys_group = MAX (bottom_group, top_group);
@@ -863,7 +863,7 @@ index 3a9f227..bec9a67 100644
 +  /*
 +   * first draw all 'invisible' stuff
 +   */
-+  side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
++  side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
 +
 +  if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
 +      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
@@ -908,7 +908,7 @@ index 3a9f227..bec9a67 100644
 +  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
 +    return;
 +
-+  side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
++  side = SWAP_IDENT ? BOTTOM_SIDE : TOP_SIDE;
 +
 +  /* Draw pins, pads, vias below silk */
 +  if (global_view_2d) {
@@ -955,7 +955,7 @@ index 3a9f227..bec9a67 100644
 +    gui->end_layer ();
 +  }
 +
-+  Settings.ShowSolderSide = save_show_solder;
++  Settings.ShowBottomSide = save_show_solder;
 +}
 +
  #define Z_NEAR 3.0
@@ -1009,14 +1009,14 @@ index 3a9f227..bec9a67 100644
 +    glVertex3i (0,             PCB->MaxHeight, 0);
 +    glEnd ();
 +  } else {
-+    int bottom_group;
 +    int top_group;
++    int bottom_group;
 +    int min_phys_group;
 +    int max_phys_group;
 +    int i;
 +
-+    bottom_group = GetLayerGroupNumberByNumber (solder_silk_layer);
-+    top_group = GetLayerGroupNumberByNumber (component_silk_layer);
++    top_group = GetLayerGroupNumberBySide (TOP_SIDE);
++    bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +
 +    min_phys_group = MIN (bottom_group, top_group);
 +    max_phys_group = MAX (bottom_group, top_group);
