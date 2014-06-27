@@ -1,5 +1,5 @@
-Bottom: 2caaa2b2fd62ae13e0c6b1cb85bf87799fbb94cf
-Top:    7e9bfe6f51cd1918d2efbad14894e848358e644e
+Bottom: b32c629ce3a878e5382acf22dd02737a6d4e04e9
+Top:    344458ec9614492bd64555e3061cbd279c6173dc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2014-06-13 01:59:11 +0100
 
@@ -12,7 +12,7 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 80b9431..52ac73e 100644
+index 9c3deaf..46990b1 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -11,6 +11,7 @@
@@ -53,7 +53,7 @@ index 80b9431..52ac73e 100644
  
    gui->graphics->use_mask (HID_MASK_OFF);
 diff --git a/src/polygon.c b/src/polygon.c
-index 9a23afa..cababe9 100644
+index 75e1b9e..da48754 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -79,6 +79,7 @@ dicer output is used for HIDs which cannot render things with holes
