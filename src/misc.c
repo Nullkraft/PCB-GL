@@ -1449,7 +1449,7 @@ GetLayerGroupNumberBySide (int side)
    * layer group associated with the relevant side's silk-screen
    */
   return GetLayerGroupNumberByNumber(
-      side == COMPONENT_LAYER ? component_silk_layer : solder_silk_layer);
+      side == TOP_SIDE ? component_silk_layer : solder_silk_layer);
 }
 
 /* ---------------------------------------------------------------------------
