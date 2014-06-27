@@ -201,7 +201,9 @@ LIBGTK_GL_SRCS= \
 	hid/gtk/edge3d.c \
 	hid/gtk/edge3d.h \
 	hid/gtk/object3d.c \
-	hid/gtk/object3d.h
+	hid/gtk/object3d.h \
+	hid/gtk/appearance.c \
+	hid/gtk/appearance.h
 
 GL_SRCS= \
 	hid/common/hidgl.c \
