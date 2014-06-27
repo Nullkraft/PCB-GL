@@ -97,19 +97,19 @@ compute_depth (int group)
 {
   static int last_depth_computed = 0;
 
-  int solder_group;
-  int component_group;
+  int bottom_group;
+  int top_group;
   int min_copper_group;
   int max_copper_group;
   int num_copper_groups;
   int middle_copper_group;
   int depth;
 
-  solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
-  component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+  bottom_group = GetLayerGroupNumberByNumber (BOTTOM_SIDE);
+  top_group = GetLayerGroupNumberByNumber (TOP_SIDE);
 
-  min_copper_group = MIN (solder_group, component_group);
-  max_copper_group = MAX (solder_group, component_group);
+  min_copper_group = MIN (bottom_group, top_group);
+  max_copper_group = MAX (bottom_group, top_group);
   num_copper_groups = max_copper_group - min_copper_group + 1;
   middle_copper_group = min_copper_group + num_copper_groups / 2;
 
@@ -136,7 +136,7 @@ compute_depth (int group)
 
   } else if (SL_TYPE (group) == SL_INVISIBLE) {
     /* Same as silk, but for the back-side layer */
-    if (Settings.ShowSolderSide) {
+    if (Settings.ShowBottomSide) {
       depth = -((min_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING - SILK_MASK_SPACING);
     } else {
       depth = -((max_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
