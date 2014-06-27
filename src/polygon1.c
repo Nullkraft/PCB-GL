@@ -96,13 +96,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
   if (UNLIKELY (((ptr) = (type *)malloc(sizeof(type))) == NULL))	\
     error(err_no_memory);
 
-#define DEBUG_INTERSECT
+//#define DEBUG_INTERSECT
 #undef DEBUG_LABEL
 #undef DEBUG_ALL_LABELS
-#define DEBUG_JUMP
-#define DEBUG_GATHER
+//#define DEBUG_JUMP
+//#define DEBUG_GATHER
 #undef DEBUG_ANGLE
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
 #else
@@ -2761,7 +2761,7 @@ poly_InvContour (PLINE * c)
   Coord stash_cy = c->head.prev->cy;
   Coord stash_radius = c->head.prev->radius;
 
-  printf ("poly_InvContour\n");
+//  printf ("poly_InvContour\n");
 
   assert (c != NULL);
   cur = &c->head;
