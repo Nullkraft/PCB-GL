@@ -1,5 +1,5 @@
 Bottom: 16f5458c400c175289c0c3b03e1e7229a17834f1
-Top:    1deb57886fd08c0af3c3b23e148be9a4088b385a
+Top:    ab8c9f6e43cec4fe6a2baf10b09b659b57153b04
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2014-06-27 04:45:28 +0100
 
@@ -676,7 +676,7 @@ index b58e5cb..0cb0f88 100644
  void EraseViaName (PinType *);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
 new file mode 100644
-index 0000000..4bed53b
+index 0000000..f63c0f4
 --- /dev/null
 +++ b/src/draw_funcs.c
 @@ -0,0 +1,460 @@
@@ -933,10 +933,10 @@ index 0000000..4bed53b
 +{
 +  PadType* pad = (PadType *)b;
 +  LayerType *layer = cl;
-+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
++  int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +  int group = GetLayerGroupNumberByPointer (layer);
 +
-+  int side = (group == solder_group) ? SOLDER_LAYER : COMPONENT_LAYER;
++  int side = (group == bottom_group) ? BOTTOM_SIDE : TOP_SIDE;
 +
 +  if (ON_SIDE (pad, side))
 +    {
@@ -1026,8 +1026,8 @@ index 0000000..4bed53b
 +static void
 +draw_ppv (int group, const BoxType *drawn_area, void *userdata)
 +{
-+  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
++  int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
++  int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +  int side;
 +
 +  if (PCB->PinOn || !gui->gui)
@@ -1036,15 +1036,15 @@ index 0000000..4bed53b
 +      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
 +
 +      /* draw element pads */
-+      if (group == component_group)
++      if (group == top_group)
 +        {
-+          side = COMPONENT_LAYER;
++          side = TOP_SIDE;
 +          r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
 +        }
 +
-+      if (group == solder_group)
++      if (group == bottom_group)
 +        {
-+          side = SOLDER_LAYER;
++          side = BOTTOM_SIDE;
 +          r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
 +        }
 +    }
@@ -1068,8 +1068,8 @@ index 0000000..4bed53b
 +static void
 +draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
 +{
-+  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
++  int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
++  int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +  int layer_num = GetLayerNumber (PCB->Data, layer);
 +  int group = GetLayerGroupNumberByPointer (layer);
 +  struct poly_info info = {drawn_area, layer};
@@ -1107,10 +1107,10 @@ index 0000000..4bed53b
 +  r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_inlayer_callback, layer);
 +
 +  /* draw element pads */
-+  if (group == component_group)
++  if (group == top_group)
 +    r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_inlayer_callback, layer);
 +
-+  if (group == solder_group)
++  if (group == bottom_group)
 +    r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_inlayer_callback, layer);
 +
 +  /* draw vias */
