@@ -1,5 +1,5 @@
 Bottom: 1dae3f0c743763e0bac6a790ce8518578ccb28e9
-Top:    ca42f6e56d8a87f74c7ec776bbeb8af758b80a11
+Top:    de7811bd490773e00fd6656717cbf3f10c542bde
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 23:38:01 +0100
 
@@ -29,3 +29,15 @@ index 08fe253..2a5a683 100644
  
  /* ---------------------------------------------------------------------------
   * misc constants
+diff --git a/src/data.h b/src/data.h
+index 5d40d71..89d9b87 100644
+--- a/src/data.h
++++ b/src/data.h
+@@ -49,6 +49,8 @@ extern PCBType *PCB;
+ #define max_copper_layer (PCB->Data->LayerN)
+ #define bottom_silk_layer (max_copper_layer + BOTTOM_SILK_LAYER)
+ #define top_silk_layer (max_copper_layer + TOP_SILK_LAYER)
++#define bottom_soldermask_layer (max_copper_layer + BOTTOM_SOLDERMASK_LAYER)
++#define top_soldermask_layer (max_copper_layer + TOP_SOLDERMASK_LAYER)
+ 
+ extern SettingType Settings;
