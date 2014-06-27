@@ -1,0 +1,225 @@
+Bottom: 9a92feed79a5d4d4161e3a1341437c43dda9dc5f
+Top:    833d291a62c611b3c887f09b04d58ec640dda9df
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-27 03:48:08 +0100
+
+Refresh of add-soldermask-layers
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index 332d898..982c3a3 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -154,6 +154,7 @@ CreateNewPCB (bool SetDefaultNames)
+   ptr->ThermStyle = 4;
+   ptr->IsleArea = 2.e8;
+   ptr->SilkActive = false;
++  ptr->SolderMaskActive = false;
+   ptr->RatDraw = false;
+   SET_FLAG (NAMEONPCBFLAG, ptr);
+   if (Settings.ShowNumber)
+diff --git a/src/draw.c b/src/draw.c
+index dee6bea..f675c43 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -887,6 +887,8 @@ DrawMask (int side, const BoxType *screen)
+       gui->graphics->use_mask (HID_MASK_CLEAR);
+     }
+ 
++  DrawLayer (LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer), screen);
++
+   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
+   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
+   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
+diff --git a/src/global.h b/src/global.h
+index d168a46..f5cc05e 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -490,6 +490,7 @@ typedef struct PCBType
+   bool Changed,		/* layout has been changed */
+     ViaOn,			/* visibility flags */
+     ElementOn, RatOn, InvisibleObjectsOn, PinOn, SilkActive,	/* active layer is actually silk */
++    SolderMaskActive, /* active layer is actually solder mask */
+     RatDraw;			 /* we're drawing rats */
+   char *ViaColor,		/* some colors */
+    *ViaSelectedColor,
+diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
+index ed79d50..6000a2e 100644
+--- a/src/hid/gtk/gui-config.c
++++ b/src/hid/gtk/gui-config.c
+@@ -1615,7 +1615,7 @@ edit_layer_button_cb(GtkWidget *widget, gchar *data)
+ {
+ 	gchar	**argv;
+ 
+-	if (PCB->RatDraw || PCB->SilkActive)
++	if (PCB->RatDraw || PCB->SilkActive || PCB->SolderMaskActive)
+ 		return;
+ 
+ 	argv = g_strsplit(data, ",", -1);
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 6ab819f..4169fc0 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -531,6 +531,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+   ignore_layer_update = true;
+   /* Select Layer */
+   PCB->SilkActive = (layer == LAYER_BUTTON_SILK);
++  PCB->SolderMaskActive = (layer == LAYER_BUTTON_MASK);
+   PCB->RatDraw  = (layer == LAYER_BUTTON_RATS);
+   if (layer == LAYER_BUTTON_SILK)
+     {
+@@ -542,6 +543,12 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+       PCB->RatOn = true;
+       hid_action ("LayersChanged");
+     }
++  else if (layer == LAYER_BUTTON_MASK)
++    {
++//      PCB->SolderMaskOn = true;
++      SET_FLAG (SHOWMASKFLAG, PCB);
++      hid_action ("LayersChanged");
++    }
+   else if (layer < max_copper_layer)
+     ChangeGroupVisibility (layer, TRUE, true);
+ 
+@@ -617,6 +624,7 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+         SET_FLAG (SHOWMASKFLAG, PCB);
+       else
+         CLEAR_FLAG (SHOWMASKFLAG, PCB);
++//      PCB->SolderMaskOn = active;
+       redraw = TRUE;
+       break;
+     default:
+@@ -811,7 +819,7 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
+                                  text, color_string, active, FALSE, FALSE);
+   layer_process (&color_string, &text, &active, LAYER_BUTTON_MASK);
+   ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_MASK,
+-                                 text, color_string, active, FALSE, FALSE);
++                                 text, color_string, active, TRUE, FALSE);
+ }
+ 
+ /*! \brief callback for ghid_layer_selector_update_colors */
+@@ -884,6 +892,8 @@ ghid_layer_buttons_update (void)
+     layer = LAYER_BUTTON_RATS;
+   else if (PCB->SilkActive)
+     layer = LAYER_BUTTON_SILK;
++  else if (PCB->SolderMaskActive)
++    layer = LAYER_BUTTON_MASK;
+   else
+     layer = LayerStack[0];
+ 
+@@ -1934,7 +1944,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
+ }
+ 
+ static const char selectlayer_syntax[] =
+-    N_("SelectLayer(1..MAXLAYER|Silk|Rats)");
++    N_("SelectLayer(1..MAXLAYER|Silk|Rats|Mask)");
+ 
+ static const char selectlayer_help[] =
+     N_("Select which layer is the current layer.");
+@@ -1962,6 +1972,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
+     newl = LAYER_BUTTON_SILK;
+   else if (strcasecmp (argv[0], "rats") == 0)
+     newl = LAYER_BUTTON_RATS;
++  else if (strcasecmp (argv[0], "mask") == 0)
++    newl = LAYER_BUTTON_MASK;
+   else if (newl == -1)
+     newl = atoi (argv[0]) - 1;
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 2bbd2de..afe3501 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -44,15 +44,15 @@
+      |  gui code in gui-top-window.c and group code in misc.c must agree
+      |  on what layer is what!
+    */
+-#define	LAYER_BUTTON_SILK			MAX_LAYER
+-#define	LAYER_BUTTON_RATS			(MAX_LAYER + 1)
+-#define	N_SELECTABLE_LAYER_BUTTONS	(LAYER_BUTTON_RATS + 1)
+-
+-#define LAYER_BUTTON_PINS			(MAX_LAYER + 2)
+-#define LAYER_BUTTON_VIAS			(MAX_LAYER + 3)
+-#define LAYER_BUTTON_FARSIDE		(MAX_LAYER + 4)
+-#define LAYER_BUTTON_MASK			(MAX_LAYER + 5)
+-#define N_LAYER_BUTTONS				(MAX_LAYER + 6)
++#define LAYER_BUTTON_SILK                MAX_LAYER
++#define LAYER_BUTTON_RATS                (MAX_LAYER + 1)
++#define LAYER_BUTTON_MASK                (MAX_LAYER + 2)
++#define N_SELECTABLE_LAYER_BUTTONS       (LAYER_BUTTON_MASK + 1)
++
++#define LAYER_BUTTON_PINS                (MAX_LAYER + 3)
++#define LAYER_BUTTON_VIAS                (MAX_LAYER + 4)
++#define LAYER_BUTTON_FARSIDE             (MAX_LAYER + 5)
++#define N_LAYER_BUTTONS                  (MAX_LAYER + 6)
+ 
+   /* Go from from the grid units in use (millimeters or mils) to PCB units
+      |  and back again.
+diff --git a/src/hid/lesstif/menu.c b/src/hid/lesstif/menu.c
+index bee7a17..1212ae9 100644
+--- a/src/hid/lesstif/menu.c
++++ b/src/hid/lesstif/menu.c
+@@ -210,6 +210,8 @@ LayersChanged (int argc, char **argv, Coord x, Coord y)
+     current_layer = LB_RATS;
+   else if (PCB->SilkActive)
+     current_layer = LB_SILK;
++  else if (PCB->SolderMaskActive)
++    current_layer = LB_MASK;
+   else
+     current_layer = LayerStack[0];
+ 
+@@ -386,6 +388,7 @@ layerpick_button_callback (Widget w, int layer,
+   char *name;
+   PCB->RatDraw = (layer == LB_RATS);
+   PCB->SilkActive = (layer == LB_SILK);
++  PCB->SolderMaskActive = (layer == LB_MASK);
+   if (layer < max_copper_layer)
+     ChangeGroupVisibility (layer, 1, 1);
+   for (l = 0; l < num_layer_buttons; l++)
+@@ -404,6 +407,9 @@ layerpick_button_callback (Widget w, int layer,
+     case LB_SILK:
+       name = "Silk";
+       break;
++    case LB_MASK:
++      name = "Mask";
++      break;
+     default:
+       name = PCB->Data->Layer[layer].Name;
+       break;
+diff --git a/src/macro.h b/src/macro.h
+index 8ef45bc..a34693a 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -76,17 +76,28 @@
+ #define	LAYER_ON_STACK(n)	(&PCB->Data->Layer[LayerStack[(n)]])
+ #define LAYER_PTR(n)            (&PCB->Data->Layer[(n)])
+ #define	CURRENT			(PCB->SilkActive ? &PCB->Data->Layer[ \
+-				(Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer)] \
++				Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer] \
++				: PCB->SolderMaskActive ? &PCB->Data->Layer[ \
++				Settings.ShowBottomSide ? bottom_soldermask_layer : top_soldermask_layer] \
+ 				: LAYER_ON_STACK(0))
+ #define	INDEXOFCURRENT		(PCB->SilkActive ? \
+-				(Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer) \
++				Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer \
++				: PCB->SolderMaskActive ? \
++				Settings.ShowBottomSide ? bottom_soldermask_layer : top_soldermask_layer \
+ 				: LayerStack[0])
+ #define SILKLAYER		Layer[ \
+ 				(Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer)]
+ #define BACKSILKLAYER		Layer[ \
+ 				(Settings.ShowBottomSide ? top_silk_layer : bottom_silk_layer)]
+-
+-#define TEST_SILK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) >= max_copper_layer)
++#define SOLDERMASKLAYER		Layer[ \
++				(Settings.ShowBottomSide ? bottom_soldermask_layer : top_soldermask_layer)]
++#define BACKSOLDERMASKLAYER	Layer[ \
++				(Settings.ShowBottomSide ? top_soldermask_layer : bottom_soldermask_layer)]
++
++#define TEST_SILK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) == top_silk_layer || \
++                                 GetLayerNumber (PCB->Data, layer) == bottom_silk_layer)
++#define TEST_SOLDERMASK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) == top_soldermask_layer || \
++                                 GetLayerNumber (PCB->Data, layer) == bottom_soldermask_layer)
+ 
+ 
+ /* ---------------------------------------------------------------------------
