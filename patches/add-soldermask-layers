@@ -1,5 +1,5 @@
 Bottom: 3fae07ed3c6fdf10454a4a6928df490b3095b605
-Top:    3fae07ed3c6fdf10454a4a6928df490b3095b605
+Top:    b7cadaddaa3d09b620807b42f183be5e2dcc9269
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 23:38:01 +0100
 
@@ -16,4 +16,44 @@ Layer (n+4 "soldermask")    # bottom side
 
 ---
 
-
+diff --git a/src/const.h b/src/const.h
+index 67eb72d..e6e850c 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -50,6 +50,8 @@
+  */
+ #define BOTTOM_SILK_LAYER       0
+ #define TOP_SILK_LAYER          1
++#define BOTTOM_SOLDERMASK_LAYER 2
++#define TOP_SOLDERMASK_LAYER    3
+ 
+ /* ---------------------------------------------------------------------------
+  * misc constants
+diff --git a/src/data.h b/src/data.h
+index 5d40d71..89d9b87 100644
+--- a/src/data.h
++++ b/src/data.h
+@@ -49,6 +49,8 @@ extern PCBType *PCB;
+ #define max_copper_layer (PCB->Data->LayerN)
+ #define bottom_silk_layer (max_copper_layer + BOTTOM_SILK_LAYER)
+ #define top_silk_layer (max_copper_layer + TOP_SILK_LAYER)
++#define bottom_soldermask_layer (max_copper_layer + BOTTOM_SOLDERMASK_LAYER)
++#define top_soldermask_layer (max_copper_layer + TOP_SOLDERMASK_LAYER)
+ 
+ extern SettingType Settings;
+ 
+diff --git a/src/global.h b/src/global.h
+index d168a46..41f4988 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -397,7 +397,11 @@ typedef struct			/* holds all objects */
+   rtree_t *via_tree, *element_tree, *pin_tree, *pad_tree, *name_tree[3],	/* for element names */
+    *rat_tree;
+   struct PCBType *pcb;
++<<<<<<< current
+   LayerType Layer[MAX_LAYER + EXTRA_LAYERS];
++=======
++  LayerType Layer[MAX_LAYER + EXTRA_LAYERS];	/* add 2 silkscreen layers and 2 soldermask layers */
++>>>>>>> patched
+   int polyClip;
+ } DataType;
