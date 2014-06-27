@@ -3,9 +3,16 @@ Top:    6d1138db49eaca96f150c0cc190756f626f240b9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 23:47:22 +0100
 
-Create new function GetLayerGroupNumberBySide()
+Introduce and use new function GetLayerGroupNumberBySide()
 
-Makes the intention of various code clearer.
+Makes the intention of various code clearer and replaces calling
+GetLayerGroupNumberByNumber() against one of the silk-screen layers
+in order to find the layer group containing the top or bottom side
+of the board.
+
+Patch includes various renaming of component -> top, and solder -> bottom
+
+Patch includes a small cleanup to drc_lines()
 
 
 ---
