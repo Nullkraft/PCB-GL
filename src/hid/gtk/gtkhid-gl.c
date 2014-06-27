@@ -105,8 +105,8 @@ compute_depth (int group)
   int middle_copper_group;
   int depth;
 
-  bottom_group = GetLayerGroupNumberByNumber (BOTTOM_SIDE);
-  top_group = GetLayerGroupNumberByNumber (TOP_SIDE);
+  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
+  top_group = GetLayerGroupNumberBySide (TOP_SIDE);
 
   min_copper_group = MIN (bottom_group, top_group);
   max_copper_group = MAX (bottom_group, top_group);
