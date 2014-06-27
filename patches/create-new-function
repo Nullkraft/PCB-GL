@@ -1,5 +1,5 @@
 Bottom: 1a1a06cf7a3888ff2ad8409753312623a0b4de9b
-Top:    9cdb6088352c98f2f86a695e4ef474b4c1391249
+Top:    6f71f27b766d20357551de85122e926729ed80dd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 23:47:22 +0100
 
@@ -28,7 +28,7 @@ index e496820..8142467 100644
  		if ((text = CreateNewText (CURRENT, &PCB->Font, Note.X,
  					   Note.Y, 0, Settings.TextScale,
 diff --git a/src/autoplace.c b/src/autoplace.c
-index 21ab5f2..9edf108 100644
+index 21ab5f2..7262601 100644
 --- a/src/autoplace.c
 +++ b/src/autoplace.c
 @@ -152,11 +152,11 @@ PerturbationType;
@@ -65,28 +65,6 @@ index 21ab5f2..9edf108 100644
  	      c->X = ((PinType *) c->ptr2)->X;
  	      c->Y = ((PinType *) c->ptr2)->Y;
  	      break;
-@@ -211,16 +210,16 @@ static void
- showboxes (BoxListType *blist)
- {
-   Cardinal i;
--  LayerType *SLayer = &(PCB->Data->Layer[solder_silk_layer]);
-+  LayerType *bottom_group = &(PCB->Data->Layer[solder_silk_layer]);
-   for (i = 0; i < blist->BoxN; i++)
-     {
--      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,
-+      CreateNewLineOnLayer (bottom_group, blist->Box[i].X1, blist->Box[i].Y1,
- 			    blist->Box[i].X2, blist->Box[i].Y1, 1, 1, 0);
--      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y2,
-+      CreateNewLineOnLayer (bottom_group, blist->Box[i].X1, blist->Box[i].Y2,
- 			    blist->Box[i].X2, blist->Box[i].Y2, 1, 1, 0);
--      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,
-+      CreateNewLineOnLayer (bottom_group, blist->Box[i].X1, blist->Box[i].Y1,
- 			    blist->Box[i].X1, blist->Box[i].Y2, 1, 1, 0);
--      CreateNewLineOnLayer (SLayer, blist->Box[i].X2, blist->Box[i].Y1,
-+      CreateNewLineOnLayer (bottom_group, blist->Box[i].X2, blist->Box[i].Y1,
- 			    blist->Box[i].X2, blist->Box[i].Y2, 1, 1, 0);
-     }
- }
 diff --git a/src/autoroute.c b/src/autoroute.c
 index ce75794..53d7989 100644
 --- a/src/autoroute.c
