@@ -1,5 +1,5 @@
 Bottom: ab8c9f6e43cec4fe6a2baf10b09b659b57153b04
-Top:    fce7f5b1ad9fc45b141a4b75dd97232f90c5a2a8
+Top:    0d927919f345afa1a9fc1b3b09f751231c2bf751
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2014-06-13 01:59:09 +0100
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ac695e8..46b368c 100644
+index ac695e8..3a9f227 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -89,6 +89,79 @@ static void draw_lead_user (render_priv *priv);
@@ -29,16 +29,16 @@ index ac695e8..46b368c 100644
 +{
 +  static int last_depth_computed = 0;
 +
-+  int bottom_group;
 +  int top_group;
++  int bottom_group;
 +  int min_copper_group;
 +  int max_copper_group;
 +  int num_copper_groups;
 +  int middle_copper_group;
 +  int depth;
 +
-+  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +  top_group = GetLayerGroupNumberBySide (TOP_SIDE);
++  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +
 +  min_copper_group = MIN (bottom_group, top_group);
 +  max_copper_group = MAX (bottom_group, top_group);
