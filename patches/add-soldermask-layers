@@ -1,5 +1,5 @@
 Bottom: 3fae07ed3c6fdf10454a4a6928df490b3095b605
-Top:    b7cadaddaa3d09b620807b42f183be5e2dcc9269
+Top:    9cca0d7b8efd4351af12572edb06d08fab4dfc3a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 23:38:01 +0100
 
@@ -17,9 +17,18 @@ Layer (n+4 "soldermask")    # bottom side
 ---
 
 diff --git a/src/const.h b/src/const.h
-index 67eb72d..e6e850c 100644
+index 67eb72d..5ee3bc6 100644
 --- a/src/const.h
 +++ b/src/const.h
+@@ -42,7 +42,7 @@
+ #define TOP_SIDE                1
+ 
+ 
+-#define EXTRA_LAYERS 2 /* 2x silkscreen layers */
++#define EXTRA_LAYERS 4 /* 2x silkscreen, 2x soldermask layers */
+ 
+ /* ---------------------------------------------------------------------------
+  * the layer-numbers of the two additional special (silkscreen) layers
 @@ -50,6 +50,8 @@
   */
  #define BOTTOM_SILK_LAYER       0
