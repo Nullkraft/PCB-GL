@@ -490,6 +490,7 @@ typedef struct PCBType
   bool Changed,		/* layout has been changed */
     ViaOn,			/* visibility flags */
     ElementOn, RatOn, InvisibleObjectsOn, PinOn, SilkActive,	/* active layer is actually silk */
+    SolderMaskActive, /* active layer is actually solder mask */
     RatDraw;			 /* we're drawing rats */
   char *ViaColor,		/* some colors */
    *ViaSelectedColor,

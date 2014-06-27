@@ -154,6 +154,7 @@ CreateNewPCB (bool SetDefaultNames)
   ptr->ThermStyle = 4;
   ptr->IsleArea = 2.e8;
   ptr->SilkActive = false;
+  ptr->SolderMaskActive = false;
   ptr->RatDraw = false;
   SET_FLAG (NAMEONPCBFLAG, ptr);
   if (Settings.ShowNumber)
