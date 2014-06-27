@@ -1436,7 +1436,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
       /* Draw pins, vias and pads on this layer */
       if (!global_view_2d && rv) {
         if (PCB->PinOn &&
-            (group == solder_group || group == component_group))
+            (group == bottom_group || group == top_group))
           r_search (PCB->Data->pin_tree, screen, NULL, pin_name_callback, Layer);
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
