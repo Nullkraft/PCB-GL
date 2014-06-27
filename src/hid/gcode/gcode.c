@@ -613,7 +613,7 @@ gcode_do_export (HID_Attr_Val * options)
             PCB->LayerGroups.Entries[i][0] : i;
           is_bottom =
             (GetLayerGroupNumberByNumber (idx) ==
-             GetLayerGroupNumberByNumber (BOTTOM_SIDE)) ? 1 : 0;
+             GetLayerGroupNumberBySide (BOTTOM_SIDE)) ? 1 : 0;
           save_drill = is_bottom; /* save drills for one layer only */
           gcode_start_png ();
           hid_save_and_show_layer_ons (save_ons);
