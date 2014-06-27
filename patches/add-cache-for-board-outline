@@ -1,5 +1,5 @@
-Bottom: 7e9bfe6f51cd1918d2efbad14894e848358e644e
-Top:    3718a851c5562465caddba31ca2ea94894cfe418
+Bottom: 344458ec9614492bd64555e3061cbd279c6173dc
+Top:    628d58feab408b3897ef8670340ffb22ccf32cde
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-13 01:59:11 +0100
 
@@ -20,7 +20,7 @@ layer changes!
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 8103d1d..a4d28ed 100644
+index 1d017fe..89abe12 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -399,6 +399,8 @@ typedef struct			/* holds all objects */
@@ -33,7 +33,7 @@ index 8103d1d..a4d28ed 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 52ac73e..dc2f783 100644
+index 46990b1..4050f4e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1362,14 +1362,22 @@ GhidDrawMask (int side, BoxType * screen)
@@ -76,7 +76,7 @@ index b6b3c30..3c873cf 100644
    {
      free (via->Name);
 diff --git a/src/polygon.c b/src/polygon.c
-index cababe9..f367a92 100644
+index da48754..bfd7499 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -1645,6 +1645,16 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
