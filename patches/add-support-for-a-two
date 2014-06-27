@@ -1,0 +1,518 @@
+Bottom: b21105c6960fc0ca3cc080fd986ea409b392af35
+Top:    e64a098bc0737be2790c128fe480900357bf49e4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-26 23:38:01 +0100
+
+Add support for a two soldermask layers, defining regions of removed mask
+
+File-format wise, these work similarly to how silk layers are supported now:
+
+Layer (1 to n "[NAME]")     # "ordinary" design layers
+Layer (n+1 "silk")          # top side
+Layer (n+2 "silk")          # bottom side
+Layer (n+3 "soldermask")    # top side
+Layer (n+4 "soldermask")    # bottom side
+
+
+---
+
+diff --git a/src/const.h b/src/const.h
+index 67eb72d..5ee3bc6 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -42,7 +42,7 @@
+ #define TOP_SIDE                1
+ 
+ 
+-#define EXTRA_LAYERS 2 /* 2x silkscreen layers */
++#define EXTRA_LAYERS 4 /* 2x silkscreen, 2x soldermask layers */
+ 
+ /* ---------------------------------------------------------------------------
+  * the layer-numbers of the two additional special (silkscreen) layers
+@@ -50,6 +50,8 @@
+  */
+ #define BOTTOM_SILK_LAYER       0
+ #define TOP_SILK_LAYER          1
++#define BOTTOM_SOLDERMASK_LAYER 2
++#define TOP_SOLDERMASK_LAYER    3
+ 
+ /* ---------------------------------------------------------------------------
+  * misc constants
+diff --git a/src/create.c b/src/create.c
+index 5ea94c8..6b0865d 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -119,6 +119,7 @@ pcb_colors_from_settings (PCBType *ptr)
+   ptr->ViaSelectedColor = Settings.ViaSelectedColor;
+   ptr->WarnColor = Settings.WarnColor;
+   ptr->MaskColor = Settings.MaskColor;
++  ptr->MaskSelectedColor = Settings.MaskSelectedColor;
+   for (i = 0; i < MAX_LAYER; i++)
+     {
+       ptr->Data->Layer[i].Color = Settings.LayerColor[i];
+@@ -134,6 +135,11 @@ pcb_colors_from_settings (PCBType *ptr)
+     Settings.ElementColor : Settings.InvisibleObjectsColor;
+   ptr->Data->Layer[bottom_silk_layer].SelectedColor =
+     Settings.ElementSelectedColor;
++
++  ptr->Data->Layer[top_soldermask_layer].Color = Settings.MaskColor;
++  ptr->Data->Layer[top_soldermask_layer].SelectedColor = Settings.MaskSelectedColor;
++  ptr->Data->Layer[bottom_soldermask_layer].Color = Settings.MaskColor;
++  ptr->Data->Layer[bottom_soldermask_layer].SelectedColor = Settings.MaskSelectedColor;
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -154,6 +160,7 @@ CreateNewPCB (bool SetDefaultNames)
+   ptr->ThermStyle = 4;
+   ptr->IsleArea = 2.e8;
+   ptr->SilkActive = false;
++  ptr->SolderMaskActive = false;
+   ptr->RatDraw = false;
+   SET_FLAG (NAMEONPCBFLAG, ptr);
+   if (Settings.ShowNumber)
+@@ -223,8 +230,10 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
+       if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, DEF_LAYER))
+ 	return 1;
+ 
+-      pcb->Data->Layer[top_silk_layer].Name = strdup ("silk");
+-      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("silk");
++      pcb->Data->Layer[top_silk_layer].Name = strdup ("top silk");
++      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("bottom silk");
++      pcb->Data->Layer[top_soldermask_layer].Name = strdup ("top soldermask");
++      pcb->Data->Layer[bottom_soldermask_layer].Name = strdup ("bottom soldermask");
+     }
+   return 0;
+ }
+diff --git a/src/data.h b/src/data.h
+index 5d40d71..89d9b87 100644
+--- a/src/data.h
++++ b/src/data.h
+@@ -49,6 +49,8 @@ extern PCBType *PCB;
+ #define max_copper_layer (PCB->Data->LayerN)
+ #define bottom_silk_layer (max_copper_layer + BOTTOM_SILK_LAYER)
+ #define top_silk_layer (max_copper_layer + TOP_SILK_LAYER)
++#define bottom_soldermask_layer (max_copper_layer + BOTTOM_SOLDERMASK_LAYER)
++#define top_soldermask_layer (max_copper_layer + TOP_SOLDERMASK_LAYER)
+ 
+ extern SettingType Settings;
+ 
+diff --git a/src/draw.c b/src/draw.c
+index dee6bea..f675c43 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -887,6 +887,8 @@ DrawMask (int side, const BoxType *screen)
+       gui->graphics->use_mask (HID_MASK_CLEAR);
+     }
+ 
++  DrawLayer (LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer), screen);
++
+   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
+   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
+   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
+diff --git a/src/global.h b/src/global.h
+index d168a46..99b67d9 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -490,6 +490,7 @@ typedef struct PCBType
+   bool Changed,		/* layout has been changed */
+     ViaOn,			/* visibility flags */
+     ElementOn, RatOn, InvisibleObjectsOn, PinOn, SilkActive,	/* active layer is actually silk */
++    SolderMaskActive, /* active layer is actually solder mask */
+     RatDraw;			 /* we're drawing rats */
+   char *ViaColor,		/* some colors */
+    *ViaSelectedColor,
+@@ -501,7 +502,7 @@ typedef struct PCBType
+     *InvisibleObjectsColor,
+     *InvisibleMarkColor,
+     *ElementSelectedColor,
+-    *RatSelectedColor, *ConnectedColor, *FoundColor, *WarnColor, *MaskColor;
++    *RatSelectedColor, *ConnectedColor, *FoundColor, *WarnColor, *MaskColor, *MaskSelectedColor;
+   long CursorX,			/* cursor position as saved with layout */
+     CursorY, Clipping;
+   Coord Bloat,			/* drc sizes saved with layout */
+@@ -636,7 +637,7 @@ typedef struct			/* some resources... */
+     *OffLimitColor,
+     *GridColor,
+     *LayerColor[MAX_LAYER],
+-    *LayerSelectedColor[MAX_LAYER], *WarnColor, *MaskColor;
++    *LayerSelectedColor[MAX_LAYER], *WarnColor, *MaskColor, *MaskSelectedColor;
+   Coord ViaThickness,		/* some preset values */
+     ViaDrillingHole, LineThickness, RatThickness, Keepaway,	/* default size of a new layout */
+     MaxWidth, MaxHeight,
+diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
+index ed79d50..6000a2e 100644
+--- a/src/hid/gtk/gui-config.c
++++ b/src/hid/gtk/gui-config.c
+@@ -1615,7 +1615,7 @@ edit_layer_button_cb(GtkWidget *widget, gchar *data)
+ {
+ 	gchar	**argv;
+ 
+-	if (PCB->RatDraw || PCB->SilkActive)
++	if (PCB->RatDraw || PCB->SilkActive || PCB->SolderMaskActive)
+ 		return;
+ 
+ 	argv = g_strsplit(data, ",", -1);
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 6ab819f..505a5f5 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -531,6 +531,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+   ignore_layer_update = true;
+   /* Select Layer */
+   PCB->SilkActive = (layer == LAYER_BUTTON_SILK);
++  PCB->SolderMaskActive = (layer == LAYER_BUTTON_MASK);
+   PCB->RatDraw  = (layer == LAYER_BUTTON_RATS);
+   if (layer == LAYER_BUTTON_SILK)
+     {
+@@ -542,6 +543,11 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+       PCB->RatOn = true;
+       hid_action ("LayersChanged");
+     }
++  else if (layer == LAYER_BUTTON_MASK)
++    {
++      SET_FLAG (SHOWMASKFLAG, PCB);
++      hid_action ("LayersChanged");
++    }
+   else if (layer < max_copper_layer)
+     ChangeGroupVisibility (layer, TRUE, true);
+ 
+@@ -811,7 +817,7 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
+                                  text, color_string, active, FALSE, FALSE);
+   layer_process (&color_string, &text, &active, LAYER_BUTTON_MASK);
+   ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_MASK,
+-                                 text, color_string, active, FALSE, FALSE);
++                                 text, color_string, active, TRUE, FALSE);
+ }
+ 
+ /*! \brief callback for ghid_layer_selector_update_colors */
+@@ -884,6 +890,8 @@ ghid_layer_buttons_update (void)
+     layer = LAYER_BUTTON_RATS;
+   else if (PCB->SilkActive)
+     layer = LAYER_BUTTON_SILK;
++  else if (PCB->SolderMaskActive)
++    layer = LAYER_BUTTON_MASK;
+   else
+     layer = LayerStack[0];
+ 
+@@ -1934,7 +1942,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
+ }
+ 
+ static const char selectlayer_syntax[] =
+-    N_("SelectLayer(1..MAXLAYER|Silk|Rats)");
++    N_("SelectLayer(1..MAXLAYER|Silk|Rats|Mask)");
+ 
+ static const char selectlayer_help[] =
+     N_("Select which layer is the current layer.");
+@@ -1962,6 +1970,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
+     newl = LAYER_BUTTON_SILK;
+   else if (strcasecmp (argv[0], "rats") == 0)
+     newl = LAYER_BUTTON_RATS;
++  else if (strcasecmp (argv[0], "mask") == 0)
++    newl = LAYER_BUTTON_MASK;
+   else if (newl == -1)
+     newl = atoi (argv[0]) - 1;
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 2bbd2de..afe3501 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -44,15 +44,15 @@
+      |  gui code in gui-top-window.c and group code in misc.c must agree
+      |  on what layer is what!
+    */
+-#define	LAYER_BUTTON_SILK			MAX_LAYER
+-#define	LAYER_BUTTON_RATS			(MAX_LAYER + 1)
+-#define	N_SELECTABLE_LAYER_BUTTONS	(LAYER_BUTTON_RATS + 1)
+-
+-#define LAYER_BUTTON_PINS			(MAX_LAYER + 2)
+-#define LAYER_BUTTON_VIAS			(MAX_LAYER + 3)
+-#define LAYER_BUTTON_FARSIDE		(MAX_LAYER + 4)
+-#define LAYER_BUTTON_MASK			(MAX_LAYER + 5)
+-#define N_LAYER_BUTTONS				(MAX_LAYER + 6)
++#define LAYER_BUTTON_SILK                MAX_LAYER
++#define LAYER_BUTTON_RATS                (MAX_LAYER + 1)
++#define LAYER_BUTTON_MASK                (MAX_LAYER + 2)
++#define N_SELECTABLE_LAYER_BUTTONS       (LAYER_BUTTON_MASK + 1)
++
++#define LAYER_BUTTON_PINS                (MAX_LAYER + 3)
++#define LAYER_BUTTON_VIAS                (MAX_LAYER + 4)
++#define LAYER_BUTTON_FARSIDE             (MAX_LAYER + 5)
++#define N_LAYER_BUTTONS                  (MAX_LAYER + 6)
+ 
+   /* Go from from the grid units in use (millimeters or mils) to PCB units
+      |  and back again.
+diff --git a/src/hid/lesstif/menu.c b/src/hid/lesstif/menu.c
+index bee7a17..1212ae9 100644
+--- a/src/hid/lesstif/menu.c
++++ b/src/hid/lesstif/menu.c
+@@ -210,6 +210,8 @@ LayersChanged (int argc, char **argv, Coord x, Coord y)
+     current_layer = LB_RATS;
+   else if (PCB->SilkActive)
+     current_layer = LB_SILK;
++  else if (PCB->SolderMaskActive)
++    current_layer = LB_MASK;
+   else
+     current_layer = LayerStack[0];
+ 
+@@ -386,6 +388,7 @@ layerpick_button_callback (Widget w, int layer,
+   char *name;
+   PCB->RatDraw = (layer == LB_RATS);
+   PCB->SilkActive = (layer == LB_SILK);
++  PCB->SolderMaskActive = (layer == LB_MASK);
+   if (layer < max_copper_layer)
+     ChangeGroupVisibility (layer, 1, 1);
+   for (l = 0; l < num_layer_buttons; l++)
+@@ -404,6 +407,9 @@ layerpick_button_callback (Widget w, int layer,
+     case LB_SILK:
+       name = "Silk";
+       break;
++    case LB_MASK:
++      name = "Mask";
++      break;
+     default:
+       name = PCB->Data->Layer[layer].Name;
+       break;
+diff --git a/src/macro.h b/src/macro.h
+index 8ef45bc..a34693a 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -76,17 +76,28 @@
+ #define	LAYER_ON_STACK(n)	(&PCB->Data->Layer[LayerStack[(n)]])
+ #define LAYER_PTR(n)            (&PCB->Data->Layer[(n)])
+ #define	CURRENT			(PCB->SilkActive ? &PCB->Data->Layer[ \
+-				(Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer)] \
++				Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer] \
++				: PCB->SolderMaskActive ? &PCB->Data->Layer[ \
++				Settings.ShowBottomSide ? bottom_soldermask_layer : top_soldermask_layer] \
+ 				: LAYER_ON_STACK(0))
+ #define	INDEXOFCURRENT		(PCB->SilkActive ? \
+-				(Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer) \
++				Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer \
++				: PCB->SolderMaskActive ? \
++				Settings.ShowBottomSide ? bottom_soldermask_layer : top_soldermask_layer \
+ 				: LayerStack[0])
+ #define SILKLAYER		Layer[ \
+ 				(Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer)]
+ #define BACKSILKLAYER		Layer[ \
+ 				(Settings.ShowBottomSide ? top_silk_layer : bottom_silk_layer)]
+-
+-#define TEST_SILK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) >= max_copper_layer)
++#define SOLDERMASKLAYER		Layer[ \
++				(Settings.ShowBottomSide ? bottom_soldermask_layer : top_soldermask_layer)]
++#define BACKSOLDERMASKLAYER	Layer[ \
++				(Settings.ShowBottomSide ? top_soldermask_layer : bottom_soldermask_layer)]
++
++#define TEST_SILK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) == top_silk_layer || \
++                                 GetLayerNumber (PCB->Data, layer) == bottom_silk_layer)
++#define TEST_SOLDERMASK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) == top_soldermask_layer || \
++                                 GetLayerNumber (PCB->Data, layer) == bottom_soldermask_layer)
+ 
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/main.c b/src/main.c
+index 9521397..26334b2 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -861,6 +861,15 @@ Color of the mask layer. Default value is @code{"#ff0000"}
+ */
+   COLOR (MaskColor, "#ff0000", "mask-color", "color for solder mask"),
+ 
++/* %start-doc options "3 Colors"
++@ftable @code
++@item --mask-color <string>
++Color of the mask layer. Default value is @code{"#ff0000"}
++@end ftable
++%end-doc
++*/
++  COLOR (MaskSelectedColor, "#00ffff", "mask-selected-color", "color of selected solder mask cutouts"),
++
+ 
+ /* %start-doc options "5 Sizes"
+ All parameters should be given with an unit. If no unit is given, 1/100 mil
+diff --git a/src/misc.c b/src/misc.c
+index 4ae68e3..9c3ad85 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -990,15 +990,15 @@ int
+ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+ {
+   int group, member, layer;
+-  bool c_set = false,        /* flags for the two special layers to */
+-    s_set = false;              /* provide a default setting for old formats */
+-  int groupnum[MAX_LAYER + EXTRA_LAYERS];
++  bool top_set = false,        /* flags for the two special layers to */
++    bottom_set = false;           /* provide a default setting for old formats */
++  int groupnum[MAX_LAYER];
+ 
+   /* clear struct */
+   memset (LayerGroup, 0, sizeof (LayerGroupType));
+ 
+   /* Clear assignments */
+-  for (layer = 0; layer < MAX_LAYER + EXTRA_LAYERS; layer++)
++  for (layer = 0; layer < MAX_LAYER; layer++)
+     groupnum[layer] = -1;
+ 
+   /* loop over all groups */
+@@ -1019,30 +1019,43 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+             case 'C':
+             case 't':
+             case 'T':
+-              layer = LayerN + TOP_SILK_LAYER;
+-              c_set = true;
++              if (member + 1 >= LayerN + EXTRA_LAYERS)
++                goto error;
++
++              LayerGroup->Entries[group][member++] = LayerN + TOP_SILK_LAYER;
++              LayerGroup->Entries[group][member++] = LayerN + TOP_SOLDERMASK_LAYER;
++              top_set = true;
++              ++s;
+               break;
+ 
+             case 's':
+             case 'S':
+             case 'b':
+             case 'B':
+-              layer = LayerN + BOTTOM_SILK_LAYER;
+-              s_set = true;
++              if (member + 1 >= LayerN + EXTRA_LAYERS)
++                goto error;
++
++              LayerGroup->Entries[group][member++] = LayerN + BOTTOM_SILK_LAYER;
++              LayerGroup->Entries[group][member++] = LayerN + BOTTOM_SOLDERMASK_LAYER;
++              bottom_set = true;
++              ++s;
+               break;
+ 
+             default:
+               if (!isdigit ((int) *s))
+                 goto error;
+               layer = atoi (s) - 1;
++
++              while (*++s && isdigit ((int) *s));
++
++              if (layer >= LayerN || member >= LayerN + EXTRA_LAYERS)
++                goto error;
++
++              groupnum[layer] = group;
++              LayerGroup->Entries[group][member++] = layer;
++
+               break;
+             }
+-          if (layer > LayerN + MAX (BOTTOM_SILK_LAYER, TOP_SILK_LAYER) ||
+-              member >= LayerN + 1)
+-            goto error;
+-          groupnum[layer] = group;
+-          LayerGroup->Entries[group][member++] = layer;
+-          while (*++s && isdigit ((int) *s));
+ 
+           /* ignore white spaces and check for separator */
+           while (*s && isspace ((int) *s))
+@@ -1061,10 +1074,17 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+    * group string, make group 0 the bottom side, and group 1 the top side.
+    * This is done by assigning the relevant silkscreen layers to those groups.
+    */
+-  if (!s_set)
+-    LayerGroup->Entries[0][LayerGroup->Number[0]++] = LayerN + BOTTOM_SILK_LAYER;
+-  if (!c_set)
+-    LayerGroup->Entries[1][LayerGroup->Number[1]++] = LayerN + TOP_SILK_LAYER;
++  if (!bottom_set)
++    {
++      LayerGroup->Entries[0][LayerGroup->Number[0]++] = LayerN + BOTTOM_SILK_LAYER;
++      LayerGroup->Entries[0][LayerGroup->Number[0]++] = LayerN + BOTTOM_SOLDERMASK_LAYER;
++    }
++
++  if (!top_set)
++    {
++      LayerGroup->Entries[1][LayerGroup->Number[1]++] = LayerN + TOP_SILK_LAYER;
++      LayerGroup->Entries[1][LayerGroup->Number[1]++] = LayerN + TOP_SOLDERMASK_LAYER;
++    }
+ 
+   /* Assign a unique layer group to each layer that was not explicitly
+    * assigned a particular group by its presence in the layer group string.
+@@ -2020,20 +2040,29 @@ LayerGroupsToString (LayerGroupType *lg)
+             int layer = PCB->LayerGroups.Entries[group][entry];
+             if (layer == top_silk_layer)
+               {
++                if (entry != 0)
++                  *cp++ = ',';
+                 *cp++ = 'c';
+               }
+             else if (layer == bottom_silk_layer)
+               {
++                if (entry != 0)
++                  *cp++ = ',';
+                 *cp++ = 's';
+               }
++            else if (layer == top_soldermask_layer ||
++                     layer == bottom_soldermask_layer)
++              {
++                continue;
++              }
+             else
+               {
++                if (entry != 0)
++                  *cp++ = ',';
+                 sprintf (cp, "%d", layer + 1);
+                 while (*++cp)
+                   ;
+               }
+-            if (entry != PCB->LayerGroups.Number[group] - 1)
+-              *cp++ = ',';
+           }
+       }
+   *cp++ = 0;
+diff --git a/src/search.c b/src/search.c
+index 5f4ea5e..7e9af2c 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -1234,18 +1234,26 @@ SearchObjectByLocation (unsigned Type,
+       HigherAvail = ELEMENT_TYPE;
+     }
+ 
+-  for (i = -1; i < max_copper_layer + 1; i++)
++  for (i = -2; i < max_copper_layer + 2; i++)
+     {
+-      if (i < 0)
++      if (i == -2)
++	SearchLayer = &PCB->Data->SOLDERMASKLAYER;
++      else if (i == -1)
+ 	SearchLayer = &PCB->Data->SILKLAYER;
+       else if (i < max_copper_layer)
+ 	SearchLayer = LAYER_ON_STACK (i);
+-      else
++      else if (i == max_copper_layer)
+ 	{
+ 	  SearchLayer = &PCB->Data->BACKSILKLAYER;
+ 	  if (!PCB->InvisibleObjectsOn)
+ 	    continue;
+ 	}
++      else if (i == max_copper_layer + 1)
++	{
++	  SearchLayer = &PCB->Data->BACKSOLDERMASKLAYER;
++	  if (!PCB->InvisibleObjectsOn)
++	    continue;
++	}
+       if (SearchLayer->On)
+ 	{
+ 	  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
+diff --git a/src/select.c b/src/select.c
+index 021453f..b684819 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -245,6 +245,16 @@ SelectBlock (BoxType *Box, bool select)
+ 	if (! (PCB->InvisibleObjectsOn || !select))
+ 	  continue;
+       }
++    if (layer == & PCB->Data->SOLDERMASKLAYER)
++      {
++	if (! (TEST_FLAG (SHOWMASKFLAG, PCB) || !select))
++	  continue;
++      }
++    if (layer == & PCB->Data->BACKSOLDERMASKLAYER)
++      {
++	if (! (TEST_FLAG (SHOWMASKFLAG, PCB) || !select))
++	  continue;
++      }
+     else
+       if (! (layer->On || !select))
+ 	continue;
