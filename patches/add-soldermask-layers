@@ -1,5 +1,5 @@
 Bottom: 3fae07ed3c6fdf10454a4a6928df490b3095b605
-Top:    4eb1f2e4bd04687ac4e603de337e8c2633a7d293
+Top:    9a92feed79a5d4d4161e3a1341437c43dda9dc5f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 23:38:01 +0100
 
@@ -38,6 +38,23 @@ index 67eb72d..5ee3bc6 100644
  
  /* ---------------------------------------------------------------------------
   * misc constants
+diff --git a/src/create.c b/src/create.c
+index 5ea94c8..332d898 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -223,8 +223,10 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
+       if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, DEF_LAYER))
+ 	return 1;
+ 
+-      pcb->Data->Layer[top_silk_layer].Name = strdup ("silk");
+-      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("silk");
++      pcb->Data->Layer[top_silk_layer].Name = strdup ("top silk");
++      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("bottom silk");
++      pcb->Data->Layer[top_soldermask_layer].Name = strdup ("top soldermask");
++      pcb->Data->Layer[bottom_soldermask_layer].Name = strdup ("bottom soldermask");
+     }
+   return 0;
+ }
 diff --git a/src/data.h b/src/data.h
 index 5d40d71..89d9b87 100644
 --- a/src/data.h
@@ -50,3 +67,136 @@ index 5d40d71..89d9b87 100644
 +#define top_soldermask_layer (max_copper_layer + TOP_SOLDERMASK_LAYER)
  
  extern SettingType Settings;
+ 
+diff --git a/src/misc.c b/src/misc.c
+index ab98370..4a65766 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -990,15 +990,15 @@ int
+ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+ {
+   int group, member, layer;
+-  bool c_set = false,        /* flags for the two special layers to */
+-    s_set = false;              /* provide a default setting for old formats */
+-  int groupnum[MAX_LAYER + EXTRA_LAYERS];
++  bool top_set = false,        /* flags for the two special layers to */
++    bottom_set = false;           /* provide a default setting for old formats */
++  int groupnum[MAX_LAYER];
+ 
+   /* clear struct */
+   memset (LayerGroup, 0, sizeof (LayerGroupType));
+ 
+   /* Clear assignments */
+-  for (layer = 0; layer < MAX_LAYER + EXTRA_LAYERS; layer++)
++  for (layer = 0; layer < MAX_LAYER; layer++)
+     groupnum[layer] = -1;
+ 
+   /* loop over all groups */
+@@ -1019,30 +1019,43 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+             case 'C':
+             case 't':
+             case 'T':
+-              layer = LayerN + TOP_SILK_LAYER;
+-              c_set = true;
++              if (member + 1 >= LayerN + EXTRA_LAYERS)
++                goto error;
++
++              LayerGroup->Entries[group][member++] = LayerN + TOP_SILK_LAYER;
++              LayerGroup->Entries[group][member++] = LayerN + TOP_SOLDERMASK_LAYER;
++              top_set = true;
++              ++s;
+               break;
+ 
+             case 's':
+             case 'S':
+             case 'b':
+             case 'B':
+-              layer = LayerN + BOTTOM_SILK_LAYER;
+-              s_set = true;
++              if (member + 1 >= LayerN + EXTRA_LAYERS)
++                goto error;
++
++              LayerGroup->Entries[group][member++] = LayerN + BOTTOM_SILK_LAYER;
++              LayerGroup->Entries[group][member++] = LayerN + BOTTOM_SOLDERMASK_LAYER;
++              bottom_set = true;
++              ++s;
+               break;
+ 
+             default:
+               if (!isdigit ((int) *s))
+                 goto error;
+               layer = atoi (s) - 1;
++
++              while (*++s && isdigit ((int) *s));
++
++              if (layer >= LayerN || member >= LayerN + EXTRA_LAYERS)
++                goto error;
++
++              groupnum[layer] = group;
++              LayerGroup->Entries[group][member++] = layer;
++
+               break;
+             }
+-          if (layer > LayerN + MAX (BOTTOM_SILK_LAYER, TOP_SILK_LAYER) ||
+-              member >= LayerN + 1)
+-            goto error;
+-          groupnum[layer] = group;
+-          LayerGroup->Entries[group][member++] = layer;
+-          while (*++s && isdigit ((int) *s));
+ 
+           /* ignore white spaces and check for separator */
+           while (*s && isspace ((int) *s))
+@@ -1061,10 +1074,17 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+    * group string, make group 0 the bottom side, and group 1 the top side.
+    * This is done by assigning the relevant silkscreen layers to those groups.
+    */
+-  if (!s_set)
+-    LayerGroup->Entries[0][LayerGroup->Number[0]++] = LayerN + BOTTOM_SILK_LAYER;
+-  if (!c_set)
+-    LayerGroup->Entries[1][LayerGroup->Number[1]++] = LayerN + TOP_SILK_LAYER;
++  if (!bottom_set)
++    {
++      LayerGroup->Entries[0][LayerGroup->Number[0]++] = LayerN + BOTTOM_SILK_LAYER;
++      LayerGroup->Entries[0][LayerGroup->Number[0]++] = LayerN + BOTTOM_SOLDERMASK_LAYER;
++    }
++
++  if (!top_set)
++    {
++      LayerGroup->Entries[1][LayerGroup->Number[1]++] = LayerN + TOP_SILK_LAYER;
++      LayerGroup->Entries[1][LayerGroup->Number[1]++] = LayerN + TOP_SOLDERMASK_LAYER;
++    }
+ 
+   /* Assign a unique layer group to each layer that was not explicitly
+    * assigned a particular group by its presence in the layer group string.
+@@ -2020,20 +2040,29 @@ LayerGroupsToString (LayerGroupType *lg)
+             int layer = PCB->LayerGroups.Entries[group][entry];
+             if (layer == top_silk_layer)
+               {
++                if (entry != 0)
++                  *cp++ = ',';
+                 *cp++ = 'c';
+               }
+             else if (layer == bottom_silk_layer)
+               {
++                if (entry != 0)
++                  *cp++ = ',';
+                 *cp++ = 's';
+               }
++            else if (layer == top_soldermask_layer ||
++                     layer == bottom_soldermask_layer)
++              {
++                continue;
++              }
+             else
+               {
++                if (entry != 0)
++                  *cp++ = ',';
+                 sprintf (cp, "%d", layer + 1);
+                 while (*++cp)
+                   ;
+               }
+-            if (entry != PCB->LayerGroups.Number[group] - 1)
+-              *cp++ = ',';
+           }
+       }
+   *cp++ = 0;
