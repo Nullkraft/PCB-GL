@@ -1,7 +1,7 @@
-Bottom: 355233e5f4e9f54f3cffa34deb24a3fe82638901
-Top:    424802437f300b31488a2c3701b631f00a0f1bee
+Bottom: 82274ee94cba8b913bad27306a16604fe9e8bce3
+Top:    68402c10b07b007ad35228b7ef398bf7b423420a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2014-06-13 01:59:21 +0100
+Date:   2014-06-27 05:07:35 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -15,7 +15,7 @@ polygon fill.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index f675add..477c87b 100644
+index 7067b8d..7187c23 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -339,6 +339,7 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
@@ -172,7 +172,7 @@ index 685b614..507a5fb 100644
    else
      gui->graphics->fill_pcb_polygon (gc, polygon, clip_box);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e466999..57f817a 100644
+index 259b316..2027468 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -691,6 +691,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -188,7 +188,7 @@ index e466999..57f817a 100644
    gui->graphics->fill_pcb_polygon (gc, poly, clip_box);
    ghid_set_alpha_mult (gc, old_alpha_mult);
 diff --git a/src/move.c b/src/move.c
-index d785823..cb2b24a 100644
+index 16eb73f..a8e08e8 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -346,10 +346,12 @@ MovePolygon (LayerType *Layer, PolygonType *Polygon)
@@ -220,7 +220,7 @@ index d785823..cb2b24a 100644
      {
        DrawPolygon (Layer, Polygon);
 diff --git a/src/polygon.c b/src/polygon.c
-index f367a92..c6f8144 100644
+index bfd7499..f4072e7 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -868,6 +868,20 @@ SubtractPad (PadType * pad, PolygonType * p)
