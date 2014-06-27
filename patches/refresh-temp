@@ -1,0 +1,35 @@
+Bottom: 9cdb6088352c98f2f86a695e4ef474b4c1391249
+Top:    6f71f27b766d20357551de85122e926729ed80dd
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-27 01:58:05 +0100
+
+Refresh of create-new-function
+
+---
+
+diff --git a/src/autoplace.c b/src/autoplace.c
+index 9edf108..7262601 100644
+--- a/src/autoplace.c
++++ b/src/autoplace.c
+@@ -210,16 +210,16 @@ static void
+ showboxes (BoxListType *blist)
+ {
+   Cardinal i;
+-  LayerType *bottom_group = &(PCB->Data->Layer[solder_silk_layer]);
++  LayerType *SLayer = &(PCB->Data->Layer[solder_silk_layer]);
+   for (i = 0; i < blist->BoxN; i++)
+     {
+-      CreateNewLineOnLayer (bottom_group, blist->Box[i].X1, blist->Box[i].Y1,
++      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,
+ 			    blist->Box[i].X2, blist->Box[i].Y1, 1, 1, 0);
+-      CreateNewLineOnLayer (bottom_group, blist->Box[i].X1, blist->Box[i].Y2,
++      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y2,
+ 			    blist->Box[i].X2, blist->Box[i].Y2, 1, 1, 0);
+-      CreateNewLineOnLayer (bottom_group, blist->Box[i].X1, blist->Box[i].Y1,
++      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,
+ 			    blist->Box[i].X1, blist->Box[i].Y2, 1, 1, 0);
+-      CreateNewLineOnLayer (bottom_group, blist->Box[i].X2, blist->Box[i].Y1,
++      CreateNewLineOnLayer (SLayer, blist->Box[i].X2, blist->Box[i].Y1,
+ 			    blist->Box[i].X2, blist->Box[i].Y2, 1, 1, 0);
+     }
+ }
