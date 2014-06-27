@@ -210,16 +210,16 @@ static void
 showboxes (BoxListType *blist)
 {
   Cardinal i;
-  LayerType *bottom_group = &(PCB->Data->Layer[solder_silk_layer]);
+  LayerType *SLayer = &(PCB->Data->Layer[solder_silk_layer]);
   for (i = 0; i < blist->BoxN; i++)
     {
-      CreateNewLineOnLayer (bottom_group, blist->Box[i].X1, blist->Box[i].Y1,
+      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,
 			    blist->Box[i].X2, blist->Box[i].Y1, 1, 1, 0);
-      CreateNewLineOnLayer (bottom_group, blist->Box[i].X1, blist->Box[i].Y2,
+      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y2,
 			    blist->Box[i].X2, blist->Box[i].Y2, 1, 1, 0);
-      CreateNewLineOnLayer (bottom_group, blist->Box[i].X1, blist->Box[i].Y1,
+      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,
 			    blist->Box[i].X1, blist->Box[i].Y2, 1, 1, 0);
-      CreateNewLineOnLayer (bottom_group, blist->Box[i].X2, blist->Box[i].Y1,
+      CreateNewLineOnLayer (SLayer, blist->Box[i].X2, blist->Box[i].Y1,
 			    blist->Box[i].X2, blist->Box[i].Y2, 1, 1, 0);
     }
 }
