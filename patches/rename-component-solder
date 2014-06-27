@@ -1,5 +1,5 @@
 Bottom: 7501f7ec80ad78f7636c3ef2dd1afcb911017b2f
-Top:    7501f7ec80ad78f7636c3ef2dd1afcb911017b2f
+Top:    0e4a7b4e638459045d58ba6ca2566b2cd6d85aa0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 21:21:44 +0100
 
@@ -17,4 +17,796 @@ Patch includes various other renaming of component -> top and solder -> bottom.
 
 ---
 
-
+diff --git a/src/autoplace.c b/src/autoplace.c
+index 7262601..5c53757 100644
+--- a/src/autoplace.c
++++ b/src/autoplace.c
+@@ -205,21 +205,21 @@ collectSelectedElements ()
+ 
+ #if 0				/* only for debugging box lists */
+ #include "create.h"
+-/* makes a line on the solder layer surrounding all boxes in blist */
++/* makes a line on the bottom silk layer surrounding all boxes in blist */
+ static void
+ showboxes (BoxListType *blist)
+ {
+   Cardinal i;
+-  LayerType *SLayer = &(PCB->Data->Layer[solder_silk_layer]);
++  LayerType *layer = &(PCB->Data->Layer[bottom_silk_layer]);
+   for (i = 0; i < blist->BoxN; i++)
+     {
+-      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,
++      CreateNewLineOnLayer (layer, blist->Box[i].X1, blist->Box[i].Y1,
+ 			    blist->Box[i].X2, blist->Box[i].Y1, 1, 1, 0);
+-      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y2,
++      CreateNewLineOnLayer (layer, blist->Box[i].X1, blist->Box[i].Y2,
+ 			    blist->Box[i].X2, blist->Box[i].Y2, 1, 1, 0);
+-      CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,
++      CreateNewLineOnLayer (layer, blist->Box[i].X1, blist->Box[i].Y1,
+ 			    blist->Box[i].X1, blist->Box[i].Y2, 1, 1, 0);
+-      CreateNewLineOnLayer (SLayer, blist->Box[i].X2, blist->Box[i].Y1,
++      CreateNewLineOnLayer (layer, blist->Box[i].X2, blist->Box[i].Y1,
+ 			    blist->Box[i].X2, blist->Box[i].Y2, 1, 1, 0);
+     }
+ }
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 53d7989..f766a5e 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -1481,34 +1481,34 @@ showbox (BoxType b, Dimension thickness, int group)
+ #if 1
+   if (b.Y1 == b.Y2 || b.X1 == b.X2)
+     thickness = 5;
+-  line = CreateNewLineOnLayer (LAYER_PTR (component_silk_layer),
++  line = CreateNewLineOnLayer (LAYER_PTR (top_silk_layer),
+ 			       b.X1, b.Y1, b.X2, b.Y1, thickness, 0,
+ 			       MakeFlags (0));
+   AddObjectToCreateUndoList (LINE_TYPE,
+-			     LAYER_PTR (component_silk_layer), line,
++			     LAYER_PTR (top_silk_layer), line,
+ 			     line);
+   if (b.Y1 != b.Y2)
+     {
+-      line = CreateNewLineOnLayer (LAYER_PTR (component_silk_layer),
++      line = CreateNewLineOnLayer (LAYER_PTR (top_silk_layer),
+ 				   b.X1, b.Y2, b.X2, b.Y2, thickness, 0,
+ 				   MakeFlags (0));
+       AddObjectToCreateUndoList (LINE_TYPE,
+-				 LAYER_PTR (component_silk_layer),
++				 LAYER_PTR (bottom_silk_layer),
+ 				 line, line);
+     }
+-  line = CreateNewLineOnLayer (LAYER_PTR (component_silk_layer),
++  line = CreateNewLineOnLayer (LAYER_PTR (top_silk_layer),
+ 			       b.X1, b.Y1, b.X1, b.Y2, thickness, 0,
+ 			       MakeFlags (0));
+   AddObjectToCreateUndoList (LINE_TYPE,
+-			     LAYER_PTR (component_silk_layer), line,
++			     LAYER_PTR (top_silk_layer), line,
+ 			     line);
+   if (b.X1 != b.X2)
+     {
+-      line = CreateNewLineOnLayer (LAYER_PTR (component_silk_layer),
++      line = CreateNewLineOnLayer (LAYER_PTR (top_silk_layer),
+ 				   b.X2, b.Y1, b.X2, b.Y2, thickness, 0,
+ 				   MakeFlags (0));
+       AddObjectToCreateUndoList (LINE_TYPE,
+-				 LAYER_PTR (component_silk_layer),
++				 LAYER_PTR (top_silk_layer),
+ 				 line, line);
+     }
+ #endif
+@@ -1553,7 +1553,7 @@ static void
+ showroutebox (routebox_t * rb)
+ {
+   showbox (rb->sbox, rb->flags.source ? 20 : (rb->flags.target ? 10 : 1),
+-	   rb->flags.is_via ? component_silk_layer : rb->group);
++	   rb->flags.is_via ? top_silk_layer : rb->group);
+ }
+ #endif
+ 
+diff --git a/src/buffer.c b/src/buffer.c
+index c7bd186..7067b8d 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -474,7 +474,7 @@ LoadElementToBuffer (BufferType *Buffer, char *Name, bool FromFile)
+     {
+       if (!ParseElementFile (Buffer->Data, Name))
+ 	{
+-	  if (Settings.ShowSolderSide)
++	  if (Settings.ShowBottomSide)
+ 	    SwapBuffer (Buffer);
+ 	  SetBufferBoundingBox (Buffer);
+ 	  if (Buffer->Data->ElementN)
+@@ -499,7 +499,7 @@ LoadElementToBuffer (BufferType *Buffer, char *Name, bool FromFile)
+ 	  element = Buffer->Data->Element->data;
+ 
+ 	  /* always add elements using top-side coordinates */
+-	  if (Settings.ShowSolderSide)
++	  if (Settings.ShowBottomSide)
+ 	    MirrorElementCoordinates (Buffer->Data, element, 0);
+ 	  SetElementBoundingBox (Buffer->Data, element, &PCB->Font);
+ 
+@@ -1531,10 +1531,10 @@ SwapBuffer (BufferType *Buffer)
+   }
+   ENDALL_LOOP;
+   /* swap silkscreen layers */
+-  swap = Buffer->Data->Layer[solder_silk_layer];
+-  Buffer->Data->Layer[solder_silk_layer] =
+-    Buffer->Data->Layer[component_silk_layer];
+-  Buffer->Data->Layer[component_silk_layer] = swap;
++  swap = Buffer->Data->Layer[bottom_silk_layer];
++  Buffer->Data->Layer[bottom_silk_layer] =
++    Buffer->Data->Layer[top_silk_layer];
++  Buffer->Data->Layer[top_silk_layer] = swap;
+ 
+   /* swap layer groups when balanced */
+   top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+@@ -1544,36 +1544,36 @@ SwapBuffer (BufferType *Buffer)
+       for (j = k = 0; j < PCB->LayerGroups.Number[bottom_group]; j++)
+ 	{
+ 	  int t1, t2;
+-	  Cardinal cnumber = PCB->LayerGroups.Entries[top_group][k];
+-	  Cardinal snumber = PCB->LayerGroups.Entries[bottom_group][j];
++	  Cardinal top_number = PCB->LayerGroups.Entries[top_group][k];
++	  Cardinal bottom_number = PCB->LayerGroups.Entries[bottom_group][j];
+ 
+-	  if (snumber >= max_copper_layer)
++	  if (bottom_number >= max_copper_layer)
+ 	    continue;
+-	  swap = Buffer->Data->Layer[snumber];
++	  swap = Buffer->Data->Layer[bottom_number];
+ 
+-	  while (cnumber >= max_copper_layer)
++	  while (top_number >= max_copper_layer)
+ 	    {
+ 	      k++;
+-	      cnumber = PCB->LayerGroups.Entries[top_group][k];
++	      top_number = PCB->LayerGroups.Entries[top_group][k];
+ 	    }
+-	  Buffer->Data->Layer[snumber] = Buffer->Data->Layer[cnumber];
+-	  Buffer->Data->Layer[cnumber] = swap;
++	  Buffer->Data->Layer[bottom_number] = Buffer->Data->Layer[top_number];
++	  Buffer->Data->Layer[top_number] = swap;
+ 	  k++;
+ 	  /* move the thermal flags with the layers */
+ 	  ALLPIN_LOOP (Buffer->Data);
+ 	  {
+-	    t1 = TEST_THERM (snumber, pin);
+-	    t2 = TEST_THERM (cnumber, pin);
+-	    ASSIGN_THERM (snumber, t2, pin);
+-	    ASSIGN_THERM (cnumber, t1, pin);
++	    t1 = TEST_THERM (bottom_number, pin);
++	    t2 = TEST_THERM (top_number, pin);
++	    ASSIGN_THERM (bottom_number, t2, pin);
++	    ASSIGN_THERM (top_number, t1, pin);
+ 	  }
+ 	  ENDALL_LOOP;
+ 	  VIA_LOOP (Buffer->Data);
+ 	  {
+-	    t1 = TEST_THERM (snumber, via);
+-	    t2 = TEST_THERM (cnumber, via);
+-	    ASSIGN_THERM (snumber, t2, via);
+-	    ASSIGN_THERM (cnumber, t1, via);
++	    t1 = TEST_THERM (bottom_number, via);
++	    t2 = TEST_THERM (top_number, via);
++	    ASSIGN_THERM (bottom_number, t2, via);
++	    ASSIGN_THERM (top_number, t1, via);
+ 	  }
+ 	  END_LOOP;
+ 	}
+diff --git a/src/create.c b/src/create.c
+index 8b5c2b9..5ea94c8 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -124,15 +124,15 @@ pcb_colors_from_settings (PCBType *ptr)
+       ptr->Data->Layer[i].Color = Settings.LayerColor[i];
+       ptr->Data->Layer[i].SelectedColor = Settings.LayerSelectedColor[i];
+     }
+-  ptr->Data->Layer[component_silk_layer].Color =
+-    Settings.ShowSolderSide ?
++  ptr->Data->Layer[top_silk_layer].Color =
++    Settings.ShowBottomSide ?
+     Settings.InvisibleObjectsColor : Settings.ElementColor;
+-  ptr->Data->Layer[component_silk_layer].SelectedColor =
++  ptr->Data->Layer[top_silk_layer].SelectedColor =
+     Settings.ElementSelectedColor;
+-  ptr->Data->Layer[solder_silk_layer].Color =
+-    Settings.ShowSolderSide ?
++  ptr->Data->Layer[bottom_silk_layer].Color =
++    Settings.ShowBottomSide ?
+     Settings.ElementColor : Settings.InvisibleObjectsColor;
+-  ptr->Data->Layer[solder_silk_layer].SelectedColor =
++  ptr->Data->Layer[bottom_silk_layer].SelectedColor =
+     Settings.ElementSelectedColor;
+ }
+ 
+@@ -223,8 +223,8 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
+       if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, DEF_LAYER))
+ 	return 1;
+ 
+-      pcb->Data->Layer[component_silk_layer].Name = strdup ("silk");
+-      pcb->Data->Layer[solder_silk_layer].Name = strdup ("silk");
++      pcb->Data->Layer[top_silk_layer].Name = strdup ("silk");
++      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("silk");
+     }
+   return 0;
+ }
+diff --git a/src/crosshair.c b/src/crosshair.c
+index f0a2d3b..348afdd 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -243,7 +243,7 @@ XORDrawElement (ElementType *Element, Coord DX, Coord DY)
+   PAD_LOOP (Element);
+   {
+     if (PCB->InvisibleObjectsOn ||
+-        (TEST_FLAG (ONSOLDERFLAG, pad) != 0) == Settings.ShowSolderSide)
++        (TEST_FLAG (ONSOLDERFLAG, pad) != 0) == Settings.ShowBottomSide)
+       {
+         /* Make a copy of the pad structure, moved to the correct position */
+         PadType moved_pad = *pad;
+diff --git a/src/data.h b/src/data.h
+index d298d49..5d40d71 100644
+--- a/src/data.h
++++ b/src/data.h
+@@ -47,8 +47,8 @@ extern PCBType *PCB;
+ 
+ #define max_group (PCB->Data->LayerN)
+ #define max_copper_layer (PCB->Data->LayerN)
+-#define solder_silk_layer (max_copper_layer + BOTTOM_SILK_LAYER)
+-#define component_silk_layer (max_copper_layer + TOP_SILK_LAYER)
++#define bottom_silk_layer (max_copper_layer + BOTTOM_SILK_LAYER)
++#define top_silk_layer (max_copper_layer + TOP_SILK_LAYER)
+ 
+ extern SettingType Settings;
+ 
+diff --git a/src/djopt.c b/src/djopt.c
+index 8508aa7..2398f75 100644
+--- a/src/djopt.c
++++ b/src/djopt.c
+@@ -113,8 +113,8 @@ static line_s *lines;
+ 
+ static int layer_groupings[MAX_LAYER];
+ static char layer_type[MAX_LAYER];
+-#define LT_COMPONENT 1
+-#define LT_SOLDER 2
++#define LT_TOP 1
++#define LT_BOTTOM 2
+ 
+ static int autorouted_only = 1;
+ 
+@@ -2789,7 +2789,7 @@ padcleaner ()
+       ALLPAD_LOOP (PCB->Data);
+ 	{
+ 	  int layerflag =
+-	    TEST_FLAG (ONSOLDERFLAG, element) ? LT_SOLDER : LT_COMPONENT;
++	    TEST_FLAG (ONSOLDERFLAG, element) ? LT_BOTTOM : LT_TOP;
+ 
+ 	  if (layer_type[l->layer] != layerflag)
+ 	    continue;
+@@ -2833,10 +2833,10 @@ grok_layer_groups ()
+       f = 0;
+       for (j = 0; j < l->Number[i]; j++)
+ 	{
+-	  if (l->Entries[i][j] == solder_silk_layer)
+-	    f |= LT_SOLDER;
+-	  if (l->Entries[i][j] == component_silk_layer)
+-	    f |= LT_COMPONENT;
++	  if (l->Entries[i][j] == bottom_silk_layer)
++	    f |= LT_BOTTOM;
++	  if (l->Entries[i][j] == top_silk_layer)
++	    f |= LT_TOP;
+ 	}
+       for (j = 0; j < l->Number[i]; j++)
+ 	{
+@@ -2844,9 +2844,9 @@ grok_layer_groups ()
+ 	    {
+ 	      layer_type[l->Entries[i][j]] |= f;
+ 	      layer_groupings[l->Entries[i][j]] = i;
+-	      if (solder_layer == -1 && f == LT_SOLDER)
++	      if (solder_layer == -1 && f == LT_BOTTOM)
+ 		solder_layer = l->Entries[i][j];
+-	      if (component_layer == -1 && f == LT_COMPONENT)
++	      if (component_layer == -1 && f == LT_TOP)
+ 		component_layer = l->Entries[i][j];
+ 	    }
+ 	}
+diff --git a/src/flags.c b/src/flags.c
+index 1383e99..d52407b 100644
+--- a/src/flags.c
++++ b/src/flags.c
+@@ -253,7 +253,7 @@ HID_Flag flags_flag_list[] = {
+   {"fullpoly",             FlagSETTINGS,     OFFSET_POINTER (SettingType, FullPoly)},
+   {"clearline",            FlagSETTINGS,     OFFSET_POINTER (SettingType, ClearLine)},
+   {"uniquenames",          FlagSETTINGS,     OFFSET_POINTER (SettingType, UniqueNames)},
+-  {"showsolderside",       FlagSETTINGS,     OFFSET_POINTER (SettingType, ShowSolderSide)},
++  {"showsolderside",       FlagSETTINGS,     OFFSET_POINTER (SettingType, ShowBottomSide)},
+   {"savelastcommand",      FlagSETTINGS,     OFFSET_POINTER (SettingType, SaveLastCommand)},
+   {"saveintmp",            FlagSETTINGS,     OFFSET_POINTER (SettingType, SaveInTMP)},
+   {"drawgrid",             FlagSETTINGS,     OFFSET_POINTER (SettingType, DrawGrid)},
+diff --git a/src/global.h b/src/global.h
+index 8103d1d..1d017fe 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -673,7 +673,7 @@ typedef struct			/* some resources... */
+   bool ClearLine, FullPoly,
+     UniqueNames,		/* force unique names */
+     SnapPin,			/* snap to pins and pads */
+-    ShowSolderSide,		/* mirror output */
++    ShowBottomSide,		/* mirror output */
+     SaveLastCommand,		/* save the last command entered by user */
+     SaveInTMP,			/* always save data in /tmp */
+     SaveMetricOnly,		/* save with mm suffix only, not mil/mm hybrid */
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 63c2265..2cc3a27 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1408,24 +1408,24 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
+         case 'r':
+         case 'R':
+           ghid_flip_view (gport->pcb_x, gport->pcb_y, true, true);
+-          Settings.ShowSolderSide = !Settings.ShowSolderSide; /* Swapped back below */
++          Settings.ShowBottomSide = !Settings.ShowBottomSide; /* Swapped back below */
+           break;
+         default:
+           return 1;
+       }
+     }
+ 
+-  Settings.ShowSolderSide = !Settings.ShowSolderSide;
++  Settings.ShowBottomSide = !Settings.ShowBottomSide;
+ 
+-  if ((active_group == top_group   && top_on   && !bottom_on) ||
++  if ((active_group == top_group    && top_on    && !bottom_on) ||
+       (active_group == bottom_group && bottom_on && !top_on))
+     {
+-      bool new_solder_vis = Settings.ShowSolderSide;
++      bool new_bottom_vis = Settings.ShowBottomSide;
+ 
+       ChangeGroupVisibility (PCB->LayerGroups.Entries[top_group][0],
+-                             !new_solder_vis, !new_solder_vis);
++                             !new_bottom_vis, !new_bottom_vis);
+       ChangeGroupVisibility (PCB->LayerGroups.Entries[bottom_group][0],
+-                             new_solder_vis, new_solder_vis);
++                             new_bottom_vis, new_bottom_vis);
+     }
+ 
+   return 0;
+diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
+index 56a6cd5..ed79d50 100644
+--- a/src/hid/gtk/gui-config.c
++++ b/src/hid/gtk/gui-config.c
+@@ -1369,9 +1369,9 @@ make_layer_group_string (LayerGroupType * lg)
+       for (entry = 0; entry < lg->Number[group]; entry++)
+ 	{
+ 	  layer = lg->Entries[group][entry];
+-	  if (layer == component_silk_layer)
++	  if (layer == top_silk_layer)
+ 	    string = g_string_append (string, "c");
+-	  else if (layer == solder_silk_layer)
++	  else if (layer == bottom_silk_layer)
+ 	    string = g_string_append (string, "s");
+ 	  else
+ 	    g_string_append_printf (string, "%d", layer + 1);
+@@ -1391,7 +1391,7 @@ config_layers_apply (void)
+   LayerType *layer;
+   gchar *s;
+   gint group, i;
+-  gint componentgroup = 0, soldergroup = 0;
++  gint top_group = 0, bottom_group = 0;
+   gboolean use_as_default = FALSE, layers_modified = FALSE;
+ 
+ #if FIXME
+@@ -1434,25 +1434,25 @@ config_layers_apply (void)
+ 	  group = config_layer_group[i] - 1;
+ 	  layer_groups.Entries[group][layer_groups.Number[group]++] = i;
+ 
+-	  if (i == component_silk_layer)
+-	    componentgroup = group;
+-	  else if (i == solder_silk_layer)
+-	    soldergroup = group;
++	  if (i == top_silk_layer)
++	    top_group = group;
++	  else if (i == bottom_silk_layer)
++	    bottom_group = group;
+ 	}
+ 
+       /* do some cross-checking
+          |  top-side and bottom-side must be in different groups
+          |  top-side and bottom-side must not be the only one in the group
+        */
+-      if (layer_groups.Number[soldergroup] <= 1
+-	  || layer_groups.Number[componentgroup] <= 1)
++      if (layer_groups.Number[bottom_group] <= 1
++	  || layer_groups.Number[top_group] <= 1)
+ 	{
+ 	  Message (_
+ 		   ("Both, 'top side' and 'bottom side' layer must have at least\n"
+ 		    "\tone other layer in their group.\n"));
+ 	  return;
+ 	}
+-      else if (soldergroup == componentgroup)
++      else if (bottom_group == top_group)
+ 	{
+ 	  Message (_
+ 		   ("The 'top side' and 'bottom side' layers are not allowed\n"
+@@ -1565,9 +1565,9 @@ ghid_config_groups_changed(void)
+    */
+   for (layer = 0; layer < max_copper_layer + 2; ++layer)
+     {
+-      if (layer == component_silk_layer)
++      if (layer == top_silk_layer)
+ 	name = _("top side");
+-      else if (layer == solder_silk_layer)
++      else if (layer == bottom_silk_layer)
+ 	name = _("bottom side");
+       else
+ 	name = (gchar *) UNKNOWN (PCB->Data->Layer[layer].Name);
+diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
+index 64a6011..f739d5e 100644
+--- a/src/hid/gtk/gui-misc.c
++++ b/src/hid/gtk/gui-misc.c
+@@ -412,7 +412,7 @@ ghid_set_status_line_label (void)
+           "<b>text</b>=%i%%  "
+           "<b>buffer</b>=#%i"),
+       Settings.grid_unit->allow,
+-      Settings.ShowSolderSide ? C_("status", "bottom") : C_("status", "top"),
++      Settings.ShowBottomSide ? C_("status", "bottom") : C_("status", "top"),
+       PCB->Grid,
+       flag, TEST_FLAG (RUBBERBANDFLAG, PCB) ? ",R  " : "  ",
+       Settings.LineThickness,
+diff --git a/src/hid/lesstif/dialogs.c b/src/hid/lesstif/dialogs.c
+index 59a44c8..db9c657 100644
+--- a/src/hid/lesstif/dialogs.c
++++ b/src/hid/lesstif/dialogs.c
+@@ -32,8 +32,8 @@ static int n;
+ 
+ static int ok;
+ 
+-#define COMPONENT_SIDE_NAME "(top)"
+-#define SOLDER_SIDE_NAME "(bottom)"
++#define TOP_SIDE_NAME "(top)"
++#define BOTTOM_SIDE_NAME "(bottom)"
+ 
+ /* ------------------------------------------------------------ */
+ 
+@@ -1389,10 +1389,10 @@ lgbutton_expose (Widget w, XtPointer u, XmDrawingAreaCallbackStruct *cbs)
+       int swidth;
+       const char *name;
+ 
+-      if (i == solder_silk_layer)
+-	name = SOLDER_SIDE_NAME;
+-      else if (i == component_silk_layer)
+-	name = COMPONENT_SIDE_NAME;
++      if (i == bottom_silk_layer)
++	name = BOTTOM_SIDE_NAME;
++      else if (i == top_silk_layer)
++	name = TOP_SIDE_NAME;
+       else
+ 	name = PCB->Data->Layer[i].Name;
+       XTextExtents (lgr.font, name, strlen(name), &dir, &lg_fa, &lg_fd, &size);
+@@ -1474,10 +1474,10 @@ lesstif_update_layer_groups ()
+       int swidth;
+       const char *name;
+ 
+-      if (i == solder_silk_layer)
+-	name = SOLDER_SIDE_NAME;
+-      else if (i == component_silk_layer)
+-	name = COMPONENT_SIDE_NAME;
++      if (i == bottom_silk_layer)
++	name = BOTTOM_SIDE_NAME;
++      else if (i == top_silk_layer)
++	name = TOP_SIDE_NAME;
+       else
+ 	name = PCB->Data->Layer[i].Name;
+       XTextExtents (lgr.font, name, strlen(name), &dir, &lg_fa, &lg_fd, &size);
+@@ -1500,10 +1500,10 @@ lesstif_update_layer_groups ()
+       n = 0;
+       if (i < max_copper_layer)
+ 	name = PCB->Data->Layer[i].Name;
+-      else if (i == solder_silk_layer)
+-	name = SOLDER_SIDE_NAME;
+-      else if (i == component_silk_layer)
+-	name = COMPONENT_SIDE_NAME;
++      else if (i == bottom_silk_layer)
++	name = BOTTOM_SIDE_NAME;
++      else if (i == top_silk_layer)
++	name = TOP_SIDE_NAME;
+       stdarg (XmNlabelString, XmStringCreatePCB (name));
+       XtSetValues (lglabels[i], args, n);
+       for (j = 0; j < max_group; j++)
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 760c6ef..1a00552 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -613,7 +613,7 @@ group_showing (int g, int *c)
+ static int
+ SwapSides (int argc, char **argv, Coord x, Coord y)
+ {
+-  int old_shown_side = Settings.ShowSolderSide;
++  int old_shown_side = Settings.ShowBottomSide;
+   int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_GROUP);
+   int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
+@@ -642,7 +642,7 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
+ 	return 1;
+       }
+       /* SwapSides will swap this */
+-      Settings.ShowSolderSide = (flip_x == flip_y);
++      Settings.ShowBottomSide = (flip_x == flip_y);
+     }
+ 
+   n = 0;
+@@ -659,16 +659,16 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
+     stdarg (XmNprocessingDirection, XmMAX_ON_BOTTOM);
+   XtSetValues (vscroll, args, n);
+ 
+-  Settings.ShowSolderSide = !Settings.ShowSolderSide;
++  Settings.ShowBottomSide = !Settings.ShowBottomSide;
+ 
+   /* The idea is that if we're looking at the front side and the front
+      layer is active (or visa versa), switching sides should switch
+      layers too.  We used to only do this if the other layer wasn't
+      shown, but we now do it always.  Change it back if users get
+      confused.  */
+-  if (Settings.ShowSolderSide != old_shown_side)
++  if (Settings.ShowBottomSide != old_shown_side)
+     {
+-      if (Settings.ShowSolderSide)
++      if (Settings.ShowBottomSide)
+ 	{
+ 	  if (active_group == top_group)
+ 	    {
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 38ea0f0..20491c6 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -68,11 +68,11 @@ static double bloat = 0;
+ static double scale = 1;
+ static Coord x_shift = 0;
+ static Coord y_shift = 0;
+-static int show_solder_side;
++static int show_bottom_side;
+ #define SCALE(w)   ((int)round((w)/scale))
+ #define SCALE_X(x) ((int)round(((x) - x_shift)/scale))
+-#define SCALE_Y(y) ((int)round(((show_solder_side ? (PCB->MaxHeight-(y)) : (y)) - y_shift)/scale))
+-#define SWAP_IF_SOLDER(a,b) do { Coord c; if (show_solder_side) { c=a; a=b; b=c; }} while (0)
++#define SCALE_Y(y) ((int)round(((show_bottom_side ? (PCB->MaxHeight-(y)) : (y)) - y_shift)/scale))
++#define SWAP_IF_SOLDER(a,b) do { Coord c; if (show_bottom_side) { c=a; a=b; b=c; }} while (0)
+ 
+ /* Used to detect non-trivial outlines */
+ #define NOT_EDGE_X(x) ((x) != 0 && (x) != PCB->MaxWidth)
+@@ -556,7 +556,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+ {
+   int i;
+   static int saved_layer_stack[MAX_LAYER];
+-  int saved_show_solder_side;
++  int saved_show_bottom_side;
+   BoxType region;
+   FlagType save_flags;
+ 
+@@ -589,7 +589,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+ 
+   memcpy (saved_layer_stack, LayerStack, sizeof (LayerStack));
+   save_flags = PCB->Flags;
+-  saved_show_solder_side = Settings.ShowSolderSide;
++  saved_show_bottom_side = Settings.ShowBottomSide;
+ 
+   as_shown = options[HA_as_shown].int_value;
+   fill_holes = options[HA_fill_holes].int_value;
+@@ -597,7 +597,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   if (!options[HA_as_shown].int_value)
+     {
+       CLEAR_FLAG (SHOWMASKFLAG, PCB);
+-      Settings.ShowSolderSide = 0;
++      Settings.ShowBottomSide = 0;
+ 
+       top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+       bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
+@@ -649,11 +649,11 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   lastbrush = (gdImagePtr)((void *) -1);
+   lastcap = -1;
+   lastgroup = -1;
+-  show_solder_side = Settings.ShowSolderSide;
++  show_bottom_side = Settings.ShowBottomSide;
+ 
+   in_mono = options[HA_mono].int_value;
+ 
+-  if (!photo_mode && Settings.ShowSolderSide)
++  if (!photo_mode && Settings.ShowBottomSide)
+     {
+       int i, j;
+       for (i=0, j=max_copper_layer-1; i<j; i++, j--)
+@@ -668,7 +668,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+ 
+   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
+   PCB->Flags = save_flags;
+-  Settings.ShowSolderSide = saved_show_solder_side;
++  Settings.ShowBottomSide = saved_show_bottom_side;
+ }
+ 
+ static void
+@@ -1717,7 +1717,7 @@ png_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
+    */
+   start_angle = 180 - start_angle;
+   delta_angle = -delta_angle;
+-  if (show_solder_side)
++  if (show_bottom_side)
+     {
+       start_angle = - start_angle;
+       delta_angle = -delta_angle;
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 55328c5..4b9fe3e 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -289,7 +289,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   fprintf (f, "1 dup neg scale\n");
+   fprintf (f, "%g dup scale\n", options[HA_scale].real_value);
+   pcb_fprintf (f, "%mi %mi translate\n", -bounds->X1, -bounds->Y2);
+-  if (options[HA_as_shown].int_value && Settings.ShowSolderSide)
++  if (options[HA_as_shown].int_value && Settings.ShowBottomSide)
+     pcb_fprintf (f, "-1 1 scale %mi 0 translate\n", bounds->X1 - bounds->X2);
+   linewidth = -1;
+   lastcap = -1;
+diff --git a/src/macro.h b/src/macro.h
+index 3c69571..2f24077 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -36,7 +36,7 @@
+  * draw.c uses a different definition of TO_SCREEN
+  */
+ #ifndef	SWAP_IDENT
+-#define	SWAP_IDENT			Settings.ShowSolderSide
++#define	SWAP_IDENT			Settings.ShowBottomSide
+ #endif
+ 
+ #define	SWAP_SIGN_X(x)		(x)
+@@ -76,15 +76,15 @@
+ #define	LAYER_ON_STACK(n)	(&PCB->Data->Layer[LayerStack[(n)]])
+ #define LAYER_PTR(n)            (&PCB->Data->Layer[(n)])
+ #define	CURRENT			(PCB->SilkActive ? &PCB->Data->Layer[ \
+-				(Settings.ShowSolderSide ? solder_silk_layer : component_silk_layer)] \
++				(Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer)] \
+ 				: LAYER_ON_STACK(0))
+ #define	INDEXOFCURRENT		(PCB->SilkActive ? \
+-				(Settings.ShowSolderSide ? solder_silk_layer : component_silk_layer) \
++				(Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer) \
+ 				: LayerStack[0])
+ #define SILKLAYER		Layer[ \
+-				(Settings.ShowSolderSide ? solder_silk_layer : component_silk_layer)]
++				(Settings.ShowBottomSide ? bottom_silk_layer : top_silk_layer)]
+ #define BACKSILKLAYER		Layer[ \
+-				(Settings.ShowSolderSide ? component_silk_layer : solder_silk_layer)]
++				(Settings.ShowBottomSide ? top_silk_layer : bottom_silk_layer)]
+ 
+ #define TEST_SILK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) >= max_copper_layer)
+ 
+diff --git a/src/misc.c b/src/misc.c
+index d2f2012..e2644f8 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -1340,7 +1340,7 @@ LayerStringToLayerStack (char *s)
+   PCB->ViaOn = false;
+   PCB->RatOn = false;
+   CLEAR_FLAG (SHOWMASKFLAG, PCB);
+-  Settings.ShowSolderSide = 0;
++  Settings.ShowBottomSide = 0;
+ 
+   for (i=argn-1; i>=0; i--)
+     {
+@@ -1358,7 +1358,7 @@ LayerStringToLayerStack (char *s)
+       else if (strcasecmp (args[i], "mask") == 0)
+ 	SET_FLAG (SHOWMASKFLAG, PCB);
+       else if (strcasecmp (args[i], "solderside") == 0)
+-	Settings.ShowSolderSide = 1;
++	Settings.ShowBottomSide = 1;
+       else if (isdigit ((int) args[i][0]))
+ 	{
+ 	  lno = atoi (args[i]);
+@@ -1449,7 +1449,7 @@ GetLayerGroupNumberBySide (int side)
+    * layer group associated with the relevant side's silk-screen
+    */
+   return GetLayerGroupNumberByNumber(
+-      side == TOP_SIDE ? component_silk_layer : solder_silk_layer);
++      side == TOP_SIDE ? top_silk_layer : bottom_silk_layer);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1559,7 +1559,7 @@ SetArcBoundingBox (ArcType *Arc)
+ void
+ ResetStackAndVisibility (void)
+ {
+-  int comp_group;
++  int top_group;
+   Cardinal i;
+ 
+   for (i = 0; i < max_copper_layer + 2; i++)
+@@ -1575,8 +1575,8 @@ ResetStackAndVisibility (void)
+   PCB->RatOn = true;
+ 
+   /* Bring the component group to the front and make it active.  */
+-  comp_group = GetLayerGroupNumberBySide (TOP_SIDE);
+-  ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 1, 1);
++  top_group = GetLayerGroupNumberBySide (TOP_SIDE);
++  ChangeGroupVisibility (PCB->LayerGroups.Entries[top_group][0], 1, 1);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1979,10 +1979,10 @@ MoveLayerToGroup (int layer, int group)
+   if (layer < 0 || layer > max_copper_layer + 1)
+     return -1;
+   prev = GetLayerGroupNumberByNumber (layer);
+-  if ((layer == solder_silk_layer
+-        && group == GetLayerGroupNumberByNumber (component_silk_layer))
+-      || (layer == component_silk_layer
+-          && group == GetLayerGroupNumberByNumber (solder_silk_layer))
++  if ((layer == bottom_silk_layer
++        && group == GetLayerGroupNumberByNumber (top_silk_layer))
++      || (layer == top_silk_layer
++          && group == GetLayerGroupNumberByNumber (bottom_silk_layer))
+       || (group < 0 || group >= max_group) || (prev == group))
+     return prev;
+ 
+@@ -2018,11 +2018,11 @@ LayerGroupsToString (LayerGroupType *lg)
+         for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry++)
+           {
+             int layer = PCB->LayerGroups.Entries[group][entry];
+-            if (layer == component_silk_layer)
++            if (layer == top_silk_layer)
+               {
+                 *cp++ = 'c';
+               }
+-            else if (layer == solder_silk_layer)
++            else if (layer == bottom_silk_layer)
+               {
+                 *cp++ = 's';
+               }
+diff --git a/src/polygon.c b/src/polygon.c
+index 9a23afa..75e1b9e 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -873,7 +873,7 @@ struct cpInfo
+   DataType *data;
+   LayerType *layer;
+   PolygonType *polygon;
+-  bool solder;
++  bool bottom;
+   POLYAREA *accumulate;
+   int batch_size;
+   jmp_buf env;
+@@ -962,7 +962,7 @@ pad_sub_callback (const BoxType * b, void *cl)
+   if (pad->Clearance == 0)
+     return 0;
+   polygon = info->polygon;
+-  if (XOR (TEST_FLAG (ONSOLDERFLAG, pad), !info->solder))
++  if (XOR (TEST_FLAG (ONSOLDERFLAG, pad), !info->bottom))
+     {
+       if (SubtractPad (pad, polygon) < 0)
+         longjmp (info->env, 1);
+@@ -1042,7 +1042,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
+       || GetLayerNumber (Data, Layer) >= max_copper_layer)
+     return 0;
+   group = Group (Data, GetLayerNumber (Data, Layer));
+-  info.solder = (group == Group (Data, solder_silk_layer));
++  info.bottom = (group == Group (Data, bottom_silk_layer));
+   info.data = Data;
+   info.other = here;
+   info.layer = Layer;
+@@ -1058,7 +1058,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
+       r = 0;
+       info.accumulate = NULL;
+       info.batch_size = 0;
+-      if (info.solder || group == Group (Data, component_silk_layer))
++      if (info.bottom || group == Group (Data, top_silk_layer))
+ 	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
+       GROUP_LOOP (Data, group);
+       {
+@@ -1597,7 +1597,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+       {
+         Cardinal group = GetLayerGroupNumberByNumber (
+                             TEST_FLAG (ONSOLDERFLAG, (PadType *) ptr2) ?
+-                              solder_silk_layer : component_silk_layer);
++                              bottom_silk_layer : top_silk_layer);
+         GROUP_LOOP (Data, group);
+         {
+           info.layer = layer;
