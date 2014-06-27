@@ -7,11 +7,11 @@ Add support for a two soldermask layers, defining regions of removed mask
 
 File-format wise, these work similarly to how silk layers are supported now:
 
-Layer (1 to n "[NAME]")     # "ordinary" design layers
-Layer (n+1 "silk")          # top side
-Layer (n+2 "silk")          # bottom side
-Layer (n+3 "soldermask")    # top side
-Layer (n+4 "soldermask")    # bottom side
+Layer (1 to n "[NAME]")            # "ordinary" design layers
+Layer (n+1 "silk")                 # bottom side silk
+Layer (n+2 "silk")                 # top side silk
+Layer (n+3 "bottom soldermask")    # bottom side soldermask
+Layer (n+4 "top soldermask")       # top side soldermask
 
 
 ---
