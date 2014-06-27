@@ -991,8 +991,8 @@ set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
   else if (TEST_FLAG (FOUNDFLAG, pv))     gui->graphics->set_color (Output.fgGC, PCB->FoundColor);
   else
     {
-      int top_group = GetLayerGroupNumberByNumber (component_silk_layer);
-      int bottom_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
+      int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+      int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
       int this_group      = GetLayerGroupNumberByPointer (layer);
 
       if (this_group == top_group || this_group == bottom_group)
