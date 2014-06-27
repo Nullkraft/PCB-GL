@@ -1,0 +1,29 @@
+Bottom: 5fe327934a0d7d7416a6c18aae9febfc9cd3821a
+Top:    90d591161660ff65944465259ab1ffc01874a51f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-27 04:17:13 +0100
+
+Refresh of add-soldermask-layers
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 4169fc0..505a5f5 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -545,7 +545,6 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+     }
+   else if (layer == LAYER_BUTTON_MASK)
+     {
+-//      PCB->SolderMaskOn = true;
+       SET_FLAG (SHOWMASKFLAG, PCB);
+       hid_action ("LayersChanged");
+     }
+@@ -624,7 +623,6 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+         SET_FLAG (SHOWMASKFLAG, PCB);
+       else
+         CLEAR_FLAG (SHOWMASKFLAG, PCB);
+-//      PCB->SolderMaskOn = active;
+       redraw = TRUE;
+       break;
+     default:
