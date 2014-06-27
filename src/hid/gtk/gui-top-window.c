@@ -545,7 +545,6 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
     }
   else if (layer == LAYER_BUTTON_MASK)
     {
-//      PCB->SolderMaskOn = true;
       SET_FLAG (SHOWMASKFLAG, PCB);
       hid_action ("LayersChanged");
     }
@@ -624,7 +623,6 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
         SET_FLAG (SHOWMASKFLAG, PCB);
       else
         CLEAR_FLAG (SHOWMASKFLAG, PCB);
-//      PCB->SolderMaskOn = active;
       redraw = TRUE;
       break;
     default:
