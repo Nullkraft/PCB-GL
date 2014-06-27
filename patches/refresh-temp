@@ -1,0 +1,21 @@
+Bottom: 40bcfc842a59ca6438136be2fcf8c323bd211ac3
+Top:    7501f7ec80ad78f7636c3ef2dd1afcb911017b2f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-27 04:15:47 +0100
+
+Refresh of create-new-function
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index de94eb9..d2f2012 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -1575,7 +1575,7 @@ ResetStackAndVisibility (void)
+   PCB->RatOn = true;
+ 
+   /* Bring the component group to the front and make it active.  */
+-  comp_group = GetLayerGroupNumberByNumber (component_silk_layer);
++  comp_group = GetLayerGroupNumberBySide (TOP_SIDE);
+   ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 1, 1);
+ }
