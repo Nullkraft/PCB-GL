@@ -1,7 +1,7 @@
-Bottom: 224001972433121dd72ace29621d035b4834153c
-Top:    17af5894205dfc9ea59313e543bc2af25ed04b68
+Bottom: d53730106af817ac79da407e3a27cb464059e553
+Top:    ec80e3a7c6184d8df7deb6e74cfc8612a3412065
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-15 06:18:33 +0100
+Date:   2014-06-27 05:07:33 +0100
 
 action.c: Fix handling of the case where a segment already exists when drawing lines
 
@@ -13,7 +13,7 @@ continue drawing from the desired point as if we HAD created the line.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 5389ec9..08bc802 100644
+index 5af250f..1bc6db1 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1253,8 +1253,11 @@ NotifyMode (void)

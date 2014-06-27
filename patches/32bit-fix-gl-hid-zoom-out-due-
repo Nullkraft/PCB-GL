@@ -1,7 +1,7 @@
-Bottom: 96d514aaad7ac919b03b91aba32440ddc7e57526
-Top:    5301713084a93b79909a5127f7fb39a482023476
+Bottom: c5c269620dbb340201b2428345ed5e6aee8ba876
+Top:    db12b6f2a09f7d34747f9419786b5841db5ed256
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-13 01:59:18 +0100
+Date:   2014-06-27 05:07:30 +0100
 
 32bit: Fix GL HID zoom out, due to over-shooting Coord data-type
 
@@ -91,7 +91,7 @@ index 212814f..efe7076 100644
    return true;
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b6beea1..5a98eed 100644
+index 8bbf021..0fd9f72 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -109,9 +109,51 @@ hid_gc_struct;
@@ -226,7 +226,7 @@ index b6beea1..5a98eed 100644
  
  bool
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index e1a89b4..6a8d8c1 100644
+index 0b5a516..9e5b15e 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -81,7 +81,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)

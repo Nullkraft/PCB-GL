@@ -1,7 +1,7 @@
-Bottom: 17af5894205dfc9ea59313e543bc2af25ed04b68
-Top:    d2243a05243b79ca3492733e8928f68f65852c53
+Bottom: ec80e3a7c6184d8df7deb6e74cfc8612a3412065
+Top:    18042ddcc6f114e598d78c98ef42c6d42cb052d0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-15 14:54:06 +0100
+Date:   2014-06-27 05:07:33 +0100
 
 Tag VNODEs with details of circular contour segments
 
@@ -72,7 +72,7 @@ index 685b614..4343e82 100644
        last_x = this_x;
        last_y = this_y;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c769a2b..e72a6aa 100644
+index b88712c..dcd7898 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -849,9 +849,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -107,7 +107,7 @@ index c769a2b..e72a6aa 100644
    hidgl_flush_triangles (&buffer);
  
 diff --git a/src/macro.h b/src/macro.h
-index 0c680ab..6784461 100644
+index 2f24077..2573536 100644
 --- a/src/macro.h
 +++ b/src/macro.h
 @@ -69,6 +69,7 @@
@@ -150,7 +150,7 @@ index d49660b..be95bd2 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 2ccb417..e26f030 100644
+index 57e79a4..1459f51 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -106,9 +106,9 @@ dicer output is used for HIDs which cannot render things with holes

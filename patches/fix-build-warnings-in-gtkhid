@@ -1,7 +1,7 @@
-Bottom: 5fdf470acc05272e78cccae825b951d35ce3fd16
-Top:    15710e94305c03066f1ac3fd2d19200636c89bb3
+Bottom: e85551f2bf83c688d14e441ea5c26fa019fc4608
+Top:    746f4df755458803c7fea6bf87b9a629c62ef00a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-13 01:59:18 +0100
+Date:   2014-06-27 05:07:31 +0100
 
 Fix build warnings in gtkhid-gl.c
 
@@ -9,7 +9,7 @@ Fix build warnings in gtkhid-gl.c
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b2de212..dfbab22 100644
+index 50c3fe3..2d509af 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -395,6 +395,7 @@ ghid_draw_grid (BoxType *drawn_area)

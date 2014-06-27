@@ -1,7 +1,7 @@
-Bottom: 6085055733cfaf787bad3218bbef5c42fb2894b3
-Top:    2973e5104a7689fb9f33d71c788f04415b7a7999
+Bottom: 4f7df9a4a62576e0f7bac48c0642cd8c2db0f1d2
+Top:    f352dd1992f41717b04c833ba7acd088ffb85c15
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-13 01:59:17 +0100
+Date:   2014-06-27 05:07:29 +0100
 
 First attempts at improved rubberbanding logic
 
@@ -9,7 +9,7 @@ First attempts at improved rubberbanding logic
 ---
 
 diff --git a/src/create.c b/src/create.c
-index acc6142..a1c8867 100644
+index 0a55619..222722b 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -1013,7 +1013,7 @@ CreateDefaultFont (PCBType *pcb)
@@ -43,7 +43,7 @@ index 04fe48e..fa49a1b 100644
  LibraryEntryType * CreateNewConnection (LibraryMenuType *, char *);
  AttributeType * CreateNewAttribute (AttributeListType *list, char *name, char *value);
 diff --git a/src/crosshair.c b/src/crosshair.c
-index ee27160..ea32fad 100644
+index dfb0732..04f0650 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -368,6 +368,57 @@ XORDrawInsertPointObject (void)
@@ -259,7 +259,7 @@ index ee27160..ea32fad 100644
        ptr++;
        i--;
 diff --git a/src/global.h b/src/global.h
-index a4d28ed..8a0d6ee 100644
+index 89abe12..c36afdf 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -548,6 +548,7 @@ typedef struct			/* rubberband lines for element moves */
@@ -271,7 +271,7 @@ index a4d28ed..8a0d6ee 100644
  
  typedef struct			/* current marked line */
 diff --git a/src/move.c b/src/move.c
-index d785823..3609c05 100644
+index 16eb73f..96a411c 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -779,6 +779,59 @@ MoveObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3, Coord DX, Coord DY)
@@ -441,7 +441,7 @@ index d785823..3609c05 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/rubberband.c b/src/rubberband.c
-index e00a5e0..8fd038a 100644
+index d47fcc7..43fe04e 100644
 --- a/src/rubberband.c
 +++ b/src/rubberband.c
 @@ -139,13 +139,13 @@ rubber_callback (const BoxType * b, void *cl)
@@ -540,7 +540,7 @@ index e00a5e0..8fd038a 100644
        break;
      default:
        Message ("hace: bad rubber-rat lookup callback\n");
-@@ -430,10 +431,10 @@ CheckPolygonForRubberbandConnection (LayerType *Layer,
+@@ -429,10 +430,10 @@ CheckPolygonForRubberbandConnection (LayerType *Layer,
  	  thick = (line->Thickness + 1) / 2;
  	  if (IsPointInPolygon (line->Point1.X, line->Point1.Y,
  				thick, Polygon))

@@ -1,7 +1,7 @@
-Bottom: 5a5c62d2289dd32643738413d4b1f138264ff63a
-Top:    6085055733cfaf787bad3218bbef5c42fb2894b3
+Bottom: 450c8160680ecdad8bb0c78f5458668e476fedf0
+Top:    4f7df9a4a62576e0f7bac48c0642cd8c2db0f1d2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-13 01:59:17 +0100
+Date:   2014-06-27 05:07:29 +0100
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -9,7 +9,7 @@ Introduce hacky code to switch cursor when over a line we might drag
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 8729237..ee27160 100644
+index 348afdd..dfb0732 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -1098,11 +1098,66 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
@@ -121,7 +121,7 @@ index 003b6a4..2aa7c8d 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8af2e32..e1a89b4 100644
+index 9b0fc84..0b5a516 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1137,6 +1137,16 @@ static int PointCursor (int argc, char **argv, Coord x, Coord y)
@@ -153,7 +153,7 @@ index 8af2e32..e1a89b4 100644
  
    ghid_graphics.make_gc             = ghid_make_gc;
 diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
-index 64a6011..0c8ef3c 100644
+index f739d5e..0af6a6d 100644
 --- a/src/hid/gtk/gui-misc.c
 +++ b/src/hid/gtk/gui-misc.c
 @@ -143,6 +143,29 @@ ghid_watch_cursor (void)

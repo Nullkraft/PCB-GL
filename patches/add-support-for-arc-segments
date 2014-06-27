@@ -1,7 +1,7 @@
-Bottom: ee553f29278b58f13870ec74d19708de73c99444
-Top:    66e2b7d5e12aaa88b7e70d004fe368f8394465bc
+Bottom: 8ddeff513e1fdbb6de86e3d56fc17b765eea53d9
+Top:    55cb10ac1346f300fc2661ee72577002066e0593
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-13 01:22:11 +0100
+Date:   2014-06-27 05:07:32 +0100
 
 Add support for arc segments in polygon object outline definitions
 
@@ -24,7 +24,7 @@ EXTREME FEATURE IN EITHER THE +/-X or +/-Y DIRECTIONS.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 5d2b4df..5389ec9 100644
+index eaf21e4..5af250f 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1428,7 +1428,8 @@ NotifyMode (void)
@@ -77,7 +77,7 @@ index b0cd9c8..a580e8e 100644
    SetPolygonBoundingBox (Dest);
    Dest->Flags = Src->Flags;
 diff --git a/src/create.c b/src/create.c
-index a1c8867..64a22ec 100644
+index 222722b..5addcf1 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -576,10 +576,10 @@ CreateNewPolygonFromRectangle (LayerType *Layer,
@@ -125,7 +125,7 @@ index fa49a1b..5b6cfdd 100644
  void RefdesMapInit (void);
  ElementType * CreateNewElement (DataType *, FontType *, FlagType, char *, char *, char *, Coord, Coord, BYTE, int, FlagType, bool);
 diff --git a/src/global.h b/src/global.h
-index 8a0d6ee..6e4bd9c 100644
+index c36afdf..de19444 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -236,8 +236,10 @@ typedef struct			/* a line/polygon point */
@@ -220,7 +220,7 @@ index 4f64880..a4e0a05 100644
  NetList		{ return(T_NETLIST); }
  Net		{ return(T_NET); }
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 6cd4c7b..8e2225c 100644
+index 72a0046..f63a50a 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -119,7 +119,7 @@ static Coord new_units (PLMeasure m);
@@ -251,7 +251,7 @@ index 6cd4c7b..8e2225c 100644
  		;
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 4623b52..c544ac6 100644
+index 322d7ea..a4a6891 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -111,6 +111,7 @@ dicer output is used for HIDs which cannot render things with holes

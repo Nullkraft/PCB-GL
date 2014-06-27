@@ -1,7 +1,7 @@
-Bottom: 66e2b7d5e12aaa88b7e70d004fe368f8394465bc
-Top:    c58e2d593cef54c42faca3e54c37280932536e3d
+Bottom: 55cb10ac1346f300fc2661ee72577002066e0593
+Top:    5dddba59928d161092ffe9d50d5b725996edaffc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-15 05:29:34 +0100
+Date:   2014-06-27 05:07:33 +0100
 
 Remove function SearchScreenGridSlop() and use SearchObjectByLocation() directly
 
@@ -9,7 +9,7 @@ Remove function SearchScreenGridSlop() and use SearchObjectByLocation() directly
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index a921c2b..7e0deef 100644
+index 82cb980..25c77cc 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -1008,8 +1008,9 @@ check_snap_offgrid_line (struct snap_data *snap_data,

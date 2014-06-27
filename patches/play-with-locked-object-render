@@ -1,7 +1,7 @@
-Bottom: b69e5effb4138557ce16d5008aaf3743785d8fc2
-Top:    dad13900ec9bbf0b3450724f9660c2312e19eaae
+Bottom: fea017e5b8d7227f19cf92ecb026736c9b7284b2
+Top:    bbb3be9480d80566454e85a771815b7d68601945
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-13 01:59:17 +0100
+Date:   2014-06-27 05:07:30 +0100
 
 Play with locked object rendering
 
@@ -14,7 +14,7 @@ the exercise is to determine whether the usability is better or not.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 90bce12..5d2b4df 100644
+index 7be535e..eaf21e4 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1146,7 +1146,6 @@ NotifyMode (void)
@@ -34,7 +34,7 @@ index 90bce12..5d2b4df 100644
  	break;
        }
 diff --git a/src/draw.c b/src/draw.c
-index a6ff4b4..96e2473 100644
+index 267f0e3..273ed8e 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -179,12 +179,15 @@ DrawStrippedText (hidGC gc, ElementType *Element, int min_width)
@@ -70,7 +70,7 @@ index a6ff4b4..96e2473 100644
    gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
    gui->graphics->set_line_width (Output.fgGC, 0);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index ebc73dd..5ff34bd 100644
+index 99ce852..bae3817 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
 @@ -7,6 +7,8 @@
@@ -171,7 +171,7 @@ index ebc73dd..5ff34bd 100644
                          PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
                          FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0cb92bd..b6beea1 100644
+index 2561403..8bbf021 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -79,6 +79,8 @@ typedef struct render_priv {

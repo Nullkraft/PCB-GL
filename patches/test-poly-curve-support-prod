@@ -1,7 +1,7 @@
-Bottom: a0736ff2aa760143ef44fb080f8119846768efcd
-Top:    224001972433121dd72ace29621d035b4834153c
+Bottom: 4024e8fd7bc38e6d32f208f1f3e8f3176dd7a93b
+Top:    d53730106af817ac79da407e3a27cb464059e553
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-15 05:28:42 +0100
+Date:   2014-06-27 05:07:33 +0100
 
 Test poly-curve support, prod at fixing cursor to pcb mapping in ORTHO view
 
@@ -9,7 +9,7 @@ Test poly-curve support, prod at fixing cursor to pcb mapping in ORTHO view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8075ccc..c769a2b 100644
+index e855cb2..b88712c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -2320,6 +2320,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -80,7 +80,7 @@ index 8075ccc..c769a2b 100644
    fvz = (float)pcb_z;
  
 diff --git a/src/polygon.c b/src/polygon.c
-index c544ac6..2ccb417 100644
+index a4a6891..57e79a4 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -1364,6 +1364,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
