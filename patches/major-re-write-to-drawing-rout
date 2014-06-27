@@ -1,4 +1,4 @@
-Bottom: 1573539dadaf90e9ccc80c52180579c067ff8214
+Bottom: b1dc20237c3e994aff4cfe699e928693a1ebb02e
 Top:    08402a096e4b549817d8129fbc071970ba6f58f2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-13 01:59:10 +0100
@@ -76,7 +76,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1c7d2a6..41cadde 100644
+index 46b368c..41cadde 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -89,17 +89,6 @@ index 1c7d2a6..41cadde 100644
  #include "gui-pinout-preview.h"
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
-@@ -105,8 +108,8 @@ compute_depth (int group)
-   int middle_copper_group;
-   int depth;
- 
--  bottom_group = GetLayerGroupNumberByNumber (BOTTOM_SIDE);
--  top_group = GetLayerGroupNumberByNumber (TOP_SIDE);
-+  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
-+  top_group = GetLayerGroupNumberBySide (TOP_SIDE);
- 
-   min_copper_group = MIN (bottom_group, top_group);
-   max_copper_group = MAX (bottom_group, top_group);
 @@ -198,64 +201,78 @@ end_subcomposite (void)
    priv->subcomposite_stencil_bit = 0;
  }
