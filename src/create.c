@@ -223,8 +223,10 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
       if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, DEF_LAYER))
 	return 1;
 
-      pcb->Data->Layer[top_silk_layer].Name = strdup ("silk");
-      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("silk");
+      pcb->Data->Layer[top_silk_layer].Name = strdup ("top silk");
+      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("bottom silk");
+      pcb->Data->Layer[top_soldermask_layer].Name = strdup ("top soldermask");
+      pcb->Data->Layer[bottom_soldermask_layer].Name = strdup ("bottom soldermask");
     }
   return 0;
 }
