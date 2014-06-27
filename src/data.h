@@ -45,6 +45,7 @@ extern OutputType Output;
 
 extern PCBType *PCB;
 
+#define EXTRA_LAYERS 2 /* 2x silkscreen layers */
 #define max_group (PCB->Data->LayerN)
 #define max_copper_layer (PCB->Data->LayerN)
 #define bottom_silk_layer (max_copper_layer + BOTTOM_SILK_LAYER)
