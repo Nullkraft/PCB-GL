@@ -1,0 +1,118 @@
+Bottom: 570d6093b03b2d33f0b131c52a0e73d24bdd7c29
+Top:    08402a096e4b549817d8129fbc071970ba6f58f2
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-27 04:52:53 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 06f399b..41cadde 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -108,8 +108,8 @@ compute_depth (int group)
+   int middle_copper_group;
+   int depth;
+ 
+-  bottom_group = GetLayerGroupNumberByNumber (BOTTOM_SIDE);
+-  top_group = GetLayerGroupNumberByNumber (TOP_SIDE);
++  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
++  top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+ 
+   min_copper_group = MIN (bottom_group, top_group);
+   max_copper_group = MAX (bottom_group, top_group);
+@@ -991,12 +991,12 @@ set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
+   else if (TEST_FLAG (FOUNDFLAG, pv))     gui->graphics->set_color (Output.fgGC, PCB->FoundColor);
+   else
+     {
+-      int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+-      int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
++      int top_group = GetLayerGroupNumberByNumber (component_silk_layer);
++      int bottom_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
+       int this_group      = GetLayerGroupNumberByPointer (layer);
+ 
+-      if (this_group == component_group || this_group == solder_group)
+-        gui->graphics->set_color (Output.fgGC, (SWAP_IDENT == (this_group == solder_group)) ?
++      if (this_group == top_group || this_group == bottom_group)
++        gui->graphics->set_color (Output.fgGC, (SWAP_IDENT == (this_group == bottom_group)) ?
+                                                   PCB->ViaColor : PCB->InvisibleObjectsColor);
+       else
+         gui->graphics->set_color (Output.fgGC, layer->Color);
+@@ -1358,8 +1358,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+   int n_entries = PCB->LayerGroups.Number[group];
+   Cardinal *layers = PCB->LayerGroups.Entries[group];
+   int first_run = 1;
+-  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+-  int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
++  int top_group = GetLayerGroupNumberByNumber (component_silk_layer);
++  int bottom_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
+ 
+   if (!gui->set_layer (0, group, 0))
+     return 0;
+@@ -1419,12 +1419,12 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+       if (!global_view_2d && rv) {
+         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
+         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
+-        if (PCB->PinOn && group == component_group)
++        if (PCB->PinOn && group == top_group)
+           {
+             side = COMPONENT_LAYER;
+             r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
+           }
+-        if (PCB->PinOn && group == solder_group)
++        if (PCB->PinOn && group == bottom_group)
+           {
+             side = SOLDER_LAYER;
+             r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
+@@ -1536,8 +1536,8 @@ ghid_draw_everything (BoxType *drawn_area)
+   struct cyl_info cyl_info;
+   int reverse_layers;
+   int save_show_solder;
+-  int solder_group;
+-  int component_group;
++  int bottom_group;
++  int top_group;
+   int min_phys_group;
+   int max_phys_group;
+ 
+@@ -1557,11 +1557,11 @@ ghid_draw_everything (BoxType *drawn_area)
+   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+ 
+-  solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+-  component_group = GetLayerGroupNumberByNumber (component_silk_layer);
++  bottom_group = GetLayerGroupNumberByNumber (solder_silk_layer);
++  top_group = GetLayerGroupNumberByNumber (component_silk_layer);
+ 
+-  min_phys_group = MIN (solder_group, component_group);
+-  max_phys_group = MAX (solder_group, component_group);
++  min_phys_group = MIN (bottom_group, top_group);
++  max_phys_group = MAX (bottom_group, top_group);
+ 
+   memset (do_group, 0, sizeof (do_group));
+   if (global_view_2d) {
+@@ -1840,17 +1840,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+     glVertex3i (0,             PCB->MaxHeight, 0);
+     glEnd ();
+   } else {
+-    int solder_group;
+-    int component_group;
++    int bottom_group;
++    int top_group;
+     int min_phys_group;
+     int max_phys_group;
+     int i;
+ 
+-    solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+-    component_group = GetLayerGroupNumberByNumber (component_silk_layer);
++    bottom_group = GetLayerGroupNumberByNumber (solder_silk_layer);
++    top_group = GetLayerGroupNumberByNumber (component_silk_layer);
+ 
+-    min_phys_group = MIN (solder_group, component_group);
+-    max_phys_group = MAX (solder_group, component_group);
++    min_phys_group = MIN (bottom_group, top_group);
++    max_phys_group = MAX (bottom_group, top_group);
+ 
+     glBegin (GL_QUADS);
+     for (i = min_phys_group; i <= max_phys_group; i++) {
