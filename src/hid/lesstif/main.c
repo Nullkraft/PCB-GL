@@ -615,7 +615,7 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
 {
   int old_shown_side = Settings.ShowSolderSide;
   int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
-  int bottom_group = GetLayerGroupNumberBySide (BOTTOM_GROUP);
+  int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
   int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
   int top_layer;
   int bottom_layer;
