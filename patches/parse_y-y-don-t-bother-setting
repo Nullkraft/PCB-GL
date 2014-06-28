@@ -1,5 +1,5 @@
 Bottom: fc878517f43af5ee9b339295005b86a6c08e5e39
-Top:    1c0d2f49091c0c9ebf1e7eadf40bc7094d0978de
+Top:    04cc79d4b12db0b5a80658b1d33cf9eded379171
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-28 21:28:08 +0100
 
@@ -9,10 +9,17 @@ parse_y.y: Don't bother setting LayerFlag[1,2] for elements - it isn't used
 ---
 
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 86ed589..ed4d183 100644
+index 86ed589..c6f5246 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
-@@ -226,8 +226,6 @@ parsepcb
+@@ -220,14 +220,12 @@ parsepcb
+ 		    yyData->pcb = yyPCB;
+ 		    yyData->LayerN = 0;
+ 		    layer_group_string = NULL;
+-		}
++		  }
+ 		  element
+ 		  {
  		    PCBType *pcb_save = PCB;
  		    ElementType *e;
  
