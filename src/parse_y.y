@@ -54,7 +54,6 @@
 #include "rtree.h"
 #include "strflags.h"
 #include "thermal.h"
-#include "move.h"
 #include "assert.h"
 
 #ifdef HAVE_LIBDMALLOC
