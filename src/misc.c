@@ -995,8 +995,6 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
     s_set = false;              /* provide a default setting for old formats */
   int groupnum[MAX_LAYER + 2];
 
-<<<<<<< current
-=======
   *LayerN = 0;
 
   /* Deterimine the maximum layer number */
@@ -1037,7 +1035,6 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
 
   printf ("ParseGroupString (\"%s\", %p, %p) - found %i layers\n", group_string, LayerGroup, LayerN, *LayerN);
 
->>>>>>> patched
   /* clear struct */
   memset (LayerGroup, 0, sizeof (LayerGroupType));
 

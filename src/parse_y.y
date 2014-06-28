@@ -213,12 +213,14 @@ parsepcb
 		| {
 		    if (yyPCB != NULL)
 		      {
-			/* This is the case where we load a footprint with file->open, or from the command line */
+printf ("FOO\n");
+			/* This case is when we load a footprint with file->open, or from the command line */
 			yyFont = &yyPCB->Font;
 			yyData = yyPCB->Data;
 			yyData->pcb = yyPCB;
 			yyData->LayerN = 0;
-		      }
+		      //}
+		      } else printf ("YO\n");
 		  }
 		  element
 		  {
@@ -226,7 +228,8 @@ parsepcb
 		    ElementType *e;
 		    if (yyPCB != NULL)
 		      {
-			/* This is the case where we load a footprint with file->open, or from the command line */
+printf ("BAR\n");
+			/* This case is when we load a footprint with file->open, or from the command line */
 			CreateNewPCBPost (yyPCB, 0);
 			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, &yyData->LayerN);
 			e = yyPCB->Data->Element->data; /* we know there's only one */
@@ -236,7 +239,7 @@ parsepcb
 			yyPCB->MaxWidth = e->BoundingBox.X2;
 			yyPCB->MaxHeight = e->BoundingBox.Y2;
 			yyPCB->is_footprint = 1;
-		      }
+		      } else printf ("HELLO\n");
 		  }
 		;
 
