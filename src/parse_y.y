@@ -54,6 +54,8 @@
 #include "rtree.h"
 #include "strflags.h"
 #include "thermal.h"
+#include "move.h"
+#include "assert.h"
 
 #ifdef HAVE_LIBDMALLOC
 # include <dmalloc.h> /* see http://dmalloc.com */
@@ -213,13 +215,12 @@ parsepcb
 			PCB = pcb_save;
 			}
 			   
-		| { PreLoadElementPCB ();
-		    layer_group_string = NULL; }
+		| {
+		    assert (yyPCB == NULL);
+		  }
 		  element
-		  { LayerFlag[0] = true;
-		    LayerFlag[1] = true;
-		    yyData->LayerN = 2;
-		    PostLoadElementPCB ();
+		  {
+		    assert (yyPCB == NULL);
 		  }
 		;
 
