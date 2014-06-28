@@ -1027,9 +1027,12 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
       /* ignore white spaces and check for separator */
       while (*s && isspace ((int) *s))
         s++;
-      if (!*s || *s == ':')
-        continue;
-      if (*s != ',')
+
+      if (*s == '\0')
+        break;
+
+      if (*s != ':' ||
+          *s != ',')
         goto error;
     }
 
