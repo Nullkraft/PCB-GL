@@ -1,0 +1,22 @@
+Bottom: 2f43997adb17f6479f8499503d288aec9647c963
+Top:    c2b37320467865b77cad2d17e9096c6728ffe03f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-28 22:36:01 +0100
+
+Refresh of parse_y-y-don-t-bother-setting
+
+---
+
+diff --git a/src/parse_y.y b/src/parse_y.y
+index 0bbbfaf..fcf57cc 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -232,8 +232,6 @@ parsepcb
+ 		    if (yyPCB != NULL)
+ 		      {
+ 			/* This is the case where we load a footprint with file->open, or from the command line */
+-			LayerFlag[0] = true;
+-			LayerFlag[1] = true;
+ 			yyData->LayerN = 2;
+ 			CreateNewPCBPost (yyPCB, 0);
+ 			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, yyData->LayerN);
