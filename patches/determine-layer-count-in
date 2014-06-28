@@ -1,5 +1,5 @@
 Bottom: 24715b4db27963bdcdb321576847c4da74da5c02
-Top:    7a349b8b2e7e99204b09eb17a355b7d16a05301b
+Top:    a8eab48b64680b290f83d90fab85d25f21d74aa4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-28 19:43:15 +0100
 
@@ -76,10 +76,10 @@ index 9521397..a6b22ad 100644
    CreateNewPCBPost (PCB, 1);
    if (argc > 1)
 diff --git a/src/misc.c b/src/misc.c
-index e2644f8..fa38c85 100644
+index e2644f8..2be39f9 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -987,13 +987,57 @@ error:
+@@ -987,13 +987,55 @@ error:
   * comma separated layer numbers (1,2,b:4,6,8,t)
   */
  int
@@ -128,17 +128,15 @@ index e2644f8..fa38c85 100644
 +      if (*s == '\0')
 +        break;
 +
-+      if (*s != ':' ||
++      if (*s != ':' &&
 +          *s != ',')
 +        goto error;
 +    }
 +
-+  printf ("ParseGroupString (\"%s\", %p, %p) - found %i layers\n", group_string, LayerGroup, LayerN, *LayerN);
-+
    /* clear struct */
    memset (LayerGroup, 0, sizeof (LayerGroupType));
  
-@@ -1002,7 +1046,9 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+@@ -1002,7 +1044,9 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
      groupnum[layer] = -1;
  
    /* loop over all groups */
@@ -149,7 +147,7 @@ index e2644f8..fa38c85 100644
      {
        while (*s && isspace ((int) *s))
          s++;
-@@ -1019,7 +1065,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+@@ -1019,7 +1063,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
              case 'C':
              case 't':
              case 'T':
@@ -158,7 +156,7 @@ index e2644f8..fa38c85 100644
                c_set = true;
                break;
  
-@@ -1027,18 +1073,16 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+@@ -1027,18 +1071,16 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
              case 'S':
              case 'b':
              case 'B':
@@ -180,7 +178,7 @@ index e2644f8..fa38c85 100644
              goto error;
            groupnum[layer] = group;
            LayerGroup->Entries[group][member++] = layer;
-@@ -1049,12 +1093,8 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+@@ -1049,12 +1091,8 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
              s++;
            if (!*s || *s == ':')
              break;
@@ -193,7 +191,7 @@ index e2644f8..fa38c85 100644
      }
  
    /* If no explicit solder or component layer group was found in the layer
-@@ -1062,14 +1102,14 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+@@ -1062,14 +1100,14 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
     * This is done by assigning the relevant silkscreen layers to those groups.
     */
    if (!s_set)
