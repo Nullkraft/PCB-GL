@@ -3,9 +3,10 @@ Top:    3c2db26f493ab230d8eb7f9e8565c9c9b6c9214c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-28 21:16:01 +0100
 
-Move PreLoadElementPCB and PostLoadElementPCB contents inline in parse_y.y
+Remove PreLoadElementPCB and PostLoadElementPCB
 
-Open-code these, as we do with ordinary board loading.
+Where these are called from parse_y.y, yyPCB is always NULL, and
+the functions do nothing.
 
 
 ---
