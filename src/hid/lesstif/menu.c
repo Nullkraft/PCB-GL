@@ -210,6 +210,8 @@ LayersChanged (int argc, char **argv, Coord x, Coord y)
     current_layer = LB_RATS;
   else if (PCB->SilkActive)
     current_layer = LB_SILK;
+  else if (PCB->SolderMaskActive)
+    current_layer = LB_MASK;
   else
     current_layer = LayerStack[0];
 
@@ -386,6 +388,7 @@ layerpick_button_callback (Widget w, int layer,
   char *name;
   PCB->RatDraw = (layer == LB_RATS);
   PCB->SilkActive = (layer == LB_SILK);
+  PCB->SolderMaskActive = (layer == LB_MASK);
   if (layer < max_copper_layer)
     ChangeGroupVisibility (layer, 1, 1);
   for (l = 0; l < num_layer_buttons; l++)
@@ -403,6 +406,9 @@ layerpick_button_callback (Widget w, int layer,
       break;
     case LB_SILK:
       name = "Silk";
+      break;
+    case LB_MASK:
+      name = "Mask";
       break;
     default:
       name = PCB->Data->Layer[layer].Name;
