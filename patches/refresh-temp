@@ -1,0 +1,45 @@
+Bottom: faad96ab4146c61c9e6604105eb30ea1c7867843
+Top:    17388aee0e0c32fe96a5d493e9c8a5a36574423e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-28 23:59:36 +0100
+
+Refresh of determine-layer-count-in
+
+---
+
+diff --git a/src/parse_y.y b/src/parse_y.y
+index dcafe11..ba31cd6 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -213,14 +213,12 @@ parsepcb
+ 		| {
+ 		    if (yyPCB != NULL)
+ 		      {
+-printf ("FOO\n");
+ 			/* This case is when we load a footprint with file->open, or from the command line */
+ 			yyFont = &yyPCB->Font;
+ 			yyData = yyPCB->Data;
+ 			yyData->pcb = yyPCB;
+ 			yyData->LayerN = 0;
+-		      //}
+-		      } else printf ("YO\n");
++		      }
+ 		  }
+ 		  element
+ 		  {
+@@ -228,7 +226,6 @@ printf ("FOO\n");
+ 		    ElementType *e;
+ 		    if (yyPCB != NULL)
+ 		      {
+-printf ("BAR\n");
+ 			/* This case is when we load a footprint with file->open, or from the command line */
+ 			CreateNewPCBPost (yyPCB, 0);
+ 			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, &yyData->LayerN);
+@@ -239,7 +236,7 @@ printf ("BAR\n");
+ 			yyPCB->MaxWidth = e->BoundingBox.X2;
+ 			yyPCB->MaxHeight = e->BoundingBox.Y2;
+ 			yyPCB->is_footprint = 1;
+-		      } else printf ("HELLO\n");
++		      }
+ 		  }
+ 		;
