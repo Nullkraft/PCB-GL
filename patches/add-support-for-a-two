@@ -1,5 +1,5 @@
-Bottom: 2178108e0413838daccce7e4e78ba32940c5b351
-Top:    5317bc9f6ba8f0ab6d2797ca467b4a4110b2cbe6
+Bottom: 603529c751c1aea433e4cbbad310a14d2d1b8215
+Top:    210e53d9ad5781144093f1b382cb78d25bb850aa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 23:38:01 +0100
 
@@ -330,7 +330,7 @@ index a6b22ad..a217134 100644
  /* %start-doc options "5 Sizes"
  All parameters should be given with an unit. If no unit is given, 1/100 mil
 diff --git a/src/misc.c b/src/misc.c
-index 9b4b0a2..d120ea9 100644
+index 0e1a835..eec9893 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -991,9 +991,9 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
@@ -346,7 +346,7 @@ index 9b4b0a2..d120ea9 100644
  
    *LayerN = 0;
  
-@@ -1042,7 +1042,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1039,7 +1039,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
    memset (LayerGroup, 0, sizeof (LayerGroupType));
  
    /* Clear assignments */
@@ -355,7 +355,7 @@ index 9b4b0a2..d120ea9 100644
      groupnum[layer] = -1;
  
    /* loop over all groups */
-@@ -1065,28 +1065,41 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1062,28 +1062,41 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
              case 'C':
              case 't':
              case 'T':
@@ -407,7 +407,7 @@ index 9b4b0a2..d120ea9 100644
  
            /* ignore white spaces and check for separator */
            while (*s && isspace ((int) *s))
-@@ -1101,10 +1114,17 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1098,10 +1111,17 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
     * group string, make group 0 the bottom side, and group 1 the top side.
     * This is done by assigning the relevant silkscreen layers to those groups.
     */
@@ -429,7 +429,7 @@ index 9b4b0a2..d120ea9 100644
  
    /* Assign a unique layer group to each layer that was not explicitly
     * assigned a particular group by its presence in the layer group string.
-@@ -2060,20 +2080,29 @@ LayerGroupsToString (LayerGroupType *lg)
+@@ -2057,20 +2077,29 @@ LayerGroupsToString (LayerGroupType *lg)
              int layer = PCB->LayerGroups.Entries[group][entry];
              if (layer == top_silk_layer)
                {
