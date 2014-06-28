@@ -3,10 +3,10 @@ Top:    a06b284f142de4fe49fcec3f72f897fe767c44ac
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-28 21:16:01 +0100
 
-Remove PreLoadElementPCB and PostLoadElementPCB
+Move contents of PreLoadElementPCB and PostLoadElementPCB into parse_y.y
 
-Where these are called from parse_y.y, yyPCB is always NULL, and
-the functions do nothing.
+These functions are only called from parse_y.y, and access yy prefixed
+variables which should be private to the parser/lexer.
 
 
 ---
