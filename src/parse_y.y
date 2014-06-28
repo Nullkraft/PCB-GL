@@ -220,14 +220,12 @@ parsepcb
 		    yyData->pcb = yyPCB;
 		    yyData->LayerN = 0;
 		    layer_group_string = NULL;
-		}
+		  }
 		  element
 		  {
 		    PCBType *pcb_save = PCB;
 		    ElementType *e;
 
-		    LayerFlag[0] = true;
-		    LayerFlag[1] = true;
 		    yyData->LayerN = 2;
 
 		    CreateNewPCBPost (yyPCB, 0);
