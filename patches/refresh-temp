@@ -1,0 +1,22 @@
+Bottom: a8eab48b64680b290f83d90fab85d25f21d74aa4
+Top:    faad96ab4146c61c9e6604105eb30ea1c7867843
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-28 23:48:59 +0100
+
+Refresh of determine-layer-count-in
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index 2be39f9..f4ddcae 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -1031,8 +1031,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+       if (*s == '\0')
+         break;
+ 
+-      if (*s != ':' &&
+-          *s != ',')
++      if (*s != ':' && *s != ',')
+         goto error;
+     }
