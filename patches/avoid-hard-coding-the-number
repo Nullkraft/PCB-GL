@@ -1,5 +1,5 @@
-Bottom: 7a349b8b2e7e99204b09eb17a355b7d16a05301b
-Top:    2178108e0413838daccce7e4e78ba32940c5b351
+Bottom: faad96ab4146c61c9e6604105eb30ea1c7867843
+Top:    603529c751c1aea433e4cbbad310a14d2d1b8215
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-27 02:05:11 +0100
 
@@ -433,7 +433,7 @@ index 2f24077..8ef45bc 100644
  		if (layer->On)				\
  			POLYGON_LOOP(layer)
 diff --git a/src/misc.c b/src/misc.c
-index fa38c85..9b4b0a2 100644
+index f4ddcae..0e1a835 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -619,7 +619,7 @@ IsDataEmpty (DataType *Data)
@@ -454,7 +454,7 @@ index fa38c85..9b4b0a2 100644
  
    *LayerN = 0;
  
-@@ -1042,7 +1042,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1039,7 +1039,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
    memset (LayerGroup, 0, sizeof (LayerGroupType));
  
    /* Clear assignments */
@@ -463,7 +463,7 @@ index fa38c85..9b4b0a2 100644
      groupnum[layer] = -1;
  
    /* loop over all groups */
-@@ -1255,7 +1255,7 @@ GetLayerNumber (DataType *Data, LayerType *Layer)
+@@ -1252,7 +1252,7 @@ GetLayerNumber (DataType *Data, LayerType *Layer)
  {
    int i;
  
@@ -472,7 +472,7 @@ index fa38c85..9b4b0a2 100644
      if (Layer == &Data->Layer[i])
        break;
    return (i);
-@@ -1368,7 +1368,7 @@ LayerStringToLayerStack (char *s)
+@@ -1365,7 +1365,7 @@ LayerStringToLayerStack (char *s)
  	}
      }
  
@@ -481,7 +481,7 @@ index fa38c85..9b4b0a2 100644
      {
        if (i < max_copper_layer)
          LayerStack[i] = i;
-@@ -1602,7 +1602,7 @@ ResetStackAndVisibility (void)
+@@ -1599,7 +1599,7 @@ ResetStackAndVisibility (void)
    int top_group;
    Cardinal i;
  
@@ -490,7 +490,7 @@ index fa38c85..9b4b0a2 100644
      {
        if (i < max_copper_layer)
          LayerStack[i] = i;
-@@ -1641,7 +1641,7 @@ SaveStackAndVisibility (void)
+@@ -1638,7 +1638,7 @@ SaveStackAndVisibility (void)
                 "yet restored.  cnt = %d\n", SavedStack.cnt);
      }
  
@@ -499,7 +499,7 @@ index fa38c85..9b4b0a2 100644
      {
        if (i < max_copper_layer)
          SavedStack.LayerStack[i] = LayerStack[i];
-@@ -1675,7 +1675,7 @@ RestoreStackAndVisibility (void)
+@@ -1672,7 +1672,7 @@ RestoreStackAndVisibility (void)
                 " wrong.  cnt = %d\n", SavedStack.cnt);
      }
  
