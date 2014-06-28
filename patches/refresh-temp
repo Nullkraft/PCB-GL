@@ -1,0 +1,21 @@
+Bottom: 7c730c8258dddd46efaeb7514f6e68b6ecf9300c
+Top:    60bb92430dae3b29a5f859dc153aaa33b658428e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-28 22:30:39 +0100
+
+Refresh of move-preloadelementpcb-and
+
+---
+
+diff --git a/src/parse_y.y b/src/parse_y.y
+index bc03acb..415e221 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -54,7 +54,6 @@
+ #include "rtree.h"
+ #include "strflags.h"
+ #include "thermal.h"
+-#include "move.h"
+ #include "assert.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
