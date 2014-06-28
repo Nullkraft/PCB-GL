@@ -987,7 +987,7 @@ error:
  * comma separated layer numbers (1,2,b:4,6,8,t)
  */
 int
-ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+ParseGroupString (char *s, LayerGroupType *LayerGroup, int *LayerN)
 {
   int group, member, layer;
   bool c_set = false,        /* flags for the two special layers to */
