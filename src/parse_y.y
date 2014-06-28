@@ -74,8 +74,6 @@ extern	FontType	*yyFont;
 extern	int		yylineno;		/* linenumber */
 extern	char		*yyfilename;	/* in this file */
 
-static char *layer_group_string; 
-
 static AttributeListType *attr_list; 
 
 int yyerror(const char *s);
@@ -175,7 +173,12 @@ parsepcb
 				yyData = yyPCB->Data;
 				yyData->pcb = yyPCB;
 				yyData->LayerN = 0;
-				layer_group_string = NULL;
+				/* Parse the default layer group string, just in case the file doesn't have one */
+				if (ParseGroupString (Settings.Groups, &yyPCB->LayerGroups, &yyData->LayerN))
+				    {
+				      Message(_("illegal default layer-group string\n"));
+				      YYABORT;
+				    }
 			}
 		  pcbfileversion
 		  pcbname 
@@ -193,14 +196,7 @@ parsepcb
 			{
 			  PCBType *pcb_save = PCB;
 
-			  if (layer_group_string == NULL)
-			    layer_group_string = Settings.Groups;
 			  CreateNewPCBPost (yyPCB, 0);
-			  if (ParseGroupString(layer_group_string, &yyPCB->LayerGroups, yyData->LayerN))
-			    {
-			      Message(_("illegal layer-group string\n"));
-			      YYABORT;
-			    }
 			/* initialize the polygon clipping now since
 			 * we didn't know the layer grouping before.
 			 */
@@ -213,8 +209,7 @@ parsepcb
 			PCB = pcb_save;
 			}
 			   
-		| { PreLoadElementPCB ();
-		    layer_group_string = NULL; }
+		| { PreLoadElementPCB (); }
 		  element
 		  { LayerFlag[0] = true;
 		    LayerFlag[1] = true;
@@ -604,7 +599,11 @@ Groups("1,2,c:3:4:5,6,s:7,8")
 pcbgroups
 		: T_GROUPS '(' STRING ')'
 			{
-			  layer_group_string = $3;
+			  if (ParseGroupString ($3, &yyPCB->LayerGroups, &yyData->LayerN))
+			    {
+			      Message(_("illegal layer-group string\n"));
+			      YYABORT;
+			    }
 			}
 		|
 		;
@@ -861,8 +860,6 @@ layer
                          	if (Layer->Name == NULL)
                                    Layer->Name = strdup("");
 				LayerFlag[$3-1] = true;
-				if (yyData->LayerN + 2 < $3)
-				  yyData->LayerN = $3 - 2;
 			}
 		  layerdata ')'
 		;
