@@ -195,7 +195,7 @@ OutputType;
 typedef struct
 {
   Cardinal Number[MAX_GROUP],	/* number of entries per groups */
-    Entries[MAX_GROUP][MAX_LAYER + 2];
+    Entries[MAX_GROUP][MAX_LAYER + EXTRA_LAYERS];
 } LayerGroupType;
 
 struct BoxType		/* a bounding box */
@@ -397,7 +397,7 @@ typedef struct			/* holds all objects */
   rtree_t *via_tree, *element_tree, *pin_tree, *pad_tree, *name_tree[3],	/* for element names */
    *rat_tree;
   struct PCBType *pcb;
-  LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
+  LayerType Layer[MAX_LAYER + EXTRA_LAYERS];
   int polyClip;
 } DataType;
 
