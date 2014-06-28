@@ -1,7 +1,7 @@
-Bottom: 16f5458c400c175289c0c3b03e1e7229a17834f1
-Top:    fa61e2aa2dd732d9e10f6a1835fcdb934beee53d
+Bottom: 177747242bed215351d8ad6af9a84f4615eef228
+Top:    b2559e1dd3216355a050c54ce9b4ea1015e1babe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2014-06-27 04:41:07 +0100
+Date:   2014-06-28 17:08:34 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -302,7 +302,7 @@ index f766a5e..34a1d78 100644
        {
  	if (layer->LineN || layer->ArcN)
 diff --git a/src/buffer.c b/src/buffer.c
-index 7067b8d..36a481c 100644
+index 3b51ba1..44cdfa5 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -578,47 +578,55 @@ void
@@ -402,7 +402,7 @@ index 7067b8d..36a481c 100644
    if (entry->Template == (char *) -1)
      {
 diff --git a/src/copy.c b/src/copy.c
-index b0cd9c8..20f07f1 100644
+index a0385db..4acc9e4 100644
 --- a/src/copy.c
 +++ b/src/copy.c
 @@ -117,8 +117,8 @@ ElementType *
@@ -432,10 +432,10 @@ index b0cd9c8..20f07f1 100644
    Dest->MarkX = Src->MarkX + dx;
    Dest->MarkY = Src->MarkY + dy;
 diff --git a/src/create.c b/src/create.c
-index 5ea94c8..1bf7f99 100644
+index 6b0865d..feff4eb 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -908,25 +908,19 @@ CreateNewLineInSymbol (SymbolType *Symbol,
+@@ -917,25 +917,19 @@ CreateNewLineInSymbol (SymbolType *Symbol,
  		       Coord X1, Coord Y1,
  		       Coord X2, Coord Y2, Coord Thickness)
  {
@@ -466,7 +466,7 @@ index 5ea94c8..1bf7f99 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -998,13 +992,14 @@ CreateNewConnection (LibraryMenuType *net, char *conn)
+@@ -1007,13 +1001,14 @@ CreateNewConnection (LibraryMenuType *net, char *conn)
  AttributeType *
  CreateNewAttribute (AttributeListType *list, char *name, char *value)
  {
@@ -491,7 +491,7 @@ index 5ea94c8..1bf7f99 100644
 +  return attr;
  }
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 348afdd..46bba27 100644
+index 16734c7..ab95580 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -374,8 +374,7 @@ XORDrawInsertPointObject (void)
@@ -639,7 +639,7 @@ index 4afd3cd..e3e6b19 100644
        w = maxx + symbol->Delta + ox;
        CreateDrawnLineOnLayer (lwidth,
 diff --git a/src/global.h b/src/global.h
-index 1d017fe..b2bef9a 100644
+index 99b67d9..9b4aea5 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -218,8 +218,8 @@ typedef struct
@@ -734,7 +734,7 @@ index 1d017fe..b2bef9a 100644
  } LibraryType;
  
  
-@@ -573,9 +565,8 @@ typedef struct			/* currently attached object */
+@@ -574,9 +566,8 @@ typedef struct			/* currently attached object */
    void *Ptr1,			/* three pointers to data, see */
     *Ptr2,			/* search.c */
     *Ptr3;
@@ -746,7 +746,7 @@ index 1d017fe..b2bef9a 100644
  } AttachedObjectType;
  
  enum crosshair_shape
-@@ -731,38 +722,33 @@ typedef struct			/* holds a connection */
+@@ -732,38 +723,33 @@ typedef struct			/* holds a connection */
  
  typedef struct			/* holds a net of connections */
  {
@@ -959,7 +959,7 @@ index 58fe107..edfc7a9 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 7151f82..371d1ca 100644
+index ce6c382..698fa08 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -325,28 +325,26 @@ nelma_write_materials(FILE * out)
@@ -1114,7 +1114,7 @@ index 59aa064..1758bba 100644
    qsort (rectLeft, boxlist->BoxN, sizeof (*rectLeft), compareleft);
    qsort (rectRight, boxlist->BoxN, sizeof (*rectRight), compareright);
 diff --git a/src/macro.h b/src/macro.h
-index 2f24077..411f2f7 100644
+index a34693a..64c7eff 100644
 --- a/src/macro.h
 +++ b/src/macro.h
 @@ -14,7 +14,7 @@
@@ -1126,7 +1126,7 @@ index 2f24077..411f2f7 100644
   *  along with this program; if not, write to the Free Software
   *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
   *
-@@ -184,33 +184,37 @@ extern int mem_any_set (unsigned char *, int);
+@@ -195,33 +195,37 @@ extern int mem_any_set (unsigned char *, int);
         __iter = __next, __next = g_list_next (__iter), n++) {       \
      PinType *via = __iter->data;
  
@@ -1191,16 +1191,16 @@ index 2f24077..411f2f7 100644
  
  #define ELEMENT_LOOP(top) do {                                      \
    GList *__iter, *__next;                                           \
-@@ -418,7 +422,7 @@ extern int mem_any_set (unsigned char *, int);
+@@ -429,7 +433,7 @@ extern int mem_any_set (unsigned char *, int);
  	LayerType *layer = (board)->Data->Layer;		\
- 	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	for (l = 0; l < max_copper_layer + EXTRA_LAYERS; l++, layer++)	\
  	{ \
 -                TEXT_LOOP(layer);                                      \
 +                TEXT_LOOP(layer);                                   \
                    if (TEXT_IS_VISIBLE((board), layer, text))
  
  #define	VISIBLEPOLYGON_LOOP(top) do	{	\
-@@ -429,43 +433,48 @@ extern int mem_any_set (unsigned char *, int);
+@@ -440,43 +444,48 @@ extern int mem_any_set (unsigned char *, int);
  		if (layer->On)				\
  			POLYGON_LOOP(layer)
  
@@ -1287,7 +1287,7 @@ index 2f24077..411f2f7 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index e2644f8..995fe10 100644
+index 9c3ad85..4ac2740 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -494,7 +494,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
@@ -1359,7 +1359,7 @@ index e2644f8..995fe10 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1800,8 +1807,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1820,8 +1827,11 @@ GetGridLockCoordinates (int type, void *ptr1,
        *y = ((ElementType *) ptr2)->MarkY;
        break;
      case POLYGON_TYPE:
@@ -1373,7 +1373,7 @@ index e2644f8..995fe10 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -2084,10 +2094,13 @@ pcb_author (void)
+@@ -2113,10 +2123,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
@@ -1392,7 +1392,7 @@ index e2644f8..995fe10 100644
  }
  
 diff --git a/src/move.c b/src/move.c
-index 16eb73f..eff33e5 100644
+index 78253f1..0505acd 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -787,7 +787,7 @@ void *
@@ -1427,7 +1427,7 @@ index 16eb73f..eff33e5 100644
  
    if (DX == 0 && DY == 0)
 diff --git a/src/mymem.c b/src/mymem.c
-index b6b3c30..de9514e 100644
+index a402f63..376a1e4 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -34,8 +34,6 @@
@@ -2160,10 +2160,10 @@ index fe75421..8e79b19 100644
  		 GetLayerNumber (PCB->Data, (LayerType *) ptr1),
  		 TEST_FLAG (LOCKFLAG, Polygon) ? _("It is LOCKED.\n") : "");
 diff --git a/src/select.c b/src/select.c
-index 1762c76..971a6ce 100644
+index b684819..0c8213b 100644
 --- a/src/select.c
 +++ b/src/select.c
-@@ -966,18 +966,20 @@ SelectObjectByName (int Type, char *Pattern, bool select)
+@@ -976,18 +976,20 @@ SelectObjectByName (int Type, char *Pattern, bool select)
  
        MENU_LOOP (&PCB->NetlistLib);
        {
