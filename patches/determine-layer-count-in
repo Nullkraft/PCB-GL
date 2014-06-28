@@ -1,5 +1,5 @@
 Bottom: 1c0d2f49091c0c9ebf1e7eadf40bc7094d0978de
-Top:    eb2ed0554ae828c1065eafc7f847e77933cf4ce8
+Top:    fbf620e3ecc9bc797c0a25b967186f3b3adcec5d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-28 19:43:15 +0100
 
@@ -220,7 +220,7 @@ index 25db4dc..635af68 100644
  void QuitApplication (void);
  char *EvaluateFilename (char *, char *, char *, char *);
 diff --git a/src/parse_y.y b/src/parse_y.y
-index ed4d183..3607677 100644
+index ed4d183..9ab75ce 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -75,8 +75,6 @@ extern	FontType	*yyFont;
@@ -261,25 +261,27 @@ index ed4d183..3607677 100644
  			/* initialize the polygon clipping now since
  			 * we didn't know the layer grouping before.
  			 */
-@@ -214,6 +210,7 @@ parsepcb
- 			PCB = pcb_save;
- 			}
- 			   
-+<<<<<<< current
- 		| {
- 		    yyFont = &yyPCB->Font;
+@@ -219,17 +215,14 @@ parsepcb
  		    yyData = yyPCB->Data;
-@@ -221,6 +218,9 @@ parsepcb
+ 		    yyData->pcb = yyPCB;
  		    yyData->LayerN = 0;
- 		    layer_group_string = NULL;
- 		}
-+=======
-+		| { PreLoadElementPCB (); }
-+>>>>>>> patched
+-		    layer_group_string = NULL;
+-		}
++		  }
  		  element
  		  {
  		    PCBType *pcb_save = PCB;
-@@ -621,7 +621,11 @@ Groups("1,2,c:3:4:5,6,s:7,8")
+ 		    ElementType *e;
+ 
+-		    yyData->LayerN = 2;
+-
+ 		    CreateNewPCBPost (yyPCB, 0);
+-		    ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, yyData->LayerN);
++		    ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, &yyData->LayerN);
+ 		    e = yyPCB->Data->Element->data; /* we know there's only one */
+ 		    PCB = yyPCB;
+ 		    MoveElementLowLevel (yyPCB->Data, e, -e->BoundingBox.X1, -e->BoundingBox.Y1);
+@@ -621,7 +614,11 @@ Groups("1,2,c:3:4:5,6,s:7,8")
  pcbgroups
  		: T_GROUPS '(' STRING ')'
  			{
@@ -292,7 +294,7 @@ index ed4d183..3607677 100644
  			}
  		|
  		;
-@@ -878,8 +882,6 @@ layer
+@@ -878,8 +875,6 @@ layer
                           	if (Layer->Name == NULL)
                                     Layer->Name = strdup("");
  				LayerFlag[$3-1] = true;
