@@ -1,0 +1,27 @@
+Bottom: 7a349b8b2e7e99204b09eb17a355b7d16a05301b
+Top:    a8eab48b64680b290f83d90fab85d25f21d74aa4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-28 23:48:40 +0100
+
+Refresh of determine-layer-count-in
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index fa38c85..2be39f9 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -1031,13 +1031,11 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+       if (*s == '\0')
+         break;
+ 
+-      if (*s != ':' ||
++      if (*s != ':' &&
+           *s != ',')
+         goto error;
+     }
+ 
+-  printf ("ParseGroupString (\"%s\", %p, %p) - found %i layers\n", group_string, LayerGroup, LayerN, *LayerN);
+-
+   /* clear struct */
+   memset (LayerGroup, 0, sizeof (LayerGroupType));
