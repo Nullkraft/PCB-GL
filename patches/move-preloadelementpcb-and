@@ -1,5 +1,5 @@
 Bottom: 5d4fa64b933a9ebba465845e5cda2302abaeb606
-Top:    a06b284f142de4fe49fcec3f72f897fe767c44ac
+Top:    62b39660db73dc8788d632994d7497faef7b4dca
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-28 21:16:01 +0100
 
@@ -86,7 +86,7 @@ index 4056bc9..fd56f90 100644
  
  /* 
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 72a0046..4765ccf 100644
+index 72a0046..0bbbfaf 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -54,6 +54,7 @@
@@ -97,25 +97,22 @@ index 72a0046..4765ccf 100644
  
  #ifdef HAVE_LIBDMALLOC
  # include <dmalloc.h> /* see http://dmalloc.com */
-@@ -213,13 +214,45 @@ parsepcb
+@@ -213,13 +214,37 @@ parsepcb
  			PCB = pcb_save;
  			}
  			   
 -		| { PreLoadElementPCB ();
 -		    layer_group_string = NULL; }
 +		| {
-+
 +		    if (yyPCB != NULL)
 +		      {
-+                        printf ("Begin parsing element...");
++			/* This is the case where we load a footprint with file->open, or from the command line */
 +			yyFont = &yyPCB->Font;
 +			yyData = yyPCB->Data;
 +			yyData->pcb = yyPCB;
 +			yyData->LayerN = 0;
 +			layer_group_string = NULL;
 +		      }
-+                    else
-+                      printf ("yyPCB=NULL Begin parsing element...");
 +		  }
  		  element
 -		  { LayerFlag[0] = true;
@@ -125,15 +122,12 @@ index 72a0046..4765ccf 100644
 +		  {
 +		    PCBType *pcb_save = PCB;
 +		    ElementType *e;
-+
 +		    if (yyPCB != NULL)
 +		      {
-+                        printf ("done\n");
-+
++			/* This is the case where we load a footprint with file->open, or from the command line */
 +			LayerFlag[0] = true;
 +			LayerFlag[1] = true;
 +			yyData->LayerN = 2;
-+
 +			CreateNewPCBPost (yyPCB, 0);
 +			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, yyData->LayerN);
 +			e = yyPCB->Data->Element->data; /* we know there's only one */
@@ -144,7 +138,5 @@ index 72a0046..4765ccf 100644
 +			yyPCB->MaxHeight = e->BoundingBox.Y2;
 +			yyPCB->is_footprint = 1;
 +		      }
-+                    else
-+                      printf ("done, BTW: yyData is %p\n", yyData);
  		  }
  		;
