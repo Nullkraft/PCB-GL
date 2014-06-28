@@ -1,5 +1,5 @@
 Bottom: 62b39660db73dc8788d632994d7497faef7b4dca
-Top:    c2b37320467865b77cad2d17e9096c6728ffe03f
+Top:    24715b4db27963bdcdb321576847c4da74da5c02
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-28 21:28:08 +0100
 
@@ -8,28 +8,6 @@ parse_y.y: Don't bother setting LayerFlag[1,2] for elements - it isn't used
 
 ---
 
-diff --git a/src/misc.c b/src/misc.c
-index e2644f8..0b756bd 100644
---- a/src/misc.c
-+++ b/src/misc.c
-@@ -994,6 +994,8 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
-     s_set = false;              /* provide a default setting for old formats */
-   int groupnum[MAX_LAYER + 2];
- 
-+  printf ("ParseGroupString (\"%s\", %p, %i)\n", s, LayerGroup, LayerN);
-+
-   /* clear struct */
-   memset (LayerGroup, 0, sizeof (LayerGroupType));
- 
-@@ -1044,6 +1046,8 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
-           LayerGroup->Entries[group][member++] = layer;
-           while (*++s && isdigit ((int) *s));
- 
-+          printf ("Group %i contains Layer %i\n", group, layer);
-+
-           /* ignore white spaces and check for separator */
-           while (*s && isspace ((int) *s))
-             s++;
 diff --git a/src/parse_y.y b/src/parse_y.y
 index 0bbbfaf..fcf57cc 100644
 --- a/src/parse_y.y
