@@ -1,0 +1,31 @@
+Bottom: 04cc79d4b12db0b5a80658b1d33cf9eded379171
+Top:    71ffaf71df908ab80165b6ee242cbebbc47d220e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-28 21:35:00 +0100
+
+Refresh of parse_y-y-don-t-bother-setting
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index e2644f8..0b756bd 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -994,6 +994,8 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+     s_set = false;              /* provide a default setting for old formats */
+   int groupnum[MAX_LAYER + 2];
+ 
++  printf ("ParseGroupString (\"%s\", %p, %i)\n", s, LayerGroup, LayerN);
++
+   /* clear struct */
+   memset (LayerGroup, 0, sizeof (LayerGroupType));
+ 
+@@ -1044,6 +1046,8 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+           LayerGroup->Entries[group][member++] = layer;
+           while (*++s && isdigit ((int) *s));
+ 
++          printf ("Group %i contains Layer %i\n", group, layer);
++
+           /* ignore white spaces and check for separator */
+           while (*s && isspace ((int) *s))
+             s++;
