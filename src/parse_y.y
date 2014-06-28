@@ -55,6 +55,7 @@
 #include "strflags.h"
 #include "thermal.h"
 #include "move.h"
+#include "assert.h"
 
 #ifdef HAVE_LIBDMALLOC
 # include <dmalloc.h> /* see http://dmalloc.com */
@@ -215,37 +216,11 @@ parsepcb
 			}
 			   
 		| {
-		    if (yyPCB != NULL)
-		      {
-			yyFont = &yyPCB->Font;
-			yyData = yyPCB->Data;
-			yyData->pcb = yyPCB;
-			yyData->LayerN = 0;
-			layer_group_string = NULL;
-		      }
+		    assert (yyPCB == NULL);
 		  }
 		  element
 		  {
-		    PCBType *pcb_save = PCB;
-		    ElementType *e;
-
-		    if (yyPCB != NULL)
-		      {
-
-			LayerFlag[0] = true;
-			LayerFlag[1] = true;
-			yyData->LayerN = 2;
-
-			CreateNewPCBPost (yyPCB, 0);
-			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, yyData->LayerN);
-			e = yyPCB->Data->Element->data; /* we know there's only one */
-			PCB = yyPCB;
-			MoveElementLowLevel (yyPCB->Data, e, -e->BoundingBox.X1, -e->BoundingBox.Y1);
-			PCB = pcb_save;
-			yyPCB->MaxWidth = e->BoundingBox.X2;
-			yyPCB->MaxHeight = e->BoundingBox.Y2;
-			yyPCB->is_footprint = 1;
-		      }
+		    assert (yyPCB == NULL);
 		  }
 		;
 
