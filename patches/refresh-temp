@@ -1,0 +1,22 @@
+Bottom: fbadc8891f58fa40320121949c811862d18e215b
+Top:    5d4fa64b933a9ebba465845e5cda2302abaeb606
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-28 20:21:55 +0100
+
+Refresh of create-a-new-constant
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index ab5b159..e2644f8 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -987,7 +987,7 @@ error:
+  * comma separated layer numbers (1,2,b:4,6,8,t)
+  */
+ int
+-ParseGroupString (char *s, LayerGroupType *LayerGroup, int *LayerN)
++ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+ {
+   int group, member, layer;
+   bool c_set = false,        /* flags for the two special layers to */
