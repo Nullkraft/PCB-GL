@@ -1,5 +1,5 @@
 Bottom: 5d4fa64b933a9ebba465845e5cda2302abaeb606
-Top:    5d4fa64b933a9ebba465845e5cda2302abaeb606
+Top:    fbadc8891f58fa40320121949c811862d18e215b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-28 19:43:15 +0100
 
@@ -11,4 +11,16 @@ construct, although that will only affect ancient PCB files.
 
 ---
 
-
+diff --git a/src/misc.c b/src/misc.c
+index e2644f8..ab5b159 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -987,7 +987,7 @@ error:
+  * comma separated layer numbers (1,2,b:4,6,8,t)
+  */
+ int
+-ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
++ParseGroupString (char *s, LayerGroupType *LayerGroup, int *LayerN)
+ {
+   int group, member, layer;
+   bool c_set = false,        /* flags for the two special layers to */
