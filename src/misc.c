@@ -1031,12 +1031,10 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
       if (*s == '\0')
         break;
 
-      if (*s != ':' ||
+      if (*s != ':' &&
           *s != ',')
         goto error;
     }
-
-  printf ("ParseGroupString (\"%s\", %p, %p) - found %i layers\n", group_string, LayerGroup, LayerN, *LayerN);
 
   /* clear struct */
   memset (LayerGroup, 0, sizeof (LayerGroupType));
