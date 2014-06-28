@@ -994,6 +994,8 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
     bottom_set = false;           /* provide a default setting for old formats */
   int groupnum[MAX_LAYER];
 
+  printf ("ParseGroupString (\"%s\", %p, %i)\n", s, LayerGroup, LayerN);
+
   /* clear struct */
   memset (LayerGroup, 0, sizeof (LayerGroupType));
 
@@ -1020,7 +1022,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
             case 't':
             case 'T':
               if (member + 1 >= LayerN + EXTRA_LAYERS)
-                goto error;
+                {printf ("E1\n"); goto error;}
 
               LayerGroup->Entries[group][member++] = LayerN + TOP_SILK_LAYER;
               LayerGroup->Entries[group][member++] = LayerN + TOP_SOLDERMASK_LAYER;
@@ -1033,7 +1035,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
             case 'b':
             case 'B':
               if (member + 1 >= LayerN + EXTRA_LAYERS)
-                goto error;
+                {printf ("E2\n"); goto error;}
 
               LayerGroup->Entries[group][member++] = LayerN + BOTTOM_SILK_LAYER;
               LayerGroup->Entries[group][member++] = LayerN + BOTTOM_SOLDERMASK_LAYER;
@@ -1043,13 +1045,15 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
 
             default:
               if (!isdigit ((int) *s))
-                goto error;
+                {printf ("E3\n"); goto error;}
               layer = atoi (s) - 1;
 
               while (*++s && isdigit ((int) *s));
 
+              printf ("Layer: group=%i, layer=%i, LayerN=%i, member=%i, EXTRA_LAYERS=%i\n", group, layer, LayerN, member, EXTRA_LAYERS);
+
               if (layer >= LayerN || member >= LayerN + EXTRA_LAYERS)
-                goto error;
+                {printf ("E4, group=%i, layer=%i, LayerN=%i, member=%i, EXTRA_LAYERS=%i\n", group, layer, LayerN, member, EXTRA_LAYERS); goto error;}
 
               groupnum[layer] = group;
               LayerGroup->Entries[group][member++] = layer;
@@ -1063,7 +1067,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
           if (!*s || *s == ':')
             break;
           if (*s != ',')
-            goto error;
+            {printf ("E5\n"); goto error;}
         }
       LayerGroup->Number[group] = member;
       if (*s == ':')
