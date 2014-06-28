@@ -1,5 +1,5 @@
 Bottom: 5d4fa64b933a9ebba465845e5cda2302abaeb606
-Top:    3c2db26f493ab230d8eb7f9e8565c9c9b6c9214c
+Top:    7c730c8258dddd46efaeb7514f6e68b6ecf9300c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-28 21:16:01 +0100
 
@@ -86,32 +86,26 @@ index 4056bc9..fd56f90 100644
  
  /* 
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 72a0046..980ffab 100644
+index 72a0046..bc03acb 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
-@@ -54,6 +54,7 @@
+@@ -54,6 +54,8 @@
  #include "rtree.h"
  #include "strflags.h"
  #include "thermal.h"
 +#include "move.h"
++#include "assert.h"
  
  #ifdef HAVE_LIBDMALLOC
  # include <dmalloc.h> /* see http://dmalloc.com */
-@@ -213,13 +214,38 @@ parsepcb
+@@ -213,13 +215,12 @@ parsepcb
  			PCB = pcb_save;
  			}
  			   
 -		| { PreLoadElementPCB ();
 -		    layer_group_string = NULL; }
 +		| {
-+		    if (yyPCB != NULL)
-+		      {
-+			yyFont = &yyPCB->Font;
-+			yyData = yyPCB->Data;
-+			yyData->pcb = yyPCB;
-+			yyData->LayerN = 0;
-+			layer_group_string = NULL;
-+		      }
++		    assert (yyPCB == NULL);
 +		  }
  		  element
 -		  { LayerFlag[0] = true;
@@ -119,25 +113,6 @@ index 72a0046..980ffab 100644
 -		    yyData->LayerN = 2;
 -		    PostLoadElementPCB ();
 +		  {
-+		    PCBType *pcb_save = PCB;
-+		    ElementType *e;
-+
-+		    if (yyPCB != NULL)
-+		      {
-+
-+			LayerFlag[0] = true;
-+			LayerFlag[1] = true;
-+			yyData->LayerN = 2;
-+
-+			CreateNewPCBPost (yyPCB, 0);
-+			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, yyData->LayerN);
-+			e = yyPCB->Data->Element->data; /* we know there's only one */
-+			PCB = yyPCB;
-+			MoveElementLowLevel (yyPCB->Data, e, -e->BoundingBox.X1, -e->BoundingBox.Y1);
-+			PCB = pcb_save;
-+			yyPCB->MaxWidth = e->BoundingBox.X2;
-+			yyPCB->MaxHeight = e->BoundingBox.Y2;
-+			yyPCB->is_footprint = 1;
-+		      }
++		    assert (yyPCB == NULL);
  		  }
  		;
