@@ -994,6 +994,8 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
     s_set = false;              /* provide a default setting for old formats */
   int groupnum[MAX_LAYER + 2];
 
+  printf ("ParseGroupString (\"%s\", %p, %i)\n", s, LayerGroup, LayerN);
+
   /* clear struct */
   memset (LayerGroup, 0, sizeof (LayerGroupType));
 
@@ -1043,6 +1045,8 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
           groupnum[layer] = group;
           LayerGroup->Entries[group][member++] = layer;
           while (*++s && isdigit ((int) *s));
+
+          printf ("Group %i contains Layer %i\n", group, layer);
 
           /* ignore white spaces and check for separator */
           while (*s && isspace ((int) *s))
