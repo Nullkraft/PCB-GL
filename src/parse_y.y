@@ -210,26 +210,19 @@ parsepcb
 			PCB = pcb_save;
 			}
 			   
-<<<<<<< current
 		| {
 		    yyFont = &yyPCB->Font;
 		    yyData = yyPCB->Data;
 		    yyData->pcb = yyPCB;
 		    yyData->LayerN = 0;
-		    layer_group_string = NULL;
-		}
-=======
-		| { PreLoadElementPCB (); }
->>>>>>> patched
+		  }
 		  element
 		  {
 		    PCBType *pcb_save = PCB;
 		    ElementType *e;
 
-		    yyData->LayerN = 2;
-
 		    CreateNewPCBPost (yyPCB, 0);
-		    ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, yyData->LayerN);
+		    ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, &yyData->LayerN);
 		    e = yyPCB->Data->Element->data; /* we know there's only one */
 		    PCB = yyPCB;
 		    MoveElementLowLevel (yyPCB->Data, e, -e->BoundingBox.X1, -e->BoundingBox.Y1);
