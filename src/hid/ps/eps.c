@@ -154,7 +154,7 @@ static int top_group, bottom_group;
 static int
 group_for_layer (int l)
 {
-  if (l < max_copper_layer + 2 && l >= 0)
+  if (l < max_copper_layer + EXTRA_LAYERS && l >= 0)
     return GetLayerGroupNumberByNumber (l);
   /* else something unique */
   return max_group + 3 + l;
@@ -328,7 +328,7 @@ static void
 eps_do_export (HID_Attr_Val * options)
 {
   int i;
-  int save_ons[MAX_LAYER + 2];
+  int save_ons[MAX_LAYER + EXTRA_LAYERS];
 
   if (!options)
     {
