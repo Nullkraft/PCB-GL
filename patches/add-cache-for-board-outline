@@ -1,5 +1,5 @@
-Bottom: 344458ec9614492bd64555e3061cbd279c6173dc
-Top:    628d58feab408b3897ef8670340ffb22ccf32cde
+Bottom: 1ffd4ab033238c2ca6790315b99265fc295bf71d
+Top:    e97edfaee4abb815e838a704b5354c7dd9e6b94a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-13 01:59:11 +0100
 
@@ -20,12 +20,12 @@ layer changes!
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 1d017fe..89abe12 100644
+index 21e69fc..632204f 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -399,6 +399,8 @@ typedef struct			/* holds all objects */
    struct PCBType *pcb;
-   LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
+   LayerType Layer[MAX_LAYER + EXTRA_LAYERS];
    int polyClip;
 +  POLYAREA *outline;
 +  bool outline_valid;
@@ -33,10 +33,10 @@ index 1d017fe..89abe12 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 46990b1..4050f4e 100644
+index 09e2915..467f677 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1362,14 +1362,22 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1372,14 +1372,22 @@ GhidDrawMask (int side, BoxType * screen)
    gui->graphics->set_color (out->fgGC, PCB->MaskColor);
    ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
  
@@ -62,7 +62,7 @@ index 46990b1..4050f4e 100644
    /* THE GL fill_pcb_polygon doesn't work whilst masking */
  //  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
 diff --git a/src/mymem.c b/src/mymem.c
-index b6b3c30..3c873cf 100644
+index a402f63..aff501c 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -699,6 +699,9 @@ FreeDataMemory (DataType *data)
