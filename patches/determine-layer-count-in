@@ -1,5 +1,5 @@
 Bottom: 24715b4db27963bdcdb321576847c4da74da5c02
-Top:    3319b672447556ce3dcc15cb07a6937d76e88aab
+Top:    2dbd0fafd50d0b0ed83c40787d65426b46a4254a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-28 19:43:15 +0100
 
@@ -76,10 +76,10 @@ index 9521397..a6b22ad 100644
    CreateNewPCBPost (PCB, 1);
    if (argc > 1)
 diff --git a/src/misc.c b/src/misc.c
-index e2644f8..bc27338 100644
+index e2644f8..40cb58b 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -987,13 +987,57 @@ error:
+@@ -987,13 +987,54 @@ error:
   * comma separated layer numbers (1,2,b:4,6,8,t)
   */
  int
@@ -92,8 +92,6 @@ index e2644f8..bc27338 100644
      s_set = false;              /* provide a default setting for old formats */
    int groupnum[MAX_LAYER + 2];
  
-+<<<<<<< current
-+=======
 +  *LayerN = 0;
 +
 +  /* Deterimine the maximum layer number */
@@ -134,11 +132,10 @@ index e2644f8..bc27338 100644
 +
 +  printf ("ParseGroupString (\"%s\", %p, %p) - found %i layers\n", group_string, LayerGroup, LayerN, *LayerN);
 +
-+>>>>>>> patched
    /* clear struct */
    memset (LayerGroup, 0, sizeof (LayerGroupType));
  
-@@ -1002,7 +1046,9 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+@@ -1002,7 +1043,9 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
      groupnum[layer] = -1;
  
    /* loop over all groups */
@@ -149,7 +146,7 @@ index e2644f8..bc27338 100644
      {
        while (*s && isspace ((int) *s))
          s++;
-@@ -1019,7 +1065,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+@@ -1019,7 +1062,7 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
              case 'C':
              case 't':
              case 'T':
@@ -158,7 +155,7 @@ index e2644f8..bc27338 100644
                c_set = true;
                break;
  
-@@ -1027,18 +1073,16 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+@@ -1027,18 +1070,16 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
              case 'S':
              case 'b':
              case 'B':
@@ -180,7 +177,7 @@ index e2644f8..bc27338 100644
              goto error;
            groupnum[layer] = group;
            LayerGroup->Entries[group][member++] = layer;
-@@ -1049,12 +1093,8 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+@@ -1049,12 +1090,8 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
              s++;
            if (!*s || *s == ':')
              break;
@@ -193,7 +190,7 @@ index e2644f8..bc27338 100644
      }
  
    /* If no explicit solder or component layer group was found in the layer
-@@ -1062,14 +1102,14 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
+@@ -1062,14 +1099,14 @@ ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
     * This is done by assigning the relevant silkscreen layers to those groups.
     */
    if (!s_set)
@@ -225,7 +222,7 @@ index 25db4dc..635af68 100644
  void QuitApplication (void);
  char *EvaluateFilename (char *, char *, char *, char *);
 diff --git a/src/parse_y.y b/src/parse_y.y
-index fcf57cc..0992b0c 100644
+index fcf57cc..dcafe11 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -75,8 +75,6 @@ extern	FontType	*yyFont;
@@ -266,26 +263,48 @@ index fcf57cc..0992b0c 100644
  			/* initialize the polygon clipping now since
  			 * we didn't know the layer grouping before.
  			 */
-@@ -222,7 +218,6 @@ parsepcb
+@@ -217,13 +213,14 @@ parsepcb
+ 		| {
+ 		    if (yyPCB != NULL)
+ 		      {
+-			/* This is the case where we load a footprint with file->open, or from the command line */
++printf ("FOO\n");
++			/* This case is when we load a footprint with file->open, or from the command line */
+ 			yyFont = &yyPCB->Font;
  			yyData = yyPCB->Data;
  			yyData->pcb = yyPCB;
  			yyData->LayerN = 0;
 -			layer_group_string = NULL;
- 		      }
+-		      }
++		      //}
++		      } else printf ("YO\n");
  		  }
  		  element
-@@ -232,9 +227,8 @@ parsepcb
+ 		  {
+@@ -231,10 +228,10 @@ parsepcb
+ 		    ElementType *e;
  		    if (yyPCB != NULL)
  		      {
- 			/* This is the case where we load a footprint with file->open, or from the command line */
+-			/* This is the case where we load a footprint with file->open, or from the command line */
 -			yyData->LayerN = 2;
++printf ("BAR\n");
++			/* This case is when we load a footprint with file->open, or from the command line */
  			CreateNewPCBPost (yyPCB, 0);
 -			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, yyData->LayerN);
 +			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, &yyData->LayerN);
  			e = yyPCB->Data->Element->data; /* we know there's only one */
  			PCB = yyPCB;
  			MoveElementLowLevel (yyPCB->Data, e, -e->BoundingBox.X1, -e->BoundingBox.Y1);
-@@ -627,7 +621,11 @@ Groups("1,2,c:3:4:5,6,s:7,8")
+@@ -242,7 +239,7 @@ parsepcb
+ 			yyPCB->MaxWidth = e->BoundingBox.X2;
+ 			yyPCB->MaxHeight = e->BoundingBox.Y2;
+ 			yyPCB->is_footprint = 1;
+-		      }
++		      } else printf ("HELLO\n");
+ 		  }
+ 		;
+ 
+@@ -627,7 +624,11 @@ Groups("1,2,c:3:4:5,6,s:7,8")
  pcbgroups
  		: T_GROUPS '(' STRING ')'
  			{
@@ -298,7 +317,7 @@ index fcf57cc..0992b0c 100644
  			}
  		|
  		;
-@@ -884,8 +882,6 @@ layer
+@@ -884,8 +885,6 @@ layer
                           	if (Layer->Name == NULL)
                                     Layer->Name = strdup("");
  				LayerFlag[$3-1] = true;
