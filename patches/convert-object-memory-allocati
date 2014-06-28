@@ -1,7 +1,7 @@
-Bottom: 177747242bed215351d8ad6af9a84f4615eef228
-Top:    b2559e1dd3216355a050c54ce9b4ea1015e1babe
+Bottom: a76d59b308f919eadad3c3f8310e3542a5df4880
+Top:    45a695501cc59d2b3c5185183e181d14835a650f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2014-06-28 17:08:34 +0100
+Date:   2014-06-29 00:02:44 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 8142467..f6419ca 100644
+index 8cd389c..6419b72 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1885,37 +1885,39 @@ static int
@@ -108,7 +108,7 @@ index 8142467..f6419ca 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatType *) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6946,22 +6950,26 @@ find_element_by_refdes (char *refdes)
+@@ -6945,22 +6949,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListType *list, const char *name)
  {
@@ -290,7 +290,7 @@ index 5c53757..647c405 100644
    double C0, T0;
    bool changed = false;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index f766a5e..34a1d78 100644
+index 58ff351..1034495 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -1006,7 +1006,6 @@ CreateRouteData ()
@@ -432,7 +432,7 @@ index a0385db..4acc9e4 100644
    Dest->MarkX = Src->MarkX + dx;
    Dest->MarkY = Src->MarkY + dy;
 diff --git a/src/create.c b/src/create.c
-index 6b0865d..feff4eb 100644
+index 7da96ee..2145b83 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -917,25 +917,19 @@ CreateNewLineInSymbol (SymbolType *Symbol,
@@ -639,7 +639,7 @@ index 4afd3cd..e3e6b19 100644
        w = maxx + symbol->Delta + ox;
        CreateDrawnLineOnLayer (lwidth,
 diff --git a/src/global.h b/src/global.h
-index 99b67d9..9b4aea5 100644
+index 21e69fc..bbfd538 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -218,8 +218,8 @@ typedef struct
@@ -959,7 +959,7 @@ index 58fe107..edfc7a9 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index ce6c382..698fa08 100644
+index e31cbe5..469aefd 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -325,28 +325,26 @@ nelma_write_materials(FILE * out)
@@ -1287,7 +1287,7 @@ index a34693a..64c7eff 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index 9c3ad85..4ac2740 100644
+index eec9893..58b2bd7 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -494,7 +494,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
@@ -1359,7 +1359,7 @@ index 9c3ad85..4ac2740 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1820,8 +1827,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1857,8 +1864,11 @@ GetGridLockCoordinates (int type, void *ptr1,
        *y = ((ElementType *) ptr2)->MarkY;
        break;
      case POLYGON_TYPE:
@@ -1373,7 +1373,7 @@ index 9c3ad85..4ac2740 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -2113,10 +2123,13 @@ pcb_author (void)
+@@ -2150,10 +2160,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
@@ -1392,7 +1392,7 @@ index 9c3ad85..4ac2740 100644
  }
  
 diff --git a/src/move.c b/src/move.c
-index 78253f1..0505acd 100644
+index b9a180d..94e99cc 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -787,7 +787,7 @@ void *
