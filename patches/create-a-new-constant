@@ -1,5 +1,5 @@
 Bottom: 2310009556c151e7946c70b6be58b2ddf24ae892
-Top:    fbadc8891f58fa40320121949c811862d18e215b
+Top:    5d4fa64b933a9ebba465845e5cda2302abaeb606
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-28 19:47:46 +0100
 
@@ -299,19 +299,6 @@ index 28dbcd5..8e3a2ce 100644
    bool print_layer[MAX_LAYER];
    double fade_ratio;
    bool multi_file;
-diff --git a/src/misc.c b/src/misc.c
-index e2644f8..ab5b159 100644
---- a/src/misc.c
-+++ b/src/misc.c
-@@ -987,7 +987,7 @@ error:
-  * comma separated layer numbers (1,2,b:4,6,8,t)
-  */
- int
--ParseGroupString (char *s, LayerGroupType *LayerGroup, int LayerN)
-+ParseGroupString (char *s, LayerGroupType *LayerGroup, int *LayerN)
- {
-   int group, member, layer;
-   bool c_set = false,        /* flags for the two special layers to */
 diff --git a/src/move.c b/src/move.c
 index 16eb73f..9dcba90 100644
 --- a/src/move.c
