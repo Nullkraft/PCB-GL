@@ -226,8 +226,6 @@ parsepcb
 		    PCBType *pcb_save = PCB;
 		    ElementType *e;
 
-		    LayerFlag[0] = true;
-		    LayerFlag[1] = true;
 		    yyData->LayerN = 2;
 
 		    CreateNewPCBPost (yyPCB, 0);
