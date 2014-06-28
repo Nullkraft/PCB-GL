@@ -215,30 +215,37 @@ parsepcb
 			}
 			   
 		| {
-		    yyFont = &yyPCB->Font;
-		    yyData = yyPCB->Data;
-		    yyData->pcb = yyPCB;
-		    yyData->LayerN = 0;
-		    layer_group_string = NULL;
+		    if (yyPCB != NULL)
+		      {
+			yyFont = &yyPCB->Font;
+			yyData = yyPCB->Data;
+			yyData->pcb = yyPCB;
+			yyData->LayerN = 0;
+			layer_group_string = NULL;
+		      }
 		  }
 		  element
 		  {
 		    PCBType *pcb_save = PCB;
 		    ElementType *e;
 
-		    LayerFlag[0] = true;
-		    LayerFlag[1] = true;
-		    yyData->LayerN = 2;
+		    if (yyPCB != NULL)
+		      {
 
-		    CreateNewPCBPost (yyPCB, 0);
-		    ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, yyData->LayerN);
-		    e = yyPCB->Data->Element->data; /* we know there's only one */
-		    PCB = yyPCB;
-		    MoveElementLowLevel (yyPCB->Data, e, -e->BoundingBox.X1, -e->BoundingBox.Y1);
-		    PCB = pcb_save;
-		    yyPCB->MaxWidth = e->BoundingBox.X2;
-		    yyPCB->MaxHeight = e->BoundingBox.Y2;
-		    yyPCB->is_footprint = 1;
+			LayerFlag[0] = true;
+			LayerFlag[1] = true;
+			yyData->LayerN = 2;
+
+			CreateNewPCBPost (yyPCB, 0);
+			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, yyData->LayerN);
+			e = yyPCB->Data->Element->data; /* we know there's only one */
+			PCB = yyPCB;
+			MoveElementLowLevel (yyPCB->Data, e, -e->BoundingBox.X1, -e->BoundingBox.Y1);
+			PCB = pcb_save;
+			yyPCB->MaxWidth = e->BoundingBox.X2;
+			yyPCB->MaxHeight = e->BoundingBox.Y2;
+			yyPCB->is_footprint = 1;
+		      }
 		  }
 		;
 
