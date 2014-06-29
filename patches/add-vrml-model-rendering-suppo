@@ -1,5 +1,5 @@
 Bottom: a8f7dc462dcfc9dd1400fce2e3a07b24cce1c492
-Top:    f6e20f2cd10ce9d7b3d48b4a2000923e0d815581
+Top:    8e5aca86651b7f41970ce487f2233a78fcf7e1d3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:21 +0000
 
@@ -705,7 +705,7 @@ index 0000000..5a8bc27
 +
 +#endif /* __HIDGL_MATRIX_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
-index 8280d2d..412668e 100644
+index 8280d2d..53fd75b 100644
 --- a/src/hid/common/hidgl_package_acy_resistor.c
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
 @@ -29,6 +29,8 @@
@@ -1179,7 +1179,7 @@ index 8280d2d..412668e 100644
 +  glActiveTextureARB (GL_TEXTURE0_ARB);
 +  glGenTextures (1, &texture1);
 +  glBindTexture (GL_TEXTURE_1D, texture1);
-+  zero_ohm = setup_resistor_texture (element, resistor_body_color);
++  zero_ohm = setup_resistor_texture (element, resistor_body_color, 3);
 +
 +  glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 +  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -1246,15 +1246,7 @@ index 8280d2d..412668e 100644
  void
  hidgl_draw_800mil_resistor (ElementType *element, float surface_depth, float board_thickness)
  {
-@@ -2314,6 +2379,7 @@ hidgl_draw_1650mil_cap (ElementType *element, float surface_depth, float board_t
- 
-   first_run = false;
- }
-+<<<<<<< current
- 
- void
- hidgl_draw_350x800mil_cap (ElementType *element, float surface_depth, float board_thickness)
-@@ -2624,77 +2690,3 @@ hidgl_draw_350x800mil_cap (ElementType *element, float surface_depth, float boar
+@@ -2624,77 +2689,3 @@ hidgl_draw_350x800mil_cap (ElementType *element, float surface_depth, float boar
  
    first_run = false;
  }
@@ -1706,7 +1698,7 @@ index 0000000..aa30bfd
 +}
 diff --git a/src/hid/common/hidgl_package_vrml_l.l b/src/hid/common/hidgl_package_vrml_l.l
 new file mode 100644
-index 0000000..eda9a78
+index 0000000..6a27388
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_vrml_l.l
 @@ -0,0 +1,276 @@
@@ -1901,7 +1893,7 @@ index 0000000..eda9a78
 +							 * stringlength is counted and copied without
 +							 * leading and trailing '"'
 +							 */
-+						vrml_yylval.string = MyCalloc(vrml_yyleng+1, sizeof(char), "LEX");
++						vrml_yylval.string = calloc (vrml_yyleng+1, sizeof(char), "LEX");
 +						p1 = (char *) (vrml_yytext);
 +						p2 = vrml_yylval.string;
 +						while(vrml_yyleng--)
