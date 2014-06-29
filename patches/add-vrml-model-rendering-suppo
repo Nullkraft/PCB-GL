@@ -1,5 +1,5 @@
 Bottom: a8f7dc462dcfc9dd1400fce2e3a07b24cce1c492
-Top:    8e5aca86651b7f41970ce487f2233a78fcf7e1d3
+Top:    627fc497dd3745a65a04dbfebd9b517d6547e409
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:21 +0000
 
@@ -1698,7 +1698,7 @@ index 0000000..aa30bfd
 +}
 diff --git a/src/hid/common/hidgl_package_vrml_l.l b/src/hid/common/hidgl_package_vrml_l.l
 new file mode 100644
-index 0000000..6a27388
+index 0000000..d8f86af
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_vrml_l.l
 @@ -0,0 +1,276 @@
@@ -1893,7 +1893,7 @@ index 0000000..6a27388
 +							 * stringlength is counted and copied without
 +							 * leading and trailing '"'
 +							 */
-+						vrml_yylval.string = calloc (vrml_yyleng+1, sizeof(char), "LEX");
++						vrml_yylval.string = calloc (vrml_yyleng+1, sizeof(char));
 +						p1 = (char *) (vrml_yytext);
 +						p2 = vrml_yylval.string;
 +						while(vrml_yyleng--)
