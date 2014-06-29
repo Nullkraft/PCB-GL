@@ -592,22 +592,31 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
 
   assert (x2 > x1);
   assert (y2 > y1);
+
   v[0] = x1 - t;
-  v[1] = y1;
+  v[1] = y2;
   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return NULL;
+  v[0] = x1 - t;
+  v[1] = y1;
   frac_circle (contour, x1, y1, v, 4);
-  v[0] = x2;
+  v[0] = x1;
   v[1] = y1 - t;
   poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+  v[0] = x2;
+  v[1] = y1 - t;
   frac_circle (contour, x2, y1, v, 4);
   v[0] = x2 + t;
-  v[1] = y2;
+  v[1] = y1;
   poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+  v[0] = x2 + t;
+  v[1] = y2;
   frac_circle (contour, x2, y2, v, 4);
-  v[0] = x1;
+  v[0] = x2;
   v[1] = y2 + t;
   poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+  v[0] = x1;
+  v[1] = y2 + t;
   frac_circle (contour, x1, y2, v, 4);
   return ContourToPoly (contour);
 }
