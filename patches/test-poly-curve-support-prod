@@ -1,5 +1,5 @@
-Bottom: 4024e8fd7bc38e6d32f208f1f3e8f3176dd7a93b
-Top:    d53730106af817ac79da407e3a27cb464059e553
+Bottom: 236e766985b898b09166d5d8ddc7ffcad81d539e
+Top:    0e3a83ac79f5795b2ed3b5696e7ed5c7cb2741bd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-27 05:07:33 +0100
 
@@ -9,10 +9,10 @@ Test poly-curve support, prod at fixing cursor to pcb mapping in ORTHO view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e855cb2..b88712c 100644
+index 12d0e3f..44c811d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -2320,6 +2320,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2342,6 +2342,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  #endif
  
    /* Push the space coordinates board back into the middle of the z-view volume */
@@ -20,7 +20,7 @@ index e855cb2..b88712c 100644
    glTranslatef (0., 0., -11.);
  
    /* Rotate about the center of the board space */
-@@ -3123,12 +3124,58 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, double *pcb_x, double *p
+@@ -3145,12 +3146,58 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, double *pcb_x, double *p
    J = last_modelview_matrix[1][2];
    K = last_modelview_matrix[2][2];
    L = last_modelview_matrix[3][2];
