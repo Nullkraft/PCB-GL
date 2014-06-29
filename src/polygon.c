@@ -111,8 +111,8 @@ dicer output is used for HIDs which cannot render things with holes
 
 //#define UNSUBTRACT_BLOAT MIL_TO_COORD (0.1)
 #define UNSUBTRACT_BLOAT 10
-#define SUBTRACT_PIN_VIA_BATCH_SIZE 1 /*100*/
-#define SUBTRACT_LINE_BATCH_SIZE 1 /*20*/
+#define SUBTRACT_PIN_VIA_BATCH_SIZE 100 /*100*/
+#define SUBTRACT_LINE_BATCH_SIZE 20 /*20*/
 
 static double rotate_circle_seg[4];
 static double bw_rotate_circle_seg[4];
@@ -343,14 +343,14 @@ original_poly (PolygonType * p)
   for (n = 0; n < p->PointN; n++)
     {
       VNODE *node;
-      Cardinal prev_n;
+      //Cardinal prev_n;
 
       /* No current contour? Make a new one starting at point */
       /*   (or) Add point to existing contour */
 
       v[0] = p->Points[n].X, v[1] = p->Points[n].Y;
 
-      prev_n = prev_contour_point (p, n);
+      //prev_n = prev_contour_point (p, n);
 
       /* XXX: Need to handle the case of a leftover circular contour point */
       if (0)
