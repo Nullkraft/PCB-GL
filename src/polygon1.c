@@ -2843,12 +2843,24 @@ poly_InclVertex (VNODE * after, VNODE * node)
   if (node->prev->prev == node)
     return;			/* we don't have 3 points in the poly yet */
 
+  /* NB: a-b below is the two-dimensional cross product of the vectors
+   *     node->prev->prev->point -> node->prev->point  and
+   *     node->prev->prev->point -> node->point.
+   *
+   * Its magnitude is the area of the parallelogram with those vectors as sides.
+   * If the vectors are colinear, this is zero.
+   */
   a = (node->point[1] - node->prev->prev->point[1]);
   a *= (node->prev->point[0] - node->prev->prev->point[0]);
   b = (node->point[0] - node->prev->prev->point[0]);
   b *= (node->prev->point[1] - node->prev->prev->point[1]);
-  if (fabs (a - b) < EPSILON &&
-      !node->prev->is_round && !node->is_round)
+
+//  printf ("a-b = %f\n", a-b);
+
+  /* XXX: HMM - This doesn't seem to be involved when extra points are left in polygon contours after boolean operations */
+  if (fabs (a - b) < 1000000) //EPSILON &&
+//      !node->prev->is_round && !node->is_round)
+//      !node->prev->is_round && !node->is_round)
     {
       VNODE *t = node->prev;
       t->prev->next = node;
