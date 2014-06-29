@@ -1,7 +1,7 @@
-Bottom: 4f7df9a4a62576e0f7bac48c0642cd8c2db0f1d2
-Top:    f352dd1992f41717b04c833ba7acd088ffb85c15
+Bottom: 5945aff6462b59dfe901599c7efba3021d562cf7
+Top:    4b91dbf3a3e22c02e7026bed4a906e6b4b697cca
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-27 05:07:29 +0100
+Date:   2014-06-29 02:42:07 +0100
 
 First attempts at improved rubberbanding logic
 
@@ -9,10 +9,10 @@ First attempts at improved rubberbanding logic
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 0a55619..222722b 100644
+index f0588c0..dc03975 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -1013,7 +1013,7 @@ CreateDefaultFont (PCBType *pcb)
+@@ -1022,7 +1022,7 @@ CreateDefaultFont (PCBType *pcb)
   */
  RubberbandType *
  CreateNewRubberbandEntry (LayerType *Layer,
@@ -21,7 +21,7 @@ index 0a55619..222722b 100644
  {
    RubberbandType *ptr = GetRubberbandMemory ();
  
-@@ -1023,6 +1023,7 @@ CreateNewRubberbandEntry (LayerType *Layer,
+@@ -1032,6 +1032,7 @@ CreateNewRubberbandEntry (LayerType *Layer,
    ptr->Layer = Layer;
    ptr->Line = Line;
    ptr->MovedPoint = MovedPoint;
@@ -43,7 +43,7 @@ index 04fe48e..fa49a1b 100644
  LibraryEntryType * CreateNewConnection (LibraryMenuType *, char *);
  AttributeType * CreateNewAttribute (AttributeListType *list, char *name, char *value);
 diff --git a/src/crosshair.c b/src/crosshair.c
-index dfb0732..04f0650 100644
+index d3e1596..11c1489 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -368,6 +368,57 @@ XORDrawInsertPointObject (void)
@@ -259,10 +259,10 @@ index dfb0732..04f0650 100644
        ptr++;
        i--;
 diff --git a/src/global.h b/src/global.h
-index 89abe12..c36afdf 100644
+index 632204f..298d0a0 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -548,6 +548,7 @@ typedef struct			/* rubberband lines for element moves */
+@@ -549,6 +549,7 @@ typedef struct			/* rubberband lines for element moves */
    LayerType *Layer;		/* layer that holds the line */
    LineType *Line;		/* the line itself */
    PointType *MovedPoint;	/* and finally the point */
@@ -271,7 +271,7 @@ index 89abe12..c36afdf 100644
  
  typedef struct			/* current marked line */
 diff --git a/src/move.c b/src/move.c
-index 16eb73f..96a411c 100644
+index b9a180d..3ddff44 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -779,6 +779,59 @@ MoveObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3, Coord DX, Coord DY)

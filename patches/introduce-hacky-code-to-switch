@@ -1,7 +1,7 @@
-Bottom: 450c8160680ecdad8bb0c78f5458668e476fedf0
-Top:    4f7df9a4a62576e0f7bac48c0642cd8c2db0f1d2
+Bottom: 01ed23c44a5b117e8ad916b0352ccdc019c7426c
+Top:    5945aff6462b59dfe901599c7efba3021d562cf7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-27 05:07:29 +0100
+Date:   2014-06-29 02:42:06 +0100
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -9,7 +9,7 @@ Introduce hacky code to switch cursor when over a line we might drag
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 348afdd..dfb0732 100644
+index 16734c7..d3e1596 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -1098,11 +1098,66 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
@@ -106,7 +106,7 @@ index 87564f0..7b3fde7 100644
  void notify_crosshair_change (bool changes_complete);
  void notify_mark_change (bool changes_complete);
 diff --git a/src/hid.h b/src/hid.h
-index 003b6a4..2aa7c8d 100644
+index f5577eb..166415f 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -518,6 +518,10 @@ typedef enum
@@ -187,7 +187,7 @@ index f739d5e..0af6a6d 100644
  ghid_mode_cursor (int Mode)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index ab7ca61..840bd4e 100644
+index 0db8af6..fba226f 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -264,6 +264,7 @@ void ghid_cursor_position_relative_label_set_text (gchar * text);

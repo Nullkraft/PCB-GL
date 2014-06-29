@@ -1,7 +1,7 @@
-Bottom: f352dd1992f41717b04c833ba7acd088ffb85c15
-Top:    fea017e5b8d7227f19cf92ecb026736c9b7284b2
+Bottom: 4b91dbf3a3e22c02e7026bed4a906e6b4b697cca
+Top:    f8372c368cc657eb4115299b8f2930f0f2b8c328
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-27 05:07:30 +0100
+Date:   2014-06-29 02:42:07 +0100
 
 More rubberbanding algorithm tweaks
 
@@ -9,7 +9,7 @@ More rubberbanding algorithm tweaks
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 04f0650..c256b10 100644
+index 11c1489..7a41963 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -385,6 +385,7 @@ line_line_intersect (double x1, double y1, double x2, double y2,
@@ -148,7 +148,7 @@ index 04f0650..c256b10 100644
        ptr++;
        i--;
 diff --git a/src/move.c b/src/move.c
-index 96a411c..6775f62 100644
+index 3ddff44..6282e9e 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -796,7 +796,7 @@ line_line_intersect (double x1, double y1, double x2, double y2,
