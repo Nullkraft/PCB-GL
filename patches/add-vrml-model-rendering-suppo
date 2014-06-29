@@ -1,5 +1,5 @@
-Bottom: 039005a66721aa59401c6e457c8d985da077e93e
-Top:    4a7b4002a440c6e9255a7196e21b47306f3c8a9d
+Bottom: a8f7dc462dcfc9dd1400fce2e3a07b24cce1c492
+Top:    f6e20f2cd10ce9d7b3d48b4a2000923e0d815581
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:21 +0000
 
@@ -9,7 +9,7 @@ Add VRML model rendering support
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 021485f..dd0c686 100644
+index 4c57deb..07f1433 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -197,7 +197,16 @@ GL_SRCS= \
@@ -30,10 +30,10 @@ index 021485f..dd0c686 100644
  	hid/common/hidgl_shaders.h \
  	hid/common/trackball.c \
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 6bcc3ee..c3eb39e 100644
+index 0c4ac20..97a0d3f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -1109,6 +1109,7 @@ hidgl_init (void)
+@@ -1110,6 +1110,7 @@ hidgl_init (void)
    }
  
    load_built_in_shaders ();
@@ -2624,10 +2624,10 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7a84e16..0bc7fc0 100644
+index de32e39..c3841d6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1497,7 +1497,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1498,7 +1498,7 @@ GhidDrawMask (int side, BoxType * screen)
    } else {
      glBindTexture (GL_TEXTURE_2D, texture);
    }
@@ -2636,7 +2636,7 @@ index 7a84e16..0bc7fc0 100644
  
    if (1) {
      GLfloat s_params[] = {0.0001, 0., 0., 0.};
-@@ -1777,6 +1777,11 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1780,6 +1780,11 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_350x800mil_cap (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
@@ -2648,8 +2648,8 @@ index 7a84e16..0bc7fc0 100644
      }
    return 1;
  }
-@@ -2654,125 +2659,27 @@ ghid_finish_debug_draw (void)
-   ghid_end_drawing (gport);
+@@ -2693,125 +2698,27 @@ ghid_finish_debug_draw (void)
+   ghid_end_drawing (gport, gport->drawing_area);
  }
  
 -static double
