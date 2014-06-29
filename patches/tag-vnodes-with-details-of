@@ -13,6 +13,12 @@ polygon (are not intersected or removed by boolean operations).
 The convention is that the curve shape tagging of a vertex corresponds
 to the edge spanning this, and the previous vertex around the list.
 
+NB: STILL DOES NOT WORK CORRECTLY IN ALL CASES. SEE:
+
+circ_segs_test4_still_procuces_bad_contour_when_starting_with_arc.pcb
+
+(SUSPECTED BUG IN THE GATHER / JUMP ROUTINES)
+
 
 ---
 
