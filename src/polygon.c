@@ -838,25 +838,37 @@ SquarePadPoly (PadType * pad, Coord clear)
       c->Point2.Y -= cx;
     }
 
-  v[0] = c->Point1.X - tx;
-  v[1] = c->Point1.Y - ty;
+  v[0] = c->Point1.X + tx;
+  v[1] = c->Point1.Y + ty;
   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return 0;
+
+  v[0] = c->Point1.X - tx;
+  v[1] = c->Point1.Y - ty;
   frac_circle (contour, (t->Point1.X - tx), (t->Point1.Y - ty), v, 4);
+
+  v[0] = t->Point1.X - cx;
+  v[1] = t->Point1.Y - cy;
+  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
 
   v[0] = t->Point2.X - cx;
   v[1] = t->Point2.Y - cy;
-  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
   frac_circle (contour, (t->Point2.X - tx), (t->Point2.Y - ty), v, 4);
+
+  v[0] = c->Point2.X - tx;
+  v[1] = c->Point2.Y - ty;
+  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
 
   v[0] = c->Point2.X + tx;
   v[1] = c->Point2.Y + ty;
-  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
   frac_circle (contour, (t->Point2.X + tx), (t->Point2.Y + ty), v, 4);
+
+  v[0] = t->Point2.X + cx;
+  v[1] = t->Point2.Y + cy;
+  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
 
   v[0] = t->Point1.X + cx;
   v[1] = t->Point1.Y + cy;
-  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
   frac_circle (contour, (t->Point1.X + tx), (t->Point1.Y + ty), v, 4);
 
   /* now we have the line contour */
