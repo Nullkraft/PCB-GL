@@ -1,5 +1,5 @@
-Bottom: 55cb10ac1346f300fc2661ee72577002066e0593
-Top:    5dddba59928d161092ffe9d50d5b725996edaffc
+Bottom: 307c97284f1ea72a183a210a8aec64371b5050e8
+Top:    3b7d6338f9bd4aa2a050761a90c0ec5e3bc987f4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-27 05:07:33 +0100
 
@@ -9,7 +9,7 @@ Remove function SearchScreenGridSlop() and use SearchObjectByLocation() directly
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 82cb980..25c77cc 100644
+index ee3f201..1165e06 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -1008,8 +1008,9 @@ check_snap_offgrid_line (struct snap_data *snap_data,
@@ -119,10 +119,10 @@ index 82cb980..25c77cc 100644
              double angle;
              int octant;
 diff --git a/src/search.c b/src/search.c
-index 5f4ea5e..c997c92 100644
+index 7e9af2c..6c00673 100644
 --- a/src/search.c
 +++ b/src/search.c
-@@ -1617,17 +1617,3 @@ SearchScreen (Coord X, Coord Y, int Type, void **Result1,
+@@ -1625,17 +1625,3 @@ SearchScreen (Coord X, Coord Y, int Type, void **Result1,
  				X, Y, SLOP * pixel_slop);
    return (ans);
  }
