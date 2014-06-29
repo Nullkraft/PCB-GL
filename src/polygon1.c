@@ -1680,7 +1680,7 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
       if ((newn = poly_CreateNodeFull (cur->point, (dir == FORW) ? cur->is_round : cur->next->is_round,
                                                    (dir == FORW) ? cur->cx       : cur->next->cx,
                                                    (dir == FORW) ? cur->cy       : cur->next->cy,
-                                                   (dir == FORW) ? cur->radius   : cur->next->radius)) == NULL) /* XXX: DIRECTION - might we need to query the nextious point for arc details ?? */
+                                                   (dir == FORW) ? cur->radius   : cur->next->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
         return err_no_memory;
       if (!*result)
 	{
