@@ -1,5 +1,5 @@
 Bottom: 336e6282d052413c16fab6bf4fe929440c668b3d
-Top:    c08fb825a11a15fa259a3ae6de799b869a4a765c
+Top:    197fa9d6089cf3f1050a93a09906554fdca6fb60
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-27 05:07:33 +0100
 
@@ -515,7 +515,7 @@ index 369efea..2ed2b62 100644
  
  #if 0
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 7d6fab6..994aeff 100644
+index 7d6fab6..5502c29 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -49,6 +49,7 @@
@@ -631,7 +631,7 @@ index 7d6fab6..994aeff 100644
 +      if ((newn = poly_CreateNodeFull (cur->point, (dir == FORW) ? cur->is_round : cur->next->is_round,
 +                                                   (dir == FORW) ? cur->cx       : cur->next->cx,
 +                                                   (dir == FORW) ? cur->cy       : cur->next->cy,
-+                                                   (dir == FORW) ? cur->radius   : cur->next->radius)) == NULL) /* XXX: DIRECTION - might we need to query the nextious point for arc details ?? */
++                                                   (dir == FORW) ? cur->radius   : cur->next->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
 +        return err_no_memory;
        if (!*result)
  	{
