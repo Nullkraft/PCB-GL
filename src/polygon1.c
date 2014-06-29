@@ -914,8 +914,8 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
       insert_node_task *next = task->next;
 
       /* XXX: If a node was inserted due to an intersection, don't assume we're on the a round contour any more */
-//      task->node_seg->v->is_round = false;
-      task->node_seg->v->next->is_round = false;
+      task->node_seg->v->is_round = false;
+//      task->node_seg->v->next->is_round = false;
 
       /* Do insersion */
       task->new_node->prev = task->node_seg->v;
@@ -1657,19 +1657,16 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
   assert (*result == NULL);
   do
     {
-      VNODE *jump_cur_temp;
-      DIRECTION jump_dir_temp;
+#if 0
+      VNODE *jump_cur_temp = cur;
+      DIRECTION jump_dir_temp = dir;
 
-      jump_cur_temp = cur;
-      jump_dir_temp = dir;
-
-#if 1
       /* see where to go next */
       if (!jump (&jump_cur_temp, &jump_dir_temp, v_rule))
 	break;
 #endif
 
-#if 0
+#if 1
       /* see where to go next */
       if (!jump (&cur, &dir, v_rule))
 	break;
@@ -1695,7 +1692,7 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
 #ifdef DEBUG_GATHER
       DEBUGP ("gather vertex at %mm, %mm, Dir=%i\n", cur->point[0], cur->point[1], dir);
 #endif
-#if 1
+#if 0
       cur = jump_cur_temp;
       dir = jump_dir_temp;
 #endif
