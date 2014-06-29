@@ -1,5 +1,5 @@
 Bottom: c2110e32cdb8c4083ef61a31e25a40f2b6ee951a
-Top:    849cdf295b1b97b4a5f3ddd33212621a2e3bdc3f
+Top:    a9dbef827dd97dad86d7735e6047ce40a174cb08
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-06-05 12:07:57 +0100
 
@@ -310,7 +310,7 @@ index 19e9ce8..459a3e3 100644
  static char *via[] = {
  /* columns rows colors chars-per-pixel */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 5f9ef2b..986eca7 100644
+index 5f9ef2b..9741aa7 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -119,7 +119,6 @@ a zoom in/out.
@@ -374,22 +374,81 @@ index 5f9ef2b..986eca7 100644
    int i;
  
    *mode_toolbar = gtk_toolbar_new ();
-@@ -1104,15 +1102,29 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
+@@ -1104,15 +1102,88 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
        gtk_container_add (GTK_CONTAINER (tool_item), mb->toolbar_button);
        gtk_toolbar_insert (GTK_TOOLBAR (*mode_toolbar), tool_item, -1);
  
-+#if 0
-+      GtkIconFactory *icon_factory;
-+      GtkIconSet *icon_set;
-+      GdkPixbuf *pixbuf;
-+      GError *error = NULL;
++#if 1
++      do {
++        GtkIconFactory *icon_factory;
++        GtkIconSet *icon_set;
++        GdkPixbuf *pixbuf;
++        GError *error = NULL;
 +
-+      icon_factory = gtk_icon_factory_new ();
-+      gtk_icon_factory_add_default (icon_factory);
++        icon_factory = gtk_icon_factory_new ();
++        gtk_icon_factory_add_default (icon_factory);
 +
-+      pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/arc.png", &error);
-+      icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
-+      gtk_icon_factory_add (icon_factory, "pcb-tool-arc", icon_set);
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-arc.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-arc", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-buf.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-buffer", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-del.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-remove", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-ins.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-insertPoint", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-line.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-line", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-lock.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-lock", icon_set);
++
++//        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-pan.png", &error);
++//        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++//        gtk_icon_factory_add (icon_factory, "pcb-tool-pan", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-polyhole.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-polygonhole", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-poly.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-polygon", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-rect.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-rectangle", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-rot.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-rotate", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-sel.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-select", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-text.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-text", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-thrm.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-thermal", icon_set);
++
++        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-via.png", &error);
++        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
++        gtk_icon_factory_add (icon_factory, "pcb-tool-via", icon_set);
++
++      } while (0);
 +#endif
 +
        /* Load the image for the button, create GtkImage widgets for both
@@ -408,3 +467,10 @@ index 5f9ef2b..986eca7 100644
  
        if (strcmp (mb->name, "select") == 0)
          {
+@@ -1126,6 +1197,7 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
+       mb->toolbar_button_cb_id =
+         g_signal_connect (mb->toolbar_button, "toggled",
+                           G_CALLBACK (mode_toolbar_button_toggled_cb), mb);
++
+     }
+ }
