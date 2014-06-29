@@ -1,5 +1,5 @@
 Bottom: d490b61853c8dd2ac03f2a3ee29c558dc2f591bd
-Top:    cc66c7cba18c4fcb7a715c335dbf654fd046555c
+Top:    d388181bc22dc530ff5a928d58e68709fc3c972d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-29 20:15:31 +0100
 
@@ -39,7 +39,7 @@ index 4343e82..12d0541 100644
            /* Fill the head vertex */
            if (v == &pl->head)
 diff --git a/src/polygon.c b/src/polygon.c
-index 87470b5..c288c86 100644
+index 87470b5..75f75bb 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -290,6 +290,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
@@ -76,7 +76,43 @@ index 87470b5..c288c86 100644
      {
        /* rotate the vector */
        t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
-@@ -753,34 +754,34 @@ LinePoly (LineType * L, Coord thick)
+@@ -591,22 +592,31 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
+ 
+   assert (x2 > x1);
+   assert (y2 > y1);
++
+   v[0] = x1 - t;
+-  v[1] = y1;
++  v[1] = y2;
+   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
+     return NULL;
++  v[0] = x1 - t;
++  v[1] = y1;
+   frac_circle (contour, x1, y1, v, 4);
+-  v[0] = x2;
++  v[0] = x1;
+   v[1] = y1 - t;
+   poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++  v[0] = x2;
++  v[1] = y1 - t;
+   frac_circle (contour, x2, y1, v, 4);
+   v[0] = x2 + t;
+-  v[1] = y2;
++  v[1] = y1;
+   poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++  v[0] = x2 + t;
++  v[1] = y2;
+   frac_circle (contour, x2, y2, v, 4);
+-  v[0] = x1;
++  v[0] = x2;
+   v[1] = y2 + t;
+   poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++  v[0] = x1;
++  v[1] = y2 + t;
+   frac_circle (contour, x1, y2, v, 4);
+   return ContourToPoly (contour);
+ }
+@@ -753,34 +763,34 @@ LinePoly (LineType * L, Coord thick)
        l->Point2.Y -= dx;
      }
  
@@ -124,7 +160,7 @@ index 87470b5..c288c86 100644
    /* now we have the line contour */
    if (!(np = ContourToPoly (contour)))
      return NULL;
-@@ -837,25 +838,37 @@ SquarePadPoly (PadType * pad, Coord clear)
+@@ -837,25 +847,37 @@ SquarePadPoly (PadType * pad, Coord clear)
        c->Point2.Y -= cx;
      }
  
