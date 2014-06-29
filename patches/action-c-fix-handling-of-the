@@ -1,5 +1,5 @@
-Bottom: d53730106af817ac79da407e3a27cb464059e553
-Top:    ec80e3a7c6184d8df7deb6e74cfc8612a3412065
+Bottom: 0e3a83ac79f5795b2ed3b5696e7ed5c7cb2741bd
+Top:    336e6282d052413c16fab6bf4fe929440c668b3d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-27 05:07:33 +0100
 
@@ -13,7 +13,7 @@ continue drawing from the desired point as if we HAD created the line.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 5af250f..1bc6db1 100644
+index febae9e..936d702 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1253,8 +1253,11 @@ NotifyMode (void)
