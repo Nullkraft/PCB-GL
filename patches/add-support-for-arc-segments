@@ -1,5 +1,5 @@
-Bottom: 8ddeff513e1fdbb6de86e3d56fc17b765eea53d9
-Top:    55cb10ac1346f300fc2661ee72577002066e0593
+Bottom: 6b71428b91a6da2124e8ace659b4fa517ba219ba
+Top:    307c97284f1ea72a183a210a8aec64371b5050e8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-27 05:07:32 +0100
 
@@ -24,7 +24,7 @@ EXTREME FEATURE IN EITHER THE +/-X or +/-Y DIRECTIONS.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index eaf21e4..5af250f 100644
+index 97d9236..febae9e 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1428,7 +1428,8 @@ NotifyMode (void)
@@ -64,7 +64,7 @@ index eaf21e4..5af250f 100644
  
  	  /* reset identifiers */
 diff --git a/src/copy.c b/src/copy.c
-index b0cd9c8..a580e8e 100644
+index a0385db..5651997 100644
 --- a/src/copy.c
 +++ b/src/copy.c
 @@ -101,7 +101,7 @@ CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
@@ -77,10 +77,10 @@ index b0cd9c8..a580e8e 100644
    SetPolygonBoundingBox (Dest);
    Dest->Flags = Src->Flags;
 diff --git a/src/create.c b/src/create.c
-index 222722b..5addcf1 100644
+index dc03975..8a4357b 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -576,10 +576,10 @@ CreateNewPolygonFromRectangle (LayerType *Layer,
+@@ -585,10 +585,10 @@ CreateNewPolygonFromRectangle (LayerType *Layer,
    if (!polygon)
      return (polygon);
  
@@ -95,7 +95,7 @@ index 222722b..5addcf1 100644
    SetPolygonBoundingBox (polygon);
    if (!Layer->polygon_tree)
      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-@@ -644,13 +644,14 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
+@@ -653,13 +653,14 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
   * creates a new point in a polygon
   */
  PointType *
@@ -125,7 +125,7 @@ index fa49a1b..5b6cfdd 100644
  void RefdesMapInit (void);
  ElementType * CreateNewElement (DataType *, FontType *, FlagType, char *, char *, char *, Coord, Coord, BYTE, int, FlagType, bool);
 diff --git a/src/global.h b/src/global.h
-index c36afdf..de19444 100644
+index 298d0a0..e46c0d4 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -236,8 +236,10 @@ typedef struct			/* a line/polygon point */
@@ -220,10 +220,10 @@ index 4f64880..a4e0a05 100644
  NetList		{ return(T_NETLIST); }
  Net		{ return(T_NET); }
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 72a0046..f63a50a 100644
+index 46058e3..e444c9b 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
-@@ -119,7 +119,7 @@ static Coord new_units (PLMeasure m);
+@@ -118,7 +118,7 @@ static Coord new_units (PLMeasure m);
  
  %token	T_FILEVERSION T_PCB T_LAYER T_VIA T_RAT T_LINE T_ARC T_RECTANGLE T_TEXT T_ELEMENTLINE
  %token	T_ELEMENT T_PIN T_PAD T_GRID T_FLAGS T_SYMBOL T_SYMBOLLINE T_CURSOR
@@ -232,7 +232,7 @@ index 72a0046..f63a50a 100644
  %token	T_AREA T_THERMAL T_DRC T_ATTRIBUTE
  %token	T_UMIL T_CMIL T_MIL T_IN T_NM T_UM T_MM T_M T_KM T_PX
  %type	<integer>	symbolid
-@@ -1184,11 +1184,15 @@ polygonpoint
+@@ -1203,11 +1203,15 @@ polygonpoint
  			/* xcoord ycoord */
  		: '(' measure measure ')'
  			{
