@@ -1,0 +1,31 @@
+Bottom: 6afd16127bab5cee29e6e9ea7eaf4653eba05d48
+Top:    8eb8a3d267d236b2d3052308b1a5a88d8a299704
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-06-29 02:30:13 +0100
+
+Refresh of draw-polygons-in-a-more-intell
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 8face42..d9f60bd 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1314,6 +1314,17 @@ struct poly_info
+ };
+ 
+ static int
++poly_callback (const BoxType * b, void *cl)
++{
++  struct poly_info *i = (struct poly_info *) cl;
++  PolygonType *polygon = (PolygonType *) b;
++
++  set_layer_object_color (i->layer, (AnyObjectType *) polygon);
++  gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
++  return 1;
++}
++
++static int
+ poly_callback_no_clear (const BoxType * b, void *cl)
+ {
+   struct poly_info *i = (struct poly_info *) cl;
