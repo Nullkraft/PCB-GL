@@ -1314,6 +1314,17 @@ struct poly_info
 };
 
 static int
+poly_callback (const BoxType * b, void *cl)
+{
+  struct poly_info *i = (struct poly_info *) cl;
+  PolygonType *polygon = (PolygonType *) b;
+
+  set_layer_object_color (i->layer, (AnyObjectType *) polygon);
+  gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
+  return 1;
+}
+
+static int
 poly_callback_no_clear (const BoxType * b, void *cl)
 {
   struct poly_info *i = (struct poly_info *) cl;
