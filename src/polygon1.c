@@ -1663,9 +1663,11 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
       jump_cur_temp = cur;
       jump_dir_temp = dir;
 
+#if 1
       /* see where to go next */
       if (!jump (&jump_cur_temp, &jump_dir_temp, v_rule))
 	break;
+#endif
 
 #if 0
       /* see where to go next */
@@ -1693,8 +1695,15 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
 #ifdef DEBUG_GATHER
       DEBUGP ("gather vertex at %mm, %mm, Dir=%i\n", cur->point[0], cur->point[1], dir);
 #endif
+#if 1
       cur = jump_cur_temp;
       dir = jump_dir_temp;
+#endif
+#if 0
+      /* see where to go next */
+      if (!jump (&cur, &dir, v_rule))
+	break;
+#endif
 
       /* Now mark the edge as included.  */
       newn = (dir == FORW ? cur : cur->prev);
