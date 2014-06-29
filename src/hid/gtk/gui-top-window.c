@@ -1102,18 +1102,77 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
       gtk_container_add (GTK_CONTAINER (tool_item), mb->toolbar_button);
       gtk_toolbar_insert (GTK_TOOLBAR (*mode_toolbar), tool_item, -1);
 
-#if 0
-      GtkIconFactory *icon_factory;
-      GtkIconSet *icon_set;
-      GdkPixbuf *pixbuf;
-      GError *error = NULL;
+#if 1
+      do {
+        GtkIconFactory *icon_factory;
+        GtkIconSet *icon_set;
+        GdkPixbuf *pixbuf;
+        GError *error = NULL;
 
-      icon_factory = gtk_icon_factory_new ();
-      gtk_icon_factory_add_default (icon_factory);
+        icon_factory = gtk_icon_factory_new ();
+        gtk_icon_factory_add_default (icon_factory);
 
-      pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/arc.png", &error);
-      icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
-      gtk_icon_factory_add (icon_factory, "pcb-tool-arc", icon_set);
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-arc.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-arc", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-buf.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-buffer", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-del.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-remove", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-ins.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-insertPoint", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-line.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-line", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-lock.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-lock", icon_set);
+
+//        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-pan.png", &error);
+//        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+//        gtk_icon_factory_add (icon_factory, "pcb-tool-pan", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-polyhole.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-polygonhole", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-poly.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-polygon", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-rect.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-rectangle", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-rot.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-rotate", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-sel.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-select", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-text.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-text", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-thrm.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-thermal", icon_set);
+
+        pixbuf = gdk_pixbuf_new_from_file ("/home/pcjc2/gedasrc/pcb/git/src/hid/gtk/icons/pcb-tool-via.png", &error);
+        icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+        gtk_icon_factory_add (icon_factory, "pcb-tool-via", icon_set);
+
+      } while (0);
 #endif
 
       /* Load the image for the button, create GtkImage widgets for both
@@ -1138,6 +1197,7 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
       mb->toolbar_button_cb_id =
         g_signal_connect (mb->toolbar_button, "toggled",
                           G_CALLBACK (mode_toolbar_button_toggled_cb), mb);
+
     }
 }
 
