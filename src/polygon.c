@@ -105,11 +105,11 @@ dicer output is used for HIDs which cannot render things with holes
 #endif
 
 
-#undef DEBUG_CIRCSEGS
+#define DEBUG_CIRCSEGS
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
-#define UNSUBTRACT_BLOAT MIL_TO_COORD (100)
+#define UNSUBTRACT_BLOAT MIL_TO_COORD (0.1)
 #define SUBTRACT_PIN_VIA_BATCH_SIZE 1 /*100*/
 #define SUBTRACT_LINE_BATCH_SIZE 1 /*20*/
 
