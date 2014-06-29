@@ -1070,7 +1070,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   glActiveTextureARB (GL_TEXTURE0_ARB);
   glGenTextures (1, &texture1);
   glBindTexture (GL_TEXTURE_1D, texture1);
-  zero_ohm = setup_resistor_texture (element, resistor_body_color);
+  zero_ohm = setup_resistor_texture (element, resistor_body_color, 3);
 
   glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -2379,7 +2379,6 @@ hidgl_draw_1650mil_cap (ElementType *element, float surface_depth, float board_t
 
   first_run = false;
 }
-<<<<<<< current
 
 void
 hidgl_draw_350x800mil_cap (ElementType *element, float surface_depth, float board_thickness)

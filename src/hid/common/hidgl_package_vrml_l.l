@@ -189,7 +189,7 @@ vector			{ return T_vector; }
 							 * stringlength is counted and copied without
 							 * leading and trailing '"'
 							 */
-						vrml_yylval.string = MyCalloc(vrml_yyleng+1, sizeof(char), "LEX");
+						vrml_yylval.string = calloc (vrml_yyleng+1, sizeof(char), "LEX");
 						p1 = (char *) (vrml_yytext);
 						p2 = vrml_yylval.string;
 						while(vrml_yyleng--)
