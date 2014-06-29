@@ -1,5 +1,5 @@
-Bottom: 746f4df755458803c7fea6bf87b9a629c62ef00a
-Top:    0fda0817b1f8a3922096d6b66d3936873c5b2188
+Bottom: 3ea1ca7d5e69406a1062abe4fcb5f9f410073109
+Top:    e326449dc170ec183c5e6513c10dd81bf786c768
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-27 05:07:31 +0100
 
@@ -86,7 +86,7 @@ diff --git a/src/hid/gtk/face3d.h b/src/hid/gtk/face3d.h
 new file mode 100644
 index 0000000..e69de29
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2d509af..52c41fc 100644
+index 64a8f66..6ab2332 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,9 @@
@@ -99,7 +99,7 @@ index 2d509af..52c41fc 100644
  #ifndef WIN32
  /* The Linux OpenGL ABI 1.0 spec requires that we define
   * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-@@ -2258,6 +2261,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2280,6 +2283,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 1, 0,
                       0, 0, 0, 1};
    bool horizon_problem = false;
@@ -112,7 +112,7 @@ index 2d509af..52c41fc 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -2613,6 +2622,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2635,6 +2644,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (priv);
