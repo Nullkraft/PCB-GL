@@ -1,5 +1,5 @@
-Bottom: 341fa1c4551cbd626ae75a594d096d70d8cbbd8e
-Top:    63e1f1ca860ed36b215decc68b00964360c49332
+Bottom: e0aa685b07734b39aa9cbb4a104c96fe28d370f8
+Top:    c8e756e511e8a9c75b2546422afecb801ec4711b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-10-04 18:24:27 +0100
 
@@ -9,7 +9,7 @@ toporouter.c: Playing around with the export a bit
 ---
 
 diff --git a/src/toporouter.c b/src/toporouter.c
-index 75ce82b..6591a0f 100644
+index 8227e4b..ca08685 100644
 --- a/src/toporouter.c
 +++ b/src/toporouter.c
 @@ -5050,28 +5050,32 @@ edge_min_spacing(GList *list, toporouter_edge_t *e, toporouter_vertex_t *v, guin
@@ -666,7 +666,7 @@ index 75ce82b..6591a0f 100644
    return oproute;
 @@ -7489,6 +7527,7 @@ hybrid_router(toporouter_t *r)
    Message(_("RUBIX router: %d nets remaining\n"), failcount);
-   printf("RUBIX router: %d nets remaining\n", failcount);
+   printf(_("RUBIX router: %d nets remaining\n"), failcount);
  
 +#if 0
    r->flags |= TOPOROUTER_FLAG_GOFAR;
