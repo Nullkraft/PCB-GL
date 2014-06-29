@@ -1,5 +1,5 @@
 Bottom: 336e6282d052413c16fab6bf4fe929440c668b3d
-Top:    197fa9d6089cf3f1050a93a09906554fdca6fb60
+Top:    d490b61853c8dd2ac03f2a3ee29c558dc2f591bd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-27 05:07:33 +0100
 
@@ -124,6 +124,26 @@ index a34693a..a38d525 100644
  
  /* ---------------------------------------------------------------------------
   * layer macros
+diff --git a/src/misc.c b/src/misc.c
+index eec9893..b784c59 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -1101,7 +1101,14 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+           /* ignore white spaces and check for separator */
+           while (*s && isspace ((int) *s))
+             s++;
+-          if (!*s || *s == ':')
++
++          /* Backup so the outer loop terminates on the NULL termination */
++          if (*s == '\0') {
++            s--;
++            break;
++          }
++
++          if (*s == ':')
+             break;
+         }
+       LayerGroup->Number[group] = member;
 diff --git a/src/polyarea.h b/src/polyarea.h
 index d49660b..be95bd2 100644
 --- a/src/polyarea.h
@@ -515,7 +535,7 @@ index 369efea..2ed2b62 100644
  
  #if 0
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 7d6fab6..5502c29 100644
+index 7d6fab6..694a161 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -49,6 +49,7 @@
@@ -649,7 +669,7 @@ index 7d6fab6..5502c29 100644
  #ifdef DEBUG_GATHER
 -      DEBUGP ("gather vertex at %#mD\n", cur->point[0], cur->point[1]);
 +      DEBUGP ("gather vertex at %mm, %mm, Dir=%i\n", cur->point[0], cur->point[1], dir);
- #endif
++#endif
 +#if 1
 +      cur = jump_cur_temp;
 +      dir = jump_dir_temp;
@@ -658,7 +678,7 @@ index 7d6fab6..5502c29 100644
 +      /* see where to go next */
 +      if (!jump (&cur, &dir, v_rule))
 +	break;
-+#endif
+ #endif
 +
        /* Now mark the edge as included.  */
        newn = (dir == FORW ? cur : cur->prev);
@@ -840,22 +860,34 @@ index 7d6fab6..5502c29 100644
    c->Flags.orient ^= 1;
    if (c->tree)
      {
-@@ -2706,11 +2842,13 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -2706,11 +2842,25 @@ poly_InclVertex (VNODE * after, VNODE * node)
    /* remove points on same line */
    if (node->prev->prev == node)
      return;			/* we don't have 3 points in the poly yet */
 +
++  /* NB: a-b below is the two-dimensional cross product of the vectors
++   *     node->prev->prev->point -> node->prev->point  and
++   *     node->prev->prev->point -> node->point.
++   *
++   * Its magnitude is the area of the parallelogram with those vectors as sides.
++   * If the vectors are colinear, this is zero.
++   */
    a = (node->point[1] - node->prev->prev->point[1]);
    a *= (node->prev->point[0] - node->prev->prev->point[0]);
    b = (node->point[0] - node->prev->prev->point[0]);
    b *= (node->prev->point[1] - node->prev->prev->point[1]);
 -  if (fabs (a - b) < EPSILON)
-+  if (fabs (a - b) < EPSILON &&
-+      !node->prev->is_round && !node->is_round)
++
++//  printf ("a-b = %f\n", a-b);
++
++  /* XXX: HMM - This doesn't seem to be involved when extra points are left in polygon contours after boolean operations */
++  if (fabs (a - b) < 1000000) //EPSILON &&
++//      !node->prev->is_round && !node->is_round)
++//      !node->prev->is_round && !node->is_round)
      {
        VNODE *t = node->prev;
        t->prev->next = node;
-@@ -2726,7 +2864,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2726,7 +2876,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    assert (src != NULL);
    *dst = NULL;
@@ -864,7 +896,7 @@ index 7d6fab6..5502c29 100644
    if (*dst == NULL)
      return FALSE;
  
-@@ -2738,7 +2876,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2738,7 +2888,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    for (cur = src->head.next; cur != &src->head; cur = cur->next)
      {
@@ -873,3 +905,88 @@ index 7d6fab6..5502c29 100644
  	return FALSE;
        // newnode->Flags = cur->Flags;
        poly_InclVertex ((*dst)->head.prev, newnode);
+diff --git a/src/thermal.c b/src/thermal.c
+index 2f91d7d..aadd20e 100644
+--- a/src/thermal.c
++++ b/src/thermal.c
+@@ -107,7 +107,7 @@ diag_line (Coord X, Coord Y, Coord l, Coord w, bool rt)
+ 
+   v[0] = X + x1;
+   v[1] = Y + y2;
+-  if ((c = poly_NewContour (v)) == NULL)
++  if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
+     return NULL;
+   v[0] = X - x2;
+   v[1] = Y - y1;
+@@ -138,7 +138,7 @@ square_therm (PinType *pin, Cardinal style)
+       /* top (actually bottom since +y is down) */
+       v[0] = pin->X - in + d;
+       v[1] = pin->Y + in;
+-      if ((c = poly_NewContour (v)) == NULL)
++      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
+         return NULL;
+       v[0] = pin->X + in - d;
+       poly_InclVertex (c->head.prev, poly_CreateNode (v));
+@@ -151,7 +151,7 @@ square_therm (PinType *pin, Cardinal style)
+       /* right */
+       v[0] = pin->X + in;
+       v[1] = pin->Y + in - d;
+-      if ((c = poly_NewContour (v)) == NULL)
++      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
+         return NULL;
+       v[1] = pin->Y - in + d;
+       poly_InclVertex (c->head.prev, poly_CreateNode (v));
+@@ -166,7 +166,7 @@ square_therm (PinType *pin, Cardinal style)
+       /* left */
+       v[0] = pin->X - in;
+       v[1] = pin->Y - in + d;
+-      if ((c = poly_NewContour (v)) == NULL)
++      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
+         return NULL;
+       v[1] = pin->Y + in - d;
+       poly_InclVertex (c->head.prev, poly_CreateNode (v));
+@@ -181,7 +181,7 @@ square_therm (PinType *pin, Cardinal style)
+       /* bottom (actually top since +y is down) */
+       v[0] = pin->X + in - d;
+       v[1] = pin->Y - in;
+-      if ((c = poly_NewContour (v)) == NULL)
++      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
+         return NULL;
+       v[0] = pin->X - in + d;
+       poly_InclVertex (c->head.prev, poly_CreateNode (v));
+@@ -242,7 +242,7 @@ square_therm (PinType *pin, Cardinal style)
+       /* topright */
+       v[0] = pin->X + in;
+       v[1] = pin->Y + in;
+-      if ((c = poly_NewContour (v)) == NULL)
++      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
+         return NULL;
+       v[1] = pin->Y + d;
+       poly_InclVertex (c->head.prev, poly_CreateNode (v));
+@@ -271,7 +271,7 @@ square_therm (PinType *pin, Cardinal style)
+       /* bottom right */
+       v[0] = pin->X + in;
+       v[1] = pin->Y - d;
+-      if ((c = poly_NewContour (v)) == NULL)
++      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
+         return NULL;
+       v[1] = pin->Y - in;
+       poly_InclVertex (c->head.prev, poly_CreateNode (v));
+@@ -298,7 +298,7 @@ square_therm (PinType *pin, Cardinal style)
+       /* bottom left */
+       v[0] = pin->X - d;
+       v[1] = pin->Y - in;
+-      if ((c = poly_NewContour (v)) == NULL)
++      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
+         return NULL;
+       v[0] = pin->X - in;
+       poly_InclVertex (c->head.prev, poly_CreateNode (v));
+@@ -325,7 +325,7 @@ square_therm (PinType *pin, Cardinal style)
+       /* top left */
+       v[0] = pin->X - d;
+       v[1] = pin->Y + out;
+-      if ((c = poly_NewContour (v)) == NULL)
++      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
+         return NULL;
+       v[0] = pin->X - in;
+       poly_InclVertex (c->head.prev, poly_CreateNode (v));
