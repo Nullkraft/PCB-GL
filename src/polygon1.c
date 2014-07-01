@@ -2710,7 +2710,9 @@ poly_PreContour (PLINE * C, BOOLp optimize)
 	   * So, remove the point c
 	   */
 
-	  if (vect_det2 (p1, p2) == 0)
+#warning BROKEN FOR CIRCULAR CONTOURS
+//	  if (vect_det2 (p1, p2) == 0)
+          if (0)
 	    {
 	      poly_ExclVertex (c);
 	      free (c);
