@@ -1,5 +1,5 @@
 Bottom: bddd14ff75da41281e71f7927586250e01b691b2
-Top:    06e58fa3ef0c4bd7641eb90e820b82f024c9d5d0
+Top:    00e3fcad61ad2ade2bb5636052d622980acad194
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-01 00:21:00 +0100
 
@@ -11,19 +11,18 @@ The code does not handle the bounding region of arcs yet
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 78ba618..84b30ea 100644
+index 78ba618..9157eb4 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -600,6 +600,8 @@ adjust_tree (rtree_t * tree, struct seg *s)
+@@ -600,6 +600,7 @@ adjust_tree (rtree_t * tree, struct seg *s)
    return 0;
  }
  
-+
 +#if 0  /* TURNS OUT DISABLING THIS ACTUALLY (VERY MARGINALLY) SPEEDS THINGS UP! */
  /*
   * seg_in_region()
   * (C) 2006, harry eaton
-@@ -621,6 +623,7 @@ seg_in_region (const BoxType * b, void *cl)
+@@ -621,6 +622,7 @@ seg_in_region (const BoxType * b, void *cl)
      return 0;
    return 1;			/* might intersect */
  }
@@ -31,7 +30,7 @@ index 78ba618..84b30ea 100644
  
  /* Prepend a deferred node-insersion task to a list */
  static insert_node_task *
-@@ -844,7 +847,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -844,7 +846,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
        info.tree = rtree_over->tree;
        if (info.tree)
  	if (UNLIKELY (r_search (info.tree, &info.s->box,
