@@ -600,7 +600,6 @@ adjust_tree (rtree_t * tree, struct seg *s)
   return 0;
 }
 
-
 #if 0  /* TURNS OUT DISABLING THIS ACTUALLY (VERY MARGINALLY) SPEEDS THINGS UP! */
 /*
  * seg_in_region()
