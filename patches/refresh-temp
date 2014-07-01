@@ -1,0 +1,68 @@
+Bottom: 7ba2940f59c78f58c635a63a5ad85e754621caf2
+Top:    2f18ee5b5e7e8cfbdea52038ce0b9c460c3eac95
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-01 02:39:23 +0100
+
+Refresh of attempt-at-supporting-arc-arc
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 7619552..7a09101 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -218,12 +218,11 @@ node_add_single (VNODE * dest, Vector po)
+ {
+   VNODE *p;
+ 
+-/* XXX: MAY NOT BE CORRECT IF WE NEED TO SEPARATE STRAIGHT AND CURVED SEGMENTS */
+   if (vect_equal (po, dest->point))
+     return dest;
+   if (vect_equal (po, dest->next->point))
+     return dest->next;
+-  p = poly_CreateNode (po);
++  p = poly_CreateNodeFull (po, dest->is_round, dest->cx, dest->cy, dest->radius);
+   if (p == NULL)
+     return NULL;
+   p->cvc_prev = p->cvc_next = NULL;
+@@ -693,6 +692,10 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+ static int
+ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+ {
++  assert (s1->v->is_round);
++  assert (!s2->v->is_round);
++
++//  printf ("Querying arc-line intersection\n");
+   /* COP OUT */
+   return seg_in_seg_line_line (i, s1, s2);
+ }
+@@ -700,6 +703,10 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+ static int
+ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
+ {
++  assert (s1->v->is_round);
++  assert (s2->v->is_round);
++
++//  printf ("Querying arc-arc intersection\n");
+   /* COP OUT */
+   return seg_in_seg_line_line (i, s1, s2);
+ }
+@@ -949,10 +956,6 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+     {
+       insert_node_task *next = task->next;
+ 
+-      /* XXX: If a node was inserted due to an intersection, don't assume we're on the a round contour any more */
+-      task->node_seg->v->is_round = false;
+-//      task->node_seg->v->next->is_round = false;
+-
+       /* Do insersion */
+       task->new_node->prev = task->node_seg->v;
+       task->new_node->next = task->node_seg->v->next;
+@@ -3398,6 +3401,7 @@ poly_ChkContour (PLINE * a)
+       a2 = a1;
+       do
+ 	{
++#warning THIS DOES NOT TAKE INTO ACCOUNT arc-arc and arc-line segments
+ 	  if (!node_neighbours (a1, a2) &&
+ 	      (icnt = vect_inters2 (a1->point, a1->next->point,
+ 				    a2->point, a2->next->point, i1, i2)) > 0)
