@@ -1,0 +1,22 @@
+Bottom: b634152e593147dcc9ad62930f64ffc29ed3b560
+Top:    b4e1355accbc2f99517273946d9b8894ea5029fa
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-04 00:12:25 +0100
+
+Refresh of hid-gerber-fix-broken-eagle
+
+---
+
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index b7a7441..af4574a 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -567,7 +567,7 @@ assign_file_suffix (char *dest, int idx)
+     case NAME_STYLE_FIRST:  fns_style = FNS_first;  break;
+     case NAME_STYLE_EAGLE:
+       assign_eagle_file_suffix (dest, idx);
+-      break;
++      return;
+     case NAME_STYLE_HACKVANA:
+       assign_hackvana_file_suffix (dest, idx);
+       return;
