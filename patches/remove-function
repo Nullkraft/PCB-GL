@@ -1,0 +1,19 @@
+Bottom: b4c5d565582880b50c79bda391ec01e3356771c9
+Top:    b4c5d565582880b50c79bda391ec01e3356771c9
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-03 23:55:10 +0100
+
+Remove function GetGroupOfLayer, use GetLayerGroupNumberByNumber() instead.
+
+These functions are virtually identical, the only difference being special-case
+handling in the deleted function to force returning max_group if passed layer
+number "max_copper_layer".
+
+This actually (as it happens), corresponds to the bottom silk layer, and this
+handling is suspect at best. GetLayerGroupNumberByNumber() will return the
+group corresponding to the bottom of the board (whichever that may be).
+
+
+---
+
+
