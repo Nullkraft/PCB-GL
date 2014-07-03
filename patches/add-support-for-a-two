@@ -1,5 +1,5 @@
-Bottom: 3fc225d5a7859bf9a58d610442d0bc2011eab160
-Top:    b4c5d565582880b50c79bda391ec01e3356771c9
+Bottom: 8373143c75899d80f8ac8222c19decebbb6ac37e
+Top:    06ef4166b818943012b3d41005acf03d4d9ab6a3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-29 00:02:06 +0100
 
@@ -330,7 +330,7 @@ index a6b22ad..a217134 100644
  /* %start-doc options "5 Sizes"
  All parameters should be given with an unit. If no unit is given, 1/100 mil
 diff --git a/src/misc.c b/src/misc.c
-index bf9cf05..1b654a7 100644
+index a05d785..4f381ae 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -991,9 +991,9 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
@@ -429,7 +429,7 @@ index bf9cf05..1b654a7 100644
  
    /* Assign a unique layer group to each layer that was not explicitly
     * assigned a particular group by its presence in the layer group string.
-@@ -2059,20 +2079,29 @@ LayerGroupsToString (LayerGroupType *lg)
+@@ -2039,20 +2059,29 @@ LayerGroupsToString (LayerGroupType *lg)
              int layer = PCB->LayerGroups.Entries[group][entry];
              if (layer == top_silk_layer)
                {

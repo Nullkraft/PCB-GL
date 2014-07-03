@@ -1,5 +1,5 @@
-Bottom: 0fcf5d5f2536f833bbefef25ee33f071b7f3395d
-Top:    3fc225d5a7859bf9a58d610442d0bc2011eab160
+Bottom: 42dd5143665144e6fb7242a7991c057128b261ce
+Top:    8373143c75899d80f8ac8222c19decebbb6ac37e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-29 00:02:04 +0100
 
@@ -433,7 +433,7 @@ index 2f24077..8ef45bc 100644
  		if (layer->On)				\
  			POLYGON_LOOP(layer)
 diff --git a/src/misc.c b/src/misc.c
-index 09fcdbb..bf9cf05 100644
+index 9a4d9ce..a05d785 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -619,7 +619,7 @@ IsDataEmpty (DataType *Data)
@@ -481,7 +481,7 @@ index 09fcdbb..bf9cf05 100644
      {
        if (i < max_copper_layer)
          LayerStack[i] = i;
-@@ -1601,7 +1601,7 @@ ResetStackAndVisibility (void)
+@@ -1581,7 +1581,7 @@ ResetStackAndVisibility (void)
    int top_group;
    Cardinal i;
  
@@ -490,7 +490,7 @@ index 09fcdbb..bf9cf05 100644
      {
        if (i < max_copper_layer)
          LayerStack[i] = i;
-@@ -1640,7 +1640,7 @@ SaveStackAndVisibility (void)
+@@ -1620,7 +1620,7 @@ SaveStackAndVisibility (void)
                 "yet restored.  cnt = %d\n", SavedStack.cnt);
      }
  
@@ -499,7 +499,7 @@ index 09fcdbb..bf9cf05 100644
      {
        if (i < max_copper_layer)
          SavedStack.LayerStack[i] = LayerStack[i];
-@@ -1674,7 +1674,7 @@ RestoreStackAndVisibility (void)
+@@ -1654,7 +1654,7 @@ RestoreStackAndVisibility (void)
                 " wrong.  cnt = %d\n", SavedStack.cnt);
      }
  

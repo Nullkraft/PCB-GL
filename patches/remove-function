@@ -1,5 +1,5 @@
-Bottom: b4c5d565582880b50c79bda391ec01e3356771c9
-Top:    06ef4166b818943012b3d41005acf03d4d9ab6a3
+Bottom: 7aae9d93afbe56b481dcd692ebb558eb4364851a
+Top:    335a2f78373be086fd66a0e2575abc98c405220e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-03 23:55:10 +0100
 
@@ -31,10 +31,10 @@ index f20f705..469f0f6 100644
    info.top_side = (GetLayerGroupNumberBySide (TOP_SIDE) == group);
  
 diff --git a/src/misc.c b/src/misc.c
-index 1b654a7..4f381ae 100644
+index 09fcdbb..9a4d9ce 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1288,7 +1288,7 @@ PushOnTopOfLayerStack (int NewTop)
+@@ -1268,7 +1268,7 @@ PushOnTopOfLayerStack (int NewTop)
  {
    int i;
  
@@ -43,7 +43,7 @@ index 1b654a7..4f381ae 100644
    if (NewTop < max_copper_layer)
      {
        /* first find position of passed one */
-@@ -1322,22 +1322,22 @@ ChangeGroupVisibility (int Layer, bool On, bool ChangeStackOrder)
+@@ -1302,22 +1302,22 @@ ChangeGroupVisibility (int Layer, bool On, bool ChangeStackOrder)
              Layer, On, ChangeStackOrder);
  
    /* decrement 'i' to keep stack in order of layergroup */
@@ -80,7 +80,7 @@ index 1b654a7..4f381ae 100644
  
    /* change at least the passed layer */
    PCB->Data->Layer[Layer].On = On;
-@@ -1450,26 +1450,6 @@ LayerStringToLayerStack (char *s)
+@@ -1430,26 +1430,6 @@ LayerStringToLayerStack (char *s)
      }
  }
  
