@@ -5,7 +5,7 @@ Date:   2014-07-04 00:31:05 +0100
 
 hid/gcode: Don't use PCB->Extent{Min,Max}{X,Y} they are about to be killed
 
-The extent updating code is broken, and was ill-advised. Use PCB->MaxWidth
+The extent updating code is broken, and poorly executed. Use PCB->MaxWidth
 and PCB->MaxHeight, these represent the size the of board.
 
 
