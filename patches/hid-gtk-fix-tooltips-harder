@@ -1,0 +1,14 @@
+Bottom: c8bfa7609070e8fbc000a3d7b70edc797f974b80
+Top:    c8bfa7609070e8fbc000a3d7b70edc797f974b80
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-04 00:55:14 +0100
+
+hid/gtk: Fix tooltips harder.
+
+We cannot use a static vairable for the tooltip id, as the rendering code can get
+re-used for different GHidPort's. An example of this is the footprint preview window.
+
+
+---
+
+
