@@ -1,0 +1,14 @@
+Bottom: b4e1355accbc2f99517273946d9b8894ea5029fa
+Top:    b4e1355accbc2f99517273946d9b8894ea5029fa
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-04 00:31:05 +0100
+
+hid/gcode: Don't use PCB->Extent{Min,Max}{X,Y} they are about to be killed
+
+The extent updating code is broken, and was ill-advised. Use PCB->MaxWidth
+and PCB->MaxHeight, these represent the size the of board.
+
+
+---
+
+
