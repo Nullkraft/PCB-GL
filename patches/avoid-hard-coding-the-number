@@ -1,5 +1,5 @@
-Bottom: 2a9a024624fd352213b616159b6a4d7029f4dff1
-Top:    dd5b942806f260e35d4322a9ccb1e9bbd49fc870
+Bottom: 0fcf5d5f2536f833bbefef25ee33f071b7f3395d
+Top:    3fc225d5a7859bf9a58d610442d0bc2011eab160
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-29 00:02:04 +0100
 
@@ -433,7 +433,7 @@ index 2f24077..8ef45bc 100644
  		if (layer->On)				\
  			POLYGON_LOOP(layer)
 diff --git a/src/misc.c b/src/misc.c
-index f4ddcae..0e1a835 100644
+index 09fcdbb..bf9cf05 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -619,7 +619,7 @@ IsDataEmpty (DataType *Data)
@@ -463,7 +463,7 @@ index f4ddcae..0e1a835 100644
      groupnum[layer] = -1;
  
    /* loop over all groups */
-@@ -1252,7 +1252,7 @@ GetLayerNumber (DataType *Data, LayerType *Layer)
+@@ -1254,7 +1254,7 @@ GetLayerNumber (DataType *Data, LayerType *Layer)
  {
    int i;
  
@@ -472,7 +472,7 @@ index f4ddcae..0e1a835 100644
      if (Layer == &Data->Layer[i])
        break;
    return (i);
-@@ -1365,7 +1365,7 @@ LayerStringToLayerStack (char *s)
+@@ -1367,7 +1367,7 @@ LayerStringToLayerStack (char *s)
  	}
      }
  
@@ -481,7 +481,7 @@ index f4ddcae..0e1a835 100644
      {
        if (i < max_copper_layer)
          LayerStack[i] = i;
-@@ -1599,7 +1599,7 @@ ResetStackAndVisibility (void)
+@@ -1601,7 +1601,7 @@ ResetStackAndVisibility (void)
    int top_group;
    Cardinal i;
  
@@ -490,7 +490,7 @@ index f4ddcae..0e1a835 100644
      {
        if (i < max_copper_layer)
          LayerStack[i] = i;
-@@ -1638,7 +1638,7 @@ SaveStackAndVisibility (void)
+@@ -1640,7 +1640,7 @@ SaveStackAndVisibility (void)
                 "yet restored.  cnt = %d\n", SavedStack.cnt);
      }
  
@@ -499,7 +499,7 @@ index f4ddcae..0e1a835 100644
      {
        if (i < max_copper_layer)
          SavedStack.LayerStack[i] = LayerStack[i];
-@@ -1672,7 +1672,7 @@ RestoreStackAndVisibility (void)
+@@ -1674,7 +1674,7 @@ RestoreStackAndVisibility (void)
                 " wrong.  cnt = %d\n", SavedStack.cnt);
      }
  
