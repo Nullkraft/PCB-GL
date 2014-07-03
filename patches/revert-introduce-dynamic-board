@@ -1,0 +1,132 @@
+Bottom: b4e1355accbc2f99517273946d9b8894ea5029fa
+Top:    47fb66343471d4649e57718a43acc4f2d01bc9f3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-04 00:27:00 +0100
+
+Revert "Introduce dynamic board size."
+
+This reverts commit d91daad65c3ea7e2e1b6ce876b7d41550f6a784e.
+
+The goal is to eventually define the board's extent by the outline
+layer, only. That way, all the exporters can export properly
+sized layouts.
+
+Undoubtly, this can also influence the GUIs. For example, "zoom to fit"
+becomes a slightly different meaning and drawing outside the board's
+extent becomes possible. Autorouting and similars can be limited to
+the actual board size. Resizing a board to the lower left no longer
+requires the error-prone moving of all the stuff and keeps file diffs
+small.
+
+
+---
+
+diff --git a/src/change.c b/src/change.c
+index 7e95672..59bf4a4 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -2344,72 +2344,10 @@ ChangePCBSize (Coord Width, Coord Height)
+ 							     Y)));
+   else
+     SetCrosshairRange (0, 0, Width, Height);
+-
+-  UpdateExtents();
+   hid_action ("PCBChanged");
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * finds the maximum size of a layout
+- * according to the outline layer,
+- * if present.
+- */
+-void
+-UpdateExtents (void)
+-{
+-  Coord minX, minY, maxX, maxY;
+-
+-  minX = minY = COORD_MAX;
+-  maxX = maxY = -COORD_MAX - 1;
+-
+-  LAYER_LOOP (PCB->Data, MAX_LAYER);
+-    {
+-      if (strcmp (layer->Name, "outline") == 0)
+-        {
+-          LINE_LOOP (layer);
+-            {
+-              if (line->Point1.X < minX)
+-                minX = line->Point1.X;
+-              if (line->Point1.Y < minY)
+-                minY = line->Point1.Y;
+-              if (line->Point2.X < minX)
+-                minX = line->Point2.X;
+-              if (line->Point2.Y < minY)
+-                minY = line->Point2.Y;
+-              if (line->Point1.X > maxX)
+-                maxX = line->Point1.X;
+-              if (line->Point1.Y > maxY)
+-                maxY = line->Point1.Y;
+-              if (line->Point2.X > maxX)
+-                maxX = line->Point2.X;
+-              if (line->Point2.Y > maxY)
+-                maxY = line->Point2.Y;
+-            }
+-          END_LOOP;
+-        }
+-    }
+-  END_LOOP;
+-
+-  if (minX == COORD_MAX || minY == COORD_MAX ||
+-      maxX == -COORD_MAX - 1 || maxY == -COORD_MAX - 1 ||
+-      maxX - minX == 0 || maxY - minY == 0)
+-    {
+-      // no or insufficient outline layer
+-      PCB->ExtentMinX = 0;
+-      PCB->ExtentMinY = 0;
+-      PCB->ExtentMaxX = PCB->MaxWidth;
+-      PCB->ExtentMaxY = PCB->MaxHeight;
+-    }
+-  else
+-    {
+-      PCB->ExtentMinX = minX;
+-      PCB->ExtentMinY = minY;
+-      PCB->ExtentMaxX = maxX;
+-      PCB->ExtentMaxY = maxY;
+-    }
+-}
+-
+-/* ---------------------------------------------------------------------------
+  * changes the mask size of a pad
+  * returns TRUE if changed
+  */
+diff --git a/src/change.h b/src/change.h
+index 5d59362..f42842a 100644
+--- a/src/change.h
++++ b/src/change.h
+@@ -106,7 +106,6 @@ bool ClrObjectOctagon (int, void *, void *, void *);
+ void *ChangeObjectName (int, void *, void *, void *, char *);
+ void *QueryInputAndChangeObjectName (int, void *, void *, void *);
+ void ChangePCBSize (Coord, Coord);
+-void UpdateExtents (void);
+ 
+ /* Change the specified text on an element, either on the board (give
+    PCB, PCB->Data) or in a buffer (give NULL, Buffer->Data).  The old
+diff --git a/src/global.h b/src/global.h
+index 21e69fc..d8002b4 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -508,13 +508,8 @@ typedef struct PCBType
+   Coord Bloat,			/* drc sizes saved with layout */
+     Shrink, minWid, minSlk, minDrill, minRing;
+   Coord GridOffsetX,		/* as saved with layout */
+-    GridOffsetY;
+-  /* TODO: Set this always to MAX_COORD, no saving needed.
+-           Kept for compatibility and until the GUI code can deal
+-           with the dynamic extent. */
+-  Coord MaxWidth, MaxHeight;	/* allowed size */
+-  Coord ExtentMinX, ExtentMinY,	/* extent, defined by the outline layer */
+-    ExtentMaxX, ExtentMaxY;
++    GridOffsetY, MaxWidth,	/* allowed size */
++    MaxHeight;
+ 
+   Coord Grid;			/* used grid with offsets */
+   double IsleArea,		/* minimum poly island to retain */
