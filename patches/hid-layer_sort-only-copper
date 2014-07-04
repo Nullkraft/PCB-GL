@@ -5,7 +5,12 @@ Date:   2014-07-04 01:45:02 +0100
 
 hid/*: layer_sort()  Only copper layers participate in the layer stack
 
-Don't consider the layers greater than or equal to max_copper_layer.
+Don't consider the layers greater than or equal to max_copper_layer,
+ie.. Silk layers are not in the layer stack. Actually, don't even
+worry about checking the layer is a copper layer - it will be.
+
+Use GetLayerGroupNumberByNumber() directly, there is no need to worry
+about being passed strange layer numbers.
 
 
 ---
