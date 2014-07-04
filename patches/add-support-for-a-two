@@ -1,5 +1,5 @@
-Bottom: 12e0d5e76c41b2bf6706fee1d477138573bf6ef7
-Top:    b4e1355accbc2f99517273946d9b8894ea5029fa
+Bottom: efd661c4bb2ef973c671669c13399fcd4212aa53
+Top:    80e752d4c8411ac9cc09b2b32a5e4a49d65276e8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-29 00:02:06 +0100
 
@@ -153,7 +153,7 @@ index 6e37f6d..e1fa2ce 100644
  
  	argv = g_strsplit(data, ",", -1);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 6ab819f..505a5f5 100644
+index d14c496..42f42d9 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -531,6 +531,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
@@ -194,7 +194,7 @@ index 6ab819f..505a5f5 100644
    else
      layer = LayerStack[0];
  
-@@ -1934,7 +1942,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
+@@ -1936,7 +1944,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
  }
  
  static const char selectlayer_syntax[] =
@@ -203,7 +203,7 @@ index 6ab819f..505a5f5 100644
  
  static const char selectlayer_help[] =
      N_("Select which layer is the current layer.");
-@@ -1962,6 +1970,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
+@@ -1964,6 +1972,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
      newl = LAYER_BUTTON_SILK;
    else if (strcasecmp (argv[0], "rats") == 0)
      newl = LAYER_BUTTON_RATS;
@@ -213,7 +213,7 @@ index 6ab819f..505a5f5 100644
      newl = atoi (argv[0]) - 1;
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 6976074..175f145 100644
+index da2513e..312d111 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -44,15 +44,15 @@
