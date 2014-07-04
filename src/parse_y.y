@@ -131,7 +131,6 @@ static Coord new_units (PLMeasure m);
 
 parse
 		: parsepcb
-		| parsedata
 		| parsefont
 		| error { YYABORT; }
 		;
@@ -165,7 +164,7 @@ parsepcb
 
 				if (!yyPCB)
 				{
-					Message(_("illegal fileformat\n"));
+					Message(_("illegal fileformat 1\n"));
 					YYABORT;
 				}
 				for (i = 0; i < MAX_LAYER + EXTRA_LAYERS; i++)
@@ -240,25 +239,6 @@ parsepcb
 		  }
 		;
 
-parsedata
-		:	{
-					/* reset flags for 'used layers';
-					 * init font and data pointers
-					 */
-				int	i;
-
-				if (!yyData || !yyFont)
-				{
-					Message(_("illegal fileformat\n"));
-					YYABORT;
-				}
-				for (i = 0; i < MAX_LAYER + EXTRA_LAYERS; i++)
-					LayerFlag[i] = false;
-				yyData->LayerN = 0;
-			}
-		 pcbdata
-		;
-
 pcbfont
 		: parsefont
 		|
@@ -272,7 +252,7 @@ parsefont
 
 				if (!yyFont)
 				{
-					Message(_("illegal fileformat\n"));
+					Message(_("illegal fileformat 3\n"));
 					YYABORT;
 				}
 				yyFont->Valid = false;
@@ -706,7 +686,6 @@ pcbdefinition
 		| rats
 		| layer
 		| element
-		| error { YYABORT; }
 		;
 
 via
