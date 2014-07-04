@@ -1,0 +1,40 @@
+Bottom: 6401d0d79add0d0514573e8942bcf36e91643257
+Top:    c0de91df6c070336d72ee89f69c29bcb12dd0ddc
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-04 04:21:39 +0100
+
+Refresh of fixup-some-bugs-from-the-added
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index f95c045..c402568 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -853,21 +853,14 @@ LookupLOConnectionsToLOList (int flag, bool AndRats)
+             }
+ 
+           /* try all new pads */
+-          if (group == top_group)
++          if (group == top_group || group == bottom_group)
+             {
+-              position = &padposition[TOP_SIDE];
+-              for (; *position < PadList[layer].Number; (*position)++)
+-                if (LookupLOConnectionsToPad
+-                    (PADLIST_ENTRY (layer, *position), group, flag, AndRats))
+-                  return (true);
+-            }
++              int side = (group == top_group) ? TOP_SIDE : BOTTOM_SIDE;
+ 
+-          if (group == bottom_group)
+-            {
+-              position = &padposition[BOTTOM_SIDE];
+-              for (; *position < PadList[layer].Number; (*position)++)
++              position = &padposition[side];
++              for (; *position < PadList[side].Number; (*position)++)
+                 if (LookupLOConnectionsToPad
+-                    (PADLIST_ENTRY (layer, *position), group, flag, AndRats))
++                    (PADLIST_ENTRY (side, *position), group, flag, AndRats))
+                   return (true);
+             }
+         }
