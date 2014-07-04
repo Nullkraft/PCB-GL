@@ -164,7 +164,7 @@ parsepcb
 
 				if (!yyPCB)
 				{
-					Message(_("illegal fileformat 1\n"));
+					Message(_("illegal fileformat\n"));
 					YYABORT;
 				}
 				for (i = 0; i < MAX_LAYER + EXTRA_LAYERS; i++)
@@ -252,7 +252,7 @@ parsefont
 
 				if (!yyFont)
 				{
-					Message(_("illegal fileformat 3\n"));
+					Message(_("illegal fileformat\n"));
 					YYABORT;
 				}
 				yyFont->Valid = false;
