@@ -928,12 +928,14 @@ MoveLayer (int old_index, int new_index)
   AddLayerChangeToUndoList (old_index, new_index);
   IncrementUndoSerialNumber ();
 
+#warning BUG NEXT LINE?
   if (old_index < -1 || old_index >= max_copper_layer)
     {
       Message ("Invalid old layer %d for move: must be -1..%d\n",
 	       old_index, max_copper_layer - 1);
       return 1;
     }
+#warning UNNECESSARY TEST AGAINST MAX_LAYER, max_copper_layer is same or smaller
   if (new_index < -1 || new_index > max_copper_layer || new_index >= MAX_LAYER)
     {
       Message ("Invalid new layer %d for move: must be -1..%d\n",
