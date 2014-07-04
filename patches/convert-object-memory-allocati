@@ -1,7 +1,7 @@
-Bottom: a76d59b308f919eadad3c3f8310e3542a5df4880
-Top:    45a695501cc59d2b3c5185183e181d14835a650f
+Bottom: c0de91df6c070336d72ee89f69c29bcb12dd0ddc
+Top:    5d3490d0d6125b6bba818ab9dd8d8e903f69078f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2014-06-29 00:02:44 +0100
+Date:   2014-07-04 04:21:56 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -639,7 +639,7 @@ index 4afd3cd..e3e6b19 100644
        w = maxx + symbol->Delta + ox;
        CreateDrawnLineOnLayer (lwidth,
 diff --git a/src/global.h b/src/global.h
-index 21e69fc..bbfd538 100644
+index d8002b4..77dc082 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -218,8 +218,8 @@ typedef struct
@@ -734,7 +734,7 @@ index 21e69fc..bbfd538 100644
  } LibraryType;
  
  
-@@ -574,9 +566,8 @@ typedef struct			/* currently attached object */
+@@ -569,9 +561,8 @@ typedef struct			/* currently attached object */
    void *Ptr1,			/* three pointers to data, see */
     *Ptr2,			/* search.c */
     *Ptr3;
@@ -746,7 +746,7 @@ index 21e69fc..bbfd538 100644
  } AttachedObjectType;
  
  enum crosshair_shape
-@@ -732,38 +723,33 @@ typedef struct			/* holds a connection */
+@@ -727,38 +718,33 @@ typedef struct			/* holds a connection */
  
  typedef struct			/* holds a net of connections */
  {
@@ -1287,7 +1287,7 @@ index a34693a..64c7eff 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index eec9893..58b2bd7 100644
+index 31021c9..f56d228 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -494,7 +494,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
@@ -1359,7 +1359,7 @@ index eec9893..58b2bd7 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1857,8 +1864,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1839,8 +1846,11 @@ GetGridLockCoordinates (int type, void *ptr1,
        *y = ((ElementType *) ptr2)->MarkY;
        break;
      case POLYGON_TYPE:
@@ -1373,7 +1373,7 @@ index eec9893..58b2bd7 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -2150,10 +2160,13 @@ pcb_author (void)
+@@ -2133,10 +2143,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
@@ -1392,7 +1392,7 @@ index eec9893..58b2bd7 100644
  }
  
 diff --git a/src/move.c b/src/move.c
-index b9a180d..94e99cc 100644
+index 5f0cfb3..657f0ef 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -787,7 +787,7 @@ void *
