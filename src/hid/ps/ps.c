@@ -707,7 +707,7 @@ static void
 ps_do_export (HID_Attr_Val * options)
 {
   FILE *fh;
-  int save_ons[MAX_LAYER + 2];
+  int save_ons[MAX_LAYER + EXTRA_LAYERS];
   int i;
 
   if (!options)
