@@ -1,7 +1,7 @@
-Bottom: 11b5dc6eac82d69f849bccabf24fc45b8619ae79
-Top:    8627accfdd51142c8a7b064322cfb87a3d10f5b1
+Bottom: 8d67beb25915054fedde03e8fa2b5e5a227c201a
+Top:    b86c1da672fcb588c4c7e392e63aefcedff45d8a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-29 02:42:07 +0100
+Date:   2014-07-04 04:24:31 +0100
 
 32bit: Fix GL HID zoom out, due to over-shooting Coord data-type
 
@@ -248,7 +248,7 @@ index 0b5a516..9e5b15e 100644
    ghid_zoom_view_abs (center_x, center_y, gport->view.coord_per_px * factor);
  }
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index fba226f..0b7f8c8 100644
+index 2918a50..bb5fedf 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -65,12 +65,6 @@
@@ -279,7 +279,7 @@ index fba226f..0b7f8c8 100644
  
    bool flip_x;
    bool flip_y;
-@@ -519,7 +513,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
+@@ -521,7 +515,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
  void ghid_cancel_lead_user (void);
  
  /* gtkhid-main.c */
@@ -288,7 +288,7 @@ index fba226f..0b7f8c8 100644
  void ghid_pan_view_rel (Coord dx, Coord dy);
  void ghid_get_coords (const char *msg, Coord *x, Coord *y);
  gint PCBChanged (int argc, char **argv, Coord x, Coord y);
-@@ -531,59 +525,4 @@ extern GdkPixmap *XC_hand_source, *XC_hand_mask;
+@@ -533,59 +527,4 @@ extern GdkPixmap *XC_hand_source, *XC_hand_mask;
  extern GdkPixmap *XC_lock_source, *XC_lock_mask;
  extern GdkPixmap *XC_clock_source, *XC_clock_mask;
  

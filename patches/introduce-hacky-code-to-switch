@@ -1,7 +1,7 @@
-Bottom: 01ed23c44a5b117e8ad916b0352ccdc019c7426c
-Top:    5945aff6462b59dfe901599c7efba3021d562cf7
+Bottom: 43755f164319b1faec99d1d96cd6a0ead31a0c54
+Top:    8d5fe8cbc69c2a597e7d8eac66d1d5b25cf7a053
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-29 02:42:06 +0100
+Date:   2014-07-04 04:24:30 +0100
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -187,10 +187,10 @@ index f739d5e..0af6a6d 100644
  ghid_mode_cursor (int Mode)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 0db8af6..fba226f 100644
+index d05fc6b..2918a50 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -264,6 +264,7 @@ void ghid_cursor_position_relative_label_set_text (gchar * text);
+@@ -266,6 +266,7 @@ void ghid_cursor_position_relative_label_set_text (gchar * text);
  void ghid_hand_cursor (void);
  void ghid_point_cursor (void);
  void ghid_watch_cursor (void);
