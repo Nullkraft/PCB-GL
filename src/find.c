@@ -853,21 +853,14 @@ LookupLOConnectionsToLOList (int flag, bool AndRats)
             }
 
           /* try all new pads */
-          if (group == top_group)
+          if (group == top_group || group == bottom_group)
             {
-              position = &padposition[TOP_SIDE];
-              for (; *position < PadList[layer].Number; (*position)++)
-                if (LookupLOConnectionsToPad
-                    (PADLIST_ENTRY (layer, *position), group, flag, AndRats))
-                  return (true);
-            }
+              int side = (group == top_group) ? TOP_SIDE : BOTTOM_SIDE;
 
-          if (group == bottom_group)
-            {
-              position = &padposition[BOTTOM_SIDE];
-              for (; *position < PadList[layer].Number; (*position)++)
+              position = &padposition[side];
+              for (; *position < PadList[side].Number; (*position)++)
                 if (LookupLOConnectionsToPad
-                    (PADLIST_ENTRY (layer, *position), group, flag, AndRats))
+                    (PADLIST_ENTRY (side, *position), group, flag, AndRats))
                   return (true);
             }
         }
