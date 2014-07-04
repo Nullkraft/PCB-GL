@@ -1,5 +1,5 @@
 Bottom: 90390880827ad75b93a04e8c2346130672fda946
-Top:    6401d0d79add0d0514573e8942bcf36e91643257
+Top:    c0de91df6c070336d72ee89f69c29bcb12dd0ddc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 04:18:59 +0100
 
@@ -11,7 +11,7 @@ Fixup some bugs from the added soldermask layers
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 97f92a2..f95c045 100644
+index 97f92a2..c402568 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -776,6 +776,8 @@ LookupLOConnectionsToLOList (int flag, bool AndRats)
@@ -23,7 +23,7 @@ index 97f92a2..f95c045 100644
  
    /* copy the current LO list positions; the original data is changed
     * by 'LookupPVConnectionsToLOList()' which has to check the same
-@@ -848,22 +850,25 @@ LookupLOConnectionsToLOList (int flag, bool AndRats)
+@@ -848,22 +850,18 @@ LookupLOConnectionsToLOList (int flag, bool AndRats)
                          (POLYGONLIST_ENTRY (layer, *position), group, flag, AndRats))
                        return (true);
                  }
@@ -46,21 +46,14 @@ index 97f92a2..f95c045 100644
 +            }
 +
 +          /* try all new pads */
-+          if (group == top_group)
++          if (group == top_group || group == bottom_group)
 +            {
-+              position = &padposition[TOP_SIDE];
-+              for (; *position < PadList[layer].Number; (*position)++)
-+                if (LookupLOConnectionsToPad
-+                    (PADLIST_ENTRY (layer, *position), group, flag, AndRats))
-+                  return (true);
-+            }
++              int side = (group == top_group) ? TOP_SIDE : BOTTOM_SIDE;
 +
-+          if (group == bottom_group)
-+            {
-+              position = &padposition[BOTTOM_SIDE];
-+              for (; *position < PadList[layer].Number; (*position)++)
++              position = &padposition[side];
++              for (; *position < PadList[side].Number; (*position)++)
 +                if (LookupLOConnectionsToPad
-+                    (PADLIST_ENTRY (layer, *position), group, flag, AndRats))
++                    (PADLIST_ENTRY (side, *position), group, flag, AndRats))
 +                  return (true);
              }
          }
