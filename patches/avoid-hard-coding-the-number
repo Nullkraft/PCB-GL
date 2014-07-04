@@ -8,6 +8,10 @@ Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 We will shorty add support for soldermask layers, so this will need changing
 
 
+NOTE....... IF THE parse_y.y patch in the stg series before this gets
+dropped, there is one more case where + 2 needs to be replaced with EXTRA_LAYERS
+
+
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
