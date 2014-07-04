@@ -1,0 +1,221 @@
+Bottom: c32b0f2eacbec444c043ff5680cb79bef49a6644
+Top:    223dbf3dcb3c2732004866265a44386144a72124
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-04 02:04:26 +0100
+
+Refresh of hid-layer_sort-only-copper
+
+---
+
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index af4574a..2ec2836 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -411,23 +411,17 @@ gerber_get_export_options (int *n)
+ }
+ 
+ static int
+-group_for_layer (int l)
++layer_stack_sort (const void *va, const void *vb)
+ {
+-  if (l < max_copper_layer + EXTRA_LAYERS && l >= 0)
+-    return GetLayerGroupNumberByNumber (l);
+-  /* else something unique */
+-  return max_group + 3 + l;
+-}
++  int a_layer = *(int *) va;
++  int b_layer = *(int *) vb;
++  int a_group = GetLayerGroupNumberByNumber (a_layer);
++  int b_group = GetLayerGroupNumberByNumber (b_layer);
+ 
+-static int
+-layer_sort (const void *va, const void *vb)
+-{
+-  int a = *(int *) va;
+-  int b = *(int *) vb;
+-  int d = group_for_layer (b) - group_for_layer (a);
+-  if (d)
+-    return d;
+-  return b - a;
++  if (b_group != a_group)
++    return b_group - a_group;
++
++  return b_layer - a_layer;
+ }
+ 
+ static void
+@@ -670,7 +664,7 @@ gerber_do_export (HID_Attr_Val * options)
+       print_layer[i] = 1;
+ 
+   memcpy (saved_layer_stack, LayerStack, sizeof (LayerStack));
+-  qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_sort);
++  qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_stack_sort);
+   linewidth = -1;
+   lastcap = -1;
+   lastgroup = -1;
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 58e9d34..3950c0d 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -505,33 +505,22 @@ png_get_export_options (int *n)
+ static int top_group, bottom_group;
+ 
+ static int
+-group_for_layer (int l)
++layer_stack_sort (const void *va, const void *vb)
+ {
+-  if (l < max_copper_layer + EXTRA_LAYERS && l >= 0)
+-    return GetLayerGroupNumberByNumber (l);
+-  /* else something unique */
+-  return max_group + 3 + l;
+-}
++  int a_layer = *(int *) va;
++  int b_layer = *(int *) vb;
++  int a_group = GetLayerGroupNumberByNumber (a_layer);
++  int b_group = GetLayerGroupNumberByNumber (b_layer);
++  int aside = (a_group == bottom_group ? 0 : a_group == top_group ? 2 : 1);
++  int bside = (b_group == bottom_group ? 0 : b_group == top_group ? 2 : 1);
+ 
+-static int
+-layer_sort (const void *va, const void *vb)
+-{
+-  int a = *(int *) va;
+-  int b = *(int *) vb;
+-  int al = group_for_layer (a);
+-  int bl = group_for_layer (b);
+-  int d = bl - al;
++  if (bside != aside)
++    return bside - aside;
+ 
+-  if (a >= 0 && a <= max_copper_layer + 1)
+-    {
+-      int aside = (al == bottom_group ? 0 : al == top_group ? 2 : 1);
+-      int bside = (bl == bottom_group ? 0 : bl == top_group ? 2 : 1);
+-      if (bside != aside)
+-	return bside - aside;
+-    }
+-  if (d)
+-    return d;
+-  return b - a;
++  if (b_group != a_group)
++    return b_group - a_group;
++
++  return b_layer - a_layer;
+ }
+ 
+ static const char *filename;
+@@ -601,7 +590,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+ 
+       top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+       bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
+-      qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_sort);
++      qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_stack_sort);
+ 
+       CLEAR_FLAG(THINDRAWFLAG, PCB);
+       CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index a844808..a8822be 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -152,33 +152,22 @@ eps_get_export_options (int *n)
+ static int top_group, bottom_group;
+ 
+ static int
+-group_for_layer (int l)
++layer_stack_sort (const void *va, const void *vb)
+ {
+-  if (l < max_copper_layer + EXTRA_LAYERS && l >= 0)
+-    return GetLayerGroupNumberByNumber (l);
+-  /* else something unique */
+-  return max_group + 3 + l;
+-}
++  int a_layer = *(int *) va;
++  int b_layer = *(int *) vb;
++  int a_group = GetLayerGroupNumberByNumber (a_layer);
++  int b_group = GetLayerGroupNumberByNumber (b_layer);
++  int aside = (a_group == bottom_group ? 0 : a_group == top_group ? 2 : 1);
++  int bside = (b_group == bottom_group ? 0 : b_group == top_group ? 2 : 1);
+ 
+-static int
+-layer_sort (const void *va, const void *vb)
+-{
+-  int a = *(int *) va;
+-  int b = *(int *) vb;
+-  int al = group_for_layer (a);
+-  int bl = group_for_layer (b);
+-  int d = bl - al;
++  if (bside != aside)
++    return bside - aside;
+ 
+-  if (a >= 0 && a <= max_copper_layer + 1)
+-    {
+-      int aside = (al == bottom_group ? 0 : al == top_group ? 2 : 1);
+-      int bside = (bl == bottom_group ? 0 : bl == top_group ? 2 : 1);
+-      if (bside != aside)
+-	return bside - aside;
+-    }
+-  if (d)
+-    return d;
+-  return b - a;
++  if (b_group != a_group)
++    return b_group - a_group;
++
++  return b_layer - a_layer;
+ }
+ 
+ static const char *filename;
+@@ -261,7 +250,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+     {
+       top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+       bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
+-      qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_sort);
++      qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_stack_sort);
+     }
+   fprintf (f, "%%!PS-Adobe-3.0 EPSF-3.0\n");
+   linewidth = -1;
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 7d16bc0..79807a1 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -417,23 +417,17 @@ ps_get_export_options (int *n)
+ }
+ 
+ static int
+-group_for_layer (int l)
++layer_stack_sort (const void *va, const void *vb)
+ {
+-  if (l < max_copper_layer + EXTRA_LAYERS && l >= 0)
+-    return GetLayerGroupNumberByNumber (l);
+-  /* else something unique */
+-  return max_group + 3 + l;
+-}
++  int a_layer = *(int *) va;
++  int b_layer = *(int *) vb;
++  int a_group = GetLayerGroupNumberByNumber (a_layer);
++  int b_group = GetLayerGroupNumberByNumber (b_layer);
+ 
+-static int
+-layer_sort (const void *va, const void *vb)
+-{
+-  int a = *(int *) va;
+-  int b = *(int *) vb;
+-  int d = group_for_layer (b) - group_for_layer (a);
+-  if (d)
+-    return d;
+-  return b - a;
++  if (b_group != a_group)
++    return b_group - a_group;
++
++  return b_layer - a_layer;
+ }
+ 
+ void
+@@ -671,7 +665,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+       global.print_layer[i] = 1;
+ 
+   memcpy (saved_layer_stack, LayerStack, sizeof (LayerStack));
+-  qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_sort);
++  qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_stack_sort);
+ 
+   global.linewidth = -1;
+   /* reset static vars */
