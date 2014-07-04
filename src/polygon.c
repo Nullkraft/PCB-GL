@@ -289,6 +289,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
   int i, range;
 
 //  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
 
   /* move vector to origin */
   e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
@@ -298,7 +299,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
     {
       /* NB: the caller added the first vertex, and will add the last vertex, hence the -1 */
       range = POLY_CIRC_SEGS * sweep / 360 - 1;
-      for (i = 0; i < range; i++)
+      for (i = 0; i < range - 1; i++)
         {
           /* rotate the vector */
           t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
@@ -500,14 +501,14 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
   /* XXX: Circle already has the first node added */
 //  if (fraction > 1)
 //    poly_InclVertex (c->head.prev, poly_CreateNode (v));
-//    poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
+  poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
   /* move vector to origin */
   e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
   e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
 
   /* XXX */ /* NB: the caller adds the last vertex, hence the -1 */
   range = POLY_CIRC_SEGS / fraction;
-  for (i = 0; i < range; i++)
+  for (i = 0; i < range - 1; i++)
     {
       /* rotate the vector */
       t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
@@ -550,22 +551,31 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
 
   assert (x2 > x1);
   assert (y2 > y1);
+
   v[0] = x1 - t;
-  v[1] = y1;
+  v[1] = y2;
   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return NULL;
+  v[0] = x1 - t;
+  v[1] = y1;
   frac_circle (contour, x1, y1, v, 4);
-  v[0] = x2;
+  v[0] = x1;
   v[1] = y1 - t;
   poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+  v[0] = x2;
+  v[1] = y1 - t;
   frac_circle (contour, x2, y1, v, 4);
   v[0] = x2 + t;
-  v[1] = y2;
+  v[1] = y1;
   poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+  v[0] = x2 + t;
+  v[1] = y2;
   frac_circle (contour, x2, y2, v, 4);
-  v[0] = x1;
+  v[0] = x2;
   v[1] = y2 + t;
   poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+  v[0] = x1;
+  v[1] = y2 + t;
   frac_circle (contour, x1, y2, v, 4);
   return ContourToPoly (contour);
 }
@@ -712,33 +722,33 @@ LinePoly (LineType * L, Coord thick)
       l->Point2.Y -= dx;
     }
 
-
-  v[0] = l->Point2.X - dx;
-  v[1] = l->Point2.Y - dy;
+  v[0] = l->Point1.X - dx;
+  v[1] = l->Point1.Y - dy;
   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return 0;
 
+  v[0] = l->Point2.X - dx;
+  v[1] = l->Point2.Y - dy;
+
   if (TEST_FLAG (SQUAREFLAG,l))
-    {
-      v[0] = l->Point2.X + dx;
-      v[1] = l->Point2.Y + dy;
-      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
-    }
+    poly_InclVertex (contour->head.prev, poly_CreateNode (v));
   else
     frac_circle (contour, l->Point2.X, l->Point2.Y, v, 2);
 
-  v[0] = l->Point1.X + dx;
-  v[1] = l->Point1.Y + dy;
+  v[0] = l->Point2.X + dx;
+  v[1] = l->Point2.Y + dy;
   poly_InclVertex (contour->head.prev, poly_CreateNode (v));
 
+  v[0] = l->Point1.X + dx;
+  v[1] = l->Point1.Y + dy;
+
   if (TEST_FLAG (SQUAREFLAG,l))
-    {
-      v[0] = l->Point1.X - dx;
-      v[1] = l->Point1.Y - dy;
-      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
-    }
+    poly_InclVertex (contour->head.prev, poly_CreateNode (v));
   else
     frac_circle (contour, l->Point1.X, l->Point1.Y, v, 2);
+
+//  v[0] = l->Point1.X - dx;
+//  v[1] = l->Point1.Y - dy;
 
   /* now we have the line contour */
   if (!(np = ContourToPoly (contour)))
@@ -796,25 +806,37 @@ SquarePadPoly (PadType * pad, Coord clear)
       c->Point2.Y -= cx;
     }
 
-  v[0] = c->Point1.X - tx;
-  v[1] = c->Point1.Y - ty;
+  v[0] = c->Point1.X + tx;
+  v[1] = c->Point1.Y + ty;
   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return 0;
+
+  v[0] = c->Point1.X - tx;
+  v[1] = c->Point1.Y - ty;
   frac_circle (contour, (t->Point1.X - tx), (t->Point1.Y - ty), v, 4);
+
+  v[0] = t->Point1.X - cx;
+  v[1] = t->Point1.Y - cy;
+  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
 
   v[0] = t->Point2.X - cx;
   v[1] = t->Point2.Y - cy;
-  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
   frac_circle (contour, (t->Point2.X - tx), (t->Point2.Y - ty), v, 4);
+
+  v[0] = c->Point2.X - tx;
+  v[1] = c->Point2.Y - ty;
+  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
 
   v[0] = c->Point2.X + tx;
   v[1] = c->Point2.Y + ty;
-  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
   frac_circle (contour, (t->Point2.X + tx), (t->Point2.Y + ty), v, 4);
+
+  v[0] = t->Point2.X + cx;
+  v[1] = t->Point2.Y + cy;
+  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
 
   v[0] = t->Point1.X + cx;
   v[1] = t->Point1.Y + cy;
-  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
   frac_circle (contour, (t->Point1.X + tx), (t->Point1.Y + ty), v, 4);
 
   /* now we have the line contour */
