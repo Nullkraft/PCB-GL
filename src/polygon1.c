@@ -50,6 +50,7 @@
 #include "rtree.h"
 #include "heap.h"
 #include "pcb-printf.h"
+#include "misc.h"
 
 #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
 
@@ -218,12 +219,11 @@ node_add_single (VNODE * dest, Vector po)
 {
   VNODE *p;
 
-/* XXX: MAY NOT BE CORRECT IF WE NEED TO SEPARATE STRAIGHT AND CURVED SEGMENTS */
   if (vect_equal (po, dest->point))
     return dest;
   if (vect_equal (po, dest->next->point))
     return dest->next;
-  p = poly_CreateNode (po);
+  p = poly_CreateNodeFull (po, dest->is_round, dest->cx, dest->cy, dest->radius);
   if (p == NULL)
     return NULL;
   p->cvc_prev = p->cvc_next = NULL;
@@ -635,6 +635,83 @@ prepend_insert_node_task (insert_node_task *list, seg *seg, VNODE *new_node)
   return task;
 }
 
+static bool
+insert_vertex_in_seg (struct info *i, struct seg *s, Vector v)
+{
+  VNODE *new_node = node_add_single_point (s->v, v);
+  if (new_node == NULL)
+    return false;
+
+#ifdef DEBUG_INTERSECT
+  DEBUGP ("new intersection on segment \"i\" at %#mD\n", v[0], v[1]);
+#endif
+  i->node_insert_list = prepend_insert_node_task (i->node_insert_list, s, new_node);
+  s->intersected = 1;
+  return true;
+}
+
+static int
+seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+{
+  Vector v1, v2;
+  int cnt;
+
+  cnt = vect_inters2 (s1->v->point, s1->v->next->point,
+                      s2->v->point, s2->v->next->point, v1, v2);
+  if (!cnt)
+    return 0;
+
+  if (i->touch)  /* if checking touches one find and we're done */
+    longjmp (*i->touch, TOUCHES);
+
+  /* Mark the contour PLINEs as intersected */
+  s1->p->Flags.status = ISECTED;
+  s2->p->Flags.status = ISECTED;
+
+  for (; cnt; cnt--)
+    {
+      bool done_insert_on_s1 = insert_vertex_in_seg (i, s2, cnt > 1 ? v2 : v1);
+      bool done_insert_on_s2 = insert_vertex_in_seg (i, s1, cnt > 1 ? v2 : v1);
+
+      /* Skip any remaining r_search hits against segment i, as any futher
+       * intersections will be rejected until the next pass anyway.
+       */
+      if ((done_insert_on_s1 && s1 == i->s) ||
+          (done_insert_on_s2 && s2 == i->s))
+        longjmp (*i->env, 1);
+
+      /* If we inserted on s (but not i), skip return now, as we can't continue with
+       * the for-loop iteration if we modified geoemtry
+       */
+      if (done_insert_on_s1 || done_insert_on_s2)
+        return 0;
+    }
+
+  return 0;
+}
+
+static int
+seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+{
+  assert (s1->v->is_round);
+  assert (!s2->v->is_round);
+
+//  printf ("Querying arc-line intersection\n");
+  /* COP OUT */
+  return seg_in_seg_line_line (i, s1, s2);
+}
+
+static int
+seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
+{
+  assert (s1->v->is_round);
+  assert (s2->v->is_round);
+
+//  printf ("Querying arc-arc intersection\n");
+  /* COP OUT */
+  return seg_in_seg_line_line (i, s1, s2);
+}
+
 /*
  * seg_in_seg()
  * (C) 2006 harry eaton
@@ -650,60 +727,24 @@ static int
 seg_in_seg (const BoxType * b, void *cl)
 {
   struct info *i = (struct info *) cl;
-  struct seg *s = (struct seg *) b;
-  Vector s1, s2;
-  int cnt;
-  VNODE *new_node;
+  struct seg *s1 = (struct seg *) b;
+  struct seg *s2 = i->s;
 
   /* When new nodes are added at the end of a pass due to an intersection
    * the segments may be altered. If either segment we're looking at has
    * already been intersected this pass, skip it until the next pass.
    */
-  if (s->intersected || i->s->intersected)
+  if (s1->intersected || s2->intersected)
     return 0;
 
-  cnt = vect_inters2 (s->v->point, s->v->next->point,
-		      i->v->point, i->v->next->point, s1, s2);
-  if (!cnt)
-    return 0;
-  if (i->touch)			/* if checking touches one find and we're done */
-    longjmp (*i->touch, TOUCHES);
-  i->s->p->Flags.status = ISECTED;
-  s->p->Flags.status = ISECTED;
-  for (; cnt; cnt--)
-    {
-      bool done_insert_on_i = false;
-      new_node = node_add_single_point (i->v, cnt > 1 ? s2 : s1);
-      if (new_node != NULL)
-	{
-#ifdef DEBUG_INTERSECT
-	  DEBUGP ("new intersection on segment \"i\" at %#mD\n",
-	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
-#endif
-	  i->node_insert_list =
-	    prepend_insert_node_task (i->node_insert_list, i->s, new_node);
-	  i->s->intersected = 1;
-	  done_insert_on_i = true;
-	}
-      new_node = node_add_single_point (s->v, cnt > 1 ? s2 : s1);
-      if (new_node != NULL)
-	{
-#ifdef DEBUG_INTERSECT
-	  DEBUGP ("new intersection on segment \"s\" at %#mD\n",
-	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
-#endif
-	  i->node_insert_list =
-	    prepend_insert_node_task (i->node_insert_list, s, new_node);
-	  s->intersected = 1;
-	  return 0; /* Keep looking for intersections with segment "i" */
-	}
-      /* Skip any remaining r_search hits against segment i, as any futher
-       * intersections will be rejected until the next pass anyway.
-       */
-      if (done_insert_on_i)
-	longjmp (*i->env, 1);
-    }
-  return 0;
+  if (s1->v->is_round && s2->v->is_round)
+    return seg_in_seg_arc_arc (i, s1, s2);
+  else if (s1->v->is_round)
+    return seg_in_seg_arc_line (i, s1, s2);
+  else if (s2->v->is_round)
+    return seg_in_seg_arc_line (i, s2, s1);
+  else
+    return seg_in_seg_line_line (i, s1, s2);
 }
 
 static void *
@@ -717,26 +758,36 @@ make_edge_tree (PLINE * pb)
     {
       s = (seg *)malloc (sizeof (struct seg));
       s->intersected = 0;
-      if (bv->point[0] < bv->next->point[0])
-	{
-	  s->box.X1 = bv->point[0];
-	  s->box.X2 = bv->next->point[0] + 1;
-	}
-      else
-	{
-	  s->box.X2 = bv->point[0] + 1;
-	  s->box.X1 = bv->next->point[0];
-	}
-      if (bv->point[1] < bv->next->point[1])
-	{
-	  s->box.Y1 = bv->point[1];
-	  s->box.Y2 = bv->next->point[1] + 1;
-	}
-      else
-	{
-	  s->box.Y2 = bv->point[1] + 1;
-	  s->box.Y1 = bv->next->point[1];
-	}
+
+      s->box.X1 = MIN (bv->point[0], bv->next->point[0]);
+      s->box.X2 = MAX (bv->point[0], bv->next->point[0]) + 1;
+      s->box.Y1 = MIN (bv->point[1], bv->next->point[1]);
+      s->box.Y2 = MAX (bv->point[1], bv->next->point[1]) + 1;
+
+      if (bv->is_round)
+        {
+          Angle start_angle;
+          Angle end_angle;
+          Angle delta_angle;
+          BoxType arc_bound;
+
+          start_angle = atan2 ((      bv->point[1] -       bv->cy), -(      bv->point[0] -       bv->cx)) / M180;
+          end_angle   = atan2 ((bv->next->point[1] - bv->next->cy), -(bv->next->point[0] - bv->next->cx)) / M180;
+
+#warning delta angle calculation looks rather suspect - wont work for arcs > 180 degrees span
+          delta_angle = end_angle - start_angle;
+
+          if (delta_angle > 180.) delta_angle -= 360.;
+          if (delta_angle < -180.) delta_angle += 360.;
+
+          arc_bound = calc_thin_arc_bounds (bv->cx, bv->cy, bv->radius, bv->radius, start_angle, delta_angle);
+
+          MAKEMIN (s->box.X1, arc_bound.X1);
+          MAKEMIN (s->box.Y1, arc_bound.Y1);
+          MAKEMAX (s->box.X2, arc_bound.X2);
+          MAKEMAX (s->box.Y2, arc_bound.Y2);
+        }
+
       s->v = bv;
       s->p = pb;
       r_insert_entry (ans, (const BoxType *) s, 1);
@@ -914,10 +965,6 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
   while (task != NULL)
     {
       insert_node_task *next = task->next;
-
-      /* XXX: If a node was inserted due to an intersection, don't assume we're on the a round contour any more */
-      task->node_seg->v->is_round = false;
-//      task->node_seg->v->next->is_round = false;
 
       /* Do insersion */
       task->new_node->prev = task->node_seg->v;
@@ -2656,7 +2703,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
 {
   double area = 0;
   VNODE *p, *c;
-  Vector p1, p2;
+//  Vector p1, p2;
 
   assert (C != NULL);
 
@@ -2665,15 +2712,17 @@ poly_PreContour (PLINE * C, BOOLp optimize)
       for (c = (p = &C->head)->next; c != &C->head; c = (p = c)->next)
 	{
 	  /* if the previous node is on the same line with this one, we should remove it */
-	  Vsub2 (p1, c->point, p->point);
-	  Vsub2 (p2, c->next->point, c->point);
+//	  Vsub2 (p1, c->point, p->point);
+//	  Vsub2 (p2, c->next->point, c->point);
 	  /* If the product below is zero then
 	   * the points on either side of c 
 	   * are on the same line!
 	   * So, remove the point c
 	   */
 
-	  if (vect_det2 (p1, p2) == 0)
+#warning BROKEN FOR CIRCULAR CONTOURS
+//	  if (vect_det2 (p1, p2) == 0)
+          if (0)
 	    {
 	      poly_ExclVertex (c);
 	      free (c);
@@ -3364,6 +3413,7 @@ poly_ChkContour (PLINE * a)
       a2 = a1;
       do
 	{
+#warning THIS DOES NOT TAKE INTO ACCOUNT arc-arc and arc-line segments
 	  if (!node_neighbours (a1, a2) &&
 	      (icnt = vect_inters2 (a1->point, a1->next->point,
 				    a2->point, a2->next->point, i1, i2)) > 0)
