@@ -706,7 +706,6 @@ pcbdefinition
 		| rats
 		| layer
 		| element
-		| error { YYABORT; }
 		;
 
 via
