@@ -1,5 +1,5 @@
-Bottom: 6b1e836b8c53462eb0bc54f7b2d9d7ce377335aa
-Top:    efd661c4bb2ef973c671669c13399fcd4212aa53
+Bottom: 24fe150772299d09ed12f5a120c41cee4a2241c9
+Top:    4e4b518500558146fd87186792554cdef0d44b42
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-29 00:02:04 +0100
 
@@ -85,7 +85,7 @@ index b775961..370ff6f 100644
    WritePCBNetlistData (FP);
  
 diff --git a/src/global.h b/src/global.h
-index 4c1243e..3d755ff 100644
+index d858bec..5137739 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -195,7 +195,7 @@ OutputType;
@@ -142,10 +142,10 @@ index 1229d67..83d4df4 100644
  }
  
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index a741e32..b2c42d3 100644
+index 2030fe8..fadb356 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -507,7 +507,7 @@ gcode_start_gcode (const char *layername, bool metric)
+@@ -504,7 +504,7 @@ gcode_start_gcode (const char *layername, bool metric)
  static void
  gcode_do_export (HID_Attr_Val * options)
  {
