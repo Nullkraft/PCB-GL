@@ -7,16 +7,21 @@ Revert "Introduce dynamic board size."
 
 This reverts commit d91daad65c3ea7e2e1b6ce876b7d41550f6a784e.
 
-The goal is to eventually define the board's extent by the outline
-layer, only. That way, all the exporters can export properly
-sized layouts.
+    The goal is to eventually define the board's extent by the outline
+    layer, only. That way, all the exporters can export properly
+    sized layouts.
 
-Undoubtly, this can also influence the GUIs. For example, "zoom to fit"
-becomes a slightly different meaning and drawing outside the board's
-extent becomes possible. Autorouting and similars can be limited to
-the actual board size. Resizing a board to the lower left no longer
-requires the error-prone moving of all the stuff and keeps file diffs
-small.
+    Undoubtly, this can also influence the GUIs. For example, "zoom to fit"
+    becomes a slightly different meaning and drawing outside the board's
+    extent becomes possible. Autorouting and similars can be limited to
+    the actual board size. Resizing a board to the lower left no longer
+    requires the error-prone moving of all the stuff and keeps file diffs
+    small.
+
+The code in question does NOT dynamically update the desired information
+when the outline layer changes, and it adds yet more magic meaning to the
+ "outline" layer which I'm trying slowly to remove from PCB. This is the
+wrong way to cope with unlimited board sizes.
 
 
 ---
