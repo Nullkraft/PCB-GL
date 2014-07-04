@@ -1,0 +1,96 @@
+Bottom: c8bfa7609070e8fbc000a3d7b70edc797f974b80
+Top:    c32b0f2eacbec444c043ff5680cb79bef49a6644
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-04 01:01:11 +0100
+
+Refresh of hid-gtk-fix-tooltips-harder
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 037ca57..d20a90f 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -459,8 +459,6 @@ describe_location (Coord X, Coord Y)
+ }
+ 
+ 
+-static int tooltip_update_timeout_id = 0;
+-
+ static gboolean check_object_tooltips (GHidPort *out)
+ {
+   char *description;
+@@ -468,23 +466,26 @@ static gboolean check_object_tooltips (GHidPort *out)
+   /* check if there are any pins or pads at that position */
+   description = describe_location (out->crosshair_x, out->crosshair_y);
+ 
+-  if (description) {
+-    gtk_widget_set_tooltip_text (out->drawing_area, description);
+-    g_free (description);
+-  }
++  if (description != NULL)
++    {
++      gtk_widget_set_tooltip_text (out->drawing_area, description);
++      g_free (description);
++    }
+ 
+-  tooltip_update_timeout_id = 0;
++  out->tooltip_update_timeout_id = 0;
+   return FALSE;
+ }
+ 
+ 
+ static void
+-cancel_tooltip_update ()
++cancel_tooltip_update (GHidPort *out)
+ {
+-  if (tooltip_update_timeout_id) {
+-    g_source_remove (tooltip_update_timeout_id);
+-    tooltip_update_timeout_id = 0;
+-  }
++  if (out->tooltip_update_timeout_id)
++    {
++      printf ("cancel_tooltip_update called to remove timeout id %i\n", out->tooltip_update_timeout_id);
++      g_source_remove (out->tooltip_update_timeout_id);
++      out->tooltip_update_timeout_id = 0;
++    }
+ }
+ 
+ /* FIXME: If the GHidPort is ever destroyed, we must call
+@@ -498,9 +499,9 @@ queue_tooltip_update (GHidPort *out)
+   gtk_widget_set_tooltip_text (out->drawing_area, NULL);
+   gtk_widget_trigger_tooltip_query (out->drawing_area);
+ 
+-  cancel_tooltip_update ();
++  cancel_tooltip_update (out);
+ 
+-  tooltip_update_timeout_id =
++  out->tooltip_update_timeout_id =
+       g_timeout_add (TOOLTIP_UPDATE_DELAY,
+                      (GSourceFunc) check_object_tooltips,
+                      out);
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 505a5f5..42f42d9 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1468,6 +1468,8 @@ ghid_build_pcb_top_window (void)
+   ghid_pack_mode_buttons ();
+   gdk_window_set_back_pixmap (gtk_widget_get_window (gport->drawing_area),
+                               NULL, FALSE);
++
++  port->tooltip_update_timeout_id = 0;
+ }
+ 
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 175f145..312d111 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -193,6 +193,8 @@ typedef struct
+   view_data view;
+   Coord pcb_x, pcb_y;             /* PCB coordinates of the mouse pointer */
+   Coord crosshair_x, crosshair_y; /* PCB coordinates of the crosshair     */
++
++  guint tooltip_update_timeout_id;
+ }
+ GHidPort;
