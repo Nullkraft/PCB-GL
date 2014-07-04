@@ -1,5 +1,5 @@
 Bottom: 00fcba5835039daa960abd8b5fcd2abbc53d9cb9
-Top:    c4a1105661ee26e1c1716b7f829d333206a1fde9
+Top:    90390880827ad75b93a04e8c2346130672fda946
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 03:03:31 +0100
 
@@ -18,7 +18,7 @@ which we may miss with the loss of parsedata.
 ---
 
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 46058e3..6246705 100644
+index 46058e3..629ccd6 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -131,7 +131,6 @@ static Coord new_units (PLMeasure m);
@@ -29,15 +29,6 @@ index 46058e3..6246705 100644
  		| parsefont
  		| error { YYABORT; }
  		;
-@@ -165,7 +164,7 @@ parsepcb
- 
- 				if (!yyPCB)
- 				{
--					Message(_("illegal fileformat\n"));
-+					Message(_("illegal fileformat 1\n"));
- 					YYABORT;
- 				}
- 				for (i = 0; i < MAX_LAYER + EXTRA_LAYERS; i++)
 @@ -240,25 +239,6 @@ parsepcb
  		  }
  		;
@@ -64,15 +55,6 @@ index 46058e3..6246705 100644
  pcbfont
  		: parsefont
  		|
-@@ -272,7 +252,7 @@ parsefont
- 
- 				if (!yyFont)
- 				{
--					Message(_("illegal fileformat\n"));
-+					Message(_("illegal fileformat 3\n"));
- 					YYABORT;
- 				}
- 				yyFont->Valid = false;
 @@ -706,7 +686,6 @@ pcbdefinition
  		| rats
  		| layer
