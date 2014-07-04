@@ -5,6 +5,15 @@ Date:   2014-07-04 03:03:31 +0100
 
 parse_y.y: Try to avoid two shift/reduce and reduce/reduce warnings
 
+TODO: Check this matches up against our expected behavior.
+
+Removing the parsedata section ("I think") has no effect, as elements
+hit the alternative | element clause within parsepcb.
+
+HOWEVER... I need to check whether there is any other valid syntax
+inside an element file, or any backwards compatibility with old formats
+which we may miss with the loss of parsedata.
+
 
 ---
 
