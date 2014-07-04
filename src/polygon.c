@@ -104,11 +104,15 @@ dicer output is used for HIDs which cannot render things with holes
 #include <dmalloc.h>
 #endif
 
+
+#define DEBUG_CIRCSEGS
+
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
+//#define UNSUBTRACT_BLOAT MIL_TO_COORD (0.1)
 #define UNSUBTRACT_BLOAT 10
-#define SUBTRACT_PIN_VIA_BATCH_SIZE 100
-#define SUBTRACT_LINE_BATCH_SIZE 20
+#define SUBTRACT_PIN_VIA_BATCH_SIZE 100 /*100*/
+#define SUBTRACT_LINE_BATCH_SIZE 20 /*20*/
 
 static double rotate_circle_seg[4];
 static double bw_rotate_circle_seg[4];
@@ -283,6 +287,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
   /* We don't re-add a point at v, nor do we add the last point, sweep degrees around from (X,Y)-v */
   double e1, e2, t1;
   int i, range;
+  double radius = sqrt ((v[0] - X) * (v[0] - X) + (v[1] - Y) * (v[1] - Y));
 
 //  poly_InclVertex (c->head.prev, poly_CreateNode (v));
 
@@ -302,7 +307,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
           e1 = t1;
           v[0] = X + ROUND (e1);
           v[1] = Y + ROUND (e2);
-          poly_InclVertex (c->head.prev, poly_CreateNode (v));
+          poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
         }
     }
   else
@@ -317,7 +322,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
           e1 = t1;
           v[0] = X + ROUND (e1);
           v[1] = Y + ROUND (e2);
-          poly_InclVertex (c->head.prev, poly_CreateNode (v));
+          poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
         }
     }
 }
@@ -337,18 +342,30 @@ original_poly (PolygonType * p)
   /* first make initial polygon contour */
   for (n = 0; n < p->PointN; n++)
     {
+      VNODE *node;
+      //Cardinal prev_n;
+
       /* No current contour? Make a new one starting at point */
       /*   (or) Add point to existing contour */
 
       v[0] = p->Points[n].X, v[1] = p->Points[n].Y;
+
+      //prev_n = prev_contour_point (p, n);
+
+      /* XXX: Need to handle the case of a leftover circular contour point */
+      if (0)
+        node = poly_CreateNodeArcApproximation (v, 0, 0, 0);
+      else
+        node = poly_CreateNode (v);
+
       if (contour == NULL)
         {
-          if ((contour = poly_NewContour (v)) == NULL)
+          if ((contour = poly_NewContour (node)) == NULL)
             return NULL;
         }
       else
         {
-          poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+          poly_InclVertex (contour->head.prev, node);
         }
 
       if (p->Points[n].included_angle != 0)
@@ -420,7 +437,7 @@ RectPoly (Coord x1, Coord x2, Coord y1, Coord y2)
 
   v[0] = x1;
   v[1] = y1;
-  if ((contour = poly_NewContour (v)) == NULL)
+  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return NULL;
   v[0] = x2;
   v[1] = y1;
@@ -442,7 +459,7 @@ OctagonPoly (Coord x, Coord y, Coord radius)
 
   v[0] = x + ROUND (radius * 0.5);
   v[1] = y + ROUND (radius * TAN_22_5_DEGREE_2);
-  if ((contour = poly_NewContour (v)) == NULL)
+  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return NULL;
   v[0] = x + ROUND (radius * TAN_22_5_DEGREE_2);
   v[1] = y + ROUND (radius * 0.5);
@@ -477,14 +494,19 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
 {
   double e1, e2, t1;
   int i, range;
+  double radius = sqrt ((v[0] - X) * (v[0] - X) + (v[1] - Y) * (v[1] - Y));
 
-  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+
+  /* XXX: Circle already has the first node added */
+//  if (fraction > 1)
+//    poly_InclVertex (c->head.prev, poly_CreateNode (v));
+//    poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
   /* move vector to origin */
   e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
   e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
 
-  /* NB: the caller adds the last vertex, hence the -1 */
-  range = POLY_CIRC_SEGS / fraction - 1;
+  /* XXX */ /* NB: the caller adds the last vertex, hence the -1 */
+  range = POLY_CIRC_SEGS / fraction;
   for (i = 0; i < range; i++)
     {
       /* rotate the vector */
@@ -493,7 +515,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
       e1 = t1;
       v[0] = X + ROUND (e1);
       v[1] = Y + ROUND (e2);
-      poly_InclVertex (c->head.prev, poly_CreateNode (v));
+      poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
     }
 }
 
@@ -509,7 +531,7 @@ CirclePoly (Coord x, Coord y, Coord radius)
     return NULL;
   v[0] = x + radius;
   v[1] = y;
-  if ((contour = poly_NewContour (v)) == NULL)
+  if ((contour = poly_NewContour (poly_CreateNodeArcApproximation (v, x, y, radius))) == NULL)
     return NULL;
   frac_circle (contour, x, y, v, 1);
   contour->is_round = TRUE;
@@ -530,7 +552,7 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
   assert (y2 > y1);
   v[0] = x1 - t;
   v[1] = y1;
-  if ((contour = poly_NewContour (v)) == NULL)
+  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return NULL;
   frac_circle (contour, x1, y1, v, 4);
   v[0] = x2;
@@ -585,7 +607,7 @@ ArcPolyNoIntersect (ArcType * a, Coord thick)
   radius_adj = (M_PI*da/360)*(M_PI*da/360)/2;
   v[0] = a->X - rx * cos (ang * M180);
   v[1] = a->Y + ry * sin (ang * M180);
-  if ((contour = poly_NewContour (v)) == NULL)
+  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return 0;
   for (i = 0; i < segs - 1; i++)
     {
@@ -689,28 +711,39 @@ LinePoly (LineType * L, Coord thick)
       l->Point2.X += dy;
       l->Point2.Y -= dx;
     }
-  v[0] = l->Point1.X - dx;
-  v[1] = l->Point1.Y - dy;
-  if ((contour = poly_NewContour (v)) == NULL)
-    return 0;
+
+
   v[0] = l->Point2.X - dx;
   v[1] = l->Point2.Y - dy;
+  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
+    return 0;
+
   if (TEST_FLAG (SQUAREFLAG,l))
-    poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+    {
+      v[0] = l->Point2.X + dx;
+      v[1] = l->Point2.Y + dy;
+      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+    }
   else
     frac_circle (contour, l->Point2.X, l->Point2.Y, v, 2);
-  v[0] = l->Point2.X + dx;
-  v[1] = l->Point2.Y + dy;
-  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+
   v[0] = l->Point1.X + dx;
   v[1] = l->Point1.Y + dy;
+  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+
   if (TEST_FLAG (SQUAREFLAG,l))
-    poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+    {
+      v[0] = l->Point1.X - dx;
+      v[1] = l->Point1.Y - dy;
+      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+    }
   else
     frac_circle (contour, l->Point1.X, l->Point1.Y, v, 2);
+
   /* now we have the line contour */
   if (!(np = ContourToPoly (contour)))
     return NULL;
+
   return np;
 }
 
@@ -765,7 +798,7 @@ SquarePadPoly (PadType * pad, Coord clear)
 
   v[0] = c->Point1.X - tx;
   v[1] = c->Point1.Y - ty;
-  if ((contour = poly_NewContour (v)) == NULL)
+  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return 0;
   frac_circle (contour, (t->Point1.X - tx), (t->Point1.Y - ty), v, 4);
 
@@ -1737,6 +1770,10 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
           strcmp (layer->Name, "route") == 0)
         Data->outline_valid = false;
     }
+  else if (type == PIN_TYPE || type == VIA_TYPE)
+    {
+        Data->outline_valid = false;
+    }
 
   if (type == POLYGON_TYPE)
     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
@@ -2072,10 +2109,18 @@ arc_outline_callback (const BoxType * b, void *cl)
   struct clip_outline_info *info = cl;
   POLYAREA *np, *res;
 
+#ifdef DEBUG_CIRCSEGS
+  if (!(np = ArcPoly (arc, arc->Thickness)))
+#else
   if (!(np = ArcPoly (arc, ROUTER_THICKNESS)))
+#endif
     return 0;
 
+#ifdef DEBUG_CIRCSEGS
+  poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
+#else
   poly_Boolean_free (info->poly, np, &res, PBO_SUB);
+#endif
   info->poly = res;
 
   return 1;
@@ -2088,10 +2133,18 @@ line_outline_callback (const BoxType * b, void *cl)
   struct clip_outline_info *info = cl;
   POLYAREA *np, *res;
 
+#ifdef DEBUG_CIRCSEGS
+  if (!(np = LinePoly (line, line->Thickness)))
+#else
   if (!(np = LinePoly (line, ROUTER_THICKNESS)))
+#endif
     return 0;
 
+#ifdef DEBUG_CIRCSEGS
+  poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
+#else
   poly_Boolean_free (info->poly, np, &res, PBO_SUB);
+#endif
   info->poly = res;
 
   return 1;
@@ -2104,10 +2157,18 @@ pv_outline_callback (const BoxType * b, void *cl)
   struct clip_outline_info *info = cl;
   POLYAREA *np, *res;
 
+#ifdef DEBUG_CIRCSEGS
+  if (!(np = CirclePoly (pv->X, pv->Y, pv->Thickness / 2)))
+#else
   if (!(np = CirclePoly (pv->X, pv->Y, pv->DrillingHole / 2)))
+#endif
     return 0;
 
+#ifdef DEBUG_CIRCSEGS
+  poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
+#else
   poly_Boolean_free (info->poly, np, &res, PBO_SUB);
+#endif
   info->poly = res;
 
   return 1;
@@ -2123,8 +2184,11 @@ polygon_outline_callback (const BoxType * b, void *cl)
   if (!(np = original_poly (poly)))
     return 0;
 
-
+#ifdef DEBUG_CIRCSEGS
   poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
+#else
+  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
+#endif
   info->poly = res;
 
   return 1;
@@ -2215,19 +2279,29 @@ POLYAREA *board_outline_poly (bool include_holes)
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
 
-#if 0
+#if 1
+#ifdef DEBUG_CIRCSEGS
+  info.poly = NULL;
+#else
   info.poly = whole_world;
+#endif
 
   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
 
+#ifndef DEBUG_CIRCSEGS
   if (include_holes)
+#endif
     {
       r_search (PCB->Data->pin_tree, &region, NULL, pv_outline_callback, &info);
       r_search (PCB->Data->via_tree, &region, NULL, pv_outline_callback, &info);
     }
 
   clipped = info.poly;
+
+#ifdef DEBUG_CIRCSEGS
+  return clipped;
+#endif
 
   /* Now we just need to work out which pieces of polygon are inside
      and outside the board! */
@@ -2264,6 +2338,7 @@ POLYAREA *board_outline_poly (bool include_holes)
   g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
 #endif
 
+#ifdef DEBUG_CIRCSEGS
   // The actual operation we want is to split the test polygon into multiple pieces
   // along the intersection with the polygon contours of any polygon on the outer layer.
   // The result would be nested, touching (not normally produced by the PBO code),
@@ -2277,6 +2352,7 @@ POLYAREA *board_outline_poly (bool include_holes)
     return whole_world;
   else
     poly_Free (&whole_world);
+#endif
 
   return clipped;
 }
