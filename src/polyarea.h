@@ -88,6 +88,9 @@ struct VNODE
     CVCList *cvc_prev;
     CVCList *cvc_next;
     Vector point;
+    bool is_round;
+    Coord cx, cy;
+    Coord radius;
 };
 
 typedef struct PLINE PLINE;
@@ -110,7 +113,7 @@ struct PLINE
     float *tristrip_vertices;
 };
 
-PLINE *poly_NewContour(Vector v);
+PLINE *poly_NewContour(VNODE *node);
 
 void poly_IniContour(PLINE *  c);
 void poly_ClrContour(PLINE *  c);  /* clears list of vertices */
@@ -122,6 +125,7 @@ void poly_PreContour(PLINE * c, BOOLp optimize); /* prepare contour */
 void poly_InvContour(PLINE * c);  /* invert contour */
 
 VNODE *poly_CreateNode(Vector v);
+VNODE *poly_CreateNodeArcApproximation(Vector v, Coord cx, Coord cy, Coord radius);
 
 void poly_InclVertex(VNODE * after, VNODE * node);
 void poly_ExclVertex(VNODE * node);
