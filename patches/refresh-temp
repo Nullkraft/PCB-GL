@@ -1,0 +1,21 @@
+Bottom: 00fcba5835039daa960abd8b5fcd2abbc53d9cb9
+Top:    83f1bde3bd461116ddce5071eb66282bda7fbe98
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-04 03:10:14 +0100
+
+Refresh of try-to-avoid-warnings-from
+
+---
+
+diff --git a/src/parse_y.y b/src/parse_y.y
+index 46058e3..29db9df 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -706,7 +706,6 @@ pcbdefinition
+ 		| rats
+ 		| layer
+ 		| element
+-		| error { YYABORT; }
+ 		;
+ 
+ via
