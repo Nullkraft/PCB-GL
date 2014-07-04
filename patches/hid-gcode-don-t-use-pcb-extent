@@ -3,10 +3,12 @@ Top:    29dda58f0c0455df8402b45a837921000be127c7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 00:31:05 +0100
 
-hid/gcode: Don't use PCB->Extent{Min,Max}{X,Y} they are about to be killed
+hid/gcode: Don't use PCB->Extent{Min,Max}{X,Y}.. they are about to be killed
 
-The extent updating code is broken, and poorly executed. Use PCB->MaxWidth
-and PCB->MaxHeight, these represent the size the of board.
+The extent updating code is broken, and adds yet more special-case code which
+handles the "outline" layer. Use PCB->MaxWidth and PCB->MaxHeight, these
+represent the size the of board, and are the values which the extents code
+defaulted to if it did not find any lines on the "outline" layer.
 
 
 ---
