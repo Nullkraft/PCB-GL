@@ -1108,9 +1108,9 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
       if (TEST_FLAG (RUBBERBANDFLAG, PCB))
         {
 
-          ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
-                                      LINE_TYPE,
-                                      &ptr1, &ptr2, &ptr3);
+          ans = SearchObjectByLocation (LINE_TYPE,
+                                        &ptr1, &ptr2, &ptr3,
+                                        Crosshair.X, Crosshair.Y, PCB->Grid / 2);
           if (ans != NO_TYPE) {
             double angle;
             int octant;
