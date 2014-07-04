@@ -1,5 +1,5 @@
-Bottom: efd661c4bb2ef973c671669c13399fcd4212aa53
-Top:    80e752d4c8411ac9cc09b2b32a5e4a49d65276e8
+Bottom: 4e4b518500558146fd87186792554cdef0d44b42
+Top:    c32b0f2eacbec444c043ff5680cb79bef49a6644
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-29 00:02:06 +0100
 
@@ -110,7 +110,7 @@ index a87adb4..26c0ff4 100644
    r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
    r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
 diff --git a/src/global.h b/src/global.h
-index 3d755ff..21e69fc 100644
+index 5137739..d8002b4 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -490,6 +490,7 @@ typedef struct PCBType
@@ -130,7 +130,7 @@ index 3d755ff..21e69fc 100644
    long CursorX,			/* cursor position as saved with layout */
      CursorY, Clipping;
    Coord Bloat,			/* drc sizes saved with layout */
-@@ -636,7 +637,7 @@ typedef struct			/* some resources... */
+@@ -631,7 +632,7 @@ typedef struct			/* some resources... */
      *OffLimitColor,
      *GridColor,
      *LayerColor[MAX_LAYER],
