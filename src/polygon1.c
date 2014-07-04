@@ -49,6 +49,7 @@
 #include "global.h"
 #include "rtree.h"
 #include "heap.h"
+#include "pcb-printf.h"
 
 #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
 
@@ -95,12 +96,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
   if (UNLIKELY (((ptr) = (type *)malloc(sizeof(type))) == NULL))	\
     error(err_no_memory);
 
+//#define DEBUG_INTERSECT
 #undef DEBUG_LABEL
 #undef DEBUG_ALL_LABELS
-#undef DEBUG_JUMP
-#undef DEBUG_GATHER
+//#define DEBUG_JUMP
+//#define DEBUG_GATHER
 #undef DEBUG_ANGLE
-#undef DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
 #else
@@ -162,6 +164,41 @@ poly_dump (POLYAREA * p)
 }
 #endif
 
+static VNODE *
+poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
+{
+  VNODE *res;
+  Coord *c;
+
+  assert (v);
+  res = (VNODE *) calloc (1, sizeof (VNODE));
+  if (res == NULL)
+    return NULL;
+  // bzero (res, sizeof (VNODE) - sizeof(Vector));
+  c = res->point;
+  *c++ = *v++;
+  *c = *v;
+
+  res->is_round = is_round;
+  res->cx = cx;
+  res->cy = cy;
+  res->radius = radius;
+
+  return res;
+}
+
+VNODE *
+poly_CreateNode (Vector v)
+{
+  return poly_CreateNodeFull (v, false, 0, 0, 0);
+}
+
+VNODE *
+poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
+{
+  return poly_CreateNodeFull (v, true, cx, cy, radius);
+}
+
 /***************************************************************/
 /* routines for processing intersections */
 
@@ -181,6 +218,7 @@ node_add_single (VNODE * dest, Vector po)
 {
   VNODE *p;
 
+/* XXX: MAY NOT BE CORRECT IF WE NEED TO SEPARATE STRAIGHT AND CURVED SEGMENTS */
   if (vect_equal (po, dest->point))
     return dest;
   if (vect_equal (po, dest->next->point))
@@ -874,6 +912,10 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
   while (task != NULL)
     {
       insert_node_task *next = task->next;
+
+      /* XXX: If a node was inserted due to an intersection, don't assume we're on the a round contour any more */
+//      task->node_seg->v->is_round = false;
+      task->node_seg->v->next->is_round = false;
 
       /* Do insersion */
       task->new_node->prev = task->node_seg->v;
@@ -1615,25 +1657,54 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
   assert (*result == NULL);
   do
     {
+      VNODE *jump_cur_temp;
+      DIRECTION jump_dir_temp;
+
+      jump_cur_temp = cur;
+      jump_dir_temp = dir;
+
+#if 1
+      /* see where to go next */
+      if (!jump (&jump_cur_temp, &jump_dir_temp, v_rule))
+	break;
+#endif
+
+#if 0
       /* see where to go next */
       if (!jump (&cur, &dir, v_rule))
 	break;
+#endif
       /* add edge to polygon */
+//      if ((newn = poly_CreateNodeFull (cur->point, cur->is_round, cur->cx, cur->cy, cur->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
+      /* XXX: The cur->next part of the line below is somewhat tested, but was determined by trial and error */
+      if ((newn = poly_CreateNodeFull (cur->point, (dir == FORW) ? cur->is_round : cur->next->is_round,
+                                                   (dir == FORW) ? cur->cx       : cur->next->cx,
+                                                   (dir == FORW) ? cur->cy       : cur->next->cy,
+                                                   (dir == FORW) ? cur->radius   : cur->next->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
+        return err_no_memory;
       if (!*result)
 	{
-	  *result = poly_NewContour (cur->point);
+	  *result = poly_NewContour (newn);
 	  if (*result == NULL)
 	    return err_no_memory;
 	}
       else
 	{
-	  if ((newn = poly_CreateNode (cur->point)) == NULL)
-	    return err_no_memory;
 	  poly_InclVertex ((*result)->head.prev, newn);
 	}
 #ifdef DEBUG_GATHER
-      DEBUGP ("gather vertex at %#mD\n", cur->point[0], cur->point[1]);
+      DEBUGP ("gather vertex at %mm, %mm, Dir=%i\n", cur->point[0], cur->point[1], dir);
 #endif
+#if 1
+      cur = jump_cur_temp;
+      dir = jump_dir_temp;
+#endif
+#if 0
+      /* see where to go next */
+      if (!jump (&cur, &dir, v_rule))
+	break;
+#endif
+
       /* Now mark the edge as included.  */
       newn = (dir == FORW ? cur : cur->prev);
       newn->Flags.mark = 1;
@@ -1643,6 +1714,11 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
 
       /* Advance to the next edge.  */
       cur = (dir == FORW ? cur->next : cur->prev);
+#if 0
+      /* see where to go next */
+      if (!jump (&cur, &dir, v_rule))
+	break;
+#endif
     }
   while (1);
   return err_ok;
@@ -2293,6 +2369,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
   return poly_Boolean_free (a, b, res, action);
 }				/* poly_Boolean */
 
+static void test_polyInvContour (void);
+
 /* just like poly_Boolean but frees the input polys */
 int
 poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
@@ -2302,6 +2380,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
   PLINE *p, *holes = NULL;
   jmp_buf e;
   int code;
+
+  test_polyInvContour ();
 
   *res = NULL;
 
@@ -2486,23 +2566,6 @@ node_neighbours (VNODE * a, VNODE * b)
   return (a == b) || (a->next == b) || (b->next == a) || (a->next == b->next);
 }
 
-VNODE *
-poly_CreateNode (Vector v)
-{
-  VNODE *res;
-  Coord *c;
-
-  assert (v);
-  res = (VNODE *) calloc (1, sizeof (VNODE));
-  if (res == NULL)
-    return NULL;
-  // bzero (res, sizeof (VNODE) - sizeof(Vector));
-  c = res->point;
-  *c++ = *v++;
-  *c = *v;
-  return res;
-}
-
 void
 poly_IniContour (PLINE * c)
 {
@@ -2519,7 +2582,7 @@ poly_IniContour (PLINE * c)
 }
 
 PLINE *
-poly_NewContour (Vector v)
+poly_NewContour (VNODE *node)
 {
   PLINE *res;
 
@@ -2529,11 +2592,13 @@ poly_NewContour (Vector v)
 
   poly_IniContour (res);
 
-  if (v != NULL)
-    {
-      Vcopy (res->head.point, v);
-      cntrbox_adjust (res, v);
-    }
+  Vcopy (res->head.point, node->point);
+  res->head.is_round = node->is_round;
+  res->head.cx = node->cx;
+  res->head.cy = node->cy;
+  res->head.radius = node->radius;
+  cntrbox_adjust (res, res->head.point);
+  free (node);
 
   return res;
 }
@@ -2649,6 +2714,47 @@ flip_cb (const BoxType * b, void *cl)
   return 1;
 }
 
+#ifndef DEBUG
+static void
+pline_dump (VNODE * v)
+{
+  VNODE *s;
+
+  s = v;
+  do
+    {
+      pcb_fprintf (stderr, "%mm %mm  - %s\n", v->point[0], v->point[1], v->is_round ? "Round" : "Line");
+    }
+  while ((v = v->next) != s);
+}
+#endif
+
+static void
+test_polyInvContour (void)
+{
+  static bool done = false;
+  PLINE *contour;
+  Vector v;
+
+  if (done)
+    return;
+
+  printf ("Testing inv_contour\n");
+
+  v[0] = 0, v[1] = 0; contour = poly_NewContour (poly_CreateNode (v));
+  v[0] = 0, v[1] = 1; poly_InclVertex (contour->head.prev, poly_CreateNodeArcApproximation (v, 0, 0, 0));
+  v[0] = 1, v[1] = 1; poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+  v[0] = 1; v[1] = 0; poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+
+  pline_dump (&contour->head);
+  poly_InvContour (contour);
+  pline_dump (&contour->head);
+
+  poly_FreeContours (&contour);
+
+  done = true;
+}
+
 void
 poly_InvContour (PLINE * c)
 {
@@ -2657,16 +2763,46 @@ poly_InvContour (PLINE * c)
   int r;
 #endif
 
+  /* Stash the first data which will get over-written in the loop */
+
+  bool stash_is_round = c->head.prev->is_round;
+  Coord stash_cx = c->head.prev->cx;
+  Coord stash_cy = c->head.prev->cy;
+  Coord stash_radius = c->head.prev->radius;
+
+//  printf ("poly_InvContour\n");
+
   assert (c != NULL);
   cur = &c->head;
   do
     {
+#if 1
+      /* Swap the attachement of round contour information */
+      cur->prev->is_round = cur->is_round;
+      cur->prev->cx = cur->cx;
+      cur->prev->cy = cur->cy;
+      cur->prev->radius = cur->radius;
+#endif
+
       next = cur->next;
       cur->next = cur->prev;
       cur->prev = next;
+
       /* fix the segment tree */
     }
   while ((cur = next) != &c->head);
+
+  /* NB: Remember that the list just got reversed.. the last
+   *     entry in the old order got stale data from the wraparound
+   *     Fix that up now.
+   */
+#if 1
+  c->head.next->next->is_round = stash_is_round;
+  c->head.next->next->cx = stash_cx;
+  c->head.next->next->cy = stash_cy;
+  c->head.next->next->radius = stash_radius;
+#endif
+
   c->Flags.orient ^= 1;
   if (c->tree)
     {
@@ -2706,11 +2842,25 @@ poly_InclVertex (VNODE * after, VNODE * node)
   /* remove points on same line */
   if (node->prev->prev == node)
     return;			/* we don't have 3 points in the poly yet */
+
+  /* NB: a-b below is the two-dimensional cross product of the vectors
+   *     node->prev->prev->point -> node->prev->point  and
+   *     node->prev->prev->point -> node->point.
+   *
+   * Its magnitude is the area of the parallelogram with those vectors as sides.
+   * If the vectors are colinear, this is zero.
+   */
   a = (node->point[1] - node->prev->prev->point[1]);
   a *= (node->prev->point[0] - node->prev->prev->point[0]);
   b = (node->point[0] - node->prev->prev->point[0]);
   b *= (node->prev->point[1] - node->prev->prev->point[1]);
-  if (fabs (a - b) < EPSILON)
+
+//  printf ("a-b = %f\n", a-b);
+
+  /* XXX: HMM - This doesn't seem to be involved when extra points are left in polygon contours after boolean operations */
+  if (fabs (a - b) < 1000000) //EPSILON &&
+//      !node->prev->is_round && !node->is_round)
+//      !node->prev->is_round && !node->is_round)
     {
       VNODE *t = node->prev;
       t->prev->next = node;
@@ -2726,7 +2876,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
 
   assert (src != NULL);
   *dst = NULL;
-  *dst = poly_NewContour (src->head.point);
+  *dst = poly_NewContour (poly_CreateNodeFull (src->head.point, src->head.is_round, src->head.cx, src->head.cy, src->head.radius));
   if (*dst == NULL)
     return FALSE;
 
@@ -2738,7 +2888,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
 
   for (cur = src->head.next; cur != &src->head; cur = cur->next)
     {
-      if ((newnode = poly_CreateNode (cur->point)) == NULL)
+      if ((newnode = poly_CreateNodeFull (cur->point, cur->is_round, cur->cx, cur->cy, cur->radius)) == NULL)
 	return FALSE;
       // newnode->Flags = cur->Flags;
       poly_InclVertex ((*dst)->head.prev, newnode);
