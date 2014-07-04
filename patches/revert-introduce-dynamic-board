@@ -1,5 +1,5 @@
-Bottom: 29dda58f0c0455df8402b45a837921000be127c7
-Top:    c32b0f2eacbec444c043ff5680cb79bef49a6644
+Bottom: f739ebcd8ac34e5572af3a6059f79c29d98e706e
+Top:    d77df4a919f8423532cd3c1855497cc178299721
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 00:27:00 +0100
 
@@ -116,10 +116,10 @@ index 5d59362..f42842a 100644
  /* Change the specified text on an element, either on the board (give
     PCB, PCB->Data) or in a buffer (give NULL, Buffer->Data).  The old
 diff --git a/src/global.h b/src/global.h
-index 21e69fc..d8002b4 100644
+index 4c1243e..d858bec 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -508,13 +508,8 @@ typedef struct PCBType
+@@ -507,13 +507,8 @@ typedef struct PCBType
    Coord Bloat,			/* drc sizes saved with layout */
      Shrink, minWid, minSlk, minDrill, minRing;
    Coord GridOffsetX,		/* as saved with layout */
