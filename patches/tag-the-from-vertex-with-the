@@ -1,5 +1,5 @@
-Bottom: 45b87c582bffb2e5c01b0742ffd6da1fd1ae944d
-Top:    8dc97d173596ad5b6331c93c5e22428b3a5a227a
+Bottom: d07cfe0a2cb2e22b83f630f0a1063316ec79608f
+Top:    f078fd059fc2978eed65db807d4ff3a85b141bf5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 04:24:34 +0100
 
@@ -39,18 +39,18 @@ index af21e3f..22bdf3b 100644
            /* Fill the head vertex */
            if (v == &pl->head)
 diff --git a/src/polygon.c b/src/polygon.c
-index 87470b5..75f75bb 100644
+index d91b5a0..ae0e65b 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -290,6 +290,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
-   double radius = sqrt ((v[0] - X) * (v[0] - X) + (v[1] - Y) * (v[1] - Y));
+@@ -289,6 +289,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
+   int i, range;
  
  //  poly_InclVertex (c->head.prev, poly_CreateNode (v));
 +  poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
  
    /* move vector to origin */
    e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
-@@ -299,7 +300,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
+@@ -298,7 +299,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
      {
        /* NB: the caller added the first vertex, and will add the last vertex, hence the -1 */
        range = POLY_CIRC_SEGS * sweep / 360 - 1;
@@ -59,7 +59,7 @@ index 87470b5..75f75bb 100644
          {
            /* rotate the vector */
            t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
-@@ -541,14 +542,14 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+@@ -500,14 +501,14 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
    /* XXX: Circle already has the first node added */
  //  if (fraction > 1)
  //    poly_InclVertex (c->head.prev, poly_CreateNode (v));
@@ -76,7 +76,7 @@ index 87470b5..75f75bb 100644
      {
        /* rotate the vector */
        t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
-@@ -591,22 +592,31 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
+@@ -550,22 +551,31 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
  
    assert (x2 > x1);
    assert (y2 > y1);
@@ -112,7 +112,7 @@ index 87470b5..75f75bb 100644
    frac_circle (contour, x1, y2, v, 4);
    return ContourToPoly (contour);
  }
-@@ -753,34 +763,34 @@ LinePoly (LineType * L, Coord thick)
+@@ -712,34 +722,34 @@ LinePoly (LineType * L, Coord thick)
        l->Point2.Y -= dx;
      }
  
@@ -160,7 +160,7 @@ index 87470b5..75f75bb 100644
    /* now we have the line contour */
    if (!(np = ContourToPoly (contour)))
      return NULL;
-@@ -837,25 +847,37 @@ SquarePadPoly (PadType * pad, Coord clear)
+@@ -796,25 +806,37 @@ SquarePadPoly (PadType * pad, Coord clear)
        c->Point2.Y -= cx;
      }
  
