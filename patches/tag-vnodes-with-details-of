@@ -1,5 +1,5 @@
-Bottom: 78cfa6819fd585fb57777eb0bd6d0824749adb55
-Top:    36d5e2eb9a5768e861785d506167c15283611ce2
+Bottom: 5f3e4a02b7297f068afb54e779143a6426ec99ea
+Top:    56b8e510ed8f6cadc2642f26bbbd5cdcebb4ca0d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 04:24:34 +0100
 
@@ -125,10 +125,10 @@ index a34693a..a38d525 100644
  /* ---------------------------------------------------------------------------
   * layer macros
 diff --git a/src/misc.c b/src/misc.c
-index 703e8dc..59dbe4c 100644
+index 59d3336..c3f60e1 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1174,7 +1174,14 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1180,7 +1180,14 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
            /* ignore white spaces and check for separator */
            while (*s && isspace ((int) *s))
              s++;
