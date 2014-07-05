@@ -1,5 +1,5 @@
 Bottom: a23d8585160d52d515b3e735117844e06b92388d
-Top:    5c0f90f803e145e48a19a051054d08f776d5577a
+Top:    7956a57a35174a99428c91c24ce80a8ab558ca65
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-05 16:36:54 +0100
 
@@ -9,7 +9,7 @@ Remove function SearchScreenGridSlop() and use SearchObjectByLocation() directly
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 348afdd..9d1c307 100644
+index 348afdd..097b7ca 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -844,8 +844,9 @@ check_snap_offgrid_line (struct snap_data *snap_data,
@@ -92,15 +92,14 @@ index 348afdd..9d1c307 100644
  
    if (ans != NO_TYPE)
      {
-@@ -1095,9 +1096,10 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+@@ -1095,9 +1096,9 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
  
    if (Settings.Mode == ARROW_MODE)
      {
 -      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
 -                                  LINEPOINT_TYPE | ARCPOINT_TYPE,
 -                                  &ptr1, &ptr2, &ptr3);
-+      ans = SearchObjectByLocation (Crosshair.X, Crosshair.Y,
-+                                    LINEPOINT_TYPE | ARCPOINT_TYPE,
++      ans = SearchObjectByLocation (LINEPOINT_TYPE | ARCPOINT_TYPE,
 +                                    &ptr1, &ptr2, &ptr3,
 +                                    Crosshair.X, Crosshair.Y, PCB->Grid / 2);
        if (ans == NO_TYPE)
