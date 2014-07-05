@@ -1,5 +1,5 @@
 Bottom: d40c9d20c18dfb2b3bd58df3d02e1e559e9c05da
-Top:    78163708680ad1a0e2e3313a753bd6f37aa59ec3
+Top:    3f4bb892a5a463c5e1aaa33760b1399433180122
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-05 17:15:34 +0100
 
@@ -9,10 +9,10 @@ Move arc from included angle calculation into misc.c
 ---
 
 diff --git a/src/misc.c b/src/misc.c
-index 125c4e5..703e8dc 100644
+index 125c4e5..59d3336 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -319,6 +319,56 @@ SetLineBoundingBox (LineType *Line)
+@@ -319,6 +319,62 @@ SetLineBoundingBox (LineType *Line)
    SetPointBoundingBox (&Line->Point2);
  }
  
@@ -63,13 +63,19 @@ index 125c4e5..703e8dc 100644
 +  *cx = hx + unit_hcx * c_to_h_dist;
 +  *cy = hy + unit_hcy * c_to_h_dist;
 +
-+#warning radius, start_angle and delta_angle are not computed yet!
++  if (radius != NULL)
++    {
++      *radius = sqrt ((p1->X - *cx) * (p1->X - *cx) +
++                      (p1->Y - *cy) * (p1->Y - *cy));
++    }
++
++#warning start_angle and delta_angle are not computed yet!
 +}
 +
  /* ---------------------------------------------------------------------------
   * sets the bounding box of a polygons
   */
-@@ -333,6 +383,27 @@ SetPolygonBoundingBox (PolygonType *Polygon)
+@@ -333,6 +389,27 @@ SetPolygonBoundingBox (PolygonType *Polygon)
      MAKEMIN (Polygon->BoundingBox.Y1, point->Y);
      MAKEMAX (Polygon->BoundingBox.X2, point->X);
      MAKEMAX (Polygon->BoundingBox.Y2, point->Y);
