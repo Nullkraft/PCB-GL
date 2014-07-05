@@ -1,5 +1,5 @@
 Bottom: d07cfe0a2cb2e22b83f630f0a1063316ec79608f
-Top:    f078fd059fc2978eed65db807d4ff3a85b141bf5
+Top:    b412a60f93a59eef9701910985457882346fd56b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 04:24:34 +0100
 
@@ -39,7 +39,7 @@ index af21e3f..22bdf3b 100644
            /* Fill the head vertex */
            if (v == &pl->head)
 diff --git a/src/polygon.c b/src/polygon.c
-index d91b5a0..ae0e65b 100644
+index d91b5a0..3ac0aa9 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -289,6 +289,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
@@ -55,7 +55,7 @@ index d91b5a0..ae0e65b 100644
        /* NB: the caller added the first vertex, and will add the last vertex, hence the -1 */
        range = POLY_CIRC_SEGS * sweep / 360 - 1;
 -      for (i = 0; i < range; i++)
-+      for (i = 0; i < range - 1; i++)
++      for (i = 0; i < range/* SHOULD NOT BE -1 */- 1; i++)
          {
            /* rotate the vector */
            t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
