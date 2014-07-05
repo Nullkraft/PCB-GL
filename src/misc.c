@@ -78,6 +78,8 @@
 #include <dmalloc.h>
 #endif
 
+#define EPSILON (1e-8)
+
 /*	forward declarations	*/
 static char *BumpName (char *);
 static void GetGridLockCoordinates (int, void *, void *, void *,
@@ -1530,6 +1532,67 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
 /* ---------------------------------------------------------------------------
  * computes the bounding box of an arc
  */
+BoxType
+calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle, Angle delta_angle)
+{
+  BoxType *bound;
+  double ca1, ca2, sa1, sa2;
+  double minx, maxx, miny, maxy;
+  Angle ang1, ang2;
+  Coord width;
+
+  /* first put angles into standard form:
+   *  ang1 < ang2, both angles between 0 and 720 */
+  delta_angle = CLAMP (delta_angle, -360, 360);
+
+  if (delta_angle > 0)
+    {
+      ang1 = NormalizeAngle (start_angle);
+      ang2 = NormalizeAngle (start_angle + delta_angle);
+    }
+  else
+    {
+      ang1 = NormalizeAngle (start_angle + delta_angle);
+      ang2 = NormalizeAngle (start_angle);
+    }
+  if (ang1 > ang2)
+    ang2 += 360.;
+
+  /* Make sure full circles aren't treated as zero-length arcs */
+  if (fabs (delta_angle - 360.) < EPSILON ||
+      fabs (delta_angle + 360.) < EPSILON);
+    ang2 = ang1 + 360.;
+
+  /* calculate sines, cosines */
+  sa1 = sin (M180 * ang1);
+  ca1 = cos (M180 * ang1);
+  sa2 = sin (M180 * ang2);
+  ca2 = cos (M180 * ang2);
+
+  bound.X1 = MIN (ca1, ca2);
+  bound.X2 = MAX (ca1, ca2);
+  bound.Y1 = MIN (sa1, sa2);
+  bounx.Y2 = MAX (sa1, sa2);
+
+  /* Check for extreme angles */
+  if ((ang1 <= 0   && ang2 >= 0)   || (ang1 <= 360 && ang2 >= 360)) maxx = 1;
+  if ((ang1 <= 90  && ang2 >= 90)  || (ang1 <= 450 && ang2 >= 450)) maxy = 1;
+  if ((ang1 <= 180 && ang2 >= 180) || (ang1 <= 540 && ang2 >= 540)) minx = -1;
+  if ((ang1 <= 270 && ang2 >= 270) || (ang1 <= 630 && ang2 >= 630)) miny = -1;
+
+  /* Finally, calcate bounds, converting sane geometry into pcb geometry */
+  bound.X1 = cx - rx * maxx;
+  bound.X2 = cx - rx * minx;
+  bound.Y1 = cy + ry * miny;
+  bound.Y2 = cy + ry * maxy;
+  close_box (&bound);
+
+  return bound;
+}
+
+/* ---------------------------------------------------------------------------
+ * computes the bounding box of an arc
+ */
 void
 SetArcBoundingBox (ArcType *Arc)
 {
@@ -1537,6 +1600,21 @@ SetArcBoundingBox (ArcType *Arc)
   double minx, maxx, miny, maxy;
   Angle ang1, ang2;
   Coord width;
+
+  Arc->BoundingBox = calc_thin_arc_bounds (Arc->X, Arc->Y, Arc->Width, Arc->Height, Arc->StartAngle, Arc->Delta);
+
+  /* Now add the additional thickness of the arc */
+  width = (Arc->Thickness + Arc->Clearance) / 2;
+
+  /* Adjust for our discrete polygon approximation */
+  width = (double)width * MAX (POLY_CIRC_RADIUS_ADJ, (1.0 + POLY_ARC_MAX_DEVIATION)) + 0.5;
+
+  Arc->BoundingBox.X1 -= width;
+  Arc->BoundingBox.X2 += width;
+  Arc->BoundingBox.Y1 -= width;
+  Arc->BoundingBox.Y2 += width;
+  close_box(&Arc->BoundingBox);
+
 
   /* first put angles into standard form:
    *  ang1 < ang2, both angles between 0 and 720 */
@@ -1575,22 +1653,43 @@ SetArcBoundingBox (ArcType *Arc)
   if ((ang1 <= 180 && ang2 >= 180) || (ang1 <= 540 && ang2 >= 540)) minx = -1;
   if ((ang1 <= 270 && ang2 >= 270) || (ang1 <= 630 && ang2 >= 630)) miny = -1;
 
-  /* Finally, calcate bounds, converting sane geometry into pcb geometry */
-  Arc->BoundingBox.X1 = Arc->X - Arc->Width * maxx;
-  Arc->BoundingBox.X2 = Arc->X - Arc->Width * minx;
-  Arc->BoundingBox.Y1 = Arc->Y + Arc->Height * miny;
-  Arc->BoundingBox.Y2 = Arc->Y + Arc->Height * maxy;
 
-  width = (Arc->Thickness + Arc->Clearance) / 2;
+  /* Update the arc end-points */
+  Arc->Point1.X = Arc->X - (double)Arc->Width  * ca1;
+  Arc->Point1.Y = Arc->Y + (double)Arc->Height * sa1;
+  Arc->Point2.X = Arc->X - (double)Arc->Width  * ca2;
+  Arc->Point2.Y = Arc->Y + (double)Arc->Height * sa2;
+}
 
-  /* Adjust for our discrete polygon approximation */
-  width = (double)width * MAX (POLY_CIRC_RADIUS_ADJ, (1.0 + POLY_ARC_MAX_DEVIATION)) + 0.5;
+/* ---------------------------------------------------------------------------
+ * computes the endpoints an arc
+ */
+void
+SetArcEndpoints (ArcType *Arc)
+{
+  double ca1, ca2, sa1, sa2;
+  Angle ang1, ang2;
 
-  Arc->BoundingBox.X1 -= width;
-  Arc->BoundingBox.X2 += width;
-  Arc->BoundingBox.Y1 -= width;
-  Arc->BoundingBox.Y2 += width;
-  close_box(&Arc->BoundingBox);
+  /* first put angles into standard form:
+   *  ang1 < ang2, both angles between 0 and 720 */
+  Arc->Delta = CLAMP (Arc->Delta, -360, 360);
+
+  if (Arc->Delta > 0)
+    {
+      ang1 = NormalizeAngle (Arc->StartAngle);
+      ang2 = NormalizeAngle (Arc->StartAngle + Arc->Delta);
+    }
+  else
+    {
+      ang1 = NormalizeAngle (Arc->StartAngle + Arc->Delta);
+      ang2 = NormalizeAngle (Arc->StartAngle);
+    }
+
+  /* calculate sines, cosines */
+  sa1 = sin (M180 * ang1);
+  ca1 = cos (M180 * ang1);
+  sa2 = sin (M180 * ang2);
+  ca2 = cos (M180 * ang2);
 
   /* Update the arc end-points */
   Arc->Point1.X = Arc->X - (double)Arc->Width  * ca1;
