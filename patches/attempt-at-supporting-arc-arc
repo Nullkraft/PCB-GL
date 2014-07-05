@@ -1,5 +1,5 @@
 Bottom: 47d095047d7fe5785101105effb4c14ce159832d
-Top:    f9e3e6c157c1ea2659d743602f87bb9412110c42
+Top:    7667315eaae9ce07bd33ddfd9f5fddccdd43ade1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 04:24:35 +0100
 
@@ -9,7 +9,7 @@ Attempt at supporting arc-arc intersections in polygons
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 37e1ceb..29b5a50 100644
+index 37e1ceb..cf526de 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -282,14 +282,25 @@ ContourToPoly (PLINE * contour)
@@ -97,7 +97,7 @@ index 37e1ceb..29b5a50 100644
 -    }
 +
 +  if (rx == ry)
-+    degree_circle (contour, a->X, a->Y, v, -a->Delta);
++    degree_circle (contour, a->X, a->Y, rx, v, -a->Delta);
 +  else
 +    for (i = 0; i < segs - 1; i++)
 +      {
@@ -123,7 +123,7 @@ index 37e1ceb..29b5a50 100644
 +  v[0] = a->X - rx * cos (ang * M180);
 +  v[1] = a->Y + ry * sin (ang * M180);
 +  if (rx == ry)
-+    degree_circle (contour, a->X, a->Y, v, a->Delta);
++    degree_circle (contour, a->X, a->Y, rx, v, a->Delta);
 +  else
 +    for (i = 0; i < segs; i++)
 +      {
