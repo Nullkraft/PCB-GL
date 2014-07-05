@@ -1,5 +1,5 @@
 Bottom: 871a10f0fdc8db28955f03b1709d3730ea62edb0
-Top:    048241532db126b67555a1dc88bd858f098ba3ae
+Top:    45b87c582bffb2e5c01b0742ffd6da1fd1ae944d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 04:24:34 +0100
 
@@ -23,7 +23,7 @@ circ_segs_test4_still_procuces_bad_contour_when_starting_with_arc.pcb
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 685b614..4343e82 100644
+index 685b614..af21e3f 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -151,12 +151,14 @@ thindraw_contour (hidGC gc, PLINE *pl)
@@ -51,8 +51,8 @@ index 685b614..4343e82 100644
 +        {
 +          Angle start_angle, end_angle, delta_angle;
 +
-+          start_angle = 180. - TO_DEGREES (atan2 ((v->prev->point[1] - v->cy), (v->prev->point[0] - v->cx)));
-+          end_angle   = 180. - TO_DEGREES (atan2 ((      v->point[1] - v->cy), (      v->point[0] - v->cx)));
++          start_angle = TO_DEGREES (atan2 ((v->prev->point[1] - v->cy), -(v->prev->point[0] - v->cx)));
++          end_angle   = TO_DEGREES (atan2 ((      v->point[1] - v->cy), -(      v->point[0] - v->cx)));
 +          delta_angle = end_angle - start_angle;
 +
 +          if (delta_angle > 180.) delta_angle -= 360.;
