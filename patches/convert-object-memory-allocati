@@ -1,7 +1,7 @@
-Bottom: c0de91df6c070336d72ee89f69c29bcb12dd0ddc
-Top:    5d3490d0d6125b6bba818ab9dd8d8e903f69078f
+Bottom: 63c055a5f8565194aa352d7b0fdf503118ab1371
+Top:    403a3546f96c0e2d95add3d5ffea5ce9c946e28e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2014-07-04 04:21:56 +0100
+Date:   2014-07-05 16:42:45 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -491,7 +491,7 @@ index 7da96ee..2145b83 100644
 +  return attr;
  }
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 16734c7..ab95580 100644
+index d49dfe9..83c3df4 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -374,8 +374,7 @@ XORDrawInsertPointObject (void)
