@@ -1,5 +1,5 @@
-Bottom: c87d9da3c8c981e96885cede4a64abc33a8bc629
-Top:    dba314aa233619946e5ae7df6107f2f116770814
+Bottom: a06aec565b2531e3354618fcefc185f130a4e598
+Top:    4d13549881043d7a8088a9a2918b536a62a4704c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 04:24:33 +0100
 
@@ -77,10 +77,10 @@ index a0385db..5651997 100644
    SetPolygonBoundingBox (Dest);
    Dest->Flags = Src->Flags;
 diff --git a/src/create.c b/src/create.c
-index dc03975..8a4357b 100644
+index 69877d6..7a58e9f 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -585,10 +585,10 @@ CreateNewPolygonFromRectangle (LayerType *Layer,
+@@ -586,10 +586,10 @@ CreateNewPolygonFromRectangle (LayerType *Layer,
    if (!polygon)
      return (polygon);
  
@@ -95,7 +95,7 @@ index dc03975..8a4357b 100644
    SetPolygonBoundingBox (polygon);
    if (!Layer->polygon_tree)
      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-@@ -653,13 +653,14 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
+@@ -654,13 +654,14 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
   * creates a new point in a polygon
   */
  PointType *
@@ -486,7 +486,7 @@ index a02fd99..369efea 100644
  /* polygon diverges from modelled arc no more than MAX_ARC_DEVIATION * thick */
  #define POLY_ARC_MAX_DEVIATION 0.02
 diff --git a/src/undo.c b/src/undo.c
-index ca41c74..655264a 100644
+index 085fde6..6acdcb1 100644
 --- a/src/undo.c
 +++ b/src/undo.c
 @@ -92,6 +92,7 @@ typedef struct			/* information about removed polygon points */
@@ -497,7 +497,7 @@ index ca41c74..655264a 100644
    Cardinal Index;		/* index in a polygons array of points */
    bool last_in_contour;		/* Whether the point was the last in its contour */
  } RemovedPointType;
-@@ -698,7 +699,9 @@ UndoRemovePoint (UndoListType *Entry)
+@@ -699,7 +700,9 @@ UndoRemovePoint (UndoListType *Entry)
  	InsertPointIntoObject (POLYGON_TYPE, layer, polygon,
  			       &Entry->Data.RemovedPoint.Index,
  			       Entry->Data.RemovedPoint.X,
@@ -508,7 +508,7 @@ index ca41c74..655264a 100644
  			       Entry->Data.RemovedPoint.last_in_contour);
  
  	polygon->Points[Entry->Data.RemovedPoint.Index].ID =
-@@ -758,6 +761,7 @@ UndoInsertPoint (UndoListType *Entry)
+@@ -759,6 +762,7 @@ UndoInsertPoint (UndoListType *Entry)
  	Entry->Data.RemovedPoint.X = pnt->X;
  	Entry->Data.RemovedPoint.Y = pnt->Y;
  	Entry->Data.RemovedPoint.ID = pnt->ID;
@@ -516,7 +516,7 @@ index ca41c74..655264a 100644
  	Entry->ID = polygon->ID;
  	Entry->Kind = POLYGON_TYPE;
  	Entry->Type = UNDO_REMOVE_POINT;
-@@ -1338,6 +1342,7 @@ AddObjectToRemovePointUndoList (int Type,
+@@ -1339,6 +1343,7 @@ AddObjectToRemovePointUndoList (int Type,
  	    undo->Data.RemovedPoint.X = polygon->Points[index].X;
  	    undo->Data.RemovedPoint.Y = polygon->Points[index].Y;
  	    undo->Data.RemovedPoint.ID = polygon->Points[index].ID;
