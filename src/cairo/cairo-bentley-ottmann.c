@@ -77,6 +77,7 @@ struct _cairo_bo_edge {
     cairo_point_t middle;
     PLINE *p;
     VNODE *v;
+    int done_insert_node;
 };
 
 /* the parent is always given by index/2 */
@@ -2352,6 +2353,7 @@ bentley_ottmann_intersect_segments (GList *data)
 
         events[i].edge.p = NULL;
         events[i].edge.v = NULL;
+        events[i].edge.done_insert_node = FALSE;
     }
 
     /* XXX: This would be the convenient place to throw in multiple
@@ -2619,6 +2621,12 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
     return 0;
   }
 
+  /* If an edge has already been tampered with, keep
+     new interesections for the next pass (snap rounding) */
+  if (e1->done_insert_node ||
+      e2->done_insert_node)
+    return 1; /* Dummy value to ensure we return for another pass */
+
 //  printf ("do_intersect: ");
 
   e1->p->Flags.status = ISECTED;
@@ -2640,6 +2648,8 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
       if (new_node->point[0] > e1->v->point[0])
         e1->v = new_node;
     }
+    /* FIXME: Could get away with end-point intersections */
+    e1->done_insert_node = TRUE;
   }
   /* if we added a node in the tree we need to change the tree */
   new_node = node_add_single_point (e2->v, point);
@@ -2655,6 +2665,8 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
       if (new_node->point[0] > e2->v->point[0])
         e2->v = new_node;
     }
+    /* FIXME: Could get away with end-point intersections */
+    e2->done_insert_node = TRUE;
   }
 //  printf ("\n");
   return count;
@@ -2665,7 +2677,8 @@ static void
 poly_area_to_start_events (POLYAREA                *poly,
                            cairo_bo_start_event_t  *events,
                            cairo_bo_event_t       **event_ptrs,
-                           int                     *counter)
+                           int                     *counter,
+                           int                      first_pass)
 {
     int i = *counter;
     PLINE *contour;
@@ -2684,8 +2697,9 @@ poly_area_to_start_events (POLYAREA                *poly,
           /* Node is between bv->point[0,1] and bv->next->point[0,1] */
 
           /* HACK TEST: */
-        bv->cvc_prev = bv->cvc_next = NULL;
-//        bv->cvc_prev = bv->cvc_next = (CVCList *) - 1;
+          /* Can't do this with multiple passes */
+          if (first_pass)
+            bv->cvc_prev = bv->cvc_next = NULL;
 
           if (bv->point[1] == bv->next->point[1]) {
               if (bv->point[0] < bv->next->point[0]) {
@@ -2728,6 +2742,7 @@ poly_area_to_start_events (POLYAREA                *poly,
           events[i].edge.next = NULL;
           events[i].edge.p = contour;
           events[i].edge.v = bv;
+          events[i].edge.done_insert_node = FALSE;;
           i++;
 
         } while ((bv = bv->next) != &contour->head);
@@ -2740,7 +2755,7 @@ poly_area_to_start_events (POLYAREA                *poly,
 
 
 int
-bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
+bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a, int first_pass)
 {
 
     int intersections;
@@ -2786,8 +2801,8 @@ bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
 
     i = 0;
 
-    poly_area_to_start_events (a, events, event_ptrs, &i);
-    poly_area_to_start_events (b, events, event_ptrs, &i);
+    poly_area_to_start_events (a, events, event_ptrs, &i, first_pass);
+    poly_area_to_start_events (b, events, event_ptrs, &i, first_pass);
 
     /* XXX: This would be the convenient place to throw in multiple
      * passes of the Bentley-Ottmann algorithm. It would merely
