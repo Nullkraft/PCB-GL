@@ -1,5 +1,5 @@
 Bottom: 5f3e4a02b7297f068afb54e779143a6426ec99ea
-Top:    56b8e510ed8f6cadc2642f26bbbd5cdcebb4ca0d
+Top:    e99e8d44737a58b3c229d9f701aac27e81e8b0a5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 04:24:34 +0100
 
@@ -176,7 +176,7 @@ index d49660b..be95bd2 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 6072dfd..caedec0 100644
+index 6072dfd..d91b5a0 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -104,11 +104,15 @@ dicer output is used for HIDs which cannot render things with holes
@@ -197,15 +197,16 @@ index 6072dfd..caedec0 100644
  
  static double rotate_circle_seg[4];
  static double bw_rotate_circle_seg[4];
-@@ -283,6 +287,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
+@@ -278,7 +282,7 @@ ContourToPoly (PLINE * contour)
+ }
+ 
+ static void
+-degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First point, already laid by caller */, Angle sweep)
++degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector v /* First point, already laid by caller */, Angle sweep)
+ {
    /* We don't re-add a point at v, nor do we add the last point, sweep degrees around from (X,Y)-v */
    double e1, e2, t1;
-   int i, range;
-+  double radius = sqrt ((v[0] - X) * (v[0] - X) + (v[1] - Y) * (v[1] - Y));
- 
- //  poly_InclVertex (c->head.prev, poly_CreateNode (v));
- 
-@@ -302,7 +307,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
+@@ -302,7 +306,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
            e1 = t1;
            v[0] = X + ROUND (e1);
            v[1] = Y + ROUND (e2);
@@ -214,7 +215,7 @@ index 6072dfd..caedec0 100644
          }
      }
    else
-@@ -317,7 +322,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
+@@ -317,7 +321,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
            e1 = t1;
            v[0] = X + ROUND (e1);
            v[1] = Y + ROUND (e2);
@@ -223,7 +224,7 @@ index 6072dfd..caedec0 100644
          }
      }
  }
-@@ -337,18 +342,30 @@ original_poly (PolygonType * p)
+@@ -337,24 +341,37 @@ original_poly (PolygonType * p)
    /* first make initial polygon contour */
    for (n = 0; n < p->PointN; n++)
      {
@@ -256,6 +257,31 @@ index 6072dfd..caedec0 100644
          }
  
        if (p->Points[n].included_angle != 0)
+         {
+           Cardinal next_n;
+           Coord cx, cy;
++          Coord radius;
+ 
+           next_n = n + 1;
+           if (next_n == p->PointN ||
+@@ -365,7 +382,7 @@ original_poly (PolygonType * p)
+ 
+ 
+           calc_arc_from_points_and_included_angle (&p->Points[n], &p->Points[next_n], p->Points[n].included_angle,
+-                                                   &cx, &cy, NULL, NULL, NULL);
++                                                   &cx, &cy, &radius, NULL, NULL);
+ 
+ #if 0 /* DEBUG TO SHOW THE CENTER OF THE ARC */
+           v[0] = cx, v[1] = cy;
+@@ -373,7 +390,7 @@ original_poly (PolygonType * p)
+           v[0] = p->Points[n].X, v[1] = p->Points[n].Y;
+ #endif
+ 
+-          degree_circle (contour, cx, cy, v, p->Points[n].included_angle);
++          degree_circle (contour, cx, cy, radius, v, p->Points[n].included_angle);
+ 
+ #if 0 /* DEBUG TO SHOW THE CENTER OF THE ARC */
+           v[0] = cx, v[1] = cy;  /* DEBUG TO SHOW THE CENTER OF THE ARC */
 @@ -420,7 +437,7 @@ RectPoly (Coord x1, Coord x2, Coord y1, Coord y2)
  
    v[0] = x1;
