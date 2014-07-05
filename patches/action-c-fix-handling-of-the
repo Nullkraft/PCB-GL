@@ -1,7 +1,7 @@
-Bottom: a82b5860fa2015f550f8da1b38d4f72b254e6860
+Bottom: 78cfa6819fd585fb57777eb0bd6d0824749adb55
 Top:    78cfa6819fd585fb57777eb0bd6d0824749adb55
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-07-04 04:24:34 +0100
+Date:   2014-07-05 17:15:34 +0100
 
 action.c: Fix handling of the case where a segment already exists when drawing lines
 
@@ -12,69 +12,4 @@ continue drawing from the desired point as if we HAD created the line.
 
 ---
 
-diff --git a/src/action.c b/src/action.c
-index febae9e..936d702 100644
---- a/src/action.c
-+++ b/src/action.c
-@@ -1253,8 +1253,11 @@ NotifyMode (void)
- 	  if ((Crosshair.AttachedLine.Point1.X !=
- 	       Crosshair.AttachedLine.Point2.X
- 	       || Crosshair.AttachedLine.Point1.Y !=
--	       Crosshair.AttachedLine.Point2.Y)
--	      && (line =
-+	       Crosshair.AttachedLine.Point2.Y))
-+            {
-+              PinType *via;
-+
-+              if ((line =
- 		  CreateDrawnLineOnLayer (CURRENT,
- 					  Crosshair.AttachedLine.Point1.X,
- 					  Crosshair.AttachedLine.Point1.Y,
-@@ -1263,12 +1266,12 @@ NotifyMode (void)
- 					  Settings.LineThickness,
- 					  2 * Settings.Keepaway,
- 					  MakeFlags (line_flags))) != NULL)
--	    {
--	      PinType *via;
-+                {
- 
--	      addedLines++;
--	      AddObjectToCreateUndoList (LINE_TYPE, CURRENT, line, line);
--	      DrawLine (CURRENT, line);
-+                  addedLines++;
-+                  AddObjectToCreateUndoList (LINE_TYPE, CURRENT, line, line);
-+                  DrawLine (CURRENT, line);
-+                }
- 	      /* place a via if vias are visible, the layer is
- 	         in a new group since the last line and there
- 	         isn't a pin already here */
-@@ -1301,8 +1304,9 @@ NotifyMode (void)
- 	    }
- 	  if (PCB->Clipping && (Note.X != Crosshair.AttachedLine.Point2.X
- 				|| Note.Y !=
--				Crosshair.AttachedLine.Point2.Y)
--	      && (line =
-+				Crosshair.AttachedLine.Point2.Y))
-+            {
-+              if ((line =
- 		  CreateDrawnLineOnLayer (CURRENT,
- 					  Crosshair.AttachedLine.Point2.X,
- 					  Crosshair.AttachedLine.Point2.Y,
-@@ -1310,11 +1314,12 @@ NotifyMode (void)
- 					  Settings.LineThickness,
- 					  2 * Settings.Keepaway,
- 					  MakeFlags (line_flags))) != NULL)
--	    {
--	      addedLines++;
--	      AddObjectToCreateUndoList (LINE_TYPE, CURRENT, line, line);
--	      IncrementUndoSerialNumber ();
--	      DrawLine (CURRENT, line);
-+                {
-+                  addedLines++;
-+                  AddObjectToCreateUndoList (LINE_TYPE, CURRENT, line, line);
-+                  IncrementUndoSerialNumber ();
-+                  DrawLine (CURRENT, line);
-+                }
- 	      /* move to new start point */
- 	      Crosshair.AttachedLine.Point1.X = Note.X;
- 	      Crosshair.AttachedLine.Point1.Y = Note.Y;
+
