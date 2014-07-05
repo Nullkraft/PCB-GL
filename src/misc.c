@@ -366,7 +366,13 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
   *cx = hx + unit_hcx * c_to_h_dist;
   *cy = hy + unit_hcy * c_to_h_dist;
 
-#warning radius, start_angle and delta_angle are not computed yet!
+  if (radius != NULL)
+    {
+      *radius = sqrt ((p1->X - *cx) * (p1->X - *cx) +
+                      (p1->Y - *cy) * (p1->Y - *cy));
+    }
+
+#warning start_angle and delta_angle are not computed yet!
 }
 
 /* ---------------------------------------------------------------------------
