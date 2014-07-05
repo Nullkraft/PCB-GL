@@ -1,7 +1,7 @@
-Bottom: 41ca87786eb35653056f13eb21e793b17adacbf1
-Top:    16b6f04fc0ea79ced90276164382971c6f1b7b0a
+Bottom: dac994a51cd0d1abee2a2375af23a2200268d168
+Top:    8bf2135099f3a5a41b322c6780e3fa0f8c90e7a9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-07-05 17:01:18 +0100
+Date:   2014-07-05 17:13:18 +0100
 
 32bit: Fix GL HID zoom out, due to over-shooting Coord data-type
 
@@ -91,7 +91,7 @@ index 212814f..efe7076 100644
    return true;
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c7d894e..1987086 100644
+index 07c9183..9dc6176 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -109,9 +109,51 @@ hid_gc_struct;
@@ -160,7 +160,7 @@ index c7d894e..1987086 100644
    Coord min_depth;
    Coord max_depth;
    float aspect;
-@@ -2232,6 +2274,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2233,6 +2275,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      max_y = PCB->MaxHeight;
    }
  
@@ -176,7 +176,7 @@ index c7d894e..1987086 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2296,7 +2347,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2297,7 +2348,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glColor3f (1., 1., 1.);
  
    if (0) {
@@ -185,7 +185,7 @@ index c7d894e..1987086 100644
      Coord z = max_depth;
  
      glBegin (GL_LINES);
-@@ -2861,7 +2912,7 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2862,7 +2913,7 @@ invert_4x4 (float m[4][4], float out[4][4])
  
  
  static bool
@@ -194,7 +194,7 @@ index c7d894e..1987086 100644
  {
    double mat[2][2];
    double inv_mat[2][2];
-@@ -2933,8 +2984,11 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -2980,8 +3031,11 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  //  if (fvx < (double)-G_MAXINT/5.) {fvx = (double)-G_MAXINT/5.; printf ("fvx underflow clamped\n"); }
  //  if (fvy < (double)-G_MAXINT/5.) {fvy = (double)-G_MAXINT/5.; printf ("fvy underflow clamped\n"); }
  
@@ -208,7 +208,7 @@ index c7d894e..1987086 100644
  
    {
      /* Reproject the computed board plane coordinates to eye space */
-@@ -2963,7 +3017,15 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -3010,7 +3064,15 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {

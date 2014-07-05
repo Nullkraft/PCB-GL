@@ -1,7 +1,7 @@
-Bottom: ac4f1b2334549a4abaf1cfe3fd44a08c590d4087
-Top:    c422bb057b253d20c830699f6564e10138894e59
+Bottom: e4a5bb2a06e1df8ff4f7d9cc81deaedbc9e957d3
+Top:    e6452e441fe4d1e2f893b3f7b4154a9f5c5f9a1c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-07-05 17:01:20 +0100
+Date:   2014-07-05 17:13:20 +0100
 
 Well on the way to completely messing up the STEP code, just by flipping the Y coord!
 
@@ -107,7 +107,7 @@ index 44f6e88..0998a22 100644
 +void face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius);
  void face3d_set_surface_orientation_reversed (face3d *face);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index daad429..12d0e3f 100644
+index e31581c..44c811d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1133,6 +1133,8 @@ ghid_screen_update (void)

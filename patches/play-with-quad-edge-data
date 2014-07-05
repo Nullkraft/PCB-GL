@@ -1,7 +1,7 @@
-Bottom: d393c334c08624748af0e7e44cac708c21ba79b5
-Top:    7f982ba68d6a1040fae688912aa2dfe21ffbf376
+Bottom: 0f2479b1b5f680da606d6a791a8946cb20a71a03
+Top:    8311ac295f0d8b64087ea824359d0820ab2360fa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-07-05 17:01:19 +0100
+Date:   2014-07-05 17:13:19 +0100
 
 Play with quad-edge data-structure - using PCB as a framework for GL!
 
@@ -86,7 +86,7 @@ diff --git a/src/hid/gtk/face3d.h b/src/hid/gtk/face3d.h
 new file mode 100644
 index 0000000..e69de29
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 64a8f66..6ab2332 100644
+index eb6300e..b09d7c0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,9 @@
@@ -112,7 +112,7 @@ index 64a8f66..6ab2332 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -2635,6 +2644,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2636,6 +2645,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (priv);
