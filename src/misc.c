@@ -319,6 +319,12 @@ SetLineBoundingBox (LineType *Line)
   SetPointBoundingBox (&Line->Point2);
 }
 
+/* ---------------------------------------------------------------------------
+ * calculates an arc center and radius for the arc described by
+ * two points, and an included angle between them. Return locations for
+ * cx, cy are required. radius, start_angle and delta_angle are optional
+ * and may be NULL if not required.
+ */
 void
 calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle included_angle,
                                          Coord *cx, Coord *cy, Coord *radius,
@@ -371,7 +377,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
                     (p1->Y - *cy) * (p1->Y - *cy));
 
   if (start_angle != NULL)
-    *start_angle = TO_DEGREES (atan2 ((p1->Y - v->cy), -(p1->X - v->cx)));
+    *start_angle = TO_DEGREES (atan2 ((p1->Y - *cy), -(p1->X - *cx)));
 
   if (delta_angle != NULL)
     *delta_angle = included_angle;
