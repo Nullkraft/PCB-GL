@@ -282,12 +282,11 @@ ContourToPoly (PLINE * contour)
 }
 
 static void
-degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First point, already laid by caller */, Angle sweep)
+degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector v /* First point, already laid by caller */, Angle sweep)
 {
   /* We don't re-add a point at v, nor do we add the last point, sweep degrees around from (X,Y)-v */
   double e1, e2, t1;
   int i, range;
-  double radius = sqrt ((v[0] - X) * (v[0] - X) + (v[1] - Y) * (v[1] - Y));
 
 //  poly_InclVertex (c->head.prev, poly_CreateNode (v));
 
@@ -372,6 +371,7 @@ original_poly (PolygonType * p)
         {
           Cardinal next_n;
           Coord cx, cy;
+          Coord radius;
 
           next_n = n + 1;
           if (next_n == p->PointN ||
@@ -382,7 +382,7 @@ original_poly (PolygonType * p)
 
 
           calc_arc_from_points_and_included_angle (&p->Points[n], &p->Points[next_n], p->Points[n].included_angle,
-                                                   &cx, &cy, NULL, NULL, NULL);
+                                                   &cx, &cy, &radius, NULL, NULL);
 
 #if 0 /* DEBUG TO SHOW THE CENTER OF THE ARC */
           v[0] = cx, v[1] = cy;
@@ -390,7 +390,7 @@ original_poly (PolygonType * p)
           v[0] = p->Points[n].X, v[1] = p->Points[n].Y;
 #endif
 
-          degree_circle (contour, cx, cy, v, p->Points[n].included_angle);
+          degree_circle (contour, cx, cy, radius, v, p->Points[n].included_angle);
 
 #if 0 /* DEBUG TO SHOW THE CENTER OF THE ARC */
           v[0] = cx, v[1] = cy;  /* DEBUG TO SHOW THE CENTER OF THE ARC */
