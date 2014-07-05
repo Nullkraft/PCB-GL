@@ -1096,8 +1096,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
 
   if (Settings.Mode == ARROW_MODE)
     {
-      ans = SearchObjectByLocation (Crosshair.X, Crosshair.Y,
-                                    LINEPOINT_TYPE | ARCPOINT_TYPE,
+      ans = SearchObjectByLocation (LINEPOINT_TYPE | ARCPOINT_TYPE,
                                     &ptr1, &ptr2, &ptr3,
                                     Crosshair.X, Crosshair.Y, PCB->Grid / 2);
       if (ans == NO_TYPE)
