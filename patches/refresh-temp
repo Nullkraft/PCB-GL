@@ -1,0 +1,145 @@
+Bottom: 8cb9ba8525132fc80134d4a928a32472207ef4b4
+Top:    1048e4c6bc3ab356fd4762b86a8de39f6dd848dd
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-05 19:35:01 +0100
+
+Refresh of attempt-at-supporting-arc-arc
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 2947e6e..96a0f66 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -56,6 +56,10 @@ PCB_SRCS = \
+ 	borast/borast-wideint-type-private.h \
+ 	change.c \
+ 	change.h \
++	circle_circle_intersection.c \
++	circle_circle_intersection.h \
++	circle_line_intersection.c \
++	circle_line_intersection.h \
+ 	clip.c \
+ 	clip.h \
+ 	command.c \
+diff --git a/src/circle_circle_intersection.c b/src/circle_circle_intersection.c
+index 04bbed2..e559bd7 100644
+--- a/src/circle_circle_intersection.c
++++ b/src/circle_circle_intersection.c
+@@ -7,7 +7,7 @@
+  *                                // center and radius of 2nd circle
+  *                                double x1, double y1, double r1,
+  *                                // 1st intersection point
+- *                                double *xi, double *yi,              
++ *                                double *xi, double *yi,
+  *                                // 2nd intersection point
+  *                                double *xi_prime, double *yi_prime)
+  *
+@@ -54,7 +54,7 @@ int circle_circle_intersection(double x0, double y0, double r0,
+ 
+   /* 'point 2' is the point where the line through the circle
+    * intersection points crosses the line between the circle
+-   * centers.  
++   * centers.
+    */
+ 
+   /* Determine the distance from point 0 to point 2. */
+@@ -107,7 +107,7 @@ void run_test(double x0, double y0, double r0,
+ 
+ int main(void)
+ {
+-  /* Add more! */    
++  /* Add more! */
+   run_test(-1.0, -1.0, 1.5, 1.0, 1.0, 2.0);
+   run_test(1.0, -1.0, 1.5, -1.0, 1.0, 2.0);
+   run_test(-1.0, 1.0, 1.5, 1.0, -1.0, 2.0);
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 1c677ac..3500c2f 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -50,6 +50,7 @@
+ #include "rtree.h"
+ #include "heap.h"
+ #include "pcb-printf.h"
++#include "misc.h"
+ 
+ #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
+ 
+@@ -757,27 +758,36 @@ make_edge_tree (PLINE * pb)
+     {
+       s = (seg *)malloc (sizeof (struct seg));
+       s->intersected = 0;
+-#warning DOES NOT INCLUDE THE BOUNDING BOX OF ARC SEGMENTS
+-      if (bv->point[0] < bv->next->point[0])
+-	{
+-	  s->box.X1 = bv->point[0];
+-	  s->box.X2 = bv->next->point[0] + 1;
+-	}
+-      else
+-	{
+-	  s->box.X2 = bv->point[0] + 1;
+-	  s->box.X1 = bv->next->point[0];
+-	}
+-      if (bv->point[1] < bv->next->point[1])
+-	{
+-	  s->box.Y1 = bv->point[1];
+-	  s->box.Y2 = bv->next->point[1] + 1;
+-	}
+-      else
+-	{
+-	  s->box.Y2 = bv->point[1] + 1;
+-	  s->box.Y1 = bv->next->point[1];
+-	}
++
++      s->box.X1 = MIN (bv->point[0], bv->next->point[0]);
++      s->box.X2 = MAX (bv->point[0], bv->next->point[0]) + 1;
++      s->box.Y1 = MIN (bv->point[1], bv->next->point[1]);
++      s->box.Y2 = MAX (bv->point[1], bv->next->point[1]) + 1;
++
++      if (bv->is_round)
++        {
++          Angle start_angle;
++          Angle end_angle;
++          Angle delta_angle;
++          BoxType arc_bound;
++
++          start_angle = atan2 ((      bv->point[1] -       bv->cy), -(      bv->point[0] -       bv->cx)) / M180;
++          end_angle   = atan2 ((bv->next->point[1] - bv->next->cy), -(bv->next->point[0] - bv->next->cx)) / M180;
++
++#warning delta angle calculation looks rather suspect - wont work for arcs > 180 degrees span
++          delta_angle = end_angle - start_angle;
++
++          if (delta_angle > 180.) delta_angle -= 360.;
++          if (delta_angle < -180.) delta_angle += 360.;
++
++          arc_bound = calc_thin_arc_bounds (bv->cx, bv->cy, bv->radius, bv->radius, start_angle, delta_angle);
++
++          MAKEMIN (s->box.X1, arc_bound.X1);
++          MAKEMIN (s->box.Y1, arc_bound.Y1);
++          MAKEMAX (s->box.X2, arc_bound.X2);
++          MAKEMAX (s->box.Y2, arc_bound.Y2);
++        }
++
+       s->v = bv;
+       s->p = pb;
+       r_insert_entry (ans, (const BoxType *) s, 1);
+@@ -2693,7 +2703,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+ {
+   double area = 0;
+   VNODE *p, *c;
+-  Vector p1, p2;
++//  Vector p1, p2;
+ 
+   assert (C != NULL);
+ 
+@@ -2702,8 +2712,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+       for (c = (p = &C->head)->next; c != &C->head; c = (p = c)->next)
+ 	{
+ 	  /* if the previous node is on the same line with this one, we should remove it */
+-	  Vsub2 (p1, c->point, p->point);
+-	  Vsub2 (p2, c->next->point, c->point);
++//	  Vsub2 (p1, c->point, p->point);
++//	  Vsub2 (p2, c->next->point, c->point);
+ 	  /* If the product below is zero then
+ 	   * the points on either side of c 
+ 	   * are on the same line!
