@@ -652,7 +652,7 @@ ArcPolyNoIntersect (ArcType * a, Coord thick)
     return 0;
 
   if (rx == ry)
-    degree_circle (contour, a->X, a->Y, v, -a->Delta);
+    degree_circle (contour, a->X, a->Y, rx, v, -a->Delta);
   else
     for (i = 0; i < segs - 1; i++)
       {
@@ -674,7 +674,7 @@ ArcPolyNoIntersect (ArcType * a, Coord thick)
   v[0] = a->X - rx * cos (ang * M180);
   v[1] = a->Y + ry * sin (ang * M180);
   if (rx == ry)
-    degree_circle (contour, a->X, a->Y, v, a->Delta);
+    degree_circle (contour, a->X, a->Y, rx, v, a->Delta);
   else
     for (i = 0; i < segs; i++)
       {
