@@ -7,7 +7,7 @@
  *                                // center and radius of 2nd circle
  *                                double x1, double y1, double r1,
  *                                // 1st intersection point
- *                                double *xi, double *yi,              
+ *                                double *xi, double *yi,
  *                                // 2nd intersection point
  *                                double *xi_prime, double *yi_prime)
  *
@@ -54,7 +54,7 @@ int circle_circle_intersection(double x0, double y0, double r0,
 
   /* 'point 2' is the point where the line through the circle
    * intersection points crosses the line between the circle
-   * centers.  
+   * centers.
    */
 
   /* Determine the distance from point 0 to point 2. */
@@ -107,7 +107,7 @@ void run_test(double x0, double y0, double r0,
 
 int main(void)
 {
-  /* Add more! */    
+  /* Add more! */
   run_test(-1.0, -1.0, 1.5, 1.0, 1.0, 2.0);
   run_test(1.0, -1.0, 1.5, -1.0, 1.0, 2.0);
   run_test(-1.0, 1.0, 1.5, 1.0, -1.0, 2.0);

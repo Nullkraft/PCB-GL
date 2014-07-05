@@ -50,6 +50,7 @@
 #include "rtree.h"
 #include "heap.h"
 #include "pcb-printf.h"
+#include "misc.h"
 
 #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
 
@@ -757,27 +758,36 @@ make_edge_tree (PLINE * pb)
     {
       s = (seg *)malloc (sizeof (struct seg));
       s->intersected = 0;
-#warning DOES NOT INCLUDE THE BOUNDING BOX OF ARC SEGMENTS
-      if (bv->point[0] < bv->next->point[0])
-	{
-	  s->box.X1 = bv->point[0];
-	  s->box.X2 = bv->next->point[0] + 1;
-	}
-      else
-	{
-	  s->box.X2 = bv->point[0] + 1;
-	  s->box.X1 = bv->next->point[0];
-	}
-      if (bv->point[1] < bv->next->point[1])
-	{
-	  s->box.Y1 = bv->point[1];
-	  s->box.Y2 = bv->next->point[1] + 1;
-	}
-      else
-	{
-	  s->box.Y2 = bv->point[1] + 1;
-	  s->box.Y1 = bv->next->point[1];
-	}
+
+      s->box.X1 = MIN (bv->point[0], bv->next->point[0]);
+      s->box.X2 = MAX (bv->point[0], bv->next->point[0]) + 1;
+      s->box.Y1 = MIN (bv->point[1], bv->next->point[1]);
+      s->box.Y2 = MAX (bv->point[1], bv->next->point[1]) + 1;
+
+      if (bv->is_round)
+        {
+          Angle start_angle;
+          Angle end_angle;
+          Angle delta_angle;
+          BoxType arc_bound;
+
+          start_angle = atan2 ((      bv->point[1] -       bv->cy), -(      bv->point[0] -       bv->cx)) / M180;
+          end_angle   = atan2 ((bv->next->point[1] - bv->next->cy), -(bv->next->point[0] - bv->next->cx)) / M180;
+
+#warning delta angle calculation looks rather suspect - wont work for arcs > 180 degrees span
+          delta_angle = end_angle - start_angle;
+
+          if (delta_angle > 180.) delta_angle -= 360.;
+          if (delta_angle < -180.) delta_angle += 360.;
+
+          arc_bound = calc_thin_arc_bounds (bv->cx, bv->cy, bv->radius, bv->radius, start_angle, delta_angle);
+
+          MAKEMIN (s->box.X1, arc_bound.X1);
+          MAKEMIN (s->box.Y1, arc_bound.Y1);
+          MAKEMAX (s->box.X2, arc_bound.X2);
+          MAKEMAX (s->box.Y2, arc_bound.Y2);
+        }
+
       s->v = bv;
       s->p = pb;
       r_insert_entry (ans, (const BoxType *) s, 1);
@@ -2693,7 +2703,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
 {
   double area = 0;
   VNODE *p, *c;
-  Vector p1, p2;
+//  Vector p1, p2;
 
   assert (C != NULL);
 
@@ -2702,8 +2712,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
       for (c = (p = &C->head)->next; c != &C->head; c = (p = c)->next)
 	{
 	  /* if the previous node is on the same line with this one, we should remove it */
-	  Vsub2 (p1, c->point, p->point);
-	  Vsub2 (p2, c->next->point, c->point);
+//	  Vsub2 (p1, c->point, p->point);
+//	  Vsub2 (p2, c->next->point, c->point);
 	  /* If the product below is zero then
 	   * the points on either side of c 
 	   * are on the same line!
