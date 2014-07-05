@@ -1,5 +1,5 @@
-Bottom: d7875362732a2f7ef15922830f4efa9e2b6f0b58
-Top:    5597569abd451f69b345417bb27332a3f95d02c1
+Bottom: 7637478556e153553bddfb34dfa48617041cad00
+Top:    a82b5860fa2015f550f8da1b38d4f72b254e6860
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 04:24:34 +0100
 
@@ -80,10 +80,10 @@ index 12d0e3f..44c811d 100644
    fvz = (float)pcb_z;
  
 diff --git a/src/polygon.c b/src/polygon.c
-index a4a6891..57e79a4 100644
+index 1b30801..6072dfd 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1364,6 +1364,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
+@@ -1323,6 +1323,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
    if (Undoing ())
      return (false);
  
@@ -91,7 +91,7 @@ index a4a6891..57e79a4 100644
    for (n = 0; n < Polygon->PointN; n++)
      {
        prev = prev_contour_point (Polygon, n);
-@@ -1373,6 +1374,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
+@@ -1332,6 +1333,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
        line.Point1 = Polygon->Points[prev];
        line.Point2 = Polygon->Points[next];
        line.Thickness = 0;
@@ -99,7 +99,7 @@ index a4a6891..57e79a4 100644
        if (Polygon->Points[prev].included_angle == Polygon->Points[n].included_angle &&
            IsPointOnLine (p->X, p->Y, 0.0, &line))
          {
-@@ -1380,6 +1382,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
+@@ -1339,6 +1341,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
            changed = true;
          }
      }
@@ -107,7 +107,7 @@ index a4a6891..57e79a4 100644
    return (changed);
  }
  
-@@ -2151,6 +2154,23 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2110,6 +2113,23 @@ pv_outline_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -131,7 +131,7 @@ index a4a6891..57e79a4 100644
  static void
  delete_piece_cb (gpointer data, gpointer userdata)
  {
-@@ -2231,13 +2251,14 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2190,13 +2210,14 @@ POLYAREA *board_outline_poly (bool include_holes)
     *  \_____________/
     */
  
@@ -148,7 +148,7 @@ index a4a6891..57e79a4 100644
    r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
    r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
  
-@@ -2282,6 +2303,21 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2241,6 +2262,21 @@ POLYAREA *board_outline_poly (bool include_holes)
    } while ((piece = piece->f) != clipped);
  
    g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
