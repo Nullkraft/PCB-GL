@@ -48,6 +48,7 @@ Angle  NormalizeAngle (Angle a);
 void r_delete_element (DataType *, ElementType *);
 void SetLineBoundingBox (LineType *);
 void SetArcBoundingBox (ArcType *);
+void SetArcEndpoints (ArcType *);
 void SetPointBoundingBox (PointType *);
 void SetPinBoundingBox (PinType *);
 void SetPadBoundingBox (PadType *);

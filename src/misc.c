@@ -1535,11 +1535,10 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
 BoxType
 calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle, Angle delta_angle)
 {
-  BoxType *bound;
+  BoxType bound;
   double ca1, ca2, sa1, sa2;
   double minx, maxx, miny, maxy;
   Angle ang1, ang2;
-  Coord width;
 
   /* first put angles into standard form:
    *  ang1 < ang2, both angles between 0 and 720 */
@@ -1572,7 +1571,7 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
   bound.X1 = MIN (ca1, ca2);
   bound.X2 = MAX (ca1, ca2);
   bound.Y1 = MIN (sa1, sa2);
-  bounx.Y2 = MAX (sa1, sa2);
+  bound.Y2 = MAX (sa1, sa2);
 
   /* Check for extreme angles */
   if ((ang1 <= 0   && ang2 >= 0)   || (ang1 <= 360 && ang2 >= 360)) maxx = 1;
@@ -1596,9 +1595,6 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
 void
 SetArcBoundingBox (ArcType *Arc)
 {
-  double ca1, ca2, sa1, sa2;
-  double minx, maxx, miny, maxy;
-  Angle ang1, ang2;
   Coord width;
 
   Arc->BoundingBox = calc_thin_arc_bounds (Arc->X, Arc->Y, Arc->Width, Arc->Height, Arc->StartAngle, Arc->Delta);
@@ -1614,51 +1610,6 @@ SetArcBoundingBox (ArcType *Arc)
   Arc->BoundingBox.Y1 -= width;
   Arc->BoundingBox.Y2 += width;
   close_box(&Arc->BoundingBox);
-
-
-  /* first put angles into standard form:
-   *  ang1 < ang2, both angles between 0 and 720 */
-  Arc->Delta = CLAMP (Arc->Delta, -360, 360);
-
-  if (Arc->Delta > 0)
-    {
-      ang1 = NormalizeAngle (Arc->StartAngle);
-      ang2 = NormalizeAngle (Arc->StartAngle + Arc->Delta);
-    }
-  else
-    {
-      ang1 = NormalizeAngle (Arc->StartAngle + Arc->Delta);
-      ang2 = NormalizeAngle (Arc->StartAngle);
-    }
-  if (ang1 > ang2)
-    ang2 += 360;
-  /* Make sure full circles aren't treated as zero-length arcs */
-  if (Arc->Delta == 360 || Arc->Delta == -360)
-    ang2 = ang1 + 360;
-
-  /* calculate sines, cosines */
-  sa1 = sin (M180 * ang1);
-  ca1 = cos (M180 * ang1);
-  sa2 = sin (M180 * ang2);
-  ca2 = cos (M180 * ang2);
-
-  minx = MIN (ca1, ca2);
-  maxx = MAX (ca1, ca2);
-  miny = MIN (sa1, sa2);
-  maxy = MAX (sa1, sa2);
-
-  /* Check for extreme angles */
-  if ((ang1 <= 0   && ang2 >= 0)   || (ang1 <= 360 && ang2 >= 360)) maxx = 1;
-  if ((ang1 <= 90  && ang2 >= 90)  || (ang1 <= 450 && ang2 >= 450)) maxy = 1;
-  if ((ang1 <= 180 && ang2 >= 180) || (ang1 <= 540 && ang2 >= 540)) minx = -1;
-  if ((ang1 <= 270 && ang2 >= 270) || (ang1 <= 630 && ang2 >= 630)) miny = -1;
-
-
-  /* Update the arc end-points */
-  Arc->Point1.X = Arc->X - (double)Arc->Width  * ca1;
-  Arc->Point1.Y = Arc->Y + (double)Arc->Height * sa1;
-  Arc->Point2.X = Arc->X - (double)Arc->Width  * ca2;
-  Arc->Point2.Y = Arc->Y + (double)Arc->Height * sa2;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1667,7 +1618,6 @@ SetArcBoundingBox (ArcType *Arc)
 void
 SetArcEndpoints (ArcType *Arc)
 {
-  double ca1, ca2, sa1, sa2;
   Angle ang1, ang2;
 
   /* first put angles into standard form:
@@ -1676,26 +1626,20 @@ SetArcEndpoints (ArcType *Arc)
 
   if (Arc->Delta > 0)
     {
-      ang1 = NormalizeAngle (Arc->StartAngle);
-      ang2 = NormalizeAngle (Arc->StartAngle + Arc->Delta);
+      ang1 = Arc->StartAngle;
+      ang2 = Arc->StartAngle + Arc->Delta;
     }
   else
     {
-      ang1 = NormalizeAngle (Arc->StartAngle + Arc->Delta);
-      ang2 = NormalizeAngle (Arc->StartAngle);
+      ang1 = Arc->StartAngle + Arc->Delta;
+      ang2 = Arc->StartAngle;
     }
 
-  /* calculate sines, cosines */
-  sa1 = sin (M180 * ang1);
-  ca1 = cos (M180 * ang1);
-  sa2 = sin (M180 * ang2);
-  ca2 = cos (M180 * ang2);
-
   /* Update the arc end-points */
-  Arc->Point1.X = Arc->X - (double)Arc->Width  * ca1;
-  Arc->Point1.Y = Arc->Y + (double)Arc->Height * sa1;
-  Arc->Point2.X = Arc->X - (double)Arc->Width  * ca2;
-  Arc->Point2.Y = Arc->Y + (double)Arc->Height * sa2;
+  Arc->Point1.X = Arc->X - (double)Arc->Width  * cos (M180 * ang1);
+  Arc->Point1.Y = Arc->Y + (double)Arc->Height * sin (M180 * ang1);
+  Arc->Point2.X = Arc->X - (double)Arc->Width  * cos (M180 * ang2);
+  Arc->Point2.Y = Arc->Y + (double)Arc->Height * sin (M180 * ang2);
 }
 
 /* ---------------------------------------------------------------------------
