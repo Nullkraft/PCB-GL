@@ -330,7 +330,6 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
                                          Coord *cx, Coord *cy, Coord *radius,
                                          Angle *start_angle, Angle *delta_angle)
 {
-  Cardinal next_n;
   Coord hx, hy;
   double p_to_h_dist;
   double c_to_h_dist;
@@ -377,7 +376,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
                     (p1->Y - *cy) * (p1->Y - *cy));
 
   if (start_angle != NULL)
-    *start_angle = TO_DEGREES (atan2 ((p1->Y - *cy), -(p1->X - *cx)));
+    *start_angle = atan2 ((p1->Y - *cy), -(p1->X - *cx)) / M180;
 
   if (delta_angle != NULL)
     *delta_angle = included_angle;
