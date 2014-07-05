@@ -1,0 +1,21 @@
+Bottom: 20706867c0cfa92e5fdcd18ab29ec4cdbf8f5b91
+Top:    a06aec565b2531e3354618fcefc185f130a4e598
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-05 15:55:39 +0100
+
+Refresh of refactor-arc-bounding-box
+
+---
+
+diff --git a/src/misc.h b/src/misc.h
+index 3030275..c9d3ef0 100644
+--- a/src/misc.h
++++ b/src/misc.h
+@@ -47,6 +47,7 @@ Angle  NormalizeAngle (Angle a);
+ 
+ void r_delete_element (DataType *, ElementType *);
+ void SetLineBoundingBox (LineType *);
++BoxType calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle, Angle delta_angle);
+ void SetArcBoundingBox (ArcType *);
+ void SetArcEndpoints (ArcType *);
+ void SetPointBoundingBox (PointType *);
