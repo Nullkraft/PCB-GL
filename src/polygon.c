@@ -299,7 +299,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
     {
       /* NB: the caller added the first vertex, and will add the last vertex, hence the -1 */
       range = POLY_CIRC_SEGS * sweep / 360 - 1;
-      for (i = 0; i < range - 1; i++)
+      for (i = 0; i < range/* SHOULD NOT BE -1 */- 1; i++)
         {
           /* rotate the vector */
           t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
