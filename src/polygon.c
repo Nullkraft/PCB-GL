@@ -750,7 +750,6 @@ ArcPoly (ArcType * a, Coord thick)
 
   if (2 * M_PI * a->Width * (1. - (double)delta / 360.) - thick < MIN_CLEARANCE_BEFORE_BISECT)
     {
-      printf ("Bisecting arc with delta angle %f\n", delta);
       int half_delta = a->Delta / 2;
 
       seg1 = seg2 = *a;
