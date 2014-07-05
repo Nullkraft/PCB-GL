@@ -177,8 +177,8 @@ thindraw_contour (hidGC gc, PLINE *pl)
         {
           Angle start_angle, end_angle, delta_angle;
 
-          start_angle = 180. - TO_DEGREES (atan2 ((v->prev->point[1] - v->cy), (v->prev->point[0] - v->cx)));
-          end_angle   = 180. - TO_DEGREES (atan2 ((      v->point[1] - v->cy), (      v->point[0] - v->cx)));
+          start_angle = TO_DEGREES (atan2 ((v->prev->point[1] - v->cy), -(v->prev->point[0] - v->cx)));
+          end_angle   = TO_DEGREES (atan2 ((      v->point[1] - v->cy), -(      v->point[0] - v->cx)));
           delta_angle = end_angle - start_angle;
 
           if (delta_angle > 180.) delta_angle -= 360.;
