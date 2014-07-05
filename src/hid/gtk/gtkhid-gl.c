@@ -1372,14 +1372,22 @@ GhidDrawMask (int side, BoxType * screen)
   gui->graphics->set_color (out->fgGC, PCB->MaskColor);
   ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
 
-  polygon.Clipped = board_outline_poly ();
+  if (!PCB->Data->outline_valid) {
+
+    if (PCB->Data->outline != NULL)
+      poly_Free (&PCB->Data->outline);
+
+    PCB->Data->outline = board_outline_poly ();
+    PCB->Data->outline_valid = true;
+  }
+
+  polygon.Clipped = PCB->Data->outline;
   polygon.NoHoles = NULL;
   polygon.NoHolesValid = 0;
   polygon.BoundingBox = *screen;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
-  poly_Free (&polygon.Clipped);
   poly_FreeContours (&polygon.NoHoles);
   /* THE GL fill_pcb_polygon doesn't work whilst masking */
 //  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
