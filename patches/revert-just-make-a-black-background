@@ -1,5 +1,5 @@
-Bottom: 0d71eafd82c6e56bc34de71cbbc32ae8c633924c
-Top:    eec1dd12bfd82a988776db52aedbfc3ddcd69ca1
+Bottom: ceecaeb5524744b0bbe09e6e073a79d1737eae18
+Top:    245ae59ff44888f377dbe751b67d002c25c1b089
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2014-07-05 17:01:16 +0100
 
@@ -11,10 +11,10 @@ This reverts commit cf6c95ade3be149a5a8659bd13a80eedc4092fd2.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a54feeb..de32e39 100644
+index b251c5a..b42f6e8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -2078,9 +2078,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2079,9 +2079,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glEnable (GL_STENCIL_TEST);
    glEnable (GL_DEPTH_TEST);
    glDepthFunc (GL_ALWAYS);
@@ -27,7 +27,7 @@ index a54feeb..de32e39 100644
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
-@@ -2184,7 +2184,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2185,7 +2185,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* glStencilFunc (GL_GREATER, 1, 1); */           /* Draw only where stencil buffer is 0 */
  
    glDepthMask (GL_FALSE);
@@ -35,7 +35,7 @@ index a54feeb..de32e39 100644
    if (global_view_2d) {
      glBegin (GL_QUADS);
      glVertex3i (0,             0,              0);
-@@ -2215,7 +2214,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2216,7 +2215,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      }
      glEnd ();
    }
