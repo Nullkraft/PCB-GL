@@ -1,0 +1,136 @@
+Bottom: b412a60f93a59eef9701910985457882346fd56b
+Top:    0b60102457802a735f99614c9111dc20490e3a84
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-05 18:14:23 +0100
+
+Refresh of tag-the-from-vertex-with-the
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 3ac0aa9..509b93b 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -282,14 +282,25 @@ ContourToPoly (PLINE * contour)
+ }
+ 
+ static void
+-degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector v /* First point, already laid by caller */, Angle sweep)
++degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector v /* First point */, Angle sweep)
+ {
+   /* We don't re-add a point at v, nor do we add the last point, sweep degrees around from (X,Y)-v */
+   double e1, e2, t1;
+   int i, range;
+ 
+ //  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+-  poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
++
++  if (c->head.prev->point[0] == v[0] &&
++      c->head.prev->point[1] == v[1])
++    {
++      /* Re-use any existing vertex point we got lumbered with (if it matches the coordinate we want) */
++      c->head.prev->is_round = true;
++      c->head.prev->cx = X;
++      c->head.prev->cy = Y;
++      c->head.prev->radius = radius;
++    }
++  else
++    poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
+ 
+   /* move vector to origin */
+   e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
+@@ -299,7 +310,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
+     {
+       /* NB: the caller added the first vertex, and will add the last vertex, hence the -1 */
+       range = POLY_CIRC_SEGS * sweep / 360 - 1;
+-      for (i = 0; i < range/* SHOULD NOT BE -1 */- 1; i++)
++      for (i = 0; i < range; i++)
+         {
+           /* rotate the vector */
+           t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
+@@ -501,7 +512,19 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+   /* XXX: Circle already has the first node added */
+ //  if (fraction > 1)
+ //    poly_InclVertex (c->head.prev, poly_CreateNode (v));
+-  poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
++
++  if (c->head.prev->point[0] == v[0] &&
++      c->head.prev->point[1] == v[1])
++    {
++      /* Re-use any existing vertex point we got lumbered with (if it matches the coordinate we want) */
++      c->head.prev->is_round = true;
++      c->head.prev->cx = X;
++      c->head.prev->cy = Y;
++      c->head.prev->radius = radius;
++    }
++  else
++    poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
++
+   /* move vector to origin */
+   e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
+   e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
+@@ -614,18 +637,30 @@ ArcPolyNoIntersect (ArcType * a, Coord thick)
+ 
+   ang = a->StartAngle;
+   da = (1.0 * a->Delta) / segs;
+-  radius_adj = (M_PI*da/360)*(M_PI*da/360)/2;
++
++  /* XXX: No need for radius ofsetting bodgery for the exact arc representation */
++  if (rx == ry)
++    radius_adj = 0.;
++  else
++    radius_adj = (M_PI*da/360)*(M_PI*da/360)/2;
++
+   v[0] = a->X - rx * cos (ang * M180);
+   v[1] = a->Y + ry * sin (ang * M180);
++
++  /* XXX: First point is a vertex? */
+   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
+     return 0;
+-  for (i = 0; i < segs - 1; i++)
+-    {
+-      ang += da;
+-      v[0] = a->X - rx * cos (ang * M180);
+-      v[1] = a->Y + ry * sin (ang * M180);
+-      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+-    }
++
++  if (rx == ry)
++    degree_circle (contour, a->X, a->Y, rx, v, -a->Delta);
++  else
++    for (i = 0; i < segs - 1; i++)
++      {
++        ang += da;
++        v[0] = a->X - rx * cos (ang * M180);
++        v[1] = a->Y + ry * sin (ang * M180);
++        poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++      }
+   /* find last point */
+   ang = a->StartAngle + a->Delta;
+   v[0] = a->X - rx * cos (ang * M180) * (1 - radius_adj);
+@@ -636,13 +671,18 @@ ArcPolyNoIntersect (ArcType * a, Coord thick)
+   rx = (a->Width + half) * (1+radius_adj);
+   ry = (a->Width + half) * (1+radius_adj);
+   da = -da;
+-  for (i = 0; i < segs; i++)
+-    {
+-      v[0] = a->X - rx * cos (ang * M180);
+-      v[1] = a->Y + ry * sin (ang * M180);
+-      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+-      ang += da;
+-    }
++  v[0] = a->X - rx * cos (ang * M180);
++  v[1] = a->Y + ry * sin (ang * M180);
++  if (rx == ry)
++    degree_circle (contour, a->X, a->Y, rx, v, a->Delta);
++  else
++    for (i = 0; i < segs; i++)
++      {
++        v[0] = a->X - rx * cos (ang * M180);
++        v[1] = a->Y + ry * sin (ang * M180);
++        poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++        ang += da;
++      }
+   /* now add other round cap */
+   ang = a->StartAngle;
+   v[0] = a->X - rx * cos (ang * M180) * (1 - radius_adj);
