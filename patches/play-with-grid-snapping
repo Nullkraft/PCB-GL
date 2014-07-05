@@ -1,7 +1,7 @@
-Bottom: dad9aee1332c84f2544c63b111d77697f9cb5146
+Bottom: 7637478556e153553bddfb34dfa48617041cad00
 Top:    7637478556e153553bddfb34dfa48617041cad00
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-07-04 04:24:34 +0100
+Date:   2014-07-05 17:01:21 +0100
 
 Play with grid snapping heuristics a little
 
@@ -11,34 +11,4 @@ This makse it MUCH easier to place vias in a regular grid spaced at the PCB grid
 
 ---
 
-diff --git a/src/crosshair.c b/src/crosshair.c
-index 1165e06..19bd48a 100644
---- a/src/crosshair.c
-+++ b/src/crosshair.c
-@@ -1158,7 +1158,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
-   ans = NO_TYPE;
-   if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
-     ans = SearchObjectByLocation (PAD_TYPE, &ptr1, &ptr2, &ptr3,
--                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
-+                                  Crosshair.X, Crosshair.Y, 0);
- 
-   /* Avoid self-snapping when moving */
-   if (ans != NO_TYPE &&
-@@ -1215,7 +1215,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
-   ans = NO_TYPE;
-   if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
-     ans = SearchObjectByLocation (PIN_TYPE, &ptr1, &ptr2, &ptr3,
--                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
-+                                  Crosshair.X, Crosshair.Y, 0);
- 
-   /* Avoid self-snapping when moving */
-   if (ans != NO_TYPE &&
-@@ -1233,7 +1233,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
-   ans = NO_TYPE;
-   if (TEST_FLAG (SNAPPINFLAG, PCB))
-     ans = SearchObjectByLocation (VIA_TYPE, &ptr1, &ptr2, &ptr3,
--                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
-+                                  Crosshair.X, Crosshair.Y, 0);
- 
-   /* Avoid snapping vias to any other vias */
-   if (Settings.Mode == MOVE_MODE &&
+

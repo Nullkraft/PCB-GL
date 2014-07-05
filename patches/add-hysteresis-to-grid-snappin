@@ -1,55 +1,11 @@
-Bottom: 81a97dff25cc298515be14e9c13fa868a82ada56
-Top:    8c524b005b0013555db7d1f193695a5edb440604
+Bottom: 15b67bde2b9ed4f554b73c2a1b15f2e65252a827
+Top:    15b67bde2b9ed4f554b73c2a1b15f2e65252a827
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-07-04 04:24:31 +0100
+Date:   2014-07-05 17:01:19 +0100
 
 Add hysteresis to grid-snapping
 
 
 ---
 
-diff --git a/src/crosshair.c b/src/crosshair.c
-index bac3fff..1165e06 100644
---- a/src/crosshair.c
-+++ b/src/crosshair.c
-@@ -1092,6 +1092,11 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
-   struct snap_data snap_data;
-   int ans;
- 
-+  Coord old_x, old_y;
-+
-+  old_x = Crosshair.X;
-+  old_y = Crosshair.Y;
-+
-   Crosshair.X = CLAMP (X, Crosshair.MinX, Crosshair.MaxX);
-   Crosshair.Y = CLAMP (Y, Crosshair.MinY, Crosshair.MaxY);
- 
-@@ -1118,11 +1123,26 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
-     }
- 
-   snap_data.crosshair = &Crosshair;
--  snap_data.nearest_sq_dist =
--    crosshair_sq_dist (&Crosshair, nearest_grid_x, nearest_grid_y);
-   snap_data.nearest_is_grid = true;
-   snap_data.x = nearest_grid_x;
-   snap_data.y = nearest_grid_y;
-+#if 0
-+  snap_data.nearest_sq_dist = crosshair_sq_dist (&Crosshair, snap_data.x, snap_data.y);
-+
-+  if (snap_data.nearest_sq_dist > PCB->Grid / 3 * PCB->Grid / 3)
-+    {
-+      snap_data.x = old_x;
-+      snap_data.y = old_y;
-+    }
-+#endif
-+
-+  if (labs (nearest_grid_x - Crosshair.X) > PCB->Grid / 3)
-+    snap_data.x = old_x;
-+
-+  if (labs (nearest_grid_y - Crosshair.Y) > PCB->Grid / 3)
-+    snap_data.y = old_y;
-+
-+  snap_data.nearest_sq_dist = crosshair_sq_dist (&Crosshair, snap_data.x, snap_data.y);
- 
-   ans = NO_TYPE;
-   if (!PCB->RatDraw)
+
