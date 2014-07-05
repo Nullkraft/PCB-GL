@@ -57,6 +57,9 @@ static hidGC current_gc = NULL;
 */
 #define USE_GC(gc) if (!use_gc(gc)) return
 
+#define NO_SAMPLERS      9
+#define NO_SAMPLERS_STR "9"
+
 static enum mask_mode cur_mask = HID_MASK_OFF;
 static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                     {0.0, 1.0, 0.0, 0.0},
@@ -89,6 +92,15 @@ typedef struct render_priv {
   Coord lead_user_x;
   Coord lead_user_y;
 
+  int no_layers;
+  GLuint *layer_texture;
+  bool *layer_rendered;
+  GLuint depth_stencil_buffer;
+  GLuint fbo_no_stencil;
+  GLuint fbo_with_stencil;
+  int fbo_height;
+  int textures_ok;
+  hidgl_shader *stack_program;
 } render_priv;
 
 
@@ -183,6 +195,7 @@ compute_depth (int group)
   last_depth_computed = depth;
   return depth;
 }
+
 
 static void
 start_subcomposite (void)
@@ -333,7 +346,7 @@ ghid_draw_grid (BoxType *drawn_area)
 
   glTexCoord2f (0., 0.);
 
-  glDisable (GL_STENCIL_TEST);
+//  glDisable (GL_STENCIL_TEST);
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
 
@@ -344,7 +357,7 @@ ghid_draw_grid (BoxType *drawn_area)
   hidgl_draw_grid (drawn_area);
 
   glDisable (GL_COLOR_LOGIC_OP);
-  glEnable (GL_STENCIL_TEST);
+//  glEnable (GL_STENCIL_TEST);
 }
 
 /* XXX: Refactor this into hidgl common routines */
@@ -581,10 +594,13 @@ set_gl_color_for_gc (hidGC gc)
       r = gport->offlimits_color.red   / 65535.;
       g = gport->offlimits_color.green / 65535.;
       b = gport->offlimits_color.blue  / 65535.;
-      a = 0.85;
+//      a = 0.85;
+      gc->alpha_mult = 1.;
     }
   else
     {
+//      gc->alpha_mult = 0.7;
+      gc->alpha_mult = 1.;
       if (hid_cache_color (0, gc->colorname, &cval, &cache))
         cc = (ColorCache *) cval.ptr;
       else
@@ -980,6 +996,41 @@ ghid_shutdown_renderer (GHidPort *port)
 }
 
 void
+ghid_init_gl (GHidPort *port)
+{
+  render_priv *priv = port->render_priv;
+  char *stack_fs_source =
+           "uniform float layer_alpha;\n"
+           "uniform sampler2D layer_texture[" NO_SAMPLERS_STR "];\n"
+           "\n"
+           "void main()\n"
+           "{\n"
+           "  vec4 layer_value[16];\n"
+           "  int layer_num;\n"
+           "\n"
+           "  for (layer_num = 0; layer_num < " NO_SAMPLERS_STR "; layer_num++) {\n"
+           "    layer_value[layer_num] = texture2D (layer_texture[layer_num], gl_TexCoord[0].st);\n"
+           "  }\n"
+           "\n"
+           "  vec4 accum = layer_value[0] * layer_value[0].a * layer_alpha;\n"
+           "\n"
+#if 1
+           "  for (layer_num = 1; layer_num < " NO_SAMPLERS_STR "; layer_num++) {\n"
+           "    float sa = layer_value[layer_num].a * layer_alpha;\n"
+           "    float one_minus_sa = 1. - sa;\n"
+           "    vec4 addition = layer_value[layer_num] * sa;\n"
+           "    accum = accum * one_minus_sa + addition;\n"
+           "  }\n"
+           "\n"
+#endif
+           "  gl_FragColor = accum;\n"
+           "}\n";
+
+  priv->stack_program =
+    hidgl_shader_new ("layerstack_rendering", NULL, stack_fs_source);
+}
+
+void
 ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
 {
   render_priv *priv = port->render_priv;
@@ -1290,7 +1341,8 @@ pad_callback (const BoxType * b, void *cl)
 static int
 hole_callback (const BoxType * b, void *cl)
 {
-  PinType *pv = (PinType *) b;
+  PinType *pin = (PinType *) b;
+#if 0
   int plated = cl ? *(int *) cl : -1;
 
   if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
@@ -1321,6 +1373,26 @@ hole_callback (const BoxType * b, void *cl)
       gui->graphics->draw_arc (Output.fgGC,
                      pv->X, pv->Y, pv->DrillingHole / 2,
                      pv->DrillingHole / 2, 0, 360);
+    }
+#endif
+//  DrawHole ((PinTypePtr) b);
+
+#if 0
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    {
+      if (!TEST_FLAG (HOLEFLAG, Ptr))
+	{
+	  gui->set_line_cap (Output.fgGC, Round_Cap);
+	  gui->set_line_width (Output.fgGC, 0);
+	  gui->draw_arc (Output.fgGC,
+			 Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
+			 Ptr->DrillingHole / 2, 0, 360);
+	}
+    }
+  else
+#endif
+    {
+      hidgl_fill_circle (pin->X, pin->Y, pin->DrillingHole / 2);
     }
   return 1;
 }
@@ -1586,19 +1658,6 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
 
       first_run = 0;
 
-      if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
-        /* Mask out drilled holes on this layer */
-        hidgl_flush_triangles (&buffer);
-        glPushAttrib (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glColorMask (0, 0, 0, 0);
-        glDepthMask (GL_FALSE);
-        gui->graphics->set_color (Output.bgGC, PCB->MaskColor);
-        if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
-        if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-        hidgl_flush_triangles (&buffer);
-        glPopAttrib ();
-      }
-
       /* draw all polygons on this layer */
       if (Layer->PolygonN) {
         info.layer = Layer;
@@ -1608,8 +1667,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
 
         /* HACK: Subcomposite polygons separately from other layer primitives */
         /* Reset the compositing */
-        gui->end_layer ();
-        gui->set_layer (0, group, 0);
+//        gui->end_layer ();
+//        gui->set_layer (0, group, 0);
 
         if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
           hidgl_flush_triangles (&buffer);
@@ -1649,6 +1708,33 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
       r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
       r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
       r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
+
+      /* Draw pins, vias and pads on this layer */
+      if (rv) {
+        if (!global_view_2d) {
+          if (PCB->PinOn &&
+              (group == solder_group || group == component_group))
+            r_search (PCB->Data->pin_tree, screen, NULL, pin_name_callback, Layer);
+          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
+          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
+          if ((group == component_group && !SWAP_IDENT) ||
+              (group == solder_group    &&  SWAP_IDENT))
+            if (PCB->PinOn)
+              r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, Layer);
+          if ((group == solder_group    && !SWAP_IDENT) ||
+              (group == component_group &&  SWAP_IDENT))
+            if (PCB->PinOn)
+              r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
+        }
+        /* Erase drilled holes on this layer */
+        hidgl_flush_triangles (&buffer);
+        glPushAttrib (GL_CURRENT_BIT);
+        glColor4f (0., 0., 0., 0.);
+        if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
+        if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
+        hidgl_flush_triangles (&buffer);
+        glPopAttrib ();
+      }
     }
   }
 
@@ -1796,6 +1882,161 @@ ghid_draw_packages (BoxType *drawn_area)
   r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_package_callback, NULL);
 }
 
+static void
+setup_fbo (GHidPort *port, int width, int height, int no_layers)
+{
+  render_priv *priv = port->render_priv;
+  int layer;
+
+  priv->fbo_width = width;
+  priv->fbo_height = height;
+  priv->no_layers = no_layers;
+
+  /* Setup an FBO to render into (without depth / stencil) */
+  glGenFramebuffersEXT (1, &priv->fbo_no_stencil);
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, priv->fbo_no_stencil);
+
+  /* Setup an FBO to render into (with depth / stencil) */
+  glGenFramebuffersEXT (1, &priv->fbo_with_stencil);
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, priv->fbo_with_stencil);
+
+  /* Create and bind a packed depth / stencil renderbuffer */
+  glGenRenderbuffersEXT (1, &priv->depth_stencil_buffer);
+  glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, priv->depth_stencil_buffer);
+  glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT,
+                            priv->fbo_width, priv->fbo_height);
+
+  /* Attach the stencil renderbuffer to the FBO */
+  glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT,
+                                GL_RENDERBUFFER_EXT, priv->depth_stencil_buffer);
+
+  /* Create some textures to render our layers into */
+  priv->layer_rendered = malloc (priv->no_layers * sizeof (bool));
+  priv->layer_texture = malloc (priv->no_layers * sizeof (GLuint));
+  for (layer = 0; layer < priv->no_layers; layer++) {
+    glGenTextures (1, &priv->layer_texture[layer]);
+    glBindTexture (GL_TEXTURE_2D, priv->layer_texture[layer]);
+
+//    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    /* Allocate storage for each texture. The texels are undefined. */
+    glTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA8,
+                  priv->fbo_width, priv->fbo_height, 0,
+                  GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+  }
+  /* For sake of cleanliness, unbind the texture we last used */
+  glBindTexture (GL_TEXTURE_2D, 0);
+
+  /* Unbind the FBO for now */
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+
+  /* Mark textures as needing rendering */
+  priv->textures_ok = 0;
+}
+
+
+static void
+cleanup_fbo (GHidPort *port)
+{
+  int layer;
+  render_priv *priv = port->render_priv;
+
+  glDeleteFramebuffersEXT (1, &priv->fbo_no_stencil);
+
+  glDeleteFramebuffersEXT (1, &priv->fbo_with_stencil);
+  glDeleteRenderbuffersEXT (1, &priv->depth_stencil_buffer);
+
+  for (layer = 0; layer < priv->no_layers; layer++) {
+    glDeleteTextures (1, &priv->layer_texture[layer]);
+  }
+
+  free (priv->layer_texture);
+  priv->layer_texture = NULL;
+  priv->textures_ok = 0;
+}
+
+
+static void
+setup_fbo_layer (GHidPort *port, int layer, int with_stencil)
+{
+  render_priv *priv = port->render_priv;
+  GLenum status;
+  GLuint fbo = with_stencil ? priv->fbo_with_stencil : priv->fbo_no_stencil;
+
+  /* Bind the FBO into active usage */
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo);
+
+  /* Bind one of the textures to the FBO for rendering into */
+  glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D,
+                             priv->layer_texture[layer], 0);
+
+  /* Check the OpenGL driver is happy with our FBO setup */
+  status = glCheckFramebufferStatusEXT (GL_FRAMEBUFFER_EXT);
+
+  if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+    fprintf (stderr, "Oppos, couldn't create a complete FBO, quitting\n");
+    fprintf (stderr, "Width: %i, height: %i\n", priv->fbo_width, priv->fbo_height);
+    exit (-1);
+  }
+
+#if 0
+  glPushAttrib (GL_VIEWPORT_BIT);
+  glViewport (0, 0, priv->fbo_width, priv->fbo_height);
+  glMatrixMode (GL_PROJECTION);
+  glPushMatrix ();
+  glLoadIdentity ();
+  glOrtho (0, priv->fbo_width, priv->fbo_height, 0, -100000, 100000);
+  glMatrixMode (GL_MODELVIEW);
+  glPushMatrix ();
+  glLoadIdentity ();
+
+  glScalef ( 1. / port->zoom,
+            -1. / port->zoom,
+             1.);
+  glTranslatef (0., -PCB->MaxHeight, 0.);
+//  glTranslatef (-port->view_x0, port->view_y0 - PCB->MaxHeight, 0.);
+#endif
+
+  glClearColor (0., 0., 0., 0.);
+  if (with_stencil) {
+    glStencilMask (~0);
+    glClearStencil (0);
+    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  } else {
+    glClear (GL_COLOR_BUFFER_BIT);
+  }
+  hidgl_reset_stencil_usage (); /* FIXME: This state is "global", not specific to the FBO! */
+  glDisable (GL_BLEND);
+}
+
+
+static void
+cleanup_fbo_layer (GHidPort *port)
+{
+#if 0
+  glMatrixMode (GL_MODELVIEW);
+  glPopMatrix ();
+  glMatrixMode (GL_PROJECTION);
+  glPopMatrix ();
+  glMatrixMode (GL_MODELVIEW);
+  glPopAttrib ();
+#endif
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+  /* Ubind the texture from the FBO */
+  glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT,
+                             GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, 0, 0);
+  glEnable (GL_BLEND);
+}
+
+
 void
 ghid_draw_everything (BoxType *drawn_area)
 {
@@ -1899,8 +2140,66 @@ ghid_draw_everything (BoxType *drawn_area)
     if (is_this_physical)
       number_phys_on_top --;
 
-    ghid_set_alpha_mult (Output.fgGC, alpha_mult);
-    GhidDrawLayerGroup (drawn_groups [i], drawn_area);
+    //ghid_set_alpha_mult (Output.fgGC, alpha_mult);
+
+    int depth = compute_depth (i);
+    int layer_visible;
+
+    /* TODO: Cache these textures between frames to avoid the overhead of recomputing */
+    if (!priv->textures_ok) {
+      /* Draw the layer into a texture */
+      //setup_fbo_layer (gport, drawn_groups [i], TRUE); /* TRUE is for yes, we want a stencil buffer */
+      setup_fbo_layer (gport, drawn_groups [i], false);
+      GhidDrawLayerGroup (drawn_groups [i], drawn_area);
+      cleanup_fbo_layer (gport);
+      priv->layer_rendered[i] = TRUE;
+    }
+
+    hidgl_set_depth (0);
+
+    {
+      int group = drawn_groups [i];
+      int idx;
+      for (idx = 0; idx < PCB->LayerGroups.Number[group] - 1; idx ++)
+        {
+          int ni = PCB->LayerGroups.Entries[group][idx];
+          if (ni >= 0 && ni < max_copper_layer + 2
+              && PCB->Data->Layer[ni].On)
+            break;
+        }
+      idx = PCB->LayerGroups.Entries[group][idx];
+      if (idx >= 0 && idx < max_copper_layer)
+        layer_visible = PCB->Data->Layer[idx].On;
+      else
+        layer_visible = 0;
+    }
+
+#if 0
+    if (priv->layer_rendered[i] && layer_visible) {
+      float aspect = (float)priv->fbo_width / (float)priv->fbo_height;
+      /* Now render from the textures */
+      hidgl_shader_activate (NULL);
+      glColor4f (1., 1., 1., 0.7);
+      glEnable (GL_TEXTURE_2D);
+
+      glPushMatrix ();
+      glLoadIdentity ();
+
+      glBindTexture (GL_TEXTURE_2D, priv->layer_texture[drawn_groups [i]]);
+      glBegin (GL_QUADS);
+      glTexCoord2d (0.0, 1.0); glVertex3f (-aspect, -1.0, -1.);
+      glTexCoord2d (1.0, 1.0); glVertex3f ( aspect, -1.0, -1.);
+      glTexCoord2d (1.0, 0.0); glVertex3f ( aspect,  1.0, -1.);
+      glTexCoord2d (0.0, 0.0); glVertex3f (-aspect,  1.0, -1.);
+      glEnd ();
+
+      glPopMatrix ();
+
+      glBindTexture (GL_TEXTURE_2D, 0);
+      glDisable (GL_TEXTURE_2D);
+      hidgl_shader_activate (circular_program);
+    }
+#endif
 
 #if 1
     if (!global_view_2d && is_this_physical && is_next_physical) {
@@ -1918,6 +2217,78 @@ ghid_draw_everything (BoxType *drawn_area)
 
   ghid_set_alpha_mult (Output.fgGC, 1.0);
 
+// HELLO
+  hidgl_shader_activate (priv->stack_program);
+  {
+    GLint tex_ids[NO_SAMPLERS];
+    GLuint sp = hidgl_shader_get_program (priv->stack_program);
+    GLint loc = glGetUniformLocation (sp, "layer_texture");
+    int sampler;
+
+    for (sampler = 0; sampler < NO_SAMPLERS; sampler++) {
+      glActiveTexture (GL_TEXTURE0 + sampler);
+#if 1
+      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+      glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+#endif
+      if (sampler < 9 /*priv->no_layers*/) {
+        int layer = /*priv->no_layers -*/ 8 - sampler;
+        glBindTexture (GL_TEXTURE_2D, priv->layer_texture [layer]);
+      } else {
+        glBindTexture (GL_TEXTURE_2D, 0);
+      }
+      tex_ids [sampler] = sampler;
+    }
+    glUniform1iv (loc, NO_SAMPLERS, tex_ids);
+    glActiveTexture (GL_TEXTURE0);
+
+    loc = glGetUniformLocation (sp, "layer_alpha");
+    glUniform1f (loc, 0.8);
+  }
+  glPushMatrix ();
+  glLoadIdentity ();
+
+  {
+    float aspect = (float)priv->fbo_width / (float)priv->fbo_height;
+
+    glBegin (GL_QUADS);
+    glTexCoord2d (0.0, 1.0); glVertex3f (-aspect, -1.0, -1.);
+    glTexCoord2d (1.0, 1.0); glVertex3f ( aspect, -1.0, -1.);
+    glTexCoord2d (1.0, 0.0); glVertex3f ( aspect,  1.0, -1.);
+    glTexCoord2d (0.0, 0.0); glVertex3f (-aspect,  1.0, -1.);
+    glEnd ();
+  }
+
+#if 0
+  /* draw all layers in layerstack order */
+  for (i = ngroups - 1; i >= 0; i--) {
+    int layer_visible;
+    int group = drawn_groups [i];
+    int idx;
+
+    for (idx = 0; idx < PCB->LayerGroups.Number[group] - 1; idx ++) {
+      int ni = PCB->LayerGroups.Entries[group][idx];
+      if (ni >= 0 && ni < max_copper_layer + 2
+          && PCB->Data->Layer[ni].On)
+        break;
+    }
+    idx = PCB->LayerGroups.Entries[group][idx];
+    if (idx >= 0 && idx < max_copper_layer)
+      layer_visible = PCB->Data->Layer[idx].On;
+    else
+      layer_visible = 0;
+
+    if (priv->layer_rendered[i] && layer_visible) {
+    }
+  }
+#endif
+
+  glPopMatrix ();
+  hidgl_shader_activate (circular_program);
+// GOODBYE
+
   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
 
@@ -1927,21 +2298,21 @@ ghid_draw_everything (BoxType *drawn_area)
   if (global_view_2d) {
     start_subcomposite ();
 
-    if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
-      /* Mask out drilled holes */
+  if (global_view_2d)
+    {
+      if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+
+      /* Erase drilled holes */
       hidgl_flush_triangles (&buffer);
-      glPushAttrib (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      glColorMask (0, 0, 0, 0);
-      glDepthMask (GL_FALSE);
+      glPushAttrib (GL_CURRENT_BIT);
+      glColor4f (0., 0., 0., 0.);
       if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
       if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
       hidgl_flush_triangles (&buffer);
       glPopAttrib ();
     }
-
-    if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
-    if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
 
     end_subcomposite ();
   }
@@ -1970,6 +2341,7 @@ ghid_draw_everything (BoxType *drawn_area)
   }
 
   Settings.ShowBottomSide = save_show_solder;
+  priv->textures_ok = 0;
 }
 
 #define Z_NEAR 3.0
@@ -1992,6 +2364,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                      0, 0, 1, 0,
                      0, 0, 0, 1};
   bool horizon_problem = false;
+  extern int debug_stencil_clears;
+  int fbo_width;
+  int fbo_height;
+  int no_layers;
+  static int old_fbo_width = -1;
+  static int old_fbo_height = -1;
+  static int old_no_layers = -1;
 
   gtk_widget_get_allocation (widget, &allocation);
 
@@ -2001,6 +2380,34 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   Output.fgGC = gui->graphics->make_gc ();
   Output.bgGC = gui->graphics->make_gc ();
   Output.pmGC = gui->graphics->make_gc ();
+
+  /* Compute the size we're going to use for the layer textures */
+//  fbo_width  = PCB->MaxWidth  / gport->zoom;
+//  fbo_height = PCB->MaxHeight / gport->zoom;
+  fbo_width = widget->allocation.width;
+  fbo_height = widget->allocation.height;
+
+  /* Work out how many layers are going to be rendered */
+  no_layers = MAX (max_copper_layer, max_group); /* FIXME: HACK */
+
+  if (old_fbo_width != fbo_width ||
+      old_fbo_height != fbo_height ||
+      old_no_layers != no_layers) {
+    /* Setup the FBO for rending to textures */
+    cleanup_fbo (port);
+    setup_fbo (port, fbo_width, fbo_height, no_layers);
+    old_fbo_width = fbo_width;
+    old_fbo_height = fbo_height;
+    old_no_layers = no_layers;
+  }
+
+  hidgl_in_context (true);
+  hidgl_init ();
+  if (one_shot)
+    ghid_init_gl (port);
+
+  check_gl_drawing_ok_hack = true;
+  debug_stencil_clears = 0;
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
@@ -2081,9 +2488,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glLoadMatrixf ((GLfloat *)last_modelview_matrix);
 #endif
 
-  glEnable (GL_STENCIL_TEST);
-  glEnable (GL_DEPTH_TEST);
-  glDepthFunc (GL_ALWAYS);
+//  glEnable (GL_STENCIL_TEST);
+//  glEnable (GL_DEPTH_TEST);
+//  glDepthFunc (GL_ALWAYS);
   glClearColor (port->offlimits_color.red / 65535.,
                 port->offlimits_color.green / 65535.,
                 port->offlimits_color.blue / 65535.,
@@ -2344,6 +2751,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   draw_lead_user (priv);
 
+//  cleanup_fbo (port);
   hidgl_finish_render ();
   ghid_end_drawing (port, widget);
 
