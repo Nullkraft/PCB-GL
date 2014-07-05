@@ -1,5 +1,5 @@
-Bottom: 99f08a54ec427ae3e38b3e34abf5dfab5ab5dd1e
-Top:    dad9aee1332c84f2544c63b111d77697f9cb5146
+Bottom: 35fa13cd8f52c2f6da7b2b5f26bcb1e2c060e568
+Top:    19286476a36c5ce8b386d705d80ac0437ce5eead
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-04 04:24:33 +0100
 
@@ -9,10 +9,10 @@ Remove function SearchScreenGridSlop() and use SearchObjectByLocation() directly
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 02b76e3..1165e06 100644
+index 1a81c25..83734d1 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -1292,9 +1292,9 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+@@ -1108,9 +1108,9 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
        if (TEST_FLAG (RUBBERBANDFLAG, PCB))
          {
  
