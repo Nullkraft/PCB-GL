@@ -1,0 +1,23 @@
+Bottom: 5c0f90f803e145e48a19a051054d08f776d5577a
+Top:    7956a57a35174a99428c91c24ce80a8ab558ca65
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-05 16:42:19 +0100
+
+Refresh of remove-function
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 9d1c307..097b7ca 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1096,8 +1096,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+ 
+   if (Settings.Mode == ARROW_MODE)
+     {
+-      ans = SearchObjectByLocation (Crosshair.X, Crosshair.Y,
+-                                    LINEPOINT_TYPE | ARCPOINT_TYPE,
++      ans = SearchObjectByLocation (LINEPOINT_TYPE | ARCPOINT_TYPE,
+                                     &ptr1, &ptr2, &ptr3,
+                                     Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+       if (ans == NO_TYPE)
