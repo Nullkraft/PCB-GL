@@ -1,5 +1,5 @@
 Bottom: d40c9d20c18dfb2b3bd58df3d02e1e559e9c05da
-Top:    35d57b8123a5e38613688dda6e9fe4d28cb11133
+Top:    89a781b5712cca5d0c199ce0a647a8f910fdfde3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-05 17:15:34 +0100
 
@@ -11,10 +11,10 @@ Also add computation of radius and start/end angle
 ---
 
 diff --git a/src/misc.c b/src/misc.c
-index 125c4e5..ec37c3f 100644
+index 125c4e5..10796fc 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -320,6 +320,70 @@ SetLineBoundingBox (LineType *Line)
+@@ -320,6 +320,69 @@ SetLineBoundingBox (LineType *Line)
  }
  
  /* ---------------------------------------------------------------------------
@@ -28,7 +28,6 @@ index 125c4e5..ec37c3f 100644
 +                                         Coord *cx, Coord *cy, Coord *radius,
 +                                         Angle *start_angle, Angle *delta_angle)
 +{
-+  Cardinal next_n;
 +  Coord hx, hy;
 +  double p_to_h_dist;
 +  double c_to_h_dist;
@@ -75,7 +74,7 @@ index 125c4e5..ec37c3f 100644
 +                    (p1->Y - *cy) * (p1->Y - *cy));
 +
 +  if (start_angle != NULL)
-+    *start_angle = TO_DEGREES (atan2 ((p1->Y - *cy), -(p1->X - *cx)));
++    *start_angle = atan2 ((p1->Y - *cy), -(p1->X - *cx)) / M180;
 +
 +  if (delta_angle != NULL)
 +    *delta_angle = included_angle;
@@ -85,7 +84,7 @@ index 125c4e5..ec37c3f 100644
   * sets the bounding box of a polygons
   */
  void
-@@ -333,6 +397,27 @@ SetPolygonBoundingBox (PolygonType *Polygon)
+@@ -333,6 +396,27 @@ SetPolygonBoundingBox (PolygonType *Polygon)
      MAKEMIN (Polygon->BoundingBox.Y1, point->Y);
      MAKEMAX (Polygon->BoundingBox.X2, point->X);
      MAKEMAX (Polygon->BoundingBox.Y2, point->Y);
