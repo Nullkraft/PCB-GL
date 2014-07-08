@@ -1,0 +1,779 @@
+Bottom: 593aa049031b1ea1bf62a735669225384d20fdcf
+Top:    a90272713039b29843a5d8bb80378662d7523975
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-07-09 00:33:04 +0100
+
+Refresh of attempt-at-supporting-arc-arc
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 96a0f66..96c3900 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -56,10 +56,10 @@ PCB_SRCS = \
+ 	borast/borast-wideint-type-private.h \
+ 	change.c \
+ 	change.h \
+-	circle_circle_intersection.c \
+-	circle_circle_intersection.h \
+-	circle_line_intersection.c \
+-	circle_line_intersection.h \
++	circle_circle_intersect.c \
++	circle_circle_intersect.h \
++	circle_line_intersect.c \
++	circle_line_intersect.h \
+ 	clip.c \
+ 	clip.h \
+ 	command.c \
+diff --git a/src/circle_circle_intersection.c b/src/circle_circle_intersection.c
+deleted file mode 100644
+index e559bd7..0000000
+--- a/src/circle_circle_intersection.c
++++ /dev/null
+@@ -1,118 +0,0 @@
+-/* circle_circle_intersection() *
+- * Determine the points where 2 circles in a common plane intersect.
+- *
+- * int circle_circle_intersection(
+- *                                // center and radius of 1st circle
+- *                                double x0, double y0, double r0,
+- *                                // center and radius of 2nd circle
+- *                                double x1, double y1, double r1,
+- *                                // 1st intersection point
+- *                                double *xi, double *yi,
+- *                                // 2nd intersection point
+- *                                double *xi_prime, double *yi_prime)
+- *
+- * This is a public domain work. 3/26/2005 Tim Voght
+- *
+- * Distinct return code for the single intersection case added by Peter Clifton 2014-07-05
+- *
+- */
+-#include <stdio.h>
+-#include <math.h>
+-
+-#define EPSILON (1e-8)
+-
+-
+-int circle_circle_intersection(double x0, double y0, double r0,
+-                               double x1, double y1, double r1,
+-                               double *xi, double *yi,
+-                               double *xi_prime, double *yi_prime)
+-{
+-  double a, dx, dy, d, h, rx, ry;
+-  double x2, y2;
+-
+-  /* dx and dy are the vertical and horizontal distances between
+-   * the circle centers.
+-   */
+-  dx = x1 - x0;
+-  dy = y1 - y0;
+-
+-  /* Determine the straight-line distance between the centers. */
+-  //d = sqrt((dy*dy) + (dx*dx));
+-  d = hypot(dx,dy); // Suggested by Keith Briggs
+-
+-  /* Check for solvability. */
+-  if (d > (r0 + r1))
+-  {
+-    /* no solution. circles do not intersect. */
+-    return 0;
+-  }
+-  if (d < fabs(r0 - r1))
+-  {
+-    /* no solution. one circle is contained in the other */
+-    return 0;
+-  }
+-
+-  /* 'point 2' is the point where the line through the circle
+-   * intersection points crosses the line between the circle
+-   * centers.
+-   */
+-
+-  /* Determine the distance from point 0 to point 2. */
+-  a = ((r0*r0) - (r1*r1) + (d*d)) / (2.0 * d) ;
+-
+-  /* Determine the coordinates of point 2. */
+-  x2 = x0 + (dx * a/d);
+-  y2 = y0 + (dy * a/d);
+-
+-  /* Determine the distance from point 2 to either of the
+-   * intersection points.
+-   */
+-  h = sqrt((r0*r0) - (a*a));
+-
+-  /* Now determine the offsets of the intersection points from
+-   * point 2.
+-   */
+-  rx = -dy * (h/d);
+-  ry = dx * (h/d);
+-
+-  /* Determine the absolute intersection points. */
+-  *xi = x2 + rx;
+-  *yi = y2 + ry;
+-
+-  if (fabs(h) < EPSILON)
+-    return 1;
+-
+-  *xi_prime = x2 - rx;
+-  *yi_prime = y2 - ry;
+-
+-  return 2;
+-}
+-
+-#undef TEST
+-
+-#ifdef TEST
+-
+-void run_test(double x0, double y0, double r0,
+-              double x1, double y1, double r1)
+-{
+-  double x3, y3, x3_prime, y3_prime;
+-
+-  printf("x0=%F, y0=%F, r0=%F, x1=%F, y1=%F, r1=%F :\n",
+-          x0, y0, r0, x1, y1, r1);
+-  circle_circle_intersection(x0, y0, r0, x1, y1, r1,
+-                             &x3, &y3, &x3_prime, &y3_prime);
+-  printf("  x3=%F, y3=%F, x3_prime=%F, y3_prime=%F\n",
+-            x3, y3, x3_prime, y3_prime);
+-}
+-
+-int main(void)
+-{
+-  /* Add more! */
+-  run_test(-1.0, -1.0, 1.5, 1.0, 1.0, 2.0);
+-  run_test(1.0, -1.0, 1.5, -1.0, 1.0, 2.0);
+-  run_test(-1.0, 1.0, 1.5, 1.0, -1.0, 2.0);
+-  run_test(1.0, 1.0, 1.5, -1.0, -1.0, 2.0);
+-  exit(0);
+-}
+-#endif
+-
+diff --git a/src/circle_circle_intersection.h b/src/circle_circle_intersection.h
+deleted file mode 100644
+index 2ca064c..0000000
+--- a/src/circle_circle_intersection.h
++++ /dev/null
+@@ -1,4 +0,0 @@
+-int circle_circle_intersection(double x0, double y0, double r0,
+-                               double x1, double y1, double r1,
+-                               double *xi, double *yi,
+-                               double *xi_prime, double *yi_prime);
+diff --git a/src/circle_line_intersection.c b/src/circle_line_intersection.c
+deleted file mode 100644
+index d934594..0000000
+--- a/src/circle_line_intersection.c
++++ /dev/null
+@@ -1,51 +0,0 @@
+-/* Based on raysphere.c from:
+- * http://paulbourke.net/geometry/circlesphere/index.html#linesphere
+- *
+- * Converted to PCB coordinate types, and line/circle intersection in 2D
+- * by Peter Clifton 2014-07-05
+- */
+-
+-
+-/*
+- * Calculate the intersection of a ray and a sphere
+- * The line segment is defined from p1 to p2
+- * The sphere is of radius r and centered at sc
+- * There are potentially two points of intersection given by
+- * p = p1 + mu1 (p2 - p1)
+- * p = p1 + mu2 (p2 - p1)
+- *
+- * Return 0 if the ray doesn't intersect the circle.
+- * Return 1 if the ray touches the circle at a single point.
+- * Return 2 if the ray intersects the circle.
+- */
+-int
+-circle_line_intersect (double cx, double cy, double r, double p1x, double p1y, double p2x, double p2y,
+-                       double *mu1, double *mu2)
+-{
+-   double a,b,c;
+-   double bb4ac;
+-   double dpx;
+-   double dpy;
+-   double dpz;
+-
+-   dpx = p2x - p1x;
+-   dpy = p2y - p1y;
+-   dpz = p2.z - p1.z;
+-   a = dp.x * dp.x + dp.y * dp.y + dp.z * dp.z;
+-   b = 2 * (dp.x * (p1x - sc.x) + dp.y * (p1y - sc.y) + dp.z * (p1.z - sc.z));
+-   c = sc.x * sc.x + sc.y * sc.y + sc.z * sc.z;
+-   c += p1x * p1x + p1y * p1y + p1.z * p1.z;
+-   c -= 2 * (sc.x * p1x + sc.y * p1y + sc.z * p1.z);
+-   c -= r * r;
+-   bb4ac = b * b - 4 * a * c;
+-   if (ABS(a) < EPS || bb4ac < 0) {
+-      *mu1 = 0;
+-      *mu2 = 0;
+-      return(FALSE);
+-   }
+-
+-   *mu1 = (-b + sqrt(bb4ac)) / (2 * a);
+-   *mu2 = (-b - sqrt(bb4ac)) / (2 * a);
+-
+-   return 2;
+-}
+diff --git a/src/circle_line_intersection.h b/src/circle_line_intersection.h
+deleted file mode 100644
+index c7920d2..0000000
+--- a/src/circle_line_intersection.h
++++ /dev/null
+@@ -1,3 +0,0 @@
+-int circle_line_intersect (double cx, double cy, double r,
+-                           double p1x, double p1y, double p2x, double p2y,
+-                           double *mu1, double *mu2);
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 22bdf3b..2c89c38 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -191,6 +191,17 @@ thindraw_contour (hidGC gc, PLINE *pl)
+             gui->graphics->fill_circle (gc, this_x, this_y, MIL_TO_COORD (3));
+           else
+             gui->graphics->draw_arc (gc, this_x, this_y, MIL_TO_COORD (3), MIL_TO_COORD (3), 0, 360);
++
++          /* Draw the bounding box for arg segments */
++          if (0)
++            {
++              BoxType *bound = get_seg_bounds (pl, v->prev);
++
++              gui->graphics->draw_line (gc, bound->X1, bound->Y1, bound->X2, bound->Y1);
++              gui->graphics->draw_line (gc, bound->X2, bound->Y1, bound->X2, bound->Y2);
++              gui->graphics->draw_line (gc, bound->X2, bound->Y2, bound->X1, bound->Y2);
++              gui->graphics->draw_line (gc, bound->X1, bound->Y2, bound->X1, bound->Y1);
++            }
+         }
+       else
+         {
+diff --git a/src/misc.c b/src/misc.c
+index 63d7ca4..a64a059 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -362,7 +362,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
+   hx = p1->X + (p2->X - p1->X) / 2;
+   hy = p1->Y + (p2->Y - p1->Y) / 2;
+ 
+-  p_to_h_dist = sqrt (pow(p2->X - p1->Y, 2) + pow (p2->Y - p1->Y, 2)) / 2.;
++  p_to_h_dist = hypot (p2->X - p1->Y, p2->Y - p1->Y) / 2.;
+   c_to_h_dist = p_to_h_dist / tan (TO_RADIANS (included_angle) / 2.);
+ 
+   unit_hcx = (float)-(hy - p1->Y) / p_to_h_dist;
+@@ -372,8 +372,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
+   *cy = hy + unit_hcy * c_to_h_dist;
+ 
+   if (radius != NULL)
+-    *radius = sqrt ((p1->X - *cx) * (p1->X - *cx) +
+-                    (p1->Y - *cy) * (p1->Y - *cy));
++    *radius = hypot (p1->X - *cx, p1->Y - *cy);
+ 
+   if (start_angle != NULL)
+     *start_angle = atan2 ((p1->Y - *cy), -(p1->X - *cx)) / M180;
+@@ -1643,7 +1642,7 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
+ 
+   /* Make sure full circles aren't treated as zero-length arcs */
+   if (fabs (delta_angle - 360.) < EPSILON ||
+-      fabs (delta_angle + 360.) < EPSILON);
++      fabs (delta_angle + 360.) < EPSILON)
+     ang2 = ang1 + 360.;
+ 
+   /* calculate sines, cosines */
+@@ -1652,10 +1651,10 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
+   sa2 = sin (M180 * ang2);
+   ca2 = cos (M180 * ang2);
+ 
+-  bound.X1 = MIN (ca1, ca2);
+-  bound.X2 = MAX (ca1, ca2);
+-  bound.Y1 = MIN (sa1, sa2);
+-  bound.Y2 = MAX (sa1, sa2);
++  minx = MIN (ca1, ca2);
++  maxx = MAX (ca1, ca2);
++  miny = MIN (sa1, sa2);
++  maxy = MAX (sa1, sa2);
+ 
+   /* Check for extreme angles */
+   if ((ang1 <= 0   && ang2 >= 0)   || (ang1 <= 360 && ang2 >= 360)) maxx = 1;
+diff --git a/src/polygon.c b/src/polygon.c
+index cf526de..41ae7a7 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -110,7 +110,7 @@ dicer output is used for HIDs which cannot render things with holes
+ #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
+ 
+ //#define UNSUBTRACT_BLOAT MIL_TO_COORD (0.1)
+-#define UNSUBTRACT_BLOAT 10
++#define UNSUBTRACT_BLOAT 100 /*10*/
+ #define SUBTRACT_PIN_VIA_BATCH_SIZE 100 /*100*/
+ #define SUBTRACT_LINE_BATCH_SIZE 20 /*20*/
+ 
+diff --git a/src/polygon.h b/src/polygon.h
+index 2ed2b62..b95bf15 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -107,4 +107,6 @@ void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
+                           void (*emit) (PLINE *, void *), void *user_data);
+ void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
+ POLYAREA *board_outline_poly (bool include_holes);
++
++BoxType *get_seg_bounds (PLINE *contour, VNODE *node);
+ #endif
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 3500c2f..7f98432 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -51,10 +51,12 @@
+ #include "heap.h"
+ #include "pcb-printf.h"
+ #include "misc.h"
++#include "circle_line_intersect.h"
++#include "circle_circle_intersect.h"
+ 
+ #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
+ 
+-#define EPSILON (1E-8)
++#define EPSILON (1E-6)
+ #define IsZero(a, b) (fabs((a) - (b)) < EPSILON)
+ 
+ /*********************************************************************/
+@@ -219,10 +221,24 @@ node_add_single (VNODE * dest, Vector po)
+ {
+   VNODE *p;
+ 
+-  if (vect_equal (po, dest->point))
+-    return dest;
+-  if (vect_equal (po, dest->next->point))
+-    return dest->next;
++  pcb_printf ("  New node is %f from previous, %f from next",
++              vect_dist2 (po, dest->point),
++              vect_dist2 (po, dest->next->point));
++
++#warning NOT SURE WHAT A SENSIBLE EPSILON IN INTEGER NANOMETERS IS - INCORRECT NUMBERS ONE WAY OR THE OTHER CAUSE BREAKAGE
++  if (vect_dist2 (po, dest->point) < 3.)
++    {
++      printf ("\n");
++      return dest;
++    }
++  if (vect_dist2 (po, dest->next->point) < 3.)
++    {
++      printf ("\n");
++      return dest->next;
++    }
++
++  printf (" - (CREATING NEW NODE)\n");
++
+   p = poly_CreateNodeFull (po, dest->is_round, dest->cx, dest->cy, dest->radius);
+   if (p == NULL)
+     return NULL;
+@@ -549,7 +565,7 @@ typedef struct info
+   VNODE *v;
+   struct seg *s;
+   jmp_buf *env, sego, *touch;
+-  int need_restart;
++//  int need_restart;
+   insert_node_task *node_insert_list;
+ } info;
+ 
+@@ -558,7 +574,7 @@ typedef struct contour_info
+   PLINE *pa;
+   jmp_buf restart;
+   jmp_buf *getout;
+-  int need_restart;
++//  int need_restart;
+   insert_node_task *node_insert_list;
+ } contour_info;
+ 
+@@ -584,6 +600,31 @@ adjust_tree (rtree_t * tree, struct seg *s)
+   q->box.X2 = max (q->v->point[0], q->v->next->point[0]) + 1;
+   q->box.Y1 = min (q->v->point[1], q->v->next->point[1]);
+   q->box.Y2 = max (q->v->point[1], q->v->next->point[1]) + 1;
++
++  if (q->v->is_round)
++    {
++      Angle start_angle;
++      Angle end_angle;
++      Angle delta_angle;
++      BoxType arc_bound;
++
++      start_angle = atan2 ((      q->v->point[1] - q->v->cy), -(      q->v->point[0] - q->v->cx)) / M180;
++      end_angle   = atan2 ((q->v->next->point[1] - q->v->cy), -(q->v->next->point[0] - q->v->cx)) / M180;
++
++#warning delta angle calculation looks rather suspect - wont work for arcs > 180 degrees span
++      delta_angle = end_angle - start_angle;
++
++      if (delta_angle > 180.) delta_angle -= 360.;
++      if (delta_angle < -180.) delta_angle += 360.;
++
++      arc_bound = calc_thin_arc_bounds (q->v->cx, q->v->cy, q->v->radius, q->v->radius, start_angle, delta_angle);
++
++      MAKEMIN (q->box.X1, arc_bound.X1);
++      MAKEMIN (q->box.Y1, arc_bound.Y1);
++      MAKEMAX (q->box.X2, arc_bound.X2);
++      MAKEMAX (q->box.Y2, arc_bound.Y2);
++    }
++
+   r_insert_entry (tree, (const BoxType *) q, 1);
+   q = (seg *)malloc (sizeof (struct seg));
+   if (!q)
+@@ -595,6 +636,31 @@ adjust_tree (rtree_t * tree, struct seg *s)
+   q->box.X2 = max (q->v->point[0], q->v->next->point[0]) + 1;
+   q->box.Y1 = min (q->v->point[1], q->v->next->point[1]);
+   q->box.Y2 = max (q->v->point[1], q->v->next->point[1]) + 1;
++
++  if (q->v->is_round)
++    {
++      Angle start_angle;
++      Angle end_angle;
++      Angle delta_angle;
++      BoxType arc_bound;
++
++      start_angle = atan2 ((      q->v->point[1] - q->v->cy), -(      q->v->point[0] - q->v->cx)) / M180;
++      end_angle   = atan2 ((q->v->next->point[1] - q->v->cy), -(q->v->next->point[0] - q->v->cx)) / M180;
++
++#warning delta angle calculation looks rather suspect - wont work for arcs > 180 degrees span
++      delta_angle = end_angle - start_angle;
++
++      if (delta_angle > 180.) delta_angle -= 360.;
++      if (delta_angle < -180.) delta_angle += 360.;
++
++      arc_bound = calc_thin_arc_bounds (q->v->cx, q->v->cy, q->v->radius, q->v->radius, start_angle, delta_angle);
++
++      MAKEMIN (q->box.X1, arc_bound.X1);
++      MAKEMIN (q->box.Y1, arc_bound.Y1);
++      MAKEMAX (q->box.X2, arc_bound.X2);
++      MAKEMAX (q->box.Y2, arc_bound.Y2);
++    }
++
+   r_insert_entry (tree, (const BoxType *) q, 1);
+   r_delete_entry (tree, (const BoxType *) s);
+   return 0;
+@@ -656,10 +722,25 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+   Vector v1, v2;
+   int cnt;
+ 
++  assert (!s1->v->is_round);
++  assert (!s2->v->is_round);
++
+   cnt = vect_inters2 (s1->v->point, s1->v->next->point,
+                       s2->v->point, s2->v->next->point, v1, v2);
+-  if (!cnt)
+-    return 0;
++
++  printf ("Intersecting\n");
++
++  pcb_printf ("  Line   %p (%mm, %mm)-(%mm, %mm)\n",
++              s1->v, s1->v->point[0], s1->v->point[1], s1->v->next->point[0], s1->v->next->point[1]);
++
++  pcb_printf ("  Line   %p (%mm, %mm)-(%mm, %mm) - intersect count is %i\n",
++              s2->v, s2->v->point[0], s2->v->point[1], s2->v->next->point[0], s2->v->next->point[1], cnt);
++
++  if (cnt == 0)
++    {
++      printf ("\n");
++      return 0;
++    }
+ 
+   if (i->touch)  /* if checking touches one find and we're done */
+     longjmp (*i->touch, TOUCHES);
+@@ -670,8 +751,10 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+ 
+   for (; cnt; cnt--)
+     {
+-      bool done_insert_on_s1 = insert_vertex_in_seg (i, s2, cnt > 1 ? v2 : v1);
+-      bool done_insert_on_s2 = insert_vertex_in_seg (i, s1, cnt > 1 ? v2 : v1);
++      bool done_insert_on_s1 = insert_vertex_in_seg (i, s1, cnt > 1 ? v2 : v1); /* Was s2 */
++      bool done_insert_on_s2 = insert_vertex_in_seg (i, s2, cnt > 1 ? v2 : v1); /* Was s1 */
++
++      printf ("\n");
+ 
+       /* Skip any remaining r_search hits against segment i, as any futher
+        * intersections will be rejected until the next pass anyway.
+@@ -693,12 +776,147 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+ static int
+ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+ {
++  double m1, m2;
++  Vector v1, v2;
++  int cnt;
++  Angle start_angle;
++  Angle end_angle;
++  Angle delta_angle;
++
+   assert (s1->v->is_round);
+   assert (!s2->v->is_round);
+ 
+-//  printf ("Querying arc-line intersection\n");
+-  /* COP OUT */
+-  return seg_in_seg_line_line (i, s1, s2);
++  cnt = circle_line_intersect ((double)s1->v->cx, (double)s1->v->cy, (double)s1->v->radius,
++                               (double)      s2->v->point[0], (double)      s2->v->point[1],
++                               (double)s2->v->next->point[0], (double)s2->v->next->point[1],
++                               &m1, &m2);
++  if (cnt == 0)
++    return 0;
++
++  start_angle = atan2 ((      s1->v->point[1] - s1->v->cy), -(      s1->v->point[0] - s1->v->cx)) / M180;
++  end_angle   = atan2 ((s1->v->next->point[1] - s1->v->cy), -(s1->v->next->point[0] - s1->v->cx)) / M180;
++
++  #warning delta angle calculation looks rather suspect - wont work for arcs > 180 degrees span
++  delta_angle = end_angle - start_angle;
++
++  if (delta_angle > 180.) delta_angle -= 360.;
++  if (delta_angle < -180.) delta_angle += 360.;
++
++  printf ("Intersecting\n");
++
++  pcb_printf ("  circle %p (%mm, %mm) R=%mm, start_angle=%f, end_angle=%f, delta_angle=%f\n",
++              s1->v, s1->v->cx, s1->v->cy, s1->v->radius, start_angle, end_angle, delta_angle);
++
++  pcb_printf ("  Line   %p (%mm, %mm)-(%mm, %mm) - intersect count is %i\n",
++              s2->v, s2->v->point[0], s2->v->point[1], s2->v->next->point[0], s2->v->next->point[1], cnt);
++
++  if (cnt == 2)
++    {
++      if (m2 < 0. - EPSILON || m2 > 1. + EPSILON)
++        {
++          printf ("  Second intersection is out of line bounds, m2 = %f\n", m2);
++          cnt--;
++        }
++      else
++        /* Process whether the m2 intersection lies on the arc */
++        {
++          Angle m2_angle;
++          Angle m2_delta;
++
++          Vcopy (v2, s2->v->point);
++          v2[0] += m2 * (s2->v->next->point[0] - s2->v->point[0]);
++          v2[1] += m2 * (s2->v->next->point[1] - s2->v->point[1]);
++
++          m2_angle = atan2 ((v2[1] - s1->v->cy), -(v2[0] - s1->v->cx)) / M180;
++          m2_delta = m2_angle - start_angle;
++
++          if (m2_delta > 180.) m2_delta -= 360.;
++          if (m2_delta < -180.) m2_delta += 360.;
++
++          pcb_printf ("  Second intersection is at (%mm, %mm), angle %f\n", v2[0], v2[1], m2_angle);
++
++          if ((delta_angle > 0. && ( m2_delta < 0. - EPSILON ||  m2_delta >  delta_angle + EPSILON)) ||
++              (delta_angle < 0. && (-m2_delta < 0. - EPSILON || -m2_delta > -delta_angle + EPSILON)))
++            {
++              printf ("  Excluding second intersection, as not on arc, m2_angle=%f m2_delta=%f, delta_angle=%f\n",
++                      m2_angle, m2_delta, delta_angle);
++              cnt --;
++            }
++        }
++    }
++
++  if (m1 < 0. - EPSILON || m1 > 1. + EPSILON)
++    {
++      printf ("  First intersection is out of line bounds, m1 = %f\n", m1);
++      cnt--;
++      m1 = m2;
++      Vcopy (v1, v2);
++    }
++  else
++    {
++      Angle m1_angle;
++      Angle m1_delta;
++
++      Vcopy (v1, s2->v->point);
++      v1[0] += m1 * (s2->v->next->point[0] - s2->v->point[0]);
++      v1[1] += m1 * (s2->v->next->point[1] - s2->v->point[1]);
++
++      m1_angle = atan2 ((v1[1] - s1->v->cy), -(v1[0] - s1->v->cx)) / M180;
++      m1_delta = m1_angle - start_angle;
++
++      if (m1_delta > 180.) m1_delta -= 360.;
++      if (m1_delta < -180.) m1_delta += 360.;
++
++      pcb_printf ("  First intersection is at (%mm, %mm), angle %f\n", v1[0], v1[1], m1_angle);
++
++      if ((delta_angle > 0. && ( m1_delta < 0. - EPSILON ||  m1_delta >  delta_angle + EPSILON)) ||
++          (delta_angle < 0. && (-m1_delta < 0. - EPSILON || -m1_delta > -delta_angle + EPSILON)))
++        {
++          printf ("  Excluding first intersection, as not on arc, m1_angle=%f m1_delta=%f, delta_angle=%f\n",
++                  m1_angle, m1_delta, delta_angle);
++          cnt --;
++          m1 = m2;
++          Vcopy (v1, v2);
++        }
++    }
++
++  /* Process whether the m1 intersection lies on the arc */
++
++  if (cnt == 0)
++    {
++      printf ("\n");
++      return 0;
++    }
++
++  if (i->touch)  /* if checking touches one find and we're done */
++    longjmp (*i->touch, TOUCHES);
++
++  /* Mark the contour PLINEs as intersected */
++  s1->p->Flags.status = ISECTED;
++  s2->p->Flags.status = ISECTED;
++
++  for (; cnt; cnt--)
++    {
++      bool done_insert_on_s1 = insert_vertex_in_seg (i, s1, cnt > 1 ? v2 : v1); /* Was s2 */
++      bool done_insert_on_s2 = insert_vertex_in_seg (i, s2, cnt > 1 ? v2 : v1); /* Was s1 */
++
++      printf ("\n");
++
++      /* Skip any remaining r_search hits against segment i, as any futher
++       * intersections will be rejected until the next pass anyway.
++       */
++      if ((done_insert_on_s1 && s1 == i->s) ||
++          (done_insert_on_s2 && s2 == i->s))
++        longjmp (*i->env, 1);
++
++      /* If we inserted on s (but not i), skip return now, as we can't continue with
++       * the for-loop iteration if we modified geoemtry
++       */
++      if (done_insert_on_s1 || done_insert_on_s2)
++        return 0;
++    }
++
++  return 0;
+ }
+ 
+ static int
+@@ -771,8 +989,8 @@ make_edge_tree (PLINE * pb)
+           Angle delta_angle;
+           BoxType arc_bound;
+ 
+-          start_angle = atan2 ((      bv->point[1] -       bv->cy), -(      bv->point[0] -       bv->cx)) / M180;
+-          end_angle   = atan2 ((bv->next->point[1] - bv->next->cy), -(bv->next->point[0] - bv->next->cx)) / M180;
++          start_angle = atan2 ((      bv->point[1] - bv->cy), -(      bv->point[0] - bv->cx)) / M180;
++          end_angle   = atan2 ((bv->next->point[1] - bv->cy), -(bv->next->point[0] - bv->cx)) / M180;
+ 
+ #warning delta angle calculation looks rather suspect - wont work for arcs > 180 degrees span
+           delta_angle = end_angle - start_angle;
+@@ -843,7 +1061,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
+   /* Have seg_in_seg return to our desired location if it touches */
+   info.env = &restart;
+   info.touch = c_info->getout;
+-  info.need_restart = 0;
++//  info.need_restart = 0;
+   info.node_insert_list = c_info->node_insert_list;
+ 
+   /* Pick which contour has the fewer points, and do the loop
+@@ -903,8 +1121,8 @@ contour_bounds_touch (const BoxType * b, void *cl)
+   while ((av = av->next) != &looping_over->head);
+ 
+   c_info->node_insert_list = info.node_insert_list;
+-  if (info.need_restart)
+-    c_info->need_restart = 1;
++//  if (info.need_restart)
++//    c_info->need_restart = 1;
+   return 0;
+ }
+ 
+@@ -916,7 +1134,7 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+   contour_info c_info;
+   int need_restart = 0;
+   insert_node_task *task;
+-  c_info.need_restart = 0;
++//  c_info.need_restart = 0;
+   c_info.node_insert_list = NULL;
+ 
+   /* Search the r-tree of the object with most contours
+@@ -956,8 +1174,8 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+       sb.Y2 = pa->ymax + 1;
+ 
+       r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
+-      if (c_info.need_restart)
+-	need_restart = 1;
++//      if (c_info.need_restart)
++//	need_restart = 1;
+     }
+ 
+   /* Process any deferred node insersions */
+@@ -973,7 +1191,8 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+       task->node_seg->v->next = task->new_node;
+       task->node_seg->p->Count++;
+ 
+-      cntrbox_adjust (task->node_seg->p, task->new_node->point);
++#warning NEED AN UPDATE FOR ROUND CONTOURS HERE?
++      cntrbox_adjust (task->node_seg->p, task->new_node->point); /* XXX: DOES THIS WORK / MATTER FOR ARC SEGMENT INSERTIONS? */
+       if (adjust_tree (task->node_seg->p->tree, task->node_seg))
+ 	assert (0); /* XXX: Memory allocation failure */
+ 
+@@ -2643,6 +2862,7 @@ poly_NewContour (VNODE *node)
+   res->head.cx = node->cx;
+   res->head.cy = node->cy;
+   res->head.radius = node->radius;
++#warning THIS WILL BE BOGUS IF WE GET A CIRCULAR CONTOUR STARTING AT THE HEAD.. NEED 2ND POINT TO DETMERMINE BOUNDS
+   cntrbox_adjust (res, res->head.point);
+   free (node);
+ 
+@@ -2743,7 +2963,31 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+ 	  area +=
+ 	    (double) (p->point[0] - c->point[0]) * (p->point[1] +
+ 						    c->point[1]);
++#warning NEED TO CATER FOR A ROUND SEGMENT
+ 	  cntrbox_adjust (C, c->point);
++          if (p->is_round)
++            {
++              Angle start_angle;
++              Angle end_angle;
++              Angle delta_angle;
++              BoxType arc_bound;
++
++              start_angle = atan2 ((p->point[1] - p->cy), -(p->point[0] - p->cx)) / M180;
++              end_angle   = atan2 ((c->point[1] - p->cy), -(c->point[0] - p->cx)) / M180;
++
++#warning delta angle calculation looks rather suspect - wont work for arcs > 180 degrees span
++              delta_angle = end_angle - start_angle;
++
++              if (delta_angle > 180.) delta_angle -= 360.;
++              if (delta_angle < -180.) delta_angle += 360.;
++
++              arc_bound = calc_thin_arc_bounds (p->cx, p->cy, p->radius, p->radius, start_angle, delta_angle);
++
++              C->xmin = min (C->xmin, arc_bound.X1);
++              C->xmax = max (C->xmax, arc_bound.X2);
++              C->ymin = min (C->ymin, arc_bound.Y1);
++              C->ymax = max (C->ymax, arc_bound.Y2);
++            }
+ 	  C->Count++;
+ 	}
+       while ((c = (p = c)->next) != &C->head);
+@@ -3777,3 +4021,35 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+  * perhaps reverse tracing the arc would require look-ahead to check
+  * for arcs
+  */
++
++
++BoxType *
++get_seg_bounds (PLINE *contour, VNODE *node)
++{
++  struct info info;
++  BoxType box;
++  double dx;
++
++  info.v = node;
++  /* compute the slant for region trimming */
++  dx = node->next->point[0] - node->point[0];
++  if (dx == 0)
++    info.m = 0;
++  else
++    {
++      info.m = (node->next->point[1] - node->point[1]) / dx;
++      info.b = node->point[1] - info.m * node->point[0];
++    }
++
++  box.X2 = (box.X1 = node->point[0]) + 1;
++  box.Y2 = (box.Y1 = node->point[1]) + 1;
++
++  /* fill in the segment in info corresponding to this node */
++  if (setjmp (info.sego) == 0)
++    {
++      r_search (contour->tree, &box, NULL, get_seg, &info);
++      assert (0);
++    }
++
++  return &info.s->box;
++}
