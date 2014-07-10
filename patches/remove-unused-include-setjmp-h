@@ -1,5 +1,5 @@
 Bottom: 5e44b8e1db72d461571f5d349a16491ecec53c9d
-Top:    5e44b8e1db72d461571f5d349a16491ecec53c9d
+Top:    da232b7c6a47b39357b9fdb436936daa0542b8a3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-10 18:58:15 +0100
 
@@ -8,4 +8,39 @@ Remove unused #include "setjmp.h" from a few files
 
 ---
 
-
+diff --git a/src/change.c b/src/change.c
+index 59bf4a4..88d4b9f 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -34,7 +34,6 @@
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
+-#include <setjmp.h>
+ 
+ #include "global.h"
+ 
+diff --git a/src/print.c b/src/print.c
+index 69328e7..4074ac2 100644
+--- a/src/print.c
++++ b/src/print.c
+@@ -44,7 +44,6 @@
+ #ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif
+-#include <setjmp.h>
+ 
+ 
+ #include "data.h"
+diff --git a/src/thermal.c b/src/thermal.c
+index 2f91d7d..083bf5e 100644
+--- a/src/thermal.c
++++ b/src/thermal.c
+@@ -41,7 +41,6 @@
+ #include <string.h>
+ #endif
+ #include <assert.h>
+-#include <setjmp.h>
+ #include <memory.h>
+ #include <ctype.h>
+ #include <signal.h>
