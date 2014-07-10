@@ -1,7 +1,7 @@
-Bottom: b52d31345c1dccd7dcb40065b9b0d638ce3a0a22
-Top:    70dfc59ce2259f088dcbad8df0c6d9111c0fec10
+Bottom: 4b8a18879aa4e38335a2e8cce31d913109ef9e37
+Top:    cb384cf4aef421ccd5ec770441c52ceddc51b899
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2014-07-05 17:15:36 +0100
+Date:   2014-07-10 19:01:35 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -35,10 +35,10 @@ index 3b51ba1..5536016 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 59bf4a4..3dd17a1 100644
+index 88d4b9f..b8f2e41 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -120,6 +120,9 @@ static void *ChangeTextJoin (LayerType *, TextType *);
+@@ -119,6 +119,9 @@ static void *ChangeTextJoin (LayerType *, TextType *);
  static void *SetTextJoin (LayerType *, TextType *);
  static void *ClrTextJoin (LayerType *, TextType *);
  static void *ChangePolyClear (LayerType *, PolygonType *);
@@ -48,7 +48,7 @@ index 59bf4a4..3dd17a1 100644
  
  /* ---------------------------------------------------------------------------
   * some local identifiers
-@@ -214,7 +217,7 @@ static ObjectFunctionType ChangeSquareFunctions = {
+@@ -213,7 +216,7 @@ static ObjectFunctionType ChangeSquareFunctions = {
  static ObjectFunctionType ChangeJoinFunctions = {
    ChangeLineJoin,
    ChangeTextJoin,
@@ -57,7 +57,7 @@ index 59bf4a4..3dd17a1 100644
    NULL,
    NULL,
    NULL,
-@@ -274,7 +277,7 @@ static ObjectFunctionType SetSquareFunctions = {
+@@ -273,7 +276,7 @@ static ObjectFunctionType SetSquareFunctions = {
  static ObjectFunctionType SetJoinFunctions = {
    SetLineJoin,
    SetTextJoin,
@@ -66,7 +66,7 @@ index 59bf4a4..3dd17a1 100644
    NULL,
    NULL,
    NULL,
-@@ -316,7 +319,7 @@ static ObjectFunctionType ClrSquareFunctions = {
+@@ -315,7 +318,7 @@ static ObjectFunctionType ClrSquareFunctions = {
  static ObjectFunctionType ClrJoinFunctions = {
    ClrLineJoin,
    ClrTextJoin,
@@ -75,7 +75,7 @@ index 59bf4a4..3dd17a1 100644
    NULL,
    NULL,
    NULL,
-@@ -1240,6 +1243,31 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
+@@ -1239,6 +1242,31 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
  }
  
  /* ---------------------------------------------------------------------------
@@ -107,7 +107,7 @@ index 59bf4a4..3dd17a1 100644
   * sets the clearance flag of a text
   */
  static void *
-@@ -1251,6 +1279,17 @@ SetTextJoin (LayerType *Layer, TextType *Text)
+@@ -1250,6 +1278,17 @@ SetTextJoin (LayerType *Layer, TextType *Text)
  }
  
  /* ---------------------------------------------------------------------------
@@ -125,7 +125,7 @@ index 59bf4a4..3dd17a1 100644
   * clears the clearance flag of a text
   */
  static void *
-@@ -1262,6 +1301,17 @@ ClrTextJoin (LayerType *Layer, TextType *Text)
+@@ -1261,6 +1300,17 @@ ClrTextJoin (LayerType *Layer, TextType *Text)
  }
  
  /* ---------------------------------------------------------------------------
