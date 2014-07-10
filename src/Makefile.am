@@ -56,6 +56,10 @@ PCB_SRCS = \
 	borast/borast-wideint-type-private.h \
 	change.c \
 	change.h \
+	circle_circle_intersect.c \
+	circle_circle_intersect.h \
+	circle_line_intersect.c \
+	circle_line_intersect.h \
 	clip.c \
 	clip.h \
 	command.c \
