@@ -1,7 +1,7 @@
-Bottom: 1a3e94fc4e52ca7701c1e7eea71ec083710c0a2a
-Top:    348f4866dccbcef011422a33bb60fb203b2bf926
+Bottom: b719dfb93e05b433b433c99247e52d139702c630
+Top:    6f5ecafee9f38d0338a436aed03b359418c51eb8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2014-07-05 17:15:17 +0100
+Date:   2014-07-10 19:01:16 +0100
 
 Fix thermal generation
 
@@ -12,10 +12,10 @@ designs, and files created with it will not load the same in mainline git.
 ---
 
 diff --git a/src/thermal.c b/src/thermal.c
-index 2f91d7d..d7229ea 100644
+index 083bf5e..e428b41 100644
 --- a/src/thermal.c
 +++ b/src/thermal.c
-@@ -423,7 +423,7 @@ ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
+@@ -422,7 +422,7 @@ ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
        {
          POLYAREA *m;
          Coord t = (pin->Thickness + pin->Clearance) / 2;
@@ -24,7 +24,7 @@ index 2f91d7d..d7229ea 100644
          pa = CirclePoly (pin->X, pin->Y, t);
          arc = CirclePoly (pin->X, pin->Y, pin->Thickness / 2);
          /* create a thin ring */
-@@ -434,18 +434,18 @@ ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
+@@ -433,18 +433,18 @@ ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
              /* t is the theoretically required length, but we use twice that
               * to avoid descritisation errors in our circle approximation.
               */
@@ -47,7 +47,7 @@ index 2f91d7d..d7229ea 100644
            }
          poly_Boolean_free (arc, pa, &m, PBO_SUB);
          return m;
-@@ -459,9 +459,21 @@ ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
+@@ -458,9 +458,21 @@ ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
        a.Thickness = 1;
        a.Clearance = pin->Clearance / 2;
        a.Flags = NoFlags ();
