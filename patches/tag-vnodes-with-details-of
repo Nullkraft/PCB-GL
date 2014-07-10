@@ -1,7 +1,7 @@
-Bottom: 3bae4b794efc0dbd97d0706386923cdf7c6fc6b0
-Top:    d07cfe0a2cb2e22b83f630f0a1063316ec79608f
+Bottom: ac2f6563937881166742c1de676abd5a030f8be6
+Top:    daed52f7d254a5c7a9a6dad81ec34271842b424c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-07-04 04:24:34 +0100
+Date:   2014-07-10 19:01:32 +0100
 
 Tag VNODEs with details of circular contour segments
 
@@ -932,10 +932,10 @@ index 7d6fab6..694a161 100644
        // newnode->Flags = cur->Flags;
        poly_InclVertex ((*dst)->head.prev, newnode);
 diff --git a/src/thermal.c b/src/thermal.c
-index 2f91d7d..aadd20e 100644
+index 083bf5e..753182c 100644
 --- a/src/thermal.c
 +++ b/src/thermal.c
-@@ -107,7 +107,7 @@ diag_line (Coord X, Coord Y, Coord l, Coord w, bool rt)
+@@ -106,7 +106,7 @@ diag_line (Coord X, Coord Y, Coord l, Coord w, bool rt)
  
    v[0] = X + x1;
    v[1] = Y + y2;
@@ -944,7 +944,7 @@ index 2f91d7d..aadd20e 100644
      return NULL;
    v[0] = X - x2;
    v[1] = Y - y1;
-@@ -138,7 +138,7 @@ square_therm (PinType *pin, Cardinal style)
+@@ -137,7 +137,7 @@ square_therm (PinType *pin, Cardinal style)
        /* top (actually bottom since +y is down) */
        v[0] = pin->X - in + d;
        v[1] = pin->Y + in;
@@ -953,7 +953,7 @@ index 2f91d7d..aadd20e 100644
          return NULL;
        v[0] = pin->X + in - d;
        poly_InclVertex (c->head.prev, poly_CreateNode (v));
-@@ -151,7 +151,7 @@ square_therm (PinType *pin, Cardinal style)
+@@ -150,7 +150,7 @@ square_therm (PinType *pin, Cardinal style)
        /* right */
        v[0] = pin->X + in;
        v[1] = pin->Y + in - d;
@@ -962,7 +962,7 @@ index 2f91d7d..aadd20e 100644
          return NULL;
        v[1] = pin->Y - in + d;
        poly_InclVertex (c->head.prev, poly_CreateNode (v));
-@@ -166,7 +166,7 @@ square_therm (PinType *pin, Cardinal style)
+@@ -165,7 +165,7 @@ square_therm (PinType *pin, Cardinal style)
        /* left */
        v[0] = pin->X - in;
        v[1] = pin->Y - in + d;
@@ -971,7 +971,7 @@ index 2f91d7d..aadd20e 100644
          return NULL;
        v[1] = pin->Y + in - d;
        poly_InclVertex (c->head.prev, poly_CreateNode (v));
-@@ -181,7 +181,7 @@ square_therm (PinType *pin, Cardinal style)
+@@ -180,7 +180,7 @@ square_therm (PinType *pin, Cardinal style)
        /* bottom (actually top since +y is down) */
        v[0] = pin->X + in - d;
        v[1] = pin->Y - in;
@@ -980,7 +980,7 @@ index 2f91d7d..aadd20e 100644
          return NULL;
        v[0] = pin->X - in + d;
        poly_InclVertex (c->head.prev, poly_CreateNode (v));
-@@ -242,7 +242,7 @@ square_therm (PinType *pin, Cardinal style)
+@@ -241,7 +241,7 @@ square_therm (PinType *pin, Cardinal style)
        /* topright */
        v[0] = pin->X + in;
        v[1] = pin->Y + in;
@@ -989,7 +989,7 @@ index 2f91d7d..aadd20e 100644
          return NULL;
        v[1] = pin->Y + d;
        poly_InclVertex (c->head.prev, poly_CreateNode (v));
-@@ -271,7 +271,7 @@ square_therm (PinType *pin, Cardinal style)
+@@ -270,7 +270,7 @@ square_therm (PinType *pin, Cardinal style)
        /* bottom right */
        v[0] = pin->X + in;
        v[1] = pin->Y - d;
@@ -998,7 +998,7 @@ index 2f91d7d..aadd20e 100644
          return NULL;
        v[1] = pin->Y - in;
        poly_InclVertex (c->head.prev, poly_CreateNode (v));
-@@ -298,7 +298,7 @@ square_therm (PinType *pin, Cardinal style)
+@@ -297,7 +297,7 @@ square_therm (PinType *pin, Cardinal style)
        /* bottom left */
        v[0] = pin->X - d;
        v[1] = pin->Y - in;
@@ -1007,7 +1007,7 @@ index 2f91d7d..aadd20e 100644
          return NULL;
        v[0] = pin->X - in;
        poly_InclVertex (c->head.prev, poly_CreateNode (v));
-@@ -325,7 +325,7 @@ square_therm (PinType *pin, Cardinal style)
+@@ -324,7 +324,7 @@ square_therm (PinType *pin, Cardinal style)
        /* top left */
        v[0] = pin->X - d;
        v[1] = pin->Y + out;
