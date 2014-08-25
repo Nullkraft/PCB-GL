@@ -1,0 +1,14 @@
+Bottom: 1caa73d820006b78e08b8aa2dec8f2a8a3019fb2
+Top:    1caa73d820006b78e08b8aa2dec8f2a8a3019fb2
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-08-25 03:07:27 +0100
+
+Avoid solving snap-rounding problem
+
+Always intersect the original line geometry, and hope topology changes caused by
+snap-rounding issues don't bite us in our output.
+
+
+---
+
+
