@@ -9,6 +9,21 @@ Always intersect the original line geometry, and hope topology changes caused by
 snap-rounding issues don't bite us in our output.
 
 
+For now - only line-line intersections are enabled, and we still perform multiple
+passes through the contours, just as we did before to try and avoid snap-rounding.
+
+Turns out if we enable EPSILONs for node_add_single, we may break adding CVC
+records for the "near enough" vertices. (The insert_descriptor() function checks
+exact coordinate equality).
+
+If we enable EPSILON for the intersection tests on-line/off-line tests, it causes
+problems. (The reason for this is not entirely clear, but likely the current
+EPSILON of 1E-6 allows too much offset.)
+
+Lets say 1E-6 * distance of line-segment of say 5,000,000nm (5mm). One EPSILON out
+would then be an error of 5nm.
+
+
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
