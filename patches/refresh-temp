@@ -1,0 +1,277 @@
+Bottom: 65ad17dd92d78df272ac1ed6debda15fb071813c
+Top:    9e7e5f5f2c6088bf9afcdfed238104eb5048f880
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-08-28 00:22:51 +0100
+
+Refresh of avoid-solving-snap-rounding
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 94d1d0a..c4f086c 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -287,16 +287,27 @@ new_descriptor (VNODE * a, char poly, char side)
+   l->poly = poly;
+   l->side = side;
+   l->next = l->prev = l;
++#if 0
+   if (side == 'P')		/* previous */
+     vect_sub (v, a->prev->point, a->point);
+   else				/* next */
+     vect_sub (v, a->next->point, a->point);
++#else
++  /* XXX: Not entirely sure about these */
++  if (side == 'P')		/* previous */
++    vect_sub (v, a->prev->orig_point0, a->prev->orig_point1);
++  else				/* next */
++    vect_sub (v, a->orig_point1, a->orig_point0);
++#endif
++
+   /* Uses slope/(slope+1) in quadrant 1 as a proxy for the angle.
+    * It still has the same monotonic sort result
+    * and is far less expensive to compute than the real angle.
+    */
+   if (vect_equal (v, vect_zero))
+     {
++      printf ("OH DEAR.. THIS ISN'T GOING TO END WELL\n");
++      *(char *)0 = 0;
+       if (side == 'P')
+ 	{
+ 	  if (a->prev->cvc_prev == (CVCList *) - 1)
+@@ -796,14 +807,14 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+ //      if (s1->v->p0 - EPSILON > s1_i2 || s1_i2 > s1->v->p1 + EPSILON)
+       if (s1->v->p0 > s1_i2 || s1_i2 > s1->v->p1)
+         {
+-          printf ("  Second intersection is off the first line bounds\n");
++//          printf ("  Second intersection is off the first line bounds\n");
+           printf ("BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (In the way we handle this... - might still be valid intersection)\n");
+           cnt--;
+         }
+ //      else if (s2->v->p0 - EPSILON > s2_i2 || s2_i2 > s2->v->p1 + EPSILON)
+       else if (s2->v->p0 > s2_i2 || s2_i2 > s2->v->p1)
+         {
+-          printf ("  Second intersection is off the second line bounds\n");
++//          printf ("  Second intersection is off the second line bounds\n");
+           printf ("BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (In the way we handle this... - might still be valid intersection)\n");
+           cnt--;
+         }
+@@ -1176,9 +1187,11 @@ contour_bounds_touch (const BoxType * b, void *cl)
+   av = &looping_over->head;
+   do				/* Loop over the nodes in the smaller contour */
+     {
++      /* XXX: Use original slope rather than that of the intersected segments? */
+       /* check this edge for any insertions */
+       double dx;
+       info.v = av;
++#if 0
+       /* compute the slant for region trimming */
+       dx = av->next->point[0] - av->point[0];
+       if (dx == 0)
+@@ -1188,6 +1201,17 @@ contour_bounds_touch (const BoxType * b, void *cl)
+ 	  info.m = (av->next->point[1] - av->point[1]) / dx;
+ 	  info.b = av->point[1] - info.m * av->point[0];
+ 	}
++#else
++      /* compute the slant for region trimming */
++      dx = av->orig_point1[0] - av->orig_point0[0];
++      if (dx == 0)
++	info.m = 0;
++      else
++	{
++	  info.m = (av->orig_point1[1] - av->orig_point0[1]) / dx;
++	  info.b = av->orig_point0[1] - info.m * av->orig_point0[0];
++	}
++#endif
+       box.X2 = (box.X1 = av->point[0]) + 1;
+       box.Y2 = (box.Y1 = av->point[1]) + 1;
+ 
+@@ -2838,6 +2862,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ 	  poly_DelContour (&p);
+ 	}
+ 
++      /* XXX: Seen a crash here with certain input (OctalSpartan) with orig_point substituted for segment angles */
++      /* The contour was deleted with the poly_DelContour above, possibly suggesting it managed to get into the isected
++       * list, AND the holes list
++       */
+       InsertHoles (&e, *res, &holes);
+     }
+   /* delete holes if any left */
+@@ -3507,14 +3535,27 @@ crossing (const BoxType * b, void *cl)
+   struct seg *s = (struct seg *) b;
+   struct pip *p = (struct pip *) cl;
+ 
++#if 0
+   if (s->v->point[1] <= p->p[1])
++#else
++  if (s->v->orig_point0[1] <= p->p[1])
++#endif
+     {
++#if 0
+       if (s->v->next->point[1] > p->p[1])
++#else
++      if (s->v->orig_point1[1] > p->p[1])
++#endif
+ 	{
+ 	  Vector v1, v2;
+ 	  long long cross;
++#if 0
+ 	  Vsub2 (v1, s->v->next->point, s->v->point);
+ 	  Vsub2 (v2, p->p, s->v->point);
++#else
++	  Vsub2 (v1, s->v->orig_point1, s->v->orig_point0);
++	  Vsub2 (v2, p->p, s->v->orig_point0);
++#endif
+ 	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
+ 	  if (cross == 0)
+ 	    {
+@@ -3527,12 +3568,22 @@ crossing (const BoxType * b, void *cl)
+     }
+   else
+     {
++#if 0
+       if (s->v->next->point[1] <= p->p[1])
++#else
++      if (s->v->orig_point1[1] <= p->p[1])
++#endif
+ 	{
+ 	  Vector v1, v2;
+ 	  long long cross;
++/* XXX: COULD USE ORIGINAL GEOMETRY, ALSO PROBABLY NEEDS UPDATING FOR CURVES */
++#if 0
+ 	  Vsub2 (v1, s->v->next->point, s->v->point);
+ 	  Vsub2 (v2, p->p, s->v->point);
++#else
++	  Vsub2 (v1, s->v->orig_point1, s->v->orig_point0);
++	  Vsub2 (v2, p->p, s->v->orig_point0);
++#endif
+ 	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
+ 	  if (cross == 0)
+ 	    {
+@@ -4076,6 +4127,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+   deel = rpy * rqx - rpx * rqy;	/* -vect_det(rp,rq); */
+ 
+   /* coordinates are 30-bit integers so deel will be exactly zero
++   *                 ^^^^^^^^^^^^^^^_____ NOT ANYMORE!!! (pcjc).
+    * if the lines are parallel
+    */
+ 
+@@ -4083,6 +4135,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+     {
+       double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
+       Vector hp1, hq1, hp2, hq2, q1p1, q1q2;
++      double hs1, hs2, ht1, ht2;
+ 
+       Vsub2 (q1p1, q1, p1);
+       Vsub2 (q1q2, q1, q2);
+@@ -4093,7 +4146,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+ 	return 0;
+       dc1 = 0;			/* m_len(p1 - p1) */
+ 
+-      dc2 = vect_m_dist (p1, p2);
++      dc2 = vect_m_dist (p1, p2); /* Signed square length p1-p2, positive if p1 is "rightmost" of p2 */
+       d1 = vect_m_dist (p1, q1);
+       d2 = vect_m_dist (p1, q2);
+ 
+@@ -4102,47 +4155,71 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+       Vcpy2 (hp2, p2);
+       Vcpy2 (hq1, q1);
+       Vcpy2 (hq2, q2);
++      hs1 = 0.0;
++      hs2 = 1.0;
++      ht1 = 0.0;
++      ht2 = 1.0;
++
+       if (dc1 > dc2)
+-	{			/* hv and h are used as help-variable. */
+-	  Vswp2 (hp1, hp2);
+-	  h = dc1, dc1 = dc2, dc2 = h;
++	{/* dc2 is negative, e.g. p2 is "rightmost" of p1. */
++          /* hv and h are used as help-variable. */
++	  Vswp2 (hp1, hp2);            /* Make hp1 the "rightmost" point of line p1-p2, hp2 the "leftmost" */
++	  h = dc1, dc1 = dc2, dc2 = h; /* dc1 and dc2 represent signed distances from hp1 and hp2 to p1 */
++	  h = hs1, hs1 = hs2, hs2 = h;
+ 	}
+       if (d1 > d2)
+-	{
+-	  Vswp2 (hq1, hq2);
+-	  h = d1, d1 = d2, d2 = h;
++	{ /* p1-q1 > p1-q2 ... IE q1-p1 < q2-p1 .. IE q1 < q2... q1 is "left" of q2 */
++	  Vswp2 (hq1, hq2);            /* Make hq1 the "righmost" point of the line q1-q2 */
++	  h = d1, d1 = d2, d2 = h;     /* d1 and d2 represent signed distances from p1 to hq1 and hq2 */
++	  h = ht1, ht1 = ht2, ht2 = h;
+ 	}
+ 
+ /* Now the line-pieces are compared */
+ 
+       if (dc1 < d1)
+-	{
++	{               /* p1-hp1 < p1-hq1  ... IE  hp1 > hq1 .... hp1 is "rightmost" of hq1 */
+ 	  if (dc2 < d1)
+-	    return 0;
++	    return 0;   /* p1-hp2 < p1-hq1  ... IE  hp2 > hq1 .... hp2 is "rightmost" of hq1... IE both hp1 and hp2 are right of the rightmost point of q1-q2, hq1 */
+ 	  if (dc2 < d2)
+-	    {
+-	      Vcpy2 (S1, hp2);
+-	      Vcpy2 (S2, hq1);
++            {           /* p1-hp2 < p1-hq2  ... IE  hp2 > hq2 .... hp2 is "rightmost" of hq2... */
++	      Vcpy2 (S1, hp2); /* One intersection is the leftmost  point of p1-p2 */
++	      Vcpy2 (S2, hq1); /* One intersection is the rightmost point of q1-q2 */
++              if (s1_out != NULL) *s1_out = hs2;
++              if (t1_out != NULL) *t1_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hp2 lies ALONG q1-q2 */
++              if (s2_out != NULL) *s2_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hq1 lies ALONG p1-p2 */
++              if (t2_out != NULL) *t2_out = ht1;
+ 	    }
+ 	  else
+-	    {
+-	      Vcpy2 (S1, hq1);
+-	      Vcpy2 (S2, hq2);
++	    {           /* p1-hp2 >= p1-hq2  ... IE  hp2 <= hq2 ... hp2 is "left of (or coincident to)" hq2... */
++	      Vcpy2 (S1, hq1); /* One intersection is the rightmost point of q1-q2 */
++	      Vcpy2 (S2, hq2); /* One intersection is the leftmost  point of q1-q2 */
++              if (s1_out != NULL) *s1_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hq1 lies ALONG p1-p2 */
++              if (t1_out != NULL) *t1_out = ht1;
++              if (s2_out != NULL) *s2_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hq2 lies ALONG p1-p2 */
++              if (t2_out != NULL) *t2_out = ht2;
+ 	    };
+ 	}
+       else
+-	{
++	{               /* p1-hp1 >= p1-hq1  ... IE  hp1 <= hq1 ... hp1 is "left of (or coincident to)" hq1 */
+ 	  if (dc1 > d2)
+-	    return 0;
++	    return 0;   /* p1-hp1 > p1-hq2   ... IE  hp1 < hq2 .... hp1 is "left" of hq2... IE rightmost point of line p1-p2 is left of both points of q1-q2 */
+ 	  if (dc2 < d2)
+-	    {
+-	      Vcpy2 (S1, hp1);
+-	      Vcpy2 (S2, hp2);
++	    {           /* p1-hp2 < p1-hq2   ... IE  hp2 > hq2 .... hp2 is "right" of hq2 */
++	      Vcpy2 (S1, hp1);  /* One intersection is the rightmost point of p1-p2 */
++	      Vcpy2 (S2, hp2);  /* One intersection is the leftmost  point of p1-p2 */
++              if (s1_out != NULL) *s1_out = hs1;
++              if (t1_out != NULL) *t1_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hp1 lies ALONG q1-q2 */
++              if (s2_out != NULL) *s2_out = hs2;
++              if (t2_out != NULL) *t2_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hp2 lies ALONG q1-q2 */
+ 	    }
+ 	  else
+-	    {
+-	      Vcpy2 (S1, hp1);
+-	      Vcpy2 (S2, hq2);
++	    {           /* p1-hp2 >= p1-hq2   ... IE  hp2 <= hq2 .... hp2 is "left of (or coincident to) " of hq2 */
++	      Vcpy2 (S1, hp1);  /* One intersection is the rightmost point of p1-p2 */
++	      Vcpy2 (S2, hq2);  /* One intersection is the leftmost  point of q1-q2 */
++              if (s1_out != NULL) *s1_out = hs1;
++              if (t1_out != NULL) *t1_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hp1 lies ALONG q1-q2 */
++              if (s2_out != NULL) *s2_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hq2 lies ALONG p1-p2 */
++              if (t2_out != NULL) *t2_out = ht2;
+ 	    };
+ 	}
+ 
+@@ -4260,6 +4337,7 @@ get_seg_bounds (PLINE *contour, VNODE *node)
+   BoxType box;
+   double dx;
+ 
++  /* XXX: Use original slope rather than that of the intersected segments? */
+   info.v = node;
+   /* compute the slant for region trimming */
+   dx = node->next->point[0] - node->point[0];
