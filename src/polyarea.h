@@ -74,6 +74,7 @@ typedef struct VNODE VNODE;
 struct CVCList
 {
     double angle;
+    double curvature;
     VNODE *parent;
     CVCList *prev, *next, *head;
     char poly, side;
