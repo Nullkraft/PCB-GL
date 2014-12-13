@@ -1,0 +1,15 @@
+Bottom: fe50ee188ec0ed1183ce0b26847ae7b13917c30e
+Top:    fe50ee188ec0ed1183ce0b26847ae7b13917c30e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-12-13 16:19:31 +0000
+
+Refactor poly_CreateNode() to take a pre-created VNODE structure, not a Vector
+
+This helps to keep consitency with other functions adding vertices to a
+contour and will be useful when additional data is added to the VNODE
+structure. (Meaning it can be set the same way in all cases).
+
+
+---
+
+
