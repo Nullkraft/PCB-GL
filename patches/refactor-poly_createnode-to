@@ -1,5 +1,5 @@
-Bottom: fe50ee188ec0ed1183ce0b26847ae7b13917c30e
-Top:    b36eb5b24b46d6967856805b69a759ab38b9ac63
+Bottom: 8b7434588d4a3a1f118325d9f9c4f0ff8f306391
+Top:    8817bf140087db18e8c354d243331461513301d3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-12-13 16:19:31 +0000
 
@@ -26,11 +26,11 @@ index d49660b..c606077 100644
  void poly_IniContour(PLINE *  c);
  void poly_ClrContour(PLINE *  c);  /* clears list of vertices */
 diff --git a/src/polygon.c b/src/polygon.c
-index 6072dfd..b6a2807 100644
+index bfd7499..e91f990 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -343,7 +343,7 @@ original_poly (PolygonType * p)
-       v[0] = p->Points[n].X, v[1] = p->Points[n].Y;
+@@ -295,7 +295,7 @@ original_poly (PolygonType * p)
+       v[1] = p->Points[n].Y;
        if (contour == NULL)
          {
 -          if ((contour = poly_NewContour (v)) == NULL)
@@ -38,7 +38,7 @@ index 6072dfd..b6a2807 100644
              return NULL;
          }
        else
-@@ -420,7 +420,7 @@ RectPoly (Coord x1, Coord x2, Coord y1, Coord y2)
+@@ -342,7 +342,7 @@ RectPoly (Coord x1, Coord x2, Coord y1, Coord y2)
  
    v[0] = x1;
    v[1] = y1;
@@ -47,7 +47,7 @@ index 6072dfd..b6a2807 100644
      return NULL;
    v[0] = x2;
    v[1] = y1;
-@@ -442,7 +442,7 @@ OctagonPoly (Coord x, Coord y, Coord radius)
+@@ -364,7 +364,7 @@ OctagonPoly (Coord x, Coord y, Coord radius)
  
    v[0] = x + ROUND (radius * 0.5);
    v[1] = y + ROUND (radius * TAN_22_5_DEGREE_2);
@@ -56,7 +56,7 @@ index 6072dfd..b6a2807 100644
      return NULL;
    v[0] = x + ROUND (radius * TAN_22_5_DEGREE_2);
    v[1] = y + ROUND (radius * 0.5);
-@@ -509,7 +509,7 @@ CirclePoly (Coord x, Coord y, Coord radius)
+@@ -430,7 +430,7 @@ CirclePoly (Coord x, Coord y, Coord radius)
      return NULL;
    v[0] = x + radius;
    v[1] = y;
@@ -65,7 +65,7 @@ index 6072dfd..b6a2807 100644
      return NULL;
    frac_circle (contour, x, y, v, 1);
    contour->is_round = TRUE;
-@@ -530,7 +530,7 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
+@@ -451,7 +451,7 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
    assert (y2 > y1);
    v[0] = x1 - t;
    v[1] = y1;
@@ -74,7 +74,7 @@ index 6072dfd..b6a2807 100644
      return NULL;
    frac_circle (contour, x1, y1, v, 4);
    v[0] = x2;
-@@ -585,7 +585,7 @@ ArcPolyNoIntersect (ArcType * a, Coord thick)
+@@ -506,7 +506,7 @@ ArcPolyNoIntersect (ArcType * a, Coord thick)
    radius_adj = (M_PI*da/360)*(M_PI*da/360)/2;
    v[0] = a->X - rx * cos (ang * M180);
    v[1] = a->Y + ry * sin (ang * M180);
@@ -83,7 +83,7 @@ index 6072dfd..b6a2807 100644
      return 0;
    for (i = 0; i < segs - 1; i++)
      {
-@@ -691,7 +691,7 @@ LinePoly (LineType * L, Coord thick)
+@@ -612,7 +612,7 @@ LinePoly (LineType * L, Coord thick)
      }
    v[0] = l->Point1.X - dx;
    v[1] = l->Point1.Y - dy;
@@ -92,7 +92,7 @@ index 6072dfd..b6a2807 100644
      return 0;
    v[0] = l->Point2.X - dx;
    v[1] = l->Point2.Y - dy;
-@@ -765,7 +765,7 @@ SquarePadPoly (PadType * pad, Coord clear)
+@@ -686,7 +686,7 @@ SquarePadPoly (PadType * pad, Coord clear)
  
    v[0] = c->Point1.X - tx;
    v[1] = c->Point1.Y - ty;

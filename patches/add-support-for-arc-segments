@@ -1,5 +1,5 @@
-Bottom: 39edf76d30de3851287f29aba3f08b4e08cd92c0
-Top:    66be171cffe5cb19004f89fc69fa8f140dbcf894
+Bottom: b1c4af5b9f1d39aa6f1d8b69c562303b6a118d57
+Top:    bce1dd258bfbcdfdb1328af56fa022b32339123c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-10 19:01:32 +0100
 
@@ -251,7 +251,7 @@ index 629ccd6..7b66542 100644
  		;
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 322d7ea..a4a6891 100644
+index ce68a11..f6fc19c 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -111,6 +111,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -333,7 +333,7 @@ index 322d7ea..a4a6891 100644
 +      v[0] = p->Points[n].X, v[1] = p->Points[n].Y;
        if (contour == NULL)
          {
-           if ((contour = poly_NewContour (v)) == NULL)
+           if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
 @@ -303,6 +351,77 @@ original_poly (PolygonType * p)
            poly_InclVertex (contour->head.prev, poly_CreateNode (v));
          }
