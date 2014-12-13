@@ -1,4 +1,4 @@
-Bottom: ac2f6563937881166742c1de676abd5a030f8be6
+Bottom: fe50ee188ec0ed1183ce0b26847ae7b13917c30e
 Top:    daed52f7d254a5c7a9a6dad81ec34271842b424c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-07-10 19:01:32 +0100
@@ -124,26 +124,6 @@ index a34693a..a38d525 100644
  
  /* ---------------------------------------------------------------------------
   * layer macros
-diff --git a/src/misc.c b/src/misc.c
-index 10796fc..63d7ca4 100644
---- a/src/misc.c
-+++ b/src/misc.c
-@@ -1187,7 +1187,14 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
-           /* ignore white spaces and check for separator */
-           while (*s && isspace ((int) *s))
-             s++;
--          if (!*s || *s == ':')
-+
-+          /* Backup so the outer loop terminates on the NULL termination */
-+          if (*s == '\0') {
-+            s--;
-+            break;
-+          }
-+
-+          if (*s == ':')
-             break;
-         }
-       LayerGroup->Number[group] = member;
 diff --git a/src/polyarea.h b/src/polyarea.h
 index d49660b..be95bd2 100644
 --- a/src/polyarea.h
