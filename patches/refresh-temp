@@ -1,0 +1,29 @@
+Bottom: ac2f6563937881166742c1de676abd5a030f8be6
+Top:    fe50ee188ec0ed1183ce0b26847ae7b13917c30e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-12-13 16:00:07 +0000
+
+Refresh of fix-to-parsegroupstring
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index 10796fc..63d7ca4 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -1187,7 +1187,14 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+           /* ignore white spaces and check for separator */
+           while (*s && isspace ((int) *s))
+             s++;
+-          if (!*s || *s == ':')
++
++          /* Backup so the outer loop terminates on the NULL termination */
++          if (*s == '\0') {
++            s--;
++            break;
++          }
++
++          if (*s == ':')
+             break;
+         }
+       LayerGroup->Number[group] = member;
