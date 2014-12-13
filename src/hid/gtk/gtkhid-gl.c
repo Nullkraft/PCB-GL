@@ -849,11 +849,9 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   double old_alpha_mult = gc->alpha_mult;
   common_thindraw_pcb_polygon (gc, poly, clip_box);
-#if 0
   ghid_set_alpha_mult (gc, gc->alpha_mult * 0.25);
   gui->graphics->fill_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, old_alpha_mult);
-#endif
 }
 
 void
@@ -1602,8 +1600,7 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
     polygon.BoundingBox = *drawn_area;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
-//  gui->graphics->fill_pcb_polygon (gc, &polygon, drawn_area);
-  gui->graphics->thindraw_pcb_polygon (gc, &polygon, drawn_area);
+  gui->graphics->fill_pcb_polygon (gc, &polygon, drawn_area);
   poly_FreeContours (&polygon.NoHoles);
 }
 
@@ -2655,7 +2652,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glDisable (GL_LIGHTING);
 
   draw_crosshair (priv);
-  //object3d_draw_debug ();
+  object3d_draw_debug ();
 
   hidgl_flush_triangles (&buffer);
 
