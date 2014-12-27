@@ -701,8 +701,8 @@ DrawLayerCommon (LayerType *Layer, const BoxType * screen, bool clear_pins)
  * drawn with this group.
  */
 #if 0
-static int
-DrawLayerGroup (int group, const BoxType * screen)
+static void
+DrawLayerGroup (int group, const BoxType * drawn_area)
 {
   int i, rv = 1;
   int layernum;
@@ -718,11 +718,13 @@ DrawLayerGroup (int group, const BoxType * screen)
           strcmp (Layer->Name, "route") == 0)
         rv = 0;
       if (layernum < max_copper_layer)
-        DrawLayerCommon (Layer, screen, true);
+        DrawLayerCommon (Layer, drawn_area, true);
     }
   if (n_entries > 1)
     rv = 1;
-  return rv;
+
+  if (rv && !gui->gui)
+    DrawPPV (group, drawn_area);
 }
 #endif
 
@@ -791,8 +793,8 @@ common_export_region (HID *hid, BoxType *region)
   int plated;
   int nplated;
   int nunplated;
-  int component_group;
-  int solder_group;
+  int top_group;
+  int bottom_group;
   int group;
   int save_swap = SWAP_IDENT;
   bool paste_empty;
@@ -800,8 +802,8 @@ common_export_region (HID *hid, BoxType *region)
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
 
-  component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-  solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
+  top_group    = GetLayerGroupNumberBySide (TOP_SIDE);
+  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 
   /* draw all copper layer groups in group order */
   for (group = 0; group < max_copper_layer; group++)
@@ -813,9 +815,9 @@ common_export_region (HID *hid, BoxType *region)
               r_search (PCB->Data->via_tree, region, NULL, pin_callback, NULL);
               r_search (PCB->Data->pin_tree, region, NULL, pin_callback, NULL);
 
-              if (group == component_group || group == solder_group)
+              if (group == top_group || group == bottom_group)
                 {
-                  SWAP_IDENT = (group == solder_group);
+                  SWAP_IDENT = (group == bottom_group);
                   r_search (PCB->Data->pad_tree, region, NULL, pad_callback, NULL);
                   SWAP_IDENT = save_swap;
                 }
@@ -840,30 +842,30 @@ common_export_region (HID *hid, BoxType *region)
     }
 
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
-    DrawMask (COMPONENT_LAYER, region);
+    DrawMask (TOP_SIDE, region);
 
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
-    DrawMask (SOLDER_LAYER, region);
+    DrawMask (BOTTOM_SIDE, region);
 
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
-    DrawSilk (COMPONENT_LAYER, region);
+    DrawSilk (TOP_SIDE, region);
 
   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
-    DrawSilk (SOLDER_LAYER, region);
+    DrawSilk (BOTTOM_SIDE, region);
 
-  paste_empty = IsPasteEmpty (COMPONENT_LAYER);
+  paste_empty = IsPasteEmpty (TOP_SIDE);
   if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
-    DrawPaste (COMPONENT_LAYER, region);
+    DrawPaste (TOP_SIDE, region);
 
-  paste_empty = IsPasteEmpty (SOLDER_LAYER);
+  paste_empty = IsPasteEmpty (BOTTOM_SIDE);
   if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
-    DrawPaste (SOLDER_LAYER, region);
+    DrawPaste (BOTTOM_SIDE, region);
 
   //if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
-    //PrintAssembly (region, component_group, 0);
+    //PrintAssembly (region, top_group, 0);
 
   //if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
-    //PrintAssembly (region, solder_group, 1);
+    //PrintAssembly (region, bottom_group, 1);
 
   if (gui->set_layer ("fab", SL (FAB, 0), 0))
     PrintFab (Output.fgGC);

@@ -614,13 +614,6 @@ hole_callback (const BoxType * b, void *cl)
 }
 
 static void
-DrawHoles (bool plated, BoxType *drawn_area)
-{
-  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
-  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
-}
-
-static void
 gerber_expose (HID * hid, BoxType *drawn_area, void *item)
 {
   int i;
@@ -647,8 +640,8 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
       print_group[GetLayerGroupNumberByNumber (i)] = all_layers || !IsLayerEmpty (layer);
     }
 
-  print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
-  print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
+  print_group[GetLayerGroupNumberBySide (BOTTOM_SIDE)] = 1;
+  print_group[GetLayerGroupNumberBySide (TOP_SIDE)] = 1;
 
   /* draw all copper layer groups in group order */
   for (group = 0; group < max_copper_layer; group++)
@@ -657,17 +650,16 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
         continue;
 
       if (set_layer (0, group, 0))
-        if (DrawLayerGroup (group, drawn_area))
-          DrawPPV (group, drawn_area);
+        DrawLayerGroup (group, drawn_area);
     }
 
   count_holes (drawn_area, &nplated, &nunplated);
 
   if (nplated && set_layer ("plated-drill", SL (PDRILL, 0), 0))
-    DrawHoles (true, drawn_area);
+    DrawHoles (true, false, drawn_area);
 
   if (nunplated && set_layer ("unplated-drill", SL (UDRILL, 0), 0))
-    DrawHoles (false, drawn_area);
+    DrawHoles (false, true, drawn_area);
 
   if (set_layer ("componentmask", SL (MASK, TOP), 0))
     DrawMask (TOP_SIDE, drawn_area);
@@ -768,8 +760,8 @@ gerber_do_export (HID_Attr_Val * options)
           LayerType *layer = PCB->Data->Layer + i;
           print_group[GetLayerGroupNumberByNumber (i)] = !IsLayerEmpty (layer);
         }
-      print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
-      print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
+      print_group[GetLayerGroupNumberBySide (BOTTOM_SIDE)] = 1;
+      print_group[GetLayerGroupNumberBySide (TOP_SIDE)] = 1;
 
       memset (print_layer, 0, sizeof (print_layer));
       for (i = 0; i < max_copper_layer; i++)

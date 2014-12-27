@@ -594,8 +594,7 @@ ps_expose (void)
         continue;
 
       if (set_layer (0, group, 0))
-        if (DrawLayerGroup (group, NULL))
-          DrawPPV (group, NULL);
+        DrawLayerGroup (group, NULL);
     }
 
   CountHoles (&nplated, &nunplated, NULL);
@@ -607,34 +606,30 @@ ps_expose (void)
     DrawHoles (false, true, NULL);
 
   if (set_layer ("componentmask", SL (MASK, TOP), 0))
-    DrawMask (COMPONENT_LAYER, NULL);
+    DrawMask (TOP_SIDE, NULL);
 
   if (set_layer ("soldermask", SL (MASK, BOTTOM), 0))
-    DrawMask (SOLDER_LAYER, NULL);
+    DrawMask (BOTTOM_SIDE, NULL);
 
   if (set_layer ("topsilk", SL (SILK, TOP), 0))
-    DrawSilk (COMPONENT_LAYER, NULL);
+    DrawSilk (TOP_SIDE, NULL);
 
   if (set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
-    DrawSilk (SOLDER_LAYER, NULL);
+    DrawSilk (BOTTOM_SIDE, NULL);
 
-  paste_empty = IsPasteEmpty (COMPONENT_LAYER);
+  paste_empty = IsPasteEmpty (TOP_SIDE);
   if (set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
-    DrawPaste (COMPONENT_LAYER, NULL);
+    DrawPaste (TOP_SIDE, NULL);
 
-  paste_empty = IsPasteEmpty (SOLDER_LAYER);
+  paste_empty = IsPasteEmpty (BOTTOM_SIDE);
   if (set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
-    DrawPaste (SOLDER_LAYER, NULL);
-
-  doing_assy = true;
+    DrawPaste (BOTTOM_SIDE, NULL);
 
   if (set_layer ("topassembly", SL (ASSY, TOP), 0))
-    PrintAssembly (COMPONENT_LAYER, NULL);
+    PrintAssembly (TOP_SIDE, NULL);
 
   if (set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
-    PrintAssembly (SOLDER_LAYER, NULL);
-
-  doing_assy = false;
+    PrintAssembly (BOTTOM_SIDE, NULL);
 
   if (set_layer ("fab", SL (FAB, 0), 0))
     PrintFab (Output.fgGC);

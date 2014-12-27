@@ -862,12 +862,11 @@ static void
 ghid_expose (const BoxType *drawn_area)
 {
   int i, ngroups, side;
-  int component, solder;
+  int top_group, bottom_group;
   /* This is the list of layer groups we will draw.  */
   int do_group[MAX_LAYER];
   /* This is the reverse of the order in which we draw them.  */
   int drawn_groups[MAX_LAYER];
-  int plated, unplated;
   bool paste_empty;
   HID *old_gui = gui;
 
@@ -894,8 +893,8 @@ ghid_expose (const BoxType *drawn_area)
 	}
     }
 
-  component = GetLayerGroupNumberByNumber (component_silk_layer);
-  solder = GetLayerGroupNumberByNumber (solder_silk_layer);
+  top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 
   /*
    * first draw all 'invisible' stuff
@@ -903,7 +902,7 @@ ghid_expose (const BoxType *drawn_area)
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
       && set_layer ("invisible", SL (INVISIBLE, 0), 0))
     {
-      side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
+      side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
       if (PCB->ElementOn)
 	{
 	  r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
@@ -930,30 +929,30 @@ ghid_expose (const BoxType *drawn_area)
     return;
 
   /* Draw pins, pads, vias below silk */
-  DrawPPV (SWAP_IDENT ? solder : component, drawn_area);
+  DrawPPV (SWAP_IDENT ? bottom_group : top_group, drawn_area);
 
   /* Draw the solder mask if turned on */
   if (set_layer ("componentmask", SL (MASK, TOP), 0))
     {
-      DrawMask (COMPONENT_LAYER, drawn_area);
+      DrawMask (TOP_SIDE, drawn_area);
       gui->end_layer ();
     }
 
   if (set_layer ("soldermask", SL (MASK, BOTTOM), 0))
     {
-      DrawMask (SOLDER_LAYER, drawn_area);
+      DrawMask (BOTTOM_SIDE, drawn_area);
       gui->end_layer ();
     }
 
   if (set_layer ("topsilk", SL (SILK, TOP), 0))
     {
-      DrawSilk (COMPONENT_LAYER, drawn_area);
+      DrawSilk (TOP_SIDE, drawn_area);
       gui->end_layer ();
     }
 
   if (set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
     {
-      DrawSilk (SOLDER_LAYER, drawn_area);
+      DrawSilk (BOTTOM_SIDE, drawn_area);
       gui->end_layer ();
     }
 
@@ -969,17 +968,17 @@ ghid_expose (const BoxType *drawn_area)
       gui->end_layer ();
     }
 
-  paste_empty = IsPasteEmpty (COMPONENT_LAYER);
+  paste_empty = IsPasteEmpty (TOP_SIDE);
   if (set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
     {
-      DrawPaste (COMPONENT_LAYER, drawn_area);
+      DrawPaste (TOP_SIDE, drawn_area);
       gui->end_layer ();
     }
 
-  paste_empty = IsPasteEmpty (SOLDER_LAYER);
+  paste_empty = IsPasteEmpty (BOTTOM_SIDE);
   if (set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
     {
-      DrawPaste (SOLDER_LAYER, drawn_area);
+      DrawPaste (BOTTOM_SIDE, drawn_area);
       gui->end_layer ();
     }
 
