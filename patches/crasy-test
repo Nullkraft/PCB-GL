@@ -1,5 +1,5 @@
 Bottom: 5fb00e2da50ebd962e57090714d9cd6283b2c955
-Top:    a34ea86f72e1bb7f1837900dfb4bf154910155c9
+Top:    e9d36bda30d50df36f183d861edacea7a8b46f29
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2014-12-27 18:12:21 +0000
 
@@ -688,7 +688,7 @@ index b58e5cb..0cb0f88 100644
  void EraseViaName (PinType *);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
 new file mode 100644
-index 0000000..f63c0f4
+index 0000000..3b15b6c
 --- /dev/null
 +++ b/src/draw_funcs.c
 @@ -0,0 +1,460 @@
@@ -943,7 +943,7 @@ index 0000000..f63c0f4
 +static int
 +pad_inlayer_callback (const BoxType * b, void *cl)
 +{
-+  PadType* pad = (PadType *)b;
++  PadType *pad = (PadType *)b;
 +  LayerType *layer = cl;
 +  int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +  int group = GetLayerGroupNumberByPointer (layer);
@@ -965,7 +965,7 @@ index 0000000..f63c0f4
 +static int
 +pin_hole_callback (const BoxType * b, void *cl)
 +{
-+  PinType *pin = (PinType*)b;
++  PinType *pin = (PinType *)b;
 +  int plated = cl ? *(int *) cl : -1;
 +
 +  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
@@ -982,7 +982,7 @@ index 0000000..f63c0f4
 +static int
 +via_hole_callback (const BoxType * b, void *cl)
 +{
-+  PinType *via = (PinType*)b;
++  PinType *via = (PinType *)b;
 +  int plated = cl ? *(int *) cl : -1;
 +
 +  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, via)) ||
