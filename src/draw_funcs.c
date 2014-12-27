@@ -249,7 +249,7 @@ via_inlayer_callback (const BoxType * b, void *cl)
 static int
 pad_inlayer_callback (const BoxType * b, void *cl)
 {
-  PadType *pad = (PadType *) b;
+  PadType *pad = (PadType *)b;
   LayerType *layer = cl;
   int bottom_group = GetLayerGroupNumberByNumber (bottom_silk_layer);
   int group = GetLayerGroupNumberByPointer (layer);
@@ -269,7 +269,7 @@ pad_inlayer_callback (const BoxType * b, void *cl)
 static int
 hole_callback (const BoxType * b, void *cl)
 {
-  PinType *pv = (PinType *) b;
+  PinType *pv = (PinType *)b;
   int plated = cl ? *(int *) cl : -1;
 
   if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
