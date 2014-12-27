@@ -422,7 +422,7 @@ ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
       {
         POLYAREA *m;
         Coord t = (pin->Thickness + pin->Clearance) / 2;
-        Coord w = 0.5 * pcb->ThermScale * pin->Clearance;
+        Coord w = pcb->ThermScale * (pin->Thickness - pin->DrillingHole);
         pa = CirclePoly (pin->X, pin->Y, t);
         arc = CirclePoly (pin->X, pin->Y, pin->Thickness / 2);
         /* create a thin ring */
@@ -433,18 +433,18 @@ ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
             /* t is the theoretically required length, but we use twice that
              * to avoid descritisation errors in our circle approximation.
              */
-            pa = RectPoly (pin->X - t * 2, pin->X + t * 2, pin->Y - w, pin->Y + w);
+            pa = RectPoly (pin->X - t * 2, pin->X + t * 2, pin->Y - w / 2, pin->Y + w / 2);
             poly_Boolean_free (m, pa, &arc, PBO_SUB);
-            pa = RectPoly (pin->X - w, pin->X + w, pin->Y - t * 2, pin->Y + t * 2);
+            pa = RectPoly (pin->X - w / 2, pin->X + w / 2, pin->Y - t * 2, pin->Y + t * 2);
           }
         else
           {
             /* t is the theoretically required length, but we use twice that
              * to avoid descritisation errors in our circle approximation.
              */
-            pa = diag_line (pin->X, pin->Y, t * 2, w, true);
+            pa = diag_line (pin->X, pin->Y, t * 2, w / 2, true);
             poly_Boolean_free (m, pa, &arc, PBO_SUB);
-            pa = diag_line (pin->X, pin->Y, t * 2, w, false);
+            pa = diag_line (pin->X, pin->Y, t * 2, w / 2, false);
           }
         poly_Boolean_free (arc, pa, &m, PBO_SUB);
         return m;
@@ -458,9 +458,21 @@ ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
       a.Thickness = 1;
       a.Clearance = pin->Clearance / 2;
       a.Flags = NoFlags ();
-      a.Delta =
-        90 -
-        (a.Clearance * (1. + 2. * pcb->ThermScale) * 180) / (M_PI * a.Width);
+      a.Delta = 90 -
+        2 * asin (((pin->Thickness - pin->DrillingHole) * pcb->ThermScale / 2 +
+                   a.Clearance / 2) / a.Width) / M_PI * 180;
+      if (a.Delta < 0)
+        {
+          a.Delta = 0;
+          printf ("THERMAL DELTA < 0\n");
+          /* This is bad - we need a different shape entirely */
+        }
+      if (a.Delta < 10)
+        {
+          a.Delta = 10;
+          printf ("THERMAL DELTA < 10\n");
+          /* Quick kludge around broken ArcPoly implementation */
+        }
       a.StartAngle = 90 - a.Delta / 2 + (style == 4 ? 0 : 45);
       pa = ArcPoly (&a, a.Clearance);
       if (!pa)
