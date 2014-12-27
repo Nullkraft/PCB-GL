@@ -1,5 +1,5 @@
 Bottom: be1a9d2e212c304ac26380f0c5a30666072f5bf5
-Top:    06a41db7a3d8c2d6038275c3f5c4fd6718c8561c
+Top:    30f0a249891ccbb7ff27e0111f7962ee61af64dd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2014-12-27 17:58:43 +0000
 
@@ -22,7 +22,7 @@ index 033dae8..f6d019e 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index 15c462d..f1cb917 100644
+index 15c462d..829e5ef 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -40,6 +40,7 @@
@@ -555,7 +555,19 @@ index 15c462d..f1cb917 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -940,9 +646,9 @@ DrawMask (int side, const BoxType *screen)
+@@ -871,6 +577,11 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
+                                            drawn_area->X2, drawn_area->Y2);
+ }
+ 
++struct poly_info {
++  const const BoxType *drawn_area;
++  LayerType *layer;
++};
++
+ static int
+ mask_poly_callback (const BoxType * b, void *cl)
+ {
+@@ -940,9 +651,9 @@ DrawMask (int side, const BoxType *screen)
    r_search (Layer->arc_tree,     screen, NULL, mask_arc_callback,  Layer);
    r_search (Layer->text_tree,    screen, NULL, mask_text_callback, Layer);
  
@@ -568,7 +580,7 @@ index 15c462d..f1cb917 100644
  
    if (thin)
      gui->graphics->set_color (Output.pmGC, "erase");
-@@ -962,13 +668,8 @@ DrawPaste (int side, const BoxType *drawn_area)
+@@ -962,13 +673,8 @@ DrawPaste (int side, const BoxType *drawn_area)
    gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
    ALLPAD_LOOP (PCB->Data);
    {
@@ -584,7 +596,7 @@ index 15c462d..f1cb917 100644
    }
    ENDALL_LOOP;
  }
-@@ -990,61 +691,6 @@ DrawRats (const BoxType *drawn_area)
+@@ -990,61 +696,6 @@ DrawRats (const BoxType *drawn_area)
      gui->graphics->use_mask (HID_MASK_OFF);
  }
  
@@ -646,7 +658,7 @@ index 15c462d..f1cb917 100644
  /* ---------------------------------------------------------------------------
   * draws one layer group.  If the exporter is not a GUI,
   * also draws the pins / pads / vias in this layer group.
-@@ -1066,13 +712,13 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -1066,13 +717,13 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
            strcmp (Layer->Name, "route") == 0)
          rv = 0;
        if (layernum < max_copper_layer && Layer->On)
