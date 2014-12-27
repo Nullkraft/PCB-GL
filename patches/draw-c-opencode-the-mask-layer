@@ -1,0 +1,15 @@
+Bottom: f58a19c0131225bde0455f4276c9b90990b4339f
+Top:    f58a19c0131225bde0455f4276c9b90990b4339f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-12-27 17:38:36 +0000
+
+draw.c: Opencode the mask layer object drawing functions
+
+Calling DrawLayer() did not render using the correct graphics context / colors.
+NB: We're still using the "wrong" GC, but we now avoid selecting inappropriate
+colors which prevent (say) PS export working correctly for mask layer objects.
+
+
+---
+
+
