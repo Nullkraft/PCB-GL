@@ -287,8 +287,8 @@ hole_callback (const BoxType * b, void *cl)
 static void
 draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
 {
-  int top_group = GetLayerGroupNumberByNumber (TOP_SIDE);
-  int bottom_group = GetLayerGroupNumberByNumber (BOTTOM_SIDE);
+  int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+  int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
   int layer_num = GetLayerNumber (PCB->Data, layer);
   int group = GetLayerGroupNumberByPointer (layer);
   struct poly_info info = {drawn_area, layer};
@@ -325,8 +325,8 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
 
 #if 0
   /* Don't draw vias on layers which are out of the layer stack */
-  if ((group >= component_group && group >= solder_group) ||
-      (group <= component_group && group <= solder_group))
+  if ((group >= top_group && group >= bottom_group) ||
+      (group <= top_group && group <= bottom_group))
     return;
 #endif
 
@@ -334,10 +334,10 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
   r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_inlayer_callback, layer);
 
   /* draw element pads */
-  if (group == component_group)
+  if (group == top_group)
     r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_inlayer_callback, layer);
 
-  if (group == solder_group)
+  if (group == bottom_group)
     r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_inlayer_callback, layer);
 
   /* draw vias */
