@@ -577,6 +577,11 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
                                            drawn_area->X2, drawn_area->Y2);
 }
 
+struct poly_info {
+  const const BoxType *drawn_area;
+  LayerType *layer;
+};
+
 static int
 mask_poly_callback (const BoxType * b, void *cl)
 {
