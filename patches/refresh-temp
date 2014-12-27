@@ -1,0 +1,40 @@
+Bottom: a34ea86f72e1bb7f1837900dfb4bf154910155c9
+Top:    e9d36bda30d50df36f183d861edacea7a8b46f29
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-12-27 19:33:13 +0000
+
+Refresh of crasy-test
+
+---
+
+diff --git a/src/draw_funcs.c b/src/draw_funcs.c
+index f63c0f4..3b15b6c 100644
+--- a/src/draw_funcs.c
++++ b/src/draw_funcs.c
+@@ -249,7 +249,7 @@ via_inlayer_callback (const BoxType * b, void *cl)
+ static int
+ pad_inlayer_callback (const BoxType * b, void *cl)
+ {
+-  PadType* pad = (PadType *)b;
++  PadType *pad = (PadType *)b;
+   LayerType *layer = cl;
+   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
+   int group = GetLayerGroupNumberByPointer (layer);
+@@ -271,7 +271,7 @@ pad_inlayer_callback (const BoxType * b, void *cl)
+ static int
+ pin_hole_callback (const BoxType * b, void *cl)
+ {
+-  PinType *pin = (PinType*)b;
++  PinType *pin = (PinType *)b;
+   int plated = cl ? *(int *) cl : -1;
+ 
+   if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
+@@ -288,7 +288,7 @@ pin_hole_callback (const BoxType * b, void *cl)
+ static int
+ via_hole_callback (const BoxType * b, void *cl)
+ {
+-  PinType *via = (PinType*)b;
++  PinType *via = (PinType *)b;
+   int plated = cl ? *(int *) cl : -1;
+ 
+   if ((plated == 0 && !TEST_FLAG (HOLEFLAG, via)) ||
