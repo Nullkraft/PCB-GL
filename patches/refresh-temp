@@ -1,0 +1,25 @@
+Bottom: 06a41db7a3d8c2d6038275c3f5c4fd6718c8561c
+Top:    30f0a249891ccbb7ff27e0111f7962ee61af64dd
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2014-12-27 18:01:42 +0000
+
+Refresh of crasy-test
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index f1cb917..829e5ef 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -577,6 +577,11 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
+                                            drawn_area->X2, drawn_area->Y2);
+ }
+ 
++struct poly_info {
++  const const BoxType *drawn_area;
++  LayerType *layer;
++};
++
+ static int
+ mask_poly_callback (const BoxType * b, void *cl)
+ {
