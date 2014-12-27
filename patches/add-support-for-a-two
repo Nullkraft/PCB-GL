@@ -1,5 +1,5 @@
-Bottom: 8af145bbd45e71380b95ce65715eba85506146b1
-Top:    28f1c48647cd8b879bb1cf0b8d0df8bd404becbb
+Bottom: 26a348facfa5269fb3c7dfdb6002692df23ff8dd
+Top:    f58a19c0131225bde0455f4276c9b90990b4339f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-26 23:38:01 +0100
 
@@ -110,7 +110,7 @@ index a87adb4..26c0ff4 100644
    r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
    r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
 diff --git a/src/global.h b/src/global.h
-index 3d755ff..21e69fc 100644
+index 5137739..d8002b4 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -490,6 +490,7 @@ typedef struct PCBType
@@ -130,7 +130,7 @@ index 3d755ff..21e69fc 100644
    long CursorX,			/* cursor position as saved with layout */
      CursorY, Clipping;
    Coord Bloat,			/* drc sizes saved with layout */
-@@ -636,7 +637,7 @@ typedef struct			/* some resources... */
+@@ -631,7 +632,7 @@ typedef struct			/* some resources... */
      *OffLimitColor,
      *GridColor,
      *LayerColor[MAX_LAYER],
@@ -153,7 +153,7 @@ index 6e37f6d..e1fa2ce 100644
  
  	argv = g_strsplit(data, ",", -1);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 6ab819f..505a5f5 100644
+index d14c496..42f42d9 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -531,6 +531,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
@@ -194,7 +194,7 @@ index 6ab819f..505a5f5 100644
    else
      layer = LayerStack[0];
  
-@@ -1934,7 +1942,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
+@@ -1936,7 +1944,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
  }
  
  static const char selectlayer_syntax[] =
@@ -203,7 +203,7 @@ index 6ab819f..505a5f5 100644
  
  static const char selectlayer_help[] =
      N_("Select which layer is the current layer.");
-@@ -1962,6 +1970,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
+@@ -1964,6 +1972,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
      newl = LAYER_BUTTON_SILK;
    else if (strcasecmp (argv[0], "rats") == 0)
      newl = LAYER_BUTTON_RATS;
@@ -213,7 +213,7 @@ index 6ab819f..505a5f5 100644
      newl = atoi (argv[0]) - 1;
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 2bbd2de..afe3501 100644
+index da2513e..312d111 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -44,15 +44,15 @@
@@ -330,7 +330,7 @@ index a6b22ad..a217134 100644
  /* %start-doc options "5 Sizes"
  All parameters should be given with an unit. If no unit is given, 1/100 mil
 diff --git a/src/misc.c b/src/misc.c
-index 0e1a835..eec9893 100644
+index a05d785..4f381ae 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -991,9 +991,9 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
@@ -407,7 +407,7 @@ index 0e1a835..eec9893 100644
  
            /* ignore white spaces and check for separator */
            while (*s && isspace ((int) *s))
-@@ -1098,10 +1111,17 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1100,10 +1113,17 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
     * group string, make group 0 the bottom side, and group 1 the top side.
     * This is done by assigning the relevant silkscreen layers to those groups.
     */
@@ -429,7 +429,7 @@ index 0e1a835..eec9893 100644
  
    /* Assign a unique layer group to each layer that was not explicitly
     * assigned a particular group by its presence in the layer group string.
-@@ -2057,20 +2077,29 @@ LayerGroupsToString (LayerGroupType *lg)
+@@ -2039,20 +2059,29 @@ LayerGroupsToString (LayerGroupType *lg)
              int layer = PCB->LayerGroups.Entries[group][entry];
              if (layer == top_silk_layer)
                {
@@ -462,7 +462,7 @@ index 0e1a835..eec9893 100644
        }
    *cp++ = 0;
 diff --git a/src/search.c b/src/search.c
-index 5f4ea5e..7e9af2c 100644
+index c997c92..6c00673 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -1234,18 +1234,26 @@ SearchObjectByLocation (unsigned Type,
