@@ -1,7 +1,7 @@
-Bottom: 8e040369b748f9d736bc731b5060f0c201abeb79
-Top:    92544e92b2a1aaa7bf8dd61d2a6c28d663dff5bb
+Bottom: 1f81724af6075972d439ac6694076d3bbe08403a
+Top:    879e48d038fdfc5aed7acd9d855ad5f550073f0f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2014-07-10 19:01:28 +0100
+Date:   2014-12-27 18:12:28 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -130,10 +130,10 @@ index e9c2697..04fe48e 100644
  LineType * CreateNewLineInElement (ElementType *, Coord, Coord, Coord, Coord, Coord);
  ArcType * CreateNewArcInElement (ElementType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord);
 diff --git a/src/file.c b/src/file.c
-index 370ff6f..f925d6f 100644
+index 11ab7c3..3bd4738 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -404,6 +404,9 @@ real_load_pcb (char *Filename, bool revert)
+@@ -403,6 +403,9 @@ real_load_pcb (char *Filename, bool revert)
    /* mark the default font invalid to know if the file has one */
    newPCB->Font.Valid = false;
  
