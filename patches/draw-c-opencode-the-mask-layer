@@ -1,5 +1,5 @@
 Bottom: f58a19c0131225bde0455f4276c9b90990b4339f
-Top:    05605b0db6a16910c8d9eb1029c319498f6b57a4
+Top:    1b18f4b592172a084c9f4497795b2e578961acba
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-12-27 17:38:36 +0000
 
@@ -13,25 +13,20 @@ colors which prevent (say) PS export working correctly for mask layer objects.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 26c0ff4..5133522 100644
+index 26c0ff4..15c462d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -871,6 +871,55 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
+@@ -871,6 +871,50 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
                                             drawn_area->X2, drawn_area->Y2);
  }
  
-+struct poly_info {
-+  const const BoxType *drawn_area;
-+  LayerType *layer;
-+};
-+
 +static int
 +mask_poly_callback (const BoxType * b, void *cl)
 +{
 +  struct poly_info *i = cl;
 +  PolygonType *polygon = (PolygonType *)b;
 +
-+  dapi->draw_poly (polygon, i->drawn_area, NULL);
++  gui->graphics->draw_pcb_polygon (Output.pmGC, polygon, i->drawn_area);
 +  return 1;
 +}
 +
@@ -40,7 +35,7 @@ index 26c0ff4..5133522 100644
 +{
 +  LineType *line = (LineType *)b;
 +
-+  dapi->draw_line (line, NULL, NULL);
++  gui->graphics->draw_pcb_line (Output.pmGC, line);
 +  return 1;
 +}
 +
@@ -49,7 +44,7 @@ index 26c0ff4..5133522 100644
 +{
 +  ArcType *arc = (ArcType *)b;
 +
-+  dapi->draw_arc (arc, NULL, NULL);
++  gui->graphics->draw_pcb_arc (Output.pmGC, arc);
 +  return 1;
 +}
 +
@@ -72,7 +67,7 @@ index 26c0ff4..5133522 100644
  /* ---------------------------------------------------------------------------
   * draws solder mask layer - this will cover nearly everything
   */
-@@ -878,23 +927,34 @@ void
+@@ -878,6 +922,8 @@ void
  DrawMask (int side, const BoxType *screen)
  {
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
@@ -80,16 +75,9 @@ index 26c0ff4..5133522 100644
 +  struct poly_info info;
  
    if (thin)
--    gui->graphics->set_color (Output.pmGC, PCB->MaskColor);
-+    {
-+      gui->graphics->set_color (Output.pmGC, PCB->MaskColor);
-+      gui->graphics->set_color (Output.fgGC, PCB->MaskColor); /* NB: Required, as draw_layer() uses fgGC */
-+    }
-   else
-     {
-       DrawMaskBoardArea (HID_MASK_BEFORE, screen);
+     gui->graphics->set_color (Output.pmGC, PCB->MaskColor);
+@@ -887,7 +933,12 @@ DrawMask (int side, const BoxType *screen)
        gui->graphics->use_mask (HID_MASK_CLEAR);
-+      gui->graphics->set_color (Output.fgGC, "erase"); /* NB: Required, as draw_layer() uses fgGC */
      }
  
 -  DrawLayer (LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer), screen);
@@ -101,13 +89,4 @@ index 26c0ff4..5133522 100644
 +  r_search (Layer->text_tree,    screen, NULL, mask_text_callback, Layer);
  
    r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
--  r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
-+  r_search (PCB->Data->via_tree, screen, NULL, clearVia_callback, NULL);
-   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
- 
-   if (thin)
--    gui->graphics->set_color (Output.pmGC, "erase");
-+    gui->graphics->set_color (Output.pmGC, "erase"); /* NB: Only need to set pmGC back, fgGC is set when required */
-   else
-     {
-       DrawMaskBoardArea (HID_MASK_AFTER, screen);
+   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
