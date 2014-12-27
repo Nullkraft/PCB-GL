@@ -300,7 +300,7 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
     return;
 
   r_search (layer->line_tree, drawn_area, NULL, line_callback, layer);
-  r_search (layer->arc_tree, drawn_area, NULL, arc_callback, layer);
+  r_search (layer->arc_tree, drawn_area,  NULL, arc_callback,  layer);
   r_search (layer->text_tree, drawn_area, NULL, text_callback, layer);
 
   /* We should check for gui->gui here, but it's kinda cool seeing the
