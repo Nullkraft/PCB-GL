@@ -251,10 +251,10 @@ pad_inlayer_callback (const BoxType * b, void *cl)
 {
   PadType *pad = (PadType *) b;
   LayerType *layer = cl;
-  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  int bottom_group = GetLayerGroupNumberByNumber (bottom_silk_layer);
   int group = GetLayerGroupNumberByPointer (layer);
 
-  int side = (group == solder_group) ? SOLDER_LAYER : COMPONENT_LAYER;
+  int side = (group == bottom_group) ? BOTTOM_SIDE : TOP_SIDE;
 
   if (ON_SIDE (pad, side))
     {
@@ -287,8 +287,8 @@ hole_callback (const BoxType * b, void *cl)
 static void
 draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
 {
-  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  int top_group = GetLayerGroupNumberByNumber (TOP_SIDE);
+  int bottom_group = GetLayerGroupNumberByNumber (BOTTOM_SIDE);
   int layer_num = GetLayerNumber (PCB->Data, layer);
   int group = GetLayerGroupNumberByPointer (layer);
   struct poly_info info = {drawn_area, layer};
@@ -299,13 +299,8 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
 
-  /* draw all visible lines this layer */
   r_search (layer->line_tree, drawn_area, NULL, line_callback, layer);
-
-  /* draw the layer arcs on drawn_area */
   r_search (layer->arc_tree, drawn_area, NULL, arc_callback, layer);
-
-  /* draw the layer text on drawn_area */
   r_search (layer->text_tree, drawn_area, NULL, text_callback, layer);
 
   /* We should check for gui->gui here, but it's kinda cool seeing the
