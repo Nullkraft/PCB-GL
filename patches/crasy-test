@@ -1,5 +1,5 @@
 Bottom: 5fb00e2da50ebd962e57090714d9cd6283b2c955
-Top:    cd05d2a90f5a840a9c11bbf587a4967ea08ff94e
+Top:    d17f42a5fb83b2364014b640d81c71f6ceb05760
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2014-12-27 18:09:40 +0000
 
@@ -613,7 +613,7 @@ index b58e5cb..0cb0f88 100644
  void EraseViaName (PinType *);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
 new file mode 100644
-index 0000000..4af86bc
+index 0000000..6cb9c01
 --- /dev/null
 +++ b/src/draw_funcs.c
 @@ -0,0 +1,365 @@
@@ -906,8 +906,8 @@ index 0000000..4af86bc
 +static void
 +draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
 +{
-+  int top_group = GetLayerGroupNumberByNumber (TOP_SIDE);
-+  int bottom_group = GetLayerGroupNumberByNumber (BOTTOM_SIDE);
++  int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
++  int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +  int layer_num = GetLayerNumber (PCB->Data, layer);
 +  int group = GetLayerGroupNumberByPointer (layer);
 +  struct poly_info info = {drawn_area, layer};
@@ -944,8 +944,8 @@ index 0000000..4af86bc
 +
 +#if 0
 +  /* Don't draw vias on layers which are out of the layer stack */
-+  if ((group >= component_group && group >= solder_group) ||
-+      (group <= component_group && group <= solder_group))
++  if ((group >= top_group && group >= bottom_group) ||
++      (group <= top_group && group <= bottom_group))
 +    return;
 +#endif
 +
@@ -953,10 +953,10 @@ index 0000000..4af86bc
 +  r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_inlayer_callback, layer);
 +
 +  /* draw element pads */
-+  if (group == component_group)
++  if (group == top_group)
 +    r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_inlayer_callback, layer);
 +
-+  if (group == solder_group)
++  if (group == bottom_group)
 +    r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_inlayer_callback, layer);
 +
 +  /* draw vias */
