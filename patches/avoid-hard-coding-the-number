@@ -1,7 +1,7 @@
-Bottom: 00c1bdfbe6a4616e77bc4070d2b6dc57324328cf
-Top:    53f325c6b14846f7ed49fdc8d6a0ee9e80770f0c
+Bottom: 51d80a58302c3a6ba21b21d245c1becae7e86bf7
+Top:    3b4628f0f7d3ca97ee8dbdedcf71dc298e6a7ee7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-29 00:02:04 +0100
+Date:   2014-12-27 18:09:34 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -67,10 +67,10 @@ index 9cece49..7d8c540 100644
        {
  	LayerType *layer = &Buffer->Data->Layer[i];
 diff --git a/src/file.c b/src/file.c
-index b775961..370ff6f 100644
+index 0772139..11ab7c3 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -850,7 +850,7 @@ WriteBuffer (FILE * FP)
+@@ -849,7 +849,7 @@ WriteBuffer (FILE * FP)
  
    WriteViaData (FP, PASTEBUFFER->Data);
    WriteElementData (FP, PASTEBUFFER->Data);
@@ -79,7 +79,7 @@ index b775961..370ff6f 100644
      WriteLayerData (FP, i, &(PASTEBUFFER->Data->Layer[i]));
    return (STATUS_OK);
  }
-@@ -874,7 +874,7 @@ WritePCB (FILE * FP)
+@@ -873,7 +873,7 @@ WritePCB (FILE * FP)
    WriteViaData (FP, PCB->Data);
    WriteElementData (FP, PCB->Data);
    WritePCBRatData (FP);

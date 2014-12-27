@@ -1,7 +1,7 @@
-Bottom: 53f325c6b14846f7ed49fdc8d6a0ee9e80770f0c
-Top:    262dc6413534d4db6556da9aa7aee7e0466166f0
+Bottom: 3b4628f0f7d3ca97ee8dbdedcf71dc298e6a7ee7
+Top:    70880439f1a2f9def18116709a8a14417db3b409
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-06-29 00:02:06 +0100
+Date:   2014-12-27 18:09:35 +0000
 
 Add support for a two soldermask layers, defining regions of removed mask
 
@@ -140,10 +140,10 @@ index 5137739..d8002b4 100644
      ViaDrillingHole, LineThickness, RatThickness, Keepaway,	/* default size of a new layout */
      MaxWidth, MaxHeight,
 diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
-index 6e37f6d..e1fa2ce 100644
+index 6a4f345..eb8fbd1 100644
 --- a/src/hid/gtk/gui-config.c
 +++ b/src/hid/gtk/gui-config.c
-@@ -1615,7 +1615,7 @@ edit_layer_button_cb(GtkWidget *widget, gchar *data)
+@@ -1642,7 +1642,7 @@ edit_layer_button_cb(GtkWidget *widget, gchar *data)
  {
  	gchar	**argv;
  
