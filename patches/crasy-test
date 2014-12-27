@@ -1,5 +1,5 @@
 Bottom: 5fb00e2da50ebd962e57090714d9cd6283b2c955
-Top:    17d264e5627f244c8be0bf929da851d0a42a1f00
+Top:    cd05d2a90f5a840a9c11bbf587a4967ea08ff94e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2014-12-27 18:09:40 +0000
 
@@ -613,10 +613,10 @@ index b58e5cb..0cb0f88 100644
  void EraseViaName (PinType *);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
 new file mode 100644
-index 0000000..1311b23
+index 0000000..4af86bc
 --- /dev/null
 +++ b/src/draw_funcs.c
-@@ -0,0 +1,370 @@
+@@ -0,0 +1,365 @@
 +
 +#include "global.h"
 +#include "data.h"
@@ -870,10 +870,10 @@ index 0000000..1311b23
 +{
 +  PadType *pad = (PadType *) b;
 +  LayerType *layer = cl;
-+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
++  int bottom_group = GetLayerGroupNumberByNumber (bottom_silk_layer);
 +  int group = GetLayerGroupNumberByPointer (layer);
 +
-+  int side = (group == solder_group) ? SOLDER_LAYER : COMPONENT_LAYER;
++  int side = (group == bottom_group) ? BOTTOM_SIDE : TOP_SIDE;
 +
 +  if (ON_SIDE (pad, side))
 +    {
@@ -906,8 +906,8 @@ index 0000000..1311b23
 +static void
 +draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
 +{
-+  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
++  int top_group = GetLayerGroupNumberByNumber (TOP_SIDE);
++  int bottom_group = GetLayerGroupNumberByNumber (BOTTOM_SIDE);
 +  int layer_num = GetLayerNumber (PCB->Data, layer);
 +  int group = GetLayerGroupNumberByPointer (layer);
 +  struct poly_info info = {drawn_area, layer};
@@ -918,13 +918,8 @@ index 0000000..1311b23
 +  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
 +    return;
 +
-+  /* draw all visible lines this layer */
 +  r_search (layer->line_tree, drawn_area, NULL, line_callback, layer);
-+
-+  /* draw the layer arcs on drawn_area */
 +  r_search (layer->arc_tree, drawn_area, NULL, arc_callback, layer);
-+
-+  /* draw the layer text on drawn_area */
 +  r_search (layer->text_tree, drawn_area, NULL, text_callback, layer);
 +
 +  /* We should check for gui->gui here, but it's kinda cool seeing the
