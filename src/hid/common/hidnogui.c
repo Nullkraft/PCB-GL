@@ -154,25 +154,13 @@ nogui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 }
 
 static void
-nogui_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+nogui_draw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 {
   CRASH;
 }
 
 static void
-nogui_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
-{
-  CRASH;
-}
-
-static void
-nogui_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
-{
-  CRASH;
-}
-
-static void
-nogui_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
+nogui_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
 {
   CRASH;
 }
@@ -502,10 +490,8 @@ common_nogui_graphics_init (HID_DRAW *graphics)
   graphics->fill_rect =       nogui_fill_rect;
 
   graphics->draw_pcb_polygon = nogui_draw_pcb_polygon;
-  graphics->fill_pcb_pad =     nogui_fill_pcb_pad;
-  graphics->thindraw_pcb_pad = nogui_thindraw_pcb_pad;
-  graphics->fill_pcb_pv =      nogui_fill_pcb_pv;
-  graphics->thindraw_pcb_pv =  nogui_thindraw_pcb_pv;
+  graphics->draw_pcb_pad     = nogui_draw_pcb_pad;
+  graphics->draw_pcb_pv      = nogui_draw_pcb_pv;
 }
 
 static HID nogui_hid;
