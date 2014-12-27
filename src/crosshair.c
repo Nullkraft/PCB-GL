@@ -994,7 +994,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
   ans = NO_TYPE;
   if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
     ans = SearchObjectByLocation (PAD_TYPE, &ptr1, &ptr2, &ptr3,
-                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+                                  Crosshair.X, Crosshair.Y, 0);
 
   /* Avoid self-snapping when moving */
   if (ans != NO_TYPE &&
@@ -1051,7 +1051,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
   ans = NO_TYPE;
   if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
     ans = SearchObjectByLocation (PIN_TYPE, &ptr1, &ptr2, &ptr3,
-                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+                                  Crosshair.X, Crosshair.Y, 0);
 
   /* Avoid self-snapping when moving */
   if (ans != NO_TYPE &&
@@ -1069,7 +1069,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
   ans = NO_TYPE;
   if (TEST_FLAG (SNAPPINFLAG, PCB))
     ans = SearchObjectByLocation (VIA_TYPE, &ptr1, &ptr2, &ptr3,
-                                  Crosshair.X, Crosshair.Y, PCB->Grid / 2);
+                                  Crosshair.X, Crosshair.Y, 0);
 
   /* Avoid snapping vias to any other vias */
   if (Settings.Mode == MOVE_MODE &&
