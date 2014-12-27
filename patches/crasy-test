@@ -1,5 +1,5 @@
 Bottom: 5fb00e2da50ebd962e57090714d9cd6283b2c955
-Top:    cf201ed5ab78513fc28b8180be332823d352668d
+Top:    9b57553636a81f772a1a04a41f10623f4d223c40
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2014-12-27 18:09:40 +0000
 
@@ -613,7 +613,7 @@ index b58e5cb..0cb0f88 100644
  void EraseViaName (PinType *);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
 new file mode 100644
-index 0000000..acc6259
+index 0000000..081b63e
 --- /dev/null
 +++ b/src/draw_funcs.c
 @@ -0,0 +1,365 @@
@@ -919,7 +919,7 @@ index 0000000..acc6259
 +    return;
 +
 +  r_search (layer->line_tree, drawn_area, NULL, line_callback, layer);
-+  r_search (layer->arc_tree, drawn_area,  NULL, arc_callback,  layer);
++  r_search (layer->arc_tree,  drawn_area, NULL, arc_callback,  layer);
 +  r_search (layer->text_tree, drawn_area, NULL, text_callback, layer);
 +
 +  /* We should check for gui->gui here, but it's kinda cool seeing the
