@@ -1,5 +1,5 @@
-Bottom: 2b61d75de6e7664cdfbe64bc245116d157ce7292
-Top:    fc517a5999c5b48e3475c71095ad1465db38aa80
+Bottom: ad9df3b62d5152018f84b9211f02b73d433cdf93
+Top:    d50633e9c371c6a8f976cd71d7ca2a97f40fa2da
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-01 16:04:54 +0000
 
@@ -9,7 +9,7 @@ Add support for drawing objects from the soldermask layer
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 129ffc6..59966e4 100644
+index df0059b..5b97d61 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1320,7 +1320,8 @@ static void
