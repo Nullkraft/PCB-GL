@@ -1,5 +1,5 @@
-Bottom: f4fa01c19437ca6620c2a29ec386574af4b3d724
-Top:    b9b8d795afa5ecd2b07b6883589626b2878747a9
+Bottom: bcf7f681b80f3e20d2bc02e543338ea777582e12
+Top:    bcf7f681b80f3e20d2bc02e543338ea777582e12
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-01 16:04:54 +0000
 
@@ -18,53 +18,4 @@ the pads.
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 06bae01..b0643d85 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1065,7 +1065,21 @@ draw_pin (PinType *pin, bool draw_hole)
- static int
- pin_callback (const BoxType * b, void *cl)
- {
--  draw_pin ((PinType *)b, false);
-+  PinType *pin = (PinType *) b;
-+
-+  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
-+    _draw_pv_name (pin);
-+  draw_pin (pin, false);
-+  return 1;
-+}
-+
-+static int
-+pin_name_callback (const BoxType * b, void *cl)
-+{
-+  PinType *pin = (PinType *) b;
-+
-+  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
-+    _draw_pv_name (pin);
-   return 1;
- }
- 
-@@ -1175,8 +1189,11 @@ pad_callback (const BoxType * b, void *cl)
-   PadType *pad = (PadType *) b;
-   int *side = cl;
- 
--  if (ON_SIDE (pad, *side))
-+  if (ON_SIDE (pad, *side)) {
-+    if (TEST_FLAG (DISPLAYNAMEFLAG, pad))
-+      draw_pad_name (pad);
-     draw_pad (pad);
-+  }
-   return 1;
- }
- 
-@@ -1427,6 +1444,9 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
- 
-       /* Draw pins, vias and pads on this layer */
-       if (!global_view_2d && rv) {
-+        if (PCB->PinOn &&
-+            (group == bottom_group || group == top_group))
-+          r_search (PCB->Data->pin_tree, screen, NULL, pin_name_callback, Layer);
-         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
-         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-         if (PCB->PinOn && group == top_group)
+
