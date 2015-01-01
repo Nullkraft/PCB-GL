@@ -1,0 +1,31 @@
+Bottom: 48388881e50fc681c9a8b31153061e7c25e0cac7
+Top:    b2421756731620d61324cc3e558ff8e55fafc478
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-01 17:05:59 +0000
+
+Refresh of i
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 02300c1..2b88194 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -90,7 +90,7 @@
+ #define ROUTE_VERBOSE
+ */
+ 
+-///*
++/*
+ #define ROUTE_DEBUG
+ //#define DEBUG_SHOW_ROUTE_BOXES
+ #define DEBUG_SHOW_EXPANSION_BOXES
+@@ -99,7 +99,7 @@
+ #define DEBUG_SHOW_TARGETS
+ #define DEBUG_SHOW_SOURCES
+ //#define DEBUG_SHOW_ZIGZAG
+-//*/
++*/
+ 
+ static direction_t
+ directionIncrement(direction_t dir)
