@@ -1,5 +1,5 @@
-Bottom: e51e4dd8190256aff7741f30ffac0c43e9f489eb
-Top:    0604b949928224cf6430787c44e9bce0630c3744
+Bottom: 3f12d3d2b85208a1d1f9031b60d0e8a939c081d8
+Top:    d96f13b239a991f55b5f0df2583296ca598ed450
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-12-27 18:09:33 +0000
 
@@ -12,10 +12,10 @@ This makse it MUCH easier to place vias in a regular grid spaced at the PCB grid
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 71edaca..9cece49 100644
+index ee57d6b..36a63dc 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -994,7 +994,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+@@ -995,7 +995,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
    ans = NO_TYPE;
    if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchObjectByLocation (PAD_TYPE, &ptr1, &ptr2, &ptr3,
@@ -24,7 +24,7 @@ index 71edaca..9cece49 100644
  
    /* Avoid self-snapping when moving */
    if (ans != NO_TYPE &&
-@@ -1051,7 +1051,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+@@ -1052,7 +1052,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
    ans = NO_TYPE;
    if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchObjectByLocation (PIN_TYPE, &ptr1, &ptr2, &ptr3,
@@ -33,7 +33,7 @@ index 71edaca..9cece49 100644
  
    /* Avoid self-snapping when moving */
    if (ans != NO_TYPE &&
-@@ -1069,7 +1069,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+@@ -1070,7 +1070,7 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
    ans = NO_TYPE;
    if (TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchObjectByLocation (VIA_TYPE, &ptr1, &ptr2, &ptr3,
