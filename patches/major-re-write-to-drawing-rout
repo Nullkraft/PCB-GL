@@ -1,5 +1,5 @@
 Bottom: 960c0e5b26bf1a234e5741bed8c468299f326cd9
-Top:    2b61d75de6e7664cdfbe64bc245116d157ce7292
+Top:    ad9df3b62d5152018f84b9211f02b73d433cdf93
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-01 16:04:54 +0000
 
@@ -76,7 +76,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e6538a3..129ffc6 100644
+index e6538a3..df0059b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -338,7 +338,7 @@ index e6538a3..129ffc6 100644
 +static int
 +pin_callback (const BoxType * b, void *cl)
 +{
-+  draw_pin ((PinType *)b, false);
++  draw_pin ((PinType *)b, TEST_FLAG (THINDRAWFLAG, PCB));
 +  return 1;
 +}
 +
