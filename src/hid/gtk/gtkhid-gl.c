@@ -1133,6 +1133,8 @@ ghid_screen_update (void)
 void
 ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
 {
+  return;
+
   /* Only apply effects to locked objects when in "lock" mode */
   if (Settings.Mode == LOCK_MODE &&
       TEST_FLAG (LOCKFLAG, object))
