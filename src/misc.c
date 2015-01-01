@@ -619,7 +619,7 @@ IsDataEmpty (DataType *Data)
 
   hasNoObjects = (Data->ViaN == 0);
   hasNoObjects &= (Data->ElementN == 0);
-  for (i = 0; i < max_copper_layer + 2; i++)
+  for (i = 0; i < max_copper_layer + EXTRA_LAYERS; i++)
     hasNoObjects = hasNoObjects &&
       Data->Layer[i].LineN == 0 &&
       Data->Layer[i].ArcN == 0 &&
@@ -993,7 +993,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
   int group, member, layer;
   bool c_set = false,        /* flags for the two special layers to */
     s_set = false;              /* provide a default setting for old formats */
-  int groupnum[MAX_LAYER + 2];
+  int groupnum[MAX_LAYER + EXTRA_LAYERS];
 
   *LayerN = 0;
 
@@ -1039,7 +1039,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
   memset (LayerGroup, 0, sizeof (LayerGroupType));
 
   /* Clear assignments */
-  for (layer = 0; layer < MAX_LAYER + 2; layer++)
+  for (layer = 0; layer < MAX_LAYER + EXTRA_LAYERS; layer++)
     groupnum[layer] = -1;
 
   /* loop over all groups */
@@ -1254,7 +1254,7 @@ GetLayerNumber (DataType *Data, LayerType *Layer)
 {
   int i;
 
-  for (i = 0; i < MAX_LAYER + 2; i++)
+  for (i = 0; i < MAX_LAYER + EXTRA_LAYERS; i++)
     if (Layer == &Data->Layer[i])
       break;
   return (i);
@@ -1367,7 +1367,7 @@ LayerStringToLayerStack (char *s)
 	}
     }
 
-  for (i = 0; i < max_copper_layer + 2; i++)
+  for (i = 0; i < max_copper_layer + EXTRA_LAYERS; i++)
     {
       if (i < max_copper_layer)
         LayerStack[i] = i;
@@ -1581,7 +1581,7 @@ ResetStackAndVisibility (void)
   int top_group;
   Cardinal i;
 
-  for (i = 0; i < max_copper_layer + 2; i++)
+  for (i = 0; i < max_copper_layer + EXTRA_LAYERS; i++)
     {
       if (i < max_copper_layer)
         LayerStack[i] = i;
@@ -1620,7 +1620,7 @@ SaveStackAndVisibility (void)
                "yet restored.  cnt = %d\n", SavedStack.cnt);
     }
 
-  for (i = 0; i < max_copper_layer + 2; i++)
+  for (i = 0; i < max_copper_layer + EXTRA_LAYERS; i++)
     {
       if (i < max_copper_layer)
         SavedStack.LayerStack[i] = LayerStack[i];
@@ -1654,7 +1654,7 @@ RestoreStackAndVisibility (void)
                " wrong.  cnt = %d\n", SavedStack.cnt);
     }
 
-  for (i = 0; i < max_copper_layer + 2; i++)
+  for (i = 0; i < max_copper_layer + EXTRA_LAYERS; i++)
     {
       if (i < max_copper_layer)
         LayerStack[i] = SavedStack.LayerStack[i];
