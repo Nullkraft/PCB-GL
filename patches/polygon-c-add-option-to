@@ -1,7 +1,7 @@
-Bottom: 7a01f1da98bdb463e6f478805c7806a5d151a7b0
-Top:    344b376a7b538032ce96c766b5a2b5c0e3a8f316
+Bottom: bc47017ffa348fbb84ff3a57c4585e4c926d49fb
+Top:    62924128811613a4bdc4c8adb13a820fa7b276b1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-01 16:05:02 +0000
+Date:   2015-01-01 16:19:58 +0000
 
 polygon.c: Add option to include drills holes (from vias / pins) in the board outline
 
@@ -9,7 +9,7 @@ polygon.c: Add option to include drills holes (from vias / pins) in the board ou
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 558c16a..d2834bd 100644
+index 415d0fc..00cab45 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1569,7 +1569,7 @@ ensure_board_outline (void)
