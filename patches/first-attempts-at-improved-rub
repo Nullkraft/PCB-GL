@@ -1,7 +1,7 @@
-Bottom: 3d119f35cdb9f6aafb63c309b29416fab873380d
-Top:    d0f7a57f09d896b91c8ba611580eb82a697b3a95
+Bottom: 9da5ecc388013894a28e863c70f4e50bbd9dd1c0
+Top:    0f1ab42f8542bc7b629d7ddea1f762a01651f9b6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-12-27 19:33:36 +0000
+Date:   2015-01-01 16:05:01 +0000
 
 First attempts at improved rubberbanding logic
 
@@ -43,7 +43,7 @@ index 04fe48e..fa49a1b 100644
  LibraryEntryType * CreateNewConnection (LibraryMenuType *, char *);
  AttributeType * CreateNewAttribute (AttributeListType *list, char *name, char *value);
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 54a6078..2819743 100644
+index d759154..a2dd6d5 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -368,6 +368,57 @@ XORDrawInsertPointObject (void)
