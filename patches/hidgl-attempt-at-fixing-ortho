@@ -1,7 +1,7 @@
-Bottom: 907b167561a599d03361889400971f7cc8f8512f
-Top:    31dd9de61902ca119e140036a2fc914ecaf7344e
+Bottom: 9b477103b0f0362e53d65da84600d84b14f36aa6
+Top:    575716dbc917746a0778eb5122de2900cc0d8061
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-01 16:19:54 +0000
+Date:   2015-01-01 17:11:05 +0000
 
 hidgl: Attempt at fixing ORTHO view
 
@@ -9,7 +9,7 @@ hidgl: Attempt at fixing ORTHO view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 95afab9..926d739 100644
+index deb0f99..33187ae 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1888,6 +1888,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,

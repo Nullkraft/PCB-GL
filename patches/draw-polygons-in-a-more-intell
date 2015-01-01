@@ -1,7 +1,7 @@
-Bottom: 5ea967f4d6d093526b56ca47fc07b31034533365
-Top:    91f6e7ed2bfd3ee6c991fe385a2fa117748adf46
+Bottom: 047dfbd6ed55506e9aca8fe422f0f2c4a8283b9d
+Top:    23aa60ca73cbb4e1a2cd57d9108d5e5b766d92ed
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-01 16:19:54 +0000
+Date:   2015-01-01 17:11:05 +0000
 
 Draw polygons in a more intelligent order
 
@@ -156,7 +156,7 @@ index 56a3d3a..115b353 100644
  }
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 07e8aa9..9307ea0 100644
+index 9509692..8727de2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1317,7 +1317,35 @@ static int

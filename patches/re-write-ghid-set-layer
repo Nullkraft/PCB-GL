@@ -1,7 +1,7 @@
-Bottom: 20ab16c36d64f5cce6defd89b6a2991a40fe5d9c
-Top:    ac257ccc8c6bfb7b89680784d78fc2aaf597bd29
+Bottom: 0ffbc75773e0f5052f4cc154d6426f24dc657433
+Top:    c3078d9c9d997e76a22a99e5baf2bcb9306e301f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-01 16:19:55 +0000
+Date:   2015-01-01 17:11:05 +0000
 
 Re-write ghid_set_layer() for some reason (can't recall why!)
 
@@ -9,7 +9,7 @@ Re-write ghid_set_layer() for some reason (can't recall why!)
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index ba242e2..212814f 100644
+index 467d00c..500b81e 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -61,48 +61,49 @@ hid_gc_struct;
