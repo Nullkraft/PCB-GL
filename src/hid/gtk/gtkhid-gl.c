@@ -1069,7 +1069,7 @@ pin_callback (const BoxType * b, void *cl)
 
   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
     _draw_pv_name (pin);
-  draw_pin (pin, false);
+  draw_pin (pin, TEST_FLAG (THINDRAWFLAG, PCB));
   return 1;
 }
 
