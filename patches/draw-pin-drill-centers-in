@@ -1,4 +1,4 @@
-Bottom: b9b8d795afa5ecd2b07b6883589626b2878747a9
+Bottom: 2472e1815dbc1c7df622e8d3ef39877336879a25
 Top:    2472e1815dbc1c7df622e8d3ef39877336879a25
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-01 16:15:07 +0000
@@ -8,15 +8,4 @@ Draw pin drill centers in thindraw mode
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b0643d85..b266b04 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1069,7 +1069,7 @@ pin_callback (const BoxType * b, void *cl)
- 
-   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
-     _draw_pv_name (pin);
--  draw_pin (pin, false);
-+  draw_pin (pin, TEST_FLAG (THINDRAWFLAG, PCB));
-   return 1;
- }
+
