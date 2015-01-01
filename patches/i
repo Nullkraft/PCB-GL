@@ -1,5 +1,5 @@
 Bottom: cab8634891f10a65b66f99ad82009e6b67afb98f
-Top:    48388881e50fc681c9a8b31153061e7c25e0cac7
+Top:    b2421756731620d61324cc3e558ff8e55fafc478
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-01 16:55:07 +0000
 
@@ -9,7 +9,7 @@ Tmp debug
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 58ff351..02300c1 100644
+index 58ff351..2b88194 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -79,6 +79,7 @@
@@ -20,21 +20,3 @@ index 58ff351..02300c1 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -89,7 +90,7 @@
- #define ROUTE_VERBOSE
- */
- 
--/*
-+///*
- #define ROUTE_DEBUG
- //#define DEBUG_SHOW_ROUTE_BOXES
- #define DEBUG_SHOW_EXPANSION_BOXES
-@@ -98,7 +99,7 @@
- #define DEBUG_SHOW_TARGETS
- #define DEBUG_SHOW_SOURCES
- //#define DEBUG_SHOW_ZIGZAG
--*/
-+//*/
- 
- static direction_t
- directionIncrement(direction_t dir)
