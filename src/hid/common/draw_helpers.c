@@ -191,6 +191,17 @@ thindraw_contour (hidGC gc, PLINE *pl)
             gui->graphics->fill_circle (gc, this_x, this_y, MIL_TO_COORD (3));
           else
             gui->graphics->draw_arc (gc, this_x, this_y, MIL_TO_COORD (3), MIL_TO_COORD (3), 0, 360);
+
+          /* Draw the bounding box for arg segments */
+          if (0)
+            {
+              BoxType *bound = get_seg_bounds (pl, v->prev);
+
+              gui->graphics->draw_line (gc, bound->X1, bound->Y1, bound->X2, bound->Y1);
+              gui->graphics->draw_line (gc, bound->X2, bound->Y1, bound->X2, bound->Y2);
+              gui->graphics->draw_line (gc, bound->X2, bound->Y2, bound->X1, bound->Y2);
+              gui->graphics->draw_line (gc, bound->X1, bound->Y2, bound->X1, bound->Y1);
+            }
         }
       else
         {
