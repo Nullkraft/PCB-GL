@@ -1,4 +1,4 @@
-Bottom: 97310246d51c0ba226f00711a3810595ca114506
+Bottom: 48388881e50fc681c9a8b31153061e7c25e0cac7
 Top:    def5781bdb8a8743afda8c59b2b818eb58ba257e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-01 16:35:27 +0000
@@ -9,18 +9,10 @@ Pass a HID_DRAW structure for debug_draw, not HID
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index e4f8704..7cdc094 100644
+index 02300c1..7cdc094 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
-@@ -79,6 +79,7 @@
- #include "undo.h"
- #include "vector.h"
- #include "pcb-printf.h"
-+#include "hid_draw.h"
- 
- #ifdef HAVE_LIBDMALLOC
- #include <dmalloc.h>
-@@ -137,7 +138,7 @@ return dir;
+@@ -138,7 +138,7 @@ return dir;
  }
  
  #ifdef ROUTE_DEBUG
@@ -29,7 +21,7 @@ index e4f8704..7cdc094 100644
  static hidGC ar_gc = 0;
  #endif
  
-@@ -1468,14 +1469,14 @@ showbox (BoxType b, Dimension thickness, int group)
+@@ -1469,14 +1469,14 @@ showbox (BoxType b, Dimension thickness, int group)
  
    if (ddraw != NULL)
      {
@@ -52,7 +44,7 @@ index e4f8704..7cdc094 100644
      }
  
  #if 1
-@@ -1524,23 +1525,23 @@ showedge (edge_t * e)
+@@ -1525,23 +1525,23 @@ showedge (edge_t * e)
    if (ddraw == NULL)
      return;
  
@@ -83,7 +75,7 @@ index e4f8704..7cdc094 100644
        break;
      default:
        break;
-@@ -3672,7 +3673,7 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
+@@ -3673,7 +3673,7 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
  
  #ifdef ROUTE_DEBUG
    if (ddraw != NULL)
@@ -92,7 +84,7 @@ index e4f8704..7cdc094 100644
  #endif
  }
  
-@@ -5165,8 +5166,8 @@ AutoRoute (bool selected)
+@@ -5166,8 +5166,8 @@ AutoRoute (bool selected)
    ddraw = gui->request_debug_draw ();
    if (ddraw != NULL)
      {
@@ -103,7 +95,7 @@ index e4f8704..7cdc094 100644
      }
  #endif
  
-@@ -5332,8 +5333,8 @@ donerouting:
+@@ -5333,8 +5333,8 @@ donerouting:
  #ifdef ROUTE_DEBUG
    if (ddraw != NULL)
      {
