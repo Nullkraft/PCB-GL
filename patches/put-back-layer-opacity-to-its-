@@ -1,7 +1,7 @@
-Bottom: f8f962342affa29157328bd07c50f979f2763e2f
-Top:    5ec918a493b511af2262cafa571c9836e5879880
+Bottom: 473414cc629ada0175439a346c3bafcf64582fd6
+Top:    bc800becfed2c4cabff5c11484995a4a3789679b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-01 16:04:56 +0000
+Date:   2015-01-01 17:11:03 +0000
 
 Put back layer opacity to its old behaviour
 
@@ -12,7 +12,7 @@ so revert them so I can build a release.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5eb7563..1f48e68 100644
+index bcbfbdb..3748ecd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1673,7 +1673,7 @@ ghid_draw_everything (BoxType *drawn_area)
