@@ -1,7 +1,7 @@
-Bottom: 0987074e554211c7c6cac87c93f12798146a4039
-Top:    62b818e0b24115c2a351804bb6fb736be8897318
+Bottom: 3eb64595a2918942344d55f8a5f18ce0a6c0a4db
+Top:    755f93ad09b43abbaee0e2426674725ed084c4f6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-01 16:20:02 +0000
+Date:   2015-01-01 17:11:13 +0000
 
 Remove debug rendering for polygons
 
@@ -263,7 +263,7 @@ index cbeb60f..0aa2ed0 100644
  
  static void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 031efed..f54672f 100644
+index 85bc919..787079e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -849,11 +849,9 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)

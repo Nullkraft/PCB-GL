@@ -1,7 +1,7 @@
-Bottom: 7b1db3b5494d78ed712c17664ddd6d643bfe3908
-Top:    d4f845e64ddd54028e6a7f4ee9ba038da9990c3c
+Bottom: 3a29881e1b296e82cf350fef0f3fdbc21fd09649
+Top:    d08658f7b2db249bfbc5d4c31adf8f4271bc0a31
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-01 16:19:57 +0000
+Date:   2015-01-01 17:11:08 +0000
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -106,7 +106,7 @@ index 87564f0..7b3fde7 100644
  void notify_crosshair_change (bool changes_complete);
  void notify_mark_change (bool changes_complete);
 diff --git a/src/hid.h b/src/hid.h
-index f5577eb..166415f 100644
+index c8248fe..84c342d 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -518,6 +518,10 @@ typedef enum
@@ -187,7 +187,7 @@ index f739d5e..0af6a6d 100644
  ghid_mode_cursor (int Mode)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index d05fc6b..2918a50 100644
+index 80c280c..3f51188 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -266,6 +266,7 @@ void ghid_cursor_position_relative_label_set_text (gchar * text);

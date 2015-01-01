@@ -1,7 +1,7 @@
-Bottom: 50f7bc09f44cc2800ffab72cc4f4e253e1e8553c
-Top:    804d1bd9b59c46e4fb16d3d7e275f8eb2b9a91f4
+Bottom: 47b8eacf3d59cd95e948e60fc2a7075fd01b0a5c
+Top:    0856344125cc4d74011039637a486ceaa911d5d4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-01 16:24:21 +0000
+Date:   2015-01-01 17:11:09 +0000
 
 Play with locked object rendering
 
@@ -9,6 +9,7 @@ Play with locked object rendering
 
 Did I mention this was a hacky pile of rubbish code.. the main point of
 the exercise is to determine whether the usability is better or not.
+
 
 ---
 
@@ -170,7 +171,7 @@ index 0cfd9df..48f0c01 100644
                          PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
                          FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9e7ea2b..f29e8e9 100644
+index 827ede4..38a9082 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -79,6 +79,8 @@ typedef struct render_priv {
