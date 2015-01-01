@@ -1064,7 +1064,7 @@ draw_pin (PinType *pin, bool draw_hole)
 static int
 pin_callback (const BoxType * b, void *cl)
 {
-  draw_pin ((PinType *)b, false);
+  draw_pin ((PinType *)b, TEST_FLAG (THINDRAWFLAG, PCB));
   return 1;
 }
 
