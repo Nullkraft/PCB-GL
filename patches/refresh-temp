@@ -1,0 +1,232 @@
+Bottom: cab8634891f10a65b66f99ad82009e6b67afb98f
+Top:    def5781bdb8a8743afda8c59b2b818eb58ba257e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-01 16:54:51 +0000
+
+Refresh of pass-a-hid_draw-structure-for
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 58ff351..7cdc094 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -79,6 +79,7 @@
+ #include "undo.h"
+ #include "vector.h"
+ #include "pcb-printf.h"
++#include "hid_draw.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -89,7 +90,7 @@
+ #define ROUTE_VERBOSE
+ */
+ 
+-/*
++///*
+ #define ROUTE_DEBUG
+ //#define DEBUG_SHOW_ROUTE_BOXES
+ #define DEBUG_SHOW_EXPANSION_BOXES
+@@ -98,7 +99,7 @@
+ #define DEBUG_SHOW_TARGETS
+ #define DEBUG_SHOW_SOURCES
+ //#define DEBUG_SHOW_ZIGZAG
+-*/
++//*/
+ 
+ static direction_t
+ directionIncrement(direction_t dir)
+@@ -137,7 +138,7 @@ return dir;
+ }
+ 
+ #ifdef ROUTE_DEBUG
+-HID *ddraw = NULL;
++HID_DRAW *ddraw = NULL;
+ static hidGC ar_gc = 0;
+ #endif
+ 
+@@ -1468,14 +1469,14 @@ showbox (BoxType b, Dimension thickness, int group)
+ 
+   if (ddraw != NULL)
+     {
+-      ddraw->graphics->set_line_width (ar_gc, thickness);
+-      ddraw->graphics->set_line_cap (ar_gc, Trace_Cap);
+-      ddraw->graphics->set_color (ar_gc, SLayer->Color);
+-
+-      ddraw->graphics->draw_line (ar_gc, b.X1, b.Y1, b.X2, b.Y1);
+-      ddraw->graphics->draw_line (ar_gc, b.X1, b.Y2, b.X2, b.Y2);
+-      ddraw->graphics->draw_line (ar_gc, b.X1, b.Y1, b.X1, b.Y2);
+-      ddraw->graphics->draw_line (ar_gc, b.X2, b.Y1, b.X2, b.Y2);
++      ddraw->set_line_width (ar_gc, thickness);
++      ddraw->set_line_cap (ar_gc, Trace_Cap);
++      ddraw->set_color (ar_gc, SLayer->Color);
++
++      ddraw->draw_line (ar_gc, b.X1, b.Y1, b.X2, b.Y1);
++      ddraw->draw_line (ar_gc, b.X1, b.Y2, b.X2, b.Y2);
++      ddraw->draw_line (ar_gc, b.X1, b.Y1, b.X1, b.Y2);
++      ddraw->draw_line (ar_gc, b.X2, b.Y1, b.X2, b.Y2);
+     }
+ 
+ #if 1
+@@ -1524,23 +1525,23 @@ showedge (edge_t * e)
+   if (ddraw == NULL)
+     return;
+ 
+-  ddraw->graphics->set_line_cap (ar_gc, Trace_Cap);
+-  ddraw->graphics->set_line_width (ar_gc, 1);
+-  ddraw->graphics->set_color (ar_gc, Settings.MaskColor);
++  ddraw->set_line_cap (ar_gc, Trace_Cap);
++  ddraw->set_line_width (ar_gc, 1);
++  ddraw->set_color (ar_gc, Settings.MaskColor);
+ 
+   switch (e->expand_dir)
+     {
+     case NORTH:
+-      ddraw->graphics->draw_line (ar_gc, b->X1, b->Y1, b->X2, b->Y1);
++      ddraw->draw_line (ar_gc, b->X1, b->Y1, b->X2, b->Y1);
+       break;
+     case SOUTH:
+-      ddraw->graphics->draw_line (ar_gc, b->X1, b->Y2, b->X2, b->Y2);
++      ddraw->draw_line (ar_gc, b->X1, b->Y2, b->X2, b->Y2);
+       break;
+     case WEST:
+-      ddraw->graphics->draw_line (ar_gc, b->X1, b->Y1, b->X1, b->Y2);
++      ddraw->draw_line (ar_gc, b->X1, b->Y1, b->X1, b->Y2);
+       break;
+     case EAST:
+-      ddraw->graphics->draw_line (ar_gc, b->X2, b->Y1, b->X2, b->Y2);
++      ddraw->draw_line (ar_gc, b->X2, b->Y1, b->X2, b->Y2);
+       break;
+     default:
+       break;
+@@ -3672,7 +3673,7 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
+ 
+ #ifdef ROUTE_DEBUG
+   if (ddraw != NULL)
+-    ddraw->flush_debug_draw ();
++    gui->flush_debug_draw ();
+ #endif
+ }
+ 
+@@ -5165,8 +5166,8 @@ AutoRoute (bool selected)
+   ddraw = gui->request_debug_draw ();
+   if (ddraw != NULL)
+     {
+-      ar_gc = ddraw->graphics->make_gc ();
+-      ddraw->graphics->set_line_cap (ar_gc, Round_Cap);
++      ar_gc = ddraw->make_gc ();
++      ddraw->set_line_cap (ar_gc, Round_Cap);
+     }
+ #endif
+ 
+@@ -5332,8 +5333,8 @@ donerouting:
+ #ifdef ROUTE_DEBUG
+   if (ddraw != NULL)
+     {
+-      ddraw->graphics->destroy_gc (ar_gc);
+-      ddraw->finish_debug_draw ();
++      ddraw->destroy_gc (ar_gc);
++      gui->finish_debug_draw ();
+     }
+ #endif
+ 
+diff --git a/src/hid.h b/src/hid.h
+index f5577eb..c8248fe 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -491,7 +491,7 @@ typedef enum
+      * gui-> for making drawing calls. If the return value is NULL, then
+      * permission has been denied, and the drawing must not continue.
+      */
+-    HID *(*request_debug_draw) (void);
++    HID_DRAW *(*request_debug_draw) (void);
+ 
+     /* Flush pending drawing to the screen
+      *
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index e9662d1..2e09138 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -429,7 +429,7 @@ nogui_progress (int so_far, int total, const char *message)
+   return 0;
+ }
+ 
+-static HID *
++static HID_DRAW *
+ nogui_request_debug_draw (void)
+ {
+   return NULL;
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 54e5598..bbaf465 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1226,12 +1226,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   return pixmap;
+ }
+ 
+-HID *
++HID_draw *
+ ghid_request_debug_draw (void)
+ {
+   /* No special setup requirements, drawing goes into
+    * the backing pixmap. */
+-  return &ghid_hid;
++  return ghid_hid.graphics;
+ }
+ 
+ void
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index ac695e8..1a95bcd 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1294,7 +1294,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   return pixmap;
+ }
+ 
+-HID *
++HID_DRAW *
+ ghid_request_debug_draw (void)
+ {
+   GHidPort *port = gport;
+@@ -1329,7 +1329,7 @@ ghid_request_debug_draw (void)
+                 port->view.flip_y ? port->view.y0 - PCB->MaxHeight :
+                              -port->view.y0, 0);
+ 
+-  return &ghid_hid;
++  return ghid_hid.graphics;
+ }
+ 
+ void
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index da2513e..d587e60 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -502,7 +502,7 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
+ gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
+ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
+                                int width, int height, int depth);
+-HID *ghid_request_debug_draw (void);
++HID_DRAW *ghid_request_debug_draw (void);
+ void ghid_flush_debug_draw (void);
+ void ghid_finish_debug_draw (void);
+ bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index f3f16c8..edc85cf 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -4003,12 +4003,12 @@ lesstif_progress (int so_far, int total, const char *message)
+   return progress_cancelled;
+ }
+ 
+-static HID *
++static HID_DRAW *
+ lesstif_request_debug_draw (void)
+ {
+   /* Send drawing to the backing pixmap */
+   pixmap = main_pixmap;
+-  return &lesstif_hid;
++  return lesstif_hid.graphics;
+ }
+ 
+ static void
