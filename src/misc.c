@@ -2015,6 +2015,7 @@ MoveLayerToGroup (int layer, int group)
 {
   int prev, i, j;
 
+#warning BUG NEXT LINE?
   if (layer < 0 || layer > max_copper_layer + 1)
     return -1;
   prev = GetLayerGroupNumberByNumber (layer);
