@@ -1,7 +1,7 @@
-Bottom: 0e76e271d8ac095c5002ec720e3bb89c92a01a3b
-Top:    48b70b983e1481d8490d4ef02bef044cf449b757
+Bottom: 67c356b8c2169b59d1502ac26641fa183d113dd8
+Top:    4cef944d268d0fdf8fef5d22b373866cbd915669
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-01 16:04:59 +0000
+Date:   2015-01-01 16:19:55 +0000
 
 Disable texturing the board's soldermask
 
@@ -9,7 +9,7 @@ Disable texturing the board's soldermask
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 710d08e..b251c5a 100644
+index 07e05cf..5a2bdcb 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1490,6 +1490,7 @@ GhidDrawMask (int side, BoxType * screen)
