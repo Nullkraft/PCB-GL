@@ -1,0 +1,31 @@
+Bottom: 48efd4880e0534ad3dee659d757c384102528cc6
+Top:    58b07b2d9f3d5ec88cdb88cf6ebe6f8d7aac6a98
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-01 15:44:08 +0000
+
+Don't use abuse mask drawing of pin/via drawing routines to show DRC clearance during placement
+
+Explicitly call the graphical drawing routines as necessary.
+
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 9821495..74cdc30 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -719,10 +719,11 @@ DrawAttached (void)
+ 
+         if (TEST_FLAG (SHOWDRCFLAG, PCB))
+           {
+-            /* XXX: Naughty cheat - use the mask to draw DRC clearance! */
+-            via.Mask = Settings.ViaThickness + PCB->Bloat * 2;
++            Coord mask_r = Settings.ViaThickness / 2 + PCB->Bloat;
+             gui->graphics->set_color (Crosshair.GC, Settings.CrossColor);
+-            gui->graphics->_thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, false, true);
++            gui->graphics->set_line_cap (Crosshair.GC, Round_Cap);
++            gui->graphics->set_line_width (Crosshair.GC, 0);
++            gui->graphics->draw_arc (Crosshair.GC, via.X, via.Y, mask_r, mask_r, 0, 360);
+             gui->graphics->set_color (Crosshair.GC, Settings.CrosshairColor);
+           }
+         break;
