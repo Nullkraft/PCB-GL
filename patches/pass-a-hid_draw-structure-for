@@ -3,7 +3,9 @@ Top:    e31d3f616c1dd3785e8b79293fc6a34620f31259
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-01 16:35:27 +0000
 
-Pass a HID_DRAW structure for debug_draw, not HID
+Pass a HID_DRAW structure for debug drawing, not HID
+
+Avoids passing the caller access to more functionality than required.
 
 
 ---
