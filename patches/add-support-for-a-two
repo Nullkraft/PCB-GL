@@ -1,7 +1,7 @@
-Bottom: 1fda040746f5889b75eef3dd55ce66dd83d8421b
-Top:    998b712aa80ce9985d026fdbaeb82ffe68d371ff
+Bottom: 471920e9631bd4621092ef0b4fc707c89b56069f
+Top:    66111a652419c8e016cf32f49c69b466f6a5b22e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2014-12-27 18:09:35 +0000
+Date:   2015-01-01 17:10:54 +0000
 
 Add support for a two soldermask layers, defining regions of removed mask
 
@@ -213,7 +213,7 @@ index d14c496..42f42d9 100644
      newl = atoi (argv[0]) - 1;
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index da2513e..312d111 100644
+index d587e60..9845c53 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -44,15 +44,15 @@
