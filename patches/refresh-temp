@@ -1,0 +1,21 @@
+Bottom: 2b61d75de6e7664cdfbe64bc245116d157ce7292
+Top:    ad9df3b62d5152018f84b9211f02b73d433cdf93
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-01 16:19:01 +0000
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 129ffc6..df0059b 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1064,7 +1064,7 @@ draw_pin (PinType *pin, bool draw_hole)
+ static int
+ pin_callback (const BoxType * b, void *cl)
+ {
+-  draw_pin ((PinType *)b, false);
++  draw_pin ((PinType *)b, TEST_FLAG (THINDRAWFLAG, PCB));
+   return 1;
+ }
