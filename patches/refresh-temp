@@ -1,0 +1,25 @@
+Bottom: e31d3f616c1dd3785e8b79293fc6a34620f31259
+Top:    9db683908479ed66b5b258d6607b3c76a0d6a52f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-02 22:56:35 +0000
+
+Refresh of hid-h-update-comment-to
+
+---
+
+diff --git a/src/hid.h b/src/hid.h
+index c8248fe..59c6e35 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -487,9 +487,9 @@ typedef enum
+ 
+     /* Request permission for debug drawing
+      *
+-     * Returns a HID pointer which should be used rather than the global
+-     * gui-> for making drawing calls. If the return value is NULL, then
+-     * permission has been denied, and the drawing must not continue.
++     * Returns a HID_DRAW pointer which should be used rather than the global
++     * gui->graphics-> for making drawing calls. If the return value is NULL,
++     * then permission has been denied, and the drawing must not continue.
+      */
+     HID_DRAW *(*request_debug_draw) (void);
