@@ -117,8 +117,8 @@ ElementType *
 CopyElementLowLevel (DataType *Data, ElementType *Src,
                      bool uniqueName, Coord dx, Coord dy, int mask_flags)
 {
-  int i;
   ElementType *Dest;
+  GList *iter;
 
   /* both coordinates and flags are the same */
   Dest = CreateNewElement (Data, &PCB->Font,
@@ -165,10 +165,11 @@ CopyElementLowLevel (DataType *Data, ElementType *Src,
   }
   END_LOOP;
 
-  for (i=0; i<Src->Attributes.Number; i++)
-    CreateNewAttribute (& Dest->Attributes,
-			Src->Attributes.List[i].name,
-			Src->Attributes.List[i].value);
+  for (iter = Src->Attributes.List; iter != NULL; iter = g_list_next (iter))
+    {
+      AttributeType *attr = iter->data;
+      CreateNewAttribute (&Dest->Attributes, attr->name, attr->value);
+    }
 
   Dest->MarkX = Src->MarkX + dx;
   Dest->MarkY = Src->MarkY + dy;
