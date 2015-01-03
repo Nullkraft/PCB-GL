@@ -2594,8 +2594,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_invalidate_current_gc ();
 
-  DrawAttached ();
-  DrawMark ();
+  DrawAttached (Output.fgGC);
+  DrawMark (Output.fgGC);
   hidgl_flush_triangles (&buffer);
 
   glEnable (GL_LIGHTING);
