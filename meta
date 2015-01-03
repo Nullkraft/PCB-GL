@@ -1,6 +1,6 @@
 Version: 1
-Previous: c01145e54bf8b067e01fbd2f5bd6b9d81414da32
-Head: 1a18016c56f88e6c0cb8311713548446abbbede4
+Previous: bf128a73f4a365c3b4ca73e80255563264275c19
+Head: 6a3b4e137736adde3682b43227b0df94c6d3cbcb
 Applied:
   refactor-poly_createnode-to: 543a5371ef7e63e5be9f433fff698202c869cf2a
   add-strip-hierarchy-options-to: a6f094b68050b4f8a4c58f00f0317bf5edc95464
@@ -13,32 +13,32 @@ Applied:
   first-attempts-at-improved-rub: e4d67a0184dff6f05e971f9c0c60cc8af7c5cfc1
   more-rubberbanding-algorithm-t: ebfd6c0d81c573d1ad84a2b491dd3a36e44c761d
   play-with-locked-object: 1a18016c56f88e6c0cb8311713548446abbbede4
+  win32-disable-the-spacenavigat: eefffc466a758e790e0d358158d43bd18efa8809
+  32bit-fix-gl-hid-zoom-out-due-: 80d4eeff87178f14f339d74b72b0e9ad3246bb10
+  hid-gtk-gl-add-hacky-code-to-r: 825660534095d81e19296b4c44c908dac8ff933e
+  polygon-c-add-option-to: ac383705049eb46a003d12fba0c741b016243acd
+  fix-build-warnings-in-gtkhid: e30a17ec63499ec5c4971b403a21aad90a8f7504
+  play-with-quad-edge-data: f36da773b51e7c5bf19504636d63b69a5ec05ebe
+  wip-on-quad-edge-play: 01d232e26630e6b5d4c2a10d0a6f07aa00e092bd
+  more-play-with-quad-edge-data: 77f48adc6d4d4851752d10ea3d1206fea520edc9
+  continue-tinkering-with-3d: 96ecc04735abd3f41d4d55659fdd27d88a1a7726
+  attempt-to-refactor-the-step: 2729845702edb7ed7260865d35f9dca8c3ece0ae
+  well-on-the-way-to-completely: dd63dff2e0690abaae4941dd4f0c983e6c92d656
+  and-working-again-mostly: e7e2bacfdc4d855aac481197108b5c19e9eb5f99
+  refactor-arc-bounding-box: 711832271db6bb12f3972a88782710037d1edb07
+  add-support-for-arc-segments: a80f58200c1c755755b2db3c12a29fb1301bc70e
+  move-arc-from-included-angle: a36a6c06da2eef1f040a34bb06ae5bb339f5abc6
+  test-poly-curve-support-prod: 40cf1038865f1b8c0fd692a3a9aff587197ab51e
+  fix-to-parsegroupstring: b2ed3d66d7af7a1b9070e33f0c72da63f15b0011
+  tag-vnodes-with-details-of: 268e26fc520a50a63bf026d402f233b75975450c
+  tag-the-from-vertex-with-the: 9eafd038e0a7a68afbc6cf51abf0d036c22265ea
+  remove-debug-from-outline: 7ff5992b6638b7f79827a6478cebfe47d6362cd1
+  polygon1-c-temporarily-disable: d437457c61bb7aff2b5d4b0ec80311a90ad6d3ef
+  attempt-at-supporting-arc-arc: 0818e200017cfccad1a94edfe343bc361f2520a4
+  avoid-solving-snap-rounding: 57dbf49554c8f84ea6c549d748efca1bf497f55c
+  work-in-progress-on-arc: 9b2c81289386098b44fec7c7b790a7c283504415
+  remove-debug-rendering-for: 6a3b4e137736adde3682b43227b0df94c6d3cbcb
 Unapplied:
-  win32-disable-the-spacenavigat: cbef5189b3b1b1e18742cc373310d761332bb566
-  32bit-fix-gl-hid-zoom-out-due-: ae30bb6fa0d9a7dd2ed7734ab007ce98fcde52d2
-  hid-gtk-gl-add-hacky-code-to-r: 05d2b78c0f7918d6c0aaf6412819d213728f3395
-  polygon-c-add-option-to: ed10933543cbfba69977d0e0fad0eda82eae7429
-  fix-build-warnings-in-gtkhid: d9e32bf365c18cfb56d33b106abc5b2715737def
-  play-with-quad-edge-data: 6c9894417cd60712e5b434ed92cd6e7c393ee06b
-  wip-on-quad-edge-play: 404732029532ceaa0917fca687f63839a705edab
-  more-play-with-quad-edge-data: 1892ebf47f2e27c8caa4afe7067f638498bd162b
-  continue-tinkering-with-3d: 628ed4f6198952ae19cf5e5f839c24b3694b857d
-  attempt-to-refactor-the-step: 846c728f0537b909f24571f353646880f3702214
-  well-on-the-way-to-completely: 5d3b05fb3ec1542bd7a9e95678fe5be09070de39
-  and-working-again-mostly: d42947d3db0b4db9c309b6a695e3056b243643e5
-  refactor-arc-bounding-box: 1641f273ac3408750fcf174e79960792b496d779
-  add-support-for-arc-segments: 2b837ae2c71dc7c3ebdfa0222f03e2133862bb75
-  move-arc-from-included-angle: 637494919c36f74e87e55b9e6288b07b1da7738b
-  test-poly-curve-support-prod: b40f2ce33a0ce5dab4a220c58d6fa166d4029cc9
-  fix-to-parsegroupstring: a64e4d6198a8d53c378905c5dd84c6c98617545f
-  tag-vnodes-with-details-of: 56ec8c019479ae70d859836c1ca092da2a4aaf60
-  tag-the-from-vertex-with-the: bb9896500c406f672d382c60802e837e61aef31e
-  remove-debug-from-outline: 3399ba7e522ebe7e9783569ad1654de3805e861e
-  polygon1-c-temporarily-disable: bd5bf35cf7a411c3ca5d005f34e18be8fc3df480
-  attempt-at-supporting-arc-arc: 97d407363f083c22a6d3d9a490857dee34c3331e
-  avoid-solving-snap-rounding: 1dd3b78e275cc04dc6f09a97152df4537de900d4
-  work-in-progress-on-arc: 8a2a4eaa14c76fef111a27e25fc939cfa688a255
-  remove-debug-rendering-for: f207696eb7fbf43aaa17665d739e6be62bcdd714
   introduce-coord_min-macro-to: 46593ec2cff273a4eb2fa069fbfa32c47c34bddd
   play-with-icons: 267324397be2597d6736cf3da933b0a232360118
   add-warning-about-bogus-code-i: 5544062f533944e073bee04263a50a604562ed5d
