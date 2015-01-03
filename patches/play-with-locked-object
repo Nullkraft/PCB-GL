@@ -1,5 +1,5 @@
 Bottom: 6ec86bff8e314158901d59d537b55ecd60094fce
-Top:    c5c18547ec01e6676f6539fb1f97168a31b4882b
+Top:    3818a1c9acdf1453af03761ad09600ef2a68fb8d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-03 14:49:04 +0000
 
@@ -170,6 +170,19 @@ index 0cfd9df..48f0c01 100644
        set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
                          PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
                          FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index c488042..c0f5a97 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1389,3 +1389,8 @@ ghid_cancel_lead_user (void)
+   priv->lead_user_timer = NULL;
+   priv->lead_user = false;
+ }
++
++void
++ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
++{
++}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index b845be2..5519575 100644
 --- a/src/hid/gtk/gtkhid-gl.c
