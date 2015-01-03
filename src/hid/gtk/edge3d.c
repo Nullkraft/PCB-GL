@@ -17,7 +17,7 @@ make_edge_info (void)
 }
 
 void
-edge_info_set_round (edge_info *info, float cx, float cy, float cz, float nx, float ny, float nz, float radius)
+edge_info_set_round (edge_info *info, double cx, double cy, double cz, double nx, double ny, double nz, double radius)
 {
   info->is_round = true;
   info->cx = cx;
