@@ -1,5 +1,5 @@
-Bottom: ca1f9073ac4fa6ac5d937ff0455429aa2e0750ae
-Top:    e901963ffd739e3197113a357d26bb87e87176c5
+Bottom: a90821f6091fe6cf6ee5ccea336247af65a27fcc
+Top:    d863a2c2b5a3e63303d85b40bd0dc98c77674c40
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-03 14:49:05 +0000
 
@@ -91,15 +91,17 @@ index c850d68..4b7e609 100644
    return true;
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index cd3432d..b14d7e8 100644
+index d11d5da..3ab990c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -108,9 +108,51 @@ hid_gc_struct;
+@@ -108,11 +108,53 @@ hid_gc_struct;
  
  
  static void draw_lead_user (render_priv *priv);
 -static bool ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y);
 +static bool ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, double *pcb_x, double *pcb_y);
+ 
+ void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
  
  
 +
@@ -147,7 +149,7 @@ index cd3432d..b14d7e8 100644
  #define BOARD_THICKNESS         MM_TO_COORD(1.60)
  #define MASK_COPPER_SPACING     MM_TO_COORD(0.05)
  #define SILK_MASK_SPACING       MM_TO_COORD(0.01)
-@@ -2025,9 +2067,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2027,9 +2069,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    render_priv *priv = port->render_priv;
    GtkAllocation allocation;
    BoxType region;
@@ -160,7 +162,7 @@ index cd3432d..b14d7e8 100644
    Coord min_depth;
    Coord max_depth;
    float aspect;
-@@ -2213,6 +2255,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2215,6 +2257,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      max_y = PCB->MaxHeight;
    }
  
@@ -176,7 +178,7 @@ index cd3432d..b14d7e8 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2277,7 +2328,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2279,7 +2330,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glColor3f (1., 1., 1.);
  
    if (0) {
@@ -185,7 +187,7 @@ index cd3432d..b14d7e8 100644
      Coord z = max_depth;
  
      glBegin (GL_LINES);
-@@ -2842,7 +2893,7 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2844,7 +2895,7 @@ invert_4x4 (float m[4][4], float out[4][4])
  
  
  static bool
@@ -194,7 +196,7 @@ index cd3432d..b14d7e8 100644
  {
    double mat[2][2];
    double inv_mat[2][2];
-@@ -2960,8 +3011,11 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -2962,8 +3013,11 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  //  if (fvx < (double)-G_MAXINT/5.) {fvx = (double)-G_MAXINT/5.; printf ("fvx underflow clamped\n"); }
  //  if (fvy < (double)-G_MAXINT/5.) {fvy = (double)-G_MAXINT/5.; printf ("fvy underflow clamped\n"); }
  
@@ -208,7 +210,7 @@ index cd3432d..b14d7e8 100644
  
    {
      /* Reproject the computed board plane coordinates to eye space */
-@@ -2990,7 +3044,15 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -2992,7 +3046,15 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {

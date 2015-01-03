@@ -1,5 +1,5 @@
-Bottom: e901963ffd739e3197113a357d26bb87e87176c5
-Top:    6bfcb157c4837317c0870e862e9e7023c4b16384
+Bottom: d863a2c2b5a3e63303d85b40bd0dc98c77674c40
+Top:    ce7faa44e18c622fc0cfe216cd777ba53669321b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-03 14:49:05 +0000
 
@@ -9,10 +9,10 @@ hid/gtk (GL): Add hacky code to render outline of board, and mask cutout geometr
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b14d7e8..5519835 100644
+index 3ab990c..af790c3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1542,6 +1542,106 @@ clearPad_callback_solid (const BoxType * b, void *cl)
+@@ -1544,6 +1544,106 @@ clearPad_callback_solid (const BoxType * b, void *cl)
  }
  
  static void
@@ -119,7 +119,7 @@ index b14d7e8..5519835 100644
  GhidDrawMask (int side, BoxType * screen)
  {
    static bool first_run = true;
-@@ -1549,7 +1649,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1551,7 +1651,7 @@ GhidDrawMask (int side, BoxType * screen)
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
    LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
    struct poly_info info;
@@ -128,7 +128,7 @@ index b14d7e8..5519835 100644
  
    OutputType *out = &Output;
  
-@@ -1610,14 +1710,8 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1612,14 +1712,8 @@ GhidDrawMask (int side, BoxType * screen)
    glEnable (GL_TEXTURE_2D);
  #endif
  
@@ -145,7 +145,7 @@ index b14d7e8..5519835 100644
  
    polygon.Clipped = PCB->Data->outline;
    polygon.NoHoles = NULL;
-@@ -1628,8 +1722,12 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1630,8 +1724,12 @@ GhidDrawMask (int side, BoxType * screen)
    SET_FLAG (FULLPOLYFLAG, &polygon);
    gui->graphics->fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_FreeContours (&polygon.NoHoles);
@@ -159,7 +159,7 @@ index b14d7e8..5519835 100644
  #if 0
    glDisable (GL_TEXTURE_GEN_S);
    glDisable (GL_TEXTURE_GEN_T);
-@@ -1643,6 +1741,84 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1645,6 +1743,84 @@ GhidDrawMask (int side, BoxType * screen)
    first_run = false;
  }
  
@@ -244,7 +244,7 @@ index b14d7e8..5519835 100644
  static int
  GhidDrawLayerGroup (int group, const BoxType * screen)
  {
-@@ -1685,6 +1861,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1687,6 +1863,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
          gui->graphics->set_color (Output.bgGC, PCB->MaskColor);
          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
@@ -252,7 +252,7 @@ index b14d7e8..5519835 100644
          hidgl_flush_triangles (&buffer);
          glPopAttrib ();
        }
-@@ -1709,6 +1886,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1711,6 +1888,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
            /* Mask out drilled holes on this layer */
            if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
            if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
@@ -260,7 +260,7 @@ index b14d7e8..5519835 100644
            hidgl_flush_triangles (&buffer);
            glPopAttrib ();
          }
-@@ -1995,6 +2173,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1997,6 +2175,7 @@ ghid_draw_everything (BoxType *drawn_area)
        cyl_info.scale = gport->view.coord_per_px;
        gui->graphics->set_color (Output.fgGC, "drill");
        ghid_set_alpha_mult (Output.fgGC, alpha_mult * 0.75);
@@ -268,7 +268,7 @@ index b14d7e8..5519835 100644
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
        if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_cyl_callback, &cyl_info);
      }
-@@ -2021,6 +2200,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -2023,6 +2202,7 @@ ghid_draw_everything (BoxType *drawn_area)
        glDepthMask (GL_FALSE);
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
        if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
