@@ -1,0 +1,49 @@
+Bottom: 4bb1c7fe58c24a4bf744f427adc44082833ef358
+Top:    5fdbbe8b69b65ba52624c1975f602c1ea6576fd9
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-03 21:21:06 +0000
+
+Refresh of play-with-locked-object
+
+---
+
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 3714dfe..6413d7e 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -382,3 +382,9 @@ hid_batch_init ()
+   hid_register_hid (&batch_hid);
+ #include "batch_lists.h"
+ }
++
++/* XXX: DUMMY FUNCTION TO ENABLE BUILD */
++void
++ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
++{
++}
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index c0f5a97..c850d68 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1390,6 +1390,7 @@ ghid_cancel_lead_user (void)
+   priv->lead_user = false;
+ }
+ 
++/* XXX: DUMMY FUNCTION TO ENABLE BUILD */
+ void
+ ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
+ {
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index ef9beee..2a62039 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -4113,3 +4113,9 @@ hid_lesstif_init ()
+   hid_register_hid (&lesstif_hid);
+ #include "lesstif_lists.h"
+ }
++
++/* XXX: DUMMY FUNCTION TO ENABLE BUILD */
++void
++ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
++{
++}
