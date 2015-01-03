@@ -110,6 +110,8 @@ hid_gc_struct;
 static void draw_lead_user (render_priv *priv);
 static bool ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y);
 
+void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
+
 
 #define BOARD_THICKNESS         MM_TO_COORD(1.60)
 #define MASK_COPPER_SPACING     MM_TO_COORD(0.05)
