@@ -1,5 +1,5 @@
-Bottom: 245ae59ff44888f377dbe751b67d002c25c1b089
-Top:    d99750015a82281ef1caaf5f2a44f7519625d3ff
+Bottom: 5392c6f844ae5ef1546f50b5704a2b6e0e7e98d0
+Top:    8fa440b28596a97f9e920f4eb7a2addf72927ea1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:21 +0000
 
@@ -9,7 +9,7 @@ Add VRML model rendering support
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 4c57deb..07f1433 100644
+index 71e1229..e890a49 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -197,7 +197,16 @@ GL_SRCS= \
@@ -2616,7 +2616,7 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b42f6e8..cae7b8b 100644
+index 827ede4..139c3e7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1498,7 +1498,7 @@ GhidDrawMask (int side, BoxType * screen)
