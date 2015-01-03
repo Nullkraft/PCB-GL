@@ -1,7 +1,7 @@
-Bottom: 73471cf7f383cd89f866e5af43175a1f1f0dd44c
-Top:    666ea1a1490bc0303c344c53c49e51bf655cfd4c
+Bottom: d38d3310c9a96961da398a3c95fde0017bae8d10
+Top:    d3bf98f5f75648288c4ab6081c0c25be80d9d574
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-03 13:01:54 +0000
+Date:   2015-01-03 13:47:38 +0000
 
 Win32: Fix build for win32
 
@@ -9,10 +9,10 @@ Win32: Fix build for win32
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 759fe8e..aa2f529 100644
+index 0ceaef5..51ca3a6 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -196,6 +196,7 @@ LIBGTK_GL_SRCS= \
+@@ -180,6 +180,7 @@ LIBGTK_GL_SRCS= \
  GL_SRCS= \
  	hid/common/hidgl.c \
  	hid/common/hidgl.h \

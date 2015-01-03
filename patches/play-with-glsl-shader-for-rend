@@ -1,7 +1,7 @@
-Bottom: 3e6da81d3db3f4ac461d29c460d9cee74eec19e4
-Top:    7dc62c7e8b68a8de72cc6611e45917ba6e01a765
+Bottom: f5d60e00b437f35b595782481598ba6a7faf727c
+Top:    a6c9fdb6fa4022e5f8423d97bc02e303d0c9e070
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-03 13:01:53 +0000
+Date:   2015-01-03 13:47:37 +0000
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -47,18 +47,18 @@ Notes:
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 8212ceb..759fe8e 100644
+index ac1a7f5..0ceaef5 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -196,6 +196,8 @@ LIBGTK_GL_SRCS= \
+@@ -180,6 +180,8 @@ LIBGTK_GL_SRCS= \
  GL_SRCS= \
  	hid/common/hidgl.c \
  	hid/common/hidgl.h \
 +	hid/common/hidgl_shaders.c \
 +	hid/common/hidgl_shaders.h \
  	hid/common/trackball.c \
- 	hid/common/trackball.h
- 
+ 	hid/common/trackball.h \
+ 	borast/borast-minimal.h \
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 index 838b9db..3694c52 100644
 --- a/src/hid/common/hidgl.c
