@@ -1,7 +1,7 @@
-Bottom: 170bf408477a9c117cc14f7d25fdd768c9daabcc
-Top:    3a05b1f8d5c1978a0b4f75d8716c5cd0eafb9b1e
+Bottom: 3e6da81d3db3f4ac461d29c460d9cee74eec19e4
+Top:    b4a776c9dc29ac91fd776394c9b3f51bd6d41f4f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-02 22:57:39 +0000
+Date:   2015-01-03 13:02:02 +0000
 
 Attempt lesstif GL support
 
@@ -66,7 +66,7 @@ index 9afffd8..dc425f5 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index df71ca6..a8d1172 100644
+index 26d1b15..3b53d8f 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -111,7 +111,7 @@ index df71ca6..a8d1172 100644
    EndCapStyle cap;
    char xor_set;
    char erase;
-@@ -1592,18 +1609,154 @@ lesstif_show_crosshair (int show)
+@@ -1586,18 +1603,154 @@ lesstif_show_crosshair (int show)
    showing = show;
  }
  
@@ -268,7 +268,7 @@ index df71ca6..a8d1172 100644
  }
  
  static void
-@@ -1797,6 +1950,23 @@ make_message (char *name, Widget left, int resizeable)
+@@ -1791,6 +1944,23 @@ make_message (char *name, Widget left, int resizeable)
  }
  
  static void
@@ -292,7 +292,7 @@ index df71ca6..a8d1172 100644
  lesstif_do_export (HID_Attr_Val * options)
  {
    Dimension width, height;
-@@ -1840,12 +2010,20 @@ lesstif_do_export (HID_Attr_Val * options)
+@@ -1834,12 +2004,20 @@ lesstif_do_export (HID_Attr_Val * options)
  
    n = 0;
    do_color (Settings.BackgroundColor, XmNbackground);
@@ -318,7 +318,7 @@ index df71ca6..a8d1172 100644
    /* A regular callback won't work here, because lesstif swallows any
       Ctrl<Button>1 event.  */
    XtAddEventHandler (work_area,
-@@ -2035,6 +2213,17 @@ lesstif_parse_arguments (int *argc, char ***argv)
+@@ -2029,6 +2207,17 @@ lesstif_parse_arguments (int *argc, char ***argv)
    XtResource *new_resources;
    val_union *new_values;
    int render_event, render_error;
@@ -336,7 +336,7 @@ index df71ca6..a8d1172 100644
  
    XtSetTypeConverter (XtRString,
  		      XtRDouble,
-@@ -2189,7 +2378,7 @@ lesstif_parse_arguments (int *argc, char ***argv)
+@@ -2183,7 +2372,7 @@ lesstif_parse_arguments (int *argc, char ***argv)
  
    appwidget = XtAppInitialize (&app_context,
  			       "Pcb",
@@ -345,7 +345,7 @@ index df71ca6..a8d1172 100644
  
    display = XtDisplay (appwidget);
    screen_s = XtScreen (appwidget);
-@@ -2491,7 +2680,8 @@ static int need_redraw = 0;
+@@ -2485,7 +2674,8 @@ static int need_redraw = 0;
  static Boolean
  idle_proc (XtPointer dummy)
  {
@@ -355,7 +355,7 @@ index df71ca6..a8d1172 100644
      {
        int mx, my;
        BoxType region;
-@@ -2895,7 +3085,7 @@ idle_proc (XtPointer dummy)
+@@ -2889,7 +3079,7 @@ idle_proc (XtPointer dummy)
  
    lesstif_update_widget_flags ();
  
@@ -364,7 +364,7 @@ index df71ca6..a8d1172 100644
    idle_proc_set = 0;
    return True;
  }
-@@ -2912,11 +3102,22 @@ lesstif_need_idle_proc ()
+@@ -2906,11 +3096,22 @@ lesstif_need_idle_proc ()
  static void
  lesstif_invalidate_lr (int l, int r, int t, int b)
  {
@@ -387,7 +387,7 @@ index df71ca6..a8d1172 100644
  }
  
  void
-@@ -3178,6 +3379,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3172,6 +3373,7 @@ lesstif_set_color (hidGC gc, const char *name)
      }
  }
  
@@ -395,7 +395,7 @@ index df71ca6..a8d1172 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3241,242 +3443,456 @@ set_gc (hidGC gc)
+@@ -3235,242 +3437,456 @@ set_gc (hidGC gc)
  			  join);
      }
  }
@@ -1041,7 +1041,7 @@ index df71ca6..a8d1172 100644
  }
  
  static void
-@@ -4095,17 +4511,19 @@ hid_lesstif_init ()
+@@ -4087,17 +4503,19 @@ hid_lesstif_init ()
  
    lesstif_graphics.make_gc             = lesstif_make_gc;
    lesstif_graphics.destroy_gc          = lesstif_destroy_gc;
