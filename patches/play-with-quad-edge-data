@@ -1,7 +1,7 @@
-Bottom: 7cb7fd2af85af7ec478ef340d60db0e10e0a7db1
-Top:    06fca88eb383ae61e9846c307039e12c7a05e5c0
+Bottom: 24f3b65b8b73e54c7b72dd8a0a6d2b9f83c0f072
+Top:    3452460fefa8ffcdd55c96f9d9202533760745fb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-03 13:18:01 +0000
+Date:   2015-01-03 13:47:42 +0000
 
 Play with quad-edge data-structure - using PCB as a framework for GL!
 
@@ -9,10 +9,10 @@ Play with quad-edge data-structure - using PCB as a framework for GL!
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 71e1229..63404ac 100644
+index 64962c0..75c9bc6 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -191,7 +191,17 @@ LIBGTK_GDK_SRCS= \
+@@ -175,7 +175,17 @@ LIBGTK_GDK_SRCS= \
  LIBGTK_GL_SRCS= \
  	hid/gtk/gtkhid-gl.c \
  	hid/gtk/gui-trackball.c \

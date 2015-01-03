@@ -1,7 +1,7 @@
-Bottom: 7c1a7b7c8273cffdf16dae24f9eeacf2f097051c
-Top:    0868e03ec38e492298bd9b1afaafaf0e71fb4fca
+Bottom: a0d12a34618cf94d6e7e6efa7e063330bcc09231
+Top:    6a4f2a638237688ccf2d4c82648627cec5d3c547
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-03 13:18:03 +0000
+Date:   2015-01-03 13:47:44 +0000
 
 Attempt at supporting arc-arc intersections in polygons
 
@@ -9,11 +9,11 @@ Attempt at supporting arc-arc intersections in polygons
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 3302337..0c7a41f 100644
+index 28ce822..7a54ea4 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -56,6 +56,10 @@ PCB_SRCS = \
- 	borast/borast-wideint-type-private.h \
+@@ -40,6 +40,10 @@ PCB_SRCS = \
+ 	buffer.h \
  	change.c \
  	change.h \
 +	circle_circle_intersect.c \
