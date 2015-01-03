@@ -1390,6 +1390,7 @@ ghid_cancel_lead_user (void)
   priv->lead_user = false;
 }
 
+/* XXX: DUMMY FUNCTION TO ENABLE BUILD */
 void
 ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
 {
