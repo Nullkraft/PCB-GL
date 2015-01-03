@@ -1,7 +1,7 @@
-Bottom: 0432bd176d15838660812da6ccba587e08eb62c3
-Top:    a7de74173f128bb570af83776b83f6a317fa96e2
+Bottom: 03040d2086c225fe2c757f7b90b7825e84577e5a
+Top:    acdc8c4ea86c070ba678b3d041712f5fb18dd036
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-03 13:47:41 +0000
+Date:   2015-01-03 14:34:11 +0000
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -9,10 +9,10 @@ Introduce hacky code to switch cursor when over a line we might drag
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index b4b5fc6..d759154 100644
+index abe8acc..787081e 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -1120,11 +1120,66 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+@@ -1118,11 +1118,66 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
        ans = SearchObjectByLocation (LINEPOINT_TYPE | ARCPOINT_TYPE,
                                      &ptr1, &ptr2, &ptr3,
                                      Crosshair.X, Crosshair.Y, PCB->Grid / 2);
@@ -84,7 +84,7 @@ index b4b5fc6..d759154 100644
    if (Settings.Mode == LINE_MODE
        && Crosshair.AttachedLine.State != STATE_FIRST
 diff --git a/src/crosshair.h b/src/crosshair.h
-index 87564f0..7b3fde7 100644
+index a037a10..0c11414 100644
 --- a/src/crosshair.h
 +++ b/src/crosshair.h
 @@ -39,6 +39,17 @@
