@@ -90,11 +90,11 @@ ghid_set_layer (const char *name, int group, int empty)
     case SL_INVISIBLE:
       return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
     case SL_MASK:
-      if (SL_MYSIDE (idx) /*&& !pinout */ )
+      if (SL_MYSIDE (group) /*&& !pinout */ )
         return TEST_FLAG (SHOWMASKFLAG, PCB);
       return 0;
     case SL_SILK:
-      if (SL_MYSIDE (idx) /*|| pinout */ )
+      if (SL_MYSIDE (group) /*|| pinout */ )
         return PCB->ElementOn;
       return 0;
     case SL_ASSY:
