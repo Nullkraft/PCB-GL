@@ -1,7 +1,7 @@
-Bottom: ecbcf0079d9cf5c188a67dac662a13f95811ba4d
-Top:    f9fae89c57cffef21118ecf0ed705bb214a7f685
+Bottom: 646a8ef95acc005493196e71267ea2939e829866
+Top:    a9fe17e28840e24d607ee2040bf501661f5af5ae
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-03 13:01:58 +0000
+Date:   2015-01-03 13:18:00 +0000
 
 32bit: Fix GL HID zoom out, due to over-shooting Coord data-type
 
@@ -11,7 +11,7 @@ Nasty NASTY hack this, but it gets me working again.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index b680c3f..89653ca 100644
+index 0c840a3..5f0e09f 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -61,6 +61,64 @@ hid_gc_struct;
