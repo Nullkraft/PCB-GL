@@ -1,5 +1,5 @@
 Bottom: d97e6219911f97983cf928ffbad2530c31e1b454
-Top:    d97e6219911f97983cf928ffbad2530c31e1b454
+Top:    e5ab7140e584fe77dd1b9312643bf7bf89141cfa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-03 12:08:42 +0000
 
@@ -8,4 +8,21 @@ lesstif: Silence set but unused variable warning
 
 ---
 
-
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index edc85cf..4bd5391 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -717,12 +717,11 @@ command_event_handler (Widget w, XtPointer p, XEvent * e, Boolean * cont)
+ {
+   char buf[10];
+   KeySym sym;
+-  int slen;
+ 
+   switch (e->type)
+     {
+     case KeyPress:
+-      slen = XLookupString ((XKeyEvent *)e, buf, sizeof (buf), &sym, NULL);
++      XLookupString ((XKeyEvent *)e, buf, sizeof (buf), &sym, NULL);
+       switch (sym)
+ 	{
+ 	case XK_Escape:
