@@ -1,5 +1,5 @@
-Bottom: 0f231d282e5efd85cb128bbfe4c594f435c68686
-Top:    2315e6fcbbe9d11785982a70ae0607a3daf9f12f
+Bottom: 08fdb1f2169a7a37d72bda26a1b5b03361abd9b0
+Top:    56517d441d068467d607f87ce9e770ad461632f2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-01 17:10:54 +0000
 
@@ -172,7 +172,7 @@ index 31b8c90..2ec2836 100644
  
    save_thindraw = PCB->Flags;
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index bbaf465..467d00c 100644
+index a247576..6fa2afa 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -72,14 +72,14 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -215,7 +215,7 @@ index 1a95bcd..7ab5b07 100644
        priv->trans_lines = true;
        return PCB->Data->Layer[idx].On;
 diff --git a/src/hid/hidint.h b/src/hid/hidint.h
-index 8d62d6b..3031607 100644
+index b988db9..8d7e5c5 100644
 --- a/src/hid/hidint.h
 +++ b/src/hid/hidint.h
 @@ -44,7 +44,7 @@ void hid_parse_command_line (int *argc, char ***argv);
@@ -228,10 +228,10 @@ index 8d62d6b..3031607 100644
  /* Use this to restore them.  */
  void hid_restore_layer_ons (int *save_array);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index edc85cf..df71ca6 100644
+index 0ff0940..26d1b15 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3004,7 +3004,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -2998,7 +2998,7 @@ lesstif_set_layer (const char *name, int group, int empty)
        for (idx = 0; idx < n-1; idx ++)
  	{
  	  int ni = PCB->LayerGroups.Entries[group][idx];
@@ -240,7 +240,7 @@ index edc85cf..df71ca6 100644
  	      && PCB->Data->Layer[ni].On)
  	    break;
  	}
-@@ -3022,7 +3022,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -3016,7 +3016,7 @@ lesstif_set_layer (const char *name, int group, int empty)
    else
      autofade = 0;
  #endif
