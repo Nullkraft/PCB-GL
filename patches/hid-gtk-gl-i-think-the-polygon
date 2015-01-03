@@ -1,5 +1,5 @@
-Bottom: fd23b2557229096d2a30199e5eaee6c20a6cd275
-Top:    6eddece362cc20dbcbe3360667f994f9313f3b9b
+Bottom: 50c4efe374f8301ea305c2967fff3def581d56e3
+Top:    def25ce7515dd36b9e3d14344a7bafe93f9e6787
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-03 14:34:06 +0000
 
@@ -9,10 +9,10 @@ hid/gtk (GL): I think the polygon renderer works in mask mode now
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e810455..59c2c04 100644
+index 877ccaa..e9677a3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1401,11 +1401,8 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1395,11 +1395,8 @@ GhidDrawMask (int side, BoxType * screen)
    polygon.BoundingBox = *screen;
    polygon.Flags = NoFlags ();
    SET_FLAG (FULLPOLYFLAG, &polygon);
