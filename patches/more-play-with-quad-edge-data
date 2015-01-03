@@ -1,7 +1,7 @@
-Bottom: 10017b9b29858222eec3b3da1180437a4c2b0ad3
-Top:    647f3bccd681af885214b68e1b5b3661753b2bfc
+Bottom: d1eebefeb0ca0d785791175720d1ce0fa8b46f4c
+Top:    c5ac7066ad8669fa3450c7b884adb977edc9f415
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-03 13:47:42 +0000
+Date:   2015-01-03 14:49:05 +0000
 
 More play with quad edge data-structures and STEP export
 
@@ -234,7 +234,7 @@ index 6200161..ed60d6d 100644
 +void face3d_set_normal (face3d *face, float nx, float ny, float nz);
 +void face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d3e4893..9a3707f 100644
+index 8392201..673f20a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -17,8 +17,9 @@
