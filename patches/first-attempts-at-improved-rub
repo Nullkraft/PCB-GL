@@ -1,5 +1,5 @@
 Bottom: acdc8c4ea86c070ba678b3d041712f5fb18dd036
-Top:    acdc8c4ea86c070ba678b3d041712f5fb18dd036
+Top:    1792d7c1731ec3b043359b8ada0494fc326986bd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-03 14:34:11 +0000
 
@@ -8,4 +8,551 @@ First attempts at improved rubberbanding logic
 
 ---
 
-
+diff --git a/src/create.c b/src/create.c
+index f0588c0..dc03975 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -1022,7 +1022,7 @@ CreateDefaultFont (PCBType *pcb)
+  */
+ RubberbandType *
+ CreateNewRubberbandEntry (LayerType *Layer,
+-			  LineType *Line, PointType *MovedPoint)
++			  LineType *Line, PointType *MovedPoint, bool endpoint)
+ {
+   RubberbandType *ptr = GetRubberbandMemory ();
+ 
+@@ -1032,6 +1032,7 @@ CreateNewRubberbandEntry (LayerType *Layer,
+   ptr->Layer = Layer;
+   ptr->Line = Line;
+   ptr->MovedPoint = MovedPoint;
++  ptr->endpoint = endpoint;
+   return (ptr);
+ }
+ 
+diff --git a/src/create.h b/src/create.h
+index 04fe48e..fa49a1b 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -61,7 +61,7 @@ PinType * CreateNewPin (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord,
+ PadType * CreateNewPad (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord, Coord, char *, char *, FlagType);
+ LineType * CreateNewLineInSymbol (SymbolType *, Coord, Coord, Coord, Coord, Coord);
+ void CreateDefaultFont (PCBType *);
+-RubberbandType * CreateNewRubberbandEntry (LayerType *, LineType *, PointType *);
++RubberbandType * CreateNewRubberbandEntry (LayerType *, LineType *, PointType *, bool);
+ LibraryMenuType * CreateNewNet (LibraryType *, char *, char *);
+ LibraryEntryType * CreateNewConnection (LibraryMenuType *, char *);
+ AttributeType * CreateNewAttribute (AttributeListType *list, char *name, char *value);
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 787081e..0b18f9b 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -358,6 +358,57 @@ XORDrawInsertPointObject (hidGC gc)
+     }
+ }
+ 
++/*
++   Determine the intersection point of two line segments
++   Return FALSE if the lines don't intersect
++
++   Based upon code from http://paulbourke.net/geometry/lineline2d/
++*/
++#define EPS 1e-6
++static bool
++line_line_intersect (double x1, double y1, double x2, double y2,
++                     double x3, double y3, double x4, double y4,
++                     double *x, double *y, double *multiplier)
++{
++  double mua,mub;
++  double denom,numera,numerb;
++
++  if (x != NULL) *x = 0.0;
++  if (y != NULL) *y = 0.0;
++
++  denom  = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
++  numera = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
++  numerb = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
++
++  /* Are the lines coincident or parallel? */
++  if (fabs (denom) < EPS)
++    {
++      /* Are the line coincident? */
++      if (fabs (numera) < EPS && fabs (numerb) < EPS)
++        {
++          if (x != NULL) *x = (x1 + x2) / 2;
++          if (y != NULL) *y = (y1 + y2) / 2;
++          return true;
++        }
++      /* The line parallel */
++      return false;
++    }
++
++  /* Is the intersection along the the segments */
++  mua = numera / denom;
++  mub = numerb / denom;
++//  if (mua < 0.0 || 1.0 < mua || mub < 0.0 || 1.0 < mub)
++//    return false;
++
++  if (x != NULL) *x = x1 + mua * (x2 - x1);
++  if (y != NULL) *y = y1 + mua * (y2 - y1);
++  if (multiplier != NULL) *multiplier = mua;
++
++  if (mua < 0.0 || 1.0 < mua || mub < 0.0 || 1.0 < mub)
++    return false;
++  return true;
++}
++
+ /* ---------------------------------------------------------------------------
+  * draws the attached object while in MOVE_MODE or COPY_MODE
+  */
+@@ -369,6 +420,14 @@ XORDrawMoveOrCopyObject (hidGC gc)
+   Coord dx = Crosshair.X - Crosshair.AttachedObject.X,
+     dy = Crosshair.Y - Crosshair.AttachedObject.Y;
+ 
++#if 0
++  /* Kludgy demo */
++  if (dx > 500000)
++    dx =   500000;
++  dy = dx;
++  /* Kludgy demo */
++#endif
++
+   switch (Crosshair.AttachedObject.Type)
+     {
+     case VIA_TYPE:
+@@ -380,12 +439,60 @@ XORDrawMoveOrCopyObject (hidGC gc)
+ 
+     case LINE_TYPE:
+       {
+-	LineType *line = (LineType *) Crosshair.AttachedObject.Ptr2;
++        LineType *moving_line = Crosshair.AttachedObject.Ptr2;
++        bool set_min = false;
++        bool set_max = false;
++        double min_multiplier = 0.0;
++        double max_multiplier = 1.0;
+ 
+-	XORDrawAttachedLine (gc, line->Point1.X + dx, line->Point1.Y + dy,
+-	                         line->Point2.X + dx, line->Point2.Y + dy,
+-	                     line->Thickness);
+-	break;
++        /* draw the attached rubberband lines too */
++        i = Crosshair.AttachedObject.RubberbandN;
++        ptr = Crosshair.AttachedObject.Rubberband;
++
++        while (i)
++          {
++            if (!TEST_FLAG (VIAFLAG, ptr->Line) &&
++                TEST_FLAG (RUBBERENDFLAG, ptr->Line))
++              {
++                double multiplier;
++
++                line_line_intersect (moving_line->Point1.X + dx, moving_line->Point1.Y + dy,
++                                     moving_line->Point2.X + dx, moving_line->Point2.Y + dy,
++                                     ptr->Line->Point1.X,        ptr->Line->Point1.Y,
++                                     ptr->Line->Point2.X,        ptr->Line->Point2.Y,
++                                     NULL, NULL, &multiplier);
++                if (multiplier < min_multiplier)
++                  {
++                    min_multiplier = multiplier;
++                    set_min = true;
++                  }
++                if (multiplier > max_multiplier)
++                  {
++                    max_multiplier = multiplier;
++                    set_max = true;
++                  }
++              }
++
++            ptr++;
++            i--;
++          }
++
++        /* If no constraints from the rubber band lines, then keep the old endpoints */
++#if 0
++        if (!set_min)
++          min_multiplier = 0.0;
++
++        if (!set_max)
++          max_multiplier = 1.0;
++#endif
++
++        XORDrawAttachedLine (gc,
++                             moving_line->Point1.X + dx + min_multiplier * (moving_line->Point2.X - moving_line->Point1.X),
++                             moving_line->Point1.Y + dy + min_multiplier * (moving_line->Point2.Y - moving_line->Point1.Y),
++                             moving_line->Point1.X + dx + max_multiplier * (moving_line->Point2.X - moving_line->Point1.X),
++                             moving_line->Point1.Y + dy + max_multiplier * (moving_line->Point2.Y - moving_line->Point1.Y),
++                             moving_line->Thickness);
++        break;
+       }
+ 
+     case ARC_TYPE:
+@@ -493,27 +600,55 @@ XORDrawMoveOrCopyObject (hidGC gc)
+ 	}
+       else if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
+ 	{
+-	  /* 'point1' is always the fix-point */
+-	  if (ptr->MovedPoint == &ptr->Line->Point1)
+-	    {
+-	      point1 = &ptr->Line->Point2;
+-	      point2 = &ptr->Line->Point1;
+-	    }
+-	  else
+-	    {
+-	      point1 = &ptr->Line->Point1;
+-	      point2 = &ptr->Line->Point2;
+-	    }
+-	  XORDrawAttachedLine (gc, point1->X, point1->Y,
+-	                       point2->X + dx, point2->Y + dy,
+-	                       ptr->Line->Thickness);
+-	}
++          if (Crosshair.AttachedObject.Type == LINE_TYPE)
++            {
++              LineType *moving_line = Crosshair.AttachedObject.Ptr2;
++              PointType *fixed_point;
++              double x, y;
++
++              line_line_intersect (moving_line->Point1.X + dx, moving_line->Point1.Y + dy,
++                                   moving_line->Point2.X + dx, moving_line->Point2.Y + dy,
++                                   ptr->Line->Point1.X,        ptr->Line->Point1.Y,
++                                   ptr->Line->Point2.X,        ptr->Line->Point2.Y,
++                                   &x,                         &y,
++                                   NULL);
++
++              fixed_point = (ptr->MovedPoint == &ptr->Line->Point1) ?
++                              &ptr->Line->Point2 : &ptr->Line->Point1;
++
++              XORDrawAttachedLine (gc, fixed_point->X, fixed_point->Y, x, y,
++                                   ptr->Line->Thickness);
++            }
++          else
++            {
++              /* TODO: Project the extension or contraction of ptr->Line, such that it
++               *       intersects with the extended or contracted version of the
++               *       line(s) being moved
++               */
++
++              /* 'point1' is always the fix-point */
++              if (ptr->MovedPoint == &ptr->Line->Point1)
++                {
++                  point1 = &ptr->Line->Point2;
++                  point2 = &ptr->Line->Point1;
++                }
++              else
++                {
++                  point1 = &ptr->Line->Point1;
++                  point2 = &ptr->Line->Point2;
++                }
++
++              XORDrawAttachedLine (gc, point1->X,      point1->Y,
++                                       point2->X + dx, point2->Y + dy,
++                                   ptr->Line->Thickness);
++            }
++        }
+       else if (ptr->MovedPoint == &ptr->Line->Point1)
+-	XORDrawAttachedLine (gc,
+-	                     ptr->Line->Point1.X + dx,
+-	                     ptr->Line->Point1.Y + dy,
+-	                     ptr->Line->Point2.X + dx,
+-	                     ptr->Line->Point2.Y + dy, ptr->Line->Thickness);
++        XORDrawAttachedLine (gc,
++                             ptr->Line->Point1.X + dx,
++                             ptr->Line->Point1.Y + dy,
++                             ptr->Line->Point2.X + dx,
++                             ptr->Line->Point2.Y + dy, ptr->Line->Thickness);
+ 
+       ptr++;
+       i--;
+diff --git a/src/global.h b/src/global.h
+index ce67c50..b36aebf 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -544,6 +544,7 @@ typedef struct			/* rubberband lines for element moves */
+   LayerType *Layer;		/* layer that holds the line */
+   LineType *Line;		/* the line itself */
+   PointType *MovedPoint;	/* and finally the point */
++  bool endpoint;                /* Whether this line is at a terminus of the line being moved */
+ } RubberbandType;
+ 
+ typedef struct			/* current marked line */
+diff --git a/src/move.c b/src/move.c
+index 5f0cfb3..6089eca 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -779,6 +779,59 @@ MoveObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3, Coord DX, Coord DY)
+   return (result);
+ }
+ 
++/*
++   Determine the intersection point of two line segments
++   Return FALSE if the lines don't intersect
++
++   Based upon code from http://paulbourke.net/geometry/lineline2d/
++*/
++#define EPS 1e-6
++static bool
++line_line_intersect (double x1, double y1, double x2, double y2,
++                     double x3, double y3, double x4, double y4,
++                     double *x, double *y, double *multiplier)
++{
++  double mua,mub;
++  double denom,numera,numerb;
++
++  if (x != NULL) *x = 0.0;
++  if (y != NULL) *y = 0.0;
++  if (multiplier != NULL) *y = 0.0;
++
++  denom  = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
++  numera = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
++  numerb = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
++
++  /* Are the lines coincident or parallel? */
++  if (fabs (denom) < EPS)
++    {
++      /* Are the line coincident? */
++      if (fabs (numera) < EPS && fabs (numerb) < EPS)
++        {
++          if (x != NULL) *x = (x1 + x2) / 2;
++          if (y != NULL) *y = (y1 + y2) / 2;
++          if (multiplier != NULL) *multiplier = 0.5;
++          return true;
++        }
++      /* The line parallel */
++      return false;
++    }
++
++  /* Is the intersection along the the segments */
++  mua = numera / denom;
++  mub = numerb / denom;
++//  if (mua < 0.0 || 1.0 < mua || mub < 0.0 || 1.0 < mub)
++//    return false;
++
++  if (x != NULL) *x = x1 + mua * (x2 - x1);
++  if (y != NULL) *y = y1 + mua * (y2 - y1);
++  if (multiplier != NULL) *multiplier = mua;
++
++  if (mua < 0.0 || 1.0 < mua || mub < 0.0 || 1.0 < mub)
++    return false;
++  return true;
++}
++
+ /* ---------------------------------------------------------------------------
+  * moves the object identified by its data pointers and the type
+  * as well as all attached rubberband lines
+@@ -788,9 +841,27 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+ 			 Coord DX, Coord DY)
+ {
+   RubberbandType *ptr;
++  LineType *moving_line = NULL;
+   void *ptr2;
++  int i;
++  double min_multiplier = 1.0;
++  double max_multiplier = 0.0;
++
++  if (Type == LINE_TYPE)
++    moving_line = Ptr2;
++
++  /* first clear any marks that we made in the line flags */
++  for (i = 0, ptr = Crosshair.AttachedObject.Rubberband;
++       i > Crosshair.AttachedObject.RubberbandN;
++       i++, ptr++)
++    CLEAR_FLAG (RUBBERENDFLAG, ptr->Line);
++
++  if (DX == 0 && DY == 0)
++    {
++      Crosshair.AttachedObject.RubberbandN = 0;
++      return NULL;
++    }
+ 
+-  /* setup offset */
+   DeltaX = DX;
+   DeltaY = DY;
+ 
+@@ -798,27 +869,62 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+   ptr = Crosshair.AttachedObject.Rubberband;
+   while (Crosshair.AttachedObject.RubberbandN)
+     {
+-      /* first clear any marks that we made in the line flags */
+-      CLEAR_FLAG (RUBBERENDFLAG, ptr->Line);
+-      /* only update undo list if an actual movement happened */
+-      if (DX != 0 || DY != 0)
++      if (Type == LINE_TYPE)
+         {
+-          AddObjectToMoveUndoList (LINEPOINT_TYPE,
+-                                   ptr->Layer, ptr->Line,
+-                                   ptr->MovedPoint, DX, DY);
+-          MoveLinePoint (ptr->Layer, ptr->Line, ptr->MovedPoint);
++          double x, y, multiplier;
++
++          line_line_intersect (moving_line->Point1.X + DX, moving_line->Point1.Y + DY,
++                               moving_line->Point2.X + DX, moving_line->Point2.Y + DY,
++                               ptr->Line->Point1.X,        ptr->Line->Point1.Y,
++                               ptr->Line->Point2.X,        ptr->Line->Point2.Y,
++                               &x,                         &y,
++                               &multiplier);
++
++          min_multiplier = MIN (min_multiplier, multiplier);
++          max_multiplier = MAX (max_multiplier, multiplier);
++
++          DeltaX = (Coord)x - ptr->MovedPoint->X;
++          DeltaY = (Coord)y - ptr->MovedPoint->Y;
+         }
++
++      AddObjectToMoveUndoList (LINEPOINT_TYPE, ptr->Layer, ptr->Line,
++                               ptr->MovedPoint, DeltaX, DeltaY);
++      MoveLinePoint (ptr->Layer, ptr->Line, ptr->MovedPoint);
++
+       Crosshair.AttachedObject.RubberbandN--;
+       ptr++;
+     }
+ 
+-  if (DX == 0 && DY == 0)
+-    return (NULL);
++  if (Type == LINE_TYPE)
++    {
++      Coord ldx, ldy;
++      ldx = (moving_line->Point2.X - moving_line->Point1.X);
++      ldy = (moving_line->Point2.Y - moving_line->Point1.Y);
++
++      DeltaX = DX + min_multiplier * ldx;
++      DeltaY = DY + min_multiplier * ldy;
++      AddObjectToMoveUndoList (LINEPOINT_TYPE, Ptr1, moving_line, &moving_line->Point1,
++                               DeltaX, DeltaY);
++      MoveLinePoint (Ptr1, moving_line, &moving_line->Point1);
++
++      DeltaX = DX + (max_multiplier - 1) * ldx;
++      DeltaY = DY + (max_multiplier - 1) * ldy;
++      AddObjectToMoveUndoList (LINEPOINT_TYPE, Ptr1, moving_line, &moving_line->Point2,
++                               DeltaX, DeltaY);
++      MoveLinePoint (Ptr1, moving_line, &moving_line->Point2);
++
++      ptr2 = moving_line;
++    }
++  else
++    {
++      DeltaX = DX;
++      DeltaY = DY;
++      AddObjectToMoveUndoList (Type, Ptr1, Ptr2, Ptr3, DeltaX, DeltaY);
++      ptr2 = ObjectOperation (&MoveFunctions, Type, Ptr1, Ptr2, Ptr3);
++      IncrementUndoSerialNumber ();
++    }
+ 
+-  AddObjectToMoveUndoList (Type, Ptr1, Ptr2, Ptr3, DX, DY);
+-  ptr2 = ObjectOperation (&MoveFunctions, Type, Ptr1, Ptr2, Ptr3);
+-  IncrementUndoSerialNumber ();
+-  return (ptr2);
++  return ptr2;
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/rubberband.c b/src/rubberband.c
+index d47fcc7..43fe04e 100644
+--- a/src/rubberband.c
++++ b/src/rubberband.c
+@@ -139,13 +139,13 @@ rubber_callback (const BoxType * b, void *cl)
+ 
+       if (test_circle_hits_box (&line->Point1, t, &i->box))
+         {
+-          CreateNewRubberbandEntry (i->layer, line, &line->Point1);
++          CreateNewRubberbandEntry (i->layer, line, &line->Point1, true);
+           found++;
+         }
+ 
+       if (test_circle_hits_box (&line->Point2, t, &i->box))
+         {
+-          CreateNewRubberbandEntry (i->layer, line, &line->Point2);
++          CreateNewRubberbandEntry (i->layer, line, &line->Point2, true);
+           found++;
+         }
+ 
+@@ -173,16 +173,17 @@ rubber_callback (const BoxType * b, void *cl)
+   if (sq_dist1 > 0 && sq_dist2 > 0)
+     return 0;
+ 
+-#ifdef CLOSEST_ONLY	/* keep this to remind me */
+-  if (dist1 < dist2)
+-    CreateNewRubberbandEntry (i->layer, line, &line->Point1);
++//#ifdef CLOSEST_ONLY	/* keep this to remind me */
++#if 1
++  if (sq_dist1 < sq_dist2)
++    CreateNewRubberbandEntry (i->layer, line, &line->Point1, true);
+   else
+-    CreateNewRubberbandEntry (i->layer, line, &line->Point2);
++    CreateNewRubberbandEntry (i->layer, line, &line->Point2, true);
+ #else
+   if (sq_dist1 <= 0)
+-    CreateNewRubberbandEntry (i->layer, line, &line->Point1);
++    CreateNewRubberbandEntry (i->layer, line, &line->Point1, true);
+   if (sq_dist2 <= 0)
+-    CreateNewRubberbandEntry (i->layer, line, &line->Point2);
++    CreateNewRubberbandEntry (i->layer, line, &line->Point2, true);
+ #endif
+   return 1;
+ }
+@@ -241,45 +242,45 @@ rat_callback (const BoxType * box, void *cl)
+     {
+     case PIN_TYPE:
+       if (rat->Point1.X == i->pin->X && rat->Point1.Y == i->pin->Y)
+-	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point1);
++	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point1, true);
+       else if (rat->Point2.X == i->pin->X && rat->Point2.Y == i->pin->Y)
+-	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point2);
++	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point2, true);
+       break;
+     case PAD_TYPE:
+       if (rat->Point1.X == i->pad->Point1.X &&
+ 	  rat->Point1.Y == i->pad->Point1.Y && rat->group1 == i->group)
+-	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point1);
++	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point1, true);
+       else
+ 	if (rat->Point2.X == i->pad->Point1.X &&
+ 	    rat->Point2.Y == i->pad->Point1.Y && rat->group2 == i->group)
+-	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point2);
++	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point2, true);
+       else
+ 	if (rat->Point1.X == i->pad->Point2.X &&
+ 	    rat->Point1.Y == i->pad->Point2.Y && rat->group1 == i->group)
+-	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point1);
++	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point1, true);
+       else
+ 	if (rat->Point2.X == i->pad->Point2.X &&
+ 	    rat->Point2.Y == i->pad->Point2.Y && rat->group2 == i->group)
+-	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point2);
++	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point2, true);
+       else
+ 	if (rat->Point1.X == (i->pad->Point1.X + i->pad->Point2.X) / 2 &&
+ 	    rat->Point1.Y == (i->pad->Point1.Y + i->pad->Point2.Y) / 2 &&
+ 	    rat->group1 == i->group)
+-	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point1);
++	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point1, true);
+       else
+ 	if (rat->Point2.X == (i->pad->Point1.X + i->pad->Point2.X) / 2 &&
+ 	    rat->Point2.Y == (i->pad->Point1.Y + i->pad->Point2.Y) / 2 &&
+ 	    rat->group2 == i->group)
+-	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point2);
++	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point2, true);
+       break;
+     case LINEPOINT_TYPE:
+       if (rat->group1 == i->group &&
+ 	  rat->Point1.X == i->point->X && rat->Point1.Y == i->point->Y)
+-	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point1);
++	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point1, true);
+       else
+ 	if (rat->group2 == i->group &&
+ 	    rat->Point2.X == i->point->X && rat->Point2.Y == i->point->Y)
+-	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point2);
++	CreateNewRubberbandEntry (NULL, (LineType *) rat, &rat->Point2, true);
+       break;
+     default:
+       Message ("hace: bad rubber-rat lookup callback\n");
+@@ -429,10 +430,10 @@ CheckPolygonForRubberbandConnection (LayerType *Layer,
+ 	  thick = (line->Thickness + 1) / 2;
+ 	  if (IsPointInPolygon (line->Point1.X, line->Point1.Y,
+ 				thick, Polygon))
+-	    CreateNewRubberbandEntry (layer, line, &line->Point1);
++	    CreateNewRubberbandEntry (layer, line, &line->Point1, true);
+ 	  if (IsPointInPolygon (line->Point2.X, line->Point2.Y,
+ 				thick, Polygon))
+-	    CreateNewRubberbandEntry (layer, line, &line->Point2);
++	    CreateNewRubberbandEntry (layer, line, &line->Point2, true);
+ 	}
+ 	END_LOOP;
+       }
