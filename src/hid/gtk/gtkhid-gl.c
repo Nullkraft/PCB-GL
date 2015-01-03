@@ -72,8 +72,6 @@ typedef struct render_priv {
   Coord lead_user_radius;
   Coord lead_user_x;
   Coord lead_user_y;
-
-  hidGC crosshair_gc;
 } render_priv;
 
 
@@ -870,7 +868,6 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   render_priv *priv;
 
   port->render_priv = priv = g_new0 (render_priv, 1);
-  port->render_priv->crosshair_gc = gui->graphics->make_gc ();
 
   priv->time_since_expose = g_timer_new ();
 
@@ -895,9 +892,6 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 void
 ghid_shutdown_renderer (GHidPort *port)
 {
-  render_priv *priv = port->render_priv;
-
-  gui->graphics->destroy_gc (priv->crosshair_gc);
   ghid_cancel_lead_user ();
   g_free (port->render_priv);
   port->render_priv = NULL;
@@ -1881,8 +1875,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_invalidate_current_gc ();
 
-  DrawAttached (priv->crosshair_gc);
-  DrawMark (priv->crosshair_gc);
+  DrawAttached (Output.fgGC);
+  DrawMark (Output.fgGC);
   hidgl_flush_triangles (&buffer);
 
   draw_crosshair (priv);
