@@ -1,7 +1,7 @@
-Bottom: a9595e372439fad040ea857a6d99e870e605a836
-Top:    5c4a05037a4c6639fbdd9a470b2c2009130adaeb
+Bottom: 29dae0af9a2837eabda1d5f4710eaa16a8647878
+Top:    a73796c1db13f6db0f01e1f50a469a36200e0c56
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-03 13:01:49 +0000
+Date:   2015-01-03 14:34:02 +0000
 
 Demo of exporter specific export routine
 
@@ -758,7 +758,7 @@ index 52d29c8..55a9e19 100644
    gerber_hid.set_crosshair       = gerber_set_crosshair;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7ab5b07..c1b666f 100644
+index 629d1e1..6bfe69d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -9,6 +9,9 @@
@@ -771,7 +771,7 @@ index 7ab5b07..c1b666f 100644
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
   * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-@@ -126,8 +129,8 @@ end_subcomposite (void)
+@@ -127,8 +130,8 @@ end_subcomposite (void)
  }
  
  
@@ -782,7 +782,7 @@ index 7ab5b07..c1b666f 100644
  {
    render_priv *priv = gport->render_priv;
    int idx = group;
-@@ -855,6 +858,136 @@ ghid_screen_update (void)
+@@ -860,6 +863,136 @@ ghid_screen_update (void)
  {
  }
  
@@ -919,7 +919,7 @@ index 7ab5b07..c1b666f 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1001,7 +1134,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1006,7 +1139,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_draw_bg_image ();
  
    ghid_invalidate_current_gc ();
