@@ -1,14 +1,27 @@
 Bottom: c5ceb76922688ccc69387b32240d1c7baf973fa8
-Top:    c5ceb76922688ccc69387b32240d1c7baf973fa8
+Top:    8b2f2f780072e9d9447b0a9628b39813f9bfa691
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-03 12:49:12 +0000
+Date:   2015-01-03 12:52:32 +0000
 
 Update header guard macro check in hidint.h to match rename
 
 The header guard in global.h was renamed in
 commit f6c2d4907583614a10918a121f45670620f1946e
 
+Fixes an implicitly defined function warning in lesstif/main.c
 
 ---
 
-
+diff --git a/src/hid/hidint.h b/src/hid/hidint.h
+index 8d62d6b..aa19ad5 100644
+--- a/src/hid/hidint.h
++++ b/src/hid/hidint.h
+@@ -62,7 +62,7 @@ enum File_Name_Style {
+ /* Returns a filename base that can be used to output the layer.  */
+ const char *layer_type_to_file_name (int idx, int style);
+ 
+-#ifdef __GLOBAL_INCLUDED__
++#ifdef PCB_GLOBAL_H
+ 
+ /* Convenience function that calls the expose callback for the item,
+    and returns the extents of what was drawn.  */
