@@ -192,6 +192,8 @@ LIBGTK_GL_SRCS= \
 	hid/gtk/gtkhid-gl.c \
 	hid/gtk/gui-trackball.c \
 	hid/gtk/gui-trackball.h \
+	hid/gtk/step.c \
+	hid/gtk/step.h \
 	hid/gtk/quad.c \
 	hid/gtk/quad.h \
 	hid/gtk/vertex3d.c \
