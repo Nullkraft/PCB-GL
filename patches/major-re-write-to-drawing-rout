@@ -1,7 +1,7 @@
-Bottom: f18b60d4439967c245fd98d9f2121ecd0ee7ff01
-Top:    09ece8fe169ccd669201a744b0eb2697acf17860
+Bottom: d28a535f870fa750a45be964e6dae400c72f8aa2
+Top:    4cc74c214b550b8b35251ba16c320b2d4b05d5f9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-03 13:01:50 +0000
+Date:   2015-01-03 14:34:04 +0000
 
 Major re-write to drawing routines
 
@@ -76,7 +76,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f04940c..d09160c 100644
+index be35a19..e5528c1 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -89,7 +89,7 @@ index f04940c..d09160c 100644
  #include "gui-pinout-preview.h"
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
-@@ -198,64 +201,78 @@ end_subcomposite (void)
+@@ -199,64 +202,78 @@ end_subcomposite (void)
    priv->subcomposite_stencil_bit = 0;
  }
  
@@ -205,7 +205,7 @@ index f04940c..d09160c 100644
  }
  
  static void
-@@ -295,6 +312,7 @@ ghid_draw_grid (BoxType *drawn_area)
+@@ -296,6 +313,7 @@ ghid_draw_grid (BoxType *drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
@@ -213,7 +213,7 @@ index f04940c..d09160c 100644
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
  
-@@ -305,6 +323,7 @@ ghid_draw_grid (BoxType *drawn_area)
+@@ -306,6 +324,7 @@ ghid_draw_grid (BoxType *drawn_area)
    hidgl_draw_grid (drawn_area);
  
    glDisable (GL_COLOR_LOGIC_OP);
@@ -221,7 +221,7 @@ index f04940c..d09160c 100644
  }
  
  static void
-@@ -932,6 +951,739 @@ ghid_screen_update (void)
+@@ -937,6 +956,739 @@ ghid_screen_update (void)
  {
  }
  
@@ -961,7 +961,7 @@ index f04940c..d09160c 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -952,6 +1704,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -957,6 +1709,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_start_drawing (port, widget);
    hidgl_start_render ();
  
@@ -972,7 +972,7 @@ index f04940c..d09160c 100644
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
-@@ -1001,8 +1757,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1006,8 +1762,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -983,7 +983,7 @@ index f04940c..d09160c 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1068,17 +1824,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1073,17 +1829,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1041,7 +1041,7 @@ index f04940c..d09160c 100644
    hidgl_flush_triangles (&buffer);
  
    /* Set the current depth to the right value for the layer we are editing */
-@@ -1100,6 +1888,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1105,6 +1893,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_finish_render ();
    ghid_end_drawing (port, widget);
  

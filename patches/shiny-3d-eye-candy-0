@@ -1,7 +1,7 @@
-Bottom: 67e6e3e93b267279d0860d0e9ef5157da4e74dab
-Top:    590766322362d6ed50312f07fbb6d766fc67b1af
+Bottom: e1bdcfb9e109cc18e13c9e4dde1e585786a327c9
+Top:    c3a77c857f8876cce1ab58d7a5202857b536e296
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-03 13:01:49 +0000
+Date:   2015-01-03 14:34:03 +0000
 
 Shiny 3D eye-candy
 
@@ -14,10 +14,10 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7ab5b07..f04940c 100644
+index 629d1e1..be35a19 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -89,6 +89,79 @@ static void draw_lead_user (render_priv *priv);
+@@ -90,6 +90,79 @@ static void draw_lead_user (render_priv *priv);
  static void ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y);
  
  
@@ -97,7 +97,7 @@ index 7ab5b07..f04940c 100644
  static void
  start_subcomposite (void)
  {
-@@ -147,11 +220,15 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -148,11 +221,15 @@ ghid_set_layer (const char *name, int group, int empty)
    end_subcomposite ();
    start_subcomposite ();
  
@@ -113,7 +113,7 @@ index 7ab5b07..f04940c 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -745,7 +822,7 @@ draw_crosshair (render_priv *priv)
+@@ -746,7 +823,7 @@ draw_crosshair (render_priv *priv)
  
    x = gport->crosshair_x;
    y = gport->crosshair_y;
@@ -122,7 +122,7 @@ index 7ab5b07..f04940c 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -1004,6 +1081,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1009,6 +1086,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
  
@@ -132,7 +132,7 @@ index 7ab5b07..f04940c 100644
    ghid_draw_grid (&region);
  
    ghid_invalidate_current_gc ();
-@@ -1156,6 +1236,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1161,6 +1241,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                      -gport->view.y0, 0);
  
@@ -140,7 +140,7 @@ index 7ab5b07..f04940c 100644
    hid_expose_callback (&ghid_hid, NULL, pinout->element);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1522,7 +1603,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -1527,7 +1608,7 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
  bool
  ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
@@ -149,7 +149,7 @@ index 7ab5b07..f04940c 100644
  
    return true;
  }
-@@ -1538,11 +1619,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
+@@ -1543,11 +1624,11 @@ ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
  
    *event_x = (last_modelview_matrix[0][0] * (float)pcb_x +
                last_modelview_matrix[1][0] * (float)pcb_y +

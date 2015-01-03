@@ -1,7 +1,7 @@
-Bottom: b392a6e4f691516a087e595803c03039ae2f86c5
-Top:    152a68c58b175195e51a5103dfc81401bb0a7ee0
+Bottom: 2457ddf05ba4c7284b1fb0a1cdf42ac28f194a6b
+Top:    894f19079dd7e9f1efcdde935afddcc10d9a9507
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-03 13:01:51 +0000
+Date:   2015-01-03 14:34:05 +0000
 
 Add cache for board-outline
 
@@ -33,10 +33,10 @@ index d8002b4..ce67c50 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 63f1c97..ba71bbb 100644
+index d4746fd..16e0e82 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1372,14 +1372,22 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1377,14 +1377,22 @@ GhidDrawMask (int side, BoxType * screen)
    gui->graphics->set_color (out->fgGC, PCB->MaskColor);
    ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
  
