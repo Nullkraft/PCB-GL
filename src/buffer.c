@@ -1437,6 +1437,7 @@ MirrorBuffer (BufferType *Buffer)
     arc->Y = SWAP_Y (arc->Y);
     arc->StartAngle = SWAP_ANGLE (arc->StartAngle);
     arc->Delta = SWAP_DELTA (arc->Delta);
+    SetArcEndpoints (arc);
     SetArcBoundingBox (arc);
   }
   ENDALL_LOOP;
@@ -1502,6 +1503,7 @@ SwapBuffer (BufferType *Buffer)
     arc->Y = SWAP_Y (arc->Y);
     arc->StartAngle = SWAP_ANGLE (arc->StartAngle);
     arc->Delta = SWAP_DELTA (arc->Delta);
+    SetArcEndpoints (arc);
     SetArcBoundingBox (arc);
     r_insert_entry (layer->arc_tree, (BoxType *)arc, 0);
   }
