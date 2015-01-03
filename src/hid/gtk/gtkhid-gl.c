@@ -14,13 +14,15 @@
 #include "polygon.h"
 #include "gui-pinout-preview.h"
 
+#ifndef WIN32
 /* The Linux OpenGL ABI 1.0 spec requires that we define
  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
  * in order to get prototypes:
  *   http://www.opengl.org/registry/ABI/
  */
+#   define GL_GLEXT_PROTOTYPES 1
+#endif
 
-#define GL_GLEXT_PROTOTYPES 1
 #ifdef HAVE_OPENGL_GL_H
 #   include <OpenGL/gl.h>
 #else
@@ -314,6 +316,8 @@ ghid_draw_grid (BoxType *drawn_area)
       gport->grid_color.blue ^= gport->bg_color.blue;
     }
 
+  glTexCoord2f (0., 0.);
+
   glDisable (GL_STENCIL_TEST);
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
@@ -332,9 +336,13 @@ static void
 ghid_draw_bg_image (void)
 {
   static GLuint texture_handle = 0;
+  GLuint current_program;
 
   if (!ghidgui->bg_pixbuf)
     return;
+
+  glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&current_program);
+  glUseProgram (0);
 
   if (texture_handle == 0)
     {
@@ -383,6 +391,8 @@ ghid_draw_bg_image (void)
   glEnd ();
 
   glDisable (GL_TEXTURE_2D);
+
+  glUseProgram (current_program);
 }
 
 void
@@ -667,7 +677,7 @@ ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
 {
   USE_GC (gc);
 
-  hidgl_fill_circle (cx, cy, radius, gport->view.coord_per_px);
+  hidgl_fill_circle (cx, cy, radius);
 }
 
 
@@ -684,7 +694,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   USE_GC (gc);
 
-  hidgl_fill_pcb_polygon (poly, clip_box, gport->view.coord_per_px);
+  hidgl_fill_pcb_polygon (poly, clip_box);
 }
 
 void
@@ -918,10 +928,19 @@ void
 ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
 {
   render_priv *priv = port->render_priv;
+  GdkGLContext *drawarea_glcontext;
+
+  /* NB: We share with the main rendering context so we can use the
+   *     same pixel shader etc..
+   */
+  if (widget == gport->drawing_area)
+    drawarea_glcontext = NULL;
+  else
+    drawarea_glcontext = gtk_widget_get_gl_context (gport->drawing_area);
 
   gtk_widget_set_gl_capability (widget,
                                 priv->glconfig,
-                                NULL,
+                                drawarea_glcontext,
                                 TRUE,
                                 GDK_GL_RGBA_TYPE);
 }
@@ -1516,9 +1535,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
 #define MIN_FACES_PER_CYL 6
 #define MAX_FACES_PER_CYL 360
   float radius = vr;
-  float x1, y1;
-  float x2, y2;
-  float z1, z2;
+  float x, y, z1, z2;
   int i;
   int slices;
 
@@ -1533,19 +1550,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
   z1 = compute_depth (from_layer);
   z2 = compute_depth (to_layer);
 
-  x1 = vx + vr;
-  y1 = vy;
+  x = vx + vr;
+  y = vy;
 
-  hidgl_ensure_triangle_space (&buffer, 2 * slices);
+  hidgl_ensure_vertex_space (&buffer, 2 * slices + 2 + 2);
+
+  /* NB: Repeated first virtex to separate from other tri-strip */
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
+
   for (i = 0; i < slices; i++)
     {
-      x2 = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
-      y2 = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
-      hidgl_add_triangle_3D (&buffer, x1, y1, z1,  x2, y2, z1,  x1, y1, z2);
-      hidgl_add_triangle_3D (&buffer, x2, y2, z1,  x1, y1, z2,  x2, y2, z2);
-      x1 = x2;
-      y1 = y2;
+      x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
+      y = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
+
+      hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+      hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
     }
+
+  /* NB: Repeated last virtex to separate from other tri-strip */
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
 }
 
 struct cyl_info {
@@ -2133,6 +2158,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   GdkGLConfig *glconfig;
   GdkPixmap *pixmap;
   GdkGLPixmap *glpixmap;
+  GdkGLContext *drawarea_glcontext;
   GdkGLContext* glcontext;
   GdkGLDrawable* gldrawable;
   view_data save_view;
@@ -2146,6 +2172,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   /* Setup rendering context for drawing routines
    */
 
+  /* NB: We share with the main rendering context so we can use the
+   *     same pixel shader etc..
+   */
+  drawarea_glcontext = gtk_widget_get_gl_context (gport->drawing_area);
+
   glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                         GDK_GL_MODE_STENCIL |
                                         GDK_GL_MODE_SINGLE);
@@ -2153,7 +2184,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   pixmap = gdk_pixmap_new (NULL, width, height, depth);
   glpixmap = gdk_pixmap_set_gl_capability (pixmap, glconfig, NULL);
   gldrawable = GDK_GL_DRAWABLE (glpixmap);
-  glcontext = gdk_gl_context_new (gldrawable, NULL, TRUE, GDK_GL_RGBA_TYPE);
+  glcontext = gdk_gl_context_new (gldrawable, drawarea_glcontext,
+                                  TRUE, GDK_GL_RGBA_TYPE);
 
   /* Setup zoom factor for drawing routines */
 
