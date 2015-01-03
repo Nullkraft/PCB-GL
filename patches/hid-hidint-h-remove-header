@@ -1,5 +1,5 @@
 Bottom: 8b2f2f780072e9d9447b0a9628b39813f9bfa691
-Top:    8b2f2f780072e9d9447b0a9628b39813f9bfa691
+Top:    360ca3a7c7259b6cfabeaa38c195efd1f18827af
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-03 12:51:46 +0000
 
@@ -8,4 +8,20 @@ hid/hidint.h: Remove header guard check, it appears not to be required
 
 ---
 
-
+diff --git a/src/hid/hidint.h b/src/hid/hidint.h
+index aa19ad5..b988db9 100644
+--- a/src/hid/hidint.h
++++ b/src/hid/hidint.h
+@@ -62,12 +62,8 @@ enum File_Name_Style {
+ /* Returns a filename base that can be used to output the layer.  */
+ const char *layer_type_to_file_name (int idx, int style);
+ 
+-#ifdef PCB_GLOBAL_H
+-
+ /* Convenience function that calls the expose callback for the item,
+    and returns the extents of what was drawn.  */
+ BoxType *hid_get_extents (void *item);
+ 
+-#endif
+-
+ void derive_default_filename(const char *pcbfile, HID_Attribute *filename_attrib, const char *suffix, char **memory);
