@@ -76,7 +76,8 @@ thindraw_moved_pv (PinType *pv, Coord x, Coord y)
   moved_pv.X += x;
   moved_pv.Y += y;
 
-  gui->graphics->_thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pv, true, false);
+  gui->graphics->_thindraw_pcb_pv (Crosshair.GC, &moved_pv, false);
+  gui->graphics->_thindraw_pcb_pv_hole (Crosshair.GC, &moved_pv);
 }
 
 /* ---------------------------------------------------------------------------
@@ -715,7 +716,8 @@ DrawAttached (void)
         via.Mask = 0;
         via.Flags = NoFlags ();
 
-        gui->graphics->_thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, true, false);
+        gui->graphics->_thindraw_pcb_pv (Crosshair.GC, &via, false);
+        gui->graphics->_thindraw_pcb_pv_hole (Crosshair.GC, &via);
 
         if (TEST_FLAG (SHOWDRCFLAG, PCB))
           {
