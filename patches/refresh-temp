@@ -1,0 +1,70 @@
+Bottom: 3818a1c9acdf1453af03761ad09600ef2a68fb8d
+Top:    4bb1c7fe58c24a4bf744f427adc44082833ef358
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-03 19:28:22 +0000
+
+Refresh of play-with-locked-object
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 5519575..cd3432d 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1077,29 +1077,6 @@ ghid_screen_update (void)
+ {
+ }
+ 
+-void
+-ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
+-{
+-  // XXX: Workaround to crashing exporters
+-  if (gc->me_pointer != &ghid_hid)
+-    return;
+-
+-  /* Only apply effects to locked objects when in "lock" mode */
+-  if (Settings.Mode == LOCK_MODE &&
+-      TEST_FLAG (LOCKFLAG, object))
+-    {
+-      ghid_set_alpha_mult (gc, 0.8);
+-      ghid_set_saturation (gc, 0.3);
+-      ghid_set_brightness (gc, 0.7);
+-    }
+-  else
+-    {
+-      ghid_set_alpha_mult (gc, 1.0);
+-      ghid_set_saturation (gc, 1.0);
+-      ghid_set_brightness (gc, 1.0);
+-    }
+-}
+-
+ static int
+ EMark_callback (const BoxType * b, void *cl)
+ {
+@@ -3195,3 +3172,26 @@ ghid_cancel_lead_user (void)
+   priv->lead_user_timer = NULL;
+   priv->lead_user = false;
+ }
++
++void
++ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
++{
++  // XXX: Workaround to crashing exporters
++  if (gc->me_pointer != &ghid_hid)
++    return;
++
++  /* Only apply effects to locked objects when in "lock" mode */
++  if (Settings.Mode == LOCK_MODE &&
++      TEST_FLAG (LOCKFLAG, object))
++    {
++      ghid_set_alpha_mult (gc, 0.8);
++      ghid_set_saturation (gc, 0.3);
++      ghid_set_brightness (gc, 0.7);
++    }
++  else
++    {
++      ghid_set_alpha_mult (gc, 1.0);
++      ghid_set_saturation (gc, 1.0);
++      ghid_set_brightness (gc, 1.0);
++    }
++}
