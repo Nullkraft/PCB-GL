@@ -1,7 +1,7 @@
-Bottom: e85c9272964a104d93b766556924b94acc727875
-Top:    bfbbd7bc64efddf56025d9d1399ec5a6378382a1
+Bottom: bb0c9bdf4fe24d87d0942519c5f78f0aff4646b4
+Top:    34a6211c3b740eafb27d68297fbbe59c8905b8e5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-03 13:47:39 +0000
+Date:   2015-01-03 14:34:09 +0000
 
 Revert "Just make a black background."
 
@@ -11,10 +11,10 @@ This reverts commit cf6c95ade3be149a5a8659bd13a80eedc4092fd2.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3a0d4bf..827ede4 100644
+index a67f035..7261bdb 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -2079,9 +2079,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2084,9 +2084,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glEnable (GL_STENCIL_TEST);
    glEnable (GL_DEPTH_TEST);
    glDepthFunc (GL_ALWAYS);
@@ -27,7 +27,7 @@ index 3a0d4bf..827ede4 100644
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
-@@ -2185,7 +2185,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2190,7 +2190,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* glStencilFunc (GL_GREATER, 1, 1); */           /* Draw only where stencil buffer is 0 */
  
    glDepthMask (GL_FALSE);
@@ -35,7 +35,7 @@ index 3a0d4bf..827ede4 100644
    if (global_view_2d) {
      glBegin (GL_QUADS);
      glVertex3i (0,             0,              0);
-@@ -2216,7 +2215,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2221,7 +2220,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      }
      glEnd ();
    }

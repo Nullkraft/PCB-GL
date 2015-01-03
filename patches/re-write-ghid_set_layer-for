@@ -1,7 +1,7 @@
-Bottom: d3bf98f5f75648288c4ab6081c0c25be80d9d574
-Top:    315446f278a132b55e4594c57ad5fe1715f4a108
+Bottom: 062ac99f8942f2710553507d98b1bfc0444fda3e
+Top:    98a651a66897fb549f79ef79f8e902dacc1c547e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-03 13:47:38 +0000
+Date:   2015-01-03 14:34:08 +0000
 
 Re-write ghid_set_layer() for some reason (can't recall why!)
 
@@ -9,10 +9,10 @@ Re-write ghid_set_layer() for some reason (can't recall why!)
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 6fa2afa..0c840a3 100644
+index bd343a5..c488042 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -61,48 +61,49 @@ hid_gc_struct;
+@@ -62,48 +62,49 @@ hid_gc_struct;
  
  static void draw_lead_user (render_priv *priv);
  
