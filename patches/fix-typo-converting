@@ -1,0 +1,25 @@
+Bottom: 9db683908479ed66b5b258d6607b3c76a0d6a52f
+Top:    d97e6219911f97983cf928ffbad2530c31e1b454
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-03 11:57:19 +0000
+
+Fix typo converting request_debug_draw to return a HID_DRAW structure
+
+Fixes GTK HID built without OpenGL
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index bbaf465..a247576 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1226,7 +1226,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   return pixmap;
+ }
+ 
+-HID_draw *
++HID_DRAW *
+ ghid_request_debug_draw (void)
+ {
+   /* No special setup requirements, drawing goes into
