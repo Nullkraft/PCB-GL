@@ -1,7 +1,7 @@
-Bottom: d28a535f870fa750a45be964e6dae400c72f8aa2
-Top:    17480ead09206233ac365308ed9ac0ba159a4ed0
+Bottom: 4616e11e2b17847aeae192c5890c9d5886996594
+Top:    b08f38269df36e8cbf6ea072ed542b12a24484c0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-03 14:47:17 +0000
+Date:   2015-01-03 23:51:28 +0000
 
 Major re-write to drawing routines
 
@@ -19,6 +19,7 @@ Notes from squashed patches:
   Fix layer on/off rendering after commit 9768e060fad7bc3dfc366da76ea1db8154005018
   Only assign stencil planes where sub-compositing is required - that is, not the far-side, mask, rat or switched off layers.
   Pass an explicit graphics context to DrawAttached and DrawMark
+
 
 ---
 
