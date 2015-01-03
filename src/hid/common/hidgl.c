@@ -749,10 +749,12 @@ fill_contour (PLINE *contour)
   borast_traps_t traps;
 
   /* If the contour is round, then call hidgl_fill_circle to draw it. */
+#if 0
   if (contour->is_round) {
     hidgl_fill_circle (contour->cx, contour->cy, contour->radius);
     return;
   }
+#endif
 
   /* If we don't have a cached set of tri-strips, compute them */
   if (contour->tristrip_vertices == NULL) {
