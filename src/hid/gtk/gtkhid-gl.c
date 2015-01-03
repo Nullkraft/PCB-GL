@@ -1489,6 +1489,7 @@ GhidDrawMask (int side, BoxType * screen)
   gui->graphics->set_color (out->fgGC, PCB->MaskColor);
   ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
 
+#if 0
   if (first_run) {
     glGenTextures (1, &texture);
     glBindTexture (GL_TEXTURE_2D, texture);
@@ -1516,6 +1517,7 @@ GhidDrawMask (int side, BoxType * screen)
   glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glEnable (GL_TEXTURE_2D);
+#endif
 
   if (!PCB->Data->outline_valid) {
 
@@ -1536,10 +1538,12 @@ GhidDrawMask (int side, BoxType * screen)
   poly_FreeContours (&polygon.NoHoles);
   ghid_set_alpha_mult (out->fgGC, 1.0);
   hidgl_flush_triangles (&buffer);
+#if 0
   glDisable (GL_TEXTURE_GEN_S);
   glDisable (GL_TEXTURE_GEN_T);
   glBindTexture (GL_TEXTURE_2D, 0);
   glDisable (GL_TEXTURE_2D);
+#endif
   hidgl_shader_activate (circular_program);
 
   gui->graphics->use_mask (HID_MASK_OFF);
