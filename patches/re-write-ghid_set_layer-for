@@ -1,15 +1,14 @@
 Bottom: 666ea1a1490bc0303c344c53c49e51bf655cfd4c
-Top:    6cdce76964cf173251715d6e7e244c69a2156144
-Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-03 13:01:54 +0000
+Top:    37543103c35e376f8b1297c0607bc4beb8d13ff3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-03 13:17:37 +0000
 
 Re-write ghid_set_layer() for some reason (can't recall why!)
-
 
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 6fa2afa..b680c3f 100644
+index 6fa2afa..0c840a3 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -61,48 +61,49 @@ hid_gc_struct;
@@ -81,11 +80,11 @@ index 6fa2afa..b680c3f 100644
 +    case SL_INVISIBLE:
 +      return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
 +    case SL_MASK:
-+      if (SL_MYSIDE (idx) /*&& !pinout */ )
++      if (SL_MYSIDE (group) /*&& !pinout */ )
 +        return TEST_FLAG (SHOWMASKFLAG, PCB);
 +      return 0;
 +    case SL_SILK:
-+      if (SL_MYSIDE (idx) /*|| pinout */ )
++      if (SL_MYSIDE (group) /*|| pinout */ )
 +        return PCB->ElementOn;
 +      return 0;
 +    case SL_ASSY:
