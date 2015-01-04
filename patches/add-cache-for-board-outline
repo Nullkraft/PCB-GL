@@ -1,5 +1,5 @@
-Bottom: 3c90b6d400825bcea438b1328024d67b3c4557b9
-Top:    35739b2ab026518006741ed4e7027f8c844130a9
+Bottom: 79239c355da4e30898ee1d6b5dec5786192c2e0e
+Top:    401533e788a4eb728c858cff8a71af52d2cfed77
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-04 20:07:17 +0000
 
@@ -33,11 +33,11 @@ index d8002b4..ce67c50 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 236c3c6..a0b8bb5 100644
+index e758316..cc9d3ee 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1384,13 +1384,21 @@ GhidDrawMask (int side, BoxType * screen)
-   gui->graphics->set_color (out->fgGC, PCB->MaskColor);
+@@ -1382,13 +1382,21 @@ GhidDrawMask (int side, BoxType * screen)
+   hid_draw_set_color (out->fgGC, PCB->MaskColor);
    ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
  
 +  if (!PCB->Data->outline_valid) {
@@ -59,7 +59,7 @@ index 236c3c6..a0b8bb5 100644
 -  poly_Free (&polygon.Clipped);
    poly_FreeContours (&polygon.NoHoles);
    /* THE GL fill_pcb_polygon doesn't work whilst masking */
- //  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
+ //  hid_draw_fill_pcb_polygon (out->fgGC, &polygon, screen);
 diff --git a/src/mymem.c b/src/mymem.c
 index a402f63..aff501c 100644
 --- a/src/mymem.c
