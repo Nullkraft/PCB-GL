@@ -28,6 +28,7 @@
 #   include <GL/gl.h>
 #endif
 
+#include "hid_draw.h"
 #include "hidgl.h"
 
 #ifdef HAVE_LIBDMALLOC
