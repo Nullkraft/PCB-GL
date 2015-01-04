@@ -1,7 +1,7 @@
-Bottom: fc04b4361fb2a127c8f621434837b5227f846465
-Top:    61f6caafdc59334ed8288bdafea6c452d4959078
+Bottom: f81088fa155d439912f6475aba90b24642f2fc0f
+Top:    896bbd5fb2823766fd5b8c6dbc0cba2b4d6cc095
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-04 17:03:43 +0000
+Date:   2015-01-04 18:51:12 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -959,7 +959,7 @@ index 58fe107..edfc7a9 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 106d7d3..23ade6b 100644
+index dade362..5a10800 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -326,28 +326,26 @@ nelma_write_materials(FILE * out)
