@@ -1,5 +1,5 @@
-Bottom: 6313b317e46490f3bc665643b9407c9f8a9a8311
-Top:    2d8664ed48f538eabfc7d3b0ec5bb5e365021672
+Bottom: 02485aa03ea8b0b79c945e7ccc0a7a7d66b2e4f6
+Top:    16b3b7089b0e7cd2de750935d14a814adf1d1d61
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 10:34:59 +0000
 
@@ -11,10 +11,10 @@ Debug polygon stuff
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 231094e..2ba8854 100644
+index bdb9d6b..c75ba74 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -975,7 +975,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -997,7 +997,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  
    /* Setup HID function pointers specific to the GL renderer*/
    ghid_hid.end_layer = ghid_end_layer;
@@ -24,7 +24,7 @@ index 231094e..2ba8854 100644
  }
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 3311b09..74a7b7f 100644
+index bfd7499..67532a9 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -1147,8 +1147,10 @@ UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
@@ -39,7 +39,7 @@ index 3311b09..74a7b7f 100644
    return 1;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b9d654c..6a9a42b 100644
+index 7d6fab6..f944f9f 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -2425,10 +2425,15 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
