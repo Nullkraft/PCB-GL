@@ -480,10 +480,10 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
   hid_draw_set_color (Output.fgGC, invisible ? PCB->InvisibleMarkColor : PCB->ElementColor);
   hid_draw_set_line_cap (Output.fgGC, Trace_Cap);
   hid_draw_set_line_width (Output.fgGC, 0);
-  hid_draw_draw_line (Output.fgGC, X - mark_size, Y, X, Y - mark_size);
-  hid_draw_draw_line (Output.fgGC, X + mark_size, Y, X, Y - mark_size);
-  hid_draw_draw_line (Output.fgGC, X - mark_size, Y, X, Y + mark_size);
-  hid_draw_draw_line (Output.fgGC, X + mark_size, Y, X, Y + mark_size);
+  hid_draw_line (Output.fgGC, X - mark_size, Y, X, Y - mark_size);
+  hid_draw_line (Output.fgGC, X + mark_size, Y, X, Y - mark_size);
+  hid_draw_line (Output.fgGC, X - mark_size, Y, X, Y + mark_size);
+  hid_draw_line (Output.fgGC, X + mark_size, Y, X, Y + mark_size);
 
   /*
    * If an element is locked, place a "L" on top of the "diamond".
