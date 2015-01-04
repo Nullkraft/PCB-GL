@@ -1,0 +1,21 @@
+Bottom: bcd2a1f43c65eb25f5400c23834b1b025f5976d9
+Top:    8fc59dfa69fe3eb499f4827403c71909cee68f93
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-04 16:47:42 +0000
+
+Refresh of add-strip-hierarchy-options-to
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 6fdd74c..13d0077 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -67,6 +67,7 @@
+ #define	LARGE_TEXT_SIZE			3
+ #define	N_TEXT_SIZES			4
+ 
++extern void ghid_set_lock_effects (hidGC gc, AnyObjectType *element);
+ 
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
