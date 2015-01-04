@@ -1,5 +1,5 @@
-Bottom: 5dd4bbf8e8b75bac5713528a6787c204c6476c0f
-Top:    48de8152353f407957bf41a115b088b58c014ffb
+Bottom: a3b11a40839973bd7321814c81246802d03e9caa
+Top:    a3b11a40839973bd7321814c81246802d03e9caa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 18:18:38 +0000
 
@@ -8,61 +8,4 @@ Benchmark no-holes dicer performance
 
 ---
 
-diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index f6fbe71..484303f 100644
---- a/src/hid/common/draw_helpers.c
-+++ b/src/hid/common/draw_helpers.c
-@@ -258,6 +258,12 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
- void
- common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
- {
-+  /* FIXME: We aren't checking the gui's dicer flag..
-+            we are dicing for every case. Some GUIs
-+            rely on this, and need their flags fixing. */
-+
-+  NoHolesPolygonDicer (poly, clip_box, fill_contour_cb, gc);
-+#if 0
-   if (!poly->NoHolesValid)
-     {
-       /* If enough of the polygon is on-screen, compute the entire
-@@ -281,6 +287,7 @@ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
-             fill_clipped_contour (gc, pl, clip_box);
-         }
-     }
-+#endif
- 
-   /* Draw other parts of the polygon if fullpoly flag is set */
-   /* NB: No "NoHoles" cache for these */
-diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 674b755..71f040b 100644
---- a/src/hid/ps/ps.c
-+++ b/src/hid/ps/ps.c
-@@ -595,6 +595,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
-   int i;
-   static int saved_layer_stack[MAX_LAYER];
-   FlagType save_thindraw;
-+  clock_t start, end;
-+  double elapsed;
- 
-   save_thindraw = PCB->Flags;
-   CLEAR_FLAG(THINDRAWFLAG, PCB);
-@@ -680,6 +682,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
-   global.region.X2 = PCB->MaxWidth;
-   global.region.Y2 = PCB->MaxHeight;
- 
-+  start = clock ();
-+
-   if (!global.multi_file)
-     {
-       /* %%Page DSC requires both a label and an ordinal */
-@@ -702,6 +706,10 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
-   if (the_file)
-     fprintf (the_file, "showpage\n");
- 
-+  end = clock ();
-+  elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
-+  printf ("Printing file took %f\n", elapsed);
-+
-   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
-   PCB->Flags = save_thindraw;
- }
+
