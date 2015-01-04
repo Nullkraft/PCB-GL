@@ -1621,9 +1621,8 @@ GhidDrawMask (int side, BoxType * screen)
     PCB->Data->outline_valid = true;
   }
 
+  memset (&polygon, 0, sizeof (polygon));
   polygon.Clipped = PCB->Data->outline;
-  polygon.NoHoles = NULL;
-  polygon.NoHolesValid = 0;
   if (screen)
     polygon.BoundingBox = *screen;
   polygon.Flags = NoFlags ();
