@@ -1,7 +1,7 @@
-Bottom: 78328c63c20689420fe2278f0ec3735c9919cea1
-Top:    fe392e26fa2b537e9f9b59511e722f9871226198
+Bottom: 532d2a687aaeba2bf1f4afb3a2f5e6172414eb34
+Top:    6b79cffbb996a83bb0e9e629d437204183d9e4ce
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 18:19:39 +0000
+Date:   2015-01-04 18:51:31 +0000
 
 Attempt at getting lesstif+gl to build
 
@@ -11,7 +11,7 @@ Attempt at getting lesstif+gl to build
 ---
 
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 5ead6f8..b3bf01d 100644
+index 9d21237..49c7666 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -63,15 +63,28 @@ static int cur_mask = -1;
@@ -144,7 +144,7 @@ index 5ead6f8..b3bf01d 100644
  
  static hidGC
  lesstif_make_gc (void)
-@@ -3325,6 +3339,7 @@ lesstif_use_mask (enum mask_mode mode)
+@@ -3326,6 +3340,7 @@ lesstif_use_mask (enum mask_mode mode)
      }
  }
  
@@ -152,7 +152,7 @@ index 5ead6f8..b3bf01d 100644
  static void
  lesstif_set_color (hidGC gc, const char *name)
  {
-@@ -3384,6 +3399,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3385,6 +3400,7 @@ lesstif_set_color (hidGC gc, const char *name)
  	}
      }
  }
@@ -160,7 +160,7 @@ index 5ead6f8..b3bf01d 100644
  
  #if 0
  static void
-@@ -3452,163 +3468,231 @@ set_gc (hidGC gc)
+@@ -3453,163 +3469,231 @@ set_gc (hidGC gc)
  }
  #endif
  
@@ -309,21 +309,6 @@ index 5ead6f8..b3bf01d 100644
 -  }
 +  priv->subcomposite_stencil_bit = stencil_bit;
 +}
-+
-+static void
-+end_subcomposite (void)
-+{
-+  /* Flush out any existing geoemtry to be rendered */
-+  hidgl_flush_triangles (&buffer);
-+
-+  hidgl_return_stencil_bit (priv->subcomposite_stencil_bit);  /* Relinquish any bitplane we previously used */
-+
-+  glStencilMask (0);
-+  glStencilFunc (GL_ALWAYS, 0, 0);                            /* Always pass stencil test */
-+  glDisable (GL_STENCIL_TEST);                                /* Disable Stencil test */
-+
-+  priv->subcomposite_stencil_bit = 0;
-+}
  
 -  if (idx < 0) {
 -    switch (SL_TYPE (idx)) {
@@ -346,6 +331,21 @@ index 5ead6f8..b3bf01d 100644
 -      case SL_PDRILL:
 -      case SL_UDRILL:
 -        return 1;
++static void
++end_subcomposite (void)
++{
++  /* Flush out any existing geoemtry to be rendered */
++  hidgl_flush_triangles (&buffer);
++
++  hidgl_return_stencil_bit (priv->subcomposite_stencil_bit);  /* Relinquish any bitplane we previously used */
++
++  glStencilMask (0);
++  glStencilFunc (GL_ALWAYS, 0, 0);                            /* Always pass stencil test */
++  glDisable (GL_STENCIL_TEST);                                /* Disable Stencil test */
++
++  priv->subcomposite_stencil_bit = 0;
++}
++
 +/* Compute group visibility based upon on copper layers only */
 +static bool
 +is_layer_group_visible (int group)
@@ -499,7 +499,7 @@ index 5ead6f8..b3bf01d 100644
  }
  
  typedef struct
-@@ -3623,19 +3707,6 @@ typedef struct
+@@ -3624,19 +3708,6 @@ typedef struct
  } ColorCache;
  
  
@@ -519,7 +519,7 @@ index 5ead6f8..b3bf01d 100644
  
  void
  ghid_set_special_colors (HID_Attribute * ha)
-@@ -3664,49 +3735,47 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -3665,49 +3736,47 @@ ghid_set_special_colors (HID_Attribute * ha)
  /* static */ double global_alpha_mult = 1.0;
  /* static */ int alpha_changed = 0;
  
@@ -591,7 +591,7 @@ index 5ead6f8..b3bf01d 100644
        alpha_mult = 0.85;
        r = 0.5;
        g = 0.5;
-@@ -3718,19 +3787,19 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -3719,19 +3788,19 @@ ghid_set_color (hidGC gc, const char *name)
    else
      {
        alpha_mult = 0.7;
@@ -614,7 +614,7 @@ index 5ead6f8..b3bf01d 100644
  	color.pixel = WhitePixel (display, screen);
  //          if (gdk_color_parse (name, &cc->color))
  //            gdk_color_alloc (gport->colormap, &cc->color);
-@@ -3741,7 +3810,8 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -3742,7 +3811,8 @@ ghid_set_color (hidGC gc, const char *name)
            cc->blue  = cc->color.blue  / 65535.;
            cc->color_set = 1;
          }
@@ -624,7 +624,7 @@ index 5ead6f8..b3bf01d 100644
          {
            if (!cc->xor_set)
              {
-@@ -3755,11 +3825,12 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -3756,11 +3826,12 @@ ghid_set_color (hidGC gc, const char *name)
                cc->xor_set = 1;
              }
          }
@@ -638,7 +638,7 @@ index 5ead6f8..b3bf01d 100644
      }
    if (1) {
      double maxi, mult;
-@@ -3785,6 +3856,15 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -3786,6 +3857,15 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
@@ -654,7 +654,7 @@ index 5ead6f8..b3bf01d 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -3797,13 +3877,17 @@ ghid_global_alpha_mult (hidGC gc, double alpha_mult)
+@@ -3798,13 +3878,17 @@ ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  void
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
@@ -674,7 +674,7 @@ index 5ead6f8..b3bf01d 100644
  }
  
  void
-@@ -3822,32 +3906,43 @@ ghid_invalidate_current_gc (void)
+@@ -3823,32 +3907,43 @@ ghid_invalidate_current_gc (void)
    current_gc = NULL;
  }
  
@@ -724,7 +724,7 @@ index 5ead6f8..b3bf01d 100644
                    start_angle, delta_angle, view_zoom);
  }
  
-@@ -4480,7 +4575,8 @@ hid_lesstif_init ()
+@@ -4481,7 +4576,8 @@ hid_lesstif_init ()
    lesstif_hid.invalidate_all          = lesstif_invalidate_all;
    lesstif_hid.notify_crosshair_change = lesstif_notify_crosshair_change;
    lesstif_hid.notify_mark_change      = lesstif_notify_mark_change;

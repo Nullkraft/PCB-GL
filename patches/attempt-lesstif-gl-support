@@ -1,7 +1,7 @@
-Bottom: ea701def481e4991f156c530593b727eebd1d6a8
-Top:    78328c63c20689420fe2278f0ec3735c9919cea1
+Bottom: 8790758ab4074ab11ab2cfab32e8ae9e8a8b204a
+Top:    532d2a687aaeba2bf1f4afb3a2f5e6172414eb34
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-04 17:29:38 +0000
+Date:   2015-01-04 18:51:31 +0000
 
 Attempt lesstif GL support
 
@@ -66,7 +66,7 @@ index 9afffd8..dc425f5 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 49009c7..5ead6f8 100644
+index c4b314e..9d21237 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -380,7 +380,7 @@ index 49009c7..5ead6f8 100644
  }
  
  void
-@@ -3184,6 +3385,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3185,6 +3386,7 @@ lesstif_set_color (hidGC gc, const char *name)
      }
  }
  
@@ -388,7 +388,7 @@ index 49009c7..5ead6f8 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3248,257 +3450,456 @@ set_gc (hidGC gc)
+@@ -3249,257 +3451,456 @@ set_gc (hidGC gc)
  			  join);
      }
  }
@@ -1044,7 +1044,7 @@ index 49009c7..5ead6f8 100644
  }
  
  static void
-@@ -4115,17 +4516,19 @@ hid_lesstif_init ()
+@@ -4116,17 +4517,19 @@ hid_lesstif_init ()
  
    lesstif_graphics.make_gc             = lesstif_make_gc;
    lesstif_graphics.destroy_gc          = lesstif_destroy_gc;
