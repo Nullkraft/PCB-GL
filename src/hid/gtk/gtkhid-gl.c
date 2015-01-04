@@ -3195,7 +3195,7 @@ void
 ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
 {
   // XXX: Workaround to crashing exporters
-  if (gc->me_pointer != &ghid_hid)
+  if (gc->hid != &ghid_hid)
     return;
 
   /* Only apply effects to locked objects when in "lock" mode */
