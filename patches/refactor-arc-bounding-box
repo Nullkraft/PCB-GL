@@ -1,5 +1,5 @@
-Bottom: 989aacbe83dc2bb3b43aeda4cee72eb627da24b8
-Top:    a8ba32dd568f4d8496f37ffb6d26df1b698bad31
+Bottom: b748f3f344ca9238ddcf715f0feb3d4aa3cbf3d7
+Top:    f074073a0c744f42564383b254b4518eccb3d052
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-04 01:50:18 +0000
 
@@ -43,7 +43,7 @@ index dc03975..69877d6 100644
    if (!Layer->arc_tree)
      Layer->arc_tree = r_create_tree (NULL, 0, 0);
 diff --git a/src/misc.c b/src/misc.c
-index 31021c9..125c4e5 100644
+index b01a5ae..5af90bb 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -78,6 +78,8 @@
@@ -55,7 +55,7 @@ index 31021c9..125c4e5 100644
  /*	forward declarations	*/
  static char *BumpName (char *);
  static void GetGridLockCoordinates (int, void *, void *, void *,
-@@ -1523,33 +1525,35 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+@@ -1530,33 +1532,35 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
  /* ---------------------------------------------------------------------------
   * computes the bounding box of an arc
   */
@@ -103,7 +103,7 @@ index 31021c9..125c4e5 100644
  
    /* calculate sines, cosines */
    sa1 = sin (M180 * ang1);
-@@ -1557,10 +1561,10 @@ SetArcBoundingBox (ArcType *Arc)
+@@ -1564,10 +1568,10 @@ SetArcBoundingBox (ArcType *Arc)
    sa2 = sin (M180 * ang2);
    ca2 = cos (M180 * ang2);
  
@@ -118,7 +118,7 @@ index 31021c9..125c4e5 100644
  
    /* Check for extreme angles */
    if ((ang1 <= 0   && ang2 >= 0)   || (ang1 <= 360 && ang2 >= 360)) maxx = 1;
-@@ -1569,11 +1573,26 @@ SetArcBoundingBox (ArcType *Arc)
+@@ -1576,11 +1580,26 @@ SetArcBoundingBox (ArcType *Arc)
    if ((ang1 <= 270 && ang2 >= 270) || (ang1 <= 630 && ang2 >= 630)) miny = -1;
  
    /* Finally, calcate bounds, converting sane geometry into pcb geometry */
@@ -149,7 +149,7 @@ index 31021c9..125c4e5 100644
    width = (Arc->Thickness + Arc->Clearance) / 2;
  
    /* Adjust for our discrete polygon approximation */
-@@ -1584,12 +1603,36 @@ SetArcBoundingBox (ArcType *Arc)
+@@ -1591,12 +1610,36 @@ SetArcBoundingBox (ArcType *Arc)
    Arc->BoundingBox.Y1 -= width;
    Arc->BoundingBox.Y2 += width;
    close_box(&Arc->BoundingBox);
