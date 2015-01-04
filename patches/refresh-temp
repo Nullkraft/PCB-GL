@@ -1,0 +1,48 @@
+Bottom: 8372de6d7d780d6f43ec4ebd2c938975787bba02
+Top:    31b727cf1f0671faec1479f6131e92c48773fd73
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-04 21:25:54 +0000
+
+Refresh of draw-c-opencode-the-mask-layer
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 7e406d0..3f09f59 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -874,7 +874,7 @@ mask_poly_callback (const BoxType * b, void *cl)
+   struct poly_info *i = cl;
+   PolygonType *polygon = (PolygonType *)b;
+ 
+-  gui->graphics->draw_pcb_polygon (Output.pmGC, polygon, i->drawn_area);
++  hid_draw_pcb_polygon (Output.pmGC, polygon, i->drawn_area);
+   return 1;
+ }
+ 
+@@ -883,7 +883,7 @@ mask_line_callback (const BoxType * b, void *cl)
+ {
+   LineType *line = (LineType *)b;
+ 
+-  gui->graphics->draw_pcb_line (Output.pmGC, line);
++  hid_draw_pcb_line (Output.pmGC, line);
+   return 1;
+ }
+ 
+@@ -892,7 +892,7 @@ mask_arc_callback (const BoxType * b, void *cl)
+ {
+   ArcType *arc = (ArcType *)b;
+ 
+-  gui->graphics->draw_pcb_arc (Output.pmGC, arc);
++  hid_draw_pcb_arc (Output.pmGC, arc);
+   return 1;
+ }
+ 
+@@ -908,7 +908,7 @@ mask_text_callback (const BoxType * b, void *cl)
+     min_silk_line = PCB->minSlk;
+   else
+     min_silk_line = PCB->minWid;
+-  gui->graphics->draw_pcb_text (Output.fgGC, text, min_silk_line);
++  hid_draw_pcb_text (Output.fgGC, text, min_silk_line);
+   return 1;
+ }
