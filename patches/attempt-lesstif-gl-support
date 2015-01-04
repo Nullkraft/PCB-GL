@@ -1,5 +1,5 @@
 Bottom: ea701def481e4991f156c530593b727eebd1d6a8
-Top:    f03fedb5c4a294a9e454d37b33b1e04dc8f6eac8
+Top:    78328c63c20689420fe2278f0ec3735c9919cea1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-04 17:29:38 +0000
 
@@ -66,7 +66,7 @@ index 9afffd8..dc425f5 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 49009c7..ed86c1c 100644
+index 49009c7..5ead6f8 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -388,7 +388,7 @@ index 49009c7..ed86c1c 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3248,36 +3450,204 @@ set_gc (hidGC gc)
+@@ -3248,257 +3450,456 @@ set_gc (hidGC gc)
  			  join);
      }
  }
@@ -398,11 +398,7 @@ index 49009c7..ed86c1c 100644
 -lesstif_set_line_cap (hidGC gc, EndCapStyle style)
 +int compute_depth (int group)
  {
-+<<<<<<< current
-   lesstifGC lesstif_gc = (lesstifGC)gc;
- 
-   lesstif_gc->cap = style;
-+=======
+-  lesstifGC lesstif_gc = (lesstifGC)gc;
 +  static int last_depth_computed = 0;
 +
 +  int solder_group;
@@ -447,10 +443,10 @@ index 49009c7..ed86c1c 100644
 +      depth = (10 - 5) * 200 / view_zoom;
 +    }
 +  }
-+
+ 
+-  lesstif_gc->cap = style;
 +  last_depth_computed = depth;
 +  return depth;
-+>>>>>>> patched
  }
  
 -static void
@@ -458,11 +454,7 @@ index 49009c7..ed86c1c 100644
 +int
 +ghid_set_layer (const char *name, int group, int empty)
  {
-+<<<<<<< current
-   lesstifGC lesstif_gc = (lesstifGC)gc;
- 
-   lesstif_gc->width = width;
-+=======
+-  lesstifGC lesstif_gc = (lesstifGC)gc;
 +  static int stencil_bit = 0;
 +  int idx = (group >= 0 && group < max_layer) ?
 +              PCB->LayerGroups.Entries[group][0] : group;
@@ -489,7 +481,8 @@ index 49009c7..ed86c1c 100644
 +    trans_lines = TRUE;
 +    return PCB->Data->Layer[idx].On;
 +  }
-+
+ 
+-  lesstif_gc->width = width;
 +  if (idx < 0) {
 +    switch (SL_TYPE (idx)) {
 +      case SL_INVISIBLE:
@@ -514,7 +507,6 @@ index 49009c7..ed86c1c 100644
 +    }
 +  }
 +  return 0;
-+>>>>>>> patched
  }
  
 -static void
@@ -522,11 +514,7 @@ index 49009c7..ed86c1c 100644
 +void
 +ghid_use_mask (int use_it)
  {
-+<<<<<<< current
-   lesstifGC lesstif_gc = (lesstifGC)gc;
- 
-   lesstif_gc->xor_set = xor_set;
-+=======
+-  lesstifGC lesstif_gc = (lesstifGC)gc;
 +  static int stencil_bit = 0;
 +
 +  /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
@@ -538,7 +526,8 @@ index 49009c7..ed86c1c 100644
 +
 +  if (use_it == cur_mask)
 +    return;
-+
+ 
+-  lesstif_gc->xor_set = xor_set;
 +  /* Flush out any existing geoemtry to be rendered */
 +  hidgl_flush_triangles (&buffer);
 +
@@ -574,7 +563,6 @@ index 49009c7..ed86c1c 100644
 +      break;
 +    }
 +  cur_mask = use_it;
-+>>>>>>> patched
  }
  
 -#define ISORT(a,b) if (a>b) { a^=b; b^=a; a^=b; }
@@ -597,15 +585,21 @@ index 49009c7..ed86c1c 100644
 -lesstif_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 +set_special_grid_color (void)
  {
-+<<<<<<< current
-   lesstifGC lesstif_gc = (lesstifGC)gc;
-   double dx1, dy1, dx2, dy2;
-   int vw = Vz (lesstif_gc->width);
-@@ -3293,35 +3663,78 @@ lesstif_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
- #if 0
-   pcb_printf (" = %#mD-%#mD %s\n", x1, y1, x2, y2, lesstif_gc->colorname);
- #endif
-+=======
+-  lesstifGC lesstif_gc = (lesstifGC)gc;
+-  double dx1, dy1, dx2, dy2;
+-  int vw = Vz (lesstif_gc->width);
+-  if ((pinout || TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB)) && lesstif_gc->erase)
+-    return;
+-#if 0
+-  pcb_printf ("draw_line %#mD-%#mD @%#mS", x1, y1, x2, y2, lesstif_gc->width);
+-#endif
+-  dx1 = Vx (x1);
+-  dy1 = Vy (y1);
+-  dx2 = Vx (x2);
+-  dy2 = Vy (y2);
+-#if 0
+-  pcb_printf (" = %#mD-%#mD %s\n", x1, y1, x2, y2, lesstif_gc->colorname);
+-#endif
 +  //if (!gport->colormap)
 +  //  return;
 +  //gport->grid_color.red ^= gport->bg_color.red;
@@ -613,7 +607,6 @@ index 49009c7..ed86c1c 100644
 +  //gport->grid_color.blue ^= gport->bg_color.blue;
 +//  gdk_color_alloc (gport->colormap, &gport->grid_color);
 +}
-+>>>>>>> patched
  
 -#if 1
 -  if (! ClipLine (0, 0, view_width, view_height,
@@ -640,19 +633,15 @@ index 49009c7..ed86c1c 100644
 +    }
  #endif
 +}
++
++/* static */ char *current_color = NULL;
++/* static */ double global_alpha_mult = 1.0;
++/* static */ int alpha_changed = 0;
  
 -  x1 = dx1;
 -  y1 = dy1;
 -  x2 = dx2;
 -  y2 = dy2;
-+/* static */ char *current_color = NULL;
-+/* static */ double global_alpha_mult = 1.0;
-+/* static */ int alpha_changed = 0;
- 
-+<<<<<<< current
-   set_gc (gc);
-   if (lesstif_gc->cap == Square_Cap && x1 == x2 && y1 == y2)
-+=======
 +void
 +ghid_set_color (hidGC gc, const char *name)
 +{
@@ -663,9 +652,10 @@ index 49009c7..ed86c1c 100644
 +  double r, g, b, a;
 +  static XColor color, exact_color;
 +  a = 1.0;
-+
+ 
+-  set_gc (gc);
+-  if (lesstif_gc->cap == Square_Cap && x1 == x2 && y1 == y2)
 +  if (!alpha_changed && current_color != NULL)
-+>>>>>>> patched
      {
 -      XFillRectangle (display, pixmap, my_gc, x1 - vw / 2, y1 - vw / 2, vw,
 -		      vw);
@@ -693,21 +683,26 @@ index 49009c7..ed86c1c 100644
      }
 -}
  
-+<<<<<<< current
- static void
- lesstif_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
- 		  Angle start_angle, Angle delta_angle)
-@@ -3338,15 +3751,31 @@ lesstif_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
-   cx = Vx (cx) - width;
-   cy = Vy (cy) - height;
-   if (flip_x)
-+=======
+-static void
+-lesstif_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
+-		  Angle start_angle, Angle delta_angle)
+-{
+-  lesstifGC lesstif_gc = (lesstifGC)gc;
 +  gc->colorname = (char *) name;
-+
+ 
+-  if ((pinout || TEST_FLAG (THINDRAWFLAG, PCB)) && lesstif_gc->erase)
+-    return;
+-#if 0
+-  pcb_printf ("draw_arc %#mD %#mSx%#mS s %d d %d", cx, cy, width, height, start_angle, delta_angle);
+-#endif
+-  width = Vz (width);
+-  height = Vz (height);
+-  cx = Vx (cx) - width;
+-  cy = Vy (cy) - height;
+-  if (flip_x)
 +//  if (gport->colormap == 0)
 +//    gport->colormap = gtk_widget_get_colormap (gport->top_window);
 +  if (strcmp (name, "erase") == 0)
-+>>>>>>> patched
      {
 -      start_angle = 180 - start_angle;
 -      delta_angle = - delta_angle;
@@ -730,17 +725,27 @@ index 49009c7..ed86c1c 100644
 +//      g = offlimit_color.green / 65535.;
 +//      b = offlimit_color.blue  / 65535.;
      }
-+<<<<<<< current
-   start_angle = NormalizeAngle (start_angle);
-   if (start_angle >= 180)
-     start_angle -= 360;
-@@ -3367,22 +3796,81 @@ lesstif_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
-      arcs, for debugging.  */
-   if (TEST_FLAG (THINDRAWFLAG, PCB)
-       && delta_angle != 360)
-+=======
+-  start_angle = NormalizeAngle (start_angle);
+-  if (start_angle >= 180)
+-    start_angle -= 360;
+-#if 0
+-  pcb_printf (" = %#mD %#mSx%#mS %d %s\n", cx, cy, width, height, lesstif_gc->width,
+-	  lesstif_gc->colorname);
+-#endif
+-  set_gc (gc);
+-  XDrawArc (display, pixmap, my_gc, cx, cy,
+-	    width * 2, height * 2, (start_angle + 180) * 64,
+-	    delta_angle * 64);
+-  if (use_mask && !TEST_FLAG (THINDRAWFLAG, PCB))
+-    XDrawArc (display, mask_bitmap, mask_gc, cx, cy,
+-	      width * 2, height * 2, (start_angle + 180) * 64,
+-	      delta_angle * 64);
+-#if 0
+-  /* Enable this if you want to see the center and radii of drawn
+-     arcs, for debugging.  */
+-  if (TEST_FLAG (THINDRAWFLAG, PCB)
+-      && delta_angle != 360)
 +  else
-+>>>>>>> patched
      {
 -      cx += width;
 -      cy += height;
@@ -822,21 +827,35 @@ index 49009c7..ed86c1c 100644
 +void
 +ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
-+<<<<<<< current
-   lesstifGC lesstif_gc = (lesstifGC)gc;
-   int vw = Vz (lesstif_gc->width);
- 
-@@ -3407,11 +3895,19 @@ lesstif_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
-   if (use_mask)
-     XDrawRectangle (display, mask_bitmap, mask_gc, x1, y1, x2 - x1 + 1,
- 		    y2 - y1 + 1);
-+=======
+-  lesstifGC lesstif_gc = (lesstifGC)gc;
+-  int vw = Vz (lesstif_gc->width);
+-
+-  if ((pinout || TEST_FLAG (THINDRAWFLAG, PCB)) && lesstif_gc->erase)
+-    return;
+-  x1 = Vx (x1);
+-  y1 = Vy (y1);
+-  x2 = Vx (x2);
+-  y2 = Vy (y2);
+-  if (x1 < -vw && x2 < -vw)
+-    return;
+-  if (y1 < -vw && y2 < -vw)
+-    return;
+-  if (x1 > view_width + vw && x2 > view_width + vw)
+-    return;
+-  if (y1 > view_height + vw && y2 > view_height + vw)
+-    return;
+-  if (x1 > x2) { int xt = x1; x1 = x2; x2 = xt; }
+-  if (y1 > y2) { int yt = y1; y1 = y2; y2 = yt; }
+-  set_gc (gc);
+-  XDrawRectangle (display, pixmap, my_gc, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+-  if (use_mask)
+-    XDrawRectangle (display, mask_bitmap, mask_gc, x1, y1, x2 - x1 + 1,
+-		    y2 - y1 + 1);
 +  if (alpha_mult != global_alpha_mult) {
 +    global_alpha_mult = alpha_mult;
 +    alpha_changed = 1;
 +    ghid_set_color (gc, current_color);
 +  }
-+>>>>>>> patched
  }
  
 -static void
@@ -844,29 +863,49 @@ index 49009c7..ed86c1c 100644
 +void
 +ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
-+<<<<<<< current
-   lesstifGC lesstif_gc = (lesstifGC)gc;
- 
-   if (pinout && use_mask && lesstif_gc->erase)
-@@ -3437,43 +3933,37 @@ lesstif_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
-   if (use_mask)
-     XFillArc (display, mask_bitmap, mask_gc, cx, cy,
- 	      radius * 2, radius * 2, 0, 360 * 64);
-+=======
+-  lesstifGC lesstif_gc = (lesstifGC)gc;
 +  gc->cap = style;
-+>>>>>>> patched
++}
+ 
+-  if (pinout && use_mask && lesstif_gc->erase)
+-    return;
+-  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB)) && lesstif_gc->erase)
+-    return;
+-#if 0
+-  pcb_printf ("fill_circle %#mD %#mS", cx, cy, radius);
+-#endif
+-  radius = Vz (radius);
+-  cx = Vx (cx) - radius;
+-  cy = Vy (cy) - radius;
+-  if (cx < -2 * radius || cx > view_width)
+-    return;
+-  if (cy < -2 * radius || cy > view_height)
+-    return;
+-#if 0
+-  pcb_printf (" = %#mD %#mS %lx %s\n", cx, cy, radius, lesstif_gc->color, lesstif_gc->colorname);
+-#endif
+-  set_gc (gc);
+-  XFillArc (display, pixmap, my_gc, cx, cy,
+-	    radius * 2, radius * 2, 0, 360 * 64);
+-  if (use_mask)
+-    XFillArc (display, mask_bitmap, mask_gc, cx, cy,
+-	      radius * 2, radius * 2, 0, 360 * 64);
++void
++ghid_set_line_width (hidGC gc, Coord width)
++{
++  gc->width = width;
  }
  
 -static void
 -lesstif_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 +void
-+ghid_set_line_width (hidGC gc, Coord width)
++ghid_set_draw_xor (hidGC gc, int xor)
  {
 -  static XPoint *p = 0;
 -  static int maxp = 0;
 -  int i;
-+  gc->width = width;
-+}
++  // printf ("ghid_set_draw_xor (%p, %d) -- not implemented\n", gc, xor);
++  /* NOT IMPLEMENTED */
  
 -  if (maxp < n_coords)
 -    {
@@ -876,11 +915,9 @@ index 49009c7..ed86c1c 100644
 -      else
 -	p = (XPoint *) malloc (maxp * sizeof (XPoint));
 -    }
-+void
-+ghid_set_draw_xor (hidGC gc, int xor)
-+{
-+  // printf ("ghid_set_draw_xor (%p, %d) -- not implemented\n", gc, xor);
-+  /* NOT IMPLEMENTED */
++  /* Only presently called when setting up a crosshair GC.
++   * We manage our own drawing model for that anyway. */
++}
  
 -  for (i = 0; i < n_coords; i++)
 -    {
@@ -896,10 +933,6 @@ index 49009c7..ed86c1c 100644
 -  if (use_mask)
 -    XFillPolygon (display, mask_bitmap, mask_gc, p, n_coords, Complex,
 -		  CoordModeOrigin);
-+  /* Only presently called when setting up a crosshair GC.
-+   * We manage our own drawing model for that anyway. */
-+}
-+
 +void
 +ghid_invalidate_current_gc (void)
 +{
@@ -909,17 +942,23 @@ index 49009c7..ed86c1c 100644
  static void
  lesstif_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
  {
-+<<<<<<< current
-   lesstifGC lesstif_gc = (lesstifGC)gc;
-   int vw = Vz (lesstif_gc->width);
- 
-@@ -3490,15 +3980,83 @@ lesstif_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
-   if (x1 > view_width + vw && x2 > view_width + vw)
-     return;
-   if (y1 > view_height + vw && y2 > view_height + vw)
-+=======
+-  lesstifGC lesstif_gc = (lesstifGC)gc;
+-  int vw = Vz (lesstif_gc->width);
+-
+-  if ((pinout || TEST_FLAG (THINDRAWFLAG, PCB)) && lesstif_gc->erase)
+-    return;
+-  x1 = Vx (x1);
+-  y1 = Vy (y1);
+-  x2 = Vx (x2);
+-  y2 = Vy (y2);
+-  if (x1 < -vw && x2 < -vw)
+-    return;
+-  if (y1 < -vw && y2 < -vw)
+-    return;
+-  if (x1 > view_width + vw && x2 > view_width + vw)
+-    return;
+-  if (y1 > view_height + vw && y2 > view_height + vw)
 +  if (current_gc == gc)
-+>>>>>>> patched
      return;
 -  if (x1 > x2) { int xt = x1; x1 = x2; x2 = xt; }
 -  if (y1 > y2) { int yt = y1; y1 = y2; y2 = yt; }
@@ -1005,7 +1044,7 @@ index 49009c7..ed86c1c 100644
  }
  
  static void
-@@ -4115,17 +4673,19 @@ hid_lesstif_init ()
+@@ -4115,17 +4516,19 @@ hid_lesstif_init ()
  
    lesstif_graphics.make_gc             = lesstif_make_gc;
    lesstif_graphics.destroy_gc          = lesstif_destroy_gc;
