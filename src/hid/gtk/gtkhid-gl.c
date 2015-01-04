@@ -1405,7 +1405,7 @@ GhidDrawMask (int side, BoxType * screen)
   polygon.BoundingBox = *screen;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
-  gui->graphics->fill_pcb_polygon (out->fgGC, &polygon, screen);
+  hid_draw_fill_pcb_polygon (out->fgGC, &polygon, screen);
   poly_FreeContours (&polygon.NoHoles);
   ghid_set_alpha_mult (out->fgGC, 1.0);
 
