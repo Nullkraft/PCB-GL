@@ -1,0 +1,432 @@
+Bottom: d1635b0f99359001ca455efc6b23e8a6a38b6d0e
+Top:    d8ef97e34c75aed754a0657782a8f974bee637c9
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-04 16:41:49 +0000
+
+Refresh of play-with-locked-object
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index b8b3fe7..00c03ac 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -1146,7 +1146,6 @@ NotifyMode (void)
+ 	    DrawElement (element);
+ 	    Draw ();
+ 	    SetChangedFlag (true);
+-	    hid_actionl ("Report", "Object", NULL);
+ 	  }
+ 	else if (type != NO_TYPE)
+ 	  {
+@@ -1161,7 +1160,6 @@ NotifyMode (void)
+ 		Draw ();
+ 	      }
+ 	    SetChangedFlag (true);
+-	    hid_actionl ("Report", "Object", NULL);
+ 	  }
+ 	break;
+       }
+diff --git a/src/draw.c b/src/draw.c
+index c4dc81b..faa9359 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -159,6 +159,7 @@ draw_element_name (ElementType *element)
+   if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
+       TEST_FLAG (HIDENAMEFLAG, element))
+     return;
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)element);
+   if (doing_pinout || doing_assy)
+     gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
+   else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, element)))
+@@ -239,6 +240,7 @@ rat_callback (const BoxType * b, void *cl)
+ static void
+ draw_element_package (ElementType *element)
+ {
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)element);
+   /* set color and draw lines, arcs, text and pins */
+   if (doing_pinout || doing_assy)
+     gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
+@@ -473,6 +475,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+       mark_size = MIN (mark_size, pad0->Thickness / 2);
+     }
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)e);
+   gui->graphics->set_color (Output.fgGC, invisible ? PCB->InvisibleMarkColor : PCB->ElementColor);
+   gui->graphics->set_line_cap (Output.fgGC, Trace_Cap);
+   gui->graphics->set_line_width (Output.fgGC, 0);
+diff --git a/src/draw_funcs.c b/src/draw_funcs.c
+index 0cfd9df..48f0c01 100644
+--- a/src/draw_funcs.c
++++ b/src/draw_funcs.c
+@@ -7,6 +7,8 @@
+ #include "draw.h"
+ #include "hid_draw.h"
+ 
++void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
++
+ static void
+ _draw_pv (PinType *pv, bool draw_hole)
+ {
+@@ -168,6 +170,7 @@ line_callback (const BoxType * b, void *cl)
+   LayerType *layer = cl;
+   LineType *line = (LineType *)b;
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)line);
+   set_layer_object_color (layer, (AnyObjectType *) line);
+   dapi->draw_line (line, NULL, NULL);
+   return 1;
+@@ -179,6 +182,7 @@ arc_callback (const BoxType * b, void *cl)
+   LayerType *layer = cl;
+   ArcType *arc = (ArcType *)b;
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)arc);
+   set_layer_object_color (layer, (AnyObjectType *) arc);
+   dapi->draw_arc (arc, NULL, NULL);
+   return 1;
+@@ -195,6 +199,7 @@ poly_callback (const BoxType * b, void *cl)
+   struct poly_info *i = cl;
+   PolygonType *polygon = (PolygonType *)b;
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)polygon);
+   set_layer_object_color (i->layer, (AnyObjectType *) polygon);
+   dapi->draw_poly (polygon, i->drawn_area, NULL);
+   return 1;
+@@ -207,6 +212,7 @@ text_callback (const BoxType * b, void *cl)
+   TextType *text = (TextType *)b;
+   int min_silk_line;
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)text);
+   if (TEST_FLAG (SELECTEDFLAG, text))
+     gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
+   else
+@@ -223,6 +229,7 @@ text_callback (const BoxType * b, void *cl)
+ static void
+ set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
+ {
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pv);
+   if (TEST_FLAG (WARNFLAG, pv))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+   else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+                                                                                                    : PCB->PinSelectedColor);
+@@ -258,6 +265,7 @@ pad_inlayer_callback (const BoxType * b, void *cl)
+ 
+   if (ON_SIDE (pad, side))
+     {
++      ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pad);
+       if (TEST_FLAG (WARNFLAG, pad))          gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+       else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->graphics->set_color (Output.fgGC, PCB->PinSelectedColor);
+       else if (TEST_FLAG (FOUNDFLAG, pad))    gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+@@ -278,6 +286,7 @@ pin_hole_callback (const BoxType * b, void *cl)
+       (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
+     return 1;
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pin);
+   set_object_color ((AnyObjectType *) pin, PCB->WarnColor,
+                     PCB->PinSelectedColor, NULL, NULL, Settings.BlackColor);
+ 
+@@ -295,6 +304,7 @@ via_hole_callback (const BoxType * b, void *cl)
+       (plated == 1 &&  TEST_FLAG (HOLEFLAG, via)))
+     return 1;
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)via);
+   set_object_color ((AnyObjectType *) via, PCB->WarnColor,
+                     PCB->ViaSelectedColor, NULL, NULL, Settings.BlackColor);
+ 
+@@ -305,6 +315,7 @@ via_hole_callback (const BoxType * b, void *cl)
+ static int
+ pin_callback (const BoxType * b, void *cl)
+ {
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)b);
+   set_object_color ((AnyObjectType *)b,
+                     PCB->WarnColor, PCB->PinSelectedColor,
+                     PCB->ConnectedColor, PCB->FoundColor, PCB->PinColor);
+@@ -316,6 +327,7 @@ pin_callback (const BoxType * b, void *cl)
+ static int
+ via_callback (const BoxType * b, void *cl)
+ {
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)b);
+   set_object_color ((AnyObjectType *)b,
+                     PCB->WarnColor, PCB->ViaSelectedColor,
+                     PCB->ConnectedColor, PCB->FoundColor, PCB->ViaColor);
+@@ -332,6 +344,7 @@ pad_callback (const BoxType * b, void *cl)
+ 
+   if (ON_SIDE (pad, *side))
+     {
++      ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pad);
+       set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
+                         PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
+                         FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 3714dfe..6413d7e 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -382,3 +382,9 @@ hid_batch_init ()
+   hid_register_hid (&batch_hid);
+ #include "batch_lists.h"
+ }
++
++/* XXX: DUMMY FUNCTION TO ENABLE BUILD */
++void
++ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
++{
++}
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index c488042..c850d68 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1389,3 +1389,9 @@ ghid_cancel_lead_user (void)
+   priv->lead_user_timer = NULL;
+   priv->lead_user = false;
+ }
++
++/* XXX: DUMMY FUNCTION TO ENABLE BUILD */
++void
++ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
++{
++}
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index f3e0695..16378ea 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -79,6 +79,8 @@ typedef struct render_priv {
+   int subcomposite_stencil_bit;
+   char *current_colorname;
+   double current_alpha_mult;
++  double current_brightness;
++  double current_saturation;
+   GTimer *time_since_expose;
+ 
+   /* Feature for leading the user to a particular location */
+@@ -97,6 +99,8 @@ typedef struct hid_gc_struct
+ 
+   const char *colorname;
+   double alpha_mult;
++  double brightness;
++  double saturation;
+   Coord width;
+   gint cap, join;
+ }
+@@ -106,6 +110,8 @@ hid_gc_struct;
+ static void draw_lead_user (render_priv *priv);
+ static bool ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y);
+ 
++void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
++
+ 
+ #define BOARD_THICKNESS         MM_TO_COORD(1.60)
+ #define MASK_COPPER_SPACING     MM_TO_COORD(0.05)
+@@ -314,6 +320,8 @@ ghid_make_gc (void)
+   rv->me_pointer = &ghid_hid;
+   rv->colorname = Settings.BackgroundColor;
+   rv->alpha_mult = 1.0;
++  rv->brightness = 1.0;
++  rv->saturation = 1.0;
+   return rv;
+ }
+ 
+@@ -547,10 +555,13 @@ set_gl_color_for_gc (hidGC gc)
+   hidval cval;
+   ColorCache *cc;
+   double r, g, b, a;
++  double luminance;
+ 
+   if (priv->current_colorname != NULL &&
+       strcmp (priv->current_colorname, gc->colorname) == 0 &&
+-      priv->current_alpha_mult == gc->alpha_mult)
++      priv->current_alpha_mult == gc->alpha_mult &&
++      priv->current_brightness == gc->brightness &&
++      priv->current_saturation == gc->saturation)
+     return;
+ 
+   free (priv->current_colorname);
+@@ -565,6 +576,8 @@ set_gl_color_for_gc (hidGC gc)
+ 
+   priv->current_colorname = strdup (gc->colorname);
+   priv->current_alpha_mult = gc->alpha_mult;
++  priv->current_brightness = gc->brightness;
++  priv->current_saturation = gc->saturation;
+ 
+   if (gport->colormap == NULL)
+     gport->colormap = gtk_widget_get_colormap (gport->top_window);
+@@ -626,6 +639,18 @@ set_gl_color_for_gc (hidGC gc)
+ #endif
+   }
+ 
++  r *= gc->brightness;
++  g *= gc->brightness;
++  b *= gc->brightness;
++
++  /* B/W Equivalent brightness */
++  luminance = (r + g + b) / 3.0;
++
++  /* Fade between B/W and colour */
++  r = r * gc->saturation + luminance * (1.0 - gc->saturation);
++  g = g * gc->saturation + luminance * (1.0 - gc->saturation);
++  b = b * gc->saturation + luminance * (1.0 - gc->saturation);
++
+   hidgl_flush_triangles (&buffer);
+   glColor4d (r, g, b, a);
+ }
+@@ -644,6 +669,20 @@ ghid_set_alpha_mult (hidGC gc, double alpha_mult)
+   set_gl_color_for_gc (gc);
+ }
+ 
++static void
++ghid_set_saturation (hidGC gc, double saturation)
++{
++  gc->saturation = saturation;
++  set_gl_color_for_gc (gc);
++}
++
++static void
++ghid_set_brightness (hidGC gc, double brightness)
++{
++  gc->brightness = brightness;
++  set_gl_color_for_gc (gc);
++}
++
+ void
+ ghid_set_line_cap (hidGC gc, EndCapStyle style)
+ {
+@@ -1061,6 +1100,7 @@ set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
+   else if (found_color     != NULL && TEST_FLAG (FOUNDFLAG,     obj)) color = found_color;
+   else                                                                color = normal_color;
+ 
++  ghid_set_lock_effects (Output.fgGC, obj);
+   gui->graphics->set_color (Output.fgGC, color);
+ }
+ 
+@@ -1073,9 +1113,11 @@ set_layer_object_color (LayerType *layer, AnyObjectType *obj)
+ static void
+ set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
+ {
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *) pv);
++
+   if (TEST_FLAG (WARNFLAG, pv))           gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
+   else if (TEST_FLAG (SELECTEDFLAG, pv))  gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+-                                                                                                   : PCB->PinSelectedColor);
++                                                                                                    : PCB->PinSelectedColor);
+   else if (TEST_FLAG (CONNECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
+   else if (TEST_FLAG (FOUNDFLAG, pv))     gui->graphics->set_color (Output.fgGC, PCB->FoundColor);
+   else
+@@ -1117,6 +1159,7 @@ _draw_pv_name (PinType *pv)
+       box.Y1 = pv->Y - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
+     }
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pv);
+   gui->graphics->set_color (Output.fgGC, PCB->PinNameColor);
+ 
+   text.Flags = NoFlags ();
+@@ -1233,6 +1276,7 @@ draw_pad_name (PadType *pad)
+       box.Y1 += Settings.PinoutTextOffsetY;
+     }
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pad);
+   gui->graphics->set_color (Output.fgGC, PCB->PinNameColor);
+ 
+   text.Flags = NoFlags ();
+@@ -1261,6 +1305,7 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+ static void
+ draw_pad (PadType *pad)
+ {
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pad);
+   set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
+                     PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
+                     FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
+@@ -1312,6 +1357,7 @@ hole_callback (const BoxType * b, void *cl)
+ 
+   if (TEST_FLAG (HOLEFLAG, pv))
+     {
++      ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pv);
+       set_object_color ((AnyObjectType *) pv, PCB->WarnColor,
+                         PCB->ViaSelectedColor, NULL, NULL, Settings.BlackColor);
+ 
+@@ -1330,6 +1376,7 @@ line_callback (const BoxType * b, void *cl)
+   LayerType *layer = cl;
+   LineType *line = (LineType *)b;
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *) line);
+   set_layer_object_color (layer, (AnyObjectType *) line);
+   gui->graphics->draw_pcb_line (Output.fgGC, line);
+   return 1;
+@@ -1341,6 +1388,7 @@ arc_callback (const BoxType * b, void *cl)
+   LayerType *layer = cl;
+   ArcType *arc = (ArcType *)b;
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *) arc);
+   set_layer_object_color (layer, (AnyObjectType *) arc);
+   gui->graphics->draw_pcb_arc (Output.fgGC, arc);
+   return 1;
+@@ -1353,6 +1401,7 @@ text_callback (const BoxType * b, void *cl)
+   TextType *text = (TextType *)b;
+   int min_silk_line;
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)text);
+   if (TEST_FLAG (SELECTEDFLAG, text))
+     gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
+   else
+@@ -1392,6 +1441,7 @@ poly_callback_no_clear (const BoxType * b, void *cl)
+   if (TEST_FLAG (CLEARPOLYFLAG, polygon))
+     return 0;
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *) polygon);
+   set_layer_object_color (i->layer, (AnyObjectType *) polygon);
+   gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
+   return 1;
+@@ -1406,6 +1456,7 @@ poly_callback_clearing (const BoxType * b, void *cl)
+   if (!TEST_FLAG (CLEARPOLYFLAG, polygon))
+     return 0;
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *) polygon);
+   set_layer_object_color (i->layer, (AnyObjectType *) polygon);
+   gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
+   return 1;
+@@ -1722,6 +1773,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
+   else
+     color = "drill";
+ 
++  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)Pin);
+   gui->graphics->set_color (Output.fgGC, color);
+   DrawDrillChannel (Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
+   return 0;
+@@ -3121,3 +3173,26 @@ ghid_cancel_lead_user (void)
+   priv->lead_user_timer = NULL;
+   priv->lead_user = false;
+ }
++
++void
++ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
++{
++  // XXX: Workaround to crashing exporters
++  if (gc->me_pointer != &ghid_hid)
++    return;
++
++  /* Only apply effects to locked objects when in "lock" mode */
++  if (Settings.Mode == LOCK_MODE &&
++      TEST_FLAG (LOCKFLAG, object))
++    {
++      ghid_set_alpha_mult (gc, 0.8);
++      ghid_set_saturation (gc, 0.3);
++      ghid_set_brightness (gc, 0.7);
++    }
++  else
++    {
++      ghid_set_alpha_mult (gc, 1.0);
++      ghid_set_saturation (gc, 1.0);
++      ghid_set_brightness (gc, 1.0);
++    }
++}
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index ef9beee..2a62039 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -4113,3 +4113,9 @@ hid_lesstif_init ()
+   hid_register_hid (&lesstif_hid);
+ #include "lesstif_lists.h"
+ }
++
++/* XXX: DUMMY FUNCTION TO ENABLE BUILD */
++void
++ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
++{
++}
