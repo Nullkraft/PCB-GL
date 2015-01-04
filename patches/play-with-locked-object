@@ -1,7 +1,7 @@
 Bottom: b9a9b41070012e65f510522e03931dbc3d05f336
-Top:    7a46d2b42ccfdc476cf12150e7c139a0ee155389
+Top:    9c7a11a9132ef74f773a939f515e62f754c3f76a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 18:51:25 +0000
+Date:   2015-01-04 18:56:32 +0000
 
 Play with locked object rendering
 
@@ -9,7 +9,6 @@ Play with locked object rendering
 
 Did I mention this was a hacky pile of rubbish code.. the main point of
 the exercise is to determine whether the usability is better or not.
-
 
 ---
 
@@ -191,7 +190,7 @@ index a765e54..0f920e4 100644
 +{
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d623df8..fdf6a72 100644
+index d623df8..269b7bf 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -79,6 +79,8 @@ typedef struct render_priv {
@@ -408,7 +407,7 @@ index d623df8..fdf6a72 100644
 +ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
 +{
 +  // XXX: Workaround to crashing exporters
-+  if (gc->me_pointer != &ghid_hid)
++  if (gc->hid != &ghid_hid)
 +    return;
 +
 +  /* Only apply effects to locked objects when in "lock" mode */
