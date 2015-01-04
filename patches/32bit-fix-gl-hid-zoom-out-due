@@ -1,5 +1,5 @@
-Bottom: b245cecace90aa5ded44a5553acd6a79f8fc1928
-Top:    25ea581e22b819ebcb81a74607ec8776a796a0bb
+Bottom: ca17a6a1b06e036763e79f30c60670965447155f
+Top:    629b649af57e1c96ee532663ee67a50ae676866b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-04 20:07:23 +0000
 
@@ -11,7 +11,7 @@ Nasty NASTY hack this, but it gets me working again.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 0f920e4..3b311ee 100644
+index e4fab83..23b159c 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -63,6 +63,64 @@ typedef struct gtk_gc_struct
@@ -91,7 +91,7 @@ index 0f920e4..3b311ee 100644
    return true;
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 269b7bf..a4c4512 100644
+index d3fae40..34b996a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -105,11 +105,53 @@ typedef struct gtk_gc_struct

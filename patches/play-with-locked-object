@@ -1,4 +1,4 @@
-Bottom: 0fb2fff0dc29321dd440fbbe1a57321df0fea70f
+Bottom: b9288d26c382fa04fcda54d1f5ecbbe3b21329dd
 Top:    c8f668a4a84f5b86d96e2efd6b649b19f4696d8c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-04 22:22:14 +0000
@@ -70,7 +70,7 @@ index accbf11..3cbb710 100644
    hid_draw_set_line_cap (Output.fgGC, Trace_Cap);
    hid_draw_set_line_width (Output.fgGC, 0);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index c30af86..56f0b00 100644
+index 30e42ac..56f0b00 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
 @@ -7,6 +7,8 @@
@@ -82,27 +82,7 @@ index c30af86..56f0b00 100644
  static void
  _draw_pv (PinType *pv, bool draw_hole)
  {
-@@ -57,8 +59,7 @@ draw_hole (PinType *pv, const BoxType *drawn_area, void *userdata)
-       hid_draw_set_line_cap (Output.fgGC, Round_Cap);
-       hid_draw_set_line_width (Output.fgGC, 0);
- 
--      hid_draw_arc (Output.fgGC, pv->X, pv->Y,
--                               pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
-+      hid_draw_arc (Output.fgGC, pv->X, pv->Y, pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
-     }
- }
- 
-@@ -122,8 +123,7 @@ draw_rat (RatType *rat, const BoxType *drawn_area, void *userdata)
-         hid_draw_set_line_width (Output.fgGC, 0);
-       else
-         hid_draw_set_line_width (Output.fgGC, w);
--      hid_draw_arc (Output.fgGC, rat->Point1.X, rat->Point1.Y,
--                               w * 2, w * 2, 0, 360);
-+      hid_draw_arc (Output.fgGC, rat->Point1.X, rat->Point1.Y, w * 2, w * 2, 0, 360);
-     }
-   else
-     hid_draw_pcb_line (Output.fgGC, (LineType *) rat);
-@@ -168,6 +168,7 @@ line_callback (const BoxType * b, void *cl)
+@@ -166,6 +168,7 @@ line_callback (const BoxType * b, void *cl)
    LayerType *layer = cl;
    LineType *line = (LineType *)b;
  
@@ -110,7 +90,7 @@ index c30af86..56f0b00 100644
    set_layer_object_color (layer, (AnyObjectType *) line);
    dapi->draw_line (line, NULL, NULL);
    return 1;
-@@ -179,6 +180,7 @@ arc_callback (const BoxType * b, void *cl)
+@@ -177,6 +180,7 @@ arc_callback (const BoxType * b, void *cl)
    LayerType *layer = cl;
    ArcType *arc = (ArcType *)b;
  
@@ -118,7 +98,7 @@ index c30af86..56f0b00 100644
    set_layer_object_color (layer, (AnyObjectType *) arc);
    dapi->draw_arc (arc, NULL, NULL);
    return 1;
-@@ -195,6 +197,7 @@ poly_callback (const BoxType * b, void *cl)
+@@ -193,6 +197,7 @@ poly_callback (const BoxType * b, void *cl)
    struct poly_info *i = cl;
    PolygonType *polygon = (PolygonType *)b;
  
@@ -126,7 +106,7 @@ index c30af86..56f0b00 100644
    set_layer_object_color (i->layer, (AnyObjectType *) polygon);
    dapi->draw_poly (polygon, i->drawn_area, NULL);
    return 1;
-@@ -207,6 +210,7 @@ text_callback (const BoxType * b, void *cl)
+@@ -205,6 +210,7 @@ text_callback (const BoxType * b, void *cl)
    TextType *text = (TextType *)b;
    int min_silk_line;
  
@@ -134,19 +114,15 @@ index c30af86..56f0b00 100644
    if (TEST_FLAG (SELECTEDFLAG, text))
      hid_draw_set_color (Output.fgGC, layer->SelectedColor);
    else
-@@ -223,9 +227,10 @@ text_callback (const BoxType * b, void *cl)
+@@ -221,6 +227,7 @@ text_callback (const BoxType * b, void *cl)
  static void
  set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
  {
 +  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)pv);
    if (TEST_FLAG (WARNFLAG, pv))          hid_draw_set_color (Output.fgGC, PCB->WarnColor);
    else if (TEST_FLAG (SELECTEDFLAG, pv)) hid_draw_set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
--                                                                                                   : PCB->PinSelectedColor);
-+                                                                                             : PCB->PinSelectedColor);
-   else if (TEST_FLAG (FOUNDFLAG, pv))    hid_draw_set_color (Output.fgGC, PCB->ConnectedColor);
-   else                                   hid_draw_set_color (Output.fgGC, layer->Color);
- }
-@@ -258,6 +263,7 @@ pad_inlayer_callback (const BoxType * b, void *cl)
+                                                                                              : PCB->PinSelectedColor);
+@@ -256,6 +263,7 @@ pad_inlayer_callback (const BoxType * b, void *cl)
  
    if (ON_SIDE (pad, side))
      {
@@ -154,7 +130,7 @@ index c30af86..56f0b00 100644
        if (TEST_FLAG (WARNFLAG, pad))          hid_draw_set_color (Output.fgGC, PCB->WarnColor);
        else if (TEST_FLAG (SELECTEDFLAG, pad)) hid_draw_set_color (Output.fgGC, PCB->PinSelectedColor);
        else if (TEST_FLAG (FOUNDFLAG, pad))    hid_draw_set_color (Output.fgGC, PCB->ConnectedColor);
-@@ -278,6 +284,7 @@ pin_hole_callback (const BoxType * b, void *cl)
+@@ -276,6 +284,7 @@ pin_hole_callback (const BoxType * b, void *cl)
        (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
      return 1;
  
@@ -162,7 +138,7 @@ index c30af86..56f0b00 100644
    set_object_color ((AnyObjectType *) pin, PCB->WarnColor,
                      PCB->PinSelectedColor, NULL, NULL, Settings.BlackColor);
  
-@@ -295,6 +302,7 @@ via_hole_callback (const BoxType * b, void *cl)
+@@ -293,6 +302,7 @@ via_hole_callback (const BoxType * b, void *cl)
        (plated == 1 &&  TEST_FLAG (HOLEFLAG, via)))
      return 1;
  
@@ -170,7 +146,7 @@ index c30af86..56f0b00 100644
    set_object_color ((AnyObjectType *) via, PCB->WarnColor,
                      PCB->ViaSelectedColor, NULL, NULL, Settings.BlackColor);
  
-@@ -305,6 +313,7 @@ via_hole_callback (const BoxType * b, void *cl)
+@@ -303,6 +313,7 @@ via_hole_callback (const BoxType * b, void *cl)
  static int
  pin_callback (const BoxType * b, void *cl)
  {
@@ -178,7 +154,7 @@ index c30af86..56f0b00 100644
    set_object_color ((AnyObjectType *)b,
                      PCB->WarnColor, PCB->PinSelectedColor,
                      PCB->ConnectedColor, PCB->FoundColor, PCB->PinColor);
-@@ -316,6 +325,7 @@ pin_callback (const BoxType * b, void *cl)
+@@ -314,6 +325,7 @@ pin_callback (const BoxType * b, void *cl)
  static int
  via_callback (const BoxType * b, void *cl)
  {
@@ -186,7 +162,7 @@ index c30af86..56f0b00 100644
    set_object_color ((AnyObjectType *)b,
                      PCB->WarnColor, PCB->ViaSelectedColor,
                      PCB->ConnectedColor, PCB->FoundColor, PCB->ViaColor);
-@@ -332,6 +342,7 @@ pad_callback (const BoxType * b, void *cl)
+@@ -330,6 +342,7 @@ pad_callback (const BoxType * b, void *cl)
  
    if (ON_SIDE (pad, *side))
      {

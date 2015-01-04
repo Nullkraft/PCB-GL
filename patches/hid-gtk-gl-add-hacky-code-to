@@ -1,5 +1,5 @@
-Bottom: 25ea581e22b819ebcb81a74607ec8776a796a0bb
-Top:    6a67394b062b41cd50f8fe938a2802dd32011dfe
+Bottom: 629b649af57e1c96ee532663ee67a50ae676866b
+Top:    deaf2207cdeec1f848626e1febcbc04d1fa09e10
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-04 20:07:23 +0000
 
@@ -9,7 +9,7 @@ hid/gtk (GL): Add hacky code to render outline of board, and mask cutout geometr
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a4c4512..c057f3f 100644
+index 34b996a..4712830 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1561,6 +1561,104 @@ clearPad_callback_solid (const BoxType * b, void *cl)
@@ -116,7 +116,7 @@ index a4c4512..c057f3f 100644
 +static void
  GhidDrawMask (int side, BoxType * screen)
  {
-   static bool first_run = true;
+ //  static bool first_run = true;
 @@ -1568,7 +1666,6 @@ GhidDrawMask (int side, BoxType * screen)
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
    LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
@@ -144,7 +144,7 @@ index a4c4512..c057f3f 100644
    polygon.Clipped = PCB->Data->outline;
 @@ -1646,8 +1737,12 @@ GhidDrawMask (int side, BoxType * screen)
    SET_FLAG (FULLPOLYFLAG, &polygon);
-   gui->graphics->fill_pcb_polygon (out->fgGC, &polygon, screen);
+   hid_draw_fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_FreeContours (&polygon.NoHoles);
 +#endif
 +
@@ -157,7 +157,7 @@ index a4c4512..c057f3f 100644
    glDisable (GL_TEXTURE_GEN_S);
    glDisable (GL_TEXTURE_GEN_T);
 @@ -1661,6 +1756,83 @@ GhidDrawMask (int side, BoxType * screen)
-   first_run = false;
+ //  first_run = false;
  }
  
 +static void
@@ -241,7 +241,7 @@ index a4c4512..c057f3f 100644
  GhidDrawLayerGroup (int group, const BoxType * screen)
  {
 @@ -1703,6 +1875,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
-         gui->graphics->set_color (Output.bgGC, PCB->MaskColor);
+         hid_draw_set_color (Output.bgGC, PCB->MaskColor);
          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
 +        fill_board_outline_holes (Output.bgGC, screen);
@@ -258,7 +258,7 @@ index a4c4512..c057f3f 100644
          }
 @@ -2013,6 +2187,7 @@ ghid_draw_everything (BoxType *drawn_area)
        cyl_info.scale = gport->view.coord_per_px;
-       gui->graphics->set_color (Output.fgGC, "drill");
+       hid_draw_set_color (Output.fgGC, "drill");
        ghid_set_alpha_mult (Output.fgGC, alpha_mult * 0.75);
 +      ghid_draw_outline_between_layers (cyl_info.from_layer, cyl_info.to_layer, drawn_area);
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
