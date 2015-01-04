@@ -982,7 +982,7 @@ set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
   else if (found_color     != NULL && TEST_FLAG (FOUNDFLAG,     obj)) color = found_color;
   else                                                                color = normal_color;
 
-  gui->graphics->set_color (Output.fgGC, color);
+  hid_draw_set_color (Output.fgGC, color);
 }
 
 static void
@@ -994,11 +994,11 @@ set_layer_object_color (LayerType *layer, AnyObjectType *obj)
 static void
 set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
 {
-  if (TEST_FLAG (WARNFLAG, pv))           gui->graphics->set_color (Output.fgGC, PCB->WarnColor);
-  else if (TEST_FLAG (SELECTEDFLAG, pv))  gui->graphics->set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
-                                                                                                   : PCB->PinSelectedColor);
-  else if (TEST_FLAG (CONNECTEDFLAG, pv)) gui->graphics->set_color (Output.fgGC, PCB->ConnectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, pv))     gui->graphics->set_color (Output.fgGC, PCB->FoundColor);
+  if (TEST_FLAG (WARNFLAG, pv))           hid_draw_set_color (Output.fgGC, PCB->WarnColor);
+  else if (TEST_FLAG (SELECTEDFLAG, pv))  hid_draw_set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+                                                                                              : PCB->PinSelectedColor);
+  else if (TEST_FLAG (CONNECTEDFLAG, pv)) hid_draw_set_color (Output.fgGC, PCB->ConnectedColor);
+  else if (TEST_FLAG (FOUNDFLAG, pv))     hid_draw_set_color (Output.fgGC, PCB->FoundColor);
   else
     {
       int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
@@ -1006,10 +1006,10 @@ set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
       int this_group      = GetLayerGroupNumberByPointer (layer);
 
       if (this_group == top_group || this_group == bottom_group)
-        gui->graphics->set_color (Output.fgGC, (SWAP_IDENT == (this_group == bottom_group)) ?
-                                                  PCB->ViaColor : PCB->InvisibleObjectsColor);
+        hid_draw_set_color (Output.fgGC, (SWAP_IDENT == (this_group == bottom_group)) ?
+                                         PCB->ViaColor : PCB->InvisibleObjectsColor);
       else
-        gui->graphics->set_color (Output.fgGC, layer->Color);
+        hid_draw_set_color (Output.fgGC, layer->Color);
     }
 }
 
@@ -1038,7 +1038,7 @@ _draw_pv_name (PinType *pv)
       box.Y1 = pv->Y - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
     }
 
-  gui->graphics->set_color (Output.fgGC, PCB->PinNameColor);
+  hid_draw_set_color (Output.fgGC, PCB->PinNameColor);
 
   text.Flags = NoFlags ();
   /* Set font height to approx 56% of pin thickness */
@@ -1047,16 +1047,16 @@ _draw_pv_name (PinType *pv)
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
 
-  gui->graphics->draw_pcb_text (Output.fgGC, &text, 0);
+  hid_draw_pcb_text (Output.fgGC, &text, 0);
 }
 
 static void
 _draw_pv (PinType *pv, bool draw_hole)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->graphics->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
+    hid_draw_thin_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
   else
-    gui->graphics->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
+    hid_draw_fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
 
   if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
     _draw_pv_name (pv);
@@ -1140,7 +1140,7 @@ draw_pad_name (PadType *pad)
       box.Y1 += Settings.PinoutTextOffsetY;
     }
 
-  gui->graphics->set_color (Output.fgGC, PCB->PinNameColor);
+  hid_draw_set_color (Output.fgGC, PCB->PinNameColor);
 
   text.Flags = NoFlags ();
   /* Set font height to approx 90% of pad thickness */
@@ -1149,7 +1149,7 @@ draw_pad_name (PadType *pad)
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
 
-  gui->graphics->draw_pcb_text (Output.fgGC, &text, 0);
+  hid_draw_pcb_text (Output.fgGC, &text, 0);
 }
 
 static void
@@ -1160,9 +1160,9 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 
   if (TEST_FLAG (THINDRAWFLAG, PCB) ||
       (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
-    gui->graphics->thindraw_pcb_pad (gc, pad, clear, mask);
+    hid_draw_thin_pcb_pad (gc, pad, clear, mask);
   else
-    gui->graphics->fill_pcb_pad (gc, pad, clear, mask);
+    hid_draw_fill_pcb_pad (gc, pad, clear, mask);
 }
 
 static void
@@ -1204,26 +1204,24 @@ hole_callback (const BoxType * b, void *cl)
     {
       if (!TEST_FLAG (HOLEFLAG, pv))
         {
-          gui->graphics->set_line_cap (Output.fgGC, Round_Cap);
-          gui->graphics->set_line_width (Output.fgGC, 0);
-          gui->graphics->draw_arc (Output.fgGC,
-                         pv->X, pv->Y, pv->DrillingHole / 2,
-                         pv->DrillingHole / 2, 0, 360);
+          hid_draw_set_line_cap (Output.fgGC, Round_Cap);
+          hid_draw_set_line_width (Output.fgGC, 0);
+          hid_draw_arc (Output.fgGC, pv->X, pv->Y,
+                        pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
         }
     }
   else
-    gui->graphics->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
+    hid_draw_fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
 
   if (TEST_FLAG (HOLEFLAG, pv))
     {
       set_object_color ((AnyObjectType *) pv, PCB->WarnColor,
                         PCB->ViaSelectedColor, NULL, NULL, Settings.BlackColor);
 
-      gui->graphics->set_line_cap (Output.fgGC, Round_Cap);
-      gui->graphics->set_line_width (Output.fgGC, 0);
-      gui->graphics->draw_arc (Output.fgGC,
-                     pv->X, pv->Y, pv->DrillingHole / 2,
-                     pv->DrillingHole / 2, 0, 360);
+      hid_draw_set_line_cap (Output.fgGC, Round_Cap);
+      hid_draw_set_line_width (Output.fgGC, 0);
+      hid_draw_arc (Output.fgGC, pv->X, pv->Y,
+                    pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
     }
   return 1;
 }
@@ -1235,7 +1233,7 @@ line_callback (const BoxType * b, void *cl)
   LineType *line = (LineType *)b;
 
   set_layer_object_color (layer, (AnyObjectType *) line);
-  gui->graphics->draw_pcb_line (Output.fgGC, line);
+  hid_draw_pcb_line (Output.fgGC, line);
   return 1;
 }
 
@@ -1246,7 +1244,7 @@ arc_callback (const BoxType * b, void *cl)
   ArcType *arc = (ArcType *)b;
 
   set_layer_object_color (layer, (AnyObjectType *) arc);
-  gui->graphics->draw_pcb_arc (Output.fgGC, arc);
+  hid_draw_pcb_arc (Output.fgGC, arc);
   return 1;
 }
 
@@ -1258,15 +1256,15 @@ text_callback (const BoxType * b, void *cl)
   int min_silk_line;
 
   if (TEST_FLAG (SELECTEDFLAG, text))
-    gui->graphics->set_color (Output.fgGC, layer->SelectedColor);
+    hid_draw_set_color (Output.fgGC, layer->SelectedColor);
   else
-    gui->graphics->set_color (Output.fgGC, layer->Color);
+    hid_draw_set_color (Output.fgGC, layer->Color);
   if (layer == &PCB->Data->SILKLAYER ||
       layer == &PCB->Data->BACKSILKLAYER)
     min_silk_line = PCB->minSlk;
   else
     min_silk_line = PCB->minWid;
-  gui->graphics->draw_pcb_text (Output.fgGC, text, min_silk_line);
+  hid_draw_pcb_text (Output.fgGC, text, min_silk_line);
   return 1;
 }
 
@@ -1283,7 +1281,7 @@ poly_callback (const BoxType * b, void *cl)
   PolygonType *polygon = (PolygonType *)b;
 
   set_layer_object_color (i->layer, (AnyObjectType *) polygon);
-  gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
+  hid_draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
   return 1;
 }
 
@@ -1292,9 +1290,9 @@ clearPin_callback (const BoxType * b, void *cl)
 {
   PinType *pin = (PinType *) b;
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    gui->graphics->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+    hid_draw_thin_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
   else
-    gui->graphics->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+    hid_draw_fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
   return 1;
 }
 
@@ -1312,7 +1310,7 @@ static int
 clearPin_callback_solid (const BoxType * b, void *cl)
 {
   PinType *pin = (PinType *) b;
-  gui->graphics->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+  hid_draw_fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
   return 1;
 }
 
@@ -1322,7 +1320,7 @@ clearPad_callback_solid (const BoxType * b, void *cl)
   PadType *pad = (PadType *) b;
   int *side = cl;
   if (ON_SIDE (pad, *side) && pad->Mask)
-    gui->graphics->fill_pcb_pad (Output.pmGC, pad, true, true);
+    hid_draw_fill_pcb_pad (Output.pmGC, pad, true, true);
   return 1;
 }
 
@@ -1335,26 +1333,26 @@ GhidDrawMask (int side, BoxType * screen)
 
   if (thin)
     {
-      gui->graphics->set_line_width (Output.pmGC, 0);
-      gui->graphics->set_color (Output.pmGC, PCB->MaskColor);
+      hid_draw_set_line_width (Output.pmGC, 0);
+      hid_draw_set_color (Output.pmGC, PCB->MaskColor);
       r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
       r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
       r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
-      gui->graphics->set_color (Output.pmGC, "erase");
+      hid_draw_set_color (Output.pmGC, "erase");
     }
 
-  gui->graphics->use_mask (HID_MASK_CLEAR);
+  hid_draw_use_mask (HID_MASK_CLEAR);
   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, NULL);
   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, NULL);
   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, &side);
 
-  gui->graphics->use_mask (HID_MASK_AFTER);
-  gui->graphics->set_color (out->fgGC, PCB->MaskColor);
+  hid_draw_use_mask (HID_MASK_AFTER);
+  hid_draw_set_color (out->fgGC, PCB->MaskColor);
   ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
-  gui->graphics->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+  hid_draw_fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   ghid_set_alpha_mult (out->fgGC, 1.0);
 
-  gui->graphics->use_mask (HID_MASK_OFF);
+  hid_draw_use_mask (HID_MASK_OFF);
 }
 
 static int
@@ -1395,7 +1393,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
         hidgl_flush_triangles (&buffer);
         glPushAttrib (GL_COLOR_BUFFER_BIT);
         glColorMask (0, 0, 0, 0);
-        gui->graphics->set_color (Output.bgGC, PCB->MaskColor);
+        hid_draw_set_color (Output.bgGC, PCB->MaskColor);
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
         hidgl_flush_triangles (&buffer);
@@ -1516,7 +1514,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
   else
     color = "drill";
 
-  gui->graphics->set_color (Output.fgGC, color);
+  hid_draw_set_color (Output.fgGC, color);
   DrawDrillChannel (Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
   return 0;
 }
@@ -1632,7 +1630,7 @@ ghid_draw_everything (BoxType *drawn_area)
       cyl_info.from_layer = drawn_groups[i];
       cyl_info.to_layer = drawn_groups[i - 1];
       cyl_info.scale = gport->view.coord_per_px;
-      gui->graphics->set_color (Output.fgGC, "drill");
+      hid_draw_set_color (Output.fgGC, "drill");
       ghid_set_alpha_mult (Output.fgGC, 0.75);
       if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
       if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_cyl_callback, &cyl_info);
@@ -1714,9 +1712,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_start_drawing (port, widget);
   hidgl_start_render ();
 
-  Output.fgGC = gui->graphics->make_gc ();
-  Output.bgGC = gui->graphics->make_gc ();
-  Output.pmGC = gui->graphics->make_gc ();
+  Output.fgGC = hid_draw_make_gc ();
+  Output.bgGC = hid_draw_make_gc ();
+  Output.pmGC = hid_draw_make_gc ();
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
@@ -1898,9 +1896,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   hidgl_finish_render ();
   ghid_end_drawing (port, widget);
 
-  gui->graphics->destroy_gc (Output.fgGC);
-  gui->graphics->destroy_gc (Output.bgGC);
-  gui->graphics->destroy_gc (Output.pmGC);
+  hid_draw_destroy_gc (Output.fgGC);
+  hid_draw_destroy_gc (Output.bgGC);
+  hid_draw_destroy_gc (Output.pmGC);
 
   Output.fgGC = NULL;
   Output.bgGC = NULL;
