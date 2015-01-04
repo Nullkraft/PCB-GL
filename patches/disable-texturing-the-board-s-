@@ -1,7 +1,7 @@
-Bottom: 33a14d24b78ba26cfb609297740eff37445ea226
-Top:    2a33f367054e043ccd55280ae1583100b081b98c
+Bottom: 026211d749a66819aa3a70da2b7419f6cf3c966a
+Top:    39dcc20455593bdd052c29f0906f97b98602ae37
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 17:16:12 +0000
+Date:   2015-01-04 18:51:23 +0000
 
 Disable texturing the board's soldermask
 
@@ -9,10 +9,10 @@ Disable texturing the board's soldermask
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 93aaba3..276b19e 100644
+index 4552555..8de6c63 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1501,6 +1501,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1502,6 +1502,7 @@ GhidDrawMask (int side, BoxType * screen)
    gui->graphics->set_color (out->fgGC, PCB->MaskColor);
    ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
  
@@ -20,7 +20,7 @@ index 93aaba3..276b19e 100644
    if (first_run) {
      glGenTextures (1, &texture);
      glBindTexture (GL_TEXTURE_2D, texture);
-@@ -1528,6 +1529,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1529,6 +1530,7 @@ GhidDrawMask (int side, BoxType * screen)
    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
    glEnable (GL_TEXTURE_2D);
@@ -28,7 +28,7 @@ index 93aaba3..276b19e 100644
  
    if (!PCB->Data->outline_valid) {
  
-@@ -1548,10 +1550,12 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1549,10 +1551,12 @@ GhidDrawMask (int side, BoxType * screen)
    poly_FreeContours (&polygon.NoHoles);
    ghid_set_alpha_mult (out->fgGC, 1.0);
    hidgl_flush_triangles (&buffer);
