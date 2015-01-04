@@ -1341,18 +1341,18 @@ GhidDrawMask (int side, BoxType * screen)
       hid_draw_set_color (Output.pmGC, "erase");
     }
 
-  hid_draw_use_mask (HID_MASK_CLEAR);
+  hid_draw_use_mask (&ghid_graphics, HID_MASK_CLEAR);
   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, NULL);
   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, NULL);
   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, &side);
 
-  hid_draw_use_mask (HID_MASK_AFTER);
+  hid_draw_use_mask (&ghid_graphics, HID_MASK_AFTER);
   hid_draw_set_color (out->fgGC, PCB->MaskColor);
   ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
   hid_draw_fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   ghid_set_alpha_mult (out->fgGC, 1.0);
 
-  hid_draw_use_mask (HID_MASK_OFF);
+  hid_draw_use_mask (&ghid_graphics, HID_MASK_OFF);
 }
 
 static int
@@ -1712,9 +1712,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_start_drawing (port, widget);
   hidgl_start_render ();
 
-  Output.fgGC = hid_draw_make_gc ();
-  Output.bgGC = hid_draw_make_gc ();
-  Output.pmGC = hid_draw_make_gc ();
+  Output.fgGC = hid_draw_make_gc (&ghid_graphics);
+  Output.bgGC = hid_draw_make_gc (&ghid_graphics);
+  Output.pmGC = hid_draw_make_gc (&ghid_graphics);
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
