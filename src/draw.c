@@ -67,6 +67,7 @@
 #define	LARGE_TEXT_SIZE			3
 #define	N_TEXT_SIZES			4
 
+extern void ghid_set_lock_effects (hidGC gc, AnyObjectType *element);
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
