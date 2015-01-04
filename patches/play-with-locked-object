@@ -1,7 +1,7 @@
-Bottom: 94d735d2019fd5d10c2cd206ad8df69e44d85060
-Top:    f9314794cb783b070f6d5b1286fd588229ecfc1b
+Bottom: b3898eecfcedff94f6d667d5362cb9a4dc2d5f11
+Top:    05705e47418f25e95df29e5441e707a3b32b3352
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-03 23:51:38 +0000
+Date:   2015-01-04 01:50:16 +0000
 
 Play with locked object rendering
 
@@ -199,7 +199,7 @@ index c488042..c850d68 100644
 +{
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b845be2..d11d5da 100644
+index f3e0695..16378ea 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -79,6 +79,8 @@ typedef struct render_priv {
@@ -395,7 +395,7 @@ index b845be2..d11d5da 100644
    set_layer_object_color (i->layer, (AnyObjectType *) polygon);
    gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
    return 1;
-@@ -1723,6 +1774,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
+@@ -1722,6 +1773,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
    else
      color = "drill";
  
@@ -403,7 +403,7 @@ index b845be2..d11d5da 100644
    gui->graphics->set_color (Output.fgGC, color);
    DrawDrillChannel (Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
    return 0;
-@@ -3122,3 +3174,26 @@ ghid_cancel_lead_user (void)
+@@ -3121,3 +3173,26 @@ ghid_cancel_lead_user (void)
    priv->lead_user_timer = NULL;
    priv->lead_user = false;
  }
