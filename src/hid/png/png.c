@@ -128,10 +128,10 @@ static int print_layer[MAX_LAYER];
 #define PHOTO_FLIP_Y	2
 
 static int photo_mode, photo_flip;
-static gdImagePtr photo_copper[MAX_LAYER+2];
+static gdImagePtr photo_copper[MAX_LAYER + EXTRA_LAYERS];
 static gdImagePtr photo_silk, photo_mask, photo_drill, *photo_im;
 static gdImagePtr photo_outline;
-static int photo_groups[MAX_LAYER+2], photo_ngroups;
+static int photo_groups[MAX_LAYER + EXTRA_LAYERS], photo_ngroups;
 static int photo_has_inners;
 
 static int doing_outline, have_outline;
@@ -784,7 +784,7 @@ ts_bs_sm (gdImagePtr im)
 static void
 png_do_export (HID_Attr_Val * options)
 {
-  int save_ons[MAX_LAYER + 2];
+  int save_ons[MAX_LAYER + EXTRA_LAYERS];
   int i;
   BoxType *bbox;
   Coord w, h;
