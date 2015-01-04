@@ -362,7 +362,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
   hx = p1->X + (p2->X - p1->X) / 2;
   hy = p1->Y + (p2->Y - p1->Y) / 2;
 
-  p_to_h_dist = sqrt (pow(p2->X - p1->Y, 2) + pow (p2->Y - p1->Y, 2)) / 2.;
+  p_to_h_dist = hypot (p2->X - p1->Y, p2->Y - p1->Y) / 2.;
   c_to_h_dist = p_to_h_dist / tan (TO_RADIANS (included_angle) / 2.);
 
   unit_hcx = (float)-(hy - p1->Y) / p_to_h_dist;
@@ -372,8 +372,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
   *cy = hy + unit_hcy * c_to_h_dist;
 
   if (radius != NULL)
-    *radius = sqrt ((p1->X - *cx) * (p1->X - *cx) +
-                    (p1->Y - *cy) * (p1->Y - *cy));
+    *radius = hypot (p1->X - *cx, p1->Y - *cy);
 
   if (start_angle != NULL)
     *start_angle = atan2 ((p1->Y - *cy), -(p1->X - *cx)) / M180;
@@ -1643,7 +1642,7 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
 
   /* Make sure full circles aren't treated as zero-length arcs */
   if (fabs (delta_angle - 360.) < EPSILON ||
-      fabs (delta_angle + 360.) < EPSILON);
+      fabs (delta_angle + 360.) < EPSILON)
     ang2 = ang1 + 360.;
 
   /* calculate sines, cosines */
@@ -1652,10 +1651,10 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
   sa2 = sin (M180 * ang2);
   ca2 = cos (M180 * ang2);
 
-  bound.X1 = MIN (ca1, ca2);
-  bound.X2 = MAX (ca1, ca2);
-  bound.Y1 = MIN (sa1, sa2);
-  bound.Y2 = MAX (sa1, sa2);
+  minx = MIN (ca1, ca2);
+  maxx = MAX (ca1, ca2);
+  miny = MIN (sa1, sa2);
+  maxy = MAX (sa1, sa2);
 
   /* Check for extreme angles */
   if ((ang1 <= 0   && ang2 >= 0)   || (ang1 <= 360 && ang2 >= 360)) maxx = 1;
