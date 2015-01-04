@@ -1,5 +1,5 @@
-Bottom: 1fe677fb009dc241ea0c2dfebc2f7ca04264c66c
-Top:    6b088686f9ae24ddbc431aa793fa5f872d95fb94
+Bottom: d8ef97e34c75aed754a0657782a8f974bee637c9
+Top:    bcd2a1f43c65eb25f5400c23834b1b025f5976d9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-04 01:50:15 +0000
 
@@ -17,10 +17,10 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index b8b3fe7..45f1a23 100644
+index 00c03ac..92b2ca7 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -3414,9 +3414,16 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3412,9 +3412,16 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
        /* If there is no refdes, maybe just spit out a warning */
        if (NAMEONPCB_NAME (element_list[i]))
  	{
@@ -38,7 +38,7 @@ index b8b3fe7..45f1a23 100644
  	  while (tmps[j] && (tmps[j] < '0' || tmps[j] > '9')
  		 && tmps[j] != '?')
  	    j++;
-@@ -4777,6 +4784,77 @@ ActionToggleHideName (int argc, char **argv, Coord x, Coord y)
+@@ -4775,6 +4782,77 @@ ActionToggleHideName (int argc, char **argv, Coord x, Coord y)
  
  /* --------------------------------------------------------------------------- */
  
@@ -116,7 +116,7 @@ index b8b3fe7..45f1a23 100644
  static const char changejoin_syntax[] =
    N_("ChangeJoin(ToggleObject|SelectedLines|SelectedArcs|Selected)");
  
-@@ -8164,6 +8242,9 @@ HID_Action action_action_list[] = {
+@@ -8162,6 +8240,9 @@ HID_Action action_action_list[] = {
    {"ToggleHideName", 0, ActionToggleHideName,
     togglehidename_help, togglehidename_syntax}
    ,
@@ -148,7 +148,7 @@ index 5ee3bc6..280fd52 100644
  
  #define NOCOPY_FLAGS (FOUNDFLAG | CONNECTEDFLAG)
 diff --git a/src/draw.c b/src/draw.c
-index c4dc81b..3beb58c 100644
+index faa9359..6fdd74c 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -154,6 +154,32 @@ pad_callback (const BoxType * b, void *cl)
@@ -184,7 +184,7 @@ index c4dc81b..3beb58c 100644
  draw_element_name (ElementType *element)
  {
    if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
-@@ -167,7 +193,7 @@ draw_element_name (ElementType *element)
+@@ -168,7 +194,7 @@ draw_element_name (ElementType *element)
      gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
    else
      gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
