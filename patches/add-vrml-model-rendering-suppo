@@ -1,5 +1,5 @@
-Bottom: 04af7949bb94b9d54e62f411da0231457fb23ca7
-Top:    a91d3aecdebbe4c173cce4bc1f45e1df9219d7da
+Bottom: f160f0e1fd896ddf552651c06d0ad67736a3082c
+Top:    a6f9c72779b6917d7d3de1e995a9eaa024275e95
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:21 +0000
 
@@ -2616,10 +2616,10 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f3e0695..a2da6f0 100644
+index 59b2c87..0e5fed5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1497,7 +1497,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1508,7 +1508,7 @@ GhidDrawMask (int side, BoxType * screen)
    } else {
      glBindTexture (GL_TEXTURE_2D, texture);
    }
@@ -2628,7 +2628,7 @@ index f3e0695..a2da6f0 100644
  
    if (1) {
      GLfloat s_params[] = {0.0001, 0., 0., 0.};
-@@ -1778,6 +1778,11 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1789,6 +1789,11 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_350x800mil_cap (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
@@ -2640,7 +2640,7 @@ index f3e0695..a2da6f0 100644
      }
    return 1;
  }
-@@ -2692,125 +2697,27 @@ ghid_finish_debug_draw (void)
+@@ -2703,125 +2708,27 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport, gport->drawing_area);
  }
  
