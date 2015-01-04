@@ -1,5 +1,5 @@
-Bottom: 34d415abe587b510ab4a2012516a3f226bd0d0b4
-Top:    80a04ee89f8e8d56c468a98ded8b8f891e97216e
+Bottom: 598b9d4c8e95f2df80980e3e05a28f2e2d47c8f5
+Top:    55f0bdc3b2782f4cee6dbef1487993487dc05577
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-03 23:51:39 +0000
 
@@ -9,7 +9,7 @@ Fix build warnings in gtkhid-gl.c
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c658ae4..01b3e1e 100644
+index f0cf55d..accd9cd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -396,6 +396,7 @@ ghid_draw_grid (BoxType *drawn_area)
@@ -28,7 +28,7 @@ index c658ae4..01b3e1e 100644
  
  static void
  ghid_draw_bg_image (void)
-@@ -1646,8 +1648,8 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
+@@ -1644,8 +1646,8 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
  static void
  GhidDrawMask (int side, BoxType * screen)
  {
@@ -39,7 +39,7 @@ index c658ae4..01b3e1e 100644
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
    LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
    struct poly_info info;
-@@ -1740,7 +1742,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1736,7 +1738,7 @@ GhidDrawMask (int side, BoxType * screen)
  
    gui->graphics->use_mask (HID_MASK_OFF);
  
