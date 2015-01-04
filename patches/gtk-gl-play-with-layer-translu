@@ -1,5 +1,5 @@
 Bottom: c0eca1f9e14cc11cf8e1f48a5c44e04e174dc6f1
-Top:    00e9ae338eaa0bda25b4c61f9b39e5c577ba37ab
+Top:    bde164abd5c5f7230d49ac10416f981fa184b548
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-04 17:03:48 +0000
 
@@ -9,24 +9,26 @@ gtk/gl: Play with layer translucency
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 726ed86..e4b55d4 100644
+index 726ed86..0f47155 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -691,10 +691,11 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -691,10 +691,13 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  void
  ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  {
-+  double old_alpha_mult = gc->alpha_mult;
++  gtkGC gtk_gc = (gtkGC)gc;
++
++  double old_alpha_mult = gtk_gc->alpha_mult;
    common_thindraw_pcb_polygon (gc, poly, clip_box);
 -  ghid_set_alpha_mult (gc, 0.25);
-+  ghid_set_alpha_mult (gc, gc->alpha_mult * 0.25);
++  ghid_set_alpha_mult (gc, gtk_gc->alpha_mult * 0.25);
    gui->graphics->fill_pcb_polygon (gc, poly, clip_box);
 -  ghid_set_alpha_mult (gc, 1.0);
 +  ghid_set_alpha_mult (gc, old_alpha_mult);
  }
  
  void
-@@ -1546,6 +1547,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1546,6 +1549,7 @@ ghid_draw_everything (BoxType *drawn_area)
  {
    render_priv *priv = gport->render_priv;
    int i, ngroups;
@@ -34,7 +36,7 @@ index 726ed86..e4b55d4 100644
    int side;
    /* This is the list of layer groups we will draw.  */
    int do_group[MAX_LAYER];
-@@ -1628,26 +1630,39 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1628,26 +1632,39 @@ ghid_draw_everything (BoxType *drawn_area)
    }
  
    /* draw all layers in layerstack order */
