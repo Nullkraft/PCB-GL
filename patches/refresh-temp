@@ -1,0 +1,49 @@
+Bottom: 64875e61032b182caab482d3588cf70284168045
+Top:    67455fe33c05e810d9ff11ec47912e50ef579d5b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-04 22:21:10 +0000
+
+Refresh of disable-texturing-the-board-s-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index cf09147..930e9b5 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -346,6 +346,7 @@ ghid_draw_grid (BoxType *drawn_area)
+   glEnable (GL_STENCIL_TEST);
+ }
+ 
++#if 0
+ /* XXX: Refactor this into hidgl common routines */
+ static void
+ load_texture_from_png (char *filename)
+@@ -386,6 +387,7 @@ load_texture_from_png (char *filename)
+ 
+   g_object_unref (pixbuf);
+ }
++#endif
+ 
+ static void
+ ghid_draw_bg_image (void)
+@@ -1464,8 +1466,8 @@ clearPad_callback_solid (const BoxType * b, void *cl)
+ static void
+ GhidDrawMask (int side, BoxType * screen)
+ {
+-  static bool first_run = true;
+-  static GLuint texture;
++//  static bool first_run = true;
++//  static GLuint texture;
+   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+   LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
+   struct poly_info info;
+@@ -1559,7 +1561,7 @@ GhidDrawMask (int side, BoxType * screen)
+ 
+   hid_draw_use_mask (&ghid_graphics, HID_MASK_OFF);
+ 
+-  first_run = false;
++//  first_run = false;
+ }
+ 
+ static int
