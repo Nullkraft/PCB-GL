@@ -1,5 +1,5 @@
-Bottom: aed3568dc1eccbf8aeb404842933ec7f864ae723
-Top:    086defa9f894ddab5ac98c9b55f3c1bba1a2e7ec
+Bottom: 3a44edcae1d59a9d89e7ed3bb7435d5b972c2479
+Top:    3a44edcae1d59a9d89e7ed3bb7435d5b972c2479
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-23 15:32:47 +0000
 
@@ -8,71 +8,4 @@ Disable DRC checks on "outline" and "route" layers
 
 ---
 
-diff --git a/src/find.c b/src/find.c
-index 3f68165..a19b23d 100644
---- a/src/find.c
-+++ b/src/find.c
-@@ -802,8 +802,10 @@ LookupLOConnectionsToPVList (bool AndRats)
-       /* now all lines, arcs and polygons of the several layers */
-       for (layer = 0; layer < max_copper_layer; layer++)
-         {
--          if (LAYER_PTR (layer)->no_drc)
--             continue;
-+          if (LAYER_PTR (layer)->no_drc ||
-+              is_layer_mechanical (LAYER_PTR (layer)))
-+            continue;
-+
-           info.layer = layer;
-           /* add touching lines */
-           if (setjmp (info.env) == 0)
-@@ -3838,6 +3840,9 @@ DRCAll (void)
-     {
-       COPPERLINE_LOOP (PCB->Data);
-       {
-+        if (is_layer_mechanical (layer))
-+          continue;
-+
-         /* check line clearances in polygons */
-         PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback);
-         if (IsBad)
-@@ -3881,6 +3886,8 @@ DRCAll (void)
-     {
-       COPPERARC_LOOP (PCB->Data);
-       {
-+        if (is_layer_mechanical (layer))
-+          continue;
-         PlowsPolygon (PCB->Data, ARC_TYPE, layer, arc, drc_callback);
-         if (IsBad)
-           break;
-diff --git a/src/misc.c b/src/misc.c
-index 5c43754..c75f491 100644
---- a/src/misc.c
-+++ b/src/misc.c
-@@ -2349,6 +2349,14 @@ ElementOrientation (ElementType *e)
-   return dy > 0 ? 3 : 1;
- }
- 
-+bool is_layer_mechanical (LayerType *layer)
-+{
-+  if (strcmp (layer->Name, "outline") == 0 ||
-+      strcmp (layer->Name, "route") == 0)
-+    return true;
-+  return false;
-+}
-+
- int
- ActionListRotations(int argc, char **argv, Coord x, Coord y)
- {
-diff --git a/src/misc.h b/src/misc.h
-index 9ce0905..45d3eb8 100644
---- a/src/misc.h
-+++ b/src/misc.h
-@@ -138,6 +138,8 @@ char * GetInfoString (void);
-    comparing two similar footprints.  */
- int ElementOrientation (ElementType *e);
- 
-+bool is_layer_mechanical (LayerType *layer);
-+
- /* These are in netlist.c */
- 
- void NetlistChanged (int force_unfreeze);
+
