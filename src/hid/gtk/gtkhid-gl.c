@@ -359,7 +359,7 @@ ghid_make_gc (void)
   hidGC gc = (hidGC) g_new0 (struct gtk_gc_struct, 1);
   gtkGC gtk_gc = (gtkGC)gc;
 
-  gc->me_pointer = &ghid_hid;
+  gc->hid = &ghid_hid;
 
   gtk_gc->colorname = Settings.BackgroundColor;
   gtk_gc->alpha_mult = 1.0;
@@ -785,7 +785,7 @@ ghid_invalidate_current_gc (void)
 static int
 use_gc (hidGC gc)
 {
-  if (gc->me_pointer != &ghid_hid)
+  if (gc->hid != &ghid_hid)
     {
       fprintf (stderr, "Fatal: GC from another HID passed to GTK HID\n");
       abort ();
@@ -3452,7 +3452,7 @@ void
 ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
 {
   // XXX: Workaround to crashing exporters
-  if (gc->me_pointer != &ghid_hid)
+  if (gc->hid != &ghid_hid)
     return;
 
   /* Only apply effects to locked objects when in "lock" mode */
