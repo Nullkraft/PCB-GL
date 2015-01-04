@@ -1,7 +1,7 @@
-Bottom: 2a9201bffe04394b7a4dca3fe5f6145b3c62d97f
-Top:    ea63fcc4c5ce7003e55e27de384ddc11fd55d805
+Bottom: d9c47b0be1e7db315be988a9f73f1622dac2be95
+Top:    10df027454b8738eabe8b6410338ed89d5f08203
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 01:50:15 +0000
+Date:   2015-01-04 17:16:13 +0000
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -106,10 +106,10 @@ index a037a10..0c11414 100644
  void notify_crosshair_change (bool changes_complete);
  void notify_mark_change (bool changes_complete);
 diff --git a/src/hid.h b/src/hid.h
-index 59c6e35..c459d8c 100644
+index ef6edb2..5ff7814 100644
 --- a/src/hid.h
 +++ b/src/hid.h
-@@ -518,6 +518,10 @@ typedef enum
+@@ -520,6 +520,10 @@ typedef enum
  
      /* Notification to the GUI that the PCB file has been renamed. */
      void (*notify_filename_changed) (void);
