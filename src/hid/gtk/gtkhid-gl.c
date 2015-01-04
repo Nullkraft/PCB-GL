@@ -1329,7 +1329,8 @@ static void
 GhidDrawMask (int side, BoxType * screen)
 {
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
-
+  LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
+  struct poly_info info;
   OutputType *out = &Output;
 
   if (thin)
@@ -1343,6 +1344,14 @@ GhidDrawMask (int side, BoxType * screen)
     }
 
   gui->graphics->use_mask (HID_MASK_CLEAR);
+
+  info.layer = Layer;
+  info.drawn_area = screen;
+  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+  r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
+  r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
+  r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
+
   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, NULL);
   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, NULL);
   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, &side);
