@@ -1,7 +1,7 @@
-Bottom: 8937871ed1d554dfb651d223bd774f340958c9d4
+Bottom: 2edb5f318dfe09690a4106821c0b42dba22c004e
 Top:    82e6f04d4ca1202eddba53ec966e758495a4205e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-04 21:17:55 +0000
+Date:   2015-01-04 21:26:53 +0000
 
 Crasy test
 
@@ -22,7 +22,7 @@ index 33f80cd..a042e5a 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index 7e406d0..ca25d16 100644
+index 3f09f59..ca25d16 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -40,6 +40,7 @@
@@ -550,7 +550,7 @@ index 7e406d0..ca25d16 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -868,13 +577,18 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
+@@ -868,6 +577,11 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
                                       drawn_area->X2, drawn_area->Y2);
  }
  
@@ -562,41 +562,6 @@ index 7e406d0..ca25d16 100644
  static int
  mask_poly_callback (const BoxType * b, void *cl)
  {
-   struct poly_info *i = cl;
-   PolygonType *polygon = (PolygonType *)b;
- 
--  gui->graphics->draw_pcb_polygon (Output.pmGC, polygon, i->drawn_area);
-+  hid_draw_pcb_polygon (Output.pmGC, polygon, i->drawn_area);
-   return 1;
- }
- 
-@@ -883,7 +597,7 @@ mask_line_callback (const BoxType * b, void *cl)
- {
-   LineType *line = (LineType *)b;
- 
--  gui->graphics->draw_pcb_line (Output.pmGC, line);
-+  hid_draw_pcb_line (Output.pmGC, line);
-   return 1;
- }
- 
-@@ -892,7 +606,7 @@ mask_arc_callback (const BoxType * b, void *cl)
- {
-   ArcType *arc = (ArcType *)b;
- 
--  gui->graphics->draw_pcb_arc (Output.pmGC, arc);
-+  hid_draw_pcb_arc (Output.pmGC, arc);
-   return 1;
- }
- 
-@@ -908,7 +622,7 @@ mask_text_callback (const BoxType * b, void *cl)
-     min_silk_line = PCB->minSlk;
-   else
-     min_silk_line = PCB->minWid;
--  gui->graphics->draw_pcb_text (Output.fgGC, text, min_silk_line);
-+  hid_draw_pcb_text (Output.fgGC, text, min_silk_line);
-   return 1;
- }
- 
 @@ -937,9 +651,9 @@ DrawMask (int side, const BoxType *screen)
    r_search (Layer->arc_tree,     screen, NULL, mask_arc_callback,  Layer);
    r_search (Layer->text_tree,    screen, NULL, mask_text_callback, Layer);
