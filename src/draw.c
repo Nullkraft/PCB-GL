@@ -840,7 +840,7 @@ DrawSilk (int side, const BoxType * drawn_area)
 
   if (gui->poly_after)
     {
-      hid_draw_use_mask (HID_MASK_AFTER);
+      hid_draw_use_mask (gui->graphics, HID_MASK_AFTER);
       DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
       /* draw package */
       r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
