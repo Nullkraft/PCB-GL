@@ -1728,14 +1728,18 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
             r_search (PCB->Data->pin_tree, screen, NULL, pin_name_callback, Layer);
           if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
           if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
+          if (PCB->PinOn && group == top_group)
+            side = TOP_SIDE;
+          if (PCB->PinOn && group == bottom_group)
+            side = BOTTOM_SIDE;
           if ((group == top_group    && !SWAP_IDENT) ||
               (group == bottom_group &&  SWAP_IDENT))
             if (PCB->PinOn)
-              r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, Layer);
+              r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
           if ((group == bottom_group && !SWAP_IDENT) ||
               (group == top_group    &&  SWAP_IDENT))
             if (PCB->PinOn)
-              r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
+              r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
         }
         /* Erase drilled holes on this layer */
         hidgl_flush_triangles (&buffer);
@@ -2384,6 +2388,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   static int old_fbo_width = -1;
   static int old_fbo_height = -1;
   static int old_no_layers = -1;
+  static bool one_shot = true;
 
   gtk_widget_get_allocation (widget, &allocation);
 
@@ -2777,6 +2782,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   Output.pmGC = NULL;
   g_timer_start (priv->time_since_expose);
 
+  one_shot = false;
   return FALSE;
 }
 
