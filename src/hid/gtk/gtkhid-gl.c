@@ -346,6 +346,7 @@ ghid_draw_grid (BoxType *drawn_area)
   glEnable (GL_STENCIL_TEST);
 }
 
+#if 0
 /* XXX: Refactor this into hidgl common routines */
 static void
 load_texture_from_png (char *filename)
@@ -386,6 +387,7 @@ load_texture_from_png (char *filename)
 
   g_object_unref (pixbuf);
 }
+#endif
 
 static void
 ghid_draw_bg_image (void)
@@ -1464,8 +1466,8 @@ clearPad_callback_solid (const BoxType * b, void *cl)
 static void
 GhidDrawMask (int side, BoxType * screen)
 {
-  static bool first_run = true;
-  static GLuint texture;
+//  static bool first_run = true;
+//  static GLuint texture;
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
   LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
   struct poly_info info;
@@ -1500,6 +1502,7 @@ GhidDrawMask (int side, BoxType * screen)
   hid_draw_set_color (out->fgGC, PCB->MaskColor);
   ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
 
+#if 0
   if (first_run) {
     glGenTextures (1, &texture);
     glBindTexture (GL_TEXTURE_2D, texture);
@@ -1527,6 +1530,7 @@ GhidDrawMask (int side, BoxType * screen)
   glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glEnable (GL_TEXTURE_2D);
+#endif
 
   if (!PCB->Data->outline_valid) {
 
@@ -1547,15 +1551,17 @@ GhidDrawMask (int side, BoxType * screen)
   poly_FreeContours (&polygon.NoHoles);
   ghid_set_alpha_mult (out->fgGC, 1.0);
   hidgl_flush_triangles (&buffer);
+#if 0
   glDisable (GL_TEXTURE_GEN_S);
   glDisable (GL_TEXTURE_GEN_T);
   glBindTexture (GL_TEXTURE_2D, 0);
   glDisable (GL_TEXTURE_2D);
+#endif
   hidgl_shader_activate (circular_program);
 
   hid_draw_use_mask (&ghid_graphics, HID_MASK_OFF);
 
-  first_run = false;
+//  first_run = false;
 }
 
 static int
