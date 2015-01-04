@@ -1,0 +1,180 @@
+Bottom: 65662b5f38e4e39947a8bd77476259fe2bd54ecd
+Top:    bd8ce6c4cea3ecd1d783df93d2dff25abbaab18b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-04 16:58:22 +0000
+
+Add a pointer in hid_gc_struct to link a gc and the relevant HID_DRAW vfunc table
+
+
+---
+
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index c497043..bab217c 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -1178,6 +1178,7 @@ gcode_make_gc (void)
+   gcodeGC gcode_gc = (gcodeGC)gc;
+ 
+   gc->hid = &gcode_hid;
++  gc->hid_draw = &gcode_graphics;
+ 
+   gcode_gc->cap = Trace_Cap;
+   gcode_gc->width = 1;
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 7f07b3a..c2a28d1 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -942,6 +942,7 @@ gerber_make_gc (void)
+   gerberGC gerber_gc = (gerberGC)gc;
+ 
+   gc->hid = &gerber_hid;
++  gc->hid_draw = &gerber_graphics;
+ 
+   gerber_gc->cap = Trace_Cap;
+ 
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index c7973c6..3b311ee 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -185,6 +185,7 @@ ghid_make_gc (void)
+   gtkGC gtk_gc = (gtkGC)gc;
+ 
+   gc->hid = &ghid_hid;
++  gc->hid_draw = &ghid_graphics;
+ 
+   gtk_gc->colorname = Settings.BackgroundColor;
+ 
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 5c0d87b..98e1f08 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -360,6 +360,7 @@ ghid_make_gc (void)
+   gtkGC gtk_gc = (gtkGC)gc;
+ 
+   gc->hid = &ghid_hid;
++  gc->hid_draw = &ghid_graphics;
+ 
+   gtk_gc->colorname = Settings.BackgroundColor;
+   gtk_gc->alpha_mult = 1.0;
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 426223d..9408227 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -3060,6 +3060,7 @@ lesstif_make_gc (void)
+   hidGC gc = (hidGC)calloc (1, sizeof (struct lesstif_gc_struct));
+ 
+   gc->hid = &lesstif_hid;
++  gc->hid_draw = &lesstif_graphics;
+ 
+   return gc;
+ }
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 33eb4dd..dade362 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -766,6 +766,7 @@ nelma_make_gc(void)
+ 	nelmaGC nelma_gc = (nelmaGC)gc;
+ 
+ 	gc->hid = &nelma_hid;
++	gc->hid_draw = &nelma_graphics;
+ 
+ 	nelma_gc->cap = Trace_Cap;
+ 	nelma_gc->width = 1;
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 164783c..7935b3c 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -1353,6 +1353,7 @@ png_make_gc (void)
+   pngGC png_gc = (pngGC)gc;
+ 
+   gc->hid = &png_hid;
++  gc->hid_draw = &png_graphics;
+ 
+   png_gc->cap = Trace_Cap;
+   png_gc->width = 1;
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index b11de83..28c9129 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -425,6 +425,7 @@ eps_make_gc (void)
+   epsGC eps_gc = (epsGC)gc;
+ 
+   gc->hid = &eps_hid;
++  gc->hid_draw = &eps_graphics;
+ 
+   eps_gc->cap = Trace_Cap;
+   eps_gc->width = 0;
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index e12fa6e..fbb84f8 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -46,6 +46,9 @@ typedef struct ps_gc_struct
+   int faded;
+ } *psGC;
+ 
++HID ps_hid;
++static HID_DRAW ps_graphics;
++
+ static const char *medias[] = {
+   "A0", "A1", "A2", "A3", "A4", "A5",
+   "A6", "A7", "A8", "A9", "A10",
+@@ -1017,6 +1020,8 @@ ps_make_gc (void)
+   psGC ps_gc = (psGC)gc;
+ 
+   gc->hid = &ps_hid;
++  gc->hid_draw = &ps_graphics;
++
+   ps_gc->cap = Trace_Cap;
+ 
+   return gc;
+@@ -1518,9 +1523,6 @@ ps_set_crosshair (int x, int y, int action)
+ 
+ #include "dolists.h"
+ 
+-HID ps_hid;
+-static HID_DRAW ps_graphics;
+-
+ void ps_ps_init (HID *hid)
+ {
+   hid->get_export_options = ps_get_export_options;
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 48a6f66..5dafc05 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -47,6 +47,8 @@ typedef struct step_gc_struct
+   int faded;
+ } *stepGC;
+ 
++HID step_hid;
++static HID_DRAW step_graphics;
+ 
+ HID_Attribute step_attribute_list[] = {
+   /* other HIDs expect this to be first.  */
+@@ -838,6 +840,7 @@ step_make_gc (void)
+   stepGC step_gc = (stepGC)gc;
+ 
+   gc->hid = &step_hid;
++  gc->hid_draw = &step_graphics;
+ 
+   step_gc->cap = Trace_Cap;
+ 
+@@ -997,9 +1000,6 @@ step_set_crosshair (int x, int y, int action)
+ 
+ #include "dolists.h"
+ 
+-HID step_hid;
+-static HID_DRAW step_graphics;
+-
+ void step_step_init (HID *hid)
+ {
+   hid->get_export_options = step_get_export_options;
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index 634617c..47a98b4 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -74,4 +74,5 @@ struct hid_draw_st
+ /* Base hidGC elements visible to any module */
+ struct hid_gc_struct {
+   HID *hid;   /* Used by HIDs to validate the GCs passed belong to them */
++  HID_DRAW *hid_draw;
+ };
