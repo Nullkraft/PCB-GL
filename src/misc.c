@@ -418,7 +418,7 @@ SetPolygonBoundingBox (PolygonType *Polygon)
       }
   }
   /* boxes don't include the lower right corner */
-  close_box(&Polygon->BoundingBox);
+  close_box(&Polygon->BoundingBox); /* XXX: DOUBLE CLOSED? calc_thin_arc_bounds closes */
   END_LOOP;
 }
 
@@ -1692,7 +1692,7 @@ SetArcBoundingBox (ArcType *Arc)
   Arc->BoundingBox.X2 += width;
   Arc->BoundingBox.Y1 -= width;
   Arc->BoundingBox.Y2 += width;
-  close_box(&Arc->BoundingBox);
+  close_box(&Arc->BoundingBox); /* XXX: DOUBLE CLOSED? calc_thin_arc_bounds closes */
 }
 
 /* ---------------------------------------------------------------------------
