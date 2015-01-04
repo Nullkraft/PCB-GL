@@ -1,5 +1,5 @@
-Bottom: 9b0c533028fa4b9fdb4d51b61250518ff28f27c4
-Top:    cd080cb0a568e229e299b307a8d071f5ffa9b6ed
+Bottom: 15815f8a3376e099609da4b7c6736dc3825425fa
+Top:    7ce3086d6d07f762f457e0ff935dc30b70522afe
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-03 23:51:34 +0000
 
@@ -1659,10 +1659,10 @@ index cef76d3..8280d2d 100644
  determinant_4x4 (float m[4][4])
  {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d226495..d694376 100644
+index ebd8ac6..e0417d2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1750,6 +1750,31 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1749,6 +1749,31 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
