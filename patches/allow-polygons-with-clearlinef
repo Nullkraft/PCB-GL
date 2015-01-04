@@ -1,7 +1,7 @@
-Bottom: 82402186e74a00fc6e445825b163fcb0308c7832
-Top:    8f578666b604460df94eb125c126e02800d9d113
+Bottom: c33841199f675b0d7ed15371bac0df36c2c62686
+Top:    d6e80c8fcdb19fe6e1bea766f4acbeb274c79243
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-03 23:51:44 +0000
+Date:   2015-01-04 01:50:21 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -172,7 +172,7 @@ index 685b614..507a5fb 100644
    else
      gui->graphics->fill_pcb_polygon (gc, polygon, clip_box);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e9677a3..53eff9a 100644
+index 7c62ffd..ce7b024 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -690,6 +690,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
