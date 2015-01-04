@@ -1,7 +1,7 @@
-Bottom: cbd1e319fb968c2224aa5eb73e843360f461c65e
-Top:    c43d715467cc5217bd2744ba8b3bee91dbe051d8
+Bottom: 2ccff54672989ed3c4992e374fbaaf1328080265
+Top:    3530758025c3c35d5537f96782e68f6f1c37a602
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 17:03:48 +0000
+Date:   2015-01-04 18:51:17 +0000
 
 Major re-write to drawing routines
 
@@ -77,7 +77,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5b155a4..3ecec3d 100644
+index f88fe6f..4a2d6ca 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -215,7 +215,7 @@ index 5b155a4..3ecec3d 100644
  }
  
  static void
-@@ -295,6 +310,7 @@ ghid_draw_grid (BoxType *drawn_area)
+@@ -296,6 +311,7 @@ ghid_draw_grid (BoxType *drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
@@ -223,7 +223,7 @@ index 5b155a4..3ecec3d 100644
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
  
-@@ -305,6 +321,7 @@ ghid_draw_grid (BoxType *drawn_area)
+@@ -306,6 +322,7 @@ ghid_draw_grid (BoxType *drawn_area)
    hidgl_draw_grid (drawn_area);
  
    glDisable (GL_COLOR_LOGIC_OP);
@@ -231,7 +231,7 @@ index 5b155a4..3ecec3d 100644
  }
  
  static void
-@@ -861,7 +878,6 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -862,7 +879,6 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
    render_priv *priv;
  
    port->render_priv = priv = g_new0 (render_priv, 1);
@@ -239,7 +239,7 @@ index 5b155a4..3ecec3d 100644
  
    priv->time_since_expose = g_timer_new ();
  
-@@ -886,9 +902,6 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -887,9 +903,6 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  void
  ghid_shutdown_renderer (GHidPort *port)
  {
@@ -249,7 +249,7 @@ index 5b155a4..3ecec3d 100644
    ghid_cancel_lead_user ();
    g_free (port->render_priv);
    port->render_priv = NULL;
-@@ -947,6 +960,739 @@ ghid_screen_update (void)
+@@ -948,6 +961,739 @@ ghid_screen_update (void)
  {
  }
  
@@ -989,7 +989,7 @@ index 5b155a4..3ecec3d 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -967,6 +1713,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -968,6 +1714,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_start_drawing (port, widget);
    hidgl_start_render ();
  
@@ -1000,7 +1000,7 @@ index 5b155a4..3ecec3d 100644
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
-@@ -1016,8 +1766,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1017,8 +1767,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1011,7 +1011,7 @@ index 5b155a4..3ecec3d 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1083,17 +1833,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1084,17 +1834,49 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1069,7 +1069,7 @@ index 5b155a4..3ecec3d 100644
    hidgl_flush_triangles (&buffer);
  
    /* Set the current depth to the right value for the layer we are editing */
-@@ -1103,8 +1885,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1104,8 +1886,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_invalidate_current_gc ();
  
@@ -1080,7 +1080,7 @@ index 5b155a4..3ecec3d 100644
    hidgl_flush_triangles (&buffer);
  
    draw_crosshair (priv);
-@@ -1115,6 +1897,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1116,6 +1898,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_finish_render ();
    ghid_end_drawing (port, widget);
  

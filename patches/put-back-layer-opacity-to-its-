@@ -1,7 +1,7 @@
-Bottom: 545d5ad6c9cacbcca86ff9a783b034537fee6269
-Top:    ff7f8497c2be320c0258fedf6d94287ebad7b191
+Bottom: 23ca9bb751b7c9d5a7bd1dcef1cb836e2e56d265
+Top:    00bec33d6a1ee27a3eaffcbae61740b0d0e0c800
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-03 23:51:30 +0000
+Date:   2015-01-04 18:51:19 +0000
 
 Put back layer opacity to its old behaviour
 
@@ -12,10 +12,10 @@ so revert them so I can build a release.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c6cbc10..5abb3ee 100644
+index 273df0f..59ccdbd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1683,7 +1683,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1684,7 +1684,7 @@ ghid_draw_everything (BoxType *drawn_area)
    }
  
    /* draw all layers in layerstack order */

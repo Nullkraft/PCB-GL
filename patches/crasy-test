@@ -1,7 +1,7 @@
-Bottom: fc04b4361fb2a127c8f621434837b5227f846465
-Top:    5b27dfc781c7ac49e7130d096750a931b8431351
+Bottom: f81088fa155d439912f6475aba90b24642f2fc0f
+Top:    d55e804d4d669babcd26ec62c26297b39968df8a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-04 17:03:47 +0000
+Date:   2015-01-04 18:51:16 +0000
 
 Crasy test
 
@@ -1179,7 +1179,7 @@ index 0000000..ba4982d
 +
 +extern struct draw_funcs *dapi;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 9fb701d..b74e5a9 100644
+index 4304cc3..c2a28d1 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -25,6 +25,7 @@
@@ -1200,7 +1200,7 @@ index 9fb701d..b74e5a9 100644
  	{
  	  hidGC gc = gui->graphics->make_gc ();
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index cc61b68..386845d 100644
+index 75c0d13..fbb84f8 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -15,6 +15,7 @@
@@ -1211,7 +1211,7 @@ index cc61b68..386845d 100644
  
  #include "hid.h"
  #include "hid_draw.h"
-@@ -1003,7 +1004,7 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -1006,7 +1007,7 @@ ps_set_layer (const char *name, int group, int empty)
        strcmp (name, "route") != 0
        )
      {
