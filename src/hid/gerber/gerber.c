@@ -628,9 +628,9 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
   hidGC savepm = Output.pmGC;
 
   gui = hid;
-  Output.fgGC = hid_draw_make_gc ();
-  Output.bgGC = hid_draw_make_gc ();
-  Output.pmGC = hid_draw_make_gc ();
+  Output.fgGC = hid_draw_make_gc (&gerber_graphics);
+  Output.bgGC = hid_draw_make_gc (&gerber_graphics);
+  Output.pmGC = hid_draw_make_gc (&gerber_graphics);
 
   hid->graphics->set_color (Output.pmGC, "erase");
   hid->graphics->set_color (Output.bgGC, "drill");

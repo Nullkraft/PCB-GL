@@ -768,30 +768,12 @@ hole_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-static int
-pin_callback (const BoxType * b, void *cl)
-{
-  //DrawPlainPin ((PinType *) b, false);
-  return 1;
-}
-
-static int
-pad_callback (const BoxType * b, void *cl)
-{
-  //PadType *pad = (PadType *) b;
-  //if (FRONT (pad))
-    //DrawPad (pad, 0);
-  return 1;
-}
-
 void
 common_export_region (HID *hid, BoxType *region)
 {
   int plated;
   int nplated;
   int nunplated;
-  int top_group;
-  int bottom_group;
   int group;
   int save_swap = SWAP_IDENT;
   bool paste_empty;
@@ -799,28 +781,10 @@ common_export_region (HID *hid, BoxType *region)
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
 
-  top_group    = GetLayerGroupNumberBySide (TOP_SIDE);
-  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
-
   /* draw all copper layer groups in group order */
   for (group = 0; group < max_copper_layer; group++)
-    {
-      if (gui->set_layer (0, group, 0))
-        {
-          if (DrawLayerGroup (group, region))
-            {
-              r_search (PCB->Data->via_tree, region, NULL, pin_callback, NULL);
-              r_search (PCB->Data->pin_tree, region, NULL, pin_callback, NULL);
-
-              if (group == top_group || group == bottom_group)
-                {
-                  SWAP_IDENT = (group == bottom_group);
-                  r_search (PCB->Data->pad_tree, region, NULL, pad_callback, NULL);
-                  SWAP_IDENT = save_swap;
-                }
-            }
-        }
-    }
+    if (gui->set_layer (0, group, 0))
+      DrawLayerGroup (group, region);
 
   count_holes (region, &nplated, &nunplated);
 
