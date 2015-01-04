@@ -1,5 +1,5 @@
 Bottom: 1b69bf9cc29bf9627f82a3f919b4da884760a228
-Top:    1b69bf9cc29bf9627f82a3f919b4da884760a228
+Top:    dce9464131a19113ae2bcc909833167fba35cf9b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-04 18:20:37 +0000
 
@@ -14,4 +14,343 @@ polygon fill.
 
 ---
 
-
+diff --git a/src/buffer.c b/src/buffer.c
+index 3b51ba1..5536016 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -339,6 +339,7 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
+ {
+   LayerType *lay = &Dest->Layer[GetLayerNumber (Source, layer)];
+ 
++  RestoreToPolygon (Source, POLYGON_TYPE, layer, polygon);
+   r_delete_entry (layer->polygon_tree, (BoxType *)polygon);
+ 
+   layer->Polygon = g_list_remove (layer->Polygon, polygon);
+@@ -351,6 +352,7 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
+   if (!lay->polygon_tree)
+     lay->polygon_tree = r_create_tree (NULL, 0, 0);
+   r_insert_entry (lay->polygon_tree, (BoxType *)polygon, 0);
++  ClearFromPolygon (Source, POLYGON_TYPE, layer, polygon);
+   return (polygon);
+ }
+ 
+diff --git a/src/change.c b/src/change.c
+index 88d4b9f..b8f2e41 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -119,6 +119,9 @@ static void *ChangeTextJoin (LayerType *, TextType *);
+ static void *SetTextJoin (LayerType *, TextType *);
+ static void *ClrTextJoin (LayerType *, TextType *);
+ static void *ChangePolyClear (LayerType *, PolygonType *);
++static void *ChangePolyJoin (LayerType *, PolygonType *);
++static void *SetPolyJoin (LayerType *, PolygonType *);
++static void *ClrPolyJoin (LayerType *, PolygonType *);
+ 
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
+@@ -213,7 +216,7 @@ static ObjectFunctionType ChangeSquareFunctions = {
+ static ObjectFunctionType ChangeJoinFunctions = {
+   ChangeLineJoin,
+   ChangeTextJoin,
+-  NULL,
++  ChangePolyJoin,
+   NULL,
+   NULL,
+   NULL,
+@@ -273,7 +276,7 @@ static ObjectFunctionType SetSquareFunctions = {
+ static ObjectFunctionType SetJoinFunctions = {
+   SetLineJoin,
+   SetTextJoin,
+-  NULL,
++  SetPolyJoin,
+   NULL,
+   NULL,
+   NULL,
+@@ -315,7 +318,7 @@ static ObjectFunctionType ClrSquareFunctions = {
+ static ObjectFunctionType ClrJoinFunctions = {
+   ClrLineJoin,
+   ClrTextJoin,
+-  NULL,
++  ClrPolyJoin,
+   NULL,
+   NULL,
+   NULL,
+@@ -1239,6 +1242,31 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
+ }
+ 
+ /* ---------------------------------------------------------------------------
++ * changes the clearance flag of a polygon
++ */
++static void *
++ChangePolyJoin (LayerType *Layer, PolygonType *poly)
++{
++  if (TEST_FLAG (LOCKFLAG, poly))
++    return (NULL);
++  ErasePolygon (poly);
++  if (TEST_FLAG(CLEARLINEFLAG, poly))
++  {
++  AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, poly, poly, false);
++  RestoreToPolygon (PCB->Data, POLYGON_TYPE, Layer, poly);
++  }
++  AddObjectToFlagUndoList (LINE_TYPE, Layer, poly, poly);
++  TOGGLE_FLAG (CLEARLINEFLAG, poly);
++  if (TEST_FLAG(CLEARLINEFLAG, poly))
++  {
++  AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, poly, poly, true);
++  ClearFromPolygon (PCB->Data, POLYGON_TYPE, Layer, poly);
++  }
++  DrawPolygon (Layer, poly);
++  return (poly);
++}
++
++/* ---------------------------------------------------------------------------
+  * sets the clearance flag of a text
+  */
+ static void *
+@@ -1250,6 +1278,17 @@ SetTextJoin (LayerType *Layer, TextType *Text)
+ }
+ 
+ /* ---------------------------------------------------------------------------
++ * sets the clearance flag of a polygon
++ */
++static void *
++SetPolyJoin (LayerType *Layer, PolygonType *poly)
++{
++  if (TEST_FLAG (LOCKFLAG, poly) || TEST_FLAG (CLEARLINEFLAG, poly))
++    return (NULL);
++  return ChangePolyJoin (Layer, poly);
++}
++
++/* ---------------------------------------------------------------------------
+  * clears the clearance flag of a text
+  */
+ static void *
+@@ -1261,6 +1300,17 @@ ClrTextJoin (LayerType *Layer, TextType *Text)
+ }
+ 
+ /* ---------------------------------------------------------------------------
++ * clears the clearance flag of a polygon
++ */
++static void *
++ClrPolyJoin (LayerType *Layer, PolygonType *poly)
++{
++  if (TEST_FLAG (LOCKFLAG, poly) || !TEST_FLAG (CLEARLINEFLAG, poly))
++    return (NULL);
++  return ChangePolyJoin (Layer, poly);
++}
++
++/* ---------------------------------------------------------------------------
+  * changes the square flag of all pins on an element
+  */
+ static void *
+diff --git a/src/change.h b/src/change.h
+index f42842a..887a713 100644
+--- a/src/change.h
++++ b/src/change.h
+@@ -56,7 +56,7 @@
+ 	(ELEMENT_TYPE | PIN_TYPE | VIA_TYPE)
+ 
+ #define CHANGEJOIN_TYPES	\
+-	(ARC_TYPE | LINE_TYPE | TEXT_TYPE)
++	(ARC_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE)
+ 
+ #define CHANGETHERMAL_TYPES	\
+ 	(PIN_TYPE | VIA_TYPE)
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 685b614..507a5fb 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -262,7 +262,9 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
+   if (polygon->Clipped == NULL)
+     return;
+ 
+-  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
++  if (TEST_FLAG (THINDRAWFLAG,     PCB) ||
++      TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
++      TEST_FLAG (CLEARLINEFLAG, polygon))
+     gui->graphics->thindraw_pcb_polygon (gc, polygon, clip_box);
+   else
+     gui->graphics->fill_pcb_polygon (gc, polygon, clip_box);
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index a51a339..8458c15 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -702,6 +702,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ 
+   double old_alpha_mult = gtk_gc->alpha_mult;
+   common_thindraw_pcb_polygon (gc, poly, clip_box);
++
++  /* Don't shade anti-polygons */
++  if TEST_FLAG (CLEARLINEFLAG, poly)
++    return;
++
+   ghid_set_alpha_mult (gc, gtk_gc->alpha_mult * 0.25);
+   gui->graphics->fill_pcb_polygon (gc, poly, clip_box);
+   ghid_set_alpha_mult (gc, old_alpha_mult);
+diff --git a/src/move.c b/src/move.c
+index 5f0cfb3..d42906c 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -346,10 +346,12 @@ MovePolygon (LayerType *Layer, PolygonType *Polygon)
+     {
+       ErasePolygon (Polygon);
+     }
++  RestoreToPolygon (PCB->Data, POLYGON_TYPE, Layer, Polygon);
+   r_delete_entry (Layer->polygon_tree, (BoxType *)Polygon);
+   MovePolygonLowLevel (Polygon, DeltaX, DeltaY);
+   r_insert_entry (Layer->polygon_tree, (BoxType *)Polygon, 0);
+   InitClip (PCB->Data, Layer, Polygon);
++  ClearFromPolygon (PCB->Data, POLYGON_TYPE, Layer, Polygon);
+   if (Layer->On)
+     {
+       DrawPolygon (Layer, Polygon);
+@@ -409,12 +411,14 @@ MovePolygonPoint (LayerType *Layer, PolygonType *Polygon,
+     {
+       ErasePolygon (Polygon);
+     }
++  RestoreToPolygon (PCB->Data, POLYGON_TYPE, Layer, Polygon);
+   r_delete_entry (Layer->polygon_tree, (BoxType *)Polygon);
+   MOVE (Point->X, Point->Y, DeltaX, DeltaY);
+   SetPolygonBoundingBox (Polygon);
+   r_insert_entry (Layer->polygon_tree, (BoxType *)Polygon, 0);
+   RemoveExcessPolygonPoints (Layer, Polygon);
+   InitClip (PCB->Data, Layer, Polygon);
++  ClearFromPolygon (PCB->Data, POLYGON_TYPE, Layer, Polygon);
+   if (Layer->On)
+     {
+       DrawPolygon (Layer, Polygon);
+diff --git a/src/polygon.c b/src/polygon.c
+index bfd7499..f4072e7 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -868,6 +868,20 @@ SubtractPad (PadType * pad, PolygonType * p)
+   return Subtract (np, p, true);
+ }
+ 
++static int
++SubtractPolygon (PolygonType * poly, PolygonType * p)
++{
++  POLYAREA *np;
++
++  /* Don't subtract from ourselves! */
++  if (poly == p || !TEST_FLAG (CLEARLINEFLAG, poly))
++    return 0;
++
++  np = original_poly (poly);
++
++  return Subtract (np, p, true);
++}
++
+ struct cpInfo
+ {
+   const BoxType *other;
+@@ -1020,6 +1034,24 @@ text_sub_callback (const BoxType * b, void *cl)
+ }
+ 
+ static int
++poly_sub_callback (const BoxType * b, void *cl)
++{
++  PolygonType *poly = (PolygonType *) b;
++  struct cpInfo *info = (struct cpInfo *) cl;
++  PolygonType *polygon;
++
++  /* don't subtract the object that was put back! */
++  if (b == info->other)
++    return 0;
++  if (!TEST_FLAG (CLEARLINEFLAG, poly))
++    return 0;
++  polygon = info->polygon;
++  if (SubtractPolygon (poly, polygon) < 0)
++    longjmp (info->env, 1);
++  return 1;
++}
++
++static int
+ Group (DataType *Data, Cardinal layer)
+ {
+   Cardinal i, j;
+@@ -1071,6 +1103,8 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
+           r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
+ 	r +=
+           r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
++        r +=
++          r_search (layer->polygon_tree, &region, NULL, poly_sub_callback, &info);
+       }
+       END_LOOP;
+       r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
+@@ -1207,6 +1241,26 @@ UnsubtractPad (PadType * pad, LayerType * l, PolygonType * p)
+   return 1;
+ }
+ 
++static int
++UnsubtractPolygon (PolygonType * poly, LayerType * l, PolygonType * p)
++{
++  POLYAREA *np;
++
++  /* Don't subtract from ourselves! */
++  if (poly == p || !TEST_FLAG (CLEARLINEFLAG, poly))
++    return 0;
++
++  /* overlap a bit to prevent notches from rounding errors */
++  np = BoxPolyBloated (&poly->BoundingBox, UNSUBTRACT_BLOAT);
++
++  if (!np)
++    return 0;
++  if (!Unsubtract (np, p))
++    return 0;
++  clearPoly (PCB->Data, l, p, (const BoxType *) poly, 2 * UNSUBTRACT_BLOAT);
++  return 1;
++}
++
+ static bool inhibit = false;
+ 
+ int
+@@ -1488,6 +1542,10 @@ subtract_plow (DataType *Data, LayerType *Layer, PolygonType *Polygon,
+       SubtractPad ((PadType *) ptr2, Polygon);
+       Polygon->NoHolesValid = 0;
+       return 1;
++    case POLYGON_TYPE:
++      SubtractPolygon ((PolygonType *) ptr2, Polygon);
++      Polygon->NoHolesValid = 0;
++      return 1;
+     case TEXT_TYPE:
+       SubtractText ((TextType *) ptr2, Polygon);
+       Polygon->NoHolesValid = 0;
+@@ -1515,6 +1573,9 @@ add_plow (DataType *Data, LayerType *Layer, PolygonType *Polygon,
+     case PAD_TYPE:
+       UnsubtractPad ((PadType *) ptr2, Layer, Polygon);
+       return 1;
++    case POLYGON_TYPE:
++      UnsubtractPolygon ((PolygonType *) ptr2, Layer, Polygon);
++      return 1;
+     case TEXT_TYPE:
+       UnsubtractText ((TextType *) ptr2, Layer, Polygon);
+       return 1;
+@@ -1580,6 +1641,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+     case LINE_TYPE:
+     case ARC_TYPE:
+     case TEXT_TYPE:
++    case POLYGON_TYPE:
+       /* the cast works equally well for lines and arcs */
+       if (!TEST_FLAG (CLEARLINEFLAG, (LineType *) ptr2))
+         return 0;
+@@ -1635,8 +1697,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+ 
+   if (type == POLYGON_TYPE)
+     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
+-  else
+-    PlowsPolygon (Data, type, ptr1, ptr2, add_plow, NULL);
++  PlowsPolygon (Data, type, ptr1, ptr2, add_plow, NULL);
+ }
+ 
+ void
+@@ -1657,8 +1718,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+ 
+   if (type == POLYGON_TYPE)
+     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
+-  else
+-    PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow, NULL);
++  PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow, NULL);
+ }
+ 
+ bool
