@@ -1,5 +1,5 @@
-Bottom: 5392c6f844ae5ef1546f50b5704a2b6e0e7e98d0
-Top:    8fa440b28596a97f9e920f4eb7a2addf72927ea1
+Bottom: 04af7949bb94b9d54e62f411da0231457fb23ca7
+Top:    a91d3aecdebbe4c173cce4bc1f45e1df9219d7da
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:21 +0000
 
@@ -9,10 +9,10 @@ Add VRML model rendering support
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 71e1229..e890a49 100644
+index 64962c0..fb00436 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -197,7 +197,16 @@ GL_SRCS= \
+@@ -181,7 +181,16 @@ GL_SRCS= \
  	hid/common/hidgl.c \
  	hid/common/hidgl.h \
  	hid/common/glext.h \
@@ -2616,10 +2616,10 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 827ede4..139c3e7 100644
+index f3e0695..a2da6f0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1498,7 +1498,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1497,7 +1497,7 @@ GhidDrawMask (int side, BoxType * screen)
    } else {
      glBindTexture (GL_TEXTURE_2D, texture);
    }
@@ -2628,7 +2628,7 @@ index 827ede4..139c3e7 100644
  
    if (1) {
      GLfloat s_params[] = {0.0001, 0., 0., 0.};
-@@ -1780,6 +1780,11 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1778,6 +1778,11 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_350x800mil_cap (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
@@ -2640,7 +2640,7 @@ index 827ede4..139c3e7 100644
      }
    return 1;
  }
-@@ -2694,125 +2699,27 @@ ghid_finish_debug_draw (void)
+@@ -2692,125 +2697,27 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport, gport->drawing_area);
  }
  
