@@ -1,5 +1,5 @@
-Bottom: 5464636c6fe963b60397ca23d9e088f4dc20c240
-Top:    2e18daaeaa34b340a18525d1fa4a7101c9c96ae1
+Bottom: 55f4580be1e4bd2dbd8444bb60416e47959e16c8
+Top:    55f4580be1e4bd2dbd8444bb60416e47959e16c8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-04 20:07:17 +0000
 
@@ -8,20 +8,4 @@ hid/gtk (GL): I think the polygon renderer works in mask mode now
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 48adbea..c37ea57 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1407,11 +1407,8 @@ GhidDrawMask (int side, BoxType * screen)
-   polygon.BoundingBox = *screen;
-   polygon.Flags = NoFlags ();
-   SET_FLAG (FULLPOLYFLAG, &polygon);
--  common_fill_pcb_polygon (out->fgGC, &polygon, screen);
-+  gui->graphics->fill_pcb_polygon (out->fgGC, &polygon, screen);
-   poly_FreeContours (&polygon.NoHoles);
--  /* THE GL fill_pcb_polygon doesn't work whilst masking */
--//  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
--//  gui->graphics->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-   ghid_set_alpha_mult (out->fgGC, 1.0);
- 
-   gui->graphics->use_mask (HID_MASK_OFF);
+
