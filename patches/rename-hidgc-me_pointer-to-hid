@@ -1,0 +1,26 @@
+Bottom: 7a46d2b42ccfdc476cf12150e7c139a0ee155389
+Top:    9c7a11a9132ef74f773a939f515e62f754c3f76a
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-04 18:56:16 +0000
+
+Rename hidGC "me_pointer" to "hid"
+
+The pointer provides a link between a HID specific graphics context and HID
+in question, name it accordingly.
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index fdf6a72..269b7bf 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -3195,7 +3195,7 @@ void
+ ghid_set_lock_effects (hidGC gc, AnyObjectType *object)
+ {
+   // XXX: Workaround to crashing exporters
+-  if (gc->me_pointer != &ghid_hid)
++  if (gc->hid != &ghid_hid)
+     return;
+ 
+   /* Only apply effects to locked objects when in "lock" mode */
