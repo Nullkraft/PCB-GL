@@ -1586,7 +1586,7 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
     polygon.BoundingBox = *drawn_area;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
-  gui->graphics->fill_pcb_polygon (gc, &polygon, drawn_area);
+  hid_draw_fill_pcb_polygon (gc, &polygon, drawn_area);
   poly_FreeContours (&polygon.NoHoles);
 }
 
@@ -1618,7 +1618,7 @@ fill_outline_hole_cb (PLINE *pl, void *user_data)
 
   /* XXX: For some reason, common_fill_pcb_polygon doesn't work for all contours here.. not sure why */
 //  common_fill_pcb_polygon (info->gc, &polygon, NULL);
-  gui->graphics->fill_pcb_polygon (info->gc, &polygon, NULL);
+  hid_draw_fill_pcb_polygon (info->gc, &polygon, NULL);
 
   poly_FreeContours (&polygon.NoHoles);
 
