@@ -1371,9 +1371,8 @@ GhidDrawMask (int side, BoxType * screen)
   gui->graphics->set_color (out->fgGC, PCB->MaskColor);
   ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
 
+  memset (&polygon, 0, sizeof (polygon));
   polygon.Clipped = board_outline_poly ();
-  polygon.NoHoles = NULL;
-  polygon.NoHolesValid = 0;
   polygon.BoundingBox = *screen;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
