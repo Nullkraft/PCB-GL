@@ -57,8 +57,7 @@ draw_hole (PinType *pv, const BoxType *drawn_area, void *userdata)
       hid_draw_set_line_cap (Output.fgGC, Round_Cap);
       hid_draw_set_line_width (Output.fgGC, 0);
 
-      hid_draw_arc (Output.fgGC, pv->X, pv->Y,
-                               pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
+      hid_draw_arc (Output.fgGC, pv->X, pv->Y, pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
     }
 }
 
@@ -122,8 +121,7 @@ draw_rat (RatType *rat, const BoxType *drawn_area, void *userdata)
         hid_draw_set_line_width (Output.fgGC, 0);
       else
         hid_draw_set_line_width (Output.fgGC, w);
-      hid_draw_arc (Output.fgGC, rat->Point1.X, rat->Point1.Y,
-                               w * 2, w * 2, 0, 360);
+      hid_draw_arc (Output.fgGC, rat->Point1.X, rat->Point1.Y, w * 2, w * 2, 0, 360);
     }
   else
     hid_draw_pcb_line (Output.fgGC, (LineType *) rat);
@@ -225,7 +223,7 @@ set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
 {
   if (TEST_FLAG (WARNFLAG, pv))          hid_draw_set_color (Output.fgGC, PCB->WarnColor);
   else if (TEST_FLAG (SELECTEDFLAG, pv)) hid_draw_set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
-                                                                                                   : PCB->PinSelectedColor);
+                                                                                             : PCB->PinSelectedColor);
   else if (TEST_FLAG (FOUNDFLAG, pv))    hid_draw_set_color (Output.fgGC, PCB->ConnectedColor);
   else                                   hid_draw_set_color (Output.fgGC, layer->Color);
 }
