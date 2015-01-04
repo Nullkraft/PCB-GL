@@ -1,7 +1,7 @@
-Bottom: 5e2c892f655a4e41fb882ebb81c5293adeea1edd
-Top:    6ca2441e5b10864b2fd65e8417ce41626b63b0e0
+Bottom: 8e706886a0b486b0a36e3b2a43bf34ea6e50c1a8
+Top:    fe37e347f97856e6b7319bcf3f04777d83dfc8a9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 20:07:19 +0000
+Date:   2015-01-04 21:40:05 +0000
 
 hidgl: Attempt at fixing ORTHO view
 
@@ -9,10 +9,10 @@ hidgl: Attempt at fixing ORTHO view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index fc0e667..78a8f8e 100644
+index 91c417f..7f92b3c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1899,6 +1899,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1897,6 +1897,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  #endif
  
    /* Push the space coordinates board back into the middle of the z-view volume */
@@ -20,7 +20,7 @@ index fc0e667..78a8f8e 100644
    glTranslatef (0., 0., -11.);
  
    /* Rotate about the center of the board space */
-@@ -2587,12 +2588,58 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+@@ -2585,12 +2586,58 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
    J = last_modelview_matrix[1][2];
    K = last_modelview_matrix[2][2];
    L = last_modelview_matrix[3][2];

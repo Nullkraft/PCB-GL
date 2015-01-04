@@ -1,7 +1,7 @@
-Bottom: 5c67a82f8e0257a0667fc7522b76b071d3739ff4
-Top:    e34757d498d12eaea257e2f9f6c2d962f2d2e9d3
+Bottom: 7959d8aa37337978404ed6529cfb74a2df66473d
+Top:    5354b0d11ee4ff7d8a93a0badb588ceebdc4aaf4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-04 20:07:19 +0000
+Date:   2015-01-04 21:40:04 +0000
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -989,7 +989,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 512f879..093b29e 100644
+index b26cde1..dc5f181 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -14,13 +14,15 @@
@@ -1081,7 +1081,7 @@ index 512f879..093b29e 100644
                                  TRUE,
                                  GDK_GL_RGBA_TYPE);
  }
-@@ -1522,9 +1541,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1520,9 +1539,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
  #define MIN_FACES_PER_CYL 6
  #define MAX_FACES_PER_CYL 360
    float radius = vr;
@@ -1092,7 +1092,7 @@ index 512f879..093b29e 100644
    int i;
    int slices;
  
-@@ -1539,19 +1556,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1537,19 +1554,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
    z1 = compute_depth (from_layer);
    z2 = compute_depth (to_layer);
  
@@ -1129,7 +1129,7 @@ index 512f879..093b29e 100644
  }
  
  struct cyl_info {
-@@ -2139,6 +2164,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2137,6 +2162,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    GdkGLConfig *glconfig;
    GdkPixmap *pixmap;
    GdkGLPixmap *glpixmap;
@@ -1137,7 +1137,7 @@ index 512f879..093b29e 100644
    GdkGLContext* glcontext;
    GdkGLDrawable* gldrawable;
    view_data save_view;
-@@ -2152,6 +2178,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2150,6 +2176,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    /* Setup rendering context for drawing routines
     */
  
@@ -1149,7 +1149,7 @@ index 512f879..093b29e 100644
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
                                          GDK_GL_MODE_SINGLE);
-@@ -2159,7 +2190,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2157,7 +2188,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
    glpixmap = gdk_pixmap_set_gl_capability (pixmap, glconfig, NULL);
    gldrawable = GDK_GL_DRAWABLE (glpixmap);
