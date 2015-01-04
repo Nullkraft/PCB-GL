@@ -1,5 +1,5 @@
 Bottom: 6368bd3c9cf7268e4c69fc8b3001ad7ed4a7cfba
-Top:    6368bd3c9cf7268e4c69fc8b3001ad7ed4a7cfba
+Top:    938c2c385a9578274bb8acb25eb3073b471ed3a1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-04 21:26:53 +0000
 
@@ -8,4 +8,35 @@ Add support for drawing objects from the soldermask layer
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index d7b0bcd..0af09a7 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1328,7 +1328,8 @@ static void
+ GhidDrawMask (int side, BoxType * screen)
+ {
+   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+-
++  LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
++  struct poly_info info;
+   OutputType *out = &Output;
+ 
+   if (thin)
+@@ -1341,7 +1342,16 @@ GhidDrawMask (int side, BoxType * screen)
+       hid_draw_set_color (Output.pmGC, "erase");
+     }
+ 
+-  hid_draw_use_mask (HID_MASK_CLEAR);
++  hid_draw_use_mask (xxxGC, HID_MASK_CLEAR);
++  gui->graphics->use_mask (HID_MASK_CLEAR);
++
++  info.layer = Layer;
++  info.drawn_area = screen;
++  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
++  r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
++  r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
++  r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
++
+   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, NULL);
+   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, NULL);
+   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, &side);
