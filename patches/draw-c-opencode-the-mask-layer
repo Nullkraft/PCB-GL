@@ -1,5 +1,5 @@
 Bottom: ddabd4bd241f9d5b5d5ea65fd89719842c24dec5
-Top:    8372de6d7d780d6f43ec4ebd2c938975787bba02
+Top:    31b727cf1f0671faec1479f6131e92c48773fd73
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-04 21:16:36 +0000
 
@@ -13,7 +13,7 @@ colors which prevent (say) PS export working correctly for mask layer objects.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e7431a4..7e406d0 100644
+index e7431a4..3f09f59 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -868,6 +868,50 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
@@ -26,7 +26,7 @@ index e7431a4..7e406d0 100644
 +  struct poly_info *i = cl;
 +  PolygonType *polygon = (PolygonType *)b;
 +
-+  gui->graphics->draw_pcb_polygon (Output.pmGC, polygon, i->drawn_area);
++  hid_draw_pcb_polygon (Output.pmGC, polygon, i->drawn_area);
 +  return 1;
 +}
 +
@@ -35,7 +35,7 @@ index e7431a4..7e406d0 100644
 +{
 +  LineType *line = (LineType *)b;
 +
-+  gui->graphics->draw_pcb_line (Output.pmGC, line);
++  hid_draw_pcb_line (Output.pmGC, line);
 +  return 1;
 +}
 +
@@ -44,7 +44,7 @@ index e7431a4..7e406d0 100644
 +{
 +  ArcType *arc = (ArcType *)b;
 +
-+  gui->graphics->draw_pcb_arc (Output.pmGC, arc);
++  hid_draw_pcb_arc (Output.pmGC, arc);
 +  return 1;
 +}
 +
@@ -60,7 +60,7 @@ index e7431a4..7e406d0 100644
 +    min_silk_line = PCB->minSlk;
 +  else
 +    min_silk_line = PCB->minWid;
-+  gui->graphics->draw_pcb_text (Output.fgGC, text, min_silk_line);
++  hid_draw_pcb_text (Output.fgGC, text, min_silk_line);
 +  return 1;
 +}
 +
