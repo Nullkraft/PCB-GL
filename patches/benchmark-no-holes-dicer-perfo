@@ -1,5 +1,5 @@
 Bottom: a3b11a40839973bd7321814c81246802d03e9caa
-Top:    a3b11a40839973bd7321814c81246802d03e9caa
+Top:    42dcb1763067af9ec9b8a022192b1aff93e2271c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 18:18:38 +0000
 
@@ -8,4 +8,62 @@ Benchmark no-holes dicer performance
 
 ---
 
-
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 3ada35b..cc9cb60 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -280,6 +280,13 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
+ void
+ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
++  /* FIXME: We aren't checking the gui's dicer flag..
++            we are dicing for every case. Some GUIs
++            rely on this, and need their flags fixing. */
++
++  NoHolesPolygonDicer (poly, clip_box, fill_contour_cb, gc);
++
++#if 0
+   if (poly->Clipped == NULL)
+     return;
+ 
+@@ -306,6 +313,7 @@ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+             fill_clipped_contour (gc, pl, clip_box);
+         }
+     }
++#endif
+ 
+   /* Draw other parts of the polygon if fullpoly flag is set */
+   /* NB: No "NoHoles" cache for these */
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index fbb84f8..1e4420f 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -597,6 +597,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   int i;
+   static int saved_layer_stack[MAX_LAYER];
+   FlagType save_thindraw;
++  clock_t start, end;
++  double elapsed;
+ 
+   save_thindraw = PCB->Flags;
+   CLEAR_FLAG(THINDRAWFLAG, PCB);
+@@ -682,6 +684,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   global.region.X2 = PCB->MaxWidth;
+   global.region.Y2 = PCB->MaxHeight;
+ 
++  start = clock ();
++
+   if (!global.multi_file)
+     {
+       /* %%Page DSC requires both a label and an ordinal */
+@@ -704,6 +708,10 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   if (the_file)
+     fprintf (the_file, "showpage\n");
+ 
++  end = clock ();
++  elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
++  printf ("Printing file took %f\n", elapsed);
++
+   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
+   PCB->Flags = save_thindraw;
+ }
