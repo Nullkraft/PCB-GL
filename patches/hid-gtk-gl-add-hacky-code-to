@@ -1,5 +1,5 @@
 Bottom: 629b649af57e1c96ee532663ee67a50ae676866b
-Top:    deaf2207cdeec1f848626e1febcbc04d1fa09e10
+Top:    6faaf5acbf404aa28048e413d37223dcf0db2f91
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-04 22:31:32 +0000
 
@@ -9,7 +9,7 @@ hid/gtk (GL): Add hacky code to render outline of board, and mask cutout geometr
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 34b996a..4712830 100644
+index 34b996a..5738af5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1561,6 +1561,104 @@ clearPad_callback_solid (const BoxType * b, void *cl)
@@ -41,7 +41,7 @@ index 34b996a..4712830 100644
 +    polygon.BoundingBox = *drawn_area;
 +  polygon.Flags = NoFlags ();
 +  SET_FLAG (FULLPOLYFLAG, &polygon);
-+  gui->graphics->fill_pcb_polygon (gc, &polygon, drawn_area);
++  hid_draw_fill_pcb_polygon (gc, &polygon, drawn_area);
 +  poly_FreeContours (&polygon.NoHoles);
 +}
 +
@@ -73,7 +73,7 @@ index 34b996a..4712830 100644
 +
 +  /* XXX: For some reason, common_fill_pcb_polygon doesn't work for all contours here.. not sure why */
 +//  common_fill_pcb_polygon (info->gc, &polygon, NULL);
-+  gui->graphics->fill_pcb_polygon (info->gc, &polygon, NULL);
++  hid_draw_fill_pcb_polygon (info->gc, &polygon, NULL);
 +
 +  poly_FreeContours (&polygon.NoHoles);
 +
