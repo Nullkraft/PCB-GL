@@ -1,5 +1,5 @@
-Bottom: 7b2dd574342538ebb31e63be5d3959dbccea9b3e
-Top:    e3ded02904db5eb25050e30d18417cc0f5d115d4
+Bottom: 248ac2e298c1aacf98c32e2fc26f974da2dc6ddc
+Top:    e8adf9c170ee4e4baae28a3dd3afbdbdf1508f3b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-04 01:50:16 +0000
 
@@ -9,10 +9,10 @@ First attempts at improved rubberbanding logic
 ---
 
 diff --git a/src/create.c b/src/create.c
-index f0588c0..dc03975 100644
+index 7da96ee..66f1d11 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -1022,7 +1022,7 @@ CreateDefaultFont (PCBType *pcb)
+@@ -956,7 +956,7 @@ CreateDefaultFont (PCBType *pcb)
   */
  RubberbandType *
  CreateNewRubberbandEntry (LayerType *Layer,
@@ -21,7 +21,7 @@ index f0588c0..dc03975 100644
  {
    RubberbandType *ptr = GetRubberbandMemory ();
  
-@@ -1032,6 +1032,7 @@ CreateNewRubberbandEntry (LayerType *Layer,
+@@ -966,6 +966,7 @@ CreateNewRubberbandEntry (LayerType *Layer,
    ptr->Layer = Layer;
    ptr->Line = Line;
    ptr->MovedPoint = MovedPoint;
@@ -30,10 +30,10 @@ index f0588c0..dc03975 100644
  }
  
 diff --git a/src/create.h b/src/create.h
-index 04fe48e..fa49a1b 100644
+index e9c2697..13f8b54 100644
 --- a/src/create.h
 +++ b/src/create.h
-@@ -61,7 +61,7 @@ PinType * CreateNewPin (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord,
+@@ -60,7 +60,7 @@ PinType * CreateNewPin (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord,
  PadType * CreateNewPad (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord, Coord, char *, char *, FlagType);
  LineType * CreateNewLineInSymbol (SymbolType *, Coord, Coord, Coord, Coord, Coord);
  void CreateDefaultFont (PCBType *);

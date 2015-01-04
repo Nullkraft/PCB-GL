@@ -1,5 +1,5 @@
-Bottom: 6b088686f9ae24ddbc431aa793fa5f872d95fb94
-Top:    7b3407a450a79a8aa1dd2a294233290e90d9a04c
+Bottom: 3683b8b0b5452bbc8191e7bc671c56b7c71093cc
+Top:    9a67e55ee184ac4fcd6b59aa4fb37faf57ecf431
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-04 01:50:15 +0000
 
@@ -20,7 +20,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 7da96ee..f0588c0 100644
+index 66f1d11..dc03975 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -35,6 +35,7 @@
@@ -118,7 +118,7 @@ index 7da96ee..f0588c0 100644
  
    /* copy values and set additional information */
 diff --git a/src/create.h b/src/create.h
-index e9c2697..04fe48e 100644
+index 13f8b54..fa49a1b 100644
 --- a/src/create.h
 +++ b/src/create.h
 @@ -53,6 +53,7 @@ TextType * CreateNewText (LayerType *, FontType *, Coord, Coord, unsigned, int,
