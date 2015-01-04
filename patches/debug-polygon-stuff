@@ -1,5 +1,5 @@
 Bottom: 02485aa03ea8b0b79c945e7ccc0a7a7d66b2e4f6
-Top:    16b3b7089b0e7cd2de750935d14a814adf1d1d61
+Top:    5cf3cb21f6f98911f3104c95fda4dd2c43ba8fa3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 10:34:59 +0000
 
@@ -39,10 +39,19 @@ index bfd7499..67532a9 100644
    return 1;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 7d6fab6..f944f9f 100644
+index 7d6fab6..74cb0cf 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2425,10 +2425,15 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -50,6 +50,8 @@
+ #include "rtree.h"
+ #include "heap.h"
+ 
++#include "pcb-printf.h"
++
+ #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
+ 
+ #define EPSILON (1E-8)
+@@ -2425,10 +2427,15 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
      {
  
  #ifdef DEBUG
@@ -60,7 +69,7 @@ index 7d6fab6..f944f9f 100644
  #endif
        M_POLYAREA_intersect (&e, a, b, TRUE);
  
-@@ -3251,12 +3256,14 @@ poly_Valid (POLYAREA * p)
+@@ -3251,12 +3258,14 @@ poly_Valid (POLYAREA * p)
  {
    PLINE *c;
  
@@ -77,7 +86,7 @@ index 7d6fab6..f944f9f 100644
        VNODE *v, *n;
        DEBUGP ("Invalid Outer PLINE\n");
        if (p->contours->Flags.orient == PLF_INV)
-@@ -3271,7 +3278,7 @@ poly_Valid (POLYAREA * p)
+@@ -3271,7 +3280,7 @@ poly_Valid (POLYAREA * p)
  		   v->point[0], v->point[1], n->point[0], n->point[1]);
  	}
        while ((v = v->next) != &p->contours->head);
@@ -86,7 +95,7 @@ index 7d6fab6..f944f9f 100644
        return FALSE;
      }
    for (c = p->contours->next; c != NULL; c = c->next)
-@@ -3279,7 +3286,7 @@ poly_Valid (POLYAREA * p)
+@@ -3279,7 +3288,7 @@ poly_Valid (POLYAREA * p)
        if (c->Flags.orient == PLF_DIR ||
  	  poly_ChkContour (c) || !poly_ContourInContour (p->contours, c))
  	{
@@ -95,7 +104,7 @@ index 7d6fab6..f944f9f 100644
  	  VNODE *v, *n;
  	  DEBUGP ("Invalid Inner PLINE orient = %d\n", c->Flags.orient);
  	  if (c->Flags.orient == PLF_DIR)
-@@ -3296,7 +3303,7 @@ poly_Valid (POLYAREA * p)
+@@ -3296,7 +3305,7 @@ poly_Valid (POLYAREA * p)
  		       v->point[0], v->point[1], n->point[0], n->point[1]);
  	    }
  	  while ((v = v->next) != &c->head);
