@@ -1,5 +1,5 @@
-Bottom: 15e172508537211de42e954148ccfcbf4eb510be
-Top:    04ca4a9f26c750b12ce7d2ecff981b7b0bcba5c1
+Bottom: 178c82f1375df67a383ae610def35a42dae37d43
+Top:    178c82f1375df67a383ae610def35a42dae37d43
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-03 23:51:30 +0000
 
@@ -19,80 +19,4 @@ layer changes!
 
 ---
 
-diff --git a/src/global.h b/src/global.h
-index d8002b4..ce67c50 100644
---- a/src/global.h
-+++ b/src/global.h
-@@ -399,6 +399,8 @@ typedef struct			/* holds all objects */
-   struct PCBType *pcb;
-   LayerType Layer[MAX_LAYER + EXTRA_LAYERS];
-   int polyClip;
-+  POLYAREA *outline;
-+  bool outline_valid;
- } DataType;
- 
- typedef struct			/* holds drill information */
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bc9eb66..c60431d 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1371,14 +1371,22 @@ GhidDrawMask (int side, BoxType * screen)
-   gui->graphics->set_color (out->fgGC, PCB->MaskColor);
-   ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
- 
--  polygon.Clipped = board_outline_poly ();
-+  if (!PCB->Data->outline_valid) {
-+
-+    if (PCB->Data->outline != NULL)
-+      poly_Free (&PCB->Data->outline);
-+
-+    PCB->Data->outline = board_outline_poly ();
-+    PCB->Data->outline_valid = true;
-+  }
-+
-+  polygon.Clipped = PCB->Data->outline;
-   polygon.NoHoles = NULL;
-   polygon.NoHolesValid = 0;
-   polygon.BoundingBox = *screen;
-   polygon.Flags = NoFlags ();
-   SET_FLAG (FULLPOLYFLAG, &polygon);
-   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
--  poly_Free (&polygon.Clipped);
-   poly_FreeContours (&polygon.NoHoles);
-   /* THE GL fill_pcb_polygon doesn't work whilst masking */
- //  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
-diff --git a/src/mymem.c b/src/mymem.c
-index a402f63..aff501c 100644
---- a/src/mymem.c
-+++ b/src/mymem.c
-@@ -699,6 +699,9 @@ FreeDataMemory (DataType *data)
-   if (data == NULL)
-     return;
- 
-+  if (data->outline)
-+    poly_Free (&data->outline);
-+
-   VIA_LOOP (data);
-   {
-     free (via->Name);
-diff --git a/src/polygon.c b/src/polygon.c
-index da48754..bfd7499 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -1645,6 +1645,16 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
-   if (!Data->polyClip)
-     return;
- 
-+  /* XXX: HACK, this is a kludgy place to put a check for recomputing our outline */
-+  if (type == LINE_TYPE || type == ARC_TYPE)
-+    {
-+      LayerType *layer = (LayerType *) ptr1;
-+
-+      if (strcmp (layer->Name, "outline") == 0 ||
-+          strcmp (layer->Name, "route") == 0)
-+        Data->outline_valid = false;
-+    }
-+
-   if (type == POLYGON_TYPE)
-     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
-   else
+
