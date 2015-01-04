@@ -1,5 +1,5 @@
-Bottom: 2d8664ed48f538eabfc7d3b0ec5bb5e365021672
-Top:    cf428d606ffdc12333adef1792c7b450a68d8797
+Bottom: 5cf3cb21f6f98911f3104c95fda4dd2c43ba8fa3
+Top:    14306b157d7631d1283493bd92d690a05af9a2d1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-12 01:22:10 +0100
 
@@ -9,10 +9,10 @@ Debug / attempt to fix DRC crash
 ---
 
 diff --git a/src/find.c b/src/find.c
-index a19b23d..5d5687c 100644
+index 15e40a1..2bddffd 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2542,6 +2542,10 @@ IsLineInPolygon (LineType *Line, PolygonType *Polygon)
+@@ -2389,6 +2389,10 @@ IsLineInPolygon (LineType *Line, PolygonType *Polygon)
         Coord wid = (Line->Thickness + Bloat + 1) / 2;
         Coord x1, x2, y1, y2;
  
@@ -24,10 +24,10 @@ index a19b23d..5d5687c 100644
         y1 = MIN (Line->Point1.Y, Line->Point2.Y) - wid;
         x2 = MAX (Line->Point1.X, Line->Point2.X) + wid;
 diff --git a/src/polygon.c b/src/polygon.c
-index 74a7b7f..be7de17 100644
+index 67532a9..10f62ac 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1694,6 +1694,7 @@ bool
+@@ -1707,6 +1707,7 @@ bool
  IsRectangleInPolygon (Coord X1, Coord Y1, Coord X2, Coord Y2, PolygonType *p)
  {
    POLYAREA *s;
