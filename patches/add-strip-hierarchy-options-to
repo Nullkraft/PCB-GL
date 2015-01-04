@@ -1,5 +1,5 @@
 Bottom: d8ef97e34c75aed754a0657782a8f974bee637c9
-Top:    bcd2a1f43c65eb25f5400c23834b1b025f5976d9
+Top:    8fc59dfa69fe3eb499f4827403c71909cee68f93
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-04 01:50:15 +0000
 
@@ -148,10 +148,18 @@ index 5ee3bc6..280fd52 100644
  
  #define NOCOPY_FLAGS (FOUNDFLAG | CONNECTEDFLAG)
 diff --git a/src/draw.c b/src/draw.c
-index faa9359..6fdd74c 100644
+index faa9359..13d0077 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -154,6 +154,32 @@ pad_callback (const BoxType * b, void *cl)
+@@ -67,6 +67,7 @@
+ #define	LARGE_TEXT_SIZE			3
+ #define	N_TEXT_SIZES			4
+ 
++extern void ghid_set_lock_effects (hidGC gc, AnyObjectType *element);
+ 
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
+@@ -154,6 +155,32 @@ pad_callback (const BoxType * b, void *cl)
  }
  
  static void
@@ -184,7 +192,7 @@ index faa9359..6fdd74c 100644
  draw_element_name (ElementType *element)
  {
    if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
-@@ -168,7 +194,7 @@ draw_element_name (ElementType *element)
+@@ -168,7 +195,7 @@ draw_element_name (ElementType *element)
      gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
    else
      gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
