@@ -15,6 +15,9 @@
 #include "gui-pinout-preview.h"
 #include "pcb-printf.h"
 
+#include "quad.h"
+#include "object3d.h"
+
 #ifndef WIN32
 /* The Linux OpenGL ABI 1.0 spec requires that we define
  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
@@ -2274,6 +2277,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                      0, 0, 1, 0,
                      0, 0, 0, 1};
   bool horizon_problem = false;
+  static bool do_once = true;
+
+  if (do_once) {
+    do_once = false;
+    object3d_test_init ();
+  }
 
   gtk_widget_get_allocation (widget, &allocation);
 
@@ -2630,6 +2639,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glDisable (GL_LIGHTING);
 
   draw_crosshair (priv);
+  object3d_draw_debug ();
 
   hidgl_flush_triangles (&buffer);
 
