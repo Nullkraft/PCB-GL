@@ -846,7 +846,7 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
   double old_alpha_mult = gc->alpha_mult;
   common_thindraw_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, gc->alpha_mult * 0.25);
-  gui->graphics->fill_pcb_polygon (gc, poly, clip_box);
+  gui->graphics->_fill_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, old_alpha_mult);
 }
 
@@ -1052,8 +1052,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 
   /* Setup HID function pointers specific to the GL renderer*/
   ghid_hid.end_layer = ghid_end_layer;
-  ghid_graphics.fill_pcb_polygon = ghid_fill_pcb_polygon;
-  ghid_graphics.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+  ghid_graphics._fill_pcb_polygon = ghid_fill_pcb_polygon;
+  ghid_graphics._thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 }
 
 void
@@ -1223,9 +1223,9 @@ static void
 _draw_pv (PinType *pv, bool draw_hole)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->graphics->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
+    gui->graphics->_thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
   else
-    gui->graphics->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
+    gui->graphics->_fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
 
   if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
     _draw_pv_name (pv);
@@ -1344,9 +1344,9 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 
   if (TEST_FLAG (THINDRAWFLAG, PCB) ||
       (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
-    gui->graphics->thindraw_pcb_pad (gc, pad, clear, mask);
+    gui->graphics->_thindraw_pcb_pad (gc, pad, clear, mask);
   else
-    gui->graphics->fill_pcb_pad (gc, pad, clear, mask);
+    gui->graphics->_fill_pcb_pad (gc, pad, clear, mask);
 }
 
 static void
@@ -1514,9 +1514,9 @@ clearPin_callback (const BoxType * b, void *cl)
 {
   PinType *pin = (PinType *) b;
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    gui->graphics->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+    gui->graphics->_thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
   else
-    gui->graphics->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+    gui->graphics->_fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
   return 1;
 }
 
@@ -1534,7 +1534,7 @@ static int
 clearPin_callback_solid (const BoxType * b, void *cl)
 {
   PinType *pin = (PinType *) b;
-  gui->graphics->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+  gui->graphics->_fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
   return 1;
 }
 
@@ -1544,7 +1544,7 @@ clearPad_callback_solid (const BoxType * b, void *cl)
   PadType *pad = (PadType *) b;
   int *side = cl;
   if (ON_SIDE (pad, *side) && pad->Mask)
-    gui->graphics->fill_pcb_pad (Output.pmGC, pad, true, true);
+    gui->graphics->_fill_pcb_pad (Output.pmGC, pad, true, true);
   return 1;
 }
 
@@ -1574,7 +1574,7 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
     polygon.BoundingBox = *drawn_area;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
-  gui->graphics->fill_pcb_polygon (gc, &polygon, drawn_area);
+  gui->graphics->_fill_pcb_polygon (gc, &polygon, drawn_area);
   poly_FreeContours (&polygon.NoHoles);
 }
 
@@ -1606,7 +1606,7 @@ fill_outline_hole_cb (PLINE *pl, void *user_data)
 
   /* XXX: For some reason, common_fill_pcb_polygon doesn't work for all contours here.. not sure why */
 //  common_fill_pcb_polygon (info->gc, &polygon, NULL);
-  gui->graphics->fill_pcb_polygon (info->gc, &polygon, NULL);
+  gui->graphics->_fill_pcb_polygon (info->gc, &polygon, NULL);
 
   poly_FreeContours (&polygon.NoHoles);
 
@@ -1723,7 +1723,7 @@ GhidDrawMask (int side, BoxType * screen)
     polygon.BoundingBox = *screen;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
-  gui->graphics->fill_pcb_polygon (out->fgGC, &polygon, screen);
+  gui->graphics->_fill_pcb_polygon (out->fgGC, &polygon, screen);
   poly_FreeContours (&polygon.NoHoles);
 #endif
 
@@ -2280,7 +2280,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      we can't use the hidgl polygon drawing routine */
   /* TODO: We could use the GLU tessellator though */
   if (hidgl_stencil_bits() == 0)
-    ghid_graphics.fill_pcb_polygon = common_fill_pcb_polygon;
+    ghid_graphics._fill_pcb_polygon = common_fill_pcb_polygon;
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
