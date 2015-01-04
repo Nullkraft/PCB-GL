@@ -1563,9 +1563,8 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
 
   ensure_board_outline ();
 
+  memset (&polygon, 0, sizeof (polygon));
   polygon.Clipped = PCB->Data->outline;
-  polygon.NoHoles = NULL;
-  polygon.NoHolesValid = 0;
   if (drawn_area)
     polygon.BoundingBox = *drawn_area;
   polygon.Flags = NoFlags ();
@@ -1589,14 +1588,14 @@ fill_outline_hole_cb (PLINE *pl, void *user_data)
 
   poly_CopyContour (&pl_copy, pl);
   poly_InvContour (pl_copy);
+
+  memset (&polygon, 0, sizeof (polygon));
   polygon.Clipped = poly_Create ();
   poly_InclContour (polygon.Clipped, pl_copy);
 
 //  if (polygon.Clipped->contours == NULL)
 //    return 0;
 
-  polygon.NoHoles = NULL;
-  polygon.NoHolesValid = 0;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
 
@@ -1619,9 +1618,8 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
 
   ensure_board_outline ();
 
+  memset (&polygon, 0, sizeof (polygon));
   polygon.Clipped = PCB->Data->outline;
-  polygon.NoHoles = NULL;
-  polygon.NoHolesValid = 0;
   if (drawn_area)
     polygon.BoundingBox = *drawn_area;
   polygon.Flags = NoFlags ();
@@ -1651,7 +1649,6 @@ GhidDrawMask (int side, BoxType * screen)
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
   LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
   struct poly_info info;
-//  PolygonType polygon;
 
   OutputType *out = &Output;
 
@@ -1793,9 +1790,8 @@ ghid_draw_outline_between_layers (int from_layer, int to_layer, BoxType *drawn_a
 
   ensure_board_outline ();
 
+  memset (&polygon, 0, sizeof (polygon));
   polygon.Clipped = PCB->Data->outline;
-  polygon.NoHoles = NULL;
-  polygon.NoHolesValid = 0;
   if (drawn_area)
     polygon.BoundingBox = *drawn_area;
   polygon.Flags = NoFlags ();
