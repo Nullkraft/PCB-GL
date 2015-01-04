@@ -1391,8 +1391,8 @@ GhidDrawMask (int side, BoxType * screen)
   poly_Free (&polygon.Clipped);
   poly_FreeContours (&polygon.NoHoles);
   /* THE GL fill_pcb_polygon doesn't work whilst masking */
-//  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
-//  gui->graphics->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+//  hid_draw_fill_pcb_polygon (out->fgGC, &polygon, screen);
+//  hid_draw_fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   ghid_set_alpha_mult (out->fgGC, 1.0);
 
   hid_draw_use_mask (&ghid_graphics, HID_MASK_OFF);
