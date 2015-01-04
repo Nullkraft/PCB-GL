@@ -1,7 +1,7 @@
-Bottom: 7b9ea985a031fcfb7a2c14835475569ccfe50833
-Top:    a861ef868b1c83b4cadad51003eb35ce26e76fd1
+Bottom: ac5fcdbfc364ca7bdf4d0f272394a6573c11f19b
+Top:    5d94027056867027cafee706fe6188a70da174e8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-03 23:51:33 +0000
+Date:   2015-01-04 01:44:49 +0000
 
 Draw polygons in a more intelligent order
 
@@ -156,7 +156,7 @@ index 56a3d3a..115b353 100644
  }
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 03c82e5..07d7bfc 100644
+index eb0f7af..4b9c227 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1316,7 +1316,35 @@ static int
@@ -196,7 +196,7 @@ index 03c82e5..07d7bfc 100644
  
    set_layer_object_color (i->layer, (AnyObjectType *) polygon);
    gui->graphics->draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
-@@ -1470,7 +1498,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1469,7 +1497,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.layer = Layer;
          info.drawn_area = screen;
