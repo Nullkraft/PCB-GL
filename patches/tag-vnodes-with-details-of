@@ -1,7 +1,7 @@
-Bottom: addeba83c5432d2c7a9b6198befe1d1d4a2b44e1
-Top:    a84624132b40d000ed109d904bf252e67aa8eab6
+Bottom: 69f7f1ad25b0d714c78c023b068f9730b05a72d8
+Top:    aeeedf4ea385ac2afae8e3f13a978b6fb2e35cf1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 17:22:16 +0000
+Date:   2015-01-04 18:51:29 +0000
 
 Tag VNODEs with details of circular contour segments
 
@@ -78,10 +78,10 @@ index 685b614..af21e3f 100644
        last_x = this_x;
        last_y = this_y;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c8e1f0a..6dc5ebf 100644
+index c3c6cd2..4c895bf 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -866,9 +866,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -867,9 +867,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  
    double old_alpha_mult = gtk_gc->alpha_mult;
    common_thindraw_pcb_polygon (gc, poly, clip_box);
@@ -93,7 +93,7 @@ index c8e1f0a..6dc5ebf 100644
  }
  
  void
-@@ -1595,7 +1597,8 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
+@@ -1596,7 +1598,8 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
      polygon.BoundingBox = *drawn_area;
    polygon.Flags = NoFlags ();
    SET_FLAG (FULLPOLYFLAG, &polygon);
@@ -103,7 +103,7 @@ index c8e1f0a..6dc5ebf 100644
    poly_FreeContours (&polygon.NoHoles);
  }
  
-@@ -2643,7 +2646,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2644,7 +2647,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (priv);
