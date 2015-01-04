@@ -1,7 +1,7 @@
-Bottom: 0105c085a10b9adca38fdcf6f82cca8fdaa1ef18
-Top:    25dd5b12ac7d9ecb0438a5a7b2fa77747b33c165
+Bottom: fc04b4361fb2a127c8f621434837b5227f846465
+Top:    61f6caafdc59334ed8288bdafea6c452d4959078
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-03 23:51:22 +0000
+Date:   2015-01-04 17:03:43 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -959,10 +959,10 @@ index 58fe107..edfc7a9 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index e31cbe5..469aefd 100644
+index 106d7d3..23ade6b 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -325,28 +325,26 @@ nelma_write_materials(FILE * out)
+@@ -326,28 +326,26 @@ nelma_write_materials(FILE * out)
  static void 
  nelma_write_nets(FILE * out)
  {
@@ -997,7 +997,7 @@ index e31cbe5..469aefd 100644
  
  			/* pin_name_to_xy(pin, &x, &y); */
  
-@@ -378,7 +376,7 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -379,7 +377,7 @@ nelma_write_layer(FILE * out, int z, int h,
  	LibraryMenuType *net;
  	LibraryEntryType *pin;
  
@@ -1006,7 +1006,7 @@ index e31cbe5..469aefd 100644
  
  	fprintf(out, "layer %s {\n", name);
  	fprintf(out, "\theight = %d\n", h);
-@@ -389,11 +387,11 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -390,11 +388,11 @@ nelma_write_layer(FILE * out, int z, int h,
  		fprintf(out, "\tobjects = {\n");
  		netlist = PCB->NetlistLib;
  
@@ -1022,7 +1022,7 @@ index e31cbe5..469aefd 100644
  
  				if (m != 0 || n != 0)
  					fprintf(out, ",\n");
-@@ -499,17 +497,17 @@ nelma_write_objects(FILE * out)
+@@ -500,17 +498,17 @@ nelma_write_objects(FILE * out)
  	LibraryMenuType *net;
  	LibraryEntryType *pin;
  
