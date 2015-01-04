@@ -1,7 +1,7 @@
-Bottom: 1e36efedc77c15b5e07bdb554fcd234e7332a5dd
-Top:    cb905652f4dedebe49982874b6129a90a9f271b0
+Bottom: c70c04e8a04e111637bb7668b5b4b1983c1664b4
+Top:    f77c4db17e089f722da7bd5be054dd62cc845058
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 20:07:08 +0000
+Date:   2015-01-04 20:52:51 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -54,10 +54,10 @@ index b0cd9c8..a0385db 100644
        LayerType *sourcelayer = &PASTEBUFFER->Data->Layer[i];
        LayerType *destlayer = LAYER_PTR (i);
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 290d632..abe8acc 100644
+index 09a9fb9..49fab31 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -281,7 +281,7 @@ XORDrawBuffer (hidGC gc, BufferType *Buffer)
+@@ -270,7 +270,7 @@ XORDrawBuffer (hidGC gc, BufferType *Buffer)
    y = Crosshair.Y - Buffer->Y;
  
    /* draw all visible layers */
@@ -159,7 +159,7 @@ index 99b8653..bab217c 100644
    const Unit *unit;
    double scale = 0, d = 0;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 3a1575a..4304cc3 100644
+index 153b2e4..409736c 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -589,7 +589,7 @@ gerber_do_export (HID_Attr_Val * options)
@@ -172,7 +172,7 @@ index 3a1575a..4304cc3 100644
  
    save_thindraw = PCB->Flags;
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 504d5b0..fdb7a9b 100644
+index ff31cbe..58dd52c 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -74,14 +74,14 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -193,7 +193,7 @@ index 504d5b0..fdb7a9b 100644
    if (idx < 0)
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 68cdd3d..aa90864 100644
+index 3cd7e92..bd3247e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -135,7 +135,7 @@ ghid_set_layer (const char *name, int group, int empty)

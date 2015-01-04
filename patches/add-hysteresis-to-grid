@@ -1,7 +1,7 @@
-Bottom: cfdc14642e6934ed67efeb1bc2611ff2ee669245
-Top:    8db877bf1edc750dd665b8dab73418c3dcf62c05
+Bottom: 8a36d27984e9789a4cf8bdaa9a4fa84799287b09
+Top:    d6bf44f9fb8ecc9c07e143c1eba0d13894793794
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 20:07:07 +0000
+Date:   2015-01-04 20:52:50 +0000
 
 Add hysteresis to grid-snapping
 
@@ -9,10 +9,10 @@ Add hysteresis to grid-snapping
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 78b8111..6ae12e9 100644
+index b74e8bb..970db92 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -927,6 +927,11 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+@@ -901,6 +901,11 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
    struct snap_data snap_data;
    int ans;
  
@@ -24,7 +24,7 @@ index 78b8111..6ae12e9 100644
    Crosshair.X = CLAMP (X, Crosshair.MinX, Crosshair.MaxX);
    Crosshair.Y = CLAMP (Y, Crosshair.MinY, Crosshair.MaxY);
  
-@@ -953,11 +958,26 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
+@@ -927,11 +932,26 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
      }
  
    snap_data.crosshair = &Crosshair;

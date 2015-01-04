@@ -1,7 +1,7 @@
-Bottom: 1901597e70d6f1254a6321cfa5d9a06a4becc1e8
-Top:    4efdda093b660a293102621519e52c7da37c2789
+Bottom: 99e113f37a827e60b4ff2d75489ef23a3c1dbcf5
+Top:    5c95f6db4b180dcc5d761ff13fa32ac4b2841e7d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 20:07:09 +0000
+Date:   2015-01-04 20:52:51 +0000
 
 draw.c: Opencode the mask layer object drawing functions
 
@@ -13,11 +13,11 @@ colors which prevent (say) PS export working correctly for mask layer objects.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 26c0ff4..15c462d 100644
+index 7af5491..2f26c43 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -871,6 +871,50 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
-                                            drawn_area->X2, drawn_area->Y2);
+@@ -868,6 +868,50 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
+                                      drawn_area->X2, drawn_area->Y2);
  }
  
 +static int
@@ -67,7 +67,7 @@ index 26c0ff4..15c462d 100644
  /* ---------------------------------------------------------------------------
   * draws solder mask layer - this will cover nearly everything
   */
-@@ -878,6 +922,8 @@ void
+@@ -875,6 +919,8 @@ void
  DrawMask (int side, const BoxType *screen)
  {
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
@@ -75,9 +75,9 @@ index 26c0ff4..15c462d 100644
 +  struct poly_info info;
  
    if (thin)
-     gui->graphics->set_color (Output.pmGC, PCB->MaskColor);
-@@ -887,7 +933,12 @@ DrawMask (int side, const BoxType *screen)
-       gui->graphics->use_mask (HID_MASK_CLEAR);
+     hid_draw_set_color (Output.pmGC, PCB->MaskColor);
+@@ -884,7 +930,12 @@ DrawMask (int side, const BoxType *screen)
+       hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
      }
  
 -  DrawLayer (LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer), screen);
