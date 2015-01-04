@@ -837,7 +837,7 @@ step_make_gc (void)
   hidGC gc = (hidGC) calloc (1, sizeof (struct step_gc_struct));
   stepGC step_gc = (stepGC)gc;
 
-  gc->me_pointer = &step_hid;
+  gc->hid = &step_hid;
 
   step_gc->cap = Trace_Cap;
 
@@ -916,7 +916,7 @@ use_gc (hidGC gc)
       lastcap = lastcolor = -1;
       return;
     }
-  if (gc->me_pointer != &step_hid)
+  if (gc->hid != &step_hid)
     {
       fprintf (stderr, "Fatal: GC from another HID passed to step HID\n");
       abort ();
