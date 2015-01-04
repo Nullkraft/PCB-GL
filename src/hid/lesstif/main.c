@@ -4128,6 +4128,8 @@ hid_lesstif_init ()
   lesstif_graphics.fill_rect           = lesstif_fill_rect;
 
   lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
+  lesstif_graphics.draw_pcb_pad        = common_gui_draw_pcb_pad;
+  lesstif_graphics.draw_pcb_pv         = common_gui_draw_pcb_pv;
 
   hid_register_hid (&lesstif_hid);
 #include "lesstif_lists.h"
