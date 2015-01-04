@@ -1,5 +1,5 @@
 Bottom: a8a32cf7beb63b1ac591b23aab4c5f9d27d749ef
-Top:    a8a32cf7beb63b1ac591b23aab4c5f9d27d749ef
+Top:    5c9b6a3a31c5e8eeeb572f3c8b21e7a0cf6cd826
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-04 17:03:49 +0000
 
@@ -8,4 +8,43 @@ Hack to avoid GL calls when we're out of context
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index f46ed39..5f4a5a4 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -485,6 +485,15 @@ set_gl_color_for_gc (hidGC gc)
+     return;
+ 
+   free (priv->current_colorname);
++  priv->current_colorname = NULL;
++
++  /* If we can't set the GL colour right now, quit with
++   * current_colorname set to NULL, so we don't NOOP the
++   * next set_gl_color_for_gc call.
++   */
++  if (!priv->in_context)
++    return;
++
+   priv->current_colorname = strdup (gtk_gc->colorname);
+   priv->current_alpha_mult = gtk_gc->alpha_mult;
+ 
+@@ -548,9 +557,6 @@ set_gl_color_for_gc (hidGC gc)
+ #endif
+   }
+ 
+-  if(!priv->in_context)
+-    return;
+-
+   hidgl_flush_triangles (&buffer);
+   glColor4d (r, g, b, a);
+ }
+@@ -843,6 +849,9 @@ draw_crosshair (render_priv *priv)
+   static int done_once = 0;
+   static GdkColor cross_color;
+ 
++  if (!priv->in_context)
++    return;
++
+   if (!done_once)
+     {
+       done_once = 1;
