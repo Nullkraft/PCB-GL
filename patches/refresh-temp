@@ -1,0 +1,22 @@
+Bottom: 8a36d27984e9789a4cf8bdaa9a4fa84799287b09
+Top:    4628b82df6e1459b891cfb045e283234ea98dc48
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-04 20:56:54 +0000
+
+Refresh of use-calling-wrappers-rather
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 8704014..afad139 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -840,7 +840,7 @@ DrawSilk (int side, const BoxType * drawn_area)
+ 
+   if (gui->poly_after)
+     {
+-      hid_draw_use_mask (HID_MASK_AFTER);
++      hid_draw_use_mask (gui->graphics, HID_MASK_AFTER);
+       DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
+       /* draw package */
+       r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
