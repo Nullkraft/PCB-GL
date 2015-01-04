@@ -1,5 +1,5 @@
 Bottom: 6ff2b912f9c6bf04f0606e12ae338aa4e56a1868
-Top:    18c1ff3d9652065996b248372b40cf4cdde29926
+Top:    77558717525762df3805ba1708185d90264f6e89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-04 20:07:14 +0000
 
@@ -9,7 +9,7 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 3ada35b..6c17c95 100644
+index 3ada35b..d514b5b 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -5,6 +5,11 @@
@@ -24,7 +24,7 @@ index 3ada35b..6c17c95 100644
  
  
  static void
-@@ -638,3 +643,227 @@ common_draw_helpers_init (HID_DRAW *graphics)
+@@ -638,3 +643,191 @@ common_draw_helpers_init (HID_DRAW *graphics)
    graphics->fill_pcb_pv          = common_fill_pcb_pv;
    graphics->thindraw_pcb_pv      = common_thindraw_pcb_pv;
  }
@@ -153,30 +153,12 @@ index 3ada35b..6c17c95 100644
 +  return 1;
 +}
 +
-+static int
-+pin_callback (const BoxType * b, void *cl)
-+{
-+  //DrawPlainPin ((PinType *) b, false);
-+  return 1;
-+}
-+
-+static int
-+pad_callback (const BoxType * b, void *cl)
-+{
-+  //PadType *pad = (PadType *) b;
-+  //if (FRONT (pad))
-+    //DrawPad (pad, 0);
-+  return 1;
-+}
-+
 +void
 +common_export_region (HID *hid, BoxType *region)
 +{
 +  int plated;
 +  int nplated;
 +  int nunplated;
-+  int top_group;
-+  int bottom_group;
 +  int group;
 +  int save_swap = SWAP_IDENT;
 +  bool paste_empty;
@@ -184,28 +166,10 @@ index 3ada35b..6c17c95 100644
 +  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
 +  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
 +
-+  top_group    = GetLayerGroupNumberBySide (TOP_SIDE);
-+  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
-+
 +  /* draw all copper layer groups in group order */
 +  for (group = 0; group < max_copper_layer; group++)
-+    {
-+      if (gui->set_layer (0, group, 0))
-+        {
-+          if (DrawLayerGroup (group, region))
-+            {
-+              r_search (PCB->Data->via_tree, region, NULL, pin_callback, NULL);
-+              r_search (PCB->Data->pin_tree, region, NULL, pin_callback, NULL);
-+
-+              if (group == top_group || group == bottom_group)
-+                {
-+                  SWAP_IDENT = (group == bottom_group);
-+                  r_search (PCB->Data->pad_tree, region, NULL, pad_callback, NULL);
-+                  SWAP_IDENT = save_swap;
-+                }
-+            }
-+        }
-+    }
++    if (gui->set_layer (0, group, 0))
++      DrawLayerGroup (group, region);
 +
 +  count_holes (region, &nplated, &nunplated);
 +
@@ -253,7 +217,7 @@ index 3ada35b..6c17c95 100644
 +    PrintFab (Output.fgGC);
 +}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 64b568f..19098e8 100644
+index 64b568f..0912221 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -23,9 +23,11 @@
@@ -358,9 +322,9 @@ index 64b568f..19098e8 100644
 +  hidGC savepm = Output.pmGC;
 +
 +  gui = hid;
-+  Output.fgGC = hid_draw_make_gc ();
-+  Output.bgGC = hid_draw_make_gc ();
-+  Output.pmGC = hid_draw_make_gc ();
++  Output.fgGC = hid_draw_make_gc (&gerber_graphics);
++  Output.bgGC = hid_draw_make_gc (&gerber_graphics);
++  Output.pmGC = hid_draw_make_gc (&gerber_graphics);
 +
 +  hid->graphics->set_color (Output.pmGC, "erase");
 +  hid->graphics->set_color (Output.bgGC, "drill");
@@ -758,7 +722,7 @@ index 64b568f..19098e8 100644
    gerber_hid.set_crosshair       = gerber_set_crosshair;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bd3247e..e20555a 100644
+index bd3247e..3422a86 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -9,6 +9,9 @@
@@ -799,12 +763,12 @@ index bd3247e..e20555a 100644
 +  HID *old_gui = gui;
 +
 +  gui = &ghid_hid;
-+  Output.fgGC = gui->graphics->make_gc ();
-+  Output.bgGC = gui->graphics->make_gc ();
-+  Output.pmGC = gui->graphics->make_gc ();
++  Output.fgGC = hid_draw_make_gc (&ghid_graphics);
++  Output.bgGC = hid_draw_make_gc (&ghid_graphics);
++  Output.pmGC = hid_draw_make_gc (&ghid_graphics);
 +
-+  gui->graphics->set_color (Output.pmGC, "erase");
-+  gui->graphics->set_color (Output.bgGC, "drill");
++  hid_draw_set_color (Output.pmGC, "erase");
++  hid_draw_set_color (Output.bgGC, "drill");
 +
 +  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
 +  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
@@ -910,9 +874,9 @@ index bd3247e..e20555a 100644
 +      gui->end_layer ();
 +    }
 +
-+  gui->graphics->destroy_gc (Output.fgGC);
-+  gui->graphics->destroy_gc (Output.bgGC);
-+  gui->graphics->destroy_gc (Output.pmGC);
++  hid_draw_destroy_gc (Output.fgGC);
++  hid_draw_destroy_gc (Output.bgGC);
++  hid_draw_destroy_gc (Output.pmGC);
 +  gui = old_gui;
 +}
 +
@@ -929,7 +893,7 @@ index bd3247e..e20555a 100644
  
    ghid_draw_grid (&region);
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index fbb84f8..e2cc2b8 100644
+index fbb84f8..a457f0c 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -32,7 +32,7 @@
@@ -992,12 +956,12 @@ index fbb84f8..e2cc2b8 100644
 +  bool paste_empty;
 +
 +  gui = &ps_hid;
-+  Output.fgGC = gui->graphics->make_gc ();
-+  Output.bgGC = gui->graphics->make_gc ();
-+  Output.pmGC = gui->graphics->make_gc ();
++  Output.fgGC = hid_draw_make_gc (&ps_graphics);
++  Output.bgGC = hid_draw_make_gc (&ps_graphics);
++  Output.pmGC = hid_draw_make_gc (&ps_graphics);
 +
-+  gui->graphics->set_color (Output.pmGC, "erase");
-+  gui->graphics->set_color (Output.bgGC, "drill");
++  hid_draw_set_color (Output.pmGC, "erase");
++  hid_draw_set_color (Output.bgGC, "drill");
 +
 +  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
 +  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
@@ -1049,9 +1013,9 @@ index fbb84f8..e2cc2b8 100644
 +  if (set_layer ("fab", SL (FAB, 0), 0))
 +    PrintFab (Output.fgGC);
 +
-+  gui->graphics->destroy_gc (Output.fgGC);
-+  gui->graphics->destroy_gc (Output.bgGC);
-+  gui->graphics->destroy_gc (Output.pmGC);
++  hid_draw_destroy_gc (Output.fgGC);
++  hid_draw_destroy_gc (Output.bgGC);
++  hid_draw_destroy_gc (Output.pmGC);
 +  gui = old_gui;
 +}
 +
