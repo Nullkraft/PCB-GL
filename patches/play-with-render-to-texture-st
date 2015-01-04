@@ -1,5 +1,5 @@
 Bottom: a6f9c72779b6917d7d3de1e995a9eaa024275e95
-Top:    3a44edcae1d59a9d89e7ed3bb7435d5b972c2479
+Top:    73d7b1f8b7a52ca950b983a7cb0b31de471017f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-26 16:50:13 +0000
 
@@ -9,7 +9,7 @@ Play with render to texture stuff
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0e5fed5..3a75c5c 100644
+index 0e5fed5..bdb9d6b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -57,6 +57,9 @@ static hidGC current_gc = NULL;
@@ -211,7 +211,7 @@ index 0e5fed5..3a75c5c 100644
  
          if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
            hidgl_flush_triangles (&buffer);
-@@ -1658,6 +1719,33 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1658,6 +1719,37 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
        r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
        r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
        r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
@@ -224,14 +224,18 @@ index 0e5fed5..3a75c5c 100644
 +            r_search (PCB->Data->pin_tree, screen, NULL, pin_name_callback, Layer);
 +          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
 +          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
++          if (PCB->PinOn && group == top_group)
++            side = TOP_SIDE;
++          if (PCB->PinOn && group == bottom_group)
++            side = BOTTOM_SIDE;
 +          if ((group == top_group    && !SWAP_IDENT) ||
 +              (group == bottom_group &&  SWAP_IDENT))
 +            if (PCB->PinOn)
-+              r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, Layer);
++              r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
 +          if ((group == bottom_group && !SWAP_IDENT) ||
 +              (group == top_group    &&  SWAP_IDENT))
 +            if (PCB->PinOn)
-+              r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
++              r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
 +        }
 +        /* Erase drilled holes on this layer */
 +        hidgl_flush_triangles (&buffer);
@@ -245,7 +249,7 @@ index 0e5fed5..3a75c5c 100644
      }
    }
  
-@@ -1805,6 +1893,161 @@ ghid_draw_packages (BoxType *drawn_area)
+@@ -1805,6 +1897,161 @@ ghid_draw_packages (BoxType *drawn_area)
    r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_package_callback, NULL);
  }
  
@@ -407,7 +411,7 @@ index 0e5fed5..3a75c5c 100644
  void
  ghid_draw_everything (BoxType *drawn_area)
  {
-@@ -1905,11 +2148,71 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1905,11 +2152,71 @@ ghid_draw_everything (BoxType *drawn_area)
      double alpha_mult = global_view_2d ? pow (FADE_FACTOR, i) :
        (is_this_physical ? pow (FADE_FACTOR, number_phys_on_top) : 1.);
  
@@ -481,7 +485,7 @@ index 0e5fed5..3a75c5c 100644
  
  #if 1
      if (!global_view_2d && is_this_physical && is_next_physical) {
-@@ -1927,6 +2230,78 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1927,6 +2234,78 @@ ghid_draw_everything (BoxType *drawn_area)
  
    ghid_set_alpha_mult (Output.fgGC, 1.0);
  
@@ -560,7 +564,7 @@ index 0e5fed5..3a75c5c 100644
    if (TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
  
-@@ -1936,22 +2311,22 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1936,22 +2315,22 @@ ghid_draw_everything (BoxType *drawn_area)
    if (global_view_2d) {
      start_subcomposite ();
  
@@ -592,7 +596,7 @@ index 0e5fed5..3a75c5c 100644
      end_subcomposite ();
    }
  
-@@ -1979,6 +2354,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1979,6 +2358,7 @@ ghid_draw_everything (BoxType *drawn_area)
    }
  
    Settings.ShowBottomSide = save_show_solder;
@@ -600,7 +604,7 @@ index 0e5fed5..3a75c5c 100644
  }
  
  #define Z_NEAR 3.0
-@@ -2001,6 +2377,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2001,6 +2381,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 1, 0,
                       0, 0, 0, 1};
    bool horizon_problem = false;
@@ -611,10 +615,11 @@ index 0e5fed5..3a75c5c 100644
 +  static int old_fbo_width = -1;
 +  static int old_fbo_height = -1;
 +  static int old_no_layers = -1;
++  static bool one_shot = true;
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -2011,6 +2394,34 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2011,6 +2399,34 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    Output.bgGC = hid_draw_make_gc (&ghid_graphics);
    Output.pmGC = hid_draw_make_gc (&ghid_graphics);
  
@@ -649,7 +654,7 @@ index 0e5fed5..3a75c5c 100644
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
-@@ -2090,9 +2501,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2090,9 +2506,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadMatrixf ((GLfloat *)last_modelview_matrix);
  #endif
  
@@ -662,10 +667,18 @@ index 0e5fed5..3a75c5c 100644
    glClearColor (port->offlimits_color.red / 65535.,
                  port->offlimits_color.green / 65535.,
                  port->offlimits_color.blue / 65535.,
-@@ -2353,6 +2764,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2353,6 +2769,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    draw_lead_user (priv);
  
 +//  cleanup_fbo (port);
    hidgl_finish_render ();
    ghid_end_drawing (port, widget);
+ 
+@@ -2365,6 +2782,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   Output.pmGC = NULL;
+   g_timer_start (priv->time_since_expose);
+ 
++  one_shot = false;
+   return FALSE;
+ }
