@@ -1,0 +1,42 @@
+Bottom: 0a6424b7f51c42722e75489c9e7e68993458ce08
+Top:    514d95833a4a15ec81998face4fbad09b40bffed
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-04 22:27:27 +0000
+
+Refresh of temp-whitespace
+
+---
+
+diff --git a/src/draw_funcs.c b/src/draw_funcs.c
+index c30af86..30e42ac 100644
+--- a/src/draw_funcs.c
++++ b/src/draw_funcs.c
+@@ -57,8 +57,7 @@ draw_hole (PinType *pv, const BoxType *drawn_area, void *userdata)
+       hid_draw_set_line_cap (Output.fgGC, Round_Cap);
+       hid_draw_set_line_width (Output.fgGC, 0);
+ 
+-      hid_draw_arc (Output.fgGC, pv->X, pv->Y,
+-                               pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
++      hid_draw_arc (Output.fgGC, pv->X, pv->Y, pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
+     }
+ }
+ 
+@@ -122,8 +121,7 @@ draw_rat (RatType *rat, const BoxType *drawn_area, void *userdata)
+         hid_draw_set_line_width (Output.fgGC, 0);
+       else
+         hid_draw_set_line_width (Output.fgGC, w);
+-      hid_draw_arc (Output.fgGC, rat->Point1.X, rat->Point1.Y,
+-                               w * 2, w * 2, 0, 360);
++      hid_draw_arc (Output.fgGC, rat->Point1.X, rat->Point1.Y, w * 2, w * 2, 0, 360);
+     }
+   else
+     hid_draw_pcb_line (Output.fgGC, (LineType *) rat);
+@@ -225,7 +223,7 @@ set_pv_inlayer_color (PinType *pv, LayerType *layer, int type)
+ {
+   if (TEST_FLAG (WARNFLAG, pv))          hid_draw_set_color (Output.fgGC, PCB->WarnColor);
+   else if (TEST_FLAG (SELECTEDFLAG, pv)) hid_draw_set_color (Output.fgGC, (type == VIA_TYPE) ? PCB->ViaSelectedColor
+-                                                                                                   : PCB->PinSelectedColor);
++                                                                                             : PCB->PinSelectedColor);
+   else if (TEST_FLAG (FOUNDFLAG, pv))    hid_draw_set_color (Output.fgGC, PCB->ConnectedColor);
+   else                                   hid_draw_set_color (Output.fgGC, layer->Color);
+ }
