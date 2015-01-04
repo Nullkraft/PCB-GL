@@ -1,5 +1,5 @@
 Bottom: bad80b506be7995b8f42898b46e1ffbb83f2396a
-Top:    90bb4c1456b80a158b06076838cef43bdedfc4f3
+Top:    79239c355da4e30898ee1d6b5dec5786192c2e0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-04 20:07:16 +0000
 
@@ -12,7 +12,7 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0dd7633..05942ca 100644
+index 0dd7633..e758316 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -11,6 +11,7 @@
@@ -47,8 +47,8 @@ index 0dd7633..05942ca 100644
 +  poly_Free (&polygon.Clipped);
 +  poly_FreeContours (&polygon.NoHoles);
 +  /* THE GL fill_pcb_polygon doesn't work whilst masking */
-+//  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
-+//  gui->graphics->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
++//  hid_draw_fill_pcb_polygon (out->fgGC, &polygon, screen);
++//  hid_draw_fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
    ghid_set_alpha_mult (out->fgGC, 1.0);
  
    hid_draw_use_mask (&ghid_graphics, HID_MASK_OFF);
