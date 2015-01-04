@@ -1,7 +1,7 @@
-Bottom: 05c4aa3cec0ffdee54a71ed0dca5b907bd8c2070
-Top:    c0ffccb4e4b2c10ae091515a51afcadd04a29370
+Bottom: d5fa0d407d6b21930144c3dc7b2c84b94ab6da85
+Top:    0fb2fff0dc29321dd440fbbe1a57321df0fea70f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 20:07:22 +0000
+Date:   2015-01-04 22:22:14 +0000
 
 More rubberbanding algorithm tweaks
 
@@ -9,10 +9,10 @@ More rubberbanding algorithm tweaks
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 0b18f9b..0991421 100644
+index b379dab..1d20765 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -375,6 +375,7 @@ line_line_intersect (double x1, double y1, double x2, double y2,
+@@ -360,6 +360,7 @@ line_line_intersect (double x1, double y1, double x2, double y2,
  
    if (x != NULL) *x = 0.0;
    if (y != NULL) *y = 0.0;
@@ -20,7 +20,7 @@ index 0b18f9b..0991421 100644
  
    denom  = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
    numera = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
-@@ -388,6 +389,7 @@ line_line_intersect (double x1, double y1, double x2, double y2,
+@@ -373,6 +374,7 @@ line_line_intersect (double x1, double y1, double x2, double y2,
          {
            if (x != NULL) *x = (x1 + x2) / 2;
            if (y != NULL) *y = (y1 + y2) / 2;
@@ -28,7 +28,7 @@ index 0b18f9b..0991421 100644
            return true;
          }
        /* The line parallel */
-@@ -439,11 +441,13 @@ XORDrawMoveOrCopyObject (hidGC gc)
+@@ -424,11 +426,13 @@ XORDrawMoveOrCopyObject (hidGC gc)
  
      case LINE_TYPE:
        {
@@ -45,7 +45,7 @@ index 0b18f9b..0991421 100644
  
          /* draw the attached rubberband lines too */
          i = Crosshair.AttachedObject.RubberbandN;
-@@ -456,28 +460,49 @@ XORDrawMoveOrCopyObject (hidGC gc)
+@@ -441,28 +445,49 @@ XORDrawMoveOrCopyObject (hidGC gc)
                {
                  double multiplier;
  
@@ -101,7 +101,7 @@ index 0b18f9b..0991421 100644
  #if 0
          if (!set_min)
            min_multiplier = 0.0;
-@@ -492,7 +517,9 @@ XORDrawMoveOrCopyObject (hidGC gc)
+@@ -477,7 +502,9 @@ XORDrawMoveOrCopyObject (hidGC gc)
                               moving_line->Point1.X + dx + max_multiplier * (moving_line->Point2.X - moving_line->Point1.X),
                               moving_line->Point1.Y + dy + max_multiplier * (moving_line->Point2.Y - moving_line->Point1.Y),
                               moving_line->Thickness);
@@ -111,7 +111,7 @@ index 0b18f9b..0991421 100644
        }
  
      case ARC_TYPE:
-@@ -590,6 +617,7 @@ XORDrawMoveOrCopyObject (hidGC gc)
+@@ -569,6 +596,7 @@ XORDrawMoveOrCopyObject (hidGC gc)
    /* draw the attached rubberband lines too */
    i = Crosshair.AttachedObject.RubberbandN;
    ptr = Crosshair.AttachedObject.Rubberband;
@@ -119,7 +119,7 @@ index 0b18f9b..0991421 100644
    while (i)
      {
        PointType *point1, *point2;
-@@ -599,6 +627,7 @@ XORDrawMoveOrCopyObject (hidGC gc)
+@@ -578,6 +606,7 @@ XORDrawMoveOrCopyObject (hidGC gc)
  	  /* this is a rat going to a polygon.  do not draw for rubberband */;
  	}
        else if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
@@ -127,7 +127,7 @@ index 0b18f9b..0991421 100644
  	{
            if (Crosshair.AttachedObject.Type == LINE_TYPE)
              {
-@@ -637,18 +666,19 @@ XORDrawMoveOrCopyObject (hidGC gc)
+@@ -616,18 +645,19 @@ XORDrawMoveOrCopyObject (hidGC gc)
                    point1 = &ptr->Line->Point1;
                    point2 = &ptr->Line->Point2;
                  }

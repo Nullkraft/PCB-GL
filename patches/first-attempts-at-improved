@@ -1,7 +1,7 @@
-Bottom: 2f43f2b5448703561410c8ab5400da8b6310ca07
-Top:    05c4aa3cec0ffdee54a71ed0dca5b907bd8c2070
+Bottom: 2d3240347409faba89c4251bd0542ed45d6a4113
+Top:    d5fa0d407d6b21930144c3dc7b2c84b94ab6da85
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 20:07:22 +0000
+Date:   2015-01-04 22:22:13 +0000
 
 First attempts at improved rubberbanding logic
 
@@ -43,10 +43,10 @@ index e9c2697..13f8b54 100644
  LibraryEntryType * CreateNewConnection (LibraryMenuType *, char *);
  AttributeType * CreateNewAttribute (AttributeListType *list, char *name, char *value);
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 787081e..0b18f9b 100644
+index 1129410..b379dab 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -358,6 +358,57 @@ XORDrawInsertPointObject (hidGC gc)
+@@ -343,6 +343,57 @@ XORDrawInsertPointObject (hidGC gc)
      }
  }
  
@@ -104,7 +104,7 @@ index 787081e..0b18f9b 100644
  /* ---------------------------------------------------------------------------
   * draws the attached object while in MOVE_MODE or COPY_MODE
   */
-@@ -369,6 +420,14 @@ XORDrawMoveOrCopyObject (hidGC gc)
+@@ -354,6 +405,14 @@ XORDrawMoveOrCopyObject (hidGC gc)
    Coord dx = Crosshair.X - Crosshair.AttachedObject.X,
      dy = Crosshair.Y - Crosshair.AttachedObject.Y;
  
@@ -119,7 +119,7 @@ index 787081e..0b18f9b 100644
    switch (Crosshair.AttachedObject.Type)
      {
      case VIA_TYPE:
-@@ -380,12 +439,60 @@ XORDrawMoveOrCopyObject (hidGC gc)
+@@ -365,12 +424,60 @@ XORDrawMoveOrCopyObject (hidGC gc)
  
      case LINE_TYPE:
        {
@@ -185,7 +185,7 @@ index 787081e..0b18f9b 100644
        }
  
      case ARC_TYPE:
-@@ -493,27 +600,55 @@ XORDrawMoveOrCopyObject (hidGC gc)
+@@ -472,27 +579,55 @@ XORDrawMoveOrCopyObject (hidGC gc)
  	}
        else if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
  	{
