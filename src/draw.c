@@ -67,6 +67,7 @@
 #define	LARGE_TEXT_SIZE			3
 #define	N_TEXT_SIZES			4
 
+extern void ghid_set_lock_effects (hidGC gc, AnyObjectType *element);
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -154,6 +155,32 @@ pad_callback (const BoxType * b, void *cl)
 }
 
 static void
+DrawStrippedText (hidGC gc, ElementType *Element, int min_width)
+{
+  TextType text;
+  TextType *text_ptr;
+  char *end_string;
+
+  if (TEST_FLAG (NAMEONPCBFLAG, PCB) &&
+      TEST_FLAG (STRIPHIERFLAG, Element))
+    {
+      text_ptr = &text;
+      memcpy (text_ptr, &ELEMENT_TEXT (PCB, Element), sizeof (TextType));
+
+      /* Strip hierarchy */
+      end_string = strrchr (text.TextString, '/');
+      if (end_string != NULL)
+        text.TextString = end_string + 1;
+    }
+  else
+    {
+      text_ptr = &ELEMENT_TEXT (PCB, Element);
+    }
+
+  gui->graphics->draw_pcb_text (gc, text_ptr, min_width);
+}
+
+static void
 draw_element_name (ElementType *element)
 {
   if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
@@ -168,7 +195,7 @@ draw_element_name (ElementType *element)
     gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
   else
     gui->graphics->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-  gui->graphics->draw_pcb_text (Output.fgGC, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
+  DrawStrippedText (Output.fgGC, element, PCB->minSlk);
 }
 
 static int
