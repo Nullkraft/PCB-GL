@@ -1,5 +1,5 @@
 Bottom: b9a9b41070012e65f510522e03931dbc3d05f336
-Top:    9c7a11a9132ef74f773a939f515e62f754c3f76a
+Top:    e531696807585dd117f5cacf35f805f92bff759a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-04 18:56:32 +0000
 
@@ -33,10 +33,18 @@ index b8b3fe7..00c03ac 100644
  	break;
        }
 diff --git a/src/draw.c b/src/draw.c
-index c4dc81b..faa9359 100644
+index c4dc81b..bd79e36 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -159,6 +159,7 @@ draw_element_name (ElementType *element)
+@@ -67,6 +67,7 @@
+ #define	LARGE_TEXT_SIZE			3
+ #define	N_TEXT_SIZES			4
+ 
++void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
+ 
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
+@@ -159,6 +160,7 @@ draw_element_name (ElementType *element)
    if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
        TEST_FLAG (HIDENAMEFLAG, element))
      return;
@@ -44,7 +52,7 @@ index c4dc81b..faa9359 100644
    if (doing_pinout || doing_assy)
      gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
    else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, element)))
-@@ -239,6 +240,7 @@ rat_callback (const BoxType * b, void *cl)
+@@ -239,6 +241,7 @@ rat_callback (const BoxType * b, void *cl)
  static void
  draw_element_package (ElementType *element)
  {
@@ -52,7 +60,7 @@ index c4dc81b..faa9359 100644
    /* set color and draw lines, arcs, text and pins */
    if (doing_pinout || doing_assy)
      gui->graphics->set_color (Output.fgGC, PCB->ElementColor);
-@@ -473,6 +475,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+@@ -473,6 +476,7 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
        mark_size = MIN (mark_size, pad0->Thickness / 2);
      }
  
