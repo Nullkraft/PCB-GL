@@ -1390,8 +1390,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 	}
       else
 	{
-	  /* Need to check if this new hole means we need to kick out any old
-	   * ones for deletion */
+	  /* Need to check if this new hole means we need to kick out any old ones for reprocessing */
 	  while (1)
 	    {
 	      struct find_inside_info info;
@@ -1425,7 +1424,10 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 
 	      /* Remove hole from the contour */
 	      remove_contour (pa_info->pa, prev, info.result, TRUE);
-	      poly_DelContour (&info.result);
+
+	      /* Add hole as the next on the list to be processed in this very function */
+	      info.result->next = *src;
+	      *src = info.result;
 	    }
 	  /* End check for kicked out holes */
 
