@@ -942,6 +942,7 @@ gerber_make_gc (void)
   gerberGC gerber_gc = (gerberGC)gc;
 
   gc->hid = &gerber_hid;
+  gc->hid_draw = &gerber_graphics;
 
   gerber_gc->cap = Trace_Cap;
 

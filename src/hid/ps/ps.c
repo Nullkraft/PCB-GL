@@ -46,6 +46,9 @@ typedef struct ps_gc_struct
   int faded;
 } *psGC;
 
+HID ps_hid;
+static HID_DRAW ps_graphics;
+
 static const char *medias[] = {
   "A0", "A1", "A2", "A3", "A4", "A5",
   "A6", "A7", "A8", "A9", "A10",
@@ -1017,6 +1020,8 @@ ps_make_gc (void)
   psGC ps_gc = (psGC)gc;
 
   gc->hid = &ps_hid;
+  gc->hid_draw = &ps_graphics;
+
   ps_gc->cap = Trace_Cap;
 
   return gc;
@@ -1517,9 +1522,6 @@ ps_set_crosshair (int x, int y, int action)
 }
 
 #include "dolists.h"
-
-HID ps_hid;
-static HID_DRAW ps_graphics;
 
 void ps_ps_init (HID *hid)
 {

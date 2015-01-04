@@ -47,6 +47,8 @@ typedef struct step_gc_struct
   int faded;
 } *stepGC;
 
+HID step_hid;
+static HID_DRAW step_graphics;
 
 HID_Attribute step_attribute_list[] = {
   /* other HIDs expect this to be first.  */
@@ -838,6 +840,7 @@ step_make_gc (void)
   stepGC step_gc = (stepGC)gc;
 
   gc->hid = &step_hid;
+  gc->hid_draw = &step_graphics;
 
   step_gc->cap = Trace_Cap;
 
@@ -996,9 +999,6 @@ step_set_crosshair (int x, int y, int action)
 }
 
 #include "dolists.h"
-
-HID step_hid;
-static HID_DRAW step_graphics;
 
 void step_step_init (HID *hid)
 {
