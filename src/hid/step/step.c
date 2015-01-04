@@ -36,15 +36,16 @@
 static int step_set_layer (const char *name, int group, int empty);
 static void use_gc (hidGC gc);
 
-typedef struct hid_gc_struct
+typedef struct step_gc_struct
 {
-  HID *me_pointer;
+  struct hid_gc_struct hid_gc; /* Parent */
+
   EndCapStyle cap;
   Coord width;
   unsigned char r, g, b;
   int erase;
   int faded;
-} hid_gc_struct;
+} *stepGC;
 
 
 HID_Attribute step_attribute_list[] = {
@@ -833,10 +834,13 @@ step_set_layer (const char *name, int group, int empty)
 static hidGC
 step_make_gc (void)
 {
-  hidGC rv = (hidGC) calloc (1, sizeof (hid_gc_struct));
-  rv->me_pointer = &step_hid;
-  rv->cap = Trace_Cap;
-  return rv;
+  hidGC gc = (hidGC) calloc (1, sizeof (struct step_gc_struct));
+  stepGC step_gc = (stepGC)gc;
+
+  gc->me_pointer = &step_hid;
+  step_gc->cap = Trace_Cap;
+
+  return gc;
 }
 
 static void
@@ -854,32 +858,38 @@ step_use_mask (enum mask_mode mode)
 static void
 step_set_color (hidGC gc, const char *name)
 {
+  stepGC step_gc = (stepGC)gc;
+
   if (strcmp (name, "erase") == 0 || strcmp (name, "drill") == 0)
     {
-      gc->r = gc->g = gc->b = 255;
-      gc->erase = 1;
+      step_gc->r = step_gc->g = step_gc->b = 255;
+      step_gc->erase = 1;
     }
   else
     {
       int r, g, b;
       sscanf (name + 1, "%02x%02x%02x", &r, &g, &b);
-      gc->r = r;
-      gc->g = g;
-      gc->b = b;
-      gc->erase = 0;
+      step_gc->r = r;
+      step_gc->g = g;
+      step_gc->b = b;
+      step_gc->erase = 0;
     }
 }
 
 static void
 step_set_line_cap (hidGC gc, EndCapStyle style)
 {
-  gc->cap = style;
+  stepGC step_gc = (stepGC)gc;
+
+  step_gc->cap = style;
 }
 
 static void
 step_set_line_width (hidGC gc, Coord width)
 {
-  gc->width = width;
+  stepGC step_gc = (stepGC)gc;
+
+  step_gc->width = width;
 }
 
 static void
@@ -895,6 +905,8 @@ step_set_draw_faded (hidGC gc, int faded)
 static void
 use_gc (hidGC gc)
 {
+  stepGC step_gc = (stepGC)gc;
+
   static int lastcap = -1;
   static int lastcolor = -1;
 
@@ -908,19 +920,19 @@ use_gc (hidGC gc)
       fprintf (stderr, "Fatal: GC from another HID passed to step HID\n");
       abort ();
     }
-  if (lastcap != gc->cap)
+  if (lastcap != step_gc->cap)
     {
       fprintf (global.f, "%%d setlinecap %%d setlinejoin\n");
-      lastcap = gc->cap;
+      lastcap = step_gc->cap;
     }
-#define CBLEND(gc) (((gc->r)<<24)|((gc->g)<<16)|((gc->b)<<8))
+#define CBLEND(gc) (((step_gc->r)<<24)|((step_gc->g)<<16)|((step_gc->b)<<8))
   if (lastcolor != CBLEND (gc))
     {
       double r, g, b;
-      r = gc->r;
-      g = gc->g;
-      b = gc->b;
-      if (gc->r == gc->g && gc->g == gc->b)
+      r = step_gc->r;
+      g = step_gc->g;
+      b = step_gc->b;
+      if (step_gc->r == step_gc->g && step_gc->g == step_gc->b)
         fprintf (global.f, "%g gray\n", r / 255.0);
       else
         fprintf (global.f, "%g %g %g rgb\n", r / 255.0, g / 255.0, b / 255.0);

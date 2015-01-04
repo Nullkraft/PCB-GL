@@ -70,3 +70,8 @@ struct hid_draw_st
   void (*_thindraw_pcb_pv_hole) (hidGC gc, PinType *pv);
 
 };
+
+/* Base hidGC elements visible to any module */
+struct hid_gc_struct {
+  HID *me_pointer;   /* Used by HIDs to validate the GCs passed belong to them */
+};

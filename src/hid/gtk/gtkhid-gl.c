@@ -95,10 +95,9 @@ typedef struct render_priv {
   Coord lead_user_y;
 } render_priv;
 
-
-typedef struct hid_gc_struct
+typedef struct gtk_gc_struct
 {
-  HID *me_pointer;
+  struct hid_gc_struct hid_gc; /* Parent */
 
   const char *colorname;
   double alpha_mult;
@@ -106,9 +105,7 @@ typedef struct hid_gc_struct
   double saturation;
   Coord width;
   gint cap, join;
-}
-hid_gc_struct;
-
+} *gtkGC;
 
 static void draw_lead_user (render_priv *priv);
 static bool ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, double *pcb_x, double *pcb_y);
@@ -359,15 +356,17 @@ ghid_destroy_gc (hidGC gc)
 hidGC
 ghid_make_gc (void)
 {
-  hidGC rv;
+  hidGC gc = (hidGC) g_new0 (struct gtk_gc_struct, 1);
+  gtkGC gtk_gc = (gtkGC)gc;
 
-  rv = g_new0 (hid_gc_struct, 1);
-  rv->me_pointer = &ghid_hid;
-  rv->colorname = Settings.BackgroundColor;
-  rv->alpha_mult = 1.0;
-  rv->brightness = 1.0;
-  rv->saturation = 1.0;
-  return rv;
+  gc->me_pointer = &ghid_hid;
+
+  gtk_gc->colorname = Settings.BackgroundColor;
+  gtk_gc->alpha_mult = 1.0;
+  gtk_gc->brightness = 1.0;
+  gtk_gc->saturation = 1.0;
+
+  return gc;
 }
 
 static void
@@ -597,6 +596,7 @@ typedef struct
 static void
 set_gl_color_for_gc (hidGC gc)
 {
+  gtkGC gtk_gc = (gtkGC)gc;
   render_priv *priv = gport->render_priv;
   static void *cache = NULL;
   hidval cval;
@@ -605,10 +605,10 @@ set_gl_color_for_gc (hidGC gc)
   double luminance;
 
   if (priv->current_colorname != NULL &&
-      strcmp (priv->current_colorname, gc->colorname) == 0 &&
-      priv->current_alpha_mult == gc->alpha_mult &&
-      priv->current_brightness == gc->brightness &&
-      priv->current_saturation == gc->saturation)
+      strcmp (priv->current_colorname, gtk_gc->colorname) == 0 &&
+      priv->current_alpha_mult == gtk_gc->alpha_mult &&
+      priv->current_brightness == gtk_gc->brightness &&
+      priv->current_saturation == gtk_gc->saturation)
     return;
 
   free (priv->current_colorname);
@@ -621,21 +621,21 @@ set_gl_color_for_gc (hidGC gc)
   if (!priv->in_context)
     return;
 
-  priv->current_colorname = strdup (gc->colorname);
-  priv->current_alpha_mult = gc->alpha_mult;
-  priv->current_brightness = gc->brightness;
-  priv->current_saturation = gc->saturation;
+  priv->current_colorname = strdup (gtk_gc->colorname);
+  priv->current_alpha_mult = gtk_gc->alpha_mult;
+  priv->current_brightness = gtk_gc->brightness;
+  priv->current_saturation = gtk_gc->saturation;
 
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
-  if (strcmp (gc->colorname, "erase") == 0)
+  if (strcmp (gtk_gc->colorname, "erase") == 0)
     {
       r = gport->bg_color.red   / 65535.;
       g = gport->bg_color.green / 65535.;
       b = gport->bg_color.blue  / 65535.;
       a = 1.0;
     }
-  else if (strcmp (gc->colorname, "drill") == 0)
+  else if (strcmp (gtk_gc->colorname, "drill") == 0)
     {
       r = gport->offlimits_color.red   / 65535.;
       g = gport->offlimits_color.green / 65535.;
@@ -644,19 +644,19 @@ set_gl_color_for_gc (hidGC gc)
     }
   else
     {
-      if (hid_cache_color (0, gc->colorname, &cval, &cache))
+      if (hid_cache_color (0, gtk_gc->colorname, &cval, &cache))
         cc = (ColorCache *) cval.ptr;
       else
         {
           cc = (ColorCache *) malloc (sizeof (ColorCache));
           memset (cc, 0, sizeof (*cc));
           cval.ptr = cc;
-          hid_cache_color (1, gc->colorname, &cval, &cache);
+          hid_cache_color (1, gtk_gc->colorname, &cval, &cache);
         }
 
       if (!cc->color_set)
         {
-          if (gdk_color_parse (gc->colorname, &cc->color))
+          if (gdk_color_parse (gtk_gc->colorname, &cc->color))
             gdk_color_alloc (gport->colormap, &cc->color);
           else
             gdk_color_white (gport->colormap, &cc->color);
@@ -672,7 +672,7 @@ set_gl_color_for_gc (hidGC gc)
     }
   if (1) {
     double maxi, mult;
-    a *= gc->alpha_mult;
+    a *= gtk_gc->alpha_mult;
     if (!priv->trans_lines)
       a = 1.0;
     maxi = r;
@@ -686,17 +686,17 @@ set_gl_color_for_gc (hidGC gc)
 #endif
   }
 
-  r *= gc->brightness;
-  g *= gc->brightness;
-  b *= gc->brightness;
+  r *= gtk_gc->brightness;
+  g *= gtk_gc->brightness;
+  b *= gtk_gc->brightness;
 
   /* B/W Equivalent brightness */
   luminance = (r + g + b) / 3.0;
 
   /* Fade between B/W and colour */
-  r = r * gc->saturation + luminance * (1.0 - gc->saturation);
-  g = g * gc->saturation + luminance * (1.0 - gc->saturation);
-  b = b * gc->saturation + luminance * (1.0 - gc->saturation);
+  r = r * gtk_gc->saturation + luminance * (1.0 - gtk_gc->saturation);
+  g = g * gtk_gc->saturation + luminance * (1.0 - gtk_gc->saturation);
+  b = b * gtk_gc->saturation + luminance * (1.0 - gtk_gc->saturation);
 
   hidgl_flush_triangles (&buffer);
   glColor4d (r, g, b, a);
@@ -705,41 +705,53 @@ set_gl_color_for_gc (hidGC gc)
 void
 ghid_set_color (hidGC gc, const char *name)
 {
-  gc->colorname = name;
+  gtkGC gtk_gc = (gtkGC)gc;
+
+  gtk_gc->colorname = name;
   set_gl_color_for_gc (gc);
 }
 
 void
 ghid_set_alpha_mult (hidGC gc, double alpha_mult)
 {
-  gc->alpha_mult = alpha_mult;
+  gtkGC gtk_gc = (gtkGC)gc;
+
+  gtk_gc->alpha_mult = alpha_mult;
   set_gl_color_for_gc (gc);
 }
 
 static void
 ghid_set_saturation (hidGC gc, double saturation)
 {
-  gc->saturation = saturation;
+  gtkGC gtk_gc = (gtkGC)gc;
+
+  gtk_gc->saturation = saturation;
   set_gl_color_for_gc (gc);
 }
 
 static void
 ghid_set_brightness (hidGC gc, double brightness)
 {
-  gc->brightness = brightness;
+  gtkGC gtk_gc = (gtkGC)gc;
+
+  gtk_gc->brightness = brightness;
   set_gl_color_for_gc (gc);
 }
 
 void
 ghid_set_line_cap (hidGC gc, EndCapStyle style)
 {
-  gc->cap = style;
+  gtkGC gtk_gc = (gtkGC)gc;
+
+  gtk_gc->cap = style;
 }
 
 void
 ghid_set_line_width (hidGC gc, Coord width)
 {
-  gc->width = width;
+  gtkGC gtk_gc = (gtkGC)gc;
+
+  gtk_gc->width = width;
 }
 
 
@@ -791,18 +803,20 @@ use_gc (hidGC gc)
 void
 ghid_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
+  gtkGC gtk_gc = (gtkGC)gc;
   USE_GC (gc);
 
-  hidgl_draw_line (gc->cap, gc->width, x1, y1, x2, y2, gport->view.coord_per_px);
+  hidgl_draw_line (gtk_gc->cap, gtk_gc->width, x1, y1, x2, y2, gport->view.coord_per_px);
 }
 
 void
 ghid_draw_arc (hidGC gc, Coord cx, Coord cy, Coord xradius, Coord yradius,
                          Angle start_angle, Angle delta_angle)
 {
+  gtkGC gtk_gc = (gtkGC)gc;
   USE_GC (gc);
 
-  hidgl_draw_arc (gc->width, cx, cy, xradius, yradius,
+  hidgl_draw_arc (gtk_gc->width, cx, cy, xradius, yradius,
                   start_angle, delta_angle, gport->view.coord_per_px);
 }
 
@@ -843,9 +857,10 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 void
 ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
-  double old_alpha_mult = gc->alpha_mult;
+  gtkGC gtk_gc = (gtkGC)gc;
+  double old_alpha_mult = gtk_gc->alpha_mult;
   common_thindraw_pcb_polygon (gc, poly, clip_box);
-  ghid_set_alpha_mult (gc, gc->alpha_mult * 0.25);
+  ghid_set_alpha_mult (gc, gtk_gc->alpha_mult * 0.25);
   gui->graphics->_fill_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, old_alpha_mult);
 }
