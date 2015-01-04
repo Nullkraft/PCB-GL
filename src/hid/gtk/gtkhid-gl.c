@@ -639,17 +639,17 @@ set_gl_color_for_gc (hidGC gc)
 #endif
   }
 
-  r *= gc->brightness;
-  g *= gc->brightness;
-  b *= gc->brightness;
+  r *= gtk_gc->brightness;
+  g *= gtk_gc->brightness;
+  b *= gtk_gc->brightness;
 
   /* B/W Equivalent brightness */
   luminance = (r + g + b) / 3.0;
 
   /* Fade between B/W and colour */
-  r = r * gc->saturation + luminance * (1.0 - gc->saturation);
-  g = g * gc->saturation + luminance * (1.0 - gc->saturation);
-  b = b * gc->saturation + luminance * (1.0 - gc->saturation);
+  r = r * gtk_gc->saturation + luminance * (1.0 - gtk_gc->saturation);
+  g = g * gtk_gc->saturation + luminance * (1.0 - gtk_gc->saturation);
+  b = b * gtk_gc->saturation + luminance * (1.0 - gtk_gc->saturation);
 
   hidgl_flush_triangles (&buffer);
   glColor4d (r, g, b, a);
@@ -676,14 +676,18 @@ ghid_set_alpha_mult (hidGC gc, double alpha_mult)
 static void
 ghid_set_saturation (hidGC gc, double saturation)
 {
-  gc->saturation = saturation;
+  gtkGC gtk_gc = (gtkGC)gc;
+
+  gtk_gc->saturation = saturation;
   set_gl_color_for_gc (gc);
 }
 
 static void
 ghid_set_brightness (hidGC gc, double brightness)
 {
-  gc->brightness = brightness;
+  gtkGC gtk_gc = (gtkGC)gc;
+
+  gtk_gc->brightness = brightness;
   set_gl_color_for_gc (gc);
 }
 
