@@ -884,6 +884,8 @@ DrawMask (int side, const BoxType *screen)
       hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
     }
 
+  DrawLayer (LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer), screen);
+
   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
