@@ -1,4 +1,4 @@
-Bottom: 1b69bf9cc29bf9627f82a3f919b4da884760a228
+Bottom: ea701def481e4991f156c530593b727eebd1d6a8
 Top:    f03fedb5c4a294a9e454d37b33b1e04dc8f6eac8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-04 17:29:38 +0000
@@ -66,7 +66,7 @@ index 9afffd8..dc425f5 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 7430f85..ed86c1c 100644
+index 49009c7..ed86c1c 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -84,7 +84,7 @@ index 7430f85..ed86c1c 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -46,13 +50,26 @@
+@@ -46,6 +50,19 @@
  #define MAX_ZOOM_SCALE	10
  #define UUNIT	Settings.grid_unit->allow
  
@@ -104,14 +104,6 @@ index 7430f85..ed86c1c 100644
  typedef struct lesstif_gc_struct
  {
    struct hid_gc_struct hid_gc /* Parent */;
- 
-   Pixel color;
-   const char *colorname;
--  int width;
-+  Coord width;
-   EndCapStyle cap;
-   char xor_set;
-   char erase;
 @@ -1594,18 +1611,154 @@ lesstif_show_crosshair (int show)
    showing = show;
  }
