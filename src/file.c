@@ -408,7 +408,7 @@ real_load_pcb (char *Filename, bool revert)
     {
       RemovePCB (oldPCB);
 
-      CreateNewPCBPost (PCB, 1);
+      CreateNewPCBPost (PCB, 0);
       ResetStackAndVisibility ();
 
       /* update cursor location */
