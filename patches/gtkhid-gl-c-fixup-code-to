@@ -1,4 +1,4 @@
-Bottom: d36d5c3cbe2dcf862194435d75f617af2d535bc3
+Bottom: ca6c7814600f3cd5e3dd1e8cd44cfac895959b53
 Top:    8f0704dcc42b473e624ab49402458f7bae519904
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-07 01:09:17 +0000
@@ -16,21 +16,6 @@ change behaviour to apply test on a per-layer basis.
 
 ---
 
-diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index 30e42ac..bd3df87 100644
---- a/src/draw_funcs.c
-+++ b/src/draw_funcs.c
-@@ -430,6 +430,10 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
-   if (layer_num >= max_copper_layer)
-     return;
- 
-+  /* Pins, pads and vias are handled in elsewhere by exporters, don't duplicate */
-+  if (!gui->gui)
-+    return;
-+
-   r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_inlayer_callback, layer);
- 
-   /* draw element pads */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index 0888e88..71b60df 100644
 --- a/src/hid/gtk/gtkhid-gl.c
