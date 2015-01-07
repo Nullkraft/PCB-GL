@@ -146,7 +146,7 @@ pcb_colors_from_settings (PCBType *ptr)
  * creates a new PCB
  */
 PCBType *
-CreateNewPCB (bool SetDefaultNames)
+CreateNewPCB (void)
 {
   PCBType *ptr;
   int i;
@@ -220,21 +220,19 @@ CreateNewPCB (bool SetDefaultNames)
  * pre-existing PCB.
  */
 int
-CreateNewPCBPost (PCBType *pcb, int use_defaults)
+CreateNewPCBPost (PCBType *pcb)
 {
   /* copy default settings */
   pcb_colors_from_settings (pcb);
 
-  if (use_defaults)
-    {
-      if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, &pcb->Data->LayerN))
-	return 1;
+  if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, &pcb->Data->LayerN))
+    return 1;
 
-      pcb->Data->Layer[top_silk_layer].Name = strdup ("top silk");
-      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("bottom silk");
-      pcb->Data->Layer[top_soldermask_layer].Name = strdup ("top soldermask");
-      pcb->Data->Layer[bottom_soldermask_layer].Name = strdup ("bottom soldermask");
-    }
+  pcb->Data->Layer[top_silk_layer].Name = strdup ("top silk");
+  pcb->Data->Layer[bottom_silk_layer].Name = strdup ("bottom silk");
+  pcb->Data->Layer[top_soldermask_layer].Name = strdup ("top soldermask");
+  pcb->Data->Layer[bottom_soldermask_layer].Name = strdup ("bottom soldermask");
+
   return 0;
 }
 

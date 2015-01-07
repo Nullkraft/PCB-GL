@@ -196,7 +196,7 @@ parsepcb
 			{
 			  PCBType *pcb_save = PCB;
 
-			  CreateNewPCBPost (yyPCB, 1);
+			  CreateNewPCBPost (yyPCB);
 			/* initialize the polygon clipping now since
 			 * we didn't know the layer grouping before.
 			 */
@@ -226,7 +226,7 @@ parsepcb
 		    if (yyPCB != NULL)
 		      {
 			/* This case is when we load a footprint with file->open, or from the command line */
-			CreateNewPCBPost (yyPCB, 1);
+			CreateNewPCBPost (yyPCB);
 			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, &yyData->LayerN);
 			e = yyPCB->Data->Element->data; /* we know there's only one */
 			PCB = yyPCB;
