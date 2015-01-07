@@ -1,5 +1,5 @@
-Bottom: 565cdf686f2b7e5e3794cc1537299e1978cdf8e4
-Top:    db9da0b388b0c6cd54f3cc7285a1a1c44daa1c82
+Bottom: cb43feb7d8bfb1351e0edfe507d2320ddcee69a6
+Top:    cb43feb7d8bfb1351e0edfe507d2320ddcee69a6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-07 01:27:52 +0000
 
@@ -13,38 +13,4 @@ board which has missing layers. (Such as silkscreen or soldermask).
 
 ---
 
-diff --git a/src/file.c b/src/file.c
-index 3abca69..11ab7c3 100644
---- a/src/file.c
-+++ b/src/file.c
-@@ -408,7 +408,7 @@ real_load_pcb (char *Filename, bool revert)
-     {
-       RemovePCB (oldPCB);
- 
--      CreateNewPCBPost (PCB, 1);
-+      CreateNewPCBPost (PCB, 0);
-       ResetStackAndVisibility ();
- 
-       /* update cursor location */
-diff --git a/src/parse_y.y b/src/parse_y.y
-index fe675a2..629ccd6 100644
---- a/src/parse_y.y
-+++ b/src/parse_y.y
-@@ -196,7 +196,7 @@ parsepcb
- 			{
- 			  PCBType *pcb_save = PCB;
- 
--			  CreateNewPCBPost (yyPCB, 1);
-+			  CreateNewPCBPost (yyPCB, 0);
- 			/* initialize the polygon clipping now since
- 			 * we didn't know the layer grouping before.
- 			 */
-@@ -226,7 +226,7 @@ parsepcb
- 		    if (yyPCB != NULL)
- 		      {
- 			/* This case is when we load a footprint with file->open, or from the command line */
--			CreateNewPCBPost (yyPCB, 1);
-+			CreateNewPCBPost (yyPCB, 0);
- 			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, &yyData->LayerN);
- 			e = yyPCB->Data->Element->data; /* we know there's only one */
- 			PCB = yyPCB;
+
