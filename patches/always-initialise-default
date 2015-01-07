@@ -1,0 +1,14 @@
+Bottom: db9da0b388b0c6cd54f3cc7285a1a1c44daa1c82
+Top:    db9da0b388b0c6cd54f3cc7285a1a1c44daa1c82
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-07 00:49:15 +0000
+
+Always initialise default layernames for the PCB (silk, soldermask etc..)
+
+This avoids retaining the default PCB stackup layer names when loading a
+board which has missing layers. (Such as silkscreen or soldermask).
+
+
+---
+
+
