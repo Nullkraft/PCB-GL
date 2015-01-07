@@ -1,0 +1,29 @@
+Bottom: 8f0704dcc42b473e624ab49402458f7bae519904
+Top:    cc4f4916ad7abf04ae2bfc5cf321af3385ce82c1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-07 01:42:12 +0000
+
+Refresh of gtkhid-gl-c-fixup-code-to
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 71b60df..729803e 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1368,6 +1368,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+   int first_run = 1;
+   int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
++  bool is_outline;
+ 
+   if (!gui->set_layer (0, group, 0))
+     return 0;
+@@ -1376,7 +1377,6 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+   for (i = n_entries - 1; i >= 0; i--) {
+     layernum = layers[i];
+     Layer = PCB->Data->Layer + layers[i];
+-    bool is_outline;
+ 
+     is_outline = strcmp (Layer->Name, "outline") == 0 ||
+                  strcmp (Layer->Name, "route") == 0;
