@@ -3,11 +3,12 @@ Top:    3cd02061ba0e34ca6fc3bec21b2c3da044e8040e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-07 00:56:50 +0000
 
-Remove SetDefaults parameter from CreateNewPCB and use_default from CreateNewPCBPost
+Remove unused / unecessary parameters from CreateNewPCB and CreateNewPCBPost
 
-The SetDefaults parameter to CreateNewPCB was not used (despite various callers
-passing either true or false). The use_default parameter to CreateNewPCBPost only
-had callers passing '1' at this point, so the parameter is unnecessary.
+The SetDefaultNames parameter to CreateNewPCB was not used (despite various
+callers passing both true and false). The use_default parameter to
+CreateNewPCBPost only had callers passing '1' at this point, so the
+parameter can be removed.
 
 
 ---
