@@ -1368,6 +1368,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
   int first_run = 1;
   int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
+  bool is_outline;
 
   if (!gui->set_layer (0, group, 0))
     return 0;
@@ -1376,7 +1377,6 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
   for (i = n_entries - 1; i >= 0; i--) {
     layernum = layers[i];
     Layer = PCB->Data->Layer + layers[i];
-    bool is_outline;
 
     is_outline = strcmp (Layer->Name, "outline") == 0 ||
                  strcmp (Layer->Name, "route") == 0;
