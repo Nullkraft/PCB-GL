@@ -1,7 +1,7 @@
-Bottom: ca17a6a1b06e036763e79f30c60670965447155f
-Top:    629b649af57e1c96ee532663ee67a50ae676866b
+Bottom: d1fc5b25e6d39f4fa2a20e0716ae72d8206f4a9f
+Top:    8e14104d25ac5c0378c3051268eb676487c8c530
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 22:31:32 +0000
+Date:   2015-01-07 01:48:05 +0000
 
 32bit: Fix GL HID zoom out, due to over-shooting Coord data-type
 
@@ -91,7 +91,7 @@ index e4fab83..23b159c 100644
    return true;
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d3fae40..34b996a 100644
+index 1a536fd..74fb539 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -105,11 +105,53 @@ typedef struct gtk_gc_struct

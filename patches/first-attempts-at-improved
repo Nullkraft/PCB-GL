@@ -1,7 +1,7 @@
-Bottom: 0cc3e01f8b10ead24983e4ab585f2a849aa51a3d
-Top:    756e4c218acc41d3eded7ee9e095dc8290df3b36
+Bottom: 06fc22d2207556a895229af225573d22911d8fb8
+Top:    4c29d6ffe0d744905bb9a09d9c5254a0e800a45d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 22:31:32 +0000
+Date:   2015-01-07 01:48:04 +0000
 
 First attempts at improved rubberbanding logic
 
@@ -9,10 +9,10 @@ First attempts at improved rubberbanding logic
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 7da96ee..66f1d11 100644
+index fe9619a..ab236bd 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -956,7 +956,7 @@ CreateDefaultFont (PCBType *pcb)
+@@ -957,7 +957,7 @@ CreateDefaultFont (PCBType *pcb)
   */
  RubberbandType *
  CreateNewRubberbandEntry (LayerType *Layer,
@@ -21,7 +21,7 @@ index 7da96ee..66f1d11 100644
  {
    RubberbandType *ptr = GetRubberbandMemory ();
  
-@@ -966,6 +966,7 @@ CreateNewRubberbandEntry (LayerType *Layer,
+@@ -967,6 +967,7 @@ CreateNewRubberbandEntry (LayerType *Layer,
    ptr->Layer = Layer;
    ptr->Line = Line;
    ptr->MovedPoint = MovedPoint;
@@ -30,7 +30,7 @@ index 7da96ee..66f1d11 100644
  }
  
 diff --git a/src/create.h b/src/create.h
-index e9c2697..13f8b54 100644
+index f49f6d0..3554b46 100644
 --- a/src/create.h
 +++ b/src/create.h
 @@ -60,7 +60,7 @@ PinType * CreateNewPin (ElementType *, Coord, Coord, Coord, Coord, Coord, Coord,
