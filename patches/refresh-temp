@@ -1,0 +1,44 @@
+Bottom: db9da0b388b0c6cd54f3cc7285a1a1c44daa1c82
+Top:    565cdf686f2b7e5e3794cc1537299e1978cdf8e4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-07 00:49:22 +0000
+
+Refresh of always-initialise-default
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index 11ab7c3..3abca69 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -408,7 +408,7 @@ real_load_pcb (char *Filename, bool revert)
+     {
+       RemovePCB (oldPCB);
+ 
+-      CreateNewPCBPost (PCB, 0);
++      CreateNewPCBPost (PCB, 1);
+       ResetStackAndVisibility ();
+ 
+       /* update cursor location */
+diff --git a/src/parse_y.y b/src/parse_y.y
+index 629ccd6..fe675a2 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -196,7 +196,7 @@ parsepcb
+ 			{
+ 			  PCBType *pcb_save = PCB;
+ 
+-			  CreateNewPCBPost (yyPCB, 0);
++			  CreateNewPCBPost (yyPCB, 1);
+ 			/* initialize the polygon clipping now since
+ 			 * we didn't know the layer grouping before.
+ 			 */
+@@ -226,7 +226,7 @@ parsepcb
+ 		    if (yyPCB != NULL)
+ 		      {
+ 			/* This case is when we load a footprint with file->open, or from the command line */
+-			CreateNewPCBPost (yyPCB, 0);
++			CreateNewPCBPost (yyPCB, 1);
+ 			ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, &yyData->LayerN);
+ 			e = yyPCB->Data->Element->data; /* we know there's only one */
+ 			PCB = yyPCB;
