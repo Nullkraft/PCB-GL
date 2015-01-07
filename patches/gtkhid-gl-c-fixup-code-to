@@ -3,7 +3,7 @@ Top:    2333dae67e256c7c8e7dedaa29ed6ac3a1ca7bbf
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-07 01:09:17 +0000
 
-gtkhid-gl.c: Fixup code to determine whether we draw pins/vias to match draw.c
+Fixup code to determine whether we draw pins/vias on a given layer
 
 The net change of this patch is that we consider whether to draw pins/vias
 for each layer within the layer group. Previously, if we encoundered a layer
