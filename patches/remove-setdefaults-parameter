@@ -1,5 +1,5 @@
 Bottom: 65ec346f8ca209df364353d8fb261901fe6c442c
-Top:    e0e829af3daeba6119c1f7801e924a5fc314f7dc
+Top:    398068a27cc9f013e6106f95f43243416468bd4d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-07 00:56:50 +0000
 
@@ -12,20 +12,18 @@ callers passing both true and false), so remove it.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index b8b3fe7..c886d79 100644
+index b8b3fe7..88ac6cc 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -5938,8 +5938,8 @@ ActionNew (int argc, char **argv, Coord x, Coord y)
+@@ -5938,7 +5938,7 @@ ActionNew (int argc, char **argv, Coord x, Coord y)
  	SaveInTMP ();
        RemovePCB (PCB);
        PCB = NULL;
 -      PCB = CreateNewPCB (true);
--      CreateNewPCBPost (PCB, 1);
 +      PCB = CreateNewPCB ();
-+      CreateNewPCBPost (PCB);
+       CreateNewPCBPost (PCB, 1);
  
        /* setup the new name and reset some values to default */
-       free (PCB->Name);
 diff --git a/src/buffer.c b/src/buffer.c
 index 3b51ba1..789985d 100644
 --- a/src/buffer.c
@@ -40,7 +38,7 @@ index 3b51ba1..789985d 100644
    /* new data isn't added to the undo list */
    if (!ParsePCB (newPCB, Filename))
 diff --git a/src/create.c b/src/create.c
-index 2f7bc35..1f85ca6 100644
+index 2f7bc35..fe9619a 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -146,7 +146,7 @@ pcb_colors_from_settings (PCBType *ptr)
@@ -52,20 +50,11 @@ index 2f7bc35..1f85ca6 100644
  {
    PCBType *ptr;
    int i;
-@@ -220,7 +220,7 @@ CreateNewPCB (bool SetDefaultNames)
-  * pre-existing PCB.
-  */
- int
--CreateNewPCBPost (PCBType *pcb, int use_defaults)
-+CreateNewPCBPost (PCBType *pcb)
- {
-   /* copy default settings */
-   pcb_colors_from_settings (pcb);
 diff --git a/src/create.h b/src/create.h
-index e9c2697..f352e06 100644
+index e9c2697..f49f6d0 100644
 --- a/src/create.h
 +++ b/src/create.h
-@@ -39,10 +39,10 @@ void CreateBeLenient (bool);
+@@ -39,7 +39,7 @@ void CreateBeLenient (bool);
  
  DataType * CreateNewBuffer (void);
  void pcb_colors_from_settings (PCBType *);
@@ -73,11 +62,7 @@ index e9c2697..f352e06 100644
 +PCBType * CreateNewPCB ();
  /* Called after PCB->Data->LayerN is set.  Returns zero if no errors,
     else nonzero.  */
--int CreateNewPCBPost (PCBType *, int /* set defaults */);
-+int CreateNewPCBPost (PCBType *);
- PinType * CreateNewVia (DataType *, Coord, Coord, Coord, Coord, Coord, Coord, char *, FlagType);
- LineType * CreateDrawnLineOnLayer (LayerType *, Coord, Coord, Coord, Coord, Coord, Coord, FlagType);
- LineType * CreateNewLineOnLayer (LayerType *, Coord, Coord, Coord, Coord, Coord, Coord, FlagType);
+ int CreateNewPCBPost (PCBType *, int /* set defaults */);
 diff --git a/src/file.c b/src/file.c
 index 11ab7c3..83f7473 100644
 --- a/src/file.c
@@ -92,10 +77,10 @@ index 11ab7c3..83f7473 100644
  #ifdef DEBUG
    double elapsed;
 diff --git a/src/main.c b/src/main.c
-index a217134..673a7b9 100644
+index a217134..3c79bac 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -1990,10 +1990,10 @@ main (int argc, char *argv[])
+@@ -1990,7 +1990,7 @@ main (int argc, char *argv[])
      }
  
    /* Create a new PCB object in memory */
@@ -103,7 +88,4 @@ index a217134..673a7b9 100644
 +  PCB = CreateNewPCB ();
    ParseGroupString (Settings.Groups, &PCB->LayerGroups, &PCB->Data->LayerN);
    /* Add silk layers to newly created PCB */
--  CreateNewPCBPost (PCB, 1);
-+  CreateNewPCBPost (PCB);
-   if (argc > 1)
-     command_line_pcb = argv[1];
+   CreateNewPCBPost (PCB, 1);
