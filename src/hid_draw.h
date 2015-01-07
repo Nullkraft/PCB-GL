@@ -55,13 +55,16 @@ struct hid_draw_st
   void (*draw_pcb_arc) (hidGC gc, ArcType *arc);
   void (*draw_pcb_text) (hidGC gc, TextType *, Coord);
   void (*draw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+  void (*draw_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
+  void (*draw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
 
-  void (*fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
-  void (*thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
-  void (*fill_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
-  void (*thindraw_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
-  void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
-  void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+  /* The following are not meant to be called outside of the GUI implementations of the above APIs */
+  void (*_fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+  void (*_thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+  void (*_fill_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
+  void (*_thindraw_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
+  void (*_fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+  void (*_thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
 
 };
 
@@ -182,39 +185,51 @@ hid_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
   gc->hid_draw->draw_pcb_polygon (gc, poly, clip_box);
 }
 
-
 inline void
-hid_draw_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+hid_draw_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
 {
-  gc->hid_draw->fill_pcb_polygon (gc, poly, clip_box);
+  gc->hid_draw->draw_pcb_pad (gc, pad, clip, mask);
 }
 
 inline void
-hid_draw_thin_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+hid_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
 {
-  gc->hid_draw->thindraw_pcb_polygon (gc, poly, clip_box);
+  fg_gc->hid_draw->draw_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
+}
+
+
+inline void
+hid_draw__fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+{
+  gc->hid_draw->_fill_pcb_polygon (gc, poly, clip_box);
 }
 
 inline void
-hid_draw_fill_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
+hid_draw__thin_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
-  gc->hid_draw->fill_pcb_pad (gc, pad, clip, mask);
+  gc->hid_draw->_thindraw_pcb_polygon (gc, poly, clip_box);
 }
 
 inline void
-hid_draw_thin_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
+hid_draw__fill_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
 {
-  gc->hid_draw->thindraw_pcb_pad (gc, pad, clip, mask);
+  gc->hid_draw->_fill_pcb_pad (gc, pad, clip, mask);
 }
 
 inline void
-hid_draw_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
+hid_draw__thin_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
 {
-  fg_gc->hid_draw->fill_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
+  gc->hid_draw->_thindraw_pcb_pad (gc, pad, clip, mask);
 }
 
 inline void
-hid_draw_thin_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
+hid_draw__fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
 {
-  fg_gc->hid_draw->thindraw_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
+  fg_gc->hid_draw->_fill_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
+}
+
+inline void
+hid_draw__thin_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
+{
+  fg_gc->hid_draw->_thindraw_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
 }
