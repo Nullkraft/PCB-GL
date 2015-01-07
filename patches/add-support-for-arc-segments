@@ -1,7 +1,7 @@
-Bottom: da8127a6cf64f62e72a427775ea428e98fbbb86a
-Top:    db895f0b49fc42dbd20be012b58119b55016015a
+Bottom: e4e01fb385b894c642e529472df71950521c38c2
+Top:    3b5b4653c55cbf58522322f7354452d57dd03d9a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 22:41:15 +0000
+Date:   2015-01-07 01:48:10 +0000
 
 Add support for arc segments in polygon object outline definitions
 
@@ -24,7 +24,7 @@ EXTREME FEATURE IN EITHER THE +/-X or +/-Y DIRECTIONS.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 92b2ca7..936d702 100644
+index 0c70e58..4f26986 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1433,7 +1433,8 @@ NotifyMode (void)
@@ -77,10 +77,10 @@ index a0385db..5651997 100644
    SetPolygonBoundingBox (Dest);
    Dest->Flags = Src->Flags;
 diff --git a/src/create.c b/src/create.c
-index 69877d6..7a58e9f 100644
+index 7333684..bd18765 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -586,10 +586,10 @@ CreateNewPolygonFromRectangle (LayerType *Layer,
+@@ -587,10 +587,10 @@ CreateNewPolygonFromRectangle (LayerType *Layer,
    if (!polygon)
      return (polygon);
  
@@ -95,7 +95,7 @@ index 69877d6..7a58e9f 100644
    SetPolygonBoundingBox (polygon);
    if (!Layer->polygon_tree)
      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-@@ -654,13 +654,14 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
+@@ -655,13 +655,14 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
   * creates a new point in a polygon
   */
  PointType *
@@ -112,7 +112,7 @@ index 69877d6..7a58e9f 100644
    return (point);
  }
 diff --git a/src/create.h b/src/create.h
-index fa49a1b..5b6cfdd 100644
+index b1a7385..fa30c3f 100644
 --- a/src/create.h
 +++ b/src/create.h
 @@ -51,7 +51,7 @@ ArcType * CreateNewArcOnLayer (LayerType *, Coord, Coord, Coord, Coord, Angle, A

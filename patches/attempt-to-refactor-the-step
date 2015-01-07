@@ -1,7 +1,7 @@
-Bottom: 896f51da04b86f35d273c4213290a3fe15bafab5
-Top:    f98656cb30ffc5ecc150549b21bb8ef0854ff0c1
+Bottom: b4b2597a985c1d7de514bab2c5a5cb41b4f83756
+Top:    33f2989046342435319992aebff7aec024897594
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 22:41:14 +0000
+Date:   2015-01-07 01:48:09 +0000
 
 Attempt to refactor the STEP emission somewhat
 
@@ -108,7 +108,7 @@ index bb9cd31..44f6e88 100644
  
  face3d *make_face3d (void);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 284651c..a2e8867 100644
+index 6ce0a10..f3a0eab 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,7 @@

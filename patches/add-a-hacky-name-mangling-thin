@@ -1,7 +1,7 @@
-Bottom: 5f01efd67962c1877d99d51e8754db497124a883
-Top:    3e0ab6a23ed224476afdc1acc3498263b4f6a8b6
+Bottom: f0ff539b24b7421282d3a56c5b4c53a61a2948ad
+Top:    02795ca3cd757ede290e14fffe8c8ff94e00859a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-04 22:41:13 +0000
+Date:   2015-01-07 01:48:08 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -20,7 +20,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 66f1d11..dc03975 100644
+index ab236bd..0f7a8ba 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -35,6 +35,7 @@
@@ -40,7 +40,7 @@ index 66f1d11..dc03975 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -672,6 +675,57 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
+@@ -673,6 +676,57 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
    return Polygon;
  }
  
@@ -98,7 +98,7 @@ index 66f1d11..dc03975 100644
  /* ---------------------------------------------------------------------------
   * creates an new element
   * memory is allocated if needed
-@@ -688,6 +742,18 @@ CreateNewElement (DataType *Data, FontType *PCBFont, FlagType Flags,
+@@ -689,6 +743,18 @@ CreateNewElement (DataType *Data, FontType *PCBFont, FlagType Flags,
    printf("Entered CreateNewElement.....\n");
  #endif
  
@@ -118,7 +118,7 @@ index 66f1d11..dc03975 100644
  
    /* copy values and set additional information */
 diff --git a/src/create.h b/src/create.h
-index 13f8b54..fa49a1b 100644
+index 3554b46..b1a7385 100644
 --- a/src/create.h
 +++ b/src/create.h
 @@ -53,6 +53,7 @@ TextType * CreateNewText (LayerType *, FontType *, Coord, Coord, unsigned, int,
@@ -130,7 +130,7 @@ index 13f8b54..fa49a1b 100644
  LineType * CreateNewLineInElement (ElementType *, Coord, Coord, Coord, Coord, Coord);
  ArcType * CreateNewArcInElement (ElementType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord);
 diff --git a/src/file.c b/src/file.c
-index 11ab7c3..3bd4738 100644
+index 83f7473..ae9af8f 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -403,6 +403,9 @@ real_load_pcb (char *Filename, bool revert)

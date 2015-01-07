@@ -1,7 +1,7 @@
-Bottom: 4bd6300396629e99d8c10c842c050b815b70e1d7
-Top:    da8127a6cf64f62e72a427775ea428e98fbbb86a
+Bottom: edc35c99ad6c7791847f7f1406c591f13f1fb7e8
+Top:    e4e01fb385b894c642e529472df71950521c38c2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 22:41:14 +0000
+Date:   2015-01-07 01:48:10 +0000
 
 Refactor arc bounding box calculations to separate out thin case
 
@@ -11,7 +11,7 @@ The thin-arc case will be useful for arc-segments within polycurves.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 3b51ba1..2564e69 100644
+index 789985d..ec006d0 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -1437,6 +1437,7 @@ MirrorBuffer (BufferType *Buffer)
@@ -31,10 +31,10 @@ index 3b51ba1..2564e69 100644
      r_insert_entry (layer->arc_tree, (BoxType *)arc, 0);
    }
 diff --git a/src/create.c b/src/create.c
-index dc03975..69877d6 100644
+index 0f7a8ba..7333684 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -564,6 +564,7 @@ CreateNewArcOnLayer (LayerType *Layer,
+@@ -565,6 +565,7 @@ CreateNewArcOnLayer (LayerType *Layer,
    Arc->Height = height;
    Arc->StartAngle = sa;
    Arc->Delta = dir;
