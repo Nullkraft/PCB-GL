@@ -1,7 +1,7 @@
-Bottom: a5d541d278ed40cf08bf80a803ec9ada17ed82e6
-Top:    514d95833a4a15ec81998face4fbad09b40bffed
+Bottom: d3d19ff3bd931e6c3046f4fc3a05cf030e221e1c
+Top:    5375352a941c8ce9740dc058737544c930ad2537
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-04 22:31:30 +0000
+Date:   2015-01-07 01:48:03 +0000
 
 Revert "Just make a black background."
 
@@ -11,7 +11,7 @@ This reverts commit cf6c95ade3be149a5a8659bd13a80eedc4092fd2.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 930e9b5..b49f83d 100644
+index a8751ad..63c4df5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -2090,9 +2090,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,

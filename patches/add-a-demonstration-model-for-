@@ -1,7 +1,7 @@
-Bottom: 672309390520ea9fec25d593944032aba45ccb65
-Top:    a0e6504422c528bf1c47f1344e3429ab6b515d0d
+Bottom: cd6931916bf5487250d167a09dc256d2b2ab2900
+Top:    5520803d07d522268f182d3aacd89914f6e58510
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-04 22:31:29 +0000
+Date:   2015-01-07 01:48:02 +0000
 
 Add a demonstration model for rendering ACY series resistors
 
@@ -1640,7 +1640,7 @@ index 0000000..cef76d3
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2690330..9a1817e 100644
+index 3ffb564..a6da33b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -346,6 +346,47 @@ ghid_draw_grid (BoxType *drawn_area)
@@ -1777,7 +1777,7 @@ index 2690330..9a1817e 100644
  
  static int
 @@ -1512,8 +1594,9 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
-       if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
+       if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
          /* Mask out drilled holes on this layer */
          hidgl_flush_triangles (&buffer);
 -        glPushAttrib (GL_COLOR_BUFFER_BIT);
@@ -1789,7 +1789,7 @@ index 2690330..9a1817e 100644
          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
 @@ -1535,8 +1618,9 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
  
-         if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
+         if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
            hidgl_flush_triangles (&buffer);
 -          glPushAttrib (GL_COLOR_BUFFER_BIT);
 +          glPushAttrib (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
