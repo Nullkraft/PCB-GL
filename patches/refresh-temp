@@ -1,0 +1,74 @@
+Bottom: d36d5c3cbe2dcf862194435d75f617af2d535bc3
+Top:    cb43feb7d8bfb1351e0edfe507d2320ddcee69a6
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-07 01:39:05 +0000
+
+Refresh of revert-remove-unused
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 789985d..3b51ba1 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -1121,7 +1121,7 @@ ConvertBufferToElement (BufferType *Buffer)
+ bool
+ LoadLayoutToBuffer (BufferType *Buffer, char *Filename)
+ {
+-  PCBType *newPCB = CreateNewPCB ();
++  PCBType *newPCB = CreateNewPCB (false);
+ 
+   /* new data isn't added to the undo list */
+   if (!ParsePCB (newPCB, Filename))
+diff --git a/src/create.c b/src/create.c
+index fe9619a..2f7bc35 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -146,7 +146,7 @@ pcb_colors_from_settings (PCBType *ptr)
+  * creates a new PCB
+  */
+ PCBType *
+-CreateNewPCB (void)
++CreateNewPCB (bool SetDefaultNames)
+ {
+   PCBType *ptr;
+   int i;
+diff --git a/src/create.h b/src/create.h
+index f49f6d0..e9c2697 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -39,7 +39,7 @@ void CreateBeLenient (bool);
+ 
+ DataType * CreateNewBuffer (void);
+ void pcb_colors_from_settings (PCBType *);
+-PCBType * CreateNewPCB ();
++PCBType * CreateNewPCB (bool);
+ /* Called after PCB->Data->LayerN is set.  Returns zero if no errors,
+    else nonzero.  */
+ int CreateNewPCBPost (PCBType *, int /* set defaults */);
+diff --git a/src/file.c b/src/file.c
+index 83f7473..11ab7c3 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -386,7 +386,7 @@ real_load_pcb (char *Filename, bool revert)
+ {
+   const char *unit_suffix, *grid_size;
+   char *new_filename;
+-  PCBType *newPCB = CreateNewPCB ();
++  PCBType *newPCB = CreateNewPCB (false);
+   PCBType *oldPCB;
+ #ifdef DEBUG
+   double elapsed;
+diff --git a/src/main.c b/src/main.c
+index 3c79bac..a217134 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -1990,7 +1990,7 @@ main (int argc, char *argv[])
+     }
+ 
+   /* Create a new PCB object in memory */
+-  PCB = CreateNewPCB ();
++  PCB = CreateNewPCB (true);
+   ParseGroupString (Settings.Groups, &PCB->LayerGroups, &PCB->Data->LayerN);
+   /* Add silk layers to newly created PCB */
+   CreateNewPCBPost (PCB, 1);
