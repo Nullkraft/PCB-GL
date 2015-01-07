@@ -1,5 +1,5 @@
 Bottom: ca6c7814600f3cd5e3dd1e8cd44cfac895959b53
-Top:    8f0704dcc42b473e624ab49402458f7bae519904
+Top:    cc4f4916ad7abf04ae2bfc5cf321af3385ce82c1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-07 01:09:17 +0000
 
@@ -17,7 +17,7 @@ change behaviour to apply test on a per-layer basis.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0888e88..71b60df 100644
+index 0888e88..729803e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1358,7 +1358,7 @@ GhidDrawMask (int side, BoxType * screen)
@@ -29,11 +29,17 @@ index 0888e88..71b60df 100644
    int layernum;
    int side;
    struct poly_info info;
-@@ -1376,10 +1376,10 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
-   for (i = n_entries - 1; i >= 0; i--) {
+@@ -1368,6 +1368,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+   int first_run = 1;
+   int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
++  bool is_outline;
+ 
+   if (!gui->set_layer (0, group, 0))
+     return 0;
+@@ -1377,9 +1378,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
      layernum = layers[i];
      Layer = PCB->Data->Layer + layers[i];
-+    bool is_outline;
  
 -    if (strcmp (Layer->Name, "outline") == 0 ||
 -        strcmp (Layer->Name, "route") == 0)
