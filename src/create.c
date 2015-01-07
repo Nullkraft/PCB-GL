@@ -146,7 +146,7 @@ pcb_colors_from_settings (PCBType *ptr)
  * creates a new PCB
  */
 PCBType *
-CreateNewPCB (void)
+CreateNewPCB (bool SetDefaultNames)
 {
   PCBType *ptr;
   int i;
