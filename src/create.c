@@ -220,7 +220,7 @@ CreateNewPCB (void)
  * pre-existing PCB.
  */
 int
-CreateNewPCBPost (PCBType *pcb)
+CreateNewPCBPost (PCBType *pcb, int use_defaults)
 {
   /* copy default settings */
   pcb_colors_from_settings (pcb);
