@@ -99,6 +99,7 @@ PFNGLACTIVETEXTUREARBPROC   glActiveTextureARB   = NULL;
 #include "clip.h"
 
 #include "hid.h"
+#include "hid_draw.h"
 #include "hidgl.h"
 #include "rtree.h"
 #include "sweep.h"
@@ -107,8 +108,7 @@ PFNGLACTIVETEXTUREARBPROC   glActiveTextureARB   = NULL;
 #include <dmalloc.h>
 #endif
 
-triangle_buffer buffer;
-float global_depth = 0;
+
 hidgl_shader *circular_program = NULL;
 hidgl_shader *resistor_program = NULL;
 
@@ -128,48 +128,52 @@ static bool in_context = false;
 
 /* NB: If using VBOs, the caller must ensure the VBO is bound to the GL_ARRAY_BUFFER */
 static void
-hidgl_reset_triangle_array (triangle_buffer *buffer)
+hidgl_reset_triangle_array (hidGC gc)
 {
-  if (buffer->use_map) {
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  if (hidgl_gc->buffer.use_map) {
     /* Hint to the driver that we're done with the previous buffer contents */
     glBufferData (GL_ARRAY_BUFFER, BUFFER_SIZE, NULL, GL_STREAM_DRAW);
     /* Map the new memory to upload vertices into. */
-    buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+    hidgl_gc->buffer.triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
   }
 
   /* If mapping the VBO fails (or if we aren't using VBOs) fall back to
    * local storage.
    */
-  if (buffer->triangle_array == NULL) {
-    buffer->triangle_array = malloc (BUFFER_SIZE);
-    buffer->use_map = false;
+  if (hidgl_gc->buffer.triangle_array == NULL) {
+    hidgl_gc->buffer.triangle_array = malloc (BUFFER_SIZE);
+    hidgl_gc->buffer.use_map = false;
   }
 
   /* Don't want this bound for now */
   glBindBuffer (GL_ARRAY_BUFFER, 0);
 
-  buffer->triangle_count = 0;
-  buffer->coord_comp_count = 0;
-  buffer->vertex_count = 0;
+  hidgl_gc->buffer.triangle_count = 0;
+  hidgl_gc->buffer.coord_comp_count = 0;
+  hidgl_gc->buffer.vertex_count = 0;
 }
 
 static void
-hidgl_init_triangle_array (triangle_buffer *buffer)
+hidgl_init_triangle_array (hidGC gc)
 {
+  hidglGC hidgl_gc = (hidglGC)gc;
+
   CHECK_IS_IN_CONTEXT ();
 
-  buffer->use_vbo = true;
-  /* buffer->use_vbo = false; */
+  hidgl_gc->buffer.use_vbo = true;
+  /* hidgl_gc->buffer.use_vbo = false; */
 
-  if (buffer->use_vbo) {
-    glGenBuffers (1, &buffer->vbo_id);
-    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+  if (hidgl_gc->buffer.use_vbo) {
+    glGenBuffers (1, &hidgl_gc->buffer.vbo_id);
+    glBindBuffer (GL_ARRAY_BUFFER, hidgl_gc->buffer.vbo_id);
   }
 
-  if (buffer->vbo_id == 0)
-    buffer->use_vbo = false;
+  if (hidgl_gc->buffer.vbo_id == 0)
+    hidgl_gc->buffer.use_vbo = false;
 
-  buffer->use_map = buffer->use_vbo;
+  hidgl_gc->buffer.use_map = hidgl_gc->buffer.use_vbo;
 
   /* NB: Mapping the whole buffer can be expensive since we ask the driver
    *     to discard previous data and give us a "new" buffer to write into
@@ -180,52 +184,55 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
    *     into a temporary buffer and queues a GPU copy of the uploaded data
    *     for when the "main" buffer has finished rendering.
    */
-  buffer->use_map = false;
+  hidgl_gc->buffer.use_map = false;
 
-  buffer->triangle_array = NULL;
-  hidgl_reset_triangle_array (buffer);
+  hidgl_gc->buffer.triangle_array = NULL;
+  hidgl_reset_triangle_array (gc);
 }
 
 static void
-hidgl_finish_triangle_array (triangle_buffer *buffer)
+hidgl_finish_triangle_array (hidGC gc)
 {
-  if (buffer->use_map) {
-    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  if (hidgl_gc->buffer.use_map) {
+    glBindBuffer (GL_ARRAY_BUFFER, hidgl_gc->buffer.vbo_id);
     glUnmapBuffer (GL_ARRAY_BUFFER);
     glBindBuffer (GL_ARRAY_BUFFER, 0);
   } else {
-    free (buffer->triangle_array);
+    free (hidgl_gc->buffer.triangle_array);
   }
 
-  if (buffer->use_vbo) {
-    glDeleteBuffers (1, &buffer->vbo_id);
-    buffer->vbo_id = 0;
+  if (hidgl_gc->buffer.use_vbo) {
+    glDeleteBuffers (1, &hidgl_gc->buffer.vbo_id);
+    hidgl_gc->buffer.vbo_id = 0;
   }
 }
 
 void
-hidgl_flush_triangles (triangle_buffer *buffer)
+hidgl_flush_triangles (hidGC gc)
 {
+  hidglGC hidgl_gc = (hidglGC)gc;
   GLfloat *data_pointer = NULL;
 
   CHECK_IS_IN_CONTEXT ();
-  if (buffer->vertex_count == 0)
+  if (hidgl_gc->buffer.vertex_count == 0)
     return;
 
-  if (buffer->use_vbo) {
-    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+  if (hidgl_gc->buffer.use_vbo) {
+    glBindBuffer (GL_ARRAY_BUFFER, hidgl_gc->buffer.vbo_id);
 
-    if (buffer->use_map) {
+    if (hidgl_gc->buffer.use_map) {
       glUnmapBuffer (GL_ARRAY_BUFFER);
-      buffer->triangle_array = NULL;
+      hidgl_gc->buffer.triangle_array = NULL;
     } else {
       glBufferData (GL_ARRAY_BUFFER,
-                    BUFFER_STRIDE * buffer->vertex_count,
-                    buffer->triangle_array,
+                    BUFFER_STRIDE * hidgl_gc->buffer.vertex_count,
+                    hidgl_gc->buffer.triangle_array,
                     GL_STREAM_DRAW);
     }
   } else {
-    data_pointer = buffer->triangle_array;
+    data_pointer = hidgl_gc->buffer.triangle_array;
   }
 
   glTexCoordPointer (2, GL_FLOAT, BUFFER_STRIDE, data_pointer + 3);
@@ -233,22 +240,24 @@ hidgl_flush_triangles (triangle_buffer *buffer)
 
   glEnableClientState (GL_TEXTURE_COORD_ARRAY);
   glEnableClientState (GL_VERTEX_ARRAY);
-  glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
+  glDrawArrays (GL_TRIANGLE_STRIP, 0, hidgl_gc->buffer.vertex_count);
 #if 0
   glPushAttrib (GL_CURRENT_BIT);
   glColor4f (1., 1., 1., 1.);
-  glDrawArrays (GL_LINE_STRIP, 0, buffer->vertex_count);
+  glDrawArrays (GL_LINE_STRIP, 0, hidgl_gc->buffer.vertex_count);
   glPopAttrib ();
 #endif
   glDisableClientState (GL_VERTEX_ARRAY);
   glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 
-  hidgl_reset_triangle_array (buffer);
+  hidgl_reset_triangle_array (gc);
 }
 
 void
-hidgl_ensure_vertex_space (triangle_buffer *buffer, int count)
+hidgl_ensure_vertex_space (hidGC gc, int count)
 {
+  hidglGC hidgl_gc = (hidglGC)gc;
+
   CHECK_IS_IN_CONTEXT ();
   if (count > 3 * TRIANGLE_ARRAY_SIZE)
     {
@@ -257,27 +266,31 @@ hidgl_ensure_vertex_space (triangle_buffer *buffer, int count)
                        count, 3 * TRIANGLE_ARRAY_SIZE);
       exit (1);
     }
-  if (count > 3 * TRIANGLE_ARRAY_SIZE - buffer->vertex_count)
-    hidgl_flush_triangles (buffer);
+  if (count > 3 * TRIANGLE_ARRAY_SIZE - hidgl_gc->buffer.vertex_count)
+    hidgl_flush_triangles (gc);
 }
 
 void
-hidgl_ensure_triangle_space (triangle_buffer *buffer, int count)
+hidgl_ensure_triangle_space (hidGC gc, int count)
 {
   CHECK_IS_IN_CONTEXT ();
   /* NB: 5 = 3 + 2 extra vertices to separate from other triangle strips */
-  hidgl_ensure_vertex_space (buffer, count * 5);
+  hidgl_ensure_vertex_space (gc, count * 5);
 }
 
 void
-hidgl_set_depth (float depth)
+hidgl_set_depth (hidGC gc, float depth)
 {
-  global_depth = depth;
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  hidgl_gc->depth = depth;
 }
 
 void
-hidgl_draw_grid (BoxType *drawn_area)
+hidgl_draw_grid (hidGC gc)
 {
+  hidglGC hidgl_gc = (hidglGC)gc;
+
   static GLfloat *points = 0;
   static int npoints = 0;
   Coord x1, y1, x2, y2, n, i;
@@ -286,10 +299,10 @@ hidgl_draw_grid (BoxType *drawn_area)
   if (!Settings.DrawGrid)
     return;
 
-  x1 = GridFit (MAX (0, drawn_area->X1), PCB->Grid, PCB->GridOffsetX);
-  y1 = GridFit (MAX (0, drawn_area->Y1), PCB->Grid, PCB->GridOffsetY);
-  x2 = GridFit (MIN (PCB->MaxWidth, drawn_area->X2), PCB->Grid, PCB->GridOffsetX);
-  y2 = GridFit (MIN (PCB->MaxHeight, drawn_area->Y2), PCB->Grid, PCB->GridOffsetY);
+  x1 = GridFit (MAX (0, gc->clip_box->X1), PCB->Grid, PCB->GridOffsetX);
+  y1 = GridFit (MAX (0, gc->clip_box->Y1), PCB->Grid, PCB->GridOffsetY);
+  x2 = GridFit (MIN (PCB->MaxWidth,  gc->clip_box->X2), PCB->Grid, PCB->GridOffsetX);
+  y2 = GridFit (MIN (PCB->MaxHeight, gc->clip_box->Y2), PCB->Grid, PCB->GridOffsetY);
 
   if (x1 > x2)
     {
@@ -319,7 +332,7 @@ hidgl_draw_grid (BoxType *drawn_area)
   for (x = x1; x <= x2; x += PCB->Grid)
     {
       points[3 * n + 0] = x;
-      points[3 * n + 2] = global_depth;
+      points[3 * n + 2] = hidgl_gc->depth;
       n++;
     }
   for (y = y1; y <= y2; y += PCB->Grid)
@@ -345,30 +358,30 @@ int calc_slices (float pix_radius, float sweep_angle)
   return (int)ceilf (slices);
 }
 
-static void draw_cap (Coord width, int x, int y, double angle)
+static void draw_cap (hidGC gc, Coord width, int x, int y, double angle)
 {
   float radius = width / 2.;
 
   CHECK_IS_IN_CONTEXT ();
 
-  hidgl_ensure_vertex_space (&buffer, 6);
+  hidgl_ensure_vertex_space (gc, 6);
 
   /* FIXME: Should draw an offset rectangle at the appropriate angle,
    *        avoiding relying on the subcompositing between layers to
    *        stop us creatign an artaefact by drawing a full circle.
    */
   /* NB: Repeated first virtex to separate from other tri-strip */
-  hidgl_add_vertex_tex (&buffer, x - radius, y - radius, -1.0, -1.0);
-  hidgl_add_vertex_tex (&buffer, x - radius, y - radius, -1.0, -1.0);
-  hidgl_add_vertex_tex (&buffer, x - radius, y + radius, -1.0,  1.0);
-  hidgl_add_vertex_tex (&buffer, x + radius, y - radius,  1.0, -1.0);
-  hidgl_add_vertex_tex (&buffer, x + radius, y + radius,  1.0,  1.0);
-  hidgl_add_vertex_tex (&buffer, x + radius, y + radius,  1.0,  1.0);
+  hidgl_add_vertex_tex (gc, x - radius, y - radius, -1.0, -1.0);
+  hidgl_add_vertex_tex (gc, x - radius, y - radius, -1.0, -1.0);
+  hidgl_add_vertex_tex (gc, x - radius, y + radius, -1.0,  1.0);
+  hidgl_add_vertex_tex (gc, x + radius, y - radius,  1.0, -1.0);
+  hidgl_add_vertex_tex (gc, x + radius, y + radius,  1.0,  1.0);
+  hidgl_add_vertex_tex (gc, x + radius, y + radius,  1.0,  1.0);
   /* NB: Repeated last virtex to separate from other tri-strip */
 }
 
 void
-hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, double scale)
+hidgl_draw_line (hidGC gc, int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, double scale)
 {
   double deltax, deltay, length;
   float wdx, wdy;
@@ -421,42 +434,42 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
     {
       if (length == 0)
         {
-          hidgl_fill_circle (x1, y1, width / 2.);
+          hidgl_fill_circle (gc, x1, y1, width / 2.);
         }
       else
         {
           float capx = deltax * width / 2. / length;
           float capy = deltay * width / 2. / length;
 
-          hidgl_ensure_vertex_space (&buffer, 10);
+          hidgl_ensure_vertex_space (gc, 10);
 
           /* NB: Repeated first virtex to separate from other tri-strip */
-          hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
-          hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
-          hidgl_add_vertex_tex (&buffer, x1 + wdx - capx, y1 + wdy - capy, -1.0,  1.0);
-          hidgl_add_vertex_tex (&buffer, x1 - wdx,        y1 - wdy,         0.0, -1.0);
-          hidgl_add_vertex_tex (&buffer, x1 + wdx,        y1 + wdy,         0.0,  1.0);
+          hidgl_add_vertex_tex (gc, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
+          hidgl_add_vertex_tex (gc, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
+          hidgl_add_vertex_tex (gc, x1 + wdx - capx, y1 + wdy - capy, -1.0,  1.0);
+          hidgl_add_vertex_tex (gc, x1 - wdx,        y1 - wdy,         0.0, -1.0);
+          hidgl_add_vertex_tex (gc, x1 + wdx,        y1 + wdy,         0.0,  1.0);
 
-          hidgl_add_vertex_tex (&buffer, x2 - wdx,        y2 - wdy,         0.0, -1.0);
-          hidgl_add_vertex_tex (&buffer, x2 + wdx,        y2 + wdy,         0.0,  1.0);
-          hidgl_add_vertex_tex (&buffer, x2 - wdx + capx, y2 - wdy + capy,  1.0, -1.0);
-          hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
-          hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
+          hidgl_add_vertex_tex (gc, x2 - wdx,        y2 - wdy,         0.0, -1.0);
+          hidgl_add_vertex_tex (gc, x2 + wdx,        y2 + wdy,         0.0,  1.0);
+          hidgl_add_vertex_tex (gc, x2 - wdx + capx, y2 - wdy + capy,  1.0, -1.0);
+          hidgl_add_vertex_tex (gc, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
+          hidgl_add_vertex_tex (gc, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
           /* NB: Repeated last virtex to separate from other tri-strip */
         }
     }
   else
     {
-      hidgl_ensure_vertex_space (&buffer, 6);
+      hidgl_ensure_vertex_space (gc, 6);
 
       /* NB: Repeated first virtex to separate from other tri-strip */
-      hidgl_add_vertex_tex (&buffer, x1 - wdx, y1 - wdy, 0.0, -1.0);
-      hidgl_add_vertex_tex (&buffer, x1 - wdx, y1 - wdy, 0.0, -1.0);
-      hidgl_add_vertex_tex (&buffer, x1 + wdx, y1 + wdy, 0.0,  1.0);
+      hidgl_add_vertex_tex (gc, x1 - wdx, y1 - wdy, 0.0, -1.0);
+      hidgl_add_vertex_tex (gc, x1 - wdx, y1 - wdy, 0.0, -1.0);
+      hidgl_add_vertex_tex (gc, x1 + wdx, y1 + wdy, 0.0,  1.0);
 
-      hidgl_add_vertex_tex (&buffer, x2 - wdx, y2 - wdy, 0.0, -1.0);
-      hidgl_add_vertex_tex (&buffer, x2 + wdx, y2 + wdy, 0.0,  1.0);
-      hidgl_add_vertex_tex (&buffer, x2 + wdx, y2 + wdy, 0.0,  1.0);
+      hidgl_add_vertex_tex (gc, x2 - wdx, y2 - wdy, 0.0, -1.0);
+      hidgl_add_vertex_tex (gc, x2 + wdx, y2 + wdy, 0.0,  1.0);
+      hidgl_add_vertex_tex (gc, x2 + wdx, y2 + wdy, 0.0,  1.0);
       /* NB: Repeated last virtex to separate from other tri-strip */
     }
 }
@@ -464,7 +477,7 @@ hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, d
 #define MIN_SLICES_PER_ARC 6
 #define MAX_SLICES_PER_ARC 360
 void
-hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
+hidgl_draw_arc (hidGC gc, Coord width, Coord x, Coord y, Coord rx, Coord ry,
                 Angle start_angle, Angle delta_angle, double scale)
 {
   float last_inner_x, last_inner_y;
@@ -507,7 +520,7 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
   if (slices > MAX_SLICES_PER_ARC)
     slices = MAX_SLICES_PER_ARC;
 
-  hidgl_ensure_triangle_space (&buffer, 2 * slices);
+  hidgl_ensure_triangle_space (gc, 2 * slices);
 
   angle_incr_rad = delta_angle_rad / (float)slices;
 
@@ -520,12 +533,12 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
     sin_ang = sinf (start_angle_rad + ((float)(i)) * angle_incr_rad);
     inner_x = -inner_r * cos_ang + x;  inner_y = inner_r * sin_ang + y;
     outer_x = -outer_r * cos_ang + x;  outer_y = outer_r * sin_ang + y;
-    hidgl_add_triangle (&buffer, last_inner_x, last_inner_y,
-                                 last_outer_x, last_outer_y,
-                                 outer_x, outer_y);
-    hidgl_add_triangle (&buffer, last_inner_x, last_inner_y,
-                                 inner_x, inner_y,
-                                 outer_x, outer_y);
+    hidgl_add_triangle (gc, last_inner_x, last_inner_y,
+                            last_outer_x, last_outer_y,
+                            outer_x, outer_y);
+    hidgl_add_triangle (gc, last_inner_x, last_inner_y,
+                            inner_x, inner_y,
+                            outer_x, outer_y);
     last_inner_x = inner_x;  last_inner_y = inner_y;
     last_outer_x = outer_x;  last_outer_y = outer_y;
   }
@@ -534,41 +547,43 @@ hidgl_draw_arc (Coord width, Coord x, Coord y, Coord rx, Coord ry,
   if (hairline)
     return;
 
-  draw_cap (width, x + rx * -cosf (start_angle_rad),
-                   y + rx *  sinf (start_angle_rad),
-                   start_angle);
-  draw_cap (width, x + rx * -cosf (start_angle_rad + delta_angle_rad),
-                   y + rx *  sinf (start_angle_rad + delta_angle_rad),
-                   start_angle + delta_angle + 180.);
+  draw_cap (gc, width, x + rx * -cosf (start_angle_rad),
+                       y + rx *  sinf (start_angle_rad),
+                       start_angle);
+  draw_cap (gc, width, x + rx * -cosf (start_angle_rad + delta_angle_rad),
+                       y + rx *  sinf (start_angle_rad + delta_angle_rad),
+                       start_angle + delta_angle + 180.);
 }
 
 void
-hidgl_draw_rect (Coord x1, Coord y1, Coord x2, Coord y2)
+hidgl_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
+  hidglGC hidgl_gc = (hidglGC)gc;
+
   CHECK_IS_IN_CONTEXT ();
   glBegin (GL_LINE_LOOP);
-  glVertex3f (x1, y1, global_depth);
-  glVertex3f (x1, y2, global_depth);
-  glVertex3f (x2, y2, global_depth);
-  glVertex3f (x2, y1, global_depth);
+  glVertex3f (x1, y1, hidgl_gc->depth);
+  glVertex3f (x1, y2, hidgl_gc->depth);
+  glVertex3f (x2, y2, hidgl_gc->depth);
+  glVertex3f (x2, y1, hidgl_gc->depth);
   glEnd ();
 }
 
 
 void
-hidgl_fill_circle (Coord x, Coord y, Coord radius)
+hidgl_fill_circle (hidGC gc, Coord x, Coord y, Coord radius)
 {
   CHECK_IS_IN_CONTEXT ();
 
-  hidgl_ensure_vertex_space (&buffer, 6);
+  hidgl_ensure_vertex_space (gc, 6);
 
   /* NB: Repeated first virtex to separate from other tri-strip */
-  hidgl_add_vertex_tex (&buffer, x - radius, y - radius, -1.0, -1.0);
-  hidgl_add_vertex_tex (&buffer, x - radius, y - radius, -1.0, -1.0);
-  hidgl_add_vertex_tex (&buffer, x - radius, y + radius, -1.0,  1.0);
-  hidgl_add_vertex_tex (&buffer, x + radius, y - radius,  1.0, -1.0);
-  hidgl_add_vertex_tex (&buffer, x + radius, y + radius,  1.0,  1.0);
-  hidgl_add_vertex_tex (&buffer, x + radius, y + radius,  1.0,  1.0);
+  hidgl_add_vertex_tex (gc, x - radius, y - radius, -1.0, -1.0);
+  hidgl_add_vertex_tex (gc, x - radius, y - radius, -1.0, -1.0);
+  hidgl_add_vertex_tex (gc, x - radius, y + radius, -1.0,  1.0);
+  hidgl_add_vertex_tex (gc, x + radius, y - radius,  1.0, -1.0);
+  hidgl_add_vertex_tex (gc, x + radius, y + radius,  1.0,  1.0);
+  hidgl_add_vertex_tex (gc, x + radius, y + radius,  1.0,  1.0);
   /* NB: Repeated last virtex to separate from other tri-strip */
 }
 
@@ -629,10 +644,13 @@ myBegin (GLenum type)
   triangle_comp_idx = 0;
 }
 
+static hidGC nasty_tesselator_gc = NULL;
+
 static void CALLBACK
 myVertex (GLdouble *vertex_data)
 {
   static GLfloat triangle_vertices [2 * 3];
+  hidGC gc = nasty_tesselator_gc;
 
   if (tessVertexType == GL_TRIANGLE_STRIP ||
       tessVertexType == GL_TRIANGLE_FAN)
@@ -645,8 +663,8 @@ myVertex (GLdouble *vertex_data)
         }
       else
         {
-          hidgl_ensure_triangle_space (&buffer, 1);
-          hidgl_add_triangle (&buffer,
+          hidgl_ensure_triangle_space (gc, 1);
+          hidgl_add_triangle (gc,
                               triangle_vertices [0], triangle_vertices [1],
                               triangle_vertices [2], triangle_vertices [3],
                               vertex_data [0], vertex_data [1]);
@@ -669,8 +687,8 @@ myVertex (GLdouble *vertex_data)
       stashed_vertices ++;
       if (stashed_vertices == 3)
         {
-          hidgl_ensure_triangle_space (&buffer, 1);
-          hidgl_add_triangle (&buffer,
+          hidgl_ensure_triangle_space (gc, 1);
+          hidgl_add_triangle (gc,
                               triangle_vertices [0], triangle_vertices [1],
                               triangle_vertices [2], triangle_vertices [3],
                               triangle_vertices [4], triangle_vertices [5]);
@@ -690,7 +708,7 @@ myFreeCombined ()
 }
 
 void
-hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
+hidgl_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 {
   int i;
   GLUtesselator *tobj;
@@ -701,6 +719,8 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
   assert (n_coords > 0);
 
   vertices = malloc (sizeof(GLdouble) * n_coords * 3);
+
+  nasty_tesselator_gc = gc;
 
   tobj = gluNewTess ();
   gluTessCallback(tobj, GLU_TESS_BEGIN,   (_GLUfuncptr)myBegin);
@@ -725,6 +745,7 @@ hidgl_fill_polygon (int n_coords, Coord *x, Coord *y)
 
   myFreeCombined ();
   free (vertices);
+  nasty_tesselator_gc = NULL;
 }
 
 static inline void
@@ -742,15 +763,16 @@ stash_vertex (PLINE *contour, int *vertex_comp,
 }
 
 static void
-fill_contour (PLINE *contour)
+fill_contour (hidGC gc, PLINE *contour)
 {
+  hidglGC hidgl_gc = (hidglGC)gc;
   int i;
   int vertex_comp;
   borast_traps_t traps;
 
   /* If the contour is round, then call hidgl_fill_circle to draw it. */
   if (contour->is_round) {
-    hidgl_fill_circle (contour->cx, contour->cy, contour->radius);
+    hidgl_fill_circle (gc, contour->cx, contour->cy, contour->radius);
     return;
   }
 
@@ -760,7 +782,7 @@ fill_contour (PLINE *contour)
     int x1, x2, x3, x4, y_top, y_bot;
 
     _borast_traps_init (&traps);
-    bo_contour_to_traps_no_draw (contour, &traps);
+    bo_contour_to_traps_no_draw (gc, contour, &traps);
 
     tristrip_space = 0;
 
@@ -805,28 +827,28 @@ fill_contour (PLINE *contour)
 
       if (x1 == x2) {
         /* NB: Repeated first virtex to separate from other tri-strip */
-        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
         /* NB: Repeated last virtex to separate from other tri-strip */
       } else if (x3 == x4) {
         /* NB: Repeated first virtex to separate from other tri-strip */
-        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x2, y_top, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
         /* NB: Repeated last virtex to separate from other tri-strip */
       } else {
         /* NB: Repeated first virtex to separate from other tri-strip */
-        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x2, y_top, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x2, y_top, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
         /* NB: Repeated last virtex to separate from other tri-strip */
       }
     }
@@ -837,14 +859,14 @@ fill_contour (PLINE *contour)
   if (contour->tristrip_num_vertices == 0)
     return;
 
-  hidgl_ensure_vertex_space (&buffer, contour->tristrip_num_vertices);
+  hidgl_ensure_vertex_space (gc, contour->tristrip_num_vertices);
 
 #if MEMCPY_VERTEX_DATA
-  memcpy (&buffer.triangle_array[buffer.coord_comp_count],
+  memcpy (&hidgl_gc->buffer.triangle_array[buffer.coord_comp_count],
           contour->tristrip_vertices,
           sizeof (float) * 5 * contour->tristrip_num_vertices);
-  buffer.coord_comp_count += 5 * contour->tristrip_num_vertices;
-  buffer.vertex_count += contour->tristrip_num_vertices;
+  hidgl_gc->buffer.coord_comp_count += 5 * contour->tristrip_num_vertices;
+  hidgl_gc->buffer.vertex_count += contour->tristrip_num_vertices;
 
 #else
   vertex_comp = 0;
@@ -852,7 +874,7 @@ fill_contour (PLINE *contour)
     int x, y;
     x = contour->tristrip_vertices[vertex_comp++];
     y = contour->tristrip_vertices[vertex_comp++];
-    hidgl_add_vertex_tex (&buffer, x, y, 0.0, 0.0);
+    hidgl_add_vertex_tex (gc, x, y, 0.0, 0.0);
   }
 #endif
 
@@ -862,13 +884,14 @@ static int
 do_hole (const BoxType *b, void *cl)
 {
   PLINE *curc = (PLINE *) b;
+  hidGC gc = cl;
 
   /* Ignore the outer contour - we draw it first explicitly*/
   if (curc->Flags.orient == PLF_DIR) {
     return 0;
   }
 
-  fill_contour (curc);
+  fill_contour (gc, curc);
   return 1;
 }
 
@@ -878,21 +901,17 @@ polygon_contains_user_holes (PolygonType *polygon)
   return (polygon->HoleIndexN > 0);
 }
 
-
-static GLint stencil_bits;
-static int dirty_bits = 0;
-static int assigned_bits = 0;
-
 static void
-fill_polyarea (POLYAREA *pa, const BoxType *clip_box, bool use_new_stencil)
+fill_polyarea (hidGC gc, POLYAREA *pa, bool use_new_stencil)
 {
-  int stencil_bit;
+  hidglGC hidgl_gc = (hidglGC)gc;
+  int stencil_bit = -1; /* XXX: Compiler thinks we might be using this uninitialised */
 
   CHECK_IS_IN_CONTEXT ();
 
   /* Special case non-holed polygons which don't require a stencil bit */
   if (pa->contour_tree->size == 1) {
-    fill_contour (pa->contours);
+    fill_contour (gc, pa->contours);
     return;
   }
 
@@ -901,7 +920,7 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, bool use_new_stencil)
    */
   if (use_new_stencil)
     {
-      stencil_bit = hidgl_assign_clear_stencil_bit ();
+      stencil_bit = hidgl_assign_clear_stencil_bit (gc);
       if (!stencil_bit)
         {
           printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
@@ -911,7 +930,7 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, bool use_new_stencil)
     }
 
   /* Flush out any existing geoemtry to be rendered */
-  hidgl_flush_triangles (&buffer);
+  hidgl_flush_triangles (gc);
 
   glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                 GL_COLOR_BUFFER_BIT |                   /* the colour buffer write mask etc.. for part way restore */
@@ -938,35 +957,35 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, bool use_new_stencil)
 
   /* Drawing operations now set our reference bit in the stencil buffer */
 
-  r_search (pa->contour_tree, clip_box, NULL, do_hole, NULL);
-  hidgl_flush_triangles (&buffer);
+  r_search (pa->contour_tree, gc->clip_box, NULL, do_hole, gc);
+  hidgl_flush_triangles (gc);
 
-  glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
-  glPushAttrib (GL_STENCIL_BUFFER_BIT);         /* Save the stencil op and function */
-  glEnable (GL_STENCIL_TEST);                   /* Enable the stencil test, just in case it wasn't already on */
+  glPopAttrib ();                                   /* Restore the colour and stencil buffer write-mask etc.. */
+  glPushAttrib (GL_STENCIL_BUFFER_BIT);             /* Save the stencil op and function */
+  glEnable (GL_STENCIL_TEST);                       /* Enable the stencil test, just in case it wasn't already on */
 
-  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);    /* This allows us to toggle the bit on the subcompositing bitplane */
-                                                /* If the stencil test has passed, we know that bit is 0, so we're */
-                                                /* effectively just setting it to 1. */
-  glStencilFunc (GL_GEQUAL, 0, assigned_bits);  /* Pass stencil test if all assigned bits clear, */
-                                                /* reference is all assigned bits so we set */
-                                                /* any bits permitted by the stencil writemask */
+  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);        /* This allows us to toggle the bit on the subcompositing bitplane */
+                                                    /* If the stencil test has passed, we know that bit is 0, so we're */
+                                                    /* effectively just setting it to 1. */
+  glStencilFunc (GL_GEQUAL, 0, hidgl_gc->assigned_bits);  /* Pass stencil test if all assigned bits clear, */
+                                                    /* reference is all assigned bits so we set */
+                                                    /* any bits permitted by the stencil writemask */
 
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
 
   /* Draw the polygon outer */
-  fill_contour (pa->contours);
-  hidgl_flush_triangles (&buffer);
+  fill_contour (gc, pa->contours);
+  hidgl_flush_triangles (gc);
 
   /* Unassign our stencil buffer bit */
   if (use_new_stencil)
-    hidgl_return_stencil_bit (stencil_bit);
+    hidgl_return_stencil_bit (gc, stencil_bit);
 
   glPopAttrib ();                               /* Restore the stencil buffer op and function */
 }
 
 void
-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly)
 {
   bool use_new_stencil;
 
@@ -976,30 +995,30 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
   use_new_stencil = polygon_contains_user_holes (poly) ||
                     TEST_FLAG (FULLPOLYFLAG, poly);
 
-  fill_polyarea (poly->Clipped, clip_box, use_new_stencil);
+  fill_polyarea (gc, poly->Clipped, use_new_stencil);
 
   if (TEST_FLAG (FULLPOLYFLAG, poly))
     {
       POLYAREA *pa;
 
       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
-        fill_polyarea (pa, clip_box, use_new_stencil);
+        fill_polyarea (gc, pa, use_new_stencil);
     }
 }
 
 void
-hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2)
+hidgl_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
   CHECK_IS_IN_CONTEXT ();
-  hidgl_ensure_vertex_space (&buffer, 6);
+  hidgl_ensure_vertex_space (gc, 6);
 
   /* NB: Repeated first virtex to separate from other tri-strip */
-  hidgl_add_vertex_tex (&buffer, x1, y1, 0.0, 0.0);
-  hidgl_add_vertex_tex (&buffer, x1, y1, 0.0, 0.0);
-  hidgl_add_vertex_tex (&buffer, x1, y2, 0.0, 0.0);
-  hidgl_add_vertex_tex (&buffer, x2, y1, 0.0, 0.0);
-  hidgl_add_vertex_tex (&buffer, x2, y2, 0.0, 0.0);
-  hidgl_add_vertex_tex (&buffer, x2, y2, 0.0, 0.0);
+  hidgl_add_vertex_tex (gc, x1, y1, 0.0, 0.0);
+  hidgl_add_vertex_tex (gc, x1, y1, 0.0, 0.0);
+  hidgl_add_vertex_tex (gc, x1, y2, 0.0, 0.0);
+  hidgl_add_vertex_tex (gc, x2, y1, 0.0, 0.0);
+  hidgl_add_vertex_tex (gc, x2, y2, 0.0, 0.0);
+  hidgl_add_vertex_tex (gc, x2, y2, 0.0, 0.0);
   /* NB: Repeated last virtex to separate from other tri-strip */
 }
 
@@ -1087,22 +1106,23 @@ hidgl_init (void)
 
 #endif
 
-
   CHECK_IS_IN_CONTEXT ();
-  glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
+#if 0
+  glGetIntegerv (GL_STENCIL_BITS, &hidgl_gc->stencil_bits);
 
-  if (stencil_bits == 0)
+  if (hidgl_gc->stencil_bits == 0)
     {
       printf ("No stencil bits available.\n"
               "Cannot mask polygon holes or subcomposite layers\n");
       /* TODO: Flag this to the HID so it can revert to the dicer? */
     }
-  else if (stencil_bits == 1)
+  else if (hidgl_gc->stencil_bits == 1)
     {
       printf ("Only one stencil bitplane avilable\n"
               "Cannot use stencil buffer to sub-composite layers.\n");
       /* Do we need to disable that somewhere? */
     }
+#endif
 
   if (!hidgl_shader_init_shaders ()) {
     printf ("Failed to initialise shader support\n");
@@ -1116,6 +1136,38 @@ done:
 }
 
 void
+hidgl_init_gc (hidGC gc)
+{
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  hidgl_gc->depth = 0.0;
+  hidgl_reset_stencil_usage (gc);
+  hidgl_init_triangle_array (gc);
+
+  CHECK_IS_IN_CONTEXT ();
+#if 1
+  glGetIntegerv (GL_STENCIL_BITS, &hidgl_gc->stencil_bits);
+
+  if (hidgl_gc->stencil_bits == 0)
+    {
+      printf ("No stencil bits available.\n"
+              "Cannot mask polygon holes or subcomposite layers\n");
+      /* TODO: Flag this to the HID so it can revert to the dicer? */
+    }
+  else if (hidgl_gc->stencil_bits == 1)
+    {
+      printf ("Only one stencil bitplane avilable\n"
+              "Cannot use stencil buffer to sub-composite layers.\n");
+      /* Do we need to disable that somewhere? */
+    }
+#endif
+
+//  hidgl_gc->depth = 0.0;
+//  hidgl_reset_stencil_usage (gc);
+//  hidgl_init_triangle_array (gc);
+}
+
+void
 hidgl_start_render (void)
 {
   if (in_context)
@@ -1123,84 +1175,100 @@ hidgl_start_render (void)
 
   in_context = true;
   hidgl_init ();
-  hidgl_init_triangle_array (&buffer);
+
+#if 0
+#warning FUBAR NULL gc
+  gc = NULL;
+
+  hidgl_init_triangle_array (gc);
+#endif
   hidgl_shader_activate (circular_program);
 }
 
 void
-hidgl_finish_render (void)
+hidgl_finish_render (hidGC gc)
 {
   if (!in_context)
     fprintf (stderr, "hidgl: hidgl_finish_render() - Not currently in rendering context!\n");
 
-  hidgl_finish_triangle_array (&buffer);
+  hidgl_finish_triangle_array (gc);
   hidgl_shader_activate (NULL);
   in_context = false;
 }
 
 int
-hidgl_stencil_bits (void)
+hidgl_stencil_bits (hidGC gc)
 {
-  return stencil_bits;
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  return hidgl_gc->stencil_bits;
 }
 
 static void
-hidgl_clean_unassigned_stencil (void)
+hidgl_clean_unassigned_stencil (hidGC gc)
 {
+  hidglGC hidgl_gc = (hidglGC)gc;
+
   CHECK_IS_IN_CONTEXT ();
   glPushAttrib (GL_STENCIL_BUFFER_BIT);
-  glStencilMask (~assigned_bits);
+  glStencilMask (~hidgl_gc->assigned_bits);
   glClearStencil (0);
   glClear (GL_STENCIL_BUFFER_BIT);
   glPopAttrib ();
 }
 
 int
-hidgl_assign_clear_stencil_bit (void)
+hidgl_assign_clear_stencil_bit (hidGC gc)
 {
-  int stencil_bitmask = (1 << stencil_bits) - 1;
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  int stencil_bitmask = (1 << hidgl_gc->stencil_bits) - 1;
   int test;
   int first_dirty = 0;
 
-  if (assigned_bits == stencil_bitmask)
+  if (hidgl_gc->assigned_bits == stencil_bitmask)
     {
       printf ("No more stencil bits available, total of %i already assigned\n",
-              stencil_bits);
+              hidgl_gc->stencil_bits);
       return 0;
     }
 
   /* Look for a bitplane we don't have to clear */
   for (test = 1; test & stencil_bitmask; test <<= 1)
     {
-      if (!(test & dirty_bits))
+      if (!(test & hidgl_gc->dirty_bits))
         {
-          assigned_bits |= test;
-          dirty_bits |= test;
+          hidgl_gc->assigned_bits |= test;
+          hidgl_gc->dirty_bits |= test;
           return test;
         }
-      else if (!first_dirty && !(test & assigned_bits))
+      else if (!first_dirty && !(test & hidgl_gc->assigned_bits))
         {
           first_dirty = test;
         }
     }
 
   /* Didn't find any non dirty planes. Clear those dirty ones which aren't in use */
-  hidgl_clean_unassigned_stencil ();
-  assigned_bits |= first_dirty;
-  dirty_bits = assigned_bits;
+  hidgl_clean_unassigned_stencil (gc);
+  hidgl_gc->assigned_bits |= first_dirty;
+  hidgl_gc->dirty_bits = hidgl_gc->assigned_bits;
 
   return first_dirty;
 }
 
 void
-hidgl_return_stencil_bit (int bit)
+hidgl_return_stencil_bit (hidGC gc, int bit)
 {
-  assigned_bits &= ~bit;
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  hidgl_gc->assigned_bits &= ~bit;
 }
 
 void
-hidgl_reset_stencil_usage (void)
+hidgl_reset_stencil_usage (hidGC gc)
 {
-  assigned_bits = 0;
-  dirty_bits = 0;
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  hidgl_gc->assigned_bits = 0;
+  hidgl_gc->dirty_bits = 0;
 }
