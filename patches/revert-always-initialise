@@ -1,5 +1,5 @@
 Bottom: 10387dbda88643d092840c59fdc678cd78fb1ea8
-Top:    7659bba935b8462a10edb8bb2f0960c1f0a99b81
+Top:    0d1b5c06c711dbfa83a645fc84b1efa67b9755ab
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-07 01:27:52 +0000
 
@@ -13,6 +13,29 @@ board which has missing layers. (Such as silkscreen or soldermask).
 
 ---
 
+diff --git a/src/create.c b/src/create.c
+index 7da96ee..2f7bc35 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -229,12 +229,13 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
+     {
+       if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, &pcb->Data->LayerN))
+ 	return 1;
+-
+-      pcb->Data->Layer[top_silk_layer].Name = strdup ("top silk");
+-      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("bottom silk");
+-      pcb->Data->Layer[top_soldermask_layer].Name = strdup ("top soldermask");
+-      pcb->Data->Layer[bottom_soldermask_layer].Name = strdup ("bottom soldermask");
+     }
++
++  pcb->Data->Layer[top_silk_layer].Name = strdup ("top silk");
++  pcb->Data->Layer[bottom_silk_layer].Name = strdup ("bottom silk");
++  pcb->Data->Layer[top_soldermask_layer].Name = strdup ("top soldermask");
++  pcb->Data->Layer[bottom_soldermask_layer].Name = strdup ("bottom soldermask");
++
+   return 0;
+ }
+ 
 diff --git a/src/file.c b/src/file.c
 index 3abca69..11ab7c3 100644
 --- a/src/file.c
