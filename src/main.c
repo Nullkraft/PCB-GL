@@ -1990,10 +1990,10 @@ main (int argc, char *argv[])
     }
 
   /* Create a new PCB object in memory */
-  PCB = CreateNewPCB ();
+  PCB = CreateNewPCB (true);
   ParseGroupString (Settings.Groups, &PCB->LayerGroups, &PCB->Data->LayerN);
   /* Add silk layers to newly created PCB */
-  CreateNewPCBPost (PCB);
+  CreateNewPCBPost (PCB, 1);
   if (argc > 1)
     command_line_pcb = argv[1];
 
