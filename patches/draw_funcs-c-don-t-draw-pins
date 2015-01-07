@@ -1,0 +1,14 @@
+Bottom: d36d5c3cbe2dcf862194435d75f617af2d535bc3
+Top:    d36d5c3cbe2dcf862194435d75f617af2d535bc3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-07 01:41:02 +0000
+
+draw_funcs.c: Don't draw pins/vias in layer for non GUI exporters
+
+The non-gui paths render pins and vias with draw_ppv, so no need to
+also render them for each layer.
+
+
+---
+
+
