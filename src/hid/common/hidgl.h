@@ -36,103 +36,124 @@ typedef struct {
   bool use_map;
 } triangle_buffer;
 
-extern triangle_buffer buffer;
-extern float global_depth;
+typedef struct hidgl_gc_struct {
+  struct hid_gc_struct gc; /* Parent */
+
+  /* Triangle management */
+  triangle_buffer buffer;
+
+  /* Stencil management */
+  GLint stencil_bits;
+  int dirty_bits;
+  int assigned_bits;
+
+  float depth;
+
+} *hidglGC;
 
 extern hidgl_shader *circular_program;
 extern hidgl_shader *resistor_program;
 
-void hidgl_flush_triangles (triangle_buffer *buffer);
-void hidgl_ensure_vertex_space (triangle_buffer *buffer, int count);
-void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
+void hidgl_flush_triangles (hidGC gc);
+void hidgl_ensure_vertex_space (hidGC gc, int count);
+void hidgl_ensure_triangle_space (hidGC gc, int count);
 
 static inline void
-hidgl_add_vertex_3D_tex (triangle_buffer *buffer,
+hidgl_add_vertex_3D_tex (hidGC gc,
                          GLfloat x, GLfloat y, GLfloat z,
                          GLfloat s, GLfloat t)
 {
-  buffer->triangle_array [buffer->coord_comp_count++] = x;
-  buffer->triangle_array [buffer->coord_comp_count++] = y;
-  buffer->triangle_array [buffer->coord_comp_count++] = z;
-  buffer->triangle_array [buffer->coord_comp_count++] = s;
-  buffer->triangle_array [buffer->coord_comp_count++] = t;
-  buffer->vertex_count++;
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  hidgl_gc->buffer.triangle_array [hidgl_gc->buffer.coord_comp_count++] = x;
+  hidgl_gc->buffer.triangle_array [hidgl_gc->buffer.coord_comp_count++] = y;
+  hidgl_gc->buffer.triangle_array [hidgl_gc->buffer.coord_comp_count++] = z;
+  hidgl_gc->buffer.triangle_array [hidgl_gc->buffer.coord_comp_count++] = s;
+  hidgl_gc->buffer.triangle_array [hidgl_gc->buffer.coord_comp_count++] = t;
+  hidgl_gc->buffer.vertex_count++;
 }
 
 static inline void
-hidgl_add_vertex_tex (triangle_buffer *buffer,
+hidgl_add_vertex_tex (hidGC gc,
                       GLfloat x, GLfloat y,
                       GLfloat s, GLfloat t)
 {
-  hidgl_add_vertex_3D_tex (buffer, x, y, global_depth, s, t);
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  hidgl_add_vertex_3D_tex (gc, x, y, hidgl_gc->depth, s, t);
 }
 
 
 static inline void
-hidgl_add_triangle_3D_tex (triangle_buffer *buffer,
+hidgl_add_triangle_3D_tex (hidGC gc,
                            GLfloat x1, GLfloat y1, GLfloat z1, GLfloat s1, GLfloat t1,
                            GLfloat x2, GLfloat y2, GLfloat z2, GLfloat s2, GLfloat t2,
                            GLfloat x3, GLfloat y3, GLfloat z3, GLfloat s3, GLfloat t3)
 {
   /* NB: Repeated first virtex to separate from other tri-strip */
-  hidgl_add_vertex_3D_tex (buffer, x1, y1, z1, s1, t1);
-  hidgl_add_vertex_3D_tex (buffer, x1, y1, z1, s1, t1);
-  hidgl_add_vertex_3D_tex (buffer, x2, y2, z2, s2, t2);
-  hidgl_add_vertex_3D_tex (buffer, x3, y3, z3, s3, t3);
-  hidgl_add_vertex_3D_tex (buffer, x3, y3, z3, s3, t3);
+  hidgl_add_vertex_3D_tex (gc, x1, y1, z1, s1, t1);
+  hidgl_add_vertex_3D_tex (gc, x1, y1, z1, s1, t1);
+  hidgl_add_vertex_3D_tex (gc, x2, y2, z2, s2, t2);
+  hidgl_add_vertex_3D_tex (gc, x3, y3, z3, s3, t3);
+  hidgl_add_vertex_3D_tex (gc, x3, y3, z3, s3, t3);
   /* NB: Repeated last virtex to separate from other tri-strip */
 }
 
 static inline void
-hidgl_add_triangle_3D (triangle_buffer *buffer,
+hidgl_add_triangle_3D (hidGC gc,
                        GLfloat x1, GLfloat y1, GLfloat z1,
                        GLfloat x2, GLfloat y2, GLfloat z2,
                        GLfloat x3, GLfloat y3, GLfloat z3)
 {
-  hidgl_add_triangle_3D_tex (buffer, x1, y1, z1, 0., 0.,
-                                     x2, y2, z2, 0., 0.,
-                                     x3, y3, z3, 0., 0.);
+  hidgl_add_triangle_3D_tex (gc, x1, y1, z1, 0., 0.,
+                                 x2, y2, z2, 0., 0.,
+                                 x3, y3, z3, 0., 0.);
 }
 
 static inline void
-hidgl_add_triangle_tex (triangle_buffer *buffer,
+hidgl_add_triangle_tex (hidGC gc,
                         GLfloat x1, GLfloat y1, GLfloat s1, GLfloat t1,
                         GLfloat x2, GLfloat y2, GLfloat s2, GLfloat t2,
                         GLfloat x3, GLfloat y3, GLfloat s3, GLfloat t3)
 {
-  hidgl_add_triangle_3D_tex (buffer, x1, y1, global_depth, s1, t1,
-                                     x2, y2, global_depth, s2, t2,
-                                     x3, y3, global_depth, s3, t3);
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  hidgl_add_triangle_3D_tex (gc, x1, y1, hidgl_gc->depth, s1, t1,
+                                 x2, y2, hidgl_gc->depth, s2, t2,
+                                 x3, y3, hidgl_gc->depth, s3, t3);
 }
 
 static inline void
-hidgl_add_triangle (triangle_buffer *buffer,
+hidgl_add_triangle (hidGC gc,
                     GLfloat x1, GLfloat y1,
                     GLfloat x2, GLfloat y2,
                     GLfloat x3, GLfloat y3)
 {
-  hidgl_add_triangle_3D (buffer, x1, y1, global_depth,
-                                 x2, y2, global_depth,
-                                 x3, y3, global_depth);
+  hidglGC hidgl_gc = (hidglGC)gc;
+
+  hidgl_add_triangle_3D (gc, x1, y1, hidgl_gc->depth,
+                             x2, y2, hidgl_gc->depth,
+                             x3, y3, hidgl_gc->depth);
 }
 
-void hidgl_draw_grid (BoxType *drawn_area);
-void hidgl_set_depth (float depth);
-void hidgl_draw_line (int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, double scale);
-void hidgl_draw_arc (Coord width, Coord vx, Coord vy, Coord vrx, Coord vry, Angle start_angle, Angle delta_angle, double scale);
-void hidgl_draw_rect (Coord x1, Coord y1, Coord x2, Coord y2);
-void hidgl_fill_circle (Coord vx, Coord vy, Coord vr);
-void hidgl_fill_polygon (int n_coords, Coord *x, Coord *y);
-void hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box);
-void hidgl_fill_rect (Coord x1, Coord y1, Coord x2, Coord y2);
+void hidgl_draw_grid (hidGC gc);
+void hidgl_set_depth (hidGC gc, float depth);
+void hidgl_draw_line (hidGC gc, int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, double scale);
+void hidgl_draw_arc (hidGC gc, Coord width, Coord vx, Coord vy, Coord vrx, Coord vry, Angle start_angle, Angle delta_angle, double scale);
+void hidgl_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+void hidgl_fill_circle (hidGC gc, Coord vx, Coord vy, Coord vr);
+void hidgl_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y);
+void hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly);
+void hidgl_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
 
 void hidgl_init (void);
+void hidgl_init_gc (hidGC gc);
 void hidgl_start_render (void);
-void hidgl_finish_render (void);
-int hidgl_stencil_bits (void);
-int hidgl_assign_clear_stencil_bit (void);
-void hidgl_return_stencil_bit (int bit);
-void hidgl_reset_stencil_usage (void);
+void hidgl_finish_render (hidGC gc);
+int hidgl_stencil_bits (hidGC gc);
+int hidgl_assign_clear_stencil_bit (hidGC gc);
+void hidgl_return_stencil_bit (hidGC gc, int bit);
+void hidgl_reset_stencil_usage (hidGC gc);
 
 /* hidgl_pacakge_acy_resistor.c */
 void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
