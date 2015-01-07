@@ -1,7 +1,7 @@
-Bottom: 2edb5f318dfe09690a4106821c0b42dba22c004e
-Top:    58ca0d8bfec1147a15af285d41d3a30b61c3416f
+Bottom: 398068a27cc9f013e6106f95f43243416468bd4d
+Top:    38551b1fa8754cba35c90f6cb3a7344f3c355ae1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-04 21:39:58 +0000
+Date:   2015-01-07 01:47:53 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index b8b3fe7..e279cdf 100644
+index 88ac6cc..d35b270 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1890,37 +1890,39 @@ static int
@@ -302,7 +302,7 @@ index 0b4b9e9..cd3f734 100644
        {
  	if (layer->LineN || layer->ArcN)
 diff --git a/src/buffer.c b/src/buffer.c
-index 3b51ba1..44cdfa5 100644
+index 789985d..b9a9334 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -578,47 +578,55 @@ void
@@ -432,10 +432,10 @@ index a0385db..4acc9e4 100644
    Dest->MarkX = Src->MarkX + dx;
    Dest->MarkY = Src->MarkY + dy;
 diff --git a/src/create.c b/src/create.c
-index 7da96ee..2145b83 100644
+index fe9619a..4ad904e 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -917,25 +917,19 @@ CreateNewLineInSymbol (SymbolType *Symbol,
+@@ -918,25 +918,19 @@ CreateNewLineInSymbol (SymbolType *Symbol,
  		       Coord X1, Coord Y1,
  		       Coord X2, Coord Y2, Coord Thickness)
  {
@@ -466,7 +466,7 @@ index 7da96ee..2145b83 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1007,13 +1001,14 @@ CreateNewConnection (LibraryMenuType *net, char *conn)
+@@ -1008,13 +1002,14 @@ CreateNewConnection (LibraryMenuType *net, char *conn)
  AttributeType *
  CreateNewAttribute (AttributeListType *list, char *name, char *value)
  {
