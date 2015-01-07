@@ -1,0 +1,17 @@
+Bottom: 2333dae67e256c7c8e7dedaa29ed6ac3a1ca7bbf
+Top:    2333dae67e256c7c8e7dedaa29ed6ac3a1ca7bbf
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-07 01:09:17 +0000
+
+gtkhid-gl.c: Fixup code to determine whether we draw pins/vias to match draw.c
+
+The net change of this patch is that we consider whether to draw pins/vias
+for each layer within the layer group. Previously, if we encoundered a layer
+named "outline" or "route" within the layer group, all _subsequent_ layers
+within that group would not have their pins/vias rendered. (Which differs
+the draw.c behaviour).
+
+
+---
+
+
