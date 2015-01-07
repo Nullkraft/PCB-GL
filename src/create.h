@@ -39,10 +39,10 @@ void CreateBeLenient (bool);
 
 DataType * CreateNewBuffer (void);
 void pcb_colors_from_settings (PCBType *);
-PCBType * CreateNewPCB (bool);
+PCBType * CreateNewPCB ();
 /* Called after PCB->Data->LayerN is set.  Returns zero if no errors,
    else nonzero.  */
-int CreateNewPCBPost (PCBType *, int /* set defaults */);
+int CreateNewPCBPost (PCBType *);
 PinType * CreateNewVia (DataType *, Coord, Coord, Coord, Coord, Coord, Coord, char *, FlagType);
 LineType * CreateDrawnLineOnLayer (LayerType *, Coord, Coord, Coord, Coord, Coord, Coord, FlagType);
 LineType * CreateNewLineOnLayer (LayerType *, Coord, Coord, Coord, Coord, Coord, Coord, FlagType);
