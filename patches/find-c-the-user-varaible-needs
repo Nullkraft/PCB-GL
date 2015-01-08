@@ -1,0 +1,25 @@
+Bottom: 6ebd86cd373cb5d02fb23e0d7b2bc7cd4ecbff30
+Top:    0e3469826d3ba56f1756dd2ea35d3156bb046890
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-04 21:16:35 +0000
+
+find.c: The User varaible needs to die...
+
+Reduce its usage to where absolutely necessary... oh, what a surprise,
+another variable passing state down into add_object_to_list ()
+
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 7980090..97f92a2 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3093,7 +3093,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
+    */
+   ListStart (type, ptr1, ptr2, ptr3, flag);
+   DoIt (flag, AndRats, AndDraw);
+-  if (User)
++  if (AndDraw)
+     IncrementUndoSerialNumber ();
+   User = false;

@@ -1,0 +1,23 @@
+Bottom: eedc0e20c7b18772b3a791c6ab676afd106f8c62
+Top:    e4122b59a212aee8de87aab4c1e6eb0524958cb7
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-12-15 18:39:38 +0000
+
+find.h: Annotate which exported functions are not used!
+
+
+---
+
+diff --git a/src/find.h b/src/find.h
+index 4cc68f8..6e75269 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -47,7 +47,7 @@ bool LineLineIntersect (LineType *, LineType *);
+ bool LineArcIntersect (LineType *, ArcType *);
+ bool PinLineIntersect (PinType *, LineType *);
+ bool LinePadIntersect (LineType *, PadType *);
+-bool ArcPadIntersect (ArcType *, PadType *);
++/* NOT USED EXTERNALLY */// bool ArcPadIntersect (ArcType *, PadType *);
+ void LookupElementConnections (ElementType *, FILE *);
+ void LookupConnectionsToAllElements (FILE *);
+ void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats);

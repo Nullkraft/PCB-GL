@@ -1,0 +1,24 @@
+Bottom: 48c27cd4fdf546e8d0fa40941f123e2a2cc5ae1f
+Top:    253916d640ebcf0fe74bf044bd767252e98582bf
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-09-05 12:53:53 +0100
+
+hid/gtk: Turn on defines to debug a potential GTK-3.0 build
+
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index 1af732e..dfd125d 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -759,6 +759,9 @@ $GTKGLEXT_PKG_ERRORS])]
+ 	GTKGLEXT_VER=`$PKG_CONFIG gtkglext-1.0 --modversion`
+ 	fi
+ 
++	GTK_CFLAGS="$GTK_CFLAGS -DGSEAL_ENABLE"
++	GTK_CFLAGS="$GTK_CFLAGS -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
++
+ 	;;
+ 
+       gcode|nelma|png )

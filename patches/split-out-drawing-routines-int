@@ -1,0 +1,38 @@
+Bottom: 85a715de079ae3b4069e8ea8030cccd3a761e5d1
+Top:    dfd008eab3cb543566a91d67a71e39e9ed0a0227
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2012-11-19 21:49:35 +0000
+
+Push drawing routines into the HID_DRAW API for possible replacement
+
+The aim here is to indirect calls to the various drawing routines such
+that a GUI or renderer implementation may swap out different parts of
+the rendering operation at will without having to re-implement the
+entire drawing stack from scratch.
+
+Each drawing API call will now be passed the drawing API structure as
+its first parameter, so we don't rely on this being a global.
+
+XXX: XXX: XXX: NO IT ISNT!!!
+
+As a further clean-up, the graphics context being used by the rendering
+routines is now a member of the vfunc table structure. We currently
+retain the old Output.*gc members, but only use them (where necessary)
+to update the ->gc member of the drawing API structure as rendering
+progresses.
+
+XXX: XXX: XXX: NO IT ISNT!!!
+
+
+---
+
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index b65d804..5fec955 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -64,3 +64,5 @@ struct hid_draw_st
+   void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+ 
+ };
++
++/* HELLO WORLD.. TRIVIAL CHANGE TO AVOID "stg clean" CLEANING THIS COMMIT WITH A USEFUL COMMIT MESSAGE */
