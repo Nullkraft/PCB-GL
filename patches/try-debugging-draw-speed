@@ -1,0 +1,14 @@
+Bottom: bc02b2dd652436374aafbca5af2efe05f7cf61a3
+Top:    bc02b2dd652436374aafbca5af2efe05f7cf61a3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2015-01-08 21:04:27 +0000
+
+hid/gtk: Improve accuracy of "Benchmark" action somewhat
+
+Divide by the actual time taken, not exactly 10. (To get _good_
+accuracy we'd also need to use timers more accurate than 1s!)
+
+
+---
+
+
