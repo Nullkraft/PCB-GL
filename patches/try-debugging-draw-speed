@@ -1,5 +1,5 @@
-Bottom: e1c3c2e2c8731ce5b6eaf05bb93781464a90deaf
-Top:    eaccd6abce4a3fe534313f5631876d0f77dad61d
+Bottom: 991e4f477afe0f5f7db38751005b2ba7e991c213
+Top:    991e4f477afe0f5f7db38751005b2ba7e991c213
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 10:34:57 +0000
 
@@ -10,22 +10,4 @@ Try debugging draw speed
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index db7507a..4fae738 100644
---- a/src/hid/gtk/gtkhid-main.c
-+++ b/src/hid/gtk/gtkhid-main.c
-@@ -1810,13 +1810,12 @@ Benchmark (int argc, char **argv, int x, int y)
-     {
-       gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
-       gdk_window_process_updates (gport->drawing_area->window, FALSE);
--      gdk_display_sync (display);
-       time (&end);
-       i++;
-     }
-   while (end - start < 10);
- 
--  printf (_("%g redraws per second\n"), i / 10.0);
-+  printf (_("%g redraws per second\n"), (double)i / (double)(end-start));
- 
-   return 0;
- }
+
