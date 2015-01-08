@@ -9,7 +9,7 @@
 static int global_vertex3d_count;
 
 vertex3d *
-make_vertex3d (float x, float y, float z)
+make_vertex3d (double x, double y, double z)
 {
   vertex3d *v;
 
