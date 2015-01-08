@@ -1,0 +1,49 @@
+Bottom: e8689416237db6ae22eb99fd9022fcbfa0a236bc
+Top:    64da04a54086a9b1e8df5756830ef01c78aacce2
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-08 00:51:58 +0000
+
+Refresh of hack-to-avoid-gl-calls-when-we
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 6a891e3..85ac133 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -522,6 +522,15 @@ set_gl_color_for_gc (hidGC gc)
+     return;
+ 
+   free (priv->current_colorname);
++  priv->current_colorname = NULL;
++
++  /* If we can't set the GL colour right now, quit with
++   * current_colorname set to NULL, so we don't NOOP the
++   * next set_gl_color_for_gc call.
++   */
++  if (!priv->in_context)
++    return;
++
+   priv->current_colorname = strdup (gtk_gc->colorname);
+   priv->current_alpha_mult = gtk_gc->alpha_mult;
+ 
+@@ -585,9 +594,6 @@ set_gl_color_for_gc (hidGC gc)
+ #endif
+   }
+ 
+-  if(!priv->in_context)
+-    return;
+-
+   hidgl_flush_triangles (gtk_gc->hidgl_gc.hidgl);
+   glColor4d (r, g, b, a);
+ }
+@@ -883,6 +889,9 @@ draw_crosshair (hidGC gc, render_priv *priv)
+   static int done_once = 0;
+   static GdkColor cross_color;
+ 
++  if (!priv->in_context)
++    return;
++
+   if (!done_once)
+     {
+       done_once = 1;
