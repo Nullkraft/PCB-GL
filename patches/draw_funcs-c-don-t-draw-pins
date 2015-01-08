@@ -1,0 +1,28 @@
+Bottom: d36d5c3cbe2dcf862194435d75f617af2d535bc3
+Top:    ca6c7814600f3cd5e3dd1e8cd44cfac895959b53
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-07 01:41:02 +0000
+
+draw_funcs.c: Don't draw pins/vias in layer for non GUI exporters
+
+The non-gui paths render pins and vias with draw_ppv, so no need to
+also render them for each layer.
+
+
+---
+
+diff --git a/src/draw_funcs.c b/src/draw_funcs.c
+index 30e42ac..bd3df87 100644
+--- a/src/draw_funcs.c
++++ b/src/draw_funcs.c
+@@ -430,6 +430,10 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+   if (layer_num >= max_copper_layer)
+     return;
+ 
++  /* Pins, pads and vias are handled in elsewhere by exporters, don't duplicate */
++  if (!gui->gui)
++    return;
++
+   r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_inlayer_callback, layer);
+ 
+   /* draw element pads */
