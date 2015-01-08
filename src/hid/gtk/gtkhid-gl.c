@@ -1723,7 +1723,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
       r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
 
       /* Draw pins, vias and pads on this layer */
-      if (rv) {
+      if (!is_outline) {
         if (!global_view_2d) {
           if (PCB->PinOn &&
               (group == bottom_group || group == top_group))
