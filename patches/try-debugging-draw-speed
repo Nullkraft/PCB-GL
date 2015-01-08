@@ -3,8 +3,10 @@ Top:    15a05840b6b8833d698b206be3dc3b1ef280db39
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-08 20:52:23 +0000
 
-Try debugging draw speed
+hid/gtk: Improve accuracy of "Benchmark" action somewhat
 
+Divide by the actual time taken, not exactly 10. (To get _good_
+accuracy we'd also need to use timers more accurate than 1s!)
 
 
 ---
