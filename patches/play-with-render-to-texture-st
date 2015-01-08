@@ -1,5 +1,5 @@
 Bottom: dc5a4294ecbfcd8ceccf75f5caa22ba0f0bc76ad
-Top:    2b54cdc8ebf887aa319cd8a2734bf8aa0b4a9e77
+Top:    1bc42484d4e56795533e9f39020d589c095d3082
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-26 16:50:13 +0000
 
@@ -9,7 +9,7 @@ Play with render to texture stuff
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d12d775..4c2daa3 100644
+index d12d775..eeee803 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -57,6 +57,9 @@ static hidGC current_gc = NULL;
@@ -197,7 +197,7 @@ index d12d775..4c2daa3 100644
        r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
 +
 +      /* Draw pins, vias and pads on this layer */
-+      if (rv) {
++      if (!is_outline) {
 +        if (!global_view_2d) {
 +          if (PCB->PinOn &&
 +              (group == bottom_group || group == top_group))
