@@ -1,7 +1,7 @@
-Bottom: e4e01fb385b894c642e529472df71950521c38c2
-Top:    3b5b4653c55cbf58522322f7354452d57dd03d9a
+Bottom: 37585f8d0375121c6265266fcd5f50a1c6de36c9
+Top:    8d011d23e3578890386c17678be595aefdc6048d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-07 01:48:10 +0000
+Date:   2015-01-08 21:29:33 +0000
 
 Add support for arc segments in polygon object outline definitions
 
@@ -24,7 +24,7 @@ EXTREME FEATURE IN EITHER THE +/-X or +/-Y DIRECTIONS.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 0c70e58..4f26986 100644
+index 6bff2ea..ccfd4d0 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1433,7 +1433,8 @@ NotifyMode (void)
