@@ -69,15 +69,6 @@
 #endif
 
 
-static void
-hidgl_reset_triangle_array (hidgl_instance *hidgl)
-{
-  hidgl_priv *priv = hidgl->priv;
-
-  priv->buffer.triangle_count = 0;
-  priv->buffer.coord_comp_count = 0;
-}
-
 static bool in_context = false;
 
 #define CHECK_IS_IN_CONTEXT(retcode) \
@@ -88,6 +79,16 @@ static bool in_context = false;
       return retcode; \
     } \
   } while (0)
+
+
+static void
+hidgl_reset_triangle_array (hidgl_instance *hidgl)
+{
+  hidgl_priv *priv = hidgl->priv;
+
+  priv->buffer.triangle_count = 0;
+  priv->buffer.coord_comp_count = 0;
+}
 
 static void
 hidgl_init_triangle_array (hidgl_instance *hidgl)
