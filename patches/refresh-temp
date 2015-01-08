@@ -1,0 +1,29 @@
+Bottom: d63b4f6c263f1099b4cc19ffea162e20a33576f4
+Top:    37ab2226d5aadf0d4262f4a3687d2c2948c92818
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-08 01:17:17 +0000
+
+Refresh of borast-fixup-to-only-draw-the
+
+---
+
+diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
+index 7a0d1ac..762e2c0 100644
+--- a/src/borast/borast-bentley-ottmann.c
++++ b/src/borast/borast-bentley-ottmann.c
+@@ -1375,6 +1375,7 @@ poly_area_to_start_events (POLYAREA                *poly,
+                                  counter, outer_contour);
+         outer_contour = 0;
+       }
++      break;
+ 
+     } while ((pa = pa->f) != poly);
+ 
+@@ -1401,6 +1402,7 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
+     for (contour = pa->contours; contour != NULL; contour = contour->next)
+       num_events += contour->Count;
+     /* FIXME: Remove horizontal edges? */
++    break;
+   } while ((pa = pa->f) != poly);
+ 
+   if (unlikely (0 == num_events))
