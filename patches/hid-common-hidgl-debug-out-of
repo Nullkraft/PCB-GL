@@ -1,5 +1,5 @@
 Bottom: 64da04a54086a9b1e8df5756830ef01c78aacce2
-Top:    f874300721c549c6fd3a4443743eca99c6c3fe0e
+Top:    51e152cfd63bc90f5b2da6f668b1a8778f6021ba
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-04 20:07:17 +0000
 
@@ -9,12 +9,12 @@ hid/common/hidgl: Debug out of context rendering
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 23b2fa3..2048fef 100644
+index 23b2fa3..732cef5 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -78,6 +78,17 @@ hidgl_reset_triangle_array (hidgl_instance *hidgl)
-   priv->buffer.coord_comp_count = 0;
- }
+@@ -69,6 +69,18 @@
+ #endif
+ 
  
 +static bool in_context = false;
 +
@@ -27,10 +27,11 @@ index 23b2fa3..2048fef 100644
 +    } \
 +  } while (0)
 +
++
  static void
- hidgl_init_triangle_array (hidgl_instance *hidgl)
+ hidgl_reset_triangle_array (hidgl_instance *hidgl)
  {
-@@ -89,6 +100,8 @@ hidgl_flush_triangles (hidgl_instance *hidgl)
+@@ -89,6 +101,8 @@ hidgl_flush_triangles (hidgl_instance *hidgl)
  {
    hidgl_priv *priv = hidgl->priv;
  
@@ -39,7 +40,7 @@ index 23b2fa3..2048fef 100644
    if (priv->buffer.triangle_count == 0)
      return;
  
-@@ -107,6 +120,8 @@ hidgl_ensure_triangle_space (hidGC gc, int count)
+@@ -107,6 +121,8 @@ hidgl_ensure_triangle_space (hidGC gc, int count)
    hidgl_instance *hidgl = hidgl_gc->hidgl;
    hidgl_priv *priv = hidgl->priv;
  
@@ -48,7 +49,7 @@ index 23b2fa3..2048fef 100644
    if (count > TRIANGLE_ARRAY_SIZE)
      {
        fprintf (stderr, "Not enough space in vertex buffer\n");
-@@ -208,6 +223,7 @@ static void draw_cap (hidGC gc, Coord width, Coord x, Coord y, Angle angle, doub
+@@ -208,6 +224,7 @@ static void draw_cap (hidGC gc, Coord width, Coord x, Coord y, Angle angle, doub
    int slices = calc_slices (radius / scale, M_PI);
    int i;
  
@@ -56,7 +57,7 @@ index 23b2fa3..2048fef 100644
    if (slices < MIN_TRIANGLES_PER_CAP)
      slices = MIN_TRIANGLES_PER_CAP;
  
-@@ -236,6 +252,7 @@ hidgl_draw_line (hidGC gc, int cap, Coord width, Coord x1, Coord y1, Coord x2, C
+@@ -236,6 +253,7 @@ hidgl_draw_line (hidGC gc, int cap, Coord width, Coord x1, Coord y1, Coord x2, C
    int circular_caps = 0;
    int hairline = 0;
  
@@ -64,7 +65,7 @@ index 23b2fa3..2048fef 100644
    if (width == 0.0)
      hairline = 1;
  
-@@ -312,6 +329,7 @@ hidgl_draw_arc (hidGC gc, Coord width, Coord x, Coord y, Coord rx, Coord ry,
+@@ -312,6 +330,7 @@ hidgl_draw_arc (hidGC gc, Coord width, Coord x, Coord y, Coord rx, Coord ry,
    int i;
    int hairline = 0;
  
@@ -72,7 +73,7 @@ index 23b2fa3..2048fef 100644
    if (width == 0.0)
      hairline = 1;
  
-@@ -377,6 +395,8 @@ hidgl_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+@@ -377,6 +396,8 @@ hidgl_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
  {
    hidglGC hidgl_gc = (hidglGC)gc;
  
@@ -81,7 +82,7 @@ index 23b2fa3..2048fef 100644
    glBegin (GL_LINE_LOOP);
    glVertex3f (x1, y1, hidgl_gc->depth);
    glVertex3f (x1, y2, hidgl_gc->depth);
-@@ -396,6 +416,7 @@ hidgl_fill_circle (hidGC gc, Coord vx, Coord vy, Coord vr, double scale)
+@@ -396,6 +417,7 @@ hidgl_fill_circle (hidGC gc, Coord vx, Coord vy, Coord vr, double scale)
    int slices;
    int i;
  
@@ -89,7 +90,7 @@ index 23b2fa3..2048fef 100644
    slices = calc_slices (vr / scale, 2 * M_PI);
  
    if (slices < MIN_TRIANGLES_PER_CIRCLE)
-@@ -547,6 +568,8 @@ hidgl_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -547,6 +569,8 @@ hidgl_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
    GLUtesselator *tobj;
    GLdouble *vertices;
  
@@ -98,7 +99,7 @@ index 23b2fa3..2048fef 100644
    assert (n_coords > 0);
  
    vertices = malloc (sizeof(GLdouble) * n_coords * 3);
-@@ -629,6 +652,8 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, double scale)
+@@ -629,6 +653,8 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, double scale)
    struct do_hole_info info;
    int stencil_bit;
  
@@ -107,7 +108,7 @@ index 23b2fa3..2048fef 100644
    info.gc = gc;
    info.scale = scale;
    global_scale = scale;
-@@ -710,6 +735,8 @@ hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box, do
+@@ -710,6 +736,8 @@ hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box, do
  void
  hidgl_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
  {
@@ -116,7 +117,7 @@ index 23b2fa3..2048fef 100644
    hidgl_ensure_triangle_space (gc, 2);
    hidgl_add_triangle (gc, x1, y1, x1, y2, x2, y2);
    hidgl_add_triangle (gc, x2, y1, x2, y2, x1, y1);
-@@ -776,6 +803,8 @@ hidgl_init_gc (hidgl_instance *hidgl, hidGC gc)
+@@ -776,6 +804,8 @@ hidgl_init_gc (hidgl_instance *hidgl, hidGC gc)
  {
    hidglGC hidgl_gc = (hidglGC)gc;
  
@@ -125,7 +126,7 @@ index 23b2fa3..2048fef 100644
    hidgl_gc->hidgl = hidgl;
    hidgl_gc->depth = 0.0;
  }
-@@ -790,6 +819,11 @@ hidgl_start_render (hidgl_instance *hidgl)
+@@ -790,6 +820,11 @@ hidgl_start_render (hidgl_instance *hidgl)
  {
    hidgl_priv *priv = hidgl->priv;
  
@@ -137,7 +138,7 @@ index 23b2fa3..2048fef 100644
  //  hidgl_init ();
    glGetIntegerv (GL_STENCIL_BITS, &priv->stencil_bits);
  
-@@ -813,6 +847,10 @@ hidgl_start_render (hidgl_instance *hidgl)
+@@ -813,6 +848,10 @@ hidgl_start_render (hidgl_instance *hidgl)
  void
  hidgl_finish_render (hidgl_instance *hidgl)
  {
@@ -148,7 +149,7 @@ index 23b2fa3..2048fef 100644
  }
  
  int
-@@ -828,6 +866,8 @@ hidgl_clean_unassigned_stencil (hidgl_instance *hidgl)
+@@ -828,6 +867,8 @@ hidgl_clean_unassigned_stencil (hidgl_instance *hidgl)
  {
    hidgl_priv *priv = hidgl->priv;
  
