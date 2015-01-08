@@ -233,6 +233,186 @@ Zoom (int argc, char **argv, Coord x, Coord y)
 
 /* ------------------------------------------------------------ */
 
+<<<<<<< current
+=======
+int compute_depth (int group)
+{
+  static int last_depth_computed = 0;
+
+  int solder_group;
+  int component_group;
+  int min_phys_group;
+  int max_phys_group;
+  int max_depth;
+  int depth = last_depth_computed;
+  int newgroup;
+  int idx = (group >= 0
+             && group <
+             max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+
+  solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+  component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+
+  min_phys_group = MIN (solder_group, component_group);
+  max_phys_group = MAX (solder_group, component_group);
+
+  max_depth = (1 + max_phys_group - min_phys_group) * 10;
+
+  if (group >= 0 && group < max_layer) {
+    newgroup = group;
+
+    depth = (max_depth - (newgroup - min_phys_group) * 10) * 200 / gport->zoom;
+  } else if (SL_TYPE (idx) == SL_MASK) {
+    if (SL_SIDE (idx) == SL_TOP_SIDE) {
+      depth = (max_depth + 3) * 200 / gport->zoom;
+    } else {
+      depth = (10 - 3) * 200 / gport->zoom;
+    }
+  } else if (SL_TYPE (idx) == SL_SILK) {
+    if (SL_SIDE (idx) == SL_TOP_SIDE) {
+      depth = (max_depth + 5) * 200 / gport->zoom;
+    } else {
+      depth = (10 - 5) * 200 / gport->zoom;
+    }
+  } else if (SL_TYPE (idx) == SL_INVISIBLE) {
+    if (Settings.ShowSolderSide) {
+      depth = (max_depth + 5) * 200 / gport->zoom;
+    } else {
+      depth = (10 - 5) * 200 / gport->zoom;
+    }
+  }
+
+  last_depth_computed = depth;
+  return depth;
+}
+
+/* These calls should be matched as an ignore==1, ignore==0 pair!! */
+/* BUT.. we often call with ingore == 0 without having ignore==1'd */
+void hidgl_hack_ignore_stencil (int ignore)
+{
+  return 0;
+  static GLint ref = 0;
+  static GLuint mask = 0;
+  static int ignored = 0;
+
+  if (ignore)
+    {
+      hidgl_flush_triangles (&buffer);
+      ignored = 1;
+      glPushAttrib (GL_STENCIL_BUFFER_BIT);
+      glGetIntegerv (GL_STENCIL_REF, &ref);
+      glGetIntegerv (GL_STENCIL_VALUE_MASK, (GLint *)&mask);
+      glStencilFunc (GL_ALWAYS, ref, mask);
+    }
+  else if (ignored)
+    {
+      hidgl_flush_triangles (&buffer);
+      ignored = 0;
+      glPopAttrib ();
+//      glStencilFunc (GL_GREATER, ref, mask);
+    }
+}
+
+int
+ghid_set_layer (const char *name, int group, int empty)
+{
+  GLenum errCode;
+  const GLubyte *errString;
+  int idx = (group >= 0 && group < max_layer) ?
+              PCB->LayerGroups.Entries[group][0] : group;
+
+  /* Flush out any existing geoemtry to be rendered */
+  hidgl_flush_triangles (&buffer);
+
+  hidgl_set_depth (compute_depth (group));
+
+  hidgl_flush_triangles (&buffer);
+  /* Composite out existing texture data */
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+  glBindTexture (GL_TEXTURE_2D, tex_name);
+
+  glPushMatrix ();
+  glLoadIdentity ();
+
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  /* Use the texture on a big quad, onto the window */
+  glEnable (GL_TEXTURE_2D);
+  glBegin (GL_QUADS);
+//  glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
+  glTexCoord2f (  0,   1);
+  glVertex2f   (  0, 0);
+  glTexCoord2f (  0,   0);
+  glVertex2f   (  0,   gport->drawing_area->allocation.height);
+  glTexCoord2f (  1,   0);
+  glVertex2f   (  gport->drawing_area->allocation.width,   gport->drawing_area->allocation.height);
+  glTexCoord2f (  1,   1);
+  glVertex2f   (  gport->drawing_area->allocation.width,   0);
+  glEnd ();
+  glDisable (GL_TEXTURE_2D);
+  glBindTexture (GL_TEXTURE_2D, 0);
+
+  glPopMatrix ();
+
+  glBlendFunc (GL_ONE, GL_ZERO);
+//  glDisable (GL_BLEND);
+
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "5OpenGL Error: %s\n", errString);
+  }
+
+  /* Setup for the next layer */
+  if (group != -99) {
+    glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
+    glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_name, 0);
+    glClear (GL_COLOR_BUFFER_BIT);
+  } else
+    return 0;
+
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "6OpenGL Error: %s\n", errString);
+  }
+
+  if (idx >= 0 && idx < max_layer + 2)
+    {
+      gport->trans_lines = TRUE;
+      return PCB->Data->Layer[idx].On;
+    }
+
+  if (idx < 0)
+    {
+      switch (SL_TYPE (idx))
+	{
+	case SL_INVISIBLE:
+	  return PCB->InvisibleObjectsOn;
+	case SL_MASK:
+	  if (SL_MYSIDE (idx))
+	    return TEST_FLAG (SHOWMASKFLAG, PCB);
+	  return 0;
+	case SL_SILK:
+	  gport->trans_lines = TRUE;
+	  if (SL_MYSIDE (idx))
+	    return PCB->ElementOn;
+	  return 0;
+	case SL_ASSY:
+	  return 0;
+	case SL_PDRILL:
+	case SL_UDRILL:
+	  return 1;
+	case SL_RATS:
+	  if (PCB->RatOn)
+	    gport->trans_lines = TRUE;
+	  return PCB->RatOn;
+	}
+    }
+
+  return 0;
+}
+
+>>>>>>> patched
 void
 ghid_calibrate (double xval, double yval)
 {
