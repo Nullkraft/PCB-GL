@@ -1,0 +1,46 @@
+Bottom: f874300721c549c6fd3a4443743eca99c6c3fe0e
+Top:    51e152cfd63bc90f5b2da6f668b1a8778f6021ba
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-08 00:58:40 +0000
+
+Refresh of hid-common-hidgl-debug-out-of
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 2048fef..732cef5 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -69,15 +69,6 @@
+ #endif
+ 
+ 
+-static void
+-hidgl_reset_triangle_array (hidgl_instance *hidgl)
+-{
+-  hidgl_priv *priv = hidgl->priv;
+-
+-  priv->buffer.triangle_count = 0;
+-  priv->buffer.coord_comp_count = 0;
+-}
+-
+ static bool in_context = false;
+ 
+ #define CHECK_IS_IN_CONTEXT(retcode) \
+@@ -89,6 +80,16 @@ static bool in_context = false;
+     } \
+   } while (0)
+ 
++
++static void
++hidgl_reset_triangle_array (hidgl_instance *hidgl)
++{
++  hidgl_priv *priv = hidgl->priv;
++
++  priv->buffer.triangle_count = 0;
++  priv->buffer.coord_comp_count = 0;
++}
++
+ static void
+ hidgl_init_triangle_array (hidgl_instance *hidgl)
+ {
