@@ -1,7 +1,7 @@
-Bottom: e7aa659b4a34cd288d6524e54ec084be98c37fd3
-Top:    06fc22d2207556a895229af225573d22911d8fb8
+Bottom: 7b947297f479900e833a4e23b61f378e7c902d91
+Top:    03d83e12127e5f4a4469499b513d3681443b0870
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-07 01:48:04 +0000
+Date:   2015-01-08 21:29:29 +0000
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -121,7 +121,7 @@ index ef6edb2..5ff7814 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 9b0fc84..0b5a516 100644
+index ecec656..0773f56 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1137,6 +1137,16 @@ static int PointCursor (int argc, char **argv, Coord x, Coord y)
