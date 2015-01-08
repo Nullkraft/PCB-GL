@@ -1,0 +1,109 @@
+Bottom: 3ca6242a788a42f3840452e436e3ce6b76fed20d
+Top:    a4c1ca29d7a737dd63cf11ab3c7fd832bec7ab92
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-08 00:42:04 +0000
+
+Refresh of fixup-borast-to-build
+
+---
+
+diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
+index 5cccfbc..7a0d1ac 100644
+--- a/src/borast/borast-bentley-ottmann.c
++++ b/src/borast/borast-bentley-ottmann.c
+@@ -49,6 +49,7 @@
+ 
+ #include "polygon.h"
+ #include <GL/gl.h>
++#include "hid_draw.h"
+ #include "hid/common/hidgl.h"
+ 
+ #define _borast_error(x) (x)
+@@ -1382,7 +1383,7 @@ poly_area_to_start_events (POLYAREA                *poly,
+ 
+ 
+ borast_status_t
+-bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps)
++bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
+ {
+   int intersections;
+   borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
+@@ -1445,15 +1446,15 @@ bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps)
+ 
+ #if 1
+     if (x1 == x2) {
+-      hidgl_ensure_triangle_space (&buffer, 1);
+-      hidgl_add_triangle (&buffer, x1, y1, x3, y3, x4, y4);
++      hidgl_ensure_triangle_space (gc, 1);
++      hidgl_add_triangle (gc, x1, y1, x3, y3, x4, y4);
+     } else if (x3 == x4) {
+-      hidgl_ensure_triangle_space (&buffer, 1);
+-      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
++      hidgl_ensure_triangle_space (gc, 1);
++      hidgl_add_triangle (gc, x1, y1, x2, y2, x3, y3);
+     } else {
+-      hidgl_ensure_triangle_space (&buffer, 2);
+-      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
+-      hidgl_add_triangle (&buffer, x3, y3, x4, y4, x1, y1);
++      hidgl_ensure_triangle_space (gc, 2);
++      hidgl_add_triangle (gc, x1, y1, x2, y2, x3, y3);
++      hidgl_add_triangle (gc, x3, y3, x4, y4, x1, y1);
+     }
+ #else
+     glBegin (GL_LINES);
+@@ -1479,7 +1480,7 @@ bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps)
+ 
+ 
+ borast_status_t
+-bo_contour_to_traps (PLINE *contour, borast_traps_t *traps)
++bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps)
+ {
+   int intersections;
+   borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
+@@ -1535,15 +1536,15 @@ bo_contour_to_traps (PLINE *contour, borast_traps_t *traps)
+ 
+ #if 1
+     if (x1 == x2) {
+-      hidgl_ensure_triangle_space (&buffer, 1);
+-      hidgl_add_triangle (&buffer, x1, y1, x3, y3, x4, y4);
++      hidgl_ensure_triangle_space (gc, 1);
++      hidgl_add_triangle (gc, x1, y1, x3, y3, x4, y4);
+     } else if (x3 == x4) {
+-      hidgl_ensure_triangle_space (&buffer, 1);
+-      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
++      hidgl_ensure_triangle_space (gc, 1);
++      hidgl_add_triangle (gc, x1, y1, x2, y2, x3, y3);
+     } else {
+-      hidgl_ensure_triangle_space (&buffer, 2);
+-      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
+-      hidgl_add_triangle (&buffer, x3, y3, x4, y4, x1, y1);
++      hidgl_ensure_triangle_space (gc, 2);
++      hidgl_add_triangle (gc, x1, y1, x2, y2, x3, y3);
++      hidgl_add_triangle (gc, x3, y3, x4, y4, x1, y1);
+     }
+ #else
+     glBegin (GL_LINES);
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 816bf98..859dd82 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -644,7 +644,7 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, double scale)
+   borast_traps_t traps;
+ 
+   _borast_traps_init (&traps);
+-  bo_poly_to_traps (pa, &traps);
++  bo_poly_to_traps (gc, pa, &traps);
+   _borast_traps_fini (&traps);
+ 
+   return;
+diff --git a/src/sweep.h b/src/sweep.h
+index 110466d..347287e 100644
+--- a/src/sweep.h
++++ b/src/sweep.h
+@@ -1,4 +1,4 @@
+ #include "borast/borast-traps-private.h"
+ 
+-borast_status_t bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps);
+-borast_status_t bo_contour_to_traps (PLINE *contour, borast_traps_t *traps);
++borast_status_t bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps);
++borast_status_t bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps);
