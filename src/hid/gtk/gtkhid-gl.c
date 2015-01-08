@@ -1406,7 +1406,7 @@ GhidDrawMask (int side, BoxType * screen)
 static int
 GhidDrawLayerGroup (int group, const BoxType * screen)
 {
-  int i, rv = 1;
+  int i;
   int layernum;
   int side;
   struct poly_info info;
@@ -1416,6 +1416,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
   int first_run = 1;
   int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
+  bool is_outline;
 
   if (!gui->set_layer (0, group, 0))
     return 0;
@@ -1425,9 +1426,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
     layernum = layers[i];
     Layer = PCB->Data->Layer + layers[i];
 
-    if (strcmp (Layer->Name, "outline") == 0 ||
-        strcmp (Layer->Name, "route") == 0)
-      rv = 0;
+    is_outline = strcmp (Layer->Name, "outline") == 0 ||
+                 strcmp (Layer->Name, "route") == 0;
 
     if (layernum < max_copper_layer && Layer->On) {
 
@@ -1436,7 +1436,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
 
       first_run = 0;
 
-      if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
+      if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
         /* Mask out drilled holes on this layer */
         hidgl_flush_triangles (&buffer);
         glPushAttrib (GL_COLOR_BUFFER_BIT);
@@ -1459,7 +1459,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
         gui->end_layer ();
         gui->set_layer (0, group, 0);
 
-        if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
+        if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
           hidgl_flush_triangles (&buffer);
           glPushAttrib (GL_COLOR_BUFFER_BIT);
           glColorMask (0, 0, 0, 0);
@@ -1472,7 +1472,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
       }
 
       /* Draw pins, vias and pads on this layer */
-      if (!global_view_2d && rv) {
+      if (!global_view_2d && !is_outline) {
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
         if (PCB->PinOn && group == top_group)
