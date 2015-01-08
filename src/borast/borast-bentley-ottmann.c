@@ -1375,6 +1375,7 @@ poly_area_to_start_events (POLYAREA                *poly,
                                  counter, outer_contour);
         outer_contour = 0;
       }
+      break;
 
     } while ((pa = pa->f) != poly);
 
@@ -1401,6 +1402,7 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
     for (contour = pa->contours; contour != NULL; contour = contour->next)
       num_events += contour->Count;
     /* FIXME: Remove horizontal edges? */
+    break;
   } while ((pa = pa->f) != poly);
 
   if (unlikely (0 == num_events))
