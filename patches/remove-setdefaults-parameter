@@ -1,5 +1,5 @@
-Bottom: 65ec346f8ca209df364353d8fb261901fe6c442c
-Top:    398068a27cc9f013e6106f95f43243416468bd4d
+Bottom: d0553522e8916f071890a4f2b4a9ea00ac43c4b1
+Top:    c97fda4939fdebf62748cbe74c480f15802aa577
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-07 00:56:50 +0000
 
@@ -12,7 +12,7 @@ callers passing both true and false), so remove it.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index b8b3fe7..88ac6cc 100644
+index 3a36c79..86b379d 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -5938,7 +5938,7 @@ ActionNew (int argc, char **argv, Coord x, Coord y)
