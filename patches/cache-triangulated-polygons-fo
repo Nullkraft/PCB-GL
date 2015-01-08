@@ -1,5 +1,5 @@
-Bottom: b344f0dd6e9f7845b3219f69b3a7cd3c4e17dbcf
-Top:    70650d0fdc07ea1cdd6c8eda210739e31e1af099
+Bottom: 00791c620c4b15331c789e25a0f914836ff31430
+Top:    39a1237451c1db9c57649336a228163a621e9269
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 10:06:57 +0000
 
@@ -9,10 +9,10 @@ Cache triangulated polygons for rendering
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 7da96ee..642178a 100644
+index fe9619a..9c43054 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -643,6 +643,8 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
+@@ -644,6 +644,8 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
    polygon->Clipped = NULL;
    polygon->NoHoles = NULL;
    polygon->NoHolesValid = 0;
