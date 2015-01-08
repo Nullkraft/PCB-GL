@@ -1568,7 +1568,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
     }
   while (end - start < 10);
 
-  printf (_("%g redraws per second\n"), i / 10.0);
+  printf (_("%g redraws per second\n"), (double)i / (double)(end-start));
 
   return 0;
 }
