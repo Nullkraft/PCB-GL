@@ -49,6 +49,9 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
 #include <dmalloc.h>
 #endif
 
+#include "hid/common/hidcairo.h"
+#include <cairo.h>
+
 //#define VIEW_ORTHO
 
 extern HID ghid_hid;
@@ -95,6 +98,8 @@ typedef struct render_priv {
   hidgl_instance *hidgl;
   GList *active_gc_list;
   double edit_depth;
+
+  HID_DRAW *hid_draw_cairo;
 
 } render_priv;
 
@@ -1104,6 +1109,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   ghid_hid.end_layer = ghid_end_layer;
   ghid_graphics._fill_pcb_polygon = ghid_fill_pcb_polygon;
   ghid_graphics._thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+  priv->hid_draw_cairo = hidcairo_init (); /* XXX */
 }
 
 void
@@ -1137,6 +1143,9 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
                                 drawarea_glcontext,
                                 TRUE,
                                 GDK_GL_RGBA_TYPE);
+
+
+  gtk_widget_set_double_buffered (widget, true); /* XXX: For Cairo testing only */
 }
 
 void
@@ -2334,7 +2343,72 @@ ghid_draw_everything (hidGC gc)
   Settings.ShowBottomSide = save_show_solder;
 }
 
+static cairo_t *_cr = NULL;
+static bool cairo_subcomposite = false;
+
+static int
+hidcairo_set_layer (hidGC gc, const char *name, int group, int _empty)
+{
+  bool group_visible = false;
+
+  if (group >= 0 && group < max_group)
+    {
+      group_visible = is_layer_group_visible (group);
+    }
+  else
+    {
+      switch (SL_TYPE (group))
+	{
+	case SL_INVISIBLE:
+	  group_visible = PCB->InvisibleObjectsOn;
+	  break;
+	case SL_MASK:
+	  group_visible = SL_MYSIDE (group) && TEST_FLAG (SHOWMASKFLAG, PCB);
+	  break;
+	case SL_SILK:
+	  group_visible = SL_MYSIDE (group) && PCB->ElementOn;
+	  break;
+	case SL_ASSY:
+	  break;
+	case SL_PDRILL:
+	case SL_UDRILL:
+	  group_visible = true;
+	  break;
+	case SL_RATS:
+	  group_visible = PCB->RatOn;
+	  break;
+	}
+    }
+
+//  cairo_pop_group_to_source (_cr);
+//  cairo_paint_with_alpha (_cr, 0.8);
+
+  if (group_visible)
+    {
+      cairo_subcomposite = true;
+      cairo_push_group (_cr);
+    }
+  else
+    {
+      cairo_subcomposite = false;
+    }
+
+  return group_visible;
+}
+
+static void
+hidcairo_end_layer (hidGC gc)
+{
+  if (cairo_subcomposite)
+    {
+      cairo_pop_group_to_source (_cr);
+      cairo_paint_with_alpha (_cr, 0.7);
+      cairo_subcomposite = false;
+    }
+}
+
 #define Z_NEAR 3.0
+#if 0
 gboolean
 ghid_drawing_area_expose_cb (GtkWidget *widget,
                              GdkEventExpose *ev,
@@ -2734,6 +2808,45 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   return FALSE;
 }
+#else
+gboolean
+ghid_drawing_area_expose_cb (GtkWidget *widget,
+                             GdkEventExpose *ev,
+                             GHidPort *port)
+{
+  render_priv *priv = port->render_priv;
+  render_priv *hidcairo_priv; /* XXX: Type has same name, but is DIFFERENT! */
+  HID hidtmp;
+
+  memset (&hidtmp, 0, sizeof (HID));
+
+  _cr = gdk_cairo_create (widget->window);
+
+  cairo_set_source_rgb (_cr, 0.0, 0.0, 0.0);
+  cairo_paint (_cr);
+
+  cairo_scale (_cr, 1.0 / 100000., 1.0 / 100000.); /* XXX */
+
+  hidcairo_priv = hidcairo_start_render (_cr);
+
+  hidtmp.set_layer = hidcairo_set_layer;
+  hidtmp.end_layer = hidcairo_end_layer;
+  hidtmp.graphics = priv->hid_draw_cairo;
+  hidtmp.gui = TRUE;
+  hidtmp.poly_before = TRUE;
+  hidtmp.name = "Test";
+
+  hid_expose_callback (&hidtmp, 0);
+  hidcairo_finish_render (hidcairo_priv);
+
+  cairo_destroy (_cr);
+  _cr = NULL;
+
+  g_timer_start (priv->time_since_expose);
+
+  return FALSE;
+}
+#endif
 
 /* This realize callback is used to work around a crash bug in some mesa
  * versions (observed on a machine running the intel i965 driver. It isn't
