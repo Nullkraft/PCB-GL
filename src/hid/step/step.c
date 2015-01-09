@@ -33,7 +33,7 @@
 
 #define HACK_BOARD_THICKNESS MM_TO_COORD(2.3)
 
-static int step_set_layer (const char *name, int group, int empty);
+static int step_set_layer (hidGC gc, const char *name, int group, int empty);
 static void use_gc (hidGC gc);
 
 typedef struct step_gc_struct
@@ -743,13 +743,13 @@ step_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_sort);
 
   /* reset static vars */
-  step_set_layer (NULL, 0, -1);
+  step_set_layer (NULL, NULL, 0, -1);
   use_gc (NULL);
 
-//  hid_expose_callback (&step_hid, NULL, 0);
+//  hid_expose_callback (&step_hid, 0);
 
-  step_set_layer (NULL, 0, -1);  /* reset static vars */
-//  hid_expose_callback (&step_hid, NULL, 0);
+  step_set_layer (NULL, NULL, 0, -1);  /* reset static vars */
+//  hid_expose_callback (&step_hid, 0);
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
   PCB->Flags = save_thindraw;
@@ -797,7 +797,7 @@ step_parse_arguments (int *argc, char ***argv)
 }
 
 static int
-step_set_layer (const char *name, int group, int empty)
+step_set_layer (hidGC gc, const char *name, int group, int empty)
 {
   static int lastgroup = -1;
   int idx = (group >= 0 && group < max_group)
@@ -971,20 +971,20 @@ step_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 }
 
 static void
-fill_polyarea (hidGC gc, POLYAREA * pa, const BoxType * clip_box)
+fill_polyarea (hidGC gc, POLYAREA * pa)
 {
 }
 
 static void
-step_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
+step_draw_pcb_polygon (hidGC gc, PolygonType * poly)
 {
-  fill_polyarea (gc, poly->Clipped, clip_box);
+  fill_polyarea (gc, poly->Clipped);
   if (TEST_FLAG (FULLPOLYFLAG, poly))
     {
       POLYAREA *pa;
 
       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
-        fill_polyarea (gc, pa, clip_box);
+        fill_polyarea (gc, pa);
     }
 }
 
