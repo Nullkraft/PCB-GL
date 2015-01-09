@@ -1,7 +1,7 @@
-Bottom: 57c826c390a29c071c36914569802f2230a65674
-Top:    c7dbc209ee1f5996d0350379d0653aee864c47fd
+Bottom: 3dcefc04a18810a668c150e195275229987126c0
+Top:    fe1c71c7c90a4930e8d97df93884d08e3c45ad59
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-04 21:16:35 +0000
+Date:   2015-01-09 23:10:10 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -193,10 +193,10 @@ index ff31cbe..58dd52c 100644
    if (idx < 0)
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3cd7e92..bd3247e 100644
+index 0d0d542..81454f3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -135,7 +135,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -139,7 +139,7 @@ ghid_set_layer (const char *name, int group, int empty)
        for (idx = 0; idx < n-1; idx ++)
  	{
  	  int ni = PCB->LayerGroups.Entries[group][idx];
@@ -205,9 +205,9 @@ index 3cd7e92..bd3247e 100644
  	      && PCB->Data->Layer[ni].On)
  	    break;
  	}
-@@ -145,7 +145,7 @@ ghid_set_layer (const char *name, int group, int empty)
-   end_subcomposite ();
-   start_subcomposite ();
+@@ -149,7 +149,7 @@ ghid_set_layer (const char *name, int group, int empty)
+   end_subcomposite (hidgl);
+   start_subcomposite (hidgl);
  
 -  if (idx >= 0 && idx < max_copper_layer + 2)
 +  if (idx >= 0 && idx < max_copper_layer + EXTRA_LAYERS)
