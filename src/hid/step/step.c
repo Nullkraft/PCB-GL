@@ -228,6 +228,20 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
   *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
 }
 
+/* NB: contour edge 'n' starts at contour coord 'n', and ends at coord 'n + 1' */
+static char *
+get_contour_edge_n_name (PLINE *contour, int n)
+{
+  VNODE *vertex = &contour->head;
+
+  while (n > 0) {
+    vertex = vertex->next; /* The VNODE structure is circularly linked, so wrapping is OK */
+    n--;
+  }
+
+  return vertex->edge_name; /* NB: Vertex 'n' is used to store the name for edge 'n' */
+}
+
 #define FWD 1
 #define REV 2
 static void
@@ -647,7 +661,11 @@ step_emit_board_contour (FILE *f, PLINE *contour)
       ct = ct->next;
     }
 
-    face_name = (ct->name != NULL) ? ct->name : "";
+    // face_name = (ct->name != NULL) ? ct->name : ""; // Naming all faces of a contour with the contour name
+    face_name = get_contour_edge_n_name (ct, adjusted_i); // Naming each face of a contour separately. (XXX: Should we prepend the contour name?)
+
+    if (face_name == NULL)
+      face_name = "";
 
     fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ( #%i, #%i, #%i, #%i ) ) ; "
                 "#%i = FACE_OUTER_BOUND ( 'NONE', #%i, .T. ) ; "
