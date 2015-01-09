@@ -1,5 +1,5 @@
-Bottom: 75d77d67d253f23b143dcce73f6d005609965fa7
-Top:    fa1563a1722b8232ad8aa4d5181a6c2951bc70ec
+Bottom: ab14ab87f27f1e3a50cf3640ef1119f845f4d66a
+Top:    ab14ab87f27f1e3a50cf3640ef1119f845f4d66a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-08 21:29:22 +0000
 
@@ -8,39 +8,4 @@ PCB+GL: Fix GL headers for Win32
 
 ---
 
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 5df34b9..838b9db 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -32,12 +32,18 @@
- #include <math.h>
- #include <assert.h>
- 
--/* The Linux OpenGL ABI 1.0 spec requires that we define
-- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-- * in order to get prototypes:
-- *   http://www.opengl.org/registry/ABI/
-- */
--#define GL_GLEXT_PROTOTYPES 1
-+#ifdef WIN32
-+#   define WIN32_LEAN_AND_MEAN 1
-+#   include <windows.h>
-+#else
-+    /* The Linux OpenGL ABI 1.0 spec requires that we define
-+     * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-+     * in order to get prototypes:
-+     *   http://www.opengl.org/registry/ABI/
-+     */
-+#   define GL_GLEXT_PROTOTYPES 1
-+#endif
-+
- #ifdef HAVE_OPENGL_GL_H
- #   include <OpenGL/gl.h>
- #else
-@@ -67,7 +73,6 @@
- #include <dmalloc.h>
- #endif
- 
--
- triangle_buffer buffer;
- float global_depth = 0;
+
