@@ -1,5 +1,5 @@
-Bottom: c82f26adb2f141424c99c3357f12ba4dfda7c9a1
-Top:    f6b7c8b7f5a0f2461defa39e628b92f069a1bc57
+Bottom: 6d9f30119c3684c8c6198e9213d09855216aa895
+Top:    3f8453f71525c8bba82ecaab148603709488d5d6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-08 21:29:21 +0000
 
@@ -5476,18 +5476,18 @@ index 0000000..ba0f8eb
 +
 +#endif
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index ac68ce0..4f8ac1a 100644
+index 37da288..816bf98 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -61,6 +61,7 @@
- #include "hid.h"
+@@ -62,6 +62,7 @@
+ #include "hid_draw.h"
  #include "hidgl.h"
  #include "rtree.h"
 +#include "sweep.h"
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -620,6 +621,13 @@ fill_polyarea (POLYAREA *pa, const BoxType *clip_box, double scale)
+@@ -640,6 +641,13 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, double scale)
    PLINE *contour;
    struct do_hole_info info;
    int stencil_bit;

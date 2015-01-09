@@ -1,5 +1,5 @@
-Bottom: 31926641aea4ef922c33b94353e8461f1a1276e0
-Top:    6b3852250e0a85a6102dca1973943b5b86f530d5
+Bottom: 169c33b89e24b4042801a0fc56f2885e441f6e63
+Top:    1e633300c18fad0c5ffe9c6f9914628bf1ba6fc1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-08 21:29:20 +0000
 
@@ -17,10 +17,10 @@ change behaviour to apply test on a per-layer basis.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0888e88..729803e 100644
+index 27cd75d..bea96a8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1358,7 +1358,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1406,7 +1406,7 @@ GhidDrawMask (int side, BoxType * screen)
  static int
  GhidDrawLayerGroup (int group, const BoxType * screen)
  {
@@ -29,7 +29,7 @@ index 0888e88..729803e 100644
    int layernum;
    int side;
    struct poly_info info;
-@@ -1368,6 +1368,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1416,6 +1416,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
    int first_run = 1;
    int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
    int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
@@ -37,7 +37,7 @@ index 0888e88..729803e 100644
  
    if (!gui->set_layer (0, group, 0))
      return 0;
-@@ -1377,9 +1378,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1425,9 +1426,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
      layernum = layers[i];
      Layer = PCB->Data->Layer + layers[i];
  
@@ -49,7 +49,7 @@ index 0888e88..729803e 100644
  
      if (layernum < max_copper_layer && Layer->On) {
  
-@@ -1388,7 +1388,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1436,7 +1436,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
  
        first_run = 0;
  
@@ -58,7 +58,7 @@ index 0888e88..729803e 100644
          /* Mask out drilled holes on this layer */
          hidgl_flush_triangles (&buffer);
          glPushAttrib (GL_COLOR_BUFFER_BIT);
-@@ -1411,7 +1411,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1459,7 +1459,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
          gui->end_layer ();
          gui->set_layer (0, group, 0);
  
@@ -67,7 +67,7 @@ index 0888e88..729803e 100644
            hidgl_flush_triangles (&buffer);
            glPushAttrib (GL_COLOR_BUFFER_BIT);
            glColorMask (0, 0, 0, 0);
-@@ -1424,7 +1424,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1472,7 +1472,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
        }
  
        /* Draw pins, vias and pads on this layer */

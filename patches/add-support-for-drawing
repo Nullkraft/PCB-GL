@@ -1,5 +1,5 @@
-Bottom: 6b3852250e0a85a6102dca1973943b5b86f530d5
-Top:    1512b0d367ebf01491e9285e70ce4a30d141cd05
+Bottom: 1e633300c18fad0c5ffe9c6f9914628bf1ba6fc1
+Top:    5ac7df21287f2ce186a7db4721e17901ef3569a3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-08 21:29:20 +0000
 
@@ -9,10 +9,10 @@ Add support for drawing objects from the soldermask layer
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 729803e..d95af7b 100644
+index bea96a8..464b973 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1328,7 +1328,8 @@ static void
+@@ -1376,7 +1376,8 @@ static void
  GhidDrawMask (int side, BoxType * screen)
  {
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
@@ -22,7 +22,7 @@ index 729803e..d95af7b 100644
    OutputType *out = &Output;
  
    if (thin)
-@@ -1342,6 +1343,14 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1390,6 +1391,14 @@ GhidDrawMask (int side, BoxType * screen)
      }
  
    hid_draw_use_mask (&ghid_graphics, HID_MASK_CLEAR);
