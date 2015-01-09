@@ -1,0 +1,78 @@
+Bottom: c568574192dd7a570abfafb5dfc9bc27850b8284
+Top:    cb165422d5f49cbbc3ac90a0397477659f64bd92
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-09 23:30:54 +0000
+
+Fixup code to determine whether we draw pins/vias on a given layer
+
+The net change of this patch is that we consider whether to draw pins/vias
+for each layer within the layer group. Previously, if we encoundered a layer
+named "outline" or "route" within the layer group, all _subsequent_ layers
+within that group would not have their pins/vias rendered.
+
+As ordering of the layers within the group should not be important like this,
+change behaviour to apply test on a per-layer basis.
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 112ab4d..7f29072 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1407,7 +1407,7 @@ static int
+ GhidDrawLayerGroup (int group, const BoxType * screen)
+ {
+   render_priv *priv = gport->render_priv;
+-  int i, rv = 1;
++  int i;
+   int layernum;
+   int side;
+   struct poly_info info;
+@@ -1417,6 +1417,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+   int first_run = 1;
+   int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
++  bool is_outline;
+ 
+   if (!gui->set_layer (0, group, 0))
+     return 0;
+@@ -1426,9 +1427,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+     layernum = layers[i];
+     Layer = PCB->Data->Layer + layers[i];
+ 
+-    if (strcmp (Layer->Name, "outline") == 0 ||
+-        strcmp (Layer->Name, "route") == 0)
+-      rv = 0;
++    is_outline = strcmp (Layer->Name, "outline") == 0 ||
++                 strcmp (Layer->Name, "route") == 0;
+ 
+     if (layernum < max_copper_layer && Layer->On) {
+ 
+@@ -1437,7 +1437,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+ 
+       first_run = 0;
+ 
+-      if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
++      if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
+         /* Mask out drilled holes on this layer */
+         hidgl_flush_triangles (priv->hidgl);
+         glPushAttrib (GL_COLOR_BUFFER_BIT);
+@@ -1460,7 +1460,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+         gui->end_layer ();
+         gui->set_layer (0, group, 0);
+ 
+-        if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
++        if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
+           hidgl_flush_triangles (priv->hidgl);
+           glPushAttrib (GL_COLOR_BUFFER_BIT);
+           glColorMask (0, 0, 0, 0);
+@@ -1473,7 +1473,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+       }
+ 
+       /* Draw pins, vias and pads on this layer */
+-      if (!global_view_2d && rv) {
++      if (!global_view_2d && !is_outline) {
+         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
+         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
+         if (PCB->PinOn && group == top_group)
