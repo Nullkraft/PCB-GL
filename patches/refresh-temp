@@ -1,0 +1,38 @@
+Bottom: ab14ab87f27f1e3a50cf3640ef1119f845f4d66a
+Top:    41db4e21c9ca647994b73bfe256508d6b7a6e4d2
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-09 23:51:16 +0000
+
+Refresh of pcb-gl-fix-gl-headers-for-win3
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 732cef5..01a4479 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -32,12 +32,18 @@
+ #include <math.h>
+ #include <assert.h>
+ 
+-/* The Linux OpenGL ABI 1.0 spec requires that we define
+- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+- * in order to get prototypes:
+- *   http://www.opengl.org/registry/ABI/
+- */
+-#define GL_GLEXT_PROTOTYPES 1
++#ifdef WIN32
++#   define WIN32_LEAN_AND_MEAN 1
++#   include <windows.h>
++#else
++    /* The Linux OpenGL ABI 1.0 spec requires that we define
++     * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
++     * in order to get prototypes:
++     *   http://www.opengl.org/registry/ABI/
++     */
++#   define GL_GLEXT_PROTOTYPES 1
++#endif
++
+ #ifdef HAVE_OPENGL_GL_H
+ #   include <OpenGL/gl.h>
+ #else
