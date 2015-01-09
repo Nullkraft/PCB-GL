@@ -2571,6 +2571,7 @@ poly_DelContour (PLINE ** c)
 	  free (cur->cvc_next);
 	  free (cur->cvc_prev);
 	}
+      free (cur->edge_name);
       free (cur);
     }
   if ((*c)->head.cvc_next != NULL)
