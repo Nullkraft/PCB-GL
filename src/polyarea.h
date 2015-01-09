@@ -88,6 +88,7 @@ struct VNODE
     CVCList *cvc_prev;
     CVCList *cvc_next;
     Vector point;
+    char *edge_name;
 };
 
 typedef struct PLINE PLINE;
