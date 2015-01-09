@@ -1,5 +1,5 @@
-Bottom: 3d06dff45614f7bca797210dcec7c00b700ed5c7
-Top:    b2d8c2fa5071caf1011ee06884d90690c81940ec
+Bottom: a3401ee0d2864f818d833ce50115f16518565e10
+Top:    7d8f0ff4262aa44783d783c7abf00c86d9f4d8a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-08 21:29:21 +0000
 
@@ -12,7 +12,7 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4b4d6ee..b27f24e 100644
+index 7ac351b..3152fda 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -11,6 +11,7 @@
@@ -23,7 +23,7 @@ index 4b4d6ee..b27f24e 100644
  #include "gui-pinout-preview.h"
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
-@@ -1350,6 +1351,8 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1398,6 +1399,8 @@ GhidDrawMask (int side, BoxType * screen)
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
    LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
    struct poly_info info;
@@ -32,7 +32,7 @@ index 4b4d6ee..b27f24e 100644
    OutputType *out = &Output;
  
    if (thin)
-@@ -1378,7 +1381,18 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1426,7 +1429,18 @@ GhidDrawMask (int side, BoxType * screen)
    hid_draw_use_mask (&ghid_graphics, HID_MASK_AFTER);
    hid_draw_set_color (out->fgGC, PCB->MaskColor);
    ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
