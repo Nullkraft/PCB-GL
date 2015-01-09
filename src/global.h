@@ -544,6 +544,7 @@ typedef struct			/* rubberband lines for element moves */
   LayerType *Layer;		/* layer that holds the line */
   LineType *Line;		/* the line itself */
   PointType *MovedPoint;	/* and finally the point */
+  bool endpoint;                /* Whether this line is at a terminus of the line being moved */
 } RubberbandType;
 
 typedef struct			/* current marked line */
