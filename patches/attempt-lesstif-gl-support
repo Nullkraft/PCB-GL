@@ -1,5 +1,5 @@
 Bottom: 9303880701bae1cd8bf23f0db31fbcde4db1d4b1
-Top:    e78bc17784997f877d731a15e16759f7ef762419
+Top:    68e2b7c9508778b8e89663b0f8f8d0d37fa42809
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-10 00:28:31 +0000
 
@@ -66,7 +66,7 @@ index 9afffd8..dc425f5 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index c4b314e..9d21237 100644
+index c4b314e..d5cf524 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -104,7 +104,17 @@ index c4b314e..9d21237 100644
  typedef struct lesstif_gc_struct
  {
    struct hid_gc_struct hid_gc /* Parent */;
-@@ -1594,18 +1611,154 @@ lesstif_show_crosshair (int show)
+@@ -93,8 +110,7 @@ static int pixmap_w = 0, pixmap_h = 0;
+ Screen *screen_s;
+ int screen;
+ static Colormap colormap;
+-static GC my_gc = 0, bg_gc, clip_gc = 0, bset_gc = 0, bclear_gc = 0, mask_gc =
+-  0;
++static GC my_gc = 0, bg_gc, clip_gc = 0, bset_gc = 0, bclear_gc = 0;
+ static Pixel bgcolor, offlimit_color, grid_color;
+ static int bgred, bggreen, bgblue;
+ 
+@@ -1594,18 +1610,152 @@ lesstif_show_crosshair (int show)
    showing = show;
  }
  
@@ -148,7 +158,7 @@ index c4b314e..9d21237 100644
 +  /* If we don't have any stencil bits available,
 +     we can't use the hidgl polygon drawing routine */
 +  /* TODO: We could use the GLU tessellator though */
-+  if (hidgl_stencil_bits() == 0)
++  if (hidgl_stencil_bits (hidgl) == 0)
 +    {
 +      lesstif_gui.fill_pcb_polygon = common_fill_pcb_polygon;
 +      lesstif_gui.poly_dicer = 1;
@@ -185,7 +195,7 @@ index c4b314e..9d21237 100644
 +  glStencilMask (~0);
 +  glClearStencil (0);
 +  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-+  hidgl_reset_stencil_usage ();
++  hidgl_reset_stencil_usage (hidgl);
 +
 +  /* Disable the stencil test until we need it - otherwise it gets dirty */
 +  glDisable (GL_STENCIL_TEST);
@@ -210,7 +220,6 @@ index c4b314e..9d21237 100644
 +
 +  /* TODO: Background image */
 +
-+  hidgl_init_triangle_array (&buffer);
 +  ghid_invalidate_current_gc ();
 +
 +  /* Setup stenciling */
@@ -235,12 +244,11 @@ index c4b314e..9d21237 100644
 +
 +  hid_expose_callback (&lesstif_gui, &region, 0);
 +
-+  hidgl_flush_triangles (&buffer);
++  hidgl_flush_triangles (hidgl);
 +  glPopMatrix ();
 +
 +  draw_grid ();
 +
-+  hidgl_init_triangle_array (&buffer);
 +  ghid_invalidate_current_gc ();
 +  glPushMatrix ();
 +  glScalef ((flip_x ? -1. : 1.) / view_zoom,
@@ -249,19 +257,19 @@ index c4b314e..9d21237 100644
 +                flip_y ? view_top_y  - PCB->MaxHeight : -view_top_y,  0);
 +  //DrawAttached (TRUE);
 +  //DrawMark (TRUE);
-+  hidgl_flush_triangles (&buffer);
++  hidgl_flush_triangles (hidgl);
 +  glPopMatrix ();
 +
 +  show_crosshair (1);
 +
-+  hidgl_flush_triangles (&buffer);
++  hidgl_flush_triangles (hidgl);
 +
 +  /* end drawing to current GL-context */
 +  glXSwapBuffers(global_display, global_window);
  }
  
  static void
-@@ -1799,6 +1952,23 @@ make_message (char *name, Widget left, int resizeable)
+@@ -1799,6 +1949,23 @@ make_message (char *name, Widget left, int resizeable)
  }
  
  static void
@@ -285,7 +293,7 @@ index c4b314e..9d21237 100644
  lesstif_do_export (HID_Attr_Val * options)
  {
    Dimension width, height;
-@@ -1844,12 +2014,20 @@ lesstif_do_export (HID_Attr_Val * options)
+@@ -1844,12 +2011,20 @@ lesstif_do_export (HID_Attr_Val * options)
  
    n = 0;
    do_color (Settings.BackgroundColor, XmNbackground);
@@ -311,7 +319,7 @@ index c4b314e..9d21237 100644
    /* A regular callback won't work here, because lesstif swallows any
       Ctrl<Button>1 event.  */
    XtAddEventHandler (work_area,
-@@ -2039,6 +2217,17 @@ lesstif_parse_arguments (int *argc, char ***argv)
+@@ -2039,6 +2214,17 @@ lesstif_parse_arguments (int *argc, char ***argv)
    XtResource *new_resources;
    val_union *new_values;
    int render_event, render_error;
@@ -329,7 +337,7 @@ index c4b314e..9d21237 100644
  
    XtSetTypeConverter (XtRString,
  		      XtRDouble,
-@@ -2193,7 +2382,7 @@ lesstif_parse_arguments (int *argc, char ***argv)
+@@ -2193,7 +2379,7 @@ lesstif_parse_arguments (int *argc, char ***argv)
  
    appwidget = XtAppInitialize (&app_context,
  			       "Pcb",
@@ -338,7 +346,7 @@ index c4b314e..9d21237 100644
  
    display = XtDisplay (appwidget);
    screen_s = XtScreen (appwidget);
-@@ -2495,7 +2684,8 @@ static int need_redraw = 0;
+@@ -2495,7 +2681,8 @@ static int need_redraw = 0;
  static Boolean
  idle_proc (XtPointer dummy)
  {
@@ -348,7 +356,7 @@ index c4b314e..9d21237 100644
      {
        int mx, my;
        BoxType region;
-@@ -2899,7 +3089,7 @@ idle_proc (XtPointer dummy)
+@@ -2899,7 +3086,7 @@ idle_proc (XtPointer dummy)
  
    lesstif_update_widget_flags ();
  
@@ -357,7 +365,7 @@ index c4b314e..9d21237 100644
    idle_proc_set = 0;
    return True;
  }
-@@ -2916,11 +3106,22 @@ lesstif_need_idle_proc ()
+@@ -2916,11 +3103,22 @@ lesstif_need_idle_proc ()
  static void
  lesstif_invalidate_lr (int l, int r, int t, int b)
  {
@@ -380,7 +388,7 @@ index c4b314e..9d21237 100644
  }
  
  void
-@@ -3185,6 +3386,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3185,6 +3383,7 @@ lesstif_set_color (hidGC gc, const char *name)
      }
  }
  
@@ -388,7 +396,7 @@ index c4b314e..9d21237 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3249,257 +3451,456 @@ set_gc (hidGC gc)
+@@ -3249,257 +3448,456 @@ set_gc (hidGC gc)
  			  join);
      }
  }
@@ -460,15 +468,15 @@ index c4b314e..9d21237 100644
 +              PCB->LayerGroups.Entries[group][0] : group;
 +
 +  /* Flush out any existing geoemtry to be rendered */
-+  hidgl_flush_triangles (&buffer);
++  hidgl_flush_triangles (hidgl);
 +
-+  hidgl_set_depth (compute_depth (group));
++  hidgl_set_depth (gc, compute_depth (group));
 +
 +  glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
 +  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
-+  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
++  hidgl_return_stencil_bit (hidgl, stencil_bit);       // Relinquish any bitplane we previously used
 +  if (SL_TYPE (idx) != SL_FINISHED) {
-+    stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
++    stencil_bit = hidgl_assign_clear_stencil_bit (hidgl); // Get a new (clean) bitplane to stencil with
 +    glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
 +    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
 +  } else {
@@ -512,32 +520,32 @@ index c4b314e..9d21237 100644
 -static void
 -lesstif_set_draw_xor (hidGC gc, int xor_set)
 +void
-+ghid_use_mask (int use_it)
++ghid_use_mask (enum mask_mode mode)
  {
 -  lesstifGC lesstif_gc = (lesstifGC)gc;
 +  static int stencil_bit = 0;
 +
 +  /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
-+  if (use_it == HID_LIVE_DRAWING ||
-+      use_it == HID_LIVE_DRAWING_OFF ||
-+      use_it == HID_FLUSH_DRAW_Q) {
++  if (mode == HID_LIVE_DRAWING ||
++      mode == HID_LIVE_DRAWING_OFF ||
++      mode == HID_FLUSH_DRAW_Q) {
 +    return;
 +  }
 +
-+  if (use_it == cur_mask)
++  if (mode == cur_mask)
 +    return;
  
 -  lesstif_gc->xor_set = xor_set;
 +  /* Flush out any existing geoemtry to be rendered */
-+  hidgl_flush_triangles (&buffer);
++  hidgl_flush_triangles (hidgl);
 +
-+  switch (use_it)
++  switch (mode)
 +    {
 +    case HID_MASK_BEFORE:
 +      /* Write '1' to the stencil buffer where the solder-mask is drawn. */
 +      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
 +      glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
-+      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
++      stencil_bit = hidgl_assign_clear_stencil_bit (hidgl); // Get a new (clean) bitplane to stencil with
 +      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
 +      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
 +      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
@@ -558,11 +566,11 @@ index c4b314e..9d21237 100644
 +
 +    case HID_MASK_OFF:
 +      /* Disable stenciling */
-+      hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
++      hidgl_return_stencil_bit (hidgl, stencil_bit);  // Relinquish any bitplane we previously used
 +      glDisable (GL_STENCIL_TEST);                // Disable Stencil test
 +      break;
 +    }
-+  cur_mask = use_it;
++  cur_mask = mode;
  }
  
 -#define ISORT(a,b) if (a>b) { a^=b; b^=a; a^=b; }
@@ -818,7 +826,7 @@ index c4b314e..9d21237 100644
 +  if( ! gui_is_up )
 +    return;
 +
-+  hidgl_flush_triangles (&buffer);
++  hidgl_flush_triangles (hidgl);
 +  glColor4d (r, g, b, a);
  }
  
@@ -979,7 +987,7 @@ index c4b314e..9d21237 100644
 +{
 +  USE_GC (gc);
 +
-+  hidgl_draw_line (gc->cap, gc->width, x1, y1, x2, y2, view_zoom);
++  hidgl_draw_line (gc, gc->cap, gc->width, x1, y1, x2, y2, view_zoom);
 +}
 +
 +void
@@ -988,7 +996,7 @@ index c4b314e..9d21237 100644
 +{
 +  USE_GC (gc);
 +
-+  hidgl_draw_arc (gc->width, cx, cy, xradius, yradius,
++  hidgl_draw_arc (gc, gc->width, cx, cy, xradius, yradius,
 +                  start_angle, delta_angle, view_zoom);
 +}
 +
@@ -997,7 +1005,7 @@ index c4b314e..9d21237 100644
 +{
 +  USE_GC (gc);
 +
-+  hidgl_draw_rect (x1, y1, x2, y2);
++  hidgl_draw_rect (gc, x1, y1, x2, y2);
 +}
 +
 +
@@ -1006,7 +1014,7 @@ index c4b314e..9d21237 100644
 +{
 +  USE_GC (gc);
 +
-+  hidgl_fill_circle (cx, cy, radius, view_zoom);
++  hidgl_fill_circle (gc, cx, cy, radius, view_zoom);
 +}
 +
 +
@@ -1015,7 +1023,7 @@ index c4b314e..9d21237 100644
 +{
 +  USE_GC (gc);
 +
-+  hidgl_fill_polygon (n_coords, x, y);
++  hidgl_fill_polygon (gc, n_coords, x, y);
 +}
 +
 +void
@@ -1023,7 +1031,7 @@ index c4b314e..9d21237 100644
 +{
 +  USE_GC (gc);
 +
-+  hidgl_fill_pcb_polygon (poly, clip_box, view_zoom);
++  hidgl_fill_pcb_polygon (gc, poly, clip_box, view_zoom);
 +}
 +
 +void
@@ -1040,11 +1048,11 @@ index c4b314e..9d21237 100644
 +{
 +  USE_GC (gc);
 +
-+  hidgl_fill_rect (x1, y1, x2, y2);
++  hidgl_fill_rect (gc, x1, y1, x2, y2);
  }
  
  static void
-@@ -4116,17 +4517,19 @@ hid_lesstif_init ()
+@@ -4116,17 +4514,19 @@ hid_lesstif_init ()
  
    lesstif_graphics.make_gc             = lesstif_make_gc;
    lesstif_graphics.destroy_gc          = lesstif_destroy_gc;
