@@ -2,15 +2,15 @@ NEVERBUILD="
 "
 
 NOBUILD="
-"
-
-BUILD="
 jpeg
 zlib
 libpng
 tiff
 pixman
 libiconv
+"
+
+BUILD="
 gettext
 glib
 atk
