@@ -1,7 +1,7 @@
-Bottom: 37585f8d0375121c6265266fcd5f50a1c6de36c9
-Top:    8d011d23e3578890386c17678be595aefdc6048d
+Bottom: 10f27dfedf4fa4134956256ef557066a779db6e1
+Top:    638f732b3bdd1483ea31ac929e01c04ab98079de
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-10 00:58:38 +0000
+Date:   2015-01-10 13:45:41 +0000
 
 Add support for arc segments in polygon object outline definitions
 
@@ -140,16 +140,16 @@ index b36aebf..a542ccf 100644
  typedef struct {
    ANYLINEFIELDS;
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 0c4ac20..559365c 100644
+index e6b1eaf..51adc6c 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -749,10 +749,12 @@ fill_contour (PLINE *contour)
+@@ -782,10 +782,12 @@ fill_contour (hidGC gc, PLINE *contour)
    borast_traps_t traps;
  
    /* If the contour is round, then call hidgl_fill_circle to draw it. */
 +#if 0
    if (contour->is_round) {
-     hidgl_fill_circle (contour->cx, contour->cy, contour->radius);
+     hidgl_fill_circle (gc, contour->cx, contour->cy, contour->radius);
      return;
    }
 +#endif
