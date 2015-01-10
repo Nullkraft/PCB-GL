@@ -3,10 +3,24 @@ Top:    b8ab0583223dcfb1f0f28f1a0f3cc8540b9f4167
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-09 22:55:21 +0000
 
-hidgl: Provide more explicit management of rendering instances and avoid global variables
+hidgl: Provide more explicit management of rendering instances
 
-Provide an (hidgl_instance *) pointer which can be used to refer to the hidgl instance,
-avoiding exposing the triangle_buffer structure.
+Provide an (hidgl_instance *) pointer which is used to refer to a hidgl
+instance when caling hidgl_* APIs that are instance, but not hidGC specific.
+
+Various hidgl APIs now take the hidgl_instance as a parameter, or in the case
+of hidgl_new_instance(), return a new instance.
+
+Graphics APIs which previously had a hidGC parameter remain the same, as the
+hidglGC structure now contains a link to the hidgl instance which created it.
+
+This change paves the way to potentially having multiple hidgl instances active
+simultaneously, and removes various global variables (such as "buffer" and
+"global_depth") which were previously accessible to allow the gtk-gl HID to
+draw using the hidgl internals.
+
+The gtk-gl HID_DRAW graphics API now subclasses the hidgl HID_DRAW API, so the
+gtk-gl HID can access the (non-private) gtk_gc->hidgl_gc.* fields.
 
 
 ---
