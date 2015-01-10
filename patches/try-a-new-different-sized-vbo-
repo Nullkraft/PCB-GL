@@ -1,5 +1,5 @@
 Bottom: 70e6708b8d65b0a8f716001276f92cc24e2c91d8
-Top:    70e6708b8d65b0a8f716001276f92cc24e2c91d8
+Top:    dddf84bb9cd49a0d6c0269c008c61ce01590710a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-08 21:29:26 +0000
 
@@ -8,4 +8,33 @@ Try a new, different sized VBO buffer for each upload.
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 32b6dc5..66586f1 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -153,10 +153,6 @@ hidgl_init_triangle_array (hidgl_instance *hidgl)
+    */
+   priv->buffer.use_map = false;
+ 
+-  /* If using VBOs (but not mapping), we only need to this once */
+-  if (priv->buffer.use_vbo && !priv->buffer.use_map)
+-    glBufferData (GL_ARRAY_BUFFER, BUFFER_SIZE, NULL, GL_STREAM_DRAW);
+-
+   priv->buffer.triangle_array = NULL;
+   hidgl_reset_triangle_array (hidgl);
+ }
+@@ -198,10 +194,10 @@ hidgl_flush_triangles (hidgl_instance *hidgl)
+       glUnmapBuffer (GL_ARRAY_BUFFER);
+       priv->buffer.triangle_array = NULL;
+     } else {
+-      /* NB: We only upload the portion of the buffer we've used */
+-      glBufferSubData (GL_ARRAY_BUFFER, 0,
+-                       BUFFER_STRIDE * priv->buffer.vertex_count,
+-                       priv->buffer.triangle_array);
++      glBufferData (GL_ARRAY_BUFFER,
++                    BUFFER_STRIDE * priv->buffer.vertex_count,
++                    priv->buffer.triangle_array,
++                    GL_STREAM_DRAW);
+     }
+   } else {
+     data_pointer = priv->buffer.triangle_array;
