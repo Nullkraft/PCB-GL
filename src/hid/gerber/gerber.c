@@ -589,7 +589,7 @@ gerber_do_export (HID_Attr_Val * options)
   const char *fnbase;
   int i;
   static int saved_layer_stack[MAX_LAYER];
-  int save_ons[MAX_LAYER + 2];
+  int save_ons[MAX_LAYER + EXTRA_LAYERS];
   FlagType save_thindraw;
 
   save_thindraw = PCB->Flags;
