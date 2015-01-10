@@ -1,5 +1,5 @@
 Bottom: 49db9924000fc0f365dc72fb992005d961c097f4
-Top:    49db9924000fc0f365dc72fb992005d961c097f4
+Top:    3dd800461d6f0f2b4774e517b5cdf12adc8c3596
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-10 16:47:19 +0000
 
@@ -8,4 +8,26 @@ w32: TMP Build fixes
 
 ---
 
-
+diff --git a/w32/build-all.sh b/w32/build-all.sh
+index 36e45d9..af04436 100755
+--- a/w32/build-all.sh
++++ b/w32/build-all.sh
+@@ -2,15 +2,15 @@ NEVERBUILD="
+ "
+ 
+ NOBUILD="
+-"
+-
+-BUILD="
+ jpeg
+ zlib
+ libpng
+ tiff
+ pixman
+ libiconv
++"
++
++BUILD="
+ gettext
+ glib
+ atk
