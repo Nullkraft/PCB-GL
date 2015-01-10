@@ -102,7 +102,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 //#define DEBUG_JUMP
 //#define DEBUG_GATHER
 #undef DEBUG_ANGLE
-//#define DEBUG
+#undef DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
 #else
