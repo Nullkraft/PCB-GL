@@ -1,5 +1,5 @@
-Bottom: bfa0255f23f13962e5adbb715a0b5f273b97ccf8
-Top:    2ac4e996579c18047da3b01225bd2f163248c5c7
+Bottom: 4a89fd24336fabe997bb89b77c78c7db99f9e233
+Top:    5515c5be1f52edf7f925fd67a1a98fe74e279f0f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:21 +0000
 
@@ -706,19 +706,19 @@ index 0000000..5a8bc27
 +
 +#endif /* __HIDGL_MATRIX_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
-index 8280d2d..53fd75b 100644
+index 97434e4..14a9439 100644
 --- a/src/hid/common/hidgl_package_acy_resistor.c
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
-@@ -29,6 +29,8 @@
- #endif
+@@ -30,6 +30,8 @@
  
+ #include "hid_draw.h"
  #include "hidgl.h"
 +#include "hidgl_material.h"
 +#include "hidgl_geometry.h"
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -48,6 +50,38 @@ extern PFNGLACTIVETEXTUREARBPROC   glActiveTextureARB;
+@@ -49,6 +51,38 @@ extern PFNGLACTIVETEXTUREARBPROC   glActiveTextureARB;
  
  #endif
  
@@ -757,7 +757,7 @@ index 8280d2d..53fd75b 100644
  static int
  compute_offset (int x, int y, int width, int height)
  {
-@@ -434,8 +468,6 @@ setup_hvdiode_texture (ElementType *element, GLfloat *body_color)
+@@ -435,8 +469,6 @@ setup_hvdiode_texture (ElementType *element, GLfloat *body_color)
  }
  
  
@@ -766,7 +766,7 @@ index 8280d2d..53fd75b 100644
  static GLfloat *debug_lines = NULL;
  static int no_debug_lines = 0;
  static int max_debug_lines = 0;
-@@ -715,41 +747,19 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
+@@ -716,41 +748,19 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
                   tex0_s, ang_edge2 / 2. / M_PI, tex0_s, mvm);
  }
  
@@ -812,7 +812,7 @@ index 8280d2d..53fd75b 100644
  
    /* XXX: Hard-coded magic */
    float resistor_pin_radius = MIL_TO_COORD (12.);
-@@ -762,101 +772,14 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -763,101 +773,14 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
    float resistor_taper2_offset = MIL_TO_COORD (33.);
    float resistor_bulge_offset = MIL_TO_COORD (45.);
    float resistor_bulge_width = MIL_TO_COORD (50.);
@@ -915,7 +915,7 @@ index 8280d2d..53fd75b 100644
    glBegin (GL_TRIANGLE_STRIP);
  
    for (strip = 0; strip < no_strips; strip++) {
-@@ -911,38 +834,34 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -912,38 +835,34 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
                   strip_data[ring    ].tex0_s, resistor_width, pos, mvm);
      }
    }
@@ -973,7 +973,7 @@ index 8280d2d..53fd75b 100644
      pin = (end == 1) ? first_pin : second_pin;
  
      if (TEST_FLAG (WARNFLAG, pin))
-@@ -957,6 +876,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -958,6 +877,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
      glColor3f (pin_color[0] / 1.5,
                 pin_color[1] / 1.5,
                 pin_color[2] / 1.5);
@@ -981,7 +981,7 @@ index 8280d2d..53fd75b 100644
  
      for (ring = 0; ring < no_rings; ring++) {
  
-@@ -992,74 +912,219 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -993,74 +913,219 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
        glEnd ();
      }
  
@@ -1247,7 +1247,7 @@ index 8280d2d..53fd75b 100644
  void
  hidgl_draw_800mil_resistor (ElementType *element, float surface_depth, float board_thickness)
  {
-@@ -2624,77 +2689,3 @@ hidgl_draw_350x800mil_cap (ElementType *element, float surface_depth, float boar
+@@ -2625,77 +2690,3 @@ hidgl_draw_350x800mil_cap (ElementType *element, float surface_depth, float boar
  
    first_run = false;
  }
