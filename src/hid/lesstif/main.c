@@ -110,8 +110,7 @@ static int pixmap_w = 0, pixmap_h = 0;
 Screen *screen_s;
 int screen;
 static Colormap colormap;
-static GC my_gc = 0, bg_gc, clip_gc = 0, bset_gc = 0, bclear_gc = 0, mask_gc =
-  0;
+static GC my_gc = 0, bg_gc, clip_gc = 0, bset_gc = 0, bclear_gc = 0;
 static Pixel bgcolor, offlimit_color, grid_color;
 static int bgred, bggreen, bgblue;
 
@@ -1649,7 +1648,7 @@ work_area_expose (Widget work_area, void *me,
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
   /* TODO: We could use the GLU tessellator though */
-  if (hidgl_stencil_bits() == 0)
+  if (hidgl_stencil_bits (hidgl) == 0)
     {
       lesstif_gui.fill_pcb_polygon = common_fill_pcb_polygon;
       lesstif_gui.poly_dicer = 1;
@@ -1686,7 +1685,7 @@ work_area_expose (Widget work_area, void *me,
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-  hidgl_reset_stencil_usage ();
+  hidgl_reset_stencil_usage (hidgl);
 
   /* Disable the stencil test until we need it - otherwise it gets dirty */
   glDisable (GL_STENCIL_TEST);
@@ -1711,7 +1710,6 @@ work_area_expose (Widget work_area, void *me,
 
   /* TODO: Background image */
 
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
 
   /* Setup stenciling */
@@ -1736,12 +1734,11 @@ work_area_expose (Widget work_area, void *me,
 
   hid_expose_callback (&lesstif_gui, &region, 0);
 
-  hidgl_flush_triangles (&buffer);
+  hidgl_flush_triangles (hidgl);
   glPopMatrix ();
 
   draw_grid ();
 
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   glPushMatrix ();
   glScalef ((flip_x ? -1. : 1.) / view_zoom,
@@ -1750,12 +1747,12 @@ work_area_expose (Widget work_area, void *me,
                 flip_y ? view_top_y  - PCB->MaxHeight : -view_top_y,  0);
   //DrawAttached (TRUE);
   //DrawMark (TRUE);
-  hidgl_flush_triangles (&buffer);
+  hidgl_flush_triangles (hidgl);
   glPopMatrix ();
 
   show_crosshair (1);
 
-  hidgl_flush_triangles (&buffer);
+  hidgl_flush_triangles (hidgl);
 
   /* end drawing to current GL-context */
   glXSwapBuffers(global_display, global_window);
@@ -3512,15 +3509,15 @@ ghid_set_layer (const char *name, int group, int empty)
               PCB->LayerGroups.Entries[group][0] : group;
 
   /* Flush out any existing geoemtry to be rendered */
-  hidgl_flush_triangles (&buffer);
+  hidgl_flush_triangles (hidgl);
 
-  hidgl_set_depth (compute_depth (group));
+  hidgl_set_depth (gc, compute_depth (group));
 
   glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
-  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
+  hidgl_return_stencil_bit (hidgl, stencil_bit);       // Relinquish any bitplane we previously used
   if (SL_TYPE (idx) != SL_FINISHED) {
-    stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+    stencil_bit = hidgl_assign_clear_stencil_bit (hidgl); // Get a new (clean) bitplane to stencil with
     glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
     glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
   } else {
@@ -3561,30 +3558,30 @@ ghid_set_layer (const char *name, int group, int empty)
 }
 
 void
-ghid_use_mask (int use_it)
+ghid_use_mask (enum mask_mode mode)
 {
   static int stencil_bit = 0;
 
   /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
-  if (use_it == HID_LIVE_DRAWING ||
-      use_it == HID_LIVE_DRAWING_OFF ||
-      use_it == HID_FLUSH_DRAW_Q) {
+  if (mode == HID_LIVE_DRAWING ||
+      mode == HID_LIVE_DRAWING_OFF ||
+      mode == HID_FLUSH_DRAW_Q) {
     return;
   }
 
-  if (use_it == cur_mask)
+  if (mode == cur_mask)
     return;
 
   /* Flush out any existing geoemtry to be rendered */
-  hidgl_flush_triangles (&buffer);
+  hidgl_flush_triangles (hidgl);
 
-  switch (use_it)
+  switch (mode)
     {
     case HID_MASK_BEFORE:
       /* Write '1' to the stencil buffer where the solder-mask is drawn. */
       glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
       glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
-      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+      stencil_bit = hidgl_assign_clear_stencil_bit (hidgl); // Get a new (clean) bitplane to stencil with
       glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
       glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
       glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
@@ -3605,11 +3602,11 @@ ghid_use_mask (int use_it)
 
     case HID_MASK_OFF:
       /* Disable stenciling */
-      hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
+      hidgl_return_stencil_bit (hidgl, stencil_bit);  // Relinquish any bitplane we previously used
       glDisable (GL_STENCIL_TEST);                // Disable Stencil test
       break;
     }
-  cur_mask = use_it;
+  cur_mask = mode;
 }
 
 typedef struct
@@ -3781,7 +3778,7 @@ ghid_set_color (hidGC gc, const char *name)
   if( ! gui_is_up )
     return;
 
-  hidgl_flush_triangles (&buffer);
+  hidgl_flush_triangles (hidgl);
   glColor4d (r, g, b, a);
 }
 
@@ -3839,7 +3836,7 @@ ghid_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
   USE_GC (gc);
 
-  hidgl_draw_line (gc->cap, gc->width, x1, y1, x2, y2, view_zoom);
+  hidgl_draw_line (gc, gc->cap, gc->width, x1, y1, x2, y2, view_zoom);
 }
 
 void
@@ -3848,7 +3845,7 @@ ghid_draw_arc (hidGC gc, Coord cx, Coord cy, Coord xradius, Coord yradius,
 {
   USE_GC (gc);
 
-  hidgl_draw_arc (gc->width, cx, cy, xradius, yradius,
+  hidgl_draw_arc (gc, gc->width, cx, cy, xradius, yradius,
                   start_angle, delta_angle, view_zoom);
 }
 
@@ -3857,7 +3854,7 @@ ghid_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
   USE_GC (gc);
 
-  hidgl_draw_rect (x1, y1, x2, y2);
+  hidgl_draw_rect (gc, x1, y1, x2, y2);
 }
 
 
@@ -3866,7 +3863,7 @@ ghid_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
 {
   USE_GC (gc);
 
-  hidgl_fill_circle (cx, cy, radius, view_zoom);
+  hidgl_fill_circle (gc, cx, cy, radius, view_zoom);
 }
 
 
@@ -3875,7 +3872,7 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 {
   USE_GC (gc);
 
-  hidgl_fill_polygon (n_coords, x, y);
+  hidgl_fill_polygon (gc, n_coords, x, y);
 }
 
 void
@@ -3883,7 +3880,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   USE_GC (gc);
 
-  hidgl_fill_pcb_polygon (poly, clip_box, view_zoom);
+  hidgl_fill_pcb_polygon (gc, poly, clip_box, view_zoom);
 }
 
 void
@@ -3900,7 +3897,7 @@ ghid_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
   USE_GC (gc);
 
-  hidgl_fill_rect (x1, y1, x2, y2);
+  hidgl_fill_rect (gc, x1, y1, x2, y2);
 }
 
 static void
