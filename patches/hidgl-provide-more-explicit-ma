@@ -5,6 +5,9 @@ Date:   2015-01-09 22:55:21 +0000
 
 hidgl: Provide more explicit management of rendering instances and avoid global variables
 
+Provide an (hidgl_instance *) pointer which can be used to refer to the hidgl instance,
+avoiding exposing the triangle_buffer structure.
+
 
 ---
 
