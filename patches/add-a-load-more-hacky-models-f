@@ -1,5 +1,5 @@
-Bottom: f5cae11e7c7889957c0c5cc9297e8cffdeb6e856
-Top:    8dd59d009fe5d87bcefe930f5e5463ae5d65e767
+Bottom: 61d28d9723d4708aa9ffaa4d520e1ac992969b91
+Top:    906ca9714dcb7e3071c8d02d1da5a1ace00a5286
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-08 21:29:27 +0000
 
@@ -9,10 +9,10 @@ Add a load more hacky models for test rendering
 ---
 
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 0b6d833..235b0f9 100644
+index 14469b3..e2d7f67 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -136,5 +136,10 @@ void hidgl_reset_stencil_usage (void);
+@@ -179,5 +179,10 @@ void hidgl_reset_stencil_usage (hidgl_instance *hidgl);
  
  /* hidgl_pacakge_acy_resistor.c */
  void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
@@ -1659,10 +1659,10 @@ index cef76d3..8280d2d 100644
  determinant_4x4 (float m[4][4])
  {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a6da33b..cfad32e 100644
+index 81c48bb..9c359a8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1760,6 +1760,31 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1810,6 +1810,31 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
