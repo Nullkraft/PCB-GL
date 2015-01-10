@@ -1,5 +1,5 @@
 Bottom: b330d003922a3831f6014ef9363dc00ff9f2e25d
-Top:    61d28d9723d4708aa9ffaa4d520e1ac992969b91
+Top:    741c189611157364bc86745907e1c7ab4e320d04
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-08 21:29:27 +0000
 
@@ -552,10 +552,10 @@ index 484614c..14469b3 100644
  #endif /* PCB_HID_COMMON_HIDGL_H  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
 new file mode 100644
-index 0000000..cef76d3
+index 0000000..62ef69f
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
-@@ -0,0 +1,1083 @@
+@@ -0,0 +1,1084 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -586,6 +586,7 @@ index 0000000..cef76d3
 +#   include <GL/gl.h>
 +#endif
 +
++#include "hid_draw.h"
 +#include "hidgl.h"
 +
 +#ifdef HAVE_LIBDMALLOC
