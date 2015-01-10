@@ -5,6 +5,17 @@ Date:   2015-01-08 21:29:26 +0000
 
 Play with perspective
 
+NB: Edit to hidgl.c:
+
++#if 0
++  glPushAttrib (GL_CURRENT_BIT);
++  glColor4f (1., 1., 1., 1.);
++  glDrawArrays (GL_LINE_STRIP, 0, priv->buffer.vertex_count);
++  glPopAttrib ();
++#endif
+
+Is probably bogus. (Leftover debug?)
+
 
 ---
 
