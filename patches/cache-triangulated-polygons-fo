@@ -1,5 +1,5 @@
 Bottom: b0212eeb0b7abea27355c44074d1d832b94f6843
-Top:    a10d4379c5e0b830ca469d87633ebb0c4f9ab55a
+Top:    52b75d2a953cd85760615f2fd178e07c5dea10f4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 10:06:57 +0000
 
@@ -385,15 +385,15 @@ index ecec656..b3c525d 100644
    ghid_hid.graphics                 = &ghid_graphics;
  
 diff --git a/src/mymem.c b/src/mymem.c
-index aff501c..b10466a 100644
+index aff501c..7f1e1c5 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -536,6 +536,9 @@ FreePolygonMemory (PolygonType *polygon)
    if (polygon == NULL)
      return;
  
-+  if (Polygon->gui_cache)
-+    gui->free_polygon_cache (Polygon);
++  if (polygon->gui_cache)
++    gui->free_polygon_cache (polygon);
 +
    free (polygon->Points);
    free (polygon->HoleIndex);
