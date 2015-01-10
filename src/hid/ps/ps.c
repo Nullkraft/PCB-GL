@@ -32,7 +32,7 @@
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
-static int ps_set_layer (const char *name, int group, int empty);
+static int ps_set_layer (hidGC gc, const char *name, int group, int empty);
 static void use_gc (hidGC gc);
 
 typedef struct ps_gc_struct
@@ -398,8 +398,6 @@ static struct {
 
   double scale_factor;
 
-  BoxType region;
-
   HID_Attr_Val ps_values[NUM_OPTIONS];
 
   bool is_mask;
@@ -597,6 +595,11 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   int i;
   static int saved_layer_stack[MAX_LAYER];
   FlagType save_thindraw;
+  BoxType region;
+  hidGC gc;
+
+#warning NULL gc
+  gc = NULL;
 
   save_thindraw = PCB->Flags;
   CLEAR_FLAG(THINDRAWFLAG, PCB);
@@ -674,13 +677,15 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 
   global.linewidth = -1;
   /* reset static vars */
-  ps_set_layer (NULL, 0, -1);
+  ps_set_layer (gc, NULL, 0, -1);
   use_gc (NULL);
 
-  global.region.X1 = 0;
-  global.region.Y1 = 0;
-  global.region.X2 = PCB->MaxWidth;
-  global.region.Y2 = PCB->MaxHeight;
+  region.X1 = 0;
+  region.Y1 = 0;
+  region.X2 = PCB->MaxWidth;
+  region.Y2 = PCB->MaxHeight;
+
+  common_set_clip_box (gc, &region);
 
   if (!global.multi_file)
     {
@@ -693,13 +698,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 
       global.doing_toc = 1;
       global.pagecount = 1;  /* 'pagecount' is modified by hid_expose_callback() call */
-      hid_expose_callback (&ps_hid, &global.region, 0);
+      hid_expose_callback (&ps_hid, 0);
     }
 
   global.pagecount = 1; /* Reset 'pagecount' if single file */
   global.doing_toc = 0;
-  ps_set_layer (NULL, 0, -1);  /* reset static vars */
-  hid_expose_callback (&ps_hid, &global.region, 0);
+  ps_set_layer (gc, NULL, 0, -1);  /* reset static vars */
+  hid_expose_callback (&ps_hid, 0);
 
   if (the_file)
     fprintf (the_file, "showpage\n");
@@ -785,7 +790,7 @@ corner (FILE *fh, Coord x, Coord y, int dx, int dy)
 }
 
 static int
-ps_set_layer (const char *name, int group, int empty)
+ps_set_layer (hidGC gc, const char *name, int group, int empty)
 {
   static int lastgroup = -1;
   time_t currenttime;
@@ -1007,7 +1012,7 @@ ps_set_layer (const char *name, int group, int empty)
       strcmp (name, "route") != 0
       )
     {
-      dapi->draw_layer (global.outline_layer, &global.region, NULL);
+      dapi->draw_layer (gc, global.outline_layer, NULL);
     }
 
   return 1;
@@ -1265,7 +1270,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 }
 
 static void
-fill_polyarea (hidGC gc, POLYAREA * pa, const BoxType * clip_box)
+fill_polyarea (hidGC gc, POLYAREA * pa)
 {
   /* Ignore clip_box, just draw everything */
 
@@ -1294,15 +1299,15 @@ fill_polyarea (hidGC gc, POLYAREA * pa, const BoxType * clip_box)
 }
 
 static void
-ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
+ps_draw_pcb_polygon (hidGC gc, PolygonType * poly)
 {
-  fill_polyarea (gc, poly->Clipped, clip_box);
+  fill_polyarea (gc, poly->Clipped);
   if (TEST_FLAG (FULLPOLYFLAG, poly))
     {
       POLYAREA *pa;
 
       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
-        fill_polyarea (gc, pa, clip_box);
+        fill_polyarea (gc, pa);
     }
 }
 

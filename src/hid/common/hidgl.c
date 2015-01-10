@@ -294,7 +294,7 @@ hidgl_set_depth (hidGC gc, float depth)
 }
 
 void
-hidgl_draw_grid (hidGC gc, BoxType *drawn_area)
+hidgl_draw_grid (hidGC gc)
 {
   hidglGC hidgl_gc = (hidglGC)gc;
 
@@ -306,10 +306,10 @@ hidgl_draw_grid (hidGC gc, BoxType *drawn_area)
   if (!Settings.DrawGrid)
     return;
 
-  x1 = GridFit (MAX (0, drawn_area->X1), PCB->Grid, PCB->GridOffsetX);
-  y1 = GridFit (MAX (0, drawn_area->Y1), PCB->Grid, PCB->GridOffsetY);
-  x2 = GridFit (MIN (PCB->MaxWidth,  drawn_area->X2), PCB->Grid, PCB->GridOffsetX);
-  y2 = GridFit (MIN (PCB->MaxHeight, drawn_area->Y2), PCB->Grid, PCB->GridOffsetY);
+  x1 = GridFit (MAX (0, gc->clip_box->X1), PCB->Grid, PCB->GridOffsetX);
+  y1 = GridFit (MAX (0, gc->clip_box->Y1), PCB->Grid, PCB->GridOffsetY);
+  x2 = GridFit (MIN (PCB->MaxWidth,  gc->clip_box->X2), PCB->Grid, PCB->GridOffsetX);
+  y2 = GridFit (MIN (PCB->MaxHeight, gc->clip_box->Y2), PCB->Grid, PCB->GridOffsetY);
 
   if (x1 > x2)
     {
@@ -753,6 +753,7 @@ hidgl_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 
   myFreeCombined ();
   free (vertices);
+  tesselator_gc = NULL;
 }
 
 static inline void
@@ -913,7 +914,7 @@ polygon_contains_user_holes (PolygonType *polygon)
 }
 
 static void
-fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, bool use_new_stencil)
+fill_polyarea (hidGC gc, POLYAREA *pa, bool use_new_stencil)
 {
   hidglGC hidgl_gc = (hidglGC)gc;
   hidgl_instance *hidgl = hidgl_gc->hidgl;
@@ -970,20 +971,19 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, bool use_new_ste
 
   /* Drawing operations now set our reference bit in the stencil buffer */
 
-  r_search (pa->contour_tree, clip_box, NULL, do_hole, gc);
+  r_search (pa->contour_tree, gc->clip_box, NULL, do_hole, gc);
   hidgl_flush_triangles (hidgl);
 
-  glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
-  glPushAttrib (GL_STENCIL_BUFFER_BIT);         /* Save the stencil op and function */
-  glEnable (GL_STENCIL_TEST);                   /* Enable the stencil test, just in case it wasn't already on */
+  glPopAttrib ();                                   /* Restore the colour and stencil buffer write-mask etc.. */
+  glPushAttrib (GL_STENCIL_BUFFER_BIT);             /* Save the stencil op and function */
+  glEnable (GL_STENCIL_TEST);                       /* Enable the stencil test, just in case it wasn't already on */
 
-  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);    /* This allows us to toggle the bit on the subcompositing bitplane */
-                                                /* If the stencil test has passed, we know that bit is 0, so we're */
-                                                /* effectively just setting it to 1. */
-
-  glStencilFunc (GL_GEQUAL, 0, priv->assigned_bits);  /* Pass stencil test if all assigned bits clear, */
-                                                /* reference is all assigned bits so we set */
-                                                /* any bits permitted by the stencil writemask */
+  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);        /* This allows us to toggle the bit on the subcompositing bitplane */
+                                                    /* If the stencil test has passed, we know that bit is 0, so we're */
+                                                    /* effectively just setting it to 1. */
+  glStencilFunc (GL_GEQUAL, 0, priv->assigned_bits);/* Pass stencil test if all assigned bits clear, */
+                                                    /* reference is all assigned bits so we set */
+                                                    /* any bits permitted by the stencil writemask */
 
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
 
@@ -999,7 +999,7 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, bool use_new_ste
 }
 
 void
-hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly)
 {
   bool use_new_stencil;
 
@@ -1009,14 +1009,14 @@ hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
   use_new_stencil = polygon_contains_user_holes (poly) ||
                     TEST_FLAG (FULLPOLYFLAG, poly);
 
-  fill_polyarea (gc, poly->Clipped, clip_box, use_new_stencil);
+  fill_polyarea (gc, poly->Clipped, use_new_stencil);
 
   if (TEST_FLAG (FULLPOLYFLAG, poly))
     {
       POLYAREA *pa;
 
       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
-        fill_polyarea (gc, pa, clip_box, use_new_stencil);
+        fill_polyarea (gc, pa, use_new_stencil);
     }
 }
 
