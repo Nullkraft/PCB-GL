@@ -1,5 +1,5 @@
 Bottom: cc521e280326684be6573eb4944250f24062137e
-Top:    cc521e280326684be6573eb4944250f24062137e
+Top:    70e6708b8d65b0a8f716001276f92cc24e2c91d8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-08 21:29:26 +0000
 
@@ -11,4 +11,313 @@ into the core like this.
 
 ---
 
-
+diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
+index 762e2c0..c64a120 100644
+--- a/src/borast/borast-bentley-ottmann.c
++++ b/src/borast/borast-bentley-ottmann.c
+@@ -52,6 +52,8 @@
+ #include "hid_draw.h"
+ #include "hid/common/hidgl.h"
+ 
++#include "sweep.h"
++
+ #define _borast_error(x) (x)
+ 
+ #define DEBUG_PRINT_STATE 0
+@@ -127,7 +129,7 @@ typedef struct _borast_bo_sweep_line {
+ } borast_bo_sweep_line_t;
+ 
+ 
+-static borast_fixed_t
++/*static*/ borast_fixed_t
+ _line_compute_intersection_x_for_y (const borast_line_t *line,
+                                     borast_fixed_t y)
+ {
+@@ -1454,9 +1456,21 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
+       hidgl_ensure_triangle_space (gc, 1);
+       hidgl_add_triangle (gc, x1, y1, x2, y2, x3, y3);
+     } else {
++#if 0
+       hidgl_ensure_triangle_space (gc, 2);
+       hidgl_add_triangle (gc, x1, y1, x2, y2, x3, y3);
+       hidgl_add_triangle (gc, x3, y3, x4, y4, x1, y1);
++#endif
++      hidgl_ensure_vertex_space (gc, 6);
++
++      /* NB: Repeated first virtex to separate from other tri-strip */
++      hidgl_add_vertex_tex (gc, x2, y2, 0.0, 0.0);
++      hidgl_add_vertex_tex (gc, x2, y2, 0.0, 0.0);
++      hidgl_add_vertex_tex (gc, x1, y1, 0.0, 0.0);
++      hidgl_add_vertex_tex (gc, x3, y3, 0.0, 0.0);
++      hidgl_add_vertex_tex (gc, x4, y4, 0.0, 0.0);
++      hidgl_add_vertex_tex (gc, x4, y4, 0.0, 0.0);
++      /* NB: Repeated last virtex to separate from other tri-strip */
+     }
+ #else
+     glBegin (GL_LINES);
+@@ -1480,7 +1494,6 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
+   return BORAST_STATUS_SUCCESS;
+ }
+ 
+-
+ borast_status_t
+ bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps)
+ {
+@@ -1569,3 +1582,56 @@ bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps)
+ 
+   return BORAST_STATUS_SUCCESS;
+ }
++
++
++borast_status_t
++bo_contour_to_traps_no_draw (PLINE *contour, borast_traps_t *traps)
++{
++  int intersections;
++  borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
++  borast_bo_start_event_t *events;
++  borast_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
++  borast_bo_event_t **event_ptrs;
++  int num_events = 0;
++  int i;
++
++  num_events = contour->Count;
++
++  if (unlikely (0 == num_events))
++      return BORAST_STATUS_SUCCESS;
++
++  events = stack_events;
++  event_ptrs = stack_event_ptrs;
++  if (num_events > ARRAY_LENGTH (stack_events)) {
++      events = _borast_malloc_ab_plus_c (num_events,
++                                        sizeof (borast_bo_start_event_t) +
++                                        sizeof (borast_bo_event_t *),
++                                        sizeof (borast_bo_event_t *));
++      if (unlikely (events == NULL))
++          return BORAST_STATUS_NO_MEMORY;
++
++      event_ptrs = (borast_bo_event_t **) (events + num_events);
++  }
++
++  i = 0;
++
++  contour_to_start_events (contour, events, event_ptrs, &i, 1);
++
++  /* XXX: This would be the convenient place to throw in multiple
++   * passes of the Bentley-Ottmann algorithm. It would merely
++   * require storing the results of each pass into a temporary
++   * borast_traps_t. */
++   _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
++                                                num_events,
++                                                traps,
++                                                &intersections);
++
++#if DEBUG_TRAPS
++  dump_traps (traps, "bo-polygon-out.txt");
++#endif
++
++  if (events != stack_events)
++      free (events);
++
++  return BORAST_STATUS_SUCCESS;
++}
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index c4e07ec..32b6dc5 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -74,6 +74,8 @@
+ #include <dmalloc.h>
+ #endif
+ 
++//#define MEMCPY_VERTEX_DATA 1
++
+ hidgl_shader *circular_program = NULL;
+ 
+ static bool in_context = false;
+@@ -709,9 +711,30 @@ hidgl_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+   free (vertices);
+ }
+ 
++static inline void
++stash_vertex (PLINE *contour, int *vertex_comp,
++              float x, float y, float z, float r, float s)
++{
++  contour->tristrip_vertices[(*vertex_comp)++] = x;
++  contour->tristrip_vertices[(*vertex_comp)++] = y;
++#if MEMCPY_VERTEX_DATA
++  contour->tristrip_vertices[(*vertex_comp)++] = z;
++  contour->tristrip_vertices[(*vertex_comp)++] = r;
++  contour->tristrip_vertices[(*vertex_comp)++] = s;
++#endif
++  contour->tristrip_num_vertices ++;
++}
++
+ static void
+ fill_contour (hidGC gc, PLINE *contour)
+ {
++  hidglGC hidgl_gc = (hidglGC)gc;
++#if MEMCPY_VERTEX_DATA
++  hidgl_instance *hidgl = hidgl_gc->hidgl;
++  hidgl_priv *priv = hidgl->priv;
++#endif
++  int i;
++  int vertex_comp;
+   borast_traps_t traps;
+ 
+   /* If the contour is round, then call hidgl_fill_circle to draw it. */
+@@ -720,9 +743,108 @@ fill_contour (hidGC gc, PLINE *contour)
+     return;
+   }
+ 
+-  _borast_traps_init (&traps);
+-  bo_contour_to_traps (gc, contour, &traps);
+-  _borast_traps_fini (&traps);
++  /* If we don't have a cached set of tri-strips, compute them */
++  if (contour->tristrip_vertices == NULL) {
++    int tristrip_space;
++    int x1, x2, x3, x4, y_top, y_bot;
++
++    _borast_traps_init (&traps);
++    bo_contour_to_traps_no_draw (contour, &traps);
++
++    tristrip_space = 0;
++
++    for (i = 0; i < traps.num_traps; i++) {
++      y_top = traps.traps[i].top;
++      y_bot = traps.traps[i].bottom;
++
++      x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
++      x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
++      x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
++      x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
++
++      if ((x1 == x2) || (x3 == x4)) {
++        tristrip_space += 5; /* Three vertices + repeated start and end */
++      } else {
++        tristrip_space += 6; /* Four vertices + repeated start and end */
++      }
++    }
++
++    if (tristrip_space == 0) {
++      printf ("Strange, contour didn't tesselate\n");
++      return;
++    }
++
++#if MEMCPY_VERTEX_DATA
++    /* NB: MEMCPY of vertex data causes a problem with depth being cached at the wrong level! */
++    contour->tristrip_vertices = malloc (sizeof (float) * 5 * tristrip_space);
++#else
++    contour->tristrip_vertices = malloc (sizeof (float) * 2 * tristrip_space);
++#endif
++    contour->tristrip_num_vertices = 0;
++
++    vertex_comp = 0;
++    for (i = 0; i < traps.num_traps; i++) {
++      y_top = traps.traps[i].top;
++      y_bot = traps.traps[i].bottom;
++
++      x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
++      x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
++      x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
++      x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
++
++      if (x1 == x2) {
++        /* NB: Repeated first virtex to separate from other tri-strip */
++        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
++        /* NB: Repeated last virtex to separate from other tri-strip */
++      } else if (x3 == x4) {
++        /* NB: Repeated first virtex to separate from other tri-strip */
++        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x2, y_top, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
++        /* NB: Repeated last virtex to separate from other tri-strip */
++      } else {
++        /* NB: Repeated first virtex to separate from other tri-strip */
++        stash_vertex (contour, &vertex_comp, x2, y_top, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x2, y_top, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
++        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
++        /* NB: Repeated last virtex to separate from other tri-strip */
++      }
++    }
++
++    _borast_traps_fini (&traps);
++  }
++
++  if (contour->tristrip_num_vertices == 0)
++    return;
++
++  hidgl_ensure_vertex_space (gc, contour->tristrip_num_vertices);
++
++#if MEMCPY_VERTEX_DATA
++  memcpy (&priv->buffer.triangle_array[priv->buffer.coord_comp_count],
++          contour->tristrip_vertices,
++          sizeof (float) * 5 * contour->tristrip_num_vertices);
++  priv->buffer.coord_comp_count += 5 * contour->tristrip_num_vertices;
++  priv->buffer.vertex_count += contour->tristrip_num_vertices;
++
++#else
++  vertex_comp = 0;
++  for (i = 0; i < contour->tristrip_num_vertices; i++) {
++    int x, y;
++    x = contour->tristrip_vertices[vertex_comp++];
++    y = contour->tristrip_vertices[vertex_comp++];
++    hidgl_add_vertex_tex (gc, x, y, 0.0, 0.0);
++  }
++#endif
++
+ }
+ 
+ static int
+diff --git a/src/polyarea.h b/src/polyarea.h
+index 43fd93d..d49660b 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -106,6 +106,8 @@ struct PLINE
+       unsigned int status:3;
+       unsigned int orient:1;
+     } Flags;
++    int tristrip_num_vertices;
++    float *tristrip_vertices;
+ };
+ 
+ PLINE *poly_NewContour(Vector v);
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 566596d..7d6fab6 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2549,6 +2549,9 @@ poly_ClrContour (PLINE * c)
+       poly_ExclVertex (cur);
+       free (cur);
+     }
++  free (c->tristrip_vertices);
++  c->tristrip_vertices = NULL;
++  c->tristrip_num_vertices = 0;
+   poly_IniContour (c);
+ }
+ 
+@@ -2580,6 +2583,7 @@ poly_DelContour (PLINE ** c)
+       rtree_t *r = (*c)->tree;
+       r_destroy_tree (&r);
+     }
++  free ((*c)->tristrip_vertices);
+   free (*c), *c = NULL;
+ }
+ 
+diff --git a/src/sweep.h b/src/sweep.h
+index 347287e..e8f138f 100644
+--- a/src/sweep.h
++++ b/src/sweep.h
+@@ -2,3 +2,5 @@
+ 
+ borast_status_t bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps);
+ borast_status_t bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps);
++borast_status_t bo_contour_to_traps_no_draw (PLINE *contour, borast_traps_t *traps);
++borast_fixed_t _line_compute_intersection_x_for_y (const borast_line_t *line, borast_fixed_t y);
