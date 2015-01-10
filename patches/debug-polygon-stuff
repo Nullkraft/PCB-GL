@@ -1,5 +1,5 @@
-Bottom: 6b60d3c915b70bfb71ae8bd9c989e26b13e183e6
-Top:    2dbfbd6f6ba05d96b74594442a5c7aab8da23299
+Bottom: 16435a8aa14c92d3b8393d643a60a17db13e7745
+Top:    cd0e23b59fb40b2cc4cce8969626e8f68593cd5a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 10:34:59 +0000
 
@@ -11,10 +11,10 @@ Debug polygon stuff
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index eeee803..5650bae 100644
+index a346254..fbe84d6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -999,7 +999,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -1038,7 +1038,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  
    /* Setup HID function pointers specific to the GL renderer*/
    ghid_hid.end_layer = ghid_end_layer;
