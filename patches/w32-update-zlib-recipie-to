@@ -1,5 +1,5 @@
 Bottom: 1a1af736fb7a8416fa8949f0a724f57ebe06768e
-Top:    1a1af736fb7a8416fa8949f0a724f57ebe06768e
+Top:    5b1b940c7e3af6c6585ffb3943142ef4290b7585
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-10 16:19:35 +0000
 
@@ -10,4 +10,15 @@ It appears this is not required any more, and its presence breaks things
 
 ---
 
-
+diff --git a/w32/recipes/zlib.recipe b/w32/recipes/zlib.recipe
+index c143197..87c0013 100644
+--- a/w32/recipes/zlib.recipe
++++ b/w32/recipes/zlib.recipe
+@@ -1,6 +1,6 @@
+ name=zlib
+ version=1.2.3
+ release=1
+-pkg_download=http://prdownloads.sourceforge.net/libpng/zlib-1.2.3.tar.gz?download
++pkg_download=http://prdownloads.sourceforge.net/libpng/zlib-1.2.3.tar.gz
+ unset build
+ configure_no_more_flags=true
