@@ -1,0 +1,72 @@
+Bottom: 2eee541ee0b7805f94f9eaa71967763ba1f14f8b
+Top:    d763794a5f274abb3c2091a080f4511282443ff6
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-10 00:48:42 +0000
+
+Refresh of attempt-at-getting-lesstif-gl
+
+---
+
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index ffdc4a3..b042965 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -1764,8 +1764,8 @@ work_area_expose (Widget work_area, void *me,
+ 
+   show_crosshair (1);
+ 
+-  hidgl_finish_render ();
+-  hidgl_flush_triangles (&buffer);
++  hidgl_finish_render (hidgl);
++  hidgl_flush_triangles (hidgl);
+ 
+   /* end drawing to current GL-context */
+   glXSwapBuffers(global_display, global_window);
+@@ -3550,7 +3550,7 @@ start_subcomposite (void)
+   glEnable (GL_STENCIL_TEST);                                 /* Enable Stencil test */
+   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);                 /* Stencil pass => replace stencil value (with 1) */
+ 
+-  stencil_bit = hidgl_assign_clear_stencil_bit();             /* Get a new (clean) bitplane to stencil with */
++  stencil_bit = hidgl_assign_clear_stencil_bit (hidgl);       /* Get a new (clean) bitplane to stencil with */
+   glStencilMask (stencil_bit);                                /* Only write to our subcompositing stencil bitplane */
+   glStencilFunc (GL_GREATER, stencil_bit, stencil_bit);       /* Pass stencil test if our assigned bit is clear */
+ 
+@@ -3561,9 +3561,9 @@ static void
+ end_subcomposite (void)
+ {
+   /* Flush out any existing geoemtry to be rendered */
+-  hidgl_flush_triangles (&buffer);
++  hidgl_flush_triangles (hidgl);
+ 
+-  hidgl_return_stencil_bit (priv->subcomposite_stencil_bit);  /* Relinquish any bitplane we previously used */
++  hidgl_return_stencil_bit (hidgl, priv->subcomposite_stencil_bit);  /* Relinquish any bitplane we previously used */
+ 
+   glStencilMask (0);
+   glStencilFunc (GL_ALWAYS, 0, 0);                            /* Always pass stencil test */
+@@ -3640,7 +3640,7 @@ ghid_set_layer (const char *name, int group, int empty)
+     start_subcomposite ();
+ 
+   /* Drawing is already flushed by {start,end}_subcomposite */
+-  hidgl_set_depth (compute_depth (group));
++  hidgl_set_depth (gc, compute_depth (group));
+ 
+   return group_visible;
+ }
+@@ -3672,7 +3672,7 @@ ghid_use_mask (enum mask_mode mode)
+       /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
+       glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
+       glEnable (GL_STENCIL_TEST);                           /* Enable Stencil test */
+-      stencil_bit = hidgl_assign_clear_stencil_bit();       /* Get a new (clean) bitplane to stencil with */
++      stencil_bit = hidgl_assign_clear_stencil_bit (hidgl); /* Get a new (clean) bitplane to stencil with */
+       glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, write stencil_bit */
+       glStencilMask (stencil_bit);                          /* Only write to our subcompositing stencil bitplane */
+       glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           /* Stencil pass => replace stencil value (with 1) */
+@@ -3908,7 +3908,7 @@ ghid_invalidate_current_gc (void)
+ static int
+ use_gc (hidGC gc)
+ {
+-  if (gc->me_pointer != &lesstif_hid)
++  if (gc->hid != &lesstif_hid)
+     {
+       fprintf (stderr, "Fatal: GC from another HID passed to LESSTIF HID\n");
+       abort ();
