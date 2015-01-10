@@ -1,5 +1,5 @@
-Bottom: 8e83caf7b321601b218d3337cd3b8c72271762e3
-Top:    46a7b48cbffb1bcea6b2e47b45b19aa8991f3b62
+Bottom: eda691a4d1cbd65c62247ffa73dc3c217da09817
+Top:    96a37f7e429c4c30a4515d3c9bb5f86c1c4b5545
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-09 23:56:41 +0000
 
@@ -9,7 +9,7 @@ Name polygon edges separately (not contours), use these to name STEP faces
 ---
 
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 33cdd9e..6326232 100644
+index 5dafc05..fb70146 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
 @@ -228,6 +228,20 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
