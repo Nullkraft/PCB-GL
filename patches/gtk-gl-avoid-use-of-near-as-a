@@ -1,0 +1,14 @@
+Bottom: f89d098ac082c736f6971087f1c0a3bc99290c55
+Top:    f89d098ac082c736f6971087f1c0a3bc99290c55
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-10 20:43:04 +0000
+
+gtk-gl: Avoid use of "near" as a variable name, as it clashes with #defines in Win32
+
+Sadly, windows.h pulls in a lot of non-namespaced cruft, even with
+#define WIN32_LEAN_AND_MEAN 1
+
+
+---
+
+
