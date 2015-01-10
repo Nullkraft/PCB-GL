@@ -1,0 +1,24 @@
+Bottom: a10d4379c5e0b830ca469d87633ebb0c4f9ab55a
+Top:    52b75d2a953cd85760615f2fd178e07c5dea10f4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-10 13:28:03 +0000
+
+Refresh of cache-triangulated-polygons-fo
+
+---
+
+diff --git a/src/mymem.c b/src/mymem.c
+index b10466a..7f1e1c5 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -536,8 +536,8 @@ FreePolygonMemory (PolygonType *polygon)
+   if (polygon == NULL)
+     return;
+ 
+-  if (Polygon->gui_cache)
+-    gui->free_polygon_cache (Polygon);
++  if (polygon->gui_cache)
++    gui->free_polygon_cache (polygon);
+ 
+   free (polygon->Points);
+   free (polygon->HoleIndex);
