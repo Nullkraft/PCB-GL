@@ -536,8 +536,8 @@ FreePolygonMemory (PolygonType *polygon)
   if (polygon == NULL)
     return;
 
-  if (Polygon->gui_cache)
-    gui->free_polygon_cache (Polygon);
+  if (polygon->gui_cache)
+    gui->free_polygon_cache (polygon);
 
   free (polygon->Points);
   free (polygon->HoleIndex);
