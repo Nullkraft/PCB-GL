@@ -1,0 +1,21 @@
+Bottom: 61d28d9723d4708aa9ffaa4d520e1ac992969b91
+Top:    741c189611157364bc86745907e1c7ab4e320d04
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-10 13:25:55 +0000
+
+Refresh of add-a-demonstration-model-for-
+
+---
+
+diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
+index cef76d3..62ef69f 100644
+--- a/src/hid/common/hidgl_package_acy_resistor.c
++++ b/src/hid/common/hidgl_package_acy_resistor.c
+@@ -28,6 +28,7 @@
+ #   include <GL/gl.h>
+ #endif
+ 
++#include "hid_draw.h"
+ #include "hidgl.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
