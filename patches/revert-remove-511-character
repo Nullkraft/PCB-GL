@@ -1,0 +1,43 @@
+Bottom: 3dd800461d6f0f2b4774e517b5cdf12adc8c3596
+Top:    9745a2fe6539ce16e2b9b53db7fd700af2a5708a
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-10 20:29:42 +0000
+
+Revert "Remove 511-character limit on configuration file lines"
+
+This reverts commit d3830fdd06e18e05ef986210a3a9da2f49498195.
+
+Tested-by: Kai-Martin Knaak <knaak@iqo.uni-hannover.de>
+
+
+---
+
+diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
+index eb8fbd1..f1e6f49 100644
+--- a/src/hid/gtk/gui-config.c
++++ b/src/hid/gtk/gui-config.c
+@@ -474,14 +474,13 @@ static void
+ config_file_read (void)
+ {
+   FILE *f;
+-  char *buf = NULL;
+-  size_t n = 0;
+-  gchar *option, *arg;
++  gchar buf[512], *option, *arg;
+ 
+   if ((f = config_file_open ("r")) == NULL)
+     return;
+ 
+-  while (getline (&buf, &n, f) != -1)
++  buf[0] = '\0';
++  while (fgets (buf, sizeof (buf), f))
+     {
+       if (parse_option_line (buf, &option, &arg) > 0)
+ 	set_config_attribute (option, arg);
+@@ -489,7 +488,6 @@ config_file_read (void)
+       g_free (arg);
+     }
+ 
+-  free (buf);
+   fclose (f);
+ }
