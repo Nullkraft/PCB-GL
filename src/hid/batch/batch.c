@@ -177,7 +177,7 @@ batch_destroy_gc (hidGC gc)
 }
 
 static void
-batch_use_mask (hidGC gc, enum mask_mode mode)
+batch_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
 }
 

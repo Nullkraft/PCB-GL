@@ -785,7 +785,7 @@ nelma_destroy_gc(hidGC gc)
 }
 
 static void 
-nelma_use_mask(hidGC gc, enum mask_mode mode)
+nelma_use_mask(HID_DRAW *hid_draw, enum mask_mode mode)
 {
 	/* does nothing */
 }

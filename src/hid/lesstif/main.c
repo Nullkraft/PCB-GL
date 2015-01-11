@@ -242,7 +242,7 @@ Location of the @file{pcb-menu.res} file which defines the menu for the lesstif 
 
 REGISTER_ATTRIBUTES (lesstif_attribute_list)
 
-static void lesstif_use_mask (hidGC gc, enum mask_mode mode);
+static void lesstif_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
 static void zoom_max ();
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
@@ -3075,7 +3075,7 @@ lesstif_destroy_gc (hidGC gc)
 }
 
 static void
-lesstif_use_mask (hidGC gc, enum mask_mode mode)
+lesstif_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
   if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB)) &&
       !use_xrender)

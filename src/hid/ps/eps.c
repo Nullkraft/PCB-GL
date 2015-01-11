@@ -441,7 +441,7 @@ eps_destroy_gc (hidGC gc)
 }
 
 static void
-eps_use_mask (hidGC gc, enum mask_mode mode)
+eps_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
   static int mask_pending = 0;
   switch (mode)

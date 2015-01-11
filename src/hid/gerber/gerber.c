@@ -956,7 +956,7 @@ gerber_destroy_gc (hidGC gc)
 }
 
 static void
-gerber_use_mask (hidGC gc, enum mask_mode mode)
+gerber_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
   current_mask = mode;
 }
