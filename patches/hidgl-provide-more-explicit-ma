@@ -1,5 +1,5 @@
-Bottom: 951915eb7454627df6bfcbc1cfc048e5775a96ad
-Top:    1beca73ba39ecf309c42dfef0d128a820ff7ca32
+Bottom: 47c7589729c325b494b1f07f8eaa9e2daaa319aa
+Top:    e7aff1a71e6fb83a48360c6e293569d2163b7d31
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:40:30 +0000
 
@@ -826,7 +826,7 @@ index 8d2c78c..4b80714 100644
  
  #endif /* PCB_HID_COMMON_HIDGL_H  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b5e4a00..1dc527d 100644
+index 4690dd5..c7197d4 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -72,11 +72,13 @@ typedef struct render_priv {
@@ -1101,7 +1101,7 @@ index b5e4a00..1dc527d 100644
 +  port->render_priv->crosshair_gc = hid_draw_make_gc (&ghid_graphics);
 +
    /* Setup HID function pointers specific to the GL renderer*/
-   ghid_hid.end_layer = ghid_end_layer;
+   ghid_graphics_class.end_layer = ghid_end_layer;
    ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
 @@ -814,6 +830,8 @@ ghid_shutdown_renderer (GHidPort *port)
    render_priv *priv = port->render_priv;
