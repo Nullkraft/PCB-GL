@@ -8,7 +8,10 @@ Move some fields from the HID* structure to HID_DRAW* and HID_DRAW_CLASS*
 The parameters gui, poly_before, poly_after only effect rendering, so
 belong in either the HID_DRAW_CLASS or HID_DRAW instance structure.
 
-the set_layer() and end_layer() APIs also belong in the HID_DRAW_CLASS
+The set_layer() and end_layer() APIs also belong in the HID_DRAW_CLASS
+
+We leave a copy of the "gui" flag in the HID structure, as main.c uses
+this to count up each type of exporter.
 
 
 ---
