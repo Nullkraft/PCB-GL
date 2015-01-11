@@ -1,5 +1,5 @@
-Bottom: 585a7798e044986ccfb1fe56fe36eea245ea4895
-Top:    3c9175919afa0c3a7589f948481d92519a7ba4ab
+Bottom: 885af7328f16cf3624f79f3471f5f705c21de79d
+Top:    81355eb93635ee12658562fe76910792f44f97fa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:42:01 +0000
 
@@ -9,10 +9,10 @@ Fixup gtkhid-gl to build
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 27cd75d..112ab4d 100644
+index 7110983..c6e239e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -281,13 +281,13 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -282,13 +282,13 @@ ghid_set_layer (const char *name, int group, int empty)
  	}
      }
  
@@ -29,7 +29,7 @@ index 27cd75d..112ab4d 100644
  
    return group_visible;
  }
-@@ -1406,6 +1406,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1407,6 +1407,7 @@ GhidDrawMask (int side, BoxType * screen)
  static int
  GhidDrawLayerGroup (int group, const BoxType * screen)
  {
@@ -37,7 +37,7 @@ index 27cd75d..112ab4d 100644
    int i, rv = 1;
    int layernum;
    int side;
-@@ -1438,13 +1439,13 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1439,13 +1440,13 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
  
        if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
          /* Mask out drilled holes on this layer */
@@ -53,7 +53,7 @@ index 27cd75d..112ab4d 100644
          glPopAttrib ();
        }
  
-@@ -1460,13 +1461,13 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1461,13 +1462,13 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
          gui->set_layer (0, group, 0);
  
          if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
@@ -69,7 +69,7 @@ index 27cd75d..112ab4d 100644
            glPopAttrib ();
          }
        }
-@@ -1502,7 +1503,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1503,7 +1504,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
  }
  
  static void
@@ -78,7 +78,7 @@ index 27cd75d..112ab4d 100644
  {
  #define PIXELS_PER_CIRCLINE 5.
  #define MIN_FACES_PER_CYL 6
-@@ -1528,13 +1529,13 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1529,13 +1530,13 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
    x1 = vx + vr;
    y1 = vy;
  
@@ -95,7 +95,7 @@ index 27cd75d..112ab4d 100644
        x1 = x2;
        y1 = y2;
      }
-@@ -1563,7 +1564,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
+@@ -1564,7 +1565,7 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
      color = "drill";
  
    hid_draw_set_color (Output.fgGC, color);
@@ -104,7 +104,7 @@ index 27cd75d..112ab4d 100644
    return 0;
  }
  
-@@ -1694,16 +1695,16 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1695,16 +1696,16 @@ ghid_draw_everything (BoxType *drawn_area)
  
    /* Draw pins, pads, vias below silk */
    if (global_view_2d) {
@@ -124,7 +124,7 @@ index 27cd75d..112ab4d 100644
        glPopAttrib ();
      }
  
-@@ -1711,7 +1712,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1712,7 +1713,7 @@ ghid_draw_everything (BoxType *drawn_area)
      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
  
@@ -133,7 +133,7 @@ index 27cd75d..112ab4d 100644
    }
  
    /* Draw the solder mask if turned on */
-@@ -1939,7 +1940,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1940,7 +1941,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    draw_crosshair (Output.fgGC, priv);
    hidgl_flush_triangles (priv->hidgl);
  
