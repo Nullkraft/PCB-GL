@@ -1534,7 +1534,7 @@ draw_element (ElementType *element)
  */
 
 void
-hid_expose_callback (HID *expose_hid, HID_DRAW *expose_hid_draw, BoxType *region, void *item)
+hid_expose_callback (HID_DRAW *expose_hid_draw, BoxType *region, void *item)
 {
   hid_draw = expose_hid_draw;
   Output.fgGC = hid_draw_make_gc (hid_draw);

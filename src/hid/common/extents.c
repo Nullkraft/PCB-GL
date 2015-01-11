@@ -227,7 +227,7 @@ hid_get_extents (void *item)
   region.Y1 = -COORD_MAX - 1;
   region.X2 = COORD_MAX;
   region.Y2 = COORD_MAX;
-  hid_expose_callback (&extents_hid, &extents_graphics, &region, item);
+  hid_expose_callback (&extents_graphics, &region, item);
 
   return &box;
 }
