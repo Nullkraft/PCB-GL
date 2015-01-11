@@ -1,0 +1,198 @@
+Bottom: 238ee9327572a5f54ec365dc2767cc29dbd32a93
+Top:    8297a0d0c2adaf016ee6c33d17211c690b904868
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 18:46:28 +0000
+
+Refresh of remove-graphics-pointer-from
+
+---
+
+diff --git a/src/hid.h b/src/hid.h
+index 24921f9..632cecd 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -294,8 +294,6 @@ typedef enum
+     void (*notify_crosshair_change) (bool changes_complete);
+     void (*notify_mark_change) (bool changes_complete);
+ 
+-    HID_DRAW *graphics;
+-
+     /* This is for the printer.  If you call this for the GUI, xval and
+        yval are ignored, and a dialog pops up to lead you through the
+        calibration procedure.  For the printer, if xval and yval are
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 412f95e..e457b7d 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -359,8 +359,6 @@ hid_batch_init ()
+   batch_hid.attribute_dialog      = batch_attribute_dialog;
+   batch_hid.show_item             = batch_show_item;
+ 
+-  batch_hid.graphics              = &batch_graphics;
+-
+   common_draw_helpers_class_init (&batch_graphics_class);
+ 
+   batch_graphics_class.set_layer      = batch_set_layer;
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index 7014af5..86abb15 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -182,8 +182,6 @@ hid_extents_init (void)
+   extents_hid.name                = "extents-extents";
+   extents_hid.description         = "used to calculate extents";
+ 
+-  extents_hid.graphics            = &extents_graphics;
+-
+   common_draw_helpers_class_init (&extents_graphics_class);
+ 
+   extents_graphics_class.set_layer      = extents_set_layer;
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 85e678d..fb8b048 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -523,7 +523,6 @@ hid_nogui_get_hid (void)
+   nogui_hid.name        = "nogui";
+   nogui_hid.description = "Default GUI when no other GUI is present.  "
+                           "Does nothing.";
+-  nogui_hid.graphics    = &nogui_graphics;
+ 
+   common_nogui_init (&nogui_hid);
+ 
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 5cbec91..9d23252 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -1620,8 +1620,6 @@ hid_gcode_init ()
+   gcode_hid.calibrate           = gcode_calibrate;
+   gcode_hid.set_crosshair       = gcode_set_crosshair;
+ 
+-  gcode_hid.graphics            = &gcode_graphics;
+-
+   common_draw_helpers_class_init (&gcode_graphics_class);
+ 
+   gcode_graphics_class.set_layer      = gcode_set_layer;
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index e71ac5c..197e935 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -1358,8 +1358,6 @@ hid_gerber_init ()
+   gerber_hid.calibrate           = gerber_calibrate;
+   gerber_hid.set_crosshair       = gerber_set_crosshair;
+ 
+-  gerber_hid.graphics            = &gerber_graphics;
+-
+   common_draw_helpers_class_init (&gerber_graphics_class);
+ 
+   gerber_graphics_class.set_layer      = gerber_set_layer;
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 705b45b..90fbd4b 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1251,7 +1251,7 @@ ghid_request_debug_draw (void)
+ {
+   /* No special setup requirements, drawing goes into
+    * the backing pixmap. */
+-  return ghid_hid.graphics;
++  return &ghid_graphics;
+ }
+ 
+ void
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 32a125d..70ec294 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1365,7 +1365,7 @@ ghid_request_debug_draw (void)
+                 port->view.flip_y ? port->view.y0 - PCB->MaxHeight :
+                              -port->view.y0, 0);
+ 
+-  return ghid_hid.graphics;
++  return &ghid_graphics;
+ }
+ 
+ void
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 20becc7..8face21 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2180,8 +2180,6 @@ hid_gtk_init ()
+   ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
+   ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
+ 
+-  ghid_hid.graphics                 = &ghid_graphics;
+-
+   common_draw_helpers_class_init (&ghid_graphics_class);
+ 
+   ghid_graphics_class.set_layer      = ghid_set_layer;
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 9abb6d8..c988a6c 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -4030,7 +4030,7 @@ lesstif_request_debug_draw (void)
+ {
+   /* Send drawing to the backing pixmap */
+   pixmap = main_pixmap;
+-  return lesstif_hid.graphics;
++  return &lesstif_graphics;
+ }
+ 
+ static void
+@@ -4111,8 +4111,6 @@ hid_lesstif_init ()
+   lesstif_hid.flush_debug_draw        = lesstif_flush_debug_draw;
+   lesstif_hid.finish_debug_draw       = lesstif_finish_debug_draw;
+ 
+-  lesstif_hid.graphics                = &lesstif_graphics;
+-
+   common_draw_helpers_class_init (&lesstif_graphics_class);
+ 
+   lesstif_graphics_class.set_layer      = lesstif_set_layer;
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 7d38835..a051590 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -1077,8 +1077,6 @@ hid_nelma_init()
+   nelma_hid.calibrate           = nelma_calibrate;
+   nelma_hid.set_crosshair       = nelma_set_crosshair;
+ 
+-  nelma_hid.graphics            = &nelma_graphics;
+-
+   common_draw_helpers_class_init (&nelma_graphics_class);
+ 
+   nelma_graphics_class.set_layer      = nelma_set_layer;
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 33a5947..ea59d7c 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -1852,8 +1852,6 @@ hid_png_init ()
+   png_hid.calibrate           = png_calibrate;
+   png_hid.set_crosshair       = png_set_crosshair;
+ 
+-  png_hid.graphics            = &png_graphics;
+-
+   common_draw_helpers_class_init (&png_graphics_class);
+ 
+   png_graphics_class.set_layer      = png_set_layer;
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index ad2f888..032d1ce 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -693,8 +693,6 @@ hid_eps_init ()
+   eps_hid.calibrate           = eps_calibrate;
+   eps_hid.set_crosshair       = eps_set_crosshair;
+ 
+-  eps_hid.graphics            = &eps_graphics;
+-
+   common_draw_helpers_class_init (&eps_graphics_class);
+ 
+   eps_graphics_class.set_layer      = eps_set_layer;
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 141bae2..997a2b2 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1571,8 +1571,6 @@ hid_ps_init ()
+   ps_hid.description        = N_("Postscript export");
+   ps_hid.exporter           = 1;
+ 
+-  ps_hid.graphics           = &ps_graphics;
+-
+   common_draw_helpers_class_init (&ps_graphics_class);
+   ps_ps_graphics_class_init (&ps_graphics_class);
