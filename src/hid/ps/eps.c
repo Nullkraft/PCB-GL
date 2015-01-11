@@ -693,8 +693,6 @@ hid_eps_init ()
   eps_hid.calibrate           = eps_calibrate;
   eps_hid.set_crosshair       = eps_set_crosshair;
 
-  eps_hid.graphics            = &eps_graphics;
-
   common_draw_helpers_class_init (&eps_graphics_class);
 
   eps_graphics_class.set_layer      = eps_set_layer;
