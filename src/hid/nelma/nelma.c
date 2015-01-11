@@ -645,10 +645,13 @@ nelma_start_png_export()
 	region.X2 = PCB->MaxWidth;
 	region.Y2 = PCB->MaxHeight;
 
+#warning NULL gc
+  common_set_clip_box (NULL, &region);
+
 	linewidth = -1;
 	lastbrush = (gdImagePtr)((void *) -1);
 
-	hid_expose_callback(&nelma_hid, &region, 0);
+	hid_expose_callback(&nelma_hid, 0);
 }
 
 static void 
@@ -728,7 +731,7 @@ nelma_do_export(HID_Attr_Val * options)
 /* *** PNG export (slightly modified code from PNG export HID) ************* */
 
 static int 
-nelma_set_layer(const char *name, int group, int empty)
+nelma_set_layer(hidGC gc, const char *name, int group, int empty)
 {
 	int             idx = (group >= 0 && group < max_group) ?
 	PCB->LayerGroups.Entries[group][0] : group;
