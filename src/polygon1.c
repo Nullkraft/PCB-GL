@@ -629,6 +629,7 @@ seg_in_seg (const BoxType * b, void *cl)
 	  i->node_insert_list =
 	    prepend_insert_node_task (i->node_insert_list, s, new_node);
 	  s->intersected = 1;
+	  printf ("Looks like we missed something\n");
 	  return 0; /* Keep looking for intersections with segment "i" */
 	}
       /* Skip any remaining r_search hits against segment i, as any futher
@@ -904,19 +905,21 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
   PLINE *curcA, *curcB;
   CVCList *the_list = NULL;
 
+//  printf ("M_POLYAREA_intersect: bo_intersect\n");
   if (a == NULL || b == NULL)
     error (err_bad_parm);
+  if (add)
+    bo_intersect (e, a, b);
   do
     {
-      do
+      if (!add)
 	{
-	  if (a->contours->xmax >= b->contours->xmin &&
-	      a->contours->ymax >= b->contours->ymin &&
-	      a->contours->xmin <= b->contours->xmax &&
-	      a->contours->ymin <= b->contours->ymax)
+	  do
 	    {
-#if 1
-	      if (!add)
+	      if (a->contours->xmax >= b->contours->xmin &&
+		  a->contours->ymax >= b->contours->ymin &&
+		  a->contours->xmin <= b->contours->xmax &&
+		  a->contours->ymin <= b->contours->ymax)
 		{
 		  if (UNLIKELY (intersect (e, a, b, add)))
 		    {
@@ -924,18 +927,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 		      error (err_no_memory);
 		    }
 		}
-	      else
-#endif
-		{
-		  if (UNLIKELY (bo_intersect (e, a, b)))
-		    {
-		      printf ("bo_is_enom\n");
-		      error (err_no_memory);
-		    }
-		}
 	    }
+	  while (add && (a = a->f) != afst);
 	}
-      while (add && (a = a->f) != afst);
+
       for (curcB = b->contours; curcB != NULL; curcB = curcB->next)
 	if (curcB->Flags.status == ISECTED)
 	  {
@@ -948,6 +943,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 	  }
     }
   while (add && (b = b->f) != bfst);
+//  printf ("M_POLYAREA_intersect: Descriptors\n");
   do
     {
       for (curcA = a->contours; curcA != NULL; curcA = curcA->next)
@@ -962,6 +958,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 	  }
     }
   while (add && (a = a->f) != afst);
+//  printf ("M_POLYAREA_intersect: Done\n");
 }				/* M_POLYAREA_intersect */
 
 static inline int
