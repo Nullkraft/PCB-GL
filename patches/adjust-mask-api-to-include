@@ -1,5 +1,5 @@
 Bottom: c6864e746df746b1910b3a2bd1a1451d8a0d545f
-Top:    3f111c05bf50285aa7e2075fc8c545f7402f4b60
+Top:    eb86680a9f4ace7935796e62044f81b6d082ead4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:42:13 +0000
 
@@ -11,7 +11,7 @@ XXX: Adds some #warnings where we pass NULL to the gc (BROKEN)
 ---
 
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index a369a5d..13495c9 100644
+index a369a5d..8d27fa5 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -177,7 +177,7 @@ batch_destroy_gc (hidGC gc)
@@ -19,12 +19,12 @@ index a369a5d..13495c9 100644
  
  static void
 -batch_use_mask (enum mask_mode mode)
-+batch_use_mask (hidGC gc, enum mask_mode mode)
++batch_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
  }
  
 diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
-index bc92bdc..75e7753 100644
+index bc92bdc..0a33bf3 100644
 --- a/src/hid/common/extents.c
 +++ b/src/hid/common/extents.c
 @@ -70,7 +70,7 @@ extents_destroy_gc (hidGC gc)
@@ -32,12 +32,12 @@ index bc92bdc..75e7753 100644
  
  static void
 -extents_use_mask (enum mask_mode mode)
-+extents_use_mask (hidGC gc, enum mask_mode mode)
++extents_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
  }
  
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index 7878025..eb6b353 100644
+index 7878025..d2c1686 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -77,7 +77,7 @@ nogui_destroy_gc (hidGC gc)
@@ -45,12 +45,12 @@ index 7878025..eb6b353 100644
  
  static void
 -nogui_use_mask (enum mask_mode mode)
-+nogui_use_mask (hidGC gc, enum mask_mode mode)
++nogui_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
    CRASH;
  }
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index d817a24..0a3473d 100644
+index d817a24..a11c0d4 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -1197,7 +1197,7 @@ gcode_destroy_gc (hidGC gc)
@@ -58,12 +58,12 @@ index d817a24..0a3473d 100644
  
  static void
 -gcode_use_mask (enum mask_mode mode)
-+gcode_use_mask (hidGC gc, enum mask_mode mode)
++gcode_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
    /* does nothing */
  }
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 9ec4b2b..0db744a 100644
+index 9ec4b2b..7a7f0af 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -50,7 +50,6 @@ static void gerber_parse_arguments (int *argc, char ***argv);
@@ -79,12 +79,12 @@ index 9ec4b2b..0db744a 100644
  
  static void
 -gerber_use_mask (enum mask_mode mode)
-+gerber_use_mask (hidGC gc, enum mask_mode mode)
++gerber_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
    current_mask = mode;
  }
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index c9620ff..bc613c2 100644
+index c9620ff..02298a4 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -324,7 +324,7 @@ ghid_draw_bg_image (void)
@@ -92,12 +92,12 @@ index c9620ff..bc613c2 100644
  
  void
 -ghid_use_mask (enum mask_mode mode)
-+ghid_use_mask (hidGC gc, enum mask_mode mode)
++ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
    static int mask_seq_id = 0;
    GdkColor color;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 618e01a..820e4f4 100644
+index 618e01a..f73b1b7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -541,7 +541,7 @@ ghid_draw_bg_image (void)
@@ -105,7 +105,7 @@ index 618e01a..820e4f4 100644
  
  void
 -ghid_use_mask (enum mask_mode mode)
-+ghid_use_mask (hidGC gc, enum mask_mode mode)
++ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
    render_priv *priv = gport->render_priv;
    hidgl_instance *hidgl = priv->hidgl;
@@ -137,7 +137,7 @@ index 618e01a..820e4f4 100644
  //  first_run = false;
  }
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 3430633..a14372c 100644
+index 3430633..9804460 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -476,7 +476,7 @@ void ghid_pinout_window_show (GHidPort *out, ElementType *Element);
@@ -145,12 +145,12 @@ index 3430633..a14372c 100644
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
 -void ghid_use_mask (enum mask_mode mode);
-+void ghid_use_mask (hidGC gc, enum mask_mode mode);
++void ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
  void ghid_set_color (hidGC gc, const char *name);
  void ghid_set_line_cap (hidGC gc, EndCapStyle style);
  void ghid_set_line_width (hidGC gc, Coord width);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 966ca64..13b4140 100644
+index 966ca64..bdeb588 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -242,7 +242,7 @@ Location of the @file{pcb-menu.res} file which defines the menu for the lesstif
@@ -158,7 +158,7 @@ index 966ca64..13b4140 100644
  REGISTER_ATTRIBUTES (lesstif_attribute_list)
  
 -static void lesstif_use_mask (enum mask_mode mode);
-+static void lesstif_use_mask (hidGC gc, enum mask_mode mode);
++static void lesstif_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
  static void zoom_max ();
  static void zoom_to (double factor, int x, int y);
  static void zoom_by (double factor, int x, int y);
@@ -187,12 +187,12 @@ index 966ca64..13b4140 100644
  
  static void
 -lesstif_use_mask (enum mask_mode mode)
-+lesstif_use_mask (hidGC gc, enum mask_mode mode)
++lesstif_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
    if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB)) &&
        !use_xrender)
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index ec530e1..a082a5b 100644
+index ec530e1..783457f 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -785,7 +785,7 @@ nelma_destroy_gc(hidGC gc)
@@ -200,12 +200,12 @@ index ec530e1..a082a5b 100644
  
  static void 
 -nelma_use_mask(enum mask_mode mode)
-+nelma_use_mask(hidGC gc, enum mask_mode mode)
++nelma_use_mask(HID_DRAW *hid_draw, enum mask_mode mode)
  {
  	/* does nothing */
  }
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index c39a99f..c2fbf77 100644
+index c39a99f..45d7468 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -1373,7 +1373,7 @@ png_destroy_gc (hidGC gc)
@@ -213,12 +213,12 @@ index c39a99f..c2fbf77 100644
  
  static void
 -png_use_mask (enum mask_mode mode)
-+png_use_mask (hidGC gc, enum mask_mode mode)
++png_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
    if (photo_mode)
      return;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index cd70714..0963152 100644
+index cd70714..7e6604f 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -36,7 +36,6 @@ static void eps_parse_arguments (int *argc, char ***argv);
@@ -234,12 +234,12 @@ index cd70714..0963152 100644
  
  static void
 -eps_use_mask (enum mask_mode mode)
-+eps_use_mask (hidGC gc, enum mask_mode mode)
++eps_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
    static int mask_pending = 0;
    switch (mode)
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index f2dd6ae..8754743 100644
+index f2dd6ae..e0b3552 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -1035,7 +1035,7 @@ ps_destroy_gc (hidGC gc)
@@ -247,7 +247,7 @@ index f2dd6ae..8754743 100644
  
  static void
 -ps_use_mask (enum mask_mode mode)
-+ps_use_mask (hidGC gc, enum mask_mode mode)
++ps_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
    /* does nothing */
  }
