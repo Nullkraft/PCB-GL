@@ -1533,7 +1533,7 @@ draw_element (ElementType *element)
  */
 
 void
-hid_expose_callback (HID *hid, HID_DRAW *hid_draw, BoxType * region, void *item)
+hid_expose_callback (HID *hid, HID_DRAW *hid_draw, BoxType *region, void *item)
 {
   HID *old_gui = gui;
 
