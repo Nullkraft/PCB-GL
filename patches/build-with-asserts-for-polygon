@@ -1,5 +1,5 @@
-Bottom: f9a816a64013d81124f1301d8242cee4de2a9928
-Top:    2c55c37112bcce3b99d60af22d0112c6f762c89d
+Bottom: efcf1b91344bfac8ba8d4c4e4691ed267f669955
+Top:    a14b0fa83def8bd9d03ea7bba94a2db608be1d5c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-02 17:56:57 +0100
 
@@ -9,10 +9,10 @@ Build with asserts for polygons
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index eac9390..e8abcdc 100644
+index 75e1b9e..c0dee55 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -73,6 +73,7 @@ dicer output is used for HIDs which cannot render things with holes
+@@ -71,6 +71,7 @@ dicer output is used for HIDs which cannot render things with holes
  /* special polygon editing routines
   */
  
@@ -21,7 +21,7 @@ index eac9390..e8abcdc 100644
  #include "config.h"
  #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 4a761d5..03b02cd 100644
+index 566596d..3d2e763 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -39,6 +39,7 @@
@@ -32,12 +32,12 @@ index 4a761d5..03b02cd 100644
  #include	<assert.h>
  #include	<stdlib.h>
  #include	<stdio.h>
-@@ -105,7 +106,7 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
+@@ -100,7 +101,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
  #undef DEBUG_JUMP
  #undef DEBUG_GATHER
  #undef DEBUG_ANGLE
 -#undef DEBUG
 +#define DEBUG
  #ifdef DEBUG
- #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
+ #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
  #else
