@@ -1,7 +1,7 @@
-Bottom: 847d456e3ddd47dfbefac8d1a190fb55b588f85e
-Top:    7cd388319df32e96d06a36c3cfb171f9f9b91a2f
+Bottom: d05b63e6852df3bf5d695b0462a982b3888310da
+Top:    ab90b5c6328d782b129bc96c4c50cf33b6582cdd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 22:28:34 +0000
+Date:   2015-01-11 23:41:04 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->make_gc() function
 
@@ -9,7 +9,7 @@ Add HID_DRAW* parameter to (HID_DRAW *)->make_gc() function
 ---
 
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index fd6913d..6eaaccb 100644
+index 1ea114d..858708f 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -166,7 +166,7 @@ batch_set_layer (HID_DRAW *hid_draw, const char *name, int idx, int empty)
@@ -35,7 +35,7 @@ index 3838864..cd679c6 100644
    hidGC gc = (hidGC)calloc (1, sizeof (struct extents_gc_struct));
  
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index 127d204..42c47e6 100644
+index 2821695..f4b8d2d 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -66,7 +66,7 @@ nogui_end_layer (HID_DRAW *hid_draw)
@@ -48,7 +48,7 @@ index 127d204..42c47e6 100644
    return 0;
  }
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index a81ebb1..5d6c5a0 100644
+index 9e8b620..c6c749d 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -1173,7 +1173,7 @@ gcode_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
@@ -61,7 +61,7 @@ index a81ebb1..5d6c5a0 100644
    hidGC gc = (hidGC) calloc (1, sizeof (struct gcode_gc_struct));
    gcodeGC gcode_gc = (gcodeGC)gc;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index fed47bc..d2b3fd5 100644
+index 707c905..6e4616e 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -47,7 +47,7 @@
@@ -124,7 +124,7 @@ index 538e547..32036c8 100644
  void ghid_set_color (hidGC gc, const char *name);
  void ghid_set_line_cap (hidGC gc, EndCapStyle style);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 6fed87f..41ac273 100644
+index 8e2c2cd..3d1ffd3 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -148,7 +148,7 @@ static bool crosshair_on = true;
@@ -155,7 +155,7 @@ index 6fed87f..41ac273 100644
    hidGC gc = (hidGC)calloc (1, sizeof (struct lesstif_gc_struct));
  
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 1f84a3a..e081095 100644
+index 755ccbc..f1d912d 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -761,7 +761,7 @@ nelma_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
@@ -168,7 +168,7 @@ index 1f84a3a..e081095 100644
  	hidGC gc = (hidGC) calloc (1, sizeof(struct hid_gc_struct));
  	nelmaGC nelma_gc = (nelmaGC)gc;
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index c9a06ed..8f236fa 100644
+index 6ccd28d..92f8661 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -1348,7 +1348,7 @@ png_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
@@ -181,7 +181,7 @@ index c9a06ed..8f236fa 100644
    hidGC gc = (hidGC) calloc (1, sizeof (struct png_gc_struct));
    pngGC png_gc = (pngGC)gc;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 5d2766b..4f83528 100644
+index e7e964d..4b192cc 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -33,8 +33,6 @@
@@ -203,7 +203,7 @@ index 5d2766b..4f83528 100644
    hidGC gc = (hidGC) calloc (1, sizeof (struct eps_gc_struct));
    epsGC eps_gc = (epsGC)gc;
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index da02628..f652f3d 100644
+index d911315..2f21bee 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -1015,7 +1015,7 @@ ps_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)

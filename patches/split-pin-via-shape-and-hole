@@ -1,7 +1,7 @@
-Bottom: fd91be76d9514657df03f58ea758fd27ca10b3b7
-Top:    c6864e746df746b1910b3a2bd1a1451d8a0d545f
+Bottom: ea08ee9493f89e4ff1da420faa62d5bbacb68b2d
+Top:    1022e5a919cbed11994deaee669f71bad5306b38
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:42:12 +0000
+Date:   2015-01-11 23:41:03 +0000
 
 Split pin/via shape and hole drawing into different functions
 
@@ -277,7 +277,7 @@ index fad2563..4fca617 100644
  void common_draw_helpers_class_init (HID_DRAW_CLASS *klass);
  void common_draw_helpers_init (HID_DRAW *graphics);
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index 27950a1..7878025 100644
+index 622fb69..e7867de 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -155,7 +155,13 @@ nogui_draw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
@@ -302,7 +302,7 @@ index 27950a1..7878025 100644
 +  klass->draw_pcb_pv_hole = nogui_draw_pcb_pv_hole;
  }
  
- static void
+ void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index 066465c..618e01a 100644
 --- a/src/hid/gtk/gtkhid-gl.c

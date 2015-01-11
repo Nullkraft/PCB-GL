@@ -1,7 +1,7 @@
-Bottom: c6864e746df746b1910b3a2bd1a1451d8a0d545f
-Top:    01e7b810cb6c586d381288539a3ebb43971f034f
+Bottom: 1022e5a919cbed11994deaee669f71bad5306b38
+Top:    a9f4d498b8113e0887e94b98901ba9b971d0b12b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:42:13 +0000
+Date:   2015-01-11 23:41:03 +0000
 
 Adjust mask API to include a HID_DRAW pointer
 
@@ -9,7 +9,7 @@ Adjust mask API to include a HID_DRAW pointer
 ---
 
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index a369a5d..8d27fa5 100644
+index 45304ab..e8e45c5 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -177,7 +177,7 @@ batch_destroy_gc (hidGC gc)
@@ -35,7 +35,7 @@ index bc92bdc..0a33bf3 100644
  }
  
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index 7878025..d2c1686 100644
+index e7867de..ac9e2ed 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -77,7 +77,7 @@ nogui_destroy_gc (hidGC gc)
@@ -48,7 +48,7 @@ index 7878025..d2c1686 100644
    CRASH;
  }
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index d817a24..a11c0d4 100644
+index a75661a..64d637d 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -1197,7 +1197,7 @@ gcode_destroy_gc (hidGC gc)
@@ -61,7 +61,7 @@ index d817a24..a11c0d4 100644
    /* does nothing */
  }
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 9ec4b2b..7a7f0af 100644
+index 519264e..a556034 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -50,7 +50,6 @@ static void gerber_parse_arguments (int *argc, char ***argv);
@@ -121,7 +121,7 @@ index 3430633..9804460 100644
  void ghid_set_line_cap (hidGC gc, EndCapStyle style);
  void ghid_set_line_width (hidGC gc, Coord width);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 966ca64..ee3b063 100644
+index 6fce99a..0005764 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -242,7 +242,7 @@ Location of the @file{pcb-menu.res} file which defines the menu for the lesstif
@@ -161,7 +161,7 @@ index 966ca64..ee3b063 100644
    if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB)) &&
        !use_xrender)
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index ec530e1..783457f 100644
+index a4712de..5597471 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -785,7 +785,7 @@ nelma_destroy_gc(hidGC gc)
@@ -174,7 +174,7 @@ index ec530e1..783457f 100644
  	/* does nothing */
  }
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index c39a99f..45d7468 100644
+index 8bf9a68..e57b14a 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -1373,7 +1373,7 @@ png_destroy_gc (hidGC gc)
@@ -187,7 +187,7 @@ index c39a99f..45d7468 100644
    if (photo_mode)
      return;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index cd70714..7e6604f 100644
+index bce73dd..91ab387 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -36,7 +36,6 @@ static void eps_parse_arguments (int *argc, char ***argv);
@@ -208,7 +208,7 @@ index cd70714..7e6604f 100644
    static int mask_pending = 0;
    switch (mode)
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index f2dd6ae..e0b3552 100644
+index 35b287a..b8f5c06 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -1035,7 +1035,7 @@ ps_destroy_gc (hidGC gc)

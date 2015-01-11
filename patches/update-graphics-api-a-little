@@ -1,7 +1,7 @@
-Bottom: d4ee2c2b56b7fc0429a5114da10f5ac0373b7041
-Top:    fd91be76d9514657df03f58ea758fd27ca10b3b7
+Bottom: 3c63b381f6d9c201f07440a6c69109a26a50f0e3
+Top:    ea08ee9493f89e4ff1da420faa62d5bbacb68b2d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 20:20:54 +0000
+Date:   2015-01-11 23:41:02 +0000
 
 Update graphics API a little
 
@@ -207,7 +207,7 @@ index 5992887..fad2563 100644
  void common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
  void common_draw_helpers_class_init (HID_DRAW_CLASS *klass);
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index fb8b048..27950a1 100644
+index a746411..622fb69 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -149,25 +149,13 @@ nogui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -250,7 +250,7 @@ index fb8b048..27950a1 100644
 +  klass->draw_pcb_pv =      nogui_draw_pcb_pv;
  }
  
- static void
+ void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index 2470607..066465c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
@@ -366,10 +366,10 @@ index 2470607..066465c 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 809db1b..6ef26eb 100644
+index 59faf56..9fb531b 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2212,6 +2212,9 @@ hid_gtk_init ()
+@@ -2213,6 +2213,9 @@ hid_gtk_init ()
    ghid_graphics_class.fill_rect      = ghid_fill_rect;
  
    ghid_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
@@ -380,10 +380,10 @@ index 809db1b..6ef26eb 100644
    ghid_graphics_class.gui = true;
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index f7ea4b7..966ca64 100644
+index 29d7220..6fce99a 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4129,6 +4129,8 @@ hid_lesstif_init ()
+@@ -4130,6 +4130,8 @@ hid_lesstif_init ()
    lesstif_graphics_class.fill_rect      = lesstif_fill_rect;
  
    lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;

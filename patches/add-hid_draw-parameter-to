@@ -1,7 +1,7 @@
-Bottom: 01e7b810cb6c586d381288539a3ebb43971f034f
-Top:    847d456e3ddd47dfbefac8d1a190fb55b588f85e
+Bottom: a9f4d498b8113e0887e94b98901ba9b971d0b12b
+Top:    d05b63e6852df3bf5d695b0462a982b3888310da
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 22:13:25 +0000
+Date:   2015-01-11 23:41:03 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->{start,end}_layer() functions
 
@@ -9,7 +9,7 @@ Add HID_DRAW* parameter to (HID_DRAW *)->{start,end}_layer() functions
 ---
 
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index 8d27fa5..fd6913d 100644
+index e8e45c5..1ea114d 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -160,7 +160,7 @@ batch_invalidate_all (void)
@@ -35,7 +35,7 @@ index 0a33bf3..3838864 100644
    int idx = group;
    if (idx >= 0 && idx < max_group)
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index d2c1686..127d204 100644
+index ac9e2ed..2821695 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -54,14 +54,14 @@ nogui_invalidate_all (void)
@@ -56,7 +56,7 @@ index d2c1686..127d204 100644
  }
  
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index a11c0d4..a81ebb1 100644
+index 64d637d..9e8b620 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -1136,7 +1136,7 @@ error:
@@ -69,7 +69,7 @@ index a11c0d4..a81ebb1 100644
    int idx = (group >= 0 && group < max_group) ?
      PCB->LayerGroups.Entries[group][0] : group;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 7a7f0af..fed47bc 100644
+index a556034..707c905 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -47,7 +47,6 @@
@@ -129,7 +129,7 @@ index 9804460..538e547 100644
  void ghid_destroy_gc (hidGC);
  void ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index ee3b063..6fed87f 100644
+index 0005764..8e2c2cd 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -3000,7 +3000,7 @@ lesstif_notify_mark_change (bool changes_complete)
@@ -142,7 +142,7 @@ index ee3b063..6fed87f 100644
    int idx = group;
    if (idx >= 0 && idx < max_group)
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 783457f..1f84a3a 100644
+index 5597471..755ccbc 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -729,7 +729,7 @@ nelma_do_export(HID_Attr_Val * options)
@@ -155,7 +155,7 @@ index 783457f..1f84a3a 100644
  	int             idx = (group >= 0 && group < max_group) ?
  	PCB->LayerGroups.Entries[group][0] : group;
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 45d7468..c9a06ed 100644
+index e57b14a..6ccd28d 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -1200,7 +1200,7 @@ static int is_drill;
@@ -168,7 +168,7 @@ index 45d7468..c9a06ed 100644
    int idx = (group >= 0
  	     && group <
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 7e6604f..5d2766b 100644
+index 91ab387..e7e964d 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -33,7 +33,6 @@
@@ -189,7 +189,7 @@ index 7e6604f..5d2766b 100644
    int idx = (group >= 0
  	     && group <
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index e0b3552..da02628 100644
+index b8f5c06..d911315 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -32,7 +32,7 @@
