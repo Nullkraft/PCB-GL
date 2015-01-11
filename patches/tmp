@@ -1,5 +1,5 @@
-Bottom: c17d76be8e1ef3de30143b5acd96c145cc0481a4
-Top:    932bd2c0f991d43725a278e5a282a19e3ff51ce6
+Bottom: 2848d53fc9b8d8ea91ce866ebbd9debc67f79d75
+Top:    418067421d689a516f6e1fab3d97df2268b1b200
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:52:24 +0000
 
@@ -9,7 +9,7 @@ TMP
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index afad139..e1a9024 100644
+index 3083038..87dbef5 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1533,14 +1533,14 @@ draw_element (ElementType *element)
@@ -29,8 +29,8 @@ index afad139..e1a9024 100644
 +  Output.bgGC = hid_draw_make_gc (hid_draw);
 +  Output.pmGC = hid_draw_make_gc (hid_draw);
  
-   hid->graphics->set_color (Output.pmGC, "erase");
-   hid->graphics->set_color (Output.bgGC, "drill");
+   hid_draw_set_color (Output.pmGC, "erase");
+   hid_draw_set_color (Output.bgGC, "drill");
 diff --git a/src/hid.h b/src/hid.h
 index ef6edb2..3123939 100644
 --- a/src/hid.h
