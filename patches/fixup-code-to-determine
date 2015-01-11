@@ -1,5 +1,5 @@
-Bottom: bc7f0e67d1f1af363936487d0cc5bc3dafeac955
-Top:    fb8c8c55e25dc0aaa60a7098e22a7a44b94c4b3c
+Bottom: 8e631dc67ce4fbefdcf2de186772cd5a1d061498
+Top:    a10287ff1dd2a32765bac1586c62e45c14aaf466
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:42:02 +0000
 
@@ -17,10 +17,10 @@ change behaviour to apply test on a per-layer basis.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 112ab4d..7f29072 100644
+index 02de97b..0f605e1 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1407,7 +1407,7 @@ static int
+@@ -1408,7 +1408,7 @@ static int
  GhidDrawLayerGroup (int group, const BoxType * screen)
  {
    render_priv *priv = gport->render_priv;
@@ -29,15 +29,15 @@ index 112ab4d..7f29072 100644
    int layernum;
    int side;
    struct poly_info info;
-@@ -1417,6 +1417,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1418,6 +1418,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
    int first_run = 1;
    int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
    int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +  bool is_outline;
  
-   if (!gui->set_layer (0, group, 0))
+   if (!hid_draw_set_layer (&ghid_graphics, 0, group, 0))
      return 0;
-@@ -1426,9 +1427,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1427,9 +1428,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
      layernum = layers[i];
      Layer = PCB->Data->Layer + layers[i];
  
@@ -49,7 +49,7 @@ index 112ab4d..7f29072 100644
  
      if (layernum < max_copper_layer && Layer->On) {
  
-@@ -1437,7 +1437,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1438,7 +1438,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
  
        first_run = 0;
  
@@ -58,16 +58,16 @@ index 112ab4d..7f29072 100644
          /* Mask out drilled holes on this layer */
          hidgl_flush_triangles (priv->hidgl);
          glPushAttrib (GL_COLOR_BUFFER_BIT);
-@@ -1460,7 +1460,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
-         gui->end_layer ();
-         gui->set_layer (0, group, 0);
+@@ -1461,7 +1461,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+         hid_draw_end_layer (&ghid_graphics);
+         hid_draw_set_layer (&ghid_graphics, 0, group, 0);
  
 -        if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
 +        if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
            hidgl_flush_triangles (priv->hidgl);
            glPushAttrib (GL_COLOR_BUFFER_BIT);
            glColorMask (0, 0, 0, 0);
-@@ -1473,7 +1473,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1474,7 +1474,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
        }
  
        /* Draw pins, vias and pads on this layer */
