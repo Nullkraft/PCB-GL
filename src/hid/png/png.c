@@ -1372,7 +1372,7 @@ png_destroy_gc (hidGC gc)
 }
 
 static void
-png_use_mask (enum mask_mode mode)
+png_use_mask (hidGC gc, enum mask_mode mode)
 {
   if (photo_mode)
     return;
