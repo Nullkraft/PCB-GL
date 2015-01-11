@@ -1,4 +1,4 @@
-Bottom: 60d633119358bc742cbfb86c9ba634a17bbc7cf7
+Bottom: 741469dec0d5ee528bf38fcb9f48e0bef2b2fbbb
 Top:    741469dec0d5ee528bf38fcb9f48e0bef2b2fbbb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 13:23:28 +0000
@@ -11,81 +11,4 @@ callers passing both true and false), so remove it.
 
 ---
 
-diff --git a/src/action.c b/src/action.c
-index 3a36c79..86b379d 100644
---- a/src/action.c
-+++ b/src/action.c
-@@ -5938,7 +5938,7 @@ ActionNew (int argc, char **argv, Coord x, Coord y)
- 	SaveInTMP ();
-       RemovePCB (PCB);
-       PCB = NULL;
--      PCB = CreateNewPCB (true);
-+      PCB = CreateNewPCB ();
-       CreateNewPCBPost (PCB, 1);
- 
-       /* setup the new name and reset some values to default */
-diff --git a/src/buffer.c b/src/buffer.c
-index 3b51ba1..789985d 100644
---- a/src/buffer.c
-+++ b/src/buffer.c
-@@ -1121,7 +1121,7 @@ ConvertBufferToElement (BufferType *Buffer)
- bool
- LoadLayoutToBuffer (BufferType *Buffer, char *Filename)
- {
--  PCBType *newPCB = CreateNewPCB (false);
-+  PCBType *newPCB = CreateNewPCB ();
- 
-   /* new data isn't added to the undo list */
-   if (!ParsePCB (newPCB, Filename))
-diff --git a/src/create.c b/src/create.c
-index 2f7bc35..fe9619a 100644
---- a/src/create.c
-+++ b/src/create.c
-@@ -146,7 +146,7 @@ pcb_colors_from_settings (PCBType *ptr)
-  * creates a new PCB
-  */
- PCBType *
--CreateNewPCB (bool SetDefaultNames)
-+CreateNewPCB (void)
- {
-   PCBType *ptr;
-   int i;
-diff --git a/src/create.h b/src/create.h
-index e9c2697..f49f6d0 100644
---- a/src/create.h
-+++ b/src/create.h
-@@ -39,7 +39,7 @@ void CreateBeLenient (bool);
- 
- DataType * CreateNewBuffer (void);
- void pcb_colors_from_settings (PCBType *);
--PCBType * CreateNewPCB (bool);
-+PCBType * CreateNewPCB ();
- /* Called after PCB->Data->LayerN is set.  Returns zero if no errors,
-    else nonzero.  */
- int CreateNewPCBPost (PCBType *, int /* set defaults */);
-diff --git a/src/file.c b/src/file.c
-index 11ab7c3..83f7473 100644
---- a/src/file.c
-+++ b/src/file.c
-@@ -386,7 +386,7 @@ real_load_pcb (char *Filename, bool revert)
- {
-   const char *unit_suffix, *grid_size;
-   char *new_filename;
--  PCBType *newPCB = CreateNewPCB (false);
-+  PCBType *newPCB = CreateNewPCB ();
-   PCBType *oldPCB;
- #ifdef DEBUG
-   double elapsed;
-diff --git a/src/main.c b/src/main.c
-index a217134..3c79bac 100644
---- a/src/main.c
-+++ b/src/main.c
-@@ -1990,7 +1990,7 @@ main (int argc, char *argv[])
-     }
- 
-   /* Create a new PCB object in memory */
--  PCB = CreateNewPCB (true);
-+  PCB = CreateNewPCB ();
-   ParseGroupString (Settings.Groups, &PCB->LayerGroups, &PCB->Data->LayerN);
-   /* Add silk layers to newly created PCB */
-   CreateNewPCBPost (PCB, 1);
+
