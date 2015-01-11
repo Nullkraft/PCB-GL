@@ -1,7 +1,7 @@
 Bottom: 951394bf013f031da22beb35cfb597d07f5e438b
-Top:    654d2ca1e526f1e1db589ec76ad0cb50a9bbb37b
-Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-11 14:56:59 +0000
+Top:    cbbffa180dbb12c9bb11ee613284aa5b7a34bdc8
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 15:02:02 +0000
 
 Play with perspective
 
@@ -15,7 +15,6 @@ NB: Edit to hidgl.c:
 +#endif
 
 Is probably bogus. (Leftover debug?)
-
 
 ---
 
@@ -87,7 +86,7 @@ index f1a9ffa..666348b 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7591bc4..f968b24 100644
+index 7591bc4..8c2f94e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -13,6 +13,7 @@
@@ -433,8 +432,8 @@ index 7591bc4..f968b24 100644
 +  double aspect = (double)widget->allocation.width / (double)widget->allocation.height;
 +  double width = 2. * aspect;
 +  double height = 2.;
-+  double near = 1.;
-+  /* double far = 24.; */
++  double near_plane = 1.;
++  /* double far_plane = 24.; */
 +
 +  /* This is nasty beyond words, but I'm lazy and translating directly
 +   * from some untested maths I derived which used this notation */
@@ -465,13 +464,13 @@ index 7591bc4..f968b24 100644
 +  fvz = (float)pcb_z;
 +
 +  /* This isn't really X and Y? */
-+  x = (C * fvz + D) * 2. / width  * near + vpx * (K * fvz + L);
-+  y = (G * fvz + H) * 2. / height * near + vpy * (K * fvz + L);
++  x = (C * fvz + D) * 2. / width  * near_plane + vpx * (K * fvz + L);
++  y = (G * fvz + H) * 2. / height * near_plane + vpy * (K * fvz + L);
 +
-+  mat[0][0] = -vpx * I - A * 2 / width / near;
-+  mat[0][1] = -vpx * J - B * 2 / width / near;
-+  mat[1][0] = -vpy * I - E * 2 / height / near;
-+  mat[1][1] = -vpy * J - F * 2 / height / near;
++  mat[0][0] = -vpx * I - A * 2 / width / near_plane;
++  mat[0][1] = -vpx * J - B * 2 / width / near_plane;
++  mat[1][0] = -vpy * I - E * 2 / height / near_plane;
++  mat[1][1] = -vpy * J - F * 2 / height / near_plane;
 +
 +//  if (fabs (determinant_2x2 (mat)) < 0.000000000001)
 +//    printf ("Determinant is quite small\n");
@@ -522,10 +521,10 @@ index 7591bc4..f968b24 100644
 +    /* float ew = last_modelview_matrix[0][3] * fvx + last_modelview_matrix[1][3] * fvy + last_modelview_matrix[2][3] * fvz + last_modelview_matrix[3][3]; */
 +
 +#if 0
-+    if (-ez < near)
-+      printf ("ez is closer than the near clipping plane, ez = %f\n", ez);
-+    if (-ez > far)
-+      printf ("ez is further than the near clipping plane, ez = %f\n", ez);
++    if (-ez < near_plane)
++      printf ("ez is closer than the near_plane clipping plane, ez = %f\n", ez);
++    if (-ez > far_plane)
++      printf ("ez is further than the near_plane clipping plane, ez = %f\n", ez);
 +#endif
 +    if (-ez < 0) {
 +      // printf ("EZ IS BEHIND THE CAMERA !! ez = %f\n", ez);
