@@ -17,7 +17,7 @@ struct hid_draw_st
   /* Make an empty graphics context.  */
   hidGC (*make_gc) (void);
   void (*destroy_gc) (hidGC gc);
-  void (*use_mask) (enum mask_mode mode);
+  void (*use_mask) (hidGC gc, enum mask_mode mode);
 
   /* Set a color.  Names can be like "red" or "#rrggbb" or special
      names like "erase".  *Always* use the "erase" color for removing
@@ -92,9 +92,9 @@ hid_draw_destroy_gc (hidGC gc)
 }
 
 inline void
-hid_draw_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
+hid_draw_use_mask (hidGC gc, enum mask_mode mode)
 {
-  hid_draw->use_mask (mode);
+  gc->hid_draw->use_mask (gc, mode);
 }
 
 inline void
