@@ -52,6 +52,8 @@
 #include "hid_draw.h"
 #include "hid/common/hidgl.h"
 
+#include "sweep.h"
+
 #define _borast_error(x) (x)
 
 #define DEBUG_PRINT_STATE 0
