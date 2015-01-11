@@ -1,25 +1,13 @@
-Bottom: 2d688907be2b65c82be849610494eaf82ca30536
+Bottom: 8f8abec25eb72c26c20614f554a3d15f76192679
 Top:    f482ccb80350f54e526eee4c9595c6b489b0052e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:20:06 +0000
+Date:   2015-01-11 15:21:05 +0000
 
 Win32 code fixes (TO BE SPLIT INTO SEPARATE PATCHES)
 
 
 ---
 
-diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
-index c3c30e7..4f2937f 100644
---- a/src/borast/borast-bentley-ottmann.c
-+++ b/src/borast/borast-bentley-ottmann.c
-@@ -59,6 +59,7 @@
- 
- #include "sweep.h"
- 
-+
- #define _borast_error(x) (x)
- 
- #define DEBUG_PRINT_STATE 0
 diff --git a/src/compat.c b/src/compat.c
 index 6092764..dd1910b 100644
 --- a/src/compat.c
