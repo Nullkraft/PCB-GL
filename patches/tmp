@@ -3,7 +3,10 @@ Top:    238ee9327572a5f54ec365dc2767cc29dbd32a93
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 18:07:55 +0000
 
-TMP
+Pass a HID_DRAW * instance to hid_expose_callback() rather than a HID * pointer
+
+Drawing should eventually be independent of the HID
+
 
 ---
 
