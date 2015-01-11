@@ -1,5 +1,5 @@
 Bottom: a5b37cd5fc4d48da28431decb865df698a416c63
-Top:    2593107c4a09a6239078b8089af9ae634b2b5044
+Top:    1b8319b68116f04133b63b912af3519f2e066eb8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:40:30 +0000
 
@@ -491,7 +491,7 @@ index 78b8111..b74e8bb 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/draw.c b/src/draw.c
-index a87adb4..afad139 100644
+index a87adb4..3083038 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -96,7 +96,7 @@ set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
@@ -916,7 +916,7 @@ index a87adb4..afad139 100644
      }
  }
  
-@@ -1543,9 +1538,9 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
+@@ -1543,12 +1538,12 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
    HID *old_gui = gui;
  
    gui = hid;
@@ -927,8 +927,13 @@ index a87adb4..afad139 100644
 +  Output.bgGC = hid_draw_make_gc (hid->graphics);
 +  Output.pmGC = hid_draw_make_gc (hid->graphics);
  
-   hid->graphics->set_color (Output.pmGC, "erase");
-   hid->graphics->set_color (Output.bgGC, "drill");
+-  hid->graphics->set_color (Output.pmGC, "erase");
+-  hid->graphics->set_color (Output.bgGC, "drill");
++  hid_draw_set_color (Output.pmGC, "erase");
++  hid_draw_set_color (Output.bgGC, "drill");
+ 
+   if (item)
+     {
 @@ -1559,8 +1554,8 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
    else
      DrawEverything (region);
