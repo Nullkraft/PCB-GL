@@ -2,9 +2,6 @@ NEVERBUILD="
 "
 
 NOBUILD="
-"
-
-BUILD="
 jpeg
 zlib
 libpng
@@ -17,6 +14,9 @@ glib
 atk
 cairo
 pango
+"
+
+BUILD="
 gtk+
 gd
 pcb
