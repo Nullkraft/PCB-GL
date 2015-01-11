@@ -1,5 +1,5 @@
 Bottom: e7aff1a71e6fb83a48360c6e293569d2163b7d31
-Top:    758f32aa2a036f1b9f7f97f955fc320a2d6ed6f9
+Top:    238ee9327572a5f54ec365dc2767cc29dbd32a93
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 18:07:55 +0000
 
@@ -8,7 +8,7 @@ TMP
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 45f72c0..587ea57 100644
+index 45f72c0..db0b6af 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -74,6 +74,7 @@ static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
@@ -41,7 +41,34 @@ index 45f72c0..587ea57 100644
        TEST_FLAG (HIDENAMEFLAG, element))
      return;
    if (doing_pinout || doing_assy)
-@@ -591,11 +592,11 @@ DrawEverything (const BoxType *drawn_area)
+@@ -566,7 +567,7 @@ DrawEverything (const BoxType *drawn_area)
+    * first draw all 'invisible' stuff
+    */
+   if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
+-      && hid_draw_set_layer (gui->graphics, "invisible", SL (INVISIBLE, 0), 0))
++      && hid_draw_set_layer (hid_draw, "invisible", SL (INVISIBLE, 0), 0))
+     {
+       side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
+       if (PCB->ElementOn)
+@@ -576,7 +577,7 @@ DrawEverything (const BoxType *drawn_area)
+ 	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
+ 	}
+       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+-      hid_draw_end_layer (gui->graphics);
++      hid_draw_end_layer (hid_draw);
+     }
+ 
+   /* draw all layers in layerstack order */
+@@ -584,105 +585,105 @@ DrawEverything (const BoxType *drawn_area)
+     {
+       int group = drawn_groups[i];
+ 
+-      if (hid_draw_set_layer (gui->graphics, 0, group, 0))
++      if (hid_draw_set_layer (hid_draw, 0, group, 0))
+         {
+           DrawLayerGroup (group, drawn_area);
+-          hid_draw_end_layer (gui->graphics);
++          hid_draw_end_layer (hid_draw);
          }
      }
  
@@ -55,8 +82,56 @@ index 45f72c0..587ea57 100644
      DrawPPV (SWAP_IDENT ? bottom_group : top_group, drawn_area);
    else
      {
-@@ -639,7 +640,7 @@ DrawEverything (const BoxType *drawn_area)
-       hid_draw_end_layer (gui->graphics);
+       CountHoles (&plated, &unplated, drawn_area);
+ 
+-      if (plated && hid_draw_set_layer (gui->graphics, "plated-drill", SL (PDRILL, 0), 0))
++      if (plated && hid_draw_set_layer (hid_draw, "plated-drill", SL (PDRILL, 0), 0))
+         {
+           DrawHoles (true, false, drawn_area);
+-          hid_draw_end_layer (gui->graphics);
++          hid_draw_end_layer (hid_draw);
+         }
+ 
+-      if (unplated && hid_draw_set_layer (gui->graphics, "unplated-drill", SL (UDRILL, 0), 0))
++      if (unplated && hid_draw_set_layer (hid_draw, "unplated-drill", SL (UDRILL, 0), 0))
+         {
+           DrawHoles (false, true, drawn_area);
+-          hid_draw_end_layer (gui->graphics);
++          hid_draw_end_layer (hid_draw);
+         }
+     }
+ 
+   /* Draw the solder mask if turned on */
+-  if (hid_draw_set_layer (gui->graphics, "componentmask", SL (MASK, TOP), 0))
++  if (hid_draw_set_layer (hid_draw, "componentmask", SL (MASK, TOP), 0))
+     {
+       DrawMask (TOP_SIDE, drawn_area);
+-      hid_draw_end_layer (gui->graphics);
++      hid_draw_end_layer (hid_draw);
+     }
+ 
+-  if (hid_draw_set_layer (gui->graphics, "soldermask", SL (MASK, BOTTOM), 0))
++  if (hid_draw_set_layer (hid_draw, "soldermask", SL (MASK, BOTTOM), 0))
+     {
+       DrawMask (BOTTOM_SIDE, drawn_area);
+-      hid_draw_end_layer (gui->graphics);
++      hid_draw_end_layer (hid_draw);
+     }
+ 
+-  if (hid_draw_set_layer (gui->graphics, "topsilk", SL (SILK, TOP), 0))
++  if (hid_draw_set_layer (hid_draw, "topsilk", SL (SILK, TOP), 0))
+     {
+       DrawSilk (TOP_SIDE, drawn_area);
+-      hid_draw_end_layer (gui->graphics);
++      hid_draw_end_layer (hid_draw);
+     }
+ 
+-  if (hid_draw_set_layer (gui->graphics, "bottomsilk", SL (SILK, BOTTOM), 0))
++  if (hid_draw_set_layer (hid_draw, "bottomsilk", SL (SILK, BOTTOM), 0))
+     {
+       DrawSilk (BOTTOM_SIDE, drawn_area);
+-      hid_draw_end_layer (gui->graphics);
++      hid_draw_end_layer (hid_draw);
      }
  
 -  if (gui->graphics->klass->gui)
@@ -64,6 +139,61 @@ index 45f72c0..587ea57 100644
      {
        /* Draw element Marks */
        if (PCB->PinOn)
+ 	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
+ 		  NULL);
+       /* Draw rat lines on top */
+-      if (hid_draw_set_layer (gui->graphics, "rats", SL (RATS, 0), 0))
++      if (hid_draw_set_layer (hid_draw, "rats", SL (RATS, 0), 0))
+         {
+           DrawRats(drawn_area);
+-          hid_draw_end_layer (gui->graphics);
++          hid_draw_end_layer (hid_draw);
+         }
+     }
+ 
+   paste_empty = IsPasteEmpty (TOP_SIDE);
+-  if (hid_draw_set_layer (gui->graphics, "toppaste", SL (PASTE, TOP), paste_empty))
++  if (hid_draw_set_layer (hid_draw, "toppaste", SL (PASTE, TOP), paste_empty))
+     {
+       DrawPaste (TOP_SIDE, drawn_area);
+-      hid_draw_end_layer (gui->graphics);
++      hid_draw_end_layer (hid_draw);
+     }
+ 
+   paste_empty = IsPasteEmpty (BOTTOM_SIDE);
+-  if (hid_draw_set_layer (gui->graphics, "bottompaste", SL (PASTE, BOTTOM), paste_empty))
++  if (hid_draw_set_layer (hid_draw, "bottompaste", SL (PASTE, BOTTOM), paste_empty))
+     {
+       DrawPaste (BOTTOM_SIDE, drawn_area);
+-      hid_draw_end_layer (gui->graphics);
++      hid_draw_end_layer (hid_draw);
+     }
+ 
+-  if (hid_draw_set_layer (gui->graphics, "topassembly", SL (ASSY, TOP), 0))
++  if (hid_draw_set_layer (hid_draw, "topassembly", SL (ASSY, TOP), 0))
+     {
+       PrintAssembly (TOP_SIDE, drawn_area);
+-      hid_draw_end_layer (gui->graphics);
++      hid_draw_end_layer (hid_draw);
+     }
+ 
+-  if (hid_draw_set_layer (gui->graphics, "bottomassembly", SL (ASSY, BOTTOM), 0))
++  if (hid_draw_set_layer (hid_draw, "bottomassembly", SL (ASSY, BOTTOM), 0))
+     {
+       PrintAssembly (BOTTOM_SIDE, drawn_area);
+-      hid_draw_end_layer (gui->graphics);
++      hid_draw_end_layer (hid_draw);
+     }
+ 
+-  if (hid_draw_set_layer (gui->graphics, "fab", SL (FAB, 0), 0))
++  if (hid_draw_set_layer (hid_draw, "fab", SL (FAB, 0), 0))
+     {
+       PrintFab (Output.fgGC);
+-      hid_draw_end_layer (gui->graphics);
++      hid_draw_end_layer (hid_draw);
+     }
+ }
+ 
 @@ -740,7 +741,7 @@ DrawPPV (int group, const BoxType *drawn_area)
    int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
    int side;
