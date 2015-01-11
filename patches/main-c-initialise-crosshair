@@ -1,0 +1,14 @@
+Bottom: 11733402ecb6e8f19b2ca2972cd200304643c8c6
+Top:    11733402ecb6e8f19b2ca2972cd200304643c8c6
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 17:55:53 +0000
+
+main.c: Initialise crosshair unconditionally
+
+Since we no longer generate graphics contexts from InitCrosshair(),
+there is no need to check gui->gui before calling it.
+
+
+---
+
+
