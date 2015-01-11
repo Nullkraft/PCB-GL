@@ -1542,8 +1542,8 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
   Output.bgGC = hid_draw_make_gc (hid->graphics);
   Output.pmGC = hid_draw_make_gc (hid->graphics);
 
-  hid->graphics->set_color (Output.pmGC, "erase");
-  hid->graphics->set_color (Output.bgGC, "drill");
+  hid_draw_set_color (Output.pmGC, "erase");
+  hid_draw_set_color (Output.bgGC, "drill");
 
   if (item)
     {
