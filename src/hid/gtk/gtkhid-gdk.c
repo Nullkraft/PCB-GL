@@ -324,7 +324,7 @@ ghid_draw_bg_image (void)
 #define WHICH_GC(gtk_gc) (cur_mask == HID_MASK_CLEAR ? priv->mask_gc : (gtk_gc)->gdk_gc)
 
 void
-ghid_use_mask (enum mask_mode mode)
+ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
   static int mask_seq_id = 0;
   GdkColor color;
