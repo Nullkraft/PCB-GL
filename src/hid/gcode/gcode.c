@@ -1136,7 +1136,7 @@ error:
 /* *** PNG export (slightly modified code from PNG export HID) ************* */
 
 static int
-gcode_set_layer (const char *name, int group, int empty)
+gcode_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
   int idx = (group >= 0 && group < max_group) ?
     PCB->LayerGroups.Entries[group][0] : group;
