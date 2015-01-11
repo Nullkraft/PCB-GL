@@ -320,6 +320,69 @@ SetLineBoundingBox (LineType *Line)
 }
 
 /* ---------------------------------------------------------------------------
+ * calculates an arc center and radius for the arc described by
+ * two points, and an included angle between them. Return locations for
+ * cx, cy are required. radius, start_angle and delta_angle are optional
+ * and may be NULL if not required.
+ */
+void
+calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle included_angle,
+                                         Coord *cx, Coord *cy, Coord *radius,
+                                         Angle *start_angle, Angle *delta_angle)
+{
+  Coord hx, hy;
+  double p_to_h_dist;
+  double c_to_h_dist;
+  double unit_hcx, unit_hcy;
+
+  /* The arc center lies on a line passing through hx, hy, perpendicular
+   * to the direction between our two end-points.
+   *
+   *              p2
+   *            / |
+   *          /   |h
+   *    -----c----|-------------- line passing (hx, hy), perpendicular to p1-p2
+   *          \   |
+   *            \ |
+   *              p1
+   *
+   *  Find cx, cy.
+   *
+   *  We know that c-p1 = radius. (But we don't know that radius).
+   *  We have the included angle, /_ p1.c.p2
+   *  |(hx,hy)-p1| = sin(angle/2) * radius
+   *
+   * tan(ang/2) = |(hx,hy)-p1| / |(hx,hy)-(cx,cy)|
+   *
+   * |(hx,hy)-(cx,cy)| = |(hx,hy)-p1| / tan(ang/2)
+   *
+   */
+
+  /* Find the point halfway between the two points the arc spans */
+  hx = p1->X + (p2->X - p1->X) / 2;
+  hy = p1->Y + (p2->Y - p1->Y) / 2;
+
+  p_to_h_dist = sqrt (pow(p2->X - p1->Y, 2) + pow (p2->Y - p1->Y, 2)) / 2.;
+  c_to_h_dist = p_to_h_dist / tan (TO_RADIANS (included_angle) / 2.);
+
+  unit_hcx = (float)-(hy - p1->Y) / p_to_h_dist;
+  unit_hcy = (float) (hx - p1->X) / p_to_h_dist;
+
+  *cx = hx + unit_hcx * c_to_h_dist;
+  *cy = hy + unit_hcy * c_to_h_dist;
+
+  if (radius != NULL)
+    *radius = sqrt ((p1->X - *cx) * (p1->X - *cx) +
+                    (p1->Y - *cy) * (p1->Y - *cy));
+
+  if (start_angle != NULL)
+    *start_angle = atan2 ((p1->Y - *cy), -(p1->X - *cx)) / M180;
+
+  if (delta_angle != NULL)
+    *delta_angle = included_angle;
+}
+
+/* ---------------------------------------------------------------------------
  * sets the bounding box of a polygons
  */
 void
@@ -333,6 +396,27 @@ SetPolygonBoundingBox (PolygonType *Polygon)
     MAKEMIN (Polygon->BoundingBox.Y1, point->Y);
     MAKEMAX (Polygon->BoundingBox.X2, point->X);
     MAKEMAX (Polygon->BoundingBox.Y2, point->Y);
+
+    if (point->included_angle != 0)
+      {
+        BoxType arc_bound;
+        Coord cx, cy, radius;
+        Angle start_angle, delta_angle;
+        PointType *next_point;
+
+        /* NB: This next line uses the polygon point index, n, defined by POLYGON_POINT_LOOP */
+        next_point = &Polygon->Points[next_contour_point (Polygon, n)];
+
+        calc_arc_from_points_and_included_angle (point, next_point, point->included_angle,
+                                                 &cx, &cy, &radius, &start_angle, &delta_angle);
+
+        arc_bound = calc_thin_arc_bounds (cx, cy, radius, radius, start_angle, delta_angle);
+
+        MAKEMIN (Polygon->BoundingBox.X1, arc_bound.X1);
+        MAKEMIN (Polygon->BoundingBox.Y1, arc_bound.Y1);
+        MAKEMAX (Polygon->BoundingBox.X2, arc_bound.X2);
+        MAKEMAX (Polygon->BoundingBox.Y2, arc_bound.Y2);
+      }
   }
   /* boxes don't include the lower right corner */
   close_box(&Polygon->BoundingBox);
