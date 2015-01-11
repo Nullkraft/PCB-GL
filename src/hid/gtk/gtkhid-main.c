@@ -928,6 +928,7 @@ static void
 ghid_attributes_revert ()
 {
   int i;
+  GList *iter;
 
   ghid_attributes_need_rows (attributes_list->Number);
 
@@ -941,11 +942,14 @@ ghid_attributes_revert ()
     }
 
   /* Fill in values */
-  for (i=0; i<attributes_list->Number; i++)
+  for (iter = attributes_list->List, i = 0;
+       iter != NULL; iter = g_list_next (iter), i++)
     {
+      AttributeType *attr = iter->data;
+
       /* create row [i] */
-      gtk_entry_set_text (GTK_ENTRY (attr_row[i].w_name), attributes_list->List[i].name);
-      gtk_entry_set_text (GTK_ENTRY (attr_row[i].w_value), attributes_list->List[i].value);
+      gtk_entry_set_text (GTK_ENTRY (attr_row[i].w_name), attr->name);
+      gtk_entry_set_text (GTK_ENTRY (attr_row[i].w_value), attr->value);
 #if 0
 #endif
     }
@@ -1013,28 +1017,14 @@ ghid_attributes (char *owner, AttributeListType *attrs)
       if (response == GTK_RESPONSE_OK)
 	{
 	  int i;
+	  FreeAttributeListMemory (attributes_list);
+
 	  /* Copy the values back */
-	  for (i=0; i<attributes_list->Number; i++)
+	  for (i = 0; i < attr_num_rows; i++)
 	    {
-	      if (attributes_list->List[i].name)
-		free (attributes_list->List[i].name);
-	      if (attributes_list->List[i].value)
-		free (attributes_list->List[i].value);
-	    }
-	  if (attributes_list->Max < attr_num_rows)
-	    {
-	      int sz = attr_num_rows * sizeof (AttributeType);
-	      if (attributes_list->List == NULL)
-		attributes_list->List = (AttributeType *) malloc (sz);
-	      else
-		attributes_list->List = (AttributeType *) realloc (attributes_list->List, sz);
-	      attributes_list->Max = attr_num_rows;
-	    }
-	  for (i=0; i<attr_num_rows; i++)
-	    {
-	      attributes_list->List[i].name = strdup (gtk_entry_get_text (GTK_ENTRY (attr_row[i].w_name)));
-	      attributes_list->List[i].value = strdup (gtk_entry_get_text (GTK_ENTRY (attr_row[i].w_value)));
-	      attributes_list->Number = attr_num_rows;
+	      AttributeType *attr = GetAttributeMemory (attributes_list);
+	      attr->name = strdup (gtk_entry_get_text (GTK_ENTRY (attr_row[i].w_name)));
+	      attr->value = strdup (gtk_entry_get_text (GTK_ENTRY (attr_row[i].w_value)));
 	    }
 
 	  break;
