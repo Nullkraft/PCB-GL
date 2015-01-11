@@ -1,5 +1,5 @@
 Bottom: 901800ad7db65efcf2fb023cfa2492b317402b14
-Top:    885af7328f16cf3624f79f3471f5f705c21de79d
+Top:    60dc408382a6243fe14f013d43594d825df3bd11
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:42:01 +0000
 
@@ -77,7 +77,7 @@ index 0cb0f88..a5a49ab 100644
 +
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 11438fb..7110983 100644
+index 11438fb..99b25af 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -8,6 +8,9 @@
@@ -660,7 +660,7 @@ index 11438fb..7110983 100644
 +  int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
 +  int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +
-+  if (!gui->set_layer (0, group, 0))
++  if (!hid_draw_set_layer (&ghid_graphics, 0, group, 0))
 +    return 0;
 +
 +  /* HACK: Subcomposite each layer in a layer group separately */
@@ -675,7 +675,7 @@ index 11438fb..7110983 100644
 +    if (layernum < max_copper_layer && Layer->On) {
 +
 +      if (!first_run)
-+        gui->set_layer (0, group, 0);
++        hid_draw_set_layer (&ghid_graphics, 0, group, 0);
 +
 +      first_run = 0;
 +
@@ -699,8 +699,8 @@ index 11438fb..7110983 100644
 +
 +        /* HACK: Subcomposite polygons separately from other layer primitives */
 +        /* Reset the compositing */
-+        gui->end_layer ();
-+        gui->set_layer (0, group, 0);
++        hid_draw_end_layer (&ghid_graphics);
++        hid_draw_set_layer (&ghid_graphics, 0, group, 0);
 +
 +        if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
 +          hidgl_flush_triangles (&buffer);
@@ -739,7 +739,7 @@ index 11438fb..7110983 100644
 +    }
 +  }
 +
-+  gui->end_layer ();
++  hid_draw_end_layer (&ghid_graphics);
 +
 +  return (n_entries > 1);
 +}
@@ -891,20 +891,20 @@ index 11438fb..7110983 100644
 +  side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
 +
 +  if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
-+      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
++      hid_draw_set_layer (&ghid_graphics, "invisible", SL (INVISIBLE, 0), 0)) {
 +    DrawSilk (side, drawn_area);
 +
 +    if (global_view_2d)
 +      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
 +
-+    gui->end_layer ();
++    hid_draw_end_layer (&ghid_graphics);
 +
 +    /* Draw the reverse-side solder mask if turned on */
 +    if (!global_view_2d &&
-+        gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
++        hid_draw_set_layer (&ghid_graphics, SWAP_IDENT ? "componentmask" : "soldermask",
 +                        SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
 +        GhidDrawMask (side, drawn_area);
-+        gui->end_layer ();
++        hid_draw_end_layer (&ghid_graphics);
 +      }
 +  }
 +
@@ -958,16 +958,16 @@ index 11438fb..7110983 100644
 +  }
 +
 +  /* Draw the solder mask if turned on */
-+  if (gui->set_layer (SWAP_IDENT ? "soldermask" : "componentmask",
++  if (hid_draw_set_layer (&ghid_graphics, SWAP_IDENT ? "soldermask" : "componentmask",
 +                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
 +    GhidDrawMask (side, drawn_area);
-+    gui->end_layer ();
++    hid_draw_end_layer (&ghid_graphics);
 +  }
 +
-+  if (gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
++  if (hid_draw_set_layer (&ghid_graphics, SWAP_IDENT ? "bottomsilk" : "topsilk",
 +                      SWAP_IDENT ? SL (SILK, BOTTOM) : SL (SILK, TOP), 0)) {
 +      DrawSilk (side, drawn_area);
-+      gui->end_layer ();
++      hid_draw_end_layer (&ghid_graphics);
 +  }
 +
 +  /* Draw element Marks */
@@ -975,9 +975,9 @@ index 11438fb..7110983 100644
 +    r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback, NULL);
 +
 +  /* Draw rat lines on top */
-+  if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0)) {
++  if (PCB->RatOn && hid_draw_set_layer (&ghid_graphics, "rats", SL (RATS, 0), 0)) {
 +    DrawRats(drawn_area);
-+    gui->end_layer ();
++    hid_draw_end_layer (&ghid_graphics);
 +  }
 +
 +  Settings.ShowBottomSide = save_show_solder;
