@@ -822,7 +822,7 @@ DrawSilk (int side, const BoxType * drawn_area)
 #endif
 
 #if 0
-  if (gui->poly_before)
+  if (gui->graphics->poly_before)
     {
       hid_draw_use_mask (gui->graphics, HID_MASK_BEFORE);
 #endif
@@ -838,7 +838,7 @@ DrawSilk (int side, const BoxType * drawn_area)
   r_search (PCB->Data->via_tree, drawn_area, NULL, clearPin_callback, NULL);
   r_search (PCB->Data->pad_tree, drawn_area, NULL, clearPad_callback, &side);
 
-  if (gui->poly_after)
+  if (gui->graphics->poly_after)
     {
       hid_draw_use_mask (gui->graphics, HID_MASK_AFTER);
       DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
@@ -855,8 +855,8 @@ static void
 DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
 {
   /* Skip the mask drawing if the GUI doesn't want this type */
-  if ((mask_type == HID_MASK_BEFORE && !gui->poly_before) ||
-      (mask_type == HID_MASK_AFTER  && !gui->poly_after))
+  if ((mask_type == HID_MASK_BEFORE && !gui->graphics->poly_before) ||
+      (mask_type == HID_MASK_AFTER  && !gui->graphics->poly_after))
     return;
 
   hid_draw_use_mask (gui->graphics, mask_type);

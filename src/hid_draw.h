@@ -63,6 +63,13 @@ typedef struct hid_draw_class_st
   void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
   void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
 
+  /* draw.c currently uses this to shortcut and special-case certain rendering when displaying on-screen */
+  bool gui;
+
+  /* Note that both of these may be set, in which case polygons will be drawn twice: */
+  bool poly_before; /* If set, the redraw code will draw polygons before erasing the clearances. */
+  bool poly_after;  /* If set, the redraw code will draw polygons after  erasing the clearances. */
+
 } HID_DRAW_CLASS;
 
 /* Base HID_DRAW elements visible to any module */
