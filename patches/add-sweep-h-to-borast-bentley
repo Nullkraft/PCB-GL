@@ -1,7 +1,7 @@
-Bottom: a4ad080928f9b6fd34bb27f0c4ec4c1da138cc6c
-Top:    ec6a0249a5f2962591ab7f11994bd672af787108
+Bottom: cbd8c43b41cbc5363f96449dd4627c4595475d77
+Top:    cbd8c43b41cbc5363f96449dd4627c4595475d77
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:14:02 +0000
+Date:   2015-01-11 15:16:59 +0000
 
 Add sweep.h to borast-bentley-ottman.c
 
@@ -10,16 +10,4 @@ Lets the compiler check the function prototypes.
 
 ---
 
-diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
-index 762e2c0..69c5207 100644
---- a/src/borast/borast-bentley-ottmann.c
-+++ b/src/borast/borast-bentley-ottmann.c
-@@ -52,6 +52,8 @@
- #include "hid_draw.h"
- #include "hid/common/hidgl.h"
- 
-+#include "sweep.h"
-+
- #define _borast_error(x) (x)
- 
- #define DEBUG_PRINT_STATE 0
+
