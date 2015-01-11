@@ -1,5 +1,5 @@
 Bottom: 1b8319b68116f04133b63b912af3519f2e066eb8
-Top:    eb27fdb311d8462bd927def23b67f085c6b7454b
+Top:    d1e910f0bcfd70e42f171ac7e5f10fc2d7ec4d5e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 16:35:49 +0000
 
@@ -262,7 +262,7 @@ index ed45bad..64dd8d5 100644
  
    return &nogui_hid;
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 99b8653..9ba6af1 100644
+index 99b8653..654b5e0 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -78,6 +78,7 @@
@@ -284,7 +284,7 @@ index 99b8653..9ba6af1 100644
  
    gcode_hid.struct_size         = sizeof (HID);
    gcode_hid.name                = "gcode";
-@@ -1623,20 +1624,26 @@ hid_gcode_init ()
+@@ -1623,20 +1624,25 @@ hid_gcode_init ()
  
    gcode_hid.graphics            = &gcode_graphics;
  
@@ -302,8 +302,6 @@ index 99b8653..9ba6af1 100644
 -  gcode_graphics.fill_circle    = gcode_fill_circle;
 -  gcode_graphics.fill_polygon   = gcode_fill_polygon;
 -  gcode_graphics.fill_rect      = gcode_fill_rect;
-+  gcode_graphics.klass          = &gcode_graphics_class;
-+
 +  common_draw_helpers_class_init (&gcode_graphics_class);
 +
 +  gcode_graphics_class.make_gc        = gcode_make_gc;
@@ -321,6 +319,7 @@ index 99b8653..9ba6af1 100644
 +  gcode_graphics_class.fill_polygon   = gcode_fill_polygon;
 +  gcode_graphics_class.fill_rect      = gcode_fill_rect;
 +
++  gcode_graphics.klass = &gcode_graphics_class;
 +  common_draw_helpers_init (&gcode_graphics);
  
    hid_register_hid (&gcode_hid);
