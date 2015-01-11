@@ -20,10 +20,10 @@ typedef struct hid_draw_class_st
      layer groups, you may pass NULL for name to have a name fetched
      from the PCB struct.  The EMPTY argument is a hint - if set, the
      layer is empty, if zero it may be non-empty.  */
-  int (*set_layer) (const char *name_, int group_, int _empty);
+  int (*set_layer) (HID_DRAW *hid_draw, const char *name_, int group_, int _empty);
 
   /* Tell the GUI the layer last selected has been finished with */
-  void (*end_layer) (void);
+  void (*end_layer) (HID_DRAW *hid_draw);
 
   /* Drawing Functions.  Coordinates and distances are ALWAYS in PCB's
      default coordinates (1 nm at the time this comment was written).
@@ -31,7 +31,7 @@ typedef struct hid_draw_class_st
      and 90 being "up" (positive Y).  */
 
   /* Make an empty graphics context.  */
-  hidGC (*make_gc) (void);
+  hidGC (*make_gc) (HID_DRAW *hid_draw);
   void (*destroy_gc) (hidGC gc);
   void (*use_mask) (HID_DRAW *hid_draw, enum mask_mode mode);
 
@@ -70,14 +70,14 @@ typedef struct hid_draw_class_st
   void (*draw_pcb_line) (hidGC gc, LineType *line);
   void (*draw_pcb_arc) (hidGC gc, ArcType *arc);
   void (*draw_pcb_text) (hidGC gc, TextType *, Coord);
-  void (*draw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+  void (*draw_pcb_polygon) (hidGC gc, PolygonType *poly);
   void (*draw_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
   void (*draw_pcb_pv) (hidGC gc, PinType *pv, bool mask);
   void (*draw_pcb_pv_hole) (hidGC gc, PinType *pv);
 
   /* The following are not meant to be called outside of the GUI implementations of the above APIs */
-  void (*_fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
-  void (*_thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+  void (*_fill_pcb_polygon) (hidGC gc, PolygonType *poly);
+  void (*_thindraw_pcb_polygon) (hidGC gc, PolygonType *poly);
   void (*_fill_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
   void (*_thindraw_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
   void (*_fill_pcb_pv) (hidGC gc, PinType *pv, bool mask);
@@ -101,12 +101,15 @@ struct hid_draw_st
   /* Note that both of these may be set, in which case polygons will be drawn twice: */
   bool poly_before; /* If set, the redraw code will draw polygons before erasing the clearances. */
   bool poly_after;  /* If set, the redraw code will draw polygons after  erasing the clearances. */
+
+  void *priv; /* XXX: TEMPORARY */
 };
 
 /* Base hidGC elements visible to any module */
 struct hid_gc_struct {
   HID *hid;   /* Used by HIDs to validate the GCs passed belong to them */
   HID_DRAW *hid_draw;
+  BoxType *clip_box; /* Used by HIDs and draw.c to restrict rendering to a given region */
 };
 
 
@@ -129,19 +132,19 @@ hid_draw_can_draw_in_mask_clear (HID_DRAW *hid_draw)
 inline int
 hid_draw_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
-  return hid_draw->klass->set_layer (name, group, empty);
+  return hid_draw->klass->set_layer (hid_draw, name, group, empty);
 }
 
 inline void
 hid_draw_end_layer (HID_DRAW *hid_draw)
 {
-  hid_draw->klass->end_layer ();
+  hid_draw->klass->end_layer (hid_draw);
 }
 
 inline hidGC
 hid_draw_make_gc (HID_DRAW *hid_draw)
 {
-  return hid_draw->klass->make_gc ();
+  return hid_draw->klass->make_gc (hid_draw);
 }
 
 inline void
@@ -242,9 +245,9 @@ hid_draw_pcb_text (hidGC gc, TextType *text, Coord min_width)
 }
 
 inline void
-hid_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+hid_draw_pcb_polygon (hidGC gc, PolygonType *poly)
 {
-  gc->hid_draw->klass->draw_pcb_polygon (gc, poly, clip_box);
+  gc->hid_draw->klass->draw_pcb_polygon (gc, poly);
 }
 
 inline void
@@ -267,15 +270,15 @@ hid_draw_pcb_pv_hole (hidGC gc, PinType *pv)
 
 
 inline void
-hid_draw__fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+hid_draw__fill_pcb_polygon (hidGC gc, PolygonType *poly)
 {
-  gc->hid_draw->klass->_fill_pcb_polygon (gc, poly, clip_box);
+  gc->hid_draw->klass->_fill_pcb_polygon (gc, poly);
 }
 
 inline void
-hid_draw__thin_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+hid_draw__thin_pcb_polygon (hidGC gc, PolygonType *poly)
 {
-  gc->hid_draw->klass->_thindraw_pcb_polygon (gc, poly, clip_box);
+  gc->hid_draw->klass->_thindraw_pcb_polygon (gc, poly);
 }
 
 inline void
