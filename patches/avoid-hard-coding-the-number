@@ -1,7 +1,7 @@
-Bottom: 7ff4a660b357fbafeb6783d04ba097697666ebcb
-Top:    81fbd4da0c991d48ee1ee746a02da412be86651e
+Bottom: 45701ff5c4e64141dd6796c68142ed149b4d6424
+Top:    a7a5a3a42b8b0f5b81037205fddef90c11c12b74
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 13:23:26 +0000
+Date:   2015-01-11 15:40:32 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -15,7 +15,7 @@ dropped, there is one more case where + 2 needs to be replaced with EXTRA_LAYERS
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 7067b8d..3b51ba1 100644
+index 9d102f4..789985d 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -1405,7 +1405,7 @@ MirrorBuffer (BufferType *Buffer)
@@ -67,7 +67,7 @@ index 09a9fb9..49fab31 100644
        {
  	LayerType *layer = &Buffer->Data->Layer[i];
 diff --git a/src/file.c b/src/file.c
-index 0772139..11ab7c3 100644
+index 8c3dea3..83f7473 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -849,7 +849,7 @@ WriteBuffer (FILE * FP)
