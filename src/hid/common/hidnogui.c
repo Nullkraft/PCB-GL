@@ -525,10 +525,11 @@ hid_nogui_get_hid (void)
                           "Does nothing.";
   nogui_hid.graphics    = &nogui_graphics;
 
-  nogui_graphics.klass  = &nogui_graphics_class;
-
   common_nogui_init (&nogui_hid);
+
   common_nogui_graphics_class_init (&nogui_graphics_class);
+
+  nogui_graphics.klass = &nogui_graphics_class;
   common_nogui_graphics_init (&nogui_graphics);
 
   return &nogui_hid;

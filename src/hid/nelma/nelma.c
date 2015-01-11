@@ -1098,7 +1098,7 @@ hid_nelma_init()
   nelma_graphics_class.fill_polygon   = nelma_fill_polygon;
   nelma_graphics_class.fill_rect      = nelma_fill_rect;
 
-  nelma_graphics.klass          = &nelma_graphics_class;
+  nelma_graphics.klass = &nelma_graphics_class;
   common_draw_helpers_init (&nelma_graphics);
 
   hid_register_hid (&nelma_hid);

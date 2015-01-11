@@ -713,7 +713,7 @@ hid_eps_init ()
   eps_graphics_class.fill_polygon   = eps_fill_polygon;
   eps_graphics_class.fill_rect      = eps_fill_rect;
 
-  eps_graphics.klass          = &eps_graphics_class;
+  eps_graphics.klass = &eps_graphics_class;
   common_draw_helpers_init (&eps_graphics);
 
   hid_register_hid (&eps_hid);
