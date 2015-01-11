@@ -48,9 +48,15 @@
 #include <glib.h>
 
 #include "polygon.h"
-#include <GL/gl.h>
 #include "hid_draw.h"
+
+#ifdef WIN32
+#   define WIN32_LEAN_AND_MEAN 1
+#endif
+
+#include <GL/gl.h>
 #include "hid/common/hidgl.h"
+
 
 #define _borast_error(x) (x)
 
