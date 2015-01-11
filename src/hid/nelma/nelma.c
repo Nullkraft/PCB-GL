@@ -1070,7 +1070,6 @@ hid_nelma_init()
   nelma_hid.name                = "nelma";
   nelma_hid.description         = "Numerical analysis package export";
   nelma_hid.exporter            = 1;
-  nelma_hid.poly_before         = 1;
 
   nelma_hid.get_export_options  = nelma_get_export_options;
   nelma_hid.do_export           = nelma_do_export;
@@ -1099,6 +1098,7 @@ hid_nelma_init()
   nelma_graphics_class.fill_rect      = nelma_fill_rect;
 
   nelma_graphics.klass = &nelma_graphics_class;
+  nelma_graphics.poly_before = true;
   common_draw_helpers_init (&nelma_graphics);
 
   hid_register_hid (&nelma_hid);

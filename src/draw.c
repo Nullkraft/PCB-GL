@@ -176,10 +176,10 @@ _draw_pv_name (PinType *pv)
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
 
-  if (gui->gui)
+  if (gui->graphics->klass->gui)
     doing_pinout++;
   hid_draw_pcb_text (Output.fgGC, &text, 0);
-  if (gui->gui)
+  if (gui->graphics->klass->gui)
     doing_pinout--;
 }
 
@@ -320,7 +320,7 @@ pad_callback (const BoxType * b, void *cl)
 static void
 draw_element_name (ElementType *element)
 {
-  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
+  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->graphics->klass->gui) ||
       TEST_FLAG (HIDENAMEFLAG, element))
     return;
   if (doing_pinout || doing_assy)
@@ -591,11 +591,11 @@ DrawEverything (const BoxType *drawn_area)
         }
     }
 
-  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
+  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->graphics->klass->gui)
     return;
 
   /* Draw pins, pads, vias below silk */
-  if (gui->gui)
+  if (gui->graphics->klass->gui)
     DrawPPV (SWAP_IDENT ? bottom_group : top_group, drawn_area);
   else
     {
@@ -639,7 +639,7 @@ DrawEverything (const BoxType *drawn_area)
       gui->end_layer ();
     }
 
-  if (gui->gui)
+  if (gui->graphics->klass->gui)
     {
       /* Draw element Marks */
       if (PCB->PinOn)
@@ -740,7 +740,7 @@ DrawPPV (int group, const BoxType *drawn_area)
   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
   int side;
 
-  if (PCB->PinOn || !gui->gui)
+  if (PCB->PinOn || !gui->graphics->klass->gui)
     {
       /* draw element pins */
       r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
@@ -760,7 +760,7 @@ DrawPPV (int group, const BoxType *drawn_area)
     }
 
   /* draw vias */
-  if (PCB->ViaOn || !gui->gui)
+  if (PCB->ViaOn || !gui->graphics->klass->gui)
     {
       r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
       r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
@@ -974,7 +974,7 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
   /* draw the layer text on screen */
   r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
 
-  /* We should check for gui->gui here, but it's kinda cool seeing the
+  /* We should check for gui->graphics->klass->gui here, but it's kinda cool seeing the
      auto-outline magically disappear when you first add something to
      the "outline" layer.  */
   if (IsLayerEmpty (Layer)
@@ -1013,7 +1013,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
   if (n_entries > 1)
     rv = 1;
 
-  if (rv && !gui->gui)
+  if (rv && !gui->graphics->klass->gui)
     DrawPPV (group, drawn_area);
 }
 

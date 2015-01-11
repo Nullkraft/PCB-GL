@@ -1570,7 +1570,6 @@ hid_ps_init ()
   ps_hid.name               = "ps";
   ps_hid.description        = N_("Postscript export");
   ps_hid.exporter           = 1;
-  ps_hid.poly_before        = 1;
 
   ps_hid.graphics           = &ps_graphics;
 
@@ -1578,6 +1577,7 @@ hid_ps_init ()
   ps_ps_graphics_class_init (&ps_graphics_class);
 
   ps_graphics.klass = &ps_graphics_class;
+  ps_graphics.poly_before = true;
   common_draw_helpers_init (&ps_graphics);
   ps_ps_graphics_init (&ps_graphics);
 

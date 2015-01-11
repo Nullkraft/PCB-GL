@@ -1641,7 +1641,7 @@ hid_gcode_init ()
   gcode_graphics_class.fill_rect      = gcode_fill_rect;
 
   gcode_graphics.klass = &gcode_graphics_class;
-  gcode_hid.poly_before = true;
+  gcode_graphics.poly_before = true;
   common_draw_helpers_init (&gcode_graphics);
 
   hid_register_hid (&gcode_hid);

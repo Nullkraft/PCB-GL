@@ -2204,7 +2204,7 @@ hid_gtk_init ()
   ghid_graphics_class.gui = true;
 
   ghid_graphics.klass = &ghid_graphics_class;
-  ghid_hid.poly_after = true;
+  ghid_graphics.poly_after = true;
   common_draw_helpers_init (&ghid_graphics);
 
   hid_register_hid (&ghid_hid);
