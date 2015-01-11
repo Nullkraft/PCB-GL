@@ -1,5 +1,5 @@
 Bottom: e1ed7f1f379a9aaa979af0e23693d08ea01c09d7
-Top:    da1b2b26f6a912b5c502be95c299811003832095
+Top:    38296f4604afb4d7dbc38cf46629b1184c3e0a53
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 18:49:24 +0000
 
@@ -9,7 +9,7 @@ Fixup draw.c not to special case based on HID name, use flags instead
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index f9fc2c7..ca48fb6 100644
+index f9fc2c7..16d209b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -925,12 +925,11 @@ DrawRats (const BoxType *drawn_area)
@@ -19,11 +19,11 @@ index f9fc2c7..ca48fb6 100644
 -  int can_mask = strcmp(gui->name, "lesstif") == 0;
  
 -  if (can_mask)
-+  if (gui->graphics->klass->can_draw_in_mask_clear)
++  if (hid_draw_can_draw_in_mask_clear (gui->graphics))
      hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
    r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
 -  if (can_mask)
-+  if (gui->graphics->klass->can_draw_in_mask_clear)
++  if (hid_draw_can_draw_in_mask_clear (gui->graphics))
      hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
  }
  
@@ -40,7 +40,7 @@ index df636d9..ca480b6 100644
  
    hid_register_hid (&lesstif_hid);
 diff --git a/src/hid_draw.h b/src/hid_draw.h
-index a442390..4416aeb 100644
+index a442390..7cf8c84 100644
 --- a/src/hid_draw.h
 +++ b/src/hid_draw.h
 @@ -82,6 +82,9 @@ typedef struct hid_draw_class_st
@@ -53,3 +53,15 @@ index a442390..4416aeb 100644
  } HID_DRAW_CLASS;
  
  /* Base HID_DRAW elements visible to any module */
+@@ -108,6 +111,12 @@ hid_draw_is_gui (HID_DRAW *hid_draw)
+   return hid_draw->klass->gui;
+ }
+ 
++inline bool
++hid_draw_can_draw_in_mask_clear (HID_DRAW *hid_draw)
++{
++  return hid_draw->klass->can_draw_in_mask_clear;
++}
++
+ 
+ /* Calling wrappers to access the vfunc table */
