@@ -1,5 +1,5 @@
 Bottom: ab90b5c6328d782b129bc96c4c50cf33b6582cdd
-Top:    f80a7482acd6b88c878278111e2f1d5db4a73ad7
+Top:    3be62f5e83ce5f7af11fbd34dd1b502768d85e3e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 23:41:04 +0000
 
@@ -2333,7 +2333,7 @@ index 6e4616e..f5c6e46 100644
  
    return 1;
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 0815245..1606466 100644
+index 0815245..f78f0f5 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -15,7 +15,8 @@
@@ -2346,26 +2346,17 @@ index 0815245..1606466 100644
  
  /* Sets priv->u_gc to the "right" GC to use (wrt mask or window)
  */
-@@ -816,6 +817,9 @@ redraw_region (GdkRectangle *rect)
-   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
-   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
- 
-+#warning NULL gc
-+//  common_set_clip_box (NULL, &region);
-+
-   eleft = Vx (0);
-   eright = Vx (PCB->MaxWidth);
-   etop = Vy (0);
-@@ -860,7 +864,7 @@ redraw_region (GdkRectangle *rect)
+@@ -860,7 +861,8 @@ redraw_region (GdkRectangle *rect)
  
    ghid_draw_bg_image();
  
 -  hid_expose_callback (&ghid_graphics, &region, 0);
++  common_set_clip_box (&ghid_graphics, &region);
 +  hid_expose_callback (&ghid_graphics, 0);
    ghid_draw_grid ();
  
    /* In some cases we are called with the crosshair still off */
-@@ -1111,9 +1115,18 @@ draw_crosshair (render_priv *priv)
+@@ -1111,6 +1113,14 @@ draw_crosshair (render_priv *priv)
  void
  ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  {
@@ -2374,17 +2365,13 @@ index 0815245..1606466 100644
 +
 +  ghid_graphics.klass = &ghid_graphics_class;
 +  ghid_graphics.poly_after = true;
++  common_nogui_graphics_init (&ghid_graphics);
 +  common_draw_helpers_init (&ghid_graphics);
 +
    /* Init any GC's required */
    port->render_priv = g_new0 (render_priv, 1);
    port->render_priv->crosshair_gc = hid_draw_make_gc (&ghid_graphics);
-+
-+  ghid_graphics .
- }
- 
- void
-@@ -1238,7 +1251,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1238,7 +1248,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                        0, 0, allocation.width, allocation.height);
  
    /* call the drawing routine */
@@ -2393,7 +2380,7 @@ index 0815245..1606466 100644
  
    gport->drawable = save_drawable;
    gport->view = save_view;
-@@ -1295,7 +1308,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1295,7 +1305,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
    region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
  
@@ -2403,7 +2390,7 @@ index 0815245..1606466 100644
  
    gport->drawable = save_drawable;
    gport->view = save_view;
-@@ -1314,16 +1328,16 @@ ghid_request_debug_draw (void)
+@@ -1314,16 +1325,16 @@ ghid_request_debug_draw (void)
  }
  
  void
