@@ -102,13 +102,13 @@ struct hid_gc_struct {
 
 /* Calling wrappers to access the vfunc table */
 
-inline hidGC
+inline int
 hid_draw_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
-  hid_draw->klass->set_layer (name, group, empty);
+  return hid_draw->klass->set_layer (name, group, empty);
 }
 
-inline hidGC
+inline void
 hid_draw_end_layer (HID_DRAW *hid_draw)
 {
   hid_draw->klass->end_layer ();

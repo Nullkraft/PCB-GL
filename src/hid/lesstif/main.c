@@ -4080,7 +4080,6 @@ hid_lesstif_init ()
   lesstif_hid.invalidate_all          = lesstif_invalidate_all;
   lesstif_hid.notify_crosshair_change = lesstif_notify_crosshair_change;
   lesstif_hid.notify_mark_change      = lesstif_notify_mark_change;
-  lesstif_hid.set_layer               = lesstif_set_layer;
 
   lesstif_hid.calibrate               = lesstif_calibrate;
   lesstif_hid.shift_is_pressed        = lesstif_shift_is_pressed;
@@ -4116,6 +4115,7 @@ hid_lesstif_init ()
 
   common_draw_helpers_class_init (&lesstif_graphics_class);
 
+  lesstif_graphics_class.set_layer      = lesstif_set_layer;
   lesstif_graphics_class.make_gc        = lesstif_make_gc;
   lesstif_graphics_class.destroy_gc     = lesstif_destroy_gc;
   lesstif_graphics_class.use_mask       = lesstif_use_mask;

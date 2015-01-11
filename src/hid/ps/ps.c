@@ -1528,13 +1528,13 @@ void ps_ps_init (HID *hid)
   hid->get_export_options = ps_get_export_options;
   hid->do_export          = ps_do_export;
   hid->parse_arguments    = ps_parse_arguments;
-  hid->set_layer          = ps_set_layer;
   hid->calibrate          = ps_calibrate;
   hid->set_crosshair      = ps_set_crosshair;
 }
 
 void ps_ps_graphics_class_init (HID_DRAW_CLASS *klass)
 {
+  klass->set_layer          = ps_set_layer;
   klass->make_gc            = ps_make_gc;
   klass->destroy_gc         = ps_destroy_gc;
   klass->use_mask           = ps_use_mask;

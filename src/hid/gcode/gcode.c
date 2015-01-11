@@ -1617,7 +1617,6 @@ hid_gcode_init ()
   gcode_hid.get_export_options  = gcode_get_export_options;
   gcode_hid.do_export           = gcode_do_export;
   gcode_hid.parse_arguments     = gcode_parse_arguments;
-  gcode_hid.set_layer           = gcode_set_layer;
   gcode_hid.calibrate           = gcode_calibrate;
   gcode_hid.set_crosshair       = gcode_set_crosshair;
 
@@ -1625,6 +1624,7 @@ hid_gcode_init ()
 
   common_draw_helpers_class_init (&gcode_graphics_class);
 
+  gcode_graphics_class.set_layer      = gcode_set_layer;
   gcode_graphics_class.make_gc        = gcode_make_gc;
   gcode_graphics_class.destroy_gc     = gcode_destroy_gc;
   gcode_graphics_class.use_mask       = gcode_use_mask;

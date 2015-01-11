@@ -690,7 +690,6 @@ hid_eps_init ()
   eps_hid.get_export_options  = eps_get_export_options;
   eps_hid.do_export           = eps_do_export;
   eps_hid.parse_arguments     = eps_parse_arguments;
-  eps_hid.set_layer           = eps_set_layer;
   eps_hid.calibrate           = eps_calibrate;
   eps_hid.set_crosshair       = eps_set_crosshair;
 
@@ -698,6 +697,7 @@ hid_eps_init ()
 
   common_draw_helpers_class_init (&eps_graphics_class);
 
+  eps_graphics_class.set_layer      = eps_set_layer;
   eps_graphics_class.make_gc        = eps_make_gc;
   eps_graphics_class.destroy_gc     = eps_destroy_gc;
   eps_graphics_class.use_mask       = eps_use_mask;

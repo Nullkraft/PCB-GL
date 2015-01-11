@@ -1074,7 +1074,6 @@ hid_nelma_init()
   nelma_hid.get_export_options  = nelma_get_export_options;
   nelma_hid.do_export           = nelma_do_export;
   nelma_hid.parse_arguments     = nelma_parse_arguments;
-  nelma_hid.set_layer           = nelma_set_layer;
   nelma_hid.calibrate           = nelma_calibrate;
   nelma_hid.set_crosshair       = nelma_set_crosshair;
 
@@ -1082,6 +1081,7 @@ hid_nelma_init()
 
   common_draw_helpers_class_init (&nelma_graphics_class);
 
+  nelma_graphics_class.set_layer      = nelma_set_layer;
   nelma_graphics_class.make_gc        = nelma_make_gc;
   nelma_graphics_class.destroy_gc     = nelma_destroy_gc;
   nelma_graphics_class.use_mask       = nelma_use_mask;
