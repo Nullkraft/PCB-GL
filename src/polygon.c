@@ -105,7 +105,7 @@ dicer output is used for HIDs which cannot render things with holes
 #endif
 
 
-#define DEBUG_CIRCSEGS
+#undef DEBUG_CIRCSEGS
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -2163,18 +2163,19 @@ struct clip_outline_info {
 
 #define ROUTER_THICKNESS MIL_TO_COORD (10)
 //#define ROUTER_THICKNESS MIL_TO_COORD (0.1)
-
+#undef ROUTER_THICKNESS
+#define ROUTER_THICKNESS (line->Thickness)
 static int
 arc_outline_callback (const BoxType * b, void *cl)
 {
-  ArcType *arc = (ArcType *)b;
+  ArcType *line = (ArcType *)b;
   struct clip_outline_info *info = cl;
   POLYAREA *np, *res;
 
 #ifdef DEBUG_CIRCSEGS
-  if (!(np = ArcPoly (arc, arc->Thickness)))
+  if (!(np = ArcPoly (line, line->Thickness)))
 #else
-  if (!(np = ArcPoly (arc, ROUTER_THICKNESS)))
+  if (!(np = ArcPoly (line, ROUTER_THICKNESS)))
 #endif
     return 0;
 
