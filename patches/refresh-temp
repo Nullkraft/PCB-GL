@@ -1,0 +1,20 @@
+Bottom: 1f28699d1b7caf40248908169277f169f3a13865
+Top:    a0f29ca0f8c376ee6caeadc14d9d41b41c876a08
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 15:19:14 +0000
+
+Refresh of bentley-ottann-test
+
+---
+
+diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
+index f9b42d4..505a9d1 100644
+--- a/src/borast/borast-bentley-ottmann.c
++++ b/src/borast/borast-bentley-ottmann.c
+@@ -57,6 +57,7 @@
+ #include <GL/gl.h>
+ #include "hid/common/hidgl.h"
+ 
++#include "sweep.h"
+ 
+ #define _borast_error(x) (x)
