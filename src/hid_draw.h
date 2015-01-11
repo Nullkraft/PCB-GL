@@ -82,6 +82,9 @@ typedef struct hid_draw_class_st
   /* draw.c currently uses this to shortcut and special-case certain rendering when displaying on-screen */
   bool gui;
 
+  /* If set, the renderer is capable of drawing positive graphics when in HID_MASK_CLEAR mode */
+  bool can_draw_in_mask_clear;
+
 } HID_DRAW_CLASS;
 
 /* Base HID_DRAW elements visible to any module */
