@@ -1533,14 +1533,14 @@ draw_element (ElementType *element)
  */
 
 void
-hid_expose_callback (HID * hid, BoxType * region, void *item)
+hid_expose_callback (HID *hid, HID_DRAW *hid_draw, BoxType * region, void *item)
 {
   HID *old_gui = gui;
 
   gui = hid;
-  Output.fgGC = hid_draw_make_gc (hid->graphics);
-  Output.bgGC = hid_draw_make_gc (hid->graphics);
-  Output.pmGC = hid_draw_make_gc (hid->graphics);
+  Output.fgGC = hid_draw_make_gc (hid_draw);
+  Output.bgGC = hid_draw_make_gc (hid_draw);
+  Output.pmGC = hid_draw_make_gc (hid_draw);
 
   hid->graphics->set_color (Output.pmGC, "erase");
   hid->graphics->set_color (Output.bgGC, "drill");
