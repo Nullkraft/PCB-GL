@@ -1,7 +1,7 @@
-Bottom: 9194c671bcf982ee23ef4ea7e05893f267ecedc9
-Top:    78367d84c29ecd6ad145016acb8e001bc495c1c6
+Bottom: 7034f10cee1f4ac27aa0bea99353f493723b3d16
+Top:    e547ee038dd73fec9e7f551e1572cda439f756ab
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:42:06 +0000
+Date:   2015-01-11 20:14:44 +0000
 
 Play with perspective
 
@@ -87,7 +87,7 @@ index f1a9ffa..666348b 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7591bc4..8c2f94e 100644
+index 2c0f0f7..eeaa898 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -13,6 +13,7 @@
@@ -106,8 +106,8 @@ index 7591bc4..8c2f94e 100644
 +
  extern HID ghid_hid;
  extern HID_DRAW ghid_graphics;
- 
-@@ -57,6 +60,10 @@ static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+ extern HID_DRAW_CLASS ghid_graphics_class;
+@@ -58,6 +61,10 @@ static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                                {0.0, 1.0, 0.0, 0.0},
                                                {0.0, 0.0, 1.0, 0.0},
                                                {0.0, 0.0, 0.0, 1.0}};
@@ -118,7 +118,7 @@ index 7591bc4..8c2f94e 100644
  static int global_view_2d = 1;
  
  typedef struct render_priv {
-@@ -93,7 +100,7 @@ typedef struct gtk_gc_struct
+@@ -94,7 +101,7 @@ typedef struct gtk_gc_struct
  } *gtkGC;
  
  static void draw_lead_user (hidGC gc, render_priv *priv);
@@ -127,7 +127,7 @@ index 7591bc4..8c2f94e 100644
  
  
  #define BOARD_THICKNESS         MM_TO_COORD(1.60)
-@@ -112,12 +119,15 @@ compute_depth (int group)
+@@ -113,12 +120,15 @@ compute_depth (int group)
    int middle_copper_group;
    int depth;
  
@@ -144,7 +144,7 @@ index 7591bc4..8c2f94e 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -1497,7 +1507,8 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1498,7 +1508,8 @@ GhidDrawMask (int side, BoxType * screen)
  
    memset (&polygon, 0, sizeof (polygon));
    polygon.Clipped = PCB->Data->outline;
@@ -154,7 +154,7 @@ index 7591bc4..8c2f94e 100644
    polygon.Flags = NoFlags ();
    SET_FLAG (FULLPOLYFLAG, &polygon);
    hid_draw_fill_pcb_polygon (out->fgGC, &polygon, screen);
-@@ -1719,7 +1730,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1720,7 +1731,7 @@ ghid_draw_everything (BoxType *drawn_area)
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
    /* XXX: This isn't strictly correct, as I've ignored the matrix
@@ -163,7 +163,7 @@ index 7591bc4..8c2f94e 100644
    /* NB: last_modelview_matrix is transposed in memory! */
    reverse_layers = (last_modelview_matrix[2][2] < 0);
  
-@@ -1883,6 +1894,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1884,6 +1895,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    Coord new_x, new_y;
    Coord min_depth;
    Coord max_depth;
@@ -176,7 +176,7 @@ index 7591bc4..8c2f94e 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -1910,20 +1927,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1911,20 +1928,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -252,7 +252,7 @@ index 7591bc4..8c2f94e 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -1932,7 +1994,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1933,7 +1995,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -261,7 +261,7 @@ index 7591bc4..8c2f94e 100644
    hidgl_reset_stencil_usage (priv->hidgl);
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -1944,58 +2006,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1945,58 +2007,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -360,7 +360,7 @@ index 7591bc4..8c2f94e 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2423,10 +2500,10 @@ ghid_finish_debug_draw (void)
+@@ -2424,10 +2501,10 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport, gport->drawing_area);
  }
  
@@ -374,7 +374,7 @@ index 7591bc4..8c2f94e 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2454,9 +2531,9 @@ determinant_4x4 (float m[4][4])
+@@ -2455,9 +2532,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -386,7 +386,7 @@ index 7591bc4..8c2f94e 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2521,68 +2598,103 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2522,68 +2599,103 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
@@ -539,7 +539,7 @@ index 7591bc4..8c2f94e 100644
  }
  
  
-@@ -2591,30 +2703,55 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
+@@ -2592,30 +2704,55 @@ ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y)
  {
    render_priv *priv = gport->render_priv;
  

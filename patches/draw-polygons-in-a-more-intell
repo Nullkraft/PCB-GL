@@ -1,7 +1,7 @@
-Bottom: 777270c8dbc1334a1d85b6a3766e55b179ea743a
-Top:    9194c671bcf982ee23ef4ea7e05893f267ecedc9
+Bottom: 72dbf3ea08228ef09f9f53c37cd8a119efd63601
+Top:    7034f10cee1f4ac27aa0bea99353f493723b3d16
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-11 15:42:06 +0000
+Date:   2015-01-11 20:14:44 +0000
 
 Draw polygons in a more intelligent order
 
@@ -142,10 +142,10 @@ index 66586f1..f1a9ffa 100644
  }
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7d8ce0a..7591bc4 100644
+index 9b23144..2c0f0f7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1375,7 +1375,35 @@ static int
+@@ -1376,7 +1376,35 @@ static int
  poly_callback (const BoxType * b, void *cl)
  {
    struct poly_info *i = (struct poly_info *) cl;
@@ -182,7 +182,7 @@ index 7d8ce0a..7591bc4 100644
  
    set_layer_object_color (i->layer, (AnyObjectType *) polygon);
    hid_draw_pcb_polygon (Output.fgGC, polygon, i->drawn_area);
-@@ -1529,7 +1557,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1530,7 +1558,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.layer = Layer;
          info.drawn_area = screen;

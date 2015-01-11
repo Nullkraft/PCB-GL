@@ -1,7 +1,7 @@
-Bottom: 25eec9dc8877188d117945fae61ffc7aa6799e92
-Top:    db8b25c7e9ee8816c8ad3987a22055812fbd5967
+Bottom: 0881bcf3e14164dbdc4dd047ec12caec69973972
+Top:    ff7aee55db8c6a601461beb6f66e59c1cacfef0c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:42:06 +0000
+Date:   2015-01-11 20:14:45 +0000
 
 Add a load more hacky models for test rendering
 
@@ -1659,10 +1659,10 @@ index 62ef69f..97434e4 100644
  determinant_4x4 (float m[4][4])
  {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ff086ea..66837da 100644
+index 09ece1f..f8ec77c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1810,6 +1810,31 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1811,6 +1811,31 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
