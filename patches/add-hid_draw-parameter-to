@@ -1,5 +1,5 @@
-Bottom: eb86680a9f4ace7935796e62044f81b6d082ead4
-Top:    357255b1d3acecd27e3688f17ecfd8c2bcf74b98
+Bottom: 01e7b810cb6c586d381288539a3ebb43971f034f
+Top:    e38a3289eccd356e068edf795cde317e12ce91bb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 22:13:25 +0000
 
@@ -103,7 +103,7 @@ index 02298a4..332a0a2 100644
    if (group >= 0 && group < max_group)
      return is_layer_group_visible (group);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f73b1b7..aaa4158 100644
+index 290515f..f0915f7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -304,7 +304,7 @@ is_layer_group_visible (int group)
@@ -129,10 +129,10 @@ index 9804460..538e547 100644
  void ghid_destroy_gc (hidGC);
  void ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index bdeb588..9404ddd 100644
+index ee3b063..6fed87f 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3002,7 +3002,7 @@ lesstif_notify_mark_change (bool changes_complete)
+@@ -3000,7 +3000,7 @@ lesstif_notify_mark_change (bool changes_complete)
  }
  
  static int
