@@ -1,5 +1,5 @@
-Bottom: 38296f4604afb4d7dbc38cf46629b1184c3e0a53
-Top:    fdf1cc2701ee7a98df7bfa91be218660f22982bb
+Bottom: 0bda29d26b4618cdf41f755642c18b8ae53302f4
+Top:    6cc328a52957cabc66e234f09be4e93a24665e76
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 18:07:55 +0000
 
@@ -373,7 +373,7 @@ index 1b4746f..7014af5 100644
    return &box;
  }
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index a68e86e..5cbec91 100644
+index 3a7c0c2..a4bdd9d 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -470,7 +470,7 @@ gcode_start_png_export ()
@@ -386,7 +386,7 @@ index a68e86e..5cbec91 100644
  
  static FILE *
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 22ae4d6..e71ac5c 100644
+index 88393ef..0f8f287 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -683,11 +683,11 @@ gerber_do_export (HID_Attr_Val * options)
@@ -466,7 +466,7 @@ index c7197d4..32a125d 100644
    glPopMatrix ();
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index ca480b6..a4a79da 100644
+index b5dacbc..ad7e55f 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -831,7 +831,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
@@ -497,7 +497,7 @@ index ca480b6..a4a79da 100644
    pinout = 0;
    view_left_x = save_vx;
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index dff74b0..7d38835 100644
+index 8940a70..a460e95 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -649,7 +649,7 @@ nelma_start_png_export()
@@ -510,7 +510,7 @@ index dff74b0..7d38835 100644
  
  static void 
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 00dd54c..33a5947 100644
+index 1260d70..8a72345 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -655,7 +655,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -523,7 +523,7 @@ index 00dd54c..33a5947 100644
    memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
    PCB->Flags = save_flags;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 3f0afc6..ad2f888 100644
+index 5bf65c8..3f46376 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -303,7 +303,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -536,7 +536,7 @@ index 3f0afc6..ad2f888 100644
    fprintf (f, "showpage\n");
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 1572ccc..141bae2 100644
+index f8df547..248831f 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -693,13 +693,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
