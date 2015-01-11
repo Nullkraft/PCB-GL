@@ -694,8 +694,6 @@ hid_eps_init ()
   eps_hid.calibrate           = eps_calibrate;
   eps_hid.set_crosshair       = eps_set_crosshair;
 
-  eps_hid.graphics            = &eps_graphics;
-
   eps_graphics.make_gc        = eps_make_gc;
   eps_graphics.destroy_gc     = eps_destroy_gc;
   eps_graphics.use_mask       = eps_use_mask;

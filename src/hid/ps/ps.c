@@ -1569,8 +1569,6 @@ hid_ps_init ()
   ps_hid.exporter           = 1;
   ps_hid.poly_before        = 1;
 
-  ps_hid.graphics           = &ps_graphics;
-
   hid_register_hid (&ps_hid);
 
   hid_eps_init ();

@@ -319,9 +319,6 @@ typedef enum
     /* Tell the GUI the layer last selected has been finished with */
     void (*end_layer) (void);
 
-
-    HID_DRAW *graphics;
-
     /* This is for the printer.  If you call this for the GUI, xval and
        yval are ignored, and a dialog pops up to lead you through the
        calibration procedure.  For the printer, if xval and yval are

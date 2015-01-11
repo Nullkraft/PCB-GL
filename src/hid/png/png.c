@@ -1853,8 +1853,6 @@ hid_png_init ()
   png_hid.calibrate           = png_calibrate;
   png_hid.set_crosshair       = png_set_crosshair;
 
-  png_hid.graphics            = &png_graphics;
-
   png_graphics.make_gc        = png_make_gc;
   png_graphics.destroy_gc     = png_destroy_gc;
   png_graphics.use_mask       = png_use_mask;
