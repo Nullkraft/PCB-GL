@@ -1,5 +1,5 @@
 Bottom: 0154b478b82343f2b2eec7c5ae24609cccc6ce63
-Top:    3820026fb7a4b78db9f55ffd1aa64af86b514c95
+Top:    1f28699d1b7caf40248908169277f169f3a13865
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:10:22 +0000
 
@@ -250,10 +250,10 @@ index 0000000..b187cf2
 +License (LGPL) version 2.1.
 diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
 new file mode 100644
-index 0000000..7a0d1ac
+index 0000000..f9b42d4
 --- /dev/null
 +++ b/src/borast/borast-bentley-ottmann.c
-@@ -0,0 +1,1569 @@
+@@ -0,0 +1,1575 @@
 +/*
 + * Copyright © 2004 Carl Worth
 + * Copyright © 2006 Red Hat, Inc.
@@ -304,9 +304,15 @@ index 0000000..7a0d1ac
 +#include <glib.h>
 +
 +#include "polygon.h"
-+#include <GL/gl.h>
 +#include "hid_draw.h"
++
++#ifdef WIN32
++#   define WIN32_LEAN_AND_MEAN 1
++#endif
++
++#include <GL/gl.h>
 +#include "hid/common/hidgl.h"
++
 +
 +#define _borast_error(x) (x)
 +
