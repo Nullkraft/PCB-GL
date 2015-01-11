@@ -1,0 +1,42 @@
+Bottom: da1b2b26f6a912b5c502be95c299811003832095
+Top:    38296f4604afb4d7dbc38cf46629b1184c3e0a53
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 19:31:44 +0000
+
+Refresh of fixup-draw-c-not-to-special
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index ca48fb6..16d209b 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -926,10 +926,10 @@ DrawRats (const BoxType *drawn_area)
+    * XXX using the mask here is to get rat transparency
+    */
+ 
+-  if (gui->graphics->klass->can_draw_in_mask_clear)
++  if (hid_draw_can_draw_in_mask_clear (gui->graphics))
+     hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
+   r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
+-  if (gui->graphics->klass->can_draw_in_mask_clear)
++  if (hid_draw_can_draw_in_mask_clear (gui->graphics))
+     hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
+ }
+ 
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index 4416aeb..7cf8c84 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -111,6 +111,12 @@ hid_draw_is_gui (HID_DRAW *hid_draw)
+   return hid_draw->klass->gui;
+ }
+ 
++inline bool
++hid_draw_can_draw_in_mask_clear (HID_DRAW *hid_draw)
++{
++  return hid_draw->klass->can_draw_in_mask_clear;
++}
++
+ 
+ /* Calling wrappers to access the vfunc table */
