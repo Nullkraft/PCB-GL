@@ -492,6 +492,10 @@ typedef enum
 
     /* Notification to the GUI that the PCB file has been renamed. */
     void (*notify_filename_changed) (void);
+
+    void (*normal_cursor) (void);
+    void (*endpoint_cursor) (void);
+    void (*grip_cursor) (int allowed_directions);
   };
 
 /* Call this as soon as possible from main().  No other HID calls are
