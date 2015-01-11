@@ -33,7 +33,6 @@
 static HID_Attribute * eps_get_export_options (int *n);
 static void eps_do_export (HID_Attr_Val * options);
 static void eps_parse_arguments (int *argc, char ***argv);
-static int eps_set_layer (const char *name, int group, int empty);
 static hidGC eps_make_gc (void);
 static void eps_destroy_gc (hidGC gc);
 static void eps_set_color (hidGC gc, const char *name);
@@ -200,6 +199,9 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   else
     bounds = &region;
 
+#warning NULL gc
+  common_set_clip_box (NULL, bounds);
+
   memset (print_group, 0, sizeof (print_group));
   memset (print_layer, 0, sizeof (print_layer));
 
@@ -301,7 +303,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   fprintf (f,
 	   "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
 
-  hid_expose_callback (&eps_hid, bounds, 0);
+  hid_expose_callback (&eps_hid, 0);
 
   fprintf (f, "showpage\n");
 
@@ -362,7 +364,7 @@ static int is_paste;
 static int is_drill;
 
 static int
-eps_set_layer (const char *name, int group, int empty)
+eps_set_layer (hidGC gc, const char *name, int group, int empty)
 {
   int idx = (group >= 0
 	     && group <
