@@ -2500,8 +2500,7 @@ idle_proc (XtPointer dummy)
     {
       int mx, my;
       BoxType region;
-#warning NULL gc
-      lesstif_use_mask (NULL, HID_MASK_OFF);
+      lesstif_use_mask (&lesstif_graphics, HID_MASK_OFF);
       pixmap = main_pixmap;
       mx = view_width;
       my = view_height;
@@ -2582,8 +2581,7 @@ idle_proc (XtPointer dummy)
       DrawBackgroundImage();
       hid_expose_callback (&lesstif_graphics, &region, 0);
       draw_grid ();
-#warning NULL gc
-      lesstif_use_mask (NULL, HID_MASK_OFF);
+      lesstif_use_mask (&lesstif_graphics, HID_MASK_OFF);
       show_crosshair (0); /* To keep the drawn / not drawn info correct */
       XSetFunction (display, my_gc, GXcopy);
       XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
