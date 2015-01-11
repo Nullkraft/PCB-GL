@@ -294,23 +294,6 @@ typedef enum
     void (*notify_crosshair_change) (bool changes_complete);
     void (*notify_mark_change) (bool changes_complete);
 
-    /* During redraw or print/export cycles, this is called once per
-       layer (or layer group, for copper layers).  If it returns false
-       (zero), the HID does not want that layer, and none of the drawing
-       functions should be called.  If it returns true (nonzero), the
-       items in that layer [group] should be drawn using the various
-       drawing functions.  In addition to the MAX_GROUP copper layer
-       groups, you may select layers indicated by the macros SL_*
-       defined above, or any others with an index of -1.  For copper
-       layer groups, you may pass NULL for name to have a name fetched
-       from the PCB struct.  The EMPTY argument is a hint - if set, the
-       layer is empty, if zero it may be non-empty.  */
-    int (*set_layer) (const char *name_, int group_, int _empty);
-
-    /* Tell the GUI the layer last selected has been finished with */
-    void (*end_layer) (void);
-
-
     HID_DRAW *graphics;
 
     /* This is for the printer.  If you call this for the GUI, xval and

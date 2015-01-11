@@ -9,6 +9,22 @@ enum mask_mode {
 
 typedef struct hid_draw_class_st
 {
+  /* During redraw or print/export cycles, this is called once per
+     layer (or layer group, for copper layers).  If it returns false
+     (zero), the HID does not want that layer, and none of the drawing
+     functions should be called.  If it returns true (nonzero), the
+     items in that layer [group] should be drawn using the various
+     drawing functions.  In addition to the MAX_GROUP copper layer
+     groups, you may select layers indicated by the macros SL_*
+     defined above, or any others with an index of -1.  For copper
+     layer groups, you may pass NULL for name to have a name fetched
+     from the PCB struct.  The EMPTY argument is a hint - if set, the
+     layer is empty, if zero it may be non-empty.  */
+  int (*set_layer) (const char *name_, int group_, int _empty);
+
+  /* Tell the GUI the layer last selected has been finished with */
+  void (*end_layer) (void);
+
   /* Drawing Functions.  Coordinates and distances are ALWAYS in PCB's
      default coordinates (1 nm at the time this comment was written).
      Angles are always in degrees, with 0 being "right" (positive X)
@@ -85,6 +101,18 @@ struct hid_gc_struct {
 };
 
 /* Calling wrappers to access the vfunc table */
+
+inline hidGC
+hid_draw_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
+{
+  hid_draw->klass->set_layer (name, group, empty);
+}
+
+inline hidGC
+hid_draw_end_layer (HID_DRAW *hid_draw)
+{
+  hid_draw->klass->end_layer ();
+}
 
 inline hidGC
 hid_draw_make_gc (HID_DRAW *hid_draw)

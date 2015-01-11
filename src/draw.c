@@ -566,7 +566,7 @@ DrawEverything (const BoxType *drawn_area)
    * first draw all 'invisible' stuff
    */
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
-      && gui->set_layer ("invisible", SL (INVISIBLE, 0), 0))
+      && gui->graphics->set_layer ("invisible", SL (INVISIBLE, 0), 0))
     {
       side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
       if (PCB->ElementOn)
@@ -576,7 +576,7 @@ DrawEverything (const BoxType *drawn_area)
 	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
 	}
       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-      gui->end_layer ();
+      gui->graphics->end_layer ();
     }
 
   /* draw all layers in layerstack order */
@@ -584,10 +584,10 @@ DrawEverything (const BoxType *drawn_area)
     {
       int group = drawn_groups[i];
 
-      if (gui->set_layer (0, group, 0))
+      if (gui->graphics->set_layer (0, group, 0))
         {
           DrawLayerGroup (group, drawn_area);
-          gui->end_layer ();
+          gui->graphics->end_layer ();
         }
     }
 
@@ -601,42 +601,42 @@ DrawEverything (const BoxType *drawn_area)
     {
       CountHoles (&plated, &unplated, drawn_area);
 
-      if (plated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
+      if (plated && gui->graphics->set_layer ("plated-drill", SL (PDRILL, 0), 0))
         {
           DrawHoles (true, false, drawn_area);
-          gui->end_layer ();
+          gui->graphics->end_layer ();
         }
 
-      if (unplated && gui->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
+      if (unplated && gui->graphics->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
         {
           DrawHoles (false, true, drawn_area);
-          gui->end_layer ();
+          gui->graphics->end_layer ();
         }
     }
 
   /* Draw the solder mask if turned on */
-  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
+  if (gui->graphics->set_layer ("componentmask", SL (MASK, TOP), 0))
     {
       DrawMask (TOP_SIDE, drawn_area);
-      gui->end_layer ();
+      gui->graphics->end_layer ();
     }
 
-  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
+  if (gui->graphics->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
     {
       DrawMask (BOTTOM_SIDE, drawn_area);
-      gui->end_layer ();
+      gui->graphics->end_layer ();
     }
 
-  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
+  if (gui->graphics->set_layer ("topsilk", SL (SILK, TOP), 0))
     {
       DrawSilk (TOP_SIDE, drawn_area);
-      gui->end_layer ();
+      gui->graphics->end_layer ();
     }
 
-  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
+  if (gui->graphics->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
     {
       DrawSilk (BOTTOM_SIDE, drawn_area);
-      gui->end_layer ();
+      gui->graphics->end_layer ();
     }
 
   if (gui->graphics->klass->gui)
@@ -646,43 +646,43 @@ DrawEverything (const BoxType *drawn_area)
 	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
 		  NULL);
       /* Draw rat lines on top */
-      if (gui->set_layer ("rats", SL (RATS, 0), 0))
+      if (gui->graphics->set_layer ("rats", SL (RATS, 0), 0))
         {
           DrawRats(drawn_area);
-          gui->end_layer ();
+          gui->graphics->end_layer ();
         }
     }
 
   paste_empty = IsPasteEmpty (TOP_SIDE);
-  if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
+  if (gui->graphics->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
     {
       DrawPaste (TOP_SIDE, drawn_area);
-      gui->end_layer ();
+      gui->graphics->end_layer ();
     }
 
   paste_empty = IsPasteEmpty (BOTTOM_SIDE);
-  if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
+  if (gui->graphics->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
     {
       DrawPaste (BOTTOM_SIDE, drawn_area);
-      gui->end_layer ();
+      gui->graphics->end_layer ();
     }
 
-  if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
+  if (gui->graphics->set_layer ("topassembly", SL (ASSY, TOP), 0))
     {
       PrintAssembly (TOP_SIDE, drawn_area);
-      gui->end_layer ();
+      gui->graphics->end_layer ();
     }
 
-  if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
+  if (gui->graphics->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
     {
       PrintAssembly (BOTTOM_SIDE, drawn_area);
-      gui->end_layer ();
+      gui->graphics->end_layer ();
     }
 
-  if (gui->set_layer ("fab", SL (FAB, 0), 0))
+  if (gui->graphics->set_layer ("fab", SL (FAB, 0), 0))
     {
       PrintFab (Output.fgGC);
-      gui->end_layer ();
+      gui->graphics->end_layer ();
     }
 }
 
