@@ -1,5 +1,5 @@
-Bottom: e1ed7f1f379a9aaa979af0e23693d08ea01c09d7
-Top:    38296f4604afb4d7dbc38cf46629b1184c3e0a53
+Bottom: 3f6dc028f594db07f52653d5134b9cfc41e61c92
+Top:    3f6dc028f594db07f52653d5134b9cfc41e61c92
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 18:49:24 +0000
 
@@ -8,60 +8,4 @@ Fixup draw.c not to special case based on HID name, use flags instead
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index f9fc2c7..16d209b 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -925,12 +925,11 @@ DrawRats (const BoxType *drawn_area)
-    * XXX gtk only allows negative drawing.
-    * XXX using the mask here is to get rat transparency
-    */
--  int can_mask = strcmp(gui->name, "lesstif") == 0;
- 
--  if (can_mask)
-+  if (hid_draw_can_draw_in_mask_clear (gui->graphics))
-     hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
-   r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
--  if (can_mask)
-+  if (hid_draw_can_draw_in_mask_clear (gui->graphics))
-     hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
- }
- 
-diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index df636d9..ca480b6 100644
---- a/src/hid/lesstif/main.c
-+++ b/src/hid/lesstif/main.c
-@@ -4134,6 +4134,7 @@ hid_lesstif_init ()
- 
-   lesstif_graphics.klass = &lesstif_graphics_class;
-   lesstif_graphics.poly_before = true;
-+  lesstif_graphics.can_draw_in_mask_clear = true;
-   common_draw_helpers_init (&lesstif_graphics);
- 
-   hid_register_hid (&lesstif_hid);
-diff --git a/src/hid_draw.h b/src/hid_draw.h
-index a442390..7cf8c84 100644
---- a/src/hid_draw.h
-+++ b/src/hid_draw.h
-@@ -82,6 +82,9 @@ typedef struct hid_draw_class_st
-   /* draw.c currently uses this to shortcut and special-case certain rendering when displaying on-screen */
-   bool gui;
- 
-+  /* If set, the renderer is capable of drawing positive graphics when in HID_MASK_CLEAR mode */
-+  bool can_draw_in_mask_clear;
-+
- } HID_DRAW_CLASS;
- 
- /* Base HID_DRAW elements visible to any module */
-@@ -108,6 +111,12 @@ hid_draw_is_gui (HID_DRAW *hid_draw)
-   return hid_draw->klass->gui;
- }
- 
-+inline bool
-+hid_draw_can_draw_in_mask_clear (HID_DRAW *hid_draw)
-+{
-+  return hid_draw->klass->can_draw_in_mask_clear;
-+}
-+
- 
- /* Calling wrappers to access the vfunc table */
+
