@@ -13,6 +13,9 @@ The set_layer() and end_layer() APIs also belong in the HID_DRAW_CLASS
 We leave a copy of the "gui" flag in the HID structure, as main.c uses
 this to count up each type of exporter.
 
+XXX: THIS BREAKS SOME EXPORERS WHICH RELY ON THE NO-OP end_layer function
+previously initialised in common_nogui_init()
+
 
 ---
 
