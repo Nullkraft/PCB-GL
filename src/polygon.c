@@ -112,7 +112,7 @@ dicer output is used for HIDs which cannot render things with holes
 //#define UNSUBTRACT_BLOAT MIL_TO_COORD (0.1)
 #define UNSUBTRACT_BLOAT 100 /*10*/
 #define SUBTRACT_PIN_VIA_BATCH_SIZE 100 /*100*/
-#define SUBTRACT_LINE_BATCH_SIZE 20 /*20*/
+#define SUBTRACT_LINE_BATCH_SIZE 1 //20 /*20*/
 
 static double rotate_circle_seg[4];
 static double bw_rotate_circle_seg[4];
@@ -294,7 +294,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
       c->head.prev->point[1] == v[1])
     {
       /* Re-use any existing vertex point we got lumbered with (if it matches the coordinate we want) */
-//      c->head.prev->is_round = true;
+      c->head.prev->is_round = true;
       c->head.prev->cx = X;
       c->head.prev->cy = Y;
       c->head.prev->radius = radius;
@@ -506,7 +506,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
 {
   double e1, e2, t1;
   int i, range;
-  double radius = sqrt ((v[0] - X) * (v[0] - X) + (v[1] - Y) * (v[1] - Y));
+  double radius = hypot ((v[0] - X), (v[1] - Y));
 
 
   /* XXX: Circle already has the first node added */
@@ -517,7 +517,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
       c->head.prev->point[1] == v[1])
     {
       /* Re-use any existing vertex point we got lumbered with (if it matches the coordinate we want) */
-//      c->head.prev->is_round = true;
+      c->head.prev->is_round = true;
       c->head.prev->cx = X;
       c->head.prev->cy = Y;
       c->head.prev->radius = radius;
