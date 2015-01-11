@@ -4029,7 +4029,7 @@ lesstif_request_debug_draw (void)
 {
   /* Send drawing to the backing pixmap */
   pixmap = main_pixmap;
-  return lesstif_hid.graphics;
+  return &lesstif_graphics;
 }
 
 static void
@@ -4111,8 +4111,6 @@ hid_lesstif_init ()
   lesstif_hid.request_debug_draw      = lesstif_request_debug_draw;
   lesstif_hid.flush_debug_draw        = lesstif_flush_debug_draw;
   lesstif_hid.finish_debug_draw       = lesstif_finish_debug_draw;
-
-  lesstif_hid.graphics                = &lesstif_graphics;
 
   lesstif_graphics.make_gc             = lesstif_make_gc;
   lesstif_graphics.destroy_gc          = lesstif_destroy_gc;

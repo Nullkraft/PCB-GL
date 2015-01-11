@@ -1621,8 +1621,6 @@ hid_gcode_init ()
   gcode_hid.calibrate           = gcode_calibrate;
   gcode_hid.set_crosshair       = gcode_set_crosshair;
 
-  gcode_hid.graphics            = &gcode_graphics;
-
   gcode_graphics.make_gc        = gcode_make_gc;
   gcode_graphics.destroy_gc     = gcode_destroy_gc;
   gcode_graphics.use_mask       = gcode_use_mask;

@@ -359,8 +359,6 @@ hid_batch_init ()
   batch_hid.attribute_dialog      = batch_attribute_dialog;
   batch_hid.show_item             = batch_show_item;
 
-  batch_hid.graphics              = &batch_graphics;
-
   batch_graphics.make_gc          = batch_make_gc;
   batch_graphics.destroy_gc       = batch_destroy_gc;
   batch_graphics.use_mask         = batch_use_mask;

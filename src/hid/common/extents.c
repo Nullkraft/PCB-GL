@@ -185,8 +185,6 @@ hid_extents_init (void)
 
   extents_hid.set_layer           = extents_set_layer;
 
-  extents_hid.graphics            = &extents_graphics;
-
   extents_graphics.make_gc        = extents_make_gc;
   extents_graphics.destroy_gc     = extents_destroy_gc;
   extents_graphics.use_mask       = extents_use_mask;

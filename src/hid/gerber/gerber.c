@@ -1358,8 +1358,6 @@ hid_gerber_init ()
   gerber_hid.calibrate           = gerber_calibrate;
   gerber_hid.set_crosshair       = gerber_set_crosshair;
 
-  gerber_hid.graphics            = &gerber_graphics;
-
   gerber_graphics.make_gc        = gerber_make_gc;
   gerber_graphics.destroy_gc     = gerber_destroy_gc;
   gerber_graphics.use_mask       = gerber_use_mask;

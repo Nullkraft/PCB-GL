@@ -1078,8 +1078,6 @@ hid_nelma_init()
   nelma_hid.calibrate           = nelma_calibrate;
   nelma_hid.set_crosshair       = nelma_set_crosshair;
 
-  nelma_hid.graphics            = &nelma_graphics;
-
   nelma_graphics.make_gc        = nelma_make_gc;
   nelma_graphics.destroy_gc     = nelma_destroy_gc;
   nelma_graphics.use_mask       = nelma_use_mask;
