@@ -1,7 +1,7 @@
-Bottom: 03e53865cf0a4a2a5cd65d1c148a79c1ab33add8
-Top:    86c96d6117a0519a67cb52b83e76b15905a1e3a8
+Bottom: 99c37f508e9c7909657ff976a6cb5906008799e3
+Top:    28322a3453fc525a104952e6421b90cee0d5f1ac
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-11 15:42:05 +0000
+Date:   2015-01-11 20:14:42 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -157,7 +157,7 @@ index f42842a..887a713 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 3ada35b..788ffdc 100644
+index dfa9db4..1b8a2a6 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -260,7 +260,9 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
@@ -172,10 +172,10 @@ index 3ada35b..788ffdc 100644
    else
      hid_draw_fill_pcb_polygon (gc, polygon, clip_box);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e9c7746..d293f07 100644
+index 158c37e..d5b9954 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -739,6 +739,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -740,6 +740,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  
    double old_alpha_mult = gtk_gc->alpha_mult;
    common_thindraw_pcb_polygon (gc, poly, clip_box);
