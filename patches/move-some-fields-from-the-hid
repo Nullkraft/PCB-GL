@@ -1,0 +1,16 @@
+Bottom: eb27fdb311d8462bd927def23b67f085c6b7454b
+Top:    eb27fdb311d8462bd927def23b67f085c6b7454b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 17:26:15 +0000
+
+Move some fields from the HID* structure to HID_DRAW* and HID_DRAW_CLASS*
+
+The parameters gui, poly_before, poly_after only effect rendering, so
+belong in either the HID_DRAW_CLASS or HID_DRAW instance structure.
+
+the set_layer() and end_layer() APIs also belong in the HID_DRAW_CLASS
+
+
+---
+
+
