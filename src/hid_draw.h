@@ -247,13 +247,13 @@ hid_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 inline void
 hid_draw_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
 {
-  gc->hid_draw->draw_pcb_pad (gc, pad, clip, mask);
+  gc->hid_draw->klass->draw_pcb_pad (gc, pad, clip, mask);
 }
 
 inline void
 hid_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
 {
-  fg_gc->hid_draw->draw_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
+  fg_gc->hid_draw->klass->draw_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
 }
 
 
