@@ -1,0 +1,13 @@
+Bottom: 1b8319b68116f04133b63b912af3519f2e066eb8
+Top:    1b8319b68116f04133b63b912af3519f2e066eb8
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 16:35:49 +0000
+
+Make HID_DRAW * an instance of the HID_DRAW class, not the API vfunc table
+
+This allows us to store per-instance parameters in a clean structure.
+
+
+---
+
+
