@@ -1,5 +1,5 @@
-Bottom: ec6a0249a5f2962591ab7f11994bd672af787108
-Top:    12e16079716794a8a952ca8382042ca08a84148e
+Bottom: f3196d3ea59a43f95712c8d4ab7d77ea21481682
+Top:    0d4d5aacbc3a04f0acfc05ba256f6b7d84a3b22b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2015-01-11 15:14:02 +0000
 
@@ -12,10 +12,10 @@ into the core like this.
 ---
 
 diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
-index 69c5207..c64a120 100644
+index 408f8e3..c3c30e7 100644
 --- a/src/borast/borast-bentley-ottmann.c
 +++ b/src/borast/borast-bentley-ottmann.c
-@@ -129,7 +129,7 @@ typedef struct _borast_bo_sweep_line {
+@@ -134,7 +134,7 @@ typedef struct _borast_bo_sweep_line {
  } borast_bo_sweep_line_t;
  
  
@@ -24,7 +24,7 @@ index 69c5207..c64a120 100644
  _line_compute_intersection_x_for_y (const borast_line_t *line,
                                      borast_fixed_t y)
  {
-@@ -1456,9 +1456,21 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
+@@ -1461,9 +1461,21 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
        hidgl_ensure_triangle_space (gc, 1);
        hidgl_add_triangle (gc, x1, y1, x2, y2, x3, y3);
      } else {
@@ -46,7 +46,7 @@ index 69c5207..c64a120 100644
      }
  #else
      glBegin (GL_LINES);
-@@ -1482,7 +1494,6 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
+@@ -1487,7 +1499,6 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
    return BORAST_STATUS_SUCCESS;
  }
  
@@ -54,7 +54,7 @@ index 69c5207..c64a120 100644
  borast_status_t
  bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps)
  {
-@@ -1571,3 +1582,56 @@ bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps)
+@@ -1576,3 +1587,56 @@ bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps)
  
    return BORAST_STATUS_SUCCESS;
  }
