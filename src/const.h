@@ -42,6 +42,8 @@
 #define TOP_SIDE                1
 
 
+#define EXTRA_LAYERS 2 /* 2x silkscreen layers */
+
 /* ---------------------------------------------------------------------------
  * the layer-numbers of the two additional special (silkscreen) layers
  * 'bottom' and 'top'. The offset of MAX_LAYER is not added
