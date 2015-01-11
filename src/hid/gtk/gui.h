@@ -474,8 +474,8 @@ void ghid_pinout_window_show (GHidPort *out, ElementType *Element);
 
 /* gtkhid-gdk.c AND gtkhid-gl.c */
 int ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty);
-hidGC ghid_make_gc (void);
-void ghid_destroy_gc (hidGC);
+hidGC ghid_make_gc (HID_DRAW *hid_draw);
+void ghid_destroy_gc (hidGC gc);
 void ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
 void ghid_set_color (hidGC gc, const char *name);
 void ghid_set_line_cap (hidGC gc, EndCapStyle style);
@@ -504,8 +504,8 @@ gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
 GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                int width, int height, int depth);
 HID_DRAW *ghid_request_debug_draw (void);
-void ghid_flush_debug_draw (void);
-void ghid_finish_debug_draw (void);
+void ghid_flush_debug_draw (hidGC gc);
+void ghid_finish_debug_draw (hidGC gc);
 bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
 bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
 void ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
