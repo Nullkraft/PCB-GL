@@ -66,7 +66,7 @@ nogui_end_layer (HID_DRAW *hid_draw)
 }
 
 static hidGC
-nogui_make_gc (void)
+nogui_make_gc (HID_DRAW *hid_draw)
 {
   return 0;
 }
