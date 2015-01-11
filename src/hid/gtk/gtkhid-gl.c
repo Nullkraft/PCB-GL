@@ -740,6 +740,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 
   double old_alpha_mult = gtk_gc->alpha_mult;
   common_thindraw_pcb_polygon (gc, poly, clip_box);
+
+  /* Don't shade anti-polygons */
+  if TEST_FLAG (CLEARLINEFLAG, poly)
+    return;
+
   ghid_set_alpha_mult (gc, gtk_gc->alpha_mult * 0.25);
   hid_draw_fill_pcb_polygon (gc, poly, clip_box);
   ghid_set_alpha_mult (gc, old_alpha_mult);
