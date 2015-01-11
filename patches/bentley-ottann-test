@@ -1,5 +1,5 @@
 Bottom: 0154b478b82343f2b2eec7c5ae24609cccc6ce63
-Top:    a0f29ca0f8c376ee6caeadc14d9d41b41c876a08
+Top:    8a8fec7498bc9a1f265c8f39dc5c5433a468b8ea
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:10:22 +0000
 
@@ -250,10 +250,10 @@ index 0000000..b187cf2
 +License (LGPL) version 2.1.
 diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
 new file mode 100644
-index 0000000..505a9d1
+index 0000000..aedbb37
 --- /dev/null
 +++ b/src/borast/borast-bentley-ottmann.c
-@@ -0,0 +1,1576 @@
+@@ -0,0 +1,1577 @@
 +/*
 + * Copyright © 2004 Carl Worth
 + * Copyright © 2006 Red Hat, Inc.
@@ -314,6 +314,7 @@ index 0000000..505a9d1
 +#include "hid/common/hidgl.h"
 +
 +#include "sweep.h"
++
 +
 +#define _borast_error(x) (x)
 +
