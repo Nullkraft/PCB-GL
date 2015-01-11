@@ -1,5 +1,5 @@
-Bottom: 5ccfa6a83b27a32d0ffeb2092b6268a7dcdc3d8a
-Top:    3c38504a766ec9e508cd7405d3baa2208a15ecc9
+Bottom: 06a8ac6fad4cde59695bf189449d665e2c98e0f9
+Top:    c562c6a8eec4e004303d1bdd0288b529d6af7b39
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 23:20:40 +0000
 
@@ -9,10 +9,10 @@ Test some polygon stuff
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 0dcf060..0ed5e71 100644
+index 4996842..d32a501 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2033,6 +2033,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2001,6 +2001,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    int del_inside = 0;
    int del_outside = 0;
    int finished;
@@ -20,7 +20,7 @@ index 0dcf060..0ed5e71 100644
  
    if (a == NULL)
      return;
-@@ -2070,6 +2071,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2038,6 +2039,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  	{
  	  anext = a->f;
  	  finished = (anext == *pieces);
@@ -28,7 +28,7 @@ index 0dcf060..0ed5e71 100644
  
  	  /* Test the outer contour first, as we may need to remove all children */
  
-@@ -2091,6 +2093,9 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2059,6 +2061,9 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  	      /* a->contours now points to the remaining holes */
  	      poly_DelContour (&curc);
  
@@ -38,7 +38,7 @@ index 0dcf060..0ed5e71 100644
  	      if (a->contours != NULL)
  		{
  		  /* Find the end of the list of holes */
-@@ -2108,6 +2113,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2076,6 +2081,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  	      poly_Free (&a);	/* NB: Sets a to NULL */
  
  	      continue;
@@ -46,7 +46,7 @@ index 0dcf060..0ed5e71 100644
  	    }
  
  	  /* Loop whilst we find INSIDE contours to delete */
-@@ -2150,6 +2156,25 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2118,6 +2124,25 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  	    }
  	  /* End check for deleted holes */
  
