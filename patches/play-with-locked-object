@@ -1,5 +1,5 @@
-Bottom: 5f676e2e84bc8b4565ebf134932025304e5cc798
-Top:    0757405216d69b318eb6db0811f97769b8b5c1c1
+Bottom: 0f0ceae96e333d1d738a0deb6040330a441879ce
+Top:    6fc1f1ea4acecc9dd86b25b07554a798c22da68b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:42:08 +0000
 
@@ -171,10 +171,10 @@ index bd3df87..5b13d95 100644
                          PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
                          FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index e457b7d..a369a5d 100644
+index ff8743c..45304ab 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
-@@ -382,3 +382,9 @@ hid_batch_init ()
+@@ -384,3 +384,9 @@ hid_batch_init ()
    hid_register_hid (&batch_hid);
  #include "batch_lists.h"
  }
@@ -431,10 +431,10 @@ index da711d5..091fed1 100644
 +    }
 +}
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index a9a537e..f7ea4b7 100644
+index ef51bc6..29d7220 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4138,3 +4138,9 @@ hid_lesstif_init ()
+@@ -4140,3 +4140,9 @@ hid_lesstif_init ()
    hid_register_hid (&lesstif_hid);
  #include "lesstif_lists.h"
  }
