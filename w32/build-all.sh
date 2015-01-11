@@ -2,9 +2,6 @@ NEVERBUILD="
 "
 
 NOBUILD="
-"
-
-BUILD="
 jpeg
 zlib
 libpng
@@ -12,6 +9,9 @@ tiff
 freetype
 pixman
 libiconv
+"
+
+BUILD="
 gettext
 glib
 atk
