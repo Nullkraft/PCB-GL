@@ -1845,7 +1845,6 @@ hid_png_init ()
   png_hid.name        = "png";
   png_hid.description = "GIF/JPEG/PNG export";
   png_hid.exporter    = 1;
-  png_hid.poly_before = 1;
 
   png_hid.get_export_options  = png_get_export_options;
   png_hid.do_export           = png_do_export;
@@ -1873,6 +1872,7 @@ hid_png_init ()
   png_graphics_class.fill_rect      = png_fill_rect;
 
   png_graphics.klass = &png_graphics_class;
+  png_graphics.poly_before = true;
   common_draw_helpers_init (&png_graphics);
 
 #ifdef HAVE_SOME_FORMAT
