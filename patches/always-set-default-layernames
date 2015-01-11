@@ -1,0 +1,40 @@
+Bottom: a01dbbec17a68a1d56e3b71588fad764b7c3749e
+Top:    60d633119358bc742cbfb86c9ba634a17bbc7cf7
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 13:23:27 +0000
+
+Always set default layernames for silk and mask layers
+
+This avoids incorrect layernames being left over from our layer stack
+should a board be loaded with missing layers (e.g. an old file format
+board with no solder-mask layers).
+
+XXX: Check what happens if we load a board with LOTS of defined layers
+(more than our default layer stack), but has Layer() definitions missing!
+Does it crash?
+
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index 7da96ee..2f7bc35 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -229,12 +229,13 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
+     {
+       if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, &pcb->Data->LayerN))
+ 	return 1;
+-
+-      pcb->Data->Layer[top_silk_layer].Name = strdup ("top silk");
+-      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("bottom silk");
+-      pcb->Data->Layer[top_soldermask_layer].Name = strdup ("top soldermask");
+-      pcb->Data->Layer[bottom_soldermask_layer].Name = strdup ("bottom soldermask");
+     }
++
++  pcb->Data->Layer[top_silk_layer].Name = strdup ("top silk");
++  pcb->Data->Layer[bottom_silk_layer].Name = strdup ("bottom silk");
++  pcb->Data->Layer[top_soldermask_layer].Name = strdup ("top soldermask");
++  pcb->Data->Layer[bottom_soldermask_layer].Name = strdup ("bottom soldermask");
++
+   return 0;
+ }
