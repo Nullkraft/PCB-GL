@@ -1,5 +1,5 @@
-Bottom: cd3155cfe68c55913eaf11c644a560b71485a0e8
-Top:    34e8d22e35b95795997e1d62905aefa39c1ff60e
+Bottom: f55d77eacab538d25088e38a04d88f14721c5072
+Top:    a4c0466d2e9ce221ab97eb343aff5db5c87ee762
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:42:04 +0000
 
@@ -11,7 +11,7 @@ Attempt at getting lesstif+gl to build
 ---
 
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index d1da1fe..43d83ff 100644
+index aa4302c..af8b6e0 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -63,15 +63,28 @@ static int cur_mask = -1;
@@ -688,8 +688,8 @@ index d1da1fe..43d83ff 100644
                    start_angle, delta_angle, view_zoom);
  }
  
-@@ -4511,7 +4607,8 @@ hid_lesstif_init ()
- 
+@@ -4512,7 +4608,8 @@ hid_lesstif_init ()
+   common_nogui_graphics_class_init (&lesstif_graphics_class);
    common_draw_helpers_class_init (&lesstif_graphics_class);
  
 -  lesstif_graphics_class.set_layer            = lesstif_set_layer;
