@@ -29,7 +29,7 @@ typedef struct extents_gc_struct
 } *extentsGC;
 
 static int
-extents_set_layer (const char *name, int group, int empty)
+extents_set_layer (hidGC gc, const char *name, int group, int empty)
 {
   int idx = group;
   if (idx >= 0 && idx < max_group)
@@ -210,10 +210,14 @@ hid_extents_init (void)
 BoxType *
 hid_get_extents (void *item)
 {
+  hidGC gc;
   BoxType region;
 
   /* As this isn't a real "HID", we need to ensure we are initialised. */
   hid_extents_init ();
+
+#warning NULL gc
+  gc = NULL;
 
   box.X1 = COORD_MAX;
   box.Y1 = COORD_MAX;
@@ -224,7 +228,9 @@ hid_get_extents (void *item)
   region.Y1 = -COORD_MAX - 1;
   region.X2 = COORD_MAX;
   region.Y2 = COORD_MAX;
-  hid_expose_callback (&extents_graphics, &region, item);
+
+  common_set_clip_box (&extents_graphics, &region);
+  hid_expose_callback (&extents_graphics, item);
 
   return &box;
 }

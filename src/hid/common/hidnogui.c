@@ -54,14 +54,14 @@ nogui_invalidate_all (void)
 }
 
 static int
-nogui_set_layer (const char *name, int idx, int empty)
+nogui_set_layer (hidGC gc, const char *name, int idx, int empty)
 {
   CRASH;
   return 0;
 }
 
 static void
-nogui_end_layer (void)
+nogui_end_layer (hidGC gc)
 {
 }
 
@@ -143,7 +143,7 @@ nogui_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 }
 
 static void
-nogui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+nogui_draw_pcb_polygon (hidGC gc, PolygonType *poly)
 {
   CRASH;
 }
@@ -425,12 +425,12 @@ nogui_request_debug_draw (void)
 }
 
 static void
-nogui_flush_debug_draw (void)
+nogui_flush_debug_draw (hidGC gc)
 {
 }
 
 static void
-nogui_finish_debug_draw (void)
+nogui_finish_debug_draw (hidGC gc)
 {
 }
 

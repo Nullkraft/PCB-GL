@@ -160,7 +160,7 @@ batch_invalidate_all (void)
 }
 
 static int
-batch_set_layer (const char *name, int idx, int empty)
+batch_set_layer (hidGC gc, const char *name, int idx, int empty)
 {
   return 0;
 }
