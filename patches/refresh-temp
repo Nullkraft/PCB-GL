@@ -1,0 +1,405 @@
+Bottom: fd91be76d9514657df03f58ea758fd27ca10b3b7
+Top:    c6864e746df746b1910b3a2bd1a1451d8a0d545f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 20:32:49 +0000
+
+Refresh of split-pin-via-shape-and-hole
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 5d50d23..6a76f0c 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -66,7 +66,8 @@ thindraw_moved_pv (hidGC gc, PinType *pv, Coord x, Coord y)
+   moved_pv.X += x;
+   moved_pv.Y += y;
+ 
+-  hid_draw__thin_pcb_pv (gc, gc, &moved_pv, true, false);
++  hid_draw__thin_pcb_pv (gc, &moved_pv, false);
++  hid_draw__thin_pcb_pv_hole (gc, &moved_pv);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -689,7 +690,8 @@ DrawAttached (hidGC gc)
+         via.Mask = 0;
+         via.Flags = NoFlags ();
+ 
+-        hid_draw__thin_pcb_pv (gc, gc, &via, true, false);
++        hid_draw__thin_pcb_pv (gc, &via, false);
++        hid_draw__thin_pcb_pv_hole (gc, &via);
+ 
+         if (TEST_FLAG (SHOWDRCFLAG, PCB))
+           {
+diff --git a/src/draw_funcs.c b/src/draw_funcs.c
+index 39f8d6f..af411f7 100644
+--- a/src/draw_funcs.c
++++ b/src/draw_funcs.c
+@@ -12,25 +12,25 @@ void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
+ static void
+ draw_pin (PinType *pin, const BoxType *drawn_area, void *userdata)
+ {
+-  hid_draw_pcb_pv (Output.fgGC, Output.bgGC, pin, false, false);
++  hid_draw_pcb_pv (Output.fgGC, pin, false);
+ }
+ 
+ static void
+ draw_pin_mask (PinType *pin, const BoxType *drawn_area, void *userdata)
+ {
+-  hid_draw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
++  hid_draw_pcb_pv (Output.pmGC, pin, true);
+ }
+ 
+ static void
+ draw_via (PinType *via, const BoxType *drawn_area, void *userdata)
+ {
+-  hid_draw_pcb_pv (Output.fgGC, Output.bgGC, via, false, false);
++  hid_draw_pcb_pv (Output.fgGC, via, false);
+ }
+ 
+ static void
+ draw_via_mask (PinType *via, const BoxType *drawn_area, void *userdata)
+ {
+-  hid_draw_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
++  hid_draw_pcb_pv (Output.pmGC, via, true);
+ }
+ 
+ static void
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index c941ad8..f4de2c0 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -538,16 +538,25 @@ draw_octagon_poly (hidGC gc, Coord X, Coord Y,
+ }
+ 
+ void
+-common_gui_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
++common_gui_draw_pcb_pv (hidGC gc, PinType *pv, bool mask)
+ {
+   if (TEST_FLAG (THINDRAWFLAG, PCB))
+-    hid_draw__thin_pcb_pv (fg_gc, fg_gc, pv, drawHole, mask); /* All thindraw callers used the same GC for fg and bg */
++    hid_draw__thin_pcb_pv (gc, pv, mask);
+   else
+-    hid_draw__fill_pcb_pv (fg_gc, bg_gc, pv, drawHole, mask);
++    hid_draw__fill_pcb_pv (gc, pv, mask);
+ }
+ 
+ void
+-common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
++common_gui_draw_pcb_pv_hole (hidGC gc, PinType *pv)
++{
++  if (TEST_FLAG (THINDRAWFLAG, PCB))
++    hid_draw__thin_pcb_pv_hole (gc, pv);
++  else
++    hid_draw__fill_pcb_pv_hole (gc, pv);
++}
++
++void
++common_fill_pcb_pv (hidGC gc, PinType *pv, bool mask)
+ {
+   Coord w = mask ? pv->Mask : pv->Thickness;
+   Coord r = w / 2;
+@@ -555,14 +564,7 @@ common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool m
+   if (TEST_FLAG (HOLEFLAG, pv))
+     {
+       if (mask)
+-	hid_draw_fill_circle (bg_gc, pv->X, pv->Y, r);
+-      if (drawHole)
+-        {
+-          hid_draw_fill_circle (bg_gc, pv->X, pv->Y, r);
+-          hid_draw_set_line_cap (fg_gc, Round_Cap);
+-          hid_draw_set_line_width (fg_gc, 0);
+-          hid_draw_arc (fg_gc, pv->X, pv->Y, r, r, 0, 360);
+-        }
++        hid_draw_fill_circle (gc, pv->X, pv->Y, r);
+       return;
+     }
+ 
+@@ -573,20 +575,36 @@ common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool m
+       Coord r = l + w;
+       Coord t = b + w;
+ 
+-      hid_draw_fill_rect (fg_gc, l, b, r, t);
++      hid_draw_fill_rect (gc, l, b, r, t);
+     }
+   else if (TEST_FLAG (OCTAGONFLAG, pv))
+-    draw_octagon_poly (fg_gc, pv->X, pv->Y, w, false);
++    draw_octagon_poly (gc, pv->X, pv->Y, w, false);
+   else /* draw a round pin or via */
+-    hid_draw_fill_circle (fg_gc, pv->X, pv->Y, r);
++    hid_draw_fill_circle (gc, pv->X, pv->Y, r);
++}
++
++void
++common_fill_pcb_pv_hole (hidGC gc, PinType *pv)
++{
++  Coord r = pv->DrillingHole / 2;
++
++  /* XXX */ hidGC bg_gc = gc;
++  /* XXX */ hidGC fg_gc = gc;
++  /* XXX: Old code had an opportunity to outline the foreground of a pure hole after clearing away the background... we now cannot */
+ 
+-  /* and the drilling hole  (which is always round) */
+-  if (drawHole)
+-    hid_draw_fill_circle (bg_gc, pv->X, pv->Y, pv->DrillingHole / 2);
++  hid_draw_fill_circle (gc, pv->X, pv->Y, r);
++
++  if (TEST_FLAG (HOLEFLAG, pv))
++    {
++      g_return_if_fail (pv->Thickness == pv->DrillingHole);
++      hid_draw_set_line_cap (fg_gc, Round_Cap);
++      hid_draw_set_line_width (fg_gc, 0);
++      hid_draw_arc (fg_gc, pv->X, pv->Y, r, r, 0, 360);
++    }
+ }
+ 
+ void
+-common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
++common_thindraw_pcb_pv (hidGC gc, PinType *pv, bool mask)
+ {
+   Coord w = mask ? pv->Mask : pv->Thickness;
+   Coord r = w / 2;
+@@ -594,14 +612,8 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+   if (TEST_FLAG (HOLEFLAG, pv))
+     {
+       if (mask)
+-	hid_draw_arc (fg_gc, pv->X, pv->Y, r, r, 0, 360);
+-      if (drawHole)
+-        {
+-	  r = pv->DrillingHole / 2;
+-          hid_draw_set_line_cap (bg_gc, Round_Cap);
+-          hid_draw_set_line_width (bg_gc, 0);
+-          hid_draw_arc (bg_gc, pv->X, pv->Y, r, r, 0, 360);
+-        }
++        /* XXX: NOT SETTING LINE CAP OR WIDTH!! */
++	hid_draw_arc (gc, pv->X, pv->Y, r, r, 0, 360);
+       return;
+     }
+ 
+@@ -612,33 +624,34 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+       Coord r = l + w;
+       Coord t = b + w;
+ 
+-      hid_draw_set_line_cap (fg_gc, Round_Cap);
+-      hid_draw_set_line_width (fg_gc, 0);
+-      hid_draw_line (fg_gc, r, t, r, b);
+-      hid_draw_line (fg_gc, l, t, l, b);
+-      hid_draw_line (fg_gc, r, t, l, t);
+-      hid_draw_line (fg_gc, r, b, l, b);
++      hid_draw_set_line_cap (gc, Round_Cap);
++      hid_draw_set_line_width (gc, 0);
++      hid_draw_line (gc, r, t, r, b);
++      hid_draw_line (gc, l, t, l, b);
++      hid_draw_line (gc, r, t, l, t);
++      hid_draw_line (gc, r, b, l, b);
+ 
+     }
+   else if (TEST_FLAG (OCTAGONFLAG, pv))
+     {
+-      draw_octagon_poly (fg_gc, pv->X, pv->Y, w, true);
++      draw_octagon_poly (gc, pv->X, pv->Y, w, true);
+     }
+   else /* draw a round pin or via */
+     {
+-      hid_draw_set_line_cap (fg_gc, Round_Cap);
+-      hid_draw_set_line_width (fg_gc, 0);
+-      hid_draw_arc (fg_gc, pv->X, pv->Y, r, r, 0, 360);
++      hid_draw_set_line_cap (gc, Round_Cap);
++      hid_draw_set_line_width (gc, 0);
++      hid_draw_arc (gc, pv->X, pv->Y, r, r, 0, 360);
+     }
++}
+ 
+-  /* and the drilling hole  (which is always round */
+-  if (drawHole)
+-    {
+-      hid_draw_set_line_cap (bg_gc, Round_Cap);
+-      hid_draw_set_line_width (bg_gc, 0);
+-      hid_draw_arc (bg_gc, pv->X, pv->Y,
+-                    pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
+-    }
++void
++common_thindraw_pcb_pv_hole (hidGC gc, PinType *pv)
++{
++  Coord r = pv->DrillingHole / 2;
++
++  hid_draw_set_line_cap (gc, Round_Cap);
++  hid_draw_set_line_width (gc, 0);
++  hid_draw_arc (gc, pv->X, pv->Y, r, r, 0, 360);
+ }
+ 
+ void
+@@ -657,6 +670,8 @@ common_draw_helpers_class_init (HID_DRAW_CLASS *klass)
+   klass->_thindraw_pcb_pad     = common_thindraw_pcb_pad;
+   klass->_fill_pcb_pv          = common_fill_pcb_pv;
+   klass->_thindraw_pcb_pv      = common_thindraw_pcb_pv;
++  klass->_fill_pcb_pv_hole     = common_fill_pcb_pv_hole;
++  klass->_thindraw_pcb_pv_hole = common_thindraw_pcb_pv_hole;
+ }
+ 
+ void
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index fad2563..4fca617 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -4,8 +4,11 @@ void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *cl
+ void common_gui_draw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+-void common_gui_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+-void common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+-void common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
++void common_gui_draw_pcb_pv (hidGC gc, PinType *pv, bool mask);
++void common_gui_draw_pcb_pv_hole (hidGC gc, PinType *pv);
++void common_fill_pcb_pv (hidGC gc, PinType *pv, bool mask);
++void common_fill_pcb_pv_hole (hidGC gc, PinType *pv);
++void common_thindraw_pcb_pv (hidGC gc, PinType *pv, bool mask);
++void common_thindraw_pcb_pv_hole (hidGC gc, PinType *pv);
+ void common_draw_helpers_class_init (HID_DRAW_CLASS *klass);
+ void common_draw_helpers_init (HID_DRAW *graphics);
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 27950a1..7878025 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -155,7 +155,13 @@ nogui_draw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+ }
+ 
+ static void
+-nogui_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
++nogui_draw_pcb_pv (hidGC gc, PinType *pv, bool mask)
++{
++  CRASH;
++}
++
++static void
++nogui_draw_pcb_pv_hole (hidGC gc, PinType *pv)
+ {
+   CRASH;
+ }
+@@ -487,6 +493,7 @@ common_nogui_graphics_class_init (HID_DRAW_CLASS *klass)
+   klass->draw_pcb_polygon = nogui_draw_pcb_polygon;
+   klass->draw_pcb_pad =     nogui_draw_pcb_pad;
+   klass->draw_pcb_pv =      nogui_draw_pcb_pv;
++  klass->draw_pcb_pv_hole = nogui_draw_pcb_pv_hole;
+ }
+ 
+ static void
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 066465c..618e01a 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1289,9 +1289,17 @@ static void
+ _draw_pv (PinType *pv, bool draw_hole)
+ {
+   if (TEST_FLAG (THINDRAWFLAG, PCB))
+-    hid_draw__thin_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
++    {
++      hid_draw__thin_pcb_pv (Output.fgGC, pv, false);
++      if (draw_hole)
++        hid_draw__thin_pcb_pv_hole (Output.fgGC, pv);
++    }
+   else
+-    hid_draw__fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
++    {
++      hid_draw__fill_pcb_pv (Output.fgGC, pv, false);
++      if (draw_hole)
++        hid_draw__fill_pcb_pv_hole (Output.bgGC, pv);
++    }
+ 
+   if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
+     _draw_pv_name (pv);
+@@ -1578,9 +1586,9 @@ clearPin_callback (const BoxType * b, void *cl)
+ {
+   PinType *pin = (PinType *) b;
+   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+-    hid_draw__thin_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
++    hid_draw__thin_pcb_pv (Output.pmGC, pin, true);
+   else
+-    hid_draw__fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
++    hid_draw__fill_pcb_pv (Output.pmGC, pin, true);
+   return 1;
+ }
+ 
+@@ -1598,7 +1606,7 @@ static int
+ clearPin_callback_solid (const BoxType * b, void *cl)
+ {
+   PinType *pin = (PinType *) b;
+-  hid_draw__fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
++  hid_draw__fill_pcb_pv (Output.pmGC, pin, true);
+   return 1;
+ }
+ 
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index 407bba1..734a208 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -72,15 +72,18 @@ typedef struct hid_draw_class_st
+   void (*draw_pcb_text) (hidGC gc, TextType *, Coord);
+   void (*draw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+   void (*draw_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
+-  void (*draw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
++  void (*draw_pcb_pv) (hidGC gc, PinType *pv, bool mask);
++  void (*draw_pcb_pv_hole) (hidGC gc, PinType *pv);
+ 
+   /* The following are not meant to be called outside of the GUI implementations of the above APIs */
+   void (*_fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+   void (*_thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
+   void (*_fill_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
+   void (*_thindraw_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
+-  void (*_fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+-  void (*_thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
++  void (*_fill_pcb_pv) (hidGC gc, PinType *pv, bool mask);
++  void (*_fill_pcb_pv_hole) (hidGC gc, PinType *pv);
++  void (*_thindraw_pcb_pv) (hidGC gc, PinType *pv, bool mask);
++  void (*_thindraw_pcb_pv_hole) (hidGC gc, PinType *pv);
+ 
+   /* draw.c currently uses this to shortcut and special-case certain rendering when displaying on-screen */
+   bool gui;
+@@ -251,9 +254,15 @@ hid_draw_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
+ }
+ 
+ inline void
+-hid_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
++hid_draw_pcb_pv (hidGC gc, PinType *pv, bool mask)
+ {
+-  fg_gc->hid_draw->klass->draw_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
++  gc->hid_draw->klass->draw_pcb_pv (gc, pv, mask);
++}
++
++inline void
++hid_draw_pcb_pv_hole (hidGC gc, PinType *pv)
++{
++  gc->hid_draw->klass->draw_pcb_pv_hole (gc, pv);
+ }
+ 
+ 
+@@ -282,13 +291,25 @@ hid_draw__thin_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
+ }
+ 
+ inline void
+-hid_draw__fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
++hid_draw__fill_pcb_pv (hidGC gc, PinType *pv, bool mask)
++{
++  gc->hid_draw->klass->_fill_pcb_pv (gc, pv, mask);
++}
++
++inline void
++hid_draw__fill_pcb_pv_hole (hidGC gc, PinType *pv)
++{
++  gc->hid_draw->klass->_fill_pcb_pv_hole (gc, pv);
++}
++
++inline void
++hid_draw__thin_pcb_pv (hidGC gc, PinType *pv, bool mask)
+ {
+-  fg_gc->hid_draw->klass->_fill_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
++  gc->hid_draw->klass->_thindraw_pcb_pv (gc, pv, mask);
+ }
+ 
+ inline void
+-hid_draw__thin_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
++hid_draw__thin_pcb_pv_hole (hidGC gc, PinType *pv)
+ {
+-  fg_gc->hid_draw->klass->_thindraw_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
++  gc->hid_draw->klass->_thindraw_pcb_pv_hole (gc, pv);
+ }
