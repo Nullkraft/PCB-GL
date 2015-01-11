@@ -1,5 +1,5 @@
-Bottom: 885af7328f16cf3624f79f3471f5f705c21de79d
-Top:    81355eb93635ee12658562fe76910792f44f97fa
+Bottom: 60dc408382a6243fe14f013d43594d825df3bd11
+Top:    da6b8a7acd77e71f3eb89c9c454e61e43d2bf4f1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:42:01 +0000
 
@@ -9,7 +9,7 @@ Fixup gtkhid-gl to build
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7110983..c6e239e 100644
+index 99b25af..7d662c2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -282,13 +282,13 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -54,7 +54,7 @@ index 7110983..c6e239e 100644
        }
  
 @@ -1461,13 +1462,13 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
-         gui->set_layer (0, group, 0);
+         hid_draw_set_layer (&ghid_graphics, 0, group, 0);
  
          if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
 -          hidgl_flush_triangles (&buffer);
