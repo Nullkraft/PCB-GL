@@ -1,5 +1,5 @@
 Bottom: cbd8c43b41cbc5363f96449dd4627c4595475d77
-Top:    cbd8c43b41cbc5363f96449dd4627c4595475d77
+Top:    f3196d3ea59a43f95712c8d4ab7d77ea21481682
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:16:59 +0000
 
@@ -10,4 +10,14 @@ Lets the compiler check the function prototypes.
 
 ---
 
-
+diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
+index 09cef2d..408f8e3 100644
+--- a/src/borast/borast-bentley-ottmann.c
++++ b/src/borast/borast-bentley-ottmann.c
+@@ -57,6 +57,7 @@
+ #include <GL/gl.h>
+ #include "hid/common/hidgl.h"
+ 
++#include "sweep.h"
+ 
+ #define _borast_error(x) (x)
