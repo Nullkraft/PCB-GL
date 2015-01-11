@@ -926,10 +926,10 @@ DrawRats (const BoxType *drawn_area)
    * XXX using the mask here is to get rat transparency
    */
 
-  if (gui->graphics->klass->can_draw_in_mask_clear)
+  if (hid_draw_can_draw_in_mask_clear (gui->graphics))
     hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
   r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
-  if (gui->graphics->klass->can_draw_in_mask_clear)
+  if (hid_draw_can_draw_in_mask_clear (gui->graphics))
     hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
 }
 

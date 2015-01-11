@@ -111,6 +111,12 @@ hid_draw_is_gui (HID_DRAW *hid_draw)
   return hid_draw->klass->gui;
 }
 
+inline bool
+hid_draw_can_draw_in_mask_clear (HID_DRAW *hid_draw)
+{
+  return hid_draw->klass->can_draw_in_mask_clear;
+}
+
 
 /* Calling wrappers to access the vfunc table */
 
