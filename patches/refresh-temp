@@ -1,0 +1,107 @@
+Bottom: bfae5626ecfc92bf0d9c2306744f58cc0bcc2cb2
+Top:    dd6392a2c1147531d56decb302f4ebcdbfc7d56b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 13:34:22 +0000
+
+Refresh of debug-self-touching-contour-st
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index dee9fdb..f2bc79e 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -301,12 +301,16 @@ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+       PLINE *pl;
+ 
+       for (pl = poly->NoHoles; pl != NULL; pl = pl->next)
++#if 1
++        thindraw_contour (gc, pl);
++#else
+         {
+           if (clip_box == NULL)
+             fill_contour (gc, pl);
+           else
+             fill_clipped_contour (gc, pl, clip_box);
+         }
++#endif
+     }
+ #endif
+ 
+diff --git a/src/polygon.c b/src/polygon.c
+index c0dee55..5df2553 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -883,8 +883,16 @@ struct cpInfo
+ static void
+ subtract_accumulated (struct cpInfo *info, PolygonType *polygon)
+ {
++  POLYAREA *curp;
+   if (info->accumulate == NULL)
+     return;
++  printf ("Subtracting accumulated polygons\n");
++
++  curp = info->accumulate;
++  do {
++    printf ("Polygon\n");
++  } while ((curp = curp->f) != info->accumulate);
++  printf ("--------------\n");
+   Subtract (info->accumulate, polygon, true);
+   info->accumulate = NULL;
+   info->batch_size = 0;
+@@ -921,7 +929,9 @@ pin_sub_callback (const BoxType * b, void *cl)
+         longjmp (info->env, 1);
+     }
+ 
++  printf (" -- Appending pin / via to accumulated poly\n");
+   poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
++  printf (" -- Done\n");
+   info->accumulate = merged;
+ 
+   info->batch_size ++;
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 3d2e763..d957b54 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1889,6 +1889,9 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
+ 	  int is_last = contour_is_last (curc);
+ 	  int isect_contour = (curc->Flags.status == ISECTED);
+ 
++          if (isect_contour)
++            printf ("Contour intersected\n");
++
+ 	  next = curc->next;
+ 
+ 	  if (isect_contour || hole_contour)
+@@ -2354,12 +2357,31 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+       *res = a;
+       M_POLYAREA_update_primary (&e, res, &holes, action, b);
+       M_POLYAREA_separate_isected (&e, res, &holes, &a_isected);
++      {
++        POLYAREA *curp = *res;
++        int count = 0;
++        if (*res != NULL) do {count++;} while ((curp = curp->f) != *res);
++        printf ("%i Polygons after separate_isected\n", count);
++      }
+       M_POLYAREA_label_separated (a_isected, b, FALSE);
+       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action,
+ 				    FALSE);
++      {
++        POLYAREA *curp = *res;
++        int count = 0;
++        if (*res != NULL) do {count++;} while ((curp = curp->f) != *res);
++        printf ("%i Polygons after Collect_separated\n", count);
++      }
+       M_B_AREA_Collect (&e, b, res, &holes, action);
+       poly_Free (&b);
+ 
++      {
++        POLYAREA *curp = *res;
++        int count = 0;
++        if (*res != NULL) do {count++;} while ((curp = curp->f) != *res);
++        printf ("%i Polygons after M_B_AREA_Collect\n", count);
++      }
++
+       /* free a_isected */
+       while ((p = a_isected) != NULL)
+ 	{
