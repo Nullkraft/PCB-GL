@@ -269,15 +269,6 @@ typedef enum
        and EPS exporters.  */
     char exporter:1;
 
-    /* If set, the redraw code will draw polygons before erasing the
-       clearances.  */
-    char poly_before:1;
-
-    /* If set, the redraw code will draw polygons after erasing the
-       clearances.  Note that HIDs may set both of these, in which case
-       polygons will be drawn twice.  */
-    char poly_after:1;
-
     /* Returns a set of resources describing options the export or print
        HID supports.  In GUI mode, the print/export dialogs use this to
        set up the selectable options.  In command line mode, these are

@@ -181,7 +181,6 @@ hid_extents_init (void)
   extents_hid.struct_size         = sizeof (HID);
   extents_hid.name                = "extents-extents";
   extents_hid.description         = "used to calculate extents";
-  extents_hid.poly_before         = 1;
 
   extents_hid.set_layer           = extents_set_layer;
 
@@ -204,6 +203,7 @@ hid_extents_init (void)
   extents_graphics_class.fill_rect      = extents_fill_rect;
 
   extents_graphics.klass = &extents_graphics_class;
+  extents_graphics.poly_before = true;
   common_draw_helpers_init (&extents_graphics);
 
   initialised = true;
