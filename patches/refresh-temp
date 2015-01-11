@@ -1,0 +1,27 @@
+Bottom: 36c2f569c4b8537fb0c0830bef0761725bb3197f
+Top:    a6c71e7687d0f293426cffacba5b08fc4e487273
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 15:38:29 +0000
+
+Refresh of always-set-default-layernames
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index f01c118..3089bdc 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -222,10 +222,11 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
+     {
+       if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, &pcb->Data->LayerN))
+ 	return 1;
+-
+-      pcb->Data->Layer[top_silk_layer].Name = strdup ("silk");
+-      pcb->Data->Layer[bottom_silk_layer].Name = strdup ("silk");
+     }
++
++  pcb->Data->Layer[top_silk_layer].Name = strdup ("silk");
++  pcb->Data->Layer[bottom_silk_layer].Name = strdup ("silk");
++
+   return 0;
+ }
