@@ -1,5 +1,5 @@
 Bottom: a14b0fa83def8bd9d03ea7bba94a2db608be1d5c
-Top:    a14b0fa83def8bd9d03ea7bba94a2db608be1d5c
+Top:    bfae5626ecfc92bf0d9c2306744f58cc0bcc2cb2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 23:31:10 +0000
 
@@ -8,4 +8,74 @@ Benchmark no-holes dicer performance
 
 ---
 
-
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 3ada35b..dee9fdb 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -283,6 +283,8 @@ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+   if (poly->Clipped == NULL)
+     return;
+ 
++  NoHolesPolygonDicer (poly, clip_box, fill_contour_cb, gc);
++#if 0
+   if (!poly->NoHolesValid)
+     {
+       /* If enough of the polygon is on-screen, compute the entire
+@@ -306,6 +308,7 @@ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+             fill_clipped_contour (gc, pl, clip_box);
+         }
+     }
++#endif
+ 
+   /* Draw other parts of the polygon if fullpoly flag is set */
+   /* NB: No "NoHoles" cache for these */
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 75c0d13..19dc7df 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -596,6 +596,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   int i;
+   static int saved_layer_stack[MAX_LAYER];
+   FlagType save_thindraw;
++  clock_t start, end;
++  double elapsed;
+ 
+   save_thindraw = PCB->Flags;
+   CLEAR_FLAG(THINDRAWFLAG, PCB);
+@@ -681,6 +683,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   global.region.X2 = PCB->MaxWidth;
+   global.region.Y2 = PCB->MaxHeight;
+ 
++  start = clock ();
++
+   if (!global.multi_file)
+     {
+       /* %%Page DSC requires both a label and an ordinal */
+@@ -700,6 +704,10 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   ps_set_layer (NULL, 0, -1);  /* reset static vars */
+   hid_expose_callback (&ps_hid, &global.region, 0);
+ 
++  end = clock ();
++  elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
++  printf ("Printing file took %f\n", elapsed);
++
+   if (the_file)
+     fprintf (the_file, "showpage\n");
+ 
+@@ -1520,6 +1528,7 @@ ps_set_crosshair (int x, int y, int action)
+ {
+ }
+ 
++
+ #include "dolists.h"
+ 
+ void ps_ps_init (HID *hid)
+@@ -1549,7 +1558,7 @@ void ps_ps_graphics_init (HID_DRAW *graphics)
+   graphics->fill_polygon       = ps_fill_polygon;
+   graphics->fill_rect          = ps_fill_rect;
+ 
+-  graphics->draw_pcb_polygon   = ps_draw_pcb_polygon;
++  //graphics->draw_pcb_polygon   = ps_draw_pcb_polygon; /* Use common implementation for benchmarking */
+ }
+ 
+ void
