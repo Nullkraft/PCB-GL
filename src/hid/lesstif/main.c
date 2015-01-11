@@ -816,6 +816,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
   time_t start, end;
   BoxType region;
   Drawable save_main;
+  hidGC gc;
 
   save_main = main_pixmap;
   main_pixmap = window;
@@ -825,13 +826,15 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
 
+  common_set_clip_box (&lesstif_graphics, &region);
+
   pixmap = window;
   XSync (display, 0);
   time (&start);
   do
     {
       XFillRectangle (display, pixmap, bg_gc, 0, 0, view_width, view_height);
-      hid_expose_callback (&lesstif_graphics, &region, 0);
+      hid_expose_callback (&lesstif_graphics, 0);
       XSync (display, 0);
       time (&end);
       i++;
@@ -2496,6 +2499,8 @@ static int need_redraw = 0;
 static Boolean
 idle_proc (XtPointer dummy)
 {
+  hidGC gc;
+
   if (need_redraw)
     {
       int mx, my;
@@ -2578,8 +2583,11 @@ idle_proc (XtPointer dummy)
 			      rightmost-leftmost+1, view_height-bottommost+1);
 	    }
 	}
+
+      common_set_clip_box (&lesstif_graphics, &region);
+
       DrawBackgroundImage();
-      hid_expose_callback (&lesstif_graphics, &region, 0);
+      hid_expose_callback (&lesstif_graphics, 0);
       draw_grid ();
       lesstif_use_mask (&lesstif_graphics, HID_MASK_OFF);
       show_crosshair (0); /* To keep the drawn / not drawn info correct */
@@ -3754,6 +3762,7 @@ pinout_callback (Widget da, PinoutData * pd,
   double save_vz;
   Pixmap save_px;
   int reason = cbs ? cbs->reason : 0;
+  hidGC gc;
 
   if (pd->window == 0 && reason == XmCR_RESIZE)
     return;
@@ -3803,7 +3812,9 @@ pinout_callback (Widget da, PinoutData * pd,
   region.Y2 = PCB->MaxHeight;
 
   XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);
-  hid_expose_callback (&lesstif_graphics, &region, pd->item);
+
+  common_set_clip_box (&lesstif_graphics, &region);
+  hid_expose_callback (&lesstif_graphics, pd->item);
 
   pinout = 0;
   view_left_x = save_vx;
