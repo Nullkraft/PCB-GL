@@ -1,7 +1,7 @@
-Bottom: 45701ff5c4e64141dd6796c68142ed149b4d6424
-Top:    a7a5a3a42b8b0f5b81037205fddef90c11c12b74
+Bottom: 53e04c78a4ce5a1a7cad95c1b58f0eb08ee19b01
+Top:    41d903c982c9903fe0c601c9918d77d0922fd152
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:40:32 +0000
+Date:   2015-01-11 19:35:50 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -111,7 +111,7 @@ index d858bec..5137739 100644
  } DataType;
  
 diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
-index fa608fc..d9bfe61 100644
+index 86abb15..bc92bdc 100644
 --- a/src/hid/common/extents.c
 +++ b/src/hid/common/extents.c
 @@ -36,7 +36,7 @@ extents_set_layer (const char *name, int group, int empty)
@@ -146,10 +146,10 @@ index 1229d67..83d4df4 100644
  }
  
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 99b8653..bab217c 100644
+index 9d23252..d817a24 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -505,7 +505,7 @@ gcode_start_gcode (const char *layername, bool metric)
+@@ -506,7 +506,7 @@ gcode_start_gcode (const char *layername, bool metric)
  static void
  gcode_do_export (HID_Attr_Val * options)
  {
@@ -159,10 +159,10 @@ index 99b8653..bab217c 100644
    const Unit *unit;
    double scale = 0, d = 0;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 153b2e4..409736c 100644
+index 197e935..9fabd5a 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -589,7 +589,7 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -590,7 +590,7 @@ gerber_do_export (HID_Attr_Val * options)
    const char *fnbase;
    int i;
    static int saved_layer_stack[MAX_LAYER];
@@ -172,7 +172,7 @@ index 153b2e4..409736c 100644
  
    save_thindraw = PCB->Flags;
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index ff31cbe..58dd52c 100644
+index 90fbd4b..c8bf438 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -74,14 +74,14 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -193,10 +193,10 @@ index ff31cbe..58dd52c 100644
    if (idx < 0)
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0d0d542..81454f3 100644
+index 70ec294..1fbebbf 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -139,7 +139,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -140,7 +140,7 @@ ghid_set_layer (const char *name, int group, int empty)
        for (idx = 0; idx < n-1; idx ++)
  	{
  	  int ni = PCB->LayerGroups.Entries[group][idx];
@@ -205,7 +205,7 @@ index 0d0d542..81454f3 100644
  	      && PCB->Data->Layer[ni].On)
  	    break;
  	}
-@@ -149,7 +149,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -150,7 +150,7 @@ ghid_set_layer (const char *name, int group, int empty)
    end_subcomposite (hidgl);
    start_subcomposite (hidgl);
  
@@ -228,10 +228,10 @@ index b988db9..8d7e5c5 100644
  /* Use this to restore them.  */
  void hid_restore_layer_ons (int *save_array);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index a5184a0..795b9fe 100644
+index 98c1d0b..a9a537e 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3008,7 +3008,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -3009,7 +3009,7 @@ lesstif_set_layer (const char *name, int group, int empty)
        for (idx = 0; idx < n-1; idx ++)
  	{
  	  int ni = PCB->LayerGroups.Entries[group][idx];
@@ -240,7 +240,7 @@ index a5184a0..795b9fe 100644
  	      && PCB->Data->Layer[ni].On)
  	    break;
  	}
-@@ -3026,7 +3026,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -3027,7 +3027,7 @@ lesstif_set_layer (const char *name, int group, int empty)
    else
      autofade = 0;
  #endif
@@ -263,10 +263,10 @@ index ddaddcb..bee7a17 100644
  	  {
  	    l = i;
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index b11c415..dade362 100644
+index a051590..ec530e1 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -654,7 +654,7 @@ nelma_start_png_export()
+@@ -655,7 +655,7 @@ nelma_start_png_export()
  static void 
  nelma_do_export(HID_Attr_Val * options)
  {
@@ -276,10 +276,10 @@ index b11c415..dade362 100644
  	FILE           *nelma_config;
  	char           *buf;
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 2bdf931..7935b3c 100644
+index ea59d7c..c39a99f 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
-@@ -128,10 +128,10 @@ static int print_layer[MAX_LAYER];
+@@ -129,10 +129,10 @@ static int print_layer[MAX_LAYER];
  #define PHOTO_FLIP_Y	2
  
  static int photo_mode, photo_flip;
@@ -292,7 +292,7 @@ index 2bdf931..7935b3c 100644
  static int photo_has_inners;
  
  static int doing_outline, have_outline;
-@@ -784,7 +784,7 @@ ts_bs_sm (gdImagePtr im)
+@@ -785,7 +785,7 @@ ts_bs_sm (gdImagePtr im)
  static void
  png_do_export (HID_Attr_Val * options)
  {
@@ -302,10 +302,10 @@ index 2bdf931..7935b3c 100644
    BoxType *bbox;
    Coord w, h;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 6893cd5..28c9129 100644
+index 032d1ce..cd70714 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
-@@ -319,7 +319,7 @@ static void
+@@ -320,7 +320,7 @@ static void
  eps_do_export (HID_Attr_Val * options)
  {
    int i;
@@ -315,10 +315,10 @@ index 6893cd5..28c9129 100644
    if (!options)
      {
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index cc53448..75c0d13 100644
+index 997a2b2..acfdcdf 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -711,7 +711,7 @@ static void
+@@ -712,7 +712,7 @@ static void
  ps_do_export (HID_Attr_Val * options)
  {
    FILE *fh;

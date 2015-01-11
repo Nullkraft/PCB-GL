@@ -1,7 +1,7 @@
-Bottom: a7a5a3a42b8b0f5b81037205fddef90c11c12b74
-Top:    75297b1b510268183a2ceae800b39c37f6d1399e
+Bottom: 41d903c982c9903fe0c601c9918d77d0922fd152
+Top:    e92ffd2c99077866228fb966643308c77390aba8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:40:32 +0000
+Date:   2015-01-11 19:35:50 +0000
 
 Add support for a two soldermask layers, defining regions of removed mask
 
@@ -93,11 +93,11 @@ index 5d40d71..89d9b87 100644
  extern SettingType Settings;
  
 diff --git a/src/draw.c b/src/draw.c
-index afad139..e7431a4 100644
+index 0cfa13d..f3d0f9a 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -884,6 +884,8 @@ DrawMask (int side, const BoxType *screen)
-       hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
+@@ -885,6 +885,8 @@ DrawMask (int side, const BoxType *screen)
+       hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
      }
  
 +  DrawLayer (LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer), screen);
@@ -306,7 +306,7 @@ index 8ef45bc..a34693a 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/main.c b/src/main.c
-index 04a116c..3c79bac 100644
+index 58ba024..072822a 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -861,6 +861,15 @@ Color of the mask layer. Default value is @code{"#ff0000"}
