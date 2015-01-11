@@ -1,5 +1,5 @@
 Bottom: c17d76be8e1ef3de30143b5acd96c145cc0481a4
-Top:    c17d76be8e1ef3de30143b5acd96c145cc0481a4
+Top:    8151970bda59e0c9f90a531b1c24cd492fcc06fb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:46:15 +0000
 
@@ -8,4 +8,194 @@ Remove graphics pointer from HID structure
 
 ---
 
-
+diff --git a/src/hid.h b/src/hid.h
+index ef6edb2..3ab40be 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -319,9 +319,6 @@ typedef enum
+     /* Tell the GUI the layer last selected has been finished with */
+     void (*end_layer) (void);
+ 
+-
+-    HID_DRAW *graphics;
+-
+     /* This is for the printer.  If you call this for the GUI, xval and
+        yval are ignored, and a dialog pops up to lead you through the
+        calibration procedure.  For the printer, if xval and yval are
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index e807d9c..bd1e30d 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -359,8 +359,6 @@ hid_batch_init ()
+   batch_hid.attribute_dialog      = batch_attribute_dialog;
+   batch_hid.show_item             = batch_show_item;
+ 
+-  batch_hid.graphics              = &batch_graphics;
+-
+   batch_graphics.make_gc          = batch_make_gc;
+   batch_graphics.destroy_gc       = batch_destroy_gc;
+   batch_graphics.use_mask         = batch_use_mask;
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index fa608fc..671a050 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -185,8 +185,6 @@ hid_extents_init (void)
+ 
+   extents_hid.set_layer           = extents_set_layer;
+ 
+-  extents_hid.graphics            = &extents_graphics;
+-
+   extents_graphics.make_gc        = extents_make_gc;
+   extents_graphics.destroy_gc     = extents_destroy_gc;
+   extents_graphics.use_mask       = extents_use_mask;
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index ed45bad..58c9f42 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -516,7 +516,6 @@ hid_nogui_get_hid (void)
+   nogui_hid.name        = "nogui";
+   nogui_hid.description = "Default GUI when no other GUI is present.  "
+                           "Does nothing.";
+-  nogui_hid.graphics    = &nogui_graphics;
+ 
+   common_nogui_init (&nogui_hid);
+   common_nogui_graphics_init (&nogui_graphics);
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 99b8653..3a0e471 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -1621,8 +1621,6 @@ hid_gcode_init ()
+   gcode_hid.calibrate           = gcode_calibrate;
+   gcode_hid.set_crosshair       = gcode_set_crosshair;
+ 
+-  gcode_hid.graphics            = &gcode_graphics;
+-
+   gcode_graphics.make_gc        = gcode_make_gc;
+   gcode_graphics.destroy_gc     = gcode_destroy_gc;
+   gcode_graphics.use_mask       = gcode_use_mask;
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 153b2e4..f8ff462 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -1358,8 +1358,6 @@ hid_gerber_init ()
+   gerber_hid.calibrate           = gerber_calibrate;
+   gerber_hid.set_crosshair       = gerber_set_crosshair;
+ 
+-  gerber_hid.graphics            = &gerber_graphics;
+-
+   gerber_graphics.make_gc        = gerber_make_gc;
+   gerber_graphics.destroy_gc     = gerber_destroy_gc;
+   gerber_graphics.use_mask       = gerber_use_mask;
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index ff31cbe..88d6878 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1251,7 +1251,7 @@ ghid_request_debug_draw (void)
+ {
+   /* No special setup requirements, drawing goes into
+    * the backing pixmap. */
+-  return ghid_hid.graphics;
++  return &ghid_graphics;
+ }
+ 
+ void
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 0d0d542..ee0db4d 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1364,7 +1364,7 @@ ghid_request_debug_draw (void)
+                 port->view.flip_y ? port->view.y0 - PCB->MaxHeight :
+                              -port->view.y0, 0);
+ 
+-  return ghid_hid.graphics;
++  return &ghid_graphics;
+ }
+ 
+ void
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index b41a356..fe21f55 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2181,8 +2181,6 @@ hid_gtk_init ()
+   ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
+   ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
+ 
+-  ghid_hid.graphics                 = &ghid_graphics;
+-
+   ghid_graphics.make_gc             = ghid_make_gc;
+   ghid_graphics.destroy_gc          = ghid_destroy_gc;
+   ghid_graphics.use_mask            = ghid_use_mask;
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index a5184a0..4949157 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -4029,7 +4029,7 @@ lesstif_request_debug_draw (void)
+ {
+   /* Send drawing to the backing pixmap */
+   pixmap = main_pixmap;
+-  return lesstif_hid.graphics;
++  return &lesstif_graphics;
+ }
+ 
+ static void
+@@ -4112,8 +4112,6 @@ hid_lesstif_init ()
+   lesstif_hid.flush_debug_draw        = lesstif_flush_debug_draw;
+   lesstif_hid.finish_debug_draw       = lesstif_finish_debug_draw;
+ 
+-  lesstif_hid.graphics                = &lesstif_graphics;
+-
+   lesstif_graphics.make_gc             = lesstif_make_gc;
+   lesstif_graphics.destroy_gc          = lesstif_destroy_gc;
+   lesstif_graphics.use_mask            = lesstif_use_mask;
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index b11c415..cb2c8e0 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -1078,8 +1078,6 @@ hid_nelma_init()
+   nelma_hid.calibrate           = nelma_calibrate;
+   nelma_hid.set_crosshair       = nelma_set_crosshair;
+ 
+-  nelma_hid.graphics            = &nelma_graphics;
+-
+   nelma_graphics.make_gc        = nelma_make_gc;
+   nelma_graphics.destroy_gc     = nelma_destroy_gc;
+   nelma_graphics.use_mask       = nelma_use_mask;
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 2bdf931..dfab5d8 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -1853,8 +1853,6 @@ hid_png_init ()
+   png_hid.calibrate           = png_calibrate;
+   png_hid.set_crosshair       = png_set_crosshair;
+ 
+-  png_hid.graphics            = &png_graphics;
+-
+   png_graphics.make_gc        = png_make_gc;
+   png_graphics.destroy_gc     = png_destroy_gc;
+   png_graphics.use_mask       = png_use_mask;
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 6893cd5..5eebbb9 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -694,8 +694,6 @@ hid_eps_init ()
+   eps_hid.calibrate           = eps_calibrate;
+   eps_hid.set_crosshair       = eps_set_crosshair;
+ 
+-  eps_hid.graphics            = &eps_graphics;
+-
+   eps_graphics.make_gc        = eps_make_gc;
+   eps_graphics.destroy_gc     = eps_destroy_gc;
+   eps_graphics.use_mask       = eps_use_mask;
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index cc53448..133ea3a 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1569,8 +1569,6 @@ hid_ps_init ()
+   ps_hid.exporter           = 1;
+   ps_hid.poly_before        = 1;
+ 
+-  ps_hid.graphics           = &ps_graphics;
+-
+   hid_register_hid (&ps_hid);
+ 
+   hid_eps_init ();
