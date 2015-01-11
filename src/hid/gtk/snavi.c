@@ -12,6 +12,7 @@
  *
  */
 
+#if 0
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -21,9 +22,11 @@
 
 #include <linux/types.h>
 #include <linux/input.h>
+#endif
 
 #include <glib.h>
 
+#if 0
 #define test_bit(bit, array)  (array [bit / 8] & (1 << (bit % 8)))
 
 static void (*update_pan_cb)(int, int, int, gpointer);
@@ -150,6 +153,7 @@ gboolean snavi_event (GIOChannel   *source,
 
   return TRUE;
 }
+#endif
 
 
 GIOChannel *
@@ -159,6 +163,9 @@ setup_snavi (void (*update_pan)(int, int, int, gpointer),
              void (*button)(int, int, gpointer),
              gpointer data)
 {
+  return NULL;
+
+#if 0
   GIOChannel *snavi;
 
   update_pan_cb = update_pan;
@@ -186,4 +193,5 @@ setup_snavi (void (*update_pan)(int, int, int, gpointer),
     }
 
   return snavi;
+#endif
 }
