@@ -1,5 +1,5 @@
 Bottom: 101e4b69ba33f067a70e8abeb51099791e3bcff1
-Top:    b37fadae5c520b86e9f0d24bbf4f3d5e231b87c2
+Top:    2be6a1cc26f35f08f25929cd86498f43b1eb3ed4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:52:24 +0000
 
@@ -45,7 +45,7 @@ index 50921e9..12959af 100644
  /* This is initially set to a "no-gui" gui, and later reset by
     main. hid_expose_callback also temporarily set it for drawing. */
 diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
-index dd53f94..ea2ff0d 100644
+index dd53f94..20a27d7 100644
 --- a/src/hid/common/extents.c
 +++ b/src/hid/common/extents.c
 @@ -227,7 +227,7 @@ hid_get_extents (void *item)
@@ -53,7 +53,7 @@ index dd53f94..ea2ff0d 100644
    region.X2 = COORD_MAX;
    region.Y2 = COORD_MAX;
 -  hid_expose_callback (&extents_hid, &region, item);
-+  hid_expose_callback (&extents_hid, &extents_graphcis, &region, item);
++  hid_expose_callback (&extents_hid, &extents_graphics, &region, item);
  
    return &box;
  }
