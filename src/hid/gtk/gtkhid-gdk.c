@@ -816,6 +816,9 @@ redraw_region (GdkRectangle *rect)
   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
 
+#warning NULL gc
+//  common_set_clip_box (NULL, &region);
+
   eleft = Vx (0);
   eright = Vx (PCB->MaxWidth);
   etop = Vy (0);
@@ -860,7 +863,7 @@ redraw_region (GdkRectangle *rect)
 
   ghid_draw_bg_image();
 
-  hid_expose_callback (&ghid_graphics, &region, 0);
+  hid_expose_callback (&ghid_graphics, 0);
   ghid_draw_grid ();
 
   /* In some cases we are called with the crosshair still off */
@@ -1238,7 +1241,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                       0, 0, allocation.width, allocation.height);
 
   /* call the drawing routine */
-  hid_expose_callback (&ghid_graphics, NULL, pinout->element);
+  hid_expose_callback (&ghid_graphics, pinout->element);
 
   gport->drawable = save_drawable;
   gport->view = save_view;
@@ -1295,7 +1298,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
 
-  hid_expose_callback (&ghid_graphics, &region, NULL);
+  common_set_clip_box (&ghid_graphics, &region);
+  hid_expose_callback (&ghid_graphics, NULL);
 
   gport->drawable = save_drawable;
   gport->view = save_view;
@@ -1314,16 +1318,16 @@ ghid_request_debug_draw (void)
 }
 
 void
-ghid_flush_debug_draw (void)
+ghid_flush_debug_draw (hidGC gc)
 {
   ghid_screen_update ();
   gdk_flush ();
 }
 
 void
-ghid_finish_debug_draw (void)
+ghid_finish_debug_draw (hidGC gc)
 {
-  ghid_flush_debug_draw ();
+  ghid_flush_debug_draw (gc);
   /* No special tear down requirements
    */
 }
