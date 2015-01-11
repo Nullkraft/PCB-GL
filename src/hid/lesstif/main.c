@@ -4135,6 +4135,7 @@ hid_lesstif_init ()
 
   lesstif_graphics.klass = &lesstif_graphics_class;
   lesstif_graphics.poly_before = true;
+  lesstif_graphics.can_draw_in_mask_clear = true;
   common_nogui_graphics_init (&lesstif_graphics);
   common_draw_helpers_init (&lesstif_graphics);
 
