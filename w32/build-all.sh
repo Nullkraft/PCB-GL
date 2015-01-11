@@ -2,9 +2,6 @@ NEVERBUILD="
 "
 
 NOBUILD="
-"
-
-BUILD="
 jpeg
 zlib
 libpng
@@ -15,6 +12,10 @@ libiconv
 gettext
 glib
 atk
+"
+
+BUILD="
+freetype
 cairo
 pango
 gtk+
