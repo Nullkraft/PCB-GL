@@ -1,0 +1,443 @@
+Bottom: 1beca73ba39ecf309c42dfef0d128a820ff7ca32
+Top:    bff47258662ba6a0cc509dc73b05fced21e5c8e4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 18:22:56 +0000
+
+Refresh of tmp
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 5eaa3fc..5f76bd6 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -74,6 +74,7 @@ static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
+ 
+ static int doing_pinout = 0;
+ static bool doing_assy = false;
++static HID_DRAW *hid_draw = NULL;
+ 
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+@@ -176,10 +177,10 @@ _draw_pv_name (PinType *pv)
+   text.Y = box.Y1;
+   text.Direction = vert ? 1 : 0;
+ 
+-  if (gui->graphics->klass->gui)
++  if (hid_draw->klass->gui)
+     doing_pinout++;
+   hid_draw_pcb_text (Output.fgGC, &text, 0);
+-  if (gui->graphics->klass->gui)
++  if (hid_draw->klass->gui)
+     doing_pinout--;
+ }
+ 
+@@ -320,7 +321,7 @@ pad_callback (const BoxType * b, void *cl)
+ static void
+ draw_element_name (ElementType *element)
+ {
+-  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->graphics->klass->gui) ||
++  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && hid_draw->klass->gui) ||
+       TEST_FLAG (HIDENAMEFLAG, element))
+     return;
+   if (doing_pinout || doing_assy)
+@@ -566,7 +567,7 @@ DrawEverything (const BoxType *drawn_area)
+    * first draw all 'invisible' stuff
+    */
+   if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
+-      && gui->graphics->set_layer ("invisible", SL (INVISIBLE, 0), 0))
++      && hid_draw->set_layer ("invisible", SL (INVISIBLE, 0), 0))
+     {
+       side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
+       if (PCB->ElementOn)
+@@ -576,7 +577,7 @@ DrawEverything (const BoxType *drawn_area)
+ 	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
+ 	}
+       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+-      gui->graphics->end_layer ();
++      hid_draw->end_layer ();
+     }
+ 
+   /* draw all layers in layerstack order */
+@@ -591,11 +592,11 @@ DrawEverything (const BoxType *drawn_area)
+         }
+     }
+ 
+-  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->graphics->klass->gui)
++  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && hid_draw->klass->gui)
+     return;
+ 
+   /* Draw pins, pads, vias below silk */
+-  if (gui->graphics->klass->gui)
++  if (hid_draw->klass->gui)
+     DrawPPV (SWAP_IDENT ? bottom_group : top_group, drawn_area);
+   else
+     {
+@@ -639,7 +640,7 @@ DrawEverything (const BoxType *drawn_area)
+       gui->graphics->end_layer ();
+     }
+ 
+-  if (gui->graphics->klass->gui)
++  if (hid_draw->klass->gui)
+     {
+       /* Draw element Marks */
+       if (PCB->PinOn)
+@@ -740,7 +741,7 @@ DrawPPV (int group, const BoxType *drawn_area)
+   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
+   int side;
+ 
+-  if (PCB->PinOn || !gui->graphics->klass->gui)
++  if (PCB->PinOn || !hid_draw->klass->gui)
+     {
+       /* draw element pins */
+       r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+@@ -760,7 +761,7 @@ DrawPPV (int group, const BoxType *drawn_area)
+     }
+ 
+   /* draw vias */
+-  if (PCB->ViaOn || !gui->graphics->klass->gui)
++  if (PCB->ViaOn || !hid_draw->klass->gui)
+     {
+       r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+       r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+@@ -822,9 +823,9 @@ DrawSilk (int side, const BoxType * drawn_area)
+ #endif
+ 
+ #if 0
+-  if (gui->graphics->poly_before)
++  if (hid_draw->poly_before)
+     {
+-      hid_draw_use_mask (gui->graphics, HID_MASK_BEFORE);
++      hid_draw_use_mask (hid_draw, HID_MASK_BEFORE);
+ #endif
+       DrawLayer (LAYER_PTR (max_copper_layer + side), drawn_area);
+       /* draw package */
+@@ -833,20 +834,20 @@ DrawSilk (int side, const BoxType * drawn_area)
+ #if 0
+     }
+ 
+-  hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
++  hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
+   r_search (PCB->Data->pin_tree, drawn_area, NULL, clearPin_callback, NULL);
+   r_search (PCB->Data->via_tree, drawn_area, NULL, clearPin_callback, NULL);
+   r_search (PCB->Data->pad_tree, drawn_area, NULL, clearPad_callback, &side);
+ 
+-  if (gui->graphics->poly_after)
++  if (hid_draw->poly_after)
+     {
+-      hid_draw_use_mask (gui->graphics, HID_MASK_AFTER);
++      hid_draw_use_mask (hid_draw, HID_MASK_AFTER);
+       DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
+       /* draw package */
+       r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
+       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
+     }
+-  hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
++  hid_draw_use_mask (hid_draw, HID_MASK_OFF);
+ #endif
+ }
+ 
+@@ -855,11 +856,11 @@ static void
+ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
+ {
+   /* Skip the mask drawing if the GUI doesn't want this type */
+-  if ((mask_type == HID_MASK_BEFORE && !gui->graphics->poly_before) ||
+-      (mask_type == HID_MASK_AFTER  && !gui->graphics->poly_after))
++  if ((mask_type == HID_MASK_BEFORE && !hid_draw->poly_before) ||
++      (mask_type == HID_MASK_AFTER  && !hid_draw->poly_after))
+     return;
+ 
+-  hid_draw_use_mask (gui->graphics, mask_type);
++  hid_draw_use_mask (hid_draw, mask_type);
+   hid_draw_set_color (Output.fgGC, PCB->MaskColor);
+   if (drawn_area == NULL)
+     hid_draw_fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+@@ -881,7 +882,7 @@ DrawMask (int side, const BoxType *screen)
+   else
+     {
+       DrawMaskBoardArea (HID_MASK_BEFORE, screen);
+-      hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
++      hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
+     }
+ 
+   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
+@@ -893,7 +894,7 @@ DrawMask (int side, const BoxType *screen)
+   else
+     {
+       DrawMaskBoardArea (HID_MASK_AFTER, screen);
+-      hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
++      hid_draw_use_mask (hid_draw, HID_MASK_OFF);
+     }
+ }
+ 
+@@ -925,13 +926,13 @@ DrawRats (const BoxType *drawn_area)
+    * XXX gtk only allows negative drawing.
+    * XXX using the mask here is to get rat transparency
+    */
+-  int can_mask = strcmp(gui->name, "lesstif") == 0;
++  int can_mask = strcmp(hid->name, "lesstif") == 0;
+ 
+   if (can_mask)
+-    hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
++    hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
+   r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
+   if (can_mask)
+-    hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
++    hid_draw_use_mask (hid_draw, HID_MASK_OFF);
+ }
+ 
+ static int
+@@ -974,7 +975,7 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
+   /* draw the layer text on screen */
+   r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
+ 
+-  /* We should check for gui->graphics->klass->gui here, but it's kinda cool seeing the
++  /* We should check for hid_draw->klass->gui here, but it's kinda cool seeing the
+      auto-outline magically disappear when you first add something to
+      the "outline" layer.  */
+   if (IsLayerEmpty (Layer)
+@@ -1013,7 +1014,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+   if (n_entries > 1)
+     rv = 1;
+ 
+-  if (rv && !gui->graphics->klass->gui)
++  if (rv && !hid_draw->klass->gui)
+     DrawPPV (group, drawn_area);
+ }
+ 
+@@ -1533,14 +1534,12 @@ draw_element (ElementType *element)
+  */
+ 
+ void
+-hid_expose_callback (HID * hid, BoxType * region, void *item)
++hid_expose_callback (HID_DRAW *expose_hid_draw, BoxType *region, void *item)
+ {
+-  HID *old_gui = gui;
+-
+-  gui = hid;
+-  Output.fgGC = hid_draw_make_gc (hid->graphics);
+-  Output.bgGC = hid_draw_make_gc (hid->graphics);
+-  Output.pmGC = hid_draw_make_gc (hid->graphics);
++  hid_draw = expose_hid_draw;
++  Output.fgGC = hid_draw_make_gc (hid_draw);
++  Output.bgGC = hid_draw_make_gc (hid_draw);
++  Output.pmGC = hid_draw_make_gc (hid_draw);
+ 
+   hid_draw_set_color (Output.pmGC, "erase");
+   hid_draw_set_color (Output.bgGC, "drill");
+@@ -1557,5 +1556,5 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
+   hid_draw_destroy_gc (Output.fgGC);
+   hid_draw_destroy_gc (Output.bgGC);
+   hid_draw_destroy_gc (Output.pmGC);
+-  gui = old_gui;
++  hid_draw = NULL;
+ }
+diff --git a/src/hid.h b/src/hid.h
+index 7d5bdc2..24921f9 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -531,7 +531,7 @@ typedef enum
+    Do *not* assume that the hid that is passed is the GUI hid.  This
+    callback is also used for printing and exporting. */
+   struct BoxType;
+-  void hid_expose_callback (HID * hid_, struct BoxType *region_, void *item_);
++  void hid_expose_callback (HID_DRAW *hid_draw, struct BoxType *region_, void *item_);
+ 
+ /* This is initially set to a "no-gui" gui, and later reset by
+    main. hid_expose_callback also temporarily set it for drawing. */
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index dd53f94..d652c1c 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -227,7 +227,7 @@ hid_get_extents (void *item)
+   region.Y1 = -COORD_MAX - 1;
+   region.X2 = COORD_MAX;
+   region.Y2 = COORD_MAX;
+-  hid_expose_callback (&extents_hid, &region, item);
++  hid_expose_callback (&extents_graphics, &region, item);
+ 
+   return &box;
+ }
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 1daadfd..d53c491 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -470,7 +470,7 @@ gcode_start_png_export ()
+   linewidth = -1;
+   lastbrush = (gdImagePtr)((void *) -1);
+ 
+-  hid_expose_callback (&gcode_hid, &region, 0);
++  hid_expose_callback (&gcode_graphics, &region, 0);
+ }
+ 
+ static FILE *
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 6185304..9e6209b 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -683,11 +683,11 @@ gerber_do_export (HID_Attr_Val * options)
+   lastgroup = -1;
+   layer_list_idx = 0;
+   finding_apertures = 1;
+-  hid_expose_callback (&gerber_hid, &region, 0);
++  hid_expose_callback (&gerber_graphics, &region, 0);
+ 
+   layer_list_idx = 0;
+   finding_apertures = 0;
+-  hid_expose_callback (&gerber_hid, &region, 0);
++  hid_expose_callback (&gerber_graphics, &region, 0);
+ 
+   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
+ 
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index ff31cbe..705b45b 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -801,7 +801,7 @@ redraw_region (GdkRectangle *rect)
+ 
+   ghid_draw_bg_image();
+ 
+-  hid_expose_callback (&ghid_hid, &region, 0);
++  hid_expose_callback (&ghid_graphics, &region, 0);
+   ghid_draw_grid ();
+ 
+   /* In some cases we are called with the crosshair still off */
+@@ -1179,7 +1179,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+                       0, 0, allocation.width, allocation.height);
+ 
+   /* call the drawing routine */
+-  hid_expose_callback (&ghid_hid, NULL, pinout->element);
++  hid_expose_callback (&ghid_graphics, NULL, pinout->element);
+ 
+   gport->drawable = save_drawable;
+   gport->view = save_view;
+@@ -1236,7 +1236,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+ 
+-  hid_expose_callback (&ghid_hid, &region, NULL);
++  hid_expose_callback (&ghid_graphics, &region, NULL);
+ 
+   gport->drawable = save_drawable;
+   gport->view = save_view;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 1dc527d..dcd78a1 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1039,7 +1039,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   ghid_draw_bg_image ();
+ 
+   ghid_invalidate_current_gc ();
+-  hid_expose_callback (&ghid_hid, &region, 0);
++  hid_expose_callback (&ghid_graphics, &region, 0);
+   hidgl_flush_triangles (priv->hidgl);
+ 
+   ghid_draw_grid (priv->crosshair_gc, &region);
+@@ -1193,7 +1193,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+                 gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
+                                     -gport->view.y0, 0);
+ 
+-  hid_expose_callback (&ghid_hid, NULL, pinout->element);
++  hid_expose_callback (&ghid_graphics, NULL, pinout->element);
+   hidgl_flush_triangles (priv->hidgl);
+   glPopMatrix ();
+ 
+@@ -1307,7 +1307,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+ 
+-  hid_expose_callback (&ghid_hid, &region, NULL);
++  hid_expose_callback (&ghid_graphics, &region, NULL);
+   hidgl_flush_triangles (priv->hidgl);
+   glPopMatrix ();
+ 
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 1682ead..1a8d9f1 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -831,7 +831,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
+   do
+     {
+       XFillRectangle (display, pixmap, bg_gc, 0, 0, view_width, view_height);
+-      hid_expose_callback (&lesstif_hid, &region, 0);
++      hid_expose_callback (&lesstif_graphics, &region, 0);
+       XSync (display, 0);
+       time (&end);
+       i++;
+@@ -2579,7 +2579,7 @@ idle_proc (XtPointer dummy)
+ 	    }
+ 	}
+       DrawBackgroundImage();
+-      hid_expose_callback (&lesstif_hid, &region, 0);
++      hid_expose_callback (&lesstif_graphics, &region, 0);
+       draw_grid ();
+       lesstif_use_mask (HID_MASK_OFF);
+       show_crosshair (0); /* To keep the drawn / not drawn info correct */
+@@ -3803,7 +3803,7 @@ pinout_callback (Widget da, PinoutData * pd,
+   region.Y2 = PCB->MaxHeight;
+ 
+   XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);
+-  hid_expose_callback (&lesstif_hid, &region, pd->item);
++  hid_expose_callback (&lesstif_graphics, &region, pd->item);
+ 
+   pinout = 0;
+   view_left_x = save_vx;
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 481d7c2..b0f7aff 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -649,7 +649,7 @@ nelma_start_png_export()
+ 	linewidth = -1;
+ 	lastbrush = (gdImagePtr)((void *) -1);
+ 
+-	hid_expose_callback(&nelma_hid, &region, 0);
++	hid_expose_callback(&nelma_graphics, &region, 0);
+ }
+ 
+ static void 
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 8e649c8..8995153 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -655,7 +655,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+ 	}
+     }
+ 
+-  hid_expose_callback (&png_hid, bounds, 0);
++  hid_expose_callback (&png_graphics, bounds, 0);
+ 
+   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
+   PCB->Flags = save_flags;
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 2420092..fc95206 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -303,7 +303,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   fprintf (f,
+ 	   "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
+ 
+-  hid_expose_callback (&eps_hid, bounds, 0);
++  hid_expose_callback (&eps_graphics, bounds, 0);
+ 
+   fprintf (f, "showpage\n");
+ 
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 5ceb757..cf41508 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -693,13 +693,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+ 
+       global.doing_toc = 1;
+       global.pagecount = 1;  /* 'pagecount' is modified by hid_expose_callback() call */
+-      hid_expose_callback (&ps_hid, &global.region, 0);
++      hid_expose_callback (&ps_graphics, &global.region, 0);
+     }
+ 
+   global.pagecount = 1; /* Reset 'pagecount' if single file */
+   global.doing_toc = 0;
+   ps_set_layer (NULL, 0, -1);  /* reset static vars */
+-  hid_expose_callback (&ps_hid, &global.region, 0);
++  hid_expose_callback (&ps_graphics, &global.region, 0);
+ 
+   if (the_file)
+     fprintf (the_file, "showpage\n");
