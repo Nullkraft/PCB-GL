@@ -1,5 +1,5 @@
-Bottom: 60dc408382a6243fe14f013d43594d825df3bd11
-Top:    e4f9cd9076a979fd3c804ab674b26213ebca4f97
+Bottom: da6b8a7acd77e71f3eb89c9c454e61e43d2bf4f1
+Top:    199df8feb259975a62ba52a35046921a5387954a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 19:57:24 +0000
 
@@ -122,10 +122,10 @@ index a5a49ab..e0688ee 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 99b25af..c5d4622 100644
+index 7d662c2..02de97b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1650,7 +1650,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1651,7 +1651,7 @@ ghid_draw_everything (BoxType *drawn_area)
  
    if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
        hid_draw_set_layer (&ghid_graphics, "invisible", SL (INVISIBLE, 0), 0)) {
@@ -134,7 +134,7 @@ index 99b25af..c5d4622 100644
  
      if (global_view_2d)
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-@@ -1724,7 +1724,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1725,7 +1725,7 @@ ghid_draw_everything (BoxType *drawn_area)
  
    if (hid_draw_set_layer (&ghid_graphics, SWAP_IDENT ? "bottomsilk" : "topsilk",
                        SWAP_IDENT ? SL (SILK, BOTTOM) : SL (SILK, TOP), 0)) {
@@ -143,7 +143,7 @@ index 99b25af..c5d4622 100644
        hid_draw_end_layer (&ghid_graphics);
    }
  
-@@ -1734,7 +1734,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -1735,7 +1735,7 @@ ghid_draw_everything (BoxType *drawn_area)
  
    /* Draw rat lines on top */
    if (PCB->RatOn && hid_draw_set_layer (&ghid_graphics, "rats", SL (RATS, 0), 0)) {
