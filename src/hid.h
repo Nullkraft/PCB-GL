@@ -256,7 +256,7 @@ typedef enum
     /* If set, this is the GUI HID.  Exactly one of these three flags
        must be set; setting "gui" lets the expose callback optimize and
        coordinate itself.  */
-    char _gui:1;
+    char gui:1;
 
     /* If set, this is the printer-class HID.  The common part of PCB
        may use this to do command-line printing, without having

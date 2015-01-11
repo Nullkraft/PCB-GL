@@ -230,7 +230,7 @@ usage_hid (HID * h)
   int i, n_attributes = 0;
   UsageNotes *note;
 
-  if (h->_gui)
+  if (h->gui)
     {
       fprintf (stderr, "\n%s gui options:\n", h->name);
       attributes = h->get_export_options (&n_attributes);
@@ -263,7 +263,7 @@ usage (void)
 
   for (i = 0; hl[i]; i++)
     {
-      if (hl[i]->_gui)
+      if (hl[i]->gui)
 	n_gui++;
       if (hl[i]->printer)
 	n_printer++;
