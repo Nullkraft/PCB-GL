@@ -817,9 +817,6 @@ redraw_region (GdkRectangle *rect)
   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
 
-#warning NULL gc
-//  common_set_clip_box (NULL, &region);
-
   eleft = Vx (0);
   eright = Vx (PCB->MaxWidth);
   etop = Vy (0);
@@ -864,6 +861,7 @@ redraw_region (GdkRectangle *rect)
 
   ghid_draw_bg_image();
 
+  common_set_clip_box (&ghid_graphics, &region);
   hid_expose_callback (&ghid_graphics, 0);
   ghid_draw_grid ();
 
@@ -1120,13 +1118,12 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 
   ghid_graphics.klass = &ghid_graphics_class;
   ghid_graphics.poly_after = true;
+  common_nogui_graphics_init (&ghid_graphics);
   common_draw_helpers_init (&ghid_graphics);
 
   /* Init any GC's required */
   port->render_priv = g_new0 (render_priv, 1);
   port->render_priv->crosshair_gc = hid_draw_make_gc (&ghid_graphics);
-
-  ghid_graphics .
 }
 
 void
