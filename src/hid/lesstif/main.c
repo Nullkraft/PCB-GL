@@ -3000,7 +3000,7 @@ lesstif_notify_mark_change (bool changes_complete)
 }
 
 static int
-lesstif_set_layer (const char *name, int group, int empty)
+lesstif_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
   int idx = group;
   if (idx >= 0 && idx < max_group)

@@ -33,7 +33,6 @@
 static HID_Attribute * eps_get_export_options (int *n);
 static void eps_do_export (HID_Attr_Val * options);
 static void eps_parse_arguments (int *argc, char ***argv);
-static int eps_set_layer (const char *name, int group, int empty);
 static hidGC eps_make_gc (void);
 static void eps_destroy_gc (hidGC gc);
 static void eps_set_color (hidGC gc, const char *name);
@@ -363,7 +362,7 @@ static int is_paste;
 static int is_drill;
 
 static int
-eps_set_layer (const char *name, int group, int empty)
+eps_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
   int idx = (group >= 0
 	     && group <

@@ -20,10 +20,10 @@ typedef struct hid_draw_class_st
      layer groups, you may pass NULL for name to have a name fetched
      from the PCB struct.  The EMPTY argument is a hint - if set, the
      layer is empty, if zero it may be non-empty.  */
-  int (*set_layer) (const char *name_, int group_, int _empty);
+  int (*set_layer) (HID_DRAW *hid_draw, const char *name_, int group_, int _empty);
 
   /* Tell the GUI the layer last selected has been finished with */
-  void (*end_layer) (void);
+  void (*end_layer) (HID_DRAW *hid_draw);
 
   /* Drawing Functions.  Coordinates and distances are ALWAYS in PCB's
      default coordinates (1 nm at the time this comment was written).
@@ -129,13 +129,13 @@ hid_draw_can_draw_in_mask_clear (HID_DRAW *hid_draw)
 inline int
 hid_draw_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
-  return hid_draw->klass->set_layer (name, group, empty);
+  return hid_draw->klass->set_layer (hid_draw, name, group, empty);
 }
 
 inline void
 hid_draw_end_layer (HID_DRAW *hid_draw)
 {
-  hid_draw->klass->end_layer ();
+  hid_draw->klass->end_layer (hid_draw);
 }
 
 inline hidGC
