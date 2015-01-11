@@ -240,11 +240,11 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
       print_layer[i] = 1;
 
   if (fast_erase) {
-    eps_hid.poly_before = 1;
-    eps_hid.poly_after = 0;
+    eps_graphics.poly_before = true;
+    eps_graphics.poly_after = false;
   } else {
-    eps_hid.poly_before = 0;
-    eps_hid.poly_after = 1;
+    eps_graphics.poly_before = false;
+    eps_graphics.poly_after = true;
   }
 
   memcpy (saved_layer_stack, LayerStack, sizeof (LayerStack));
@@ -686,7 +686,6 @@ hid_eps_init ()
   eps_hid.name                = "eps";
   eps_hid.description         = "Encapsulated Postscript";
   eps_hid.exporter            = 1;
-  eps_hid.poly_after          = 1;
 
   eps_hid.get_export_options  = eps_get_export_options;
   eps_hid.do_export           = eps_do_export;
@@ -713,7 +712,8 @@ hid_eps_init ()
   eps_graphics_class.fill_polygon   = eps_fill_polygon;
   eps_graphics_class.fill_rect      = eps_fill_rect;
 
-  eps_graphics.klass          = &eps_graphics_class;
+  eps_graphics.klass = &eps_graphics_class;
+  eps_graphics.poly_after = true;
   common_draw_helpers_init (&eps_graphics);
 
   hid_register_hid (&eps_hid);
