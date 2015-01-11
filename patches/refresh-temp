@@ -1,0 +1,1030 @@
+Bottom: 1b8319b68116f04133b63b912af3519f2e066eb8
+Top:    eb27fdb311d8462bd927def23b67f085c6b7454b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 17:22:26 +0000
+
+Refresh of make-hid_draw-an-instance-of
+
+---
+
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index e807d9c..27bcc71 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -323,15 +323,16 @@ batch_show_item (void *item)
+ 
+ static HID batch_hid;
+ static HID_DRAW batch_graphics;
++static HID_DRAW_CLASS batch_graphics_class;
+ 
+ void
+ hid_batch_init ()
+ {
+   memset (&batch_hid, 0, sizeof (HID));
+   memset (&batch_graphics, 0, sizeof (HID_DRAW));
++  memset (&batch_graphics_ckass, 0, sizeof (HID_DRAW_CLASS));
+ 
+   common_nogui_init (&batch_hid);
+-  common_draw_helpers_init (&batch_graphics);
+ 
+   batch_hid.struct_size           = sizeof (HID);
+   batch_hid.name                  = "batch";
+@@ -361,19 +362,24 @@ hid_batch_init ()
+ 
+   batch_hid.graphics              = &batch_graphics;
+ 
+-  batch_graphics.make_gc          = batch_make_gc;
+-  batch_graphics.destroy_gc       = batch_destroy_gc;
+-  batch_graphics.use_mask         = batch_use_mask;
+-  batch_graphics.set_color        = batch_set_color;
+-  batch_graphics.set_line_cap     = batch_set_line_cap;
+-  batch_graphics.set_line_width   = batch_set_line_width;
+-  batch_graphics.set_draw_xor     = batch_set_draw_xor;
+-  batch_graphics.draw_line        = batch_draw_line;
+-  batch_graphics.draw_arc         = batch_draw_arc;
+-  batch_graphics.draw_rect        = batch_draw_rect;
+-  batch_graphics.fill_circle      = batch_fill_circle;
+-  batch_graphics.fill_polygon     = batch_fill_polygon;
+-  batch_graphics.fill_rect        = batch_fill_rect;
++  common_draw_helpers_class_init (&batch_graphics_class);
++
++  batch_graphics_class.make_gc        = batch_make_gc;
++  batch_graphics_class.destroy_gc     = batch_destroy_gc;
++  batch_graphics_class.use_mask       = batch_use_mask;
++  batch_graphics_class.set_color      = batch_set_color;
++  batch_graphics_class.set_line_cap   = batch_set_line_cap;
++  batch_graphics_class.set_line_width = batch_set_line_width;
++  batch_graphics_class.set_draw_xor   = batch_set_draw_xor;
++  batch_graphics_class.draw_line      = batch_draw_line;
++  batch_graphics_class.draw_arc       = batch_draw_arc;
++  batch_graphics_class.draw_rect      = batch_draw_rect;
++  batch_graphics_class.fill_circle    = batch_fill_circle;
++  batch_graphics_class.fill_polygon   = batch_fill_polygon;
++  batch_graphics_class.fill_rect      = batch_fill_rect;
++
++  batch_graphics.klass = &batch_graphics_class;
++  common_draw_helpers_init (&batch_graphics);
+ 
+   hid_register_hid (&batch_hid);
+ #include "batch_lists.h"
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 3ada35b..dfa9db4 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -624,17 +624,22 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+ }
+ 
+ void
++common_draw_helpers_class_init (HID_DRAW_CLASS *klass)
++{
++  klass->draw_pcb_line        = common_draw_pcb_line;
++  klass->draw_pcb_arc         = common_draw_pcb_arc;
++  klass->draw_pcb_text        = common_draw_pcb_text;
++  klass->draw_pcb_polygon     = common_fill_pcb_polygon; /* Default is the non-GUI case */
++
++  klass->fill_pcb_polygon     = common_fill_pcb_polygon;
++  klass->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
++  klass->fill_pcb_pad         = common_fill_pcb_pad;
++  klass->thindraw_pcb_pad     = common_thindraw_pcb_pad;
++  klass->fill_pcb_pv          = common_fill_pcb_pv;
++  klass->thindraw_pcb_pv      = common_thindraw_pcb_pv;
++}
++
++void
+ common_draw_helpers_init (HID_DRAW *graphics)
+ {
+-  graphics->draw_pcb_line        = common_draw_pcb_line;
+-  graphics->draw_pcb_arc         = common_draw_pcb_arc;
+-  graphics->draw_pcb_text        = common_draw_pcb_text;
+-  graphics->draw_pcb_polygon     = common_fill_pcb_polygon; /* Default is the non-GUI case */
+-
+-  graphics->fill_pcb_polygon     = common_fill_pcb_polygon;
+-  graphics->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
+-  graphics->fill_pcb_pad         = common_fill_pcb_pad;
+-  graphics->thindraw_pcb_pad     = common_thindraw_pcb_pad;
+-  graphics->fill_pcb_pv          = common_fill_pcb_pv;
+-  graphics->thindraw_pcb_pv      = common_thindraw_pcb_pv;
+ }
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index fb5730c..5992887 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -5,4 +5,5 @@ void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+ void common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
++void common_draw_helpers_class_init (HID_DRAW_CLASS *klass);
+ void common_draw_helpers_init (HID_DRAW *graphics);
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index fa608fc..cf2de59 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -164,6 +164,7 @@ extents_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+ 
+ static HID extents_hid;
+ static HID_DRAW extents_graphics;
++static HID_DRAW_CLASS extents_graphics_class;
+ 
+ void
+ hid_extents_init (void)
+@@ -175,8 +176,7 @@ hid_extents_init (void)
+ 
+   memset (&extents_hid, 0, sizeof (HID));
+   memset (&extents_graphics, 0, sizeof (HID_DRAW));
+-
+-  common_draw_helpers_init (&extents_graphics);
++  memset (&extents_graphics_class, 0, sizeof (HID_DRAW_CLASS));
+ 
+   extents_hid.struct_size         = sizeof (HID);
+   extents_hid.name                = "extents-extents";
+@@ -187,19 +187,24 @@ hid_extents_init (void)
+ 
+   extents_hid.graphics            = &extents_graphics;
+ 
+-  extents_graphics.make_gc        = extents_make_gc;
+-  extents_graphics.destroy_gc     = extents_destroy_gc;
+-  extents_graphics.use_mask       = extents_use_mask;
+-  extents_graphics.set_color      = extents_set_color;
+-  extents_graphics.set_line_cap   = extents_set_line_cap;
+-  extents_graphics.set_line_width = extents_set_line_width;
+-  extents_graphics.set_draw_xor   = extents_set_draw_xor;
+-  extents_graphics.draw_line      = extents_draw_line;
+-  extents_graphics.draw_arc       = extents_draw_arc;
+-  extents_graphics.draw_rect      = extents_draw_rect;
+-  extents_graphics.fill_circle    = extents_fill_circle;
+-  extents_graphics.fill_polygon   = extents_fill_polygon;
+-  extents_graphics.fill_rect      = extents_fill_rect;
++  common_draw_helpers_class_init (&extents_graphics_class);
++
++  extents_graphics_class.make_gc        = extents_make_gc;
++  extents_graphics_class.destroy_gc     = extents_destroy_gc;
++  extents_graphics_class.use_mask       = extents_use_mask;
++  extents_graphics_class.set_color      = extents_set_color;
++  extents_graphics_class.set_line_cap   = extents_set_line_cap;
++  extents_graphics_class.set_line_width = extents_set_line_width;
++  extents_graphics_class.set_draw_xor   = extents_set_draw_xor;
++  extents_graphics_class.draw_line      = extents_draw_line;
++  extents_graphics_class.draw_arc       = extents_draw_arc;
++  extents_graphics_class.draw_rect      = extents_draw_rect;
++  extents_graphics_class.fill_circle    = extents_fill_circle;
++  extents_graphics_class.fill_polygon   = extents_fill_polygon;
++  extents_graphics_class.fill_rect      = extents_fill_rect;
++
++  extents_graphics.klass = &extents_graphics_class;
++  common_draw_helpers_init (&extents_graphics);
+ 
+   initialised = true;
+ }
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index ed45bad..64dd8d5 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -478,39 +478,46 @@ common_nogui_init (HID *hid)
+   hid->finish_debug_draw =    nogui_finish_debug_draw;
+ }
+ 
+-void
++static void
++common_nogui_graphics_class_init (HID_DRAW_CLASS *klass)
++{
++  klass->make_gc =         nogui_make_gc;
++  klass->destroy_gc =      nogui_destroy_gc;
++  klass->use_mask =        nogui_use_mask;
++  klass->set_color =       nogui_set_color;
++  klass->set_line_cap =    nogui_set_line_cap;
++  klass->set_line_width =  nogui_set_line_width;
++  klass->set_draw_xor =    nogui_set_draw_xor;
++  klass->set_draw_faded =  nogui_set_draw_faded;
++  klass->draw_line =       nogui_draw_line;
++  klass->draw_arc =        nogui_draw_arc;
++  klass->draw_rect =       nogui_draw_rect;
++  klass->fill_circle =     nogui_fill_circle;
++  klass->fill_polygon =    nogui_fill_polygon;
++  klass->fill_rect =       nogui_fill_rect;
++
++  klass->draw_pcb_polygon = nogui_draw_pcb_polygon;
++  klass->fill_pcb_pad =     nogui_fill_pcb_pad;
++  klass->thindraw_pcb_pad = nogui_thindraw_pcb_pad;
++  klass->fill_pcb_pv =      nogui_fill_pcb_pv;
++  klass->thindraw_pcb_pv =  nogui_thindraw_pcb_pv;
++}
++
++static void
+ common_nogui_graphics_init (HID_DRAW *graphics)
+ {
+-  graphics->make_gc =         nogui_make_gc;
+-  graphics->destroy_gc =      nogui_destroy_gc;
+-  graphics->use_mask =        nogui_use_mask;
+-  graphics->set_color =       nogui_set_color;
+-  graphics->set_line_cap =    nogui_set_line_cap;
+-  graphics->set_line_width =  nogui_set_line_width;
+-  graphics->set_draw_xor =    nogui_set_draw_xor;
+-  graphics->set_draw_faded =  nogui_set_draw_faded;
+-  graphics->draw_line =       nogui_draw_line;
+-  graphics->draw_arc =        nogui_draw_arc;
+-  graphics->draw_rect =       nogui_draw_rect;
+-  graphics->fill_circle =     nogui_fill_circle;
+-  graphics->fill_polygon =    nogui_fill_polygon;
+-  graphics->fill_rect =       nogui_fill_rect;
+-
+-  graphics->draw_pcb_polygon = nogui_draw_pcb_polygon;
+-  graphics->fill_pcb_pad =     nogui_fill_pcb_pad;
+-  graphics->thindraw_pcb_pad = nogui_thindraw_pcb_pad;
+-  graphics->fill_pcb_pv =      nogui_fill_pcb_pv;
+-  graphics->thindraw_pcb_pv =  nogui_thindraw_pcb_pv;
+ }
+ 
+ static HID nogui_hid;
+ static HID_DRAW nogui_graphics;
++static HID_DRAW_CLASS nogui_graphics_class;
+ 
+ HID *
+ hid_nogui_get_hid (void)
+ {
+   memset (&nogui_hid, 0, sizeof (HID));
+   memset (&nogui_graphics, 0, sizeof (HID_DRAW));
++  memset (&nogui_graphics_class, 0, sizeof (HID_DRAW_CLASS));
+ 
+   nogui_hid.struct_size = sizeof (HID);
+   nogui_hid.name        = "nogui";
+@@ -518,7 +525,10 @@ hid_nogui_get_hid (void)
+                           "Does nothing.";
+   nogui_hid.graphics    = &nogui_graphics;
+ 
++  nogui_graphics.klass  = &nogui_graphics_class;
++
+   common_nogui_init (&nogui_hid);
++  common_nogui_graphics_class_init (&nogui_graphics_class);
+   common_nogui_graphics_init (&nogui_graphics);
+ 
+   return &nogui_hid;
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 99b8653..9ba6af1 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -78,6 +78,7 @@
+ 
+ static HID gcode_hid;
+ static HID_DRAW gcode_graphics;
++static HID_DRAW_CLASS gcode_graphics_class;
+ 
+ struct color_struct
+ {
+@@ -1604,9 +1605,9 @@ hid_gcode_init ()
+ {
+   memset (&gcode_hid, 0, sizeof (HID));
+   memset (&gcode_graphics, 0, sizeof (HID_DRAW));
++  memset (&gcode_graphics_class, 0, sizeof (HID_DRAW_CLASS));
+ 
+   common_nogui_init (&gcode_hid);
+-  common_draw_helpers_init (&gcode_graphics);
+ 
+   gcode_hid.struct_size         = sizeof (HID);
+   gcode_hid.name                = "gcode";
+@@ -1623,20 +1624,26 @@ hid_gcode_init ()
+ 
+   gcode_hid.graphics            = &gcode_graphics;
+ 
+-  gcode_graphics.make_gc        = gcode_make_gc;
+-  gcode_graphics.destroy_gc     = gcode_destroy_gc;
+-  gcode_graphics.use_mask       = gcode_use_mask;
+-  gcode_graphics.set_color      = gcode_set_color;
+-  gcode_graphics.set_line_cap   = gcode_set_line_cap;
+-  gcode_graphics.set_line_width = gcode_set_line_width;
+-  gcode_graphics.set_draw_xor   = gcode_set_draw_xor;
+-  gcode_graphics.set_draw_faded = gcode_set_draw_faded;
+-  gcode_graphics.draw_line      = gcode_draw_line;
+-  gcode_graphics.draw_arc       = gcode_draw_arc;
+-  gcode_graphics.draw_rect      = gcode_draw_rect;
+-  gcode_graphics.fill_circle    = gcode_fill_circle;
+-  gcode_graphics.fill_polygon   = gcode_fill_polygon;
+-  gcode_graphics.fill_rect      = gcode_fill_rect;
++  gcode_graphics.klass          = &gcode_graphics_class;
++
++  common_draw_helpers_class_init (&gcode_graphics_class);
++
++  gcode_graphics_class.make_gc        = gcode_make_gc;
++  gcode_graphics_class.destroy_gc     = gcode_destroy_gc;
++  gcode_graphics_class.use_mask       = gcode_use_mask;
++  gcode_graphics_class.set_color      = gcode_set_color;
++  gcode_graphics_class.set_line_cap   = gcode_set_line_cap;
++  gcode_graphics_class.set_line_width = gcode_set_line_width;
++  gcode_graphics_class.set_draw_xor   = gcode_set_draw_xor;
++  gcode_graphics_class.set_draw_faded = gcode_set_draw_faded;
++  gcode_graphics_class.draw_line      = gcode_draw_line;
++  gcode_graphics_class.draw_arc       = gcode_draw_arc;
++  gcode_graphics_class.draw_rect      = gcode_draw_rect;
++  gcode_graphics_class.fill_circle    = gcode_fill_circle;
++  gcode_graphics_class.fill_polygon   = gcode_fill_polygon;
++  gcode_graphics_class.fill_rect      = gcode_fill_rect;
++
++  common_draw_helpers_init (&gcode_graphics);
+ 
+   hid_register_hid (&gcode_hid);
+ 
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 153b2e4..6185304 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -292,6 +292,7 @@ setLayerApertureList (int layer_idx)
+ 
+ static HID gerber_hid;
+ static HID_DRAW gerber_graphics;
++static HID_DRAW_CLASS gerber_graphics_class;
+ 
+ typedef struct gerber_gc_struct
+ {
+@@ -1342,9 +1343,9 @@ hid_gerber_init ()
+ {
+   memset (&gerber_hid, 0, sizeof (gerber_hid));
+   memset (&gerber_graphics, 0, sizeof (gerber_graphics));
++  memset (&gerber_graphics_class, 0, sizeof (gerber_graphics_class));
+ 
+   common_nogui_init (&gerber_hid);
+-  common_draw_helpers_init (&gerber_graphics);
+ 
+   gerber_hid.struct_size         = sizeof (gerber_hid);
+   gerber_hid.name                = "gerber";
+@@ -1360,19 +1361,24 @@ hid_gerber_init ()
+ 
+   gerber_hid.graphics            = &gerber_graphics;
+ 
+-  gerber_graphics.make_gc        = gerber_make_gc;
+-  gerber_graphics.destroy_gc     = gerber_destroy_gc;
+-  gerber_graphics.use_mask       = gerber_use_mask;
+-  gerber_graphics.set_color      = gerber_set_color;
+-  gerber_graphics.set_line_cap   = gerber_set_line_cap;
+-  gerber_graphics.set_line_width = gerber_set_line_width;
+-  gerber_graphics.set_draw_xor   = gerber_set_draw_xor;
+-  gerber_graphics.draw_line      = gerber_draw_line;
+-  gerber_graphics.draw_arc       = gerber_draw_arc;
+-  gerber_graphics.draw_rect      = gerber_draw_rect;
+-  gerber_graphics.fill_circle    = gerber_fill_circle;
+-  gerber_graphics.fill_polygon   = gerber_fill_polygon;
+-  gerber_graphics.fill_rect      = gerber_fill_rect;
++  common_draw_helpers_class_init (&gerber_graphics_class);
++
++  gerber_graphics_class.make_gc        = gerber_make_gc;
++  gerber_graphics_class.destroy_gc     = gerber_destroy_gc;
++  gerber_graphics_class.use_mask       = gerber_use_mask;
++  gerber_graphics_class.set_color      = gerber_set_color;
++  gerber_graphics_class.set_line_cap   = gerber_set_line_cap;
++  gerber_graphics_class.set_line_width = gerber_set_line_width;
++  gerber_graphics_class.set_draw_xor   = gerber_set_draw_xor;
++  gerber_graphics_class.draw_line      = gerber_draw_line;
++  gerber_graphics_class.draw_arc       = gerber_draw_arc;
++  gerber_graphics_class.draw_rect      = gerber_draw_rect;
++  gerber_graphics_class.fill_circle    = gerber_fill_circle;
++  gerber_graphics_class.fill_polygon   = gerber_fill_polygon;
++  gerber_graphics_class.fill_rect      = gerber_fill_rect;
++
++  gerber_graphics.klass = &gerber_graphics_class;
++  common_draw_helpers_init (&gerber_graphics);
+ 
+   hid_register_hid (&gerber_hid);
+ }
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 3cd7e92..b5e4a00 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -35,6 +35,7 @@
+ 
+ extern HID ghid_hid;
+ extern HID_DRAW ghid_graphics;
++extern HID_DRAW_CLASS ghid_graphics_class;
+ 
+ static hidGC current_gc = NULL;
+ 
+@@ -803,8 +804,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ 
+   /* Setup HID function pointers specific to the GL renderer*/
+   ghid_hid.end_layer = ghid_end_layer;
+-  ghid_graphics.fill_pcb_polygon = ghid_fill_pcb_polygon;
+-  ghid_graphics.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
++  ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
++  ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+ }
+ 
+ void
+@@ -895,7 +896,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+      we can't use the hidgl polygon drawing routine */
+   /* TODO: We could use the GLU tessellator though */
+   if (hidgl_stencil_bits() == 0)
+-    ghid_graphics.fill_pcb_polygon = common_fill_pcb_polygon;
++    ghid_graphics_class.fill_pcb_polygon = common_fill_pcb_polygon;
+ 
+   glEnable (GL_BLEND);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index b41a356..56564fd 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2088,6 +2088,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
+ 
+ HID ghid_hid;
+ HID_DRAW ghid_graphics;
++struct hid_draw_class_st ghid_graphics_class;
+ 
+ void
+ hid_gtk_init ()
+@@ -2128,9 +2129,9 @@ hid_gtk_init ()
+ 
+   memset (&ghid_hid, 0, sizeof (HID));
+   memset (&ghid_graphics, 0, sizeof (HID_DRAW));
++  memset (&ghid_graphics_class, 0, sizeof (HID_DRAW_CLASS));
+ 
+   common_nogui_init (&ghid_hid);
+-  common_draw_helpers_init (&ghid_graphics);
+ 
+   ghid_hid.struct_size              = sizeof (HID);
+   ghid_hid.name                     = "gtk";
+@@ -2183,21 +2184,26 @@ hid_gtk_init ()
+ 
+   ghid_hid.graphics                 = &ghid_graphics;
+ 
+-  ghid_graphics.make_gc             = ghid_make_gc;
+-  ghid_graphics.destroy_gc          = ghid_destroy_gc;
+-  ghid_graphics.use_mask            = ghid_use_mask;
+-  ghid_graphics.set_color           = ghid_set_color;
+-  ghid_graphics.set_line_cap        = ghid_set_line_cap;
+-  ghid_graphics.set_line_width      = ghid_set_line_width;
+-  ghid_graphics.set_draw_xor        = ghid_set_draw_xor;
+-  ghid_graphics.draw_line           = ghid_draw_line;
+-  ghid_graphics.draw_arc            = ghid_draw_arc;
+-  ghid_graphics.draw_rect           = ghid_draw_rect;
+-  ghid_graphics.fill_circle         = ghid_fill_circle;
+-  ghid_graphics.fill_polygon        = ghid_fill_polygon;
+-  ghid_graphics.fill_rect           = ghid_fill_rect;
+-
+-  ghid_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
++  common_draw_helpers_class_init (&ghid_graphics_class);
++
++  ghid_graphics_class.make_gc        = ghid_make_gc;
++  ghid_graphics_class.destroy_gc     = ghid_destroy_gc;
++  ghid_graphics_class.use_mask       = ghid_use_mask;
++  ghid_graphics_class.set_color      = ghid_set_color;
++  ghid_graphics_class.set_line_cap   = ghid_set_line_cap;
++  ghid_graphics_class.set_line_width = ghid_set_line_width;
++  ghid_graphics_class.set_draw_xor   = ghid_set_draw_xor;
++  ghid_graphics_class.draw_line      = ghid_draw_line;
++  ghid_graphics_class.draw_arc       = ghid_draw_arc;
++  ghid_graphics_class.draw_rect      = ghid_draw_rect;
++  ghid_graphics_class.fill_circle    = ghid_fill_circle;
++  ghid_graphics_class.fill_polygon   = ghid_fill_polygon;
++  ghid_graphics_class.fill_rect      = ghid_fill_rect;
++
++  ghid_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
++
++  ghid_graphics.klass = &ghid_graphics_class;
++  common_draw_helpers_init (&ghid_graphics);
+ 
+   hid_register_hid (&ghid_hid);
+ #include "gtk_lists.h"
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index a5184a0..00c439c 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -60,6 +60,7 @@ typedef struct lesstif_gc_struct
+ 
+ static HID lesstif_hid;
+ static HID_DRAW lesstif_graphics;
++static HID_DRAW_CLASS lesstif_graphics_class;
+ 
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
+ 
+@@ -4063,9 +4064,9 @@ hid_lesstif_init ()
+ {
+   memset (&lesstif_hid, 0, sizeof (HID));
+   memset (&lesstif_graphics, 0, sizeof (HID_DRAW));
++  memset (&lesstif_graphics_class, 0, sizeof (HID_DRAW_CLASS));
+ 
+   common_nogui_init (&lesstif_hid);
+-  common_draw_helpers_init (&lesstif_graphics);
+ 
+   lesstif_hid.struct_size             = sizeof (HID);
+   lesstif_hid.name                    = "lesstif";
+@@ -4114,22 +4115,27 @@ hid_lesstif_init ()
+ 
+   lesstif_hid.graphics                = &lesstif_graphics;
+ 
+-  lesstif_graphics.make_gc             = lesstif_make_gc;
+-  lesstif_graphics.destroy_gc          = lesstif_destroy_gc;
+-  lesstif_graphics.use_mask            = lesstif_use_mask;
+-  lesstif_graphics.set_color           = lesstif_set_color;
+-  lesstif_graphics.set_line_cap        = lesstif_set_line_cap;
+-  lesstif_graphics.set_line_width      = lesstif_set_line_width;
+-  lesstif_graphics.set_draw_xor        = lesstif_set_draw_xor;
+-  lesstif_graphics.draw_line           = lesstif_draw_line;
+-  lesstif_graphics.draw_arc            = lesstif_draw_arc;
+-  lesstif_graphics.draw_rect           = lesstif_draw_rect;
+-  lesstif_graphics.fill_circle         = lesstif_fill_circle;
+-  lesstif_graphics.fill_polygon        = lesstif_fill_polygon;
+-  lesstif_graphics.fill_rect           = lesstif_fill_rect;
++  common_draw_helpers_class_init (&lesstif_graphics_class);
++
++  lesstif_graphics_class.make_gc        = lesstif_make_gc;
++  lesstif_graphics_class.destroy_gc     = lesstif_destroy_gc;
++  lesstif_graphics_class.use_mask       = lesstif_use_mask;
++  lesstif_graphics_class.set_color      = lesstif_set_color;
++  lesstif_graphics_class.set_line_cap   = lesstif_set_line_cap;
++  lesstif_graphics_class.set_line_width = lesstif_set_line_width;
++  lesstif_graphics_class.set_draw_xor   = lesstif_set_draw_xor;
++  lesstif_graphics_class.draw_line      = lesstif_draw_line;
++  lesstif_graphics_class.draw_arc       = lesstif_draw_arc;
++  lesstif_graphics_class.draw_rect      = lesstif_draw_rect;
++  lesstif_graphics_class.fill_circle    = lesstif_fill_circle;
++  lesstif_graphics_class.fill_polygon   = lesstif_fill_polygon;
++  lesstif_graphics_class.fill_rect      = lesstif_fill_rect;
+ 
+   lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
+ 
++  lesstif_graphics.klass = &lesstif_graphics_class;
++  common_draw_helpers_init (&lesstif_graphics);
++
+   hid_register_hid (&lesstif_hid);
+ #include "lesstif_lists.h"
+ }
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index 238cca1..05d5863 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -13,6 +13,7 @@
+ #include "misc.h"
+ 
+ #include "hid.h"
++#include "hid_draw.h"
+ #include "../hidint.h"
+ #include "../ps/ps.h"
+ #include "hid/common/hidnogui.h"
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index b11c415..df12c26 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -108,6 +108,7 @@ typedef struct nelma_gc_struct {
+ 
+ static HID nelma_hid;
+ static HID_DRAW nelma_graphics;
++static HID_DRAW_CLASS nelma_graphics_class;
+ 
+ static struct color_struct *black = NULL, *white = NULL;
+ static Coord    linewidth = -1;
+@@ -1061,9 +1062,9 @@ hid_nelma_init()
+ {
+   memset (&nelma_hid, 0, sizeof (HID));
+   memset (&nelma_graphics, 0, sizeof (HID_DRAW));
++  memset (&nelma_graphics_class, 0, sizeof (HID_DRAW_CLASS));
+ 
+   common_nogui_init (&nelma_hid);
+-  common_draw_helpers_init (&nelma_graphics);
+ 
+   nelma_hid.struct_size         = sizeof (HID);
+   nelma_hid.name                = "nelma";
+@@ -1080,20 +1081,25 @@ hid_nelma_init()
+ 
+   nelma_hid.graphics            = &nelma_graphics;
+ 
+-  nelma_graphics.make_gc        = nelma_make_gc;
+-  nelma_graphics.destroy_gc     = nelma_destroy_gc;
+-  nelma_graphics.use_mask       = nelma_use_mask;
+-  nelma_graphics.set_color      = nelma_set_color;
+-  nelma_graphics.set_line_cap   = nelma_set_line_cap;
+-  nelma_graphics.set_line_width = nelma_set_line_width;
+-  nelma_graphics.set_draw_xor   = nelma_set_draw_xor;
+-  nelma_graphics.set_draw_faded = nelma_set_draw_faded;
+-  nelma_graphics.draw_line      = nelma_draw_line;
+-  nelma_graphics.draw_arc       = nelma_draw_arc;
+-  nelma_graphics.draw_rect      = nelma_draw_rect;
+-  nelma_graphics.fill_circle    = nelma_fill_circle;
+-  nelma_graphics.fill_polygon   = nelma_fill_polygon;
+-  nelma_graphics.fill_rect      = nelma_fill_rect;
++  common_draw_helpers_class_init (&nelma_graphics_class);
++
++  nelma_graphics_class.make_gc        = nelma_make_gc;
++  nelma_graphics_class.destroy_gc     = nelma_destroy_gc;
++  nelma_graphics_class.use_mask       = nelma_use_mask;
++  nelma_graphics_class.set_color      = nelma_set_color;
++  nelma_graphics_class.set_line_cap   = nelma_set_line_cap;
++  nelma_graphics_class.set_line_width = nelma_set_line_width;
++  nelma_graphics_class.set_draw_xor   = nelma_set_draw_xor;
++  nelma_graphics_class.set_draw_faded = nelma_set_draw_faded;
++  nelma_graphics_class.draw_line      = nelma_draw_line;
++  nelma_graphics_class.draw_arc       = nelma_draw_arc;
++  nelma_graphics_class.draw_rect      = nelma_draw_rect;
++  nelma_graphics_class.fill_circle    = nelma_fill_circle;
++  nelma_graphics_class.fill_polygon   = nelma_fill_polygon;
++  nelma_graphics_class.fill_rect      = nelma_fill_rect;
++
++  nelma_graphics.klass          = &nelma_graphics_class;
++  common_draw_helpers_init (&nelma_graphics);
+ 
+   hid_register_hid (&nelma_hid);
+ 
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 2bdf931..0c189d3 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -60,6 +60,7 @@
+ 
+ static HID png_hid;
+ static HID_DRAW png_graphics;
++static HID_DRAW_CLASS png_graphics_class;
+ 
+ static void *color_cache = NULL;
+ static void *brush_cache = NULL;
+@@ -1836,9 +1837,9 @@ hid_png_init ()
+ {
+   memset (&png_hid, 0, sizeof (HID));
+   memset (&png_graphics, 0, sizeof (HID_DRAW));
++  memset (&png_graphics_class, 0, sizeof (HID_DRAW_CLASS));
+ 
+   common_nogui_init (&png_hid);
+-  common_draw_helpers_init (&png_graphics);
+ 
+   png_hid.struct_size = sizeof (HID);
+   png_hid.name        = "png";
+@@ -1855,19 +1856,24 @@ hid_png_init ()
+ 
+   png_hid.graphics            = &png_graphics;
+ 
+-  png_graphics.make_gc        = png_make_gc;
+-  png_graphics.destroy_gc     = png_destroy_gc;
+-  png_graphics.use_mask       = png_use_mask;
+-  png_graphics.set_color      = png_set_color;
+-  png_graphics.set_line_cap   = png_set_line_cap;
+-  png_graphics.set_line_width = png_set_line_width;
+-  png_graphics.set_draw_xor   = png_set_draw_xor;
+-  png_graphics.draw_line      = png_draw_line;
+-  png_graphics.draw_arc       = png_draw_arc;
+-  png_graphics.draw_rect      = png_draw_rect;
+-  png_graphics.fill_circle    = png_fill_circle;
+-  png_graphics.fill_polygon   = png_fill_polygon;
+-  png_graphics.fill_rect      = png_fill_rect;
++  common_draw_helpers_class_init (&png_graphics_class);
++
++  png_graphics_class.make_gc        = png_make_gc;
++  png_graphics_class.destroy_gc     = png_destroy_gc;
++  png_graphics_class.use_mask       = png_use_mask;
++  png_graphics_class.set_color      = png_set_color;
++  png_graphics_class.set_line_cap   = png_set_line_cap;
++  png_graphics_class.set_line_width = png_set_line_width;
++  png_graphics_class.set_draw_xor   = png_set_draw_xor;
++  png_graphics_class.draw_line      = png_draw_line;
++  png_graphics_class.draw_arc       = png_draw_arc;
++  png_graphics_class.draw_rect      = png_draw_rect;
++  png_graphics_class.fill_circle    = png_fill_circle;
++  png_graphics_class.fill_polygon   = png_fill_polygon;
++  png_graphics_class.fill_rect      = png_fill_rect;
++
++  png_graphics.klass = &png_graphics_class;
++  common_draw_helpers_init (&png_graphics);
+ 
+ #ifdef HAVE_SOME_FORMAT
+   hid_register_hid (&png_hid);
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 6893cd5..5e56e70 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -63,6 +63,7 @@ typedef struct eps_gc_struct
+ 
+ static HID eps_hid;
+ static HID_DRAW eps_graphics;
++static HID_DRAW_CLASS eps_graphics_class;
+ 
+ static FILE *f = 0;
+ static Coord linewidth = -1;
+@@ -677,9 +678,9 @@ hid_eps_init ()
+ {
+   memset (&eps_hid, 0, sizeof (HID));
+   memset (&eps_graphics, 0, sizeof (HID_DRAW));
++  memset (&eps_graphics_class, 0, sizeof (HID_DRAW_CLASS));
+ 
+   common_nogui_init (&eps_hid);
+-  common_draw_helpers_init (&eps_graphics);
+ 
+   eps_hid.struct_size         = sizeof (HID);
+   eps_hid.name                = "eps";
+@@ -696,19 +697,24 @@ hid_eps_init ()
+ 
+   eps_hid.graphics            = &eps_graphics;
+ 
+-  eps_graphics.make_gc        = eps_make_gc;
+-  eps_graphics.destroy_gc     = eps_destroy_gc;
+-  eps_graphics.use_mask       = eps_use_mask;
+-  eps_graphics.set_color      = eps_set_color;
+-  eps_graphics.set_line_cap   = eps_set_line_cap;
+-  eps_graphics.set_line_width = eps_set_line_width;
+-  eps_graphics.set_draw_xor   = eps_set_draw_xor;
+-  eps_graphics.draw_line      = eps_draw_line;
+-  eps_graphics.draw_arc       = eps_draw_arc;
+-  eps_graphics.draw_rect      = eps_draw_rect;
+-  eps_graphics.fill_circle    = eps_fill_circle;
+-  eps_graphics.fill_polygon   = eps_fill_polygon;
+-  eps_graphics.fill_rect      = eps_fill_rect;
++  common_draw_helpers_class_init (&eps_graphics_class);
++
++  eps_graphics_class.make_gc        = eps_make_gc;
++  eps_graphics_class.destroy_gc     = eps_destroy_gc;
++  eps_graphics_class.use_mask       = eps_use_mask;
++  eps_graphics_class.set_color      = eps_set_color;
++  eps_graphics_class.set_line_cap   = eps_set_line_cap;
++  eps_graphics_class.set_line_width = eps_set_line_width;
++  eps_graphics_class.set_draw_xor   = eps_set_draw_xor;
++  eps_graphics_class.draw_line      = eps_draw_line;
++  eps_graphics_class.draw_arc       = eps_draw_arc;
++  eps_graphics_class.draw_rect      = eps_draw_rect;
++  eps_graphics_class.fill_circle    = eps_fill_circle;
++  eps_graphics_class.fill_polygon   = eps_fill_polygon;
++  eps_graphics_class.fill_rect      = eps_fill_rect;
++
++  eps_graphics.klass          = &eps_graphics_class;
++  common_draw_helpers_init (&eps_graphics);
+ 
+   hid_register_hid (&eps_hid);
+ }
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index cc53448..5c46206 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -47,6 +47,7 @@ typedef struct ps_gc_struct
+ 
+ HID ps_hid;
+ static HID_DRAW ps_graphics;
++static HID_DRAW_CLASS ps_graphics_class;
+ 
+ static const char *medias[] = {
+   "A0", "A1", "A2", "A3", "A4", "A5",
+@@ -1532,24 +1533,28 @@ void ps_ps_init (HID *hid)
+   hid->set_crosshair      = ps_set_crosshair;
+ }
+ 
++void ps_ps_graphics_class_init (HID_DRAW_CLASS *klass)
++{
++  klass->make_gc            = ps_make_gc;
++  klass->destroy_gc         = ps_destroy_gc;
++  klass->use_mask           = ps_use_mask;
++  klass->set_color          = ps_set_color;
++  klass->set_line_cap       = ps_set_line_cap;
++  klass->set_line_width     = ps_set_line_width;
++  klass->set_draw_xor       = ps_set_draw_xor;
++  klass->set_draw_faded     = ps_set_draw_faded;
++  klass->draw_line          = ps_draw_line;
++  klass->draw_arc           = ps_draw_arc;
++  klass->draw_rect          = ps_draw_rect;
++  klass->fill_circle        = ps_fill_circle;
++  klass->fill_polygon       = ps_fill_polygon;
++  klass->fill_rect          = ps_fill_rect;
++
++  klass->draw_pcb_polygon   = ps_draw_pcb_polygon;
++}
++
+ void ps_ps_graphics_init (HID_DRAW *graphics)
+ {
+-  graphics->make_gc            = ps_make_gc;
+-  graphics->destroy_gc         = ps_destroy_gc;
+-  graphics->use_mask           = ps_use_mask;
+-  graphics->set_color          = ps_set_color;
+-  graphics->set_line_cap       = ps_set_line_cap;
+-  graphics->set_line_width     = ps_set_line_width;
+-  graphics->set_draw_xor       = ps_set_draw_xor;
+-  graphics->set_draw_faded     = ps_set_draw_faded;
+-  graphics->draw_line          = ps_draw_line;
+-  graphics->draw_arc           = ps_draw_arc;
+-  graphics->draw_rect          = ps_draw_rect;
+-  graphics->fill_circle        = ps_fill_circle;
+-  graphics->fill_polygon       = ps_fill_polygon;
+-  graphics->fill_rect          = ps_fill_rect;
+-
+-  graphics->draw_pcb_polygon   = ps_draw_pcb_polygon;
+ }
+ 
+ void
+@@ -1559,9 +1564,7 @@ hid_ps_init ()
+   memset (&ps_graphics, 0, sizeof (HID_DRAW));
+ 
+   common_nogui_init (&ps_hid);
+-  common_draw_helpers_init (&ps_graphics);
+   ps_ps_init (&ps_hid);
+-  ps_ps_graphics_init (&ps_graphics);
+ 
+   ps_hid.struct_size        = sizeof (HID);
+   ps_hid.name               = "ps";
+@@ -1571,6 +1574,13 @@ hid_ps_init ()
+ 
+   ps_hid.graphics           = &ps_graphics;
+ 
++  common_draw_helpers_class_init (&ps_graphics_class);
++  ps_ps_graphics_class_init (&ps_graphics_class);
++
++  ps_graphics.klass         = &ps_graphics_class;
++  common_draw_helpers_init (&ps_graphics);
++  ps_ps_graphics_init (&ps_graphics);
++
+   hid_register_hid (&ps_hid);
+ 
+   hid_eps_init ();
+diff --git a/src/hid/ps/ps.h b/src/hid/ps/ps.h
+index cda1dec..fe02e59 100644
+--- a/src/hid/ps/ps.h
++++ b/src/hid/ps/ps.h
+@@ -4,4 +4,5 @@ extern void ps_start_file (FILE *);
+ extern void ps_calibrate_1 (double , double , int);
+ extern void hid_eps_init ();
+ void ps_ps_init (HID *hid);
++void ps_ps_graphics_class_init (HID_DRAW_CLASS *klass);
+ void ps_ps_graphics_init (HID_DRAW *graphics);
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index ad984f9..ea288c7 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -7,7 +7,7 @@ enum mask_mode {
+ 
+ /* Low level drawing API */
+ 
+-struct hid_draw_st
++typedef struct hid_draw_class_st
+ {
+   /* Drawing Functions.  Coordinates and distances are ALWAYS in PCB's
+      default coordinates (1 nm at the time this comment was written).
+@@ -63,6 +63,12 @@ struct hid_draw_st
+   void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+   void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+ 
++} HID_DRAW_CLASS;
++
++/* Base HID_DRAW elements visible to any module */
++struct hid_draw_st
++{
++  HID_DRAW_CLASS *klass;
+ };
+ 
+ /* Base hidGC elements visible to any module */
+@@ -76,145 +82,145 @@ struct hid_gc_struct {
+ inline hidGC
+ hid_draw_make_gc (HID_DRAW *hid_draw)
+ {
+-  return hid_draw->make_gc ();
++  return hid_draw->klass->make_gc ();
+ }
+ 
+ inline void
+ hid_draw_destroy_gc (hidGC gc)
+ {
+-  gc->hid_draw->destroy_gc (gc);
++  gc->hid_draw->klass->destroy_gc (gc);
+ }
+ 
+ inline void
+ hid_draw_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
+ {
+-  hid_draw->use_mask (mode);
++  hid_draw->klass->use_mask (mode);
+ }
+ 
+ inline void
+ hid_draw_set_color (hidGC gc, char *name)
+ {
+-  gc->hid_draw->set_color (gc, name);
++  gc->hid_draw->klass->set_color (gc, name);
+ }
+ 
+ inline void
+ hid_draw_set_line_cap (hidGC gc, EndCapStyle style)
+ {
+-  gc->hid_draw->set_line_cap (gc, style);
++  gc->hid_draw->klass->set_line_cap (gc, style);
+ }
+ 
+ inline void
+ hid_draw_set_line_width (hidGC gc, Coord width)
+ {
+-  gc->hid_draw->set_line_width (gc, width);
++  gc->hid_draw->klass->set_line_width (gc, width);
+ }
+ 
+ inline void
+ hid_draw_set_draw_xor (hidGC gc, int xor_)
+ {
+-  gc->hid_draw->set_draw_xor (gc, xor_);
++  gc->hid_draw->klass->set_draw_xor (gc, xor_);
+ }
+ 
+ inline void
+ hid_draw_set_draw_faded (hidGC gc, int faded)
+ {
+-  gc->hid_draw->set_draw_faded (gc, faded);
++  gc->hid_draw->klass->set_draw_faded (gc, faded);
+ }
+ 
+ inline void
+ hid_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+ {
+-  gc->hid_draw->draw_line (gc, x1, y1, x2, y2);
++  gc->hid_draw->klass->draw_line (gc, x1, y1, x2, y2);
+ }
+ 
+ inline void
+ hid_draw_arc (hidGC gc, Coord cx, Coord cy, Coord xradius, Coord yradius, Angle start_angle, Angle delta_angle)
+ {
+-  gc->hid_draw->draw_arc (gc, cx, cy, xradius, yradius, start_angle, delta_angle);
++  gc->hid_draw->klass->draw_arc (gc, cx, cy, xradius, yradius, start_angle, delta_angle);
+ }
+ 
+ inline void
+ hid_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+ {
+-  gc->hid_draw->draw_rect (gc, x1, y1, x2, y2);
++  gc->hid_draw->klass->draw_rect (gc, x1, y1, x2, y2);
+ }
+ 
+ inline void
+ hid_draw_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
+ {
+-  gc->hid_draw->fill_circle (gc, cx, cy, radius);
++  gc->hid_draw->klass->fill_circle (gc, cx, cy, radius);
+ }
+ 
+ inline void
+ hid_draw_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+ {
+-  gc->hid_draw->fill_polygon (gc, n_coords, x, y);
++  gc->hid_draw->klass->fill_polygon (gc, n_coords, x, y);
+ }
+ 
+ inline void
+ hid_draw_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+ {
+-  gc->hid_draw->fill_rect (gc, x1, y1, x2, y2);
++  gc->hid_draw->klass->fill_rect (gc, x1, y1, x2, y2);
+ }
+ 
+ 
+ inline void
+ hid_draw_pcb_line (hidGC gc, LineType *line)
+ {
+-  gc->hid_draw->draw_pcb_line (gc, line);
++  gc->hid_draw->klass->draw_pcb_line (gc, line);
+ }
+ 
+ inline void
+ hid_draw_pcb_arc (hidGC gc, ArcType *arc)
+ {
+-  gc->hid_draw->draw_pcb_arc (gc, arc);
++  gc->hid_draw->klass->draw_pcb_arc (gc, arc);
+ }
+ 
+ inline void
+ hid_draw_pcb_text (hidGC gc, TextType *text, Coord min_width)
+ {
+-  gc->hid_draw->draw_pcb_text (gc, text, min_width);
++  gc->hid_draw->klass->draw_pcb_text (gc, text, min_width);
+ }
+ 
+ inline void
+ hid_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
+-  gc->hid_draw->draw_pcb_polygon (gc, poly, clip_box);
++  gc->hid_draw->klass->draw_pcb_polygon (gc, poly, clip_box);
+ }
+ 
+ 
+ inline void
+ hid_draw_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
+-  gc->hid_draw->fill_pcb_polygon (gc, poly, clip_box);
++  gc->hid_draw->klass->fill_pcb_polygon (gc, poly, clip_box);
+ }
+ 
+ inline void
+ hid_draw_thin_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
+-  gc->hid_draw->thindraw_pcb_polygon (gc, poly, clip_box);
++  gc->hid_draw->klass->thindraw_pcb_polygon (gc, poly, clip_box);
+ }
+ 
+ inline void
+ hid_draw_fill_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
+ {
+-  gc->hid_draw->fill_pcb_pad (gc, pad, clip, mask);
++  gc->hid_draw->klass->fill_pcb_pad (gc, pad, clip, mask);
+ }
+ 
+ inline void
+ hid_draw_thin_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
+ {
+-  gc->hid_draw->thindraw_pcb_pad (gc, pad, clip, mask);
++  gc->hid_draw->klass->thindraw_pcb_pad (gc, pad, clip, mask);
+ }
+ 
+ inline void
+ hid_draw_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
+ {
+-  fg_gc->hid_draw->fill_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
++  fg_gc->hid_draw->klass->fill_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
+ }
+ 
+ inline void
+ hid_draw_thin_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
+ {
+-  fg_gc->hid_draw->thindraw_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
++  fg_gc->hid_draw->klass->thindraw_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
+ }
