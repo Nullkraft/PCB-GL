@@ -540,7 +540,7 @@ ghid_draw_bg_image (void)
 }
 
 void
-ghid_use_mask (enum mask_mode mode)
+ghid_use_mask (hidGC gc, enum mask_mode mode)
 {
   render_priv *priv = gport->render_priv;
   hidgl_instance *hidgl = priv->hidgl;
@@ -1739,7 +1739,7 @@ GhidDrawMask (int side, BoxType * screen)
       hid_draw_set_color (Output.pmGC, "erase");
     }
 
-  hid_draw_use_mask (&ghid_graphics, HID_MASK_CLEAR);
+  hid_draw_use_mask (Output.fgGC, HID_MASK_CLEAR);
 
   info.layer = Layer;
   info.drawn_area = screen;
@@ -1752,7 +1752,7 @@ GhidDrawMask (int side, BoxType * screen)
   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, NULL);
   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, &side);
 
-  hid_draw_use_mask (&ghid_graphics, HID_MASK_AFTER);
+  hid_draw_use_mask (Output.fgGC, HID_MASK_AFTER);
   hid_draw_set_color (out->fgGC, PCB->MaskColor);
   ghid_set_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
 
@@ -1811,7 +1811,7 @@ GhidDrawMask (int side, BoxType * screen)
 #endif
   hidgl_shader_activate (circular_program);
 
-  hid_draw_use_mask (&ghid_graphics, HID_MASK_OFF);
+  hid_draw_use_mask (out->fgGC, HID_MASK_OFF);
 
 //  first_run = false;
 }
