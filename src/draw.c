@@ -74,7 +74,6 @@ static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
 
 static int doing_pinout = 0;
 static bool doing_assy = false;
-static HID *hid = NULL;
 static HID_DRAW *hid_draw = NULL;
 
 /* ---------------------------------------------------------------------------
@@ -128,7 +127,7 @@ void
 Draw (void)
 {
   if (Block.X1 <= Block.X2 && Block.Y1 <= Block.Y2)
-    hid->invalidate_lr (Block.X1, Block.X2, Block.Y1, Block.Y2);
+    gui->invalidate_lr (Block.X1, Block.X2, Block.Y1, Block.Y2);
 
   /* shrink the update block */
   Block.X1 = Block.Y1 =  MAXINT;
@@ -1537,7 +1536,6 @@ draw_element (ElementType *element)
 void
 hid_expose_callback (HID *expose_hid, HID_DRAW *expose_hid_draw, BoxType *region, void *item)
 {
-  hid = expose_hid;
   hid_draw = expose_hid_draw;
   Output.fgGC = hid_draw_make_gc (hid_draw);
   Output.bgGC = hid_draw_make_gc (hid_draw);
@@ -1558,6 +1556,5 @@ hid_expose_callback (HID *expose_hid, HID_DRAW *expose_hid_draw, BoxType *region
   hid_draw_destroy_gc (Output.fgGC);
   hid_draw_destroy_gc (Output.bgGC);
   hid_draw_destroy_gc (Output.pmGC);
-  hid = NULL;
   hid_draw = NULL;
 }
