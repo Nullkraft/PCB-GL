@@ -537,7 +537,7 @@ DrawSilk (int side, const BoxType * drawn_area)
 #if 0
   if (gui->poly_before)
     {
-      hid_draw_use_mask (gui->graphics, HID_MASK_BEFORE);
+      hid_draw_use_mask (Output.fgGC, HID_MASK_BEFORE);
 #endif
       dapi->draw_layer (LAYER_PTR (max_copper_layer + side), drawn_area, NULL);
       /* draw package */
@@ -546,20 +546,20 @@ DrawSilk (int side, const BoxType * drawn_area)
 #if 0
     }
 
-  hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
+  hid_draw_use_mask (Output.fgGC, HID_MASK_CLEAR);
   r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_mask_callback, NULL);
   r_search (PCB->Data->via_tree, drawn_area, NULL, via_mask_callback, NULL);
   r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_mask_callback, &side);
 
   if (gui->poly_after)
     {
-      hid_draw_use_mask (gui->graphics, HID_MASK_AFTER);
+      hid_draw_use_mask (Output.fgGC, HID_MASK_AFTER);
       dapi->draw_layer (LAYER_PTR (max_copper_layer + layer), drawn_area, NULL);
       /* draw package */
       r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
     }
-  hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
+  hid_draw_use_mask (Output.fgGC, HID_MASK_OFF);
 #endif
 }
 
@@ -572,7 +572,7 @@ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
       (mask_type == HID_MASK_AFTER  && !gui->poly_after))
     return;
 
-  hid_draw_use_mask (gui->graphics, mask_type);
+  hid_draw_use_mask (Output.fgGC, mask_type);
   hid_draw_set_color (Output.fgGC, PCB->MaskColor);
   if (drawn_area == NULL)
     hid_draw_fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
@@ -645,7 +645,7 @@ DrawMask (int side, const BoxType *screen)
   else
     {
       DrawMaskBoardArea (HID_MASK_BEFORE, screen);
-      hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
+      hid_draw_use_mask (Output.fgGC, HID_MASK_CLEAR);
     }
 
   info.layer = Layer;
@@ -664,7 +664,7 @@ DrawMask (int side, const BoxType *screen)
   else
     {
       DrawMaskBoardArea (HID_MASK_AFTER, screen);
-      hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
+      hid_draw_use_mask (Output.fgGC, HID_MASK_OFF);
     }
 }
 
@@ -694,10 +694,10 @@ DrawRats (const BoxType *drawn_area)
   int can_mask = strcmp(gui->name, "lesstif") == 0;
 
   if (can_mask)
-    hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
+    hid_draw_use_mask (Output.fgGC, HID_MASK_CLEAR);
   r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
   if (can_mask)
-    hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
+    hid_draw_use_mask (Output.fgGC, HID_MASK_OFF);
 }
 
 /* ---------------------------------------------------------------------------
