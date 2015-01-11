@@ -314,10 +314,10 @@ typedef enum
        layer groups, you may pass NULL for name to have a name fetched
        from the PCB struct.  The EMPTY argument is a hint - if set, the
        layer is empty, if zero it may be non-empty.  */
-    int (*set_layer) (const char *name_, int group_, int _empty);
+    int (*set_layer) (hidGC gc, const char *name_, int group_, int _empty);
 
     /* Tell the GUI the layer last selected has been finished with */
-    void (*end_layer) (void);
+    void (*end_layer) (hidGC gc);
 
 
     HID_DRAW *graphics;
@@ -500,13 +500,13 @@ typedef enum
      * May be implemented as a NOOP if the GUI has chosen to send the
      * debug drawing directly to the screen.
      */
-    void (*flush_debug_draw)   (void);
+    void (*flush_debug_draw)   (hidGC gc);
 
     /* When finished, the user must inform the GUI to clean up resources
      *
      * Any remaining rendering will be flushed to the screen.
      */
-    void (*finish_debug_draw)  (void);
+    void (*finish_debug_draw)  (hidGC gc);
 
     /* Notification to the GUI around saving the PCB file.
      *
@@ -561,7 +561,7 @@ typedef enum
    Do *not* assume that the hid that is passed is the GUI hid.  This
    callback is also used for printing and exporting. */
   struct BoxType;
-  void hid_expose_callback (HID * hid_, struct BoxType *region_, void *item_);
+  void hid_expose_callback (HID * hid_, void *item_);
 
 /* This is initially set to a "no-gui" gui, and later reset by
    main. hid_expose_callback also temporarily set it for drawing. */
