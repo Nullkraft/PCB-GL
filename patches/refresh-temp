@@ -1,0 +1,353 @@
+Bottom: 98c6b9fe9d86466b1ab3c6fa0665a600ae4d103f
+Top:    190ba493c454c95b8d25a19072d3bb3537325682
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 22:12:33 +0000
+
+Refresh of attempt-at-re-writing-drawing
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index bc8b705..4a3952c 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -9,16 +9,16 @@
+ 
+ /* Takes a copy of clip_box so we own it */
+ void
+-common_set_clip_box (hidGC gc, BoxType *clip_box)
++common_set_clip_box (HID_DRAW *graphics, BoxType *clip_box)
+ {
+-  free (gc->clip_box);
+-  gc->clip_box = NULL;
++  free (graphics->clip_box);
++  graphics->clip_box = NULL;
+ 
+   if (clip_box == NULL)
+     return;
+ 
+-  gc->clip_box = malloc (sizeof (BoxType));
+-  *gc->clip_box = *clip_box;
++  graphics->clip_box = malloc (sizeof (BoxType));
++  *graphics->clip_box = *clip_box;
+ }
+ 
+ static void
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index af7e19a..1c13d34 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -1,4 +1,3 @@
+-void common_set_clip_box (hidGC gc, BoxType *clip_box);
+ void common_gui_draw_pcb_polygon (hidGC gc, PolygonType *poly);
+ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly);
+ void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly);
+@@ -13,3 +12,4 @@ void common_thindraw_pcb_pv (hidGC gc, PinType *pv, bool mask);
+ void common_thindraw_pcb_pv_hole (hidGC gc, PinType *pv);
+ void common_draw_helpers_class_init (HID_DRAW_CLASS *klass);
+ void common_draw_helpers_init (HID_DRAW *graphics);
++void common_set_clip_box (HID_DRAW *graphics, BoxType *clip_box);
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 77d8a42..ca0bcc7 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -130,9 +130,9 @@ static bool in_context = false;
+ 
+ /* NB: If using VBOs, the caller must ensure the VBO is bound to the GL_ARRAY_BUFFER */
+ static void
+-hidgl_reset_triangle_array (hidgl_instance *hidgl)
++hidgl_reset_triangle_array (HID_DRAW *hid_draw)
+ {
+-  hidgl_priv *priv = hidgl->priv;
++  hidgl_priv *priv = hid_draw->priv;
+ 
+   if (priv->buffer.use_map) {
+     /* Hint to the driver that we're done with the previous buffer contents */
+@@ -158,9 +158,9 @@ hidgl_reset_triangle_array (hidgl_instance *hidgl)
+ }
+ 
+ static void
+-hidgl_init_triangle_array (hidgl_instance *hidgl)
++hidgl_init_triangle_array (HID_DRAW *hid_draw)
+ {
+-  hidgl_priv *priv = hidgl->priv;
++  hidgl_priv *priv = hid_draw->priv;
+ 
+   CHECK_IS_IN_CONTEXT ();
+ 
+@@ -193,9 +193,9 @@ hidgl_init_triangle_array (hidgl_instance *hidgl)
+ }
+ 
+ static void
+-hidgl_finish_triangle_array (hidgl_instance *hidgl)
++hidgl_finish_triangle_array (HID_DRAW *hid_draw)
+ {
+-  hidgl_priv *priv = hidgl->priv;
++  hidgl_priv *priv = hid_draw->priv;
+ 
+   if (priv->buffer.use_map) {
+     glBindBuffer (GL_ARRAY_BUFFER, priv->buffer.vbo_id);
+@@ -212,9 +212,9 @@ hidgl_finish_triangle_array (hidgl_instance *hidgl)
+ }
+ 
+ void
+-hidgl_flush_triangles (hidgl_instance *hidgl)
++hidgl_flush_triangles (HID_DRAW *hid_draw)
+ {
+-  hidgl_priv *priv = hidgl->priv;
++  hidgl_priv *priv = hid_draw->priv;
+   GLfloat *data_pointer = NULL;
+ 
+   CHECK_IS_IN_CONTEXT ();
+@@ -260,8 +260,8 @@ void
+ hidgl_ensure_vertex_space (hidGC gc, int count)
+ {
+   hidglGC hidgl_gc = (hidglGC)gc;
+-  hidgl_instance *hidgl = hidgl_gc->hidgl;
+-  hidgl_priv *priv = hidgl->priv;
++  HID_DRAW *hid_draw = gc->hid_draw;
++  hidgl_priv *priv = hid_draw->priv;
+ 
+   CHECK_IS_IN_CONTEXT ();
+ 
+@@ -286,7 +286,7 @@ hidgl_ensure_triangle_space (hidGC gc, int count)
+ }
+ 
+ void
+-hidgl_set_depth (hidGC gc, float depth)
++hidgl_set_depth (HID_DRAW *hid_draw, float depth)
+ {
+   hidglGC hidgl_gc = (hidglGC)gc;
+ 
+@@ -775,8 +775,8 @@ fill_contour (hidGC gc, PLINE *contour)
+ {
+   hidglGC hidgl_gc = (hidglGC)gc;
+ #if MEMCPY_VERTEX_DATA
+-  hidgl_instance *hidgl = hidgl_gc->hidgl;
+-  hidgl_priv *priv = hidgl->priv;
++  HID_DRAW *hid_draw = gc->hid_draw;
++  hidgl_priv *priv = hid_draw->priv;
+ #endif
+   int i;
+   int vertex_comp;
+@@ -917,8 +917,8 @@ static void
+ fill_polyarea (hidGC gc, POLYAREA *pa, bool use_new_stencil)
+ {
+   hidglGC hidgl_gc = (hidglGC)gc;
+-  hidgl_instance *hidgl = hidgl_gc->hidgl;
+-  hidgl_priv *priv = hidgl->priv;
++  HID_DRAW *hid_draw = gc->hid_draw;
++  hidgl_priv *priv = hid_draw->priv;
+   int stencil_bit;
+ 
+   CHECK_IS_IN_CONTEXT ();
+@@ -1136,15 +1136,15 @@ hidgl_init (void)
+   called = true;
+ }
+ 
+-hidgl_instance *
++HID_DRAW *
+ hidgl_new_instance (void)
+ {
+-  hidgl_instance *hidgl;
++  HID_DRAW *hid_draw;
+   hidgl_priv *priv;
+ 
+-  hidgl = calloc (1, sizeof (hidgl_instance));
++  hid_draw = calloc (1, sizeof (*hid_draw));
+   priv = calloc (1, sizeof (hidgl_priv));
+-  hidgl->priv = priv;
++  hid_draw->priv = priv;
+ 
+ #if 0
+   glGetIntegerv (GL_STENCIL_BITS, &priv->stencil_bits);
+@@ -1166,24 +1166,23 @@ hidgl_new_instance (void)
+ #endif
+ //  hidgl_init_triangle_array (hidgl);
+ 
+-  return hidgl;
++  return hid_draw;
+ }
+ 
+ void
+-hidgl_free_instance (hidgl_instance *hidgl)
++hidgl_free_instance (HID_DRAW *hid_draw)
+ {
+-  free (hidgl->priv);
+-  free (hidgl);
++  free (hid_draw->priv);
++  free (hid_draw);
+ }
+ 
+ void
+-hidgl_init_gc (hidgl_instance *hidgl, hidGC gc)
++hidgl_init_gc (HID_DRAW *hid_draw, hidGC gc)
+ {
+   hidglGC hidgl_gc = (hidglGC)gc;
+ 
+   CHECK_IS_IN_CONTEXT ();
+ 
+-  hidgl_gc->hidgl = hidgl;
+   hidgl_gc->depth = 0.0;
+ }
+ 
+@@ -1193,9 +1192,9 @@ hidgl_finish_gc (hidGC gc)
+ }
+ 
+ void
+-hidgl_start_render (hidgl_instance *hidgl)
++hidgl_start_render (HID_DRAW *hid_draw)
+ {
+-  hidgl_priv *priv = hidgl->priv;
++  hidgl_priv *priv = hid_draw->priv;
+   static bool called = false;
+ 
+   if (in_context)
+@@ -1235,28 +1234,28 @@ hidgl_start_render (hidgl_instance *hidgl)
+ }
+ 
+ void
+-hidgl_finish_render (hidgl_instance *hidgl)
++hidgl_finish_render (HID_DRAW *hid_draw)
+ {
+   if (!in_context)
+     fprintf (stderr, "hidgl: hidgl_finish_render() - Not currently in rendering context!\n");
+ 
+-  hidgl_finish_triangle_array (hidgl);
++  hidgl_finish_triangle_array (hid_draw);
+   hidgl_shader_activate (NULL);
+   in_context = false;
+ }
+ 
+ int
+-hidgl_stencil_bits (hidgl_instance *hidgl)
++hidgl_stencil_bits (HID_DRAW *hid_draw)
+ {
+-  hidgl_priv *priv = hidgl->priv;
++  hidgl_priv *priv = hid_draw->priv;
+ 
+   return priv->stencil_bits;
+ }
+ 
+ static void
+-hidgl_clean_unassigned_stencil (hidgl_instance *hidgl)
++hidgl_clean_unassigned_stencil (HID_DRAW *hid_draw)
+ {
+-  hidgl_priv *priv = hidgl->priv;
++  hidgl_priv *priv = hid_draw->priv;
+ 
+   CHECK_IS_IN_CONTEXT ();
+ 
+@@ -1268,9 +1267,9 @@ hidgl_clean_unassigned_stencil (hidgl_instance *hidgl)
+ }
+ 
+ int
+-hidgl_assign_clear_stencil_bit (hidgl_instance *hidgl)
++hidgl_assign_clear_stencil_bit (HID_DRAW *hid_draw)
+ {
+-  hidgl_priv *priv = hidgl->priv;
++  hidgl_priv *priv = hid_draw->priv;
+ 
+   int stencil_bitmask = (1 << priv->stencil_bits) - 1;
+   int test;
+@@ -1307,17 +1306,17 @@ hidgl_assign_clear_stencil_bit (hidgl_instance *hidgl)
+ }
+ 
+ void
+-hidgl_return_stencil_bit (hidgl_instance *hidgl, int bit)
++hidgl_return_stencil_bit (HID_DRAW *hid_draw, int bit)
+ {
+-  hidgl_priv *priv = hidgl->priv;
++  hidgl_priv *priv = hid_draw->priv;
+ 
+   priv->assigned_bits &= ~bit;
+ }
+ 
+ void
+-hidgl_reset_stencil_usage (hidgl_instance *hidgl)
++hidgl_reset_stencil_usage (HID_DRAW *hid_draw)
+ {
+-  hidgl_priv *priv = hidgl->priv;
++  hidgl_priv *priv = hid_draw->priv;
+ 
+   priv->assigned_bits = 0;
+   priv->dirty_bits = 0;
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index 1e691ce..8f353f2 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -52,18 +52,11 @@ typedef struct {
+ 
+ } hidgl_priv;
+ 
+-/* NB: hidgl_instance is a public type, intended to be used as an opaque pointer */
+-typedef struct {
+-  hidgl_priv *priv;
+-
+-} hidgl_instance;
+ 
+ /* NB: hidglGC is a semi-private type, only defined here to enable inlining of geometry creation, and for derived GUIs to extend */
+ typedef struct hidgl_gc_struct {
+   struct hid_gc_struct gc; /* Parent */
+ 
+-  hidgl_instance *hidgl;
+-
+   float depth;
+ 
+ } *hidglGC;
+@@ -71,7 +64,7 @@ typedef struct hidgl_gc_struct {
+ extern hidgl_shader *circular_program;
+ extern hidgl_shader *resistor_program;
+ 
+-void hidgl_flush_triangles (hidgl_instance *hidgl);
++void hidgl_flush_triangles (HID_DRAW *hid_draw);
+ void hidgl_ensure_vertex_space (hidGC gc, int count);
+ void hidgl_ensure_triangle_space (hidGC gc, int count);
+ 
+@@ -81,9 +74,8 @@ hidgl_add_vertex_3D_tex (hidGC gc,
+                          GLfloat x, GLfloat y, GLfloat z,
+                          GLfloat s, GLfloat t)
+ {
+-  hidglGC hidgl_gc = (hidglGC)gc;
+-  hidgl_instance *hidgl = hidgl_gc->hidgl;
+-  hidgl_priv *priv = hidgl->priv;
++  HID_DRAW *hid_draw = gc->hid_draw;
++  hidgl_priv *priv = hid_draw->priv;
+ 
+   priv->buffer.triangle_array [priv->buffer.coord_comp_count++] = x;
+   priv->buffer.triangle_array [priv->buffer.coord_comp_count++] = y;
+@@ -156,7 +148,7 @@ hidgl_add_triangle (hidGC gc,
+ }
+ 
+ void hidgl_draw_grid (hidGC gc);
+-void hidgl_set_depth (hidGC gc, float depth);
++void hidgl_set_depth (HID_DRAW *hid_draw, float depth);
+ void hidgl_draw_line (hidGC gc, int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, double scale);
+ void hidgl_draw_arc (hidGC gc, Coord width, Coord vx, Coord vy, Coord vrx, Coord vry, Angle start_angle, Angle delta_angle, double scale);
+ void hidgl_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+@@ -166,16 +158,16 @@ void hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly);
+ void hidgl_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
+ 
+ void hidgl_init (void);
+-hidgl_instance *hidgl_new_instance (void);
+-void hidgl_free_instance (hidgl_instance *hidgl);
+-void hidgl_init_gc (hidgl_instance *hidgl, hidGC gc);
++HID_DRAW *hidgl_new_instance (void);
++void hidgl_free_instance (HID_DRAW *hid_draw);
++void hidgl_init_gc (HID_DRAW *hid_draw, hidGC gc);
+ void hidgl_finish_gc (hidGC gc);
+-void hidgl_start_render (hidgl_instance *hidgl);
+-void hidgl_finish_render (hidgl_instance *hidgl);
+-int hidgl_stencil_bits (hidgl_instance *hidgl);
+-int hidgl_assign_clear_stencil_bit (hidgl_instance *hidgl);
+-void hidgl_return_stencil_bit (hidgl_instance *hidgl, int bit);
+-void hidgl_reset_stencil_usage (hidgl_instance *hidgl);
++void hidgl_start_render (HID_DRAW *hid_draw);
++void hidgl_finish_render (HID_DRAW *hid_draw);
++int hidgl_stencil_bits (HID_DRAW *hid_draw);
++int hidgl_assign_clear_stencil_bit (HID_DRAW *hid_draw);
++void hidgl_return_stencil_bit (HID_DRAW *hid_draw, int bit);
++void hidgl_reset_stencil_usage (HID_DRAW *hid_draw);
+ 
+ /* hidgl_pacakge_acy_resistor.c */
+ void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
