@@ -256,7 +256,7 @@ typedef enum
     /* If set, this is the GUI HID.  Exactly one of these three flags
        must be set; setting "gui" lets the expose callback optimize and
        coordinate itself.  */
-    char gui:1;
+    char _gui:1;
 
     /* If set, this is the printer-class HID.  The common part of PCB
        may use this to do command-line printing, without having
@@ -268,15 +268,6 @@ typedef enum
        part of the File->Export menu option.  Examples are PNG, Gerber,
        and EPS exporters.  */
     char exporter:1;
-
-    /* If set, the redraw code will draw polygons before erasing the
-       clearances.  */
-    char poly_before:1;
-
-    /* If set, the redraw code will draw polygons after erasing the
-       clearances.  Note that HIDs may set both of these, in which case
-       polygons will be drawn twice.  */
-    char poly_after:1;
 
     /* Returns a set of resources describing options the export or print
        HID supports.  In GUI mode, the print/export dialogs use this to
