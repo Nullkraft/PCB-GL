@@ -1,7 +1,7 @@
-Bottom: aca9809e9bd8915de1492a5c28073b4888233269
-Top:    e5a0baac3a341cb44564d12763d6bbab7bbdbbb3
+Bottom: d814287c0da8173c923bb33c1142359728c66166
+Top:    a69c0ae90c1257988ee6cd378447404572e5111c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 14:58:30 +0000
+Date:   2015-01-11 15:05:56 +0000
 
 Split pin/via shape and hole drawing into different functions
 
@@ -309,7 +309,7 @@ index 04246eb..4d98614 100644
  
  static HID nogui_hid;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 330f132..13ae58d 100644
+index 9d4f2c0..b9aeeb0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1288,9 +1288,17 @@ static void

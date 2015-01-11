@@ -1,7 +1,7 @@
-Bottom: 56c1615f28530f08b442dd568767093e59672d07
-Top:    5796eb534a76d3a5dbdb4eb1345e10721a4e2c44
+Bottom: de2226c6ee1107f99379ba221927c5081df8f160
+Top:    0afc1627c655b0da8f33dfa10035594fc233f2ee
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 14:58:31 +0000
+Date:   2015-01-11 15:05:57 +0000
 
 Attempt at re-writing drawing routines to pass state via hidGC
 
@@ -2145,7 +2145,7 @@ index 36e1acc..c95cd12 100644
     */
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c43f402..dd56b9c 100644
+index 85d5e8e..b28929f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -54,8 +54,6 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
