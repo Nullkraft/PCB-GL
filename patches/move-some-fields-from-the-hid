@@ -1,5 +1,5 @@
 Bottom: 5e84ba4ae234e08810f6e04608af4b87d3b2993b
-Top:    47c7589729c325b494b1f07f8eaa9e2daaa319aa
+Top:    23ff296387a059a6b949a224aecfbdf288f93eb5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 17:26:15 +0000
 
@@ -17,7 +17,7 @@ this to count up each type of exporter.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 3083038..45f72c0 100644
+index 3083038..f9fc2c7 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -176,10 +176,10 @@ _draw_pv_name (PinType *pv)
@@ -25,11 +25,11 @@ index 3083038..45f72c0 100644
    text.Direction = vert ? 1 : 0;
  
 -  if (gui->gui)
-+  if (gui->graphics->klass->gui)
++  if (hid_draw_is_gui (gui->graphics))
      doing_pinout++;
    hid_draw_pcb_text (Output.fgGC, &text, 0);
 -  if (gui->gui)
-+  if (gui->graphics->klass->gui)
++  if (hid_draw_is_gui (gui->graphics))
      doing_pinout--;
  }
  
@@ -38,7 +38,7 @@ index 3083038..45f72c0 100644
  draw_element_name (ElementType *element)
  {
 -  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
-+  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->graphics->klass->gui) ||
++  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && hid_draw_is_gui (gui->graphics)) ||
        TEST_FLAG (HIDENAMEFLAG, element))
      return;
    if (doing_pinout || doing_assy)
@@ -74,12 +74,12 @@ index 3083038..45f72c0 100644
      }
  
 -  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
-+  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->graphics->klass->gui)
++  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && hid_draw_is_gui (gui->graphics))
      return;
  
    /* Draw pins, pads, vias below silk */
 -  if (gui->gui)
-+  if (gui->graphics->klass->gui)
++  if (hid_draw_is_gui (gui->graphics))
      DrawPPV (SWAP_IDENT ? bottom_group : top_group, drawn_area);
    else
      {
@@ -136,7 +136,7 @@ index 3083038..45f72c0 100644
      }
  
 -  if (gui->gui)
-+  if (gui->graphics->klass->gui)
++  if (hid_draw_is_gui (gui->graphics))
      {
        /* Draw element Marks */
        if (PCB->PinOn)
@@ -200,7 +200,7 @@ index 3083038..45f72c0 100644
    int side;
  
 -  if (PCB->PinOn || !gui->gui)
-+  if (PCB->PinOn || !gui->graphics->klass->gui)
++  if (PCB->PinOn || !hid_draw_is_gui (gui->graphics))
      {
        /* draw element pins */
        r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
@@ -209,7 +209,7 @@ index 3083038..45f72c0 100644
  
    /* draw vias */
 -  if (PCB->ViaOn || !gui->gui)
-+  if (PCB->ViaOn || !gui->graphics->klass->gui)
++  if (PCB->ViaOn || !hid_draw_is_gui (gui->graphics))
      {
        r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
        r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
@@ -247,7 +247,7 @@ index 3083038..45f72c0 100644
    r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
  
 -  /* We should check for gui->gui here, but it's kinda cool seeing the
-+  /* We should check for gui->graphics->klass->gui here, but it's kinda cool seeing the
++  /* We should check for hid_draw_is_gui (gui->graphics) here, but it's kinda cool seeing the
       auto-outline magically disappear when you first add something to
       the "outline" layer.  */
    if (IsLayerEmpty (Layer)
@@ -256,7 +256,7 @@ index 3083038..45f72c0 100644
      rv = 1;
  
 -  if (rv && !gui->gui)
-+  if (rv && !gui->graphics->klass->gui)
++  if (rv && !hid_draw_is_gui (gui->graphics))
      DrawPPV (group, drawn_area);
  }
  
@@ -678,7 +678,7 @@ index a52bf76..1572ccc 100644
    ps_ps_graphics_init (&ps_graphics);
  
 diff --git a/src/hid_draw.h b/src/hid_draw.h
-index ea288c7..64cb7ec 100644
+index ea288c7..a442390 100644
 --- a/src/hid_draw.h
 +++ b/src/hid_draw.h
 @@ -9,6 +9,22 @@ enum mask_mode {
@@ -724,8 +724,19 @@ index ea288c7..64cb7ec 100644
  };
  
  /* Base hidGC elements visible to any module */
-@@ -79,6 +102,18 @@ struct hid_gc_struct {
+@@ -77,8 +100,29 @@ struct hid_gc_struct {
+   HID_DRAW *hid_draw;
+ };
  
++
++/* Getters for class properties */
++inline bool
++hid_draw_is_gui (HID_DRAW *hid_draw)
++{
++  return hid_draw->klass->gui;
++}
++
++
  /* Calling wrappers to access the vfunc table */
  
 +inline int
