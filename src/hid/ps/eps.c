@@ -301,7 +301,8 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   fprintf (f,
 	   "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
 
-  hid_expose_callback (&eps_graphics, bounds, 0);
+  common_set_clip_box (&eps_graphics, bounds);
+  hid_expose_callback (&eps_graphics, 0);
 
   fprintf (f, "showpage\n");
 
