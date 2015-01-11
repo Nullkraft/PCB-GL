@@ -12,12 +12,11 @@ libiconv
 gettext
 glib
 atk
+cairo
+pango
 "
 
 BUILD="
-freetype
-cairo
-pango
 gtk+
 gd
 pcb
