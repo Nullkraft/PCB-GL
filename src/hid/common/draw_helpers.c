@@ -162,6 +162,8 @@ thindraw_contour (hidGC gc, PLINE *pl)
   if (pl->head.next == NULL)
     return;
 
+  hid_draw_set_color (gc, PCB->WarnColor);
+
   last_x = pl->head.point[0];
   last_y = pl->head.point[1];
   v = pl->head.next;
@@ -208,6 +210,63 @@ thindraw_contour (hidGC gc, PLINE *pl)
           else
             hid_draw_arc (gc, this_x, this_y, MIL_TO_COORD (1.5), MIL_TO_COORD (1.5), 0, 360);
           hid_draw_line (gc, last_x, last_y, this_x, this_y);
+
+        }
+
+      last_x = this_x;
+      last_y = this_y;
+    }
+  while ((v = v->next) != pl->head.next);
+
+  hid_draw_set_color (gc, PCB->PinColor);
+
+  last_x = pl->head.point[0];
+  last_y = pl->head.point[1];
+  v = pl->head.next;
+
+  do
+    {
+      this_x = v->point[0];
+      this_y = v->point[1];
+
+      if (v->prev->is_round)
+        {
+          Angle start_angle, end_angle, delta_angle;
+
+          start_angle = TO_DEGREES (atan2 ((v->prev->point[1] - v->prev->cy), -(v->prev->point[0] - v->prev->cx)));
+          end_angle   = TO_DEGREES (atan2 ((      v->point[1] - v->prev->cy), -(      v->point[0] - v->prev->cx)));
+          delta_angle = end_angle - start_angle;
+
+          if (delta_angle > 180.) delta_angle -= 360.;
+          if (delta_angle < -180.) delta_angle += 360.;
+
+          hid_draw_arc (gc, v->prev->cx, v->prev->cy, v->prev->radius, v->prev->radius, start_angle, delta_angle);
+
+          /* Fill the head vertex */
+          if (v == &pl->head)
+            hid_draw_fill_circle (gc, this_x, this_y, MIL_TO_COORD (3));
+          else
+            hid_draw_arc (gc, this_x, this_y, MIL_TO_COORD (3), MIL_TO_COORD (3), 0, 360);
+
+          /* Draw the bounding box for arg segments */
+          if (0)
+            {
+              BoxType *bound = get_seg_bounds (pl, v->prev);
+
+              hid_draw_line (gc, bound->X1, bound->Y1, bound->X2, bound->Y1);
+              hid_draw_line (gc, bound->X2, bound->Y1, bound->X2, bound->Y2);
+              hid_draw_line (gc, bound->X2, bound->Y2, bound->X1, bound->Y2);
+              hid_draw_line (gc, bound->X1, bound->Y2, bound->X1, bound->Y1);
+            }
+        }
+      else
+        {
+          if (v == &pl->head)
+            hid_draw_fill_circle (gc, this_x, this_y, MIL_TO_COORD (1.5));
+          else
+            hid_draw_arc (gc, this_x, this_y, MIL_TO_COORD (1.5), MIL_TO_COORD (1.5), 0, 360);
+          hid_draw_line (gc, v->prev->orig_point0[0], v->prev->orig_point0[1], v->prev->orig_point1[0], v->prev->orig_point1[1]);
+
         }
 
       last_x = this_x;
