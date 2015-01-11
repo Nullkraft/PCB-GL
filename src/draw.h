@@ -66,22 +66,22 @@ void EraseElementPinsAndPads (ElementType *);
 void EraseElementName (ElementType *);
 void EraseObject (int, void *, void *);
 
-void DrawLayerGroup (int side, const BoxType *drawn_area);
-void DrawPaste (int side, const BoxType *drawn_area);
-void DrawSilk (int side, const BoxType *drawn_area);
-void DrawMask (int side, const BoxType *drawn_area);
-void DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area);
-void PrintAssembly (int side, const BoxType *drawn_area);
+void DrawLayerGroup (hidGC gc, int side);
+void DrawPaste (hidGC gc, int side);
+void DrawSilk (hidGC gc, int side);
+void DrawMask (hidGC gc, int side);
+void DrawHoles (hidGC gc, bool draw_plated, bool draw_unplated);
+void PrintAssembly (hidGC gc, int side);
 
 /* TEMPORARY */
-void ClearPad (PadType *, bool);
-void DrawPinOrViaLowLevel (PinType *, bool);
-void DrawPlainPin (PinType *, bool);
-void DrawPlainVia (PinType *, bool);
-void DrawRegularText (LayerType *, TextType *);
-void DrawEMark (ElementType *, Coord, Coord, bool);
-void DrawHole (PinType *);
-void DrawRats (const BoxType *);
+//void ClearPad (hidGC gc, PadType *, bool);
+//void DrawPinOrViaLowLevel (hidGC gc, PinType *, bool);
+//void DrawPlainPin (hidGC gc, PinType *, bool);
+//void DrawPlainVia (hidGC gc, PinType *, bool);
+//void DrawRegularText (hidGC gc, LayerType *, TextType *);
+void DrawEMark (hidGC gc, ElementType *, Coord, Coord, bool);
+//void DrawHole (hidGC gc, PinType *);
+void DrawRats (hidGC gc);
 /* TEMPORARY */
 
 #endif
