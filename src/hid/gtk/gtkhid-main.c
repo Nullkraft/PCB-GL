@@ -2137,7 +2137,6 @@ hid_gtk_init ()
   ghid_hid.name                     = "gtk";
   ghid_hid.description              = "Gtk - The Gimp Toolkit";
   ghid_hid.gui                      = 1;
-  ghid_hid.poly_after               = 1;
 
   ghid_hid.get_export_options       = ghid_get_export_options;
   ghid_hid.do_export                = ghid_do_export;
@@ -2202,7 +2201,10 @@ hid_gtk_init ()
 
   ghid_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
 
+  ghid_graphics_class.gui = true;
+
   ghid_graphics.klass = &ghid_graphics_class;
+  ghid_graphics.poly_after = true;
   common_draw_helpers_init (&ghid_graphics);
 
   hid_register_hid (&ghid_hid);
