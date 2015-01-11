@@ -1,0 +1,30 @@
+Bottom: eb27fdb311d8462bd927def23b67f085c6b7454b
+Top:    d1e910f0bcfd70e42f171ac7e5f10fc2d7ec4d5e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 17:43:38 +0000
+
+Refresh of make-hid_draw-an-instance-of
+
+---
+
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 9ba6af1..654b5e0 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -1624,8 +1624,6 @@ hid_gcode_init ()
+ 
+   gcode_hid.graphics            = &gcode_graphics;
+ 
+-  gcode_graphics.klass          = &gcode_graphics_class;
+-
+   common_draw_helpers_class_init (&gcode_graphics_class);
+ 
+   gcode_graphics_class.make_gc        = gcode_make_gc;
+@@ -1643,6 +1641,7 @@ hid_gcode_init ()
+   gcode_graphics_class.fill_polygon   = gcode_fill_polygon;
+   gcode_graphics_class.fill_rect      = gcode_fill_rect;
+ 
++  gcode_graphics.klass = &gcode_graphics_class;
+   common_draw_helpers_init (&gcode_graphics);
+ 
+   hid_register_hid (&gcode_hid);
