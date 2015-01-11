@@ -1,5 +1,5 @@
 Bottom: ab90b5c6328d782b129bc96c4c50cf33b6582cdd
-Top:    3be62f5e83ce5f7af11fbd34dd1b502768d85e3e
+Top:    899ed3be1de41908bc435ccd73cc6f704b41bf4f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 23:41:04 +0000
 
@@ -2281,23 +2281,17 @@ index c6c749d..0e00f50 100644
  
  static FILE *
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 6e4616e..f5c6e46 100644
+index 6e4616e..19c4708 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -676,17 +676,20 @@ gerber_do_export (HID_Attr_Val * options)
-   region.X2 = PCB->MaxWidth;
-   region.Y2 = PCB->MaxHeight;
- 
-+#warning NULL gc
-+  common_set_clip_box (NULL, &region);
-+
-   pagecount = 1;
-   resetApertures ();
- 
+@@ -682,11 +682,14 @@ gerber_do_export (HID_Attr_Val * options)
    lastgroup = -1;
    layer_list_idx = 0;
    finding_apertures = 1;
 -  hid_expose_callback (&gerber_graphics, &region, 0);
++
++  common_set_clip_box (&gerber_graphics, &region);
++
 +  hid_expose_callback (&gerber_graphics, 0);
  
    layer_list_idx = 0;
@@ -4048,7 +4042,7 @@ index 32036c8..48b8c3c 100644
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
  void ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 3d1ffd3..2bfa077 100644
+index 3d1ffd3..c860c5a 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -816,6 +816,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
@@ -4059,14 +4053,11 @@ index 3d1ffd3..2bfa077 100644
  
    save_main = main_pixmap;
    main_pixmap = window;
-@@ -825,13 +826,18 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
+@@ -825,13 +826,15 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
    region.X2 = PCB->MaxWidth;
    region.Y2 = PCB->MaxHeight;
  
-+#warning NULL gc
-+  gc = NULL;
-+
-+  common_set_clip_box (gc, &region);
++  common_set_clip_box (&lesstif_graphics, &region);
 +
    pixmap = window;
    XSync (display, 0);
@@ -4079,24 +4070,21 @@ index 3d1ffd3..2bfa077 100644
        XSync (display, 0);
        time (&end);
        i++;
-@@ -2496,6 +2502,11 @@ static int need_redraw = 0;
+@@ -2496,6 +2499,8 @@ static int need_redraw = 0;
  static Boolean
  idle_proc (XtPointer dummy)
  {
 +  hidGC gc;
 +
-+#warning NULL gc
-+  gc = NULL;
-+
    if (need_redraw)
      {
        int mx, my;
-@@ -2578,8 +2589,11 @@ idle_proc (XtPointer dummy)
+@@ -2578,8 +2583,11 @@ idle_proc (XtPointer dummy)
  			      rightmost-leftmost+1, view_height-bottommost+1);
  	    }
  	}
 +
-+      common_set_clip_box (gc, &region);
++      common_set_clip_box (&lesstif_graphics, &region);
 +
        DrawBackgroundImage();
 -      hid_expose_callback (&lesstif_graphics, &region, 0);
@@ -4104,7 +4092,7 @@ index 3d1ffd3..2bfa077 100644
        draw_grid ();
        lesstif_use_mask (&lesstif_graphics, HID_MASK_OFF);
        show_crosshair (0); /* To keep the drawn / not drawn info correct */
-@@ -3754,6 +3768,7 @@ pinout_callback (Widget da, PinoutData * pd,
+@@ -3754,6 +3762,7 @@ pinout_callback (Widget da, PinoutData * pd,
    double save_vz;
    Pixmap save_px;
    int reason = cbs ? cbs->reason : 0;
@@ -4112,22 +4100,18 @@ index 3d1ffd3..2bfa077 100644
  
    if (pd->window == 0 && reason == XmCR_RESIZE)
      return;
-@@ -3802,8 +3817,13 @@ pinout_callback (Widget da, PinoutData * pd,
-   region.X2 = PCB->MaxWidth;
+@@ -3803,7 +3812,9 @@ pinout_callback (Widget da, PinoutData * pd,
    region.Y2 = PCB->MaxHeight;
  
-+#warning NULL gc
-+  gc = NULL;
-+
-+  common_set_clip_box (gc, &region);
-+
    XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);
 -  hid_expose_callback (&lesstif_graphics, &region, pd->item);
++
++  common_set_clip_box (&lesstif_graphics, &region);
 +  hid_expose_callback (&lesstif_graphics, pd->item);
  
    pinout = 0;
    view_left_x = save_vx;
-@@ -4034,7 +4054,7 @@ lesstif_request_debug_draw (void)
+@@ -4034,7 +4045,7 @@ lesstif_request_debug_draw (void)
  }
  
  static void
@@ -4136,7 +4120,7 @@ index 3d1ffd3..2bfa077 100644
  {
    /* Copy the backing pixmap to the display and redraw any attached objects */
    XSetFunction (display, my_gc, GXcopy);
-@@ -4050,9 +4070,9 @@ lesstif_flush_debug_draw (void)
+@@ -4050,9 +4061,9 @@ lesstif_flush_debug_draw (void)
  }
  
  static void
@@ -4149,21 +4133,16 @@ index 3d1ffd3..2bfa077 100644
     */
  }
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index f1d912d..2f8a497 100644
+index f1d912d..55e88bd 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -646,10 +646,13 @@ nelma_start_png_export()
- 	region.X2 = PCB->MaxWidth;
- 	region.Y2 = PCB->MaxHeight;
- 
-+#warning NULL gc
-+  common_set_clip_box (NULL, &region);
-+
+@@ -649,7 +649,8 @@ nelma_start_png_export()
  	linewidth = -1;
  	lastbrush = (gdImagePtr)((void *) -1);
  
 -	hid_expose_callback(&nelma_graphics, &region, 0);
-+	hid_expose_callback(&nelma_graphics, 0);
++	common_set_clip_box (&nelma_graphics, &region);
++	hid_expose_callback (&nelma_graphics, 0);
  }
  
  static void 
