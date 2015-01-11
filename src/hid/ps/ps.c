@@ -1035,7 +1035,7 @@ ps_destroy_gc (hidGC gc)
 }
 
 static void
-ps_use_mask (enum mask_mode mode)
+ps_use_mask (hidGC gc, enum mask_mode mode)
 {
   /* does nothing */
 }
