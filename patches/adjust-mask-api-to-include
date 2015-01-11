@@ -1,5 +1,5 @@
 Bottom: c6864e746df746b1910b3a2bd1a1451d8a0d545f
-Top:    eb86680a9f4ace7935796e62044f81b6d082ead4
+Top:    3722e75418364ab0bcf5c256cc3fbc6fa2990010
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 15:42:13 +0000
 
@@ -150,7 +150,7 @@ index 3430633..9804460 100644
  void ghid_set_line_cap (hidGC gc, EndCapStyle style);
  void ghid_set_line_width (hidGC gc, Coord width);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 966ca64..bdeb588 100644
+index 966ca64..ee3b063 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -242,7 +242,7 @@ Location of the @file{pcb-menu.res} file which defines the menu for the lesstif
@@ -162,27 +162,25 @@ index 966ca64..bdeb588 100644
  static void zoom_max ();
  static void zoom_to (double factor, int x, int y);
  static void zoom_by (double factor, int x, int y);
-@@ -2500,7 +2500,8 @@ idle_proc (XtPointer dummy)
+@@ -2500,7 +2500,7 @@ idle_proc (XtPointer dummy)
      {
        int mx, my;
        BoxType region;
 -      lesstif_use_mask (HID_MASK_OFF);
-+#warning NULL gc
-+      lesstif_use_mask (NULL, HID_MASK_OFF);
++      lesstif_use_mask (&lesstif_graphics, HID_MASK_OFF);
        pixmap = main_pixmap;
        mx = view_width;
        my = view_height;
-@@ -2581,7 +2582,8 @@ idle_proc (XtPointer dummy)
+@@ -2581,7 +2581,7 @@ idle_proc (XtPointer dummy)
        DrawBackgroundImage();
        hid_expose_callback (&lesstif_graphics, &region, 0);
        draw_grid ();
 -      lesstif_use_mask (HID_MASK_OFF);
-+#warning NULL gc
-+      lesstif_use_mask (NULL, HID_MASK_OFF);
++      lesstif_use_mask (&lesstif_graphics, HID_MASK_OFF);
        show_crosshair (0); /* To keep the drawn / not drawn info correct */
        XSetFunction (display, my_gc, GXcopy);
        XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
-@@ -3073,7 +3075,7 @@ lesstif_destroy_gc (hidGC gc)
+@@ -3073,7 +3073,7 @@ lesstif_destroy_gc (hidGC gc)
  }
  
  static void
