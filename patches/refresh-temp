@@ -1,0 +1,22 @@
+Bottom: b37fadae5c520b86e9f0d24bbf4f3d5e231b87c2
+Top:    2be6a1cc26f35f08f25929cd86498f43b1eb3ed4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 18:00:48 +0000
+
+Refresh of tmp
+
+---
+
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index ea2ff0d..20a27d7 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -227,7 +227,7 @@ hid_get_extents (void *item)
+   region.Y1 = -COORD_MAX - 1;
+   region.X2 = COORD_MAX;
+   region.Y2 = COORD_MAX;
+-  hid_expose_callback (&extents_hid, &extents_graphcis, &region, item);
++  hid_expose_callback (&extents_hid, &extents_graphics, &region, item);
+ 
+   return &box;
+ }
