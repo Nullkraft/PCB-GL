@@ -1,7 +1,7 @@
-Bottom: 3c27ab06540ef712a511413d81fef5d125cc167d
-Top:    0ccd43cb453695ee125a5ba7bc6271b0f8cd8bd5
+Bottom: 230740e6f85b7c7400a24ce61d29415922630814
+Top:    b952f71f5812ef3e4bcf79115ccc89208011a641
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-11 13:38:48 +0000
+Date:   2015-01-11 14:56:13 +0000
 
 Work in progress
 
@@ -572,10 +572,10 @@ index 0000000..c27606b
 +
 +int vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2, Vector S1, Vector S2);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 98f6e43..9fe81f0 100644
+index ea28d2b..c7471aa 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -79,14 +79,8 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+@@ -78,14 +78,8 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
  /* note that a vertex v's Flags.status represents the edge defined by
   * v to v->next (i.e. the edge is forward of v)
   */
@@ -591,7 +591,7 @@ index 98f6e43..9fe81f0 100644
  
  #define NODE_LABEL(n)  ((n)->Flags.status)
  #define LABEL_NODE(n,l) ((n)->Flags.status = (l))
-@@ -195,10 +189,6 @@ node_add_single (VNODE * dest, Vector po)
+@@ -194,10 +188,6 @@ node_add_single (VNODE * dest, Vector po)
    return p;
  }				/* node_add */
  
@@ -602,7 +602,7 @@ index 98f6e43..9fe81f0 100644
  /*
  new_descriptor
    (C) 2006 harry eaton
-@@ -489,23 +479,6 @@ cntrbox_adjust (PLINE * c, Vector p)
+@@ -488,23 +478,6 @@ cntrbox_adjust (PLINE * c, Vector p)
  
  /* some structures for handling segment intersections using the rtrees */
  
@@ -626,7 +626,7 @@ index 98f6e43..9fe81f0 100644
  typedef struct info
  {
    double m, b;
-@@ -731,6 +704,25 @@ get_seg (const BoxType * b, void *cl)
+@@ -719,6 +692,25 @@ get_seg (const BoxType * b, void *cl)
    return 0;
  }
  
@@ -652,7 +652,7 @@ index 98f6e43..9fe81f0 100644
  /*
   * intersect() (and helpers)
   * (C) 2006, harry eaton
-@@ -937,15 +929,23 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -923,15 +915,23 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	      a->contours->xmin <= b->contours->xmax &&
  	      a->contours->ymin <= b->contours->ymax)
  	    {
@@ -678,7 +678,7 @@ index 98f6e43..9fe81f0 100644
  		}
  	    }
  	}
-@@ -955,7 +955,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -941,7 +941,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	  {
  	    the_list = add_descriptors (curcB, 'B', the_list);
  	    if (UNLIKELY (the_list == NULL))
@@ -690,7 +690,7 @@ index 98f6e43..9fe81f0 100644
  	  }
      }
    while (add && (b = b->f) != bfst);
-@@ -966,7 +969,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -952,7 +955,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	  {
  	    the_list = add_descriptors (curcA, 'A', the_list);
  	    if (UNLIKELY (the_list == NULL))
