@@ -1,7 +1,7 @@
-Bottom: 1ee70d484610b6d5a213777a5b5685b7c78e0302
-Top:    32bae895de255092f1d53f8ccef1728d567fafbd
+Bottom: d4ee2c2b56b7fc0429a5114da10f5ac0373b7041
+Top:    00ec472d0ce023764ed2ccad73090350ab06e7e1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-11 15:42:09 +0000
+Date:   2015-01-11 20:20:50 +0000
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -148,10 +148,10 @@ index 5ee3bc6..280fd52 100644
  
  #define NOCOPY_FLAGS (FOUNDFLAG | CONNECTEDFLAG)
 diff --git a/src/draw.c b/src/draw.c
-index 3cbb710..d74311d 100644
+index 2993fac..72b6903 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -155,6 +155,32 @@ pad_callback (const BoxType * b, void *cl)
+@@ -156,6 +156,32 @@ pad_callback (const BoxType * b, void *cl)
  }
  
  static void
@@ -183,8 +183,8 @@ index 3cbb710..d74311d 100644
 +static void
  draw_element_name (ElementType *element)
  {
-   if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
-@@ -169,7 +195,7 @@ draw_element_name (ElementType *element)
+   if ((TEST_FLAG (HIDENAMESFLAG, PCB) && hid_draw_is_gui (hid_draw)) ||
+@@ -170,7 +196,7 @@ draw_element_name (ElementType *element)
      hid_draw_set_color (Output.fgGC, PCB->ElementColor);
    else
      hid_draw_set_color (Output.fgGC, PCB->InvisibleObjectsColor);

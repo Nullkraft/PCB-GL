@@ -1,7 +1,7 @@
-Bottom: 91c959a1b9c7b26bcb4d5ed3e308e3e132e70ffc
-Top:    b1922be1c3dfca0aafe8a1bf66c7e15452f493b2
+Bottom: a70e588ff0ca0f8691a6cebfb8cae9820814dedd
+Top:    f983974399dc077e64c57d2e68b895387c6aa15a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:42:11 +0000
+Date:   2015-01-11 20:20:53 +0000
 
 Avoid solving snap-rounding problem
 
@@ -27,7 +27,7 @@ would then be an error of 5nm.
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 7d845f7..003be24 100644
+index 2187897..6706337 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -162,6 +162,8 @@ thindraw_contour (hidGC gc, PLINE *pl)

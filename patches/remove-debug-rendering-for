@@ -1,7 +1,7 @@
-Bottom: 03c1634eac15de9fb479b59dacd1be604d877a5e
-Top:    def197453960458718aeb45efebc902f4a0edc1f
+Bottom: dca5a720348e9296cb287980e115f0bb3cff4586
+Top:    103fd47b84f71389a4a361c66d1cccf496121269
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:42:11 +0000
+Date:   2015-01-11 20:20:53 +0000
 
 Remove debug rendering for polygons
 
@@ -9,7 +9,7 @@ Remove debug rendering for polygons
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 0a71724..9cd5221 100644
+index b959385..463f682 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -139,30 +139,6 @@ fill_contour (hidGC gc, PLINE *pl)
@@ -263,10 +263,10 @@ index 0a71724..9cd5221 100644
  
  static void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2461fff..2cd9e3f 100644
+index fdaeafb..34d3257 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -903,11 +903,9 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -904,11 +904,9 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  
    double old_alpha_mult = gtk_gc->alpha_mult;
    common_thindraw_pcb_polygon (gc, poly, clip_box);
@@ -278,7 +278,7 @@ index 2461fff..2cd9e3f 100644
  }
  
  void
-@@ -1644,8 +1642,7 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
+@@ -1645,8 +1643,7 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
      polygon.BoundingBox = *drawn_area;
    polygon.Flags = NoFlags ();
    SET_FLAG (FULLPOLYFLAG, &polygon);
@@ -288,7 +288,7 @@ index 2461fff..2cd9e3f 100644
    poly_FreeContours (&polygon.NoHoles);
  }
  
-@@ -2696,7 +2693,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2697,7 +2694,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);

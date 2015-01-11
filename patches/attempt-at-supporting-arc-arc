@@ -1,7 +1,7 @@
-Bottom: a1e03feefbd5e58f5a39e629608042e06bebfeed
-Top:    91c959a1b9c7b26bcb4d5ed3e308e3e132e70ffc
+Bottom: 852a3fdce95dd3bb6f464c9424d9ae749372c1bc
+Top:    a70e588ff0ca0f8691a6cebfb8cae9820814dedd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:42:11 +0000
+Date:   2015-01-11 20:20:53 +0000
 
 Attempt at supporting arc-arc intersections in polygons
 
@@ -241,7 +241,7 @@ index 0000000..c7920d2
 +                           double p1x, double p1y, double p2x, double p2y,
 +                           double *mu1, double *mu2);
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index a36f5d5..7d845f7 100644
+index 0aa9779..2187897 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -189,6 +189,17 @@ thindraw_contour (hidGC gc, PLINE *pl)

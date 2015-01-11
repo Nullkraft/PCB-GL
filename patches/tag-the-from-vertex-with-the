@@ -1,7 +1,7 @@
-Bottom: 1ce0724356862e1284feb1a36f65a6725c0ecd5c
-Top:    dcd996420998b061dcaeb62fc17962c59c215f2d
+Bottom: 8b761a3ada97ab95f5845dc4c4305f612da301dd
+Top:    e6dc5dba174c92a85a64da9fb6578f1ceb8d92c9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:42:11 +0000
+Date:   2015-01-11 20:20:52 +0000
 
 Tag the from vertex with the circular information, not the to vertex.
 
@@ -12,7 +12,7 @@ so avoids the need to mess too much with gather / jump.
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 4aba080..a36f5d5 100644
+index 978ab3d..0aa9779 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -171,18 +171,18 @@ thindraw_contour (hidGC gc, PLINE *pl)
