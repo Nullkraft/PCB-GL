@@ -1,5 +1,5 @@
 Bottom: 1b8319b68116f04133b63b912af3519f2e066eb8
-Top:    d1e910f0bcfd70e42f171ac7e5f10fc2d7ec4d5e
+Top:    11733402ecb6e8f19b2ca2972cd200304643c8c6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 16:35:49 +0000
 
@@ -179,7 +179,7 @@ index fa608fc..cf2de59 100644
    initialised = true;
  }
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index ed45bad..64dd8d5 100644
+index ed45bad..3b85044 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -478,39 +478,46 @@ common_nogui_init (HID *hid)
@@ -250,14 +250,14 @@ index ed45bad..64dd8d5 100644
  
    nogui_hid.struct_size = sizeof (HID);
    nogui_hid.name        = "nogui";
-@@ -518,7 +525,10 @@ hid_nogui_get_hid (void)
-                           "Does nothing.";
+@@ -519,6 +526,10 @@ hid_nogui_get_hid (void)
    nogui_hid.graphics    = &nogui_graphics;
  
-+  nogui_graphics.klass  = &nogui_graphics_class;
-+
    common_nogui_init (&nogui_hid);
++
 +  common_nogui_graphics_class_init (&nogui_graphics_class);
++
++  nogui_graphics.klass = &nogui_graphics_class;
    common_nogui_graphics_init (&nogui_graphics);
  
    return &nogui_hid;
@@ -559,7 +559,7 @@ index 238cca1..05d5863 100644
  #include "../ps/ps.h"
  #include "hid/common/hidnogui.h"
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index b11c415..df12c26 100644
+index b11c415..cb28849 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -108,6 +108,7 @@ typedef struct nelma_gc_struct {
@@ -616,7 +616,7 @@ index b11c415..df12c26 100644
 +  nelma_graphics_class.fill_polygon   = nelma_fill_polygon;
 +  nelma_graphics_class.fill_rect      = nelma_fill_rect;
 +
-+  nelma_graphics.klass          = &nelma_graphics_class;
++  nelma_graphics.klass = &nelma_graphics_class;
 +  common_draw_helpers_init (&nelma_graphics);
  
    hid_register_hid (&nelma_hid);
@@ -683,7 +683,7 @@ index 2bdf931..0c189d3 100644
  #ifdef HAVE_SOME_FORMAT
    hid_register_hid (&png_hid);
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 6893cd5..5e56e70 100644
+index 6893cd5..5890e4c 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -63,6 +63,7 @@ typedef struct eps_gc_struct
@@ -738,13 +738,13 @@ index 6893cd5..5e56e70 100644
 +  eps_graphics_class.fill_polygon   = eps_fill_polygon;
 +  eps_graphics_class.fill_rect      = eps_fill_rect;
 +
-+  eps_graphics.klass          = &eps_graphics_class;
++  eps_graphics.klass = &eps_graphics_class;
 +  common_draw_helpers_init (&eps_graphics);
  
    hid_register_hid (&eps_hid);
  }
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index cc53448..5c46206 100644
+index cc53448..a52bf76 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -47,6 +47,7 @@ typedef struct ps_gc_struct
@@ -817,7 +817,7 @@ index cc53448..5c46206 100644
 +  common_draw_helpers_class_init (&ps_graphics_class);
 +  ps_ps_graphics_class_init (&ps_graphics_class);
 +
-+  ps_graphics.klass         = &ps_graphics_class;
++  ps_graphics.klass = &ps_graphics_class;
 +  common_draw_helpers_init (&ps_graphics);
 +  ps_ps_graphics_init (&ps_graphics);
 +
