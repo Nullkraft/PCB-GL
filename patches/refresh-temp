@@ -1,0 +1,46 @@
+Bottom: f80a7482acd6b88c878278111e2f1d5db4a73ad7
+Top:    3be62f5e83ce5f7af11fbd34dd1b502768d85e3e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 23:48:56 +0000
+
+Refresh of attempt-at-re-writing-drawing
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 1606466..f78f0f5 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -817,9 +817,6 @@ redraw_region (GdkRectangle *rect)
+   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+ 
+-#warning NULL gc
+-//  common_set_clip_box (NULL, &region);
+-
+   eleft = Vx (0);
+   eright = Vx (PCB->MaxWidth);
+   etop = Vy (0);
+@@ -864,6 +861,7 @@ redraw_region (GdkRectangle *rect)
+ 
+   ghid_draw_bg_image();
+ 
++  common_set_clip_box (&ghid_graphics, &region);
+   hid_expose_callback (&ghid_graphics, 0);
+   ghid_draw_grid ();
+ 
+@@ -1120,13 +1118,12 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ 
+   ghid_graphics.klass = &ghid_graphics_class;
+   ghid_graphics.poly_after = true;
++  common_nogui_graphics_init (&ghid_graphics);
+   common_draw_helpers_init (&ghid_graphics);
+ 
+   /* Init any GC's required */
+   port->render_priv = g_new0 (render_priv, 1);
+   port->render_priv->crosshair_gc = hid_draw_make_gc (&ghid_graphics);
+-
+-  ghid_graphics .
+ }
+ 
+ void
