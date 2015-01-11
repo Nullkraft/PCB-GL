@@ -301,12 +301,16 @@ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
       PLINE *pl;
 
       for (pl = poly->NoHoles; pl != NULL; pl = pl->next)
+#if 1
+        thindraw_contour (gc, pl);
+#else
         {
           if (clip_box == NULL)
             fill_contour (gc, pl);
           else
             fill_clipped_contour (gc, pl, clip_box);
         }
+#endif
     }
 #endif
 
