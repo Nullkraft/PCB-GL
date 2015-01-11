@@ -1,7 +1,7 @@
-Bottom: d8f579a455a9d03d848631bf4d178d0c2e9788a7
-Top:    cc049fdceadc3ce90f0875c34d132216cbd244b7
+Bottom: 7f1688cb09925104b48bf94f87c7c37165aa15c9
+Top:    aa84f593aef97ff76e7fcbf67f57f85cbcaec37c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-11 15:42:00 +0000
+Date:   2015-01-11 23:39:28 +0000
 
 Demo of exporter specific export routine
 
@@ -217,7 +217,7 @@ index dfa9db4..4a74152 100644
 +    PrintFab (Output.fgGC);
 +}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 9ec4b2b..5a7bb9f 100644
+index 519264e..32d6fbd 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -23,9 +23,11 @@
@@ -885,7 +885,7 @@ index 1fbebbf..411a518 100644
  
    ghid_draw_grid (priv->crosshair_gc, &region);
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index f2dd6ae..4e96420 100644
+index 35b287a..185cc4b 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -32,7 +32,7 @@
