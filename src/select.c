@@ -976,18 +976,20 @@ SelectObjectByName (int Type, char *Pattern, bool select)
 
       MENU_LOOP (&PCB->NetlistLib);
       {
-        Cardinal i;
-        LibraryEntryType *entry;
+        GList *i;
         ConnectionType conn;
 
         /* Name[0] and Name[1] are special purpose, not the actual name*/
         if (menu->Name && menu->Name[0] != '\0' && menu->Name[1] != '\0' &&
             REGEXEC (menu->Name + 2))
           {
-            for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
-              if (SeekPad (entry, &conn, false))
-                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,
-                             true, FOUNDFLAG, true);
+            for (i = menu->Entry; i != NULL; i = g_list_next (i))
+              {
+                LibraryEntryType *entry = i->data;
+                if (SeekPad (entry, &conn, false))
+                  RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,
+                               true, FOUNDFLAG, true);
+              }
           }
       }
       END_LOOP;
