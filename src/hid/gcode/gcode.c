@@ -1624,8 +1624,6 @@ hid_gcode_init ()
 
   gcode_hid.graphics            = &gcode_graphics;
 
-  gcode_graphics.klass          = &gcode_graphics_class;
-
   common_draw_helpers_class_init (&gcode_graphics_class);
 
   gcode_graphics_class.make_gc        = gcode_make_gc;
@@ -1643,6 +1641,7 @@ hid_gcode_init ()
   gcode_graphics_class.fill_polygon   = gcode_fill_polygon;
   gcode_graphics_class.fill_rect      = gcode_fill_rect;
 
+  gcode_graphics.klass = &gcode_graphics_class;
   common_draw_helpers_init (&gcode_graphics);
 
   hid_register_hid (&gcode_hid);
