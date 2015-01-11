@@ -644,7 +644,7 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, double scale)
   borast_traps_t traps;
 
   _borast_traps_init (&traps);
-  bo_poly_to_traps (pa, &traps);
+  bo_poly_to_traps (gc, pa, &traps);
   _borast_traps_fini (&traps);
 
   return;
