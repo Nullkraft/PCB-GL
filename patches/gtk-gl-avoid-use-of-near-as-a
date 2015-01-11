@@ -1,0 +1,63 @@
+Bottom: 654d2ca1e526f1e1db589ec76ad0cb50a9bbb37b
+Top:    cbbffa180dbb12c9bb11ee613284aa5b7a34bdc8
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 15:01:18 +0000
+
+gtk-gl: Avoid use of "near" as a variable name, as it clashes with #defines in Win32
+
+Sadly, windows.h pulls in a lot of non-namespaced cruft, even with
+#define WIN32_LEAN_AND_MEAN 1
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index f968b24..8c2f94e 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2613,8 +2613,8 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+   double aspect = (double)widget->allocation.width / (double)widget->allocation.height;
+   double width = 2. * aspect;
+   double height = 2.;
+-  double near = 1.;
+-  /* double far = 24.; */
++  double near_plane = 1.;
++  /* double far_plane = 24.; */
+ 
+   /* This is nasty beyond words, but I'm lazy and translating directly
+    * from some untested maths I derived which used this notation */
+@@ -2643,13 +2643,13 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+   fvz = (float)pcb_z;
+ 
+   /* This isn't really X and Y? */
+-  x = (C * fvz + D) * 2. / width  * near + vpx * (K * fvz + L);
+-  y = (G * fvz + H) * 2. / height * near + vpy * (K * fvz + L);
++  x = (C * fvz + D) * 2. / width  * near_plane + vpx * (K * fvz + L);
++  y = (G * fvz + H) * 2. / height * near_plane + vpy * (K * fvz + L);
+ 
+-  mat[0][0] = -vpx * I - A * 2 / width / near;
+-  mat[0][1] = -vpx * J - B * 2 / width / near;
+-  mat[1][0] = -vpy * I - E * 2 / height / near;
+-  mat[1][1] = -vpy * J - F * 2 / height / near;
++  mat[0][0] = -vpx * I - A * 2 / width / near_plane;
++  mat[0][1] = -vpx * J - B * 2 / width / near_plane;
++  mat[1][0] = -vpy * I - E * 2 / height / near_plane;
++  mat[1][1] = -vpy * J - F * 2 / height / near_plane;
+ 
+ //  if (fabs (determinant_2x2 (mat)) < 0.000000000001)
+ //    printf ("Determinant is quite small\n");
+@@ -2683,10 +2683,10 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
+     /* float ew = last_modelview_matrix[0][3] * fvx + last_modelview_matrix[1][3] * fvy + last_modelview_matrix[2][3] * fvz + last_modelview_matrix[3][3]; */
+ 
+ #if 0
+-    if (-ez < near)
+-      printf ("ez is closer than the near clipping plane, ez = %f\n", ez);
+-    if (-ez > far)
+-      printf ("ez is further than the near clipping plane, ez = %f\n", ez);
++    if (-ez < near_plane)
++      printf ("ez is closer than the near_plane clipping plane, ez = %f\n", ez);
++    if (-ez > far_plane)
++      printf ("ez is further than the near_plane clipping plane, ez = %f\n", ez);
+ #endif
+     if (-ez < 0) {
+       // printf ("EZ IS BEHIND THE CAMERA !! ez = %f\n", ez);
