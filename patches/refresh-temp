@@ -1,0 +1,28 @@
+Bottom: 4d6be17bf8ca64d86251067d0cb6703460185ee2
+Top:    1bc147946265bc52601a3370487534760c5a11ba
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 14:42:01 +0000
+
+Refresh of tmp-alterartions-to-build-all
+
+---
+
+diff --git a/w32/build-all.sh b/w32/build-all.sh
+index e31e529..689d307 100755
+--- a/w32/build-all.sh
++++ b/w32/build-all.sh
+@@ -12,12 +12,11 @@ libiconv
+ gettext
+ glib
+ atk
++cairo
++pango
+ "
+ 
+ BUILD="
+-freetype
+-cairo
+-pango
+ gtk+
+ gd
+ pcb
