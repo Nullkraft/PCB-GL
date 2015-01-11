@@ -1418,7 +1418,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
   int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 
-  if (!gui->set_layer (0, group, 0))
+  if (!hid_draw_set_layer (&ghid_graphics, 0, group, 0))
     return 0;
 
   /* HACK: Subcomposite each layer in a layer group separately */
@@ -1433,7 +1433,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
     if (layernum < max_copper_layer && Layer->On) {
 
       if (!first_run)
-        gui->set_layer (0, group, 0);
+        hid_draw_set_layer (&ghid_graphics, 0, group, 0);
 
       first_run = 0;
 
@@ -1457,8 +1457,8 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
 
         /* HACK: Subcomposite polygons separately from other layer primitives */
         /* Reset the compositing */
-        gui->end_layer ();
-        gui->set_layer (0, group, 0);
+        hid_draw_end_layer (&ghid_graphics);
+        hid_draw_set_layer (&ghid_graphics, 0, group, 0);
 
         if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
           hidgl_flush_triangles (&buffer);
@@ -1497,7 +1497,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
     }
   }
 
-  gui->end_layer ();
+  hid_draw_end_layer (&ghid_graphics);
 
   return (n_entries > 1);
 }
@@ -1649,20 +1649,20 @@ ghid_draw_everything (BoxType *drawn_area)
   side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
 
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
-      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
+      hid_draw_set_layer (&ghid_graphics, "invisible", SL (INVISIBLE, 0), 0)) {
     DrawSilk (side, drawn_area);
 
     if (global_view_2d)
       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
 
-    gui->end_layer ();
+    hid_draw_end_layer (&ghid_graphics);
 
     /* Draw the reverse-side solder mask if turned on */
     if (!global_view_2d &&
-        gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
+        hid_draw_set_layer (&ghid_graphics, SWAP_IDENT ? "componentmask" : "soldermask",
                         SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
         GhidDrawMask (side, drawn_area);
-        gui->end_layer ();
+        hid_draw_end_layer (&ghid_graphics);
       }
   }
 
@@ -1716,16 +1716,16 @@ ghid_draw_everything (BoxType *drawn_area)
   }
 
   /* Draw the solder mask if turned on */
-  if (gui->set_layer (SWAP_IDENT ? "soldermask" : "componentmask",
+  if (hid_draw_set_layer (&ghid_graphics, SWAP_IDENT ? "soldermask" : "componentmask",
                       SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
     GhidDrawMask (side, drawn_area);
-    gui->end_layer ();
+    hid_draw_end_layer (&ghid_graphics);
   }
 
-  if (gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
+  if (hid_draw_set_layer (&ghid_graphics, SWAP_IDENT ? "bottomsilk" : "topsilk",
                       SWAP_IDENT ? SL (SILK, BOTTOM) : SL (SILK, TOP), 0)) {
       DrawSilk (side, drawn_area);
-      gui->end_layer ();
+      hid_draw_end_layer (&ghid_graphics);
   }
 
   /* Draw element Marks */
@@ -1733,9 +1733,9 @@ ghid_draw_everything (BoxType *drawn_area)
     r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback, NULL);
 
   /* Draw rat lines on top */
-  if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0)) {
+  if (PCB->RatOn && hid_draw_set_layer (&ghid_graphics, "rats", SL (RATS, 0), 0)) {
     DrawRats(drawn_area);
-    gui->end_layer ();
+    hid_draw_end_layer (&ghid_graphics);
   }
 
   Settings.ShowBottomSide = save_show_solder;
