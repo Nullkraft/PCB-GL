@@ -1,14 +1,13 @@
 Bottom: 0154b478b82343f2b2eec7c5ae24609cccc6ce63
-Top:    49d8d8683230bdf3db3f808d8523594d855fe28a
-Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-11 14:56:17 +0000
+Top:    3820026fb7a4b78db9f55ffd1aa64af86b514c95
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 15:10:22 +0000
 
 Bentley-Ottann test implementation
 
 Code from cairo - intersection routines stripped out
 
 XXX: Appears to be some breakage in demo.pcb (See top LHS component layer polygons)
-
 
 ---
 
@@ -251,10 +250,10 @@ index 0000000..b187cf2
 +License (LGPL) version 2.1.
 diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
 new file mode 100644
-index 0000000..5cccfbc
+index 0000000..7a0d1ac
 --- /dev/null
 +++ b/src/borast/borast-bentley-ottmann.c
-@@ -0,0 +1,1568 @@
+@@ -0,0 +1,1569 @@
 +/*
 + * Copyright © 2004 Carl Worth
 + * Copyright © 2006 Red Hat, Inc.
@@ -306,6 +305,7 @@ index 0000000..5cccfbc
 +
 +#include "polygon.h"
 +#include <GL/gl.h>
++#include "hid_draw.h"
 +#include "hid/common/hidgl.h"
 +
 +#define _borast_error(x) (x)
@@ -1639,7 +1639,7 @@ index 0000000..5cccfbc
 +
 +
 +borast_status_t
-+bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps)
++bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
 +{
 +  int intersections;
 +  borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
@@ -1702,15 +1702,15 @@ index 0000000..5cccfbc
 +
 +#if 1
 +    if (x1 == x2) {
-+      hidgl_ensure_triangle_space (&buffer, 1);
-+      hidgl_add_triangle (&buffer, x1, y1, x3, y3, x4, y4);
++      hidgl_ensure_triangle_space (gc, 1);
++      hidgl_add_triangle (gc, x1, y1, x3, y3, x4, y4);
 +    } else if (x3 == x4) {
-+      hidgl_ensure_triangle_space (&buffer, 1);
-+      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
++      hidgl_ensure_triangle_space (gc, 1);
++      hidgl_add_triangle (gc, x1, y1, x2, y2, x3, y3);
 +    } else {
-+      hidgl_ensure_triangle_space (&buffer, 2);
-+      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
-+      hidgl_add_triangle (&buffer, x3, y3, x4, y4, x1, y1);
++      hidgl_ensure_triangle_space (gc, 2);
++      hidgl_add_triangle (gc, x1, y1, x2, y2, x3, y3);
++      hidgl_add_triangle (gc, x3, y3, x4, y4, x1, y1);
 +    }
 +#else
 +    glBegin (GL_LINES);
@@ -1736,7 +1736,7 @@ index 0000000..5cccfbc
 +
 +
 +borast_status_t
-+bo_contour_to_traps (PLINE *contour, borast_traps_t *traps)
++bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps)
 +{
 +  int intersections;
 +  borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
@@ -1792,15 +1792,15 @@ index 0000000..5cccfbc
 +
 +#if 1
 +    if (x1 == x2) {
-+      hidgl_ensure_triangle_space (&buffer, 1);
-+      hidgl_add_triangle (&buffer, x1, y1, x3, y3, x4, y4);
++      hidgl_ensure_triangle_space (gc, 1);
++      hidgl_add_triangle (gc, x1, y1, x3, y3, x4, y4);
 +    } else if (x3 == x4) {
-+      hidgl_ensure_triangle_space (&buffer, 1);
-+      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
++      hidgl_ensure_triangle_space (gc, 1);
++      hidgl_add_triangle (gc, x1, y1, x2, y2, x3, y3);
 +    } else {
-+      hidgl_ensure_triangle_space (&buffer, 2);
-+      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
-+      hidgl_add_triangle (&buffer, x3, y3, x4, y4, x1, y1);
++      hidgl_ensure_triangle_space (gc, 2);
++      hidgl_add_triangle (gc, x1, y1, x2, y2, x3, y3);
++      hidgl_add_triangle (gc, x3, y3, x4, y4, x1, y1);
 +    }
 +#else
 +    glBegin (GL_LINES);
@@ -5478,7 +5478,7 @@ index 0000000..ba0f8eb
 +
 +#endif
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 37da288..816bf98 100644
+index 37da288..859dd82 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -62,6 +62,7 @@
@@ -5496,7 +5496,7 @@ index 37da288..816bf98 100644
 +  borast_traps_t traps;
 +
 +  _borast_traps_init (&traps);
-+  bo_poly_to_traps (pa, &traps);
++  bo_poly_to_traps (gc, pa, &traps);
 +  _borast_traps_fini (&traps);
 +
 +  return;
@@ -5505,11 +5505,11 @@ index 37da288..816bf98 100644
    global_scale = scale;
 diff --git a/src/sweep.h b/src/sweep.h
 new file mode 100644
-index 0000000..110466d
+index 0000000..347287e
 --- /dev/null
 +++ b/src/sweep.h
 @@ -0,0 +1,4 @@
 +#include "borast/borast-traps-private.h"
 +
-+borast_status_t bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps);
-+borast_status_t bo_contour_to_traps (PLINE *contour, borast_traps_t *traps);
++borast_status_t bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps);
++borast_status_t bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps);
