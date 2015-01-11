@@ -74,6 +74,7 @@ static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
 
 static int doing_pinout = 0;
 static bool doing_assy = false;
+static HID_DRAW *hid_draw = NULL;
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -176,10 +177,10 @@ _draw_pv_name (PinType *pv)
   text.Y = box.Y1;
   text.Direction = vert ? 1 : 0;
 
-  if (hid_draw_is_gui (gui->graphics))
+  if (hid_draw_is_gui (hid_draw))
     doing_pinout++;
   hid_draw_pcb_text (Output.fgGC, &text, 0);
-  if (hid_draw_is_gui (gui->graphics))
+  if (hid_draw_is_gui (hid_draw))
     doing_pinout--;
 }
 
@@ -320,7 +321,7 @@ pad_callback (const BoxType * b, void *cl)
 static void
 draw_element_name (ElementType *element)
 {
-  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && hid_draw_is_gui (gui->graphics)) ||
+  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && hid_draw_is_gui (hid_draw)) ||
       TEST_FLAG (HIDENAMEFLAG, element))
     return;
   if (doing_pinout || doing_assy)
@@ -566,7 +567,7 @@ DrawEverything (const BoxType *drawn_area)
    * first draw all 'invisible' stuff
    */
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
-      && hid_draw_set_layer (gui->graphics, "invisible", SL (INVISIBLE, 0), 0))
+      && hid_draw_set_layer (hid_draw, "invisible", SL (INVISIBLE, 0), 0))
     {
       side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
       if (PCB->ElementOn)
@@ -576,7 +577,7 @@ DrawEverything (const BoxType *drawn_area)
 	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
 	}
       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-      hid_draw_end_layer (gui->graphics);
+      hid_draw_end_layer (hid_draw);
     }
 
   /* draw all layers in layerstack order */
@@ -584,105 +585,105 @@ DrawEverything (const BoxType *drawn_area)
     {
       int group = drawn_groups[i];
 
-      if (hid_draw_set_layer (gui->graphics, 0, group, 0))
+      if (hid_draw_set_layer (hid_draw, 0, group, 0))
         {
           DrawLayerGroup (group, drawn_area);
-          hid_draw_end_layer (gui->graphics);
+          hid_draw_end_layer (hid_draw);
         }
     }
 
-  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && hid_draw_is_gui (gui->graphics))
+  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && hid_draw_is_gui (hid_draw))
     return;
 
   /* Draw pins, pads, vias below silk */
-  if (hid_draw_is_gui (gui->graphics))
+  if (hid_draw_is_gui (hid_draw))
     DrawPPV (SWAP_IDENT ? bottom_group : top_group, drawn_area);
   else
     {
       CountHoles (&plated, &unplated, drawn_area);
 
-      if (plated && hid_draw_set_layer (gui->graphics, "plated-drill", SL (PDRILL, 0), 0))
+      if (plated && hid_draw_set_layer (hid_draw, "plated-drill", SL (PDRILL, 0), 0))
         {
           DrawHoles (true, false, drawn_area);
-          hid_draw_end_layer (gui->graphics);
+          hid_draw_end_layer (hid_draw);
         }
 
-      if (unplated && hid_draw_set_layer (gui->graphics, "unplated-drill", SL (UDRILL, 0), 0))
+      if (unplated && hid_draw_set_layer (hid_draw, "unplated-drill", SL (UDRILL, 0), 0))
         {
           DrawHoles (false, true, drawn_area);
-          hid_draw_end_layer (gui->graphics);
+          hid_draw_end_layer (hid_draw);
         }
     }
 
   /* Draw the solder mask if turned on */
-  if (hid_draw_set_layer (gui->graphics, "componentmask", SL (MASK, TOP), 0))
+  if (hid_draw_set_layer (hid_draw, "componentmask", SL (MASK, TOP), 0))
     {
       DrawMask (TOP_SIDE, drawn_area);
-      hid_draw_end_layer (gui->graphics);
+      hid_draw_end_layer (hid_draw);
     }
 
-  if (hid_draw_set_layer (gui->graphics, "soldermask", SL (MASK, BOTTOM), 0))
+  if (hid_draw_set_layer (hid_draw, "soldermask", SL (MASK, BOTTOM), 0))
     {
       DrawMask (BOTTOM_SIDE, drawn_area);
-      hid_draw_end_layer (gui->graphics);
+      hid_draw_end_layer (hid_draw);
     }
 
-  if (hid_draw_set_layer (gui->graphics, "topsilk", SL (SILK, TOP), 0))
+  if (hid_draw_set_layer (hid_draw, "topsilk", SL (SILK, TOP), 0))
     {
       DrawSilk (TOP_SIDE, drawn_area);
-      hid_draw_end_layer (gui->graphics);
+      hid_draw_end_layer (hid_draw);
     }
 
-  if (hid_draw_set_layer (gui->graphics, "bottomsilk", SL (SILK, BOTTOM), 0))
+  if (hid_draw_set_layer (hid_draw, "bottomsilk", SL (SILK, BOTTOM), 0))
     {
       DrawSilk (BOTTOM_SIDE, drawn_area);
-      hid_draw_end_layer (gui->graphics);
+      hid_draw_end_layer (hid_draw);
     }
 
-  if (hid_draw_is_gui (gui->graphics))
+  if (hid_draw_is_gui (hid_draw))
     {
       /* Draw element Marks */
       if (PCB->PinOn)
 	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
 		  NULL);
       /* Draw rat lines on top */
-      if (hid_draw_set_layer (gui->graphics, "rats", SL (RATS, 0), 0))
+      if (hid_draw_set_layer (hid_draw, "rats", SL (RATS, 0), 0))
         {
           DrawRats(drawn_area);
-          hid_draw_end_layer (gui->graphics);
+          hid_draw_end_layer (hid_draw);
         }
     }
 
   paste_empty = IsPasteEmpty (TOP_SIDE);
-  if (hid_draw_set_layer (gui->graphics, "toppaste", SL (PASTE, TOP), paste_empty))
+  if (hid_draw_set_layer (hid_draw, "toppaste", SL (PASTE, TOP), paste_empty))
     {
       DrawPaste (TOP_SIDE, drawn_area);
-      hid_draw_end_layer (gui->graphics);
+      hid_draw_end_layer (hid_draw);
     }
 
   paste_empty = IsPasteEmpty (BOTTOM_SIDE);
-  if (hid_draw_set_layer (gui->graphics, "bottompaste", SL (PASTE, BOTTOM), paste_empty))
+  if (hid_draw_set_layer (hid_draw, "bottompaste", SL (PASTE, BOTTOM), paste_empty))
     {
       DrawPaste (BOTTOM_SIDE, drawn_area);
-      hid_draw_end_layer (gui->graphics);
+      hid_draw_end_layer (hid_draw);
     }
 
-  if (hid_draw_set_layer (gui->graphics, "topassembly", SL (ASSY, TOP), 0))
+  if (hid_draw_set_layer (hid_draw, "topassembly", SL (ASSY, TOP), 0))
     {
       PrintAssembly (TOP_SIDE, drawn_area);
-      hid_draw_end_layer (gui->graphics);
+      hid_draw_end_layer (hid_draw);
     }
 
-  if (hid_draw_set_layer (gui->graphics, "bottomassembly", SL (ASSY, BOTTOM), 0))
+  if (hid_draw_set_layer (hid_draw, "bottomassembly", SL (ASSY, BOTTOM), 0))
     {
       PrintAssembly (BOTTOM_SIDE, drawn_area);
-      hid_draw_end_layer (gui->graphics);
+      hid_draw_end_layer (hid_draw);
     }
 
-  if (hid_draw_set_layer (gui->graphics, "fab", SL (FAB, 0), 0))
+  if (hid_draw_set_layer (hid_draw, "fab", SL (FAB, 0), 0))
     {
       PrintFab (Output.fgGC);
-      hid_draw_end_layer (gui->graphics);
+      hid_draw_end_layer (hid_draw);
     }
 }
 
@@ -740,7 +741,7 @@ DrawPPV (int group, const BoxType *drawn_area)
   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
   int side;
 
-  if (PCB->PinOn || !hid_draw_is_gui (gui->graphics))
+  if (PCB->PinOn || !hid_draw_is_gui (hid_draw))
     {
       /* draw element pins */
       r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
@@ -760,7 +761,7 @@ DrawPPV (int group, const BoxType *drawn_area)
     }
 
   /* draw vias */
-  if (PCB->ViaOn || !hid_draw_is_gui (gui->graphics))
+  if (PCB->ViaOn || !hid_draw_is_gui (hid_draw))
     {
       r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
       r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
@@ -822,9 +823,9 @@ DrawSilk (int side, const BoxType * drawn_area)
 #endif
 
 #if 0
-  if (gui->graphics->poly_before)
+  if (hid_draw->poly_before)
     {
-      hid_draw_use_mask (gui->graphics, HID_MASK_BEFORE);
+      hid_draw_use_mask (hid_draw, HID_MASK_BEFORE);
 #endif
       DrawLayer (LAYER_PTR (max_copper_layer + side), drawn_area);
       /* draw package */
@@ -833,20 +834,20 @@ DrawSilk (int side, const BoxType * drawn_area)
 #if 0
     }
 
-  hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
+  hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
   r_search (PCB->Data->pin_tree, drawn_area, NULL, clearPin_callback, NULL);
   r_search (PCB->Data->via_tree, drawn_area, NULL, clearPin_callback, NULL);
   r_search (PCB->Data->pad_tree, drawn_area, NULL, clearPad_callback, &side);
 
-  if (gui->graphics->poly_after)
+  if (hid_draw->poly_after)
     {
-      hid_draw_use_mask (gui->graphics, HID_MASK_AFTER);
+      hid_draw_use_mask (hid_draw, HID_MASK_AFTER);
       DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
       /* draw package */
       r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
     }
-  hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
+  hid_draw_use_mask (hid_draw, HID_MASK_OFF);
 #endif
 }
 
@@ -855,11 +856,11 @@ static void
 DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
 {
   /* Skip the mask drawing if the GUI doesn't want this type */
-  if ((mask_type == HID_MASK_BEFORE && !gui->graphics->poly_before) ||
-      (mask_type == HID_MASK_AFTER  && !gui->graphics->poly_after))
+  if ((mask_type == HID_MASK_BEFORE && !hid_draw->poly_before) ||
+      (mask_type == HID_MASK_AFTER  && !hid_draw->poly_after))
     return;
 
-  hid_draw_use_mask (gui->graphics, mask_type);
+  hid_draw_use_mask (hid_draw, mask_type);
   hid_draw_set_color (Output.fgGC, PCB->MaskColor);
   if (drawn_area == NULL)
     hid_draw_fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
@@ -881,7 +882,7 @@ DrawMask (int side, const BoxType *screen)
   else
     {
       DrawMaskBoardArea (HID_MASK_BEFORE, screen);
-      hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
+      hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
     }
 
   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
@@ -893,7 +894,7 @@ DrawMask (int side, const BoxType *screen)
   else
     {
       DrawMaskBoardArea (HID_MASK_AFTER, screen);
-      hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
+      hid_draw_use_mask (hid_draw, HID_MASK_OFF);
     }
 }
 
@@ -926,11 +927,11 @@ DrawRats (const BoxType *drawn_area)
    * XXX using the mask here is to get rat transparency
    */
 
-  if (hid_draw_can_draw_in_mask_clear (gui->graphics))
-    hid_draw_use_mask (gui->graphics, HID_MASK_CLEAR);
+  if (hid_draw_can_draw_in_mask_clear (hid_draw))
+    hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
   r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
-  if (hid_draw_can_draw_in_mask_clear (gui->graphics))
-    hid_draw_use_mask (gui->graphics, HID_MASK_OFF);
+  if (hid_draw_can_draw_in_mask_clear (hid_draw))
+    hid_draw_use_mask (hid_draw, HID_MASK_OFF);
 }
 
 static int
@@ -973,7 +974,7 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
   /* draw the layer text on screen */
   r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
 
-  /* We should check for hid_draw_is_gui (gui->graphics) here, but it's kinda cool seeing the
+  /* We should check for hid_draw_is_gui (hid_draw) here, but it's kinda cool seeing the
      auto-outline magically disappear when you first add something to
      the "outline" layer.  */
   if (IsLayerEmpty (Layer)
@@ -1012,7 +1013,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
   if (n_entries > 1)
     rv = 1;
 
-  if (rv && !hid_draw_is_gui (gui->graphics))
+  if (rv && !hid_draw_is_gui (hid_draw))
     DrawPPV (group, drawn_area);
 }
 
@@ -1532,14 +1533,12 @@ draw_element (ElementType *element)
  */
 
 void
-hid_expose_callback (HID * hid, BoxType * region, void *item)
+hid_expose_callback (HID_DRAW *expose_hid_draw, BoxType *region, void *item)
 {
-  HID *old_gui = gui;
-
-  gui = hid;
-  Output.fgGC = hid_draw_make_gc (hid->graphics);
-  Output.bgGC = hid_draw_make_gc (hid->graphics);
-  Output.pmGC = hid_draw_make_gc (hid->graphics);
+  hid_draw = expose_hid_draw;
+  Output.fgGC = hid_draw_make_gc (hid_draw);
+  Output.bgGC = hid_draw_make_gc (hid_draw);
+  Output.pmGC = hid_draw_make_gc (hid_draw);
 
   hid_draw_set_color (Output.pmGC, "erase");
   hid_draw_set_color (Output.bgGC, "drill");
@@ -1556,5 +1555,5 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
   hid_draw_destroy_gc (Output.fgGC);
   hid_draw_destroy_gc (Output.bgGC);
   hid_draw_destroy_gc (Output.pmGC);
-  gui = old_gui;
+  hid_draw = NULL;
 }
