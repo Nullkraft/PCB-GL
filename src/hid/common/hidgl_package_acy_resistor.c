@@ -12,7 +12,9 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include "data.h"
 
-#ifndef WIN32
+#ifdef WIN32
+#   define WIN32_LEAN_AND_MEAN 1
+#else
 /* The Linux OpenGL ABI 1.0 spec requires that we define
  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
  * in order to get prototypes:
