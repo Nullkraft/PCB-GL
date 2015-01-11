@@ -1613,7 +1613,6 @@ hid_gcode_init ()
   gcode_hid.name                = "gcode";
   gcode_hid.description         = "G-CODE export";
   gcode_hid.exporter            = 1;
-  gcode_hid.poly_before         = 1;
 
   gcode_hid.get_export_options  = gcode_get_export_options;
   gcode_hid.do_export           = gcode_do_export;
@@ -1642,6 +1641,7 @@ hid_gcode_init ()
   gcode_graphics_class.fill_rect      = gcode_fill_rect;
 
   gcode_graphics.klass = &gcode_graphics_class;
+  gcode_graphics.poly_before = true;
   common_draw_helpers_init (&gcode_graphics);
 
   hid_register_hid (&gcode_hid);
