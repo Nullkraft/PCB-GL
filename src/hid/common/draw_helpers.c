@@ -9,16 +9,16 @@
 
 /* Takes a copy of clip_box so we own it */
 void
-common_set_clip_box (hidGC gc, BoxType *clip_box)
+common_set_clip_box (HID_DRAW *graphics, BoxType *clip_box)
 {
-  free (gc->clip_box);
-  gc->clip_box = NULL;
+  free (graphics->clip_box);
+  graphics->clip_box = NULL;
 
   if (clip_box == NULL)
     return;
 
-  gc->clip_box = malloc (sizeof (BoxType));
-  *gc->clip_box = *clip_box;
+  graphics->clip_box = malloc (sizeof (BoxType));
+  *graphics->clip_box = *clip_box;
 }
 
 static void
