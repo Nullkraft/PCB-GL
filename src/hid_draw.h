@@ -100,6 +100,15 @@ struct hid_gc_struct {
   HID_DRAW *hid_draw;
 };
 
+
+/* Getters for class properties */
+inline bool
+hid_draw_is_gui (HID_DRAW *hid_draw)
+{
+  return hid_draw->klass->gui;
+}
+
+
 /* Calling wrappers to access the vfunc table */
 
 inline int
