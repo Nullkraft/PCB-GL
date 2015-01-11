@@ -549,6 +549,10 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   int saved_show_bottom_side;
   BoxType region;
   FlagType save_flags;
+  hidGC gc;
+
+#warning NULL gc
+  gc = NULL;
 
   f = the_file;
 
@@ -561,6 +565,8 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
     bounds = GetDataBoundingBox (PCB->Data);    
   else
     bounds = &region;
+
+  common_set_clip_box (gc, bounds);
 
   memset (print_group, 0, sizeof (print_group));
   memset (print_layer, 0, sizeof (print_layer));
@@ -654,7 +660,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 	}
     }
 
-  hid_expose_callback (&png_hid, bounds, 0);
+  hid_expose_callback (&png_hid, 0);
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
   PCB->Flags = save_flags;
@@ -1199,7 +1205,7 @@ static int is_drill;
 static int is_copper;
 
 static int
-png_set_layer (const char *name, int group, int empty)
+png_set_layer (hidGC gc, const char *name, int group, int empty)
 {
   int idx = (group >= 0
 	     && group <
