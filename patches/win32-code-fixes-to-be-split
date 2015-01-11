@@ -1,7 +1,7 @@
-Bottom: 011d59af51166bf15670275f31d60ff82a5c9ec6
+Bottom: 2d688907be2b65c82be849610494eaf82ca30536
 Top:    f482ccb80350f54e526eee4c9595c6b489b0052e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:14:09 +0000
+Date:   2015-01-11 15:19:38 +0000
 
 Win32 code fixes (TO BE SPLIT INTO SEPARATE PATCHES)
 
@@ -9,22 +9,10 @@ Win32 code fixes (TO BE SPLIT INTO SEPARATE PATCHES)
 ---
 
 diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
-index c64a120..4f2937f 100644
+index c3c30e7..4f2937f 100644
 --- a/src/borast/borast-bentley-ottmann.c
 +++ b/src/borast/borast-bentley-ottmann.c
-@@ -48,12 +48,18 @@
- #include <glib.h>
- 
- #include "polygon.h"
--#include <GL/gl.h>
- #include "hid_draw.h"
-+
-+#ifdef WIN32
-+#   define WIN32_LEAN_AND_MEAN 1
-+#endif
-+
-+#include <GL/gl.h>
- #include "hid/common/hidgl.h"
+@@ -59,6 +59,7 @@
  
  #include "sweep.h"
  
