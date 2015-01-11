@@ -1,5 +1,5 @@
 Bottom: 2be6a1cc26f35f08f25929cd86498f43b1eb3ed4
-Top:    a8e62ccb9e90f8b3552b5b05790d03cdcc386f70
+Top:    9035596dfb9bd9fc0099851f7680e8441f4025cc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 16:00:37 +0000
 
@@ -9,28 +9,18 @@ TMP
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 12dcf41..0061cf2 100644
+index 12dcf41..5057d54 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -74,6 +74,8 @@ static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
+@@ -74,6 +74,7 @@ static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
  
  static int doing_pinout = 0;
  static bool doing_assy = false;
-+static HID *hid = NULL;
 +static HID_DRAW *hid_draw = NULL;
  
  /* ---------------------------------------------------------------------------
   * some local prototypes
-@@ -126,7 +128,7 @@ void
- Draw (void)
- {
-   if (Block.X1 <= Block.X2 && Block.Y1 <= Block.Y2)
--    gui->invalidate_lr (Block.X1, Block.X2, Block.Y1, Block.Y2);
-+    hid->invalidate_lr (Block.X1, Block.X2, Block.Y1, Block.Y2);
- 
-   /* shrink the update block */
-   Block.X1 = Block.Y1 =  MAXINT;
-@@ -176,10 +178,10 @@ _draw_pv_name (PinType *pv)
+@@ -176,10 +177,10 @@ _draw_pv_name (PinType *pv)
    text.Y = box.Y1;
    text.Direction = vert ? 1 : 0;
  
@@ -43,7 +33,7 @@ index 12dcf41..0061cf2 100644
      doing_pinout--;
  }
  
-@@ -320,7 +322,7 @@ pad_callback (const BoxType * b, void *cl)
+@@ -320,7 +321,7 @@ pad_callback (const BoxType * b, void *cl)
  static void
  draw_element_name (ElementType *element)
  {
@@ -52,7 +42,7 @@ index 12dcf41..0061cf2 100644
        TEST_FLAG (HIDENAMEFLAG, element))
      return;
    if (doing_pinout || doing_assy)
-@@ -566,7 +568,7 @@ DrawEverything (const BoxType *drawn_area)
+@@ -566,7 +567,7 @@ DrawEverything (const BoxType *drawn_area)
     * first draw all 'invisible' stuff
     */
    if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
@@ -61,7 +51,7 @@ index 12dcf41..0061cf2 100644
      {
        side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
        if (PCB->ElementOn)
-@@ -576,7 +578,7 @@ DrawEverything (const BoxType *drawn_area)
+@@ -576,7 +577,7 @@ DrawEverything (const BoxType *drawn_area)
  	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
@@ -70,7 +60,7 @@ index 12dcf41..0061cf2 100644
      }
  
    /* draw all layers in layerstack order */
-@@ -584,105 +586,105 @@ DrawEverything (const BoxType *drawn_area)
+@@ -584,105 +585,105 @@ DrawEverything (const BoxType *drawn_area)
      {
        int group = drawn_groups[i];
  
@@ -205,7 +195,7 @@ index 12dcf41..0061cf2 100644
      }
  }
  
-@@ -740,7 +742,7 @@ DrawPPV (int group, const BoxType *drawn_area)
+@@ -740,7 +741,7 @@ DrawPPV (int group, const BoxType *drawn_area)
    int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
    int side;
  
@@ -214,7 +204,7 @@ index 12dcf41..0061cf2 100644
      {
        /* draw element pins */
        r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
-@@ -760,7 +762,7 @@ DrawPPV (int group, const BoxType *drawn_area)
+@@ -760,7 +761,7 @@ DrawPPV (int group, const BoxType *drawn_area)
      }
  
    /* draw vias */
@@ -223,7 +213,7 @@ index 12dcf41..0061cf2 100644
      {
        r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
        r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
-@@ -822,9 +824,9 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -822,9 +823,9 @@ DrawSilk (int side, const BoxType * drawn_area)
  #endif
  
  #if 0
@@ -235,7 +225,7 @@ index 12dcf41..0061cf2 100644
  #endif
        DrawLayer (LAYER_PTR (max_copper_layer + side), drawn_area);
        /* draw package */
-@@ -833,20 +835,20 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -833,20 +834,20 @@ DrawSilk (int side, const BoxType * drawn_area)
  #if 0
      }
  
@@ -260,7 +250,7 @@ index 12dcf41..0061cf2 100644
  #endif
  }
  
-@@ -855,11 +857,11 @@ static void
+@@ -855,11 +856,11 @@ static void
  DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
  {
    /* Skip the mask drawing if the GUI doesn't want this type */
@@ -275,7 +265,7 @@ index 12dcf41..0061cf2 100644
    hid_draw_set_color (Output.fgGC, PCB->MaskColor);
    if (drawn_area == NULL)
      hid_draw_fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-@@ -881,7 +883,7 @@ DrawMask (int side, const BoxType *screen)
+@@ -881,7 +882,7 @@ DrawMask (int side, const BoxType *screen)
    else
      {
        DrawMaskBoardArea (HID_MASK_BEFORE, screen);
@@ -284,7 +274,7 @@ index 12dcf41..0061cf2 100644
      }
  
    r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
-@@ -893,7 +895,7 @@ DrawMask (int side, const BoxType *screen)
+@@ -893,7 +894,7 @@ DrawMask (int side, const BoxType *screen)
    else
      {
        DrawMaskBoardArea (HID_MASK_AFTER, screen);
@@ -293,7 +283,7 @@ index 12dcf41..0061cf2 100644
      }
  }
  
-@@ -925,13 +927,13 @@ DrawRats (const BoxType *drawn_area)
+@@ -925,13 +926,13 @@ DrawRats (const BoxType *drawn_area)
     * XXX gtk only allows negative drawing.
     * XXX using the mask here is to get rat transparency
     */
@@ -310,7 +300,7 @@ index 12dcf41..0061cf2 100644
  }
  
  static int
-@@ -974,7 +976,7 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
+@@ -974,7 +975,7 @@ DrawLayer (LayerType *Layer, const BoxType *screen)
    /* draw the layer text on screen */
    r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
  
@@ -319,7 +309,7 @@ index 12dcf41..0061cf2 100644
       auto-outline magically disappear when you first add something to
       the "outline" layer.  */
    if (IsLayerEmpty (Layer)
-@@ -1013,7 +1015,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -1013,7 +1014,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
    if (n_entries > 1)
      rv = 1;
  
@@ -328,7 +318,7 @@ index 12dcf41..0061cf2 100644
      DrawPPV (group, drawn_area);
  }
  
-@@ -1533,11 +1535,10 @@ draw_element (ElementType *element)
+@@ -1533,11 +1534,9 @@ draw_element (ElementType *element)
   */
  
  void
@@ -338,16 +328,14 @@ index 12dcf41..0061cf2 100644
 -  HID *old_gui = gui;
 -
 -  gui = hid;
-+  hid = expose_hid;
 +  hid_draw = expose_hid_draw;
    Output.fgGC = hid_draw_make_gc (hid_draw);
    Output.bgGC = hid_draw_make_gc (hid_draw);
    Output.pmGC = hid_draw_make_gc (hid_draw);
-@@ -1557,5 +1558,6 @@ hid_expose_callback (HID *hid, HID_DRAW *hid_draw, BoxType *region, void *item)
+@@ -1557,5 +1556,5 @@ hid_expose_callback (HID *hid, HID_DRAW *hid_draw, BoxType *region, void *item)
    hid_draw_destroy_gc (Output.fgGC);
    hid_draw_destroy_gc (Output.bgGC);
    hid_draw_destroy_gc (Output.pmGC);
 -  gui = old_gui;
-+  hid = NULL;
 +  hid_draw = NULL;
  }
