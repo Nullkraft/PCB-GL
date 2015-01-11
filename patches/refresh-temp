@@ -1,0 +1,210 @@
+Bottom: 11733402ecb6e8f19b2ca2972cd200304643c8c6
+Top:    91945f39119b5a61b5b9ecf7127af5f6531857be
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 17:46:28 +0000
+
+Refresh of move-some-fields-from-the-hid
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 3083038..eed0d5b 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -822,7 +822,7 @@ DrawSilk (int side, const BoxType * drawn_area)
+ #endif
+ 
+ #if 0
+-  if (gui->poly_before)
++  if (gui->graphics->poly_before)
+     {
+       hid_draw_use_mask (gui->graphics, HID_MASK_BEFORE);
+ #endif
+@@ -838,7 +838,7 @@ DrawSilk (int side, const BoxType * drawn_area)
+   r_search (PCB->Data->via_tree, drawn_area, NULL, clearPin_callback, NULL);
+   r_search (PCB->Data->pad_tree, drawn_area, NULL, clearPad_callback, &side);
+ 
+-  if (gui->poly_after)
++  if (gui->graphics->poly_after)
+     {
+       hid_draw_use_mask (gui->graphics, HID_MASK_AFTER);
+       DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
+@@ -855,8 +855,8 @@ static void
+ DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
+ {
+   /* Skip the mask drawing if the GUI doesn't want this type */
+-  if ((mask_type == HID_MASK_BEFORE && !gui->poly_before) ||
+-      (mask_type == HID_MASK_AFTER  && !gui->poly_after))
++  if ((mask_type == HID_MASK_BEFORE && !gui->graphics->poly_before) ||
++      (mask_type == HID_MASK_AFTER  && !gui->graphics->poly_after))
+     return;
+ 
+   hid_draw_use_mask (gui->graphics, mask_type);
+diff --git a/src/hid.h b/src/hid.h
+index ef6edb2..b9c64ba 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -256,7 +256,7 @@ typedef enum
+     /* If set, this is the GUI HID.  Exactly one of these three flags
+        must be set; setting "gui" lets the expose callback optimize and
+        coordinate itself.  */
+-    char gui:1;
++    char _gui:1;
+ 
+     /* If set, this is the printer-class HID.  The common part of PCB
+        may use this to do command-line printing, without having
+@@ -269,15 +269,6 @@ typedef enum
+        and EPS exporters.  */
+     char exporter:1;
+ 
+-    /* If set, the redraw code will draw polygons before erasing the
+-       clearances.  */
+-    char poly_before:1;
+-
+-    /* If set, the redraw code will draw polygons after erasing the
+-       clearances.  Note that HIDs may set both of these, in which case
+-       polygons will be drawn twice.  */
+-    char poly_after:1;
+-
+     /* Returns a set of resources describing options the export or print
+        HID supports.  In GUI mode, the print/export dialogs use this to
+        set up the selectable options.  In command line mode, these are
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 654b5e0..b5eee7f 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -1613,7 +1613,6 @@ hid_gcode_init ()
+   gcode_hid.name                = "gcode";
+   gcode_hid.description         = "G-CODE export";
+   gcode_hid.exporter            = 1;
+-  gcode_hid.poly_before         = 1;
+ 
+   gcode_hid.get_export_options  = gcode_get_export_options;
+   gcode_hid.do_export           = gcode_do_export;
+@@ -1642,6 +1641,7 @@ hid_gcode_init ()
+   gcode_graphics_class.fill_rect      = gcode_fill_rect;
+ 
+   gcode_graphics.klass = &gcode_graphics_class;
++  gcode_hid.poly_before = true;
+   common_draw_helpers_init (&gcode_graphics);
+ 
+   hid_register_hid (&gcode_hid);
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 56564fd..49fa5d9 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2137,7 +2137,6 @@ hid_gtk_init ()
+   ghid_hid.name                     = "gtk";
+   ghid_hid.description              = "Gtk - The Gimp Toolkit";
+   ghid_hid.gui                      = 1;
+-  ghid_hid.poly_after               = 1;
+ 
+   ghid_hid.get_export_options       = ghid_get_export_options;
+   ghid_hid.do_export                = ghid_do_export;
+@@ -2202,7 +2201,10 @@ hid_gtk_init ()
+ 
+   ghid_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
+ 
++  ghid_graphics_class.gui = true;
++
+   ghid_graphics.klass = &ghid_graphics_class;
++  ghid_hid.poly_after = true;
+   common_draw_helpers_init (&ghid_graphics);
+ 
+   hid_register_hid (&ghid_hid);
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 0c189d3..8e649c8 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -1845,7 +1845,6 @@ hid_png_init ()
+   png_hid.name        = "png";
+   png_hid.description = "GIF/JPEG/PNG export";
+   png_hid.exporter    = 1;
+-  png_hid.poly_before = 1;
+ 
+   png_hid.get_export_options  = png_get_export_options;
+   png_hid.do_export           = png_do_export;
+@@ -1873,6 +1872,7 @@ hid_png_init ()
+   png_graphics_class.fill_rect      = png_fill_rect;
+ 
+   png_graphics.klass = &png_graphics_class;
++  png_graphics.poly_before = true;
+   common_draw_helpers_init (&png_graphics);
+ 
+ #ifdef HAVE_SOME_FORMAT
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 5890e4c..2420092 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -240,11 +240,11 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+       print_layer[i] = 1;
+ 
+   if (fast_erase) {
+-    eps_hid.poly_before = 1;
+-    eps_hid.poly_after = 0;
++    eps_graphics.poly_before = true;
++    eps_graphics.poly_after = false;
+   } else {
+-    eps_hid.poly_before = 0;
+-    eps_hid.poly_after = 1;
++    eps_graphics.poly_before = false;
++    eps_graphics.poly_after = true;
+   }
+ 
+   memcpy (saved_layer_stack, LayerStack, sizeof (LayerStack));
+@@ -686,7 +686,6 @@ hid_eps_init ()
+   eps_hid.name                = "eps";
+   eps_hid.description         = "Encapsulated Postscript";
+   eps_hid.exporter            = 1;
+-  eps_hid.poly_after          = 1;
+ 
+   eps_hid.get_export_options  = eps_get_export_options;
+   eps_hid.do_export           = eps_do_export;
+@@ -714,6 +713,7 @@ hid_eps_init ()
+   eps_graphics_class.fill_rect      = eps_fill_rect;
+ 
+   eps_graphics.klass = &eps_graphics_class;
++  eps_graphics.poly_after = true;
+   common_draw_helpers_init (&eps_graphics);
+ 
+   hid_register_hid (&eps_hid);
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index ea288c7..951064d 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -63,6 +63,13 @@ typedef struct hid_draw_class_st
+   void (*fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+   void (*thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+ 
++  /* draw.c currently uses this to shortcut and special-case certain rendering when displaying on-screen */
++  bool gui;
++
++  /* Note that both of these may be set, in which case polygons will be drawn twice: */
++  bool poly_before; /* If set, the redraw code will draw polygons before erasing the clearances. */
++  bool poly_after;  /* If set, the redraw code will draw polygons after  erasing the clearances. */
++
+ } HID_DRAW_CLASS;
+ 
+ /* Base HID_DRAW elements visible to any module */
+diff --git a/src/main.c b/src/main.c
+index 04a116c..adf137e 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -230,7 +230,7 @@ usage_hid (HID * h)
+   int i, n_attributes = 0;
+   UsageNotes *note;
+ 
+-  if (h->gui)
++  if (h->_gui)
+     {
+       fprintf (stderr, "\n%s gui options:\n", h->name);
+       attributes = h->get_export_options (&n_attributes);
+@@ -263,7 +263,7 @@ usage (void)
+ 
+   for (i = 0; hl[i]; i++)
+     {
+-      if (hl[i]->gui)
++      if (hl[i]->_gui)
+ 	n_gui++;
+       if (hl[i]->printer)
+ 	n_printer++;
