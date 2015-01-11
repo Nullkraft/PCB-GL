@@ -1,5 +1,5 @@
 Bottom: 5e84ba4ae234e08810f6e04608af4b87d3b2993b
-Top:    951915eb7454627df6bfcbc1cfc048e5775a96ad
+Top:    47c7589729c325b494b1f07f8eaa9e2daaa319aa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 17:26:15 +0000
 
@@ -17,7 +17,7 @@ this to count up each type of exporter.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 3083038..5eaa3fc 100644
+index 3083038..45f72c0 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -176,10 +176,10 @@ _draw_pv_name (PinType *pv)
@@ -47,7 +47,7 @@ index 3083038..5eaa3fc 100644
     */
    if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
 -      && gui->set_layer ("invisible", SL (INVISIBLE, 0), 0))
-+      && gui->graphics->set_layer ("invisible", SL (INVISIBLE, 0), 0))
++      && hid_draw_set_layer (gui->graphics, "invisible", SL (INVISIBLE, 0), 0))
      {
        side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
        if (PCB->ElementOn)
@@ -56,7 +56,7 @@ index 3083038..5eaa3fc 100644
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
 -      gui->end_layer ();
-+      gui->graphics->end_layer ();
++      hid_draw_end_layer (gui->graphics);
      }
  
    /* draw all layers in layerstack order */
@@ -65,11 +65,11 @@ index 3083038..5eaa3fc 100644
        int group = drawn_groups[i];
  
 -      if (gui->set_layer (0, group, 0))
-+      if (gui->graphics->set_layer (0, group, 0))
++      if (hid_draw_set_layer (gui->graphics, 0, group, 0))
          {
            DrawLayerGroup (group, drawn_area);
 -          gui->end_layer ();
-+          gui->graphics->end_layer ();
++          hid_draw_end_layer (gui->graphics);
          }
      }
  
@@ -86,53 +86,53 @@ index 3083038..5eaa3fc 100644
        CountHoles (&plated, &unplated, drawn_area);
  
 -      if (plated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
-+      if (plated && gui->graphics->set_layer ("plated-drill", SL (PDRILL, 0), 0))
++      if (plated && hid_draw_set_layer (gui->graphics, "plated-drill", SL (PDRILL, 0), 0))
          {
            DrawHoles (true, false, drawn_area);
 -          gui->end_layer ();
-+          gui->graphics->end_layer ();
++          hid_draw_end_layer (gui->graphics);
          }
  
 -      if (unplated && gui->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
-+      if (unplated && gui->graphics->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
++      if (unplated && hid_draw_set_layer (gui->graphics, "unplated-drill", SL (UDRILL, 0), 0))
          {
            DrawHoles (false, true, drawn_area);
 -          gui->end_layer ();
-+          gui->graphics->end_layer ();
++          hid_draw_end_layer (gui->graphics);
          }
      }
  
    /* Draw the solder mask if turned on */
 -  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
-+  if (gui->graphics->set_layer ("componentmask", SL (MASK, TOP), 0))
++  if (hid_draw_set_layer (gui->graphics, "componentmask", SL (MASK, TOP), 0))
      {
        DrawMask (TOP_SIDE, drawn_area);
 -      gui->end_layer ();
-+      gui->graphics->end_layer ();
++      hid_draw_end_layer (gui->graphics);
      }
  
 -  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
-+  if (gui->graphics->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
++  if (hid_draw_set_layer (gui->graphics, "soldermask", SL (MASK, BOTTOM), 0))
      {
        DrawMask (BOTTOM_SIDE, drawn_area);
 -      gui->end_layer ();
-+      gui->graphics->end_layer ();
++      hid_draw_end_layer (gui->graphics);
      }
  
 -  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
-+  if (gui->graphics->set_layer ("topsilk", SL (SILK, TOP), 0))
++  if (hid_draw_set_layer (gui->graphics, "topsilk", SL (SILK, TOP), 0))
      {
        DrawSilk (TOP_SIDE, drawn_area);
 -      gui->end_layer ();
-+      gui->graphics->end_layer ();
++      hid_draw_end_layer (gui->graphics);
      }
  
 -  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
-+  if (gui->graphics->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
++  if (hid_draw_set_layer (gui->graphics, "bottomsilk", SL (SILK, BOTTOM), 0))
      {
        DrawSilk (BOTTOM_SIDE, drawn_area);
 -      gui->end_layer ();
-+      gui->graphics->end_layer ();
++      hid_draw_end_layer (gui->graphics);
      }
  
 -  if (gui->gui)
@@ -144,54 +144,54 @@ index 3083038..5eaa3fc 100644
  		  NULL);
        /* Draw rat lines on top */
 -      if (gui->set_layer ("rats", SL (RATS, 0), 0))
-+      if (gui->graphics->set_layer ("rats", SL (RATS, 0), 0))
++      if (hid_draw_set_layer (gui->graphics, "rats", SL (RATS, 0), 0))
          {
            DrawRats(drawn_area);
 -          gui->end_layer ();
-+          gui->graphics->end_layer ();
++          hid_draw_end_layer (gui->graphics);
          }
      }
  
    paste_empty = IsPasteEmpty (TOP_SIDE);
 -  if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
-+  if (gui->graphics->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
++  if (hid_draw_set_layer (gui->graphics, "toppaste", SL (PASTE, TOP), paste_empty))
      {
        DrawPaste (TOP_SIDE, drawn_area);
 -      gui->end_layer ();
-+      gui->graphics->end_layer ();
++      hid_draw_end_layer (gui->graphics);
      }
  
    paste_empty = IsPasteEmpty (BOTTOM_SIDE);
 -  if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
-+  if (gui->graphics->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
++  if (hid_draw_set_layer (gui->graphics, "bottompaste", SL (PASTE, BOTTOM), paste_empty))
      {
        DrawPaste (BOTTOM_SIDE, drawn_area);
 -      gui->end_layer ();
-+      gui->graphics->end_layer ();
++      hid_draw_end_layer (gui->graphics);
      }
  
 -  if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
-+  if (gui->graphics->set_layer ("topassembly", SL (ASSY, TOP), 0))
++  if (hid_draw_set_layer (gui->graphics, "topassembly", SL (ASSY, TOP), 0))
      {
        PrintAssembly (TOP_SIDE, drawn_area);
 -      gui->end_layer ();
-+      gui->graphics->end_layer ();
++      hid_draw_end_layer (gui->graphics);
      }
  
 -  if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
-+  if (gui->graphics->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
++  if (hid_draw_set_layer (gui->graphics, "bottomassembly", SL (ASSY, BOTTOM), 0))
      {
        PrintAssembly (BOTTOM_SIDE, drawn_area);
 -      gui->end_layer ();
-+      gui->graphics->end_layer ();
++      hid_draw_end_layer (gui->graphics);
      }
  
 -  if (gui->set_layer ("fab", SL (FAB, 0), 0))
-+  if (gui->graphics->set_layer ("fab", SL (FAB, 0), 0))
++  if (hid_draw_set_layer (gui->graphics, "fab", SL (FAB, 0), 0))
      {
        PrintFab (Output.fgGC);
 -      gui->end_layer ();
-+      gui->graphics->end_layer ();
++      hid_draw_end_layer (gui->graphics);
      }
  }
  
@@ -304,19 +304,47 @@ index ef6edb2..7d5bdc2 100644
      HID_DRAW *graphics;
  
      /* This is for the printer.  If you call this for the GUI, xval and
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 27bcc71..412f95e 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -344,7 +344,6 @@ hid_batch_init ()
+   batch_hid.parse_arguments       = batch_parse_arguments;
+   batch_hid.invalidate_lr         = batch_invalidate_lr;
+   batch_hid.invalidate_all        = batch_invalidate_all;
+-  batch_hid.set_layer             = batch_set_layer;
+   batch_hid.calibrate             = batch_calibrate;
+   batch_hid.shift_is_pressed      = batch_shift_is_pressed;
+   batch_hid.control_is_pressed    = batch_control_is_pressed;
+@@ -364,6 +363,7 @@ hid_batch_init ()
+ 
+   common_draw_helpers_class_init (&batch_graphics_class);
+ 
++  batch_graphics_class.set_layer      = batch_set_layer;
+   batch_graphics_class.make_gc        = batch_make_gc;
+   batch_graphics_class.destroy_gc     = batch_destroy_gc;
+   batch_graphics_class.use_mask       = batch_use_mask;
 diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
-index cf2de59..dd53f94 100644
+index cf2de59..1b4746f 100644
 --- a/src/hid/common/extents.c
 +++ b/src/hid/common/extents.c
-@@ -181,7 +181,6 @@ hid_extents_init (void)
+@@ -181,14 +181,12 @@ hid_extents_init (void)
    extents_hid.struct_size         = sizeof (HID);
    extents_hid.name                = "extents-extents";
    extents_hid.description         = "used to calculate extents";
 -  extents_hid.poly_before         = 1;
+-
+-  extents_hid.set_layer           = extents_set_layer;
  
-   extents_hid.set_layer           = extents_set_layer;
+   extents_hid.graphics            = &extents_graphics;
  
-@@ -204,6 +203,7 @@ hid_extents_init (void)
+   common_draw_helpers_class_init (&extents_graphics_class);
+ 
++  extents_graphics_class.set_layer      = extents_set_layer;
+   extents_graphics_class.make_gc        = extents_make_gc;
+   extents_graphics_class.destroy_gc     = extents_destroy_gc;
+   extents_graphics_class.use_mask       = extents_use_mask;
+@@ -204,6 +202,7 @@ hid_extents_init (void)
    extents_graphics_class.fill_rect      = extents_fill_rect;
  
    extents_graphics.klass = &extents_graphics_class;
@@ -324,11 +352,33 @@ index cf2de59..dd53f94 100644
    common_draw_helpers_init (&extents_graphics);
  
    initialised = true;
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 3b85044..85e678d 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -448,8 +448,6 @@ common_nogui_init (HID *hid)
+   hid->parse_arguments =      nogui_parse_arguments;
+   hid->invalidate_lr =        nogui_invalidate_lr;
+   hid->invalidate_all =       nogui_invalidate_all;
+-  hid->set_layer =            nogui_set_layer;
+-  hid->end_layer =            nogui_end_layer;
+   hid->calibrate =            nogui_calibrate;
+   hid->shift_is_pressed =     nogui_shift_is_pressed;
+   hid->control_is_pressed =   nogui_control_is_pressed;
+@@ -481,6 +479,8 @@ common_nogui_init (HID *hid)
+ static void
+ common_nogui_graphics_class_init (HID_DRAW_CLASS *klass)
+ {
++  klass->set_layer =       nogui_set_layer;
++  klass->end_layer =       nogui_end_layer;
+   klass->make_gc =         nogui_make_gc;
+   klass->destroy_gc =      nogui_destroy_gc;
+   klass->use_mask =        nogui_use_mask;
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 654b5e0..1daadfd 100644
+index 654b5e0..a68e86e 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -1613,7 +1613,6 @@ hid_gcode_init ()
+@@ -1613,12 +1613,10 @@ hid_gcode_init ()
    gcode_hid.name                = "gcode";
    gcode_hid.description         = "G-CODE export";
    gcode_hid.exporter            = 1;
@@ -336,6 +386,19 @@ index 654b5e0..1daadfd 100644
  
    gcode_hid.get_export_options  = gcode_get_export_options;
    gcode_hid.do_export           = gcode_do_export;
+   gcode_hid.parse_arguments     = gcode_parse_arguments;
+-  gcode_hid.set_layer           = gcode_set_layer;
+   gcode_hid.calibrate           = gcode_calibrate;
+   gcode_hid.set_crosshair       = gcode_set_crosshair;
+ 
+@@ -1626,6 +1624,7 @@ hid_gcode_init ()
+ 
+   common_draw_helpers_class_init (&gcode_graphics_class);
+ 
++  gcode_graphics_class.set_layer      = gcode_set_layer;
+   gcode_graphics_class.make_gc        = gcode_make_gc;
+   gcode_graphics_class.destroy_gc     = gcode_destroy_gc;
+   gcode_graphics_class.use_mask       = gcode_use_mask;
 @@ -1642,6 +1641,7 @@ hid_gcode_init ()
    gcode_graphics_class.fill_rect      = gcode_fill_rect;
  
@@ -344,8 +407,41 @@ index 654b5e0..1daadfd 100644
    common_draw_helpers_init (&gcode_graphics);
  
    hid_register_hid (&gcode_hid);
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 6185304..22ae4d6 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -1355,7 +1355,6 @@ hid_gerber_init ()
+   gerber_hid.get_export_options  = gerber_get_export_options;
+   gerber_hid.do_export           = gerber_do_export;
+   gerber_hid.parse_arguments     = gerber_parse_arguments;
+-  gerber_hid.set_layer           = gerber_set_layer;
+   gerber_hid.calibrate           = gerber_calibrate;
+   gerber_hid.set_crosshair       = gerber_set_crosshair;
+ 
+@@ -1363,6 +1362,7 @@ hid_gerber_init ()
+ 
+   common_draw_helpers_class_init (&gerber_graphics_class);
+ 
++  gerber_graphics_class.set_layer      = gerber_set_layer;
+   gerber_graphics_class.make_gc        = gerber_make_gc;
+   gerber_graphics_class.destroy_gc     = gerber_destroy_gc;
+   gerber_graphics_class.use_mask       = gerber_use_mask;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index b5e4a00..4690dd5 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -803,7 +803,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+     }
+ 
+   /* Setup HID function pointers specific to the GL renderer*/
+-  ghid_hid.end_layer = ghid_end_layer;
++  ghid_graphics_class.end_layer = ghid_end_layer;
+   ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
+   ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+ }
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 56564fd..7870f6d 100644
+index 56564fd..20becc7 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -2137,7 +2137,6 @@ hid_gtk_init ()
@@ -356,6 +452,22 @@ index 56564fd..7870f6d 100644
  
    ghid_hid.get_export_options       = ghid_get_export_options;
    ghid_hid.do_export                = ghid_do_export;
+@@ -2146,7 +2145,6 @@ hid_gtk_init ()
+   ghid_hid.invalidate_all           = ghid_invalidate_all;
+   ghid_hid.notify_crosshair_change  = ghid_notify_crosshair_change;
+   ghid_hid.notify_mark_change       = ghid_notify_mark_change;
+-  ghid_hid.set_layer                = ghid_set_layer;
+ 
+   ghid_hid.calibrate                = ghid_calibrate;
+   ghid_hid.shift_is_pressed         = ghid_shift_is_pressed;
+@@ -2186,6 +2184,7 @@ hid_gtk_init ()
+ 
+   common_draw_helpers_class_init (&ghid_graphics_class);
+ 
++  ghid_graphics_class.set_layer      = ghid_set_layer;
+   ghid_graphics_class.make_gc        = ghid_make_gc;
+   ghid_graphics_class.destroy_gc     = ghid_destroy_gc;
+   ghid_graphics_class.use_mask       = ghid_use_mask;
 @@ -2202,7 +2201,10 @@ hid_gtk_init ()
  
    ghid_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
@@ -368,7 +480,7 @@ index 56564fd..7870f6d 100644
  
    hid_register_hid (&ghid_hid);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 00c439c..1682ead 100644
+index 00c439c..df636d9 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -4072,7 +4072,6 @@ hid_lesstif_init ()
@@ -379,6 +491,22 @@ index 00c439c..1682ead 100644
  
    lesstif_hid.get_export_options      = lesstif_get_export_options;
    lesstif_hid.do_export               = lesstif_do_export;
+@@ -4081,7 +4080,6 @@ hid_lesstif_init ()
+   lesstif_hid.invalidate_all          = lesstif_invalidate_all;
+   lesstif_hid.notify_crosshair_change = lesstif_notify_crosshair_change;
+   lesstif_hid.notify_mark_change      = lesstif_notify_mark_change;
+-  lesstif_hid.set_layer               = lesstif_set_layer;
+ 
+   lesstif_hid.calibrate               = lesstif_calibrate;
+   lesstif_hid.shift_is_pressed        = lesstif_shift_is_pressed;
+@@ -4117,6 +4115,7 @@ hid_lesstif_init ()
+ 
+   common_draw_helpers_class_init (&lesstif_graphics_class);
+ 
++  lesstif_graphics_class.set_layer      = lesstif_set_layer;
+   lesstif_graphics_class.make_gc        = lesstif_make_gc;
+   lesstif_graphics_class.destroy_gc     = lesstif_destroy_gc;
+   lesstif_graphics_class.use_mask       = lesstif_use_mask;
 @@ -4134,6 +4133,7 @@ hid_lesstif_init ()
    lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
  
@@ -400,10 +528,10 @@ index 05d5863..da9e20f 100644
    lpr_hid.get_export_options  = lpr_get_export_options;
    lpr_hid.do_export           = lpr_do_export;
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index cb28849..481d7c2 100644
+index cb28849..dff74b0 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -1070,7 +1070,6 @@ hid_nelma_init()
+@@ -1070,12 +1070,10 @@ hid_nelma_init()
    nelma_hid.name                = "nelma";
    nelma_hid.description         = "Numerical analysis package export";
    nelma_hid.exporter            = 1;
@@ -411,6 +539,19 @@ index cb28849..481d7c2 100644
  
    nelma_hid.get_export_options  = nelma_get_export_options;
    nelma_hid.do_export           = nelma_do_export;
+   nelma_hid.parse_arguments     = nelma_parse_arguments;
+-  nelma_hid.set_layer           = nelma_set_layer;
+   nelma_hid.calibrate           = nelma_calibrate;
+   nelma_hid.set_crosshair       = nelma_set_crosshair;
+ 
+@@ -1083,6 +1081,7 @@ hid_nelma_init()
+ 
+   common_draw_helpers_class_init (&nelma_graphics_class);
+ 
++  nelma_graphics_class.set_layer      = nelma_set_layer;
+   nelma_graphics_class.make_gc        = nelma_make_gc;
+   nelma_graphics_class.destroy_gc     = nelma_destroy_gc;
+   nelma_graphics_class.use_mask       = nelma_use_mask;
 @@ -1099,6 +1098,7 @@ hid_nelma_init()
    nelma_graphics_class.fill_rect      = nelma_fill_rect;
  
@@ -420,10 +561,10 @@ index cb28849..481d7c2 100644
  
    hid_register_hid (&nelma_hid);
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 0c189d3..8e649c8 100644
+index 0c189d3..00dd54c 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
-@@ -1845,7 +1845,6 @@ hid_png_init ()
+@@ -1845,12 +1845,10 @@ hid_png_init ()
    png_hid.name        = "png";
    png_hid.description = "GIF/JPEG/PNG export";
    png_hid.exporter    = 1;
@@ -431,6 +572,19 @@ index 0c189d3..8e649c8 100644
  
    png_hid.get_export_options  = png_get_export_options;
    png_hid.do_export           = png_do_export;
+   png_hid.parse_arguments     = png_parse_arguments;
+-  png_hid.set_layer           = png_set_layer;
+   png_hid.calibrate           = png_calibrate;
+   png_hid.set_crosshair       = png_set_crosshair;
+ 
+@@ -1858,6 +1856,7 @@ hid_png_init ()
+ 
+   common_draw_helpers_class_init (&png_graphics_class);
+ 
++  png_graphics_class.set_layer      = png_set_layer;
+   png_graphics_class.make_gc        = png_make_gc;
+   png_graphics_class.destroy_gc     = png_destroy_gc;
+   png_graphics_class.use_mask       = png_use_mask;
 @@ -1873,6 +1872,7 @@ hid_png_init ()
    png_graphics_class.fill_rect      = png_fill_rect;
  
@@ -440,7 +594,7 @@ index 0c189d3..8e649c8 100644
  
  #ifdef HAVE_SOME_FORMAT
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 5890e4c..2420092 100644
+index 5890e4c..3f0afc6 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -240,11 +240,11 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -459,7 +613,7 @@ index 5890e4c..2420092 100644
    }
  
    memcpy (saved_layer_stack, LayerStack, sizeof (LayerStack));
-@@ -686,7 +686,6 @@ hid_eps_init ()
+@@ -686,12 +686,10 @@ hid_eps_init ()
    eps_hid.name                = "eps";
    eps_hid.description         = "Encapsulated Postscript";
    eps_hid.exporter            = 1;
@@ -467,6 +621,19 @@ index 5890e4c..2420092 100644
  
    eps_hid.get_export_options  = eps_get_export_options;
    eps_hid.do_export           = eps_do_export;
+   eps_hid.parse_arguments     = eps_parse_arguments;
+-  eps_hid.set_layer           = eps_set_layer;
+   eps_hid.calibrate           = eps_calibrate;
+   eps_hid.set_crosshair       = eps_set_crosshair;
+ 
+@@ -699,6 +697,7 @@ hid_eps_init ()
+ 
+   common_draw_helpers_class_init (&eps_graphics_class);
+ 
++  eps_graphics_class.set_layer      = eps_set_layer;
+   eps_graphics_class.make_gc        = eps_make_gc;
+   eps_graphics_class.destroy_gc     = eps_destroy_gc;
+   eps_graphics_class.use_mask       = eps_use_mask;
 @@ -714,6 +713,7 @@ hid_eps_init ()
    eps_graphics_class.fill_rect      = eps_fill_rect;
  
@@ -476,9 +643,24 @@ index 5890e4c..2420092 100644
  
    hid_register_hid (&eps_hid);
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index a52bf76..5ceb757 100644
+index a52bf76..1572ccc 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
+@@ -1528,13 +1528,13 @@ void ps_ps_init (HID *hid)
+   hid->get_export_options = ps_get_export_options;
+   hid->do_export          = ps_do_export;
+   hid->parse_arguments    = ps_parse_arguments;
+-  hid->set_layer          = ps_set_layer;
+   hid->calibrate          = ps_calibrate;
+   hid->set_crosshair      = ps_set_crosshair;
+ }
+ 
+ void ps_ps_graphics_class_init (HID_DRAW_CLASS *klass)
+ {
++  klass->set_layer          = ps_set_layer;
+   klass->make_gc            = ps_make_gc;
+   klass->destroy_gc         = ps_destroy_gc;
+   klass->use_mask           = ps_use_mask;
 @@ -1570,7 +1570,6 @@ hid_ps_init ()
    ps_hid.name               = "ps";
    ps_hid.description        = N_("Postscript export");
@@ -496,7 +678,7 @@ index a52bf76..5ceb757 100644
    ps_ps_graphics_init (&ps_graphics);
  
 diff --git a/src/hid_draw.h b/src/hid_draw.h
-index ea288c7..30de626 100644
+index ea288c7..64cb7ec 100644
 --- a/src/hid_draw.h
 +++ b/src/hid_draw.h
 @@ -9,6 +9,22 @@ enum mask_mode {
@@ -542,22 +724,22 @@ index ea288c7..30de626 100644
  };
  
  /* Base hidGC elements visible to any module */
-@@ -80,6 +103,18 @@ struct hid_gc_struct {
+@@ -79,6 +102,18 @@ struct hid_gc_struct {
+ 
  /* Calling wrappers to access the vfunc table */
  
- inline hidGC
++inline int
 +hid_draw_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 +{
-+  hid_draw->klass->set_layer (name, group, empty);
++  return hid_draw->klass->set_layer (name, group, empty);
 +}
 +
-+inline hidGC
++inline void
 +hid_draw_end_layer (HID_DRAW *hid_draw)
 +{
 +  hid_draw->klass->end_layer ();
 +}
 +
-+inline hidGC
+ inline hidGC
  hid_draw_make_gc (HID_DRAW *hid_draw)
  {
-   return hid_draw->klass->make_gc ();
