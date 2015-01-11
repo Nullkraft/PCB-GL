@@ -1,7 +1,7 @@
-Bottom: 741469dec0d5ee528bf38fcb9f48e0bef2b2fbbb
-Top:    70a49222cb6f65b24a02ae8cf494c1decd49e3c3
+Bottom: e630f4a76895739bdb324e77444b0235bedf083f
+Top:    7cf520a2f0c213e47d0d4bdfc732709f37df15f0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-11 15:41:57 +0000
+Date:   2015-01-11 19:35:55 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -796,7 +796,7 @@ index d8002b4..77dc082 100644
  } BoxListType;
  
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 3ada35b..f3eaf78 100644
+index dfa9db4..6a4fddb 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -43,7 +43,7 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
@@ -826,7 +826,7 @@ index 3ada35b..f3eaf78 100644
                newline = *line;
                newline.Point1.X = SCALE_TEXT (newline.Point1.X + x, Text->Scale);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index b41a356..37d4bf3 100644
+index 8face21..459d4fb 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -928,6 +928,7 @@ static void
@@ -959,10 +959,10 @@ index 58fe107..edfc7a9 100644
  
  static gint
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index dade362..5a10800 100644
+index ec530e1..4634ae2 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -326,28 +326,26 @@ nelma_write_materials(FILE * out)
+@@ -327,28 +327,26 @@ nelma_write_materials(FILE * out)
  static void 
  nelma_write_nets(FILE * out)
  {
@@ -997,7 +997,7 @@ index dade362..5a10800 100644
  
  			/* pin_name_to_xy(pin, &x, &y); */
  
-@@ -379,7 +377,7 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -380,7 +378,7 @@ nelma_write_layer(FILE * out, int z, int h,
  	LibraryMenuType *net;
  	LibraryEntryType *pin;
  
@@ -1006,7 +1006,7 @@ index dade362..5a10800 100644
  
  	fprintf(out, "layer %s {\n", name);
  	fprintf(out, "\theight = %d\n", h);
-@@ -390,11 +388,11 @@ nelma_write_layer(FILE * out, int z, int h,
+@@ -391,11 +389,11 @@ nelma_write_layer(FILE * out, int z, int h,
  		fprintf(out, "\tobjects = {\n");
  		netlist = PCB->NetlistLib;
  
@@ -1022,7 +1022,7 @@ index dade362..5a10800 100644
  
  				if (m != 0 || n != 0)
  					fprintf(out, ",\n");
-@@ -500,17 +498,17 @@ nelma_write_objects(FILE * out)
+@@ -501,17 +499,17 @@ nelma_write_objects(FILE * out)
  	LibraryMenuType *net;
  	LibraryEntryType *pin;
  
