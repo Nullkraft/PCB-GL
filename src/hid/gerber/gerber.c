@@ -676,15 +676,15 @@ gerber_do_export (HID_Attr_Val * options)
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
 
-#warning NULL gc
-  common_set_clip_box (NULL, &region);
-
   pagecount = 1;
   resetApertures ();
 
   lastgroup = -1;
   layer_list_idx = 0;
   finding_apertures = 1;
+
+  common_set_clip_box (&gerber_graphics, &region);
+
   hid_expose_callback (&gerber_graphics, 0);
 
   layer_list_idx = 0;

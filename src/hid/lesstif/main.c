@@ -826,10 +826,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
 
-#warning NULL gc
-  gc = NULL;
-
-  common_set_clip_box (gc, &region);
+  common_set_clip_box (&lesstif_graphics, &region);
 
   pixmap = window;
   XSync (display, 0);
@@ -2504,9 +2501,6 @@ idle_proc (XtPointer dummy)
 {
   hidGC gc;
 
-#warning NULL gc
-  gc = NULL;
-
   if (need_redraw)
     {
       int mx, my;
@@ -2590,7 +2584,7 @@ idle_proc (XtPointer dummy)
 	    }
 	}
 
-      common_set_clip_box (gc, &region);
+      common_set_clip_box (&lesstif_graphics, &region);
 
       DrawBackgroundImage();
       hid_expose_callback (&lesstif_graphics, 0);
@@ -3817,12 +3811,9 @@ pinout_callback (Widget da, PinoutData * pd,
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
 
-#warning NULL gc
-  gc = NULL;
-
-  common_set_clip_box (gc, &region);
-
   XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);
+
+  common_set_clip_box (&lesstif_graphics, &region);
   hid_expose_callback (&lesstif_graphics, pd->item);
 
   pinout = 0;

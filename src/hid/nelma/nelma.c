@@ -646,13 +646,11 @@ nelma_start_png_export()
 	region.X2 = PCB->MaxWidth;
 	region.Y2 = PCB->MaxHeight;
 
-#warning NULL gc
-  common_set_clip_box (NULL, &region);
-
 	linewidth = -1;
 	lastbrush = (gdImagePtr)((void *) -1);
 
-	hid_expose_callback(&nelma_graphics, 0);
+	common_set_clip_box (&nelma_graphics, &region);
+	hid_expose_callback (&nelma_graphics, 0);
 }
 
 static void 
