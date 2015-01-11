@@ -15,7 +15,8 @@
 #endif
 
 extern HID ghid_hid;
-extern HID_DRAW ghid_graphics;
+HID_DRAW ghid_graphics;
+extern HID_DRAW_CLASS ghid_graphics_class;
 
 /* Sets priv->u_gc to the "right" GC to use (wrt mask or window)
 */
@@ -1114,9 +1115,18 @@ draw_crosshair (render_priv *priv)
 void
 ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 {
+  /* Init ghid_graphics HID_DRAW instance */
+  memset (&ghid_graphics, 0, sizeof (HID_DRAW));
+
+  ghid_graphics.klass = &ghid_graphics_class;
+  ghid_graphics.poly_after = true;
+  common_draw_helpers_init (&ghid_graphics);
+
   /* Init any GC's required */
   port->render_priv = g_new0 (render_priv, 1);
   port->render_priv->crosshair_gc = hid_draw_make_gc (&ghid_graphics);
+
+  ghid_graphics .
 }
 
 void

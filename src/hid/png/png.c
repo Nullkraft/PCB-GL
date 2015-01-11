@@ -550,10 +550,6 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   int saved_show_bottom_side;
   BoxType region;
   FlagType save_flags;
-  hidGC gc;
-
-#warning NULL gc
-  gc = NULL;
 
   f = the_file;
 
@@ -566,8 +562,6 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
     bounds = GetDataBoundingBox (PCB->Data);    
   else
     bounds = &region;
-
-  common_set_clip_box (gc, bounds);
 
   memset (print_group, 0, sizeof (print_group));
   memset (print_layer, 0, sizeof (print_layer));
@@ -661,6 +655,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 	}
     }
 
+  common_set_clip_box (&png_graphics, bounds);
   hid_expose_callback (&png_graphics, 0);
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));

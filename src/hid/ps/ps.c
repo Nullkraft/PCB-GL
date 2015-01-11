@@ -1009,7 +1009,11 @@ ps_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
       strcmp (name, "route") != 0
       )
     {
+      hidGC gc;
+
+      gc = hid_draw_make_gc (hid_draw);
       dapi->draw_layer (gc, global.outline_layer, NULL);
+      hid_draw_destroy_gc (gc);
     }
 
   return 1;

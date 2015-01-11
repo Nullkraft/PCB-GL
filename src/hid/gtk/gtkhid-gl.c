@@ -52,7 +52,7 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
 //#define VIEW_ORTHO
 
 extern HID ghid_hid;
-extern HID_DRAW ghid_graphics;
+static HID_DRAW ghid_graphics;
 extern HID_DRAW_CLASS ghid_graphics_class;
 
 /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
@@ -271,6 +271,21 @@ end_subcomposite (HID_DRAW *hid_draw)
   priv->subcomposite_stencil_bit = 0;
 }
 
+static void
+set_depth_on_all_active_gc (render_priv *priv, float depth)
+{
+  GList *iter;
+
+  for (iter = priv->active_gc_list;
+       iter != NULL;
+       iter = g_list_next (iter))
+    {
+      hidGC gc = iter->data;
+
+      hidgl_set_depth (gc, depth);
+    }
+}
+
 /* Compute group visibility based upon on copper layers only */
 static bool
 is_layer_group_visible (int group)
@@ -340,7 +355,7 @@ ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
     start_subcomposite (hid_draw);
 
   /* Drawing is already flushed by {start,end}_subcomposite */
-  hidgl_set_depth (hid_draw, compute_depth (group));
+  set_depth_on_all_active_gc (priv, compute_depth (group));
 
   return group_visible;
 }
@@ -370,7 +385,7 @@ ghid_make_gc (HID_DRAW *hid_draw)
   gtkGC gtk_gc = (gtkGC)gc;
 
   gc->hid = &ghid_hid;
-  gc->hid_draw = &ghid_graphics;
+  gc->hid_draw = hid_draw;
 
   hidgl_init_gc (hid_draw, gc);
 
@@ -1078,12 +1093,23 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
     }
 
   hidgl_init ();
-  priv->hid_draw = hidgl_new_instance ();
 
   /* Setup HID function pointers specific to the GL renderer*/
+  hidgl_class_init (&ghid_graphics_class);
+
   ghid_graphics_class.end_layer = ghid_end_layer;
   ghid_graphics_class._fill_pcb_polygon = ghid_fill_pcb_polygon;
   ghid_graphics_class._thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+
+  /* Init ghid_graphics HID_DRAW instance */
+  memset (&ghid_graphics, 0, sizeof (HID_DRAW));
+
+  ghid_graphics.klass = &ghid_graphics_class;
+  ghid_graphics.poly_after = true;
+  common_draw_helpers_init (&ghid_graphics);
+  hidgl_instance_init (&ghid_graphics);
+
+  priv->hid_draw = &ghid_graphics;
 }
 
 void
@@ -1630,8 +1656,8 @@ fill_board_outline (hidGC gc)
 
   memset (&polygon, 0, sizeof (polygon));
   polygon.Clipped = PCB->Data->outline;
-  if (gc->clip_box)
-    polygon.BoundingBox = *gc->clip_box;
+  if (gc->hid_draw->clip_box)
+    polygon.BoundingBox = *gc->hid_draw->clip_box;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
   hid_draw__fill_pcb_polygon (gc, &polygon);
@@ -1686,20 +1712,20 @@ fill_board_outline_holes (hidGC gc)
 
   memset (&polygon, 0, sizeof (polygon));
   polygon.Clipped = PCB->Data->outline;
-  if (gc->clip_box)
-    polygon.BoundingBox = *gc->clip_box;
+  if (gc->hid_draw->clip_box)
+    polygon.BoundingBox = *gc->hid_draw->clip_box;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
 
   info.gc = gc;
 
-  PolygonHoles (&polygon, gc->clip_box, fill_outline_hole_cb, &info);
+  PolygonHoles (&polygon, gc->hid_draw->clip_box, fill_outline_hole_cb, &info);
 
   p = polygon;
   for (p.Clipped = polygon.Clipped->f;
        p.Clipped != polygon.Clipped;
        p.Clipped = p.Clipped->f) {
-    PolygonHoles (&p, gc->clip_box, fill_outline_hole_cb, &info);
+    PolygonHoles (&p, gc->hid_draw->clip_box, fill_outline_hole_cb, &info);
   }
 
 //  poly_FreeContours (&polygon.NoHoles);
@@ -1716,6 +1742,7 @@ GhidDrawMask (hidGC gc, int side)
   LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
   struct layer_info l_info;
   struct side_info s_info;
+  HID_DRAW *hid_draw = gc->hid_draw;
 
   l_info.gc = gc;
   l_info.layer = Layer;
@@ -1726,24 +1753,24 @@ GhidDrawMask (hidGC gc, int side)
     {
       hid_draw_set_line_width (Output.pmGC, 0);
       hid_draw_set_color (Output.pmGC, PCB->MaskColor);
-      r_search (PCB->Data->pin_tree, gc->clip_box, NULL, clearPin_callback, NULL);
-      r_search (PCB->Data->via_tree, gc->clip_box, NULL, clearPin_callback, NULL);
-      r_search (PCB->Data->pad_tree, gc->clip_box, NULL, clearPad_callback, &s_info);
+      r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, clearPin_callback, NULL);
+      r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, clearPin_callback, NULL);
+      r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, clearPad_callback, &s_info);
       hid_draw_set_color (Output.pmGC, "erase");
     }
 
-  hid_draw_use_mask (gc->hid_draw, HID_MASK_CLEAR);
+  hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
 
-  r_search (Layer->polygon_tree, gc->clip_box, NULL, poly_callback, &s_info);
-  r_search (Layer->line_tree, gc->clip_box, NULL, line_callback, &l_info);
-  r_search (Layer->arc_tree, gc->clip_box, NULL, arc_callback, &l_info);
-  r_search (Layer->text_tree, gc->clip_box, NULL, text_callback, &l_info);
+  r_search (Layer->polygon_tree, hid_draw->clip_box, NULL, poly_callback, &s_info);
+  r_search (Layer->line_tree, hid_draw->clip_box, NULL, line_callback, &l_info);
+  r_search (Layer->arc_tree, hid_draw->clip_box, NULL, arc_callback, &l_info);
+  r_search (Layer->text_tree, hid_draw->clip_box, NULL, text_callback, &l_info);
 
-  r_search (PCB->Data->pin_tree, gc->clip_box, NULL, clearPin_callback_solid, NULL);
-  r_search (PCB->Data->via_tree, gc->clip_box, NULL, clearPin_callback_solid, NULL);
-  r_search (PCB->Data->pad_tree, gc->clip_box, NULL, clearPad_callback_solid, &s_info);
+  r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, clearPin_callback_solid, NULL);
+  r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, clearPin_callback_solid, NULL);
+  r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, clearPad_callback_solid, &s_info);
 
-  hid_draw_use_mask (gc->hid_draw, HID_MASK_AFTER);
+  hid_draw_use_mask (hid_draw, HID_MASK_AFTER);
   hid_draw_set_color (gc, PCB->MaskColor);
   ghid_set_alpha_mult (gc, thin ? 0.35 : 1.0);
 
@@ -1782,8 +1809,8 @@ GhidDrawMask (hidGC gc, int side)
 
   memset (&polygon, 0, sizeof (polygon));
   polygon.Clipped = PCB->Data->outline;
-  if (gc->clip_box)
-    polygon.BoundingBox = *gc->clip_box;
+  if (hid_draw->clip_box)
+    polygon.BoundingBox = *hid_draw->clip_box;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
   hid_draw__fill_pcb_polygon (gc, &polygon);
@@ -1802,7 +1829,7 @@ GhidDrawMask (hidGC gc, int side)
 #endif
   hidgl_shader_activate (circular_program);
 
-  hid_draw_use_mask (gc->hid_draw, HID_MASK_OFF);
+  hid_draw_use_mask (hid_draw, HID_MASK_OFF);
 
 //  first_run = false;
 }
@@ -1860,8 +1887,8 @@ ghid_draw_outline_between_layers (hidGC gc, int from_layer, int to_layer)
 
   memset (&polygon, 0, sizeof (polygon));
   polygon.Clipped = PCB->Data->outline;
-  if (gc->clip_box)
-    polygon.BoundingBox = *gc->clip_box;
+  if (gc->hid_draw->clip_box)
+    polygon.BoundingBox = *gc->hid_draw->clip_box;
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
 
@@ -1870,14 +1897,14 @@ ghid_draw_outline_between_layers (hidGC gc, int from_layer, int to_layer)
   info.z2 = compute_depth (to_layer);
 
   draw_outline_contour (info.gc, polygon.Clipped->contours, info.z1, info.z2);
-  PolygonHoles (&polygon, gc->clip_box, outline_hole_cb, &info);
+  PolygonHoles (&polygon, gc->hid_draw->clip_box, outline_hole_cb, &info);
 
   p = polygon;
   for (p.Clipped = polygon.Clipped->f;
        p.Clipped != polygon.Clipped;
        p.Clipped = p.Clipped->f) {
     draw_outline_contour (info.gc, p.Clipped->contours, info.z1, info.z2);
-    PolygonHoles (&p, gc->clip_box, outline_hole_cb, &info);
+    PolygonHoles (&p, gc->hid_draw->clip_box, outline_hole_cb, &info);
   }
 
   poly_FreeContours (&polygon.NoHoles);
@@ -1900,11 +1927,12 @@ GhidDrawLayerGroup (hidGC gc, int group)
   bool is_outline;
   struct layer_info l_info;
   struct side_info s_info;
+  HID_DRAW *hid_draw = gc->hid_draw;
 
   l_info.gc = gc;
   s_info.gc = gc;
 
-  if (!hid_draw_set_layer (&ghid_graphics, 0, group, 0))
+  if (!hid_draw_set_layer (hid_draw, 0, group, 0))
     return 0;
 
   /* HACK: Subcomposite each layer in a layer group separately */
@@ -1921,7 +1949,7 @@ GhidDrawLayerGroup (hidGC gc, int group)
     if (layernum < max_copper_layer && Layer->On) {
 
       if (!first_run)
-        hid_draw_set_layer (&ghid_graphics, 0, group, 0);
+        hid_draw_set_layer (hid_draw, 0, group, 0);
 
       first_run = 0;
 
@@ -1932,8 +1960,8 @@ GhidDrawLayerGroup (hidGC gc, int group)
         glColorMask (0, 0, 0, 0);
         glDepthMask (GL_FALSE);
         hid_draw_set_color (Output.bgGC, PCB->MaskColor);
-        if (PCB->PinOn) r_search (PCB->Data->pin_tree, gc->clip_box, NULL, hole_callback, gc);
-        if (PCB->ViaOn) r_search (PCB->Data->via_tree, gc->clip_box, NULL, hole_callback, gc);
+        if (PCB->PinOn) r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, hole_callback, gc);
+        if (PCB->ViaOn) r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, hole_callback, gc);
         fill_board_outline_holes (Output.bgGC);
         hidgl_flush_triangles (priv->hid_draw);
         glPopAttrib ();
@@ -1942,13 +1970,13 @@ GhidDrawLayerGroup (hidGC gc, int group)
       /* draw all polygons on this layer */
       if (Layer->PolygonN) {
         l_info.layer = Layer;
-        r_search (Layer->polygon_tree, gc->clip_box, NULL, poly_callback_no_clear, &l_info);
-        r_search (Layer->polygon_tree, gc->clip_box, NULL, poly_callback_clearing, &l_info);
+        r_search (Layer->polygon_tree, hid_draw->clip_box, NULL, poly_callback_no_clear, &l_info);
+        r_search (Layer->polygon_tree, hid_draw->clip_box, NULL, poly_callback_clearing, &l_info);
 
         /* HACK: Subcomposite polygons separately from other layer primitives */
         /* Reset the compositing */
-        hid_draw_end_layer (&ghid_graphics);
-        hid_draw_set_layer (&ghid_graphics, 0, group, 0);
+        hid_draw_end_layer (hid_draw);
+        hid_draw_set_layer (hid_draw, 0, group, 0);
 
         if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
           hidgl_flush_triangles (priv->hid_draw);
@@ -1956,8 +1984,8 @@ GhidDrawLayerGroup (hidGC gc, int group)
           glColorMask (0, 0, 0, 0);
           glDepthMask (GL_FALSE);
           /* Mask out drilled holes on this layer */
-          if (PCB->PinOn) r_search (PCB->Data->pin_tree, gc->clip_box, NULL, hole_callback, gc);
-          if (PCB->ViaOn) r_search (PCB->Data->via_tree, gc->clip_box, NULL, hole_callback, gc);
+          if (PCB->PinOn) r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, hole_callback, gc);
+          if (PCB->ViaOn) r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, hole_callback, gc);
           fill_board_outline_holes (Output.bgGC);
           hidgl_flush_triangles (priv->hid_draw);
           glPopAttrib ();
@@ -1968,31 +1996,31 @@ GhidDrawLayerGroup (hidGC gc, int group)
       if (!global_view_2d && !is_outline) {
         if (PCB->PinOn &&
             (group == bottom_group || group == top_group))
-          r_search (PCB->Data->pin_tree, gc->clip_box, NULL, pin_name_callback, gc);
-        if (PCB->PinOn) r_search (PCB->Data->pin_tree, gc->clip_box, NULL, pin_inlayer_callback, &l_info);
-        if (PCB->ViaOn) r_search (PCB->Data->via_tree, gc->clip_box, NULL, via_inlayer_callback, &l_info);
+          r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_name_callback, gc);
+        if (PCB->PinOn) r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_inlayer_callback, &l_info);
+        if (PCB->ViaOn) r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_inlayer_callback, &l_info);
         if (PCB->PinOn && group == top_group)
           {
             s_info.side = TOP_SIDE;
-            r_search (PCB->Data->pad_tree, gc->clip_box, NULL, pad_callback, &s_info);
+            r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_callback, &s_info);
           }
         if (PCB->PinOn && group == bottom_group)
           {
             s_info.side = BOTTOM_SIDE;
-            r_search (PCB->Data->pad_tree, gc->clip_box, NULL, pad_callback, &s_info);
+            r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_callback, &s_info);
           }
       }
 
       if (TEST_FLAG (CHECKPLANESFLAG, PCB))
         continue;
 
-      r_search (Layer->line_tree, gc->clip_box, NULL, line_callback, &l_info);
-      r_search (Layer->arc_tree, gc->clip_box, NULL, arc_callback, &l_info);
-      r_search (Layer->text_tree, gc->clip_box, NULL, text_callback, &l_info);
+      r_search (Layer->line_tree, hid_draw->clip_box, NULL, line_callback, &l_info);
+      r_search (Layer->arc_tree, hid_draw->clip_box, NULL, arc_callback, &l_info);
+      r_search (Layer->text_tree, hid_draw->clip_box, NULL, text_callback, &l_info);
     }
   }
 
-  hid_draw_end_layer (&ghid_graphics);
+  hid_draw_end_layer (hid_draw);
 
   return (n_entries > 1);
 }
@@ -2130,7 +2158,7 @@ static void
 ghid_draw_packages (hidGC gc)
 {
   /* XXX: Just the front elements for now */
-  r_search (PCB->Data->element_tree, gc->clip_box, NULL, frontE_package_callback, NULL);
+  r_search (PCB->Data->element_tree, gc->hid_draw->clip_box, NULL, frontE_package_callback, NULL);
 }
 
 void
@@ -2151,6 +2179,7 @@ ghid_draw_everything (hidGC gc)
   int min_phys_group;
   int max_phys_group;
   struct side_info info;
+  HID_DRAW *hid_draw = gc->hid_draw;
 
   cyl_info.gc = gc;
   info.gc = gc;
@@ -2206,20 +2235,20 @@ ghid_draw_everything (hidGC gc)
   info.side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
 
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
-      hid_draw_set_layer (&ghid_graphics, "invisible", SL (INVISIBLE, 0), 0)) {
+      hid_draw_set_layer (hid_draw, "invisible", SL (INVISIBLE, 0), 0)) {
     DrawSilk (gc, info.side);
 
     if (global_view_2d)
-      r_search (PCB->Data->pad_tree, gc->clip_box, NULL, pad_callback, &info);
+      r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_callback, &info);
 
-    hid_draw_end_layer (&ghid_graphics);
+    hid_draw_end_layer (hid_draw);
 
     /* Draw the reverse-side solder mask if turned on */
     if (!global_view_2d &&
-        hid_draw_set_layer (&ghid_graphics, SWAP_IDENT ? "componentmask" : "soldermask",
-                        SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
+        hid_draw_set_layer (hid_draw, SWAP_IDENT ? "componentmask" : "soldermask",
+                            SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
         GhidDrawMask (gc, info.side);
-        hid_draw_end_layer (&ghid_graphics);
+        hid_draw_end_layer (hid_draw);
       }
   }
 
@@ -2250,8 +2279,8 @@ ghid_draw_everything (hidGC gc)
       hid_draw_set_color (gc, "drill");
       ghid_set_alpha_mult (gc, alpha_mult * 0.75);
       ghid_draw_outline_between_layers (gc, cyl_info.from_layer, cyl_info.to_layer);
-      if (PCB->PinOn) r_search (PCB->Data->pin_tree, gc->clip_box, NULL, pin_hole_cyl_callback, &cyl_info);
-      if (PCB->ViaOn) r_search (PCB->Data->via_tree, gc->clip_box, NULL, via_hole_cyl_callback, &cyl_info);
+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_hole_cyl_callback, &cyl_info);
+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_hole_cyl_callback, &cyl_info);
     }
 #endif
   }
@@ -2266,7 +2295,7 @@ ghid_draw_everything (hidGC gc)
 
   /* Draw pins, pads, vias below silk */
   if (global_view_2d) {
-    start_subcomposite (gc->hid_draw);
+    start_subcomposite (hid_draw);
 
     if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
       /* Mask out drilled holes */
@@ -2274,41 +2303,41 @@ ghid_draw_everything (hidGC gc)
       glPushAttrib (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       glColorMask (0, 0, 0, 0);
       glDepthMask (GL_FALSE);
-      if (PCB->PinOn) r_search (PCB->Data->pin_tree, gc->clip_box, NULL, hole_callback, gc);
-      if (PCB->ViaOn) r_search (PCB->Data->via_tree, gc->clip_box, NULL, hole_callback, gc);
+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, hole_callback, gc);
+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, hole_callback, gc);
       fill_board_outline_holes (Output.bgGC);
       hidgl_flush_triangles (priv->hid_draw);
       glPopAttrib ();
     }
 
-    if (PCB->PinOn) r_search (PCB->Data->pad_tree, gc->clip_box, NULL, pad_callback, &info);
-    if (PCB->PinOn) r_search (PCB->Data->pin_tree, gc->clip_box, NULL, pin_callback, gc);
-    if (PCB->ViaOn) r_search (PCB->Data->via_tree, gc->clip_box, NULL, via_callback, gc);
+    if (PCB->PinOn) r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_callback, &info);
+    if (PCB->PinOn) r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_callback, gc);
+    if (PCB->ViaOn) r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_callback, gc);
 
-    end_subcomposite (gc->hid_draw);
+    end_subcomposite (hid_draw);
   }
 
   /* Draw the solder mask if turned on */
-  if (hid_draw_set_layer (&ghid_graphics, SWAP_IDENT ? "soldermask" : "componentmask",
-                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
+  if (hid_draw_set_layer (hid_draw, SWAP_IDENT ? "soldermask" : "componentmask",
+                          SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
     GhidDrawMask (gc, info.side);
-    hid_draw_end_layer (&ghid_graphics);
+    hid_draw_end_layer (hid_draw);
   }
 
-  if (hid_draw_set_layer (&ghid_graphics, SWAP_IDENT ? "bottomsilk" : "topsilk",
-                      SWAP_IDENT ? SL (SILK, BOTTOM) : SL (SILK, TOP), 0)) {
+  if (hid_draw_set_layer (hid_draw, SWAP_IDENT ? "bottomsilk" : "topsilk",
+                          SWAP_IDENT ? SL (SILK, BOTTOM) : SL (SILK, TOP), 0)) {
       DrawSilk (gc, info.side);
-      hid_draw_end_layer (&ghid_graphics);
+      hid_draw_end_layer (hid_draw);
   }
 
   /* Draw element Marks */
   if (PCB->PinOn)
-    r_search (PCB->Data->element_tree, gc->clip_box, NULL, EMark_callback, gc);
+    r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, EMark_callback, gc);
 
   /* Draw rat lines on top */
-  if (PCB->RatOn && hid_draw_set_layer (&ghid_graphics, "rats", SL (RATS, 0), 0)) {
+  if (PCB->RatOn && hid_draw_set_layer (hid_draw, "rats", SL (RATS, 0), 0)) {
     DrawRats (gc);
-    hid_draw_end_layer (&ghid_graphics);
+    hid_draw_end_layer (hid_draw);
   }
 
   Settings.ShowBottomSide = save_show_solder;
@@ -2335,6 +2364,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                      0, 0, 0, 1};
   bool horizon_problem = false;
   static bool do_once = true;
+  HID_DRAW *hid_draw = priv->hid_draw;
   hidGC gc;
 
   if (do_once) {
@@ -2346,9 +2376,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_start_drawing (port, widget);
 
-  gc = hid_draw_make_gc (&ghid_graphics);
-  Output.bgGC = hid_draw_make_gc (&ghid_graphics);
-  Output.pmGC = hid_draw_make_gc (&ghid_graphics);
+  gc = hid_draw_make_gc (hid_draw);
+  Output.bgGC = hid_draw_make_gc (hid_draw);
+  Output.pmGC = hid_draw_make_gc (hid_draw);
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
@@ -2580,8 +2610,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_draw_bg_image ();
 
-  common_set_clip_box (&ghid_graphics, &region);
-  /* hid_expose_callback (&ghid_graphics, 0); */
+  common_set_clip_box (hid_draw, &region);
+  /* hid_expose_callback (hid_draw, 0); */
   ghid_draw_everything (gc);
   hidgl_flush_triangles (priv->hid_draw);
 
@@ -2627,7 +2657,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   /* Set the current depth to the right value for the layer we are editing */
   priv->edit_depth = compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT));
-  hidgl_set_depth (&ghid_graphics, priv->edit_depth);
+  hidgl_set_depth (gc, priv->edit_depth);
 
   ghid_draw_grid (gc);
 
@@ -2743,6 +2773,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   Coord save_max_width;
   Coord save_max_height;
   double xz, yz;
+  HID_DRAW *hid_draw = priv->hid_draw;
 
   save_view = gport->view;
   save_width = gport->width;
@@ -2843,8 +2874,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                 gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                     -gport->view.y0, 0);
 
-  hidgl_set_depth (&ghid_graphics, 0.);
-  hid_expose_callback (&ghid_graphics, pinout->element);
+  hid_expose_callback (hid_draw, pinout->element);
   hidgl_flush_triangles (priv->hid_draw);
   glPopMatrix ();
 
@@ -2873,6 +2903,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   view_data save_view;
   int save_width, save_height;
   BoxType region;
+  HID_DRAW *hid_draw = priv->hid_draw;
 
   save_view = gport->view;
   save_width = gport->width;
@@ -2965,8 +2996,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
 
-  common_set_clip_box (&ghid_graphics, &region);
-  hid_expose_callback (&ghid_graphics, NULL);
+  common_set_clip_box (hid_draw, &region);
+  hid_expose_callback (hid_draw, NULL);
   hidgl_flush_triangles (priv->hid_draw);
   glPopMatrix ();
 
@@ -2994,6 +3025,7 @@ HID_DRAW *
 ghid_request_debug_draw (void)
 {
   GHidPort *port = gport;
+  render_priv *priv = port->render_priv;
   GtkWidget *widget = port->drawing_area;
   GtkAllocation allocation;
 
@@ -3022,7 +3054,7 @@ ghid_request_debug_draw (void)
                 port->view.flip_y ? port->view.y0 - PCB->MaxHeight :
                              -port->view.y0, 0);
 
-  return &ghid_graphics;
+  return priv->hid_draw;
 }
 
 void

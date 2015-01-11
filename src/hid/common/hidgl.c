@@ -189,7 +189,7 @@ hidgl_init_triangle_array (HID_DRAW *hid_draw)
   priv->buffer.use_map = false;
 
   priv->buffer.triangle_array = NULL;
-  hidgl_reset_triangle_array (hidgl);
+  hidgl_reset_triangle_array (hid_draw);
 }
 
 static void
@@ -253,13 +253,12 @@ hidgl_flush_triangles (HID_DRAW *hid_draw)
   glDisableClientState (GL_VERTEX_ARRAY);
   glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 
-  hidgl_reset_triangle_array (hidgl);
+  hidgl_reset_triangle_array (hid_draw);
 }
 
 void
 hidgl_ensure_vertex_space (hidGC gc, int count)
 {
-  hidglGC hidgl_gc = (hidglGC)gc;
   HID_DRAW *hid_draw = gc->hid_draw;
   hidgl_priv *priv = hid_draw->priv;
 
@@ -273,7 +272,7 @@ hidgl_ensure_vertex_space (hidGC gc, int count)
       exit (1);
     }
   if (count > 3 * TRIANGLE_ARRAY_SIZE - priv->buffer.vertex_count)
-    hidgl_flush_triangles (hidgl);
+    hidgl_flush_triangles (hid_draw);
 }
 
 void
@@ -286,7 +285,7 @@ hidgl_ensure_triangle_space (hidGC gc, int count)
 }
 
 void
-hidgl_set_depth (HID_DRAW *hid_draw, float depth)
+hidgl_set_depth (hidGC gc, float depth)
 {
   hidglGC hidgl_gc = (hidglGC)gc;
 
@@ -297,6 +296,7 @@ void
 hidgl_draw_grid (hidGC gc)
 {
   hidglGC hidgl_gc = (hidglGC)gc;
+  HID_DRAW *hid_draw = gc->hid_draw;
 
   static GLfloat *points = 0;
   static int npoints = 0;
@@ -306,10 +306,10 @@ hidgl_draw_grid (hidGC gc)
   if (!Settings.DrawGrid)
     return;
 
-  x1 = GridFit (MAX (0, gc->clip_box->X1), PCB->Grid, PCB->GridOffsetX);
-  y1 = GridFit (MAX (0, gc->clip_box->Y1), PCB->Grid, PCB->GridOffsetY);
-  x2 = GridFit (MIN (PCB->MaxWidth,  gc->clip_box->X2), PCB->Grid, PCB->GridOffsetX);
-  y2 = GridFit (MIN (PCB->MaxHeight, gc->clip_box->Y2), PCB->Grid, PCB->GridOffsetY);
+  x1 = GridFit (MAX (0, hid_draw->clip_box->X1), PCB->Grid, PCB->GridOffsetX);
+  y1 = GridFit (MAX (0, hid_draw->clip_box->Y1), PCB->Grid, PCB->GridOffsetY);
+  x2 = GridFit (MIN (PCB->MaxWidth,  hid_draw->clip_box->X2), PCB->Grid, PCB->GridOffsetX);
+  y2 = GridFit (MIN (PCB->MaxHeight, hid_draw->clip_box->Y2), PCB->Grid, PCB->GridOffsetY);
 
   if (x1 > x2)
     {
@@ -916,7 +916,6 @@ polygon_contains_user_holes (PolygonType *polygon)
 static void
 fill_polyarea (hidGC gc, POLYAREA *pa, bool use_new_stencil)
 {
-  hidglGC hidgl_gc = (hidglGC)gc;
   HID_DRAW *hid_draw = gc->hid_draw;
   hidgl_priv *priv = hid_draw->priv;
   int stencil_bit;
@@ -934,7 +933,7 @@ fill_polyarea (hidGC gc, POLYAREA *pa, bool use_new_stencil)
    */
   if (use_new_stencil)
     {
-      stencil_bit = hidgl_assign_clear_stencil_bit (hidgl);
+      stencil_bit = hidgl_assign_clear_stencil_bit (hid_draw);
       if (!stencil_bit)
         {
           printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
@@ -944,7 +943,7 @@ fill_polyarea (hidGC gc, POLYAREA *pa, bool use_new_stencil)
     }
 
   /* Flush out any existing geoemtry to be rendered */
-  hidgl_flush_triangles (hidgl);
+  hidgl_flush_triangles (hid_draw);
 
   glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                 GL_COLOR_BUFFER_BIT |                   /* the colour buffer write mask etc.. for part way restore */
@@ -971,8 +970,8 @@ fill_polyarea (hidGC gc, POLYAREA *pa, bool use_new_stencil)
 
   /* Drawing operations now set our reference bit in the stencil buffer */
 
-  r_search (pa->contour_tree, gc->clip_box, NULL, do_hole, gc);
-  hidgl_flush_triangles (hidgl);
+  r_search (pa->contour_tree, hid_draw->clip_box, NULL, do_hole, gc);
+  hidgl_flush_triangles (hid_draw);
 
   glPopAttrib ();                                   /* Restore the colour and stencil buffer write-mask etc.. */
   glPushAttrib (GL_STENCIL_BUFFER_BIT);             /* Save the stencil op and function */
@@ -989,11 +988,11 @@ fill_polyarea (hidGC gc, POLYAREA *pa, bool use_new_stencil)
 
   /* Draw the polygon outer */
   fill_contour (gc, pa->contours);
-  hidgl_flush_triangles (hidgl);
+  hidgl_flush_triangles (hid_draw);
 
   /* Unassign our stencil buffer bit */
   if (use_new_stencil)
-    hidgl_return_stencil_bit (hidgl, stencil_bit);
+    hidgl_return_stencil_bit (hid_draw, stencil_bit);
 
   glPopAttrib ();                               /* Restore the stencil buffer op and function */
 }
@@ -1136,13 +1135,17 @@ hidgl_init (void)
   called = true;
 }
 
-HID_DRAW *
-hidgl_new_instance (void)
+void
+hidgl_class_init (HID_DRAW_CLASS *klass)
 {
-  HID_DRAW *hid_draw;
+  /* XXX: For now, our sub-classes have all the v-func methods, and they call us as required */
+}
+
+void
+hidgl_instance_init (HID_DRAW *hid_draw)
+{
   hidgl_priv *priv;
 
-  hid_draw = calloc (1, sizeof (*hid_draw));
   priv = calloc (1, sizeof (hidgl_priv));
   hid_draw->priv = priv;
 
@@ -1162,11 +1165,9 @@ hidgl_new_instance (void)
       /* Do we need to disable that somewhere? */
     }
 
-  hidgl_reset_stencil_usage (hidgl);
+  hidgl_reset_stencil_usage (hid_draw);
 #endif
-//  hidgl_init_triangle_array (hidgl);
-
-  return hid_draw;
+//  hidgl_init_triangle_array (hid_draw);
 }
 
 void
@@ -1229,7 +1230,7 @@ hidgl_start_render (HID_DRAW *hid_draw)
     }
 #endif
 
-  hidgl_init_triangle_array (hidgl);
+  hidgl_init_triangle_array (hid_draw);
   hidgl_shader_activate (/*priv->*/circular_program);
 }
 
@@ -1298,7 +1299,7 @@ hidgl_assign_clear_stencil_bit (HID_DRAW *hid_draw)
     }
 
   /* Didn't find any non dirty planes. Clear those dirty ones which aren't in use */
-  hidgl_clean_unassigned_stencil (hidgl);
+  hidgl_clean_unassigned_stencil (hid_draw);
   priv->assigned_bits |= first_dirty;
   priv->dirty_bits = priv->assigned_bits;
 

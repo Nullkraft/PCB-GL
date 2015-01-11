@@ -102,6 +102,8 @@ struct hid_draw_st
   bool poly_before; /* If set, the redraw code will draw polygons before erasing the clearances. */
   bool poly_after;  /* If set, the redraw code will draw polygons after  erasing the clearances. */
 
+  BoxType *clip_box; /* Used by HIDs and draw.c to restrict rendering to a given region */
+
   void *priv; /* XXX: TEMPORARY */
 };
 
@@ -109,7 +111,6 @@ struct hid_draw_st
 struct hid_gc_struct {
   HID *hid;   /* Used by HIDs to validate the GCs passed belong to them */
   HID_DRAW *hid_draw;
-  BoxType *clip_box; /* Used by HIDs and draw.c to restrict rendering to a given region */
 };
 
 

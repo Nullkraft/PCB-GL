@@ -210,14 +210,10 @@ hid_extents_init (void)
 BoxType *
 hid_get_extents (void *item)
 {
-  hidGC gc;
   BoxType region;
 
   /* As this isn't a real "HID", we need to ensure we are initialised. */
   hid_extents_init ();
-
-#warning NULL gc
-  gc = NULL;
 
   box.X1 = COORD_MAX;
   box.Y1 = COORD_MAX;

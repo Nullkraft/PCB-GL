@@ -11,5 +11,5 @@ void common_fill_pcb_pv_hole (hidGC gc, PinType *pv);
 void common_thindraw_pcb_pv (hidGC gc, PinType *pv, bool mask);
 void common_thindraw_pcb_pv_hole (hidGC gc, PinType *pv);
 void common_draw_helpers_class_init (HID_DRAW_CLASS *klass);
-void common_draw_helpers_init (HID_DRAW *graphics);
-void common_set_clip_box (HID_DRAW *graphics, BoxType *clip_box);
+void common_draw_helpers_init (HID_DRAW *hid_draw);
+void common_set_clip_box (HID_DRAW *hid_draw, BoxType *clip_box);

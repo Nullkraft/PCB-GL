@@ -9,16 +9,16 @@
 
 /* Takes a copy of clip_box so we own it */
 void
-common_set_clip_box (HID_DRAW *graphics, BoxType *clip_box)
+common_set_clip_box (HID_DRAW *hid_draw, BoxType *clip_box)
 {
-  free (graphics->clip_box);
-  graphics->clip_box = NULL;
+  free (hid_draw->clip_box);
+  hid_draw->clip_box = NULL;
 
   if (clip_box == NULL)
     return;
 
-  graphics->clip_box = malloc (sizeof (BoxType));
-  *graphics->clip_box = *clip_box;
+  hid_draw->clip_box = malloc (sizeof (BoxType));
+  *hid_draw->clip_box = *clip_box;
 }
 
 static void
@@ -205,6 +205,7 @@ fill_contour_cb (PLINE *pl, void *user_data)
 static void
 fill_clipped_contour (hidGC gc, PLINE *pl)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
   PLINE *pl_copy;
   POLYAREA *clip_poly;
   POLYAREA *piece_poly;
@@ -212,8 +213,8 @@ fill_clipped_contour (hidGC gc, PLINE *pl)
   POLYAREA *draw_piece;
   int x;
 
-  clip_poly = RectPoly (gc->clip_box->X1, gc->clip_box->X2,
-                        gc->clip_box->Y1, gc->clip_box->Y2);
+  clip_poly = RectPoly (hid_draw->clip_box->X1, hid_draw->clip_box->X2,
+                        hid_draw->clip_box->Y1, hid_draw->clip_box->Y2);
   poly_CopyContour (&pl_copy, pl);
   piece_poly = poly_Create ();
   poly_InclContour (piece_poly, pl_copy);
@@ -239,18 +240,19 @@ fill_clipped_contour (hidGC gc, PLINE *pl)
 static int
 should_compute_no_holes (hidGC gc, PolygonType *poly)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
   Coord x1, x2, y1, y2;
   double poly_bounding_area;
   double clipped_poly_area;
 
   /* If there is no passed clip box, compute the whole thing */
-  if (gc->clip_box == NULL)
+  if (hid_draw->clip_box == NULL)
     return 1;
 
-  x1 = MAX (poly->BoundingBox.X1, gc->clip_box->X1);
-  x2 = MIN (poly->BoundingBox.X2, gc->clip_box->X2);
-  y1 = MAX (poly->BoundingBox.Y1, gc->clip_box->Y1);
-  y2 = MIN (poly->BoundingBox.Y2, gc->clip_box->Y2);
+  x1 = MAX (poly->BoundingBox.X1, hid_draw->clip_box->X1);
+  x2 = MIN (poly->BoundingBox.X2, hid_draw->clip_box->X2);
+  y1 = MAX (poly->BoundingBox.Y1, hid_draw->clip_box->Y1);
+  y2 = MIN (poly->BoundingBox.Y2, hid_draw->clip_box->Y2);
 
   /* Check if the polygon is outside the clip box */
   if ((x2 <= x1) || (y2 <= y1))
@@ -294,6 +296,8 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon)
 void
 common_fill_pcb_polygon (hidGC gc, PolygonType *poly)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
+
   if (poly->Clipped == NULL)
     return;
 
@@ -306,7 +310,7 @@ common_fill_pcb_polygon (hidGC gc, PolygonType *poly)
       if (should_compute_no_holes (gc, poly))
         ComputeNoHoles (poly);
       else
-        NoHolesPolygonDicer (poly, gc->clip_box, fill_contour_cb, gc);
+        NoHolesPolygonDicer (poly, hid_draw->clip_box, fill_contour_cb, gc);
     }
   if (poly->NoHolesValid && poly->NoHoles)
     {
@@ -314,7 +318,7 @@ common_fill_pcb_polygon (hidGC gc, PolygonType *poly)
 
       for (pl = poly->NoHoles; pl != NULL; pl = pl->next)
         {
-          if (gc->clip_box == NULL)
+          if (hid_draw->clip_box == NULL)
             fill_contour (gc, pl);
           else
             fill_clipped_contour (gc, pl);
@@ -330,7 +334,7 @@ common_fill_pcb_polygon (hidGC gc, PolygonType *poly)
       for (p.Clipped = poly->Clipped->f;
            p.Clipped != poly->Clipped;
            p.Clipped = p.Clipped->f)
-        NoHolesPolygonDicer (&p, gc->clip_box, fill_contour_cb, gc);
+        NoHolesPolygonDicer (&p, hid_draw->clip_box, fill_contour_cb, gc);
     }
 }
 
@@ -345,11 +349,13 @@ thindraw_hole_cb (PLINE *pl, void *user_data)
 void
 common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
+
   if (poly->Clipped == NULL)
     return;
 
   thindraw_contour (gc, poly->Clipped->contours);
-  PolygonHoles (poly, gc->clip_box, thindraw_hole_cb, gc);
+  PolygonHoles (poly, hid_draw->clip_box, thindraw_hole_cb, gc);
 
   /* Draw other parts of the polygon if fullpoly flag is set */
   if (TEST_FLAG (FULLPOLYFLAG, poly))
@@ -361,7 +367,7 @@ common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly)
            p.Clipped = p.Clipped->f)
         {
           thindraw_contour (gc, p.Clipped->contours);
-          PolygonHoles (&p, gc->clip_box, thindraw_hole_cb, gc);
+          PolygonHoles (&p, hid_draw->clip_box, thindraw_hole_cb, gc);
         }
     }
 }
@@ -688,6 +694,6 @@ common_draw_helpers_class_init (HID_DRAW_CLASS *klass)
 }
 
 void
-common_draw_helpers_init (HID_DRAW *graphics)
+common_draw_helpers_init (HID_DRAW *hid_draw)
 {
 }

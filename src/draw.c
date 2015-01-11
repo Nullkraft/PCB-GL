@@ -162,7 +162,9 @@ pad_callback (const BoxType * b, void *cl)
 static void
 draw_element_name (hidGC gc, ElementType *element)
 {
-  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && hid_draw_is_gui (gc->hid_draw)) ||
+  HID_DRAW *hid_draw = gc->hid_draw;
+
+  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && hid_draw_is_gui (hid_draw)) ||
       TEST_FLAG (HIDENAMEFLAG, element))
     return;
   ghid_set_lock_effects (gc, (AnyObjectType *)element);
@@ -350,11 +352,11 @@ DrawEverything (hidGC gc)
       info.side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
       if (PCB->ElementOn)
 	{
-	  r_search (PCB->Data->element_tree, gc->clip_box, NULL, element_callback, &info);
-	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], gc->clip_box, NULL, name_callback, &info);
+	  r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, element_callback, &info);
+	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], hid_draw->clip_box, NULL, name_callback, &info);
 	  dapi->draw_layer (gc, &(PCB->Data->Layer[max_copper_layer + info.side]), NULL);
 	}
-      r_search (PCB->Data->pad_tree, gc->clip_box, NULL, pad_callback, &info);
+      r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_callback, &info);
       hid_draw_end_layer (hid_draw);
     }
 
@@ -378,7 +380,7 @@ DrawEverything (hidGC gc)
     dapi->draw_ppv (gc, SWAP_IDENT ? bottom_group : top_group, NULL);
   else
     {
-      CountHoles (&plated, &unplated, gc->clip_box);
+      CountHoles (&plated, &unplated, hid_draw->clip_box);
 
       if (plated && hid_draw_set_layer (hid_draw, "plated-drill", SL (PDRILL, 0), 0))
         {
@@ -422,7 +424,7 @@ DrawEverything (hidGC gc)
     {
       /* Draw element Marks */
       if (PCB->PinOn)
-	r_search (PCB->Data->element_tree, gc->clip_box, NULL, EMark_callback, gc);
+	r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, EMark_callback, gc);
       /* Draw rat lines on top */
       if (hid_draw_set_layer (hid_draw, "rats", SL (RATS, 0), 0))
         {
@@ -544,6 +546,7 @@ void
 DrawSilk (hidGC gc, int side)
 {
   struct side_info info;
+  HID_DRAW *hid_draw = gc->hid_draw;
 
   info.gc = gc;
   info.side = side;
@@ -557,29 +560,29 @@ DrawSilk (hidGC gc, int side)
 #if 0
   if (hid_draw->poly_before)
     {
-      hid_draw_use_mask (gc->hid_draw, HID_MASK_BEFORE);
+      hid_draw_use_mask (hid_draw, HID_MASK_BEFORE);
 #endif
       dapi->draw_layer (gc, LAYER_PTR (max_copper_layer + side), NULL);
       /* draw package */
-      r_search (PCB->Data->element_tree, gc->clip_box, NULL, element_callback, &info);
-      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], gc->clip_box, NULL, name_callback, &info);
+      r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, element_callback, &info);
+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], hid_draw->clip_box, NULL, name_callback, &info);
 #if 0
     }
 
-  hid_draw_use_mask (gc->hid_draw, HID_MASK_CLEAR);
-  r_search (PCB->Data->pin_tree, gc->clip_box, NULL, pin_mask_callback, gc);
-  r_search (PCB->Data->via_tree, gc->clip_box, NULL, via_mask_callback, gc);
-  r_search (PCB->Data->pad_tree, gc->clip_box, NULL, pad_mask_callback, &info);
+  hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
+  r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_mask_callback, gc);
+  r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_mask_callback, gc);
+  r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_mask_callback, &info);
 
   if (hid_draw->poly_after)
     {
       hid_draw_use_mask (gc, hid_draw, HID_MASK_AFTER);
       dapi->draw_layer (gc, LAYER_PTR (max_copper_layer + layer), NULL);
       /* draw package */
-      r_search (PCB->Data->element_tree, gc->clip_box, NULL, element_callback, &side);
-      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], gc->clip_box, NULL, name_callback, &info);
+      r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, element_callback, &side);
+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], hid_draw->clip_box, NULL, name_callback, &info);
     }
-  hid_draw_use_mask (gc->hid_draw, HID_MASK_OFF);
+  hid_draw_use_mask (hid_draw, HID_MASK_OFF);
 #endif
 }
 
@@ -587,18 +590,20 @@ DrawSilk (hidGC gc, int side)
 static void
 DrawMaskBoardArea (hidGC gc, int mask_type)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
+
   /* Skip the mask drawing if the GUI doesn't want this type */
-  if ((mask_type == HID_MASK_BEFORE && !gc->hid_draw->poly_before) ||
-      (mask_type == HID_MASK_AFTER  && !gc->hid_draw->poly_after))
+  if ((mask_type == HID_MASK_BEFORE && !hid_draw->poly_before) ||
+      (mask_type == HID_MASK_AFTER  && !hid_draw->poly_after))
     return;
 
-  hid_draw_use_mask (gc->hid_draw, mask_type);
+  hid_draw_use_mask (hid_draw, mask_type);
   hid_draw_set_color (gc, PCB->MaskColor);
-  if (gc->clip_box == NULL)
+  if (hid_draw->clip_box == NULL)
     hid_draw_fill_rect (gc, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   else
-    hid_draw_fill_rect (gc, gc->clip_box->X1, gc->clip_box->Y1,
-                            gc->clip_box->X2, gc->clip_box->Y2);
+    hid_draw_fill_rect (gc, hid_draw->clip_box->X1, hid_draw->clip_box->Y1,
+                            hid_draw->clip_box->X2, hid_draw->clip_box->Y2);
 }
 
 static int
@@ -653,6 +658,7 @@ DrawMask (hidGC gc, int side)
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
   LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
   struct side_info info;
+  HID_DRAW *hid_draw = gc->hid_draw;
 
   info.gc = gc;
   info.side = side;
@@ -662,24 +668,24 @@ DrawMask (hidGC gc, int side)
   else
     {
       DrawMaskBoardArea (gc, HID_MASK_BEFORE);
-      hid_draw_use_mask (gc->hid_draw, HID_MASK_CLEAR);
+      hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
     }
 
-  r_search (Layer->polygon_tree, gc->clip_box, NULL, mask_poly_callback, gc);
-  r_search (Layer->line_tree,    gc->clip_box, NULL, mask_line_callback, gc);
-  r_search (Layer->arc_tree,     gc->clip_box, NULL, mask_arc_callback,  gc);
-  r_search (Layer->text_tree,    gc->clip_box, NULL, mask_text_callback, gc);
+  r_search (Layer->polygon_tree, hid_draw->clip_box, NULL, mask_poly_callback, gc);
+  r_search (Layer->line_tree,    hid_draw->clip_box, NULL, mask_line_callback, gc);
+  r_search (Layer->arc_tree,     hid_draw->clip_box, NULL, mask_arc_callback,  gc);
+  r_search (Layer->text_tree,    hid_draw->clip_box, NULL, mask_text_callback, gc);
 
-  r_search (PCB->Data->pin_tree, gc->clip_box, NULL, pin_mask_callback, gc);
-  r_search (PCB->Data->via_tree, gc->clip_box, NULL, via_mask_callback, gc);
-  r_search (PCB->Data->pad_tree, gc->clip_box, NULL, pad_mask_callback, &info);
+  r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_mask_callback, gc);
+  r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_mask_callback, gc);
+  r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_mask_callback, &info);
 
   if (thin)
     hid_draw_set_color (Output.pmGC, "erase");
   else
     {
       DrawMaskBoardArea (gc, HID_MASK_AFTER);
-      hid_draw_use_mask (gc->hid_draw, HID_MASK_OFF);
+      hid_draw_use_mask (hid_draw, HID_MASK_OFF);
     }
 }
 
@@ -701,17 +707,19 @@ DrawPaste (hidGC gc, int side)
 /* static */ void
 DrawRats (hidGC gc)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
+
   /*
    * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
    * XXX gtk only allows negative drawing.
    * XXX using the mask here is to get rat transparency
    */
 
-  if (hid_draw_can_draw_in_mask_clear (gc->hid_draw))
-    hid_draw_use_mask (gc->hid_draw, HID_MASK_CLEAR);
-  r_search (PCB->Data->rat_tree, gc->clip_box, NULL, rat_callback, gc);
-  if (hid_draw_can_draw_in_mask_clear (gc->hid_draw))
-    hid_draw_use_mask (gc->hid_draw, HID_MASK_OFF);
+  if (hid_draw_can_draw_in_mask_clear (hid_draw))
+    hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
+  r_search (PCB->Data->rat_tree, hid_draw->clip_box, NULL, rat_callback, gc);
+  if (hid_draw_can_draw_in_mask_clear (hid_draw))
+    hid_draw_use_mask (hid_draw, HID_MASK_OFF);
 }
 
 /* ---------------------------------------------------------------------------
@@ -726,6 +734,7 @@ DrawLayerGroup (hidGC gc, int group)
   LayerType *Layer;
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
+  HID_DRAW *hid_draw = gc->hid_draw;
 
   for (i = n_entries - 1; i >= 0; i--)
     {
@@ -740,7 +749,7 @@ DrawLayerGroup (hidGC gc, int group)
   if (n_entries > 1)
     rv = 1;
 
-  if (rv && !hid_draw_is_gui (gc->hid_draw))
+  if (rv && !hid_draw_is_gui (hid_draw))
     dapi->draw_ppv (gc, group, NULL);
 }
 

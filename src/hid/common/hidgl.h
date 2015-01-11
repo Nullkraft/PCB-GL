@@ -148,7 +148,7 @@ hidgl_add_triangle (hidGC gc,
 }
 
 void hidgl_draw_grid (hidGC gc);
-void hidgl_set_depth (HID_DRAW *hid_draw, float depth);
+void hidgl_set_depth (hidGC gc, float depth);
 void hidgl_draw_line (hidGC gc, int cap, Coord width, Coord x1, Coord y1, Coord x2, Coord y2, double scale);
 void hidgl_draw_arc (hidGC gc, Coord width, Coord vx, Coord vy, Coord vrx, Coord vry, Angle start_angle, Angle delta_angle, double scale);
 void hidgl_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
@@ -159,6 +159,8 @@ void hidgl_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
 
 void hidgl_init (void);
 HID_DRAW *hidgl_new_instance (void);
+void hidgl_class_init (HID_DRAW_CLASS *klass);
+void hidgl_instance_init (HID_DRAW *hid_draw);
 void hidgl_free_instance (HID_DRAW *hid_draw);
 void hidgl_init_gc (HID_DRAW *hid_draw, hidGC gc);
 void hidgl_finish_gc (hidGC gc);

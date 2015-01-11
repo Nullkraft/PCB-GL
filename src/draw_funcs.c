@@ -351,6 +351,7 @@ pad_callback (const BoxType * b, void *cl)
 static void
 draw_ppv (hidGC gc, int group, void *userdata)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
   int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 
@@ -359,7 +360,7 @@ draw_ppv (hidGC gc, int group, void *userdata)
       struct side_info info;
 
       /* draw element pins */
-      r_search (PCB->Data->pin_tree, gc->clip_box, NULL, pin_callback, gc);
+      r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_callback, gc);
 
       info.gc = gc;
       info.layer = NULL; /* Nasty, but saves creating a load of different info types */
@@ -368,19 +369,19 @@ draw_ppv (hidGC gc, int group, void *userdata)
       if (group == top_group)
         {
           info.side = TOP_SIDE;
-          r_search (PCB->Data->pad_tree, gc->clip_box, NULL, pad_callback, &info);
+          r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_callback, &info);
         }
 
       if (group == bottom_group)
         {
           info.side = BOTTOM_SIDE;
-          r_search (PCB->Data->pad_tree, gc->clip_box, NULL, pad_callback, &info);
+          r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_callback, &info);
         }
     }
 
   /* draw vias */
   if (PCB->ViaOn)
-    r_search (PCB->Data->via_tree, gc->clip_box, NULL, via_callback, gc);
+    r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_callback, gc);
 
   dapi->draw_holes (gc, -1, NULL);
 }
@@ -388,20 +389,22 @@ draw_ppv (hidGC gc, int group, void *userdata)
 static void
 draw_holes (hidGC gc, int plated, void *userdata)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
   struct hole_info info;
 
   info.gc = gc;
   info.plated = plated;
 
   if (PCB->PinOn)
-    r_search (PCB->Data->pin_tree, gc->clip_box, NULL, pin_hole_callback, &info);
+    r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_hole_callback, &info);
   if (PCB->ViaOn)
-    r_search (PCB->Data->via_tree, gc->clip_box, NULL, via_hole_callback, &info);
+    r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_hole_callback, &info);
 }
 
 static void
 draw_layer (hidGC gc, LayerType *layer, void *userdata)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
   int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
   int layer_num = GetLayerNumber (PCB->Data, layer);
@@ -420,20 +423,20 @@ draw_layer (hidGC gc, LayerType *layer, void *userdata)
 
   if (layer_num < max_copper_layer && !is_outline)
     {
-      r_search (PCB->Data->pin_tree, gc->clip_box, NULL, pin_hole_callback, &h_info);
-      r_search (PCB->Data->via_tree, gc->clip_box, NULL, via_hole_callback, &h_info);
+      r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_hole_callback, &h_info);
+      r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_hole_callback, &h_info);
     }
 
   /* print the non-clearing polys */
-  r_search (layer->polygon_tree, gc->clip_box, NULL, poly_callback, &l_info);
+  r_search (layer->polygon_tree, hid_draw->clip_box, NULL, poly_callback, &l_info);
 
   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
 
   /* draw all visible lines this layer */
-  r_search (layer->line_tree, gc->clip_box, NULL, line_callback, &l_info);
-  r_search (layer->arc_tree,  gc->clip_box, NULL, arc_callback,  &l_info);
-  r_search (layer->text_tree, gc->clip_box, NULL, text_callback, &l_info);
+  r_search (layer->line_tree, hid_draw->clip_box, NULL, line_callback, &l_info);
+  r_search (layer->arc_tree,  hid_draw->clip_box, NULL, arc_callback,  &l_info);
+  r_search (layer->text_tree, hid_draw->clip_box, NULL, text_callback, &l_info);
 
   /* We should check for gui->gui here, but it's kinda cool seeing the
      auto-outline magically disappear when you first add something to
@@ -458,7 +461,7 @@ draw_layer (hidGC gc, LayerType *layer, void *userdata)
   if (!gui->gui)
     return;
 
-  r_search (PCB->Data->pin_tree, gc->clip_box, NULL, pin_inlayer_callback, &l_info);
+  r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_inlayer_callback, &l_info);
 
   /* draw element pads */
   if (group == top_group ||
@@ -469,11 +472,11 @@ draw_layer (hidGC gc, LayerType *layer, void *userdata)
       s_info.gc = gc;
       s_info.layer = layer;
       s_info.side = (group == bottom_group) ? BOTTOM_SIDE : TOP_SIDE;
-      r_search (PCB->Data->pad_tree, gc->clip_box, NULL, pad_inlayer_callback, &s_info);
+      r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_inlayer_callback, &s_info);
     }
 
   /* draw vias */
-  r_search (PCB->Data->via_tree, gc->clip_box, NULL, via_inlayer_callback, &l_info);
+  r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_inlayer_callback, &l_info);
 }
 
 struct draw_funcs d_f = {
