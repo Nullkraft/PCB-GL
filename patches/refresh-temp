@@ -1,0 +1,21 @@
+Bottom: 418067421d689a516f6e1fab3d97df2268b1b200
+Top:    2c6d78ecdab2e7c4b2a555ea4dda7454a2754da7
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-11 16:14:49 +0000
+
+Refresh of tmp
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 87dbef5..30159bb 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1533,7 +1533,7 @@ draw_element (ElementType *element)
+  */
+ 
+ void
+-hid_expose_callback (HID *hid, HID_DRAW *hid_draw, BoxType * region, void *item)
++hid_expose_callback (HID *hid, HID_DRAW *hid_draw, BoxType *region, void *item)
+ {
+   HID *old_gui = gui;
