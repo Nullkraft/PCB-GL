@@ -1,5 +1,5 @@
 Bottom: 847d456e3ddd47dfbefac8d1a190fb55b588f85e
-Top:    5890440dc8eca3a2816570ee3711e308418e639a
+Top:    7cd388319df32e96d06a36c3cfb171f9f9b91a2f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 22:28:34 +0000
 
@@ -82,6 +82,19 @@ index fed47bc..d2b3fd5 100644
  {
    hidGC gc = (hidGC) calloc (1, sizeof (struct gerber_gc_struct));
    gerberGC gerber_gc = (gerberGC)gc;
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 332a0a2..0815245 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -179,7 +179,7 @@ ghid_destroy_gc (hidGC gc)
+ }
+ 
+ hidGC
+-ghid_make_gc (void)
++ghid_make_gc (HID_DRAW *hid_draw)
+ {
+   hidGC gc = (hidGC)g_new0 (struct gtk_gc_struct, 1);
+   gtkGC gtk_gc = (gtkGC)gc;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index f0915f7..43ec65f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
@@ -95,6 +108,21 @@ index f0915f7..43ec65f 100644
  {
    render_priv *priv = gport->render_priv;
    hidGC gc = (hidGC) g_new0 (struct gtk_gc_struct, 1);
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 538e547..32036c8 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -474,8 +474,8 @@ void ghid_pinout_window_show (GHidPort *out, ElementType *Element);
+ 
+ /* gtkhid-gdk.c AND gtkhid-gl.c */
+ int ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty);
+-hidGC ghid_make_gc (void);
+-void ghid_destroy_gc (hidGC);
++hidGC ghid_make_gc (HID_DRAW *hid_draw);
++void ghid_destroy_gc (hidGC gc);
+ void ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
+ void ghid_set_color (hidGC gc, const char *name);
+ void ghid_set_line_cap (hidGC gc, EndCapStyle style);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
 index 6fed87f..41ac273 100644
 --- a/src/hid/lesstif/main.c
@@ -187,3 +215,25 @@ index da02628..f652f3d 100644
  {
    hidGC gc = (hidGC) calloc (1, sizeof (struct ps_gc_struct));
    psGC ps_gc = (psGC)gc;
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index d59b0da..4096a26 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -31,7 +31,7 @@ typedef struct hid_draw_class_st
+      and 90 being "up" (positive Y).  */
+ 
+   /* Make an empty graphics context.  */
+-  hidGC (*make_gc) (void);
++  hidGC (*make_gc) (HID_DRAW *hid_draw);
+   void (*destroy_gc) (hidGC gc);
+   void (*use_mask) (HID_DRAW *hid_draw, enum mask_mode mode);
+ 
+@@ -141,7 +141,7 @@ hid_draw_end_layer (HID_DRAW *hid_draw)
+ inline hidGC
+ hid_draw_make_gc (HID_DRAW *hid_draw)
+ {
+-  return hid_draw->klass->make_gc ();
++  return hid_draw->klass->make_gc (hid_draw);
+ }
+ 
+ inline void
