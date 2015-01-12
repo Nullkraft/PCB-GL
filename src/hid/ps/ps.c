@@ -399,6 +399,8 @@ static struct {
 
   double scale_factor;
 
+  BoxType region;
+
   HID_Attr_Val ps_values[NUM_OPTIONS];
 
   bool is_mask;
@@ -596,7 +598,6 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   int i;
   static int saved_layer_stack[MAX_LAYER];
   FlagType save_thindraw;
-  BoxType region;
 
   save_thindraw = PCB->Flags;
   CLEAR_FLAG(THINDRAWFLAG, PCB);
@@ -677,12 +678,12 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   ps_set_layer (&ps_graphics, NULL, 0, -1);
   use_gc (NULL);
 
-  region.X1 = 0;
-  region.Y1 = 0;
-  region.X2 = PCB->MaxWidth;
-  region.Y2 = PCB->MaxHeight;
+  global.region.X1 = 0;
+  global.region.Y1 = 0;
+  global.region.X2 = PCB->MaxWidth;
+  global.region.Y2 = PCB->MaxHeight;
 
-  common_set_clip_box (&ps_graphics, &region);
+  common_set_clip_box (&ps_graphics, &global.region);
 
   if (!global.multi_file)
     {
