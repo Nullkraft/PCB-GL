@@ -139,30 +139,6 @@ fill_contour (hidGC gc, PLINE *pl)
   free (y);
 }
 
-#define Vsub2(a,b,c) {(a)[0]=(b)[0]-(c)[0];(a)[1]=(b)[1]-(c)[1];}
-
-/*
- * Determine whether the angle swept by a-b to a-c is
- * counter clockwise, clockwise or zero
- */
-static int compare_ccw_cw (Vector a, Vector b, Vector c)
-{
-  double cross;
-  Vector ab;
-  Vector ac;
-
-  Vsub2 (ab, b, a);
-  Vsub2 (ac, c, a);
-
-  cross = (double) ab[0] * ac[1] - (double) ac[0] * ab[1];
-  if (cross > 0.0)
-    return 1;
-  else if (cross < 0.0)
-    return -1;
-  else
-    return 0;
-}
-
 static void
 thindraw_contour (hidGC gc, PLINE *pl)
 {
@@ -173,122 +149,16 @@ thindraw_contour (hidGC gc, PLINE *pl)
   hid_draw_set_line_width (gc, 0);
   hid_draw_set_line_cap (gc, Round_Cap);
 
-#if 0
   /* If the contour is round, use an arc drawing routine. */
   if (pl->is_round)
     {
       hid_draw_arc (gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
       return;
     }
-#endif
 
   /* Need at least two points in the contour */
   if (pl->head.next == NULL)
     return;
-
-  hid_draw_set_color (gc, "#00FF00");
-
-  v = &pl->head;
-
-  do
-    {
-      Vector vec;
-      double length;
-
-      /* Draw a hint of the slope being used for edge ordering at this vertex */
-      /* Forward direction */
-
-      if (v->is_round == false)
-        { /* Line-segment case */
-          Vsub2 (vec, v->orig_point1, v->orig_point0);
-        }
-      else
-        { /* Arc segment case */
-
-          Vector center;
-          double radial_dx;
-
-          center[0] = v->cx;
-          center[1] = v->cy;
-
-          /* First of all, make v the radial line */
-          Vsub2 (vec, center, v->point);
-
-          /* Now rotate it through 90 to give the curve tangent */
-          radial_dx = vec[0];
-          vec[0] = -vec[1];
-          vec[1] = radial_dx;
-
-          if (compare_ccw_cw (v->point, center, v->next->point) == -1)
-          {
-            vec[0] = -vec[0];
-            vec[1] = -vec[1];
-          }
-        }
-
-      length = hypot (vec[0], vec[1]);
-      vec[0] /= length / MM_TO_COORD (0.1);
-      vec[1] /= length / MM_TO_COORD (0.1);
-
-      this_x = v->point[0];
-      this_y = v->point[1];
-
-      hid_draw_line (gc, this_x, this_y, this_x + vec[0], this_y + vec[1]);
-    }
-  while ((v = v->next) != &pl->head);
-
-  hid_draw_set_color (gc, "#FF0000");
-
-  v = &pl->head;
-
-  do
-    {
-      Vector vec;
-      double length;
-
-      /* Draw a hint of the slope being used for edge ordering at this vertex */
-      /* Backward direction */
-
-      if (v->prev->is_round == false)
-        { /* Line-segment case */
-          Vsub2 (vec, v->prev->orig_point0, v->prev->orig_point1);
-        }
-      else
-        { /* Arc segment case */
-
-          Vector center;
-          double radial_dx;
-
-          center[0] = v->prev->cx;
-          center[1] = v->prev->cy;
-
-          /* First of all, make v the radial line */
-          Vsub2 (vec, center, v->point);
-
-          /* Now rotate it through 90 to give the curve tangent */
-          radial_dx = vec[0];
-          vec[0] = -vec[1];
-          vec[1] = radial_dx;
-
-          if (compare_ccw_cw (v->prev->point, center, v->point) == 1)
-          {
-            vec[0] = -vec[0];
-            vec[1] = -vec[1];
-          }
-        }
-
-      length = hypot (vec[0], vec[1]);
-      vec[0] /= length / MM_TO_COORD (0.1);
-      vec[1] /= length / MM_TO_COORD (0.1);
-
-      this_x = v->point[0];
-      this_y = v->point[1];
-
-      hid_draw_line (gc, this_x, this_y, this_x + vec[0], this_y + vec[1]);
-    }
-  while ((v = v->next) != &pl->head);
-
-  hid_draw_set_color (gc, PCB->WarnColor);
 
   v = &pl->head;
 
@@ -317,17 +187,6 @@ thindraw_contour (hidGC gc, PLINE *pl)
             hid_draw_fill_circle (gc, this_x, this_y, MIL_TO_COORD (3));
           else
             hid_draw_arc (gc, this_x, this_y, MIL_TO_COORD (3), MIL_TO_COORD (3), 0, 360);
-
-          /* Draw the bounding box for arg segments */
-          if (0)
-            {
-              BoxType *bound = get_seg_bounds (pl, v);
-
-              hid_draw_line (gc, bound->X1, bound->Y1, bound->X2, bound->Y1);
-              hid_draw_line (gc, bound->X2, bound->Y1, bound->X2, bound->Y2);
-              hid_draw_line (gc, bound->X2, bound->Y2, bound->X1, bound->Y2);
-              hid_draw_line (gc, bound->X1, bound->Y2, bound->X1, bound->Y1);
-            }
         }
       else
         {
@@ -336,76 +195,6 @@ thindraw_contour (hidGC gc, PLINE *pl)
           else
             hid_draw_arc (gc, this_x, this_y, MIL_TO_COORD (1.5), MIL_TO_COORD (1.5), 0, 360);
           hid_draw_line (gc, this_x, this_y, next_x, next_y);
-
-        }
-    }
-  while ((v = v->next) != &pl->head);
-
-  hid_draw_set_color (gc, "#FFFF00");
-
-  v = &pl->head;
-
-  do
-    {
-      this_x = v->point[0];
-      this_y = v->point[1];
-      next_x = v->next->point[0];
-      next_y = v->next->point[1];
-
-      hid_draw_line (gc, this_x, this_y, next_x, next_y);
-    }
-  while ((v = v->next) != &pl->head);
-
-  hid_draw_set_color (gc, PCB->PinColor);
-
-  v = &pl->head;
-
-  do
-    {
-      this_x = v->point[0];
-      this_y = v->point[1];
-      next_x = v->next->point[0];
-      next_y = v->next->point[1];
-
-      if (0 /*v->is_round */)
-        {
-          Angle start_angle, end_angle, delta_angle;
-
-          start_angle = TO_DEGREES (atan2 ((this_y - v->cy), -(this_x - v->cx)));
-          end_angle   = TO_DEGREES (atan2 ((next_y - v->cy), -(next_x - v->cx)));
-          delta_angle = end_angle - start_angle;
-
-          if (delta_angle > 180.) delta_angle -= 360.;
-          if (delta_angle < -180.) delta_angle += 360.;
-
-          hid_draw_arc (gc, v->cx, v->cy, v->radius, v->radius, start_angle, delta_angle);
-
-          /* Fill the head vertex */
-          if (v == &pl->head)
-            hid_draw_fill_circle (gc, this_x, this_y, MIL_TO_COORD (3));
-          else
-            hid_draw_arc (gc, this_x, this_y, MIL_TO_COORD (3), MIL_TO_COORD (3), 0, 360);
-
-          /* Draw the bounding box for arg segments */
-          if (0)
-            {
-              BoxType *bound = get_seg_bounds (pl, v);
-
-              hid_draw_line (gc, bound->X1, bound->Y1, bound->X2, bound->Y1);
-              hid_draw_line (gc, bound->X2, bound->Y1, bound->X2, bound->Y2);
-              hid_draw_line (gc, bound->X2, bound->Y2, bound->X1, bound->Y2);
-              hid_draw_line (gc, bound->X1, bound->Y2, bound->X1, bound->Y1);
-            }
-        }
-      else
-        {
-#if 0
-          if (v == &pl->head)
-            hid_draw_fill_circle (gc, this_x, this_y, MIL_TO_COORD (1.5));
-          else
-            hid_draw_arc (gc, this_x, this_y, MIL_TO_COORD (1.5), MIL_TO_COORD (1.5), 0, 360);
-#endif
-          hid_draw_line (gc, v->orig_point0[0], v->orig_point0[1], v->orig_point1[0], v->orig_point1[1]);
 
         }
     }
