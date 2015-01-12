@@ -50,18 +50,15 @@ typedef struct render_priv {
   int cur_mask;
 } render_priv;
 
-static HID dummy_hidcairo_hid;
-static HID_DRAW hidcairo_graphics;
-static render_priv *priv;
 
 static hidGC
-hidcairo_make_gc (void)
+hidcairo_make_gc (HID_DRAW *hid_draw)
 {
   hidGC gc = (hidGC) calloc(1, sizeof(struct hidcairo_gc_struct));
   hidcairoGC hidcairo_gc = (hidcairoGC)gc;
 
-  gc->hid = &dummy_hidcairo_hid;
-  gc->hid_draw = &hidcairo_graphics;
+  gc->hid = NULL;
+  gc->hid_draw = hid_draw;
 
   /* Initial color settings need configuring */
   hidcairo_gc->colorname = NULL;
@@ -82,8 +79,10 @@ hidcairo_destroy_gc (hidGC gc)
 }
 
 static void
-hidcairo_use_mask (hidGC gc, enum mask_mode mode)
+hidcairo_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
+  render_priv *priv = hid_draw->priv;
+
   if (mode == priv->cur_mask)
     return;
 
@@ -122,6 +121,7 @@ typedef struct
 static void
 _set_color (hidGC gc)
 {
+  render_priv *priv = gc->hid_draw->priv;
   hidcairoGC hidcairo_gc = (hidcairoGC)gc;
 
   static void *cache = NULL;
@@ -194,6 +194,7 @@ _set_color (hidGC gc)
 static void
 use_gc (hidGC gc)
 {
+  render_priv *priv = gc->hid_draw->priv;
   hidcairoGC hidcairo_gc = (hidcairoGC)gc;
 
   cairo_set_line_cap (priv->cr, hidcairo_gc->line_cap);
@@ -259,6 +260,7 @@ hidcairo_set_line_cap (hidGC gc, EndCapStyle style)
 static void
 hidcairo_set_line_width (hidGC gc, Coord width)
 {
+  render_priv *priv = gc->hid_draw->priv;
   hidcairoGC hidcairo_gc = (hidcairoGC)gc;
   hidcairo_gc->line_width = width;
 
@@ -287,6 +289,8 @@ hidcairo_set_draw_faded (hidGC gc, int faded)
 static void
 hidcairo_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
+  render_priv *priv = gc->hid_draw->priv;
+
   use_gc (gc);
   cairo_move_to (priv->cr, x1, y1);
   cairo_line_to (priv->cr, x2, y2);
@@ -296,6 +300,8 @@ hidcairo_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 static void
 hidcairo_draw_arc (hidGC gc, Coord cx, Coord cy, Coord xradius, Coord yradius, Angle start_angle, Angle delta_angle)
 {
+  render_priv *priv = gc->hid_draw->priv;
+
   /* Unfortunately we can get called with zero radius arcs when thindrawing solder mask clearance in vias in some cases */
   if (xradius == 0 || yradius == 0)
     return;
@@ -323,6 +329,8 @@ hidcairo_draw_arc (hidGC gc, Coord cx, Coord cy, Coord xradius, Coord yradius, A
 static void
 hidcairo_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
+  render_priv *priv = gc->hid_draw->priv;
+
   use_gc (gc);
   cairo_rectangle (priv->cr, x1, y1, x2 - x1, y2 - y1);
   cairo_stroke (priv->cr);
@@ -331,6 +339,8 @@ hidcairo_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 static void
 hidcairo_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
 {
+  render_priv *priv = gc->hid_draw->priv;
+
   use_gc (gc);
   cairo_arc (priv->cr, cx, cy, radius, 0.0, M_PI * 2.0);
   cairo_fill (priv->cr);
@@ -339,6 +349,7 @@ hidcairo_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
 static void
 hidcairo_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 {
+  render_priv *priv = gc->hid_draw->priv;
   int i;
 
   g_return_if_fail (n_coords > 1);
@@ -354,6 +365,8 @@ hidcairo_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 static void
 hidcairo_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
+  render_priv *priv = gc->hid_draw->priv;
+
   use_gc (gc);
   cairo_rectangle (priv->cr, x1, y1, x2 - x1, y2 - y1);
   cairo_fill (priv->cr);
@@ -404,6 +417,7 @@ fill_polyarea (hidGC gc, POLYAREA * pa)
 {
   /* Ignore clip_box, just draw everything */
 
+  render_priv *priv = gc->hid_draw->priv;
   VNODE *v;
   PLINE *pl;
 
@@ -469,84 +483,79 @@ hidcairo_fill_pcb_polygon (hidGC gc, PolygonType *poly)
 // {
 // }
 
-HID_DRAW *
-hidcairo_init (void)
+void
+hidcairo_class_init (HID_DRAW_CLASS *klass)
 {
-  memset (&hidcairo_graphics, 0, sizeof (HID_DRAW));
+//  memset (&klass, 0, sizeof (HID_DRAW));
 
-  common_draw_helpers_init (&hidcairo_graphics);
+//  common_draw_helpers_init (&klass);
 
-  hidcairo_graphics.make_gc               = hidcairo_make_gc;
-  hidcairo_graphics.destroy_gc            = hidcairo_destroy_gc;
-  hidcairo_graphics.use_mask              = hidcairo_use_mask;
+  klass->make_gc               = hidcairo_make_gc;
+  klass->destroy_gc            = hidcairo_destroy_gc;
+  klass->use_mask              = hidcairo_use_mask;
 
-  hidcairo_graphics.set_line_cap          = hidcairo_set_line_cap;
-  hidcairo_graphics.set_line_width        = hidcairo_set_line_width;
+  klass->set_line_cap          = hidcairo_set_line_cap;
+  klass->set_line_width        = hidcairo_set_line_width;
 
-  hidcairo_graphics.set_color             = hidcairo_set_color;
-  hidcairo_graphics.set_draw_xor          = hidcairo_set_draw_xor;
-  hidcairo_graphics.set_draw_faded        = hidcairo_set_draw_faded;
+  klass->set_color             = hidcairo_set_color;
+  klass->set_draw_xor          = hidcairo_set_draw_xor;
+  klass->set_draw_faded        = hidcairo_set_draw_faded;
 
-  hidcairo_graphics.draw_line             = hidcairo_draw_line;
-  hidcairo_graphics.draw_arc              = hidcairo_draw_arc;
-  hidcairo_graphics.draw_rect             = hidcairo_draw_rect;
-  hidcairo_graphics.fill_circle           = hidcairo_fill_circle;
-  hidcairo_graphics.fill_polygon          = hidcairo_fill_polygon;
-  hidcairo_graphics.fill_rect             = hidcairo_fill_rect;
+  klass->draw_line             = hidcairo_draw_line;
+  klass->draw_arc              = hidcairo_draw_arc;
+  klass->draw_rect             = hidcairo_draw_rect;
+  klass->fill_circle           = hidcairo_fill_circle;
+  klass->fill_polygon          = hidcairo_fill_polygon;
+  klass->fill_rect             = hidcairo_fill_rect;
 
   /* The following APIs render using PCB data-structures, not immediate parameters */
 
-  // USE COMMON ROUTINE: hidcairo_graphics.draw_pcb_line         = hidcairo_draw_pcb_line;
-  // USE COMMON ROUTINE: hidcairo_graphics.draw_pcb_arc          = hidcairo_draw_pcb_arc;
-  // USE COMMON ROUTINE: hidcairo_graphics.draw_pcb_text         = hidcairo_draw_pcb_text;
-  // USE COMMON ROUTINE: hidcairo_graphics.draw_pcb_polygon      = hidcairo_draw_pcb_polygon;
-  // USE COMMON ROUTINE: hidcairo_graphics.draw_pcb_polygon      = hidcairo_gui_draw_pcb_polygon;
-  // USE COMMON ROUTINE: hidcairo_graphics.draw_pcb_pad          = hidcairo_draw_pcb_pad;
-  // USE COMMON ROUTINE: hidcairo_graphics.draw_pcb_pv           = hidcairo_draw_pcb_pv;
-  hidcairo_graphics.draw_pcb_polygon      = common_gui_draw_pcb_polygon;      // USE COMMON GUI ROUTINE
-  hidcairo_graphics.draw_pcb_pad          = common_gui_draw_pcb_pad;          // USE COMMON GUI ROUTINE
-  hidcairo_graphics.draw_pcb_pv           = common_gui_draw_pcb_pv;           // USE COMMON GUI ROUTINE
+  // USE COMMON ROUTINE: klass->draw_pcb_line         = hidcairo_draw_pcb_line;
+  // USE COMMON ROUTINE: klass->draw_pcb_arc          = hidcairo_draw_pcb_arc;
+  // USE COMMON ROUTINE: klass->draw_pcb_text         = hidcairo_draw_pcb_text;
+  // USE COMMON ROUTINE: klass->draw_pcb_polygon      = hidcairo_draw_pcb_polygon;
+  // USE COMMON ROUTINE: klass->draw_pcb_polygon      = hidcairo_gui_draw_pcb_polygon;
+  // USE COMMON ROUTINE: klass->draw_pcb_pad          = hidcairo_draw_pcb_pad;
+  // USE COMMON ROUTINE: klass->draw_pcb_pv           = hidcairo_draw_pcb_pv;
+  klass->draw_pcb_polygon      = common_gui_draw_pcb_polygon;      // USE COMMON GUI ROUTINE
+  klass->draw_pcb_pad          = common_gui_draw_pcb_pad;          // USE COMMON GUI ROUTINE
+  klass->draw_pcb_pv           = common_gui_draw_pcb_pv;           // USE COMMON GUI ROUTINE
 
   /* The following are not meant to be called outside of the GUI implementations of the above APIs */
-  hidcairo_graphics._fill_pcb_polygon     = hidcairo_fill_pcb_polygon;
-  // USE COMMON ROUTINE: hidcairo_graphics._thindraw_pcb_polygon = hidcairo_thindraw_pcb_polygon;
-  // USE COMMON ROUTINE: hidcairo_graphics._fill_pcb_pad         = hidcairo_fill_pcb_pad;
-  // USE COMMON ROUTINE: hidcairo_graphics._thindraw_pcb_pad     = hidcairo_thindraw_pcb_pad;
-  // USE COMMON ROUTINE: hidcairo_graphics._fill_pcb_pv          = hidcairo_fill_pcb_pv;
-  // USE COMMON ROUTINE: hidcairo_graphics._thindraw_pcb_pv      = hidcairo_thindraw_pcb_pv;
-
-  return &hidcairo_graphics;
-}
-
-struct render_priv *
-hidcairo_start_render (cairo_t *cr)
-{
-  render_priv *_priv;
-
-  /* XXX: UGLY HACK */
-  g_return_val_if_fail (priv == NULL, NULL);
-
-  _priv = (render_priv *)calloc (1, sizeof (render_priv));
-
-  cairo_reference (cr);
-  _priv->cr = cr;
-
-  /* XXX: UGLY HACK */
-  priv = _priv;
-
-  return _priv;
+  klass->_fill_pcb_polygon     = hidcairo_fill_pcb_polygon;
+  // USE COMMON ROUTINE: klass->_thindraw_pcb_polygon = hidcairo_thindraw_pcb_polygon;
+  // USE COMMON ROUTINE: klass->_fill_pcb_pad         = hidcairo_fill_pcb_pad;
+  // USE COMMON ROUTINE: klass->_thindraw_pcb_pad     = hidcairo_thindraw_pcb_pad;
+  // USE COMMON ROUTINE: klass->_fill_pcb_pv          = hidcairo_fill_pcb_pv;
+  // USE COMMON ROUTINE: klass->_thindraw_pcb_pv      = hidcairo_thindraw_pcb_pv;
 }
 
 void
-hidcairo_finish_render (struct render_priv *_priv)
+hidcairo_init (HID_DRAW *hid_draw)
 {
-  /* XXX: UGLY HACK */
-  g_return_if_fail (priv == _priv);
+}
 
-  cairo_destroy (_priv->cr);
-  _priv->cr = NULL;
-  free (_priv);
+void
+hidcairo_start_render (HID_DRAW *hid_draw, cairo_t *cr)
+{
+  render_priv *priv;
 
-  /* XXX: UGLY HACK */
-  priv = NULL;
+  g_return_if_fail (hid_draw->priv == NULL);
+
+  priv = (render_priv *)calloc (1, sizeof (render_priv));
+  hid_draw->priv = priv;
+
+  cairo_reference (cr);
+  priv->cr = cr;
+}
+
+void
+hidcairo_finish_render (HID_DRAW *hid_draw)
+{
+  render_priv *priv = hid_draw->priv;
+
+  cairo_destroy (priv->cr);
+  free (priv);
+
+  hid_draw->priv = NULL;
 }
