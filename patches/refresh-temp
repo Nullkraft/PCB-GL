@@ -1,0 +1,70 @@
+Bottom: a53f6e139e233517b2036e43d2ee4c0ff513b452
+Top:    9dc9e73ef9104bd7a53c34a5b0fcab0165269081
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-12 23:48:12 +0000
+
+Refresh of add-clip_box-member-to-the
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index a3e4f51..88e69d2 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2582,7 +2582,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   ghid_draw_bg_image ();
+ 
+-  common_set_clip_box (hid_draw, &region);
++  common_set_clip_box (&ghid_graphics, &region);
+   /* hid_expose_callback (&ghid_graphics, &region, 0); */
+   ghid_draw_everything (&region);
+   hidgl_flush_triangles (priv->hidgl);
+@@ -2971,7 +2971,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+ 
+-  common_set_clip_box (hid_draw, &region);
++  common_set_clip_box (&ghid_graphics, &region);
+   hid_expose_callback (&ghid_graphics, &region, NULL);
+   hidgl_flush_triangles (priv->hidgl);
+   glPopMatrix ();
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index e34fdd1..d3720d9 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -399,6 +399,8 @@ static struct {
+ 
+   double scale_factor;
+ 
++  BoxType region;
++
+   HID_Attr_Val ps_values[NUM_OPTIONS];
+ 
+   bool is_mask;
+@@ -596,7 +598,6 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   int i;
+   static int saved_layer_stack[MAX_LAYER];
+   FlagType save_thindraw;
+-  BoxType region;
+ 
+   save_thindraw = PCB->Flags;
+   CLEAR_FLAG(THINDRAWFLAG, PCB);
+@@ -677,12 +678,12 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   ps_set_layer (&ps_graphics, NULL, 0, -1);
+   use_gc (NULL);
+ 
+-  region.X1 = 0;
+-  region.Y1 = 0;
+-  region.X2 = PCB->MaxWidth;
+-  region.Y2 = PCB->MaxHeight;
++  global.region.X1 = 0;
++  global.region.Y1 = 0;
++  global.region.X2 = PCB->MaxWidth;
++  global.region.Y2 = PCB->MaxHeight;
+ 
+-  common_set_clip_box (&ps_graphics, &region);
++  common_set_clip_box (&ps_graphics, &global.region);
+ 
+   if (!global.multi_file)
+     {
