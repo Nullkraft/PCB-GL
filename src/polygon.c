@@ -305,7 +305,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
       c->head.prev->point[1] == v[1])
     {
       /* Re-use any existing vertex point we got lumbered with (if it matches the coordinate we want) */
-      c->head.prev->is_round = true;
+//      c->head.prev->is_round = true;
       c->head.prev->cx = X;
       c->head.prev->cy = Y;
       c->head.prev->radius = radius;
@@ -527,7 +527,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
       c->head.prev->point[1] == v[1])
     {
       /* Re-use any existing vertex point we got lumbered with (if it matches the coordinate we want) */
-      c->head.prev->is_round = true;
+//      c->head.prev->is_round = true;
       c->head.prev->cx = X;
       c->head.prev->cy = Y;
       c->head.prev->radius = radius;
@@ -1318,6 +1318,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
       subtract_accumulated (&info, polygon);
 #endif
     }
+//  polygon->Clipped = info.accumulate;
   polygon->NoHolesValid = 0;
   return r;
 }
