@@ -1,5 +1,5 @@
 Bottom: ab90b5c6328d782b129bc96c4c50cf33b6582cdd
-Top:    9ba8151f3ef48a280bcb29f5f443c6bc9bcf11c1
+Top:    07803f320d0d6a87f99d2b5edc3ca93b7d29198f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 00:29:31 +0000
 
@@ -9,7 +9,7 @@ Add HID_DRAW* parameter to (HID_DRAW *)->{flush,finish}_debug_draw_gc() function
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 0b4b9e9..e38247f 100644
+index 0b4b9e9..1af0765 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -3673,7 +3673,7 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
@@ -17,22 +17,21 @@ index 0b4b9e9..e38247f 100644
  #ifdef ROUTE_DEBUG
    if (ddraw != NULL)
 -    gui->flush_debug_draw ();
-+    gui->flush_debug_draw (ar_gc);
++    gui->flush_debug_draw (ddraw);
  #endif
  }
  
-@@ -5333,8 +5333,8 @@ donerouting:
- #ifdef ROUTE_DEBUG
+@@ -5334,7 +5334,7 @@ donerouting:
    if (ddraw != NULL)
      {
-+      gui->finish_debug_draw (ar_gc);
        hid_draw_destroy_gc (ar_gc);
 -      gui->finish_debug_draw ();
++      gui->finish_debug_draw (ddraw);
      }
  #endif
  
 diff --git a/src/hid.h b/src/hid.h
-index 5059273..fc2faca 100644
+index 5059273..08bdc0d 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -472,13 +472,13 @@ typedef enum
@@ -40,19 +39,19 @@ index 5059273..fc2faca 100644
       * debug drawing directly to the screen.
       */
 -    void (*flush_debug_draw)   (void);
-+    void (*flush_debug_draw)   (hidGC gc);
++    void (*flush_debug_draw)   (HID_DRAW *hid_draw);
  
      /* When finished, the user must inform the GUI to clean up resources
       *
       * Any remaining rendering will be flushed to the screen.
       */
 -    void (*finish_debug_draw)  (void);
-+    void (*finish_debug_draw)  (hidGC gc);
++    void (*finish_debug_draw)  (HID_DRAW *hid_draw);
  
      /* Notification to the GUI around saving the PCB file.
       *
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index f4b8d2d..19f704f 100644
+index f4b8d2d..f82c498 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -425,12 +425,12 @@ nogui_request_debug_draw (void)
@@ -60,18 +59,18 @@ index f4b8d2d..19f704f 100644
  
  static void
 -nogui_flush_debug_draw (void)
-+nogui_flush_debug_draw (hidGC gc)
++nogui_flush_debug_draw (HID_DRAW *hid_draw)
  {
  }
  
  static void
 -nogui_finish_debug_draw (void)
-+nogui_finish_debug_draw (hidGC gc)
++nogui_finish_debug_draw (HID_DRAW *hid_draw)
  {
  }
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 0815245..0f5adb4 100644
+index 0815245..9d767b3 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -1314,16 +1314,16 @@ ghid_request_debug_draw (void)
@@ -79,7 +78,7 @@ index 0815245..0f5adb4 100644
  
  void
 -ghid_flush_debug_draw (void)
-+ghid_flush_debug_draw (hidGC gc)
++ghid_flush_debug_draw (HID_DRAW *hid_draw)
  {
    ghid_screen_update ();
    gdk_flush ();
@@ -87,7 +86,7 @@ index 0815245..0f5adb4 100644
  
  void
 -ghid_finish_debug_draw (void)
-+ghid_finish_debug_draw (hidGC gc)
++ghid_finish_debug_draw (HID_DRAW *hid_draw)
  {
 -  ghid_flush_debug_draw ();
 +  ghid_flush_debug_draw (gc);
@@ -95,7 +94,7 @@ index 0815245..0f5adb4 100644
     */
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 43ec65f..72c997a 100644
+index 43ec65f..9fa5fe3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -3032,7 +3032,7 @@ ghid_request_debug_draw (void)
@@ -103,7 +102,7 @@ index 43ec65f..72c997a 100644
  
  void
 -ghid_flush_debug_draw (void)
-+ghid_flush_debug_draw (hidGC gc)
++ghid_flush_debug_draw (HID_DRAW *hid_draw)
  {
    render_priv *priv = gport->render_priv;
    GtkWidget *widget = gport->drawing_area;
@@ -112,12 +111,12 @@ index 43ec65f..72c997a 100644
  
  void
 -ghid_finish_debug_draw (void)
-+ghid_finish_debug_draw (hidGC gc)
++ghid_finish_debug_draw (HID_DRAW *hid_draw)
  {
    render_priv *priv = gport->render_priv;
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 32036c8..48b8c3c 100644
+index 32036c8..2f0af5c 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -504,8 +504,8 @@ gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
@@ -126,13 +125,13 @@ index 32036c8..48b8c3c 100644
  HID_DRAW *ghid_request_debug_draw (void);
 -void ghid_flush_debug_draw (void);
 -void ghid_finish_debug_draw (void);
-+void ghid_flush_debug_draw (hidGC gc);
-+void ghid_finish_debug_draw (hidGC gc);
++void ghid_flush_debug_draw (HID_DRAW *hid_draw);
++void ghid_finish_debug_draw (HID_DRAW *hid_draw);
  bool ghid_event_to_pcb_coords (int event_x, int event_y, Coord *pcb_x, Coord *pcb_y);
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
  void ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 3d1ffd3..0840bdf 100644
+index 3d1ffd3..4f82dfc 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -4034,7 +4034,7 @@ lesstif_request_debug_draw (void)
@@ -140,7 +139,7 @@ index 3d1ffd3..0840bdf 100644
  
  static void
 -lesstif_flush_debug_draw (void)
-+lesstif_flush_debug_draw (hidGC gc)
++lesstif_flush_debug_draw (HID_DRAW *hid_draw)
  {
    /* Copy the backing pixmap to the display and redraw any attached objects */
    XSetFunction (display, my_gc, GXcopy);
@@ -149,10 +148,10 @@ index 3d1ffd3..0840bdf 100644
  
  static void
 -lesstif_finish_debug_draw (void)
-+lesstif_finish_debug_draw (hidGC gc)
++lesstif_finish_debug_draw (HID_DRAW *hid_draw)
  {
 -  lesstif_flush_debug_draw ();
-+  lesstif_flush_debug_draw (gc);
++  lesstif_flush_debug_draw (hid_draw);
    /* No special tear down requirements
     */
  }
