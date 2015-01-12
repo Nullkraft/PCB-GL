@@ -1,5 +1,5 @@
-Bottom: d05b63e6852df3bf5d695b0462a982b3888310da
-Top:    ab90b5c6328d782b129bc96c4c50cf33b6582cdd
+Bottom: 5e642e065ce4cc68b9f935aedba4f678e8affe38
+Top:    a2fb93bdc6e8b2a96a2d58702032ff17ac729dba
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 23:41:04 +0000
 
@@ -9,7 +9,7 @@ Add HID_DRAW* parameter to (HID_DRAW *)->make_gc() function
 ---
 
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index 1ea114d..858708f 100644
+index 13973b5..77f4725 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -166,7 +166,7 @@ batch_set_layer (HID_DRAW *hid_draw, const char *name, int idx, int empty)
@@ -124,7 +124,7 @@ index 538e547..32036c8 100644
  void ghid_set_color (hidGC gc, const char *name);
  void ghid_set_line_cap (hidGC gc, EndCapStyle style);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 8e2c2cd..3d1ffd3 100644
+index 3a33a7e..e51b51f 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -148,7 +148,7 @@ static bool crosshair_on = true;

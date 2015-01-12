@@ -1,5 +1,5 @@
-Bottom: 1022e5a919cbed11994deaee669f71bad5306b38
-Top:    a9f4d498b8113e0887e94b98901ba9b971d0b12b
+Bottom: a6e967b91a57292c95ca3a47ff856d93068c3bdc
+Top:    b729b1e012a9713b1f8ac44ffef9341ee8e89763
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 23:41:03 +0000
 
@@ -9,7 +9,7 @@ Adjust mask API to include a HID_DRAW pointer
 ---
 
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index 45304ab..e8e45c5 100644
+index 9d3adaf..c924dcb 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -177,7 +177,7 @@ batch_destroy_gc (hidGC gc)
@@ -121,7 +121,7 @@ index 3430633..9804460 100644
  void ghid_set_line_cap (hidGC gc, EndCapStyle style);
  void ghid_set_line_width (hidGC gc, Coord width);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 6fce99a..0005764 100644
+index e1ededf..51bbe0c 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -242,7 +242,7 @@ Location of the @file{pcb-menu.res} file which defines the menu for the lesstif
