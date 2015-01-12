@@ -1,5 +1,5 @@
 Bottom: 8eceb21020219161fce4cd534716d77d7b5b2138
-Top:    a53f6e139e233517b2036e43d2ee4c0ff513b452
+Top:    9dc9e73ef9104bd7a53c34a5b0fcab0165269081
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:03 +0000
 
@@ -106,14 +106,14 @@ index 9d767b3..b0d1e24 100644
  
    gport->drawable = save_drawable;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9fa5fe3..a3e4f51 100644
+index 9fa5fe3..88e69d2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -2582,6 +2582,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_draw_bg_image ();
  
-+  common_set_clip_box (hid_draw, &region);
++  common_set_clip_box (&ghid_graphics, &region);
    /* hid_expose_callback (&ghid_graphics, &region, 0); */
    ghid_draw_everything (&region);
    hidgl_flush_triangles (priv->hidgl);
@@ -121,7 +121,7 @@ index 9fa5fe3..a3e4f51 100644
    region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
    region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
  
-+  common_set_clip_box (hid_draw, &region);
++  common_set_clip_box (&ghid_graphics, &region);
    hid_expose_callback (&ghid_graphics, &region, NULL);
    hidgl_flush_triangles (priv->hidgl);
    glPopMatrix ();
@@ -194,43 +194,18 @@ index 4b192cc..63b7337 100644
  
    fprintf (f, "showpage\n");
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 2f21bee..e34fdd1 100644
+index 2f21bee..d3720d9 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -399,8 +399,6 @@ static struct {
+@@ -683,6 +683,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   global.region.X2 = PCB->MaxWidth;
+   global.region.Y2 = PCB->MaxHeight;
  
-   double scale_factor;
- 
--  BoxType region;
--
-   HID_Attr_Val ps_values[NUM_OPTIONS];
- 
-   bool is_mask;
-@@ -598,6 +596,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
-   int i;
-   static int saved_layer_stack[MAX_LAYER];
-   FlagType save_thindraw;
-+  BoxType region;
- 
-   save_thindraw = PCB->Flags;
-   CLEAR_FLAG(THINDRAWFLAG, PCB);
-@@ -678,10 +677,12 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
-   ps_set_layer (&ps_graphics, NULL, 0, -1);
-   use_gc (NULL);
- 
--  global.region.X1 = 0;
--  global.region.Y1 = 0;
--  global.region.X2 = PCB->MaxWidth;
--  global.region.Y2 = PCB->MaxHeight;
-+  region.X1 = 0;
-+  region.Y1 = 0;
-+  region.X2 = PCB->MaxWidth;
-+  region.Y2 = PCB->MaxHeight;
++  common_set_clip_box (&ps_graphics, &global.region);
 +
-+  common_set_clip_box (&ps_graphics, &region);
- 
    if (!global.multi_file)
      {
+       /* %%Page DSC requires both a label and an ordinal */
 diff --git a/src/hid_draw.h b/src/hid_draw.h
 index 4096a26..46e4140 100644
 --- a/src/hid_draw.h
