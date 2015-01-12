@@ -3673,7 +3673,7 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
 
 #ifdef ROUTE_DEBUG
   if (ddraw != NULL)
-    gui->flush_debug_draw ();
+    gui->flush_debug_draw (ddraw);
 #endif
 }
 
@@ -5334,7 +5334,7 @@ donerouting:
   if (ddraw != NULL)
     {
       hid_draw_destroy_gc (ar_gc);
-      gui->finish_debug_draw ();
+      gui->finish_debug_draw (ddraw);
     }
 #endif
 
