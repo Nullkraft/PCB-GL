@@ -1,7 +1,7 @@
-Bottom: b729b1e012a9713b1f8ac44ffef9341ee8e89763
-Top:    5e642e065ce4cc68b9f935aedba4f678e8affe38
+Bottom: 53cc5faf2b6e5b86202d79139a0dd7b934e1cbe4
+Top:    527b16148a5032c1e1a62cfc90c34e82f4d52754
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 23:41:03 +0000
+Date:   2015-01-12 01:16:02 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->{start,end}_layer() functions
 
@@ -129,7 +129,7 @@ index 9804460..538e547 100644
  void ghid_destroy_gc (hidGC);
  void ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 51bbe0c..3a33a7e 100644
+index b49a7c6..1e470fb 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -3000,7 +3000,7 @@ lesstif_notify_mark_change (bool changes_complete)

@@ -1,7 +1,7 @@
-Bottom: 20724d0ca8bfc13a256cdfbb7cd35dff8a56acf0
-Top:    d4f955e5f06d18a47f4fbc07c5754e44a64281d7
+Bottom: 05417e911d347acf9395c70a97d322b3941c3446
+Top:    2ecb7d159e636cb9c9cbbd3f11fe46bde22111ee
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-12 01:07:53 +0000
+Date:   2015-01-12 01:16:02 +0000
 
 Update graphics API a little
 
@@ -380,7 +380,7 @@ index 59faf56..9fb531b 100644
    ghid_graphics_class.gui = true;
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 030bdd0..e1ededf 100644
+index 790f424..b569b7b 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -4130,6 +4130,8 @@ hid_lesstif_init ()
@@ -390,8 +390,8 @@ index 030bdd0..e1ededf 100644
 +  lesstif_graphics_class.draw_pcb_pad     = common_gui_draw_pcb_pad;
 +  lesstif_graphics_class.draw_pcb_pv      = common_gui_draw_pcb_pv;
  
-   lesstif_graphics.klass = &lesstif_graphics_class;
-   lesstif_graphics.poly_before = true;
+   lesstif_graphics_class.can_draw_in_mask_clear = true;
+ 
 diff --git a/src/hid_draw.h b/src/hid_draw.h
 index 7cf8c84..407bba1 100644
 --- a/src/hid_draw.h

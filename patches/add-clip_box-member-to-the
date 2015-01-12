@@ -1,7 +1,7 @@
-Bottom: 8f15641756c40ae8fa0c1709674b0c8197da9492
-Top:    66a1549bd0380ad2cc6c77b82fbb65223faf0daa
+Bottom: 8eceb21020219161fce4cd534716d77d7b5b2138
+Top:    a53f6e139e233517b2036e43d2ee4c0ff513b452
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-12 00:36:48 +0000
+Date:   2015-01-12 01:16:03 +0000
 
 Add clip_box member to the HID_DRAW * instance structure
 
@@ -126,7 +126,7 @@ index 9fa5fe3..a3e4f51 100644
    hidgl_flush_triangles (priv->hidgl);
    glPopMatrix ();
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 58d5352..d633aa9 100644
+index f7ef051..d1cf0bd 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -825,6 +825,8 @@ Benchmark (int argc, char **argv, Coord x, Coord y)

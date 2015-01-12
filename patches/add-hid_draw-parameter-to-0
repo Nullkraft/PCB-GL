@@ -1,7 +1,7 @@
-Bottom: 5e642e065ce4cc68b9f935aedba4f678e8affe38
-Top:    a2fb93bdc6e8b2a96a2d58702032ff17ac729dba
+Bottom: 527b16148a5032c1e1a62cfc90c34e82f4d52754
+Top:    835673f18fb478d1f5a8336661a7d1f0b1b8d8a5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 23:41:04 +0000
+Date:   2015-01-12 01:16:02 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->make_gc() function
 
@@ -124,7 +124,7 @@ index 538e547..32036c8 100644
  void ghid_set_color (hidGC gc, const char *name);
  void ghid_set_line_cap (hidGC gc, EndCapStyle style);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 3a33a7e..e51b51f 100644
+index 1e470fb..0b7ced2 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -148,7 +148,7 @@ static bool crosshair_on = true;

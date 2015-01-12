@@ -1,7 +1,7 @@
-Bottom: a2fb93bdc6e8b2a96a2d58702032ff17ac729dba
-Top:    8f15641756c40ae8fa0c1709674b0c8197da9492
+Bottom: 835673f18fb478d1f5a8336661a7d1f0b1b8d8a5
+Top:    8eceb21020219161fce4cd534716d77d7b5b2138
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-12 00:29:31 +0000
+Date:   2015-01-12 01:16:03 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->{flush,finish}_debug_draw_gc() function
 
@@ -131,7 +131,7 @@ index 32036c8..2f0af5c 100644
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
  void ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index e51b51f..58d5352 100644
+index 0b7ced2..f7ef051 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -4034,7 +4034,7 @@ lesstif_request_debug_draw (void)
