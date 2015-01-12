@@ -1,7 +1,7 @@
-Bottom: 30b5b906884d3ff5443986555faddadf5815d2c1
-Top:    f55d77eacab538d25088e38a04d88f14721c5072
+Bottom: 6811cbe6f200e50e4c9eeefb06bca2405089f6a7
+Top:    387735782cb9a6eb277faf69408842d21e11fcaa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-01-11 23:39:34 +0000
+Date:   2015-01-12 01:07:42 +0000
 
 Attempt lesstif GL support
 
@@ -66,7 +66,7 @@ index 9afffd8..dc425f5 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 73c124f..aa4302c 100644
+index dd299b9..4186c82 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -1087,7 +1087,7 @@ index 73c124f..aa4302c 100644
 +  lesstif_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 +  lesstif_graphics_class.fill_rect            = ghid_fill_rect;
  
-   lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
+   lesstif_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
  
    lesstif_graphics.klass = &lesstif_graphics_class;
    lesstif_graphics.poly_before = true;
