@@ -47,7 +47,7 @@
 static HID_Attribute * gerber_get_export_options (int *n);
 static void gerber_do_export (HID_Attr_Val * options);
 static void gerber_parse_arguments (int *argc, char ***argv);
-static hidGC gerber_make_gc (void);
+static hidGC gerber_make_gc (HID_DRAW *hid_draw);
 static void gerber_destroy_gc (hidGC gc);
 static void gerber_set_color (hidGC gc, const char *name);
 static void gerber_set_line_cap (hidGC gc, EndCapStyle style);
@@ -935,7 +935,7 @@ gerber_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 }
 
 static hidGC
-gerber_make_gc (void)
+gerber_make_gc (HID_DRAW *hid_draw)
 {
   hidGC gc = (hidGC) calloc (1, sizeof (struct gerber_gc_struct));
   gerberGC gerber_gc = (gerberGC)gc;
