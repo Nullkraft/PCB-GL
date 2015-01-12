@@ -1,5 +1,5 @@
 Bottom: 9dc9e73ef9104bd7a53c34a5b0fcab0165269081
-Top:    605530dae4f4f7a6a4cd2210003feba632354ac7
+Top:    a582d774a18656e756c9add470227636876036c4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 23:16:27 +0000
 
@@ -9,7 +9,7 @@ hidgl: Fixup to use HID_DRAW * rather than hidgl_instance *
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index e6b1eaf..c594dca 100644
+index e6b1eaf..b8409e3 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -130,9 +130,9 @@ static bool in_context = false;
@@ -93,12 +93,8 @@ index e6b1eaf..c594dca 100644
  }
  
  void
-@@ -294,9 +293,10 @@ hidgl_set_depth (hidGC gc, float depth)
- }
- 
- void
--hidgl_draw_grid (hidGC gc, BoxType *drawn_area)
-+hidgl_draw_grid (hidGC gc)
+@@ -297,6 +296,7 @@ void
+ hidgl_draw_grid (hidGC gc, BoxType *drawn_area)
  {
    hidglGC hidgl_gc = (hidglGC)gc;
 +  HID_DRAW *hid_draw = gc->hid_draw;
@@ -169,7 +165,7 @@ index e6b1eaf..c594dca 100644
  
    glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
                  GL_COLOR_BUFFER_BIT |                   /* the colour buffer write mask etc.. for part way restore */
-@@ -971,35 +971,34 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, bool use_new_ste
+@@ -971,29 +971,28 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, bool use_new_ste
    /* Drawing operations now set our reference bit in the stencil buffer */
  
    r_search (pa->contour_tree, clip_box, NULL, do_hole, gc);
@@ -211,13 +207,6 @@ index e6b1eaf..c594dca 100644
  
    glPopAttrib ();                               /* Restore the stencil buffer op and function */
  }
- 
- void
--hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
-+hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box))
- {
-   bool use_new_stencil;
- 
 @@ -1136,15 +1135,19 @@ hidgl_init (void)
    called = true;
  }
