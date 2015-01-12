@@ -42,6 +42,7 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
 #include <gtk/gtkgl.h>
 #include "hid/common/hidgl.h"
 
+#include "hid/common/hidnogui.h"
 #include "hid/common/draw_helpers.h"
 #include "hid/common/trackball.h"
 
@@ -3061,11 +3062,10 @@ ghid_request_debug_draw (void)
 void
 ghid_flush_debug_draw (HID_DRAW *hid_draw)
 {
-  render_priv *priv = gport->render_priv;
   GtkWidget *widget = gport->drawing_area;
   GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
 
-  hidgl_flush_triangles (priv->hid_draw);
+  hidgl_flush_triangles (hid_draw);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
@@ -3076,8 +3076,6 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
 void
 ghid_finish_debug_draw (HID_DRAW *hid_draw)
 {
-  HID_DRAW *hid_draw = gc->hid_draw;
-
   hidgl_flush_triangles (hid_draw);
   glPopMatrix ();
 
