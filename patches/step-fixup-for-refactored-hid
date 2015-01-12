@@ -1,5 +1,5 @@
-Bottom: ecfc7998391cc73fb2abe7ea55e47616da02df19
-Top:    9110c68bf7bb94a4f53ff4fdbb226dda1e32da21
+Bottom: 652b1445759d5ad0b6fc60479c3ad013f901eb97
+Top:    68ad34825dc720efadb54a772d482621a1da9968
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 00:59:44 +0000
 
@@ -9,7 +9,7 @@ step: Fixup for refactored HID / HID_DRAW API
 ---
 
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 5dafc05..d1b0452 100644
+index d660768..a85d48f 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
 @@ -49,6 +49,7 @@ typedef struct step_gc_struct
@@ -20,7 +20,7 @@ index 5dafc05..d1b0452 100644
  
  HID_Attribute step_attribute_list[] = {
    /* other HIDs expect this to be first.  */
-@@ -1005,28 +1006,33 @@ void step_step_init (HID *hid)
+@@ -1001,28 +1002,33 @@ void step_step_init (HID *hid)
    hid->get_export_options = step_get_export_options;
    hid->do_export          = step_do_export;
    hid->parse_arguments    = step_parse_arguments;
@@ -72,7 +72,7 @@ index 5dafc05..d1b0452 100644
  }
  
  void
-@@ -1036,17 +1042,18 @@ hid_step_init ()
+@@ -1032,17 +1038,18 @@ hid_step_init ()
    memset (&step_graphics, 0, sizeof (HID_DRAW));
  
    common_nogui_init (&step_hid);
