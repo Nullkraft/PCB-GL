@@ -1,0 +1,35 @@
+Bottom: 5e84ba4ae234e08810f6e04608af4b87d3b2993b
+Top:    77b05359095f6e9f5297217da4a1467bb21b64e1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-12 01:07:22 +0000
+
+Refresh of main-c-initialise-crosshair
+
+---
+
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 27bcc71..252e2bf 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -330,7 +330,7 @@ hid_batch_init ()
+ {
+   memset (&batch_hid, 0, sizeof (HID));
+   memset (&batch_graphics, 0, sizeof (HID_DRAW));
+-  memset (&batch_graphics_ckass, 0, sizeof (HID_DRAW_CLASS));
++  memset (&batch_graphics_class, 0, sizeof (HID_DRAW_CLASS));
+ 
+   common_nogui_init (&batch_hid);
+ 
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 00c439c..e2626b6 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -4131,7 +4131,7 @@ hid_lesstif_init ()
+   lesstif_graphics_class.fill_polygon   = lesstif_fill_polygon;
+   lesstif_graphics_class.fill_rect      = lesstif_fill_rect;
+ 
+-  lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
++  lesstif_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
+ 
+   lesstif_graphics.klass = &lesstif_graphics_class;
+   common_draw_helpers_init (&lesstif_graphics);
