@@ -293,7 +293,7 @@ hidgl_set_depth (hidGC gc, float depth)
 }
 
 void
-hidgl_draw_grid (hidGC gc)
+hidgl_draw_grid (hidGC gc, BoxType *drawn_area)
 {
   hidglGC hidgl_gc = (hidglGC)gc;
   HID_DRAW *hid_draw = gc->hid_draw;
@@ -998,7 +998,7 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, bool use_new_ste
 }
 
 void
-hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box))
+hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   bool use_new_stencil;
 
