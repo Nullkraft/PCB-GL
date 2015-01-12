@@ -1,5 +1,5 @@
 Bottom: a53f6e139e233517b2036e43d2ee4c0ff513b452
-Top:    1f11c9dab026e8204a7abce2a87d04a9c9e5aaea
+Top:    6e9cbbc3640934c94f15a7079574fb9b9380c3d0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 23:16:27 +0000
 
@@ -447,7 +447,7 @@ index e2d7f67..a4fe876 100644
  /* hidgl_pacakge_acy_resistor.c */
  void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a3e4f51..1f790d2 100644
+index a3e4f51..f611005 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -42,6 +42,7 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
@@ -773,8 +773,12 @@ index a3e4f51..1f790d2 100644
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
    glDisable (GL_STENCIL_TEST);
-@@ -2585,7 +2592,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   common_set_clip_box (hid_draw, &region);
+@@ -2582,10 +2589,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   ghid_draw_bg_image ();
+ 
+-  common_set_clip_box (hid_draw, &region);
++  common_set_clip_box (priv->hid_draw, &region);
    /* hid_expose_callback (&ghid_graphics, &region, 0); */
    ghid_draw_everything (&region);
 -  hidgl_flush_triangles (priv->hidgl);
@@ -869,15 +873,7 @@ index a3e4f51..1f790d2 100644
  
    /* end drawing to current GL-context */
    gport->render_priv->in_context = false;
-@@ -3000,6 +3009,7 @@ HID_DRAW *
- ghid_request_debug_draw (void)
- {
-   GHidPort *port = gport;
-+  render_priv *priv = port->render_priv;
-   GtkWidget *widget = port->drawing_area;
-   GtkAllocation allocation;
- 
-@@ -3040,7 +3050,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
+@@ -3040,7 +3049,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
    GtkWidget *widget = gport->drawing_area;
    GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
@@ -886,7 +882,7 @@ index a3e4f51..1f790d2 100644
  
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
-@@ -3051,9 +3061,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
+@@ -3051,9 +3060,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
  void
  ghid_finish_debug_draw (HID_DRAW *hid_draw)
  {
@@ -897,7 +893,7 @@ index a3e4f51..1f790d2 100644
    glPopMatrix ();
  
    ghid_end_drawing (gport, gport->drawing_area);
-@@ -3415,7 +3423,6 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -3415,7 +3422,6 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
  static void
  draw_lead_user (hidGC gc, render_priv *priv)
  {
@@ -905,7 +901,7 @@ index a3e4f51..1f790d2 100644
    int i;
    double radius = priv->lead_user_radius;
    double width = MM_TO_COORD (LEAD_USER_WIDTH);
-@@ -3442,7 +3449,7 @@ draw_lead_user (hidGC gc, render_priv *priv)
+@@ -3442,7 +3448,7 @@ draw_lead_user (hidGC gc, render_priv *priv)
                        radius, radius, 0, 360, gport->view.coord_per_px);
      }
  
