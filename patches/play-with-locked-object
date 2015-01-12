@@ -1,7 +1,7 @@
-Bottom: 23b8012b76c576dcf902eb2ba7539402323fedbd
-Top:    8e536645fdc31e29c4ef7c23a2b86519706ae877
+Bottom: d0beefaca594425ba775c558f0739a8ce47260c4
+Top:    0a1f6d6eae69cc3bfaf76a05f82152aa6675fd4c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-12 01:07:47 +0000
+Date:   2015-01-12 01:15:56 +0000
 
 Play with locked object rendering
 
@@ -431,10 +431,10 @@ index da711d5..091fed1 100644
 +    }
 +}
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 6c8fabb..030bdd0 100644
+index ed10b50..790f424 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4140,3 +4140,9 @@ hid_lesstif_init ()
+@@ -4141,3 +4141,9 @@ hid_lesstif_init ()
    hid_register_hid (&lesstif_hid);
  #include "lesstif_lists.h"
  }
