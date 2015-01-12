@@ -2590,6 +2590,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_draw_bg_image ();
 
   common_set_clip_box (priv->hid_draw, &region);
+  /* hid_expose_callback (priv->hid_draw, &region, 0); */
   ghid_draw_everything (&region);
   hidgl_flush_triangles (priv->hid_draw);
 
