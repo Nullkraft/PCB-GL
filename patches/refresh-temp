@@ -1,0 +1,24 @@
+Bottom: b3ab676d9d7b3a769b68b9070a310c09d9ab5482
+Top:    48ef418e0983d09e81c5ace63f1bf0bf6fd56976
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-12 01:15:28 +0000
+
+Refresh of fixup-draw-c-not-to-special
+
+---
+
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 1b17b34..f828343 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -4133,9 +4133,10 @@ hid_lesstif_init ()
+ 
+   lesstif_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
+ 
++  lesstif_graphics_class.can_draw_in_mask_clear = true;
++
+   lesstif_graphics.klass = &lesstif_graphics_class;
+   lesstif_graphics.poly_before = true;
+-  lesstif_graphics.can_draw_in_mask_clear = true;
+   common_nogui_graphics_init (&lesstif_graphics);
+   common_draw_helpers_init (&lesstif_graphics);
