@@ -1,7 +1,7 @@
-Bottom: 0f0ceae96e333d1d738a0deb6040330a441879ce
-Top:    6fc1f1ea4acecc9dd86b25b07554a798c22da68b
+Bottom: 23b8012b76c576dcf902eb2ba7539402323fedbd
+Top:    8e536645fdc31e29c4ef7c23a2b86519706ae877
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:42:08 +0000
+Date:   2015-01-12 01:07:47 +0000
 
 Play with locked object rendering
 
@@ -171,7 +171,7 @@ index bd3df87..5b13d95 100644
                          PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
                          FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index ff8743c..45304ab 100644
+index 72c49e0..9d3adaf 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -384,3 +384,9 @@ hid_batch_init ()
@@ -431,7 +431,7 @@ index da711d5..091fed1 100644
 +    }
 +}
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index ef51bc6..29d7220 100644
+index 6c8fabb..030bdd0 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -4140,3 +4140,9 @@ hid_lesstif_init ()
