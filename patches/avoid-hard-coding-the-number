@@ -1,7 +1,7 @@
-Bottom: cdf57adb1bdd3b6d811f4fc226a0aa3461b3d239
-Top:    452d6ac59edc950cbbd3444efb03abed3a420e0e
+Bottom: b4a232f78b99eeb0aa41d3616058736e796d26b4
+Top:    62d4527c61743756bcfb8ac8f844042a40c7f988
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-12 01:07:30 +0000
+Date:   2015-01-12 01:15:38 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -228,7 +228,7 @@ index b988db9..8d7e5c5 100644
  /* Use this to restore them.  */
  void hid_restore_layer_ons (int *save_array);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 9ceb0b8..6c8fabb 100644
+index a31f002..ed10b50 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -3009,7 +3009,7 @@ lesstif_set_layer (const char *name, int group, int empty)
