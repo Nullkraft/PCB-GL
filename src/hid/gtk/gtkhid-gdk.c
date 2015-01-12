@@ -1314,16 +1314,16 @@ ghid_request_debug_draw (void)
 }
 
 void
-ghid_flush_debug_draw (void)
+ghid_flush_debug_draw (hidGC gc)
 {
   ghid_screen_update ();
   gdk_flush ();
 }
 
 void
-ghid_finish_debug_draw (void)
+ghid_finish_debug_draw (hidGC gc)
 {
-  ghid_flush_debug_draw ();
+  ghid_flush_debug_draw (gc);
   /* No special tear down requirements
    */
 }
