@@ -1,7 +1,7 @@
-Bottom: e6ba19781ab42a7566eb15cac09be5e1c5f5ba0e
-Top:    b4957a2e336132bbe0bbe06dd49db0ddba9bcf72
+Bottom: 593ee8acbd40d7dc93e5b34ef2716d003425ce9b
+Top:    a86ea72b0cce070ccb985726fb0eeb83c015a471
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-11 15:21:05 +0000
+Date:   2015-01-12 00:55:09 +0000
 
 Win32 code fixes (TO BE SPLIT INTO SEPARATE PATCHES)
 
@@ -48,7 +48,7 @@ index 97434e4..5e5aedb 100644
   * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
   * in order to get prototypes:
 diff --git a/src/hid/common/hidinit.c b/src/hid/common/hidinit.c
-index 9f05800..ae8b3b8 100644
+index b964d24..a809ead 100644
 --- a/src/hid/common/hidinit.c
 +++ b/src/hid/common/hidinit.c
 @@ -16,6 +16,7 @@
@@ -60,7 +60,7 @@ index 9f05800..ae8b3b8 100644
  #endif
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 30202e4..bd9c2e7 100644
+index 2470607..5b6d4f1 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -18,7 +18,9 @@
@@ -75,7 +75,7 @@ index 30202e4..bd9c2e7 100644
   * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
   * in order to get prototypes:
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index c68b9d3..8f47a3a 100644
+index 59faf56..130646e 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -2092,6 +2092,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
