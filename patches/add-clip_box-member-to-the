@@ -1,5 +1,5 @@
 Bottom: 07803f320d0d6a87f99d2b5edc3ca93b7d29198f
-Top:    07803f320d0d6a87f99d2b5edc3ca93b7d29198f
+Top:    cd730c2a741702c390dd03c030ce1dff6a2b334e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 00:36:48 +0000
 
@@ -8,4 +8,239 @@ Add clip_box member to the HID_DRAW * instance structure
 
 ---
 
-
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index f4de2c0..6f8bb40 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -7,6 +7,20 @@
+ #include "draw_helpers.h"
+ 
+ 
++/* Takes a copy of clip_box so we own it */
++void
++common_set_clip_box (HID_DRAW *hid_draw, BoxType *clip_box)
++{
++  free (hid_draw->clip_box);
++  hid_draw->clip_box = NULL;
++
++  if (clip_box == NULL)
++    return;
++
++  hid_draw->clip_box = malloc (sizeof (BoxType));
++  *hid_draw->clip_box = *clip_box;
++}
++
+ static void
+ common_draw_pcb_line (hidGC gc, LineType *line)
+ {
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index 4fca617..93623c4 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -12,3 +12,4 @@ void common_thindraw_pcb_pv (hidGC gc, PinType *pv, bool mask);
+ void common_thindraw_pcb_pv_hole (hidGC gc, PinType *pv);
+ void common_draw_helpers_class_init (HID_DRAW_CLASS *klass);
+ void common_draw_helpers_init (HID_DRAW *graphics);
++void common_set_clip_box (HID_DRAW *hid_draw, BoxType *clip_box);
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index cd679c6..d145915 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -224,6 +224,8 @@ hid_get_extents (void *item)
+   region.Y1 = -COORD_MAX - 1;
+   region.X2 = COORD_MAX;
+   region.Y2 = COORD_MAX;
++
++  common_set_clip_box (&extents_graphics, &region);
+   hid_expose_callback (&extents_graphics, &region, item);
+ 
+   return &box;
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index c6c749d..3d6616c 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -467,9 +467,11 @@ gcode_start_png_export ()
+   region.X2 = PCB->MaxWidth;
+   region.Y2 = PCB->MaxHeight;
+ 
++
+   linewidth = -1;
+   lastbrush = (gdImagePtr)((void *) -1);
+ 
++  common_set_clip_box (&gcode_graphics, &region);
+   hid_expose_callback (&gcode_graphics, &region, 0);
+ }
+ 
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 6e4616e..ab1c2ed 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -682,6 +682,9 @@ gerber_do_export (HID_Attr_Val * options)
+   lastgroup = -1;
+   layer_list_idx = 0;
+   finding_apertures = 1;
++
++  common_set_clip_box (&gerber_graphics, &region);
++
+   hid_expose_callback (&gerber_graphics, &region, 0);
+ 
+   layer_list_idx = 0;
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 9d767b3..b0d1e24 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -860,6 +860,7 @@ redraw_region (GdkRectangle *rect)
+ 
+   ghid_draw_bg_image();
+ 
++  common_set_clip_box (&ghid_graphics, &region);
+   hid_expose_callback (&ghid_graphics, &region, 0);
+   ghid_draw_grid ();
+ 
+@@ -1295,6 +1296,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+ 
++  common_set_clip_box (&ghid_graphics, &region);
+   hid_expose_callback (&ghid_graphics, &region, NULL);
+ 
+   gport->drawable = save_drawable;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 9fa5fe3..a3e4f51 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2582,6 +2582,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   ghid_draw_bg_image ();
+ 
++  common_set_clip_box (hid_draw, &region);
+   /* hid_expose_callback (&ghid_graphics, &region, 0); */
+   ghid_draw_everything (&region);
+   hidgl_flush_triangles (priv->hidgl);
+@@ -2970,6 +2971,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
+   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
+ 
++  common_set_clip_box (hid_draw, &region);
+   hid_expose_callback (&ghid_graphics, &region, NULL);
+   hidgl_flush_triangles (priv->hidgl);
+   glPopMatrix ();
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 4f82dfc..643ee49 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -825,6 +825,8 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
+   region.X2 = PCB->MaxWidth;
+   region.Y2 = PCB->MaxHeight;
+ 
++  common_set_clip_box (&lesstif_graphics, &region);
++
+   pixmap = window;
+   XSync (display, 0);
+   time (&start);
+@@ -2578,6 +2580,9 @@ idle_proc (XtPointer dummy)
+ 			      rightmost-leftmost+1, view_height-bottommost+1);
+ 	    }
+ 	}
++
++      common_set_clip_box (&lesstif_graphics, &region);
++
+       DrawBackgroundImage();
+       hid_expose_callback (&lesstif_graphics, &region, 0);
+       draw_grid ();
+@@ -3803,6 +3808,8 @@ pinout_callback (Widget da, PinoutData * pd,
+   region.Y2 = PCB->MaxHeight;
+ 
+   XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);
++
++  common_set_clip_box (&lesstif_graphics, &region);
+   hid_expose_callback (&lesstif_graphics, &region, pd->item);
+ 
+   pinout = 0;
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index f1d912d..a9e854bd 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -649,6 +649,7 @@ nelma_start_png_export()
+ 	linewidth = -1;
+ 	lastbrush = (gdImagePtr)((void *) -1);
+ 
++	common_set_clip_box (&nelma_graphics, &region);
+ 	hid_expose_callback(&nelma_graphics, &region, 0);
+ }
+ 
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 92f8661..b582198 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -655,6 +655,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+ 	}
+     }
+ 
++  common_set_clip_box (&png_graphics, bounds);
+   hid_expose_callback (&png_graphics, bounds, 0);
+ 
+   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 4b192cc..63b7337 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -299,6 +299,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   fprintf (f,
+ 	   "/a { gsave setlinewidth translate scale 0 0 1 5 3 roll arc stroke grestore} bind def\n");
+ 
++  common_set_clip_box (&eps_graphics, bounds);
+   hid_expose_callback (&eps_graphics, bounds, 0);
+ 
+   fprintf (f, "showpage\n");
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 2f21bee..e34fdd1 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -399,8 +399,6 @@ static struct {
+ 
+   double scale_factor;
+ 
+-  BoxType region;
+-
+   HID_Attr_Val ps_values[NUM_OPTIONS];
+ 
+   bool is_mask;
+@@ -598,6 +596,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   int i;
+   static int saved_layer_stack[MAX_LAYER];
+   FlagType save_thindraw;
++  BoxType region;
+ 
+   save_thindraw = PCB->Flags;
+   CLEAR_FLAG(THINDRAWFLAG, PCB);
+@@ -678,10 +677,12 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+   ps_set_layer (&ps_graphics, NULL, 0, -1);
+   use_gc (NULL);
+ 
+-  global.region.X1 = 0;
+-  global.region.Y1 = 0;
+-  global.region.X2 = PCB->MaxWidth;
+-  global.region.Y2 = PCB->MaxHeight;
++  region.X1 = 0;
++  region.Y1 = 0;
++  region.X2 = PCB->MaxWidth;
++  region.Y2 = PCB->MaxHeight;
++
++  common_set_clip_box (&ps_graphics, &region);
+ 
+   if (!global.multi_file)
+     {
+diff --git a/src/hid_draw.h b/src/hid_draw.h
+index 4096a26..46e4140 100644
+--- a/src/hid_draw.h
++++ b/src/hid_draw.h
+@@ -101,6 +101,8 @@ struct hid_draw_st
+   /* Note that both of these may be set, in which case polygons will be drawn twice: */
+   bool poly_before; /* If set, the redraw code will draw polygons before erasing the clearances. */
+   bool poly_after;  /* If set, the redraw code will draw polygons after  erasing the clearances. */
++
++  BoxType *clip_box; /* Used by HIDs and draw.c to restrict rendering to a given region */
+ };
+ 
+ /* Base hidGC elements visible to any module */
