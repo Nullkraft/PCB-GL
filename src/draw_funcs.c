@@ -10,42 +10,27 @@
 void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
 
 static void
-_draw_pv (PinType *pv, bool draw_hole)
-{
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
-    hid_draw_thin_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
-  else
-    hid_draw_fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
-}
-
-static void
 draw_pin (PinType *pin, const BoxType *drawn_area, void *userdata)
 {
-  _draw_pv (pin, false);
+  hid_draw_pcb_pv (Output.fgGC, Output.bgGC, pin, false, false);
 }
 
 static void
 draw_pin_mask (PinType *pin, const BoxType *drawn_area, void *userdata)
 {
-  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    hid_draw_thin_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
-  else
-    hid_draw_fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+  hid_draw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
 }
 
 static void
 draw_via (PinType *via, const BoxType *drawn_area, void *userdata)
 {
-  _draw_pv (via, false);
+  hid_draw_pcb_pv (Output.fgGC, Output.bgGC, via, false, false);
 }
 
 static void
 draw_via_mask (PinType *via, const BoxType *drawn_area, void *userdata)
 {
-  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    hid_draw_thin_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
-  else
-    hid_draw_fill_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
+  hid_draw_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
 }
 
 static void
@@ -69,11 +54,7 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
   if (clear && !mask && pad->Clearance <= 0)
     return;
 
-  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
-      (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
-    hid_draw_thin_pcb_pad (gc, pad, clear, mask);
-  else
-    hid_draw_fill_pcb_pad (gc, pad, clear, mask);
+  hid_draw_pcb_pad (gc, pad, clear, mask);
 }
 
 static void
