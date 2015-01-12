@@ -40,6 +40,10 @@ PCB_SRCS = \
 	buffer.h \
 	change.c \
 	change.h \
+	circle_circle_intersect.c \
+	circle_circle_intersect.h \
+	circle_line_intersect.c \
+	circle_line_intersect.h \
 	clip.c \
 	clip.h \
 	compat.c \
