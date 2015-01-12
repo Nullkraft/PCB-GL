@@ -425,12 +425,12 @@ nogui_request_debug_draw (void)
 }
 
 static void
-nogui_flush_debug_draw (void)
+nogui_flush_debug_draw (hidGC gc)
 {
 }
 
 static void
-nogui_finish_debug_draw (void)
+nogui_finish_debug_draw (hidGC gc)
 {
 }
 

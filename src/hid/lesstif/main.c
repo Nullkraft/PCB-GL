@@ -4034,7 +4034,7 @@ lesstif_request_debug_draw (void)
 }
 
 static void
-lesstif_flush_debug_draw (void)
+lesstif_flush_debug_draw (hidGC gc)
 {
   /* Copy the backing pixmap to the display and redraw any attached objects */
   XSetFunction (display, my_gc, GXcopy);
@@ -4050,9 +4050,9 @@ lesstif_flush_debug_draw (void)
 }
 
 static void
-lesstif_finish_debug_draw (void)
+lesstif_finish_debug_draw (hidGC gc)
 {
-  lesstif_flush_debug_draw ();
+  lesstif_flush_debug_draw (gc);
   /* No special tear down requirements
    */
 }
