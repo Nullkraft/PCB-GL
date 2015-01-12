@@ -2589,7 +2589,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_draw_bg_image ();
 
-  common_set_clip_box (hid_draw, &region);
+  common_set_clip_box (priv->hid_draw, &region);
   /* hid_expose_callback (&ghid_graphics, &region, 0); */
   ghid_draw_everything (&region);
   hidgl_flush_triangles (priv->hid_draw);
@@ -3009,7 +3009,6 @@ HID_DRAW *
 ghid_request_debug_draw (void)
 {
   GHidPort *port = gport;
-  render_priv *priv = port->render_priv;
   GtkWidget *widget = port->drawing_area;
   GtkAllocation allocation;
 
