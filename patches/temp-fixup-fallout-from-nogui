@@ -1,5 +1,5 @@
-Bottom: 23ff296387a059a6b949a224aecfbdf288f93eb5
-Top:    37a251f555c2113de8ede8f7997c40e85c577027
+Bottom: 6f6157667a9bd2ea164adfbb3016bbff896f05d0
+Top:    94b706fc13ea8e8e1470b003f3610368ebadb3cf
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 23:28:14 +0000
 
@@ -11,7 +11,7 @@ TEMP: Fixup fallout from nogui change
 ---
 
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index 412f95e..87f62f2 100644
+index 4f0acb3..2e7bdc2 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -361,6 +361,7 @@ hid_batch_init ()
@@ -150,7 +150,7 @@ index 20becc7..190a1cd 100644
  
    hid_register_hid (&ghid_hid);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index df636d9..9eaca89 100644
+index 889064a..f5c21bb 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -4113,6 +4113,7 @@ hid_lesstif_init ()

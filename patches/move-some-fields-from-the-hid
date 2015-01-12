@@ -1,5 +1,5 @@
-Bottom: 5e84ba4ae234e08810f6e04608af4b87d3b2993b
-Top:    23ff296387a059a6b949a224aecfbdf288f93eb5
+Bottom: 77b05359095f6e9f5297217da4a1467bb21b64e1
+Top:    6f6157667a9bd2ea164adfbb3016bbff896f05d0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 17:26:15 +0000
 
@@ -308,7 +308,7 @@ index ef6edb2..7d5bdc2 100644
  
      /* This is for the printer.  If you call this for the GUI, xval and
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index 27bcc71..412f95e 100644
+index 252e2bf..4f0acb3 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -344,7 +344,6 @@ hid_batch_init ()
@@ -483,7 +483,7 @@ index 56564fd..20becc7 100644
  
    hid_register_hid (&ghid_hid);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 00c439c..df636d9 100644
+index e2626b6..889064a 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -4072,7 +4072,6 @@ hid_lesstif_init ()
@@ -511,7 +511,7 @@ index 00c439c..df636d9 100644
    lesstif_graphics_class.destroy_gc     = lesstif_destroy_gc;
    lesstif_graphics_class.use_mask       = lesstif_use_mask;
 @@ -4134,6 +4133,7 @@ hid_lesstif_init ()
-   lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
+   lesstif_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
  
    lesstif_graphics.klass = &lesstif_graphics_class;
 +  lesstif_graphics.poly_before = true;
