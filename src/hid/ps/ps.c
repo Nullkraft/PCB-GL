@@ -695,13 +695,13 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 
       global.doing_toc = 1;
       global.pagecount = 1;  /* 'pagecount' is modified by hid_expose_callback() call */
-      hid_expose_callback (&ps_graphics, &global.region, 0);
+      hid_expose_callback (&ps_graphics, 0);
     }
 
   global.pagecount = 1; /* Reset 'pagecount' if single file */
   global.doing_toc = 0;
   ps_set_layer (&ps_graphics, NULL, 0, -1);  /* reset static vars */
-  hid_expose_callback (&ps_graphics, &global.region, 0);
+  hid_expose_callback (&ps_graphics, 0);
 
   if (the_file)
     fprintf (the_file, "showpage\n");
@@ -1009,7 +1009,11 @@ ps_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
       strcmp (name, "route") != 0
       )
     {
-      dapi->draw_layer (global.outline_layer, &global.region, NULL);
+      hidGC gc;
+
+      gc = hid_draw_make_gc (hid_draw);
+      dapi->draw_layer (gc, global.outline_layer, NULL);
+      hid_draw_destroy_gc (gc);
     }
 
   return 1;
@@ -1267,7 +1271,7 @@ ps_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 }
 
 static void
-fill_polyarea (hidGC gc, POLYAREA * pa, const BoxType * clip_box)
+fill_polyarea (hidGC gc, POLYAREA * pa)
 {
   /* Ignore clip_box, just draw everything */
 
@@ -1296,15 +1300,15 @@ fill_polyarea (hidGC gc, POLYAREA * pa, const BoxType * clip_box)
 }
 
 static void
-ps_draw_pcb_polygon (hidGC gc, PolygonType * poly, const BoxType * clip_box)
+ps_draw_pcb_polygon (hidGC gc, PolygonType * poly)
 {
-  fill_polyarea (gc, poly->Clipped, clip_box);
+  fill_polyarea (gc, poly->Clipped);
   if (TEST_FLAG (FULLPOLYFLAG, poly))
     {
       POLYAREA *pa;
 
       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
-        fill_polyarea (gc, pa, clip_box);
+        fill_polyarea (gc, pa);
     }
 }
 
