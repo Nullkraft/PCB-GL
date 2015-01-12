@@ -61,8 +61,10 @@ circle_line_intersect (double cx, double cy, double r,
       return 0;
     }
 
-   *mu1 = (-b + sqrt(bb4ac)) / (2 * a);
-   *mu2 = (-b - sqrt(bb4ac)) / (2 * a);
+//   *mu1 = (-b + sqrt(bb4ac)) / (2 * a);
+//   *mu2 = (-b - sqrt(bb4ac)) / (2 * a);
+   *mu1 = (-b - sqrt(bb4ac)) / (2 * a);
+   *mu2 = (-b + sqrt(bb4ac)) / (2 * a);
 
    return 2;
 }
