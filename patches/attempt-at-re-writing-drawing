@@ -1,5 +1,5 @@
 Bottom: 07803f320d0d6a87f99d2b5edc3ca93b7d29198f
-Top:    46acb9e931b286efda7ec9cd7042732daf6f6261
+Top:    12ebc514719c996f50040c89aa58a3a3805a8969
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 23:41:04 +0000
 
@@ -2331,10 +2331,18 @@ index 9d767b3..5933a88 100644
    gport->drawable = save_drawable;
    gport->view = save_view;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9fa5fe3..57e597b 100644
+index 9fa5fe3..ab3fb6b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -52,11 +52,9 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
+@@ -42,6 +42,7 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
+ #include <gtk/gtkgl.h>
+ #include "hid/common/hidgl.h"
+ 
++#include "hid/common/hidnogui.h"
+ #include "hid/common/draw_helpers.h"
+ #include "hid/common/trackball.h"
+ 
+@@ -52,11 +53,9 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
  //#define VIEW_ORTHO
  
  extern HID ghid_hid;
@@ -2347,7 +2355,7 @@ index 9fa5fe3..57e597b 100644
  /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
  */
  #define USE_GC(gc) if (!use_gc(gc)) return
-@@ -95,7 +93,7 @@ typedef struct render_priv {
+@@ -95,7 +94,7 @@ typedef struct render_priv {
    Coord lead_user_x;
    Coord lead_user_y;
  
@@ -2356,7 +2364,7 @@ index 9fa5fe3..57e597b 100644
    GList *active_gc_list;
    double edit_depth;
  
-@@ -238,18 +236,18 @@ compute_depth (int group)
+@@ -238,18 +237,18 @@ compute_depth (int group)
  }
  
  static void
@@ -2378,7 +2386,7 @@ index 9fa5fe3..57e597b 100644
    glStencilMask (stencil_bit);                                /* Only write to our subcompositing stencil bitplane */
    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit);       /* Pass stencil test if our assigned bit is clear */
  
-@@ -257,14 +255,14 @@ start_subcomposite (hidgl_instance *hidgl)
+@@ -257,14 +256,14 @@ start_subcomposite (hidgl_instance *hidgl)
  }
  
  static void
@@ -2396,7 +2404,7 @@ index 9fa5fe3..57e597b 100644
  
    glStencilMask (0);
    glStencilFunc (GL_ALWAYS, 0, 0);                            /* Always pass stencil test */
-@@ -307,7 +305,6 @@ int
+@@ -307,7 +306,6 @@ int
  ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
  {
    render_priv *priv = gport->render_priv;
@@ -2404,7 +2412,7 @@ index 9fa5fe3..57e597b 100644
    bool group_visible = false;
    bool subcomposite = true;
  
-@@ -352,10 +349,10 @@ ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
+@@ -352,10 +350,10 @@ ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
  	}
      }
  
@@ -2417,7 +2425,7 @@ index 9fa5fe3..57e597b 100644
  
    /* Drawing is already flushed by {start,end}_subcomposite */
    set_depth_on_all_active_gc (priv, compute_depth (group));
-@@ -364,12 +361,9 @@ ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
+@@ -364,12 +362,9 @@ ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
  }
  
  static void
@@ -2432,7 +2440,7 @@ index 9fa5fe3..57e597b 100644
  }
  
  void
-@@ -391,9 +385,9 @@ ghid_make_gc (HID_DRAW *hid_draw)
+@@ -391,9 +386,9 @@ ghid_make_gc (HID_DRAW *hid_draw)
    gtkGC gtk_gc = (gtkGC)gc;
  
    gc->hid = &ghid_hid;
@@ -2444,7 +2452,7 @@ index 9fa5fe3..57e597b 100644
  
    gtk_gc->colorname = Settings.BackgroundColor;
    gtk_gc->alpha_mult = 1.0;
-@@ -406,7 +400,7 @@ ghid_make_gc (HID_DRAW *hid_draw)
+@@ -406,7 +401,7 @@ ghid_make_gc (HID_DRAW *hid_draw)
  }
  
  static void
@@ -2453,7 +2461,7 @@ index 9fa5fe3..57e597b 100644
  {
    if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
      return;
-@@ -428,7 +422,7 @@ ghid_draw_grid (hidGC gc, BoxType *drawn_area)
+@@ -428,7 +423,7 @@ ghid_draw_grid (hidGC gc, BoxType *drawn_area)
               gport->grid_color.green / 65535.,
               gport->grid_color.blue / 65535.);
  
@@ -2462,7 +2470,7 @@ index 9fa5fe3..57e597b 100644
  
    glDisable (GL_COLOR_LOGIC_OP);
    glEnable (GL_STENCIL_TEST);
-@@ -543,15 +537,13 @@ ghid_draw_bg_image (void)
+@@ -543,15 +538,13 @@ ghid_draw_bg_image (void)
  void
  ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  {
@@ -2479,7 +2487,7 @@ index 9fa5fe3..57e597b 100644
  
    switch (mode)
      {
-@@ -564,7 +556,7 @@ ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
+@@ -564,7 +557,7 @@ ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
        glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
        glDepthMask (GL_FALSE);
        glEnable (GL_STENCIL_TEST);                           /* Enable Stencil test */
@@ -2488,7 +2496,7 @@ index 9fa5fe3..57e597b 100644
        glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, write stencil_bit */
        glStencilMask (stencil_bit);                          /* Only write to our subcompositing stencil bitplane */
        glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           /* Stencil pass => replace stencil value (with 1) */
-@@ -580,7 +572,7 @@ ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
+@@ -580,7 +573,7 @@ ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
  
      case HID_MASK_OFF:
        /* Disable stenciling */
@@ -2497,7 +2505,7 @@ index 9fa5fe3..57e597b 100644
        glDisable (GL_STENCIL_TEST);                          /* Disable Stencil test */
        break;
      }
-@@ -736,7 +728,7 @@ set_gl_color_for_gc (hidGC gc)
+@@ -736,7 +729,7 @@ set_gl_color_for_gc (hidGC gc)
    g = g * gtk_gc->saturation + luminance * (1.0 - gtk_gc->saturation);
    b = b * gtk_gc->saturation + luminance * (1.0 - gtk_gc->saturation);
  
@@ -2506,7 +2514,7 @@ index 9fa5fe3..57e597b 100644
    glColor4d (r, g, b, a);
  }
  
-@@ -814,12 +806,6 @@ ghid_set_line_cap_angle (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+@@ -814,12 +807,6 @@ ghid_set_line_cap_angle (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
    printf ("ghid_set_line_cap_angle() -- not implemented\n");
  }
  
@@ -2519,7 +2527,7 @@ index 9fa5fe3..57e597b 100644
  static int
  use_gc (hidGC gc)
  {
-@@ -829,10 +815,10 @@ use_gc (hidGC gc)
+@@ -829,10 +816,10 @@ use_gc (hidGC gc)
        abort ();
      }
  
@@ -2533,7 +2541,7 @@ index 9fa5fe3..57e597b 100644
  
    set_gl_color_for_gc (gc);
    return 1;
-@@ -885,22 +871,22 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -885,22 +872,22 @@ ghid_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
  }
  
  void
@@ -2561,7 +2569,7 @@ index 9fa5fe3..57e597b 100644
    ghid_set_alpha_mult (gc, old_alpha_mult);
  }
  
-@@ -1045,6 +1031,7 @@ static void
+@@ -1045,6 +1032,7 @@ static void
  draw_crosshair (hidGC gc, render_priv *priv)
  {
    gtkGC gtk_gc = (gtkGC)gc;
@@ -2569,7 +2577,7 @@ index 9fa5fe3..57e597b 100644
    gint x, y, z;
    static int done_once = 0;
    static GdkColor cross_color;
-@@ -1106,12 +1093,24 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -1106,12 +1094,24 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
      }
  
    hidgl_init ();
@@ -2595,7 +2603,7 @@ index 9fa5fe3..57e597b 100644
  }
  
  void
-@@ -1119,7 +1118,7 @@ ghid_shutdown_renderer (GHidPort *port)
+@@ -1119,7 +1119,7 @@ ghid_shutdown_renderer (GHidPort *port)
  {
    render_priv *priv = port->render_priv;
  
@@ -2604,7 +2612,7 @@ index 9fa5fe3..57e597b 100644
  
    ghid_cancel_lead_user ();
    g_free (port->render_priv);
-@@ -1164,7 +1163,7 @@ ghid_start_drawing (GHidPort *port, GtkWidget *widget)
+@@ -1164,7 +1164,7 @@ ghid_start_drawing (GHidPort *port, GtkWidget *widget)
  
    port->render_priv->in_context = true;
  
@@ -2613,7 +2621,7 @@ index 9fa5fe3..57e597b 100644
  
    return TRUE;
  }
-@@ -1174,7 +1173,7 @@ ghid_end_drawing (GHidPort *port, GtkWidget *widget)
+@@ -1174,7 +1174,7 @@ ghid_end_drawing (GHidPort *port, GtkWidget *widget)
  {
    GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
@@ -2622,7 +2630,7 @@ index 9fa5fe3..57e597b 100644
  
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
-@@ -1196,13 +1195,14 @@ static int
+@@ -1196,13 +1196,14 @@ static int
  EMark_callback (const BoxType * b, void *cl)
  {
    ElementType *element = (ElementType *) b;
@@ -2639,7 +2647,7 @@ index 9fa5fe3..57e597b 100644
                    char *connected_color, char *found_color, char *normal_color)
  {
    char *color;
-@@ -1213,42 +1213,42 @@ set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
+@@ -1213,42 +1214,42 @@ set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
    else if (found_color     != NULL && TEST_FLAG (FOUNDFLAG,     obj)) color = found_color;
    else                                                                color = normal_color;
  
@@ -2699,7 +2707,7 @@ index 9fa5fe3..57e597b 100644
  {
    BoxType box;
    bool vert;
-@@ -1272,8 +1272,8 @@ _draw_pv_name (PinType *pv)
+@@ -1272,8 +1273,8 @@ _draw_pv_name (PinType *pv)
        box.Y1 = pv->Y - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
      }
  
@@ -2710,7 +2718,7 @@ index 9fa5fe3..57e597b 100644
  
    text.Flags = NoFlags ();
    /* Set font height to approx 56% of pin thickness */
-@@ -1282,46 +1282,47 @@ _draw_pv_name (PinType *pv)
+@@ -1282,46 +1283,47 @@ _draw_pv_name (PinType *pv)
    text.Y = box.Y1;
    text.Direction = vert ? 1 : 0;
  
@@ -2769,7 +2777,7 @@ index 9fa5fe3..57e597b 100644
    return 1;
  }
  
-@@ -1329,46 +1330,59 @@ static int
+@@ -1329,46 +1331,59 @@ static int
  pin_name_callback (const BoxType * b, void *cl)
  {
    PinType *pin = (PinType *) b;
@@ -2839,7 +2847,7 @@ index 9fa5fe3..57e597b 100644
  {
    BoxType box;
    bool vert;
-@@ -1397,8 +1411,8 @@ draw_pad_name (PadType *pad)
+@@ -1397,8 +1412,8 @@ draw_pad_name (PadType *pad)
        box.Y1 += Settings.PinoutTextOffsetY;
      }
  
@@ -2850,7 +2858,7 @@ index 9fa5fe3..57e597b 100644
  
    text.Flags = NoFlags ();
    /* Set font height to approx 90% of pad thickness */
-@@ -1407,7 +1421,7 @@ draw_pad_name (PadType *pad)
+@@ -1407,7 +1422,7 @@ draw_pad_name (PadType *pad)
    text.Y = box.Y1;
    text.Direction = vert ? 1 : 0;
  
@@ -2859,7 +2867,7 @@ index 9fa5fe3..57e597b 100644
  }
  
  static void
-@@ -1424,29 +1438,34 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+@@ -1424,29 +1439,34 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
  }
  
  static void
@@ -2903,7 +2911,7 @@ index 9fa5fe3..57e597b 100644
    }
    return 1;
  }
-@@ -1456,7 +1475,9 @@ static int
+@@ -1456,7 +1476,9 @@ static int
  hole_callback (const BoxType * b, void *cl)
  {
    PinType *pv = (PinType *) b;
@@ -2914,7 +2922,7 @@ index 9fa5fe3..57e597b 100644
  
    if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
        (plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
-@@ -1466,10 +1487,9 @@ hole_callback (const BoxType * b, void *cl)
+@@ -1466,10 +1488,9 @@ hole_callback (const BoxType * b, void *cl)
      {
        if (!TEST_FLAG (HOLEFLAG, pv))
          {
@@ -2928,7 +2936,7 @@ index 9fa5fe3..57e597b 100644
          }
      }
    else
-@@ -1477,14 +1497,13 @@ hole_callback (const BoxType * b, void *cl)
+@@ -1477,14 +1498,13 @@ hole_callback (const BoxType * b, void *cl)
  
    if (TEST_FLAG (HOLEFLAG, pv))
      {
@@ -2948,7 +2956,7 @@ index 9fa5fe3..57e597b 100644
      }
    return 1;
  }
-@@ -1492,92 +1511,86 @@ hole_callback (const BoxType * b, void *cl)
+@@ -1492,92 +1512,86 @@ hole_callback (const BoxType * b, void *cl)
  static int
  line_callback (const BoxType * b, void *cl)
  {
@@ -3067,7 +3075,7 @@ index 9fa5fe3..57e597b 100644
    return 1;
  }
  
-@@ -1596,8 +1609,9 @@ static int
+@@ -1596,8 +1610,9 @@ static int
  clearPad_callback (const BoxType * b, void *cl)
  {
    PadType *pad = (PadType *) b;
@@ -3079,7 +3087,7 @@ index 9fa5fe3..57e597b 100644
      _draw_pad (Output.pmGC, pad, true, true);
    return 1;
  }
-@@ -1614,8 +1628,9 @@ static int
+@@ -1614,8 +1629,9 @@ static int
  clearPad_callback_solid (const BoxType * b, void *cl)
  {
    PadType *pad = (PadType *) b;
@@ -3091,7 +3099,7 @@ index 9fa5fe3..57e597b 100644
      hid_draw__fill_pcb_pad (Output.pmGC, pad, true, true);
    return 1;
  }
-@@ -1634,7 +1649,7 @@ ensure_board_outline (void)
+@@ -1634,7 +1650,7 @@ ensure_board_outline (void)
  }
  
  static void
@@ -3100,7 +3108,7 @@ index 9fa5fe3..57e597b 100644
  {
    PolygonType polygon;
  
-@@ -1642,11 +1657,11 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
+@@ -1642,11 +1658,11 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
  
    memset (&polygon, 0, sizeof (polygon));
    polygon.Clipped = PCB->Data->outline;
@@ -3115,7 +3123,7 @@ index 9fa5fe3..57e597b 100644
    poly_FreeContours (&polygon.NoHoles);
  }
  
-@@ -1677,8 +1692,8 @@ fill_outline_hole_cb (PLINE *pl, void *user_data)
+@@ -1677,8 +1693,8 @@ fill_outline_hole_cb (PLINE *pl, void *user_data)
    SET_FLAG (FULLPOLYFLAG, &polygon);
  
    /* XXX: For some reason, common_fill_pcb_polygon doesn't work for all contours here.. not sure why */
@@ -3126,7 +3134,7 @@ index 9fa5fe3..57e597b 100644
  
    poly_FreeContours (&polygon.NoHoles);
  
-@@ -1688,7 +1703,7 @@ fill_outline_hole_cb (PLINE *pl, void *user_data)
+@@ -1688,7 +1704,7 @@ fill_outline_hole_cb (PLINE *pl, void *user_data)
  }
  
  static void
@@ -3135,7 +3143,7 @@ index 9fa5fe3..57e597b 100644
  {
    render_priv *priv = gport->render_priv;
    PolygonType polygon, p;
-@@ -1698,64 +1713,67 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
+@@ -1698,64 +1714,67 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
  
    memset (&polygon, 0, sizeof (polygon));
    polygon.Clipped = PCB->Data->outline;
@@ -3227,7 +3235,7 @@ index 9fa5fe3..57e597b 100644
  
  #if 0
    if (first_run) {
-@@ -1792,18 +1810,18 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1792,18 +1811,18 @@ GhidDrawMask (int side, BoxType * screen)
  
    memset (&polygon, 0, sizeof (polygon));
    polygon.Clipped = PCB->Data->outline;
@@ -3252,7 +3260,7 @@ index 9fa5fe3..57e597b 100644
  #if 0
    glDisable (GL_TEXTURE_GEN_S);
    glDisable (GL_TEXTURE_GEN_T);
-@@ -1812,7 +1830,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1812,7 +1831,7 @@ GhidDrawMask (int side, BoxType * screen)
  #endif
    hidgl_shader_activate (circular_program);
  
@@ -3261,7 +3269,7 @@ index 9fa5fe3..57e597b 100644
  
  //  first_run = false;
  }
-@@ -1860,7 +1878,7 @@ outline_hole_cb (PLINE *pl, void *user_data)
+@@ -1860,7 +1879,7 @@ outline_hole_cb (PLINE *pl, void *user_data)
  }
  
  static void
@@ -3270,7 +3278,7 @@ index 9fa5fe3..57e597b 100644
  {
    render_priv *priv = gport->render_priv;
    PolygonType polygon, p;
-@@ -1870,39 +1888,37 @@ ghid_draw_outline_between_layers (int from_layer, int to_layer, BoxType *drawn_a
+@@ -1870,39 +1889,37 @@ ghid_draw_outline_between_layers (int from_layer, int to_layer, BoxType *drawn_a
  
    memset (&polygon, 0, sizeof (polygon));
    polygon.Clipped = PCB->Data->outline;
@@ -3317,7 +3325,7 @@ index 9fa5fe3..57e597b 100644
    LayerType *Layer;
    int n_entries = PCB->LayerGroups.Number[group];
    Cardinal *layers = PCB->LayerGroups.Entries[group];
-@@ -1910,8 +1926,14 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1910,8 +1927,14 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
    int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
    int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
    bool is_outline;
@@ -3333,7 +3341,7 @@ index 9fa5fe3..57e597b 100644
      return 0;
  
    /* HACK: Subcomposite each layer in a layer group separately */
-@@ -1922,49 +1944,51 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1922,49 +1945,51 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
      is_outline = strcmp (Layer->Name, "outline") == 0 ||
                   strcmp (Layer->Name, "route") == 0;
  
@@ -3402,7 +3410,7 @@ index 9fa5fe3..57e597b 100644
            glPopAttrib ();
          }
        }
-@@ -1973,31 +1997,31 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1973,31 +1998,31 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
        if (!global_view_2d && !is_outline) {
          if (PCB->PinOn &&
              (group == bottom_group || group == top_group))
@@ -3445,7 +3453,7 @@ index 9fa5fe3..57e597b 100644
  
    return (n_entries > 1);
  }
-@@ -2048,6 +2072,7 @@ DrawDrillChannel (hidGC gc, int vx, int vy, int vr, int from_layer, int to_layer
+@@ -2048,6 +2073,7 @@ DrawDrillChannel (hidGC gc, int vx, int vy, int vr, int from_layer, int to_layer
  }
  
  struct cyl_info {
@@ -3453,7 +3461,7 @@ index 9fa5fe3..57e597b 100644
    int from_layer;
    int to_layer;
    double scale;
-@@ -2069,9 +2094,9 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
+@@ -2069,9 +2095,9 @@ draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
    else
      color = "drill";
  
@@ -3466,7 +3474,7 @@ index 9fa5fe3..57e597b 100644
    return 0;
  }
  
-@@ -2131,19 +2156,18 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -2131,19 +2157,18 @@ frontE_package_callback (const BoxType * b, void *cl)
  }
  
  static void
@@ -3489,7 +3497,7 @@ index 9fa5fe3..57e597b 100644
    /* This is the list of layer groups we will draw.  */
    int do_group[MAX_LAYER];
    /* This is the reverse of the order in which we draw them.  */
-@@ -2155,6 +2179,11 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -2155,6 +2180,11 @@ ghid_draw_everything (BoxType *drawn_area)
    int bottom_group;
    int min_phys_group;
    int max_phys_group;
@@ -3501,7 +3509,7 @@ index 9fa5fe3..57e597b 100644
  
    priv->current_colorname = NULL;
  
-@@ -2204,23 +2233,23 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -2204,23 +2234,23 @@ ghid_draw_everything (BoxType *drawn_area)
    /*
     * first draw all 'invisible' stuff
     */
@@ -3534,7 +3542,7 @@ index 9fa5fe3..57e597b 100644
        }
    }
  
-@@ -2240,76 +2269,76 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -2240,76 +2270,76 @@ ghid_draw_everything (BoxType *drawn_area)
      if (is_this_physical)
        number_phys_on_top --;
  
@@ -3642,7 +3650,7 @@ index 9fa5fe3..57e597b 100644
    }
  
    Settings.ShowBottomSide = save_show_solder;
-@@ -2336,6 +2365,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2336,6 +2366,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 0, 1};
    bool horizon_problem = false;
    static bool do_once = true;
@@ -3651,7 +3659,7 @@ index 9fa5fe3..57e597b 100644
  
    if (do_once) {
      do_once = false;
-@@ -2346,14 +2377,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2346,14 +2378,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port, widget);
  
@@ -3670,7 +3678,7 @@ index 9fa5fe3..57e597b 100644
      ghid_graphics_class._fill_pcb_polygon = common_fill_pcb_polygon;
  
    glEnable (GL_BLEND);
-@@ -2439,7 +2470,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2439,7 +2471,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -3679,7 +3687,7 @@ index 9fa5fe3..57e597b 100644
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
    glDisable (GL_STENCIL_TEST);
-@@ -2538,8 +2569,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2538,8 +2570,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -3688,7 +3696,7 @@ index 9fa5fe3..57e597b 100644
    /* Setup stenciling */
    /* Drawing operations set the stencil buffer to '1' */
    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
-@@ -2582,9 +2611,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2582,9 +2612,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_draw_bg_image ();
  
@@ -3702,7 +3710,7 @@ index 9fa5fe3..57e597b 100644
  
    glTexCoord2f (0., 0.);
    glColor3f (1., 1., 1.);
-@@ -2628,15 +2658,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2628,15 +2659,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    /* Set the current depth to the right value for the layer we are editing */
    priv->edit_depth = compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT));
@@ -3723,7 +3731,7 @@ index 9fa5fe3..57e597b 100644
  
    glEnable (GL_LIGHTING);
  
-@@ -2688,7 +2716,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2688,7 +2717,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    }
  
    if (!global_view_2d)
@@ -3732,7 +3740,7 @@ index 9fa5fe3..57e597b 100644
  
    glDisable (GL_CULL_FACE);
    glDisable (GL_DEPTH_TEST);
-@@ -2696,20 +2724,19 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2696,20 +2725,19 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_COLOR_MATERIAL);
    glDisable (GL_LIGHTING);
  
@@ -3757,7 +3765,7 @@ index 9fa5fe3..57e597b 100644
    Output.bgGC = NULL;
    Output.pmGC = NULL;
    g_timer_start (priv->time_since_expose);
-@@ -2747,6 +2774,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2747,6 +2775,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    Coord save_max_width;
    Coord save_max_height;
    double xz, yz;
@@ -3765,7 +3773,7 @@ index 9fa5fe3..57e597b 100644
  
    save_view = gport->view;
    save_width = gport->width;
-@@ -2830,7 +2858,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2830,7 +2859,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -3774,7 +3782,7 @@ index 9fa5fe3..57e597b 100644
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
    glDisable (GL_STENCIL_TEST);
-@@ -2838,7 +2866,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2838,7 +2867,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* call the drawing routine */
@@ -3782,7 +3790,7 @@ index 9fa5fe3..57e597b 100644
    glPushMatrix ();
    glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
              (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px,
-@@ -2848,8 +2875,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2848,8 +2876,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                      -gport->view.y0, 0);
  
@@ -3793,7 +3801,7 @@ index 9fa5fe3..57e597b 100644
    glPopMatrix ();
  
    ghid_end_drawing (gport, widget);
-@@ -2877,6 +2904,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2877,6 +2905,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    view_data save_view;
    int save_width, save_height;
    BoxType region;
@@ -3801,7 +3809,7 @@ index 9fa5fe3..57e597b 100644
  
    save_view = gport->view;
    save_width = gport->width;
-@@ -2917,7 +2945,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2917,7 +2946,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
      return NULL;
    }
@@ -3810,7 +3818,7 @@ index 9fa5fe3..57e597b 100644
    gport->render_priv->in_context = true;
  
    glEnable (GL_BLEND);
-@@ -2942,7 +2970,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2942,7 +2971,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -3819,7 +3827,7 @@ index 9fa5fe3..57e597b 100644
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
    glDisable (GL_STENCIL_TEST);
-@@ -2950,7 +2978,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2950,7 +2979,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* call the drawing routine */
@@ -3827,7 +3835,7 @@ index 9fa5fe3..57e597b 100644
    glPushMatrix ();
    glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
              (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px,
-@@ -2970,13 +2997,14 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2970,13 +2998,14 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
    region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
  
@@ -3845,7 +3853,7 @@ index 9fa5fe3..57e597b 100644
  
    /* end drawing to current GL-context */
    gport->render_priv->in_context = false;
-@@ -2998,6 +3026,7 @@ HID_DRAW *
+@@ -2998,6 +3027,7 @@ HID_DRAW *
  ghid_request_debug_draw (void)
  {
    GHidPort *port = gport;
@@ -3853,7 +3861,7 @@ index 9fa5fe3..57e597b 100644
    GtkWidget *widget = port->drawing_area;
    GtkAllocation allocation;
  
-@@ -3014,8 +3043,6 @@ ghid_request_debug_draw (void)
+@@ -3014,8 +3044,6 @@ ghid_request_debug_draw (void)
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -3862,7 +3870,7 @@ index 9fa5fe3..57e597b 100644
    /* Setup stenciling */
    glDisable (GL_STENCIL_TEST);
  
-@@ -3028,7 +3055,7 @@ ghid_request_debug_draw (void)
+@@ -3028,17 +3056,16 @@ ghid_request_debug_draw (void)
                  port->view.flip_y ? port->view.y0 - PCB->MaxHeight :
                               -port->view.y0, 0);
  
@@ -3871,28 +3879,29 @@ index 9fa5fe3..57e597b 100644
  }
  
  void
-@@ -3038,7 +3065,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
+ ghid_flush_debug_draw (HID_DRAW *hid_draw)
+ {
+-  render_priv *priv = gport->render_priv;
    GtkWidget *widget = gport->drawing_area;
    GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
 -  hidgl_flush_triangles (priv->hidgl);
-+  hidgl_flush_triangles (priv->hid_draw);
++  hidgl_flush_triangles (hid_draw);
  
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
-@@ -3049,9 +3076,9 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
+@@ -3049,9 +3076,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
  void
  ghid_finish_debug_draw (HID_DRAW *hid_draw)
  {
 -  render_priv *priv = gport->render_priv;
-+  HID_DRAW *hid_draw = gc->hid_draw;
- 
+-
 -  hidgl_flush_triangles (priv->hidgl);
 +  hidgl_flush_triangles (hid_draw);
    glPopMatrix ();
  
    ghid_end_drawing (gport, gport->drawing_area);
-@@ -3413,7 +3440,6 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -3413,7 +3438,6 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
  static void
  draw_lead_user (hidGC gc, render_priv *priv)
  {
@@ -3900,7 +3909,7 @@ index 9fa5fe3..57e597b 100644
    int i;
    double radius = priv->lead_user_radius;
    double width = MM_TO_COORD (LEAD_USER_WIDTH);
-@@ -3440,7 +3466,7 @@ draw_lead_user (hidGC gc, render_priv *priv)
+@@ -3440,7 +3464,7 @@ draw_lead_user (hidGC gc, render_priv *priv)
                        radius, radius, 0, 360, gport->view.coord_per_px);
      }
  
