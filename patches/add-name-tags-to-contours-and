@@ -1,5 +1,5 @@
-Bottom: 652b1445759d5ad0b6fc60479c3ad013f901eb97
-Top:    5875345daecac036eb623c4988a5a2953a72b173
+Bottom: 68ad34825dc720efadb54a772d482621a1da9968
+Top:    3d19a6577bf490ba0945a03b640a6c9f443c2a5c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 00:55:08 +0000
 
@@ -9,10 +9,10 @@ Add name tags to contours and feature naming for pins and vias in STEP export
 ---
 
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index d660768..c736af7 100644
+index a85d48f..9b775ac 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
-@@ -266,6 +266,8 @@ step_emit_board_contour (FILE *f, PLINE *contour)
+@@ -267,6 +267,8 @@ step_emit_board_contour (FILE *f, PLINE *contour)
  
    PLINE *ct;
  
@@ -21,7 +21,7 @@ index d660768..c736af7 100644
    ncontours = 0;
    npoints = 0;
    ct = contour;
-@@ -589,7 +591,7 @@ step_emit_board_contour (FILE *f, PLINE *contour)
+@@ -590,7 +592,7 @@ step_emit_board_contour (FILE *f, PLINE *contour)
        global.next_identifier = global.next_identifier + 2;
      }
  
@@ -30,7 +30,7 @@ index d660768..c736af7 100644
               global.next_identifier);
      for (icont = 0; icont < ncontours - 1; icont++)
        fprintf (f, "#%i, ",
-@@ -620,7 +622,7 @@ step_emit_board_contour (FILE *f, PLINE *contour)
+@@ -621,7 +623,7 @@ step_emit_board_contour (FILE *f, PLINE *contour)
        global.next_identifier = global.next_identifier + 2;
      }
  
@@ -39,7 +39,7 @@ index d660768..c736af7 100644
               global.next_identifier);
      for (icont = 0; icont < ncontours - 1; icont++)
        fprintf (f, "#%i, ",
-@@ -645,12 +647,14 @@ step_emit_board_contour (FILE *f, PLINE *contour)
+@@ -646,12 +648,14 @@ step_emit_board_contour (FILE *f, PLINE *contour)
        ct = ct->next;
      }
  

@@ -1,5 +1,5 @@
-Bottom: f482ccb80350f54e526eee4c9595c6b489b0052e
-Top:    47ddab2e26126de1d7bc048415ef5062e6c9f184
+Bottom: 9110c68bf7bb94a4f53ff4fdbb226dda1e32da21
+Top:    4fa7befaa6962023fae74aae3746a07b3f1695f3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-09 23:56:41 +0000
 
@@ -11,10 +11,10 @@ XXX: Incomplete.. needs us to actually set the name flags on the contour edges!
 ---
 
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 5dafc05..fb70146 100644
+index d1b0452..32c6766 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
-@@ -228,6 +228,20 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
+@@ -229,6 +229,20 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
    *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
  }
  
@@ -35,7 +35,7 @@ index 5dafc05..fb70146 100644
  #define FWD 1
  #define REV 2
  static void
-@@ -647,7 +661,11 @@ step_emit_board_contour (FILE *f, PLINE *contour)
+@@ -648,7 +662,11 @@ step_emit_board_contour (FILE *f, PLINE *contour)
        ct = ct->next;
      }
  
