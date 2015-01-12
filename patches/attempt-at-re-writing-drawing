@@ -1,5 +1,5 @@
-Bottom: 9ba8151f3ef48a280bcb29f5f443c6bc9bcf11c1
-Top:    899ed3be1de41908bc435ccd73cc6f704b41bf4f
+Bottom: 07803f320d0d6a87f99d2b5edc3ca93b7d29198f
+Top:    46acb9e931b286efda7ec9cd7042732daf6f6261
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-11 23:41:04 +0000
 
@@ -1491,7 +1491,7 @@ index b36aebf..050d804 100644
  }
  OutputType;
 diff --git a/src/hid.h b/src/hid.h
-index fc2faca..c5ba6d4 100644
+index 08bdc0d..19100ba 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -533,7 +533,7 @@ typedef enum
@@ -2196,7 +2196,7 @@ index e2d7f67..042476b 100644
  /* hidgl_pacakge_acy_resistor.c */
  void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index 19f704f..cb291e4 100644
+index f82c498..71c518f 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -143,7 +143,7 @@ nogui_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
@@ -2273,7 +2273,7 @@ index 6e4616e..19c4708 100644
  
    return 1;
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 0f5adb4..f78f0f5 100644
+index 9d767b3..5933a88 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -15,7 +15,8 @@
@@ -2331,7 +2331,7 @@ index 0f5adb4..f78f0f5 100644
    gport->drawable = save_drawable;
    gport->view = save_view;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 72c997a..832fb0c 100644
+index 9fa5fe3..57e597b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -52,11 +52,9 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
@@ -3871,7 +3871,7 @@ index 72c997a..832fb0c 100644
  }
  
  void
-@@ -3038,7 +3065,7 @@ ghid_flush_debug_draw (hidGC gc)
+@@ -3038,7 +3065,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
    GtkWidget *widget = gport->drawing_area;
    GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
@@ -3880,9 +3880,9 @@ index 72c997a..832fb0c 100644
  
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
-@@ -3049,9 +3076,9 @@ ghid_flush_debug_draw (hidGC gc)
+@@ -3049,9 +3076,9 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
  void
- ghid_finish_debug_draw (hidGC gc)
+ ghid_finish_debug_draw (HID_DRAW *hid_draw)
  {
 -  render_priv *priv = gport->render_priv;
 +  HID_DRAW *hid_draw = gc->hid_draw;
@@ -3947,7 +3947,7 @@ index 9fb531b..85d010e 100644
  #include "gtk_lists.h"
  }
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 0840bdf..c860c5a 100644
+index 4f82dfc..0e690bb 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -816,6 +816,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
