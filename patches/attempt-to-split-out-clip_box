@@ -1,5 +1,5 @@
 Bottom: 16781ceb9111f967c7ff3b02e2cd0305c5a01478
-Top:    9a5db9ee7d7dd39e1f5ddfd0d8dfb5db997832e9
+Top:    18f901097f2e75da2b72884ba89c2e31405a2891
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-13 00:19:36 +0000
 
@@ -350,27 +350,23 @@ index 2993fac..49eb1ef 100644
    hid_draw_destroy_gc (Output.fgGC);
    hid_draw_destroy_gc (Output.bgGC);
 diff --git a/src/draw.h b/src/draw.h
-index bae0cd8..bae6b77 100644
+index bae0cd8..56dfcec 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -66,11 +66,20 @@ void EraseElementPinsAndPads (ElementType *);
+@@ -66,11 +66,11 @@ void EraseElementPinsAndPads (ElementType *);
  void EraseElementName (ElementType *);
  void EraseObject (int, void *, void *);
  
-+<<<<<<< current
- void DrawLayerGroup (int side, const BoxType *drawn_area);
- void DrawPaste (int side, const BoxType *drawn_area);
- void DrawSilk (HID_DRAW *hid_draw, int side, const BoxType *drawn_area);
- void DrawMask (int side, const BoxType *drawn_area);
- void PrintAssembly (int side, const BoxType *drawn_area);
-+=======
+-void DrawLayerGroup (int side, const BoxType *drawn_area);
+-void DrawPaste (int side, const BoxType *drawn_area);
+-void DrawSilk (HID_DRAW *hid_draw, int side, const BoxType *drawn_area);
+-void DrawMask (int side, const BoxType *drawn_area);
+-void PrintAssembly (int side, const BoxType *drawn_area);
 +void DrawLayerGroup (HID_DRAW *hid_draw, int side);
 +void DrawPaste (HID_DRAW *hid_draw, int side);
 +void DrawSilk (HID_DRAW *hid_draw, int side);
 +void DrawMask (HID_DRAW *hid_draw, int side);
-+void DrawHoles (hidGC gc, bool draw_plated, bool draw_unplated);
 +void PrintAssembly (HID_DRAW *hid_draw, int side, const BoxType *drawn_area);
-+>>>>>>> patched
  
  /* TEMPORARY */
  void ClearPad (PadType *, bool);
