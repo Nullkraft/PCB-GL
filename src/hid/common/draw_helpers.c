@@ -288,7 +288,7 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
       for (poly.Clipped = polygon->Clipped->f;
            poly.Clipped != polygon->Clipped;
            poly.Clipped = poly.Clipped->f)
-        hid_draw__thin_pcb_polygon (gc, &poly, hid_draw->clip_box);
+        hid_draw__thin_pcb_polygon (gc, &poly, gc->hid_draw->clip_box);
     }
 }
 

@@ -1732,7 +1732,6 @@ fill_board_outline_holes (hidGC gc)
 static void
 GhidDrawMask (HID_DRAW *hid_draw, int side)
 {
-  render_priv *priv = gport->render_priv;
 //  static bool first_run = true;
 //  static GLuint texture;
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
@@ -2320,7 +2319,7 @@ ghid_draw_everything (void)
 
   /* Draw rat lines on top */
   if (PCB->RatOn && hid_draw_set_layer (hid_draw, "rats", SL (RATS, 0), 0)) {
-    DrawRats (&ghid_graphics, hid_draw->clip_box);
+    DrawRats (&ghid_graphics);
     hid_draw_end_layer (&ghid_graphics);
   }
 

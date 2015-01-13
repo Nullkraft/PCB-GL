@@ -84,7 +84,7 @@ static HID_DRAW *hid_draw = NULL;
 static void DrawEverything (const BoxType *);
 static void AddPart (void *);
 /* static */ void DrawEMark (ElementType *, Coord, Coord, bool);
-/* static */ void DrawRats (HID_DRAW *hid_draw, const BoxType *);
+/* static */ void DrawRats (HID_DRAW *hid_draw);
 
 static void
 set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
@@ -284,7 +284,7 @@ element_callback (const BoxType * b, void *cl)
  */
 
 void
-PrintAssembly (HID_DRAW *hid_draw, int side, const BoxType * drawn_area)
+PrintAssembly (HID_DRAW *hid_draw, int side)
 {
   int side_group = GetLayerGroupNumberBySide (side);
 
@@ -342,7 +342,7 @@ DrawEverything (const BoxType *drawn_area)
 	{
 	  r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, element_callback, &side);
 	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], hid_draw->clip_box, NULL, name_callback, &side);
-	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), NULL);
+	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), hid_draw->clip_box, NULL);
 	}
       r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_callback, &side);
       hid_draw_end_layer (hid_draw);
@@ -416,7 +416,7 @@ DrawEverything (const BoxType *drawn_area)
       /* Draw rat lines on top */
       if (hid_draw_set_layer (hid_draw, "rats", SL (RATS, 0), 0))
         {
-          DrawRats (hid_draw, hid_draw->clip_box);
+          DrawRats (hid_draw);
           hid_draw_end_layer (hid_draw);
         }
     }
@@ -437,13 +437,13 @@ DrawEverything (const BoxType *drawn_area)
 
   if (hid_draw_set_layer (hid_draw, "topassembly", SL (ASSY, TOP), 0))
     {
-      PrintAssembly (hid_draw, TOP_SIDE, hid_draw->clip_box);
+      PrintAssembly (hid_draw, TOP_SIDE);
       hid_draw_end_layer (hid_draw);
     }
 
   if (hid_draw_set_layer (hid_draw, "bottomassembly", SL (ASSY, BOTTOM), 0))
     {
-      PrintAssembly (BOTTOM_SIDE, hid_draw->clip_box);
+      PrintAssembly (hid_draw, BOTTOM_SIDE);
       hid_draw_end_layer (hid_draw);
     }
 
@@ -687,10 +687,8 @@ DrawPaste (HID_DRAW *hid_draw, int side)
 }
 
 /* static */ void
-DrawRats (hidGC gc)
+DrawRats (HID_DRAW *hid_draw)
 {
-  HID_DRAW *hid_draw = gc->hid_draw;
-
   /*
    * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
    * XXX gtk only allows negative drawing.
@@ -702,8 +700,6 @@ DrawRats (hidGC gc)
   r_search (PCB->Data->rat_tree, hid_draw->clip_box, NULL, rat_callback, NULL);
   if (hid_draw_can_draw_in_mask_clear (hid_draw))
     hid_draw_use_mask (hid_draw, HID_MASK_OFF);
-
-  hid_draw = old_hid_draw;
 }
 
 /* ---------------------------------------------------------------------------
