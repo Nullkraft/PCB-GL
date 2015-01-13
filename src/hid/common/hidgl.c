@@ -293,7 +293,7 @@ hidgl_set_depth (hidGC gc, float depth)
 }
 
 void
-hidgl_draw_grid (hidGC gc, BoxType *drawn_area)
+hidgl_draw_grid (hidGC gc)
 {
   hidglGC hidgl_gc = (hidglGC)gc;
   HID_DRAW *hid_draw = gc->hid_draw;
@@ -914,7 +914,7 @@ polygon_contains_user_holes (PolygonType *polygon)
 }
 
 static void
-fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, bool use_new_stencil)
+fill_polyarea (hidGC gc, POLYAREA *pa, bool use_new_stencil)
 {
   HID_DRAW *hid_draw = gc->hid_draw;
   hidgl_priv *priv = hid_draw->priv;
@@ -970,7 +970,7 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, bool use_new_ste
 
   /* Drawing operations now set our reference bit in the stencil buffer */
 
-  r_search (pa->contour_tree, clip_box, NULL, do_hole, gc);
+  r_search (pa->contour_tree, hid_draw->clip_box, NULL, do_hole, gc);
   hidgl_flush_triangles (hid_draw);
 
   glPopAttrib ();                                   /* Restore the colour and stencil buffer write-mask etc.. */
@@ -998,7 +998,7 @@ fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, bool use_new_ste
 }
 
 void
-hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly)
 {
   bool use_new_stencil;
 
@@ -1008,14 +1008,14 @@ hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
   use_new_stencil = polygon_contains_user_holes (poly) ||
                     TEST_FLAG (FULLPOLYFLAG, poly);
 
-  fill_polyarea (gc, poly->Clipped, clip_box, use_new_stencil);
+  fill_polyarea (gc, poly->Clipped, use_new_stencil);
 
   if (TEST_FLAG (FULLPOLYFLAG, poly))
     {
       POLYAREA *pa;
 
       for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
-        fill_polyarea (gc, pa, clip_box, use_new_stencil);
+        fill_polyarea (gc, pa, use_new_stencil);
     }
 }
 
