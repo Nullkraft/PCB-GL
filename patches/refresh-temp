@@ -1,0 +1,141 @@
+Bottom: 18f901097f2e75da2b72884ba89c2e31405a2891
+Top:    4dbaeec2062bca0ed9d4adeddb4c522812f64cd7
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-13 01:53:07 +0000
+
+Refresh of attempt-to-split-out-clip_box
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 49eb1ef..fa9458b 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -84,7 +84,7 @@ static HID_DRAW *hid_draw = NULL;
+ static void DrawEverything (const BoxType *);
+ static void AddPart (void *);
+ /* static */ void DrawEMark (ElementType *, Coord, Coord, bool);
+-/* static */ void DrawRats (HID_DRAW *hid_draw, const BoxType *);
++/* static */ void DrawRats (HID_DRAW *hid_draw);
+ 
+ static void
+ set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
+@@ -284,7 +284,7 @@ element_callback (const BoxType * b, void *cl)
+  */
+ 
+ void
+-PrintAssembly (HID_DRAW *hid_draw, int side, const BoxType * drawn_area)
++PrintAssembly (HID_DRAW *hid_draw, int side)
+ {
+   int side_group = GetLayerGroupNumberBySide (side);
+ 
+@@ -342,7 +342,7 @@ DrawEverything (const BoxType *drawn_area)
+ 	{
+ 	  r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, element_callback, &side);
+ 	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], hid_draw->clip_box, NULL, name_callback, &side);
+-	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), NULL);
++	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), hid_draw->clip_box, NULL);
+ 	}
+       r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_callback, &side);
+       hid_draw_end_layer (hid_draw);
+@@ -416,7 +416,7 @@ DrawEverything (const BoxType *drawn_area)
+       /* Draw rat lines on top */
+       if (hid_draw_set_layer (hid_draw, "rats", SL (RATS, 0), 0))
+         {
+-          DrawRats (hid_draw, hid_draw->clip_box);
++          DrawRats (hid_draw);
+           hid_draw_end_layer (hid_draw);
+         }
+     }
+@@ -437,13 +437,13 @@ DrawEverything (const BoxType *drawn_area)
+ 
+   if (hid_draw_set_layer (hid_draw, "topassembly", SL (ASSY, TOP), 0))
+     {
+-      PrintAssembly (hid_draw, TOP_SIDE, hid_draw->clip_box);
++      PrintAssembly (hid_draw, TOP_SIDE);
+       hid_draw_end_layer (hid_draw);
+     }
+ 
+   if (hid_draw_set_layer (hid_draw, "bottomassembly", SL (ASSY, BOTTOM), 0))
+     {
+-      PrintAssembly (BOTTOM_SIDE, hid_draw->clip_box);
++      PrintAssembly (hid_draw, BOTTOM_SIDE);
+       hid_draw_end_layer (hid_draw);
+     }
+ 
+@@ -687,10 +687,8 @@ DrawPaste (HID_DRAW *hid_draw, int side)
+ }
+ 
+ /* static */ void
+-DrawRats (hidGC gc)
++DrawRats (HID_DRAW *hid_draw)
+ {
+-  HID_DRAW *hid_draw = gc->hid_draw;
+-
+   /*
+    * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
+    * XXX gtk only allows negative drawing.
+@@ -702,8 +700,6 @@ DrawRats (hidGC gc)
+   r_search (PCB->Data->rat_tree, hid_draw->clip_box, NULL, rat_callback, NULL);
+   if (hid_draw_can_draw_in_mask_clear (hid_draw))
+     hid_draw_use_mask (hid_draw, HID_MASK_OFF);
+-
+-  hid_draw = old_hid_draw;
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/draw.h b/src/draw.h
+index 56dfcec..5c70583 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -70,7 +70,7 @@ void DrawLayerGroup (HID_DRAW *hid_draw, int side);
+ void DrawPaste (HID_DRAW *hid_draw, int side);
+ void DrawSilk (HID_DRAW *hid_draw, int side);
+ void DrawMask (HID_DRAW *hid_draw, int side);
+-void PrintAssembly (HID_DRAW *hid_draw, int side, const BoxType *drawn_area);
++void PrintAssembly (HID_DRAW *hid_draw, int side);
+ 
+ /* TEMPORARY */
+ void ClearPad (PadType *, bool);
+@@ -80,7 +80,7 @@ void DrawPlainVia (PinType *, bool);
+ void DrawRegularText (LayerType *, TextType *);
+ void DrawEMark (ElementType *, Coord, Coord, bool);
+ void DrawHole (PinType *);
+-void DrawRats (HID_DRAW *hid_draw, const BoxType *);
++void DrawRats (HID_DRAW *hid_draw);
+ /* TEMPORARY */
+ 
+ #endif
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index b618704..4ed811d 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -288,7 +288,7 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
+       for (poly.Clipped = polygon->Clipped->f;
+            poly.Clipped != polygon->Clipped;
+            poly.Clipped = poly.Clipped->f)
+-        hid_draw__thin_pcb_polygon (gc, &poly, hid_draw->clip_box);
++        hid_draw__thin_pcb_polygon (gc, &poly, gc->hid_draw->clip_box);
+     }
+ }
+ 
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 6556812..91391c1 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1732,7 +1732,6 @@ fill_board_outline_holes (hidGC gc)
+ static void
+ GhidDrawMask (HID_DRAW *hid_draw, int side)
+ {
+-  render_priv *priv = gport->render_priv;
+ //  static bool first_run = true;
+ //  static GLuint texture;
+   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+@@ -2320,7 +2319,7 @@ ghid_draw_everything (void)
+ 
+   /* Draw rat lines on top */
+   if (PCB->RatOn && hid_draw_set_layer (hid_draw, "rats", SL (RATS, 0), 0)) {
+-    DrawRats (&ghid_graphics, hid_draw->clip_box);
++    DrawRats (&ghid_graphics);
+     hid_draw_end_layer (&ghid_graphics);
+   }
