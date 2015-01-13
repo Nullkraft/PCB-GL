@@ -882,7 +882,6 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly)
 void
 ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly)
 {
-  HID_DRAW *hid_draw = gc->hid_draw;
   gtkGC gtk_gc = (gtkGC)gc;
 
   double old_alpha_mult = gtk_gc->alpha_mult;
@@ -1933,7 +1932,6 @@ GhidDrawLayerGroup (hidGC gc, int group)
   bool is_outline;
   struct layer_info l_info;
   struct side_info s_info;
-  HID_DRAW *hid_draw = gc->hid_draw;
 
   l_info.gc = gc;
   s_info.gc = gc;
@@ -2186,7 +2184,6 @@ ghid_draw_everything (hidGC gc)
   int min_phys_group;
   int max_phys_group;
   struct side_info info;
-  HID_DRAW *hid_draw = gc->hid_draw;
 
   cyl_info.gc = gc;
   info.gc = gc;
@@ -2901,6 +2898,7 @@ GdkPixmap *
 ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
 {
   render_priv *priv = gport->render_priv;
+  HID_DRAW *hid_draw = priv->hid_draw;
   GdkGLConfig *glconfig;
   GdkPixmap *pixmap;
   GdkGLPixmap *glpixmap;
