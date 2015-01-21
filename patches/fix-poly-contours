@@ -1,5 +1,5 @@
 Bottom: 7cd1e1968b74de4f8e719d9092dc9e1ea4591171
-Top:    96a37121907858ec09fe63afd5b2ea0e78b90d02
+Top:    9dd8e77bfc87d93be60af4bb37aac1ec04d4abe0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-21 22:54:08 +0000
 
@@ -30,7 +30,7 @@ Layer(1 "component")
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 4b2cacc..b8c7013 100644
+index 4b2cacc..b51a34e 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -497,6 +497,37 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
@@ -71,6 +71,15 @@ index 4b2cacc..b8c7013 100644
  
  /* create a circle approximation from lines */
  POLYAREA *
+@@ -511,7 +542,7 @@ CirclePoly (Coord x, Coord y, Coord radius)
+   v[1] = y;
+   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
+     return NULL;
+-  frac_circle (contour, x, y, v, 1);
++  frac_circle2 (contour, x, y, v, 1);
+   contour->is_round = TRUE;
+   contour->cx = x;
+   contour->cy = y;
 @@ -689,28 +720,39 @@ LinePoly (LineType * L, Coord thick)
        l->Point2.X += dy;
        l->Point2.Y -= dx;
@@ -94,10 +103,11 @@ index 4b2cacc..b8c7013 100644
 +      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
 +    }
    else
-     frac_circle (contour, l->Point2.X, l->Point2.Y, v, 2);
+-    frac_circle (contour, l->Point2.X, l->Point2.Y, v, 2);
 -  v[0] = l->Point2.X + dx;
 -  v[1] = l->Point2.Y + dy;
 -  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++    frac_circle2 (contour, l->Point2.X, l->Point2.Y, v, 2);
 +
    v[0] = l->Point1.X + dx;
    v[1] = l->Point1.Y + dy;
@@ -111,7 +121,8 @@ index 4b2cacc..b8c7013 100644
 +      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
 +    }
    else
-     frac_circle (contour, l->Point1.X, l->Point1.Y, v, 2);
+-    frac_circle (contour, l->Point1.X, l->Point1.Y, v, 2);
++    frac_circle2 (contour, l->Point1.X, l->Point1.Y, v, 2);
 +
    /* now we have the line contour */
    if (!(np = ContourToPoly (contour)))
