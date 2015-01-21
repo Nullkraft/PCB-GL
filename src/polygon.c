@@ -542,7 +542,7 @@ CirclePoly (Coord x, Coord y, Coord radius)
   v[1] = y;
   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return NULL;
-  frac_circle (contour, x, y, v, 1);
+  frac_circle2 (contour, x, y, v, 1);
   contour->is_round = TRUE;
   contour->cx = x;
   contour->cy = y;
@@ -734,7 +734,7 @@ LinePoly (LineType * L, Coord thick)
       poly_InclVertex (contour->head.prev, poly_CreateNode (v));
     }
   else
-    frac_circle (contour, l->Point2.X, l->Point2.Y, v, 2);
+    frac_circle2 (contour, l->Point2.X, l->Point2.Y, v, 2);
 
   v[0] = l->Point1.X + dx;
   v[1] = l->Point1.Y + dy;
@@ -747,7 +747,7 @@ LinePoly (LineType * L, Coord thick)
       poly_InclVertex (contour->head.prev, poly_CreateNode (v));
     }
   else
-    frac_circle (contour, l->Point1.X, l->Point1.Y, v, 2);
+    frac_circle2 (contour, l->Point1.X, l->Point1.Y, v, 2);
 
   /* now we have the line contour */
   if (!(np = ContourToPoly (contour)))
