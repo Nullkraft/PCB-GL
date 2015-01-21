@@ -7,6 +7,7 @@ Fix poly contours (?)
 
 XXX: Thermals are not fixed up after frac_circle() changes
  V2: Leave all but LinePoly using the old frac_circle(), new frac_circle2() fixes LinePoly
+     (also use frac_circle2() in CirclePoly to avoid adding a repeat vertex)
 
 XXX: Fix may be coincidental due to minor geometry changes
 
