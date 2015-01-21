@@ -5,6 +5,27 @@ Date:   2015-01-21 22:54:08 +0000
 
 Fix poly contours (?)
 
+XXX: Thermals are not fixed up after frac_circle() changes
+XXX: Fix may be coincidental due to minor geometry changes
+
+Fixes bug observed with copper sliver on this layout fragment:
+
+Element["" "" "" "unknown" 1325.00mil 1070.00mil -175.00mil -105.00mil 0 100 ""]
+(
+  Pad[-85.00mil -39.00mil -79.00mil -39.00mil 34.00mil 30.00mil 40.00mil "2" "2" "square"]
+
+  )
+
+Layer(1 "component")
+(
+  Line[1245.00mil 1030.00mil 1195.00mil 1030.00mil 12.00mil 20.00mil "clearline"]
+  Polygon("clearpoly")
+  (
+    [5.00mil 5.00mil] [4195.00mil 5.00mil] [4195.00mil 2695.00mil] [5.00mil 2695.00mil]
+  )
+)
+
+
 
 ---
 
