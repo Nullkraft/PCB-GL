@@ -1703,9 +1703,8 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
   VNODE *cur;
   DIRECTION dir = UNINITIALISED;
 
-  cur = (&a->head)->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
-//  cur = (&a->head); //    ->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
-//  cur = (&a->head)        ;
+  cur = (&a->head)        ;
+//  cur = (&a->head)->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
   do
     {
 #if 0
