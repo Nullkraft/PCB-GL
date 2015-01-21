@@ -1,5 +1,5 @@
-Bottom: 745f215d2a50fe3e2dddc5fe0d568a87ff585777
-Top:    0c26657517dce8fc0522ed1dcbd0019653fff96f
+Bottom: ab5a8f7b4e74b574826e499e45813fbf0f7dc634
+Top:    8a95992b0794d3a26a3dc761780ef21e526dd998
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -130,7 +130,7 @@ index be95bd2..cb3e6c2 100644
  int poly_Boolean(const POLYAREA * a, const POLYAREA * b, POLYAREA ** res, int action);
  int poly_Boolean_free(POLYAREA * a, POLYAREA * b, POLYAREA ** res, int action);
 diff --git a/src/polygon.c b/src/polygon.c
-index 41ae7a7..b1b2010 100644
+index 5ca85ea..459193d 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -294,7 +294,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
@@ -142,7 +142,7 @@ index 41ae7a7..b1b2010 100644
        c->head.prev->cx = X;
        c->head.prev->cy = Y;
        c->head.prev->radius = radius;
-@@ -517,7 +517,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+@@ -516,7 +516,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
        c->head.prev->point[1] == v[1])
      {
        /* Re-use any existing vertex point we got lumbered with (if it matches the coordinate we want) */
@@ -151,7 +151,7 @@ index 41ae7a7..b1b2010 100644
        c->head.prev->cx = X;
        c->head.prev->cy = Y;
        c->head.prev->radius = radius;
-@@ -1251,6 +1251,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
+@@ -1298,6 +1298,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
        r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
        subtract_accumulated (&info, polygon);
      }
