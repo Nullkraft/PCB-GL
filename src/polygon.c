@@ -478,6 +478,38 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
   double e1, e2, t1;
   int i, range;
 
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  /* move vector to origin */
+  e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
+  e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
+
+  /* XXX */ /* NB: the caller adds the last vertex, hence the -1 */
+  range = POLY_CIRC_SEGS / fraction;
+  for (i = 0; i < range; i++)
+    {
+      /* rotate the vector */
+      t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
+      e2 = rotate_circle_seg[2] * e1 + rotate_circle_seg[3] * e2;
+      e1 = t1;
+      v[0] = X + ROUND (e1);
+      v[1] = Y + ROUND (e2);
+      poly_InclVertex (c->head.prev, poly_CreateNode (v));
+    }
+}
+
+/* add verticies in a fractional-circle starting from v
+ * centered at X, Y and going counter-clockwise
+ * does not include the first point
+ * last argument is 1 for a full circle
+ * 2 for a half circle
+ * or 4 for a quarter circle
+ */
+static void
+frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+{
+  double e1, e2, t1;
+  int i, range;
+
   /* move vector to origin */
   e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
   e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
