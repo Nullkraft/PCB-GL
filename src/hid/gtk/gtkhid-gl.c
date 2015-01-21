@@ -1646,7 +1646,7 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
   polygon.Flags = NoFlags ();
   SET_FLAG (FULLPOLYFLAG, &polygon);
 //  hid_draw_fill_pcb_polygon (gc, &polygon, drawn_area);
-  hid_draw_thindraw_pcb_polygon (gc, &polygon, drawn_area);
+  hid_draw_thin_pcb_polygon (gc, &polygon, drawn_area);
   poly_FreeContours (&polygon.NoHoles);
 }
 
