@@ -6,6 +6,8 @@ Date:   2015-01-21 22:54:08 +0000
 Fix poly contours (?)
 
 XXX: Thermals are not fixed up after frac_circle() changes
+ V2: Leave all but LinePoly using the old frac_circle(), new frac_circle2() fixes LinePoly
+
 XXX: Fix may be coincidental due to minor geometry changes
 
 Fixes bug observed with copper sliver on this layout fragment:
