@@ -1,5 +1,5 @@
 Bottom: 18f2088923dcedae2201dbd7f20b86718f96d47d
-Top:    84d06ae4a4863af87357b5141f286c3d10659379
+Top:    7cd1e1968b74de4f8e719d9092dc9e1ea4591171
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-21 23:20:58 +0000
 
@@ -9,7 +9,7 @@ polygon.c: For some reason, the range computation in frac_circle appears to be w
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index b6a2807..0ce7b4b 100644
+index b6a2807..4b2cacc 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -483,8 +483,8 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
@@ -18,7 +18,7 @@ index b6a2807..0ce7b4b 100644
  
 -  /* NB: the caller adds the last vertex, hence the -1 */
 -  range = POLY_CIRC_SEGS / fraction - 1;
-+  /* XXX: */ /* NB: the caller adds the last vertex, hence the -1 */
++  /* XXX */ /* NB: the caller adds the last vertex, hence the -1 */
 +  range = POLY_CIRC_SEGS / fraction;
    for (i = 0; i < range; i++)
      {
