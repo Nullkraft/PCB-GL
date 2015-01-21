@@ -1,5 +1,5 @@
 Bottom: 18f2088923dcedae2201dbd7f20b86718f96d47d
-Top:    817d1e90c9b9233b5955ed861405baf78b7ed41f
+Top:    0be364b3b12708c3744e5fc6d9474da399d6c326
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:15:59 +0000
 
@@ -78,7 +78,7 @@ index dfa9db4..978ab3d 100644
        last_x = this_x;
        last_y = this_y;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 34d3257..fdaeafb 100644
+index 34d3257..5db9b1d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -904,9 +904,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -99,7 +99,7 @@ index 34d3257..fdaeafb 100644
    SET_FLAG (FULLPOLYFLAG, &polygon);
 -  hid_draw_fill_pcb_polygon (gc, &polygon, drawn_area);
 +//  hid_draw_fill_pcb_polygon (gc, &polygon, drawn_area);
-+  hid_draw_thindraw_pcb_polygon (gc, &polygon, drawn_area);
++  hid_draw_thin_pcb_polygon (gc, &polygon, drawn_area);
    poly_FreeContours (&polygon.NoHoles);
  }
  
