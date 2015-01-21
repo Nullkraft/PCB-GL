@@ -1,5 +1,5 @@
-Bottom: 0f0464dbf576c5ad28b765e2d82fdf7506760594
-Top:    c1286b02c324db2353befab3ace7418c97cc5418
+Bottom: 1c85e19478acfc736822f859ebd77c77e8f53ace
+Top:    6d839693d76c2c1a68fe2f97101bf6a12be72366
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -9,7 +9,7 @@ Remove debug from outline generation
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 509b93b..cf526de 100644
+index 3a27bbb..c9ebbd6 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -105,7 +105,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -21,7 +21,7 @@ index 509b93b..cf526de 100644
  
  #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
  
-@@ -2163,18 +2163,19 @@ struct clip_outline_info {
+@@ -2210,18 +2210,19 @@ struct clip_outline_info {
  
  #define ROUTER_THICKNESS MIL_TO_COORD (10)
  //#define ROUTER_THICKNESS MIL_TO_COORD (0.1)
