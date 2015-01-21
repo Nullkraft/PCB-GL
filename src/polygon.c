@@ -483,7 +483,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
   e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
   e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
 
-  /* XXX: *//* NB: the caller adds the last vertex, hence the -1 */
+  /* XXX: */ /* NB: the caller adds the last vertex, hence the -1 */
   range = POLY_CIRC_SEGS / fraction;
   for (i = 0; i < range; i++)
     {
