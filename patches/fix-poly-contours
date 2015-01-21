@@ -1,5 +1,5 @@
 Bottom: 701304925a9dfbf3a63c61c7a8a59d5e2360d6b7
-Top:    701304925a9dfbf3a63c61c7a8a59d5e2360d6b7
+Top:    cab7408e88a060b4d7e6ee7e6f694eda7b0aa70f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-21 22:54:08 +0000
 
@@ -29,4 +29,83 @@ Layer(1 "component")
 
 ---
 
-
+diff --git a/src/polygon.c b/src/polygon.c
+index 764fe8b..35bc10f 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -478,12 +478,11 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+   double e1, e2, t1;
+   int i, range;
+ 
+-  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+   /* move vector to origin */
+   e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
+   e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
+ 
+-  /* XXX: *//* NB: the caller adds the last vertex, hence the -1 */
++  /* XXX */ /* NB: the caller adds the last vertex, hence the -1 */
+   range = POLY_CIRC_SEGS / fraction;
+   for (i = 0; i < range; i++)
+     {
+@@ -689,28 +688,39 @@ LinePoly (LineType * L, Coord thick)
+       l->Point2.X += dy;
+       l->Point2.Y -= dx;
+     }
+-  v[0] = l->Point1.X - dx;
+-  v[1] = l->Point1.Y - dy;
+-  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
+-    return 0;
++
++
+   v[0] = l->Point2.X - dx;
+   v[1] = l->Point2.Y - dy;
++  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
++    return 0;
++
+   if (TEST_FLAG (SQUAREFLAG,l))
+-    poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++    {
++      v[0] = l->Point2.X + dx;
++      v[1] = l->Point2.Y + dy;
++      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++    }
+   else
+     frac_circle (contour, l->Point2.X, l->Point2.Y, v, 2);
+-  v[0] = l->Point2.X + dx;
+-  v[1] = l->Point2.Y + dy;
+-  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++
+   v[0] = l->Point1.X + dx;
+   v[1] = l->Point1.Y + dy;
++  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++
+   if (TEST_FLAG (SQUAREFLAG,l))
+-    poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++    {
++      v[0] = l->Point1.X - dx;
++      v[1] = l->Point1.Y - dy;
++      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++    }
+   else
+     frac_circle (contour, l->Point1.X, l->Point1.Y, v, 2);
++
+   /* now we have the line contour */
+   if (!(np = ContourToPoly (contour)))
+     return NULL;
++
+   return np;
+ }
+ 
+diff --git a/src/polygon.h b/src/polygon.h
+index 369efea..0cba2bf 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -34,7 +34,7 @@
+ 
+ /* Implementation constants */
+ 
+-#define POLY_CIRC_SEGS 40
++#define POLY_CIRC_SEGS 8//40
+ #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
+ 
+ #if 0
