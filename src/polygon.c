@@ -516,7 +516,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
       e1 = t1;
       v[0] = X + ROUND (e1);
       v[1] = Y + ROUND (e2);
-      poly_InclVertex (c->head.prev, poly_CreateNode (v));
+      poly_InclVertex (c->head.prev, poly_CreateNodeArcApproximation (v, X, Y, radius));
     }
 }
 
@@ -532,6 +532,7 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
 {
   double e1, e2, t1;
   int i, range;
+  double radius = sqrt ((v[0] - X) * (v[0] - X) + (v[1] - Y) * (v[1] - Y));
 
   /* move vector to origin */
   e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
