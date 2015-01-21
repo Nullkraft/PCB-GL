@@ -1,5 +1,5 @@
-Bottom: 0c26657517dce8fc0522ed1dcbd0019653fff96f
-Top:    ee532c2c1ba3c260d6cb57453ee1c1bf1a4d2623
+Bottom: 8a95992b0794d3a26a3dc761780ef21e526dd998
+Top:    4726917d6d820d0654075ca026e4f501e9e6549c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -356,7 +356,7 @@ index cb3e6c2..1edbf31 100644
      CVCList *prev, *next, *head;
      char poly, side;
 diff --git a/src/polygon.c b/src/polygon.c
-index b1b2010..0122041 100644
+index 459193d..01f62db 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -112,7 +112,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -384,9 +384,9 @@ index b1b2010..0122041 100644
 -  double radius = sqrt ((v[0] - X) * (v[0] - X) + (v[1] - Y) * (v[1] - Y));
 +  double radius = hypot ((v[0] - X), (v[1] - Y));
  
- 
    /* XXX: Circle already has the first node added */
-@@ -517,7 +517,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+ //  if (fraction > 1)
+@@ -516,7 +516,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
        c->head.prev->point[1] == v[1])
      {
        /* Re-use any existing vertex point we got lumbered with (if it matches the coordinate we want) */
