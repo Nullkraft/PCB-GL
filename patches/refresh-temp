@@ -1,0 +1,40 @@
+Bottom: 96a37121907858ec09fe63afd5b2ea0e78b90d02
+Top:    9dd8e77bfc87d93be60af4bb37aac1ec04d4abe0
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-21 23:35:07 +0000
+
+Refresh of fix-poly-contours
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index b8c7013..b51a34e 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -542,7 +542,7 @@ CirclePoly (Coord x, Coord y, Coord radius)
+   v[1] = y;
+   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
+     return NULL;
+-  frac_circle (contour, x, y, v, 1);
++  frac_circle2 (contour, x, y, v, 1);
+   contour->is_round = TRUE;
+   contour->cx = x;
+   contour->cy = y;
+@@ -734,7 +734,7 @@ LinePoly (LineType * L, Coord thick)
+       poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+     }
+   else
+-    frac_circle (contour, l->Point2.X, l->Point2.Y, v, 2);
++    frac_circle2 (contour, l->Point2.X, l->Point2.Y, v, 2);
+ 
+   v[0] = l->Point1.X + dx;
+   v[1] = l->Point1.Y + dy;
+@@ -747,7 +747,7 @@ LinePoly (LineType * L, Coord thick)
+       poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+     }
+   else
+-    frac_circle (contour, l->Point1.X, l->Point1.Y, v, 2);
++    frac_circle2 (contour, l->Point1.X, l->Point1.Y, v, 2);
+ 
+   /* now we have the line contour */
+   if (!(np = ContourToPoly (contour)))
