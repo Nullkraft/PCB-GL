@@ -1,5 +1,5 @@
-Bottom: 14381da4dc0848e58c2f71ce9367af2a7accf716
-Top:    745f215d2a50fe3e2dddc5fe0d568a87ff585777
+Bottom: 0cf51a4116e1d76604a9d8937d7ff8b6a013e3e5
+Top:    ab5a8f7b4e74b574826e499e45813fbf0f7dc634
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -310,7 +310,7 @@ index 63d7ca4..a64a059 100644
    /* Check for extreme angles */
    if ((ang1 <= 0   && ang2 >= 0)   || (ang1 <= 360 && ang2 >= 360)) maxx = 1;
 diff --git a/src/polygon.c b/src/polygon.c
-index cf526de..41ae7a7 100644
+index c9ebbd6..5ca85ea 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -110,7 +110,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -323,10 +323,10 @@ index cf526de..41ae7a7 100644
  #define SUBTRACT_LINE_BATCH_SIZE 20 /*20*/
  
 diff --git a/src/polygon.h b/src/polygon.h
-index 2ed2b62..b95bf15 100644
+index 0643765..d47b1fc 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
-@@ -107,4 +107,6 @@ void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
+@@ -106,4 +106,6 @@ void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
                            void (*emit) (PLINE *, void *), void *user_data);
  void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
  POLYAREA *board_outline_poly (bool include_holes);
