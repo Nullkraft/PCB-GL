@@ -49,6 +49,7 @@
 #include "global.h"
 #include "rtree.h"
 #include "heap.h"
+#include "pcb-printf.h"
 
 #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
 
@@ -95,12 +96,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
   if (UNLIKELY (((ptr) = (type *)malloc(sizeof(type))) == NULL))	\
     error(err_no_memory);
 
-#undef DEBUG_LABEL
-#undef DEBUG_ALL_LABELS
-#undef DEBUG_JUMP
-#undef DEBUG_GATHER
+//#define DEBUG_LABEL
+//#define DEBUG_ALL_LABELS
+//#define DEBUG_JUMP
+//#define DEBUG_GATHER
 #undef DEBUG_ANGLE
-#undef DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
 #else
@@ -134,7 +135,8 @@ pline_dump (VNODE * v)
   do
     {
       n = v->next;
-      pcb_fprintf (stderr, "Line [%#mS %#mS %#mS %#mS 10 10 \"%s\"]\n",
+      //pcb_fprintf (stderr, "Line [%#mS %#mS %#mS %#mS 10 10 \"%s\"]\n",
+      pcb_fprintf (stderr, "Line [%#mm %#mm %#mm %#mm 10 10 \"%s\"]\n",
 	       v->point[0], v->point[1],
 	       n->point[0], n->point[1], theState (v));
     }
@@ -254,7 +256,7 @@ new_descriptor (VNODE * a, char poly, char side)
   l->angle = ang;
   assert (ang >= 0.0 && ang <= 4.0);
 #ifdef DEBUG_ANGLE
-  DEBUGP ("node on %c at %#mD assigned angle %g on side %c\n", poly,
+  DEBUGP ("node on %c at %mm, %mm assigned angle %g on side %c\n", poly,
 	  a->point[0], a->point[1], ang, side);
 #endif
   return l;
@@ -626,6 +628,7 @@ seg_in_seg (const BoxType * b, void *cl)
 		      i->v->point, i->v->next->point, s1, s2);
   if (!cnt)
     return 0;
+
   if (i->touch)			/* if checking touches one find and we're done */
     longjmp (*i->touch, TOUCHES);
   i->s->p->Flags.status = ISECTED;
@@ -637,7 +640,7 @@ seg_in_seg (const BoxType * b, void *cl)
       if (new_node != NULL)
 	{
 #ifdef DEBUG_INTERSECT
-	  DEBUGP ("new intersection on segment \"i\" at %#mD\n",
+	  DEBUGP ("new intersection on segment \"i\" at %mm, %mm\n",
 	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
 #endif
 	  i->node_insert_list =
@@ -649,7 +652,7 @@ seg_in_seg (const BoxType * b, void *cl)
       if (new_node != NULL)
 	{
 #ifdef DEBUG_INTERSECT
-	  DEBUGP ("new intersection on segment \"s\" at %#mD\n",
+	  DEBUGP ("new intersection on segment \"s\" at %mm, %mm\n",
 	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
 #endif
 	  i->node_insert_list =
@@ -1056,7 +1059,7 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("%#mD->%#mD labeled %s\n", c->point[0], c->point[1],
+      DEBUGP ("%#mm, %mm->%mm, %mm labeled %s\n", c->point[0], c->point[1],
 	      c->next->point[0], c->next->point[1], theState (c));
     }
   while ((c = c->next) != &a->head);
@@ -1563,12 +1566,15 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
 
   if (!(*cur)->cvc_prev)	/* not a cross-vertex */
     {
-      if (*cdir == FORW ? (*cur)->Flags.mark : (*cur)->prev->Flags.mark)
+      if (*cdir == FORW ? (*cur)->Flags.mark : (*cur)->prev->Flags.mark) //{
+//        printf ("Non-cross-vertex cur in jump.. marked, so returning false\n");
 	return FALSE;
+//      }
+//      printf ("Non-cross-vertex cur in jump.. not marked, so returning true\n");
       return TRUE;
     }
 #ifdef DEBUG_JUMP
-  DEBUGP ("jump entering node at %$mD\n", (*cur)->point[0], (*cur)->point[1]);
+  DEBUGP ("jump entering node at %mm, %mm\n", (*cur)->point[0], (*cur)->point[1]);
 #endif
   if (*cdir == FORW)
     d = (*cur)->cvc_prev->prev;
@@ -1578,8 +1584,14 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
   do
     {
       e = d->parent;
-      if (d->side == 'P')
+      if (d->side == 'P') {
+//        if (e->point[0] == e->prev->point[0] &&
+//            e->point[1] == e->prev->point[1]) {
+//          pcb_printf ("e->point == e->prev->point... is this a problem?\n");
+//          pcb_printf ("Point e is %mm, %mm\n", e->point[0], e->point[1]);
+//        }
 	e = e->prev;
+      }
       newone = *cdir;
       if (!e->Flags.mark && rule (d->poly, e, &newone))
 	{
@@ -1588,10 +1600,10 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
 	    {
 #ifdef DEBUG_JUMP
 	      if (newone == FORW)
-		DEBUGP ("jump leaving node at %#mD\n",
+		DEBUGP ("jump leaving node at %mm, %mm\n",
 			e->next->point[0], e->next->point[1]);
 	      else
-		DEBUGP ("jump leaving node at %#mD\n",
+		DEBUGP ("jump leaving node at %mm, %mm\n",
 			e->point[0], e->point[1]);
 #endif
 	      *cur = d->parent;
@@ -1632,7 +1644,7 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
 	  poly_InclVertex ((*result)->head.prev, newn);
 	}
 #ifdef DEBUG_GATHER
-      DEBUGP ("gather vertex at %#mD\n", cur->point[0], cur->point[1]);
+      DEBUGP ("gather vertex at %mm, %mm\n", cur->point[0], cur->point[1]);
 #endif
       /* Now mark the edge as included.  */
       newn = (dir == FORW ? cur : cur->prev);
@@ -1692,11 +1704,17 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
   cur = &a->head;
   do
     {
-      if (s_rule (cur, &dir) && cur->Flags.mark == 0)
+//      printf ("Testing 1\n");
+      if (s_rule (cur, &dir) && cur->Flags.mark == 0) //{
+//        printf ("Collect1 path 1\n");
 	Collect1 (e, cur, dir, contours, holes, j_rule);
+//      }
       other = cur;
-      if ((other->cvc_prev && jump (&other, &dir, j_rule)))
+//      printf ("Testing 2\n");
+      if ((other->cvc_prev)) { // && jump (&other, &dir, j_rule))) //{
+//        printf ("Collect1 path 2\n");
 	Collect1 (e, other, dir, contours, holes, j_rule);
+//      }
     }
   while ((cur = cur->next) != &a->head);
 }				/* Collect */
@@ -2336,6 +2354,12 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 	}
     }
 
+  /* XXXXXXXXXXXXXXXXXXXX */
+//  printf ("A-----------------\n");
+//  poly_dump (a);
+//  printf ("B-----------------\n");
+//  poly_dump (b);
+
   if ((code = setjmp (e)) == 0)
     {
 #ifdef DEBUG
@@ -2381,6 +2405,13 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       return code;
     }
   assert (!*res || poly_Valid (*res));
+
+  /* XXXXXXXXXXXXXXXXXXXX */
+  //printf ("O-----------------\n");
+  //printf ("%li %li\n", (*res)->contours->next->head.point[0], (*res)->contours->next->head.point[1]);
+//  printf ("O-----------------\n");
+//  poly_dump (*res);
+
   return code;
 }				/* poly_Boolean_free */
 
