@@ -1,0 +1,17 @@
+Bottom: 6291606da619cff024b4cc504f607b07afa39174
+Top:    6291606da619cff024b4cc504f607b07afa39174
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-01-24 19:24:56 +0000
+
+polygon1.c: Remove second Connect1() call from Collect()
+
+This was introduced in commit 29258d77731c3a34b3335f3b3657fb549d449c71
+to fix a bug where a single-point touching polygon would not always
+find a valid starting point.
+
+It isn't clear that this is true any more.
+
+
+---
+
+
