@@ -1,0 +1,22 @@
+Bottom: 8bda702f1024327afde76b658b2584ede7b5eb68
+Top:    81bef6e680e2bed681dddb31c5b33cbfdfea202c
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-02-02 04:57:38 +0000
+
+Refresh of adjust-step-export-to-0-2mm
+
+---
+
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index d1b0452..7d1844a 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -31,7 +31,7 @@
+ 
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented STEP function %s.\n", __FUNCTION__); abort()
+ 
+-#define HACK_BOARD_THICKNESS MM_TO_COORD(2.3)
++#define HACK_BOARD_THICKNESS MM_TO_COORD(0.2)
+ 
+ static int step_set_layer (const char *name, int group, int empty);
+ static void use_gc (hidGC gc);
