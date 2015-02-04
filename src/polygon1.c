@@ -140,7 +140,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 #ifdef DEBUG
 static char *theState (VNODE * v);
 
-static void
+/*static */void
 pline_dump (VNODE * v)
 {
   VNODE *s, *n;
@@ -149,14 +149,14 @@ pline_dump (VNODE * v)
   do
     {
       n = NEXT_VERTEX(v);
-      pcb_fprintf (stderr, "Line [%#mS %#mS %#mS %#mS 10 10 \"%s\"]\n",
+      pcb_fprintf (stderr, "Line [%mn %mn %mn %mn 10 10 \"%s\"]\n",
 	       v->point[0], v->point[1],
 	       n->point[0], n->point[1], theState (v));
     }
   while ((v = NEXT_VERTEX(v)) != s);
 }
 
-static void
+/*static */void
 poly_dump (POLYAREA * p)
 {
   POLYAREA *f = p;
