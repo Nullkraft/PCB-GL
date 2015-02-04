@@ -1686,7 +1686,7 @@ static void
 Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
 	 S_Rule s_rule, J_Rule j_rule)
 {
-  VNODE *cur, *other;
+  VNODE *cur;
   DIRECTION dir;
 
   cur = &a->head;
@@ -1694,9 +1694,6 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
     {
       if (s_rule (cur, &dir) && cur->Flags.mark == 0)
 	Collect1 (e, cur, dir, contours, holes, j_rule);
-      other = cur;
-      if ((other->cvc_prev && jump (&other, &dir, j_rule)))
-	Collect1 (e, other, dir, contours, holes, j_rule);
     }
   while ((cur = cur->next) != &a->head);
 }				/* Collect */
