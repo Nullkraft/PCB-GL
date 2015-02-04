@@ -1449,7 +1449,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 
 typedef enum
 {
-  FORW, BACKW
+  UNINITIALISED, FORW, BACKW
 } DIRECTION;
 
 /* Start Rule */
@@ -1498,14 +1498,16 @@ XorS_Rule (VNODE * cur, DIRECTION * initdir)
 static int
 IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
 {
-  assert (*cdir == FORW);
+//  assert (*cdir == FORW);
+  *cdir = FORW;
   return (v->Flags.status == INSIDE || v->Flags.status == SHARED);
 }
 
 static int
 UniteJ_Rule (char p, VNODE * v, DIRECTION * cdir)
 {
-  assert (*cdir == FORW);
+//  assert (*cdir == FORW);
+  *cdir = FORW;
   return (v->Flags.status == OUTSIDE || v->Flags.status == SHARED);
 }
 
@@ -1522,6 +1524,9 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
       *cdir = FORW;
       return TRUE;
     }
+  // XXX: FIXME: NO cdir set for this case, e.g. possible no initialisation
+  if (*cdir == UNINITIALISED)
+    printf ("UNINITIALISED directin in XorJ_Rule\n");
   return FALSE;
 }
 
@@ -1545,6 +1550,15 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
       else
 	*cdir = BACKW;
       return TRUE;
+    }
+  // XXX: FIXME: NO cdir set for this case, e.g. possible no initialisation
+  if (*cdir == UNINITIALISED)
+    {
+      printf ("UNINITIALISED directin in SubJ_Rule\n");
+      if (p == 'A')
+	*cdir = FORW;
+      else
+	*cdir = BACKW;
     }
   return FALSE;
 }
@@ -1684,27 +1698,32 @@ Collect1 (jmp_buf * e, VNODE * cur, DIRECTION dir, POLYAREA ** contours,
 }
 
 static void
-Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
+Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
 	 S_Rule s_rule, J_Rule j_rule)
 {
-  VNODE *cur, *other;
-  DIRECTION dir;
+  VNODE *cur;
+  DIRECTION dir = UNINITIALISED;
 
-  cur = &a->head;
+  cur = (&a->head); //    ->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
+  cur = (&a->head)        ->next->next->next->next->next;
   do
     {
-      if (s_rule (cur, &dir) && cur->Flags.mark == 0)
+      // The following may be a nice speedup, but not sure if it is correct.
+      // In particular, consider the case when we collect a 'B' polygon contour.
+      // Could some of that countour may already have been collected, and there
+      // still be a piece we are interested in after? (Can we reach it though??)
+//      if (cur->Flags.mark != 0)
+//        break;
+
+      if (j_rule (poly, cur, &dir) && cur->Flags.mark == 0)
 	Collect1 (e, cur, dir, contours, holes, j_rule);
-      other = cur;
-      if ((other->cvc_prev && jump (&other, &dir, j_rule)))
-	Collect1 (e, other, dir, contours, holes, j_rule);
     }
   while ((cur = cur->next) != &a->head);
 }				/* Collect */
 
 
 static int
-cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+cntr_Collect (char poly, jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 	      int action, POLYAREA * owner, POLYAREA * parent,
 	      PLINE * parent_contour)
 {
@@ -1715,16 +1734,16 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
       switch (action)
 	{
 	case PBO_UNITE:
-	  Collect (e, *A, contours, holes, UniteS_Rule, UniteJ_Rule);
+	  Collect (poly, e, *A, contours, holes, UniteS_Rule, UniteJ_Rule);
 	  break;
 	case PBO_ISECT:
-	  Collect (e, *A, contours, holes, IsectS_Rule, IsectJ_Rule);
+	  Collect (poly, e, *A, contours, holes, IsectS_Rule, IsectJ_Rule);
 	  break;
 	case PBO_XOR:
-	  Collect (e, *A, contours, holes, XorS_Rule, XorJ_Rule);
+	  Collect (poly, e, *A, contours, holes, XorS_Rule, XorJ_Rule);
 	  break;
 	case PBO_SUB:
-	  Collect (e, *A, contours, holes, SubS_Rule, SubJ_Rule);
+	  Collect (poly, e, *A, contours, holes, SubS_Rule, SubJ_Rule);
 	  break;
 	};
     }
@@ -1787,7 +1806,25 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 	{
 	  next = &((*cur)->next);
 	  if ((*cur)->Flags.status == ISECTED)
-	    continue;
+            {
+	      /* Check for missed intersect contours here. These can come from
+	       * cases where contours of A and B touch at a single-vertex, so
+	       * are labeled ISECTED for processing, yet our JUMP rules for a
+	       * particular operation does not deem to jump between A & B
+	       * contours at the shared vertex.
+	       *
+	       * NB: There Could be grief if the JUMP rule is inconsistent in
+	       *     its interpretation from each side of the vertex.
+	       */
+	      /* if we disappear a contour, don't advance twice */
+	      printf ("Hello 1, cur=%p, contour=%p, holes=%p\n", cur, contours, holes);
+	      if (cntr_Collect ('B', e, cur, contours, holes, action, NULL, NULL, NULL))
+                {
+                  printf ("Hello 2\n");
+	          next = cur;
+                }
+	      continue;
+	    }
 
 	  if ((*cur)->Flags.status == INSIDE)
 	    switch (action)
@@ -2202,10 +2239,72 @@ M_POLYAREA_Collect_separated (jmp_buf * e, PLINE * afst, POLYAREA ** contours,
     {
       next = &((*cur)->next);
       /* if we disappear a contour, don't advance twice */
-      if (cntr_Collect (e, cur, contours, holes, action, NULL, NULL, NULL))
+      if (cntr_Collect ('A', e, cur, contours, holes, action, NULL, NULL, NULL))
 	next = cur;
     }
 }
+
+#if 0
+/* Call cntr_Collect on any intersected contours found on the B-polygon.
+ * This is required in order to catch contours that intersect at a single
+ * point, which will be flagged as ISECTED, but may not necessarily traverse
+ * into a single output contour according to the jump rules.
+ *
+ * This is distinct from M_POLYAREA_Collect_separated which takes a linked
+ * list of separated PLINE contours separated from the 'A' polygon. The 'B'
+ * polygon still owns the intersected 'B' contours, so we don't re-link them
+ * like this.
+ *
+ * This is distinct from M_POLYAREA_Colllect, because ..... (WHY???).
+ */
+static void
+M_POLYAREA_Collect_from_b (jmp_buf *e, POLYAREA * bfst, POLYAREA ** contours,
+                           PLINE ** holes, int action, BOOLp maybe)
+{
+  POLYAREA *b = bfst;
+  POLYAREA *parent = NULL;	/* Quiet compiler warning */
+  PLINE **cur, **next, *parent_contour;
+
+  assert (b != NULL);
+  while ((b = b->f) != bfst); /* XXX: NOP LOOPS THE LIST, LEAVING b = bfst ?? */
+
+  /* now the non-intersect parts are collected in temp/holes */
+  do
+    {
+      if (maybe && b->contours->Flags.status != ISECTED)
+	parent_contour = b->contours;
+      else
+	parent_contour = NULL;
+
+      /* Take care of the first contour - so we know if we
+       * can shortcut reparenting some of its children
+       */
+      cur = &b->contours;
+      if (*cur != NULL)
+	{
+	  next = &((*cur)->next);
+	  /* if we disappear a contour, don't advance twice */
+	  if (cntr_Collect ('B', e, cur, contours, holes, action, b, NULL, NULL))
+	    {
+	      parent = (*contours)->b;	/* InsCntr inserts behind the head */
+	      next = cur;
+	    }
+	  else
+	    parent = b;
+	  cur = next;
+	}
+      for (; *cur != NULL; cur = next)
+	{
+	  next = &((*cur)->next)
+	  /* if we disappear a contour, don't advance twice */
+	  if (cntr_Collect ('B', e, cur, contours, holes, action, b, parent,
+			    parent_contour))
+	    next = cur;
+	}
+    }
+  while ((a = a->f) != afst);
+}
+#endif
 
 static void
 M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
@@ -2233,7 +2332,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
 	{
 	  next = &((*cur)->next);
 	  /* if we disappear a contour, don't advance twice */
-	  if (cntr_Collect (e, cur, contours, holes, action, a, NULL, NULL))
+	  if (cntr_Collect ('A', e, cur, contours, holes, action, a, NULL, NULL))
 	    {
 	      parent = (*contours)->b;	/* InsCntr inserts behind the head */
 	      next = cur;
@@ -2246,7 +2345,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
 	{
 	  next = &((*cur)->next);
 	  /* if we disappear a contour, don't advance twice */
-	  if (cntr_Collect (e, cur, contours, holes, action, a, parent,
+	  if (cntr_Collect ('A', e, cur, contours, holes, action, a, parent,
 			    parent_contour))
 	    next = cur;
 	}
@@ -2357,6 +2456,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       M_POLYAREA_label_separated (a_isected, b, FALSE);
       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action,
 				    FALSE);
+//      M_POLYAREA_Collect_from_b (&e, b, res, &holes, action, FALSE);
       M_B_AREA_Collect (&e, b, res, &holes, action);
       poly_Free (&b);
 
