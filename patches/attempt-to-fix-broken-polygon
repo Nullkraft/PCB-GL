@@ -1,5 +1,5 @@
-Bottom: 3ddfe3dd2550784e2266df80fe2d2d8f20b47ff9
-Top:    cfd31cfaa33886dd98374718b0a7466a761bbb39
+Bottom: ab87e03e1544284a94f1ba3b50c12c86d1091e84
+Top:    6c1654c6d449679da30718304c845f1638b6415f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-04 11:59:31 +0000
 
@@ -31,19 +31,10 @@ index 3737f35..2b8a029 100644
  /* polygon diverges from modelled arc no more than MAX_ARC_DEVIATION * thick */
  #define POLY_ARC_MAX_DEVIATION 0.02
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 352f8f6..7cf6a7c 100644
+index b97e527..8d927cb 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -100,7 +100,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
- #undef DEBUG_JUMP
- #undef DEBUG_GATHER
- #undef DEBUG_ANGLE
--#undef DEBUG
-+#define DEBUG
- #ifdef DEBUG
- #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
- #else
-@@ -1448,7 +1448,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1449,7 +1449,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  
  typedef enum
  {
@@ -52,7 +43,7 @@ index 352f8f6..7cf6a7c 100644
  } DIRECTION;
  
  /* Start Rule */
-@@ -1497,14 +1497,16 @@ XorS_Rule (VNODE * cur, DIRECTION * initdir)
+@@ -1498,14 +1498,16 @@ XorS_Rule (VNODE * cur, DIRECTION * initdir)
  static int
  IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  {
@@ -71,7 +62,7 @@ index 352f8f6..7cf6a7c 100644
    return (v->Flags.status == OUTSIDE || v->Flags.status == SHARED);
  }
  
-@@ -1521,6 +1523,9 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1522,6 +1524,9 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
        *cdir = FORW;
        return TRUE;
      }
@@ -81,7 +72,7 @@ index 352f8f6..7cf6a7c 100644
    return FALSE;
  }
  
-@@ -1545,6 +1550,15 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1546,6 +1551,15 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  	*cdir = BACKW;
        return TRUE;
      }
@@ -97,7 +88,7 @@ index 352f8f6..7cf6a7c 100644
    return FALSE;
  }
  
-@@ -1683,27 +1697,32 @@ Collect1 (jmp_buf * e, VNODE * cur, DIRECTION dir, POLYAREA ** contours,
+@@ -1684,27 +1698,32 @@ Collect1 (jmp_buf * e, VNODE * cur, DIRECTION dir, POLYAREA ** contours,
  }
  
  static void
@@ -139,7 +130,7 @@ index 352f8f6..7cf6a7c 100644
  	      int action, POLYAREA * owner, POLYAREA * parent,
  	      PLINE * parent_contour)
  {
-@@ -1714,16 +1733,16 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1715,16 +1734,16 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
        switch (action)
  	{
  	case PBO_UNITE:
@@ -160,7 +151,7 @@ index 352f8f6..7cf6a7c 100644
  	  break;
  	};
      }
-@@ -1786,7 +1805,25 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1787,7 +1806,25 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  	{
  	  next = &((*cur)->next);
  	  if ((*cur)->Flags.status == ISECTED)
@@ -187,7 +178,7 @@ index 352f8f6..7cf6a7c 100644
  
  	  if ((*cur)->Flags.status == INSIDE)
  	    switch (action)
-@@ -2201,11 +2238,73 @@ M_POLYAREA_Collect_separated (jmp_buf * e, PLINE * afst, POLYAREA ** contours,
+@@ -2202,11 +2239,73 @@ M_POLYAREA_Collect_separated (jmp_buf * e, PLINE * afst, POLYAREA ** contours,
      {
        next = &((*cur)->next);
        /* if we disappear a contour, don't advance twice */
@@ -262,7 +253,7 @@ index 352f8f6..7cf6a7c 100644
  static void
  M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
  		    PLINE ** holes, int action, BOOLp maybe)
-@@ -2232,7 +2331,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -2233,7 +2332,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
  	{
  	  next = &((*cur)->next);
  	  /* if we disappear a contour, don't advance twice */
@@ -271,7 +262,7 @@ index 352f8f6..7cf6a7c 100644
  	    {
  	      parent = (*contours)->b;	/* InsCntr inserts behind the head */
  	      next = cur;
-@@ -2245,7 +2344,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -2246,7 +2345,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
  	{
  	  next = &((*cur)->next);
  	  /* if we disappear a contour, don't advance twice */
@@ -280,7 +271,7 @@ index 352f8f6..7cf6a7c 100644
  			    parent_contour))
  	    next = cur;
  	}
-@@ -2356,6 +2455,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2357,6 +2456,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        M_POLYAREA_label_separated (a_isected, b, FALSE);
        M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action,
  				    FALSE);
