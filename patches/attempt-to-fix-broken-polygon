@@ -1,4 +1,4 @@
-Bottom: ab87e03e1544284a94f1ba3b50c12c86d1091e84
+Bottom: 02921cdcf06e1a583705227bd2f87e243ce14304
 Top:    6c1654c6d449679da30718304c845f1638b6415f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-04 11:59:31 +0000
@@ -8,28 +8,6 @@ Attempt to fix broken polygon contour generation
 
 ---
 
-diff --git a/src/polygon.h b/src/polygon.h
-index 3737f35..2b8a029 100644
---- a/src/polygon.h
-+++ b/src/polygon.h
-@@ -34,14 +34,14 @@
- 
- /* Implementation constants */
- 
--#define POLY_CIRC_SEGS 40
-+#define POLY_CIRC_SEGS 8
- #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
- 
- /* adjustment to make the segments outline the circle rather than connect
-  * points on the circle: 1 - cos (\alpha / 2) < (\alpha / 2) ^ 2 / 2
-  */
--#define POLY_CIRC_RADIUS_ADJ (1.0 + M_PI / POLY_CIRC_SEGS_F * \
--                                    M_PI / POLY_CIRC_SEGS_F / 2.0)
-+#define POLY_CIRC_RADIUS_ADJ 1.0 //(1.0 + M_PI / POLY_CIRC_SEGS_F * \
-+                                 //   M_PI / POLY_CIRC_SEGS_F / 2.0)
- 
- /* polygon diverges from modelled arc no more than MAX_ARC_DEVIATION * thick */
- #define POLY_ARC_MAX_DEVIATION 0.02
 diff --git a/src/polygon1.c b/src/polygon1.c
 index b97e527..8d927cb 100644
 --- a/src/polygon1.c
