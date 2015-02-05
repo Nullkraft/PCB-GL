@@ -273,7 +273,7 @@ ContourToPoly (PLINE * contour)
   return p;
 }
 
-static POLYAREA *
+POLYAREA *
 original_poly (PolygonType * p)
 {
   PLINE *contour = NULL;

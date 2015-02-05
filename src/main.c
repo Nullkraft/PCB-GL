@@ -1869,6 +1869,35 @@ char *program_directory = 0;
 
 #include "dolists.h"
 
+static POLYAREA *
+LayerPolygonsToPoly (LayerType *layer)
+{
+  GList *iter;
+  POLYAREA *piece;
+  POLYAREA *ret = NULL;
+
+  for (iter = layer->Polygon;
+       iter != NULL;
+       iter = g_list_next (iter))
+    {
+      piece = PolygonToPoly (iter->data);
+
+      if (ret == NULL)
+        {
+          ret = piece;
+        }
+      else
+        {
+          piece->f = ret;
+          piece->b = ret->b;
+          ret->b->f = piece;
+          ret->b = piece;
+        }
+    }
+
+  return ret;
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -2009,6 +2038,27 @@ main (int argc, char *argv[])
        */
       if (LoadPCB (command_line_pcb))
 	PCB->Filename = strdup (command_line_pcb);
+
+      /* Polygon debug hack - perform an operation if there is a polygon on the first two layers */
+      if (max_copper_layer >= 3 &&
+          LAYER_PTR(0)->PolygonN >= 1 &&
+          LAYER_PTR(1)->PolygonN >= 1 &&
+          LAYER_PTR(2)->PolygonN == 0)
+        {
+          POLYAREA *a, *b, *res;
+          int operation = PBO_UNITE;
+
+          if (strcmp (LAYER_PTR(1)->Name, "sub") == 0)
+            operation = PBO_SUB;
+
+          a = LayerPolygonsToPoly (LAYER_PTR(0));
+          b = LayerPolygonsToPoly (LAYER_PTR(1));
+
+          poly_Boolean_free (a, b, &res, operation);
+
+          if (res != NULL)
+            PolyToPolygonsOnLayer (PCB->Data, LAYER_PTR(2), res, NoFlags());
+        }
     }
 
   if (Settings.InitialLayerStack
