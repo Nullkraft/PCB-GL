@@ -1,5 +1,5 @@
 Bottom: 4f263fa11718000f31e91bb83b53cd3194330d1d
-Top:    4f263fa11718000f31e91bb83b53cd3194330d1d
+Top:    2293690dbc845c43714dc8449bd13c8bf118e3e9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-05 20:22:13 +0000
 
@@ -8,4 +8,50 @@ Polygon debug operations
 
 ---
 
-
+diff --git a/src/main.c b/src/main.c
+index 072822a..2e7c365 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -2010,7 +2010,28 @@ main (int argc, char *argv[])
+        * file might not exist
+        */
+       if (LoadPCB (command_line_pcb))
+-	PCB->Filename = strdup (command_line_pcb);
++        {
++          PCB->Filename = strdup (command_line_pcb);
++
++          /* Polygon debug hack - perform an operation if there is a polygon on the first two layers */
++          if (max_copper_layer >= 3 &&
++              LAYER_PTR(0)->PolygonN == 1 &&
++              LAYER_PTR(1)->PolygonN == 1 &&
++              LAYER_PTR(2)->PolygonN == 0)
++            {
++              POLYAREA *a, *b, *res;
++              int operation;
++
++              a = PolygonToPoly ((PolygonType *)LAYER_PTR(0)->Polygon->data);
++              b = PolygonToPoly ((PolygonType *)LAYER_PTR(1)->Polygon->data);
++              operation = PBO_UNITE;
++
++              poly_Boolean_free (a, b, &res, operation);
++
++              if (res != NULL)
++                PolyToPolygonsOnLayer (PCB->Data, LAYER_PTR(2), res, NoFlags());
++            }
++        }
+     }
+ 
+   if (Settings.InitialLayerStack
+diff --git a/src/polygon.c b/src/polygon.c
+index 72fb992..8da5947 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -273,7 +273,7 @@ ContourToPoly (PLINE * contour)
+   return p;
+ }
+ 
+-static POLYAREA *
++POLYAREA *
+ original_poly (PolygonType * p)
+ {
+   PLINE *contour = NULL;
