@@ -2010,7 +2010,28 @@ main (int argc, char *argv[])
        * file might not exist
        */
       if (LoadPCB (command_line_pcb))
-	PCB->Filename = strdup (command_line_pcb);
+        {
+          PCB->Filename = strdup (command_line_pcb);
+
+          /* Polygon debug hack - perform an operation if there is a polygon on the first two layers */
+          if (max_copper_layer >= 3 &&
+              LAYER_PTR(0)->PolygonN == 1 &&
+              LAYER_PTR(1)->PolygonN == 1 &&
+              LAYER_PTR(2)->PolygonN == 0)
+            {
+              POLYAREA *a, *b, *res;
+              int operation;
+
+              a = PolygonToPoly ((PolygonType *)LAYER_PTR(0)->Polygon->data);
+              b = PolygonToPoly ((PolygonType *)LAYER_PTR(1)->Polygon->data);
+              operation = PBO_UNITE;
+
+              poly_Boolean_free (a, b, &res, operation);
+
+              if (res != NULL)
+                PolyToPolygonsOnLayer (PCB->Data, LAYER_PTR(2), res, NoFlags());
+            }
+        }
     }
 
   if (Settings.InitialLayerStack
