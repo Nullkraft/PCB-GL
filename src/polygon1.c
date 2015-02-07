@@ -45,6 +45,7 @@
 #include	<setjmp.h>
 #include	<math.h>
 #include	<string.h>
+#include	<fenv.h>
 
 #include "global.h"
 #include "rtree.h"
@@ -95,12 +96,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
   if (UNLIKELY (((ptr) = (type *)malloc(sizeof(type))) == NULL))	\
     error(err_no_memory);
 
-#undef DEBUG_LABEL
-#undef DEBUG_ALL_LABELS
-#undef DEBUG_JUMP
-#undef DEBUG_GATHER
-#undef DEBUG_ANGLE
-#undef DEBUG
+#define DEBUG_LABEL
+#define DEBUG_ALL_LABELS
+#define DEBUG_JUMP
+#define DEBUG_GATHER
+#define DEBUG_ANGLE
+#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
 #else
@@ -207,6 +208,7 @@ new_descriptor (VNODE * a, char poly, char side)
   CVCList *l = (CVCList *) malloc (sizeof (CVCList));
   Vector v;
   register double ang, dx, dy;
+  int fpeRaised;
 
   if (!l)
     return NULL;
@@ -241,20 +243,36 @@ new_descriptor (VNODE * a, char poly, char side)
 	}
     }
   assert (!vect_equal (v, vect_zero));
+
+  printf ("Finding angle for vector x=%li, y=%li\n", v[0], v[1]);
+
+  feclearexcept(FE_ALL_EXCEPT);
   dx = fabs ((double) v[0]);
   dy = fabs ((double) v[1]);
   ang = dy / (dy + dx);
+  fpeRaised = fetestexcept(FE_ALL_EXCEPT);
+  printf ("FPERaised = %d, 1st quadrant angle = %.18f\n", fpeRaised, ang);
   /* now move to the actual quadrant */
-  if (v[0] < 0 && v[1] >= 0)
+  if (v[0] < 0 && v[1] >= 0) {
     ang = 2.0 - ang;		/* 2nd quadrant */
-  else if (v[0] < 0 && v[1] < 0)
+    printf ("Angle in 2nd quadrant = %.18f\n", ang);
+  } else if (v[0] < 0 && v[1] < 0) {
     ang += 2.0;			/* 3rd quadrant */
-  else if (v[0] >= 0 && v[1] < 0)
+    printf ("Angle in 3rd quadrant = %.18f\n", ang);
+  } else if (v[0] >= 0 && v[1] < 0) {
     ang = 4.0 - ang;		/* 4th quadrant */
+    printf ("Angle in 4th quadrant = %.18f\n", ang);
+  }
   l->angle = ang;
   assert (ang >= 0.0 && ang <= 4.0);
+
+  // NB: Angle 0.0 is along the +ve X-axis. Angle 1.0 is along the +ve Y-axis.
+  //     This follows the usual convention, however as PCB has +ve Y-axis
+  //     downwards, increasing numerical angle corresponds to clockwise rotation
+  //     of vectors on screen.
+
 #ifdef DEBUG_ANGLE
-  DEBUGP ("node on %c at %#mD assigned angle %g on side %c\n", poly,
+  DEBUGP ("node on %c at (%mn, %mn) assigned angle %.18f on side %c\n", poly,
 	  a->point[0], a->point[1], ang, side);
 #endif
   return l;
@@ -320,9 +338,29 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
 	  small = l->next;
 	  big = l;
 	}
-      else if (newone->angle >= l->angle && newone->angle <= l->next->angle)
+      else if (l->angle < newone->angle && newone->angle < l->next->angle)
 	{
 	  /* insert new cvc if it lies between existing points */
+	  newone->prev = l;
+	  newone->next = l->next;
+	  l->next = l->next->prev = newone;
+	  return newone;
+	}
+#if 1
+      else if (l->angle == newone->angle)
+#else
+      else if (l->next->angle == newone->angle)
+#endif
+	{
+          /* XXX: Nasty bugs can occur if we don't order these correctly, but I'm unsure
+                  exactly how we can determine the correct order. In the case I've seen,
+                  both identical angles were from snap-rounded geometry, and both belonged
+                  to different contours of the 'A' polygon. In that case, the test above
+                  l->next->angle == .. works, but l->angle == .. does not. The change swaps
+                  the order the "identical" edges are listed in the CVC list.
+           */
+	  /* insert new cvc if it is at the same angle as an existing point */
+          DEBUGP ("ANGLE FOUND IDENTICAL TO PREVIOUS. Angle = %.19f\n", l->angle);
 	  newone->prev = l;
 	  newone->next = l->next;
 	  l->next = l->next->prev = newone;
@@ -371,6 +409,21 @@ node_add_single_point (VNODE * a, Vector p)
   return new_node;
 }				/* node_add_point */
 
+
+static void
+print_cvc_list (CVCList *list)
+{
+  CVCList *iter;
+
+  iter = list;
+  do
+    {
+      DEBUGP ("Printing cvc_list entry: %p, poly is %c, side is %c, parent is %p, angle is %.18f\n",
+              iter, iter->poly, iter->side, iter->parent, iter->angle);
+    }
+  while ((iter = iter->next) != list);
+}
+
 /*
 node_label
  (C) 2006 harry eaton
@@ -391,11 +444,16 @@ node_label (VNODE * pn)
    * and check if this edge (pn -> pn->next) is found between the other poly's entry and exit
    */
 
+  DEBUGP ("Labelling VNODE at (%mn, %mn)\n", pn->point[0], pn->point[1]);
+  print_cvc_list (pn->cvc_next);
+
   if (pn->cvc_next->angle == pn->cvc_next->prev->angle)
     l = pn->cvc_next->prev;
   else
     l = pn->cvc_next;
 
+
+  DEBUGP ("Starting spin for next edge from other polygon\n");
   first_l = l;
   while ((l->poly == this_poly) && (l != first_l->prev))
     {
@@ -407,11 +465,18 @@ node_label (VNODE * pn)
       if (l->poly == l->next->poly &&
           l->side != l->next->side && /* <-- PCJC: Not sure if this is required, including for sanity */
           l->angle == l->next->angle)
+      {
+        DEBUGP ("Eating paired edge from %c poly\n", l->poly);
         l = l->next->next;
+      }
     }
   assert (l->poly != this_poly);
+  DEBUGP ("Completed spin for next edge from other polygon\n");
 
   assert (l && l->angle >= 0 && l->angle <= 4.0);
+  DEBUGP ("l->poly: %c, l->side: %c\n", l->poly, l->side);
+  print_cvc_list (l);
+
   if (l->poly != this_poly)
     {
       if (l->side == 'P')
@@ -419,11 +484,15 @@ node_label (VNODE * pn)
 	  if (l->parent->prev->point[0] == pn->next->point[0] &&
 	      l->parent->prev->point[1] == pn->next->point[1])
 	    {
+              DEBUGP ("SHARED2\n");
 	      region = SHARED2;
 	      pn->shared = l->parent->prev;
 	    }
 	  else
+          {
+            DEBUGP ("INSIDE\n");
 	    region = INSIDE;
+          }
 	}
       else
 	{
@@ -431,27 +500,58 @@ node_label (VNODE * pn)
 	    {
 	      assert (l->parent->next->point[0] == pn->next->point[0] &&
 		      l->parent->next->point[1] == pn->next->point[1]);
+	      DEBUGP ("SHARED\n");
 	      region = SHARED;
 	      pn->shared = l->parent;
 	    }
 	  else
+          {
+	    DEBUGP ("OUTSIDE\n");
 	    region = OUTSIDE;
+          }
 	}
     }
+  else
+    DEBUGP ("Fubar - assert fail?\n");
   if (region == UNKNWN)
     {
+      DEBUGP ("UNKNWN\n");
       for (l = l->next; l != pn->cvc_next; l = l->next)
 	{
 	  if (l->poly != this_poly)
 	    {
 	      if (l->side == 'P')
+	      {
+		DEBUGP ("2: INSIDE\n");
 		region = INSIDE;
+	      }
 	      else
+	      {
+		DEBUGP ("2: OUTSIDE\n");
 		region = OUTSIDE;
+              }
 	      break;
 	    }
 	}
     }
+
+#if 0
+  // KLUDGE TO TEST THEORY
+  if (pn->point[0] == 139000000L &&
+      pn->point[1] ==  12000000L &&
+      l->poly == 'A' && l->side == 'N' &&
+      l->parent->next->point[0] == 140000000L &&
+      l->parent->next->point[1] ==  12000000L)
+    {
+      DEBUGP ("l->poly %c, l->side %c\n", l->poly, l->side);
+      DEBUGP ("l->parent->point: (%mn, %mn)\n", l->parent->point[0], l->parent->point[1]);
+      DEBUGP ("l->parent->prev->point: (%mn, %mn)\n", l->parent->prev->point[0], l->parent->prev->point[1]);
+      DEBUGP ("l->parent->next->point: (%mn, %mn)\n", l->parent->next->point[0], l->parent->next->point[1]);
+      DEBUGP ("Forcing region = INSIDE for node at (%mn, %mn)\n", pn->point[0], pn->point[1]);
+      region = INSIDE;
+    }
+#endif
+
   assert (region != UNKNWN);
   assert (NODE_LABEL (pn) == UNKNWN || NODE_LABEL (pn) == region);
   LABEL_NODE (pn, region);
@@ -648,7 +748,7 @@ seg_in_seg (const BoxType * b, void *cl)
       if (new_node != NULL)
 	{
 #ifdef DEBUG_INTERSECT
-	  DEBUGP ("new intersection on segment \"i\" at %#mD\n",
+	  DEBUGP ("new intersection on segment \"i\" at (%mn, %mn)\n",
 	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
 #endif
 	  i->node_insert_list =
@@ -660,7 +760,7 @@ seg_in_seg (const BoxType * b, void *cl)
       if (new_node != NULL)
 	{
 #ifdef DEBUG_INTERSECT
-	  DEBUGP ("new intersection on segment \"s\" at %#mD\n",
+	  DEBUGP ("new intersection on segment \"s\" at (%mn, %mn)\n",
 	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
 #endif
 	  i->node_insert_list =
@@ -1067,7 +1167,7 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("%#mD->%#mD labeled %s\n", c->point[0], c->point[1],
+      DEBUGP ("(%mn, %mn)->(%mn, %mn) labeled %s\n", c->point[0], c->point[1],
 	      c->next->point[0], c->next->point[1], theState (c));
     }
   while ((c = c->next) != &a->head);
@@ -1593,7 +1693,7 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
       return TRUE;
     }
 #ifdef DEBUG_JUMP
-  DEBUGP ("jump entering node at %$mD\n", (*cur)->point[0], (*cur)->point[1]);
+  DEBUGP ("jump entering node at (%mn, %mn)\n", (*cur)->point[0], (*cur)->point[1]);
 #endif
   if (*cdir == FORW)
     d = (*cur)->cvc_prev->prev;
@@ -1613,10 +1713,10 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
 	    {
 #ifdef DEBUG_JUMP
 	      if (newone == FORW)
-		DEBUGP ("jump leaving node at %#mD\n",
+		DEBUGP ("jump leaving node at (%mn, %mn)\n",
 			e->next->point[0], e->next->point[1]);
 	      else
-		DEBUGP ("jump leaving node at %#mD\n",
+		DEBUGP ("jump leaving node at (%mn, %mn)\n",
 			e->point[0], e->point[1]);
 #endif
 	      *cur = d->parent;
@@ -1657,7 +1757,7 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
 	  poly_InclVertex ((*result)->head.prev, newn);
 	}
 #ifdef DEBUG_GATHER
-      DEBUGP ("gather vertex at %#mD\n", cur->point[0], cur->point[1]);
+      DEBUGP ("gather vertex at (%mn, %mn)\n", cur->point[0], cur->point[1]);
 #endif
       /* Now mark the edge as included.  */
       newn = (dir == FORW ? cur : cur->prev);
