@@ -45,6 +45,7 @@
 #include	<setjmp.h>
 #include	<math.h>
 #include	<string.h>
+#include	<fenv.h>
 
 #include "global.h"
 #include "rtree.h"
@@ -109,12 +110,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 
 #define error(code)  longjmp(*(e), code)
 
-#undef DEBUG_LABEL
-#undef DEBUG_ALL_LABELS
-#undef DEBUG_JUMP
-#undef DEBUG_GATHER
-#undef DEBUG_ANGLE
-#undef DEBUG
+#define DEBUG_LABEL
+#define DEBUG_ALL_LABELS
+#define DEBUG_JUMP
+#define DEBUG_GATHER
+#define DEBUG_ANGLE
+#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
 #else
@@ -222,6 +223,7 @@ new_descriptor (VNODE * a, char poly, char side)
   CVCList *l = (CVCList *) malloc (sizeof (CVCList));
   Vector v;
   register double ang, dx, dy;
+  int fpeRaised;
 
   if (!l)
     return NULL;
@@ -259,20 +261,36 @@ new_descriptor (VNODE * a, char poly, char side)
 	}
     }
   assert (!vect_equal (v, vect_zero));
+
+  printf ("Finding angle for vector x=%li, y=%li\n", v[0], v[1]);
+
+  feclearexcept(FE_ALL_EXCEPT);
   dx = fabs ((double) v[0]);
   dy = fabs ((double) v[1]);
   ang = dy / (dy + dx);
+  fpeRaised = fetestexcept(FE_ALL_EXCEPT);
+  printf ("FPERaised = %d, 1st quadrant angle = %.18f\n", fpeRaised, ang);
   /* now move to the actual quadrant */
-  if (v[0] < 0 && v[1] >= 0)
+  if (v[0] < 0 && v[1] >= 0) {
     ang = 2.0 - ang;		/* 2nd quadrant */
-  else if (v[0] < 0 && v[1] < 0)
+    printf ("Angle in 2nd quadrant = %.18f\n", ang);
+  } else if (v[0] < 0 && v[1] < 0) {
     ang += 2.0;			/* 3rd quadrant */
-  else if (v[0] >= 0 && v[1] < 0)
+    printf ("Angle in 3rd quadrant = %.18f\n", ang);
+  } else if (v[0] >= 0 && v[1] < 0) {
     ang = 4.0 - ang;		/* 4th quadrant */
+    printf ("Angle in 4th quadrant = %.18f\n", ang);
+  }
   l->angle = ang;
   assert (ang >= 0.0 && ang <= 4.0);
+
+  // NB: Angle 0.0 is along the +ve X-axis. Angle 1.0 is along the +ve Y-axis.
+  //     This follows the usual convention, however as PCB has +ve Y-axis
+  //     downwards, increasing numerical angle corresponds to clockwise rotation
+  //     of vectors on screen.
+
 #ifdef DEBUG_ANGLE
-  DEBUGP ("node on %c at %#mD assigned angle %g on side %c\n", poly,
+  DEBUGP ("node on %c at (%$mn, %$mn) assigned angle %.18f on side %c\n", poly,
 	  a->point[0], a->point[1], ang, side);
 #endif
   return l;
@@ -360,6 +378,26 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
                compare_cvc_nodes (newone, l->next) <= 0)
 	{
 	  /* insert new cvc if it lies between existing points */
+	  newone->prev = l;
+	  newone->next = l->next;
+	  l->next = l->next->prev = newone;
+	  return newone;
+	}
+#if 1
+      else if (l->angle == newone->angle)
+#else
+      else if (l->next->angle == newone->angle)
+#endif
+	{
+          /* XXX: Nasty bugs can occur if we don't order these correctly, but I'm unsure
+                  exactly how we can determine the correct order. In the case I've seen,
+                  both identical angles were from snap-rounded geometry, and both belonged
+                  to different contours of the 'A' polygon. In that case, the test above
+                  l->next->angle == .. works, but l->angle == .. does not. The change swaps
+                  the order the "identical" edges are listed in the CVC list.
+           */
+	  /* insert new cvc if it is at the same angle as an existing point */
+          DEBUGP ("ANGLE FOUND IDENTICAL TO PREVIOUS. Angle = %.19f\n", l->angle);
 	  newone->prev = l;
 	  newone->next = l->next;
 	  l->next = l->next->prev = newone;
@@ -466,6 +504,21 @@ next_cvc_from_other_poly (CVCList *start)
   return l;
 }
 
+
+static void
+print_cvc_list (CVCList *list)
+{
+  CVCList *iter;
+
+  iter = list;
+  do
+    {
+      DEBUGP ("Printing cvc_list entry: %p, poly is %c, side is %c, parent is %p, angle is %.18f\n",
+              iter, iter->poly, iter->side, iter->parent, iter->angle);
+    }
+  while ((iter = iter->next) != list);
+}
+
 /*
 edge_label
  (C) 2006 harry eaton
@@ -488,6 +541,9 @@ edge_label (VNODE * pn, int existing_label)
   /* Start with l pointing to the CVCNode corresponding to this edge leaving its from vertex */
   assert (pn);
   l = EDGE_BACKWARD_VERTEX (pn)->cvc_next;
+
+  DEBUGP ("Labelling VNODE at (%$mn, %$mn)\n", pn->point[0], pn->point[1]);
+  print_cvc_list (pn->cvc_next);
 
   assert (l);
 
@@ -532,11 +588,23 @@ edge_label (VNODE * pn, int existing_label)
       /* SHARED is the same direction case,
        * SHARED2 is the opposite direction case.
        */
+      DEBUGP ((l->side == 'P') ? "SHARED2\n" : "SHARED\n");
       region = (l->side == 'P') ? SHARED2 : SHARED;
       pn->shared = VERTEX_SIDE_DIR_EDGE (l->parent, l->side);
     }
   else
     {
+      DEBUGP ("l->poly: %c, l->side: %c\n", l->poly, l->side);
+      print_cvc_list (l);
+
+      /* Check the other polygon edge we landed on in the CVCList is not a hairline edge pair
+       * from the same polygon. If so, they may be sorted in incorrect order and would thus
+       * mislead as to whether we are inside or outside that contour. It is a bug if such edges
+       * are present.
+       */
+      assert (l->poly != l->next->poly || compare_cvc_nodes (l, l->next) != 0);
+
+      DEBUGP ((l->side == 'P') ? "INSIDE\n" : "OUTSIDE\n");
       region = (l->side == 'P') ? INSIDE : OUTSIDE;
     }
 
@@ -745,7 +813,7 @@ seg_in_seg (const BoxType * b, void *cl)
       if (new_node != NULL)
 	{
 #ifdef DEBUG_INTERSECT
-	  DEBUGP ("new intersection on segment \"i\" at %#mD\n",
+	  DEBUGP ("new intersection on segment \"i\" at (%$mn, %$mn)\n",
 	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
 #endif
 	  i->node_insert_list =
@@ -757,7 +825,7 @@ seg_in_seg (const BoxType * b, void *cl)
       if (new_node != NULL)
 	{
 #ifdef DEBUG_INTERSECT
-	  DEBUGP ("new intersection on segment \"s\" at %#mD\n",
+	  DEBUGP ("new intersection on segment \"s\" at (%$mn, %$mn)\n",
 	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
 #endif
 	  i->node_insert_list =
@@ -1178,7 +1246,7 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("%#mD->%#mD labeled %s\n",
+      DEBUGP ("(%$mn, %$mn)->(%$mn, %$mn) labeled %s\n",
               EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
     }
@@ -1682,7 +1750,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
       return TRUE;
     }
 #ifdef DEBUG_JUMP
-  DEBUGP ("jump entering node at %$mD\n", (*curv)->point[0], (*curv)->point[1]);
+  DEBUGP ("jump entering node at (%mn, %mn)\n", (*curv)->point[0], (*curv)->point[1]);
 #endif
   /* Pick the descriptor of the edge we came into this vertex with, then spin (anti?)clock-wise one edge descriptor */
   if (*cdir == FORW)
@@ -1701,7 +1769,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
 	      (d->side == 'P' && newone == BACKW))
 	    {
 #ifdef DEBUG_JUMP
-	      DEBUGP ("jump leaving node at %#mD\n",
+	      DEBUGP ("jump leaving node at (%mn, %mn)\n",
 	              EDGE_DIRECTION_VERTEX (e, newone)->point[0], EDGE_DIRECTION_VERTEX (e, newone)->point[1]);
 #endif
 	      *curv = d->parent;
@@ -1741,7 +1809,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 	  poly_InclVertex (PREV_VERTEX (&(*result)->head), newn);
 	}
 #ifdef DEBUG_GATHER
-      DEBUGP ("gather vertex at %#mD\n", curv->point[0], curv->point[1]);
+      DEBUGP ("gather vertex at (%mn, %mn)\n", curv->point[0], curv->point[1]);
 #endif
       /* Now mark the edge as included.  */
       newn = VERTEX_DIRECTION_EDGE (curv, dir);
