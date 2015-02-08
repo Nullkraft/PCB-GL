@@ -346,7 +346,11 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
 	  l->next = l->next->prev = newone;
 	  return newone;
 	}
+#if 1
+      else if (l->angle == newone->angle)
+#else
       else if (l->next->angle == newone->angle)
+#endif
 	{
           /* XXX: Nasty bugs can occur if we don't order these correctly, but I'm unsure
                   exactly how we can determine the correct order. In the case I've seen,
@@ -448,16 +452,33 @@ node_label (VNODE * pn)
     l = pn->cvc_next->prev;
   } else {
     DEBUGP ("Path 2\n");
-    l = pn->cvc_next->next;
+    l = pn->cvc_next; //->next;
   }
 
+
+  DEBUGP ("Starting spin for next edge from other polygon\n");
   first_l = l;
   while ((l->poly == this_poly) && (l != first_l->prev))
-    l = l->next;
+    {
+      l = l->next;
+
+      /* Skip over hairline pairs of edges from the other polygon, as they are not necessarily
+       * sorted in the correct order, and thus can mislead as to whether we are inside or outside
+       */
+      if (l->poly == l->next->poly &&
+          l->side != l->next->side && /* <-- Not sure if this test is required, but include for sanity */
+          l->angle == l->next->angle) {
+        DEBUGP ("Eating paired edge from %c poly\n", l->poly);
+        l = l->next->next;
+      }
+    }
   assert (l->poly != this_poly);
+  DEBUGP ("Completed spin for next edge from other polygon\n");
 
   assert (l && l->angle >= 0 && l->angle <= 4.0);
   DEBUGP ("l->poly: %c, l->side: %c\n", l->poly, l->side);
+  print_cvc_list (l);
+
   if (l->poly != this_poly)
     {
       if (l->side == 'P')
@@ -512,6 +533,24 @@ node_label (VNODE * pn)
 	    }
 	}
     }
+
+#if 0
+  // KLUDGE TO TEST THEORY
+  if (pn->point[0] == 139000000L &&
+      pn->point[1] ==  12000000L &&
+      l->poly == 'A' && l->side == 'N' &&
+      l->parent->next->point[0] == 140000000L &&
+      l->parent->next->point[1] ==  12000000L)
+    {
+      DEBUGP ("l->poly %c, l->side %c\n", l->poly, l->side);
+      DEBUGP ("l->parent->point: (%mn, %mn)\n", l->parent->point[0], l->parent->point[1]);
+      DEBUGP ("l->parent->prev->point: (%mn, %mn)\n", l->parent->prev->point[0], l->parent->prev->point[1]);
+      DEBUGP ("l->parent->next->point: (%mn, %mn)\n", l->parent->next->point[0], l->parent->next->point[1]);
+      DEBUGP ("Forcing region = INSIDE for node at (%mn, %mn)\n", pn->point[0], pn->point[1]);
+      region = INSIDE;
+    }
+#endif
+
   assert (region != UNKNWN);
   assert (NODE_LABEL (pn) == UNKNWN || NODE_LABEL (pn) == region);
   LABEL_NODE (pn, region);
