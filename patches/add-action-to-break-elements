@@ -1,5 +1,5 @@
 Bottom: ad550ed5bc4a55cd18052adadd22c1510ee82975
-Top:    4546b79cad910ee1d5fd0c3b7fc32d4341d24234
+Top:    cb9640ff81712b84bd62074536a082d4d13b88af
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-14 12:24:53 +0000
 
@@ -9,7 +9,7 @@ Add action to break elements to pieces in place
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 57e4c1f..e37723e 100644
+index 57e4c1f..962ab27 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -8018,6 +8018,149 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
@@ -55,7 +55,7 @@ index 57e4c1f..e37723e 100644
 +    if (new_line)
 +      {
 +        new_line->Number = STRDUP (NAMEONPCB_NAME (element));
-+        AddObjectToCreateUndoList (LINE_TYPE, layer, line, line);
++        AddObjectToCreateUndoList (LINE_TYPE, layer, new_line, new_line);
 +      }
 +  }
 +  END_LOOP;
