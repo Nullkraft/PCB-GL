@@ -1,5 +1,5 @@
 Bottom: ad550ed5bc4a55cd18052adadd22c1510ee82975
-Top:    7b8c858116147d9e92b4317d15fbc574a57c9be2
+Top:    0437db70371e2d0cc44614a7ae9461c4dd1a01e0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-14 12:24:53 +0000
 
@@ -9,10 +9,10 @@ Add action to break elements to pieces in place
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 57e4c1f..d3b5aa5 100644
+index 57e4c1f..273c8fe 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -8018,6 +8018,147 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
+@@ -8018,6 +8018,149 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
    return 0;
  }
  
@@ -33,6 +33,10 @@ index 57e4c1f..d3b5aa5 100644
 +  Cardinal group;
 +  LayerType *top_copper, *bottom_copper;
 +  LayerType *top_silk, *bottom_silk;
++  LayerType *layer;
++  LineType *new_line;
++  ArcType *new_arc;
++  PinType *new_via;
 +
 +  group = GetLayerGroupNumberBySide (SWAP_IDENT ? BOTTOM_SIDE : TOP_SIDE);
 +  top_copper = &PCB->Data->Layer[PCB->LayerGroups.Entries[group][0]];
@@ -41,34 +45,29 @@ index 57e4c1f..d3b5aa5 100644
 +  top_silk = &PCB->Data->Layer[top_silk_layer];
 +  bottom_silk = &PCB->Data->Layer[bottom_silk_layer];
 +
-+  /*
-+   * At this point the buffer should contain just a single element.
-+   * Now we detach the single element from the buffer and then clear the
-+   * buffer, ready to receive the smashed elements.  As a result of detaching
-+   * it the single element is orphaned from the buffer and thus will not be
-+   * free()'d by FreeDataMemory (called via ClearBuffer).  This leaves it
-+   * around for us to smash bits off it.  It then becomes our responsibility,
-+   * however, to free the single element when we're finished with it.
-+   */
-+  /* XXX: TODO: Detach element from PCB */
-+  //Buffer->Data->Element = NULL;
-+  //Buffer->Data->ElementN = 0;
-+
 +  ELEMENTLINE_LOOP (element);
 +  {
-+    CreateNewLineOnLayer (top_silk, /* BOTTOM? */
-+                          line->Point1.X, line->Point1.Y,
-+                          line->Point2.X, line->Point2.Y,
-+                          line->Thickness, 0, NoFlags ());
-+    if (line)
-+      line->Number = STRDUP (NAMEONPCB_NAME (element));
++    layer = TEST_FLAG (ONSOLDERFLAG, element) ? bottom_silk : top_silk;
++    new_line = CreateNewLineOnLayer (layer,
++                                     line->Point1.X, line->Point1.Y,
++                                     line->Point2.X, line->Point2.Y,
++                                     line->Thickness, 0, NoFlags ());
++    if (new_line)
++      {
++        new_line->Number = STRDUP (NAMEONPCB_NAME (element));
++        AddObjectToCreateUndoList (LINE_TYPE, layer, line, line);
++      }
 +  }
 +  END_LOOP;
 +  ARC_LOOP (element);
 +  {
-+    CreateNewArcOnLayer (top_silk, /* BOTTOM? */
-+                         arc->X, arc->Y, arc->Width, arc->Height, arc->StartAngle,
-+                         arc->Delta, arc->Thickness, 0, NoFlags ());
++    layer = TEST_FLAG (ONSOLDERFLAG, element) ? bottom_silk : top_silk;
++    new_arc = CreateNewArcOnLayer (layer,
++                                   arc->X, arc->Y, arc->Width, arc->Height, arc->StartAngle,
++                                   arc->Delta, arc->Thickness, 0, NoFlags ());
++    if (new_arc)
++      AddObjectToCreateUndoList (LINE_TYPE, layer, new_line, new_line);
++
 +  }
 +  END_LOOP;
 +  PIN_LOOP (element);
@@ -78,24 +77,27 @@ index 57e4c1f..d3b5aa5 100644
 +    if (TEST_FLAG (HOLEFLAG, pin))
 +      AddFlags (f, HOLEFLAG);
 +
-+    CreateNewVia (PCB->Data, pin->X, pin->Y,
-+                  pin->Thickness, pin->Clearance, pin->Mask,
-+                  pin->DrillingHole, pin->Number, f);
++    new_via = CreateNewVia (PCB->Data, pin->X, pin->Y,
++                            pin->Thickness, pin->Clearance, pin->Mask,
++                            pin->DrillingHole, pin->Number, f);
++    if (new_via)
++      AddObjectToCreateUndoList (VIA_TYPE, new_via, new_via, new_via);
 +  }
 +  END_LOOP;
 +  PAD_LOOP (element);
 +  {
-+    LineType *line;
-+    line = CreateNewLineOnLayer (TEST_FLAG (ONSOLDERFLAG, pad) ? bottom_copper : top_copper,
-+                                 pad->Point1.X, pad->Point1.Y,
-+                                 pad->Point2.X, pad->Point2.Y,
-+                                 pad->Thickness, pad->Clearance, NoFlags ());
-+    if (line)
-+      line->Number = STRDUP (pad->Number);
++    layer = TEST_FLAG (ONSOLDERFLAG, pad) ? bottom_copper : top_copper;
++    new_line = CreateNewLineOnLayer (layer,
++                                      pad->Point1.X, pad->Point1.Y,
++                                      pad->Point2.X, pad->Point2.Y,
++                                      pad->Thickness, pad->Clearance, NoFlags ());
++    if (new_line)
++      {
++        new_line->Number = STRDUP (pad->Number);
++        AddObjectToCreateUndoList (LINE_TYPE, layer, new_line, new_line);
++      }
 +  }
 +  END_LOOP;
-+//  FreeElementMemory (element);
-+//  FreeElement (element);
 +  RemoveElement (element);
 +}
 +
@@ -160,7 +162,7 @@ index 57e4c1f..d3b5aa5 100644
  /* --------------------------------------------------------------------------- */
  
  HID_Action action_action_list[] = {
-@@ -8159,6 +8300,9 @@ HID_Action action_action_list[] = {
+@@ -8159,6 +8302,9 @@ HID_Action action_action_list[] = {
    {"SetValue", 0, ActionSetValue,
     setvalue_help, setvalue_syntax}
    ,
