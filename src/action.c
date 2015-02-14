@@ -8040,9 +8040,9 @@ static void SmashElement (ElementType *element)
   ArcType *new_arc;
   PinType *new_via;
 
-  group = GetLayerGroupNumberBySide (SWAP_IDENT ? BOTTOM_SIDE : TOP_SIDE);
+  group = GetLayerGroupNumberBySide (TOP_SIDE);
   top_copper = &PCB->Data->Layer[PCB->LayerGroups.Entries[group][0]];
-  group = GetLayerGroupNumberBySide (SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE);
+  group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
   bottom_copper = &PCB->Data->Layer[PCB->LayerGroups.Entries[group][0]];
   top_silk = &PCB->Data->Layer[top_silk_layer];
   bottom_silk = &PCB->Data->Layer[bottom_silk_layer];
