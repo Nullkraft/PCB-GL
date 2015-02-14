@@ -1,0 +1,22 @@
+Bottom: 4546b79cad910ee1d5fd0c3b7fc32d4341d24234
+Top:    cb9640ff81712b84bd62074536a082d4d13b88af
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-02-14 18:48:45 +0000
+
+Refresh of add-action-to-break-elements
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index e37723e..962ab27 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -8057,7 +8057,7 @@ static void SmashElement (ElementType *element)
+     if (new_line)
+       {
+         new_line->Number = STRDUP (NAMEONPCB_NAME (element));
+-        AddObjectToCreateUndoList (LINE_TYPE, layer, line, line);
++        AddObjectToCreateUndoList (LINE_TYPE, layer, new_line, new_line);
+       }
+   }
+   END_LOOP;
