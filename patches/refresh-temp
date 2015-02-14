@@ -1,0 +1,171 @@
+Bottom: ad550ed5bc4a55cd18052adadd22c1510ee82975
+Top:    7b8c858116147d9e92b4317d15fbc574a57c9be2
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-02-14 14:47:15 +0000
+
+Refresh of add-action-to-break-elements
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 57e4c1f..d3b5aa5 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -8018,6 +8018,147 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
+   return 0;
+ }
+ 
++/* ------------------------------------------------------------ */
++
++static const char smash_syntax[] = N_("Smash(Object|Selected|SelectedElements)");
++static const char smash_help[] = N_("Smash an element or elements into pieces.");
++
++/* %start-doc actions Attributes
++
++This smashes the given object into pieces in-place on the PCB.
++
++%end-doc */
++
++
++static void SmashElement (ElementType *element)
++{
++  Cardinal group;
++  LayerType *top_copper, *bottom_copper;
++  LayerType *top_silk, *bottom_silk;
++
++  group = GetLayerGroupNumberBySide (SWAP_IDENT ? BOTTOM_SIDE : TOP_SIDE);
++  top_copper = &PCB->Data->Layer[PCB->LayerGroups.Entries[group][0]];
++  group = GetLayerGroupNumberBySide (SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE);
++  bottom_copper = &PCB->Data->Layer[PCB->LayerGroups.Entries[group][0]];
++  top_silk = &PCB->Data->Layer[top_silk_layer];
++  bottom_silk = &PCB->Data->Layer[bottom_silk_layer];
++
++  /*
++   * At this point the buffer should contain just a single element.
++   * Now we detach the single element from the buffer and then clear the
++   * buffer, ready to receive the smashed elements.  As a result of detaching
++   * it the single element is orphaned from the buffer and thus will not be
++   * free()'d by FreeDataMemory (called via ClearBuffer).  This leaves it
++   * around for us to smash bits off it.  It then becomes our responsibility,
++   * however, to free the single element when we're finished with it.
++   */
++  /* XXX: TODO: Detach element from PCB */
++  //Buffer->Data->Element = NULL;
++  //Buffer->Data->ElementN = 0;
++
++  ELEMENTLINE_LOOP (element);
++  {
++    CreateNewLineOnLayer (top_silk, /* BOTTOM? */
++                          line->Point1.X, line->Point1.Y,
++                          line->Point2.X, line->Point2.Y,
++                          line->Thickness, 0, NoFlags ());
++    if (line)
++      line->Number = STRDUP (NAMEONPCB_NAME (element));
++  }
++  END_LOOP;
++  ARC_LOOP (element);
++  {
++    CreateNewArcOnLayer (top_silk, /* BOTTOM? */
++                         arc->X, arc->Y, arc->Width, arc->Height, arc->StartAngle,
++                         arc->Delta, arc->Thickness, 0, NoFlags ());
++  }
++  END_LOOP;
++  PIN_LOOP (element);
++  {
++    FlagType f = NoFlags ();
++    AddFlags (f, VIAFLAG);
++    if (TEST_FLAG (HOLEFLAG, pin))
++      AddFlags (f, HOLEFLAG);
++
++    CreateNewVia (PCB->Data, pin->X, pin->Y,
++                  pin->Thickness, pin->Clearance, pin->Mask,
++                  pin->DrillingHole, pin->Number, f);
++  }
++  END_LOOP;
++  PAD_LOOP (element);
++  {
++    LineType *line;
++    line = CreateNewLineOnLayer (TEST_FLAG (ONSOLDERFLAG, pad) ? bottom_copper : top_copper,
++                                 pad->Point1.X, pad->Point1.Y,
++                                 pad->Point2.X, pad->Point2.Y,
++                                 pad->Thickness, pad->Clearance, NoFlags ());
++    if (line)
++      line->Number = STRDUP (pad->Number);
++  }
++  END_LOOP;
++//  FreeElementMemory (element);
++//  FreeElement (element);
++  RemoveElement (element);
++}
++
++/*---------------------------------------------------------------------------
++ *
++ * break selected element(s) into pieces
++ */
++static int
++ActionSmash (int argc, char **argv, Coord x, Coord y)
++{
++  char *function = ARG (0);
++  ElementType *element;
++  void *ptr1, *ptr2, *ptr3;
++  bool change = false;
++
++  if (function)
++    {
++      switch (GetFunctionID (function))
++        {
++        case F_Object:
++          if (SearchScreen (Crosshair.X, Crosshair.Y, ELEMENT_TYPE,
++                            &ptr1, &ptr2, &ptr3) != NO_TYPE)
++            {
++              element = ptr1;
++              change = true;
++              SmashElement (element);
++            }
++          break;
++
++        case F_Selected:
++        case F_SelectedElements:
++          if (PCB->PinOn && PCB->ElementOn)
++            {
++              ELEMENT_LOOP (PCB->Data);
++                {
++                  if (TEST_FLAG (SELECTEDFLAG, element))
++                    {
++                      change = true;
++                      SmashElement (element);
++                    }
++                }
++              END_LOOP;
++            }
++          break;
++
++        default:
++          AFAIL (smash);
++        }
++
++      if (change)
++        {
++          SetChangedFlag (true);
++          Draw ();
++          IncrementUndoSerialNumber ();
++        }
++      return 0;
++    }
++
++  AFAIL (smash);
++}
++
+ /* --------------------------------------------------------------------------- */
+ 
+ HID_Action action_action_list[] = {
+@@ -8159,6 +8300,9 @@ HID_Action action_action_list[] = {
+   {"SetValue", 0, ActionSetValue,
+    setvalue_help, setvalue_syntax}
+   ,
++  {"Smash", 0, ActionSmash,
++   smash_help, smash_syntax}
++  ,
+   {"ToggleHideName", 0, ActionToggleHideName,
+    togglehidename_help, togglehidename_syntax}
+   ,
