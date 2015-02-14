@@ -1,5 +1,5 @@
 Bottom: ad550ed5bc4a55cd18052adadd22c1510ee82975
-Top:    0437db70371e2d0cc44614a7ae9461c4dd1a01e0
+Top:    4546b79cad910ee1d5fd0c3b7fc32d4341d24234
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-14 12:24:53 +0000
 
@@ -9,7 +9,7 @@ Add action to break elements to pieces in place
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 57e4c1f..273c8fe 100644
+index 57e4c1f..e37723e 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -8018,6 +8018,149 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
@@ -38,9 +38,9 @@ index 57e4c1f..273c8fe 100644
 +  ArcType *new_arc;
 +  PinType *new_via;
 +
-+  group = GetLayerGroupNumberBySide (SWAP_IDENT ? BOTTOM_SIDE : TOP_SIDE);
++  group = GetLayerGroupNumberBySide (TOP_SIDE);
 +  top_copper = &PCB->Data->Layer[PCB->LayerGroups.Entries[group][0]];
-+  group = GetLayerGroupNumberBySide (SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE);
++  group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 +  bottom_copper = &PCB->Data->Layer[PCB->LayerGroups.Entries[group][0]];
 +  top_silk = &PCB->Data->Layer[top_silk_layer];
 +  bottom_silk = &PCB->Data->Layer[bottom_silk_layer];
@@ -172,3 +172,16 @@ index 57e4c1f..273c8fe 100644
    {"ToggleHideName", 0, ActionToggleHideName,
     togglehidename_help, togglehidename_syntax}
    ,
+diff --git a/src/gpcb-menu.res.in b/src/gpcb-menu.res.in
+index 47bee40..7a5c777 100644
+--- a/src/gpcb-menu.res.in
++++ b/src/gpcb-menu.res.in
+@@ -286,6 +286,8 @@ MainMenu =
+     {"Elements" ChangeSquare(SelectedElements)}
+     {"Pins" ChangeSquare(SelectedPins)}
+    }
++   -
++   {"Break selected elements to pieces" Smash(SelectedElements)}
+   }
+ 
+ #
