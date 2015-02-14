@@ -8030,7 +8030,8 @@ This smashes the given object into pieces in-place on the PCB.
 %end-doc */
 
 
-static void SmashElement (ElementType *element)
+static void
+SmashElement (ElementType *element)
 {
   Cardinal group;
   LayerType *top_copper, *bottom_copper;
