@@ -8057,7 +8057,7 @@ static void SmashElement (ElementType *element)
     if (new_line)
       {
         new_line->Number = STRDUP (NAMEONPCB_NAME (element));
-        AddObjectToCreateUndoList (LINE_TYPE, layer, line, line);
+        AddObjectToCreateUndoList (LINE_TYPE, layer, new_line, new_line);
       }
   }
   END_LOOP;
