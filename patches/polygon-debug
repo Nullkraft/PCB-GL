@@ -1,5 +1,5 @@
-Bottom: ad550ed5bc4a55cd18052adadd22c1510ee82975
-Top:    7f1699c4c5af40a0c76e0002142e78390cc90a6e
+Bottom: 7488dd085fbe1b93978cb0f104087bba455c90cb
+Top:    5b797e66f989eb4b9457ffc640e3650d6885bfe5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-04 15:53:25 +0000
 
@@ -9,7 +9,7 @@ Polygon debug
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index c520aad..8da5947 100644
+index f534ef9..8a1ca61 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -612,6 +612,9 @@ ArcPoly (ArcType * a, Coord thick, char *name)
@@ -22,7 +22,7 @@ index c520aad..8da5947 100644
  POLYAREA *
  LinePoly (LineType * L, Coord thick, char *name)
  {
-@@ -682,6 +685,8 @@ LinePoly (LineType * L, Coord thick, char *name)
+@@ -684,6 +687,8 @@ LinePoly (LineType * L, Coord thick, char *name)
    if (!(np = ContourToPoly (contour)))
      return NULL;
  
@@ -31,7 +31,7 @@ index c520aad..8da5947 100644
    return np;
  }
  
-@@ -1041,10 +1046,28 @@ line_sub_callback (const BoxType * b, void *cl)
+@@ -1043,10 +1048,28 @@ line_sub_callback (const BoxType * b, void *cl)
    if (!(np = LinePoly (line, line->Thickness + line->Clearance, NULL)))
      longjmp (info->env, 1);
  
@@ -60,7 +60,7 @@ index c520aad..8da5947 100644
    if (info->batch_size == SUBTRACT_LINE_BATCH_SIZE)
      subtract_accumulated (info, polygon);
  
-@@ -1116,7 +1139,8 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
+@@ -1118,7 +1141,8 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
          r +=
            r_search (layer->line_tree, &region, NULL, line_sub_callback,
                      &info);
@@ -70,7 +70,7 @@ index c520aad..8da5947 100644
          r +=
            r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
  	r +=
-@@ -1125,7 +1149,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
+@@ -1127,7 +1151,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
        END_LOOP;
        r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
        r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
@@ -80,7 +80,7 @@ index c520aad..8da5947 100644
    polygon->NoHolesValid = 0;
    return r;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 6abd4ff..3629c34 100644
+index 0f351a7..72ec2be 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -126,7 +126,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
