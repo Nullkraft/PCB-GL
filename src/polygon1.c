@@ -1703,16 +1703,19 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
   VNODE *cur;
   DIRECTION dir = UNINITIALISED;
 
-  cur = (&a->head); //    ->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
+//  cur = (&a->head)->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
+//  cur = (&a->head); //    ->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
   cur = (&a->head)        ;
   do
     {
+#if 0
       // The following may be a nice speedup, but not sure if it is correct.
       // In particular, consider the case when we collect a 'B' polygon contour.
       // Could some of that countour may already have been collected, and there
       // still be a piece we are interested in after? (Can we reach it though??)
       if (cur->Flags.mark != 0)
         break;
+#endif
 
       if (j_rule (poly, cur, &dir) && cur->Flags.mark == 0)
 	Collect1 (e, cur, dir, contours, holes, j_rule);
