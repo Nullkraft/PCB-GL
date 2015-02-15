@@ -1,5 +1,5 @@
-Bottom: a82bf7fe7c8fc2ceefbcf4aa29740bb669e28121
-Top:    0ca61b06f7a13f22c4f64ddf8cb79cce52e6035f
+Bottom: b3a45bcf19b3a6c70255872022fee84298506b91
+Top:    bf66ee343d3adc7b86e000c0834a0c35148b28e3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:04 +0000
 
@@ -31,7 +31,7 @@ index 14590b5..0bb79dc 100644
        return isects (lp, Polygon, true);
      }
 diff --git a/src/polygon.c b/src/polygon.c
-index 710a22e..f534ef9 100644
+index 47ca86d..8a1ca61 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -508,7 +508,7 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
@@ -60,7 +60,7 @@ index 710a22e..f534ef9 100644
  {
    double delta;
    ArcType seg1, seg2;
-@@ -602,17 +603,17 @@ ArcPoly (ArcType * a, Coord thick)
+@@ -602,20 +603,20 @@ ArcPoly (ArcType * a, Coord thick)
        seg2.Delta -= half_delta;
        seg2.StartAngle += half_delta;
  
@@ -76,13 +76,16 @@ index 710a22e..f534ef9 100644
 +  return ArcPolyNoIntersect (a, thick, name);
  }
  
+ void pline_dump (VNODE * v);
+ void poly_dump (POLYAREA * p);
+ 
  POLYAREA *
 -LinePoly (LineType * L, Coord thick)
 +LinePoly (LineType * L, Coord thick, char *name)
  {
    PLINE *contour = NULL;
    POLYAREA *np = NULL;
-@@ -628,7 +629,7 @@ LinePoly (LineType * L, Coord thick)
+@@ -631,7 +632,7 @@ LinePoly (LineType * L, Coord thick)
            SQUARE (l->Point1.Y - l->Point2.Y));
    if (!TEST_FLAG (SQUAREFLAG,l))
      if (d == 0)                   /* line is a point */
@@ -91,7 +94,7 @@ index 710a22e..f534ef9 100644
    if (d != 0)
      {
        d = half / d;
-@@ -652,6 +653,7 @@ LinePoly (LineType * L, Coord thick)
+@@ -655,6 +656,7 @@ LinePoly (LineType * L, Coord thick)
    v[1] = l->Point2.Y - dy;
    if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
      return 0;
@@ -99,7 +102,7 @@ index 710a22e..f534ef9 100644
  
    v[0] = l->Point2.X - dx;
    v[1] = l->Point2.Y - dy;
-@@ -865,7 +867,7 @@ SubtractLine (LineType * line, PolygonType * p)
+@@ -870,7 +872,7 @@ SubtractLine (LineType * line, PolygonType * p)
  
    if (!TEST_FLAG (CLEARLINEFLAG, line))
      return 0;
@@ -108,7 +111,7 @@ index 710a22e..f534ef9 100644
      return -1;
    return Subtract (np, p, true);
  }
-@@ -877,7 +879,7 @@ SubtractArc (ArcType * arc, PolygonType * p)
+@@ -882,7 +884,7 @@ SubtractArc (ArcType * arc, PolygonType * p)
  
    if (!TEST_FLAG (CLEARLINEFLAG, arc))
      return 0;
@@ -117,7 +120,7 @@ index 710a22e..f534ef9 100644
      return -1;
    return Subtract (np, p, true);
  }
-@@ -912,7 +914,7 @@ SubtractPad (PadType * pad, PolygonType * p)
+@@ -917,7 +919,7 @@ SubtractPad (PadType * pad, PolygonType * p)
    else
      {
        if (!
@@ -126,7 +129,7 @@ index 710a22e..f534ef9 100644
          return -1;
      }
    return Subtract (np, p, true);
-@@ -1038,7 +1040,7 @@ line_sub_callback (const BoxType * b, void *cl)
+@@ -1043,7 +1045,7 @@ line_sub_callback (const BoxType * b, void *cl)
      return 0;
    polygon = info->polygon;
  
@@ -134,8 +137,8 @@ index 710a22e..f534ef9 100644
 +  if (!(np = LinePoly (line, line->Thickness + line->Clearance, NULL)))
      longjmp (info->env, 1);
  
-   poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
-@@ -2037,8 +2039,11 @@ arc_outline_callback (const BoxType * b, void *cl)
+   if (info->batch_size == 2)
+@@ -2061,8 +2063,11 @@ arc_outline_callback (const BoxType * b, void *cl)
    ArcType *arc = (ArcType *)b;
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
@@ -148,7 +151,7 @@ index 710a22e..f534ef9 100644
      return 0;
  
    poly_Boolean_free (info->poly, np, &res, PBO_SUB);
-@@ -2053,8 +2058,11 @@ line_outline_callback (const BoxType * b, void *cl)
+@@ -2077,8 +2082,11 @@ line_outline_callback (const BoxType * b, void *cl)
    LineType *line = (LineType *)b;
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;

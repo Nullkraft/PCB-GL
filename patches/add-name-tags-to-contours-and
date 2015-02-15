@@ -1,5 +1,5 @@
-Bottom: e6ecd9e71ed97ab6158b037a2735e5d968d86534
-Top:    a82bf7fe7c8fc2ceefbcf4aa29740bb669e28121
+Bottom: 0de9cc1d6217dde435284f7e1dfe51490fb0391a
+Top:    b3a45bcf19b3a6c70255872022fee84298506b91
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:04 +0000
 
@@ -69,7 +69,7 @@ index c606077..92ca8a2 100644
  
  PLINE *poly_NewContour(VNODE *node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 1b88227..710a22e 100644
+index 67b384c..47ca86d 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -451,8 +451,13 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
@@ -95,7 +95,7 @@ index 1b88227..710a22e 100644
    return ContourToPoly (contour);
  }
  
-@@ -622,7 +628,7 @@ LinePoly (LineType * L, Coord thick)
+@@ -625,7 +631,7 @@ LinePoly (LineType * L, Coord thick)
            SQUARE (l->Point1.Y - l->Point2.Y));
    if (!TEST_FLAG (SQUAREFLAG,l))
      if (d == 0)                   /* line is a point */
@@ -104,7 +104,7 @@ index 1b88227..710a22e 100644
    if (d != 0)
      {
        d = half / d;
-@@ -817,7 +823,7 @@ PinPoly (PinType * pin, Coord thick, Coord clear)
+@@ -822,7 +828,7 @@ PinPoly (PinType * pin, Coord thick, Coord clear)
            return OctagonPoly (pin->X, pin->Y, size + size);
          }
      }
@@ -113,7 +113,7 @@ index 1b88227..710a22e 100644
  }
  
  POLYAREA *
-@@ -1730,7 +1736,7 @@ IsPointInPolygon (Coord X, Coord Y, Coord r, PolygonType *p)
+@@ -1754,7 +1760,7 @@ IsPointInPolygon (Coord X, Coord Y, Coord r, PolygonType *p)
      return true;
    if (r < 1)
      return false;
@@ -122,7 +122,7 @@ index 1b88227..710a22e 100644
      return false;
    return isects (c, p, true);
  }
-@@ -2063,8 +2069,33 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2087,8 +2093,33 @@ pv_outline_callback (const BoxType * b, void *cl)
    PinType *pv = (PinType *)b;
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
@@ -171,7 +171,7 @@ index f2eecdd..644dc1d 100644
  POLYAREA * LinePoly(LineType *l, Coord thick);
  POLYAREA * ArcPoly(ArcType *l, Coord thick);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index dedd875..0f351a7 100644
+index 8ccbd06..72ec2be 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -2674,6 +2674,7 @@ poly_IniContour (PLINE * c)
