@@ -1,5 +1,5 @@
 Bottom: 74e6046eb2972d5ef1c23e826fa4ab042b795a2d
-Top:    86ed9f8eb07f0149429219c4be2e49a397e16fe8
+Top:    b4cf7ded0b8a1d3636edabb955dac5d7f7da2716
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-15 19:47:54 +0000
 
@@ -9,7 +9,7 @@ Tmp changes
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 46ca374..e9f2efc 100644
+index 46ca374..0775646 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1707,12 +1707,14 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
@@ -27,19 +27,3 @@ index 46ca374..e9f2efc 100644
  
        if (j_rule (poly, cur, &dir) && cur->Flags.mark == 0)
  	Collect1 (e, cur, dir, contours, holes, j_rule);
-@@ -1815,6 +1817,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
- 	       * NB: There Could be grief if the JUMP rule is inconsistent in
- 	       *     its interpretation from each side of the vertex.
- 	       */
-+#if 1
-             switch (action)
-               {
-               case PBO_UNITE:
-@@ -1830,6 +1833,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
-                 Collect ('B', e, *cur, contours, holes, SubS_Rule, SubJ_Rule);
-                 break;
-               }
-+#endif
- 	    }
-           else if ((*cur)->Flags.status == INSIDE)
- 	    switch (action)
