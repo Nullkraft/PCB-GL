@@ -1,0 +1,22 @@
+Bottom: 0bba04a5b5873e767101bde675e5606dcb788118
+Top:    23875b59a273fa19a77b8968b538b93e49c5465a
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-02-15 19:41:21 +0000
+
+Refresh of polygon-debug-operations
+
+---
+
+diff --git a/src/main.c b/src/main.c
+index 97bc786..1e705ed 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -2050,6 +2050,9 @@ main (int argc, char *argv[])
+           POLYAREA *a, *b, *res;
+           int operation = PBO_UNITE;
+ 
++          if (strcmp (LAYER_PTR(1)->Name, "sub") == 0)
++            operation = PBO_SUB;
++
+           a = LayerPolygonsToPoly (LAYER_PTR(0));
+           b = LayerPolygonsToPoly (LAYER_PTR(1));
