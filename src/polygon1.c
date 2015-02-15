@@ -1703,16 +1703,18 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
   VNODE *cur;
   DIRECTION dir = UNINITIALISED;
 
-  cur = (&a->head); //    ->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
-  cur = (&a->head)        ;
+//  cur = (&a->head)        ;
+  cur = (&a->head)->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
   do
     {
+#if 0
       // The following may be a nice speedup, but not sure if it is correct.
       // In particular, consider the case when we collect a 'B' polygon contour.
       // Could some of that countour may already have been collected, and there
       // still be a piece we are interested in after? (Can we reach it though??)
       if (cur->Flags.mark != 0)
         break;
+#endif
 
       if (j_rule (poly, cur, &dir) && cur->Flags.mark == 0)
 	Collect1 (e, cur, dir, contours, holes, j_rule);
@@ -1815,6 +1817,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 	       * NB: There Could be grief if the JUMP rule is inconsistent in
 	       *     its interpretation from each side of the vertex.
 	       */
+#if 1
             switch (action)
               {
               case PBO_UNITE:
@@ -1830,6 +1833,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
                 Collect ('B', e, *cur, contours, holes, SubS_Rule, SubJ_Rule);
                 break;
               }
+#endif
 	    }
           else if ((*cur)->Flags.status == INSIDE)
 	    switch (action)
