@@ -1817,7 +1817,6 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 	       * NB: There Could be grief if the JUMP rule is inconsistent in
 	       *     its interpretation from each side of the vertex.
 	       */
-#if 1
             switch (action)
               {
               case PBO_UNITE:
@@ -1833,7 +1832,6 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
                 Collect ('B', e, *cur, contours, holes, SubS_Rule, SubJ_Rule);
                 break;
               }
-#endif
 	    }
           else if ((*cur)->Flags.status == INSIDE)
 	    switch (action)
