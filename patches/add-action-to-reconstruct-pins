@@ -1,5 +1,5 @@
 Bottom: 821f217b6d02cdabf3e98722b9321042f94054db
-Top:    fc22cb50a8c8685cb6cdc7a0d53f6159d5a473ec
+Top:    eedce58938c8c2759bf160588326a39cfe90ceac
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-14 18:49:09 +0000
 
@@ -9,96 +9,50 @@ Add action to reconstruct pins / vias
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 828f2f1..d7106b1 100644
+index 828f2f1..d24a2b3 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -8162,6 +8162,149 @@ ActionSmash (int argc, char **argv, Coord x, Coord y)
+@@ -107,6 +107,8 @@ typedef enum
+   F_ClearAndRedraw,
+   F_ClearList,
+   F_Close,
++  F_CreatePins,
++  F_CreateVias,
+   F_Found,
+   F_Connection,
+   F_Convert,
+@@ -342,6 +344,8 @@ static FunctionType Functions[] = {
+   {"ClearAndRedraw", F_ClearAndRedraw},
+   {"ClearList", F_ClearList},
+   {"Close", F_Close},
++  {"CreatePins", F_CreatePins},
++  {"CreateVias", F_CreateVias},
+   {"Found", F_Found},
+   {"Connection", F_Connection},
+   {"Convert", F_Convert},
+@@ -8162,6 +8166,122 @@ ActionSmash (int argc, char **argv, Coord x, Coord y)
    AFAIL (smash);
  }
  
 +
-+static const char smash_syntax[] = N_("Smash(Object|Selected|SelectedElements)");
-+static const char smash_help[] = N_("Smash an element or elements into pieces.");
++static const char repairdrills_syntax[] = N_("RepairDrills(CreatePins|CreateVias,<layername>)");
++static const char repairdrills_help[] = N_("Repair and reconstruct elements containing pins, or discrete vias, where two matching single-pad elements are found (top and bottom sides, and a 0-length line represeting the drill size on the named layer.");
 +
-+/* %start-doc actions Attributes
-+
-+This smashes the given object into pieces in-place on the PCB.
-+
-+%end-doc */
-+
-+
-+static void
-+SmashElement (ElementType *element)
++static LayerType *
++GetLayerByName (char *name)
 +{
-+  Cardinal group;
-+  LayerType *top_copper, *bottom_copper;
-+  LayerType *top_silk, *bottom_silk;
++  int i;
 +  LayerType *layer;
-+  LineType *new_line;
-+  ArcType *new_arc;
-+  PinType *new_via;
 +
-+  group = GetLayerGroupNumberBySide (TOP_SIDE);
-+  top_copper = &PCB->Data->Layer[PCB->LayerGroups.Entries[group][0]];
-+  group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
-+  bottom_copper = &PCB->Data->Layer[PCB->LayerGroups.Entries[group][0]];
-+  top_silk = &PCB->Data->Layer[top_silk_layer];
-+  bottom_silk = &PCB->Data->Layer[bottom_silk_layer];
++  for (i = 0; i < max_copper_layer; i++)
++    {
++      layer = PCB->Data->Layer + i;
 +
-+  ELEMENTLINE_LOOP (element);
-+  {
-+    layer = TEST_FLAG (ONSOLDERFLAG, element) ? bottom_silk : top_silk;
-+    new_line = CreateNewLineOnLayer (layer,
-+                                     line->Point1.X, line->Point1.Y,
-+                                     line->Point2.X, line->Point2.Y,
-+                                     line->Thickness, 0, NoFlags ());
-+    if (new_line)
-+      {
-+        new_line->Number = STRDUP (NAMEONPCB_NAME (element));
-+        AddObjectToCreateUndoList (LINE_TYPE, layer, new_line, new_line);
-+      }
-+  }
-+  END_LOOP;
-+  ARC_LOOP (element);
-+  {
-+    layer = TEST_FLAG (ONSOLDERFLAG, element) ? bottom_silk : top_silk;
-+    new_arc = CreateNewArcOnLayer (layer,
-+                                   arc->X, arc->Y, arc->Width, arc->Height, arc->StartAngle,
-+                                   arc->Delta, arc->Thickness, 0, NoFlags ());
-+    if (new_arc)
-+      AddObjectToCreateUndoList (LINE_TYPE, layer, new_line, new_line);
++      if (strcmp (layer->Name, name) == 0)
++        return layer;
++    }
 +
-+  }
-+  END_LOOP;
-+  PIN_LOOP (element);
-+  {
-+    FlagType f = NoFlags ();
-+    AddFlags (f, VIAFLAG);
-+    if (TEST_FLAG (HOLEFLAG, pin))
-+      AddFlags (f, HOLEFLAG);
-+
-+    new_via = CreateNewVia (PCB->Data, pin->X, pin->Y,
-+                            pin->Thickness, pin->Clearance, pin->Mask,
-+                            pin->DrillingHole, pin->Number, f);
-+    if (new_via)
-+      AddObjectToCreateUndoList (VIA_TYPE, new_via, new_via, new_via);
-+  }
-+  END_LOOP;
-+  PAD_LOOP (element);
-+  {
-+    layer = TEST_FLAG (ONSOLDERFLAG, pad) ? bottom_copper : top_copper;
-+    new_line = CreateNewLineOnLayer (layer,
-+                                      pad->Point1.X, pad->Point1.Y,
-+                                      pad->Point2.X, pad->Point2.Y,
-+                                      pad->Thickness, pad->Clearance, NoFlags ());
-+    if (new_line)
-+      {
-+        new_line->Number = STRDUP (pad->Number);
-+        AddObjectToCreateUndoList (LINE_TYPE, layer, new_line, new_line);
-+      }
-+  }
-+  END_LOOP;
-+  RemoveElement (element);
++  return NULL;
 +}
 +
 +/*---------------------------------------------------------------------------
@@ -106,59 +60,106 @@ index 828f2f1..d7106b1 100644
 + * break selected element(s) into pieces
 + */
 +static int
-+ActionSmash (int argc, char **argv, Coord x, Coord y)
++ActionRepairDrills (int argc, char **argv, Coord x, Coord y)
 +{
-+  char *function = ARG (0);
-+  ElementType *element;
-+  void *ptr1, *ptr2, *ptr3;
-+  bool change = false;
++  int function;
++  bool save_show_bottom_side;
++  bool save_invisible_objects;
 +
-+  if (function)
++  LayerType *drill_layer;
++
++  if (argc != 2)
++    AFAIL (repairdrills);
++
++  function = GetFunctionID (ARG(0));
++  drill_layer = GetLayerByName (ARG(1));
++
++  if (drill_layer == NULL ||
++      (function != F_CreatePins &&
++       function != F_CreateVias))
++    AFAIL (repairdrills);
++
++  save_show_bottom_side = Settings.ShowBottomSide;
++  save_invisible_objects = PCB->InvisibleObjectsOn;
++
++  PCB->InvisibleObjectsOn = false;
++
++  /* ITERATE OVER ALL LINE SEGMENTS ON "drill_layer" */
++  LINE_LOOP (drill_layer);
 +    {
-+      switch (GetFunctionID (function))
++      ElementType *top_pad_element;
++      ElementType *bottom_pad_element;
++      PadType *top_pad;
++      PadType *bottom_pad;
++      PadType *dummy;
++
++      /* Pass over any lines which are not zero length */
++      if (line->Point1.X != line->Point2.X ||
++          line->Point1.Y != line->Point2.Y)
++        continue;
++
++      /* Now we have a target "drill", of width line->Thickness, we need to check
++       * for corresponding pads on the top and bottom layers for it to mate with.
++       *
++       * XXX: Should we delete those here, and make a list of new vias / pins to add?
++       */
++      pcb_printf ("Found potential drill at (%$ms, %$ms) width is %$ms\t", line->Point1.X, line->Point1.Y, line->Thickness);
++
++      /* Find a top side pad which corresponds to the drill location */
++      Settings.ShowBottomSide = false;
++      if (SearchObjectByLocation (PAD_TYPE, (void **)&top_pad_element, (void **)&top_pad, (void **)&dummy, line->Point1.X, line->Point1.Y, 0) != PAD_TYPE ||
++          top_pad->Point1.X != line->Point1.X ||
++          top_pad->Point1.Y != line->Point1.Y ||
++          top_pad->Point2.X != line->Point1.X ||
++          top_pad->Point2.Y != line->Point1.Y)
 +        {
-+        case F_Object:
-+          if (SearchScreen (Crosshair.X, Crosshair.Y, ELEMENT_TYPE,
-+                            &ptr1, &ptr2, &ptr3) != NO_TYPE)
-+            {
-+              element = ptr1;
-+              change = true;
-+              SmashElement (element);
-+            }
-+          break;
-+
-+        case F_Selected:
-+        case F_SelectedElements:
-+          if (PCB->PinOn && PCB->ElementOn)
-+            {
-+              ELEMENT_LOOP (PCB->Data);
-+                {
-+                  if (TEST_FLAG (SELECTEDFLAG, element))
-+                    {
-+                      change = true;
-+                      SmashElement (element);
-+                    }
-+                }
-+              END_LOOP;
-+            }
-+          break;
-+
-+        default:
-+          AFAIL (smash);
++          printf ("Could not find top-side pad\n");
++          continue;
 +        }
 +
-+      if (change)
++      /* Find a bottom side pad which corresponds to the drill location */
++      Settings.ShowBottomSide = true;
++      if (SearchObjectByLocation (PAD_TYPE, (void **)&bottom_pad_element, (void **)&bottom_pad, (void **)&dummy, line->Point1.X, line->Point1.Y, 0) != PAD_TYPE ||
++          bottom_pad->Point1.X != line->Point1.X ||
++          bottom_pad->Point1.Y != line->Point1.Y ||
++          bottom_pad->Point2.X != line->Point1.X ||
++          bottom_pad->Point2.Y != line->Point1.Y)
 +        {
-+          SetChangedFlag (true);
-+          Draw ();
-+          IncrementUndoSerialNumber ();
++          printf ("Could not find bottom-side pad\n");
++          continue;
 +        }
-+      return 0;
++
++      /* If the top and bottom pads are not the same radius, give up */
++      if (top_pad->Thickness != bottom_pad->Thickness)
++        {
++          printf ("top-side and bottom-side pad are not equal thickness\n");
++          continue;
++        }
++
++      printf ("\n");
++
++      pcb_printf ("Found a viable pin/via at (%$ms, %$ms), pad width %$ms, drill size %$ms\n",
++                  line->Point1.X, line->Point1.Y, top_pad->Thickness, line->Thickness);
++
 +    }
++  END_LOOP;
 +
-+  AFAIL (smash);
++  Settings.ShowBottomSide= save_show_bottom_side;
++  PCB->InvisibleObjectsOn= save_invisible_objects;
++
++  return 0;
 +}
 +
  /* --------------------------------------------------------------------------- */
  
  HID_Action action_action_list[] = {
+@@ -8276,6 +8396,9 @@ HID_Action action_action_list[] = {
+   {"Renumber", 0, ActionRenumber,
+    renumber_help, renumber_syntax}
+   ,
++  {"RepairDrills", 0, ActionRepairDrills,
++   repairdrills_help, repairdrills_syntax}
++  ,
+   {"RipUp", 0, ActionRipUp,
+    ripup_help, ripup_syntax}
+   ,
