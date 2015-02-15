@@ -3697,6 +3697,8 @@ poly_DelContour (PLINE ** c)
       else
         free (cur->cvc_prev);
 
+      free (cur->edge_name);
+
       g_slice_free (VNODE, cur);
     }
 
