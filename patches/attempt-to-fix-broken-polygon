@@ -1,5 +1,5 @@
 Bottom: 076bdca72bbb8adbfd55c1ed90560872fdb7de10
-Top:    f2cb185df8813e93fb40294769b300b8dba6a144
+Top:    228a1359a16a2020db0fb9e319af7ed2df238eac
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-04 11:59:31 +0000
 
@@ -38,7 +38,7 @@ What we should do (at least a sufficient fix) is walk ("Collect") the intersecte
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 352f8f6..e720c98 100644
+index 352f8f6..8fa8686 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1448,7 +1448,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
@@ -109,8 +109,8 @@ index 352f8f6..e720c98 100644
 +  DIRECTION dir = UNINITIALISED;
  
 -  cur = &a->head;
-+  cur = (&a->head)        ;
-+//  cur = (&a->head); //    ->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
++  cur = (&a->head);
++//  cur = (&a->head)->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
    do
      {
 -      if (s_rule (cur, &dir) && cur->Flags.mark == 0)
