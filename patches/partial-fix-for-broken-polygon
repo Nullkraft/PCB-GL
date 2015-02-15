@@ -1,5 +1,5 @@
 Bottom: 9f26b7a4b809ca2e6a3b953f57c0f562c8ec9350
-Top:    74e6046eb2972d5ef1c23e826fa4ab042b795a2d
+Top:    a65c20292323863b962926c64bc57f6813a7ee07
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-04 11:59:31 +0000
 
@@ -38,7 +38,7 @@ What we should do (at least a sufficient fix) is walk ("Collect") the intersecte
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ef82f37..46ca374 100644
+index ef82f37..866c605 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1448,7 +1448,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
@@ -157,7 +157,7 @@ index ef82f37..46ca374 100644
 -	    continue;
 -
 -	  if ((*cur)->Flags.status == INSIDE)
-+            {
++	    {
 +	      /* Check for missed intersect contours here. These can come from
 +	       * cases where contours of A and B touch at a single-vertex, so
 +	       * are labeled ISECTED for processing, yet our JUMP rules for a
@@ -167,23 +167,23 @@ index ef82f37..46ca374 100644
 +	       * NB: There Could be grief if the JUMP rule is inconsistent in
 +	       *     its interpretation from each side of the vertex.
 +	       */
-+            switch (action)
-+              {
-+              case PBO_UNITE:
-+                Collect ('B', e, *cur, contours, holes, UniteS_Rule, UniteJ_Rule);
-+                break;
-+              case PBO_ISECT:
-+                Collect ('B', e, *cur, contours, holes, IsectS_Rule, IsectJ_Rule);
-+                break;
-+              case PBO_XOR:
-+                Collect ('B', e, *cur, contours, holes, XorS_Rule, XorJ_Rule);
-+                break;
-+              case PBO_SUB:
-+                Collect ('B', e, *cur, contours, holes, SubS_Rule, SubJ_Rule);
-+                break;
-+              }
++	    switch (action)
++	      {
++	      case PBO_UNITE:
++		Collect ('B', e, *cur, contours, holes, UniteS_Rule, UniteJ_Rule);
++		break;
++	      case PBO_ISECT:
++		Collect ('B', e, *cur, contours, holes, IsectS_Rule, IsectJ_Rule);
++		break;
++	      case PBO_XOR:
++		Collect ('B', e, *cur, contours, holes, XorS_Rule, XorJ_Rule);
++		break;
++	      case PBO_SUB:
++		Collect ('B', e, *cur, contours, holes, SubS_Rule, SubJ_Rule);
++		break;
++	      }
 +	    }
-+          else if ((*cur)->Flags.status == INSIDE)
++	  else if ((*cur)->Flags.status == INSIDE)
  	    switch (action)
  	      {
  	      case PBO_XOR:
