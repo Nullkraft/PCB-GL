@@ -1805,7 +1805,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 	{
 	  next = &((*cur)->next);
 	  if ((*cur)->Flags.status == ISECTED)
-            {
+	    {
 	      /* Check for missed intersect contours here. These can come from
 	       * cases where contours of A and B touch at a single-vertex, so
 	       * are labeled ISECTED for processing, yet our JUMP rules for a
@@ -1815,23 +1815,23 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 	       * NB: There Could be grief if the JUMP rule is inconsistent in
 	       *     its interpretation from each side of the vertex.
 	       */
-            switch (action)
-              {
-              case PBO_UNITE:
-                Collect ('B', e, *cur, contours, holes, UniteS_Rule, UniteJ_Rule);
-                break;
-              case PBO_ISECT:
-                Collect ('B', e, *cur, contours, holes, IsectS_Rule, IsectJ_Rule);
-                break;
-              case PBO_XOR:
-                Collect ('B', e, *cur, contours, holes, XorS_Rule, XorJ_Rule);
-                break;
-              case PBO_SUB:
-                Collect ('B', e, *cur, contours, holes, SubS_Rule, SubJ_Rule);
-                break;
-              }
+	    switch (action)
+	      {
+	      case PBO_UNITE:
+		Collect ('B', e, *cur, contours, holes, UniteS_Rule, UniteJ_Rule);
+		break;
+	      case PBO_ISECT:
+		Collect ('B', e, *cur, contours, holes, IsectS_Rule, IsectJ_Rule);
+		break;
+	      case PBO_XOR:
+		Collect ('B', e, *cur, contours, holes, XorS_Rule, XorJ_Rule);
+		break;
+	      case PBO_SUB:
+		Collect ('B', e, *cur, contours, holes, SubS_Rule, SubJ_Rule);
+		break;
+	      }
 	    }
-          else if ((*cur)->Flags.status == INSIDE)
+	  else if ((*cur)->Flags.status == INSIDE)
 	    switch (action)
 	      {
 	      case PBO_XOR:
