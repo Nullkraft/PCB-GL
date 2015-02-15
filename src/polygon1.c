@@ -1703,8 +1703,8 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
   VNODE *cur;
   DIRECTION dir = UNINITIALISED;
 
-  cur = (&a->head)        ;
-//  cur = (&a->head); //    ->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
+  cur = (&a->head);
+//  cur = (&a->head)->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
   do
     {
       // The following may be a nice speedup, but not sure if it is correct.
