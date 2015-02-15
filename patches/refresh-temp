@@ -1,0 +1,41 @@
+Bottom: e6fd752687af23e12aeb4687718d26c9059c5810
+Top:    3406a4dbc835804b5bdadac62d7a14a23aaafce8
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-02-15 21:23:16 +0000
+
+Refresh of fix-bug-in-polygon-contour
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 33161b5..f451948 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -390,14 +390,25 @@ node_label (VNODE * pn)
+    * check for shared edges (that could be prev or next in the list since the angles are equal)
+    * and check if this edge (pn -> pn->next) is found between the other poly's entry and exit
+    */
++
+   if (pn->cvc_next->angle == pn->cvc_next->prev->angle)
+     l = pn->cvc_next->prev;
+   else
+-    l = pn->cvc_next->next;
++    l = pn->cvc_next;
+ 
+   first_l = l;
+   while ((l->poly == this_poly) && (l != first_l->prev))
+-    l = l->next;
++    {
++      l = l->next;
++
++      /* Skip over hairline pairs of edges from the other polygon, as they are not necessarily
++       * sorted in the correct order, and thus can mislead as to whether we are inside or outside
++       */
++      if (l->poly == l->next->poly &&
++          l->side != l->next->side && /* <-- PCJC: Not sure if this is required, including for sanity */
++          l->angle == l->next->angle)
++        l = l->next->next;
++    }
+   assert (l->poly != this_poly);
+ 
+   assert (l && l->angle >= 0 && l->angle <= 4.0);
