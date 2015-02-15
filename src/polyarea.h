@@ -94,6 +94,7 @@ struct VNODE
     bool is_round;
     Coord cx, cy;
     Coord radius;
+    char *edge_name;
 };
 
 struct PLINE
