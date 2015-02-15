@@ -1,5 +1,5 @@
-Bottom: 864cd39a268bbb9c562bc2752dd3a9c7f8a10134
-Top:    f2f02b70790281b65a1eb80df0b73bc29a56331d
+Bottom: e6ecd9e71ed97ab6158b037a2735e5d968d86534
+Top:    a82bf7fe7c8fc2ceefbcf4aa29740bb669e28121
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:04 +0000
 
@@ -171,10 +171,10 @@ index f2eecdd..644dc1d 100644
  POLYAREA * LinePoly(LineType *l, Coord thick);
  POLYAREA * ArcPoly(ArcType *l, Coord thick);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index e9f2efc..33161b5 100644
+index dedd875..0f351a7 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2563,6 +2563,7 @@ poly_IniContour (PLINE * c)
+@@ -2674,6 +2674,7 @@ poly_IniContour (PLINE * c)
    c->cx = 0;
    c->cy = 0;
    c->radius = 0;
@@ -182,7 +182,7 @@ index e9f2efc..33161b5 100644
  }
  
  PLINE *
-@@ -2597,6 +2598,8 @@ poly_ClrContour (PLINE * c)
+@@ -2708,6 +2709,8 @@ poly_ClrContour (PLINE * c)
    free (c->tristrip_vertices);
    c->tristrip_vertices = NULL;
    c->tristrip_num_vertices = 0;
@@ -191,7 +191,7 @@ index e9f2efc..33161b5 100644
    poly_IniContour (c);
  }
  
-@@ -2629,6 +2632,7 @@ poly_DelContour (PLINE ** c)
+@@ -2740,6 +2743,7 @@ poly_DelContour (PLINE ** c)
        r_destroy_tree (&r);
      }
    free ((*c)->tristrip_vertices);
