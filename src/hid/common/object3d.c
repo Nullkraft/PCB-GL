@@ -363,6 +363,22 @@ typedef struct
   face3d *bottom_face;
 } polygon_3d_link;
 
+
+/* NB: contour edge 'n' starts at contour coord 'n', and ends at coord 'n + 1' */
+static char *
+get_contour_edge_n_name (PLINE *contour, int n)
+{
+  VNODE *vertex = &contour->head;
+
+  while (n > 0) {
+    vertex = vertex->next; /* The VNODE structure is circularly linked, so wrapping is OK */
+    n--;
+  }
+
+  return vertex->edge_name; /* NB: Vertex 'n' is used to store the name for edge 'n' */
+}
+
+
 /* NOTE: This function sets the user_data pointer on POLYAREA it
  *       converts, to point at a polygon_3d_link structure
  *       referencing the generated object and upper/lower faces
@@ -486,10 +502,27 @@ object3d_from_contours (POLYAREA *contours,
           object3d_add_edge (object, edges[i]);
         }
 
+      ct = outer_contour;
+      offset_in_ct = 0;
+      ct_npoints = get_contour_npoints (ct);
+
       /* Define the faces */
-      for (i = 0; i < npoints; i++)
+      for (i = 0; i < npoints; i++, offset_in_ct++)
         {
-          faces[i] = make_face3d (NULL);
+          char *face_name;
+
+          /* Update which contour we're looking at */
+          if (offset_in_ct == ct_npoints)
+            {
+              offset_in_ct = 0;
+              ct = ct->next;
+              ct_npoints = get_contour_npoints (ct);
+            }
+
+          // face_name = (ct->name != NULL) ? ct->name : ""; // Naming all faces of a contour with the contour name
+          face_name = get_contour_edge_n_name (ct, adjusted_i); // Naming each face of a contour separately. (XXX: Should we prepend the contour name?)
+
+          faces[i] = make_face3d (face_name);
 
           object3d_add_face (object, faces[i]);
           /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
