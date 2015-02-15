@@ -1,5 +1,5 @@
-Bottom: 7f1699c4c5af40a0c76e0002142e78390cc90a6e
-Top:    1fe0f1a6faa1f1d5899914c4c56377de5f311b50
+Bottom: 5b797e66f989eb4b9457ffc640e3650d6885bfe5
+Top:    00d3dc5ddc68e89f26845767c078691031916f71
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-09 23:56:41 +0000
 
@@ -61,10 +61,10 @@ index 92ca8a2..e478d5d 100644
  
  typedef struct PLINE PLINE;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 3629c34..07e656f 100644
+index 72ec2be..a57ca02 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2724,6 +2724,7 @@ poly_DelContour (PLINE ** c)
+@@ -2729,6 +2729,7 @@ poly_DelContour (PLINE ** c)
  	  free (cur->cvc_next);
  	  free (cur->cvc_prev);
  	}
