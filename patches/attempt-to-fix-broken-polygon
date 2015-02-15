@@ -3,7 +3,36 @@ Top:    f2cb185df8813e93fb40294769b300b8dba6a144
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-04 11:59:31 +0000
 
-Attempt to fix broken polygon contour generation
+Partial fix for broken polygon contour generation
+
+The fix in commit 29258d77731c3a34b3335f3b3657fb549d449c71 for problems
+with single point touching A and B polygons was incorrect, and can lead
+to broken output.
+
+This can be seen in the following test-case from Dave McGuire:
+
+  Element["" "" "" "unknown" 1325.00mil 1070.00mil -175.00mil -105.00mil 0 100 ""]
+  (
+    Pad[-85.00mil -39.00mil -79.00mil -39.00mil 34.00mil 30.00mil 40.00mil "2" "2" "square"]
+  )
+
+  Layer(1 "component")
+  (
+    Line[1245.00mil 1030.00mil 1195.00mil 1030.00mil 12.00mil 20.00mil "clearline"]
+    Polygon("clearpoly")
+    (
+      [5.00mil 5.00mil] [4195.00mil 5.00mil] [4195.00mil 2695.00mil] [5.00mil 2695.00mil]
+    )
+  )
+
+The problem occurs in the Collect() routine. In the above example, the first
+point tested on the 'A' polygon is not part of the output contour, but IS a
+vertex where the A and B touch. As a result, the (buggy) code then flips
+directly to the 'B' poylgon without checking that it belongs in the output
+contour, resulting in incorrect vertices being inserted into the output.
+
+What we should do (at least a sufficient fix) is walk ("Collect") the intersected
+'B' polygon contours explicitly. This commit implements that change.
 
 
 ---
