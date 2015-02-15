@@ -1,0 +1,60 @@
+Bottom: e6fd752687af23e12aeb4687718d26c9059c5810
+Top:    e6fd752687af23e12aeb4687718d26c9059c5810
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-02-15 21:15:38 +0000
+
+Fix bug in polygon contour generation
+
+Incorrect contours were emitted in some cases when snap-rounding of vertices to
+the integer grid cause coincident shared vertices from the same polygon to meet
+at a cross-connected vertex.
+
+The geometry required to create this situation is tricky, but could be provoked
+in certain conditions by exactly touching line clearance polygons. (Due to
+subtle rounding errors in the clearance polygons don't always meet exactly).
+
+Distilling a simpler test case, the following polygons (on layer A and B)
+should be united to reproduce the bug. (NB: The A POLYAREA has two contours
+which touch at a single point):
+
+  Layer(1 "A")
+  (
+    Polygon("")
+    (
+      [51.0000mm 18.0000mm] [51.0000mm 12.0000mm] [140.0000mm 12.0000mm  ] [144.0000mm 18.0000mm]
+    )
+    Polygon("")
+    (
+      [51.0000mm 6.0000mm] [144.0000mm 6.0000mm] [140.0000mm 12.0000mm] [51.0000mm 11.99996mm]
+    )
+  )
+  Layer(2 "B")
+  (
+    Polygon("clearpoly")
+    (
+      [139.0000mm 5.0000mm] [145.0000mm 5.0000mm] [145.0000mm 19.0000mm] [139.0000mm 19.0000mm]
+    )
+  )
+
+In this case the two contours of the 'A' polygon each have an edge that is
+horizontal (or very close to horizontal), and meet at a single point inside
+the 'B' polygon contour. Due to rounding onto the integer grid, both lines
+intersect the B contour at the same point, leaving two coincident edge
+fragments belonging to the A contour meeting at that one vertex on the B
+contour.
+
+In the above example, operation ordering conspires to insert the two identical
+A edges into the CVC list for the common intersection point on the B contour,
+in an incorrect order. (They are sorted by pseudo-angles, which are identical
+in this case). The reversed order of these paired edges then upsets contour
+labeling in node_label().
+
+This commit fixes node_label() to look for and skip pairs of identically angled
+edges from the same polygon when iterating around the CVC list. (We can
+determine the INSIDE/OUTSIDE status when we find the next, non-paired edge from
+the other polygon).
+
+
+---
+
+
