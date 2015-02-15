@@ -2050,6 +2050,9 @@ main (int argc, char *argv[])
           POLYAREA *a, *b, *res;
           int operation = PBO_UNITE;
 
+          if (strcmp (LAYER_PTR(1)->Name, "sub") == 0)
+            operation = PBO_SUB;
+
           a = LayerPolygonsToPoly (LAYER_PTR(0));
           b = LayerPolygonsToPoly (LAYER_PTR(1));
 
