@@ -1,0 +1,24 @@
+Bottom: 6407b661caae54ee405e3240a5b1ab5359578190
+Top:    6447855eb8f1c2a38b90ebedaf0bd6e8d03afbe0
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-02-15 20:17:21 +0000
+
+Refresh of tmp-changes
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index f0b70ef..84a9b49 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1703,9 +1703,8 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
+   VNODE *cur;
+   DIRECTION dir = UNINITIALISED;
+ 
+-  cur = (&a->head)->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
+-//  cur = (&a->head); //    ->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
+ //  cur = (&a->head)        ;
++  cur = (&a->head)->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
+   do
+     {
+ #if 0
