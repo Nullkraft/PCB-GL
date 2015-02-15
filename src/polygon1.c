@@ -207,7 +207,7 @@ new_descriptor (VNODE * a, char poly, char side)
 {
   CVCList *l = (CVCList *) malloc (sizeof (CVCList));
   Vector v;
-  register double dx, dy, ang;
+  register double ang, dx, dy;
   int fpeRaised;
 
   if (!l)
@@ -447,13 +447,10 @@ node_label (VNODE * pn)
   DEBUGP ("Labelling VNODE at (%mn, %mn)\n", pn->point[0], pn->point[1]);
   print_cvc_list (pn->cvc_next);
 
-  if (pn->cvc_next->angle == pn->cvc_next->prev->angle) {
-    DEBUGP ("Path 1\n");
+  if (pn->cvc_next->angle == pn->cvc_next->prev->angle)
     l = pn->cvc_next->prev;
-  } else {
-    DEBUGP ("Path 2\n");
-    l = pn->cvc_next; //->next;
-  }
+  else
+    l = pn->cvc_next;
 
 
   DEBUGP ("Starting spin for next edge from other polygon\n");
@@ -466,8 +463,9 @@ node_label (VNODE * pn)
        * sorted in the correct order, and thus can mislead as to whether we are inside or outside
        */
       if (l->poly == l->next->poly &&
-          l->side != l->next->side && /* <-- Not sure if this test is required, but include for sanity */
-          l->angle == l->next->angle) {
+          l->side != l->next->side && /* <-- PCJC: Not sure if this is required, including for sanity */
+          l->angle == l->next->angle)
+      {
         DEBUGP ("Eating paired edge from %c poly\n", l->poly);
         l = l->next->next;
       }
@@ -502,13 +500,13 @@ node_label (VNODE * pn)
 	    {
 	      assert (l->parent->next->point[0] == pn->next->point[0] &&
 		      l->parent->next->point[1] == pn->next->point[1]);
-              DEBUGP ("SHARED\n");
+	      DEBUGP ("SHARED\n");
 	      region = SHARED;
 	      pn->shared = l->parent;
 	    }
 	  else
           {
-            DEBUGP ("OUTSIDE\n");
+	    DEBUGP ("OUTSIDE\n");
 	    region = OUTSIDE;
           }
 	}
@@ -522,11 +520,14 @@ node_label (VNODE * pn)
 	{
 	  if (l->poly != this_poly)
 	    {
-	      if (l->side == 'P') {
-                DEBUGP ("2: INSIDE\n");
+	      if (l->side == 'P')
+	      {
+		DEBUGP ("2: INSIDE\n");
 		region = INSIDE;
-              } else {
-                DEBUGP ("2: OUTSIDE\n");
+	      }
+	      else
+	      {
+		DEBUGP ("2: OUTSIDE\n");
 		region = OUTSIDE;
               }
 	      break;
