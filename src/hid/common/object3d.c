@@ -59,7 +59,7 @@
 #endif
 
 
-#define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
+#define HACK_BOARD_THICKNESS MM_TO_COORD(2.3)
 
 static GList *object3d_test_objects = NULL;
 
