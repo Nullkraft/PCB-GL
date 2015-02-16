@@ -1,7 +1,7 @@
-Bottom: 445ae78ff090e77087b1170d02a330a05be6ce46
-Top:    a3c87b0a8e8b976fc6713dc9ef9e68b513fa6cbe
+Bottom: 8598e3851eb12c5646e760aa5b3291fd93ae73da
+Top:    204c31ce53180e3cc0a89d34e2b276ce0896a185
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-02-15 22:35:12 +0000
+Date:   2015-02-16 23:51:41 +0000
 
 Add name tags for line contours (and provide partial support for arcs)
 
@@ -31,7 +31,7 @@ index 14590b5..0bb79dc 100644
        return isects (lp, Polygon, true);
      }
 diff --git a/src/polygon.c b/src/polygon.c
-index 710a22e..f534ef9 100644
+index 6998dfe..eb943d3 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -508,7 +508,7 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
@@ -162,7 +162,7 @@ index 710a22e..f534ef9 100644
  
    poly_Boolean_free (info->poly, np, &res, PBO_SUB);
 diff --git a/src/polygon.h b/src/polygon.h
-index 644dc1d..2b8a029 100644
+index e07c133..3737f35 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -71,8 +71,8 @@ POLYAREA * PolygonToPoly (PolygonType *);

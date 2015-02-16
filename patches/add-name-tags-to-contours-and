@@ -1,7 +1,7 @@
-Bottom: 9129feff6c0ff74735348a1efbc0bd6b36780164
-Top:    445ae78ff090e77087b1170d02a330a05be6ce46
+Bottom: 70a687417291ce26ccd28144a433fa6d1a5786cf
+Top:    8598e3851eb12c5646e760aa5b3291fd93ae73da
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-02-15 22:35:12 +0000
+Date:   2015-02-16 23:51:40 +0000
 
 Add name tags to contours and feature naming for pins and vias in STEP export
 
@@ -69,7 +69,7 @@ index c606077..92ca8a2 100644
  
  PLINE *poly_NewContour(VNODE *node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 1b88227..710a22e 100644
+index 8dd3904..6998dfe 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -451,8 +451,13 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
@@ -158,7 +158,7 @@ index 1b88227..710a22e 100644
  
    poly_Boolean_free (info->poly, np, &res, PBO_SUB);
 diff --git a/src/polygon.h b/src/polygon.h
-index f2eecdd..644dc1d 100644
+index a02fd99..e07c133 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -69,7 +69,7 @@ void ComputeNoHoles (PolygonType *poly);
