@@ -45,7 +45,7 @@
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented STEP function %s.\n", __FUNCTION__); abort()
 
-#define HACK_BOARD_THICKNESS MM_TO_COORD(2.3)
+#define HACK_BOARD_THICKNESS MM_TO_COORD(0.2)
 
 
 HID step_hid;
