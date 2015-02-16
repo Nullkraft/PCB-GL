@@ -1,5 +1,5 @@
-Bottom: ed2d60eef1dbef8da68edcc3b32e55baa26a9c9c
-Top:    74689f2fc39fa24031e77fa2f3a7b8f3230ffffe
+Bottom: 93d409d40b672ce824a3b0a84920666d9790dd58
+Top:    0ddef3312f2f35140599bfa546299778064955c4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-21 23:20:58 +0000
 
@@ -9,7 +9,7 @@ polygon.c: For some reason, the range computation in frac_circle appears to be w
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 23400dd..4c7b1e0 100644
+index ce68a11..6a63c0d 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -405,8 +405,8 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
