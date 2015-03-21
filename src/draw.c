@@ -83,7 +83,7 @@ static HID_DRAW *hid_draw = NULL;
 static void DrawEverything (const BoxType *);
 static void AddPart (void *);
 /* static */ void DrawEMark (ElementType *, Coord, Coord, bool);
-/* static */ void DrawRats (const BoxType *);
+/* static */ void DrawRats (HID_DRAW *hid_draw, const BoxType *);
 
 static void
 set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
@@ -291,7 +291,7 @@ PrintAssembly (int side, const BoxType * drawn_area)
   hid_draw_set_draw_faded (Output.fgGC, 0);
 
   /* draw package */
-  DrawSilk (side, drawn_area);
+  DrawSilk (hid_draw, side, drawn_area);
   doing_assy = false;
 }
 
@@ -395,13 +395,13 @@ DrawEverything (const BoxType *drawn_area)
 
   if (hid_draw_set_layer (hid_draw, "topsilk", SL (SILK, TOP), 0))
     {
-      DrawSilk (TOP_SIDE, drawn_area);
+      DrawSilk (hid_draw, TOP_SIDE, drawn_area);
       hid_draw_end_layer (hid_draw);
     }
 
   if (hid_draw_set_layer (hid_draw, "bottomsilk", SL (SILK, BOTTOM), 0))
     {
-      DrawSilk (BOTTOM_SIDE, drawn_area);
+      DrawSilk (hid_draw, BOTTOM_SIDE, drawn_area);
       hid_draw_end_layer (hid_draw);
     }
 
@@ -414,7 +414,7 @@ DrawEverything (const BoxType *drawn_area)
       /* Draw rat lines on top */
       if (hid_draw_set_layer (hid_draw, "rats", SL (RATS, 0), 0))
         {
-          DrawRats(drawn_area);
+          DrawRats (hid_draw, drawn_area);
           hid_draw_end_layer (hid_draw);
         }
     }
@@ -523,8 +523,11 @@ pad_mask_callback (const BoxType * b, void *cl)
  */
 
 void
-DrawSilk (int side, const BoxType * drawn_area)
+DrawSilk (HID_DRAW *new_hid_draw, int side, const BoxType * drawn_area)
 {
+  HID_DRAW *old_hid_draw = hid_draw;
+  hid_draw = new_hid_draw;
+
 #if 0
   /* This code is used when you want to mask silk to avoid exposed
      pins and pads.  We decided it was a bad idea to do this
@@ -558,6 +561,8 @@ DrawSilk (int side, const BoxType * drawn_area)
     }
   hid_draw_use_mask (hid_draw, HID_MASK_OFF);
 #endif
+
+  hid_draw = old_hid_draw;
 }
 
 
@@ -681,8 +686,11 @@ DrawPaste (int side, const BoxType *drawn_area)
 }
 
 /* static */ void
-DrawRats (const BoxType *drawn_area)
+DrawRats (HID_DRAW *new_hid_draw, const BoxType *drawn_area)
 {
+  HID_DRAW *old_hid_draw = hid_draw;
+  hid_draw = new_hid_draw;
+
   /*
    * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
    * XXX gtk only allows negative drawing.
@@ -694,6 +702,8 @@ DrawRats (const BoxType *drawn_area)
   r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
   if (hid_draw_can_draw_in_mask_clear (hid_draw))
     hid_draw_use_mask (hid_draw, HID_MASK_OFF);
+
+  hid_draw = old_hid_draw;
 }
 
 /* ---------------------------------------------------------------------------
