@@ -1695,7 +1695,7 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
       if (s_rule (cur, &dir) && cur->Flags.mark == 0)
 	Collect1 (e, cur, dir, contours, holes, j_rule);
       other = cur;
-      if ((other->cvc_prev && jump (&other, &dir, j_rule)))
+      if (other->cvc_prev)
 	Collect1 (e, other, dir, contours, holes, j_rule);
     }
   while ((cur = cur->next) != &a->head);
