@@ -1,7 +1,7 @@
-Bottom: 3cbe0765f15b076f113ad88bbbb53c400bef6b86
-Top:    65c87c460ea5039a70eb4e70d6f082fcb7210513
+Bottom: b5703b985adac97e586320b452afc80b2c22b6fc
+Top:    afa3513ff11be8b2b046bd24bd9b86ae1972bd15
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-21 11:51:15 +0000
+Date:   2015-03-21 12:04:54 +0000
 
 Add name tags to contours and feature naming for pins and vias in STEP export
 
@@ -69,10 +69,10 @@ index c606077..92ca8a2 100644
  
  PLINE *poly_NewContour(VNODE *node);
 diff --git a/src/polygon.c b/src/polygon.c
-index ce68a11..e2ed33b 100644
+index 8dd3904..6998dfe 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -420,8 +420,13 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+@@ -451,8 +451,13 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
  }
  
  /* create a circle approximation from lines */
@@ -87,7 +87,7 @@ index ce68a11..e2ed33b 100644
  {
    PLINE *contour;
    Vector v;
-@@ -437,6 +442,7 @@ CirclePoly (Coord x, Coord y, Coord radius)
+@@ -468,6 +473,7 @@ CirclePoly (Coord x, Coord y, Coord radius)
    contour->cx = x;
    contour->cy = y;
    contour->radius = radius;
@@ -95,7 +95,7 @@ index ce68a11..e2ed33b 100644
    return ContourToPoly (contour);
  }
  
-@@ -591,7 +597,7 @@ LinePoly (LineType * L, Coord thick)
+@@ -622,7 +628,7 @@ LinePoly (LineType * L, Coord thick)
            SQUARE (l->Point1.Y - l->Point2.Y));
    if (!TEST_FLAG (SQUAREFLAG,l))
      if (d == 0)                   /* line is a point */
@@ -104,7 +104,7 @@ index ce68a11..e2ed33b 100644
    if (d != 0)
      {
        d = half / d;
-@@ -773,7 +779,7 @@ PinPoly (PinType * pin, Coord thick, Coord clear)
+@@ -817,7 +823,7 @@ PinPoly (PinType * pin, Coord thick, Coord clear)
            return OctagonPoly (pin->X, pin->Y, size + size);
          }
      }
@@ -113,7 +113,7 @@ index ce68a11..e2ed33b 100644
  }
  
  POLYAREA *
-@@ -1686,7 +1692,7 @@ IsPointInPolygon (Coord X, Coord Y, Coord r, PolygonType *p)
+@@ -1730,7 +1736,7 @@ IsPointInPolygon (Coord X, Coord Y, Coord r, PolygonType *p)
      return true;
    if (r < 1)
      return false;
@@ -122,7 +122,7 @@ index ce68a11..e2ed33b 100644
      return false;
    return isects (c, p, true);
  }
-@@ -2019,8 +2025,33 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2063,8 +2069,33 @@ pv_outline_callback (const BoxType * b, void *cl)
    PinType *pv = (PinType *)b;
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
@@ -171,10 +171,10 @@ index a02fd99..e07c133 100644
  POLYAREA * LinePoly(LineType *l, Coord thick);
  POLYAREA * ArcPoly(ArcType *l, Coord thick);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ef82f37..352f8f6 100644
+index ca8ed9a..04518c3 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2516,6 +2516,7 @@ poly_IniContour (PLINE * c)
+@@ -2572,6 +2572,7 @@ poly_IniContour (PLINE * c)
    c->cx = 0;
    c->cy = 0;
    c->radius = 0;
@@ -182,7 +182,7 @@ index ef82f37..352f8f6 100644
  }
  
  PLINE *
-@@ -2550,6 +2551,8 @@ poly_ClrContour (PLINE * c)
+@@ -2606,6 +2607,8 @@ poly_ClrContour (PLINE * c)
    free (c->tristrip_vertices);
    c->tristrip_vertices = NULL;
    c->tristrip_num_vertices = 0;
@@ -191,7 +191,7 @@ index ef82f37..352f8f6 100644
    poly_IniContour (c);
  }
  
-@@ -2582,6 +2585,7 @@ poly_DelContour (PLINE ** c)
+@@ -2638,6 +2641,7 @@ poly_DelContour (PLINE ** c)
        r_destroy_tree (&r);
      }
    free ((*c)->tristrip_vertices);
