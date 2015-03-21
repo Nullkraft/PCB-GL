@@ -2047,6 +2047,7 @@ POLYAREA *board_outline_poly (void)
   POLYAREA *piece;
   POLYAREA *check;
   GList *pieces_to_delete = NULL;
+  bool any_pieces_kept = false;
 
 #define BLOAT_WORLD MIL_TO_COORD (10)
 
@@ -2131,13 +2132,25 @@ POLYAREA *board_outline_poly (void)
         count ++;
     } while ((check = check->f) != clipped);
 
-    /* If the piece is inside an odd number of others, delete it */
-    if ((count & 1) == 0)
+    /* If the piece is inside an odd number of others, keep it */
+    if ((count & 1) == 1)
+      any_pieces_kept = true;
+    else
       pieces_to_delete = g_list_prepend (pieces_to_delete, piece);
 
   } while ((piece = piece->f) != clipped);
 
-  g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
+  /* If we did not find an enclosed area (the board) trimmed from the world polygon,
+     return the entire subtracted result. This keeps the behaviour similar to what
+     you see when individual lines on the outline layer don't close to form an
+     enclosed region. (This fixes being able to cope with such a case where the
+     outline layer geometry lies outside the world rect polygon above, and divides
+     that world rect into multiple pieces.
+   */
+  if (any_pieces_kept)
+    g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
+
+  g_list_free (pieces_to_delete);
 
   return clipped;
 }
