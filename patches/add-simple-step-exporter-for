@@ -1,7 +1,7 @@
-Bottom: 70eeb7cb7c244717d05c0f3675d18c633f7ca202
-Top:    b9ede59524a5737e059b20f312128a2aa155b31b
+Bottom: dc9c8827a2c6112f3c16e419bdadbeb77f427409
+Top:    e62289c059654bba04c8894895f90d4060fd173c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-02-16 23:51:40 +0000
+Date:   2015-03-21 11:51:15 +0000
 
 Add simple STEP exporter for the board outline
 
@@ -9,7 +9,7 @@ Add simple STEP exporter for the board outline
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 75c9bc6..c354f1a 100644
+index 6a052ec..ad640ef 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -12,7 +12,7 @@ HIDLIST = @HIDLIST@
@@ -29,7 +29,7 @@ index 75c9bc6..c354f1a 100644
  	parse_y.h \
  	pcb-menu.h \
  	res_parse.h \
-@@ -448,6 +449,20 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
+@@ -458,6 +459,20 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
  	(for f in ${LIBPS_SRCS} ; do cat $(srcdir)/$$f ; done) | grep "^REGISTER" > $@.tmp
  	mv $@.tmp $@
  
