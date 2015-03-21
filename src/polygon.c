@@ -1323,6 +1323,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
   if (Undoing ())
     return (false);
 
+if (0) {
   for (n = 0; n < Polygon->PointN; n++)
     {
       prev = prev_contour_point (Polygon, n);
@@ -1332,6 +1333,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
       line.Point1 = Polygon->Points[prev];
       line.Point2 = Polygon->Points[next];
       line.Thickness = 0;
+#warning THIS TEST IS NOT SUFFICIENT.. DOESNT ACCOUNT FOR DIFFERENT ARC CENTERS
       if (Polygon->Points[prev].included_angle == Polygon->Points[n].included_angle &&
           IsPointOnLine (p->X, p->Y, 0.0, &line))
         {
@@ -1339,6 +1341,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
           changed = true;
         }
     }
+}
   return (changed);
 }
 
@@ -2110,6 +2113,23 @@ pv_outline_callback (const BoxType * b, void *cl)
   return 1;
 }
 
+static int
+polygon_outline_callback (const BoxType * b, void *cl)
+{
+  PolygonType *poly = (PolygonType *)b;
+  struct clip_outline_info *info = cl;
+  POLYAREA *np, *res;
+
+  if (!(np = original_poly (poly)))
+    return 0;
+
+
+  poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
+  info->poly = res;
+
+  return 1;
+}
+
 static void
 delete_piece_cb (gpointer data, gpointer userdata)
 {
@@ -2190,12 +2210,13 @@ POLYAREA *board_outline_poly (bool include_holes)
    *  \_____________/
    */
 
-  info.poly = whole_world;
-
   region.X1 = 0;
   region.Y1 = 0;
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
+
+#if 0
+  info.poly = whole_world;
 
   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
@@ -2241,6 +2262,21 @@ POLYAREA *board_outline_poly (bool include_holes)
   } while ((piece = piece->f) != clipped);
 
   g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
+#endif
+
+  // The actual operation we want is to split the test polygon into multiple pieces
+  // along the intersection with the polygon contours of any polygon on the outer layer.
+  // The result would be nested, touching (not normally produced by the PBO code),
+  // polygon pieces which could then be culled appropriately by the above contour
+  // classification code to delete the regions outside the board.
+  info.poly = NULL; //clipped;
+  r_search (Layer->polygon_tree, &region, NULL, polygon_outline_callback, &info);
+  clipped = info.poly;
+
+  if (clipped == NULL)
+    return whole_world;
+  else
+    poly_Free (&whole_world);
 
   return clipped;
 }
