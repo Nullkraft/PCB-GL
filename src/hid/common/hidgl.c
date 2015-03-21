@@ -32,12 +32,18 @@
 #include <math.h>
 #include <assert.h>
 
-/* The Linux OpenGL ABI 1.0 spec requires that we define
- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
- * in order to get prototypes:
- *   http://www.opengl.org/registry/ABI/
- */
-#define GL_GLEXT_PROTOTYPES 1
+#ifdef WIN32
+#   define WIN32_LEAN_AND_MEAN 1
+#   include <windows.h>
+#else
+    /* The Linux OpenGL ABI 1.0 spec requires that we define
+     * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+     * in order to get prototypes:
+     *   http://www.opengl.org/registry/ABI/
+     */
+#   define GL_GLEXT_PROTOTYPES 1
+#endif
+
 #ifdef HAVE_OPENGL_GL_H
 #   include <OpenGL/gl.h>
 #else
