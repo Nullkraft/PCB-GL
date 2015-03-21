@@ -1,7 +1,7 @@
-Bottom: a87c66d45ca87e77ab4cb9835b8601ae15410af7
-Top:    5786ad886bcc639ffdb0eddddaa7aa98ebf2df9c
+Bottom: 727e943d18b33ee8214d53fc35a0c51e116d42c0
+Top:    7c77f7ca0658586067dae0188894df8aad8338fe
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-01-12 01:15:47 +0000
+Date:   2015-03-21 11:50:57 +0000
 
 Fix borast not to build for non-GL enabled builds
 
@@ -9,7 +9,7 @@ Fix borast not to build for non-GL enabled builds
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 8212ceb..ac1a7f5 100644
+index bd12421..73cdc6f 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -38,22 +38,6 @@ PCB_SRCS = \
