@@ -1348,7 +1348,7 @@ png_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 
 
 static hidGC
-png_make_gc (void)
+png_make_gc (HID_DRAW *hid_draw)
 {
   hidGC gc = (hidGC) calloc (1, sizeof (struct png_gc_struct));
   pngGC png_gc = (pngGC)gc;
