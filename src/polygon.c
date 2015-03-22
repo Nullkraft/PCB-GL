@@ -2134,11 +2134,11 @@ POLYAREA *board_outline_poly (void)
 
     } while ((check = check->f) != clipped);
 
-    /* If the piece is inside an odd number of others, delete it */
-    if ((count & 1) == 0)
-      pieces_to_delete = g_list_prepend (pieces_to_delete, piece);
-    else
+    /* If the piece is inside an odd number of others, keep it */
+    if ((count & 1) == 1)
       any_pieces_kept = true;
+    else
+      pieces_to_delete = g_list_prepend (pieces_to_delete, piece);
 
   } while ((piece = piece->f) != clipped);
 
