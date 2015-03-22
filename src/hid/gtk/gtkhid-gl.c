@@ -1694,14 +1694,10 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
 
   info.gc = gc;
 
-  PolygonHoles (&polygon, drawn_area, fill_outline_hole_cb, &info);
-
   p = polygon;
-  for (p.Clipped = polygon.Clipped->f;
-       p.Clipped != polygon.Clipped;
-       p.Clipped = p.Clipped->f) {
+  do {
     PolygonHoles (&p, drawn_area, fill_outline_hole_cb, &info);
-  }
+  } while ((p.Clipped = p.Clipped->f) != polygon.Clipped);
 
 //  poly_FreeContours (&polygon.NoHoles);
 
@@ -1868,16 +1864,11 @@ ghid_draw_outline_between_layers (int from_layer, int to_layer, BoxType *drawn_a
   info.z1 = compute_depth (from_layer);
   info.z2 = compute_depth (to_layer);
 
-  draw_outline_contour (info.gc, polygon.Clipped->contours, info.z1, info.z2);
-  PolygonHoles (&polygon, drawn_area, outline_hole_cb, &info);
-
   p = polygon;
-  for (p.Clipped = polygon.Clipped->f;
-       p.Clipped != polygon.Clipped;
-       p.Clipped = p.Clipped->f) {
+  do {
     draw_outline_contour (info.gc, p.Clipped->contours, info.z1, info.z2);
     PolygonHoles (&p, drawn_area, outline_hole_cb, &info);
-  }
+  } while ((p.Clipped = p.Clipped->f) != polygon.Clipped);
 
   poly_FreeContours (&polygon.NoHoles);
 
