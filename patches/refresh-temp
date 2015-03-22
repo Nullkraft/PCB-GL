@@ -1,0 +1,20 @@
+Bottom: 060c25bd697a3483bc1bf3e2da81c8d2cd6a8ec0
+Top:    930808acd754e6744eb94c58eae3f603e87fb9fb
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-03-22 20:03:35 +0000
+
+Refresh of hid-gtk-gl-add-hacky-code-to
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 38245ec..adeb32a 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2101,7 +2101,6 @@ POLYAREA *board_outline_poly (void)
+   region.X2 = PCB->MaxWidth;
+   region.Y2 = PCB->MaxHeight;
+ 
+-
+   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
+   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
