@@ -1,7 +1,7 @@
-Bottom: 13254a6aebb65944d347cef3b4cbe9871a30bd2b
-Top:    5e131a4c45d43f4521f3fd5084df2e91945d6573
+Bottom: 787511cac198e3f9c4e6de1f920f472bfd8e5939
+Top:    6a3b3f9225f18e4d4f66900db090f5e512b5e3c4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-21 11:51:10 +0000
+Date:   2015-03-22 20:09:34 +0000
 
 Move arc from included angle calculation into misc.c
 
@@ -127,7 +127,7 @@ index c9d3ef0..d4fdf0e 100644
  void SetElementBoundingBox (DataType *, ElementType *, FontType *);
  bool IsDataEmpty (DataType *);
 diff --git a/src/polygon.c b/src/polygon.c
-index f6fc19c..8cf1daa 100644
+index 5397e4f..99c1d73 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -354,13 +354,7 @@ original_poly (PolygonType * p)
