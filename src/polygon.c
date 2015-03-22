@@ -2101,7 +2101,6 @@ POLYAREA *board_outline_poly (void)
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
 
-
   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
 
