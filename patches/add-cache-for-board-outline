@@ -1,5 +1,5 @@
 Bottom: 91a7020d568c829e9e63609ce52a11cc50ed1ba1
-Top:    bcb1611cf2d66020eb65650de286fc869cdd4b99
+Top:    c3d9055836cbca0137a75e467ab20027ac4e16dd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-03-21 11:50:58 +0000
 
@@ -75,10 +75,27 @@ index a402f63..aff501c 100644
    {
      free (via->Name);
 diff --git a/src/polygon.c b/src/polygon.c
-index e284458..5c2b457 100644
+index e284458..587564f 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1645,6 +1645,16 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1633,6 +1633,16 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+   if (!Data->polyClip)
+     return;
+ 
++  /* XXX: HACK, this is a kludgy place to put a check for recomputing our outline */
++  if (type == LINE_TYPE || type == ARC_TYPE)
++    {
++      LayerType *layer = (LayerType *) ptr1;
++
++      if (strcmp (layer->Name, "outline") == 0 ||
++          strcmp (layer->Name, "route") == 0)
++        Data->outline_valid = false;
++    }
++
+   if (type == POLYGON_TYPE)
+     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
+   else
+@@ -1645,6 +1655,16 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
    if (!Data->polyClip)
      return;
  
