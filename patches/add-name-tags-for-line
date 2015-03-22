@@ -1,7 +1,7 @@
-Bottom: afa3513ff11be8b2b046bd24bd9b86ae1972bd15
-Top:    86578226fc12ed605975abf65a9e4794ff1b0a0d
+Bottom: 9b0fb9591d2c8e91568cc202d64b54f7268368cc
+Top:    6635624906c46a4481a7f22b5c77fdbaea2d5c23
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-02-16 23:51:41 +0000
+Date:   2015-03-22 20:33:12 +0000
 
 Add name tags for line contours (and provide partial support for arcs)
 
@@ -31,7 +31,7 @@ index 14590b5..0bb79dc 100644
        return isects (lp, Polygon, true);
      }
 diff --git a/src/polygon.c b/src/polygon.c
-index 6998dfe..eb943d3 100644
+index e7e8f9b..8834733 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -508,7 +508,7 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
@@ -135,7 +135,7 @@ index 6998dfe..eb943d3 100644
      longjmp (info->env, 1);
  
    poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
-@@ -2037,8 +2039,11 @@ arc_outline_callback (const BoxType * b, void *cl)
+@@ -2047,8 +2049,11 @@ arc_outline_callback (const BoxType * b, void *cl)
    ArcType *arc = (ArcType *)b;
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
@@ -148,7 +148,7 @@ index 6998dfe..eb943d3 100644
      return 0;
  
    poly_Boolean_free (info->poly, np, &res, PBO_SUB);
-@@ -2053,8 +2058,11 @@ line_outline_callback (const BoxType * b, void *cl)
+@@ -2063,8 +2068,11 @@ line_outline_callback (const BoxType * b, void *cl)
    LineType *line = (LineType *)b;
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
