@@ -1,5 +1,5 @@
-Bottom: 060c25bd697a3483bc1bf3e2da81c8d2cd6a8ec0
-Top:    155d0b36258869e97ac60e5e1e7c00d3d5dffa8d
+Bottom: bd0e1d43935fd3c34ea2d27ce9b4514fbc688584
+Top:    140ae9f8eb23ac391cba7156a69d31c570da77e8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-03-21 11:51:07 +0000
 
@@ -22,7 +22,7 @@ index 1c8b92b..1fd999f 100644
    }
  }
 diff --git a/src/polygon.c b/src/polygon.c
-index 38245ec..4810e4a 100644
+index 60a60aa..50a08cb 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -2013,6 +2013,22 @@ line_outline_callback (const BoxType * b, void *cl)
@@ -57,7 +57,7 @@ index 38245ec..4810e4a 100644
  {
    int i;
    int count;
-@@ -2105,6 +2121,12 @@ POLYAREA *board_outline_poly (void)
+@@ -2104,6 +2120,12 @@ POLYAREA *board_outline_poly (void)
    r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
    r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
  
