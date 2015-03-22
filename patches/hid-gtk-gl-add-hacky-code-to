@@ -1,5 +1,5 @@
 Bottom: ef8ca3b822d9e73fbfe0b6ca4b1b5ed23f5a3ac1
-Top:    477bc0ef1365d501b29b532a75ce3704e86043e6
+Top:    060c25bd697a3483bc1bf3e2da81c8d2cd6a8ec0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-03-21 11:51:07 +0000
 
@@ -267,7 +267,7 @@ index 7f99368..1c8b92b 100644
        glPopAttrib ();
      }
 diff --git a/src/polygon.c b/src/polygon.c
-index e91f990..d6996b7 100644
+index e91f990..38245ec 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -2047,6 +2047,7 @@ POLYAREA *board_outline_poly (void)
@@ -293,11 +293,13 @@ index e91f990..d6996b7 100644
 +
      } while ((check = check->f) != clipped);
  
-     /* If the piece is inside an odd number of others, delete it */
-     if ((count & 1) == 0)
-       pieces_to_delete = g_list_prepend (pieces_to_delete, piece);
-+    else
+-    /* If the piece is inside an odd number of others, delete it */
+-    if ((count & 1) == 0)
++    /* If the piece is inside an odd number of others, keep it */
++    if ((count & 1) == 1)
 +      any_pieces_kept = true;
++    else
+       pieces_to_delete = g_list_prepend (pieces_to_delete, piece);
  
    } while ((piece = piece->f) != clipped);
  
