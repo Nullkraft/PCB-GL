@@ -1,5 +1,5 @@
 Bottom: ef8ca3b822d9e73fbfe0b6ca4b1b5ed23f5a3ac1
-Top:    060c25bd697a3483bc1bf3e2da81c8d2cd6a8ec0
+Top:    930808acd754e6744eb94c58eae3f603e87fb9fb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-03-21 11:51:07 +0000
 
@@ -267,7 +267,7 @@ index 7f99368..1c8b92b 100644
        glPopAttrib ();
      }
 diff --git a/src/polygon.c b/src/polygon.c
-index e91f990..38245ec 100644
+index e91f990..adeb32a 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -2047,6 +2047,7 @@ POLYAREA *board_outline_poly (void)
@@ -278,15 +278,7 @@ index e91f990..38245ec 100644
  
  #define BLOAT_WORLD MIL_TO_COORD (10)
  
-@@ -2100,6 +2101,7 @@ POLYAREA *board_outline_poly (void)
-   region.X2 = PCB->MaxWidth;
-   region.Y2 = PCB->MaxHeight;
- 
-+
-   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
-   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
- 
-@@ -2129,15 +2131,28 @@ POLYAREA *board_outline_poly (void)
+@@ -2129,15 +2130,28 @@ POLYAREA *board_outline_poly (void)
          continue;
        if (poly_ContourInContour (check->contours, piece->contours))
          count ++;
