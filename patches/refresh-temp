@@ -1,0 +1,99 @@
+Bottom: c8275aa911adc1ee4bbd0bb09d220de234eb0657
+Top:    477bc0ef1365d501b29b532a75ce3704e86043e6
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-03-22 20:00:52 +0000
+
+Refresh of hid-gtk-gl-add-hacky-code-to
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 48e1a4f..1c8b92b 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1694,14 +1694,10 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
+ 
+   info.gc = gc;
+ 
+-  PolygonHoles (&polygon, drawn_area, fill_outline_hole_cb, &info);
+-
+   p = polygon;
+-  for (p.Clipped = polygon.Clipped->f;
+-       p.Clipped != polygon.Clipped;
+-       p.Clipped = p.Clipped->f) {
++  do {
+     PolygonHoles (&p, drawn_area, fill_outline_hole_cb, &info);
+-  }
++  } while ((p.Clipped = p.Clipped->f) != polygon.Clipped);
+ 
+ //  poly_FreeContours (&polygon.NoHoles);
+ 
+@@ -1868,16 +1864,11 @@ ghid_draw_outline_between_layers (int from_layer, int to_layer, BoxType *drawn_a
+   info.z1 = compute_depth (from_layer);
+   info.z2 = compute_depth (to_layer);
+ 
+-  draw_outline_contour (info.gc, polygon.Clipped->contours, info.z1, info.z2);
+-  PolygonHoles (&polygon, drawn_area, outline_hole_cb, &info);
+-
+   p = polygon;
+-  for (p.Clipped = polygon.Clipped->f;
+-       p.Clipped != polygon.Clipped;
+-       p.Clipped = p.Clipped->f) {
++  do {
+     draw_outline_contour (info.gc, p.Clipped->contours, info.z1, info.z2);
+     PolygonHoles (&p, drawn_area, outline_hole_cb, &info);
+-  }
++  } while ((p.Clipped = p.Clipped->f) != polygon.Clipped);
+ 
+   poly_FreeContours (&polygon.NoHoles);
+ 
+diff --git a/src/polygon.c b/src/polygon.c
+index e91f990..d6996b7 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2047,6 +2047,7 @@ POLYAREA *board_outline_poly (void)
+   POLYAREA *piece;
+   POLYAREA *check;
+   GList *pieces_to_delete = NULL;
++  bool any_pieces_kept = false;
+ 
+ #define BLOAT_WORLD MIL_TO_COORD (10)
+ 
+@@ -2100,6 +2101,7 @@ POLYAREA *board_outline_poly (void)
+   region.X2 = PCB->MaxWidth;
+   region.Y2 = PCB->MaxHeight;
+ 
++
+   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
+   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
+ 
+@@ -2129,15 +2131,28 @@ POLYAREA *board_outline_poly (void)
+         continue;
+       if (poly_ContourInContour (check->contours, piece->contours))
+         count ++;
++
+     } while ((check = check->f) != clipped);
+ 
+     /* If the piece is inside an odd number of others, delete it */
+     if ((count & 1) == 0)
+       pieces_to_delete = g_list_prepend (pieces_to_delete, piece);
++    else
++      any_pieces_kept = true;
+ 
+   } while ((piece = piece->f) != clipped);
+ 
+-  g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
++  /* If we did not find an enclosed area (the board) trimmed from the world polygon,
++     return the entire subtracted result. This keeps the behaviour similar to what
++     you see when individual lines on the outline layer don't close to form an
++     enclosed region. (This fixes being able to cope with such a case where the
++     outline layer geometry lies outside the world rect polygon above, and divides
++     that world rect into multiple pieces.
++   */
++  if (any_pieces_kept)
++    g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
++
++  g_list_free (pieces_to_delete);
+ 
+   return clipped;
+ }
