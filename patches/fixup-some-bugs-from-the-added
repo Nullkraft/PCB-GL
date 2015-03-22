@@ -1,5 +1,5 @@
 Bottom: d84f1f42431f4d9a7d04d95004feba9dc034910c
-Top:    7c7ceecb105dda99ee8807b133213dc9bea8b36b
+Top:    b1c88a177efd23299460ad58630daf7d7aa0a243
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-03-21 11:50:49 +0000
 
@@ -72,15 +72,3 @@ index 4f381ae..f60639e 100644
      return -1;
    prev = GetLayerGroupNumberByNumber (layer);
    if ((layer == bottom_silk_layer
-diff --git a/src/move.c b/src/move.c
-index b9a180d..9cdd49a 100644
---- a/src/move.c
-+++ b/src/move.c
-@@ -934,6 +934,7 @@ MoveLayer (int old_index, int new_index)
- 	       old_index, max_copper_layer - 1);
-       return 1;
-     }
-+#warning UNNECESSARY TEST AGAINST MAX_LAYER, max_copper_layer is same or smaller
-   if (new_index < -1 || new_index > max_copper_layer || new_index >= MAX_LAYER)
-     {
-       Message ("Invalid new layer %d for move: must be -1..%d\n",
