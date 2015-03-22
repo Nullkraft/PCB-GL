@@ -1,7 +1,7 @@
-Bottom: 29b865793bf1a136efcc4b0a86b31d02bab923bd
-Top:    19ae26796219a5a561aef6b7f0f0ed2e15ecd3e1
+Bottom: df3bb97db6b2779a5244e71cd4890ec4015a95bf
+Top:    d9514a1b7e7a9393a424cd8a4146ea1755dae918
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-21 11:51:12 +0000
+Date:   2015-03-22 20:25:35 +0000
 
 Split pin/via shape and hole drawing into different functions
 
@@ -304,7 +304,7 @@ index 622fb69..e7867de 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 066465c..618e01a 100644
+index c8c2a5a..ef8774b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1289,9 +1289,17 @@ static void

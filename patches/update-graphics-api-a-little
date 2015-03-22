@@ -1,7 +1,7 @@
-Bottom: dc9c8827a2c6112f3c16e419bdadbeb77f427409
-Top:    29b865793bf1a136efcc4b0a86b31d02bab923bd
+Bottom: c0aef109d9f3713b0c939f14a61a24136c5f356b
+Top:    df3bb97db6b2779a5244e71cd4890ec4015a95bf
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-21 11:51:12 +0000
+Date:   2015-03-22 20:25:34 +0000
 
 Update graphics API a little
 
@@ -252,7 +252,7 @@ index a746411..622fb69 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2470607..066465c 100644
+index 2332d07..c8c2a5a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -900,7 +900,7 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -347,7 +347,7 @@ index 2470607..066465c 100644
  
    poly_FreeContours (&polygon.NoHoles);
  
-@@ -1788,7 +1788,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1784,7 +1784,7 @@ GhidDrawMask (int side, BoxType * screen)
      polygon.BoundingBox = *screen;
    polygon.Flags = NoFlags ();
    SET_FLAG (FULLPOLYFLAG, &polygon);
@@ -356,7 +356,7 @@ index 2470607..066465c 100644
    poly_FreeContours (&polygon.NoHoles);
  #endif
  
-@@ -2346,7 +2346,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2337,7 +2337,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
    if (hidgl_stencil_bits (priv->hidgl) == 0)

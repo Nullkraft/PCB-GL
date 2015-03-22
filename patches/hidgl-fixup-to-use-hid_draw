@@ -1,7 +1,7 @@
-Bottom: 07623c49001a92d4372c34b77d76b5e9110cfb8f
-Top:    4518e111c12dc4cc72231a0387b98eb4af74d0e9
+Bottom: a33cdd625bb47f733bf4b8c87e05ae3376041d05
+Top:    f3eb3082cadbe6456a8a4f901d54112fa08e16d8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-21 11:51:13 +0000
+Date:   2015-03-22 20:25:36 +0000
 
 hidgl: Fixup to use HID_DRAW * rather than hidgl_instance *
 
@@ -436,7 +436,7 @@ index e2d7f67..a4fe876 100644
  /* hidgl_pacakge_acy_resistor.c */
  void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 88e69d2..71dfe6c 100644
+index 887850b..7b4006a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -42,6 +42,7 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
@@ -650,7 +650,7 @@ index 88e69d2..71dfe6c 100644
  
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
-@@ -1716,7 +1723,7 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
+@@ -1712,7 +1719,7 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
  
  //  poly_FreeContours (&polygon.NoHoles);
  
@@ -659,7 +659,7 @@ index 88e69d2..71dfe6c 100644
  }
  
  static void
-@@ -1803,7 +1810,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1799,7 +1806,7 @@ GhidDrawMask (int side, BoxType * screen)
    fill_board_outline (out->fgGC, screen);
  
    ghid_set_alpha_mult (out->fgGC, 1.0);
@@ -668,7 +668,7 @@ index 88e69d2..71dfe6c 100644
  #if 0
    glDisable (GL_TEXTURE_GEN_S);
    glDisable (GL_TEXTURE_GEN_T);
-@@ -1892,7 +1899,7 @@ ghid_draw_outline_between_layers (int from_layer, int to_layer, BoxType *drawn_a
+@@ -1883,7 +1890,7 @@ ghid_draw_outline_between_layers (int from_layer, int to_layer, BoxType *drawn_a
  
    poly_FreeContours (&polygon.NoHoles);
  
@@ -677,7 +677,7 @@ index 88e69d2..71dfe6c 100644
  }
  
  static int
-@@ -1931,7 +1938,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1922,7 +1929,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
  
        if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
          /* Mask out drilled holes on this layer */
@@ -686,7 +686,7 @@ index 88e69d2..71dfe6c 100644
          glPushAttrib (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
          glColorMask (0, 0, 0, 0);
          glDepthMask (GL_FALSE);
-@@ -1939,7 +1946,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1930,7 +1937,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
          fill_board_outline_holes (Output.bgGC, screen);
@@ -695,7 +695,7 @@ index 88e69d2..71dfe6c 100644
          glPopAttrib ();
        }
  
-@@ -1956,7 +1963,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1947,7 +1954,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
          hid_draw_set_layer (&ghid_graphics, 0, group, 0);
  
          if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
@@ -704,7 +704,7 @@ index 88e69d2..71dfe6c 100644
            glPushAttrib (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
            glColorMask (0, 0, 0, 0);
            glDepthMask (GL_FALSE);
-@@ -1964,7 +1971,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1955,7 +1962,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
            if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
            if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
            fill_board_outline_holes (Output.bgGC, screen);
@@ -713,7 +713,7 @@ index 88e69d2..71dfe6c 100644
            glPopAttrib ();
          }
        }
-@@ -2267,18 +2274,18 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -2258,18 +2265,18 @@ ghid_draw_everything (BoxType *drawn_area)
  
    /* Draw pins, pads, vias below silk */
    if (global_view_2d) {
@@ -735,7 +735,7 @@ index 88e69d2..71dfe6c 100644
        glPopAttrib ();
      }
  
-@@ -2286,7 +2293,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -2277,7 +2284,7 @@ ghid_draw_everything (BoxType *drawn_area)
      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
  
@@ -744,7 +744,7 @@ index 88e69d2..71dfe6c 100644
    }
  
    /* Draw the solder mask if turned on */
-@@ -2353,7 +2360,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2344,7 +2351,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
@@ -753,7 +753,7 @@ index 88e69d2..71dfe6c 100644
      ghid_graphics_class._fill_pcb_polygon = common_fill_pcb_polygon;
  
    glEnable (GL_BLEND);
-@@ -2439,7 +2446,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2430,7 +2437,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -762,7 +762,7 @@ index 88e69d2..71dfe6c 100644
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
    glDisable (GL_STENCIL_TEST);
-@@ -2582,10 +2589,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2573,10 +2580,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_draw_bg_image ();
  
@@ -776,7 +776,7 @@ index 88e69d2..71dfe6c 100644
  
    glTexCoord2f (0., 0.);
    glColor3f (1., 1., 1.);
-@@ -2637,7 +2644,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2628,7 +2635,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    DrawAttached (Output.fgGC);
    DrawMark (Output.fgGC);
@@ -785,7 +785,7 @@ index 88e69d2..71dfe6c 100644
  
    glEnable (GL_LIGHTING);
  
-@@ -2700,7 +2707,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2691,7 +2698,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    draw_crosshair (Output.fgGC, priv);
    object3d_draw_debug ();
  
@@ -794,7 +794,7 @@ index 88e69d2..71dfe6c 100644
  
    draw_lead_user (Output.fgGC, priv);
  
-@@ -2748,6 +2755,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2739,6 +2746,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    Coord save_max_width;
    Coord save_max_height;
    double xz, yz;
@@ -802,7 +802,7 @@ index 88e69d2..71dfe6c 100644
  
    save_view = gport->view;
    save_width = gport->width;
-@@ -2831,7 +2839,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2822,7 +2830,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -811,7 +811,7 @@ index 88e69d2..71dfe6c 100644
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
    glDisable (GL_STENCIL_TEST);
-@@ -2849,8 +2857,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2840,8 +2848,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                      -gport->view.y0, 0);
  
@@ -822,7 +822,7 @@ index 88e69d2..71dfe6c 100644
    glPopMatrix ();
  
    ghid_end_drawing (gport, widget);
-@@ -2878,6 +2886,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2869,6 +2877,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    view_data save_view;
    int save_width, save_height;
    BoxType region;
@@ -830,7 +830,7 @@ index 88e69d2..71dfe6c 100644
  
    save_view = gport->view;
    save_width = gport->width;
-@@ -2918,7 +2927,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2909,7 +2918,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
      return NULL;
    }
@@ -839,7 +839,7 @@ index 88e69d2..71dfe6c 100644
    gport->render_priv->in_context = true;
  
    glEnable (GL_BLEND);
-@@ -2943,7 +2952,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2934,7 +2943,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -848,7 +848,7 @@ index 88e69d2..71dfe6c 100644
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
    glDisable (GL_STENCIL_TEST);
-@@ -2971,14 +2980,14 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2962,14 +2971,14 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
    region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
  
@@ -867,7 +867,7 @@ index 88e69d2..71dfe6c 100644
  
    /* end drawing to current GL-context */
    gport->render_priv->in_context = false;
-@@ -3040,7 +3049,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
+@@ -3031,7 +3040,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
    GtkWidget *widget = gport->drawing_area;
    GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
@@ -876,7 +876,7 @@ index 88e69d2..71dfe6c 100644
  
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
-@@ -3051,9 +3060,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
+@@ -3042,9 +3051,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
  void
  ghid_finish_debug_draw (HID_DRAW *hid_draw)
  {
@@ -887,7 +887,7 @@ index 88e69d2..71dfe6c 100644
    glPopMatrix ();
  
    ghid_end_drawing (gport, gport->drawing_area);
-@@ -3415,7 +3422,6 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -3406,7 +3413,6 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
  static void
  draw_lead_user (hidGC gc, render_priv *priv)
  {
@@ -895,7 +895,7 @@ index 88e69d2..71dfe6c 100644
    int i;
    double radius = priv->lead_user_radius;
    double width = MM_TO_COORD (LEAD_USER_WIDTH);
-@@ -3442,7 +3448,7 @@ draw_lead_user (hidGC gc, render_priv *priv)
+@@ -3433,7 +3439,7 @@ draw_lead_user (hidGC gc, render_priv *priv)
                        radius, radius, 0, 360, gport->view.coord_per_px);
      }
  

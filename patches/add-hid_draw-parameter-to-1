@@ -1,7 +1,7 @@
-Bottom: 128725416da8aa50f66cef225ac3653d9227de63
-Top:    36a4cd1aaf13db8d659469cdee95ec39015abc33
+Bottom: 8bf7d2e3736a09eccf5ad60bded8405cfeacd4be
+Top:    12e2d82adf3f886338468033d20f6dd3b5b4fdc3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-21 11:51:13 +0000
+Date:   2015-03-22 20:25:35 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->{flush,finish}_debug_draw_gc() function
 
@@ -94,10 +94,10 @@ index 0815245..9d767b3 100644
     */
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 43ec65f..9fa5fe3 100644
+index 279ccc3..d4b0598 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -3032,7 +3032,7 @@ ghid_request_debug_draw (void)
+@@ -3023,7 +3023,7 @@ ghid_request_debug_draw (void)
  }
  
  void
@@ -106,7 +106,7 @@ index 43ec65f..9fa5fe3 100644
  {
    render_priv *priv = gport->render_priv;
    GtkWidget *widget = gport->drawing_area;
-@@ -3047,7 +3047,7 @@ ghid_flush_debug_draw (void)
+@@ -3038,7 +3038,7 @@ ghid_flush_debug_draw (void)
  }
  
  void
