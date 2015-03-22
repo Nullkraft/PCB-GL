@@ -1,0 +1,21 @@
+Bottom: 7c7ceecb105dda99ee8807b133213dc9bea8b36b
+Top:    b1c88a177efd23299460ad58630daf7d7aa0a243
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-03-22 23:58:53 +0000
+
+Refresh of fixup-some-bugs-from-the-added
+
+---
+
+diff --git a/src/move.c b/src/move.c
+index 9cdd49a..b9a180d 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -934,7 +934,6 @@ MoveLayer (int old_index, int new_index)
+ 	       old_index, max_copper_layer - 1);
+       return 1;
+     }
+-#warning UNNECESSARY TEST AGAINST MAX_LAYER, max_copper_layer is same or smaller
+   if (new_index < -1 || new_index > max_copper_layer || new_index >= MAX_LAYER)
+     {
+       Message ("Invalid new layer %d for move: must be -1..%d\n",
