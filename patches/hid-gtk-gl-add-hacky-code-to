@@ -1,5 +1,5 @@
 Bottom: ef8ca3b822d9e73fbfe0b6ca4b1b5ed23f5a3ac1
-Top:    c8275aa911adc1ee4bbd0bb09d220de234eb0657
+Top:    477bc0ef1365d501b29b532a75ce3704e86043e6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-03-21 11:51:07 +0000
 
@@ -9,10 +9,10 @@ hid/gtk (GL): Add hacky code to render outline of board, and mask cutout geometr
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7f99368..48e1a4f 100644
+index 7f99368..1c8b92b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1610,15 +1610,112 @@ clearPad_callback_solid (const BoxType * b, void *cl)
+@@ -1610,15 +1610,108 @@ clearPad_callback_solid (const BoxType * b, void *cl)
  }
  
  static void
@@ -101,14 +101,10 @@ index 7f99368..48e1a4f 100644
 +
 +  info.gc = gc;
 +
-+  PolygonHoles (&polygon, drawn_area, fill_outline_hole_cb, &info);
-+
 +  p = polygon;
-+  for (p.Clipped = polygon.Clipped->f;
-+       p.Clipped != polygon.Clipped;
-+       p.Clipped = p.Clipped->f) {
++  do {
 +    PolygonHoles (&p, drawn_area, fill_outline_hole_cb, &info);
-+  }
++  } while ((p.Clipped = p.Clipped->f) != polygon.Clipped);
 +
 +//  poly_FreeContours (&polygon.NoHoles);
 +
@@ -127,7 +123,7 @@ index 7f99368..48e1a4f 100644
  
    OutputType *out = &Output;
  
-@@ -1679,14 +1776,8 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1679,14 +1772,8 @@ GhidDrawMask (int side, BoxType * screen)
    glEnable (GL_TEXTURE_2D);
  #endif
  
@@ -144,7 +140,7 @@ index 7f99368..48e1a4f 100644
  
    memset (&polygon, 0, sizeof (polygon));
    polygon.Clipped = PCB->Data->outline;
-@@ -1696,8 +1787,12 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1696,8 +1783,12 @@ GhidDrawMask (int side, BoxType * screen)
    SET_FLAG (FULLPOLYFLAG, &polygon);
    hid_draw_fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_FreeContours (&polygon.NoHoles);
@@ -158,7 +154,7 @@ index 7f99368..48e1a4f 100644
  #if 0
    glDisable (GL_TEXTURE_GEN_S);
    glDisable (GL_TEXTURE_GEN_T);
-@@ -1711,6 +1806,84 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1711,6 +1802,79 @@ GhidDrawMask (int side, BoxType * screen)
  //  first_run = false;
  }
  
@@ -224,16 +220,11 @@ index 7f99368..48e1a4f 100644
 +  info.z1 = compute_depth (from_layer);
 +  info.z2 = compute_depth (to_layer);
 +
-+  draw_outline_contour (info.gc, polygon.Clipped->contours, info.z1, info.z2);
-+  PolygonHoles (&polygon, drawn_area, outline_hole_cb, &info);
-+
 +  p = polygon;
-+  for (p.Clipped = polygon.Clipped->f;
-+       p.Clipped != polygon.Clipped;
-+       p.Clipped = p.Clipped->f) {
++  do {
 +    draw_outline_contour (info.gc, p.Clipped->contours, info.z1, info.z2);
 +    PolygonHoles (&p, drawn_area, outline_hole_cb, &info);
-+  }
++  } while ((p.Clipped = p.Clipped->f) != polygon.Clipped);
 +
 +  poly_FreeContours (&polygon.NoHoles);
 +
@@ -243,7 +234,7 @@ index 7f99368..48e1a4f 100644
  static int
  GhidDrawLayerGroup (int group, const BoxType * screen)
  {
-@@ -1754,6 +1927,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1754,6 +1918,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
          hid_draw_set_color (Output.bgGC, PCB->MaskColor);
          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
@@ -251,7 +242,7 @@ index 7f99368..48e1a4f 100644
          hidgl_flush_triangles (priv->hidgl);
          glPopAttrib ();
        }
-@@ -1778,6 +1952,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
+@@ -1778,6 +1943,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
            /* Mask out drilled holes on this layer */
            if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
            if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
@@ -259,7 +250,7 @@ index 7f99368..48e1a4f 100644
            hidgl_flush_triangles (priv->hidgl);
            glPopAttrib ();
          }
-@@ -2064,6 +2239,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -2064,6 +2230,7 @@ ghid_draw_everything (BoxType *drawn_area)
        cyl_info.scale = gport->view.coord_per_px;
        hid_draw_set_color (Output.fgGC, "drill");
        ghid_set_alpha_mult (Output.fgGC, alpha_mult * 0.75);
@@ -267,7 +258,7 @@ index 7f99368..48e1a4f 100644
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
        if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_cyl_callback, &cyl_info);
      }
-@@ -2090,6 +2266,7 @@ ghid_draw_everything (BoxType *drawn_area)
+@@ -2090,6 +2257,7 @@ ghid_draw_everything (BoxType *drawn_area)
        glDepthMask (GL_FALSE);
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
        if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
@@ -275,3 +266,53 @@ index 7f99368..48e1a4f 100644
        hidgl_flush_triangles (priv->hidgl);
        glPopAttrib ();
      }
+diff --git a/src/polygon.c b/src/polygon.c
+index e91f990..d6996b7 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2047,6 +2047,7 @@ POLYAREA *board_outline_poly (void)
+   POLYAREA *piece;
+   POLYAREA *check;
+   GList *pieces_to_delete = NULL;
++  bool any_pieces_kept = false;
+ 
+ #define BLOAT_WORLD MIL_TO_COORD (10)
+ 
+@@ -2100,6 +2101,7 @@ POLYAREA *board_outline_poly (void)
+   region.X2 = PCB->MaxWidth;
+   region.Y2 = PCB->MaxHeight;
+ 
++
+   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
+   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
+ 
+@@ -2129,15 +2131,28 @@ POLYAREA *board_outline_poly (void)
+         continue;
+       if (poly_ContourInContour (check->contours, piece->contours))
+         count ++;
++
+     } while ((check = check->f) != clipped);
+ 
+     /* If the piece is inside an odd number of others, delete it */
+     if ((count & 1) == 0)
+       pieces_to_delete = g_list_prepend (pieces_to_delete, piece);
++    else
++      any_pieces_kept = true;
+ 
+   } while ((piece = piece->f) != clipped);
+ 
+-  g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
++  /* If we did not find an enclosed area (the board) trimmed from the world polygon,
++     return the entire subtracted result. This keeps the behaviour similar to what
++     you see when individual lines on the outline layer don't close to form an
++     enclosed region. (This fixes being able to cope with such a case where the
++     outline layer geometry lies outside the world rect polygon above, and divides
++     that world rect into multiple pieces.
++   */
++  if (any_pieces_kept)
++    g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
++
++  g_list_free (pieces_to_delete);
+ 
+   return clipped;
+ }
