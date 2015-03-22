@@ -1,0 +1,21 @@
+Bottom: 930808acd754e6744eb94c58eae3f603e87fb9fb
+Top:    bd0e1d43935fd3c34ea2d27ce9b4514fbc688584
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-03-22 20:03:40 +0000
+
+Refresh of hid-gtk-gl-add-hacky-code-to
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index adeb32a..60a60aa 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2130,7 +2130,6 @@ POLYAREA *board_outline_poly (void)
+         continue;
+       if (poly_ContourInContour (check->contours, piece->contours))
+         count ++;
+-
+     } while ((check = check->f) != clipped);
+ 
+     /* If the piece is inside an odd number of others, keep it */
