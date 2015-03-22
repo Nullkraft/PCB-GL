@@ -1,7 +1,7 @@
-Bottom: ecc15675fcd4943f3c76838a4cd1f69eeedece7d
-Top:    ff444f6f95bbdb5cf504525db63227d5dc0bdec6
+Bottom: 664b9ab5b31a38e38b8ede9b559cbdc202df4e87
+Top:    e446444fa5d2e474bcc229f7fe9164a990e0ef79
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-21 12:05:48 +0000
+Date:   2015-03-22 20:33:14 +0000
 
 Win32 code fixes (TO BE SPLIT INTO SEPARATE PATCHES)
 
@@ -60,7 +60,7 @@ index b964d24..a809ead 100644
  #endif
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2470607..5b6d4f1 100644
+index 2332d07..7ca00e8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -18,7 +18,9 @@
@@ -158,10 +158,10 @@ index 8977b40..29910ea 100644
  # endif
  #endif
 diff --git a/src/polygon.c b/src/polygon.c
-index eb943d3..7938cd1 100644
+index 8834733..dc9e61c 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -2086,12 +2086,13 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2096,12 +2096,13 @@ pv_outline_callback (const BoxType * b, void *cl)
  
        if (element_name != NULL && pin_number != NULL)
          {
