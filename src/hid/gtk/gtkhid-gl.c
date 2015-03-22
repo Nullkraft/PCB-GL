@@ -1717,7 +1717,7 @@ fill_board_outline_holes (hidGC gc)
 
   p = polygon;
   do {
-    PolygonHoles (&p, gc->hid_draw_>clip_box, fill_outline_hole_cb, &info);
+    PolygonHoles (&p, gc->hid_draw->clip_box, fill_outline_hole_cb, &info);
   } while ((p.Clipped = p.Clipped->f) != polygon.Clipped);
 
 //  poly_FreeContours (&polygon.NoHoles);
