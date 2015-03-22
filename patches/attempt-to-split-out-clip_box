@@ -1,5 +1,5 @@
 Bottom: bc723df4d4427fd9952bb2df4e3fb1b7e6835604
-Top:    ed3644ffbfbff18449d2c0d05ed7784881345514
+Top:    a4e56302c17f5ed0a64ff9c5efcd38e25bc3da26
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-03-22 20:25:36 +0000
 
@@ -721,7 +721,7 @@ index b0d1e24..5933a88 100644
    gport->drawable = save_drawable;
    gport->view = save_view;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7b4006a..3f12a20 100644
+index 7b4006a..b4be3a5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -403,7 +403,7 @@ ghid_make_gc (HID_DRAW *hid_draw)
@@ -840,7 +840,7 @@ index 7b4006a..3f12a20 100644
    p = polygon;
    do {
 -    PolygonHoles (&p, drawn_area, fill_outline_hole_cb, &info);
-+    PolygonHoles (&p, gc->hid_draw_>clip_box, fill_outline_hole_cb, &info);
++    PolygonHoles (&p, gc->hid_draw->clip_box, fill_outline_hole_cb, &info);
    } while ((p.Clipped = p.Clipped->f) != polygon.Clipped);
  
  //  poly_FreeContours (&polygon.NoHoles);
