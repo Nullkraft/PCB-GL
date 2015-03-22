@@ -1,7 +1,7 @@
-Bottom: ef8ca3b822d9e73fbfe0b6ca4b1b5ed23f5a3ac1
-Top:    bd0e1d43935fd3c34ea2d27ce9b4514fbc688584
+Bottom: 3007f502b3afaa9e2e57ff74737481db38a418a9
+Top:    3d551e4d31f8e6a6860274c4ea5244fffce50508
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-21 11:51:07 +0000
+Date:   2015-03-22 20:09:31 +0000
 
 hid/gtk (GL): Add hacky code to render outline of board, and mask cutout geometry
 
@@ -266,44 +266,3 @@ index 7f99368..1c8b92b 100644
        hidgl_flush_triangles (priv->hidgl);
        glPopAttrib ();
      }
-diff --git a/src/polygon.c b/src/polygon.c
-index e91f990..60a60aa 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -2047,6 +2047,7 @@ POLYAREA *board_outline_poly (void)
-   POLYAREA *piece;
-   POLYAREA *check;
-   GList *pieces_to_delete = NULL;
-+  bool any_pieces_kept = false;
- 
- #define BLOAT_WORLD MIL_TO_COORD (10)
- 
-@@ -2131,13 +2132,25 @@ POLYAREA *board_outline_poly (void)
-         count ++;
-     } while ((check = check->f) != clipped);
- 
--    /* If the piece is inside an odd number of others, delete it */
--    if ((count & 1) == 0)
-+    /* If the piece is inside an odd number of others, keep it */
-+    if ((count & 1) == 1)
-+      any_pieces_kept = true;
-+    else
-       pieces_to_delete = g_list_prepend (pieces_to_delete, piece);
- 
-   } while ((piece = piece->f) != clipped);
- 
--  g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
-+  /* If we did not find an enclosed area (the board) trimmed from the world polygon,
-+     return the entire subtracted result. This keeps the behaviour similar to what
-+     you see when individual lines on the outline layer don't close to form an
-+     enclosed region. (This fixes being able to cope with such a case where the
-+     outline layer geometry lies outside the world rect polygon above, and divides
-+     that world rect into multiple pieces.
-+   */
-+  if (any_pieces_kept)
-+    g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
-+
-+  g_list_free (pieces_to_delete);
- 
-   return clipped;
- }
