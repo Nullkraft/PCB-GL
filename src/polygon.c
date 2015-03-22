@@ -2130,7 +2130,6 @@ POLYAREA *board_outline_poly (void)
         continue;
       if (poly_ContourInContour (check->contours, piece->contours))
         count ++;
-
     } while ((check = check->f) != clipped);
 
     /* If the piece is inside an odd number of others, keep it */
