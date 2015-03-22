@@ -1,5 +1,5 @@
-Bottom: d0b4df6e97e032ec9401d22021b0e9a49675bf68
-Top:    f73327dd30397e65b71ba0226ce6d3aa1a6d6316
+Bottom: 8aa78d331df13b98740c74f44adc201636c45fa6
+Top:    3ea67dc03a8e44aa86c0318520b8f733cf448cdc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:03 +0000
 
@@ -9,7 +9,7 @@ Hidcairo
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 75c9bc6..9e0b427 100644
+index 6a052ec..055ab6e 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -162,7 +162,7 @@ PCB_SRCS = \
@@ -32,7 +32,7 @@ index 75c9bc6..9e0b427 100644
  BUILT_SOURCES = \
  	core_lists.h \
  	gpcb-menu.h \
-@@ -378,6 +382,15 @@ else
+@@ -388,6 +392,15 @@ else
  LIBGTK_SRCS+=	${LIBGTK_GDK_SRCS}
  endif
  
@@ -628,7 +628,7 @@ index 0000000..43c55ee
 +
 +//extern HID_DRAW cairo_graphics;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ab3fb6b..c7bdd06 100644
+index 203f841..671fe37 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -44,12 +44,16 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
@@ -768,7 +768,7 @@ index ab3fb6b..c7bdd06 100644
  }
  
  void
-@@ -2346,6 +2442,7 @@ ghid_draw_everything (hidGC gc)
+@@ -2339,6 +2435,7 @@ ghid_draw_everything (hidGC gc)
  }
  
  #define Z_NEAR 3.0
@@ -776,7 +776,7 @@ index ab3fb6b..c7bdd06 100644
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
-@@ -2744,6 +2841,33 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2737,6 +2834,33 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    return FALSE;
  }
