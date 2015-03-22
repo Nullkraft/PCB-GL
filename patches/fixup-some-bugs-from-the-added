@@ -1,5 +1,5 @@
 Bottom: d84f1f42431f4d9a7d04d95004feba9dc034910c
-Top:    581e7d94ce6b27fafaf42b30273a4cac2afec409
+Top:    7c7ceecb105dda99ee8807b133213dc9bea8b36b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-03-21 11:50:49 +0000
 
@@ -59,29 +59,24 @@ index 97f92a2..c402568 100644
          }
  
 diff --git a/src/misc.c b/src/misc.c
-index 4f381ae..31021c9 100644
+index 4f381ae..f60639e 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -2015,6 +2015,7 @@ MoveLayerToGroup (int layer, int group)
+@@ -2015,7 +2015,8 @@ MoveLayerToGroup (int layer, int group)
  {
    int prev, i, j;
  
+-  if (layer < 0 || layer > max_copper_layer + 1)
 +#warning BUG NEXT LINE?
-   if (layer < 0 || layer > max_copper_layer + 1)
++  if (layer < 0 || layer >= max_copper_layer + 2)
      return -1;
    prev = GetLayerGroupNumberByNumber (layer);
+   if ((layer == bottom_silk_layer
 diff --git a/src/move.c b/src/move.c
-index b9a180d..5f0cfb3 100644
+index b9a180d..9cdd49a 100644
 --- a/src/move.c
 +++ b/src/move.c
-@@ -928,12 +928,14 @@ MoveLayer (int old_index, int new_index)
-   AddLayerChangeToUndoList (old_index, new_index);
-   IncrementUndoSerialNumber ();
- 
-+#warning BUG NEXT LINE?
-   if (old_index < -1 || old_index >= max_copper_layer)
-     {
-       Message ("Invalid old layer %d for move: must be -1..%d\n",
+@@ -934,6 +934,7 @@ MoveLayer (int old_index, int new_index)
  	       old_index, max_copper_layer - 1);
        return 1;
      }
