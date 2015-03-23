@@ -1,7 +1,7 @@
-Bottom: 581e7d94ce6b27fafaf42b30273a4cac2afec409
-Top:    de91a1014b710724073de9ec22f503710a60889a
+Bottom: 36cd9e88191974594a3c048cf9fe44f7b8a9640b
+Top:    a744b5f37d2bacfcc4dc11204fc5e07e4bfe8963
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-03-21 11:50:51 +0000
+Date:   2015-03-23 00:10:38 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -1287,7 +1287,7 @@ index a34693a..64c7eff 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index 31021c9..f56d228 100644
+index 4f381ae..94b6ec5 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -494,7 +494,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
@@ -1373,7 +1373,7 @@ index 31021c9..f56d228 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -2133,10 +2143,13 @@ pcb_author (void)
+@@ -2132,10 +2142,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
@@ -1392,7 +1392,7 @@ index 31021c9..f56d228 100644
  }
  
 diff --git a/src/move.c b/src/move.c
-index 5f0cfb3..657f0ef 100644
+index b9a180d..94e99cc 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -787,7 +787,7 @@ void *
