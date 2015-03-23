@@ -682,6 +682,9 @@ gerber_do_export (HID_Attr_Val * options)
   lastgroup = -1;
   layer_list_idx = 0;
   finding_apertures = 1;
+
+  common_set_clip_box (&gerber_graphics, &region);
+
   hid_expose_callback (&gerber_graphics, &region, 0);
 
   layer_list_idx = 0;
