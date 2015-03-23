@@ -1,7 +1,7 @@
-Bottom: 91e7c0bb8e538280cad2108a4d743012a6012407
-Top:    795bc55c1f2a131442602005181d929bbeeb70be
+Bottom: 6bbe53fc461625442071c08272f368ccb62832d8
+Top:    b7c1dbb2aecd3b7927166b976588b206eb5e27ce
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-22 20:09:34 +0000
+Date:   2015-03-23 00:10:57 +0000
 
 Refactor arc bounding box calculations to separate out thin case
 
@@ -43,7 +43,7 @@ index 0f7a8ba..7333684 100644
    if (!Layer->arc_tree)
      Layer->arc_tree = r_create_tree (NULL, 0, 0);
 diff --git a/src/misc.c b/src/misc.c
-index b01a5ae..5af90bb 100644
+index 1146eba..929a9dc 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -78,6 +78,8 @@
