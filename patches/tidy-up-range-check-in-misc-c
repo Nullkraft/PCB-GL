@@ -11,10 +11,10 @@ NB: The +2 relates to the bottom silk and top-silk layers, whose numbers
 are used to denote the bottom and top layer groups respectively.
 
 re-write:
-   > max_copper_layer + 1
+  layer > max_copper_layer + 1
 
 to become:
-   >= max_copper_layer + 2
+  layer >= max_copper_layer + 2
 
 
 ---
