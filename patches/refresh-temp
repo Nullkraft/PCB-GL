@@ -1,0 +1,22 @@
+Bottom: a4d66316d94b5b89de79b057786b75a1cf0e19ba
+Top:    6f3a6a83f563c853be17327b0aed9323f19cc868
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-03-23 00:00:15 +0000
+
+Refresh of fixup-some-bugs-from-the-added
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index 37aaebb..4f381ae 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -2015,7 +2015,7 @@ MoveLayerToGroup (int layer, int group)
+ {
+   int prev, i, j;
+ 
+-  if (layer < 0 || layer >= max_copper_layer + 2)
++  if (layer < 0 || layer > max_copper_layer + 1)
+     return -1;
+   prev = GetLayerGroupNumberByNumber (layer);
+   if ((layer == bottom_silk_layer
