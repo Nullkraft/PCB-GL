@@ -1,7 +1,7 @@
-Bottom: 03db07ce24f6bbdbdc29f0fb04b5eaf9f4322d49
-Top:    664b9ab5b31a38e38b8ede9b559cbdc202df4e87
+Bottom: 3bc757df8539ad7ed686b7cd2a906ac04e5021a0
+Top:    f549dc3968a5b7947461de7ac16f944495d3df1a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-22 20:33:13 +0000
+Date:   2015-03-23 00:13:27 +0000
 
 Revert "Remove 511-character limit on configuration file lines"
 
@@ -13,7 +13,7 @@ Tested-by: Kai-Martin Knaak <knaak@iqo.uni-hannover.de>
 ---
 
 diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
-index eb8fbd1..f1e6f49 100644
+index 0c48026..afbd575 100644
 --- a/src/hid/gtk/gui-config.c
 +++ b/src/hid/gtk/gui-config.c
 @@ -474,14 +474,13 @@ static void
