@@ -1,7 +1,7 @@
-Bottom: 0f702ea54455bf2b9f613ce96c8cc1126ef18e24
-Top:    0bbde8afed5c0d53a5652918c923fca123bb5ea1
+Bottom: f4c642314fdeb6b38126127200ba7e981f70e226
+Top:    0b7eb8fdc50b62442aa49d2a11a79eeb2bfc57f4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-23 00:10:53 +0000
+Date:   2015-03-23 00:13:14 +0000
 
 Fix to ParseGroupString()
 
@@ -9,7 +9,7 @@ Fix to ParseGroupString()
 ---
 
 diff --git a/src/misc.c b/src/misc.c
-index 4f381ae..1146eba 100644
+index 37aaebb..2df8cd9 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -1101,7 +1101,14 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
