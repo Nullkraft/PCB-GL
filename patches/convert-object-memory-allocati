@@ -1,7 +1,7 @@
-Bottom: 36cd9e88191974594a3c048cf9fe44f7b8a9640b
-Top:    a744b5f37d2bacfcc4dc11204fc5e07e4bfe8963
+Bottom: 0db9bbc0b5a0dd19272db4a464ceef5ca6a0b191
+Top:    719ef244e087812dfd984300e7de6dec161e8643
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-03-23 00:10:38 +0000
+Date:   2015-03-23 00:12:59 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -1287,7 +1287,7 @@ index a34693a..64c7eff 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index 4f381ae..94b6ec5 100644
+index 37aaebb..b85a193 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -494,7 +494,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
