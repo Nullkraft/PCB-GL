@@ -1,0 +1,22 @@
+Bottom: 6f3a6a83f563c853be17327b0aed9323f19cc868
+Top:    6f3a6a83f563c853be17327b0aed9323f19cc868
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-03-23 00:02:23 +0000
+
+Tidy up range check in misc.c
+
+For consistnecy with other range checks involving max_copper_layer, and to
+drive home the fact we are checking for exceeding max_copper_layer + 2.
+NB: The +2 relates to the bottom silk and top-silk layers, whose numbers
+are used to denote the bottom and top layer groups respectively.
+
+re-write:
+   > max_copper_layer + 1
+
+to become:
+   >= max_copper_layer + 2
+
+
+---
+
+
