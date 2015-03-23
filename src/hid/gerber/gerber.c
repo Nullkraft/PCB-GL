@@ -916,7 +916,7 @@ gerber_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
       hidGC gc = hid_draw_make_gc (&gerber_graphics);
       if (outline_layer
 	  && outline_layer != PCB->Data->Layer+idx)
-	dapi->draw_layer (outline_layer, gerber_graphics.clip_box, NULL);
+	dapi->draw_layer (gc, outline_layer, NULL);
       else if (!outline_layer)
 	{
 	  printf("name %s idx %d\n", name, idx);
