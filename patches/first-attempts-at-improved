@@ -1,7 +1,7 @@
-Bottom: 1fd037a98da6438a9776031d06c7aff35a98f0c6
-Top:    0661ee01f0a37cbf05d19cf1bdc0ca1a539d0045
+Bottom: 48975fb9e789143d751e3040c0ae60cafd6a0b66
+Top:    260f53d0a3de251170141ab71c22628ac14c235a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-22 20:09:30 +0000
+Date:   2015-03-23 00:10:54 +0000
 
 First attempts at improved rubberbanding logic
 
@@ -274,7 +274,7 @@ index ce67c50..b36aebf 100644
  
  typedef struct			/* current marked line */
 diff --git a/src/move.c b/src/move.c
-index 5f0cfb3..6089eca 100644
+index b9a180d..3ddff44 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -779,6 +779,59 @@ MoveObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3, Coord DX, Coord DY)
