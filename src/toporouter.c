@@ -2547,7 +2547,8 @@ import_clusters(toporouter_t *r)
   NETLIST_LOOP(&nets);
   {
     if(netlist->NetN > 0) {
-      toporouter_netlist_t *nl = netlist_create(r, netlist->Net->Connection->menu->Name, netlist->Net->Connection->menu->Style);
+      toporouter_netlist_t *nl = netlist_create(r, ((ConnectionType *)(((NetType *)(netlist->Net->data))->Connection->data))->menu->Name,
+                                                   ((ConnectionType *)(((NetType *)(netlist->Net->data))->Connection->data))->menu->Style);
       
       NET_LOOP(netlist);
       {
