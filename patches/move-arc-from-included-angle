@@ -1,7 +1,7 @@
-Bottom: 5945278650341937d8bfa06107fe7c5057850d89
-Top:    397db2459f61a5cc6a280c96c57f5dc43496a31f
+Bottom: e683f6e770abad9a15ec23cc10b739aa644077f8
+Top:    4d436bd0c86cf40c043982dda08d12e1678212c2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-03-23 00:10:58 +0000
+Date:   2015-03-23 00:13:19 +0000
 
 Move arc from included angle calculation into misc.c
 
@@ -13,7 +13,7 @@ Compute the correct boundingbox for a polygon with arc segments.
 ---
 
 diff --git a/src/misc.c b/src/misc.c
-index 929a9dc..36683fe 100644
+index a0f2785..dc97733 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -320,6 +320,69 @@ SetLineBoundingBox (LineType *Line)
