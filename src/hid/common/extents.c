@@ -29,7 +29,7 @@ typedef struct extents_gc_struct
 } *extentsGC;
 
 static int
-extents_set_layer (const char *name, int group, int empty)
+extents_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
   int idx = group;
   if (idx >= 0 && idx < max_group)
