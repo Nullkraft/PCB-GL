@@ -1,7 +1,7 @@
-Bottom: de1d0b2128e490f4cc93ea30b4945fcfaff8f639
-Top:    3bd449c63825da9412894e401b850b6d6dcc2436
+Bottom: bb96b1bfd624755ced69cdb7a7ccb8b1e2333f73
+Top:    6d5f3a802788314798c2253267b418ea947d22aa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-03-22 20:09:25 +0000
+Date:   2015-03-23 00:10:49 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -188,7 +188,7 @@ index 158c37e..d5b9954 100644
    hid_draw_fill_pcb_polygon (gc, poly, clip_box);
    ghid_set_alpha_mult (gc, old_alpha_mult);
 diff --git a/src/move.c b/src/move.c
-index 5f0cfb3..d42906c 100644
+index b9a180d..fe3a684 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -346,10 +346,12 @@ MovePolygon (LayerType *Layer, PolygonType *Polygon)
