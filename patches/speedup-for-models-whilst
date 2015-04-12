@@ -1,5 +1,5 @@
-Bottom: 73b1d08a1c6608d6c5a7e3e400145d16df213544
-Top:    46656aef8cfe14f41e9112816554e069abfe4043
+Bottom: a9c620f7d084210eae091c39fb19e0eae4dd660e
+Top:    7288026b3a452ea647a11ef34dcb604d79bcc673
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-12 17:08:54 +0100
 
@@ -9,10 +9,10 @@ Speedup for models whilst debugging
 ---
 
 diff --git a/src/hid/step/assembly.cpp b/src/hid/step/assembly.cpp
-index f7d1c26..728a5c9 100644
+index dbbbdaf..27d4766 100644
 --- a/src/hid/step/assembly.cpp
 +++ b/src/hid/step/assembly.cpp
-@@ -834,7 +834,12 @@ append_model_from_file (Registry *registry,
+@@ -844,7 +844,12 @@ append_model_from_file (Registry *registry,
  //  int file_increment = ( int )( ( ceil( ( max_existing_file_id + 99.0 ) / 1000.0 ) + 1.0 ) * 1000.0 ); /* XXX: RELYING ON SCL NOT CHANGING */
  //  std::cout << "INFO: Expecting a to add " << file_increment << " to entity names" << std::endl;
  
