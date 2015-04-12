@@ -1,5 +1,34 @@
+/*
+ *                            COPYRIGHT
+ *
+ *  PCB, interactive printed circuit board design
+ *  Copyright (C) 2015 Peter Clifton
+ *  Copyright (C) 2015 PCB Contributors (see ChangeLog for details)
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *  Contact addresses for paper mail and Email:
+ *  Harry Eaton, 6697 Buttonhole Ct, Columbia, MD 21044, USA
+ *  haceaton@aplcomm.jhuapl.edu
+ *
+ */
+
 //*****************************************************************************
-//  AP203 Minimum
+// Portions based upon the STEPcode example: AP203 Minimum
+//
+// AP203 Minimum
 //
 //  This program is intended to serve as a tutorial example for programmers
 // interested in learning about ISO 10303 (STEP), the STEPcode project, and
@@ -32,23 +61,6 @@
 //****************************************************************************/
 
 
-//  This program uses CMake to build Makefiles or other project files.  It
-// includes a CMakeLists.txt program that also builds STEPcode as a sub-build.
-// To compile, you must tell CMake where your STEPcode source tree is located
-// by setting STEPCODE_ROOT_DIR.  To compile:
-//
-//  $ pwd
-//  .../stepcode/example/ap203min
-//  $ mkdir build
-//  $ cd build
-//  $ cmake .. -DSTEPCODE_ROOT_DIR=../../..
-//  $ make
-//  $ cd bin
-//  $ ls
-//  AP203Minimum
-//  $./AP203Minimum
-//  AP203Minimum    outfile.step
-
 #include <STEPfile.h>
 #include <sdai.h>
 #include <STEPattribute.h>
@@ -62,8 +74,6 @@
 #include "schema.h"
 
 #include <SdaiAUTOMOTIVE_DESIGN.h>
-
-//#include <math.h>
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
@@ -1011,8 +1021,8 @@ print_pd_debug (InstMgr *instance_list, SdaiProduct_definition *pd)
 extern "C" void
 export_step_assembly (const char *filename, GList *models)
 {
-  Registry * registry = new Registry( SchemaInit );
-  InstMgr * instance_list = new InstMgr();
+  Registry * registry = new Registry (SchemaInit);
+  InstMgr * instance_list = new InstMgr (/* ownsInstance = */1);
 
   // Increment FileId so entities start at #1 instead of #0.
   instance_list->NextFileId();
@@ -1058,8 +1068,6 @@ export_step_assembly (const char *filename, GList *models)
 
   write_ap214 (registry, instance_list, filename);
 
-//  header_instances->DeleteInstances();
-  instance_list->DeleteInstances();
-  delete registry;
   delete instance_list;
+  delete registry;
 }
