@@ -1564,7 +1564,7 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
   // XXX: FIXME: NO cdir set for this case, e.g. possible no initialisation
   if (*cdir == UNINITIALISED)
     {
-      printf ("UNINITIALISED directin in SubJ_Rule\n");
+//      printf ("UNINITIALISED directin in SubJ_Rule\n");
       if (p == 'A')
 	*cdir = FORW;
       else
