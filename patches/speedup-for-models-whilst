@@ -1,5 +1,5 @@
 Bottom: 73b1d08a1c6608d6c5a7e3e400145d16df213544
-Top:    69670dc2ef647b797989d7219af3bd4bf0e76dde
+Top:    46656aef8cfe14f41e9112816554e069abfe4043
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-12 17:08:54 +0100
 
@@ -8,6 +8,23 @@ Speedup for models whilst debugging
 
 ---
 
+diff --git a/src/hid/step/assembly.cpp b/src/hid/step/assembly.cpp
+index f7d1c26..728a5c9 100644
+--- a/src/hid/step/assembly.cpp
++++ b/src/hid/step/assembly.cpp
+@@ -834,7 +834,12 @@ append_model_from_file (Registry *registry,
+ //  int file_increment = ( int )( ( ceil( ( max_existing_file_id + 99.0 ) / 1000.0 ) + 1.0 ) * 1000.0 ); /* XXX: RELYING ON SCL NOT CHANGING */
+ //  std::cout << "INFO: Expecting a to add " << file_increment << " to entity names" << std::endl;
+ 
++#if 1
+   STEPfile sfile = STEPfile (*registry, *instance_list, "", false);
++#else
++  STEPfile *sfilep = new STEPfile (*registry, *instance_list, "", false);
++  STEPfile &sfile = *sfilep; /* Let us deliberately leak STEPfile for a performance test */
++#endif
+ 
+   sfile.AppendExchangeFile (filename);
+ 
 diff --git a/src/polygon.c b/src/polygon.c
 index 8834733..fa3a714 100644
 --- a/src/polygon.c
@@ -35,3 +52,16 @@ index 3737f35..767c919 100644
  #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
  
  /* adjustment to make the segments outline the circle rather than connect
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 04518c3..76e989d 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1564,7 +1564,7 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+   // XXX: FIXME: NO cdir set for this case, e.g. possible no initialisation
+   if (*cdir == UNINITIALISED)
+     {
+-      printf ("UNINITIALISED directin in SubJ_Rule\n");
++//      printf ("UNINITIALISED directin in SubJ_Rule\n");
+       if (p == 'A')
+ 	*cdir = FORW;
+       else
