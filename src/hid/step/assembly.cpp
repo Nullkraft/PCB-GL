@@ -708,7 +708,12 @@ append_model_from_file (Registry *registry,
 //  int file_increment = ( int )( ( ceil( ( max_existing_file_id + 99.0 ) / 1000.0 ) + 1.0 ) * 1000.0 ); /* XXX: RELYING ON SCL NOT CHANGING */
 //  std::cout << "INFO: Expecting a to add " << file_increment << " to entity names" << std::endl;
 
+#if 1
   STEPfile sfile = STEPfile (*registry, *instance_list, "", false);
+#else
+  STEPfile *sfilep = new STEPfile (*registry, *instance_list, "", false);
+  STEPfile &sfile = *sfilep; /* Let us deliberately leak STEPfile for a performance test */
+#endif
 
   // XXX: This appears to throw exceptions from std::ios_base if the file doesn't exist
   try
