@@ -1,0 +1,36 @@
+Bottom: 613c0e4b37c82bea58a93e163a3e86d4794311fe
+Top:    37be621fc98c6050e7a8d0fad58901839d2b886d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-04-12 17:08:57 +0100
+
+Refresh of speedup-for-models-whilst
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 8834733..fa3a714 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2110,6 +2110,8 @@ pv_outline_callback (const BoxType * b, void *cl)
+     }
+   else
+     {
++      /* NOT FROM ELEMENT, DROP HOLE */
++      return 1;
+       feature_name = STRDUP(pv->Name);
+     }
+ 
+diff --git a/src/polygon.h b/src/polygon.h
+index 3737f35..767c919 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -34,7 +34,8 @@
+ 
+ /* Implementation constants */
+ 
+-#define POLY_CIRC_SEGS 40
++#define POLY_CIRC_SEGS 8
++//#define POLY_CIRC_SEGS 40
+ #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
+ 
+ /* adjustment to make the segments outline the circle rather than connect
