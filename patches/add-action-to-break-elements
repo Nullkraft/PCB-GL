@@ -1,5 +1,5 @@
 Bottom: bc6308523eda8fa913e020228c91453a2ca7e8d1
-Top:    eb0f766441e8de098a4c824c8948c43e795ce43c
+Top:    359fae008290025c50c4baf369bce831720b805a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-03-23 00:13:26 +0000
 
@@ -9,7 +9,7 @@ Add action to break elements to pieces in place
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 57e4c1f..828f2f1 100644
+index 57e4c1f..fd7f04e 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -8018,6 +8018,150 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
@@ -67,7 +67,7 @@ index 57e4c1f..828f2f1 100644
 +                                   arc->X, arc->Y, arc->Width, arc->Height, arc->StartAngle,
 +                                   arc->Delta, arc->Thickness, 0, NoFlags ());
 +    if (new_arc)
-+      AddObjectToCreateUndoList (LINE_TYPE, layer, new_line, new_line);
++      AddObjectToCreateUndoList (LINE_TYPE, layer, new_arc, new_arc);
 +
 +  }
 +  END_LOOP;
