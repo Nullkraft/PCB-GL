@@ -8069,7 +8069,7 @@ SmashElement (ElementType *element)
                                    arc->X, arc->Y, arc->Width, arc->Height, arc->StartAngle,
                                    arc->Delta, arc->Thickness, 0, NoFlags ());
     if (new_arc)
-      AddObjectToCreateUndoList (LINE_TYPE, layer, new_line, new_line);
+      AddObjectToCreateUndoList (LINE_TYPE, layer, new_arc, new_arc);
 
   }
   END_LOOP;
