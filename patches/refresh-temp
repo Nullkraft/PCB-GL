@@ -1,0 +1,22 @@
+Bottom: eb0f766441e8de098a4c824c8948c43e795ce43c
+Top:    359fae008290025c50c4baf369bce831720b805a
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-04-12 17:10:16 +0100
+
+Refresh of add-action-to-break-elements
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 828f2f1..fd7f04e 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -8069,7 +8069,7 @@ SmashElement (ElementType *element)
+                                    arc->X, arc->Y, arc->Width, arc->Height, arc->StartAngle,
+                                    arc->Delta, arc->Thickness, 0, NoFlags ());
+     if (new_arc)
+-      AddObjectToCreateUndoList (LINE_TYPE, layer, new_line, new_line);
++      AddObjectToCreateUndoList (LINE_TYPE, layer, new_arc, new_arc);
+ 
+   }
+   END_LOOP;
