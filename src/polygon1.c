@@ -95,12 +95,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
   if (UNLIKELY (((ptr) = (type *)malloc(sizeof(type))) == NULL))	\
     error(err_no_memory);
 
-#define DEBUG_LABEL
-#define DEBUG_ALL_LABELS
-#define DEBUG_JUMP
-#define DEBUG_GATHER
-#define DEBUG_ANGLE
-#define DEBUG
+#undef DEBUG_LABEL
+#undef DEBUG_ALL_LABELS
+#undef DEBUG_JUMP
+#undef DEBUG_GATHER
+#undef DEBUG_ANGLE
+#undef DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
 #else
@@ -125,7 +125,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 #ifdef DEBUG
 static char *theState (VNODE * v);
 
-/*static */void
+static void
 pline_dump (VNODE * v)
 {
   VNODE *s, *n;
@@ -134,14 +134,14 @@ pline_dump (VNODE * v)
   do
     {
       n = v->next;
-      pcb_fprintf (stderr, "Line [%mn %mn %mn %mn 10 10 \"%s\"]\n",
+      pcb_fprintf (stderr, "Line [%#mS %#mS %#mS %#mS 10 10 \"%s\"]\n",
 	       v->point[0], v->point[1],
 	       n->point[0], n->point[1], theState (v));
     }
   while ((v = v->next) != s);
 }
 
-/*static */void
+static void
 poly_dump (POLYAREA * p)
 {
   POLYAREA *f = p;
@@ -254,9 +254,8 @@ new_descriptor (VNODE * a, char poly, char side)
   l->angle = ang;
   assert (ang >= 0.0 && ang <= 4.0);
 #ifdef DEBUG_ANGLE
-  DEBUGP ("node on %c at %mn, %mn assigned angle %g on side %c\n", poly,
-	  a->point[0], a->point[1], ang * 10000., side);
-  DEBUGP ("That angle would be %f\n", atan2 (v[1], v[0]) * 180. / M_PI);
+  DEBUGP ("node on %c at %#mD assigned angle %g on side %c\n", poly,
+	  a->point[0], a->point[1], ang, side);
 #endif
   return l;
 }
@@ -1057,7 +1056,7 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("%mm, %mm -> %mm, %mm labeled %s\n", c->point[0], c->point[1],
+      DEBUGP ("%#mD->%#mD labeled %s\n", c->point[0], c->point[1],
 	      c->next->point[0], c->next->point[1], theState (c));
     }
   while ((c = c->next) != &a->head);
@@ -1529,7 +1528,7 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
       return TRUE;
     }
 #ifdef DEBUG_JUMP
-  DEBUGP ("jump entering node at %mm, %mm\n", (*cur)->point[0], (*cur)->point[1]);
+  DEBUGP ("jump entering node at %$mD\n", (*cur)->point[0], (*cur)->point[1]);
 #endif
   if (*cdir == FORW)
     d = (*cur)->cvc_prev->prev;
@@ -1549,10 +1548,10 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
 	    {
 #ifdef DEBUG_JUMP
 	      if (newone == FORW)
-		DEBUGP ("jump leaving node at %mm, %mm\n",
+		DEBUGP ("jump leaving node at %#mD\n",
 			e->next->point[0], e->next->point[1]);
 	      else
-		DEBUGP ("jump leaving node at %mm, %mm\n",
+		DEBUGP ("jump leaving node at %#mD\n",
 			e->point[0], e->point[1]);
 #endif
 	      *cur = d->parent;
@@ -1593,7 +1592,7 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
 	  poly_InclVertex ((*result)->head.prev, newn);
 	}
 #ifdef DEBUG_GATHER
-      DEBUGP ("gather vertex at %mm, %mm\n", cur->point[0], cur->point[1]);
+      DEBUGP ("gather vertex at %#mD\n", cur->point[0], cur->point[1]);
 #endif
       /* Now mark the edge as included.  */
       newn = (dir == FORW ? cur : cur->prev);
