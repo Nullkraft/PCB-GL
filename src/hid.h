@@ -294,8 +294,6 @@ typedef enum
     void (*notify_crosshair_change) (bool changes_complete);
     void (*notify_mark_change) (bool changes_complete);
 
-    HID_DRAW *graphics;
-
     /* This is for the printer.  If you call this for the GUI, xval and
        yval are ignored, and a dialog pops up to lead you through the
        calibration procedure.  For the printer, if xval and yval are
