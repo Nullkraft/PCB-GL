@@ -1,5 +1,5 @@
-Bottom: a9c620f7d084210eae091c39fb19e0eae4dd660e
-Top:    e1de0895b0c8495951207a5a1b2ed96185411320
+Bottom: 21a3eb4fa6542dfd936115f7f3d204d736b581e2
+Top:    6653e200c83dbb1b16d5a938a63416795dcad2a7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-12 17:08:54 +0100
 
@@ -26,7 +26,7 @@ index dbbbdaf..27d4766 100644
    sfile.AppendExchangeFile (filename);
  
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 5d4c67e..bbd625e 100644
+index 8807835..2619ce8 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
 @@ -867,6 +867,8 @@ step_do_export (HID_Attr_Val * options)
@@ -38,7 +38,7 @@ index 5d4c67e..bbd625e 100644
          GList *model_iter;
  
          /* Skip if the component doesn't have a STEP-AP214 3d_model */
-@@ -938,16 +940,31 @@ step_do_export (HID_Attr_Val * options)
+@@ -940,16 +942,31 @@ step_do_export (HID_Attr_Val * options)
              models = g_list_append (models, model);
            }
  
