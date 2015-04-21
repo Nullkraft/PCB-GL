@@ -1,7 +1,7 @@
-Bottom: 0db9bbc0b5a0dd19272db4a464ceef5ca6a0b191
-Top:    719ef244e087812dfd984300e7de6dec161e8643
+Bottom: fb48a6ffdf5ff0e91f3d38f3bdee789c57f42a05
+Top:    ea902243bb846e9fcfade89848e91b7d8afd69d6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-03-23 00:12:59 +0000
+Date:   2015-04-21 02:08:26 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -2139,10 +2139,10 @@ index 46061a3..c036559 100644
  void FreePCBMemory (PCBType *);
  void FreeBoxListMemory (BoxListType *);
 diff --git a/src/report.c b/src/report.c
-index fe75421..8e79b19 100644
+index f822344..266e747 100644
 --- a/src/report.c
 +++ b/src/report.c
-@@ -334,14 +334,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
+@@ -333,14 +333,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
  
  	pcb_sprintf (&report[0], _("%m+POLYGON ID# %ld;  Flags:%s\n"
  		 "Its bounding box is %$mD %$mD.\n"
@@ -2160,7 +2160,7 @@ index fe75421..8e79b19 100644
  		 GetLayerNumber (PCB->Data, (LayerType *) ptr1),
  		 TEST_FLAG (LOCKFLAG, Polygon) ? _("It is LOCKED.\n") : "");
 diff --git a/src/select.c b/src/select.c
-index b684819..0c8213b 100644
+index f130b07..c60c925 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -976,18 +976,20 @@ SelectObjectByName (int Type, char *Pattern, bool select)
