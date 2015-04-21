@@ -126,7 +126,7 @@ rubber_callback (const BoxType * b, void *cl)
   if (line == i->line)
     return 0;
 
-  if (TEST_FLAG (LOCKFLAG, line))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, line))
     return 0;
 
   /* Check to see if the line touches a rectangular region.
@@ -423,7 +423,7 @@ CheckPolygonForRubberbandConnection (LayerType *Layer,
 	 */
 	LINE_LOOP (layer);
 	{
-	  if (TEST_FLAG (LOCKFLAG, line))
+	  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, line))
 	    continue;
 	  if (TEST_FLAG (CLEARLINEFLAG, line))
 	    continue;
