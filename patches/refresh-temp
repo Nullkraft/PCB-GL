@@ -1,0 +1,43 @@
+Bottom: 268b1419e0a8eee6956e600d251200b3c069a6f4
+Top:    e5f43241f0e491101d641f68839989a0a1adcee7
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-04-21 02:07:25 +0100
+
+Refresh of add-support-for-a-two
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 42f42d9..347edf1 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -616,6 +616,7 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+     case LAYER_BUTTON_FARSIDE:
+       PCB->InvisibleObjectsOn = active;
+       PCB->Data->BACKSILKLAYER.On = (active && PCB->ElementOn);
++      PCB->Data->BACKSOLDERMASKLAYER.On = (active && TEST_FLAG (SHOWMASKFLAG, PCB));
+       redraw = TRUE;
+       break;
+     case LAYER_BUTTON_MASK:
+@@ -623,6 +624,8 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+         SET_FLAG (SHOWMASKFLAG, PCB);
+       else
+         CLEAR_FLAG (SHOWMASKFLAG, PCB);
++      PCB->Data->SOLDERMASKLAYER.On = TEST_FLAG (SHOWMASKFLAG, PCB);
++      PCB->Data->BACKSOLDERMASKLAYER.On = TEST_FLAG (SHOWMASKFLAG, PCB);
+       redraw = TRUE;
+       break;
+     default:
+diff --git a/src/select.c b/src/select.c
+index b684819..f130b07 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -252,7 +252,7 @@ SelectBlock (BoxType *Box, bool select)
+       }
+     if (layer == & PCB->Data->BACKSOLDERMASKLAYER)
+       {
+-	if (! (TEST_FLAG (SHOWMASKFLAG, PCB) || !select))
++	if (! ((PCB->InvisibleObjectsOn && TEST_FLAG (SHOWMASKFLAG, PCB)) || !select))
+ 	  continue;
+       }
+     else
