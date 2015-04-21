@@ -395,7 +395,7 @@ ChangeViaSize (PinType *Via)
 {
   Coord value = Absolute ? Absolute : Via->Thickness + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Via))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Via))
     return (NULL);
   if (!TEST_FLAG (HOLEFLAG, Via) && value <= MAX_PINORVIASIZE &&
       value >= MIN_PINORVIASIZE &&
@@ -431,7 +431,7 @@ ChangeVia2ndSize (PinType *Via)
 {
   Coord value = (Absolute) ? Absolute : Via->DrillingHole + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Via))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Via))
     return (NULL);
   if (value <= MAX_PINORVIASIZE &&
       value >= MIN_PINORVIAHOLE && (TEST_FLAG (HOLEFLAG, Via) ||
@@ -465,7 +465,7 @@ ChangeViaClearSize (PinType *Via)
 {
   Coord value = (Absolute) ? Absolute : Via->Clearance + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Via))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Via))
     return (NULL);
   value = MIN (MAX_LINESIZE, value);
   if (value < 0)
@@ -500,7 +500,7 @@ ChangePinSize (ElementType *Element, PinType *Pin)
 {
   Coord value = (Absolute) ? Absolute : Pin->Thickness + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Pin))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pin))
     return (NULL);
   if (!TEST_FLAG (HOLEFLAG, Pin) && value <= MAX_PINORVIASIZE &&
       value >= MIN_PINORVIASIZE &&
@@ -533,7 +533,7 @@ ChangePinClearSize (ElementType *Element, PinType *Pin)
 {
   Coord value = (Absolute) ? Absolute : Pin->Clearance + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Pin))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pin))
     return (NULL);
   value = MIN (MAX_LINESIZE, value);
   if (value < 0)
@@ -566,7 +566,7 @@ ChangePadSize (ElementType *Element, PadType *Pad)
 {
   Coord value = (Absolute) ? Absolute : Pad->Thickness + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Pad))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pad))
     return (NULL);
   if (value <= MAX_PADSIZE && value >= MIN_PADSIZE && value != Pad->Thickness)
     {
@@ -596,7 +596,7 @@ ChangePadClearSize (ElementType *Element, PadType *Pad)
 {
   Coord value = (Absolute) ? Absolute : Pad->Clearance + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Pad))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pad))
     return (NULL);
   value = MIN (MAX_LINESIZE, value);
   if (value < 0)
@@ -630,7 +630,7 @@ ChangeElement2ndSize (ElementType *Element)
   bool changed = false;
   Coord value;
 
-  if (TEST_FLAG (LOCKFLAG, Element))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Element))
     return (NULL);
   PIN_LOOP (Element);
   {
@@ -673,7 +673,7 @@ ChangePin2ndSize (ElementType *Element, PinType *Pin)
 {
   Coord value = (Absolute) ? Absolute : Pin->DrillingHole + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Pin))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pin))
     return (NULL);
   if (value <= MAX_PINORVIASIZE &&
       value >= MIN_PINORVIAHOLE && (TEST_FLAG (HOLEFLAG, Pin) ||
@@ -707,7 +707,7 @@ ChangeLineSize (LayerType *Layer, LineType *Line)
 {
   Coord value = (Absolute) ? Absolute : Line->Thickness + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Line))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Line))
     return (NULL);
   if (value <= MAX_LINESIZE && value >= MIN_LINESIZE &&
       value != Line->Thickness)
@@ -736,7 +736,8 @@ ChangeLineClearSize (LayerType *Layer, LineType *Line)
 {
   Coord value = (Absolute) ? Absolute : Line->Clearance + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Line) || !TEST_FLAG (CLEARLINEFLAG, Line))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Line)) ||
+      !TEST_FLAG (CLEARLINEFLAG, Line))
     return (NULL);
   value = MIN (MAX_LINESIZE, MAX (value, PCB->Bloat * 2 + 2));
   if (value != Line->Clearance)
@@ -790,7 +791,7 @@ ChangeArcSize (LayerType *Layer, ArcType *Arc)
 {
   Coord value = (Absolute) ? Absolute : Arc->Thickness + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Arc))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Arc))
     return (NULL);
   if (value <= MAX_LINESIZE && value >= MIN_LINESIZE &&
       value != Arc->Thickness)
@@ -819,7 +820,8 @@ ChangeArcClearSize (LayerType *Layer, ArcType *Arc)
 {
   Coord value = (Absolute) ? Absolute : Arc->Clearance + Delta;
 
-  if (TEST_FLAG (LOCKFLAG, Arc) || !TEST_FLAG (CLEARLINEFLAG, Arc))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Arc)) ||
+      !TEST_FLAG (CLEARLINEFLAG, Arc))
     return (NULL);
   value = MIN (MAX_LINESIZE, MAX (value, PCB->Bloat * 2 + 2));
   if (value != Arc->Clearance)
@@ -855,7 +857,7 @@ ChangeTextSize (LayerType *Layer, TextType *Text)
               (double)(Absolute != 0 ? Absolute : Delta)
                 / (double)FONT_CAPHEIGHT * 100.;
 
-  if (TEST_FLAG (LOCKFLAG, Text))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Text))
     return (NULL);
   if (value <= MAX_TEXTSCALE && value >= MIN_TEXTSCALE &&
       value != Text->Scale)
@@ -885,7 +887,7 @@ ChangeElementSize (ElementType *Element)
   Coord value;
   bool changed = false;
 
-  if (TEST_FLAG (LOCKFLAG, Element))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Element))
     return (NULL);
   if (PCB->ElementOn)
     EraseElement (Element);
@@ -934,7 +936,7 @@ ChangeElementNameSize (ElementType *Element)
               (double)(Absolute != 0 ? Absolute : Delta)
                 / (double)FONT_CAPHEIGHT * 100.;
 
-  if (TEST_FLAG (LOCKFLAG, &Element->Name[0]))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, &Element->Name[0]))
     return (NULL);
   if (value <= MAX_TEXTSCALE && value >= MIN_TEXTSCALE)
     {
@@ -1060,7 +1062,7 @@ ChangeElementText (PCBType *pcb, DataType *data, ElementType *Element, int which
 static void *
 ChangeElementName (ElementType *Element)
 {
-  if (TEST_FLAG (LOCKFLAG, &Element->Name[0]))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, &Element->Name[0]))
     return (NULL);
   if (NAME_INDEX (PCB) == NAMEONPCB_INDEX)
     {
@@ -1088,7 +1090,7 @@ ChangeTextName (LayerType *Layer, TextType *Text)
 {
   char *old = Text->TextString;
 
-  if (TEST_FLAG (LOCKFLAG, Text))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Text))
     return (NULL);
   EraseText (Layer, Text);
   RestoreToPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
@@ -1122,7 +1124,7 @@ ChangeLayoutName (char *Name)
 bool
 ChangeElementSide (ElementType *Element, Coord yoff)
 {
-  if (TEST_FLAG (LOCKFLAG, Element))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Element))
     return (false);
   EraseElement (Element);
   AddObjectToMirrorUndoList (ELEMENT_TYPE, Element, Element, Element, yoff);
@@ -1150,7 +1152,7 @@ ChangeLayerName (LayerType *Layer, char *Name)
 static void *
 ChangeLineJoin (LayerType *Layer, LineType *Line)
 {
-  if (TEST_FLAG (LOCKFLAG, Line))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Line))
     return (NULL);
   EraseLine (Line);
   if (TEST_FLAG(CLEARLINEFLAG, Line))
@@ -1175,7 +1177,8 @@ ChangeLineJoin (LayerType *Layer, LineType *Line)
 static void *
 SetLineJoin (LayerType *Layer, LineType *Line)
 {
-  if (TEST_FLAG (LOCKFLAG, Line) || TEST_FLAG (CLEARLINEFLAG, Line))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Line)) ||
+      TEST_FLAG (CLEARLINEFLAG, Line))
     return (NULL);
   return ChangeLineJoin (Layer, Line);
 }
@@ -1186,7 +1189,8 @@ SetLineJoin (LayerType *Layer, LineType *Line)
 static void *
 ClrLineJoin (LayerType *Layer, LineType *Line)
 {
-  if (TEST_FLAG (LOCKFLAG, Line) || !TEST_FLAG (CLEARLINEFLAG, Line))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Line)) 
+      || !TEST_FLAG (CLEARLINEFLAG, Line))
     return (NULL);
   return ChangeLineJoin (Layer, Line);
 }
@@ -1197,7 +1201,7 @@ ClrLineJoin (LayerType *Layer, LineType *Line)
 static void *
 ChangeArcJoin (LayerType *Layer, ArcType *Arc)
 {
-  if (TEST_FLAG (LOCKFLAG, Arc))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Arc))
     return (NULL);
   EraseArc (Arc);
   if (TEST_FLAG (CLEARLINEFLAG, Arc))
@@ -1222,7 +1226,8 @@ ChangeArcJoin (LayerType *Layer, ArcType *Arc)
 static void *
 SetArcJoin (LayerType *Layer, ArcType *Arc)
 {
-  if (TEST_FLAG (LOCKFLAG, Arc) || TEST_FLAG (CLEARLINEFLAG, Arc))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Arc)) ||
+      TEST_FLAG (CLEARLINEFLAG, Arc))
     return (NULL);
   return ChangeArcJoin (Layer, Arc);
 }
@@ -1233,7 +1238,8 @@ SetArcJoin (LayerType *Layer, ArcType *Arc)
 static void *
 ClrArcJoin (LayerType *Layer, ArcType *Arc)
 {
-  if (TEST_FLAG (LOCKFLAG, Arc) || !TEST_FLAG (CLEARLINEFLAG, Arc))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Arc)) ||
+      !TEST_FLAG (CLEARLINEFLAG, Arc))
     return (NULL);
   return ChangeArcJoin (Layer, Arc);
 }
@@ -1244,7 +1250,7 @@ ClrArcJoin (LayerType *Layer, ArcType *Arc)
 static void *
 ChangeTextJoin (LayerType *Layer, TextType *Text)
 {
-  if (TEST_FLAG (LOCKFLAG, Text))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Text))
     return (NULL);
   EraseText (Layer, Text);
   if (TEST_FLAG(CLEARLINEFLAG, Text))
@@ -1269,7 +1275,8 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
 static void *
 SetTextJoin (LayerType *Layer, TextType *Text)
 {
-  if (TEST_FLAG (LOCKFLAG, Text) || TEST_FLAG (CLEARLINEFLAG, Text))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Text)) ||
+      TEST_FLAG (CLEARLINEFLAG, Text))
     return (NULL);
   return ChangeTextJoin (Layer, Text);
 }
@@ -1280,7 +1287,8 @@ SetTextJoin (LayerType *Layer, TextType *Text)
 static void *
 ClrTextJoin (LayerType *Layer, TextType *Text)
 {
-  if (TEST_FLAG (LOCKFLAG, Text) || !TEST_FLAG (CLEARLINEFLAG, Text))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Text)) ||
+      !TEST_FLAG (CLEARLINEFLAG, Text))
     return (NULL);
   return ChangeTextJoin (Layer, Text);
 }
@@ -1293,7 +1301,7 @@ ChangeElementSquare (ElementType *Element)
 {
   void *ans = NULL;
 
-  if (TEST_FLAG (LOCKFLAG, Element))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Element))
     return (NULL);
   PIN_LOOP (Element);
   {
@@ -1316,7 +1324,7 @@ SetElementSquare (ElementType *Element)
 {
   void *ans = NULL;
 
-  if (TEST_FLAG (LOCKFLAG, Element))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Element))
     return (NULL);
   PIN_LOOP (Element);
   {
@@ -1339,7 +1347,7 @@ ClrElementSquare (ElementType *Element)
 {
   void *ans = NULL;
 
-  if (TEST_FLAG (LOCKFLAG, Element))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Element))
     return (NULL);
   PIN_LOOP (Element);
   {
@@ -1362,7 +1370,7 @@ ChangeElementOctagon (ElementType *Element)
 {
   void *result = NULL;
 
-  if (TEST_FLAG (LOCKFLAG, Element))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Element))
     return (NULL);
   PIN_LOOP (Element);
   {
@@ -1381,7 +1389,7 @@ SetElementOctagon (ElementType *Element)
 {
   void *result = NULL;
 
-  if (TEST_FLAG (LOCKFLAG, Element))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Element))
     return (NULL);
   PIN_LOOP (Element);
   {
@@ -1400,7 +1408,7 @@ ClrElementOctagon (ElementType *Element)
 {
   void *result = NULL;
 
-  if (TEST_FLAG (LOCKFLAG, Element))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Element))
     return (NULL);
   PIN_LOOP (Element);
   {
@@ -1417,7 +1425,7 @@ ClrElementOctagon (ElementType *Element)
 static void *
 ChangePadSquare (ElementType *Element, PadType *Pad)
 {
-  if (TEST_FLAG (LOCKFLAG, Pad))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pad))
     return (NULL);
   ErasePad (Pad);
   AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, false);
@@ -1437,7 +1445,8 @@ static void *
 SetPadSquare (ElementType *Element, PadType *Pad)
 {
 
-  if (TEST_FLAG (LOCKFLAG, Pad) || TEST_FLAG (SQUAREFLAG, Pad))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pad)) ||
+      TEST_FLAG (SQUAREFLAG, Pad))
     return (NULL);
 
   return (ChangePadSquare (Element, Pad));
@@ -1451,7 +1460,8 @@ static void *
 ClrPadSquare (ElementType *Element, PadType *Pad)
 {
 
-  if (TEST_FLAG (LOCKFLAG, Pad) || !TEST_FLAG (SQUAREFLAG, Pad))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pad)) ||
+      !TEST_FLAG (SQUAREFLAG, Pad))
     return (NULL);
 
   return (ChangePadSquare (Element, Pad));
@@ -1464,7 +1474,7 @@ ClrPadSquare (ElementType *Element, PadType *Pad)
 static void *
 ChangePinSquare (ElementType *Element, PinType *Pin)
 {
-  if (TEST_FLAG (LOCKFLAG, Pin))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pin))
     return (NULL);
   ErasePin (Pin);
   AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, false);
@@ -1483,7 +1493,8 @@ ChangePinSquare (ElementType *Element, PinType *Pin)
 static void *
 SetPinSquare (ElementType *Element, PinType *Pin)
 {
-  if (TEST_FLAG (LOCKFLAG, Pin) || TEST_FLAG (SQUAREFLAG, Pin))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pin)) ||
+      TEST_FLAG (SQUAREFLAG, Pin))
     return (NULL);
 
   return (ChangePinSquare (Element, Pin));
@@ -1495,7 +1506,8 @@ SetPinSquare (ElementType *Element, PinType *Pin)
 static void *
 ClrPinSquare (ElementType *Element, PinType *Pin)
 {
-  if (TEST_FLAG (LOCKFLAG, Pin) || !TEST_FLAG (SQUAREFLAG, Pin))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pin)) ||
+      !TEST_FLAG (SQUAREFLAG, Pin))
     return (NULL);
 
   return (ChangePinSquare (Element, Pin));
@@ -1507,7 +1519,7 @@ ClrPinSquare (ElementType *Element, PinType *Pin)
 static void *
 ChangeViaOctagon (PinType *Via)
 {
-  if (TEST_FLAG (LOCKFLAG, Via))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Via))
     return (NULL);
   EraseVia (Via);
   AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, false);
@@ -1526,7 +1538,8 @@ ChangeViaOctagon (PinType *Via)
 static void *
 SetViaOctagon (PinType *Via)
 {
-  if (TEST_FLAG (LOCKFLAG, Via) || TEST_FLAG (OCTAGONFLAG, Via))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Via)) ||
+      TEST_FLAG (OCTAGONFLAG, Via))
     return (NULL);
 
   return (ChangeViaOctagon (Via));
@@ -1538,7 +1551,8 @@ SetViaOctagon (PinType *Via)
 static void *
 ClrViaOctagon (PinType *Via)
 {
-  if (TEST_FLAG (LOCKFLAG, Via) || !TEST_FLAG (OCTAGONFLAG, Via))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Via)) ||
+      !TEST_FLAG (OCTAGONFLAG, Via))
     return (NULL);
 
   return (ChangeViaOctagon (Via));
@@ -1550,7 +1564,7 @@ ClrViaOctagon (PinType *Via)
 static void *
 ChangePinOctagon (ElementType *Element, PinType *Pin)
 {
-  if (TEST_FLAG (LOCKFLAG, Pin))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pin))
     return (NULL);
   ErasePin (Pin);
   AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, false);
@@ -1569,7 +1583,8 @@ ChangePinOctagon (ElementType *Element, PinType *Pin)
 static void *
 SetPinOctagon (ElementType *Element, PinType *Pin)
 {
-  if (TEST_FLAG (LOCKFLAG, Pin) || TEST_FLAG (OCTAGONFLAG, Pin))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pin)) ||
+      TEST_FLAG (OCTAGONFLAG, Pin))
     return (NULL);
 
   return (ChangePinOctagon (Element, Pin));
@@ -1581,7 +1596,8 @@ SetPinOctagon (ElementType *Element, PinType *Pin)
 static void *
 ClrPinOctagon (ElementType *Element, PinType *Pin)
 {
-  if (TEST_FLAG (LOCKFLAG, Pin) || !TEST_FLAG (OCTAGONFLAG, Pin))
+  if ((!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pin)) ||
+      !TEST_FLAG (OCTAGONFLAG, Pin))
     return (NULL);
 
   return (ChangePinOctagon (Element, Pin));
@@ -1593,7 +1609,7 @@ ClrPinOctagon (ElementType *Element, PinType *Pin)
 bool
 ChangeHole (PinType *Via)
 {
-  if (TEST_FLAG (LOCKFLAG, Via))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Via))
     return (false);
   EraseVia (Via);
   AddObjectToFlagUndoList (VIA_TYPE, Via, Via, Via);
@@ -1636,7 +1652,7 @@ ChangeHole (PinType *Via)
 bool
 ChangePaste (PadType *Pad)
 {
-  if (TEST_FLAG (LOCKFLAG, Pad))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Pad))
     return (false);
   ErasePad (Pad);
   AddObjectToFlagUndoList (PAD_TYPE, Pad, Pad, Pad);
@@ -1652,7 +1668,7 @@ ChangePaste (PadType *Pad)
 static void *
 ChangePolyClear (LayerType *Layer, PolygonType *Polygon)
 {
-  if (TEST_FLAG (LOCKFLAG, Polygon))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Polygon))
     return (NULL);
   AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, Polygon, Polygon, true);
   AddObjectToFlagUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
