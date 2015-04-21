@@ -78,7 +78,7 @@ test_circle_hits_box (PointType *point, Coord radius, BoxType *box)
       box->Y1 - radius <= point->Y && point->Y <= box->Y2 + radius)
     {
       /* We are close enough to the box boundary that we might touch
-       * it, althoguh it is possible that if we are near one of the
+       * it, although it is possible that if we are near one of the
        * box corners, the circle contour doesn't touch the box.
        */
 
