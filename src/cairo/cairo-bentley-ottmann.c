@@ -44,10 +44,13 @@
 #include "cairo-combsort-private.h"
 
 #include <glib.h>
+#include <setjmp.h>
+
+#include "polygon.h"
 
 #define _cairo_error(x) (x)
 
-#define DEBUG_PRINT_STATE 1
+#define DEBUG_PRINT_STATE 0
 #define DEBUG_EVENTS 1
 #define DEBUG_TRAPS 0
 
@@ -64,19 +67,12 @@ typedef struct _cairo_bo_intersect_point {
 } cairo_bo_intersect_point_t;
 
 typedef struct _cairo_bo_edge cairo_bo_edge_t;
-typedef struct _cairo_bo_trap cairo_bo_trap_t;
-
-/* A deferred trapezoid of an edge */
-struct _cairo_bo_trap {
-    cairo_bo_edge_t *right;
-    int32_t top;
-};
 
 struct _cairo_bo_edge {
     cairo_edge_t edge;
     cairo_bo_edge_t *prev;
     cairo_bo_edge_t *next;
-    cairo_bo_trap_t deferred_trap;
+    cairo_point_t middle;
 };
 
 /* the parent is always given by index/2 */
@@ -125,7 +121,6 @@ typedef struct _cairo_bo_event_queue {
 
 typedef struct _cairo_bo_sweep_line {
     cairo_bo_edge_t *head;
-    cairo_bo_edge_t *stopped;
     int32_t current_y;
     cairo_bo_edge_t *current_edge;
 } cairo_bo_sweep_line_t;
@@ -1105,7 +1100,6 @@ static void
 _cairo_bo_sweep_line_init (cairo_bo_sweep_line_t *sweep_line)
 {
     sweep_line->head = NULL;
-    sweep_line->stopped = NULL;
     sweep_line->current_y = INT32_MIN;
     sweep_line->current_edge = NULL;
 }
@@ -1326,162 +1320,33 @@ edges_colinear (const cairo_bo_edge_t *a, const cairo_bo_edge_t *b)
     }
 }
 
-/* Adds the trapezoid, if any, of the left edge to the #cairo_traps_t */
+
 static cairo_status_t
-_cairo_bo_edge_end_trap (cairo_bo_edge_t        *left,
-                         int32_t                 bot,
-                         cairo_traps_t                *traps)
+_add_result_edge (cairo_array_t *array,
+                  cairo_edge_t  *edge)
 {
-    cairo_bo_trap_t *trap = &left->deferred_trap;
+  int tmp;
 
-    /* Only emit (trivial) non-degenerate trapezoids with positive height. */
-    if (likely (trap->top < bot)) {
 #if 0
-        _cairo_traps_add_trap (traps,
-                               trap->top, bot,
-                               &left->edge.line, &trap->right->edge.line);
-#else
-        printf ("added trap\n");
+    /* Avoid creating any horizontal edges due to bending. */
+    if (edge->top == edge->bottom) {
+        printf ("Not emitting horizontal edge :(\n");
+       return CAIRO_STATUS_SUCCESS;
+    }
 #endif
 
-#if DEBUG_PRINT_STATE
-        printf ("Deferred trap: left=(%d, %d)-(%d,%d) "
-                "right=(%d,%d)-(%d,%d) top=%d, bot=%d\n",
-                left->edge.line.p1.x, left->edge.line.p1.y,
-                left->edge.line.p2.x, left->edge.line.p2.y,
-                trap->right->edge.line.p1.x, trap->right->edge.line.p1.y,
-                trap->right->edge.line.p2.x, trap->right->edge.line.p2.y,
-                trap->top, bot);
-#endif
-#if DEBUG_EVENTS
-        event_log ("end trap: %lu %lu %d %d\n",
-                   (long) left,
-                   (long) trap->right,
-                   trap->top,
-                   bot);
-#endif
+    /* Fix up any edge that got bent so badly as to reverse top and bottom */
+    if (edge->top > edge->bottom) {
+       tmp = edge->bottom;
+       edge->bottom = edge->top;
+       edge->top = tmp;
     }
 
-//    trap->right = NULL;
+    printf ("Emitting result edge (%i,%i)-(%i,%i)\n",
+            edge->line.p1.x, edge->line.p1.y,
+            edge->line.p2.x, edge->line.p2.y);
 
-//    return _cairo_traps_status (traps);
-    return 0;
-}
-
-
-/* Start a new trapezoid at the given top y coordinate, whose edges
- * are `edge' and `edge->next'. If `edge' already has a trapezoid,
- * then either add it to the traps in `traps', if the trapezoid's
- * right edge differs from `edge->next', or do nothing if the new
- * trapezoid would be a continuation of the existing one. */
-static inline cairo_status_t
-_cairo_bo_edge_start_or_continue_trap (cairo_bo_edge_t        *left,
-                                       cairo_bo_edge_t  *right,
-                                       int               top,
-                                       cairo_traps_t        *traps)
-{
-    cairo_status_t status;
-
-    if (left->deferred_trap.right == right)
-        return CAIRO_STATUS_SUCCESS;
-
-    if (left->deferred_trap.right != NULL) {
-        if (right != NULL && edges_colinear (left->deferred_trap.right, right))
-        {
-            /* continuation on right, so just swap edges */
-            left->deferred_trap.right = right;
-            return CAIRO_STATUS_SUCCESS;
-        }
-
-        status = _cairo_bo_edge_end_trap (left, top, traps);
-        if (unlikely (status))
-            return status;
-    }
-
-    if (right != NULL && ! edges_colinear (left, right)) {
-        left->deferred_trap.top = top;
-        left->deferred_trap.right = right;
-
-#if DEBUG_EVENTS
-        event_log ("begin trap: %lu %lu %d\n",
-                   (long) left,
-                   (long) right,
-                   top);
-#endif
-    }
-
-    return CAIRO_STATUS_SUCCESS;
-}
-
-static inline cairo_status_t
-_active_edges_to_traps (cairo_bo_edge_t                *left,
-                        int32_t                         top,
-                        cairo_traps_t                *traps)
-{
-    cairo_bo_edge_t *right;
-    cairo_status_t status;
-
-#if DEBUG_PRINT_STATE
-    printf ("Processing active edges for %d\n", top);
-#endif
-
-    while (left != NULL) {
-        int in_out;
-
-        /* Greedily search for the closing edge, so that we generate the
-         * maximal span width with the minimal number of trapezoids.
-         */
-        in_out = left->edge.dir;
-
-        /* Check if there is a co-linear edge with an existing trap */
-        right = left->next;
-        if (left->deferred_trap.right == NULL) {
-            while (right != NULL && right->deferred_trap.right == NULL)
-                right = right->next;
-
-            if (right != NULL && edges_colinear (left, right)) {
-                /* continuation on left */
-                left->deferred_trap = right->deferred_trap;
-                right->deferred_trap.right = NULL;
-            }
-        }
-
-        /* End all subsumed traps */
-        right = left->next;
-        while (right != NULL) {
-            if (right->deferred_trap.right != NULL) {
-                status = _cairo_bo_edge_end_trap (right, top, traps);
-                if (unlikely (status))
-                    return status;
-            }
-
-            in_out += right->edge.dir;
-            if (in_out == 0) {
-                cairo_bo_edge_t *next;
-                cairo_bool_t skip = FALSE;
-
-                /* skip co-linear edges */
-                next = right->next;
-                if (next != NULL)
-                    skip = edges_colinear (right, next);
-
-                if (! skip)
-                    break;
-            }
-
-            right = right->next;
-        }
-
-        status = _cairo_bo_edge_start_or_continue_trap (left, right,
-                                                        top, traps);
-        if (unlikely (status))
-            return status;
-
-        left = right;
-        if (left != NULL)
-            left = left->next;
-    }
-
+//    return _cairo_array_append (array, edge);
     return CAIRO_STATUS_SUCCESS;
 }
 
@@ -1528,26 +1393,10 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
     _cairo_bo_sweep_line_init (&sweep_line);
 
     while ((event = _cairo_bo_event_dequeue (&event_queue))) {
-        if (event->point.y != sweep_line.current_y) {
-            for (e1 = sweep_line.stopped; e1; e1 = e1->next) {
-                if (e1->deferred_trap.right != NULL) {
-                    status = _cairo_bo_edge_end_trap (e1,
-                                                      e1->edge.bottom,
-                                                      traps);
-                    if (unlikely (status))
-                        goto unwind;
-                }
-            }
-            sweep_line.stopped = NULL;
-
-            status = _active_edges_to_traps (sweep_line.head,
-                                             sweep_line.current_y,
-                                             traps);
-            if (unlikely (status))
-                goto unwind;
+//        if (event->point.y != sweep_line.current_y) {
 
             sweep_line.current_y = event->point.y;
-        }
+//        }
 
 #if DEBUG_EVENTS
         event_log ("event: %d (%ld, %ld) %lu, %lu\n",
@@ -1561,7 +1410,8 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
         switch (event->type) {
         case CAIRO_BO_EVENT_TYPE_START:
             e1 = &((cairo_bo_start_event_t *) event)->edge;
-            printf ("Start event\n");
+
+            e1->middle = event->point;
 
             status = _cairo_bo_sweep_line_insert (&sweep_line, e1);
             if (unlikely (status))
@@ -1570,23 +1420,6 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
             status = _cairo_bo_event_queue_insert_stop (&event_queue, e1);
             if (unlikely (status))
                 goto unwind;
-
-            /* check to see if this is a continuation of a stopped edge */
-            /* XXX change to an infinitesimal lengthening rule */
-            for (left = sweep_line.stopped; left; left = left->next) {
-                if (e1->edge.top <= left->edge.bottom &&
-                    edges_colinear (e1, left))
-                {
-                    e1->deferred_trap = left->deferred_trap;
-                    if (left->prev != NULL)
-                        left->prev = left->next;
-                    else
-                        sweep_line.stopped = left->next;
-                    if (left->next != NULL)
-                        left->next->prev = left->prev;
-                    break;
-                }
-            }
 
             left = e1->prev;
             right = e1->next;
@@ -1606,9 +1439,20 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
             break;
 
         case CAIRO_BO_EVENT_TYPE_STOP:
-            printf ("Stop event\n");
             e1 = ((cairo_bo_queue_event_t *) event)->e1;
             _cairo_bo_event_queue_delete (&event_queue, event);
+
+            {
+                cairo_edge_t intersected;
+                /* FIXME: Coordinates of the intersection?? */
+                intersected.line.p1.x = e1->middle.x;
+                intersected.line.p1.y = e1->middle.y;
+                intersected.top = intersected.line.p1.y;
+                intersected.line.p2.x = e1->edge.line.p2.x;
+                intersected.line.p2.y = e1->edge.line.p2.y;
+                intersected.bottom = intersected.line.p2.y;
+                _add_result_edge (/*intersected_edges*/NULL, &intersected);
+            }
 
             left = e1->prev;
             right = e1->next;
@@ -1616,14 +1460,6 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
             _cairo_bo_sweep_line_delete (&sweep_line, e1);
 
             /* first, check to see if we have a continuation via a fresh edge */
-            if (e1->deferred_trap.right != NULL) {
-                e1->next = sweep_line.stopped;
-                if (sweep_line.stopped != NULL)
-                    sweep_line.stopped->prev = e1;
-                sweep_line.stopped = e1;
-                e1->prev = NULL;
-            }
-
             if (left != NULL && right != NULL) {
                 status = _cairo_bo_event_queue_insert_if_intersect_below_current_y (&event_queue, left, right);
                 if (unlikely (status))
@@ -1633,7 +1469,6 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
             break;
 
         case CAIRO_BO_EVENT_TYPE_INTERSECTION:
-            printf ("Intersection event\n");
             e1 = ((cairo_bo_queue_event_t *) event)->e1;
             e2 = ((cairo_bo_queue_event_t *) event)->e2;
             _cairo_bo_event_queue_delete (&event_queue, event);
@@ -1643,6 +1478,29 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
                 break;
 
             intersection_count++;
+
+            {
+                cairo_edge_t intersected;
+                /* FIXME: Coordinates of the intersection?? */
+                intersected.line.p1.x = e1->middle.x;
+                intersected.line.p1.y = e1->middle.y;
+                intersected.top = intersected.line.p1.y;
+                intersected.line.p2.x = event->point.x;
+                intersected.line.p2.y = event->point.y;
+                intersected.bottom = intersected.line.p2.y;
+                _add_result_edge (/*intersected_edges*/NULL, &intersected);
+
+                intersected.line.p1.x = e2->middle.x;
+                intersected.line.p1.y = e2->middle.y;
+                intersected.top = intersected.line.p1.y;
+                intersected.line.p2.x = event->point.x;
+                intersected.line.p2.y = event->point.y;
+                intersected.bottom = intersected.line.p2.y;
+                _add_result_edge (/*intersected_edges*/NULL, &intersected);
+
+                e1->middle = event->point;
+                e2->middle = event->point;
+            }
 
             left = e1->prev;
             right = e2->next;
@@ -1668,13 +1526,6 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
     }
 
     *num_intersections = intersection_count;
-    for (e1 = sweep_line.stopped; e1; e1 = e1->next) {
-        if (e1->deferred_trap.right != NULL) {
-            status = _cairo_bo_edge_end_trap (e1, e1->edge.bottom, traps);
-            if (unlikely (status))
-                break;
-        }
-    }
  unwind:
     _cairo_bo_event_queue_fini (&event_queue);
 
@@ -1725,7 +1576,6 @@ _cairo_bentley_ottmann_tessellate_polygon (cairo_traps_t         *traps,
                                                 events[i].point.y);
 
         events[i].edge.edge = polygon->edges[i];
-        events[i].edge.deferred_trap.right = NULL;
         events[i].edge.prev = NULL;
         events[i].edge.next = NULL;
     }
@@ -2172,7 +2022,6 @@ bentley_ottmann_intersect_segments (GList *data)
                                                 events[i].point.y);
 
         events[i].edge.edge = *cairo_edge;
-        events[i].edge.deferred_trap.right = NULL;
         events[i].edge.prev = NULL;
         events[i].edge.next = NULL;
     }
@@ -2220,6 +2069,13 @@ my_cairo_test (void)
   data = g_list_prepend (data, &points[i]);
   i++;
 
+  /* Line from (15,15)-(25,16) */
+  points[i].a.x = 15; points[i].a.y = 15;
+  points[i].b.x = 25; points[i].b.y = 15;
+  points[i].num = i;
+  data = g_list_prepend (data, &points[i]);
+  i++;
+
 #if 0
   /* Line from (14,10)-(16,20) */
   points[i].a.x = 14; points[i].a.y = 10;
@@ -2237,4 +2093,113 @@ my_cairo_test (void)
 #endif
 
   bentley_ottmann_intersect_segments (data);
+}
+
+#ifdef OLD_WAY
+
+/*
+node_add
+ (C) 1993 Klamer Schutte
+ (C) 1997 Alexey Nikitin, Michael Leonov
+ (C) 2006 harry eaton
+
+ returns a bit field in new_point that indicates where the
+ point was.
+ 1 means a new node was created and inserted
+ 4 means the intersection was not on the dest point
+*/
+static VNODE *
+node_add (VNODE * dest, Vector po, int *new_point)
+{
+  VNODE *p;
+
+  if (vect_equal (po, dest->point))
+    return dest;
+  if (vect_equal (po, dest->next->point))
+    {
+      (*new_point) += 4;
+      return dest->next;
+    }
+  p = poly_CreateNode (po);
+  if (p == NULL)
+    return NULL;
+  (*new_point) += 5;
+  p->prev = dest;
+  p->next = dest->next;
+  p->cvc_prev = p->cvc_next = NULL;
+  p->Flags.status = UNKNWN;
+  return (dest->next = dest->next->prev = p);
+}				/* node_add */
+
+
+/*
+node_add_point
+ (C) 1993 Klamer Schutte
+ (C) 1997 Alexey Nikitin, Michael Leonov
+
+ return 1 if new node in b, 2 if new node in a and 3 if new node in both
+*/
+
+static int
+node_add_point (VNODE * a, VNODE * b, Vector p)
+{
+  int res = 0;
+
+  VNODE *node_a, *node_b;
+
+  node_a = node_add (a, p, &res);
+  res += res;
+  node_b = node_add (b, p, &res);
+
+  if (node_a == NULL || node_b == NULL)
+    return ISECT_NO_MEMORY;
+  node_b->cvc_prev = node_b->cvc_next = (CVCList *) - 1;
+  node_a->cvc_prev = node_a->cvc_next = (CVCList *) - 1;
+  return res;
+}				/* node_add_point */
+
+
+
+
+static void
+dummy (void)
+{
+  struct info *i = (struct info *) cl;
+  struct seg *s = (struct seg *) b;
+  Vector s1, s2;
+  int cnt, res;
+
+  i->s->p->Flags.status = ISECTED;
+  s->p->Flags.status = ISECTED;
+  for (; cnt; cnt--)
+    {
+      res = node_add_point (i->v, s->v, cnt > 1 ? s2 : s1);
+      if (res < 0)
+        return 1;                /* error */
+      /* adjust the bounding box and tree if necessary */
+      if (res & 2) {
+        cntrbox_adjust (i->s->p, cnt > 1 ? s2 : s1);
+        if (adjust_tree (i->s->p->tree, i->s))
+          return 1;
+      }
+      /* if we added a node in the tree we need to change the tree */
+      if (res & 1) {
+        cntrbox_adjust (s->p, cnt > 1 ? s2 : s1);
+        if (adjust_tree (i->tree, s))
+          return 1;
+      }
+      if (res & 3) {               /* if a point was inserted start over */
+        DEBUGP ("new intersection at (%d, %d)\n", cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
+        longjmp (*i->env, 1);
+      }
+    }
+  return 0;
+}
+#endif
+
+
+int
+bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
+{
+  return 0;
 }
