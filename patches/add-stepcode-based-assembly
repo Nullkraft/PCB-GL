@@ -1,5 +1,5 @@
 Bottom: fd99a94188e7358e77626818aec0a7fbbd4c721a
-Top:    5e8f66ea0f4810e2c88e30fc012144d88f04922b
+Top:    1b7f58c0568f7c9e2f46e74d6348c9f8a3e27a48
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-21 02:08:41 +0100
 
@@ -1197,7 +1197,7 @@ index 0000000..7a8b5df
 +
 +void export_step_assembly (const char *filename, GList *assembly_models);
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 9b775ac..5d4c67e 100644
+index 9b775ac..56c5f8c 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
 @@ -24,11 +24,14 @@
@@ -1298,7 +1298,7 @@ index 9b775ac..5d4c67e 100644
        return;
      }
  
-@@ -788,6 +839,151 @@ step_do_export (HID_Attr_Val * options)
+@@ -788,6 +839,169 @@ step_do_export (HID_Attr_Val * options)
  
    step_end_file (fh);
    fclose (fh);
@@ -1330,6 +1330,8 @@ index 9b775ac..5d4c67e 100644
 +        double ax, ay, az;
 +        double rx, ry, rz;
 +        double rotation;
++        double cos_rot;
++        double sin_rot;
 +        GList *model_iter;
 +
 +        /* Skip if the component doesn't have a STEP-AP214 3d_model */
@@ -1374,8 +1376,9 @@ index 9b775ac..5d4c67e 100644
 +        parse_numeric_attribute (element, "PCB::3d_model::ref_dir::X", &rx);
 +        parse_numeric_attribute (element, "PCB::3d_model::ref_dir::Y", &ry);
 +        parse_numeric_attribute (element, "PCB::3d_model::ref_dir::Z", &rz);
++        parse_numeric_attribute (element, "PCB::rotation", &rotation);
 +
-+        printf ("Transform (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)\n", ox, oy, oz, ax, ay, az, rx, ry, rz);
++        printf ("Transform (%f, %f, %f), (%f, %f, %f), (%f, %f, %f). Rotation of part is %f\n", ox, oy, oz, ax, ay, az, rx, ry, rz, rotation);
 +
 +        model = NULL;
 +
@@ -1401,16 +1404,31 @@ index 9b775ac..5d4c67e 100644
 +            models = g_list_append (models, model);
 +          }
 +
++        cos_rot = cos (rotation * M_PI / 180.);
++        sin_rot = sin (rotation * M_PI / 180.);
++
++        // Rotation of part on board
++        // (NB: Y flipped from normal right handed convention)
++        //[cos -sin   0] [x] = [xcos - ysin]
++        //[sin  cos   0] [y]   [xsin + ycos]
++        //[  0    0   1] [z]   [z          ]
++
++        // Flip of part to backside of board
++        // [  1   0   0] [x] = [ x]
++        // [  0  -1   0] [y] = [-y]
++        // [  0   0  -1] [z] = [-z]
++
 +        instance = g_new0 (struct assembly_model_instance, 1);
 +        instance->name = NAMEONPCB_NAME (element);
-+        instance->ox = COORD_TO_MM (element->MarkX) + ox,
-+        instance->oy = COORD_TO_MM (element->MarkY) + oy,
-+        instance->oz = on_solder_negate * -COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0 + oz; /* XXX: THINK ABOUT HOW WE FLIP FOR NON-TRIVIAL STARING TRANSFORMS */
-+        instance->ax = on_solder_negate * ax,                       /* XXX: THINK ABOUT HOW WE FLIP TO THE BACKSIDE FOR NON-TRIVIAL STARING TRANSFORMS */
-+        instance->ay = on_solder_negate * ay,                       /* XXX: ALSO THINK ABOUT HOW WE ROTATE THE COMPONENT BY ANGLE "rotation"           */
++        instance->ox = COORD_TO_MM (element->MarkX) +                    ( ox * cos_rot + oy * sin_rot),
++        instance->oy = COORD_TO_MM (element->MarkY) + on_solder_negate * (-ox * sin_rot + oy * cos_rot),
++        instance->oz = on_solder_negate * -COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0 + on_solder_negate * oz;
++        instance->ax =                    ( ax * cos_rot + ay * sin_rot),
++        instance->ay = on_solder_negate * (-ax * sin_rot + ay * cos_rot),
 +        instance->az = on_solder_negate * az;
-+        instance->rx = rx, instance->ry = ry,  instance->rz = rz; /* XXX: THINK ABOUT HOW WE FLIP TO THE BACKSIDE FOR NON-TRIVIAL STARING TRANSFORMS */
-+                                                                   /* XXX: ALSO THINK ABOUT HOW WE ROTATE THE COMPONENT BY ANGLE "rotation"           */
++        instance->rx =                    ( rx * cos_rot + ry * sin_rot), /* XXX: SHOULD THIS FACTOR IN on_solder_negate? */
++        instance->ry = on_solder_negate * (-rx * sin_rot + ry * cos_rot), /* XXX: SHOULD THIS FACTOR IN ol_solder_negaet? */
++        instance->rz = on_solder_negate * rz;
 +        model->instances = g_list_append (model->instances, instance);
 +
 +      }
