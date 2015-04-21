@@ -252,7 +252,7 @@ SelectBlock (BoxType *Box, bool select)
       }
     if (layer == & PCB->Data->BACKSOLDERMASKLAYER)
       {
-	if (! (TEST_FLAG (SHOWMASKFLAG, PCB) || !select))
+	if (! ((PCB->InvisibleObjectsOn && TEST_FLAG (SHOWMASKFLAG, PCB)) || !select))
 	  continue;
       }
     else

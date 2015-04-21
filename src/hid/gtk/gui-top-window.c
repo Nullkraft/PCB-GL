@@ -616,6 +616,7 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
     case LAYER_BUTTON_FARSIDE:
       PCB->InvisibleObjectsOn = active;
       PCB->Data->BACKSILKLAYER.On = (active && PCB->ElementOn);
+      PCB->Data->BACKSOLDERMASKLAYER.On = (active && TEST_FLAG (SHOWMASKFLAG, PCB));
       redraw = TRUE;
       break;
     case LAYER_BUTTON_MASK:
@@ -623,6 +624,8 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
         SET_FLAG (SHOWMASKFLAG, PCB);
       else
         CLEAR_FLAG (SHOWMASKFLAG, PCB);
+      PCB->Data->SOLDERMASKLAYER.On = TEST_FLAG (SHOWMASKFLAG, PCB);
+      PCB->Data->BACKSOLDERMASKLAYER.On = TEST_FLAG (SHOWMASKFLAG, PCB);
       redraw = TRUE;
       break;
     default:
