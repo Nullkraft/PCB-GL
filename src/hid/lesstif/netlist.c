@@ -198,14 +198,16 @@ nbcb_ripup (Widget w, Std_Nbcb_Func v, XmPushButtonCallbackStruct * cbs)
 
   VISIBLELINE_LOOP (PCB->Data);
   {
-    if (TEST_FLAG (FOUNDFLAG, line) && !TEST_FLAG (LOCKFLAG, line))
+    if (TEST_FLAG (FOUNDFLAG, line) &&
+        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, line)))
       RemoveObject (LINE_TYPE, layer, line, line);
   }
   ENDALL_LOOP;
 
   VISIBLEARC_LOOP (PCB->Data);
   {
-    if (TEST_FLAG (FOUNDFLAG, arc) && !TEST_FLAG (LOCKFLAG, arc))
+    if (TEST_FLAG (FOUNDFLAG, arc) &&
+        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, arc)))
       RemoveObject (ARC_TYPE, layer, arc, arc);
   }
   ENDALL_LOOP;
@@ -213,7 +215,8 @@ nbcb_ripup (Widget w, Std_Nbcb_Func v, XmPushButtonCallbackStruct * cbs)
   if (PCB->ViaOn)
     VIA_LOOP (PCB->Data);
   {
-    if (TEST_FLAG (FOUNDFLAG, via) && !TEST_FLAG (LOCKFLAG, via))
+    if (TEST_FLAG (FOUNDFLAG, via) &&
+        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, via)))
       RemoveObject (VIA_TYPE, via, via, via);
   }
   END_LOOP;

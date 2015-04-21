@@ -72,7 +72,7 @@ SelectObject (void)
 
   type = SearchScreen (Crosshair.X, Crosshair.Y, SELECT_TYPES,
 		       &ptr1, &ptr2, &ptr3);
-  if (type == NO_TYPE || TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
+  if (type == NO_TYPE || (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, (PinType *) ptr2)))
     return (false);
   switch (type)
     {
@@ -225,7 +225,8 @@ SelectBlock (BoxType *Box, bool select)
     RAT_LOOP (PCB->Data);
   {
     if (LINE_IN_BOX ((LineType *) line, Box) &&
-	!TEST_FLAG (LOCKFLAG, line) && TEST_FLAG (SELECTEDFLAG, line) != select)
+	(PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, line)) &&
+	TEST_FLAG (SELECTEDFLAG, line) != select)
       {
 	AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
 	ASSIGN_FLAG (SELECTEDFLAG, select, line);
@@ -265,9 +266,9 @@ SelectBlock (BoxType *Box, bool select)
 
     LINE_LOOP (layer);
     {
-      if (LINE_IN_BOX (line, Box)
-	  && !TEST_FLAG (LOCKFLAG, line)
-	  && TEST_FLAG (SELECTEDFLAG, line) != select)
+      if (LINE_IN_BOX (line, Box) &&
+	  (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, line)) &&
+	  TEST_FLAG (SELECTEDFLAG, line) != select)
 	{
 	  AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
 	  ASSIGN_FLAG (SELECTEDFLAG, select, line);
@@ -279,9 +280,9 @@ SelectBlock (BoxType *Box, bool select)
     END_LOOP;
     ARC_LOOP (layer);
     {
-      if (ARC_IN_BOX (arc, Box)
-	  && !TEST_FLAG (LOCKFLAG, arc)
-	  && TEST_FLAG (SELECTEDFLAG, arc) != select)
+      if (ARC_IN_BOX (arc, Box) &&
+	  (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, arc)) &&
+	  TEST_FLAG (SELECTEDFLAG, arc) != select)
 	{
 	  AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
 	  ASSIGN_FLAG (SELECTEDFLAG, select, arc);
@@ -295,9 +296,9 @@ SelectBlock (BoxType *Box, bool select)
     {
       if (!select || TEXT_IS_VISIBLE(PCB, layer, text))
 	{
-	  if (TEXT_IN_BOX (text, Box)
-	      && !TEST_FLAG (LOCKFLAG, text)
-	      && TEST_FLAG (SELECTEDFLAG, text) != select)
+	  if (TEXT_IN_BOX (text, Box) &&
+	      (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, text)) &&
+	      TEST_FLAG (SELECTEDFLAG, text) != select)
 	    {
 	      AddObjectToFlagUndoList (TEXT_TYPE, layer, text, text);
 	      ASSIGN_FLAG (SELECTEDFLAG, select, text);
@@ -310,9 +311,9 @@ SelectBlock (BoxType *Box, bool select)
     END_LOOP;
     POLYGON_LOOP (layer);
     {
-      if (POLYGON_IN_BOX (polygon, Box)
-	  && !TEST_FLAG (LOCKFLAG, polygon)
-	  && TEST_FLAG (SELECTEDFLAG, polygon) != select)
+      if (POLYGON_IN_BOX (polygon, Box) &&
+	  (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, polygon)) &&
+	  TEST_FLAG (SELECTEDFLAG, polygon) != select)
 	{
 	  AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
 	  ASSIGN_FLAG (SELECTEDFLAG, select, polygon);
@@ -330,15 +331,14 @@ SelectBlock (BoxType *Box, bool select)
   {
     {
       bool gotElement = false;
-      if ((PCB->ElementOn || !select)
-	  && !TEST_FLAG (LOCKFLAG, element)
-	  && ((TEST_FLAG (ONSOLDERFLAG, element) != 0) == SWAP_IDENT
+      if ((PCB->ElementOn || !select) &&
+	  (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, element)) &&
+	  ((TEST_FLAG (ONSOLDERFLAG, element) != 0) == SWAP_IDENT
 	      || PCB->InvisibleObjectsOn))
 	{
-	  if (BOX_IN_BOX
-	      (&ELEMENT_TEXT (PCB, element).BoundingBox, Box)
-	      && !TEST_FLAG (LOCKFLAG, &ELEMENT_TEXT (PCB, element))
-	      && TEST_FLAG (SELECTEDFLAG,
+	  if (BOX_IN_BOX (&ELEMENT_TEXT (PCB, element).BoundingBox, Box) &&
+	      (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, &ELEMENT_TEXT (PCB, element))) &&
+	      TEST_FLAG (SELECTEDFLAG,
 			    &ELEMENT_TEXT (PCB, element)) != select)
 	    {
 	      /* select all names of element */
@@ -389,7 +389,9 @@ SelectBlock (BoxType *Box, bool select)
 		gotElement = true;
 	      }
 	}
-      if ((PCB->PinOn || !select) && !TEST_FLAG (LOCKFLAG, element) && !gotElement)
+      if ((PCB->PinOn || !select) &&
+	  (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, element)) &&
+	  !gotElement)
 	{
 	  PIN_LOOP (element);
 	  {
@@ -428,9 +430,9 @@ SelectBlock (BoxType *Box, bool select)
   if (PCB->ViaOn || !select)
     VIA_LOOP (PCB->Data);
   {
-    if (VIA_OR_PIN_IN_BOX (via, Box)
-	&& !TEST_FLAG (LOCKFLAG, via)
-	&& TEST_FLAG (SELECTEDFLAG, via) != select)
+    if (VIA_OR_PIN_IN_BOX (via, Box) &&
+	(PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, via)) &&
+	TEST_FLAG (SELECTEDFLAG, via) != select)
       {
 	AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
 	ASSIGN_FLAG (SELECTEDFLAG, select, via);
@@ -742,7 +744,8 @@ SelectByFlag (int flag, bool select)
 
   VISIBLELINE_LOOP (PCB->Data);
   {
-    if (TEST_FLAG (flag, line) && !TEST_FLAG (LOCKFLAG, line))
+    if (TEST_FLAG (flag, line) &&
+        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, line)))
       {
 	AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
 	ASSIGN_FLAG (SELECTEDFLAG, select, line);
@@ -753,7 +756,8 @@ SelectByFlag (int flag, bool select)
   ENDALL_LOOP;
   VISIBLEARC_LOOP (PCB->Data);
   {
-    if (TEST_FLAG (flag, arc) && !TEST_FLAG (LOCKFLAG, arc))
+    if (TEST_FLAG (flag, arc) &&
+        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, arc)))
       {
 	AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
 	ASSIGN_FLAG (SELECTEDFLAG, select, arc);
@@ -764,7 +768,8 @@ SelectByFlag (int flag, bool select)
   ENDALL_LOOP;
   VISIBLEPOLYGON_LOOP (PCB->Data);
   {
-    if (TEST_FLAG (flag, polygon) && !TEST_FLAG (LOCKFLAG, polygon))
+    if (TEST_FLAG (flag, polygon) &&
+        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, polygon)))
       {
 	AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
 	ASSIGN_FLAG (SELECTEDFLAG, select, polygon);
@@ -778,7 +783,8 @@ SelectByFlag (int flag, bool select)
     {
       ALLPIN_LOOP (PCB->Data);
       {
-	if (!TEST_FLAG (LOCKFLAG, element) && TEST_FLAG (flag, pin))
+	if (TEST_FLAG (flag, pin) &&
+            (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, element)))
 	  {
 	    AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
 	    ASSIGN_FLAG (SELECTEDFLAG, select, pin);
@@ -789,7 +795,8 @@ SelectByFlag (int flag, bool select)
       ENDALL_LOOP;
       ALLPAD_LOOP (PCB->Data);
       {
-	if (!TEST_FLAG (LOCKFLAG, element) && TEST_FLAG (flag, pad))
+	if (TEST_FLAG (flag, pad) &&
+            (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, element)))
 	  {
 	    AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
 	    ASSIGN_FLAG (SELECTEDFLAG, select, pad);
@@ -803,7 +810,8 @@ SelectByFlag (int flag, bool select)
   if (PCB->ViaOn)
     VIA_LOOP (PCB->Data);
   {
-    if (TEST_FLAG (flag, via) && !TEST_FLAG (LOCKFLAG, via))
+    if (TEST_FLAG (flag, via) &&
+        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, via)))
       {
 	AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
 	ASSIGN_FLAG (SELECTEDFLAG, select, via);
@@ -877,7 +885,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
   if (Type & TEXT_TYPE)
     ALLTEXT_LOOP (PCB->Data);
   {
-    if (!TEST_FLAG (LOCKFLAG, text)
+    if ((PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, text))
 	&& TEXT_IS_VISIBLE (PCB, layer, text)
 	&& text->TextString
 	&& REGEXEC (text->TextString)
@@ -894,7 +902,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
   if (PCB->ElementOn && (Type & ELEMENT_TYPE))
     ELEMENT_LOOP (PCB->Data);
   {
-    if (!TEST_FLAG (LOCKFLAG, element)
+    if ((PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, element))
 	&& ((TEST_FLAG (ONSOLDERFLAG, element) != 0) == SWAP_IDENT
 	    || PCB->InvisibleObjectsOn)
 	&& TEST_FLAG (SELECTEDFLAG, element) != select)
@@ -932,7 +940,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
   if (PCB->PinOn && (Type & PIN_TYPE))
     ALLPIN_LOOP (PCB->Data);
   {
-    if (!TEST_FLAG (LOCKFLAG, element)
+    if ((PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, element))
 	&& pin->Name && REGEXEC (pin->Name)
 	&& TEST_FLAG (SELECTEDFLAG, pin) != select)
       {
@@ -946,7 +954,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
   if (PCB->PinOn && (Type & PAD_TYPE))
     ALLPAD_LOOP (PCB->Data);
   {
-    if (!TEST_FLAG (LOCKFLAG, element)
+    if ((PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, element))
 	&& ((TEST_FLAG (ONSOLDERFLAG, pad) != 0) == SWAP_IDENT
 	    || PCB->InvisibleObjectsOn)
 	&& TEST_FLAG (SELECTEDFLAG, pad) != select)
@@ -962,7 +970,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
   if (PCB->ViaOn && (Type & VIA_TYPE))
     VIA_LOOP (PCB->Data);
   {
-    if (!TEST_FLAG (LOCKFLAG, via)
+    if ((PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, via))
 	&& via->Name
 	&& REGEXEC (via->Name) && TEST_FLAG (SELECTEDFLAG, via) != select)
       {
