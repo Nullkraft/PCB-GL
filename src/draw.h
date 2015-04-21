@@ -66,11 +66,11 @@ void EraseElementPinsAndPads (ElementType *);
 void EraseElementName (ElementType *);
 void EraseObject (int, void *, void *);
 
-void DrawLayerGroup (int side, const BoxType *drawn_area);
-void DrawPaste (int side, const BoxType *drawn_area);
-void DrawSilk (HID_DRAW *hid_draw, int side, const BoxType *drawn_area);
-void DrawMask (int side, const BoxType *drawn_area);
-void PrintAssembly (int side, const BoxType *drawn_area);
+void DrawLayerGroup (HID_DRAW *hid_draw, int side);
+void DrawPaste (HID_DRAW *hid_draw, int side);
+void DrawSilk (HID_DRAW *hid_draw, int side);
+void DrawMask (HID_DRAW *hid_draw, int side);
+void PrintAssembly (HID_DRAW *hid_draw, int side);
 
 /* TEMPORARY */
 void ClearPad (PadType *, bool);
@@ -80,7 +80,7 @@ void DrawPlainVia (PinType *, bool);
 void DrawRegularText (LayerType *, TextType *);
 void DrawEMark (ElementType *, Coord, Coord, bool);
 void DrawHole (PinType *);
-void DrawRats (HID_DRAW *hid_draw, const BoxType *);
+void DrawRats (HID_DRAW *hid_draw);
 /* TEMPORARY */
 
 #endif
