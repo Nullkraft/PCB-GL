@@ -136,7 +136,7 @@ SearchViaByLocation (int locked, PinType ** Via, PinType ** Dummy1,
   info.ptr1 = (void **) Via;
   info.ptr2 = (void **) Dummy1;
   info.ptr3 = (void **) Dummy2;
-  info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
 
   if (setjmp (info.env) == 0)
     {
@@ -163,7 +163,7 @@ SearchPinByLocation (int locked, ElementType ** Element, PinType ** Pin,
   info.ptr1 = (void **) Element;
   info.ptr2 = (void **) Pin;
   info.ptr3 = (void **) Dummy;
-  info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
 
   if (setjmp (info.env) == 0)
     r_search (PCB->Data->pin_tree, &SearchBox, NULL, pinorvia_callback,
@@ -220,7 +220,7 @@ SearchPadByLocation (int locked, ElementType ** Element, PadType ** Pad,
   info.ptr1 = (void **) Element;
   info.ptr2 = (void **) Pad;
   info.ptr3 = (void **) Dummy;
-  info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
   info.BackToo = (BackToo && PCB->InvisibleObjectsOn);
   info.found_anything = false;
   r_search (PCB->Data->pad_tree, &SearchBox, NULL, pad_callback, &info);
@@ -266,7 +266,7 @@ SearchLineByLocation (int locked, LayerType ** Layer, LineType ** Line,
 
   info.Line = Line;
   info.Point = (PointType **) Dummy;
-  info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
 
   *Layer = SearchLayer;
   if (setjmp (info.env) == 0)
@@ -310,7 +310,7 @@ SearchRatLineByLocation (int locked, RatType ** Line, RatType ** Dummy1,
   info.ptr1 = (void **) Line;
   info.ptr2 = (void **) Dummy1;
   info.ptr3 = (void **) Dummy2;
-  info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
 
   if (setjmp (info.env) == 0)
     {
@@ -358,7 +358,7 @@ SearchArcByLocation (int locked, LayerType ** Layer, ArcType ** Arc,
 
   info.Arc = Arc;
   info.Dummy = Dummy;
-  info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
 
   *Layer = SearchLayer;
   if (setjmp (info.env) == 0)
@@ -398,7 +398,7 @@ SearchTextByLocation (int locked, LayerType ** Layer, TextType ** Text,
   *Layer = SearchLayer;
   info.ptr2 = (void **) Text;
   info.ptr3 = (void **) Dummy;
-  info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
 
   if (setjmp (info.env) == 0)
     {
@@ -439,7 +439,7 @@ SearchPolygonByLocation (int locked, LayerType ** Layer,
   *Layer = SearchLayer;
   info.ptr2 = (void **) Polygon;
   info.ptr3 = (void **) Dummy;
-  info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
 
   if (setjmp (info.env) == 0)
     {
@@ -495,7 +495,7 @@ SearchLinePointByLocation (int locked, LayerType ** Layer,
   info.Point = Point;
   *Point = NULL;
   info.least = MAX_LINE_POINT_DISTANCE + SearchRadius;
-  info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
   if (r_search
       (SearchLayer->line_tree, &SearchBox, NULL, linepoint_callback, &info))
     return true;
@@ -546,7 +546,7 @@ SearchArcPointByLocation (int locked, LayerType **Layer,
   info.Point = Point;
   *Point = NULL;
   info.least = MAX_ARC_POINT_DISTANCE + SearchRadius;
-  info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
   if (r_search
       (SearchLayer->arc_tree, &SearchBox, NULL, arcpoint_callback, &info))
     return true;
@@ -633,7 +633,7 @@ SearchElementNameByLocation (int locked, ElementType ** Element,
       info.ptr3 = (void **) Dummy;
       info.area = SQUARE (MAX_COORD);
       info.BackToo = (BackToo && PCB->InvisibleObjectsOn);
-      info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+      info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
       if (r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], &SearchBox, NULL,
 		    name_callback, &info))
 	return true;
@@ -688,7 +688,7 @@ SearchElementByLocation (int locked,
       info.ptr3 = (void **) Dummy2;
       info.area = SQUARE (MAX_COORD);
       info.BackToo = (BackToo && PCB->InvisibleObjectsOn);
-      info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+      info.locked = ((locked & LOCKED_TYPE) || PCB->ViolateLock) ? 0 : LOCKFLAG;
       if (r_search
 	  (PCB->Data->element_tree, &SearchBox, NULL, element_callback,
 	   &info))

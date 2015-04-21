@@ -221,6 +221,8 @@ CreateNewPCB (void)
 
 	CreateDefaultFont (ptr);
 
+  ptr->ViolateLock = true;
+
   return (ptr);
 }
 
