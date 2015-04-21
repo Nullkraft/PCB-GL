@@ -472,7 +472,7 @@ MoveArcToLayer (LayerType *Layer, ArcType *Arc)
 {
   ArcType *newone;
 
-  if (TEST_FLAG (LOCKFLAG, Arc))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Arc))
     {
       Message (_("Sorry, the object is locked\n"));
       return NULL;
@@ -563,7 +563,7 @@ MoveLineToLayer (LayerType *Layer, LineType *Line)
   LineType *newone;
   void *ptr1, *ptr2, *ptr3;
 
-  if (TEST_FLAG (LOCKFLAG, Line))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Line))
     {
       Message (_("Sorry, the object is locked\n"));
       return NULL;
@@ -661,7 +661,7 @@ MoveTextToLayerLowLevel (LayerType *Source, TextType *text,
 static void *
 MoveTextToLayer (LayerType *layer, TextType *text)
 {
-  if (TEST_FLAG (LOCKFLAG, text))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, text))
     {
       Message (_("Sorry, the object is locked\n"));
       return NULL;
@@ -735,7 +735,7 @@ MovePolygonToLayer (LayerType *Layer, PolygonType *Polygon)
   PolygonType *newone;
   struct mptlc d;
 
-  if (TEST_FLAG (LOCKFLAG, Polygon))
+  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, Polygon))
     {
       Message (_("Sorry, the object is locked\n"));
       return NULL;
