@@ -912,6 +912,8 @@ step_do_export (HID_Attr_Val * options)
         parse_numeric_attribute (element, "PCB::3d_model::ref_dir::Y", &ry);
         parse_numeric_attribute (element, "PCB::3d_model::ref_dir::Z", &rz);
 
+        parse_numeric_attribute (element, "PCB::3d_model::rotation", &rotation);
+
         printf ("Transform (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)\n", ox, oy, oz, ax, ay, az, rx, ry, rz);
 
         model = NULL;
