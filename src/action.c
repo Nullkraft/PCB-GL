@@ -1003,7 +1003,7 @@ NotifyMode (void)
 	  {
 	    type = SearchScreen (Note.X, Note.Y, test, &ptr1, &ptr2, &ptr3);
 	    if (!Note.Hit && (type & MOVE_TYPES) &&
-		!TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
+		(PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, (PinType *) ptr2)))
 	      {
 		Note.Hit = type;
 		Note.ptr1 = ptr1;
@@ -1469,8 +1469,9 @@ NotifyMode (void)
 
 	    if (Crosshair.AttachedObject.Type != NO_TYPE)
 	      {
-		if (TEST_FLAG (LOCKFLAG, (PolygonType *)
-			       Crosshair.AttachedObject.Ptr2))
+		if (!PCB->ViolateLock &&
+		    TEST_FLAG (LOCKFLAG, (PolygonType *)
+		               Crosshair.AttachedObject.Ptr2))
 		  {
 		    Message (_("Sorry, the object is locked\n"));
 		    Crosshair.AttachedObject.Type = NO_TYPE;
@@ -1614,7 +1615,7 @@ NotifyMode (void)
 	   SearchScreen (Note.X, Note.Y, REMOVE_TYPES, &ptr1, &ptr2,
 			 &ptr3)) != NO_TYPE)
 	{
-	  if (TEST_FLAG (LOCKFLAG, (LineType *) ptr2))
+	  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, (LineType *) ptr2))
 	    {
 	      Message (_("Sorry, the object is locked\n"));
 	      break;
@@ -1672,6 +1673,7 @@ NotifyMode (void)
 	    if (Crosshair.AttachedObject.Type != NO_TYPE)
 	      {
 		if (Settings.Mode == MOVE_MODE &&
+		    !PCB->ViolateLock &&
 		    TEST_FLAG (LOCKFLAG, (PinType *)
 			       Crosshair.AttachedObject.Ptr2))
 		  {
@@ -1726,7 +1728,8 @@ NotifyMode (void)
 
 	  if (Crosshair.AttachedObject.Type != NO_TYPE)
 	    {
-	      if (TEST_FLAG (LOCKFLAG, (PolygonType *)
+	      if (!PCB->ViolateLock &&
+		TEST_FLAG (LOCKFLAG, (PolygonType *)
 			     Crosshair.AttachedObject.Ptr2))
 		{
 		  Message (_("Sorry, the object is locked\n"));
@@ -2431,7 +2434,8 @@ ActionDisperseElements (int argc, char **argv, Coord x, Coord y)
      * going to be used either with a brand new design or a scratch
      * design holding some new components
      */
-    if (!TEST_FLAG (LOCKFLAG, element) && (all || TEST_FLAG (SELECTEDFLAG, element)))
+    if ((PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, element)) &&
+        (all || TEST_FLAG (SELECTEDFLAG, element)))
       {
 
 	/* figure out how much to move the element */
@@ -3382,7 +3386,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
   lock_cnt = 0;
   ELEMENT_LOOP (PCB->Data);
   {
-    if (TEST_FLAG (LOCKFLAG, element->Name) || TEST_FLAG (LOCKFLAG, element))
+    if (!PCB->ViolateLock && (TEST_FLAG (LOCKFLAG, element->Name) || TEST_FLAG (LOCKFLAG, element)))
       {
 	/* 
 	 * add to the list of locked elements which we won't try to
@@ -3665,7 +3669,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
 	case F_All:
 	  ALLLINE_LOOP (PCB->Data);
 	  {
-	    if (TEST_FLAG (AUTOFLAG, line) && !TEST_FLAG (LOCKFLAG, line))
+	    if (TEST_FLAG (AUTOFLAG, line) &&
+	        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, line)))
 	      {
 		RemoveObject (LINE_TYPE, layer, line, line);
 		changed = true;
@@ -3674,7 +3679,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
 	  ENDALL_LOOP;
 	  ALLARC_LOOP (PCB->Data);
 	  {
-	    if (TEST_FLAG (AUTOFLAG, arc) && !TEST_FLAG (LOCKFLAG, arc))
+	    if (TEST_FLAG (AUTOFLAG, arc) &&
+	        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, arc)))
 	      {
 		RemoveObject (ARC_TYPE, layer, arc, arc);
 		changed = true;
@@ -3683,7 +3689,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
 	  ENDALL_LOOP;
 	  VIA_LOOP (PCB->Data);
 	  {
-	    if (TEST_FLAG (AUTOFLAG, via) && !TEST_FLAG (LOCKFLAG, via))
+	    if (TEST_FLAG (AUTOFLAG, via) &&
+	        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, via)))
 	      {
 		RemoveObject (VIA_TYPE, via, via, via);
 		changed = true;
@@ -3700,8 +3707,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
 	case F_Selected:
 	  VISIBLELINE_LOOP (PCB->Data);
 	  {
-	    if (TEST_FLAGS (AUTOFLAG | SELECTEDFLAG, line)
-		&& !TEST_FLAG (LOCKFLAG, line))
+	    if (TEST_FLAGS (AUTOFLAG | SELECTEDFLAG, line) &&
+	        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, line)))
 	      {
 		RemoveObject (LINE_TYPE, layer, line, line);
 		changed = true;
@@ -3711,8 +3718,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
 	  if (PCB->ViaOn)
 	    VIA_LOOP (PCB->Data);
 	  {
-	    if (TEST_FLAGS (AUTOFLAG | SELECTEDFLAG, via)
-		&& !TEST_FLAG (LOCKFLAG, via))
+	    if (TEST_FLAGS (AUTOFLAG | SELECTEDFLAG, via) &&
+	        (PCB->ViolateLock || !TEST_FLAG (LOCKFLAG, via)))
 	      {
 		RemoveObject (VIA_TYPE, via, via, via);
 		changed = true;
@@ -4099,7 +4106,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
 	    if ((type =
 		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
 			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
-	      if (TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
+	      if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
 		Message (_("Sorry, the object is locked\n"));
 	    if (ChangeObjectSize (type, ptr1, ptr2, ptr3, value, absolute))
 	      SetChangedFlag (true);
@@ -6836,7 +6843,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
 	if ((type =
 	     SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
 			   &ptr1, &ptr2, &ptr3)) != NO_TYPE)
-	  if (TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
+	  if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, (PinType *) ptr2))
 	    Message (_("Sorry, the object is locked\n"));
 	if (set_object (type, ptr1, ptr2, ptr3))
 	  SetChangedFlag (true);
