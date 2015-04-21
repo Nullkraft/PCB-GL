@@ -1,5 +1,5 @@
 Bottom: ccd233c27540297c2455343a6c5d52555141b04a
-Top:    268b1419e0a8eee6956e600d251200b3c069a6f4
+Top:    e5f43241f0e491101d641f68839989a0a1adcee7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-03-21 11:50:49 +0000
 
@@ -149,7 +149,7 @@ index 6a4f345..eb8fbd1 100644
  
  	argv = g_strsplit(data, ",", -1);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index d14c496..42f42d9 100644
+index d14c496..347edf1 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -531,6 +531,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
@@ -172,7 +172,24 @@ index d14c496..42f42d9 100644
    else if (layer < max_copper_layer)
      ChangeGroupVisibility (layer, TRUE, true);
  
-@@ -811,7 +817,7 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
+@@ -610,6 +616,7 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+     case LAYER_BUTTON_FARSIDE:
+       PCB->InvisibleObjectsOn = active;
+       PCB->Data->BACKSILKLAYER.On = (active && PCB->ElementOn);
++      PCB->Data->BACKSOLDERMASKLAYER.On = (active && TEST_FLAG (SHOWMASKFLAG, PCB));
+       redraw = TRUE;
+       break;
+     case LAYER_BUTTON_MASK:
+@@ -617,6 +624,8 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+         SET_FLAG (SHOWMASKFLAG, PCB);
+       else
+         CLEAR_FLAG (SHOWMASKFLAG, PCB);
++      PCB->Data->SOLDERMASKLAYER.On = TEST_FLAG (SHOWMASKFLAG, PCB);
++      PCB->Data->BACKSOLDERMASKLAYER.On = TEST_FLAG (SHOWMASKFLAG, PCB);
+       redraw = TRUE;
+       break;
+     default:
+@@ -811,7 +820,7 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
                                   text, color_string, active, FALSE, FALSE);
    layer_process (&color_string, &text, &active, LAYER_BUTTON_MASK);
    ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_MASK,
@@ -181,7 +198,7 @@ index d14c496..42f42d9 100644
  }
  
  /*! \brief callback for ghid_layer_selector_update_colors */
-@@ -884,6 +890,8 @@ ghid_layer_buttons_update (void)
+@@ -884,6 +893,8 @@ ghid_layer_buttons_update (void)
      layer = LAYER_BUTTON_RATS;
    else if (PCB->SilkActive)
      layer = LAYER_BUTTON_SILK;
@@ -190,7 +207,7 @@ index d14c496..42f42d9 100644
    else
      layer = LayerStack[0];
  
-@@ -1936,7 +1944,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
+@@ -1936,7 +1947,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
  }
  
  static const char selectlayer_syntax[] =
@@ -199,7 +216,7 @@ index d14c496..42f42d9 100644
  
  static const char selectlayer_help[] =
      N_("Select which layer is the current layer.");
-@@ -1964,6 +1972,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
+@@ -1964,6 +1975,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
      newl = LAYER_BUTTON_SILK;
    else if (strcasecmp (argv[0], "rats") == 0)
      newl = LAYER_BUTTON_RATS;
@@ -492,7 +509,7 @@ index c997c92..6c00673 100644
  	{
  	  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
 diff --git a/src/select.c b/src/select.c
-index 021453f..b684819 100644
+index 021453f..f130b07 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -245,6 +245,16 @@ SelectBlock (BoxType *Box, bool select)
@@ -506,7 +523,7 @@ index 021453f..b684819 100644
 +      }
 +    if (layer == & PCB->Data->BACKSOLDERMASKLAYER)
 +      {
-+	if (! (TEST_FLAG (SHOWMASKFLAG, PCB) || !select))
++	if (! ((PCB->InvisibleObjectsOn && TEST_FLAG (SHOWMASKFLAG, PCB)) || !select))
 +	  continue;
 +      }
      else
