@@ -25,7 +25,8 @@
  *
  */
 
-
+#include <STEPfile.h>
+#include <sdai.h>
 #include <STEPattribute.h>
 #include <ExpDict.h>
 #include <Registry.h>
@@ -37,6 +38,8 @@
 #include "schema.h"
 
 #include <SdaiAUTOMOTIVE_DESIGN.h>
+
+#include "utils.h"
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
@@ -53,8 +56,6 @@
 #endif
 
 #include <glib.h>
-
-#include "util.h"
 
 
 void
