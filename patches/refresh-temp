@@ -1,0 +1,39 @@
+Bottom: a4e7034b981f40cf05cfbf74a1be2bc9cc1ca511
+Top:    7c17500823c922aee9a52e33b53b05982f4a79b8
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-04-25 17:39:04 +0100
+
+Refresh of toy-rendering-attempt
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 5b345a0..4f0ad84 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -87,6 +87,8 @@
+ #include <sys/wait.h>
+ #endif
+ 
++#define DEBUG
++
+ /* ---------------------------------------------------------------------------
+  * some local types
+  */
+diff --git a/src/hid/step/model.h b/src/hid/step/model.h
+index f7cdecb..f776512 100644
+--- a/src/hid/step/model.h
++++ b/src/hid/step/model.h
+@@ -1,6 +1,5 @@
+ 
+ struct step_model_instance {
+-  const char *name;
+   double x;
+   double y;
+   double rotation;
+@@ -21,4 +20,4 @@ struct step_model {
+   double rz;
+ };
+ 
+-void export_step_assembly (const char *filename, GList *assembly_models);
++struct step_model *step_model_to_shape_master (const char *filename);
