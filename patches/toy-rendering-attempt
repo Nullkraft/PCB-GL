@@ -1,5 +1,5 @@
 Bottom: cd8de61f7908ff62a72e0be2e14c3e23f8488887
-Top:    a4e7034b981f40cf05cfbf74a1be2bc9cc1ca511
+Top:    7c17500823c922aee9a52e33b53b05982f4a79b8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-22 23:34:23 +0100
 
@@ -25,6 +25,19 @@ index 38992a1..d1581d6 100644
  libstep_a_SOURCES = ${LIBSTEP_SRCS} hid/step/step_lists.h
  
  pcb_LDFLAGS = \
+diff --git a/src/action.c b/src/action.c
+index 5b345a0..4f0ad84 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -87,6 +87,8 @@
+ #include <sys/wait.h>
+ #endif
+ 
++#define DEBUG
++
+ /* ---------------------------------------------------------------------------
+  * some local types
+  */
 diff --git a/src/hid/step/assembly.cpp b/src/hid/step/assembly.cpp
 index dbbbdaf..4b0e407 100644
 --- a/src/hid/step/assembly.cpp
@@ -377,13 +390,12 @@ index 0000000..48be905
 +}
 diff --git a/src/hid/step/model.h b/src/hid/step/model.h
 new file mode 100644
-index 0000000..f7cdecb
+index 0000000..f776512
 --- /dev/null
 +++ b/src/hid/step/model.h
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,23 @@
 +
 +struct step_model_instance {
-+  const char *name;
 +  double x;
 +  double y;
 +  double rotation;
@@ -404,7 +416,7 @@ index 0000000..f7cdecb
 +  double rz;
 +};
 +
-+void export_step_assembly (const char *filename, GList *assembly_models);
++struct step_model *step_model_to_shape_master (const char *filename);
 diff --git a/src/hid/step/utils.cpp b/src/hid/step/utils.cpp
 new file mode 100644
 index 0000000..ea90a52
