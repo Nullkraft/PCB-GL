@@ -1,6 +1,5 @@
 
 struct step_model_instance {
-  const char *name;
   double x;
   double y;
   double rotation;
@@ -21,4 +20,4 @@ struct step_model {
   double rz;
 };
 
-void export_step_assembly (const char *filename, GList *assembly_models);
+struct step_model *step_model_to_shape_master (const char *filename);
