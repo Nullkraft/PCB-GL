@@ -927,25 +927,25 @@ step_do_export (HID_Attr_Val * options)
             attribute = AttributeGet (element, "PCB::3d_model::origin::X");
             g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0 mm");
             attribute = AttributeGet (element, "PCB::3d_model::origin::Y");
-            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0 mm");
+            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0 mm");
             attribute = AttributeGet (element, "PCB::3d_model::origin::Z");
-            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0 mm");
+            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0 mm");
             AttributePutToList (&element->Attributes, "PCB::3d_model::origin", value->str, true);
 
             attribute = AttributeGet (element, "PCB::3d_model::axis::X");
             g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0");
             attribute = AttributeGet (element, "PCB::3d_model::axis::Y");
-            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0");
+            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0");
             attribute = AttributeGet (element, "PCB::3d_model::axis::Z");
-            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0");
+            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0");
             AttributePutToList (&element->Attributes, "PCB::3d_model::axis", value->str, true);
 
             attribute = AttributeGet (element, "PCB::3d_model::ref_dir::X");
             g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0");
             attribute = AttributeGet (element, "PCB::3d_model::ref_dir::Y");
-            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0");
+            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0");
             attribute = AttributeGet (element, "PCB::3d_model::ref_dir::Z");
-            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0");
+            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0");
             AttributePutToList (&element->Attributes, "PCB::3d_model::ref_dir", value->str, true);
 
             g_string_free (value, true);
