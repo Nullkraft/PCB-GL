@@ -710,7 +710,16 @@ append_model_from_file (Registry *registry,
 
   STEPfile sfile = STEPfile (*registry, *instance_list, "", false);
 
-  sfile.AppendExchangeFile (filename);
+  // XXX: This appears to throw exceptions from std::ios_base if the file doesn't exist
+  try
+    {
+      sfile.AppendExchangeFile (filename);
+    }
+  catch (...)
+    {
+      std::cout << "ERROR: Caught exception when attempting to read from file '" << filename << "' (does the file exist?)" << std::endl;
+      return NULL;
+    }
 
   Severity severity = sfile.Error().severity();
   if (severity != SEVERITY_NULL)
@@ -909,7 +918,7 @@ export_step_assembly (const char *filename, GList *models)
       model_pd = append_model_from_file (registry, instance_list, model->filename);
       if (model_pd == NULL)
         {
-          printf ("ERROR Loading STEP model from file '%s'", model->filename);
+          printf ("ERROR Loading STEP model from file '%s'\n", model->filename);
           continue;
         }
 
