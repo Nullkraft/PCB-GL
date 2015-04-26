@@ -1,5 +1,5 @@
 Bottom: fd99a94188e7358e77626818aec0a7fbbd4c721a
-Top:    3aeab40fb32c4da5848193b3312d890f0136913d
+Top:    7f01eb6134abbcdba4e1acc8f545f403248e9e3b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-26 13:31:04 +0100
 
@@ -90,10 +90,10 @@ index ad640ef..25d6ff2 100644
  	true > $@
 diff --git a/src/hid/step/assembly.cpp b/src/hid/step/assembly.cpp
 new file mode 100644
-index 0000000..4b0e407
+index 0000000..1cc4a3f
 --- /dev/null
 +++ b/src/hid/step/assembly.cpp
-@@ -0,0 +1,937 @@
+@@ -0,0 +1,946 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -806,7 +806,16 @@ index 0000000..4b0e407
 +
 +  STEPfile sfile = STEPfile (*registry, *instance_list, "", false);
 +
-+  sfile.AppendExchangeFile (filename);
++  // XXX: This appears to throw exceptions from std::ios_base if the file doesn't exist
++  try
++    {
++      sfile.AppendExchangeFile (filename);
++    }
++  catch (...)
++    {
++      std::cout << "ERROR: Caught exception when attempting to read from file '" << filename << "' (does the file exist?)" << std::endl;
++      return NULL;
++    }
 +
 +  Severity severity = sfile.Error().severity();
 +  if (severity != SEVERITY_NULL)
@@ -1005,7 +1014,7 @@ index 0000000..4b0e407
 +      model_pd = append_model_from_file (registry, instance_list, model->filename);
 +      if (model_pd == NULL)
 +        {
-+          printf ("ERROR Loading STEP model from file '%s'", model->filename);
++          printf ("ERROR Loading STEP model from file '%s'\n", model->filename);
 +          continue;
 +        }
 +
@@ -1062,7 +1071,7 @@ index 0000000..7a8b5df
 +
 +void export_step_assembly (const char *filename, GList *assembly_models);
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 9b775ac..a228dc4 100644
+index 9b775ac..95fd193 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
 @@ -24,11 +24,14 @@
@@ -1163,7 +1172,7 @@ index 9b775ac..a228dc4 100644
        return;
      }
  
-@@ -788,6 +839,173 @@ step_do_export (HID_Attr_Val * options)
+@@ -788,6 +839,206 @@ step_do_export (HID_Attr_Val * options)
  
    step_end_file (fh);
    fclose (fh);
@@ -1246,6 +1255,39 @@ index 9b775ac..a228dc4 100644
 +        parse_numeric_attribute (element, "PCB::3d_model::ref_dir::Y", &ry);
 +        parse_numeric_attribute (element, "PCB::3d_model::ref_dir::Z", &rz);
 +        parse_numeric_attribute (element, "PCB::rotation", &rotation);
++
++#if 1  /* Write the intended final syntax attributes */
++        if (1)
++          {
++            GString *value = g_string_new (NULL);
++
++            attribute = AttributeGet (element, "PCB::3d_model::origin::X");
++            g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0 mm");
++            attribute = AttributeGet (element, "PCB::3d_model::origin::Y");
++            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0 mm");
++            attribute = AttributeGet (element, "PCB::3d_model::origin::Z");
++            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0 mm");
++            AttributePutToList (&element->Attributes, "PCB::3d_model::origin", value->str, true);
++
++            attribute = AttributeGet (element, "PCB::3d_model::axis::X");
++            g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0");
++            attribute = AttributeGet (element, "PCB::3d_model::axis::Y");
++            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0");
++            attribute = AttributeGet (element, "PCB::3d_model::axis::Z");
++            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0");
++            AttributePutToList (&element->Attributes, "PCB::3d_model::axis", value->str, true);
++
++            attribute = AttributeGet (element, "PCB::3d_model::ref_dir::X");
++            g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0");
++            attribute = AttributeGet (element, "PCB::3d_model::ref_dir::Y");
++            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0");
++            attribute = AttributeGet (element, "PCB::3d_model::ref_dir::Z");
++            g_string_append_printf (value, "%s", attribute != NULL ? attribute : "0.0");
++            AttributePutToList (&element->Attributes, "PCB::3d_model::ref_dir", value->str, true);
++
++            g_string_free (value, true);
++          }
++#endif
 +
 +        printf ("Transform (%f, %f, %f), (%f, %f, %f), (%f, %f, %f). Rotation of part is %f\n", ox, oy, oz, ax, ay, az, rx, ry, rz, rotation);
 +
