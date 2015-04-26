@@ -1,5 +1,5 @@
 Bottom: fd99a94188e7358e77626818aec0a7fbbd4c721a
-Top:    4f5a6881a69edae4d3e1c0891fc67f08096f7714
+Top:    3aeab40fb32c4da5848193b3312d890f0136913d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-26 13:31:04 +0100
 
@@ -1062,7 +1062,7 @@ index 0000000..7a8b5df
 +
 +void export_step_assembly (const char *filename, GList *assembly_models);
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 9b775ac..56c5f8c 100644
+index 9b775ac..a228dc4 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
 @@ -24,11 +24,14 @@
@@ -1163,7 +1163,7 @@ index 9b775ac..56c5f8c 100644
        return;
      }
  
-@@ -788,6 +839,169 @@ step_do_export (HID_Attr_Val * options)
+@@ -788,6 +839,173 @@ step_do_export (HID_Attr_Val * options)
  
    step_end_file (fh);
    fclose (fh);
@@ -1209,6 +1209,8 @@ index 9b775ac..56c5f8c 100644
 +          continue;
 +        model_filename = attribute;
 +
++#if 0   /* Rather than write a parser for three floats in a string, separate X, Y, Z explicitly for quicker testing */
++
 +        attribute = AttributeGet (element, "PCB::3d_model::origin");
 +        if (attribute == NULL)
 +          continue;
@@ -1225,7 +1227,9 @@ index 9b775ac..56c5f8c 100644
 +          continue;
 +        parse_direction_3d_string (attribute, &rx, &ry, &rz);
 +        rx = 1.0, ry = 0.0, rz = 0.0;
++#endif
 +
++        /* XXX: Should parse a unit suffix, e.g. "degrees" */
 +        attribute = AttributeGet (element, "PCB::rotation");
 +        if (attribute == NULL)
 +          continue;
