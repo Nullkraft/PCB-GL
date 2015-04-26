@@ -881,6 +881,8 @@ step_do_export (HID_Attr_Val * options)
           continue;
         model_filename = attribute;
 
+#if 0   /* Rather than write a parser for three floats in a string, separate X, Y, Z explicitly for quicker testing */
+
         attribute = AttributeGet (element, "PCB::3d_model::origin");
         if (attribute == NULL)
           continue;
@@ -897,7 +899,9 @@ step_do_export (HID_Attr_Val * options)
           continue;
         parse_direction_3d_string (attribute, &rx, &ry, &rz);
         rx = 1.0, ry = 0.0, rz = 0.0;
+#endif
 
+        /* XXX: Should parse a unit suffix, e.g. "degrees" */
         attribute = AttributeGet (element, "PCB::rotation");
         if (attribute == NULL)
           continue;
