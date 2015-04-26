@@ -925,11 +925,11 @@ step_do_export (HID_Attr_Val * options)
             GString *value = g_string_new (NULL);
 
             attribute = AttributeGet (element, "PCB::3d_model::origin::X");
-            g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0 mm");
+            g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0mm");
             attribute = AttributeGet (element, "PCB::3d_model::origin::Y");
-            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0 mm");
+            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0mm");
             attribute = AttributeGet (element, "PCB::3d_model::origin::Z");
-            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0 mm");
+            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0mm");
             AttributePutToList (&element->Attributes, "PCB::3d_model::origin", value->str, true);
 
             attribute = AttributeGet (element, "PCB::3d_model::axis::X");
