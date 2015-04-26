@@ -1,0 +1,28 @@
+Bottom: fdcb00412538dd83860355a75f0fbcc27fb3bf50
+Top:    50daa8168a820422f49b0c8b626850270664f468
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-04-26 16:08:22 +0100
+
+Refresh of add-stepcode-based-assembly
+
+---
+
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 3e863de..c109dc5 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -925,11 +925,11 @@ step_do_export (HID_Attr_Val * options)
+             GString *value = g_string_new (NULL);
+ 
+             attribute = AttributeGet (element, "PCB::3d_model::origin::X");
+-            g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0 mm");
++            g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0mm");
+             attribute = AttributeGet (element, "PCB::3d_model::origin::Y");
+-            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0 mm");
++            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0mm");
+             attribute = AttributeGet (element, "PCB::3d_model::origin::Z");
+-            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0 mm");
++            g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0mm");
+             AttributePutToList (&element->Attributes, "PCB::3d_model::origin", value->str, true);
+ 
+             attribute = AttributeGet (element, "PCB::3d_model::axis::X");
