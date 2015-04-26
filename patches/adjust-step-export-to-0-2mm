@@ -1,5 +1,5 @@
-Bottom: d60da2fda4583afde21a78cecccd693aaac83b38
-Top:    8dc21c32bdc02586618697e11ec88f3bce0b0270
+Bottom: 3812b04032bce6ec5e6737e096527d3fc7f4303c
+Top:    87959edc3af0a7fd24456bfdfb8ddef407e2dce9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-16 23:51:41 +0000
 
@@ -9,10 +9,10 @@ Adjust STEP export to 0.2mm board thickness (Hack - need something quick!)
 ---
 
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index d1b0452..7d1844a 100644
+index 2ca5bd6..83c648a 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
-@@ -31,7 +31,7 @@
+@@ -34,7 +34,7 @@
  
  #define CRASH fprintf(stderr, "HID error: pcb called unimplemented STEP function %s.\n", __FUNCTION__); abort()
  
