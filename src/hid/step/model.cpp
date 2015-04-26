@@ -67,19 +67,13 @@ typedef std::list<SDAI_Application_instance *> ai_list;
 
 
 SdaiProduct_definition *
-append_model_from_file (Registry *registry,
+read_model_from_file (Registry *registry,
                         InstMgr *instance_list,
                         const char *filename)
 {
-  int max_existing_file_id = instance_list->MaxFileId ();
-
-  /* XXX: The following line is coppied from STEPfile.inline.cc, and we rely on it matching the algorithm there! */
-//  int file_increment = ( int )( ( ceil( ( max_existing_file_id + 99.0 ) / 1000.0 ) + 1.0 ) * 1000.0 ); /* XXX: RELYING ON SCL NOT CHANGING */
-//  std::cout << "INFO: Expecting a to add " << file_increment << " to entity names" << std::endl;
-
   STEPfile sfile = STEPfile (*registry, *instance_list, "", false);
 
-  sfile.AppendExchangeFile (filename);
+  sfile.ReadExchangeFile (filename);
 
   Severity severity = sfile.Error().severity();
   if (severity != SEVERITY_NULL)
@@ -90,16 +84,10 @@ append_model_from_file (Registry *registry,
 #warning HANDLE OTHER ERRORS BETTER?
     }
 
-  pd_list all_pd_list;
   pd_list pd_list;
 
   // Find all PRODUCT_DEFINITION entities with a SHAPE_DEFINITION_REPRESETNATION
-  find_all_pd_with_sdr (instance_list, &all_pd_list);
-
-  // Find and copy over any PRODUCT_DEFINITION in our list which have entity numbers from the append
-  for (pd_list::iterator iter = all_pd_list.begin(); iter != all_pd_list.end(); iter++)
-    if ((*iter)->StepFileId () > max_existing_file_id)
-      pd_list.push_back (*iter);
+  find_all_pd_with_sdr (instance_list, &pd_list);
 
   /*  Try to determine the root product */
   find_and_remove_child_pd (instance_list, &pd_list, "Next_assembly_usage_occurrence"); // Remove any PD which are children of another via NAUO
@@ -126,6 +114,26 @@ append_model_from_file (Registry *registry,
   return *pd_list.begin();
 }
 
+typedef std::list<SdaiManifold_solid_brep *> msb_list;
+
+void
+find_manifold_solid_brep (Registry *registry,
+                          InstMgr *instance_list,
+                          SdaiShape_representation *sr,
+                          msb_list *msb_list)
+{
+  SingleLinkNode *iter = sr->items_ ()->GetHead ();
+
+  while (iter != NULL)
+    {
+      SDAI_Application_instance *node = ((EntityNode *)iter)->node;
+
+      if (strcmp (node->EntityName (), "Manifold_Solid_Brep") == 0)
+        msb_list->push_back ((SdaiManifold_solid_brep *)node);
+
+      iter = iter->NextNode ();
+    }
+}
 
 extern "C" struct step_model *
 step_model_to_shape_master (const char *filename)
@@ -133,54 +141,245 @@ step_model_to_shape_master (const char *filename)
   Registry * registry = new Registry (SchemaInit);
   InstMgr * instance_list = new InstMgr (/* ownsInstance = */1);
 
-#if 0
   // Increment FileId so entities start at #1 instead of #0.
   instance_list->NextFileId();
 
-  SdaiProduct_definition *assembly_pd = create_parent_assembly (registry, instance_list);
-  if (assembly_pd == NULL)
+  SdaiProduct_definition *pd = read_model_from_file (registry, instance_list, filename);
+  if (pd == NULL)
     {
-      printf ("ERROR creating parent assembly");
-      return;
+      printf ("ERROR Loading STEP model from file '%s'", filename);
+      return NULL;
     }
 
-  GList *model_iter;
-  for (model_iter = models;
-       model_iter != NULL;
-       model_iter = g_list_next (model_iter))
+  SdaiShape_definition_representation *sdr = find_sdr_for_pd (instance_list, pd);
+  SdaiShape_representation *sr = (SdaiShape_representation *)sdr->used_representation_ ();
+
+  // If sr is an exact match for the step entity SHAPE_REPRESENTATION (not a subclass), return - we are already in the correct form
+  if (strcmp (sr->EntityName (), "Advanced_Brep_Shape_Representation") != 0)
     {
-      struct assembly_model *model = (struct assembly_model *)model_iter->data;
-
-      SdaiProduct_definition *model_pd;
-      model_pd = append_model_from_file (registry, instance_list, model->filename);
-      if (model_pd == NULL)
-        {
-          printf ("ERROR Loading STEP model from file '%s'", model->filename);
-          continue;
-        }
-
-      GList *inst_iter;
-      for (inst_iter = model->instances;
-           inst_iter != NULL;
-           inst_iter = g_list_next (inst_iter))
-        {
-          struct assembly_model_instance *instance = (struct assembly_model_instance *)inst_iter->data;
-
-          SdaiAxis2_placement_3d *child_location;
-          child_location = MakeAxis (registry, instance_list,
-                                     instance->ox, instance->oy, instance->oz,  // POINT
-                                     instance->ax, instance->ay, instance->az,  // AXIS
-                                     instance->rx, instance->ry, instance->rz); // REF DIRECTION
-
-          assemble_instance_of_model (registry, instance_list, assembly_pd, model_pd, child_location, instance->name);
-        }
+      printf ("step_model_to_shape_master: Looking for Advanced_Brep_Shape_Representation, but found %s (which we don't support yet)\n", sr->EntityName ());
+      return NULL;
     }
 
-  write_ap214 (registry, instance_list, filename);
-#endif
+  SdaiAxis2_placement_3d *part_origin = find_axis2_placement_3d_in_sr (sr);
+  if (part_origin == NULL)
+    std::cout << "WARNING: Could not find AXIS2_PLACEMENT_3D entity in SHAPE_REPRESENTATION" << std::endl;
+
+  msb_list msb_list;
+  find_manifold_solid_brep (registry, instance_list, sr, &msb_list);
+
+  for (msb_list::iterator iter = msb_list.begin (); iter != msb_list.end (); iter++)
+    {
+      std::cout << "Found MANIFOLD_SOLID_BREP; processing" << std::endl;
+      SdaiClosed_shell *cs = (*iter)->outer_ ();
+
+      std::cout << "Closed shell is " << cs << std::endl;
+
+      for (SingleLinkNode *iter = cs->cfs_faces_ ()->GetHead ();
+           iter != NULL;
+           iter = iter->NextNode ())
+        {
+          SdaiFace *face = (SdaiFace *)((EntityNode *)iter)->node;
+
+          /* XXX: Do we look for specific types of face at this point? (Expect ADVANCED_FACE usually?) */
+          if (strcmp (face->EntityName (), "Advanced_Face") != 0)
+            {
+              printf ("WARNING: Found face of type %s (which we don't support yet)\n", face->EntityName ());
+              continue;
+            }
+
+          /* NB: ADVANCED_FACE is a FACE_SURFACE, which has SdaiSurface *face_geometry_ (), and Boolean same_sense_ () */
+          // SdaiAdvanced_face *af = (SdaiAdvanced_face *) face;
+          /* NB: FACE_SURFACE is a FACE, which has EntityAggreate bounds_ (), whos' members are SdaiFace_bound *  */
+          SdaiFace_surface *fs = (SdaiFace_surface *) face;
+
+          SdaiSurface *surface = fs->face_geometry_ ();
+
+          std::cout << "Face " << face->name_ ().c_str () << " has surface of type " << surface->EntityName () << " and same_sense = " << fs->same_sense_ () << std::endl;
+
+          if (surface->IsComplex ())
+            {
+              printf ("WARNING: Found a STEP Complex entity for our surface (which we don't support yet). Probably a B_SPLINE surface?\n");
+            }
+          else if (strcmp (surface->EntityName (), "Plane") == 0)
+            {
+              printf ("WARNING: planar surfaces are not supported yet\n");
+            }
+          else if (strcmp (surface->EntityName (), "Cylindrical_Surface") == 0)
+            {
+              printf ("WARNING: cylindrical suraces are not supported yet\n");
+            }
+          else if (strcmp (surface->EntityName (), "Toroidal_Surface") == 0)
+            {
+              printf ("WARNING: toroidal suraces are not supported yet\n");
+            }
+          else if (strcmp (surface->EntityName (), "Spherical_Surface") == 0)
+            {
+              printf ("WARNING: spherical surfaces are not supported yet\n");
+            }
+          else
+            {
+              printf ("ERROR: Found an unknown surface type (which we obviously don't support). Surface name is %s\n", surface->EntityName ());
+            }
+
+          for (SingleLinkNode *iter = fs->bounds_ ()->GetHead ();
+               iter != NULL;
+               iter = iter->NextNode ())
+            {
+              SdaiFace_bound *fb = (SdaiFace_bound *)((EntityNode *)iter)->node;
+
+
+              bool is_outer_bound = (strcmp (fb->EntityName (), "Face_Outer_Bound") == 0);
+
+              if (is_outer_bound)
+                std::cout << "  Outer bounds of face include ";
+              else
+                std::cout << "  Bounds of face include ";
+
+              // NB: SdaiFace_bound has SdaiLoop *bound_ (), and Boolean orientation_ ()
+              // NB: SdaiLoop is a SdaiTopological_representation_item, which is a SdaiRepresentation_item, which has a name_ ().
+              // NB: Expect bounds_ () may return a SUBTYPE of SdaiLoop, such as, but not necessarily: SdaiEdge_loop
+              SdaiLoop *loop = fb->bound_ ();
+
+              std::cout << "loop #" << loop->StepFileId () << ", of type " << loop->EntityName () << ":" << std::endl;
+              if (strcmp (loop->EntityName (), "Edge_Loop") == 0)
+                {
+                  SdaiEdge_loop *el = (SdaiEdge_loop *)loop;
+
+                  // NB: EDGE_LOOP uses multiple inheritance from LOOP and PATH, thus needs special handling to
+                  //     access the elements belonging to PATH, such as edge_list ...
+                  //     (Not sure if this is a bug in STEPcode, as the SdaiEdge_loop class DOES define
+                  //     an accessor edge_list_ (), yet it appears to return an empty aggregate.
+
+                  char path_entity_name[] = "Path"; /* SdaiApplication_instance::GetMiEntity() should take const char *, but doesn't */
+                  SdaiPath *path = (SdaiPath *)el->GetMiEntity (path_entity_name);
+
+                  for (SingleLinkNode *iter = path->edge_list_ ()->GetHead ();
+                       iter != NULL;
+                       iter = iter->NextNode ())
+                    {
+                      SdaiOriented_edge *oe = (SdaiOriented_edge *)((EntityNode *)iter)->node;
+
+                      // NB: Stepcode does not compute derived attributes, so we need to look at the EDGE
+                      //     "edge_element" referred to by the ORIENTED_EDGE, to find the start and end vertices
+
+                      SdaiEdge *edge = oe->edge_element_ ();
+                      bool orientation = oe->orientation_ ();
+
+                      if (strcmp (edge->edge_start_ ()->EntityName (), "Vertex_Point") != 0 ||
+                          strcmp (edge->edge_end_   ()->EntityName (), "Vertex_Point") != 0)
+                        {
+                          printf ("WARNING: Edge start and/or end vertices are not specified as VERTEX_POINT\n");
+                          continue;
+                        }
+
+                      // NB: Assuming edge points to an EDGE, or one of its subtypes that does not make edge_start and edge_end derived attributes.
+                      //     In practice, edge should point to an EDGE_CURVE sub-type
+                      SdaiVertex_point *edge_start = (SdaiVertex_point *) (orientation ? edge->edge_start_ () : edge->edge_end_ ());
+                      SdaiVertex_point *edge_end =  (SdaiVertex_point *) (!orientation ? edge->edge_start_ () : edge->edge_end_ ());
+
+                      // NB: XXX: SdaiVertex_point multiply inherits from vertex and geometric_representation_item
+
+                      SdaiPoint *edge_start_point = edge_start->vertex_geometry_ ();
+                      SdaiPoint *edge_end_point = edge_end->vertex_geometry_ ();
+
+                      if (strcmp (edge_start_point->EntityName (), "Cartesian_Point") == 0)
+                        {
+                          /* HAPPY WITH THIS TYPE */
+                        }
+                      else
+                        {
+                          // XXX: point_on_curve, point_on_surface, point_replica, degenerate_pcurve
+                          printf ("WARNING: Got Edge start point as unhandled point type (%s)\n", edge_start_point->EntityName ());
+                          continue;
+                        }
+
+                      if (strcmp (edge_end_point->EntityName (), "Cartesian_Point") == 0)
+                        {
+                          /* HAPPY WITH THIS TYPE */
+                        }
+                      else
+                        {
+                          // XXX: point_on_curve, point_on_surface, point_replica, degenerate_pcurve
+                          printf ("WARNING: Got Edge end point as unhandled point type (%s)\n", edge_end_point->EntityName ());
+                          continue;
+                        }
+
+                      SdaiCartesian_point *edge_start_cp = (SdaiCartesian_point *)edge_start_point;
+                      SdaiCartesian_point *edge_end_cp = (SdaiCartesian_point *)edge_end_point;
+
+                      printf ("    Edge #%i starts at (%f, %f, %f) and ends at (%f, %f, %f)\n",
+                              edge->StepFileId (),
+                              ((RealNode *)edge_start_cp->coordinates_ ()->GetHead())->value,
+                              ((RealNode *)edge_start_cp->coordinates_ ()->GetHead()->NextNode())->value,
+                              ((RealNode *)edge_start_cp->coordinates_ ()->GetHead()->NextNode()->NextNode())->value,
+                              ((RealNode *)edge_end_cp->coordinates_ ()->GetHead())->value,
+                              ((RealNode *)edge_end_cp->coordinates_ ()->GetHead()->NextNode())->value,
+                              ((RealNode *)edge_end_cp->coordinates_ ()->GetHead()->NextNode()->NextNode())->value);
+
+                      if (strcmp (edge->EntityName (), "Edge_Curve") == 0)
+                        {
+                          SdaiEdge_curve *ec = (SdaiEdge_curve *)edge;
+
+                          SdaiCurve *curve = ec->edge_geometry_ ();
+                          bool same_sense = ec->same_sense_ ();
+
+                          printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
+
+                          if (strcmp (curve->EntityName (), "Line") == 0)
+                            {
+                              printf ("WARNING: Underlying curve geometry type Line is not supported yet\n");
+                              continue;
+                            }
+                          else if (strcmp (curve->EntityName (), "Circle") == 0)
+                            {
+                              printf ("WARNING: Underlying curve geometry type circle is not supported yet\n");
+                              continue;
+                            }
+                          else
+                            {
+                              printf ("WARNING: Unhandled curve geometry type (%s), #%i\n", curve->EntityName (), curve->StepFileId ());
+                              // XXX: line, conic, pcurve, surface_curve, offset_curve_2d, offset_curve_3d, curve_replica
+                              // XXX: Various derived types of the above, e.g.:
+                              //      conic is a supertype of: circle, ellipse, hyperbola, parabola
+                              continue;
+                            }
+
+                        }
+                      else
+                        {
+                          printf ("WARNING: found unknown edge type (%s)\n", edge->EntityName ());
+                          continue;
+                        }
+
+                    }
+
+                }
+              else
+                {
+                  printf ("WARNING: Face is bounded by an unhandled loop type (%s)\n", loop->EntityName ());
+                  continue;
+                }
+            }
+
+        }
+    }
 
   delete instance_list;
   delete registry;
 
   return NULL;
 }
+
+/* Geometry surface and face types encountered so far..
+
+Toroidal_surface     Circle (x5)
+Toroidal_surface     Circle (x4)
+Toroidal_surface     Circle (x3) + B_Spline_Curve_With_Knots
+
+Cylindrical_surface  Circle + Line + B_Spline_Curve_With_Knots
+Cylindrical_surface  Circle + Line
+
+Plane                Circle (xn) + Line (xn) + B_Spline_Curve_With_Knots
+
+*/
