@@ -68,27 +68,7 @@ Name of the STEP output file. Can contain a path.
 
 REGISTER_ATTRIBUTES (step_attribute_list)
 
-/* All file-scope data is in global struct */
-static struct {
-
-  FILE *f;
-  bool print_group[MAX_LAYER];
-  bool print_layer[MAX_LAYER];
-
-  const char *filename;
-
-  LayerType *outline_layer;
-
-  HID_Attr_Val step_values[NUM_OPTIONS];
-
-  bool is_mask;
-  bool is_drill;
-  bool is_assy;
-  bool is_copper;
-  bool is_paste;
-
-  int next_identifier;
-} global;
+static HID_Attr_Val step_option_values[NUM_OPTIONS];
 
 static HID_Attribute *
 step_get_export_options (int *n)
@@ -161,8 +141,8 @@ step_do_export (HID_Attr_Val * options)
     {
       step_get_export_options (0);
       for (i = 0; i < NUM_OPTIONS; i++)
-        global.step_values[i] = step_attribute_list[i].default_val;
-      options = global.step_values;
+        step_option_values[i] = step_attribute_list[i].default_val;
+      options = step_option_values;
     }
 
   filename = options[HA_stepfile].str_value;
@@ -170,7 +150,7 @@ step_do_export (HID_Attr_Val * options)
     filename = "pcb-out.step";
 
   board_outline_list = object3d_from_board_outline ();
-  object3d_list_export_to_step_assy (board_outline_list, filename);
+  object3d_list_export_to_step_assy (board_outline_list, temp_pcb_filename);
   g_list_free_full (board_outline_list, (GDestroyNotify)destroy_object3d);
 
   {
@@ -341,7 +321,7 @@ step_do_export (HID_Attr_Val * options)
       }
     END_LOOP;
 
-    export_step_assembly (global.filename, models);
+    export_step_assembly (filename, models);
 
     /* XXX: LEAK ALL THE MODEL DATA.. BEING LAZY RIGHT NOW */
   }
