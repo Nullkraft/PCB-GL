@@ -28,22 +28,12 @@
 #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
 
 #ifdef REVERSED_PCB_CONTOURS
-#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
-#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((pcb)->MaxHeight - (y)))
-#define COORD_TO_STEP_Z(pcb, z) (COORD_TO_MM(                   (z)))
-
 #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
 #define STEP_Y_TO_COORD(pcb, y) ((pcb)->MaxHeight - MM_TO_COORD((y)))
-#define STEP_Z_TO_COORD(pcb, z) (MM_TO_COORD((z)))
 #else
 /* XXX: BROKEN UPSIDE DOWN OUTPUT */
-#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM((x)))
-#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((y)))
-#define COORD_TO_STEP_Z(pcb, z) (COORD_TO_MM((z)))
-
 #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
 #define STEP_Y_TO_COORD(pcb, y) (MM_TO_COORD((y)))
-#define STEP_Z_TO_COORD(pcb, z) (MM_TO_COORD((z)))
 #endif
 
 
@@ -345,7 +335,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
 }
 
 void
-object3d_list_export_to_step_assy (GList *objects, char *filename)
+object3d_list_export_to_step_assy (GList *objects, const char *filename)
 {
   step_file *step;
   step_id comp_shape_definition_representation;
@@ -391,7 +381,7 @@ object3d_list_export_to_step_assy (GList *objects, char *filename)
 }
 
 void
-object3d_export_to_step (object3d *object, char *filename)
+object3d_export_to_step (object3d *object, const char *filename)
 {
   step_file *step;
 
