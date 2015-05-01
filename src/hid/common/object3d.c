@@ -23,13 +23,11 @@
 
 #ifdef REVERSED_PCB_CONTOURS
 #define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
-//#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((pcb)->MaxHeight - (y)))
-#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM(                   (y)))
+#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((pcb)->MaxHeight - (y)))
 #define COORD_TO_STEP_Z(pcb, z) (COORD_TO_MM(                   (z)))
 
 #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
-#define STEP_Y_TO_COORD(pcb, y) (MM_TO_COORD((y)))
-//#define STEP_Y_TO_COORD(pcb, y) ((pcb)->MaxHeight - MM_TO_COORD((y)))
+#define STEP_Y_TO_COORD(pcb, y) ((pcb)->MaxHeight - MM_TO_COORD((y)))
 #define STEP_Z_TO_COORD(pcb, z) (MM_TO_COORD((z)))
 #else
 /* XXX: BROKEN UPSIDE DOWN OUTPUT */
