@@ -1,5 +1,5 @@
 Bottom: 84a3a7edbaffc0477060f48598f7fa21e840c8de
-Top:    da51d132eccae92df38d64340105cf668fe27c00
+Top:    0e34443c6832af39ac93ea4c8c9757ad773e7b71
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-05-01 22:42:10 +0100
 
@@ -36,7 +36,7 @@ index d4917d7..d2bf7b3 100644
 +void appearance_set_color (appearance *appear, float r, float g, float b);
 +void appearance_set_appearance (appearance *appear, const appearance *from);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 2da2c5c..37a47cc 100644
+index 2da2c5c..252a535 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -5,6 +5,7 @@
@@ -271,17 +271,17 @@ index 2da2c5c..37a47cc 100644
 +#ifdef REVERSED_PCB_CONTOURS
 +        edge_info_set_round (UNDIR_DATA (edges[i]),
 +                             COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
-+                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
++                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 +        edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
 +                             COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, ztop), /* Center of circle */ /* TOP */
-+                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
++                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 +#else
 +        edge_info_set_round (UNDIR_DATA (edges[i]),
 +                             COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
-+                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
++                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 +        edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
 +                             COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, ztop), /* Center of circle */ /* TOP */
-+                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
++                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 +#endif
 +        edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
 +      }
