@@ -296,8 +296,8 @@ object3d_from_contours (const POLYAREA *contours,
 
       get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
 
-      vertices[i]           = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, zbot); /* Bottom */
-      vertices[npoints + i] = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, ztop); /* Top */
+      vertices[i]           = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, zbot)); /* Bottom */
+      vertices[npoints + i] = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, ztop)); /* Top */
 
       object3d_add_vertex (object, vertices[i]);
       object3d_add_vertex (object, vertices[npoints + i]);
