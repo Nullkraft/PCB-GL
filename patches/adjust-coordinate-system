@@ -1,5 +1,5 @@
-Bottom: da51d132eccae92df38d64340105cf668fe27c00
-Top:    0d9ff34e4e9e606e8dbdee1471817737a0c002cc
+Bottom: 42556354c55e1f9f8af62062f5835cf41a06fdcb
+Top:    c426c37b2f2d8a001966817ddd82ae9f9e1d9dbe
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-05-01 00:43:24 +0100
 
@@ -9,7 +9,7 @@ Adjust coordinate system GOODNES KNOWS WHETHER THE GEOMETRY IS CORRECT... IDA-ST
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 37a47cc..42dc66c 100644
+index d5d7460..6eae025 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -18,7 +18,8 @@
@@ -43,19 +43,6 @@ index 37a47cc..42dc66c 100644
      face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
      object3d_add_face (object, faces[npoints + 1]);
  
-@@ -441,10 +450,10 @@ object3d_from_contours (const POLYAREA *contours,
- #ifdef REVERSED_PCB_CONTOURS
-         edge_info_set_round (UNDIR_DATA (edges[i]),
-                              COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
--                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
-+                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
-         edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
-                              COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, ztop), /* Center of circle */ /* TOP */
--                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
-+                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
- #else
-         edge_info_set_round (UNDIR_DATA (edges[i]),
-                              COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
 @@ -659,8 +668,13 @@ old_object3d_from_board_outline (void)
  
        get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
