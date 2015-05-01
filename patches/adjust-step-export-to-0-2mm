@@ -1,5 +1,5 @@
-Bottom: 3812b04032bce6ec5e6737e096527d3fc7f4303c
-Top:    87959edc3af0a7fd24456bfdfb8ddef407e2dce9
+Bottom: 4677128c654542650d457a25456e4d4ec953d7d4
+Top:    b1f1bba1e2ecfc7229e861b5f03ae29daf71cbf6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-16 23:51:41 +0000
 
@@ -9,15 +9,15 @@ Adjust STEP export to 0.2mm board thickness (Hack - need something quick!)
 ---
 
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 2ca5bd6..83c648a 100644
+index 6bc2257..ec12573 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
-@@ -34,7 +34,7 @@
+@@ -44,7 +44,7 @@
  
  #define CRASH fprintf(stderr, "HID error: pcb called unimplemented STEP function %s.\n", __FUNCTION__); abort()
  
 -#define HACK_BOARD_THICKNESS MM_TO_COORD(2.3)
 +#define HACK_BOARD_THICKNESS MM_TO_COORD(0.2)
  
- static int step_set_layer (const char *name, int group, int empty);
- static void use_gc (hidGC gc);
+ 
+ HID step_hid;
