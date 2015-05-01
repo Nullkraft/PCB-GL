@@ -24,7 +24,7 @@
 
 
 //#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
-#define REVERSED_PCB_CONTOURS 0
+#undef REVERSED_PCB_CONTOURS
 
 #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
 
