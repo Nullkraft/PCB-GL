@@ -1,5 +1,5 @@
-Bottom: e5b5b904c9ec5b3dc748f5b58f378318b9969cf9
-Top:    57607afccde2dfc247657837609f1ff6b555d61c
+Bottom: ac2b9f7304290a276bdc25dadbaa01c42e8f3d17
+Top:    4677128c654542650d457a25456e4d4ec953d7d4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-12 17:08:54 +0100
 
@@ -9,7 +9,7 @@ Speedup for models whilst debugging
 ---
 
 diff --git a/src/hid/step/assembly.cpp b/src/hid/step/assembly.cpp
-index 4b0e407..559778d 100644
+index 1cc4a3f..87a2a18 100644
 --- a/src/hid/step/assembly.cpp
 +++ b/src/hid/step/assembly.cpp
 @@ -708,7 +708,12 @@ append_model_from_file (Registry *registry,
@@ -23,8 +23,8 @@ index 4b0e407..559778d 100644
 +  STEPfile &sfile = *sfilep; /* Let us deliberately leak STEPfile for a performance test */
 +#endif
  
-   sfile.AppendExchangeFile (filename);
- 
+   // XXX: This appears to throw exceptions from std::ios_base if the file doesn't exist
+   try
 diff --git a/src/polygon.c b/src/polygon.c
 index 841e1ea..245b9bb 100644
 --- a/src/polygon.c
