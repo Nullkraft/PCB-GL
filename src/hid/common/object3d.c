@@ -57,6 +57,7 @@
 
 
 #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
+#define HACK_MASK_THICKNESS MM_TO_COORD(0.05)
 
 static GList *object3d_test_objects = NULL;
 
@@ -571,8 +572,8 @@ object3d_from_board_outline (void)
 
 #ifdef REVERSED_PCB_CONTOURS
   objects = object3d_from_contours (board_outline,
-                                    -HACK_BOARD_THICKNESS / 2, /* Bottom */
-                                    0,                         /* Top */
+                                    -HACK_BOARD_THICKNESS, /* Bottom */
+                                    0,                     /* Top */
                                     board_appearance,
                                     top_bot_appearance);
 #else
@@ -591,6 +592,54 @@ object3d_from_board_outline (void)
   return objects;
 }
 
+
+GList *
+object3d_from_board_soldermask_within_area (POLYAREA *area, int side)
+{
+  appearance *mask_appearance;
+  GList *objects;
+  struct mask_poly_info info;
+  BoxType *bounds;
+
+  info.poly = area;
+  info.side = side;
+
+  bounds.X1 = area->contours.xmin;
+  bounds.X2 = area->contours.xmax;
+  bounds.Y1 = area->contours.ymin;
+  bounds.Y2 = area->contours.ymax;
+
+  r_search (Layer->line_tree, &bounds, NULL, line_mask_callback, &info);
+  r_search (Layer->arc_tree,  &bounds, NULL, arc_mask_callback, &info);
+  r_search (Layer->text_tree, &bounds, NULL, text_masK_callback, &info);
+  r_search (Layer->polygon_tree, &bounds, NULL, polygon_mask_callback, &info);
+  r_search (PCB->Data->pad_tree, &bounds, NULL, pad_mask_callback, &info);
+  r_search (PCB->Data->pin_tree, &bounds, NULL, pv_mask_callback, &info);
+  r_search (PCB->Data->via_tree, &bounds, NULL, pv_mask_callback, &info);
+
+  mask_appearance = make_appearance ();
+  appearance_set_color (mask_appearance, 0.2, 0.8, 0.2);
+
+#ifdef REVERSED_PCB_CONTOURS
+  objects = object3d_from_contours (info.poly,
+                                    -HACK_BOARD_THICKNESS / 2, /* Bottom */
+                                    -HACK_BOARD_THICKNESS + HACK_MASK_THICKNESS, /* Top */
+                                    mask_appearance,
+                                    NULL);
+#else
+  objects = object3d_from_contours (info.poly,
+                                    -HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Bottom */
+                                    -HACK_BOARD_THICKNESS / 2, /* Top */
+                                    mask_appearance,
+                                    NULL);
+#endif
+
+  destroy_appearance (mask_appearance);
+
+  poly_Free (&info.poly);
+
+  return objects;
+}
 
 GList *
 old_object3d_from_board_outline (void)
