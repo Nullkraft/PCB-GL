@@ -1,5 +1,5 @@
-Bottom: 4a61befacf31c238399949b1767ad5bc066f70c1
-Top:    9755b9da2cd611871cdc955c9e8a75a94f127725
+Bottom: 901d22538f8645e8c4fae829e57ff3c4a67348dc
+Top:    ac2b9f7304290a276bdc25dadbaa01c42e8f3d17
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-22 23:34:23 +0100
 
@@ -9,20 +9,20 @@ Toy rendering attempt
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 25d6ff2..d1581d6 100644
+index 93a7ceb..217bff9 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -477,6 +477,8 @@ LIBSTEP_SRCS = \
+@@ -482,6 +482,8 @@ LIBSTEP_SRCS = \
  	hid/step/step.h \
  	hid/step/assembly.cpp \
  	hid/step/assembly.h \
 +	hid/step/model.cpp \
 +	hid/step/model.h \
  	hid/step/utils.cpp \
- 	hid/step/utils.h
- libstep_a_SOURCES = ${LIBSTEP_SRCS} hid/step/step_lists.h
+ 	hid/step/utils.h \
+ 	hid/step/step_writer.c \
 diff --git a/src/action.c b/src/action.c
-index 8ffa10b..44b0edc 100644
+index 5b345a0..4f0ad84 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -87,6 +87,8 @@
@@ -35,10 +35,10 @@ index 8ffa10b..44b0edc 100644
   * some local types
   */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2332d07..b7df242 100644
+index b2539ca..932cf6c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1112,6 +1112,10 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -1118,6 +1118,10 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
    ghid_graphics_class.end_layer = ghid_end_layer;
    ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
    ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
