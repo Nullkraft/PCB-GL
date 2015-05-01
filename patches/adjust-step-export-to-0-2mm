@@ -1,5 +1,5 @@
 Bottom: 4677128c654542650d457a25456e4d4ec953d7d4
-Top:    b1f1bba1e2ecfc7229e861b5f03ae29daf71cbf6
+Top:    78ae69ceee7423e3c0d9d7f1599e634c4f4ab42c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-16 23:51:41 +0000
 
@@ -8,6 +8,19 @@ Adjust STEP export to 0.2mm board thickness (Hack - need something quick!)
 
 ---
 
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 7ec84c0..b81ff61 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -59,7 +59,7 @@
+ #endif
+ 
+ 
+-#define HACK_BOARD_THICKNESS MM_TO_COORD(2.3)
++#define HACK_BOARD_THICKNESS MM_TO_COORD(0.2)
+ 
+ static GList *object3d_test_objects = NULL;
+ 
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
 index 6bc2257..ec12573 100644
 --- a/src/hid/step/step.c
