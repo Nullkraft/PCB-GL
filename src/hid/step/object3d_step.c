@@ -50,7 +50,7 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
 }
 
 static step_file *
-start_ap214_file (char *filename)
+start_ap214_file (const char *filename)
 {
   FILE *f;
   time_t currenttime;
