@@ -324,12 +324,12 @@ object3d_from_contours (const POLYAREA *contours,
     }
 
     faces[npoints] = make_face3d (); /* bottom_face */
-    face3d_set_normal (faces[npoints], 0., 0., 1.);
+    face3d_set_normal (faces[npoints], 0., 0., -1.);
     face3d_set_appearance (faces[npoints], top_bot_appearance);
     object3d_add_face (object, faces[npoints]);
 
     faces[npoints + 1] = make_face3d (); /* top_face */
-    face3d_set_normal (faces[npoints + 1], 0., 0., -1.);
+    face3d_set_normal (faces[npoints + 1], 0., 0., 1.);
     face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
     object3d_add_face (object, faces[npoints + 1]);
 
