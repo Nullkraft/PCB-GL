@@ -1,0 +1,24 @@
+Bottom: 42556354c55e1f9f8af62062f5835cf41a06fdcb
+Top:    c1254f370f1a05c925f77c4ce0ffa370f7335812
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-05-01 23:57:07 +0100
+
+Refresh of extend-board-export
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index d5d7460..2684765 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -571,8 +571,8 @@ object3d_from_board_outline (void)
+ 
+ #ifdef REVERSED_PCB_CONTOURS
+   objects = object3d_from_contours (board_outline,
+-                                    HACK_BOARD_THICKNESS / 2, /* Bottom */
+-                                    0,                        /* Top */
++                                    -HACK_BOARD_THICKNESS / 2, /* Bottom */
++                                    0,                         /* Top */
+                                     board_appearance,
+                                     top_bot_appearance);
+ #else
