@@ -1,5 +1,5 @@
 Bottom: 84a3a7edbaffc0477060f48598f7fa21e840c8de
-Top:    fd7f40bfb83878bc362c31332b01602f41a00b85
+Top:    da51d132eccae92df38d64340105cf668fe27c00
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-05-01 22:42:10 +0100
 
@@ -36,7 +36,7 @@ index d4917d7..d2bf7b3 100644
 +void appearance_set_color (appearance *appear, float r, float g, float b);
 +void appearance_set_appearance (appearance *appear, const appearance *from);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 2da2c5c..a5fa8d3 100644
+index 2da2c5c..37a47cc 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -5,6 +5,7 @@
@@ -154,12 +154,12 @@ index 2da2c5c..a5fa8d3 100644
 +    }
 +
 +    faces[npoints] = make_face3d (); /* bottom_face */
-+    face3d_set_normal (faces[npoints], 0., 0., 1.);
++    face3d_set_normal (faces[npoints], 0., 0., -1.);
 +    face3d_set_appearance (faces[npoints], top_bot_appearance);
 +    object3d_add_face (object, faces[npoints]);
 +
 +    faces[npoints + 1] = make_face3d (); /* top_face */
-+    face3d_set_normal (faces[npoints + 1], 0., 0., -1.);
++    face3d_set_normal (faces[npoints + 1], 0., 0., 1.);
 +    face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
 +    object3d_add_face (object, faces[npoints + 1]);
 +
