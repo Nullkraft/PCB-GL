@@ -5,6 +5,8 @@
 
 #include <glib.h>
 
+#include "data.h"
+
 #include "hid/common/step_id.h"
 #include "hid/common/quad.h"
 #include "hid/common/vertex3d.h"
