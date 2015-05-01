@@ -1,5 +1,5 @@
 Bottom: 6525b3b1ff4a57469da1ed17817d9fb57e3b69a5
-Top:    6f580585b890f1e7d06f2095bdde0381872c8bde
+Top:    84a3a7edbaffc0477060f48598f7fa21e840c8de
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-30 22:16:59 +0100
 
@@ -2025,7 +2025,7 @@ index bac7e89..0000000
 -void destroy_vertex3d (vertex3d *v);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 new file mode 100644
-index 0000000..e98449a
+index 0000000..6879a98
 --- /dev/null
 +++ b/src/hid/step/object3d_step.c
 @@ -0,0 +1,391 @@
@@ -2081,7 +2081,7 @@ index 0000000..e98449a
 +}
 +
 +static step_file *
-+start_ap214_file (char *filename)
++start_ap214_file (const char *filename)
 +{
 +  FILE *f;
 +  time_t currenttime;
