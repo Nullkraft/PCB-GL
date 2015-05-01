@@ -571,8 +571,8 @@ object3d_from_board_outline (void)
 
 #ifdef REVERSED_PCB_CONTOURS
   objects = object3d_from_contours (board_outline,
-                                    HACK_BOARD_THICKNESS / 2, /* Bottom */
-                                    0,                        /* Top */
+                                    -HACK_BOARD_THICKNESS / 2, /* Bottom */
+                                    0,                         /* Top */
                                     board_appearance,
                                     top_bot_appearance);
 #else
