@@ -1,5 +1,5 @@
 Bottom: 84a3a7edbaffc0477060f48598f7fa21e840c8de
-Top:    0e34443c6832af39ac93ea4c8c9757ad773e7b71
+Top:    42556354c55e1f9f8af62062f5835cf41a06fdcb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-05-01 22:42:10 +0100
 
@@ -36,7 +36,7 @@ index d4917d7..d2bf7b3 100644
 +void appearance_set_color (appearance *appear, float r, float g, float b);
 +void appearance_set_appearance (appearance *appear, const appearance *from);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 2da2c5c..252a535 100644
+index 2da2c5c..d5d7460 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -5,6 +5,7 @@
@@ -126,8 +126,8 @@ index 2da2c5c..252a535 100644
 +
 +      get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
 +
-+      vertices[i]           = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, zbot); /* Bottom */
-+      vertices[npoints + i] = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, ztop); /* Top */
++      vertices[i]           = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, zbot)); /* Bottom */
++      vertices[npoints + i] = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, ztop)); /* Top */
 +
 +      object3d_add_vertex (object, vertices[i]);
 +      object3d_add_vertex (object, vertices[npoints + i]);
