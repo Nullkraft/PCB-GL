@@ -16,6 +16,9 @@
 #include "object3d.h"
 #include "polygon.h"
 
+#include "rtree.h"
+#include "rotate.h"
+
 #include "pcb-printf.h"
 
 #define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
@@ -238,8 +241,8 @@ object3d_from_contours (const POLYAREA *contours,
 {
   GList *objects = NULL;
   object3d *object;
-  appearance *object_appearance;
-  appearance *top_bot_appearance;
+  appearance *object_appearance = NULL;
+  appearance *top_bot_appearance = NULL;
   const POLYAREA *pa;
   PLINE *contour;
   PLINE *ct;
@@ -269,10 +272,18 @@ object3d_from_contours (const POLYAREA *contours,
     }
 
     object = make_object3d (PCB->Name);
-    object_appearance = make_appearance ();
-    top_bot_appearance = make_appearance ();
-    appearance_set_appearance (object_appearance, master_object_appearance);
-    appearance_set_appearance (top_bot_appearance, master_top_bot_appearance);
+
+    if (master_object_appearance != NULL)
+      {
+        object_appearance = make_appearance ();
+        appearance_set_appearance (object_appearance, master_object_appearance);
+      }
+
+    if (master_top_bot_appearance != NULL)
+      {
+        top_bot_appearance = make_appearance ();
+        appearance_set_appearance (top_bot_appearance, master_top_bot_appearance);
+      }
 
     object3d_set_appearance (object, object_appearance);
 
@@ -561,25 +572,31 @@ GList *
 object3d_from_board_outline (void)
 {
   POLYAREA *board_outline = board_outline_poly (true);
+
+#if 0
+  return object3d_from_soldermask_within_area (board_outline, TOP_SIDE);
+#else
+
   appearance *board_appearance;
   appearance *top_bot_appearance;
   GList *objects;
 
   board_appearance = make_appearance ();
-  top_bot_appearance = make_appearance ();
+  top_bot_appearance = NULL;
+//  top_bot_appearance = make_appearance ();
   appearance_set_color (board_appearance,   1.0, 1.0, 0.6);
-  appearance_set_color (top_bot_appearance, 0.2, 0.8, 0.2);
+//  appearance_set_color (top_bot_appearance, 0.2, 0.8, 0.2);
 
 #ifdef REVERSED_PCB_CONTOURS
   objects = object3d_from_contours (board_outline,
-                                    -HACK_BOARD_THICKNESS, /* Bottom */
-                                    0,                     /* Top */
+                                    -HACK_BOARD_THICKNESS + HACK_MASK_THICKNESS, /* Bottom */
+                                    0                     -HACK_MASK_THICKNESS,  /* Top */
                                     board_appearance,
                                     top_bot_appearance);
 #else
   objects = object3d_from_contours (board_outline,
-                                     HACK_BOARD_THICKNESS / 2, /* Bottom */
-                                    -HACK_BOARD_THICKNESS / 2, /* Top */
+                                     HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS, /* Bottom */
+                                    -HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Top */
                                     board_appearance,
                                     top_bot_appearance);
 #endif
@@ -590,29 +607,229 @@ object3d_from_board_outline (void)
   poly_Free (&board_outline);
 
   return objects;
+#endif
+}
+
+struct mask_info {
+  POLYAREA *poly;
+  int side;
+};
+
+static POLYAREA *
+TextToPoly (TextType *Text, Coord min_line_width)
+{
+  POLYAREA *np, *res;
+  Coord x = 0;
+  unsigned char *string = (unsigned char *) Text->TextString;
+  Cardinal n;
+  FontType *font = &PCB->Font;
+
+  res = NULL;
+
+  while (string && *string)
+    {
+      /* draw lines if symbol is valid and data is present */
+      if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
+        {
+          LineType *line = font->Symbol[*string].Line;
+          LineType newline;
+
+          for (n = font->Symbol[*string].LineN; n; n--, line++)
+            {
+              /* create one line, scale, move, rotate and swap it */
+              newline = *line;
+              newline.Point1.X = SCALE_TEXT (newline.Point1.X + x, Text->Scale);
+              newline.Point1.Y = SCALE_TEXT (newline.Point1.Y, Text->Scale);
+              newline.Point2.X = SCALE_TEXT (newline.Point2.X + x, Text->Scale);
+              newline.Point2.Y = SCALE_TEXT (newline.Point2.Y, Text->Scale);
+              newline.Thickness = SCALE_TEXT (newline.Thickness, Text->Scale / 2);
+              if (newline.Thickness < min_line_width)
+                newline.Thickness = min_line_width;
+
+              RotateLineLowLevel (&newline, 0, 0, Text->Direction);
+
+              /* the labels of SMD objects on the bottom
+               * side haven't been swapped yet, only their offset
+               */
+              if (TEST_FLAG (ONSOLDERFLAG, Text))
+                {
+                  newline.Point1.X = SWAP_SIGN_X (newline.Point1.X);
+                  newline.Point1.Y = SWAP_SIGN_Y (newline.Point1.Y);
+                  newline.Point2.X = SWAP_SIGN_X (newline.Point2.X);
+                  newline.Point2.Y = SWAP_SIGN_Y (newline.Point2.Y);
+                }
+              /* add offset and draw line */
+              newline.Point1.X += Text->X;
+              newline.Point1.Y += Text->Y;
+              newline.Point2.X += Text->X;
+              newline.Point2.Y += Text->Y;
+
+              np = LinePoly (&newline, newline.Thickness, NULL);
+              poly_Boolean_free (res, np, &res, PBO_UNITE);
+            }
+
+          /* move on to next cursor position */
+          x += (font->Symbol[*string].Width + font->Symbol[*string].Delta);
+        }
+      else
+        {
+          /* the default symbol is a filled box */
+          BoxType defaultsymbol = PCB->Font.DefaultSymbol;
+          Coord size = (defaultsymbol.X2 - defaultsymbol.X1) * 6 / 5;
+
+          defaultsymbol.X1 = SCALE_TEXT (defaultsymbol.X1 + x, Text->Scale);
+          defaultsymbol.Y1 = SCALE_TEXT (defaultsymbol.Y1, Text->Scale);
+          defaultsymbol.X2 = SCALE_TEXT (defaultsymbol.X2 + x, Text->Scale);
+          defaultsymbol.Y2 = SCALE_TEXT (defaultsymbol.Y2, Text->Scale);
+
+          RotateBoxLowLevel (&defaultsymbol, 0, 0, Text->Direction);
+
+          /* add offset and draw box */
+          defaultsymbol.X1 += Text->X;
+          defaultsymbol.Y1 += Text->Y;
+          defaultsymbol.X2 += Text->X;
+          defaultsymbol.Y2 += Text->Y;
+
+          np = RectPoly (defaultsymbol.X1, defaultsymbol.X2,
+                         defaultsymbol.Y1, defaultsymbol.Y2);
+          poly_Boolean_free (res, np, &res, PBO_UNITE);
+
+          /* move on to next cursor position */
+          x += size;
+        }
+      string++;
+    }
+
+  return res;
+}
+
+static int
+line_mask_callback (const BoxType * b, void *cl)
+{
+  LineType *line = (LineType *) b;
+  struct mask_info *info = (struct mask_info *) cl;
+  POLYAREA *np, *res;
+
+  if (!(np = LinePoly (line, line->Thickness, NULL)))
+    return 0;
+
+  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
+  info->poly = res;
+
+  return 1;
+}
+
+static int
+arc_mask_callback (const BoxType * b, void *cl)
+{
+  ArcType *arc = (ArcType *) b;
+  struct mask_info *info = (struct mask_info *) cl;
+  POLYAREA *np, *res;
+
+  if (!(np = ArcPoly (arc, arc->Thickness, NULL)))
+    return 0;
+
+  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
+  info->poly = res;
+
+  return 1;
+}
+
+
+static int
+text_mask_callback (const BoxType * b, void *cl)
+{
+  TextType *text = (TextType *) b;
+  struct mask_info *info = (struct mask_info *) cl;
+  POLYAREA *np, *res;
+
+  if (!(np = TextToPoly (text, PCB->minWid))) /* XXX: Min mask cutout width should be separate */
+    return 0;
+
+  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
+  info->poly = res;
+
+  return 1;
+}
+
+static int
+polygon_mask_callback (const BoxType * b, void *cl)
+{
+  PolygonType *poly = (PolygonType *) b;
+  struct mask_info *info = (struct mask_info *) cl;
+  POLYAREA *np, *res;
+
+  if (!(np = PolygonToPoly (poly)))
+    return 0;
+
+  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
+  info->poly = res;
+
+  return 1;
+}
+
+static int
+pad_mask_callback (const BoxType * b, void *cl)
+{
+  PadType *pad = (PadType *) b;
+  struct mask_info *info = (struct mask_info *) cl;
+  POLYAREA *np, *res;
+
+  if (pad->Mask == 0)
+    return 0;
+
+  if (XOR (TEST_FLAG (ONSOLDERFLAG, pad), (info->side == BOTTOM_SIDE)))
+    return 0;
+
+  if (!(np = PadPoly (pad, pad->Mask)))
+    return 0;
+
+  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
+  info->poly = res;
+
+  return 1;
+}
+
+static int
+pv_mask_callback (const BoxType * b, void *cl)
+{
+  PinType *pv = (PinType *)b;
+  struct mask_info *info = cl;
+  POLYAREA *np, *res;
+
+  if (!(np = CirclePoly (pv->X, pv->Y, pv->Mask / 2, NULL)))
+    return 0;
+
+  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
+  info->poly = res;
+
+  return 1;
 }
 
 
 GList *
-object3d_from_board_soldermask_within_area (POLYAREA *area, int side)
+object3d_from_soldermask_within_area (POLYAREA *area, int side)
 {
   appearance *mask_appearance;
   GList *objects;
-  struct mask_poly_info info;
-  BoxType *bounds;
+  struct mask_info info;
+  BoxType bounds;
+  LayerType *layer;
 
-  info.poly = area;
+  poly_Copy0 (&info.poly, area);
   info.side = side;
 
-  bounds.X1 = area->contours.xmin;
-  bounds.X2 = area->contours.xmax;
-  bounds.Y1 = area->contours.ymin;
-  bounds.Y2 = area->contours.ymax;
+  bounds.X1 = area->contours->xmin;
+  bounds.X2 = area->contours->xmax;
+  bounds.Y1 = area->contours->ymin;
+  bounds.Y2 = area->contours->ymax;
 
-  r_search (Layer->line_tree, &bounds, NULL, line_mask_callback, &info);
-  r_search (Layer->arc_tree,  &bounds, NULL, arc_mask_callback, &info);
-  r_search (Layer->text_tree, &bounds, NULL, text_masK_callback, &info);
-  r_search (Layer->polygon_tree, &bounds, NULL, polygon_mask_callback, &info);
+  layer = LAYER_PTR ((side == TOP_SIDE) ? top_soldermask_layer : bottom_soldermask_layer);
+
+  r_search (layer->line_tree, &bounds, NULL, line_mask_callback, &info);
+  r_search (layer->arc_tree,  &bounds, NULL, arc_mask_callback, &info);
+  r_search (layer->text_tree, &bounds, NULL, text_mask_callback, &info);
+  r_search (layer->polygon_tree, &bounds, NULL, polygon_mask_callback, &info);
   r_search (PCB->Data->pad_tree, &bounds, NULL, pad_mask_callback, &info);
   r_search (PCB->Data->pin_tree, &bounds, NULL, pv_mask_callback, &info);
   r_search (PCB->Data->via_tree, &bounds, NULL, pv_mask_callback, &info);
@@ -622,14 +839,14 @@ object3d_from_board_soldermask_within_area (POLYAREA *area, int side)
 
 #ifdef REVERSED_PCB_CONTOURS
   objects = object3d_from_contours (info.poly,
-                                    -HACK_BOARD_THICKNESS / 2, /* Bottom */
-                                    -HACK_BOARD_THICKNESS + HACK_MASK_THICKNESS, /* Top */
+                                    (side == TOP_SIDE) ? -HACK_MASK_THICKNESS : -HACK_BOARD_THICKNESS,                       /* Bottom */
+                                    (side == TOP_SIDE) ? 0                    : -HACK_BOARD_THICKNESS + HACK_MASK_THICKNESS, /* Top */
                                     mask_appearance,
                                     NULL);
 #else
   objects = object3d_from_contours (info.poly,
-                                    -HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Bottom */
-                                    -HACK_BOARD_THICKNESS / 2, /* Top */
+                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2,                       /* Bottom */
+                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2                       : HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS, /* Top */
                                     mask_appearance,
                                     NULL);
 #endif
