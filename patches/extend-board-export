@@ -1,10 +1,11 @@
 Bottom: 84a3a7edbaffc0477060f48598f7fa21e840c8de
-Top:    f1752d2f859ea41e9ee710c38701bc976705f917
+Top:    270d238c80069605bb63242b8431cad6382ff019
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-05-01 22:42:10 +0100
+Date:   2015-05-04 14:04:51 +0100
 
 Extend board export
 
+Include emission of soldermask etc..
 
 ---
 
@@ -713,7 +714,7 @@ index e8c26e2..2ffdb54 100644
  GList *object3d_from_board_outline (void);
 +GList *object3d_from_soldermask_within_area (POLYAREA *area, int side);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 6879a98..dc60565 100644
+index 6879a98..f8c28ce 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -5,6 +5,8 @@
@@ -755,7 +756,7 @@ index 6879a98..dc60565 100644
  
    /* Setup the context of the "product" we are defining", and that it is a 'part' */
    application_context_identifier = step_application_context (step, "automotive_design");
-@@ -134,6 +125,271 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
+@@ -134,6 +125,29 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
  
    geometric_representation_context_identifier = make_3d_metric_step_geometric_representation_context (step);
  
@@ -767,8 +768,9 @@ index 6879a98..dc60565 100644
 +}
 +
 +static void
-+object3d_to_step_body_fragment (step_file *step, object3d *object,
-+                                char *part_id, char *part_name, char *part_description, char *body_name,
++object3d_to_step_body_fragment (step_file *step,
++                                object3d *object,
++                                char *body_name,
 +                                step_id *brep,
 +                                step_id_list *styled_item_identifiers)
 +{
@@ -781,177 +783,35 @@ index 6879a98..dc60565 100644
 +  GList *vertex_iter;
 +  GList *contour_iter;
 +
-+#define FWD 1
-+#define REV 2
-+#define ORIENTED_EDGE_IDENTIFIER(e) (((edge_info *)UNDIR_DATA (e))->edge_identifier + ((e & 2) ? REV : FWD))
-+
-+  /* Define ininite planes corresponding to every planar face, and cylindrical surfaces for every cylindrical face */
-+  for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter)) {
-+    face3d *face = face_iter->data;
-+
-+    if (face->is_cylindrical) {
-+      /* CYLINDRICAL SURFACE NORMAL POINTS OUTWARDS AWAY FROM ITS AXIS.
-+       * face->surface_orientation_reversed NEEDS TO BE SET FOR HOLES IN THE SOLID
-+       */
-+      face->surface_identifier =
-+        step_cylindrical_surface (step, "NONE",
-+                                  step_axis2_placement_3d (step, "NONE",
-+                                                           step_cartesian_point (step, "NONE", face->cx, face->cy, face->cz),
-+                                                                 step_direction (step, "NONE", face->ax, face->ay, face->az),
-+                                                                 step_direction (step, "NONE", face->nx, face->ny, face->nz)),
-+                                  face->radius);
-+    } else {
-+      contour3d *outer_contour = face->contours->data;
-+      vertex3d *ov = ODATA (outer_contour->first_edge);
-+      vertex3d *dv = DDATA (outer_contour->first_edge);
-+
-+      double rx, ry, rz;
-+
-+      rx = dv->x - ov->x;
-+      ry = dv->y - ov->y;
-+      rz = dv->z - ov->z;
-+
-+      /* Catch the circular face case where the start and end vertices are identical */
-+      if (rx < EPSILON && -rx < EPSILON &&
-+          ry < EPSILON && -ry < EPSILON &&
-+          rz < EPSILON && -rz < EPSILON) {
-+        rx = 1., ry = 0., rz = 0.;
-+      }
-+
-+      face->surface_identifier =
-+        step_plane (step, "NONE",
-+                    step_axis2_placement_3d (step, "NONE",
-+                                             step_cartesian_point (step, "NONE", ov->x,  /* A point on the plane. Defines 0,0 of the plane's parameterised coords. */ 
-+                                                                                 ov->y,      /* Set this to the origin vertex of the first edge */
-+                                                                                 ov->z),     /* this contour links to in the quad edge structure. */
-+                                                   step_direction (step, "NONE", face->nx, face->ny, face->nz), /* An axis direction normal to the the face - Gives z-axis */
-+                                                   step_direction (step, "NONE", rx,     /* Reference x-axis, orthogonal to z-axis. */
-+                                                                                 ry,         /* Define this to be along the first edge this */
-+                                                                                 rz)));      /* contour links to in the quad edge structure */
-+    }
-+  }
-+
-+  /* Define the infinite lines corresponding to every edge (either lines or circles)*/
-+  for (edge_iter = object->edges; edge_iter != NULL; edge_iter = g_list_next (edge_iter)) {
-+    edge_ref edge = (edge_ref)edge_iter->data;
-+    edge_info *info = UNDIR_DATA (edge);
-+
-+    if (info->is_round) {
-+      info->infinite_line_identifier =
-+        step_circle (step, "NONE",
-+                     step_axis2_placement_3d (step, "NONE",
-+                                              step_cartesian_point (step, "NONE", info->cx, info->cy, info->cz),  // <--- Center of the circle
-+                                                    step_direction (step, "NONE", info->nx, info->ny, info->nz),  // <--- Normal of the circle
-+                                                    step_direction (step, "NONE", -1.0,     0.0,      0.0)),      // <--- Approximate X-axis direction of placement /* XXX: PULL FROM FACE DATA */
-+                                                    info->radius);
-+    } else {
-+      vertex3d *ov = ODATA (edge);
-+      vertex3d *dv = DDATA (edge);
-+
-+      double dir_x, dir_y, dir_z;
-+
-+      dir_x = dv->x - ov->x;
-+      dir_y = dv->y - ov->y;
-+      dir_z = dv->z - ov->z;
-+
-+#if 1
-+      /* XXX: This avoids the test file step_outline_test.pcb failing to display properly in freecad when coordinates are slightly rounded */
-+      if (dir_x < EPSILON && -dir_x < EPSILON &&
-+          dir_y < EPSILON && -dir_y < EPSILON &&
-+          dir_z < EPSILON && -dir_z < EPSILON) {
-+        printf ("EDGE TOO SHORT TO DETERMINE DIRECTION - GUESSING! Coords (%f, %f)\n", ov->x, ov->y);
-+        pcb_printf ("Approx PCB coords of short edge: %#mr, %#mr\n", (Coord)STEP_X_TO_COORD (PCB, ov->x), (Coord)STEP_Y_TO_COORD (PCB, ov->y));
-+        dir_x = 1.0; /* DUMMY TO AVOID A ZERO LENGTH DIRECTION VECTOR */
-+      }
-+#endif
-+
-+      info->infinite_line_identifier =
-+        step_line (step, "NONE",
-+                   step_cartesian_point (step, "NONE", ov->x, ov->y, ov->z),  // <--- A point on the line (the origin vertex)
-+                   step_vector (step, "NONE",
-+                                step_direction (step, "NONE", dir_x, dir_y, dir_z), // <--- Direction along the line
-+                                1000.0));     // <--- Arbitrary length in this direction for the parameterised coordinate "1".
-+
-+    }
-+  }
-+
-+  /* Define the vertices */
-+  for (vertex_iter = object->vertices; vertex_iter != NULL; vertex_iter = g_list_next (vertex_iter)) {
-+    vertex3d *vertex = vertex_iter->data;
-+
-+    vertex->vertex_identifier =
-+      step_vertex_point (step, "NONE", step_cartesian_point (step, "NONE", vertex->x, vertex->y, vertex->z));
-+  }
-+
-+  /* Define the Edges */
-+  for (edge_iter = object->edges; edge_iter != NULL; edge_iter = g_list_next (edge_iter)) {
-+    edge_ref edge = (edge_ref)edge_iter->data;
-+    edge_info *info = UNDIR_DATA (edge);
-+    step_id sv = ((vertex3d *)ODATA (edge))->vertex_identifier;
-+    step_id ev = ((vertex3d *)DDATA (edge))->vertex_identifier;
-+
-+    /* XXX: The lookup of these edges by adding to info->edge_identifier requires the step_* functions to assign sequential identifiers */
-+    info->edge_identifier = step_edge_curve (step, "NONE", sv, ev, info->infinite_line_identifier, true);
-+    step_oriented_edge (step, "NONE", info->edge_identifier, true);  /* Add 1 to info->edge_identifier to find this (same) oriented edge */
-+    step_oriented_edge (step, "NONE", info->edge_identifier, false); /* Add 2 to info->edge_identifier to find this (back) oriented edge */
-+  }
-+
-+  /* Define the faces */
-+  for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter)) {
-+    face3d *face = face_iter->data;
-+    bool outer_contour = true;
-+    step_id_list face_contour_list = NULL;
-+
-+    for (contour_iter = face->contours;
-+         contour_iter != NULL;
-+         contour_iter = g_list_next (contour_iter), outer_contour = false) {
-+      contour3d *contour = contour_iter->data;
-+      edge_ref edge;
-+      step_id edge_loop;
-+      step_id_list edge_loop_edges = NULL;
-+
-+      edge = contour->first_edge;
-+      do {
-+        edge_loop_edges = g_list_append (edge_loop_edges, GINT_TO_POINTER (ORIENTED_EDGE_IDENTIFIER (edge)));
-+      } while (edge = LNEXT (edge), edge != contour->first_edge);
-+
-+      edge_loop = step_edge_loop (step, "NONE", edge_loop_edges);
-+
-+      if (outer_contour)
-+        contour->face_bound_identifier = step_face_outer_bound (step, "NONE", edge_loop, true);
-+      else
-+        contour->face_bound_identifier = step_face_bound (step, "NONE", edge_loop, true);
-+
-+      face_contour_list = g_list_append (face_contour_list, GINT_TO_POINTER (contour->face_bound_identifier));
-+    }
-+
-+    face->face_identifier = step_advanced_face (step, "NONE", face_contour_list, face->surface_identifier, !face->surface_orientation_reversed);
-+    shell_face_list = g_list_append (shell_face_list, GINT_TO_POINTER (face->face_identifier));
-+  }
-+
-+  /* Closed shell which bounds the brep solid */
-+  pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
-+  brep_identifier = step_manifold_solid_brep (step, body_name /* This is picked up as the solid body name by Solidworks */, pcb_shell_identifier);
-+
-+#if 1
-+  /* Body style */
-+  /* XXX: THERE MUST BE A BODY STYLE, CERTAINLY IF WE WANT TO OVER RIDE FACE COLOURS */
-+  brep_style_identifier = step_styled_item (step, "NONE", presentation_style_assignments_from_appearance (step, object->appear), brep_identifier);
-+  step_presentation_layer_assignment (step, "1", "Layer 1", make_step_id_list (1, brep_style_identifier));
-+
+ #define FWD 1
+ #define REV 2
+ #define ORIENTED_EDGE_IDENTIFIER(e) (((edge_info *)UNDIR_DATA (e))->edge_identifier + ((e & 2) ? REV : FWD))
+@@ -174,7 +188,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
+       face->surface_identifier =
+         step_plane (step, "NONE",
+                     step_axis2_placement_3d (step, "NONE",
+-                                             step_cartesian_point (step, "NONE", ov->x,  /* A point on the plane. Defines 0,0 of the plane's parameterised coords. */ 
++                                             step_cartesian_point (step, "NONE", ov->x,  /* A point on the plane. Defines 0,0 of the plane's parameterised coords. */
+                                                                                  ov->y,      /* Set this to the origin vertex of the first edge */
+                                                                                  ov->z),     /* this contour links to in the quad edge structure. */
+                                                    step_direction (step, "NONE", face->nx, face->ny, face->nz), /* An axis direction normal to the the face - Gives z-axis */
+@@ -292,7 +306,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
+   brep_style_identifier = step_styled_item (step, "NONE", presentation_style_assignments_from_appearance (step, object->appear), brep_identifier);
+   step_presentation_layer_assignment (step, "1", "Layer 1", make_step_id_list (1, brep_style_identifier));
+ 
+-  styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (brep_style_identifier));
 +  *styled_item_identifiers = step_id_list_append (*styled_item_identifiers, brep_style_identifier);
-+
-+  /* Face styles */
-+  for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter)) {
-+    face3d *face = face_iter->data;
-+
-+    if (face->appear != NULL) {
-+      step_id orsi = step_over_riding_styled_item (step, "NONE",
-+                                                   presentation_style_assignments_from_appearance (step, face->appear),
-+                                                   face->face_identifier, brep_style_identifier);
+ 
+   /* Face styles */
+   for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter)) {
+@@ -302,13 +316,82 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
+       step_id orsi = step_over_riding_styled_item (step, "NONE",
+                                                    presentation_style_assignments_from_appearance (step, face->appear),
+                                                    face->face_identifier, brep_style_identifier);
+-      styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (orsi));
 +      *styled_item_identifiers = step_id_list_append (*styled_item_identifiers, orsi);
-+    }
-+  }
+     }
+   }
 +#endif
 +
 +  if (brep != NULL)
@@ -1010,24 +870,26 @@ index 6879a98..dc60565 100644
 +  step_id shape_representation_identifier;
 +  step_id brep_identifier;
 +  step_id anchor_axis_identifier;
-+  step_id pcb_shell_identifier;
-+  step_id brep_style_identifier;
 +  step_id shape_definition_representation_identifier;
 +  GList *styled_item_identifiers = NULL;
-+  GList *shell_face_list = NULL;
-+  GList *face_iter;
-+  GList *edge_iter;
-+  GList *vertex_iter;
-+  GList *contour_iter;
 +
 +  step_product_fragment (step, part_id, part_name, part_description,
 +                         &geometric_representation_context_identifier,
 +                         &product_definition_shape_identifier);
 +
- #define FWD 1
- #define REV 2
- #define ORIENTED_EDGE_IDENTIFIER(e) (((edge_info *)UNDIR_DATA (e))->edge_identifier + ((e & 2) ? REV : FWD))
-@@ -335,6 +591,71 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
++  object3d_to_step_body_fragment (step,
++                                  object,
++                                  body_name,
++                                  &brep_identifier,
++                                  &styled_item_identifiers);
+ 
+   /* Emit references to the styled and over_ridden styled items */
+   step_mechanical_design_geometric_presentation_representation (step, "", styled_item_identifiers, geometric_representation_context_identifier);
+-#endif
+ 
+   /* Need an anchor in 3D space to orient the shape */
+   anchor_axis_identifier = step_axis2_placement_3d (step, "NONE",
+@@ -335,6 +418,71 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
  }
  
  void
@@ -1076,7 +938,7 @@ index 6879a98..dc60565 100644
 +    if (multiple_bodies)
 +      g_string_append_printf (body_name, " - %i", part);
 +
-+    object3d_to_step_body_fragment (step, object, part_id->str, part_name->str, "PCB model", body_name->str, &comp_brep, &styled_items);
++    object3d_to_step_body_fragment (step, object, body_name->str, &comp_brep, &styled_items);
 +
 +    g_string_free (body_name, true);
 +
