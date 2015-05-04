@@ -1,5 +1,5 @@
-Bottom: b25e57aa2b34dd44fc8b994153ef9948e3816c86
-Top:    e53be08c0e339f33ddb0ffc70a26be97729c4ccb
+Bottom: f1752d2f859ea41e9ee710c38701bc976705f917
+Top:    270d238c80069605bb63242b8431cad6382ff019
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-05-04 14:02:59 +0100
 
@@ -9,10 +9,10 @@ temp
 ---
 
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 09113ac..3919b1c 100644
+index dc60565..f8c28ce 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -134,8 +134,9 @@ step_product_fragment (step_file *step, char *part_id, char *part_name, char *pa
+@@ -133,8 +133,9 @@ step_product_fragment (step_file *step, char *part_id, char *part_name, char *pa
  }
  
  static void
@@ -24,7 +24,7 @@ index 09113ac..3919b1c 100644
                                  step_id *brep,
                                  step_id_list *styled_item_identifiers)
  {
-@@ -188,7 +189,7 @@ object3d_to_step_body_fragment (step_file *step, object3d *object,
+@@ -187,7 +188,7 @@ object3d_to_step_body_fragment (step_file *step, object3d *object,
        face->surface_identifier =
          step_plane (step, "NONE",
                      step_axis2_placement_3d (step, "NONE",
@@ -33,7 +33,7 @@ index 09113ac..3919b1c 100644
                                                                                   ov->y,      /* Set this to the origin vertex of the first edge */
                                                                                   ov->z),     /* this contour links to in the quad edge structure. */
                                                     step_direction (step, "NONE", face->nx, face->ny, face->nz), /* An axis direction normal to the the face - Gives z-axis */
-@@ -377,195 +378,21 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
+@@ -376,195 +377,21 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
    step_id shape_representation_identifier;
    step_id brep_identifier;
    step_id anchor_axis_identifier;
@@ -234,7 +234,7 @@ index 09113ac..3919b1c 100644
  
    /* Need an anchor in 3D space to orient the shape */
    anchor_axis_identifier = step_axis2_placement_3d (step, "NONE",
-@@ -637,7 +464,7 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
+@@ -636,7 +463,7 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
      if (multiple_bodies)
        g_string_append_printf (body_name, " - %i", part);
  
