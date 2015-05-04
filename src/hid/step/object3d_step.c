@@ -331,14 +331,14 @@ object3d_to_step_body_fragment (step_file *step,
 
 
 static void
-step_product_definition_absr (step_file *step,
-                              step_id_list brep_list,
-                              step_id_list styled_item_list,
-                              step_id geometric_representation_context_identifier,
-                              step_id product_definition_shape_identifier,
-                              step_id *shape_representation,
-                              step_id *shape_definition_representation,
-                              step_id *placement_axis)
+step_absr_fragment (step_file *step,
+                    step_id_list brep_list,
+                    step_id_list styled_item_list,
+                    step_id geometric_representation_context_identifier,
+                    step_id product_definition_shape_identifier,
+                    step_id *shape_representation,
+                    step_id *shape_definition_representation,
+                    step_id *placement_axis)
 {
   step_id shape_representation_identifier;
   step_id anchor_axis_identifier;
@@ -366,55 +366,6 @@ step_product_definition_absr (step_file *step,
 
   if (placement_axis != NULL)
     *placement_axis = anchor_axis_identifier;
-}
-
-static void
-object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, char *part_name, char *part_description, char *body_name,
-                           step_id *shape_definition_representation, step_id *placement_axis)
-{
-  step_id product_definition_shape_identifier;
-  step_id geometric_representation_context_identifier;
-  step_id shape_representation_identifier;
-  step_id brep_identifier;
-  step_id anchor_axis_identifier;
-  step_id shape_definition_representation_identifier;
-  GList *styled_item_identifiers = NULL;
-
-  step_product_fragment (step, part_id, part_name, part_description,
-                         &geometric_representation_context_identifier,
-                         &product_definition_shape_identifier);
-
-  object3d_to_step_body_fragment (step,
-                                  object,
-                                  body_name,
-                                  &brep_identifier,
-                                  &styled_item_identifiers);
-
-  /* Emit references to the styled and over_ridden styled items */
-  step_mechanical_design_geometric_presentation_representation (step, "", styled_item_identifiers, geometric_representation_context_identifier);
-
-  /* Need an anchor in 3D space to orient the shape */
-  anchor_axis_identifier = step_axis2_placement_3d (step, "NONE",
-                                                    step_cartesian_point (step, "NONE", 0.0, 0.0, 0.0),
-                                                          step_direction (step, "NONE", 0.0, 0.0, 1.0),
-                                                          step_direction (step, "NONE", 1.0, 0.0, 0.0)),
-
-  shape_representation_identifier =
-    step_advanced_brep_shape_representation (step, "test_pcb_absr_name",
-                                             make_step_id_list (2, brep_identifier, anchor_axis_identifier), geometric_representation_context_identifier);
-
-  shape_definition_representation_identifier =
-  step_shape_definition_representation (step, product_definition_shape_identifier, shape_representation_identifier);
-
-  if (shape_definition_representation != NULL)
-    *shape_definition_representation = shape_definition_representation_identifier;
-
-  if (placement_axis != NULL)
-    *placement_axis = anchor_axis_identifier;
-
-#undef ORIENTED_EDGE_IDENTIFIER
-#undef FWD
-#undef REV
 }
 
 void
@@ -470,16 +421,41 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
     breps = step_id_list_append (breps, comp_brep);
   }
 
-  step_product_definition_absr (step,
-                                breps,
-                                styled_items,
-                                geometric_representation_context,
-                                product_definition_shape,
-                                &shape_representation,
-                                &shape_definition_representation,
-                                &placement_axis);
+  step_absr_fragment (step,
+                      breps,
+                      styled_items,
+                      geometric_representation_context,
+                      product_definition_shape,
+                      &shape_representation,
+                      &shape_definition_representation,
+                      &placement_axis);
 
   finish_ap214_file (step);
+}
+
+static void
+object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, char *part_name, char *part_description, char *body_name,
+                           step_id *shape_definition_representation, step_id *placement_axis)
+{
+  step_id product_definition_shape_identifier;
+  step_id geometric_representation_context_identifier;
+  step_id brep_identifier;
+  GList *styled_item_identifiers = NULL;
+
+  step_product_fragment (step, part_id, part_name, part_description,
+                         &geometric_representation_context_identifier,
+                         &product_definition_shape_identifier);
+
+  object3d_to_step_body_fragment (step, object, body_name, &brep_identifier, &styled_item_identifiers);
+
+  step_absr_fragment (step,
+                      make_step_id_list (1, brep_identifier),
+                      styled_item_identifiers,
+                      geometric_representation_context_identifier,
+                      product_definition_shape_identifier,
+                      NULL /* shape_representation */,
+                      shape_definition_representation,
+                      placement_axis);
 }
 
 void
