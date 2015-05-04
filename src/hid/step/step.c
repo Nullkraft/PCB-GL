@@ -136,6 +136,8 @@ step_do_export (HID_Attr_Val * options)
   const char *filename;
   const char *temp_pcb_filename = "_pcb.step";
   GList *board_outline_list;
+  POLYAREA *board_outline;
+  POLYAREA *piece;
 
   if (!options)
     {
@@ -150,7 +152,23 @@ step_do_export (HID_Attr_Val * options)
     filename = "pcb-out.step";
 
   board_outline_list = object3d_from_board_outline ();
-  object3d_list_export_to_step_assy (board_outline_list, temp_pcb_filename);
+
+  board_outline = board_outline_poly (false);
+  piece = board_outline;
+  do {
+    GList *mask_objects;
+
+    mask_objects = object3d_from_soldermask_within_area (piece, TOP_SIDE);
+    board_outline_list = g_list_concat (board_outline_list, mask_objects);
+
+    mask_objects = object3d_from_soldermask_within_area (piece, BOTTOM_SIDE);
+    board_outline_list = g_list_concat (board_outline_list, mask_objects);
+
+  } while ((piece = piece->f) != board_outline);
+  poly_Free (&board_outline);
+
+  object3d_list_export_to_step_part (board_outline_list, temp_pcb_filename);
+//  object3d_list_export_to_step_assy (board_outline_list, temp_pcb_filename);
   g_list_free_full (board_outline_list, (GDestroyNotify)destroy_object3d);
 
   {
