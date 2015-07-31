@@ -1,5 +1,5 @@
 Bottom: 84a3a7edbaffc0477060f48598f7fa21e840c8de
-Top:    7e9a8aa7fe56b9d12a711d675706fe3506184eee
+Top:    f92d03eb86bdc21c17723f036529ab112af02b04
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-05-04 14:04:51 +0100
 
@@ -37,7 +37,7 @@ index d4917d7..d2bf7b3 100644
 +void appearance_set_color (appearance *appear, float r, float g, float b);
 +void appearance_set_appearance (appearance *appear, const appearance *from);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 2da2c5c..c4de6b7 100644
+index 2da2c5c..2efc341 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -5,6 +5,7 @@
@@ -63,7 +63,7 @@ index 2da2c5c..c4de6b7 100644
  
  
  #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
-+#define HACK_MASK_THICKNESS MM_TO_COORD(0.05)
++#define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
  
  static GList *object3d_test_objects = NULL;
  
