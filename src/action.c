@@ -109,6 +109,7 @@ typedef enum
   F_Close,
   F_CreatePins,
   F_CreateVias,
+  F_CreateHoles,
   F_Found,
   F_Connection,
   F_Convert,
@@ -346,6 +347,7 @@ static FunctionType Functions[] = {
   {"Close", F_Close},
   {"CreatePins", F_CreatePins},
   {"CreateVias", F_CreateVias},
+  {"CreateHoles", F_CreateHoles},
   {"Found", F_Found},
   {"Connection", F_Connection},
   {"Convert", F_Convert},
@@ -8167,7 +8169,7 @@ ActionSmash (int argc, char **argv, Coord x, Coord y)
 }
 
 
-static const char repairdrills_syntax[] = N_("RepairDrills(CreatePins|CreateVias,<layername>)");
+static const char repairdrills_syntax[] = N_("RepairDrills(CreatePins|CreateVias|CreateHoles,<layername>)");
 static const char repairdrills_help[] = N_("Repair and reconstruct elements containing pins, or discrete vias, where two matching single-pad elements are found (top and bottom sides, and a 0-length line represeting the drill size on the named layer.");
 
 static LayerType *
@@ -8208,7 +8210,8 @@ ActionRepairDrills (int argc, char **argv, Coord x, Coord y)
 
   if (drill_layer == NULL ||
       (function != F_CreatePins &&
-       function != F_CreateVias))
+       function != F_CreateVias &&
+       function != F_CreateHoles))
     AFAIL (repairdrills);
 
   save_show_bottom_side = Settings.ShowBottomSide;
@@ -8248,6 +8251,14 @@ ActionRepairDrills (int argc, char **argv, Coord x, Coord y)
           printf ("Could not find top-side pad\n");
           continue;
         }
+
+      if (function == F_CreateHoles) {
+        /* Create a hole at given location */
+
+        pcb_printf ("Found a viable pin/via at (%$ms, %$ms), pad width %$ms, drill size %$ms\n",
+                    line->Point1.X, line->Point1.Y, top_pad->Thickness, line->Thickness);
+        continue;
+      }
 
       /* Find a bottom side pad which corresponds to the drill location */
       Settings.ShowBottomSide = true;
