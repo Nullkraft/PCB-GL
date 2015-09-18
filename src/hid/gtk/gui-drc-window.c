@@ -168,7 +168,6 @@ row_activated_cb (GtkTreeView *view, GtkTreePath *path,
     return;
 
   CenterDisplay (violation->x_coord, violation->y_coord);
-  gtk_window_present (GTK_WINDOW (gport->top_window));
 }
 
 
