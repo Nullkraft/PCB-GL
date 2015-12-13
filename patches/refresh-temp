@@ -1,0 +1,21 @@
+Bottom: 57b711bd59c530413876b233f10389d71af83378
+Top:    a0869c30e5b11e075193d0823b1388f0867fea44
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2015-12-13 14:38:30 +0000
+
+Refresh of comment-object3d_draw_debug
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index b2539ca..7cdb152 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2686,7 +2686,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glDisable (GL_LIGHTING);
+ 
+   draw_crosshair (Output.fgGC, priv);
+-  object3d_draw_debug ();
++//  object3d_draw_debug ();
+ 
+   hidgl_flush_triangles (priv->hidgl);
