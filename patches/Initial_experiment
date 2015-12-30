@@ -1,5 +1,5 @@
 Bottom: a0869c30e5b11e075193d0823b1388f0867fea44
-Top:    a0869c30e5b11e075193d0823b1388f0867fea44
+Top:    d0c55476a616cba0f694eb847ba9c740688bcef4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-12-30 17:01:49 +0000
 
@@ -8,4 +8,163 @@ Initial experiment with XInput devices
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 5977ccf..c8de1dc 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -299,12 +299,104 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
+   return handled;
+ }
+ 
++// Copied from Xournal
++
++int finite_sized(double x) // detect unrealistic coordinate values
++{
++  return (finite(x) && x<1E6 && x>-1E6);
++}
++
++void fix_xinput_coords(GdkWindow *window, GdkEvent *event)
++{
++  double *axes, *px, *py, axis_width;
++  GdkDevice *device;
++  int wx, wy, sx, sy, ix, iy;
++
++  if (event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) {
++    axes = event->button.axes;
++    px = &(event->button.x);
++    py = &(event->button.y);
++    device = event->button.device;
++  }
++  else if (event->type == GDK_MOTION_NOTIFY) {
++    axes = event->motion.axes;
++    px = &(event->motion.x);
++    py = &(event->motion.y);
++    device = event->motion.device;
++  }
++  else return; // nothing we know how to do
++
++  //gnome_canvas_get_scroll_offsets(canvas, &sx, &sy);
++  sx = 0;
++  sy = 0;
++
++#ifdef ENABLE_XINPUT_BUGFIX
++  // fix broken events with the core pointer's location
++  if (!finite_sized(axes[0]) || !finite_sized(axes[1]) || axes[0]==0. || axes[1]==0.) {
++    gdk_window_get_pointer (window, &ix, &iy, NULL);
++    *px = ix + sx; 
++    *py = iy + sy;
++  }
++  else {
++    gdk_window_get_origin (window, &wx, &wy);
++    axis_width = device->axes[0].max - device->axes[0].min;
++    if (axis_width>EPSILON)
++      *px = (axes[0]/axis_width)*ui.screen_width + sx - wx;
++    axis_width = device->axes[1].max - device->axes[1].min;
++    if (axis_width>EPSILON)
++      *py = (axes[1]/axis_width)*ui.screen_height + sy - wy;
++  }
++#else
++  if (!finite_sized(*px) || !finite_sized(*py) || *px==0. || *py==0.) {
++    gdk_window_get_pointer (window, &ix, &iy, NULL);
++    *px = ix + sx; 
++    *py = iy + sy;
++  }
++  else {
++    /* with GTK+ 2.16 or earlier, the event comes from the parent gdkwindow
++       and so needs to be adjusted for scrolling */
++    if (gtk_major_version == 2 && gtk_minor_version <= 16) {
++      *px += sx;
++      *py += sy;
++    }
++    /* with GTK+ 2.17, events come improperly translated, and the event's
++       GdkWindow isn't even the same for ButtonDown as for MotionNotify... */
++    if (gtk_major_version == 2 && gtk_minor_version == 17) { // GTK+ 2.17 issues !!
++      gdk_window_get_position (window, &wx, &wy);
++      *px += sx - wx;
++      *py += sy - wy;
++    }
++  }
++#endif
++}
++
++// End copied from Xournal
++
+ gboolean
+ ghid_port_button_press_cb (GtkWidget * drawing_area,
+ 			   GdkEventButton * ev, gpointer data)
+ {
+   ModifierKeysState mk;
+   GdkModifierType state;
++  gboolean is_core;
++
++  fprintf (stderr, "Button press cb, source is %i\n", gdk_device_get_source (ev->device));
++
++  /* Reject touch events */
++  is_core = (ev->device == gdk_device_get_core_pointer ());
++  if (is_core) {
++    fprintf (stderr, "Rejecting core button press event\n");
++    return FALSE;
++  }
++
++  // Xournal
++  // synaptics touchpads send bogus axis values with ButtonDown
++  //if (!is_core) gdk_device_get_state (ev->device, ev->window, ev->axes, NULL);
++
++  fprintf (stderr, "Button press at coordinates %f, %f\n", ev->x, ev->y);
++
++  if (!is_core)
++    fix_xinput_coords(drawing_area, (GdkEvent *)ev);
+ 
+   /* Reject double and triple click events */
+   if (ev->type != GDK_BUTTON_PRESS) return TRUE;
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index cfd8ad9..78084e4 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1387,9 +1387,45 @@ ghid_build_pcb_top_window (void)
+ 			 | GDK_FOCUS_CHANGE_MASK | GDK_POINTER_MOTION_MASK
+ 			 | GDK_POINTER_MOTION_HINT_MASK);
+ 
++  gtk_widget_set_extension_events (gport->drawing_area,
++                                   GDK_EXTENSION_EVENTS_ALL);
++
++
++  /* Enable XInput devices - if we don't, then we only appear to get core-pointer events for everything */
++  if (1) { /* XXX: TODO - find a better place for this */
++    GList *dev_list;
++    GdkDevice *device;
++
++    // Copied from xournal - adjusted to use getters rather than access GSEAL'd members
++    dev_list = gdk_devices_list();
++    for (; dev_list != NULL; dev_list = dev_list->next) {
++      device = (GdkDevice *)dev_list->data;
++      if (device != gdk_device_get_core_pointer() && gdk_device_get_n_axes (device) >= 2) {
++
++        if (0) {
++          // Skip over my touchpad for now!
++          if (g_strrstr (gdk_device_get_name (device), "TouchPad"))
++            continue;
++        }
++
++        fprintf (stderr, "Setting GDK_MODE_SCREEN on XInput device %s\n", gdk_device_get_name (device));
++        /* get around a GDK bug: map the valuator range CORRECTLY to [0,1] */
++#ifdef ENABLE_XINPUT_BUGFIX
++        gdk_device_set_axis_use(device, 0, GDK_AXIS_IGNORE);
++        gdk_device_set_axis_use(device, 1, GDK_AXIS_IGNORE);
++#endif
++        gdk_device_set_mode(device, GDK_MODE_SCREEN);
++        if (g_strrstr (gdk_device_get_name (device), "raser"))
++          gdk_device_set_source(device, GDK_SOURCE_ERASER);
++      }
++    }
++    // End copied from xournal
++
++  }
++
+   /*
+    * This is required to get the drawing_area key-press-event.  Also the
+-   * enter and button press callbacks grab focus to be sure we have it
++   * enter and button press callbacks grab focus to be sure we have it  
+    * when in the drawing_area.
+    */
+   gtk_widget_set_can_focus (gport->drawing_area, TRUE);
