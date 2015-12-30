@@ -3,8 +3,13 @@ Top:    22dcf0fcd66e5aa67838dcb28f112583010fb1ef
 Author: Anton Dubniak <twister@tfsoft.org.ua>
 Date:   2015-12-30 17:53:00 +0200
 
-From cfcb31d533fd723c238870abe2f8f3a5b1cc5000 Mon Sep 17 00:00:00 2001
-Subject: [PATCH] A possible fix for the LP1013358 bug
+Fix Auto-enforce-DRC check to allow the exact minimum spacing
+
+Removes an improper "+ 1" (COORD - e.g. nm) condition applied in the auto-drc
+code, and similar from the XOR rendering code.
+
+Reviewed-by: Peter Clifton <Peter.Clifton@clifton-electronics.co.uk>
+
 
 
 ---
