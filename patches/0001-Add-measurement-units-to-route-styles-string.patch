@@ -1,0 +1,25 @@
+Bottom: 22dcf0fcd66e5aa67838dcb28f112583010fb1ef
+Top:    d5c988584ef608b1811c5e2dd4d96c74a9faf96c
+Author: Anton Dubniak <twister@tfsoft.org.ua>
+Date:   2016-01-04 01:00:37 +0200
+
+From 71b8b9d04df58e4370859df8813efb86cd562ee7 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] Add measurement units to route-styles string (to avoid
+ redundant unit conversion on save/load perferences)
+
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index 48f5ed7..f98aeff 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -945,7 +945,7 @@ make_route_string (RouteStyleType rs[], int n_styles)
+ 
+   for (i = 0; i < n_styles; ++i)
+     {
+-      char *r_string = pcb_g_strdup_printf ("%s,%mc,%mc,%mc,%mc", rs[i].Name,
++      char *r_string = pcb_g_strdup_printf ("%s,%$mr,%$mr,%$mr,%$mr", rs[i].Name,
+                                             rs[i].Thick, rs[i].Diameter,
+                                             rs[i].Hole, rs[i].Keepaway);
+       if (i > 0)
