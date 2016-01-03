@@ -3,9 +3,10 @@ Top:    d5c988584ef608b1811c5e2dd4d96c74a9faf96c
 Author: Anton Dubniak <twister@tfsoft.org.ua>
 Date:   2016-01-04 01:00:37 +0200
 
-From 71b8b9d04df58e4370859df8813efb86cd562ee7 Mon Sep 17 00:00:00 2001
-Subject: [PATCH] Add measurement units to route-styles string (to avoid
- redundant unit conversion on save/load perferences)
+Add measurement units to route-styles string in preferences file.
+
+This avoids unit conversion to cmil on save of preferences, and
+avoids the rounding errors associated with that.
 
 
 ---
