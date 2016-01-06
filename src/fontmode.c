@@ -84,6 +84,7 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
   SymbolType *symbol;
   LayerType *lfont, *lorig, *lwidth, *lgrid;
   int s, l;
+  GList *ll;
 
   if (hid_actionl ("New", "Font", 0))
     return 1;
@@ -130,25 +131,26 @@ FontEdit (int argc, char **argv, Coord Ux, Coord Uy)
       miny = MIL_TO_COORD (5);
       maxy = font->MaxHeight;
 
-      for (l = 0; l < symbol->LineN; l++)
+      for (ll = symbol->Line; ll != NULL; ll = g_list_next (ll))
 	{
+	  LineType *line = ll->data;
+
 	  CreateDrawnLineOnLayer (lfont,
-				  symbol->Line[l].Point1.X + ox,
-				  symbol->Line[l].Point1.Y + oy,
-				  symbol->Line[l].Point2.X + ox,
-				  symbol->Line[l].Point2.Y + oy,
-				  symbol->Line[l].Thickness,
-				  symbol->Line[l].Thickness, NoFlags ());
-	  CreateDrawnLineOnLayer (lorig, symbol->Line[l].Point1.X + ox,
-				  symbol->Line[l].Point1.Y + oy,
-				  symbol->Line[l].Point2.X + ox,
-				  symbol->Line[l].Point2.Y + oy,
-				  symbol->Line[l].Thickness,
-				  symbol->Line[l].Thickness, NoFlags ());
-	  if (maxx < symbol->Line[l].Point1.X)
-	    maxx = symbol->Line[l].Point1.X;
-	  if (maxx < symbol->Line[l].Point2.X)
-	    maxx = symbol->Line[l].Point2.X;
+				  line->Point1.X + ox,
+				  line->Point1.Y + oy,
+				  line->Point2.X + ox,
+				  line->Point2.Y + oy,
+				  line->Thickness,
+				  line->Thickness, NoFlags ());
+	  CreateDrawnLineOnLayer (lorig,
+				  line->Point1.X + ox,
+				  line->Point1.Y + oy,
+				  line->Point2.X + ox,
+				  line->Point2.Y + oy,
+				  line->Thickness,
+				  line->Thickness, NoFlags ());
+	  maxx = MAX (maxx, line->Point1.X);
+	  maxx = MAX (maxx, line->Point2.X);
 	}
       w = maxx + symbol->Delta + ox;
       CreateDrawnLineOnLayer (lwidth,
