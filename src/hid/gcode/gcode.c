@@ -1622,6 +1622,7 @@ hid_gcode_init ()
 
   gcode_hid.graphics            = &gcode_graphics;
 
+  common_nogui_graphics_class_init (&gcode_graphics_class);
   common_draw_helpers_class_init (&gcode_graphics_class);
 
   gcode_graphics_class.set_layer      = gcode_set_layer;
@@ -1642,6 +1643,7 @@ hid_gcode_init ()
 
   gcode_graphics.klass = &gcode_graphics_class;
   gcode_graphics.poly_before = true;
+  common_nogui_graphics_init (&gcode_graphics);
   common_draw_helpers_init (&gcode_graphics);
 
   hid_register_hid (&gcode_hid);
