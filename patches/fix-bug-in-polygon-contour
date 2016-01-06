@@ -1,5 +1,5 @@
-Bottom: 27da13860f4a51ccb8550e754b6233ce824c0d45
-Top:    80597b35c958a197ba43f872fbfb7c66f49974e0
+Bottom: 15ec03bfa35bee90ab546e7994179b78351dc977
+Top:    06e97fb3c79fc022db328cdeab99df21febd9cf5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-15 22:34:34 +0000
 
@@ -58,10 +58,10 @@ the other polygon).
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index efca1b7..b3bc879 100644
+index 0874296..2ae97e5 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -390,14 +390,25 @@ node_label (VNODE * pn)
+@@ -391,14 +391,25 @@ node_label (VNODE * pn)
     * check for shared edges (that could be prev or next in the list since the angles are equal)
     * and check if this edge (pn -> pn->next) is found between the other poly's entry and exit
     */
