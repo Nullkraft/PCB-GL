@@ -1,7 +1,7 @@
-Bottom: cb67650fcff61a5cbc94e82fbfe8eca9021eca7d
-Top:    0a9fa9451990438627edf4c9a62acb09736e2774
+Bottom: a621fd66e3b3b12ec558d0c2f101ee7ecdb23ac9
+Top:    c5ad0fb32fd19b99cb218d35db8a2dcbe67a7514
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:14:29 +0000
+Date:   2016-01-06 23:18:12 +0000
 
 Add support for a two soldermask layers, defining regions of removed mask
 
@@ -149,10 +149,10 @@ index 6a4f345..eb8fbd1 100644
  
  	argv = g_strsplit(data, ",", -1);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 8142b65..b3d36b8 100644
+index e52b8da..5c67265 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -530,6 +530,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -529,6 +529,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
    ignore_layer_update = true;
    /* Select Layer */
    PCB->SilkActive = (layer == LAYER_BUTTON_SILK);
@@ -160,7 +160,7 @@ index 8142b65..b3d36b8 100644
    PCB->RatDraw  = (layer == LAYER_BUTTON_RATS);
    if (layer == LAYER_BUTTON_SILK)
      {
-@@ -541,6 +542,11 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -540,6 +541,11 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
        PCB->RatOn = true;
        hid_action ("LayersChanged");
      }
@@ -172,7 +172,7 @@ index 8142b65..b3d36b8 100644
    else if (layer < max_copper_layer)
      ChangeGroupVisibility (layer, TRUE, true);
  
-@@ -609,6 +615,7 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -608,6 +614,7 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
      case LAYER_BUTTON_FARSIDE:
        PCB->InvisibleObjectsOn = active;
        PCB->Data->BACKSILKLAYER.On = (active && PCB->ElementOn);
@@ -180,7 +180,7 @@ index 8142b65..b3d36b8 100644
        redraw = TRUE;
        break;
      case LAYER_BUTTON_MASK:
-@@ -616,6 +623,8 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -615,6 +622,8 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
          SET_FLAG (SHOWMASKFLAG, PCB);
        else
          CLEAR_FLAG (SHOWMASKFLAG, PCB);
@@ -189,7 +189,7 @@ index 8142b65..b3d36b8 100644
        redraw = TRUE;
        break;
      default:
-@@ -810,7 +819,7 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
+@@ -809,7 +818,7 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
                                   text, color_string, active, FALSE, FALSE);
    layer_process (&color_string, &text, &active, LAYER_BUTTON_MASK);
    ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_MASK,
@@ -198,7 +198,7 @@ index 8142b65..b3d36b8 100644
  }
  
  /*! \brief callback for ghid_layer_selector_update_colors */
-@@ -883,6 +892,8 @@ ghid_layer_buttons_update (void)
+@@ -882,6 +891,8 @@ ghid_layer_buttons_update (void)
      layer = LAYER_BUTTON_RATS;
    else if (PCB->SilkActive)
      layer = LAYER_BUTTON_SILK;
@@ -207,7 +207,7 @@ index 8142b65..b3d36b8 100644
    else
      layer = LayerStack[0];
  
-@@ -1946,7 +1957,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
+@@ -1945,7 +1956,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
  }
  
  static const char selectlayer_syntax[] =
@@ -216,7 +216,7 @@ index 8142b65..b3d36b8 100644
  
  static const char selectlayer_help[] =
      N_("Select which layer is the current layer.");
-@@ -1974,6 +1985,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
+@@ -1973,6 +1984,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
      newl = LAYER_BUTTON_SILK;
    else if (strcasecmp (argv[0], "rats") == 0)
      newl = LAYER_BUTTON_RATS;
