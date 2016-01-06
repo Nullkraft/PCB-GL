@@ -1,7 +1,7 @@
-Bottom: c25a145ffd84531805c4b27e109d96eb70b9a623
-Top:    f406bf16cffa7c426ef5cd9a0851155ea1599ae3
+Bottom: 7220db83d65352b69b61ed85708ab059ba9006f2
+Top:    57d63300da711fb9fd3ae51cd8abd2cad4fbdf61
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:12:29 +0000
+Date:   2016-01-06 23:14:25 +0000
 
 Pass a HID_DRAW * instance to hid_expose_callback() rather than a HID * pointer
 
@@ -466,7 +466,7 @@ index c7197d4..32a125d 100644
    glPopMatrix ();
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index df55d14..106465f 100644
+index 078d7cc..1933a59 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -831,7 +831,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
@@ -487,7 +487,7 @@ index df55d14..106465f 100644
        draw_grid ();
        lesstif_use_mask (HID_MASK_OFF);
        show_crosshair (0); /* To keep the drawn / not drawn info correct */
-@@ -3805,7 +3805,7 @@ pinout_callback (Widget da, PinoutData * pd,
+@@ -3804,7 +3804,7 @@ pinout_callback (Widget da, PinoutData * pd,
    region.Y2 = PCB->MaxHeight;
  
    XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);

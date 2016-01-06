@@ -1,7 +1,7 @@
-Bottom: 30d11eee124410bac3e17b4c3ebcd01b2046d1c1
-Top:    98eddbe6c2af0f54f9f7756154438eca87c72625
+Bottom: 201adeae4cec1e11617922cdd4a9227255175bcc
+Top:    0801aca9c85f832ef2d116d1e4ecda89101208b0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:12:28 +0000
+Date:   2016-01-06 23:14:24 +0000
 
 Move some fields from the HID* structure to HID_DRAW* and HID_DRAW_CLASS*
 
@@ -483,10 +483,10 @@ index 1a64566..c44b7e1 100644
  
    hid_register_hid (&ghid_hid);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 629b60b..49c8ad1 100644
+index 035f418..814b5d8 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4074,7 +4074,6 @@ hid_lesstif_init ()
+@@ -4073,7 +4073,6 @@ hid_lesstif_init ()
    lesstif_hid.name                    = "lesstif";
    lesstif_hid.description             = "LessTif - a Motif clone for X/Unix";
    lesstif_hid.gui                     = 1;
@@ -494,7 +494,7 @@ index 629b60b..49c8ad1 100644
  
    lesstif_hid.get_export_options      = lesstif_get_export_options;
    lesstif_hid.do_export               = lesstif_do_export;
-@@ -4083,7 +4082,6 @@ hid_lesstif_init ()
+@@ -4082,7 +4081,6 @@ hid_lesstif_init ()
    lesstif_hid.invalidate_all          = lesstif_invalidate_all;
    lesstif_hid.notify_crosshair_change = lesstif_notify_crosshair_change;
    lesstif_hid.notify_mark_change      = lesstif_notify_mark_change;
@@ -502,7 +502,7 @@ index 629b60b..49c8ad1 100644
  
    lesstif_hid.calibrate               = lesstif_calibrate;
    lesstif_hid.shift_is_pressed        = lesstif_shift_is_pressed;
-@@ -4119,6 +4117,7 @@ hid_lesstif_init ()
+@@ -4118,6 +4116,7 @@ hid_lesstif_init ()
  
    common_draw_helpers_class_init (&lesstif_graphics_class);
  
@@ -510,7 +510,7 @@ index 629b60b..49c8ad1 100644
    lesstif_graphics_class.make_gc        = lesstif_make_gc;
    lesstif_graphics_class.destroy_gc     = lesstif_destroy_gc;
    lesstif_graphics_class.use_mask       = lesstif_use_mask;
-@@ -4136,6 +4135,7 @@ hid_lesstif_init ()
+@@ -4135,6 +4134,7 @@ hid_lesstif_init ()
    lesstif_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
  
    lesstif_graphics.klass = &lesstif_graphics_class;

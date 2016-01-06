@@ -1,7 +1,7 @@
-Bottom: 65e4cfdc22da10935a7b72a4cdb08f9f57fd9f79
-Top:    b8d33b9328bdcf97c5caa34b758305be6e25493b
+Bottom: 102467f79fe48686cedfd708fafc25ba8c989b4d
+Top:    727745d98389b0f008068f5e5e31f5d1c6a81eb9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:12:28 +0000
+Date:   2016-01-06 23:14:23 +0000
 
 Expose a base hidGC structure for HIDs to inherit from.
 
@@ -1114,7 +1114,7 @@ index cfb647e..6f551c8 100644
  }
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 1f0f712..32a1ff7 100644
+index ad027c2..3b54403 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -46,16 +46,17 @@
@@ -1138,7 +1138,7 @@ index 1f0f712..32a1ff7 100644
  
  static HID lesstif_hid;
  static HID_DRAW lesstif_graphics;
-@@ -3058,10 +3059,11 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -3057,10 +3058,11 @@ lesstif_set_layer (const char *name, int group, int empty)
  static hidGC
  lesstif_make_gc (void)
  {
@@ -1154,7 +1154,7 @@ index 1f0f712..32a1ff7 100644
  }
  
  static void
-@@ -3127,6 +3129,7 @@ lesstif_use_mask (enum mask_mode mode)
+@@ -3126,6 +3128,7 @@ lesstif_use_mask (enum mask_mode mode)
  static void
  lesstif_set_color (hidGC gc, const char *name)
  {
@@ -1162,7 +1162,7 @@ index 1f0f712..32a1ff7 100644
    static void *cache = 0;
    hidval cval;
    static XColor color, exact_color;
-@@ -3135,21 +3138,21 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3134,21 +3137,21 @@ lesstif_set_color (hidGC gc, const char *name)
      return;
    if (!name)
      name = "red";
@@ -1191,7 +1191,7 @@ index 1f0f712..32a1ff7 100644
      }
    else
      {
-@@ -3159,26 +3162,26 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3158,26 +3161,26 @@ lesstif_set_color (hidGC gc, const char *name)
        printf ("lesstif_set_color `%s' %08x rgb/%d/%d/%d\n",
  	      name, color.pixel, color.red, color.green, color.blue);
  #endif
@@ -1225,7 +1225,7 @@ index 1f0f712..32a1ff7 100644
  	}
      }
  }
-@@ -3186,6 +3189,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3185,6 +3188,7 @@ lesstif_set_color (hidGC gc, const char *name)
  static void
  set_gc (hidGC gc)
  {
@@ -1233,7 +1233,7 @@ index 1f0f712..32a1ff7 100644
    int cap, join, width;
    if (gc->me_pointer != &lesstif_hid)
      {
-@@ -3194,9 +3198,9 @@ set_gc (hidGC gc)
+@@ -3193,9 +3197,9 @@ set_gc (hidGC gc)
      }
  #if 0
    pcb_printf ("set_gc c%s %08lx w%#mS c%d x%d e%d\n",
@@ -1245,7 +1245,7 @@ index 1f0f712..32a1ff7 100644
      {
      case Square_Cap:
        cap = CapProjecting;
-@@ -3216,12 +3220,12 @@ set_gc (hidGC gc)
+@@ -3215,12 +3219,12 @@ set_gc (hidGC gc)
        join = JoinBevel;
        break;
      }
@@ -1261,7 +1261,7 @@ index 1f0f712..32a1ff7 100644
      {
        XSetFunction (display, my_gc, GXcopy);
        XSetForeground (display, my_gc, offlimit_color);
-@@ -3229,20 +3233,20 @@ set_gc (hidGC gc)
+@@ -3228,20 +3232,20 @@ set_gc (hidGC gc)
    else
      {
        XSetFunction (display, my_gc, GXcopy);
@@ -1286,7 +1286,7 @@ index 1f0f712..32a1ff7 100644
  			  join);
      }
  }
-@@ -3250,19 +3254,25 @@ set_gc (hidGC gc)
+@@ -3249,19 +3253,25 @@ set_gc (hidGC gc)
  static void
  lesstif_set_line_cap (hidGC gc, EndCapStyle style)
  {
@@ -1315,7 +1315,7 @@ index 1f0f712..32a1ff7 100644
  }
  
  #define ISORT(a,b) if (a>b) { a^=b; b^=a; a^=b; }
-@@ -3270,19 +3280,20 @@ lesstif_set_draw_xor (hidGC gc, int xor_set)
+@@ -3269,19 +3279,20 @@ lesstif_set_draw_xor (hidGC gc, int xor_set)
  static void
  lesstif_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
  {
@@ -1340,7 +1340,7 @@ index 1f0f712..32a1ff7 100644
  #endif
  
  #if 1
-@@ -3297,7 +3308,7 @@ lesstif_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+@@ -3296,7 +3307,7 @@ lesstif_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
    y2 = dy2;
  
    set_gc (gc);
@@ -1349,7 +1349,7 @@ index 1f0f712..32a1ff7 100644
      {
        XFillRectangle (display, pixmap, my_gc, x1 - vw / 2, y1 - vw / 2, vw,
  		      vw);
-@@ -3317,7 +3328,9 @@ static void
+@@ -3316,7 +3327,9 @@ static void
  lesstif_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
  		  Angle start_angle, Angle delta_angle)
  {
@@ -1360,7 +1360,7 @@ index 1f0f712..32a1ff7 100644
      return;
  #if 0
    pcb_printf ("draw_arc %#mD %#mSx%#mS s %d d %d", cx, cy, width, height, start_angle, delta_angle);
-@@ -3340,8 +3353,8 @@ lesstif_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
+@@ -3339,8 +3352,8 @@ lesstif_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
    if (start_angle >= 180)
      start_angle -= 360;
  #if 0
@@ -1371,7 +1371,7 @@ index 1f0f712..32a1ff7 100644
  #endif
    set_gc (gc);
    XDrawArc (display, pixmap, my_gc, cx, cy,
-@@ -3372,8 +3385,10 @@ lesstif_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
+@@ -3371,8 +3384,10 @@ lesstif_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
  static void
  lesstif_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
  {
@@ -1384,7 +1384,7 @@ index 1f0f712..32a1ff7 100644
      return;
    x1 = Vx (x1);
    y1 = Vy (y1);
-@@ -3399,9 +3414,11 @@ lesstif_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+@@ -3398,9 +3413,11 @@ lesstif_draw_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
  static void
  lesstif_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
  {
@@ -1398,7 +1398,7 @@ index 1f0f712..32a1ff7 100644
      return;
  #if 0
    pcb_printf ("fill_circle %#mD %#mS", cx, cy, radius);
-@@ -3414,7 +3431,7 @@ lesstif_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
+@@ -3413,7 +3430,7 @@ lesstif_fill_circle (hidGC gc, Coord cx, Coord cy, Coord radius)
    if (cy < -2 * radius || cy > view_height)
      return;
  #if 0
@@ -1407,7 +1407,7 @@ index 1f0f712..32a1ff7 100644
  #endif
    set_gc (gc);
    XFillArc (display, pixmap, my_gc, cx, cy,
-@@ -3459,8 +3476,10 @@ lesstif_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
+@@ -3458,8 +3475,10 @@ lesstif_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
  static void
  lesstif_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
  {

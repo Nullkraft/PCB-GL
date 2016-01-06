@@ -1,7 +1,7 @@
-Bottom: 9915b0264db1f5a2f2d1e871aab0cc4d0355626c
-Top:    f6ee785f994ac212bff8424c1649ab07d85c254f
+Bottom: ec6e522efb41529d1970c7d0321a47af681282f0
+Top:    a8bc9dea91d36ac2a0fa86c128c6a9b7436b94fc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:12:28 +0000
+Date:   2016-01-06 23:14:24 +0000
 
 Make HID_DRAW * an instance of the HID_DRAW class, not the API vfunc table
 
@@ -483,7 +483,7 @@ index 7975a88..1a64566 100644
    hid_register_hid (&ghid_hid);
  #include "gtk_lists.h"
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 91d1a93..e46e364 100644
+index 5f4468c..90b96a5 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -60,6 +60,7 @@ typedef struct lesstif_gc_struct
@@ -494,7 +494,7 @@ index 91d1a93..e46e364 100644
  
  #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
  
-@@ -4065,9 +4066,9 @@ hid_lesstif_init ()
+@@ -4064,9 +4065,9 @@ hid_lesstif_init ()
  {
    memset (&lesstif_hid, 0, sizeof (HID));
    memset (&lesstif_graphics, 0, sizeof (HID_DRAW));
@@ -505,7 +505,7 @@ index 91d1a93..e46e364 100644
  
    lesstif_hid.struct_size             = sizeof (HID);
    lesstif_hid.name                    = "lesstif";
-@@ -4116,22 +4117,27 @@ hid_lesstif_init ()
+@@ -4115,22 +4116,27 @@ hid_lesstif_init ()
  
    lesstif_hid.graphics                = &lesstif_graphics;
  

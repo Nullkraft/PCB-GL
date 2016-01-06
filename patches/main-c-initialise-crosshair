@@ -1,7 +1,7 @@
-Bottom: f6ee785f994ac212bff8424c1649ab07d85c254f
-Top:    30d11eee124410bac3e17b4c3ebcd01b2046d1c1
+Bottom: a8bc9dea91d36ac2a0fa86c128c6a9b7436b94fc
+Top:    201adeae4cec1e11617922cdd4a9227255175bcc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:12:28 +0000
+Date:   2016-01-06 23:14:24 +0000
 
 main.c: Initialise crosshair unconditionally
 
@@ -25,10 +25,10 @@ index 27bcc71..252e2bf 100644
    common_nogui_init (&batch_hid);
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index e46e364..629b60b 100644
+index 90b96a5..035f418 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4133,7 +4133,7 @@ hid_lesstif_init ()
+@@ -4132,7 +4132,7 @@ hid_lesstif_init ()
    lesstif_graphics_class.fill_polygon   = lesstif_fill_polygon;
    lesstif_graphics_class.fill_rect      = lesstif_fill_rect;
  

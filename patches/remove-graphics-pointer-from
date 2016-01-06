@@ -1,7 +1,7 @@
-Bottom: f406bf16cffa7c426ef5cd9a0851155ea1599ae3
-Top:    554e025a1282cdfbee09cb549e25d6bbb5c948e8
+Bottom: 57d63300da711fb9fd3ae51cd8abd2cad4fbdf61
+Top:    a740961d54b146285a5be6cd2972085471d2c551
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:12:29 +0000
+Date:   2016-01-06 23:14:25 +0000
 
 Remove graphics pointer from HID structure
 
@@ -125,10 +125,10 @@ index 44202cd..955d6f4 100644
    common_draw_helpers_class_init (&ghid_graphics_class);
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 106465f..8cd3a08 100644
+index 1933a59..d58fbe7 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4032,7 +4032,7 @@ lesstif_request_debug_draw (void)
+@@ -4031,7 +4031,7 @@ lesstif_request_debug_draw (void)
  {
    /* Send drawing to the backing pixmap */
    pixmap = main_pixmap;
@@ -137,7 +137,7 @@ index 106465f..8cd3a08 100644
  }
  
  static void
-@@ -4113,8 +4113,6 @@ hid_lesstif_init ()
+@@ -4112,8 +4112,6 @@ hid_lesstif_init ()
    lesstif_hid.flush_debug_draw        = lesstif_flush_debug_draw;
    lesstif_hid.finish_debug_draw       = lesstif_finish_debug_draw;
  
