@@ -1425,7 +1425,7 @@ _add_result_edge (cairo_array_t *array,
     return CAIRO_STATUS_SUCCESS;
 }
 
-static void do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point);
+static int do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point);
 
 /* Execute a single pass of the Bentley-Ottmann algorithm on edges,
  * generating trapezoids according to the fill_rule and appending them
@@ -1434,7 +1434,8 @@ static cairo_status_t
 _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
                                             int                  num_events,
                                             cairo_traps_t       *traps,
-                                            int                 *num_intersections)
+                                            int                 *num_intersections,
+                                            int                 *num_new_nodes)
 {
     cairo_status_t status = CAIRO_STATUS_SUCCESS; /* silence compiler */
     int intersection_count = 0;
@@ -1443,6 +1444,7 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
     cairo_bo_event_t *event;
     cairo_bo_edge_t *left, *right;
     cairo_bo_edge_t *e1, *e2;
+    int new_nodes = 0;
 
 #if DEBUG_EVENTS
     {
@@ -1587,7 +1589,7 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
 #endif
             intersection_count++;
 
-            do_intersect (e1, e2, event->point);
+            new_nodes += do_intersect (e1, e2, event->point);
 
             {
                 cairo_edge_t intersected;
@@ -1638,6 +1640,7 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
     }
 
     *num_intersections = intersection_count;
+    *num_new_nodes = new_nodes;
  unwind:
     _cairo_bo_event_queue_fini (&event_queue);
 
@@ -2095,6 +2098,7 @@ bentley_ottmann_intersect_segments (GList *data)
     cairo_bo_event_t **event_ptrs;
     int num_events;
     int i;
+    int num_new_nodes;
     cairo_traps_t *traps = NULL;
     GList *iter;
 
@@ -2147,7 +2151,8 @@ bentley_ottmann_intersect_segments (GList *data)
     status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
                                                          num_events,
                                                          traps,
-                                                         &intersections);
+                                                         &intersections,
+                                                         &num_new_nodes);
 #if DEBUG_TRAPS
     dump_traps (traps, "bo-polygon-out.txt");
 #endif
@@ -2339,29 +2344,15 @@ node_add_single_point (VNODE *inp_node, cairo_point_t p)
 }				/* node_add_point */
 
 
-static void
+static int
 do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
 {
   VNODE *new_node;
-
-  // i->s is some seg from the edge tree, pointing to v (and corresponds to one of the intersected items)
-  // s is some other seg the item hit.
-  // Need to know the VNODE of the segment (VNODE)-----(VNODE->next) and the PLINE they belong to.
-
-//  cnt = vect_inters2 (e2->v->point, e2->v->next->point,
-//                      e1->v->point, e1->v->next->point, s1, s2);
-
-  // cnt == 0: No intersection (error)
-  // cnt == 1: Intersection, s1 gives the intersection point
-  // cnt == 2: (GUESS) Lines coincident: -----X======x----
-  //                                          ^_s1   ^_s2
-
-  // BUT: We know our _single_ intersection is passed as (point.x,point.y) - so why bother?
-  // Just need to check that intersection isn't with one of our existing vertex end-points?
+  int count = 0;
 
   if (e1->p == e2->p) {
 //    printf ("do_intersect: SAME CONTOUR\n");
-    return;
+    return 0;
   }
 
 //  printf ("do_intersect: ");
@@ -2373,9 +2364,10 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
   /* adjust the bounding box and tree if necessary */
   if (new_node != NULL) {
 //    printf ("1 ");
+    count ++;
     e1->p->Count ++; /* ??? */
     cntrbox_adjust (e1->p, point);
-    if (adjust_tree (e1->p, e1->v)) return; /* error */
+    if (adjust_tree (e1->p, e1->v)) return 0; /* error */
     /* Need to decide whether the new piece, or the old piece is
        going to continue seeing "action" in the sweepline algorithm */
     if (new_node->point[1] > e1->v->point[1]) {
@@ -2389,9 +2381,10 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
   new_node = node_add_single_point (e2->v, point);
   if (new_node != NULL) {
 //    printf ("2");
+    count ++;
     e2->p->Count ++; /* ??? */
     cntrbox_adjust (e2->p, point);
-    if (adjust_tree (e2->p, e2->v)) return /*1*/;
+    if (adjust_tree (e2->p, e2->v)) return 0; /* error */
     if (new_node->point[1] > e2->v->point[1]) {
       e2->v = new_node;
     } else if (new_node->point[1] == e2->v->point[1]) {
@@ -2400,7 +2393,7 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
     }
   }
 //  printf ("\n");
-  return;
+  return count;
 }
 
 
@@ -2427,7 +2420,7 @@ poly_area_to_start_events (POLYAREA                *poly,
           /* Node is between bv->point[0,1] and bv->next->point[0,1] */
 
           /* HACK TEST: */
-//        bv->cvc_prev = bv->cvc_next = NULL;
+        bv->cvc_prev = bv->cvc_next = NULL;
 //        bv->cvc_prev = bv->cvc_next = (CVCList *) - 1;
 
           if (bv->point[1] == bv->next->point[1]) {
@@ -2495,6 +2488,7 @@ bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
     cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
     cairo_bo_event_t **event_ptrs;
     int num_events = 0;
+    int num_new_nodes;
     int i;
     POLYAREA *pa;
     cairo_traps_t *traps = NULL;
@@ -2540,7 +2534,8 @@ bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
     status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
                                                          num_events,
                                                          traps,
-                                                         &intersections);
+                                                         &intersections,
+                                                         &num_new_nodes);
 //    printf ("Number of intersections was %i\n", intersections);
 #if DEBUG_TRAPS
     dump_traps (traps, "bo-polygon-out.txt");
@@ -2549,5 +2544,5 @@ bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
     if (events != stack_events)
         free (events);
 
-    return status;
+    return num_new_nodes;
 }

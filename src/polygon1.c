@@ -909,7 +909,20 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
   if (a == NULL || b == NULL)
     error (err_bad_parm);
   if (add)
-    bo_intersect (e, a, b);
+    {
+      int num_new_nodes;
+      int first_pass = 1;
+
+      do
+	{
+	  num_new_nodes = bo_intersect (e, a, b);
+	  if (!first_pass && num_new_nodes != 0)
+	    printf ("Got %i new nodes with another pass\n", num_new_nodes);
+	  first_pass = 0;
+	}
+      while (num_new_nodes != 0);
+
+    }
   do
     {
       if (!add)
