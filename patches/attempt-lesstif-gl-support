@@ -1,7 +1,7 @@
-Bottom: db58dde7259196e78fca4e373069d21b50b6653b
-Top:    2dc87c2bdcaf98691e277ffc997ddb2516842daa
+Bottom: 31b9d884790f1db362e729ffa53cfdfe0103ac29
+Top:    3d95026b3f7b5dc696cb1321b3d96bbd11d53c12
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 17:27:04 +0000
+Date:   2016-01-06 21:11:46 +0000
 
 Attempt lesstif GL support
 
@@ -66,7 +66,7 @@ index f557c37..6a1f341 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 79a914a..f2aae9b 100644
+index 125a81b..970b653 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -356,7 +356,7 @@ index 79a914a..f2aae9b 100644
      {
        int mx, my;
        BoxType region;
-@@ -2900,7 +3087,7 @@ idle_proc (XtPointer dummy)
+@@ -2902,7 +3089,7 @@ idle_proc (XtPointer dummy)
  
    lesstif_update_widget_flags ();
  
@@ -365,7 +365,7 @@ index 79a914a..f2aae9b 100644
    idle_proc_set = 0;
    return True;
  }
-@@ -2917,11 +3104,22 @@ lesstif_need_idle_proc ()
+@@ -2919,11 +3106,22 @@ lesstif_need_idle_proc ()
  static void
  lesstif_invalidate_lr (int l, int r, int t, int b)
  {
@@ -388,7 +388,7 @@ index 79a914a..f2aae9b 100644
  }
  
  void
-@@ -3186,6 +3384,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3188,6 +3386,7 @@ lesstif_set_color (hidGC gc, const char *name)
      }
  }
  
@@ -396,7 +396,7 @@ index 79a914a..f2aae9b 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3250,257 +3449,456 @@ set_gc (hidGC gc)
+@@ -3252,257 +3451,456 @@ set_gc (hidGC gc)
  			  join);
      }
  }
@@ -1052,7 +1052,7 @@ index 79a914a..f2aae9b 100644
  }
  
  static void
-@@ -4114,20 +4512,22 @@ hid_lesstif_init ()
+@@ -4116,20 +4514,22 @@ hid_lesstif_init ()
    common_nogui_graphics_class_init (&lesstif_graphics_class);
    common_draw_helpers_class_init (&lesstif_graphics_class);
  

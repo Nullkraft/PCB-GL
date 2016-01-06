@@ -1,7 +1,7 @@
-Bottom: 2dc87c2bdcaf98691e277ffc997ddb2516842daa
-Top:    71d5b376bd62c562903a6813cb6d00f2cc917388
+Bottom: 3d95026b3f7b5dc696cb1321b3d96bbd11d53c12
+Top:    59adf9d5a1417de9a5da83942dc91bd04c72a246
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:27:04 +0000
+Date:   2016-01-06 21:11:46 +0000
 
 Attempt at getting lesstif+gl to build
 
@@ -11,7 +11,7 @@ Attempt at getting lesstif+gl to build
 ---
 
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index f2aae9b..606960e 100644
+index 970b653..cf1d403 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -63,15 +63,28 @@ static int cur_mask = -1;
@@ -101,7 +101,7 @@ index f2aae9b..606960e 100644
    hidgl_flush_triangles (hidgl);
  
    /* end drawing to current GL-context */
-@@ -3197,6 +3210,7 @@ lesstif_notify_mark_change (bool changes_complete)
+@@ -3199,6 +3212,7 @@ lesstif_notify_mark_change (bool changes_complete)
      invalidate_depth ++;
  }
  
@@ -109,7 +109,7 @@ index f2aae9b..606960e 100644
  static int
  lesstif_set_layer (const char *name, int group, int empty)
  {
-@@ -3252,6 +3266,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -3254,6 +3268,7 @@ lesstif_set_layer (const char *name, int group, int empty)
      }
    return 0;
  }
@@ -117,7 +117,7 @@ index f2aae9b..606960e 100644
  
  static hidGC
  lesstif_make_gc (void)
-@@ -3324,6 +3339,7 @@ lesstif_use_mask (enum mask_mode mode)
+@@ -3326,6 +3341,7 @@ lesstif_use_mask (enum mask_mode mode)
      }
  }
  
@@ -125,7 +125,7 @@ index f2aae9b..606960e 100644
  static void
  lesstif_set_color (hidGC gc, const char *name)
  {
-@@ -3383,6 +3399,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3385,6 +3401,7 @@ lesstif_set_color (hidGC gc, const char *name)
  	}
      }
  }
@@ -133,7 +133,7 @@ index f2aae9b..606960e 100644
  
  #if 0
  static void
-@@ -3451,111 +3468,188 @@ set_gc (hidGC gc)
+@@ -3453,111 +3470,188 @@ set_gc (hidGC gc)
  }
  #endif
  
@@ -401,7 +401,7 @@ index f2aae9b..606960e 100644
  }
  
  void
-@@ -3563,13 +3657,6 @@ ghid_use_mask (enum mask_mode mode)
+@@ -3565,13 +3659,6 @@ ghid_use_mask (enum mask_mode mode)
  {
    static int stencil_bit = 0;
  
@@ -415,7 +415,7 @@ index f2aae9b..606960e 100644
    if (mode == cur_mask)
      return;
  
-@@ -3579,32 +3666,30 @@ ghid_use_mask (enum mask_mode mode)
+@@ -3581,32 +3668,30 @@ ghid_use_mask (enum mask_mode mode)
    switch (mode)
      {
      case HID_MASK_BEFORE:
@@ -463,7 +463,7 @@ index f2aae9b..606960e 100644
        break;
      }
    cur_mask = mode;
-@@ -3622,19 +3707,6 @@ typedef struct
+@@ -3624,19 +3709,6 @@ typedef struct
  } ColorCache;
  
  
@@ -483,7 +483,7 @@ index f2aae9b..606960e 100644
  
  void
  ghid_set_special_colors (HID_Attribute * ha)
-@@ -3663,49 +3735,47 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -3665,49 +3737,47 @@ ghid_set_special_colors (HID_Attribute * ha)
  /* static */ double global_alpha_mult = 1.0;
  /* static */ int alpha_changed = 0;
  
@@ -555,7 +555,7 @@ index f2aae9b..606960e 100644
        alpha_mult = 0.85;
        r = 0.5;
        g = 0.5;
-@@ -3717,19 +3787,19 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -3719,19 +3789,19 @@ ghid_set_color (hidGC gc, const char *name)
    else
      {
        alpha_mult = 0.7;
@@ -578,7 +578,7 @@ index f2aae9b..606960e 100644
  	color.pixel = WhitePixel (display, screen);
  //          if (gdk_color_parse (name, &cc->color))
  //            gdk_color_alloc (gport->colormap, &cc->color);
-@@ -3740,7 +3810,8 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -3742,7 +3812,8 @@ ghid_set_color (hidGC gc, const char *name)
            cc->blue  = cc->color.blue  / 65535.;
            cc->color_set = 1;
          }
@@ -588,7 +588,7 @@ index f2aae9b..606960e 100644
          {
            if (!cc->xor_set)
              {
-@@ -3754,11 +3825,12 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -3756,11 +3827,12 @@ ghid_set_color (hidGC gc, const char *name)
                cc->xor_set = 1;
              }
          }
@@ -602,7 +602,7 @@ index f2aae9b..606960e 100644
      }
    if (1) {
      double maxi, mult;
-@@ -3784,6 +3856,15 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -3786,6 +3858,15 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
@@ -618,7 +618,7 @@ index f2aae9b..606960e 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -3796,13 +3877,17 @@ ghid_global_alpha_mult (hidGC gc, double alpha_mult)
+@@ -3798,13 +3879,17 @@ ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  void
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
@@ -638,7 +638,7 @@ index f2aae9b..606960e 100644
  }
  
  void
-@@ -3821,32 +3906,43 @@ ghid_invalidate_current_gc (void)
+@@ -3823,32 +3908,43 @@ ghid_invalidate_current_gc (void)
    current_gc = NULL;
  }
  
@@ -688,7 +688,7 @@ index f2aae9b..606960e 100644
                    start_angle, delta_angle, view_zoom);
  }
  
-@@ -4512,7 +4608,8 @@ hid_lesstif_init ()
+@@ -4514,7 +4610,8 @@ hid_lesstif_init ()
    common_nogui_graphics_class_init (&lesstif_graphics_class);
    common_draw_helpers_class_init (&lesstif_graphics_class);
  
