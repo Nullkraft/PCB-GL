@@ -1,7 +1,7 @@
-Bottom: 94c124858e3c3e122960b407caa4e3e94ab4e540
-Top:    720d02f9b9d0a83bf96ff80a65c8cf50425899bd
+Bottom: bc85a8b174ddecf09d10ee5f67774fa52bd61615
+Top:    f4748fe1f424cea16d7b729be16ccc521a1329fa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 23:14:30 +0000
+Date:   2016-01-06 23:18:42 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,10 +9,10 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index e5906ed..ee25734 100644
+index f1aff8b..3babbcb 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1897,37 +1897,39 @@ static int
+@@ -1896,37 +1896,39 @@ static int
  ActionDumpLibrary (int argc, char **argv, Coord x, Coord y)
  {
    int i, j;
@@ -70,7 +70,7 @@ index e5906ed..ee25734 100644
  	    }
  	}
      }
-@@ -3277,6 +3279,8 @@ static const char renumber_help[] =
+@@ -3276,6 +3278,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, Coord x, Coord y)
  {
@@ -79,7 +79,7 @@ index e5906ed..ee25734 100644
    bool changed = false;
    ElementType **element_list;
    ElementType **locked_element_list;
-@@ -3616,6 +3620,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3615,6 +3619,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    free (is);
    free (was);
    return 0;
@@ -87,7 +87,7 @@ index e5906ed..ee25734 100644
  }
  
  
-@@ -4637,16 +4642,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4636,16 +4641,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index e5906ed..ee25734 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatType *) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6987,22 +6991,26 @@ find_element_by_refdes (char *refdes)
+@@ -6986,22 +6990,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListType *list, const char *name)
  {
