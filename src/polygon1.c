@@ -1889,6 +1889,9 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
 	  int is_last = contour_is_last (curc);
 	  int isect_contour = (curc->Flags.status == ISECTED);
 
+          if (isect_contour)
+            printf ("Contour intersected\n");
+
 	  next = curc->next;
 
 	  if (isect_contour || hole_contour)
@@ -2354,11 +2357,30 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       *res = a;
       M_POLYAREA_update_primary (&e, res, &holes, action, b);
       M_POLYAREA_separate_isected (&e, res, &holes, &a_isected);
+      {
+        POLYAREA *curp = *res;
+        int count = 0;
+        if (*res != NULL) do {count++;} while ((curp = curp->f) != *res);
+        printf ("%i Polygons after separate_isected\n", count);
+      }
       M_POLYAREA_label_separated (a_isected, b, FALSE);
       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action,
 				    FALSE);
+      {
+        POLYAREA *curp = *res;
+        int count = 0;
+        if (*res != NULL) do {count++;} while ((curp = curp->f) != *res);
+        printf ("%i Polygons after Collect_separated\n", count);
+      }
       M_B_AREA_Collect (&e, b, res, &holes, action);
       poly_Free (&b);
+
+      {
+        POLYAREA *curp = *res;
+        int count = 0;
+        if (*res != NULL) do {count++;} while ((curp = curp->f) != *res);
+        printf ("%i Polygons after M_B_AREA_Collect\n", count);
+      }
 
       /* free a_isected */
       while ((p = a_isected) != NULL)
