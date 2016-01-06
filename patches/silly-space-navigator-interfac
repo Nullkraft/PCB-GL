@@ -1,7 +1,7 @@
-Bottom: 5c61986bc19126df656493bb7e9afc5704a43ef6
-Top:    752bc7524099e65a6ac2e088af06614394a82049
+Bottom: 666c16e27ebb329010a580fe2b2dd1897962f600
+Top:    179044e8e23241960b55759acda378b94dbfb2f9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 23:14:34 +0000
+Date:   2016-01-06 23:27:15 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -12,10 +12,10 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 7b322bb..5c781b1 100644
+index 166e39f..0e4e013 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -324,7 +324,9 @@ LIBGTK_SRCS = \
+@@ -323,7 +323,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-pinout-preview.h \
  	hid/gtk/gui-pinout-window.c \
  	hid/gtk/gui-top-window.c \
@@ -104,10 +104,10 @@ index ae8cfa4..146ff10 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index b3d36b8..806f2a7 100644
+index 5c67265..b37cda1 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -118,6 +118,7 @@ a zoom in/out.
+@@ -117,6 +117,7 @@ a zoom in/out.
  #include "gui-icons-mode-buttons.data"
  #include "gui-icons-misc.data"
  #include "gui-trackball.h"
@@ -115,7 +115,7 @@ index b3d36b8..806f2a7 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1356,6 +1357,7 @@ ghid_build_pcb_top_window (void)
+@@ -1355,6 +1356,7 @@ ghid_build_pcb_top_window (void)
    /* FIXME: IFDEF HACK */
  #ifdef ENABLE_GL
    trackball = ghid_trackball_new ();
@@ -123,7 +123,7 @@ index b3d36b8..806f2a7 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -1846,6 +1848,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -1845,6 +1847,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
