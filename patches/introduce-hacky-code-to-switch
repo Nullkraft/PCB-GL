@@ -1,7 +1,7 @@
-Bottom: 2da1f9fc4e53bbb57df1268302f8ee33d26f5347
-Top:    f44d59910a951b10e99e0ed727ca310b1ff62dec
+Bottom: 1e5b2647a74306623d54183987800fe08aa01574
+Top:    210dec5290a16d99e1e76d6e5de85c9c8ecfa4a4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-04-21 02:08:35 +0100
+Date:   2016-01-06 16:59:14 +0000
 
 Introduce hacky code to switch cursor when over a line we might drag
 
@@ -106,7 +106,7 @@ index a037a10..0c11414 100644
  void notify_crosshair_change (bool changes_complete);
  void notify_mark_change (bool changes_complete);
 diff --git a/src/hid.h b/src/hid.h
-index 632cecd..5059273 100644
+index 7943949..5ecf529 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -492,6 +492,10 @@ typedef enum

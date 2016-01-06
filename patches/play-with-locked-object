@@ -1,7 +1,7 @@
-Bottom: fe0e50a70ce62b35f60d37ef93c3cf5931953f85
-Top:    5927eed4cece5b9115cbdb89c01b5ddc65d5cdaf
+Bottom: 6d141c066b8c69dc87cdb99fa14eef2fdb7a676f
+Top:    8078f282f77195cbbc2e889206868e60dac96b6d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-04-21 02:08:35 +0100
+Date:   2016-01-06 16:59:15 +0000
 
 Play with locked object rendering
 
@@ -14,10 +14,10 @@ the exercise is to determine whether the usability is better or not.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 86b379d..57e4c1f 100644
+index d3f1691..e9bde81 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1146,7 +1146,6 @@ NotifyMode (void)
+@@ -1153,7 +1153,6 @@ NotifyMode (void)
  	    DrawElement (element);
  	    Draw ();
  	    SetChangedFlag (true);
@@ -25,7 +25,7 @@ index 86b379d..57e4c1f 100644
  	  }
  	else if (type != NO_TYPE)
  	  {
-@@ -1161,7 +1160,6 @@ NotifyMode (void)
+@@ -1168,7 +1167,6 @@ NotifyMode (void)
  		Draw ();
  	      }
  	    SetChangedFlag (true);
