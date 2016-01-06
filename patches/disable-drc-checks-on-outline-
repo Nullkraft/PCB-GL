@@ -1,5 +1,5 @@
-Bottom: 42b05b9ff5efc1885bb9fbf1ecdef4e3e11aa951
-Top:    99be1fdcc4837031f5ed7c792380d9172d52bb8a
+Bottom: 4cc845f5a9ef902a5648165877e570eac8aa5174
+Top:    678b7ad4c1bb36b1f5f7d6ccaa2c32cff930e92d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-23 15:32:47 +0000
 
@@ -46,10 +46,10 @@ index 4edb048..2f6dd76 100644
            {
              IsBad = true;
 diff --git a/src/misc.c b/src/misc.c
-index 37aaebb..c816da7 100644
+index 040124c..448ec45 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -2418,6 +2418,14 @@ ElementOrientation (ElementType *e)
+@@ -2453,6 +2453,14 @@ ElementOrientation (ElementType *e)
    return dy > 0 ? 3 : 1;
  }
  
@@ -65,10 +65,10 @@ index 37aaebb..c816da7 100644
  ActionListRotations(int argc, char **argv, Coord x, Coord y)
  {
 diff --git a/src/misc.h b/src/misc.h
-index d6f33e5..b0b254d 100644
+index 85178db..004708e 100644
 --- a/src/misc.h
 +++ b/src/misc.h
-@@ -138,6 +138,8 @@ char * GetInfoString (void);
+@@ -139,6 +139,8 @@ char * GetInfoString (void);
     comparing two similar footprints.  */
  int ElementOrientation (ElementType *e);
  
