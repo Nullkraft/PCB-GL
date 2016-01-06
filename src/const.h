@@ -42,7 +42,7 @@
 #define TOP_SIDE                1
 
 
-#define EXTRA_LAYERS 2 /* 2x silkscreen layers */
+#define EXTRA_LAYERS 4 /* 2x silkscreen, 2x soldermask layers */
 
 /* ---------------------------------------------------------------------------
  * the layer-numbers of the two additional special (silkscreen) layers
@@ -50,6 +50,8 @@
  */
 #define BOTTOM_SILK_LAYER       0
 #define TOP_SILK_LAYER          1
+#define BOTTOM_SOLDERMASK_LAYER 2
+#define TOP_SOLDERMASK_LAYER    3
 
 /* ---------------------------------------------------------------------------
  * misc constants
