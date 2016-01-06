@@ -2185,6 +2185,7 @@ hid_gtk_init ()
 
   ghid_hid.graphics                 = &ghid_graphics;
 
+  common_nogui_graphics_class_init (&ghid_graphics_class);
   common_draw_helpers_class_init (&ghid_graphics_class);
 
   ghid_graphics_class.set_layer      = ghid_set_layer;
@@ -2208,6 +2209,7 @@ hid_gtk_init ()
 
   ghid_graphics.klass = &ghid_graphics_class;
   ghid_graphics.poly_after = true;
+  common_nogui_graphics_init (&ghid_graphics);
   common_draw_helpers_init (&ghid_graphics);
 
   hid_register_hid (&ghid_hid);
