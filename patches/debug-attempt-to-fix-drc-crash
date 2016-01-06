@@ -1,5 +1,5 @@
-Bottom: ec71dca0e47460c711b0a12ce700cedefefc2159
-Top:    583e8d22a1f1e83d50e23c32ef6a358abae05736
+Bottom: bb10fae6bf138a949f6accfb315c0778fec0e3f3
+Top:    c53fd055ab121287eaecc2bf59a8f09fc8c0ff38
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-12 01:22:10 +0100
 
@@ -24,10 +24,10 @@ index 15e40a1..2bddffd 100644
         y1 = MIN (Line->Point1.Y, Line->Point2.Y) - wid;
         x2 = MAX (Line->Point1.X, Line->Point2.X) + wid;
 diff --git a/src/polygon.c b/src/polygon.c
-index 67532a9..10f62ac 100644
+index 1dfb1bc..48aac13 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1707,6 +1707,7 @@ bool
+@@ -1717,6 +1717,7 @@ bool
  IsRectangleInPolygon (Coord X1, Coord Y1, Coord X2, Coord Y2, PolygonType *p)
  {
    POLYAREA *s;
