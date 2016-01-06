@@ -1,7 +1,7 @@
-Bottom: 4ae9b262da8deec38620327533112e7829b84e56
-Top:    178d469a372af08368294091ee1619c72fe0e531
+Bottom: cd485d954db5b5f920688e5402ed88e25632a2b5
+Top:    344a660f363980a4753bbd85051d64c6c1c256d2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2015-04-21 02:08:26 +0100
+Date:   2016-01-06 17:22:10 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -306,10 +306,10 @@ index 9ca83f4..3faeb7d 100644
        {
  	if (layer->LineN || layer->ArcN)
 diff --git a/src/buffer.c b/src/buffer.c
-index 789985d..b9a9334 100644
+index b94125a..8ee77d0 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -578,47 +578,55 @@ void
+@@ -576,47 +576,55 @@ void
  make_footprint_hash ()
  {
    int i, j;
@@ -376,7 +376,7 @@ index 789985d..b9a9334 100644
  
  #ifdef DEBUG
  /* 	      printf(" ... found file footprint %s\n",  fp); */
-@@ -630,7 +638,7 @@ make_footprint_hash ()
+@@ -628,7 +636,7 @@ make_footprint_hash ()
  	  else 
            /* m4 */
  	    {
@@ -385,7 +385,7 @@ index 789985d..b9a9334 100644
  	      if (fp)
  		{
  		  footprint_hash[num_entries].footprint = strdup (fp+1);
-@@ -641,7 +649,7 @@ make_footprint_hash ()
+@@ -639,7 +647,7 @@ make_footprint_hash ()
  		}
  	      else
  		{
@@ -394,7 +394,7 @@ index 789985d..b9a9334 100644
  		  footprint_hash[num_entries].footprint = fp;
  		  footprint_hash[num_entries].footprint_allocated = 0;
  		}
-@@ -718,8 +726,8 @@ LoadFootprintByName (BufferType *Buffer, char *Footprint)
+@@ -735,8 +743,8 @@ LoadFootprintByName (BufferType *Buffer, char *Footprint)
        return 1;
      }
  
