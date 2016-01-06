@@ -1,7 +1,7 @@
-Bottom: a859d4fe73ea69c1cce5b0d6ea86767f134642fd
-Top:    122d22cb9476a20bfea3e37540faa49d04cd1e34
+Bottom: 94c124858e3c3e122960b407caa4e3e94ab4e540
+Top:    720d02f9b9d0a83bf96ff80a65c8cf50425899bd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 23:12:33 +0000
+Date:   2016-01-06 23:14:30 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 794fd76..e1f56b4 100644
+index e5906ed..ee25734 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1897,37 +1897,39 @@ static int
@@ -70,7 +70,7 @@ index 794fd76..e1f56b4 100644
  	    }
  	}
      }
-@@ -3261,6 +3263,8 @@ static const char renumber_help[] =
+@@ -3277,6 +3279,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, Coord x, Coord y)
  {
@@ -79,7 +79,7 @@ index 794fd76..e1f56b4 100644
    bool changed = false;
    ElementType **element_list;
    ElementType **locked_element_list;
-@@ -3600,6 +3604,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3616,6 +3620,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    free (is);
    free (was);
    return 0;
@@ -87,7 +87,7 @@ index 794fd76..e1f56b4 100644
  }
  
  
-@@ -4609,16 +4614,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4637,16 +4642,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index 794fd76..e1f56b4 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatType *) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6959,22 +6963,26 @@ find_element_by_refdes (char *refdes)
+@@ -6987,22 +6991,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListType *list, const char *name)
  {
@@ -1291,10 +1291,10 @@ index a34693a..64c7eff 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index 37aaebb..b85a193 100644
+index 040124c..f60c12e 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -494,7 +494,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
+@@ -529,7 +529,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
  {
    SymbolType *symbol = FontPtr->Symbol;
    unsigned char *s = (unsigned char *) Text->TextString;
@@ -1303,7 +1303,7 @@ index 37aaebb..b85a193 100644
    int space;
  
    Coord minx, miny, maxx, maxy, tx;
-@@ -521,7 +521,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
+@@ -556,7 +556,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
        if (*s <= MAX_FONTPOSITION && symbol[*s].Valid)
          {
            LineType *line = symbol[*s].Line;
@@ -1312,7 +1312,7 @@ index 37aaebb..b85a193 100644
              {
                /* Clamp the width of text lines at the minimum thickness.
                 * NB: Divide 4 in thickness calculation is comprised of a factor
-@@ -814,9 +814,9 @@ CenterDisplay (Coord X, Coord Y)
+@@ -849,9 +849,9 @@ CenterDisplay (Coord X, Coord Y)
  void
  SetFontInfo (FontType *Ptr)
  {
@@ -1324,7 +1324,7 @@ index 37aaebb..b85a193 100644
    Coord totalminy = MAX_COORD;
  
    /* calculate cell with and height (is at least DEFAULT_CELLSIZE)
-@@ -835,8 +835,9 @@ SetFontInfo (FontType *Ptr)
+@@ -870,8 +870,9 @@ SetFontInfo (FontType *Ptr)
  
        minx = miny = MAX_COORD;
        maxx = maxy = 0;
@@ -1335,7 +1335,7 @@ index 37aaebb..b85a193 100644
            minx = MIN (minx, line->Point1.X);
            miny = MIN (miny, line->Point1.Y);
            minx = MIN (minx, line->Point2.X);
-@@ -848,8 +849,11 @@ SetFontInfo (FontType *Ptr)
+@@ -883,8 +884,11 @@ SetFontInfo (FontType *Ptr)
          }
  
        /* move symbol to left edge */
@@ -1349,7 +1349,7 @@ index 37aaebb..b85a193 100644
  
        /* set symbol bounding box with a minimum cell size of (1,1) */
        symbol->Width = maxx - minx + 1;
-@@ -866,8 +870,11 @@ SetFontInfo (FontType *Ptr)
+@@ -901,8 +905,11 @@ SetFontInfo (FontType *Ptr)
      if (symbol->Valid)
        {
          symbol->Height -= totalminy;
@@ -1363,7 +1363,7 @@ index 37aaebb..b85a193 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1839,8 +1846,11 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1874,8 +1881,11 @@ GetGridLockCoordinates (int type, void *ptr1,
        *y = ((ElementType *) ptr2)->MarkY;
        break;
      case POLYGON_TYPE:
@@ -1377,7 +1377,7 @@ index 37aaebb..b85a193 100644
        break;
  
      case LINEPOINT_TYPE:
-@@ -2132,10 +2142,13 @@ pcb_author (void)
+@@ -2167,10 +2177,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
@@ -2143,12 +2143,12 @@ index 46061a3..c036559 100644
  void FreePCBMemory (PCBType *);
  void FreeBoxListMemory (BoxListType *);
 diff --git a/src/report.c b/src/report.c
-index cc6634a..a6d2290 100644
+index 1e49d9d..2d5633b 100644
 --- a/src/report.c
 +++ b/src/report.c
-@@ -343,14 +343,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
+@@ -342,14 +342,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
  
- 	pcb_snprintf (&report[0], str_len, _("%m+POLYGON ID# %ld;  Flags:%s\n"
+ 	pcb_snprintf (report, sizeof (report), _("%m+POLYGON ID# %ld;  Flags:%s\n"
  		 "Its bounding box is %$mD %$mD.\n"
 -		 "It has %d points and could store %d more\n"
 -		 "  without using more memory.\n"
