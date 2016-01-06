@@ -1,7 +1,7 @@
-Bottom: 7d953a42e71f169fa5f99d8976f58b82c6924b6f
-Top:    d8b361cd0611b712593d261787fb02e74e2627c5
+Bottom: 178aedf6e3962612f1f724a2fa5b648e90fe31e3
+Top:    5321a6676d212f886a40af53745e2eaa47ebe8a5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 16:50:35 +0000
+Date:   2016-01-06 17:22:14 +0000
 
 Bentley-Ottann test implementation
 
@@ -13,7 +13,7 @@ XXX: Appears to be some breakage in demo.pcb (See top LHS component layer polygo
 ---
 
 diff --git a/configure.ac b/configure.ac
-index aabd38f..9afffd8 100644
+index f98192b..f557c37 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
@@ -196,7 +196,7 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index aab9e48..bd12421 100644
+index 5c781b1..953e821 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -38,6 +38,22 @@ PCB_SRCS = \
@@ -222,7 +222,7 @@ index aab9e48..bd12421 100644
  	change.c \
  	change.h \
  	clip.c \
-@@ -139,6 +155,7 @@ PCB_SRCS = \
+@@ -138,6 +154,7 @@ PCB_SRCS = \
  	set.h \
  	strflags.c \
  	strflags.h \

@@ -1,7 +1,7 @@
-Bottom: d8b361cd0611b712593d261787fb02e74e2627c5
-Top:    2235d2b7a6c2f9fc34cc2b2eaa4e7d658b916c99
+Bottom: 5321a6676d212f886a40af53745e2eaa47ebe8a5
+Top:    f9aebc9ea69784fc97274694befc43e3a12fac79
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 16:50:35 +0000
+Date:   2016-01-06 17:22:14 +0000
 
 Fix borast not to build for non-GL enabled builds
 
@@ -9,7 +9,7 @@ Fix borast not to build for non-GL enabled builds
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index bd12421..73cdc6f 100644
+index 953e821..75cf7dd 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -38,22 +38,6 @@ PCB_SRCS = \
@@ -35,7 +35,7 @@ index bd12421..73cdc6f 100644
  	change.c \
  	change.h \
  	clip.c \
-@@ -197,8 +181,23 @@ GL_SRCS= \
+@@ -196,8 +180,23 @@ GL_SRCS= \
  	hid/common/hidgl.c \
  	hid/common/hidgl.h \
  	hid/common/trackball.c \
