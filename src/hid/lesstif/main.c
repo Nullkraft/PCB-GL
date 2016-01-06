@@ -52,7 +52,7 @@ typedef struct lesstif_gc_struct
 
   Pixel color;
   const char *colorname;
-  int width;
+  Coord width;
   EndCapStyle cap;
   char xor_set;
   char erase;
