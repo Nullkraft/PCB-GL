@@ -1,7 +1,7 @@
-Bottom: 0a6bd58db80ec3a015ab2c8334185f37d70ac518
-Top:    fdd82d8ae3c8dd31db4c33867fa7e7838504ee30
+Bottom: dda09a2f1fa0c9f1e53f11729732987998a7400a
+Top:    cb67650fcff61a5cbc94e82fbfe8eca9021eca7d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:12:32 +0000
+Date:   2016-01-06 23:14:29 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -67,10 +67,10 @@ index 09a9fb9..49fab31 100644
        {
  	LayerType *layer = &Buffer->Data->Layer[i];
 diff --git a/src/file.c b/src/file.c
-index 8c3dea3..83f7473 100644
+index d1287e8..657efeb 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -849,7 +849,7 @@ WriteBuffer (FILE * FP)
+@@ -850,7 +850,7 @@ WriteBuffer (FILE * FP)
  
    WriteViaData (FP, PASTEBUFFER->Data);
    WriteElementData (FP, PASTEBUFFER->Data);
@@ -79,7 +79,7 @@ index 8c3dea3..83f7473 100644
      WriteLayerData (FP, i, &(PASTEBUFFER->Data->Layer[i]));
    return (STATUS_OK);
  }
-@@ -873,7 +873,7 @@ WritePCB (FILE * FP)
+@@ -874,7 +874,7 @@ WritePCB (FILE * FP)
    WriteViaData (FP, PCB->Data);
    WriteElementData (FP, PCB->Data);
    WritePCBRatData (FP);
@@ -228,10 +228,10 @@ index b988db9..8d7e5c5 100644
  /* Use this to restore them.  */
  void hid_restore_layer_ons (int *save_array);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 8cd3a08..c4c31ee 100644
+index d58fbe7..e5fca5a 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3011,7 +3011,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -3010,7 +3010,7 @@ lesstif_set_layer (const char *name, int group, int empty)
        for (idx = 0; idx < n-1; idx ++)
  	{
  	  int ni = PCB->LayerGroups.Entries[group][idx];
@@ -240,7 +240,7 @@ index 8cd3a08..c4c31ee 100644
  	      && PCB->Data->Layer[ni].On)
  	    break;
  	}
-@@ -3029,7 +3029,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -3028,7 +3028,7 @@ lesstif_set_layer (const char *name, int group, int empty)
    else
      autofade = 0;
  #endif
@@ -401,10 +401,10 @@ index 2f24077..8ef45bc 100644
  		if (layer->On)				\
  			POLYGON_LOOP(layer)
 diff --git a/src/misc.c b/src/misc.c
-index 9a4d9ce..a05d785 100644
+index b760709..e73f95c 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -619,7 +619,7 @@ IsDataEmpty (DataType *Data)
+@@ -654,7 +654,7 @@ IsDataEmpty (DataType *Data)
  
    hasNoObjects = (Data->ViaN == 0);
    hasNoObjects &= (Data->ElementN == 0);
@@ -413,7 +413,7 @@ index 9a4d9ce..a05d785 100644
      hasNoObjects = hasNoObjects &&
        Data->Layer[i].LineN == 0 &&
        Data->Layer[i].ArcN == 0 &&
-@@ -993,7 +993,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1028,7 +1028,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
    int group, member, layer;
    bool c_set = false,        /* flags for the two special layers to */
      s_set = false;              /* provide a default setting for old formats */
@@ -422,7 +422,7 @@ index 9a4d9ce..a05d785 100644
  
    *LayerN = 0;
  
-@@ -1039,7 +1039,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1074,7 +1074,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
    memset (LayerGroup, 0, sizeof (LayerGroupType));
  
    /* Clear assignments */
@@ -431,7 +431,7 @@ index 9a4d9ce..a05d785 100644
      groupnum[layer] = -1;
  
    /* loop over all groups */
-@@ -1254,7 +1254,7 @@ GetLayerNumber (DataType *Data, LayerType *Layer)
+@@ -1289,7 +1289,7 @@ GetLayerNumber (DataType *Data, LayerType *Layer)
  {
    int i;
  
@@ -440,7 +440,7 @@ index 9a4d9ce..a05d785 100644
      if (Layer == &Data->Layer[i])
        break;
    return (i);
-@@ -1367,7 +1367,7 @@ LayerStringToLayerStack (char *s)
+@@ -1402,7 +1402,7 @@ LayerStringToLayerStack (char *s)
  	}
      }
  
@@ -449,7 +449,7 @@ index 9a4d9ce..a05d785 100644
      {
        if (i < max_copper_layer)
          LayerStack[i] = i;
-@@ -1581,7 +1581,7 @@ ResetStackAndVisibility (void)
+@@ -1616,7 +1616,7 @@ ResetStackAndVisibility (void)
    int top_group;
    Cardinal i;
  
@@ -458,7 +458,7 @@ index 9a4d9ce..a05d785 100644
      {
        if (i < max_copper_layer)
          LayerStack[i] = i;
-@@ -1620,7 +1620,7 @@ SaveStackAndVisibility (void)
+@@ -1655,7 +1655,7 @@ SaveStackAndVisibility (void)
                 "yet restored.  cnt = %d\n", SavedStack.cnt);
      }
  
@@ -467,7 +467,7 @@ index 9a4d9ce..a05d785 100644
      {
        if (i < max_copper_layer)
          SavedStack.LayerStack[i] = LayerStack[i];
-@@ -1654,7 +1654,7 @@ RestoreStackAndVisibility (void)
+@@ -1689,7 +1689,7 @@ RestoreStackAndVisibility (void)
                 " wrong.  cnt = %d\n", SavedStack.cnt);
      }
  

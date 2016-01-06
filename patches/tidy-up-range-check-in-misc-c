@@ -1,7 +1,7 @@
-Bottom: c1ad716ecd5b30360489e48c2bf576cc39ce7f1b
-Top:    a859d4fe73ea69c1cce5b0d6ea86767f134642fd
+Bottom: 27714770959c9400a6ff53a384ad68b46b84172f
+Top:    94c124858e3c3e122960b407caa4e3e94ab4e540
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:12:32 +0000
+Date:   2016-01-06 23:14:29 +0000
 
 Tidy up range check in misc.c
 
@@ -20,10 +20,10 @@ to become:
 ---
 
 diff --git a/src/misc.c b/src/misc.c
-index 4f381ae..37aaebb 100644
+index c3e6af0..040124c 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -2015,7 +2015,7 @@ MoveLayerToGroup (int layer, int group)
+@@ -2050,7 +2050,7 @@ MoveLayerToGroup (int layer, int group)
  {
    int prev, i, j;
  

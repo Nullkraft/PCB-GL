@@ -1,7 +1,7 @@
-Bottom: fdd82d8ae3c8dd31db4c33867fa7e7838504ee30
-Top:    c1c6aca8cc0af135366a62d4ffecc6665c148c3a
+Bottom: cb67650fcff61a5cbc94e82fbfe8eca9021eca7d
+Top:    0a9fa9451990438627edf4c9a62acb09736e2774
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:12:32 +0000
+Date:   2016-01-06 23:14:29 +0000
 
 Add support for a two soldermask layers, defining regions of removed mask
 
@@ -149,7 +149,7 @@ index 6a4f345..eb8fbd1 100644
  
  	argv = g_strsplit(data, ",", -1);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 8b19b12..9cc0236 100644
+index 8142b65..b3d36b8 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -530,6 +530,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
@@ -207,7 +207,7 @@ index 8b19b12..9cc0236 100644
    else
      layer = LayerStack[0];
  
-@@ -1929,7 +1940,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
+@@ -1946,7 +1957,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
  }
  
  static const char selectlayer_syntax[] =
@@ -216,7 +216,7 @@ index 8b19b12..9cc0236 100644
  
  static const char selectlayer_help[] =
      N_("Select which layer is the current layer.");
-@@ -1957,6 +1968,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
+@@ -1974,6 +1985,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
      newl = LAYER_BUTTON_SILK;
    else if (strcasecmp (argv[0], "rats") == 0)
      newl = LAYER_BUTTON_RATS;
@@ -343,10 +343,10 @@ index d3bbce3..3c3b4d0 100644
  /* %start-doc options "5 Sizes"
  All parameters should be given with an unit. If no unit is given, 1/100 mil
 diff --git a/src/misc.c b/src/misc.c
-index a05d785..4f381ae 100644
+index e73f95c..c3e6af0 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -991,9 +991,9 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1026,9 +1026,9 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
  {
    char *s;
    int group, member, layer;
@@ -359,7 +359,7 @@ index a05d785..4f381ae 100644
  
    *LayerN = 0;
  
-@@ -1039,7 +1039,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1074,7 +1074,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
    memset (LayerGroup, 0, sizeof (LayerGroupType));
  
    /* Clear assignments */
@@ -368,7 +368,7 @@ index a05d785..4f381ae 100644
      groupnum[layer] = -1;
  
    /* loop over all groups */
-@@ -1062,28 +1062,41 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1097,28 +1097,41 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
              case 'C':
              case 't':
              case 'T':
@@ -420,7 +420,7 @@ index a05d785..4f381ae 100644
  
            /* ignore white spaces and check for separator */
            while (*s && isspace ((int) *s))
-@@ -1100,10 +1113,17 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1135,10 +1148,17 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
     * group string, make group 0 the bottom side, and group 1 the top side.
     * This is done by assigning the relevant silkscreen layers to those groups.
     */
@@ -442,7 +442,7 @@ index a05d785..4f381ae 100644
  
    /* Assign a unique layer group to each layer that was not explicitly
     * assigned a particular group by its presence in the layer group string.
-@@ -2039,20 +2059,29 @@ LayerGroupsToString (LayerGroupType *lg)
+@@ -2074,20 +2094,29 @@ LayerGroupsToString (LayerGroupType *lg)
              int layer = PCB->LayerGroups.Entries[group][entry];
              if (layer == top_silk_layer)
                {
