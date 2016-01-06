@@ -1,5 +1,5 @@
-Bottom: 1c85e19478acfc736822f859ebd77c77e8f53ace
-Top:    6d839693d76c2c1a68fe2f97101bf6a12be72366
+Bottom: 8895464076253321cd6b9f026f3123f6079c7f34
+Top:    b7f287c9d8717063e34bc8231127fa262f3eef85
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -9,7 +9,7 @@ Remove debug from outline generation
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 3a27bbb..c9ebbd6 100644
+index 01d44f3..3e65cad 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -105,7 +105,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -21,7 +21,7 @@ index 3a27bbb..c9ebbd6 100644
  
  #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
  
-@@ -2210,18 +2210,19 @@ struct clip_outline_info {
+@@ -2220,18 +2220,19 @@ struct clip_outline_info {
  
  #define ROUTER_THICKNESS MIL_TO_COORD (10)
  //#define ROUTER_THICKNESS MIL_TO_COORD (0.1)
@@ -46,7 +46,7 @@ index 3a27bbb..c9ebbd6 100644
      return 0;
  
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 10f3d7f..78ba618 100644
+index b489dde..a405dfd 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -102,7 +102,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
