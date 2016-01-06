@@ -1,7 +1,7 @@
-Bottom: 26d631f3e84fa9db91b4b988fe85d6be4bcca77e
-Top:    7f6949e397f8b3143187eed16443341cb90bab40
+Bottom: 3cd8ae7e179b94ca600fa824f8b356889deaead9
+Top:    030bc34775d75ce5b5edfca7117421bdd2ea5324
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 14:53:29 +0000
+Date:   2016-01-06 17:22:08 +0000
 
 parse_y.y: Try to avoid two shift/reduce and reduce/reduce warnings
 
@@ -18,7 +18,7 @@ which we may miss with the loss of parsedata.
 ---
 
 diff --git a/src/parse_y.y b/src/parse_y.y
-index ba31cd6..62fcc4b 100644
+index 8b14675..ec6103b 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -131,7 +131,6 @@ static Coord new_units (PLMeasure m);

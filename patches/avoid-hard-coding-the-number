@@ -1,7 +1,7 @@
-Bottom: 6ea0b87a94ef1f0b834c7039cfbe6c48ba6f8511
-Top:    c7b4988bb5ce3d7e7c9228ede01b2ee611d20fd4
+Bottom: fa41950ef9dedc65a99b676785630516bd6d354a
+Top:    b920aac5d29b8e60d352bc325c3b14b4edf380c5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 14:53:30 +0000
+Date:   2016-01-06 17:22:09 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -15,10 +15,10 @@ dropped, there is one more case where + 2 needs to be replaced with EXTRA_LAYERS
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 9d102f4..789985d 100644
+index c488ab7..b94125a 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -1405,7 +1405,7 @@ MirrorBuffer (BufferType *Buffer)
+@@ -1422,7 +1422,7 @@ MirrorBuffer (BufferType *Buffer)
        Message (_("You can't mirror a buffer that has elements!\n"));
        return;
      }
@@ -549,7 +549,7 @@ index b6b3c30..a402f63 100644
        FreeAttributeListMemory (&layer->Attributes);
        TEXT_LOOP (layer);
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 62fcc4b..629ccd6 100644
+index ec6103b..c0350f8 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -65,7 +65,7 @@ static	PolygonType	*Polygon;
