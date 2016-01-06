@@ -1,7 +1,7 @@
-Bottom: 8a5467a39204834f5256e0819003609acdd4f98f
-Top:    2e4b33a04b964a9fc7959f91a477f61986652016
+Bottom: 3536064de56b4249ba458d54faa5f4b0ac88fe6f
+Top:    21b4e955747ed73f52ad732428ff351c09ac2c40
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-04-21 02:08:23 +0100
+Date:   2016-01-06 14:51:35 +0000
 
 Expose a base hidGC structure for HIDs to inherit from.
 
@@ -13,7 +13,7 @@ wrap up the API calls (rather than calling directly into the vfunc table).
 ---
 
 diff --git a/src/hid.h b/src/hid.h
-index 59c6e35..ef6edb2 100644
+index 43451c4..5ff0c2c 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -54,9 +54,11 @@ extern "C"

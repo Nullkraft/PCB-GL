@@ -1,7 +1,7 @@
-Bottom: eed115bc8fec6578439e2246ea85a762ebb990ab
-Top:    02fbbbbc758be8c071dc124ffa2cd27ce546d483
+Bottom: f74d62ba7fd8eed7f64b9f3719734126976f5551
+Top:    c641b90465e98e58a56ea2fbdc2252735f67d4e0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-04-21 02:08:23 +0100
+Date:   2016-01-06 14:51:36 +0000
 
 Move some fields from the HID* structure to HID_DRAW* and HID_DRAW_CLASS*
 
@@ -264,7 +264,7 @@ index 3083038..f9fc2c7 100644
  }
  
 diff --git a/src/hid.h b/src/hid.h
-index ef6edb2..7d5bdc2 100644
+index 5ff0c2c..26d7edc 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -269,15 +269,6 @@ typedef enum
