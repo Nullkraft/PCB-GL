@@ -1,7 +1,7 @@
-Bottom: 3d4103c81af02a5e28c42206563508218e9f0e9d
-Top:    70ee16b292aa62fecd0da13816b8bc37cef7115f
+Bottom: db84443cd4eeeb112ee7a02e58f49fb0f5c4cead
+Top:    a5821cd77645553c4d61f95aa388e7d8bfaa62d6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 17:22:57 +0000
+Date:   2016-01-06 21:11:40 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index d3f1691..dd09af7 100644
+index 1335d7d..acb95cb 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1897,37 +1897,39 @@ static int
@@ -87,7 +87,7 @@ index d3f1691..dd09af7 100644
  }
  
  
-@@ -4609,16 +4614,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4615,16 +4620,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index d3f1691..dd09af7 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatType *) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6959,22 +6963,26 @@ find_element_by_refdes (char *refdes)
+@@ -6965,22 +6969,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListType *list, const char *name)
  {
@@ -2143,12 +2143,12 @@ index 46061a3..c036559 100644
  void FreePCBMemory (PCBType *);
  void FreeBoxListMemory (BoxListType *);
 diff --git a/src/report.c b/src/report.c
-index 1dd0b95..a7e54a3 100644
+index cc6634a..a6d2290 100644
 --- a/src/report.c
 +++ b/src/report.c
-@@ -332,14 +332,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
+@@ -343,14 +343,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
  
- 	pcb_sprintf (&report[0], _("%m+POLYGON ID# %ld;  Flags:%s\n"
+ 	pcb_snprintf (&report[0], str_len, _("%m+POLYGON ID# %ld;  Flags:%s\n"
  		 "Its bounding box is %$mD %$mD.\n"
 -		 "It has %d points and could store %d more\n"
 -		 "  without using more memory.\n"
