@@ -1,5 +1,5 @@
-Bottom: de3963c506100eeaa9f22f458d90d8bbd9652799
-Top:    ada50cf844fd3dc1a14886bc343dd39e1aaf6cc9
+Bottom: 9e53a7bbd736759166c3f871ed8189743979de6f
+Top:    45756a73f969d709508de073c81f24a8e1d9c13f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:15:59 +0000
 
@@ -78,7 +78,7 @@ index dfa9db4..978ab3d 100644
        last_x = this_x;
        last_y = this_y;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 34d3257..5db9b1d 100644
+index 5617d47..da7344b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -904,9 +904,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -103,7 +103,7 @@ index 34d3257..5db9b1d 100644
    poly_FreeContours (&polygon.NoHoles);
  }
  
-@@ -2694,7 +2697,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2685,7 +2688,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);
@@ -147,7 +147,7 @@ index c606077..be95bd2 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index b51a34e..1548677 100644
+index 21713de..1f8aa77 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -104,11 +104,15 @@ dicer output is used for HIDs which cannot render things with holes
@@ -301,7 +301,7 @@ index b51a34e..1548677 100644
      return NULL;
    frac_circle2 (contour, x, y, v, 1);
    contour->is_round = TRUE;
-@@ -1779,6 +1803,10 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1789,6 +1813,10 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
            strcmp (layer->Name, "route") == 0)
          Data->outline_valid = false;
      }
@@ -312,7 +312,7 @@ index b51a34e..1548677 100644
  
    if (type == POLYGON_TYPE)
      InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
-@@ -2114,10 +2142,18 @@ arc_outline_callback (const BoxType * b, void *cl)
+@@ -2124,10 +2152,18 @@ arc_outline_callback (const BoxType * b, void *cl)
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
  
@@ -331,7 +331,7 @@ index b51a34e..1548677 100644
    info->poly = res;
  
    return 1;
-@@ -2130,10 +2166,18 @@ line_outline_callback (const BoxType * b, void *cl)
+@@ -2140,10 +2176,18 @@ line_outline_callback (const BoxType * b, void *cl)
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
  
@@ -350,7 +350,7 @@ index b51a34e..1548677 100644
    info->poly = res;
  
    return 1;
-@@ -2146,10 +2190,18 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2156,10 +2200,18 @@ pv_outline_callback (const BoxType * b, void *cl)
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
  
@@ -369,7 +369,7 @@ index b51a34e..1548677 100644
    info->poly = res;
  
    return 1;
-@@ -2165,8 +2217,11 @@ polygon_outline_callback (const BoxType * b, void *cl)
+@@ -2175,8 +2227,11 @@ polygon_outline_callback (const BoxType * b, void *cl)
    if (!(np = original_poly (poly)))
      return 0;
  
@@ -382,7 +382,7 @@ index b51a34e..1548677 100644
    info->poly = res;
  
    return 1;
-@@ -2257,13 +2312,19 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2268,13 +2323,19 @@ POLYAREA *board_outline_poly (bool include_holes)
    region.X2 = PCB->MaxWidth;
    region.Y2 = PCB->MaxHeight;
  
@@ -403,7 +403,7 @@ index b51a34e..1548677 100644
      {
        r_search (PCB->Data->pin_tree, &region, NULL, pv_outline_callback, &info);
        r_search (PCB->Data->via_tree, &region, NULL, pv_outline_callback, &info);
-@@ -2271,6 +2332,10 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2282,6 +2343,10 @@ POLYAREA *board_outline_poly (bool include_holes)
  
    clipped = info.poly;
  
@@ -414,15 +414,15 @@ index b51a34e..1548677 100644
    /* Now we just need to work out which pieces of polygon are inside
       and outside the board! */
  
-@@ -2306,6 +2371,7 @@ POLYAREA *board_outline_poly (bool include_holes)
-   g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
+@@ -2329,6 +2394,7 @@ POLYAREA *board_outline_poly (bool include_holes)
+   g_list_free (pieces_to_delete);
  #endif
  
 +#ifdef DEBUG_CIRCSEGS
    // The actual operation we want is to split the test polygon into multiple pieces
    // along the intersection with the polygon contours of any polygon on the outer layer.
    // The result would be nested, touching (not normally produced by the PBO code),
-@@ -2319,6 +2385,7 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2342,6 +2408,7 @@ POLYAREA *board_outline_poly (bool include_holes)
      return whole_world;
    else
      poly_Free (&whole_world);
@@ -431,7 +431,7 @@ index b51a34e..1548677 100644
    return clipped;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ef82f37..694a161 100644
+index 567a473..47e679d 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -49,6 +49,7 @@
