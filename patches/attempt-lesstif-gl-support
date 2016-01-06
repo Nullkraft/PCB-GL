@@ -1,7 +1,7 @@
-Bottom: f1c6e3fc5ab998163f0474d1143aa5e31ee6d1bb
-Top:    971685265ad4ac38333bafbe200287f463cdc518
+Bottom: 967bca733901552dbc152c959a410c5ebe950563
+Top:    7dd36af77ac81bf7c052b153ff2341ab02d0af9c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 16:51:27 +0000
+Date:   2016-01-06 17:22:16 +0000
 
 Attempt lesstif GL support
 
@@ -14,10 +14,10 @@ __ A LOT __ of drawing model changes in lesstif
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 9afffd8..dc425f5 100644
+index f557c37..6a1f341 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -392,7 +392,8 @@ AC_ARG_ENABLE([gl],
+@@ -390,7 +390,8 @@ AC_ARG_ENABLE([gl],
  [  --enable-gl           Enable GL drawing (with GTK HID)],
  [],[
  	case " $with_gui " in
@@ -27,7 +27,7 @@ index 9afffd8..dc425f5 100644
  		* ) enable_gl=no;;
  	esac
  ])
-@@ -402,8 +403,9 @@ AM_CONDITIONAL(USE_GL, test x$enable_gl = xyes)
+@@ -400,8 +401,9 @@ AM_CONDITIONAL(USE_GL, test x$enable_gl = xyes)
  if test "x$enable_gl" = "xyes"; then
  	case " $with_gui " in
  		*\ gtk\ *) ;;
@@ -39,7 +39,7 @@ index 9afffd8..dc425f5 100644
  	;;
  	esac
  
-@@ -736,6 +738,25 @@ for e in $HIDLIST; do
+@@ -734,6 +736,25 @@ for e in $HIDLIST; do
  	    ;;
  	  * ) ;;
  	esac
