@@ -1,7 +1,7 @@
-Bottom: 68e77fabc4b3b0ab3ef6fc6fdcadf5be2455ebbc
-Top:    9b920da9d29c3d25ddb94e45e1bdfec4a2890210
+Bottom: c71eec970d6fa935d5ce44683faac3a794041595
+Top:    8c7959910b7084d40e4c71c389b62364c9018a40
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-04-21 02:08:41 +0100
+Date:   2016-01-06 17:13:35 +0000
 
 Add action to break elements to pieces in place
 
@@ -9,10 +9,10 @@ Add action to break elements to pieces in place
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 57e4c1f..fd7f04e 100644
+index e9bde81..7b6bbc0 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -8018,6 +8018,150 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
+@@ -8033,6 +8033,150 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
    return 0;
  }
  
@@ -163,7 +163,7 @@ index 57e4c1f..fd7f04e 100644
  /* --------------------------------------------------------------------------- */
  
  HID_Action action_action_list[] = {
-@@ -8159,6 +8303,9 @@ HID_Action action_action_list[] = {
+@@ -8174,6 +8318,9 @@ HID_Action action_action_list[] = {
    {"SetValue", 0, ActionSetValue,
     setvalue_help, setvalue_syntax}
    ,

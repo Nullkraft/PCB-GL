@@ -1,7 +1,7 @@
-Bottom: 9a07f8f7670e72e62d03fa55cbeeae5fca302d6c
-Top:    68e77fabc4b3b0ab3ef6fc6fdcadf5be2455ebbc
+Bottom: 7486a7f6dc0fe093834ac46c8947f66fc7c6b7b3
+Top:    c71eec970d6fa935d5ce44683faac3a794041595
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-04-21 02:08:41 +0100
+Date:   2016-01-06 17:13:35 +0000
 
 Add name tags for line contours (and provide partial support for arcs)
 
@@ -9,7 +9,7 @@ Add name tags for line contours (and provide partial support for arcs)
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 14590b5..0bb79dc 100644
+index 99d243a..2b6496f 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2359,7 +2359,7 @@ IsArcInPolygon (ArcType *Arc, PolygonType *Polygon)
