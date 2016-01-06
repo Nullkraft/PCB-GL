@@ -1,5 +1,5 @@
-Bottom: c5587b03f171587ffb4397e377b4a084b37c30e0
-Top:    841e167381b4a1b149e4ea295d3dede57ed4df00
+Bottom: df8fec293a7d9704d72949da407de43728ef5629
+Top:    c8ad99540ba9bc173d3a2df67f3a05a65f577024
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-11-13 00:19:21 +0000
 
@@ -11,7 +11,7 @@ XXX: Why did we change various double typed parameters to float in this patch??
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 64962c0..fb00436 100644
+index 4590ef8..269f134 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -181,7 +181,16 @@ GL_SRCS= \
@@ -2619,10 +2619,10 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c02f263..b7df249 100644
+index da711d5..2f877a9 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1559,7 +1559,7 @@ GhidDrawMask (int side, BoxType * screen)
+@@ -1560,7 +1560,7 @@ GhidDrawMask (int side, BoxType * screen)
    } else {
      glBindTexture (GL_TEXTURE_2D, texture);
    }
@@ -2631,7 +2631,7 @@ index c02f263..b7df249 100644
  
    if (1) {
      GLfloat s_params[] = {0.0001, 0., 0., 0.};
-@@ -1841,6 +1841,11 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1842,6 +1842,11 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_350x800mil_cap (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
@@ -2643,7 +2643,7 @@ index c02f263..b7df249 100644
      }
    return 1;
  }
-@@ -2754,125 +2759,27 @@ ghid_finish_debug_draw (void)
+@@ -2755,125 +2760,27 @@ ghid_finish_debug_draw (void)
    ghid_end_drawing (gport, gport->drawing_area);
  }
  
