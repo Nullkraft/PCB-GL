@@ -1,5 +1,5 @@
-Bottom: 6f625deb81c0710f9597e88211fbce501b028996
-Top:    17b7bae851ac0d3f14f24d54bd6fda77cba21add
+Bottom: 43f49f80cdf7b65917a0063671cc7c3582b06646
+Top:    321e0305937b3b4d4178bad8fe01f977062dfbed
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-06 17:22:51 +0000
 
@@ -31,7 +31,7 @@ index 4f0acb3..2e7bdc2 100644
  
    hid_register_hid (&batch_hid);
 diff --git a/src/hid/bom/bom.c b/src/hid/bom/bom.c
-index 9c81682..d17aea7 100644
+index 522f7be..83ec29d 100644
 --- a/src/hid/bom/bom.c
 +++ b/src/hid/bom/bom.c
 @@ -15,6 +15,7 @@
@@ -90,10 +90,10 @@ index 518ff06..e8acba0 100644
  
  #endif
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index a68e86e..3a7c0c2 100644
+index 9fca3c1..f643c32 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -1622,6 +1622,7 @@ hid_gcode_init ()
+@@ -1628,6 +1628,7 @@ hid_gcode_init ()
  
    gcode_hid.graphics            = &gcode_graphics;
  
@@ -101,7 +101,7 @@ index a68e86e..3a7c0c2 100644
    common_draw_helpers_class_init (&gcode_graphics_class);
  
    gcode_graphics_class.set_layer      = gcode_set_layer;
-@@ -1642,6 +1643,7 @@ hid_gcode_init ()
+@@ -1648,6 +1649,7 @@ hid_gcode_init ()
  
    gcode_graphics.klass = &gcode_graphics_class;
    gcode_graphics.poly_before = true;
@@ -150,10 +150,10 @@ index c44b7e1..44202cd 100644
  
    hid_register_hid (&ghid_hid);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 889064a..f5c21bb 100644
+index 49c8ad1..d3db3b7 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4113,6 +4113,7 @@ hid_lesstif_init ()
+@@ -4115,6 +4115,7 @@ hid_lesstif_init ()
  
    lesstif_hid.graphics                = &lesstif_graphics;
  
@@ -161,7 +161,7 @@ index 889064a..f5c21bb 100644
    common_draw_helpers_class_init (&lesstif_graphics_class);
  
    lesstif_graphics_class.set_layer      = lesstif_set_layer;
-@@ -4134,6 +4135,7 @@ hid_lesstif_init ()
+@@ -4136,6 +4137,7 @@ hid_lesstif_init ()
  
    lesstif_graphics.klass = &lesstif_graphics_class;
    lesstif_graphics.poly_before = true;

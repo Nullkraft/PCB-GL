@@ -1,5 +1,5 @@
-Bottom: 1ef7c1684425775219336a1f60f500b5aa0abe51
-Top:    6f625deb81c0710f9597e88211fbce501b028996
+Bottom: b7bd0a9e227944f8ef3ee9a4e24d4af7759d9fc9
+Top:    43f49f80cdf7b65917a0063671cc7c3582b06646
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-06 17:22:51 +0000
 
@@ -378,10 +378,10 @@ index 3b85044..85e678d 100644
    klass->destroy_gc =      nogui_destroy_gc;
    klass->use_mask =        nogui_use_mask;
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 654b5e0..a68e86e 100644
+index dc3ffcf..9fca3c1 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -1613,12 +1613,10 @@ hid_gcode_init ()
+@@ -1619,12 +1619,10 @@ hid_gcode_init ()
    gcode_hid.name                = "gcode";
    gcode_hid.description         = "G-CODE export";
    gcode_hid.exporter            = 1;
@@ -394,7 +394,7 @@ index 654b5e0..a68e86e 100644
    gcode_hid.calibrate           = gcode_calibrate;
    gcode_hid.set_crosshair       = gcode_set_crosshair;
  
-@@ -1626,6 +1624,7 @@ hid_gcode_init ()
+@@ -1632,6 +1630,7 @@ hid_gcode_init ()
  
    common_draw_helpers_class_init (&gcode_graphics_class);
  
@@ -402,7 +402,7 @@ index 654b5e0..a68e86e 100644
    gcode_graphics_class.make_gc        = gcode_make_gc;
    gcode_graphics_class.destroy_gc     = gcode_destroy_gc;
    gcode_graphics_class.use_mask       = gcode_use_mask;
-@@ -1642,6 +1641,7 @@ hid_gcode_init ()
+@@ -1648,6 +1647,7 @@ hid_gcode_init ()
    gcode_graphics_class.fill_rect      = gcode_fill_rect;
  
    gcode_graphics.klass = &gcode_graphics_class;
@@ -483,10 +483,10 @@ index 1a64566..c44b7e1 100644
  
    hid_register_hid (&ghid_hid);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index e2626b6..889064a 100644
+index 629b60b..49c8ad1 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4072,7 +4072,6 @@ hid_lesstif_init ()
+@@ -4074,7 +4074,6 @@ hid_lesstif_init ()
    lesstif_hid.name                    = "lesstif";
    lesstif_hid.description             = "LessTif - a Motif clone for X/Unix";
    lesstif_hid.gui                     = 1;
@@ -494,7 +494,7 @@ index e2626b6..889064a 100644
  
    lesstif_hid.get_export_options      = lesstif_get_export_options;
    lesstif_hid.do_export               = lesstif_do_export;
-@@ -4081,7 +4080,6 @@ hid_lesstif_init ()
+@@ -4083,7 +4082,6 @@ hid_lesstif_init ()
    lesstif_hid.invalidate_all          = lesstif_invalidate_all;
    lesstif_hid.notify_crosshair_change = lesstif_notify_crosshair_change;
    lesstif_hid.notify_mark_change      = lesstif_notify_mark_change;
@@ -502,7 +502,7 @@ index e2626b6..889064a 100644
  
    lesstif_hid.calibrate               = lesstif_calibrate;
    lesstif_hid.shift_is_pressed        = lesstif_shift_is_pressed;
-@@ -4117,6 +4115,7 @@ hid_lesstif_init ()
+@@ -4119,6 +4117,7 @@ hid_lesstif_init ()
  
    common_draw_helpers_class_init (&lesstif_graphics_class);
  
@@ -510,7 +510,7 @@ index e2626b6..889064a 100644
    lesstif_graphics_class.make_gc        = lesstif_make_gc;
    lesstif_graphics_class.destroy_gc     = lesstif_destroy_gc;
    lesstif_graphics_class.use_mask       = lesstif_use_mask;
-@@ -4134,6 +4133,7 @@ hid_lesstif_init ()
+@@ -4136,6 +4135,7 @@ hid_lesstif_init ()
    lesstif_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
  
    lesstif_graphics.klass = &lesstif_graphics_class;

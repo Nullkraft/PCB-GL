@@ -1,5 +1,5 @@
-Bottom: b4be4cf86a17b86204313505866daaabbe586217
-Top:    776e25c234f3d9e98824c754d07a50181f79954e
+Bottom: b7b33874964645a205c971809ceb2b241a6dc42e
+Top:    ff08162da6f91a8872d8b5c41f2d638aa908357f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-06 17:22:52 +0000
 
@@ -60,10 +60,10 @@ index 2618d98..a746411 100644
    common_nogui_init (&nogui_hid);
  
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index a4bdd9d..f29f1fa 100644
+index f162783..eb5a2d5 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -1620,8 +1620,6 @@ hid_gcode_init ()
+@@ -1626,8 +1626,6 @@ hid_gcode_init ()
    gcode_hid.calibrate           = gcode_calibrate;
    gcode_hid.set_crosshair       = gcode_set_crosshair;
  
@@ -125,10 +125,10 @@ index 44202cd..955d6f4 100644
    common_draw_helpers_class_init (&ghid_graphics_class);
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index c099230..a31f002 100644
+index 106465f..8cd3a08 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4030,7 +4030,7 @@ lesstif_request_debug_draw (void)
+@@ -4032,7 +4032,7 @@ lesstif_request_debug_draw (void)
  {
    /* Send drawing to the backing pixmap */
    pixmap = main_pixmap;
@@ -137,7 +137,7 @@ index c099230..a31f002 100644
  }
  
  static void
-@@ -4111,8 +4111,6 @@ hid_lesstif_init ()
+@@ -4113,8 +4113,6 @@ hid_lesstif_init ()
    lesstif_hid.flush_debug_draw        = lesstif_flush_debug_draw;
    lesstif_hid.finish_debug_draw       = lesstif_finish_debug_draw;
  

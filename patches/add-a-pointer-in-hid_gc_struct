@@ -1,5 +1,5 @@
-Bottom: 45f583c4ec471cd0af37bcd836a79b6e3629c516
-Top:    fd9480f81fcd5c80c0fc57357b78f16bc71a32d9
+Bottom: 713c8bacc9fa46644c3e7cb286619c3a91089bad
+Top:    b44011bc674511267a2b6d3198a4548c653a78b0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-06 17:22:51 +0000
 
@@ -9,10 +9,10 @@ Add a pointer in hid_gc_struct to link a gc and the relevant HID_DRAW vfunc tabl
 ---
 
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 9ec7d32..99b8653 100644
+index fd3276b..c30c4a0 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -1178,6 +1178,7 @@ gcode_make_gc (void)
+@@ -1183,6 +1183,7 @@ gcode_make_gc (void)
    gcodeGC gcode_gc = (gcodeGC)gc;
  
    gc->hid = &gcode_hid;
@@ -57,10 +57,10 @@ index 0c836eb..68cdd3d 100644
    gtk_gc->colorname = Settings.BackgroundColor;
    gtk_gc->alpha_mult = 1.0;
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 94e2142..a5184a0 100644
+index 30880c1..91d1a93 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3060,6 +3060,7 @@ lesstif_make_gc (void)
+@@ -3062,6 +3062,7 @@ lesstif_make_gc (void)
    hidGC gc = (hidGC)calloc (1, sizeof (struct lesstif_gc_struct));
  
    gc->hid = &lesstif_hid;

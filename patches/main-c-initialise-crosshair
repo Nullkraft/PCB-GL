@@ -1,5 +1,5 @@
-Bottom: fccaacf1da4e959822b781f12cdfa516385cacc6
-Top:    1ef7c1684425775219336a1f60f500b5aa0abe51
+Bottom: 6c70030fb98d52e8035c816154a17e5b3f41d0ef
+Top:    b7bd0a9e227944f8ef3ee9a4e24d4af7759d9fc9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-06 17:22:51 +0000
 
@@ -25,10 +25,10 @@ index 27bcc71..252e2bf 100644
    common_nogui_init (&batch_hid);
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 00c439c..e2626b6 100644
+index e46e364..629b60b 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4131,7 +4131,7 @@ hid_lesstif_init ()
+@@ -4133,7 +4133,7 @@ hid_lesstif_init ()
    lesstif_graphics_class.fill_polygon   = lesstif_fill_polygon;
    lesstif_graphics_class.fill_rect      = lesstif_fill_rect;
  
@@ -38,10 +38,10 @@ index 00c439c..e2626b6 100644
    lesstif_graphics.klass = &lesstif_graphics_class;
    common_draw_helpers_init (&lesstif_graphics);
 diff --git a/src/main.c b/src/main.c
-index 04a116c..58ba024 100644
+index ce95361..d3bbce3 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -1990,8 +1990,7 @@ main (int argc, char *argv[])
+@@ -1988,8 +1988,7 @@ main (int argc, char *argv[])
  
    ResetStackAndVisibility ();
  

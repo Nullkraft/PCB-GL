@@ -1,5 +1,5 @@
-Bottom: 06b9edbbec0bcb4c9b3cdb8be3c676da5a125d36
-Top:    b4be4cf86a17b86204313505866daaabbe586217
+Bottom: 0afea727bf28a15386b3b185afbf61de0703adde
+Top:    b7b33874964645a205c971809ceb2b241a6dc42e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-06 17:22:52 +0000
 
@@ -373,7 +373,7 @@ index 1b4746f..7014af5 100644
    return &box;
  }
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 3a7c0c2..a4bdd9d 100644
+index f643c32..f162783 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -470,7 +470,7 @@ gcode_start_png_export ()
@@ -466,7 +466,7 @@ index c7197d4..32a125d 100644
    glPopMatrix ();
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index f828343..c099230 100644
+index df55d14..106465f 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -831,7 +831,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
@@ -487,7 +487,7 @@ index f828343..c099230 100644
        draw_grid ();
        lesstif_use_mask (HID_MASK_OFF);
        show_crosshair (0); /* To keep the drawn / not drawn info correct */
-@@ -3803,7 +3803,7 @@ pinout_callback (Widget da, PinoutData * pd,
+@@ -3805,7 +3805,7 @@ pinout_callback (Widget da, PinoutData * pd,
    region.Y2 = PCB->MaxHeight;
  
    XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);

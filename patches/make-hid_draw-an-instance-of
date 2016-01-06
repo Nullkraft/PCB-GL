@@ -1,5 +1,5 @@
-Bottom: 1d753b5d626ccd1635dd3ccd763bd38f4a9a3e51
-Top:    fccaacf1da4e959822b781f12cdfa516385cacc6
+Bottom: 3292c988da7cf60d89120d09248a04f69be4a878
+Top:    6c70030fb98d52e8035c816154a17e5b3f41d0ef
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-06 17:22:51 +0000
 
@@ -262,7 +262,7 @@ index ed45bad..3b85044 100644
  
    return &nogui_hid;
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 99b8653..654b5e0 100644
+index c30c4a0..dc3ffcf 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -78,6 +78,7 @@
@@ -273,7 +273,7 @@ index 99b8653..654b5e0 100644
  
  struct color_struct
  {
-@@ -1604,9 +1605,9 @@ hid_gcode_init ()
+@@ -1610,9 +1611,9 @@ hid_gcode_init ()
  {
    memset (&gcode_hid, 0, sizeof (HID));
    memset (&gcode_graphics, 0, sizeof (HID_DRAW));
@@ -284,7 +284,7 @@ index 99b8653..654b5e0 100644
  
    gcode_hid.struct_size         = sizeof (HID);
    gcode_hid.name                = "gcode";
-@@ -1623,20 +1624,25 @@ hid_gcode_init ()
+@@ -1629,20 +1630,25 @@ hid_gcode_init ()
  
    gcode_hid.graphics            = &gcode_graphics;
  
@@ -483,7 +483,7 @@ index 7975a88..1a64566 100644
    hid_register_hid (&ghid_hid);
  #include "gtk_lists.h"
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index a5184a0..00c439c 100644
+index 91d1a93..e46e364 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -60,6 +60,7 @@ typedef struct lesstif_gc_struct
@@ -494,7 +494,7 @@ index a5184a0..00c439c 100644
  
  #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
  
-@@ -4063,9 +4064,9 @@ hid_lesstif_init ()
+@@ -4065,9 +4066,9 @@ hid_lesstif_init ()
  {
    memset (&lesstif_hid, 0, sizeof (HID));
    memset (&lesstif_graphics, 0, sizeof (HID_DRAW));
@@ -505,7 +505,7 @@ index a5184a0..00c439c 100644
  
    lesstif_hid.struct_size             = sizeof (HID);
    lesstif_hid.name                    = "lesstif";
-@@ -4114,22 +4115,27 @@ hid_lesstif_init ()
+@@ -4116,22 +4117,27 @@ hid_lesstif_init ()
  
    lesstif_hid.graphics                = &lesstif_graphics;
  
