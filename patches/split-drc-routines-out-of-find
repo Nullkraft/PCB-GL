@@ -1,5 +1,5 @@
-Bottom: bc85a8b174ddecf09d10ee5f67774fa52bd61615
-Top:    f429a762be33ce5e4f7dcfd400b807131b37ae64
+Bottom: 4ae9b262da8deec38620327533112e7829b84e56
+Top:    7dd5962992f731b4cbdf8253cbcdea05d8e02b80
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-01-01 15:21:49 +0000
 
@@ -9,10 +9,10 @@ Split drc routines out of find.c into new file drc.c
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index d451310..680d83b 100644
+index e7e3c5b..2dcac10 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -59,6 +59,8 @@ PCB_SRCS = \
+@@ -60,6 +60,8 @@ PCB_SRCS = \
  	dolists.h \
  	draw.c \
  	draw.h \
@@ -22,10 +22,10 @@ index d451310..680d83b 100644
  	drill.h \
  	edif.y \
 diff --git a/src/action.c b/src/action.c
-index f1aff8b..5baf324 100644
+index d3f1691..28fa865 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -48,6 +48,7 @@
+@@ -49,6 +49,7 @@
  #include "crosshair.h"
  #include "data.h"
  #include "draw.h"
