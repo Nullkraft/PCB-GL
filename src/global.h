@@ -490,6 +490,7 @@ typedef struct PCBType
   bool Changed,		/* layout has been changed */
     ViaOn,			/* visibility flags */
     ElementOn, RatOn, InvisibleObjectsOn, PinOn, SilkActive,	/* active layer is actually silk */
+    SolderMaskActive, /* active layer is actually solder mask */
     RatDraw;			 /* we're drawing rats */
   char *ViaColor,		/* some colors */
    *ViaSelectedColor,
@@ -501,7 +502,7 @@ typedef struct PCBType
     *InvisibleObjectsColor,
     *InvisibleMarkColor,
     *ElementSelectedColor,
-    *RatSelectedColor, *ConnectedColor, *FoundColor, *WarnColor, *MaskColor;
+    *RatSelectedColor, *ConnectedColor, *FoundColor, *WarnColor, *MaskColor, *MaskSelectedColor;
   long CursorX,			/* cursor position as saved with layout */
     CursorY, Clipping;
   Coord Bloat,			/* drc sizes saved with layout */
@@ -631,7 +632,7 @@ typedef struct			/* some resources... */
     *OffLimitColor,
     *GridColor,
     *LayerColor[MAX_LAYER],
-    *LayerSelectedColor[MAX_LAYER], *WarnColor, *MaskColor;
+    *LayerSelectedColor[MAX_LAYER], *WarnColor, *MaskColor, *MaskSelectedColor;
   Coord ViaThickness,		/* some preset values */
     ViaDrillingHole, LineThickness, RatThickness, Keepaway,	/* default size of a new layout */
     MaxWidth, MaxHeight,

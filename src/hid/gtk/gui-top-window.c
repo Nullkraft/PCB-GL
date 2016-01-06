@@ -530,6 +530,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
   ignore_layer_update = true;
   /* Select Layer */
   PCB->SilkActive = (layer == LAYER_BUTTON_SILK);
+  PCB->SolderMaskActive = (layer == LAYER_BUTTON_MASK);
   PCB->RatDraw  = (layer == LAYER_BUTTON_RATS);
   if (layer == LAYER_BUTTON_SILK)
     {
@@ -539,6 +540,11 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
   else if (layer == LAYER_BUTTON_RATS)
     {
       PCB->RatOn = true;
+      hid_action ("LayersChanged");
+    }
+  else if (layer == LAYER_BUTTON_MASK)
+    {
+      SET_FLAG (SHOWMASKFLAG, PCB);
       hid_action ("LayersChanged");
     }
   else if (layer < max_copper_layer)
@@ -609,6 +615,7 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
     case LAYER_BUTTON_FARSIDE:
       PCB->InvisibleObjectsOn = active;
       PCB->Data->BACKSILKLAYER.On = (active && PCB->ElementOn);
+      PCB->Data->BACKSOLDERMASKLAYER.On = (active && TEST_FLAG (SHOWMASKFLAG, PCB));
       redraw = TRUE;
       break;
     case LAYER_BUTTON_MASK:
@@ -616,6 +623,8 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
         SET_FLAG (SHOWMASKFLAG, PCB);
       else
         CLEAR_FLAG (SHOWMASKFLAG, PCB);
+      PCB->Data->SOLDERMASKLAYER.On = TEST_FLAG (SHOWMASKFLAG, PCB);
+      PCB->Data->BACKSOLDERMASKLAYER.On = TEST_FLAG (SHOWMASKFLAG, PCB);
       redraw = TRUE;
       break;
     default:
@@ -810,7 +819,7 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
                                  text, color_string, active, FALSE, FALSE);
   layer_process (&color_string, &text, &active, LAYER_BUTTON_MASK);
   ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_MASK,
-                                 text, color_string, active, FALSE, FALSE);
+                                 text, color_string, active, TRUE, FALSE);
 }
 
 /*! \brief callback for ghid_layer_selector_update_colors */
@@ -883,6 +892,8 @@ ghid_layer_buttons_update (void)
     layer = LAYER_BUTTON_RATS;
   else if (PCB->SilkActive)
     layer = LAYER_BUTTON_SILK;
+  else if (PCB->SolderMaskActive)
+    layer = LAYER_BUTTON_MASK;
   else
     layer = LayerStack[0];
 
@@ -1946,7 +1957,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
 }
 
 static const char selectlayer_syntax[] =
-    N_("SelectLayer(1..MAXLAYER|Silk|Rats)");
+    N_("SelectLayer(1..MAXLAYER|Silk|Rats|Mask)");
 
 static const char selectlayer_help[] =
     N_("Select which layer is the current layer.");
@@ -1974,6 +1985,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
     newl = LAYER_BUTTON_SILK;
   else if (strcasecmp (argv[0], "rats") == 0)
     newl = LAYER_BUTTON_RATS;
+  else if (strcasecmp (argv[0], "mask") == 0)
+    newl = LAYER_BUTTON_MASK;
   else if (newl == -1)
     newl = atoi (argv[0]) - 1;
 
