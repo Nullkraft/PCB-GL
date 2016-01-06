@@ -1,7 +1,7 @@
-Bottom: d576a3954dab509327e5802dd3270d89e01ce7de
-Top:    2ee855a0d4f27fcdc2067fbfe1574e838fe8651f
+Bottom: 1ef7c1684425775219336a1f60f500b5aa0abe51
+Top:    6f625deb81c0710f9597e88211fbce501b028996
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:22:04 +0000
+Date:   2016-01-06 17:22:51 +0000
 
 Move some fields from the HID* structure to HID_DRAW* and HID_DRAW_CLASS*
 
@@ -444,10 +444,10 @@ index b5e4a00..4690dd5 100644
    ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
  }
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 56564fd..20becc7 100644
+index 1a64566..c44b7e1 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2137,7 +2137,6 @@ hid_gtk_init ()
+@@ -2140,7 +2140,6 @@ hid_gtk_init ()
    ghid_hid.name                     = "gtk";
    ghid_hid.description              = "Gtk - The Gimp Toolkit";
    ghid_hid.gui                      = 1;
@@ -455,7 +455,7 @@ index 56564fd..20becc7 100644
  
    ghid_hid.get_export_options       = ghid_get_export_options;
    ghid_hid.do_export                = ghid_do_export;
-@@ -2146,7 +2145,6 @@ hid_gtk_init ()
+@@ -2149,7 +2148,6 @@ hid_gtk_init ()
    ghid_hid.invalidate_all           = ghid_invalidate_all;
    ghid_hid.notify_crosshair_change  = ghid_notify_crosshair_change;
    ghid_hid.notify_mark_change       = ghid_notify_mark_change;
@@ -463,7 +463,7 @@ index 56564fd..20becc7 100644
  
    ghid_hid.calibrate                = ghid_calibrate;
    ghid_hid.shift_is_pressed         = ghid_shift_is_pressed;
-@@ -2186,6 +2184,7 @@ hid_gtk_init ()
+@@ -2189,6 +2187,7 @@ hid_gtk_init ()
  
    common_draw_helpers_class_init (&ghid_graphics_class);
  
@@ -471,7 +471,7 @@ index 56564fd..20becc7 100644
    ghid_graphics_class.make_gc        = ghid_make_gc;
    ghid_graphics_class.destroy_gc     = ghid_destroy_gc;
    ghid_graphics_class.use_mask       = ghid_use_mask;
-@@ -2202,7 +2201,10 @@ hid_gtk_init ()
+@@ -2205,7 +2204,10 @@ hid_gtk_init ()
  
    ghid_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
  

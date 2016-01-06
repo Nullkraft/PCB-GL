@@ -1,7 +1,7 @@
-Bottom: 52c4ff2a76381352e46c4567ffc15ec39a3a966f
-Top:    dadc01d50af4d963165ea165a27d6e103f98bd5f
+Bottom: b4be4cf86a17b86204313505866daaabbe586217
+Top:    776e25c234f3d9e98824c754d07a50181f79954e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:22:04 +0000
+Date:   2016-01-06 17:22:52 +0000
 
 Remove graphics pointer from HID structure
 
@@ -112,10 +112,10 @@ index 32a125d..70ec294 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 190a1cd..7afe3c0 100644
+index 44202cd..955d6f4 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2180,8 +2180,6 @@ hid_gtk_init ()
+@@ -2183,8 +2183,6 @@ hid_gtk_init ()
    ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
    ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
  

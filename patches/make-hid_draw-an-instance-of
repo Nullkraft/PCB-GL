@@ -1,7 +1,7 @@
-Bottom: a2bac29e1cf19ca72c8e1ef592e0d9c7a7cc451c
-Top:    154342a2816fb721c940db082200b394243536f7
+Bottom: 1d753b5d626ccd1635dd3ccd763bd38f4a9a3e51
+Top:    fccaacf1da4e959822b781f12cdfa516385cacc6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:22:04 +0000
+Date:   2016-01-06 17:22:51 +0000
 
 Make HID_DRAW * an instance of the HID_DRAW class, not the API vfunc table
 
@@ -418,10 +418,10 @@ index 3cd7e92..b5e4a00 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index b41a356..56564fd 100644
+index 7975a88..1a64566 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2088,6 +2088,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
+@@ -2091,6 +2091,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
  
  HID ghid_hid;
  HID_DRAW ghid_graphics;
@@ -429,7 +429,7 @@ index b41a356..56564fd 100644
  
  void
  hid_gtk_init ()
-@@ -2128,9 +2129,9 @@ hid_gtk_init ()
+@@ -2131,9 +2132,9 @@ hid_gtk_init ()
  
    memset (&ghid_hid, 0, sizeof (HID));
    memset (&ghid_graphics, 0, sizeof (HID_DRAW));
@@ -440,7 +440,7 @@ index b41a356..56564fd 100644
  
    ghid_hid.struct_size              = sizeof (HID);
    ghid_hid.name                     = "gtk";
-@@ -2183,21 +2184,26 @@ hid_gtk_init ()
+@@ -2186,21 +2187,26 @@ hid_gtk_init ()
  
    ghid_hid.graphics                 = &ghid_graphics;
  
