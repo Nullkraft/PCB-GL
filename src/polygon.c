@@ -868,6 +868,20 @@ SubtractPad (PadType * pad, PolygonType * p)
   return Subtract (np, p, true);
 }
 
+static int
+SubtractPolygon (PolygonType * poly, PolygonType * p)
+{
+  POLYAREA *np;
+
+  /* Don't subtract from ourselves! */
+  if (poly == p || !TEST_FLAG (CLEARLINEFLAG, poly))
+    return 0;
+
+  np = original_poly (poly);
+
+  return Subtract (np, p, true);
+}
+
 struct cpInfo
 {
   const BoxType *other;
@@ -1020,6 +1034,24 @@ text_sub_callback (const BoxType * b, void *cl)
 }
 
 static int
+poly_sub_callback (const BoxType * b, void *cl)
+{
+  PolygonType *poly = (PolygonType *) b;
+  struct cpInfo *info = (struct cpInfo *) cl;
+  PolygonType *polygon;
+
+  /* don't subtract the object that was put back! */
+  if (b == info->other)
+    return 0;
+  if (!TEST_FLAG (CLEARLINEFLAG, poly))
+    return 0;
+  polygon = info->polygon;
+  if (SubtractPolygon (poly, polygon) < 0)
+    longjmp (info->env, 1);
+  return 1;
+}
+
+static int
 Group (DataType *Data, Cardinal layer)
 {
   Cardinal i, j;
@@ -1071,6 +1103,8 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
           r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
 	r +=
           r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
+        r +=
+          r_search (layer->polygon_tree, &region, NULL, poly_sub_callback, &info);
       }
       END_LOOP;
       r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
@@ -1204,6 +1238,26 @@ UnsubtractPad (PadType * pad, LayerType * l, PolygonType * p)
   if (!Unsubtract (np, p))
     return 0;
   clearPoly (PCB->Data, l, p, (const BoxType *) pad, 2 * UNSUBTRACT_BLOAT);
+  return 1;
+}
+
+static int
+UnsubtractPolygon (PolygonType * poly, LayerType * l, PolygonType * p)
+{
+  POLYAREA *np;
+
+  /* Don't subtract from ourselves! */
+  if (poly == p || !TEST_FLAG (CLEARLINEFLAG, poly))
+    return 0;
+
+  /* overlap a bit to prevent notches from rounding errors */
+  np = BoxPolyBloated (&poly->BoundingBox, UNSUBTRACT_BLOAT);
+
+  if (!np)
+    return 0;
+  if (!Unsubtract (np, p))
+    return 0;
+  clearPoly (PCB->Data, l, p, (const BoxType *) poly, 2 * UNSUBTRACT_BLOAT);
   return 1;
 }
 
@@ -1488,6 +1542,10 @@ subtract_plow (DataType *Data, LayerType *Layer, PolygonType *Polygon,
       SubtractPad ((PadType *) ptr2, Polygon);
       Polygon->NoHolesValid = 0;
       return 1;
+    case POLYGON_TYPE:
+      SubtractPolygon ((PolygonType *) ptr2, Polygon);
+      Polygon->NoHolesValid = 0;
+      return 1;
     case TEXT_TYPE:
       SubtractText ((TextType *) ptr2, Polygon);
       Polygon->NoHolesValid = 0;
@@ -1514,6 +1572,9 @@ add_plow (DataType *Data, LayerType *Layer, PolygonType *Polygon,
       return 1;
     case PAD_TYPE:
       UnsubtractPad ((PadType *) ptr2, Layer, Polygon);
+      return 1;
+    case POLYGON_TYPE:
+      UnsubtractPolygon ((PolygonType *) ptr2, Layer, Polygon);
       return 1;
     case TEXT_TYPE:
       UnsubtractText ((TextType *) ptr2, Layer, Polygon);
@@ -1580,6 +1641,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
     case LINE_TYPE:
     case ARC_TYPE:
     case TEXT_TYPE:
+    case POLYGON_TYPE:
       /* the cast works equally well for lines and arcs */
       if (!TEST_FLAG (CLEARLINEFLAG, (LineType *) ptr2))
         return 0;
@@ -1645,8 +1707,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
 
   if (type == POLYGON_TYPE)
     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
-  else
-    PlowsPolygon (Data, type, ptr1, ptr2, add_plow, NULL);
+  PlowsPolygon (Data, type, ptr1, ptr2, add_plow, NULL);
 }
 
 void
@@ -1667,8 +1728,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
 
   if (type == POLYGON_TYPE)
     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
-  else
-    PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow, NULL);
+  PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow, NULL);
 }
 
 bool
