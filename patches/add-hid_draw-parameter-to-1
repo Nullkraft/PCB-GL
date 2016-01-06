@@ -1,7 +1,7 @@
-Bottom: ff7d950675a34b4ed992d4aad3a9496e8feeb18c
-Top:    df96a2e33dd90a45d2d2abf0ba306ece18097621
+Bottom: d4e15dab1e184c46fff2cb0adf032397d30f0998
+Top:    dcc49ae4ed2717a41b5ee0aae689cc00cc89b1b2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-04-21 02:08:39 +0100
+Date:   2016-01-06 17:06:08 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->{flush,finish}_debug_draw_gc() function
 
@@ -9,10 +9,10 @@ Add HID_DRAW* parameter to (HID_DRAW *)->{flush,finish}_debug_draw_gc() function
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 0b4b9e9..1af0765 100644
+index 9ca83f4..4c21f68 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
-@@ -3673,7 +3673,7 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
+@@ -3740,7 +3740,7 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
  
  #ifdef ROUTE_DEBUG
    if (ddraw != NULL)
@@ -21,7 +21,7 @@ index 0b4b9e9..1af0765 100644
  #endif
  }
  
-@@ -5334,7 +5334,7 @@ donerouting:
+@@ -5408,7 +5408,7 @@ donerouting:
    if (ddraw != NULL)
      {
        hid_draw_destroy_gc (ar_gc);
@@ -31,7 +31,7 @@ index 0b4b9e9..1af0765 100644
  #endif
  
 diff --git a/src/hid.h b/src/hid.h
-index 5059273..08bdc0d 100644
+index 5ecf529..580e47e 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -472,13 +472,13 @@ typedef enum
