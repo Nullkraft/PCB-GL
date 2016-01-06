@@ -1,7 +1,7 @@
-Bottom: b920aac5d29b8e60d352bc325c3b14b4edf380c5
-Top:    84192bf9357c1959a38a7f92bd83ede7b1d09918
+Bottom: 183ba4a57119f17eeacf66964f3f5729f3ce7bf9
+Top:    32ec195caac9f01282e7f8aee0789b4003794fe5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:22:09 +0000
+Date:   2016-01-06 17:22:56 +0000
 
 Add support for a two soldermask layers, defining regions of removed mask
 
@@ -149,10 +149,10 @@ index 6a4f345..eb8fbd1 100644
  
  	argv = g_strsplit(data, ",", -1);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index d14c496..347edf1 100644
+index 9efec0d..e29d2f1 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -531,6 +531,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -534,6 +534,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
    ignore_layer_update = true;
    /* Select Layer */
    PCB->SilkActive = (layer == LAYER_BUTTON_SILK);
@@ -160,7 +160,7 @@ index d14c496..347edf1 100644
    PCB->RatDraw  = (layer == LAYER_BUTTON_RATS);
    if (layer == LAYER_BUTTON_SILK)
      {
-@@ -542,6 +543,11 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -545,6 +546,11 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
        PCB->RatOn = true;
        hid_action ("LayersChanged");
      }
@@ -172,7 +172,7 @@ index d14c496..347edf1 100644
    else if (layer < max_copper_layer)
      ChangeGroupVisibility (layer, TRUE, true);
  
-@@ -610,6 +616,7 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -613,6 +619,7 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
      case LAYER_BUTTON_FARSIDE:
        PCB->InvisibleObjectsOn = active;
        PCB->Data->BACKSILKLAYER.On = (active && PCB->ElementOn);
@@ -180,7 +180,7 @@ index d14c496..347edf1 100644
        redraw = TRUE;
        break;
      case LAYER_BUTTON_MASK:
-@@ -617,6 +624,8 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -620,6 +627,8 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
          SET_FLAG (SHOWMASKFLAG, PCB);
        else
          CLEAR_FLAG (SHOWMASKFLAG, PCB);
@@ -189,7 +189,7 @@ index d14c496..347edf1 100644
        redraw = TRUE;
        break;
      default:
-@@ -811,7 +820,7 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
+@@ -814,7 +823,7 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
                                   text, color_string, active, FALSE, FALSE);
    layer_process (&color_string, &text, &active, LAYER_BUTTON_MASK);
    ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_MASK,
@@ -198,7 +198,7 @@ index d14c496..347edf1 100644
  }
  
  /*! \brief callback for ghid_layer_selector_update_colors */
-@@ -884,6 +893,8 @@ ghid_layer_buttons_update (void)
+@@ -887,6 +896,8 @@ ghid_layer_buttons_update (void)
      layer = LAYER_BUTTON_RATS;
    else if (PCB->SilkActive)
      layer = LAYER_BUTTON_SILK;
@@ -207,7 +207,7 @@ index d14c496..347edf1 100644
    else
      layer = LayerStack[0];
  
-@@ -1936,7 +1947,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
+@@ -1939,7 +1950,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
  }
  
  static const char selectlayer_syntax[] =
@@ -216,7 +216,7 @@ index d14c496..347edf1 100644
  
  static const char selectlayer_help[] =
      N_("Select which layer is the current layer.");
-@@ -1964,6 +1975,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
+@@ -1967,6 +1978,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
      newl = LAYER_BUTTON_SILK;
    else if (strcasecmp (argv[0], "rats") == 0)
      newl = LAYER_BUTTON_RATS;
@@ -226,7 +226,7 @@ index d14c496..347edf1 100644
      newl = atoi (argv[0]) - 1;
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index d587e60..9845c53 100644
+index 1e24e61..c7d607c 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -44,15 +44,15 @@
