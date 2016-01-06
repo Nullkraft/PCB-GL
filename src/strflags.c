@@ -95,6 +95,7 @@ static FlagBitsType object_flagbits[] = {
   { CLEARPOLYFLAG, N ("clearpoly"), POLYGON_TYPE },
   { HIDENAMEFLAG, N ("hidename"), ELEMENT_TYPE },
   { DISPLAYNAMEFLAG, N ("showname"), ELEMENT_TYPE },
+  { STRIPHIERFLAG, N ("striphierarchy"), ELEMENT_TYPE },
   { CLEARLINEFLAG, N ("clearline"), LINE_TYPE | ARC_TYPE | TEXT_TYPE },
   { SELECTEDFLAG, N ("selected"), ALL_TYPES },
   { ONSOLDERFLAG, N ("onsolder"), ELEMENT_TYPE | PAD_TYPE | TEXT_TYPE },
