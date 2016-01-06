@@ -1,5 +1,5 @@
-Bottom: bfae5626ecfc92bf0d9c2306744f58cc0bcc2cb2
-Top:    dd6392a2c1147531d56decb302f4ebcdbfc7d56b
+Bottom: 84bdbea9fc9bda752f05cc955ece004a89123422
+Top:    9d518ef8a6b1d7d06cd4fc34e403af7cb5a43ca5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 23:31:11 +0000
 
@@ -9,7 +9,7 @@ Debug self-touching contour stuff
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index dee9fdb..f2bc79e 100644
+index 57ed904..947c4d7 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -301,12 +301,16 @@ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
