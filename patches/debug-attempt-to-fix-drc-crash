@@ -1,5 +1,5 @@
-Bottom: bb10fae6bf138a949f6accfb315c0778fec0e3f3
-Top:    c53fd055ab121287eaecc2bf59a8f09fc8c0ff38
+Bottom: 76ee2dfe59bc03f2d0578f11a7a4407ffc848cbd
+Top:    ccc96d90888319a2b133f0d84ebc99813032350f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-12 01:22:10 +0100
 
@@ -9,7 +9,7 @@ Debug / attempt to fix DRC crash
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 15e40a1..2bddffd 100644
+index 2f6dd76..dcce41c 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2389,6 +2389,10 @@ IsLineInPolygon (LineType *Line, PolygonType *Polygon)

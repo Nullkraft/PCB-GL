@@ -1,5 +1,5 @@
-Bottom: a499d40658df7393aaf21baa085b0b947d3f6952
-Top:    b7c0c0005b07ae81d7fc82830b6920a304843082
+Bottom: 42b05b9ff5efc1885bb9fbf1ecdef4e3e11aa951
+Top:    99be1fdcc4837031f5ed7c792380d9172d52bb8a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-23 15:32:47 +0000
 
@@ -9,7 +9,7 @@ Disable DRC checks on "outline" and "route" layers
 ---
 
 diff --git a/src/find.c b/src/find.c
-index c402568..15e40a1 100644
+index 4edb048..2f6dd76 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -728,11 +728,10 @@ LookupLOConnectionsToPVList (int flag, bool AndRats)
