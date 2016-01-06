@@ -1,5 +1,5 @@
-Bottom: 8eb88ceff98e6d93bba13edd6d5932515278c4ff
-Top:    c468efb281c7dcb0993e9cdb08bae729dd40594a
+Bottom: ac9c2db5f0aea92db323cab794e5f5a042854bf5
+Top:    ac9c2db5f0aea92db323cab794e5f5a042854bf5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2013-06-05 12:07:58 +0100
 
@@ -10,16 +10,4 @@ Yes - I want to hide them for a print!
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index d74311d..caf6f65 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -183,7 +183,7 @@ DrawStrippedText (hidGC gc, ElementType *Element, int min_width)
- static void
- draw_element_name (ElementType *element)
- {
--  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
-+  if ((TEST_FLAG (HIDENAMESFLAG, PCB) /*&& gui->gui*/) ||
-       TEST_FLAG (HIDENAMEFLAG, element))
-     return;
-   ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)element);
+

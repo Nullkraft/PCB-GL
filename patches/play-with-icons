@@ -1,5 +1,5 @@
-Bottom: f58ceaf16f03df483cd9fea01ca5a049a74943f4
-Top:    9c6bed15beebe2c4faa78209df23c130a2489fd8
+Bottom: 49260d681270041f97193138fbc7f4c452b83b83
+Top:    d8bb04e11e85dd5b09122a8c23ac73696bce9937
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2013-06-05 12:07:57 +0100
 
@@ -310,7 +310,7 @@ index 19e9ce8..459a3e3 100644
  static char *via[] = {
  /* columns rows colors chars-per-pixel */
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 7775ed2..f3e8a4c 100644
+index cfd8ad9..300400c 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -119,7 +119,6 @@ a zoom in/out.
@@ -321,7 +321,7 @@ index 7775ed2..f3e8a4c 100644
  #include "gui-icons-misc.data"
  #include "gui-trackball.h"
  #include "snavi.h"
-@@ -954,26 +953,25 @@ typedef struct
+@@ -957,26 +956,25 @@ typedef struct
    guint toolbar_button_cb_id;
    gchar *name;
    gint mode;
@@ -362,7 +362,7 @@ index 7775ed2..f3e8a4c 100644
  };
  
  static gint n_mode_buttons = G_N_ELEMENTS (mode_buttons);
-@@ -1063,10 +1061,10 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
+@@ -1066,10 +1064,10 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
    GtkToolItem *tool_item;
    GtkWidget *vbox, *hbox = NULL;
    GtkWidget *image;
@@ -374,7 +374,7 @@ index 7775ed2..f3e8a4c 100644
    int i;
  
    *mode_toolbar = gtk_toolbar_new ();
-@@ -1104,15 +1102,88 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
+@@ -1107,15 +1105,88 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
        gtk_container_add (GTK_CONTAINER (tool_item), mb->toolbar_button);
        gtk_toolbar_insert (GTK_TOOLBAR (*mode_toolbar), tool_item, -1);
  
@@ -467,7 +467,7 @@ index 7775ed2..f3e8a4c 100644
  
        if (strcmp (mb->name, "select") == 0)
          {
-@@ -1126,6 +1197,7 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
+@@ -1129,6 +1200,7 @@ make_mode_buttons_and_toolbar (GtkWidget **mode_frame,
        mb->toolbar_button_cb_id =
          g_signal_connect (mb->toolbar_button, "toggled",
                            G_CALLBACK (mode_toolbar_button_toggled_cb), mb);

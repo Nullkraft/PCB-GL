@@ -1,5 +1,5 @@
-Bottom: ab5a8f7b4e74b574826e499e45813fbf0f7dc634
-Top:    8a95992b0794d3a26a3dc761780ef21e526dd998
+Bottom: 04fb462aad8c2db7f80e002377e33d8b6ce0a0a9
+Top:    9d599a7934ed2038b84022337b79d7cd514e8ff7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -130,7 +130,7 @@ index be95bd2..cb3e6c2 100644
  int poly_Boolean(const POLYAREA * a, const POLYAREA * b, POLYAREA ** res, int action);
  int poly_Boolean_free(POLYAREA * a, POLYAREA * b, POLYAREA ** res, int action);
 diff --git a/src/polygon.c b/src/polygon.c
-index 5ca85ea..459193d 100644
+index c9a0c8e..e0e1276 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -294,7 +294,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
@@ -160,7 +160,7 @@ index 5ca85ea..459193d 100644
    return r;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 7f98432..c4f086c 100644
+index 81dab7f..509b148 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -75,8 +75,10 @@ double vect_dist2 (Vector v1, Vector v2);

@@ -1,5 +1,5 @@
-Bottom: 4726917d6d820d0654075ca026e4f501e9e6549c
-Top:    187be12449b4ed800a1e079fc4ac70602de6431d
+Bottom: 3151f746c2da0b141499e3126b14e4d78b1e4149
+Top:    fc9fdf9656a2808a369705c93aa6f76ca46c0dd5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:01 +0000
 
@@ -263,7 +263,7 @@ index b959385..463f682 100644
  
  static void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5db9b1d..34d3257 100644
+index da7344b..5617d47 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -904,11 +904,9 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -288,7 +288,7 @@ index 5db9b1d..34d3257 100644
    poly_FreeContours (&polygon.NoHoles);
  }
  
-@@ -2697,7 +2694,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2688,7 +2685,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);

@@ -1,5 +1,5 @@
-Bottom: 0cf51a4116e1d76604a9d8937d7ff8b6a013e3e5
-Top:    ab5a8f7b4e74b574826e499e45813fbf0f7dc634
+Bottom: 056b533724922ea586e47e1e70aacfbc37917fc6
+Top:    04fb462aad8c2db7f80e002377e33d8b6ce0a0a9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -11,7 +11,7 @@ XXX: Looks like square pad clearance polygons might have extra un-necessary node
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 28ce822..7a54ea4 100644
+index 919f591..d74681a 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -40,6 +40,10 @@ PCB_SRCS = \
@@ -265,7 +265,7 @@ index 0aa9779..2187897 100644
        else
          {
 diff --git a/src/misc.c b/src/misc.c
-index 63d7ca4..a64a059 100644
+index dc97733..037abf4 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -362,7 +362,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
@@ -312,7 +312,7 @@ index 63d7ca4..a64a059 100644
    /* Check for extreme angles */
    if ((ang1 <= 0   && ang2 >= 0)   || (ang1 <= 360 && ang2 >= 360)) maxx = 1;
 diff --git a/src/polygon.c b/src/polygon.c
-index c9ebbd6..5ca85ea 100644
+index 3e65cad..c9a0c8e 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -110,7 +110,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -336,7 +336,7 @@ index 0643765..d47b1fc 100644
 +BoxType *get_seg_bounds (PLINE *contour, VNODE *node);
  #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 9157eb4..7f98432 100644
+index 0a20a47..81dab7f 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -50,10 +50,13 @@
