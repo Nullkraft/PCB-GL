@@ -1,7 +1,7 @@
-Bottom: 0ff6222b16ae1bb3747fbe00a1d4b52ef4a43a00
-Top:    183ba4a57119f17eeacf66964f3f5729f3ce7bf9
+Bottom: d1f6bae5852fc416630f1448050162e6a70879b4
+Top:    402d57e49bedeb9a5b4820ae5d9ab07f81ece9b8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:22:56 +0000
+Date:   2016-01-06 21:11:39 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -146,7 +146,7 @@ index 1229d67..83d4df4 100644
  }
  
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index f29f1fa..a75661a 100644
+index eb5a2d5..02bdff8 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -506,7 +506,7 @@ gcode_start_gcode (const char *layername, bool metric)
@@ -228,10 +228,10 @@ index b988db9..8d7e5c5 100644
  /* Use this to restore them.  */
  void hid_restore_layer_ons (int *save_array);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index a31f002..ed10b50 100644
+index 8cd3a08..c4c31ee 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3009,7 +3009,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -3011,7 +3011,7 @@ lesstif_set_layer (const char *name, int group, int empty)
        for (idx = 0; idx < n-1; idx ++)
  	{
  	  int ni = PCB->LayerGroups.Entries[group][idx];
@@ -240,7 +240,7 @@ index a31f002..ed10b50 100644
  	      && PCB->Data->Layer[ni].On)
  	    break;
  	}
-@@ -3027,7 +3027,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -3029,7 +3029,7 @@ lesstif_set_layer (const char *name, int group, int empty)
    else
      autofade = 0;
  #endif

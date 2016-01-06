@@ -1,7 +1,7 @@
-Bottom: 183ba4a57119f17eeacf66964f3f5729f3ce7bf9
-Top:    32ec195caac9f01282e7f8aee0789b4003794fe5
+Bottom: 402d57e49bedeb9a5b4820ae5d9ab07f81ece9b8
+Top:    fae6a3b6a65c6179b0d10cf8426f286cea60d7f5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:22:56 +0000
+Date:   2016-01-06 21:11:39 +0000
 
 Add support for a two soldermask layers, defining regions of removed mask
 
@@ -149,10 +149,10 @@ index 6a4f345..eb8fbd1 100644
  
  	argv = g_strsplit(data, ",", -1);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 9efec0d..e29d2f1 100644
+index 8b19b12..9cc0236 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -534,6 +534,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -530,6 +530,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
    ignore_layer_update = true;
    /* Select Layer */
    PCB->SilkActive = (layer == LAYER_BUTTON_SILK);
@@ -160,7 +160,7 @@ index 9efec0d..e29d2f1 100644
    PCB->RatDraw  = (layer == LAYER_BUTTON_RATS);
    if (layer == LAYER_BUTTON_SILK)
      {
-@@ -545,6 +546,11 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -541,6 +542,11 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
        PCB->RatOn = true;
        hid_action ("LayersChanged");
      }
@@ -172,7 +172,7 @@ index 9efec0d..e29d2f1 100644
    else if (layer < max_copper_layer)
      ChangeGroupVisibility (layer, TRUE, true);
  
-@@ -613,6 +619,7 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -609,6 +615,7 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
      case LAYER_BUTTON_FARSIDE:
        PCB->InvisibleObjectsOn = active;
        PCB->Data->BACKSILKLAYER.On = (active && PCB->ElementOn);
@@ -180,7 +180,7 @@ index 9efec0d..e29d2f1 100644
        redraw = TRUE;
        break;
      case LAYER_BUTTON_MASK:
-@@ -620,6 +627,8 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
+@@ -616,6 +623,8 @@ layer_selector_toggle_callback (GHidLayerSelector *ls, int layer, gpointer d)
          SET_FLAG (SHOWMASKFLAG, PCB);
        else
          CLEAR_FLAG (SHOWMASKFLAG, PCB);
@@ -189,7 +189,7 @@ index 9efec0d..e29d2f1 100644
        redraw = TRUE;
        break;
      default:
-@@ -814,7 +823,7 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
+@@ -810,7 +819,7 @@ make_virtual_layer_buttons (GtkWidget *layer_selector)
                                   text, color_string, active, FALSE, FALSE);
    layer_process (&color_string, &text, &active, LAYER_BUTTON_MASK);
    ghid_layer_selector_add_layer (layersel, LAYER_BUTTON_MASK,
@@ -198,7 +198,7 @@ index 9efec0d..e29d2f1 100644
  }
  
  /*! \brief callback for ghid_layer_selector_update_colors */
-@@ -887,6 +896,8 @@ ghid_layer_buttons_update (void)
+@@ -883,6 +892,8 @@ ghid_layer_buttons_update (void)
      layer = LAYER_BUTTON_RATS;
    else if (PCB->SilkActive)
      layer = LAYER_BUTTON_SILK;
@@ -207,7 +207,7 @@ index 9efec0d..e29d2f1 100644
    else
      layer = LayerStack[0];
  
-@@ -1939,7 +1950,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
+@@ -1929,7 +1940,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
  }
  
  static const char selectlayer_syntax[] =
@@ -216,7 +216,7 @@ index 9efec0d..e29d2f1 100644
  
  static const char selectlayer_help[] =
      N_("Select which layer is the current layer.");
-@@ -1967,6 +1978,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
+@@ -1957,6 +1968,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
      newl = LAYER_BUTTON_SILK;
    else if (strcasecmp (argv[0], "rats") == 0)
      newl = LAYER_BUTTON_RATS;
@@ -323,10 +323,10 @@ index 8ef45bc..a34693a 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/main.c b/src/main.c
-index 58ba024..072822a 100644
+index d3bbce3..3c3b4d0 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -861,6 +861,15 @@ Color of the mask layer. Default value is @code{"#ff0000"}
+@@ -855,6 +855,15 @@ Color of the mask layer. Default value is @code{"#ff0000"}
  */
    COLOR (MaskColor, "#ff0000", "mask-color", "color for solder mask"),
  
