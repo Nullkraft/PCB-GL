@@ -1,5 +1,5 @@
-Bottom: ac2b9f7304290a276bdc25dadbaa01c42e8f3d17
-Top:    4677128c654542650d457a25456e4d4ec953d7d4
+Bottom: 12542c9e5672dc05d15f7376d713e481e37e934e
+Top:    324f4dc25ece20f0d9655b8ba9b849b41a5150df
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-12 17:08:54 +0100
 
@@ -26,10 +26,10 @@ index 1cc4a3f..87a2a18 100644
    // XXX: This appears to throw exceptions from std::ios_base if the file doesn't exist
    try
 diff --git a/src/polygon.c b/src/polygon.c
-index 841e1ea..245b9bb 100644
+index 499237c..ff3fc28 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -2111,6 +2111,8 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2177,6 +2177,8 @@ pv_outline_callback (const BoxType * b, void *cl)
      }
    else
      {
@@ -39,7 +39,7 @@ index 841e1ea..245b9bb 100644
      }
  
 diff --git a/src/polygon.h b/src/polygon.h
-index 3737f35..767c919 100644
+index e86059e..59a767a 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -34,7 +34,8 @@
