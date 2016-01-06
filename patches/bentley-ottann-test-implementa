@@ -1,7 +1,7 @@
-Bottom: 3d4103c81af02a5e28c42206563508218e9f0e9d
-Top:    d786b8528d6233c96c6310f3871304564bfdf2a4
+Bottom: db84443cd4eeeb112ee7a02e58f49fb0f5c4cead
+Top:    75f9ca21fb4fd585d440dc9894d05d80e3cc19d9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 17:26:59 +0000
+Date:   2016-01-06 21:11:41 +0000
 
 Bentley-Ottann test implementation
 
@@ -13833,18 +13833,18 @@ index 0000000..bb5ff35
 +
 +#endif /* __G_PQUEUE_H__ */
 diff --git a/src/main.c b/src/main.c
-index 072822a..3586a5d 100644
+index 3c3b4d0..bb98fea 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -58,6 +58,7 @@
- #include "free_atexit.h"
+@@ -56,6 +56,7 @@
  #include "polygon.h"
+ #include "gettext.h"
  #include "pcb-printf.h"
 +#include "sweep.h"
  
  #include "hid/common/actions.h"
  
-@@ -1875,6 +1876,7 @@ char *program_directory = 0;
+@@ -1869,6 +1870,7 @@ char *program_directory = 0;
  
  #include "dolists.h"
  
@@ -13852,7 +13852,7 @@ index 072822a..3586a5d 100644
  int
  main (int argc, char *argv[])
  {
-@@ -2086,11 +2088,16 @@ main (int argc, char *argv[])
+@@ -2082,11 +2084,16 @@ main (int argc, char *argv[])
            UNKNOWN (Settings.GnetlistProgram));
  #endif
  

@@ -1,7 +1,7 @@
-Bottom: d786b8528d6233c96c6310f3871304564bfdf2a4
-Top:    c0d656595157f0656f0187aecc12f1dfcd840df3
+Bottom: 75f9ca21fb4fd585d440dc9894d05d80e3cc19d9
+Top:    e59ce272911e2fcdcfaf47d47232ebf4721b6caa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 17:26:59 +0000
+Date:   2016-01-06 21:11:41 +0000
 
 TMP2
 
@@ -570,18 +570,18 @@ index 303dab1..23d653f 100644
  /*
   * 128-bit datatypes.  Again, provide two implementations in
 diff --git a/src/main.c b/src/main.c
-index 3586a5d..e9f98f2 100644
+index bb98fea..4d892aa 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -58,6 +58,7 @@
- #include "free_atexit.h"
+@@ -56,6 +56,7 @@
  #include "polygon.h"
+ #include "gettext.h"
  #include "pcb-printf.h"
 +#include "setjmp.h"
  #include "sweep.h"
  
  #include "hid/common/actions.h"
-@@ -2091,7 +2092,7 @@ main (int argc, char *argv[])
+@@ -2087,7 +2088,7 @@ main (int argc, char *argv[])
    // bos_test_intersections ();
    my_cairo_test ();
  
