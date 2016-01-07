@@ -497,7 +497,7 @@ common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
         {
           Coord x[4], y[4];
           common_get_pad_polygon (x, y, pad, w);
-          hid_fill_polygon (gc, 4, x, y);
+          hid_draw_fill_polygon (gc, 4, x, y);
         }
       else
         hid_draw_line (gc, pad->Point1.X, pad->Point1.Y,
