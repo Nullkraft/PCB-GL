@@ -1,5 +1,5 @@
-Bottom: 5d45edf5a4999f387c2bf171ff7f368797cf16a4
-Top:    d39513128f537288d5a7966296099bb699fed23e
+Bottom: 3809cbb8a40b11ff99f31245af6f33b4cc46f20a
+Top:    eb8c7835e0890f2e5dc6fec72f58541d7fb1e69a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-21 23:35:12 +0100
 
@@ -11,10 +11,10 @@ Boy do I regret not refactoring this to some function or macro TEST_LOCK (...)
 ---
 
 diff --git a/src/action.c b/src/action.c
-index f82f708..3f5630c 100644
+index aa196bc..f2bfed6 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1004,7 +1004,7 @@ NotifyMode (void)
+@@ -1003,7 +1003,7 @@ NotifyMode (void)
  	  {
  	    type = SearchScreen (Note.X, Note.Y, test, &ptr1, &ptr2, &ptr3);
  	    if (!Note.Hit && (type & MOVE_TYPES) &&
@@ -23,7 +23,7 @@ index f82f708..3f5630c 100644
  	      {
  		Note.Hit = type;
  		Note.ptr1 = ptr1;
-@@ -1469,8 +1469,9 @@ NotifyMode (void)
+@@ -1468,8 +1468,9 @@ NotifyMode (void)
  
  	    if (Crosshair.AttachedObject.Type != NO_TYPE)
  	      {
@@ -35,7 +35,7 @@ index f82f708..3f5630c 100644
  		  {
  		    Message (_("Sorry, the object is locked\n"));
  		    Crosshair.AttachedObject.Type = NO_TYPE;
-@@ -1613,7 +1614,7 @@ NotifyMode (void)
+@@ -1612,7 +1613,7 @@ NotifyMode (void)
  	   SearchScreen (Note.X, Note.Y, REMOVE_TYPES, &ptr1, &ptr2,
  			 &ptr3)) != NO_TYPE)
  	{
@@ -44,7 +44,7 @@ index f82f708..3f5630c 100644
  	    {
  	      Message (_("Sorry, the object is locked\n"));
  	      break;
-@@ -1671,6 +1672,7 @@ NotifyMode (void)
+@@ -1670,6 +1671,7 @@ NotifyMode (void)
  	    if (Crosshair.AttachedObject.Type != NO_TYPE)
  	      {
  		if (Settings.Mode == MOVE_MODE &&
@@ -52,7 +52,7 @@ index f82f708..3f5630c 100644
  		    TEST_FLAG (LOCKFLAG, (PinType *)
  			       Crosshair.AttachedObject.Ptr2))
  		  {
-@@ -1725,7 +1727,8 @@ NotifyMode (void)
+@@ -1724,7 +1726,8 @@ NotifyMode (void)
  
  	  if (Crosshair.AttachedObject.Type != NO_TYPE)
  	    {
@@ -62,7 +62,7 @@ index f82f708..3f5630c 100644
  			     Crosshair.AttachedObject.Ptr2))
  		{
  		  Message (_("Sorry, the object is locked\n"));
-@@ -2414,7 +2417,8 @@ ActionDisperseElements (int argc, char **argv, Coord x, Coord y)
+@@ -2429,7 +2432,8 @@ ActionDisperseElements (int argc, char **argv, Coord x, Coord y)
       * going to be used either with a brand new design or a scratch
       * design holding some new components
       */
@@ -72,7 +72,7 @@ index f82f708..3f5630c 100644
        {
  
  	/* figure out how much to move the element */
-@@ -3363,7 +3367,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3380,7 +3384,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    lock_cnt = 0;
    ELEMENT_LOOP (PCB->Data);
    {
@@ -81,7 +81,7 @@ index f82f708..3f5630c 100644
        {
  	/* 
  	 * add to the list of locked elements which we won't try to
-@@ -3646,7 +3650,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3663,7 +3667,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	case F_All:
  	  ALLLINE_LOOP (PCB->Data);
  	  {
@@ -91,7 +91,7 @@ index f82f708..3f5630c 100644
  	      {
  		RemoveObject (LINE_TYPE, layer, line, line);
  		changed = true;
-@@ -3655,7 +3660,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3672,7 +3677,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  ENDALL_LOOP;
  	  ALLARC_LOOP (PCB->Data);
  	  {
@@ -101,7 +101,7 @@ index f82f708..3f5630c 100644
  	      {
  		RemoveObject (ARC_TYPE, layer, arc, arc);
  		changed = true;
-@@ -3664,7 +3670,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3681,7 +3687,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  ENDALL_LOOP;
  	  VIA_LOOP (PCB->Data);
  	  {
@@ -111,7 +111,7 @@ index f82f708..3f5630c 100644
  	      {
  		RemoveObject (VIA_TYPE, via, via, via);
  		changed = true;
-@@ -3681,8 +3688,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3698,8 +3705,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	case F_Selected:
  	  VISIBLELINE_LOOP (PCB->Data);
  	  {
@@ -122,7 +122,7 @@ index f82f708..3f5630c 100644
  	      {
  		RemoveObject (LINE_TYPE, layer, line, line);
  		changed = true;
-@@ -3692,8 +3699,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3709,8 +3716,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  if (PCB->ViaOn)
  	    VIA_LOOP (PCB->Data);
  	  {
@@ -133,7 +133,7 @@ index f82f708..3f5630c 100644
  	      {
  		RemoveObject (VIA_TYPE, via, via, via);
  		changed = true;
-@@ -4080,7 +4087,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
+@@ -4097,7 +4104,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
  	    if ((type =
  		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
  			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
@@ -142,7 +142,7 @@ index f82f708..3f5630c 100644
  		Message (_("Sorry, the object is locked\n"));
  	    if (ChangeObjectSize (type, ptr1, ptr2, ptr3, value, absolute))
  	      SetChangedFlag (true);
-@@ -6804,7 +6811,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
+@@ -6834,7 +6841,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
  	if ((type =
  	     SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
  			   &ptr1, &ptr2, &ptr3)) != NO_TYPE)
@@ -152,10 +152,10 @@ index f82f708..3f5630c 100644
  	if (set_object (type, ptr1, ptr2, ptr3))
  	  SetChangedFlag (true);
 diff --git a/src/change.c b/src/change.c
-index 88d4b9f..f34fca2 100644
+index 7f9bf42..571adbd 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -390,7 +390,7 @@ ChangeViaSize (PinType *Via)
+@@ -395,7 +395,7 @@ ChangeViaSize (PinType *Via)
  {
    Coord value = Absolute ? Absolute : Via->Thickness + Delta;
  
@@ -164,7 +164,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    if (!TEST_FLAG (HOLEFLAG, Via) && value <= MAX_PINORVIASIZE &&
        value >= MIN_PINORVIASIZE &&
-@@ -425,7 +425,7 @@ ChangeVia2ndSize (PinType *Via)
+@@ -431,7 +431,7 @@ ChangeVia2ndSize (PinType *Via)
  {
    Coord value = (Absolute) ? Absolute : Via->DrillingHole + Delta;
  
@@ -173,7 +173,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    if (value <= MAX_PINORVIASIZE &&
        value >= MIN_PINORVIAHOLE && (TEST_FLAG (HOLEFLAG, Via) ||
-@@ -458,7 +458,7 @@ ChangeViaClearSize (PinType *Via)
+@@ -465,7 +465,7 @@ ChangeViaClearSize (PinType *Via)
  {
    Coord value = (Absolute) ? Absolute : Via->Clearance + Delta;
  
@@ -182,7 +182,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    value = MIN (MAX_LINESIZE, value);
    if (value < 0)
-@@ -492,7 +492,7 @@ ChangePinSize (ElementType *Element, PinType *Pin)
+@@ -500,7 +500,7 @@ ChangePinSize (ElementType *Element, PinType *Pin)
  {
    Coord value = (Absolute) ? Absolute : Pin->Thickness + Delta;
  
@@ -191,7 +191,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    if (!TEST_FLAG (HOLEFLAG, Pin) && value <= MAX_PINORVIASIZE &&
        value >= MIN_PINORVIASIZE &&
-@@ -524,7 +524,7 @@ ChangePinClearSize (ElementType *Element, PinType *Pin)
+@@ -533,7 +533,7 @@ ChangePinClearSize (ElementType *Element, PinType *Pin)
  {
    Coord value = (Absolute) ? Absolute : Pin->Clearance + Delta;
  
@@ -200,7 +200,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    value = MIN (MAX_LINESIZE, value);
    if (value < 0)
-@@ -556,7 +556,7 @@ ChangePadSize (ElementType *Element, PadType *Pad)
+@@ -566,7 +566,7 @@ ChangePadSize (ElementType *Element, PadType *Pad)
  {
    Coord value = (Absolute) ? Absolute : Pad->Thickness + Delta;
  
@@ -209,7 +209,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    if (value <= MAX_PADSIZE && value >= MIN_PADSIZE && value != Pad->Thickness)
      {
-@@ -585,7 +585,7 @@ ChangePadClearSize (ElementType *Element, PadType *Pad)
+@@ -596,7 +596,7 @@ ChangePadClearSize (ElementType *Element, PadType *Pad)
  {
    Coord value = (Absolute) ? Absolute : Pad->Clearance + Delta;
  
@@ -218,7 +218,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    value = MIN (MAX_LINESIZE, value);
    if (value < 0)
-@@ -618,7 +618,7 @@ ChangeElement2ndSize (ElementType *Element)
+@@ -630,7 +630,7 @@ ChangeElement2ndSize (ElementType *Element)
    bool changed = false;
    Coord value;
  
@@ -227,7 +227,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -660,7 +660,7 @@ ChangePin2ndSize (ElementType *Element, PinType *Pin)
+@@ -673,7 +673,7 @@ ChangePin2ndSize (ElementType *Element, PinType *Pin)
  {
    Coord value = (Absolute) ? Absolute : Pin->DrillingHole + Delta;
  
@@ -236,7 +236,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    if (value <= MAX_PINORVIASIZE &&
        value >= MIN_PINORVIAHOLE && (TEST_FLAG (HOLEFLAG, Pin) ||
-@@ -693,7 +693,7 @@ ChangeLineSize (LayerType *Layer, LineType *Line)
+@@ -707,7 +707,7 @@ ChangeLineSize (LayerType *Layer, LineType *Line)
  {
    Coord value = (Absolute) ? Absolute : Line->Thickness + Delta;
  
@@ -245,7 +245,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    if (value <= MAX_LINESIZE && value >= MIN_LINESIZE &&
        value != Line->Thickness)
-@@ -721,7 +721,8 @@ ChangeLineClearSize (LayerType *Layer, LineType *Line)
+@@ -736,7 +736,8 @@ ChangeLineClearSize (LayerType *Layer, LineType *Line)
  {
    Coord value = (Absolute) ? Absolute : Line->Clearance + Delta;
  
@@ -255,7 +255,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    value = MIN (MAX_LINESIZE, MAX (value, PCB->Bloat * 2 + 2));
    if (value != Line->Clearance)
-@@ -774,7 +775,7 @@ ChangeArcSize (LayerType *Layer, ArcType *Arc)
+@@ -790,7 +791,7 @@ ChangeArcSize (LayerType *Layer, ArcType *Arc)
  {
    Coord value = (Absolute) ? Absolute : Arc->Thickness + Delta;
  
@@ -264,7 +264,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    if (value <= MAX_LINESIZE && value >= MIN_LINESIZE &&
        value != Arc->Thickness)
-@@ -802,7 +803,8 @@ ChangeArcClearSize (LayerType *Layer, ArcType *Arc)
+@@ -819,7 +820,8 @@ ChangeArcClearSize (LayerType *Layer, ArcType *Arc)
  {
    Coord value = (Absolute) ? Absolute : Arc->Clearance + Delta;
  
@@ -274,7 +274,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    value = MIN (MAX_LINESIZE, MAX (value, PCB->Bloat * 2 + 2));
    if (value != Arc->Clearance)
-@@ -837,7 +839,7 @@ ChangeTextSize (LayerType *Layer, TextType *Text)
+@@ -855,7 +857,7 @@ ChangeTextSize (LayerType *Layer, TextType *Text)
                (double)(Absolute != 0 ? Absolute : Delta)
                  / (double)FONT_CAPHEIGHT * 100.;
  
@@ -283,7 +283,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    if (value <= MAX_TEXTSCALE && value >= MIN_TEXTSCALE &&
        value != Text->Scale)
-@@ -866,7 +868,7 @@ ChangeElementSize (ElementType *Element)
+@@ -885,7 +887,7 @@ ChangeElementSize (ElementType *Element)
    Coord value;
    bool changed = false;
  
@@ -292,7 +292,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    if (PCB->ElementOn)
      EraseElement (Element);
-@@ -914,7 +916,7 @@ ChangeElementNameSize (ElementType *Element)
+@@ -934,7 +936,7 @@ ChangeElementNameSize (ElementType *Element)
                (double)(Absolute != 0 ? Absolute : Delta)
                  / (double)FONT_CAPHEIGHT * 100.;
  
@@ -301,7 +301,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    if (value <= MAX_TEXTSCALE && value >= MIN_TEXTSCALE)
      {
-@@ -1040,7 +1042,7 @@ ChangeElementText (PCBType *pcb, DataType *data, ElementType *Element, int which
+@@ -1060,7 +1062,7 @@ ChangeElementText (PCBType *pcb, DataType *data, ElementType *Element, int which
  static void *
  ChangeElementName (ElementType *Element)
  {
@@ -310,7 +310,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    if (NAME_INDEX (PCB) == NAMEONPCB_INDEX)
      {
-@@ -1066,7 +1068,7 @@ ChangeTextName (LayerType *Layer, TextType *Text)
+@@ -1088,7 +1090,7 @@ ChangeTextName (LayerType *Layer, TextType *Text)
  {
    char *old = Text->TextString;
  
@@ -319,7 +319,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    EraseText (Layer, Text);
    RestoreToPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
-@@ -1098,7 +1100,7 @@ ChangeLayoutName (char *Name)
+@@ -1122,7 +1124,7 @@ ChangeLayoutName (char *Name)
  bool
  ChangeElementSide (ElementType *Element, Coord yoff)
  {
@@ -328,7 +328,7 @@ index 88d4b9f..f34fca2 100644
      return (false);
    EraseElement (Element);
    AddObjectToMirrorUndoList (ELEMENT_TYPE, Element, Element, Element, yoff);
-@@ -1125,7 +1127,7 @@ ChangeLayerName (LayerType *Layer, char *Name)
+@@ -1150,7 +1152,7 @@ ChangeLayerName (LayerType *Layer, char *Name)
  static void *
  ChangeLineJoin (LayerType *Layer, LineType *Line)
  {
@@ -337,7 +337,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    EraseLine (Line);
    if (TEST_FLAG(CLEARLINEFLAG, Line))
-@@ -1150,7 +1152,8 @@ ChangeLineJoin (LayerType *Layer, LineType *Line)
+@@ -1175,7 +1177,8 @@ ChangeLineJoin (LayerType *Layer, LineType *Line)
  static void *
  SetLineJoin (LayerType *Layer, LineType *Line)
  {
@@ -347,7 +347,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    return ChangeLineJoin (Layer, Line);
  }
-@@ -1161,7 +1164,8 @@ SetLineJoin (LayerType *Layer, LineType *Line)
+@@ -1186,7 +1189,8 @@ SetLineJoin (LayerType *Layer, LineType *Line)
  static void *
  ClrLineJoin (LayerType *Layer, LineType *Line)
  {
@@ -357,7 +357,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    return ChangeLineJoin (Layer, Line);
  }
-@@ -1172,7 +1176,7 @@ ClrLineJoin (LayerType *Layer, LineType *Line)
+@@ -1197,7 +1201,7 @@ ClrLineJoin (LayerType *Layer, LineType *Line)
  static void *
  ChangeArcJoin (LayerType *Layer, ArcType *Arc)
  {
@@ -366,7 +366,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    EraseArc (Arc);
    if (TEST_FLAG (CLEARLINEFLAG, Arc))
-@@ -1197,7 +1201,8 @@ ChangeArcJoin (LayerType *Layer, ArcType *Arc)
+@@ -1222,7 +1226,8 @@ ChangeArcJoin (LayerType *Layer, ArcType *Arc)
  static void *
  SetArcJoin (LayerType *Layer, ArcType *Arc)
  {
@@ -376,7 +376,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    return ChangeArcJoin (Layer, Arc);
  }
-@@ -1208,7 +1213,8 @@ SetArcJoin (LayerType *Layer, ArcType *Arc)
+@@ -1233,7 +1238,8 @@ SetArcJoin (LayerType *Layer, ArcType *Arc)
  static void *
  ClrArcJoin (LayerType *Layer, ArcType *Arc)
  {
@@ -386,7 +386,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    return ChangeArcJoin (Layer, Arc);
  }
-@@ -1219,7 +1225,7 @@ ClrArcJoin (LayerType *Layer, ArcType *Arc)
+@@ -1244,7 +1250,7 @@ ClrArcJoin (LayerType *Layer, ArcType *Arc)
  static void *
  ChangeTextJoin (LayerType *Layer, TextType *Text)
  {
@@ -395,7 +395,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    EraseText (Layer, Text);
    if (TEST_FLAG(CLEARLINEFLAG, Text))
-@@ -1244,7 +1250,8 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
+@@ -1269,7 +1275,8 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
  static void *
  SetTextJoin (LayerType *Layer, TextType *Text)
  {
@@ -405,7 +405,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    return ChangeTextJoin (Layer, Text);
  }
-@@ -1255,7 +1262,8 @@ SetTextJoin (LayerType *Layer, TextType *Text)
+@@ -1280,7 +1287,8 @@ SetTextJoin (LayerType *Layer, TextType *Text)
  static void *
  ClrTextJoin (LayerType *Layer, TextType *Text)
  {
@@ -415,7 +415,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    return ChangeTextJoin (Layer, Text);
  }
-@@ -1268,7 +1276,7 @@ ChangeElementSquare (ElementType *Element)
+@@ -1293,7 +1301,7 @@ ChangeElementSquare (ElementType *Element)
  {
    void *ans = NULL;
  
@@ -424,7 +424,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1291,7 +1299,7 @@ SetElementSquare (ElementType *Element)
+@@ -1316,7 +1324,7 @@ SetElementSquare (ElementType *Element)
  {
    void *ans = NULL;
  
@@ -433,7 +433,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1314,7 +1322,7 @@ ClrElementSquare (ElementType *Element)
+@@ -1339,7 +1347,7 @@ ClrElementSquare (ElementType *Element)
  {
    void *ans = NULL;
  
@@ -442,7 +442,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1337,7 +1345,7 @@ ChangeElementOctagon (ElementType *Element)
+@@ -1362,7 +1370,7 @@ ChangeElementOctagon (ElementType *Element)
  {
    void *result = NULL;
  
@@ -451,7 +451,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1356,7 +1364,7 @@ SetElementOctagon (ElementType *Element)
+@@ -1381,7 +1389,7 @@ SetElementOctagon (ElementType *Element)
  {
    void *result = NULL;
  
@@ -460,7 +460,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1375,7 +1383,7 @@ ClrElementOctagon (ElementType *Element)
+@@ -1400,7 +1408,7 @@ ClrElementOctagon (ElementType *Element)
  {
    void *result = NULL;
  
@@ -469,7 +469,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1392,7 +1400,7 @@ ClrElementOctagon (ElementType *Element)
+@@ -1417,7 +1425,7 @@ ClrElementOctagon (ElementType *Element)
  static void *
  ChangePadSquare (ElementType *Element, PadType *Pad)
  {
@@ -478,7 +478,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    ErasePad (Pad);
    AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, false);
-@@ -1412,7 +1420,8 @@ static void *
+@@ -1437,7 +1445,8 @@ static void *
  SetPadSquare (ElementType *Element, PadType *Pad)
  {
  
@@ -488,7 +488,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
  
    return (ChangePadSquare (Element, Pad));
-@@ -1426,7 +1435,8 @@ static void *
+@@ -1451,7 +1460,8 @@ static void *
  ClrPadSquare (ElementType *Element, PadType *Pad)
  {
  
@@ -498,7 +498,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
  
    return (ChangePadSquare (Element, Pad));
-@@ -1439,7 +1449,7 @@ ClrPadSquare (ElementType *Element, PadType *Pad)
+@@ -1464,7 +1474,7 @@ ClrPadSquare (ElementType *Element, PadType *Pad)
  static void *
  ChangePinSquare (ElementType *Element, PinType *Pin)
  {
@@ -507,7 +507,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    ErasePin (Pin);
    AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, false);
-@@ -1458,7 +1468,8 @@ ChangePinSquare (ElementType *Element, PinType *Pin)
+@@ -1483,7 +1493,8 @@ ChangePinSquare (ElementType *Element, PinType *Pin)
  static void *
  SetPinSquare (ElementType *Element, PinType *Pin)
  {
@@ -517,7 +517,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
  
    return (ChangePinSquare (Element, Pin));
-@@ -1470,7 +1481,8 @@ SetPinSquare (ElementType *Element, PinType *Pin)
+@@ -1495,7 +1506,8 @@ SetPinSquare (ElementType *Element, PinType *Pin)
  static void *
  ClrPinSquare (ElementType *Element, PinType *Pin)
  {
@@ -527,7 +527,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
  
    return (ChangePinSquare (Element, Pin));
-@@ -1482,7 +1494,7 @@ ClrPinSquare (ElementType *Element, PinType *Pin)
+@@ -1507,7 +1519,7 @@ ClrPinSquare (ElementType *Element, PinType *Pin)
  static void *
  ChangeViaOctagon (PinType *Via)
  {
@@ -536,7 +536,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    EraseVia (Via);
    AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, false);
-@@ -1501,7 +1513,8 @@ ChangeViaOctagon (PinType *Via)
+@@ -1526,7 +1538,8 @@ ChangeViaOctagon (PinType *Via)
  static void *
  SetViaOctagon (PinType *Via)
  {
@@ -546,7 +546,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
  
    return (ChangeViaOctagon (Via));
-@@ -1513,7 +1526,8 @@ SetViaOctagon (PinType *Via)
+@@ -1538,7 +1551,8 @@ SetViaOctagon (PinType *Via)
  static void *
  ClrViaOctagon (PinType *Via)
  {
@@ -556,7 +556,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
  
    return (ChangeViaOctagon (Via));
-@@ -1525,7 +1539,7 @@ ClrViaOctagon (PinType *Via)
+@@ -1550,7 +1564,7 @@ ClrViaOctagon (PinType *Via)
  static void *
  ChangePinOctagon (ElementType *Element, PinType *Pin)
  {
@@ -565,7 +565,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
    ErasePin (Pin);
    AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, false);
-@@ -1544,7 +1558,8 @@ ChangePinOctagon (ElementType *Element, PinType *Pin)
+@@ -1569,7 +1583,8 @@ ChangePinOctagon (ElementType *Element, PinType *Pin)
  static void *
  SetPinOctagon (ElementType *Element, PinType *Pin)
  {
@@ -575,7 +575,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
  
    return (ChangePinOctagon (Element, Pin));
-@@ -1556,7 +1571,8 @@ SetPinOctagon (ElementType *Element, PinType *Pin)
+@@ -1581,7 +1596,8 @@ SetPinOctagon (ElementType *Element, PinType *Pin)
  static void *
  ClrPinOctagon (ElementType *Element, PinType *Pin)
  {
@@ -585,7 +585,7 @@ index 88d4b9f..f34fca2 100644
      return (NULL);
  
    return (ChangePinOctagon (Element, Pin));
-@@ -1568,7 +1584,7 @@ ClrPinOctagon (ElementType *Element, PinType *Pin)
+@@ -1593,7 +1609,7 @@ ClrPinOctagon (ElementType *Element, PinType *Pin)
  bool
  ChangeHole (PinType *Via)
  {
@@ -594,7 +594,7 @@ index 88d4b9f..f34fca2 100644
      return (false);
    EraseVia (Via);
    AddObjectToFlagUndoList (VIA_TYPE, Via, Via, Via);
-@@ -1611,7 +1627,7 @@ ChangeHole (PinType *Via)
+@@ -1636,7 +1652,7 @@ ChangeHole (PinType *Via)
  bool
  ChangePaste (PadType *Pad)
  {
@@ -603,7 +603,7 @@ index 88d4b9f..f34fca2 100644
      return (false);
    ErasePad (Pad);
    AddObjectToFlagUndoList (PAD_TYPE, Pad, Pad, Pad);
-@@ -1627,7 +1643,7 @@ ChangePaste (PadType *Pad)
+@@ -1652,7 +1668,7 @@ ChangePaste (PadType *Pad)
  static void *
  ChangePolyClear (LayerType *Layer, PolygonType *Polygon)
  {
@@ -638,7 +638,7 @@ index b36aebf..114193e 100644
     *ViaSelectedColor,
      *PinColor,
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 58fe107..12f5840 100644
+index 089aa7c..4e110e4 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
 @@ -572,14 +572,16 @@ netlist_rip_up_cb (GtkWidget * widget, gpointer data)
