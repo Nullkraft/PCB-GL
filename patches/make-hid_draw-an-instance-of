@@ -1,7 +1,7 @@
-Bottom: 5dc57669cfe5e21c557997e73028089331e468dc
-Top:    a76abe68206043e5f9dae3aeed4b589b86bf87af
+Bottom: 5520e6f2fab9f10cc93deff5a76548d32c73d74c
+Top:    5d29aa3c5aaf4955c5522e087e5d559e6f1c9b10
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:17:41 +0000
+Date:   2016-01-07 02:18:05 +0000
 
 Make HID_DRAW * an instance of the HID_DRAW class, not the API vfunc table
 
@@ -622,7 +622,7 @@ index b11c415..cb28849 100644
    hid_register_hid (&nelma_hid);
  
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 2bdf931..0c189d3 100644
+index da222da..edb7c28 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -60,6 +60,7 @@

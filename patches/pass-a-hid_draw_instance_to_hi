@@ -1,7 +1,7 @@
-Bottom: 7b7c1d1abb57b801cfe91a459f00a5768133e8c0
-Top:    5084820fb70953aa39596c64fd06f1aecc0d5a3f
+Bottom: f9cc8549ad7aee30744b214b6df6dfdd3f8aa93e
+Top:    bc7de1a725f2504d7de291dc2b1ee458615a6b6e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:17:41 +0000
+Date:   2016-01-07 02:18:06 +0000
 
 Pass a HID_DRAW * instance to hid_expose_callback() rather than a HID * pointer
 
@@ -510,7 +510,7 @@ index 8940a70..a460e95 100644
  
  static void 
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 1260d70..8a72345 100644
+index 0421475..5872aad 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -655,7 +655,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)

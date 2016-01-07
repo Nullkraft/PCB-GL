@@ -1,7 +1,7 @@
-Bottom: 76192487fd9c0aaea0666bce1955d8d7c0c4aa81
-Top:    b102fe8922ccde9cf52d2cce42341989a9b962b3
+Bottom: 810e11671839ab32a3a84202af24a9eca5bd7158
+Top:    a2def549659b3327f8ebaee0fe95db319462e51e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:17:41 +0000
+Date:   2016-01-07 02:18:05 +0000
 
 Move some fields from the HID* structure to HID_DRAW* and HID_DRAW_CLASS*
 
@@ -564,7 +564,7 @@ index cb28849..dff74b0 100644
  
    hid_register_hid (&nelma_hid);
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 0c189d3..00dd54c 100644
+index edb7c28..6ae0811 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -1845,12 +1845,10 @@ hid_png_init ()

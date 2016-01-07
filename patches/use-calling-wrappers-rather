@@ -1,7 +1,7 @@
-Bottom: 91d908d3ad7ce2c9ac71c3fd2d30a162e421f42d
-Top:    5dc57669cfe5e21c557997e73028089331e468dc
+Bottom: 1efc6e468d1a7ad13d4f5d9e74331dde5340f413
+Top:    5520e6f2fab9f10cc93deff5a76548d32c73d74c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 00:49:54 +0000
+Date:   2016-01-07 02:18:05 +0000
 
 Use calling wrappers rather than accessing HID_DRAW* vfunc tables directly
 
@@ -1364,7 +1364,7 @@ index 68cdd3d..3cd7e92 100644
    g_free (port->render_priv);
    port->render_priv = NULL;
 diff --git a/src/print.c b/src/print.c
-index bf92dee..5646217 100644
+index 17152f6..2701cf0 100644
 --- a/src/print.c
 +++ b/src/print.c
 @@ -76,14 +76,14 @@
@@ -1394,7 +1394,7 @@ index bf92dee..5646217 100644
    if (align & 8)
      fab_line (gc, t.X,
                t.Y + SCALE_TEXT (font->MaxHeight, t.Scale) + MIL_TO_COORD(10),
-@@ -238,7 +238,7 @@ PrintFab (hidGC gc)
+@@ -242,7 +242,7 @@ PrintFab (hidGC gc)
        yoff -= (4 - ds) * TEXT_LINE;
      }
  
@@ -1403,7 +1403,7 @@ index bf92dee..5646217 100644
  
    for (n = AllDrills->DrillN - 1; n >= 0; n--)
      {
-@@ -248,7 +248,7 @@ PrintFab (hidGC gc)
+@@ -252,7 +252,7 @@ PrintFab (hidGC gc)
  	plated_sym = --ds;
        if (drill->UnplatedCount)
  	unplated_sym = --ds;
@@ -1412,7 +1412,7 @@ index bf92dee..5646217 100644
        for (i = 0; i < drill->PinN; i++)
  	drill_sym (gc, TEST_FLAG (HOLEFLAG, drill->Pin[i]) ?
  		   unplated_sym : plated_sym, drill->Pin[i]->X,
-@@ -269,7 +269,7 @@ PrintFab (hidGC gc)
+@@ -273,7 +273,7 @@ PrintFab (hidGC gc)
  	  text_at (gc, MIL_TO_COORD(1400), yoff, MIL_TO_COORD(2), "NO");
  	  text_at (gc, MIL_TO_COORD(980), yoff, MIL_TO_COORD(2), "%d", drill->UnplatedCount);
  	}
@@ -1421,7 +1421,7 @@ index bf92dee..5646217 100644
        text_at (gc, MIL_TO_COORD(450), yoff, MIL_TO_COORD(2), "%0.3f",
  	       COORD_TO_INCH(drill->DrillSize));
        if (plated_sym != -1 && unplated_sym != -1)
-@@ -280,7 +280,7 @@ PrintFab (hidGC gc)
+@@ -284,7 +284,7 @@ PrintFab (hidGC gc)
        total_drills += drill->ViaCount;
      }
  
@@ -1430,7 +1430,7 @@ index bf92dee..5646217 100644
    text_at (gc, 0, yoff, MIL_TO_COORD(9), "Symbol");
    text_at (gc, MIL_TO_COORD(410), yoff, MIL_TO_COORD(9), "Diam. (Inch)");
    text_at (gc, MIL_TO_COORD(950), yoff, MIL_TO_COORD(9), "Count");
-@@ -310,15 +310,13 @@ PrintFab (hidGC gc)
+@@ -317,15 +317,13 @@ PrintFab (hidGC gc)
      }
    if (i == max_copper_layer)
      {
@@ -1452,7 +1452,7 @@ index bf92dee..5646217 100644
        text_at (gc, MIL_TO_COORD(2000), yoff, 0,
  	       "Maximum Dimensions: %f mils wide, %f mils high",
  	       COORD_TO_MIL(PCB->MaxWidth), COORD_TO_MIL(PCB->MaxHeight));
-@@ -330,25 +328,25 @@ PrintFab (hidGC gc)
+@@ -337,25 +335,25 @@ PrintFab (hidGC gc)
    else
      {
        LayerType *layer = LAYER_PTR (i);

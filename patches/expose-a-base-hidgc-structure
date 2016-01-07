@@ -1,7 +1,7 @@
-Bottom: f8492ae230b185b5c707803464bd1b74aba9457a
-Top:    2ebd2342576219366de1881e8130bb6926ceda10
+Bottom: 78dae606aeadfcb14ea8544736b36ee77fae59d7
+Top:    285e78b9b04a3f7ee89dfabe554405c287072a51
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 00:49:54 +0000
+Date:   2016-01-07 02:18:05 +0000
 
 Expose a base hidGC structure for HIDs to inherit from.
 
@@ -1705,7 +1705,7 @@ index 2e814de..90afd96 100644
  }
  
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 2f1590b..5f315e2 100644
+index a74e423..ba3f77d 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -94,16 +94,17 @@ typedef struct color_struct

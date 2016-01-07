@@ -1,7 +1,7 @@
-Bottom: 7621f188985d1b27a6c259d8455ac8a9799c22bb
-Top:    2fefe2355ac8ebf8aa4f2199bad54f64836d7d61
+Bottom: 5c68ceca68787cd2cd3410aad3e0d2ff98923c71
+Top:    7115dc3ee4ebaca6a41d63b322ecc8e3e107f8ae
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 00:49:54 +0000
+Date:   2016-01-07 02:18:05 +0000
 
 Add a pointer in hid_gc_struct to link a gc and the relevant HID_DRAW vfunc table
 
@@ -81,7 +81,7 @@ index d11eb4f..b11c415 100644
  	nelma_gc->cap = Trace_Cap;
  	nelma_gc->width = 1;
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 66bba9a..2bdf931 100644
+index 1a052fb..da222da 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -1353,6 +1353,7 @@ png_make_gc (void)
