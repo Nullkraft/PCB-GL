@@ -143,7 +143,7 @@ nogui_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
 }
 
 static void
-nogui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+nogui_draw_pcb_polygon (hidGC gc, PolygonType *poly)
 {
   CRASH;
 }

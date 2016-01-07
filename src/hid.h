@@ -532,7 +532,7 @@ typedef enum
 
    Do *not* assume that the hid that is passed is the GUI hid.  This
    callback is also used for printing and exporting. */
-  void hid_expose_callback (HID_DRAW *hid_draw, struct BoxType *region_, void *item_);
+  void hid_expose_callback (HID_DRAW *hid_draw, void *item_);
 
 /* This is initially set to a "no-gui" gui, and later reset by
    main. hid_expose_callback also temporarily set it for drawing. */
