@@ -1,7 +1,7 @@
-Bottom: d13bbe12cb4d58fa50be221260cdcd13c3769b2e
-Top:    79d21bf9999e070907d4b463f9feb40e444147c1
+Bottom: c07d68f583d37f29aa6c64bf5e196e73e8d6540a
+Top:    337ec578b15eb8a5ea4615854ff2dec7e638909e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 23:26:53 +0000
+Date:   2016-01-07 00:59:24 +0000
 
 Demo of exporter specific export routine
 
@@ -9,7 +9,7 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index dfa9db4..4a74152 100644
+index ebab4cc..77e7de8 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -5,6 +5,11 @@
@@ -24,7 +24,7 @@ index dfa9db4..4a74152 100644
  
  
  static void
-@@ -643,3 +648,191 @@ void
+@@ -692,3 +697,191 @@ void
  common_draw_helpers_init (HID_DRAW *graphics)
  {
  }
