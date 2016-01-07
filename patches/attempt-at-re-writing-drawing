@@ -1,7 +1,7 @@
-Bottom: b5c5bc38668395a77cf19ea275ad64a677c2d90e
-Top:    064362d5fd14d34826c0a95f2380cb3f4cfae897
+Bottom: efeec103a10310ee5f6d2f152a3158db1fadae18
+Top:    3525306055c06103efb5dd2061a5a44e8a4b8038
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 01:33:24 +0000
+Date:   2016-01-07 01:46:27 +0000
 
 Attempt at re-writing drawing routines to pass state via hidGC
 
@@ -1478,7 +1478,7 @@ index b36aebf..050d804 100644
  }
  OutputType;
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 71bd9ff..71486b4 100644
+index 872ff8b..fc16f3c 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -203,7 +203,7 @@ fill_contour_cb (PLINE *pl, void *user_data)

@@ -1,7 +1,7 @@
-Bottom: 9d2fecec314aa2d9e5ee8cccc9ad23fe17b241bf
-Top:    b5c5bc38668395a77cf19ea275ad64a677c2d90e
+Bottom: 62bdb109bee2b7c5271596f0fcf76855b85e064a
+Top:    efeec103a10310ee5f6d2f152a3158db1fadae18
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 01:33:24 +0000
+Date:   2016-01-07 01:46:26 +0000
 
 Attempt to split out clip_box using code from big re-write
 
@@ -406,7 +406,7 @@ index 580e47e..f453dbb 100644
  /* This is initially set to a "no-gui" gui, and later reset by
     main. hid_expose_callback also temporarily set it for drawing. */
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index e8970d5..71bd9ff 100644
+index 923aa9f..872ff8b 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -205,6 +205,7 @@ fill_contour_cb (PLINE *pl, void *user_data)

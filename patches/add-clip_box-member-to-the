@@ -1,7 +1,7 @@
-Bottom: 2db16757390cbc12b5fe1c0f9bafecce808826d7
-Top:    d7349a0d87e49a7c5b9190bdfd566de89812a76a
+Bottom: 7f20427b965e9d9ea73005a8d835d963e2cea88d
+Top:    fbf7b2c7a184a650a30aeec136b49a115b2d2f18
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 01:33:24 +0000
+Date:   2016-01-07 01:46:26 +0000
 
 Add clip_box member to the HID_DRAW * instance structure
 
@@ -9,7 +9,7 @@ Add clip_box member to the HID_DRAW * instance structure
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 6e7b205..e8970d5 100644
+index 03591ba..923aa9f 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -7,6 +7,20 @@
