@@ -525,9 +525,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
 static void
 netlist_select_cb (GtkWidget * widget, gpointer data)
 {
-  LibraryEntryType *entry;
   ConnectionType conn;
-  gint i;
+  GList *iter;
   gboolean select_flag = GPOINTER_TO_INT (data);
 
   if (!selected_net)
@@ -538,9 +537,12 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
   InitConnectionLookup ();
   ClearFlagOnAllObjects (true, FOUNDFLAG);
 
-  for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
+  for (iter = selected_net->Entry; iter != NULL; iter = g_list_next (iter)) {
+    LibraryEntryType *entry = iter->data;
+
     if (SeekPad (entry, &conn, false))
       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, FOUNDFLAG, true);
+  }
 
   SelectByFlag (FOUNDFLAG, select_flag);
   ClearFlagOnAllObjects (false, FOUNDFLAG);
@@ -855,9 +857,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
 {
   struct ggnfnn_task *task = (struct ggnfnn_task *)data;
   LibraryMenuType *net;
-  LibraryEntryType *node;
   gchar *str;
-  gint j;
+  GList *j;
   gboolean is_disabled;
 
   /* We only want to inspect leaf nodes in the tree */
@@ -874,13 +875,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
     return FALSE;
 
   /* Look for the node name in this net. */
-  for (j = net->EntryN, node = net->Entry; j; j--, node++)
-    if (node->ListEntry && !strcmp (task->node_name, node->ListEntry))
+  for (j = net->Entry; j != NULL; j = g_list_next (j)) {
+    LibraryEntryType *entry = j->data;
+
+    if (entry->ListEntry && !strcmp (task->node_name, entry->ListEntry))
       {
         task->found_net = net;
         task->iter = *iter;
         return TRUE;
       }
+  }
 
   return FALSE;
 }
@@ -1000,7 +1004,7 @@ ghid_netlist_window_update (gboolean init_nodes)
 
   /* XXX Check if the select callback does this for us */
   if (init_nodes)
-    node_model_update ((&PCB->NetlistLib)->Menu);
+    node_model_update ((LibraryMenuType *)PCB->NetlistLib.Menu->data);
 }
 
 static gint
