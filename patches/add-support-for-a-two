@@ -1,7 +1,7 @@
-Bottom: 77b49f9cb8fe4b23b49e8328c4508eca480f47bd
-Top:    a029a2ff11f987959626e3fd16860a720fc344ad
+Bottom: f6e704cd316247283b9551a25a30ad6bb7374066
+Top:    006ecbc8cdecc4490fcfe5e80dcb326412ac9c35
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 02:18:09 +0000
+Date:   2016-01-07 02:19:02 +0000
 
 Add support for a two soldermask layers, defining regions of removed mask
 
@@ -17,10 +17,10 @@ Layer (n+4 "top soldermask")       # top side soldermask
 ---
 
 diff --git a/src/const.h b/src/const.h
-index 67eb72d..5ee3bc6 100644
+index be5a7ed..3ed0aa1 100644
 --- a/src/const.h
 +++ b/src/const.h
-@@ -42,7 +42,7 @@
+@@ -43,7 +43,7 @@
  #define TOP_SIDE                1
  
  
@@ -29,7 +29,7 @@ index 67eb72d..5ee3bc6 100644
  
  /* ---------------------------------------------------------------------------
   * the layer-numbers of the two additional special (silkscreen) layers
-@@ -50,6 +50,8 @@
+@@ -51,6 +51,8 @@
   */
  #define BOTTOM_SILK_LAYER       0
  #define TOP_SILK_LAYER          1
@@ -39,10 +39,10 @@ index 67eb72d..5ee3bc6 100644
  /* ---------------------------------------------------------------------------
   * misc constants
 diff --git a/src/create.c b/src/create.c
-index 6da9271..fe9619a 100644
+index 2c03c40..c0d8d74 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -119,6 +119,7 @@ pcb_colors_from_settings (PCBType *ptr)
+@@ -127,6 +127,7 @@ pcb_colors_from_settings (PCBType *ptr)
    ptr->ViaSelectedColor = Settings.ViaSelectedColor;
    ptr->WarnColor = Settings.WarnColor;
    ptr->MaskColor = Settings.MaskColor;
@@ -50,7 +50,7 @@ index 6da9271..fe9619a 100644
    for (i = 0; i < MAX_LAYER; i++)
      {
        ptr->Data->Layer[i].Color = Settings.LayerColor[i];
-@@ -134,6 +135,11 @@ pcb_colors_from_settings (PCBType *ptr)
+@@ -142,6 +143,11 @@ pcb_colors_from_settings (PCBType *ptr)
      Settings.ElementColor : Settings.InvisibleObjectsColor;
    ptr->Data->Layer[bottom_silk_layer].SelectedColor =
      Settings.ElementSelectedColor;
@@ -61,8 +61,8 @@ index 6da9271..fe9619a 100644
 +  ptr->Data->Layer[bottom_soldermask_layer].SelectedColor = Settings.MaskSelectedColor;
  }
  
- /* ---------------------------------------------------------------------------
-@@ -154,6 +160,7 @@ CreateNewPCB (void)
+ /*!
+@@ -162,6 +168,7 @@ CreateNewPCB (void)
    ptr->ThermStyle = 4;
    ptr->IsleArea = 2.e8;
    ptr->SilkActive = false;
@@ -70,7 +70,7 @@ index 6da9271..fe9619a 100644
    ptr->RatDraw = false;
    SET_FLAG (NAMEONPCBFLAG, ptr);
    if (Settings.ShowNumber)
-@@ -226,6 +233,8 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
+@@ -239,6 +246,8 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
  
    pcb->Data->Layer[top_silk_layer].Name = strdup ("top silk");
    pcb->Data->Layer[bottom_silk_layer].Name = strdup ("bottom silk");

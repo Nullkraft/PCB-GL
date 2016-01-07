@@ -1,7 +1,7 @@
-Bottom: 547d8952fd118dd90ae1329d7eb779d585563475
-Top:    77b49f9cb8fe4b23b49e8328c4508eca480f47bd
+Bottom: 7d4e8f5fb8cc2c5566257be1f40d5ade7baecf21
+Top:    f6e704cd316247283b9551a25a30ad6bb7374066
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 02:18:09 +0000
+Date:   2016-01-07 02:19:01 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -28,10 +28,10 @@ index d5bbab7..4f98732 100644
        LayerType *layer = Buffer->Data->Layer + i;
        if (layer->TextN)
 diff --git a/src/const.h b/src/const.h
-index 08fe253..67eb72d 100644
+index 5b3b9e2..be5a7ed 100644
 --- a/src/const.h
 +++ b/src/const.h
-@@ -42,6 +42,8 @@
+@@ -43,6 +43,8 @@
  #define TOP_SIDE                1
  
  
@@ -41,10 +41,10 @@ index 08fe253..67eb72d 100644
   * the layer-numbers of the two additional special (silkscreen) layers
   * 'bottom' and 'top'. The offset of MAX_LAYER is not added
 diff --git a/src/copy.c b/src/copy.c
-index b0cd9c8..a0385db 100644
+index 1d1cbd5..3e070e5 100644
 --- a/src/copy.c
 +++ b/src/copy.c
-@@ -326,7 +326,7 @@ CopyPastebufferToLayout (Coord X, Coord Y)
+@@ -332,7 +332,7 @@ CopyPastebufferToLayout (Coord X, Coord Y)
    DeltaX = X - PASTEBUFFER->X, DeltaY = Y - PASTEBUFFER->Y;
  
    /* paste all layers */
