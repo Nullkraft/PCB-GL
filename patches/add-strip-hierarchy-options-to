@@ -1,5 +1,5 @@
 Bottom: 23789d13a33165ad62751e37768f7597e9c3fd28
-Top:    23789d13a33165ad62751e37768f7597e9c3fd28
+Top:    b1e459f887dd5547b6a3994fc9265fd74b99d40f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2016-01-07 02:19:13 +0000
 
@@ -16,4 +16,192 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index 7726be6..20e2895 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -3436,9 +3436,16 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+       /* If there is no refdes, maybe just spit out a warning */
+       if (NAMEONPCB_NAME (element_list[i]))
+ 	{
++          /* Strip hierarchy */
++          tmps = strrchr (NAMEONPCB_NAME (element_list[i]), '/');
++          if (tmps == NULL)
++	    tmps = strdup (NAMEONPCB_NAME (element_list[i]));
++          else
++            tmps = strdup (tmps + 1);
++
+ 	  /* figure out the prefix */
+-	  tmps = strdup (NAMEONPCB_NAME (element_list[i]));
+ 	  j = 0;
++
+ 	  while (tmps[j] && (tmps[j] < '0' || tmps[j] > '9')
+ 		 && tmps[j] != '?')
+ 	    j++;
+@@ -4813,6 +4820,77 @@ ActionToggleHideName (int argc, char **argv, Coord x, Coord y)
+ 
+ /* --------------------------------------------------------------------------- */
+ 
++static const char togglestriphierarchy_syntax[] =
++  "ToggleStripHierarchy(Object|SelectedElements)";
++
++static const char togglestriphierarchy_help[] =
++  "Toggles the visibility of element names.";
++
++/* %start-doc actions ToggleStripHierarchy
++
++%end-doc */
++
++static int
++ActionToggleStripHierarchy (int argc, char **argv, Coord x, Coord y)
++{
++  char *function = ARG (0);
++  if (function && PCB->ElementOn)
++    {
++      switch (GetFunctionID (function))
++	{
++	case F_Object:
++	  {
++	    int type;
++	    void *ptr1, *ptr2, *ptr3;
++
++	    gui->get_coords ("Select an Object", &x, &y);
++	    if ((type = SearchScreen (x, y, ELEMENT_TYPE,
++				      &ptr1, &ptr2, &ptr3)) != NO_TYPE)
++	      {
++		AddObjectToFlagUndoList (type, ptr1, ptr2, ptr3);
++		EraseElementName ((ElementType *) ptr2);
++		TOGGLE_FLAG (HIDENAMEFLAG, (ElementType *) ptr2);
++/* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
++		DrawElementName ((ElementType *) ptr2);
++		Draw ();
++		IncrementUndoSerialNumber ();
++	      }
++	    break;
++	  }
++	case F_SelectedElements:
++	case F_Selected:
++	  {
++	    bool changed = false;
++	    ELEMENT_LOOP (PCB->Data);
++	    {
++	      if ((TEST_FLAG (SELECTEDFLAG, element) ||
++		   TEST_FLAG (SELECTEDFLAG,
++			      &NAMEONPCB_TEXT (element)))
++		  && (FRONT (element) || PCB->InvisibleObjectsOn))
++		{
++		  AddObjectToFlagUndoList (ELEMENT_TYPE, element,
++					   element, element);
++		  EraseElementName (element);
++		  TOGGLE_FLAG (STRIPHIERFLAG, element);
++/* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
++		  DrawElementName (element);
++		  changed = true;
++		}
++	    }
++	    END_LOOP;
++	    if (changed)
++	      {
++		Draw ();
++		IncrementUndoSerialNumber ();
++	      }
++	  }
++	}
++    }
++  return 0;
++}
++
++/* --------------------------------------------------------------------------- */
++
+ static const char changejoin_syntax[] =
+   N_("ChangeJoin(ToggleObject|SelectedLines|SelectedArcs|Selected)");
+ 
+@@ -8212,6 +8290,9 @@ HID_Action action_action_list[] = {
+   {"ToggleHideName", 0, ActionToggleHideName,
+    togglehidename_help, togglehidename_syntax}
+   ,
++  {"ToggleStripHierarchy", 0, ActionToggleStripHierarchy,
++   togglestriphierarchy_help, togglestriphierarchy_syntax}
++  ,
+   {"Undo", 0, ActionUndo,
+    undo_help, undo_syntax}
+   ,
+diff --git a/src/const.h b/src/const.h
+index 3ed0aa1..43a9e55 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -192,6 +192,8 @@ pinout text should be vertical.
+ Marker used internally to avoid revisiting an object.
+ @item 0x10000 connected
+ If set, this object has been as physically connected by @code{FindConnection()}.
++@item 0x20000 striphierarchy
++Strip hierarchy when displaying this element's refdes.
+ @end table
+ %end-doc */
+ 
+@@ -229,6 +231,7 @@ If set, this object has been as physically connected by @code{FindConnection()}.
+                                              also pinout text for pins is vertical */
+ #define VISITFLAG               0x8000  /*!< marker to avoid re-visiting an object */
+ #define CONNECTEDFLAG          0x10000  /*!< flag like FOUND flag, but used to identify physically connected objects (not rats) */
++#define STRIPHIERFLAG          0x20000  /*!< Strip hierarchy when displaying names */
+ 
+ 
+ #define NOCOPY_FLAGS (FOUNDFLAG | CONNECTEDFLAG)
+diff --git a/src/draw.c b/src/draw.c
+index 2993fac..72b6903 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -156,6 +156,32 @@ pad_callback (const BoxType * b, void *cl)
+ }
+ 
+ static void
++DrawStrippedText (hidGC gc, ElementType *Element, int min_width)
++{
++  TextType text;
++  TextType *text_ptr;
++  char *end_string;
++
++  if (TEST_FLAG (NAMEONPCBFLAG, PCB) &&
++      TEST_FLAG (STRIPHIERFLAG, Element))
++    {
++      text_ptr = &text;
++      memcpy (text_ptr, &ELEMENT_TEXT (PCB, Element), sizeof (TextType));
++
++      /* Strip hierarchy */
++      end_string = strrchr (text.TextString, '/');
++      if (end_string != NULL)
++        text.TextString = end_string + 1;
++    }
++  else
++    {
++      text_ptr = &ELEMENT_TEXT (PCB, Element);
++    }
++
++  hid_draw_pcb_text (gc, text_ptr, min_width);
++}
++
++static void
+ draw_element_name (ElementType *element)
+ {
+   if ((TEST_FLAG (HIDENAMESFLAG, PCB) && hid_draw_is_gui (hid_draw)) ||
+@@ -170,7 +196,7 @@ draw_element_name (ElementType *element)
+     hid_draw_set_color (Output.fgGC, PCB->ElementColor);
+   else
+     hid_draw_set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+-  hid_draw_pcb_text (Output.fgGC, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
++  DrawStrippedText (Output.fgGC, element, PCB->minSlk);
+ }
+ 
+ static int
+diff --git a/src/strflags.c b/src/strflags.c
+index f29da5b..3e57696 100644
+--- a/src/strflags.c
++++ b/src/strflags.c
+@@ -95,6 +95,7 @@ static FlagBitsType object_flagbits[] = {
+   { CLEARPOLYFLAG, N ("clearpoly"), POLYGON_TYPE },
+   { HIDENAMEFLAG, N ("hidename"), ELEMENT_TYPE },
+   { DISPLAYNAMEFLAG, N ("showname"), ELEMENT_TYPE },
++  { STRIPHIERFLAG, N ("striphierarchy"), ELEMENT_TYPE },
+   { CLEARLINEFLAG, N ("clearline"), LINE_TYPE | ARC_TYPE | TEXT_TYPE },
+   { SELECTEDFLAG, N ("selected"), ALL_TYPES },
+   { ONSOLDERFLAG, N ("onsolder"), ELEMENT_TYPE | PAD_TYPE | TEXT_TYPE },
