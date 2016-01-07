@@ -1,7 +1,7 @@
-Bottom: b8fb742bbef8d3f35feca450e323aba0f0e0b0e5
-Top:    0e7f72a6110fb8d36dc2905f16cd4a87e8d64d19
+Bottom: d7349a0d87e49a7c5b9190bdfd566de89812a76a
+Top:    729d49e4c70fa600d1832cc343a1cad69259e904
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:06:09 +0000
+Date:   2016-01-07 01:33:24 +0000
 
 hidgl: Fixup to use HID_DRAW * rather than hidgl_instance *
 
@@ -905,10 +905,10 @@ index 887850b..7b4006a 100644
  }
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 9fb531b..85d010e 100644
+index 846c997..4d623c6 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2097,8 +2097,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
+@@ -2100,8 +2100,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
  #endif
  
  HID ghid_hid;
@@ -918,7 +918,7 @@ index 9fb531b..85d010e 100644
  
  void
  hid_gtk_init ()
-@@ -2138,7 +2137,6 @@ hid_gtk_init ()
+@@ -2141,7 +2140,6 @@ hid_gtk_init ()
  #endif
  
    memset (&ghid_hid, 0, sizeof (HID));
@@ -926,7 +926,7 @@ index 9fb531b..85d010e 100644
    memset (&ghid_graphics_class, 0, sizeof (HID_DRAW_CLASS));
  
    common_nogui_init (&ghid_hid);
-@@ -2216,14 +2214,8 @@ hid_gtk_init ()
+@@ -2219,14 +2217,8 @@ hid_gtk_init ()
    ghid_graphics_class.draw_pcb_pad     = common_gui_draw_pcb_pad;
    ghid_graphics_class.draw_pcb_pv      = common_gui_draw_pcb_pv;
  

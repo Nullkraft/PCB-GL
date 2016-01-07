@@ -1,7 +1,7 @@
-Bottom: 889ddd8513353ec8e42f359dc6c63575180e4572
-Top:    6336c5cd6d931a2f62f06217f9f86c1b24c3f87b
+Bottom: 9d1890097b92f06a3ca0a0e01f5953c0fdc8d2ff
+Top:    f829363eafd25f329ee83b947669cb51748cb774
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:06:08 +0000
+Date:   2016-01-07 01:33:23 +0000
 
 Adjust mask API to include a HID_DRAW pointer
 
@@ -48,10 +48,10 @@ index e7867de..ac9e2ed 100644
    CRASH;
  }
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index a75661a..64d637d 100644
+index 02bdff8..ea49a45 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -1197,7 +1197,7 @@ gcode_destroy_gc (hidGC gc)
+@@ -1202,7 +1202,7 @@ gcode_destroy_gc (hidGC gc)
  }
  
  static void
@@ -82,7 +82,7 @@ index 519264e..a556034 100644
    current_mask = mode;
  }
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index c9620ff..02298a4 100644
+index 1c8e814..8024e84 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -324,7 +324,7 @@ ghid_draw_bg_image (void)
@@ -108,10 +108,10 @@ index ef8774b..98e02ad 100644
    render_priv *priv = gport->render_priv;
    hidgl_instance *hidgl = priv->hidgl;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 3430633..9804460 100644
+index de062d8..65c876a 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -476,7 +476,7 @@ void ghid_pinout_window_show (GHidPort *out, ElementType *Element);
+@@ -480,7 +480,7 @@ void ghid_pinout_window_show (GHidPort *out, ElementType *Element);
  int ghid_set_layer (const char *name, int group, int empty);
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
@@ -121,7 +121,7 @@ index 3430633..9804460 100644
  void ghid_set_line_cap (hidGC gc, EndCapStyle style);
  void ghid_set_line_width (hidGC gc, Coord width);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index b569b7b..b49a7c6 100644
+index 6a56893..0191370 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -242,7 +242,7 @@ Location of the @file{pcb-menu.res} file which defines the menu for the lesstif
@@ -133,7 +133,7 @@ index b569b7b..b49a7c6 100644
  static void zoom_max ();
  static void zoom_to (double factor, int x, int y);
  static void zoom_by (double factor, int x, int y);
-@@ -2500,7 +2500,7 @@ idle_proc (XtPointer dummy)
+@@ -2503,7 +2503,7 @@ idle_proc (XtPointer dummy)
      {
        int mx, my;
        BoxType region;
@@ -142,7 +142,7 @@ index b569b7b..b49a7c6 100644
        pixmap = main_pixmap;
        mx = view_width;
        my = view_height;
-@@ -2581,7 +2581,7 @@ idle_proc (XtPointer dummy)
+@@ -2584,7 +2584,7 @@ idle_proc (XtPointer dummy)
        DrawBackgroundImage();
        hid_expose_callback (&lesstif_graphics, &region, 0);
        draw_grid ();
@@ -151,7 +151,7 @@ index b569b7b..b49a7c6 100644
        show_crosshair (0); /* To keep the drawn / not drawn info correct */
        XSetFunction (display, my_gc, GXcopy);
        XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
-@@ -3073,7 +3073,7 @@ lesstif_destroy_gc (hidGC gc)
+@@ -3077,7 +3077,7 @@ lesstif_destroy_gc (hidGC gc)
  }
  
  static void

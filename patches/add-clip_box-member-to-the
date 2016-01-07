@@ -1,7 +1,7 @@
-Bottom: dcc49ae4ed2717a41b5ee0aae689cc00cc89b1b2
-Top:    b8fb742bbef8d3f35feca450e323aba0f0e0b0e5
+Bottom: 2db16757390cbc12b5fe1c0f9bafecce808826d7
+Top:    d7349a0d87e49a7c5b9190bdfd566de89812a76a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:06:08 +0000
+Date:   2016-01-07 01:33:24 +0000
 
 Add clip_box member to the HID_DRAW * instance structure
 
@@ -9,7 +9,7 @@ Add clip_box member to the HID_DRAW * instance structure
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index f4de2c0..6f8bb40 100644
+index 6e7b205..e8970d5 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -7,6 +7,20 @@
@@ -56,7 +56,7 @@ index cd679c6..d145915 100644
  
    return &box;
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index c6c749d..3d6616c 100644
+index ea9a6bd..2ec69e5 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -467,9 +467,11 @@ gcode_start_png_export ()
@@ -86,7 +86,7 @@ index 6e4616e..ab1c2ed 100644
  
    layer_list_idx = 0;
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 9d767b3..b0d1e24 100644
+index 6bbd1b0..7cebfe7 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -860,6 +860,7 @@ redraw_region (GdkRectangle *rect)
@@ -126,10 +126,10 @@ index d4b0598..887850b 100644
    hidgl_flush_triangles (priv->hidgl);
    glPopMatrix ();
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index f7ef051..d1cf0bd 100644
+index 4ed4237..6ff5efd 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -825,6 +825,8 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
+@@ -828,6 +828,8 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
    region.X2 = PCB->MaxWidth;
    region.Y2 = PCB->MaxHeight;
  
@@ -138,7 +138,7 @@ index f7ef051..d1cf0bd 100644
    pixmap = window;
    XSync (display, 0);
    time (&start);
-@@ -2578,6 +2580,9 @@ idle_proc (XtPointer dummy)
+@@ -2581,6 +2583,9 @@ idle_proc (XtPointer dummy)
  			      rightmost-leftmost+1, view_height-bottommost+1);
  	    }
  	}
@@ -148,7 +148,7 @@ index f7ef051..d1cf0bd 100644
        DrawBackgroundImage();
        hid_expose_callback (&lesstif_graphics, &region, 0);
        draw_grid ();
-@@ -3803,6 +3808,8 @@ pinout_callback (Widget da, PinoutData * pd,
+@@ -3807,6 +3812,8 @@ pinout_callback (Widget da, PinoutData * pd,
    region.Y2 = PCB->MaxHeight;
  
    XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);

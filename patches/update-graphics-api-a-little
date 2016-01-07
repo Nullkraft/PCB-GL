@@ -1,7 +1,7 @@
-Bottom: 313d5d57357c423322ff894a808709ad99d37984
-Top:    47a7a77115fdb5e04b9d8e60c526fdce16c268e8
+Bottom: 48b6b91559f333992fc1b2efaecdb932433af073
+Top:    b29f460195ad5f5eb9efb461bdc7883eee8539e4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:06:08 +0000
+Date:   2016-01-07 01:33:23 +0000
 
 Update graphics API a little
 
@@ -104,7 +104,7 @@ index 5b13d95..39f8d6f 100644
  
  static void
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index dfa9db4..c941ad8 100644
+index ebab4cc..901f2a8 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -261,9 +261,9 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
@@ -128,7 +128,7 @@ index dfa9db4..c941ad8 100644
      }
  }
  
-@@ -423,6 +423,15 @@ common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+@@ -465,6 +465,15 @@ common_get_pad_polygon(Coord x[4], Coord y[4], const PadType *l, int w)
  }
  
  void
@@ -144,7 +144,7 @@ index dfa9db4..c941ad8 100644
  common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
  {
    Coord w = clear ? (mask ? pad->Mask
-@@ -529,6 +538,15 @@ draw_octagon_poly (hidGC gc, Coord X, Coord Y,
+@@ -578,6 +587,15 @@ draw_octagon_poly (hidGC gc, Coord X, Coord Y,
  }
  
  void
@@ -160,7 +160,7 @@ index dfa9db4..c941ad8 100644
  common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
  {
    Coord w = mask ? pv->Mask : pv->Thickness;
-@@ -626,17 +644,19 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+@@ -675,17 +693,19 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
  void
  common_draw_helpers_class_init (HID_DRAW_CLASS *klass)
  {
@@ -366,10 +366,10 @@ index 2332d07..c8c2a5a 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 59faf56..9fb531b 100644
+index 763f493..846c997 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2213,6 +2213,9 @@ hid_gtk_init ()
+@@ -2216,6 +2216,9 @@ hid_gtk_init ()
    ghid_graphics_class.fill_rect      = ghid_fill_rect;
  
    ghid_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
@@ -380,10 +380,10 @@ index 59faf56..9fb531b 100644
    ghid_graphics_class.gui = true;
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 790f424..b569b7b 100644
+index c9eb567..6a56893 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4130,6 +4130,8 @@ hid_lesstif_init ()
+@@ -4134,6 +4134,8 @@ hid_lesstif_init ()
    lesstif_graphics_class.fill_rect      = lesstif_fill_rect;
  
    lesstif_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;

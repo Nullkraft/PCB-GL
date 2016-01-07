@@ -1,7 +1,7 @@
-Bottom: d68d3fbd05ae4ee2140b611810a2a4900581348b
-Top:    98a35e47d6e3416b2f094cf3f53229a2ad1a6a5a
+Bottom: b5c5bc38668395a77cf19ea275ad64a677c2d90e
+Top:    064362d5fd14d34826c0a95f2380cb3f4cfae897
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-04-21 02:08:39 +0100
+Date:   2016-01-07 01:33:24 +0000
 
 Attempt at re-writing drawing routines to pass state via hidGC
 
@@ -1478,7 +1478,7 @@ index b36aebf..050d804 100644
  }
  OutputType;
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 4ed811d..1be2d15 100644
+index 71bd9ff..71486b4 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -203,7 +203,7 @@ fill_contour_cb (PLINE *pl, void *user_data)
@@ -1580,7 +1580,7 @@ index 4ed811d..1be2d15 100644
  {
    HID_DRAW *hid_draw = gc->hid_draw;
  
-@@ -694,6 +694,6 @@ common_draw_helpers_class_init (HID_DRAW_CLASS *klass)
+@@ -743,6 +743,6 @@ common_draw_helpers_class_init (HID_DRAW_CLASS *klass)
  }
  
  void
@@ -2774,10 +2774,10 @@ index b4be3a5..0d21f2f 100644
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 34049a6..97b7b9f 100644
+index ad3b3b8..f670fc1 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -816,6 +816,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
+@@ -819,6 +819,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
    time_t start, end;
    BoxType region;
    Drawable save_main;
@@ -2785,7 +2785,7 @@ index 34049a6..97b7b9f 100644
  
    save_main = main_pixmap;
    main_pixmap = window;
-@@ -2498,6 +2499,8 @@ static int need_redraw = 0;
+@@ -2501,6 +2502,8 @@ static int need_redraw = 0;
  static Boolean
  idle_proc (XtPointer dummy)
  {
@@ -2794,7 +2794,7 @@ index 34049a6..97b7b9f 100644
    if (need_redraw)
      {
        int mx, my;
-@@ -3759,6 +3762,7 @@ pinout_callback (Widget da, PinoutData * pd,
+@@ -3763,6 +3766,7 @@ pinout_callback (Widget da, PinoutData * pd,
    double save_vz;
    Pixmap save_px;
    int reason = cbs ? cbs->reason : 0;

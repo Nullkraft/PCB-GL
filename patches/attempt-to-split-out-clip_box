@@ -1,7 +1,7 @@
-Bottom: 488dfb497b6670d36a618d7f7aae2f5dfdb219f9
-Top:    d68d3fbd05ae4ee2140b611810a2a4900581348b
+Bottom: 9d2fecec314aa2d9e5ee8cccc9ad23fe17b241bf
+Top:    b5c5bc38668395a77cf19ea275ad64a677c2d90e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:06:09 +0000
+Date:   2016-01-07 01:33:24 +0000
 
 Attempt to split out clip_box using code from big re-write
 
@@ -406,7 +406,7 @@ index 580e47e..f453dbb 100644
  /* This is initially set to a "no-gui" gui, and later reset by
     main. hid_expose_callback also temporarily set it for drawing. */
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 6f8bb40..4ed811d 100644
+index e8970d5..71bd9ff 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -205,6 +205,7 @@ fill_contour_cb (PLINE *pl, void *user_data)
@@ -609,7 +609,7 @@ index f82c498..71c518f 100644
    CRASH;
  }
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 3d6616c..0e00f50 100644
+index 2ec69e5..c47d133 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -472,7 +472,7 @@ gcode_start_png_export ()
@@ -665,7 +665,7 @@ index ab1c2ed..4ef080e 100644
  
    return 1;
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index b0d1e24..5933a88 100644
+index 7cebfe7..2bfb003 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -15,7 +15,8 @@
@@ -1194,10 +1194,10 @@ index 7b4006a..b4be3a5 100644
    glPopMatrix ();
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index d1cf0bd..34049a6 100644
+index 6ff5efd..ad3b3b8 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -833,7 +833,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
+@@ -836,7 +836,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
    do
      {
        XFillRectangle (display, pixmap, bg_gc, 0, 0, view_width, view_height);
@@ -1206,7 +1206,7 @@ index d1cf0bd..34049a6 100644
        XSync (display, 0);
        time (&end);
        i++;
-@@ -2584,7 +2584,7 @@ idle_proc (XtPointer dummy)
+@@ -2587,7 +2587,7 @@ idle_proc (XtPointer dummy)
        common_set_clip_box (&lesstif_graphics, &region);
  
        DrawBackgroundImage();
@@ -1215,7 +1215,7 @@ index d1cf0bd..34049a6 100644
        draw_grid ();
        lesstif_use_mask (&lesstif_graphics, HID_MASK_OFF);
        show_crosshair (0); /* To keep the drawn / not drawn info correct */
-@@ -3810,7 +3810,7 @@ pinout_callback (Widget da, PinoutData * pd,
+@@ -3814,7 +3814,7 @@ pinout_callback (Widget da, PinoutData * pd,
    XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);
  
    common_set_clip_box (&lesstif_graphics, &region);

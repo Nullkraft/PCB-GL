@@ -1,7 +1,7 @@
-Bottom: 6336c5cd6d931a2f62f06217f9f86c1b24c3f87b
-Top:    95a08a8fb06ea81eaf1e0f5f498e2d7f4438411f
+Bottom: f829363eafd25f329ee83b947669cb51748cb774
+Top:    f0f88878504f95965f49cca16e72b34f8f808a60
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:06:08 +0000
+Date:   2016-01-07 01:33:23 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->{start,end}_layer() functions
 
@@ -56,10 +56,10 @@ index ac9e2ed..2821695 100644
  }
  
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 64d637d..9e8b620 100644
+index ea49a45..c261ef4 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -1136,7 +1136,7 @@ error:
+@@ -1141,7 +1141,7 @@ gcode_do_export (HID_Attr_Val * options)
  /* *** PNG export (slightly modified code from PNG export HID) ************* */
  
  static int
@@ -90,7 +90,7 @@ index a556034..707c905 100644
    int want_outline;
    char *cp;
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 02298a4..332a0a2 100644
+index 8024e84..5fac157 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -137,7 +137,7 @@ is_layer_group_visible (int group)
@@ -116,10 +116,10 @@ index 98e02ad..488154f 100644
    render_priv *priv = gport->render_priv;
    hidgl_instance *hidgl = priv->hidgl;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 9804460..538e547 100644
+index 65c876a..c8c5b02 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -473,7 +473,7 @@ void ghid_logv (const char *fmt, va_list args);
+@@ -477,7 +477,7 @@ void ghid_logv (const char *fmt, va_list args);
  void ghid_pinout_window_show (GHidPort *out, ElementType *Element);
  
  /* gtkhid-gdk.c AND gtkhid-gl.c */
@@ -129,10 +129,10 @@ index 9804460..538e547 100644
  void ghid_destroy_gc (hidGC);
  void ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index b49a7c6..1e470fb 100644
+index 0191370..eaeed07 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3000,7 +3000,7 @@ lesstif_notify_mark_change (bool changes_complete)
+@@ -3004,7 +3004,7 @@ lesstif_notify_mark_change (bool changes_complete)
  }
  
  static int

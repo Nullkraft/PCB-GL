@@ -1,7 +1,7 @@
-Bottom: d4e15dab1e184c46fff2cb0adf032397d30f0998
-Top:    dcc49ae4ed2717a41b5ee0aae689cc00cc89b1b2
+Bottom: 1398a4bbb7391968c4f590f654654733e32a2ccf
+Top:    2db16757390cbc12b5fe1c0f9bafecce808826d7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:06:08 +0000
+Date:   2016-01-07 01:33:24 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->{flush,finish}_debug_draw_gc() function
 
@@ -70,7 +70,7 @@ index f4b8d2d..f82c498 100644
  }
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 0815245..9d767b3 100644
+index 2a2a280..6bbd1b0 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -1314,16 +1314,16 @@ ghid_request_debug_draw (void)
@@ -116,10 +116,10 @@ index 279ccc3..d4b0598 100644
    render_priv *priv = gport->render_priv;
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 32036c8..2f0af5c 100644
+index f7597f5..a8c6c36 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -504,8 +504,8 @@ gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
+@@ -508,8 +508,8 @@ gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
  GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                 int width, int height, int depth);
  HID_DRAW *ghid_request_debug_draw (void);
@@ -131,10 +131,10 @@ index 32036c8..2f0af5c 100644
  bool ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y);
  void ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 0b7ced2..f7ef051 100644
+index 83fbd55..4ed4237 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4034,7 +4034,7 @@ lesstif_request_debug_draw (void)
+@@ -4038,7 +4038,7 @@ lesstif_request_debug_draw (void)
  }
  
  static void
@@ -143,7 +143,7 @@ index 0b7ced2..f7ef051 100644
  {
    /* Copy the backing pixmap to the display and redraw any attached objects */
    XSetFunction (display, my_gc, GXcopy);
-@@ -4050,9 +4050,9 @@ lesstif_flush_debug_draw (void)
+@@ -4054,9 +4054,9 @@ lesstif_flush_debug_draw (void)
  }
  
  static void

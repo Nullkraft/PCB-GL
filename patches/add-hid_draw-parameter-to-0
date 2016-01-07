@@ -1,7 +1,7 @@
-Bottom: 95a08a8fb06ea81eaf1e0f5f498e2d7f4438411f
-Top:    d4e15dab1e184c46fff2cb0adf032397d30f0998
+Bottom: f0f88878504f95965f49cca16e72b34f8f808a60
+Top:    1398a4bbb7391968c4f590f654654733e32a2ccf
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:06:08 +0000
+Date:   2016-01-07 01:33:23 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->make_gc() function
 
@@ -48,10 +48,10 @@ index 2821695..f4b8d2d 100644
    return 0;
  }
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 9e8b620..c6c749d 100644
+index c261ef4..ea9a6bd 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
-@@ -1173,7 +1173,7 @@ gcode_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
+@@ -1178,7 +1178,7 @@ gcode_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
  }
  
  static hidGC
@@ -83,7 +83,7 @@ index 707c905..6e4616e 100644
    hidGC gc = (hidGC) calloc (1, sizeof (struct gerber_gc_struct));
    gerberGC gerber_gc = (gerberGC)gc;
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 332a0a2..0815245 100644
+index 5fac157..2a2a280 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -179,7 +179,7 @@ ghid_destroy_gc (hidGC gc)
@@ -109,10 +109,10 @@ index 488154f..279ccc3 100644
    render_priv *priv = gport->render_priv;
    hidGC gc = (hidGC) g_new0 (struct gtk_gc_struct, 1);
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 538e547..32036c8 100644
+index c8c5b02..f7597f5 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -474,8 +474,8 @@ void ghid_pinout_window_show (GHidPort *out, ElementType *Element);
+@@ -478,8 +478,8 @@ void ghid_pinout_window_show (GHidPort *out, ElementType *Element);
  
  /* gtkhid-gdk.c AND gtkhid-gl.c */
  int ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty);
@@ -124,7 +124,7 @@ index 538e547..32036c8 100644
  void ghid_set_color (hidGC gc, const char *name);
  void ghid_set_line_cap (hidGC gc, EndCapStyle style);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 1e470fb..0b7ced2 100644
+index eaeed07..83fbd55 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -148,7 +148,7 @@ static bool crosshair_on = true;
@@ -136,7 +136,7 @@ index 1e470fb..0b7ced2 100644
  
  static void
  ShowCrosshair (bool show)
-@@ -1806,7 +1806,7 @@ lesstif_do_export (HID_Attr_Val * options)
+@@ -1809,7 +1809,7 @@ lesstif_do_export (HID_Attr_Val * options)
    Widget menu;
    Widget work_area_frame;
  
@@ -145,7 +145,7 @@ index 1e470fb..0b7ced2 100644
  
    n = 0;
    stdarg (XtNwidth, &width);
-@@ -3056,7 +3056,7 @@ lesstif_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
+@@ -3060,7 +3060,7 @@ lesstif_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
  }
  
  static hidGC

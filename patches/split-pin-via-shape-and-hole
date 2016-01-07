@@ -1,7 +1,7 @@
-Bottom: 47a7a77115fdb5e04b9d8e60c526fdce16c268e8
-Top:    889ddd8513353ec8e42f359dc6c63575180e4572
+Bottom: b29f460195ad5f5eb9efb461bdc7883eee8539e4
+Top:    9d1890097b92f06a3ca0a0e01f5953c0fdc8d2ff
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:06:08 +0000
+Date:   2016-01-07 01:33:23 +0000
 
 Split pin/via shape and hole drawing into different functions
 
@@ -85,10 +85,10 @@ index 39f8d6f..af411f7 100644
  
  static void
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index c941ad8..f4de2c0 100644
+index 901f2a8..6e7b205 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -538,16 +538,25 @@ draw_octagon_poly (hidGC gc, Coord X, Coord Y,
+@@ -587,16 +587,25 @@ draw_octagon_poly (hidGC gc, Coord X, Coord Y,
  }
  
  void
@@ -118,7 +118,7 @@ index c941ad8..f4de2c0 100644
  {
    Coord w = mask ? pv->Mask : pv->Thickness;
    Coord r = w / 2;
-@@ -555,14 +564,7 @@ common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool m
+@@ -604,14 +613,7 @@ common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool m
    if (TEST_FLAG (HOLEFLAG, pv))
      {
        if (mask)
@@ -134,7 +134,7 @@ index c941ad8..f4de2c0 100644
        return;
      }
  
-@@ -573,20 +575,36 @@ common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool m
+@@ -622,20 +624,36 @@ common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool m
        Coord r = l + w;
        Coord t = b + w;
  
@@ -178,7 +178,7 @@ index c941ad8..f4de2c0 100644
  {
    Coord w = mask ? pv->Mask : pv->Thickness;
    Coord r = w / 2;
-@@ -594,14 +612,8 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+@@ -643,14 +661,8 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
    if (TEST_FLAG (HOLEFLAG, pv))
      {
        if (mask)
@@ -195,7 +195,7 @@ index c941ad8..f4de2c0 100644
        return;
      }
  
-@@ -612,33 +624,34 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+@@ -661,33 +673,34 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
        Coord r = l + w;
        Coord t = b + w;
  
@@ -248,7 +248,7 @@ index c941ad8..f4de2c0 100644
  }
  
  void
-@@ -657,6 +670,8 @@ common_draw_helpers_class_init (HID_DRAW_CLASS *klass)
+@@ -706,6 +719,8 @@ common_draw_helpers_class_init (HID_DRAW_CLASS *klass)
    klass->_thindraw_pcb_pad     = common_thindraw_pcb_pad;
    klass->_fill_pcb_pv          = common_fill_pcb_pv;
    klass->_thindraw_pcb_pv      = common_thindraw_pcb_pv;

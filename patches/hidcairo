@@ -1,7 +1,7 @@
-Bottom: 98a35e47d6e3416b2f094cf3f53229a2ad1a6a5a
-Top:    64a30d00af2d64679b5249b785e1d16130fc9734
+Bottom: 064362d5fd14d34826c0a95f2380cb3f4cfae897
+Top:    87fed3608e5d3e9a898a29cc019d50c7ac0de76d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-04-21 02:08:40 +0100
+Date:   2016-01-07 01:33:24 +0000
 
 Hidcairo
 
@@ -9,10 +9,10 @@ Hidcairo
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 6a052ec..055ab6e 100644
+index 5f7671d..01c3ed2 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -162,7 +162,7 @@ PCB_SRCS = \
+@@ -159,7 +159,7 @@ PCB_SRCS = \
  	hid/common/hid_resource.h \
  	hid/hidint.h 
  
@@ -21,7 +21,7 @@ index 6a052ec..055ab6e 100644
  DBUS_SRCS= \
  	dbus-pcbmain.c \
  	dbus-pcbmain.h \
-@@ -213,6 +213,10 @@ GL_SRCS= \
+@@ -210,6 +210,10 @@ GL_SRCS= \
  	borast/borast-wideint-private.h \
  	borast/borast-wideint-type-private.h
  
@@ -32,7 +32,7 @@ index 6a052ec..055ab6e 100644
  BUILT_SOURCES = \
  	core_lists.h \
  	gpcb-menu.h \
-@@ -388,6 +392,15 @@ else
+@@ -385,6 +389,15 @@ else
  LIBGTK_SRCS+=	${LIBGTK_GDK_SRCS}
  endif
  
