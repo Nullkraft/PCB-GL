@@ -1,5 +1,5 @@
-Bottom: 6016bee981ae14e93794d2aa82e2e8fdaeaac245
-Top:    a5b83872c5e14467386070c90a0ac120cb273322
+Bottom: 267765760ce56af6d5a1bc9367431dc7c6c24c5f
+Top:    5c88bf17811f3eb69435c8b873c417532debfbde
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-21 23:35:12 +0100
 
@@ -152,7 +152,7 @@ index aa196bc..f2bfed6 100644
  	if (set_object (type, ptr1, ptr2, ptr3))
  	  SetChangedFlag (true);
 diff --git a/src/change.c b/src/change.c
-index 7f9bf42..571adbd 100644
+index a2823b7..8c4630f 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -395,7 +395,7 @@ ChangeViaSize (PinType *Via)
@@ -301,7 +301,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    if (value <= MAX_TEXTSCALE && value >= MIN_TEXTSCALE)
      {
-@@ -1060,7 +1062,7 @@ ChangeElementText (PCBType *pcb, DataType *data, ElementType *Element, int which
+@@ -1065,7 +1067,7 @@ ChangeElementText (PCBType *pcb, DataType *data, ElementType *Element, int which
  static void *
  ChangeElementName (ElementType *Element)
  {
@@ -310,7 +310,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    if (NAME_INDEX (PCB) == NAMEONPCB_INDEX)
      {
-@@ -1088,7 +1090,7 @@ ChangeTextName (LayerType *Layer, TextType *Text)
+@@ -1093,7 +1095,7 @@ ChangeTextName (LayerType *Layer, TextType *Text)
  {
    char *old = Text->TextString;
  
@@ -319,7 +319,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    EraseText (Layer, Text);
    RestoreToPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
-@@ -1122,7 +1124,7 @@ ChangeLayoutName (char *Name)
+@@ -1127,7 +1129,7 @@ ChangeLayoutName (char *Name)
  bool
  ChangeElementSide (ElementType *Element, Coord yoff)
  {
@@ -328,7 +328,7 @@ index 7f9bf42..571adbd 100644
      return (false);
    EraseElement (Element);
    AddObjectToMirrorUndoList (ELEMENT_TYPE, Element, Element, Element, yoff);
-@@ -1150,7 +1152,7 @@ ChangeLayerName (LayerType *Layer, char *Name)
+@@ -1155,7 +1157,7 @@ ChangeLayerName (LayerType *Layer, char *Name)
  static void *
  ChangeLineJoin (LayerType *Layer, LineType *Line)
  {
@@ -337,7 +337,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    EraseLine (Line);
    if (TEST_FLAG(CLEARLINEFLAG, Line))
-@@ -1175,7 +1177,8 @@ ChangeLineJoin (LayerType *Layer, LineType *Line)
+@@ -1180,7 +1182,8 @@ ChangeLineJoin (LayerType *Layer, LineType *Line)
  static void *
  SetLineJoin (LayerType *Layer, LineType *Line)
  {
@@ -347,7 +347,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    return ChangeLineJoin (Layer, Line);
  }
-@@ -1186,7 +1189,8 @@ SetLineJoin (LayerType *Layer, LineType *Line)
+@@ -1191,7 +1194,8 @@ SetLineJoin (LayerType *Layer, LineType *Line)
  static void *
  ClrLineJoin (LayerType *Layer, LineType *Line)
  {
@@ -357,7 +357,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    return ChangeLineJoin (Layer, Line);
  }
-@@ -1197,7 +1201,7 @@ ClrLineJoin (LayerType *Layer, LineType *Line)
+@@ -1202,7 +1206,7 @@ ClrLineJoin (LayerType *Layer, LineType *Line)
  static void *
  ChangeArcJoin (LayerType *Layer, ArcType *Arc)
  {
@@ -366,7 +366,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    EraseArc (Arc);
    if (TEST_FLAG (CLEARLINEFLAG, Arc))
-@@ -1222,7 +1226,8 @@ ChangeArcJoin (LayerType *Layer, ArcType *Arc)
+@@ -1227,7 +1231,8 @@ ChangeArcJoin (LayerType *Layer, ArcType *Arc)
  static void *
  SetArcJoin (LayerType *Layer, ArcType *Arc)
  {
@@ -376,7 +376,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    return ChangeArcJoin (Layer, Arc);
  }
-@@ -1233,7 +1238,8 @@ SetArcJoin (LayerType *Layer, ArcType *Arc)
+@@ -1238,7 +1243,8 @@ SetArcJoin (LayerType *Layer, ArcType *Arc)
  static void *
  ClrArcJoin (LayerType *Layer, ArcType *Arc)
  {
@@ -386,7 +386,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    return ChangeArcJoin (Layer, Arc);
  }
-@@ -1244,7 +1250,7 @@ ClrArcJoin (LayerType *Layer, ArcType *Arc)
+@@ -1249,7 +1255,7 @@ ClrArcJoin (LayerType *Layer, ArcType *Arc)
  static void *
  ChangeTextJoin (LayerType *Layer, TextType *Text)
  {
@@ -395,7 +395,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    EraseText (Layer, Text);
    if (TEST_FLAG(CLEARLINEFLAG, Text))
-@@ -1269,7 +1275,8 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
+@@ -1274,7 +1280,8 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
  static void *
  SetTextJoin (LayerType *Layer, TextType *Text)
  {
@@ -405,7 +405,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    return ChangeTextJoin (Layer, Text);
  }
-@@ -1280,7 +1287,8 @@ SetTextJoin (LayerType *Layer, TextType *Text)
+@@ -1285,7 +1292,8 @@ SetTextJoin (LayerType *Layer, TextType *Text)
  static void *
  ClrTextJoin (LayerType *Layer, TextType *Text)
  {
@@ -415,7 +415,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    return ChangeTextJoin (Layer, Text);
  }
-@@ -1293,7 +1301,7 @@ ChangeElementSquare (ElementType *Element)
+@@ -1298,7 +1306,7 @@ ChangeElementSquare (ElementType *Element)
  {
    void *ans = NULL;
  
@@ -424,7 +424,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1316,7 +1324,7 @@ SetElementSquare (ElementType *Element)
+@@ -1321,7 +1329,7 @@ SetElementSquare (ElementType *Element)
  {
    void *ans = NULL;
  
@@ -433,7 +433,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1339,7 +1347,7 @@ ClrElementSquare (ElementType *Element)
+@@ -1344,7 +1352,7 @@ ClrElementSquare (ElementType *Element)
  {
    void *ans = NULL;
  
@@ -442,7 +442,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1362,7 +1370,7 @@ ChangeElementOctagon (ElementType *Element)
+@@ -1367,7 +1375,7 @@ ChangeElementOctagon (ElementType *Element)
  {
    void *result = NULL;
  
@@ -451,7 +451,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1381,7 +1389,7 @@ SetElementOctagon (ElementType *Element)
+@@ -1386,7 +1394,7 @@ SetElementOctagon (ElementType *Element)
  {
    void *result = NULL;
  
@@ -460,7 +460,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1400,7 +1408,7 @@ ClrElementOctagon (ElementType *Element)
+@@ -1405,7 +1413,7 @@ ClrElementOctagon (ElementType *Element)
  {
    void *result = NULL;
  
@@ -469,7 +469,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    PIN_LOOP (Element);
    {
-@@ -1417,7 +1425,7 @@ ClrElementOctagon (ElementType *Element)
+@@ -1422,7 +1430,7 @@ ClrElementOctagon (ElementType *Element)
  static void *
  ChangePadSquare (ElementType *Element, PadType *Pad)
  {
@@ -478,7 +478,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    ErasePad (Pad);
    AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, false);
-@@ -1437,7 +1445,8 @@ static void *
+@@ -1442,7 +1450,8 @@ static void *
  SetPadSquare (ElementType *Element, PadType *Pad)
  {
  
@@ -488,7 +488,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
  
    return (ChangePadSquare (Element, Pad));
-@@ -1451,7 +1460,8 @@ static void *
+@@ -1456,7 +1465,8 @@ static void *
  ClrPadSquare (ElementType *Element, PadType *Pad)
  {
  
@@ -498,7 +498,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
  
    return (ChangePadSquare (Element, Pad));
-@@ -1464,7 +1474,7 @@ ClrPadSquare (ElementType *Element, PadType *Pad)
+@@ -1469,7 +1479,7 @@ ClrPadSquare (ElementType *Element, PadType *Pad)
  static void *
  ChangePinSquare (ElementType *Element, PinType *Pin)
  {
@@ -507,7 +507,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    ErasePin (Pin);
    AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, false);
-@@ -1483,7 +1493,8 @@ ChangePinSquare (ElementType *Element, PinType *Pin)
+@@ -1488,7 +1498,8 @@ ChangePinSquare (ElementType *Element, PinType *Pin)
  static void *
  SetPinSquare (ElementType *Element, PinType *Pin)
  {
@@ -517,7 +517,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
  
    return (ChangePinSquare (Element, Pin));
-@@ -1495,7 +1506,8 @@ SetPinSquare (ElementType *Element, PinType *Pin)
+@@ -1500,7 +1511,8 @@ SetPinSquare (ElementType *Element, PinType *Pin)
  static void *
  ClrPinSquare (ElementType *Element, PinType *Pin)
  {
@@ -527,7 +527,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
  
    return (ChangePinSquare (Element, Pin));
-@@ -1507,7 +1519,7 @@ ClrPinSquare (ElementType *Element, PinType *Pin)
+@@ -1512,7 +1524,7 @@ ClrPinSquare (ElementType *Element, PinType *Pin)
  static void *
  ChangeViaOctagon (PinType *Via)
  {
@@ -536,7 +536,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    EraseVia (Via);
    AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, false);
-@@ -1526,7 +1538,8 @@ ChangeViaOctagon (PinType *Via)
+@@ -1531,7 +1543,8 @@ ChangeViaOctagon (PinType *Via)
  static void *
  SetViaOctagon (PinType *Via)
  {
@@ -546,7 +546,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
  
    return (ChangeViaOctagon (Via));
-@@ -1538,7 +1551,8 @@ SetViaOctagon (PinType *Via)
+@@ -1543,7 +1556,8 @@ SetViaOctagon (PinType *Via)
  static void *
  ClrViaOctagon (PinType *Via)
  {
@@ -556,7 +556,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
  
    return (ChangeViaOctagon (Via));
-@@ -1550,7 +1564,7 @@ ClrViaOctagon (PinType *Via)
+@@ -1555,7 +1569,7 @@ ClrViaOctagon (PinType *Via)
  static void *
  ChangePinOctagon (ElementType *Element, PinType *Pin)
  {
@@ -565,7 +565,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
    ErasePin (Pin);
    AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, false);
-@@ -1569,7 +1583,8 @@ ChangePinOctagon (ElementType *Element, PinType *Pin)
+@@ -1574,7 +1588,8 @@ ChangePinOctagon (ElementType *Element, PinType *Pin)
  static void *
  SetPinOctagon (ElementType *Element, PinType *Pin)
  {
@@ -575,7 +575,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
  
    return (ChangePinOctagon (Element, Pin));
-@@ -1581,7 +1596,8 @@ SetPinOctagon (ElementType *Element, PinType *Pin)
+@@ -1586,7 +1601,8 @@ SetPinOctagon (ElementType *Element, PinType *Pin)
  static void *
  ClrPinOctagon (ElementType *Element, PinType *Pin)
  {
@@ -585,7 +585,7 @@ index 7f9bf42..571adbd 100644
      return (NULL);
  
    return (ChangePinOctagon (Element, Pin));
-@@ -1593,7 +1609,7 @@ ClrPinOctagon (ElementType *Element, PinType *Pin)
+@@ -1598,7 +1614,7 @@ ClrPinOctagon (ElementType *Element, PinType *Pin)
  bool
  ChangeHole (PinType *Via)
  {
@@ -594,7 +594,7 @@ index 7f9bf42..571adbd 100644
      return (false);
    EraseVia (Via);
    AddObjectToFlagUndoList (VIA_TYPE, Via, Via, Via);
-@@ -1636,7 +1652,7 @@ ChangeHole (PinType *Via)
+@@ -1641,7 +1657,7 @@ ChangeHole (PinType *Via)
  bool
  ChangePaste (PadType *Pad)
  {
@@ -603,7 +603,7 @@ index 7f9bf42..571adbd 100644
      return (false);
    ErasePad (Pad);
    AddObjectToFlagUndoList (PAD_TYPE, Pad, Pad, Pad);
-@@ -1652,7 +1668,7 @@ ChangePaste (PadType *Pad)
+@@ -1657,7 +1673,7 @@ ChangePaste (PadType *Pad)
  static void *
  ChangePolyClear (LayerType *Layer, PolygonType *Polygon)
  {
@@ -613,10 +613,10 @@ index 7f9bf42..571adbd 100644
    AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, Polygon, Polygon, true);
    AddObjectToFlagUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
 diff --git a/src/create.c b/src/create.c
-index ab236bd..b12ad56 100644
+index 18657d9..66f464f 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -213,6 +213,8 @@ CreateNewPCB (void)
+@@ -221,6 +221,8 @@ CreateNewPCB (void)
  
  	CreateDefaultFont (ptr);
  
