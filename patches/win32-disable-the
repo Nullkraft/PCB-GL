@@ -1,7 +1,7 @@
-Bottom: 8078f282f77195cbbc2e889206868e60dac96b6d
-Top:    b1cbe2ea0aee12dc04de2eee6aee756794be536b
+Bottom: 7e2369bc5ce1e11c03510e90ec3cd1a1deefbbf1
+Top:    b0c20d1741f79cb604ba9eb72ce22e8188001046
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 16:59:15 +0000
+Date:   2016-01-07 01:32:29 +0000
 
 Win32: Disable the SpaceNavigator code
 
@@ -9,7 +9,7 @@ Win32: Disable the SpaceNavigator code
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 146ff10..5977ccf 100644
+index 71327b4..9eec316 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -554,8 +554,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,

@@ -1,7 +1,7 @@
-Bottom: bb543769bcc081e75e62da5e3d8d22498c38d03b
-Top:    2b68c056e93d81dd85bd74a2b66677376f07c711
+Bottom: 4bf2ed177daee1cfe55c67c699398cadcc5474aa
+Top:    51bb78519c545da2e4f27a2efe5e7764daff18e9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 16:59:14 +0000
+Date:   2016-01-07 01:32:28 +0000
 
 Fix to ParseGroupString()
 
@@ -9,10 +9,10 @@ Fix to ParseGroupString()
 ---
 
 diff --git a/src/misc.c b/src/misc.c
-index 37aaebb..2df8cd9 100644
+index 040124c..545aaac 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1101,7 +1101,14 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+@@ -1136,7 +1136,14 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
            /* ignore white spaces and check for separator */
            while (*s && isspace ((int) *s))
              s++;

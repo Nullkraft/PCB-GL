@@ -1,7 +1,7 @@
-Bottom: 6d141c066b8c69dc87cdb99fa14eef2fdb7a676f
-Top:    8078f282f77195cbbc2e889206868e60dac96b6d
+Bottom: 259cf077ca3febff8adab3a03d9cbaf073102106
+Top:    7e2369bc5ce1e11c03510e90ec3cd1a1deefbbf1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 16:59:15 +0000
+Date:   2016-01-07 01:32:29 +0000
 
 Play with locked object rendering
 
@@ -14,10 +14,10 @@ the exercise is to determine whether the usability is better or not.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index d3f1691..e9bde81 100644
+index cf34a76..7726be6 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1153,7 +1153,6 @@ NotifyMode (void)
+@@ -1152,7 +1152,6 @@ NotifyMode (void)
  	    DrawElement (element);
  	    Draw ();
  	    SetChangedFlag (true);
@@ -25,7 +25,7 @@ index d3f1691..e9bde81 100644
  	  }
  	else if (type != NO_TYPE)
  	  {
-@@ -1168,7 +1167,6 @@ NotifyMode (void)
+@@ -1167,7 +1166,6 @@ NotifyMode (void)
  		Draw ();
  	      }
  	    SetChangedFlag (true);
@@ -185,7 +185,7 @@ index 72c49e0..9d3adaf 100644
 +{
 +}
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 61ed4eb..7deeda6 100644
+index b78331f..8335d17 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -1404,3 +1404,9 @@ ghid_cancel_lead_user (void)
@@ -431,10 +431,10 @@ index da711d5..091fed1 100644
 +    }
 +}
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index ed10b50..790f424 100644
+index d7b5e34..c9eb567 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4141,3 +4141,9 @@ hid_lesstif_init ()
+@@ -4145,3 +4145,9 @@ hid_lesstif_init ()
    hid_register_hid (&lesstif_hid);
  #include "lesstif_lists.h"
  }

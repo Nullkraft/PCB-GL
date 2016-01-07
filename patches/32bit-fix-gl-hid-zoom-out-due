@@ -1,7 +1,7 @@
-Bottom: b1cbe2ea0aee12dc04de2eee6aee756794be536b
-Top:    076cc6cb2e252cec815b20875e6b6fa9683680e8
+Bottom: b0c20d1741f79cb604ba9eb72ce22e8188001046
+Top:    3f0668482a9cd32503ec9d80aafda84a2d251bfb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 16:59:15 +0000
+Date:   2016-01-07 01:32:29 +0000
 
 32bit: Fix GL HID zoom out, due to over-shooting Coord data-type
 
@@ -11,7 +11,7 @@ Nasty NASTY hack this, but it gets me working again.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 7deeda6..c9620ff 100644
+index 8335d17..1c8e814 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -63,6 +63,64 @@ typedef struct gtk_gc_struct
@@ -228,7 +228,7 @@ index 091fed1..7f99368 100644
  
  bool
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 7ff821e..59faf56 100644
+index 90050c3..763f493 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -81,7 +81,7 @@ ghid_pan_view_rel (Coord dx, Coord dy)
@@ -250,7 +250,7 @@ index 7ff821e..59faf56 100644
    ghid_zoom_view_abs (center_x, center_y, gport->view.coord_per_px * factor);
  }
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 3f51188..3430633 100644
+index e37fd26..de062d8 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -65,12 +65,6 @@
@@ -266,7 +266,7 @@ index 3f51188..3430633 100644
  /*
   * Used to intercept "special" hotkeys that gtk doesn't usually pass
   * on to the menu hotkeys.  We catch them and put them back where we
-@@ -159,10 +153,10 @@ typedef struct
+@@ -162,10 +156,10 @@ typedef struct
  {
    double coord_per_px; /* Zoom level described as PCB units per screen pixel */
  
@@ -281,7 +281,7 @@ index 3f51188..3430633 100644
  
    bool flip_x;
    bool flip_y;
-@@ -521,7 +515,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
+@@ -525,7 +519,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
  void ghid_cancel_lead_user (void);
  
  /* gtkhid-main.c */
@@ -290,7 +290,7 @@ index 3f51188..3430633 100644
  void ghid_pan_view_rel (Coord dx, Coord dy);
  void ghid_get_coords (const char *msg, Coord *x, Coord *y);
  gint PCBChanged (int argc, char **argv, Coord x, Coord y);
-@@ -533,59 +527,4 @@ extern GdkPixmap *XC_hand_source, *XC_hand_mask;
+@@ -537,59 +531,4 @@ extern GdkPixmap *XC_hand_source, *XC_hand_mask;
  extern GdkPixmap *XC_lock_source, *XC_lock_mask;
  extern GdkPixmap *XC_clock_source, *XC_clock_mask;
  
