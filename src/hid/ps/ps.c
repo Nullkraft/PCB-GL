@@ -1015,7 +1015,7 @@ ps_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 }
 
 static hidGC
-ps_make_gc (void)
+ps_make_gc (HID_DRAW *hid_draw)
 {
   hidGC gc = (hidGC) calloc (1, sizeof (struct ps_gc_struct));
   psGC ps_gc = (psGC)gc;
