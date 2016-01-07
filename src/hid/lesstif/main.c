@@ -63,15 +63,28 @@ static int cur_mask = -1;
 static int gui_is_up = 0;
 static int trans_lines = 0;
 
+typedef struct render_priv {
+  bool trans_lines;
+  bool in_context;
+  int subcomposite_stencil_bit;
+  char *current_colorname;
+  double current_alpha_mult;
+} render_priv;
+
+render_priv _priv = {false, false, 0, NULL, 0.0};
+render_priv *priv = &_priv;
+
 typedef struct lesstif_gc_struct
 {
   struct hid_gc_struct hid_gc /* Parent */;
 
-  Pixel color;
+//  Pixel color;
   const char *colorname;
+  double alpha_mult;
   Coord width;
+//  int cap, join;
   EndCapStyle cap;
-  char xor_set;
+//  char xor_set;
   char erase;
 } *lesstifGC;
 
@@ -158,7 +171,7 @@ static int view_left_x = 0, view_top_y = 0;
    board.  */
 static double view_zoom = MIL_TO_COORD (10), prev_view_zoom = MIL_TO_COORD (10);
 static bool flip_x = 0, flip_y = 0;
-static bool autofade = 0;
+//static bool autofade = 0;
 static bool crosshair_on = true;
 
 /* ---------------------------------------------------------------------------
@@ -1625,7 +1638,7 @@ work_area_expose (Widget work_area, void *me,
   GLwDrawingAreaCallbackStruct *cbs = (GLwDrawingAreaCallbackStruct *)data;
   XExposeEvent *e;
   BoxType region;
-  int eleft, eright, etop, ebottom;
+//  int eleft, eright, etop, ebottom;
   int min_x, min_y;
   int max_x, max_y;
   Dimension width, height;
@@ -1654,8 +1667,7 @@ work_area_expose (Widget work_area, void *me,
   /* TODO: We could use the GLU tessellator though */
   if (hidgl_stencil_bits (hidgl) == 0)
     {
-      lesstif_gui.fill_pcb_polygon = common_fill_pcb_polygon;
-      lesstif_gui.poly_dicer = 1;
+      lesstif_graphics.fill_pcb_polygon = common_fill_pcb_polygon;
     }
 
   show_crosshair (0);
@@ -1705,8 +1717,8 @@ work_area_expose (Widget work_area, void *me,
   region.Y1 = MIN (Py (min_y), Py (max_y + 1));
   region.Y2 = MAX (Py (min_y), Py (max_y + 1));
 
-  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
-  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
+//  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
+//  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
 
   glColor3f (bgred / 65535.,
              bggreen / 65535.,
@@ -1736,7 +1748,7 @@ work_area_expose (Widget work_area, void *me,
   glVertex3i (0,             PCB->MaxHeight, 0);
   glEnd ();
 
-  hid_expose_callback (&lesstif_gui, &region, 0);
+  hid_expose_callback (&lesstif_hid, &region, 0);
 
   hidgl_flush_triangles (hidgl);
   glPopMatrix ();
@@ -1756,6 +1768,7 @@ work_area_expose (Widget work_area, void *me,
 
   show_crosshair (1);
 
+  hidgl_finish_render (hidgl);
   hidgl_flush_triangles (hidgl);
 
   /* end drawing to current GL-context */
@@ -3201,6 +3214,7 @@ lesstif_notify_mark_change (bool changes_complete)
     invalidate_depth ++;
 }
 
+#if 0
 static int
 lesstif_set_layer (const char *name, int group, int empty)
 {
@@ -3256,6 +3270,7 @@ lesstif_set_layer (const char *name, int group, int empty)
     }
   return 0;
 }
+#endif
 
 static hidGC
 lesstif_make_gc (void)
@@ -3328,6 +3343,7 @@ lesstif_use_mask (enum mask_mode mode)
     }
 }
 
+#if 0
 static void
 lesstif_set_color (hidGC gc, const char *name)
 {
@@ -3387,6 +3403,7 @@ lesstif_set_color (hidGC gc, const char *name)
 	}
     }
 }
+#endif
 
 #if 0
 static void
@@ -3455,124 +3472,194 @@ set_gc (hidGC gc)
 }
 #endif
 
+#define BOARD_THICKNESS         MM_TO_COORD(1.60)
+#define MASK_COPPER_SPACING     MM_TO_COORD(0.05)
+#define SILK_MASK_SPACING       MM_TO_COORD(0.01)
 int compute_depth (int group)
 {
   static int last_depth_computed = 0;
 
-  int solder_group;
-  int component_group;
-  int min_phys_group;
-  int max_phys_group;
-  int max_depth;
-  int depth = last_depth_computed;
-  int newgroup;
-  int idx = (group >= 0
-             && group <
-             max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+  int top_group;
+  int bottom_group;
+  int min_copper_group;
+  int max_copper_group;
+  int num_copper_groups;
+  int middle_copper_group;
+  int depth;
 
-  solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
-  component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+  top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
 
-  min_phys_group = MIN (solder_group, component_group);
-  max_phys_group = MAX (solder_group, component_group);
+  min_copper_group = MIN (bottom_group, top_group);
+  max_copper_group = MAX (bottom_group, top_group);
+  num_copper_groups = max_copper_group - min_copper_group + 1;
+  middle_copper_group = min_copper_group + num_copper_groups / 2;
 
-  max_depth = (1 + max_phys_group - min_phys_group) * 10;
-
-  if (group >= 0 && group < max_layer) {
-    newgroup = group;
-
-    depth = (max_depth - (newgroup - min_phys_group) * 10) * 200 / view_zoom;
-  } else if (SL_TYPE (idx) == SL_MASK) {
-    if (SL_SIDE (idx) == SL_TOP_SIDE) {
-      depth = (max_depth + 3) * 200 / view_zoom;
+  if (group >= 0 && group < max_group) {
+    if (group >= min_copper_group && group <= max_copper_group) {
+      /* XXX: IS THIS INCORRECT FOR REVERSED GROUP ORDERINGS? */
+      depth = -(group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups;
     } else {
-      depth = (10 - 3) * 200 / view_zoom;
+      depth = 0;
     }
-  } else if (SL_TYPE (idx) == SL_SILK) {
-    if (SL_SIDE (idx) == SL_TOP_SIDE) {
-      depth = (max_depth + 5) * 200 / view_zoom;
+
+  } else if (SL_TYPE (group) == SL_MASK) {
+    if (SL_SIDE (group) == SL_TOP_SIDE) {
+      depth = -((min_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING);
     } else {
-      depth = (10 - 5) * 200 / view_zoom;
+      depth = -((max_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING);
     }
-  } else if (SL_TYPE (idx) == SL_INVISIBLE) {
-    if (Settings.ShowSolderSide) {
-      depth = (max_depth + 5) * 200 / view_zoom;
+  } else if (SL_TYPE (group) == SL_SILK) {
+    if (SL_SIDE (group) == SL_TOP_SIDE) {
+      depth = -((min_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING - SILK_MASK_SPACING);
     } else {
-      depth = (10 - 5) * 200 / view_zoom;
+      depth = -((max_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
     }
+
+  } else if (SL_TYPE (group) == SL_INVISIBLE) {
+    /* Same as silk, but for the back-side layer */
+    if (Settings.ShowBottomSide) {
+      depth = -((min_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING - SILK_MASK_SPACING);
+    } else {
+      depth = -((max_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
+    }
+  } else if (SL_TYPE (group) == SL_RATS   ||
+             SL_TYPE (group) == SL_PDRILL ||
+             SL_TYPE (group) == SL_UDRILL) {
+    /* Draw these at the depth we last rendered at */
+    depth = last_depth_computed;
+  } else if (SL_TYPE (group) == SL_PASTE  ||
+             SL_TYPE (group) == SL_FAB    ||
+             SL_TYPE (group) == SL_ASSY) {
+    /* Layer types we don't use, which draw.c asks us about, so
+     * we just return _something_ to avoid the warnign below. */
+    depth = last_depth_computed;
+  } else {
+    /* DEFAULT CASE */
+    printf ("Unknown layer group to set depth for: %i\n", group);
+    depth = last_depth_computed;
   }
 
   last_depth_computed = depth;
   return depth;
 }
 
-int
-ghid_set_layer (const char *name, int group, int empty)
+static void
+start_subcomposite (void)
 {
-  static int stencil_bit = 0;
-  int idx = (group >= 0 && group < max_layer) ?
-              PCB->LayerGroups.Entries[group][0] : group;
+  int stencil_bit;
 
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (hidgl);
 
+  glEnable (GL_STENCIL_TEST);                                 /* Enable Stencil test */
+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);                 /* Stencil pass => replace stencil value (with 1) */
+
+  stencil_bit = hidgl_assign_clear_stencil_bit (hidgl);       /* Get a new (clean) bitplane to stencil with */
+  glStencilMask (stencil_bit);                                /* Only write to our subcompositing stencil bitplane */
+  glStencilFunc (GL_GREATER, stencil_bit, stencil_bit);       /* Pass stencil test if our assigned bit is clear */
+
+  priv->subcomposite_stencil_bit = stencil_bit;
+}
+
+static void
+end_subcomposite (void)
+{
+  /* Flush out any existing geoemtry to be rendered */
+  hidgl_flush_triangles (hidgl);
+
+  hidgl_return_stencil_bit (hidgl, priv->subcomposite_stencil_bit);  /* Relinquish any bitplane we previously used */
+
+  glStencilMask (0);
+  glStencilFunc (GL_ALWAYS, 0, 0);                            /* Always pass stencil test */
+  glDisable (GL_STENCIL_TEST);                                /* Disable Stencil test */
+
+  priv->subcomposite_stencil_bit = 0;
+}
+
+/* Compute group visibility based upon on copper layers only */
+static bool
+is_layer_group_visible (int group)
+{
+  int entry;
+  for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry++)
+    {
+      int layer_idx = PCB->LayerGroups.Entries[group][entry];
+      if (layer_idx >= 0 && layer_idx < max_copper_layer &&
+          LAYER_PTR (layer_idx)->On)
+        return true;
+    }
+  return false;
+}
+
+int
+ghid_set_layer (const char *name, int group, int empty)
+{
+  bool group_visible = false;
+  bool subcomposite = true;
+
+  if (group >= 0 && group < max_group)
+    {
+      priv->trans_lines = true;
+      subcomposite = true;
+      group_visible = is_layer_group_visible (group);
+    }
+  else
+    {
+      switch (SL_TYPE (group))
+	{
+	case SL_INVISIBLE:
+	  priv->trans_lines = false;
+	  subcomposite = false;
+	  group_visible = PCB->InvisibleObjectsOn;
+	  break;
+	case SL_MASK:
+	  priv->trans_lines = true;
+	  subcomposite = false;
+	  group_visible = TEST_FLAG (SHOWMASKFLAG, PCB);
+	  break;
+	case SL_SILK:
+	  priv->trans_lines = true;
+	  subcomposite = true;
+	  group_visible = PCB->ElementOn;
+	  break;
+	case SL_ASSY:
+	  break;
+	case SL_PDRILL:
+	case SL_UDRILL:
+	  priv->trans_lines = true;
+	  subcomposite = true;
+	  group_visible = true;
+	  break;
+	case SL_RATS:
+	  priv->trans_lines = true;
+	  subcomposite = false;
+	  group_visible = PCB->RatOn;
+	  break;
+	}
+    }
+
+  end_subcomposite ();
+
+  if (group_visible && subcomposite)
+    start_subcomposite ();
+
+  /* Drawing is already flushed by {start,end}_subcomposite */
   hidgl_set_depth (gc, compute_depth (group));
 
-  glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
-  hidgl_return_stencil_bit (hidgl, stencil_bit);       // Relinquish any bitplane we previously used
-  if (SL_TYPE (idx) != SL_FINISHED) {
-    stencil_bit = hidgl_assign_clear_stencil_bit (hidgl); // Get a new (clean) bitplane to stencil with
-    glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
-    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
-  } else {
-    stencil_bit = 0;
-    glStencilMask (0);
-    glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
-  }
+  return group_visible;
+}
 
-  if (idx >= 0 && idx < max_layer + 2) {
-    trans_lines = TRUE;
-    return PCB->Data->Layer[idx].On;
-  }
-
-  if (idx < 0) {
-    switch (SL_TYPE (idx)) {
-      case SL_INVISIBLE:
-        return PCB->InvisibleObjectsOn;
-      case SL_MASK:
-        if (SL_MYSIDE (idx))
-          return TEST_FLAG (SHOWMASKFLAG, PCB);
-        return 0;
-      case SL_SILK:
-        trans_lines = TRUE;
-        if (SL_MYSIDE (idx))
-          return PCB->ElementOn;
-        return 0;
-      case SL_ASSY:
-        return 0;
-      case SL_RATS:
-        trans_lines = TRUE;
-        return 1;
-      case SL_PDRILL:
-      case SL_UDRILL:
-        return 1;
-    }
-  }
-  return 0;
+static void
+ghid_end_layer (void)
+{
+  end_subcomposite ();
 }
 
 void
 ghid_use_mask (enum mask_mode mode)
 {
   static int stencil_bit = 0;
-
-  /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
-  if (mode == HID_LIVE_DRAWING ||
-      mode == HID_LIVE_DRAWING_OFF ||
-      mode == HID_FLUSH_DRAW_Q) {
-    return;
-  }
 
   if (mode == cur_mask)
     return;
@@ -3583,32 +3670,30 @@ ghid_use_mask (enum mask_mode mode)
   switch (mode)
     {
     case HID_MASK_BEFORE:
-      /* Write '1' to the stencil buffer where the solder-mask is drawn. */
-      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
-      glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
-      stencil_bit = hidgl_assign_clear_stencil_bit (hidgl); // Get a new (clean) bitplane to stencil with
-      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
-      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
-      break;
+      /* The HID asks not to receive this mask type, so warn if we get it */
+      g_return_if_reached ();
 
     case HID_MASK_CLEAR:
-      /* Drawing operations clear the stencil buffer to '0' */
-      glStencilFunc (GL_ALWAYS, 0, stencil_bit);  // Always pass stencil test, write 0
-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
+      /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
+      glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
+      glEnable (GL_STENCIL_TEST);                           /* Enable Stencil test */
+      stencil_bit = hidgl_assign_clear_stencil_bit (hidgl); /* Get a new (clean) bitplane to stencil with */
+      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, write stencil_bit */
+      glStencilMask (stencil_bit);                          /* Only write to our subcompositing stencil bitplane */
+      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           /* Stencil pass => replace stencil value (with 1) */
       break;
 
     case HID_MASK_AFTER:
-      /* Drawing operations as masked to areas where the stencil buffer is '1' */
-      glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
-      glStencilFunc (GL_LEQUAL, stencil_bit, stencil_bit);   // Draw only where our bit of the stencil buffer is set
-      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
+      /* Drawing operations as masked to areas where the stencil buffer is '0' */
+      glColorMask (1, 1, 1, 1);                   /* Enable drawing of r, g, b & a */
+      glStencilFunc (GL_GEQUAL, 0, stencil_bit);  /* Draw only where our bit of the stencil buffer is clear */
+      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    /* Stencil buffer read only */
       break;
 
     case HID_MASK_OFF:
       /* Disable stenciling */
-      hidgl_return_stencil_bit (hidgl, stencil_bit);  // Relinquish any bitplane we previously used
-      glDisable (GL_STENCIL_TEST);                // Disable Stencil test
+      hidgl_return_stencil_bit (hidgl, stencil_bit);  /* Relinquish any bitplane we previously used */
+      glDisable (GL_STENCIL_TEST);                    /* Disable Stencil test */
       break;
     }
   cur_mask = mode;
@@ -3626,19 +3711,6 @@ typedef struct
 } ColorCache;
 
 
-  /* Config helper functions for when the user changes color preferences.
-     |  set_special colors used in the gtkhid.
-   */
-static void
-set_special_grid_color (void)
-{
-  //if (!gport->colormap)
-  //  return;
-  //gport->grid_color.red ^= gport->bg_color.red;
-  //gport->grid_color.green ^= gport->bg_color.green;
-  //gport->grid_color.blue ^= gport->bg_color.blue;
-//  gdk_color_alloc (gport->colormap, &gport->grid_color);
-}
 
 void
 ghid_set_special_colors (HID_Attribute * ha)
@@ -3667,49 +3739,47 @@ ghid_set_special_colors (HID_Attribute * ha)
 /* static */ double global_alpha_mult = 1.0;
 /* static */ int alpha_changed = 0;
 
-void
-ghid_set_color (hidGC gc, const char *name)
+static void
+set_gl_color_for_gc (hidGC gc)
 {
+  lesstifGC lesstif_gc = (lesstifGC)gc;
   static void *cache = NULL;
   hidval cval;
   ColorCache *cc;
   double alpha_mult = 1.0;
   double r, g, b, a;
-  static XColor color, exact_color;
+  static XColor color;
   a = 1.0;
 
-  if (!alpha_changed && current_color != NULL)
+
+  if (priv->current_colorname != NULL &&
+      strcmp (priv->current_colorname, lesstif_gc->colorname) == 0 &&
+      priv->current_alpha_mult == lesstif_gc->alpha_mult)
+    return;
+
+  free (priv->current_colorname);
+  priv->current_colorname = NULL;
+
+  /* If we can't set the GL colour right now, quit with
+   * current_colorname set to NULL, so we don't NOOP the
+   * next set_gl_color_for_gc call.
+   */
+  if (!priv->in_context)
+    return;
+
+  priv->current_colorname = strdup (lesstif_gc->colorname);
+  priv->current_alpha_mult = lesstif_gc->alpha_mult;
+
+  if (strcmp (priv->current_colorname, "erase") == 0)
     {
-      if (strcmp (name, current_color) == 0)
-        return;
-      free (current_color);
-    }
-
-  alpha_changed = 0;
-
-  current_color = strdup (name);
-
-  if (name == NULL)
-    {
-      fprintf (stderr, "%s():  name = NULL, setting to magenta\n",
-               __FUNCTION__);
-      name = "magenta";
-    }
-
-  gc->colorname = (char *) name;
-
-//  if (gport->colormap == 0)
-//    gport->colormap = gtk_widget_get_colormap (gport->top_window);
-  if (strcmp (name, "erase") == 0)
-    {
-      gc->erase = 1;
+      lesstif_gc->erase = 1;
       r = bgred   / 65535.;
       g = bggreen / 65535.;
       b = bgblue  / 65535.;
     }
-  else if (strcmp (name, "drill") == 0)
+  else if (strcmp (priv->current_colorname, "drill") == 0)
     {
-      gc->erase = 0;
+      lesstif_gc->erase = 0;
       alpha_mult = 0.85;
       r = 0.5;
       g = 0.5;
@@ -3721,19 +3791,19 @@ ghid_set_color (hidGC gc, const char *name)
   else
     {
       alpha_mult = 0.7;
-      if (hid_cache_color (0, name, &cval, &cache))
+      if (hid_cache_color (0, priv->current_colorname, &cval, &cache))
         cc = (ColorCache *) cval.ptr;
       else
         {
           cc = (ColorCache *) malloc (sizeof (ColorCache));
           memset (cc, 0, sizeof (*cc));
           cval.ptr = cc;
-          hid_cache_color (1, name, &cval, &cache);
+          hid_cache_color (1, priv->current_colorname, &cval, &cache);
         }
 
       if (!cc->color_set)
         {
-      if (!XAllocNamedColor (display, colormap, name, &color, &cc->color))
+      if (!XAllocNamedColor (display, colormap, priv->current_colorname, &color, &cc->color))
 	color.pixel = WhitePixel (display, screen);
 //          if (gdk_color_parse (name, &cc->color))
 //            gdk_color_alloc (gport->colormap, &cc->color);
@@ -3744,7 +3814,8 @@ ghid_set_color (hidGC gc, const char *name)
           cc->blue  = cc->color.blue  / 65535.;
           cc->color_set = 1;
         }
-      if (gc->xor)
+#if 0
+      if (lesstif_gc->xor)
         {
           if (!cc->xor_set)
             {
@@ -3758,11 +3829,12 @@ ghid_set_color (hidGC gc, const char *name)
               cc->xor_set = 1;
             }
         }
+#endif
       r = cc->red;
       g = cc->green;
       b = cc->blue;
 
-      gc->erase = 0;
+      lesstif_gc->erase = 0;
     }
   if (1) {
     double maxi, mult;
@@ -3788,6 +3860,15 @@ ghid_set_color (hidGC gc, const char *name)
 }
 
 void
+ghid_set_color (hidGC gc, const char *name)
+{
+  lesstifGC lesstif_gc = (lesstifGC)gc;
+
+  lesstif_gc->colorname = name;
+
+}
+
+void
 ghid_global_alpha_mult (hidGC gc, double alpha_mult)
 {
   if (alpha_mult != global_alpha_mult) {
@@ -3800,13 +3881,17 @@ ghid_global_alpha_mult (hidGC gc, double alpha_mult)
 void
 ghid_set_line_cap (hidGC gc, EndCapStyle style)
 {
-  gc->cap = style;
+  lesstifGC lesstif_gc = (lesstifGC)gc;
+
+  lesstif_gc->cap = style;
 }
 
 void
 ghid_set_line_width (hidGC gc, Coord width)
 {
-  gc->width = width;
+  lesstifGC lesstif_gc = (lesstifGC)gc;
+
+  lesstif_gc->width = width;
 }
 
 void
@@ -3825,32 +3910,43 @@ ghid_invalidate_current_gc (void)
   current_gc = NULL;
 }
 
-static void
-lesstif_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
+static int
+use_gc (hidGC gc)
 {
+  if (gc->hid != &lesstif_hid)
+    {
+      fprintf (stderr, "Fatal: GC from another HID passed to LESSTIF HID\n");
+      abort ();
+    }
+
   if (current_gc == gc)
-    return;
+    return 1;
 
   current_gc = gc;
 
-  ghid_set_color (gc, gc->colorname);
+  set_gl_color_for_gc (gc);
+  return 1;
 }
 
 void
 ghid_draw_line (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2)
 {
+  lesstifGC lesstif_gc = (lesstifGC)gc;
+
   USE_GC (gc);
 
-  hidgl_draw_line (gc, gc->cap, gc->width, x1, y1, x2, y2, view_zoom);
+  hidgl_draw_line (gc, lesstif_gc->cap, lesstif_gc->width, x1, y1, x2, y2, view_zoom);
 }
 
 void
 ghid_draw_arc (hidGC gc, Coord cx, Coord cy, Coord xradius, Coord yradius,
                          Angle start_angle, Angle delta_angle)
 {
+  lesstifGC lesstif_gc = (lesstifGC)gc;
+
   USE_GC (gc);
 
-  hidgl_draw_arc (gc, gc->width, cx, cy, xradius, yradius,
+  hidgl_draw_arc (gc, lesstif_gc->width, cx, cy, xradius, yradius,
                   start_angle, delta_angle, view_zoom);
 }
 
@@ -4516,7 +4612,8 @@ hid_lesstif_init ()
   common_nogui_graphics_class_init (&lesstif_graphics_class);
   common_draw_helpers_class_init (&lesstif_graphics_class);
 
-  lesstif_graphics_class.set_layer            = lesstif_set_layer;
+  lesstif_graphics_class.set_layer            = ghid_set_layer;
+  lesstif_graphics_class.end_layer            = ghid_end_layer;
   lesstif_graphics_class.make_gc              = lesstif_make_gc;
   lesstif_graphics_class.destroy_gc           = lesstif_destroy_gc;
   lesstif_graphics_class.use_mask             = ghid_use_mask;
