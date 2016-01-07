@@ -5,6 +5,11 @@
 #include "rotate.h" /* For RotateLineLowLevel() */
 #include "polygon.h"
 #include "draw_helpers.h"
+#include "rtree.h"
+#include "misc.h"
+#include "print.h" /* FIXME */
+#include "data.h" /* FIXME */
+#include "draw.h" /* FIXME */
 
 
 static void
@@ -691,4 +696,192 @@ common_draw_helpers_class_init (HID_DRAW_CLASS *klass)
 void
 common_draw_helpers_init (HID_DRAW *graphics)
 {
+}
+
+
+struct pin_info
+{
+  bool arg;
+  LayerType *Layer;
+};
+
+/* ---------------------------------------------------------------------------
+ * draws one non-copper layer
+ */
+#if 0
+void
+DrawLayerCommon (LayerType *Layer, const BoxType * screen, bool clear_pins)
+{
+  struct pin_info info;
+
+  /* print the non-clearing polys */
+  info.Layer = Layer;
+  info.arg = clear_pins;
+
+  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+
+  if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
+    return;
+
+  /* draw all visible lines this layer */
+  r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
+
+  /* draw the layer arcs on screen */
+  r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
+
+  /* draw the layer text on screen */
+  r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
+
+  /* We should check for gui->gui here, but it's kinda cool seeing the
+     auto-outline magically disappear when you first add something to
+     the "outline" layer.  */
+  if (IsLayerEmpty (Layer) && (strcmp (Layer->Name, "outline") == 0 ||
+                               strcmp (Layer->Name, "route") == 0))
+    {
+      gui->set_color (Output.fgGC, Layer->Color);
+      gui->set_line_width (Output.fgGC, PCB->minWid);
+      gui->draw_rect (Output.fgGC,
+                      0, 0,
+                      PCB->MaxWidth, PCB->MaxHeight);
+    }
+}
+#endif
+
+/* ---------------------------------------------------------------------------
+ * draws one layer group.  Returns non-zero if pins and pads should be
+ * drawn with this group.
+ */
+#if 0
+static void
+DrawLayerGroup (int group, const BoxType * drawn_area)
+{
+  int i, rv = 1;
+  int layernum;
+  LayerType *Layer;
+  int n_entries = PCB->LayerGroups.Number[group];
+  Cardinal *layers = PCB->LayerGroups.Entries[group];
+
+  for (i = n_entries - 1; i >= 0; i--)
+    {
+      layernum = layers[i];
+      Layer = PCB->Data->Layer + layers[i];
+      if (strcmp (Layer->Name, "outline") == 0 ||
+          strcmp (Layer->Name, "route") == 0)
+        rv = 0;
+      if (layernum < max_copper_layer)
+        DrawLayerCommon (Layer, drawn_area, true);
+    }
+  if (n_entries > 1)
+    rv = 1;
+
+  if (rv && !gui->gui)
+    DrawPPV (group, drawn_area);
+}
+#endif
+
+typedef struct
+{
+  int nplated;
+  int nunplated;
+} HoleCountStruct;
+
+static int
+hole_counting_callback (const BoxType * b, void *cl)
+{
+  PinType *pin = (PinType *) b;
+  HoleCountStruct *hcs = cl;
+  if (TEST_FLAG (HOLEFLAG, pin))
+    hcs->nunplated++;
+  else
+    hcs->nplated++;
+  return 1;
+}
+
+static void
+count_holes (BoxType *region, int *plated, int *unplated)
+{
+  HoleCountStruct hcs;
+  hcs.nplated = hcs.nunplated = 0;
+  r_search (PCB->Data->pin_tree, region, NULL, hole_counting_callback, &hcs);
+  r_search (PCB->Data->via_tree, region, NULL, hole_counting_callback, &hcs);
+  if (plated != NULL) *plated = hcs.nplated;
+  if (unplated != NULL) *unplated = hcs.nunplated;
+}
+
+static int
+hole_callback (const BoxType * b, void *cl)
+{
+  PinType *pin = (PinType *) b;
+  int plated = cl ? *(int *) cl : -1;
+
+  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
+      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
+    return 1;
+
+  //DrawHole ((PinType *) b);
+  return 1;
+}
+
+void
+common_export_region (HID *hid, BoxType *region)
+{
+  int plated;
+  int nplated;
+  int nunplated;
+  int group;
+  int save_swap = SWAP_IDENT;
+  bool paste_empty;
+
+  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+
+  /* draw all copper layer groups in group order */
+  for (group = 0; group < max_copper_layer; group++)
+    if (gui->set_layer (0, group, 0))
+      DrawLayerGroup (group, region);
+
+  count_holes (region, &nplated, &nunplated);
+
+  if (nplated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
+    {
+      plated = 1;
+      r_search (PCB->Data->pin_tree, region, NULL, hole_callback, &plated);
+      r_search (PCB->Data->via_tree, region, NULL, hole_callback, &plated);
+    }
+
+  if (nunplated && gui->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
+    {
+      plated = 0;
+      r_search (PCB->Data->pin_tree, region, NULL, hole_callback, &plated);
+      r_search (PCB->Data->via_tree, region, NULL, hole_callback, &plated);
+    }
+
+  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
+    DrawMask (TOP_SIDE, region);
+
+  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
+    DrawMask (BOTTOM_SIDE, region);
+
+  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
+    DrawSilk (TOP_SIDE, region);
+
+  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
+    DrawSilk (BOTTOM_SIDE, region);
+
+  paste_empty = IsPasteEmpty (TOP_SIDE);
+  if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
+    DrawPaste (TOP_SIDE, region);
+
+  paste_empty = IsPasteEmpty (BOTTOM_SIDE);
+  if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
+    DrawPaste (BOTTOM_SIDE, region);
+
+  //if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
+    //PrintAssembly (region, top_group, 0);
+
+  //if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
+    //PrintAssembly (region, bottom_group, 1);
+
+  if (gui->set_layer ("fab", SL (FAB, 0), 0))
+    PrintFab (Output.fgGC);
 }
