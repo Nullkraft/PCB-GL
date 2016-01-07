@@ -1,0 +1,49 @@
+Bottom: d8d8c7f10e3f23ee812ba87fa6e9b3788ccf4c59
+Top:    521c8124a98c4c83dd61e9ee6cd9e6ebacaae22e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-01-07 03:29:30 +0000
+
+Revert "hid/ps/ps.c: avoid division by zero."
+
+This reverts commit 6e24a51370c17eb99e8d823c670b77cbb9eba515.
+
+Given a linewidth of zero, 'inf' was written as line width to the
+PostScript file, which made the file invalid. Now we at least get
+valid PostScript.
+
+Not yet solved: why is there an attempt to draw a circle of zero
+size?
+
+This is related to bug LP1497963.
+
+
+---
+
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 771d212..d2cb2a1 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1193,8 +1193,6 @@ ps_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
+ 	     Angle start_angle, Angle delta_angle)
+ {
+   Angle sa, ea;
+-  assert (width > 0);
+-
+   if (delta_angle > 0)
+     {
+       sa = start_angle;
+@@ -1205,10 +1203,10 @@ ps_draw_arc (hidGC gc, Coord cx, Coord cy, Coord width, Coord height,
+       sa = start_angle + delta_angle;
+       ea = start_angle;
+     }
+-
+-  if (width <= 0)
+-    width = MIL_TO_COORD (10);
+-
++#if 0
++  printf ("draw_arc %d,%d %dx%d %d..%d %d..%d\n",
++	  cx, cy, width, height, start_angle, delta_angle, sa, ea);
++#endif
+   use_gc (gc);
+   pcb_fprintf (global.f, "%ma %ma %mi %mi %mi %mi %g a\n",
+                sa, ea, -width, height, cx, cy,
