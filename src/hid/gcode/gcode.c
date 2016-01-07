@@ -467,9 +467,11 @@ gcode_start_png_export ()
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
 
+
   linewidth = -1;
   lastbrush = (gdImagePtr)((void *) -1);
 
+  common_set_clip_box (&gcode_graphics, &region);
   hid_expose_callback (&gcode_graphics, &region, 0);
 }
 
