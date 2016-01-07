@@ -1,0 +1,30 @@
+Bottom: d5c988584ef608b1811c5e2dd4d96c74a9faf96c
+Top:    21febe555f5400d6a4a32d69b5c52ce70d1708c1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-01-07 02:16:10 +0000
+
+Revert "gui-top-window.c: no need to check arguments if not used."
+
+This reverts commit 92d4bab703cd0894421bc8c8fe1aa7a67dc1c679.
+
+
+
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index e243cd7..f54ed93 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -2195,9 +2195,11 @@ Opens the window which allows editing of the route styles.
+ static int
+ AdjustStyle(int argc, char **argv, Coord x, Coord y)
+ {
++  if (argc > 1)
++    AFAIL (adjuststyle);
++
+   ghid_route_style_selector_edit_dialog
+     (GHID_ROUTE_STYLE_SELECTOR (ghidgui->route_style_selector));
+-
+   return 0;
+ }
