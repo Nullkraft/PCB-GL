@@ -1,5 +1,5 @@
-Bottom: 988f82c9e7121bd6a7274905b634dd7b5d3a08bd
-Top:    a048f0fcbce10073fffba745004665b08460a0df
+Bottom: fc1942a3dbcfa63f3d6b0186015f42d4faec27aa
+Top:    87ac191ec3c43d6b10a5a56495fd999e4333b34d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-06 23:17:41 +0000
 
@@ -483,10 +483,10 @@ index 1a64566..c44b7e1 100644
  
    hid_register_hid (&ghid_hid);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 035f418..814b5d8 100644
+index fbfcc7f..698dd63 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4073,7 +4073,6 @@ hid_lesstif_init ()
+@@ -4076,7 +4076,6 @@ hid_lesstif_init ()
    lesstif_hid.name                    = "lesstif";
    lesstif_hid.description             = "LessTif - a Motif clone for X/Unix";
    lesstif_hid.gui                     = 1;
@@ -494,7 +494,7 @@ index 035f418..814b5d8 100644
  
    lesstif_hid.get_export_options      = lesstif_get_export_options;
    lesstif_hid.do_export               = lesstif_do_export;
-@@ -4082,7 +4081,6 @@ hid_lesstif_init ()
+@@ -4085,7 +4084,6 @@ hid_lesstif_init ()
    lesstif_hid.invalidate_all          = lesstif_invalidate_all;
    lesstif_hid.notify_crosshair_change = lesstif_notify_crosshair_change;
    lesstif_hid.notify_mark_change      = lesstif_notify_mark_change;
@@ -502,7 +502,7 @@ index 035f418..814b5d8 100644
  
    lesstif_hid.calibrate               = lesstif_calibrate;
    lesstif_hid.shift_is_pressed        = lesstif_shift_is_pressed;
-@@ -4118,6 +4116,7 @@ hid_lesstif_init ()
+@@ -4121,6 +4119,7 @@ hid_lesstif_init ()
  
    common_draw_helpers_class_init (&lesstif_graphics_class);
  
@@ -510,7 +510,7 @@ index 035f418..814b5d8 100644
    lesstif_graphics_class.make_gc        = lesstif_make_gc;
    lesstif_graphics_class.destroy_gc     = lesstif_destroy_gc;
    lesstif_graphics_class.use_mask       = lesstif_use_mask;
-@@ -4135,6 +4134,7 @@ hid_lesstif_init ()
+@@ -4138,6 +4137,7 @@ hid_lesstif_init ()
    lesstif_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
  
    lesstif_graphics.klass = &lesstif_graphics_class;

@@ -1,5 +1,5 @@
-Bottom: bc1b9d490dc4d2948cc8e63eb46111a0fdd1037e
-Top:    6e684fa1dbd47f99cf2028a4751aea0c364e56a5
+Bottom: c8f73d29735eadbe1f47485a5446b35d49dab562
+Top:    e14df4ad62ee1d1a07d418a4fb0b0e43116c05cd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-06 23:17:41 +0000
 
@@ -86,7 +86,7 @@ index 0f8f287..60627b7 100644
    common_draw_helpers_class_init (&gerber_graphics_class);
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 705b45b..90fbd4b 100644
+index 62e7727..f3f474b 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -1251,7 +1251,7 @@ ghid_request_debug_draw (void)
@@ -125,10 +125,10 @@ index 44202cd..955d6f4 100644
    common_draw_helpers_class_init (&ghid_graphics_class);
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 1933a59..d58fbe7 100644
+index 4a3ad56..b341f2c 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -4031,7 +4031,7 @@ lesstif_request_debug_draw (void)
+@@ -4034,7 +4034,7 @@ lesstif_request_debug_draw (void)
  {
    /* Send drawing to the backing pixmap */
    pixmap = main_pixmap;
@@ -137,7 +137,7 @@ index 1933a59..d58fbe7 100644
  }
  
  static void
-@@ -4112,8 +4112,6 @@ hid_lesstif_init ()
+@@ -4115,8 +4115,6 @@ hid_lesstif_init ()
    lesstif_hid.flush_debug_draw        = lesstif_flush_debug_draw;
    lesstif_hid.finish_debug_draw       = lesstif_finish_debug_draw;
  

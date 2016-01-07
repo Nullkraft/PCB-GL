@@ -1,5 +1,5 @@
-Bottom: 67404e3d84b97c467d80131ca4d016a48991d9df
-Top:    bc1b9d490dc4d2948cc8e63eb46111a0fdd1037e
+Bottom: 9323509b03f758d47a6871a871357391763d5c85
+Top:    c8f73d29735eadbe1f47485a5446b35d49dab562
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-06 23:17:41 +0000
 
@@ -404,7 +404,7 @@ index 88393ef..0f8f287 100644
    memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index ff31cbe..705b45b 100644
+index e3396e5..62e7727 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -801,7 +801,7 @@ redraw_region (GdkRectangle *rect)
@@ -466,10 +466,10 @@ index c7197d4..32a125d 100644
    glPopMatrix ();
  
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 078d7cc..1933a59 100644
+index 1b96378..4a3ad56 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -831,7 +831,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
+@@ -834,7 +834,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
    do
      {
        XFillRectangle (display, pixmap, bg_gc, 0, 0, view_width, view_height);
@@ -478,7 +478,7 @@ index 078d7cc..1933a59 100644
        XSync (display, 0);
        time (&end);
        i++;
-@@ -2579,7 +2579,7 @@ idle_proc (XtPointer dummy)
+@@ -2582,7 +2582,7 @@ idle_proc (XtPointer dummy)
  	    }
  	}
        DrawBackgroundImage();
@@ -487,7 +487,7 @@ index 078d7cc..1933a59 100644
        draw_grid ();
        lesstif_use_mask (HID_MASK_OFF);
        show_crosshair (0); /* To keep the drawn / not drawn info correct */
-@@ -3804,7 +3804,7 @@ pinout_callback (Widget da, PinoutData * pd,
+@@ -3807,7 +3807,7 @@ pinout_callback (Widget da, PinoutData * pd,
    region.Y2 = PCB->MaxHeight;
  
    XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);

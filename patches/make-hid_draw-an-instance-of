@@ -1,5 +1,5 @@
-Bottom: bee1bba4a970983360bb61ff534d23446875b790
-Top:    ad95257f8796e9992ecd98dc309ca075f72e23ec
+Bottom: 8c12e00e16e7ee8ecff7bb4fba7758d4112ddf25
+Top:    ba3950ce47f683ffade15fb5bea55235d8e749fc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-06 23:17:41 +0000
 
@@ -71,10 +71,10 @@ index e807d9c..27bcc71 100644
    hid_register_hid (&batch_hid);
  #include "batch_lists.h"
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 3ada35b..dfa9db4 100644
+index 663bdf3..ebab4cc 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -624,17 +624,22 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+@@ -673,17 +673,22 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
  }
  
  void
@@ -483,7 +483,7 @@ index 7975a88..1a64566 100644
    hid_register_hid (&ghid_hid);
  #include "gtk_lists.h"
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 5f4468c..90b96a5 100644
+index a48ce37..7efb900 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -60,6 +60,7 @@ typedef struct lesstif_gc_struct
@@ -494,7 +494,7 @@ index 5f4468c..90b96a5 100644
  
  #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
  
-@@ -4064,9 +4065,9 @@ hid_lesstif_init ()
+@@ -4067,9 +4068,9 @@ hid_lesstif_init ()
  {
    memset (&lesstif_hid, 0, sizeof (HID));
    memset (&lesstif_graphics, 0, sizeof (HID_DRAW));
@@ -505,7 +505,7 @@ index 5f4468c..90b96a5 100644
  
    lesstif_hid.struct_size             = sizeof (HID);
    lesstif_hid.name                    = "lesstif";
-@@ -4115,22 +4116,27 @@ hid_lesstif_init ()
+@@ -4118,22 +4119,27 @@ hid_lesstif_init ()
  
    lesstif_hid.graphics                = &lesstif_graphics;
  
