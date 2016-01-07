@@ -4135,7 +4135,7 @@ hid_lesstif_init ()
   lesstif_graphics_class.fill_polygon   = lesstif_fill_polygon;
   lesstif_graphics_class.fill_rect      = lesstif_fill_rect;
 
-  lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
+  lesstif_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
 
   lesstif_graphics.klass = &lesstif_graphics_class;
   common_draw_helpers_init (&lesstif_graphics);

@@ -330,7 +330,7 @@ hid_batch_init ()
 {
   memset (&batch_hid, 0, sizeof (HID));
   memset (&batch_graphics, 0, sizeof (HID_DRAW));
-  memset (&batch_graphics_ckass, 0, sizeof (HID_DRAW_CLASS));
+  memset (&batch_graphics_class, 0, sizeof (HID_DRAW_CLASS));
 
   common_nogui_init (&batch_hid);
 
