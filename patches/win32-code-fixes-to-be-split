@@ -1,7 +1,7 @@
-Bottom: 27d4c3bf4d16f05f2afbc3f7a590649c859f3adb
-Top:    7cc12845a9acbca102bd342f570dcde711897fdd
+Bottom: ffbfd95c13f8a7549581d8f930b6f9b248cd0538
+Top:    c767e382694a3caa451c8fd21473c9d807d075b8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 02:18:27 +0000
+Date:   2016-01-07 02:37:30 +0000
 
 Win32 code fixes (TO BE SPLIT INTO SEPARATE PATCHES)
 
@@ -9,10 +9,10 @@ Win32 code fixes (TO BE SPLIT INTO SEPARATE PATCHES)
 ---
 
 diff --git a/src/compat.c b/src/compat.c
-index 6092764..dd1910b 100644
+index 24e6625..fb544fb 100644
 --- a/src/compat.c
 +++ b/src/compat.c
-@@ -57,6 +57,7 @@ random (void)
+@@ -63,6 +63,7 @@ random (void)
  #endif
  
  #if !defined(HAVE_DLFCN_H) && defined(WIN32)
