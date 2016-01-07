@@ -33,8 +33,6 @@
 static HID_Attribute * eps_get_export_options (int *n);
 static void eps_do_export (HID_Attr_Val * options);
 static void eps_parse_arguments (int *argc, char ***argv);
-static hidGC eps_make_gc (void);
-static void eps_destroy_gc (hidGC gc);
 static void eps_set_color (hidGC gc, const char *name);
 static void eps_set_line_cap (hidGC gc, EndCapStyle style);
 static void eps_set_line_width (hidGC gc, Coord width);
@@ -418,7 +416,7 @@ eps_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 }
 
 static hidGC
-eps_make_gc (void)
+eps_make_gc (HID_DRAW *hid_draw)
 {
   hidGC gc = (hidGC) calloc (1, sizeof (struct eps_gc_struct));
   epsGC eps_gc = (epsGC)gc;
