@@ -47,7 +47,6 @@
 static HID_Attribute * gerber_get_export_options (int *n);
 static void gerber_do_export (HID_Attr_Val * options);
 static void gerber_parse_arguments (int *argc, char ***argv);
-static int gerber_set_layer (const char *name, int group, int empty);
 static hidGC gerber_make_gc (void);
 static void gerber_destroy_gc (hidGC gc);
 static void gerber_set_color (hidGC gc, const char *name);
@@ -717,7 +716,7 @@ drill_sort (const void *va, const void *vb)
 }
 
 static int
-gerber_set_layer (const char *name, int group, int empty)
+gerber_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
   int want_outline;
   char *cp;
