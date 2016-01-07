@@ -242,7 +242,7 @@ Location of the @file{pcb-menu.res} file which defines the menu for the lesstif 
 
 REGISTER_ATTRIBUTES (lesstif_attribute_list)
 
-static void lesstif_use_mask (enum mask_mode mode);
+static void lesstif_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
 static void zoom_max ();
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
@@ -2503,7 +2503,7 @@ idle_proc (XtPointer dummy)
     {
       int mx, my;
       BoxType region;
-      lesstif_use_mask (HID_MASK_OFF);
+      lesstif_use_mask (&lesstif_graphics, HID_MASK_OFF);
       pixmap = main_pixmap;
       mx = view_width;
       my = view_height;
@@ -2584,7 +2584,7 @@ idle_proc (XtPointer dummy)
       DrawBackgroundImage();
       hid_expose_callback (&lesstif_graphics, &region, 0);
       draw_grid ();
-      lesstif_use_mask (HID_MASK_OFF);
+      lesstif_use_mask (&lesstif_graphics, HID_MASK_OFF);
       show_crosshair (0); /* To keep the drawn / not drawn info correct */
       XSetFunction (display, my_gc, GXcopy);
       XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
@@ -3077,7 +3077,7 @@ lesstif_destroy_gc (hidGC gc)
 }
 
 static void
-lesstif_use_mask (enum mask_mode mode)
+lesstif_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
   if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB)) &&
       !use_xrender)
