@@ -54,14 +54,14 @@ nogui_invalidate_all (void)
 }
 
 static int
-nogui_set_layer (const char *name, int idx, int empty)
+nogui_set_layer (HID_DRAW *hid_draw, const char *name, int idx, int empty)
 {
   CRASH;
   return 0;
 }
 
 static void
-nogui_end_layer (void)
+nogui_end_layer (HID_DRAW *hid_draw)
 {
 }
 
