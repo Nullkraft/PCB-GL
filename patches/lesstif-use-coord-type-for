@@ -1,7 +1,7 @@
-Bottom: 75f54c7c6044b08520a5aadf6833cd99d197cbbb
-Top:    95958818378461c79150fce6a540a9a6556e9f24
+Bottom: e546223bcf115ba77751ff9916d4246d749ada8d
+Top:    e5390a41cf2c26cf7210e2988c678cde883d184f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:27:50 +0000
+Date:   2016-01-07 01:02:22 +0000
 
 lesstif: Use Coord type for line-width, not int
 
@@ -9,7 +9,7 @@ lesstif: Use Coord type for line-width, not int
 ---
 
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index e5fca5a..d1846eb 100644
+index d7b5e34..ae0b9fa 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -52,7 +52,7 @@ typedef struct lesstif_gc_struct
