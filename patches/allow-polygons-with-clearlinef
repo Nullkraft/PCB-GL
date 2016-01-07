@@ -1,7 +1,7 @@
-Bottom: 47bf03b751f72dac2da23b880118c9b54e1cf4c5
-Top:    f8a2eba23eaebb930a81e235a504d8e1adf09717
+Bottom: 67149233ae53f270b6636e590bd57d753fb89e35
+Top:    73e4decf5d564e590a5151229c3081df6f9e8614
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-07 02:18:17 +0000
+Date:   2016-01-07 02:19:09 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -35,7 +35,7 @@ index 4f98732..8cc50f2 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 7f9bf42..7e50bc9 100644
+index a2823b7..c0aa468 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -121,6 +121,9 @@ static void *ChangeTextJoin (LayerType *, TextType *);
@@ -75,7 +75,7 @@ index 7f9bf42..7e50bc9 100644
    NULL,
    NULL,
    NULL,
-@@ -1264,6 +1267,31 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
+@@ -1269,6 +1272,31 @@ ChangeTextJoin (LayerType *Layer, TextType *Text)
  }
  
  /*!
@@ -107,7 +107,7 @@ index 7f9bf42..7e50bc9 100644
   * \brief Sets the clearance flag of a text.
   */
  static void *
-@@ -1275,6 +1303,17 @@ SetTextJoin (LayerType *Layer, TextType *Text)
+@@ -1280,6 +1308,17 @@ SetTextJoin (LayerType *Layer, TextType *Text)
  }
  
  /*!
@@ -125,7 +125,7 @@ index 7f9bf42..7e50bc9 100644
   * \brief Clears the clearance flag of a text.
   */
  static void *
-@@ -1286,6 +1325,17 @@ ClrTextJoin (LayerType *Layer, TextType *Text)
+@@ -1291,6 +1330,17 @@ ClrTextJoin (LayerType *Layer, TextType *Text)
  }
  
  /*!
@@ -144,10 +144,10 @@ index 7f9bf42..7e50bc9 100644
   */
  static void *
 diff --git a/src/change.h b/src/change.h
-index f42842a..887a713 100644
+index 29e9501..3722771 100644
 --- a/src/change.h
 +++ b/src/change.h
-@@ -56,7 +56,7 @@
+@@ -59,7 +59,7 @@
  	(ELEMENT_TYPE | PIN_TYPE | VIA_TYPE)
  
  #define CHANGEJOIN_TYPES	\
