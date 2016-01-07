@@ -1,17 +1,12 @@
+#include <glib.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <stdio.h>
+
+#include "step.h"
+#include "vertex3d.h"
 
 static int global_vertex3d_count;
-
-typedef struct
-{
-  float x;
-  float y;
-  float z;
-  int id;
-
-  /* STEP crap - to hell with encapsulation */
-  int vertex_identifier;
-} vertex3d;
 
 vertex3d *
 make_vertex3d (float x, float y, float z)
