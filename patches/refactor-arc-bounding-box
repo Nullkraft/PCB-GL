@@ -1,5 +1,5 @@
-Bottom: c74a85a530a4f11f1cddc541ab6e8c5760aff86b
-Top:    01b7a1dac41d096ce82ee618436c7b7fdb7bbaca
+Bottom: 104a2b45b3cdad36f029abdd4456508503804819
+Top:    3d6305b9b3c7fe64d9d393dfd312b655dbf2c645
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-07 02:18:22 +0000
 
@@ -31,10 +31,10 @@ index 4f98732..5de6542 100644
      r_insert_entry (layer->arc_tree, (BoxType *)arc, 0);
    }
 diff --git a/src/create.c b/src/create.c
-index 0f7a8ba..7333684 100644
+index 95044e8..51435f4 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -565,6 +565,7 @@ CreateNewArcOnLayer (LayerType *Layer,
+@@ -579,6 +579,7 @@ CreateNewArcOnLayer (LayerType *Layer,
    Arc->Height = height;
    Arc->StartAngle = sa;
    Arc->Delta = dir;

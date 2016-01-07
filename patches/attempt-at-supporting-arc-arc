@@ -1,5 +1,5 @@
-Bottom: a1178a19a3c91ebd279f7554a1f0a5ac451662c7
-Top:    c522f868616a3c366da019df9be96eb9edbbca89
+Bottom: 168eae319d7f3b9b3e60b804e51b76a3b3a8439e
+Top:    c15cac9c902df0212587326669c81c3d55e74d51
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -11,7 +11,7 @@ XXX: Looks like square pad clearance polygons might have extra un-necessary node
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 919f591..d74681a 100644
+index adea27e..0e5babb 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -40,6 +40,10 @@ PCB_SRCS = \
@@ -24,7 +24,7 @@ index 919f591..d74681a 100644
 +	circle_line_intersect.h \
  	clip.c \
  	clip.h \
- 	command.c \
+ 	compat.c \
 diff --git a/src/circle_circle_intersect.c b/src/circle_circle_intersect.c
 new file mode 100644
 index 0000000..8ac5c01
@@ -243,7 +243,7 @@ index 0000000..c7920d2
 +                           double p1x, double p1y, double p2x, double p2y,
 +                           double *mu1, double *mu2);
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 0aa9779..2187897 100644
+index 3c1cee1..8bdb180 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -189,6 +189,17 @@ thindraw_contour (hidGC gc, PLINE *pl)
@@ -265,10 +265,10 @@ index 0aa9779..2187897 100644
        else
          {
 diff --git a/src/misc.c b/src/misc.c
-index dc97733..037abf4 100644
+index 13245e2..37cfe16 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -362,7 +362,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
+@@ -397,7 +397,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
    hx = p1->X + (p2->X - p1->X) / 2;
    hy = p1->Y + (p2->Y - p1->Y) / 2;
  
@@ -277,7 +277,7 @@ index dc97733..037abf4 100644
    c_to_h_dist = p_to_h_dist / tan (TO_RADIANS (included_angle) / 2.);
  
    unit_hcx = (float)-(hy - p1->Y) / p_to_h_dist;
-@@ -372,8 +372,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
+@@ -407,8 +407,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
    *cy = hy + unit_hcy * c_to_h_dist;
  
    if (radius != NULL)
@@ -287,7 +287,7 @@ index dc97733..037abf4 100644
  
    if (start_angle != NULL)
      *start_angle = atan2 ((p1->Y - *cy), -(p1->X - *cx)) / M180;
-@@ -1643,7 +1642,7 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
+@@ -1678,7 +1677,7 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
  
    /* Make sure full circles aren't treated as zero-length arcs */
    if (fabs (delta_angle - 360.) < EPSILON ||
@@ -296,7 +296,7 @@ index dc97733..037abf4 100644
      ang2 = ang1 + 360.;
  
    /* calculate sines, cosines */
-@@ -1652,10 +1651,10 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
+@@ -1687,10 +1686,10 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
    sa2 = sin (M180 * ang2);
    ca2 = cos (M180 * ang2);
  

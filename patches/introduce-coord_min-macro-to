@@ -1,5 +1,5 @@
-Bottom: 3b47cd66e8a9e8a17c57dc42612e8bf5079b952b
-Top:    499216d939239aca382dbccfa496e5e5bdba1995
+Bottom: 645958ff5ff79db07fc3dbe1d7dbab0b89c3b460
+Top:    014bfc0bc418674262941b16046a0bcb69cfe111
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2014-06-13 01:52:03 +0100
 
@@ -9,10 +9,10 @@ Introduce COORD_MIN macro to avoid open-coding the minumum as -COORD_MAX - 1
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 9afffd8..1842764 100644
+index f557c37..18785b0 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1093,18 +1093,22 @@ case "$enable_coord32:$enable_coord64:$ac_cv_header_stdint_h" in
+@@ -1091,18 +1091,22 @@ case "$enable_coord32:$enable_coord64:$ac_cv_header_stdint_h" in
    yes:no:yes )
      COORD_TYPE="int32_t"
      COORD_MAX="INT32_MAX"
@@ -35,7 +35,7 @@ index 9afffd8..1842764 100644
      ;;
    yes:yes:*  )
      AC_MSG_ERROR("*** cannot require both 32 and 64 bit coordinates")
-@@ -1112,12 +1116,15 @@ case "$enable_coord32:$enable_coord64:$ac_cv_header_stdint_h" in
+@@ -1110,12 +1114,15 @@ case "$enable_coord32:$enable_coord64:$ac_cv_header_stdint_h" in
    *:*:*    )
      COORD_TYPE="long"
      COORD_MAX="LONG_MAX"

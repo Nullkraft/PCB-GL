@@ -1,5 +1,5 @@
-Bottom: 01b7a1dac41d096ce82ee618436c7b7fdb7bbaca
-Top:    3c74394804a0c477e01e3ccbae54b0878629f582
+Bottom: 3d6305b9b3c7fe64d9d393dfd312b655dbf2c645
+Top:    4a89a39e24da7d591647b5bb9baae774cf132f3c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-07 02:18:22 +0000
 
@@ -64,10 +64,10 @@ index 20e2895..388cddd 100644
  
  	  /* reset identifiers */
 diff --git a/src/copy.c b/src/copy.c
-index a0385db..5651997 100644
+index 3e070e5..9b11e7d 100644
 --- a/src/copy.c
 +++ b/src/copy.c
-@@ -101,7 +101,7 @@ CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
+@@ -106,7 +106,7 @@ CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
            CreateNewHoleInPolygon (Dest);
            hole++;
          }
@@ -77,10 +77,10 @@ index a0385db..5651997 100644
    SetPolygonBoundingBox (Dest);
    Dest->Flags = Src->Flags;
 diff --git a/src/create.c b/src/create.c
-index 7333684..bd18765 100644
+index 51435f4..adc32be 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -587,10 +587,10 @@ CreateNewPolygonFromRectangle (LayerType *Layer,
+@@ -601,10 +601,10 @@ CreateNewPolygonFromRectangle (LayerType *Layer,
    if (!polygon)
      return (polygon);
  
@@ -95,8 +95,8 @@ index 7333684..bd18765 100644
    SetPolygonBoundingBox (polygon);
    if (!Layer->polygon_tree)
      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-@@ -655,13 +655,14 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
-  * creates a new point in a polygon
+@@ -669,13 +669,14 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
+  * \brief Creates a new point in a polygon.
   */
  PointType *
 -CreateNewPointInPolygon (PolygonType *Polygon, Coord X, Coord Y)
@@ -112,10 +112,10 @@ index 7333684..bd18765 100644
    return (point);
  }
 diff --git a/src/create.h b/src/create.h
-index b1a7385..fa30c3f 100644
+index 76b5769..22404ac 100644
 --- a/src/create.h
 +++ b/src/create.h
-@@ -51,7 +51,7 @@ ArcType * CreateNewArcOnLayer (LayerType *, Coord, Coord, Coord, Coord, Angle, A
+@@ -49,7 +49,7 @@ ArcType * CreateNewArcOnLayer (LayerType *, Coord, Coord, Coord, Coord, Angle, A
  PolygonType * CreateNewPolygonFromRectangle (LayerType *, Coord, Coord, Coord, Coord, FlagType);
  TextType * CreateNewText (LayerType *, FontType *, Coord, Coord, unsigned, int, char *, FlagType);
  PolygonType * CreateNewPolygon (LayerType *, FlagType);

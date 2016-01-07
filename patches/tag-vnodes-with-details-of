@@ -1,5 +1,5 @@
-Bottom: ecc9bf7001cd36e59f763388e089170f99132e3e
-Top:    d96582f51ac8d10d7d0c45ce1129d4edeede5650
+Bottom: 99a905da3a355f38f81f2fea04079756805fb724
+Top:    471db3d5ccc0668fff9a6dd5e43a8f7439f43182
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:15:59 +0000
 
@@ -23,7 +23,7 @@ circ_segs_test4_still_procuces_bad_contour_when_starting_with_arc.pcb
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index dfa9db4..978ab3d 100644
+index 0bded43..a3b41d5 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -149,12 +149,14 @@ thindraw_contour (hidGC gc, PLINE *pl)

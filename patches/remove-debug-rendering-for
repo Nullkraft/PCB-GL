@@ -1,5 +1,5 @@
-Bottom: 164168f365d676ad7333a7a21a124760e8e87f07
-Top:    3b47cd66e8a9e8a17c57dc42612e8bf5079b952b
+Bottom: 9633312f5917844e2026b241e7cf15baddd3b160
+Top:    645958ff5ff79db07fc3dbe1d7dbab0b89c3b460
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:01 +0000
 
@@ -9,7 +9,7 @@ Remove debug rendering for polygons
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index b959385..463f682 100644
+index f9e0a7c..95d06b3 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -139,30 +139,6 @@ fill_contour (hidGC gc, PLINE *pl)

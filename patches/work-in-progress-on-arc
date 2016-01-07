@@ -1,5 +1,5 @@
-Bottom: 31ad7b2b9ca032089560f1202a2a77292d4e8b64
-Top:    164168f365d676ad7333a7a21a124760e8e87f07
+Bottom: 6ec4540432e3efc8c71872a1d07fec12bec18b25
+Top:    9633312f5917844e2026b241e7cf15baddd3b160
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -38,7 +38,7 @@ index b008572..ca2428a 100644
     return 2;
  }
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 6706337..b959385 100644
+index 07e55c3..f9e0a7c 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -139,12 +139,36 @@ fill_contour (hidGC gc, PLINE *pl)
@@ -322,10 +322,10 @@ index 6706337..b959385 100644
  
  static void
 diff --git a/src/misc.c b/src/misc.c
-index 037abf4..32c67d9 100644
+index 37cfe16..b4babfd 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -418,7 +418,7 @@ SetPolygonBoundingBox (PolygonType *Polygon)
+@@ -453,7 +453,7 @@ SetPolygonBoundingBox (PolygonType *Polygon)
        }
    }
    /* boxes don't include the lower right corner */
@@ -334,7 +334,7 @@ index 037abf4..32c67d9 100644
    END_LOOP;
  }
  
-@@ -1692,7 +1692,7 @@ SetArcBoundingBox (ArcType *Arc)
+@@ -1727,7 +1727,7 @@ SetArcBoundingBox (ArcType *Arc)
    Arc->BoundingBox.X2 += width;
    Arc->BoundingBox.Y1 -= width;
    Arc->BoundingBox.Y2 += width;
