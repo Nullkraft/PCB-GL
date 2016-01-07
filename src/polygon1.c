@@ -1664,6 +1664,10 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
 
       if (j_rule (poly, cur, &dir) && cur->Flags.mark == 0)
 	Collect1 (e, cur, dir, contours, holes, j_rule);
+//    The lines below are no-longer required.. preserving for now to record this commit.
+//      other = cur;
+//      if (other->cvc_prev)
+//	Collect1 (e, other, dir, contours, holes, j_rule);
     }
   while ((cur = cur->next) != &a->head);
 }				/* Collect */
