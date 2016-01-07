@@ -1,7 +1,7 @@
-Bottom: 236908b36395d49d5f6debc637dc17e64269d2ce
-Top:    92774540a6fb3691d0e3621f5720d1e4b4b5d49d
+Bottom: ac5634904c85692e98a9ed9bd7d46cc32cc08371
+Top:    a7bcf1ff8503259d35af3d4e88668f1978818cb6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 01:24:15 +0000
+Date:   2016-01-07 01:34:55 +0000
 
 Initial experiment with XInput devices
 
@@ -9,7 +9,7 @@ Initial experiment with XInput devices
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 5977ccf..c8de1dc 100644
+index 9eec316..2380f70 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -299,12 +299,104 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
@@ -118,10 +118,10 @@ index 5977ccf..c8de1dc 100644
    /* Reject double and triple click events */
    if (ev->type != GDK_BUTTON_PRESS) return TRUE;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index cfd8ad9..78084e4 100644
+index ca4b069..525a796 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -1387,9 +1387,45 @@ ghid_build_pcb_top_window (void)
+@@ -1402,9 +1402,45 @@ ghid_build_pcb_top_window (void)
  			 | GDK_FOCUS_CHANGE_MASK | GDK_POINTER_MOTION_MASK
  			 | GDK_POINTER_MOTION_HINT_MASK);
  
