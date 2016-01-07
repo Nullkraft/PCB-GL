@@ -149,25 +149,13 @@ nogui_draw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 }
 
 static void
-nogui_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+nogui_draw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 {
   CRASH;
 }
 
 static void
-nogui_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
-{
-  CRASH;
-}
-
-static void
-nogui_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
-{
-  CRASH;
-}
-
-static void
-nogui_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
+nogui_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
 {
   CRASH;
 }
@@ -497,10 +485,8 @@ common_nogui_graphics_class_init (HID_DRAW_CLASS *klass)
   klass->fill_rect =       nogui_fill_rect;
 
   klass->draw_pcb_polygon = nogui_draw_pcb_polygon;
-  klass->fill_pcb_pad =     nogui_fill_pcb_pad;
-  klass->thindraw_pcb_pad = nogui_thindraw_pcb_pad;
-  klass->fill_pcb_pv =      nogui_fill_pcb_pv;
-  klass->thindraw_pcb_pv =  nogui_thindraw_pcb_pv;
+  klass->draw_pcb_pad =     nogui_draw_pcb_pad;
+  klass->draw_pcb_pv =      nogui_draw_pcb_pv;
 }
 
 void

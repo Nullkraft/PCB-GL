@@ -66,7 +66,7 @@ thindraw_moved_pv (hidGC gc, PinType *pv, Coord x, Coord y)
   moved_pv.X += x;
   moved_pv.Y += y;
 
-  hid_draw_thin_pcb_pv (gc, gc, &moved_pv, true, false);
+  hid_draw__thin_pcb_pv (gc, gc, &moved_pv, true, false);
 }
 
 /* ---------------------------------------------------------------------------
@@ -233,7 +233,7 @@ XORDrawElement (hidGC gc, ElementType *Element, Coord DX, Coord DY)
         moved_pad.Point1.X += DX; moved_pad.Point1.Y += DY;
         moved_pad.Point2.X += DX; moved_pad.Point2.Y += DY;
 
-        hid_draw_thin_pcb_pad (gc, &moved_pad, false, false);
+        hid_draw__thin_pcb_pad (gc, &moved_pad, false, false);
       }
   }
   END_LOOP;
@@ -689,7 +689,7 @@ DrawAttached (hidGC gc)
         via.Mask = 0;
         via.Flags = NoFlags ();
 
-        hid_draw_thin_pcb_pv (gc, gc, &via, true, false);
+        hid_draw__thin_pcb_pv (gc, gc, &via, true, false);
 
         if (TEST_FLAG (SHOWDRCFLAG, PCB))
           {
