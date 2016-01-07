@@ -1,7 +1,7 @@
-Bottom: 5e9bea547434b85c885696bbc0f8d3c99ee62002
-Top:    7a98108a8cc6df082a786c99d5bfa2eeaf870b6e
+Bottom: 4491c6d4e820a54f426a8fd1611aab46478a3c47
+Top:    e7bf65043e8329805e6ddd2bd3163d4ece3c2e68
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:05:32 +0000
+Date:   2016-01-07 01:33:10 +0000
 
 Move arc from included angle calculation into misc.c
 
@@ -13,10 +13,10 @@ Compute the correct boundingbox for a polygon with arc segments.
 ---
 
 diff --git a/src/misc.c b/src/misc.c
-index a0f2785..dc97733 100644
+index 0cab234..13245e2 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -320,6 +320,69 @@ SetLineBoundingBox (LineType *Line)
+@@ -355,6 +355,69 @@ SetLineBoundingBox (LineType *Line)
  }
  
  /* ---------------------------------------------------------------------------
@@ -86,7 +86,7 @@ index a0f2785..dc97733 100644
   * sets the bounding box of a polygons
   */
  void
-@@ -333,6 +396,27 @@ SetPolygonBoundingBox (PolygonType *Polygon)
+@@ -368,6 +431,27 @@ SetPolygonBoundingBox (PolygonType *Polygon)
      MAKEMIN (Polygon->BoundingBox.Y1, point->Y);
      MAKEMAX (Polygon->BoundingBox.X2, point->X);
      MAKEMAX (Polygon->BoundingBox.Y2, point->Y);
@@ -115,7 +115,7 @@ index a0f2785..dc97733 100644
    /* boxes don't include the lower right corner */
    close_box(&Polygon->BoundingBox);
 diff --git a/src/misc.h b/src/misc.h
-index c9d3ef0..d4fdf0e 100644
+index 860cfa7..84f62ed 100644
 --- a/src/misc.h
 +++ b/src/misc.h
 @@ -53,6 +53,7 @@ void SetArcEndpoints (ArcType *);

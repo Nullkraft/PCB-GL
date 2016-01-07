@@ -1,7 +1,7 @@
-Bottom: 8d35844fe3db2284f62ac34d7bcf72312bf94f91
-Top:    7ff365dd59fd596537f1005567ca5a59b80099f9
+Bottom: 6994d5fecf1035c1c442629daa54a7bb536d6667
+Top:    c90bf519eb41afab41861d1bc3235e8358deac67
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:05:32 +0000
+Date:   2016-01-07 01:33:10 +0000
 
 Refactor arc bounding box calculations to separate out thin case
 
@@ -11,10 +11,10 @@ The thin-arc case will be useful for arc-segments within polycurves.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 789985d..ec006d0 100644
+index 4f98732..5de6542 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -1437,6 +1437,7 @@ MirrorBuffer (BufferType *Buffer)
+@@ -1457,6 +1457,7 @@ MirrorBuffer (BufferType *Buffer)
      arc->Y = SWAP_Y (arc->Y);
      arc->StartAngle = SWAP_ANGLE (arc->StartAngle);
      arc->Delta = SWAP_DELTA (arc->Delta);
@@ -22,7 +22,7 @@ index 789985d..ec006d0 100644
      SetArcBoundingBox (arc);
    }
    ENDALL_LOOP;
-@@ -1502,6 +1503,7 @@ SwapBuffer (BufferType *Buffer)
+@@ -1522,6 +1523,7 @@ SwapBuffer (BufferType *Buffer)
      arc->Y = SWAP_Y (arc->Y);
      arc->StartAngle = SWAP_ANGLE (arc->StartAngle);
      arc->Delta = SWAP_DELTA (arc->Delta);
@@ -43,7 +43,7 @@ index 0f7a8ba..7333684 100644
    if (!Layer->arc_tree)
      Layer->arc_tree = r_create_tree (NULL, 0, 0);
 diff --git a/src/misc.c b/src/misc.c
-index 2df8cd9..a0f2785 100644
+index 545aaac..0cab234 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -78,6 +78,8 @@
@@ -55,7 +55,7 @@ index 2df8cd9..a0f2785 100644
  /*	forward declarations	*/
  static char *BumpName (char *);
  static void GetGridLockCoordinates (int, void *, void *, void *,
-@@ -1530,33 +1532,35 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+@@ -1565,33 +1567,35 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
  /* ---------------------------------------------------------------------------
   * computes the bounding box of an arc
   */
@@ -103,7 +103,7 @@ index 2df8cd9..a0f2785 100644
  
    /* calculate sines, cosines */
    sa1 = sin (M180 * ang1);
-@@ -1564,10 +1568,10 @@ SetArcBoundingBox (ArcType *Arc)
+@@ -1599,10 +1603,10 @@ SetArcBoundingBox (ArcType *Arc)
    sa2 = sin (M180 * ang2);
    ca2 = cos (M180 * ang2);
  
@@ -118,7 +118,7 @@ index 2df8cd9..a0f2785 100644
  
    /* Check for extreme angles */
    if ((ang1 <= 0   && ang2 >= 0)   || (ang1 <= 360 && ang2 >= 360)) maxx = 1;
-@@ -1576,11 +1580,26 @@ SetArcBoundingBox (ArcType *Arc)
+@@ -1611,11 +1615,26 @@ SetArcBoundingBox (ArcType *Arc)
    if ((ang1 <= 270 && ang2 >= 270) || (ang1 <= 630 && ang2 >= 630)) miny = -1;
  
    /* Finally, calcate bounds, converting sane geometry into pcb geometry */
@@ -149,7 +149,7 @@ index 2df8cd9..a0f2785 100644
    width = (Arc->Thickness + Arc->Clearance) / 2;
  
    /* Adjust for our discrete polygon approximation */
-@@ -1591,12 +1610,36 @@ SetArcBoundingBox (ArcType *Arc)
+@@ -1626,12 +1645,36 @@ SetArcBoundingBox (ArcType *Arc)
    Arc->BoundingBox.Y1 -= width;
    Arc->BoundingBox.Y2 += width;
    close_box(&Arc->BoundingBox);
@@ -191,7 +191,7 @@ index 2df8cd9..a0f2785 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/misc.h b/src/misc.h
-index d6f33e5..c9d3ef0 100644
+index 85178db..860cfa7 100644
 --- a/src/misc.h
 +++ b/src/misc.h
 @@ -47,7 +47,9 @@ Angle  NormalizeAngle (Angle a);

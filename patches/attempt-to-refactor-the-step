@@ -1,7 +1,7 @@
-Bottom: 5d68324cf5b506f1edcb527d8b92bec89657f768
-Top:    7a572e542a2149db0f25e47d4700aacba9db2c05
+Bottom: c87d6562fc018a52f6888ae033dc895f945c3184
+Top:    2d3c0d9f7a44744e8e4cf1a19cefecf9d14d04a1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:05:32 +0000
+Date:   2016-01-07 01:33:09 +0000
 
 Attempt to refactor the STEP emission somewhat
 
@@ -9,10 +9,10 @@ Attempt to refactor the STEP emission somewhat
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 7b98422..919f591 100644
+index 747926c..adea27e 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -176,6 +176,8 @@ LIBGTK_GL_SRCS= \
+@@ -173,6 +173,8 @@ LIBGTK_GL_SRCS= \
  	hid/gtk/gtkhid-gl.c \
  	hid/gtk/gui-trackball.c \
  	hid/gtk/gui-trackball.h \

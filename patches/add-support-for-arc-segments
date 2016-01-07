@@ -1,7 +1,7 @@
-Bottom: 7ff365dd59fd596537f1005567ca5a59b80099f9
-Top:    5e9bea547434b85c885696bbc0f8d3c99ee62002
+Bottom: c90bf519eb41afab41861d1bc3235e8358deac67
+Top:    4491c6d4e820a54f426a8fd1611aab46478a3c47
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:05:32 +0000
+Date:   2016-01-07 01:33:10 +0000
 
 Add support for arc segments in polygon object outline definitions
 
@@ -24,10 +24,10 @@ EXTREME FEATURE IN EITHER THE +/-X or +/-Y DIRECTIONS.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 6b700b5..a16a7f2 100644
+index 20e2895..388cddd 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1440,7 +1440,8 @@ NotifyMode (void)
+@@ -1439,7 +1439,8 @@ NotifyMode (void)
  	  {
  	    CreateNewPointInPolygon (&Crosshair.AttachedPolygon,
  				     Crosshair.AttachedLine.Point2.X,
@@ -37,7 +37,7 @@ index 6b700b5..a16a7f2 100644
  
  	    /* copy the coordinates */
  	    Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
-@@ -1531,7 +1532,8 @@ NotifyMode (void)
+@@ -1530,7 +1531,8 @@ NotifyMode (void)
  		{
  		  CreateNewPointInPolygon (&Crosshair.AttachedPolygon,
  					   Crosshair.AttachedLine.Point2.X,
@@ -47,7 +47,7 @@ index 6b700b5..a16a7f2 100644
  
  		  /* copy the coordinates */
  		  Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
-@@ -1754,13 +1756,13 @@ NotifyMode (void)
+@@ -1753,13 +1755,13 @@ NotifyMode (void)
  	    InsertPointIntoObject (POLYGON_TYPE,
  				   Crosshair.AttachedObject.Ptr1, fake.poly,
  				   &polyIndex,
@@ -220,7 +220,7 @@ index 4f64880..a4e0a05 100644
  NetList		{ return(T_NETLIST); }
  Net		{ return(T_NET); }
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 629ccd6..7b66542 100644
+index c0350f8..79dc75b 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -118,7 +118,7 @@ static Coord new_units (PLMeasure m);
