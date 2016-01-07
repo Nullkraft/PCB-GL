@@ -1,7 +1,7 @@
-Bottom: 6fbb4d59b4fc3c00fa9b0f70fad1f253021379da
-Top:    a7c8e903f19098aef1adfa519d188aa81834432f
+Bottom: 1b1a36296cd6ce56a220fe70eb6af9139c03adb9
+Top:    fef883c8a1c753e776d8e0f299bd57dc55514d5e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 01:46:26 +0000
+Date:   2016-01-07 02:18:23 +0000
 
 Adjust mask API to include a HID_DRAW pointer
 
@@ -174,7 +174,7 @@ index a4712de..5597471 100644
  	/* does nothing */
  }
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 8bf9a68..e57b14a 100644
+index 11c986c..b2ea870 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -1373,7 +1373,7 @@ png_destroy_gc (hidGC gc)

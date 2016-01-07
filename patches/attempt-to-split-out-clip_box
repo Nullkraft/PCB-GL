@@ -1,7 +1,7 @@
-Bottom: 62bdb109bee2b7c5271596f0fcf76855b85e064a
-Top:    efeec103a10310ee5f6d2f152a3158db1fadae18
+Bottom: cc4f2781e3b9218fb0603765dda1c0f0ceaf3863
+Top:    6a703778c6be5fbbe01ef2910268d29f17a16fb9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 01:46:26 +0000
+Date:   2016-01-07 02:18:24 +0000
 
 Attempt to split out clip_box using code from big re-write
 
@@ -1238,7 +1238,7 @@ index a9e854bd..55e88bd 100644
  
  static void 
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index b582198..f11e313 100644
+index 880bda1..32d86e5 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -656,7 +656,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)

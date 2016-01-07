@@ -1,7 +1,7 @@
-Bottom: a7c8e903f19098aef1adfa519d188aa81834432f
-Top:    dbdbdd945365b0873ede70b9e799fa0a55073deb
+Bottom: fef883c8a1c753e776d8e0f299bd57dc55514d5e
+Top:    2ea6e700d9bbf70031cca59fd599852ad636ca88
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 01:46:26 +0000
+Date:   2016-01-07 02:18:23 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->{start,end}_layer() functions
 
@@ -155,7 +155,7 @@ index 5597471..755ccbc 100644
  	int             idx = (group >= 0 && group < max_group) ?
  	PCB->LayerGroups.Entries[group][0] : group;
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index e57b14a..6ccd28d 100644
+index b2ea870..89c948b 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -1200,7 +1200,7 @@ static int is_drill;

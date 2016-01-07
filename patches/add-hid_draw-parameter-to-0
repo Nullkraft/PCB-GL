@@ -1,7 +1,7 @@
-Bottom: dbdbdd945365b0873ede70b9e799fa0a55073deb
-Top:    8774ac371c6007c0e1c1a706a33444f916db0be3
+Bottom: 2ea6e700d9bbf70031cca59fd599852ad636ca88
+Top:    a1423ceb8c8cd200ca522a9ce12afbf0d73ff438
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 01:46:26 +0000
+Date:   2016-01-07 02:18:23 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->make_gc() function
 
@@ -168,7 +168,7 @@ index 755ccbc..f1d912d 100644
  	hidGC gc = (hidGC) calloc (1, sizeof(struct hid_gc_struct));
  	nelmaGC nelma_gc = (nelmaGC)gc;
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 6ccd28d..92f8661 100644
+index 89c948b..2006f77 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -1348,7 +1348,7 @@ png_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
