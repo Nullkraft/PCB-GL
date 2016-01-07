@@ -57,6 +57,7 @@ random (void)
 #endif
 
 #if !defined(HAVE_DLFCN_H) && defined(WIN32)
+#define WIN32_LEAN_AND_MEAN 1
 #include <windows.h>
 
 void *

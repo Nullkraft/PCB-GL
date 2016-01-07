@@ -13,7 +13,9 @@
 
 
 
-#ifndef WIN32
+#ifdef WIN32
+#   define WIN32_LEAN_AND_MEAN 1
+#else
 /* The Linux OpenGL ABI 1.0 spec requires that we define
  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
  * in order to get prototypes:
@@ -244,6 +246,7 @@ object3d_export_to_step (object3d *object, char *filename)
   FILE *f;
   time_t currenttime;
   struct tm utc;
+  struct tm *tmp;
   //int next_step_identifier;
 
   f = fopen (filename, "w");
@@ -254,7 +257,9 @@ object3d_export_to_step (object3d *object, char *filename)
     }
 
   currenttime = time (NULL);
-  gmtime_r (&currenttime, &utc);
+  // gmtime_r (&currenttime, &utc);
+  tmp =  gmtime (&currenttime);
+  utc = *tmp;
 
   fprintf (f, "ISO-10303-21;\n");
   fprintf (f, "HEADER;\n");
