@@ -1,7 +1,7 @@
-Bottom: 4d4f0423a10b50f7fc25bd9fed2b647ff77fc405
-Top:    87ea387015ce932aee6447e9749e74914de1f19b
+Bottom: a0b9110c0e1a97ff66260c13d3a14c83ad5c53f0
+Top:    833e47379fe7fcc61b67799010094ff5c5c47a58
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:16:36 +0000
+Date:   2016-01-07 01:34:23 +0000
 
 Win32 code fixes (TO BE SPLIT INTO SEPARATE PATCHES)
 
@@ -75,10 +75,10 @@ index 2332d07..7ca00e8 100644
   * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
   * in order to get prototypes:
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 59faf56..130646e 100644
+index 763f493..53c2211 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2092,6 +2092,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
+@@ -2095,6 +2095,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
   * footprint libraries.
   */
  #ifdef WIN32
@@ -87,7 +87,7 @@ index 59faf56..130646e 100644
  #include <winreg.h>
  #endif
 diff --git a/src/hid/gtk/gui-library-window.c b/src/hid/gtk/gui-library-window.c
-index 2901c6c..3c6d7ff 100644
+index 1a9a4c1..2b81849 100644
 --- a/src/hid/gtk/gui-library-window.c
 +++ b/src/hid/gtk/gui-library-window.c
 @@ -67,6 +67,8 @@
