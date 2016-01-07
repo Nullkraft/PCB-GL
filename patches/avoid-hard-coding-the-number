@@ -1,7 +1,7 @@
-Bottom: e736b9f008c143a6c15f87f37068573f64082250
-Top:    a15bd37ef61dd66ff2700fd05b7505db76abf6eb
+Bottom: 547d8952fd118dd90ae1329d7eb779d585563475
+Top:    77b49f9cb8fe4b23b49e8328c4508eca480f47bd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 01:46:11 +0000
+Date:   2016-01-07 02:18:09 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -276,7 +276,7 @@ index da3179b..a4712de 100644
  	FILE           *nelma_config;
  	char           *buf;
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 3b16696..8bf9a68 100644
+index 5b51ff2..11c986c 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -129,10 +129,10 @@ static int print_layer[MAX_LAYER];
