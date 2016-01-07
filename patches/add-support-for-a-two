@@ -1,7 +1,7 @@
-Bottom: a621fd66e3b3b12ec558d0c2f101ee7ecdb23ac9
-Top:    c5ad0fb32fd19b99cb218d35db8a2dcbe67a7514
+Bottom: 7dbcde99eef1076b33e0c0eb6cc9609ddb6f5b07
+Top:    4dd6b3baec4383ad2efe8c4fc5ae116c04f10b5f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:18:12 +0000
+Date:   2016-01-07 00:58:53 +0000
 
 Add support for a two soldermask layers, defining regions of removed mask
 
@@ -136,10 +136,10 @@ index 5137739..d8002b4 100644
      ViaDrillingHole, LineThickness, RatThickness, Keepaway,	/* default size of a new layout */
      MaxWidth, MaxHeight,
 diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
-index 6a4f345..eb8fbd1 100644
+index 8c4205f..38d255c 100644
 --- a/src/hid/gtk/gui-config.c
 +++ b/src/hid/gtk/gui-config.c
-@@ -1642,7 +1642,7 @@ edit_layer_button_cb(GtkWidget *widget, gchar *data)
+@@ -1643,7 +1643,7 @@ edit_layer_button_cb(GtkWidget *widget, gchar *data)
  {
  	gchar	**argv;
  
@@ -149,7 +149,7 @@ index 6a4f345..eb8fbd1 100644
  
  	argv = g_strsplit(data, ",", -1);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index e52b8da..5c67265 100644
+index 93be8a4..4d9cce6 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -529,6 +529,7 @@ layer_selector_select_callback (GHidLayerSelector *ls, int layer, gpointer d)
@@ -207,7 +207,7 @@ index e52b8da..5c67265 100644
    else
      layer = LayerStack[0];
  
-@@ -1945,7 +1956,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
+@@ -1939,7 +1950,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
  }
  
  static const char selectlayer_syntax[] =
@@ -216,7 +216,7 @@ index e52b8da..5c67265 100644
  
  static const char selectlayer_help[] =
      N_("Select which layer is the current layer.");
-@@ -1973,6 +1984,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
+@@ -1967,6 +1978,8 @@ SelectLayer (int argc, char **argv, Coord x, Coord y)
      newl = LAYER_BUTTON_SILK;
    else if (strcasecmp (argv[0], "rats") == 0)
      newl = LAYER_BUTTON_RATS;
@@ -226,7 +226,7 @@ index e52b8da..5c67265 100644
      newl = atoi (argv[0]) - 1;
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 1e24e61..c7d607c 100644
+index e70b050..3253f48 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -44,15 +44,15 @@
@@ -255,10 +255,10 @@ index 1e24e61..c7d607c 100644
    /* Go from from the grid units in use (millimeters or mils) to PCB units
       |  and back again.
 diff --git a/src/hid/lesstif/menu.c b/src/hid/lesstif/menu.c
-index bee7a17..1212ae9 100644
+index bb28ea5..457b585 100644
 --- a/src/hid/lesstif/menu.c
 +++ b/src/hid/lesstif/menu.c
-@@ -210,6 +210,8 @@ LayersChanged (int argc, char **argv, Coord x, Coord y)
+@@ -215,6 +215,8 @@ LayersChanged (int argc, char **argv, Coord x, Coord y)
      current_layer = LB_RATS;
    else if (PCB->SilkActive)
      current_layer = LB_SILK;
@@ -267,7 +267,7 @@ index bee7a17..1212ae9 100644
    else
      current_layer = LayerStack[0];
  
-@@ -386,6 +388,7 @@ layerpick_button_callback (Widget w, int layer,
+@@ -391,6 +393,7 @@ layerpick_button_callback (Widget w, int layer,
    char *name;
    PCB->RatDraw = (layer == LB_RATS);
    PCB->SilkActive = (layer == LB_SILK);
@@ -275,7 +275,7 @@ index bee7a17..1212ae9 100644
    if (layer < max_copper_layer)
      ChangeGroupVisibility (layer, 1, 1);
    for (l = 0; l < num_layer_buttons; l++)
-@@ -404,6 +407,9 @@ layerpick_button_callback (Widget w, int layer,
+@@ -409,6 +412,9 @@ layerpick_button_callback (Widget w, int layer,
      case LB_SILK:
        name = "Silk";
        break;

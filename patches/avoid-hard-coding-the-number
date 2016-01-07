@@ -1,7 +1,7 @@
-Bottom: ef1b68ec6da26ba44ca69f215eb5e3d6b3d4f1f8
-Top:    a621fd66e3b3b12ec558d0c2f101ee7ecdb23ac9
+Bottom: aa7e572508232d1f27cdc1a84a2070cc1f9b7832
+Top:    7dbcde99eef1076b33e0c0eb6cc9609ddb6f5b07
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:18:12 +0000
+Date:   2016-01-07 00:58:53 +0000
 
 Avoid hard-coding the number of extra layers in use (for 2x silkscreen)
 
@@ -172,7 +172,7 @@ index 60627b7..dc80eff 100644
  
    save_thindraw = PCB->Flags;
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 90fbd4b..c8bf438 100644
+index f3f474b..493f25c 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -74,14 +74,14 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -228,10 +228,10 @@ index b988db9..8d7e5c5 100644
  /* Use this to restore them.  */
  void hid_restore_layer_ons (int *save_array);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index d58fbe7..e5fca5a 100644
+index b341f2c..d7b5e34 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3010,7 +3010,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -3013,7 +3013,7 @@ lesstif_set_layer (const char *name, int group, int empty)
        for (idx = 0; idx < n-1; idx ++)
  	{
  	  int ni = PCB->LayerGroups.Entries[group][idx];
@@ -240,7 +240,7 @@ index d58fbe7..e5fca5a 100644
  	      && PCB->Data->Layer[ni].On)
  	    break;
  	}
-@@ -3028,7 +3028,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -3031,7 +3031,7 @@ lesstif_set_layer (const char *name, int group, int empty)
    else
      autofade = 0;
  #endif
@@ -250,10 +250,10 @@ index d58fbe7..e5fca5a 100644
    if (idx < 0)
      {
 diff --git a/src/hid/lesstif/menu.c b/src/hid/lesstif/menu.c
-index ddaddcb..bee7a17 100644
+index 8a71198..bb28ea5 100644
 --- a/src/hid/lesstif/menu.c
 +++ b/src/hid/lesstif/menu.c
-@@ -499,7 +499,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
+@@ -504,7 +504,7 @@ ToggleView (int argc, char **argv, Coord x, Coord y)
    else
      {
        l = -1;

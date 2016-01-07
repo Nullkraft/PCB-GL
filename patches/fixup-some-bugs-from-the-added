@@ -1,7 +1,7 @@
-Bottom: e20df580d248496f88e30dab750e444f6a328aa9
-Top:    36f586e53fd2bd67bcfc40ba5123fd865e07c2e6
+Bottom: 8789b980e6565d4af9699bfb5e1ae0edd1194b18
+Top:    692140da8360f1e9f74806e5cc51301ac2bdf430
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:18:13 +0000
+Date:   2016-01-07 00:58:54 +0000
 
 Fixup some bugs from the added soldermask layers
 
@@ -59,10 +59,10 @@ index 3bd66f6..4edb048 100644
          }
  
 diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
-index eb8fbd1..0c48026 100644
+index 38d255c..d35650b 100644
 --- a/src/hid/gtk/gui-config.c
 +++ b/src/hid/gtk/gui-config.c
-@@ -1513,6 +1513,15 @@ config_layer_group_button_state_update (void)
+@@ -1514,6 +1514,15 @@ config_layer_group_button_state_update (void)
    for (g = 0; g < max_group; g++)
      for (i = 0; i < layer_groups.Number[g]; i++)
        {
