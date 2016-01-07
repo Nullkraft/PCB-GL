@@ -1096,6 +1096,7 @@ _cairo_bo_sweep_line_compare_edges (cairo_bo_sweep_line_t *sweep_line,
             return cmp;
         }
 
+#if 0
 //        printf ("Sweep-line compare edges test\n");
         count = _cairo_bo_edge_intersect ((cairo_bo_edge_t *)a,
                                           (cairo_bo_edge_t *)b,
@@ -1107,6 +1108,7 @@ _cairo_bo_sweep_line_compare_edges (cairo_bo_sweep_line_t *sweep_line,
 //          printf ("HMM, seems they DONT intersect?\n");
           return CAIRO_STATUS_SUCCESS;
         }
+#endif
 
         /* The two edges intersect exactly at y, so fall back on slope
          * comparison. We know that this compare_edges function will be
@@ -1465,6 +1467,17 @@ _cairo_bo_event_queue_insert_if_intersect_below_current_y (cairo_bo_event_queue_
     intersection1.y = -1; /* Shut the compiler up */
     intersection2.x = -1; /* Shut the compiler up */
     intersection2.y = -1; /* Shut the compiler up */
+
+    if (left->done_insert_node || right->done_insert_node)
+      return CAIRO_STATUS_SUCCESS;
+
+#if 0
+    /* Don't intersect the same contour */
+    if (left->p == right->p)
+      return CAIRO_STATUS_SUCCESS;
+#endif
+
+    /* FIXME: Might need to insist on another iteration */
 
 //    if (_line_equal (&left->edge.line, &right->edge.line))
 //        return CAIRO_STATUS_SUCCESS;
@@ -2518,6 +2531,7 @@ cntrbox_adjust (PLINE * c, cairo_point_t p)
 static int
 adjust_tree (PLINE *p, VNODE *v)
 {
+  return 0;
   struct seg *s = lookup_seg (p, v);
   struct seg *q;
 
