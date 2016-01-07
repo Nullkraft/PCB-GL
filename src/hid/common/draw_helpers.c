@@ -7,6 +7,20 @@
 #include "draw_helpers.h"
 
 
+/* Takes a copy of clip_box so we own it */
+void
+common_set_clip_box (HID_DRAW *hid_draw, BoxType *clip_box)
+{
+  free (hid_draw->clip_box);
+  hid_draw->clip_box = NULL;
+
+  if (clip_box == NULL)
+    return;
+
+  hid_draw->clip_box = malloc (sizeof (BoxType));
+  *hid_draw->clip_box = *clip_box;
+}
+
 static void
 common_draw_pcb_line (hidGC gc, LineType *line)
 {
