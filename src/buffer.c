@@ -576,47 +576,55 @@ void
 make_footprint_hash ()
 {
   int i, j;
+  GList *ii, *jj;
   char *fp;
   int num_entries = 0;
 
   clear_footprint_hash ();
 
-  for (i=0; i<Library.MenuN; i++)
-    for (j=0; j<Library.Menu[i].EntryN; j++)
-      num_entries ++;
+  for (ii = Library.Menu; ii != NULL; ii = g_list_next (ii))
+    {
+      LibraryMenuType *menu = ii->data;
+      for (jj = menu->Entry; jj != NULL; jj = g_list_next (jj))
+        num_entries ++;
+    }
   footprint_hash = (FootprintHashEntry *)malloc (num_entries * sizeof(FootprintHashEntry));
+
   num_entries = 0;
 
   /* There are two types of library entries.  The file-based types
      have a Template of (char *)-1 and the AllocatedMemory is the full
      path to the footprint file.  The m4 ones have the footprint name
      in brackets in the description.  */
-  for (i=0; i<Library.MenuN; i++)
+  for (ii = Library.Menu, i = 0; ii != NULL; ii = g_list_next (ii), i++)
     {
+      LibraryMenuType *menu = ii->data;
 #ifdef DEBUG
   printf("In make_footprint_hash, looking for footprints in %s\n", 
-	 Library.Menu[i].directory);
+	 menu->directory);
 #endif
 
-    for (j=0; j<Library.Menu[i].EntryN; j++)
+      for (jj = menu->Entry, j = 0; jj != NULL; jj = g_list_next (jj), j++)
 	{
+          LibraryEntryType *entry = jj->data;
+
 	  footprint_hash[num_entries].menu_idx = i;
 	  footprint_hash[num_entries].entry_idx = j;
-	  if (Library.Menu[i].Entry[j].Template == (char *) -1) 
+	  if (entry->Template == (char *) -1) 
           /* file */
 	    {
 #ifdef DEBUG
-/*	      printf(" ... Examining file %s\n", Library.Menu[i].Entry[j].AllocatedMemory); */
+/*	      printf(" ... Examining file %s\n", entry->AllocatedMemory); */
 #endif
-	      fp = strrchr (Library.Menu[i].Entry[j].AllocatedMemory, '/');
+	      fp = strrchr (entry->AllocatedMemory, '/');
 
 	      if (!fp)
-		fp = strrchr (Library.Menu[i].Entry[j].AllocatedMemory, '\\');
+		fp = strrchr (entry->AllocatedMemory, '\\');
 
 	      if (fp)
 		fp ++;
 	      else 
-		fp = Library.Menu[i].Entry[j].AllocatedMemory;
+		fp = entry->AllocatedMemory;
 
 #ifdef DEBUG
 /* 	      printf(" ... found file footprint %s\n",  fp); */
@@ -628,7 +636,7 @@ make_footprint_hash ()
 	  else 
           /* m4 */
 	    {
-	      fp = strrchr (Library.Menu[i].Entry[j].Description, '[');
+	      fp = strrchr (entry->Description, '[');
 	      if (fp)
 		{
 		  footprint_hash[num_entries].footprint = strdup (fp+1);
@@ -639,7 +647,7 @@ make_footprint_hash ()
 		}
 	      else
 		{
-		  fp = Library.Menu[i].Entry[j].Description;
+		  fp = entry->Description;
 		  footprint_hash[num_entries].footprint = fp;
 		  footprint_hash[num_entries].footprint_allocated = 0;
 		}
@@ -735,8 +743,8 @@ LoadFootprintByName (BufferType *Buffer, char *Footprint)
       return 1;
     }
 
-  menu = & Library.Menu[fpe->menu_idx];
-  entry = & menu->Entry[fpe->entry_idx];
+  menu = g_list_nth_data (Library.Menu, fpe->menu_idx);
+  entry = g_list_nth_data (menu->Entry, fpe->entry_idx);
 
   if (entry->Template == (char *) -1)
     {
