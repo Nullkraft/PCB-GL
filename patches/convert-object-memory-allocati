@@ -1,7 +1,7 @@
-Bottom: bc85a8b174ddecf09d10ee5f67774fa52bd61615
-Top:    f4748fe1f424cea16d7b729be16ccc521a1329fa
+Bottom: 15502ef349ae58cebd45fb17fe8ac003dc4dfc13
+Top:    b32604cf073912834784c7f43a57363ff17c36db
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 23:18:42 +0000
+Date:   2016-01-07 00:59:04 +0000
 
 Convert object memory allocations to use g_slice()
 
@@ -9,7 +9,7 @@ Convert object memory allocations to use g_slice()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index f1aff8b..3babbcb 100644
+index cf34a76..cb8c664 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1896,37 +1896,39 @@ static int
@@ -70,7 +70,7 @@ index f1aff8b..3babbcb 100644
  	    }
  	}
      }
-@@ -3276,6 +3278,8 @@ static const char renumber_help[] =
+@@ -3278,6 +3280,8 @@ static const char renumber_help[] =
  static int
  ActionRenumber (int argc, char **argv, Coord x, Coord y)
  {
@@ -79,7 +79,7 @@ index f1aff8b..3babbcb 100644
    bool changed = false;
    ElementType **element_list;
    ElementType **locked_element_list;
-@@ -3615,6 +3619,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3617,6 +3621,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    free (is);
    free (was);
    return 0;
@@ -87,7 +87,7 @@ index f1aff8b..3babbcb 100644
  }
  
  
-@@ -4636,16 +4641,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
+@@ -4638,16 +4643,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
  		    SetChangedFlag (true);
  		    if (type == ELEMENT_TYPE)
  		      {
@@ -108,7 +108,7 @@ index f1aff8b..3babbcb 100644
  			    if (PCB->RatOn)
  			      EraseRat ((RatType *) ptr->Line);
  			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
-@@ -6986,22 +6990,26 @@ find_element_by_refdes (char *refdes)
+@@ -6989,22 +6993,26 @@ find_element_by_refdes (char *refdes)
  static AttributeType *
  lookup_attr (AttributeListType *list, const char *name)
  {
@@ -800,7 +800,7 @@ index d8002b4..77dc082 100644
  } BoxListType;
  
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index dfa9db4..6a4fddb 100644
+index ebab4cc..7512882 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -43,7 +43,7 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
@@ -895,7 +895,7 @@ index 955d6f4..5cf1875 100644
  
  	  break;
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 58fe107..edfc7a9 100644
+index 089aa7c..5f82f76 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
 @@ -525,9 +525,8 @@ netlist_disable_all_cb (GtkToggleButton * button, gpointer data)
@@ -923,7 +923,7 @@ index 58fe107..edfc7a9 100644
  
    SelectByFlag (FOUNDFLAG, select_flag);
    ClearFlagOnAllObjects (false, FOUNDFLAG);
-@@ -853,9 +855,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -855,9 +857,8 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
  {
    struct ggnfnn_task *task = (struct ggnfnn_task *)data;
    LibraryMenuType *net;
@@ -934,7 +934,7 @@ index 58fe107..edfc7a9 100644
    gboolean is_disabled;
  
    /* We only want to inspect leaf nodes in the tree */
-@@ -872,13 +873,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
+@@ -874,13 +875,16 @@ hunt_named_node (GtkTreeModel *model, GtkTreePath *path,
      return FALSE;
  
    /* Look for the node name in this net. */
@@ -953,7 +953,7 @@ index 58fe107..edfc7a9 100644
  
    return FALSE;
  }
-@@ -998,7 +1002,7 @@ ghid_netlist_window_update (gboolean init_nodes)
+@@ -1000,7 +1004,7 @@ ghid_netlist_window_update (gboolean init_nodes)
  
    /* XXX Check if the select callback does this for us */
    if (init_nodes)
