@@ -11,8 +11,8 @@ typedef struct {
   appearance *appear;
 
   /* STEP crap - to hell with encapsulation */
-  int plane_identifier;
-  bool plane_orientation_reversed;
+  int surface_identifier;
+  bool surface_orientation_reversed;
   int face_identifier;
   int face_bound_identifier;
 } face3d;
@@ -23,3 +23,4 @@ void face3d_add_contour (face3d *face, contour3d *contour);
 void face3d_set_appearance (face3d *face, appearance *appear);
 void face3d_set_normal (face3d *face, float nx, float ny, float nz);
 void face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius);
+void face3d_set_surface_orientation_reversed (face3d *face);
