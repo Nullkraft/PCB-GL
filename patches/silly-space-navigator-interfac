@@ -1,7 +1,7 @@
-Bottom: 666c16e27ebb329010a580fe2b2dd1897962f600
-Top:    179044e8e23241960b55759acda378b94dbfb2f9
+Bottom: b1a85e92e87d0bd69da057d37e3dbaa04713e254
+Top:    dd2a1bd9337268001a3e29263df5a1c3aedd0ad2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-06 23:27:15 +0000
+Date:   2016-01-07 01:00:08 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -12,10 +12,10 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 166e39f..0e4e013 100644
+index 3b82b5e..eac97c4 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -323,7 +323,9 @@ LIBGTK_SRCS = \
+@@ -322,7 +322,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-pinout-preview.h \
  	hid/gtk/gui-pinout-window.c \
  	hid/gtk/gui-top-window.c \
@@ -40,7 +40,7 @@ index 955d6f4..6c6c076 100644
  {
    ghid_zoom_view_abs (center_x, center_y, gport->view.coord_per_px * factor);
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index ae8cfa4..146ff10 100644
+index f9ac4bd..71327b4 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -104,7 +104,7 @@ index ae8cfa4..146ff10 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 5c67265..b37cda1 100644
+index 4d9cce6..ca4b069 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -117,6 +117,7 @@ a zoom in/out.
@@ -123,7 +123,7 @@ index 5c67265..b37cda1 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -1845,6 +1847,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -1839,6 +1841,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
@@ -137,7 +137,7 @@ index 5c67265..b37cda1 100644
  
    gtk_main ();
 diff --git a/src/hid/gtk/gui-trackball.c b/src/hid/gtk/gui-trackball.c
-index 2165af7..370759d 100644
+index 0b0dd9a..c73f49a 100644
 --- a/src/hid/gtk/gui-trackball.c
 +++ b/src/hid/gtk/gui-trackball.c
 @@ -112,6 +112,38 @@ button_release_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
@@ -192,18 +192,18 @@ index 5c8a1f1..98d558d 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c7d607c..73d9bb9 100644
+index 3253f48..202b5d4 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -149,6 +149,7 @@ typedef struct
-     netlist_window_height, history_size, settings_mode;
+@@ -152,6 +152,7 @@ typedef struct
+     settings_mode;
  
    bool is_up;
 +  GIOChannel *snavi;
  }
  GhidGui;
  
-@@ -174,6 +175,7 @@ typedef struct
+@@ -177,6 +178,7 @@ typedef struct
  {
    GtkWidget *top_window,	/* toplevel widget              */
     *drawing_area;		/* and its drawing area */
@@ -211,7 +211,7 @@ index c7d607c..73d9bb9 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -303,6 +305,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -306,6 +308,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
@@ -222,7 +222,7 @@ index c7d607c..73d9bb9 100644
  
  /* gui-dialog.c function prototypes.
  */
-@@ -515,6 +521,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
+@@ -518,6 +524,7 @@ void ghid_lead_user_to_location (Coord x, Coord y);
  void ghid_cancel_lead_user (void);
  
  /* gtkhid-main.c */
