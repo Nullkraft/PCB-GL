@@ -472,13 +472,13 @@ typedef enum
      * May be implemented as a NOOP if the GUI has chosen to send the
      * debug drawing directly to the screen.
      */
-    void (*flush_debug_draw)   (void);
+    void (*flush_debug_draw)   (HID_DRAW *hid_draw);
 
     /* When finished, the user must inform the GUI to clean up resources
      *
      * Any remaining rendering will be flushed to the screen.
      */
-    void (*finish_debug_draw)  (void);
+    void (*finish_debug_draw)  (HID_DRAW *hid_draw);
 
     /* Notification to the GUI around saving the PCB file.
      *
