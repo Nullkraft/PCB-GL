@@ -1,7 +1,7 @@
-Bottom: 8c7959910b7084d40e4c71c389b62364c9018a40
-Top:    8361cca47668a8ef102d394d1b3b43ec351f731a
+Bottom: 83a0d2cc55625c9d4b96fc2c91205b3bdfc3770a
+Top:    543d763fce305b44d7e7c7f50a6862647a08f123
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:13:35 +0000
+Date:   2016-01-07 01:34:08 +0000
 
 Add action to reconstruct pins / vias / holes
 
@@ -9,10 +9,10 @@ Add action to reconstruct pins / vias / holes
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 7b6bbc0..f82f708 100644
+index 0ee548d..aa196bc 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -111,6 +111,9 @@ typedef enum
+@@ -110,6 +110,9 @@ typedef enum
    F_ClearAndRedraw,
    F_ClearList,
    F_Close,
@@ -22,7 +22,7 @@ index 7b6bbc0..f82f708 100644
    F_Found,
    F_Connection,
    F_Convert,
-@@ -346,6 +349,9 @@ static FunctionType Functions[] = {
+@@ -345,6 +348,9 @@ static FunctionType Functions[] = {
    {"ClearAndRedraw", F_ClearAndRedraw},
    {"ClearList", F_ClearList},
    {"Close", F_Close},
@@ -32,7 +32,7 @@ index 7b6bbc0..f82f708 100644
    {"Found", F_Found},
    {"Connection", F_Connection},
    {"Convert", F_Convert},
-@@ -8177,6 +8183,131 @@ ActionSmash (int argc, char **argv, Coord x, Coord y)
+@@ -8212,6 +8218,131 @@ ActionSmash (int argc, char **argv, Coord x, Coord y)
    AFAIL (smash);
  }
  
@@ -164,7 +164,7 @@ index 7b6bbc0..f82f708 100644
  /* --------------------------------------------------------------------------- */
  
  HID_Action action_action_list[] = {
-@@ -8291,6 +8422,9 @@ HID_Action action_action_list[] = {
+@@ -8326,6 +8457,9 @@ HID_Action action_action_list[] = {
    {"Renumber", 0, ActionRenumber,
     renumber_help, renumber_syntax}
    ,

@@ -1,7 +1,7 @@
-Bottom: cd6cdc319e90232e64831ee88d53b3d60d054a61
-Top:    4f99d2094c5ad24fa2aba1522e0737e2a99b3287
+Bottom: 372cc10c1d27c0c72b13c886b3b1d9b08a05b394
+Top:    62a1e3b82d47f0c0a69eb5d0a01286b96e25f569
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:13:36 +0000
+Date:   2016-01-07 01:34:09 +0000
 
 Alternative, more thorough STEP export code
 
@@ -9,10 +9,10 @@ Alternative, more thorough STEP export code
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 25d6ff2..93a7ceb 100644
+index 9c958ff..286185e 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -160,7 +160,22 @@ PCB_SRCS = \
+@@ -157,7 +157,22 @@ PCB_SRCS = \
  	hid/common/draw_helpers.h \
  	hid/common/hid_resource.c \
  	hid/common/hid_resource.h \
@@ -36,7 +36,7 @@ index 25d6ff2..93a7ceb 100644
  
  EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
  nodist_EXTRA_pcb_SOURCES = dummy.cpp
-@@ -176,17 +191,7 @@ LIBGTK_GDK_SRCS= \
+@@ -173,17 +188,7 @@ LIBGTK_GDK_SRCS= \
  LIBGTK_GL_SRCS= \
  	hid/gtk/gtkhid-gl.c \
  	hid/gtk/gui-trackball.c \
@@ -55,7 +55,7 @@ index 25d6ff2..93a7ceb 100644
  
  GL_SRCS= \
  	hid/common/hidgl.c \
-@@ -478,7 +483,11 @@ LIBSTEP_SRCS = \
+@@ -475,7 +480,11 @@ LIBSTEP_SRCS = \
  	hid/step/assembly.cpp \
  	hid/step/assembly.h \
  	hid/step/utils.cpp \

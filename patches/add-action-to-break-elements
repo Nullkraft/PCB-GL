@@ -1,7 +1,7 @@
-Bottom: c71eec970d6fa935d5ce44683faac3a794041595
-Top:    8c7959910b7084d40e4c71c389b62364c9018a40
+Bottom: 34ed83d9d425546aa3a56b2235b5a481dad731a2
+Top:    83a0d2cc55625c9d4b96fc2c91205b3bdfc3770a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:13:35 +0000
+Date:   2016-01-07 01:34:08 +0000
 
 Add action to break elements to pieces in place
 
@@ -9,10 +9,10 @@ Add action to break elements to pieces in place
 ---
 
 diff --git a/src/action.c b/src/action.c
-index e9bde81..7b6bbc0 100644
+index 7726be6..0ee548d 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -8033,6 +8033,150 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
+@@ -8068,6 +8068,150 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
    return 0;
  }
  
@@ -163,7 +163,7 @@ index e9bde81..7b6bbc0 100644
  /* --------------------------------------------------------------------------- */
  
  HID_Action action_action_list[] = {
-@@ -8174,6 +8318,9 @@ HID_Action action_action_list[] = {
+@@ -8209,6 +8353,9 @@ HID_Action action_action_list[] = {
    {"SetValue", 0, ActionSetValue,
     setvalue_help, setvalue_syntax}
    ,
@@ -174,7 +174,7 @@ index e9bde81..7b6bbc0 100644
     togglehidename_help, togglehidename_syntax}
    ,
 diff --git a/src/gpcb-menu.res.in b/src/gpcb-menu.res.in
-index 47bee40..7a5c777 100644
+index 4cea179..81de686 100644
 --- a/src/gpcb-menu.res.in
 +++ b/src/gpcb-menu.res.in
 @@ -286,6 +286,8 @@ MainMenu =

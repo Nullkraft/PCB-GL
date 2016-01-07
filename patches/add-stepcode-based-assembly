@@ -1,7 +1,7 @@
-Bottom: 8361cca47668a8ef102d394d1b3b43ec351f731a
-Top:    67779072349569c7294e5c60ee6121db1f191086
+Bottom: 543d763fce305b44d7e7c7f50a6862647a08f123
+Top:    b8ce28f79b46a88963555414818df53e2a973db9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 17:13:35 +0000
+Date:   2016-01-07 01:34:09 +0000
 
 Add STEPcode based assembly export function
 
@@ -9,10 +9,10 @@ Add STEPcode based assembly export function
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 9afffd8..c3c026c 100644
+index f557c37..058fa40 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -458,6 +458,23 @@ which exporters you want and do not list png there.])
+@@ -456,6 +456,23 @@ which exporters you want and do not list png there.])
  	esac
  fi
  
@@ -37,10 +37,10 @@ index 9afffd8..c3c026c 100644
      F=$srcdir/src/hid/$hid/hid.conf
      if test -f $F ; then
 diff --git a/src/Makefile.am b/src/Makefile.am
-index ad640ef..25d6ff2 100644
+index abb6eb8..9c958ff 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -163,6 +163,7 @@ PCB_SRCS = \
+@@ -160,6 +160,7 @@ PCB_SRCS = \
  	hid/hidint.h 
  
  EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
@@ -48,7 +48,7 @@ index ad640ef..25d6ff2 100644
  DBUS_SRCS= \
  	dbus-pcbmain.c \
  	dbus-pcbmain.h \
-@@ -459,14 +460,38 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
+@@ -456,14 +457,38 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
  	(for f in ${LIBPS_SRCS} ; do cat $(srcdir)/$$f ; done) | grep "^REGISTER" > $@.tmp
  	mv $@.tmp $@
  
