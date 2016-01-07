@@ -399,6 +399,8 @@ typedef struct			/* holds all objects */
   struct PCBType *pcb;
   LayerType Layer[MAX_LAYER + EXTRA_LAYERS];
   int polyClip;
+  POLYAREA *outline;
+  bool outline_valid;
 } DataType;
 
 typedef struct			/* holds drill information */
