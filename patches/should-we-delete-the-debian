@@ -1,5 +1,5 @@
 Bottom: d8d8c7f10e3f23ee812ba87fa6e9b3788ccf4c59
-Top:    d8d8c7f10e3f23ee812ba87fa6e9b3788ccf4c59
+Top:    2844a784d4c866d5e49454b567b029e8ae49d718
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-07 03:18:57 +0000
 
@@ -8,4 +8,2321 @@ Should we delete the debian/ directory?? I think so
 
 ---
 
-
+diff --git a/debian/README.Debian b/debian/README.Debian
+deleted file mode 100644
+index c7f9e5f..0000000
+--- a/debian/README.Debian
++++ /dev/null
+@@ -1,17 +0,0 @@
+-PCB for Debian
+---------------
+-
+-Documentation for PCB is available in several forms:
+-
+- - Info ('info pcb')
+-
+- - Manual page ('man pcb')
+-
+- - PDF (pcb.pdf and refcard.pdf)
+-
+- - HTML (/usr/share/doc/pcb/html/index.html)
+- 
+-Information about PCB is available online at http://pcb.sourceforge.net/
+-
+-Hamish Moffatt <hamish@debian.org>, based on original by
+-Hartmut Koptein <koptein@debian.org>,  Wed,  9 Jul 1997 02:50:56 +0200
+diff --git a/debian/changelog b/debian/changelog
+deleted file mode 100644
+index 65d6f69..0000000
+--- a/debian/changelog
++++ /dev/null
+@@ -1,1335 +0,0 @@
+-pcb (20150823-0ppa0~vivid) vivid; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: 710afb2105e1e39667aa643b58dc5babac4ae18e
+-   Author: Kai-Martin Knaak <kmk@lilalaser.de>
+-     Show the actual name of silk layers in the GUI.
+-
+-   Commit: 5b10716f9c51921ff1a4fc4b1efb5c69ca5f1ce4
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     src/buffer.c: Converted plain comments into doxygen comments.
+-
+-   Commit: fd18b40060859e20687bb757de40500eb8cfc320
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     src/box.h: Converted plain comments into doxygen comments.
+-
+-   Commit: acdb6f329cab5642052f49b128ba0f9545c302e7
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     src/autoroute.h: Converted plain comments into doxygen comments.
+-
+-   Commit: 4a987d6eadee3006f24ab1f1c650dda2fa32ff54
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     Corrected scale value for `umil` unit.
+-
+-   Commit: 8b567052b8d6580945e1870debe87792036bf73e
+-   Author: Markus Hitter <mah@jump-ing.de>
+-     Don't configure with AM_MAINTAINER_MODE.
+-
+-   Commit: ad9e873078019c31a14ecc472912eceb0f746bc4
+-   Author: Markus Hitter <mah@jump-ing.de>
+-     src/Makefile.am: parse_y.h isn't a source file.
+-
+-   Commit: 3289044192490b2685a32e0497740158ce034dfa
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     Updated the Dutch translation file.
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 24 Aug 2015 23:06:56 +0600
+-
+-pcb (20150823-0ppa0~vivid) vivid; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: 710afb2105e1e39667aa643b58dc5babac4ae18e
+-   Author: Kai-Martin Knaak <kmk@lilalaser.de>
+-     Show the actual name of silk layers in the GUI.
+-
+-   Commit: 5b10716f9c51921ff1a4fc4b1efb5c69ca5f1ce4
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     src/buffer.c: Converted plain comments into doxygen comments.
+-
+-   Commit: fd18b40060859e20687bb757de40500eb8cfc320
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     src/box.h: Converted plain comments into doxygen comments.
+-
+-   Commit: acdb6f329cab5642052f49b128ba0f9545c302e7
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     src/autoroute.h: Converted plain comments into doxygen comments.
+-
+-   Commit: 4a987d6eadee3006f24ab1f1c650dda2fa32ff54
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     Corrected scale value for `umil` unit.
+-
+-   Commit: 8b567052b8d6580945e1870debe87792036bf73e
+-   Author: Markus Hitter <mah@jump-ing.de>
+-     Don't configure with AM_MAINTAINER_MODE.
+-
+-   Commit: ad9e873078019c31a14ecc472912eceb0f746bc4
+-   Author: Markus Hitter <mah@jump-ing.de>
+-     src/Makefile.am: parse_y.h isn't a source file.
+-
+-   Commit: 3289044192490b2685a32e0497740158ce034dfa
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     Updated the Dutch translation file.
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 24 Aug 2015 23:04:32 +0600
+-
+-pcb (20150724-0ppa0~vivid) vivid; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: 2ee9ea0f4f04da3627efa698f7fd2522f06d4702
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     autoroute.c: Converted plain comments into doxygen comments.
+-
+-   Commit: 238d76e3e297a2444e0d6ab4492eb7320c0e771e
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     action.h: minor changes in Doxygen header.
+-
+-   Commit: 1df92f87500fee31e1e83c276ebccc9c4e1fd27d
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     action.c: minor changes in Doxygen header.
+-
+-   Commit: d5776bdfb8ab11ca9f0071df698ef83cb09356a8
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     src/autoplace.h: Converted plain comments into doxygen comments.
+-
+-   Commit: 26f57a7c1b2ac650b4ae3de326e6c7fdf27753db
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     src/autoplace.c: Converted plain comments into doxygen comments.
+-
+-   Commit: dcaf5972f9e910866bc613d36135691605e6f438
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     action: edits in the Doxygen file headers.
+-
+-   Commit: 706cd02089da1b7847682041d168c91e2cc48953
+-   Author: erich_heinzle <a1039181@gmail.com>
+-     Added font information to pcb manual.
+-
+-   Commit: 96442e0317911314d89cfd270977602a65d7f65c
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     src/action.h: Converted plain comments into doxygen comments.
+-
+-   Commit: 431c34100010ea5687b466a73457206af9aba94d
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     src/action.c: Converted plain comments into doxygen comments.
+-
+-   Commit: 3285e0a0115a843066db89f5a8602786d6341d5a
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     Added files for generation of developer documentation with Doxygen.
+-
+-   Commit: 68d01fdf42b1d953f5adea4c2adb45fc2de124d6
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     action.c: clean up before return.
+-
+-   Commit: 6e8b883a413642f199a817070583646ef7cb1288
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     action.c: added cast to int.
+-
+-   Commit: 7b62ea6628663fb13af0219a355b327aa2bdc208
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     hid.h: removed duplicate forward declaration.
+-
+-   Commit: 93522ce482f0272d2cbc7890516aba52aed71e78
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     Correction of word-wrap in duplicate text.
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Thu, 30 Jul 2015 23:06:57 +0600
+-
+-pcb (20150414-0ppa0~vivid) vivid; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Tue, 21 Jul 2015 07:04:01 +0600
+-
+-pcb (20150414-0ppa1~vivid) vivid; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: 51981d7d01c8ea2f34748e581309737f00774db5
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     Correction in "drill report" window (GTK GUI), a wrong total count was reported.
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Tue, 02 Jun 2015 00:05:59 +0600
+-
+-pcb (20150206-0ppa0~utopic) utopic; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Fri, 24 Apr 2015 23:57:24 +0600
+-
+-pcb (20150206-0ppa0~utopic) utopic; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 23 Feb 2015 22:32:15 +0600
+-
+-pcb (20150206-0ppa0~utopic) utopic; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: bf4f3b46f9a1e104291122d6895d737d638b522d
+-   Author: Andrew Poelstra <apoelstra@wpsoftware.net>
+-     pcb-printf: add (incomplete) specifier unit test; allow # and $ to be in any order
+-
+-   Commit: 149b44eefaf102cac6a900a48cb67fbbd34188c3
+-   Author: Andrew Poelstra <apoelstra@wpsoftware.net>
+-     src/main-test.c: remove unused variables from main()
+-
+-   Commit: 86ba8cacdf90184d343edc3e6132f78ea4700352
+-   Author: Andrew Poelstra <apoelstra@wpsoftware.net>
+-     Add unit test framework and simple unit-conversion test
+-
+-   Commit: 5102f7d1ab441b3705fb33763a9cb6f1340801ce
+-   Author: Marco Ciampa <ciampix@libero.it>
+-     Added pcb.pot to the gitignore file.
+-
+-   Commit: 3a008161404ee51f63c2850ad6c0d140a4da30c5
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Remove unused parameter SetDefaultNames from CreateNewPCB
+-
+-   Commit: b7932a2e96336b7370a84384518fc5f02d358e4a
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Rename default silk layers from "silk" to "top silk" and "bottom silk"
+-
+-   Commit: 8891ef62bdf5c563a5dda88b6be58dcbc0b3920d
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Always set default layernames for silk layers
+-
+-   Commit: e72909a5156a77b0ef6be7e23eecf984af31433b
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     w32: Update pango recipe to 1.28.3
+-
+-   Commit: 5de50f5449bc81565fb6680250bcd061c7527845
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     w32: Update cairo recipe to 1.10.2
+-
+-   Commit: 5337349ba7dc39dbd0833407458305c7edc913ac
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     w32: Add recipe for freetype
+-
+-   Commit: da1c825fda409706beb682ae0f13d9f7017e209f
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     w32: Update pixman recipe to 0.20.2
+-
+-   Commit: 3ab028304b98c310b76bb4a55cb42ec4214da5f9
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     w32: Attempt to make gettext build successfully
+-
+-   Commit: 16b20250219b956d64fe4af0c379ae40fb5b46a0
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     w32: Update gettext recipe to 0.18
+-
+-   Commit: a2f819d356250f9984d7cb9bfa568682b57074dd
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     w32: Update zlib recipie to drop ?download.
+-
+-   Commit: 1397de75e36a0e76c9348b109664d9b64f837c60
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     w32: Update gd recipie to new version and download location for libgd
+-
+-   Commit: a4c7e1238754711b9b10606e0adce43dd387652f
+-   Author: Peter Clifton <pcjc2@cam.ac.uk>
+-     hid/gtk: Improve accuracy of "Benchmark" action somewhat
+-
+-   Commit: 964366c1d5db9804f057ee1dbd9423fac43f6a07
+-   Author: Marco Ciampa <ciampix@libero.it>
+-     Small fix in text source.
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sat, 07 Feb 2015 13:33:16 +0600
+-
+-pcb (20150103a-0ppa0~utopic) utopic; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: cbd88e627a04f9df72d3b8b2636158296b64222b
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Update "missing" (automake) script to a later version
+-
+-   Commit: c3e6ece3fbcfe43309794b5894138adc6b264328
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Pass an explicit graphics context to DrawAttached and DrawMark
+-
+-   Commit: cdec60bfd9ed4d8fa3d377b52535d5714f1fc83e
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     lesstif: Fix lesstif_use_mask and associated state to use the mask_mode enum
+-
+-   Commit: 86d3246e0fac3137da264c211840c8d0ea86b72b
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     hid/hidint.h: Remove header guard check, it appears not to be required
+-
+-   Commit: de97ab6f187146f0caa2a3aaa9fab44c8ff36351
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Update header guard macro check in hidint.h to match rename
+-
+-   Commit: cb5a14b994360885658cb7e4251ecf518cbb4b72
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     lesstif: Silence two set but unused variable warnings
+-
+-   Commit: 7827275a5acee762aee5b3db650de905ed8bb603
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     lesstif: Silence set but unused variable warning
+-
+-   Commit: b2b99e824a9ca739d7ed13d6c21a9858818752f0
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     lesstif: Silence set but unused variable warning
+-
+-   Commit: 18ff46cd6b96459d04fd6946081b33fc967d9c56
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     lesstif: Silence set but unused variable warning
+-
+-   Commit: 88546ec577c01c915ff1e3a3a93f2ec8a6dee985
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Fix typo converting request_debug_draw to return a HID_DRAW structure
+-
+-   Commit: 02f5cfac7ee68317123f153d2182f1936f1ae1d8
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     hid.h: Update comment to reflect change in API
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sun, 04 Jan 2015 15:59:06 +0600
+-
+-pcb (20150101a-0ppa0~utopic) utopic; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Fri, 02 Jan 2015 21:07:56 +0600
+-
+-pcb (20150101a-0ppa0~utopic) utopic; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: 8d73bca77f8f602ea5a0bca10a02019605e1f957
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Pass a HID_DRAW structure for debug drawing, not HID
+-
+-   Commit: 4276045bbfd9916c270532bd61e58b80698a53b2
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     autoroute.c: Add missing include required for debug drawing
+-
+-   Commit: 80a6d55bf18d2de687f0a9b7f8ed5b9f148979cc
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Don't use abuse mask drawing of pin/via drawing routines to show DRC clearance during placement
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Fri, 02 Jan 2015 20:56:12 +0600
+-
+-pcb (20141209a-0ppa0~utopic) utopic; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: e2aaa7de5ce68b568c850effc72126d3b15707a5
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Don't put generated i18n helper files under version control
+-
+-   Commit: 0c6a47c06e6a9d3a68325d01aa512396ca95a5f8
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Skip prompt on `make distcheck'
+-
+-   Commit: ebbc5cea5aec1b32cd429003d9d635adac332ed5
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Fix menus not being translated
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Fri, 19 Dec 2014 00:25:38 +0600
+-
+-pcb (20141112a-0ppa0~utopic) utopic; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: 89c4aaa1899a09e044fae81b0dac41a6399f8e59
+-   Author: Eugene Mikhantiev <mikhantiev@gmail.com>
+-     PCB make distcheck
+-
+-   Commit: d4fbbd263f2ad718370018232cbc1ff34955d25f
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     List real source files, not generated C files, in po/POTFILES.in
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 08 Dec 2014 17:45:17 +0600
+-
+-pcb (20141029a-0ppa0~utopic) utopic; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 12 Nov 2014 23:46:18 +0600
+-
+-pcb (20141029-0ppa0~utopic) utopic; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 12 Nov 2014 23:39:42 +0600
+-
+-pcb (20141029-0ppa0~utopic) utopic; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: eacb7b80e5adf8867683f6dbbb1d8f5d53970ad1
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Add support for arbitrary-depth footprint libraries
+-
+-   Commit: 9dd4c9293d88de8987db43ce10c12ec334a0f40b
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Don't recurse into relatively-specified library directories
+-
+-   Commit: b91c2fd203a8e4d6536c6fda39597fffa07c08df
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Remove 509-character limit on configuration values
+-
+-   Commit: d0accd5536a09238ab44c6f0a8fd1c31fb915669
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     If there is only one library root node, keep it expanded
+-
+-   Commit: b14118bd036a1a436a565448f0f56c1d1bc69eff
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Load footprints recursively from subdirectories
+-
+-   Commit: d80224b33544bdb822dad80cfcb436e9a81fd73a
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Add support for recursive directories to GTK library dialog
+-
+-   Commit: bc06c9a13f7c3895aefdd226152a5a91721d6c5b
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Store full library path with menus
+-
+-   Commit: d3830fdd06e18e05ef986210a3a9da2f49498195
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Remove 511-character limit on configuration file lines
+-
+-   Commit: fb435b25b837746e839ff5d5e7338a1261d8fe8a
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Remove outdated copy of `mdate-sh'
+-
+-   Commit: 42b9a98b6492505a7eb02e370ac7bcd03863533b
+-   Author: Roland Lutz <rlutz@hedmen.org>
+-     Add `test-driver' to the list of ignored files
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 12 Nov 2014 10:17:25 +0600
+-
+-pcb (20140710-0ppa0~trusty) trusty; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: e73a2ed54a6f9c4093cf54d43f03d74fee47171a
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Remove unused #include "setjmp.h" from a few files
+-
+-   Commit: b16e5565e6c8e6fcf700b89e3b6367bf6d029f1d
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Remove function SearchScreenGridSlop() and use SearchObjectByLocation() directly
+-
+-   Commit: fd6aca57a586ffaa47cbbdbf8b719b88f15c90f6
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     action.c: Fix handling of the case where a segment already exists when drawing lines
+-
+-   Commit: 6f31629c5e4ca1563c73977b039c54cb8b437fd5
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     hid/gtk: Remove debugging printf accidentally committed
+-
+-   Commit: a6c407a12ffa9670ddd80851a450344ceda986dd
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     
+-
+-   Commit: 4ca484d4f6c4ae3159c19c723036f980e93d19ce
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     hid/*: layer_sort()  Only copper layers participate in the layer stack
+-
+-   Commit: ed4dcff9395c5630f9dd96066da11135ad3e4feb
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Revert "Introduce dynamic board size."
+-
+-   Commit: 8a38201592f780d43e2b05551346146e62b091ae
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     hid/gcode: Don't use PCB->Extent{Min,Max}{X,Y}.. they are about to be killed
+-
+-   Commit: 70c25b17a312aee03afa72ec58379e8a4467b5bb
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     hid/gtk: Don't use a static local variable for the tooltip id, it is ugly.
+-
+-   Commit: 3db13ae26dec92a6e0076044625e53d01b133a4b
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     hid/gerber: Fix broken eagle-suffix filename assignemnt
+-
+-   Commit: af547d4007d43d10957f6922bacf65c0e341db53
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     constify name argument to ghid_notebook_page()
+-
+-   Commit: 790acb69296c7a3732b65c8039037c9828d40253
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Remove function GetGroupOfLayer, use GetLayerGroupNumberByNumber() instead.
+-
+-   Commit: 4d8cedcc401d6c119a81ed391165afa8cb217401
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Avoid walking off the layer group string in ParseGroupString
+-
+-   Commit: 91014b46ec17e09ad5cb4c9c2200cea3afc3124d
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Determine layer count in ParseGroupString
+-
+-   Commit: a6feafb347f05fe75a71b85cbd70d2d7fb6c91a2
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     parse_y.y: Don't bother setting LayerFlag[1,2] for elements - it isn't used
+-
+-   Commit: 1f4a4ebe3e36187f0c05eec987936446dbd6ebfd
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Move contents of PreLoadElementPCB and PostLoadElementPCB into parse_y.y
+-
+-   Commit: 6336ce582b720f6aa4ff008aee534d31a6964414
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Create a new constant MAX_GROUP to size arrays of layer groups.
+-
+-   Commit: b276c9db136547bf08bd5c016d5a5e2c070fa6e5
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Rename "{component,solder}_silk_layer" to "{top,bottom}_silk_layer"
+-
+-   Commit: a07d4d2515cf57d5c65b8f6e1cc943658d1f5718
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Use new function GetLayerGroupNumberBySide() to make code clearer
+-
+-   Commit: 88112881ade5d1b5ab5388cc21ec6b095d81aac8
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     line.c: Cleanup group checking in drc_lines()
+-
+-   Commit: 32a105e39e5ab139aa67f20a908a67ab40438875
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Create new function GetLayerGroupNumberBySide()
+-
+-   Commit: 73b848023de3c0ce4950cced003dbc4404f00e8b
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Replace {COMPONENT,SOLDER}_LAYER with {TOP,BOTTOM}_{SILK_LAYER,SIDE} depending on usage
+-
+-   Commit: b06898d875964f303267e3ba492204da3427100d
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     move.c: Fix incorrect usage of max_group
+-
+-   Commit: 4cba2a2a8cddfa06c03cd0448c74885a68d24ddb
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Fix some broken assumptions regarding 32-bit integer coordinates in polygon1.c
+-
+-   Commit: 4beb98671149f43e8c76892687d008e0adc22f4d
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     polygon.c: Readability cleanup for frac_circle()
+-
+-   Commit: 137e17afdcf21bcff53767ac9412ffb7535ca706
+-   Author: Andrew Poelstra <apoelstra@wpsoftware.net>
+-     png: add explicit round() calls to the scaling
+-
+-   Commit: feaf43794e55cc8cad5e233804239e6281a6b4c4
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     hid/gtk: Focus file save dialog at exit to "Save", not "Close without saving".
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 16 Jul 2014 11:12:53 +0700
+-
+-pcb (20140526-0ppa0~trusty) trusty; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: d7ef5dd19b430fda9fa960cc56b2bbce2b457c64
+-   Author: Jorge Barros de Abreu <ficmatin10@gmail.com>
+-     Translation of Getting Started with PCB to pt_BR
+-
+-   Commit: 746dedb7bbad61e8c3c97c524421958a8399212b
+-   Author: bert <bert.timmerman@xs4all.nl>
+-     Changed the backup file suffix from dash to tilde.
+-
+-   Commit: ea98c4f75ef4fba4cb922d302d413abdff4368d4
+-   Author: Richard Hughes <richard@hughsie.com>
+-     Fix the AppData and update to the latest spec version
+-
+-   Commit: b013247d058073ee2869566ae71d6dc7032674fa
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     puller.c: Fix some cases where we use int rather than Coord
+-
+-   Commit: 0325123ba437cc3f1439fb96c00da0b33d180177
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     puller.c: Fix trace printf in find_pair() to reflect actual arguments
+-
+-   Commit: 29c81d624f6d0eaefefb254b9f62342a90a097fa
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     crosshair.c: Clean up MoveCrosshairAbsolute() to make the logic more readable
+-
+-   Commit: 6c0c66cb74a06560bb584c3538800f9a38e8fc4c
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Remove MoveCrosshairRelative function and convert old usage to FitCrosshairIntoGrid()
+-
+-   Commit: 31e10574516c1b9e3b672336f97cd872f785131c
+-   Author: Jorge Barros de Abreu <ficmatin10@gmail.com>
+-     Update pt_BR.po
+-
+-   Commit: bda326b55751a95a08021dde6ea5ce9ea313f1db
+-   Author: Ivan Stankovic <pokemon@fly.srk.fer.hr>
+-     hid/gtk: reset tooltip_update_timeout_id properly
+-
+-   Commit: 12cfa6b0106408def4a04971f652887660d40b44
+-   Author: Andrew Poelstra <apoelstra@wpsoftware.net>
+-     gtk: add option to Preferencs dialog to save in metric-only mode
+-
+-   Commit: 0345cbb5ab6568df520ba096fc28ffd84b7b4f0a
+-   Author: Andrew Poelstra <apoelstra@wpsoftware.net>
+-     Add command-line option --save-metric-only
+-
+-   Commit: 54280a940e03feaf77047177cec5d24dd6c9b62b
+-   Author: Andrew Poelstra <apoelstra@wpsoftware.net>
+-     pcb-printf: make ALLOW_READABLE constant changeable at runtime
+-
+-   Commit: e8309c9f0ac22be16de649254051036504454e80
+-   Author: DJ Delorie <dj@delorie.com>
+-     Update for release
+-
+-   Commit: bc2306d441999c8f1815ec8ede3962fd5723f4ba
+-   Author: DJ Delorie <dj@delorie.com>
+-     update gcode golden files
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Tue, 03 Jun 2014 02:32:25 +0700
+-
+-pcb (20140223a-0ppa0~saucy) saucy; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Thu, 06 Mar 2014 13:47:22 +0700
+-
+-pcb (20131027a-0ppa2~saucy) saucy; urgency=low
+-
+-  * Change lesstif version
+-
+-
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 27 Nov 2013 21:58:23 +0700
+-
+-pcb (20131027a-0ppa1~saucy) saucy; urgency=low
+-
+-  * Change lesstif version
+-
+-
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 27 Nov 2013 21:52:20 +0700
+-
+-pcb (20131027a-0ppa1~saucy) saucy; urgency=low
+-
+-  * Change lesstif version
+-
+-
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 27 Nov 2013 08:03:24 +0700
+-
+-pcb (20131027a-0ppa1~saucy) saucy; urgency=low
+-
+-  * Change lesstif version
+-
+-
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 27 Nov 2013 08:02:47 +0700
+-
+-pcb (20131027a-0ppa0~saucy) saucy; urgency=low
+-
+-  * Update sources from git
+-
+-  Change lesstif version
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 27 Nov 2013 07:57:13 +0700
+-
+-pcb (20131027-0ppa0~saucy) saucy; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: 6bf756c665c73f2ad222ed7b1d99987f8d9ec04d
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Fix lockup when a scroll event is received outside the drawing area
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 30 Oct 2013 23:42:31 +0700
+-
+-pcb (1.9.0+git20131027-0ppa0~saucy) saucy; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: 6bf756c665c73f2ad222ed7b1d99987f8d9ec04d
+-   Author: Peter Clifton <peter@clifton-electronics.co.uk>
+-     Fix lockup when a scroll event is received outside the drawing area
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 30 Oct 2013 01:04:07 +0700
+-
+-pcb (1:20130803a-0ppa0~raring) raring; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: 72238c0a0fe177ac9493c4c08876f7c151c87aad
+-   Author: Markus Hitter <mah@jump-ing.de>
+-     Regenerate tests after "Make xy file output IPC 7531 compliant.".
+-
+-   Commit: 8c4eca07633ab87e693f121c46c7a60fbe3af4fa
+-   Author: dark141@gmail.com <dark141@gmail.com>
+-     Make xy file output IPC 7531 compliant.
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 05 Aug 2013 15:20:31 +0700
+-
+-pcb (1:20130803-0ppa0~raring) raring; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: 72238c0a0fe177ac9493c4c08876f7c151c87aad
+-   Author: Markus Hitter <mah@jump-ing.de>
+-     Regenerate tests after "Make xy file output IPC 7531 compliant.".
+-
+-   Commit: 8c4eca07633ab87e693f121c46c7a60fbe3af4fa
+-   Author: dark141@gmail.com <dark141@gmail.com>
+-     Make xy file output IPC 7531 compliant.
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 05 Aug 2013 12:13:15 +0700
+-
+-pcb (1:20130803-0ppa0~raring) raring; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: b6434b1edd507aa7b0d398813376fb63cc70ee14
+-   Author: Eugene Mikhantiev <mikhantiev@gmail.com>
+-     Add intl/plural.c to POTFILES.skip
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sat, 03 Aug 2013 23:20:35 +0700
+-
+-pcb (1:20130731-0ppa0~raring) raring; urgency=low
+-
+-  * Update sources from git
+-
+-  Changelog:
+-   Commit: 1a452fa682140d15e3b03b6d9b584f38e558b210
+-   Author: Markus Hitter <mah@jump-ing.de>
+-     src/action.c: add a number of comments.
+-
+-   Commit: 772f77db0d384295e48473ee7da8127071cea72f
+-   Author: Markus Hitter <mah@jump-ing.de>
+-     src/res_parse.y: handle resource globals gracefully.
+-
+-   Commit: baf014785c2cef744f43c5c0074fb52d40231210
+-   Author: DJ Delorie <dj@delorie.com>
+-     Additional checks for existing names
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Thu, 01 Aug 2013 13:10:59 +0700
+-
+-pcb (20130622-0ppa0~raring) raring; urgency=low
+-
+-  * Update sources from git to commit 9f6394ddd78a0fa48ef6bffb8e625afdaa208059
+-  Commit subject:
+-    src/Makefile.am: revert the AM_CPPFLAGS change as it breaks the building process.
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sat, 22 Jun 2013 18:14:18 +0700
+-
+-pcb (20130619-0ppa3~raring) raring; urgency=low
+-
+-  * Update sources from git to commit
+-    5ab63e00f0fa1c3081a52ee742e2a5220402a0ce Patch to resolve archlinux
+-    build warn/errors.
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sat, 22 Jun 2013 13:03:57 +0700
+-
+-pcb (20130419-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    099c0de8caab2661a5e52b1f684cce0e61816167
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 22 Apr 2013 10:15:17 +0700
+-
+-pcb (20130413-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    a0c5a64bb6458b558224e8a1c23ce335a5ebb302
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sun, 14 Apr 2013 22:01:53 +0700
+-
+-pcb (20130205-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    dfc2250dfdadcabfbf23afa93ee74f3e6172e607
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sun, 17 Feb 2013 19:00:39 +0700
+-
+-pcb (20130205-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    dfc2250dfdadcabfbf23afa93ee74f3e6172e607
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Fri, 08 Feb 2013 19:36:58 +0700
+-
+-pcb (20130103-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    0229ff27f664770162a00b9114e4a044153bd537
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sat, 19 Jan 2013 23:52:55 +0700
+-
+-pcb (20130103-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    0229ff27f664770162a00b9114e4a044153bd537
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Thu, 17 Jan 2013 21:41:49 +0700
+-
+-pcb (20130103-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    0229ff27f664770162a00b9114e4a044153bd537
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Fri, 04 Jan 2013 12:51:21 +0700
+-
+-pcb (20130102-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    535d5ef8030fcf2e0a096818af9e909221bc9447
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 02 Jan 2013 12:35:52 +0700
+-
+-pcb (20121230-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    4cbfadfb7a496e60c25f47c88bdb374b4d3777bb
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 31 Dec 2012 20:50:57 +0700
+-
+-pcb (20121227-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    4658e4074b4446337467f99fa2b8f9b7147e7e01
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Fri, 28 Dec 2012 11:30:52 +0700
+-
+-pcb (20121223-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    fdeb6a95ac1905c4db1217a310cf85597b79cdec
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sun, 23 Dec 2012 07:50:57 +0700
+-
+-pcb (20121219-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    ac6ba5b85a458033dde78f2dbb62873988d865c4
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sat, 22 Dec 2012 03:17:14 +0700
+-
+-pcb (20121219-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    ac6ba5b85a458033dde78f2dbb62873988d865c4
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 19 Dec 2012 22:25:18 +0700
+-
+-pcb (20121219-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git to commit
+-    ac6ba5b85a458033dde78f2dbb62873988d865c4
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 19 Dec 2012 21:56:28 +0700
+-
+-pcb (20121214-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources to commit 491d634b739ef9ecad1674f63811647492723e02
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sat, 15 Dec 2012 20:32:02 +0700
+-
+-pcb (20121213-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources to git commit 8ca2c0e581dd160a4124df7187255b8a07cc959f
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Thu, 13 Dec 2012 21:20:56 +0700
+-
+-pcb (20121207-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources to commit c83cec94d723080881340012f1b9e1a314e17da7
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sun, 09 Dec 2012 11:51:40 +0700
+-
+-pcb (20121203-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Update sources
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 03 Dec 2012 11:47:35 +0700
+-
+-pcb (20121202-0ppa0~precise0) precise; urgency=low
+-
+-  * Updated dources to commit c8b51a09905fb3bf8dba2eaaef99e2bc76b2d18a
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 03 Dec 2012 02:07:47 +0700
+-
+-pcb (20121123-0ppa1~quantal0) quantal; urgency=low
+-
+-  * Added hid_draw.h to pcb-common-dev
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sun, 25 Nov 2012 01:01:54 +0700
+-
+-pcb (20121123-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated sources from git commit 26741273747462b338a72d6b58cb83fe9a364198
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sat, 24 Nov 2012 16:33:34 +0700
+-
+-pcb (20121119-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated to git commit ea77ddd42fe93738debda5cdf1dd4a61fbe9345e
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Tue, 20 Nov 2012 10:46:14 +0700
+-
+-pcb (20121118-0ppa0~quantal0) quantal; urgency=low
+-
+-  * Updated to git commit a1d8ee04cc571cca4cbe7ef86b40bef612a0c387
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 19 Nov 2012 02:26:25 +0700
+-
+-pcb (20121115-0ppa2~quantal0) quantal; urgency=low
+-
+-  * Added patch for lesstif HID API
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sat, 17 Nov 2012 12:24:50 +0700
+-
+-pcb (20121115-0ppa1~quantal0) quantal; urgency=low
+-
+-  * Updated to git commit 5dd4283fa3deb7a5ddb6e94874b4542597e30e0b
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Sat, 17 Nov 2012 02:45:21 +0700
+-
+-pcb (20121113-0ppa5~quantal0) quantal; urgency=low
+-
+-  * Update to git revision df06fde6c2338f717d5ce8cca1decc5f78e8ec11
+-  * Add pcb-dev pachage
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 14 Nov 2012 13:55:29 +0700
+-
+-pcb (20121101-0ppa3~quantal0) quantal; urgency=low
+-
+-  * Add plugins
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Mon, 12 Nov 2012 23:54:47 +0700
+-
+-pcb (20121101-0ppa2~quantal1) quantal; urgency=low
+-
+-  * Updated sources from git to commit 5722ae0a55832f525f056d09b002d7f984f90379
+-  * Removied unnecessary patches
+-
+- -- Eugene Mikhantiev <mikhantiev@gmail.com>  Wed, 31 Oct 2012 18:12:50 +0700
+-
+-pcb (20110918-7) unstable; urgency=low
+-
+-  * Force 64-bit coordinate types (even on 32-bit archs)
+-    Thanks to Keith Packard <keithp@debian.org> (Closes: #683980)
+-
+- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Mon, 06 Aug 2012 11:11:20 +0200
+-
+-pcb (20110918-6) unstable; urgency=low
+-
+-  * Imported patch from Ubuntu and forwarded it upstream:
+-    debian/patches/drop_check_global_included.patch:
+-    Drop the #if check for the declaration of hid_get_extents().
+-  * Added fix_CPPFLAGS.diff patch to Append input CPPFLAGS for lesstif target
+-
+- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Wed, 23 May 2012 13:14:33 +0200
+-
+-pcb (20110918-5) unstable; urgency=low
+-
+-  * Added 0001-Fixed-command-line-batch-output-for-some-exporters.patch from
+-    upstream git to fix command line batch output for some exporters.
+-    Thanks to Traumflug <mah@jump-ing.de> (LP: #988503)
+-  * Bumped compat level to 9
+-  * debian/control: Updated Standards-Version to 3.9.3
+-  * debian/copyright: Updated copyright format & years.
+-
+- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Tue, 08 May 2012 21:30:17 +0200
+-
+-pcb (20110918-4) unstable; urgency=low
+-
+-  * Close 644139 in previous changelog entry
+-  * Added disable_hid_png3_test.diff to disable hid_png3 test
+-    (Closes: #642923)
+-
+- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Tue, 20 Dec 2011 20:45:37 +0200
+-
+-pcb (20110918-3) unstable; urgency=low
+-
+-  * debian/rules: Remove needlessly installed header file. (Closes: #644139)
+-
+- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Mon, 03 Oct 2011 21:40:56 +0200
+-
+-pcb (20110918-2) unstable; urgency=low
+-
+-  * Added default_GtkFileChooser_cwd.diff patch to default the GTK file
+-    chooser dialogs to cwd (Closes: #642060)
+-  * debian/control: Remove ${shlib:Depends} from pcb-common's dependencies.
+-
+- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Wed, 21 Sep 2011 17:12:08 +0200
+-
+-pcb (20110918-1) unstable; urgency=low
+-
+-  * New upstream release.
+-  * debian/watch: Added URL for gEDA website
+-  * debian/control:
+-    + Bumped Standards-Version to 3.9.2
+-    + Replaced Build-Dep on libgtk2.0-dev & libglib2.0-dev with
+-      libgtkglext1-dev
+-  * Bumped compat level 8
+-  * debian/copyright:
+-    + Updated copyright years
+-    + Updated copyright format
+-  * debian/rules:
+-    + Remove needlessly installed static library before installing common
+-      files
+-    + Added override for dh_auto_test to run tests in build dirs
+-  * Added fix_typo.diff patch to fix a typo
+-  * Added fix_pan_action.diff patch to fix pan action to stop after button
+-    release outside window master (Closes: #562641)
+-  * debian/pcb-{gtk,lesstiff}.lintian-overrides: Added overrides for false
+-    spelling-error tags
+-  * Added imagemagick & gerbv to Build-Deps to enable test suite
+-  * Added pcbtest_paths.diff patch to fix path for lib/pcblib-newlib
+-
+- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Wed, 21 Sep 2011 12:21:08 +0200
+-
+-pcb (20100929-2) unstable; urgency=low
+-
+-  * Install PDF version of refcard instead of the DVI, as the PDF got
+-    fixed.
+-
+- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Mon, 08 Nov 2010 07:33:30 +0200
+-
+-pcb (20100929-1) unstable; urgency=low
+-
+-  * New upstream release (Closes: #602150)
+-  * debian/control:
+-    + Updated my email address
+-    + Added DMUA after sponsors consent
+-    (http://lists.alioth.debian.org/pipermail/pkg-electronics-devel/2010-April/001827.html)
+-    + Added intltool to Build-Deps
+-    + Bumped Standards-Version to 3.9.1, no changes needed.
+-  * Removed desktop.diff & manpage.diff patches, as they got applied
+-    upstream. Credit to chrysn <chrysn@fsfe.org>.
+-  * LED and LED.NET are now named LED.pcb and LED.net.
+-    Credit to chrysn <chrysn@fsfe.org>.
+-
+- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Tue, 02 Nov 2010 09:33:10 +0200
+-
+-pcb (20091103-2) unstable; urgency=low
+-
+-  * Modified desktop.diff patch: do not add Education;Science categories
+-  * debian/rules: check wether pcb-common is built before operating on
+-    it, this is a workaround for builders that only build binary-arch
+-    (Closes: #556298). Thanks to Maia Kozheva <sikon@ubuntu.com>.
+-
+- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Thu, 19 Nov 2009 10:30:13 +0200
+-
+-pcb (20091103-1) unstable; urgency=low
+-
+-  * New upstream release. (Closes: #520909, #294278)
+-  * Switch to source format 3.0 (quilt).
+-  * debian/control:
+-    + Bumped Standards-Version to 3.8.3, no changes needed.
+-    + Build-Depend on debhelper (>= 7.4.3~).
+-    + Update version of tcl/tk dependencies to 8.5
+-    + Add ${misc:Depends} to binary packages' dependencies.
+-    + Added Homepage field.
+-    + Added myself to uploaders.
+-    + Added to extended description of pcb-common.
+-    + Added Vcs-* fields.
+-  * debian/compat: Bumped compat level to 7
+-  * debian/rules:
+-    + Simplified rules file.
+-    + Do not install Merge* in /usr/bin since they already get installed in
+-      /usr/share/pcb/tools
+-    + Install DVI version of refcard since the PDF version is messed up.
+-    + Add --enable-dependency-tracking option to CONFIGURE_OPTS to make
+-      out-of-source building work.
+-    + Add -Wl,--as-needed to LDFLAGS.
+-  * Added pcb-common.docs, pcb-gtk.links, pcb-lesstif.links,
+-    debian/pcb-common.examples, debian/pcb-common.install,
+-    debian/README.source, debian/source.lintian-overrides,
+-    debian/pcb-gtk.lintian-overrides, debian/pcb-lesstif.lintian-overrides,
+-    debian/pcb-common.info, debian/pcb-common.lintian-overrides,
+-    debian/pcb-common.doc-base
+-  * Remove debian/pcb.dirs, debian/pcb-common.postinst,
+-    debian/pcb-common.prerm, debian/pcb-common.menu
+-  * Removed un-necessary entries from debian/*.dirs
+-  * Rename: debian/README.debian -> debian/README.Debian
+-  * Added patches:
+-    + outdated_config.diff to for config.{sub,guess} to call their up-to-date
+-      versions. (Closes: #538882)
+-    + desktop.diff to fix the following in the pcb.desktop file:
+-      - Remove Encoding field
+-      - Add Education;Science as main categories
+-    + manpage.diff to fix manpage error.
+-  * debian/copyright: Rewrote in machine-readable format.
+-  * Regenerated debian/pcb.xpm from upstream provided pcb.svg
+-
+- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Thu, 29 Oct 2009 10:11:20 +0200
+-
+-pcb (20080202-2) unstable; urgency=low
+-
+-  * Call dh_installmime in debian/rules to register the MIME types properly
+-  * Added Recommends: for extra-xdg-menus, which will add an Electronics
+-    menu to your freedesktop environment.
+-
+- -- Hamish Moffatt <hamish@debian.org>  Wed, 13 Feb 2008 00:47:14 +1100
+-
+-pcb (20080202-1) unstable; urgency=low
+-
+-  * New upstream release
+-
+- -- Hamish Moffatt <hamish@debian.org>  Tue, 12 Feb 2008 23:30:35 +1100
+-
+-pcb (20070912-6) unstable; urgency=low
+-
+-  * Added build-dependency on libxmu-dev, as pcb will use libXmu if found at
+-    configure time.
+-
+- -- Hamish Moffatt <hamish@debian.org>  Sun, 27 Jan 2008 12:31:13 +1100
+-
+-pcb (20070912-5) unstable; urgency=low
+-
+-  * Added the LessTif user-interface as an option. To this end, the package
+-    is now split into:
+-    - pcb, a meta-package depending on one of the two UIs,
+-    - pcb-common, containing common files,
+-    - pcb-gtk, containing only the existing GTK+ user-interface, and
+-    - pcb-lesstif, containing only the LessTif user-interface.
+-
+-    The two UIs provide /usr/bin/pcb via the alternatives mechanism.
+-    At least one of the two must be installed.
+-
+- -- Hamish Moffatt <hamish@debian.org>  Tue, 01 Jan 2008 13:11:36 +1100
+-
+-pcb (20070912-4) unstable; urgency=low
+-
+-  * Add build-dependency on libdbus-1-dev
+-
+- -- Hamish Moffatt <hamish@debian.org>  Thu, 18 Oct 2007 23:34:11 +1000
+-
+-pcb (20070912-3) unstable; urgency=low
+-
+-  * Changed the Menu structure to adhere to the new menu policy.
+-
+- -- Ramakrishnan Muthukrishnan <rkrishnan@debian.org>  Wed, 10 Oct 2007 08:39:08 +0530
+-
+-pcb (20070912-2) unstable; urgency=low
+-
+-  * enabled dbus in the build (closes: #446038)
+-
+- -- Ramakrishnan Muthukrishnan <rkrishnan@debian.org>  Wed, 10 Oct 2007 08:16:22 +0530
+-
+-pcb (20070912-1) unstable; urgency=low
+-
+-  * New Upstream Release.
+-
+- -- Ramakrishnan Muthukrishnan <rkrishnan@debian.org>  Tue, 18 Sep 2007 18:56:27 +0530
+-
+-pcb (20070208p1-1) unstable; urgency=low
+-
+-  * New upstream release (closes: #425116)
+-
+- -- Ramakrishnan Muthukrishnan <rkrishnan@debian.org>  Sun, 08 Jul 2007 19:48:33 +0530
+-
+-pcb (20060822-1) unstable; urgency=low
+-
+-  * New upstream release (closes: #386585, #387219, #387315)
+-  * Added watch file
+-  * Added desktop file (closes: #367617). Thanks to Vassilis Pandis.
+-  * Updated to standards-revision 3.7.2
+-
+- -- Hamish Moffatt <hamish@debian.org>  Sun, 17 Sep 2006 09:17:24 +1000
+-
+-pcb (20050609-1) unstable; urgency=low
+-
+-  * New upstream snapshot 20050609 (closes: #343339)
+-    * Uses GTK+ rather than raw X11
+-    * Uses standard polarity for solder masks (closes: #337653)
+-  * Change build-deps from xlibs-dev to individual libraries
+-
+- -- Hamish Moffatt <hamish@debian.org>  Sun, 18 Dec 2005 00:13:39 +1100
+-
+-pcb (1.99j+20050127-2) unstable; urgency=low
+-
+-  * Improved package description: (closes: #295405)
+-  * Fixed dependency: tk84 -> tk8.4 (closes: #295404)
+-  * Updated README.debian (closes: #269578)
+-  * Applied patch to src/djopt.c to allow compilation with gcc-4.0
+-    (closes: #294319), thanks to Andreas Jochens for the patch.
+-  * Prevent example files from being compressed
+-
+- -- Hamish Moffatt <hamish@debian.org>  Sun, 20 Feb 2005 13:14:00 +1100
+-
+-pcb (1.99j+20050127-1) unstable; urgency=low
+-
+-  * Upstream snapshot 20050127
+-  * Rewrote packaging for major upstream changes since last upload
+-
+- -- Hamish Moffatt <hamish@debian.org>  Tue,  8 Feb 2005 23:27:44 +1100
+-
+-pcb (1.99j-1) unstable; urgency=low
+-
+-  * New upstream release (Pre-2.0 version)
+-  * New maintainer
+-  * Most of the work for this version was done by the previous
+-    maintainer Hartmut Koptein.
+-  * Fixed menu entries (closes: #179496)
+-  * Fixed faulty entry in app-defaults (closes: #172978)
+-  * Fixed missing HTML documentation (closes: #127159, #126574)
+-  * Fixed most lintian warnings
+-
+- -- Hamish Moffatt <hamish@debian.org>  Sat,  8 Feb 2003 13:54:47 +1100
+-
+-pcb (1.7.1-4.2) unstable; urgency=low
+-
+-  * NMU
+-  * Fix build-depends.  Closes: #90603, #92442.
+-  * fix src/Imakefile (complexProgramTargetNoMan(pcb))
+-  * Add Depends: m4.  Closes: #124335
+-
+- -- LaMont Jones <lamont@debian.org>  Thu, 10 Jan 2002 15:26:54 -0700
+-
+-pcb (1.7.1-4.1) unstable; urgency=low
+-
+-  * NMU upload
+-  * Removed the automatic address setting in the changelog
+-  * fix /usr/X11R6/lib/X11/app-defaults -> /etc/X11/app-defaults (closes:
+-    #86283)
+-  * fix doc/Imakefile so that it actually builds again.
+-  * fix man page building and installation.
+-  * added debhelper token to postinst and postrm
+-  
+- -- Tollef Fog Heen <tfheen@debian.org>  Sat, 17 Mar 2001 13:59:24 +0100
+-
+-pcb (1.7.1-4) unstable; urgency=low
+-
+-  * fixed usr/doc share sym-link 
+-
+- -- Hartmut Koptein <koptein@debian.org>  Thu, 21 Oct 1999 13:13:23 +0200
+-
+-
+-pcb (1.7.1-3) unstable; urgency=low
+-
+-  * Updated Standards-Version to 3.0.1.1
+-
+- -- Hartmut Koptein <koptein@debian.org>  Tue,  7 Sep 1999 00:50:00 +0200
+-
+-
+-pcb (1.7.1-2) unstable; urgency=low
+-
+-  * debian/rules clean bug; Fixes: Bug#38670 
+-
+- -- Hartmut Koptein <koptein@debian.org>  Tue,  1 Jun 1999 08:13:35 +0200
+-
+-
+-pcb (1.7.1-1) unstable; urgency=low
+-
+-  * new upstream version
+-  * changed refcard.tex.raw for using LaTeX2e
+-  * varargs/glibc-2.1 changes
+-  * New Standards-Version: 2.5.1
+-  * added pcb.xpm icon for the menu (not the best, it's my own creation ;-)
+-
+- -- Hartmut Koptein <koptein@debian.org>  Fri, 14 May 1999 11:38:00 +0200
+-
+-
+-pcb (1.7-1) unstable; urgency=low
+-
+-  * new upstream version
+-  * fixed two va_list bugs and some compiler warnings
+-  * changed menu entry Pcb into PCB
+-  * fixed lintian report errors
+-  * examples/* aren't compressed anymore
+- 
+- -- Hartmut Koptein <koptein@debian.org>  Thu, 29 Apr 1999 19:04:32 +0200
+-
+-
+-pcb (1.6.3-1) unstable; urgency=low
+-
+-  * new upstream version (not released for debian)
+-
+- -- Hartmut Koptein <koptein@et-inf.fho-emden.de>  Thu, 20 Aug 1998 22:40:08 +0200
+-
+-
+-pcb (1.6-2) frozen unstable; urgency=low
+-
+-  * added postrm script for update-menus
+-
+- -- Hartmut Koptein <koptein@et-inf.fho-emden.de>  Wed,  1 Apr 1998 02:37:38 +0200
+-
+-
+-pcb (1.6-1) frozen unstable; urgency=low
+-
+-  * new upstream version
+-  * last version is lost on master
+-
+- -- Hartmut Koptein <koptein@et-inf.fho-emden.de>  Sat, 28 Mar 1998 00:54:02 +0100
+-
+-
+-pcb (1.5.5-1) frozen; urgency=low
+-
+-  * new upstream version
+-  * added pcb.ps and pcb.html to /usr/doc/pcb
+-  * changed menu entry to 'Technical' (menu and info)
+-  * changed old menu structure to the new one
+-  * New Standards-Version: 2.4.0.0
+-
+- -- Hartmut Koptein <koptein@et-inf.fho-emden.de>  Mon, 16 Mar 1998 21:36:09 +0100
+-
+-
+-pcb (1.5.3-1) unstable; urgency=low
+-
+-  * new upstream version
+-
+- -- Hartmut Koptein <koptein@et-inf.fho-emden.de>  Mon, 17 Nov 1997 23:04:34 +0100
+-
+-
+-pcb (1.4.5-1) unstable; urgency=low
+-
+-  * new upstream version
+-
+- -- Hartmut Koptein <koptein@et-inf.fho-emden.de>  Wed,  9 Jul 1997 02:21:50 +0200
+-
+-
+-pcb (1.4.4-1) unstable; urgency=low
+-
+-  * new maintainer
+-  * new upstream version
+-  * compiled for libc6 (Bug#3413, Bug#4676 and Bug#5059)
+-  * enlarge discription (Bug#3635)
+-  * obsolete Bugs #3872 and #4026
+-  * added menu entry Apps/Electronics/PCB
+-  * added examples
+-
+- -- Hartmut Koptein <koptein@et-inf.fho-emden.de>  Wed,  9 Jul 1997 02:21:50 +0200
+-
+-
+-pcb (1.4.3-1) unstable; urgency=low
+-
+-  * Initial Release.
+-
+- -- Michael Mattice <mattice@mattice.reslife.okstate.edu>  Thu, 21 Nov 1996 23:13:19 -0600
+diff --git a/debian/compat b/debian/compat
+deleted file mode 100644
+index ec63514..0000000
+--- a/debian/compat
++++ /dev/null
+@@ -1 +0,0 @@
+-9
+diff --git a/debian/control b/debian/control
+deleted file mode 100644
+index 1e45288..0000000
+--- a/debian/control
++++ /dev/null
+@@ -1,101 +0,0 @@
+-Source: pcb
+-Section: electronics
+-Priority: optional
+-Maintainer: Eugene Mikhantiev <mikhantiev@gmail.com>
+-XSBC-Original-Maintainer: Debian Electronics Team <pkg-electronics-devel@lists.alioth.debian.org>
+-Uploaders: Eugene Mikhantiev <mikhantiev@gmail.com>
+-Build-Depends: debhelper (>= 9), bison, flex, libgts-dev, libgtkglext1-dev, tk, libgd2-xpm-dev | libgd2-dev, libdbus-1-dev, libmotif-dev, libxmu-dev, libxml-parser-perl, intltool, imagemagick, autopoint, autoconf, gawk, texinfo, texlive-binaries, texlive-generic-recommended, texlive-latex-base, ghostscript, geda-gschem
+-Standards-Version: 3.9.3
+-Homepage: http://pcb.geda-project.org/
+-
+-Package: pcb
+-Architecture: all
+-Depends: ${misc:Depends}, pcb-gtk | pcb-lesstif, pcb-common
+-Description: printed circuit board (pcb) design program - meta-package
+- PCB is an interactive printed circuit board editor for the X11 window 
+- system. PCB includes a rats nest feature, design rule checking, and can 
+- provide industry standard RS-274-X (Gerber), NC drill, and centroid data 
+- (X-Y data) output for use in the board fabrication and assembly process. 
+- PCB offers high end features such as an autorouter and trace optimizer 
+- which can tremendously reduce layout time.
+-
+-Package: pcb-common
+-Architecture: all
+-Replaces: pcb
+-Depends: ${misc:Depends}, m4, tk8.5 | wish, tcl8.5 | tclsh, pcb-gtk | pcb-lesstif
+-Recommends: extra-xdg-menus
+-Description: printed circuit board (pcb) design program - common files
+- PCB is an interactive printed circuit board editor for the X11 window 
+- system. PCB includes a rats nest feature, design rule checking, and can 
+- provide industry standard RS-274-X (Gerber), NC drill, and centroid data 
+- (X-Y data) output for use in the board fabrication and assembly process. 
+- PCB offers high end features such as an autorouter and trace optimizer 
+- which can tremendously reduce layout time.
+- .
+- This package contains the common files.
+-
+-Package: pcb-gtk
+-Architecture: any
+-Depends: ${misc:Depends}, ${shlibs:Depends}, pcb-common
+-Description: printed circuit board (pcb) design program - GTK+ interface
+- PCB is an interactive printed circuit board editor for the X11 window 
+- system. PCB includes a rats nest feature, design rule checking, and can 
+- provide industry standard RS-274-X (Gerber), NC drill, and centroid data 
+- (X-Y data) output for use in the board fabrication and assembly process. 
+- PCB offers high end features such as an autorouter and trace optimizer 
+- which can tremendously reduce layout time.
+- .
+- This package contains the GTK+ user-interface for pcb.
+-
+-Package: pcb-lesstif
+-Architecture: any
+-Depends: ${misc:Depends}, ${shlibs:Depends}, pcb-common
+-Description: printed circuit board (pcb) design program - LessTif interface
+- PCB is an interactive printed circuit board editor for the X11 window 
+- system. PCB includes a rats nest feature, design rule checking, and can 
+- provide industry standard RS-274-X (Gerber), NC drill, and centroid data 
+- (X-Y data) output for use in the board fabrication and assembly process. 
+- PCB offers high end features such as an autorouter and trace optimizer 
+- which can tremendously reduce layout time.
+- .
+- This package contains the LessTif user-interface for pcb.
+-
+-Package: pcb-common-dev
+-Architecture: all
+-Depends: ${misc:Depends}, pcb-common, pcb-gtk-dev | pcb-lesstif-dev
+-Description: printed circuit board (pcb) design program - meta-package
+- PCB is an interactive printed circuit board editor for the X11 window 
+- system. PCB includes a rats nest feature, design rule checking, and can 
+- provide industry standard RS-274-X (Gerber), NC drill, and centroid data 
+- (X-Y data) output for use in the board fabrication and assembly process. 
+- PCB offers high end features such as an autorouter and trace optimizer 
+- .
+- This plugin contains C headers necessary for building plugins
+-
+-Package: pcb-gtk-dev
+-Architecture: all
+-Conflicts: pcb-lesstif-dev
+-Replaces: pcb-lesstif-dev
+-Depends: ${misc:Depends}, pcb-gtk
+-Description: printed circuit board (pcb) design program - meta-package
+- PCB is an interactive printed circuit board editor for the X11 window 
+- system. PCB includes a rats nest feature, design rule checking, and can 
+- provide industry standard RS-274-X (Gerber), NC drill, and centroid data 
+- (X-Y data) output for use in the board fabrication and assembly process. 
+- PCB offers high end features such as an autorouter and trace optimizer 
+- .
+- This plugin contains C headers necessary for building plugins
+-
+-Package: pcb-lesstif-dev
+-Architecture: all
+-Conflicts: pcb-gtk-dev
+-Replaces: pcb-gtk-dev
+-Depends: ${misc:Depends}, pcb-lesstif
+-Description: printed circuit board (pcb) design program - meta-package
+- PCB is an interactive printed circuit board editor for the X11 window 
+- system. PCB includes a rats nest feature, design rule checking, and can 
+- provide industry standard RS-274-X (Gerber), NC drill, and centroid data 
+- (X-Y data) output for use in the board fabrication and assembly process. 
+- PCB offers high end features such as an autorouter and trace optimizer 
+- .
+- This plugin contains C headers necessary for building plugins
+diff --git a/debian/copyright b/debian/copyright
+deleted file mode 100644
+index 01e954f..0000000
+--- a/debian/copyright
++++ /dev/null
+@@ -1,44 +0,0 @@
+-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0
+-Upstream-Name: pcb
+-Upstream-Contact: harry eaton <haceaton@aplcomm.jhuapl.edu>
+-Source: http://pcb.gpleda.org
+-
+-
+-Files: *
+-Copyright: 1994-1997,2010 Thomas Nau <Thomas.Nau@rz.uni-ulm.de>
+-           1998-2007,2009 harry eaton <haceaton@aplcomm.jhuapl.edu>
+-           2001 C. Scott Ananian
+-           2003-2008 DJ Delorie <djdelorie@users.sourceforge.net>
+-           2009-2011 PCB Contributers (See ChangeLog for details)
+-           2009 Anthony Blake <anthonix@anthonix.resnet.scms.waikato.ac.nz>
+-           2011 Andrew Poelstra <apoelstra@wpsoftware.net>
+-           2010 Alberto Maccioni <alberto.maccioni@gmail.com>
+-           2003-2010 Dan McMahill <danmc@users.sourceforge.net>
+-License: GPL-2+
+-
+-Files: debian/*
+-Copyright: 2003-2008 Hamish Moffatt <hamish@debian.org>
+-           1996 Michael Mattice <mattice@mattice.reslife.okstate.edu>
+-           1997-1999 Hartmut Koptein <koptein@debian.org>
+-           2009-2012 أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
+-License: GPL-2+
+-
+-License: GPL-2+
+- This program is free software; you can redistribute it and/or modify
+- it under the terms of the GNU General Public License as published by
+- the Free Software Foundation; either version 2 of the License, or
+- (at your option) any later version.
+- .
+- This program is distributed in the hope that it will be useful,
+- but WITHOUT ANY WARRANTY; without even the implied warranty of
+- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- GNU General Public License for more details.
+- .
+- You should have received a copy of the GNU General Public License
+- along with this program; if not, write to the Free Software
+- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+- USA.
+- .
+- On Debian systems, the complete text of the GNU GPL2 licenses can be found at
+- `/usr/share/common-licenses/GPL-2'.
+-
+diff --git a/debian/pcb-common-dev.dirs b/debian/pcb-common-dev.dirs
+deleted file mode 100644
+index 99afc4e..0000000
+--- a/debian/pcb-common-dev.dirs
++++ /dev/null
+@@ -1 +0,0 @@
+-usr/include/pcb
+diff --git a/debian/pcb-common-dev.install b/debian/pcb-common-dev.install
+deleted file mode 100644
+index 2e55fbb..0000000
+--- a/debian/pcb-common-dev.install
++++ /dev/null
+@@ -1,33 +0,0 @@
+-src/buffer.h usr/include/pcb/
+-src/change.h usr/include/pcb/
+-src/copy.h usr/include/pcb/
+-src/create.h usr/include/pcb/
+-src/data.h usr/include/pcb/
+-src/draw.h usr/include/pcb/
+-src/error.h usr/include/pcb/
+-src/find.h usr/include/pcb/
+-src/gettext.h usr/include/pcb/
+-src/global.h usr/include/pcb/
+-src/hid.h usr/include/pcb/
+-src/hid_draw.h usr/include/pcb/
+-src/macro.h usr/include/pcb/
+-src/mirror.h usr/include/pcb/
+-src/misc.h usr/include/pcb/
+-src/move.h usr/include/pcb/
+-src/pcb-printf.h usr/include/pcb/
+-src/polyarea.h usr/include/pcb/
+-src/polygon.h usr/include/pcb/
+-src/rats.h usr/include/pcb/
+-src/remove.h usr/include/pcb/
+-src/rotate.h usr/include/pcb/
+-src/rtree.h usr/include/pcb/
+-src/select.h usr/include/pcb/
+-src/set.h usr/include/pcb/
+-src/strflags.h usr/include/pcb/
+-src/undo.h usr/include/pcb/
+-src/const.h  usr/include/pcb/
+-globalconst.h usr/include/pcb/
+-src/global.h usr/include/pcb/
+-src/macro.h usr/include/pcb/
+-src/mymem.h usr/include/pcb/
+-src/box.h usr/include/pcb/
+diff --git a/debian/pcb-common.dirs b/debian/pcb-common.dirs
+deleted file mode 100644
+index 71af915..0000000
+--- a/debian/pcb-common.dirs
++++ /dev/null
+@@ -1 +0,0 @@
+-usr/share/doc/pcb-common
+diff --git a/debian/pcb-common.doc-base b/debian/pcb-common.doc-base
+deleted file mode 100644
+index 1b9bd59..0000000
+--- a/debian/pcb-common.doc-base
++++ /dev/null
+@@ -1,20 +0,0 @@
+-Document: pcb
+-Title: Pcb Manual
+-Author: harry eaton <haceaton@aplcomm.jhuapl.edu>
+-Abstract: This document is a manual for Pcb, the interactive printed circuit
+- board layout system for X11.
+-Section: Science/Electronics
+-
+-Format: HTML
+-Index: /usr/share/doc/pcb-common/pcb.html
+-Files: /usr/share/doc/pcb-common/pcb.html
+-
+-Format: Info
+-Index: /usr/share/info/pcb.info.gz
+-Files: /usr/share/info/pcb.info*
+-
+-Format: PDF
+-Files: /usr/share/doc/pcb-common/pcb.pdf.gz
+-
+-Format: DVI
+-Files: /usr/share/doc/pcb-common/refcard.pdf.gz
+diff --git a/debian/pcb-common.docs b/debian/pcb-common.docs
+deleted file mode 100644
+index ad62f33..0000000
+--- a/debian/pcb-common.docs
++++ /dev/null
+@@ -1,6 +0,0 @@
+-NEWS
+-README_FILES/Whats_new_in_2.0
+-build_gtk/doc/pcb.pdf
+-build_gtk/doc/refcard.pdf
+-build_gtk/doc/*.png
+-build_gtk/doc/*.html
+diff --git a/debian/pcb-common.examples b/debian/pcb-common.examples
+deleted file mode 100644
+index af46d6e..0000000
+--- a/debian/pcb-common.examples
++++ /dev/null
+@@ -1,2 +0,0 @@
+-example/*
+-tutorial/*
+diff --git a/debian/pcb-common.info b/debian/pcb-common.info
+deleted file mode 100644
+index 4cb0a50..0000000
+--- a/debian/pcb-common.info
++++ /dev/null
+@@ -1 +0,0 @@
+-doc/*.info*
+diff --git a/debian/pcb-common.install b/debian/pcb-common.install
+deleted file mode 100644
+index 0e43c24..0000000
+--- a/debian/pcb-common.install
++++ /dev/null
+@@ -1,2 +0,0 @@
+-usr/
+-debian/pcb.xpm  usr/share/pixmaps/
+diff --git a/debian/pcb-common.lintian-overrides b/debian/pcb-common.lintian-overrides
+deleted file mode 100644
+index 1cd9169..0000000
+--- a/debian/pcb-common.lintian-overrides
++++ /dev/null
+@@ -1,3 +0,0 @@
+-# /usr/bin/pcb is an alternative installed by postinst script of either pcb-gtk
+-# or pcb-lesstiff
+-pcb-common: desktop-command-not-in-package usr/share/applications/pcb.desktop pcb
+diff --git a/debian/pcb-gtk-dev.dirs b/debian/pcb-gtk-dev.dirs
+deleted file mode 100644
+index 99afc4e..0000000
+--- a/debian/pcb-gtk-dev.dirs
++++ /dev/null
+@@ -1 +0,0 @@
+-usr/include/pcb
+diff --git a/debian/pcb-gtk-dev.install b/debian/pcb-gtk-dev.install
+deleted file mode 100644
+index 6089f99..0000000
+--- a/debian/pcb-gtk-dev.install
++++ /dev/null
+@@ -1 +0,0 @@
+-build_gtk/config.h usr/include/pcb
+diff --git a/debian/pcb-gtk.dirs b/debian/pcb-gtk.dirs
+deleted file mode 100644
+index e772481..0000000
+--- a/debian/pcb-gtk.dirs
++++ /dev/null
+@@ -1 +0,0 @@
+-usr/bin
+diff --git a/debian/pcb-gtk.links b/debian/pcb-gtk.links
+deleted file mode 100644
+index f789395..0000000
+--- a/debian/pcb-gtk.links
++++ /dev/null
+@@ -1 +0,0 @@
+-usr/share/man/man1/pcb.1.gz usr/share/man/man1/pcb-gtk.1.gz
+diff --git a/debian/pcb-gtk.lintian-overrides b/debian/pcb-gtk.lintian-overrides
+deleted file mode 100644
+index 8a60354..0000000
+--- a/debian/pcb-gtk.lintian-overrides
++++ /dev/null
+@@ -1,4 +0,0 @@
+-# pcb.xpm is provided by pcb-common, which is in pcb-gtk's Depends
+-pcb-gtk: menu-icon-missing pcb.xpm
+-# Not a spelling mistake, ang is for angle
+-pcb-gtk: spelling-error-in-binary usr/bin/pcb-gtk ang and
+diff --git a/debian/pcb-gtk.menu b/debian/pcb-gtk.menu
+deleted file mode 100644
+index 45f48fa..0000000
+--- a/debian/pcb-gtk.menu
++++ /dev/null
+@@ -1,5 +0,0 @@
+-?package(pcb-gtk):needs="x11" section="Applications/Science/Electronics" \
+-	title="PCB (GTK+ interface)"                                           \
+-	longtitle="Printed Circuit Board Design Program"      \
+-	hotkey="P" icon="pcb.xpm"                             \
+-	command="/usr/bin/pcb-gtk"
+diff --git a/debian/pcb-gtk.postinst b/debian/pcb-gtk.postinst
+deleted file mode 100644
+index a2abc1a..0000000
+--- a/debian/pcb-gtk.postinst
++++ /dev/null
+@@ -1,21 +0,0 @@
+-#! /bin/sh
+-set -e
+-
+-case "$1" in
+-    configure)
+-        update-alternatives --quiet --install /usr/bin/pcb pcb /usr/bin/pcb-gtk 20
+-	;;
+-
+-    abort-upgrade|abort-remove|abort-deconfigure)
+-
+-    ;;
+-
+-    *)
+-        echo "postinst called with unknown argument \`$1'" >&2
+-        exit 0
+-    ;;
+-esac
+-
+-#DEBHELPER#
+-
+-exit 0
+diff --git a/debian/pcb-gtk.prerm b/debian/pcb-gtk.prerm
+deleted file mode 100644
+index 74b3e7b..0000000
+--- a/debian/pcb-gtk.prerm
++++ /dev/null
+@@ -1,20 +0,0 @@
+-#! /bin/sh
+-set -e
+-
+-case "$1" in
+-    remove)
+-	update-alternatives --quiet --remove pcb /usr/bin/pcb-gtk
+-        ;;
+-    upgrade|failed-upgrade|deconfigure)
+-        ;;
+-    *)
+-        echo "prerm called with unknown argument \`$1'" >&2
+-        exit 0
+-    ;;
+-esac
+-
+-#DEBHELPER#
+-
+-exit 0
+-
+-
+diff --git a/debian/pcb-lesstif-dev.dirs b/debian/pcb-lesstif-dev.dirs
+deleted file mode 100644
+index 99afc4e..0000000
+--- a/debian/pcb-lesstif-dev.dirs
++++ /dev/null
+@@ -1 +0,0 @@
+-usr/include/pcb
+diff --git a/debian/pcb-lesstif-dev.install b/debian/pcb-lesstif-dev.install
+deleted file mode 100644
+index cdfcb8f..0000000
+--- a/debian/pcb-lesstif-dev.install
++++ /dev/null
+@@ -1 +0,0 @@
+-build_lesstif/config.h usr/include/pcb
+diff --git a/debian/pcb-lesstif.dirs b/debian/pcb-lesstif.dirs
+deleted file mode 100644
+index e772481..0000000
+--- a/debian/pcb-lesstif.dirs
++++ /dev/null
+@@ -1 +0,0 @@
+-usr/bin
+diff --git a/debian/pcb-lesstif.links b/debian/pcb-lesstif.links
+deleted file mode 100644
+index 3cb7f3d..0000000
+--- a/debian/pcb-lesstif.links
++++ /dev/null
+@@ -1 +0,0 @@
+-usr/share/man/man1/pcb.1.gz usr/share/man/man1/pcb-lesstif.1.gz
+diff --git a/debian/pcb-lesstif.lintian-overrides b/debian/pcb-lesstif.lintian-overrides
+deleted file mode 100644
+index 2a2cae7..0000000
+--- a/debian/pcb-lesstif.lintian-overrides
++++ /dev/null
+@@ -1,4 +0,0 @@
+-# pcb.xpm is provided by pcb-common, which is in pcb-lesstif's Depends
+-pcb-lesstif: menu-icon-missing pcb.xpm
+-# Not a spelling mistake, ang is for angle
+-pcb-lesstif: spelling-error-in-binary usr/bin/pcb-lesstif ang and
+diff --git a/debian/pcb-lesstif.menu b/debian/pcb-lesstif.menu
+deleted file mode 100644
+index 85e40a7..0000000
+--- a/debian/pcb-lesstif.menu
++++ /dev/null
+@@ -1,5 +0,0 @@
+-?package(pcb-lesstif):needs="x11" section="Applications/Science/Electronics" \
+-	title="PCB (LessTif interface)"                                           \
+-	longtitle="Printed Circuit Board Design Program"      \
+-	hotkey="P" icon="pcb.xpm"                             \
+-	command="/usr/bin/pcb-lesstif"
+diff --git a/debian/pcb-lesstif.postinst b/debian/pcb-lesstif.postinst
+deleted file mode 100644
+index b97b04e..0000000
+--- a/debian/pcb-lesstif.postinst
++++ /dev/null
+@@ -1,21 +0,0 @@
+-#! /bin/sh
+-set -e
+-
+-case "$1" in
+-    configure)
+-        update-alternatives --quiet --install /usr/bin/pcb pcb /usr/bin/pcb-lesstif 40
+-	;;
+-
+-    abort-upgrade|abort-remove|abort-deconfigure)
+-
+-    ;;
+-
+-    *)
+-        echo "postinst called with unknown argument \`$1'" >&2
+-        exit 0
+-    ;;
+-esac
+-
+-#DEBHELPER#
+-
+-exit 0
+diff --git a/debian/pcb-lesstif.prerm b/debian/pcb-lesstif.prerm
+deleted file mode 100644
+index b24de55..0000000
+--- a/debian/pcb-lesstif.prerm
++++ /dev/null
+@@ -1,20 +0,0 @@
+-#! /bin/sh
+-set -e
+-
+-case "$1" in
+-    remove)
+-	update-alternatives --quiet --remove pcb /usr/bin/pcb-lesstif
+-        ;;
+-    upgrade|failed-upgrade|deconfigure)
+-        ;;
+-    *)
+-        echo "prerm called with unknown argument \`$1'" >&2
+-        exit 0
+-    ;;
+-esac
+-
+-#DEBHELPER#
+-
+-exit 0
+-
+-
+diff --git a/debian/pcb.xpm b/debian/pcb.xpm
+deleted file mode 100644
+index e7d62d2..0000000
+--- a/debian/pcb.xpm
++++ /dev/null
+@@ -1,357 +0,0 @@
+-/* XPM */
+-static char * pcb_xpm[] = {
+-"32 32 322 2",
+-"  	c None",
+-". 	c #3B7305",
+-"+ 	c #3B7403",
+-"@ 	c #A0C081",
+-"# 	c #C5DEAD",
+-"$ 	c #C2D9AC",
+-"% 	c #C4DDAC",
+-"& 	c #C9DFB4",
+-"* 	c #3C7303",
+-"= 	c #C1D9AB",
+-"- 	c #4E9A06",
+-"; 	c #50A005",
+-"> 	c #57B103",
+-", 	c #55AC03",
+-"' 	c #4E9B06",
+-") 	c #54AA04",
+-"! 	c #4F9B06",
+-"~ 	c #54A804",
+-"{ 	c #B9D79C",
+-"] 	c #4C7E1A",
+-"^ 	c #D4680C",
+-"/ 	c #3A7206",
+-"( 	c #C0D7AB",
+-"_ 	c #489005",
+-": 	c #52A105",
+-"< 	c #4C9804",
+-"[ 	c #57B003",
+-"} 	c #53A803",
+-"| 	c #55AC04",
+-"1 	c #478E05",
+-"2 	c #5ABA02",
+-"3 	c #59B602",
+-"4 	c #A9CA8A",
+-"5 	c #5A8A2D",
+-"6 	c #DF8128",
+-"7 	c #FCC068",
+-"8 	c #E99943",
+-"9 	c #387103",
+-"0 	c #C3DBAC",
+-"a 	c #5AB902",
+-"b 	c #5DC101",
+-"c 	c #5EC201",
+-"d 	c #56AD04",
+-"e 	c #54A904",
+-"f 	c #5BBB02",
+-"g 	c #59B702",
+-"h 	c #9FC878",
+-"i 	c #8E842C",
+-"j 	c #E08229",
+-"k 	c #FCBD60",
+-"l 	c #F6A537",
+-"m 	c #EDA657",
+-"n 	c #D06309",
+-"o 	c #397007",
+-"p 	c #C3DAAE",
+-"q 	c #59B901",
+-"r 	c #5FC500",
+-"s 	c #5DC100",
+-"t 	c #4C9904",
+-"u 	c #59B802",
+-"v 	c #478F05",
+-"w 	c #5AB702",
+-"x 	c #A49F48",
+-"y 	c #D8842C",
+-"z 	c #FCBC5F",
+-"A 	c #EC9D47",
+-"B 	c #D67420",
+-"C 	c #40720F",
+-"D 	c #C0DBA6",
+-"E 	c #5CBD01",
+-"F 	c #5FC300",
+-"G 	c #52A604",
+-"H 	c #59B502",
+-"I 	c #509E05",
+-"J 	c #58B203",
+-"K 	c #788906",
+-"L 	c #D9872E",
+-"M 	c #D67520",
+-"N 	c #527E25",
+-"O 	c #B0CE93",
+-"P 	c #5BBE01",
+-"Q 	c #4C9A04",
+-"R 	c #4A9305",
+-"S 	c #58B303",
+-"T 	c #4A9604",
+-"U 	c #56AE03",
+-"V 	c #738105",
+-"W 	c #D48427",
+-"X 	c #FCBC5E",
+-"Y 	c #EC9D46",
+-"Z 	c #D77521",
+-"` 	c #618939",
+-" .	c #A6CC82",
+-"..	c #62C10A",
+-"+.	c #A5CB80",
+-"@.	c #BAD99C",
+-"#.	c #B9D49D",
+-"$.	c #BCD99E",
+-"%.	c #BAD69E",
+-"&.	c #BCD89E",
+-"*.	c #BBD79E",
+-"=.	c #66A727",
+-"-.	c #F6A538",
+-";.	c #EC9C46",
+-">.	c #D57521",
+-",.	c #71954E",
+-"'.	c #96BF71",
+-").	c #5CC000",
+-"!.	c #AEDA83",
+-"~.	c #6BAA2F",
+-"{.	c #58AD07",
+-"].	c #529F0A",
+-"^.	c #56AA08",
+-"/.	c #54A30C",
+-"(.	c #55A706",
+-"_.	c #57A70F",
+-":.	c #61AD1A",
+-"<.	c #AFC995",
+-"[.	c #D48528",
+-"}.	c #D47B2A",
+-"|.	c #AA5D04",
+-"1.	c #7F9F5F",
+-"2.	c #8DBE5F",
+-"3.	c #51A205",
+-"4.	c #BEDF9E",
+-"5.	c #74A844",
+-"6.	c #72A93E",
+-"7.	c #78AA4A",
+-"8.	c #6CA635",
+-"9.	c #7FAC54",
+-"0.	c #65A42C",
+-"a.	c #88AE62",
+-"b.	c #66A42B",
+-"c.	c #B1CE94",
+-"d.	c #CD7921",
+-"e.	c #C2A364",
+-"f.	c #8CA971",
+-"g.	c #7AAD4B",
+-"h.	c #53A704",
+-"i.	c #5FC400",
+-"j.	c #BFDF9F",
+-"k.	c #539317",
+-"l.	c #559D12",
+-"m.	c #55941B",
+-"n.	c #549C10",
+-"o.	c #549319",
+-"p.	c #509A0A",
+-"q.	c #57951E",
+-"r.	c #67A62C",
+-"s.	c #AFA357",
+-"t.	c #CD7920",
+-"u.	c #7C7A03",
+-"v.	c #C1D6AC",
+-"w.	c #9CB682",
+-"x.	c #73AF3B",
+-"y.	c #60C502",
+-"z.	c #BDDD9C",
+-"A.	c #93972D",
+-"B.	c #D98830",
+-"C.	c #818204",
+-"D.	c #C2D8AD",
+-"E.	c #A8C191",
+-"F.	c #619E28",
+-"G.	c #6BC815",
+-"H.	c #AFD789",
+-"I.	c #8D8F1F",
+-"J.	c #DA8833",
+-"K.	c #EC9C45",
+-"L.	c #7B7A03",
+-"M.	c #4C9506",
+-"N.	c #448905",
+-"O.	c #C1D7AC",
+-"P.	c #375E13",
+-"Q.	c #B7CCA2",
+-"R.	c #5AA118",
+-"S.	c #5BB802",
+-"T.	c #7BCD2E",
+-"U.	c #9FCF73",
+-"V.	c #79A84E",
+-"W.	c #7EA953",
+-"X.	c #81AB59",
+-"Y.	c #DCAA5C",
+-"Z.	c #FDF4E6",
+-"`.	c #F9BD6E",
+-" +	c #CC7821",
+-".+	c #7B7403",
+-"++	c #448505",
+-"@+	c #468A05",
+-"#+	c #499006",
+-"$+	c #C0D7AA",
+-"%+	c #395E14",
+-"&+	c #C1D5AE",
+-"*+	c #5BBB01",
+-"=+	c #87D043",
+-"-+	c #8FC65C",
+-";+	c #81B056",
+-">+	c #82B256",
+-",+	c #81B154",
+-"'+	c #629E13",
+-")+	c #E8BC7E",
+-"!+	c #F7E6CD",
+-"~+	c #EFC78E",
+-"{+	c #CF7E28",
+-"]+	c #726503",
+-"^+	c #3D7A05",
+-"/+	c #3A7604",
+-"(+	c #448605",
+-"_+	c #418205",
+-":+	c #B9D29F",
+-"<+	c #355716",
+-"[+	c #BBD2A5",
+-"}+	c #71C81F",
+-"|+	c #BFD7A7",
+-"1+	c #8AC850",
+-"2+	c #83B653",
+-"3+	c #8AC950",
+-"4+	c #86B956",
+-"5+	c #94CC5F",
+-"6+	c #6F6439",
+-"7+	c #A27D49",
+-"8+	c #E1AA5F",
+-"9+	c #CF9E4A",
+-"0+	c #88791B",
+-"a+	c #3B7405",
+-"b+	c #407F05",
+-"c+	c #458806",
+-"d+	c #488E06",
+-"e+	c #4A9206",
+-"f+	c #ABCD8B",
+-"g+	c #3E5F1F",
+-"h+	c #375919",
+-"i+	c #B3CE98",
+-"j+	c #5DC001",
+-"k+	c #5BBC01",
+-"l+	c #53A703",
+-"m+	c #69B028",
+-"n+	c #88C450",
+-"o+	c #84B852",
+-"p+	c #87C350",
+-"q+	c #7EB54A",
+-"r+	c #80C640",
+-"s+	c #58642D",
+-"t+	c #647A32",
+-"u+	c #468708",
+-"v+	c #418105",
+-"w+	c #458905",
+-"x+	c #4B9506",
+-"y+	c #9BC473",
+-"z+	c #4D6A31",
+-"A+	c #375718",
+-"B+	c #ACCC8E",
+-"C+	c #56AF03",
+-"D+	c #5BB902",
+-"E+	c #55AD03",
+-"F+	c #53A604",
+-"G+	c #4E9906",
+-"H+	c #8CBE5E",
+-"I+	c #58743E",
+-"J+	c #37551B",
+-"K+	c #A4C981",
+-"L+	c #4FA103",
+-"M+	c #4F9F03",
+-"N+	c #499105",
+-"O+	c #499404",
+-"P+	c #7EB549",
+-"Q+	c #5E7944",
+-"R+	c #334E1A",
+-"S+	c #93B770",
+-"T+	c #418005",
+-"U+	c #428105",
+-"V+	c #438107",
+-"W+	c #448309",
+-"X+	c #47830B",
+-"Y+	c #48840E",
+-"Z+	c #4A8610",
+-"`+	c #4C8711",
+-" @	c #4C8813",
+-".@	c #4D8915",
+-"+@	c #508A17",
+-"@@	c #518A18",
+-"#@	c #528C1A",
+-"$@	c #528D1B",
+-"%@	c #558D1D",
+-"&@	c #558E1F",
+-"*@	c #568E20",
+-"=@	c #578F20",
+-"-@	c #589022",
+-";@	c #589122",
+-">@	c #7CA851",
+-",@	c #627D4A",
+-"'@	c #283C15",
+-")@	c #A3C087",
+-"!@	c #659535",
+-"~@	c #669637",
+-"{@	c #67963A",
+-"]@	c #6A973C",
+-"^@	c #6A983F",
+-"/@	c #6C9941",
+-"(@	c #6E9A43",
+-"_@	c #6F9A45",
+-":@	c #6F9B47",
+-"<@	c #719B4A",
+-"[@	c #729B4A",
+-"}@	c #749C4C",
+-"|@	c #749D4E",
+-"1@	c #769D50",
+-"2@	c #779D51",
+-"3@	c #789D52",
+-"4@	c #789E53",
+-"5@	c #789E54",
+-"6@	c #96B37A",
+-"7@	c #5F744A",
+-"8@	c #705914",
+-"9@	c #A07A1E",
+-"0@	c #9E791D",
+-"a@	c #9E791E",
+-"b@	c #9E791F",
+-"c@	c #A0791F",
+-"d@	c #A0781F",
+-"e@	c #A07821",
+-"f@	c #A07721",
+-"g@	c #946A19",
+-"                                                                ",
+-"                                                                ",
+-"                                                                ",
+-"                                                                ",
+-"                                                                ",
+-"                                                                ",
+-"                                                                ",
+-"            . . . . . . . . . . . . . . . . . . . +             ",
+-"          @ # $ % $ % $ % $ % $ % $ % $ % $ % $ % & *           ",
+-"          = - ; > > , - ' ) - ! ) - ~ - - - - - - { ]     ^     ",
+-"        / ( - _ : < [ } - } | 1 2 1 3 1 - 1 - 1 - 4 5   6 7 8   ",
+-"        9 0 - a b c d > e - f - g - g - - - - - - h i j k l m n ",
+-"        o p - q r r s t f 1 g 1 u v w 1 - 1 - 1 - x y z l A B   ",
+-"        C D - E r r F G w ' w ! H I J - - - - - K L z l A M     ",
+-"        N O - P r r c Q H R S T > t U 1 - 1 - V W X l Y Z       ",
+-"        `  .' b r r ..+.@.#.$.%.&.*.{ =.- - K W X -.;.>.        ",
+-"        ,.'.I ).r r !.~.{.].^./.(._.:.<.- V [.X -.;.}.|.        ",
+-"        1.2.3.b r r 4.5.6.7.8.9.0.a.b.c.K [.X -.;.d.e.          ",
+-"        f.g.h.i.r r j.k.l.m.n.o.p.q.r.s.[.X -.;.t.u.v.          ",
+-"        w.x.| r r y.z.- - - - - - - A.B.X -.;.t.C.- D.          ",
+-"        E.F.S r r G.H.1 - 1 - 1 - I.J.X l K.d.L.M.N.O.P.        ",
+-"        Q.R.S.r r T.U.V.- W.- X.- Y.Z.`.K. +.+++@+#+$+%+        ",
+-"        &+1 *+r r =+-+;+- >+- ,+'+)+!+~+{+]+^+/+(+_+:+<+        ",
+-"        [+- E r r }+|+1+2+3+4+5+6+7+8+9+0+a+b+c+d+e+f+g+        ",
+-"      h+i+1 j+k+j+l+m+n+o+p+q+r+s+t+u+v+e+w+x+N.x+N.y+z+        ",
+-"      A+B+- G e e U 3 ! 3.C+- h.D+E+U F+- - G+G+G+- H+I+        ",
+-"      J+K+1 h.L+e M+- 1 - N+- 1 3.t 3.O+- 1 - 1 - 1 P+Q+        ",
+-"      R+S+T+T+U+V+W+X+Y+Z+`+ @.@+@@@#@$@%@&@*@=@-@;@>@,@        ",
+-"      '@)@!@!@!@~@{@]@^@/@(@_@:@<@[@}@|@1@1@2@3@4@5@6@7@        ",
+-"      8@9@0@0@0@0@a@a@a@a@b@c@c@d@c@d@e@e@e@e@e@e@e@f@g@        ",
+-"                                                                ",
+-"                                                                "};
+diff --git a/debian/rules b/debian/rules
+deleted file mode 100755
+index 930c2cc..0000000
+--- a/debian/rules
++++ /dev/null
+@@ -1,76 +0,0 @@
+-#!/usr/bin/make -f
+-#                                          -*- makefile -*-
+-# debian/rules file for the Debian/GNU Linux pcb package
+-# Copyright 1997-99 by Hartmut Koptein <koptein@debian.org>
+-package = pcb
+-CONFIGURE_OPTS=--enable-dbus --disable-update-desktop-database --disable-update-mime-database --enable-coord64 LDFLAGS="$(LDFLAGS) -Wl,--as-needed"
+-export DH_OPTIONS=-v
+-export DH_VERBOSE=1
+-
+-%:
+-	dh $@
+-
+-override_dh_auto_configure:
+-	./autogen.sh
+-	dh_auto_configure --builddirectory=build_gtk -- $(CONFIGURE_OPTS) \
+-		--with-gui=gtk
+-	dh_auto_configure --builddirectory=build_lesstif -- $(CONFIGURE_OPTS) \
+-		--with-gui=lesstif --disable-doc
+-
+-override_dh_auto_build:
+-	dh_auto_build -S autoconf --builddirectory=build_gtk
+-	dh_auto_build -S autoconf --builddirectory=build_lesstif
+-
+-override_dh_auto_test:
+-	#dh_auto_test --builddirectory build_gtk
+-	#dh_auto_test --builddirectory build_lesstif
+-
+-override_dh_auto_install:
+-	dh_auto_install --builddirectory=build_gtk
+-
+-override_dh_auto_clean:
+-	dh_auto_clean --builddirectory=build_gtk
+-	dh_auto_clean --builddirectory=build_lesstif
+-
+-override_dh_install:
+-	# Remove needlessly installed static library and header file before
+-	# installing common files:
+-	rm -rf $(CURDIR)/debian/tmp/usr/lib
+-	rm -rf $(CURDIR)/debian/tmp/usr/include
+-	dh_install -Xusr/bin -Xusr/share/doc -Xexamples -Xtutorial -Xusr/share/info
+-
+-	# Install pcb-gtk binary:
+-	install build_gtk/src/pcb debian/$(package)-gtk/usr/bin/pcb-gtk
+-
+-	# Install pcb-lesstif binary:
+-	install build_lesstif/src/pcb debian/$(package)-lesstif/usr/bin/pcb-lesstif
+-	
+-	# Set executable bit for pcb tools:
+-	[ ! -d debian/$(package)-common ] || chmod a+x debian/$(package)-common/usr/share/pcb/tools/MergePCBPS
+-	[ ! -d debian/$(package)-common ] || chmod a+x debian/$(package)-common/usr/share/pcb/tools/Merge_dimPCBPS
+-	[ ! -d debian/$(package)-common ] || chmod a+x debian/$(package)-common/usr/share/pcb/tools/tgo2pcb.tcl
+-	[ ! -d debian/$(package)-common ] || chmod a+x debian/$(package)-common/usr/share/pcb/tools/PCB2HPGL
+-
+-	# Remove empty dirs:
+-	[ ! -d debian/$(package)-common ] || find debian/$(package)-common -type d -empty -delete
+-
+-override_dh_fixperms:
+-	dh_fixperms
+-	# Fix permissions of a couple of example files:
+-	[ ! -d debian/$(package)-common ] || chmod -x debian/$(package)-common/usr/share/doc/$(package)-common/examples/LED.pcb
+-	[ ! -d debian/$(package)-common ] || chmod -x debian/$(package)-common/usr/share/doc/$(package)-common/examples/LED.net
+-
+-override_dh_installexamples:
+-	dh_installexamples -XMakefile
+-
+-override_dh_installchangelogs:
+-	dh_installchangelogs -p$(package)-common
+-
+-override_dh_installdocs:
+-	# Only install docs in $(package)-common & link other packages' docs to
+-	# $(package)-common:
+-	dh_installdocs --link-doc=$(package)-common
+-
+-override_dh_compress:
+-	# exclude example files from compression
+-	dh_compress -X.pcb -XLED
+diff --git a/debian/source.lintian-overrides b/debian/source.lintian-overrides
+deleted file mode 100644
+index d243bc4..0000000
+--- a/debian/source.lintian-overrides
++++ /dev/null
+@@ -1,3 +0,0 @@
+-# Added a patch to use updated config.{sub,guess}
+-pcb source: outdated-autotools-helper-file config.sub 2005-07-08
+-pcb source: outdated-autotools-helper-file config.guess 2005-07-08
+diff --git a/debian/watch b/debian/watch
+deleted file mode 100644
+index 7ccc752..0000000
+--- a/debian/watch
++++ /dev/null
+@@ -1,3 +0,0 @@
+-version=3
+-http://sf.net/pcb/pcb-(.*)\.tar\.gz
+-http://geda.seul.org/dist/pcb-(.*)\.tar\.gz
