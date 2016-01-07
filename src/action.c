@@ -8070,6 +8070,71 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
   return 0;
 }
 
+
+static const char outline_to_poly_syntax[] =
+"OutlineToPoly()";
+
+static const char outline_to_poly_help[] =
+"Convert PCB's own interal idea of the outline shape (as a polygon), to a"
+"polygon on the \"outline\" layer, deleting all other content there\n";
+
+/* %start-doc actions OutlineToPoly
+
+Test for BDale
+
+%end-doc */
+
+
+static int
+ActionOutlineToPoly (int argc, char **argv, int x, int y)
+{
+  char *function = ARG (0);
+  POLYAREA *board_outline;
+  LayerType *Layer = NULL;
+  int found_outline;
+  int i;
+
+  printf ("Hello world!\n");
+
+  for (i = 0; i < max_copper_layer; i++)
+    {
+      Layer = PCB->Data->Layer + i;
+
+      if (strcmp (Layer->Name, "outline") == 0 ||
+          strcmp (Layer->Name, "route") == 0)
+        {
+          found_outline = 1;
+          break;
+        }
+    }
+
+  if (!found_outline) {
+    printf ("Didn't find outline\n");
+    return 0;
+  }
+
+
+  board_outline = board_outline_poly ();
+
+  PolyToPolygonsOnLayer (PCB->Data, Layer, board_outline, MakeFlags (0));
+
+  LINE_LOOP (Layer);
+  {
+    RemoveLine (Layer, line);
+  }
+  END_LOOP;
+
+  ARC_LOOP (Layer);
+  {
+    RemoveArc (Layer, arc);
+  }
+  END_LOOP;
+
+  Draw ();
+
+  return 1;
+}
+
 /* --------------------------------------------------------------------------- */
 
 HID_Action action_action_list[] = {
@@ -8260,6 +8325,9 @@ HID_Action action_action_list[] = {
   ,
   {"Import", 0, ActionImport,
    import_help, import_syntax}
+  ,
+  {"OutlineToPoly", 0, ActionOutlineToPoly,
+   outline_to_poly_help, outline_to_poly_syntax}
   ,
 };
 
