@@ -655,6 +655,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 	}
     }
 
+  common_set_clip_box (&png_graphics, bounds);
   hid_expose_callback (&png_graphics, bounds, 0);
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
