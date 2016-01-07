@@ -1,5 +1,5 @@
 Bottom: b1e459f887dd5547b6a3994fc9265fd74b99d40f
-Top:    b1e459f887dd5547b6a3994fc9265fd74b99d40f
+Top:    bda56bbbe4108040bbdc8081cb3a23fa77738356
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2016-01-07 02:18:21 +0000
 
@@ -19,4 +19,135 @@ Add a hacky name-mangling thingy for loading boards
 
 ---
 
-
+diff --git a/src/create.c b/src/create.c
+index 18657d9..95044e8 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -38,6 +38,7 @@
+ #include <memory.h>
+ #include <setjmp.h>
+ #include <stdlib.h>
++#include <stdio.h>
+ 
+ #include "global.h"
+ 
+@@ -56,6 +57,8 @@
+ #include "undo.h"
+ #include "vendor.h"
+ 
++#include <glib.h>
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -687,6 +690,65 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
+   return Polygon;
+ }
+ 
++static char *refdes_map_file = "refdes.map";
++static GHashTable *refdes_map_table = NULL;
++
++/*!
++ * \brief Initialises the refdes mapping hash table from a file
++ *
++ */
++void RefdesMapInit (void)
++{
++  FILE *mapfile;
++  char *from = NULL;
++  char *to = NULL;
++
++  refdes_map_table = g_hash_table_new_full (g_str_hash, g_str_equal,
++                                            g_free, g_free);
++
++  if (refdes_map_file == NULL)
++    return;
++
++  printf ("Refdes map file %s\n", refdes_map_file);
++
++  mapfile = fopen (refdes_map_file, "rb");
++
++  if (mapfile == NULL) {
++    fprintf(stderr, "Could not open [%s]\n", refdes_map_file);
++    return;
++  }
++
++  while (!feof(mapfile) && !ferror(mapfile)) {
++    free (from);
++    free (to);
++
++    from = NULL;
++    to = NULL;
++
++    fscanf (mapfile, "%ms %ms\n", &from, &to);
++
++    if (from == NULL || to == NULL)
++      continue;
++
++    g_hash_table_insert (refdes_map_table, g_strdup (from), g_strdup (to));
++
++    printf ("Stashing rename command: %s to %s\n", from, to);
++  }
++
++  free (to);
++  free (from);
++}
++
++
++/*!
++ * \brief Looks up a refdes in the mapping hash table
++ *
++ */
++char *RefdesMapMap (char *from)
++{
++  return g_hash_table_lookup (refdes_map_table, from);
++}
++
+ /*!
+  * \brief Creates an new element.
+  *
+@@ -704,6 +766,18 @@ CreateNewElement (DataType *Data, FontType *PCBFont, FlagType Flags,
+   printf("Entered CreateNewElement.....\n");
+ #endif
+ 
++  /* HACK: Mapping between refdes */
++  if (NameOnPCB != NULL) {
++    char *to;
++    to = RefdesMapMap (NameOnPCB);
++    if (to != NULL) {
++//      free (NameOnPCB);
++      printf ("Mapping name from %s to %s\n", NameOnPCB, to);
++      NameOnPCB = malloc (sizeof (char) * (strlen (to) + 1));
++      strcpy (NameOnPCB, to);
++    }
++  }
++
+   Element = GetElementMemory (Data);
+ 
+   /* copy values and set additional information */
+diff --git a/src/create.h b/src/create.h
+index 4cf6b8f..76b5769 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -51,6 +51,7 @@ TextType * CreateNewText (LayerType *, FontType *, Coord, Coord, unsigned, int,
+ PolygonType * CreateNewPolygon (LayerType *, FlagType);
+ PointType * CreateNewPointInPolygon (PolygonType *, Coord, Coord);
+ PolygonType * CreateNewHoleInPolygon (PolygonType *polygon);
++void RefdesMapInit (void);
+ ElementType * CreateNewElement (DataType *, FontType *, FlagType, char *, char *, char *, Coord, Coord, BYTE, int, FlagType, bool);
+ LineType * CreateNewLineInElement (ElementType *, Coord, Coord, Coord, Coord, Coord);
+ ArcType * CreateNewArcInElement (ElementType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord);
+diff --git a/src/file.c b/src/file.c
+index 657efeb..ba2988d 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -403,6 +403,9 @@ real_load_pcb (char *Filename, bool revert)
+   /* mark the default font invalid to know if the file has one */
+   newPCB->Font.Valid = false;
+ 
++  /* Hack, load the mapping file */
++  RefdesMapInit ();
++
+   /* new data isn't added to the undo list */
+   if (!ParsePCB (PCB, new_filename))
+     {
