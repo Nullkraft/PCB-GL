@@ -36,7 +36,6 @@ static void eps_parse_arguments (int *argc, char ***argv);
 static int eps_set_layer (const char *name, int group, int empty);
 static hidGC eps_make_gc (void);
 static void eps_destroy_gc (hidGC gc);
-static void eps_use_mask (enum mask_mode mode);
 static void eps_set_color (hidGC gc, const char *name);
 static void eps_set_line_cap (hidGC gc, EndCapStyle style);
 static void eps_set_line_width (hidGC gc, Coord width);
@@ -442,7 +441,7 @@ eps_destroy_gc (hidGC gc)
 }
 
 static void
-eps_use_mask (enum mask_mode mode)
+eps_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
   static int mask_pending = 0;
   switch (mode)
