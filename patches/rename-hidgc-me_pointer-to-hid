@@ -1,7 +1,7 @@
-Bottom: 70e5c8f9d3a08896ea2ee4712f7eb704fc903653
-Top:    2a2dfeb51408461ad8b0085f9d7d7454f4b859a2
+Bottom: 2ebd2342576219366de1881e8130bb6926ceda10
+Top:    7621f188985d1b27a6c259d8455ac8a9799c22bb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-06 23:17:40 +0000
+Date:   2016-01-07 00:49:54 +0000
 
 Rename hidGC "me_pointer" to "hid"
 
@@ -47,7 +47,7 @@ index b450568..8f2f661 100644
    gerber_gc->cap = Trace_Cap;
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 9b679e5..6ebc746 100644
+index c1d4212..c7d529a 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -125,7 +125,7 @@ ghid_make_gc (void)
@@ -91,10 +91,10 @@ index 6f551c8..0c836eb 100644
        fprintf (stderr, "Fatal: GC from another HID passed to GTK HID\n");
        abort ();
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 3b54403..f9209fe 100644
+index bd056e5..0391110 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3060,7 +3060,7 @@ lesstif_make_gc (void)
+@@ -3063,7 +3063,7 @@ lesstif_make_gc (void)
  {
    hidGC gc = (hidGC)calloc (1, sizeof (struct lesstif_gc_struct));
  
@@ -103,7 +103,7 @@ index 3b54403..f9209fe 100644
  
    return gc;
  }
-@@ -3190,7 +3190,7 @@ set_gc (hidGC gc)
+@@ -3193,7 +3193,7 @@ set_gc (hidGC gc)
  {
    lesstifGC lesstif_gc = (lesstifGC)gc;
    int cap, join, width;
