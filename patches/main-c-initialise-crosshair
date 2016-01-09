@@ -1,4 +1,4 @@
-Bottom: f9d2c210f0f1477a86724bc9aadb4ec45ab0bc94
+Bottom: e98a34b71c4b83e7d191fbe9ac3bd36ce0bb716f
 Top:    e0c238f79cebdf269b6052344ddf39e315b85648
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-07 02:18:58 +0000
@@ -11,32 +11,6 @@ there is no need to check gui->gui before calling it.
 
 ---
 
-diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index 27bcc71..252e2bf 100644
---- a/src/hid/batch/batch.c
-+++ b/src/hid/batch/batch.c
-@@ -330,7 +330,7 @@ hid_batch_init ()
- {
-   memset (&batch_hid, 0, sizeof (HID));
-   memset (&batch_graphics, 0, sizeof (HID_DRAW));
--  memset (&batch_graphics_ckass, 0, sizeof (HID_DRAW_CLASS));
-+  memset (&batch_graphics_class, 0, sizeof (HID_DRAW_CLASS));
- 
-   common_nogui_init (&batch_hid);
- 
-diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 7efb900..fbfcc7f 100644
---- a/src/hid/lesstif/main.c
-+++ b/src/hid/lesstif/main.c
-@@ -4135,7 +4135,7 @@ hid_lesstif_init ()
-   lesstif_graphics_class.fill_polygon   = lesstif_fill_polygon;
-   lesstif_graphics_class.fill_rect      = lesstif_fill_rect;
- 
--  lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
-+  lesstif_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
- 
-   lesstif_graphics.klass = &lesstif_graphics_class;
-   common_draw_helpers_init (&lesstif_graphics);
 diff --git a/src/main.c b/src/main.c
 index ce95361..d3bbce3 100644
 --- a/src/main.c
