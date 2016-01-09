@@ -389,8 +389,12 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
   int layer_num = GetLayerNumber (PCB->Data, layer);
   int group = GetLayerGroupNumberByPointer (layer);
   struct poly_info info = {drawn_area, layer};
+  bool is_outline;
 
-  if (layer_num < max_copper_layer)
+  is_outline = strcmp (layer->Name, "outline") == 0 ||
+               strcmp (layer->Name, "route") == 0;
+
+  if (layer_num < max_copper_layer && !is_outline)
     {
       r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, NULL);
       r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, NULL);
@@ -402,12 +406,6 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
 
-  if (layer_num < max_copper_layer)
-    {
-      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, NULL);
-      r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, NULL);
-    }
-
   /* draw all visible lines this layer */
   r_search (layer->line_tree, drawn_area, NULL, line_callback, layer);
   r_search (layer->arc_tree,  drawn_area, NULL, arc_callback,  layer);
@@ -417,8 +415,7 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
      auto-outline magically disappear when you first add something to
      the "outline" layer.  */
 
-  if (strcmp (layer->Name, "outline") == 0 ||
-      strcmp (layer->Name, "route") == 0)
+  if (is_outline)
     {
       if (IsLayerEmpty (layer))
         {
