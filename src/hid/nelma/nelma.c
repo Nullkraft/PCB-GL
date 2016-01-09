@@ -650,7 +650,7 @@ nelma_start_png_export()
 	lastbrush = (gdImagePtr)((void *) -1);
 
 	common_set_clip_box (&nelma_graphics, &region);
-	hid_expose_callback(&nelma_graphics, &region, 0);
+	hid_expose_callback (&nelma_graphics, 0);
 }
 
 static void 
