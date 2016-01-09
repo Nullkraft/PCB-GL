@@ -43,7 +43,7 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
 {
   Coord x = 0;
   unsigned char *string = (unsigned char *) Text->TextString;
-  Cardinal n;
+  GList *iter;
   FontType *font = &PCB->Font;
 
   while (string && *string)
@@ -51,11 +51,12 @@ common_draw_pcb_text (hidGC gc, TextType *Text, Coord min_line_width)
       /* draw lines if symbol is valid and data is present */
       if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
         {
-          LineType *line = font->Symbol[*string].Line;
-          LineType newline;
-
-          for (n = font->Symbol[*string].LineN; n; n--, line++)
+          for (iter = font->Symbol[*string].Line;
+               iter != NULL; iter = g_list_next (iter))
             {
+              LineType *line = iter->data;
+              LineType newline;
+
               /* create one line, scale, move, rotate and swap it */
               newline = *line;
               newline.Point1.X = SCALE_TEXT (newline.Point1.X + x, Text->Scale);
