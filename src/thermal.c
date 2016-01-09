@@ -106,7 +106,7 @@ diag_line (Coord X, Coord Y, Coord l, Coord w, bool rt)
 
   v[0] = X + x1;
   v[1] = Y + y2;
-  if ((c = poly_NewContour (v)) == NULL)
+  if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
     return NULL;
   v[0] = X - x2;
   v[1] = Y - y1;
@@ -137,7 +137,7 @@ square_therm (PinType *pin, Cardinal style)
       /* top (actually bottom since +y is down) */
       v[0] = pin->X - in + d;
       v[1] = pin->Y + in;
-      if ((c = poly_NewContour (v)) == NULL)
+      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
         return NULL;
       v[0] = pin->X + in - d;
       poly_InclVertex (c->head.prev, poly_CreateNode (v));
@@ -150,7 +150,7 @@ square_therm (PinType *pin, Cardinal style)
       /* right */
       v[0] = pin->X + in;
       v[1] = pin->Y + in - d;
-      if ((c = poly_NewContour (v)) == NULL)
+      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
         return NULL;
       v[1] = pin->Y - in + d;
       poly_InclVertex (c->head.prev, poly_CreateNode (v));
@@ -165,7 +165,7 @@ square_therm (PinType *pin, Cardinal style)
       /* left */
       v[0] = pin->X - in;
       v[1] = pin->Y - in + d;
-      if ((c = poly_NewContour (v)) == NULL)
+      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
         return NULL;
       v[1] = pin->Y + in - d;
       poly_InclVertex (c->head.prev, poly_CreateNode (v));
@@ -180,7 +180,7 @@ square_therm (PinType *pin, Cardinal style)
       /* bottom (actually top since +y is down) */
       v[0] = pin->X + in - d;
       v[1] = pin->Y - in;
-      if ((c = poly_NewContour (v)) == NULL)
+      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
         return NULL;
       v[0] = pin->X - in + d;
       poly_InclVertex (c->head.prev, poly_CreateNode (v));
@@ -241,7 +241,7 @@ square_therm (PinType *pin, Cardinal style)
       /* topright */
       v[0] = pin->X + in;
       v[1] = pin->Y + in;
-      if ((c = poly_NewContour (v)) == NULL)
+      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
         return NULL;
       v[1] = pin->Y + d;
       poly_InclVertex (c->head.prev, poly_CreateNode (v));
@@ -270,7 +270,7 @@ square_therm (PinType *pin, Cardinal style)
       /* bottom right */
       v[0] = pin->X + in;
       v[1] = pin->Y - d;
-      if ((c = poly_NewContour (v)) == NULL)
+      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
         return NULL;
       v[1] = pin->Y - in;
       poly_InclVertex (c->head.prev, poly_CreateNode (v));
@@ -297,7 +297,7 @@ square_therm (PinType *pin, Cardinal style)
       /* bottom left */
       v[0] = pin->X - d;
       v[1] = pin->Y - in;
-      if ((c = poly_NewContour (v)) == NULL)
+      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
         return NULL;
       v[0] = pin->X - in;
       poly_InclVertex (c->head.prev, poly_CreateNode (v));
@@ -324,7 +324,7 @@ square_therm (PinType *pin, Cardinal style)
       /* top left */
       v[0] = pin->X - d;
       v[1] = pin->Y + out;
-      if ((c = poly_NewContour (v)) == NULL)
+      if ((c = poly_NewContour (poly_CreateNode (v))) == NULL)
         return NULL;
       v[0] = pin->X - in;
       poly_InclVertex (c->head.prev, poly_CreateNode (v));
