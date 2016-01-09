@@ -1,5 +1,5 @@
 Bottom: ac05693bcf34b5cff8398392b808d2e0d2547d93
-Top:    f9d2c210f0f1477a86724bc9aadb4ec45ab0bc94
+Top:    e98a34b71c4b83e7d191fbe9ac3bd36ce0bb716f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-07 02:18:58 +0000
 
@@ -11,7 +11,7 @@ This allows us to store per-instance parameters in a clean structure.
 ---
 
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index e807d9c..27bcc71 100644
+index e807d9c..252e2bf 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -323,15 +323,16 @@ batch_show_item (void *item)
@@ -25,7 +25,7 @@ index e807d9c..27bcc71 100644
  {
    memset (&batch_hid, 0, sizeof (HID));
    memset (&batch_graphics, 0, sizeof (HID_DRAW));
-+  memset (&batch_graphics_ckass, 0, sizeof (HID_DRAW_CLASS));
++  memset (&batch_graphics_class, 0, sizeof (HID_DRAW_CLASS));
  
    common_nogui_init (&batch_hid);
 -  common_draw_helpers_init (&batch_graphics);
@@ -483,7 +483,7 @@ index 7975a88..1a64566 100644
    hid_register_hid (&ghid_hid);
  #include "gtk_lists.h"
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index a48ce37..7efb900 100644
+index a48ce37..fbfcc7f 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -60,6 +60,7 @@ typedef struct lesstif_gc_struct
@@ -505,7 +505,7 @@ index a48ce37..7efb900 100644
  
    lesstif_hid.struct_size             = sizeof (HID);
    lesstif_hid.name                    = "lesstif";
-@@ -4118,22 +4119,27 @@ hid_lesstif_init ()
+@@ -4118,21 +4119,26 @@ hid_lesstif_init ()
  
    lesstif_hid.graphics                = &lesstif_graphics;
  
@@ -522,6 +522,8 @@ index a48ce37..7efb900 100644
 -  lesstif_graphics.fill_circle         = lesstif_fill_circle;
 -  lesstif_graphics.fill_polygon        = lesstif_fill_polygon;
 -  lesstif_graphics.fill_rect           = lesstif_fill_rect;
+-
+-  lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
 +  common_draw_helpers_class_init (&lesstif_graphics_class);
 +
 +  lesstif_graphics_class.make_gc        = lesstif_make_gc;
@@ -537,15 +539,14 @@ index a48ce37..7efb900 100644
 +  lesstif_graphics_class.fill_circle    = lesstif_fill_circle;
 +  lesstif_graphics_class.fill_polygon   = lesstif_fill_polygon;
 +  lesstif_graphics_class.fill_rect      = lesstif_fill_rect;
- 
-   lesstif_graphics.draw_pcb_polygon    = common_gui_draw_pcb_polygon;
- 
++
++  lesstif_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
++
 +  lesstif_graphics.klass = &lesstif_graphics_class;
 +  common_draw_helpers_init (&lesstif_graphics);
-+
+ 
    hid_register_hid (&lesstif_hid);
  #include "lesstif_lists.h"
- }
 diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
 index 238cca1..05d5863 100644
 --- a/src/hid/lpr/lpr.c
