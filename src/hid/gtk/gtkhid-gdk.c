@@ -179,7 +179,7 @@ ghid_destroy_gc (hidGC gc)
 }
 
 hidGC
-ghid_make_gc (void)
+ghid_make_gc (HID_DRAW *hid_draw)
 {
   hidGC gc = (hidGC)g_new0 (struct gtk_gc_struct, 1);
   gtkGC gtk_gc = (gtkGC)gc;
