@@ -77,7 +77,7 @@ nogui_destroy_gc (hidGC gc)
 }
 
 static void
-nogui_use_mask (enum mask_mode mode)
+nogui_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
   CRASH;
 }
