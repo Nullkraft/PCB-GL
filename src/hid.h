@@ -521,13 +521,9 @@ typedef enum
        * adjusted so that the cursor and the crosshair are at the same
        * point on the screen.
        */
-#define HID_SC_DO_NOTHING                          0
-
-#define HID_SC_WARP_POINTER	                       1
-
-#define HID_SC_PAN_VIEWPORT                        2
-
-#define HID_SC_CENTER_IN_VIEWPORT                  3
+#define HID_SC_DO_NOTHING	0
+#define HID_SC_WARP_POINTER	1
+#define HID_SC_PAN_VIEWPORT	2
 
       hidval (*add_timer) (void (*func) (hidval user_data_),
 			   unsigned long milliseconds_, hidval user_data_);
