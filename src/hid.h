@@ -529,8 +529,6 @@ typedef enum
 
 #define HID_SC_CENTER_IN_VIEWPORT                  3
 
-#define HID_SC_CENTER_IN_VIEWPORT_AND_WARP_POINTER 4
-
       hidval (*add_timer) (void (*func) (hidval user_data_),
 			   unsigned long milliseconds_, hidval user_data_);
         /*!< Causes func to be called at some point in the future.
