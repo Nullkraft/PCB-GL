@@ -28,22 +28,27 @@ static void
 pan_common (GHidPort *port)
 {
   int event_x, event_y;
+  Coord old_x, old_y;
 
   /* We need to fix up the PCB coordinates corresponding to the last
   * event so convert it back to event coordinates temporarily. */
-  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
+//  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
 
+#if 1
   /* Don't pan so far the board is completely off the screen */
   port->view.x0 = MAX (-port->view.width,  port->view.x0);
   port->view.y0 = MAX (-port->view.height, port->view.y0);
   port->view.x0 = MIN ( port->view.x0, PCB->MaxWidth);
   port->view.y0 = MIN ( port->view.y0, PCB->MaxHeight);
+#endif
 
   /* Fix up noted event coordinates to match where we clamped. Alternatively
    * we could call ghid_note_event_location (NULL); to get a new pointer
    * location, but this costs us an xserver round-trip (on X11 platforms)
    */
-  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
+//  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
+
+  ghid_note_event_location (NULL); /* Force an update of the cursor position */
 
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view.x0);
@@ -135,6 +140,7 @@ ghid_flip_view (Coord center_x, Coord center_y, bool flip_x, bool flip_y)
 
   /* Work out where on the screen the flip point is */
   ghid_pcb_to_event_coords (center_x, center_y, &widget_x, &widget_y);
+  printf ("Reconstituted screen coordinates are (%i, %i)\n", widget_x, widget_y);
 
   gport->view.flip_x = gport->view.flip_x != flip_x;
   gport->view.flip_y = gport->view.flip_y != flip_y;
@@ -1426,6 +1432,9 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
   int bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
   bool top_on = LAYER_PTR (PCB->LayerGroups.Entries[top_group][0])->On;
   bool bottom_on = LAYER_PTR (PCB->LayerGroups.Entries[bottom_group][0])->On;
+
+  pcb_fprintf (stderr, "(gport->pcb_x, gport->pcb_y) = (%mn, %mn)\n", gport->pcb_x, gport->pcb_y);
+
 
   if (argc > 0)
     {

@@ -30,6 +30,8 @@
 #include "config.h"
 #endif
 
+#include <inttypes.h>
+
 #include "gui.h"
 #include "gtkhid.h"
 #include "hid/common/hid_resource.h"
@@ -129,14 +131,17 @@ ghid_note_event_location (GdkEventButton * ev)
     {
       gdk_window_get_pointer (gtk_widget_get_window (ghid_port.drawing_area),
                               &event_x, &event_y, NULL);
+      fprintf (stderr, "NULL NOTEING Mouse at (%i, %i) ", event_x, event_y);
     }
   else
     {
       event_x = ev->x;
       event_y = ev->y;
+      fprintf (stderr, "Actual event Mouse at (%i, %i) ", event_x, event_y);
     }
 
   ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
+  fprintf (stderr, "pcb (%" PRIi64 ", %" PRIi64 ")\n", gport->pcb_x, gport->pcb_y);
 
   moved = MoveCrosshairAbsolute (gport->pcb_x, gport->pcb_y);
   if (moved)
