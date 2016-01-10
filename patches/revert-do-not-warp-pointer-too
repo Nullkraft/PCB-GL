@@ -1,5 +1,5 @@
-Bottom: 2b43779631801f4b3e938f9cbd668a034ef37155
-Top:    d70b0ad7ac594e2078272201e9a8554f1a994e19
+Bottom: e44efa8125faed7e5b04bf16cbe9bea6404801dc
+Top:    9171a056e1945751c9b9506e2da1df33b92673e3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-10 17:03:09 +0000
 
@@ -15,10 +15,10 @@ This reverts commit 0be7dc9e80fc0cee683bf4fb07705e122059bcdf.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 0be31ab..cf34a76 100644
+index 58adeb6..b0e8952 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -3820,8 +3820,7 @@ ActionAddRats (int argc, char **argv, Coord x, Coord y)
+@@ -3818,8 +3818,7 @@ ActionAddRats (int argc, char **argv, Coord x, Coord y)
  	      DrawRat (shorty);
  	      Draw ();
  	      CenterDisplay ((shorty->Point2.X + shorty->Point1.X) / 2,
@@ -28,7 +28,7 @@ index 0be31ab..cf34a76 100644
  	    }
  	  break;
  	}
-@@ -5987,7 +5986,7 @@ ActionNew (int argc, char **argv, Coord x, Coord y)
+@@ -5985,7 +5984,7 @@ ActionNew (int argc, char **argv, Coord x, Coord y)
  
        ResetStackAndVisibility ();
        SetCrosshairRange (0, 0, PCB->MaxWidth, PCB->MaxHeight);
