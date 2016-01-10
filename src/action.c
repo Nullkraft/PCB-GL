@@ -2961,13 +2961,11 @@ ActionDisplay (int argc, char **argv, Coord childX, Coord childY)
 	  break;
 	}
     }
-  else
-    err = 1;
 
-  if (err)
-    AFAIL (display);
+  if (!err)
+    return 0;
 
-  return 0;
+  AFAIL (display);
 }
 
 /* --------------------------------------------------------------------------- */
