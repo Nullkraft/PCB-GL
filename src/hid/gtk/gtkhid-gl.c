@@ -50,11 +50,11 @@ static hidGC current_gc = NULL;
 #define USE_GC(gc) if (!use_gc(gc)) return
 
 static enum mask_mode cur_mask = HID_MASK_OFF;
-static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+static GLdouble view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                     {0.0, 1.0, 0.0, 0.0},
                                     {0.0, 0.0, 1.0, 0.0},
                                     {0.0, 0.0, 0.0, 1.0}};
-static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+static GLdouble last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                               {0.0, 1.0, 0.0, 0.0},
                                               {0.0, 0.0, 1.0, 0.0},
                                               {0.0, 0.0, 0.0, 1.0}};
@@ -909,7 +909,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
   glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
-  glMultMatrixf ((GLfloat *)view_matrix);
+  glMultMatrixd ((GLdouble *)view_matrix);
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
   glScalef ((port->view.flip_x ? -1. : 1.) / port->view.coord_per_px,
             (port->view.flip_y ? -1. : 1.) / port->view.coord_per_px,
@@ -918,7 +918,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                                     -port->view.x0,
                 port->view.flip_y ?  port->view.y0 - PCB->MaxHeight :
                                     -port->view.y0, 0);
-  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
+  glGetDoublev (GL_MODELVIEW_MATRIX, (GLdouble *)last_modelview_matrix);
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (port->offlimits_color.red / 65535.,
@@ -1368,10 +1368,10 @@ ghid_finish_debug_draw (void)
   ghid_end_drawing (gport, gport->drawing_area);
 }
 
-static float
-determinant_2x2 (float m[2][2])
+static double
+determinant_2x2 (double m[2][2])
 {
-  float det;
+  double det;
   det = m[0][0] * m[1][1] -
         m[0][1] * m[1][0];
   return det;
@@ -1399,9 +1399,9 @@ determinant_4x4 (float m[4][4])
 #endif
 
 static void
-invert_2x2 (float m[2][2], float out[2][2])
+invert_2x2 (double m[2][2], double out[2][2])
 {
-  float scale = 1 / determinant_2x2 (m);
+  double scale = 1 / determinant_2x2 (m);
   out[0][0] =  m[1][1] * scale;
   out[0][1] = -m[0][1] * scale;
   out[1][0] = -m[1][0] * scale;
@@ -1469,9 +1469,9 @@ invert_4x4 (float m[4][4], float out[4][4])
 static void
 ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb_y)
 {
-  float mat[2][2];
-  float inv_mat[2][2];
-  float x, y;
+  double mat[2][2];
+  double inv_mat[2][2];
+  double x, y;
 
   /*
     ex = view_matrix[0][0] * vx +
@@ -1499,11 +1499,11 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
   */
 
   /* NB: last_modelview_matrix is transposed in memory! */
-  x = (float)ex - last_modelview_matrix[3][0] * 1
-                - last_modelview_matrix[2][0] * pcb_z;
+  x = (double)ex - last_modelview_matrix[3][0] * 1.
+                 - last_modelview_matrix[2][0] * pcb_z;
 
-  y = (float)ey - last_modelview_matrix[3][1] * 1
-                - last_modelview_matrix[2][1] * pcb_z;
+  y = (double)ey - last_modelview_matrix[3][1] * 1.
+                 - last_modelview_matrix[2][1] * pcb_z;
 
   /*
     x = view_matrix[0][0] * vx +
@@ -1526,8 +1526,8 @@ ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, Coord *pcb_x, Coord *pcb
 
   invert_2x2 (mat, inv_mat);
 
-  *pcb_x = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
-  *pcb_y = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
+  *pcb_x = (inv_mat[0][0] * x + inv_mat[0][1] * y);
+  *pcb_y = (inv_mat[1][0] * x + inv_mat[1][1] * y);
 }
 
 
@@ -1543,17 +1543,17 @@ bool
 ghid_pcb_to_event_coords (Coord pcb_x, Coord pcb_y, int *event_x, int *event_y)
 {
   /* NB: last_modelview_matrix is transposed in memory */
-  float w = last_modelview_matrix[0][3] * (float)pcb_x +
-            last_modelview_matrix[1][3] * (float)pcb_y +
-            last_modelview_matrix[2][3] * 0. +
-            last_modelview_matrix[3][3] * 1.;
+  double w = last_modelview_matrix[0][3] * (double)pcb_x +
+             last_modelview_matrix[1][3] * (double)pcb_y +
+             last_modelview_matrix[2][3] * 0. +
+             last_modelview_matrix[3][3] * 1.;
 
-  *event_x = (last_modelview_matrix[0][0] * (float)pcb_x +
-              last_modelview_matrix[1][0] * (float)pcb_y +
+  *event_x = (last_modelview_matrix[0][0] * (double)pcb_x +
+              last_modelview_matrix[1][0] * (double)pcb_y +
               last_modelview_matrix[2][0] * 0. +
               last_modelview_matrix[3][0] * 1.) / w;
-  *event_y = (last_modelview_matrix[0][1] * (float)pcb_x +
-              last_modelview_matrix[1][1] * (float)pcb_y +
+  *event_y = (last_modelview_matrix[0][1] * (double)pcb_x +
+              last_modelview_matrix[1][1] * (double)pcb_y +
               last_modelview_matrix[2][1] * 0. +
               last_modelview_matrix[3][1] * 1.) / w;
 
