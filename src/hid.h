@@ -527,7 +527,7 @@ typedef enum
 
 #define HID_SC_PAN_VIEWPORT                        2
 
-#define HID_SC_CENTER_IN_VIEWPORT                  3
+#define HID_SC_CENTER_IN_VIEWPORT_AND_WARP_POINTER  3
 
       hidval (*add_timer) (void (*func) (hidval user_data_),
 			   unsigned long milliseconds_, hidval user_data_);
