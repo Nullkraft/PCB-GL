@@ -1,0 +1,50 @@
+Bottom: 2b9e65eb6d97cafe740e5938de18ddf62a16f5bf
+Top:    2bc6c9ae8676fbeb8a35b5d0e84e37e8167e021c
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-01-10 17:21:22 +0000
+
+Revert "gtkhid-main.c: remove seemingly useless double conversion."
+
+This reverts commit f4b511daed4bcc07df7445a345f2d19105b2be70.
+
+They don't do anything.  The locals event_x/y are just copied
+out then straight back into gport->pcb_x/y, none of which are
+use at all in the interim.
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 1e210ab..3a3bd75 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -27,15 +27,27 @@
+ static void
+ pan_common (GHidPort *port)
+ {
++  int event_x, event_y;
++
++  /* We need to fix up the PCB coordinates corresponding to the last
++  * event so convert it back to event coordinates temporarily. */
++  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
++
+   /* Don't pan so far the board is completely off the screen */
+   port->view.x0 = MAX (-port->view.width,  port->view.x0);
+   port->view.y0 = MAX (-port->view.height, port->view.y0);
+   port->view.x0 = MIN ( port->view.x0, PCB->MaxWidth);
+   port->view.y0 = MIN ( port->view.y0, PCB->MaxHeight);
+ 
++  /* Fix up noted event coordinates to match where we clamped. Alternatively
++   * we could call ghid_note_event_location (NULL); to get a new pointer
++   * location, but this costs us an xserver round-trip (on X11 platforms)
++   */
++  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
++
+   ghidgui->adjustment_changed_holdoff = TRUE;
+-  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), port->view.x0);
+-  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), port->view.y0);
++  gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view.x0);
++  gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view.y0);
+   ghidgui->adjustment_changed_holdoff = FALSE;
+ 
+   ghid_port_ranges_changed();
