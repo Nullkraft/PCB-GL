@@ -3820,8 +3820,7 @@ ActionAddRats (int argc, char **argv, Coord x, Coord y)
 	      DrawRat (shorty);
 	      Draw ();
 	      CenterDisplay ((shorty->Point2.X + shorty->Point1.X) / 2,
-			     (shorty->Point2.Y + shorty->Point1.Y) / 2,
-                             false);
+			     (shorty->Point2.Y + shorty->Point1.Y) / 2);
 	    }
 	  break;
 	}
@@ -5987,7 +5986,7 @@ ActionNew (int argc, char **argv, Coord x, Coord y)
 
       ResetStackAndVisibility ();
       SetCrosshairRange (0, 0, PCB->MaxWidth, PCB->MaxHeight);
-      CenterDisplay (PCB->MaxWidth / 2, PCB->MaxHeight / 2, false);
+      CenterDisplay (PCB->MaxWidth / 2, PCB->MaxHeight / 2);
       Redraw ();
 
       hid_action ("PCBChanged");
