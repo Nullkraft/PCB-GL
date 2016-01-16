@@ -1,0 +1,92 @@
+Bottom: c2bbcc8e1d3fa8e227424c9e092ec7d405464824
+Top:    ff7f4e84f8bf88783619ba9d17c30bb14b57ccef
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-01-16 16:56:25 +0000
+
+Refresh of attempt-to-fix-gtk-hid-zooming
+
+---
+
+diff --git a/src/hid/common/trackball.c b/src/hid/common/trackball.c
+index c4b8501..7691e77 100644
+--- a/src/hid/common/trackball.c
++++ b/src/hid/common/trackball.c
+@@ -299,7 +299,7 @@ normalize_quat(float q[4])
+  *
+  */
+ void
+-build_rotmatrix(float m[4][4], float q[4])
++build_rotmatrix(double m[4][4], float q[4])
+ {
+     m[0][0] = 1.0f - 2.0f * (q[1] * q[1] + q[2] * q[2]);
+     m[0][1] = 2.0f * (q[0] * q[1] - q[2] * q[3]);
+diff --git a/src/hid/common/trackball.h b/src/hid/common/trackball.h
+index ed0c267..6713b11 100644
+--- a/src/hid/common/trackball.h
++++ b/src/hid/common/trackball.h
+@@ -66,7 +66,7 @@ add_quats(float *q1, float *q2, float *dest);
+  * given quaternion.
+  */
+ void
+-build_rotmatrix(float m[4][4], float q[4]);
++build_rotmatrix(double m[4][4], float q[4]);
+ 
+ /*
+  * This function computes a quaternion based on an axis (defined by
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 2b80e77..bd199da 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -34,7 +34,7 @@ pan_common (GHidPort *port)
+   * event so convert it back to event coordinates temporarily. */
+ //  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
+ 
+-#if 0
++#if 1
+   /* Don't pan so far the board is completely off the screen */
+   port->view.x0 = MAX (-port->view.width,  port->view.x0);
+   port->view.y0 = MAX (-port->view.height, port->view.y0);
+@@ -48,14 +48,14 @@ pan_common (GHidPort *port)
+    */
+ //  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
+ 
+-//  ghid_note_event_location (NULL); /* Force an update of the cursor position */
++  ghid_note_event_location (NULL); /* Force an update of the cursor position */
+ 
+   ghidgui->adjustment_changed_holdoff = TRUE;
+   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view.x0);
+   gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view.y0);
+   ghidgui->adjustment_changed_holdoff = FALSE;
+ 
+-//  ghid_port_ranges_changed();
++  ghid_port_ranges_changed();
+ }
+ 
+ static void
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 0f790ae..6bc45c5 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -131,19 +131,17 @@ ghid_note_event_location (GdkEventButton * ev)
+     {
+       gdk_window_get_pointer (gtk_widget_get_window (ghid_port.drawing_area),
+                               &event_x, &event_y, NULL);
+-      fprintf (stderr, "Mouse at (%i, %i) ", event_x, event_y);
++      fprintf (stderr, "NULL NOTEING Mouse at (%i, %i) ", event_x, event_y);
+     }
+   else
+     {
+       event_x = ev->x;
+       event_y = ev->y;
++      fprintf (stderr, "Actual event Mouse at (%i, %i) ", event_x, event_y);
+     }
+ 
+   ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
+-  if (!ev)
+-    {
+-      fprintf (stderr, "pcb (%" PRIi64 ", %" PRIi64 ")\n", gport->pcb_x, gport->pcb_y);
+-    }
++  fprintf (stderr, "pcb (%" PRIi64 ", %" PRIi64 ")\n", gport->pcb_x, gport->pcb_y);
+ 
+   moved = MoveCrosshairAbsolute (gport->pcb_x, gport->pcb_y);
+   if (moved)
