@@ -34,7 +34,7 @@ pan_common (GHidPort *port)
   * event so convert it back to event coordinates temporarily. */
 //  ghid_pcb_to_event_coords (gport->pcb_x, gport->pcb_y, &event_x, &event_y);
 
-#if 0
+#if 1
   /* Don't pan so far the board is completely off the screen */
   port->view.x0 = MAX (-port->view.width,  port->view.x0);
   port->view.y0 = MAX (-port->view.height, port->view.y0);
@@ -48,14 +48,14 @@ pan_common (GHidPort *port)
    */
 //  ghid_event_to_pcb_coords (event_x, event_y, &gport->pcb_x, &gport->pcb_y);
 
-//  ghid_note_event_location (NULL); /* Force an update of the cursor position */
+  ghid_note_event_location (NULL); /* Force an update of the cursor position */
 
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view.x0);
   gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view.y0);
   ghidgui->adjustment_changed_holdoff = FALSE;
 
-//  ghid_port_ranges_changed();
+  ghid_port_ranges_changed();
 }
 
 static void
