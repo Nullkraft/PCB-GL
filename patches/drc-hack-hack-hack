@@ -9,6 +9,9 @@ IsPolygonInPolygon was applying 2x bloat to the line it uses to test with
 against the second polygon, and IsLineInPolygon was applying a further
 bloat offset - making the clearance used incorrect.
 
+This caused false DRC violation reports of polygons being too close to
+one-another, despite there being adequate clearance.
+
 
 ---
 
