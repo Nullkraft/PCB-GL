@@ -1,5 +1,5 @@
 Bottom: d5c988584ef608b1811c5e2dd4d96c74a9faf96c
-Top:    ae34c573eea6c9bd4a45ef136763597a2929f1ee
+Top:    5870f04c6b7d8f1be21a691c838cd7ac0a1b763b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2016-01-17 13:00:00 +0000
 
@@ -13,7 +13,7 @@ bloat offset - making the clearance used incorrect.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index e1c1ee2..31034e5 100644
+index e1c1ee2..bd8c934 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2504,7 +2504,12 @@ IsPolygonInPolygon (PolygonType *P1, PolygonType *P2)
@@ -24,7 +24,7 @@ index e1c1ee2..31034e5 100644
 +              line.Thickness = Bloat;
 +              /* Another Bloat is added by IsLineInPolygon, making the correct
 +               * 2x Bloat. Ideally we would change it there, but doing so
-+               * breaks some other DRC checks which rely on the broken behaviour
++               * breaks some other DRC checks which rely on the  behaviour
 +               * in IsLineInPolygon.
 +               */
                line.Clearance = 0;
