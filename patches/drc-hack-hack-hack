@@ -1,5 +1,5 @@
 Bottom: 8d57d68463cc91b126eea23fd6546e1cd233b85c
-Top:    cb4c1449d42538be2ce3619af2ac0852f4508f00
+Top:    58424267ac79a08264f4a2fdac7780d19de5ad93
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2016-01-17 13:09:57 +0000
 
@@ -20,7 +20,7 @@ to be used, in order to avoid surprises as to where it gets applied.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index e1c1ee2..bd8c934 100644
+index e1c1ee2..92f9d6d 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2504,7 +2504,12 @@ IsPolygonInPolygon (PolygonType *P1, PolygonType *P2)
@@ -30,8 +30,8 @@ index e1c1ee2..bd8c934 100644
 -              line.Thickness = 2 * Bloat;
 +              line.Thickness = Bloat;
 +              /* Another Bloat is added by IsLineInPolygon, making the correct
-+               * 2x Bloat. Ideally we would change it there, but doing so
-+               * breaks some other DRC checks which rely on the  behaviour
++               * 2x Bloat. Perhaps we should change it there, but doing so
++               * breaks some other DRC checks which rely on the behaviour
 +               * in IsLineInPolygon.
 +               */
                line.Clearance = 0;
