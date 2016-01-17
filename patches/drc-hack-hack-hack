@@ -12,6 +12,10 @@ bloat offset - making the clearance used incorrect.
 This caused false DRC violation reports of polygons being too close to
 one-another, despite there being adequate clearance.
 
+Note for future - a cleaner fix regarding "Bloat", and the DRC, is that
+we should probably pass it more explicitly as a parameter where it is
+to be used, in order to avoid surprises as to where it gets applied.
+
 
 ---
 
