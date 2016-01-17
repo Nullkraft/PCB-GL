@@ -2506,8 +2506,8 @@ IsPolygonInPolygon (PolygonType *P1, PolygonType *P2)
               line.Point1.Y = v->point[1];
               line.Thickness = Bloat;
               /* Another Bloat is added by IsLineInPolygon, making the correct
-               * 2x Bloat. Ideally we would change it there, but doing so
-               * breaks some other DRC checks which rely on the  behaviour
+               * 2x Bloat. Perhaps we should change it there, but doing so
+               * breaks some other DRC checks which rely on the behaviour
                * in IsLineInPolygon.
                */
               line.Clearance = 0;
