@@ -372,11 +372,11 @@ node_add_single_point (VNODE * a, Vector p)
 }				/* node_add_point */
 
 /*
-node_label
+edge_label
  (C) 2006 harry eaton
 */
 static unsigned int
-node_label (VNODE * pn)
+edge_label (VNODE * pn)
 {
   CVCList *first_l, *l;
   char this_poly;
@@ -458,7 +458,7 @@ node_label (VNODE * pn)
   if (region == SHARED || region == SHARED2)
     return UNKNWN;
   return region;
-}				/* node_label */
+}				/* edge_label */
 
 /*
  add_descriptors
@@ -1093,7 +1093,7 @@ label_contour (PLINE * a)
     {
       if (cur->cvc_next)	/* examine cross vertex */
 	{
-	  label = node_label (cur);
+	  label = edge_label (cur);
 	  if (first_labelled == NULL)
 	    first_labelled = cur;
 	  continue;
