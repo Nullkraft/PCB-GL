@@ -1,5 +1,5 @@
 Bottom: e9865551aae1c331a5afba06832f7e41103176bf
-Top:    1486799ec1325ac2abeb67e18143831275fedb19
+Top:    b4abfd22561097dccd535ed83eb9120de12ea8e0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-03 23:11:20 +0000
 
@@ -9,7 +9,7 @@ Rename v->e and e->v to clairfy edge vs. vertex usage
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c6e7739..a08343f 100644
+index c6e7739..e93a825 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1480,34 +1480,34 @@ typedef enum
@@ -206,7 +206,12 @@ index c6e7739..a08343f 100644
  //  cur = (&a->head)->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
    do
      {
-@@ -1700,10 +1700,10 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
+@@ -1696,14 +1696,14 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
+       // In particular, consider the case when we collect a 'B' polygon contour.
+       // Could some of that countour may already have been collected, and there
+       // still be a piece we are interested in after? (Can we reach it though??)
+-      if (cur->Flags.mark != 0)
++      if (cure->Flags.mark != 0)
          break;
  #endif
  
