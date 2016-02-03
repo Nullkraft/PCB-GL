@@ -241,14 +241,14 @@ new_descriptor (VNODE * a, char poly, char side)
     {
       if (side == 'P')
 	{
-	  if (PREV_VERTEX (a)->cvc_prev == (CVCList *) - 1)
+	  if (PREV_VERTEX (a)->cvc_next == (CVCList *) - 1)
 	    PREV_VERTEX (a)->cvc_prev = PREV_VERTEX (a)->cvc_next = NULL;
 	  poly_ExclVertex (PREV_VERTEX (a));
 	  vect_sub (v, PREV_VERTEX (a)->point, a->point);
 	}
       else
 	{
-	  if (NEXT_VERTEX (a)->cvc_prev == (CVCList *) - 1)
+	  if (NEXT_VERTEX (a)->cvc_next == (CVCList *) - 1)
 	    NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
 	  poly_ExclVertex (NEXT_VERTEX (a));
 	  vect_sub (v, NEXT_VERTEX (a)->point, a->point);
@@ -488,7 +488,7 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
 
   do
     {
-      if (node->cvc_prev)
+      if (node->cvc_next)
 	{
 	  assert (node->cvc_prev == (CVCList *) - 1
 		  && node->cvc_next == (CVCList *) - 1);
@@ -1556,7 +1556,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
   VNODE *e; /* e is considered an edge */
   DIRECTION newone;
 
-  if (!(*curv)->cvc_prev)	/* not a cross-vertex */
+  if (!(*curv)->cvc_next)	/* not a cross-vertex */
     {
       if ((*cdir == FORW) ? VERTEX_FORWARD_EDGE (*curv)->Flags.mark :
                            VERTEX_BACKWARD_EDGE (*curv)->Flags.mark)
