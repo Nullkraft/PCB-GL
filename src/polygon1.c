@@ -297,7 +297,7 @@ new_descriptor (VNODE * a, char poly, char side)
     {
       if (side == 'P')
 	{
-	  if (PREV_VERTEX (a)->cvc_prev == (CVCList *) - 1)
+	  if (PREV_VERTEX (a)->cvc_next == (CVCList *) - 1)
 	    PREV_VERTEX (a)->cvc_prev = PREV_VERTEX (a)->cvc_next = NULL;
 	  poly_ExclVertex (PREV_VERTEX (a));
           fprintf (stderr, "REMOVING VERTEX 111111111111111111111111111111111111111111111111111111\n");
@@ -306,7 +306,7 @@ new_descriptor (VNODE * a, char poly, char side)
 	}
       else
 	{
-	  if (NEXT_VERTEX (a)->cvc_prev == (CVCList *) - 1)
+	  if (NEXT_VERTEX (a)->cvc_next == (CVCList *) - 1)
 	    NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
 	  poly_ExclVertex (NEXT_VERTEX (a));
           fprintf (stderr, "REMOVING VERTEX 222222222222222222222222222222222222222222222222222222\n");
@@ -685,7 +685,7 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
 
   do
     {
-      if (node->cvc_prev)
+      if (node->cvc_next)
 	{
 	  assert (node->cvc_prev == (CVCList *) - 1
 		  && node->cvc_next == (CVCList *) - 1);
@@ -1812,7 +1812,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
   VNODE *e; /* e is considered an edge */
   DIRECTION newone;
 
-  if (!(*curv)->cvc_prev)	/* not a cross-vertex */
+  if (!(*curv)->cvc_next)	/* not a cross-vertex */
     {
       if (VERTEX_DIRECTION_EDGE (*curv, *cdir)->Flags.mark)
 	return FALSE;
