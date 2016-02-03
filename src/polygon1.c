@@ -1696,7 +1696,7 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
       // In particular, consider the case when we collect a 'B' polygon contour.
       // Could some of that countour may already have been collected, and there
       // still be a piece we are interested in after? (Can we reach it though??)
-      if (cur->Flags.mark != 0)
+      if (cure->Flags.mark != 0)
         break;
 #endif
 
