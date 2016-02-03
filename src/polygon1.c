@@ -77,6 +77,19 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 /* note that a vertex v's Flags.status represents the edge defined by
  * v to v->next (i.e. the edge is forward of v)
  */
+
+/* Some macros which will hopefully aid readability of the code which
+ * traverses edges and vertices..
+ */
+#define VERTEX_FORWARD_EDGE(v) (v)
+#define VERTEX_BACKWARD_EDGE(v) (v->_prev)
+#define EDGE_FORWARD_VERTEX(e) (e->_next)
+#define EDGE_BACKWARD_VERTEX(e) (e)
+#define NEXT_VERTEX(v) (v->_next)
+#define PREV_VERTEX(v) (v->_prev)
+#define NEXT_EDGE(e) (e->_next)
+#define PREV_EDGE(e) (e->_prev)
+
 #define ISECTED 3
 #define UNKNWN  0
 #define INSIDE  1
@@ -133,12 +146,12 @@ pline_dump (VNODE * v)
   s = v;
   do
     {
-      n = v->next;
+      n = NEXT_VERTEX(v);
       pcb_fprintf (stderr, "Line [%#mS %#mS %#mS %#mS 10 10 \"%s\"]\n",
 	       v->point[0], v->point[1],
 	       n->point[0], n->point[1], theState (v));
     }
-  while ((v = v->next) != s);
+  while ((v = NEXT_VERTEX(v)) != s);
 }
 
 static void
@@ -176,15 +189,16 @@ node_add
  1 means a new node was created and inserted
  4 means the intersection was not on the dest point
 */
+/* dest is considered an edge */
 static VNODE *
 node_add_single (VNODE * dest, Vector po)
 {
   VNODE *p;
 
-  if (vect_equal (po, dest->point))
-    return dest;
-  if (vect_equal (po, dest->next->point))
-    return dest->next;
+  if (vect_equal (po, EDGE_BACKWARD_VERTEX (dest)->point))
+    return EDGE_BACKWARD_VERTEX (dest);
+  if (vect_equal (po, EDGE_FORWARD_VERTEX (dest)->point))
+    return EDGE_FORWARD_VERTEX (dest);
   p = poly_CreateNode (po);
   if (p == NULL)
     return NULL;
@@ -216,9 +230,9 @@ new_descriptor (VNODE * a, char poly, char side)
   l->side = side;
   l->next = l->prev = l;
   if (side == 'P')		/* previous */
-    vect_sub (v, a->prev->point, a->point);
+    vect_sub (v, PREV_VERTEX (a)->point, a->point);
   else				/* next */
-    vect_sub (v, a->next->point, a->point);
+    vect_sub (v, NEXT_VERTEX (a)->point, a->point);
   /* Uses slope/(slope+1) in quadrant 1 as a proxy for the angle.
    * It still has the same monotonic sort result
    * and is far less expensive to compute than the real angle.
@@ -227,17 +241,17 @@ new_descriptor (VNODE * a, char poly, char side)
     {
       if (side == 'P')
 	{
-	  if (a->prev->cvc_prev == (CVCList *) - 1)
-	    a->prev->cvc_prev = a->prev->cvc_next = NULL;
-	  poly_ExclVertex (a->prev);
-	  vect_sub (v, a->prev->point, a->point);
+	  if (PREV_VERTEX (a)->cvc_prev == (CVCList *) - 1)
+	    PREV_VERTEX (a)->cvc_prev = PREV_VERTEX (a)->cvc_next = NULL;
+	  poly_ExclVertex (PREV_VERTEX (a));
+	  vect_sub (v, PREV_VERTEX (a)->point, a->point);
 	}
       else
 	{
-	  if (a->next->cvc_prev == (CVCList *) - 1)
-	    a->next->cvc_prev = a->next->cvc_next = NULL;
-	  poly_ExclVertex (a->next);
-	  vect_sub (v, a->next->point, a->point);
+	  if (NEXT_VERTEX (a)->cvc_prev == (CVCList *) - 1)
+	    NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
+	  poly_ExclVertex (NEXT_VERTEX (a));
+	  vect_sub (v, NEXT_VERTEX (a)->point, a->point);
 	}
     }
   assert (!vect_equal (v, vect_zero));
@@ -352,20 +366,22 @@ node_add_point
 
  return 1 if new node in b, 2 if new node in a and 3 if new node in both
 */
+/* a is considered an edge */
 
 static VNODE *
 node_add_single_point (VNODE * a, Vector p)
 {
-  VNODE *next_a, *new_node;
+  VNODE *a_backward_vertex, *a_forward_vertex, *new_node;
 
-  next_a = a->next;
+  a_backward_vertex = EDGE_BACKWARD_VERTEX (a);
+  a_forward_vertex = EDGE_FORWARD_VERTEX (a);
 
   new_node = node_add_single (a, p);
   assert (new_node != NULL);
 
   new_node->cvc_prev = new_node->cvc_next = (CVCList *) - 1;
 
-  if (new_node == a || new_node == next_a)
+  if (new_node == a_backward_vertex || new_node == a_forward_vertex)
     return NULL;
 
   return new_node;
@@ -375,6 +391,7 @@ node_add_single_point (VNODE * a, Vector p)
 node_label
  (C) 2006 harry eaton
 */
+/* pn is considered an edge (?) */
 static unsigned int
 node_label (VNODE * pn)
 {
@@ -416,8 +433,8 @@ node_label (VNODE * pn)
     {
       if (l->side == 'P')
 	{
-	  if (l->parent->prev->point[0] == pn->next->point[0] &&
-	      l->parent->prev->point[1] == pn->next->point[1])
+	  if (l->parent->prev->point[0] == EDGE_FORWARD_VERTEX (pn)->point[0] &&
+	      l->parent->prev->point[1] == EDGE_FORWARD_VERTEX (pn)->point[1])
 	    {
 	      region = SHARED2;
 	      pn->shared = l->parent->prev;
@@ -429,8 +446,8 @@ node_label (VNODE * pn)
 	{
 	  if (l->angle == pn->cvc_next->angle)
 	    {
-	      assert (l->parent->next->point[0] == pn->next->point[0] &&
-		      l->parent->next->point[1] == pn->next->point[1]);
+	      assert (l->parent->next->point[0] == EDGE_FORWARD_VERTEX (pn)->point[0] &&
+		      l->parent->next->point[1] == EDGE_FORWARD_VERTEX (pn)->point[1]);
 	      region = SHARED;
 	      pn->shared = l->parent;
 	    }
@@ -1462,53 +1479,12 @@ typedef enum
   UNINITIALISED, FORW, BACKW
 } DIRECTION;
 
-/* Start Rule */
-typedef int (*S_Rule) (VNODE *, DIRECTION *);
-
 /* Jump Rule  */
 typedef int (*J_Rule) (char, VNODE *, DIRECTION *);
 
 static int
-UniteS_Rule (VNODE * cur, DIRECTION * initdir)
-{
-  *initdir = FORW;
-  return (NODE_LABEL (cur) == OUTSIDE) || (NODE_LABEL (cur) == SHARED);
-}
-
-static int
-IsectS_Rule (VNODE * cur, DIRECTION * initdir)
-{
-  *initdir = FORW;
-  return (NODE_LABEL (cur) == INSIDE) || (NODE_LABEL (cur) == SHARED);
-}
-
-static int
-SubS_Rule (VNODE * cur, DIRECTION * initdir)
-{
-  *initdir = FORW;
-  return (NODE_LABEL (cur) == OUTSIDE) || (NODE_LABEL (cur) == SHARED2);
-}
-
-static int
-XorS_Rule (VNODE * cur, DIRECTION * initdir)
-{
-  if (cur->Flags.status == INSIDE)
-    {
-      *initdir = BACKW;
-      return TRUE;
-    }
-  if (cur->Flags.status == OUTSIDE)
-    {
-      *initdir = FORW;
-      return TRUE;
-    }
-  return FALSE;
-}
-
-static int
 IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
 {
-//  assert (*cdir == FORW);
   *cdir = FORW;
   return (v->Flags.status == INSIDE || v->Flags.status == SHARED);
 }
@@ -1516,7 +1492,6 @@ IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
 static int
 UniteJ_Rule (char p, VNODE * v, DIRECTION * cdir)
 {
-//  assert (*cdir == FORW);
   *cdir = FORW;
   return (v->Flags.status == OUTSIDE || v->Flags.status == SHARED);
 }
@@ -1534,9 +1509,6 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
       *cdir = FORW;
       return TRUE;
     }
-  // XXX: FIXME: NO cdir set for this case, e.g. possible no initialisation
-  if (*cdir == UNINITIALISED)
-    printf ("UNINITIALISED directin in XorJ_Rule\n");
   return FALSE;
 }
 
@@ -1560,15 +1532,6 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
       else
 	*cdir = BACKW;
       return TRUE;
-    }
-  // XXX: FIXME: NO cdir set for this case, e.g. possible no initialisation
-  if (*cdir == UNINITIALISED)
-    {
-//      printf ("UNINITIALISED directin in SubJ_Rule\n");
-      if (p == 'A')
-	*cdir = FORW;
-      else
-	*cdir = BACKW;
     }
   return FALSE;
 }
@@ -1709,7 +1672,7 @@ Collect1 (jmp_buf * e, VNODE * cur, DIRECTION dir, POLYAREA ** contours,
 
 static void
 Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
-	 S_Rule s_rule, J_Rule j_rule)
+         J_Rule j_rule)
 {
   VNODE *cur;
   DIRECTION dir = UNINITIALISED;
@@ -1746,16 +1709,16 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
       switch (action)
 	{
 	case PBO_UNITE:
-	  Collect ('A', e, *A, contours, holes, UniteS_Rule, UniteJ_Rule);
+	  Collect ('A', e, *A, contours, holes, UniteJ_Rule);
 	  break;
 	case PBO_ISECT:
-	  Collect ('A', e, *A, contours, holes, IsectS_Rule, IsectJ_Rule);
+	  Collect ('A', e, *A, contours, holes, IsectJ_Rule);
 	  break;
 	case PBO_XOR:
-	  Collect ('A', e, *A, contours, holes, XorS_Rule, XorJ_Rule);
+	  Collect ('A', e, *A, contours, holes, XorJ_Rule);
 	  break;
 	case PBO_SUB:
-	  Collect ('A', e, *A, contours, holes, SubS_Rule, SubJ_Rule);
+	  Collect ('A', e, *A, contours, holes, SubJ_Rule);
 	  break;
 	};
     }
@@ -1831,16 +1794,16 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 	    switch (action)
 	      {
 	      case PBO_UNITE:
-		Collect ('B', e, *cur, contours, holes, UniteS_Rule, UniteJ_Rule);
+		Collect ('B', e, *cur, contours, holes, UniteJ_Rule);
 		break;
 	      case PBO_ISECT:
-		Collect ('B', e, *cur, contours, holes, IsectS_Rule, IsectJ_Rule);
+		Collect ('B', e, *cur, contours, holes, IsectJ_Rule);
 		break;
 	      case PBO_XOR:
-		Collect ('B', e, *cur, contours, holes, XorS_Rule, XorJ_Rule);
+		Collect ('B', e, *cur, contours, holes, XorJ_Rule);
 		break;
 	      case PBO_SUB:
-		Collect ('B', e, *cur, contours, holes, SubS_Rule, SubJ_Rule);
+		Collect ('B', e, *cur, contours, holes, SubJ_Rule);
 		break;
 	      }
 	    }
@@ -2565,7 +2528,7 @@ poly_IniContour (PLINE * c)
   if (c == NULL)
     return;
   /* bzero (c, sizeof(PLINE)); */
-  c->head.next = c->head.prev = &c->head;
+  c->head._next = c->head._prev = &c->head;
   c->xmin = c->ymin = COORD_MAX;
   c->xmax = c->ymax = -COORD_MAX - 1;
   c->is_round = FALSE;
@@ -2599,7 +2562,7 @@ poly_ClrContour (PLINE * c)
   VNODE *cur;
 
   assert (c != NULL);
-  while ((cur = c->head.next) != &c->head)
+  while ((cur = c->head._next) != &c->head)
     {
       poly_ExclVertex (cur);
       free (cur);
@@ -2794,7 +2757,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
   (*dst)->ymin = src->ymin, (*dst)->ymax = src->ymax;
   (*dst)->area = src->area;
 
-  for (cur = src->head.next; cur != &src->head; cur = cur->next)
+  for (cur = src->head._next; cur != &src->head; cur = cur->next)
     {
       if ((newnode = poly_CreateNode (cur->point)) == NULL)
 	return FALSE;
