@@ -1102,17 +1102,17 @@ label_contour
 static BOOLp
 label_contour (PLINE * a)
 {
-  VNODE *cur = &a->head; /* cur is considered an edge */
+  VNODE *cure = &a->head; /* cur is considered an edge */
   VNODE *first_labelled = NULL;
   int label = UNKNWN;
 
   do
     {
-      if (cur->cvc_next)	/* examine cross vertex */
+      if (cure->cvc_next)	/* examine cross vertex */
 	{
-	  label = edge_label (cur);
+	  label = edge_label (cure);
 	  if (first_labelled == NULL)
-	    first_labelled = cur;
+	    first_labelled = cure;
 	  continue;
 	}
 
@@ -1121,9 +1121,9 @@ label_contour (PLINE * a)
 
       /* This labels nodes which aren't cross-connected */
       assert (label == INSIDE || label == OUTSIDE);
-      LABEL_EDGE (cur, label);
+      LABEL_EDGE (cure, label);
     }
-  while ((cur = NEXT_EDGE (cur)) != first_labelled);
+  while ((cure = NEXT_EDGE (cure)) != first_labelled);
 #ifdef DEBUG_ALL_LABELS
   print_labels (a);
   DEBUGP ("\n\n");
@@ -1480,34 +1480,35 @@ typedef enum
 } DIRECTION;
 
 /* Jump Rule  */
-typedef int (*J_Rule) (char, VNODE *, DIRECTION *); /* VNODE * is considered an edge */
+/* e is considered an edge */
+typedef int (*J_Rule) (char p, VNODE *e, DIRECTION *cdir);
 
-/* v is considered an edge */
+/* e is considered an edge */
 static int
-IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+IsectJ_Rule (char p, VNODE *e, DIRECTION * cdir)
 {
   *cdir = FORW;
-  return (v->Flags.status == INSIDE || v->Flags.status == SHARED);
+  return (e->Flags.status == INSIDE || e->Flags.status == SHARED);
 }
 
-/* v is considered an edge */
+/* e is considered an edge */
 static int
-UniteJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+UniteJ_Rule (char p, VNODE *e, DIRECTION * cdir)
 {
   *cdir = FORW;
-  return (v->Flags.status == OUTSIDE || v->Flags.status == SHARED);
+  return (e->Flags.status == OUTSIDE || e->Flags.status == SHARED);
 }
 
-/* v is considered an edge */
+/* e is considered an edge */
 static int
-XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+XorJ_Rule (char p, VNODE *e, DIRECTION * cdir)
 {
-  if (v->Flags.status == INSIDE)
+  if (e->Flags.status == INSIDE)
     {
       *cdir = BACKW;
       return TRUE;
     }
-  if (v->Flags.status == OUTSIDE)
+  if (e->Flags.status == OUTSIDE)
     {
       *cdir = FORW;
       return TRUE;
@@ -1515,21 +1516,21 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
   return FALSE;
 }
 
-/* v is considered an edge */
+/* e is considered an edge */
 static int
-SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+SubJ_Rule (char p, VNODE *e, DIRECTION * cdir)
 {
-  if (p == 'B' && v->Flags.status == INSIDE)
+  if (p == 'B' && e->Flags.status == INSIDE)
     {
       *cdir = BACKW;
       return TRUE;
     }
-  if (p == 'A' && v->Flags.status == OUTSIDE)
+  if (p == 'A' && e->Flags.status == OUTSIDE)
     {
       *cdir = FORW;
       return TRUE;
     }
-  if (v->Flags.status == SHARED2)
+  if (e->Flags.status == SHARED2)
     {
       if (p == 'A')
 	*cdir = FORW;
@@ -1546,28 +1547,28 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  *
  * returns true if an edge is found, false otherwise
  */
-/* *cur is considered a vertex */
+/* *curv is considered a vertex */
 static int
-jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
+jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
 {
   CVCList *d, *start;
   VNODE *e; /* e is considered an edge */
   DIRECTION newone;
 
-  if (!(*cur)->cvc_prev)	/* not a cross-vertex */
+  if (!(*curv)->cvc_prev)	/* not a cross-vertex */
     {
-      if ((*cdir == FORW) ? VERTEX_FORWARD_EDGE (*cur)->Flags.mark :
-                           VERTEX_BACKWARD_EDGE (*cur)->Flags.mark)
+      if ((*cdir == FORW) ? VERTEX_FORWARD_EDGE (*curv)->Flags.mark :
+                           VERTEX_BACKWARD_EDGE (*curv)->Flags.mark)
 	return FALSE;
       return TRUE;
     }
 #ifdef DEBUG_JUMP
-  DEBUGP ("jump entering node at %$mD\n", (*cur)->point[0], (*cur)->point[1]);
+  DEBUGP ("jump entering node at %$mD\n", (*curv)->point[0], (*curv)->point[1]);
 #endif
   if (*cdir == FORW)
-    d = (*cur)->cvc_prev->prev;
+    d = (*curv)->cvc_prev->prev;
   else
-    d = (*cur)->cvc_next->prev;
+    d = (*curv)->cvc_next->prev;
   start = d;
   do
     {
@@ -1589,7 +1590,7 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
 		DEBUGP ("jump leaving node at %#mD\n",
 			e->point[0], e->point[1]);
 #endif
-	      *cur = d->parent;
+	      *curv = d->parent;
 	      *cdir = newone;
 	      return TRUE;
 	    }
@@ -1601,9 +1602,10 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
 
 /* start is considered a vertex */
 static int
-Gather (VNODE * start, PLINE ** result, J_Rule j_rule, DIRECTION initdir)
+Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 {
-  VNODE *cur = start, *newn; /* cur is considered a vertex */
+  VNODE *curv = startv; /* curv is considered a vertex */
+  VNODE *newn;
   DIRECTION dir = initdir;
 #ifdef DEBUG_GATHER
   DEBUGP ("gather direction = %d\n", dir);
@@ -1612,10 +1614,10 @@ Gather (VNODE * start, PLINE ** result, J_Rule j_rule, DIRECTION initdir)
   do
     {
       /* see where to go next */
-      if (!jump (&cur, &dir, j_rule))
+      if (!jump (&curv, &dir, j_rule))
 	break;
-      /* add edge to polygon */
-      if ((newn = poly_CreateNode (cur->point)) == NULL)
+      /* add vertex to polygon */
+      if ((newn = poly_CreateNode (curv->point)) == NULL)
         return err_no_memory;
       if (!*result)
 	{
@@ -1631,28 +1633,28 @@ Gather (VNODE * start, PLINE ** result, J_Rule j_rule, DIRECTION initdir)
       DEBUGP ("gather vertex at %#mD\n", cur->point[0], cur->point[1]);
 #endif
       /* Now mark the edge as included.  */
-      newn = (dir == FORW) ? VERTEX_FORWARD_EDGE (cur) : VERTEX_BACKWARD_EDGE (cur);
+      newn = (dir == FORW) ? VERTEX_FORWARD_EDGE (curv) : VERTEX_BACKWARD_EDGE (curv);
       newn->Flags.mark = 1;
       /* for SHARED edge mark both */
       if (newn->shared)
 	newn->shared->Flags.mark = 1;
 
       /* Advance to the next vertex.  */
-      cur = (dir == FORW) ? NEXT_VERTEX (cur) : PREV_VERTEX (cur);
+      curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
     }
   while (1);
   return err_ok;
 }				/* Gather */
 
-/* cur is considered an edge */
+/* cure is considered an edge */
 static void
-Collect1 (jmp_buf * e, VNODE * cur, DIRECTION dir, POLYAREA ** contours,
-	  PLINE ** holes, J_Rule j_rule)
+Collect1 (jmp_buf *e, VNODE *cure, DIRECTION dir, POLYAREA **contours,
+          PLINE **holes, J_Rule j_rule)
 {
   PLINE *p = NULL;		/* start making contour */
   int errc = err_ok;
-  if ((errc = Gather ((dir == FORW) ? EDGE_BACKWARD_VERTEX (cur) :
-                                      EDGE_FORWARD_VERTEX (cur),
+  if ((errc = Gather ((dir == FORW) ? EDGE_BACKWARD_VERTEX (cure) :
+                                      EDGE_FORWARD_VERTEX (cure),
                       &p, j_rule, dir)) != err_ok)
     {
       if (p != NULL)
@@ -1684,10 +1686,10 @@ static void
 Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
          J_Rule j_rule)
 {
-  VNODE *cur; /* cur is considered an edge */
+  VNODE *cure; /* cure is considered an edge */
   DIRECTION dir = UNINITIALISED;
 
-  cur = (&a->head);
+  cure = (&a->head);
 //  cur = (&a->head)->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
   do
     {
@@ -1696,14 +1698,14 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
       // In particular, consider the case when we collect a 'B' polygon contour.
       // Could some of that countour may already have been collected, and there
       // still be a piece we are interested in after? (Can we reach it though??)
-      if (cur->Flags.mark != 0)
+      if (cure->Flags.mark != 0)
         break;
 #endif
 
-      if (j_rule (poly, cur, &dir) && cur->Flags.mark == 0)
-	Collect1 (e, cur, dir, contours, holes, j_rule);
+      if (j_rule (poly, cure, &dir) && cure->Flags.mark == 0)
+	Collect1 (e, cure, dir, contours, holes, j_rule);
     }
-  while ((cur = NEXT_EDGE (cur)) != &a->head);
+  while ((cure = NEXT_EDGE (cure)) != &a->head);
 }				/* Collect */
 
 
