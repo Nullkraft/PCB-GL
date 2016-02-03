@@ -1102,17 +1102,17 @@ label_contour
 static BOOLp
 label_contour (PLINE * a)
 {
-  VNODE *cur = &a->head; /* cur is considered an edge */
+  VNODE *cure = &a->head; /* cur is considered an edge */
   VNODE *first_labelled = NULL;
   int label = UNKNWN;
 
   do
     {
-      if (cur->cvc_next)	/* examine cross vertex */
+      if (cure->cvc_next)	/* examine cross vertex */
 	{
-	  label = edge_label (cur);
+	  label = edge_label (cure);
 	  if (first_labelled == NULL)
-	    first_labelled = cur;
+	    first_labelled = cure;
 	  continue;
 	}
 
@@ -1121,9 +1121,9 @@ label_contour (PLINE * a)
 
       /* This labels nodes which aren't cross-connected */
       assert (label == INSIDE || label == OUTSIDE);
-      LABEL_EDGE (cur, label);
+      LABEL_EDGE (cure, label);
     }
-  while ((cur = NEXT_EDGE (cur)) != first_labelled);
+  while ((cure = NEXT_EDGE (cure)) != first_labelled);
 #ifdef DEBUG_ALL_LABELS
   print_labels (a);
   DEBUGP ("\n\n");
@@ -1480,7 +1480,8 @@ typedef enum
 } DIRECTION;
 
 /* Jump Rule  */
-typedef int (*J_Rule) (char p, VNODE *e, DIRECTION *cdir); /* e is considered an edge */
+/* e is considered an edge */
+typedef int (*J_Rule) (char p, VNODE *e, DIRECTION *cdir);
 
 /* e is considered an edge */
 static int
@@ -1603,7 +1604,8 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
 static int
 Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 {
-  VNODE *curv = startv, *newn; /* curv is considered a vertex */
+  VNODE *curv = startv; /* curv is considered a vertex */
+  VNODE *newn;
   DIRECTION dir = initdir;
 #ifdef DEBUG_GATHER
   DEBUGP ("gather direction = %d\n", dir);
