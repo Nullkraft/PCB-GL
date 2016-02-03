@@ -1,0 +1,21 @@
+Bottom: 1486799ec1325ac2abeb67e18143831275fedb19
+Top:    b4abfd22561097dccd535ed83eb9120de12ea8e0
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-03 23:18:03 +0000
+
+Refresh of rename-v-e-and-e-v-to-clairfy
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index a08343f..e93a825 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1696,7 +1696,7 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
+       // In particular, consider the case when we collect a 'B' polygon contour.
+       // Could some of that countour may already have been collected, and there
+       // still be a piece we are interested in after? (Can we reach it though??)
+-      if (cur->Flags.mark != 0)
++      if (cure->Flags.mark != 0)
+         break;
+ #endif
