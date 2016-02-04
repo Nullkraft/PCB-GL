@@ -1,5 +1,5 @@
 Bottom: 99254e64fda553d6b67ea10b083b9e95b8d1f311
-Top:    e3e4c86daaf83b3781fd85e85a2d45975af942e7
+Top:    4cb60f1009148d609515a2178b6e058ff35f195d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-03 16:46:04 +0000
 
@@ -22,7 +22,7 @@ index 92ca8a2..c2a7366 100644
        unsigned int status:3;
        unsigned int mark:1;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 0d5183d..dfb7fdd 100644
+index 0d5183d..fd155bc 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -77,6 +77,19 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -388,18 +388,18 @@ index 0d5183d..dfb7fdd 100644
  #ifdef DEBUG_ALL_LABELS
    print_labels (a);
    DEBUGP ("\n\n");
-@@ -1463,8 +1481,9 @@ typedef enum
+@@ -1463,8 +1481,10 @@ typedef enum
  } DIRECTION;
  
  /* Jump Rule  */
--typedef int (*J_Rule) (char, VNODE *, DIRECTION *);
-+typedef int (*J_Rule) (char, VNODE *, DIRECTION *); /* VNODE * is considered an edge */
++/* VNODE * is considered an edge */
+ typedef int (*J_Rule) (char, VNODE *, DIRECTION *);
  
 +/* v is considered an edge */
  static int
  IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  {
-@@ -1472,6 +1491,7 @@ IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1472,6 +1492,7 @@ IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
    return (v->Flags.status == INSIDE || v->Flags.status == SHARED);
  }
  
@@ -407,7 +407,7 @@ index 0d5183d..dfb7fdd 100644
  static int
  UniteJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  {
-@@ -1479,6 +1499,7 @@ UniteJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1479,6 +1500,7 @@ UniteJ_Rule (char p, VNODE * v, DIRECTION * cdir)
    return (v->Flags.status == OUTSIDE || v->Flags.status == SHARED);
  }
  
@@ -415,7 +415,7 @@ index 0d5183d..dfb7fdd 100644
  static int
  XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  {
-@@ -1495,6 +1516,7 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1495,6 +1517,7 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
    return FALSE;
  }
  
@@ -423,7 +423,7 @@ index 0d5183d..dfb7fdd 100644
  static int
  SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  {
-@@ -1525,32 +1547,37 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1525,32 +1548,37 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
   *
   * returns true if an edge is found, false otherwise
   */
@@ -466,7 +466,7 @@ index 0d5183d..dfb7fdd 100644
        newone = *cdir;
        if (!e->Flags.mark && j_rule (d->poly, e, &newone))
  	{
-@@ -1560,10 +1587,10 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
+@@ -1560,10 +1588,10 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
  #ifdef DEBUG_JUMP
  	      if (newone == FORW)
  		DEBUGP ("jump leaving node at %#mD\n",
@@ -479,7 +479,7 @@ index 0d5183d..dfb7fdd 100644
  #endif
  	      *cur = d->parent;
  	      *cdir = newone;
-@@ -1571,14 +1598,15 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
+@@ -1571,14 +1599,15 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
  	    }
  	}
      }
@@ -497,7 +497,7 @@ index 0d5183d..dfb7fdd 100644
    DIRECTION dir = initdir;
  #ifdef DEBUG_GATHER
    DEBUGP ("gather direction = %d\n", dir);
-@@ -1600,33 +1628,35 @@ Gather (VNODE * start, PLINE ** result, J_Rule j_rule, DIRECTION initdir)
+@@ -1600,33 +1629,35 @@ Gather (VNODE * start, PLINE ** result, J_Rule j_rule, DIRECTION initdir)
  	}
        else
  	{
@@ -539,7 +539,7 @@ index 0d5183d..dfb7fdd 100644
      {
        if (p != NULL)
  	poly_DelContour (&p);
-@@ -1657,7 +1687,7 @@ static void
+@@ -1657,7 +1688,7 @@ static void
  Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
           J_Rule j_rule)
  {
@@ -548,7 +548,7 @@ index 0d5183d..dfb7fdd 100644
    DIRECTION dir = UNINITIALISED;
  
    cur = (&a->head);
-@@ -1676,7 +1706,7 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
+@@ -1676,7 +1707,7 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
        if (j_rule (poly, cur, &dir) && cur->Flags.mark == 0)
  	Collect1 (e, cur, dir, contours, holes, j_rule);
      }
@@ -557,7 +557,7 @@ index 0d5183d..dfb7fdd 100644
  }				/* Collect */
  
  
-@@ -2402,7 +2432,7 @@ clear_marks (POLYAREA * p)
+@@ -2402,7 +2433,7 @@ clear_marks (POLYAREA * p)
  	    {
  	      v->Flags.mark = 0;
  	    }
@@ -566,7 +566,7 @@ index 0d5183d..dfb7fdd 100644
  	}
      }
    while ((n = n->f) != p);
-@@ -2485,7 +2515,7 @@ cntrbox_pointin (PLINE * c, Vector p)
+@@ -2485,7 +2516,7 @@ cntrbox_pointin (PLINE * c, Vector p)
  static inline int
  node_neighbours (VNODE * a, VNODE * b)
  {
@@ -575,7 +575,7 @@ index 0d5183d..dfb7fdd 100644
  }
  
  VNODE *
-@@ -2511,7 +2541,7 @@ poly_IniContour (PLINE * c)
+@@ -2511,7 +2542,7 @@ poly_IniContour (PLINE * c)
    if (c == NULL)
      return;
    /* bzero (c, sizeof(PLINE)); */
@@ -584,7 +584,7 @@ index 0d5183d..dfb7fdd 100644
    c->xmin = c->ymin = COORD_MAX;
    c->xmax = c->ymax = -COORD_MAX - 1;
    c->is_round = FALSE;
-@@ -2545,7 +2575,7 @@ poly_ClrContour (PLINE * c)
+@@ -2545,7 +2576,7 @@ poly_ClrContour (PLINE * c)
    VNODE *cur;
  
    assert (c != NULL);
@@ -593,7 +593,7 @@ index 0d5183d..dfb7fdd 100644
      {
        poly_ExclVertex (cur);
        free (cur);
-@@ -2565,9 +2595,9 @@ poly_DelContour (PLINE ** c)
+@@ -2565,9 +2596,9 @@ poly_DelContour (PLINE ** c)
  
    if (*c == NULL)
      return;
@@ -605,7 +605,7 @@ index 0d5183d..dfb7fdd 100644
        if (cur->cvc_next != NULL)
  	{
  	  free (cur->cvc_next);
-@@ -2602,11 +2632,11 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -2602,11 +2633,11 @@ poly_PreContour (PLINE * C, BOOLp optimize)
  
    if (optimize)
      {
@@ -619,7 +619,7 @@ index 0d5183d..dfb7fdd 100644
  	  /* If the product below is zero then
  	   * the points on either side of c 
  	   * are on the same line!
-@@ -2625,7 +2655,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -2625,7 +2656,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
    C->xmin = C->xmax = C->head.point[0];
    C->ymin = C->ymax = C->head.point[1];
  
@@ -628,7 +628,7 @@ index 0d5183d..dfb7fdd 100644
    if (c != p)
      {
        do
-@@ -2637,7 +2667,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -2637,7 +2668,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
  	  cntrbox_adjust (C, c->point);
  	  C->Count++;
  	}
@@ -637,7 +637,7 @@ index 0d5183d..dfb7fdd 100644
      }
    C->area = ABS (area);
    if (C->Count > 2)
-@@ -2649,7 +2679,7 @@ static int
+@@ -2649,7 +2680,7 @@ static int
  flip_cb (const BoxType * b, void *cl)
  {
    struct seg *s = (struct seg *) b;
@@ -646,7 +646,7 @@ index 0d5183d..dfb7fdd 100644
    return 1;
  }
  
-@@ -2665,9 +2695,9 @@ poly_InvContour (PLINE * c)
+@@ -2665,9 +2696,9 @@ poly_InvContour (PLINE * c)
    cur = &c->head;
    do
      {
@@ -659,7 +659,7 @@ index 0d5183d..dfb7fdd 100644
        /* fix the segment tree */
      }
    while ((cur = next) != &c->head);
-@@ -2693,8 +2723,8 @@ poly_ExclVertex (VNODE * node)
+@@ -2693,8 +2724,8 @@ poly_ExclVertex (VNODE * node)
        free (node->cvc_next);
        free (node->cvc_prev);
      }
@@ -670,7 +670,7 @@ index 0d5183d..dfb7fdd 100644
  }
  
  void
-@@ -2704,21 +2734,21 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -2704,21 +2735,21 @@ poly_InclVertex (VNODE * after, VNODE * node)
    assert (after != NULL);
    assert (node != NULL);
  
@@ -703,7 +703,7 @@ index 0d5183d..dfb7fdd 100644
        free (t);
      }
  }
-@@ -2740,12 +2770,12 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2740,12 +2771,12 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
    (*dst)->ymin = src->ymin, (*dst)->ymax = src->ymax;
    (*dst)->area = src->area;
  
@@ -718,7 +718,7 @@ index 0d5183d..dfb7fdd 100644
      }
    (*dst)->tree = (rtree_t *)make_edge_tree (*dst);
    return TRUE;
-@@ -2857,14 +2887,14 @@ crossing (const BoxType * b, void *cl)
+@@ -2857,14 +2888,14 @@ crossing (const BoxType * b, void *cl)
    struct seg *s = (struct seg *) b;
    struct pip *p = (struct pip *) cl;
  
@@ -737,7 +737,7 @@ index 0d5183d..dfb7fdd 100644
  	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
  	  if (cross == 0)
  	    {
-@@ -2877,12 +2907,12 @@ crossing (const BoxType * b, void *cl)
+@@ -2877,12 +2908,12 @@ crossing (const BoxType * b, void *cl)
      }
    else
      {
@@ -753,7 +753,7 @@ index 0d5183d..dfb7fdd 100644
  	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
  	  if (cross == 0)
  	    {
-@@ -3036,8 +3066,8 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
+@@ -3036,8 +3067,8 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
      {
        double dot_product;
  
@@ -764,7 +764,7 @@ index 0d5183d..dfb7fdd 100644
  
        dot_product = dot_orthogonal_to_direction (pt1->point, pt2->point,
                                                   pt3->point, pt2->point);
-@@ -3045,7 +3075,7 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
+@@ -3045,7 +3076,7 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
        if (dot_product * dir > 0.)
          break;
      }
@@ -773,7 +773,7 @@ index 0d5183d..dfb7fdd 100644
  
    /* Loop over remaining vertices */
    q = pt3;
-@@ -3063,7 +3093,7 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
+@@ -3063,7 +3094,7 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
          min_q = q;
        }
      }
@@ -782,7 +782,7 @@ index 0d5183d..dfb7fdd 100644
  
    /* Were any "q" found inside pt1 pt2 pt3? */
    if (min_q == NULL) {
-@@ -3162,8 +3192,8 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -3162,8 +3193,8 @@ inside_sector (VNODE * pn, Vector p2)
  
    assert (pn != NULL);
    vect_sub (cdir, p2, pn->point);
@@ -793,7 +793,7 @@ index 0d5183d..dfb7fdd 100644
  
    p_c = vect_det2 (pdir, cdir) >= 0;
    n_c = vect_det2 (ndir, cdir) >= 0;
-@@ -3191,23 +3221,23 @@ poly_ChkContour (PLINE * a)
+@@ -3191,23 +3222,23 @@ poly_ChkContour (PLINE * a)
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
@@ -823,7 +823,7 @@ index 0d5183d..dfb7fdd 100644
  	      else
  		hit2 = NULL;
  
-@@ -3223,7 +3253,7 @@ poly_ChkContour (PLINE * a)
+@@ -3223,7 +3254,7 @@ poly_ChkContour (PLINE * a)
  		/* An end-point of the second line touched somewhere along the
  		   length of the first line. Check where the second line leads. */
  		  if (inside_sector (hit2, a1->point) !=
@@ -832,7 +832,7 @@ index 0d5183d..dfb7fdd 100644
  		    return TRUE;
  		}
  	      else if (hit2 == NULL)
-@@ -3231,21 +3261,21 @@ poly_ChkContour (PLINE * a)
+@@ -3231,21 +3262,21 @@ poly_ChkContour (PLINE * a)
  		/* An end-point of the first line touched somewhere along the
  		   length of the second line. Check where the first line leads. */
  		  if (inside_sector (hit1, a2->point) !=
@@ -859,7 +859,7 @@ index 0d5183d..dfb7fdd 100644
    return FALSE;
  }
  
-@@ -3270,11 +3300,11 @@ poly_Valid (POLYAREA * p)
+@@ -3270,11 +3301,11 @@ poly_Valid (POLYAREA * p)
        v = &p->contours->head;
        do
  	{
@@ -873,7 +873,7 @@ index 0d5183d..dfb7fdd 100644
  #endif
        return FALSE;
      }
-@@ -3295,11 +3325,11 @@ poly_Valid (POLYAREA * p)
+@@ -3295,11 +3326,11 @@ poly_Valid (POLYAREA * p)
  	  v = &c->head;
  	  do
  	    {
