@@ -1,0 +1,23 @@
+Bottom: e3e4c86daaf83b3781fd85e85a2d45975af942e7
+Top:    4cb60f1009148d609515a2178b6e058ff35f195d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-04 14:44:54 +0000
+
+Refresh of add-macros-to-access-next-and
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index dfb7fdd..fd155bc 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1481,7 +1481,8 @@ typedef enum
+ } DIRECTION;
+ 
+ /* Jump Rule  */
+-typedef int (*J_Rule) (char, VNODE *, DIRECTION *); /* VNODE * is considered an edge */
++/* VNODE * is considered an edge */
++typedef int (*J_Rule) (char, VNODE *, DIRECTION *);
+ 
+ /* v is considered an edge */
+ static int
