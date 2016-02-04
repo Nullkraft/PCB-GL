@@ -1565,13 +1565,15 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
 #ifdef DEBUG_JUMP
   DEBUGP ("jump entering node at %$mD\n", (*cur)->point[0], (*cur)->point[1]);
 #endif
+  /* Pick the descriptor of the edge we came into this vertex with, then spin (anti?)clock-wise one edge descriptor */
   if (*cdir == FORW)
-    d = (*cur)->cvc_prev->prev;
+    d = (*cur)->cvc_prev->prev; /* If we start with a CVC Vertex.. this previous edge has not been vetted for whether it belongs in the polygon or not!! */
   else
     d = (*cur)->cvc_next->prev;
   start = d;
   do
     {
+      /* Get the edge e, associated with that descriptor */
       if (d->side == 'P')
         e = VERTEX_BACKWARD_EDGE (d->parent);
       else
@@ -1585,10 +1587,10 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
 #ifdef DEBUG_JUMP
 	      if (newone == FORW)
 		DEBUGP ("jump leaving node at %#mD\n",
-			NEXT_VERTEX (e)->point[0], NEXT_VERTEX (e)->point[1]);
+			EDGE_FORWARD_VERTEX (e)->point[0], EDGE_FORWARD_VERTEX (e)->point[1]);
 	      else
 		DEBUGP ("jump leaving node at %#mD\n",
-			e->point[0], e->point[1]);
+			EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1]);
 #endif
 	      *cur = d->parent;
 	      *cdir = newone;
@@ -1596,7 +1598,7 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
 	    }
 	}
     }
-  while ((d = d->prev) != start);
+  while ((d = d->prev) != start); /* Keep searching around the cvc vertex for a suitable exit edge */
   return FALSE;
 }
 
