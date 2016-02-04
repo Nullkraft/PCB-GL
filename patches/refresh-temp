@@ -1,0 +1,44 @@
+Bottom: 36152d679221d7e1c1d3b7586bb20342b9a88e6f
+Top:    1cd43e87e1658d72435f4ea9a2a8c156679b14f9
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-04 00:08:04 +0000
+
+Refresh of try-applying-martin-s-upstream
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index c48530e..5c43d25 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1647,16 +1647,14 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+   return err_ok;
+ }				/* Gather */
+ 
+-/* cure is considered an edge */
++/* curv is considered a vertex */
+ static void
+-Collect1 (jmp_buf *e, VNODE *cure, DIRECTION dir, POLYAREA **contours,
++Collect1 (jmp_buf *e, VNODE *curv, DIRECTION dir, POLYAREA **contours,
+           PLINE **holes, J_Rule j_rule)
+ {
+   PLINE *p = NULL;		/* start making contour */
+   int errc = err_ok;
+-  if ((errc = Gather ((dir == FORW) ? EDGE_BACKWARD_VERTEX (cure) :
+-                                      EDGE_FORWARD_VERTEX (cure),
+-                      &p, j_rule, dir)) != err_ok)
++  if ((errc = Gather (curv, &p, j_rule, dir)) != err_ok)
+     {
+       if (p != NULL)
+ 	poly_DelContour (&p);
+@@ -1704,7 +1702,9 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
+ #endif
+ 
+       if (j_rule (poly, cure, &dir) && cure->Flags.mark == 0)
+-	Collect1 (e, cure, dir, contours, holes, j_rule);
++        Collect1 (e, (dir == FORW) ? EDGE_BACKWARD_VERTEX (cure) :
++                                     EDGE_FORWARD_VERTEX (cure),
++                  dir, contours, holes, j_rule);
+     }
+   while ((cure = NEXT_EDGE (cure)) != &a->head);
+ }				/* Collect */
