@@ -1084,10 +1084,11 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("%#mD->%#mD labeled %s\n", c->point[0], c->point[1],
-	      NEXT_VERTEX (c)->point[0], NEXT_VERTEX (c)->point[1], theState (c));
+      DEBUGP ("%#mD->%#mD labeled %s\n",
+              EDGE_BACKWARD_VERTEX (c)->point[0], EDGE_BACKWARD_VERTEX (c)->point[1],
+               EDGE_FORWARD_VERTEX (c)->point[0],  EDGE_FORWARD_VERTEX (c)->point[1], theState (c));
     }
-  while ((c = NEXT_VERTEX (c)) != &a->head);
+  while ((c = NEXT_EDGE (c)) != &a->head);
 }
 #endif
 #endif
