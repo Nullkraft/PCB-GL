@@ -1,5 +1,5 @@
 Bottom: e9865551aae1c331a5afba06832f7e41103176bf
-Top:    03cfb8a933b7dca122874860832521868e8b6003
+Top:    7b8d2088115c577f24704a8b01a2b5b01fad086b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-03 23:11:20 +0000
 
@@ -9,10 +9,30 @@ Rename v->e and e->v to clairfy edge vs. vertex usage
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c6e7739..63d2f6a 100644
+index c6e7739..86d4a44 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1102,17 +1102,17 @@ label_contour
+@@ -1080,14 +1080,15 @@ theState (VNODE * e)
+ static void
+ print_labels (PLINE * a)
+ {
+-  VNODE *c = &a->head;
++  VNODE *e = &a->head;
+ 
+   do
+     {
+-      DEBUGP ("%#mD->%#mD labeled %s\n", c->point[0], c->point[1],
+-	      NEXT_VERTEX (c)->point[0], NEXT_VERTEX (c)->point[1], theState (c));
++      DEBUGP ("%#mD->%#mD labeled %s\n",
++              EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
++               EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
+     }
+-  while ((c = NEXT_VERTEX (c)) != &a->head);
++  while ((e = NEXT_EDGE (e)) != &a->head);
+ }
+ #endif
+ #endif
+@@ -1102,17 +1103,17 @@ label_contour
  static BOOLp
  label_contour (PLINE * a)
  {
@@ -34,7 +54,7 @@ index c6e7739..63d2f6a 100644
  	  continue;
  	}
  
-@@ -1121,9 +1121,9 @@ label_contour (PLINE * a)
+@@ -1121,9 +1122,9 @@ label_contour (PLINE * a)
  
        /* This labels nodes which aren't cross-connected */
        assert (label == INSIDE || label == OUTSIDE);
@@ -46,7 +66,7 @@ index c6e7739..63d2f6a 100644
  #ifdef DEBUG_ALL_LABELS
    print_labels (a);
    DEBUGP ("\n\n");
-@@ -1480,34 +1480,35 @@ typedef enum
+@@ -1480,34 +1481,35 @@ typedef enum
  } DIRECTION;
  
  /* Jump Rule  */
@@ -93,7 +113,7 @@ index c6e7739..63d2f6a 100644
      {
        *cdir = FORW;
        return TRUE;
-@@ -1515,21 +1516,21 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1515,21 +1517,21 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
    return FALSE;
  }
  
@@ -120,7 +140,7 @@ index c6e7739..63d2f6a 100644
      {
        if (p == 'A')
  	*cdir = FORW;
-@@ -1546,28 +1547,28 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1546,28 +1548,28 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
   *
   * returns true if an edge is found, false otherwise
   */
@@ -157,7 +177,7 @@ index c6e7739..63d2f6a 100644
    start = d;
    do
      {
-@@ -1589,7 +1590,7 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
+@@ -1589,7 +1591,7 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
  		DEBUGP ("jump leaving node at %#mD\n",
  			e->point[0], e->point[1]);
  #endif
@@ -166,7 +186,7 @@ index c6e7739..63d2f6a 100644
  	      *cdir = newone;
  	      return TRUE;
  	    }
-@@ -1601,9 +1602,10 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
+@@ -1601,9 +1603,10 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule j_rule)
  
  /* start is considered a vertex */
  static int
@@ -179,7 +199,7 @@ index c6e7739..63d2f6a 100644
    DIRECTION dir = initdir;
  #ifdef DEBUG_GATHER
    DEBUGP ("gather direction = %d\n", dir);
-@@ -1612,10 +1614,10 @@ Gather (VNODE * start, PLINE ** result, J_Rule j_rule, DIRECTION initdir)
+@@ -1612,10 +1615,10 @@ Gather (VNODE * start, PLINE ** result, J_Rule j_rule, DIRECTION initdir)
    do
      {
        /* see where to go next */
@@ -193,7 +213,7 @@ index c6e7739..63d2f6a 100644
          return err_no_memory;
        if (!*result)
  	{
-@@ -1631,28 +1633,28 @@ Gather (VNODE * start, PLINE ** result, J_Rule j_rule, DIRECTION initdir)
+@@ -1631,28 +1634,28 @@ Gather (VNODE * start, PLINE ** result, J_Rule j_rule, DIRECTION initdir)
        DEBUGP ("gather vertex at %#mD\n", cur->point[0], cur->point[1]);
  #endif
        /* Now mark the edge as included.  */
@@ -229,7 +249,7 @@ index c6e7739..63d2f6a 100644
                        &p, j_rule, dir)) != err_ok)
      {
        if (p != NULL)
-@@ -1684,10 +1686,10 @@ static void
+@@ -1684,10 +1687,10 @@ static void
  Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
           J_Rule j_rule)
  {
@@ -242,7 +262,7 @@ index c6e7739..63d2f6a 100644
  //  cur = (&a->head)->next->next->next->next->next; /* Breaks circ_seg_test9.pcb */
    do
      {
-@@ -1696,14 +1698,14 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
+@@ -1696,14 +1699,14 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
        // In particular, consider the case when we collect a 'B' polygon contour.
        // Could some of that countour may already have been collected, and there
        // still be a piece we are interested in after? (Can we reach it though??)
