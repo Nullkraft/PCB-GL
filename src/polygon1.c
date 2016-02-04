@@ -1481,7 +1481,8 @@ typedef enum
 } DIRECTION;
 
 /* Jump Rule  */
-typedef int (*J_Rule) (char, VNODE *, DIRECTION *); /* VNODE * is considered an edge */
+/* VNODE * is considered an edge */
+typedef int (*J_Rule) (char, VNODE *, DIRECTION *);
 
 /* v is considered an edge */
 static int
