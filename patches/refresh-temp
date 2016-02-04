@@ -1,0 +1,33 @@
+Bottom: 03cfb8a933b7dca122874860832521868e8b6003
+Top:    7b8d2088115c577f24704a8b01a2b5b01fad086b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-04 00:02:21 +0000
+
+Refresh of rename-v-e-and-e-v-to-clairfy
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 63d2f6a..86d4a44 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1080,14 +1080,15 @@ theState (VNODE * e)
+ static void
+ print_labels (PLINE * a)
+ {
+-  VNODE *c = &a->head;
++  VNODE *e = &a->head;
+ 
+   do
+     {
+-      DEBUGP ("%#mD->%#mD labeled %s\n", c->point[0], c->point[1],
+-	      NEXT_VERTEX (c)->point[0], NEXT_VERTEX (c)->point[1], theState (c));
++      DEBUGP ("%#mD->%#mD labeled %s\n",
++              EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
++               EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
+     }
+-  while ((c = NEXT_VERTEX (c)) != &a->head);
++  while ((e = NEXT_EDGE (e)) != &a->head);
+ }
+ #endif
+ #endif
