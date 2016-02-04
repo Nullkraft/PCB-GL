@@ -1,5 +1,5 @@
 Bottom: 4cb60f1009148d609515a2178b6e058ff35f195d
-Top:    052906ef9bb9474dc27a2a54dc179a41af1a4e43
+Top:    ac757b592b1e6633a04403b18f3f3981bd7c6981
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-03 23:11:20 +0000
 
@@ -9,7 +9,7 @@ Rename v->e and e->v to clairfy edge vs. vertex usage
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index fd155bc..96655be 100644
+index fd155bc..3d55e94 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1080,15 +1080,15 @@ theState (VNODE * e)
@@ -215,8 +215,12 @@ index fd155bc..96655be 100644
          return err_no_memory;
        if (!*result)
  	{
-@@ -1635,28 +1636,28 @@ Gather (VNODE * start, PLINE ** result, J_Rule j_rule, DIRECTION initdir)
-       DEBUGP ("gather vertex at %#mD\n", cur->point[0], cur->point[1]);
+@@ -1632,31 +1633,31 @@ Gather (VNODE * start, PLINE ** result, J_Rule j_rule, DIRECTION initdir)
+ 	  poly_InclVertex (PREV_VERTEX (&(*result)->head), newn);
+ 	}
+ #ifdef DEBUG_GATHER
+-      DEBUGP ("gather vertex at %#mD\n", cur->point[0], cur->point[1]);
++      DEBUGP ("gather vertex at %#mD\n", curv->point[0], curv->point[1]);
  #endif
        /* Now mark the edge as included.  */
 -      newn = (dir == FORW) ? VERTEX_FORWARD_EDGE (cur) : VERTEX_BACKWARD_EDGE (cur);
