@@ -1,5 +1,5 @@
-Bottom: 93d3b68e6f167a381c01613098024bdd16e3a550
-Top:    547cc86751a94e5bc2b569d662cfb4876df712cf
+Bottom: 1dc2a3ae7b09b69bde70d8ed50e417dd3a40b610
+Top:    5e552c3075cdb7fdcdcaafa0d5334b087e7d47c7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-03 23:46:22 +0000
 
@@ -9,10 +9,10 @@ Try using cvc_next instead of cvc_prev where possible
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c9a4457..97ed6e8 100644
+index fa9f41e..adf3828 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -241,14 +241,14 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -242,14 +242,14 @@ new_descriptor (VNODE * a, char poly, char side)
      {
        if (side == 'P')
  	{
@@ -29,7 +29,7 @@ index c9a4457..97ed6e8 100644
  	    NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
  	  poly_ExclVertex (NEXT_VERTEX (a));
  	  vect_sub (v, NEXT_VERTEX (a)->point, a->point);
-@@ -488,7 +488,7 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
+@@ -489,7 +489,7 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
  
    do
      {
@@ -38,7 +38,7 @@ index c9a4457..97ed6e8 100644
  	{
  	  assert (node->cvc_prev == (CVCList *) - 1
  		  && node->cvc_next == (CVCList *) - 1);
-@@ -1556,7 +1556,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
+@@ -1557,7 +1557,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
    VNODE *e; /* e is considered an edge */
    DIRECTION newone;
  
