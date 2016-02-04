@@ -1,5 +1,5 @@
-Bottom: 36152d679221d7e1c1d3b7586bb20342b9a88e6f
-Top:    1cd43e87e1658d72435f4ea9a2a8c156679b14f9
+Bottom: 66b0da7b3c695de4cd90901d5b332759897d3460
+Top:    547cc86751a94e5bc2b569d662cfb4876df712cf
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-04 00:02:47 +0000
 
@@ -9,10 +9,10 @@ Try applying Martin's upstream patch (or similar)... and see how that looks with
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c48530e..5c43d25 100644
+index d77bff4..97ed6e8 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1647,16 +1647,14 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+@@ -1649,16 +1649,14 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
    return err_ok;
  }				/* Gather */
  
@@ -32,7 +32,7 @@ index c48530e..5c43d25 100644
      {
        if (p != NULL)
  	poly_DelContour (&p);
-@@ -1704,7 +1702,9 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
+@@ -1706,7 +1704,9 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
  #endif
  
        if (j_rule (poly, cure, &dir) && cure->Flags.mark == 0)
