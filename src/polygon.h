@@ -34,7 +34,7 @@
 
 /* Implementation constants */
 
-#define POLY_CIRC_SEGS 40
+#define POLY_CIRC_SEGS 10 //40
 #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
 
 /* adjustment to make the segments outline the circle rather than connect
