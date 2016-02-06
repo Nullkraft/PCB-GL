@@ -1,5 +1,5 @@
-Bottom: f2524411b9500d4b3b04eede561ba381bf0fd2e7
-Top:    630b330949f0d4c28c2e3e06940ebd4c3f414a43
+Bottom: 4cb60f1009148d609515a2178b6e058ff35f195d
+Top:    a58984c8526c6396d6bd9c28dfac5ac95dbe5df1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-04 14:49:39 +0000
 
@@ -22,7 +22,7 @@ index c2a7366..92ca8a2 100644
        unsigned int status:3;
        unsigned int mark:1;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1b99b67..634f73e 100644
+index fd155bc..13f27f6 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -82,13 +82,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -45,7 +45,7 @@ index 1b99b67..634f73e 100644
  
  #define ISECTED 3
  #define UNKNWN  0
-@@ -2517,7 +2517,7 @@ cntrbox_pointin (PLINE * c, Vector p)
+@@ -2516,7 +2516,7 @@ cntrbox_pointin (PLINE * c, Vector p)
  static inline int
  node_neighbours (VNODE * a, VNODE * b)
  {
@@ -54,7 +54,7 @@ index 1b99b67..634f73e 100644
  }
  
  VNODE *
-@@ -3223,23 +3223,23 @@ poly_ChkContour (PLINE * a)
+@@ -3222,23 +3222,23 @@ poly_ChkContour (PLINE * a)
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
@@ -84,7 +84,7 @@ index 1b99b67..634f73e 100644
  	      else
  		hit2 = NULL;
  
-@@ -3255,7 +3255,7 @@ poly_ChkContour (PLINE * a)
+@@ -3254,7 +3254,7 @@ poly_ChkContour (PLINE * a)
  		/* An end-point of the second line touched somewhere along the
  		   length of the first line. Check where the second line leads. */
  		  if (inside_sector (hit2, a1->point) !=
@@ -93,7 +93,7 @@ index 1b99b67..634f73e 100644
  		    return TRUE;
  		}
  	      else if (hit2 == NULL)
-@@ -3263,21 +3263,21 @@ poly_ChkContour (PLINE * a)
+@@ -3262,21 +3262,21 @@ poly_ChkContour (PLINE * a)
  		/* An end-point of the first line touched somewhere along the
  		   length of the second line. Check where the first line leads. */
  		  if (inside_sector (hit1, a2->point) !=
