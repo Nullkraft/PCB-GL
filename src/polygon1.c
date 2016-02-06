@@ -1658,15 +1658,15 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
   assert (*result == NULL);
   do
     {
-      VNODE *jump_cur_temp;
+      VNODE *jump_curv_temp;
       DIRECTION jump_dir_temp;
 
-      jump_cur_temp = cur;
+      jump_curv_temp = curv;
       jump_dir_temp = dir;
 
 #if 1
       /* see where to go next */
-      if (!jump (&jump_cur_temp, &jump_dir_temp, v_rule))
+      if (!jump (&jump_curv_temp, &jump_dir_temp, j_rule))
 	break;
 #endif
 
@@ -1700,12 +1700,12 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
       DEBUGP ("gather vertex at %mm, %mm, Dir=%i\n", curv->point[0], curv->point[1], dir);
 #endif
 #if 1
-      cur = jump_cur_temp;
+      curv = jump_curv_temp;
       dir = jump_dir_temp;
 #endif
 #if 0
       /* see where to go next */
-      if (!jump (&cur, &dir, v_rule))
+      if (!jump (&cur, &dir, j_rule))
 	break;
 #endif
 
@@ -1720,7 +1720,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
       curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
 #if 0
       /* see where to go next */
-      if (!jump (&cur, &dir, v_rule))
+      if (!jump (&cur, &dir, j_rule))
 	break;
 #endif
     }
