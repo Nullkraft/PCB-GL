@@ -1,5 +1,5 @@
 Bottom: ed45d9e3da657aa9d5b72cbbae0f93f4d0421de4
-Top:    9c8e656bc3f971e38ff18a68dd7a1a9acd1eb7b9
+Top:    74768dab367235db94da9ad09d50cdb8a6581664
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -160,7 +160,7 @@ index c9a0c8e..e0e1276 100644
    return r;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 589b6bf..6cea91b 100644
+index 589b6bf..1e7c051 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -75,8 +75,10 @@ double vect_dist2 (Vector v1, Vector v2);
@@ -506,27 +506,27 @@ index 589b6bf..6cea91b 100644
 +
 +      if (dir == FORW)
 +        {
-+          newn->orig_point0[0] = cur->orig_point0[0];
-+          newn->orig_point0[1] = cur->orig_point0[1];
-+          newn->orig_point1[0] = cur->orig_point1[0];
-+          newn->orig_point1[1] = cur->orig_point1[1];
-+          newn->p0 = cur->p0;
-+          newn->p1 = cur->p1;
-+          if (newn->p1 < newn->p0)
++          VERTEX_FORWARD_EDGE (newn)->orig_point0[0] = VERTEX_FORWARD_EDGE (curv)->orig_point0[0];
++          VERTEX_FORWARD_EDGE (newn)->orig_point0[1] = VERTEX_FORWARD_EDGE (curv)->orig_point0[1];
++          VERTEX_FORWARD_EDGE (newn)->orig_point1[0] = VERTEX_FORWARD_EDGE (curv)->orig_point1[0];
++          VERTEX_FORWARD_EDGE (newn)->orig_point1[1] = VERTEX_FORWARD_EDGE (curv)->orig_point1[1];
++          VERTEX_FORWARD_EDGE (newn)->p0 = VERTEX_FORWARD_EDGE (curv)->p0;
++          VERTEX_FORWARD_EDGE (newn)->p1 = VERTEX_FORWARD_EDGE (curv)->p1;
++          if (VERTEX_FORWARD_EDGE (newn)->p1 < VERTEX_FORWARD_EDGE (newn)->p0)
 +            {
-+              printf ("FORW: OH DEAR, p0=%f, p1=%f\n", newn->p0, newn->p1);
++              printf ("FORW: OH DEAR, p0=%f, p1=%f\n", VERTEX_FORWARD_EDGE (newn)->p0, VERTEX_FORWARD_EDGE (newn)->p1);
 +//              *(char *)0 = 0; /* CRASH */
 +            }
 +        }
 +      else
 +        {
-+          newn->orig_point0[0] = cur->prev->orig_point1[0];
-+          newn->orig_point0[1] = cur->prev->orig_point1[1];
-+          newn->orig_point1[0] = cur->prev->orig_point0[0];
-+          newn->orig_point1[1] = cur->prev->orig_point0[1];
-+          newn->p0 = 1.0 - cur->prev->p1;
-+          newn->p1 = 1.0 - cur->prev->p0;
-+          if (newn->p1 < newn->p0)
++          VERTEX_FORWARD_EDGE (newn)->orig_point0[0] = VERTEX_BACKWARD_EDGE (curv)->orig_point1[0];
++          VERTEX_FORWARD_EDGE (newn)->orig_point0[1] = VERTEX_BACKWARD_EDGE (curv)->orig_point1[1];
++          VERTEX_FORWARD_EDGE (newn)->orig_point1[0] = VERTEX_BACKWARD_EDGE (curv)->orig_point0[0];
++          VERTEX_FORWARD_EDGE (newn)->orig_point1[1] = VERTEX_BACKWARD_EDGE (curv)->orig_point0[1];
++          VERTEX_FORWARD_EDGE (newn)->p0 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->prev->p1;
++          VERTEX_FORWARD_EDGE (newn)->p1 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->prev->p0;
++          if (VERTEX_FORWARD_EDGE (newn)->p1 < VERTEX_FORWARD_EDGE (newn)->p0)
 +            {
 +              printf ("!FORW: OH DEAR, p0=%f, p1=%f\n", newn->p0, newn->p1);
 +//              *(char *)0 = 0; /* CRASH */
