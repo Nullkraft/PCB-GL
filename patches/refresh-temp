@@ -1,0 +1,24 @@
+Bottom: f376f001d88c9c603a1530c5b84c467bc13c758f
+Top:    2d5c64ca4cf65bddd8beb10bb3532bb27aa561bd
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-06 16:15:18 +0000
+
+Refresh of polygon1-c-fix-collect-routine
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index c4d1baa..0c9fa3b 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1707,6 +1707,10 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
+         Collect1 (e, (dir == FORW) ? EDGE_BACKWARD_VERTEX (cure) :
+                                      EDGE_FORWARD_VERTEX (cure),
+                   dir, contours, holes, j_rule);
++//    The lines below are no-longer required.. preserving for now to record this commit.
++//      other = cur;
++//      if (other->cvc_prev)
++//	Collect1 (e, other, dir, contours, holes, j_rule);
+     }
+   while ((cure = NEXT_EDGE (cure)) != &a->head);
+ }				/* Collect */
