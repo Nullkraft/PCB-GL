@@ -1,5 +1,5 @@
-Bottom: c15cac9c902df0212587326669c81c3d55e74d51
-Top:    6ec4540432e3efc8c71872a1d07fec12bec18b25
+Bottom: 00f461d2a5a4d1d1d73f1ecab40b497b0031f1c8
+Top:    af72aca3c1e9f7845f12789cca80b5b4e4fb750b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -160,7 +160,7 @@ index c9a0c8e..e0e1276 100644
    return r;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 81dab7f..509b148 100644
+index c3d6e99..c9c54a1 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -75,8 +75,10 @@ double vect_dist2 (Vector v1, Vector v2);
@@ -482,7 +482,7 @@ index 81dab7f..509b148 100644
  
  #warning NEED AN UPDATE FOR ROUND CONTOURS HERE?
        cntrbox_adjust (task->node_seg->p, task->new_node->point); /* XXX: DOES THIS WORK / MATTER FOR ARC SEGMENT INSERTIONS? */
-@@ -1947,6 +2068,36 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1907,6 +2028,36 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
                                                     (dir == FORW) ? cur->cy       : cur->prev->cy,
                                                     (dir == FORW) ? cur->radius   : cur->prev->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
          return err_no_memory;
@@ -519,7 +519,7 @@ index 81dab7f..509b148 100644
        if (!*result)
  	{
  	  *result = poly_NewContour (newn);
-@@ -1955,7 +2106,7 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1915,7 +2066,7 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
  	}
        else
  	{
@@ -528,7 +528,7 @@ index 81dab7f..509b148 100644
  	}
  #ifdef DEBUG_GATHER
        DEBUGP ("gather vertex at %mm, %mm, Dir=%i\n", cur->point[0], cur->point[1], dir);
-@@ -2711,6 +2862,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2706,6 +2857,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  	  poly_DelContour (&p);
  	}
  
@@ -539,7 +539,7 @@ index 81dab7f..509b148 100644
        InsertHoles (&e, *res, &holes);
      }
    /* delete holes if any left */
-@@ -2858,6 +3013,10 @@ poly_NewContour (VNODE *node)
+@@ -2853,6 +3008,10 @@ poly_NewContour (VNODE *node)
    poly_IniContour (res);
  
    Vcopy (res->head.point, node->point);
@@ -550,7 +550,7 @@ index 81dab7f..509b148 100644
    res->head.is_round = node->is_round;
    res->head.cx = node->cx;
    res->head.cy = node->cy;
-@@ -3067,11 +3226,22 @@ poly_InvContour (PLINE * c)
+@@ -3062,11 +3221,22 @@ poly_InvContour (PLINE * c)
    Coord stash_cx = c->head.cx;
    Coord stash_cy = c->head.cy;
    Coord stash_radius = c->head.radius;
@@ -573,7 +573,7 @@ index 81dab7f..509b148 100644
  #endif
  
  //  printf ("poly_InvContour\n");
-@@ -3092,16 +3262,28 @@ poly_InvContour (PLINE * c)
+@@ -3087,16 +3257,28 @@ poly_InvContour (PLINE * c)
        next_cx = cur->next->cx;
        next_cy = cur->next->cy;
        next_radius = cur->next->radius;
@@ -602,7 +602,7 @@ index 81dab7f..509b148 100644
  #endif
  
        next = cur->next;
-@@ -3149,6 +3331,17 @@ poly_ExclVertex (VNODE * node)
+@@ -3144,6 +3326,17 @@ poly_ExclVertex (VNODE * node)
    node->next->prev = node->prev;
  }
  
@@ -620,7 +620,7 @@ index 81dab7f..509b148 100644
  void
  poly_InclVertex (VNODE * after, VNODE * node)
  {
-@@ -3159,6 +3352,13 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -3154,6 +3347,13 @@ poly_InclVertex (VNODE * after, VNODE * node)
    node->prev = after;
    node->next = after->next;
    after->next = after->next->prev = node;
@@ -634,7 +634,7 @@ index 81dab7f..509b148 100644
    /* remove points on same line */
    if (node->prev->prev == node)
      return;			/* we don't have 3 points in the poly yet */
-@@ -3201,6 +3401,11 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -3196,6 +3396,11 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
    if (*dst == NULL)
      return FALSE;
  
@@ -646,7 +646,7 @@ index 81dab7f..509b148 100644
    (*dst)->Count = src->Count;
    (*dst)->Flags.orient = src->Flags.orient;
    (*dst)->xmin = src->xmin, (*dst)->xmax = src->xmax;
-@@ -3211,8 +3416,14 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -3206,8 +3411,14 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
      {
        if ((newnode = poly_CreateNodeFull (cur->point, cur->is_round, cur->cx, cur->cy, cur->radius)) == NULL)
  	return FALSE;
@@ -662,7 +662,7 @@ index 81dab7f..509b148 100644
      }
    (*dst)->tree = (rtree_t *)make_edge_tree (*dst);
    return TRUE;
-@@ -3324,14 +3535,27 @@ crossing (const BoxType * b, void *cl)
+@@ -3319,14 +3530,27 @@ crossing (const BoxType * b, void *cl)
    struct seg *s = (struct seg *) b;
    struct pip *p = (struct pip *) cl;
  
@@ -690,7 +690,7 @@ index 81dab7f..509b148 100644
  	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
  	  if (cross == 0)
  	    {
-@@ -3344,12 +3568,22 @@ crossing (const BoxType * b, void *cl)
+@@ -3339,12 +3563,22 @@ crossing (const BoxType * b, void *cl)
      }
    else
      {
@@ -713,7 +713,7 @@ index 81dab7f..509b148 100644
  	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
  	  if (cross == 0)
  	    {
-@@ -3660,7 +3894,8 @@ poly_ChkContour (PLINE * a)
+@@ -3655,7 +3889,8 @@ poly_ChkContour (PLINE * a)
  #warning THIS DOES NOT TAKE INTO ACCOUNT arc-arc and arc-line segments
  	  if (!node_neighbours (a1, a2) &&
  	      (icnt = vect_inters2 (a1->point, a1->next->point,
@@ -723,7 +723,7 @@ index 81dab7f..509b148 100644
  	    {
  	      if (icnt > 1)
  		return TRUE;
-@@ -3865,11 +4100,19 @@ vect_inters2
+@@ -3860,11 +4095,19 @@ vect_inters2
  
  int
  vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
@@ -744,7 +744,7 @@ index 81dab7f..509b148 100644
    if (max (p1[0], p2[0]) < min (q1[0], q2[0]) ||
        max (q1[0], q2[0]) < min (p1[0], p2[0]) ||
        max (p1[1], p2[1]) < min (q1[1], q2[1]) ||
-@@ -3884,6 +4127,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -3879,6 +4122,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
    deel = rpy * rqx - rpx * rqy;	/* -vect_det(rp,rq); */
  
    /* coordinates are 30-bit integers so deel will be exactly zero
@@ -752,7 +752,7 @@ index 81dab7f..509b148 100644
     * if the lines are parallel
     */
  
-@@ -3891,6 +4135,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -3886,6 +4130,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
      {
        double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
        Vector hp1, hq1, hp2, hq2, q1p1, q1q2;
@@ -760,7 +760,7 @@ index 81dab7f..509b148 100644
  
        Vsub2 (q1p1, q1, p1);
        Vsub2 (q1q2, q1, q2);
-@@ -3901,7 +4146,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -3896,7 +4141,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  	return 0;
        dc1 = 0;			/* m_len(p1 - p1) */
  
@@ -769,7 +769,7 @@ index 81dab7f..509b148 100644
        d1 = vect_m_dist (p1, q1);
        d2 = vect_m_dist (p1, q2);
  
-@@ -3910,49 +4155,86 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -3905,49 +4150,86 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
        Vcpy2 (hp2, p2);
        Vcpy2 (hq1, q1);
        Vcpy2 (hq2, q2);
@@ -878,7 +878,7 @@ index 81dab7f..509b148 100644
        return (Vequ2 (S1, S2) ? 1 : 2);
      }
    else
-@@ -3978,28 +4260,53 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -3973,28 +4255,53 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
         * s = (rqy * (q1x - p1x) + rqx * (p1y - q1y))/( rqy * rpx - rqx * rpy)
         */
  
@@ -936,7 +936,7 @@ index 81dab7f..509b148 100644
        return 1;
      }
  }				/* vect_inters2 */
-@@ -4030,6 +4337,7 @@ get_seg_bounds (PLINE *contour, VNODE *node)
+@@ -4025,6 +4332,7 @@ get_seg_bounds (PLINE *contour, VNODE *node)
    BoxType box;
    double dx;
  
