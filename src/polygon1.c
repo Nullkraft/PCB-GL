@@ -2087,27 +2087,27 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 
       if (dir == FORW)
         {
-          newn->orig_point0[0] = cur->orig_point0[0];
-          newn->orig_point0[1] = cur->orig_point0[1];
-          newn->orig_point1[0] = cur->orig_point1[0];
-          newn->orig_point1[1] = cur->orig_point1[1];
-          newn->p0 = cur->p0;
-          newn->p1 = cur->p1;
-          if (newn->p1 < newn->p0)
+          VERTEX_FORWARD_EDGE (newn)->orig_point0[0] = VERTEX_FORWARD_EDGE (curv)->orig_point0[0];
+          VERTEX_FORWARD_EDGE (newn)->orig_point0[1] = VERTEX_FORWARD_EDGE (curv)->orig_point0[1];
+          VERTEX_FORWARD_EDGE (newn)->orig_point1[0] = VERTEX_FORWARD_EDGE (curv)->orig_point1[0];
+          VERTEX_FORWARD_EDGE (newn)->orig_point1[1] = VERTEX_FORWARD_EDGE (curv)->orig_point1[1];
+          VERTEX_FORWARD_EDGE (newn)->p0 = VERTEX_FORWARD_EDGE (curv)->p0;
+          VERTEX_FORWARD_EDGE (newn)->p1 = VERTEX_FORWARD_EDGE (curv)->p1;
+          if (VERTEX_FORWARD_EDGE (newn)->p1 < VERTEX_FORWARD_EDGE (newn)->p0)
             {
-              printf ("FORW: OH DEAR, p0=%f, p1=%f\n", newn->p0, newn->p1);
+              printf ("FORW: OH DEAR, p0=%f, p1=%f\n", VERTEX_FORWARD_EDGE (newn)->p0, VERTEX_FORWARD_EDGE (newn)->p1);
 //              *(char *)0 = 0; /* CRASH */
             }
         }
       else
         {
-          newn->orig_point0[0] = cur->prev->orig_point1[0];
-          newn->orig_point0[1] = cur->prev->orig_point1[1];
-          newn->orig_point1[0] = cur->prev->orig_point0[0];
-          newn->orig_point1[1] = cur->prev->orig_point0[1];
-          newn->p0 = 1.0 - cur->prev->p1;
-          newn->p1 = 1.0 - cur->prev->p0;
-          if (newn->p1 < newn->p0)
+          VERTEX_FORWARD_EDGE (newn)->orig_point0[0] = VERTEX_BACKWARD_EDGE (curv)->orig_point1[0];
+          VERTEX_FORWARD_EDGE (newn)->orig_point0[1] = VERTEX_BACKWARD_EDGE (curv)->orig_point1[1];
+          VERTEX_FORWARD_EDGE (newn)->orig_point1[0] = VERTEX_BACKWARD_EDGE (curv)->orig_point0[0];
+          VERTEX_FORWARD_EDGE (newn)->orig_point1[1] = VERTEX_BACKWARD_EDGE (curv)->orig_point0[1];
+          VERTEX_FORWARD_EDGE (newn)->p0 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->prev->p1;
+          VERTEX_FORWARD_EDGE (newn)->p1 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->prev->p0;
+          if (VERTEX_FORWARD_EDGE (newn)->p1 < VERTEX_FORWARD_EDGE (newn)->p0)
             {
               printf ("!FORW: OH DEAR, p0=%f, p1=%f\n", newn->p0, newn->p1);
 //              *(char *)0 = 0; /* CRASH */
