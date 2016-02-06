@@ -1,5 +1,5 @@
-Bottom: 4c7ce0b792d2ba9d10c7ba3b1b49f996a48ce1d0
-Top:    3a535b106e22d1b95f942f38205901434da04370
+Bottom: e0fbeafdd8bb9095d9321994681d7c0387c5eb5f
+Top:    a514a2c5ef41789d675ff66e188d8f8a8dcf6e18
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-05 20:22:13 +0000
 
@@ -9,10 +9,10 @@ Polygon debug operations
 ---
 
 diff --git a/src/main.c b/src/main.c
-index 072822a..1e705ed 100644
+index 3c3b4d0..acfdc46 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -1875,6 +1875,35 @@ char *program_directory = 0;
+@@ -1869,6 +1869,35 @@ char *program_directory = 0;
  
  #include "dolists.h"
  
@@ -48,7 +48,7 @@ index 072822a..1e705ed 100644
  int
  main (int argc, char *argv[])
  {
-@@ -2011,6 +2040,27 @@ main (int argc, char *argv[])
+@@ -2009,6 +2038,27 @@ main (int argc, char *argv[])
         */
        if (LoadPCB (command_line_pcb))
  	PCB->Filename = strdup (command_line_pcb);
