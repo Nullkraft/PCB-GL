@@ -1,7 +1,7 @@
-Bottom: 5c9e8e3b1a5c1ffc60d63d152e8119e48f3b7787
-Top:    05efa32300be60684748632ee7a39ea838b8a76a
+Bottom: 2b4b1313973619ec59ec0cba13997569ed496d46
+Top:    db7c611cba990a85f10c004a9c50a5f53280902d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-06 15:32:48 +0000
+Date:   2016-02-06 15:33:37 +0000
 
 Add name tags to contours and feature naming for pins and vias in STEP export
 
@@ -171,7 +171,7 @@ index a02fd99..e07c133 100644
  POLYAREA * LinePoly(LineType *l, Coord thick);
  POLYAREA * ArcPoly(ArcType *l, Coord thick);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f8f3344..df980d4 100644
+index 091641f..0f61cd1 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -2518,6 +2518,7 @@ poly_IniContour (PLINE * c)
