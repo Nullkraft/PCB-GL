@@ -1677,10 +1677,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 //                                                    curv->cx,
 //                                                    curv->cy,
 //                                                    curv->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
-      if ((newn = poly_CreateNodeFull (cur->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->prev->is_round,
-                                                   (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->prev->cx,
-                                                   (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cy       : VERTEX_BACKWARD_EDGE (curv)->prev->cy,
-                                                   (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->radius   : VERTEX_BACKWARD_EDGE (curv)->prev->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
+      if ((newn = poly_CreateNodeFull (curv->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->prev->is_round,
+                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->prev->cx,
+                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cy       : VERTEX_BACKWARD_EDGE (curv)->prev->cy,
+                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->radius   : VERTEX_BACKWARD_EDGE (curv)->prev->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
         return err_no_memory;
       if (!*result)
 	{
