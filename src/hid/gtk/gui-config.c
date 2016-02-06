@@ -475,14 +475,13 @@ static void
 config_file_read (void)
 {
   FILE *f;
-  char *buf = NULL;
-  size_t n = 0;
-  gchar *option, *arg;
+  gchar buf[512], *option, *arg;
 
   if ((f = config_file_open ("r")) == NULL)
     return;
 
-  while (getline (&buf, &n, f) != -1)
+  buf[0] = '\0';
+  while (fgets (buf, sizeof (buf), f))
     {
       if (parse_option_line (buf, &option, &arg) > 0)
 	set_config_attribute (option, arg);
@@ -490,7 +489,6 @@ config_file_read (void)
       g_free (arg);
     }
 
-  free (buf);
   fclose (f);
 }
 
