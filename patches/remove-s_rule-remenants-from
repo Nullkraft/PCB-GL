@@ -1,5 +1,5 @@
-Bottom: e0fbeafdd8bb9095d9321994681d7c0387c5eb5f
-Top:    4822d12e0a7b66d563d224baffbd487600a3935a
+Bottom: 53a33d3e524500660a0ce9762593e2b59855bbbc
+Top:    45544f7a98c39553ac7f486f23e3a6021dfa256d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-06 15:16:37 +0000
 
@@ -11,10 +11,10 @@ These "start" rules are not required, as we can use the "jump" rules instead.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ca8ed9a..f8f3344 100644
+index 544fc6d..95ce14f 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1462,53 +1462,12 @@ typedef enum
+@@ -1451,53 +1451,12 @@ typedef enum
    UNINITIALISED, FORW, BACKW
  } DIRECTION;
  
@@ -68,7 +68,7 @@ index ca8ed9a..f8f3344 100644
    *cdir = FORW;
    return (v->Flags.status == INSIDE || v->Flags.status == SHARED);
  }
-@@ -1516,7 +1475,6 @@ IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1505,7 +1464,6 @@ IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  static int
  UniteJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  {
@@ -76,7 +76,7 @@ index ca8ed9a..f8f3344 100644
    *cdir = FORW;
    return (v->Flags.status == OUTSIDE || v->Flags.status == SHARED);
  }
-@@ -1534,9 +1492,6 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1523,9 +1481,6 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
        *cdir = FORW;
        return TRUE;
      }
@@ -86,7 +86,7 @@ index ca8ed9a..f8f3344 100644
    return FALSE;
  }
  
-@@ -1561,15 +1516,6 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1550,15 +1505,6 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  	*cdir = BACKW;
        return TRUE;
      }
@@ -102,7 +102,7 @@ index ca8ed9a..f8f3344 100644
    return FALSE;
  }
  
-@@ -1709,7 +1655,7 @@ Collect1 (jmp_buf * e, VNODE * cur, DIRECTION dir, POLYAREA ** contours,
+@@ -1698,7 +1644,7 @@ Collect1 (jmp_buf * e, VNODE * cur, DIRECTION dir, POLYAREA ** contours,
  
  static void
  Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
@@ -111,7 +111,7 @@ index ca8ed9a..f8f3344 100644
  {
    VNODE *cur;
    DIRECTION dir = UNINITIALISED;
-@@ -1746,16 +1692,16 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1735,16 +1681,16 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
        switch (action)
  	{
  	case PBO_UNITE:
@@ -132,7 +132,7 @@ index ca8ed9a..f8f3344 100644
  	  break;
  	};
      }
-@@ -1831,16 +1777,16 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1820,16 +1766,16 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  	    switch (action)
  	      {
  	      case PBO_UNITE:
