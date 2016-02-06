@@ -647,9 +647,6 @@ LinePoly (LineType * L, Coord thick)
   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
     return 0;
 
-  v[0] = l->Point2.X - dx;
-  v[1] = l->Point2.Y - dy;
-
   if (TEST_FLAG (SQUAREFLAG,l))
     {
       v[0] = l->Point2.X + dx;
