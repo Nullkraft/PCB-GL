@@ -1,4 +1,4 @@
-Bottom: 4cb60f1009148d609515a2178b6e058ff35f195d
+Bottom: 71842a16334ae8b3d5e62b00855d105858d5eb48
 Top:    a58984c8526c6396d6bd9c28dfac5ac95dbe5df1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-06 15:33:38 +0000
@@ -22,29 +22,9 @@ index c2a7366..92ca8a2 100644
        unsigned int status:3;
        unsigned int mark:1;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index fd155bc..13f27f6 100644
+index 4210b68..13f27f6 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -82,13 +82,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
-  * traverses edges and vertices..
-  */
- #define VERTEX_FORWARD_EDGE(v) ((v))
--#define VERTEX_BACKWARD_EDGE(v) ((v)->_prev)
--#define EDGE_FORWARD_VERTEX(e) ((e)->_next)
-+#define VERTEX_BACKWARD_EDGE(v) ((v)->prev)
-+#define EDGE_FORWARD_VERTEX(e) ((e)->next)
- #define EDGE_BACKWARD_VERTEX(e) ((e))
--#define NEXT_VERTEX(v) ((v)->_next)
--#define PREV_VERTEX(v) ((v)->_prev)
--#define NEXT_EDGE(e) ((e)->_next)
--#define PREV_EDGE(e) ((e)->_prev)
-+#define NEXT_VERTEX(v) ((v)->next)
-+#define PREV_VERTEX(v) ((v)->prev)
-+#define NEXT_EDGE(e) ((e)->next)
-+#define PREV_EDGE(e) ((e)->prev)
- 
- #define ISECTED 3
- #define UNKNWN  0
 @@ -2516,7 +2516,7 @@ cntrbox_pointin (PLINE * c, Vector p)
  static inline int
  node_neighbours (VNODE * a, VNODE * b)
