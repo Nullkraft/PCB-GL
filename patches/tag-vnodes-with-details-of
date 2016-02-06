@@ -1,5 +1,5 @@
 Bottom: 2d5c64ca4cf65bddd8beb10bb3532bb27aa561bd
-Top:    e57127e4613333957b0bbfff4933af2a5944078b
+Top:    9995cf420d2d4e2ce0da2764f0d3adc0f271c2cc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:15:59 +0000
 
@@ -431,7 +431,7 @@ index b0cc0e0..915c243 100644
    return clipped;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 0c9fa3b..2280665 100644
+index 0c9fa3b..3d4038e 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -49,6 +49,7 @@
@@ -524,15 +524,15 @@ index 0c9fa3b..2280665 100644
    assert (*result == NULL);
    do
      {
-+      VNODE *jump_cur_temp;
++      VNODE *jump_curv_temp;
 +      DIRECTION jump_dir_temp;
 +
-+      jump_cur_temp = cur;
++      jump_curv_temp = curv;
 +      jump_dir_temp = dir;
 +
 +#if 1
 +      /* see where to go next */
-+      if (!jump (&jump_cur_temp, &jump_dir_temp, v_rule))
++      if (!jump (&jump_curv_temp, &jump_dir_temp, j_rule))
 +	break;
 +#endif
 +
@@ -564,12 +564,12 @@ index 0c9fa3b..2280665 100644
 +      DEBUGP ("gather vertex at %mm, %mm, Dir=%i\n", curv->point[0], curv->point[1], dir);
 +#endif
 +#if 1
-+      cur = jump_cur_temp;
++      curv = jump_curv_temp;
 +      dir = jump_dir_temp;
 +#endif
 +#if 0
 +      /* see where to go next */
-+      if (!jump (&cur, &dir, v_rule))
++      if (!jump (&cur, &dir, j_rule))
 +	break;
  #endif
 +
@@ -585,7 +585,7 @@ index 0c9fa3b..2280665 100644
        curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
 +#if 0
 +      /* see where to go next */
-+      if (!jump (&cur, &dir, v_rule))
++      if (!jump (&cur, &dir, j_rule))
 +	break;
 +#endif
      }
