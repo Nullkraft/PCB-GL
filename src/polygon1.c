@@ -1085,7 +1085,7 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("%mm, %mm -> %mm, %mm labeled %s\n", c->point[0], c->point[1],
+      DEBUGP ("%mm, %mm -> %mm, %mm labeled %s\n",
               EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
     }
