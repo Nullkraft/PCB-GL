@@ -1,7 +1,7 @@
-Bottom: 3d6305b9b3c7fe64d9d393dfd312b655dbf2c645
-Top:    4a89a39e24da7d591647b5bb9baae774cf132f3c
+Bottom: 36101c4156d5baa4c661dc21e95ea5743bf783bc
+Top:    d55b6f2543ca121850ce59f5ea78b951334a5947
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-07 02:18:22 +0000
+Date:   2016-02-06 15:54:08 +0000
 
 Add support for arc segments in polygon object outline definitions
 
@@ -251,7 +251,7 @@ index c0350f8..79dc75b 100644
  		;
  
 diff --git a/src/polygon.c b/src/polygon.c
-index ac9f638..5397e4f 100644
+index c3ea10f..fe9504b 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -111,6 +111,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -412,7 +412,7 @@ index ac9f638..5397e4f 100644
        /* Is current point last in contour? If so process it. */
        if (n == p->PointN - 1 ||
            (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
-@@ -419,6 +538,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+@@ -450,6 +569,7 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
      }
  }
  
@@ -420,7 +420,7 @@ index ac9f638..5397e4f 100644
  /* create a circle approximation from lines */
  POLYAREA *
  CirclePoly (Coord x, Coord y, Coord radius)
-@@ -1253,7 +1373,8 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
+@@ -1297,7 +1417,8 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
        line.Point1 = Polygon->Points[prev];
        line.Point2 = Polygon->Points[next];
        line.Thickness = 0;
@@ -430,7 +430,7 @@ index ac9f638..5397e4f 100644
          {
            RemoveObject (POLYGONPOINT_TYPE, Layer, Polygon, p);
            changed = true;
-@@ -1847,9 +1968,9 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+@@ -1891,9 +2012,9 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
              return false;
            many = true;
            v = &p->contours->head;
@@ -442,7 +442,7 @@ index ac9f638..5397e4f 100644
            newone->BoundingBox.X1 = p->contours->xmin;
            newone->BoundingBox.X2 = p->contours->xmax + 1;
            newone->BoundingBox.Y1 = p->contours->ymin;
-@@ -1961,7 +2082,8 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+@@ -2005,7 +2126,8 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
            do
              {
                CreateNewPointInPolygon (Polygon, node->point[0],
