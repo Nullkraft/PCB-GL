@@ -1,5 +1,5 @@
 Bottom: 4e04dfa4f00ededa46fc3bbee724cb47f5036878
-Top:    7c19982db48e28c058d70c8f831f85250cd25fcc
+Top:    7755f4eae1e238858d851ba4663d6b1b6c01410f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-09 17:30:23 +0000
 
@@ -13,7 +13,7 @@ XXX: Thermals are not fixed up after frac_circle() changes
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 0177070..c3ea10f 100644
+index 0177070..e35c808 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -419,6 +419,37 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
@@ -63,20 +63,19 @@ index 0177070..c3ea10f 100644
    contour->is_round = TRUE;
    contour->cx = x;
    contour->cy = y;
-@@ -610,28 +641,41 @@ LinePoly (LineType * L, Coord thick)
+@@ -610,28 +641,38 @@ LinePoly (LineType * L, Coord thick)
        l->Point2.X += dy;
        l->Point2.Y -= dx;
      }
 -  v[0] = l->Point1.X - dx;
 -  v[1] = l->Point1.Y - dy;
-+
-+  v[0] = l->Point2.X - dx;
-+  v[1] = l->Point2.Y - dy;
-   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
-     return 0;
+-  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
+-    return 0;
 +
    v[0] = l->Point2.X - dx;
    v[1] = l->Point2.Y - dy;
++  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
++    return 0;
 +
    if (TEST_FLAG (SQUAREFLAG,l))
 -    poly_InclVertex (contour->head.prev, poly_CreateNode (v));
