@@ -1,5 +1,5 @@
-Bottom: 0d7c0d90d4220d64f75161279b13594bbca7f93d
-Top:    fec1efad750201717dcd348a5530aeebfe64f56e
+Bottom: bb02bd99c67f1a2740ffbf00c8d1c4bfffbceb37
+Top:    bb02bd99c67f1a2740ffbf00c8d1c4bfffbceb37
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-07 02:18:22 +0000
 
@@ -26,16 +26,4 @@ Layer(1 "component")
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index ef82f37..567a473 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -1695,7 +1695,7 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
-       if (s_rule (cur, &dir) && cur->Flags.mark == 0)
- 	Collect1 (e, cur, dir, contours, holes, j_rule);
-       other = cur;
--      if ((other->cvc_prev && jump (&other, &dir, j_rule)))
-+      if (other->cvc_prev)
- 	Collect1 (e, other, dir, contours, holes, j_rule);
-     }
-   while ((cur = cur->next) != &a->head);
+
