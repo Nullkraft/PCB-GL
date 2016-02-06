@@ -1,0 +1,23 @@
+Bottom: 7c19982db48e28c058d70c8f831f85250cd25fcc
+Top:    7755f4eae1e238858d851ba4663d6b1b6c01410f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-06 16:14:09 +0000
+
+Refresh of fix-poly-contours
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index c3ea10f..e35c808 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -647,9 +647,6 @@ LinePoly (LineType * L, Coord thick)
+   if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
+     return 0;
+ 
+-  v[0] = l->Point2.X - dx;
+-  v[1] = l->Point2.Y - dy;
+-
+   if (TEST_FLAG (SQUAREFLAG,l))
+     {
+       v[0] = l->Point2.X + dx;
