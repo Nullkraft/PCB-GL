@@ -1,0 +1,28 @@
+Bottom: a3975f15991f0d523abf6c808030ef4be7efb95a
+Top:    8a4914855407d010b3a0bf00fe54e4fa23bba0a3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-06 16:48:10 +0000
+
+Refresh of tag-the-from-vertex-with-the
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index c70ebf8..3b271e3 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1677,10 +1677,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+ //                                                    curv->cx,
+ //                                                    curv->cy,
+ //                                                    curv->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
+-      if ((newn = poly_CreateNodeFull (cur->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->prev->is_round,
+-                                                   (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->prev->cx,
+-                                                   (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cy       : VERTEX_BACKWARD_EDGE (curv)->prev->cy,
+-                                                   (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->radius   : VERTEX_BACKWARD_EDGE (curv)->prev->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
++      if ((newn = poly_CreateNodeFull (curv->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->prev->is_round,
++                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->prev->cx,
++                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cy       : VERTEX_BACKWARD_EDGE (curv)->prev->cy,
++                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->radius   : VERTEX_BACKWARD_EDGE (curv)->prev->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
+         return err_no_memory;
+       if (!*result)
+ 	{
