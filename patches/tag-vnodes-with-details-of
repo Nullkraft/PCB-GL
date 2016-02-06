@@ -1,5 +1,5 @@
-Bottom: 99a905da3a355f38f81f2fea04079756805fb724
-Top:    471db3d5ccc0668fff9a6dd5e43a8f7439f43182
+Bottom: 949cb33ec34dd47c03e03b463c796377f1c514e9
+Top:    7a90436f23b044fb990c49c13c02c76594d74370
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:15:59 +0000
 
@@ -147,7 +147,7 @@ index c606077..be95bd2 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 21713de..1f8aa77 100644
+index b0cc0e0..915c243 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -104,11 +104,15 @@ dicer output is used for HIDs which cannot render things with holes
@@ -301,7 +301,7 @@ index 21713de..1f8aa77 100644
      return NULL;
    frac_circle2 (contour, x, y, v, 1);
    contour->is_round = TRUE;
-@@ -1789,6 +1813,10 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1788,6 +1812,10 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
            strcmp (layer->Name, "route") == 0)
          Data->outline_valid = false;
      }
@@ -312,7 +312,7 @@ index 21713de..1f8aa77 100644
  
    if (type == POLYGON_TYPE)
      InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
-@@ -2124,10 +2152,18 @@ arc_outline_callback (const BoxType * b, void *cl)
+@@ -2123,10 +2151,18 @@ arc_outline_callback (const BoxType * b, void *cl)
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
  
@@ -331,7 +331,7 @@ index 21713de..1f8aa77 100644
    info->poly = res;
  
    return 1;
-@@ -2140,10 +2176,18 @@ line_outline_callback (const BoxType * b, void *cl)
+@@ -2139,10 +2175,18 @@ line_outline_callback (const BoxType * b, void *cl)
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
  
@@ -350,7 +350,7 @@ index 21713de..1f8aa77 100644
    info->poly = res;
  
    return 1;
-@@ -2156,10 +2200,18 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2155,10 +2199,18 @@ pv_outline_callback (const BoxType * b, void *cl)
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
  
@@ -369,7 +369,7 @@ index 21713de..1f8aa77 100644
    info->poly = res;
  
    return 1;
-@@ -2175,8 +2227,11 @@ polygon_outline_callback (const BoxType * b, void *cl)
+@@ -2174,8 +2226,11 @@ polygon_outline_callback (const BoxType * b, void *cl)
    if (!(np = original_poly (poly)))
      return 0;
  
@@ -382,7 +382,7 @@ index 21713de..1f8aa77 100644
    info->poly = res;
  
    return 1;
-@@ -2268,13 +2323,19 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2267,13 +2322,19 @@ POLYAREA *board_outline_poly (bool include_holes)
    region.X2 = PCB->MaxWidth;
    region.Y2 = PCB->MaxHeight;
  
@@ -403,7 +403,7 @@ index 21713de..1f8aa77 100644
      {
        r_search (PCB->Data->pin_tree, &region, NULL, pv_outline_callback, &info);
        r_search (PCB->Data->via_tree, &region, NULL, pv_outline_callback, &info);
-@@ -2282,6 +2343,10 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2281,6 +2342,10 @@ POLYAREA *board_outline_poly (bool include_holes)
  
    clipped = info.poly;
  
@@ -414,7 +414,7 @@ index 21713de..1f8aa77 100644
    /* Now we just need to work out which pieces of polygon are inside
       and outside the board! */
  
-@@ -2329,6 +2394,7 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2328,6 +2393,7 @@ POLYAREA *board_outline_poly (bool include_holes)
    g_list_free (pieces_to_delete);
  #endif
  
@@ -422,7 +422,7 @@ index 21713de..1f8aa77 100644
    // The actual operation we want is to split the test polygon into multiple pieces
    // along the intersection with the polygon contours of any polygon on the outer layer.
    // The result would be nested, touching (not normally produced by the PBO code),
-@@ -2342,6 +2408,7 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2341,6 +2407,7 @@ POLYAREA *board_outline_poly (bool include_holes)
      return whole_world;
    else
      poly_Free (&whole_world);
@@ -431,7 +431,7 @@ index 21713de..1f8aa77 100644
    return clipped;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 567a473..47e679d 100644
+index f721685..83418b2 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -49,6 +49,7 @@
@@ -520,7 +520,7 @@ index 567a473..47e679d 100644
        /* Do insersion */
        task->new_node->prev = task->node_seg->v;
        task->new_node->next = task->node_seg->v->next;
-@@ -1615,11 +1657,30 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1575,11 +1617,30 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
    assert (*result == NULL);
    do
      {
@@ -552,7 +552,7 @@ index 567a473..47e679d 100644
          return err_no_memory;
        if (!*result)
  	{
-@@ -1632,8 +1693,18 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1592,8 +1653,18 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
  	  poly_InclVertex ((*result)->head.prev, newn);
  	}
  #ifdef DEBUG_GATHER
@@ -572,7 +572,7 @@ index 567a473..47e679d 100644
        /* Now mark the edge as included.  */
        newn = (dir == FORW ? cur : cur->prev);
        newn->Flags.mark = 1;
-@@ -1643,6 +1714,11 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1603,6 +1674,11 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
  
        /* Advance to the next edge.  */
        cur = (dir == FORW ? cur->next : cur->prev);
@@ -584,7 +584,7 @@ index 567a473..47e679d 100644
      }
    while (1);
    return err_ok;
-@@ -2293,6 +2369,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+@@ -2288,6 +2364,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
    return poly_Boolean_free (a, b, res, action);
  }				/* poly_Boolean */
  
@@ -593,7 +593,7 @@ index 567a473..47e679d 100644
  /* just like poly_Boolean but frees the input polys */
  int
  poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-@@ -2303,6 +2381,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2298,6 +2376,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    jmp_buf e;
    int code;
  
@@ -602,7 +602,7 @@ index 567a473..47e679d 100644
    *res = NULL;
  
    if (!a)
-@@ -2486,23 +2566,6 @@ node_neighbours (VNODE * a, VNODE * b)
+@@ -2481,23 +2561,6 @@ node_neighbours (VNODE * a, VNODE * b)
    return (a == b) || (a->next == b) || (b->next == a) || (a->next == b->next);
  }
  
@@ -626,7 +626,7 @@ index 567a473..47e679d 100644
  void
  poly_IniContour (PLINE * c)
  {
-@@ -2530,6 +2593,10 @@ poly_NewContour (VNODE *node)
+@@ -2525,6 +2588,10 @@ poly_NewContour (VNODE *node)
    poly_IniContour (res);
  
    Vcopy (res->head.point, node->point);
@@ -637,7 +637,7 @@ index 567a473..47e679d 100644
    cntrbox_adjust (res, res->head.point);
    free (node);
  
-@@ -2647,6 +2714,47 @@ flip_cb (const BoxType * b, void *cl)
+@@ -2642,6 +2709,47 @@ flip_cb (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -685,7 +685,7 @@ index 567a473..47e679d 100644
  void
  poly_InvContour (PLINE * c)
  {
-@@ -2655,16 +2763,46 @@ poly_InvContour (PLINE * c)
+@@ -2650,16 +2758,46 @@ poly_InvContour (PLINE * c)
    int r;
  #endif
  
@@ -732,7 +732,7 @@ index 567a473..47e679d 100644
    c->Flags.orient ^= 1;
    if (c->tree)
      {
-@@ -2704,11 +2842,25 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -2699,11 +2837,25 @@ poly_InclVertex (VNODE * after, VNODE * node)
    /* remove points on same line */
    if (node->prev->prev == node)
      return;			/* we don't have 3 points in the poly yet */
@@ -759,7 +759,7 @@ index 567a473..47e679d 100644
      {
        VNODE *t = node->prev;
        t->prev->next = node;
-@@ -2724,7 +2876,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2719,7 +2871,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    assert (src != NULL);
    *dst = NULL;
@@ -768,7 +768,7 @@ index 567a473..47e679d 100644
    if (*dst == NULL)
      return FALSE;
  
-@@ -2736,7 +2888,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2731,7 +2883,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    for (cur = src->head.next; cur != &src->head; cur = cur->next)
      {
