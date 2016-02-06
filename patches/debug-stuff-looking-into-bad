@@ -1,5 +1,5 @@
 Bottom: 2d5c64ca4cf65bddd8beb10bb3532bb27aa561bd
-Top:    430068d0097ead2a4716440fd3ee82905db43a96
+Top:    3cb4076c79fc1d588fe5ef2fab1e0daea70fa143
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-01-07 02:18:22 +0000
 
@@ -80,7 +80,7 @@ index b0cc0e0..6d76ea14 100644
    polygon->NoHolesValid = 0;
    return r;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 0c9fa3b..45cbcbe 100644
+index 0c9fa3b..92f2121 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -108,12 +108,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -145,7 +145,7 @@ index 0c9fa3b..45cbcbe 100644
    do
      {
 -      DEBUGP ("%#mD->%#mD labeled %s\n",
-+      DEBUGP ("%mm, %mm -> %mm, %mm labeled %s\n", c->point[0], c->point[1],
++      DEBUGP ("%mm, %mm -> %mm, %mm labeled %s\n",
                EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                 EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
      }
