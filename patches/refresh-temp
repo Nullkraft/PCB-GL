@@ -1,0 +1,22 @@
+Bottom: 430068d0097ead2a4716440fd3ee82905db43a96
+Top:    3cb4076c79fc1d588fe5ef2fab1e0daea70fa143
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-06 16:19:59 +0000
+
+Refresh of debug-stuff-looking-into-bad
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 45cbcbe..92f2121 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1085,7 +1085,7 @@ print_labels (PLINE * a)
+ 
+   do
+     {
+-      DEBUGP ("%mm, %mm -> %mm, %mm labeled %s\n", c->point[0], c->point[1],
++      DEBUGP ("%mm, %mm -> %mm, %mm labeled %s\n",
+               EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
+                EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
+     }
