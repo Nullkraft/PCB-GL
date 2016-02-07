@@ -1,5 +1,5 @@
-Bottom: ed45d9e3da657aa9d5b72cbbae0f93f4d0421de4
-Top:    74768dab367235db94da9ad09d50cdb8a6581664
+Bottom: cc682be6dcd595e3a4c6e7f2440c2c10a6ab9ccb
+Top:    d9fc69f660697dc187afe26c8d13e83e96bb34dd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -160,7 +160,7 @@ index c9a0c8e..e0e1276 100644
    return r;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 589b6bf..1e7c051 100644
+index fa2a445..b0dfa75 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -75,8 +75,10 @@ double vect_dist2 (Vector v1, Vector v2);
@@ -500,8 +500,8 @@ index 589b6bf..1e7c051 100644
  #warning NEED AN UPDATE FOR ROUND CONTOURS HERE?
        cntrbox_adjust (task->node_seg->p, task->new_node->point); /* XXX: DOES THIS WORK / MATTER FOR ARC SEGMENT INSERTIONS? */
 @@ -1964,6 +2084,36 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
-                                                     (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cy       : VERTEX_BACKWARD_EDGE (curv)->prev->cy,
-                                                     (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->radius   : VERTEX_BACKWARD_EDGE (curv)->prev->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
+                                                     (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cy       : VERTEX_BACKWARD_EDGE (curv)->cy,
+                                                     (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->radius   : VERTEX_BACKWARD_EDGE (curv)->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
          return err_no_memory;
 +
 +      if (dir == FORW)
