@@ -1,0 +1,32 @@
+Bottom: 29c49ec344b03ddd9b5ec838c16bd55c0982ce06
+Top:    29c49ec344b03ddd9b5ec838c16bd55c0982ce06
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-07 11:45:07 +0000
+
+polygon1.c: Move jump call to bottom of Gather..
+
+We call Gather from Collect1, having in Collect(), established using the j_rule,
+that the edge we wish to start with is not marked, and it suitable for inclusion
+in the new polygon contour. (Passing what will be the resulting "from" vertex
+into Collect1 to start processing).
+
+The first step in Gather was previously a Jump call - which could switch to the
+other polygon contour. (Without including our start edge). The key problem here
+is that Jump makes the assumption that the vertex it is passed was reached having
+been included in the resulting polygon. (It starts inspection of the CVCList from
+the assumed entry edge that reached the given vertex).
+
+In our startup condition, the vertex we pass (usually a from vertex, of a FORWARD
+polygon traversal of an edge in the 'A' polygon to be included in the resulting
+contour), is not necessarily preceeded by an edge on that same source contour that
+will end up in the resulting polyon - leading to the possibility that Jump gets
+the wrong result. (This is a by-inspection / theoretical issue, not one yet known
+to cause any particular bug).
+
+The fix is to include the edge segment we start with, BEFORE calling jump in Collect.
+Once our start edge is included, the assumptions made by Jump should hold.
+
+
+---
+
+
