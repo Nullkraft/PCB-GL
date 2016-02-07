@@ -2461,7 +2461,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 	break;
 #endif
 
-#if 1
+#if 0
       /* see where to go next */
       if (!jump (&curv, &dir, j_rule))
 	break;
@@ -2538,9 +2538,9 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 
       /* Advance to the next vertex (edge?).  */
       curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
-#if 0
+#if 1
       /* see where to go next */
-      if (!jump (&cur, &dir, j_rule))
+      if (!jump (&curv, &dir, j_rule))
 	break;
 #endif
     }
