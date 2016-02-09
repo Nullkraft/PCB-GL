@@ -1,5 +1,5 @@
-Bottom: e43b7877ac87b827d6f002247c28a899414b7c9f
-Top:    f6cf314a05284b5ad5579be1c899b7db287cb3d4
+Bottom: c1bcd0401e1a7c36a19697623e9883dfbfab0f74
+Top:    b8e97dea8fd8bb1b2ef015a78a45e9093e17ae6f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -104,7 +104,7 @@ index 8bdb180..07e55c3 100644
  
        last_x = this_x;
 diff --git a/src/polyarea.h b/src/polyarea.h
-index 637c497..e7a2d32 100644
+index 86bf9c3..678c7cf 100644
 --- a/src/polyarea.h
 +++ b/src/polyarea.h
 @@ -88,6 +88,10 @@ struct VNODE
@@ -118,7 +118,7 @@ index 637c497..e7a2d32 100644
      bool is_round;
      Coord cx, cy;
      Coord radius;
-@@ -193,8 +197,8 @@ double vect_dist2 (Vector v1, Vector v2);
+@@ -195,8 +199,8 @@ double vect_dist2 (Vector v1, Vector v2);
  double vect_det2 (Vector v1, Vector v2);
  double vect_len2 (Vector v1);
  
@@ -160,7 +160,7 @@ index 3e519d7..08f8028 100644
    return r;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index d55e0ca..0fddac1 100644
+index 48eae3b..6efbf58 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -75,8 +75,10 @@ double vect_dist2 (Vector v1, Vector v2);
