@@ -159,6 +159,8 @@ struct POLYAREA
     POLYPARENTAGE parentage;
 };
 
+void poly_dump (POLYAREA *p);
+
 BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 void poly_M_Incl(POLYAREA **list, POLYAREA *a);
 

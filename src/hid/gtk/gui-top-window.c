@@ -119,6 +119,8 @@ a zoom in/out.
 #include "gui-trackball.h"
 #include "snavi.h"
 
+#include "polyarea.h"
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
@@ -1275,6 +1277,12 @@ ghid_polygon_debug_selection_changed_cb (GtkTreeSelection *treeselection, gpoint
   gtk_tree_model_get (model, &iter,
                       POLYGON_DEBUG_COLUMN_POLYAREA, &ghidgui->debugged_polyarea,
                       -1);
+
+  if (ghidgui->debugged_polyarea != NULL) {
+    fprintf (stderr, "Printing polyarea %p\n", ghidgui->debugged_polyarea);
+    poly_dump (ghidgui->debugged_polyarea);
+  }
+
   ghid_invalidate_all ();
 }
 
