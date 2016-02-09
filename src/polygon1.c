@@ -105,10 +105,6 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 
 #define error(code)  longjmp(*(e), code)
 
-#define MemGet(ptr, type) \
-  if (UNLIKELY (((ptr) = (type *)malloc(sizeof(type))) == NULL))	\
-    error(err_no_memory);
-
 //#define DEBUG_INTERSECT
 #undef DEBUG_LABEL
 #undef DEBUG_ALL_LABELS
@@ -136,6 +132,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 	t = (a)[0], (a)[0] = (b)[0], (b)[0] = t; \
 	t = (a)[1], (a)[1] = (b)[1], (b)[1] = t; \
 }
+
+static POLYPARENTAGE no_parentage = {
+  .immaculate_conception = true,
+  .action = PBO_NONE,
+  .a = NULL,
+  .b = NULL
+};
 
 #ifdef DEBUG
 static char *theState (VNODE * v);
@@ -1240,23 +1243,22 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
 {
   POLYAREA *newp;
 
+  newp = poly_Create ();
   if (*dst == NULL)
     {
-      MemGet (*dst, POLYAREA);
-      (*dst)->f = (*dst)->b = *dst;
-      newp = *dst;
+      newp->f = newp->b = newp;
+      *dst = newp;
     }
   else
     {
-      MemGet (newp, POLYAREA);
       newp->f = *dst;
       newp->b = (*dst)->b;
       newp->f->b = newp->b->f = newp;
     }
-  newp->contours = c;
-  newp->contour_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (newp->contour_tree, (BoxType *) c, 0);
+
   c->next = NULL;
+  newp->contours = c;
+  r_insert_entry (newp->contour_tree, (BoxType *) c, 0);
 }				/* InsCntr */
 
 static void
@@ -1971,6 +1973,9 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
   piece->b->f = piece->f;
   piece->f->b = piece->b;
   piece->f = piece->b = piece;
+
+  /* Reset parentage information */
+  piece->parentage = no_parentage;
 }
 
 static void
@@ -2402,11 +2407,29 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
 {
   POLYAREA *a = NULL, *b = NULL;
 
+  *res = NULL; /* Set now, in case we run out of memory below */
+
   if (!poly_M_Copy0 (&a, a_org) || !poly_M_Copy0 (&b, b_org))
     return err_no_memory;
 
   return poly_Boolean_free (a, b, res, action);
 }				/* poly_Boolean */
+
+static void
+M_Set_Parentage (POLYAREA *poly, POLYPARENTAGE parentage)
+{
+  POLYAREA *piece = poly;
+
+  if (poly == NULL)
+    return;
+
+  do
+    {
+      piece->parentage = parentage;
+    }
+  while ((piece = piece->f) != poly);
+
+}
 
 static void test_polyInvContour (void);
 
@@ -2419,10 +2442,28 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
   PLINE *p, *holes = NULL;
   jmp_buf e;
   int code;
+  POLYAREA *a_copy, *b_copy;
+
+  *res = NULL; /* Set now, in case we run out of memory below */
+
+  /* Make copies for tracking polygon parentage (DEBUG) */
+  if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
+      return err_no_memory;
+
+  /* Move the parentage information over onto the copy */
+  if (a_copy != NULL)
+    {
+      M_Set_Parentage (a_copy, a->parentage);
+      M_Set_Parentage (a, no_parentage);
+    }
+
+  if (b_copy != NULL)
+    {
+      M_Set_Parentage (b_copy, b->parentage);
+      M_Set_Parentage (b, no_parentage);
+    }
 
   test_polyInvContour ();
-
-  *res = NULL;
 
   if (!a)
     {
@@ -2431,12 +2472,14 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 	case PBO_XOR:
 	case PBO_UNITE:
 	  *res = bi;
-	  return err_ok;
+	  code = err_ok;
+	  goto out;
 	case PBO_SUB:
 	case PBO_ISECT:
 	  if (b != NULL)
 	    poly_Free (&b);
-	  return err_ok;
+	  code = err_ok;
+	  goto out;
 	}
     }
   if (!b)
@@ -2447,11 +2490,13 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 	case PBO_XOR:
 	case PBO_UNITE:
 	  *res = ai;
-	  return err_ok;
+	  code = err_ok;
+	  goto out;
 	case PBO_ISECT:
 	  if (a != NULL)
 	    poly_Free (&a);
-	  return err_ok;
+	  code = err_ok;
+	  goto out;
 	}
     }
 
@@ -2499,7 +2544,23 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       poly_Free (res);
       return code;
     }
+
+out:
   assert (!*res || poly_Valid (*res));
+
+  /* Store perantage information */
+  if (*res != NULL)
+    {
+      POLYPARENTAGE parentage;
+
+      parentage.immaculate_conception = false;
+      parentage.action = action;
+      parentage.a = a_copy;
+      parentage.b = b_copy;
+
+      M_Set_Parentage (*res, parentage);
+    }
+
   return code;
 }				/* poly_Boolean_free */
 
@@ -2968,20 +3029,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
 /**********************************************************************/
 /* polygon routines */
 
-BOOLp
-poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
-{
-  *dst = NULL;
-  if (src != NULL)
-    *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
-  if (*dst == NULL)
-    return FALSE;
-  (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
-
-  return poly_Copy1 (*dst, src);
-}
-
-BOOLp
+static bool
 poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
 {
   PLINE *cur, **last = &dst->contours;
@@ -2992,10 +3040,35 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
   for (cur = src->contours; cur != NULL; cur = cur->next)
     {
       if (!poly_CopyContour (last, cur))
-	return FALSE;
+        return false;
       r_insert_entry (dst->contour_tree, (BoxType *) * last, 0);
       last = &(*last)->next;
     }
+
+  return true;
+}
+
+BOOLp
+poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
+{
+  POLYPARENTAGE parentage;
+
+  *dst = NULL;
+  if (src == NULL)
+    return TRUE;
+
+#if 0
+  /* Copy parentage information */
+  parentage.immaculate_conception = src->parentage.immaculate_conception;
+  parentage.action = src->parentage.action;
+  poly_M_Copy0 (&parentage.a, src->parentage.a);
+  poly_M_Copy0 (&parentage.b, src->parentage.b);
+#endif
+
+  if ((*dst = poly_Create ()) == NULL || !poly_Copy1 (*dst, src))
+    return FALSE;
+  (*dst)->parentage = parentage;
+
   return TRUE;
 }
 
@@ -3017,17 +3090,29 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
 {
   const POLYAREA *src = srcfst;
   POLYAREA *di;
+//  POLYPARENTAGE parentage;
 
   *dst = NULL;
   if (src == NULL)
-    return FALSE;
+    return TRUE; //FALSE; /* NEEDS TO RETURN TRUE, AS THIS IS _NOT_ A FAILURE */
+
+#if 0
+  /* Copy parentage information - we assume all M_linked polygons have the same parentage */
+  parentage.immaculate_conception = src->parentage.immaculate_conception;
+  parentage.action = src->parentage.action;
+  poly_M_Copy0 (&parentage.a, src->parentage.a);
+  poly_M_Copy0 (&parentage.b, src->parentage.b);
+#endif
+
   do
     {
       if ((di = poly_Create ()) == NULL || !poly_Copy1 (di, src))
 	return FALSE;
+//      di->parentage = parentage;
       poly_M_Incl (dst, di);
     }
   while ((src = src->f) != srcfst);
+
   return TRUE;
 }
 
@@ -3324,6 +3409,7 @@ poly_Init (POLYAREA * p)
   p->f = p->b = p;
   p->contours = NULL;
   p->contour_tree = r_create_tree (NULL, 0, 0);
+  p->parentage = no_parentage;
 }
 
 POLYAREA *
@@ -3365,6 +3451,13 @@ poly_Free (POLYAREA ** p)
     }
   poly_FreeContours (&cur->contours);
   r_destroy_tree (&cur->contour_tree);
+
+  /* Free parentage information - assume all linked polygons share this, so only need to do it for the past polygon */
+  if ((*p)->parentage.a != NULL)
+    poly_Free (&(*p)->parentage.a);
+  if ((*p)->parentage.b != NULL)
+    poly_Free (&(*p)->parentage.b);
+
   free (*p), *p = NULL;
 }
 

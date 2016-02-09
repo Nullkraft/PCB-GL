@@ -132,19 +132,37 @@ void poly_ExclVertex(VNODE * node);
 
 /**********************************************************************/
 
+enum PolygonBooleanOperation {
+	PBO_NONE,
+	PBO_UNITE,
+	PBO_ISECT,
+	PBO_SUB,
+	PBO_XOR
+};
+
 typedef struct POLYAREA POLYAREA;
+typedef struct POLYPARENTAGE POLYPARENTAGE;
+
+struct POLYPARENTAGE
+{
+  bool immaculate_conception;
+  enum PolygonBooleanOperation action;
+  POLYAREA *a;
+  POLYAREA *b;
+};
+
 struct POLYAREA
 {
     POLYAREA *f, *b;
     PLINE *contours;
     rtree_t *contour_tree;
+    POLYPARENTAGE parentage;
 };
 
 BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 void poly_M_Incl(POLYAREA **list, POLYAREA *a);
 
 BOOLp poly_Copy0(POLYAREA **dst, const POLYAREA *src);
-BOOLp poly_Copy1(POLYAREA  *dst, const POLYAREA *src);
 
 BOOLp poly_InclContour(POLYAREA * p, PLINE * c);
 BOOLp poly_ExclContour(POLYAREA * p, PLINE * c);
@@ -170,13 +188,6 @@ void poly_Free(POLYAREA **p);
 void poly_Init(POLYAREA  *p);
 void poly_FreeContours(PLINE **pl);
 BOOLp poly_Valid(POLYAREA *p);
-
-enum PolygonBooleanOperation {
-	PBO_UNITE,
-	PBO_ISECT,
-	PBO_SUB,
-	PBO_XOR
-};
 
 double vect_dist2 (Vector v1, Vector v2);
 double vect_det2 (Vector v1, Vector v2);
