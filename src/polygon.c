@@ -293,7 +293,8 @@ ContourToPoly (PLINE * contour)
 }
 
 static void
-degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector v /* First point */, Angle sweep)
+//degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector v /* First point */, Angle sweep)
+degree_circle (PLINE * c, double X, double Y /* <- Center */, double radius, Vector v /* First point */, Angle sweep)
 {
   /* We don't re-add a point at v, nor do we add the last point, sweep degrees around from (X,Y)-v */
   double e1, e2, t1;
@@ -393,8 +394,10 @@ original_poly (PolygonType * p)
       if (p->Points[n].included_angle != 0)
         {
           Cardinal next_n;
-          Coord cx, cy;
-          Coord radius;
+          double cx, cy;
+          double radius;
+//          Coord cx, cy;
+//          Coord radius;
 
           next_n = n + 1;
           if (next_n == p->PointN ||
@@ -2459,6 +2462,12 @@ POLYAREA *board_outline_poly (bool include_holes)
 #ifdef DEBUG_CIRCSEGS
   return clipped;
 #endif
+
+  if (clipped == NULL)
+    {
+      fprintf (stderr, "clipped == NULL in board_outline_poly\n");
+      return clipped;
+    }
 
   /* Now we just need to work out which pieces of polygon are inside
      and outside the board! */
