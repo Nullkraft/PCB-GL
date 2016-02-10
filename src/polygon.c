@@ -136,7 +136,7 @@ polygon_init (void)
 
   /* DEBUG - AVOID PCB running the system out of memory! */
   getrlimit (RLIMIT_AS, &limit);
-  limit.rlim_cur = MIN (limit.rlim_cur, 2000 * 1024 * 1024 /* 2000 GiB limit to virtual memory size */);
+  limit.rlim_cur = MIN (limit.rlim_cur, 7000 * 1024 * 1024 /* 2000 GiB limit to virtual memory size */);
   setrlimit (RLIMIT_AS, &limit);
 
 }
@@ -293,7 +293,8 @@ ContourToPoly (PLINE * contour)
 }
 
 static void
-degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector v /* First point */, Angle sweep)
+//degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector v /* First point */, Angle sweep)
+degree_circle (PLINE * c, double X, double Y /* <- Center */, double radius, Vector v /* First point */, Angle sweep)
 {
   /* We don't re-add a point at v, nor do we add the last point, sweep degrees around from (X,Y)-v */
   double e1, e2, t1;
@@ -393,8 +394,10 @@ original_poly (PolygonType * p)
       if (p->Points[n].included_angle != 0)
         {
           Cardinal next_n;
-          Coord cx, cy;
-          Coord radius;
+          double cx, cy;
+          double radius;
+//          Coord cx, cy;
+//          Coord radius;
 
           next_n = n + 1;
           if (next_n == p->PointN ||
@@ -2362,6 +2365,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
   piece->f->b = piece->b;
   piece->f = piece->b = piece;
 
+  /* Detach the parentage information, so we don't free it.. copies still belong to the M_POLYAREA we are taking this piece from */
+  piece->parentage.immaculate_conception = true;
+  piece->parentage.action = PBO_NONE;
+  piece->parentage.a = NULL;
+  piece->parentage.b = NULL;
+
   poly_Free (&piece);
 }
 
@@ -2453,6 +2462,12 @@ POLYAREA *board_outline_poly (bool include_holes)
 #ifdef DEBUG_CIRCSEGS
   return clipped;
 #endif
+
+  if (clipped == NULL)
+    {
+      fprintf (stderr, "clipped == NULL in board_outline_poly\n");
+      return clipped;
+    }
 
   /* Now we just need to work out which pieces of polygon are inside
      and outside the board! */
