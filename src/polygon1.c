@@ -159,7 +159,7 @@ pline_dump (VNODE * v)
   do
     {
       n = NEXT_VERTEX(v);
-      pcb_fprintf (stderr, "Line [%#mS %#mS %#mS %#mS 10 10 \"%s\"]\n",
+      pcb_fprintf (stderr, "Line [%#$mn %#$mn %#$mn %#$mn 10 10 \"%s\"]\n",
 	       v->point[0], v->point[1],
 	       n->point[0], n->point[1], theState (v));
     }
@@ -190,7 +190,8 @@ poly_dump (POLYAREA * p)
 }
 
 static VNODE *
-poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
+poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radius)
+//poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
 {
   VNODE *res;
   Coord *c;
@@ -200,6 +201,29 @@ poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
   if (res == NULL)
     return NULL;
   // bzero (res, sizeof (VNODE) - sizeof(Vector));
+
+#if 0
+  if (is_round)
+    {
+      Angle start_angle;
+//      Angle end_angle;
+      Coord check_x, check_y;
+
+      start_angle = atan2 ((v[1] - cy), -(v[0] - cx)) / M180;
+
+      check_x = cx + radius * -cos (start_angle * M180);
+      check_y = cy + radius *  sin (start_angle * M180);
+
+      if (check_x != v[0] || check_y != v[1])
+        {
+          fprintf (stderr, "poly_CreateNodeFull() Tweaking from vertex location to match angle calculation\n");
+          pcb_fprintf (stderr, "Moving from (%$mn, %$mn) to (%$mn, %$mn)\n", v[0], v[1], check_x, check_y);
+          v[0] = check_x;
+          v[1] = check_y;
+        }
+    }
+#endif
+
   c = res->point;
   *c++ = *v++;
   *c = *v;
@@ -224,7 +248,8 @@ poly_CreateNode (Vector v)
 }
 
 VNODE *
-poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
+//poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
+poly_CreateNodeArcApproximation (Vector v, double cx, double cy, double radius)
 {
 //  return poly_CreateNodeFull (v, false /*true*/, cx, cy, radius);
   return poly_CreateNodeFull (v, true, cx, cy, radius);
@@ -643,7 +668,16 @@ edge_label (VNODE * pn)
        */
       if (l->poly == l->next->poly &&
           l->side != l->next->side && /* <-- PCJC: Not sure if this is required, including for sanity */
-          l->angle == l->next->angle)
+          l->angle == l->next->angle &&
+          ((l->side       = 'P') ? VERTEX_BACKWARD_EDGE (l->parent      ) : VERTEX_FORWARD_EDGE (l->parent      ))->is_round ==
+          ((l->next->side = 'P') ? VERTEX_BACKWARD_EDGE (l->next->parent) : VERTEX_FORWARD_EDGE (l->next->parent))->is_round &&
+          ((l->side       = 'P') ? VERTEX_BACKWARD_EDGE (l->parent      ) : VERTEX_FORWARD_EDGE (l->parent      ))->radius ==
+          ((l->next->side = 'P') ? VERTEX_BACKWARD_EDGE (l->next->parent) : VERTEX_FORWARD_EDGE (l->next->parent))->radius &&
+          ((l->side       = 'P') ? VERTEX_BACKWARD_EDGE (l->parent      ) : VERTEX_FORWARD_EDGE (l->parent      ))->cx ==
+          ((l->next->side = 'P') ? VERTEX_BACKWARD_EDGE (l->next->parent) : VERTEX_FORWARD_EDGE (l->next->parent))->cx &&
+          ((l->side       = 'P') ? VERTEX_BACKWARD_EDGE (l->parent      ) : VERTEX_FORWARD_EDGE (l->parent      ))->cy ==
+          ((l->next->side = 'P') ? VERTEX_BACKWARD_EDGE (l->next->parent) : VERTEX_FORWARD_EDGE (l->next->parent))->cy)
+
         l = l->next->next;
     }
   assert (l->poly != this_poly);
@@ -719,6 +753,34 @@ edge_label (VNODE * pn)
   return region;
 }				/* edge_label */
 
+static void
+cvc_list_dump (CVCList *list)
+{
+  VNODE *node = list->parent;
+  CVCList *iter;
+
+  /* Only print for the vertex we're interested in at the moment */
+  if (!(
+      (node->point[0] == 69088001 || node->point[0] == 69088000 || node->point[0] == 69087998) &&
+      node->point[1] == 29336999))
+    return;
+
+  pcb_fprintf (stderr, "Dumping CVC list at (%$mn, %$mn)\n", node->point[0], node->point[1]);
+
+  iter = list;
+  do {
+    pcb_fprintf (stderr, "angle = %f, poly = %c, side = %c, (%mm, %mm)-(%mm, %mm)\n",
+                 iter->angle,
+                 iter->poly,
+                 iter->side,
+                 ((iter->side == 'P') ? EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_BACKWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[0],
+                 ((iter->side == 'P') ? EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_BACKWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[1],
+                 ((iter->side == 'P') ? EDGE_FORWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[0],
+                 ((iter->side == 'P') ? EDGE_FORWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[1]);
+  } while ((iter = iter->next) != list);
+
+}
+
 /*
  add_descriptors
  (C) 2006 harry eaton
@@ -737,9 +799,11 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
 	  list = node->cvc_prev = insert_descriptor (node, poly, 'P', list);
 	  if (!node->cvc_prev)
 	    return NULL;
+	   cvc_list_dump (node->cvc_prev);
 	  list = node->cvc_next = insert_descriptor (node, poly, 'N', list);
 	  if (!node->cvc_next)
 	    return NULL;
+	   cvc_list_dump (node->cvc_prev);
 	}
     }
   while ((node = NEXT_VERTEX(node)) != &pl->head);
@@ -1115,6 +1179,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
 
   printf ("  Intersect count is %i\n", cnt);
 
+#if 0
   if (cnt == 0)
     {
       printf ("Trying with a perturbation\n");
@@ -1129,6 +1194,10 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
 
       printf ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <<<<<<\n");
     }
+#endif
+
+  if (cnt == 0)
+    return 0;
 
   if (cnt == 2)
     {
@@ -2502,8 +2571,8 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
           VERTEX_FORWARD_EDGE (newn)->orig_point0[1] = VERTEX_BACKWARD_EDGE (curv)->orig_point1[1];
           VERTEX_FORWARD_EDGE (newn)->orig_point1[0] = VERTEX_BACKWARD_EDGE (curv)->orig_point0[0];
           VERTEX_FORWARD_EDGE (newn)->orig_point1[1] = VERTEX_BACKWARD_EDGE (curv)->orig_point0[1];
-          VERTEX_FORWARD_EDGE (newn)->p0 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->prev->p1;
-          VERTEX_FORWARD_EDGE (newn)->p1 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->prev->p0;
+          VERTEX_FORWARD_EDGE (newn)->p0 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->/*prev->*/p1;
+          VERTEX_FORWARD_EDGE (newn)->p1 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->/*prev->*/p0;
           if (VERTEX_FORWARD_EDGE (newn)->p1 < VERTEX_FORWARD_EDGE (newn)->p0)
             {
               printf ("!FORW: OH DEAR, p0=%f, p1=%f\n", newn->p0, newn->p1);
@@ -3639,6 +3708,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
               Angle end_angle;
               Angle delta_angle;
               BoxType arc_bound;
+              Coord p_check_x, p_check_y;
+              Coord c_check_x, c_check_y;
 
               start_angle = atan2 ((p->point[1] - p->cy), -(p->point[0] - p->cx)) / M180;
               end_angle   = atan2 ((c->point[1] - p->cy), -(c->point[0] - p->cx)) / M180;
@@ -3648,6 +3719,34 @@ poly_PreContour (PLINE * C, BOOLp optimize)
 
               if (delta_angle > 180.) delta_angle -= 360.;
               if (delta_angle < -180.) delta_angle += 360.;
+
+              p_check_x = p->cx + p->radius * -cos (start_angle * M180);
+              p_check_y = p->cy + p->radius *  sin (start_angle * M180);
+              c_check_x = p->cx + p->radius * -cos (end_angle * M180);
+              c_check_y = p->cy + p->radius *  sin (end_angle * M180);
+
+              if (p_check_x != p->point[0] || p_check_y != p->point[1] ||
+                  c_check_x != c->point[0] || c_check_y != c->point[1])
+                {
+                  fprintf (stderr, "Oh dear, arc start point doesn't land correctly\n");
+                  pcb_fprintf (stderr, "p = (%$mn, %$mn), c = (%$mn, %$mn) (by endpoint)\n",
+                               p->point[0], p->point[1], c->point[0], c->point[1]);
+                  pcb_fprintf (stderr, "! = (%$mn, %$mn), ! = (%$mn, %$mn) (by angles, center and radius)\n",
+                               p_check_x, p_check_y, c_check_x, c_check_y);
+                  fprintf (stderr, "Error distances are %fnm %fnm\n",
+                           hypot (p->point[0] - p_check_x, p->point[1] - p_check_y),
+                           hypot (c->point[0] - c_check_x, c->point[1] - c_check_y));
+                  fprintf (stderr, "\n");
+                  //*(char *)0 = 0;
+                  p->point[0] = p_check_x;
+                  p->point[1] = p_check_y;
+                  c->point[0] = c_check_x;
+                  c->point[1] = c_check_y;
+                }
+              else
+                {
+                  fprintf (stderr, "angles ok\n");
+                }
 
               arc_bound = calc_thin_arc_bounds (p->cx, p->cy, p->radius, p->radius, start_angle, delta_angle);
 
