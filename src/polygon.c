@@ -124,6 +124,7 @@ void
 polygon_init (void)
 {
   struct rlimit limit;
+  double eps;
 
   double cos_ang = cos (2.0 * M_PI / POLY_CIRC_SEGS_F);
   double sin_ang = sin (2.0 * M_PI / POLY_CIRC_SEGS_F);
@@ -139,6 +140,11 @@ polygon_init (void)
   limit.rlim_cur = MIN (limit.rlim_cur, 7000 * 1024 * 1024 /* 2000 GiB limit to virtual memory size */);
   setrlimit (RLIMIT_AS, &limit);
 
+  /* Estimate eps on this machine */
+  eps = 1.;
+  do eps = 0.5 * eps; while (eps + 1.0 > 1.0);
+
+  fprintf (stderr, "Epsilon calculated at %.17e\n", eps);
 }
 
 Cardinal
@@ -1307,7 +1313,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
           r_search (layer->line_tree, &region, NULL, line_sub_callback,
                     &info);
         subtract_accumulated (&info, polygon);
-#if 0
+#if 1
         r +=
           r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
 	r +=
@@ -1315,7 +1321,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
 #endif
       }
       END_LOOP;
-#if 0
+#if 1
       r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
       r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
       subtract_accumulated (&info, polygon);
