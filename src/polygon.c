@@ -1307,7 +1307,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
           r_search (layer->line_tree, &region, NULL, line_sub_callback,
                     &info);
         subtract_accumulated (&info, polygon);
-#if 0
+#if 1
         r +=
           r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
 	r +=
@@ -1315,7 +1315,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
 #endif
       }
       END_LOOP;
-#if 0
+#if 1
       r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
       r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
       subtract_accumulated (&info, polygon);
