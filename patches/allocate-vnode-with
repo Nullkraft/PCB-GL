@@ -1,0 +1,13 @@
+Bottom: e63a7a603f66fefd0caa239b42606c3ae0e040be
+Top:    e63a7a603f66fefd0caa239b42606c3ae0e040be
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 19:38:31 +0000
+
+Allocate VNODE with g_slice_new0, rather than calloc
+
+g_slice should be optimised for lots of small allocations - lets try this..
+
+
+---
+
+
