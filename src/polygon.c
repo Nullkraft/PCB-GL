@@ -2463,7 +2463,7 @@ POLYAREA *board_outline_poly (bool include_holes)
      and outside the board! */
 
   /* If there is no result, or only one piece, return that */
-  if (clipepd == NULL || clipped->f == clipped)
+  if (clipped == NULL || clipped->f == clipped)
     return clipped;
 
   /* WARNING: This next check is O(n^2), where n is the number of clipped
