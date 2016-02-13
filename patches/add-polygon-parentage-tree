@@ -1,5 +1,5 @@
 Bottom: ed28b1d26d8189be843305c1aa0082ca8248d735
-Top:    33ded6f410a0975429354454e973a1eec6968f0e
+Top:    56409c2ad660f0717dc54fefed8e388c01fa8a01
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-09 18:40:43 +0000
 
@@ -427,7 +427,7 @@ index eabb6b5..8a36e84 100644
    poly->NoHoles = NULL;
    flags = poly->Flags;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 5f2686a..acb59e6 100644
+index 5f2686a..5daaf23 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -133,6 +133,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -444,16 +444,28 @@ index 5f2686a..acb59e6 100644
  #ifdef DEBUG
  static char *theState (VNODE * v);
  
-@@ -152,7 +159,7 @@ pline_dump (VNODE * v)
+@@ -151,8 +158,11 @@ pline_dump (VNODE * v)
+     }
    while ((v = NEXT_VERTEX(v)) != s);
  }
++#endif
  
 -static void
++static void pline_dump (VNODE * v);
++
 +/*static */void
  poly_dump (POLYAREA * p)
  {
    POLYAREA *f = p;
-@@ -1969,6 +1976,9 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
+@@ -171,7 +181,6 @@ poly_dump (POLYAREA * p)
+     }
+   while ((p = p->f) != f);
+ }
+-#endif
+ 
+ static VNODE *
+ poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
+@@ -1969,6 +1978,9 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
    piece->b->f = piece->f;
    piece->f->b = piece->b;
    piece->f = piece->b = piece;
@@ -463,7 +475,7 @@ index 5f2686a..acb59e6 100644
  }
  
  static void
-@@ -2408,6 +2418,22 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+@@ -2408,6 +2420,22 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
    return poly_Boolean_free (a, b, res, action);
  }				/* poly_Boolean */
  
@@ -486,7 +498,7 @@ index 5f2686a..acb59e6 100644
  static void test_polyInvContour (void);
  
  /* just like poly_Boolean but frees the input polys */
-@@ -2419,11 +2445,29 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2419,11 +2447,29 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    PLINE *p, *holes = NULL;
    jmp_buf e;
    int code;
@@ -518,7 +530,7 @@ index 5f2686a..acb59e6 100644
    if (!a)
      {
        switch (action)
-@@ -2431,12 +2475,14 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2431,12 +2477,14 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  	case PBO_XOR:
  	case PBO_UNITE:
  	  *res = bi;
@@ -535,7 +547,7 @@ index 5f2686a..acb59e6 100644
  	}
      }
    if (!b)
-@@ -2447,11 +2493,13 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2447,11 +2495,13 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  	case PBO_XOR:
  	case PBO_UNITE:
  	  *res = ai;
@@ -551,7 +563,7 @@ index 5f2686a..acb59e6 100644
  	}
      }
  
-@@ -2499,7 +2547,23 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2499,7 +2549,23 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        poly_Free (res);
        return code;
      }
@@ -575,7 +587,7 @@ index 5f2686a..acb59e6 100644
    return code;
  }				/* poly_Boolean_free */
  
-@@ -3326,6 +3390,7 @@ poly_Init (POLYAREA * p)
+@@ -3326,6 +3392,7 @@ poly_Init (POLYAREA * p)
    p->f = p->b = p;
    p->contours = NULL;
    p->contour_tree = r_create_tree (NULL, 0, 0);
@@ -583,7 +595,7 @@ index 5f2686a..acb59e6 100644
  }
  
  POLYAREA *
-@@ -3367,6 +3432,13 @@ poly_Free (POLYAREA ** p)
+@@ -3367,6 +3434,13 @@ poly_Free (POLYAREA ** p)
      }
    poly_FreeContours (&cur->contours);
    r_destroy_tree (&cur->contour_tree);
