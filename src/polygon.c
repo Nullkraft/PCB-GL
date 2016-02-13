@@ -2458,8 +2458,8 @@ POLYAREA *board_outline_poly (bool include_holes)
   /* Now we just need to work out which pieces of polygon are inside
      and outside the board! */
 
-  /* If there is only one piece, return that */
-  if (clipped->f == clipped)
+  /* If there is no result, or only one piece, return that */
+  if (clipped == NULL || clipped->f == clipped)
     return clipped;
 
   /* WARNING: This next check is O(n^2), where n is the number of clipped
