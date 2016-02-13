@@ -108,12 +108,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
   if (UNLIKELY (((ptr) = (type *)malloc(sizeof(type))) == NULL))	\
     error(err_no_memory);
 
-#undef DEBUG_LABEL
-#undef DEBUG_ALL_LABELS
-#undef DEBUG_JUMP
-#undef DEBUG_GATHER
-#undef DEBUG_ANGLE
-#undef DEBUG
+#define DEBUG_LABEL
+#define DEBUG_ALL_LABELS
+#define DEBUG_JUMP
+#define DEBUG_GATHER
+#define DEBUG_ANGLE
+#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
 #else
@@ -138,7 +138,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 #ifdef DEBUG
 static char *theState (VNODE * v);
 
-static void
+/*static */void
 pline_dump (VNODE * v)
 {
   VNODE *s, *n;
@@ -147,14 +147,14 @@ pline_dump (VNODE * v)
   do
     {
       n = NEXT_VERTEX(v);
-      pcb_fprintf (stderr, "Line [%#mS %#mS %#mS %#mS 10 10 \"%s\"]\n",
+      pcb_fprintf (stderr, "Line [%mn %mn %mn %mn 10 10 \"%s\"]\n",
 	       v->point[0], v->point[1],
 	       n->point[0], n->point[1], theState (v));
     }
   while ((v = NEXT_VERTEX(v)) != s);
 }
 
-static void
+/*static */void
 poly_dump (POLYAREA * p)
 {
   POLYAREA *f = p;
@@ -268,8 +268,9 @@ new_descriptor (VNODE * a, char poly, char side)
   l->angle = ang;
   assert (ang >= 0.0 && ang <= 4.0);
 #ifdef DEBUG_ANGLE
-  DEBUGP ("node on %c at %#mD assigned angle %g on side %c\n", poly,
-	  a->point[0], a->point[1], ang, side);
+  DEBUGP ("node on %c at %mn, %mn assigned angle %g on side %c\n", poly,
+	  a->point[0], a->point[1], ang * 10000., side);
+  DEBUGP ("That angle would be %f\n", atan2 (v[1], v[0]) * 180. / M_PI);
 #endif
   return l;
 }
@@ -1084,7 +1085,7 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("%#mD->%#mD labeled %s\n",
+      DEBUGP ("%mm, %mm -> %mm, %mm labeled %s\n",
               EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
     }
@@ -1564,7 +1565,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
       return TRUE;
     }
 #ifdef DEBUG_JUMP
-  DEBUGP ("jump entering node at %$mD\n", (*curv)->point[0], (*curv)->point[1]);
+  DEBUGP ("jump entering node at %mm, %mm\n", (*curv)->point[0], (*curv)->point[1]);
 #endif
   /* Pick the descriptor of the edge we came into this vertex with, then spin (anti?)clock-wise one edge descriptor */
   if (*cdir == FORW)
@@ -1587,10 +1588,10 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
 	    {
 #ifdef DEBUG_JUMP
 	      if (newone == FORW)
-		DEBUGP ("jump leaving node at %#mD\n",
+		DEBUGP ("jump leaving node at %mm, %mm\n",
 			EDGE_FORWARD_VERTEX (e)->point[0], EDGE_FORWARD_VERTEX (e)->point[1]);
 	      else
-		DEBUGP ("jump leaving node at %#mD\n",
+		DEBUGP ("jump leaving node at %mm, %mm\n",
 			EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1]);
 #endif
 	      *curv = d->parent;
@@ -1633,7 +1634,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 	  poly_InclVertex (PREV_VERTEX (&(*result)->head), newn);
 	}
 #ifdef DEBUG_GATHER
-      DEBUGP ("gather vertex at %#mD\n", curv->point[0], curv->point[1]);
+      DEBUGP ("gather vertex at %mm, %mm\n", curv->point[0], curv->point[1]);
 #endif
       /* Now mark the edge as included.  */
       newn = (dir == FORW) ? VERTEX_FORWARD_EDGE (curv) : VERTEX_BACKWARD_EDGE (curv);
