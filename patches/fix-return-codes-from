@@ -1,5 +1,5 @@
-Bottom: 3728daf47ab1dc4f054459ca1f4f42838f3f55fc
-Top:    11ede0a01c80719ab9de48a1ca2aa6e9ba2890df
+Bottom: 8857964225fa9c8f74e6deccda634dded2cee785
+Top:    b451f32fb1fdc37a514289f58a1e8aa08c444bfe
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 17:42:30 +0000
 
@@ -13,7 +13,7 @@ later processing incorrectly, such as in poly_Boolean and poly_BooleanFree
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 143de3e..14d6c78 100644
+index ecbdddd..9282eda 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -2400,6 +2400,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
@@ -34,7 +34,7 @@ index 143de3e..14d6c78 100644
  
    if (!a)
      {
-@@ -3018,7 +3020,8 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
+@@ -3019,7 +3021,8 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
  
    *dst = NULL;
    if (src == NULL)
