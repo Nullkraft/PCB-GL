@@ -1,5 +1,5 @@
 Bottom: ea9ebb531c5b9cef3093a31dfeec8b567700d1e1
-Top:    78cc851f00e9d6923d9ff6168c75ec5a719c22cd
+Top:    3505f21b05b3b43f57e3ded39059d7d6d7731d48
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-12 21:33:05 +0000
 
@@ -9,7 +9,7 @@ TEMP POLYGON MESS
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 2d0e18b..a9f9a79 100644
+index 2d0e18b..964d175 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -97,6 +97,10 @@ static void poly_InclVertex_int (VNODE * after, VNODE * node);
@@ -407,15 +407,6 @@ index 2d0e18b..a9f9a79 100644
        Vcopy (v1, s2->v->point);
        v1[0] += m1 * (EDGE_FORWARD_VERTEX (s2->v)->point[0] - EDGE_BACKWARD_VERTEX (s2->v)->point[0]);
        v1[1] += m1 * (EDGE_FORWARD_VERTEX (s2->v)->point[1] - EDGE_BACKWARD_VERTEX (s2->v)->point[1]);
-@@ -1282,7 +1288,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
-           (delta_angle <= 0. && (-m1_delta < 0. || -m1_delta > -delta_angle)))
-         {
-           printf ("    Excluding first intersection, as not on arc, m1_angle=%f m1_delta=%f, delta_angle=%f\n",
--                  m1_angle, m1_delta, delta_angle);
-+              m1_angle, m1_delta, delta_angle);
-           cnt --;
-           m1 = m2;
-           Vcopy (v1, v2);
 @@ -1350,11 +1356,11 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
  
  #if 1
