@@ -3950,7 +3950,8 @@ poly_InclVertex (VNODE * after, VNODE * node)
       VNODE *t = PREV_VERTEX (node);
       NEXT_VERTEX (PREV_VERTEX (t)) = node;
       PREV_VERTEX (node) = PREV_VERTEX (t);
-      free (t);
+      g_slice_free (VNODE, t);
+      //free (t);
     }
 }
 
