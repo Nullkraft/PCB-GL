@@ -1,0 +1,156 @@
+Bottom: c6336f906bb32734e77977e84e7819f395cbfe54
+Top:    77386b03ddb4f80cc4f0356ba156209677399059
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 17:24:18 +0000
+
+Refresh of refactor-polygon-copy
+
+---
+
+diff --git a/src/polyarea.h b/src/polyarea.h
+index be95bd2..fc6a63d 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -144,7 +144,6 @@ BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
+ void poly_M_Incl(POLYAREA **list, POLYAREA *a);
+ 
+ BOOLp poly_Copy0(POLYAREA **dst, const POLYAREA *src);
+-BOOLp poly_Copy1(POLYAREA  *dst, const POLYAREA *src);
+ 
+ BOOLp poly_InclContour(POLYAREA * p, PLINE * c);
+ BOOLp poly_ExclContour(POLYAREA * p, PLINE * c);
+diff --git a/src/polygon.c b/src/polygon.c
+index 3e65cad..eabb6b5 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2011,9 +2011,8 @@ NoHolesPolygonDicer (PolygonType *p, const BoxType * clip,
+ {
+   POLYAREA *main_contour, *cur, *next;
+ 
+-  main_contour = poly_Create ();
+   /* copy the main poly only */
+-  poly_Copy1 (main_contour, p->Clipped);
++  poly_Copy0 (&main_contour, p->Clipped);
+   /* clip to the bounding box */
+   if (clip)
+     {
+diff --git a/src/polygon1.c b/src/polygon1.c
+index b5ef082..a36b32e 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -105,10 +105,6 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+ 
+ #define error(code)  longjmp(*(e), code)
+ 
+-#define MemGet(ptr, type) \
+-  if (UNLIKELY (((ptr) = (type *)malloc(sizeof(type))) == NULL))	\
+-    error(err_no_memory);
+-
+ //#define DEBUG_INTERSECT
+ #undef DEBUG_LABEL
+ #undef DEBUG_ALL_LABELS
+@@ -1240,23 +1236,22 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
+ {
+   POLYAREA *newp;
+ 
++  newp = poly_Create ();
+   if (*dst == NULL)
+     {
+-      MemGet (*dst, POLYAREA);
+-      (*dst)->f = (*dst)->b = *dst;
+-      newp = *dst;
++      newp->f = newp->b = newp;
++      *dst = newp;
+     }
+   else
+     {
+-      MemGet (newp, POLYAREA);
+       newp->f = *dst;
+       newp->b = (*dst)->b;
+       newp->f->b = newp->b->f = newp;
+     }
++
++  c->next = NULL;
+   newp->contours = c;
+-  newp->contour_tree = r_create_tree (NULL, 0, 0);
+   r_insert_entry (newp->contour_tree, (BoxType *) c, 0);
+-  c->next = NULL;
+ }				/* InsCntr */
+ 
+ static void
+@@ -2402,6 +2397,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+ {
+   POLYAREA *a = NULL, *b = NULL;
+ 
++  *res = NULL; /* Set now, in case we run out of memory below */
++
+   if (!poly_M_Copy0 (&a, a_org) || !poly_M_Copy0 (&b, b_org))
+     return err_no_memory;
+ 
+@@ -2422,7 +2419,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ 
+   test_polyInvContour ();
+ 
+-  *res = NULL;
++  *res = NULL; /* Set now, in case we run out of memory below */
+ 
+   if (!a)
+     {
+@@ -2968,20 +2965,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+ /**********************************************************************/
+ /* polygon routines */
+ 
+-BOOLp
+-poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
+-{
+-  *dst = NULL;
+-  if (src != NULL)
+-    *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
+-  if (*dst == NULL)
+-    return FALSE;
+-  (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
+-
+-  return poly_Copy1 (*dst, src);
+-}
+-
+-BOOLp
++static bool
+ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+ {
+   PLINE *cur, **last = &dst->contours;
+@@ -2992,10 +2976,24 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+   for (cur = src->contours; cur != NULL; cur = cur->next)
+     {
+       if (!poly_CopyContour (last, cur))
+-	return FALSE;
++        return false;
+       r_insert_entry (dst->contour_tree, (BoxType *) * last, 0);
+       last = &(*last)->next;
+     }
++
++  return true;
++}
++
++BOOLp
++poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
++{
++  *dst = NULL;
++  if (src == NULL)
++    return TRUE;
++
++  if ((*dst = poly_Create ()) == NULL || !poly_Copy1 (*dst, src))
++    return FALSE;
++
+   return TRUE;
+ }
+ 
+@@ -3020,7 +3018,8 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
+ 
+   *dst = NULL;
+   if (src == NULL)
+-    return FALSE;
++    return TRUE; /* Copying a NULL POLYAREA is not a failure, return true */
++
+   do
+     {
+       if ((di = poly_Create ()) == NULL || !poly_Copy1 (di, src))
