@@ -108,7 +108,7 @@ dicer output is used for HIDs which cannot render things with holes
 #include <sys/time.h>
 #include <sys/resource.h>
 
-#define DEBUG_CIRCSEGS
+#undef DEBUG_CIRCSEGS
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
