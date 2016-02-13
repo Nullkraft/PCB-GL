@@ -1,5 +1,5 @@
-Bottom: a48b3c72b0aa13e3ef54cd924600db97170589ab
-Top:    0d85235556b510f4958a355029e7fbec374a91a8
+Bottom: e6f29f3897960285a183b5892c2a28afcfa8db4c
+Top:    1568bd156545fc2700815243ec791b18e04bf3c9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-10 16:56:03 +0000
 
@@ -79,18 +79,9 @@ index c892307..199bc59 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 432a169..895014b 100644
+index c04b153..40296ed 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -136,7 +136,7 @@ polygon_init (void)
- 
-   /* DEBUG - AVOID PCB running the system out of memory! */
-   getrlimit (RLIMIT_AS, &limit);
--  limit.rlim_cur = MIN (limit.rlim_cur, 2000 * 1024 * 1024 /* 2000 GiB limit to virtual memory size */);
-+  limit.rlim_cur = MIN (limit.rlim_cur, 7000 * 1024 * 1024 /* 2000 GiB limit to virtual memory size */);
-   setrlimit (RLIMIT_AS, &limit);
- 
- }
 @@ -293,7 +293,8 @@ ContourToPoly (PLINE * contour)
  }
  
@@ -114,20 +105,7 @@ index 432a169..895014b 100644
  
            next_n = n + 1;
            if (next_n == p->PointN ||
-@@ -2362,6 +2365,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
-   piece->f->b = piece->b;
-   piece->f = piece->b = piece;
- 
-+  /* Detach the parentage information, so we don't free it.. copies still belong to the M_POLYAREA we are taking this piece from */
-+  piece->parentage.immaculate_conception = true;
-+  piece->parentage.action = PBO_NONE;
-+  piece->parentage.a = NULL;
-+  piece->parentage.b = NULL;
-+
-   poly_Free (&piece);
- }
- 
-@@ -2454,6 +2463,12 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2460,6 +2463,12 @@ POLYAREA *board_outline_poly (bool include_holes)
    return clipped;
  #endif
  
