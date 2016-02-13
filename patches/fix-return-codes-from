@@ -1,0 +1,15 @@
+Bottom: 3728daf47ab1dc4f054459ca1f4f42838f3f55fc
+Top:    3728daf47ab1dc4f054459ca1f4f42838f3f55fc
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 17:42:30 +0000
+
+Fix return codes from poly_Copy* functions when coping NULL input polygons
+
+Copying a NULL polygon results in a NULL return polygon. This is not an error,
+so be sure to return TRUE for success, otherwise we can abort boolean
+later processing incorrectly, such as in poly_Boolean and poly_BooleanFree
+
+
+---
+
+
