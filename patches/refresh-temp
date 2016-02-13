@@ -1,0 +1,37 @@
+Bottom: 275ad72745612aba7c47ffb70a06d468fa83a986
+Top:    33ded6f410a0975429354454e973a1eec6968f0e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 18:04:46 +0000
+
+Refresh of add-polygon-parentage-tree
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 80ed032..acb59e6 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -3054,23 +3054,12 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+ BOOLp
+ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
+ {
+-  POLYPARENTAGE parentage;
+-
+   *dst = NULL;
+   if (src == NULL)
+     return TRUE;
+ 
+-#if 0
+-  /* Copy parentage information */
+-  parentage.immaculate_conception = src->parentage.immaculate_conception;
+-  parentage.action = src->parentage.action;
+-  poly_M_Copy0 (&parentage.a, src->parentage.a);
+-  poly_M_Copy0 (&parentage.b, src->parentage.b);
+-#endif
+-
+   if ((*dst = poly_Create ()) == NULL || !poly_Copy1 (*dst, src))
+     return FALSE;
+-  (*dst)->parentage = parentage;
+ 
+   return TRUE;
+ }
