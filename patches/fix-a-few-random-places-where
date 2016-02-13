@@ -1,0 +1,15 @@
+Bottom: 265265b13f2a8980106d787cc0386e73fa1b2e2e
+Top:    265265b13f2a8980106d787cc0386e73fa1b2e2e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 23:23:51 +0000
+
+Fix a few random places where we fail badly if the board outline polygon computes to NULL
+
+Usually, the board outline polygon should default to being the world region, but if a
+polygon computation fails, it may return NULL, and we can crash in a few places if that
+happens.
+
+
+---
+
+
