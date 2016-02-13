@@ -2991,8 +2991,9 @@ BOOLp
 poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
 {
   *dst = NULL;
-  if (src != NULL)
-    *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
+  if (src == NULL)
+    return TRUE; /* Copying a NULL POLYAREA is not a failure, return true */
+  *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
   if (*dst == NULL)
     return FALSE;
   (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
