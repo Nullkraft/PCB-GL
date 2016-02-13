@@ -1,5 +1,5 @@
 Bottom: ed28b1d26d8189be843305c1aa0082ca8248d735
-Top:    fd757ff2ef7cf8485c3e558d91dc74afaaec9617
+Top:    4c8c6571cebb22afa0c41def0cb18f5cce3421dc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-09 18:40:43 +0000
 
@@ -284,7 +284,7 @@ index fc6a63d..86bf9c3 100644
  double vect_det2 (Vector v1, Vector v2);
  double vect_len2 (Vector v1);
 diff --git a/src/polygon.c b/src/polygon.c
-index eabb6b5..be4fcf2 100644
+index eabb6b5..5305cdf 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -104,6 +104,9 @@ dicer output is used for HIDs which cannot render things with holes
@@ -350,27 +350,7 @@ index eabb6b5..be4fcf2 100644
    return Subtract (np, p, true);
  }
  
-@@ -1288,15 +1304,19 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
-           r_search (layer->line_tree, &region, NULL, line_sub_callback,
-                     &info);
-         subtract_accumulated (&info, polygon);
-+#if 0
-         r +=
-           r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
- 	r +=
-           r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
-+#endif
-       }
-       END_LOOP;
-+#if 0
-       r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
-       r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
-       subtract_accumulated (&info, polygon);
-+#endif
-     }
-   polygon->NoHolesValid = 0;
-   return r;
-@@ -1329,11 +1349,13 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+@@ -1329,11 +1345,13 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
        goto fail;
      }
    p->Clipped = biggest (merged);
@@ -384,7 +364,7 @@ index eabb6b5..be4fcf2 100644
    if (p->NoHoles) printf ("Just leaked in Unsubtract\n");
    p->NoHoles = NULL;
    return 0;
-@@ -1438,6 +1460,7 @@ InitClip (DataType *Data, LayerType *layer, PolygonType * p)
+@@ -1438,6 +1456,7 @@ InitClip (DataType *Data, LayerType *layer, PolygonType * p)
    if (p->Clipped)
      poly_Free (&p->Clipped);
    p->Clipped = original_poly (p);
@@ -392,7 +372,7 @@ index eabb6b5..be4fcf2 100644
    poly_FreeContours (&p->NoHoles);
    if (!p->Clipped)
      return 0;
-@@ -1754,8 +1777,11 @@ plow_callback (const BoxType * b, void *cl)
+@@ -1754,8 +1773,11 @@ plow_callback (const BoxType * b, void *cl)
    PolygonType *polygon = (PolygonType *) b;
  
    if (TEST_FLAG (CLEARPOLYFLAG, polygon))
@@ -406,7 +386,7 @@ index eabb6b5..be4fcf2 100644
    return 0;
  }
  
-@@ -1869,7 +1895,10 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1869,7 +1891,10 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
      }
  
    if (type == POLYGON_TYPE)
@@ -418,7 +398,7 @@ index eabb6b5..be4fcf2 100644
    else
      PlowsPolygon (Data, type, ptr1, ptr2, add_plow, NULL);
  }
-@@ -2058,6 +2087,7 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+@@ -2058,6 +2083,7 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
     * we do this dirty work.
     */
    poly->Clipped = NULL;
@@ -426,7 +406,7 @@ index eabb6b5..be4fcf2 100644
    if (poly->NoHoles) printf ("Just leaked in MorpyPolygon\n");
    poly->NoHoles = NULL;
    flags = poly->Flags;
-@@ -2331,6 +2361,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
+@@ -2331,6 +2357,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
    piece->f->b = piece->b;
    piece->f = piece->b = piece;
  
