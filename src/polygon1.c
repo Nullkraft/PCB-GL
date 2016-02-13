@@ -2983,6 +2983,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
       r_insert_entry (dst->contour_tree, (BoxType *) * last, 0);
       last = &(*last)->next;
     }
+
   return TRUE;
 }
 
@@ -2990,13 +2991,13 @@ BOOLp
 poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
 {
   *dst = NULL;
-  if (src != NULL)
-    *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
-  if (*dst == NULL)
-    return FALSE;
-  (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
+  if (src == NULL)
+    return TRUE;
 
-  return poly_Copy1 (*dst, src);
+  if ((*dst = poly_Create ()) == NULL || !poly_Copy1 (*dst, src))
+    return FALSE;
+
+  return TRUE;
 }
 
 void
