@@ -2385,6 +2385,8 @@ POLYAREA *board_outline_poly (bool include_holes)
   GList *pieces_to_delete = NULL;
   bool any_pieces_kept = false;
 
+  return NULL;
+
 #define BLOAT_WORLD MIL_TO_COORD (10)
 
   whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
