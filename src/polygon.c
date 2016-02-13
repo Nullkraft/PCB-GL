@@ -108,7 +108,7 @@ dicer output is used for HIDs which cannot render things with holes
 #include <sys/time.h>
 #include <sys/resource.h>
 
-#undef DEBUG_CIRCSEGS
+#define DEBUG_CIRCSEGS
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -2384,6 +2384,8 @@ POLYAREA *board_outline_poly (bool include_holes)
   POLYAREA *check;
   GList *pieces_to_delete = NULL;
   bool any_pieces_kept = false;
+
+  return NULL;
 
 #define BLOAT_WORLD MIL_TO_COORD (10)
 

@@ -177,9 +177,11 @@ poly_dump (POLYAREA * p)
 
   do
     {
+      fprintf (stderr, "POLYAREA %p\n", f);
       pl = p->contours;
       do
         {
+          fprintf (stderr, "PLINE %p\n", pl);
           pline_dump (&pl->head);
           fprintf (stderr, "NEXT PLINE\n");
         }
@@ -2738,6 +2740,9 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 	{
 	  next = &((*cur)->next);
 	  if ((*cur)->Flags.status == ISECTED)
+#if 0
+            continue;
+#else
 	    {
 	      /* Check for missed intersect contours here. These can come from
 	       * cases where contours of A and B touch at a single-vertex, so
@@ -2764,7 +2769,9 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 		break;
 	      }
 	    }
-	  else if ((*cur)->Flags.status == INSIDE)
+	  else 
+#endif
+            if ((*cur)->Flags.status == INSIDE)
 	    switch (action)
 	      {
 	      case PBO_XOR:
@@ -3366,6 +3373,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       assert (poly_Valid (b));
 #endif
 
+      fprintf (stderr, "DUMPING A\n");
+      poly_dump (a);
+      fprintf (stderr, "DUMPING B\n");
+      poly_dump (b);
       /* intersect needs to make a list of the contours in a and b which are intersected */
       M_POLYAREA_intersect (&e, a, b, TRUE);
 
