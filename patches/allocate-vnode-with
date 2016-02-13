@@ -1,5 +1,5 @@
-Bottom: 9259f5ff630ba0af5c3501d522b0126422e62340
-Top:    ac2f2927bacfbe64bf33761536e429611dd76b2b
+Bottom: 83d84a1a5b90b69f623b0b59c3ea26b8a395a421
+Top:    bae9096f8c2b0b65c6449c976560f2261e7912ef
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 19:38:31 +0000
 
@@ -11,10 +11,10 @@ g_slice should be optimised for lots of small allocations - lets try this..
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index fa05375..217968d 100644
+index 75f1e7d..a9ebe9b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -201,10 +201,10 @@ poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radiu
+@@ -203,10 +203,10 @@ poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radiu
    Coord *c;
  
    assert (v);
@@ -27,7 +27,7 @@ index fa05375..217968d 100644
  
  #if 0
    if (is_round)
-@@ -389,6 +389,7 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -391,6 +391,7 @@ new_descriptor (VNODE * a, char poly, char side)
                  PREV_VERTEX (a)->cvc_prev = PREV_VERTEX (a)->cvc_next = NULL;
                poly_ExclVertex (PREV_VERTEX (a));
                vect_sub (v, PREV_VERTEX (a)->point, a->point);
@@ -35,7 +35,7 @@ index fa05375..217968d 100644
              }
            else
              {
-@@ -396,6 +397,7 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -398,6 +399,7 @@ new_descriptor (VNODE * a, char poly, char side)
                  NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
                poly_ExclVertex (NEXT_VERTEX (a));
                vect_sub (v, NEXT_VERTEX (a)->point, a->point);
@@ -43,7 +43,7 @@ index fa05375..217968d 100644
              }
          }
  
-@@ -3575,7 +3577,8 @@ poly_NewContour (VNODE *node)
+@@ -3646,7 +3648,8 @@ poly_NewContour (VNODE *node)
    res->head.radius = node->radius;
  #warning THIS WILL BE BOGUS IF WE GET A CIRCULAR CONTOUR STARTING AT THE HEAD.. NEED 2ND POINT TO DETMERMINE BOUNDS
    cntrbox_adjust (res, res->head.point);
@@ -53,7 +53,7 @@ index fa05375..217968d 100644
  
    return res;
  }
-@@ -3589,7 +3592,8 @@ poly_ClrContour (PLINE * c)
+@@ -3660,7 +3663,8 @@ poly_ClrContour (PLINE * c)
    while ((cur = NEXT_EDGE (&c->head)) != &c->head)
      {
        poly_ExclVertex (cur);
@@ -63,7 +63,7 @@ index fa05375..217968d 100644
      }
    free (c->tristrip_vertices);
    c->tristrip_vertices = NULL;
-@@ -3612,7 +3616,8 @@ poly_DelContour (PLINE ** c)
+@@ -3683,7 +3687,8 @@ poly_DelContour (PLINE ** c)
  	  free (cur->cvc_next);
  	  free (cur->cvc_prev);
  	}
@@ -73,7 +73,7 @@ index fa05375..217968d 100644
      }
    if ((*c)->head.cvc_next != NULL)
      {
-@@ -3656,7 +3661,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3727,7 +3732,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
            if (0)
  	    {
  	      poly_ExclVertex (c);
@@ -83,7 +83,7 @@ index fa05375..217968d 100644
  	      c = p;
  	    }
  	}
-@@ -3944,7 +3950,8 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -4015,7 +4021,8 @@ poly_InclVertex (VNODE * after, VNODE * node)
        VNODE *t = PREV_VERTEX (node);
        NEXT_VERTEX (PREV_VERTEX (t)) = node;
        PREV_VERTEX (node) = PREV_VERTEX (t);
