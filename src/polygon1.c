@@ -640,14 +640,18 @@ cvc_list_dump (CVCList *list)
 
   iter = list;
   do {
-    pcb_fprintf (stderr, "angle = %f, poly = %c, side = %c, (%mm, %mm)-(%mm, %mm)\n",
+    pcb_fprintf (stderr, "angle = %.30e, poly = %c, side = %c, (%mn, %mn)-(%mn, %mn), curvature = %f Vertices: %p-%p Edge: %p\n",
                  iter->angle,
                  iter->poly,
                  iter->side,
-                 ((iter->side == 'P') ? EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_BACKWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[0],
-                 ((iter->side == 'P') ? EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_BACKWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[1],
-                 ((iter->side == 'P') ? EDGE_FORWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[0],
-                 ((iter->side == 'P') ? EDGE_FORWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[1]);
+                 EDGE_BACKWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[0],
+                 EDGE_BACKWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[1],
+                 EDGE_FORWARD_VERTEX  (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[0],
+                 EDGE_FORWARD_VERTEX  (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[1],
+                 iter->curvature,
+                 EDGE_BACKWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side)),
+                 EDGE_FORWARD_VERTEX  (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side)),
+                 VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side));
   } while ((iter = iter->next) != list);
 
 }
