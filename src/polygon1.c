@@ -98,6 +98,10 @@ static void poly_InclVertex_int (VNODE * after, VNODE * node);
 #define PREV_VERTEX(v) ((v)->prev)
 #define NEXT_EDGE(e) ((e)->next)
 #define PREV_EDGE(e) ((e)->prev)
+#define VERTEX_SIDE_DIR_EDGE(v,s) (((s) == 'P') ? VERTEX_BACKWARD_EDGE (v) : VERTEX_FORWARD_EDGE (v)) /* Move backwards for 'P' side, forwards for 'N' */
+#define EDGE_SIDE_DIR_VERTEX(e,s) (((s) == 'P') ? EDGE_BACKWARD_VERTEX (e) : EDGE_FORWARD_VERTEX (e)) /* Move backwards for 'P' side, forwards for 'N' */
+#define VERTEX_DIRECTION_EDGE(v,d) (((d) == FORW) ? VERTEX_FORWARD_EDGE (v) : VERTEX_BACKWARD_EDGE (v)) /* Move backwards for BACKW, forwards for FORW */
+#define EDGE_DIRECTION_VERTEX(e,d) (((d) == FORW) ? EDGE_FORWARD_VERTEX (e) : EDGE_BACKWARD_VERTEX (e)) /* Move backwards for BACKW, forwards for FORW */
 
 #define ISECTED 3
 #define UNKNWN  0
@@ -356,8 +360,7 @@ new_descriptor (VNODE * a, char poly, char side)
   l->poly = poly;
   l->side = side;
   l->next = l->prev = l;
-  if ((side == 'P' && a->prev->is_round == false) || /* previous, not round */
-      (side != 'P' && a      ->is_round == false))   /* next,     not round */
+  if (VERTEX_SIDE_DIR_EDGE (a, side)->is_round == false)  /* not round */
     { /* Line-segment case */
 
 #if 0
@@ -413,20 +416,21 @@ new_descriptor (VNODE * a, char poly, char side)
        * 90 degrees CW)
        */
 
+      center[0] = VERTEX_SIDE_DIR_EDGE (a, side)->cx;
+      center[1] = VERTEX_SIDE_DIR_EDGE (a, side)->cy;
+      l->curvature = (double)-compare_ccw_cw (a->point, center, EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (a, side), side)->point) / VERTEX_SIDE_DIR_EDGE (a, side)->radius;
+#if 0
       if (side == 'P')		/* previous */
         {
-          center[0] = VERTEX_BACKWARD_EDGE (a)->cx;
-          center[1] = VERTEX_BACKWARD_EDGE (a)->cy;
           l->curvature = (double)+compare_ccw_cw (EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (a))->point, center, a->point) / VERTEX_BACKWARD_EDGE (a)->radius;
           // OR: ?
           // l->curvature = (double)-compare_ccw_cw (a->point, center, a->prev->point) / a->prev->radius;
         }
       else				/* next */
         {
-          center[0] = VERTEX_FORWARD_EDGE (a)->cx;
-          center[1] = VERTEX_FORWARD_EDGE (a)->cy;
           l->curvature = (double)-compare_ccw_cw (a->point, center, EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (a))->point) / VERTEX_FORWARD_EDGE (a)->radius;
         }
+#endif
 
       /* First of all, make v the radial line */
       vect_sub (v, center, a->point);
@@ -636,14 +640,18 @@ cvc_list_dump (CVCList *list)
 
   iter = list;
   do {
-    pcb_fprintf (stderr, "angle = %f, poly = %c, side = %c, (%mm, %mm)-(%mm, %mm)\n",
+    pcb_fprintf (stderr, "angle = %.30e, poly = %c, side = %c, (%mn, %mn)-(%mn, %mn), curvature = %f Vertices: %p-%p Edge: %p\n",
                  iter->angle,
                  iter->poly,
                  iter->side,
-                 ((iter->side == 'P') ? EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_BACKWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[0],
-                 ((iter->side == 'P') ? EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_BACKWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[1],
-                 ((iter->side == 'P') ? EDGE_FORWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[0],
-                 ((iter->side == 'P') ? EDGE_FORWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[1]);
+                 EDGE_BACKWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[0],
+                 EDGE_BACKWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[1],
+                 EDGE_FORWARD_VERTEX  (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[0],
+                 EDGE_FORWARD_VERTEX  (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[1],
+                 iter->curvature,
+                 EDGE_BACKWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side)),
+                 EDGE_FORWARD_VERTEX  (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side)),
+                 VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side));
   } while ((iter = iter->next) != list);
 
 }
@@ -2033,7 +2041,7 @@ label_contour (PLINE * a)
 
   do
     {
-      if (cure->cvc_next)	/* examine cross vertex */
+      if (EDGE_BACKWARD_VERTEX (cure)->cvc_next)	/* examine cross vertex */
 	{
 	  label = edge_label (cure);
 	  if (first_labelled == NULL)
@@ -2484,8 +2492,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
 
   if (!(*curv)->cvc_prev)	/* not a cross-vertex */
     {
-      if ((*cdir == FORW) ? VERTEX_FORWARD_EDGE (*curv)->Flags.mark :
-                           VERTEX_BACKWARD_EDGE (*curv)->Flags.mark)
+      if (VERTEX_DIRECTION_EDGE (*curv, *cdir)->Flags.mark)
 	return FALSE;
       return TRUE;
     }
@@ -2501,10 +2508,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
   do
     {
       /* Get the edge e, associated with that descriptor */
-      if (d->side == 'P')
-        e = VERTEX_BACKWARD_EDGE (d->parent);
-      else
-        e = VERTEX_FORWARD_EDGE (d->parent);
+      e = VERTEX_SIDE_DIR_EDGE (d->parent, d->side);
       newone = *cdir;
       if (!e->Flags.mark && j_rule (d->poly, e, &newone))
 	{
@@ -2512,12 +2516,8 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
 	      (d->side == 'P' && newone == BACKW))
 	    {
 #ifdef DEBUG_JUMP
-	      if (newone == FORW)
-		DEBUGP ("jump leaving node at %#mD\n",
-			EDGE_FORWARD_VERTEX (e)->point[0], EDGE_FORWARD_VERTEX (e)->point[1]);
-	      else
-		DEBUGP ("jump leaving node at %#mD\n",
-			EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1]);
+	      DEBUGP ("jump leaving node at %#mD\n",
+	              EDGE_DIRECTION_VERTEX (e, newone)->point[0], EDGE_DIRECTION_VERTEX (e, newone)->point[1]);
 #endif
 	      *curv = d->parent;
 	      *cdir = newone;
@@ -2543,10 +2543,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
   do
     {
       /* add vertex (edge?) to polygon */
-      if ((newn = poly_CreateNodeFull (curv->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->is_round,
-                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->cx,
-                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cy       : VERTEX_BACKWARD_EDGE (curv)->cy,
-                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->radius   : VERTEX_BACKWARD_EDGE (curv)->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
+      if ((newn = poly_CreateNodeFull (curv->point, VERTEX_DIRECTION_EDGE (curv, dir)->is_round,
+                                                    VERTEX_DIRECTION_EDGE (curv, dir)->cx,
+                                                    VERTEX_DIRECTION_EDGE (curv, dir)->cy,
+                                                    VERTEX_DIRECTION_EDGE (curv, dir)->radius)) == NULL)
         return err_no_memory;
 
       if (dir == FORW)
@@ -2593,7 +2593,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 #endif
 
       /* Now mark the edge as included.  */
-      newn = (dir == FORW) ? VERTEX_FORWARD_EDGE (curv) : VERTEX_BACKWARD_EDGE (curv);
+      newn = VERTEX_DIRECTION_EDGE (curv, dir);
       newn->Flags.mark = 1;
       /* for SHARED edge mark both */
       if (newn->shared)
