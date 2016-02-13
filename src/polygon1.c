@@ -1297,10 +1297,10 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
   /* Process whether the m1 intersection lies on the arc */
 
   if (cnt == 0)
-  {
-    printf ("\n");
-    return 0;
-  }
+    {
+      printf ("\n");
+      return 0;
+    }
 
   if (i->touch)  /* if checking touches one find and we're done */
     longjmp (*i->touch, TOUCHES);
@@ -1310,31 +1310,31 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
   s2->p->Flags.status = ISECTED;
 
   for (; cnt; cnt--)
-  {
-    bool done_insert_on_s1 = insert_vertex_in_seg (i, s1, cnt > 1 ? v2 : v1, -1.0 /*cnt > 1 ? 0.0 : 0.0*/); /* XXX */
-    bool done_insert_on_s2 = insert_vertex_in_seg (i, s2, cnt > 1 ? v2 : v1, cnt > 1 ? m2 : m1);
+    {
+      bool done_insert_on_s1 = insert_vertex_in_seg (i, s1, cnt > 1 ? v2 : v1, -1.0 /*cnt > 1 ? 0.0 : 0.0*/); /* XXX */
+      bool done_insert_on_s2 = insert_vertex_in_seg (i, s2, cnt > 1 ? v2 : v1, cnt > 1 ? m2 : m1);
 
-    printf ("\n");
+      printf ("\n");
 
-    /* Skip any remaining r_search hits against segment i, as any futher
-     * intersections will be rejected until the next pass anyway.
-     */
-    if ((done_insert_on_s1 && s1 == i->s) ||
-        (done_insert_on_s2 && s2 == i->s))
-      longjmp (*i->env, 1);
+      /* Skip any remaining r_search hits against segment i, as any futher
+       * intersections will be rejected until the next pass anyway.
+       */
+      if ((done_insert_on_s1 && s1 == i->s) ||
+          (done_insert_on_s2 && s2 == i->s))
+        longjmp (*i->env, 1);
 
-    /* If we inserted on s (but not i), skip return now, as we can't continue with
-     * the for-loop iteration if we modified geoemtry
-     */
-    if (done_insert_on_s1 || done_insert_on_s2)
-      return 0;
-    //        longjmp (*i->env, 1);
-  }
+      /* If we inserted on s (but not i), skip return now, as we can't continue with
+       * the for-loop iteration if we modified geoemtry
+       */
+      if (done_insert_on_s1 || done_insert_on_s2)
+        return 0;
+      //        longjmp (*i->env, 1);
+    }
 
   return 0;
 }
 
-  static int
+static int
 seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
 {
   Vector v1, v2;
@@ -1351,7 +1351,7 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
   assert (s1->v->is_round);
   assert (s2->v->is_round);
 
-  //  printf ("Querying arc-arc intersection\n");
+//  printf ("Querying arc-arc intersection\n");
 
 #if 1
   /* COP OUT */
