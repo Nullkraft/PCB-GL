@@ -39,7 +39,7 @@
       are marked
 */
 
-#undef NDEBUG
+//#undef NDEBUG
 #include	<assert.h>
 #include	<stdlib.h>
 #include	<stdio.h>
