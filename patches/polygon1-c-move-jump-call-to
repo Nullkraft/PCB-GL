@@ -1,5 +1,5 @@
-Bottom: 37a680bd8d42aefb24fa6f3dd74b90cf324f606b
-Top:    90267ae8034409b4b5506965552d7ccf9f56ed1e
+Bottom: 0979ef82eca6841409129d749d173a79e7bcca90
+Top:    d4c712d65999db5cac5a189b9dcc3d65bf5411e1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-07 11:45:07 +0000
 
@@ -30,10 +30,10 @@ Once our start edge is included, the assumptions made by Jump should hold.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 8c62938..95f1cfd 100644
+index 8a4e9b4..ee39e21 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2457,9 +2457,6 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+@@ -2475,9 +2475,6 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
    assert (*result == NULL);
    do
      {
@@ -43,7 +43,7 @@ index 8c62938..95f1cfd 100644
        /* add vertex (edge?) to polygon */
        if ((newn = poly_CreateNodeFull (curv->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->is_round,
                                                      (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->cx,
-@@ -2519,6 +2516,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+@@ -2537,6 +2534,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
  
        /* Advance to the next vertex (edge?).  */
        curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
