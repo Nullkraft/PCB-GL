@@ -1,4 +1,4 @@
-Bottom: 6a49cdaa7d928f7ad524af76d9ce600ac1a4b501
+Bottom: ea9ebb531c5b9cef3093a31dfeec8b567700d1e1
 Top:    2d6afd34e7492ed723b76c198230f5258288a301
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-12 21:33:05 +0000
@@ -9,7 +9,7 @@ TEMP POLYGON MESS
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 961a626..888903d 100644
+index 2d0e18b..888903d 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -97,6 +97,10 @@ static void poly_InclVertex_int (VNODE * after, VNODE * node);
@@ -78,15 +78,6 @@ index 961a626..888903d 100644
  
        /* First of all, make v the radial line */
        vect_sub (v, center, a->point);
-@@ -481,7 +485,7 @@ new_descriptor (VNODE * a, char poly, char side)
- }
- 
- /*
-- * Compare the edge angles (and ourvatures) to determine
-+ * Compare the edge angles (and curvatures) to determine
-  * the ordering of two edges around a vertex.
-  *
-  * Returns <0 (ie -1) for a < b
 @@ -627,127 +631,155 @@ node_add_single_point (VNODE * a, Vector p)
    return new_node;
  }				/* node_add_point */
