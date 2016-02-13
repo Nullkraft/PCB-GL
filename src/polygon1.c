@@ -158,6 +158,9 @@ pline_dump (VNODE * v)
     }
   while ((v = NEXT_VERTEX(v)) != s);
 }
+#endif
+
+static void pline_dump (VNODE * v);
 
 /*static */void
 poly_dump (POLYAREA * p)
@@ -178,7 +181,6 @@ poly_dump (POLYAREA * p)
     }
   while ((p = p->f) != f);
 }
-#endif
 
 static VNODE *
 poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
