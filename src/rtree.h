@@ -87,5 +87,6 @@ static inline int r_search_pt (rtree_t * rtree, const PointType * pt,
 int r_region_is_empty (rtree_t * rtree, const BoxType * region);
 
 void __r_dump_tree (struct rtree_node *, int);
+void r_check_tree (rtree_t *rtree);
 
 #endif
