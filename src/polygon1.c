@@ -1451,53 +1451,12 @@ typedef enum
   UNINITIALISED, FORW, BACKW
 } DIRECTION;
 
-/* Start Rule */
-typedef int (*S_Rule) (VNODE *, DIRECTION *);
-
 /* Jump Rule  */
 typedef int (*J_Rule) (char, VNODE *, DIRECTION *);
 
 static int
-UniteS_Rule (VNODE * cur, DIRECTION * initdir)
-{
-  *initdir = FORW;
-  return (NODE_LABEL (cur) == OUTSIDE) || (NODE_LABEL (cur) == SHARED);
-}
-
-static int
-IsectS_Rule (VNODE * cur, DIRECTION * initdir)
-{
-  *initdir = FORW;
-  return (NODE_LABEL (cur) == INSIDE) || (NODE_LABEL (cur) == SHARED);
-}
-
-static int
-SubS_Rule (VNODE * cur, DIRECTION * initdir)
-{
-  *initdir = FORW;
-  return (NODE_LABEL (cur) == OUTSIDE) || (NODE_LABEL (cur) == SHARED2);
-}
-
-static int
-XorS_Rule (VNODE * cur, DIRECTION * initdir)
-{
-  if (cur->Flags.status == INSIDE)
-    {
-      *initdir = BACKW;
-      return TRUE;
-    }
-  if (cur->Flags.status == OUTSIDE)
-    {
-      *initdir = FORW;
-      return TRUE;
-    }
-  return FALSE;
-}
-
-static int
 IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
 {
-//  assert (*cdir == FORW);
   *cdir = FORW;
   return (v->Flags.status == INSIDE || v->Flags.status == SHARED);
 }
@@ -1505,7 +1464,6 @@ IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
 static int
 UniteJ_Rule (char p, VNODE * v, DIRECTION * cdir)
 {
-//  assert (*cdir == FORW);
   *cdir = FORW;
   return (v->Flags.status == OUTSIDE || v->Flags.status == SHARED);
 }
@@ -1523,9 +1481,6 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
       *cdir = FORW;
       return TRUE;
     }
-  // XXX: FIXME: NO cdir set for this case, e.g. possible no initialisation
-  if (*cdir == UNINITIALISED)
-    printf ("UNINITIALISED directin in XorJ_Rule\n");
   return FALSE;
 }
 
@@ -1549,15 +1504,6 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
       else
 	*cdir = BACKW;
       return TRUE;
-    }
-  // XXX: FIXME: NO cdir set for this case, e.g. possible no initialisation
-  if (*cdir == UNINITIALISED)
-    {
-      printf ("UNINITIALISED directin in SubJ_Rule\n");
-      if (p == 'A')
-	*cdir = FORW;
-      else
-	*cdir = BACKW;
     }
   return FALSE;
 }
@@ -1698,7 +1644,7 @@ Collect1 (jmp_buf * e, VNODE * cur, DIRECTION dir, POLYAREA ** contours,
 
 static void
 Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
-	 S_Rule s_rule, J_Rule j_rule)
+         J_Rule j_rule)
 {
   VNODE *cur;
   DIRECTION dir = UNINITIALISED;
@@ -1735,16 +1681,16 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
       switch (action)
 	{
 	case PBO_UNITE:
-	  Collect ('A', e, *A, contours, holes, UniteS_Rule, UniteJ_Rule);
+	  Collect ('A', e, *A, contours, holes, UniteJ_Rule);
 	  break;
 	case PBO_ISECT:
-	  Collect ('A', e, *A, contours, holes, IsectS_Rule, IsectJ_Rule);
+	  Collect ('A', e, *A, contours, holes, IsectJ_Rule);
 	  break;
 	case PBO_XOR:
-	  Collect ('A', e, *A, contours, holes, XorS_Rule, XorJ_Rule);
+	  Collect ('A', e, *A, contours, holes, XorJ_Rule);
 	  break;
 	case PBO_SUB:
-	  Collect ('A', e, *A, contours, holes, SubS_Rule, SubJ_Rule);
+	  Collect ('A', e, *A, contours, holes, SubJ_Rule);
 	  break;
 	};
     }
@@ -1820,16 +1766,16 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 	    switch (action)
 	      {
 	      case PBO_UNITE:
-		Collect ('B', e, *cur, contours, holes, UniteS_Rule, UniteJ_Rule);
+		Collect ('B', e, *cur, contours, holes, UniteJ_Rule);
 		break;
 	      case PBO_ISECT:
-		Collect ('B', e, *cur, contours, holes, IsectS_Rule, IsectJ_Rule);
+		Collect ('B', e, *cur, contours, holes, IsectJ_Rule);
 		break;
 	      case PBO_XOR:
-		Collect ('B', e, *cur, contours, holes, XorS_Rule, XorJ_Rule);
+		Collect ('B', e, *cur, contours, holes, XorJ_Rule);
 		break;
 	      case PBO_SUB:
-		Collect ('B', e, *cur, contours, holes, SubS_Rule, SubJ_Rule);
+		Collect ('B', e, *cur, contours, holes, SubJ_Rule);
 		break;
 	      }
 	    }
