@@ -1,5 +1,5 @@
 Bottom: 0d85235556b510f4958a355029e7fbec374a91a8
-Top:    2223e2666f8e18ac0b1f57de604f1f0acd56dd1c
+Top:    48fc2dbd8f63b02af7633d83551dcc51f642e3e8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-12 21:33:05 +0000
 
@@ -31,14 +31,14 @@ index 895014b..d05949b 100644
        r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
        subtract_accumulated (&info, polygon);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 89233a6..c10e622 100644
+index 89233a6..9419e57 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -39,6 +39,7 @@
        are marked
  */
  
-+#undef NDEBUG
++//#undef NDEBUG
  #include	<assert.h>
  #include	<stdlib.h>
  #include	<stdio.h>
