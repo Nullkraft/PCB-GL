@@ -1,0 +1,16 @@
+Bottom: b789541152cc00f83febf350e5c8844d43d04a12
+Top:    b789541152cc00f83febf350e5c8844d43d04a12
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 17:47:37 +0000
+
+polygon1.c: Fix possible case where we could return an invalid polygon upon allocation failure
+
+This was a bug present in the poly_Boolean() routine. We need to set the output
+polygon to NULL if we are going to return early on memory failure. Comment this,
+and add a similar note to poly_Boolean_free(), where we already set the return
+value (and hence there was no bug).
+
+
+---
+
+
