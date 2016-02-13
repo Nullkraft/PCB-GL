@@ -1329,7 +1329,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
        */
       if (done_insert_on_s1 || done_insert_on_s2)
         return 0;
-      //        longjmp (*i->env, 1);
+//        longjmp (*i->env, 1);
     }
 
   return 0;
