@@ -66,7 +66,7 @@ extern char *canonicalize_file_name (const char *);
 #else
   /* cygwin has realpath, so it won't get here.  */ 
 # if defined (_WIN32)
-#  define WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN 1
 #  include <windows.h> /* for GetFullPathName */
 # endif
 #endif
