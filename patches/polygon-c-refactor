@@ -1,0 +1,15 @@
+Bottom: c6336f906bb32734e77977e84e7819f395cbfe54
+Top:    c6336f906bb32734e77977e84e7819f395cbfe54
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 17:26:03 +0000
+
+polygon.c: Refactor NoHolesPolygonDicer to call poly_Copy0 rather than poly_Copy1
+
+poly_Copy1 is much more of an internal function to polygon1.c, and this is its
+only external caller. Replace this occurance with poly_Copy0, which is intended
+to be the public API.
+
+
+---
+
+
