@@ -1,5 +1,5 @@
 Bottom: 11ede0a01c80719ab9de48a1ca2aa6e9ba2890df
-Top:    e5c30dde4c292d3cfa5d71faca70f8a4b7c6a657
+Top:    ee0f8cc03d6be387bbec3ca0b3297ea6b0f51bd7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 17:14:44 +0000
 
@@ -9,18 +9,10 @@ Refactor polygon copy operations
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 14d6c78..19ec771 100644
+index 14d6c78..c1861d8 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2983,6 +2983,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
-       r_insert_entry (dst->contour_tree, (BoxType *) * last, 0);
-       last = &(*last)->next;
-     }
-+
-   return TRUE;
- }
- 
-@@ -2990,13 +2991,13 @@ BOOLp
+@@ -2990,13 +2990,13 @@ BOOLp
  poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
  {
    *dst = NULL;
