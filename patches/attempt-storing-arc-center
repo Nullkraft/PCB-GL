@@ -1,5 +1,5 @@
-Bottom: e4da70a2a33a3be6be60ef5c95431f6e289fa61f
-Top:    a17a87d9691f651a75cf80c56a1c2f00b2cecc39
+Bottom: d0bff199cf46b7d21703a91b65ebddefb264e487
+Top:    0cfca1257e8f765f879406e6e1738ea41f5bb81b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:29:00 +0000
 
@@ -79,7 +79,7 @@ index c892307..199bc59 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 190336a..1430f10 100644
+index 3f8db96..7a47ae8 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -293,7 +293,8 @@ ContourToPoly (PLINE * contour)
@@ -106,7 +106,7 @@ index 190336a..1430f10 100644
            next_n = n + 1;
            if (next_n == p->PointN ||
 diff --git a/src/polygon1.c b/src/polygon1.c
-index df10837..3d0a8f8 100644
+index 4982799..ece23d9 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -190,7 +190,8 @@ poly_dump (POLYAREA * p)
