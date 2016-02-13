@@ -111,8 +111,8 @@ dicer output is used for HIDs which cannot render things with holes
 
 //#define UNSUBTRACT_BLOAT MIL_TO_COORD (0.1)
 #define UNSUBTRACT_BLOAT 10
-#define SUBTRACT_PIN_VIA_BATCH_SIZE 100 /*100*/
-#define SUBTRACT_LINE_BATCH_SIZE 20 /*20*/
+#define SUBTRACT_PIN_VIA_BATCH_SIZE 100
+#define SUBTRACT_LINE_BATCH_SIZE 20
 
 static double rotate_circle_seg[4];
 static double bw_rotate_circle_seg[4];
