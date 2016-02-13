@@ -1288,7 +1288,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
           (delta_angle <= 0. && (-m1_delta < 0. || -m1_delta > -delta_angle)))
         {
           printf ("    Excluding first intersection, as not on arc, m1_angle=%f m1_delta=%f, delta_angle=%f\n",
-              m1_angle, m1_delta, delta_angle);
+                  m1_angle, m1_delta, delta_angle);
           cnt --;
           m1 = m2;
           Vcopy (v1, v2);
