@@ -1,0 +1,31 @@
+Bottom: b789541152cc00f83febf350e5c8844d43d04a12
+Top:    efb401032cfed5a8daf3820cc35db51e8b7653e9
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 17:47:48 +0000
+
+Refresh of polygon1-c-fix-possible-case
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index f476cc4..37f2218 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2400,6 +2400,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+ {
+   POLYAREA *a = NULL, *b = NULL;
+ 
++  *res = NULL; /* Set now, in case we run out of memory below */
++
+   if (!poly_M_Copy0 (&a, a_org) || !poly_M_Copy0 (&b, b_org))
+     return err_no_memory;
+ 
+@@ -2420,7 +2422,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ 
+   test_polyInvContour ();
+ 
+-  *res = NULL;
++  *res = NULL; /* Set now, in case we run out of memory below */
+ 
+   if (!a)
+     {
