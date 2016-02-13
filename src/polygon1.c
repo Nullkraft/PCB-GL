@@ -39,6 +39,7 @@
       are marked
 */
 
+#undef NDEBUG
 #include	<assert.h>
 #include	<stdlib.h>
 #include	<stdio.h>
@@ -194,7 +195,8 @@ poly_dump (POLYAREA * p)
 }
 
 static VNODE *
-poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
+poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radius)
+//poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
 {
   VNODE *res;
   Coord *c;
@@ -228,7 +230,8 @@ poly_CreateNode (Vector v)
 }
 
 VNODE *
-poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
+//poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
+poly_CreateNodeArcApproximation (Vector v, double cx, double cy, double radius)
 {
 //  return poly_CreateNodeFull (v, false /*true*/, cx, cy, radius);
   return poly_CreateNodeFull (v, true, cx, cy, radius);
@@ -936,6 +939,7 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
   DEBUGP ("new intersection on segment \"i\" at %#mD\n", v[0], v[1]);
 #endif
   i->node_insert_list = prepend_insert_node_task (i->node_insert_list, s, new_node, param);
+  assert (!s->intersected);
   s->intersected = 1;
   return true;
 }
@@ -1290,6 +1294,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
       s1->v->radius == s2->v->radius)
     {
       printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
+      s1->v->is_round = false;
+      s2->v->is_round = false;
       return seg_in_seg_line_line (i, s1, s2);
     }
 #endif
@@ -1937,7 +1943,7 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("(%mn, %mn)->(%mn, %mn) labeled %s  is_round=%i radius=%li cvc_next=%p cvc_prev=%p\n",
+      DEBUGP ("(%mn, %mn)->(%mn, %mn) labeled %s  is_round=%i radius=%f cvc_next=%p cvc_prev=%p\n",
               EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e),
               e->is_round, e->radius, EDGE_BACKWARD_VERTEX (e)->cvc_next, EDGE_BACKWARD_VERTEX (e)->cvc_prev);
@@ -4641,10 +4647,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
       Vector q1_trimmed;
       Vector q2_trimmed;
 
-      double sq1;
-      double sq2;
-      double tp1;
-      double tp2;
+//      double sq1;
+//      double sq2;
+//      double tp1;
+//      double tp2;
 
       p1_trimmed[0] = p1[0] + ROUND (s1 * rpx);
       p1_trimmed[1] = p1[1] + ROUND (s1 * rpy);
@@ -4657,10 +4663,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
       q2_trimmed[1] = q1[1] + ROUND (t2 * rqy);
 
       /* Calculate the parameter values on each line (p1-p2 has s param, q1-q2 has t param), of the end-points of the other line */
-      sq1 = calculate_line_point_intersection (p1, p2, q1_trimmed);
-      sq2 = calculate_line_point_intersection (p1, p2, q2_trimmed);
-      tp1 = calculate_line_point_intersection (q1, q2, p1_trimmed);
-      tp2 = calculate_line_point_intersection (q1, q2, p2_trimmed);
+//      sq1 = calculate_line_point_intersection (p1, p2, q1_trimmed);
+//      sq2 = calculate_line_point_intersection (p1, p2, q2_trimmed);
+//      tp1 = calculate_line_point_intersection (q1, q2, p1_trimmed);
+//      tp2 = calculate_line_point_intersection (q1, q2, p2_trimmed);
 
       {
       double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
