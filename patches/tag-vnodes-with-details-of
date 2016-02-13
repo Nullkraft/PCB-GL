@@ -1,5 +1,5 @@
 Bottom: a5abdf11abef39a4ee1a1e4347c791b09808b2ab
-Top:    a0c9ce4bf0d5fb028e6e7a9aa286b85a8840f922
+Top:    a6c1485a9eb0f35596d70c474545cd09b2ac1ced
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:57:50 +0000
 
@@ -148,10 +148,10 @@ index c606077..be95bd2 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 477a5c8..5dc27a5 100644
+index 477a5c8..9fe8cf6 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -104,11 +104,15 @@ dicer output is used for HIDs which cannot render things with holes
+@@ -104,8 +104,12 @@ dicer output is used for HIDs which cannot render things with holes
  #include <dmalloc.h>
  #endif
  
@@ -162,13 +162,8 @@ index 477a5c8..5dc27a5 100644
  
 +//#define UNSUBTRACT_BLOAT MIL_TO_COORD (0.1)
  #define UNSUBTRACT_BLOAT 10
--#define SUBTRACT_PIN_VIA_BATCH_SIZE 100
--#define SUBTRACT_LINE_BATCH_SIZE 20
-+#define SUBTRACT_PIN_VIA_BATCH_SIZE 100 /*100*/
-+#define SUBTRACT_LINE_BATCH_SIZE 20 /*20*/
- 
- static double rotate_circle_seg[4];
- static double bw_rotate_circle_seg[4];
+ #define SUBTRACT_PIN_VIA_BATCH_SIZE 100
+ #define SUBTRACT_LINE_BATCH_SIZE 20
 @@ -278,7 +282,7 @@ ContourToPoly (PLINE * contour)
  }
  
@@ -681,7 +676,7 @@ index 477a5c8..5dc27a5 100644
    return clipped;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 0c9fa3b..ef3447f 100644
+index 0c9fa3b..5461e2b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -49,6 +49,7 @@
@@ -759,42 +754,23 @@ index 0c9fa3b..ef3447f 100644
    if (vect_equal (po, EDGE_BACKWARD_VERTEX (dest)->point))
      return EDGE_BACKWARD_VERTEX (dest);
    if (vect_equal (po, EDGE_FORWARD_VERTEX (dest)->point))
-@@ -903,6 +941,10 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -903,6 +941,9 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
      {
        insert_node_task *next = task->next;
  
 +      /* XXX: If a node was inserted due to an intersection, don't assume we're on the a round contour any more */
 +      task->node_seg->v->is_round = false;
-+//      task->node_seg->v->next->is_round = false;
 +
        /* Do insersion */
        PREV_VERTEX (task->new_node) = EDGE_BACKWARD_VERTEX (task->node_seg->v);
        NEXT_VERTEX (task->new_node) = EDGE_FORWARD_VERTEX (task->node_seg->v);
-@@ -1616,11 +1658,29 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
-   assert (*result == NULL);
-   do
-     {
-+#if 0
-+      VNODE *jump_curv_temp = curv;
-+      DIRECTION jump_dir_temp = dir;
-+
-+      /* see where to go next */
-+      if (!jump (&jump_curv_temp, &jump_dir_temp, j_rule))
-+	break;
-+#endif
-+
-+#if 1
+@@ -1619,8 +1660,11 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
        /* see where to go next */
        if (!jump (&curv, &dir, j_rule))
  	break;
 -      /* add vertex to polygon */
 -      if ((newn = poly_CreateNode (curv->point)) == NULL)
-+#endif
 +      /* add vertex (edge?) to polygon */
-+//      if ((newn = poly_CreateNodeFull (curv->point, curv->is_round,
-+//                                                    curv->cx,
-+//                                                    curv->cy,
-+//                                                    curv->radius)) == NULL) /* XXX: DIRECTION - might we need to query the previous point for arc details ?? */
 +      if ((newn = poly_CreateNodeFull (curv->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->is_round,
 +                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->cx,
 +                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cy       : VERTEX_BACKWARD_EDGE (curv)->cy,
@@ -802,42 +778,27 @@ index 0c9fa3b..ef3447f 100644
          return err_no_memory;
        if (!*result)
  	{
-@@ -1633,8 +1693,18 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+@@ -1633,8 +1677,9 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
  	  poly_InclVertex (PREV_VERTEX (&(*result)->head), newn);
  	}
  #ifdef DEBUG_GATHER
 -      DEBUGP ("gather vertex at %#mD\n", curv->point[0], curv->point[1]);
 +      DEBUGP ("gather vertex at %mm, %mm, Dir=%i\n", curv->point[0], curv->point[1], dir);
  #endif
-+#if 0
-+      curv = jump_curv_temp;
-+      dir = jump_dir_temp;
-+#endif
-+#if 0
-+      /* see where to go next */
-+      if (!jump (&cur, &dir, j_rule))
-+	break;
-+#endif
 +
        /* Now mark the edge as included.  */
        newn = (dir == FORW) ? VERTEX_FORWARD_EDGE (curv) : VERTEX_BACKWARD_EDGE (curv);
        newn->Flags.mark = 1;
-@@ -1642,8 +1712,13 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+@@ -1642,7 +1687,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
        if (newn->shared)
  	newn->shared->Flags.mark = 1;
  
 -      /* Advance to the next vertex.  */
 +      /* Advance to the next vertex (edge?).  */
        curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
-+#if 0
-+      /* see where to go next */
-+      if (!jump (&cur, &dir, j_rule))
-+	break;
-+#endif
      }
    while (1);
-   return err_ok;
-@@ -2331,6 +2406,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+@@ -2331,6 +2376,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
    return poly_Boolean_free (a, b, res, action);
  }				/* poly_Boolean */
  
@@ -846,7 +807,7 @@ index 0c9fa3b..ef3447f 100644
  /* just like poly_Boolean but frees the input polys */
  int
  poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-@@ -2341,6 +2418,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2341,6 +2388,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    jmp_buf e;
    int code;
  
@@ -855,7 +816,7 @@ index 0c9fa3b..ef3447f 100644
    *res = NULL;
  
    if (!a)
-@@ -2524,23 +2603,6 @@ node_neighbours (VNODE * a, VNODE * b)
+@@ -2524,23 +2573,6 @@ node_neighbours (VNODE * a, VNODE * b)
    return (a == b) || (a->next == b) || (b->next == a) || (a->next == b->next);
  }
  
@@ -879,7 +840,7 @@ index 0c9fa3b..ef3447f 100644
  void
  poly_IniContour (PLINE * c)
  {
-@@ -2568,6 +2630,10 @@ poly_NewContour (VNODE *node)
+@@ -2568,6 +2600,10 @@ poly_NewContour (VNODE *node)
    poly_IniContour (res);
  
    Vcopy (res->head.point, node->point);
@@ -890,7 +851,7 @@ index 0c9fa3b..ef3447f 100644
    cntrbox_adjust (res, res->head.point);
    free (node);
  
-@@ -2685,6 +2751,47 @@ flip_cb (const BoxType * b, void *cl)
+@@ -2685,6 +2721,47 @@ flip_cb (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -938,18 +899,12 @@ index 0c9fa3b..ef3447f 100644
  void
  poly_InvContour (PLINE * c)
  {
-@@ -2693,16 +2800,74 @@ poly_InvContour (PLINE * c)
+@@ -2693,16 +2770,48 @@ poly_InvContour (PLINE * c)
    int r;
  #endif
  
 +  /* Stash the first data which will get over-written in the loop */
 +
-+#if 0
-+  bool stash_is_round = c->head.prev->is_round;
-+  Coord stash_cx = c->head.prev->cx;
-+  Coord stash_cy = c->head.prev->cy;
-+  Coord stash_radius = c->head.prev->radius;
-+#else
 +  bool stash_is_round = c->head.is_round;
 +  Coord stash_cx = c->head.cx;
 +  Coord stash_cy = c->head.cy;
@@ -959,7 +914,6 @@ index 0c9fa3b..ef3447f 100644
 +  Coord next_cx;
 +  Coord next_cy;
 +  Coord next_radius;
-+#endif
 +
 +//  printf ("poly_InvContour\n");
 +
@@ -967,13 +921,6 @@ index 0c9fa3b..ef3447f 100644
    cur = &c->head;
    do
      {
-+#if 0
-+      /* Swap the attachement of round contour information */
-+      cur->prev->is_round = cur->is_round;
-+      cur->prev->cx = cur->cx;
-+      cur->prev->cy = cur->cy;
-+      cur->prev->radius = cur->radius;
-+#else
 +      /* Swap the attachement of round contour information */
 +      next_is_round = cur->next->is_round;
 +      next_cx = cur->next->cx;
@@ -989,7 +936,6 @@ index 0c9fa3b..ef3447f 100644
 +      stash_cx = next_cx;
 +      stash_cy = next_cy;
 +      stash_radius = next_radius;
-+#endif
 +
        next = NEXT_EDGE (cur);
        NEXT_EDGE(cur) = PREV_EDGE (cur);
@@ -999,21 +945,10 @@ index 0c9fa3b..ef3447f 100644
      }
    while ((cur = next) != &c->head);
 +
-+  /* NB: Remember that the list just got reversed.. the last
-+   *     entry in the old order got stale data from the wraparound
-+   *     Fix that up now.
-+   */
-+#if 0
-+  c->head.next->next->is_round = stash_is_round;
-+  c->head.next->next->cx = stash_cx;
-+  c->head.next->next->cy = stash_cy;
-+  c->head.next->next->radius = stash_radius;
-+#endif
-+
    c->Flags.orient ^= 1;
    if (c->tree)
      {
-@@ -2742,11 +2907,26 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -2742,11 +2851,26 @@ poly_InclVertex (VNODE * after, VNODE * node)
    /* remove points on same line */
    if (PREV_VERTEX (PREV_VERTEX (node)) == node)
      return;			/* we don't have 3 points in the poly yet */
@@ -1041,7 +976,7 @@ index 0c9fa3b..ef3447f 100644
      {
        VNODE *t = PREV_VERTEX (node);
        NEXT_VERTEX (PREV_VERTEX (t)) = node;
-@@ -2762,7 +2942,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2762,7 +2886,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    assert (src != NULL);
    *dst = NULL;
@@ -1050,7 +985,7 @@ index 0c9fa3b..ef3447f 100644
    if (*dst == NULL)
      return FALSE;
  
-@@ -2774,7 +2954,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2774,7 +2898,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    for (cur = NEXT_EDGE (&src->head); cur != &src->head; cur = NEXT_VERTEX (cur))
      {
