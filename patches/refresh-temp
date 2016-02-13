@@ -1,0 +1,20 @@
+Bottom: d02ca54f77213fdac666f0bcfb15f3a0d6fb0ee9
+Top:    1c50ea2e56bf63273c28dd2fa3f812d5f36062c6
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 17:43:34 +0000
+
+Refresh of make-poly_copy1-a-static
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index c1c15dd..4db2379 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2983,6 +2983,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+       r_insert_entry (dst->contour_tree, (BoxType *) * last, 0);
+       last = &(*last)->next;
+     }
++
+   return TRUE;
+ }
