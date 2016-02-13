@@ -1,0 +1,22 @@
+Bottom: 2d6afd34e7492ed723b76c198230f5258288a301
+Top:    78cc851f00e9d6923d9ff6168c75ec5a719c22cd
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 19:44:22 +0000
+
+Refresh of temp-polygon-mess
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 888903d..a9f9a79 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1329,7 +1329,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+        */
+       if (done_insert_on_s1 || done_insert_on_s2)
+         return 0;
+-      //        longjmp (*i->env, 1);
++//        longjmp (*i->env, 1);
+     }
+ 
+   return 0;
