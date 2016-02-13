@@ -136,7 +136,7 @@ polygon_init (void)
 
   /* DEBUG - AVOID PCB running the system out of memory! */
   getrlimit (RLIMIT_AS, &limit);
-  limit.rlim_cur = MIN (limit.rlim_cur, 2000 * 1024 * 1024 /* 2000 GiB limit to virtual memory size */);
+  limit.rlim_cur = MIN (limit.rlim_cur, 7000 * 1024 * 1024 /* 2000 GiB limit to virtual memory size */);
   setrlimit (RLIMIT_AS, &limit);
 
 }
@@ -2360,6 +2360,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
   piece->b->f = piece->f;
   piece->f->b = piece->b;
   piece->f = piece->b = piece;
+
+  /* Detach the parentage information, so we don't free it.. copies still belong to the M_POLYAREA we are taking this piece from */
+  piece->parentage.immaculate_conception = true;
+  piece->parentage.action = PBO_NONE;
+  piece->parentage.a = NULL;
+  piece->parentage.b = NULL;
 
   poly_Free (&piece);
 }
