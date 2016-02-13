@@ -2990,7 +2990,8 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
 {
   *dst = NULL;
   if (src == NULL)
-    return TRUE; /* Copying a NULL POLYAREA is not a failure, return true */
+    return TRUE;
+
   *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
   if (*dst == NULL)
     return FALSE;
@@ -3020,7 +3021,7 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
 
   *dst = NULL;
   if (src == NULL)
-    return TRUE; /* Copying a NULL POLYAREA is not a failure, return true */
+    return TRUE;
 
   do
     {
