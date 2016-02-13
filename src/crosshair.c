@@ -66,7 +66,8 @@ thindraw_moved_pv (hidGC gc, PinType *pv, Coord x, Coord y)
   moved_pv.X += x;
   moved_pv.Y += y;
 
-  hid_draw__thin_pcb_pv (gc, gc, &moved_pv, true, false);
+  hid_draw__thin_pcb_pv (gc, &moved_pv, false);
+  hid_draw__thin_pcb_pv_hole (gc, &moved_pv);
 }
 
 /* ---------------------------------------------------------------------------
@@ -689,7 +690,8 @@ DrawAttached (hidGC gc)
         via.Mask = 0;
         via.Flags = NoFlags ();
 
-        hid_draw__thin_pcb_pv (gc, gc, &via, true, false);
+        hid_draw__thin_pcb_pv (gc, &via, false);
+        hid_draw__thin_pcb_pv_hole (gc, &via);
 
         if (TEST_FLAG (SHOWDRCFLAG, PCB))
           {
