@@ -2400,8 +2400,6 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
 {
   POLYAREA *a = NULL, *b = NULL;
 
-  *res = NULL; /* Set now, in case we run out of memory below */
-
   if (!poly_M_Copy0 (&a, a_org) || !poly_M_Copy0 (&b, b_org))
     return err_no_memory;
 
@@ -2422,7 +2420,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 
   test_polyInvContour ();
 
-  *res = NULL; /* Set now, in case we run out of memory below */
+  *res = NULL;
 
   if (!a)
     {
