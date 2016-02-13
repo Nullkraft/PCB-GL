@@ -2983,7 +2983,6 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
       r_insert_entry (dst->contour_tree, (BoxType *) * last, 0);
       last = &(*last)->next;
     }
-
   return TRUE;
 }
 
