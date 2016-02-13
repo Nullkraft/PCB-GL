@@ -1,7 +1,7 @@
-Bottom: 67149233ae53f270b6636e590bd57d753fb89e35
-Top:    73e4decf5d564e590a5151229c3081df6f9e8614
+Bottom: 098ad2fe5477176791ee64b82b568dbfe7803c68
+Top:    6d89fa616e4fbc787650039657bc5a8d4943e244
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-01-09 17:30:18 +0000
+Date:   2016-02-13 18:44:26 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -220,7 +220,7 @@ index b9a180d..fe3a684 100644
      {
        DrawPolygon (Layer, Polygon);
 diff --git a/src/polygon.c b/src/polygon.c
-index 587564f..81880d3 100644
+index 205a1a3..4f46f75 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -868,6 +868,20 @@ SubtractPad (PadType * pad, PolygonType * p)
