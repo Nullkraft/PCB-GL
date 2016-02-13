@@ -2457,9 +2457,6 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
   assert (*result == NULL);
   do
     {
-      /* see where to go next */
-      if (!jump (&curv, &dir, j_rule))
-	break;
       /* add vertex (edge?) to polygon */
       if ((newn = poly_CreateNodeFull (curv->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->is_round,
                                                     (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->cx,
@@ -2519,6 +2516,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 
       /* Advance to the next vertex (edge?).  */
       curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
+
+      /* see where to go next */
+      if (!jump (&curv, &dir, j_rule))
+	break;
     }
   while (1);
   return err_ok;
