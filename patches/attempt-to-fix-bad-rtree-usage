@@ -1,0 +1,15 @@
+Bottom: 2df66937ce12bf9be5e9fd41a2320cec5351d1cb
+Top:    2df66937ce12bf9be5e9fd41a2320cec5351d1cb
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 22:05:14 +0000
+
+Attempt to fix bad rtree usage in polygon code
+
+We need to delete the rtree entry before updating any bounds, otherwise
+bad things might happen (and certainly, with NDEBUG undefined, we may
+get asserts firing in rtree.c)
+
+
+---
+
+
