@@ -1,7 +1,7 @@
-Bottom: 9e7371eb44a1d9cdd3e3a0acf58a9c33a1aa7cc8
-Top:    2d07857e0e3bf52080798602823e9f4d0947bd17
+Bottom: 98137c6a1c79f8cd2802cd1e03404622387143b1
+Top:    15112e42b7a049bbecf8a2b5840f6781231df4ac
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-06 15:41:09 +0000
+Date:   2016-02-13 19:01:08 +0000
 
 Extend board export
 
@@ -1061,10 +1061,10 @@ index 2e2e86d..d765c3c 100644
  
    {
 diff --git a/src/polygon.c b/src/polygon.c
-index 8834733..667895b 100644
+index 8831d64..f338a4c 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -687,14 +687,72 @@ LinePoly (LineType * L, Coord thick, char *name)
+@@ -684,14 +684,72 @@ LinePoly (LineType * L, Coord thick, char *name)
    return np;
  }
  
@@ -1139,7 +1139,7 @@ index 8834733..667895b 100644
    double tx, ty;
    double cx, cy;
    PadType _t=*pad,*t=&_t;
-@@ -835,6 +893,24 @@ BoxPolyBloated (BoxType *box, Coord bloat)
+@@ -832,6 +890,24 @@ BoxPolyBloated (BoxType *box, Coord bloat)
                     box->Y1 - bloat, box->Y2 + bloat);
  }
  
@@ -1164,7 +1164,7 @@ index 8834733..667895b 100644
  /* remove the pin clearance from the polygon */
  static int
  SubtractPin (DataType * d, PinType * pin, LayerType * l, PolygonType * p)
-@@ -905,18 +981,8 @@ SubtractPad (PadType * pad, PolygonType * p)
+@@ -902,18 +978,8 @@ SubtractPad (PadType * pad, PolygonType * p)
  
    if (pad->Clearance == 0)
      return 0;

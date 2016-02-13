@@ -1,7 +1,7 @@
-Bottom: ff279bb2a736dfc8a085ff3fef08c2dbe902765f
-Top:    3c919cee145415abfb37e48126d109691bb8193a
+Bottom: 43a6bcce56625de515abe79abded7f6cb442f00a
+Top:    4ae079436905d895ba91189907e0a4e2163948ef
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-06 15:41:08 +0000
+Date:   2016-02-13 19:01:07 +0000
 
 Add name tags for line contours (and provide partial support for arcs)
 
@@ -31,7 +31,7 @@ index 99d243a..2b6496f 100644
        return isects (lp, Polygon, true);
      }
 diff --git a/src/polygon.c b/src/polygon.c
-index e7e8f9b..8834733 100644
+index a7cb003..8831d64 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -508,7 +508,7 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
@@ -97,9 +97,9 @@ index e7e8f9b..8834733 100644
      return 0;
 +  contour->name = name;
  
-   v[0] = l->Point2.X - dx;
-   v[1] = l->Point2.Y - dy;
-@@ -865,7 +867,7 @@ SubtractLine (LineType * line, PolygonType * p)
+   if (TEST_FLAG (SQUAREFLAG,l))
+     {
+@@ -862,7 +864,7 @@ SubtractLine (LineType * line, PolygonType * p)
  
    if (!TEST_FLAG (CLEARLINEFLAG, line))
      return 0;
@@ -108,7 +108,7 @@ index e7e8f9b..8834733 100644
      return -1;
    return Subtract (np, p, true);
  }
-@@ -877,7 +879,7 @@ SubtractArc (ArcType * arc, PolygonType * p)
+@@ -874,7 +876,7 @@ SubtractArc (ArcType * arc, PolygonType * p)
  
    if (!TEST_FLAG (CLEARLINEFLAG, arc))
      return 0;
@@ -117,7 +117,7 @@ index e7e8f9b..8834733 100644
      return -1;
    return Subtract (np, p, true);
  }
-@@ -912,7 +914,7 @@ SubtractPad (PadType * pad, PolygonType * p)
+@@ -909,7 +911,7 @@ SubtractPad (PadType * pad, PolygonType * p)
    else
      {
        if (!
@@ -126,7 +126,7 @@ index e7e8f9b..8834733 100644
          return -1;
      }
    return Subtract (np, p, true);
-@@ -1038,7 +1040,7 @@ line_sub_callback (const BoxType * b, void *cl)
+@@ -1035,7 +1037,7 @@ line_sub_callback (const BoxType * b, void *cl)
      return 0;
    polygon = info->polygon;
  
@@ -135,7 +135,7 @@ index e7e8f9b..8834733 100644
      longjmp (info->env, 1);
  
    poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
-@@ -2047,8 +2049,11 @@ arc_outline_callback (const BoxType * b, void *cl)
+@@ -2044,8 +2046,11 @@ arc_outline_callback (const BoxType * b, void *cl)
    ArcType *arc = (ArcType *)b;
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
@@ -148,7 +148,7 @@ index e7e8f9b..8834733 100644
      return 0;
  
    poly_Boolean_free (info->poly, np, &res, PBO_SUB);
-@@ -2063,8 +2068,11 @@ line_outline_callback (const BoxType * b, void *cl)
+@@ -2060,8 +2065,11 @@ line_outline_callback (const BoxType * b, void *cl)
    LineType *line = (LineType *)b;
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
