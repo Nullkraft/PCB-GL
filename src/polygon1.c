@@ -454,7 +454,7 @@ new_descriptor (VNODE * a, char poly, char side)
 }
 
 /*
- * Compare the edge angles (and ourvatures) to determine
+ * Compare the edge angles (and curvatures) to determine
  * the ordering of two edges around a vertex.
  *
  * Returns <0 (ie -1) for a < b
