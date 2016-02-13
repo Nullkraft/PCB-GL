@@ -2447,7 +2447,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
   int code;
   POLYAREA *a_copy, *b_copy;
 
-  *res = NULL; /* Set now, in case we run out of memory below */
+  *res = NULL;
 
   /* Make copies for tracking polygon parentage (DEBUG) */
   if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
@@ -3093,29 +3093,18 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
 {
   const POLYAREA *src = srcfst;
   POLYAREA *di;
-//  POLYPARENTAGE parentage;
 
   *dst = NULL;
   if (src == NULL)
     return TRUE;
 
-#if 0
-  /* Copy parentage information - we assume all M_linked polygons have the same parentage */
-  parentage.immaculate_conception = src->parentage.immaculate_conception;
-  parentage.action = src->parentage.action;
-  poly_M_Copy0 (&parentage.a, src->parentage.a);
-  poly_M_Copy0 (&parentage.b, src->parentage.b);
-#endif
-
   do
     {
       if ((di = poly_Create ()) == NULL || !poly_Copy1 (di, src))
 	return FALSE;
-//      di->parentage = parentage;
       poly_M_Incl (dst, di);
     }
   while ((src = src->f) != srcfst);
-
   return TRUE;
 }
 
