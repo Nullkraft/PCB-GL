@@ -1,5 +1,5 @@
 Bottom: e6f29f3897960285a183b5892c2a28afcfa8db4c
-Top:    1568bd156545fc2700815243ec791b18e04bf3c9
+Top:    f10c1e92fe768b62ab480e720eee422ea475233f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-10 16:56:03 +0000
 
@@ -79,7 +79,7 @@ index c892307..199bc59 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index c04b153..40296ed 100644
+index c04b153..346e3b2 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -293,7 +293,8 @@ ContourToPoly (PLINE * contour)
@@ -105,19 +105,6 @@ index c04b153..40296ed 100644
  
            next_n = n + 1;
            if (next_n == p->PointN ||
-@@ -2460,6 +2463,12 @@ POLYAREA *board_outline_poly (bool include_holes)
-   return clipped;
- #endif
- 
-+  if (clipped == NULL)
-+    {
-+      fprintf (stderr, "clipped == NULL in board_outline_poly\n");
-+      return clipped;
-+    }
-+
-   /* Now we just need to work out which pieces of polygon are inside
-      and outside the board! */
- 
 diff --git a/src/polygon1.c b/src/polygon1.c
 index df10837..89233a6 100644
 --- a/src/polygon1.c
