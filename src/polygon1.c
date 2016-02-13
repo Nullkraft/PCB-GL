@@ -39,6 +39,7 @@
       are marked
 */
 
+#undef NDEBUG
 #include	<assert.h>
 #include	<stdlib.h>
 #include	<stdio.h>
@@ -194,7 +195,8 @@ poly_dump (POLYAREA * p)
 }
 
 static VNODE *
-poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
+poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radius)
+//poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
 {
   VNODE *res;
   Coord *c;
@@ -228,7 +230,8 @@ poly_CreateNode (Vector v)
 }
 
 VNODE *
-poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
+//poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
+poly_CreateNodeArcApproximation (Vector v, double cx, double cy, double radius)
 {
 //  return poly_CreateNodeFull (v, false /*true*/, cx, cy, radius);
   return poly_CreateNodeFull (v, true, cx, cy, radius);
@@ -936,6 +939,7 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
   DEBUGP ("new intersection on segment \"i\" at %#mD\n", v[0], v[1]);
 #endif
   i->node_insert_list = prepend_insert_node_task (i->node_insert_list, s, new_node, param);
+  assert (!s->intersected);
   s->intersected = 1;
   return true;
 }
@@ -1290,6 +1294,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
       s1->v->radius == s2->v->radius)
     {
       printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
+      s1->v->is_round = false;
+      s2->v->is_round = false;
       return seg_in_seg_line_line (i, s1, s2);
     }
 #endif
@@ -1937,7 +1943,7 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("(%mn, %mn)->(%mn, %mn) labeled %s  is_round=%i radius=%li cvc_next=%p cvc_prev=%p\n",
+      DEBUGP ("(%mn, %mn)->(%mn, %mn) labeled %s  is_round=%i radius=%f cvc_next=%p cvc_prev=%p\n",
               EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e),
               e->is_round, e->radius, EDGE_BACKWARD_VERTEX (e)->cvc_next, EDGE_BACKWARD_VERTEX (e)->cvc_prev);
