@@ -201,10 +201,10 @@ poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radiu
   Coord *c;
 
   assert (v);
-  res = (VNODE *) calloc (1, sizeof (VNODE));
+//  res = (VNODE *) calloc (1, sizeof (VNODE));
+  res = g_slice_new0 (VNODE);
   if (res == NULL)
     return NULL;
-  // bzero (res, sizeof (VNODE) - sizeof(Vector));
 
 #if 0
   if (is_round)
@@ -389,6 +389,7 @@ new_descriptor (VNODE * a, char poly, char side)
                 PREV_VERTEX (a)->cvc_prev = PREV_VERTEX (a)->cvc_next = NULL;
               poly_ExclVertex (PREV_VERTEX (a));
               vect_sub (v, PREV_VERTEX (a)->point, a->point);
+#warning DOES THIS LEAK A VERTEX?
             }
           else
             {
@@ -396,6 +397,7 @@ new_descriptor (VNODE * a, char poly, char side)
                 NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
               poly_ExclVertex (NEXT_VERTEX (a));
               vect_sub (v, NEXT_VERTEX (a)->point, a->point);
+#warning DOES THIS LEAK A VERTEX?
             }
         }
 
@@ -3575,7 +3577,8 @@ poly_NewContour (VNODE *node)
   res->head.radius = node->radius;
 #warning THIS WILL BE BOGUS IF WE GET A CIRCULAR CONTOUR STARTING AT THE HEAD.. NEED 2ND POINT TO DETMERMINE BOUNDS
   cntrbox_adjust (res, res->head.point);
-  free (node);
+  g_slice_free (VNODE, node);
+//  free (node);
 
   return res;
 }
@@ -3589,7 +3592,8 @@ poly_ClrContour (PLINE * c)
   while ((cur = NEXT_EDGE (&c->head)) != &c->head)
     {
       poly_ExclVertex (cur);
-      free (cur);
+      g_slice_free (VNODE, cur);
+//      free (cur);
     }
   free (c->tristrip_vertices);
   c->tristrip_vertices = NULL;
@@ -3612,7 +3616,8 @@ poly_DelContour (PLINE ** c)
 	  free (cur->cvc_next);
 	  free (cur->cvc_prev);
 	}
-      free (cur);
+      g_slice_free (VNODE, cur);
+//      free (cur);
     }
   if ((*c)->head.cvc_next != NULL)
     {
@@ -3656,7 +3661,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
           if (0)
 	    {
 	      poly_ExclVertex (c);
-	      free (c);
+	      g_slice_free (VNODE, c);
+//	      free (c);
 	      c = p;
 	    }
 	}
@@ -3944,7 +3950,8 @@ poly_InclVertex (VNODE * after, VNODE * node)
       VNODE *t = PREV_VERTEX (node);
       NEXT_VERTEX (PREV_VERTEX (t)) = node;
       PREV_VERTEX (node) = PREV_VERTEX (t);
-      free (t);
+      g_slice_free (VNODE, t);
+      //free (t);
     }
 }
 
