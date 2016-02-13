@@ -3054,23 +3054,12 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
 BOOLp
 poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
 {
-  POLYPARENTAGE parentage;
-
   *dst = NULL;
   if (src == NULL)
     return TRUE;
 
-#if 0
-  /* Copy parentage information */
-  parentage.immaculate_conception = src->parentage.immaculate_conception;
-  parentage.action = src->parentage.action;
-  poly_M_Copy0 (&parentage.a, src->parentage.a);
-  poly_M_Copy0 (&parentage.b, src->parentage.b);
-#endif
-
   if ((*dst = poly_Create ()) == NULL || !poly_Copy1 (*dst, src))
     return FALSE;
-  (*dst)->parentage = parentage;
 
   return TRUE;
 }
