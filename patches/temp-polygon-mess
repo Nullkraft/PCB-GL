@@ -1,4 +1,4 @@
-Bottom: e63a7a603f66fefd0caa239b42606c3ae0e040be
+Bottom: 6a49cdaa7d928f7ad524af76d9ce600ac1a4b501
 Top:    2d6afd34e7492ed723b76c198230f5258288a301
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-12 21:33:05 +0000
@@ -9,7 +9,7 @@ TEMP POLYGON MESS
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index de2ba20..888903d 100644
+index 961a626..888903d 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -97,6 +97,10 @@ static void poly_InclVertex_int (VNODE * after, VNODE * node);
@@ -38,19 +38,6 @@ index de2ba20..888903d 100644
  #undef DEBUG_ANGLE
  #define DEBUG
  #ifdef DEBUG
-@@ -197,10 +201,10 @@ poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radiu
-   Coord *c;
- 
-   assert (v);
--  res = (VNODE *) calloc (1, sizeof (VNODE));
-+//  res = (VNODE *) calloc (1, sizeof (VNODE));
-+  res = g_slice_new0 (VNODE);
-   if (res == NULL)
-     return NULL;
--  // bzero (res, sizeof (VNODE) - sizeof(Vector));
- 
- #if 0
-   if (is_round)
 @@ -355,11 +359,10 @@ new_descriptor (VNODE * a, char poly, char side)
    l->poly = poly;
    l->side = side;
@@ -65,23 +52,7 @@ index de2ba20..888903d 100644
        if (side == 'P')		/* previous */
          vect_sub (v, PREV_VERTEX (a)->point, a->point);
        else				/* next */
-@@ -386,6 +389,7 @@ new_descriptor (VNODE * a, char poly, char side)
-                 PREV_VERTEX (a)->cvc_prev = PREV_VERTEX (a)->cvc_next = NULL;
-               poly_ExclVertex (PREV_VERTEX (a));
-               vect_sub (v, PREV_VERTEX (a)->point, a->point);
-+#warning DOES THIS LEAK A VERTEX?
-             }
-           else
-             {
-@@ -393,6 +397,7 @@ new_descriptor (VNODE * a, char poly, char side)
-                 NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
-               poly_ExclVertex (NEXT_VERTEX (a));
-               vect_sub (v, NEXT_VERTEX (a)->point, a->point);
-+#warning DOES THIS LEAK A VERTEX?
-             }
-         }
- 
-@@ -412,20 +417,21 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -414,20 +417,21 @@ new_descriptor (VNODE * a, char poly, char side)
         * 90 degrees CW)
         */
  
@@ -107,7 +78,7 @@ index de2ba20..888903d 100644
  
        /* First of all, make v the radial line */
        vect_sub (v, center, a->point);
-@@ -479,7 +485,7 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -481,7 +485,7 @@ new_descriptor (VNODE * a, char poly, char side)
  }
  
  /*
@@ -116,7 +87,7 @@ index de2ba20..888903d 100644
   * the ordering of two edges around a vertex.
   *
   * Returns <0 (ie -1) for a < b
-@@ -625,127 +631,155 @@ node_add_single_point (VNODE * a, Vector p)
+@@ -627,127 +631,155 @@ node_add_single_point (VNODE * a, Vector p)
    return new_node;
  }				/* node_add_point */
  
@@ -232,11 +203,16 @@ index de2ba20..888903d 100644
 -      l = l->next;
 +      fprintf (stderr, "shared_edge_case\n");
 +      /* Should be the shared edge case.. but we will make a few checks to be sure! */
++
++      /* If this fires, we found a hairline edge pair within our own polygon, as no edge
++       * from the same polygon should compare identically in the CVCList
++       */
++      assert (l->poly != this_poly);
  
 -      /* Skip over hairline pairs of edges from the other polygon, as they are not necessarily
 -       * sorted in the correct order, and thus can mislead as to whether we are inside or outside
-+      /* If this fires, we found a hairline edge pair within our own polygon, as no edge
-+       * from the same polygon should compare identically in the CVCList
++      /* If this fires, we found two geometrically distinct edges which for some reason compare as equal in our cvc_list.
++       * Shared edges should be geometrically identical (but may be in opposite directions).
         */
 -      if (l->poly == l->next->poly &&
 -          l->side != l->next->side && /* <-- PCJC: Not sure if this is required, including for sanity */
@@ -258,11 +234,6 @@ index de2ba20..888903d 100644
 -  if (l->poly != this_poly)
 -    {
 -      if (l->side == 'P')
-+      assert (l->poly != this_poly);
-+
-+      /* If this fires, we found two geometrically distinct edges which for some reason compare as equal in our cvc_list.
-+       * Shared edges should be geometrically identical (but may be in opposite directions).
-+       */
 +      assert (EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side)->point[0] == EDGE_FORWARD_VERTEX (pn)->point[0] &&
 +              EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side)->point[1] == EDGE_FORWARD_VERTEX (pn)->point[1] &&
 +              compare_edge_arcs_equal (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), pn));
@@ -365,7 +336,7 @@ index de2ba20..888903d 100644
    assert (EDGE_LABEL (pn) == UNKNWN || EDGE_LABEL (pn) == region);
    LABEL_EDGE (pn, region);
    if (region == SHARED || region == SHARED2)
-@@ -753,34 +787,6 @@ edge_label (VNODE * pn)
+@@ -755,34 +787,6 @@ edge_label (VNODE * pn)
    return region;
  }				/* edge_label */
  
@@ -400,7 +371,7 @@ index de2ba20..888903d 100644
  /*
   add_descriptors
   (C) 2006 harry eaton
-@@ -1042,6 +1048,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1044,6 +1048,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
        return 0;
      }
  
@@ -408,7 +379,7 @@ index de2ba20..888903d 100644
    /* ... */
    if (cnt == 2)
      {
-@@ -1049,15 +1056,15 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1051,15 +1056,15 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
         *      the endpoints of each line. Rejecting these here is not actually correct, as
         *      there may still be an intersection (depending on the segment bounds).
         */
@@ -428,7 +399,7 @@ index de2ba20..888903d 100644
          {
  //          printf ("  Second intersection is off the second line bounds\n");
            printf ("BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (In the way we handle this... - might still be valid intersection) <<<<<<<<<<<\n");
-@@ -1095,6 +1102,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1097,6 +1102,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
        printf ("\n");
        return 0;
      }
@@ -436,7 +407,7 @@ index de2ba20..888903d 100644
  
    if (i->touch)  /* if checking touches one find and we're done */
      longjmp (*i->touch, TOUCHES);
-@@ -1254,7 +1262,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1256,7 +1262,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
        Angle m1_angle;
        Angle m1_delta;
  
@@ -445,7 +416,7 @@ index de2ba20..888903d 100644
        Vcopy (v1, s2->v->point);
        v1[0] += m1 * (EDGE_FORWARD_VERTEX (s2->v)->point[0] - EDGE_BACKWARD_VERTEX (s2->v)->point[0]);
        v1[1] += m1 * (EDGE_FORWARD_VERTEX (s2->v)->point[1] - EDGE_BACKWARD_VERTEX (s2->v)->point[1]);
-@@ -1280,7 +1288,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1282,7 +1288,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
            (delta_angle <= 0. && (-m1_delta < 0. || -m1_delta > -delta_angle)))
          {
            printf ("    Excluding first intersection, as not on arc, m1_angle=%f m1_delta=%f, delta_angle=%f\n",
@@ -454,7 +425,7 @@ index de2ba20..888903d 100644
            cnt --;
            m1 = m2;
            Vcopy (v1, v2);
-@@ -1321,7 +1329,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1323,7 +1329,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
         */
        if (done_insert_on_s1 || done_insert_on_s2)
          return 0;
@@ -463,7 +434,7 @@ index de2ba20..888903d 100644
      }
  
    return 0;
-@@ -1348,11 +1356,11 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1350,11 +1356,11 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
  
  #if 1
    /* COP OUT */
@@ -478,7 +449,7 @@ index de2ba20..888903d 100644
        return seg_in_seg_line_line (i, s1, s2);
      }
  #endif
-@@ -1995,6 +2003,8 @@ print_labels (PLINE * a)
+@@ -1997,6 +2003,8 @@ print_labels (PLINE * a)
                EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                 EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e),
                e->is_round, e->radius, EDGE_BACKWARD_VERTEX (e)->cvc_next, EDGE_BACKWARD_VERTEX (e)->cvc_prev);
@@ -487,7 +458,7 @@ index de2ba20..888903d 100644
      }
    while ((e = NEXT_EDGE (e)) != &a->head);
  }
-@@ -2017,7 +2027,7 @@ label_contour (PLINE * a)
+@@ -2019,7 +2027,7 @@ label_contour (PLINE * a)
  
    do
      {
@@ -496,7 +467,7 @@ index de2ba20..888903d 100644
  	{
  	  label = edge_label (cure);
  	  if (first_labelled == NULL)
-@@ -2468,8 +2478,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
+@@ -2470,8 +2478,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
  
    if (!(*curv)->cvc_prev)	/* not a cross-vertex */
      {
@@ -506,7 +477,7 @@ index de2ba20..888903d 100644
  	return FALSE;
        return TRUE;
      }
-@@ -2485,10 +2494,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
+@@ -2487,10 +2494,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
    do
      {
        /* Get the edge e, associated with that descriptor */
@@ -518,7 +489,7 @@ index de2ba20..888903d 100644
        newone = *cdir;
        if (!e->Flags.mark && j_rule (d->poly, e, &newone))
  	{
-@@ -2496,12 +2502,8 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
+@@ -2498,12 +2502,8 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
  	      (d->side == 'P' && newone == BACKW))
  	    {
  #ifdef DEBUG_JUMP
@@ -533,7 +504,7 @@ index de2ba20..888903d 100644
  #endif
  	      *curv = d->parent;
  	      *cdir = newone;
-@@ -2527,10 +2529,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+@@ -2529,10 +2529,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
    do
      {
        /* add vertex (edge?) to polygon */
@@ -548,7 +519,7 @@ index de2ba20..888903d 100644
          return err_no_memory;
  
        if (dir == FORW)
-@@ -2577,7 +2579,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+@@ -2579,7 +2579,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
  #endif
  
        /* Now mark the edge as included.  */
@@ -557,47 +528,7 @@ index de2ba20..888903d 100644
        newn->Flags.mark = 1;
        /* for SHARED edge mark both */
        if (newn->shared)
-@@ -3573,7 +3575,8 @@ poly_NewContour (VNODE *node)
-   res->head.radius = node->radius;
- #warning THIS WILL BE BOGUS IF WE GET A CIRCULAR CONTOUR STARTING AT THE HEAD.. NEED 2ND POINT TO DETMERMINE BOUNDS
-   cntrbox_adjust (res, res->head.point);
--  free (node);
-+  g_slice_free (VNODE, node);
-+//  free (node);
- 
-   return res;
- }
-@@ -3587,7 +3590,8 @@ poly_ClrContour (PLINE * c)
-   while ((cur = NEXT_EDGE (&c->head)) != &c->head)
-     {
-       poly_ExclVertex (cur);
--      free (cur);
-+      g_slice_free (VNODE, cur);
-+//      free (cur);
-     }
-   free (c->tristrip_vertices);
-   c->tristrip_vertices = NULL;
-@@ -3610,7 +3614,8 @@ poly_DelContour (PLINE ** c)
- 	  free (cur->cvc_next);
- 	  free (cur->cvc_prev);
- 	}
--      free (cur);
-+      g_slice_free (VNODE, cur);
-+//      free (cur);
-     }
-   if ((*c)->head.cvc_next != NULL)
-     {
-@@ -3654,7 +3659,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
-           if (0)
- 	    {
- 	      poly_ExclVertex (c);
--	      free (c);
-+	      g_slice_free (VNODE, c);
-+//	      free (c);
- 	      c = p;
- 	    }
- 	}
-@@ -3710,10 +3716,12 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3716,10 +3716,12 @@ poly_PreContour (PLINE * C, BOOLp optimize)
                             hypot (c->point[0] - c_check_x, c->point[1] - c_check_y));
                    fprintf (stderr, "\n");
                    //*(char *)0 = 0;
@@ -610,7 +541,7 @@ index de2ba20..888903d 100644
                  }
                else
                  {
-@@ -4693,6 +4701,7 @@ calculate_line_point_intersection (Vector l1, Vector l2, Vector point)
+@@ -4699,6 +4701,7 @@ calculate_line_point_intersection (Vector l1, Vector l2, Vector point)
  vect_inters2
   (C) 1993 Klamer Schutte
   (C) 1997 Michael Leonov, Alexey Nikitin
@@ -618,7 +549,7 @@ index de2ba20..888903d 100644
  */
  
  int
-@@ -4737,10 +4746,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
+@@ -4743,10 +4746,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
        Vector q1_trimmed;
        Vector q2_trimmed;
  
@@ -633,7 +564,7 @@ index de2ba20..888903d 100644
  
        p1_trimmed[0] = p1[0] + ROUND (s1 * rpx);
        p1_trimmed[1] = p1[1] + ROUND (s1 * rpy);
-@@ -4753,10 +4762,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
+@@ -4759,10 +4762,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
        q2_trimmed[1] = q1[1] + ROUND (t2 * rqy);
  
        /* Calculate the parameter values on each line (p1-p2 has s param, q1-q2 has t param), of the end-points of the other line */
@@ -648,7 +579,7 @@ index de2ba20..888903d 100644
  
        {
        double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
-@@ -4919,11 +4928,13 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
+@@ -4925,11 +4928,13 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
  	{
  	  s = (rqy * (p1[0] - q1[0]) + rqx * (q1[1] - p1[1])) / deel;
  //	  if (s < -EPSILON || s > 1. + EPSILON)
