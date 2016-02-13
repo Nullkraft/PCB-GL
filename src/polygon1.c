@@ -1969,7 +1969,8 @@ print_labels (PLINE * a)
   do
     {
       DEBUGP ("(%mn, %mn)->(%mn, %mn) labeled %s  is_round=%i radius=%f cvc_next=%p cvc_prev=%p\n",
-	      EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e),
+              EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
+               EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e),
               e->is_round, e->radius, EDGE_BACKWARD_VERTEX (e)->cvc_next, EDGE_BACKWARD_VERTEX (e)->cvc_prev);
     }
   while ((e = NEXT_EDGE (e)) != &a->head);
