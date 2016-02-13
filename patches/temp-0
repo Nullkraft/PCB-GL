@@ -1,5 +1,5 @@
 Bottom: d64afafa5da6b2f33bf222ce50af979ef7f4f16e
-Top:    d64afafa5da6b2f33bf222ce50af979ef7f4f16e
+Top:    265265b13f2a8980106d787cc0386e73fa1b2e2e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 23:15:19 +0000
 
@@ -8,4 +8,93 @@ Temp
 
 ---
 
-
+diff --git a/src/heap.c b/src/heap.c
+index 50b11c0..0a9191f 100644
+--- a/src/heap.c
++++ b/src/heap.c
+@@ -38,6 +38,7 @@
+ 
+ #include "global.h"
+ 
++#undef NDEBUG
+ #include <assert.h>
+ 
+ #include "heap.h"
+@@ -47,7 +48,7 @@
+ #endif
+ 
+ /* define this for more thorough self-checking of data structures */
+-#undef SLOW_ASSERTIONS
++#define SLOW_ASSERTIONS
+ 
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+diff --git a/src/polygon.c b/src/polygon.c
+index 7a47ae8..f488d79 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -108,7 +108,7 @@ dicer output is used for HIDs which cannot render things with holes
+ #include <sys/time.h>
+ #include <sys/resource.h>
+ 
+-#undef DEBUG_CIRCSEGS
++#define DEBUG_CIRCSEGS
+ 
+ #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
+ 
+@@ -2385,6 +2385,8 @@ POLYAREA *board_outline_poly (bool include_holes)
+   GList *pieces_to_delete = NULL;
+   bool any_pieces_kept = false;
+ 
++  return NULL;
++
+ #define BLOAT_WORLD MIL_TO_COORD (10)
+ 
+   whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 48f34b7..0986629 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -177,9 +177,11 @@ poly_dump (POLYAREA * p)
+ 
+   do
+     {
++      fprintf (stderr, "POLYAREA %p\n", f);
+       pl = p->contours;
+       do
+         {
++          fprintf (stderr, "PLINE %p\n", pl);
+           pline_dump (&pl->head);
+           fprintf (stderr, "NEXT PLINE\n");
+         }
+@@ -2738,6 +2740,9 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+ 	{
+ 	  next = &((*cur)->next);
+ 	  if ((*cur)->Flags.status == ISECTED)
++#if 0
++            continue;
++#else
+ 	    {
+ 	      /* Check for missed intersect contours here. These can come from
+ 	       * cases where contours of A and B touch at a single-vertex, so
+@@ -2764,7 +2769,9 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+ 		break;
+ 	      }
+ 	    }
+-	  else if ((*cur)->Flags.status == INSIDE)
++	  else 
++#endif
++            if ((*cur)->Flags.status == INSIDE)
+ 	    switch (action)
+ 	      {
+ 	      case PBO_XOR:
+@@ -3366,6 +3373,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+       assert (poly_Valid (b));
+ #endif
+ 
++      fprintf (stderr, "DUMPING A\n");
++      poly_dump (a);
++      fprintf (stderr, "DUMPING B\n");
++      poly_dump (b);
+       /* intersect needs to make a list of the contours in a and b which are intersected */
+       M_POLYAREA_intersect (&e, a, b, TRUE);
