@@ -1,5 +1,5 @@
 Bottom: ed28b1d26d8189be843305c1aa0082ca8248d735
-Top:    56409c2ad660f0717dc54fefed8e388c01fa8a01
+Top:    fd757ff2ef7cf8485c3e558d91dc74afaaec9617
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-09 18:40:43 +0000
 
@@ -284,7 +284,7 @@ index fc6a63d..86bf9c3 100644
  double vect_det2 (Vector v1, Vector v2);
  double vect_len2 (Vector v1);
 diff --git a/src/polygon.c b/src/polygon.c
-index eabb6b5..8a36e84 100644
+index eabb6b5..be4fcf2 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -104,6 +104,9 @@ dicer output is used for HIDs which cannot render things with holes
@@ -313,7 +313,7 @@ index eabb6b5..8a36e84 100644
 +
 +  /* DEBUG - AVOID PCB running the system out of memory! */
 +  getrlimit (RLIMIT_AS, &limit);
-+  limit.rlim_cur = MIN (limit.rlim_cur, 2000 * 1024 * 1024 /* 2000 GiB limit to virtual memory size */);
++  limit.rlim_cur = MIN (limit.rlim_cur, 7000 * 1024 * 1024 /* 2000 GiB limit to virtual memory size */);
 +  setrlimit (RLIMIT_AS, &limit);
 +
  }
@@ -426,6 +426,19 @@ index eabb6b5..8a36e84 100644
    if (poly->NoHoles) printf ("Just leaked in MorpyPolygon\n");
    poly->NoHoles = NULL;
    flags = poly->Flags;
+@@ -2331,6 +2361,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
+   piece->f->b = piece->b;
+   piece->f = piece->b = piece;
+ 
++  /* Detach the parentage information, so we don't free it.. copies still belong to the M_POLYAREA we are taking this piece from */
++  piece->parentage.immaculate_conception = true;
++  piece->parentage.action = PBO_NONE;
++  piece->parentage.a = NULL;
++  piece->parentage.b = NULL;
++
+   poly_Free (&piece);
+ }
+ 
 diff --git a/src/polygon1.c b/src/polygon1.c
 index 5f2686a..5daaf23 100644
 --- a/src/polygon1.c
