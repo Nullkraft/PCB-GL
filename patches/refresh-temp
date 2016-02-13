@@ -1,0 +1,25 @@
+Bottom: 1568bd156545fc2700815243ec791b18e04bf3c9
+Top:    f10c1e92fe768b62ab480e720eee422ea475233f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 18:28:08 +0000
+
+Refresh of mess-of-attempts-to-debug-and
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 40296ed..346e3b2 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2463,12 +2463,6 @@ POLYAREA *board_outline_poly (bool include_holes)
+   return clipped;
+ #endif
+ 
+-  if (clipped == NULL)
+-    {
+-      fprintf (stderr, "clipped == NULL in board_outline_poly\n");
+-      return clipped;
+-    }
+-
+   /* Now we just need to work out which pieces of polygon are inside
+      and outside the board! */
