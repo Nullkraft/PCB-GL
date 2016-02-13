@@ -1707,6 +1707,10 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
         Collect1 (e, (dir == FORW) ? EDGE_BACKWARD_VERTEX (cure) :
                                      EDGE_FORWARD_VERTEX (cure),
                   dir, contours, holes, j_rule);
+//    The lines below are no-longer required.. preserving for now to record this commit.
+//      other = cur;
+//      if (other->cvc_prev)
+//	Collect1 (e, other, dir, contours, holes, j_rule);
     }
   while ((cure = NEXT_EDGE (cure)) != &a->head);
 }				/* Collect */
