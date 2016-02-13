@@ -1,5 +1,5 @@
 Bottom: 853fafaea0a7c48043a577e2330cc7dabb652f67
-Top:    2cdb185935e1aeec52530bf3e4d27b5465ab8647
+Top:    2fb0c1e07a075571b1ddd2dd06ccf2f8e1d3d2c2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 23:15:19 +0000
 
@@ -30,18 +30,9 @@ index 50b11c0..0a9191f 100644
  /* ---------------------------------------------------------------------------
   * some local prototypes
 diff --git a/src/polygon.c b/src/polygon.c
-index 7a47ae8..f488d79 100644
+index 7a47ae8..e9cac40 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -108,7 +108,7 @@ dicer output is used for HIDs which cannot render things with holes
- #include <sys/time.h>
- #include <sys/resource.h>
- 
--#undef DEBUG_CIRCSEGS
-+#define DEBUG_CIRCSEGS
- 
- #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
- 
 @@ -2385,6 +2385,8 @@ POLYAREA *board_outline_poly (bool include_holes)
    GList *pieces_to_delete = NULL;
    bool any_pieces_kept = false;
