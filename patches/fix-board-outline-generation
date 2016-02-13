@@ -1,5 +1,5 @@
 Bottom: fd757ff2ef7cf8485c3e558d91dc74afaaec9617
-Top:    7d1529033c1ec49df02e1e5aa4d0b0a536dcdf50
+Top:    87120d91e94d1b3ab49021d18c989e66bcc5876d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:26:13 +0000
 
@@ -12,18 +12,17 @@ should handle this case!
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index be4fcf2..f6ae8ab 100644
+index be4fcf2..da734f8 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -2459,6 +2459,12 @@ POLYAREA *board_outline_poly (bool include_holes)
-   return clipped;
- #endif
- 
-+  if (clipped == NULL)
-+    {
-+      fprintf (stderr, "clipped == NULL in board_outline_poly\n");
-+      return clipped;
-+    }
-+
+@@ -2462,8 +2462,8 @@ POLYAREA *board_outline_poly (bool include_holes)
    /* Now we just need to work out which pieces of polygon are inside
       and outside the board! */
+ 
+-  /* If there is only one piece, return that */
+-  if (clipped->f == clipped)
++  /* If there is no result, or only one piece, return that */
++  if (clipepd == NULL || clipped->f == clipped)
+     return clipped;
+ 
+   /* WARNING: This next check is O(n^2), where n is the number of clipped
