@@ -1,0 +1,22 @@
+Bottom: 78cc851f00e9d6923d9ff6168c75ec5a719c22cd
+Top:    3505f21b05b3b43f57e3ded39059d7d6d7731d48
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 19:46:07 +0000
+
+Refresh of temp-polygon-mess
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index a9f9a79..964d175 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1288,7 +1288,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+           (delta_angle <= 0. && (-m1_delta < 0. || -m1_delta > -delta_angle)))
+         {
+           printf ("    Excluding first intersection, as not on arc, m1_angle=%f m1_delta=%f, delta_angle=%f\n",
+-              m1_angle, m1_delta, delta_angle);
++                  m1_angle, m1_delta, delta_angle);
+           cnt --;
+           m1 = m2;
+           Vcopy (v1, v2);
