@@ -1,5 +1,5 @@
-Bottom: efb401032cfed5a8daf3820cc35db51e8b7653e9
-Top:    78fe931c8613e4bfde2a4521b8c031ce3e859a3c
+Bottom: df78a11fcb050d8c6c85e5688e1fd4109f8ae8d7
+Top:    df78a11fcb050d8c6c85e5688e1fd4109f8ae8d7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 17:40:35 +0000
 
@@ -10,23 +10,4 @@ This ensures all polygon initialisation happens in a common place
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 37f2218..92a71f3 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -2993,12 +2993,11 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
-   *dst = NULL;
-   if (src == NULL)
-     return TRUE; /* Copying a NULL POLYAREA is not a failure, return true */
--  *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
--  if (*dst == NULL)
-+
-+  if ((*dst = poly_Create ()) == NULL || !poly_Copy1 (*dst, src))
-     return FALSE;
--  (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
- 
--  return poly_Copy1 (*dst, src);
-+  return TRUE;
- }
- 
- void
+
