@@ -1,7 +1,7 @@
-Bottom: 3c4ae25a2ff3dd2a6499e237020cdc303b201b69
-Top:    cda9df3a45a954b7cb79d7b176c25d229ecb1f9f
+Bottom: 08871e7423ca54f37a5a657ef415703be8050119
+Top:    b8f64685a8bf0011b95018f3a03b43815f9b61ed
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-01-09 17:30:19 +0000
+Date:   2016-02-13 18:44:28 +0000
 
 Refactor poly_CreateNode() to take a pre-created VNODE structure, not a Vector
 
@@ -26,7 +26,7 @@ index d49660b..c606077 100644
  void poly_IniContour(PLINE *  c);
  void poly_ClrContour(PLINE *  c);  /* clears list of vertices */
 diff --git a/src/polygon.c b/src/polygon.c
-index 587564f..922cb83 100644
+index 205a1a3..1430ff4 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -295,7 +295,7 @@ original_poly (PolygonType * p)
