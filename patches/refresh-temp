@@ -1,0 +1,272 @@
+Bottom: 90fed552fedd43fb0c49a62fb7556698b9672545
+Top:    a4258180fdfe2f76f2fd781e149b216b920688e9
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 23:36:37 +0000
+
+Refresh of attempt-to-fix-bad-rtree-usage
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 48f34b7..ce70f22 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -748,6 +748,15 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
+   return list;
+ }
+ 
++static bool
++cntrbox_check (PLINE * c, Vector p)
++{
++  return (p[0]     < c->xmin ||
++          p[0] + 1 > c->xmax ||
++          p[1]     < c->ymin ||
++          p[1] + 1 > c->ymax);
++}
++
+ static inline void
+ cntrbox_adjust (PLINE * c, Vector p)
+ {
+@@ -805,21 +814,9 @@ typedef struct contour_info
+  * a vertex has been added
+  */
+ static int
+-adjust_tree (rtree_t * tree, struct seg *s/*_orig*/)
++adjust_tree (rtree_t * tree, struct seg *s)
+ {
+   struct seg *q;
+-#if 0
+-  struct seg *s;
+-  struct seg copy;
+-
+-  /* Take a copy, as r_delete_entry will free the original, and we want to delete that before altering boxes */
+-  copy = *s_orig;
+-  s = &copy;
+-
+-  //r_check_tree (tree);
+-  r_delete_entry (tree, (const BoxType *) s_orig);
+-#endif
+-  //r_check_tree (tree);
+ 
+   q = (seg *)malloc (sizeof (struct seg));
+   if (!q)
+@@ -857,7 +854,6 @@ adjust_tree (rtree_t * tree, struct seg *s/*_orig*/)
+     }
+ 
+   r_insert_entry (tree, (const BoxType *) q, 1);
+-  //r_check_tree (tree);
+   q = (seg *)malloc (sizeof (struct seg));
+   if (!q)
+     return 1;
+@@ -894,10 +890,7 @@ adjust_tree (rtree_t * tree, struct seg *s/*_orig*/)
+     }
+ 
+   r_insert_entry (tree, (const BoxType *) q, 1);
+-  //r_check_tree (tree);
+   r_delete_entry (tree, (const BoxType *) s);
+-  //r_check_tree (tree);
+-
+   return 0;
+ }
+ 
+@@ -1549,7 +1542,6 @@ make_edge_tree (PLINE * pb)
+       s->v = bv;
+       s->p = pb;
+       r_insert_entry (ans, (const BoxType *) s, 1);
+-      //r_check_tree (ans);
+     }
+   while ((bv = NEXT_EDGE (bv)) != &pb->head);
+   return (void *) ans;
+@@ -1654,7 +1646,6 @@ contour_bounds_touch (const BoxType * b, void *cl)
+       /* fill in the segment in info corresponding to this node */
+       if (setjmp (info.sego) == 0)
+ 	{
+-          //r_check_tree (looping_over->tree);
+ 	  r_search (looping_over->tree, &box, NULL, get_seg, &info);
+ 	  assert (0);
+ 	}
+@@ -1669,15 +1660,9 @@ contour_bounds_touch (const BoxType * b, void *cl)
+       /* NB: If this actually hits anything, we are teleported back to the beginning */
+       info.tree = rtree_over->tree;
+       if (info.tree)
+-      {
+-        //r_check_tree (rtree_over->tree);
+-        //r_check_tree (looping_over->tree);
+ 	if (UNLIKELY (r_search (info.tree, &info.s->box,
+ 				NULL /* seg_in_region */, seg_in_seg, &info)))
+-          assert (0); /* XXX: Memory allocation failure */
+-        //r_check_tree (rtree_over->tree);
+-        //r_check_tree (looping_over->tree);
+-      }
++	  assert (0); /* XXX: Memory allocation failure */
+     }
+   while ((av = NEXT_EDGE (av)) != &looping_over->head);
+ 
+@@ -1698,9 +1683,6 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+ //  c_info.need_restart = 0;
+   c_info.node_insert_list = NULL;
+ 
+-  //r_check_tree (a->contour_tree);
+-  r_check_tree (b->contour_tree);
+-
+   /* Search the r-tree of the object with most contours
+    * We loop over the contours of "a". Swap if necessary.
+    */
+@@ -1737,19 +1719,13 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+       sb.X2 = pa->xmax + 1;
+       sb.Y2 = pa->ymax + 1;
+ 
+-      //r_check_tree (b->contour_tree);
+       r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
+-      //r_check_tree (b->contour_tree);
+ //      if (c_info.need_restart)
+ //	need_restart = 1;
+     }
+ 
+   /* Process any deferred node insersions */
+   task = c_info.node_insert_list;
+-
+-  if (task == NULL)
+-    return need_restart;
+-
+   while (task != NULL)
+     {
+       insert_node_task *next = task->next;
+@@ -1783,33 +1759,30 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+         }
+ 
+ #warning NEED AN UPDATE FOR ROUND CONTOURS HERE?
+-      //r_check_tree (b->contour_tree);
+-      /* First delete the contour from the contour r-tree, as its bounds may be adjusted whilst inserting nodes */
+-      r_delete_entry (b->contour_tree, (const BoxType *) task->node_seg->p);
+-      //r_check_tree (b->contour_tree);
+-      cntrbox_adjust (task->node_seg->p, task->new_node->point); /* XXX: DOES THIS WORK / MATTER FOR ARC SEGMENT INSERTIONS? */
+-      //r_check_tree (b->contour_tree);
+-      r_insert_entry (b->contour_tree, (const BoxType *) task->node_seg->p, 0);
+-      //r_check_tree (b->contour_tree);
++      if (cntrbox_check (task->node_seg->p, task->new_node->point))
++        {
++          /* First delete the contour from the contour r-tree, as its bounds
++           * may be adjusted whilst inserting nodes
++           */
++          r_delete_entry (b->contour_tree, (const BoxType *) task->node_seg->p);
++          cntrbox_adjust (task->node_seg->p, task->new_node->point); /* XXX: DOES THIS WORK / MATTER FOR ARC SEGMENT INSERTIONS? */
++          r_insert_entry (b->contour_tree, (const BoxType *) task->node_seg->p, 0);
++        }
+       if (adjust_tree (task->node_seg->p->tree, task->node_seg))
+ 	assert (0); /* XXX: Memory allocation failure */
+-      //r_check_tree (b->contour_tree);
++
+       need_restart = 1; /* Any new nodes could intersect */
+ 
+       free (task);
+       task = next;
+     }
+ 
+-
+-
+   return need_restart;
+ }
+ 
+ static int
+ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+ {
+-  //r_check_tree (a->contour_tree);
+-  //r_check_tree (b->contour_tree);
+   int call_count = 1;
+   while (intersect_impl (jb, b, a, add))
+     call_count++;
+@@ -2100,7 +2073,6 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
+   c->next = NULL;
+   newp->contours = c;
+   r_insert_entry (newp->contour_tree, (BoxType *) c, 0);
+-  //r_check_tree (newp->contour_tree);
+ }				/* InsCntr */
+ 
+ static void
+@@ -2114,10 +2086,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+   if (cntr->Flags.orient == PLF_DIR)
+     {
+       if (owner != NULL)
+-      {
+ 	r_delete_entry (owner->contour_tree, (BoxType *) cntr);
+-        //r_check_tree (owner->contour_tree);
+-      }
+       InsCntr (e, cntr, contours);
+     }
+   /* put hole into temporary list */
+@@ -2131,12 +2100,8 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+ 	  if (owner != parent)
+ 	    {
+ 	      if (owner != NULL)
+-              {
+ 		r_delete_entry (owner->contour_tree, (BoxType *) cntr);
+-                //r_check_tree (owner->contour_tree);
+-              }
+ 	      r_insert_entry (parent->contour_tree, (BoxType *) cntr, 0);
+-              //r_check_tree (parent->contour_tree);
+ 	    }
+ 	}
+       else
+@@ -2146,10 +2111,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+ 	  /* We don't insert the holes into an r-tree,
+ 	   * they just form a linked list */
+ 	  if (owner != NULL)
+-          {
+ 	    r_delete_entry (owner->contour_tree, (BoxType *) cntr);
+-            //r_check_tree (owner->contour_tree);
+-          }
+ 	}
+     }
+ }				/* PutContour */
+@@ -2169,10 +2131,7 @@ remove_contour (POLYAREA * piece, PLINE * prev_contour, PLINE * contour,
+   contour->next = NULL;
+ 
+   if (remove_rtree_entry)
+-  {
+     r_delete_entry (piece->contour_tree, (BoxType *) contour);
+-    //r_check_tree (piece->contour_tree);
+-  }
+ }
+ 
+ struct polyarea_info
+@@ -2257,7 +2216,6 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+       all_pa_info[i].BoundingBox.Y2 = curc->contours->ymax;
+       all_pa_info[i].pa = curc;
+       r_insert_entry (tree, (const BoxType *) &all_pa_info[i], 0);
+-      //r_check_tree (tree);
+       i++;
+     }
+   while ((curc = curc->f) != dest);
+@@ -2366,7 +2324,6 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+ 	  curh->next = container->next;
+ 	  container->next = curh;
+ 	  r_insert_entry (pa_info->pa->contour_tree, (BoxType *) curh, 0);
+-          //r_check_tree (pa_info->pa->contour_tree);
+ 
+ 	}
+     }
+@@ -2677,7 +2634,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+ 	case PBO_SUB:
+ 	  Collect ('A', e, *A, contours, holes, SubJ_Rule);
+ 	  break;
+-	}
++	};
+     }
+   else
+     {
+@@ -3964,7 +3921,6 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+       if (!poly_CopyContour (last, cur))
+         return FALSE;
+       r_insert_entry (dst->contour_tree, (BoxType *) * last, 0);
+-      //r_check_tree (dst->contour_tree);
+       last = &(*last)->next;
+     }
+ 
+@@ -4040,7 +3996,6 @@ poly_InclContour (POLYAREA * p, PLINE * c)
+       c->next = tmp;
+     }
+   r_insert_entry (p->contour_tree, (BoxType *) c, 0);
+-  //r_check_tree (p->contour_tree);
+   return TRUE;
+ }
