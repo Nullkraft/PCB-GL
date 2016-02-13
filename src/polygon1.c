@@ -748,6 +748,15 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
   return list;
 }
 
+static bool
+cntrbox_check (PLINE * c, Vector p)
+{
+  return (p[0]     < c->xmin ||
+          p[0] + 1 > c->xmax ||
+          p[1]     < c->ymin ||
+          p[1] + 1 > c->ymax);
+}
+
 static inline void
 cntrbox_adjust (PLINE * c, Vector p)
 {
@@ -1750,7 +1759,15 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
         }
 
 #warning NEED AN UPDATE FOR ROUND CONTOURS HERE?
-      cntrbox_adjust (task->node_seg->p, task->new_node->point); /* XXX: DOES THIS WORK / MATTER FOR ARC SEGMENT INSERTIONS? */
+      if (cntrbox_check (task->node_seg->p, task->new_node->point))
+        {
+          /* First delete the contour from the contour r-tree, as its bounds
+           * may be adjusted whilst inserting nodes
+           */
+          r_delete_entry (b->contour_tree, (const BoxType *) task->node_seg->p);
+          cntrbox_adjust (task->node_seg->p, task->new_node->point); /* XXX: DOES THIS WORK / MATTER FOR ARC SEGMENT INSERTIONS? */
+          r_insert_entry (b->contour_tree, (const BoxType *) task->node_seg->p, 0);
+        }
       if (adjust_tree (task->node_seg->p->tree, task->node_seg))
 	assert (0); /* XXX: Memory allocation failure */
 
