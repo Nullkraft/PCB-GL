@@ -2968,20 +2968,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
 /**********************************************************************/
 /* polygon routines */
 
-BOOLp
-poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
-{
-  *dst = NULL;
-  if (src != NULL)
-    *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
-  if (*dst == NULL)
-    return FALSE;
-  (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
-
-  return poly_Copy1 (*dst, src);
-}
-
-BOOLp
+static BOOLp
 poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
 {
   PLINE *cur, **last = &dst->contours;
@@ -2997,6 +2984,19 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
       last = &(*last)->next;
     }
   return TRUE;
+}
+
+BOOLp
+poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
+{
+  *dst = NULL;
+  if (src != NULL)
+    *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
+  if (*dst == NULL)
+    return FALSE;
+  (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
+
+  return poly_Copy1 (*dst, src);
 }
 
 void
