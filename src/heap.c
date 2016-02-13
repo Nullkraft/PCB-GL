@@ -38,7 +38,6 @@
 
 #include "global.h"
 
-#undef NDEBUG
 #include <assert.h>
 
 #include "heap.h"
@@ -48,7 +47,7 @@
 #endif
 
 /* define this for more thorough self-checking of data structures */
-#define SLOW_ASSERTIONS
+#undef SLOW_ASSERTIONS
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
