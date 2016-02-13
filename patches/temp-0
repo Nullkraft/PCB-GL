@@ -1,5 +1,5 @@
 Bottom: 853fafaea0a7c48043a577e2330cc7dabb652f67
-Top:    2fb0c1e07a075571b1ddd2dd06ccf2f8e1d3d2c2
+Top:    ad2d146c9ab3b6d75023609ee1ce68b327e3f5a8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 23:15:19 +0000
 
@@ -8,27 +8,6 @@ Temp
 
 ---
 
-diff --git a/src/heap.c b/src/heap.c
-index 50b11c0..0a9191f 100644
---- a/src/heap.c
-+++ b/src/heap.c
-@@ -38,6 +38,7 @@
- 
- #include "global.h"
- 
-+#undef NDEBUG
- #include <assert.h>
- 
- #include "heap.h"
-@@ -47,7 +48,7 @@
- #endif
- 
- /* define this for more thorough self-checking of data structures */
--#undef SLOW_ASSERTIONS
-+#define SLOW_ASSERTIONS
- 
- /* ---------------------------------------------------------------------------
-  * some local prototypes
 diff --git a/src/polygon.c b/src/polygon.c
 index 7a47ae8..e9cac40 100644
 --- a/src/polygon.c
@@ -42,50 +21,3 @@ index 7a47ae8..e9cac40 100644
  #define BLOAT_WORLD MIL_TO_COORD (10)
  
    whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 48f34b7..0986629 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -177,9 +177,11 @@ poly_dump (POLYAREA * p)
- 
-   do
-     {
-+      fprintf (stderr, "POLYAREA %p\n", f);
-       pl = p->contours;
-       do
-         {
-+          fprintf (stderr, "PLINE %p\n", pl);
-           pline_dump (&pl->head);
-           fprintf (stderr, "NEXT PLINE\n");
-         }
-@@ -2738,6 +2740,9 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
- 	{
- 	  next = &((*cur)->next);
- 	  if ((*cur)->Flags.status == ISECTED)
-+#if 0
-+            continue;
-+#else
- 	    {
- 	      /* Check for missed intersect contours here. These can come from
- 	       * cases where contours of A and B touch at a single-vertex, so
-@@ -2764,7 +2769,9 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
- 		break;
- 	      }
- 	    }
--	  else if ((*cur)->Flags.status == INSIDE)
-+	  else 
-+#endif
-+            if ((*cur)->Flags.status == INSIDE)
- 	    switch (action)
- 	      {
- 	      case PBO_XOR:
-@@ -3366,6 +3373,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-       assert (poly_Valid (b));
- #endif
- 
-+      fprintf (stderr, "DUMPING A\n");
-+      poly_dump (a);
-+      fprintf (stderr, "DUMPING B\n");
-+      poly_dump (b);
-       /* intersect needs to make a list of the contours in a and b which are intersected */
-       M_POLYAREA_intersect (&e, a, b, TRUE);
