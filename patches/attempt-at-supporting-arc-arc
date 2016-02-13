@@ -1,5 +1,5 @@
-Bottom: 61f8c5dbe4fbd6855b3d99f1698a996df955cdd9
-Top:    c1bcd0401e1a7c36a19697623e9883dfbfab0f74
+Bottom: 33ded6f410a0975429354454e973a1eec6968f0e
+Top:    10079e841624f723f64800a9f9e7eb6c39a49d3e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -336,7 +336,7 @@ index 0643765..d47b1fc 100644
 +BoxType *get_seg_bounds (PLINE *contour, VNODE *node);
  #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 9036984..48eae3b 100644
+index acb59e6..c59472f 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -50,10 +50,13 @@
@@ -908,7 +908,7 @@ index 9036984..48eae3b 100644
        if (adjust_tree (task->node_seg->p->tree, task->node_seg))
  	assert (0); /* XXX: Memory allocation failure */
  
-@@ -2697,6 +2977,7 @@ poly_NewContour (VNODE *node)
+@@ -2700,6 +2980,7 @@ poly_NewContour (VNODE *node)
    res->head.cx = node->cx;
    res->head.cy = node->cy;
    res->head.radius = node->radius;
@@ -916,7 +916,7 @@ index 9036984..48eae3b 100644
    cntrbox_adjust (res, res->head.point);
    free (node);
  
-@@ -2757,7 +3038,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -2760,7 +3041,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
  {
    double area = 0;
    VNODE *p, *c;
@@ -925,7 +925,7 @@ index 9036984..48eae3b 100644
  
    assert (C != NULL);
  
-@@ -2766,15 +3047,17 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -2769,15 +3050,17 @@ poly_PreContour (PLINE * C, BOOLp optimize)
        for (c = NEXT_VERTEX ((p = &C->head)); c != &C->head; c = NEXT_VERTEX (p = c))
  	{
  	  /* if the previous node is on the same line with this one, we should remove it */
@@ -946,7 +946,7 @@ index 9036984..48eae3b 100644
  	    {
  	      poly_ExclVertex (c);
  	      free (c);
-@@ -2795,7 +3078,31 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -2798,7 +3081,31 @@ poly_PreContour (PLINE * C, BOOLp optimize)
  	  area +=
  	    (double) (p->point[0] - c->point[0]) * (p->point[1] +
  						    c->point[1]);
@@ -978,7 +978,7 @@ index 9036984..48eae3b 100644
  	  C->Count++;
  	}
        while ((c = NEXT_VERTEX (p = c)) != &C->head);
-@@ -3497,6 +3804,7 @@ poly_ChkContour (PLINE * a)
+@@ -3478,6 +3785,7 @@ poly_ChkContour (PLINE * a)
        a2 = a1;
        do
  	{
@@ -986,7 +986,7 @@ index 9036984..48eae3b 100644
  	  if (!node_neighbours (a1, a2) &&
  	      (icnt = vect_inters2 (a1->point, a1->next->point,
  				    a2->point, a2->next->point, i1, i2)) > 0)
-@@ -3860,3 +4168,35 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -3841,3 +4149,35 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
   * perhaps reverse tracing the arc would require look-ahead to check
   * for arcs
   */
