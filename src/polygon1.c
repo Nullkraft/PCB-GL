@@ -105,10 +105,6 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 
 #define error(code)  longjmp(*(e), code)
 
-#define MemGet(ptr, type) \
-  if (UNLIKELY (((ptr) = (type *)malloc(sizeof(type))) == NULL))	\
-    error(err_no_memory);
-
 //#define DEBUG_INTERSECT
 #undef DEBUG_LABEL
 #undef DEBUG_ALL_LABELS
@@ -1240,23 +1236,22 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
 {
   POLYAREA *newp;
 
+  newp = poly_Create ();
   if (*dst == NULL)
     {
-      MemGet (*dst, POLYAREA);
-      (*dst)->f = (*dst)->b = *dst;
-      newp = *dst;
+      newp->f = newp->b = newp;
+      *dst = newp;
     }
   else
     {
-      MemGet (newp, POLYAREA);
       newp->f = *dst;
       newp->b = (*dst)->b;
       newp->f->b = newp->b->f = newp;
     }
-  newp->contours = c;
-  newp->contour_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (newp->contour_tree, (BoxType *) c, 0);
+
   c->next = NULL;
+  newp->contours = c;
+  r_insert_entry (newp->contour_tree, (BoxType *) c, 0);
 }				/* InsCntr */
 
 static void
@@ -2402,6 +2397,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
 {
   POLYAREA *a = NULL, *b = NULL;
 
+  *res = NULL; /* Set now, in case we run out of memory below */
+
   if (!poly_M_Copy0 (&a, a_org) || !poly_M_Copy0 (&b, b_org))
     return err_no_memory;
 
@@ -2422,7 +2419,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 
   test_polyInvContour ();
 
-  *res = NULL;
+  *res = NULL; /* Set now, in case we run out of memory below */
 
   if (!a)
     {
@@ -2979,10 +2976,24 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
   for (cur = src->contours; cur != NULL; cur = cur->next)
     {
       if (!poly_CopyContour (last, cur))
-	return FALSE;
+        return FALSE;
       r_insert_entry (dst->contour_tree, (BoxType *) * last, 0);
       last = &(*last)->next;
     }
+
+  return TRUE;
+}
+
+BOOLp
+poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
+{
+  *dst = NULL;
+  if (src == NULL)
+    return TRUE;
+
+  if ((*dst = poly_Create ()) == NULL || !poly_Copy1 (*dst, src))
+    return FALSE;
+
   return TRUE;
 }
 
@@ -3020,7 +3031,8 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
 
   *dst = NULL;
   if (src == NULL)
-    return FALSE;
+    return TRUE; /* Copying a NULL POLYAREA is not a failure, return true */
+
   do
     {
       if ((di = poly_Create ()) == NULL || !poly_Copy1 (di, src))
