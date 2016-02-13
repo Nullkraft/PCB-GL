@@ -2979,7 +2979,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
   for (cur = src->contours; cur != NULL; cur = cur->next)
     {
       if (!poly_CopyContour (last, cur))
-	return FALSE;
+        return FALSE;
       r_insert_entry (dst->contour_tree, (BoxType *) * last, 0);
       last = &(*last)->next;
     }
