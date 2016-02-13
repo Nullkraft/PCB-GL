@@ -1,7 +1,7 @@
-Bottom: 4c8c6571cebb22afa0c41def0cb18f5cce3421dc
+Bottom: 20c6742462528f0e2517fa2bf7fc33ef56abb3b1
 Top:    20c6742462528f0e2517fa2bf7fc33ef56abb3b1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-13 18:26:13 +0000
+Date:   2016-02-13 18:57:51 +0000
 
 Fix board outline generation to not crash when we find nothing
 
@@ -11,18 +11,4 @@ should handle this case!
 
 ---
 
-diff --git a/src/polygon.c b/src/polygon.c
-index 5305cdf..70f437b 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -2458,8 +2458,8 @@ POLYAREA *board_outline_poly (bool include_holes)
-   /* Now we just need to work out which pieces of polygon are inside
-      and outside the board! */
- 
--  /* If there is only one piece, return that */
--  if (clipped->f == clipped)
-+  /* If there is no result, or only one piece, return that */
-+  if (clipped == NULL || clipped->f == clipped)
-     return clipped;
- 
-   /* WARNING: This next check is O(n^2), where n is the number of clipped
+

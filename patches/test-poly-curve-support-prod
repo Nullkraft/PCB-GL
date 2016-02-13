@@ -1,7 +1,7 @@
-Bottom: 3aa904cd09c0b4af25f8657684dfe0f7360dc9de
-Top:    f059a10b91ef4f8b88e55360bedc02bf7ca4f601
+Bottom: 4e444cce4ec88009610e7adb10356da27e97113a
+Top:    73401a610226a44af7b39fc4f5f12923f2da29ce
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-06 16:14:30 +0000
+Date:   2016-02-13 18:57:50 +0000
 
 Test poly-curve support, prod at fixing cursor to pcb mapping in ORTHO view
 
@@ -9,7 +9,7 @@ Test poly-curve support, prod at fixing cursor to pcb mapping in ORTHO view
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index ec6157c..b0cc0e0 100644
+index 698c314..477a5c8 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -1364,6 +1364,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)

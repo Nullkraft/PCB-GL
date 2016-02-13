@@ -1,7 +1,7 @@
-Bottom: 01ac6608329bf79deae428cfb553e16dd5c8111d
-Top:    17621041f402f74b7ca95bfc59049538d170b08c
+Bottom: 834e3225df9c16cc57b09f83861c93541d90a0ec
+Top:    8fa9635567ea210315eff63f843ff4b7adb81b36
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-06 16:14:30 +0000
+Date:   2016-02-13 18:57:49 +0000
 
 Add support for arc segments in polygon object outline definitions
 
@@ -251,7 +251,7 @@ index c0350f8..79dc75b 100644
  		;
  
 diff --git a/src/polygon.c b/src/polygon.c
-index e35c808..69c76b8 100644
+index 0beae50..f1cf3eb 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -111,6 +111,7 @@ dicer output is used for HIDs which cannot render things with holes

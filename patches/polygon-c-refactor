@@ -1,7 +1,7 @@
-Bottom: c6336f906bb32734e77977e84e7819f395cbfe54
-Top:    67cf298c63fd5a648133a33eda2fa7dae45b27e4
+Bottom: a9e0fdfc9375c1afd02e5593aee3038d1395c0ca
+Top:    ff67cbbb0c19006e1719e3fad4ff9a024fee1766
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-13 17:26:03 +0000
+Date:   2016-02-13 18:57:50 +0000
 
 polygon.c: Refactor NoHolesPolygonDicer to call poly_Copy0 rather than poly_Copy1
 
@@ -13,7 +13,7 @@ to be the public API.
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 3e65cad..eabb6b5 100644
+index b90db0f..acdab30 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -2011,9 +2011,8 @@ NoHolesPolygonDicer (PolygonType *p, const BoxType * clip,

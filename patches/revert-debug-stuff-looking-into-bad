@@ -1,7 +1,7 @@
-Bottom: 3cb4076c79fc1d588fe5ef2fab1e0daea70fa143
-Top:    2d5c64ca4cf65bddd8beb10bb3532bb27aa561bd
+Bottom: a9bf0c1baabe097fd5cda763f65bb1e5ec04808d
+Top:    a5abdf11abef39a4ee1a1e4347c791b09808b2ab
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-04-21 02:08:38 +0100
+Date:   2016-02-13 18:57:50 +0000
 
 Revert "DEBUG STUFF - looking into bad polygons"
 
@@ -13,7 +13,7 @@ This reverts commit 292c3e44c385e3ca13127339cbfdeda1d7f6587e.
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 6d76ea14..b0cc0e0 100644
+index 37fcc0f..477a5c8 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -684,9 +684,6 @@ ArcPoly (ArcType * a, Coord thick)

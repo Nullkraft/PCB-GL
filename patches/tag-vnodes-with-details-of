@@ -1,7 +1,7 @@
-Bottom: 2d5c64ca4cf65bddd8beb10bb3532bb27aa561bd
-Top:    2a0925b1dc92536cd37cbc0d34876d139f06bf2d
+Bottom: a5abdf11abef39a4ee1a1e4347c791b09808b2ab
+Top:    a0c9ce4bf0d5fb028e6e7a9aa286b85a8840f922
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-13 16:41:41 +0000
+Date:   2016-02-13 18:57:50 +0000
 
 Tag VNODEs with details of circular contour segments
 
@@ -19,6 +19,7 @@ NB: STILL DOES NOT WORK CORRECTLY IN ALL CASES. SEE:
 circ_segs_test4_still_procuces_bad_contour_when_starting_with_arc.pcb
 
 (SUSPECTED BUG IN THE GATHER / JUMP ROUTINES)
+
 
 ---
 
@@ -147,7 +148,7 @@ index c606077..be95bd2 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index b0cc0e0..01d44f3 100644
+index 477a5c8..5dc27a5 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -104,11 +104,15 @@ dicer output is used for HIDs which cannot render things with holes
