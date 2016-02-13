@@ -190,7 +190,8 @@ poly_dump (POLYAREA * p)
 }
 
 static VNODE *
-poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
+poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radius)
+//poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
 {
   VNODE *res;
   Coord *c;
@@ -224,7 +225,8 @@ poly_CreateNode (Vector v)
 }
 
 VNODE *
-poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
+//poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
+poly_CreateNodeArcApproximation (Vector v, double cx, double cy, double radius)
 {
 //  return poly_CreateNodeFull (v, false /*true*/, cx, cy, radius);
   return poly_CreateNodeFull (v, true, cx, cy, radius);
