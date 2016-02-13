@@ -1,0 +1,41 @@
+Bottom: 3728daf47ab1dc4f054459ca1f4f42838f3f55fc
+Top:    11ede0a01c80719ab9de48a1ca2aa6e9ba2890df
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 17:42:48 +0000
+
+Refresh of fix-return-codes-from
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 143de3e..14d6c78 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2400,6 +2400,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+ {
+   POLYAREA *a = NULL, *b = NULL;
+ 
++  *res = NULL; /* Set now, in case we run out of memory below */
++
+   if (!poly_M_Copy0 (&a, a_org) || !poly_M_Copy0 (&b, b_org))
+     return err_no_memory;
+ 
+@@ -2420,7 +2422,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ 
+   test_polyInvContour ();
+ 
+-  *res = NULL;
++  *res = NULL; /* Set now, in case we run out of memory below */
+ 
+   if (!a)
+     {
+@@ -3018,7 +3020,8 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
+ 
+   *dst = NULL;
+   if (src == NULL)
+-    return FALSE;
++    return TRUE; /* Copying a NULL POLYAREA is not a failure, return true */
++
+   do
+     {
+       if ((di = poly_Create ()) == NULL || !poly_Copy1 (di, src))
