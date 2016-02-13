@@ -2993,12 +2993,11 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
   *dst = NULL;
   if (src == NULL)
     return TRUE; /* Copying a NULL POLYAREA is not a failure, return true */
-  *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
-  if (*dst == NULL)
-    return FALSE;
-  (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
 
-  return poly_Copy1 (*dst, src);
+  if ((*dst = poly_Create ()) == NULL || !poly_Copy1 (*dst, src))
+    return FALSE;
+
+  return TRUE;
 }
 
 void
