@@ -1,7 +1,7 @@
-Bottom: 196b2aca902cd8766b3ea44c4262188a43f2f6f8
-Top:    c32765d1b9e502e0f3f9ffe54d5c49f4ed804a54
+Bottom: 2707033e503b47fa44701b0ddc7798da38bd6eda
+Top:    b9b2b02a9fb5157877c381357395d65631df9207
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-06 15:42:21 +0000
+Date:   2016-02-13 19:01:09 +0000
 
 Win32 code fixes (TO BE SPLIT INTO SEPARATE PATCHES)
 
@@ -158,10 +158,10 @@ index 8977b40..29910ea 100644
  # endif
  #endif
 diff --git a/src/polygon.c b/src/polygon.c
-index 8834733..dc9e61c 100644
+index 8831d64..910fec3 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -2096,12 +2096,13 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2093,12 +2093,13 @@ pv_outline_callback (const BoxType * b, void *cl)
  
        if (element_name != NULL && pin_number != NULL)
          {
