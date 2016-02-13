@@ -9,6 +9,11 @@ We need to delete the rtree entry before updating any bounds, otherwise
 bad things might happen (and certainly, with NDEBUG undefined, we may
 get asserts firing in rtree.c)
 
+To avoid computational expense deleting and removing from the rtree in
+the general case (where we wouldn't expect bounds to change), a new
+test function has been added which determines whether the contour bounds
+will be updated or not.
+
 
 ---
 
