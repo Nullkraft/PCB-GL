@@ -1,0 +1,110 @@
+Bottom: 3b409d5d3626f148a7d41b71892e55b6ba326dfe
+Top:    07e59fcb3a374163715896a8424b9a20a4df504b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 18:56:43 +0000
+
+Refresh of polygon-debug
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index bde4ef3..d6557be 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -605,6 +605,9 @@ ArcPoly (ArcType * a, Coord thick)
+   return ArcPolyNoIntersect (a, thick);
+ }
+ 
++void pline_dump (VNODE * v);
++void poly_dump (POLYAREA * p);
++
+ POLYAREA *
+ LinePoly (LineType * L, Coord thick)
+ {
+@@ -673,6 +676,8 @@ LinePoly (LineType * L, Coord thick)
+   if (!(np = ContourToPoly (contour)))
+     return NULL;
+ 
++  poly_dump (np);
++
+   return np;
+ }
+ 
+@@ -1032,10 +1037,28 @@ line_sub_callback (const BoxType * b, void *cl)
+   if (!(np = LinePoly (line, line->Thickness + line->Clearance)))
+     longjmp (info->env, 1);
+ 
++  if (info->batch_size == 2)
++    {
++      printf ("Batch no %i, input:\n",info->batch_size);
++      poly_dump (info->accumulate);
++      printf ("---- subtract from it:\n");
++      poly_dump (np);
++    }
++
+   poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
++
++  if (info->batch_size == 2)
++    {
++      printf ("Ouptut:\n");
++      poly_dump (merged);
++      printf ("-----------\n");
++    }
++
+   info->accumulate = merged;
+   info->batch_size ++;
+ 
++  pcb_printf ("Line %mm, %mm - %mm, %mm\n", line->Point1.X, line->Point1.Y, line->Point2.X, line->Point2.Y);
++
+   if (info->batch_size == SUBTRACT_LINE_BATCH_SIZE)
+     subtract_accumulated (info, polygon);
+ 
+@@ -1107,7 +1130,8 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
+         r +=
+           r_search (layer->line_tree, &region, NULL, line_sub_callback,
+                     &info);
+-        subtract_accumulated (&info, polygon);
++//        subtract_accumulated (&info, polygon);
++      polygon->Clipped = info.accumulate;
+         r +=
+           r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
+ 	r +=
+@@ -1116,7 +1140,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
+       END_LOOP;
+       r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
+       r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+-      subtract_accumulated (&info, polygon);
++//      subtract_accumulated (&info, polygon);
+     }
+   polygon->NoHolesValid = 0;
+   return r;
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 58edfbd..6d045f6 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -139,7 +139,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+ #ifdef DEBUG
+ static char *theState (VNODE * v);
+ 
+-static void
++/*static */void
+ pline_dump (VNODE * v)
+ {
+   VNODE *s, *n;
+@@ -148,14 +148,14 @@ pline_dump (VNODE * v)
+   do
+     {
+       n = NEXT_VERTEX(v);
+-      pcb_fprintf (stderr, "Line [%#mS %#mS %#mS %#mS 10 10 \"%s\"]\n",
++      pcb_fprintf (stderr, "Line [%mn %mn %mn %mn 10 10 \"%s\"]\n",
+ 	       v->point[0], v->point[1],
+ 	       n->point[0], n->point[1], theState (v));
+     }
+   while ((v = NEXT_VERTEX(v)) != s);
+ }
+ 
+-static void
++/*static */void
+ poly_dump (POLYAREA * p)
+ {
+   POLYAREA *f = p;
