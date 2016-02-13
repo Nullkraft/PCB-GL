@@ -1,5 +1,5 @@
 Bottom: 67cf298c63fd5a648133a33eda2fa7dae45b27e4
-Top:    d02ca54f77213fdac666f0bcfb15f3a0d6fb0ee9
+Top:    1c50ea2e56bf63273c28dd2fa3f812d5f36062c6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 17:27:45 +0000
 
@@ -21,7 +21,7 @@ index be95bd2..fc6a63d 100644
  BOOLp poly_InclContour(POLYAREA * p, PLINE * c);
  BOOLp poly_ExclContour(POLYAREA * p, PLINE * c);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b5ef082..c1c15dd 100644
+index b5ef082..4db2379 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -2968,20 +2968,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
@@ -46,7 +46,7 @@ index b5ef082..c1c15dd 100644
  poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
  {
    PLINE *cur, **last = &dst->contours;
-@@ -2992,13 +2979,26 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+@@ -2992,13 +2979,27 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
    for (cur = src->contours; cur != NULL; cur = cur->next)
      {
        if (!poly_CopyContour (last, cur))
@@ -55,6 +55,7 @@ index b5ef082..c1c15dd 100644
        r_insert_entry (dst->contour_tree, (BoxType *) * last, 0);
        last = &(*last)->next;
      }
++
    return TRUE;
  }
  
