@@ -1,5 +1,5 @@
 Bottom: 8857964225fa9c8f74e6deccda634dded2cee785
-Top:    b789541152cc00f83febf350e5c8844d43d04a12
+Top:    50dab70ad7eb3dbdef71c75d4d93c9cb91e57f58
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 17:42:30 +0000
 
@@ -13,27 +13,28 @@ later processing incorrectly, such as in poly_Boolean and poly_BooleanFree
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ecbdddd..f476cc4 100644
+index ecbdddd..1dd9607 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2989,8 +2989,9 @@ BOOLp
+@@ -2989,8 +2989,10 @@ BOOLp
  poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
  {
    *dst = NULL;
 -  if (src != NULL)
 -    *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
 +  if (src == NULL)
-+    return TRUE; /* Copying a NULL POLYAREA is not a failure, return true */
++    return TRUE;
++
 +  *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
    if (*dst == NULL)
      return FALSE;
    (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
-@@ -3019,7 +3020,8 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
+@@ -3019,7 +3021,8 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
  
    *dst = NULL;
    if (src == NULL)
 -    return FALSE;
-+    return TRUE; /* Copying a NULL POLYAREA is not a failure, return true */
++    return TRUE;
 +
    do
      {
