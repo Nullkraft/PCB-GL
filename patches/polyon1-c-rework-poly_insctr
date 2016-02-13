@@ -1,0 +1,16 @@
+Bottom: d02ca54f77213fdac666f0bcfb15f3a0d6fb0ee9
+Top:    d02ca54f77213fdac666f0bcfb15f3a0d6fb0ee9
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 17:34:19 +0000
+
+polyon1.c: Rework poly_InsCtr to re-use poly_Create() rather than open-coding
+
+Removes the single case where the memory allocation macro MyMem was called, so
+this was also removed.
+
+This allows us to ensure common initialisation is performed in poly_Create().
+
+
+---
+
+
