@@ -1,0 +1,34 @@
+Bottom: 67d1b707b2ba4f8830e269b8e50b28a229ee07b6
+Top:    d0bff199cf46b7d21703a91b65ebddefb264e487
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-13 19:35:36 +0000
+
+Refresh of polygon1-c-move-jump-call-to
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 3d62222..4982799 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2457,9 +2457,6 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+   assert (*result == NULL);
+   do
+     {
+-      /* see where to go next */
+-      if (!jump (&curv, &dir, j_rule))
+-	break;
+       /* add vertex (edge?) to polygon */
+       if ((newn = poly_CreateNodeFull (curv->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->is_round,
+                                                     (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->cx,
+@@ -2519,6 +2516,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+ 
+       /* Advance to the next vertex (edge?).  */
+       curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
++
++      /* see where to go next */
++      if (!jump (&curv, &dir, j_rule))
++	break;
+     }
+   while (1);
+   return err_ok;
