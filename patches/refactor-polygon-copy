@@ -1,5 +1,5 @@
 Bottom: 7b5a5da32ab6fe32f2fa6ec08692b7d853fefef9
-Top:    d7cca3d171346daf6ebc571f708918943b88cad4
+Top:    eef93bd95fa7c70fbc57533aac0a29ce229a49ed
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 17:14:44 +0000
 
@@ -9,7 +9,7 @@ Refactor polygon copy operations
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 663dd11..ca7a7e7 100644
+index 663dd11..55772a5 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -105,10 +105,6 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -70,26 +70,17 @@ index 663dd11..ca7a7e7 100644
  
    if (!a)
      {
-@@ -2968,7 +2965,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
- /**********************************************************************/
- /* polygon routines */
- 
--static BOOLp
-+static bool
- poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
- {
-   PLINE *cur, **last = &dst->contours;
 @@ -2979,10 +2976,24 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
    for (cur = src->contours; cur != NULL; cur = cur->next)
      {
        if (!poly_CopyContour (last, cur))
 -	return FALSE;
-+        return false;
++        return FALSE;
        r_insert_entry (dst->contour_tree, (BoxType *) * last, 0);
        last = &(*last)->next;
      }
 +
-+  return true;
++  return TRUE;
 +}
 +
 +BOOLp
