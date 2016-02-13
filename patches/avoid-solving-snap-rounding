@@ -1,5 +1,5 @@
 Bottom: f6a5a97e07f3ed2708c976be6b41195f14ffd727
-Top:    0184cdaa480a9df09c74cab563bd019bac0f4cd9
+Top:    b7c96d21cef0420bdc9a1932202feff91f6b51f3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
 
@@ -160,7 +160,7 @@ index f099d7c..fb30658 100644
    return r;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 2ca973c..853e1dc 100644
+index 2ca973c..7171766 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -75,8 +75,10 @@ double vect_dist2 (Vector v1, Vector v2);
@@ -524,8 +524,8 @@ index 2ca973c..853e1dc 100644
 +          VERTEX_FORWARD_EDGE (newn)->orig_point0[1] = VERTEX_BACKWARD_EDGE (curv)->orig_point1[1];
 +          VERTEX_FORWARD_EDGE (newn)->orig_point1[0] = VERTEX_BACKWARD_EDGE (curv)->orig_point0[0];
 +          VERTEX_FORWARD_EDGE (newn)->orig_point1[1] = VERTEX_BACKWARD_EDGE (curv)->orig_point0[1];
-+          VERTEX_FORWARD_EDGE (newn)->p0 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->prev->p1;
-+          VERTEX_FORWARD_EDGE (newn)->p1 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->prev->p0;
++          VERTEX_FORWARD_EDGE (newn)->p0 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->p1;
++          VERTEX_FORWARD_EDGE (newn)->p1 = 1.0 - VERTEX_BACKWARD_EDGE (curv)->p0;
 +          if (VERTEX_FORWARD_EDGE (newn)->p1 < VERTEX_FORWARD_EDGE (newn)->p0)
 +            {
 +              printf ("!FORW: OH DEAR, p0=%f, p1=%f\n", newn->p0, newn->p1);
