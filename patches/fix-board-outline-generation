@@ -3,7 +3,7 @@ Top:    20c6742462528f0e2517fa2bf7fc33ef56abb3b1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:26:13 +0000
 
-Fix board outline generation to work when we find nothing
+Fix board outline generation to not crash when we find nothing
 
 This was hit due to another bug, but since NULL is a valid polygon, we
 should handle this case!
