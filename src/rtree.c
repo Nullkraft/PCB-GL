@@ -40,7 +40,6 @@
 
 #include "global.h"
 
-#undef NDEBUG
 #include <assert.h>
 #include <setjmp.h>
 
@@ -408,12 +407,6 @@ r_create_tree (const BoxType * boxlist[], int N, int manage)
   assert (__r_tree_is_good (rtree->root));
 #endif
   return rtree;
-}
-
-void
-r_check_tree (rtree_t *rtree)
-{
-  assert (__r_tree_is_good (rtree->root));
 }
 
 static void
