@@ -137,7 +137,7 @@ is_layer_group_visible (int group)
 }
 
 int
-ghid_set_layer (const char *name, int group, int empty)
+ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
   if (group >= 0 && group < max_group)
     return is_layer_group_visible (group);

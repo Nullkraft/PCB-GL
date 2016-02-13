@@ -477,7 +477,7 @@ void ghid_logv (const char *fmt, va_list args);
 void ghid_pinout_window_show (GHidPort *out, ElementType *Element);
 
 /* gtkhid-gdk.c AND gtkhid-gl.c */
-int ghid_set_layer (const char *name, int group, int empty);
+int ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty);
 hidGC ghid_make_gc (void);
 void ghid_destroy_gc (hidGC);
 void ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
