@@ -5,7 +5,7 @@ Date:   2016-02-13 17:34:19 +0000
 
 polyon1.c: Rework InsCntr to re-use poly_Create() rather than open-coding
 
-Removes the single case where the memory allocation macro MyMem was called, so
+Removes the single case where the memory allocation macro MemGet was called, so
 this was also removed.
 
 This allows us to ensure common initialisation is performed in poly_Create().
