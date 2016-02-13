@@ -1,4 +1,4 @@
-Bottom: c6336f906bb32734e77977e84e7819f395cbfe54
+Bottom: 67cf298c63fd5a648133a33eda2fa7dae45b27e4
 Top:    77386b03ddb4f80cc4f0356ba156209677399059
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 17:14:44 +0000
@@ -20,21 +20,6 @@ index be95bd2..fc6a63d 100644
  
  BOOLp poly_InclContour(POLYAREA * p, PLINE * c);
  BOOLp poly_ExclContour(POLYAREA * p, PLINE * c);
-diff --git a/src/polygon.c b/src/polygon.c
-index 3e65cad..eabb6b5 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -2011,9 +2011,8 @@ NoHolesPolygonDicer (PolygonType *p, const BoxType * clip,
- {
-   POLYAREA *main_contour, *cur, *next;
- 
--  main_contour = poly_Create ();
-   /* copy the main poly only */
--  poly_Copy1 (main_contour, p->Clipped);
-+  poly_Copy0 (&main_contour, p->Clipped);
-   /* clip to the bounding box */
-   if (clip)
-     {
 diff --git a/src/polygon1.c b/src/polygon1.c
 index b5ef082..a36b32e 100644
 --- a/src/polygon1.c
