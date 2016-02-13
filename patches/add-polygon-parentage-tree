@@ -1,5 +1,5 @@
 Bottom: ed28b1d26d8189be843305c1aa0082ca8248d735
-Top:    a1513f18f1e3c769b9e9acc46c330f81c19c137d
+Top:    275ad72745612aba7c47ffb70a06d468fa83a986
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-09 18:40:43 +0000
 
@@ -427,7 +427,7 @@ index eabb6b5..8a36e84 100644
    poly->NoHoles = NULL;
    flags = poly->Flags;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 5f2686a..3ab8b67 100644
+index 5f2686a..80ed032 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -133,6 +133,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -486,16 +486,16 @@ index 5f2686a..3ab8b67 100644
  static void test_polyInvContour (void);
  
  /* just like poly_Boolean but frees the input polys */
-@@ -2419,10 +2445,28 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2419,11 +2445,29 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    PLINE *p, *holes = NULL;
    jmp_buf e;
    int code;
+-
+-  test_polyInvContour ();
 +  POLYAREA *a_copy, *b_copy;
  
--  test_polyInvContour ();
-+  *res = NULL; /* Set now, in case we run out of memory below */
+   *res = NULL;
  
--  *res = NULL;
 +  /* Make copies for tracking polygon parentage (DEBUG) */
 +  if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
 +      return err_no_memory;
@@ -514,9 +514,10 @@ index 5f2686a..3ab8b67 100644
 +    }
 +
 +  test_polyInvContour ();
- 
++
    if (!a)
      {
+       switch (action)
 @@ -2431,12 +2475,14 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  	case PBO_XOR:
  	case PBO_UNITE:
@@ -598,37 +599,7 @@ index 5f2686a..3ab8b67 100644
  
    return TRUE;
  }
-@@ -3018,18 +3093,29 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
- {
-   const POLYAREA *src = srcfst;
-   POLYAREA *di;
-+//  POLYPARENTAGE parentage;
- 
-   *dst = NULL;
-   if (src == NULL)
-     return TRUE;
- 
-+#if 0
-+  /* Copy parentage information - we assume all M_linked polygons have the same parentage */
-+  parentage.immaculate_conception = src->parentage.immaculate_conception;
-+  parentage.action = src->parentage.action;
-+  poly_M_Copy0 (&parentage.a, src->parentage.a);
-+  poly_M_Copy0 (&parentage.b, src->parentage.b);
-+#endif
-+
-   do
-     {
-       if ((di = poly_Create ()) == NULL || !poly_Copy1 (di, src))
- 	return FALSE;
-+//      di->parentage = parentage;
-       poly_M_Incl (dst, di);
-     }
-   while ((src = src->f) != srcfst);
-+
-   return TRUE;
- }
- 
-@@ -3326,6 +3412,7 @@ poly_Init (POLYAREA * p)
+@@ -3326,6 +3401,7 @@ poly_Init (POLYAREA * p)
    p->f = p->b = p;
    p->contours = NULL;
    p->contour_tree = r_create_tree (NULL, 0, 0);
@@ -636,7 +607,7 @@ index 5f2686a..3ab8b67 100644
  }
  
  POLYAREA *
-@@ -3367,6 +3454,13 @@ poly_Free (POLYAREA ** p)
+@@ -3367,6 +3443,13 @@ poly_Free (POLYAREA ** p)
      }
    poly_FreeContours (&cur->contours);
    r_destroy_tree (&cur->contour_tree);
