@@ -2459,6 +2459,12 @@ POLYAREA *board_outline_poly (bool include_holes)
   return clipped;
 #endif
 
+  if (clipped == NULL)
+    {
+      fprintf (stderr, "clipped == NULL in board_outline_poly\n");
+      return clipped;
+    }
+
   /* Now we just need to work out which pieces of polygon are inside
      and outside the board! */
 
