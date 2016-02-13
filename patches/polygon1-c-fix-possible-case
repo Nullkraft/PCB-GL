@@ -1,5 +1,5 @@
-Bottom: b789541152cc00f83febf350e5c8844d43d04a12
-Top:    90390f70eee3c67c604ecdd8a156725f59899704
+Bottom: 50dab70ad7eb3dbdef71c75d4d93c9cb91e57f58
+Top:    df78a11fcb050d8c6c85e5688e1fd4109f8ae8d7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 17:47:37 +0000
 
@@ -14,7 +14,7 @@ incorrectly returning FALSE when copping a NULL polygon.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f476cc4..0403874 100644
+index 1dd9607..f970086 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -2400,6 +2400,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
