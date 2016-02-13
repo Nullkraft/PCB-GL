@@ -1,5 +1,5 @@
 Bottom: 52d92b7cf4a46772e5d1095fcc0c85369fab850c
-Top:    d64afafa5da6b2f33bf222ce50af979ef7f4f16e
+Top:    90fed552fedd43fb0c49a62fb7556698b9672545
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 22:05:14 +0000
 
@@ -250,40 +250,3 @@ index 802d713..48f34b7 100644
 +  //r_check_tree (p->contour_tree);
    return TRUE;
  }
- 
-diff --git a/src/rtree.c b/src/rtree.c
-index 6558427..dc71dec 100644
---- a/src/rtree.c
-+++ b/src/rtree.c
-@@ -40,6 +40,7 @@
- 
- #include "global.h"
- 
-+#undef NDEBUG
- #include <assert.h>
- #include <setjmp.h>
- 
-@@ -409,6 +410,12 @@ r_create_tree (const BoxType * boxlist[], int N, int manage)
-   return rtree;
- }
- 
-+void
-+r_check_tree (rtree_t *rtree)
-+{
-+  assert (__r_tree_is_good (rtree->root));
-+}
-+
- static void
- __r_destroy_tree (struct rtree_node *node)
- {
-diff --git a/src/rtree.h b/src/rtree.h
-index d44de09..e9e1881 100644
---- a/src/rtree.h
-+++ b/src/rtree.h
-@@ -87,5 +87,6 @@ static inline int r_search_pt (rtree_t * rtree, const PointType * pt,
- int r_region_is_empty (rtree_t * rtree, const BoxType * region);
- 
- void __r_dump_tree (struct rtree_node *, int);
-+void r_check_tree (rtree_t *rtree);
- 
- #endif
