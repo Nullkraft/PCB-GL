@@ -334,8 +334,7 @@ new_descriptor (VNODE * a, char poly, char side)
   l->poly = poly;
   l->side = side;
   l->next = l->prev = l;
-  if ((side == 'P' && a->prev->is_round == false) || /* previous, not round */
-      (side != 'P' && a      ->is_round == false))   /* next,     not round */
+  if (VERTEX_SIDE_DIR_EDGE (a, side)->is_round == false)  /* not round */
     { /* Line-segment case */
 
 #if 0
@@ -391,20 +390,21 @@ new_descriptor (VNODE * a, char poly, char side)
        * 90 degrees CW)
        */
 
+      center[0] = VERTEX_SIDE_DIR_EDGE (a, side)->cx;
+      center[1] = VERTEX_SIDE_DIR_EDGE (a, side)->cy;
+      l->curvature = (double)-compare_ccw_cw (a->point, center, EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (a, side), side)->point) / VERTEX_SIDE_DIR_EDGE (a, side)->radius;
+#if 0
       if (side == 'P')		/* previous */
         {
-          center[0] = VERTEX_BACKWARD_EDGE (a)->cx;
-          center[1] = VERTEX_BACKWARD_EDGE (a)->cy;
           l->curvature = (double)+compare_ccw_cw (EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (a))->point, center, a->point) / VERTEX_BACKWARD_EDGE (a)->radius;
           // OR: ?
           // l->curvature = (double)-compare_ccw_cw (a->point, center, a->prev->point) / a->prev->radius;
         }
       else				/* next */
         {
-          center[0] = VERTEX_FORWARD_EDGE (a)->cx;
-          center[1] = VERTEX_FORWARD_EDGE (a)->cy;
           l->curvature = (double)-compare_ccw_cw (a->point, center, EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (a))->point) / VERTEX_FORWARD_EDGE (a)->radius;
         }
+#endif
 
       /* First of all, make v the radial line */
       vect_sub (v, center, a->point);
@@ -4641,10 +4641,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
       Vector q1_trimmed;
       Vector q2_trimmed;
 
-      double sq1;
-      double sq2;
-      double tp1;
-      double tp2;
+//      double sq1;
+//      double sq2;
+//      double tp1;
+//      double tp2;
 
       p1_trimmed[0] = p1[0] + ROUND (s1 * rpx);
       p1_trimmed[1] = p1[1] + ROUND (s1 * rpy);
@@ -4657,10 +4657,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
       q2_trimmed[1] = q1[1] + ROUND (t2 * rqy);
 
       /* Calculate the parameter values on each line (p1-p2 has s param, q1-q2 has t param), of the end-points of the other line */
-      sq1 = calculate_line_point_intersection (p1, p2, q1_trimmed);
-      sq2 = calculate_line_point_intersection (p1, p2, q2_trimmed);
-      tp1 = calculate_line_point_intersection (q1, q2, p1_trimmed);
-      tp2 = calculate_line_point_intersection (q1, q2, p2_trimmed);
+//      sq1 = calculate_line_point_intersection (p1, p2, q1_trimmed);
+//      sq2 = calculate_line_point_intersection (p1, p2, q2_trimmed);
+//      tp1 = calculate_line_point_intersection (q1, q2, p1_trimmed);
+//      tp2 = calculate_line_point_intersection (q1, q2, p2_trimmed);
 
       {
       double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
