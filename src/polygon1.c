@@ -4768,10 +4768,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
       Vector q1_trimmed;
       Vector q2_trimmed;
 
-      double sq1;
-      double sq2;
-      double tp1;
-      double tp2;
+//      double sq1;
+//      double sq2;
+//      double tp1;
+//      double tp2;
 
       p1_trimmed[0] = p1[0] + ROUND (s1 * rpx);
       p1_trimmed[1] = p1[1] + ROUND (s1 * rpy);
@@ -4784,10 +4784,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
       q2_trimmed[1] = q1[1] + ROUND (t2 * rqy);
 
       /* Calculate the parameter values on each line (p1-p2 has s param, q1-q2 has t param), of the end-points of the other line */
-      sq1 = calculate_line_point_intersection (p1, p2, q1_trimmed);
-      sq2 = calculate_line_point_intersection (p1, p2, q2_trimmed);
-      tp1 = calculate_line_point_intersection (q1, q2, p1_trimmed);
-      tp2 = calculate_line_point_intersection (q1, q2, p2_trimmed);
+//      sq1 = calculate_line_point_intersection (p1, p2, q1_trimmed);
+//      sq2 = calculate_line_point_intersection (p1, p2, q2_trimmed);
+//      tp1 = calculate_line_point_intersection (q1, q2, p1_trimmed);
+//      tp2 = calculate_line_point_intersection (q1, q2, p2_trimmed);
 
       {
       double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
