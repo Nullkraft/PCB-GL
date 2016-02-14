@@ -1,0 +1,28 @@
+Bottom: 639246b8f3c0dc6f963d5f230bf17f278d99065d
+Top:    2006370623e3a753f32309edcfa210d4fee6464a
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-14 00:57:21 +0000
+
+Refresh of introduce-macros-for
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index e805cab..1f05d35 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -636,14 +636,6 @@ cvc_list_dump (CVCList *list)
+   VNODE *node = list->parent;
+   CVCList *iter;
+ 
+-#if 0
+-  /* Only print for the vertex we're interested in at the moment */
+-  if (!(
+-      (node->point[0] == 69088001 || node->point[0] == 69088000 || node->point[0] == 69087998) &&
+-      node->point[1] == 29336999))
+-    return;
+-#endif
+-
+   pcb_fprintf (stderr, "Dumping CVC list at (%$mn, %$mn)\n", node->point[0], node->point[1]);
+ 
+   iter = list;
