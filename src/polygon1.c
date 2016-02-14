@@ -39,6 +39,7 @@
       are marked
 */
 
+#undef NDEBUG
 #include	<assert.h>
 #include	<stdlib.h>
 #include	<stdio.h>
@@ -941,6 +942,7 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
   DEBUGP ("new intersection on segment \"i\" at %#mD\n", v[0], v[1]);
 #endif
   i->node_insert_list = prepend_insert_node_task (i->node_insert_list, s, new_node, param);
+  assert (!s->intersected);
   s->intersected = 1;
   return true;
 }
@@ -1295,6 +1297,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
       s1->v->radius == s2->v->radius)
     {
       printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
+      s1->v->is_round = false;
+      s2->v->is_round = false;
       return seg_in_seg_line_line (i, s1, s2);
     }
 #endif
