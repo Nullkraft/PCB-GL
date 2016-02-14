@@ -760,12 +760,6 @@ cvc_list_dump (CVCList *list)
   VNODE *node = list->parent;
   CVCList *iter;
 
-  /* Only print for the vertex we're interested in at the moment */
-  if (!(
-      (node->point[0] == 69088001 || node->point[0] == 69088000 || node->point[0] == 69087998) &&
-      node->point[1] == 29336999))
-    return;
-
   pcb_fprintf (stderr, "Dumping CVC list at (%$mn, %$mn)\n", node->point[0], node->point[1]);
 
   iter = list;
