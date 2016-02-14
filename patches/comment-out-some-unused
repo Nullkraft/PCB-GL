@@ -1,5 +1,5 @@
-Bottom: 61b03937ba5042f74ea104fa3b74a9d0594803b2
-Top:    7acfb173944e4beba80cd481e10c511f01746b02
+Bottom: 7bc73f304fa65b27bdabb05b760af19673eae394
+Top:    3d9285e1542a7807804ffda1163619ddc507c7c1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-14 00:52:25 +0000
 
@@ -9,10 +9,10 @@ Comment out some unused variables to reduce build noise
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 86aebf0..65f75dd 100644
+index 2cee604..4a3f63e 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -4768,10 +4768,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
+@@ -4760,10 +4760,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
        Vector q1_trimmed;
        Vector q2_trimmed;
  
@@ -27,7 +27,7 @@ index 86aebf0..65f75dd 100644
  
        p1_trimmed[0] = p1[0] + ROUND (s1 * rpx);
        p1_trimmed[1] = p1[1] + ROUND (s1 * rpy);
-@@ -4784,10 +4784,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
+@@ -4776,10 +4776,10 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
        q2_trimmed[1] = q1[1] + ROUND (t2 * rqy);
  
        /* Calculate the parameter values on each line (p1-p2 has s param, q1-q2 has t param), of the end-points of the other line */
