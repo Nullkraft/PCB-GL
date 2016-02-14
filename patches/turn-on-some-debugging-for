@@ -1,5 +1,5 @@
-Bottom: dd85d4b48d336145c4cda064b1d5979884ca122b
-Top:    d7d6165b2254acc886673c893ea54c04f7d4f25f
+Bottom: 5ccaeec40d1b1768e96c148d3975327122ae1a26
+Top:    5e49a6445de7ae0449665b73f67a67fab6df14cc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-14 00:50:26 +0000
 
@@ -15,7 +15,7 @@ correct seg structure - which has been free'd during the first splitting.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1e45fe5..961e06f 100644
+index f4dc990..fd269e9 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -39,6 +39,7 @@
@@ -26,7 +26,7 @@ index 1e45fe5..961e06f 100644
  #include	<assert.h>
  #include	<stdlib.h>
  #include	<stdio.h>
-@@ -941,6 +942,7 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
+@@ -938,6 +939,7 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
    DEBUGP ("new intersection on segment \"i\" at %#mD\n", v[0], v[1]);
  #endif
    i->node_insert_list = prepend_insert_node_task (i->node_insert_list, s, new_node, param);
@@ -34,7 +34,7 @@ index 1e45fe5..961e06f 100644
    s->intersected = 1;
    return true;
  }
-@@ -1295,6 +1297,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1292,6 +1294,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
        s1->v->radius == s2->v->radius)
      {
        printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
