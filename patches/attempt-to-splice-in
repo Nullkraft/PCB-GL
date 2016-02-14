@@ -1,5 +1,5 @@
-Bottom: e1f159c89da4ae7962a68d8739bcb9ff9ba64372
-Top:    34583435ec9b7df3ad82591b4c63e5685eb66418
+Bottom: 9a62110300a81e66363dab15ad2b3e631fd69d22
+Top:    22f416cfe679e0bfbe24def26219d1a3bbcde4b9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-14 01:14:48 +0000
 
@@ -9,10 +9,10 @@ Attempt to splice in edge_label routine from later in patch series...
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 356ce0f..b40af39 100644
+index 66a1654..5029e8b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -309,6 +309,24 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -313,6 +313,24 @@ new_descriptor (VNODE * a, char poly, char side)
  }
  
  /*
@@ -37,7 +37,7 @@ index 356ce0f..b40af39 100644
  insert_descriptor
    (C) 2006 harry eaton
  
-@@ -363,12 +381,13 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
+@@ -367,12 +385,13 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
    l = big = small = start;
    do
      {
@@ -53,7 +53,7 @@ index 356ce0f..b40af39 100644
  	{
  	  /* insert new cvc if it lies between existing points */
  	  newone->prev = l;
-@@ -379,6 +398,11 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
+@@ -383,6 +402,11 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
      }
    while ((l = l->next) != start);
    /* didn't find it between points, it must go on an end */
@@ -65,7 +65,7 @@ index 356ce0f..b40af39 100644
    if (big->angle <= newone->angle)
      {
        newone->prev = big;
-@@ -387,6 +411,7 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
+@@ -391,6 +415,7 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
        return newone;
      }
    assert (small->angle >= newone->angle);
@@ -73,7 +73,7 @@ index 356ce0f..b40af39 100644
    newone->next = small;
    newone->prev = small->prev;
    small->prev = small->prev->next = newone;
-@@ -424,86 +449,97 @@ node_add_single_point (VNODE * a, Vector p)
+@@ -428,86 +453,97 @@ node_add_single_point (VNODE * a, Vector p)
  /*
  edge_label
   (C) 2006 harry eaton
