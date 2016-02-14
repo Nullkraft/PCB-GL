@@ -700,7 +700,16 @@ edge_label (VNODE * pn)
        */
       if (l->poly == l->next->poly &&
           l->side != l->next->side && /* <-- PCJC: Not sure if this is required, including for sanity */
-          l->angle == l->next->angle)
+          l->angle == l->next->angle &&
+          ((l->side       = 'P') ? VERTEX_BACKWARD_EDGE (l->parent      ) : VERTEX_FORWARD_EDGE (l->parent      ))->is_round ==
+          ((l->next->side = 'P') ? VERTEX_BACKWARD_EDGE (l->next->parent) : VERTEX_FORWARD_EDGE (l->next->parent))->is_round &&
+          ((l->side       = 'P') ? VERTEX_BACKWARD_EDGE (l->parent      ) : VERTEX_FORWARD_EDGE (l->parent      ))->radius ==
+          ((l->next->side = 'P') ? VERTEX_BACKWARD_EDGE (l->next->parent) : VERTEX_FORWARD_EDGE (l->next->parent))->radius &&
+          ((l->side       = 'P') ? VERTEX_BACKWARD_EDGE (l->parent      ) : VERTEX_FORWARD_EDGE (l->parent      ))->cx ==
+          ((l->next->side = 'P') ? VERTEX_BACKWARD_EDGE (l->next->parent) : VERTEX_FORWARD_EDGE (l->next->parent))->cx &&
+          ((l->side       = 'P') ? VERTEX_BACKWARD_EDGE (l->parent      ) : VERTEX_FORWARD_EDGE (l->parent      ))->cy ==
+          ((l->next->side = 'P') ? VERTEX_BACKWARD_EDGE (l->next->parent) : VERTEX_FORWARD_EDGE (l->next->parent))->cy)
+
         l = l->next->next;
     }
   assert (l->poly != this_poly);
