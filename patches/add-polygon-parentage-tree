@@ -1,5 +1,5 @@
 Bottom: e1f159c89da4ae7962a68d8739bcb9ff9ba64372
-Top:    b17b771cfdd3fa087c28a8eb9d115e4690b5a2c8
+Top:    80171986e416410b4f53ee20439f8220d615ae5a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:57:51 +0000
 
@@ -284,42 +284,10 @@ index fc6a63d..86bf9c3 100644
  double vect_det2 (Vector v1, Vector v2);
  double vect_len2 (Vector v1);
 diff --git a/src/polygon.c b/src/polygon.c
-index a892dce..d045ce2 100644
+index a892dce..8360d64 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -104,6 +104,9 @@ dicer output is used for HIDs which cannot render things with holes
- #include <dmalloc.h>
- #endif
- 
-+/* For getrlimit, setrlimit */
-+#include <sys/time.h>
-+#include <sys/resource.h>
- 
- #undef DEBUG_CIRCSEGS
- 
-@@ -120,6 +123,8 @@ static double bw_rotate_circle_seg[4];
- void
- polygon_init (void)
- {
-+  struct rlimit limit;
-+
-   double cos_ang = cos (2.0 * M_PI / POLY_CIRC_SEGS_F);
-   double sin_ang = sin (2.0 * M_PI / POLY_CIRC_SEGS_F);
- 
-@@ -128,6 +133,12 @@ polygon_init (void)
- 
-   bw_rotate_circle_seg[0] =  cos_ang;  bw_rotate_circle_seg[1] =  sin_ang;
-   bw_rotate_circle_seg[2] = -sin_ang;  bw_rotate_circle_seg[3] =  cos_ang;
-+
-+  /* DEBUG - AVOID PCB running the system out of memory! */
-+  getrlimit (RLIMIT_AS, &limit);
-+  limit.rlim_cur = MIN (limit.rlim_cur, 7000 * 1024 * 1024 /* 2000 GiB limit to virtual memory size */);
-+  setrlimit (RLIMIT_AS, &limit);
-+
- }
- 
- Cardinal
-@@ -932,6 +943,8 @@ SquarePadPoly (PadType * pad, Coord clear)
+@@ -932,6 +932,8 @@ SquarePadPoly (PadType * pad, Coord clear)
    return np;
  }
  
@@ -328,7 +296,7 @@ index a892dce..d045ce2 100644
  /* clear np1 from the polygon */
  static int
  Subtract (POLYAREA * np1, PolygonType * p, bool fnp)
-@@ -961,11 +974,13 @@ Subtract (POLYAREA * np1, PolygonType * p, bool fnp)
+@@ -961,11 +963,13 @@ Subtract (POLYAREA * np1, PolygonType * p, bool fnp)
        fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
        poly_Free (&merged);
        p->Clipped = NULL;
@@ -342,7 +310,7 @@ index a892dce..d045ce2 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    if (!p->Clipped)
      Message ("Polygon cleared out of existence near (%d, %d)\n",
-@@ -1086,6 +1101,7 @@ SubtractPad (PadType * pad, PolygonType * p)
+@@ -1086,6 +1090,7 @@ SubtractPad (PadType * pad, PolygonType * p)
            (np = LinePoly ((LineType *) pad, pad->Thickness + pad->Clearance)))
          return -1;
      }
@@ -350,7 +318,7 @@ index a892dce..d045ce2 100644
    return Subtract (np, p, true);
  }
  
-@@ -1329,11 +1345,13 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+@@ -1329,11 +1334,13 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
        goto fail;
      }
    p->Clipped = biggest (merged);
@@ -364,7 +332,7 @@ index a892dce..d045ce2 100644
    if (p->NoHoles) printf ("Just leaked in Unsubtract\n");
    p->NoHoles = NULL;
    return 0;
-@@ -1438,6 +1456,7 @@ InitClip (DataType *Data, LayerType *layer, PolygonType * p)
+@@ -1438,6 +1445,7 @@ InitClip (DataType *Data, LayerType *layer, PolygonType * p)
    if (p->Clipped)
      poly_Free (&p->Clipped);
    p->Clipped = original_poly (p);
@@ -372,7 +340,7 @@ index a892dce..d045ce2 100644
    poly_FreeContours (&p->NoHoles);
    if (!p->Clipped)
      return 0;
-@@ -1754,8 +1773,11 @@ plow_callback (const BoxType * b, void *cl)
+@@ -1754,8 +1762,11 @@ plow_callback (const BoxType * b, void *cl)
    PolygonType *polygon = (PolygonType *) b;
  
    if (TEST_FLAG (CLEARPOLYFLAG, polygon))
@@ -386,7 +354,7 @@ index a892dce..d045ce2 100644
    return 0;
  }
  
-@@ -1869,7 +1891,10 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1869,7 +1880,10 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
      }
  
    if (type == POLYGON_TYPE)
@@ -398,7 +366,7 @@ index a892dce..d045ce2 100644
    else
      PlowsPolygon (Data, type, ptr1, ptr2, add_plow, NULL);
  }
-@@ -2058,6 +2083,7 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+@@ -2058,6 +2072,7 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
     * we do this dirty work.
     */
    poly->Clipped = NULL;
@@ -406,7 +374,7 @@ index a892dce..d045ce2 100644
    if (poly->NoHoles) printf ("Just leaked in MorpyPolygon\n");
    poly->NoHoles = NULL;
    flags = poly->Flags;
-@@ -2331,6 +2357,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
+@@ -2331,6 +2346,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
    piece->f->b = piece->b;
    piece->f = piece->b = piece;
  
