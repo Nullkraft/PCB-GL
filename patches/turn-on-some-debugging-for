@@ -1,0 +1,17 @@
+Bottom: b6ee76c82b801fd0006ff484bf23f355a66851d6
+Top:    b6ee76c82b801fd0006ff484bf23f355a66851d6
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-14 00:50:26 +0000
+
+Turn on some debugging for intersections..
+
+Have seen some use-after free corruption in a few places, and this was
+aimed at testing whether or not the culprit was performing multiple
+intersections on the same segment. (When we perform the deferred work
+to split that segment, any later intersections will not point at the
+correct seg structure - which has been free'd during the first splitting.
+
+
+---
+
+
