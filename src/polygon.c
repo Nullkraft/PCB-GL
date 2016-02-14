@@ -104,6 +104,9 @@ dicer output is used for HIDs which cannot render things with holes
 #include <dmalloc.h>
 #endif
 
+/* For getrlimit, setrlimit */
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #undef DEBUG_CIRCSEGS
 
@@ -120,6 +123,8 @@ static double bw_rotate_circle_seg[4];
 void
 polygon_init (void)
 {
+  struct rlimit limit;
+
   double cos_ang = cos (2.0 * M_PI / POLY_CIRC_SEGS_F);
   double sin_ang = sin (2.0 * M_PI / POLY_CIRC_SEGS_F);
 
@@ -128,6 +133,12 @@ polygon_init (void)
 
   bw_rotate_circle_seg[0] =  cos_ang;  bw_rotate_circle_seg[1] =  sin_ang;
   bw_rotate_circle_seg[2] = -sin_ang;  bw_rotate_circle_seg[3] =  cos_ang;
+
+  /* DEBUG - AVOID PCB running the system out of memory! */
+  getrlimit (RLIMIT_AS, &limit);
+  limit.rlim_cur = MIN (limit.rlim_cur, 7000 * 1024 * 1024 /* 7000 GiB limit to virtual memory size */);
+  setrlimit (RLIMIT_AS, &limit);
+
 }
 
 Cardinal
