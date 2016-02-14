@@ -206,7 +206,6 @@ poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radiu
   res = g_slice_new0 (VNODE);
   if (res == NULL)
     return NULL;
-  // bzero (res, sizeof (VNODE) - sizeof(Vector));
 
   c = res->point;
   *c++ = *v++;
