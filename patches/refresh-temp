@@ -1,0 +1,21 @@
+Bottom: e8bfc4995fccf8ae88cf300ff43dba97b51bd523
+Top:    060c9e1c0254bae778f041f0fb6327d8974a8b0d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-14 01:05:14 +0000
+
+Refresh of allocate-vnode-with
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 20b7a4f..23a809c 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -206,7 +206,6 @@ poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radiu
+   res = g_slice_new0 (VNODE);
+   if (res == NULL)
+     return NULL;
+-  // bzero (res, sizeof (VNODE) - sizeof(Vector));
+ 
+   c = res->point;
+   *c++ = *v++;
