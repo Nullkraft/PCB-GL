@@ -626,6 +626,28 @@ node_add_single_point (VNODE * a, Vector p)
   return new_node;
 }				/* node_add_point */
 
+static void
+cvc_list_dump (CVCList *list)
+{
+  VNODE *node = list->parent;
+  CVCList *iter;
+
+  pcb_fprintf (stderr, "Dumping CVC list at (%$mn, %$mn)\n", node->point[0], node->point[1]);
+
+  iter = list;
+  do {
+    pcb_fprintf (stderr, "angle = %f, poly = %c, side = %c, (%mm, %mm)-(%mm, %mm)\n",
+                 iter->angle,
+                 iter->poly,
+                 iter->side,
+                 ((iter->side == 'P') ? EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_BACKWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[0],
+                 ((iter->side == 'P') ? EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_BACKWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[1],
+                 ((iter->side == 'P') ? EDGE_FORWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[0],
+                 ((iter->side == 'P') ? EDGE_FORWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[1]);
+  } while ((iter = iter->next) != list);
+
+}
+
 /*
 edge_label
  (C) 2006 harry eaton
@@ -753,28 +775,6 @@ edge_label (VNODE * pn)
     return UNKNWN;
   return region;
 }				/* edge_label */
-
-static void
-cvc_list_dump (CVCList *list)
-{
-  VNODE *node = list->parent;
-  CVCList *iter;
-
-  pcb_fprintf (stderr, "Dumping CVC list at (%$mn, %$mn)\n", node->point[0], node->point[1]);
-
-  iter = list;
-  do {
-    pcb_fprintf (stderr, "angle = %f, poly = %c, side = %c, (%mm, %mm)-(%mm, %mm)\n",
-                 iter->angle,
-                 iter->poly,
-                 iter->side,
-                 ((iter->side == 'P') ? EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_BACKWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[0],
-                 ((iter->side == 'P') ? EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_BACKWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[1],
-                 ((iter->side == 'P') ? EDGE_FORWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[0],
-                 ((iter->side == 'P') ? EDGE_FORWARD_VERTEX (VERTEX_BACKWARD_EDGE (iter->parent)) : EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (iter->parent)))->point[1]);
-  } while ((iter = iter->next) != list);
-
-}
 
 /*
  add_descriptors
