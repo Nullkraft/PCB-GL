@@ -1,5 +1,5 @@
-Bottom: 5e49a6445de7ae0449665b73f67a67fab6df14cc
-Top:    fa6d9dd100e65201a196aa23e6ec3e80b29f1a51
+Bottom: 381967945c3345d88fcd07852d11b9d780fbaecd
+Top:    e57034535beace241f675e3cfba22ab59eec8ffa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-14 01:00:23 +0000
 
@@ -12,10 +12,10 @@ slightly less explicit.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index fd269e9..ef454eb 100644
+index f316444..5deb468 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -337,8 +337,7 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -334,8 +334,7 @@ new_descriptor (VNODE * a, char poly, char side)
    l->poly = poly;
    l->side = side;
    l->next = l->prev = l;
@@ -25,7 +25,7 @@ index fd269e9..ef454eb 100644
      { /* Line-segment case */
  
  #if 0
-@@ -394,20 +393,21 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -391,20 +390,21 @@ new_descriptor (VNODE * a, char poly, char side)
         * 90 degrees CW)
         */
  
