@@ -1,5 +1,5 @@
-Bottom: d91faed7cfa1260ce7280cf213496861c454159b
-Top:    bcd24159552e2b1b18291f79befe2426ab0dd19f
+Bottom: 68a73af49ecf6e56802593780cebf7af27732fba
+Top:    7a7560460e8d2bbc20c5007636e6a566788b2919
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:29:00 +0000
 
@@ -106,10 +106,10 @@ index 53e91f1..2fc09df 100644
            next_n = n + 1;
            if (next_n == p->PointN ||
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ee39e21..1e45fe5 100644
+index f316444..f4dc990 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -190,7 +190,8 @@ poly_dump (POLYAREA * p)
+@@ -194,7 +194,8 @@ poly_dump (POLYAREA * p)
  }
  
  static VNODE *
@@ -119,7 +119,7 @@ index ee39e21..1e45fe5 100644
  {
    VNODE *res;
    Coord *c;
-@@ -224,7 +225,8 @@ poly_CreateNode (Vector v)
+@@ -228,7 +229,8 @@ poly_CreateNode (Vector v)
  }
  
  VNODE *
@@ -129,7 +129,7 @@ index ee39e21..1e45fe5 100644
  {
  //  return poly_CreateNodeFull (v, false /*true*/, cx, cy, radius);
    return poly_CreateNodeFull (v, true, cx, cy, radius);
-@@ -1940,7 +1942,7 @@ print_labels (PLINE * a)
+@@ -1937,7 +1939,7 @@ print_labels (PLINE * a)
  
    do
      {
