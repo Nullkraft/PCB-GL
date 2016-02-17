@@ -5,7 +5,70 @@ Date:   2016-02-17 19:56:41 +0000
 
 Attempt to splice in edge_label routine from later in patch series...
 
-(This corrects the bogus fix for hairline edges in the previous patch)
+This corrects the bogus fix for hairline edges in the previous patch,
+simplifying edge_label, but it DOES NOT address how to deal with these
+hairline edge pairs.
+
+With debugging on the test-cases causing problem will fail.
+
+With arc radius compensation disabled in polygon.h, the following will
+produce hairline edge pairs, and cause problems..
+
+
+
+Via[8475.00mil 5575.00mil 40.00mil 30.00mil 0.0000 20.00mil "" ""]
+
+Layer(1 "component")
+(
+)
+Layer(2 "solder")
+(
+  Line[8425.00mil 6250.00mil 8425.00mil 4475.00mil 25.00mil 30.00mil "clearline"]
+  Line[8475.00mil 5575.00mil 8475.00mil 4425.00mil 15.00mil 30.00mil "clearline"]
+  Polygon("clearpoly")
+  (
+    [6350.00mil 6650.00mil] [6350.00mil 4150.00mil] [9050.00mil 4150.00mil] [9050.00mil 6650.00mil]
+  )
+)
+
+The diff for polygon.h:
+
+
+diff --git a/src/polygon.h b/src/polygon.h
+index a369096..0cba2bf 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -37,11 +37,28 @@
+ #define POLY_CIRC_SEGS 8//40
+ #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
+
++#if 0
++/* THIS IS BROKEN:
++ *
++ * IT BREAKS THE CIRCULARITY OF CIRULAR CONTORS, AS THE FIRST
++ * FIRST VERTEX ADDED BY CirclePoly IS NOT RADIUS ADJUSTED.
++ *
++ * IT BREAKS CIRCULARITY OF ALIGMENT BETWEEN A LINE AND ITS END-CAPS,
++ * LEADING TO MORE COMPLEX CONTOURS FOR COMMON LINE-LINE INTERSECTIONS,
++ * SUCH AS 90 AND 45 DEGREE ANGLES
++ *
++ * IT WAS INTENDED TO AVOID DRC ERRORS WITH "TOO-CLOSE" FEATURES,
++ * BUT COULD OTHERWISE CAUSE THEM FOR "TOO THIN" FEATURES - INSIDE/OUTSIDE
++ * CONTOUR APPROXIMATION NEEDS TO BE CONTROLED DEPENDING ON THE REQUIREMENT
++ */
+ /* adjustment to make the segments outline the circle rather than connect
+  * points on the circle: 1 - cos (\alpha / 2) < (\alpha / 2) ^ 2 / 2
+  */
+ #define POLY_CIRC_RADIUS_ADJ (1.0 + M_PI / POLY_CIRC_SEGS_F * \
+                                     M_PI / POLY_CIRC_SEGS_F / 2.0)
++#else
++#define POLY_CIRC_RADIUS_ADJ 1.0
++#endif
+
+ /* polygon diverges from modelled arc no more than MAX_ARC_DEVIATION * thick */
+ #define POLY_ARC_MAX_DEVIATION 0.02
+
+
 
 
 ---
