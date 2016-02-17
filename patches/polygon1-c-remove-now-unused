@@ -1,4 +1,4 @@
-Bottom: 24fd352da705264769c532e2570bb9f85dc350fe
+Bottom: bd258e614bd2b66105fbee4085f4f23c55573b50
 Top:    bd258e614bd2b66105fbee4085f4f23c55573b50
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 19:59:03 +0000
@@ -8,18 +8,4 @@ polygon1.c: Remove now unused memory allocation macro MemGet
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index e7d7f61..b329cfc 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -105,10 +105,6 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
- 
- #define error(code)  longjmp(*(e), code)
- 
--#define MemGet(ptr, type) \
--  if (UNLIKELY (((ptr) = (type *)malloc(sizeof(type))) == NULL))	\
--    error(err_no_memory);
--
- //#define DEBUG_INTERSECT
- #undef DEBUG_LABEL
- #undef DEBUG_ALL_LABELS
+
