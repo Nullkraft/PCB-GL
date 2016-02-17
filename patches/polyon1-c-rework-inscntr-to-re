@@ -1,0 +1,51 @@
+Bottom: 787bc110db5f8635106ccabe684b8f579cbcd850
+Top:    d6bc82c31d0b10a67412a69b3db1b2f4370d7f22
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-17 19:53:12 +0000
+
+polyon1.c: Rework InsCntr to re-use poly_Create() rather than open-coding
+
+This allows us to ensure common initialisation is performed in poly_Create().
+
+This commit removes the single case where the memory allocation macro MemGet
+was called, which will be removed in a later commit.
+
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index e482145..d03af9c 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1214,23 +1214,25 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
+ {
+   POLYAREA *newp;
+ 
++  newp = poly_Create ();
++  if (newp == NULL)
++    error(err_no_memory);
++
+   if (*dst == NULL)
+     {
+-      MemGet (*dst, POLYAREA);
+-      (*dst)->f = (*dst)->b = *dst;
+-      newp = *dst;
++      newp->f = newp->b = newp;
++      *dst = newp;
+     }
+   else
+     {
+-      MemGet (newp, POLYAREA);
+       newp->f = *dst;
+       newp->b = (*dst)->b;
+       newp->f->b = newp->b->f = newp;
+     }
++
++  c->next = NULL;
+   newp->contours = c;
+-  newp->contour_tree = r_create_tree (NULL, 0, 0);
+   r_insert_entry (newp->contour_tree, (BoxType *) c, 0);
+-  c->next = NULL;
+ }				/* InsCntr */
+ 
+ static void
