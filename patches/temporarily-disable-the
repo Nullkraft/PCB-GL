@@ -1,5 +1,5 @@
 Bottom: d8b1793170ea5f04ffce844866c77ebb9d7ce218
-Top:    8a4f5195db2675e02def4fba012aeb39ddbe488d
+Top:    f63938ae13ec16ded5059773c3e861afce779945
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:08:56 +0000
 
@@ -11,11 +11,15 @@ Was part of adding arc support, now temporarily borrowed for debugging
 ---
 
 diff --git a/src/polygon.h b/src/polygon.h
-index a02fd99..369efea 100644
+index a02fd99..0cba2bf 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
-@@ -37,11 +37,28 @@
- #define POLY_CIRC_SEGS 40
+@@ -34,14 +34,31 @@
+ 
+ /* Implementation constants */
+ 
+-#define POLY_CIRC_SEGS 40
++#define POLY_CIRC_SEGS 8//40
  #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
  
 +#if 0
@@ -43,3 +47,34 @@ index a02fd99..369efea 100644
  
  /* polygon diverges from modelled arc no more than MAX_ARC_DEVIATION * thick */
  #define POLY_ARC_MAX_DEVIATION 0.02
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 8ee1d5c..b44f814 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -39,6 +39,7 @@
+       are marked
+ */
+ 
++#undef NDEBUG
+ #include	<assert.h>
+ #include	<stdlib.h>
+ #include	<stdio.h>
+@@ -108,12 +109,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+ 
+ #define error(code)  longjmp(*(e), code)
+ 
+-#undef DEBUG_LABEL
+-#undef DEBUG_ALL_LABELS
+-#undef DEBUG_JUMP
+-#undef DEBUG_GATHER
+-#undef DEBUG_ANGLE
+-#undef DEBUG
++#define DEBUG_LABEL
++#define DEBUG_ALL_LABELS
++#define DEBUG_JUMP
++#define DEBUG_GATHER
++#define DEBUG_ANGLE
++#define DEBUG
+ #ifdef DEBUG
+ #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
+ #else
