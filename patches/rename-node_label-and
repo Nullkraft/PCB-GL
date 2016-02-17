@@ -1,5 +1,5 @@
-Bottom: 787834ca7e1970aa3b18781309f6a463eb51f14e
-Top:    2f4b186c474bc2e3a56f741b69d7d8ce6df46361
+Bottom: 0c3fbda8cd7b80535e00b15ef0588cd82db03380
+Top:    6a76ffebad30979af39b96377a1994e5e1b11dca
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:51:38 +0000
 
@@ -9,7 +9,7 @@ Rename NODE_LABEL and LABEL_NODE to reflect that they operate on edges
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 01d1019..1b50804 100644
+index 9d7c8b5..2aaf3cd 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -87,8 +87,8 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -37,7 +37,7 @@ index 01d1019..1b50804 100644
  {
    CVCList *first_l, *l;
    char this_poly;
-@@ -454,12 +454,12 @@ node_label (VNODE * pn)
+@@ -443,12 +443,12 @@ node_label (VNODE * pn)
  	}
      }
    assert (region != UNKNWN);
@@ -53,7 +53,7 @@ index 01d1019..1b50804 100644
  
  /*
   add_descriptors
-@@ -1037,7 +1037,7 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+@@ -1026,7 +1026,7 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
  #ifdef DEBUG
  
  static char *
@@ -62,7 +62,7 @@ index 01d1019..1b50804 100644
  {
    static char u[] = "UNKNOWN";
    static char i[] = "INSIDE";
-@@ -1045,7 +1045,7 @@ theState (VNODE * v)
+@@ -1034,7 +1034,7 @@ theState (VNODE * v)
    static char s[] = "SHARED";
    static char s2[] = "SHARED2";
  
@@ -71,7 +71,7 @@ index 01d1019..1b50804 100644
      {
      case INSIDE:
        return i;
-@@ -1094,7 +1094,7 @@ label_contour (PLINE * a)
+@@ -1083,7 +1083,7 @@ label_contour (PLINE * a)
      {
        if (cur->cvc_next)	/* examine cross vertex */
  	{
@@ -80,7 +80,7 @@ index 01d1019..1b50804 100644
  	  if (first_labelled == NULL)
  	    first_labelled = cur;
  	  continue;
-@@ -1105,7 +1105,7 @@ label_contour (PLINE * a)
+@@ -1094,7 +1094,7 @@ label_contour (PLINE * a)
  
        /* This labels nodes which aren't cross-connected */
        assert (label == INSIDE || label == OUTSIDE);
