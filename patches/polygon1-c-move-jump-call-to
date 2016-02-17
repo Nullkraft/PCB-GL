@@ -1,0 +1,56 @@
+Bottom: 7dbfd4451deb5da9ab9b189cc961f62e410c64a7
+Top:    24ebb6089955d1251c40882380785dc5c754a16f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-14 01:39:32 +0000
+
+polygon1.c: Move jump call to bottom of Gather..
+
+We call Gather from Collect1, having in Collect(), established using the j_rule,
+that the edge we wish to start with is not marked, and it suitable for inclusion
+in the new polygon contour. (Passing what will be the resulting "from" vertex
+into Collect1 to start processing).
+
+The first step in Gather was previously a Jump call - which could switch to the
+other polygon contour. (Without including our start edge). The key problem here
+is that Jump makes the assumption that the vertex it is passed was reached having
+been included in the resulting polygon. (It starts inspection of the CVCList from
+the assumed entry edge that reached the given vertex).
+
+In our startup condition, the vertex we pass (usually a from vertex, of a FORWARD
+polygon traversal of an edge in the 'A' polygon to be included in the resulting
+contour), is not necessarily preceeded by an edge on that same source contour that
+will end up in the resulting polyon - leading to the possibility that Jump gets
+the wrong result. (This is a by-inspection / theoretical issue, not one yet known
+to cause any particular bug).
+
+The fix is to include the edge segment we start with, BEFORE calling jump in Collect.
+Once our start edge is included, the assumptions made by Jump should hold.
+
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 5029e8b..850a717 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1707,9 +1707,6 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+   assert (*result == NULL);
+   do
+     {
+-      /* see where to go next */
+-      if (!jump (&curv, &dir, j_rule))
+-	break;
+       /* add vertex (edge?) to polygon */
+       if ((newn = poly_CreateNodeFull (curv->point, VERTEX_DIRECTION_EDGE (curv, dir)->is_round,
+                                                     VERTEX_DIRECTION_EDGE (curv, dir)->cx,
+@@ -1739,6 +1736,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+ 
+       /* Advance to the next vertex (edge?).  */
+       curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
++
++      /* see where to go next */
++      if (!jump (&curv, &dir, j_rule))
++	break;
+     }
+   while (1);
+   return err_ok;
