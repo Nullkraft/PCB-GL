@@ -1,5 +1,5 @@
 Bottom: 5869374d8895c5bc5a99f7a8512c0f4ebbcdd4ea
-Top:    5869374d8895c5bc5a99f7a8512c0f4ebbcdd4ea
+Top:    24ebb6089955d1251c40882380785dc5c754a16f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:26 +0000
 
@@ -11,4 +11,22 @@ slightly less explicit.
 
 ---
 
-
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 23c382f..850a717 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1708,10 +1708,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+   do
+     {
+       /* add vertex (edge?) to polygon */
+-      if ((newn = poly_CreateNodeFull (curv->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->is_round,
+-                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->cx,
+-                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cy       : VERTEX_BACKWARD_EDGE (curv)->cy,
+-                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->radius   : VERTEX_BACKWARD_EDGE (curv)->radius)) == NULL)
++      if ((newn = poly_CreateNodeFull (curv->point, VERTEX_DIRECTION_EDGE (curv, dir)->is_round,
++                                                    VERTEX_DIRECTION_EDGE (curv, dir)->cx,
++                                                    VERTEX_DIRECTION_EDGE (curv, dir)->cy,
++                                                    VERTEX_DIRECTION_EDGE (curv, dir)->radius)) == NULL)
+         return err_no_memory;
+       if (!*result)
+ 	{
