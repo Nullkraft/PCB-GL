@@ -136,7 +136,7 @@ polygon_init (void)
 
   /* DEBUG - AVOID PCB running the system out of memory! */
   getrlimit (RLIMIT_AS, &limit);
-  limit.rlim_cur = MIN (limit.rlim_cur, 7000 * 1024 * 1024 /* 7000 GiB limit to virtual memory size */);
+  limit.rlim_cur = MIN (limit.rlim_cur, 2000 * 1024 * 1024 /* 2 GiB limit to virtual memory size */);
   setrlimit (RLIMIT_AS, &limit);
 
 }
