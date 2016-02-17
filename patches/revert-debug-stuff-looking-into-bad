@@ -1,7 +1,7 @@
-Bottom: ada3ece80ad699bd5dac65f1cbae1c3024d2841a
-Top:    c7f3341f0c6747fe6f7df9a6c3a7bafe0befac57
+Bottom: 2650709463303130d51182a9f392050e4dccf9a3
+Top:    de465d08874117c4f20eaef6a8dee9b160f05e9b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-17 19:58:49 +0000
+Date:   2016-02-17 19:58:55 +0000
 
 Revert "DEBUG STUFF - looking into bad polygons"
 
@@ -84,7 +84,7 @@ index 96b6d67..06dc892 100644
    polygon->NoHolesValid = 0;
    return r;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a3a2c84..254b0bc 100644
+index 5b49364..133e486 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -108,12 +108,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
