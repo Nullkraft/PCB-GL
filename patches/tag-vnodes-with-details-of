@@ -1,5 +1,5 @@
 Bottom: 95648a7fd2db6864f376665a3aeddd27fcf3f532
-Top:    61d7094db536ae6166f5fe6bf2f2eb42f295baf5
+Top:    50359dffb9e90b7a279e77fbd62c1d130614d138
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:32 +0000
 
@@ -676,7 +676,7 @@ index 06dc892..c297c86 100644
    return clipped;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 24bd4a3..32d8ffa 100644
+index 24bd4a3..650d917 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -49,6 +49,7 @@
@@ -771,10 +771,10 @@ index 24bd4a3..32d8ffa 100644
 -      /* add vertex to polygon */
 -      if ((newn = poly_CreateNode (curv->point)) == NULL)
 +      /* add vertex (edge?) to polygon */
-+      if ((newn = poly_CreateNodeFull (curv->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->is_round,
-+                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->cx,
-+                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cy       : VERTEX_BACKWARD_EDGE (curv)->cy,
-+                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->radius   : VERTEX_BACKWARD_EDGE (curv)->radius)) == NULL)
++      if ((newn = poly_CreateNodeFull (curv->point, VERTEX_DIRECTION_EDGE (curv, dir)->is_round,
++                                                    VERTEX_DIRECTION_EDGE (curv, dir)->cx,
++                                                    VERTEX_DIRECTION_EDGE (curv, dir)->cy,
++                                                    VERTEX_DIRECTION_EDGE (curv, dir)->radius)) == NULL)
          return err_no_memory;
        if (!*result)
  	{
