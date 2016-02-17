@@ -1,5 +1,5 @@
-Bottom: 69304f2d2fd80ebd786f1cbce148357d367fa523
-Top:    df0f2e4a9ae5a3c826be1c4f4a507ea9b9bcff36
+Bottom: 95648a7fd2db6864f376665a3aeddd27fcf3f532
+Top:    61d7094db536ae6166f5fe6bf2f2eb42f295baf5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:32 +0000
 
@@ -676,7 +676,7 @@ index 06dc892..c297c86 100644
    return clipped;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 53bd1ac..878b4e7 100644
+index 24bd4a3..32d8ffa 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -49,6 +49,7 @@
@@ -798,7 +798,7 @@ index 53bd1ac..878b4e7 100644
        curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
  
        /* see where to go next */
-@@ -2382,6 +2427,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+@@ -2378,6 +2423,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
    return poly_Boolean_free (a, b, res, action);
  }				/* poly_Boolean */
  
@@ -807,7 +807,7 @@ index 53bd1ac..878b4e7 100644
  /* just like poly_Boolean but frees the input polys */
  int
  poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-@@ -2392,6 +2439,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2388,6 +2435,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    jmp_buf e;
    int code;
  
@@ -816,7 +816,7 @@ index 53bd1ac..878b4e7 100644
    *res = NULL;
  
    if (!a)
-@@ -2575,23 +2624,6 @@ node_neighbours (VNODE * a, VNODE * b)
+@@ -2571,23 +2620,6 @@ node_neighbours (VNODE * a, VNODE * b)
    return (a == b) || (a->next == b) || (b->next == a) || (a->next == b->next);
  }
  
@@ -840,7 +840,7 @@ index 53bd1ac..878b4e7 100644
  void
  poly_IniContour (PLINE * c)
  {
-@@ -2619,6 +2651,10 @@ poly_NewContour (VNODE *node)
+@@ -2615,6 +2647,10 @@ poly_NewContour (VNODE *node)
    poly_IniContour (res);
  
    Vcopy (res->head.point, node->point);
@@ -851,7 +851,7 @@ index 53bd1ac..878b4e7 100644
    cntrbox_adjust (res, res->head.point);
    free (node);
  
-@@ -2736,6 +2772,47 @@ flip_cb (const BoxType * b, void *cl)
+@@ -2732,6 +2768,47 @@ flip_cb (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -899,7 +899,7 @@ index 53bd1ac..878b4e7 100644
  void
  poly_InvContour (PLINE * c)
  {
-@@ -2744,16 +2821,48 @@ poly_InvContour (PLINE * c)
+@@ -2740,16 +2817,48 @@ poly_InvContour (PLINE * c)
    int r;
  #endif
  
@@ -948,7 +948,7 @@ index 53bd1ac..878b4e7 100644
    c->Flags.orient ^= 1;
    if (c->tree)
      {
-@@ -2793,11 +2902,26 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -2789,11 +2898,26 @@ poly_InclVertex (VNODE * after, VNODE * node)
    /* remove points on same line */
    if (PREV_VERTEX (PREV_VERTEX (node)) == node)
      return;			/* we don't have 3 points in the poly yet */
@@ -976,7 +976,7 @@ index 53bd1ac..878b4e7 100644
      {
        VNODE *t = PREV_VERTEX (node);
        NEXT_VERTEX (PREV_VERTEX (t)) = node;
-@@ -2813,7 +2937,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2809,7 +2933,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    assert (src != NULL);
    *dst = NULL;
@@ -985,7 +985,7 @@ index 53bd1ac..878b4e7 100644
    if (*dst == NULL)
      return FALSE;
  
-@@ -2825,7 +2949,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2821,7 +2945,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    for (cur = NEXT_EDGE (&src->head); cur != &src->head; cur = NEXT_VERTEX (cur))
      {
