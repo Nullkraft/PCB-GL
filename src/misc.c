@@ -1594,7 +1594,7 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
 
   /* Make sure full circles aren't treated as zero-length arcs */
   if (fabs (delta_angle - 360.) < EPSILON ||
-      fabs (delta_angle + 360.) < EPSILON);
+      fabs (delta_angle + 360.) < EPSILON)
     ang2 = ang1 + 360.;
 
   /* calculate sines, cosines */
