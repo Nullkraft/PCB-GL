@@ -1,7 +1,7 @@
-Bottom: 7dbfd4451deb5da9ab9b189cc961f62e410c64a7
-Top:    24ebb6089955d1251c40882380785dc5c754a16f
+Bottom: d8b1793170ea5f04ffce844866c77ebb9d7ce218
+Top:    d8b1793170ea5f04ffce844866c77ebb9d7ce218
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-14 01:39:32 +0000
+Date:   2016-02-17 19:56:56 +0000
 
 polygon1.c: Move jump call to bottom of Gather..
 
@@ -29,28 +29,4 @@ Once our start edge is included, the assumptions made by Jump should hold.
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 5029e8b..850a717 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -1707,9 +1707,6 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
-   assert (*result == NULL);
-   do
-     {
--      /* see where to go next */
--      if (!jump (&curv, &dir, j_rule))
--	break;
-       /* add vertex (edge?) to polygon */
-       if ((newn = poly_CreateNodeFull (curv->point, VERTEX_DIRECTION_EDGE (curv, dir)->is_round,
-                                                     VERTEX_DIRECTION_EDGE (curv, dir)->cx,
-@@ -1739,6 +1736,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
- 
-       /* Advance to the next vertex (edge?).  */
-       curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
-+
-+      /* see where to go next */
-+      if (!jump (&curv, &dir, j_rule))
-+	break;
-     }
-   while (1);
-   return err_ok;
+
