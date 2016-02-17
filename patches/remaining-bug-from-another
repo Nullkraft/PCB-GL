@@ -1,5 +1,5 @@
-Bottom: 6ea32e13fd6c629058a1157f1c12385b34892f4e
-Top:    6b9598414110a393b56970c86616f12cfece7405
+Bottom: f497a3e81656ed56c1c5e4352fe294a2e97b856f
+Top:    f19bd133a6f47a57ac64a3d93ef7bbe3e194ffa2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:31 +0000
 
@@ -11,7 +11,7 @@ NB: Original function had this bug before we moved it
 ---
 
 diff --git a/src/misc.c b/src/misc.c
-index 1729bbd..7e9f635 100644
+index 16f69a9..f8096ec 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -397,7 +397,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
