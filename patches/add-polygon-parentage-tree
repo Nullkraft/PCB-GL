@@ -1,5 +1,5 @@
-Bottom: 24ebb6089955d1251c40882380785dc5c754a16f
-Top:    ee59315848110c11b20c2fbda37a28285091bad0
+Bottom: cffd2bab38bb9b35e253b65f6b4297315ffc4ea7
+Top:    c73b0a2ae42545a620efe931f903a6ba9d6dd9a3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:57:51 +0000
 
@@ -388,7 +388,7 @@ index a892dce..8360d64 100644
  }
  
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 850a717..d49e12f 100644
+index e3b64b4..d40e2d9 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -137,6 +137,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -426,7 +426,7 @@ index 850a717..d49e12f 100644
  
  static VNODE *
  poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
-@@ -1990,6 +1999,9 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
+@@ -1986,6 +1995,9 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
    piece->b->f = piece->f;
    piece->f->b = piece->b;
    piece->f = piece->b = piece;
@@ -436,7 +436,7 @@ index 850a717..d49e12f 100644
  }
  
  static void
-@@ -2429,6 +2441,22 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+@@ -2425,6 +2437,22 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
    return poly_Boolean_free (a, b, res, action);
  }				/* poly_Boolean */
  
@@ -459,7 +459,7 @@ index 850a717..d49e12f 100644
  static void test_polyInvContour (void);
  
  /* just like poly_Boolean but frees the input polys */
-@@ -2440,11 +2468,29 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2436,11 +2464,29 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    PLINE *p, *holes = NULL;
    jmp_buf e;
    int code;
@@ -491,7 +491,7 @@ index 850a717..d49e12f 100644
    if (!a)
      {
        switch (action)
-@@ -2452,12 +2498,14 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2448,12 +2494,14 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  	case PBO_XOR:
  	case PBO_UNITE:
  	  *res = bi;
@@ -508,7 +508,7 @@ index 850a717..d49e12f 100644
  	}
      }
    if (!b)
-@@ -2468,11 +2516,13 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2464,11 +2512,13 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  	case PBO_XOR:
  	case PBO_UNITE:
  	  *res = ai;
@@ -524,7 +524,7 @@ index 850a717..d49e12f 100644
  	}
      }
  
-@@ -2520,7 +2570,23 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2516,7 +2566,23 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        poly_Free (res);
        return code;
      }
@@ -548,7 +548,7 @@ index 850a717..d49e12f 100644
    return code;
  }				/* poly_Boolean_free */
  
-@@ -3321,6 +3387,7 @@ poly_Init (POLYAREA * p)
+@@ -3317,6 +3383,7 @@ poly_Init (POLYAREA * p)
    p->f = p->b = p;
    p->contours = NULL;
    p->contour_tree = r_create_tree (NULL, 0, 0);
@@ -556,7 +556,7 @@ index 850a717..d49e12f 100644
  }
  
  POLYAREA *
-@@ -3362,6 +3429,13 @@ poly_Free (POLYAREA ** p)
+@@ -3358,6 +3425,13 @@ poly_Free (POLYAREA ** p)
      }
    poly_FreeContours (&cur->contours);
    r_destroy_tree (&cur->contour_tree);
