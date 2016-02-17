@@ -186,7 +186,9 @@ LIBGTK_GDK_SRCS= \
 LIBGTK_GL_SRCS= \
 	hid/gtk/gtkhid-gl.c \
 	hid/gtk/gui-trackball.c \
-	hid/gtk/gui-trackball.h
+	hid/gtk/gui-trackball.h \
+	hid/gtk/step.c \
+	hid/gtk/step.h
 
 GL_SRCS= \
 	hid/common/hidgl.c \
