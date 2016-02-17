@@ -1,7 +1,7 @@
-Bottom: 2dfc35b1331b122d84820efec0a6c97c930feb6a
+Bottom: 07f66efa57022ff8618d8cb4d49d12a268747e51
 Top:    07f66efa57022ff8618d8cb4d49d12a268747e51
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-17 20:01:04 +0000
+Date:   2016-02-17 20:01:09 +0000
 
 polygon1.c: Fix unitialised output polygon upon when hitting allocation failure
 
@@ -13,15 +13,4 @@ incorrectly returning FALSE when copying a NULL polygon.
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index ed4c2bc..5cbf4ee 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -2388,6 +2388,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
- {
-   POLYAREA *a = NULL, *b = NULL;
- 
-+  *res = NULL;
-+
-   if (!poly_M_Copy0 (&a, a_org) || !poly_M_Copy0 (&b, b_org))
-     return err_no_memory;
+
