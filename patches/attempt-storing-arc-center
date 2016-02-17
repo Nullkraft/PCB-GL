@@ -1,5 +1,5 @@
-Bottom: d7c99dfe9f3a9e483874d6c35936b3f333e80586
-Top:    cd22f1253f7c0c338de12df7478e2e8b01ab0090
+Bottom: 2edf7052d62fde47848031e476050572168dae9d
+Top:    31d0bf67fa592dba3b285d9f7784ec252bf03598
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:29:00 +0000
 
@@ -9,7 +9,7 @@ Attempt storing arc center calcultations in floating point...
 ---
 
 diff --git a/src/misc.c b/src/misc.c
-index b4babfd..79416c8 100644
+index 54f1b83..3f5cd07 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -362,10 +362,12 @@ SetLineBoundingBox (LineType *Line)
@@ -106,7 +106,7 @@ index 53e91f1..2fc09df 100644
            next_n = n + 1;
            if (next_n == p->PointN ||
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 5deb468..e8de514 100644
+index 8360df6..faebd12 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -194,7 +194,8 @@ poly_dump (POLYAREA * p)
