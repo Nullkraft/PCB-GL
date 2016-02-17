@@ -1,5 +1,5 @@
 Bottom: 0c4cfe34a8590d149be75b4b50357d99b8dc4cae
-Top:    6970bf57515be3b0b219e69b27ade6e2352a6b45
+Top:    c3f75872adb13d5336939bfbdeaddb018037a80f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-14 00:55:17 +0000
 
@@ -11,7 +11,7 @@ Sometimes the polygon code exploded...
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 8360d64..af2cc26 100644
+index 8360d64..26e0cf9 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -104,6 +104,9 @@ dicer output is used for HIDs which cannot render things with holes
@@ -40,7 +40,7 @@ index 8360d64..af2cc26 100644
 +
 +  /* DEBUG - AVOID PCB running the system out of memory! */
 +  getrlimit (RLIMIT_AS, &limit);
-+  limit.rlim_cur = MIN (limit.rlim_cur, 7000 * 1024 * 1024 /* 7000 GiB limit to virtual memory size */);
++  limit.rlim_cur = MIN (limit.rlim_cur, 2000 * 1024 * 1024 /* 2 GiB limit to virtual memory size */);
 +  setrlimit (RLIMIT_AS, &limit);
 +
  }
