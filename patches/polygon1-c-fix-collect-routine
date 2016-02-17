@@ -1,7 +1,7 @@
-Bottom: 0dd0b85788f82b8404d1347ef7f895175c678e2d
-Top:    edcd47a01a2e2e1e5555d8296134c42316c8d8b8
+Bottom: 4af14606f2e897f5c74c9b9f08d9c6474ecc3170
+Top:    2fd7a9beb0d3f8bcc596318060ffc7b149bb32ed
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-13 18:57:50 +0000
+Date:   2016-02-17 19:58:43 +0000
 
 OLD HOLD-OVER, THIS FIX WAS LIKELY INCORRECT, AND NOW REDUNDANT. PRESERVING FOR POSTERITY FOR NOW...
 
@@ -29,10 +29,10 @@ Layer(1 "component")
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c4d1baa..0c9fa3b 100644
+index 8f0990b..254b0bc 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1707,6 +1707,10 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
+@@ -1725,6 +1725,10 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
          Collect1 (e, (dir == FORW) ? EDGE_BACKWARD_VERTEX (cure) :
                                       EDGE_FORWARD_VERTEX (cure),
                    dir, contours, holes, j_rule);
