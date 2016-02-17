@@ -1,5 +1,5 @@
-Bottom: c8e22276d1889fe2221727488412c104bdc97675
-Top:    0ad45156f12b6b09e4ebeda4c63c16a7ed9fa05d
+Bottom: 3f0c75a18c900880214e52f63339e99575769db7
+Top:    8eaeb1f945b763db3fe036fc3f3dca7b654cd6da
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 16:42:08 +0000
 
@@ -9,7 +9,7 @@ Calculate epsilon estimate for debugging
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 2fc09df..86afee6 100644
+index 29daa24..16e1096 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -124,6 +124,7 @@ void
@@ -21,7 +21,7 @@ index 2fc09df..86afee6 100644
    double cos_ang = cos (2.0 * M_PI / POLY_CIRC_SEGS_F);
    double sin_ang = sin (2.0 * M_PI / POLY_CIRC_SEGS_F);
 @@ -139,6 +140,11 @@ polygon_init (void)
-   limit.rlim_cur = MIN (limit.rlim_cur, 7000 * 1024 * 1024 /* 7000 GiB limit to virtual memory size */);
+   limit.rlim_cur = MIN (limit.rlim_cur, 2000 * 1024 * 1024 /* 2 GiB limit to virtual memory size */);
    setrlimit (RLIMIT_AS, &limit);
  
 +  /* Estimate eps on this machine */
