@@ -1,5 +1,5 @@
-Bottom: 69f126f10921d9dbfa5d09b6f6be7351bc1a64fd
-Top:    6dbf8d3643b0eee1d5ee34ab1bbb54d7b861c968
+Bottom: 125554191cd0b1b902213358e1baa2eccdc130e8
+Top:    31602fb1add8dc4b6e63914e22c2a2e1056617fb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 19:53:53 +0000
 
@@ -13,10 +13,10 @@ later processing incorrectly, such as in poly_Boolean and poly_BooleanFree
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f7db53f..0498d36 100644
+index a5d1325..33a2212 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2811,8 +2811,10 @@ BOOLp
+@@ -2810,8 +2810,10 @@ BOOLp
  poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
  {
    *dst = NULL;
@@ -29,7 +29,7 @@ index f7db53f..0498d36 100644
    if (*dst == NULL)
      return FALSE;
    (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
-@@ -2841,7 +2843,8 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
+@@ -2840,7 +2842,8 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
  
    *dst = NULL;
    if (src == NULL)

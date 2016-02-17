@@ -1,5 +1,5 @@
-Bottom: 94f5438779d07de1b0f86b562960e7699ef9f847
-Top:    16d008e148814438593394f6385b4ad4fbc6b909
+Bottom: 812f5ade4e12190d0f64e334b391da4de20c63e5
+Top:    dc90b683dab97746b06f676b1e497d48a5a06eb3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 19:54:09 +0000
 
@@ -11,10 +11,10 @@ This ensures all polygon initialisation happens in a common place
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a8d9391..054bef4 100644
+index 511bd21..0000871 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2816,12 +2816,10 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
+@@ -2815,12 +2815,10 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
    if (src == NULL)
      return TRUE;
  
