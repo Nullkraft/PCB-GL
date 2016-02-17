@@ -1,0 +1,53 @@
+Bottom: d8b1793170ea5f04ffce844866c77ebb9d7ce218
+Top:    b07dfd179aab95d396dec7ade0f34bd462b2a663
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-17 20:20:21 +0000
+
+Refresh of debug-on
+
+---
+
+diff --git a/src/polygon.h b/src/polygon.h
+index a02fd99..a369096 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -34,7 +34,7 @@
+ 
+ /* Implementation constants */
+ 
+-#define POLY_CIRC_SEGS 40
++#define POLY_CIRC_SEGS 8//40
+ #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
+ 
+ /* adjustment to make the segments outline the circle rather than connect
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 8ee1d5c..b44f814 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -39,6 +39,7 @@
+       are marked
+ */
+ 
++#undef NDEBUG
+ #include	<assert.h>
+ #include	<stdlib.h>
+ #include	<stdio.h>
+@@ -108,12 +109,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+ 
+ #define error(code)  longjmp(*(e), code)
+ 
+-#undef DEBUG_LABEL
+-#undef DEBUG_ALL_LABELS
+-#undef DEBUG_JUMP
+-#undef DEBUG_GATHER
+-#undef DEBUG_ANGLE
+-#undef DEBUG
++#define DEBUG_LABEL
++#define DEBUG_ALL_LABELS
++#define DEBUG_JUMP
++#define DEBUG_GATHER
++#define DEBUG_ANGLE
++#define DEBUG
+ #ifdef DEBUG
+ #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
+ #else
