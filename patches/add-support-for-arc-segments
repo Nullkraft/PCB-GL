@@ -1,7 +1,7 @@
-Bottom: 939a1d42805e7f017502abc9c9800db314b326da
-Top:    7a10012fb7c7874ef3b2848371fa2e938dfcdc16
+Bottom: b770514b4c74ff6df4bf4d620e6406638cbacee1
+Top:    3262a8b4ef2e34a4d87aa9aed8b3dcef706eb999
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-17 19:58:43 +0000
+Date:   2016-02-17 19:58:48 +0000
 
 Add support for arc segments in polygon object outline definitions
 
@@ -251,7 +251,7 @@ index c0350f8..79dc75b 100644
  		;
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 0beae50..f1cf3eb 100644
+index 79c8467..4ff6854 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -111,6 +111,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -430,7 +430,7 @@ index 0beae50..f1cf3eb 100644
          {
            RemoveObject (POLYGONPOINT_TYPE, Layer, Polygon, p);
            changed = true;
-@@ -1888,9 +2009,9 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+@@ -1887,9 +2008,9 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
              return false;
            many = true;
            v = &p->contours->head;
@@ -442,7 +442,7 @@ index 0beae50..f1cf3eb 100644
            newone->BoundingBox.X1 = p->contours->xmin;
            newone->BoundingBox.X2 = p->contours->xmax + 1;
            newone->BoundingBox.Y1 = p->contours->ymin;
-@@ -2002,7 +2123,8 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+@@ -2001,7 +2122,8 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
            do
              {
                CreateNewPointInPolygon (Polygon, node->point[0],
