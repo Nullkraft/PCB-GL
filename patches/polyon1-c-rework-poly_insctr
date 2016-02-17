@@ -1,7 +1,7 @@
-Bottom: 504e16c4a943018e7db2bae25fa776c9f2624078
+Bottom: 24fd352da705264769c532e2570bb9f85dc350fe
 Top:    24fd352da705264769c532e2570bb9f85dc350fe
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-17 19:58:56 +0000
+Date:   2016-02-17 19:59:03 +0000
 
 polyon1.c: Rework InsCntr to re-use poly_Create() rather than open-coding
 
@@ -13,39 +13,4 @@ was called, which will be removed in a later commit.
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 7847be6..e7d7f61 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -1257,23 +1257,25 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
- {
-   POLYAREA *newp;
- 
-+  newp = poly_Create ();
-+  if (newp == NULL)
-+    error(err_no_memory);
-+
-   if (*dst == NULL)
-     {
--      MemGet (*dst, POLYAREA);
--      (*dst)->f = (*dst)->b = *dst;
--      newp = *dst;
-+      newp->f = newp->b = newp;
-+      *dst = newp;
-     }
-   else
-     {
--      MemGet (newp, POLYAREA);
-       newp->f = *dst;
-       newp->b = (*dst)->b;
-       newp->f->b = newp->b->f = newp;
-     }
-+
-+  c->next = NULL;
-   newp->contours = c;
--  newp->contour_tree = r_create_tree (NULL, 0, 0);
-   r_insert_entry (newp->contour_tree, (BoxType *) c, 0);
--  c->next = NULL;
- }				/* InsCntr */
- 
- static void
+
