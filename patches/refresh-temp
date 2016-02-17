@@ -1,0 +1,22 @@
+Bottom: 02cf64ae5b53f9a67c838aee6bb05719b46429aa
+Top:    46164f90d085a6bcc494bd09416b23480fe2085d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-17 20:43:53 +0000
+
+Refresh of add-support-for-arc-segments
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index 0cab234..e0bdb4a 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -1594,7 +1594,7 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
+ 
+   /* Make sure full circles aren't treated as zero-length arcs */
+   if (fabs (delta_angle - 360.) < EPSILON ||
+-      fabs (delta_angle + 360.) < EPSILON);
++      fabs (delta_angle + 360.) < EPSILON)
+     ang2 = ang1 + 360.;
+ 
+   /* calculate sines, cosines */
