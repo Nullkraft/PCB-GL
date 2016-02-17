@@ -1,5 +1,5 @@
-Bottom: 18b0aa66f0bbeb87f303863a78a789efde40cd95
-Top:    a6a8aa1efecaca73a1d4bd76ead608bb4b645dfb
+Bottom: 875f47220471c376327beddcd885928c619b4705
+Top:    49a914bae11f3c06bedadbffe6d9391e4fbfb312
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:51:38 +0000
 
@@ -22,10 +22,10 @@ index 9fa6d44..c606077 100644
        unsigned int status:3;
        unsigned int mark:1;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index e4643b2..5abef07 100644
+index 36c6725..591f72e 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -83,13 +83,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+@@ -82,13 +82,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
   * traverses edges and vertices..
   */
  #define VERTEX_FORWARD_EDGE(v) ((v))
@@ -45,7 +45,7 @@ index e4643b2..5abef07 100644
  
  #define ISECTED 3
  #define UNKNWN  0
-@@ -2506,7 +2506,7 @@ cntrbox_pointin (PLINE * c, Vector p)
+@@ -2505,7 +2505,7 @@ cntrbox_pointin (PLINE * c, Vector p)
  static inline int
  node_neighbours (VNODE * a, VNODE * b)
  {
@@ -54,7 +54,7 @@ index e4643b2..5abef07 100644
  }
  
  VNODE *
-@@ -3208,23 +3208,23 @@ poly_ChkContour (PLINE * a)
+@@ -3207,23 +3207,23 @@ poly_ChkContour (PLINE * a)
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
@@ -84,7 +84,7 @@ index e4643b2..5abef07 100644
  	      else
  		hit2 = NULL;
  
-@@ -3240,7 +3240,7 @@ poly_ChkContour (PLINE * a)
+@@ -3239,7 +3239,7 @@ poly_ChkContour (PLINE * a)
  		/* An end-point of the second line touched somewhere along the
  		   length of the first line. Check where the second line leads. */
  		  if (inside_sector (hit2, a1->point) !=
@@ -93,7 +93,7 @@ index e4643b2..5abef07 100644
  		    return TRUE;
  		}
  	      else if (hit2 == NULL)
-@@ -3248,21 +3248,21 @@ poly_ChkContour (PLINE * a)
+@@ -3247,21 +3247,21 @@ poly_ChkContour (PLINE * a)
  		/* An end-point of the first line touched somewhere along the
  		   length of the second line. Check where the first line leads. */
  		  if (inside_sector (hit1, a2->point) !=

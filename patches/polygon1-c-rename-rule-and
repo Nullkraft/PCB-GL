@@ -1,5 +1,5 @@
-Bottom: a6a8aa1efecaca73a1d4bd76ead608bb4b645dfb
-Top:    e150e4692b9d038b0255b2e09d16077a7ef8feed
+Bottom: 49a914bae11f3c06bedadbffe6d9391e4fbfb312
+Top:    4387f8084ff1eb559860a8c1ff0a9e804f70891c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:51:38 +0000
 
@@ -9,10 +9,10 @@ polygon1.c: Rename rule and v_rule to j_rule for consistency
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 5abef07..7f8e683 100644
+index 591f72e..86fd69d 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1540,7 +1540,7 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1539,7 +1539,7 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
   */
  /* *cur is considered a vertex */
  static int
@@ -21,7 +21,7 @@ index 5abef07..7f8e683 100644
  {
    CVCList *d, *start;
    VNODE *e; /* e is considered an edge */
-@@ -1570,7 +1570,7 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
+@@ -1569,7 +1569,7 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
        else
          e = VERTEX_FORWARD_EDGE (d->parent);
        newone = *cdir;
@@ -30,7 +30,7 @@ index 5abef07..7f8e683 100644
  	{
  	  if ((d->side == 'N' && newone == FORW) ||
  	      (d->side == 'P' && newone == BACKW))
-@@ -1595,7 +1595,7 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
+@@ -1594,7 +1594,7 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
  
  /* start is considered a vertex */
  static int
@@ -39,7 +39,7 @@ index 5abef07..7f8e683 100644
  {
    VNODE *cur = start, *newn; /* cur is considered a vertex */
    DIRECTION dir = initdir;
-@@ -1606,7 +1606,7 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1605,7 +1605,7 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
    do
      {
        /* see where to go next */

@@ -1,5 +1,5 @@
-Bottom: 4b6bad4c9ecd384f2f1679bbde85a508d36b5465
-Top:    48e6ec1d06898e8028535cc9e011b5453517cdb1
+Bottom: 4b5e05ce68c7444a5e2846d8c7e33d0a98f5bc17
+Top:    96e905c534f9359fde5e1d7097297ebce6b2c42b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:51:38 +0000
 
@@ -9,10 +9,10 @@ Rename NODE_LABEL and LABEL_NODE to reflect that they operate on edges
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 9d7c8b5..2aaf3cd 100644
+index 95ce14f..85b8792 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -87,8 +87,8 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+@@ -86,8 +86,8 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
  
  #define TOUCHES 99
  
@@ -23,7 +23,7 @@ index 9d7c8b5..2aaf3cd 100644
  
  #define error(code)  longjmp(*(e), code)
  
-@@ -373,11 +373,11 @@ node_add_single_point (VNODE * a, Vector p)
+@@ -372,11 +372,11 @@ node_add_single_point (VNODE * a, Vector p)
  }				/* node_add_point */
  
  /*
@@ -37,7 +37,7 @@ index 9d7c8b5..2aaf3cd 100644
  {
    CVCList *first_l, *l;
    char this_poly;
-@@ -443,12 +443,12 @@ node_label (VNODE * pn)
+@@ -442,12 +442,12 @@ node_label (VNODE * pn)
  	}
      }
    assert (region != UNKNWN);
@@ -53,7 +53,7 @@ index 9d7c8b5..2aaf3cd 100644
  
  /*
   add_descriptors
-@@ -1026,7 +1026,7 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+@@ -1025,7 +1025,7 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
  #ifdef DEBUG
  
  static char *
@@ -62,7 +62,7 @@ index 9d7c8b5..2aaf3cd 100644
  {
    static char u[] = "UNKNOWN";
    static char i[] = "INSIDE";
-@@ -1034,7 +1034,7 @@ theState (VNODE * v)
+@@ -1033,7 +1033,7 @@ theState (VNODE * v)
    static char s[] = "SHARED";
    static char s2[] = "SHARED2";
  
@@ -71,7 +71,7 @@ index 9d7c8b5..2aaf3cd 100644
      {
      case INSIDE:
        return i;
-@@ -1083,7 +1083,7 @@ label_contour (PLINE * a)
+@@ -1082,7 +1082,7 @@ label_contour (PLINE * a)
      {
        if (cur->cvc_next)	/* examine cross vertex */
  	{
@@ -80,7 +80,7 @@ index 9d7c8b5..2aaf3cd 100644
  	  if (first_labelled == NULL)
  	    first_labelled = cur;
  	  continue;
-@@ -1094,7 +1094,7 @@ label_contour (PLINE * a)
+@@ -1093,7 +1093,7 @@ label_contour (PLINE * a)
  
        /* This labels nodes which aren't cross-connected */
        assert (label == INSIDE || label == OUTSIDE);
