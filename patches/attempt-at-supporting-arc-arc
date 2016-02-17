@@ -1,4 +1,4 @@
-Bottom: 57c4fdd35d9f3c9b8c5245eb6fa53115e9c3b243
+Bottom: 50e1b903e4798b64e18612393a2f8217b59b3a33
 Top:    a7d0ab59d0dc0acea30dc56a06461e7d1fa3d918
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-01-12 01:16:00 +0000
@@ -265,18 +265,9 @@ index 3c1cee1..8bdb180 100644
        else
          {
 diff --git a/src/misc.c b/src/misc.c
-index 59a5cf8..3fd9dc6 100644
+index 6381174..3fd9dc6 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1677,7 +1677,7 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
- 
-   /* Make sure full circles aren't treated as zero-length arcs */
-   if (fabs (delta_angle - 360.) < EPSILON ||
--      fabs (delta_angle + 360.) < EPSILON);
-+      fabs (delta_angle + 360.) < EPSILON)
-     ang2 = ang1 + 360.;
- 
-   /* calculate sines, cosines */
 @@ -1686,10 +1686,10 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
    sa2 = sin (M180 * ang2);
    ca2 = cos (M180 * ang2);
