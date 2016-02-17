@@ -90,6 +90,10 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 #define PREV_VERTEX(v) ((v)->prev)
 #define NEXT_EDGE(e) ((e)->next)
 #define PREV_EDGE(e) ((e)->prev)
+#define VERTEX_SIDE_DIR_EDGE(v,s) (((s) == 'P') ? VERTEX_BACKWARD_EDGE (v) : VERTEX_FORWARD_EDGE (v)) /* Move backwards for 'P' side, forwards for 'N' */
+#define EDGE_SIDE_DIR_VERTEX(e,s) (((s) == 'P') ? EDGE_BACKWARD_VERTEX (e) : EDGE_FORWARD_VERTEX (e)) /* Move backwards for 'P' side, forwards for 'N' */
+#define VERTEX_DIRECTION_EDGE(v,d) (((d) == FORW) ? VERTEX_FORWARD_EDGE (v) : VERTEX_BACKWARD_EDGE (v)) /* Move backwards for BACKW, forwards for FORW */
+#define EDGE_DIRECTION_VERTEX(e,d) (((d) == FORW) ? EDGE_FORWARD_VERTEX (e) : EDGE_BACKWARD_VERTEX (e)) /* Move backwards for BACKW, forwards for FORW */
 
 #define ISECTED 3
 #define UNKNWN  0
@@ -1124,7 +1128,7 @@ label_contour (PLINE * a)
 
   do
     {
-      if (cure->cvc_next)	/* examine cross vertex */
+      if (EDGE_BACKWARD_VERTEX (cure)->cvc_next)	/* examine cross vertex */
 	{
 	  label = edge_label (cure);
 	  if (first_labelled == NULL)
@@ -1575,8 +1579,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
 
   if (!(*curv)->cvc_prev)	/* not a cross-vertex */
     {
-      if ((*cdir == FORW) ? VERTEX_FORWARD_EDGE (*curv)->Flags.mark :
-                           VERTEX_BACKWARD_EDGE (*curv)->Flags.mark)
+      if (VERTEX_DIRECTION_EDGE (*curv, *cdir)->Flags.mark)
 	return FALSE;
       return TRUE;
     }
@@ -1592,10 +1595,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
   do
     {
       /* Get the edge e, associated with that descriptor */
-      if (d->side == 'P')
-        e = VERTEX_BACKWARD_EDGE (d->parent);
-      else
-        e = VERTEX_FORWARD_EDGE (d->parent);
+      e = VERTEX_SIDE_DIR_EDGE (d->parent, d->side);
       newone = *cdir;
       if (!e->Flags.mark && j_rule (d->poly, e, &newone))
 	{
@@ -1603,12 +1603,8 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
 	      (d->side == 'P' && newone == BACKW))
 	    {
 #ifdef DEBUG_JUMP
-	      if (newone == FORW)
-		DEBUGP ("jump leaving node at %#mD\n",
-			EDGE_FORWARD_VERTEX (e)->point[0], EDGE_FORWARD_VERTEX (e)->point[1]);
-	      else
-		DEBUGP ("jump leaving node at %#mD\n",
-			EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1]);
+	      DEBUGP ("jump leaving node at %#mD\n",
+	              EDGE_DIRECTION_VERTEX (e, newone)->point[0], EDGE_DIRECTION_VERTEX (e, newone)->point[1]);
 #endif
 	      *curv = d->parent;
 	      *cdir = newone;
@@ -1653,7 +1649,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
       DEBUGP ("gather vertex at %#mD\n", curv->point[0], curv->point[1]);
 #endif
       /* Now mark the edge as included.  */
-      newn = (dir == FORW) ? VERTEX_FORWARD_EDGE (curv) : VERTEX_BACKWARD_EDGE (curv);
+      newn = VERTEX_DIRECTION_EDGE (curv, dir);
       newn->Flags.mark = 1;
       /* for SHARED edge mark both */
       if (newn->shared)
