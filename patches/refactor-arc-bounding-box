@@ -1,5 +1,5 @@
 Bottom: 58ad1cb2a8ae747c81e8e2a4a810982c81017ddb
-Top:    c17e26d6fc5e5d0430915fd5d9eca2c986f96291
+Top:    7d06a675e53dd086c94120dbf21a9c4b62bdeb7a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:31 +0000
 
@@ -43,7 +43,7 @@ index 95044e8..51435f4 100644
    if (!Layer->arc_tree)
      Layer->arc_tree = r_create_tree (NULL, 0, 0);
 diff --git a/src/misc.c b/src/misc.c
-index 545aaac..0cab234 100644
+index 545aaac..e0bdb4a 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -78,6 +78,8 @@
@@ -98,7 +98,7 @@ index 545aaac..0cab234 100644
 -  if (Arc->Delta == 360 || Arc->Delta == -360)
 -    ang2 = ang1 + 360;
 +  if (fabs (delta_angle - 360.) < EPSILON ||
-+      fabs (delta_angle + 360.) < EPSILON);
++      fabs (delta_angle + 360.) < EPSILON)
 +    ang2 = ang1 + 360.;
  
    /* calculate sines, cosines */
