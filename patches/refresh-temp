@@ -1,0 +1,22 @@
+Bottom: 0cce83a61162e939ac398deed5f73b873a96e03e
+Top:    bb067f120b7320f0398503c719367008a7238fc7
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-17 17:32:14 +0000
+
+Refresh of remaining-bug-from-another
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index 1729bbd..7e9f635 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -397,7 +397,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
+   hx = p1->X + (p2->X - p1->X) / 2;
+   hy = p1->Y + (p2->Y - p1->Y) / 2;
+ 
+-  p_to_h_dist = hypot (p2->X - p1->X, p2->Y - p1->Y) / 2.;
++  p_to_h_dist = hypot (p2->X - p1->Y, p2->Y - p1->Y) / 2.;
+   c_to_h_dist = p_to_h_dist / tan (TO_RADIANS (included_angle) / 2.);
+ 
+   unit_hcx = (double)-(hy - p1->Y) / p_to_h_dist;
