@@ -1,4 +1,4 @@
-Bottom: c9593a7ee50f48622d310bf30b98683ea51b4744
+Bottom: 050591f89ab1109cc2ee5771fa46822a788676ba
 Top:    8ed09141b3428276f37b157b83cc615a7e48d5d5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-14 00:50:26 +0000
@@ -15,7 +15,7 @@ correct seg structure - which has been free'd during the first splitting.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 58ca3fa..cc4419b 100644
+index 32d0ef7..cc4419b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -39,6 +39,7 @@
@@ -34,12 +34,3 @@ index 58ca3fa..cc4419b 100644
    s->intersected = 1;
    return true;
  }
-@@ -1292,6 +1294,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
-       s1->v->radius == s2->v->radius)
-     {
-       printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
-+      s1->v->is_round = false;
-+      s2->v->is_round = false;
-       return seg_in_seg_line_line (i, s1, s2);
-     }
- #endif
