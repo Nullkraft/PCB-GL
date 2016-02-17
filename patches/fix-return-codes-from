@@ -1,0 +1,41 @@
+Bottom: 8f2ad4c09d3053367397eeec808cc6171a7d879d
+Top:    333f5557518e947fe9c0130515e9d4a01282616c
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-17 19:53:53 +0000
+
+Fix return codes from poly_Copy* functions when coping NULL input polygons
+
+Copying a NULL polygon results in a NULL return polygon. This is not an error,
+so be sure to return TRUE for success, otherwise we can abort boolean
+later processing incorrectly, such as in poly_Boolean and poly_BooleanFree
+
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 8cccaac..e70e75e 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2821,8 +2821,10 @@ BOOLp
+ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
+ {
+   *dst = NULL;
+-  if (src != NULL)
+-    *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
++  if (src == NULL)
++    return TRUE;
++
++  *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
+   if (*dst == NULL)
+     return FALSE;
+   (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
+@@ -2851,7 +2853,8 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
+ 
+   *dst = NULL;
+   if (src == NULL)
+-    return FALSE;
++    return TRUE;
++
+   do
+     {
+       if ((di = poly_Create ()) == NULL || !poly_Copy1 (di, src))
