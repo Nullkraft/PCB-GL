@@ -1,5 +1,5 @@
-Bottom: 4319f8404e0041a80b5071882af20d3bb022bd71
-Top:    73d56fe0a56c4d69d8cbc98a391872b4d309c74a
+Bottom: cb0a35b53517bcb4017db329ecfb66eec79daf1e
+Top:    9e25f78fddde951663c997ff13c1539019c11ea4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-14 01:01:49 +0000
 
@@ -8,7 +8,7 @@ Mess of attempts to debug and improve arc-support in polygon code
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 4fe5ebc..b9195a2 100644
+index ba66d9d..0529bfa 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -164,7 +164,7 @@ pline_dump (VNODE * v)
@@ -112,7 +112,7 @@ index 4fe5ebc..b9195a2 100644
  
    if (cnt == 2)
      {
-@@ -3626,6 +3680,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3622,6 +3676,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
                Angle end_angle;
                Angle delta_angle;
                BoxType arc_bound;
@@ -121,7 +121,7 @@ index 4fe5ebc..b9195a2 100644
  
                start_angle = atan2 ((p->point[1] - p->cy), -(p->point[0] - p->cx)) / M180;
                end_angle   = atan2 ((c->point[1] - p->cy), -(c->point[0] - p->cx)) / M180;
-@@ -3636,6 +3692,34 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3632,6 +3688,34 @@ poly_PreContour (PLINE * C, BOOLp optimize)
                if (delta_angle > 180.) delta_angle -= 360.;
                if (delta_angle < -180.) delta_angle += 360.;
  
