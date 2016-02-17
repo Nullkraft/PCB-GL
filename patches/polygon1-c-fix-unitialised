@@ -1,0 +1,27 @@
+Bottom: 333f5557518e947fe9c0130515e9d4a01282616c
+Top:    8e7ca30c934e1a7efd5392a014a7754e4fa856b0
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-17 19:53:59 +0000
+
+polygon1.c: Fix unitialised output polygon upon when hitting allocation failure
+
+This was a bug present in the poly_Boolean() routine. We need to set the output
+polygon to NULL if we are going to return early on memory failure. This was
+noticed during general review after observing problems due to our copy routines
+incorrectly returning FALSE when copying a NULL polygon.
+
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index e70e75e..460ad55 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2337,6 +2337,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+ {
+   POLYAREA *a = NULL, *b = NULL;
+ 
++  *res = NULL;
++
+   if (!poly_M_Copy0 (&a, a_org) || !poly_M_Copy0 (&b, b_org))
+     return err_no_memory;
