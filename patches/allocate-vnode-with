@@ -1,5 +1,5 @@
-Bottom: fa6d9dd100e65201a196aa23e6ec3e80b29f1a51
-Top:    f37b6c9e16ef5212c415fcd2138d6849dec9da4e
+Bottom: 1d6466143e626a62746c5b56d66407df26000bee
+Top:    c878bb373c31e9b67f177bee819affa6dcc1192a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 19:38:31 +0000
 
@@ -11,7 +11,7 @@ g_slice should be optimised for lots of small allocations - lets try this..
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ef454eb..b0442ba 100644
+index 9f71638..cb58c35 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -202,10 +202,10 @@ poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radiu
@@ -43,7 +43,7 @@ index ef454eb..b0442ba 100644
              }
          }
  
-@@ -3517,7 +3519,7 @@ poly_NewContour (VNODE *node)
+@@ -3513,7 +3515,7 @@ poly_NewContour (VNODE *node)
    res->head.radius = node->radius;
  #warning THIS WILL BE BOGUS IF WE GET A CIRCULAR CONTOUR STARTING AT THE HEAD.. NEED 2ND POINT TO DETMERMINE BOUNDS
    cntrbox_adjust (res, res->head.point);
@@ -52,7 +52,7 @@ index ef454eb..b0442ba 100644
  
    return res;
  }
-@@ -3531,7 +3533,7 @@ poly_ClrContour (PLINE * c)
+@@ -3527,7 +3529,7 @@ poly_ClrContour (PLINE * c)
    while ((cur = NEXT_EDGE (&c->head)) != &c->head)
      {
        poly_ExclVertex (cur);
@@ -61,7 +61,7 @@ index ef454eb..b0442ba 100644
      }
    free (c->tristrip_vertices);
    c->tristrip_vertices = NULL;
-@@ -3554,7 +3556,7 @@ poly_DelContour (PLINE ** c)
+@@ -3550,7 +3552,7 @@ poly_DelContour (PLINE ** c)
  	  free (cur->cvc_next);
  	  free (cur->cvc_prev);
  	}
@@ -70,7 +70,7 @@ index ef454eb..b0442ba 100644
      }
    if ((*c)->head.cvc_next != NULL)
      {
-@@ -3598,7 +3600,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3594,7 +3596,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
            if (0)
  	    {
  	      poly_ExclVertex (c);
@@ -79,7 +79,7 @@ index ef454eb..b0442ba 100644
  	      c = p;
  	    }
  	}
-@@ -3856,7 +3858,7 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -3852,7 +3854,7 @@ poly_InclVertex (VNODE * after, VNODE * node)
        VNODE *t = PREV_VERTEX (node);
        NEXT_VERTEX (PREV_VERTEX (t)) = node;
        PREV_VERTEX (node) = PREV_VERTEX (t);
