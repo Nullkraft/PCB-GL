@@ -1,5 +1,5 @@
-Bottom: 49045955d7f2e747a4236fb2db4b68a6cfd5a0c0
-Top:    f500e95eb6acc770987f3edfbb16eed3ed695d64
+Bottom: 2f4b186c474bc2e3a56f741b69d7d8ce6df46361
+Top:    0d0429f7e194fbc4f23b4a75cf396a1417bb7de9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:51:38 +0000
 
@@ -22,10 +22,10 @@ index c606077..9fa6d44 100644
        unsigned int status:3;
        unsigned int mark:1;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 091641f..6b8e13c 100644
+index 1b50804..84c0b5e 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -77,6 +77,19 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+@@ -78,6 +78,19 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
  /* note that a vertex v's Flags.status represents the edge defined by
   * v to v->next (i.e. the edge is forward of v)
   */
@@ -45,7 +45,7 @@ index 091641f..6b8e13c 100644
  #define ISECTED 3
  #define UNKNWN  0
  #define INSIDE  1
-@@ -133,12 +146,12 @@ pline_dump (VNODE * v)
+@@ -134,12 +147,12 @@ pline_dump (VNODE * v)
    s = v;
    do
      {
@@ -60,7 +60,7 @@ index 091641f..6b8e13c 100644
  }
  
  static void
-@@ -176,15 +189,16 @@ node_add
+@@ -177,15 +190,16 @@ node_add
   1 means a new node was created and inserted
   4 means the intersection was not on the dest point
  */
@@ -81,7 +81,7 @@ index 091641f..6b8e13c 100644
    p = poly_CreateNode (po);
    if (p == NULL)
      return NULL;
-@@ -216,9 +230,9 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -217,9 +231,9 @@ new_descriptor (VNODE * a, char poly, char side)
    l->side = side;
    l->next = l->prev = l;
    if (side == 'P')		/* previous */
@@ -93,7 +93,7 @@ index 091641f..6b8e13c 100644
    /* Uses slope/(slope+1) in quadrant 1 as a proxy for the angle.
     * It still has the same monotonic sort result
     * and is far less expensive to compute than the real angle.
-@@ -227,17 +241,17 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -228,17 +242,17 @@ new_descriptor (VNODE * a, char poly, char side)
      {
        if (side == 'P')
  	{
@@ -119,7 +119,7 @@ index 091641f..6b8e13c 100644
  	}
      }
    assert (!vect_equal (v, vect_zero));
-@@ -352,20 +366,22 @@ node_add_point
+@@ -353,20 +367,22 @@ node_add_point
  
   return 1 if new node in b, 2 if new node in a and 3 if new node in both
  */
@@ -145,7 +145,7 @@ index 091641f..6b8e13c 100644
      return NULL;
  
    return new_node;
-@@ -375,6 +391,7 @@ node_add_single_point (VNODE * a, Vector p)
+@@ -376,6 +392,7 @@ node_add_single_point (VNODE * a, Vector p)
  edge_label
   (C) 2006 harry eaton
  */
@@ -153,7 +153,7 @@ index 091641f..6b8e13c 100644
  static unsigned int
  edge_label (VNODE * pn)
  {
-@@ -416,11 +433,11 @@ edge_label (VNODE * pn)
+@@ -417,11 +434,11 @@ edge_label (VNODE * pn)
      {
        if (l->side == 'P')
  	{
@@ -168,7 +168,7 @@ index 091641f..6b8e13c 100644
  	    }
  	  else
  	    region = INSIDE;
-@@ -429,10 +446,10 @@ edge_label (VNODE * pn)
+@@ -430,10 +447,10 @@ edge_label (VNODE * pn)
  	{
  	  if (l->angle == pn->cvc_next->angle)
  	    {
@@ -182,7 +182,7 @@ index 091641f..6b8e13c 100644
  	    }
  	  else
  	    region = OUTSIDE;
-@@ -467,7 +484,7 @@ edge_label (VNODE * pn)
+@@ -468,7 +485,7 @@ edge_label (VNODE * pn)
  static CVCList *
  add_descriptors (PLINE * pl, char poly, CVCList * list)
  {
@@ -191,7 +191,7 @@ index 091641f..6b8e13c 100644
  
    do
      {
-@@ -483,7 +500,7 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
+@@ -484,7 +501,7 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
  	    return NULL;
  	}
      }
@@ -200,7 +200,7 @@ index 091641f..6b8e13c 100644
    return list;
  }
  
-@@ -553,21 +570,21 @@ adjust_tree (rtree_t * tree, struct seg *s)
+@@ -554,21 +571,21 @@ adjust_tree (rtree_t * tree, struct seg *s)
    q->intersected = 0;
    q->v = s->v;
    q->p = s->p;
@@ -231,7 +231,7 @@ index 091641f..6b8e13c 100644
    r_insert_entry (tree, (const BoxType *) q, 1);
    r_delete_entry (tree, (const BoxType *) s);
    return 0;
-@@ -633,8 +650,8 @@ seg_in_seg (const BoxType * b, void *cl)
+@@ -634,8 +651,8 @@ seg_in_seg (const BoxType * b, void *cl)
    if (s->intersected || i->s->intersected)
      return 0;
  
@@ -242,7 +242,7 @@ index 091641f..6b8e13c 100644
    if (!cnt)
      return 0;
    if (i->touch)			/* if checking touches one find and we're done */
-@@ -681,38 +698,38 @@ static void *
+@@ -682,38 +699,38 @@ static void *
  make_edge_tree (PLINE * pb)
  {
    struct seg *s;
@@ -293,7 +293,7 @@ index 091641f..6b8e13c 100644
    return (void *) ans;
  }
  
-@@ -755,7 +772,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -756,7 +773,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
    PLINE *pb = (PLINE *) b;
    PLINE *rtree_over;
    PLINE *looping_over;
@@ -302,7 +302,7 @@ index 091641f..6b8e13c 100644
    struct info info;
    BoxType box;
    jmp_buf restart;
-@@ -782,22 +799,22 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -783,22 +800,22 @@ contour_bounds_touch (const BoxType * b, void *cl)
      }
  
    av = &looping_over->head;
@@ -331,7 +331,7 @@ index 091641f..6b8e13c 100644
  
        /* fill in the segment in info corresponding to this node */
        if (setjmp (info.sego) == 0)
-@@ -820,7 +837,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -821,7 +838,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
  				seg_in_region, seg_in_seg, &info)))
  	  assert (0); /* XXX: Memory allocation failure */
      }
@@ -340,7 +340,7 @@ index 091641f..6b8e13c 100644
  
    c_info->node_insert_list = info.node_insert_list;
    if (info.need_restart)
-@@ -887,10 +904,10 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -888,10 +905,10 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        insert_node_task *next = task->next;
  
        /* Do insersion */
@@ -355,7 +355,7 @@ index 091641f..6b8e13c 100644
        task->node_seg->p->Count++;
  
        cntrbox_adjust (task->node_seg->p, task->new_node->point);
-@@ -1067,10 +1084,11 @@ print_labels (PLINE * a)
+@@ -1068,10 +1085,11 @@ print_labels (PLINE * a)
  
    do
      {
@@ -370,7 +370,7 @@ index 091641f..6b8e13c 100644
  }
  #endif
  #endif
-@@ -1085,7 +1103,7 @@ label_contour
+@@ -1086,7 +1104,7 @@ label_contour
  static BOOLp
  label_contour (PLINE * a)
  {
@@ -379,7 +379,7 @@ index 091641f..6b8e13c 100644
    VNODE *first_labelled = NULL;
    int label = UNKNWN;
  
-@@ -1106,7 +1124,7 @@ label_contour (PLINE * a)
+@@ -1107,7 +1125,7 @@ label_contour (PLINE * a)
        assert (label == INSIDE || label == OUTSIDE);
        LABEL_EDGE (cur, label);
      }
@@ -388,7 +388,7 @@ index 091641f..6b8e13c 100644
  #ifdef DEBUG_ALL_LABELS
    print_labels (a);
    DEBUGP ("\n\n");
-@@ -1463,8 +1481,10 @@ typedef enum
+@@ -1464,8 +1482,10 @@ typedef enum
  } DIRECTION;
  
  /* Jump Rule  */
@@ -399,7 +399,7 @@ index 091641f..6b8e13c 100644
  static int
  IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  {
-@@ -1472,6 +1492,7 @@ IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1473,6 +1493,7 @@ IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
    return (v->Flags.status == INSIDE || v->Flags.status == SHARED);
  }
  
@@ -407,7 +407,7 @@ index 091641f..6b8e13c 100644
  static int
  UniteJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  {
-@@ -1479,6 +1500,7 @@ UniteJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1480,6 +1501,7 @@ UniteJ_Rule (char p, VNODE * v, DIRECTION * cdir)
    return (v->Flags.status == OUTSIDE || v->Flags.status == SHARED);
  }
  
@@ -415,7 +415,7 @@ index 091641f..6b8e13c 100644
  static int
  XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  {
-@@ -1495,6 +1517,7 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1496,6 +1518,7 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
    return FALSE;
  }
  
@@ -423,7 +423,7 @@ index 091641f..6b8e13c 100644
  static int
  SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  {
-@@ -1525,32 +1548,37 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1526,32 +1549,37 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
   *
   * returns true if an edge is found, false otherwise
   */
@@ -466,7 +466,7 @@ index 091641f..6b8e13c 100644
        newone = *cdir;
        if (!e->Flags.mark && rule (d->poly, e, &newone))
  	{
-@@ -1560,10 +1588,10 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
+@@ -1561,10 +1589,10 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
  #ifdef DEBUG_JUMP
  	      if (newone == FORW)
  		DEBUGP ("jump leaving node at %#mD\n",
@@ -479,7 +479,7 @@ index 091641f..6b8e13c 100644
  #endif
  	      *cur = d->parent;
  	      *cdir = newone;
-@@ -1571,14 +1599,15 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
+@@ -1572,14 +1600,15 @@ jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
  	    }
  	}
      }
@@ -497,7 +497,7 @@ index 091641f..6b8e13c 100644
    DIRECTION dir = initdir;
  #ifdef DEBUG_GATHER
    DEBUGP ("gather direction = %d\n", dir);
-@@ -1600,33 +1629,35 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1601,33 +1630,35 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
  	}
        else
  	{
@@ -539,7 +539,7 @@ index 091641f..6b8e13c 100644
      {
        if (p != NULL)
  	poly_DelContour (&p);
-@@ -1657,7 +1688,7 @@ static void
+@@ -1658,7 +1689,7 @@ static void
  Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
           J_Rule j_rule)
  {
@@ -548,7 +548,7 @@ index 091641f..6b8e13c 100644
    DIRECTION dir = UNINITIALISED;
  
    cur = (&a->head);
-@@ -1676,7 +1707,7 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
+@@ -1677,7 +1708,7 @@ Collect (char poly, jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes
        if (j_rule (poly, cur, &dir) && cur->Flags.mark == 0)
  	Collect1 (e, cur, dir, contours, holes, j_rule);
      }
@@ -557,7 +557,7 @@ index 091641f..6b8e13c 100644
  }				/* Collect */
  
  
-@@ -2402,7 +2433,7 @@ clear_marks (POLYAREA * p)
+@@ -2403,7 +2434,7 @@ clear_marks (POLYAREA * p)
  	    {
  	      v->Flags.mark = 0;
  	    }
@@ -566,7 +566,7 @@ index 091641f..6b8e13c 100644
  	}
      }
    while ((n = n->f) != p);
-@@ -2485,7 +2516,7 @@ cntrbox_pointin (PLINE * c, Vector p)
+@@ -2486,7 +2517,7 @@ cntrbox_pointin (PLINE * c, Vector p)
  static inline int
  node_neighbours (VNODE * a, VNODE * b)
  {
@@ -575,7 +575,7 @@ index 091641f..6b8e13c 100644
  }
  
  VNODE *
-@@ -2511,7 +2542,7 @@ poly_IniContour (PLINE * c)
+@@ -2512,7 +2543,7 @@ poly_IniContour (PLINE * c)
    if (c == NULL)
      return;
    /* bzero (c, sizeof(PLINE)); */
@@ -584,7 +584,7 @@ index 091641f..6b8e13c 100644
    c->xmin = c->ymin = COORD_MAX;
    c->xmax = c->ymax = -COORD_MAX - 1;
    c->is_round = FALSE;
-@@ -2544,7 +2575,7 @@ poly_ClrContour (PLINE * c)
+@@ -2545,7 +2576,7 @@ poly_ClrContour (PLINE * c)
    VNODE *cur;
  
    assert (c != NULL);
@@ -593,7 +593,7 @@ index 091641f..6b8e13c 100644
      {
        poly_ExclVertex (cur);
        free (cur);
-@@ -2562,9 +2593,9 @@ poly_DelContour (PLINE ** c)
+@@ -2563,9 +2594,9 @@ poly_DelContour (PLINE ** c)
  
    if (*c == NULL)
      return;
@@ -605,7 +605,7 @@ index 091641f..6b8e13c 100644
        if (cur->cvc_next != NULL)
  	{
  	  free (cur->cvc_next);
-@@ -2598,11 +2629,11 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -2599,11 +2630,11 @@ poly_PreContour (PLINE * C, BOOLp optimize)
  
    if (optimize)
      {
@@ -619,7 +619,7 @@ index 091641f..6b8e13c 100644
  	  /* If the product below is zero then
  	   * the points on either side of c 
  	   * are on the same line!
-@@ -2621,7 +2652,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -2622,7 +2653,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
    C->xmin = C->xmax = C->head.point[0];
    C->ymin = C->ymax = C->head.point[1];
  
@@ -628,7 +628,7 @@ index 091641f..6b8e13c 100644
    if (c != p)
      {
        do
-@@ -2633,7 +2664,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -2634,7 +2665,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
  	  cntrbox_adjust (C, c->point);
  	  C->Count++;
  	}
@@ -637,7 +637,7 @@ index 091641f..6b8e13c 100644
      }
    C->area = ABS (area);
    if (C->Count > 2)
-@@ -2645,7 +2676,7 @@ static int
+@@ -2646,7 +2677,7 @@ static int
  flip_cb (const BoxType * b, void *cl)
  {
    struct seg *s = (struct seg *) b;
@@ -646,7 +646,7 @@ index 091641f..6b8e13c 100644
    return 1;
  }
  
-@@ -2661,9 +2692,9 @@ poly_InvContour (PLINE * c)
+@@ -2662,9 +2693,9 @@ poly_InvContour (PLINE * c)
    cur = &c->head;
    do
      {
@@ -659,7 +659,7 @@ index 091641f..6b8e13c 100644
        /* fix the segment tree */
      }
    while ((cur = next) != &c->head);
-@@ -2689,8 +2720,8 @@ poly_ExclVertex (VNODE * node)
+@@ -2690,8 +2721,8 @@ poly_ExclVertex (VNODE * node)
        free (node->cvc_next);
        free (node->cvc_prev);
      }
@@ -670,7 +670,7 @@ index 091641f..6b8e13c 100644
  }
  
  void
-@@ -2700,21 +2731,21 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -2701,21 +2732,21 @@ poly_InclVertex (VNODE * after, VNODE * node)
    assert (after != NULL);
    assert (node != NULL);
  
@@ -703,7 +703,7 @@ index 091641f..6b8e13c 100644
        free (t);
      }
  }
-@@ -2736,12 +2767,12 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -2737,12 +2768,12 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
    (*dst)->ymin = src->ymin, (*dst)->ymax = src->ymax;
    (*dst)->area = src->area;
  
@@ -718,7 +718,7 @@ index 091641f..6b8e13c 100644
      }
    (*dst)->tree = (rtree_t *)make_edge_tree (*dst);
    return TRUE;
-@@ -2853,14 +2884,14 @@ crossing (const BoxType * b, void *cl)
+@@ -2854,14 +2885,14 @@ crossing (const BoxType * b, void *cl)
    struct seg *s = (struct seg *) b;
    struct pip *p = (struct pip *) cl;
  
@@ -737,7 +737,7 @@ index 091641f..6b8e13c 100644
  	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
  	  if (cross == 0)
  	    {
-@@ -2873,12 +2904,12 @@ crossing (const BoxType * b, void *cl)
+@@ -2874,12 +2905,12 @@ crossing (const BoxType * b, void *cl)
      }
    else
      {
@@ -753,7 +753,7 @@ index 091641f..6b8e13c 100644
  	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
  	  if (cross == 0)
  	    {
-@@ -3032,8 +3063,8 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
+@@ -3033,8 +3064,8 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
      {
        double dot_product;
  
@@ -764,7 +764,7 @@ index 091641f..6b8e13c 100644
  
        dot_product = dot_orthogonal_to_direction (pt1->point, pt2->point,
                                                   pt3->point, pt2->point);
-@@ -3041,7 +3072,7 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
+@@ -3042,7 +3073,7 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
        if (dot_product * dir > 0.)
          break;
      }
@@ -773,7 +773,7 @@ index 091641f..6b8e13c 100644
  
    /* Loop over remaining vertices */
    q = pt3;
-@@ -3059,7 +3090,7 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
+@@ -3060,7 +3091,7 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
          min_q = q;
        }
      }
@@ -782,7 +782,7 @@ index 091641f..6b8e13c 100644
  
    /* Were any "q" found inside pt1 pt2 pt3? */
    if (min_q == NULL) {
-@@ -3158,8 +3189,8 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -3159,8 +3190,8 @@ inside_sector (VNODE * pn, Vector p2)
  
    assert (pn != NULL);
    vect_sub (cdir, p2, pn->point);
@@ -793,7 +793,7 @@ index 091641f..6b8e13c 100644
  
    p_c = vect_det2 (pdir, cdir) >= 0;
    n_c = vect_det2 (ndir, cdir) >= 0;
-@@ -3187,23 +3218,23 @@ poly_ChkContour (PLINE * a)
+@@ -3188,23 +3219,23 @@ poly_ChkContour (PLINE * a)
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
@@ -823,7 +823,7 @@ index 091641f..6b8e13c 100644
  	      else
  		hit2 = NULL;
  
-@@ -3219,7 +3250,7 @@ poly_ChkContour (PLINE * a)
+@@ -3220,7 +3251,7 @@ poly_ChkContour (PLINE * a)
  		/* An end-point of the second line touched somewhere along the
  		   length of the first line. Check where the second line leads. */
  		  if (inside_sector (hit2, a1->point) !=
@@ -832,7 +832,7 @@ index 091641f..6b8e13c 100644
  		    return TRUE;
  		}
  	      else if (hit2 == NULL)
-@@ -3227,21 +3258,21 @@ poly_ChkContour (PLINE * a)
+@@ -3228,21 +3259,21 @@ poly_ChkContour (PLINE * a)
  		/* An end-point of the first line touched somewhere along the
  		   length of the second line. Check where the first line leads. */
  		  if (inside_sector (hit1, a2->point) !=
@@ -859,7 +859,7 @@ index 091641f..6b8e13c 100644
    return FALSE;
  }
  
-@@ -3266,11 +3297,11 @@ poly_Valid (POLYAREA * p)
+@@ -3267,11 +3298,11 @@ poly_Valid (POLYAREA * p)
        v = &p->contours->head;
        do
  	{
@@ -873,7 +873,7 @@ index 091641f..6b8e13c 100644
  #endif
        return FALSE;
      }
-@@ -3291,11 +3322,11 @@ poly_Valid (POLYAREA * p)
+@@ -3292,11 +3323,11 @@ poly_Valid (POLYAREA * p)
  	  v = &c->head;
  	  do
  	    {
