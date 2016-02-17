@@ -1,5 +1,5 @@
-Bottom: c926e0ec326a7a0cdfbbcb323faf2ddcd4c2c77e
-Top:    48723a44216094da33603284bae391ed2d2faf5d
+Bottom: b8fdea676dfb52b13a19b196df1a874725f29834
+Top:    f5f63a7026941acaba21fc78534eae2038092d23
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:20:20 +0000
 
@@ -9,7 +9,7 @@ Debug on
 ---
 
 diff --git a/src/polygon.h b/src/polygon.h
-index a02fd99..a369096 100644
+index 369efea..0cba2bf 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -34,7 +34,7 @@
@@ -20,7 +20,7 @@ index a02fd99..a369096 100644
 +#define POLY_CIRC_SEGS 8//40
  #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
  
- /* adjustment to make the segments outline the circle rather than connect
+ #if 0
 diff --git a/src/polygon1.c b/src/polygon1.c
 index f66e288..140ea70 100644
 --- a/src/polygon1.c

@@ -1,5 +1,5 @@
-Bottom: b07dfd179aab95d396dec7ade0f34bd462b2a663
-Top:    f63938ae13ec16ded5059773c3e861afce779945
+Bottom: da2a09e7dd25ff1f088789191568f7c967202645
+Top:    2c7ff37e3dbb72d59463cc95f3b102bfa5d46739
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:08:56 +0000
 
@@ -11,11 +11,11 @@ Was part of adding arc support, now temporarily borrowed for debugging
 ---
 
 diff --git a/src/polygon.h b/src/polygon.h
-index a369096..0cba2bf 100644
+index a02fd99..369efea 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -37,11 +37,28 @@
- #define POLY_CIRC_SEGS 8//40
+ #define POLY_CIRC_SEGS 40
  #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
  
 +#if 0
