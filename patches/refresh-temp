@@ -1,0 +1,38 @@
+Bottom: 8ed09141b3428276f37b157b83cc615a7e48d5d5
+Top:    c9593a7ee50f48622d310bf30b98683ea51b4744
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-17 20:54:05 +0000
+
+Refresh of attempt-storing-arc-center
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index cc4419b..58ca3fa 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -39,7 +39,6 @@
+       are marked
+ */
+ 
+-#undef NDEBUG
+ #include	<assert.h>
+ #include	<stdlib.h>
+ #include	<stdio.h>
+@@ -939,7 +938,6 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
+   DEBUGP ("new intersection on segment \"i\" at %#mD\n", v[0], v[1]);
+ #endif
+   i->node_insert_list = prepend_insert_node_task (i->node_insert_list, s, new_node, param);
+-  assert (!s->intersected);
+   s->intersected = 1;
+   return true;
+ }
+@@ -1294,8 +1292,6 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
+       s1->v->radius == s2->v->radius)
+     {
+       printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
+-      s1->v->is_round = false;
+-      s2->v->is_round = false;
+       return seg_in_seg_line_line (i, s1, s2);
+     }
+ #endif
