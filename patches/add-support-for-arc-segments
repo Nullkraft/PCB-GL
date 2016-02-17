@@ -1,4 +1,4 @@
-Bottom: c17e26d6fc5e5d0430915fd5d9eca2c986f96291
+Bottom: 7d06a675e53dd086c94120dbf21a9c4b62bdeb7a
 Top:    46164f90d085a6bcc494bd09416b23480fe2085d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:31 +0000
@@ -207,19 +207,6 @@ index 31fc6dc..6c530fb 100644
  PointType * AdjustInsertPoint (void);
  
  #endif
-diff --git a/src/misc.c b/src/misc.c
-index 0cab234..e0bdb4a 100644
---- a/src/misc.c
-+++ b/src/misc.c
-@@ -1594,7 +1594,7 @@ calc_thin_arc_bounds (Coord cx, Coord cy, Coord rx, Coord ry, Angle start_angle,
- 
-   /* Make sure full circles aren't treated as zero-length arcs */
-   if (fabs (delta_angle - 360.) < EPSILON ||
--      fabs (delta_angle + 360.) < EPSILON);
-+      fabs (delta_angle + 360.) < EPSILON)
-     ang2 = ang1 + 360.;
- 
-   /* calculate sines, cosines */
 diff --git a/src/parse_l.l b/src/parse_l.l
 index 4f64880..a4e0a05 100644
 --- a/src/parse_l.l
