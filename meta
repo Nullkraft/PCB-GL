@@ -1,29 +1,30 @@
 Version: 1
-Previous: cf1cadfd61692748cb4ca9036e51ec15bf18eeaa
-Head: 7ad85a159025e41124fda63ded17a8609e07ec06
+Previous: 8f18476c94c2a554cece986f16ea9a7124255556
+Head: a547b4a2e4697331b1c65aa49d292acf7b0762a7
 Applied:
-  add-strip-hierarchy-options-to: bc3b8a189c910aa25bfb91852a0fcedd3d9e467e
-  add-a-hacky-name-mangling-thin: 66a0b8838588ff07083ce0a826f0be9e7e1ec334
-  change-scroll-wheel-bindings-t: 79f7a161851c93c9e45b0493f7a7b3a666be9802
-  remove-shortcut-to-the-djopt-t: 4e8aa9f41d7ca5d373f63a2ef15438976ca30dc8
-  wip-on-quad-edge-play: 4d88bd68b018bb3a50f5ad04b59b0242fcf0c080
-  more-play-with-quad-edge-data: b99dcb6d0bbf6228223154f7c0e86e9024d98783
-  continue-tinkering-with-3d: aff6bba88f614f63a8f00330e7629d72e8175cd1
-  attempt-to-refactor-the-step: 71534c8119738e34ebbb35330e024e9973d8d79b
-  well-on-the-way-to-completely: 224bcc493822a0b975351ce2624accf9f0ae76c5
-  and-working-again-mostly: 404258474d5e29188ce5a0c0dd108eeae991cea4
-  refactor-arc-bounding-box: 418329875cf6392031faf9deb4d7c1704703953c
-  add-support-for-arc-segments: 575ca5e2b317a9f955d1539aefd25285d29dbc82
-  temp: f78b563df89e15b7b5b154e1303c5fa9698d3233
-  remaining-bug-from-another: 10f453a6112c71ae07a847b3fd550f246237901d
-  revert-remaining-bug-from: dfab216a6615b5ce0f7e8ce191b263de35f77a39
-  move-arc-from-included-angle: 79b6af17254e78061b72ee1faa07cf3fb25104ad
-  test-poly-curve-support-prod: 2ec8c40890a5bca83c7e011b84e2bf646e3591aa
-  polygon-h-reduce-circ_segs-to: 133f342d7ffc099bcc7d3de84cce328417dda71f
-  polygon1-c-fix-collect-routine: f5f22245b2f0857d6d7751cbe0fc0d7d64b915d2
-  attempt-to-fix-bad-rtree-usage: 50a36ea15992060cf967073d61e90e24d578a156
-  debug-stuff-looking-into-bad: 17a7729b2b30814131052de1b0990dcdf9a41ef1
-  revert-debug-stuff-looking-into-bad: e8691e3ea29e4d7bb54b1e6786fb93abc4a943b9
+  add-strip-hierarchy-options-to: 691fb751d223f68ded439f3caffbb90bc29a8b54
+  add-a-hacky-name-mangling-thin: f72603a441874d2d0aa6f27d1463f90fc16370d5
+  change-scroll-wheel-bindings-t: 0acbd7816c418bc1b64ac344a82f5dd770d97a07
+  remove-shortcut-to-the-djopt-t: 4a0e1c32d939bb50b784e1ff917c4941d9dacd96
+  wip-on-quad-edge-play: 1228fa7e60316027b12e0ee62959194c353726e7
+  more-play-with-quad-edge-data: af820e9b2f9bd9005088da45ef4b0e52cb243737
+  continue-tinkering-with-3d: 4065d17274e9e8b27a8f9525b044862e9fb278dd
+  attempt-to-refactor-the-step: 3460b5f6a08727a1820cc2fbf3d2a20aa7eb5524
+  well-on-the-way-to-completely: e2f542453d92b4dc8299943c1bf7904945dec0b5
+  and-working-again-mostly: e6d44c866d2d4dbd0d96b4cf57fa848465d81b7b
+  refactor-arc-bounding-box: b85c46994524588dbce8d2360ef9aaf34b5514b4
+  add-support-for-arc-segments: c2085c4031ea7d51265abd805c7d87da73aeb6ae
+  temp: e2d0ab191bc3ae556e22c3237cc4f7bc032c1848
+  remaining-bug-from-another: ef61b50ec278b88cc833fdaacb2c032be215d450
+  revert-remaining-bug-from: 7659de91d303492401a43dc17d22a0e9bc9047b0
+  move-arc-from-included-angle: 38f47fbba41ec32f57e0fce423f5ff926f1e37ea
+  test-poly-curve-support-prod: b0c004f2853c51aa4f3e17c04fa40bb3e85043cd
+  polygon-h-reduce-circ_segs-to: a57ce130e5511e0fc0b1bdf3a6d16bb6afbf15f6
+  polygon1-c-fix-collect-routine: 9dbbffa8ce53256a4c8b9e70255d24e9fa30b2a3
+  attempt-to-fix-bad-rtree-usage: eefcffb0403df8e35deff3f0c20c94ce055598b8
+  debug-stuff-looking-into-bad: 0d316f9fb2b1c6fe314e4f75936f837d2557edcc
+  revert-debug-stuff-looking-into-bad: a547b4a2e4697331b1c65aa49d292acf7b0762a7
+Unapplied:
   tag-vnodes-with-details-of: 994e5f6e264d991988f65117ae034bf6193a89da
   remove-debug-from-outline: 48eb8524960e4f2206b04ee06013df18facf7eb3
   polygon1-c-temporarily-disable: 2ccf6cbc5f0fb12690755d5b4ab42be3d93ab460
@@ -37,7 +38,6 @@ Applied:
   introduce-macros-for-traversing: d6432835fe754b7c3d8e6b743c0a3cf139e0eefe
   attempt-to-splice-in: 2928d32806465e77bd13bab6de9ae24202c83a66
   polygon1-c-move-jump-call-to: 7ad85a159025e41124fda63ded17a8609e07ec06
-Unapplied:
   add-polygon-parentage-tree: 887a3b978e1451a1b89a26946f98551f5fa9390c
   limit-virtual-memory-size-of: 152974da24aba9fc87cb632bc9c59fedc00354c7
   attempt-at-supporting-arc-arc: edb168591be2445a91dbf268e080a23746814a2d
