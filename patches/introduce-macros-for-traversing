@@ -1,7 +1,7 @@
-Bottom: cb0f3fe9c544d0de0a4ad2bfa379f7155015d80b
-Top:    c08964286551f2d37a95b25fabfeb39b1a82d1fd
+Bottom: 3279462d45afab19670a1b525dac862ab46a7b3d
+Top:    7dbfd4451deb5da9ab9b189cc961f62e410c64a7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-17 20:01:14 +0000
+Date:   2016-02-17 20:03:26 +0000
 
 Introduce macros for traversing between edges and nodes in a specified direction
 
@@ -12,10 +12,10 @@ slightly less explicit.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 166d640..66a1654 100644
+index 89c7035..5029e8b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1675,10 +1675,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+@@ -1711,10 +1711,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
        if (!jump (&curv, &dir, j_rule))
  	break;
        /* add vertex (edge?) to polygon */
