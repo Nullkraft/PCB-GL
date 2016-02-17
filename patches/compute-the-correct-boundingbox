@@ -1,5 +1,5 @@
-Bottom: 6ea32e13fd6c629058a1157f1c12385b34892f4e
-Top:    92c3af5d8da49b70f8e2e7f494583fc869356e8c
+Bottom: f497a3e81656ed56c1c5e4352fe294a2e97b856f
+Top:    528b5863c45e1027e5247845c3546456f04abc34
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:32 +0000
 
@@ -9,7 +9,7 @@ Compute the correct boundingbox for a polygon with arc segments.
 ---
 
 diff --git a/src/misc.c b/src/misc.c
-index 1729bbd..59a5cf8 100644
+index 16f69a9..6381174 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -430,6 +430,27 @@ SetPolygonBoundingBox (PolygonType *Polygon)
