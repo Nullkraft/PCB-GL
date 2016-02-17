@@ -1,5 +1,5 @@
 Bottom: edd31e426458cc1de8066640f8bb9cc7058fe80f
-Top:    7295eaa88c38b5a808f5cdcc82ec0aa947801a02
+Top:    478831cc94f48f6b95734cbbbae22ed8365a4642
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-14 00:18:00 +0000
 
@@ -26,32 +26,3 @@ index 6282e9e..9a4ce64 100644
      {
        Coord ldx, ldy;
        ldx = (moving_line->Point2.X - moving_line->Point1.X);
-diff --git a/src/polygon1.c b/src/polygon1.c
-index c0748c1..23a88ea 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -39,6 +39,7 @@
-       are marked
- */
- 
-+#undef NDEBUG
- #include	<assert.h>
- #include	<stdlib.h>
- #include	<stdio.h>
-@@ -936,6 +937,7 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
-   DEBUGP ("new intersection on segment \"i\" at %#mD\n", v[0], v[1]);
- #endif
-   i->node_insert_list = prepend_insert_node_task (i->node_insert_list, s, new_node, param);
-+  assert (!s->intersected);
-   s->intersected = 1;
-   return true;
- }
-@@ -1290,6 +1292,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
-       s1->v->radius == s2->v->radius)
-     {
-       printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
-+      s1->v->is_round = false;
-+      s2->v->is_round = false;
-       return seg_in_seg_line_line (i, s1, s2);
-     }
- #endif
