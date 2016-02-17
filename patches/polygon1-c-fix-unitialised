@@ -1,5 +1,5 @@
-Bottom: 171163b7dc0743b0391a052138183c6ae8ccbb9a
-Top:    1f605d0428d31fbb93f2067595178254d3ec1f6d
+Bottom: fab6fe84ac0a6c40f876fe7dd1b5d6c4eebda580
+Top:    d24c22bc8c6bb8268717e15c654972f5fe05c929
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 19:53:59 +0000
 
@@ -14,10 +14,10 @@ incorrectly returning FALSE when copying a NULL polygon.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 70666e3..631c3cf 100644
+index 0498d36..a8d9391 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2338,6 +2338,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+@@ -2327,6 +2327,8 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
  {
    POLYAREA *a = NULL, *b = NULL;
  
