@@ -1,5 +1,5 @@
 Bottom: c9593a7ee50f48622d310bf30b98683ea51b4744
-Top:    c9593a7ee50f48622d310bf30b98683ea51b4744
+Top:    8ed09141b3428276f37b157b83cc615a7e48d5d5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:55:34 +0000
 
@@ -10,4 +10,32 @@ This avoids assert failures with debugging enabeled
 
 ---
 
-
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 58ca3fa..cc4419b 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -39,6 +39,7 @@
+       are marked
+ */
+ 
++#undef NDEBUG
+ #include	<assert.h>
+ #include	<stdlib.h>
+ #include	<stdio.h>
+@@ -938,6 +939,7 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
+   DEBUGP ("new intersection on segment \"i\" at %#mD\n", v[0], v[1]);
+ #endif
+   i->node_insert_list = prepend_insert_node_task (i->node_insert_list, s, new_node, param);
++  assert (!s->intersected);
+   s->intersected = 1;
+   return true;
+ }
+@@ -1292,6 +1294,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
+       s1->v->radius == s2->v->radius)
+     {
+       printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
++      s1->v->is_round = false;
++      s2->v->is_round = false;
+       return seg_in_seg_line_line (i, s1, s2);
+     }
+ #endif
