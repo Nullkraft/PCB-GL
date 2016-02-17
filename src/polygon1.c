@@ -1706,10 +1706,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
   do
     {
       /* add vertex (edge?) to polygon */
-      if ((newn = poly_CreateNodeFull (curv->point, (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->is_round : VERTEX_BACKWARD_EDGE (curv)->is_round,
-                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cx       : VERTEX_BACKWARD_EDGE (curv)->cx,
-                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->cy       : VERTEX_BACKWARD_EDGE (curv)->cy,
-                                                    (dir == FORW) ? VERTEX_FORWARD_EDGE (curv)->radius   : VERTEX_BACKWARD_EDGE (curv)->radius)) == NULL)
+      if ((newn = poly_CreateNodeFull (curv->point, VERTEX_DIRECTION_EDGE (curv, dir)->is_round,
+                                                    VERTEX_DIRECTION_EDGE (curv, dir)->cx,
+                                                    VERTEX_DIRECTION_EDGE (curv, dir)->cy,
+                                                    VERTEX_DIRECTION_EDGE (curv, dir)->radius)) == NULL)
         return err_no_memory;
       if (!*result)
 	{
