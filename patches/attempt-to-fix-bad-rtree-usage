@@ -1,5 +1,5 @@
-Bottom: 63dcd0df4424b6268a45807200b8e020a15c55e0
-Top:    4b987ddd6c6bf7ca45fd2b00a4dde9405eb77ce5
+Bottom: 1b5c09f7783abb8da6d25166040c3fbb7feb9f99
+Top:    eaeabb4004083f6ad67d6a59ac064b741bdcd2ba
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 19:52:34 +0000
 
@@ -18,10 +18,10 @@ will be updated or not.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c4d1baa..8f0990b 100644
+index a6df579..9191741 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -504,6 +504,15 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
+@@ -494,6 +494,15 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
    return list;
  }
  
@@ -37,7 +37,7 @@ index c4d1baa..8f0990b 100644
  static inline void
  cntrbox_adjust (PLINE * c, Vector p)
  {
-@@ -910,7 +919,16 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -900,7 +909,16 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        EDGE_FORWARD_VERTEX (task->node_seg->v) = task->new_node;
        task->node_seg->p->Count++;
  
