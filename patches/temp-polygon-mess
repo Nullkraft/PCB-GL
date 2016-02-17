@@ -1,5 +1,5 @@
-Bottom: 73d56fe0a56c4d69d8cbc98a391872b4d309c74a
-Top:    c8e22276d1889fe2221727488412c104bdc97675
+Bottom: 9e25f78fddde951663c997ff13c1539019c11ea4
+Top:    3f0c75a18c900880214e52f63339e99575769db7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-14 01:12:26 +0000
 
@@ -12,7 +12,7 @@ implementation of edge_label
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b9195a2..3992790 100644
+index 0529bfa..303b7bc 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -117,11 +117,11 @@ static void poly_InclVertex_int (VNODE * after, VNODE * node);
@@ -140,7 +140,7 @@ index b9195a2..3992790 100644
      }
    while ((e = NEXT_EDGE (e)) != &a->head);
  }
-@@ -3710,10 +3719,12 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3706,10 +3715,12 @@ poly_PreContour (PLINE * C, BOOLp optimize)
                             hypot (c->point[0] - c_check_x, c->point[1] - c_check_y));
                    fprintf (stderr, "\n");
                    //*(char *)0 = 0;
@@ -153,7 +153,7 @@ index b9195a2..3992790 100644
                  }
                else
                  {
-@@ -4693,6 +4704,7 @@ calculate_line_point_intersection (Vector l1, Vector l2, Vector point)
+@@ -4689,6 +4700,7 @@ calculate_line_point_intersection (Vector l1, Vector l2, Vector point)
  vect_inters2
   (C) 1993 Klamer Schutte
   (C) 1997 Michael Leonov, Alexey Nikitin
@@ -161,7 +161,7 @@ index b9195a2..3992790 100644
  */
  
  int
-@@ -4919,11 +4931,13 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
+@@ -4915,11 +4927,13 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
  	{
  	  s = (rqy * (p1[0] - q1[0]) + rqx * (q1[1] - p1[1])) / deel;
  //	  if (s < -EPSILON || s > 1. + EPSILON)
