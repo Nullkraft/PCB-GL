@@ -1,5 +1,5 @@
 Bottom: d8b1793170ea5f04ffce844866c77ebb9d7ce218
-Top:    d8b1793170ea5f04ffce844866c77ebb9d7ce218
+Top:    0bf93419d9a1317bb8def6328751cace701f0fcc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 19:56:56 +0000
 
@@ -29,4 +29,28 @@ Once our start edge is included, the assumptions made by Jump should hold.
 
 ---
 
-
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 8ee1d5c..24bd4a3 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1664,9 +1664,6 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+   assert (*result == NULL);
+   do
+     {
+-      /* see where to go next */
+-      if (!jump (&curv, &dir, j_rule))
+-	break;
+       /* add vertex to polygon */
+       if ((newn = poly_CreateNode (curv->point)) == NULL)
+         return err_no_memory;
+@@ -1692,6 +1689,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+ 
+       /* Advance to the next vertex.  */
+       curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
++
++      /* see where to go next */
++      if (!jump (&curv, &dir, j_rule))
++	break;
+     }
+   while (1);
+   return err_ok;
