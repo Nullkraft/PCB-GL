@@ -1,5 +1,5 @@
-Bottom: 2c7ff37e3dbb72d59463cc95f3b102bfa5d46739
-Top:    95af1b4ef3fa894ac575514f18285f9db8e24535
+Bottom: 1b3cc489636d760f74240a2c4e575a4a5613377a
+Top:    000111b0a55d8b670e76fa8b1e007c81a7e707e3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 18:51:38 +0000
 
@@ -38,10 +38,10 @@ What we should do (at least a sufficient fix) is walk ("Collect") the intersecte
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ef82f37..544fc6d 100644
+index 11b48b8..3716ad6 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1448,7 +1448,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1449,7 +1449,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  
  typedef enum
  {
@@ -50,7 +50,7 @@ index ef82f37..544fc6d 100644
  } DIRECTION;
  
  /* Start Rule */
-@@ -1497,14 +1497,16 @@ XorS_Rule (VNODE * cur, DIRECTION * initdir)
+@@ -1498,14 +1498,16 @@ XorS_Rule (VNODE * cur, DIRECTION * initdir)
  static int
  IsectJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  {
@@ -69,7 +69,7 @@ index ef82f37..544fc6d 100644
    return (v->Flags.status == OUTSIDE || v->Flags.status == SHARED);
  }
  
-@@ -1521,6 +1523,9 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1522,6 +1524,9 @@ XorJ_Rule (char p, VNODE * v, DIRECTION * cdir)
        *cdir = FORW;
        return TRUE;
      }
@@ -79,7 +79,7 @@ index ef82f37..544fc6d 100644
    return FALSE;
  }
  
-@@ -1545,6 +1550,15 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
+@@ -1546,6 +1551,15 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
  	*cdir = BACKW;
        return TRUE;
      }
@@ -95,7 +95,7 @@ index ef82f37..544fc6d 100644
    return FALSE;
  }
  
-@@ -1683,20 +1697,27 @@ Collect1 (jmp_buf * e, VNODE * cur, DIRECTION dir, POLYAREA ** contours,
+@@ -1684,20 +1698,27 @@ Collect1 (jmp_buf * e, VNODE * cur, DIRECTION dir, POLYAREA ** contours,
  }
  
  static void
@@ -131,7 +131,7 @@ index ef82f37..544fc6d 100644
      }
    while ((cur = cur->next) != &a->head);
  }				/* Collect */
-@@ -1714,16 +1735,16 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1715,16 +1736,16 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
        switch (action)
  	{
  	case PBO_UNITE:
@@ -152,7 +152,7 @@ index ef82f37..544fc6d 100644
  	  break;
  	};
      }
-@@ -1786,9 +1807,33 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1787,9 +1808,33 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  	{
  	  next = &((*cur)->next);
  	  if ((*cur)->Flags.status == ISECTED)
