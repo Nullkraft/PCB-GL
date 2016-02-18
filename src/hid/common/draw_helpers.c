@@ -261,9 +261,9 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
     return;
 
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    hid_draw_thin_pcb_polygon (gc, polygon, clip_box);
+    hid_draw__thin_pcb_polygon (gc, polygon, clip_box);
   else
-    hid_draw_fill_pcb_polygon (gc, polygon, clip_box);
+    hid_draw__fill_pcb_polygon (gc, polygon, clip_box);
 
   /* If checking planes, thin-draw any pieces which have been clipped away */
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && !TEST_FLAG (FULLPOLYFLAG, polygon))
@@ -273,7 +273,7 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
       for (poly.Clipped = polygon->Clipped->f;
            poly.Clipped != polygon->Clipped;
            poly.Clipped = poly.Clipped->f)
-        hid_draw_thin_pcb_polygon (gc, &poly, clip_box);
+        hid_draw__thin_pcb_polygon (gc, &poly, clip_box);
     }
 }
 
@@ -465,6 +465,15 @@ common_get_pad_polygon(Coord x[4], Coord y[4], const PadType *l, int w)
 }
 
 void
+common_gui_draw_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    hid_draw__thin_pcb_pad (gc, pad, clip, mask);
+  else
+    hid_draw__fill_pcb_pad (gc, pad, clip, mask);
+}
+
+void
 common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 {
   Coord w = clear ? (mask ? pad->Mask
@@ -578,6 +587,15 @@ draw_octagon_poly (hidGC gc, Coord X, Coord Y,
 }
 
 void
+common_gui_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    hid_draw__thin_pcb_pv (fg_gc, fg_gc, pv, drawHole, mask); /* All thindraw callers used the same GC for fg and bg */
+  else
+    hid_draw__fill_pcb_pv (fg_gc, bg_gc, pv, drawHole, mask);
+}
+
+void
 common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
 {
   Coord w = mask ? pv->Mask : pv->Thickness;
@@ -675,17 +693,19 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
 void
 common_draw_helpers_class_init (HID_DRAW_CLASS *klass)
 {
-  klass->draw_pcb_line        = common_draw_pcb_line;
-  klass->draw_pcb_arc         = common_draw_pcb_arc;
-  klass->draw_pcb_text        = common_draw_pcb_text;
-  klass->draw_pcb_polygon     = common_fill_pcb_polygon; /* Default is the non-GUI case */
+  klass->draw_pcb_line         = common_draw_pcb_line;
+  klass->draw_pcb_arc          = common_draw_pcb_arc;
+  klass->draw_pcb_text         = common_draw_pcb_text;
+  klass->draw_pcb_polygon      = common_fill_pcb_polygon; /* Default is the non-GUI case */
+  klass->draw_pcb_pad          = common_fill_pcb_pad;     /* Default is the non-GUI case */
+  klass->draw_pcb_pv           = common_fill_pcb_pv;      /* Default is the non-GUI case */
 
-  klass->fill_pcb_polygon     = common_fill_pcb_polygon;
-  klass->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
-  klass->fill_pcb_pad         = common_fill_pcb_pad;
-  klass->thindraw_pcb_pad     = common_thindraw_pcb_pad;
-  klass->fill_pcb_pv          = common_fill_pcb_pv;
-  klass->thindraw_pcb_pv      = common_thindraw_pcb_pv;
+  klass->_fill_pcb_polygon     = common_fill_pcb_polygon;
+  klass->_thindraw_pcb_polygon = common_thindraw_pcb_polygon;
+  klass->_fill_pcb_pad         = common_fill_pcb_pad;
+  klass->_thindraw_pcb_pad     = common_thindraw_pcb_pad;
+  klass->_fill_pcb_pv          = common_fill_pcb_pv;
+  klass->_thindraw_pcb_pv      = common_thindraw_pcb_pv;
 }
 
 void
