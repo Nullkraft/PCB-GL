@@ -488,10 +488,10 @@ edge_label (VNODE * pn)
                        iter->angle,
                        iter->poly,
                        iter->side,
-                       EDGE_BACKWARD_VERTEX (VERTEX_SIDE_EDGE (iter->parent, iter->side))->point[0],
-                       EDGE_BACKWARD_VERTEX (VERTEX_SIDE_EDGE (iter->parent, iter->side))->point[1],
-                       EDGE_FORWARD_VERTEX (VERTEX_SIDE_EDGE (iter->parent, iter->side))->point[0],
-                       EDGE_FORWARD_VERTEX (VERTEX_SIDE_EDGE (iter->parent, iter->side))->point[1]);
+                       EDGE_BACKWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[0],
+                       EDGE_BACKWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[1],
+                       EDGE_FORWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[0],
+                       EDGE_FORWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[1]);
         } while ((iter = iter->next) != pn->cvc_next);
       }
 
