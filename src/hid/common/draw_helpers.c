@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "global.h"
 #include "hid.h"
 #include "hid_draw.h"
@@ -10,6 +12,13 @@
 static void
 common_draw_pcb_line (hidGC gc, LineType *line)
 {
+  PolygonType poly;
+  memset (&poly, 0, sizeof (PolygonType));
+  poly.Clipped = LinePoly (line, line->Thickness);
+  hid_draw_pcb_polygon (gc, &poly, NULL);
+  poly_Free (&poly.Clipped);
+  return;
+
   hid_draw_set_line_cap (gc, Trace_Cap);
   if (TEST_FLAG (THINDRAWFLAG, PCB))
     hid_draw_set_line_width (gc, 0);
