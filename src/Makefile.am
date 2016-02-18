@@ -187,9 +187,7 @@ LIBGTK_GDK_SRCS= \
 LIBGTK_GL_SRCS= \
 	hid/gtk/gtkhid-gl.c \
 	hid/gtk/gui-trackball.c \
-	hid/gtk/gui-trackball.h \
-	hid/gtk/step.c \
-	hid/gtk/step.h
+	hid/gtk/gui-trackball.h
 
 GL_SRCS= \
 	hid/common/hidgl.c \
@@ -361,7 +359,11 @@ LIBGTK_SRCS = \
 	hid/gtk/gui-top-window.c \
 	hid/gtk/gui-utils.c \
 	hid/gtk/snavi.c \
-	hid/gtk/snavi.h
+	hid/gtk/snavi.h \
+	hid/step/step_writer.c \
+	hid/step/step_writer.h \
+	hid/step/object3d_step.c \
+	hid/step/object3d_step.h
 libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
 
 hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
