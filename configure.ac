@@ -1091,18 +1091,22 @@ case "$enable_coord32:$enable_coord64:$ac_cv_header_stdint_h" in
   yes:no:yes )
     COORD_TYPE="int32_t"
     COORD_MAX="INT32_MAX"
+    COORD_MIN="INT32_MIN"
     ;;
   no:yes:yes )
     COORD_TYPE="int64_t"
     COORD_MAX="INT64_MAX"
+    COORD_MIN="INT64_MIN"
     ;;
   yes:no:no  )
     COORD_TYPE="int"
     COORD_MAX="INT_MAX"
+    COORD_MIN="INT_MIN"
     ;;
   no:yes:no  )
     COORD_TYPE="long long"
     COORD_MAX="LLONG_MAX"
+    COORD_MIN="LLONG_MIN"
     ;;
   yes:yes:*  )
     AC_MSG_ERROR("*** cannot require both 32 and 64 bit coordinates")
@@ -1110,12 +1114,15 @@ case "$enable_coord32:$enable_coord64:$ac_cv_header_stdint_h" in
   *:*:*    )
     COORD_TYPE="long"
     COORD_MAX="LONG_MAX"
+    COORD_MIN="LONG_MIN"
     ;;
 esac
 AC_DEFINE_UNQUOTED([COORD_TYPE],[$COORD_TYPE],
   [C type for Coordinates])
 AC_DEFINE_UNQUOTED([COORD_MAX],[$COORD_MAX],
   [Maximum value of coordinate type])
+AC_DEFINE_UNQUOTED([COORD_MIN],[$COORD_MIN],
+  [Minimum value of coordinate type])
 
 # ------------- Complete set of CPPFLAGS and LIBS -------------------
 
