@@ -1,4 +1,4 @@
-Bottom: 454080d2f181264e1feec7efa84a91b04ec45a2f
+Bottom: 6869788182028a94bb620f43520b4eb342a4f7bf
 Top:    a2b792534dcc5b66c88ff2787c292d09103589ea
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 17:37:09 +0000
@@ -448,19 +448,6 @@ index a150934..cad586d 100644
 -vertex3d *make_vertex3d (float x, float y, float z);
 +vertex3d *make_vertex3d (double x, double y, double z);
  void destroy_vertex3d (vertex3d *v);
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9b91a07..f4688ac 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -15,7 +15,7 @@
- #include "gui-pinout-preview.h"
- #include "pcb-printf.h"
- 
--#include "hid/step/step_writer.h"
-+#include "hid/common/step_id.h"
- #include "hid/common/quad.h"
- #include "hid/common/vertex3d.h"
- #include "hid/common/contour3d.h"
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 index ec01561..70ae407 100644
 --- a/src/hid/step/object3d_step.c
