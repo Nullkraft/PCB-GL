@@ -1,5 +1,5 @@
-Bottom: 1a6a99c90b2d339215d9e55665d62443da279d70
-Top:    58ad1cb2a8ae747c81e8e2a4a810982c81017ddb
+Bottom: 405071264ace87ea9f974e1fec13557c00fda5cb
+Top:    ace8d31769cd648d8155c00270825d4656445de6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:31 +0000
 
@@ -8,10 +8,10 @@ And working again (mostly)
 
 ---
 
-diff --git a/src/hid/gtk/object3d.c b/src/hid/gtk/object3d.c
-index 538eed3..8578b12 100644
---- a/src/hid/gtk/object3d.c
-+++ b/src/hid/gtk/object3d.c
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index beae5ef..cbce221 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
 @@ -242,34 +242,20 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
    return psa_list;
  }
