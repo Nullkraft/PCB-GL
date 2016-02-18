@@ -1,5 +1,5 @@
 Bottom: f39e1ac45bbd985b2300eb3ca8731fcc675b6b30
-Top:    c35d85df8539d60f2dfb5a92172da7b39b1197c3
+Top:    d6042f47e890e2e27465e6eddcf69b8e0e9f7695
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:31 +0000
 
@@ -734,6 +734,14 @@ index ecdc721..26b87fe 100644
  GList *object3d_from_board_outline (void);
  void object3d_export_to_step (object3d *object, char *filename);
  void object3d_test_board_outline (void);
+diff --git a/src/hid/common/step_id.h b/src/hid/common/step_id.h
+new file mode 100644
+index 0000000..86a4974
+--- /dev/null
++++ b/src/hid/common/step_id.h
+@@ -0,0 +1,2 @@
++typedef int step_id;
++typedef GList* step_id_list;
 diff --git a/src/hid/common/vertex3d.c b/src/hid/common/vertex3d.c
 index 51db3a7..8e584ab 100644
 --- a/src/hid/common/vertex3d.c
