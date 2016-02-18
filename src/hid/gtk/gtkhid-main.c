@@ -2216,6 +2216,9 @@ hid_gtk_init ()
   ghid_graphics_class.fill_rect      = ghid_fill_rect;
 
   ghid_graphics_class.draw_pcb_polygon = common_gui_draw_pcb_polygon;
+  ghid_graphics_class.draw_pcb_pad     = common_gui_draw_pcb_pad;
+  ghid_graphics_class.draw_pcb_pv      = common_gui_draw_pcb_pv;
+
 
   ghid_graphics_class.gui = true;
 
