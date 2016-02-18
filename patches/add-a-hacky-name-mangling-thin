@@ -1,7 +1,7 @@
-Bottom: 7bf63cc94dd079444d652a276ebe1d2e595e4f02
-Top:    1e0344f72747660e86ae0a7c7e9324d0eba07acf
+Bottom: 37360123a20c7329218851c914b5ddf9ee6f2caf
+Top:    c30a91510d93647ea5bd70ef5e366f63c2456060
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2016-02-18 20:35:03 +0000
+Date:   2016-02-18 20:35:09 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -20,7 +20,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 7341a0e..51435f4 100644
+index 7d0a760..adc32be 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -38,6 +38,7 @@
@@ -40,7 +40,7 @@ index 7341a0e..51435f4 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -688,6 +691,65 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
+@@ -689,6 +692,65 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
    return Polygon;
  }
  
@@ -106,7 +106,7 @@ index 7341a0e..51435f4 100644
  /*!
   * \brief Creates an new element.
   *
-@@ -705,6 +767,18 @@ CreateNewElement (DataType *Data, FontType *PCBFont, FlagType Flags,
+@@ -706,6 +768,18 @@ CreateNewElement (DataType *Data, FontType *PCBFont, FlagType Flags,
    printf("Entered CreateNewElement.....\n");
  #endif
  
@@ -126,12 +126,12 @@ index 7341a0e..51435f4 100644
  
    /* copy values and set additional information */
 diff --git a/src/create.h b/src/create.h
-index 4cf6b8f..76b5769 100644
+index aec69b8..22404ac 100644
 --- a/src/create.h
 +++ b/src/create.h
 @@ -51,6 +51,7 @@ TextType * CreateNewText (LayerType *, FontType *, Coord, Coord, unsigned, int,
  PolygonType * CreateNewPolygon (LayerType *, FlagType);
- PointType * CreateNewPointInPolygon (PolygonType *, Coord, Coord);
+ PointType * CreateNewPointInPolygon (PolygonType *, Coord, Coord, Angle included_angle);
  PolygonType * CreateNewHoleInPolygon (PolygonType *polygon);
 +void RefdesMapInit (void);
  ElementType * CreateNewElement (DataType *, FontType *, FlagType, char *, char *, char *, Coord, Coord, BYTE, int, FlagType, bool);
