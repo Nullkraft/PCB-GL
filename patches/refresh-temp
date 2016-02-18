@@ -1,0 +1,54 @@
+Bottom: b075b23ae879f12fa89bb798d10a8f34cbc1c8f0
+Top:    cb651428095f7dc3bd5fb32612f68b6881c16e8d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-18 14:45:37 +0000
+
+Refresh of wip-on-quad-edge-play
+
+---
+
+diff --git a/src/hid/common/face3d.c b/src/hid/common/face3d.c
+index e69de29..1a8c8c3 100644
+--- a/src/hid/common/face3d.c
++++ b/src/hid/common/face3d.c
+@@ -0,0 +1,27 @@
++#include <glib.h>
++
++#include "quad.h"
++#include "face3d.h"
++
++face3d *
++make_face3d (void)
++{
++  face3d *face;
++
++  face = g_new0 (face3d, 1);
++
++  return face;
++}
++
++void
++destroy_face3d (face3d *face)
++{
++  g_list_free (face->contours);
++  g_free (face);
++}
++
++void
++face3d_add_contour (face3d *face, edge_ref contour)
++{
++  face->contours = g_list_append (face->contours, (void *)contour);
++}
+diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
+index e69de29..6200161 100644
+--- a/src/hid/common/face3d.h
++++ b/src/hid/common/face3d.h
+@@ -0,0 +1,8 @@
++typedef struct {
++  float nx, ny, nz; /* Face normal?*/
++  GList *contours;
++} face3d;
++
++face3d *make_face3d (void);
++void destroy_face3d (face3d *face);
++void face3d_add_contour (face3d *face, edge_ref contour);
