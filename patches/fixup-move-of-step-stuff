@@ -1,5 +1,5 @@
 Bottom: 6c4d00650d47cbb6cfaadffe733bf35821e043c3
-Top:    6c4d00650d47cbb6cfaadffe733bf35821e043c3
+Top:    1653bd308112f591e2370c7679620e5e11f27ea0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 15:13:45 +0000
 
@@ -8,4 +8,20 @@ Fixup move of step stuff
 
 ---
 
-
+diff --git a/src/Makefile.am b/src/Makefile.am
+index df42091..6543607 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -361,7 +361,11 @@ LIBGTK_SRCS = \
+ 	hid/gtk/gui-top-window.c \
+ 	hid/gtk/gui-utils.c \
+ 	hid/gtk/snavi.c \
+-	hid/gtk/snavi.h
++	hid/gtk/snavi.h \
++	hid/step/step_writer.c \
++	hid/step/step_writer.h \
++	hid/step/object3d_step.c \
++	hid/step/object3d_step.h
+ libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
+ 
+ hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
