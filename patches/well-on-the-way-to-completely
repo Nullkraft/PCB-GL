@@ -1,5 +1,5 @@
 Bottom: 0d74cf69f43f01fca87746c91f2e2e654e65f353
-Top:    f39b3f5fc9935e2d0b0ad67482e4163bccc77317
+Top:    b01637dd203e1c61bf333861e839e00ef89fbd38
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 17:37:09 +0000
 
@@ -449,10 +449,10 @@ index a150934..cad586d 100644
 +vertex3d *make_vertex3d (double x, double y, double z);
  void destroy_vertex3d (vertex3d *v);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 3464ff2..c2df099 100644
+index 3464ff2..8440a48 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -23,6 +23,26 @@
+@@ -23,6 +23,20 @@
  #include "object3d_step.h"
  
  
@@ -461,16 +461,10 @@ index 3464ff2..c2df099 100644
 +#define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
 +
 +#ifdef REVERSED_PCB_CONTOURS
-+#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
-+#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((pcb)->MaxHeight - (y)))
-+
 +#define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
 +#define STEP_Y_TO_COORD(pcb, y) ((pcb)->MaxHeight - MM_TO_COORD((y)))
 +#else
 +/* XXX: BROKEN UPSIDE DOWN OUTPUT */
-+#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM((x)))
-+#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((y)))
-+
 +#define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
 +#define STEP_Y_TO_COORD(pcb, y) (MM_TO_COORD((y)))
 +#endif
@@ -479,7 +473,7 @@ index 3464ff2..c2df099 100644
  static step_id_list
  presentation_style_assignments_from_appearance (step_file *step, appearance *appear)
  {
-@@ -143,6 +163,19 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -143,6 +157,19 @@ object3d_export_to_step (object3d *object, const char *filename)
        vertex3d *ov = ODATA (outer_contour->first_edge);
        vertex3d *dv = DDATA (outer_contour->first_edge);
  
@@ -499,7 +493,7 @@ index 3464ff2..c2df099 100644
        face->surface_identifier =
          step_plane (step, "NONE",
                      step_axis2_placement_3d (step, "NONE",
-@@ -150,9 +183,9 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -150,9 +177,9 @@ object3d_export_to_step (object3d *object, const char *filename)
                                                                                   ov->y,      /* Set this to the origin vertex of the first edge */
                                                                                   ov->z),     /* this contour links to in the quad edge structure. */
                                                     step_direction (step, "NONE", face->nx, face->ny, face->nz), /* An axis direction normal to the the face - Gives z-axis */
@@ -512,7 +506,7 @@ index 3464ff2..c2df099 100644
      }
    }
  
-@@ -173,14 +206,30 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -173,14 +200,30 @@ object3d_export_to_step (object3d *object, const char *filename)
        vertex3d *ov = ODATA (edge);
        vertex3d *dv = DDATA (edge);
  
@@ -546,7 +540,7 @@ index 3464ff2..c2df099 100644
      }
    }
  
-@@ -242,14 +291,13 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -242,14 +285,13 @@ object3d_export_to_step (object3d *object, const char *filename)
    pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
    brep_identifier = step_manifold_solid_brep (step, "PCB outline", pcb_shell_identifier);
  
@@ -566,7 +560,7 @@ index 3464ff2..c2df099 100644
  
    /* Face styles */
    for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter)) {
-@@ -265,6 +313,7 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -265,6 +307,7 @@ object3d_export_to_step (object3d *object, const char *filename)
  
    /* Emit references to the styled and over_ridden styled items */
    step_mechanical_design_geometric_presentation_representation (step, "", styled_item_identifiers, geometric_representation_context_identifier);
