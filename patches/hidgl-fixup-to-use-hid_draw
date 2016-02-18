@@ -1,7 +1,7 @@
-Bottom: 41e2cdb18cc37ddd6aad723fd76215b122a010a0
-Top:    c234b5081cf0e533412078fab37e3c084b7021da
+Bottom: 424c15cc156dddfe48db5617a4b180e56eba0bf7
+Top:    3936a6026a94ed3624db28513fbfc57522f286be
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 14:14:13 +0000
+Date:   2016-02-18 16:25:13 +0000
 
 hidgl: Fixup to use HID_DRAW * rather than hidgl_instance *
 
@@ -436,7 +436,7 @@ index e2d7f67..a4fe876 100644
  /* hidgl_pacakge_acy_resistor.c */
  void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 887850b..7b4006a 100644
+index 3a5f028..a7b8620 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -42,6 +42,7 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;

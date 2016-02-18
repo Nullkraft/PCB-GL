@@ -1,7 +1,7 @@
-Bottom: 19e4176a69086850c07df7e61b8610c8ccb8aea8
-Top:    9024217cbf9650fe5c605ebe7ebe7eefb19ecc7a
+Bottom: cf8b19badb5cba5e702cc15e4ad4228819aa9726
+Top:    c75df78e3256e253375cc47f746a6ce5f80fd58a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 14:14:12 +0000
+Date:   2016-02-18 16:25:12 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->{flush,finish}_debug_draw_gc() function
 
@@ -94,7 +94,7 @@ index 2a2a280..6bbd1b0 100644
     */
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 279ccc3..d4b0598 100644
+index d07aab8..8710e00 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -3023,7 +3023,7 @@ ghid_request_debug_draw (void)

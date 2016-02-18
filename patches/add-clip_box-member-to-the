@@ -1,7 +1,7 @@
-Bottom: 9024217cbf9650fe5c605ebe7ebe7eefb19ecc7a
-Top:    41e2cdb18cc37ddd6aad723fd76215b122a010a0
+Bottom: c75df78e3256e253375cc47f746a6ce5f80fd58a
+Top:    424c15cc156dddfe48db5617a4b180e56eba0bf7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 14:14:13 +0000
+Date:   2016-02-18 16:25:13 +0000
 
 Add clip_box member to the HID_DRAW * instance structure
 
@@ -106,7 +106,7 @@ index 6bbd1b0..7cebfe7 100644
  
    gport->drawable = save_drawable;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d4b0598..887850b 100644
+index 8710e00..3a5f028 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -2573,6 +2573,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,

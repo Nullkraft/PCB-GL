@@ -1,7 +1,7 @@
-Bottom: ba251bc263d778ce08de1b78df45856966ae668a
-Top:    df9badfe16c291b0d929ba40928853979d35185b
+Bottom: 7acd789b4e2123e530c3015310b773ef9356e4a9
+Top:    6a561a2051e754ea4f88cde849577ec203074aef
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 14:14:13 +0000
+Date:   2016-02-18 16:25:13 +0000
 
 Hidcairo
 
@@ -9,11 +9,11 @@ Hidcairo
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 5f7671d..01c3ed2 100644
+index 5ef4e2c..5e0c84f 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -159,7 +159,7 @@ PCB_SRCS = \
- 	hid/common/hid_resource.h \
+@@ -169,7 +169,7 @@ PCB_SRCS = \
+ 	hid/common/vertex3d.h \
  	hid/hidint.h 
  
 -EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
@@ -628,7 +628,7 @@ index 0000000..43c55ee
 +
 +//extern HID_DRAW cairo_graphics;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0d21f2f..6d5d176 100644
+index 5107028..00c0771 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -44,12 +44,16 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
