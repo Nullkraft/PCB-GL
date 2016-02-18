@@ -182,8 +182,7 @@ typedef struct
  */
 typedef struct			/* holds information about output window */
 {
-  hidGC bgGC,			/* background and foreground; */
-    fgGC,			/* changed from some routines */
+  hidGC bgGC,			/* background GC */
     pmGC;			/* depth 1 pixmap GC to store clip */
 }
 OutputType;
