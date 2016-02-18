@@ -50,7 +50,6 @@ static void gerber_parse_arguments (int *argc, char ***argv);
 static int gerber_set_layer (const char *name, int group, int empty);
 static hidGC gerber_make_gc (void);
 static void gerber_destroy_gc (hidGC gc);
-static void gerber_use_mask (enum mask_mode mode);
 static void gerber_set_color (hidGC gc, const char *name);
 static void gerber_set_line_cap (hidGC gc, EndCapStyle style);
 static void gerber_set_line_width (hidGC gc, Coord width);
@@ -957,7 +956,7 @@ gerber_destroy_gc (hidGC gc)
 }
 
 static void
-gerber_use_mask (enum mask_mode mode)
+gerber_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
   current_mask = mode;
 }
