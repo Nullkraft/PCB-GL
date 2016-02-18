@@ -1,7 +1,7 @@
-Bottom: 5faa42055fa72a542916ff67a320b0060a88c3b2
+Bottom: d3144463c68727fe61c9f6b6166c2ceec6c4c6b8
 Top:    d3144463c68727fe61c9f6b6166c2ceec6c4c6b8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 20:36:51 +0000
+Date:   2016-02-18 20:36:57 +0000
 
 Temporarily disable rubber-banding of lines
 
@@ -12,17 +12,4 @@ development.
 
 ---
 
-diff --git a/src/move.c b/src/move.c
-index 6282e9e..9a4ce64 100644
---- a/src/move.c
-+++ b/src/move.c
-@@ -926,7 +926,8 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
-     if (!found_line_at_1_end)
-       max_multiplier = MAX (max_multiplier, 1.0);
- 
--  if (Type == LINE_TYPE)
-+//  if (Type == LINE_TYPE)
-+    if (0)
-     {
-       Coord ldx, ldy;
-       ldx = (moving_line->Point2.X - moving_line->Point1.X);
+
