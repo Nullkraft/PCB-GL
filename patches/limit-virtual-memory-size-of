@@ -1,5 +1,5 @@
-Bottom: a8d81660cf615d69e6947b2d94f0635dddf6d8aa
-Top:    5b44bb575f8cff09f60f76fd55f05065674f693e
+Bottom: 077b55694d09ea9242469b56fc4bbfb43fda75c7
+Top:    077b55694d09ea9242469b56fc4bbfb43fda75c7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 19:37:58 +0000
 
@@ -10,39 +10,4 @@ Sometimes the polygon code exploded...
 
 ---
 
-diff --git a/src/polygon.c b/src/polygon.c
-index 130485a..3e6988a 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -104,6 +104,9 @@ dicer output is used for HIDs which cannot render things with holes
- #include <dmalloc.h>
- #endif
- 
-+/* For getrlimit, setrlimit */
-+#include <sys/time.h>
-+#include <sys/resource.h>
- 
- #define DEBUG_CIRCSEGS
- 
-@@ -120,6 +123,8 @@ static double bw_rotate_circle_seg[4];
- void
- polygon_init (void)
- {
-+  struct rlimit limit;
-+
-   double cos_ang = cos (2.0 * M_PI / POLY_CIRC_SEGS_F);
-   double sin_ang = sin (2.0 * M_PI / POLY_CIRC_SEGS_F);
- 
-@@ -128,6 +133,12 @@ polygon_init (void)
- 
-   bw_rotate_circle_seg[0] =  cos_ang;  bw_rotate_circle_seg[1] =  sin_ang;
-   bw_rotate_circle_seg[2] = -sin_ang;  bw_rotate_circle_seg[3] =  cos_ang;
-+
-+  /* DEBUG - AVOID PCB running the system out of memory! */
-+  getrlimit (RLIMIT_AS, &limit);
-+  limit.rlim_cur = MIN (limit.rlim_cur, 2000 * 1024 * 1024 /* 2 GiB limit to virtual memory size */);
-+  setrlimit (RLIMIT_AS, &limit);
-+
- }
- 
- Cardinal
+
