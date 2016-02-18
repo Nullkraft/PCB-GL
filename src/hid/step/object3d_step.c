@@ -56,7 +56,7 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
 }
 
 static step_file *
-start_ap214_file (char *filename)
+start_ap214_file (const char *filename)
 {
   FILE *f;
   time_t currenttime;
@@ -341,7 +341,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
 }
 
 void
-object3d_list_export_to_step_assy (GList *objects, char *filename)
+object3d_list_export_to_step_assy (GList *objects, const char *filename)
 {
   step_file *step;
   step_id comp_shape_definition_representation;
@@ -556,7 +556,7 @@ object3d_list_export_to_step_assy (GList *objects, char *filename)
 }
 
 void
-object3d_export_to_step (object3d *object, char *filename)
+object3d_export_to_step (object3d *object, const char *filename)
 {
   step_file *step;
 
