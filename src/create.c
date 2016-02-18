@@ -38,6 +38,7 @@
 #include <memory.h>
 #include <setjmp.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "global.h"
 
@@ -55,6 +56,8 @@
 #include "set.h"
 #include "undo.h"
 #include "vendor.h"
+
+#include <glib.h>
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -689,6 +692,65 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
   return Polygon;
 }
 
+static char *refdes_map_file = "refdes.map";
+static GHashTable *refdes_map_table = NULL;
+
+/*!
+ * \brief Initialises the refdes mapping hash table from a file
+ *
+ */
+void RefdesMapInit (void)
+{
+  FILE *mapfile;
+  char *from = NULL;
+  char *to = NULL;
+
+  refdes_map_table = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                            g_free, g_free);
+
+  if (refdes_map_file == NULL)
+    return;
+
+  printf ("Refdes map file %s\n", refdes_map_file);
+
+  mapfile = fopen (refdes_map_file, "rb");
+
+  if (mapfile == NULL) {
+    fprintf(stderr, "Could not open [%s]\n", refdes_map_file);
+    return;
+  }
+
+  while (!feof(mapfile) && !ferror(mapfile)) {
+    free (from);
+    free (to);
+
+    from = NULL;
+    to = NULL;
+
+    fscanf (mapfile, "%ms %ms\n", &from, &to);
+
+    if (from == NULL || to == NULL)
+      continue;
+
+    g_hash_table_insert (refdes_map_table, g_strdup (from), g_strdup (to));
+
+    printf ("Stashing rename command: %s to %s\n", from, to);
+  }
+
+  free (to);
+  free (from);
+}
+
+
+/*!
+ * \brief Looks up a refdes in the mapping hash table
+ *
+ */
+char *RefdesMapMap (char *from)
+{
+  return g_hash_table_lookup (refdes_map_table, from);
+}
+
 /*!
  * \brief Creates an new element.
  *
@@ -705,6 +767,18 @@ CreateNewElement (DataType *Data, FontType *PCBFont, FlagType Flags,
 #ifdef DEBUG
   printf("Entered CreateNewElement.....\n");
 #endif
+
+  /* HACK: Mapping between refdes */
+  if (NameOnPCB != NULL) {
+    char *to;
+    to = RefdesMapMap (NameOnPCB);
+    if (to != NULL) {
+//      free (NameOnPCB);
+      printf ("Mapping name from %s to %s\n", NameOnPCB, to);
+      NameOnPCB = malloc (sizeof (char) * (strlen (to) + 1));
+      strcpy (NameOnPCB, to);
+    }
+  }
 
   Element = GetElementMemory (Data);
 
