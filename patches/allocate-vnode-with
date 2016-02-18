@@ -1,5 +1,5 @@
-Bottom: 8998b61ed3c942d48b3c1721483a5c6b299cde4c
-Top:    35179c09c5135740ba4faa33ec3c741182d5ccf0
+Bottom: 9dff8f9b383c02ec11cbddbf31cd8199383356d9
+Top:    c08c8d36b26ba8736fd04fa00ff4228eb03521ba
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 18:40:49 +0000
 
@@ -11,7 +11,7 @@ g_slice should be optimised for lots of small allocations - lets try this..
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index cc4419b..ba66d9d 100644
+index 5c3515a..426f980 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -202,10 +202,10 @@ poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radiu
