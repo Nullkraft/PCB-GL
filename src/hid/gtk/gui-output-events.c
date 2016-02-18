@@ -299,12 +299,104 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
   return handled;
 }
 
+// Copied from Xournal
+
+int finite_sized(double x) // detect unrealistic coordinate values
+{
+  return (finite(x) && x<1E6 && x>-1E6);
+}
+
+void fix_xinput_coords(GdkWindow *window, GdkEvent *event)
+{
+  double *axes, *px, *py, axis_width;
+  GdkDevice *device;
+  int wx, wy, sx, sy, ix, iy;
+
+  if (event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) {
+    axes = event->button.axes;
+    px = &(event->button.x);
+    py = &(event->button.y);
+    device = event->button.device;
+  }
+  else if (event->type == GDK_MOTION_NOTIFY) {
+    axes = event->motion.axes;
+    px = &(event->motion.x);
+    py = &(event->motion.y);
+    device = event->motion.device;
+  }
+  else return; // nothing we know how to do
+
+  //gnome_canvas_get_scroll_offsets(canvas, &sx, &sy);
+  sx = 0;
+  sy = 0;
+
+#ifdef ENABLE_XINPUT_BUGFIX
+  // fix broken events with the core pointer's location
+  if (!finite_sized(axes[0]) || !finite_sized(axes[1]) || axes[0]==0. || axes[1]==0.) {
+    gdk_window_get_pointer (window, &ix, &iy, NULL);
+    *px = ix + sx; 
+    *py = iy + sy;
+  }
+  else {
+    gdk_window_get_origin (window, &wx, &wy);
+    axis_width = device->axes[0].max - device->axes[0].min;
+    if (axis_width>EPSILON)
+      *px = (axes[0]/axis_width)*ui.screen_width + sx - wx;
+    axis_width = device->axes[1].max - device->axes[1].min;
+    if (axis_width>EPSILON)
+      *py = (axes[1]/axis_width)*ui.screen_height + sy - wy;
+  }
+#else
+  if (!finite_sized(*px) || !finite_sized(*py) || *px==0. || *py==0.) {
+    gdk_window_get_pointer (window, &ix, &iy, NULL);
+    *px = ix + sx; 
+    *py = iy + sy;
+  }
+  else {
+    /* with GTK+ 2.16 or earlier, the event comes from the parent gdkwindow
+       and so needs to be adjusted for scrolling */
+    if (gtk_major_version == 2 && gtk_minor_version <= 16) {
+      *px += sx;
+      *py += sy;
+    }
+    /* with GTK+ 2.17, events come improperly translated, and the event's
+       GdkWindow isn't even the same for ButtonDown as for MotionNotify... */
+    if (gtk_major_version == 2 && gtk_minor_version == 17) { // GTK+ 2.17 issues !!
+      gdk_window_get_position (window, &wx, &wy);
+      *px += sx - wx;
+      *py += sy - wy;
+    }
+  }
+#endif
+}
+
+// End copied from Xournal
+
 gboolean
 ghid_port_button_press_cb (GtkWidget * drawing_area,
 			   GdkEventButton * ev, gpointer data)
 {
   ModifierKeysState mk;
   GdkModifierType state;
+  gboolean is_core;
+
+  fprintf (stderr, "Button press cb, source is %i\n", gdk_device_get_source (ev->device));
+
+  /* Reject touch events */
+  is_core = (ev->device == gdk_device_get_core_pointer ());
+  if (is_core) {
+    fprintf (stderr, "Rejecting core button press event\n");
+    return FALSE;
+  }
+
+  // Xournal
+  // synaptics touchpads send bogus axis values with ButtonDown
+  //if (!is_core) gdk_device_get_state (ev->device, ev->window, ev->axes, NULL);
+
+  fprintf (stderr, "Button press at coordinates %f, %f\n", ev->x, ev->y);
+
+  if (!is_core)
+    fix_xinput_coords(drawing_area, (GdkEvent *)ev);
 
   /* Reject double and triple click events */
   if (ev->type != GDK_BUTTON_PRESS) return TRUE;
