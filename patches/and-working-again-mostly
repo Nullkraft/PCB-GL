@@ -1,5 +1,5 @@
 Bottom: f2c8ca08ed9dec9c5e046e17bb021fa3303b8e5a
-Top:    f2c8ca08ed9dec9c5e046e17bb021fa3303b8e5a
+Top:    5823a69c5814012a3ce724a6288ecd23cc1fb2b2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:31 +0000
 
@@ -8,4 +8,176 @@ And working again (mostly)
 
 ---
 
-
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 171e37f..405f9ab 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -294,6 +294,7 @@ object3d_from_board_outline (void)
+       }
+ 
+       get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
++
+       vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_STEP_Z (PCB, HACK_BOARD_THICKNESS)); /* Bottom */
+       vertices[npoints + i] = make_vertex3d (x1, y1, 0);                                            /* Top */
+ 
+@@ -456,7 +457,7 @@ object3d_from_board_outline (void)
+ 
+     }
+ 
+-    if (1) {
++    if (0) {
+       /* Cylinder centers on 45x45mm, stitch vertex is at 40x45mm. Radius is thus 5mm */
+ 
+       edge_ref cylinder_edges[3];
+@@ -562,7 +563,8 @@ object3d_test_board_outline (void)
+   GList *board_outlines;
+ 
+   board_outlines = object3d_from_board_outline ();
+-  object3d_export_to_step (board_outlines->data, "object3d_test.step");
++  object3d_list_export_to_step_assy (board_outlines, "object3d_test.step");
++  //object3d_export_to_step (board_outlines->data, "object3d_test.step");
+ 
+   g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
+ }
+diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
+index 33a3d4a..dcd0472 100644
+--- a/src/hid/step/step_writer.c
++++ b/src/hid/step/step_writer.c
+@@ -69,6 +69,114 @@ destroy_step_output_file (step_file *file)
+   g_free (file);
+ }
+ 
++/* XXX: Just reading out boiler-plate at this point */
++step_id
++make_3d_metric_step_geometric_representation_context (step_file *file)
++{
++  fprintf (file->f, "#%i = ( LENGTH_UNIT ( ) NAMED_UNIT ( * ) SI_UNIT ( .MILLI., .METRE. ) );\n", file->next_id);
++  fprintf (file->f, "#%i = ( NAMED_UNIT ( * ) PLANE_ANGLE_UNIT ( ) SI_UNIT ( $, .RADIAN. ) );\n", file->next_id + 1);
++  fprintf (file->f, "#%i = ( NAMED_UNIT ( * ) SI_UNIT ( $, .STERADIAN. ) SOLID_ANGLE_UNIT ( ) );\n", file->next_id + 2);
++  fprintf (file->f, "#%i = UNCERTAINTY_MEASURE_WITH_UNIT (LENGTH_MEASURE( 1.0E-005 ), #%i, 'distance_accuracy_value', 'NONE');\n", file->next_id + 3, file->next_id);
++
++  fprintf (file->f, "#%i = ( GEOMETRIC_REPRESENTATION_CONTEXT ( 3 ) "
++                            "GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT ( ( #%i ) ) "
++                            "GLOBAL_UNIT_ASSIGNED_CONTEXT ( ( #%i, #%i, #%i ) ) "
++                            "REPRESENTATION_CONTEXT ( 'NONE', 'WORKASPACE' ) );\n",
++                    file->next_id + 4, file->next_id + 3, file->next_id, file->next_id + 1, file->next_id + 2);
++  file->next_id += 4;
++
++  return file->next_id++;
++}
++
++step_id
++step_application_context (step_file *file, char *application)
++{
++  fprintf (file->f, "#%i = APPLICATION_CONTEXT ( '%s' ) ;\n", file->next_id, application);
++
++  return file->next_id++;
++}
++
++step_id
++step_application_protocol_definition (step_file *file, char *status, char *application_interpreted_model_schema_name,
++                                      char *application_protocol_year, step_id application)
++{
++  fprintf (file->f, "#%i = APPLICATION_PROTOCOL_DEFINITION ( '%s', '%s', %s, #%i );\n",
++                    file->next_id, status, application_interpreted_model_schema_name, application_protocol_year, application);
++
++  return file->next_id++;
++}
++
++step_id
++step_product_context (step_file *file, char *name, step_id frame_of_reference, char *discipline_type)
++{
++  fprintf (file->f, "#%i = PRODUCT_CONTEXT ( '%s', #%i, '%s' ) ;\n",
++                    file->next_id, name, frame_of_reference, discipline_type);
++
++  return file->next_id++;
++}
++
++step_id
++step_product (step_file *file, char *id, char *name, char *description, step_id_list frame_of_reference)
++{
++  fprintf (file->f, "#%i = PRODUCT ('%s', '%s', '%s', ", file->next_id, id, name, description);
++  fprint_id_list (file->f, frame_of_reference);
++  fprintf (file->f, ") ;\n");
++  destroy_step_id_list (frame_of_reference);
++
++  return file->next_id++;
++}
++
++step_id
++step_product_related_product_category (step_file *file, char *name, char *description, step_id_list products)
++{
++  if (description != NULL)
++    fprintf (file->f, "#%i = PRODUCT_RELATED_PRODUCT_CATEGORY ('%s', '%s', ", file->next_id, name, description);
++  else
++    fprintf (file->f, "#%i = PRODUCT_RELATED_PRODUCT_CATEGORY ('%s', $, ", file->next_id, name);
++
++  fprint_id_list (file->f, products);
++  fprintf (file->f, ") ;\n");
++  destroy_step_id_list (products);
++
++  return file->next_id++;
++}
++
++step_id
++step_product_definition_context (step_file *file, char *name, step_id frame_of_reference, char *life_cycle_stage)
++{
++  fprintf (file->f, "#%i = PRODUCT_DEFINITION_CONTEXT ( '%s', #%i, '%s' ) ;\n",
++                    file->next_id, name, frame_of_reference, life_cycle_stage);
++
++  return file->next_id++;
++}
++
++step_id
++step_product_definition_formation (step_file *file, char *id, char *description, step_id of_product)
++{
++  fprintf (file->f, "#%i = PRODUCT_DEFINITION_FORMATION ( '%s', '%s', #%i) ;\n",
++                    file->next_id, id, description, of_product);
++
++  return file->next_id++;
++}
++
++step_id
++step_product_definition (step_file *file, char *id, char *description, step_id formation, step_id frame_of_reference)
++{
++  fprintf (file->f, "#%i = PRODUCT_DEFINITION ( '%s', '%s', #%i, #%i ) ;\n",
++                    file->next_id, id, description, formation, frame_of_reference);
++
++  return file->next_id++;
++}
++
++step_id
++step_product_definition_shape (step_file *file, char *name, char *description, step_id definition)
++{
++  fprintf (file->f, "#%i = PRODUCT_DEFINITION_SHAPE ( '%s', '%s',  #%i ) ;\n",
++                    file->next_id, name, description, definition);
++
++  return file->next_id++;
++}
++
+ step_id
+ step_cartesian_point (step_file *file, char *name, double x, double y, double z)
+ {
+diff --git a/src/hid/step/step_writer.h b/src/hid/step/step_writer.h
+index 2a5cbc3..1490bb4 100644
+--- a/src/hid/step/step_writer.h
++++ b/src/hid/step/step_writer.h
+@@ -13,6 +13,18 @@ step_id_list make_step_id_list (int count, ...);
+ step_file *step_output_file (FILE *f);
+ void destroy_step_output_file (step_file *file);
+ 
++step_id make_3d_metric_step_geometric_representation_context (step_file *file); /* XXX: Just reading out boiler-plate at this point */
++
++step_id step_application_context (step_file *file, char *application);
++step_id step_application_protocol_definition (step_file *file, char *status, char *application_interpreted_model_schema_name, char *application_protocol_year, step_id application);
++step_id step_product_context (step_file *file, char *name, step_id frame_of_reference, char *discipline_type);
++step_id step_product (step_file *file, char *id, char *name, char *description, step_id_list frame_of_reference);
++step_id step_product_related_product_category (step_file *file, char *name, char *description, step_id_list products);
++step_id step_product_definition_context (step_file *file, char *name, step_id frame_of_reference, char *life_cycle_stage);
++step_id step_product_definition_formation (step_file *file, char *id, char *description, step_id of_product);
++step_id step_product_definition (step_file *file, char *id, char *description, step_id formation, step_id frame_of_reference);
++step_id step_product_definition_shape (step_file *file, char *name, char *description, step_id definition);
++
+ step_id step_cartesian_point (step_file *file, char *name, double x, double y, double z);
+ step_id step_direction (step_file *file, char *name, double x, double y, double z);
+ step_id step_axis2_placement_3d (step_file *file, char *name, step_id location, step_id axis, step_id ref_direction);
