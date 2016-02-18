@@ -1,0 +1,36 @@
+Bottom: 15bf5b155bb6ad4e2694700518020171e0d3a8ea
+Top:    ee25404f58cecbced9810a36c6d280ee948f2ca1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-18 20:31:52 +0000
+
+Turn on some debugging for intersections..
+
+Have seen some use-after free corruption in a few places, and this was
+aimed at testing whether or not the culprit was performing multiple
+intersections on the same segment. (When we perform the deferred work
+to split that segment, any later intersections will not point at the
+correct seg structure - which has been free'd during the first splitting.
+
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 197bb3b..75c0f7f 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -39,6 +39,7 @@
+       are marked
+ */
+ 
++#undef NDEBUG
+ #include	<assert.h>
+ #include	<stdlib.h>
+ #include	<stdio.h>
+@@ -936,6 +937,7 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
+   DEBUGP ("new intersection on segment \"i\" at %#mD\n", v[0], v[1]);
+ #endif
+   i->node_insert_list = prepend_insert_node_task (i->node_insert_list, s, new_node, param);
++  assert (!s->intersected);
+   s->intersected = 1;
+   return true;
+ }
