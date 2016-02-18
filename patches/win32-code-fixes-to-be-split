@@ -1,7 +1,7 @@
-Bottom: 08c962385c347c5cd616878ee48f9e9a679511e7
-Top:    67961de2ac23c8a23616fd7b95cd73c1256a52da
+Bottom: fcc436df1289deec8b80d0d6b9702567748d0637
+Top:    e3b5157e24cdceceb6bbbc52a516ef64897c71cf
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 14:14:17 +0000
+Date:   2016-02-18 16:54:35 +0000
 
 Win32 code fixes (TO BE SPLIT INTO SEPARATE PATCHES)
 
@@ -59,13 +59,47 @@ index b964d24..a809ead 100644
  #include <windows.h>
  #endif
  
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index ddcf35e..fade34d 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -13,7 +13,9 @@
+ 
+ 
+ 
+-#ifndef WIN32
++#ifdef WIN32
++#   define WIN32_LEAN_AND_MEAN 1
++#else
+ /* The Linux OpenGL ABI 1.0 spec requires that we define
+  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+  * in order to get prototypes:
+@@ -244,6 +246,7 @@ object3d_export_to_step (object3d *object, char *filename)
+   FILE *f;
+   time_t currenttime;
+   struct tm utc;
++  struct tm *tmp;
+   //int next_step_identifier;
+ 
+   f = fopen (filename, "w");
+@@ -254,7 +257,9 @@ object3d_export_to_step (object3d *object, char *filename)
+     }
+ 
+   currenttime = time (NULL);
+-  gmtime_r (&currenttime, &utc);
++  // gmtime_r (&currenttime, &utc);
++  tmp =  gmtime (&currenttime);
++  utc = *tmp;
+ 
+   fprintf (f, "ISO-10303-21;\n");
+   fprintf (f, "HEADER;\n");
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2332d07..7ca00e8 100644
+index 1dbfdac..213829b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -18,7 +18,9 @@
- #include "quad.h"
- #include "object3d.h"
+ #include "hid/common/quad.h"
+ #include "hid/common/object3d.h"
  
 -#ifndef WIN32
 +#ifdef WIN32
@@ -110,40 +144,6 @@ index 1a9a4c1..2b81849 100644
        }
      while (*tok_start != '\0');
  
-diff --git a/src/hid/gtk/object3d.c b/src/hid/gtk/object3d.c
-index ddcf35e..fade34d 100644
---- a/src/hid/gtk/object3d.c
-+++ b/src/hid/gtk/object3d.c
-@@ -13,7 +13,9 @@
- 
- 
- 
--#ifndef WIN32
-+#ifdef WIN32
-+#   define WIN32_LEAN_AND_MEAN 1
-+#else
- /* The Linux OpenGL ABI 1.0 spec requires that we define
-  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-  * in order to get prototypes:
-@@ -244,6 +246,7 @@ object3d_export_to_step (object3d *object, char *filename)
-   FILE *f;
-   time_t currenttime;
-   struct tm utc;
-+  struct tm *tmp;
-   //int next_step_identifier;
- 
-   f = fopen (filename, "w");
-@@ -254,7 +257,9 @@ object3d_export_to_step (object3d *object, char *filename)
-     }
- 
-   currenttime = time (NULL);
--  gmtime_r (&currenttime, &utc);
-+  // gmtime_r (&currenttime, &utc);
-+  tmp =  gmtime (&currenttime);
-+  utc = *tmp;
- 
-   fprintf (f, "ISO-10303-21;\n");
-   fprintf (f, "HEADER;\n");
 diff --git a/src/lrealpath.c b/src/lrealpath.c
 index 8977b40..29910ea 100644
 --- a/src/lrealpath.c
