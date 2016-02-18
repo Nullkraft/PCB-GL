@@ -172,7 +172,7 @@ PCB_SRCS = \
 	hid/common/step_id.h \
 	hid/common/vertex3d.c \
 	hid/common/vertex3d.h \
-	hid/hidint.h
+	hid/hidint.h 
 
 EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
 nodist_EXTRA_pcb_SOURCES = dummy.cpp
