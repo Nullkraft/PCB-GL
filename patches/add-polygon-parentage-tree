@@ -1,7 +1,7 @@
-Bottom: b7278efc665a5d98551973900d28d93863d8e80c
-Top:    eeba6be03225cc459cb52e28eed44d380e4ee1fb
+Bottom: 0d90760ddfba06e8fac73f77a71c5bb7b965a2df
+Top:    8ac9471b07277fc59a6378b8f0b343e368f82c18
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 20:29:47 +0000
+Date:   2016-02-18 20:43:44 +0000
 
 Add polygon parentage tree debug view
 
@@ -388,7 +388,7 @@ index 79c8467..ff7e60a 100644
  }
  
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 99943f5..9089395 100644
+index 83271a7..f48219a 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -49,6 +49,7 @@
@@ -435,7 +435,7 @@ index 99943f5..9089395 100644
  
  /***************************************************************/
  /* routines for processing intersections */
-@@ -1104,8 +1110,6 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+@@ -1106,8 +1112,6 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
    return FALSE;
  }				/* cntr_in_M_POLYAREA */
  
@@ -444,7 +444,7 @@ index 99943f5..9089395 100644
  static char *
  theState (VNODE * e)
  {
-@@ -1130,6 +1134,7 @@ theState (VNODE * e)
+@@ -1132,6 +1136,7 @@ theState (VNODE * e)
      }
  }
  
@@ -452,7 +452,7 @@ index 99943f5..9089395 100644
  #ifdef DEBUG_ALL_LABELS
  static void
  print_labels (PLINE * a)
-@@ -1939,6 +1944,9 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
+@@ -1941,6 +1946,9 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
    piece->b->f = piece->f;
    piece->f->b = piece->b;
    piece->f = piece->b = piece;
@@ -462,7 +462,7 @@ index 99943f5..9089395 100644
  }
  
  static void
-@@ -2378,6 +2386,22 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+@@ -2380,6 +2388,22 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
    return poly_Boolean_free (a, b, res, action);
  }				/* poly_Boolean */
  
@@ -485,7 +485,7 @@ index 99943f5..9089395 100644
  /* just like poly_Boolean but frees the input polys */
  int
  poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-@@ -2387,9 +2411,27 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2389,9 +2413,27 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    PLINE *p, *holes = NULL;
    jmp_buf e;
    int code;
@@ -513,7 +513,7 @@ index 99943f5..9089395 100644
    if (!a)
      {
        switch (action)
-@@ -2397,12 +2439,14 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2399,12 +2441,14 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  	case PBO_XOR:
  	case PBO_UNITE:
  	  *res = bi;
@@ -530,7 +530,7 @@ index 99943f5..9089395 100644
  	}
      }
    if (!b)
-@@ -2413,11 +2457,13 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2415,11 +2459,13 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  	case PBO_XOR:
  	case PBO_UNITE:
  	  *res = ai;
@@ -546,7 +546,7 @@ index 99943f5..9089395 100644
  	}
      }
  
-@@ -2465,7 +2511,23 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2467,7 +2513,23 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        poly_Free (res);
        return code;
      }
@@ -570,7 +570,7 @@ index 99943f5..9089395 100644
    return code;
  }				/* poly_Boolean_free */
  
-@@ -3191,6 +3253,7 @@ poly_Init (POLYAREA * p)
+@@ -3193,6 +3255,7 @@ poly_Init (POLYAREA * p)
    p->f = p->b = p;
    p->contours = NULL;
    p->contour_tree = r_create_tree (NULL, 0, 0);
@@ -578,7 +578,7 @@ index 99943f5..9089395 100644
  }
  
  POLYAREA *
-@@ -3232,6 +3295,13 @@ poly_Free (POLYAREA ** p)
+@@ -3234,6 +3297,13 @@ poly_Free (POLYAREA ** p)
      }
    poly_FreeContours (&cur->contours);
    r_destroy_tree (&cur->contour_tree);
