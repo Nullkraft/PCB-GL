@@ -1,5 +1,5 @@
-Bottom: 3ed0ba876a63831d56fa259abd35276aefe5aff9
-Top:    a6b31c1ae9a997740e1c7e0b651751e30c0584c3
+Bottom: 6ceb61e0cd9e79162a90148a69e2395282236e60
+Top:    46398feb2ec9db317b72c9318557cbdce995d8a8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 17:11:02 +0000
 
@@ -38,7 +38,7 @@ index d4917d7..d2bf7b3 100644
 +void appearance_set_color (appearance *appear, float r, float g, float b);
 +void appearance_set_appearance (appearance *appear, const appearance *from);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 2da2c5c..2efc341 100644
+index 15ab630..04ee525 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -5,6 +5,7 @@
@@ -68,8 +68,8 @@ index 2da2c5c..2efc341 100644
  
  static GList *object3d_test_objects = NULL;
  
-@@ -229,8 +233,634 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
- 
+@@ -228,8 +232,634 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
+ }
  
  GList *
 +object3d_from_contours (const POLYAREA *contours,
