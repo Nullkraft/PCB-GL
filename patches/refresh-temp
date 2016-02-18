@@ -1,0 +1,26 @@
+Bottom: 6ceb61e0cd9e79162a90148a69e2395282236e60
+Top:    abf1866b7894e797cfda92f5727e149d39e30c27
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-18 17:58:57 +0000
+
+Refresh of alternative-more-thorough-step
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index a2ca904..742c411 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -361,11 +361,7 @@ LIBGTK_SRCS = \
+ 	hid/gtk/gui-top-window.c \
+ 	hid/gtk/gui-utils.c \
+ 	hid/gtk/snavi.c \
+-	hid/gtk/snavi.h \
+-	hid/step/step_writer.c \
+-	hid/step/step_writer.h \
+-	hid/step/object3d_step.c \
+-	hid/step/object3d_step.h
++	hid/gtk/snavi.h
+ libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
+ 
+ hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
