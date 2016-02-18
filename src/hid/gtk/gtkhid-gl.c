@@ -538,7 +538,7 @@ ghid_draw_bg_image (void)
 }
 
 void
-ghid_use_mask (enum mask_mode mode)
+ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
   render_priv *priv = gport->render_priv;
   hidgl_instance *hidgl = priv->hidgl;
