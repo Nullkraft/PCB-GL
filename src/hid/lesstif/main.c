@@ -148,7 +148,7 @@ static bool crosshair_on = true;
 /* ---------------------------------------------------------------------------
  * some local prototypes
  */
-static hidGC lesstif_make_gc (void);
+static hidGC lesstif_make_gc (HID_DRAW *hid_draw);
 
 static void
 ShowCrosshair (bool show)
@@ -1809,7 +1809,7 @@ lesstif_do_export (HID_Attr_Val * options)
   Widget menu;
   Widget work_area_frame;
 
-  crosshair_gc = lesstif_make_gc ();
+  crosshair_gc = lesstif_make_gc (&lesstif_graphics);
 
   n = 0;
   stdarg (XtNwidth, &width);
@@ -3060,7 +3060,7 @@ lesstif_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 }
 
 static hidGC
-lesstif_make_gc (void)
+lesstif_make_gc (HID_DRAW *hid_draw)
 {
   hidGC gc = (hidGC)calloc (1, sizeof (struct lesstif_gc_struct));
 
