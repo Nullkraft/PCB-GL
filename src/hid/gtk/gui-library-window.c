@@ -67,6 +67,8 @@
 #include <dmalloc.h>
 #endif
 
+#include <libgen.h> /* For basename() */
+
 static GtkWidget *library_window;
 
 #include "gui-pinout-preview.h"
@@ -621,7 +623,9 @@ create_lib_tree_model (GhidLibraryWindow * library_window)
 	tok_start = tok_end;
 	if (*tok_start == '/')
 	  tok_start++;
-	tok_end = strchrnul(tok_start, '/');
+	tok_end = strchr(tok_start, '/');
+        if (tok_end == NULL)
+          tok_end = tok_start + strlen (tok_start);
       }
     while (*tok_start != '\0');
 
