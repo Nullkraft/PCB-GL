@@ -55,6 +55,7 @@ start_ap214_file (const char *filename)
   FILE *f;
   time_t currenttime;
   struct tm utc;
+  struct tm *tmp;
 
   f = fopen (filename, "w");
   if (f == NULL)
@@ -64,7 +65,9 @@ start_ap214_file (const char *filename)
     }
 
   currenttime = time (NULL);
-  gmtime_r (&currenttime, &utc);
+//  gmtime_r (&currenttime, &utc);
+  tmp =  gmtime (&currenttime);
+  utc = *tmp;
 
   fprintf (f, "ISO-10303-21;\n");
   fprintf (f, "HEADER;\n");

@@ -2092,12 +2092,13 @@ pv_outline_callback (const BoxType * b, void *cl)
 
       if (element_name != NULL && pin_number != NULL)
         {
-          char *tmp;
+          feature_name = NULL; // Win32
+//          char *tmp;
 
-          feature_name = tmp = malloc (strlen (element_name) + 1 + strlen (pin_number) + 1);
-          tmp = stpcpy (tmp, element_name);
-          *(tmp++) = '-';
-          tmp = stpcpy (tmp, pin_number);
+//          feature_name = tmp = malloc (strlen (element_name) + 1 + strlen (pin_number) + 1);
+//          tmp = stpcpy (tmp, element_name);
+//          *(tmp++) = '-';
+//          tmp = stpcpy (tmp, pin_number);
         }
       else
         {
