@@ -484,7 +484,11 @@ LIBSTEP_SRCS = \
 	hid/step/assembly.cpp \
 	hid/step/assembly.h \
 	hid/step/utils.cpp \
-	hid/step/utils.h
+	hid/step/utils.h \
+	hid/step/step_writer.c \
+	hid/step/step_writer.h \
+	hid/step/object3d_step.c \
+	hid/step/object3d_step.h
 libstep_a_SOURCES = ${LIBSTEP_SRCS} hid/step/step_lists.h
 
 pcb_LDFLAGS = \
