@@ -2100,8 +2100,7 @@ REGISTER_FLAGS (ghid_main_flag_list)
 #endif
 
 HID ghid_hid;
-HID_DRAW ghid_graphics;
-struct hid_draw_class_st ghid_graphics_class;
+HID_DRAW_CLASS ghid_graphics_class;
 
 void
 hid_gtk_init ()
@@ -2141,7 +2140,6 @@ hid_gtk_init ()
 #endif
 
   memset (&ghid_hid, 0, sizeof (HID));
-  memset (&ghid_graphics, 0, sizeof (HID_DRAW));
   memset (&ghid_graphics_class, 0, sizeof (HID_DRAW_CLASS));
 
   common_nogui_init (&ghid_hid);
@@ -2219,13 +2217,7 @@ hid_gtk_init ()
   ghid_graphics_class.draw_pcb_pad     = common_gui_draw_pcb_pad;
   ghid_graphics_class.draw_pcb_pv      = common_gui_draw_pcb_pv;
 
-
   ghid_graphics_class.gui = true;
-
-  ghid_graphics.klass = &ghid_graphics_class;
-  ghid_graphics.poly_after = true;
-  common_nogui_graphics_init (&ghid_graphics);
-  common_draw_helpers_init (&ghid_graphics);
 
   hid_register_hid (&ghid_hid);
 #include "gtk_lists.h"
