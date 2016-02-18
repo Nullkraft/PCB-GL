@@ -1,5 +1,5 @@
-Bottom: 1dc2a3ae7b09b69bde70d8ed50e417dd3a40b610
-Top:    5e552c3075cdb7fdcdcaafa0d5334b087e7d47c7
+Bottom: 730e37b1a9eda26e0e1a80e2e5746ec8546ca297
+Top:    61dd2378d8119f0993d1f91f289c965dc1948d48
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-03 23:46:22 +0000
 
@@ -9,10 +9,10 @@ Try using cvc_next instead of cvc_prev where possible
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index fa9f41e..adf3828 100644
+index aee0f9f..fe9b624 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -242,14 +242,14 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -253,7 +253,7 @@ new_descriptor (VNODE * a, char poly, char side)
      {
        if (side == 'P')
  	{
@@ -20,7 +20,8 @@ index fa9f41e..adf3828 100644
 +	  if (PREV_VERTEX (a)->cvc_next == (CVCList *) - 1)
  	    PREV_VERTEX (a)->cvc_prev = PREV_VERTEX (a)->cvc_next = NULL;
  	  poly_ExclVertex (PREV_VERTEX (a));
- 	  vect_sub (v, PREV_VERTEX (a)->point, a->point);
+           fprintf (stderr, "REMOVING VERTEX 111111111111111111111111111111111111111111111111111111\n");
+@@ -261,7 +261,7 @@ new_descriptor (VNODE * a, char poly, char side)
  	}
        else
  	{
@@ -28,8 +29,8 @@ index fa9f41e..adf3828 100644
 +	  if (NEXT_VERTEX (a)->cvc_next == (CVCList *) - 1)
  	    NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
  	  poly_ExclVertex (NEXT_VERTEX (a));
- 	  vect_sub (v, NEXT_VERTEX (a)->point, a->point);
-@@ -489,7 +489,7 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
+           fprintf (stderr, "REMOVING VERTEX 222222222222222222222222222222222222222222222222222222\n");
+@@ -568,7 +568,7 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
  
    do
      {
@@ -38,12 +39,12 @@ index fa9f41e..adf3828 100644
  	{
  	  assert (node->cvc_prev == (CVCList *) - 1
  		  && node->cvc_next == (CVCList *) - 1);
-@@ -1557,7 +1557,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
+@@ -1663,7 +1663,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
    VNODE *e; /* e is considered an edge */
    DIRECTION newone;
  
 -  if (!(*curv)->cvc_prev)	/* not a cross-vertex */
 +  if (!(*curv)->cvc_next)	/* not a cross-vertex */
      {
-       if ((*cdir == FORW) ? VERTEX_FORWARD_EDGE (*curv)->Flags.mark :
-                            VERTEX_BACKWARD_EDGE (*curv)->Flags.mark)
+       if (VERTEX_DIRECTION_EDGE (*curv, *cdir)->Flags.mark)
+ 	return FALSE;
