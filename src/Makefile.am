@@ -157,6 +157,16 @@ PCB_SRCS = \
 	hid/common/draw_helpers.h \
 	hid/common/hid_resource.c \
 	hid/common/hid_resource.h \
+	hid/common/edge3d.c \
+	hid/common/edge3d.h \
+	hid/common/face3d.c \
+	hid/common/face3d.h \
+	hid/common/object3d.c \
+	hid/common/object3d.h \
+	hid/common/quad.c \
+	hid/common/quad.h \
+	hid/common/vertex3d.c \
+	hid/common/vertex3d.h \
 	hid/hidint.h 
 
 EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
@@ -172,17 +182,7 @@ LIBGTK_GDK_SRCS= \
 LIBGTK_GL_SRCS= \
 	hid/gtk/gtkhid-gl.c \
 	hid/gtk/gui-trackball.c \
-	hid/gtk/gui-trackball.h \
-	hid/gtk/quad.c \
-	hid/gtk/quad.h \
-	hid/gtk/vertex3d.c \
-	hid/gtk/vertex3d.h \
-	hid/gtk/face3d.c \
-	hid/gtk/face3d.h \
-	hid/gtk/edge3d.c \
-	hid/gtk/edge3d.h \
-	hid/gtk/object3d.c \
-	hid/gtk/object3d.h
+	hid/gtk/gui-trackball.h
 
 GL_SRCS= \
 	hid/common/hidgl.c \
