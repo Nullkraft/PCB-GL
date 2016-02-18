@@ -1,0 +1,27 @@
+Bottom: 29d5423c42785f447c56bb2f6c1d2cb0c48a7aed
+Top:    27630f6ffa14a2c3e775cad8903003b75af9ed70
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-18 20:30:20 +0000
+
+Revert "Remaining (bug?) from another patch.."
+
+This reverts commit a349202698b3ef11a2a886b300d55e201e15bd43.
+
+NB: Original function had this bug before we moved it
+
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index 0dae818..6ef9074 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -397,7 +397,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
+   hx = p1->X + (p2->X - p1->X) / 2;
+   hy = p1->Y + (p2->Y - p1->Y) / 2;
+ 
+-  p_to_h_dist = hypot (p2->X - p1->Y, p2->Y - p1->Y) / 2.;
++  p_to_h_dist = hypot (p2->X - p1->X, p2->Y - p1->Y) / 2.;
+   c_to_h_dist = p_to_h_dist / tan (TO_RADIANS (included_angle) / 2.);
+ 
+   unit_hcx = (double)-(hy - p1->Y) / p_to_h_dist;
