@@ -1,5 +1,5 @@
 Bottom: 91a2d3a738624a996a0b5d8e3d6a88deeb8eca00
-Top:    979342c6aa5a0de0754cb0507cc6f5bdb3458f59
+Top:    35322370759c956c28c3c021bc8523a7cfefeac2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 16:53:44 +0000
 
@@ -12,7 +12,7 @@ slightly less explicit.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 0000871..b697830 100644
+index 0000871..4974abe 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -89,6 +89,10 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -26,6 +26,21 @@ index 0000871..b697830 100644
  
  #define ISECTED 3
  #define UNKNWN  0
+@@ -575,10 +579,10 @@ adjust_tree (rtree_t * tree, struct seg *s)
+   q->intersected = 0;
+   q->v = NEXT_EDGE (s->v);
+   q->p = s->p;
+-  q->box.X1 = min (EDGE_BACKWARD_VERTEX (q->v)->point[0], EDGE_FORWARD_VERTEX (EDGE_BACKWARD_VERTEX (q->v))->point[0]);
+-  q->box.X2 = max (EDGE_BACKWARD_VERTEX (q->v)->point[0], EDGE_FORWARD_VERTEX (EDGE_BACKWARD_VERTEX (q->v))->point[0]) + 1;
+-  q->box.Y1 = min (EDGE_BACKWARD_VERTEX (q->v)->point[1], EDGE_FORWARD_VERTEX (EDGE_BACKWARD_VERTEX (q->v))->point[1]);
+-  q->box.Y2 = max (EDGE_BACKWARD_VERTEX (q->v)->point[1], EDGE_FORWARD_VERTEX (EDGE_BACKWARD_VERTEX (q->v))->point[1]) + 1;
++  q->box.X1 = min (EDGE_BACKWARD_VERTEX (q->v)->point[0], EDGE_FORWARD_VERTEX (q->v)->point[0]);
++  q->box.X2 = max (EDGE_BACKWARD_VERTEX (q->v)->point[0], EDGE_FORWARD_VERTEX (q->v)->point[0]) + 1;
++  q->box.Y1 = min (EDGE_BACKWARD_VERTEX (q->v)->point[1], EDGE_FORWARD_VERTEX (q->v)->point[1]);
++  q->box.Y2 = max (EDGE_BACKWARD_VERTEX (q->v)->point[1], EDGE_FORWARD_VERTEX (q->v)->point[1]) + 1;
+   r_insert_entry (tree, (const BoxType *) q, 1);
+   r_delete_entry (tree, (const BoxType *) s);
+   return 0;
 @@ -1112,7 +1116,7 @@ label_contour (PLINE * a)
  
    do
