@@ -1,7 +1,7 @@
-Bottom: be1933a12a5bd5b3817df3794ef7a672ccd107d0
-Top:    8ebeb5813dfb2655c03a53f77ef5ab6e7c8b70f6
+Bottom: e1655037e33ecbc26ddcf4eb0435c49b58076214
+Top:    900cbb5717284d083ba2c0e1f3931c762838d2f8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 14:14:18 +0000
+Date:   2016-02-18 17:02:51 +0000
 
 Initial experiment with XInput devices
 
@@ -9,7 +9,7 @@ Initial experiment with XInput devices
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 9eec316..2380f70 100644
+index 71327b4..f8b4d36 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -299,12 +299,104 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
