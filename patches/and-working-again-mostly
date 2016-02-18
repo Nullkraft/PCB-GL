@@ -1,5 +1,5 @@
 Bottom: a2b792534dcc5b66c88ff2787c292d09103589ea
-Top:    7f6907fb188abab268d7ca1a889162851cdce1c6
+Top:    5a26f8eb49e30d167902e4b5874e48ea3274cbab
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 17:37:13 +0000
 
@@ -40,7 +40,7 @@ index 171e37f..405f9ab 100644
    g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
  }
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 70ae407..2206b3a 100644
+index 70ae407..a6c7cab 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -55,34 +55,20 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
@@ -50,7 +50,7 @@ index 70ae407..2206b3a 100644
 -void
 -object3d_export_to_step (object3d *object, char *filename)
 +static step_file *
-+start_ap214_file (char *filename)
++start_ap214_file (const char *filename)
  {
    FILE *f;
 -  step_file *step;
@@ -185,14 +185,14 @@ index 70ae407..2206b3a 100644
      step_advanced_brep_shape_representation (step, "test_pcb_absr_name",
 -                                             make_step_id_list (2, brep_identifier, 13 /* XXX */), geometric_representation_context_identifier);
 +                                             make_step_id_list (2, brep_identifier, anchor_axis_identifier), geometric_representation_context_identifier);
-+
+ 
+-  step_shape_definition_representation (step, 9 /* XXX */, shape_representation_identifier);
 +  shape_definition_representation_identifier =
 +  step_shape_definition_representation (step, product_definition_shape_identifier, shape_representation_identifier);
 +
 +  if (shape_definition_representation != NULL)
 +    *shape_definition_representation = shape_definition_representation_identifier;
- 
--  step_shape_definition_representation (step, 9 /* XXX */, shape_representation_identifier);
++
 +  if (placement_axis != NULL)
 +    *placement_axis = anchor_axis_identifier;
  
@@ -202,7 +202,7 @@ index 70ae407..2206b3a 100644
 +}
 +
 +void
-+object3d_list_export_to_step_assy (GList *objects, char *filename)
++object3d_list_export_to_step_assy (GList *objects, const char *filename)
 +{
 +  step_file *step;
 +  step_id comp_shape_definition_representation;
@@ -419,7 +419,7 @@ index 70ae407..2206b3a 100644
 +}
 +
 +void
-+object3d_export_to_step (object3d *object, char *filename)
++object3d_export_to_step (object3d *object, const char *filename)
 +{
 +  step_file *step;
  
@@ -429,12 +429,13 @@ index 70ae407..2206b3a 100644
 +  finish_ap214_file (step);
  }
 diff --git a/src/hid/step/object3d_step.h b/src/hid/step/object3d_step.h
-index 049fc6b..740937d 100644
+index 049fc6b..5dc6f4d 100644
 --- a/src/hid/step/object3d_step.h
 +++ b/src/hid/step/object3d_step.h
 @@ -1 +1,2 @@
-+void object3d_list_export_to_step_assy (GList *objects, char *filename);
- void object3d_export_to_step (object3d *object, char *filename);
+-void object3d_export_to_step (object3d *object, char *filename);
++void object3d_list_export_to_step_assy (GList *objects, const char *filename);
++void object3d_export_to_step (object3d *object, const char *filename);
 diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
 index 33a3d4a..dcd0472 100644
 --- a/src/hid/step/step_writer.c
