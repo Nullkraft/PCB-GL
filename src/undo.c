@@ -92,6 +92,7 @@ typedef struct			/* information about removed polygon points */
 {
   Coord X, Y;			/* data */
   int ID;
+  Angle IncludedAngle;
   Cardinal Index;		/* index in a polygons array of points */
   bool last_in_contour;		/* Whether the point was the last in its contour */
 } RemovedPointType;
@@ -699,7 +700,9 @@ UndoRemovePoint (UndoListType *Entry)
 	InsertPointIntoObject (POLYGON_TYPE, layer, polygon,
 			       &Entry->Data.RemovedPoint.Index,
 			       Entry->Data.RemovedPoint.X,
-			       Entry->Data.RemovedPoint.Y, true,
+			       Entry->Data.RemovedPoint.Y,
+			       Entry->Data.RemovedPoint.IncludedAngle,
+			       true,
 			       Entry->Data.RemovedPoint.last_in_contour);
 
 	polygon->Points[Entry->Data.RemovedPoint.Index].ID =
@@ -759,6 +762,7 @@ UndoInsertPoint (UndoListType *Entry)
 	Entry->Data.RemovedPoint.X = pnt->X;
 	Entry->Data.RemovedPoint.Y = pnt->Y;
 	Entry->Data.RemovedPoint.ID = pnt->ID;
+	Entry->Data.RemovedPoint.IncludedAngle = pnt->included_angle;
 	Entry->ID = polygon->ID;
 	Entry->Kind = POLYGON_TYPE;
 	Entry->Type = UNDO_REMOVE_POINT;
@@ -1339,6 +1343,7 @@ AddObjectToRemovePointUndoList (int Type,
 	    undo->Data.RemovedPoint.X = polygon->Points[index].X;
 	    undo->Data.RemovedPoint.Y = polygon->Points[index].Y;
 	    undo->Data.RemovedPoint.ID = polygon->Points[index].ID;
+	    undo->Data.RemovedPoint.IncludedAngle = polygon->Points[index].included_angle;
 	    undo->Data.RemovedPoint.Index = index;
 
 	    /* Check whether this point was at the end of its contour.
