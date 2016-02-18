@@ -294,7 +294,7 @@ fprint_idlist (FILE *f, int *ids, int num_ids)
 }
 
 void
-object3d_export_to_step (object3d *object, char *filename)
+object3d_export_to_step (object3d *object, const char *filename)
 {
   FILE *f;
   time_t currenttime;
