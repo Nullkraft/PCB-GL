@@ -683,6 +683,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   global.region.X2 = PCB->MaxWidth;
   global.region.Y2 = PCB->MaxHeight;
 
+  common_set_clip_box (&ps_graphics, &global.region);
+
   if (!global.multi_file)
     {
       /* %%Page DSC requires both a label and an ordinal */
