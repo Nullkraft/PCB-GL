@@ -1,5 +1,5 @@
 Bottom: 657bd730a90a722ad87572eef7e83731a7a2750e
-Top:    68522071f9dffbc9bcf08122c9196cc8c0998f04
+Top:    b502eb5f207b7557cfd406c8851a6685b108c288
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 18:42:26 +0000
 
@@ -125,6 +125,46 @@ index 1a9a4c1..2b81849 100644
        }
      while (*tok_start != '\0');
  
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index 6879a98..f802839 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -55,6 +55,7 @@ start_ap214_file (const char *filename)
+   FILE *f;
+   time_t currenttime;
+   struct tm utc;
++  struct tm *tmp;
+ 
+   f = fopen (filename, "w");
+   if (f == NULL)
+@@ -64,7 +65,9 @@ start_ap214_file (const char *filename)
+     }
+ 
+   currenttime = time (NULL);
+-  gmtime_r (&currenttime, &utc);
++//  gmtime_r (&currenttime, &utc);
++  tmp =  gmtime (&currenttime);
++  utc = *tmp;
+ 
+   fprintf (f, "ISO-10303-21;\n");
+   fprintf (f, "HEADER;\n");
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index c109dc5..4b43d07 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -132,8 +132,11 @@ step_start_file (FILE *f, const char *filename)
+ {
+   time_t currenttime = time (NULL);
+   struct tm utc;
++  struct tm *tmp;
+ 
+-  gmtime_r (&currenttime, &utc);
++//  gmtime_r (&currenttime, &utc);
++  tmp =  gmtime (&currenttime);
++  utc = *tmp;
+ 
+   fprintf (f, "ISO-10303-21;\n");
+   fprintf (f, "HEADER;\n");
 diff --git a/src/lrealpath.c b/src/lrealpath.c
 index 8977b40..29910ea 100644
 --- a/src/lrealpath.c
