@@ -1,4 +1,4 @@
-Bottom: f39b3f5fc9935e2d0b0ad67482e4163bccc77317
+Bottom: b01637dd203e1c61bf333861e839e00ef89fbd38
 Top:    cccb5ef81ab68399ce52350bb1e5f6e99feb486f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 17:37:13 +0000
@@ -40,27 +40,10 @@ index 171e37f..405f9ab 100644
    g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
  }
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index c2df099..5251dc3 100644
+index 8440a48..5251dc3 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -28,16 +28,10 @@
- #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
- 
- #ifdef REVERSED_PCB_CONTOURS
--#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
--#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((pcb)->MaxHeight - (y)))
--
- #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
- #define STEP_Y_TO_COORD(pcb, y) ((pcb)->MaxHeight - MM_TO_COORD((y)))
- #else
- /* XXX: BROKEN UPSIDE DOWN OUTPUT */
--#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM((x)))
--#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((y)))
--
- #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
- #define STEP_Y_TO_COORD(pcb, y) (MM_TO_COORD((y)))
- #endif
-@@ -55,34 +49,20 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
+@@ -49,34 +49,20 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
    return psa_list;
  }
  
@@ -98,7 +81,7 @@ index c2df099..5251dc3 100644
    currenttime = time (NULL);
    gmtime_r (&currenttime, &utc);
  
-@@ -106,38 +86,53 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -100,38 +86,53 @@ object3d_export_to_step (object3d *object, const char *filename)
    fprintf (f, "\n");
    fprintf (f, "DATA;\n");
  
@@ -179,7 +162,7 @@ index c2df099..5251dc3 100644
  
  #define FWD 1
  #define REV 2
-@@ -289,7 +284,7 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -283,7 +284,7 @@ object3d_export_to_step (object3d *object, const char *filename)
  
    /* Closed shell which bounds the brep solid */
    pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
@@ -188,7 +171,7 @@ index c2df099..5251dc3 100644
  
  #if 1
    /* Body style */
-@@ -315,18 +310,251 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -309,18 +310,251 @@ object3d_export_to_step (object3d *object, const char *filename)
    step_mechanical_design_geometric_presentation_representation (step, "", styled_item_identifiers, geometric_representation_context_identifier);
  #endif
  
@@ -205,11 +188,11 @@ index c2df099..5251dc3 100644
 +
 +  shape_definition_representation_identifier =
 +  step_shape_definition_representation (step, product_definition_shape_identifier, shape_representation_identifier);
- 
--  step_shape_definition_representation (step, 9 /* XXX */, shape_representation_identifier);
++
 +  if (shape_definition_representation != NULL)
 +    *shape_definition_representation = shape_definition_representation_identifier;
-+
+ 
+-  step_shape_definition_representation (step, 9 /* XXX */, shape_representation_identifier);
 +  if (placement_axis != NULL)
 +    *placement_axis = anchor_axis_identifier;
  
@@ -227,11 +210,11 @@ index c2df099..5251dc3 100644
 +  GList *object_iter;
 +  int part;
 +  bool multiple_parts;
++
++  multiple_parts = (g_list_next (objects) != NULL);
  
 -  fprintf (f, "ENDSEC;\n" );
 -  fprintf (f, "END-ISO-10303-21;\n" );
-+  multiple_parts = (g_list_next (objects) != NULL);
-+
 +  step = start_ap214_file (filename);
 +
 +  for (object_iter = objects, part = 1;
