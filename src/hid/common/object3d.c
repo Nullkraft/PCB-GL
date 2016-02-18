@@ -290,7 +290,7 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
 
 
 void
-object3d_export_to_step (object3d *object, char *filename)
+object3d_export_to_step (object3d *object, const char *filename)
 {
   FILE *f;
   time_t currenttime;
