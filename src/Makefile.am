@@ -169,6 +169,7 @@ PCB_SRCS = \
 	hid/common/object3d.h \
 	hid/common/quad.c \
 	hid/common/quad.h \
+	hid/common/step_id.h \
 	hid/common/vertex3d.c \
 	hid/common/vertex3d.h \
 	hid/hidint.h 

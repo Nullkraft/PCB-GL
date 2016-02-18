@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "step.h"
+#include "step_id.h"
 #include "quad.h"
 #include "contour3d.h"
 #include "appearance.h"
