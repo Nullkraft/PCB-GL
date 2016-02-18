@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "step.h"
+#include "step_writer.h"
 
 static char *
 step_bool (bool expr)
