@@ -1,5 +1,5 @@
-Bottom: 55c150db5e0ff7fefd5d68dc6fe54cd26c1038e9
-Top:    f7917d191aa5977d7ec0b52255d5a4540036d966
+Bottom: a8d81660cf615d69e6947b2d94f0635dddf6d8aa
+Top:    5b44bb575f8cff09f60f76fd55f05065674f693e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 19:37:58 +0000
 
@@ -11,7 +11,7 @@ Sometimes the polygon code exploded...
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 8360d64..26e0cf9 100644
+index 130485a..3e6988a 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -104,6 +104,9 @@ dicer output is used for HIDs which cannot render things with holes
@@ -22,7 +22,7 @@ index 8360d64..26e0cf9 100644
 +#include <sys/time.h>
 +#include <sys/resource.h>
  
- #undef DEBUG_CIRCSEGS
+ #define DEBUG_CIRCSEGS
  
 @@ -120,6 +123,8 @@ static double bw_rotate_circle_seg[4];
  void
