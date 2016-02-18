@@ -49,6 +49,7 @@
 #include "global.h"
 #include "rtree.h"
 #include "heap.h"
+#include "pcb-printf.h"
 
 #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
 
@@ -142,10 +143,9 @@ static POLYPARENTAGE no_parentage = {
   .b = NULL
 };
 
-#ifdef DEBUG
 static char *theState (VNODE * v);
 
-static void
+/* static */ void
 pline_dump (VNODE * v)
 {
   VNODE *s, *n;
@@ -160,9 +160,6 @@ pline_dump (VNODE * v)
     }
   while ((v = NEXT_VERTEX(v)) != s);
 }
-#endif
-
-static void pline_dump (VNODE * v);
 
 /*static */void
 poly_dump (POLYAREA * p)
@@ -1113,8 +1110,6 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
   return FALSE;
 }				/* cntr_in_M_POLYAREA */
 
-#ifdef DEBUG
-
 static char *
 theState (VNODE * e)
 {
@@ -1139,6 +1134,7 @@ theState (VNODE * e)
     }
 }
 
+#ifdef DEBUG
 #ifdef DEBUG_ALL_LABELS
 static void
 print_labels (PLINE * a)
