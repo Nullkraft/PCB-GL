@@ -2564,6 +2564,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_draw_bg_image ();
 
+  common_set_clip_box (&ghid_graphics, &region);
   /* hid_expose_callback (&ghid_graphics, &region, 0); */
   ghid_draw_everything (&region);
   hidgl_flush_triangles (priv->hidgl);
@@ -2951,6 +2952,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
 
+  common_set_clip_box (&ghid_graphics, &region);
   hid_expose_callback (&ghid_graphics, &region, NULL);
   hidgl_flush_triangles (priv->hidgl);
   glPopMatrix ();
