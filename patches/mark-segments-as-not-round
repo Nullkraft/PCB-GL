@@ -1,0 +1,25 @@
+Bottom: 0b4ed6bd6ec464345a015a6cb8edf0bcda1ac640
+Top:    15bf5b155bb6ad4e2694700518020171e0d3a8ea
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-18 20:31:48 +0000
+
+Mark segments as not round before falling back to line-line intersection
+
+This avoids assert failures with debugging enabeled
+
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 8c34ee2..197bb3b 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1290,6 +1290,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
+       s1->v->radius == s2->v->radius)
+     {
+       printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
++      s1->v->is_round = false;
++      s2->v->is_round = false;
+       return seg_in_seg_line_line (i, s1, s2);
+     }
+ #endif
