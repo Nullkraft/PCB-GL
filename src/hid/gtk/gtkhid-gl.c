@@ -15,8 +15,8 @@
 #include "gui-pinout-preview.h"
 #include "pcb-printf.h"
 
-#include "quad.h"
-#include "object3d.h"
+#include "hid/common/quad.h"
+#include "hid/common/object3d.h"
 
 #ifndef WIN32
 /* The Linux OpenGL ABI 1.0 spec requires that we define
