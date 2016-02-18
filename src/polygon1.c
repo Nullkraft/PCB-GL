@@ -1619,16 +1619,16 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
       if (!jump (&cur, &dir, v_rule))
 	break;
       /* add edge to polygon */
+      if ((newn = poly_CreateNode (cur->point)) == NULL)
+        return err_no_memory;
       if (!*result)
 	{
-	  *result = poly_NewContour (cur->point);
+	  *result = poly_NewContour (newn);
 	  if (*result == NULL)
 	    return err_no_memory;
 	}
       else
 	{
-	  if ((newn = poly_CreateNode (cur->point)) == NULL)
-	    return err_no_memory;
 	  poly_InclVertex ((*result)->head.prev, newn);
 	}
 #ifdef DEBUG_GATHER
@@ -2519,7 +2519,7 @@ poly_IniContour (PLINE * c)
 }
 
 PLINE *
-poly_NewContour (Vector v)
+poly_NewContour (VNODE *node)
 {
   PLINE *res;
 
@@ -2529,11 +2529,9 @@ poly_NewContour (Vector v)
 
   poly_IniContour (res);
 
-  if (v != NULL)
-    {
-      Vcopy (res->head.point, v);
-      cntrbox_adjust (res, v);
-    }
+  Vcopy (res->head.point, node->point);
+  cntrbox_adjust (res, res->head.point);
+  free (node);
 
   return res;
 }
@@ -2726,7 +2724,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
 
   assert (src != NULL);
   *dst = NULL;
-  *dst = poly_NewContour (src->head.point);
+  *dst = poly_NewContour (poly_CreateNode (src->head.point));
   if (*dst == NULL)
     return FALSE;
 
