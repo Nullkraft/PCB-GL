@@ -1,5 +1,5 @@
 Bottom: 5605c5281612c652cef9771c0ed690e7e8a6aafb
-Top:    8d4366cc907993666970d4d3cd7ad6f10cbde8d7
+Top:    b1a43be6ff8dbdfe6dead856d82578df43d66f38
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 16:53:55 +0000
 
@@ -85,7 +85,7 @@ new file mode 100644
 index 0000000..e69de29
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 new file mode 100644
-index 0000000..ddcf35e
+index 0000000..0a264ce
 --- /dev/null
 +++ b/src/hid/common/object3d.c
 @@ -0,0 +1,915 @@
@@ -330,7 +330,7 @@ index 0000000..ddcf35e
 +}
 +
 +void
-+object3d_export_to_step (object3d *object, char *filename)
++object3d_export_to_step (object3d *object, const char *filename)
 +{
 +  FILE *f;
 +  time_t currenttime;
@@ -1006,7 +1006,7 @@ index 0000000..ddcf35e
 +}
 diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
 new file mode 100644
-index 0000000..4f40a3b
+index 0000000..b967543
 --- /dev/null
 +++ b/src/hid/common/object3d.h
 @@ -0,0 +1,13 @@
@@ -1021,7 +1021,7 @@ index 0000000..4f40a3b
 +void destroy_object3d (object3d *object);
 +object3d *object3d_create_test_cube (void);
 +object3d *object3d_from_board_outline (void);
-+void object3d_export_to_step (object3d *object, char *filename);
++void object3d_export_to_step (object3d *object, const char *filename);
 +void object3d_test_board_outline (void);
 diff --git a/src/hid/common/quad.c b/src/hid/common/quad.c
 new file mode 100644
