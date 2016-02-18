@@ -1,5 +1,5 @@
 Bottom: c697d6221742e43b4e841037acca4faa7128b24e
-Top:    abf1866b7894e797cfda92f5727e149d39e30c27
+Top:    cbba9d1e7bfbfa09e40d3a2e82f18247eecad6e6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 17:48:47 +0000
 
@@ -80,10 +80,10 @@ index b34c7b4..e8c26e2 100644
  GList *object3d_from_board_outline (void);
 -void object3d_test_board_outline (void);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9b91a07..b2539ca 100644
+index 9b91a07..f4688ac 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -15,12 +15,13 @@
+@@ -15,7 +15,7 @@
  #include "gui-pinout-preview.h"
  #include "pcb-printf.h"
  
@@ -92,12 +92,6 @@ index 9b91a07..b2539ca 100644
  #include "hid/common/quad.h"
  #include "hid/common/vertex3d.h"
  #include "hid/common/contour3d.h"
- #include "hid/common/appearance.h"
- #include "hid/common/face3d.h"
-+#include "hid/common/edge3d.h"
- #include "hid/common/object3d.h"
- 
- #ifndef WIN32
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 index 2206b3a..6879a98 100644
 --- a/src/hid/step/object3d_step.c
