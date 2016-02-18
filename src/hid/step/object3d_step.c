@@ -36,7 +36,7 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
 }
 
 void
-object3d_export_to_step (object3d *object, char *filename)
+object3d_export_to_step (object3d *object, const char *filename)
 {
   FILE *f;
   step_file *step;
