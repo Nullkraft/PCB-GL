@@ -56,7 +56,7 @@ extents_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 }
 
 static hidGC
-extents_make_gc (void)
+extents_make_gc (HID_DRAW *hid_draw)
 {
   hidGC gc = (hidGC)calloc (1, sizeof (struct extents_gc_struct));
 
