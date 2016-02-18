@@ -1692,6 +1692,8 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
   struct outline_info info;
 
   ensure_board_outline ();
+  if (PCB->Data->outline == NULL)
+    return;
 
   memset (&polygon, 0, sizeof (polygon));
   polygon.Clipped = PCB->Data->outline;
