@@ -1,5 +1,5 @@
 Bottom: f39e1ac45bbd985b2300eb3ca8731fcc675b6b30
-Top:    d6042f47e890e2e27465e6eddcf69b8e0e9f7695
+Top:    6c4d00650d47cbb6cfaadffe733bf35821e043c3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:31 +0000
 
@@ -9,10 +9,18 @@ Attempt to refactor the STEP emission somewhat
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 9965e66..446739d 100644
+index 9965e66..df42091 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -186,7 +186,9 @@ LIBGTK_GDK_SRCS= \
+@@ -169,6 +169,7 @@ PCB_SRCS = \
+ 	hid/common/object3d.h \
+ 	hid/common/quad.c \
+ 	hid/common/quad.h \
++	hid/common/step_id.h \
+ 	hid/common/vertex3d.c \
+ 	hid/common/vertex3d.h \
+ 	hid/hidint.h 
+@@ -186,7 +187,9 @@ LIBGTK_GDK_SRCS= \
  LIBGTK_GL_SRCS= \
  	hid/gtk/gtkhid-gl.c \
  	hid/gtk/gui-trackball.c \
@@ -24,7 +32,7 @@ index 9965e66..446739d 100644
  GL_SRCS= \
  	hid/common/hidgl.c \
 diff --git a/src/hid/common/contour3d.c b/src/hid/common/contour3d.c
-index 6aa3189..a9976cc 100644
+index 6aa3189..13e865e 100644
 --- a/src/hid/common/contour3d.c
 +++ b/src/hid/common/contour3d.c
 @@ -1,6 +1,8 @@
@@ -32,7 +40,7 @@ index 6aa3189..a9976cc 100644
  #include <stdbool.h>
 +#include <stdio.h>
  
-+#include "step.h"
++#include "step_id.h"
  #include "quad.h"
  #include "contour3d.h"
  
@@ -50,7 +58,7 @@ index 8ce8d8a..837e666 100644
  
  contour3d *make_contour3d (edge_ref first_edge);
 diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
-index 9014125..2d34558 100644
+index 9014125..c67fa95 100644
 --- a/src/hid/common/edge3d.c
 +++ b/src/hid/common/edge3d.c
 @@ -1,7 +1,9 @@
@@ -59,7 +67,7 @@ index 9014125..2d34558 100644
 +#include <stdio.h>
  #include <glib.h>
  
-+#include "step.h"
++#include "step_id.h"
  #include "edge3d.h"
  
  edge_info *
@@ -79,7 +87,7 @@ index b91ff40..696ace3 100644
  
  edge_info *make_edge_info (void);
 diff --git a/src/hid/common/face3d.c b/src/hid/common/face3d.c
-index ff20c3f..8e8f8c0 100644
+index ff20c3f..0f9f327 100644
 --- a/src/hid/common/face3d.c
 +++ b/src/hid/common/face3d.c
 @@ -1,6 +1,8 @@
@@ -87,7 +95,7 @@ index ff20c3f..8e8f8c0 100644
  #include <stdbool.h>
 +#include <stdio.h>
  
-+#include "step.h"
++#include "step_id.h"
  #include "quad.h"
  #include "contour3d.h"
  #include "appearance.h"
@@ -110,14 +118,14 @@ index bb9cd31..44f6e88 100644
  
  face3d *make_face3d (void);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 2b42e3a..a79d255 100644
+index 2b42e3a..273113c 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -5,6 +5,7 @@
  
  #include <glib.h>
  
-+#include "step.h"
++#include "step_id.h"
  #include "quad.h"
  #include "vertex3d.h"
  #include "contour3d.h"
@@ -743,7 +751,7 @@ index 0000000..86a4974
 +typedef int step_id;
 +typedef GList* step_id_list;
 diff --git a/src/hid/common/vertex3d.c b/src/hid/common/vertex3d.c
-index 51db3a7..8e584ab 100644
+index 51db3a7..8abef8f 100644
 --- a/src/hid/common/vertex3d.c
 +++ b/src/hid/common/vertex3d.c
 @@ -1,17 +1,12 @@
@@ -760,7 +768,7 @@ index 51db3a7..8e584ab 100644
 -  float y;
 -  float z;
 -  int id;
-+#include "step.h"
++//#include "step.h"
 +#include "vertex3d.h"
  
 -  /* STEP crap - to hell with encapsulation */
@@ -784,14 +792,14 @@ index 278ae60..a150934 100644
  
  vertex3d *make_vertex3d (float x, float y, float z);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 790b761..f7480a3 100644
+index 790b761..491154b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,7 @@
  #include "gui-pinout-preview.h"
  #include "pcb-printf.h"
  
-+#include "hid/common/step.h"
++#include "step.h"
  #include "hid/common/quad.h"
  #include "hid/common/vertex3d.h"
  #include "hid/common/contour3d.h"
