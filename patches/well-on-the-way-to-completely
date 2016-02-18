@@ -1,5 +1,5 @@
-Bottom: 2b261faa78bb3dbb8b5f7e0bc0a25b26cedcb56e
-Top:    1a6a99c90b2d339215d9e55665d62443da279d70
+Bottom: 6c4d00650d47cbb6cfaadffe733bf35821e043c3
+Top:    405071264ace87ea9f974e1fec13557c00fda5cb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:31 +0000
 
@@ -8,10 +8,10 @@ Well on the way to completely messing up the STEP code, just by flipping the Y c
 
 ---
 
-diff --git a/src/hid/gtk/edge3d.c b/src/hid/gtk/edge3d.c
-index 2d34558..3cd5659 100644
---- a/src/hid/gtk/edge3d.c
-+++ b/src/hid/gtk/edge3d.c
+diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
+index c67fa95..23e335e 100644
+--- a/src/hid/common/edge3d.c
++++ b/src/hid/common/edge3d.c
 @@ -17,7 +17,7 @@ make_edge_info (void)
  }
  
@@ -21,10 +21,10 @@ index 2d34558..3cd5659 100644
  {
    info->is_round = true;
    info->cx = cx;
-diff --git a/src/hid/gtk/edge3d.h b/src/hid/gtk/edge3d.h
+diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
 index 696ace3..38fd6c1 100644
---- a/src/hid/gtk/edge3d.h
-+++ b/src/hid/gtk/edge3d.h
+--- a/src/hid/common/edge3d.h
++++ b/src/hid/common/edge3d.h
 @@ -5,13 +5,13 @@ typedef struct
  
    /* For circular curves */
@@ -54,10 +54,10 @@ index 696ace3..38fd6c1 100644
 +void edge_info_set_round (edge_info *info, double cx, double cy, double cz, double nx, double ny, double nz, double radius);
  void edge_info_set_stitch (edge_info *info);
  void destroy_edge_info (edge_info *info);
-diff --git a/src/hid/gtk/face3d.c b/src/hid/gtk/face3d.c
-index 8e8f8c0..59bb963 100644
---- a/src/hid/gtk/face3d.c
-+++ b/src/hid/gtk/face3d.c
+diff --git a/src/hid/common/face3d.c b/src/hid/common/face3d.c
+index 0f9f327..13d7501 100644
+--- a/src/hid/common/face3d.c
++++ b/src/hid/common/face3d.c
 @@ -38,7 +38,7 @@ face3d_set_appearance (face3d *face, appearance *appear)
  }
  
@@ -76,10 +76,10 @@ index 8e8f8c0..59bb963 100644
  {
    face->is_cylindrical = true;
    face->cx = cx;
-diff --git a/src/hid/gtk/face3d.h b/src/hid/gtk/face3d.h
+diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
 index 44f6e88..0998a22 100644
---- a/src/hid/gtk/face3d.h
-+++ b/src/hid/gtk/face3d.h
+--- a/src/hid/common/face3d.h
++++ b/src/hid/common/face3d.h
 @@ -1,12 +1,12 @@
  typedef struct {
 -  float nx, ny, nz; /* Face normal?*/
@@ -106,10 +106,10 @@ index 44f6e88..0998a22 100644
 +void face3d_set_normal (face3d *face, double nx, double ny, double nz);
 +void face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius);
  void face3d_set_surface_orientation_reversed (face3d *face);
-diff --git a/src/hid/gtk/object3d.c b/src/hid/gtk/object3d.c
-index a79d255..538eed3 100644
---- a/src/hid/gtk/object3d.c
-+++ b/src/hid/gtk/object3d.c
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 273113c..beae5ef 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
 @@ -16,6 +16,30 @@
  #include "polygon.h"
  #include "data.h"
@@ -510,6 +510,41 @@ index a79d255..538eed3 100644
                                          5.);                   /* Radius of cylinder */
        face3d_set_normal (cylinder_faces[0], 1., 0., 0.);       /* A normal to the axis direction */
                                     /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
+diff --git a/src/hid/common/vertex3d.c b/src/hid/common/vertex3d.c
+index 8abef8f..b3557de 100644
+--- a/src/hid/common/vertex3d.c
++++ b/src/hid/common/vertex3d.c
+@@ -9,7 +9,7 @@
+ static int global_vertex3d_count;
+ 
+ vertex3d *
+-make_vertex3d (float x, float y, float z)
++make_vertex3d (double x, double y, double z)
+ {
+   vertex3d *v;
+ 
+diff --git a/src/hid/common/vertex3d.h b/src/hid/common/vertex3d.h
+index a150934..cad586d 100644
+--- a/src/hid/common/vertex3d.h
++++ b/src/hid/common/vertex3d.h
+@@ -1,13 +1,13 @@
+ typedef struct
+ {
+-  float x;
+-  float y;
+-  float z;
++  double x;
++  double y;
++  double z;
+   int id;
+ 
+   /* STEP crap - to hell with encapsulation */
+   step_id vertex_identifier;
+ } vertex3d;
+ 
+-vertex3d *make_vertex3d (float x, float y, float z);
++vertex3d *make_vertex3d (double x, double y, double z);
+ void destroy_vertex3d (vertex3d *v);
 diff --git a/src/hid/gtk/step.c b/src/hid/gtk/step.c
 index 090a338..c5204e2 100644
 --- a/src/hid/gtk/step.c
@@ -550,38 +585,3 @@ index 090a338..c5204e2 100644
    destroy_step_id_list (bounds);
  
    return file->next_id++;
-diff --git a/src/hid/gtk/vertex3d.c b/src/hid/gtk/vertex3d.c
-index 8e584ab..bbe5074 100644
---- a/src/hid/gtk/vertex3d.c
-+++ b/src/hid/gtk/vertex3d.c
-@@ -9,7 +9,7 @@
- static int global_vertex3d_count;
- 
- vertex3d *
--make_vertex3d (float x, float y, float z)
-+make_vertex3d (double x, double y, double z)
- {
-   vertex3d *v;
- 
-diff --git a/src/hid/gtk/vertex3d.h b/src/hid/gtk/vertex3d.h
-index a150934..cad586d 100644
---- a/src/hid/gtk/vertex3d.h
-+++ b/src/hid/gtk/vertex3d.h
-@@ -1,13 +1,13 @@
- typedef struct
- {
--  float x;
--  float y;
--  float z;
-+  double x;
-+  double y;
-+  double z;
-   int id;
- 
-   /* STEP crap - to hell with encapsulation */
-   step_id vertex_identifier;
- } vertex3d;
- 
--vertex3d *make_vertex3d (float x, float y, float z);
-+vertex3d *make_vertex3d (double x, double y, double z);
- void destroy_vertex3d (vertex3d *v);
