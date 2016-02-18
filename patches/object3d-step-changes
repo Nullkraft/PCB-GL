@@ -1,4 +1,4 @@
-Bottom: 5a26f8eb49e30d167902e4b5874e48ea3274cbab
+Bottom: cccb5ef81ab68399ce52350bb1e5f6e99feb486f
 Top:    8b0aff7156853bdc6ef40f519cb22d3c2efd2f6e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 18:35:10 +0000
@@ -9,27 +9,10 @@ Object3D / step changes
 ---
 
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index a6c7cab..6879a98 100644
+index 5251dc3..6879a98 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -28,16 +28,10 @@
- #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
- 
- #ifdef REVERSED_PCB_CONTOURS
--#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
--#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((pcb)->MaxHeight - (y)))
--
- #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
- #define STEP_Y_TO_COORD(pcb, y) ((pcb)->MaxHeight - MM_TO_COORD((y)))
- #else
- /* XXX: BROKEN UPSIDE DOWN OUTPUT */
--#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM((x)))
--#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((y)))
--
- #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
- #define STEP_Y_TO_COORD(pcb, y) (MM_TO_COORD((y)))
- #endif
-@@ -384,175 +378,6 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
+@@ -378,175 +378,6 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
    finish_ap214_file (step);
  
    /* XXX: TODO: MAKE AN ASSEMBLY PRODUCT AND GATHER THE ABOVE PIECES INSIDE IT */
