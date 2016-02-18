@@ -1,5 +1,5 @@
 Bottom: 38315790561b251448be936be2cc4e49b47e572a
-Top:    4cca00de9771567e243f383e4ef1aa1bb597a8f4
+Top:    1d8464257d48ab2bc18e61d0f8312b34b8731fa4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 17:14:17 +0000
 
@@ -43,7 +43,7 @@ index ed60d6d..bb9cd31 100644
  void face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius);
 +void face3d_set_surface_orientation_reversed (face3d *face);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 49462ca..2b42e3a 100644
+index 49462ca..720543f 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -35,7 +35,7 @@
@@ -100,7 +100,15 @@ index 49462ca..2b42e3a 100644
  }
  
  /*********************************************************************************************************/
-@@ -297,6 +304,7 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -290,13 +297,14 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
+ 
+ 
+ void
+-object3d_export_to_step (object3d *object, char *filename)
++object3d_export_to_step (object3d *object, const char *filename)
+ {
+   FILE *f;
+   time_t currenttime;
    struct tm utc;
    int next_step_identifier;
    int geometric_representation_context_identifier;
@@ -818,7 +826,7 @@ index 49462ca..2b42e3a 100644
 +  g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
  }
 diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
-index 8d081a2..ecdc721 100644
+index 8d081a2..f396295 100644
 --- a/src/hid/common/object3d.h
 +++ b/src/hid/common/object3d.h
 @@ -16,6 +16,6 @@ void object3d_add_edge (object3d *object, edge_ref edge);
@@ -826,6 +834,7 @@ index 8d081a2..ecdc721 100644
  void object3d_add_face (object3d *object, face3d *face);
  object3d *object3d_create_test_cube (void);
 -object3d *object3d_from_board_outline (void);
+-void object3d_export_to_step (object3d *object, char *filename);
 +GList *object3d_from_board_outline (void);
- void object3d_export_to_step (object3d *object, char *filename);
++void object3d_export_to_step (object3d *object, const char *filename);
  void object3d_test_board_outline (void);
