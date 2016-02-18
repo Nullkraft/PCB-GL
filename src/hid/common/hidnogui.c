@@ -155,7 +155,13 @@ nogui_draw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 }
 
 static void
-nogui_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
+nogui_draw_pcb_pv (hidGC gc, PinType *pv, bool mask)
+{
+  CRASH;
+}
+
+static void
+nogui_draw_pcb_pv_hole (hidGC gc, PinType *pv)
 {
   CRASH;
 }
@@ -487,6 +493,7 @@ common_nogui_graphics_class_init (HID_DRAW_CLASS *klass)
   klass->draw_pcb_polygon = nogui_draw_pcb_polygon;
   klass->draw_pcb_pad =     nogui_draw_pcb_pad;
   klass->draw_pcb_pv =      nogui_draw_pcb_pv;
+  klass->draw_pcb_pv_hole = nogui_draw_pcb_pv_hole;
 }
 
 void

@@ -72,15 +72,18 @@ typedef struct hid_draw_class_st
   void (*draw_pcb_text) (hidGC gc, TextType *, Coord);
   void (*draw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
   void (*draw_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
-  void (*draw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+  void (*draw_pcb_pv) (hidGC gc, PinType *pv, bool mask);
+  void (*draw_pcb_pv_hole) (hidGC gc, PinType *pv);
 
   /* The following are not meant to be called outside of the GUI implementations of the above APIs */
   void (*_fill_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
   void (*_thindraw_pcb_polygon) (hidGC gc, PolygonType *poly, const BoxType *clip_box);
   void (*_fill_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
   void (*_thindraw_pcb_pad) (hidGC gc, PadType *pad, bool clip, bool mask);
-  void (*_fill_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
-  void (*_thindraw_pcb_pv) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask);
+  void (*_fill_pcb_pv) (hidGC gc, PinType *pv, bool mask);
+  void (*_fill_pcb_pv_hole) (hidGC gc, PinType *pv);
+  void (*_thindraw_pcb_pv) (hidGC gc, PinType *pv, bool mask);
+  void (*_thindraw_pcb_pv_hole) (hidGC gc, PinType *pv);
 
   /* draw.c currently uses this to shortcut and special-case certain rendering when displaying on-screen */
   bool gui;
@@ -251,9 +254,15 @@ hid_draw_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
 }
 
 inline void
-hid_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
+hid_draw_pcb_pv (hidGC gc, PinType *pv, bool mask)
 {
-  fg_gc->hid_draw->klass->draw_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
+  gc->hid_draw->klass->draw_pcb_pv (gc, pv, mask);
+}
+
+inline void
+hid_draw_pcb_pv_hole (hidGC gc, PinType *pv)
+{
+  gc->hid_draw->klass->draw_pcb_pv_hole (gc, pv);
 }
 
 
@@ -282,13 +291,25 @@ hid_draw__thin_pcb_pad (hidGC gc, PadType *pad, bool clip, bool mask)
 }
 
 inline void
-hid_draw__fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
+hid_draw__fill_pcb_pv (hidGC gc, PinType *pv, bool mask)
 {
-  fg_gc->hid_draw->klass->_fill_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
+  gc->hid_draw->klass->_fill_pcb_pv (gc, pv, mask);
 }
 
 inline void
-hid_draw__thin_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool draw_hole, bool mask)
+hid_draw__fill_pcb_pv_hole (hidGC gc, PinType *pv)
 {
-  fg_gc->hid_draw->klass->_thindraw_pcb_pv (fg_gc, bg_gc, pv, draw_hole, mask);
+  gc->hid_draw->klass->_fill_pcb_pv_hole (gc, pv);
+}
+
+inline void
+hid_draw__thin_pcb_pv (hidGC gc, PinType *pv, bool mask)
+{
+  gc->hid_draw->klass->_thindraw_pcb_pv (gc, pv, mask);
+}
+
+inline void
+hid_draw__thin_pcb_pv_hole (hidGC gc, PinType *pv)
+{
+  gc->hid_draw->klass->_thindraw_pcb_pv_hole (gc, pv);
 }
