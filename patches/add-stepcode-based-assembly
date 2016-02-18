@@ -1,7 +1,7 @@
-Bottom: e7da6f005c94baa353748c719a6525d120d821c1
-Top:    f3e5c45052707f79ed8a60fd82892b319442137b
+Bottom: 631c05aaad62cee34e2c4b97a66b7e0489203bf2
+Top:    256b2daad99ebeeec8494928ababac765782841b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 17:11:02 +0000
+Date:   2016-02-18 17:48:47 +0000
 
 Add STEPcode based assembly export function
 
@@ -37,10 +37,10 @@ index f557c37..058fa40 100644
      F=$srcdir/src/hid/$hid/hid.conf
      if test -f $F ; then
 diff --git a/src/Makefile.am b/src/Makefile.am
-index b19e015..20ff48a 100644
+index b463979..b03d9dc 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -170,6 +170,7 @@ PCB_SRCS = \
+@@ -175,6 +175,7 @@ PCB_SRCS = \
  	hid/hidint.h 
  
  EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
@@ -48,7 +48,7 @@ index b19e015..20ff48a 100644
  DBUS_SRCS= \
  	dbus-pcbmain.c \
  	dbus-pcbmain.h \
-@@ -456,14 +457,38 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
+@@ -465,14 +466,38 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
  	(for f in ${LIBPS_SRCS} ; do cat $(srcdir)/$$f ; done) | grep "^REGISTER" > $@.tmp
  	mv $@.tmp $@
  

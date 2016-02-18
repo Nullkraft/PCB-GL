@@ -1,7 +1,7 @@
-Bottom: 8d4366cc907993666970d4d3cd7ad6f10cbde8d7
-Top:    03bf2d8e0d5bbead34db28fd929013eb89dde4d6
+Bottom: a468773c9874dd8a769f4356b05f992e04289eb7
+Top:    dfca085dd3baf8e6cfae2a674bfc964bdbc9db9a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 17:11:02 +0000
+Date:   2016-02-18 17:48:46 +0000
 
 Add simple STEP exporter for the board outline
 
@@ -9,7 +9,7 @@ Add simple STEP exporter for the board outline
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 5ef4e2c..b19e015 100644
+index bd6874d..b463979 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -12,7 +12,7 @@ HIDLIST = @HIDLIST@
@@ -21,7 +21,7 @@ index 5ef4e2c..b19e015 100644
  	libgcode.a
  
  pcblib_DATA= \
-@@ -220,6 +220,7 @@ BUILT_SOURCES = \
+@@ -225,6 +225,7 @@ BUILT_SOURCES = \
  	hid/gcode/gcode_lists.h \
  	hid/nelma/nelma_lists.h \
  	hid/ps/ps_lists.h \
@@ -29,7 +29,7 @@ index 5ef4e2c..b19e015 100644
  	parse_y.h \
  	pcb-menu.h \
  	res_parse.h \
-@@ -455,6 +456,20 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
+@@ -464,6 +465,20 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
  	(for f in ${LIBPS_SRCS} ; do cat $(srcdir)/$$f ; done) | grep "^REGISTER" > $@.tmp
  	mv $@.tmp $@
  
