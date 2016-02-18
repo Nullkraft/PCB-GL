@@ -1,7 +1,7 @@
-Bottom: 1fe04306ac87014759d871e0019f806df3323d43
-Top:    43a6bcce56625de515abe79abded7f6cb442f00a
+Bottom: 389e1a675bff6b8a7c9f46940ca473a700cc78fd
+Top:    371bcdabc82598f5a30f553c4e15a471ef70ba25
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-13 19:01:07 +0000
+Date:   2016-02-18 13:56:01 +0000
 
 Add name tags to contours and feature naming for pins and vias in STEP export
 
@@ -57,7 +57,7 @@ index a85d48f..9b775ac 100644
      global.next_identifier = global.next_identifier + 3;
    }
 diff --git a/src/polyarea.h b/src/polyarea.h
-index c606077..92ca8a2 100644
+index 1b8e9b3..fa029e6 100644
 --- a/src/polyarea.h
 +++ b/src/polyarea.h
 @@ -108,6 +108,7 @@ struct PLINE
@@ -69,7 +69,7 @@ index c606077..92ca8a2 100644
  
  PLINE *poly_NewContour(VNODE *node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 0beae50..a7cb003 100644
+index 79c8467..77d24ca 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -451,8 +451,13 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
@@ -122,7 +122,7 @@ index 0beae50..a7cb003 100644
      return false;
    return isects (c, p, true);
  }
-@@ -2070,8 +2076,33 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2069,8 +2075,33 @@ pv_outline_callback (const BoxType * b, void *cl)
    PinType *pv = (PinType *)b;
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;
@@ -171,10 +171,10 @@ index a02fd99..e07c133 100644
  POLYAREA * LinePoly(LineType *l, Coord thick);
  POLYAREA * ArcPoly(ArcType *l, Coord thick);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c4d1baa..634f73e 100644
+index 24bd4a3..192c970 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2550,6 +2550,7 @@ poly_IniContour (PLINE * c)
+@@ -2601,6 +2601,7 @@ poly_IniContour (PLINE * c)
    c->cx = 0;
    c->cy = 0;
    c->radius = 0;
@@ -182,7 +182,7 @@ index c4d1baa..634f73e 100644
  }
  
  PLINE *
-@@ -2584,6 +2585,8 @@ poly_ClrContour (PLINE * c)
+@@ -2635,6 +2636,8 @@ poly_ClrContour (PLINE * c)
    free (c->tristrip_vertices);
    c->tristrip_vertices = NULL;
    c->tristrip_num_vertices = 0;
@@ -191,7 +191,7 @@ index c4d1baa..634f73e 100644
    poly_IniContour (c);
  }
  
-@@ -2616,6 +2619,7 @@ poly_DelContour (PLINE ** c)
+@@ -2667,6 +2670,7 @@ poly_DelContour (PLINE ** c)
        r_destroy_tree (&r);
      }
    free ((*c)->tristrip_vertices);
