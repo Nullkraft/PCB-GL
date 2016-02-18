@@ -1,0 +1,29 @@
+Bottom: a2b792534dcc5b66c88ff2787c292d09103589ea
+Top:    f39b3f5fc9935e2d0b0ad67482e4163bccc77317
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-18 18:18:08 +0000
+
+Refresh of well-on-the-way-to-completely
+
+---
+
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index 70ae407..c2df099 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -56,7 +56,7 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
+ }
+ 
+ void
+-object3d_export_to_step (object3d *object, char *filename)
++object3d_export_to_step (object3d *object, const char *filename)
+ {
+   FILE *f;
+   step_file *step;
+diff --git a/src/hid/step/object3d_step.h b/src/hid/step/object3d_step.h
+index 049fc6b..1d2d5cd0 100644
+--- a/src/hid/step/object3d_step.h
++++ b/src/hid/step/object3d_step.h
+@@ -1 +1 @@
+-void object3d_export_to_step (object3d *object, char *filename);
++void object3d_export_to_step (object3d *object, const char *filename);
