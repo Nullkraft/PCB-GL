@@ -1,5 +1,5 @@
 Bottom: 4cca00de9771567e243f383e4ef1aa1bb597a8f4
-Top:    6869788182028a94bb620f43520b4eb342a4f7bf
+Top:    0d74cf69f43f01fca87746c91f2e2e654e65f353
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 17:37:03 +0000
 
@@ -715,7 +715,7 @@ index 790b761..f4688ac 100644
  #include "hid/common/contour3d.h"
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 new file mode 100644
-index 0000000..ec01561
+index 0000000..3464ff2
 --- /dev/null
 +++ b/src/hid/step/object3d_step.c
 @@ -0,0 +1,283 @@
@@ -757,7 +757,7 @@ index 0000000..ec01561
 +}
 +
 +void
-+object3d_export_to_step (object3d *object, char *filename)
++object3d_export_to_step (object3d *object, const char *filename)
 +{
 +  FILE *f;
 +  step_file *step;
@@ -1004,11 +1004,11 @@ index 0000000..ec01561
 +}
 diff --git a/src/hid/step/object3d_step.h b/src/hid/step/object3d_step.h
 new file mode 100644
-index 0000000..049fc6b
+index 0000000..1d2d5cd0
 --- /dev/null
 +++ b/src/hid/step/object3d_step.h
 @@ -0,0 +1 @@
-+void object3d_export_to_step (object3d *object, char *filename);
++void object3d_export_to_step (object3d *object, const char *filename);
 diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
 new file mode 100644
 index 0000000..0a04ea0
