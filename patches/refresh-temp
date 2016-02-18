@@ -1,0 +1,22 @@
+Bottom: 4c87a03e2ebe163558d68268ee1220735b366c1f
+Top:    bcf69a9d8a9001024f9d54c171ff7c304b659805
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-18 16:39:01 +0000
+
+Refresh of alternative-more-thorough-step
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 286185e..742c411 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -172,7 +172,7 @@ PCB_SRCS = \
+ 	hid/common/step_id.h \
+ 	hid/common/vertex3d.c \
+ 	hid/common/vertex3d.h \
+-	hid/hidint.h
++	hid/hidint.h 
+ 
+ EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
+ nodist_EXTRA_pcb_SOURCES = dummy.cpp
