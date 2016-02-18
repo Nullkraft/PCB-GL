@@ -192,6 +192,8 @@ pinout text should be vertical.
 Marker used internally to avoid revisiting an object.
 @item 0x10000 connected
 If set, this object has been as physically connected by @code{FindConnection()}.
+@item 0x20000 striphierarchy
+Strip hierarchy when displaying this element's refdes.
 @end table
 %end-doc */
 
@@ -229,6 +231,7 @@ If set, this object has been as physically connected by @code{FindConnection()}.
                                              also pinout text for pins is vertical */
 #define VISITFLAG               0x8000  /*!< marker to avoid re-visiting an object */
 #define CONNECTEDFLAG          0x10000  /*!< flag like FOUND flag, but used to identify physically connected objects (not rats) */
+#define STRIPHIERFLAG          0x20000  /*!< Strip hierarchy when displaying names */
 
 
 #define NOCOPY_FLAGS (FOUNDFLAG | CONNECTEDFLAG)
