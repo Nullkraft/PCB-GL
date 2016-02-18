@@ -340,7 +340,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
 #undef REV
 }
 
-static void
+void
 object3d_list_export_to_step_assy (GList *objects, char *filename)
 {
   step_file *step;
