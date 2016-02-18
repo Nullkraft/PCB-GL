@@ -51,6 +51,7 @@ TextType * CreateNewText (LayerType *, FontType *, Coord, Coord, unsigned, int, 
 PolygonType * CreateNewPolygon (LayerType *, FlagType);
 PointType * CreateNewPointInPolygon (PolygonType *, Coord, Coord, Angle included_angle);
 PolygonType * CreateNewHoleInPolygon (PolygonType *polygon);
+void RefdesMapInit (void);
 ElementType * CreateNewElement (DataType *, FontType *, FlagType, char *, char *, char *, Coord, Coord, BYTE, int, FlagType, bool);
 LineType * CreateNewLineInElement (ElementType *, Coord, Coord, Coord, Coord, Coord);
 ArcType * CreateNewArcInElement (ElementType *, Coord, Coord, Coord, Coord, Angle, Angle, Coord);
