@@ -1,5 +1,5 @@
 Bottom: 6e3b70206254568df9823baa8d4a74b43e51ecc1
-Top:    d9e0c2077a0f3f4c3c05b656baab44d46f0dc68f
+Top:    b075b23ae879f12fa89bb798d10a8f34cbc1c8f0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 14:37:00 +0000
 
@@ -21,6 +21,50 @@ index 5ef4e2c..06bb694 100644
  	hid/common/edge3d.c \
  	hid/common/edge3d.h \
  	hid/common/face3d.c \
+diff --git a/src/hid/common/appearance.c b/src/hid/common/appearance.c
+new file mode 100644
+index 0000000..92790fcc
+--- /dev/null
++++ b/src/hid/common/appearance.c
+@@ -0,0 +1,25 @@
++#include <glib.h>
++
++#include "appearance.h"
++
++appearance
++*make_appearance (void)
++{
++  appearance *appear = g_new0 (appearance, 1);
++
++  return appear;
++}
++
++void
++destroy_appearance (appearance *appear)
++{
++  g_free (appear);
++}
++
++void
++appearance_set_color (appearance *appear, float r, float g, float b)
++{
++  appear->r = r;
++  appear->g = g;
++  appear->b = b;
++}
+diff --git a/src/hid/common/appearance.h b/src/hid/common/appearance.h
+new file mode 100644
+index 0000000..d4917d7
+--- /dev/null
++++ b/src/hid/common/appearance.h
+@@ -0,0 +1,7 @@
++typedef struct {
++  float r, g, b;
++} appearance;
++
++appearance *make_appearance (void);
++void destroy_appearance (appearance *appearance);
++void appearance_set_color (appearance *appearance, float r, float g, float b);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 index ddcf35e..35f2330 100644
 --- a/src/hid/common/object3d.c
@@ -889,50 +933,6 @@ index 4f40a3b..8d081a2 100644
  object3d *object3d_create_test_cube (void);
  object3d *object3d_from_board_outline (void);
  void object3d_export_to_step (object3d *object, char *filename);
-diff --git a/src/hid/gtk/appearance.c b/src/hid/gtk/appearance.c
-new file mode 100644
-index 0000000..92790fcc
---- /dev/null
-+++ b/src/hid/gtk/appearance.c
-@@ -0,0 +1,25 @@
-+#include <glib.h>
-+
-+#include "appearance.h"
-+
-+appearance
-+*make_appearance (void)
-+{
-+  appearance *appear = g_new0 (appearance, 1);
-+
-+  return appear;
-+}
-+
-+void
-+destroy_appearance (appearance *appear)
-+{
-+  g_free (appear);
-+}
-+
-+void
-+appearance_set_color (appearance *appear, float r, float g, float b)
-+{
-+  appear->r = r;
-+  appear->g = g;
-+  appear->b = b;
-+}
-diff --git a/src/hid/gtk/appearance.h b/src/hid/gtk/appearance.h
-new file mode 100644
-index 0000000..d4917d7
---- /dev/null
-+++ b/src/hid/gtk/appearance.h
-@@ -0,0 +1,7 @@
-+typedef struct {
-+  float r, g, b;
-+} appearance;
-+
-+appearance *make_appearance (void);
-+void destroy_appearance (appearance *appearance);
-+void appearance_set_color (appearance *appearance, float r, float g, float b);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index 1dbfdac..0eed09e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
