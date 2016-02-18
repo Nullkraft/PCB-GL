@@ -1,0 +1,178 @@
+Bottom: ce683652d194b9d1a04741e075974fe93571d93a
+Top:    845abeef93d8700b1272b843813481d67e0b5ee8
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-18 19:54:17 +0000
+
+Refresh of debug-stuff-looking-into-bad
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 0accd67..9f3b014 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -695,6 +695,9 @@ ArcPoly (ArcType * a, Coord thick)
+   return ArcPolyNoIntersect (a, thick);
+ }
+ 
++void pline_dump (VNODE * v);
++void poly_dump (POLYAREA * p);
++
+ POLYAREA *
+ LinePoly (LineType * L, Coord thick)
+ {
+@@ -763,6 +766,8 @@ LinePoly (LineType * L, Coord thick)
+   if (!(np = ContourToPoly (contour)))
+     return NULL;
+ 
++  poly_dump (np);
++
+   return np;
+ }
+ 
+@@ -1127,10 +1132,28 @@ line_sub_callback (const BoxType * b, void *cl)
+   if (!(np = LinePoly (line, line->Thickness + line->Clearance)))
+     longjmp (info->env, 1);
+ 
++  if (info->batch_size == 2)
++    {
++      printf ("Batch no %i, input:\n",info->batch_size);
++      poly_dump (info->accumulate);
++      printf ("---- subtract from it:\n");
++      poly_dump (np);
++    }
++
+   poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
++
++  if (info->batch_size == 2)
++    {
++      printf ("Ouptut:\n");
++      poly_dump (merged);
++      printf ("-----------\n");
++    }
++
+   info->accumulate = merged;
+   info->batch_size ++;
+ 
++  pcb_printf ("Line %mm, %mm - %mm, %mm\n", line->Point1.X, line->Point1.Y, line->Point2.X, line->Point2.Y);
++
+   if (info->batch_size == SUBTRACT_LINE_BATCH_SIZE)
+     subtract_accumulated (info, polygon);
+ 
+@@ -1202,7 +1225,8 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
+         r +=
+           r_search (layer->line_tree, &region, NULL, line_sub_callback,
+                     &info);
+-        subtract_accumulated (&info, polygon);
++//        subtract_accumulated (&info, polygon);
++      polygon->Clipped = info.accumulate;
+         r +=
+           r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
+ 	r +=
+@@ -1211,7 +1235,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
+       END_LOOP;
+       r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
+       r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+-      subtract_accumulated (&info, polygon);
++//      subtract_accumulated (&info, polygon);
+     }
+   polygon->NoHolesValid = 0;
+   return r;
+diff --git a/src/polygon1.c b/src/polygon1.c
+index b8e71f8..d827a84 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -108,12 +108,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+ 
+ #define error(code)  longjmp(*(e), code)
+ 
+-#undef DEBUG_LABEL
+-#undef DEBUG_ALL_LABELS
+-#undef DEBUG_JUMP
+-#undef DEBUG_GATHER
+-#undef DEBUG_ANGLE
+-#undef DEBUG
++#define DEBUG_LABEL
++#define DEBUG_ALL_LABELS
++#define DEBUG_JUMP
++#define DEBUG_GATHER
++#define DEBUG_ANGLE
++#define DEBUG
+ #ifdef DEBUG
+ #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
+ #else
+@@ -145,7 +145,7 @@ static POLYPARENTAGE no_parentage = {
+ #ifdef DEBUG
+ static char *theState (VNODE * v);
+ 
+-static void
++/*static */void
+ pline_dump (VNODE * v)
+ {
+   VNODE *s, *n;
+@@ -154,7 +154,7 @@ pline_dump (VNODE * v)
+   do
+     {
+       n = NEXT_VERTEX(v);
+-      pcb_fprintf (stderr, "Line [%#mS %#mS %#mS %#mS 10 10 \"%s\"]\n",
++      pcb_fprintf (stderr, "Line [%mn %mn %mn %mn 10 10 \"%s\"]\n",
+ 	       v->point[0], v->point[1],
+ 	       n->point[0], n->point[1], theState (v));
+     }
+@@ -162,8 +162,6 @@ pline_dump (VNODE * v)
+ }
+ #endif
+ 
+-static void pline_dump (VNODE * v);
+-
+ /*static */void
+ poly_dump (POLYAREA * p)
+ {
+@@ -277,8 +275,9 @@ new_descriptor (VNODE * a, char poly, char side)
+   l->angle = ang;
+   assert (ang >= 0.0 && ang <= 4.0);
+ #ifdef DEBUG_ANGLE
+-  DEBUGP ("node on %c at %#mD assigned angle %g on side %c\n", poly,
+-	  a->point[0], a->point[1], ang, side);
++  DEBUGP ("node on %c at %mn, %mn assigned angle %g on side %c\n", poly,
++	  a->point[0], a->point[1], ang * 10000., side);
++  DEBUGP ("That angle would be %f\n", atan2 (v[1], v[0]) * 180. / M_PI);
+ #endif
+   return l;
+ }
+@@ -1147,7 +1146,7 @@ print_labels (PLINE * a)
+ 
+   do
+     {
+-      DEBUGP ("%#mD->%#mD labeled %s\n",
++      DEBUGP ("%mm, %mm -> %mm, %mm labeled %s\n",
+               EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
+                EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
+     }
+@@ -1628,7 +1627,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
+       return TRUE;
+     }
+ #ifdef DEBUG_JUMP
+-  DEBUGP ("jump entering node at %$mD\n", (*curv)->point[0], (*curv)->point[1]);
++  DEBUGP ("jump entering node at %mm, %mm\n", (*curv)->point[0], (*curv)->point[1]);
+ #endif
+   /* Pick the descriptor of the edge we came into this vertex with, then spin (anti?)clock-wise one edge descriptor */
+   if (*cdir == FORW)
+@@ -1647,7 +1646,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
+ 	      (d->side == 'P' && newone == BACKW))
+ 	    {
+ #ifdef DEBUG_JUMP
+-	      DEBUGP ("jump leaving node at %#mD\n",
++	      DEBUGP ("jump leaving node at %mm, %mm\n",
+ 	              EDGE_DIRECTION_VERTEX (e, newone)->point[0], EDGE_DIRECTION_VERTEX (e, newone)->point[1]);
+ #endif
+ 	      *curv = d->parent;
+@@ -1687,7 +1686,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+ 	  poly_InclVertex (PREV_VERTEX (&(*result)->head), newn);
+ 	}
+ #ifdef DEBUG_GATHER
+-      DEBUGP ("gather vertex at %#mD\n", curv->point[0], curv->point[1]);
++      DEBUGP ("gather vertex at %mm, %mm\n", curv->point[0], curv->point[1]);
+ #endif
+       /* Now mark the edge as included.  */
+       newn = VERTEX_DIRECTION_EDGE (curv, dir);
