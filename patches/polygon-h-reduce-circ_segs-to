@@ -1,0 +1,23 @@
+Bottom: 5b4d06a743ef918450355b68a42fe277796d95e2
+Top:    169e75811e0dbb259cc220ee55628ff3cec3869d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-18 20:30:40 +0000
+
+polygon.h: Reduce circ_segs to 8 for debug clarity
+
+
+---
+
+diff --git a/src/polygon.h b/src/polygon.h
+index 369efea..0643765 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -34,7 +34,7 @@
+ 
+ /* Implementation constants */
+ 
+-#define POLY_CIRC_SEGS 40
++#define POLY_CIRC_SEGS 8 //40
+ #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
+ 
+ #if 0
