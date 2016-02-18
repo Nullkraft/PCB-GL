@@ -1,5 +1,5 @@
-Bottom: 948262be915e6f77f3d0e8563470c231e3f34a18
-Top:    90f76f7b8bfd59f6857d1a274d8734fdbe493ab7
+Bottom: 5a527d4d49a67660fc3b7d85d958b085dc8658aa
+Top:    5a527d4d49a67660fc3b7d85d958b085dc8658aa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 18:40:49 +0000
 
@@ -8,27 +8,4 @@ Calculate epsilon estimate for debugging
 
 ---
 
-diff --git a/src/polygon.c b/src/polygon.c
-index 29daa24..16e1096 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -124,6 +124,7 @@ void
- polygon_init (void)
- {
-   struct rlimit limit;
-+  double eps;
- 
-   double cos_ang = cos (2.0 * M_PI / POLY_CIRC_SEGS_F);
-   double sin_ang = sin (2.0 * M_PI / POLY_CIRC_SEGS_F);
-@@ -139,6 +140,11 @@ polygon_init (void)
-   limit.rlim_cur = MIN (limit.rlim_cur, 2000 * 1024 * 1024 /* 2 GiB limit to virtual memory size */);
-   setrlimit (RLIMIT_AS, &limit);
- 
-+  /* Estimate eps on this machine */
-+  eps = 1.;
-+  do eps = 0.5 * eps; while (eps + 1.0 > 1.0);
-+
-+  fprintf (stderr, "Epsilon calculated at %.17e\n", eps);
- }
- 
- Cardinal
+
