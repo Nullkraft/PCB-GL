@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-//#include "step.h"
+#include "step_id.h"
 #include "vertex3d.h"
 
 static int global_vertex3d_count;
