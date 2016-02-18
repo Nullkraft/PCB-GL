@@ -1,0 +1,22 @@
+Bottom: b7388f12c6e329b6ea1d2d807eedafefcc682db4
+Top:    a2b792534dcc5b66c88ff2787c292d09103589ea
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-18 18:03:19 +0000
+
+Refresh of well-on-the-way-to-completely
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 9b91a07..f4688ac 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -15,7 +15,7 @@
+ #include "gui-pinout-preview.h"
+ #include "pcb-printf.h"
+ 
+-#include "hid/step/step_writer.h"
++#include "hid/common/step_id.h"
+ #include "hid/common/quad.h"
+ #include "hid/common/vertex3d.h"
+ #include "hid/common/contour3d.h"
