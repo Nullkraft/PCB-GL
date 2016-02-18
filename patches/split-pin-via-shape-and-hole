@@ -1,7 +1,7 @@
-Bottom: 2e1aaca5faecd98a13cade7306b5d87179144ce3
-Top:    c74ed86b8be8b9c9f8b4e1ab9c268ea55226c7a0
+Bottom: c2cd4456216503968681031fe38f13049df60c3e
+Top:    ef0fec57e0917df136b509a700e3fbb39d125d91
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 16:25:12 +0000
+Date:   2016-02-18 16:56:21 +0000
 
 Split pin/via shape and hole drawing into different functions
 
@@ -304,10 +304,10 @@ index 622fb69..e7867de 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e0aeba9..9796fc0 100644
+index 2100deb..36cf217 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1289,9 +1289,17 @@ static void
+@@ -1286,9 +1286,17 @@ static void
  _draw_pv (PinType *pv, bool draw_hole)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
@@ -327,7 +327,7 @@ index e0aeba9..9796fc0 100644
  
    if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
      _draw_pv_name (pv);
-@@ -1578,9 +1586,9 @@ clearPin_callback (const BoxType * b, void *cl)
+@@ -1575,9 +1583,9 @@ clearPin_callback (const BoxType * b, void *cl)
  {
    PinType *pin = (PinType *) b;
    if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
@@ -339,7 +339,7 @@ index e0aeba9..9796fc0 100644
    return 1;
  }
  
-@@ -1598,7 +1606,7 @@ static int
+@@ -1595,7 +1603,7 @@ static int
  clearPin_callback_solid (const BoxType * b, void *cl)
  {
    PinType *pin = (PinType *) b;

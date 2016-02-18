@@ -1,7 +1,7 @@
-Bottom: b4ab32ca9eccbbfac221752175837529e5836ec9
-Top:    1bcb6e4a67dc7ffd9274f01fd91cfeb87bf0c6bc
+Bottom: fc4ecd4ec374f12ac23302244e454070f3810f79
+Top:    ed979d446133c943031a073ea6f3a918b1ef9744
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 16:25:12 +0000
+Date:   2016-02-18 16:56:21 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->{start,end}_layer() functions
 
@@ -103,10 +103,10 @@ index 8024e84..5fac157 100644
    if (group >= 0 && group < max_group)
      return is_layer_group_visible (group);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ed30166..818a939 100644
+index ff07d65..edc53c6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -304,7 +304,7 @@ is_layer_group_visible (int group)
+@@ -301,7 +301,7 @@ is_layer_group_visible (int group)
  }
  
  int
