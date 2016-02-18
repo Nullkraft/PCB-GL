@@ -587,16 +587,25 @@ draw_octagon_poly (hidGC gc, Coord X, Coord Y,
 }
 
 void
-common_gui_draw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
+common_gui_draw_pcb_pv (hidGC gc, PinType *pv, bool mask)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB))
-    hid_draw__thin_pcb_pv (fg_gc, fg_gc, pv, drawHole, mask); /* All thindraw callers used the same GC for fg and bg */
+    hid_draw__thin_pcb_pv (gc, pv, mask);
   else
-    hid_draw__fill_pcb_pv (fg_gc, bg_gc, pv, drawHole, mask);
+    hid_draw__fill_pcb_pv (gc, pv, mask);
 }
 
 void
-common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
+common_gui_draw_pcb_pv_hole (hidGC gc, PinType *pv)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    hid_draw__thin_pcb_pv_hole (gc, pv);
+  else
+    hid_draw__fill_pcb_pv_hole (gc, pv);
+}
+
+void
+common_fill_pcb_pv (hidGC gc, PinType *pv, bool mask)
 {
   Coord w = mask ? pv->Mask : pv->Thickness;
   Coord r = w / 2;
@@ -604,14 +613,7 @@ common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool m
   if (TEST_FLAG (HOLEFLAG, pv))
     {
       if (mask)
-	hid_draw_fill_circle (bg_gc, pv->X, pv->Y, r);
-      if (drawHole)
-        {
-          hid_draw_fill_circle (bg_gc, pv->X, pv->Y, r);
-          hid_draw_set_line_cap (fg_gc, Round_Cap);
-          hid_draw_set_line_width (fg_gc, 0);
-          hid_draw_arc (fg_gc, pv->X, pv->Y, r, r, 0, 360);
-        }
+        hid_draw_fill_circle (gc, pv->X, pv->Y, r);
       return;
     }
 
@@ -622,72 +624,83 @@ common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool m
       Coord r = l + w;
       Coord t = b + w;
 
-      hid_draw_fill_rect (fg_gc, l, b, r, t);
+      hid_draw_fill_rect (gc, l, b, r, t);
     }
   else if (TEST_FLAG (OCTAGONFLAG, pv))
-    draw_octagon_poly (fg_gc, pv->X, pv->Y, w, false);
+    draw_octagon_poly (gc, pv->X, pv->Y, w, false);
   else /* draw a round pin or via */
-    hid_draw_fill_circle (fg_gc, pv->X, pv->Y, r);
-
-  /* and the drilling hole  (which is always round) */
-  if (drawHole)
-    hid_draw_fill_circle (bg_gc, pv->X, pv->Y, pv->DrillingHole / 2);
+    hid_draw_fill_circle (gc, pv->X, pv->Y, r);
 }
 
 void
-common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
+common_fill_pcb_pv_hole (hidGC gc, PinType *pv)
 {
-  Coord w = mask ? pv->Mask : pv->Thickness;
-  Coord r = w / 2;
+  Coord r = pv->DrillingHole / 2;
+
+  /* XXX */ hidGC bg_gc = gc;
+  /* XXX */ hidGC fg_gc = gc;
+  /* XXX: Old code had an opportunity to outline the foreground of a pure hole after clearing away the background... we now cannot */
+
+  hid_draw_fill_circle (gc, pv->X, pv->Y, r);
 
   if (TEST_FLAG (HOLEFLAG, pv))
     {
-      if (mask)
-	hid_draw_arc (fg_gc, pv->X, pv->Y, r, r, 0, 360);
-      if (drawHole)
-        {
-	  r = pv->DrillingHole / 2;
-          hid_draw_set_line_cap (bg_gc, Round_Cap);
-          hid_draw_set_line_width (bg_gc, 0);
-          hid_draw_arc (bg_gc, pv->X, pv->Y, r, r, 0, 360);
-        }
-      return;
-    }
-
-  if (TEST_FLAG (SQUAREFLAG, pv))
-    {
-      Coord l = pv->X - r;
-      Coord b = pv->Y - r;
-      Coord r = l + w;
-      Coord t = b + w;
-
-      hid_draw_set_line_cap (fg_gc, Round_Cap);
-      hid_draw_set_line_width (fg_gc, 0);
-      hid_draw_line (fg_gc, r, t, r, b);
-      hid_draw_line (fg_gc, l, t, l, b);
-      hid_draw_line (fg_gc, r, t, l, t);
-      hid_draw_line (fg_gc, r, b, l, b);
-
-    }
-  else if (TEST_FLAG (OCTAGONFLAG, pv))
-    {
-      draw_octagon_poly (fg_gc, pv->X, pv->Y, w, true);
-    }
-  else /* draw a round pin or via */
-    {
+      g_return_if_fail (pv->Thickness == pv->DrillingHole);
       hid_draw_set_line_cap (fg_gc, Round_Cap);
       hid_draw_set_line_width (fg_gc, 0);
       hid_draw_arc (fg_gc, pv->X, pv->Y, r, r, 0, 360);
     }
+}
 
-  /* and the drilling hole  (which is always round */
-  if (drawHole)
+void
+common_thindraw_pcb_pv (hidGC gc, PinType *pv, bool mask)
+{
+  Coord w = mask ? pv->Mask : pv->Thickness;
+  Coord r = w / 2;
+
+  if (TEST_FLAG (HOLEFLAG, pv))
     {
-      hid_draw_set_line_cap (bg_gc, Round_Cap);
-      hid_draw_set_line_width (bg_gc, 0);
-      hid_draw_arc (bg_gc, pv->X, pv->Y,
-                    pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
+      if (mask)
+        /* XXX: NOT SETTING LINE CAP OR WIDTH!! */
+	hid_draw_arc (gc, pv->X, pv->Y, r, r, 0, 360);
+      return;
     }
+
+  if (TEST_FLAG (SQUAREFLAG, pv))
+    {
+      Coord l = pv->X - r;
+      Coord b = pv->Y - r;
+      Coord r = l + w;
+      Coord t = b + w;
+
+      hid_draw_set_line_cap (gc, Round_Cap);
+      hid_draw_set_line_width (gc, 0);
+      hid_draw_line (gc, r, t, r, b);
+      hid_draw_line (gc, l, t, l, b);
+      hid_draw_line (gc, r, t, l, t);
+      hid_draw_line (gc, r, b, l, b);
+
+    }
+  else if (TEST_FLAG (OCTAGONFLAG, pv))
+    {
+      draw_octagon_poly (gc, pv->X, pv->Y, w, true);
+    }
+  else /* draw a round pin or via */
+    {
+      hid_draw_set_line_cap (gc, Round_Cap);
+      hid_draw_set_line_width (gc, 0);
+      hid_draw_arc (gc, pv->X, pv->Y, r, r, 0, 360);
+    }
+}
+
+void
+common_thindraw_pcb_pv_hole (hidGC gc, PinType *pv)
+{
+  Coord r = pv->DrillingHole / 2;
+
+  hid_draw_set_line_cap (gc, Round_Cap);
+  hid_draw_set_line_width (gc, 0);
+  hid_draw_arc (gc, pv->X, pv->Y, r, r, 0, 360);
 }
 
 void
@@ -706,6 +719,8 @@ common_draw_helpers_class_init (HID_DRAW_CLASS *klass)
   klass->_thindraw_pcb_pad     = common_thindraw_pcb_pad;
   klass->_fill_pcb_pv          = common_fill_pcb_pv;
   klass->_thindraw_pcb_pv      = common_thindraw_pcb_pv;
+  klass->_fill_pcb_pv_hole     = common_fill_pcb_pv_hole;
+  klass->_thindraw_pcb_pv_hole = common_thindraw_pcb_pv_hole;
 }
 
 void
