@@ -157,6 +157,10 @@ PCB_SRCS = \
 	hid/common/draw_helpers.h \
 	hid/common/hid_resource.c \
 	hid/common/hid_resource.h \
+	hid/common/appearance.c \
+	hid/common/appearance.h \
+	hid/common/contour3d.c \
+	hid/common/contour3d.h \
 	hid/common/edge3d.c \
 	hid/common/edge3d.h \
 	hid/common/face3d.c \
@@ -165,9 +169,10 @@ PCB_SRCS = \
 	hid/common/object3d.h \
 	hid/common/quad.c \
 	hid/common/quad.h \
+	hid/common/step_id.h \
 	hid/common/vertex3d.c \
 	hid/common/vertex3d.h \
-	hid/hidint.h 
+	hid/hidint.h
 
 EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
 nodist_EXTRA_pcb_SOURCES = dummy.cpp
@@ -475,7 +480,11 @@ LIBSTEP_SRCS = \
 	hid/step/assembly.cpp \
 	hid/step/assembly.h \
 	hid/step/utils.cpp \
-	hid/step/utils.h
+	hid/step/utils.h \
+	hid/step/step_writer.c \
+	hid/step/step_writer.h \
+	hid/step/object3d_step.c \
+	hid/step/object3d_step.h
 libstep_a_SOURCES = ${LIBSTEP_SRCS} hid/step/step_lists.h
 
 pcb_LDFLAGS = \
