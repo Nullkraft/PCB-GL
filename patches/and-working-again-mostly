@@ -1,4 +1,4 @@
-Bottom: b7388f12c6e329b6ea1d2d807eedafefcc682db4
+Bottom: a2b792534dcc5b66c88ff2787c292d09103589ea
 Top:    7f6907fb188abab268d7ca1a889162851cdce1c6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 17:37:13 +0000
@@ -39,19 +39,6 @@ index 171e37f..405f9ab 100644
  
    g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
  }
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9b91a07..f4688ac 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -15,7 +15,7 @@
- #include "gui-pinout-preview.h"
- #include "pcb-printf.h"
- 
--#include "hid/step/step_writer.h"
-+#include "hid/common/step_id.h"
- #include "hid/common/quad.h"
- #include "hid/common/vertex3d.h"
- #include "hid/common/contour3d.h"
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 index 70ae407..2206b3a 100644
 --- a/src/hid/step/object3d_step.c
