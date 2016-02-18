@@ -28,16 +28,10 @@
 #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
 
 #ifdef REVERSED_PCB_CONTOURS
-#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
-#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((pcb)->MaxHeight - (y)))
-
 #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
 #define STEP_Y_TO_COORD(pcb, y) ((pcb)->MaxHeight - MM_TO_COORD((y)))
 #else
 /* XXX: BROKEN UPSIDE DOWN OUTPUT */
-#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM((x)))
-#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((y)))
-
 #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
 #define STEP_Y_TO_COORD(pcb, y) (MM_TO_COORD((y)))
 #endif
@@ -56,7 +50,7 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
 }
 
 static step_file *
-start_ap214_file (char *filename)
+start_ap214_file (const char *filename)
 {
   FILE *f;
   time_t currenttime;
@@ -341,7 +335,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
 }
 
 void
-object3d_list_export_to_step_assy (GList *objects, char *filename)
+object3d_list_export_to_step_assy (GList *objects, const char *filename)
 {
   step_file *step;
   step_id comp_shape_definition_representation;
@@ -384,179 +378,10 @@ object3d_list_export_to_step_assy (GList *objects, char *filename)
   finish_ap214_file (step);
 
   /* XXX: TODO: MAKE AN ASSEMBLY PRODUCT AND GATHER THE ABOVE PIECES INSIDE IT */
-#if 0
-    // RELATE THE PRODUCT STRUCTURE --------------------
-    // Find the product definitions by following the definition
-    // attribute of the shape definition representations.
-    stp_product_definition * asm_pd =  get_property_pdef (asm_sdr);
-    stp_product_definition * comp_pd = get_property_pdef (comp_sdr);
-
-    // Create the association between the configuration management
-    // description of the assembly and component.
-    //
-    stp_next_assembly_usage_occurrence* nauo = createCMAsm(
-	"unique ID",    // any unique id string
-	"left tire",    // something that identifies the usage.
-	"",		// description, "" is fine.
-	0,     		// Optional reference_designator string used
-			// to separate multiple uses of a component.
-	asm_pd, comp_pd
-	);
-
-
-    // RELATE THE GEOMETRY --------------------
-    // We need locations for the assembly and the component, so we
-    // create some example axis2_placements
-    //
-    stp_cartesian_point* p1 = pnew stp_cartesian_point;
-    p1-> name("");
-    p1-> coordinates()->add(0);
-    p1-> coordinates()->add(0);
-    p1-> coordinates()->add(0);
-    stp_axis2_placement_3d* asmAxis = pnew stp_axis2_placement_3d("", p1, 0, 0);
-
-    stp_cartesian_point* p2 = pnew stp_cartesian_point;
-    p2-> name("");
-    p2-> coordinates()->add(0);
-    p2-> coordinates()->add(0);
-    p2-> coordinates()->add(0);
-    stp_axis2_placement_3d* compAxis = pnew stp_axis2_placement_3d("", p2, 0, 0);
-
-    // Create the association between the geometry description of the
-    // assembly and component.  There are two distinct ways to relate
-    // the geometry.
-    //
-    if (useMappedItem) {
-	createGeomAsmMI(
-	    asm_sdr->used_representation(), asmAxis,
-	    comp_sdr->used_representation(), compAxis, 
-	    nauo);
-    } else {
-	createGeomAsmCDSR(
-	    asm_sdr->used_representation(), asmAxis,
-	    comp_sdr->used_representation(), compAxis, 
-	    nauo);
-    }
-
-
-  // Given two product_definitions this creates an assembly between them.
-  stp_next_assembly_usage_occurrence* createCMAsm(
-      const char* asm_id,
-      const char* asm_usage,
-      const char* asm_desc,
-      const char* ref_desig, 
-      stp_product_definition* asm_pdef, 
-      stp_product_definition* comp_pdef
-      )
-  {
-      // Create a next_assembly_usage occurrence to link the two.
-      stp_next_assembly_usage_occurrence* nauo = 
-          pnew stp_next_assembly_usage_occurrence();
-
-      // The id has no standard mapping, but it should be unique.
-      nauo->id (asm_id);
-
-      // The name should contain something that identifies the usage.
-      nauo->name (asm_usage);
-
-      // There's no mapping for the description, "" is fine..
-      nauo->description (asm_desc);
-
-      // The reference_designator is optional.  When specified, it
-      // should contain a unique location for the assembly.
-      nauo->reference_designator (ref_desig);
-
-      // The relating_product_definition is the assembly.
-      nauo->relating_product_definition (asm_pdef);
-
-      // The related_product_definition is the component.
-      nauo->related_product_definition (comp_pdef);
-
-      return nauo;
-  }
-
-
-  // This method should be used if the shape types are different.  Given
-  // two shape_representations and their axis2_placements, this creates
-  // the geometric portion of the assembly using a
-  // context_dependent_shape_representation.
-  //
-  void createGeomAsmCDSR(
-      stp_representation* asmSR, 
-      stp_representation_item* asmAxis,
-      stp_representation* compSR,
-      stp_representation_item* compAxis,
-      stp_next_assembly_usage_occurrence* nauo
-      )
-  {
-      /* We pass in representations to avoid having to do casts,
-       * but this should only be used to relate instances of the
-       * shape representation subtype.
-       */
-      if (!asmSR->  isa (ROSE_DOMAIN(stp_shape_representation)) ||
-          !compSR-> isa (ROSE_DOMAIN(stp_shape_representation)))
-      {
-          printf ("createGeomAsmCDSR: representations must be instances of");
-          printf ("  the shape representation subtype");
-          return;
-      }
-
-      // Create a product_definition_shape to link the cdsr to the nauo
-      stp_product_definition_shape* pds = pnew stp_product_definition_shape();
-
-      // There's no standard mapping for the name or description.
-      pds->name("");
-      pds->description("");
-
-      // The definition should point to next_assembly_usage_occurrence.
-      stp_characterized_definition* cd = pnew stp_characterized_definition();
-      stp_characterized_product_definition* cpd = 
-          pnew stp_characterized_product_definition();
-      cd->_characterized_product_definition(cpd);
-      cpd->_product_definition_relationship(nauo);
-      pds->definition(cd);
-
-      // Create a context_dependent_shape_representation.
-      stp_context_dependent_shape_representation* cdsr = 
-          pnew stp_context_dependent_shape_representation();
-
-      // The represented_product_relation is the pds.
-      cdsr->represented_product_relation(pds);
-
-      // A complex entity is used for the shape_representation_relationship.
-      stp_representation_relationship_with_transformation_and_shape_representation_relationship * repRel = 
-          pnew stp_representation_relationship_with_transformation_and_shape_representation_relationship();
-      cdsr->representation_relation(repRel);
-
-      // The name and description attributes have no standard mapping
-      repRel->name("");
-      repRel->description("");
-
-      // rep_1 is the assembly shape and rep_2 is the component.
-      repRel->rep_1(asmSR);
-      repRel->rep_2(compSR);
-
-      // The transformation_operator should be an item_defined_transform.
-      stp_item_defined_transformation* xform = pnew stp_item_defined_transformation();
-      stp_transformation* trans = pnew stp_transformation();
-      trans->_item_defined_transformation(xform);
-      repRel->transformation_operator(trans);
-
-      // The name and description fields have no standard mapping.
-      xform->name("");
-      xform->description("");
-
-      // The first transform_item is the axis of the assembly and the second is
-      // the component.
-      xform->transform_item_1(asmAxis);
-      xform->transform_item_2(compAxis);
-  }
-#endif
-
 }
 
 void
-object3d_export_to_step (object3d *object, char *filename)
+object3d_export_to_step (object3d *object, const char *filename)
 {
   step_file *step;
 
