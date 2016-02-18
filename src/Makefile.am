@@ -159,7 +159,7 @@ PCB_SRCS = \
 	hid/common/hid_resource.h \
 	hid/hidint.h 
 
-EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
+EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} ${CAIRO_SRCS} toporouter.c toporouter.h
 DBUS_SRCS= \
 	dbus-pcbmain.c \
 	dbus-pcbmain.h \
@@ -199,6 +199,10 @@ GL_SRCS= \
 	borast/borast-wideint.c \
 	borast/borast-wideint-private.h \
 	borast/borast-wideint-type-private.h
+
+CAIRO_SRCS= \
+	hid/common/hidcairo.c \
+	hid/common/hidcairo.h
 
 BUILT_SOURCES = \
 	core_lists.h \
@@ -373,6 +377,15 @@ PCB_SRCS+=	${GL_SRCS}
 LIBGTK_SRCS+=	${LIBGTK_GL_SRCS}
 else
 LIBGTK_SRCS+=	${LIBGTK_GDK_SRCS}
+endif
+
+# If we are building with Cairo support, we need some extra files
+if USE_GL
+#CAIRO
+PCB_SRCS+=	${CAIRO_SRCS}
+#LIBGTK_SRCS+=	${LIBGTK_CAIRO_SRCS}
+else
+#LIBGTK_SRCS+=	${LIBGTK_GDK_SRCS}
 endif
 
 # If we are building on win32, then compile in some icons for the
