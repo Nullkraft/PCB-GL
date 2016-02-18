@@ -1,4 +1,4 @@
-Bottom: 8d4366cc907993666970d4d3cd7ad6f10cbde8d7
+Bottom: b1a43be6ff8dbdfe6dead856d82578df43d66f38
 Top:    424afdaa5d93e698f2fafc31c659dd2d709b81c7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 17:14:05 +0000
@@ -111,7 +111,7 @@ index e69de29..6200161 100644
 +void destroy_face3d (face3d *face);
 +void face3d_add_contour (face3d *face, edge_ref contour);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index ddcf35e..0c3ad02 100644
+index 0a264ce..0c3ad02 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -3,10 +3,13 @@
@@ -251,8 +251,7 @@ index ddcf35e..0c3ad02 100644
 +}
 +
  void
--object3d_export_to_step (object3d *object, char *filename)
-+object3d_export_to_step (object3d *object, const char *filename)
+ object3d_export_to_step (object3d *object, const char *filename)
  {
    FILE *f;
    time_t currenttime;
@@ -264,7 +263,7 @@ index ddcf35e..0c3ad02 100644
  
    f = fopen (filename, "w");
    if (f == NULL)
-@@ -312,463 +369,146 @@ object3d_export_to_step (object3d *object, char *filename)
+@@ -312,463 +369,146 @@ object3d_export_to_step (object3d *object, const char *filename)
                "#20 = SHAPE_DEFINITION_REPRESENTATION ( #9, #19 ) ;\n",
                "test_pcb_absr_name");
  
@@ -953,10 +952,10 @@ index ddcf35e..0c3ad02 100644
  
  void
 diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
-index 4f40a3b..9a34fa8 100644
+index b967543..9a34fa8 100644
 --- a/src/hid/common/object3d.h
 +++ b/src/hid/common/object3d.h
-@@ -1,13 +1,21 @@
+@@ -1,12 +1,20 @@
  typedef struct {
 -  edge_ref first_edge;
    int id;
@@ -978,9 +977,7 @@ index 4f40a3b..9a34fa8 100644
 +void object3d_add_face (object3d *object, face3d *face);
  object3d *object3d_create_test_cube (void);
  object3d *object3d_from_board_outline (void);
--void object3d_export_to_step (object3d *object, char *filename);
-+void object3d_export_to_step (object3d *object, const char *filename);
- void object3d_test_board_outline (void);
+ void object3d_export_to_step (object3d *object, const char *filename);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index 1dbfdac..0eed09e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
