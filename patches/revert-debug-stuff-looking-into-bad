@@ -1,5 +1,5 @@
 Bottom: 31b8d75bedf9918aeec79281da734ce63b71ac6f
-Top:    7ddcef49ba6a7c357b758b02cc09f9d5a8f15ee5
+Top:    324dca7a9df2b8ab8a6b959820c1e86638cb8b4e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 19:37:58 +0000
 
@@ -84,7 +84,7 @@ index 9f3b014..0accd67 100644
    polygon->NoHolesValid = 0;
    return r;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 6c7f25d..cc60364 100644
+index 6c7f25d..9089395 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -109,12 +109,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -106,7 +106,7 @@ index 6c7f25d..cc60364 100644
  #ifdef DEBUG
  #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
  #else
-@@ -154,14 +154,14 @@ pline_dump (VNODE * v)
+@@ -154,7 +154,7 @@ pline_dump (VNODE * v)
    do
      {
        n = NEXT_VERTEX(v);
@@ -115,14 +115,6 @@ index 6c7f25d..cc60364 100644
  	       v->point[0], v->point[1],
  	       n->point[0], n->point[1], theState (v));
      }
-   while ((v = NEXT_VERTEX(v)) != s);
- }
- 
--/*static */void
-+/* static */ void
- poly_dump (POLYAREA * p)
- {
-   POLYAREA *f = p;
 @@ -274,9 +274,8 @@ new_descriptor (VNODE * a, char poly, char side)
    l->angle = ang;
    assert (ang >= 0.0 && ang <= 4.0);
