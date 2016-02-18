@@ -327,6 +327,7 @@ libgtk_a_CPPFLAGS = -I./hid/gtk
 LIBGTK_SRCS = \
 	dolists.h \
 	hid/hidint.h \
+	hid/gtk/bga-wizard.c \
 	hid/gtk/ghid-cell-renderer-visibility.c \
 	hid/gtk/ghid-cell-renderer-visibility.h \
 	hid/gtk/ghid-coord-entry.c \
