@@ -1,5 +1,5 @@
-Bottom: febec09db550799746fdcd9026a0285025ce0304
-Top:    44ce992fca16ee5858ce8f25b21e0bad9ff898bf
+Bottom: d3144463c68727fe61c9f6b6166c2ceec6c4c6b8
+Top:    2e368d668c9873082e8de43575ca0c9acecde19d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 18:40:48 +0000
 
@@ -79,10 +79,10 @@ index c892307..199bc59 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 4129240..29daa24 100644
+index bf37a0d..d30d412 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -293,7 +293,8 @@ ContourToPoly (PLINE * contour)
+@@ -292,7 +292,8 @@ ContourToPoly (PLINE * contour)
  }
  
  static void
@@ -92,7 +92,7 @@ index 4129240..29daa24 100644
  {
    /* We don't re-add a point at v, nor do we add the last point, sweep degrees around from (X,Y)-v */
    double e1, e2, t1;
-@@ -393,8 +394,10 @@ original_poly (PolygonType * p)
+@@ -392,8 +393,10 @@ original_poly (PolygonType * p)
        if (p->Points[n].included_angle != 0)
          {
            Cardinal next_n;
@@ -106,10 +106,10 @@ index 4129240..29daa24 100644
            next_n = n + 1;
            if (next_n == p->PointN ||
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 6982381..f239210 100644
+index f16cb2f..8c34ee2 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -194,7 +194,8 @@ poly_dump (POLYAREA * p)
+@@ -192,7 +192,8 @@ poly_dump (POLYAREA * p)
  }
  
  static VNODE *
@@ -119,7 +119,7 @@ index 6982381..f239210 100644
  {
    VNODE *res;
    Coord *c;
-@@ -228,7 +229,8 @@ poly_CreateNode (Vector v)
+@@ -226,7 +227,8 @@ poly_CreateNode (Vector v)
  }
  
  VNODE *
@@ -129,7 +129,7 @@ index 6982381..f239210 100644
  {
  //  return poly_CreateNodeFull (v, false /*true*/, cx, cy, radius);
    return poly_CreateNodeFull (v, true, cx, cy, radius);
-@@ -1937,7 +1939,7 @@ print_labels (PLINE * a)
+@@ -1934,7 +1936,7 @@ print_labels (PLINE * a)
  
    do
      {

@@ -1,5 +1,5 @@
-Bottom: 9756836419ec611fa83af4140320eab67e8da3cc
-Top:    6b394301ad6b8e28efbb5aebdd8e647fed3699f0
+Bottom: ce2cce30514505144d37a13b1eeffe068cdec112
+Top:    c15c1e08d9d6158b69382fbc04600e9414b4bb05
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 18:40:48 +0000
 
@@ -356,7 +356,7 @@ index 678c7cf..c892307 100644
      CVCList *prev, *next, *head;
      char poly, side;
 diff --git a/src/polygon.c b/src/polygon.c
-index 9557b1f..4129240 100644
+index 601464a..bf37a0d 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -115,7 +115,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -368,7 +368,7 @@ index 9557b1f..4129240 100644
  
  static double rotate_circle_seg[4];
  static double bw_rotate_circle_seg[4];
-@@ -305,7 +305,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
+@@ -304,7 +304,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
        c->head.prev->point[1] == v[1])
      {
        /* Re-use any existing vertex point we got lumbered with (if it matches the coordinate we want) */
@@ -377,7 +377,7 @@ index 9557b1f..4129240 100644
        c->head.prev->cx = X;
        c->head.prev->cy = Y;
        c->head.prev->radius = radius;
-@@ -517,7 +517,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+@@ -516,7 +516,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
  {
    double e1, e2, t1;
    int i, range;
@@ -386,7 +386,7 @@ index 9557b1f..4129240 100644
  
    /* XXX: Circle already has the first node added */
  //  if (fraction > 1)
-@@ -527,7 +527,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+@@ -526,7 +526,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
        c->head.prev->point[1] == v[1])
      {
        /* Re-use any existing vertex point we got lumbered with (if it matches the coordinate we want) */
@@ -396,7 +396,7 @@ index 9557b1f..4129240 100644
        c->head.prev->cy = Y;
        c->head.prev->radius = radius;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 65b3b58..9b33ae2 100644
+index 92d41e7..2b36431 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -75,8 +75,10 @@ double vect_dist2 (Vector v1, Vector v2);
@@ -426,7 +426,7 @@ index 65b3b58..9b33ae2 100644
  #ifdef DEBUG
  #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
  #else
-@@ -228,7 +230,8 @@ poly_CreateNode (Vector v)
+@@ -226,7 +228,8 @@ poly_CreateNode (Vector v)
  VNODE *
  poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
  {
@@ -436,7 +436,7 @@ index 65b3b58..9b33ae2 100644
  }
  
  /***************************************************************/
-@@ -251,29 +254,29 @@ node_add_single (VNODE * dest, Vector po)
+@@ -249,29 +252,29 @@ node_add_single (VNODE * dest, Vector po)
  {
    VNODE *p;
  
@@ -473,7 +473,7 @@ index 65b3b58..9b33ae2 100644
    if (p == NULL)
      return NULL;
  
-@@ -291,6 +294,27 @@ node_add_single (VNODE * dest, Vector po)
+@@ -289,6 +292,27 @@ node_add_single (VNODE * dest, Vector po)
  #define ISECT_BAD_PARAM (-1)
  #define ISECT_NO_MEMORY (-2)
  
@@ -501,7 +501,7 @@ index 65b3b58..9b33ae2 100644
  
  /*
  new_descriptor
-@@ -310,41 +334,108 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -308,41 +332,108 @@ new_descriptor (VNODE * a, char poly, char side)
    l->poly = poly;
    l->side = side;
    l->next = l->prev = l;
@@ -641,7 +641,7 @@ index 65b3b58..9b33ae2 100644
      }
    assert (!vect_equal (v, vect_zero));
    dx = fabs ((double) v[0]);
-@@ -380,6 +471,10 @@ static int compare_cvc_nodes (CVCList *a, CVCList *b)
+@@ -378,6 +469,10 @@ static int compare_cvc_nodes (CVCList *a, CVCList *b)
      return -1;
    else if (a->angle > b->angle)
      return 1;
@@ -652,7 +652,7 @@ index 65b3b58..9b33ae2 100644
    else
      return 0;
  }
-@@ -421,6 +516,7 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
+@@ -419,6 +514,7 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
  	      newone->head = l->head;
  	      break;
  	    }
@@ -660,7 +660,7 @@ index 65b3b58..9b33ae2 100644
  	  if (l->head->parent->point[0] == start->parent->point[0]
  	      && l->head->parent->point[1] == start->parent->point[1])
  	    {
-@@ -504,6 +600,20 @@ node_add_single_point (VNODE * a, Vector p)
+@@ -502,6 +598,20 @@ node_add_single_point (VNODE * a, Vector p)
    return new_node;
  }				/* node_add_point */
  
@@ -681,7 +681,7 @@ index 65b3b58..9b33ae2 100644
  /*
  edge_label
   (C) 2006 harry eaton
-@@ -559,7 +669,8 @@ edge_label (VNODE * pn)
+@@ -557,7 +667,8 @@ edge_label (VNODE * pn)
         * Shared edges should be geometrically identical (but may be in opposite directions).
         */
        assert (EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side)->point[0] == EDGE_FORWARD_VERTEX (pn)->point[0] &&
@@ -691,7 +691,7 @@ index 65b3b58..9b33ae2 100644
  
        /* SHARED is the same direction case,
         * SHARED2 is the opposite direction case.
-@@ -842,51 +953,37 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -840,51 +951,37 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
    assert (!s1->v->is_round);
    assert (!s2->v->is_round);
  
@@ -766,7 +766,7 @@ index 65b3b58..9b33ae2 100644
    /* ... */
    if (cnt == 2)
      {
-@@ -898,14 +995,14 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -896,14 +993,14 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
        if (s1->v->p0 > s1_i2 || s1_i2 > s1->v->p1)
          {
  //          printf ("  Second intersection is off the first line bounds\n");
@@ -783,7 +783,7 @@ index 65b3b58..9b33ae2 100644
            cnt--;
          }
      }
-@@ -914,6 +1011,8 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -912,6 +1009,8 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
    if (s1->v->p0 > s1_i1 || s1_i1 > s1->v->p1)
      {
  //      printf ("  First intersection is off the first line bounds\n");
@@ -792,7 +792,7 @@ index 65b3b58..9b33ae2 100644
        cnt--;
        /* Copy second intersection details to first */
        Vcopy (v1, v2);
-@@ -924,6 +1023,8 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -922,6 +1021,8 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
    else if (s2->v->p0 > s2_i1 || s2_i1 > s2->v->p1)
      {
  //      printf ("  First intersection is off the second line bounds\n");
@@ -801,7 +801,7 @@ index 65b3b58..9b33ae2 100644
        cnt--;
        /* Copy second intersection details to first */
        Vcopy (v1, v2);
-@@ -933,7 +1034,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -931,7 +1032,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
  
    if (cnt == 0)
      {
@@ -810,7 +810,7 @@ index 65b3b58..9b33ae2 100644
        return 0;
      }
  
-@@ -949,7 +1050,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -947,7 +1048,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
        bool done_insert_on_s1 = insert_vertex_in_seg (i, s1, cnt > 1 ? v2 : v1, cnt > 1 ? s1_i2 : s1_i1); /* Was s2 */
        bool done_insert_on_s2 = insert_vertex_in_seg (i, s2, cnt > 1 ? v2 : v1, cnt > 1 ? s2_i2 : s2_i1); /* Was s1 */
  
@@ -819,7 +819,7 @@ index 65b3b58..9b33ae2 100644
  
        /* Skip any remaining r_search hits against segment i, as any futher
         * intersections will be rejected until the next pass anyway.
-@@ -963,6 +1064,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -961,6 +1062,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
         */
        if (done_insert_on_s1 || done_insert_on_s2)
          return 0;
@@ -827,7 +827,7 @@ index 65b3b58..9b33ae2 100644
      }
  
    return 0;
-@@ -982,37 +1084,63 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -980,37 +1082,63 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
    assert (!s2->v->is_round);
  
    cnt = circle_line_intersect ((double)s1->v->cx, (double)s1->v->cy, (double)s1->v->radius,
@@ -902,7 +902,7 @@ index 65b3b58..9b33ae2 100644
          {
            printf ("  Second intersection is out of line bounds, m2 = %f\n", m2);
            cnt--;
-@@ -1023,9 +1151,9 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1021,9 +1149,9 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
            Angle m2_angle;
            Angle m2_delta;
  
@@ -915,7 +915,7 @@ index 65b3b58..9b33ae2 100644
  
            m2_angle = atan2 ((v2[1] - s1->v->cy), -(v2[0] - s1->v->cx)) / M180;
            m2_delta = m2_angle - start_angle;
-@@ -1034,18 +1162,24 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1032,18 +1160,24 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
            if (m2_delta < -180.) m2_delta += 360.;
  
            pcb_printf ("  Second intersection is at (%mm, %mm), angle %f\n", v2[0], v2[1], m2_angle);
@@ -944,7 +944,7 @@ index 65b3b58..9b33ae2 100644
      {
        printf ("  First intersection is out of line bounds, m1 = %f\n", m1);
        cnt--;
-@@ -1057,9 +1191,15 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1055,9 +1189,15 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
        Angle m1_angle;
        Angle m1_delta;
  
@@ -960,7 +960,7 @@ index 65b3b58..9b33ae2 100644
  
        m1_angle = atan2 ((v1[1] - s1->v->cy), -(v1[0] - s1->v->cx)) / M180;
        m1_delta = m1_angle - start_angle;
-@@ -1068,11 +1208,15 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1066,11 +1206,15 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
        if (m1_delta < -180.) m1_delta += 360.;
  
        pcb_printf ("  First intersection is at (%mm, %mm), angle %f\n", v1[0], v1[1], m1_angle);
@@ -979,7 +979,7 @@ index 65b3b58..9b33ae2 100644
                    m1_angle, m1_delta, delta_angle);
            cnt --;
            m1 = m2;
-@@ -1097,8 +1241,8 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1095,8 +1239,8 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
  
    for (; cnt; cnt--)
      {
@@ -990,7 +990,7 @@ index 65b3b58..9b33ae2 100644
  
        printf ("\n");
  
-@@ -1114,6 +1258,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1112,6 +1256,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
         */
        if (done_insert_on_s1 || done_insert_on_s2)
          return 0;
@@ -998,7 +998,7 @@ index 65b3b58..9b33ae2 100644
      }
  
    return 0;
-@@ -1122,12 +1267,195 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1120,12 +1265,195 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
  static int
  seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
  {
@@ -1195,7 +1195,7 @@ index 65b3b58..9b33ae2 100644
  }
  
  /*
-@@ -1403,9 +1731,27 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -1401,9 +1729,27 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        PREV_VERTEX (EDGE_FORWARD_VERTEX (task->node_seg->v)) = task->new_node;
        EDGE_FORWARD_VERTEX (task->node_seg->v) = task->new_node;
        task->node_seg->p->Count++;
@@ -1226,7 +1226,7 @@ index 65b3b58..9b33ae2 100644
  
  #warning NEED AN UPDATE FOR ROUND CONTOURS HERE?
        if (cntrbox_check (task->node_seg->p, task->new_node->point)) /* XXX: DOES THIS WORK / MATTER FOR ARC SEGMENT INSERTIONS? */
-@@ -1591,9 +1937,10 @@ print_labels (PLINE * a)
+@@ -1588,9 +1934,10 @@ print_labels (PLINE * a)
  
    do
      {
@@ -1239,7 +1239,7 @@ index 65b3b58..9b33ae2 100644
      }
    while ((e = NEXT_EDGE (e)) != &a->head);
  }
-@@ -3650,13 +3997,17 @@ crossing (const BoxType * b, void *cl)
+@@ -3632,13 +3979,17 @@ crossing (const BoxType * b, void *cl)
    struct seg *s = (struct seg *) b;
    struct pip *p = (struct pip *) cl;
  
@@ -1259,7 +1259,7 @@ index 65b3b58..9b33ae2 100644
        if (EDGE_FORWARD_VERTEX (s->v)->point[1] > p->p[1])
  #else
        if (s->v->orig_point1[1] > p->p[1])
-@@ -3664,13 +4015,15 @@ crossing (const BoxType * b, void *cl)
+@@ -3646,13 +3997,15 @@ crossing (const BoxType * b, void *cl)
  	{
  	  Vector v1, v2;
  	  long long cross;
@@ -1276,7 +1276,7 @@ index 65b3b58..9b33ae2 100644
  	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
  	  if (cross == 0)
  	    {
-@@ -3683,7 +4036,7 @@ crossing (const BoxType * b, void *cl)
+@@ -3665,7 +4018,7 @@ crossing (const BoxType * b, void *cl)
      }
    else
      {
@@ -1285,7 +1285,7 @@ index 65b3b58..9b33ae2 100644
        if (EDGE_FORWARD_VERTEX (s->v)->point[1] <= p->p[1])
  #else
        if (s->v->orig_point1[1] <= p->p[1])
-@@ -3692,13 +4045,15 @@ crossing (const BoxType * b, void *cl)
+@@ -3674,13 +4027,15 @@ crossing (const BoxType * b, void *cl)
  	  Vector v1, v2;
  	  long long cross;
  /* XXX: COULD USE ORIGINAL GEOMETRY, ALSO PROBABLY NEEDS UPDATING FOR CURVES */
@@ -1302,7 +1302,7 @@ index 65b3b58..9b33ae2 100644
  	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
  	  if (cross == 0)
  	    {
-@@ -4016,9 +4371,9 @@ poly_ChkContour (PLINE * a)
+@@ -3998,9 +4353,9 @@ poly_ChkContour (PLINE * a)
  	{
  #warning THIS DOES NOT TAKE INTO ACCOUNT arc-arc and arc-line segments
  	  if (!node_neighbours (a1, a2) &&
@@ -1315,7 +1315,7 @@ index 65b3b58..9b33ae2 100644
  	    {
  	      if (icnt > 1)
  		return TRUE;
-@@ -4215,6 +4570,29 @@ vect_m_dist (Vector v1, Vector v2)
+@@ -4197,6 +4552,29 @@ vect_m_dist (Vector v1, Vector v2)
    return -dd;
  }				/* vect_m_dist */
  
@@ -1345,7 +1345,7 @@ index 65b3b58..9b33ae2 100644
  /*
  vect_inters2
   (C) 1993 Klamer Schutte
-@@ -4222,20 +4600,22 @@ vect_inters2
+@@ -4204,20 +4582,22 @@ vect_inters2
  */
  
  int
@@ -1376,7 +1376,7 @@ index 65b3b58..9b33ae2 100644
    if (max (p1[0], p2[0]) < min (q1[0], q2[0]) ||
        max (q1[0], q2[0]) < min (p1[0], p2[0]) ||
        max (p1[1], p2[1]) < min (q1[1], q2[1]) ||
-@@ -4256,6 +4636,33 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4238,6 +4618,33 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  
    if (deel == 0)		/* parallel */
      {
@@ -1410,7 +1410,7 @@ index 65b3b58..9b33ae2 100644
        double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
        Vector hp1, hq1, hp2, hq2, q1p1, q1q2;
        double hs1, hs2, ht1, ht2;
-@@ -4264,24 +4671,27 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4246,24 +4653,27 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
        Vsub2 (q1q2, q1, q2);
  
  
@@ -1449,7 +1449,7 @@ index 65b3b58..9b33ae2 100644
  
        if (dc1 > dc2)
  	{/* dc2 is negative, e.g. p2 is "rightmost" of p1. */
-@@ -4305,21 +4715,21 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4287,21 +4697,21 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  	    return 0;   /* p1-hp2 < p1-hq1  ... IE  hp2 > hq1 .... hp2 is "rightmost" of hq1... IE both hp1 and hp2 are right of the rightmost point of q1-q2, hq1 */
  	  if (dc2 < d2)
              {           /* p1-hp2 < p1-hq2  ... IE  hp2 > hq2 .... hp2 is "rightmost" of hq2... */
@@ -1483,7 +1483,7 @@ index 65b3b58..9b33ae2 100644
  	    };
  	}
        else
-@@ -4328,38 +4738,36 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4310,38 +4720,36 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  	    return 0;   /* p1-hp1 > p1-hq2   ... IE  hp1 < hq2 .... hp1 is "left" of hq2... IE rightmost point of line p1-p2 is left of both points of q1-q2 */
  	  if (dc2 < d2)
  	    {           /* p1-hp2 < p1-hq2   ... IE  hp2 > hq2 .... hp2 is "right" of hq2 */
@@ -1539,7 +1539,7 @@ index 65b3b58..9b33ae2 100644
    else
      {				/* not parallel */
        /*
-@@ -4385,29 +4793,29 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4367,29 +4775,29 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  
        if (Vequ2 (q1, p1))
  	{
@@ -1577,7 +1577,7 @@ index 65b3b58..9b33ae2 100644
  	  s = 1.0;
  	  t = 1.0;
  	}
-@@ -4422,13 +4830,13 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4404,13 +4812,13 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  	  if (t < 0.       || t > 1.          )
  	    return 0;
  
