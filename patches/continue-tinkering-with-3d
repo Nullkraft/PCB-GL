@@ -1,5 +1,5 @@
-Bottom: 47c68f346d1cbe95511c02350e6960c7b6d6e404
-Top:    e8517f21ad4e0a927fc2ba45fc04fc0effc4a288
+Bottom: 331ad50fdba30394cace3dfdd9768c96481d9434
+Top:    f39e1ac45bbd985b2300eb3ca8731fcc675b6b30
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-17 20:03:31 +0000
 
@@ -8,10 +8,10 @@ Continue tinkering with 3D games
 
 ---
 
-diff --git a/src/hid/gtk/face3d.c b/src/hid/gtk/face3d.c
+diff --git a/src/hid/common/face3d.c b/src/hid/common/face3d.c
 index 0df8f23..ff20c3f 100644
---- a/src/hid/gtk/face3d.c
-+++ b/src/hid/gtk/face3d.c
+--- a/src/hid/common/face3d.c
++++ b/src/hid/common/face3d.c
 @@ -55,3 +55,9 @@ face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, fl
    face->az = az;
    face->radius = radius;
@@ -22,10 +22,10 @@ index 0df8f23..ff20c3f 100644
 +{
 +  face->surface_orientation_reversed = true;
 +}
-diff --git a/src/hid/gtk/face3d.h b/src/hid/gtk/face3d.h
+diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
 index ed60d6d..bb9cd31 100644
---- a/src/hid/gtk/face3d.h
-+++ b/src/hid/gtk/face3d.h
+--- a/src/hid/common/face3d.h
++++ b/src/hid/common/face3d.h
 @@ -11,8 +11,8 @@ typedef struct {
    appearance *appear;
  
@@ -42,10 +42,10 @@ index ed60d6d..bb9cd31 100644
  void face3d_set_normal (face3d *face, float nx, float ny, float nz);
  void face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius);
 +void face3d_set_surface_orientation_reversed (face3d *face);
-diff --git a/src/hid/gtk/object3d.c b/src/hid/gtk/object3d.c
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 index 49462ca..2b42e3a 100644
---- a/src/hid/gtk/object3d.c
-+++ b/src/hid/gtk/object3d.c
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
 @@ -35,7 +35,7 @@
  
  #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
@@ -817,10 +817,10 @@ index 49462ca..2b42e3a 100644
 -  return board_object;
 +  g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
  }
-diff --git a/src/hid/gtk/object3d.h b/src/hid/gtk/object3d.h
+diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
 index 8d081a2..ecdc721 100644
---- a/src/hid/gtk/object3d.h
-+++ b/src/hid/gtk/object3d.h
+--- a/src/hid/common/object3d.h
++++ b/src/hid/common/object3d.h
 @@ -16,6 +16,6 @@ void object3d_add_edge (object3d *object, edge_ref edge);
  void object3d_add_vertex (object3d *object, vertex3d *vertex);
  void object3d_add_face (object3d *object, face3d *face);
