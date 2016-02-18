@@ -1,6 +1,6 @@
 Version: 1
-Previous: e508395b0a513d36f1db649f61f69654e230a480
-Head: 7aaabcf999ab7a7c2c91b42abd12210b853a733f
+Previous: 3ef5fc601d3e2596945c35179470b02dbfabd228
+Head: e36fa3c0556073e46a7ca06bf37a424a0fcc37d4
 Applied:
   add-strip-hierarchy-options-to: a795ddb33b7972ffb028492d825662a7d7979ee6
   add-a-hacky-name-mangling-thin: b8ae063bb834afa952d3681dfab241229ff55d5b
@@ -28,29 +28,29 @@ Applied:
   polygon1-c-temporarily-disable: 0da5d8d46614b53b342f66cab71e2c9ff74c8d99
   add-polygon-parentage-tree: a9310f4d9f3861c3dbdea02729d76b6cff2ced99
   limit-virtual-memory-size-of: 7aaabcf999ab7a7c2c91b42abd12210b853a733f
+  attempt-at-supporting-arc-arc: 1a3b1205ee9cd0cf440a226c61ec0cd3df42ad97
+  avoid-solving-snap-rounding: 4658863852e32b702fc9d9ba5e27b91f56b53122
+  work-in-progress-on-arc: 3ff9f3cb70aa553da95e886b8c2a11c9a35f6db6
+  make-more-use-of-macros-for-traversing: f33b1a33dcef08d3c0eec254ceaec6f221373fcf
+  remove-debug-rendering-for: 7f72e59c8036a2a90cdc55a1f9db86aaeaf33c60
+  fix-a-few-random-places-where: 1f3df7731cc1b01c0817d673db8a4a0befc8eca9
+  temporarily-disable-rubber: 323a33a3980b4780d356ead73ca03973401e0c45
+  attempt-storing-arc-center: f49b0a9166b806b3806d3f1b22d8efa867f818ab
+  mark-segments-as-not-round: 842e1c99a9db971ab45102f4a8cdc2f7ce9534b6
+  turn-on-some-debugging-for: 132190e8de6754ac8662647a3e35ad2b662b8e64
+  allocate-vnode-with: 08aa09bb546c717879c4846791c0251040249810
+  mess-of-attempts-to-debug-and: 4abb85bfab14615a6f7fb7f6ed06debb87785688
+  temp-polygon-mess: 21e9d66b480f58251c827c32751f752ae66fb609
+  calculate-epsilon-estimate-for: 331fbe1a5db3aced4addcc05ea0ad55fdafaff4f
+  draw-lines-as-their-polygon-equivalent: c20a10153e6bc59f0cde4c60a2506cee8182ec60
+  debugging-on-again: b78305054fe15ebcb0257b32eca19b4f1114eaa8
+  introduce-coord_min-macro-to: 2c24552ac3bceb0f4a9985f24de4624457d697bf
+  play-with-icons: c04d56b15ba5a0651e70fc8be2d4832cb4ea4189
+  add-warning-about-bogus-code-i: e1dac832e57bfabfcbebdbc57f820ccf2906b927
+  comment-out-check-for-gui-hid-: 78c4acc730d61244c0c6c4fbc76878bff186ce9f
+  toporouter-c-playing-around-wi: a613c85f644c0dc64c038557c947eb6a76d02ea5
+  play-with-some-things: a8426a2bb2d39b290564096b757bde7e86531078
+  drc-fix-line-polygon-and-polyg: 4591d7e7ee8c1eb71f3c7845613615054050378d
+  bga-wizard: e36fa3c0556073e46a7ca06bf37a424a0fcc37d4
 Unapplied:
-  attempt-at-supporting-arc-arc: 6406335ec52ce7d26eebb6a9841b68629659d6c3
-  avoid-solving-snap-rounding: ae66e3ce7524e06548f9bd4c3edcf82eaa969dae
-  work-in-progress-on-arc: e52524c6a0e5d3ec28d34cbc02a4d6908ecf6193
-  make-more-use-of-macros-for-traversing: de9ea15f62fba597750132cfb97d7da367d869db
-  remove-debug-rendering-for: 55ef5970f4ad80c912456b4c81f7ab89b6c1fdf6
-  fix-a-few-random-places-where: 7224fc35418818ebb8b3485ba353fafdf74cf17f
-  temporarily-disable-rubber: 86f683030fd8e76a88ce21f383320a5a1b50831b
-  attempt-storing-arc-center: c7ad368c27e287b70de3162e746d028d6398fae0
-  mark-segments-as-not-round: 0aa3d875d443e6dbca50a7624041f76210ad2064
-  turn-on-some-debugging-for: 0a8150fbdc0382bfedf7cb6e53fad5bd7c744ded
-  allocate-vnode-with: 099780e4f7c4c91c8a94d4e446f70bc74e8ca392
-  mess-of-attempts-to-debug-and: 1fc0c015503cac61a5afdc6df677127e27f5d735
-  temp-polygon-mess: 6c2deacde18eb84ba113cf28c8496825d3392af0
-  calculate-epsilon-estimate-for: da6d64d44f188f32d32f881a4199c934bafdf46c
-  draw-lines-as-their-polygon-equivalent: 9df36ab97f359fc096ffb672e72da2bbcb7f6f5b
-  debugging-on-again: 26c7281d4643059a8c12d89e863c9707ca14b72e
-  introduce-coord_min-macro-to: f3e121a7a918f9ec339bc6657669e6764e98aee8
-  play-with-icons: 1f98f0c6209b7824c8c54362b569a47884455b19
-  add-warning-about-bogus-code-i: 0aad3819dc5fc9a3a2acd37cd2adac9ea92f3e14
-  comment-out-check-for-gui-hid-: fddd2e25c05daada6d2110e2b45d1978014f745a
-  toporouter-c-playing-around-wi: 350716da8837bb4432090e9565fc2860141e670d
-  play-with-some-things: 31bf0301351da3b4b8ed8277723481bd639f2d95
-  drc-fix-line-polygon-and-polyg: b6d8ae5df58252b6934c29db3be984eb71a98af7
-  bga-wizard: c18bf5f5e3c968ec7c39b6330a85f20b5fac3302
 Hidden:
