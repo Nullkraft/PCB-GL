@@ -20,8 +20,6 @@
 
 #define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
 
-#define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
-
 #ifdef REVERSED_PCB_CONTOURS
 #define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
 #define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((pcb)->MaxHeight - (y)))

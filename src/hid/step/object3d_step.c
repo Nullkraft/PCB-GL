@@ -23,6 +23,26 @@
 #include "object3d_step.h"
 
 
+#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
+
+#define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
+
+#ifdef REVERSED_PCB_CONTOURS
+#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
+#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((pcb)->MaxHeight - (y)))
+
+#define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
+#define STEP_Y_TO_COORD(pcb, y) ((pcb)->MaxHeight - MM_TO_COORD((y)))
+#else
+/* XXX: BROKEN UPSIDE DOWN OUTPUT */
+#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM((x)))
+#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((y)))
+
+#define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
+#define STEP_Y_TO_COORD(pcb, y) (MM_TO_COORD((y)))
+#endif
+
+
 static step_id_list
 presentation_style_assignments_from_appearance (step_file *step, appearance *appear)
 {
