@@ -472,7 +472,7 @@ gcode_start_png_export ()
   lastbrush = (gdImagePtr)((void *) -1);
 
   common_set_clip_box (&gcode_graphics, &region);
-  hid_expose_callback (&gcode_graphics, &region, 0);
+  hid_expose_callback (&gcode_graphics, 0);
 }
 
 static FILE *
