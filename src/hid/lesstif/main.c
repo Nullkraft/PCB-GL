@@ -819,6 +819,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
   time_t start, end;
   BoxType region;
   Drawable save_main;
+  hidGC gc;
 
   save_main = main_pixmap;
   main_pixmap = window;
@@ -2501,6 +2502,8 @@ static int need_redraw = 0;
 static Boolean
 idle_proc (XtPointer dummy)
 {
+  hidGC gc;
+
   if (need_redraw)
     {
       int mx, my;
@@ -3763,6 +3766,7 @@ pinout_callback (Widget da, PinoutData * pd,
   double save_vz;
   Pixmap save_px;
   int reason = cbs ? cbs->reason : 0;
+  hidGC gc;
 
   if (pd->window == 0 && reason == XmCR_RESIZE)
     return;
