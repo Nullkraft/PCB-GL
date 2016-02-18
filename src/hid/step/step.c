@@ -132,8 +132,11 @@ step_start_file (FILE *f, const char *filename)
 {
   time_t currenttime = time (NULL);
   struct tm utc;
+  struct tm *tmp;
 
-  gmtime_r (&currenttime, &utc);
+//  gmtime_r (&currenttime, &utc);
+  tmp =  gmtime (&currenttime);
+  utc = *tmp;
 
   fprintf (f, "ISO-10303-21;\n");
   fprintf (f, "HEADER;\n");
