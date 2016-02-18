@@ -155,9 +155,11 @@ pline_dump (VNODE * v)
   do
     {
       n = NEXT_VERTEX(v);
-      pcb_fprintf (stderr, "Line [%#mS %#mS %#mS %#mS 10 10 \"%s\"]\n",
+      pcb_fprintf (stderr, "Line [%$#mn %$#mn %$#mn %$#mn 10 10 \"%s\"] # %s, radius %mn\n",
 	       v->point[0], v->point[1],
-	       n->point[0], n->point[1], theState (v));
+	       n->point[0], n->point[1], theState (v),
+	       VERTEX_FORWARD_EDGE (v)->is_round ? "Round" : "Line",
+	       VERTEX_FORWARD_EDGE (v)->is_round ? v->radius : 0);
     }
   while ((v = NEXT_VERTEX(v)) != s);
 }
@@ -2828,21 +2830,6 @@ flip_cb (const BoxType * b, void *cl)
   s->v = PREV_EDGE (s->v);
   return 1;
 }
-
-#ifndef DEBUG
-static void
-pline_dump (VNODE * v)
-{
-  VNODE *s;
-
-  s = v;
-  do
-    {
-      pcb_fprintf (stderr, "%mn %mn  - %s, radius %mn\n", v->point[0], v->point[1], v->is_round ? "Round" : "Line", v->is_round ? v->radius : 0);
-    }
-  while ((v = v->next) != s);
-}
-#endif
 
 static void
 test_polyInvContour (void)
