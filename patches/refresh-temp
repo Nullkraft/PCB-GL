@@ -1,0 +1,30 @@
+Bottom: 5a26f8eb49e30d167902e4b5874e48ea3274cbab
+Top:    cccb5ef81ab68399ce52350bb1e5f6e99feb486f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-18 18:35:49 +0000
+
+Refresh of and-working-again-mostly
+
+---
+
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index a6c7cab..5251dc3 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -28,16 +28,10 @@
+ #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
+ 
+ #ifdef REVERSED_PCB_CONTOURS
+-#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
+-#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((pcb)->MaxHeight - (y)))
+-
+ #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
+ #define STEP_Y_TO_COORD(pcb, y) ((pcb)->MaxHeight - MM_TO_COORD((y)))
+ #else
+ /* XXX: BROKEN UPSIDE DOWN OUTPUT */
+-#define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM((x)))
+-#define COORD_TO_STEP_Y(pcb, y) (COORD_TO_MM((y)))
+-
+ #define STEP_X_TO_COORD(pcb, x) (MM_TO_COORD((x)))
+ #define STEP_Y_TO_COORD(pcb, y) (MM_TO_COORD((y)))
+ #endif
