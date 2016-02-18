@@ -1,5 +1,5 @@
-Bottom: e583b1a9f048a91491272c4d92093001cc75c67a
-Top:    facb31908309a9821e3a43516c7cfae07d43be4c
+Bottom: 297314c28bfc215ef06497797f49ede2a2a4512c
+Top:    e9623a557707878ede3a9574b1f0c20832a57d2b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 19:37:57 +0000
 
@@ -94,10 +94,10 @@ index 860cfa7..84f62ed 100644
  void SetElementBoundingBox (DataType *, ElementType *, FontType *);
  bool IsDataEmpty (DataType *);
 diff --git a/src/polygon.c b/src/polygon.c
-index 4ff6854..c2da6eb 100644
+index 2e42a3a..e58f7db 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -354,13 +354,7 @@ original_poly (PolygonType * p)
+@@ -365,13 +365,7 @@ original_poly (PolygonType * p)
        if (p->Points[n].included_angle != 0)
          {
            Cardinal next_n;
@@ -111,7 +111,7 @@ index 4ff6854..c2da6eb 100644
  
            next_n = n + 1;
            if (next_n == p->PointN ||
-@@ -369,44 +363,9 @@ original_poly (PolygonType * p)
+@@ -380,44 +374,9 @@ original_poly (PolygonType * p)
  
            /* XXX: Compute center of arc */
  
