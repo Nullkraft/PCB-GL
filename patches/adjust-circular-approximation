@@ -1,5 +1,5 @@
 Bottom: e7887bad54491fce7b591be7b7c611051854d095
-Top:    e7887bad54491fce7b591be7b7c611051854d095
+Top:    d8441776da5f08c778d9677ddb3510da2a7f13ed
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-04 15:57:59 +0000
 
@@ -8,4 +8,16 @@ Adjust circular approximation
 
 ---
 
-
+diff --git a/src/polygon.h b/src/polygon.h
+index 369efea..2d65302 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -34,7 +34,7 @@
+ 
+ /* Implementation constants */
+ 
+-#define POLY_CIRC_SEGS 40
++#define POLY_CIRC_SEGS 8
+ #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
+ 
+ #if 0
