@@ -1,7 +1,7 @@
-Bottom: 316993c0e0e526764e959da63431c135f906f76d
-Top:    f94ac2ef13588e99c8ccba8708cd4a5a9a71347e
+Bottom: 435c163d3ded054bfab2273004d448ff91c13d01
+Top:    b3b82c8b890c249fe9fc3483c419eedf8b5b47ac
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 18:40:47 +0000
+Date:   2016-02-18 19:37:58 +0000
 
 polygon1.c: Temporarily disable the seg_in_region test
 
@@ -11,7 +11,7 @@ The code does not handle the bounding region of arcs yet
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index bfb2637..e3b64b4 100644
+index cec9df4..8fa2d0c 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -673,6 +673,7 @@ adjust_tree (rtree_t * tree, struct seg *s)
