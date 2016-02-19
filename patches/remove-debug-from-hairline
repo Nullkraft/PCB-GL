@@ -1,5 +1,5 @@
 Bottom: f6655bf6b8b1670251bdbe99cc45c5873e5e1122
-Top:    13525127cfd660ddc0cb1d9724872a4a8115ca20
+Top:    8795ea6eb8b34b0013716a2b25da51413d5c0440
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-19 19:26:09 +0000
 
@@ -21,7 +21,7 @@ index 45ddd77..1b8e9b3 100644
  };
  
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 7850ec3..d55ec3c 100644
+index 7850ec3..14226d0 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -416,37 +416,6 @@ node_add_single_point (VNODE * a, Vector p)
@@ -152,6 +152,15 @@ index 7850ec3..d55ec3c 100644
        g_critical ("Removing last node in circular CVC list..");
      }
  
+@@ -2489,7 +2416,7 @@ remove_cvc_list_entry (CVCList *l)
+   l->next->prev = l->prev;
+   l->prev->next = l->next;
+ 
+-  /* Lets be lazy, and leave the node around in the main list of CVCNodes.. saves having 
++  /* Lets be lazy, and leave the node around in the main list of CVCNodes.. saves having
+    * to walk the entire list, and re-jig the circular list pointers. (Less easy, since it
+    * is only a singly linked list, and multiple items at each level may point to the next
+    * node group of CVCNodes. Just set parent to NULL in order to flag it. (Strictly this
 @@ -2500,12 +2427,6 @@ remove_cvc_list_entry (CVCList *l)
     */
    l->parent = NULL;
@@ -460,3 +469,14 @@ index 7850ec3..d55ec3c 100644
 -//  fprintf (stderr, "END OF BOOLEAN\n\n");
    return code;
  }				/* poly_Boolean_free */
+ 
+@@ -3248,9 +3037,6 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+   if (C->Count > 2)
+     C->Flags.orient = ((area < 0) ? PLF_INV : PLF_DIR);
+   C->tree = (rtree_t *)make_edge_tree (C);
+-
+-  if (poly_ChkContour (C))
+-    g_critical ("poly_PreContour(): Creating bad contour!");
+ }				/* poly_PreContour */
+ 
+ static int
