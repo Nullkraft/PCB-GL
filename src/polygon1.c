@@ -1153,6 +1153,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
 
   printf ("  Intersect count is %i\n", cnt);
 
+#if 0
   if (cnt == 0)
     {
       printf ("Trying with a perturbation\n");
@@ -1167,6 +1168,10 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
 
       printf ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <<<<<<\n");
     }
+#endif
+
+  if (cnt == 0)
+    return 0;
 
   if (cnt == 2)
     {
