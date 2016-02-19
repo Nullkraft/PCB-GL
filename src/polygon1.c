@@ -2416,7 +2416,7 @@ remove_cvc_list_entry (CVCList *l)
   l->next->prev = l->prev;
   l->prev->next = l->next;
 
-  /* Lets be lazy, and leave the node around in the main list of CVCNodes.. saves having 
+  /* Lets be lazy, and leave the node around in the main list of CVCNodes.. saves having
    * to walk the entire list, and re-jig the circular list pointers. (Less easy, since it
    * is only a singly linked list, and multiple items at each level may point to the next
    * node group of CVCNodes. Just set parent to NULL in order to flag it. (Strictly this
@@ -3037,9 +3037,6 @@ poly_PreContour (PLINE * C, BOOLp optimize)
   if (C->Count > 2)
     C->Flags.orient = ((area < 0) ? PLF_INV : PLF_DIR);
   C->tree = (rtree_t *)make_edge_tree (C);
-
-  if (poly_ChkContour (C))
-    g_critical ("poly_PreContour(): Creating bad contour!");
 }				/* poly_PreContour */
 
 static int
