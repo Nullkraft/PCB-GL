@@ -1,0 +1,24 @@
+Bottom: 4c9fd529256617be6f57ee7097ca4bd7b12389ef
+Top:    dc0e9f312d8f0fa14d3bbb806a1ee532c488a99d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-19 17:22:29 +0000
+
+Refresh of try-to-do-something-about-the
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index f354b18..5a871d0 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2621,8 +2621,8 @@ PLINE_check_hairline_edges (PLINE *contour)
+ 
+                   n = nn;
+ 
+-                  /* Skip testing if we wrapped around, and only had one pair to test */
+-                  if (n == first_l && test_count == 1)
++                  /* Skip testing if we wrapped around */
++                  if (n == first_l)
+                     break;
+ 
+                 }
