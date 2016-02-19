@@ -1,5 +1,5 @@
-Bottom: fab2f37fe30e60471f1000348075b2a46c5f0c85
-Top:    36b73f9fad51d3dfeff34f133aaf6aa264c6a3f8
+Bottom: 0bfe9c8e4a3f849b95898baa969fd4e31609df81
+Top:    eb68ee268e518668a4c8deccaa712a44091c12cf
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:31:52 +0000
 
@@ -15,7 +15,7 @@ correct seg structure - which has been free'd during the first splitting.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f8c1d48..ae9c69e 100644
+index fb25283..736d96b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -39,6 +39,7 @@
@@ -26,7 +26,7 @@ index f8c1d48..ae9c69e 100644
  #include	<assert.h>
  #include	<stdlib.h>
  #include	<stdio.h>
-@@ -938,6 +939,7 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
+@@ -966,6 +967,7 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
    DEBUGP ("new intersection on segment \"i\" at %#mD\n", v[0], v[1]);
  #endif
    i->node_insert_list = prepend_insert_node_task (i->node_insert_list, s, new_node, param);
