@@ -1,0 +1,32 @@
+Bottom: eb68ee268e518668a4c8deccaa712a44091c12cf
+Top:    09fea3537f99075376787ea048472785fc9fe8ec
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-19 20:42:04 +0000
+
+Refresh of disable-perturbation-attempt
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 736d96b..19d6064 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1153,6 +1153,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+ 
+   printf ("  Intersect count is %i\n", cnt);
+ 
++#if 0
+   if (cnt == 0)
+     {
+       printf ("Trying with a perturbation\n");
+@@ -1167,6 +1168,10 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+ 
+       printf ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <<<<<<\n");
+     }
++#endif
++
++  if (cnt == 0)
++    return 0;
+ 
+   if (cnt == 2)
+     {
