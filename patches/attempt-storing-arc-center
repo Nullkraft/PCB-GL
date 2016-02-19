@@ -1,5 +1,5 @@
-Bottom: 64c4dc8cd8e6beba219102513220eb63c0b781ca
-Top:    6885619ee8103b0fb68a4200b3f167b846e195db
+Bottom: a5f49a14eff61182b0031e5c226d43c578b137c3
+Top:    86715587f396afc7b4fd5221139b13723eb6a595
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:31:44 +0000
 
@@ -106,7 +106,7 @@ index bf37a0d..d30d412 100644
            next_n = n + 1;
            if (next_n == p->PointN ||
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1800679..f7d39c6 100644
+index a5bf8ed..fd3b284 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -192,7 +192,8 @@ poly_dump (POLYAREA * p)
@@ -129,7 +129,7 @@ index 1800679..f7d39c6 100644
  {
  //  return poly_CreateNodeFull (v, false /*true*/, cx, cy, radius);
    return poly_CreateNodeFull (v, true, cx, cy, radius);
-@@ -1936,7 +1938,7 @@ print_labels (PLINE * a)
+@@ -1964,7 +1966,7 @@ print_labels (PLINE * a)
  
    do
      {
