@@ -2621,8 +2621,8 @@ PLINE_check_hairline_edges (PLINE *contour)
 
                   n = nn;
 
-                  /* Skip testing if we wrapped around, and only had one pair to test */
-                  if (n == first_l && test_count == 1)
+                  /* Skip testing if we wrapped around */
+                  if (n == first_l)
                     break;
 
                 }
