@@ -1,5 +1,5 @@
-Bottom: 36b73f9fad51d3dfeff34f133aaf6aa264c6a3f8
-Top:    9b0c334ec48ebe8a4d8b0d53964f0746acfba8cf
+Bottom: eb68ee268e518668a4c8deccaa712a44091c12cf
+Top:    985346a8952b927ed7cb921f412bc05c957ba00b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:32:15 +0000
 
@@ -9,7 +9,7 @@ Mess of attempts to debug and improve arc-support in polygon code
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ae9c69e..d93c817 100644
+index 736d96b..fe9bc93 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -204,6 +204,28 @@ poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radiu
@@ -41,7 +41,7 @@ index ae9c69e..d93c817 100644
    c = res->point;
    *c++ = *v++;
    *c = *v;
-@@ -603,6 +625,31 @@ node_add_single_point (VNODE * a, Vector p)
+@@ -604,6 +626,31 @@ node_add_single_point (VNODE * a, Vector p)
    return new_node;
  }				/* node_add_point */
  
@@ -73,7 +73,7 @@ index ae9c69e..d93c817 100644
  
  /* \brief Compare the curvature / geometries of two edges
   *
-@@ -737,9 +784,11 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
+@@ -765,9 +812,11 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
  	  list = node->cvc_prev = insert_descriptor (node, poly, 'P', list);
  	  if (!node->cvc_prev)
  	    return NULL;
@@ -85,7 +85,7 @@ index ae9c69e..d93c817 100644
  	}
      }
    while ((node = NEXT_VERTEX(node)) != &pl->head);
-@@ -1125,6 +1174,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1153,6 +1202,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
  
    printf ("  Intersect count is %i\n", cnt);
  
@@ -93,7 +93,7 @@ index ae9c69e..d93c817 100644
    if (cnt == 0)
      {
        printf ("Trying with a perturbation\n");
-@@ -1139,6 +1189,10 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1167,6 +1217,10 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
  
        printf ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <<<<<<\n");
      }
@@ -104,7 +104,7 @@ index ae9c69e..d93c817 100644
  
    if (cnt == 2)
      {
-@@ -3619,6 +3673,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3937,6 +3991,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
                Angle end_angle;
                Angle delta_angle;
                BoxType arc_bound;
@@ -113,7 +113,7 @@ index ae9c69e..d93c817 100644
  
                start_angle = atan2 ((p->point[1] - p->cy), -(p->point[0] - p->cx)) / M180;
                end_angle   = atan2 ((c->point[1] - p->cy), -(c->point[0] - p->cx)) / M180;
-@@ -3629,6 +3685,34 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3947,6 +4003,34 @@ poly_PreContour (PLINE * C, BOOLp optimize)
                if (delta_angle > 180.) delta_angle -= 360.;
                if (delta_angle < -180.) delta_angle += 360.;
  
