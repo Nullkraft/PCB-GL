@@ -1,0 +1,183 @@
+Bottom: a571637afd52c1e72ce6cf6fc59feec36e0d0119
+Top:    4c9fd529256617be6f57ee7097ca4bd7b12389ef
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-19 17:19:41 +0000
+
+Refresh of try-to-do-something-about-the
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 35c08cd..f354b18 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -495,8 +495,8 @@ edge_label (VNODE * pn, int existing_label)
+       /* If this fires, we found two geometrically distinct edges which for some reason compare as equal in our cvc_list.
+        * Shared edges should be geometrically identical (but may be in opposite directions).
+        */
+-      if (!(EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side)->point[0] == EDGE_FORWARD_VERTEX (pn)->point[0] &&
+-            EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side)->point[1] == EDGE_FORWARD_VERTEX (pn)->point[1]))
++      if (!vect_equal (EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side)->point,
++                       EDGE_FORWARD_VERTEX (pn)->point))
+         g_critical ("Expected shared edge, but geometry doesn't match");
+ 
+       /* SHARED is the same direction case,
+@@ -2419,7 +2419,6 @@ add_dummy_descriptors_at_point (Vector point, PLINE * pl, char poly, CVCList * l
+           vect_equal (node->point, point)) // && /* Matches the target location */
+ //          (node->cvc_next == NULL || !is_in_cvc_list (node, node->cvc_next)))
+         {
+-          g_warning ("Adding a P&N pair");
+           if (node->cvc_prev == NULL &&
+               !VERTEX_BACKWARD_EDGE (node)->Flags.mark) /* Don't bother re-adding an edge we've decided we don't want traversed */
+             {
+@@ -2449,6 +2448,9 @@ add_dummy_descriptors_at_point (Vector point, PLINE * pl, char poly, CVCList * l
+ static void
+ remove_cvc_list_entry (CVCList *l)
+ {
++  if (l == NULL)
++    return;
++
+   /* XXX: What about when we remove the last edge - e.g. likely
+    *      inthe case of a dummy entry with connection degree 1.
+    */
+@@ -2592,67 +2594,19 @@ PLINE_check_hairline_edges (PLINE *contour)
+                   VERTEX_SIDE_DIR_EDGE (l->parent, l->side)->Flags.mark = true;
+                   VERTEX_SIDE_DIR_EDGE (n->parent, n->side)->Flags.mark = true;
+ 
+-#if 0
+-                  if (l_otherend->cvc_next == NULL)
+-                    {
+-                      /* If one edge doesn't land at a CVC node, check the other doesn't - as a sanity check */
+-                      g_assert (l_otherend->cvc_prev == NULL);
+-                      g_assert (n_otherend->cvc_next == NULL);
+-                      g_assert (n_otherend->cvc_prev == NULL);
+-
+-                      /* NOTE: These may be the same vertex, depending on the degree of self-touching at this node */
+-                      //ensure_cvc_node_at (EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side), (l->side == 'P') ? 'N' : 'P');
+-                      //ensure_cvc_node_at (EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side), (l->side == 'P') ? 'N' : 'P');
+-#endif
+-                      g_warning ("ADDING DUMMY DESCRIPTORS");
+-                      /*list =*/ add_dummy_descriptors_at_point (l_otherend->point, contour, first_l->poly, /*list*/ l); /* Is picking 'l' OK for an arbitrary CVCList? */
+-
+-                      /* Mark the vertices as being "dummy", to allow skipping A-B connected sanity checks in the edge labeling
+-                       * without reducing the level of security afforded to normal cross-connected node processing.
+-                       */
+-                      //EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side)->cvc_is_dummy = true;
+-                      //EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (n->parent, n->side), n->side)->cvc_is_dummy = true;
+-
+-#if 0
+-                      if (l->side == 'P') /* Prev at l means next at otherend */
+-                          g_assert (l_otherend->cvc_next != NULL);
+-                      else
+-                          g_assert (l_otherend->cvc_prev != NULL);
+-
+-                      if (n->side == 'P') /* Prev at n means next at otherend */
+-                          g_assert (n_otherend->cvc_next != NULL);
+-                      else
+-                          g_assert (n_otherend->cvc_prev != NULL);
+-#endif
+-#if 0
+-                    }
+-                  else
+-                    {
+-                      g_assert (l_otherend->cvc_next != NULL);
+-                      g_assert (l_otherend->cvc_prev != NULL);
+-                      g_assert (n_otherend->cvc_next != NULL);
+-                      g_assert (n_otherend->cvc_prev != NULL);
+-                    }
+-#endif
++                  add_dummy_descriptors_at_point (l_otherend->point, contour, first_l->poly, l); /* Picking 'l' for an arbitrary start CVCList */
+ 
+                   /* Now remove the vertices from both CVC lists, to avoid complicating the edge labeling code.
+                    * Alternatively - teach the edge labeling code to skip pre-marked edges?
++                   *
++                   * NOTE: We are careful not to re-add these marked vertices as we progress further in our
++                   *       loop around the contour, but at least some must have already existing in the
++                   *       cross-connected nodes.
+                    */
+-                  if (l->side == 'P' && /* Prev at l means next at otherend */
+-                      l_otherend->cvc_next != NULL)
+-                    remove_cvc_list_entry (l_otherend->cvc_next);
+-
+-                  if (l->side == 'N' && /* Next at l means prev at otherend */
+-                      l_otherend->cvc_prev != NULL)
+-                    remove_cvc_list_entry (l_otherend->cvc_prev);
+-
+-                  if (n->side == 'P' && /* Prev at n means next at otherend */
+-                      n_otherend->cvc_next != NULL)
+-                    remove_cvc_list_entry (n_otherend->cvc_next);
+ 
+-                  if (n->side == 'N' && /* Next at n means prev at otherend */
+-                      n_otherend->cvc_prev != NULL)
+-                    remove_cvc_list_entry (n_otherend->cvc_prev);
++                  /* NOTE: 'P' at this node means 'N' at otherend */
++                  remove_cvc_list_entry ((l->side == 'P') ? l_otherend->cvc_next : l_otherend->cvc_prev);
++                  remove_cvc_list_entry ((n->side == 'P') ? n_otherend->cvc_next : n_otherend->cvc_prev);
+ 
+                   /* Find the next eligible edge to start from, since we're about to delete the
+                    * one we would otherwise have used in the next iteration
+@@ -2662,10 +2616,8 @@ PLINE_check_hairline_edges (PLINE *contour)
+                   while (nn->poly != first_l->poly && nn != first_l)
+                     nn = nn->next;
+ 
+-                  if (l->side == 'P' && l->parent->cvc_prev != NULL)  remove_cvc_list_entry (l->parent->cvc_prev);
+-                  if (l->side == 'N' && l->parent->cvc_next != NULL)  remove_cvc_list_entry (l->parent->cvc_next);
+-                  if (n->side == 'P' && n->parent->cvc_prev != NULL)  remove_cvc_list_entry (n->parent->cvc_prev);
+-                  if (n->side == 'N' && n->parent->cvc_next != NULL)  remove_cvc_list_entry (n->parent->cvc_next);
++                  remove_cvc_list_entry ((l->side == 'P') ? l->parent->cvc_prev : l->parent->cvc_next);
++                  remove_cvc_list_entry ((n->side == 'P') ? n->parent->cvc_prev : n->parent->cvc_next);
+ 
+                   n = nn;
+ 
+@@ -2673,51 +2625,6 @@ PLINE_check_hairline_edges (PLINE *contour)
+                   if (n == first_l && test_count == 1)
+                     break;
+ 
+-
+-#if 0
+-                  /* Now remove the vertices from both CVC lists, to avoid complicating the edge labeling code.
+-                   * Alternatively - teach the edge labeling code to skip pre-marked edges?
+-                   */
+-                  if (l->side == 'P') /* Prev at l means next at otherend */
+-                    {
+-                      g_warn_if_fail        (l_otherend->cvc_next != NULL);
+-                      g_warn_if_fail        (l_otherend->cvc_next->parent == l_otherend);
+-                      cvc_list_dump         (l_otherend->cvc_next);
+-                      remove_cvc_list_entry (l_otherend->cvc_next);
+-                    }
+-                  else
+-                    {
+-                      g_warn_if_fail        (l_otherend->cvc_prev != NULL);
+-                      g_warn_if_fail        (l_otherend->cvc_prev->parent == l_otherend);
+-                      cvc_list_dump         (l_otherend->cvc_prev);
+-                      remove_cvc_list_entry (l_otherend->cvc_prev);
+-                    }
+-
+-                  if (l->side == 'P') /* Prev at l means next at otherend */
+-                      g_warn_if_fail (l_otherend->cvc_next == NULL);
+-                  else
+-                      g_warn_if_fail (l_otherend->cvc_prev == NULL);
+-
+-                  if (n->side == 'P') /* Prev at n means next at otherend */
+-                      g_warn_if_fail (n_otherend->cvc_next != NULL);
+-                  else
+-                      g_warn_if_fail (n_otherend->cvc_prev != NULL);
+-
+-                  if (n->side == 'P') /* Prev at n means next at otherend */
+-                    {
+-                      g_warn_if_fail        (n_otherend->cvc_next != NULL);
+-                      g_warn_if_fail        (n_otherend->cvc_next->parent == n_otherend);
+-                      cvc_list_dump         (n_otherend->cvc_next);
+-                      remove_cvc_list_entry (n_otherend->cvc_next);
+-                    }
+-                  else
+-                    {
+-                      g_warn_if_fail        (n_otherend->cvc_prev != NULL);
+-                      g_warn_if_fail        (n_otherend->cvc_prev->parent == n_otherend);
+-                      cvc_list_dump         (n_otherend->cvc_prev);
+-                      remove_cvc_list_entry (n_otherend->cvc_prev);
+-                    }
+-#endif
+                 }
+               else
+                 {
