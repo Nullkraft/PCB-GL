@@ -1,5 +1,5 @@
 Bottom: de76aedc71b9f596efb8c39c50c09b36fa690b25
-Top:    60c5e3d8bf0af74fe3b1fde4c1efb56663e3cd07
+Top:    aef744839e76ad6b5185c34cebd13871736d90ee
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-20 23:38:02 +0000
 
@@ -9,7 +9,7 @@ More work in progress
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b3e992a..7cd48fb 100644
+index b3e992a..83d0b98 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -110,12 +110,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -270,12 +270,12 @@ index b3e992a..7cd48fb 100644
          {
 -//          cvc_list_dump (l);
 -          n = l->next;
-+          cvc_list_dump (l);
- 
+-
 -//          /* Skip edges from the other polygon */
 -//          if (l->poly != first_l->poly)
 -//            continue;
--
++          cvc_list_dump (l);
+ 
 -          /* Find the next edge from this polygon */
 -          while ((n->poly != first_l->poly /* || n->parent == NULL*/) /* && n != first_l*/)
 -            n = n->next;
@@ -541,3 +541,12 @@ index b3e992a..7cd48fb 100644
              }
          }
      }
+@@ -2960,8 +3076,6 @@ M_Set_Parentage (POLYAREA *poly, POLYPARENTAGE parentage)
+ 
+ }
+ 
+-static void clear_marks (POLYAREA * p);
+-
+ /* just like poly_Boolean but frees the input polys */
+ int
+ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
