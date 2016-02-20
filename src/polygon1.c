@@ -335,7 +335,7 @@ new_descriptor (VNODE * a, char poly, char side)
   if (VERTEX_SIDE_DIR_EDGE (a, side)->is_round == false)  /* not round */
     { /* Line-segment case */
 
-#if 0
+#if 1
       if (side == 'P')		/* previous */
         vect_sub (v, PREV_VERTEX (a)->point, a->point);
       else				/* next */
@@ -673,7 +673,27 @@ edge_label (VNODE * pn, int existing_label)
       if (!(vect_equal (EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side)->point,
                         EDGE_FORWARD_VERTEX (pn)->point) &&
             compare_edge_arcs_equal (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), pn)))
-        g_critical ("Expected shared edge, but geometry doesn't match");
+        {
+          g_critical ("Expected shared edge, but geometry doesn't match");
+          {
+            VNODE *v = EDGE_BACKWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side));
+            VNODE *n = NEXT_VERTEX (v);
+            pcb_fprintf (stderr, "(%#$mn, %$#mn)-(%$#mn, %$#mn) %s, radius %$mn\n",
+                     v->point[0], v->point[1],
+                     n->point[0], n->point[1], theState (v),
+                     VERTEX_FORWARD_EDGE (v)->is_round ? "Round" : "Line",
+                     VERTEX_FORWARD_EDGE (v)->is_round ? v->radius : 0);
+          }
+          {
+            VNODE *v = pn;
+            VNODE *n = NEXT_VERTEX (v);
+            pcb_fprintf (stderr, "(%#$mn, %$#mn)-(%$#mn, %$#mn) %s, radius %$mn\n",
+                     v->point[0], v->point[1],
+                     n->point[0], n->point[1], theState (v),
+                     VERTEX_FORWARD_EDGE (v)->is_round ? "Round" : "Line",
+                     VERTEX_FORWARD_EDGE (v)->is_round ? v->radius : 0);
+          }
+        }
 
       /* SHARED is the same direction case,
        * SHARED2 is the opposite direction case.
@@ -3413,6 +3433,80 @@ PLINE_check_hairline_edges (PLINE *contour)
                    *      two colinear edges, and fixing up any geometry accordingly. If that middle vertex was cross-connected,
                    *      then - perhaps we just need to un-cross-connect it?
                    */
+
+    {
+      VNODE *longer;  /* As edge */
+      VNODE *shorter; /* As edge */
+      VNODE *point_v; /* As vertex */
+      VNODE *new_node;
+      char shorter_side;
+
+      /* Pick which edge is longer, to insert into.
+       * NOTE: Should work for arcs less than 180 degrees span
+       */
+      if (vect_dist2 (l_otherend->point, l->parent->point) >
+          vect_dist2 (n_otherend->point, n->parent->point))
+        {
+          longer  = VERTEX_SIDE_DIR_EDGE (l->parent, l->side);
+          shorter = VERTEX_SIDE_DIR_EDGE (n->parent, n->side);
+          shorter_side = n->side;
+        }
+      else
+        {
+          longer  = VERTEX_SIDE_DIR_EDGE (n->parent, n->side);
+          shorter = VERTEX_SIDE_DIR_EDGE (l->parent, l->side);
+          shorter_side = l->side;
+        }
+
+      point_v = EDGE_SIDE_DIR_VERTEX (shorter, shorter_side);
+
+      new_node = node_add_single_point (longer, point_v->point);
+
+      /* Do insersion */
+      PREV_VERTEX (new_node) = EDGE_BACKWARD_VERTEX (longer);
+      NEXT_VERTEX (new_node) = EDGE_FORWARD_VERTEX  (longer);
+      PREV_VERTEX (EDGE_FORWARD_VERTEX (longer)) = new_node;
+      EDGE_FORWARD_VERTEX (longer) = new_node;
+      contour->Count++;
+
+      if (param >= 0.0 && param <= 1.0)
+        {
+          /* Nicely behaved linear segment addition, with parameter */
+          new_node->p1 = new_node->prev->p1;
+          new_node->prev->p1 = param;
+          new_node->p0 = param;
+        }
+      else
+        {
+          /* Used for arc-segment insersions, where we redeclare the original coordinates of the pieces */
+          if (new_node->prev->p1 != 1.0)
+            printf ("new_node->prev->p1 != 1.0\n");
+          new_node->prev->p1 = 1.0; /* NB: Should already be 1.0 - might be worth asserting? */
+          Vcopy (new_node->prev->orig_point1, new_node->point);
+
+          new_node->p0 = 0.0;
+          new_node->p1 = 1.0;
+          Vcopy (new_node->orig_point0, new_node->point);
+          Vcopy (new_node->orig_point1, new_node->next->point);
+        }
+    }
+
+#if 0
+      // XXX: REALLY HOPE THIS DOESN'T UPDATE ANYTHING BY SNAP-ROUNDING, OR WE MIGHT AFFECT THE INTERSECTION WITH THE OTHER POLYGON?
+#warning NEED AN UPDATE FOR ROUND CONTOURS HERE?
+      if (cntrbox_check (contour, new_node->point)) /* XXX: DOES THIS WORK / MATTER FOR ARC SEGMENT INSERTIONS? */
+        {
+          /* First delete the contour from the contour r-tree, as its bounds
+           * may be adjusted whilst inserting nodes
+           */
+          r_delete_entry (b->contour_tree, (const BoxType *) contour);
+          cntrbox_adjust (contour, new_node->point); /* XXX: DOES THIS WORK / MATTER FOR ARC SEGMENT INSERTIONS? */
+          r_insert_entry (b->contour_tree, (const BoxType *) contour, 0);
+        }
+
+      if (adjust_tree (contour->tree, node_seg))
+        assert (0); /* XXX: Memory allocation failure */
+#endif
 
                   // XXX: What if we delete the last cross-connected vertex?? Probably the labelling code fails, as it won't know if the
                   //      contours are entirely INSIDE / OUTSIDE eachother.... may require fix-up later on in the process, as the
