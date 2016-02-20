@@ -1,5 +1,5 @@
 Bottom: f863b2f605bc31512b42dcd352b343cfdd616053
-Top:    c9e5fc8bf768c794463981dc4d8763148175c40f
+Top:    f1f073f0554c01e035054cdfe62419873058034f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-20 00:35:59 +0000
 
@@ -9,19 +9,38 @@ Temp attempt to try adding nodes when dealing with the inconsistent edge hairlin
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c2551a2..16c6597 100644
+index c2551a2..cf92b1f 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -897,7 +897,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -618,6 +618,7 @@ typedef struct info
+   jmp_buf *env, sego, *touch;
+   int need_restart;
+   insert_node_task *node_insert_list;
++  bool debug;
+ } info;
+ 
+ typedef struct contour_info
+@@ -815,6 +816,8 @@ get_seg (const BoxType * b, void *cl)
+ {
+   struct info *i = (struct info *) cl;
+   struct seg *s = (struct seg *) b;
++  if (i->debug)
++    fprintf (stderr, "get_seg testing against segment %p (seg %p)\n", s->v, s);
+   if (i->v == s->v)
+     {
+       i->s = s;
+@@ -896,8 +899,9 @@ contour_bounds_touch (const BoxType * b, void *cl)
+       /* fill in the segment in info corresponding to this node */
        if (setjmp (info.sego) == 0)
  	{
++	  info.debug = false;
  	  r_search (looping_over->tree, &box, NULL, get_seg, &info);
 -	  assert (0);
 +	  g_error ("Did not find segment in contour tree!");
  	}
  
        /* If we're going to have another pass anyway, skip this */
-@@ -2444,12 +2444,44 @@ next_cvc_from_same_poly (CVCList *start)
+@@ -2444,12 +2448,78 @@ next_cvc_from_same_poly (CVCList *start)
    n = start->next;
  
    /* Find the next edge from the same polygon */
@@ -63,11 +82,45 @@ index c2551a2..16c6597 100644
 +}
 +#endif
 +
++static seg *
++find_edge_seg (VNODE *edge, PLINE *contour)
++{
++  struct info info;
++  BoxType box;
++
++  /* fill in the segment in info corresponding to this node */
++  info.v = edge;
++  info.s = NULL;
++  box.X2 = (box.X1 = EDGE_BACKWARD_VERTEX (edge)->point[0]) + 1;
++  box.Y2 = (box.Y1 = EDGE_BACKWARD_VERTEX (edge)->point[1]) + 1;
++//  fprintf (stderr, "NEED TO FIND SEGMENT FOR EDGE   %p\n", info.v);
++  if (setjmp (info.sego) == 0)
++    {
++//      info.debug = true;
++      info.debug = false;
++      r_search (contour->tree, &box, NULL, get_seg, &info);
++      /* Didn't find the edge if we get here */
++    }
++  return info.s;
++}
++
++static bool
++is_edge_in_contour (VNODE *edge, PLINE *contour)
++{
++  VNODE *e = &contour->head;
++  do
++    {
++      if (e == edge)
++        return true;
++    }
++  while ((e = NEXT_EDGE(e)) != &contour->head);
++  return false;
++}
 +
  /* NOTE: If any contour is split into multiple pieces due to hairline edge pairs
   * will not necessarily be inserted into the correct location. Hole contours
   * should be OK, but if we have a B polygon outline contour that gets split into
-@@ -2485,30 +2517,37 @@ PLINE_check_hairline_edges (PLINE *contour)
+@@ -2485,30 +2555,37 @@ PLINE_check_hairline_edges (PLINE *contour)
  
        test_count = 0;
        l = first_l;
@@ -109,7 +162,17 @@ index c2551a2..16c6597 100644
  
            g_assert (l->parent != NULL);
            g_assert (n->parent != NULL);
-@@ -2528,6 +2567,8 @@ PLINE_check_hairline_edges (PLINE *contour)
+@@ -2516,6 +2593,9 @@ PLINE_check_hairline_edges (PLINE *contour)
+           g_assert (l->poly == first_l->poly);
+           g_assert (n->poly == first_l->poly);
+ 
++//          g_assert (is_edge_in_contour (l->parent, contour)); <-- UNTRUE.. SEVERAL CONTOURS MAY NOW BE JOINED AT THE CVC NODES
++//          g_assert (is_edge_in_contour (n->parent, contour)); <-- UNTRUE.. SEVERAL CONTOURS MAY NOW BE JOINED AT THE CVC NODES
++
+           /* Check for hairline pairs of edges in the CVCList, they may be sorted in incorrect order,
+            * and would thus mislead as to whether we are inside or outside a given contour. It is a
+            * bug if such edges are present, so test for it here where we may detect it. We compare
+@@ -2528,6 +2608,8 @@ PLINE_check_hairline_edges (PLINE *contour)
  
                if (vect_equal (l_otherend->point, n_otherend->point))
                  {
@@ -118,7 +181,7 @@ index c2551a2..16c6597 100644
                    /* Simple approach - just mark the edges as visited, so we don't traverse them!
                     * Doing it this way ensures that both pieces of the contour are reachable if
                     * the hairline edge pair splits this PLINE into two pieces. Since we will ensure
-@@ -2557,7 +2598,7 @@ PLINE_check_hairline_edges (PLINE *contour)
+@@ -2557,7 +2639,7 @@ PLINE_check_hairline_edges (PLINE *contour)
                    nn = n->next;
                    /* Find the next edge from this polygon */
                    //while (nn->poly != first_l->poly && nn != first_l)
@@ -127,7 +190,7 @@ index c2551a2..16c6597 100644
                      nn = nn->next;
  
                    if (l == first_l)
-@@ -2576,12 +2617,86 @@ PLINE_check_hairline_edges (PLINE *contour)
+@@ -2576,12 +2658,84 @@ PLINE_check_hairline_edges (PLINE *contour)
                  }
                else
                  {
@@ -136,9 +199,7 @@ index c2551a2..16c6597 100644
 +                  VNODE *point_v; /* As vertex */
 +                  VNODE *new_node;
 +                  char shorter_side;
-+                  seg *node_seg;
-+                  struct info info;
-+                  BoxType box;
++//                  seg *node_seg;
 +
                    g_critical ("Check found hairline edge pair (by compare_cvc_nodes), but geometry of each edge is different!");
                    /* XXX: Not sure how to handle this case... might get away with deleting the vertex in the middle of the
@@ -163,18 +224,12 @@ index c2551a2..16c6597 100644
 +                      shorter_side = l->side;
 +                    }
 +
-+                  /* fill in the segment in info corresponding to this node */
-+                  info.v = longer;
-+                  info.s = NULL;
-+                  box.X2 = (box.X1 = EDGE_BACKWARD_VERTEX (longer)->point[0]) + 1;
-+                  box.Y2 = (box.Y1 = EDGE_BACKWARD_VERTEX (longer)->point[1]) + 1;
-+                  if (setjmp (info.sego) == 0)
-+                    {
-+                      r_search (contour->tree, &box, NULL, get_seg, &info);
-+                      g_error ("Did not find segment in contour tree!");
-+                    }
-+                  node_seg = info.s;
++#if 0
++                  node_seg = find_edge_seg (longer, contour);
++                  if (node_seg == NULL)
++                    g_error ("Did not find segment in contour tree!");
 +                  g_assert (node_seg != NULL);
++#endif
 +
 +                  point_v = EDGE_SIDE_DIR_VERTEX (shorter, shorter_side);
 +                  new_node = node_add_single_point (longer, point_v->point);
@@ -203,8 +258,14 @@ index c2551a2..16c6597 100644
 +#endif
 +                    }
 +
++                  /* SKIP THIS.. NOTHING USES THE CONTOUR TREE AFTER INTERSECTION,
++                   * AND AS THIS IS AN INTERSECTED CONTOUR, THESE CONTOURS ARE
++                   * EVENTUALLY DROPPED.
++                   */
++#if 0
 +                  if (adjust_tree (contour->tree, node_seg))
 +                    assert (0); /* XXX: Memory allocation failure */
++#endif
 +
 +                  /* XXX: Could force creation of descriptors at the new node, and flag the shared pieces
 +                   * (shorter, and the segment between our new node, and the test vertex (along the old
@@ -214,7 +275,7 @@ index c2551a2..16c6597 100644
                    // XXX: What if we delete the last cross-connected vertex?? Probably the labelling code fails, as it won't know if the
                    //      contours are entirely INSIDE / OUTSIDE eachother.... may require fix-up later on in the process, as the
                    //      conntours are actually no longer interected.
-@@ -2618,6 +2733,7 @@ PLINE_check_hairline_edges (PLINE *contour)
+@@ -2618,6 +2772,7 @@ PLINE_check_hairline_edges (PLINE *contour)
                    remove_cvc_list_entry (n);
  
                    n = nn;
@@ -222,7 +283,7 @@ index c2551a2..16c6597 100644
                  }
              }
  
-@@ -2626,9 +2742,9 @@ PLINE_check_hairline_edges (PLINE *contour)
+@@ -2626,9 +2781,9 @@ PLINE_check_hairline_edges (PLINE *contour)
            if (terminate_after_this_iteration)
              break;
  
@@ -235,7 +296,7 @@ index c2551a2..16c6597 100644
          }
        while ((l = n) != first_l);
      }
-@@ -2791,6 +2907,12 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2791,6 +2946,12 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        M_POLYAREA_check_hairline_edges (a);
        M_POLYAREA_check_hairline_edges (b);
  
@@ -248,3 +309,14 @@ index c2551a2..16c6597 100644
        /* We could speed things up a lot here if we only processed the relevant contours */
        /* NB: Relevant parts of a are labeled below */
        M_POLYAREA_label (b, a, FALSE);
+diff --git a/src/rtree.c b/src/rtree.c
+index 6558427..d8bede4 100644
+--- a/src/rtree.c
++++ b/src/rtree.c
+@@ -40,6 +40,7 @@
+ 
+ #include "global.h"
+ 
++#undef NDEBUG
+ #include <assert.h>
+ #include <setjmp.h>
