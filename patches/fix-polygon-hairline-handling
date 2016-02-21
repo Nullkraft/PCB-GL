@@ -1,5 +1,5 @@
 Bottom: 320435433d37691efad653993473a90a756d844a
-Top:    a7c7761df93956fa6c67f93177738f44433c3a41
+Top:    6384a596a058559f853d951497812b5f4b8acafa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-21 13:37:56 +0000
 
@@ -21,7 +21,7 @@ index d255863..6f0f6b0 100644
  struct VNODE
  {
 diff --git a/src/polygon1.c b/src/polygon1.c
-index aaa8c96..2f2ee7a 100644
+index aaa8c96..c9fef08 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -110,12 +110,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -108,17 +108,21 @@ index aaa8c96..2f2ee7a 100644
  /*
  edge_label
   (C) 2006 harry eaton
-@@ -430,7 +481,7 @@ edge_label
+@@ -430,8 +481,7 @@ edge_label
  static unsigned int
  edge_label (VNODE * pn, int existing_label)
  {
 -  CVCList *first_l, *l;
-+  CVCList *first_l, *l, *test;
-   char this_poly;
+-  char this_poly;
++  CVCList *l, *test;
    int region;
    bool shared_edge_case = false;
-@@ -449,30 +500,36 @@ edge_label (VNODE * pn, int existing_label)
-   this_poly = l->poly;
+ 
+@@ -446,33 +496,38 @@ edge_label (VNODE * pn, int existing_label)
+   l = EDGE_BACKWARD_VERTEX (pn)->cvc_next;
+ 
+   assert (l);
+-  this_poly = l->poly;
  
    /* Shared edges can be sorted in either order, so need to check l->prev as well */
 -  if (compare_cvc_nodes (l, l->prev) == 0)
@@ -167,7 +171,7 @@ index aaa8c96..2f2ee7a 100644
        /* If this fires, we found two geometrically distinct edges which for some reason compare as equal in our cvc_list.
         * Shared edges should be geometrically identical (but may be in opposite directions).
         */
-@@ -488,53 +545,6 @@ edge_label (VNODE * pn, int existing_label)
+@@ -488,53 +543,6 @@ edge_label (VNODE * pn, int existing_label)
      }
    else
      {
@@ -221,7 +225,7 @@ index aaa8c96..2f2ee7a 100644
        region = (l->side == 'P') ? INSIDE : OUTSIDE;
      }
  
-@@ -1480,7 +1490,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1480,7 +1488,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
        pa_info = (struct polyarea_info *) heap_remove_smallest (heap);
        if (heap_is_empty (heap))
  	{			/* only one possibility it must be the right one */
@@ -230,7 +234,7 @@ index aaa8c96..2f2ee7a 100644
  	  container = pa_info->pa->contours;
  	}
        else
-@@ -2398,14 +2408,14 @@ add_dummy_descriptors_at_point_from_pline (Vector point, PLINE * pl, char poly,
+@@ -2398,14 +2406,14 @@ add_dummy_descriptors_at_point_from_pline (Vector point, PLINE * pl, char poly,
          {
            count++;
            if (node->cvc_prev == NULL &&
@@ -247,7 +251,7 @@ index aaa8c96..2f2ee7a 100644
              {
                next_count++;
                list = node->cvc_next = insert_descriptor (node, poly, 'N', list);
-@@ -2419,7 +2429,7 @@ add_dummy_descriptors_at_point_from_pline (Vector point, PLINE * pl, char poly,
+@@ -2419,7 +2427,7 @@ add_dummy_descriptors_at_point_from_pline (Vector point, PLINE * pl, char poly,
  }
  
  static void
@@ -256,18 +260,75 @@ index aaa8c96..2f2ee7a 100644
  {
    POLYAREA *b = bfst;
    PLINE *cur;
-@@ -2451,6 +2461,10 @@ remove_cvc_list_entry (CVCList *l)
+@@ -2442,53 +2450,12 @@ add_dummy_descriptors_at_point (Vector point, PLINE * pl, char poly, CVCList * l
+ 
+ 
+ static void
+-remove_cvc_list_entry (CVCList *l)
++mark_cvc_list_entry_as_skip (CVCList *l)
+ {
+-  CVCList *head_iter;
+-  CVCList *cvc_iter;
+-  bool last_at_vertex;
+-
    if (l == NULL)
      return;
  
+-  last_at_vertex = (l->prev == l || l->next == l); /* XXX: Are these conditions equivalent for the last in list case? */
+-
+-  if (l->side == 'P')
+-    l->parent->cvc_prev = NULL;
+-  else
+-    l->parent->cvc_next = NULL;
+-
+-  l->next->prev = l->prev;
+-  l->prev->next = l->next;
+-
+-  /* Ensure the CVCList we're about to free is not pointed to by any of the master
+-   * CVCList links
+-   */
+-  /* Loop over all CVC heads, starting with l->head, stopping when we get back to l */
+-  head_iter = l->head;
+-  do
+-    {
+-      if (head_iter->head == l) /* This CVCList group points at l as the next group */
+-        {
+-          /* Loop over all CVC in iter, change iter->head to point to the next
+-           * descriptor for this vertex, or if we removed the last one, to the
+-           * next CVCList vertex group, l->head
+-           */
+-          cvc_iter = head_iter;
+-          do
+-            {
+-              if (last_at_vertex)
+-                cvc_iter->head = l->head;
+-              else
+-                cvc_iter->head = l->next;
+-            }
+-          while ((cvc_iter = cvc_iter->next) != head_iter);
+-          break;
+-        }
+-    }
+-  while ((head_iter = head_iter->head) != l->head);
+-
+-  free (l);
 +  l->skip_me = true;
-+
-+  return;
-+
-   last_at_vertex = (l->prev == l || l->next == l); /* XXX: Are these conditions equivalent for the last in list case? */
+ }
  
-   if (l->side == 'P')
-@@ -2815,7 +2829,7 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+ static CVCList *
+@@ -2688,9 +2655,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+ 
+                   /* NOTE: 'P' at this node means 'N' at otherend */
+                   fprintf (stderr, "Removing CVC descriptor at %p\n", (l->side == 'P') ? l_otherend->cvc_next : l_otherend->cvc_prev);
+-                  remove_cvc_list_entry ((l->side == 'P') ? l_otherend->cvc_next : l_otherend->cvc_prev);
++                  mark_cvc_list_entry_as_skip ((l->side == 'P') ? l_otherend->cvc_next : l_otherend->cvc_prev);
+                   fprintf (stderr, "Removing CVC descriptor at %p\n", (n->side == 'P') ? n_otherend->cvc_next : n_otherend->cvc_prev);
+-                  remove_cvc_list_entry ((n->side == 'P') ? n_otherend->cvc_next : n_otherend->cvc_prev);
++                  mark_cvc_list_entry_as_skip ((n->side == 'P') ? n_otherend->cvc_next : n_otherend->cvc_prev);
+ 
+                   point_v = l_otherend; /* Vertex end where we will ensure descriptors exist */
+ 
+@@ -2815,11 +2782,11 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
  
                fprintf (stderr, "Dumping CVC list prior to adding our new nodes\n");
                cvc_list_dump (find_cvc_at_point (the_list, point));
@@ -276,7 +337,42 @@ index aaa8c96..2f2ee7a 100644
                fprintf (stderr, "Dumping CVC list after adding our new nodes\n");
                cvc_list_dump (find_cvc_at_point (the_list, point));
  
-@@ -2898,6 +2912,7 @@ M_POLYAREA_check_hairline_edges (CVCList *the_list, POLYAREA *bfst)
+-              /* Now remove the vertices from both CVC lists, to avoid complicating the edge labeling code.
++              /* Now remove the vertices from this CVC list, to avoid complicating the edge labeling code.
+                * Alternatively - teach the edge labeling code to skip pre-marked edges?
+                *
+                * NOTE: We are careful not to re-add these marked vertices as we progress further in our
+@@ -2830,9 +2797,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+ #if 0
+               /* NOTE: 'P' at this node means 'N' at otherend */
+               fprintf (stderr, "Removing CVC descriptor at %p\n", (l->side == 'P') ? l_otherend->cvc_next : l_otherend->cvc_prev);
+-              remove_cvc_list_entry ((l->side == 'P') ? l_otherend->cvc_next : l_otherend->cvc_prev);
++              mark_cvc_list_entry_as_skip ((l->side == 'P') ? l_otherend->cvc_next : l_otherend->cvc_prev);
+               fprintf (stderr, "Removing CVC descriptor at %p\n", (n->side == 'P') ? n_otherend->cvc_next : n_otherend->cvc_prev);
+-              remove_cvc_list_entry ((n->side == 'P') ? n_otherend->cvc_next : n_otherend->cvc_prev);
++              mark_cvc_list_entry_as_skip ((n->side == 'P') ? n_otherend->cvc_next : n_otherend->cvc_prev);
+ #endif
+ 
+               /* Find the next eligible edge to start from, since we're about to delete the
+@@ -2850,7 +2817,7 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+                     terminate_after_this_iteration = true;
+                 }
+               fprintf (stderr, "Removing CVC descriptor at %p\n", l);
+-              remove_cvc_list_entry (l);
++              mark_cvc_list_entry_as_skip (l);
+ #warning ACTUALLY, THIS IS HIT WHEN WE REMOVE THE FIRST EDGE IN l ABOVE.. NEED TO COPE MORE GRACEFULLY!
+               if (n == first_l)
+                 {
+@@ -2858,7 +2825,7 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+                   terminate_after_this_iteration = true;
+                 }
+               fprintf (stderr, "Removing CVC descriptor at %p\n", n);
+-              remove_cvc_list_entry (n);
++              mark_cvc_list_entry_as_skip (n);
+               cvc_list_dump (find_cvc_at_point (the_list, point));
+ 
+               n = nn;
+@@ -2898,6 +2865,7 @@ M_POLYAREA_check_hairline_edges (CVCList *the_list, POLYAREA *bfst)
    while ((b = b->f) != bfst);
  }
  
@@ -284,7 +380,7 @@ index aaa8c96..2f2ee7a 100644
  /* determine if two polygons touch or overlap */
  BOOLp
  Touching (POLYAREA * a, POLYAREA * b)
-@@ -3034,8 +3049,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -3034,8 +3002,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        /* intersect needs to make a list of the contours in a and b which are intersected */
        M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
  
@@ -295,7 +391,7 @@ index aaa8c96..2f2ee7a 100644
  
  #if 0
        /* Second pass gives us a chance to catch any bad-geometry hairlines we convert by inserting nodes */
-@@ -3079,7 +3096,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -3079,7 +3049,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
      }
  
  out:
