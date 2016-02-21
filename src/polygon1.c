@@ -3049,7 +3049,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
     }
 
 out:
-  assert (!*res || poly_Valid (*res));
+//  assert (!*res || poly_Valid (*res));
 
   /* Store perantage information */
   if (*res != NULL)
