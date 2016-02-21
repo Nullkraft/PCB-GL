@@ -1,5 +1,5 @@
-Bottom: a5f49a14eff61182b0031e5c226d43c578b137c3
-Top:    86715587f396afc7b4fd5221139b13723eb6a595
+Bottom: 6f56ee427b167ca49303af59592eae804b01bf29
+Top:    f2da68b12b6660cd37e3f69a734f3d271d9aec99
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:31:44 +0000
 
@@ -52,10 +52,10 @@ index 84f62ed..ded72f6 100644
  void SetElementBoundingBox (DataType *, ElementType *, FontType *);
  bool IsDataEmpty (DataType *);
 diff --git a/src/polyarea.h b/src/polyarea.h
-index c892307..199bc59 100644
+index 22de3a8..010e676 100644
 --- a/src/polyarea.h
 +++ b/src/polyarea.h
-@@ -94,8 +94,10 @@ struct VNODE
+@@ -95,8 +95,10 @@ struct VNODE
      double p0; /* Smaller parameter along curve, 0-1 */
      double p1; /* Larger  parameter along curve, 0-1 */
      bool is_round;
@@ -68,7 +68,7 @@ index c892307..199bc59 100644
  };
  
  typedef struct PLINE PLINE;
-@@ -130,7 +132,8 @@ void poly_PreContour(PLINE * c, BOOLp optimize); /* prepare contour */
+@@ -131,7 +133,8 @@ void poly_PreContour(PLINE * c, BOOLp optimize); /* prepare contour */
  void poly_InvContour(PLINE * c);  /* invert contour */
  
  VNODE *poly_CreateNode(Vector v);
@@ -106,7 +106,7 @@ index bf37a0d..d30d412 100644
            next_n = n + 1;
            if (next_n == p->PointN ||
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a5bf8ed..fd3b284 100644
+index 4c79bf3..3ea0335 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -192,7 +192,8 @@ poly_dump (POLYAREA * p)
@@ -129,7 +129,7 @@ index a5bf8ed..fd3b284 100644
  {
  //  return poly_CreateNodeFull (v, false /*true*/, cx, cy, radius);
    return poly_CreateNodeFull (v, true, cx, cy, radius);
-@@ -1964,7 +1966,7 @@ print_labels (PLINE * a)
+@@ -1974,7 +1976,7 @@ print_labels (PLINE * a)
  
    do
      {
