@@ -1,5 +1,5 @@
-Bottom: 21f98352ca8ed89cbc27a70298f05b7fa853b25c
-Top:    4da6634df2ea8f73fea63ec661274a8eb9455d32
+Bottom: b897fc99a4242c88e5ade20c46ad36b562632185
+Top:    1373cf4206c8556cf6ba7b61e00018738e38f9f1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-21 15:09:29 +0000
 
@@ -9,7 +9,7 @@ Refactor hairline edge checks
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 83d0b98..aaa8c96 100644
+index 42d94af..9ee2c34 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -332,14 +332,6 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
