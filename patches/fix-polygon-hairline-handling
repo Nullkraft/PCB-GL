@@ -1,5 +1,5 @@
-Bottom: 81652756fab88b67bd124f06942f4137c5dcaff4
-Top:    30197302ae78ba693d6ec4cadd3109b6f66483d0
+Bottom: 8a6d451beeab2490736eda03efa6ea4519da1f84
+Top:    0df6130eb294633e749bac2fef4db24dc503e9be
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-21 15:13:19 +0000
 
@@ -9,10 +9,10 @@ Fix polygon hairline handling
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 189bc25..26df96d 100644
+index 5be2e76..c1b2295 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -3049,7 +3049,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2934,7 +2934,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
      }
  
  out:
