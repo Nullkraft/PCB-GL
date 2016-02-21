@@ -1660,10 +1660,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
   if (!(*curv)->cvc_prev)	/* not a cross-vertex */
     {
       if (VERTEX_DIRECTION_EDGE (*curv, *cdir)->Flags.mark)
-        {
-          g_warning ("Nowhere to go at normal-vertex");
-	  return FALSE;
-        }
+	return FALSE;
       return TRUE;
     }
 #ifdef DEBUG_JUMP
@@ -1696,7 +1693,6 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
 	}
     }
   while ((d = d->prev) != start); /* Keep searching around the cvc vertex for a suitable exit edge */
-  g_warning ("Nowhere to go at cross-vertex");
   return FALSE;
 }
 
