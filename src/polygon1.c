@@ -2647,7 +2647,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
                   g_critical ("Finding hairline edge pair");
 
 
-                  /* Remove the shared edges from any possibly existing cross-connected node at their other ends.
+                  /* Mark the shared edges from being used in any possibly existing
+                   * cross-connected node at their other ends.
+                   *
                    * NB: This doesn't apply to the case below where edge geometry is different, as we insert an
                    *     additional vertex, and can be pretty sure that vertex will not be cross-connected. The
                    *     longer edge may land at a cross-connected point, and we need to leave that descriptor.
@@ -2786,13 +2788,7 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
               fprintf (stderr, "Dumping CVC list after adding our new nodes\n");
               cvc_list_dump (find_cvc_at_point (the_list, point));
 
-              /* Now remove the vertices from this CVC list, to avoid complicating the edge labeling code.
-               * Alternatively - teach the edge labeling code to skip pre-marked edges?
-               *
-               * NOTE: We are careful not to re-add these marked vertices as we progress further in our
-               *       loop around the contour, but at least some must have already existing in the
-               *       cross-connected nodes.
-               */
+              /* Now mark the vertices from this CVC list, to avoid complicating the edge labeling code. */
 
 #if 0
               /* NOTE: 'P' at this node means 'N' at otherend */
@@ -2816,14 +2812,17 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
                   if (l == first_l)
                     terminate_after_this_iteration = true;
                 }
+
               fprintf (stderr, "Removing CVC descriptor at %p\n", l);
               mark_cvc_list_entry_as_skip (l);
+
 #warning ACTUALLY, THIS IS HIT WHEN WE REMOVE THE FIRST EDGE IN l ABOVE.. NEED TO COPE MORE GRACEFULLY!
               if (n == first_l)
                 {
                   fprintf (stderr, "NOTE (2)\n");
                   terminate_after_this_iteration = true;
                 }
+
               fprintf (stderr, "Removing CVC descriptor at %p\n", n);
               mark_cvc_list_entry_as_skip (n);
               cvc_list_dump (find_cvc_at_point (the_list, point));
