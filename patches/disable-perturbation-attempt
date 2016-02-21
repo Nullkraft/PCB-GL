@@ -1,5 +1,5 @@
-Bottom: 326416cfa13a408e714215571e4c999d50a6914a
-Top:    57f1fe0f6925bcf91e6b9f40c52df142207e6961
+Bottom: 49a92ea799263e1c73be12282bcae6017c83b474
+Top:    489d7194584daf06422d76eb0f23ba7ddf97ddf8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-19 20:41:35 +0000
 
@@ -9,7 +9,7 @@ Disable perturbation attempt during intersection
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ceb1c86..5663339 100644
+index 9948072..d0793d7 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1158,6 +1158,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)

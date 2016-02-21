@@ -1,5 +1,5 @@
-Bottom: 1d2a3caeb35c1e36bc3aba854402f824900b0599
-Top:    efae4b1518e1ab83d5bf03f924397161cc5ea7fa
+Bottom: 6bc979aa5e24ac65f9b5f07be54b591baf8160f9
+Top:    799c7b7fc8fc4b755206d663bc1bd7e35fd60a8b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:31:08 +0000
 
@@ -11,7 +11,7 @@ The code does not handle the bounding region of arcs yet
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f0e5333..83fa809 100644
+index 4c1a456..81d56b0 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -714,6 +714,7 @@ adjust_tree (rtree_t * tree, struct seg *s)

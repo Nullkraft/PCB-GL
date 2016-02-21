@@ -1,5 +1,5 @@
-Bottom: b57b4d9bba3bcff69b6642261aa1f69e9b278c0b
-Top:    774e5ccb8cec62f6f463e124df4780976485064c
+Bottom: b64d7bdafd93e3bda65d32822384fcc1ae63a813
+Top:    9b8be471e24c2356487d5c5490c89a4bd4816497
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:43:45 +0000
 
@@ -675,7 +675,7 @@ index 0accd67..8f172ed 100644
    return clipped;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index d6f8ead..5654f7d 100644
+index 3dc4083..445ff1e 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -109,12 +109,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -813,8 +813,8 @@ index d6f8ead..5654f7d 100644
  int
  poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 @@ -2822,6 +2870,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-   POLYAREA *a_copy, *b_copy;
    CVCList *the_list;
+   POLYAREA *a_copy, *b_copy;
  
 +  test_polyInvContour ();
 +
