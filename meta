@@ -1,6 +1,6 @@
 Version: 1
-Previous: b7f6a4dfabe7cec6b7d6b71a24bb5df8c432534e
-Head: a9c4aa75ddaf744212e166f61b690151861db036
+Previous: 8dc7660c3b202dfa4d47e3991686233aaf319425
+Head: 1fcd72f5bf9d6be60dfad6f4281ecfad0c51f666
 Applied:
   add-polygon-parentage-tree: d03932a1e440257ee6ad522814feb15688d11125
   limit-virtual-memory-size-of: 1e0deeaeab2279d4b29ce9a7862f21deb3bb98ad
@@ -10,36 +10,36 @@ Applied:
   refactor-hairline-edge-checks: 0d0c15e752f25ac3ecf417e709eac1db3a5bf4e0
   fix-polygon-hairline-handling: c9a5db718a10e0a107a0ccbd731d6b26f9af6a9e
   remove-debug-from-hairline: a9c4aa75ddaf744212e166f61b690151861db036
+  refactor-arc-bounding-box: 4f32dfa6af3e12f1331e6259c3d15d47ccd2d628
+  fix-for-arc-bounding-box: 582c69e00226d0d14de2e3b81fc174c0cfc4661f
+  add-support-for-arc-segments: 94096ebb3c734dddd9a70ca8ae33b63ad7456ffc
+  temp: 2f3a4eec8393487eb55a21a20350793b30ea6be4
+  remaining-bug-from-another: f2c1c45982f7a728ba11ed0b72afbcd5af434ec9
+  revert-remaining-bug-from: a8dabdc5010a4a4c29de13e06353756672a2395e
+  compute-the-correct: 9b334b4fbe49f341319d7eafc6f690c4021a475f
+  test-poly-curve-support: 7bc45f9ecd98803bca01c26aae136ffb97f5df4e
+  polygon-h-reduce-circ_segs-to: 9ce60d8bd02f0f70e3c5e3635baef1379d7280dc
+  debug-stuff-looking-into-bad: 01a47ba09a32ded27eb38bd5afc326c54c4a755f
+  revert-debug-stuff-looking: f6e3f0d32aa0a9908090cf9bfbc3b0b25d8d9844
+  disable-polygon-heritage: 0e1da64692866b86bd3d9f8c4163acd32758d240
+  tag-vnodes-with-details-of: 328dd74e64bc443d9fdb0e611122fd8d73971fac
+  remove-debug-from-outline: a806cb46036b1024116cdbb5e56b1272006edf43
+  polygon1-c-temporarily-disable: 63f72f17647d7c78243df224c9b4f897f0c49083
+  attempt-at-supporting-arc-arc: aa733175914cca1d3ff39e60644af3022f159d4c
+  avoid-solving-snap-rounding: 3656c2a451262e80d9f73efa44ff1bafa6a1bf4d
+  work-in-progress-on-arc: c4ccaa0b2cd22bfe766225d174f92e94fea04d1d
+  fixup-inserted-nodes-to-be-of: c31883505dc44fc0181f12d61651a83624c4ddba
+  make-more-use-of-macros-for: 76f018debecb38ec7515be8c658e4326ad29ba8a
+  remove-debug-rendering-for: abd718bbb5d6c992ce351a769886738d0f65b26f
+  fix-a-few-random-places-where: 60d27764f86a6b4c74c941bf9a9f657bcdd250d3
+  temporarily-disable-rubber: 9d30f67df3ebee8cc903b31498d997e781dc58af
+  attempt-storing-arc-center: 0eec42f9aa9a01eccd22d9a45357f1b5262a29fb
+  mark-segments-as-not-round: dcbf9d36cffbca977d4d7914a17a214f7a1cb04d
+  turn-on-some-debugging-for: f1dae39e50b5e3b71406c28ef959714d062925e5
+  disable-perturbation-attempt: c28d8358cad97c5dd93e17b98c6449fab469c33f
+  mess-of-attempts-to-debug-and: 281b9460bdb565b8c7656c6d0100ae3b2e60b45a
+  temp-polygon-mess: 681685f5643573ca9842d6711757ae723220ef1a
+  calculate-epsilon-estimate-for: e1dfecbc288ab5e4457946bb8cadf185cc066c14
+  draw-lines-as-their-polygon: 1fcd72f5bf9d6be60dfad6f4281ecfad0c51f666
 Unapplied:
-  refactor-arc-bounding-box: a6c86c55a215114e82351c31c29ab72e2dea72c0
-  fix-for-arc-bounding-box: a178e30d2a37470c9d8f818d7171b0b3cdf577b1
-  add-support-for-arc-segments: f0e64ae1fabe517315135e73ad0d79bb967b7f49
-  temp: 66dd0ae449be086e97ae672510644a17baf76ec9
-  remaining-bug-from-another: 25907c668c0247c1396c310279d27637c92401b1
-  revert-remaining-bug-from: cb99a8664a65748b9890dde68337f1e363f008af
-  compute-the-correct: a908fd94e0910e1b75e2e6d3232146a18af82133
-  test-poly-curve-support: c2def23f178a9c45f8b1b7855427527258a314d3
-  polygon-h-reduce-circ_segs-to: 1b901efe7aea9924679da0df62ab46ebd961350e
-  debug-stuff-looking-into-bad: f114fd647904f39f830bd28fc3ae5b1e6a9ac111
-  revert-debug-stuff-looking: 15d199983611f5de1f736835067da46b535d257c
-  disable-polygon-heritage: 28c2e5b3e245dab40f39d1deebec7b52c047de3c
-  tag-vnodes-with-details-of: 7ae825924a5428e71d0dfa25004af050ac940837
-  remove-debug-from-outline: 723993d6f82a482169f478f55d82b792c67a5c35
-  polygon1-c-temporarily-disable: c6446da2e33804b1761fe8551c6dadbed10b779e
-  attempt-at-supporting-arc-arc: 04303f650b132e628eff126d61f4c6ac2be1db87
-  avoid-solving-snap-rounding: 776ff70352b8b109fd5468947b842d9671fc757b
-  work-in-progress-on-arc: 2cf3560c8c70b619e90fc6ee6188f05dec8c9752
-  fixup-inserted-nodes-to-be-of: c5cad55ad568f41405a4c3a81fcb294eb50e0833
-  make-more-use-of-macros-for: 680a8f7ee48265af6fdaa79cfcf077ebdce6a9a3
-  remove-debug-rendering-for: 6de276be7b760e6a7bb3a69ab7cdc845e5d79526
-  fix-a-few-random-places-where: dd976c070de506a740c9bd3f4dd20ed80f51b4ca
-  temporarily-disable-rubber: 8a438c23c673f2fade7a83044f7eff633c38f590
-  attempt-storing-arc-center: 396b3cd8cc3aba15501413883ca47ba3db812ccb
-  mark-segments-as-not-round: 8f1ce3916bb77844da14521bcc93bfada8f0d56a
-  turn-on-some-debugging-for: 22afc31407c1d89eef048b2c03b9873e2e718198
-  disable-perturbation-attempt: 721b0df8a4820301d40d19eff0b6952ff2f8597b
-  mess-of-attempts-to-debug-and: a402f7b4abce33cbc201c2f6ca9007b14db766f6
-  temp-polygon-mess: 946b3b91e352c07aebd7eb94d3556aa46da9d22c
-  calculate-epsilon-estimate-for: 0405ead87b3c0d315c6b1b2a03f8e876e914c311
-  draw-lines-as-their-polygon: abe7b2ff4a881198f45ccddbcf2b3f6a60b73e47
 Hidden:
