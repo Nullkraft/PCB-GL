@@ -2956,6 +2956,8 @@ M_Set_Parentage (POLYAREA *poly, POLYPARENTAGE parentage)
 
 }
 
+static void clear_marks (POLYAREA * p);
+
 /* just like poly_Boolean but frees the input polys */
 int
 poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
@@ -2967,12 +2969,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
   int code;
   CVCList *the_list;
   POLYAREA *a_copy, *b_copy;
+  CVCList *the_list;
 
   *res = NULL;
 
   g_warning ("BEGIN BOOLEAN");
-
-  *res = NULL;
 
   /* Make copies for tracking polygon parentage (DEBUG) */
   if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
@@ -2990,7 +2991,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       M_Set_Parentage (b_copy, b->parentage);
       M_Set_Parentage (b, no_parentage);
     }
->>>>>>> patched
 
   if (!a)
     {
