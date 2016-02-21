@@ -2923,8 +2923,6 @@ M_Set_Parentage (POLYAREA *poly, POLYPARENTAGE parentage)
 
 }
 
-static void clear_marks (POLYAREA * p);
-
 /* just like poly_Boolean but frees the input polys */
 int
 poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
