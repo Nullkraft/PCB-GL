@@ -2388,33 +2388,21 @@ static CVCList *
 add_dummy_descriptors_at_point_from_pline (Vector point, PLINE * pl, char poly, CVCList * list)
 {
   VNODE *node = &pl->head; /* node is considered a vertex */
-  int count = 0;
-  int prev_count = 0;
-  int next_count = 0;
 
-  pcb_fprintf (stderr, "LOOKING FOR VERTICES AT POINT (%$mn, %$mn), from PLINE %p\n", point[0], point[1], pl);
-
-#warning THIS ONLY CATCHES NODES FROM THE CURRENT PLINE.. THERE MAY BE MULTIPLE PLINE TO CONSIDER!!
   do
     {
       if (vect_equal (node->point, point))
         {
-          count++;
-          if (node->cvc_prev == NULL &&
-1)//              !VERTEX_BACKWARD_EDGE (node)->Flags.mark) /* Don't bother re-adding an edge we've decided we don't want traversed */
+          if (node->cvc_prev == NULL)
             {
-              prev_count++;
               list = node->cvc_prev = insert_descriptor (node, poly, 'P', list);
               g_return_val_if_fail (node->cvc_prev != NULL, NULL);
             }
-          if (node->cvc_next == NULL &&
-1)//              !VERTEX_FORWARD_EDGE (node)->Flags.mark) /* Don't bother re-adding an edge we've decided we don't want traversed */
+          if (node->cvc_next == NULL)
             {
-              next_count++;
               list = node->cvc_next = insert_descriptor (node, poly, 'N', list);
               g_return_val_if_fail (node->cvc_next != NULL, NULL);
             }
-          fprintf (stderr, "Found a match (Total %i Prev %i, Next %i)\n", count, prev_count, next_count);
         }
     }
   while ((node = NEXT_VERTEX(node)) != &pl->head);
@@ -2588,9 +2576,6 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
               VNODE *l_otherend = EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side);
               VNODE *n_otherend = EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (n->parent, n->side), n->side);
               VNODE *point_v; /* As vertex */
-              Vector point;
-
-              Vcopy (point, l->parent->point);
 
               if (vect_equal (l_otherend->point, n_otherend->point))
                 {
