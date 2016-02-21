@@ -1,5 +1,5 @@
 Bottom: 320435433d37691efad653993473a90a756d844a
-Top:    6384a596a058559f853d951497812b5f4b8acafa
+Top:    77a95d41caa7a022482fa64aba97cfdf54daceaa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-21 13:37:56 +0000
 
@@ -21,7 +21,7 @@ index d255863..6f0f6b0 100644
  struct VNODE
  {
 diff --git a/src/polygon1.c b/src/polygon1.c
-index aaa8c96..c9fef08 100644
+index aaa8c96..8c038ee 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -110,12 +110,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -316,7 +316,18 @@ index aaa8c96..c9fef08 100644
  }
  
  static CVCList *
-@@ -2688,9 +2655,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2680,7 +2647,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+                   g_critical ("Finding hairline edge pair");
+ 
+ 
+-                  /* Remove the shared edges from any possibly existing cross-connected node at their other ends.
++                  /* Mark the shared edges from being used in any possibly existing
++                   * cross-connected node at their other ends.
++                   *
+                    * NB: This doesn't apply to the case below where edge geometry is different, as we insert an
+                    *     additional vertex, and can be pretty sure that vertex will not be cross-connected. The
+                    *     longer edge may land at a cross-connected point, and we need to leave that descriptor.
+@@ -2688,9 +2657,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
  
                    /* NOTE: 'P' at this node means 'N' at otherend */
                    fprintf (stderr, "Removing CVC descriptor at %p\n", (l->side == 'P') ? l_otherend->cvc_next : l_otherend->cvc_prev);
@@ -328,7 +339,7 @@ index aaa8c96..c9fef08 100644
  
                    point_v = l_otherend; /* Vertex end where we will ensure descriptors exist */
  
-@@ -2815,11 +2782,11 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2815,24 +2784,18 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
  
                fprintf (stderr, "Dumping CVC list prior to adding our new nodes\n");
                cvc_list_dump (find_cvc_at_point (the_list, point));
@@ -338,11 +349,14 @@ index aaa8c96..c9fef08 100644
                cvc_list_dump (find_cvc_at_point (the_list, point));
  
 -              /* Now remove the vertices from both CVC lists, to avoid complicating the edge labeling code.
-+              /* Now remove the vertices from this CVC list, to avoid complicating the edge labeling code.
-                * Alternatively - teach the edge labeling code to skip pre-marked edges?
-                *
-                * NOTE: We are careful not to re-add these marked vertices as we progress further in our
-@@ -2830,9 +2797,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+-               * Alternatively - teach the edge labeling code to skip pre-marked edges?
+-               *
+-               * NOTE: We are careful not to re-add these marked vertices as we progress further in our
+-               *       loop around the contour, but at least some must have already existing in the
+-               *       cross-connected nodes.
+-               */
++              /* Now mark the vertices from this CVC list, to avoid complicating the edge labeling code. */
+ 
  #if 0
                /* NOTE: 'P' at this node means 'N' at otherend */
                fprintf (stderr, "Removing CVC descriptor at %p\n", (l->side == 'P') ? l_otherend->cvc_next : l_otherend->cvc_prev);
@@ -354,25 +368,29 @@ index aaa8c96..c9fef08 100644
  #endif
  
                /* Find the next eligible edge to start from, since we're about to delete the
-@@ -2850,7 +2817,7 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2849,16 +2812,19 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+                   if (l == first_l)
                      terminate_after_this_iteration = true;
                  }
++
                fprintf (stderr, "Removing CVC descriptor at %p\n", l);
 -              remove_cvc_list_entry (l);
 +              mark_cvc_list_entry_as_skip (l);
++
  #warning ACTUALLY, THIS IS HIT WHEN WE REMOVE THE FIRST EDGE IN l ABOVE.. NEED TO COPE MORE GRACEFULLY!
                if (n == first_l)
                  {
-@@ -2858,7 +2825,7 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+                   fprintf (stderr, "NOTE (2)\n");
                    terminate_after_this_iteration = true;
                  }
++
                fprintf (stderr, "Removing CVC descriptor at %p\n", n);
 -              remove_cvc_list_entry (n);
 +              mark_cvc_list_entry_as_skip (n);
                cvc_list_dump (find_cvc_at_point (the_list, point));
  
                n = nn;
-@@ -2898,6 +2865,7 @@ M_POLYAREA_check_hairline_edges (CVCList *the_list, POLYAREA *bfst)
+@@ -2898,6 +2864,7 @@ M_POLYAREA_check_hairline_edges (CVCList *the_list, POLYAREA *bfst)
    while ((b = b->f) != bfst);
  }
  
@@ -380,7 +398,7 @@ index aaa8c96..c9fef08 100644
  /* determine if two polygons touch or overlap */
  BOOLp
  Touching (POLYAREA * a, POLYAREA * b)
-@@ -3034,8 +3002,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -3034,8 +3001,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        /* intersect needs to make a list of the contours in a and b which are intersected */
        M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
  
@@ -391,7 +409,7 @@ index aaa8c96..c9fef08 100644
  
  #if 0
        /* Second pass gives us a chance to catch any bad-geometry hairlines we convert by inserting nodes */
-@@ -3079,7 +3049,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -3079,7 +3048,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
      }
  
  out:
