@@ -1,5 +1,5 @@
-Bottom: 30a17dfa391446353e306d766f0861a84c6d33e4
-Top:    5476f3fe6e09c06a5cb509c748ceb690ca70e3bf
+Bottom: efae4b1518e1ab83d5bf03f924397161cc5ea7fa
+Top:    3ba3b84f2b0890678c19308f5cd619fd2e324bf6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:31:11 +0000
 
@@ -289,7 +289,7 @@ index 0643765..d47b1fc 100644
 +BoxType *get_seg_bounds (PLINE *contour, VNODE *node);
  #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index d4a97aa..07e8e20 100644
+index 83fa809..517291b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -50,10 +50,13 @@
@@ -339,16 +339,16 @@ index d4a97aa..07e8e20 100644
    if (p == NULL)
      return NULL;
    p->cvc_prev = p->cvc_next = NULL;
-@@ -655,7 +671,7 @@ typedef struct info
+@@ -662,7 +678,7 @@ typedef struct info
    VNODE *v;
    struct seg *s;
    jmp_buf *env, sego, *touch;
 -  int need_restart;
 +//  int need_restart;
    insert_node_task *node_insert_list;
+   bool debug;
  } info;
- 
-@@ -664,7 +680,7 @@ typedef struct contour_info
+@@ -672,7 +688,7 @@ typedef struct contour_info
    PLINE *pa;
    jmp_buf restart;
    jmp_buf *getout;
@@ -357,7 +357,7 @@ index d4a97aa..07e8e20 100644
    insert_node_task *node_insert_list;
  } contour_info;
  
-@@ -690,6 +706,31 @@ adjust_tree (rtree_t * tree, struct seg *s)
+@@ -698,6 +714,31 @@ adjust_tree (rtree_t * tree, struct seg *s)
    q->box.X2 = max (EDGE_BACKWARD_VERTEX (q->v)->point[0], EDGE_FORWARD_VERTEX (q->v)->point[0]) + 1;
    q->box.Y1 = min (EDGE_BACKWARD_VERTEX (q->v)->point[1], EDGE_FORWARD_VERTEX (q->v)->point[1]);
    q->box.Y2 = max (EDGE_BACKWARD_VERTEX (q->v)->point[1], EDGE_FORWARD_VERTEX (q->v)->point[1]) + 1;
@@ -389,7 +389,7 @@ index d4a97aa..07e8e20 100644
    r_insert_entry (tree, (const BoxType *) q, 1);
    q = (seg *)malloc (sizeof (struct seg));
    if (!q)
-@@ -701,6 +742,31 @@ adjust_tree (rtree_t * tree, struct seg *s)
+@@ -709,6 +750,31 @@ adjust_tree (rtree_t * tree, struct seg *s)
    q->box.X2 = max (EDGE_BACKWARD_VERTEX (q->v)->point[0], EDGE_FORWARD_VERTEX (q->v)->point[0]) + 1;
    q->box.Y1 = min (EDGE_BACKWARD_VERTEX (q->v)->point[1], EDGE_FORWARD_VERTEX (q->v)->point[1]);
    q->box.Y2 = max (EDGE_BACKWARD_VERTEX (q->v)->point[1], EDGE_FORWARD_VERTEX (q->v)->point[1]) + 1;
@@ -421,7 +421,7 @@ index d4a97aa..07e8e20 100644
    r_insert_entry (tree, (const BoxType *) q, 1);
    r_delete_entry (tree, (const BoxType *) s);
    return 0;
-@@ -741,6 +807,249 @@ prepend_insert_node_task (insert_node_task *list, seg *seg, VNODE *new_node)
+@@ -749,6 +815,249 @@ prepend_insert_node_task (insert_node_task *list, seg *seg, VNODE *new_node)
    return task;
  }
  
@@ -671,7 +671,7 @@ index d4a97aa..07e8e20 100644
  /*
   * seg_in_seg()
   * (C) 2006 harry eaton
-@@ -756,60 +1065,24 @@ static int
+@@ -764,60 +1073,24 @@ static int
  seg_in_seg (const BoxType * b, void *cl)
  {
    struct info *i = (struct info *) cl;
@@ -743,7 +743,7 @@ index d4a97aa..07e8e20 100644
  }
  
  static void *
-@@ -823,26 +1096,36 @@ make_edge_tree (PLINE * pb)
+@@ -831,26 +1104,36 @@ make_edge_tree (PLINE * pb)
      {
        s = (seg *)malloc (sizeof (struct seg));
        s->intersected = 0;
@@ -800,7 +800,7 @@ index d4a97aa..07e8e20 100644
        s->v = bv;
        s->p = pb;
        r_insert_entry (ans, (const BoxType *) s, 1);
-@@ -898,7 +1181,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -908,7 +1191,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
    /* Have seg_in_seg return to our desired location if it touches */
    info.env = &restart;
    info.touch = c_info->getout;
@@ -809,7 +809,7 @@ index d4a97aa..07e8e20 100644
    info.node_insert_list = c_info->node_insert_list;
  
    /* Pick which contour has the fewer points, and do the loop
-@@ -958,8 +1241,8 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -969,8 +1252,8 @@ contour_bounds_touch (const BoxType * b, void *cl)
    while ((av = NEXT_EDGE (av)) != &looping_over->head);
  
    c_info->node_insert_list = info.node_insert_list;
@@ -820,7 +820,7 @@ index d4a97aa..07e8e20 100644
    return 0;
  }
  
-@@ -971,7 +1254,7 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -982,7 +1265,7 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
    contour_info c_info;
    int need_restart = 0;
    insert_node_task *task;
@@ -829,7 +829,7 @@ index d4a97aa..07e8e20 100644
    c_info.node_insert_list = NULL;
  
    /* Search the r-tree of the object with most contours
-@@ -1011,8 +1294,8 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -1022,8 +1305,8 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        sb.Y2 = pa->ymax + 1;
  
        r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
@@ -840,7 +840,7 @@ index d4a97aa..07e8e20 100644
      }
  
    /* Process any deferred node insersions */
-@@ -1021,9 +1304,6 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -1032,9 +1315,6 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
      {
        insert_node_task *next = task->next;
  
@@ -850,7 +850,7 @@ index d4a97aa..07e8e20 100644
        /* Do insersion */
        PREV_VERTEX (task->new_node) = EDGE_BACKWARD_VERTEX (task->node_seg->v);
        NEXT_VERTEX (task->new_node) = EDGE_FORWARD_VERTEX (task->node_seg->v);
-@@ -1031,13 +1311,14 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -1042,13 +1322,14 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        EDGE_FORWARD_VERTEX (task->node_seg->v) = task->new_node;
        task->node_seg->p->Count++;
  
@@ -867,7 +867,7 @@ index d4a97aa..07e8e20 100644
            r_insert_entry (b->contour_tree, (const BoxType *) task->node_seg->p, 0);
          }
  
-@@ -3030,6 +3311,7 @@ poly_NewContour (VNODE *node)
+@@ -3138,6 +3419,7 @@ poly_NewContour (VNODE *node)
    res->head.cx = node->cx;
    res->head.cy = node->cy;
    res->head.radius = node->radius;
@@ -875,7 +875,7 @@ index d4a97aa..07e8e20 100644
    cntrbox_adjust (res, res->head.point);
    g_slice_free (VNODE, node);
  
-@@ -3090,7 +3372,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3198,7 +3480,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
  {
    double area = 0;
    VNODE *p, *c;
@@ -884,7 +884,7 @@ index d4a97aa..07e8e20 100644
  
    assert (C != NULL);
  
-@@ -3099,15 +3381,17 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3207,15 +3489,17 @@ poly_PreContour (PLINE * C, BOOLp optimize)
        for (c = NEXT_VERTEX ((p = &C->head)); c != &C->head; c = NEXT_VERTEX (p = c))
  	{
  	  /* if the previous node is on the same line with this one, we should remove it */
@@ -905,7 +905,7 @@ index d4a97aa..07e8e20 100644
  	    {
  	      poly_ExclVertex (c);
  	      g_slice_free (VNODE, c);
-@@ -3128,7 +3412,31 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3236,7 +3520,31 @@ poly_PreContour (PLINE * C, BOOLp optimize)
  	  area +=
  	    (double) (p->point[0] - c->point[0]) * (p->point[1] +
  						    c->point[1]);
@@ -937,7 +937,7 @@ index d4a97aa..07e8e20 100644
  	  C->Count++;
  	}
        while ((c = NEXT_VERTEX (p = c)) != &C->head);
-@@ -3767,6 +4075,7 @@ poly_ChkContour (PLINE * a)
+@@ -3875,6 +4183,7 @@ poly_ChkContour (PLINE * a)
        a2 = a1;
        do
  	{
@@ -945,7 +945,7 @@ index d4a97aa..07e8e20 100644
  	  if (!node_neighbours (a1, a2) &&
  	      (icnt = vect_inters2 (a1->point, a1->next->point,
  				    a2->point, a2->next->point, i1, i2)) > 0)
-@@ -4130,3 +4439,35 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4238,3 +4547,35 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
   * perhaps reverse tracing the arc would require look-ahead to check
   * for arcs
   */
