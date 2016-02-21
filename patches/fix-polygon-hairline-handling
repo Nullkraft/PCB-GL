@@ -1,5 +1,5 @@
 Bottom: 8a6d451beeab2490736eda03efa6ea4519da1f84
-Top:    0df6130eb294633e749bac2fef4db24dc503e9be
+Top:    8a6d451beeab2490736eda03efa6ea4519da1f84
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-21 15:13:19 +0000
 
@@ -8,16 +8,4 @@ Fix polygon hairline handling
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 5be2e76..c1b2295 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -2934,7 +2934,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-     }
- 
- out:
--  assert (!*res || poly_Valid (*res));
-+//  assert (!*res || poly_Valid (*res));
- 
-   /* Store perantage information */
-   if (*res != NULL)
+
