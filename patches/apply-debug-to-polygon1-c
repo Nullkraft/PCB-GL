@@ -1,5 +1,5 @@
-Bottom: 0e5daf8cdc3e52d373e98398cbd8398b7164c046
-Top:    da0c3fb132e3423ffaaa1a992361f730c02bc252
+Bottom: 9c4f920e4ee2f17e534fb1320892ec096ed0f842
+Top:    e8deadd27ec0c5d78ee3f23d601c37f0754eb71c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:46:26 +0000
 
@@ -9,7 +9,7 @@ Apply debug to polygon1.c
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index e8db54f..5b1a71a 100644
+index 1164e9d..ae5fda0 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -39,6 +39,7 @@
@@ -135,7 +135,7 @@ index e8db54f..5b1a71a 100644
  	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
  #endif
  	  i->node_insert_list =
-@@ -2800,6 +2836,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2825,6 +2861,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  
    *res = NULL;
  
@@ -147,7 +147,7 @@ index e8db54f..5b1a71a 100644
    if (!a)
      {
        switch (action)
-@@ -3121,6 +3162,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -3146,6 +3187,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
  	  if (vect_det2 (p1, p2) == 0)
  	    {
  	      poly_ExclVertex (c);
@@ -155,7 +155,7 @@ index e8db54f..5b1a71a 100644
  	      g_slice_free (VNODE, c);
  	      c = p;
  	    }
-@@ -3778,7 +3820,7 @@ poly_Valid (POLYAREA * p)
+@@ -3803,7 +3845,7 @@ poly_Valid (POLYAREA * p)
        do
  	{
  	  n = NEXT_VERTEX (v);
@@ -164,7 +164,7 @@ index e8db54f..5b1a71a 100644
  		   v->point[0], v->point[1], n->point[0], n->point[1]);
  	}
        while ((v = NEXT_VERTEX (v)) != &p->contours->head);
-@@ -3803,7 +3845,7 @@ poly_Valid (POLYAREA * p)
+@@ -3828,7 +3870,7 @@ poly_Valid (POLYAREA * p)
  	  do
  	    {
  	      n = NEXT_VERTEX (v);
@@ -173,7 +173,7 @@ index e8db54f..5b1a71a 100644
  		       v->point[0], v->point[1], n->point[0], n->point[1]);
  	    }
  	  while ((v = NEXT_VERTEX (v)) != &c->head);
-@@ -3992,6 +4034,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4017,6 +4059,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  	      Vcpy2 (S2, hq2);
  	    };
  	}
@@ -181,7 +181,7 @@ index e8db54f..5b1a71a 100644
        return (Vequ2 (S1, S2) ? 1 : 2);
      }
    else
-@@ -4039,6 +4082,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4064,6 +4107,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  	  S1[0] = q1[0] + ROUND (t * rqx);
  	  S1[1] = q1[1] + ROUND (t * rqy);
  	}
