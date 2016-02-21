@@ -1,5 +1,5 @@
 Bottom: 21cb7b05d6547b28cda74b5b9fa2d130b71b8580
-Top:    28ededde9c241b9f6358a4001ae4552e93909e18
+Top:    6ff4c6643aa76df7b679da21b73af5b1bc87f848
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-21 15:04:57 +0000
 
@@ -9,7 +9,7 @@ Remove debug from hairline handling etc..
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index aa00161..5b8bb06 100644
+index aa00161..b726d7b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -39,7 +39,6 @@
@@ -95,7 +95,16 @@ index aa00161..5b8bb06 100644
          }
      }
    while ((node = NEXT_VERTEX(node)) != &pl->head);
-@@ -2465,47 +2448,6 @@ next_cvc_from_same_poly (CVCList *start)
+@@ -2425,8 +2408,6 @@ add_dummy_descriptors_at_point (Vector point, char poly, CVCList * list, POLYARE
+   POLYAREA *b = bfst;
+   PLINE *cur;
+ 
+-  pcb_fprintf (stderr, "LOOKING FOR VERTICES AT POINT (%$mn, %$mn)\n", point[0], point[1]);
+-
+   assert (b != NULL);
+   do
+     {
+@@ -2465,47 +2446,6 @@ next_cvc_from_same_poly (CVCList *start)
    return n;
  }
  
@@ -143,7 +152,7 @@ index aa00161..5b8bb06 100644
  
  static seg *
  find_edge_seg (VNODE *edge, PLINE *contour)
-@@ -2601,8 +2543,6 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2601,8 +2541,6 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
        l = first_l;
        do
          {
@@ -152,7 +161,7 @@ index aa00161..5b8bb06 100644
            n =  next_cvc_from_same_poly (l);
  
            /* Skip testing if we wrapped around, and only had one pair to test */
-@@ -2615,8 +2555,6 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2615,8 +2553,6 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
              {
                g_warning ("Wrapped around and found ourselves in the CVCList.. not quite sure how we managed that\n"
                           "Did we perhaps delete the start descriptor? Odd number of entries in a CVCList??");
@@ -161,7 +170,7 @@ index aa00161..5b8bb06 100644
                break;
              }
  #endif
-@@ -2631,15 +2569,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2631,15 +2567,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
                VNODE *l_otherend = EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side);
                VNODE *n_otherend = EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (n->parent, n->side), n->side);
                VNODE *point_v; /* As vertex */
@@ -177,7 +186,7 @@ index aa00161..5b8bb06 100644
                    /* Mark the shared edges from being used in any possibly existing
                     * cross-connected node at their other ends.
                     *
-@@ -2649,9 +2581,7 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2649,9 +2579,7 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
                     */
  
                    /* NOTE: 'P' at this node means 'N' at otherend */
@@ -187,7 +196,7 @@ index aa00161..5b8bb06 100644
                    mark_cvc_list_entry_as_skip ((n->side == 'P') ? n_otherend->cvc_next : n_otherend->cvc_prev);
  
                    point_v = l_otherend; /* Vertex end where we will ensure descriptors exist */
-@@ -2666,21 +2596,6 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2666,21 +2594,6 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
                    char shorter_side;
  //                  seg *node_seg;
  
@@ -209,7 +218,7 @@ index aa00161..5b8bb06 100644
                    /* Pick which edge is longer, to insert into.
                     * NOTE: Should work for arcs less than 180 degrees span
                     */
-@@ -2714,8 +2629,6 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2714,8 +2627,6 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
                    g_assert (new_node != NULL);
                    new_node->cvc_prev = new_node->cvc_next = NULL;
  
@@ -218,7 +227,7 @@ index aa00161..5b8bb06 100644
                    {
                      /* Need a copy of the original longer edge pointer, as
                       * tracking back from longer (one of its vertex ends)
-@@ -2762,8 +2675,6 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2762,8 +2673,6 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
  
                  }
  
@@ -227,7 +236,7 @@ index aa00161..5b8bb06 100644
                /* Simple approach - just mark the edges as visited, so we don't traverse them!
                 * Doing it this way ensures that both pieces of the contour are reachable if
                 * the hairline edge pair splits this PLINE into two pieces. Since we will ensure
-@@ -2772,31 +2683,16 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2772,31 +2681,16 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
                 */
                VERTEX_SIDE_DIR_EDGE (l->parent, l->side)->Flags.mark = true;
                VERTEX_SIDE_DIR_EDGE (n->parent, n->side)->Flags.mark = true;
@@ -259,7 +268,7 @@ index aa00161..5b8bb06 100644
                if (l == first_l)
                  {
                    /* NOTE: Need to advance twice, as we're removing this, AND the next descriptor */
-@@ -2806,19 +2702,12 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -2806,19 +2700,12 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
                      terminate_after_this_iteration = true;
                  }
  
@@ -280,7 +289,7 @@ index aa00161..5b8bb06 100644
  
                n = nn;
                // XXX: What if we delete the last cross-connected vertex?? Probably the labelling code fails, as it won't know if the
-@@ -2913,8 +2802,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2913,8 +2800,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  
    *res = NULL;
  
@@ -289,7 +298,7 @@ index aa00161..5b8bb06 100644
    if (!a)
      {
        switch (action)
-@@ -3003,7 +2890,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -3003,7 +2888,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
      }
    assert (!*res || poly_Valid (*res));
  
