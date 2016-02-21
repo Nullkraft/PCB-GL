@@ -1,5 +1,5 @@
-Bottom: 86715587f396afc7b4fd5221139b13723eb6a595
-Top:    0bfe9c8e4a3f849b95898baa969fd4e31609df81
+Bottom: f2da68b12b6660cd37e3f69a734f3d271d9aec99
+Top:    19cfea5eb5a61d3b5e23cf3d3e473d1bbec2afe0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:31:48 +0000
 
@@ -11,10 +11,10 @@ This avoids assert failures with debugging enabeled
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index fd3b284..fb25283 100644
+index 3ea0335..3a75bca 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1320,6 +1320,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
+@@ -1325,6 +1325,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
        s1->v->radius == s2->v->radius)
      {
        printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
