@@ -2845,8 +2845,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 
   *res = NULL;
 
-  g_warning ("BEGIN BOOLEAN");
-
   /* Make copies for tracking polygon parentage (DEBUG) */
   if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
       return err_no_memory;
@@ -2971,7 +2969,6 @@ out:
       M_Set_Parentage (*res, parentage);
     }
 
-  g_warning ("END BOOLEAN");
   return code;
 }				/* poly_Boolean_free */
 
