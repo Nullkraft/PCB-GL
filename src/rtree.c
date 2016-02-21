@@ -40,7 +40,6 @@
 
 #include "global.h"
 
-#undef NDEBUG
 #include <assert.h>
 #include <setjmp.h>
 
