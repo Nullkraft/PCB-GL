@@ -1,7 +1,7 @@
-Bottom: 364948e8175b94c5eb89a88ee72798e461ce8a50
-Top:    ab82ac2be62b27234324b374b250afe4f2656272
+Bottom: eeaad35327d6a0f9e9d8c6c19fd97b687174811a
+Top:    c425fa5b45de5b4bacb263f4660e37132f8ceb6c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-21 15:13:16 +0000
+Date:   2016-02-21 15:13:19 +0000
 
 More debug stuff
 
@@ -9,10 +9,10 @@ More debug stuff
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c86b382..806126b 100644
+index 03756ca..78803a2 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2956,6 +2956,8 @@ M_Set_Parentage (POLYAREA *poly, POLYPARENTAGE parentage)
+@@ -2923,6 +2923,8 @@ M_Set_Parentage (POLYAREA *poly, POLYPARENTAGE parentage)
  
  }
  
@@ -21,7 +21,7 @@ index c86b382..806126b 100644
  /* just like poly_Boolean but frees the input polys */
  int
  poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-@@ -2967,13 +2969,12 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2934,13 +2936,12 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    int code;
    CVCList *the_list;
    POLYAREA *a_copy, *b_copy;
@@ -36,7 +36,7 @@ index c86b382..806126b 100644
    /* Make copies for tracking polygon parentage (DEBUG) */
    if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
        return err_no_memory;
-@@ -2990,7 +2991,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2957,7 +2958,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        M_Set_Parentage (b_copy, b->parentage);
        M_Set_Parentage (b, no_parentage);
      }
