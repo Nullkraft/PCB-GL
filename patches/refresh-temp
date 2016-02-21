@@ -1,0 +1,20 @@
+Bottom: 38f85db4f49c60edcec21574f1df61168e36922e
+Top:    7a9841082b213f84bacfb9b98f02942612eadf86
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-21 13:52:11 +0000
+
+Refresh of remove-debug-from-hairline
+
+---
+
+diff --git a/src/rtree.c b/src/rtree.c
+index d8bede4..6558427 100644
+--- a/src/rtree.c
++++ b/src/rtree.c
+@@ -40,7 +40,6 @@
+ 
+ #include "global.h"
+ 
+-#undef NDEBUG
+ #include <assert.h>
+ #include <setjmp.h>
