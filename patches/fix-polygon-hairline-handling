@@ -1,5 +1,5 @@
-Bottom: 4da6634df2ea8f73fea63ec661274a8eb9455d32
-Top:    16d209ba59b76ee5755aea9f38ef5fc884e2c586
+Bottom: 1373cf4206c8556cf6ba7b61e00018738e38f9f1
+Top:    30197302ae78ba693d6ec4cadd3109b6f66483d0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-21 15:09:29 +0000
 
@@ -21,7 +21,7 @@ index d255863..6f0f6b0 100644
  struct VNODE
  {
 diff --git a/src/polygon1.c b/src/polygon1.c
-index aaa8c96..8c038ee 100644
+index 9ee2c34..26df96d 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -110,12 +110,12 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -398,7 +398,7 @@ index aaa8c96..8c038ee 100644
  /* determine if two polygons touch or overlap */
  BOOLp
  Touching (POLYAREA * a, POLYAREA * b)
-@@ -3034,8 +3001,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -3035,8 +3002,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        /* intersect needs to make a list of the contours in a and b which are intersected */
        M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
  
@@ -409,7 +409,7 @@ index aaa8c96..8c038ee 100644
  
  #if 0
        /* Second pass gives us a chance to catch any bad-geometry hairlines we convert by inserting nodes */
-@@ -3079,7 +3048,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -3080,7 +3049,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
      }
  
  out:
