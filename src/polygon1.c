@@ -741,7 +741,7 @@ edge_label (VNODE * pn, int existing_label)
 
   assert (l);
 
-  fprintf (stderr, "edge_label(), called with an edge on poly %c\n", this_poly);
+  fprintf (stderr, "edge_label(), called with an edge on poly %c\n", l->poly);
   cvc_list_dump (l);
 
   /* Shared edges can be sorted in either order, so need to check l->prev as well */
