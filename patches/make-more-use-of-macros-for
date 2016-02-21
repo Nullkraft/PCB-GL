@@ -1,5 +1,5 @@
-Bottom: d14b9ffbe1d9c2b09ea1c78649af34046f2348e6
-Top:    b4438faed4dbe78b658f490964239dd08c945ad2
+Bottom: f3bfe209266d53a166c9afe8e37680df4ba14aca
+Top:    f3bfe209266d53a166c9afe8e37680df4ba14aca
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:31:23 +0000
 
@@ -11,43 +11,4 @@ slightly less explicit.
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index f0ec77b..a5bf8ed 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -332,8 +332,7 @@ new_descriptor (VNODE * a, char poly, char side)
-   l->poly = poly;
-   l->side = side;
-   l->next = l->prev = l;
--  if ((side == 'P' && a->prev->is_round == false) || /* previous, not round */
--      (side != 'P' && a      ->is_round == false))   /* next,     not round */
-+  if (VERTEX_SIDE_DIR_EDGE (a, side)->is_round == false)  /* not round */
-     { /* Line-segment case */
- 
- #if 0
-@@ -391,20 +390,21 @@ new_descriptor (VNODE * a, char poly, char side)
-        * 90 degrees CW)
-        */
- 
-+      center[0] = VERTEX_SIDE_DIR_EDGE (a, side)->cx;
-+      center[1] = VERTEX_SIDE_DIR_EDGE (a, side)->cy;
-+      l->curvature = (double)-compare_ccw_cw (a->point, center, EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (a, side), side)->point) / VERTEX_SIDE_DIR_EDGE (a, side)->radius;
-+#if 0
-       if (side == 'P')		/* previous */
-         {
--          center[0] = VERTEX_BACKWARD_EDGE (a)->cx;
--          center[1] = VERTEX_BACKWARD_EDGE (a)->cy;
-           l->curvature = (double)+compare_ccw_cw (EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (a))->point, center, a->point) / VERTEX_BACKWARD_EDGE (a)->radius;
-           // OR: ?
-           // l->curvature = (double)-compare_ccw_cw (a->point, center, a->prev->point) / a->prev->radius;
-         }
-       else				/* next */
-         {
--          center[0] = VERTEX_FORWARD_EDGE (a)->cx;
--          center[1] = VERTEX_FORWARD_EDGE (a)->cy;
-           l->curvature = (double)-compare_ccw_cw (a->point, center, EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (a))->point) / VERTEX_FORWARD_EDGE (a)->radius;
-         }
-+#endif
- 
-       /* First of all, make v the radial line */
-       vect_sub (v, center, a->point);
+
