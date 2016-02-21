@@ -1,27 +1,11 @@
-Bottom: 26e428faaddf63d9911f98aba72e37f03dee567d
-Top:    11aa4545977e25c046a8873cf54f4a8dac7a2562
+Bottom: 0e5daf8cdc3e52d373e98398cbd8398b7164c046
+Top:    0e5daf8cdc3e52d373e98398cbd8398b7164c046
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 20:46:26 +0000
+Date:   2016-02-21 15:22:32 +0000
 
 Disable polygon arc radius bodgering
 
 
 ---
 
-diff --git a/src/polygon.h b/src/polygon.h
-index f1af9bf..eb9ee15d 100644
---- a/src/polygon.h
-+++ b/src/polygon.h
-@@ -37,11 +37,7 @@
- #define POLY_CIRC_SEGS 10 //40
- #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
- 
--/* adjustment to make the segments outline the circle rather than connect
-- * points on the circle: 1 - cos (\alpha / 2) < (\alpha / 2) ^ 2 / 2
-- */
--#define POLY_CIRC_RADIUS_ADJ (1.0 + M_PI / POLY_CIRC_SEGS_F * \
--                                    M_PI / POLY_CIRC_SEGS_F / 2.0)
-+#define POLY_CIRC_RADIUS_ADJ 1.0
- 
- /* polygon diverges from modelled arc no more than MAX_ARC_DEVIATION * thick */
- #define POLY_ARC_MAX_DEVIATION 0.02
+
