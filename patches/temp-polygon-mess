@@ -1,5 +1,5 @@
 Bottom: 1524c4bef2faab07ae1a0bf2b98d5275698fbcc4
-Top:    9337a14cd7aeb542829cd515e609ca626b6dfd1f
+Top:    6d97037bfe51b249c3e1a86746b2a18319f0ef57
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:32:21 +0000
 
@@ -12,7 +12,7 @@ implementation of edge_label
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 0adf998..d870f4f 100644
+index 0adf998..3d236cb 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -117,11 +117,11 @@ static void poly_InclVertex_int (VNODE * after, VNODE * node);
@@ -43,7 +43,7 @@ index 0adf998..d870f4f 100644
  
    assert (l);
  
-+  fprintf (stderr, "edge_label(), called with an edge on poly %c\n", this_poly);
++  fprintf (stderr, "edge_label(), called with an edge on poly %c\n", l->poly);
 +  cvc_list_dump (l);
 +
    /* Shared edges can be sorted in either order, so need to check l->prev as well */
