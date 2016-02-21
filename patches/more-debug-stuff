@@ -1,5 +1,5 @@
 Bottom: 4c3fd81d5131d3a88724d0ef5c5ca001cf2c51f9
-Top:    2c4f657a46d08c50030669e70e7bb93a0560c992
+Top:    4c3fd81d5131d3a88724d0ef5c5ca001cf2c51f9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-21 15:13:19 +0000
 
@@ -8,23 +8,4 @@ More debug stuff
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index b9c728c..e4e3f4a 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -2810,6 +2810,8 @@ M_Set_Parentage (POLYAREA *poly, POLYPARENTAGE parentage)
- 
- }
- 
-+static void clear_marks (POLYAREA * p);
-+
- /* just like poly_Boolean but frees the input polys */
- int
- poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-@@ -2821,6 +2823,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-   int code;
-   CVCList *the_list;
-   POLYAREA *a_copy, *b_copy;
-+  CVCList *the_list;
- 
-   *res = NULL;
+
