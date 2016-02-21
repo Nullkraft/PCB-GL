@@ -1,5 +1,5 @@
 Bottom: cbf1bc6d8bbe15252cab96a1518b1069c05140bd
-Top:    cbf1bc6d8bbe15252cab96a1518b1069c05140bd
+Top:    51648b4d57787d063b85b58b2cee549709afc462
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-21 15:09:34 +0000
 
@@ -12,4 +12,603 @@ copied.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 1fd999f..5274072 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2612,6 +2612,16 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   DrawMark (Output.fgGC);
+   hidgl_flush_triangles (priv->hidgl);
+ 
++  if (ghidgui->debugged_polyarea != NULL) {
++    PolygonType dummy_poly;
++    dummy_poly.Clipped = ghidgui->debugged_polyarea;
++    dummy_poly.Flags = NoFlags ();
++    SET_FLAG (FULLPOLYFLAG, &dummy_poly);
++
++    common_thindraw_pcb_polygon (Output.fgGC, &dummy_poly, &region);
++    hidgl_flush_triangles (priv->hidgl);
++  }
++
+   glEnable (GL_LIGHTING);
+ 
+   glShadeModel (GL_SMOOTH);
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index ca4b069..316cb55 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -119,6 +119,8 @@ a zoom in/out.
+ #include "gui-trackball.h"
+ #include "snavi.h"
+ 
++#include "polyarea.h"
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -1260,6 +1262,30 @@ fix_topbar_theming (void)
+                     G_CALLBACK (do_fix_topbar_theming), NULL);
+ }
+ 
++static void
++ghid_polygon_debug_selection_changed_cb (GtkTreeSelection *treeselection, gpointer user_data)
++{
++//  GHidPort *port = user_data;
++  GtkTreeModel *model;
++  GtkTreeIter iter;
++
++  if (!gtk_tree_selection_get_selected (treeselection, &model, &iter)) {
++    ghidgui->debugged_polyarea = NULL;
++    return;
++  }
++
++  gtk_tree_model_get (model, &iter,
++                      POLYGON_DEBUG_COLUMN_POLYAREA, &ghidgui->debugged_polyarea,
++                      -1);
++
++  if (ghidgui->debugged_polyarea != NULL) {
++    fprintf (stderr, "Printing polyarea %p\n", ghidgui->debugged_polyarea);
++    poly_dump (ghidgui->debugged_polyarea);
++  }
++
++  ghid_invalidate_all ();
++}
++
+ /* 
+  * Create the top_window contents.  The config settings should be loaded
+  * before this is called.
+@@ -1271,6 +1297,8 @@ ghid_build_pcb_top_window (void)
+   GtkWidget *vbox_main, *hbox_middle, *hbox;
+   GtkWidget *vbox, *frame;
+   GtkWidget *label;
++  GtkTreeViewColumn *column;
++  GtkTreeIter iter;
+   /* FIXME: IFDEF HACK */
+ #ifdef ENABLE_GL
+   GtkWidget *trackball;
+@@ -1431,6 +1459,34 @@ ghid_build_pcb_top_window (void)
+   g_signal_connect (G_OBJECT (ghidgui->h_adjustment), "value_changed",
+ 		    G_CALLBACK (h_adjustment_changed_cb), ghidgui);
+ 
++  /* Polygon debug */
++  ghidgui->polygon_debug_ts = gtk_tree_store_new (N_POLYGON_DEBUG_COLUMNS,
++                                                  G_TYPE_STRING,
++                                                  G_TYPE_POINTER);
++
++  gtk_tree_store_append (ghidgui->polygon_debug_ts, &iter, NULL);
++  gtk_tree_store_set (ghidgui->polygon_debug_ts,
++                      &iter,
++                      POLYGON_DEBUG_COLUMN_TEXT,     "Hello world",
++                      POLYGON_DEBUG_COLUMN_POLYAREA, NULL,
++                      -1);
++
++  ghidgui->polygon_debug_tv = gtk_tree_view_new_with_model (GTK_TREE_MODEL (ghidgui->polygon_debug_ts));
++
++  column = gtk_tree_view_column_new_with_attributes ("Polygon",
++                                                     gtk_cell_renderer_text_new (),
++                                                     "text", POLYGON_DEBUG_COLUMN_TEXT,
++                                                     NULL);
++
++  gtk_tree_view_append_column (GTK_TREE_VIEW (ghidgui->polygon_debug_tv), column);
++
++  gtk_box_pack_end (GTK_BOX (hbox_middle),
++                    ghidgui->polygon_debug_tv, TRUE, TRUE, 0);
++
++  g_signal_connect (G_OBJECT (gtk_tree_view_get_selection (GTK_TREE_VIEW (ghidgui->polygon_debug_tv))),
++                    "changed",
++                    G_CALLBACK (ghid_polygon_debug_selection_changed_cb), port);
++
+   /* -- The bottom status line label */
+   ghidgui->status_line_hbox = gtk_hbox_new (FALSE, 0);
+   gtk_box_pack_start (GTK_BOX (ghidgui->vbox_middle),
+@@ -1492,6 +1548,76 @@ ghid_build_pcb_top_window (void)
+   port->tooltip_update_timeout_id = 0;
+ }
+ 
++static const char *
++pbo_operation_string (int action)
++{
++  switch (action) {
++    case PBO_NONE:
++      return "PBO_NONE";
++    case PBO_UNITE:
++      return "PBO_UNITE";
++    case PBO_ISECT:
++      return "PBO_ISECT";
++    case PBO_SUB:
++      return "PBO_SUB";
++    case PBO_XOR:
++      return "PBO_XOR";
++    default:
++      return "UNKNOWN POLYGON OPERATION";
++  }
++}
++
++static void
++recurse_populate_parentage (const char *prefix_string, GtkTreeIter *parent_iter, POLYAREA *pa)
++{
++  char *text;
++  GtkTreeIter iter;
++
++  if (pa == NULL || pa->parentage.immaculate_conception)
++    text = g_strdup_printf ("%s%s", prefix_string, (pa == NULL) ? "NULL" : "Input polygon");
++  else
++    text = g_strdup_printf ("%s%s", prefix_string, pbo_operation_string (pa->parentage.action));
++
++  gtk_tree_store_set (ghidgui->polygon_debug_ts,
++                      parent_iter,
++                      POLYGON_DEBUG_COLUMN_TEXT,     text,
++                      POLYGON_DEBUG_COLUMN_POLYAREA, pa,
++                      -1);
++  g_free (text);
++
++  if (pa == NULL || pa->parentage.immaculate_conception)
++    return;
++
++  gtk_tree_store_append (ghidgui->polygon_debug_ts, &iter, parent_iter);
++  recurse_populate_parentage ("A: ", &iter, pa->parentage.a);
++
++  gtk_tree_store_append (ghidgui->polygon_debug_ts, &iter, parent_iter);
++  recurse_populate_parentage ("B: ", &iter, pa->parentage.b);
++}
++
++void
++ghid_populate_polygon_parentage (PolygonType *polygon)
++{
++  POLYAREA *root = polygon->Clipped;
++  GtkTreeIter iter;
++
++  gtk_tree_store_clear (ghidgui->polygon_debug_ts);
++  gtk_tree_store_append (ghidgui->polygon_debug_ts, &iter, NULL);
++
++  recurse_populate_parentage ("", &iter, root);
++
++  ghidgui->debugged_polygon = polygon;
++  ghidgui->debugged_polyarea = NULL;
++}
++
++void
++ghid_notify_polygon_changed (PolygonType *polygon)
++{
++  if (ghidgui->debugged_polygon == polygon) {
++    ghid_populate_polygon_parentage (polygon);
++  }
++
++}
+ 
+   /* Connect and disconnect just the signals a g_main_loop() will need.
+      |  Cursor and motion events still need to be handled by the top level
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index de062d8..d858a74 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -114,6 +114,11 @@ typedef struct
+   GtkWidget *h_range, *v_range;
+   GtkObject *h_adjustment, *v_adjustment;
+ 
++  GtkWidget *polygon_debug_tv;
++  GtkTreeStore *polygon_debug_ts;
++  PolygonType *debugged_polygon;
++  POLYAREA *debugged_polyarea;
++
+   GdkPixbuf *bg_pixbuf;
+ 
+   gchar *name_label_string;
+@@ -150,6 +155,14 @@ typedef struct
+ }
+ GhidGui;
+ 
++
++enum {
++  POLYGON_DEBUG_COLUMN_TEXT,
++  POLYGON_DEBUG_COLUMN_POLYAREA,
++  N_POLYGON_DEBUG_COLUMNS
++};
++
++
+ extern GhidGui _ghidgui, *ghidgui;
+ 
+ typedef struct
+diff --git a/src/polyarea.h b/src/polyarea.h
+index 1b8e9b3..d255863 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -128,14 +128,35 @@ void poly_ExclVertex(VNODE * node);
+ 
+ /**********************************************************************/
+ 
++enum PolygonBooleanOperation {
++	PBO_NONE,
++	PBO_UNITE,
++	PBO_ISECT,
++	PBO_SUB,
++	PBO_XOR
++};
++
+ typedef struct POLYAREA POLYAREA;
++typedef struct POLYPARENTAGE POLYPARENTAGE;
++
++struct POLYPARENTAGE
++{
++  bool immaculate_conception;
++  enum PolygonBooleanOperation action;
++  POLYAREA *a;
++  POLYAREA *b;
++};
++
+ struct POLYAREA
+ {
+     POLYAREA *f, *b;
+     PLINE *contours;
+     rtree_t *contour_tree;
++    POLYPARENTAGE parentage;
+ };
+ 
++void poly_dump (POLYAREA *p);
++
+ BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
+ void poly_M_Incl(POLYAREA **list, POLYAREA *a);
+ 
+@@ -166,13 +187,6 @@ void poly_Init(POLYAREA  *p);
+ void poly_FreeContours(PLINE **pl);
+ BOOLp poly_Valid(POLYAREA *p);
+ 
+-enum PolygonBooleanOperation {
+-	PBO_UNITE,
+-	PBO_ISECT,
+-	PBO_SUB,
+-	PBO_XOR
+-};
+-
+ double vect_dist2 (Vector v1, Vector v2);
+ double vect_det2 (Vector v1, Vector v2);
+ double vect_len2 (Vector v1);
+diff --git a/src/polygon.c b/src/polygon.c
+index 79c8467..ff7e60a 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -752,6 +752,8 @@ SquarePadPoly (PadType * pad, Coord clear)
+   return np;
+ }
+ 
++/* HACK */ extern void ghid_notify_polygon_changed (PolygonType *);
++
+ /* clear np1 from the polygon */
+ static int
+ Subtract (POLYAREA * np1, PolygonType * p, bool fnp)
+@@ -781,11 +783,13 @@ Subtract (POLYAREA * np1, PolygonType * p, bool fnp)
+       fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
+       poly_Free (&merged);
+       p->Clipped = NULL;
++      /* HACK */ ghid_notify_polygon_changed (p);
+       if (p->NoHoles) printf ("Just leaked in Subtract\n");
+       p->NoHoles = NULL;
+       return -1;
+     }
+   p->Clipped = biggest (merged);
++  /* HACK */ ghid_notify_polygon_changed (p);
+   assert (!p->Clipped || poly_Valid (p->Clipped));
+   if (!p->Clipped)
+     Message ("Polygon cleared out of existence near (%d, %d)\n",
+@@ -906,6 +910,7 @@ SubtractPad (PadType * pad, PolygonType * p)
+           (np = LinePoly ((LineType *) pad, pad->Thickness + pad->Clearance)))
+         return -1;
+     }
++
+   return Subtract (np, p, true);
+ }
+ 
+@@ -1149,11 +1154,13 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+       goto fail;
+     }
+   p->Clipped = biggest (merged);
++  /* HACK */ ghid_notify_polygon_changed (p);
+   assert (!p->Clipped || poly_Valid (p->Clipped));
+   return 1;
+ 
+ fail:
+   p->Clipped = NULL;
++  /* HACK */ ghid_notify_polygon_changed (p);
+   if (p->NoHoles) printf ("Just leaked in Unsubtract\n");
+   p->NoHoles = NULL;
+   return 0;
+@@ -1258,6 +1265,7 @@ InitClip (DataType *Data, LayerType *layer, PolygonType * p)
+   if (p->Clipped)
+     poly_Free (&p->Clipped);
+   p->Clipped = original_poly (p);
++  /* HACK */ ghid_notify_polygon_changed (p);
+   poly_FreeContours (&p->NoHoles);
+   if (!p->Clipped)
+     return 0;
+@@ -1570,8 +1578,11 @@ plow_callback (const BoxType * b, void *cl)
+   PolygonType *polygon = (PolygonType *) b;
+ 
+   if (TEST_FLAG (CLEARPOLYFLAG, polygon))
+-    return plow->callback (plow->data, plow->layer, polygon, plow->type,
+-                           plow->ptr1, plow->ptr2, plow->userdata);
++    {
++      return plow->callback (plow->data, plow->layer, polygon, plow->type,
++                             plow->ptr1, plow->ptr2, plow->userdata);
++//      /* HACK */ ghid_notify_polygon_changed (polygon);
++    }
+   return 0;
+ }
+ 
+@@ -1685,7 +1696,10 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+     }
+ 
+   if (type == POLYGON_TYPE)
+-    InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
++    {
++      InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
++//      /* HACK */ ghid_notify_polygon_changed (ptr2);
++    }
+   else
+     PlowsPolygon (Data, type, ptr1, ptr2, add_plow, NULL);
+ }
+@@ -1870,6 +1884,7 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+    * we do this dirty work.
+    */
+   poly->Clipped = NULL;
++  /* HACK */ ghid_notify_polygon_changed (poly);
+   if (poly->NoHoles) printf ("Just leaked in MorpyPolygon\n");
+   poly->NoHoles = NULL;
+   flags = poly->Flags;
+@@ -2097,6 +2112,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
+   piece->f->b = piece->b;
+   piece->f = piece->b = piece;
+ 
++  /* Detach the parentage information, so we don't free it.. copies still belong to the M_POLYAREA we are taking this piece from */
++  piece->parentage.immaculate_conception = true;
++  piece->parentage.action = PBO_NONE;
++  piece->parentage.a = NULL;
++  piece->parentage.b = NULL;
++
+   poly_Free (&piece);
+ }
+ 
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 31d1999..8de425d 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -137,10 +137,16 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+ 	t = (a)[1], (a)[1] = (b)[1], (b)[1] = t; \
+ }
+ 
+-#ifdef DEBUG
++static POLYPARENTAGE no_parentage = {
++  .immaculate_conception = true,
++  .action = PBO_NONE,
++  .a = NULL,
++  .b = NULL
++};
++
+ static char *theState (VNODE * v);
+ 
+-static void
++/* static */ void
+ pline_dump (VNODE * v)
+ {
+   VNODE *s, *n;
+@@ -156,7 +162,7 @@ pline_dump (VNODE * v)
+   while ((v = NEXT_VERTEX(v)) != s);
+ }
+ 
+-static void
++/*static */void
+ poly_dump (POLYAREA * p)
+ {
+   POLYAREA *f = p;
+@@ -175,7 +181,6 @@ poly_dump (POLYAREA * p)
+     }
+   while ((p = p->f) != f);
+ }
+-#endif
+ 
+ /***************************************************************/
+ /* routines for processing intersections */
+@@ -1144,8 +1149,6 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+   return FALSE;
+ }				/* cntr_in_M_POLYAREA */
+ 
+-#ifdef DEBUG
+-
+ static char *
+ theState (VNODE * e)
+ {
+@@ -1170,6 +1173,7 @@ theState (VNODE * e)
+     }
+ }
+ 
++#ifdef DEBUG
+ #ifdef DEBUG_ALL_LABELS
+ static void
+ print_labels (PLINE * a)
+@@ -1984,6 +1988,9 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
+   piece->b->f = piece->f;
+   piece->f->b = piece->b;
+   piece->f = piece->b = piece;
++
++  /* Reset parentage information */
++  piece->parentage = no_parentage;
+ }
+ 
+ static void
+@@ -2937,6 +2944,22 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+   return poly_Boolean_free (a, b, res, action);
+ }				/* poly_Boolean */
+ 
++static void
++M_Set_Parentage (POLYAREA *poly, POLYPARENTAGE parentage)
++{
++  POLYAREA *piece = poly;
++
++  if (poly == NULL)
++    return;
++
++  do
++    {
++      piece->parentage = parentage;
++    }
++  while ((piece = piece->f) != poly);
++
++}
++
+ /* just like poly_Boolean but frees the input polys */
+ int
+ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2947,11 +2970,32 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+   jmp_buf e;
+   int code;
+   CVCList *the_list;
++  POLYAREA *a_copy, *b_copy;
+ 
+   *res = NULL;
+ 
+   g_warning ("BEGIN BOOLEAN");
+ 
++  *res = NULL;
++
++  /* Make copies for tracking polygon parentage (DEBUG) */
++  if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
++      return err_no_memory;
++
++  /* Move the parentage information over onto the copy */
++  if (a_copy != NULL)
++    {
++      M_Set_Parentage (a_copy, a->parentage);
++      M_Set_Parentage (a, no_parentage);
++    }
++
++  if (b_copy != NULL)
++    {
++      M_Set_Parentage (b_copy, b->parentage);
++      M_Set_Parentage (b, no_parentage);
++    }
++>>>>>>> patched
++
+   if (!a)
+     {
+       switch (action)
+@@ -2959,12 +3003,14 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ 	case PBO_XOR:
+ 	case PBO_UNITE:
+ 	  *res = bi;
+-	  return err_ok;
++	  code = err_ok;
++	  goto out;
+ 	case PBO_SUB:
+ 	case PBO_ISECT:
+ 	  if (b != NULL)
+ 	    poly_Free (&b);
+-	  return err_ok;
++	  code = err_ok;
++	  goto out;
+ 	}
+     }
+   if (!b)
+@@ -2975,11 +3021,13 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ 	case PBO_XOR:
+ 	case PBO_UNITE:
+ 	  *res = ai;
+-	  return err_ok;
++	  code = err_ok;
++	  goto out;
+ 	case PBO_ISECT:
+ 	  if (a != NULL)
+ 	    poly_Free (&a);
+-	  return err_ok;
++	  code = err_ok;
++	  goto out;
+ 	}
+     }
+ 
+@@ -3036,9 +3084,25 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+       poly_Free (res);
+       return code;
+     }
++
++out:
+   assert (!*res || poly_Valid (*res));
+ 
++  /* Store perantage information */
++  if (*res != NULL)
++    {
++      POLYPARENTAGE parentage;
++
++      parentage.immaculate_conception = false;
++      parentage.action = action;
++      parentage.a = a_copy;
++      parentage.b = b_copy;
++
++      M_Set_Parentage (*res, parentage);
++    }
++
+   g_warning ("END BOOLEAN");
++
+   return code;
+ }				/* poly_Boolean_free */
+ 
+@@ -3764,6 +3828,7 @@ poly_Init (POLYAREA * p)
+   p->f = p->b = p;
+   p->contours = NULL;
+   p->contour_tree = r_create_tree (NULL, 0, 0);
++  p->parentage = no_parentage;
+ }
+ 
+ POLYAREA *
+@@ -3805,6 +3870,13 @@ poly_Free (POLYAREA ** p)
+     }
+   poly_FreeContours (&cur->contours);
+   r_destroy_tree (&cur->contour_tree);
++
++  /* Free parentage information - assume all linked polygons share this, so only need to do it for the past polygon */
++  if ((*p)->parentage.a != NULL)
++    poly_Free (&(*p)->parentage.a);
++  if ((*p)->parentage.b != NULL)
++    poly_Free (&(*p)->parentage.b);
++
+   free (*p), *p = NULL;
+ }
+ 
+diff --git a/src/select.c b/src/select.c
+index f130b07..3e231d0 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -127,6 +127,7 @@ SelectObject (void)
+ 
+     case POLYGON_TYPE:
+       {
++	/* HACK */ extern void ghid_populate_polygon_parentage (PolygonType *);
+ 	PolygonType *poly = (PolygonType *) ptr2;
+ 
+ 	layer = (LayerType *) ptr1;
+@@ -134,6 +135,9 @@ SelectObject (void)
+ 	TOGGLE_FLAG (SELECTEDFLAG, poly);
+ 	DrawPolygon (layer, poly);
+ 	/* changing memory order no longer effects draw order */
++
++	/* HACK */ ghid_populate_polygon_parentage (poly);
++
+ 	break;
+       }
