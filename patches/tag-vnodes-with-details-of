@@ -1,5 +1,5 @@
-Bottom: b32e7bc1ac2111ad1bac924b1876488fa8206f72
-Top:    9ca5518d165399d5f9f7e318f59f590b1c141e9a
+Bottom: b57b4d9bba3bcff69b6642261aa1f69e9b278c0b
+Top:    774e5ccb8cec62f6f463e124df4780976485064c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:43:45 +0000
 
@@ -675,7 +675,7 @@ index 0accd67..8f172ed 100644
    return clipped;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b652377..a66e638 100644
+index d6f8ead..5654f7d 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -109,12 +109,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -803,7 +803,7 @@ index b652377..a66e638 100644
        curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
  
        /* see where to go next */
-@@ -2827,6 +2873,8 @@ M_Set_Parentage (POLYAREA *poly, POLYPARENTAGE parentage)
+@@ -2810,6 +2856,8 @@ M_Set_Parentage (POLYAREA *poly, POLYPARENTAGE parentage)
  
  }
  
@@ -812,7 +812,7 @@ index b652377..a66e638 100644
  /* just like poly_Boolean but frees the input polys */
  int
  poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-@@ -2839,6 +2887,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2822,6 +2870,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    POLYAREA *a_copy, *b_copy;
    CVCList *the_list;
  
@@ -821,7 +821,7 @@ index b652377..a66e638 100644
    *res = NULL;
  
    /* Make copies for tracking polygon parentage (DEBUG) */
-@@ -3070,23 +3120,6 @@ node_neighbours (VNODE * a, VNODE * b)
+@@ -3055,23 +3105,6 @@ node_neighbours (VNODE * a, VNODE * b)
    return (a == b) || (a->next == b) || (b->next == a) || (a->next == b->next);
  }
  
@@ -845,7 +845,7 @@ index b652377..a66e638 100644
  void
  poly_IniContour (PLINE * c)
  {
-@@ -3114,6 +3147,10 @@ poly_NewContour (VNODE *node)
+@@ -3099,6 +3132,10 @@ poly_NewContour (VNODE *node)
    poly_IniContour (res);
  
    Vcopy (res->head.point, node->point);
@@ -856,7 +856,7 @@ index b652377..a66e638 100644
    cntrbox_adjust (res, res->head.point);
    g_slice_free (VNODE, node);
  
-@@ -3231,6 +3268,32 @@ flip_cb (const BoxType * b, void *cl)
+@@ -3216,6 +3253,32 @@ flip_cb (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -889,7 +889,7 @@ index b652377..a66e638 100644
  void
  poly_InvContour (PLINE * c)
  {
-@@ -3239,16 +3302,48 @@ poly_InvContour (PLINE * c)
+@@ -3224,16 +3287,48 @@ poly_InvContour (PLINE * c)
    int r;
  #endif
  
@@ -938,7 +938,7 @@ index b652377..a66e638 100644
    c->Flags.orient ^= 1;
    if (c->tree)
      {
-@@ -3288,11 +3383,26 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -3273,11 +3368,26 @@ poly_InclVertex (VNODE * after, VNODE * node)
    /* remove points on same line */
    if (PREV_VERTEX (PREV_VERTEX (node)) == node)
      return;			/* we don't have 3 points in the poly yet */
@@ -966,7 +966,7 @@ index b652377..a66e638 100644
      {
        VNODE *t = PREV_VERTEX (node);
        NEXT_VERTEX (PREV_VERTEX (t)) = node;
-@@ -3308,7 +3418,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -3293,7 +3403,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    assert (src != NULL);
    *dst = NULL;
@@ -975,7 +975,7 @@ index b652377..a66e638 100644
    if (*dst == NULL)
      return FALSE;
  
-@@ -3320,7 +3430,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -3305,7 +3415,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    for (cur = NEXT_EDGE (&src->head); cur != &src->head; cur = NEXT_VERTEX (cur))
      {
