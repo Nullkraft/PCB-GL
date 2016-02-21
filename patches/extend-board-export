@@ -1,7 +1,7 @@
-Bottom: 7f601fcc698ce144a5899b5d967c3ef625d4dfd9
-Top:    13edc8be41f605dc01213a77532db82836e54597
+Bottom: d79858c0156c814d0544318a845904556ca57644
+Top:    56396b030988f8169c5ec144b2ee8c891055edde
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 20:46:26 +0000
+Date:   2016-02-21 15:22:31 +0000
 
 Extend board export
 
@@ -1186,10 +1186,10 @@ index 0e2c670..7c18421 100644
  }
  
 diff --git a/src/polygon.h b/src/polygon.h
-index 3737f35..e86059e 100644
+index 5361799..b88e232 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
-@@ -75,6 +75,7 @@ POLYAREA * LinePoly(LineType *l, Coord thick, char *name);
+@@ -92,6 +92,7 @@ POLYAREA * LinePoly(LineType *l, Coord thick, char *name);
  POLYAREA * ArcPoly(ArcType *l, Coord thick, char *name);
  POLYAREA * PinPoly(PinType *l, Coord thick, Coord clear);
  POLYAREA * BoxPolyBloated (BoxType *box, Coord radius);

@@ -1,7 +1,7 @@
-Bottom: 375c41de40364dadde360992ac7d18d44b0bc3b0
-Top:    da7eff7a9c4cc24f148c7fcaaf078ec709b61359
+Bottom: bc9c2b0d89dd79eca400cc98ef303bef349cd775
+Top:    742bc8fb3becd6fa34a0e205febdb3984267da8e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 20:46:25 +0000
+Date:   2016-02-21 15:22:31 +0000
 
 Add name tags for line contours (and provide partial support for arcs)
 
@@ -162,10 +162,10 @@ index 77d24ca..0e2c670 100644
  
    poly_Boolean_free (info->poly, np, &res, PBO_SUB);
 diff --git a/src/polygon.h b/src/polygon.h
-index e07c133..3737f35 100644
+index 96e49e4..5361799 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
-@@ -71,8 +71,8 @@ POLYAREA * PolygonToPoly (PolygonType *);
+@@ -88,8 +88,8 @@ POLYAREA * PolygonToPoly (PolygonType *);
  POLYAREA * RectPoly (Coord x1, Coord x2, Coord y1, Coord y2);
  POLYAREA * CirclePoly (Coord x, Coord y, Coord radius, char *name);
  POLYAREA * OctagonPoly(Coord x, Coord y, Coord radius);
