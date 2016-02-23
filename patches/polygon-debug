@@ -1,5 +1,5 @@
-Bottom: f24c4d03f5a865ae52fd8df8e91ff22c43d1adc7
-Top:    86b02b8f7fa3472e26414fcef0314785fcfc023a
+Bottom: 99d0b372e11144819d84c8e211b8c6d0c291c3e6
+Top:    9e2609dbd21b9750554eecf5e5e256f5667493fa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-23 23:41:18 +0000
 
@@ -9,7 +9,7 @@ Polygon debug
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a412c9f..0febee5 100644
+index a4b21ff..a991f19 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -155,7 +155,7 @@ pline_dump (VNODE * v)
@@ -111,7 +111,7 @@ index a412c9f..0febee5 100644
                EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                 EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
      }
-@@ -1234,6 +1274,7 @@ label_contour (PLINE * a)
+@@ -1232,6 +1272,7 @@ label_contour (PLINE * a)
            g_warning ("Walked entire contour and couldn't find anything we could label - it is either all INSIDE or OUTSIDE");
            /* Mark the contour as NOT intersected, so it can be treated separately below. */
            /* XXX: Does this work with separated out intersected contours? */
@@ -119,7 +119,7 @@ index a412c9f..0febee5 100644
            a->Flags.status = UNKNWN;
          }
        else
-@@ -1678,7 +1719,7 @@ SubJ_Rule (char p, VNODE *e, DIRECTION * cdir)
+@@ -1676,7 +1717,7 @@ SubJ_Rule (char p, VNODE *e, DIRECTION * cdir)
  static int
  jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
  {
@@ -128,7 +128,7 @@ index a412c9f..0febee5 100644
    VNODE *e; /* e is considered an edge */
    DIRECTION newone;
  
-@@ -1689,13 +1730,41 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
+@@ -1687,13 +1728,41 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
        return TRUE;
      }
  #ifdef DEBUG_JUMP
@@ -176,7 +176,7 @@ index a412c9f..0febee5 100644
    start = d;
    do
      {
-@@ -1708,7 +1777,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
+@@ -1706,7 +1775,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
  	      (d->side == 'P' && newone == BACKW))
  	    {
  #ifdef DEBUG_JUMP
@@ -185,7 +185,7 @@ index a412c9f..0febee5 100644
  	              EDGE_DIRECTION_VERTEX (e, newone)->point[0], EDGE_DIRECTION_VERTEX (e, newone)->point[1]);
  #endif
  	      *curv = d->parent;
-@@ -1748,7 +1817,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
+@@ -1746,7 +1815,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
  	  poly_InclVertex (PREV_VERTEX (&(*result)->head), newn);
  	}
  #ifdef DEBUG_GATHER
@@ -194,7 +194,7 @@ index a412c9f..0febee5 100644
  #endif
        /* Now mark the edge as included.  */
        newn = VERTEX_DIRECTION_EDGE (curv, dir);
-@@ -3872,7 +3941,7 @@ poly_Valid (POLYAREA * p)
+@@ -3870,7 +3939,7 @@ poly_Valid (POLYAREA * p)
        do
  	{
  	  n = NEXT_VERTEX (v);
@@ -203,7 +203,7 @@ index a412c9f..0febee5 100644
  		   v->point[0], v->point[1], n->point[0], n->point[1]);
  	}
        while ((v = NEXT_VERTEX (v)) != &p->contours->head);
-@@ -3897,7 +3966,7 @@ poly_Valid (POLYAREA * p)
+@@ -3895,7 +3964,7 @@ poly_Valid (POLYAREA * p)
  	  do
  	    {
  	      n = NEXT_VERTEX (v);
