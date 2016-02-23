@@ -1,7 +1,7 @@
-Bottom: 9ab7308ee71a64ffcb1fce9b1f75b88b12932dba
-Top:    bc9c2b0d89dd79eca400cc98ef303bef349cd775
+Bottom: 4ba42682fd1dd8c997d54811fa8a05a2b594692a
+Top:    17ff73a86c3e09a38ba8c8f5bb16d4fe0aabaddc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-21 15:22:31 +0000
+Date:   2016-02-23 23:43:18 +0000
 
 Add name tags to contours and feature naming for pins and vias in STEP export
 
@@ -171,10 +171,10 @@ index 369efea..96e49e4 100644
  POLYAREA * LinePoly(LineType *l, Coord thick);
  POLYAREA * ArcPoly(ArcType *l, Coord thick);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b726d7b..e8db54f 100644
+index 0c7b78c..6bd57b7 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -3023,6 +3023,7 @@ poly_IniContour (PLINE * c)
+@@ -3046,6 +3046,7 @@ poly_IniContour (PLINE * c)
    c->cx = 0;
    c->cy = 0;
    c->radius = 0;
@@ -182,7 +182,7 @@ index b726d7b..e8db54f 100644
  }
  
  PLINE *
-@@ -3057,6 +3058,8 @@ poly_ClrContour (PLINE * c)
+@@ -3080,6 +3081,8 @@ poly_ClrContour (PLINE * c)
    free (c->tristrip_vertices);
    c->tristrip_vertices = NULL;
    c->tristrip_num_vertices = 0;
@@ -191,7 +191,7 @@ index b726d7b..e8db54f 100644
    poly_IniContour (c);
  }
  
-@@ -3089,6 +3092,7 @@ poly_DelContour (PLINE ** c)
+@@ -3112,6 +3115,7 @@ poly_DelContour (PLINE ** c)
        r_destroy_tree (&r);
      }
    free ((*c)->tristrip_vertices);
