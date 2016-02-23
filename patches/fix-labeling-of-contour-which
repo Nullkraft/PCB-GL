@@ -1,5 +1,5 @@
 Bottom: 6ff4c6643aa76df7b679da21b73af5b1bc87f848
-Top:    c82c6f7691faf03cf5555583d1c7095594c6b985
+Top:    dabbefd50566c903bf6020f4c6967fb304851054
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-23 23:41:30 +0000
 
@@ -23,10 +23,10 @@ dropped, or re-constructed, depending on the boolean operation being performed).
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b726d7b..4de4448 100644
+index b726d7b..0c7b78c 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1218,7 +1218,26 @@ label_contour (PLINE * a)
+@@ -1218,7 +1218,24 @@ label_contour (PLINE * a)
        assert (label == INSIDE || label == OUTSIDE);
        LABEL_EDGE (cure, label);
      }
@@ -35,8 +35,6 @@ index b726d7b..4de4448 100644
 +
 +  if (first_labelled == NULL)
 +    {
-+//      g_warning ("Walked entire contour and couldn't find anything we could label - is it INSIDE or OUTSIDE??  SHARED OR SHARED2??");
-+
 +      if (EDGE_LABEL (&a->head) == UNKNWN)
 +        {
 +          g_warning ("Walked entire contour and couldn't find anything we could label - it is either all INSIDE or OUTSIDE");
@@ -54,7 +52,7 @@ index b726d7b..4de4448 100644
  #warning The above loop could run forever if we encounter a contour where the only intersection gets nuked due to shared edges
  #ifdef DEBUG_ALL_LABELS
    print_labels (a);
-@@ -1235,7 +1254,12 @@ cntr_label_POLYAREA (PLINE * poly, POLYAREA * ppl, BOOLp test)
+@@ -1235,7 +1252,12 @@ cntr_label_POLYAREA (PLINE * poly, POLYAREA * ppl, BOOLp test)
      {
        label_contour (poly);	/* should never get here when BOOLp is true */
      }
@@ -68,7 +66,7 @@ index b726d7b..4de4448 100644
      {
        if (test)
  	return TRUE;
-@@ -2328,6 +2352,7 @@ M_POLYAREA_Collect_separated (jmp_buf * e, PLINE * afst, POLYAREA ** contours,
+@@ -2328,6 +2350,7 @@ M_POLYAREA_Collect_separated (jmp_buf * e, PLINE * afst, POLYAREA ** contours,
        if (cntr_Collect (e, cur, contours, holes, action, NULL, NULL, NULL))
  	next = cur;
      }
