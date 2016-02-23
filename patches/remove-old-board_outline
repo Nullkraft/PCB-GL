@@ -1,5 +1,5 @@
-Bottom: 65d69d3d6aceb0d94b70bc43e3652002edea0f52
-Top:    865dbebefd2f507c53348d6247c93f28f221ef97
+Bottom: e084c34da0bf71e46d4b5b72a3d5a88299efb0ce
+Top:    b4a5d9c7c652931661b946cb72c997c29c8bd844
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-05-02 00:04:10 +0100
 
@@ -9,10 +9,10 @@ Remove old board_outline implementation
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 670c1df..28d9f2a 100644
+index e2f2f02..8f18283 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -870,348 +870,6 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -871,348 +871,6 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
    return objects;
  }
  
