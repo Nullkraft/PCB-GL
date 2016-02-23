@@ -1222,8 +1222,6 @@ label_contour (PLINE * a)
 
   if (first_labelled == NULL)
     {
-//      g_warning ("Walked entire contour and couldn't find anything we could label - is it INSIDE or OUTSIDE??  SHARED OR SHARED2??");
-
       if (EDGE_LABEL (&a->head) == UNKNWN)
         {
           g_warning ("Walked entire contour and couldn't find anything we could label - it is either all INSIDE or OUTSIDE");
