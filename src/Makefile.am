@@ -157,6 +157,8 @@ PCB_SRCS = \
 	hid/common/draw_helpers.h \
 	hid/common/hid_resource.c \
 	hid/common/hid_resource.h \
+	hid/common/appearance.c \
+	hid/common/appearance.h \
 	hid/common/edge3d.c \
 	hid/common/edge3d.h \
 	hid/common/face3d.c \
