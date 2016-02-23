@@ -1,7 +1,7 @@
-Bottom: 8541dcb4fb80fbbadd920786eb285165ff989c54
-Top:    b64d7bdafd93e3bda65d32822384fcc1ae63a813
+Bottom: a820607d2ceadb148d2eb04c532fc14de4e8383a
+Top:    afdfe5926f79ac24e0601c1df583d506c6aed24c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-21 14:13:31 +0000
+Date:   2016-02-23 23:43:16 +0000
 
 Disable polygon heritage
 
@@ -9,10 +9,10 @@ Disable polygon heritage
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b9c728c..3dc4083 100644
+index 950ea0d..885f268 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2825,8 +2825,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2848,8 +2848,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    *res = NULL;
  
    /* Make copies for tracking polygon parentage (DEBUG) */
