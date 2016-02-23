@@ -3046,6 +3046,7 @@ poly_IniContour (PLINE * c)
   c->cx = 0;
   c->cy = 0;
   c->radius = 0;
+  c->name = NULL;
 }
 
 PLINE *
@@ -3080,6 +3081,8 @@ poly_ClrContour (PLINE * c)
   free (c->tristrip_vertices);
   c->tristrip_vertices = NULL;
   c->tristrip_num_vertices = 0;
+  free (c->name);
+  c->name = NULL;
   poly_IniContour (c);
 }
 
@@ -3112,6 +3115,7 @@ poly_DelContour (PLINE ** c)
       r_destroy_tree (&r);
     }
   free ((*c)->tristrip_vertices);
+  free ((*c)->name);
   free (*c), *c = NULL;
 }
 
