@@ -155,7 +155,7 @@ pline_dump (VNODE * v)
   do
     {
       n = NEXT_VERTEX(v);
-      pcb_fprintf (stderr, "Line [%$#mn %$#mn %$#mn %$#mn 10 10 \"%s\"] # %s, radius %mn\n",
+      pcb_fprintf (stderr, "Line [%$#mn %$#mn %$#mn %$#mn 10 10 \"%s\"] # %s, radius %$mn\n",
 	       v->point[0], v->point[1],
 	       n->point[0], n->point[1], theState (v),
 	       VERTEX_FORWARD_EDGE (v)->is_round ? "Round" : "Line",
