@@ -1,5 +1,5 @@
 Bottom: 6c1b2a3e25c46af61b01212ba7bd3c715ff8069e
-Top:    1735763dbb389868e501f543994d4b4e373b8174
+Top:    17e5231d99693ded1c97205738fc77cfccbfc966
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 20:19:13 +0000
 
@@ -484,7 +484,7 @@ index 978a449..5e4e1fc 100644
  
    /* now we have the line contour */
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 885f268..3a389db 100644
+index 885f268..ec4fafa 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -109,6 +109,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -588,7 +588,7 @@ index 885f268..3a389db 100644
  	}
  #ifdef DEBUG_GATHER
 -      DEBUGP ("gather vertex at %#mD\n", curv->point[0], curv->point[1]);
-+      DEBUGP ("gather vertex at %mm, %mm, Dir=%i\n", curv->point[0], curv->point[1], dir);
++      DEBUGP ("gather vertex at %$mn, %$mn, Dir=%i\n", curv->point[0], curv->point[1], dir);
  #endif
 +
        /* Now mark the edge as included.  */
