@@ -1,5 +1,5 @@
 Bottom: cc232d26ca283e8c4bf100babc1537542152af70
-Top:    cc232d26ca283e8c4bf100babc1537542152af70
+Top:    2d91c94a4d80709d3ccc75fe675676ca8aa35299
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 20:19:14 +0000
 
@@ -12,4 +12,16 @@ happens.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 5274072..a033a4f 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1684,6 +1684,8 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
+   struct outline_info info;
+ 
+   ensure_board_outline ();
++  if (PCB->Data->outline == NULL)
++    return;
+ 
+   memset (&polygon, 0, sizeof (polygon));
+   polygon.Clipped = PCB->Data->outline;
