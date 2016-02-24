@@ -1,5 +1,5 @@
-Bottom: fe5de1ae8dfa80ff525522fccbea31796657c093
-Top:    9aec221548e9f10b11d749e5b7b26ebde0e0bbd3
+Bottom: ecc962ec47a67a0ec2dd1adbe69fabb4a25653d4
+Top:    32abb232a2fb6f0ef742308b9fc94bf26fe25890
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:31:18 +0000
 
@@ -396,7 +396,7 @@ index 601464a..bf37a0d 100644
        c->head.prev->cy = Y;
        c->head.prev->radius = radius;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 5b9385a..b3cad5c 100644
+index 7adbdbf..ec33d84 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -75,8 +75,10 @@ double vect_dist2 (Vector v1, Vector v2);
@@ -1244,7 +1244,7 @@ index 5b9385a..b3cad5c 100644
      }
    while ((e = NEXT_EDGE (e)) != &a->head);
  }
-@@ -3054,7 +3402,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
+@@ -3077,7 +3425,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
                VNODE *n_otherend = EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (n->parent, n->side), n->side);
                VNODE *point_v; /* As vertex */
  
@@ -1255,7 +1255,7 @@ index 5b9385a..b3cad5c 100644
                  {
                    /* Mark the shared edges from being used in any possibly existing
                     * cross-connected node at their other ends.
-@@ -4054,13 +4404,17 @@ crossing (const BoxType * b, void *cl)
+@@ -4077,13 +4427,17 @@ crossing (const BoxType * b, void *cl)
    struct seg *s = (struct seg *) b;
    struct pip *p = (struct pip *) cl;
  
@@ -1275,7 +1275,7 @@ index 5b9385a..b3cad5c 100644
        if (EDGE_FORWARD_VERTEX (s->v)->point[1] > p->p[1])
  #else
        if (s->v->orig_point1[1] > p->p[1])
-@@ -4068,13 +4422,15 @@ crossing (const BoxType * b, void *cl)
+@@ -4091,13 +4445,15 @@ crossing (const BoxType * b, void *cl)
  	{
  	  Vector v1, v2;
  	  long long cross;
@@ -1292,7 +1292,7 @@ index 5b9385a..b3cad5c 100644
  	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
  	  if (cross == 0)
  	    {
-@@ -4087,7 +4443,7 @@ crossing (const BoxType * b, void *cl)
+@@ -4110,7 +4466,7 @@ crossing (const BoxType * b, void *cl)
      }
    else
      {
@@ -1301,7 +1301,7 @@ index 5b9385a..b3cad5c 100644
        if (EDGE_FORWARD_VERTEX (s->v)->point[1] <= p->p[1])
  #else
        if (s->v->orig_point1[1] <= p->p[1])
-@@ -4096,13 +4452,15 @@ crossing (const BoxType * b, void *cl)
+@@ -4119,13 +4475,15 @@ crossing (const BoxType * b, void *cl)
  	  Vector v1, v2;
  	  long long cross;
  /* XXX: COULD USE ORIGINAL GEOMETRY, ALSO PROBABLY NEEDS UPDATING FOR CURVES */
@@ -1318,7 +1318,7 @@ index 5b9385a..b3cad5c 100644
  	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
  	  if (cross == 0)
  	    {
-@@ -4420,9 +4778,9 @@ poly_ChkContour (PLINE * a)
+@@ -4443,9 +4801,9 @@ poly_ChkContour (PLINE * a)
  	{
  #warning THIS DOES NOT TAKE INTO ACCOUNT arc-arc and arc-line segments
  	  if (!node_neighbours (a1, a2) &&
@@ -1331,7 +1331,7 @@ index 5b9385a..b3cad5c 100644
  	    {
  	      if (icnt > 1)
  		return TRUE;
-@@ -4619,6 +4977,29 @@ vect_m_dist (Vector v1, Vector v2)
+@@ -4642,6 +5000,29 @@ vect_m_dist (Vector v1, Vector v2)
    return -dd;
  }				/* vect_m_dist */
  
@@ -1361,7 +1361,7 @@ index 5b9385a..b3cad5c 100644
  /*
  vect_inters2
   (C) 1993 Klamer Schutte
-@@ -4626,20 +5007,22 @@ vect_inters2
+@@ -4649,20 +5030,22 @@ vect_inters2
  */
  
  int
@@ -1392,7 +1392,7 @@ index 5b9385a..b3cad5c 100644
    if (max (p1[0], p2[0]) < min (q1[0], q2[0]) ||
        max (q1[0], q2[0]) < min (p1[0], p2[0]) ||
        max (p1[1], p2[1]) < min (q1[1], q2[1]) ||
-@@ -4660,6 +5043,33 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4683,6 +5066,33 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  
    if (deel == 0)		/* parallel */
      {
@@ -1426,7 +1426,7 @@ index 5b9385a..b3cad5c 100644
        double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
        Vector hp1, hq1, hp2, hq2, q1p1, q1q2;
        double hs1, hs2, ht1, ht2;
-@@ -4668,24 +5078,27 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4691,24 +5101,27 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
        Vsub2 (q1q2, q1, q2);
  
  
@@ -1465,7 +1465,7 @@ index 5b9385a..b3cad5c 100644
  
        if (dc1 > dc2)
  	{/* dc2 is negative, e.g. p2 is "rightmost" of p1. */
-@@ -4709,21 +5122,21 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4732,21 +5145,21 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  	    return 0;   /* p1-hp2 < p1-hq1  ... IE  hp2 > hq1 .... hp2 is "rightmost" of hq1... IE both hp1 and hp2 are right of the rightmost point of q1-q2, hq1 */
  	  if (dc2 < d2)
              {           /* p1-hp2 < p1-hq2  ... IE  hp2 > hq2 .... hp2 is "rightmost" of hq2... */
@@ -1499,7 +1499,7 @@ index 5b9385a..b3cad5c 100644
  	    };
  	}
        else
-@@ -4732,38 +5145,36 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4755,38 +5168,36 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  	    return 0;   /* p1-hp1 > p1-hq2   ... IE  hp1 < hq2 .... hp1 is "left" of hq2... IE rightmost point of line p1-p2 is left of both points of q1-q2 */
  	  if (dc2 < d2)
  	    {           /* p1-hp2 < p1-hq2   ... IE  hp2 > hq2 .... hp2 is "right" of hq2 */
@@ -1555,7 +1555,7 @@ index 5b9385a..b3cad5c 100644
    else
      {				/* not parallel */
        /*
-@@ -4789,29 +5200,29 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4812,29 +5223,29 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  
        if (Vequ2 (q1, p1))
  	{
@@ -1593,7 +1593,7 @@ index 5b9385a..b3cad5c 100644
  	  s = 1.0;
  	  t = 1.0;
  	}
-@@ -4826,13 +5237,13 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4849,13 +5260,13 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  	  if (t < 0.       || t > 1.          )
  	    return 0;
  

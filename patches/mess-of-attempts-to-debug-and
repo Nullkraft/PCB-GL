@@ -1,5 +1,5 @@
-Bottom: 489d7194584daf06422d76eb0f23ba7ddf97ddf8
-Top:    6dd7b0ff2420109258199059dee6d0ea42d6a92e
+Bottom: 87fe6779f7e24c69511dfda450d99d9f1271edd0
+Top:    fcfbb407608eeb36e88734b951731577653b7199
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-18 20:32:15 +0000
 
@@ -9,7 +9,7 @@ Mess of attempts to debug and improve arc-support in polygon code
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index d0793d7..c674a65 100644
+index 0d620e6..c4f4d6b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -204,6 +204,28 @@ poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radiu
@@ -85,7 +85,7 @@ index d0793d7..c674a65 100644
  	}
      }
    while ((node = NEXT_VERTEX(node)) != &pl->head);
-@@ -4071,6 +4120,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -4094,6 +4143,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
                Angle end_angle;
                Angle delta_angle;
                BoxType arc_bound;
@@ -94,7 +94,7 @@ index d0793d7..c674a65 100644
  
                start_angle = atan2 ((p->point[1] - p->cy), -(p->point[0] - p->cx)) / M180;
                end_angle   = atan2 ((c->point[1] - p->cy), -(c->point[0] - p->cx)) / M180;
-@@ -4081,6 +4132,34 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+@@ -4104,6 +4155,34 @@ poly_PreContour (PLINE * C, BOOLp optimize)
                if (delta_angle > 180.) delta_angle -= 360.;
                if (delta_angle < -180.) delta_angle += 360.;
  
