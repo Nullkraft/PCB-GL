@@ -95,8 +95,10 @@ struct VNODE
     double p0; /* Smaller parameter along curve, 0-1 */
     double p1; /* Larger  parameter along curve, 0-1 */
     bool is_round;
-    Coord cx, cy;
-    Coord radius;
+    double cx, cy;
+    double radius;
+//    Coord cx, cy;
+//    Coord radius;
 };
 
 typedef struct PLINE PLINE;
@@ -131,7 +133,8 @@ void poly_PreContour(PLINE * c, BOOLp optimize); /* prepare contour */
 void poly_InvContour(PLINE * c);  /* invert contour */
 
 VNODE *poly_CreateNode(Vector v);
-VNODE *poly_CreateNodeArcApproximation(Vector v, Coord cx, Coord cy, Coord radius);
+VNODE *poly_CreateNodeArcApproximation(Vector v, double cx, double cy, double radius);
+//VNODE *poly_CreateNodeArcApproximation(Vector v, Coord cx, Coord cy, Coord radius);
 
 void poly_InclVertex(VNODE * after, VNODE * node);
 void poly_ExclVertex(VNODE * node);
