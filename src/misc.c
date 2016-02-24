@@ -397,7 +397,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
   hx = p1->X + (p2->X - p1->X) / 2;
   hy = p1->Y + (p2->Y - p1->Y) / 2;
 
-  p_to_h_dist = hypot (p2->X - p1->X, p2->Y - p1->Y) / 2.;
+  p_to_h_dist = hypot (p2->X - p1->Y, p2->Y - p1->Y) / 2.;
   c_to_h_dist = p_to_h_dist / tan (TO_RADIANS (included_angle) / 2.);
 
   unit_hcx = (double)-(hy - p1->Y) / p_to_h_dist;
