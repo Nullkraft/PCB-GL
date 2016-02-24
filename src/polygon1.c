@@ -1790,7 +1790,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 	  poly_InclVertex (PREV_VERTEX (&(*result)->head), newn);
 	}
 #ifdef DEBUG_GATHER
-      DEBUGP ("gather vertex at %mm, %mm, Dir=%i\n", curv->point[0], curv->point[1], dir);
+      DEBUGP ("gather vertex at %$mn, %$mn, Dir=%i\n", curv->point[0], curv->point[1], dir);
 #endif
 
       /* Now mark the edge as included.  */
