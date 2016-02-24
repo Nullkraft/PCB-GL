@@ -1,5 +1,5 @@
 Bottom: afdfe5926f79ac24e0601c1df583d506c6aed24c
-Top:    afdfe5926f79ac24e0601c1df583d506c6aed24c
+Top:    1179f84d98f9bfc458a36edfc44c36463d3eade0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 21:35:55 +0000
 
@@ -8,4 +8,145 @@ More debug for circsegs stuff
 
 ---
 
-
+diff --git a/src/polygon.c b/src/polygon.c
+index 0accd67..978a449 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -108,6 +108,8 @@ dicer output is used for HIDs which cannot render things with holes
+ #include <sys/time.h>
+ #include <sys/resource.h>
+ 
++#define DEBUG_CIRCSEGS
++
+ #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
+ 
+ #define UNSUBTRACT_BLOAT 10
+@@ -1813,6 +1815,10 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+           strcmp (layer->Name, "route") == 0)
+         Data->outline_valid = false;
+     }
++  else if (type == PIN_TYPE || type == VIA_TYPE)
++    {
++        Data->outline_valid = false;
++    }
+ 
+   if (type == POLYGON_TYPE)
+     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
+@@ -2148,10 +2154,18 @@ arc_outline_callback (const BoxType * b, void *cl)
+   struct clip_outline_info *info = cl;
+   POLYAREA *np, *res;
+ 
++#ifdef DEBUG_CIRCSEGS
++  if (!(np = ArcPoly (arc, arc->Thickness)))
++#else
+   if (!(np = ArcPoly (arc, ROUTER_THICKNESS)))
++#endif
+     return 0;
+ 
++#ifdef DEBUG_CIRCSEGS
++  poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
++#else
+   poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++#endif
+   info->poly = res;
+ 
+   return 1;
+@@ -2164,10 +2178,18 @@ line_outline_callback (const BoxType * b, void *cl)
+   struct clip_outline_info *info = cl;
+   POLYAREA *np, *res;
+ 
++#ifdef DEBUG_CIRCSEGS
++  if (!(np = LinePoly (line, line->Thickness)))
++#else
+   if (!(np = LinePoly (line, ROUTER_THICKNESS)))
++#endif
+     return 0;
+ 
++#ifdef DEBUG_CIRCSEGS
++  poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
++#else
+   poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++#endif
+   info->poly = res;
+ 
+   return 1;
+@@ -2180,10 +2202,18 @@ pv_outline_callback (const BoxType * b, void *cl)
+   struct clip_outline_info *info = cl;
+   POLYAREA *np, *res;
+ 
++#ifdef DEBUG_CIRCSEGS
++  if (!(np = CirclePoly (pv->X, pv->Y, pv->Thickness / 2)))
++#else
+   if (!(np = CirclePoly (pv->X, pv->Y, pv->DrillingHole / 2)))
++#endif
+     return 0;
+ 
++#ifdef DEBUG_CIRCSEGS
++  poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
++#else
+   poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++#endif
+   info->poly = res;
+ 
+   return 1;
+@@ -2199,8 +2229,11 @@ polygon_outline_callback (const BoxType * b, void *cl)
+   if (!(np = original_poly (poly)))
+     return 0;
+ 
+-
++#ifdef DEBUG_CIRCSEGS
+   poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
++#else
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++#endif
+   info->poly = res;
+ 
+   return 1;
+@@ -2298,13 +2331,19 @@ POLYAREA *board_outline_poly (bool include_holes)
+   region.X2 = PCB->MaxWidth;
+   region.Y2 = PCB->MaxHeight;
+ 
+-#if 0
++#if 1
++#ifdef DEBUG_CIRCSEGS
++  info.poly = NULL;
++#else
+   info.poly = whole_world;
++#endif
+ 
+   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
+   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
+ 
++#ifndef DEBUG_CIRCSEGS
+   if (include_holes)
++#endif
+     {
+       r_search (PCB->Data->pin_tree, &region, NULL, pv_outline_callback, &info);
+       r_search (PCB->Data->via_tree, &region, NULL, pv_outline_callback, &info);
+@@ -2312,6 +2351,10 @@ POLYAREA *board_outline_poly (bool include_holes)
+ 
+   clipped = info.poly;
+ 
++#ifdef DEBUG_CIRCSEGS
++  return clipped;
++#endif
++
+   /* Now we just need to work out which pieces of polygon are inside
+      and outside the board! */
+ 
+@@ -2359,6 +2402,7 @@ POLYAREA *board_outline_poly (bool include_holes)
+   g_list_free (pieces_to_delete);
+ #endif
+ 
++#ifdef DEBUG_CIRCSEGS
+   // The actual operation we want is to split the test polygon into multiple pieces
+   // along the intersection with the polygon contours of any polygon on the outer layer.
+   // The result would be nested, touching (not normally produced by the PBO code),
+@@ -2372,6 +2416,7 @@ POLYAREA *board_outline_poly (bool include_holes)
+     return whole_world;
+   else
+     poly_Free (&whole_world);
++#endif
+ 
+   return clipped;
+ }
