@@ -1,0 +1,30 @@
+Bottom: 3a94f2233b29c12f94a8c1ad02b1b92df3821792
+Top:    aa830536d8a2ad0dc2826412b291cf6171832ccd
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-24 22:08:31 +0000
+
+Refresh of remove-debug-from-outline
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 6a6e0c2..46101dc 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2248,14 +2248,14 @@ struct clip_outline_info {
+ static int
+ arc_outline_callback (const BoxType * b, void *cl)
+ {
+-  ArcType *arc = (ArcType *)b;
++  ArcType *line = (ArcType *)b;
+   struct clip_outline_info *info = cl;
+   POLYAREA *np, *res;
+ 
+ #ifdef DEBUG_CIRCSEGS
+-  if (!(np = ArcPoly (arc, arc->Thickness)))
++  if (!(np = ArcPoly (line, line->Thickness)))
+ #else
+-  if (!(np = ArcPoly (arc, ROUTER_THICKNESS)))
++  if (!(np = ArcPoly (line, ROUTER_THICKNESS)))
+ #endif
+     return 0;
