@@ -1,7 +1,7 @@
-Bottom: 410819dc2c406c3bffdc4976599da7178b0174e4
+Bottom: db5148dfefde85e8a80aea3e7bdc31fe6d5a35b7
 Top:    db5148dfefde85e8a80aea3e7bdc31fe6d5a35b7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 20:18:56 +0000
+Date:   2016-02-24 20:19:00 +0000
 
 Remaining (bug?) from another patch..
 
@@ -10,16 +10,4 @@ NB: Original function had this bug before we moved it
 
 ---
 
-diff --git a/src/misc.c b/src/misc.c
-index 6ef9074..0dae818 100644
---- a/src/misc.c
-+++ b/src/misc.c
-@@ -397,7 +397,7 @@ calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle inc
-   hx = p1->X + (p2->X - p1->X) / 2;
-   hy = p1->Y + (p2->Y - p1->Y) / 2;
- 
--  p_to_h_dist = hypot (p2->X - p1->X, p2->Y - p1->Y) / 2.;
-+  p_to_h_dist = hypot (p2->X - p1->Y, p2->Y - p1->Y) / 2.;
-   c_to_h_dist = p_to_h_dist / tan (TO_RADIANS (included_angle) / 2.);
- 
-   unit_hcx = (double)-(hy - p1->Y) / p_to_h_dist;
+
