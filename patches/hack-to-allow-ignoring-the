@@ -1,7 +1,7 @@
-Bottom: 5ee4720d735ea81dda3c87788eed023166543b2a
-Top:    c6afa0db9a56e1c85e4c9292815ee1415ea840c3
+Bottom: 5ef78bb53e8ba9ee78949b6e780544c6e186cb65
+Top:    01103d251621c7ec796ad03a7dd53cefd6b0ccea
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2015-04-21 23:35:29 +0100
+Date:   2016-02-24 23:22:28 +0000
 
 Hack to allow ignoring the lock status of objects..
 
@@ -11,7 +11,7 @@ Boy do I regret not refactoring this to some function or macro TEST_LOCK (...)
 ---
 
 diff --git a/src/action.c b/src/action.c
-index aa196bc..f2bfed6 100644
+index 7782164..e2fbaaf 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1003,7 +1003,7 @@ NotifyMode (void)
@@ -23,7 +23,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		Note.Hit = type;
  		Note.ptr1 = ptr1;
-@@ -1468,8 +1468,9 @@ NotifyMode (void)
+@@ -1469,8 +1469,9 @@ NotifyMode (void)
  
  	    if (Crosshair.AttachedObject.Type != NO_TYPE)
  	      {
@@ -35,7 +35,7 @@ index aa196bc..f2bfed6 100644
  		  {
  		    Message (_("Sorry, the object is locked\n"));
  		    Crosshair.AttachedObject.Type = NO_TYPE;
-@@ -1612,7 +1613,7 @@ NotifyMode (void)
+@@ -1614,7 +1615,7 @@ NotifyMode (void)
  	   SearchScreen (Note.X, Note.Y, REMOVE_TYPES, &ptr1, &ptr2,
  			 &ptr3)) != NO_TYPE)
  	{
@@ -44,7 +44,7 @@ index aa196bc..f2bfed6 100644
  	    {
  	      Message (_("Sorry, the object is locked\n"));
  	      break;
-@@ -1670,6 +1671,7 @@ NotifyMode (void)
+@@ -1672,6 +1673,7 @@ NotifyMode (void)
  	    if (Crosshair.AttachedObject.Type != NO_TYPE)
  	      {
  		if (Settings.Mode == MOVE_MODE &&
@@ -52,7 +52,7 @@ index aa196bc..f2bfed6 100644
  		    TEST_FLAG (LOCKFLAG, (PinType *)
  			       Crosshair.AttachedObject.Ptr2))
  		  {
-@@ -1724,7 +1726,8 @@ NotifyMode (void)
+@@ -1726,7 +1728,8 @@ NotifyMode (void)
  
  	  if (Crosshair.AttachedObject.Type != NO_TYPE)
  	    {
@@ -62,7 +62,7 @@ index aa196bc..f2bfed6 100644
  			     Crosshair.AttachedObject.Ptr2))
  		{
  		  Message (_("Sorry, the object is locked\n"));
-@@ -2429,7 +2432,8 @@ ActionDisperseElements (int argc, char **argv, Coord x, Coord y)
+@@ -2431,7 +2434,8 @@ ActionDisperseElements (int argc, char **argv, Coord x, Coord y)
       * going to be used either with a brand new design or a scratch
       * design holding some new components
       */
@@ -72,7 +72,7 @@ index aa196bc..f2bfed6 100644
        {
  
  	/* figure out how much to move the element */
-@@ -3380,7 +3384,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3382,7 +3386,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    lock_cnt = 0;
    ELEMENT_LOOP (PCB->Data);
    {
@@ -81,7 +81,7 @@ index aa196bc..f2bfed6 100644
        {
  	/* 
  	 * add to the list of locked elements which we won't try to
-@@ -3663,7 +3667,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3665,7 +3669,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	case F_All:
  	  ALLLINE_LOOP (PCB->Data);
  	  {
@@ -91,7 +91,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		RemoveObject (LINE_TYPE, layer, line, line);
  		changed = true;
-@@ -3672,7 +3677,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3674,7 +3679,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  ENDALL_LOOP;
  	  ALLARC_LOOP (PCB->Data);
  	  {
@@ -101,7 +101,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		RemoveObject (ARC_TYPE, layer, arc, arc);
  		changed = true;
-@@ -3681,7 +3687,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3683,7 +3689,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  ENDALL_LOOP;
  	  VIA_LOOP (PCB->Data);
  	  {
@@ -111,7 +111,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		RemoveObject (VIA_TYPE, via, via, via);
  		changed = true;
-@@ -3698,8 +3705,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3700,8 +3707,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	case F_Selected:
  	  VISIBLELINE_LOOP (PCB->Data);
  	  {
@@ -122,7 +122,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		RemoveObject (LINE_TYPE, layer, line, line);
  		changed = true;
-@@ -3709,8 +3716,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3711,8 +3718,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  if (PCB->ViaOn)
  	    VIA_LOOP (PCB->Data);
  	  {
@@ -133,7 +133,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		RemoveObject (VIA_TYPE, via, via, via);
  		changed = true;
-@@ -4097,7 +4104,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
+@@ -4099,7 +4106,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
  	    if ((type =
  		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
  			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
@@ -142,7 +142,7 @@ index aa196bc..f2bfed6 100644
  		Message (_("Sorry, the object is locked\n"));
  	    if (ChangeObjectSize (type, ptr1, ptr2, ptr3, value, absolute))
  	      SetChangedFlag (true);
-@@ -6834,7 +6841,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
+@@ -6836,7 +6843,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
  	if ((type =
  	     SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
  			   &ptr1, &ptr2, &ptr3)) != NO_TYPE)
@@ -613,7 +613,7 @@ index a2823b7..8c4630f 100644
    AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, Polygon, Polygon, true);
    AddObjectToFlagUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
 diff --git a/src/create.c b/src/create.c
-index 18657d9..66f464f 100644
+index 7d0a760..247d82b 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -221,6 +221,8 @@ CreateNewPCB (void)
@@ -626,10 +626,10 @@ index 18657d9..66f464f 100644
  }
  
 diff --git a/src/global.h b/src/global.h
-index b36aebf..114193e 100644
+index a542ccf..8010568 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -494,6 +494,7 @@ typedef struct PCBType
+@@ -496,6 +496,7 @@ typedef struct PCBType
      ElementOn, RatOn, InvisibleObjectsOn, PinOn, SilkActive,	/* active layer is actually silk */
      SolderMaskActive, /* active layer is actually solder mask */
      RatDraw;			 /* we're drawing rats */
@@ -744,10 +744,10 @@ index 6282e9e..abdf494 100644
        Message (_("Sorry, the object is locked\n"));
        return NULL;
 diff --git a/src/polygon.c b/src/polygon.c
-index 236a402..7a3ecca 100644
+index ae36304..c2d3c1b 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1863,7 +1863,8 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+@@ -2074,7 +2074,8 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
    bool many = false;
    FlagType flags;
  
@@ -905,7 +905,7 @@ index 6c00673..b08626e 100644
  	  (PCB->Data->element_tree, &SearchBox, NULL, element_callback,
  	   &info))
 diff --git a/src/select.c b/src/select.c
-index f130b07..0ad89ca 100644
+index 3e231d0..4e59fb2 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -72,7 +72,7 @@ SelectObject (void)
@@ -917,7 +917,7 @@ index f130b07..0ad89ca 100644
      return (false);
    switch (type)
      {
-@@ -221,7 +221,8 @@ SelectBlock (BoxType *Box, bool select)
+@@ -225,7 +225,8 @@ SelectBlock (BoxType *Box, bool select)
      RAT_LOOP (PCB->Data);
    {
      if (LINE_IN_BOX ((LineType *) line, Box) &&
@@ -927,7 +927,7 @@ index f130b07..0ad89ca 100644
        {
  	AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
  	ASSIGN_FLAG (SELECTEDFLAG, select, line);
-@@ -261,9 +262,9 @@ SelectBlock (BoxType *Box, bool select)
+@@ -265,9 +266,9 @@ SelectBlock (BoxType *Box, bool select)
  
      LINE_LOOP (layer);
      {
@@ -940,7 +940,7 @@ index f130b07..0ad89ca 100644
  	{
  	  AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
  	  ASSIGN_FLAG (SELECTEDFLAG, select, line);
-@@ -275,9 +276,9 @@ SelectBlock (BoxType *Box, bool select)
+@@ -279,9 +280,9 @@ SelectBlock (BoxType *Box, bool select)
      END_LOOP;
      ARC_LOOP (layer);
      {
@@ -953,7 +953,7 @@ index f130b07..0ad89ca 100644
  	{
  	  AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
  	  ASSIGN_FLAG (SELECTEDFLAG, select, arc);
-@@ -291,9 +292,9 @@ SelectBlock (BoxType *Box, bool select)
+@@ -295,9 +296,9 @@ SelectBlock (BoxType *Box, bool select)
      {
        if (!select || TEXT_IS_VISIBLE(PCB, layer, text))
  	{
@@ -966,7 +966,7 @@ index f130b07..0ad89ca 100644
  	    {
  	      AddObjectToFlagUndoList (TEXT_TYPE, layer, text, text);
  	      ASSIGN_FLAG (SELECTEDFLAG, select, text);
-@@ -306,9 +307,9 @@ SelectBlock (BoxType *Box, bool select)
+@@ -310,9 +311,9 @@ SelectBlock (BoxType *Box, bool select)
      END_LOOP;
      POLYGON_LOOP (layer);
      {
@@ -979,7 +979,7 @@ index f130b07..0ad89ca 100644
  	{
  	  AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
  	  ASSIGN_FLAG (SELECTEDFLAG, select, polygon);
-@@ -326,15 +327,14 @@ SelectBlock (BoxType *Box, bool select)
+@@ -330,15 +331,14 @@ SelectBlock (BoxType *Box, bool select)
    {
      {
        bool gotElement = false;
@@ -1001,7 +1001,7 @@ index f130b07..0ad89ca 100644
  			    &ELEMENT_TEXT (PCB, element)) != select)
  	    {
  	      /* select all names of element */
-@@ -385,7 +385,9 @@ SelectBlock (BoxType *Box, bool select)
+@@ -389,7 +389,9 @@ SelectBlock (BoxType *Box, bool select)
  		gotElement = true;
  	      }
  	}
@@ -1012,7 +1012,7 @@ index f130b07..0ad89ca 100644
  	{
  	  PIN_LOOP (element);
  	  {
-@@ -424,9 +426,9 @@ SelectBlock (BoxType *Box, bool select)
+@@ -428,9 +430,9 @@ SelectBlock (BoxType *Box, bool select)
    if (PCB->ViaOn || !select)
      VIA_LOOP (PCB->Data);
    {
@@ -1025,7 +1025,7 @@ index f130b07..0ad89ca 100644
        {
  	AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
  	ASSIGN_FLAG (SELECTEDFLAG, select, via);
-@@ -738,7 +740,8 @@ SelectByFlag (int flag, bool select)
+@@ -742,7 +744,8 @@ SelectByFlag (int flag, bool select)
  
    VISIBLELINE_LOOP (PCB->Data);
    {
@@ -1035,7 +1035,7 @@ index f130b07..0ad89ca 100644
        {
  	AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
  	ASSIGN_FLAG (SELECTEDFLAG, select, line);
-@@ -749,7 +752,8 @@ SelectByFlag (int flag, bool select)
+@@ -753,7 +756,8 @@ SelectByFlag (int flag, bool select)
    ENDALL_LOOP;
    VISIBLEARC_LOOP (PCB->Data);
    {
@@ -1045,7 +1045,7 @@ index f130b07..0ad89ca 100644
        {
  	AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
  	ASSIGN_FLAG (SELECTEDFLAG, select, arc);
-@@ -760,7 +764,8 @@ SelectByFlag (int flag, bool select)
+@@ -764,7 +768,8 @@ SelectByFlag (int flag, bool select)
    ENDALL_LOOP;
    VISIBLEPOLYGON_LOOP (PCB->Data);
    {
@@ -1055,7 +1055,7 @@ index f130b07..0ad89ca 100644
        {
  	AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
  	ASSIGN_FLAG (SELECTEDFLAG, select, polygon);
-@@ -774,7 +779,8 @@ SelectByFlag (int flag, bool select)
+@@ -778,7 +783,8 @@ SelectByFlag (int flag, bool select)
      {
        ALLPIN_LOOP (PCB->Data);
        {
@@ -1065,7 +1065,7 @@ index f130b07..0ad89ca 100644
  	  {
  	    AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
  	    ASSIGN_FLAG (SELECTEDFLAG, select, pin);
-@@ -785,7 +791,8 @@ SelectByFlag (int flag, bool select)
+@@ -789,7 +795,8 @@ SelectByFlag (int flag, bool select)
        ENDALL_LOOP;
        ALLPAD_LOOP (PCB->Data);
        {
@@ -1075,7 +1075,7 @@ index f130b07..0ad89ca 100644
  	  {
  	    AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
  	    ASSIGN_FLAG (SELECTEDFLAG, select, pad);
-@@ -799,7 +806,8 @@ SelectByFlag (int flag, bool select)
+@@ -803,7 +810,8 @@ SelectByFlag (int flag, bool select)
    if (PCB->ViaOn)
      VIA_LOOP (PCB->Data);
    {
@@ -1085,7 +1085,7 @@ index f130b07..0ad89ca 100644
        {
  	AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
  	ASSIGN_FLAG (SELECTEDFLAG, select, via);
-@@ -873,7 +881,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
+@@ -877,7 +885,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
    if (Type & TEXT_TYPE)
      ALLTEXT_LOOP (PCB->Data);
    {
@@ -1094,7 +1094,7 @@ index f130b07..0ad89ca 100644
  	&& TEXT_IS_VISIBLE (PCB, layer, text)
  	&& text->TextString
  	&& REGEXEC (text->TextString)
-@@ -890,7 +898,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
+@@ -894,7 +902,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
    if (PCB->ElementOn && (Type & ELEMENT_TYPE))
      ELEMENT_LOOP (PCB->Data);
    {
@@ -1103,7 +1103,7 @@ index f130b07..0ad89ca 100644
  	&& ((TEST_FLAG (ONSOLDERFLAG, element) != 0) == SWAP_IDENT
  	    || PCB->InvisibleObjectsOn)
  	&& TEST_FLAG (SELECTEDFLAG, element) != select)
-@@ -928,7 +936,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
+@@ -932,7 +940,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
    if (PCB->PinOn && (Type & PIN_TYPE))
      ALLPIN_LOOP (PCB->Data);
    {
@@ -1112,7 +1112,7 @@ index f130b07..0ad89ca 100644
  	&& pin->Name && REGEXEC (pin->Name)
  	&& TEST_FLAG (SELECTEDFLAG, pin) != select)
        {
-@@ -942,7 +950,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
+@@ -946,7 +954,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
    if (PCB->PinOn && (Type & PAD_TYPE))
      ALLPAD_LOOP (PCB->Data);
    {
@@ -1121,7 +1121,7 @@ index f130b07..0ad89ca 100644
  	&& ((TEST_FLAG (ONSOLDERFLAG, pad) != 0) == SWAP_IDENT
  	    || PCB->InvisibleObjectsOn)
  	&& TEST_FLAG (SELECTEDFLAG, pad) != select)
-@@ -958,7 +966,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
+@@ -962,7 +970,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
    if (PCB->ViaOn && (Type & VIA_TYPE))
      VIA_LOOP (PCB->Data);
    {

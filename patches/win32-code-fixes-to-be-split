@@ -1,7 +1,7 @@
-Bottom: adc5b2132d7fcf1952bc1baa773179d5151356b6
-Top:    9480a89f15b4ec5222a076ced94e06f3c6eef37e
+Bottom: 185997359f4726f7b4299a7b00cfb91254f6c9e9
+Top:    3d83468ba8288c383e261b52b69103899cfbee71
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 18:42:26 +0000
+Date:   2016-02-24 23:22:28 +0000
 
 Win32 code fixes (TO BE SPLIT INTO SEPARATE PATCHES)
 
@@ -21,7 +21,7 @@ index 24e6625..fb544fb 100644
  
  void *
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index e6b1eaf..26cb769 100644
+index 51adc6c..4ad9b2d 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -35,6 +35,7 @@
@@ -60,7 +60,7 @@ index b964d24..a809ead 100644
  #endif
  
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 405f9ab..91f7fa9 100644
+index 4553186..821b928 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -40,7 +40,9 @@
@@ -75,7 +75,7 @@ index 405f9ab..91f7fa9 100644
   * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
   * in order to get prototypes:
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f4688ac..85ba11c 100644
+index 6e8c5d3..ad37e0c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -23,7 +23,9 @@
@@ -179,10 +179,10 @@ index 8977b40..29910ea 100644
  # endif
  #endif
 diff --git a/src/polygon.c b/src/polygon.c
-index 0e2c670..236a402 100644
+index 4c8ea80..ae36304 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -2092,12 +2092,13 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2321,12 +2321,13 @@ pv_outline_callback (const BoxType * b, void *cl)
  
        if (element_name != NULL && pin_number != NULL)
          {
