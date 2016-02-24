@@ -1,5 +1,5 @@
 Bottom: e19f8b25ba4b07db559d96b7fe7bb3810ef0fc58
-Top:    3a94f2233b29c12f94a8c1ad02b1b92df3821792
+Top:    aa830536d8a2ad0dc2826412b291cf6171832ccd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 20:19:13 +0000
 
@@ -9,7 +9,7 @@ Remove debug from outline generation
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 5e4e1fc..6a6e0c2 100644
+index 5e4e1fc..46101dc 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -108,7 +108,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -21,7 +21,7 @@ index 5e4e1fc..6a6e0c2 100644
  
  #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
  
-@@ -2243,7 +2243,8 @@ struct clip_outline_info {
+@@ -2243,18 +2243,19 @@ struct clip_outline_info {
  
  #define ROUTER_THICKNESS MIL_TO_COORD (10)
  //#define ROUTER_THICKNESS MIL_TO_COORD (0.1)
@@ -31,6 +31,20 @@ index 5e4e1fc..6a6e0c2 100644
  static int
  arc_outline_callback (const BoxType * b, void *cl)
  {
+-  ArcType *arc = (ArcType *)b;
++  ArcType *line = (ArcType *)b;
+   struct clip_outline_info *info = cl;
+   POLYAREA *np, *res;
+ 
+ #ifdef DEBUG_CIRCSEGS
+-  if (!(np = ArcPoly (arc, arc->Thickness)))
++  if (!(np = ArcPoly (line, line->Thickness)))
+ #else
+-  if (!(np = ArcPoly (arc, ROUTER_THICKNESS)))
++  if (!(np = ArcPoly (line, ROUTER_THICKNESS)))
+ #endif
+     return 0;
+ 
 diff --git a/src/polygon1.c b/src/polygon1.c
 index f34c968..c323758 100644
 --- a/src/polygon1.c
