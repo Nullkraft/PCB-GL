@@ -1,5 +1,5 @@
 Bottom: 1179f84d98f9bfc458a36edfc44c36463d3eade0
-Top:    4e134519f9666410290c5ecd7d5c7ef9cfdebb7b
+Top:    3e072625e8cf019c8d552c8c7aca47b20c3f6231
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 20:19:13 +0000
 
@@ -24,25 +24,10 @@ circ_segs_test4_still_procuces_bad_contour_when_starting_with_arc.pcb
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 0bded43..3c1cee1 100644
+index 0bded43..1d6e71d 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -149,12 +149,14 @@ thindraw_contour (hidGC gc, PLINE *pl)
-   hid_draw_set_line_width (gc, 0);
-   hid_draw_set_line_cap (gc, Round_Cap);
- 
-+#if 0
-   /* If the contour is round, use an arc drawing routine. */
-   if (pl->is_round)
-     {
-       hid_draw_arc (gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
-       return;
-     }
-+#endif
- 
-   /* Need at least two points in the contour */
-   if (pl->head.next == NULL)
-@@ -169,8 +171,33 @@ thindraw_contour (hidGC gc, PLINE *pl)
+@@ -169,8 +169,33 @@ thindraw_contour (hidGC gc, PLINE *pl)
        this_x = v->point[0];
        this_y = v->point[1];
  
