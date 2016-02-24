@@ -1,5 +1,5 @@
 Bottom: 6c1b2a3e25c46af61b01212ba7bd3c715ff8069e
-Top:    3e072625e8cf019c8d552c8c7aca47b20c3f6231
+Top:    24284eeea150c467c71fccd737654a160ac370a3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 20:19:13 +0000
 
@@ -484,7 +484,7 @@ index 978a449..5e4e1fc 100644
  
    /* now we have the line contour */
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 885f268..557ea82 100644
+index 885f268..f34c968 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -109,12 +109,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -612,25 +612,7 @@ index 885f268..557ea82 100644
        curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
  
        /* see where to go next */
-@@ -2833,6 +2879,8 @@ M_Set_Parentage (POLYAREA *poly, POLYPARENTAGE parentage)
- 
- }
- 
-+static void test_polyInvContour (void);
-+
- /* just like poly_Boolean but frees the input polys */
- int
- poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-@@ -2845,6 +2893,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-   CVCList *the_list;
-   POLYAREA *a_copy, *b_copy;
- 
-+  test_polyInvContour ();
-+
-   *res = NULL;
- 
-   /* Make copies for tracking polygon parentage (DEBUG) */
-@@ -3078,23 +3128,6 @@ node_neighbours (VNODE * a, VNODE * b)
+@@ -3078,23 +3124,6 @@ node_neighbours (VNODE * a, VNODE * b)
    return (a == b) || (a->next == b) || (b->next == a) || (a->next == b->next);
  }
  
@@ -654,7 +636,7 @@ index 885f268..557ea82 100644
  void
  poly_IniContour (PLINE * c)
  {
-@@ -3122,6 +3155,10 @@ poly_NewContour (VNODE *node)
+@@ -3122,6 +3151,10 @@ poly_NewContour (VNODE *node)
    poly_IniContour (res);
  
    Vcopy (res->head.point, node->point);
@@ -665,40 +647,7 @@ index 885f268..557ea82 100644
    cntrbox_adjust (res, res->head.point);
    g_slice_free (VNODE, node);
  
-@@ -3239,6 +3276,32 @@ flip_cb (const BoxType * b, void *cl)
-   return 1;
- }
- 
-+static void
-+test_polyInvContour (void)
-+{
-+  static bool done = false;
-+  PLINE *contour;
-+  Vector v;
-+
-+  if (done)
-+    return;
-+
-+  printf ("Testing inv_contour\n");
-+
-+  v[0] = 0, v[1] = 0;           contour = poly_NewContour (poly_CreateNodeArcApproximation (v, 0, 0, 1));
-+  v[0] = 0, v[1] = 2; poly_InclVertex (contour->head.prev, poly_CreateNodeArcApproximation (v, 0, 0, 3));
-+  v[0] = 0, v[1] = 4; poly_InclVertex (contour->head.prev, poly_CreateNodeArcApproximation (v, 0, 0, 5));
-+  v[0] = 0; v[1] = 6; poly_InclVertex (contour->head.prev, poly_CreateNodeArcApproximation (v, 0, 0, 7));
-+
-+  pline_dump (&contour->head);
-+  poly_InvContour (contour);
-+  pline_dump (&contour->head);
-+
-+  poly_FreeContours (&contour);
-+
-+  done = true;
-+}
-+
- void
- poly_InvContour (PLINE * c)
- {
-@@ -3247,16 +3310,48 @@ poly_InvContour (PLINE * c)
+@@ -3247,16 +3280,48 @@ poly_InvContour (PLINE * c)
    int r;
  #endif
  
@@ -747,7 +696,7 @@ index 885f268..557ea82 100644
    c->Flags.orient ^= 1;
    if (c->tree)
      {
-@@ -3296,11 +3391,26 @@ poly_InclVertex (VNODE * after, VNODE * node)
+@@ -3296,11 +3361,26 @@ poly_InclVertex (VNODE * after, VNODE * node)
    /* remove points on same line */
    if (PREV_VERTEX (PREV_VERTEX (node)) == node)
      return;			/* we don't have 3 points in the poly yet */
@@ -775,7 +724,7 @@ index 885f268..557ea82 100644
      {
        VNODE *t = PREV_VERTEX (node);
        NEXT_VERTEX (PREV_VERTEX (t)) = node;
-@@ -3316,7 +3426,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -3316,7 +3396,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    assert (src != NULL);
    *dst = NULL;
@@ -784,7 +733,7 @@ index 885f268..557ea82 100644
    if (*dst == NULL)
      return FALSE;
  
-@@ -3328,7 +3438,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+@@ -3328,7 +3408,7 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
  
    for (cur = NEXT_EDGE (&src->head); cur != &src->head; cur = NEXT_VERTEX (cur))
      {
