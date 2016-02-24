@@ -1,0 +1,22 @@
+Bottom: a6c56f501710f624f6e409f56b35599d476893df
+Top:    ea36b1ae7e5cb3337f674c7be28ac46369d4bb20
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-24 22:23:17 +0000
+
+Refresh of tag-vnodes-with-details-of
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 1223724..e3ed7b8 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -155,7 +155,7 @@ pline_dump (VNODE * v)
+   do
+     {
+       n = NEXT_VERTEX(v);
+-      pcb_fprintf (stderr, "Line [%$#mn %$#mn %$#mn %$#mn 10 10 \"%s\"] # %s, radius %$mn\n",
++      pcb_fprintf (stderr, "Line [%$mn %$mn %$mn %$mn 10 10 \"%s\"] # %s, radius %$mn\n",
+ 	       v->point[0], v->point[1],
+ 	       n->point[0], n->point[1], theState (v),
+ 	       VERTEX_FORWARD_EDGE (v)->is_round ? "Round" : "Line",
