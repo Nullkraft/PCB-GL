@@ -1,0 +1,219 @@
+Bottom: 0b3c6d7d7faf7bf11f5530793df73ddc98bafe6b
+Top:    090011dc27b03f92db8237be096251c4f964c029
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-24 22:58:33 +0000
+
+Refresh of add-name-tags-to-contours-and
+
+---
+
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index a85d48f..9b775ac 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -267,6 +267,8 @@ step_emit_board_contour (FILE *f, PLINE *contour)
+ 
+   PLINE *ct;
+ 
++  char *face_name;
++
+   ncontours = 0;
+   npoints = 0;
+   ct = contour;
+@@ -590,7 +592,7 @@ step_emit_board_contour (FILE *f, PLINE *contour)
+       global.next_identifier = global.next_identifier + 2;
+     }
+ 
+-    fprintf (f, "#%i = ADVANCED_FACE ( 'NONE', ( ",
++    fprintf (f, "#%i = ADVANCED_FACE ( 'Bottom', ( ",
+              global.next_identifier);
+     for (icont = 0; icont < ncontours - 1; icont++)
+       fprintf (f, "#%i, ",
+@@ -621,7 +623,7 @@ step_emit_board_contour (FILE *f, PLINE *contour)
+       global.next_identifier = global.next_identifier + 2;
+     }
+ 
+-    fprintf (f, "#%i = ADVANCED_FACE ( 'NONE', ( ",
++    fprintf (f, "#%i = ADVANCED_FACE ( 'Top', ( ",
+              global.next_identifier);
+     for (icont = 0; icont < ncontours - 1; icont++)
+       fprintf (f, "#%i, ",
+@@ -646,12 +648,14 @@ step_emit_board_contour (FILE *f, PLINE *contour)
+       ct = ct->next;
+     }
+ 
++    face_name = (ct->name != NULL) ? ct->name : "";
++
+     fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ( #%i, #%i, #%i, #%i ) ) ; "
+                 "#%i = FACE_OUTER_BOUND ( 'NONE', #%i, .T. ) ; "
+-                "#%i = ADVANCED_FACE ( 'NONE', ( #%i ), #%i, .F. ) ;\n",
++                "#%i = ADVANCED_FACE ( '%s', ( #%i ), #%i, .F. ) ;\n",
+              global.next_identifier, side_edge_identifier[i_start + (adjusted_i + 1) % get_contour_npoints (ct)] + REV, top_edge_identifier[i] + FWD, side_edge_identifier[i] + FWD, bottom_edge_identifier[i] + REV,
+              global.next_identifier + 1, global.next_identifier,
+-             global.next_identifier + 2, global.next_identifier + 1, side_plane_identifier[i]);
++             global.next_identifier + 2, face_name, global.next_identifier + 1, side_plane_identifier[i]);
+     side_face_identifier[i] = global.next_identifier + 2;
+     global.next_identifier = global.next_identifier + 3;
+   }
+diff --git a/src/polyarea.h b/src/polyarea.h
+index 94bdf45..1e3c629 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -112,6 +112,7 @@ struct PLINE
+     } Flags;
+     int tristrip_num_vertices;
+     float *tristrip_vertices;
++    char *name;
+ };
+ 
+ PLINE *poly_NewContour(VNODE *node);
+diff --git a/src/polygon.c b/src/polygon.c
+index 2ba4f52..0a74a22 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -601,8 +601,13 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+ 
+ 
+ /* create a circle approximation from lines */
++/* NB: Name can be NULL, but once passed is owned by the contour.
++ *     It will be free'd with free() when no longer required, so
++ *     must be allocated by the standard library routines such as
++ *     malloc, calloc, realloc.
++ */
+ POLYAREA *
+-CirclePoly (Coord x, Coord y, Coord radius)
++CirclePoly (Coord x, Coord y, Coord radius, char *name)
+ {
+   PLINE *contour;
+   Vector v;
+@@ -618,6 +623,7 @@ CirclePoly (Coord x, Coord y, Coord radius)
+   contour->cx = x;
+   contour->cy = y;
+   contour->radius = radius;
++  contour->name = name;
+   return ContourToPoly (contour);
+ }
+ 
+@@ -798,7 +804,7 @@ LinePoly (LineType * L, Coord thick)
+           SQUARE (l->Point1.Y - l->Point2.Y));
+   if (!TEST_FLAG (SQUAREFLAG,l))
+     if (d == 0)                   /* line is a point */
+-      return CirclePoly (l->Point1.X, l->Point1.Y, half);
++      return CirclePoly (l->Point1.X, l->Point1.Y, half, NULL);
+   if (d != 0)
+     {
+       d = half / d;
+@@ -1007,7 +1013,7 @@ PinPoly (PinType * pin, Coord thick, Coord clear)
+           return OctagonPoly (pin->X, pin->Y, size + size);
+         }
+     }
+-  return CirclePoly (pin->X, pin->Y, size);
++  return CirclePoly (pin->X, pin->Y, size, NULL);
+ }
+ 
+ POLYAREA *
+@@ -1948,7 +1954,7 @@ IsPointInPolygon (Coord X, Coord Y, Coord r, PolygonType *p)
+     return true;
+   if (r < 1)
+     return false;
+-  if (!(c = CirclePoly (X, Y, r)))
++  if (!(c = CirclePoly (X, Y, r, NULL)))
+     return false;
+   return isects (c, p, true);
+ }
+@@ -2298,11 +2304,36 @@ pv_outline_callback (const BoxType * b, void *cl)
+   PinType *pv = (PinType *)b;
+   struct clip_outline_info *info = cl;
+   POLYAREA *np, *res;
++  char *feature_name;
++
++  if (pv->Element != NULL)
++    {
++      char *element_name = ((ElementType *)pv->Element)->Name[NAMEONPCB_INDEX].TextString;
++      char *pin_number = pv->Number;
++
++      if (element_name != NULL && pin_number != NULL)
++        {
++          char *tmp;
++
++          feature_name = tmp = malloc (strlen (element_name) + 1 + strlen (pin_number) + 1);
++          tmp = stpcpy (tmp, element_name);
++          *(tmp++) = '-';
++          tmp = stpcpy (tmp, pin_number);
++        }
++      else
++        {
++          feature_name = NULL;
++        }
++    }
++  else
++    {
++      feature_name = STRDUP(pv->Name);
++    }
+ 
+ #ifdef DEBUG_CIRCSEGS
+-  if (!(np = CirclePoly (pv->X, pv->Y, pv->Thickness / 2)))
++  if (!(np = CirclePoly (pv->X, pv->Y, pv->Thickness / 2), feature_name))
+ #else
+-  if (!(np = CirclePoly (pv->X, pv->Y, pv->DrillingHole / 2)))
++  if (!(np = CirclePoly (pv->X, pv->Y, pv->DrillingHole / 2, feature_name)))
+ #endif
+     return 0;
+ 
+diff --git a/src/polygon.h b/src/polygon.h
+index 0643765..3ec4478 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -86,7 +86,7 @@ void ComputeNoHoles (PolygonType *poly);
+ POLYAREA * ContourToPoly (PLINE *);
+ POLYAREA * PolygonToPoly (PolygonType *);
+ POLYAREA * RectPoly (Coord x1, Coord x2, Coord y1, Coord y2);
+-POLYAREA * CirclePoly (Coord x, Coord y, Coord radius);
++POLYAREA * CirclePoly (Coord x, Coord y, Coord radius, char *name);
+ POLYAREA * OctagonPoly(Coord x, Coord y, Coord radius);
+ POLYAREA * LinePoly(LineType *l, Coord thick);
+ POLYAREA * ArcPoly(ArcType *l, Coord thick);
+diff --git a/src/polygon1.c b/src/polygon1.c
+index e3ed7b8..5c09126 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -3137,6 +3137,7 @@ poly_IniContour (PLINE * c)
+   c->cx = 0;
+   c->cy = 0;
+   c->radius = 0;
++  c->name = NULL;
+ }
+ 
+ PLINE *
+@@ -3175,6 +3176,8 @@ poly_ClrContour (PLINE * c)
+   free (c->tristrip_vertices);
+   c->tristrip_vertices = NULL;
+   c->tristrip_num_vertices = 0;
++  free (c->name);
++  c->name = NULL;
+   poly_IniContour (c);
+ }
+ 
+@@ -3207,6 +3210,7 @@ poly_DelContour (PLINE ** c)
+       r_destroy_tree (&r);
+     }
+   free ((*c)->tristrip_vertices);
++  free ((*c)->name);
+   free (*c), *c = NULL;
+ }
+ 
+diff --git a/src/thermal.c b/src/thermal.c
+index 753182c..e004bf3 100644
+--- a/src/thermal.c
++++ b/src/thermal.c
+@@ -423,8 +423,8 @@ ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
+         POLYAREA *m;
+         Coord t = (pin->Thickness + pin->Clearance) / 2;
+         Coord w = 0.5 * pcb->ThermScale * pin->Clearance;
+-        pa = CirclePoly (pin->X, pin->Y, t);
+-        arc = CirclePoly (pin->X, pin->Y, pin->Thickness / 2);
++        pa = CirclePoly (pin->X, pin->Y, t, NULL);
++        arc = CirclePoly (pin->X, pin->Y, pin->Thickness / 2, NULL);
+         /* create a thin ring */
+         poly_Boolean_free (pa, arc, &m, PBO_SUB);
+         /* fix me needs error checking */
