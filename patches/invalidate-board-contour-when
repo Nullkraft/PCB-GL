@@ -1,5 +1,5 @@
 Bottom: afdfe5926f79ac24e0601c1df583d506c6aed24c
-Top:    afdfe5926f79ac24e0601c1df583d506c6aed24c
+Top:    b88c71bc1c09bee79548c46f12e3ad859eab54e7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 21:37:20 +0000
 
@@ -10,4 +10,18 @@ The drill-holes of vias and pins can affect the board contour
 
 ---
 
-
+diff --git a/src/polygon.c b/src/polygon.c
+index 0accd67..e92f479 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1813,6 +1813,10 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+           strcmp (layer->Name, "route") == 0)
+         Data->outline_valid = false;
+     }
++  else if (type == PIN_TYPE || type == VIA_TYPE)
++    {
++        Data->outline_valid = false;
++    }
+ 
+   if (type == POLYGON_TYPE)
+     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
