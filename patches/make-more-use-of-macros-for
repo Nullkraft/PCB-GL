@@ -1,0 +1,53 @@
+Bottom: eb8947f91823bf05a95eb06cf4ec557ecc722c83
+Top:    1ed92649ea3476441a2f602c898782a5e3b40bb8
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-24 20:19:14 +0000
+
+Make more use of macros for traversing between edges and nodes in a specified direction
+
+This greatly simplifies the code, at the cost of the traversal direction being
+slightly less explicit.
+
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index f85b5ba..624f209 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -333,8 +333,7 @@ new_descriptor (VNODE * a, char poly, char side)
+   l->side = side;
+   l->next = l->prev = l;
+   l->skip_me = false;
+-  if ((side == 'P' && a->prev->is_round == false) || /* previous, not round */
+-      (side != 'P' && a      ->is_round == false))   /* next,     not round */
++  if (VERTEX_SIDE_DIR_EDGE (a, side)->is_round == false)  /* not round */
+     { /* Line-segment case */
+ 
+ #if 0
+@@ -392,20 +391,21 @@ new_descriptor (VNODE * a, char poly, char side)
+        * 90 degrees CW)
+        */
+ 
++      center[0] = VERTEX_SIDE_DIR_EDGE (a, side)->cx;
++      center[1] = VERTEX_SIDE_DIR_EDGE (a, side)->cy;
++      l->curvature = (double)-compare_ccw_cw (a->point, center, EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (a, side), side)->point) / VERTEX_SIDE_DIR_EDGE (a, side)->radius;
++#if 0
+       if (side == 'P')		/* previous */
+         {
+-          center[0] = VERTEX_BACKWARD_EDGE (a)->cx;
+-          center[1] = VERTEX_BACKWARD_EDGE (a)->cy;
+           l->curvature = (double)+compare_ccw_cw (EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (a))->point, center, a->point) / VERTEX_BACKWARD_EDGE (a)->radius;
+           // OR: ?
+           // l->curvature = (double)-compare_ccw_cw (a->point, center, a->prev->point) / a->prev->radius;
+         }
+       else				/* next */
+         {
+-          center[0] = VERTEX_FORWARD_EDGE (a)->cx;
+-          center[1] = VERTEX_FORWARD_EDGE (a)->cy;
+           l->curvature = (double)-compare_ccw_cw (a->point, center, EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (a))->point) / VERTEX_FORWARD_EDGE (a)->radius;
+         }
++#endif
+ 
+       /* First of all, make v the radial line */
+       vect_sub (v, center, a->point);
