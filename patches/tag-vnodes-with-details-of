@@ -1,5 +1,5 @@
 Bottom: 6c1b2a3e25c46af61b01212ba7bd3c715ff8069e
-Top:    a6c56f501710f624f6e409f56b35599d476893df
+Top:    ea36b1ae7e5cb3337f674c7be28ac46369d4bb20
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 20:19:13 +0000
 
@@ -484,7 +484,7 @@ index 978a449..5e4e1fc 100644
  
    /* now we have the line contour */
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 885f268..1223724 100644
+index 885f268..e3ed7b8 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -109,6 +109,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -500,7 +500,7 @@ index 885f268..1223724 100644
      {
        n = NEXT_VERTEX(v);
 -      pcb_fprintf (stderr, "Line [%#mS %#mS %#mS %#mS 10 10 \"%s\"]\n",
-+      pcb_fprintf (stderr, "Line [%$#mn %$#mn %$#mn %$#mn 10 10 \"%s\"] # %s, radius %$mn\n",
++      pcb_fprintf (stderr, "Line [%$mn %$mn %$mn %$mn 10 10 \"%s\"] # %s, radius %$mn\n",
  	       v->point[0], v->point[1],
 -	       n->point[0], n->point[1], theState (v));
 +	       n->point[0], n->point[1], theState (v),
