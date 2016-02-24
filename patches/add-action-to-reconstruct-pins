@@ -1,5 +1,5 @@
-Bottom: a4a278e4834450ead54bde24a6f58cc80641f761
-Top:    f76311a4c3cac4613a2090f9913504569def29bb
+Bottom: c86c7314565471b22de3493d486c1b4e5726356b
+Top:    1bdd6821f2fbf04fb643cf64c54eb7718adcd2f4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-23 23:43:18 +0000
 
@@ -9,7 +9,7 @@ Add action to reconstruct pins / vias / holes
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 0ee548d..aa196bc 100644
+index 742c977..7782164 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -110,6 +110,9 @@ typedef enum
@@ -32,7 +32,7 @@ index 0ee548d..aa196bc 100644
    {"Found", F_Found},
    {"Connection", F_Connection},
    {"Convert", F_Convert},
-@@ -8212,6 +8218,131 @@ ActionSmash (int argc, char **argv, Coord x, Coord y)
+@@ -8214,6 +8220,131 @@ ActionSmash (int argc, char **argv, Coord x, Coord y)
    AFAIL (smash);
  }
  
@@ -164,7 +164,7 @@ index 0ee548d..aa196bc 100644
  /* --------------------------------------------------------------------------- */
  
  HID_Action action_action_list[] = {
-@@ -8326,6 +8457,9 @@ HID_Action action_action_list[] = {
+@@ -8328,6 +8459,9 @@ HID_Action action_action_list[] = {
    {"Renumber", 0, ActionRenumber,
     renumber_help, renumber_syntax}
    ,
