@@ -1,5 +1,5 @@
-Bottom: 5ed9a1e0efbf0ec44fc9b79f08159cb9e680e1cb
-Top:    3f1e32f8ca794ca9d775c7371725e28c31e69d40
+Bottom: b99f8437f40fa37ce9a5c3243a8ac28abe3adf3f
+Top:    c9184406abdbbf9c57ef3c6ef800ee1d6c5e2095
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-23 23:43:19 +0000
 
@@ -11,7 +11,7 @@ FIXME: Some changes related to debugging polygon badness
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 9b268bd..3acb12b 100644
+index 5823ccc..e3667b3 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -20,6 +20,8 @@
@@ -31,7 +31,7 @@ index 9b268bd..3acb12b 100644
  
  static GList *object3d_test_objects = NULL;
  
-@@ -838,6 +841,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -841,6 +844,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
    r_search (layer->arc_tree,  &bounds, NULL, arc_mask_callback, &info);
    r_search (layer->text_tree, &bounds, NULL, text_mask_callback, &info);
    r_search (layer->polygon_tree, &bounds, NULL, polygon_mask_callback, &info);
@@ -39,7 +39,7 @@ index 9b268bd..3acb12b 100644
    r_search (PCB->Data->pad_tree, &bounds, NULL, pad_mask_callback, &info);
    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_mask_callback, &info);
    r_search (PCB->Data->via_tree, &bounds, NULL, pv_mask_callback, &info);
-@@ -1210,3 +1214,277 @@ old_object3d_from_board_outline (void)
+@@ -1213,3 +1217,277 @@ old_object3d_from_board_outline (void)
  
    return board_objects;
  }

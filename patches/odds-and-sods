@@ -1,5 +1,5 @@
-Bottom: 7d040d155f7e10c48fdbf1764385255dd1195627
-Top:    2fe15a2ec323854ccfb4f8d142a0685e6ac6c255
+Bottom: 4e6e0c7a1568223676e42ae131cdea3dd1348d42
+Top:    a7ccbd0826b74d406aac9dd1d242781ca9292440
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-23 23:43:19 +0000
 
@@ -9,10 +9,10 @@ ODDS AND SODS
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 646b57d..0924cbe 100644
+index b0dcba0..44abe54 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -1507,7 +1507,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1510,7 +1510,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
    /* DEBUG */
    poly_M_Copy0 (&PCB->Data->outline, info.poly);
    PCB->Data->outline_valid = true;

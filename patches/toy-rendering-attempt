@@ -1,5 +1,5 @@
-Bottom: b720973f75a01c03589c6712611bc71cd0a8741f
-Top:    74826a6d20bd248371667025b9c23c554fb499bf
+Bottom: 8d459a9ed7c382f13b53961f12cc9ff0f78c6ac9
+Top:    87c1b34a1bb697bf320d543054506ee4d8d617f2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-22 23:34:23 +0100
 
@@ -22,7 +22,7 @@ index 742c411..0630dd5 100644
  	hid/step/utils.h \
  	hid/step/step_writer.c \
 diff --git a/src/action.c b/src/action.c
-index f2bfed6..9fe8fa1 100644
+index e2fbaaf..d8f5f6c 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -90,6 +90,8 @@
@@ -35,10 +35,10 @@ index f2bfed6..9fe8fa1 100644
   * some local types
   */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7f2fc9a..26dc474 100644
+index 51295d7..ad08a48 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1117,6 +1117,10 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -1119,6 +1119,10 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
    ghid_graphics_class.end_layer = ghid_end_layer;
    ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
    ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;

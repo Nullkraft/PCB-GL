@@ -1,5 +1,5 @@
-Bottom: 2fe15a2ec323854ccfb4f8d142a0685e6ac6c255
-Top:    34ac4188490d21411cbf1a32f372ce21c6e76e82
+Bottom: a7ccbd0826b74d406aac9dd1d242781ca9292440
+Top:    083386358b0556964b9cea1d6efb53f9c15fa4f8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-22 02:09:47 +0000
 
@@ -9,7 +9,7 @@ Debug wonky copper polygon generation
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 0924cbe..fb62afb 100644
+index 44abe54..d188f21 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -23,6 +23,7 @@
@@ -20,7 +20,7 @@ index 0924cbe..fb62afb 100644
  //#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
  #undef REVERSED_PCB_CONTOURS
  
-@@ -1433,19 +1434,19 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1436,19 +1437,19 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
        {
          fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
  
@@ -47,7 +47,7 @@ index 0924cbe..fb62afb 100644
      if (group == top_group ||
          group == bottom_group)
        {
-@@ -1499,17 +1500,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1502,17 +1503,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                NULL));
  
  

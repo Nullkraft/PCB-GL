@@ -1,5 +1,5 @@
-Bottom: b4a5d9c7c652931661b946cb72c997c29c8bd844
-Top:    6c339aa2fa476e507b44c2bc98ef98bb60600e92
+Bottom: 1ab56a757d71d92f43f45e09fa210d393e582624
+Top:    ac8a222c909ea86c793e345441db65ef09799351
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-04-21 23:35:12 +0100
 
@@ -11,7 +11,7 @@ Boy do I regret not refactoring this to some function or macro TEST_LOCK (...)
 ---
 
 diff --git a/src/action.c b/src/action.c
-index aa196bc..f2bfed6 100644
+index 7782164..e2fbaaf 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1003,7 +1003,7 @@ NotifyMode (void)
@@ -23,7 +23,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		Note.Hit = type;
  		Note.ptr1 = ptr1;
-@@ -1468,8 +1468,9 @@ NotifyMode (void)
+@@ -1469,8 +1469,9 @@ NotifyMode (void)
  
  	    if (Crosshair.AttachedObject.Type != NO_TYPE)
  	      {
@@ -35,7 +35,7 @@ index aa196bc..f2bfed6 100644
  		  {
  		    Message (_("Sorry, the object is locked\n"));
  		    Crosshair.AttachedObject.Type = NO_TYPE;
-@@ -1612,7 +1613,7 @@ NotifyMode (void)
+@@ -1614,7 +1615,7 @@ NotifyMode (void)
  	   SearchScreen (Note.X, Note.Y, REMOVE_TYPES, &ptr1, &ptr2,
  			 &ptr3)) != NO_TYPE)
  	{
@@ -44,7 +44,7 @@ index aa196bc..f2bfed6 100644
  	    {
  	      Message (_("Sorry, the object is locked\n"));
  	      break;
-@@ -1670,6 +1671,7 @@ NotifyMode (void)
+@@ -1672,6 +1673,7 @@ NotifyMode (void)
  	    if (Crosshair.AttachedObject.Type != NO_TYPE)
  	      {
  		if (Settings.Mode == MOVE_MODE &&
@@ -52,7 +52,7 @@ index aa196bc..f2bfed6 100644
  		    TEST_FLAG (LOCKFLAG, (PinType *)
  			       Crosshair.AttachedObject.Ptr2))
  		  {
-@@ -1724,7 +1726,8 @@ NotifyMode (void)
+@@ -1726,7 +1728,8 @@ NotifyMode (void)
  
  	  if (Crosshair.AttachedObject.Type != NO_TYPE)
  	    {
@@ -62,7 +62,7 @@ index aa196bc..f2bfed6 100644
  			     Crosshair.AttachedObject.Ptr2))
  		{
  		  Message (_("Sorry, the object is locked\n"));
-@@ -2429,7 +2432,8 @@ ActionDisperseElements (int argc, char **argv, Coord x, Coord y)
+@@ -2431,7 +2434,8 @@ ActionDisperseElements (int argc, char **argv, Coord x, Coord y)
       * going to be used either with a brand new design or a scratch
       * design holding some new components
       */
@@ -72,7 +72,7 @@ index aa196bc..f2bfed6 100644
        {
  
  	/* figure out how much to move the element */
-@@ -3380,7 +3384,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3382,7 +3386,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    lock_cnt = 0;
    ELEMENT_LOOP (PCB->Data);
    {
@@ -81,7 +81,7 @@ index aa196bc..f2bfed6 100644
        {
  	/* 
  	 * add to the list of locked elements which we won't try to
-@@ -3663,7 +3667,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3665,7 +3669,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	case F_All:
  	  ALLLINE_LOOP (PCB->Data);
  	  {
@@ -91,7 +91,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		RemoveObject (LINE_TYPE, layer, line, line);
  		changed = true;
-@@ -3672,7 +3677,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3674,7 +3679,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  ENDALL_LOOP;
  	  ALLARC_LOOP (PCB->Data);
  	  {
@@ -101,7 +101,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		RemoveObject (ARC_TYPE, layer, arc, arc);
  		changed = true;
-@@ -3681,7 +3687,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3683,7 +3689,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  ENDALL_LOOP;
  	  VIA_LOOP (PCB->Data);
  	  {
@@ -111,7 +111,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		RemoveObject (VIA_TYPE, via, via, via);
  		changed = true;
-@@ -3698,8 +3705,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3700,8 +3707,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	case F_Selected:
  	  VISIBLELINE_LOOP (PCB->Data);
  	  {
@@ -122,7 +122,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		RemoveObject (LINE_TYPE, layer, line, line);
  		changed = true;
-@@ -3709,8 +3716,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3711,8 +3718,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  if (PCB->ViaOn)
  	    VIA_LOOP (PCB->Data);
  	  {
@@ -133,7 +133,7 @@ index aa196bc..f2bfed6 100644
  	      {
  		RemoveObject (VIA_TYPE, via, via, via);
  		changed = true;
-@@ -4097,7 +4104,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
+@@ -4099,7 +4106,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
  	    if ((type =
  		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
  			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
@@ -142,7 +142,7 @@ index aa196bc..f2bfed6 100644
  		Message (_("Sorry, the object is locked\n"));
  	    if (ChangeObjectSize (type, ptr1, ptr2, ptr3, value, absolute))
  	      SetChangedFlag (true);
-@@ -6834,7 +6841,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
+@@ -6836,7 +6843,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
  	if ((type =
  	     SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
  			   &ptr1, &ptr2, &ptr3)) != NO_TYPE)
@@ -613,7 +613,7 @@ index a2823b7..8c4630f 100644
    AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, Polygon, Polygon, true);
    AddObjectToFlagUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
 diff --git a/src/create.c b/src/create.c
-index 18657d9..66f464f 100644
+index 7d0a760..247d82b 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -221,6 +221,8 @@ CreateNewPCB (void)
@@ -626,10 +626,10 @@ index 18657d9..66f464f 100644
  }
  
 diff --git a/src/global.h b/src/global.h
-index b36aebf..114193e 100644
+index a542ccf..8010568 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -494,6 +494,7 @@ typedef struct PCBType
+@@ -496,6 +496,7 @@ typedef struct PCBType
      ElementOn, RatOn, InvisibleObjectsOn, PinOn, SilkActive,	/* active layer is actually silk */
      SolderMaskActive, /* active layer is actually solder mask */
      RatDraw;			 /* we're drawing rats */
@@ -744,10 +744,10 @@ index 6282e9e..abdf494 100644
        Message (_("Sorry, the object is locked\n"));
        return NULL;
 diff --git a/src/polygon.c b/src/polygon.c
-index 3c9cefa..06552f1 100644
+index 54c3425..e23389e 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1942,7 +1942,8 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+@@ -2139,7 +2139,8 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
    bool many = false;
    FlagType flags;
  
