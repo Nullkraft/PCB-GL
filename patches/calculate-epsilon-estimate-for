@@ -1,5 +1,5 @@
-Bottom: bc1b2b4423acc5a8c20d7fadaf7e251fb56fc64c
-Top:    6caa977d1121f4b1cda438cc4a21d46b3d5ff896
+Bottom: d5f3f7d6e4cd3d5433456465ae0610abdc9bbf26
+Top:    033b5ad521e6185274f9b0d43a6d937eb4eba2cd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 20:19:15 +0000
 
@@ -9,10 +9,10 @@ Calculate epsilon estimate for debugging
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index d30d412..16e1096 100644
+index 1694548..1901d82 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -124,6 +124,7 @@ void
+@@ -123,6 +123,7 @@ void
  polygon_init (void)
  {
    struct rlimit limit;
@@ -20,7 +20,7 @@ index d30d412..16e1096 100644
  
    double cos_ang = cos (2.0 * M_PI / POLY_CIRC_SEGS_F);
    double sin_ang = sin (2.0 * M_PI / POLY_CIRC_SEGS_F);
-@@ -138,6 +139,12 @@ polygon_init (void)
+@@ -137,6 +138,12 @@ polygon_init (void)
    getrlimit (RLIMIT_AS, &limit);
    limit.rlim_cur = MIN (limit.rlim_cur, 2000 * 1024 * 1024 /* 2 GiB limit to virtual memory size */);
    setrlimit (RLIMIT_AS, &limit);
