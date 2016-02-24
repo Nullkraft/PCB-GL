@@ -255,6 +255,9 @@ object3d_from_contours (const POLYAREA *contours,
   int offset_in_ct;
   int ct_npoints;
 
+  if (contours == NULL)
+    return NULL;
+
   /* Loop over all board outline pieces */
   pa = contours;
   do {
