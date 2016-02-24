@@ -1,5 +1,5 @@
-Bottom: 05a14f9149d91ed4dc0dc312d9fc93e4eca9a767
-Top:    04f7051f9c67ffc324d6e88fa6cc62e30f068313
+Bottom: cc232d26ca283e8c4bf100babc1537542152af70
+Top:    cc232d26ca283e8c4bf100babc1537542152af70
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 20:19:14 +0000
 
@@ -12,30 +12,4 @@ happens.
 
 ---
 
-diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 405f9ab..4553186 100644
---- a/src/hid/common/object3d.c
-+++ b/src/hid/common/object3d.c
-@@ -251,6 +251,9 @@ object3d_from_board_outline (void)
- 
-   board_outline = board_outline_poly (true);
- 
-+  if (board_outline == NULL)
-+    return NULL;
-+
-   /* Loop over all board outline pieces */
-   pa = board_outline;
-   do {
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5ce8ea1..7e87a10 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1692,6 +1692,8 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
-   struct outline_info info;
- 
-   ensure_board_outline ();
-+  if (PCB->Data->outline == NULL)
-+    return;
- 
-   memset (&polygon, 0, sizeof (polygon));
-   polygon.Clipped = PCB->Data->outline;
+
