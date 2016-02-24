@@ -1,7 +1,7 @@
-Bottom: b83e35cb4f0758567e81e93b7a1052af3e2e457e
-Top:    0d5f7471ab3dfb3c20f56ba1b774bd54538acce4
+Bottom: ab993f1f5f73ffc15a116888bacc5a4475e72771
+Top:    710337643af65f4e5a88ade8fab2b010d81c4c97
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 22:43:49 +0000
+Date:   2016-02-24 22:55:10 +0000
 
 Play with quad-edge data-structure - using PCB as a framework for GL!
 
@@ -1319,7 +1319,7 @@ index 0000000..bac7e89
 +vertex3d *make_vertex3d (float x, float y, float z);
 +void destroy_vertex3d (vertex3d *v);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1fd999f..1dbfdac 100644
+index 3fcd41a..c52dd69 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,9 @@
@@ -1332,7 +1332,7 @@ index 1fd999f..1dbfdac 100644
  #ifndef WIN32
  /* The Linux OpenGL ABI 1.0 spec requires that we define
   * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-@@ -2315,6 +2318,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2318,6 +2321,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 1, 0,
                       0, 0, 0, 1};
    bool horizon_problem = false;
@@ -1345,7 +1345,7 @@ index 1fd999f..1dbfdac 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -2671,6 +2680,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2684,6 +2693,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);

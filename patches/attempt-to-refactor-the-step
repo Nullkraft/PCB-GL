@@ -1,7 +1,7 @@
-Bottom: 8a716d8795b3039fb32553d82fdee2a611a28fb4
-Top:    9ab2ba67448ab9b5b2ac4196061bd4dec6038b75
+Bottom: 5a7fb46c75c79d00ef9bdfefbb02b6927bbb5587
+Top:    89603b52ccee132a24a4c16ed2e10e9c3d50da1f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 22:43:49 +0000
+Date:   2016-02-24 22:55:11 +0000
 
 Attempt to refactor the STEP emission somewhat
 
@@ -702,7 +702,7 @@ index 278ae60..a150934 100644
  
  vertex3d *make_vertex3d (float x, float y, float z);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 790b761..f4688ac 100644
+index 015d575..6e8c5d3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,7 @@
