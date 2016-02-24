@@ -290,7 +290,7 @@ new_descriptor (VNODE * a, char poly, char side)
   //     of vectors on screen.
 
 #ifdef DEBUG_ANGLE
-  DEBUGP ("node on %c at (%mn, %mn) assigned angle %.18f on side %c\n", poly,
+  DEBUGP ("node on %c at (%$mn, %$mn) assigned angle %.18f on side %c\n", poly,
 	  a->point[0], a->point[1], ang, side);
 #endif
   return l;
@@ -542,7 +542,7 @@ edge_label (VNODE * pn, int existing_label)
   assert (pn);
   l = EDGE_BACKWARD_VERTEX (pn)->cvc_next;
 
-  DEBUGP ("Labelling VNODE at (%mn, %mn)\n", pn->point[0], pn->point[1]);
+  DEBUGP ("Labelling VNODE at (%$mn, %$mn)\n", pn->point[0], pn->point[1]);
   print_cvc_list (pn->cvc_next);
 
   assert (l);
@@ -813,7 +813,7 @@ seg_in_seg (const BoxType * b, void *cl)
       if (new_node != NULL)
 	{
 #ifdef DEBUG_INTERSECT
-	  DEBUGP ("new intersection on segment \"i\" at (%mn, %mn)\n",
+	  DEBUGP ("new intersection on segment \"i\" at (%$mn, %$mn)\n",
 	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
 #endif
 	  i->node_insert_list =
@@ -825,7 +825,7 @@ seg_in_seg (const BoxType * b, void *cl)
       if (new_node != NULL)
 	{
 #ifdef DEBUG_INTERSECT
-	  DEBUGP ("new intersection on segment \"s\" at (%mn, %mn)\n",
+	  DEBUGP ("new intersection on segment \"s\" at (%$mn, %$mn)\n",
 	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
 #endif
 	  i->node_insert_list =
@@ -1246,7 +1246,7 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("(%mn, %mn)->(%mn, %mn) labeled %s\n",
+      DEBUGP ("(%$mn, %$mn)->(%$mn, %$mn) labeled %s\n",
               EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
     }
