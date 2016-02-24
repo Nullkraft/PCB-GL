@@ -1,5 +1,5 @@
 Bottom: cb812a54749f94032c0f12e107d7fb9900fac546
-Top:    21b4394d57d266cf934c5ace51f26db29f5d1f4a
+Top:    e8106cf77ecc4d4faff657d36fe34182a3f7667b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-07 22:18:10 +0000
 
@@ -9,7 +9,7 @@ Debug polygon angles and node labeling harder
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 0c7b78c..9a4e711 100644
+index 0c7b78c..2b44cc7 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -45,6 +45,7 @@
@@ -84,7 +84,7 @@ index 0c7b78c..9a4e711 100644
 +
  #ifdef DEBUG_ANGLE
 -  DEBUGP ("node on %c at %#mD assigned angle %g on side %c\n", poly,
-+  DEBUGP ("node on %c at (%mn, %mn) assigned angle %.18f on side %c\n", poly,
++  DEBUGP ("node on %c at (%$mn, %$mn) assigned angle %.18f on side %c\n", poly,
  	  a->point[0], a->point[1], ang, side);
  #endif
    return l;
@@ -141,7 +141,7 @@ index 0c7b78c..9a4e711 100644
    assert (pn);
    l = EDGE_BACKWARD_VERTEX (pn)->cvc_next;
  
-+  DEBUGP ("Labelling VNODE at (%mn, %mn)\n", pn->point[0], pn->point[1]);
++  DEBUGP ("Labelling VNODE at (%$mn, %$mn)\n", pn->point[0], pn->point[1]);
 +  print_cvc_list (pn->cvc_next);
 +
    assert (l);
@@ -176,7 +176,7 @@ index 0c7b78c..9a4e711 100644
  	{
  #ifdef DEBUG_INTERSECT
 -	  DEBUGP ("new intersection on segment \"i\" at %#mD\n",
-+	  DEBUGP ("new intersection on segment \"i\" at (%mn, %mn)\n",
++	  DEBUGP ("new intersection on segment \"i\" at (%$mn, %$mn)\n",
  	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
  #endif
  	  i->node_insert_list =
@@ -185,7 +185,7 @@ index 0c7b78c..9a4e711 100644
  	{
  #ifdef DEBUG_INTERSECT
 -	  DEBUGP ("new intersection on segment \"s\" at %#mD\n",
-+	  DEBUGP ("new intersection on segment \"s\" at (%mn, %mn)\n",
++	  DEBUGP ("new intersection on segment \"s\" at (%$mn, %$mn)\n",
  	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
  #endif
  	  i->node_insert_list =
@@ -194,7 +194,7 @@ index 0c7b78c..9a4e711 100644
    do
      {
 -      DEBUGP ("%#mD->%#mD labeled %s\n",
-+      DEBUGP ("(%mn, %mn)->(%mn, %mn) labeled %s\n",
++      DEBUGP ("(%$mn, %$mn)->(%$mn, %$mn) labeled %s\n",
                EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                 EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
      }
