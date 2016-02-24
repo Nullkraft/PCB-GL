@@ -1,5 +1,5 @@
 Bottom: f906fe2644f80b9086692f36e02575809bb52198
-Top:    84de4d63253c2fd5283423ac0afbb605c3a3f53d
+Top:    e67e297f4f5bc6a18100667adaaa1efaea834976
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-23 23:43:18 +0000
 
@@ -38,7 +38,7 @@ index d4917d7..d2bf7b3 100644
 +void appearance_set_color (appearance *appear, float r, float g, float b);
 +void appearance_set_appearance (appearance *appear, const appearance *from);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index c34c17f..2809a69 100644
+index c34c17f..f219c6b 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -5,6 +5,7 @@
@@ -68,7 +68,7 @@ index c34c17f..2809a69 100644
  
  static GList *object3d_test_objects = NULL;
  
-@@ -228,8 +232,634 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
+@@ -228,8 +232,637 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
  }
  
  GList *
@@ -94,6 +94,9 @@ index c34c17f..2809a69 100644
 +  int start_of_ct;
 +  int offset_in_ct;
 +  int ct_npoints;
++
++  if (contours == NULL)
++    return NULL;
 +
 +  /* Loop over all board outline pieces */
 +  pa = contours;
