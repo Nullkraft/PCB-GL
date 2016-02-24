@@ -1,5 +1,5 @@
 Bottom: 1179f84d98f9bfc458a36edfc44c36463d3eade0
-Top:    4daa6a777883be2d3bc98c384577c20b0590df83
+Top:    4e134519f9666410290c5ecd7d5c7ef9cfdebb7b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 20:19:13 +0000
 
@@ -148,18 +148,10 @@ index 6f0f6b0..94bdf45 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 978a449..8f172ed 100644
+index 978a449..5e4e1fc 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -112,6 +112,7 @@ dicer output is used for HIDs which cannot render things with holes
- 
- #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
- 
-+//#define UNSUBTRACT_BLOAT MIL_TO_COORD (0.1)
- #define UNSUBTRACT_BLOAT 10
- #define SUBTRACT_PIN_VIA_BATCH_SIZE 100
- #define SUBTRACT_LINE_BATCH_SIZE 20
-@@ -291,7 +292,7 @@ ContourToPoly (PLINE * contour)
+@@ -291,7 +291,7 @@ ContourToPoly (PLINE * contour)
  }
  
  static void
@@ -168,7 +160,7 @@ index 978a449..8f172ed 100644
  {
    /* We don't re-add a point at v, nor do we add the last point, sweep degrees around from (X,Y)-v */
    double e1, e2, t1;
-@@ -299,6 +300,18 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
+@@ -299,6 +299,18 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
  
  //  poly_InclVertex (c->head.prev, poly_CreateNode (v));
  
@@ -187,7 +179,7 @@ index 978a449..8f172ed 100644
    /* move vector to origin */
    e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
    e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
-@@ -315,7 +328,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
+@@ -315,7 +327,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
            e1 = t1;
            v[0] = X + ROUND (e1);
            v[1] = Y + ROUND (e2);
@@ -196,7 +188,7 @@ index 978a449..8f172ed 100644
          }
      }
    else
-@@ -330,7 +343,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
+@@ -330,7 +342,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Vector v /* First po
            e1 = t1;
            v[0] = X + ROUND (e1);
            v[1] = Y + ROUND (e2);
@@ -205,7 +197,7 @@ index 978a449..8f172ed 100644
          }
      }
  }
-@@ -350,24 +363,37 @@ original_poly (PolygonType * p)
+@@ -350,24 +362,37 @@ original_poly (PolygonType * p)
    /* first make initial polygon contour */
    for (n = 0; n < p->PointN; n++)
      {
@@ -245,7 +237,7 @@ index 978a449..8f172ed 100644
  
            next_n = n + 1;
            if (next_n == p->PointN ||
-@@ -378,7 +404,7 @@ original_poly (PolygonType * p)
+@@ -378,7 +403,7 @@ original_poly (PolygonType * p)
  
  
            calc_arc_from_points_and_included_angle (&p->Points[n], &p->Points[next_n], p->Points[n].included_angle,
@@ -254,7 +246,7 @@ index 978a449..8f172ed 100644
  
  #if 0 /* DEBUG TO SHOW THE CENTER OF THE ARC */
            v[0] = cx, v[1] = cy;
-@@ -386,7 +412,7 @@ original_poly (PolygonType * p)
+@@ -386,7 +411,7 @@ original_poly (PolygonType * p)
            v[0] = p->Points[n].X, v[1] = p->Points[n].Y;
  #endif
  
@@ -263,7 +255,7 @@ index 978a449..8f172ed 100644
  
  #if 0 /* DEBUG TO SHOW THE CENTER OF THE ARC */
            v[0] = cx, v[1] = cy;  /* DEBUG TO SHOW THE CENTER OF THE ARC */
-@@ -490,8 +516,24 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+@@ -490,8 +515,24 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
  {
    double e1, e2, t1;
    int i, range;
@@ -289,7 +281,7 @@ index 978a449..8f172ed 100644
    /* move vector to origin */
    e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
    e2 = (v[1] - Y) * POLY_CIRC_RADIUS_ADJ;
-@@ -506,7 +548,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+@@ -506,7 +547,7 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
        e1 = t1;
        v[0] = X + ROUND (e1);
        v[1] = Y + ROUND (e2);
@@ -298,7 +290,7 @@ index 978a449..8f172ed 100644
      }
  }
  
-@@ -522,6 +564,23 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+@@ -522,6 +563,23 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
  {
    double e1, e2, t1;
    int i, range;
@@ -322,7 +314,7 @@ index 978a449..8f172ed 100644
  
    /* move vector to origin */
    e1 = (v[0] - X) * POLY_CIRC_RADIUS_ADJ;
-@@ -529,7 +588,7 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+@@ -529,7 +587,7 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
  
    /* XXX */ /* NB: the caller adds the last vertex, hence the -1 */
    range = POLY_CIRC_SEGS / fraction;
@@ -331,7 +323,7 @@ index 978a449..8f172ed 100644
      {
        /* rotate the vector */
        t1 = rotate_circle_seg[0] * e1 + rotate_circle_seg[1] * e2;
-@@ -537,7 +596,7 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
+@@ -537,7 +595,7 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
        e1 = t1;
        v[0] = X + ROUND (e1);
        v[1] = Y + ROUND (e2);
@@ -340,7 +332,7 @@ index 978a449..8f172ed 100644
      }
  }
  
-@@ -553,7 +612,7 @@ CirclePoly (Coord x, Coord y, Coord radius)
+@@ -553,7 +611,7 @@ CirclePoly (Coord x, Coord y, Coord radius)
      return NULL;
    v[0] = x + radius;
    v[1] = y;
@@ -349,7 +341,7 @@ index 978a449..8f172ed 100644
      return NULL;
    frac_circle2 (contour, x, y, v, 1);
    contour->is_round = TRUE;
-@@ -572,22 +631,31 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
+@@ -572,22 +630,31 @@ RoundRect (Coord x1, Coord x2, Coord y1, Coord y2, Coord t)
  
    assert (x2 > x1);
    assert (y2 > y1);
@@ -385,7 +377,7 @@ index 978a449..8f172ed 100644
    frac_circle (contour, x1, y2, v, 4);
    return ContourToPoly (contour);
  }
-@@ -626,18 +694,30 @@ ArcPolyNoIntersect (ArcType * a, Coord thick)
+@@ -626,18 +693,30 @@ ArcPolyNoIntersect (ArcType * a, Coord thick)
  
    ang = a->StartAngle;
    da = (1.0 * a->Delta) / segs;
@@ -424,7 +416,7 @@ index 978a449..8f172ed 100644
    /* find last point */
    ang = a->StartAngle + a->Delta;
    v[0] = a->X - rx * cos (ang * M180) * (1 - radius_adj);
-@@ -648,13 +728,18 @@ ArcPolyNoIntersect (ArcType * a, Coord thick)
+@@ -648,13 +727,18 @@ ArcPolyNoIntersect (ArcType * a, Coord thick)
    rx = (a->Width + half) * (1+radius_adj);
    ry = (a->Width + half) * (1+radius_adj);
    da = -da;
@@ -450,7 +442,7 @@ index 978a449..8f172ed 100644
    /* now add other round cap */
    ang = a->StartAngle;
    v[0] = a->X - rx * cos (ang * M180) * (1 - radius_adj);
-@@ -734,33 +819,34 @@ LinePoly (LineType * L, Coord thick)
+@@ -734,33 +818,34 @@ LinePoly (LineType * L, Coord thick)
        l->Point2.Y -= dx;
      }
  
@@ -498,7 +490,7 @@ index 978a449..8f172ed 100644
    /* now we have the line contour */
    if (!(np = ContourToPoly (contour)))
      return NULL;
-@@ -817,25 +903,37 @@ SquarePadPoly (PadType * pad, Coord clear)
+@@ -817,25 +902,37 @@ SquarePadPoly (PadType * pad, Coord clear)
        c->Point2.Y -= cx;
      }
  
