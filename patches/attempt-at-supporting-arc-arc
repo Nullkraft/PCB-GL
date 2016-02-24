@@ -1,7 +1,7 @@
-Bottom: 1744310841e405e4160a32a625ba4e04a3bbfa7f
-Top:    f9a67d5dcfa1d293fd1475a9bf827809ea75d167
+Bottom: 86c8304fe414dd0aa19da87b6349b7edf37cd8ff
+Top:    0fad79c9ecf08d516e1e365b8fcf1287d2e553fd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 22:24:19 +0000
+Date:   2016-02-24 22:46:01 +0000
 
 Attempt at supporting arc-arc intersections in polygons
 
@@ -11,7 +11,7 @@ XXX: Looks like square pad clearance polygons might have extra un-necessary node
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index bd6874d..cf79c75 100644
+index 47b171d..b6db56c 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -40,6 +40,10 @@ PCB_SRCS = \
