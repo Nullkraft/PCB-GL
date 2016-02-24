@@ -1,7 +1,7 @@
-Bottom: 085ebe0f820012a0b555407c958dfe632f295e4e
-Top:    ed82488f002f8a440c5bf9f0f40d109088d8bb8d
+Bottom: dc0261fe87f21879dba3177504bc0182f802ee60
+Top:    410819dc2c406c3bffdc4976599da7178b0174e4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 20:18:26 +0000
+Date:   2016-02-24 20:18:55 +0000
 
 Limit virtual memory size of PCB process to avoid swapping my machine to death!
 
@@ -11,7 +11,7 @@ Sometimes the polygon code exploded...
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 7e2d17f..2e42a3a 100644
+index 4dd9dc8..e58f7db 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -104,6 +104,10 @@ dicer output is used for HIDs which cannot render things with holes
