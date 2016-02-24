@@ -1,0 +1,28 @@
+Bottom: 4e134519f9666410290c5ecd7d5c7ef9cfdebb7b
+Top:    3e072625e8cf019c8d552c8c7aca47b20c3f6231
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-24 21:46:37 +0000
+
+Refresh of temporarily-disable-rendering
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 3c1cee1..1d6e71d 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -149,14 +149,12 @@ thindraw_contour (hidGC gc, PLINE *pl)
+   hid_draw_set_line_width (gc, 0);
+   hid_draw_set_line_cap (gc, Round_Cap);
+ 
+-#if 0
+   /* If the contour is round, use an arc drawing routine. */
+   if (pl->is_round)
+     {
+       hid_draw_arc (gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
+       return;
+     }
+-#endif
+ 
+   /* Need at least two points in the contour */
+   if (pl->head.next == NULL)
