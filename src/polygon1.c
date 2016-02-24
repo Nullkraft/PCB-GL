@@ -117,11 +117,11 @@ static void poly_InclVertex_int (VNODE * after, VNODE * node);
 
 #define error(code)  longjmp(*(e), code)
 
-#undef DEBUG_INTERSECT
+#define DEBUG_INTERSECT
 #undef DEBUG_LABEL
 #define DEBUG_ALL_LABELS
-#undef DEBUG_JUMP
-#undef DEBUG_GATHER
+#define DEBUG_JUMP
+#define DEBUG_GATHER
 #undef DEBUG_ANGLE
 #define DEBUG
 #ifdef DEBUG
@@ -361,7 +361,7 @@ new_descriptor (VNODE * a, char poly, char side)
   if (VERTEX_SIDE_DIR_EDGE (a, side)->is_round == false)  /* not round */
     { /* Line-segment case */
 
-#if 0
+#if 1 /* May affect producing good angles for our geometry... */
       if (side == 'P')		/* previous */
         vect_sub (v, PREV_VERTEX (a)->point, a->point);
       else				/* next */
@@ -741,6 +741,9 @@ edge_label (VNODE * pn, int existing_label)
 
   assert (l);
 
+  fprintf (stderr, "edge_label(), called with an edge on poly %c\n", l->poly);
+  cvc_list_dump (l);
+
   /* Shared edges can be sorted in either order, so need to check l->prev as well */
   test = prev_cvc_from_other_poly (l);
 
@@ -751,6 +754,7 @@ edge_label (VNODE * pn, int existing_label)
        * edge generated during intersection. Treat as if it were not cross-
        * connected, by labeling with the current label.
        */
+      fprintf (stderr, "one_poly_only_case\n");
       region = existing_label;
       LABEL_EDGE (pn, region);
       return region;
@@ -758,6 +762,7 @@ edge_label (VNODE * pn, int existing_label)
 
   if (compare_cvc_nodes (l, test) == 0)
     {
+      fprintf (stderr, "probably shared edge case with l->prev\n");
       shared_edge_case = true;
       l = test;
     }
@@ -772,6 +777,7 @@ edge_label (VNODE * pn, int existing_label)
 
   if (shared_edge_case)
     {
+      fprintf (stderr, "shared_edge_case\n");
       /* If this fires, we found two geometrically distinct edges which for some reason compare as equal in our cvc_list.
        * Shared edges should be geometrically identical (but may be in opposite directions).
        */
@@ -783,11 +789,13 @@ edge_label (VNODE * pn, int existing_label)
       /* SHARED is the same direction case,
        * SHARED2 is the opposite direction case.
        */
+      printf ((l->side == 'P') ? "SHARED2\n" : "SHARED\n");
       region = (l->side == 'P') ? SHARED2 : SHARED;
       pn->shared = VERTEX_SIDE_DIR_EDGE (l->parent, l->side);
     }
   else
     {
+      fprintf (stderr, "normal case\n");
       region = (l->side == 'P') ? INSIDE : OUTSIDE;
     }
 
@@ -1070,6 +1078,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
       return 0;
     }
 
+#if 0
   /* ... */
   if (cnt == 2)
     {
@@ -1077,15 +1086,15 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
        *      the endpoints of each line. Rejecting these here is not actually correct, as
        *      there may still be an intersection (depending on the segment bounds).
        */
-//      if (s1->v->p0 - EPSILON > s1_i2 || s1_i2 > s1->v->p1 + EPSILON)
-      if (s1->v->p0 > s1_i2 || s1_i2 > s1->v->p1)
+      if (s1->v->p0 - EPSILON > s1_i2 || s1_i2 > s1->v->p1 + EPSILON)
+//      if (s1->v->p0 > s1_i2 || s1_i2 > s1->v->p1)
         {
 //          printf ("  Second intersection is off the first line bounds\n");
           printf ("BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (In the way we handle this... - might still be valid intersection) <<<<<<<<<<<\n");
           cnt--;
         }
-//      else if (s2->v->p0 - EPSILON > s2_i2 || s2_i2 > s2->v->p1 + EPSILON)
-      else if (s2->v->p0 > s2_i2 || s2_i2 > s2->v->p1)
+      else if (s2->v->p0 - EPSILON > s2_i2 || s2_i2 > s2->v->p1 + EPSILON)
+//      else if (s2->v->p0 > s2_i2 || s2_i2 > s2->v->p1)
         {
 //          printf ("  Second intersection is off the second line bounds\n");
           printf ("BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (In the way we handle this... - might still be valid intersection) <<<<<<<<<<<\n");
@@ -1123,6 +1132,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
       printf ("\n");
       return 0;
     }
+#endif
 
   if (i->touch)  /* if checking touches one find and we're done */
     longjmp (*i->touch, TOUCHES);
@@ -1282,7 +1292,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
       Angle m1_angle;
       Angle m1_delta;
 
-#if 0
+#if 1
       Vcopy (v1, s2->v->point);
       v1[0] += m1 * (EDGE_FORWARD_VERTEX (s2->v)->point[0] - EDGE_BACKWARD_VERTEX (s2->v)->point[0]);
       v1[1] += m1 * (EDGE_FORWARD_VERTEX (s2->v)->point[1] - EDGE_BACKWARD_VERTEX (s2->v)->point[1]);
@@ -1376,9 +1386,7 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
 
 #if 1
   /* COP OUT */
-  if (s1->v->cx     == s2->v->cx &&
-      s1->v->cy     == s2->v->cy &&
-      s1->v->radius == s2->v->radius)
+  if (compare_edge_arcs_equal (s1->v, s2->v))
     {
       printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
       s1->v->is_round = false;
@@ -2038,6 +2046,8 @@ print_labels (PLINE * a)
               EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e),
               e->is_round, e->radius, EDGE_BACKWARD_VERTEX (e)->cvc_next, EDGE_BACKWARD_VERTEX (e)->cvc_prev);
+      if (EDGE_BACKWARD_VERTEX (e)->cvc_prev)
+        cvc_list_dump (EDGE_BACKWARD_VERTEX (e)->cvc_prev);
     }
   while ((e = NEXT_EDGE (e)) != &a->head);
 }
@@ -4169,10 +4179,12 @@ poly_PreContour (PLINE * C, BOOLp optimize)
                            hypot (c->point[0] - c_check_x, c->point[1] - c_check_y));
                   fprintf (stderr, "\n");
                   //*(char *)0 = 0;
+#if 0
                   p->point[0] = p_check_x;
                   p->point[1] = p_check_y;
                   c->point[0] = c_check_x;
                   c->point[1] = c_check_y;
+#endif
                 }
               else
                 {
@@ -5111,6 +5123,7 @@ calculate_line_point_intersection (Vector l1, Vector l2, Vector point)
 vect_inters2
  (C) 1993 Klamer Schutte
  (C) 1997 Michael Leonov, Alexey Nikitin
+ (C) 2016 Peter Clifton
 */
 
 int
@@ -5337,11 +5350,13 @@ vect_inters2 (Vector p1, Vector p2, double s1, double s2,
 	{
 	  s = (rqy * (p1[0] - q1[0]) + rqx * (q1[1] - p1[1])) / deel;
 //	  if (s < -EPSILON || s > 1. + EPSILON)
-	  if (s < 0.       || s > 1.          )
+//	  if (s < 0. || s > 1.)
+	  if (s < s1 || s2 < s)
 	    return 0;
 	  t = (rpy * (p1[0] - q1[0]) + rpx * (q1[1] - p1[1])) / deel;
 //	  if (t < -EPSILON || t > 1. + EPSILON)
-	  if (t < 0.       || t > 1.          )
+//	  if (t < 0. || t > 1.)
+	  if (t < t1 || t2 < t)
 	    return 0;
 
 	  i1[0] = q1[0] + ROUND (t * rqx);
