@@ -1,0 +1,43 @@
+Bottom: 1179f84d98f9bfc458a36edfc44c36463d3eade0
+Top:    6c1b2a3e25c46af61b01212ba7bd3c715ff8069e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-24 21:54:02 +0000
+
+Refresh of debug-rendering-for-board
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 5ce8ea1..c00124e 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -904,9 +904,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ 
+   double old_alpha_mult = gtk_gc->alpha_mult;
+   common_thindraw_pcb_polygon (gc, poly, clip_box);
++#if 0
+   ghid_set_alpha_mult (gc, gtk_gc->alpha_mult * 0.25);
+   hid_draw_fill_pcb_polygon (gc, poly, clip_box);
+   ghid_set_alpha_mult (gc, old_alpha_mult);
++#endif
+ }
+ 
+ void
+@@ -1643,7 +1645,8 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
+     polygon.BoundingBox = *drawn_area;
+   polygon.Flags = NoFlags ();
+   SET_FLAG (FULLPOLYFLAG, &polygon);
+-  hid_draw_fill_pcb_polygon (gc, &polygon, drawn_area);
++//  hid_draw_fill_pcb_polygon (gc, &polygon, drawn_area);
++  hid_draw_thin_pcb_polygon (gc, &polygon, drawn_area);
+   poly_FreeContours (&polygon.NoHoles);
+ }
+ 
+@@ -2695,7 +2698,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glDisable (GL_LIGHTING);
+ 
+   draw_crosshair (Output.fgGC, priv);
+-  object3d_draw_debug ();
++  //object3d_draw_debug ();
+ 
+   hidgl_flush_triangles (priv->hidgl);
