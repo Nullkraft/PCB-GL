@@ -1,0 +1,27 @@
+Bottom: cd55feeac2aea07a9d2b47e439a6899364a15c24
+Top:    182b58e35e73405e9d47fe2ba90820e97a1b2c17
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-24 23:34:43 +0000
+
+Invalidate board contour when a via / pin is altered
+
+The drill-holes of vias and pins can affect the board contour
+
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index e780ded..fed0fe0 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1664,6 +1664,10 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+           strcmp (layer->Name, "route") == 0)
+         Data->outline_valid = false;
+     }
++  else if (type == PIN_TYPE || type == VIA_TYPE)
++    {
++        Data->outline_valid = false;
++    }
+ 
+   if (type == POLYGON_TYPE)
+     InitClip (PCB->Data, (LayerType *) ptr1, (PolygonType *) ptr2);
