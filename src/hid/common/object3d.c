@@ -297,6 +297,7 @@ object3d_from_board_outline (void)
       }
 
       get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
+
       vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_STEP_Z (PCB, HACK_BOARD_THICKNESS)); /* Bottom */
       vertices[npoints + i] = make_vertex3d (x1, y1, 0);                                            /* Top */
 
@@ -459,7 +460,7 @@ object3d_from_board_outline (void)
 
     }
 
-    if (1) {
+    if (0) {
       /* Cylinder centers on 45x45mm, stitch vertex is at 40x45mm. Radius is thus 5mm */
 
       edge_ref cylinder_edges[3];
@@ -565,7 +566,8 @@ object3d_test_board_outline (void)
   GList *board_outlines;
 
   board_outlines = object3d_from_board_outline ();
-  object3d_export_to_step (board_outlines->data, "object3d_test.step");
+  object3d_list_export_to_step_assy (board_outlines, "object3d_test.step");
+  //object3d_export_to_step (board_outlines->data, "object3d_test.step");
 
   g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
 }
