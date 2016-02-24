@@ -1,5 +1,5 @@
 Bottom: 34ac4188490d21411cbf1a32f372ce21c6e76e82
-Top:    34ac4188490d21411cbf1a32f372ce21c6e76e82
+Top:    a0f6b28f451e5caf19735503aba843b92de628bc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-22 02:10:15 +0000
 
@@ -12,4 +12,20 @@ copied.
 
 ---
 
-
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 2372153..1157244 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2895,10 +2895,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+   *res = NULL;
+ 
+   /* Make copies for tracking polygon parentage (DEBUG) */
+-//  if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
+-//      return err_no_memory;
+-  a_copy = NULL;
+-  b_copy = NULL;
++  if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
++      return err_no_memory;
+ 
+   /* Move the parentage information over onto the copy */
+   if (a_copy != NULL)
