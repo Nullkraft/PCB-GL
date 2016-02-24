@@ -1,5 +1,5 @@
-Bottom: a6f537446234ab0e3ae18705b94428da22d2c050
-Top:    4a395e91ff246166acac0dab13b8aff2d7451d6c
+Bottom: 767f8afdc91efdf10a8d74f39cf459596257152c
+Top:    5ed9a1e0efbf0ec44fc9b79f08159cb9e680e1cb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-23 23:43:18 +0000
 
@@ -9,10 +9,10 @@ Comment object3d_draw_debug() call during expose
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f4688ac..1f355ff 100644
+index 6e8c5d3..9f1d695 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -2685,7 +2685,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2698,7 +2698,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);
