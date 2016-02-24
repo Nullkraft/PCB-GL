@@ -1,5 +1,5 @@
-Bottom: 291866baf9ddb0cc20274b835e87af8ccb00196d
-Top:    0ed20ecfe048a9551e8a8efdac9c23ebfbd952f9
+Bottom: e8106cf77ecc4d4faff657d36fe34182a3f7667b
+Top:    2bb5fdf2d7964808e8788a6480f0e570e2270674
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-04 15:53:25 +0000
 
@@ -80,10 +80,10 @@ index d34c9a5..c3d4a30 100644
    polygon->NoHolesValid = 0;
    return r;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 5a05157..ff467b0 100644
+index 2b44cc7..68a59d3 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -139,7 +139,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+@@ -140,7 +140,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
  #ifdef DEBUG
  static char *theState (VNODE * v);
  
@@ -92,7 +92,7 @@ index 5a05157..ff467b0 100644
  pline_dump (VNODE * v)
  {
    VNODE *s, *n;
-@@ -148,14 +148,14 @@ pline_dump (VNODE * v)
+@@ -149,14 +149,14 @@ pline_dump (VNODE * v)
    do
      {
        n = NEXT_VERTEX(v);
