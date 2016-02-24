@@ -1,7 +1,7 @@
-Bottom: 9c5a825d4a629e9971a993e6f93db66b41850d36
-Top:    77993c31e77ed431aa11bc371901879247a02e7f
+Bottom: 4e201701104b373b8a7e72ac0d8c58dc2e92dc55
+Top:    85e759d2ee12974ac4bd8dc01f38a93727189676
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 18:55:19 +0000
+Date:   2016-02-24 20:33:55 +0000
 
 Initial experiment with XInput devices
 
@@ -118,10 +118,10 @@ index 71327b4..f8b4d36 100644
    /* Reject double and triple click events */
    if (ev->type != GDK_BUTTON_PRESS) return TRUE;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index ca4b069..525a796 100644
+index 316cb55..952556c 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -1402,9 +1402,45 @@ ghid_build_pcb_top_window (void)
+@@ -1430,9 +1430,45 @@ ghid_build_pcb_top_window (void)
  			 | GDK_FOCUS_CHANGE_MASK | GDK_POINTER_MOTION_MASK
  			 | GDK_POINTER_MOTION_HINT_MASK);
  
