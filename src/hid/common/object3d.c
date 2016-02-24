@@ -23,6 +23,7 @@
 #include "misc.h"
 #include "hid/hidint.h"
 
+
 //#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
 #undef REVERSED_PCB_CONTOURS
 
@@ -1433,19 +1434,19 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
       {
         fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
 
-        r_search (layer->line_tree, &bounds, NULL, line_copper_callback, &info);
-        r_search (layer->arc_tree,  &bounds, NULL, arc_copper_callback, &info);
-        r_search (layer->text_tree, &bounds, NULL, text_copper_callback, &info);
+//        r_search (layer->line_tree, &bounds, NULL, line_copper_callback, &info);
+//        r_search (layer->arc_tree,  &bounds, NULL, arc_copper_callback, &info);
+//        r_search (layer->text_tree, &bounds, NULL, text_copper_callback, &info);
         r_search (layer->polygon_tree, &bounds, NULL, polygon_copper_callback, &info);
       }
     END_LOOP;
 
-    fprintf (stderr, "Accumulating pin + via pads\n");
-    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
-    r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
+//    fprintf (stderr, "Accumulating pin + via pads\n");
+//    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
+//    r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
 #endif
 
-#if 1
+#if 0
     if (group == top_group ||
         group == bottom_group)
       {
@@ -1499,17 +1500,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                               NULL));
 
 
+    break;
   }
 
 
   destroy_appearance (copper_appearance);
 
-  /* DEBUG */
-  poly_M_Copy0 (&PCB->Data->outline, info.poly);
-  PCB->Data->outline_valid = true;
-//  gui->invalidate_all ();
+  /* ASSUME THERE IS A POLYGON WHERE WE KNOW WE PUT ONE... */
+  ((PolygonType *)PCB->Data->Layer[1].Polygon->data)->Clipped = info.poly;
 
-  poly_Free (&info.poly);
+  /* DEBUG */
+//  poly_M_Copy0 (&PCB->Data->outline, info.poly);
+//  PCB->Data->outline_valid = true;
+  gui->invalidate_all ();
+
+//  poly_Free (&info.poly);
 
   return objects;
 }
