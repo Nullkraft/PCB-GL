@@ -1430,9 +1430,45 @@ ghid_build_pcb_top_window (void)
 			 | GDK_FOCUS_CHANGE_MASK | GDK_POINTER_MOTION_MASK
 			 | GDK_POINTER_MOTION_HINT_MASK);
 
+  gtk_widget_set_extension_events (gport->drawing_area,
+                                   GDK_EXTENSION_EVENTS_ALL);
+
+
+  /* Enable XInput devices - if we don't, then we only appear to get core-pointer events for everything */
+  if (1) { /* XXX: TODO - find a better place for this */
+    GList *dev_list;
+    GdkDevice *device;
+
+    // Copied from xournal - adjusted to use getters rather than access GSEAL'd members
+    dev_list = gdk_devices_list();
+    for (; dev_list != NULL; dev_list = dev_list->next) {
+      device = (GdkDevice *)dev_list->data;
+      if (device != gdk_device_get_core_pointer() && gdk_device_get_n_axes (device) >= 2) {
+
+        if (0) {
+          // Skip over my touchpad for now!
+          if (g_strrstr (gdk_device_get_name (device), "TouchPad"))
+            continue;
+        }
+
+        fprintf (stderr, "Setting GDK_MODE_SCREEN on XInput device %s\n", gdk_device_get_name (device));
+        /* get around a GDK bug: map the valuator range CORRECTLY to [0,1] */
+#ifdef ENABLE_XINPUT_BUGFIX
+        gdk_device_set_axis_use(device, 0, GDK_AXIS_IGNORE);
+        gdk_device_set_axis_use(device, 1, GDK_AXIS_IGNORE);
+#endif
+        gdk_device_set_mode(device, GDK_MODE_SCREEN);
+        if (g_strrstr (gdk_device_get_name (device), "raser"))
+          gdk_device_set_source(device, GDK_SOURCE_ERASER);
+      }
+    }
+    // End copied from xournal
+
+  }
+
   /*
    * This is required to get the drawing_area key-press-event.  Also the
-   * enter and button press callbacks grab focus to be sure we have it
+   * enter and button press callbacks grab focus to be sure we have it  
    * when in the drawing_area.
    */
   gtk_widget_set_can_focus (gport->drawing_area, TRUE);
