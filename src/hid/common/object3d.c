@@ -673,6 +673,9 @@ object3d_from_board_outline (void)
 
   board_outline = board_outline_poly (true);
 
+  if (board_outline == NULL)
+    return NULL;
+
   /* Loop over all board outline pieces */
   pa = board_outline;
   do {
