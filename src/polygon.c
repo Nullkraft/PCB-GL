@@ -2248,14 +2248,14 @@ struct clip_outline_info {
 static int
 arc_outline_callback (const BoxType * b, void *cl)
 {
-  ArcType *arc = (ArcType *)b;
+  ArcType *line = (ArcType *)b;
   struct clip_outline_info *info = cl;
   POLYAREA *np, *res;
 
 #ifdef DEBUG_CIRCSEGS
-  if (!(np = ArcPoly (arc, arc->Thickness)))
+  if (!(np = ArcPoly (line, line->Thickness)))
 #else
-  if (!(np = ArcPoly (arc, ROUTER_THICKNESS)))
+  if (!(np = ArcPoly (line, ROUTER_THICKNESS)))
 #endif
     return 0;
 
