@@ -1,7 +1,7 @@
-Bottom: 85de5466117b8b59abb9c8922040683276d40c9c
+Bottom: 480211343f85cb3d06c1e793247db933ddd5d9da
 Top:    480211343f85cb3d06c1e793247db933ddd5d9da
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 20:19:08 +0000
+Date:   2016-02-24 20:19:13 +0000
 
 polygon.c: Temporarily disable coalescing adjacent line segments
 
@@ -10,30 +10,4 @@ We need to extend the tests to properly account for arc segments.
 
 ---
 
-diff --git a/src/polygon.c b/src/polygon.c
-index e58f7db..0395ac0 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -1383,6 +1383,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
-   if (Undoing ())
-     return (false);
- 
-+if (0) {
-   for (n = 0; n < Polygon->PointN; n++)
-     {
-       prev = prev_contour_point (Polygon, n);
-@@ -1392,6 +1393,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
-       line.Point1 = Polygon->Points[prev];
-       line.Point2 = Polygon->Points[next];
-       line.Thickness = 0;
-+#warning THIS TEST IS NOT SUFFICIENT.. DOESNT ACCOUNT FOR DIFFERENT ARC CENTERS
-       if (Polygon->Points[prev].included_angle == Polygon->Points[n].included_angle &&
-           IsPointOnLine (p->X, p->Y, 0.0, &line))
-         {
-@@ -1399,6 +1401,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
-           changed = true;
-         }
-     }
-+}
-   return (changed);
- }
+

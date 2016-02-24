@@ -1,7 +1,7 @@
-Bottom: 4fcfc21b6cfe98f1975a9474b05cf717402a287b
-Top:    d765f6dc0453a8f3e3e782dd46baf8d21ae603fc
+Bottom: 37a3483e543f3628a4aa3e50b59ed4718d3b90a9
+Top:    03cb190767e205e0c3e87571d31c723b035c34d7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 20:19:07 +0000
+Date:   2016-02-24 20:19:12 +0000
 
 Add polygon parentage tree debug view
 
@@ -284,7 +284,7 @@ index 28dfe26..6f0f6b0 100644
  double vect_det2 (Vector v1, Vector v2);
  double vect_len2 (Vector v1);
 diff --git a/src/polygon.c b/src/polygon.c
-index c2da6eb..4dd9dc8 100644
+index fa616ad..87959a2 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -831,6 +831,8 @@ SquarePadPoly (PadType * pad, Coord clear)
@@ -340,7 +340,7 @@ index c2da6eb..4dd9dc8 100644
    poly_FreeContours (&p->NoHoles);
    if (!p->Clipped)
      return 0;
-@@ -1650,8 +1658,11 @@ plow_callback (const BoxType * b, void *cl)
+@@ -1653,8 +1661,11 @@ plow_callback (const BoxType * b, void *cl)
    PolygonType *polygon = (PolygonType *) b;
  
    if (TEST_FLAG (CLEARPOLYFLAG, polygon))
@@ -354,7 +354,7 @@ index c2da6eb..4dd9dc8 100644
    return 0;
  }
  
-@@ -1765,7 +1776,10 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1768,7 +1779,10 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
      }
  
    if (type == POLYGON_TYPE)
@@ -366,7 +366,7 @@ index c2da6eb..4dd9dc8 100644
    else
      PlowsPolygon (Data, type, ptr1, ptr2, add_plow, NULL);
  }
-@@ -1950,6 +1964,7 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+@@ -1953,6 +1967,7 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
     * we do this dirty work.
     */
    poly->Clipped = NULL;
@@ -374,7 +374,7 @@ index c2da6eb..4dd9dc8 100644
    if (poly->NoHoles) printf ("Just leaked in MorpyPolygon\n");
    poly->NoHoles = NULL;
    flags = poly->Flags;
-@@ -2178,6 +2193,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
+@@ -2181,6 +2196,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
    piece->f->b = piece->b;
    piece->f = piece->b = piece;
  
