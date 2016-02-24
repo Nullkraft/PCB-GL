@@ -1,5 +1,5 @@
-Bottom: 32abb232a2fb6f0ef742308b9fc94bf26fe25890
-Top:    eb8947f91823bf05a95eb06cf4ec557ecc722c83
+Bottom: 7f07f6c7fb92342b052d4a5b1bd5875d6d9038b3
+Top:    db0a19e746c10b8db5693a4b2ef3d6bfb2f4cc3e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 20:19:14 +0000
 
@@ -9,7 +9,7 @@ Fixup inserted nodes to be of the correct curvature when dealing with hairlines
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ec33d84..f85b5ba 100644
+index adb7ae3..168d9c4 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -3499,6 +3499,30 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)

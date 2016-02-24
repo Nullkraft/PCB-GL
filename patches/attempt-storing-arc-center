@@ -1,5 +1,5 @@
-Bottom: d9eecdd96ca85b68a7163bec19eb5384ca228ff3
-Top:    9dfbf58a6816e1158f788239317cba652e3773c0
+Bottom: 78ba3695ce0b126b82e9d1fabcbb015c737aca4a
+Top:    79a7634505f08f910b189c11dda66e144f516360
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 20:19:14 +0000
 
@@ -79,10 +79,10 @@ index 22de3a8..010e676 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index bf37a0d..d30d412 100644
+index 2426203..1694548 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -292,7 +292,8 @@ ContourToPoly (PLINE * contour)
+@@ -291,7 +291,8 @@ ContourToPoly (PLINE * contour)
  }
  
  static void
@@ -92,7 +92,7 @@ index bf37a0d..d30d412 100644
  {
    /* We don't re-add a point at v, nor do we add the last point, sweep degrees around from (X,Y)-v */
    double e1, e2, t1;
-@@ -392,8 +393,10 @@ original_poly (PolygonType * p)
+@@ -391,8 +392,10 @@ original_poly (PolygonType * p)
        if (p->Points[n].included_angle != 0)
          {
            Cardinal next_n;
@@ -106,7 +106,7 @@ index bf37a0d..d30d412 100644
            next_n = n + 1;
            if (next_n == p->PointN ||
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 624f209..5e4eb92 100644
+index 9f99b00..401abc9 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -192,7 +192,8 @@ poly_dump (POLYAREA * p)
