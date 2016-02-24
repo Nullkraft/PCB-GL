@@ -1,0 +1,21 @@
+Bottom: 4daa6a777883be2d3bc98c384577c20b0590df83
+Top:    4e134519f9666410290c5ecd7d5c7ef9cfdebb7b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-24 21:42:32 +0000
+
+Refresh of tag-vnodes-with-details-of
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 8f172ed..5e4e1fc 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -112,7 +112,6 @@ dicer output is used for HIDs which cannot render things with holes
+ 
+ #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
+ 
+-//#define UNSUBTRACT_BLOAT MIL_TO_COORD (0.1)
+ #define UNSUBTRACT_BLOAT 10
+ #define SUBTRACT_PIN_VIA_BATCH_SIZE 100
+ #define SUBTRACT_LINE_BATCH_SIZE 20
