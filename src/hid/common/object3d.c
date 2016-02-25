@@ -254,8 +254,6 @@ get_contour_edge_n_is_round (PLINE *contour, int n)
     }
 #endif
 
-  return false;
-
   while (n > 0) {
     edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
     n--;
@@ -1553,7 +1551,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
     END_LOOP;
 #endif
 
-#if 0
+#if 1
     fprintf (stderr, "Accumulating pin + via pads\n");
     r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
     r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
@@ -1594,6 +1592,12 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
    *
    */
 
+#if 1
+    fprintf (stderr, "Subtracting pin + via drills\n");
+    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_drill_callback, &info);
+    r_search (PCB->Data->via_tree, &bounds, NULL, pv_drill_callback, &info);
+#endif
+
   if (info.poly == NULL)
     {
       fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
@@ -1612,8 +1616,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                               copper_appearance,
                               NULL));
 
-
-    break;
   }
 
 
