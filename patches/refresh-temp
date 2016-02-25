@@ -1,0 +1,112 @@
+Bottom: 2a81bf72dc5c39da3a8d3829f794d04d0741332b
+Top:    c8e2f573c4c0a18e335eec677c6d0f3ccd900d7f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-25 19:48:36 +0000
+
+Refresh of rename-pinpoly-to-pinclearpoly
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 19e7ff5..c1ed686 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -904,7 +904,23 @@ pv_mask_callback (const BoxType * b, void *cl)
+   struct mask_info *info = cl;
+   POLYAREA *np, *res;
+ 
+-  if (!(np = CirclePoly (pv->X, pv->Y, pv->Mask / 2, NULL)))
++  if (!(np = PinPoly (pv, pv->Mask)))
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  info->poly = res;
++
++  return 1;
++}
++
++static int
++pv_drill_callback (const BoxType * b, void *cl)
++{
++  PinType *pv = (PinType *)b;
++  struct mask_info *info = cl;
++  POLYAREA *np, *res;
++
++  if (!(np = CirclePoly (pv->X, pv->Y, (pv->DrillingHole + 1) / 2, NULL)))
+     return 0;
+ 
+   poly_Boolean_free (info->poly, np, &res, PBO_SUB);
+@@ -1474,7 +1490,7 @@ pv_copper_callback (const BoxType * b, void *cl)
+   struct copper_info *info = cl;
+   POLYAREA *np, *res;
+ 
+-  if (!(np = CirclePoly (pv->X, pv->Y, pv->Thickness / 2, NULL)))
++  if (!(np = PinPoly (pv, PIN_SIZE (pv))))
+     return 0;
+ 
+   poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
+diff --git a/src/polygon.c b/src/polygon.c
+index 54c3425..759fe75 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1055,7 +1055,28 @@ Subtract (POLYAREA * np1, PolygonType * p, bool fnp)
+ 
+ /* create a polygon of the pin clearance */
+ POLYAREA *
+-PinPoly (PinType * pin, Coord thick, Coord clear)
++PinPoly (PinType * pin, Coord thick)
++{
++  int size = (thick + 1) / 2;
++
++  if (TEST_FLAG (SQUAREFLAG, pin))
++    {
++      return RectPoly (pin->X - size, pin->X + size,
++                       pin->Y - size, pin->Y + size);
++    }
++  else if (TEST_FLAG (OCTAGONFLAG, pin))
++    {
++      return OctagonPoly (pin->X, pin->Y, thick);
++    }
++  else
++    {
++      return CirclePoly (pin->X, pin->Y, size, NULL);
++    }
++}
++
++/* create a polygon of the pin clearance */
++static POLYAREA *
++PinClearPoly (PinType * pin, Coord thick, Coord clear)
+ {
+   int size;
+ 
+@@ -1119,7 +1140,7 @@ SubtractPin (DataType * d, PinType * pin, LayerType * l, PolygonType * p)
+     }
+   else
+     {
+-      np = PinPoly (pin, PIN_SIZE (pin), pin->Clearance);
++      np = PinClearPoly (pin, PIN_SIZE (pin), pin->Clearance);
+       if (!np)
+         return -1;
+     }
+@@ -1224,7 +1245,7 @@ pin_sub_callback (const BoxType * b, void *cl)
+     }
+   else
+     {
+-      np = PinPoly (pin, PIN_SIZE (pin), pin->Clearance);
++      np = PinClearPoly (pin, PIN_SIZE (pin), pin->Clearance);
+       if (!np)
+         longjmp (info->env, 1);
+     }
+diff --git a/src/polygon.h b/src/polygon.h
+index 1343d03..f077f02 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -90,7 +90,7 @@ POLYAREA * CirclePoly (Coord x, Coord y, Coord radius, char *name);
+ POLYAREA * OctagonPoly(Coord x, Coord y, Coord radius);
+ POLYAREA * LinePoly(LineType *l, Coord thick, char *name);
+ POLYAREA * ArcPoly(ArcType *l, Coord thick, char *name);
+-POLYAREA * PinPoly(PinType *l, Coord thick, Coord clear);
++POLYAREA * PinPoly(PinType *l, Coord thick);
+ POLYAREA * BoxPolyBloated (BoxType *box, Coord radius);
+ POLYAREA * PadPoly (PadType *pad, Coord size);
+ void frac_circle (PLINE *, Coord, Coord, Vector, int);
