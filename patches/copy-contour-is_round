@@ -1,5 +1,5 @@
 Bottom: 3f61a3cc744d4277c0ca9c1dadd07f811113d1b0
-Top:    3f61a3cc744d4277c0ca9c1dadd07f811113d1b0
+Top:    b28805bcb1bdb5be17fee455b500053095e34709
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-25 12:51:54 +0000
 
@@ -8,4 +8,18 @@ Copy contour is_round information when copying polygons
 
 ---
 
-
+diff --git a/src/polygon1.c b/src/polygon1.c
+index fd804b1..ca4dd28 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -3517,6 +3517,10 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+   (*dst)->xmin = src->xmin, (*dst)->xmax = src->xmax;
+   (*dst)->ymin = src->ymin, (*dst)->ymax = src->ymax;
+   (*dst)->area = src->area;
++  (*dst)->is_round = src->is_round;
++  (*dst)->cx = src->cx;
++  (*dst)->cy = src->cy;
++  (*dst)->radius = src->radius;
+ 
+   for (cur = NEXT_EDGE (&src->head); cur != &src->head; cur = NEXT_VERTEX (cur))
+     {
