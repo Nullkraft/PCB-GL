@@ -159,6 +159,7 @@ struct POLYAREA
     PLINE *contours;
     rtree_t *contour_tree;
     POLYPARENTAGE parentage;
+    void *user_data; /* To be used at will by the owner of this polygon */
 };
 
 void poly_dump (POLYAREA *p);
@@ -176,6 +177,9 @@ BOOLp poly_ChkContour(PLINE * a);
 
 BOOLp poly_CheckInside(POLYAREA * c, Vector v0);
 BOOLp Touching(POLYAREA *p1, POLYAREA *p2);
+
+/* Call with test = false if wanting to test the whole polygon */
+POLYAREA *cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test);
 
 /**********************************************************************/
 
