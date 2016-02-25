@@ -1,5 +1,5 @@
 Bottom: c8e2f573c4c0a18e335eec677c6d0f3ccd900d7f
-Top:    c8e2f573c4c0a18e335eec677c6d0f3ccd900d7f
+Top:    bebe23cadb8d11e694b190822e036b1e457abb4f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-25 19:50:58 +0000
 
@@ -8,4 +8,78 @@ Turn back on some commented 3D generation code
 
 ---
 
-
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index c1ed686..ac52b12 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -254,8 +254,6 @@ get_contour_edge_n_is_round (PLINE *contour, int n)
+     }
+ #endif
+ 
+-  return false;
+-
+   while (n > 0) {
+     edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
+     n--;
+@@ -1553,7 +1551,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+     END_LOOP;
+ #endif
+ 
+-#if 0
++#if 1
+     fprintf (stderr, "Accumulating pin + via pads\n");
+     r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
+     r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
+@@ -1594,6 +1592,12 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+    *
+    */
+ 
++#if 1
++    fprintf (stderr, "Subtracting pin + via drills\n");
++    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_drill_callback, &info);
++    r_search (PCB->Data->via_tree, &bounds, NULL, pv_drill_callback, &info);
++#endif
++
+   if (info.poly == NULL)
+     {
+       fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
+@@ -1612,8 +1616,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+                               copper_appearance,
+                               NULL));
+ 
+-
+-    break;
+   }
+ 
+ 
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index a4fe3c5..2bb9bfd 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -152,7 +152,7 @@ step_do_export (HID_Attr_Val * options)
+   if (filename == NULL)
+     filename = "pcb-out.step";
+ 
+-#if 0
++#if 1
+   board_outline_list = object3d_from_board_outline ();
+ #else
+   board_outline_list = NULL;
+@@ -202,11 +202,13 @@ step_do_export (HID_Attr_Val * options)
+         poly_DelContour (&curc);
+       }
+ 
+-//    mask_objects = object3d_from_soldermask_within_area (piece, TOP_SIDE);
+-//    board_outline_list = g_list_concat (board_outline_list, mask_objects);
++#if 1
++    mask_objects = object3d_from_soldermask_within_area (piece, TOP_SIDE);
++    board_outline_list = g_list_concat (board_outline_list, mask_objects);
+ 
+-//    mask_objects = object3d_from_soldermask_within_area (piece, BOTTOM_SIDE);
+-//    board_outline_list = g_list_concat (board_outline_list, mask_objects);
++    mask_objects = object3d_from_soldermask_within_area (piece, BOTTOM_SIDE);
++    board_outline_list = g_list_concat (board_outline_list, mask_objects);
++#endif
+ 
+     copper_layer_objects = object3d_from_copper_layers_within_area (piece);
+     board_outline_list = g_list_concat (board_outline_list, copper_layer_objects);
