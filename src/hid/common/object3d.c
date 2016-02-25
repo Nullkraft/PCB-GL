@@ -65,8 +65,9 @@
 
 
 #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
-#define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
 #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
+#define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
+#define HACK_SILK_THICKNESS MM_TO_COORD(0.01)
 
 static GList *object3d_test_objects = NULL;
 
@@ -1333,7 +1334,6 @@ compute_depth (int group)
   int min_copper_group;
   int max_copper_group;
   int num_copper_groups;
-//  int middle_copper_group;
   int depth;
 
   top_group = GetLayerGroupNumberBySide (TOP_SIDE);
@@ -1342,7 +1342,6 @@ compute_depth (int group)
   min_copper_group = MIN (bottom_group, top_group);
   max_copper_group = MAX (bottom_group, top_group);
   num_copper_groups = max_copper_group - min_copper_group;// + 1;
-//  middle_copper_group = min_copper_group + num_copper_groups / 2;
 
   if (group >= 0 && group < max_group) {
     if (group >= min_copper_group && group <= max_copper_group) {
@@ -1351,25 +1350,25 @@ compute_depth (int group)
     } else {
       depth = 0;
     }
-#if 0
+#if 1
   } else if (SL_TYPE (group) == SL_MASK) {
     if (SL_SIDE (group) == SL_TOP_SIDE) {
-      depth = -((min_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING);
+      depth = HACK_COPPER_THICKNESS;
     } else {
-      depth = -((max_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING);
+      depth = -HACK_BOARD_THICKNESS - HACK_BOARD_THICKNESS - HACK_MASK_THICKNESS;
     }
   } else if (SL_TYPE (group) == SL_SILK) {
     if (SL_SIDE (group) == SL_TOP_SIDE) {
-      depth = -((min_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING - SILK_MASK_SPACING);
+      depth = HACK_COPPER_THICKNESS + HACK_SILK_THICKNESS;
     } else {
-      depth = -((max_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
+      depth = -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS - HACK_SILK_THICKNESS;
     }
   } else if (SL_TYPE (group) == SL_INVISIBLE) {
     /* Same as silk, but for the back-side layer */
     if (Settings.ShowBottomSide) {
-      depth = -((min_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING - SILK_MASK_SPACING);
+      depth = HACK_COPPER_THICKNESS + HACK_SILK_THICKNESS;
     } else {
-      depth = -((max_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
+      depth = -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS - HACK_SILK_THICKNESS;
     }
 #endif
   } else {
