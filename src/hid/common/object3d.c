@@ -65,8 +65,9 @@
 
 
 #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
-#define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
 #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
+#define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
+#define HACK_SILK_THICKNESS MM_TO_COORD(0.01)
 
 static GList *object3d_test_objects = NULL;
 
@@ -694,14 +695,14 @@ object3d_from_board_outline (void)
 
 #ifdef REVERSED_PCB_CONTOURS
   objects = object3d_from_contours (board_outline,
-                                    -HACK_BOARD_THICKNESS + HACK_MASK_THICKNESS, /* Bottom */
-                                    0                     -HACK_MASK_THICKNESS,  /* Top */
+                                    -HACK_BOARD_THICKNESS, /* Bottom */
+                                    0                    ,  /* Top */
                                     board_appearance,
                                     top_bot_appearance);
 #else
   objects = object3d_from_contours (board_outline,
-                                     HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS, /* Bottom */
-                                    -HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Top */
+                                     HACK_BOARD_THICKNESS / 2, /* Bottom */
+                                    -HACK_BOARD_THICKNESS / 2, /* Top */
                                     board_appearance,
                                     top_bot_appearance);
 #endif
@@ -961,14 +962,14 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
 
 #ifdef REVERSED_PCB_CONTOURS
   objects = object3d_from_contours (info.poly,
-                                    (side == TOP_SIDE) ? -HACK_MASK_THICKNESS : -HACK_BOARD_THICKNESS,                       /* Bottom */
-                                    (side == TOP_SIDE) ? 0                    : -HACK_BOARD_THICKNESS + HACK_MASK_THICKNESS, /* Top */
+                                    (side == TOP_SIDE) ? 0                   - HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
+                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS - HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS,                       /* Top */
                                     mask_appearance,
                                     NULL);
 #else
   objects = object3d_from_contours (info.poly,
-                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2,                       /* Bottom */
-                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2                       : HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS, /* Top */
+                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS                       : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS + HACK_MASK_THICKNESS, /* Bottom */
+                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS, /* Top */
                                     mask_appearance,
                                     NULL);
 #endif
@@ -1333,7 +1334,6 @@ compute_depth (int group)
   int min_copper_group;
   int max_copper_group;
   int num_copper_groups;
-  int middle_copper_group;
   int depth;
 
   top_group = GetLayerGroupNumberBySide (TOP_SIDE);
@@ -1342,34 +1342,33 @@ compute_depth (int group)
   min_copper_group = MIN (bottom_group, top_group);
   max_copper_group = MAX (bottom_group, top_group);
   num_copper_groups = max_copper_group - min_copper_group;// + 1;
-  middle_copper_group = min_copper_group + num_copper_groups / 2;
 
   if (group >= 0 && group < max_group) {
     if (group >= min_copper_group && group <= max_copper_group) {
       /* XXX: IS THIS INCORRECT FOR REVERSED GROUP ORDERINGS? */
-      depth = -(group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups;
+      depth = -(group - min_copper_group) * (HACK_BOARD_THICKNESS + HACK_COPPER_THICKNESS) / num_copper_groups;
     } else {
       depth = 0;
     }
-#if 0
+#if 1
   } else if (SL_TYPE (group) == SL_MASK) {
     if (SL_SIDE (group) == SL_TOP_SIDE) {
-      depth = -((min_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING);
+      depth = HACK_COPPER_THICKNESS;
     } else {
-      depth = -((max_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING);
+      depth = -HACK_BOARD_THICKNESS - HACK_BOARD_THICKNESS - HACK_MASK_THICKNESS;
     }
   } else if (SL_TYPE (group) == SL_SILK) {
     if (SL_SIDE (group) == SL_TOP_SIDE) {
-      depth = -((min_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING - SILK_MASK_SPACING);
+      depth = HACK_COPPER_THICKNESS + HACK_SILK_THICKNESS;
     } else {
-      depth = -((max_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
+      depth = -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS - HACK_SILK_THICKNESS;
     }
   } else if (SL_TYPE (group) == SL_INVISIBLE) {
     /* Same as silk, but for the back-side layer */
     if (Settings.ShowBottomSide) {
-      depth = -((min_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING - SILK_MASK_SPACING);
+      depth = HACK_COPPER_THICKNESS + HACK_SILK_THICKNESS;
     } else {
-      depth = -((max_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
+      depth = -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS - HACK_SILK_THICKNESS;
     }
 #endif
   } else {
@@ -1533,7 +1532,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 
   for (group = min_phys_group; group <= max_phys_group; group++) {
 
-    Coord depth = compute_depth (group);
+#ifdef REVERSED_PCB_CONTOURS
+    Coord depth = compute_depth (group) - HACK_BOARD_THICKNESS;
+#else
+    Coord depth = compute_depth (group) + HACK_BOARD_THICKNESS / 2;
+#endif
     info.poly = NULL;
 
     fprintf (stderr, "Computing copper geometry for group %i\n", group);
@@ -1610,8 +1613,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                               depth,                         /* Bottom */
                               depth + HACK_COPPER_THICKNESS, /* Top */
 #else
-                              -depth + HACK_COPPER_THICKNESS, /* Bottom */
-                              -depth,                         /* Top */
+                              -depth,                         /* Bottom */
+                              -depth - HACK_COPPER_THICKNESS, /* Top */
 #endif
                               copper_appearance,
                               NULL));
