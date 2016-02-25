@@ -23,6 +23,7 @@
 #include "misc.h"
 #include "hid/hidint.h"
 
+#define PERFECT_ROUND_CONTOURS
 
 //#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
 #undef REVERSED_PCB_CONTOURS
@@ -201,9 +202,11 @@ object3d_draw_debug (void)
 static int
 get_contour_npoints (PLINE *contour)
 {
+#ifdef PERFECT_ROUND_CONTOURS
   /* HACK FOR ROUND CONTOURS */
   if (contour->is_round)
     return 1;
+#endif
 
   return contour->Count;
 }
@@ -213,6 +216,7 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
 {
   VNODE *vertex = &contour->head;
 
+#ifdef PERFECT_ROUND_CONTOURS
   if (contour->is_round)
     {
       /* HACK SPECIAL CASE FOR ROUND CONTOURS */
@@ -226,6 +230,7 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
 
       return;
     }
+#endif
 
   while (n > 0) {
     vertex = vertex->next; /* The VNODE structure is circularly linked, so wrapping is OK */
@@ -234,6 +239,84 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
 
   *x = COORD_TO_STEP_X (PCB, vertex->point[0]);
   *y = COORD_TO_STEP_Y (PCB, vertex->point[1]);
+}
+
+static bool
+get_contour_edge_n_is_round (PLINE *contour, int n)
+{
+  VNODE *edge = &contour->head;
+
+#ifdef PERFECT_ROUND_CONTOURS
+  if (contour->is_round)
+    {
+      /* HACK SPECIAL CASE FOR ROUND CONTOURS */
+      return true;
+    }
+#endif
+
+  return false;
+
+  while (n > 0) {
+    edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
+    n--;
+  }
+
+  return edge->is_round;
+}
+
+/* Copied from polygon1.c */
+#define Vsub2(r,a,b)	{(r)[0] = (a)[0] - (b)[0]; (r)[1] = (a)[1] - (b)[1];}
+#define EDGE_BACKWARD_VERTEX(e) ((e))
+#define EDGE_FORWARD_VERTEX(e) ((e)->next)
+
+static int compare_ccw_cw (Vector a, Vector b, Vector c)
+{
+  double cross;
+  Vector ab;
+  Vector ac;
+
+  Vsub2 (ab, b, a);
+  Vsub2 (ac, c, a);
+
+  cross = (double) ab[0] * ac[1] - (double) ac[0] * ab[1];
+  if (cross > 0.0)
+    return 1;
+  else if (cross < 0.0)
+    return -1;
+  else
+    return 0;
+}
+
+static void
+get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx, double *cy, double *r, bool *cw)
+{
+  VNODE *edge = &contour->head;
+  Vector center;
+
+#ifdef PERFECT_ROUND_CONTOURS
+  if (contour->is_round)
+    {
+      /* HACK SPECIAL CASE FOR ROUND CONTOURS */
+      *cx = COORD_TO_STEP_X (PCB, contour->cx);
+      *cy = COORD_TO_STEP_Y (PCB, contour->cy);
+      *r = COORD_TO_MM (contour->radius);
+      *cw = (contour->Flags.orient == PLF_DIR);
+      return;
+    }
+#endif
+
+  while (n > 0) {
+    edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
+    n--;
+  }
+
+  center[0] = edge->cx;
+  center[1] = edge->cy;
+
+  *cx = COORD_TO_STEP_X (PCB, edge->cx);
+  *cy = COORD_TO_STEP_Y (PCB, edge->cy);
+  *r = COORD_TO_MM (edge->radius);
+  *cw = (compare_ccw_cw (EDGE_BACKWARD_VERTEX (edge)->point, center, EDGE_FORWARD_VERTEX (edge)->point) > 0);
 }
 
 GList *
@@ -456,31 +539,40 @@ object3d_from_contours (const POLYAREA *contours,
       splice (SYM(edges[2 * npoints + i]),  edges[npoints + i]);
 #endif
 
-      if (ct->is_round) {
+      if (get_contour_edge_n_is_round (ct, offset_in_ct)) {
+        double cx;
+        double cy;
+        double radius;
+        double normal_z;
+        bool cw;
 
-        face3d_set_cylindrical (faces[i], COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), 0., /* A point on the axis of the cylinder */
-                                          0., 0., 1.,                                                       /* Direction of the cylindrical axis */
-                                          COORD_TO_MM (ct->radius));
-        face3d_set_surface_orientation_reversed (faces[i]); /* XXX: Assuming this is a hole, the cylindrical surface normal points in the wrong direction - INCORRECT IF THIS IS THE OUTER CONTOUR!*/
+        get_contour_edge_n_round_geometry_in_step_mm (ct, offset_in_ct, &cx, &cy, &radius, &cw);
+
+        face3d_set_cylindrical (faces[i], cx, cy, 0., /* A point on the axis of the cylinder */
+                                          0., 0., 1., /* Direction of the cylindrical axis */
+                                          radius);
+
+        /* XXX: DEPENDS ON INSIDE / OUTSIDE CORNER!! */
+        if (ct->Flags.orient == PLF_INV)
+          face3d_set_surface_orientation_reversed (faces[i]);
+
         face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
                                   /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 
 #ifdef REVERSED_PCB_CONTOURS
-        edge_info_set_round (UNDIR_DATA (edges[i]),
-                             COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
-                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
-        edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
-                             COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, ztop), /* Center of circle */ /* TOP */
-                             0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+        normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 #else
-        edge_info_set_round (UNDIR_DATA (edges[i]),
-                             COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
-                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
-        edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
-                             COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), COORD_TO_STEP_Z (PCB, ztop), /* Center of circle */ /* TOP */
-                             0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+        normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 #endif
-        edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
+
+        edge_info_set_round (UNDIR_DATA (edges[i]),
+                             cx, cy, COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
+                             0., 0., normal_z, /* Normal */ radius);
+        edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
+                             cx, cy, COORD_TO_STEP_Z (PCB, ztop), /* Center of circle */ /* TOP */
+                             0., 0., normal_z, /* Normal */ radius);
+        if (ct->is_round)
+          edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
       }
 
     }
@@ -1437,19 +1529,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
       {
         fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
 
-//        r_search (layer->line_tree, &bounds, NULL, line_copper_callback, &info);
-//        r_search (layer->arc_tree,  &bounds, NULL, arc_copper_callback, &info);
-//        r_search (layer->text_tree, &bounds, NULL, text_copper_callback, &info);
+        r_search (layer->line_tree, &bounds, NULL, line_copper_callback, &info);
+        r_search (layer->arc_tree,  &bounds, NULL, arc_copper_callback, &info);
+        r_search (layer->text_tree, &bounds, NULL, text_copper_callback, &info);
         r_search (layer->polygon_tree, &bounds, NULL, polygon_copper_callback, &info);
       }
     END_LOOP;
-
-//    fprintf (stderr, "Accumulating pin + via pads\n");
-//    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
-//    r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
 #endif
 
 #if 0
+    fprintf (stderr, "Accumulating pin + via pads\n");
+    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
+    r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
+#endif
+
+#if 1
     if (group == top_group ||
         group == bottom_group)
       {
