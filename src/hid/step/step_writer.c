@@ -69,12 +69,18 @@ step_file
   file->f = f;
   file->next_id = 1;
 
+  file->cartesian_point_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  file->direction_hash =       g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  file->vector_hash =          g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+
   return file;
 }
 
 void
 destroy_step_output_file (step_file *file)
 {
+  g_hash_table_destroy (file->cartesian_point_hash);
+  g_hash_table_destroy (file->direction_hash);
   g_free (file);
 }
 
@@ -189,16 +195,42 @@ step_product_definition_shape (step_file *file, char *name, char *description, s
 step_id
 step_cartesian_point (step_file *file, char *name, double x, double y, double z)
 {
-  fprintf (file->f, "#%i=CARTESIAN_POINT('%s',(%f,%f,%f));\n",
-                    file->next_id, name, x, y, z);
+  char *line;
+  step_id id;
+
+  line = g_strdup_printf ("'%s',(%f,%f,%f)", name, x, y, z);
+
+  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (file->cartesian_point_hash, line))) != 0)
+    {
+      g_free (line);
+      return id;
+    }
+
+  g_hash_table_insert (file->cartesian_point_hash, line, GINT_TO_POINTER (file->next_id));
+  fprintf (file->f, "%i=CARTESIAN_POINT(%s);\n", file->next_id, line);
+  g_free (line);
+
   return file->next_id++;
 }
 
 step_id
 step_direction (step_file *file, char *name, double x, double y, double z)
 {
-  fprintf (file->f, "#%i=DIRECTION('%s',(%f,%f,%f));\n",
-                    file->next_id, name, x, y, z);
+  char *line;
+  step_id id;
+
+  line = g_strdup_printf ("'%s',(%f,%f,%f)", name, x, y, z);
+
+  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (file->direction_hash, line))) != 0)
+    {
+      g_free (line);
+      return id;
+    }
+
+  g_hash_table_insert (file->direction_hash, line, GINT_TO_POINTER (file->next_id));
+  fprintf (file->f, "%i=DIRECTION(%s);\n", file->next_id, line);
+  g_free (line);
+
   return file->next_id++;
 }
 
@@ -237,8 +269,21 @@ step_circle (step_file *file, char *name, step_id position, double radius)
 step_id
 step_vector (step_file *file, char *name, step_id orientation, double magnitude)
 {
-  fprintf (file->f, "#%i=VECTOR('%s',#%i,%f);\n",
-                    file->next_id, name, orientation, magnitude);
+  char *line;
+  step_id id;
+
+  line = g_strdup_printf ("'%s',#%i,%f", name, orientation, magnitude);
+
+  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (file->vector_hash, line))) != 0)
+    {
+      g_free (line);
+      return id;
+    }
+
+  g_hash_table_insert (file->vector_hash, line, GINT_TO_POINTER (file->next_id));
+  fprintf (file->f, "%i=VECTOR(%s);\n", file->next_id, line);
+  g_free (line);
+
   return file->next_id++;
 }
 
