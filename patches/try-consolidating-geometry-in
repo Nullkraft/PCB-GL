@@ -1,5 +1,5 @@
 Bottom: 8cf1d2e621661e76b42f9e0de96b5c5c509383ab
-Top:    a1fd62ff5f6841cef7d4d0fbc516e47ec95e7f7f
+Top:    8c4a425ea0beb165d8397ab723d684b2d6ea92c6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-26 12:48:46 +0000
 
@@ -9,10 +9,10 @@ Try consolidating geometry in step creation
 ---
 
 diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
-index 178d8f3..0ed1db3 100644
+index 178d8f3..3ec1b4b 100644
 --- a/src/hid/step/step_writer.c
 +++ b/src/hid/step/step_writer.c
-@@ -69,12 +69,18 @@ step_file
+@@ -69,12 +69,19 @@ step_file
    file->f = f;
    file->next_id = 1;
  
@@ -28,10 +28,11 @@ index 178d8f3..0ed1db3 100644
  {
 +  g_hash_table_destroy (file->cartesian_point_hash);
 +  g_hash_table_destroy (file->direction_hash);
++  g_hash_table_destroy (file->vector_hash);
    g_free (file);
  }
  
-@@ -189,16 +195,42 @@ step_product_definition_shape (step_file *file, char *name, char *description, s
+@@ -189,16 +196,42 @@ step_product_definition_shape (step_file *file, char *name, char *description, s
  step_id
  step_cartesian_point (step_file *file, char *name, double x, double y, double z)
  {
@@ -49,7 +50,7 @@ index 178d8f3..0ed1db3 100644
 +    }
 +
 +  g_hash_table_insert (file->cartesian_point_hash, line, GINT_TO_POINTER (file->next_id));
-+  fprintf (file->f, "%i=CARTESIAN_POINT(%s);\n", file->next_id, line);
++  fprintf (file->f, "#%i=CARTESIAN_POINT(%s);\n", file->next_id, line);
 +  g_free (line);
 +
    return file->next_id++;
@@ -72,13 +73,13 @@ index 178d8f3..0ed1db3 100644
 +    }
 +
 +  g_hash_table_insert (file->direction_hash, line, GINT_TO_POINTER (file->next_id));
-+  fprintf (file->f, "%i=DIRECTION(%s);\n", file->next_id, line);
++  fprintf (file->f, "#%i=DIRECTION(%s);\n", file->next_id, line);
 +  g_free (line);
 +
    return file->next_id++;
  }
  
-@@ -237,8 +269,21 @@ step_circle (step_file *file, char *name, step_id position, double radius)
+@@ -237,8 +270,21 @@ step_circle (step_file *file, char *name, step_id position, double radius)
  step_id
  step_vector (step_file *file, char *name, step_id orientation, double magnitude)
  {
@@ -96,7 +97,7 @@ index 178d8f3..0ed1db3 100644
 +    }
 +
 +  g_hash_table_insert (file->vector_hash, line, GINT_TO_POINTER (file->next_id));
-+  fprintf (file->f, "%i=VECTOR(%s);\n", file->next_id, line);
++  fprintf (file->f, "#%i=VECTOR(%s);\n", file->next_id, line);
 +  g_free (line);
 +
    return file->next_id++;
