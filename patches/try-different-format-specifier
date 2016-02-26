@@ -1,5 +1,5 @@
 Bottom: 7a92d39723ddf601b15ee641e81244e3cebc4fdf
-Top:    b13456a36a8503de6308f78099b2c6ea6c3e7d13
+Top:    2501d91685dd7f6767dc0e3632c6b03fb2c2b76d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-26 14:40:00 +0000
 
@@ -9,7 +9,7 @@ Try different format specifier
 ---
 
 diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
-index 39e69a8..b4b0702 100644
+index 39e69a8..9655d8f 100644
 --- a/src/hid/step/step_writer.c
 +++ b/src/hid/step/step_writer.c
 @@ -189,7 +189,7 @@ step_product_definition_shape (step_file *file, char *name, char *description, s
@@ -17,7 +17,7 @@ index 39e69a8..b4b0702 100644
  step_cartesian_point (step_file *file, char *name, double x, double y, double z)
  {
 -  fprintf (file->f, "#%i = CARTESIAN_POINT ( '%s', ( %g, %g, %g ) ) ;\n",
-+  fprintf (file->f, "#%i = CARTESIAN_POINT ( '%s', ( %#g, %#g, %#g ) ) ;\n",
++  fprintf (file->f, "#%i = CARTESIAN_POINT ( '%s', ( %f, %f, %f ) ) ;\n",
                      file->next_id, name, x, y, z);
    return file->next_id++;
  }
@@ -26,7 +26,7 @@ index 39e69a8..b4b0702 100644
  step_direction (step_file *file, char *name, double x, double y, double z)
  {
 -  fprintf (file->f, "#%i = DIRECTION ( '%s', ( %g, %g, %g ) ) ;\n",
-+  fprintf (file->f, "#%i = DIRECTION ( '%s', ( %#g, %#g, %#g ) ) ;\n",
++  fprintf (file->f, "#%i = DIRECTION ( '%s', ( %f, %f, %f ) ) ;\n",
                      file->next_id, name, x, y, z);
    return file->next_id++;
  }
@@ -35,7 +35,7 @@ index 39e69a8..b4b0702 100644
  step_cylindrical_surface (step_file *file, char *name, step_id position, double radius)
  {
 -  fprintf (file->f, "#%i = CYLINDRICAL_SURFACE ( '%s', #%i, %g ) ;\n",
-+  fprintf (file->f, "#%i = CYLINDRICAL_SURFACE ( '%s', #%i, %#g ) ;\n",
++  fprintf (file->f, "#%i = CYLINDRICAL_SURFACE ( '%s', #%i, %f ) ;\n",
                      file->next_id, name, position, radius);
    return file->next_id++;
  }
@@ -44,7 +44,7 @@ index 39e69a8..b4b0702 100644
  step_circle (step_file *file, char *name, step_id position, double radius)
  {
 -  fprintf (file->f, "#%i = CIRCLE ( '%s', #%i, %g ) ;\n",
-+  fprintf (file->f, "#%i = CIRCLE ( '%s', #%i, %#g ) ;\n",
++  fprintf (file->f, "#%i = CIRCLE ( '%s', #%i, %f ) ;\n",
                      file->next_id, name, position, radius);
    return file->next_id++;
  }
@@ -53,7 +53,7 @@ index 39e69a8..b4b0702 100644
  step_vector (step_file *file, char *name, step_id orientation, double magnitude)
  {
 -  fprintf (file->f, "#%i = VECTOR ( '%s', #%i, %g ) ;\n",
-+  fprintf (file->f, "#%i = VECTOR ( '%s', #%i, %#g ) ;\n",
++  fprintf (file->f, "#%i = VECTOR ( '%s', #%i, %f ) ;\n",
                      file->next_id, name, orientation, magnitude);
    return file->next_id++;
  }
@@ -62,7 +62,7 @@ index 39e69a8..b4b0702 100644
  step_colour_rgb (step_file *file, char *name, double red, double green, double blue)
  {
 -  fprintf (file->f, "#%i = COLOUR_RGB ( '%s', %g, %g, %g ) ;\n",
-+  fprintf (file->f, "#%i = COLOUR_RGB ( '%s', %#g, %#g, %#g ) ;\n",
++  fprintf (file->f, "#%i = COLOUR_RGB ( '%s', %f, %f, %f ) ;\n",
                      file->next_id, name, red, green, blue);
    return file->next_id++;
  }
