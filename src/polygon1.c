@@ -241,14 +241,10 @@ node_add_single (VNODE * dest, Vector po)
   VNODE *p;
 
 /* XXX: MAY NOT BE CORRECT IF WE NEED TO SEPARATE STRAIGHT AND CURVED SEGMENTS */
-  if (vect_equal (po, EDGE_BACKWARD_VERTEX (dest)->point)) {
-    pcb_fprintf (stderr, "node_add_single() returning EDGE_BACKWARD_VERTEX (dest);\n");
+  if (vect_equal (po, EDGE_BACKWARD_VERTEX (dest)->point))
     return EDGE_BACKWARD_VERTEX (dest);
-  }
-  if (vect_equal (po, EDGE_FORWARD_VERTEX (dest)->point)) {
-    pcb_fprintf (stderr, "node_add_single() returning EDGE_FORWARD_VERTEX (dest);\n");
+  if (vect_equal (po, EDGE_FORWARD_VERTEX (dest)->point))
     return EDGE_FORWARD_VERTEX (dest);
-  }
   p = poly_CreateNode (po);
   if (p == NULL)
     return NULL;
