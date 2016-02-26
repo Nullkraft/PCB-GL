@@ -1,0 +1,48 @@
+Bottom: a1fd62ff5f6841cef7d4d0fbc516e47ec95e7f7f
+Top:    8c4a425ea0beb165d8397ab723d684b2d6ea92c6
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-26 15:08:49 +0000
+
+Refresh of try-consolidating-geometry-in
+
+---
+
+diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
+index 0ed1db3..3ec1b4b 100644
+--- a/src/hid/step/step_writer.c
++++ b/src/hid/step/step_writer.c
+@@ -81,6 +81,7 @@ destroy_step_output_file (step_file *file)
+ {
+   g_hash_table_destroy (file->cartesian_point_hash);
+   g_hash_table_destroy (file->direction_hash);
++  g_hash_table_destroy (file->vector_hash);
+   g_free (file);
+ }
+ 
+@@ -207,7 +208,7 @@ step_cartesian_point (step_file *file, char *name, double x, double y, double z)
+     }
+ 
+   g_hash_table_insert (file->cartesian_point_hash, line, GINT_TO_POINTER (file->next_id));
+-  fprintf (file->f, "%i=CARTESIAN_POINT(%s);\n", file->next_id, line);
++  fprintf (file->f, "#%i=CARTESIAN_POINT(%s);\n", file->next_id, line);
+   g_free (line);
+ 
+   return file->next_id++;
+@@ -228,7 +229,7 @@ step_direction (step_file *file, char *name, double x, double y, double z)
+     }
+ 
+   g_hash_table_insert (file->direction_hash, line, GINT_TO_POINTER (file->next_id));
+-  fprintf (file->f, "%i=DIRECTION(%s);\n", file->next_id, line);
++  fprintf (file->f, "#%i=DIRECTION(%s);\n", file->next_id, line);
+   g_free (line);
+ 
+   return file->next_id++;
+@@ -281,7 +282,7 @@ step_vector (step_file *file, char *name, step_id orientation, double magnitude)
+     }
+ 
+   g_hash_table_insert (file->vector_hash, line, GINT_TO_POINTER (file->next_id));
+-  fprintf (file->f, "%i=VECTOR(%s);\n", file->next_id, line);
++  fprintf (file->f, "#%i=VECTOR(%s);\n", file->next_id, line);
+   g_free (line);
+ 
+   return file->next_id++;
