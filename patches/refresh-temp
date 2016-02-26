@@ -1,0 +1,72 @@
+Bottom: 589563fdeeeb545ec4be86d6607cc67313ff48f5
+Top:    cce27679b6a9c7f1f5c9290a983986f468803a4e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-26 12:16:59 +0000
+
+Refresh of attempt-at-producing-inter
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index b20eb75..494b9c7 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -690,8 +690,8 @@ object3d_from_contours (POLYAREA *contours,
+     link->bottom_face = faces[npoints];
+     link->top_face = faces[npoints + 1];
+ 
+-    fprintf (stderr, "Linking piece %p with object %p, top face %p (contour count %i), bottom face %p (contour count %i)\n",
+-             pa, link->object, link->top_face, g_list_length (link->top_face->contours), link->bottom_face, g_list_length (link->bottom_face->contours));
++//    fprintf (stderr, "Linking piece %p with object %p, top face %p (contour count %i), bottom face %p (contour count %i)\n",
++//             pa, link->object, link->top_face, g_list_length (link->top_face->contours), link->bottom_face, g_list_length (link->bottom_face->contours));
+ 
+   } while (pa = pa->f, pa != contours);
+ 
+@@ -1797,12 +1797,25 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+           edge_ref e;
+           edge_info *info;
+ 
+-          POLYAREA *top_pa;
+-          POLYAREA *bottom_pa;
+-          
+-          top_link    = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group    ] , false)->user_data;
++          POLYAREA *top_pa    = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group    ] , false);
++          POLYAREA *bottom_pa = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group + 1] , false);
++
++          /* These conditions should not occur, and can likely only happen because some other
++           * bug in the polygon processing code has created an inconsistent m_polyarea somewhere.
++           * We need to check for them though, since sadly - bad polygon boolean operations are
++           * still far too common.
++           */
++          g_warn_if_fail (top_pa != NULL);
++          g_warn_if_fail (bottom_pa != NULL);
++          if (top_pa == NULL)
++              continue;
++
++          if (bottom_pa == NULL)
++            continue;
++
++          top_link    = top_pa->user_data;
+           barrel_link = pa->user_data;
+-          bottom_link = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group + 1] , false)->user_data;
++          bottom_link = bottom_pa->user_data;
+ 
+           top_group_object    = top_link->object;
+           barrel_object       = barrel_link->object;
+@@ -1816,7 +1829,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+           barrel_top_face_first_edge = ((contour3d *)barrel_top_face->contours->data)->first_edge;
+           barrel_bottom_face_first_edge = ((contour3d *)barrel_bottom_face->contours->data)->first_edge;
+ 
+-          fprintf (stderr, "Extruding a barrel\n");
++//          fprintf (stderr, "Extruding a barrel\n");
+ 
+           /* Do some magic to join the objects */
+ 
+@@ -1947,7 +1960,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+           edge_ref drill_bottom_face_first_edge = ((contour3d *)drill_bottom_face->contours->data)->first_edge;
+           edge_ref e;
+ 
+-          fprintf (stderr, "Extruding a barrel\n");
++//          fprintf (stderr, "Extruding a drill\n");
+ 
+           /* Do some magic to join the objects */
