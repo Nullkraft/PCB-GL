@@ -5,6 +5,9 @@ typedef GList* step_id_list;
 typedef struct {
   FILE *f;
   step_id next_id;
+  GHashTable *cartesian_point_hash;
+  GHashTable *direction_hash;
+  GHashTable *vector_hash;
 
 } step_file;
 
