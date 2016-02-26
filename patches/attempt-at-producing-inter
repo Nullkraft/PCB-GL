@@ -1,5 +1,5 @@
 Bottom: b762ec4bc4711c30b341a842077cf1d781f963b1
-Top:    589563fdeeeb545ec4be86d6607cc67313ff48f5
+Top:    cce27679b6a9c7f1f5c9290a983986f468803a4e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-25 20:31:14 +0000
 
@@ -9,7 +9,7 @@ Attempt at producing inter-layer copper with via barrels etc..!
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index e5f02ff..b20eb75 100644
+index e5f02ff..494b9c7 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -66,6 +66,7 @@
@@ -70,8 +70,8 @@ index e5f02ff..b20eb75 100644
 +    link->bottom_face = faces[npoints];
 +    link->top_face = faces[npoints + 1];
 +
-+    fprintf (stderr, "Linking piece %p with object %p, top face %p (contour count %i), bottom face %p (contour count %i)\n",
-+             pa, link->object, link->top_face, g_list_length (link->top_face->contours), link->bottom_face, g_list_length (link->bottom_face->contours));
++//    fprintf (stderr, "Linking piece %p with object %p, top face %p (contour count %i), bottom face %p (contour count %i)\n",
++//             pa, link->object, link->top_face, g_list_length (link->top_face->contours), link->bottom_face, g_list_length (link->bottom_face->contours));
 +
    } while (pa = pa->f, pa != contours);
  
@@ -182,7 +182,7 @@ index e5f02ff..b20eb75 100644
  
  //  poly_Copy0 (&info.poly, area);
  
-@@ -1525,114 +1616,445 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1525,114 +1616,458 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
    top_group =    GetLayerGroupNumberBySide (TOP_SIDE);
    bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
  
@@ -307,9 +307,6 @@ index e5f02ff..b20eb75 100644
  #endif
 +                                copper_appearance,
 +                                NULL));
-+
-+      group_m_polyarea[group] = info.poly;
-+    }
  
 -  /* TODO: Inter-layer features
 -   *
@@ -334,6 +331,9 @@ index e5f02ff..b20eb75 100644
 -   * and subtract that from the positive copper polygon. Any subtracted contour
 -   * should at this point match to one body of copper on a given layer.
 -   *
++      group_m_polyarea[group] = info.poly;
++    }
++
 +  /* Now need to punch drill-holes through the inter-layers..
 +   * Ideally, we construct a polygon of drill-holes, so any overlapping are taken into account
     */
@@ -424,12 +424,25 @@ index e5f02ff..b20eb75 100644
 +          edge_ref e;
 +          edge_info *info;
 +
-+          POLYAREA *top_pa;
-+          POLYAREA *bottom_pa;
-+          
-+          top_link    = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group    ] , false)->user_data;
++          POLYAREA *top_pa    = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group    ] , false);
++          POLYAREA *bottom_pa = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group + 1] , false);
++
++          /* These conditions should not occur, and can likely only happen because some other
++           * bug in the polygon processing code has created an inconsistent m_polyarea somewhere.
++           * We need to check for them though, since sadly - bad polygon boolean operations are
++           * still far too common.
++           */
++          g_warn_if_fail (top_pa != NULL);
++          g_warn_if_fail (bottom_pa != NULL);
++          if (top_pa == NULL)
++              continue;
++
++          if (bottom_pa == NULL)
++            continue;
++
++          top_link    = top_pa->user_data;
 +          barrel_link = pa->user_data;
-+          bottom_link = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group + 1] , false)->user_data;
++          bottom_link = bottom_pa->user_data;
 +
 +          top_group_object    = top_link->object;
 +          barrel_object       = barrel_link->object;
@@ -443,7 +456,7 @@ index e5f02ff..b20eb75 100644
 +          barrel_top_face_first_edge = ((contour3d *)barrel_top_face->contours->data)->first_edge;
 +          barrel_bottom_face_first_edge = ((contour3d *)barrel_bottom_face->contours->data)->first_edge;
 +
-+          fprintf (stderr, "Extruding a barrel\n");
++//          fprintf (stderr, "Extruding a barrel\n");
 +
 +          /* Do some magic to join the objects */
 +
@@ -583,7 +596,7 @@ index e5f02ff..b20eb75 100644
 +          edge_ref drill_bottom_face_first_edge = ((contour3d *)drill_bottom_face->contours->data)->first_edge;
 +          edge_ref e;
 +
-+          fprintf (stderr, "Extruding a barrel\n");
++//          fprintf (stderr, "Extruding a drill\n");
 +
 +          /* Do some magic to join the objects */
 +
