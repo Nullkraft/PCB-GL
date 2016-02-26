@@ -1764,7 +1764,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                                bottom_depth - HACK_BOARD_THICKNESS,                         /* Bottom */
                                                top_depth    - HACK_BOARD_THICKNESS + HACK_COPPER_THICKNESS, /* Top */
 #else
-                                               /* NB: We're extruding this inside out, so the contour directions match up nicely (?) */
                                                -bottom_depth - HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS, /* Bottom */
                                                -top_depth    - HACK_BOARD_THICKNESS / 2,                         /* Top */
 #endif
@@ -1795,7 +1794,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
           edge_ref barrel_top_face_first_edge    ;
           edge_ref barrel_bottom_face_first_edge ;
           edge_ref e;
-          edge_info *info;
 
           POLYAREA *top_pa    = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group    ] , false);
           POLYAREA *bottom_pa = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group + 1] , false);
@@ -1841,31 +1839,53 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
           face3d_add_contour (top_group_face,    make_contour3d (barrel_top_face_first_edge));
           face3d_add_contour (bottom_group_face, make_contour3d (barrel_bottom_face_first_edge));
 
-          info = UNDIR_DATA (barrel_top_face_first_edge);
-          if (info->is_round)
-            info->nz = -info->nz; /* Flip circular normal, if this contour is a circle */
-
-          info = UNDIR_DATA (barrel_bottom_face_first_edge);
-          if (info->is_round)
-            info->nz = -info->nz; /* Flip circular normal, if this contour is a circle */
-
           /* Need to walk around the top / bottom edge contours, and re-connect with the linked up copper groups */
 
           e = barrel_top_face_first_edge;
           do
             {
+              edge_info *info = UNDIR_DATA (e);
+//              face3d *side_face = RDATA (e);
+
               /* Check and reassign the edge */
               g_assert (LDATA (e) == barrel_top_face);
               LDATA (e) = top_group_face;
+
+//              /* Only adjust from one end! */
+//              if (side_face->is_cylindrical)
+//                {
+//                  edge_face->surface_orientation_reversed = !edge_face->surface_orientation_reversed;
+//                  edge_face->az = -edge_face->az;
+//                }
+
+              if (info->is_round)
+                info->nz = -info->nz; /* Flip circular normal, if this contour is a circle */
+
+              /* XXX: Also need to flip this edge!... CHEAT, and just flip the object3d edge bucket references...
+               * XXX: Leaves the quad-edges WRONG!
+               */
+              barrel_object->edges = g_list_remove (barrel_object->edges, (void *)e);
+              object3d_add_edge (barrel_object, SYM (e));
             }
           while ((e = LNEXT (e)) != barrel_top_face_first_edge);
 
           e = barrel_bottom_face_first_edge;
           do
             {
+              edge_info *info = UNDIR_DATA (e);
+
               /* Check and reassign the edge */
               g_assert (LDATA (e) == barrel_bottom_face);
               LDATA (e) = bottom_group_face;
+
+              if (info->is_round)
+                info->nz = -info->nz; /* Flip circular normal, if this contour is a circle */
+
+              /* XXX: Also need to flip this edge!... CHEAT, and just flip the object3d edge bucket references...
+               * XXX: Leaves the quad-edges WRONG!
+               */
+              barrel_object->edges = g_list_remove (barrel_object->edges, (void *)SYM (e));
+              object3d_add_edge (barrel_object, e);
             }
           while ((e = LNEXT (e)) != barrel_bottom_face_first_edge);
 
@@ -1910,7 +1930,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 #endif
     }
 
-  if (1) /* Drill barrels */
+  if (0) /* Drill barrels */
     {
       Coord top_depth;
       Coord bottom_depth;
@@ -1926,12 +1946,12 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 
       drill_objects = object3d_from_contours (drill_m_polyarea,
 #ifdef REVERSED_PCB_CONTOURS
-                                              bottom_depth - HACK_BOARD_THICKNESS + HACK_COPPER_THICKNESS, /* Bottom */
-                                              top_depth    - HACK_BOARD_THICKNESS + HACK_COPPER_THICKNESS, /* Top */
+                                              top_depth - HACK_BOARD_THICKNESS + HACK_COPPER_THICKNESS, /* Bottom */
+                                              bottom_depth    - HACK_BOARD_THICKNESS + HACK_COPPER_THICKNESS, /* Top */
 #else
                                               /* NB: We're extruding this inside out, so the contour directions match up nicely (?) */
-                                              -bottom_depth - HACK_BOARD_THICKNESS / 2,                         /* Bottom */
-                                              -top_depth    - HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS, /* Top */
+                                              -top_depth    - HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS, /* Bottom */
+                                              -bottom_depth - HACK_BOARD_THICKNESS / 2,                         /* Top */
 #endif
                                               copper_appearance,
                                               NULL);
@@ -1952,13 +1972,15 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
           object3d *bottom_group_object = bottom_link->object;
 
           face3d *top_group_face    = top_link->top_face;
-          face3d *drill_top_face    = drill_link->top_face;
-          face3d *drill_bottom_face = drill_link->bottom_face;
+          face3d *drill_top_face    = drill_link->bottom_face; /* Remember we extruded this upside down (inside out) */
+          face3d *drill_bottom_face = drill_link->top_face;    /* Remember we extruded this upside down (inside out) */
           face3d *bottom_group_face = bottom_link->bottom_face;
 
           edge_ref drill_top_face_first_edge = ((contour3d *)drill_top_face->contours->data)->first_edge;
           edge_ref drill_bottom_face_first_edge = ((contour3d *)drill_bottom_face->contours->data)->first_edge;
           edge_ref e;
+
+          g_warn_if_fail (top_group_object == bottom_group_object);
 
 //          fprintf (stderr, "Extruding a drill\n");
 
@@ -2018,24 +2040,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 
           /* Steal the data from the drill object */
           steal_object_geometry (top_group_object, drill_object);
-
-#if 0 /* THIS SHOULD NEVER FIRE, SINCE THE VIA BARRELS HAVE JOINED THE TWO OBJECTS */
-          if (top_group_object != bottom_group_object)
-            { /* Top object and bottom object were previously distinct */
-
-              /* Update any remaining link pointers to the previous bottom object we are about to delete */
-              bottom_link->object = top_group_object;
-
-              /* Remove the old bottom object from the list of output objects */
-              group_objects = g_list_remove (group_objects, bottom_group_object);
-
-              /* Steal the data from the old bottom object */
-              steal_object_geometry (top_group_object, bottom_group_object);
-
-              /* Delete the old bottom object */
-              destroy_object3d (bottom_group_object);
-            }
-#endif
 
           free (pa->user_data);
         }
