@@ -81,6 +81,7 @@ destroy_step_output_file (step_file *file)
 {
   g_hash_table_destroy (file->cartesian_point_hash);
   g_hash_table_destroy (file->direction_hash);
+  g_hash_table_destroy (file->vector_hash);
   g_free (file);
 }
 
@@ -207,7 +208,7 @@ step_cartesian_point (step_file *file, char *name, double x, double y, double z)
     }
 
   g_hash_table_insert (file->cartesian_point_hash, line, GINT_TO_POINTER (file->next_id));
-  fprintf (file->f, "%i=CARTESIAN_POINT(%s);\n", file->next_id, line);
+  fprintf (file->f, "#%i=CARTESIAN_POINT(%s);\n", file->next_id, line);
   g_free (line);
 
   return file->next_id++;
@@ -228,7 +229,7 @@ step_direction (step_file *file, char *name, double x, double y, double z)
     }
 
   g_hash_table_insert (file->direction_hash, line, GINT_TO_POINTER (file->next_id));
-  fprintf (file->f, "%i=DIRECTION(%s);\n", file->next_id, line);
+  fprintf (file->f, "#%i=DIRECTION(%s);\n", file->next_id, line);
   g_free (line);
 
   return file->next_id++;
@@ -281,7 +282,7 @@ step_vector (step_file *file, char *name, step_id orientation, double magnitude)
     }
 
   g_hash_table_insert (file->vector_hash, line, GINT_TO_POINTER (file->next_id));
-  fprintf (file->f, "%i=VECTOR(%s);\n", file->next_id, line);
+  fprintf (file->f, "#%i=VECTOR(%s);\n", file->next_id, line);
   g_free (line);
 
   return file->next_id++;
