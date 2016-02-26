@@ -189,7 +189,7 @@ step_product_definition_shape (step_file *file, char *name, char *description, s
 step_id
 step_cartesian_point (step_file *file, char *name, double x, double y, double z)
 {
-  fprintf (file->f, "#%i = CARTESIAN_POINT ( '%s', ( %g, %g, %g ) ) ;\n",
+  fprintf (file->f, "#%i = CARTESIAN_POINT ( '%s', ( %f, %f, %f ) ) ;\n",
                     file->next_id, name, x, y, z);
   return file->next_id++;
 }
@@ -197,7 +197,7 @@ step_cartesian_point (step_file *file, char *name, double x, double y, double z)
 step_id
 step_direction (step_file *file, char *name, double x, double y, double z)
 {
-  fprintf (file->f, "#%i = DIRECTION ( '%s', ( %g, %g, %g ) ) ;\n",
+  fprintf (file->f, "#%i = DIRECTION ( '%s', ( %f, %f, %f ) ) ;\n",
                     file->next_id, name, x, y, z);
   return file->next_id++;
 }
@@ -221,7 +221,7 @@ step_plane (step_file *file, char *name, step_id position)
 step_id
 step_cylindrical_surface (step_file *file, char *name, step_id position, double radius)
 {
-  fprintf (file->f, "#%i = CYLINDRICAL_SURFACE ( '%s', #%i, %g ) ;\n",
+  fprintf (file->f, "#%i = CYLINDRICAL_SURFACE ( '%s', #%i, %f ) ;\n",
                     file->next_id, name, position, radius);
   return file->next_id++;
 }
@@ -229,7 +229,7 @@ step_cylindrical_surface (step_file *file, char *name, step_id position, double 
 step_id
 step_circle (step_file *file, char *name, step_id position, double radius)
 {
-  fprintf (file->f, "#%i = CIRCLE ( '%s', #%i, %g ) ;\n",
+  fprintf (file->f, "#%i = CIRCLE ( '%s', #%i, %f ) ;\n",
                     file->next_id, name, position, radius);
   return file->next_id++;
 }
@@ -237,7 +237,7 @@ step_circle (step_file *file, char *name, step_id position, double radius)
 step_id
 step_vector (step_file *file, char *name, step_id orientation, double magnitude)
 {
-  fprintf (file->f, "#%i = VECTOR ( '%s', #%i, %g ) ;\n",
+  fprintf (file->f, "#%i = VECTOR ( '%s', #%i, %f ) ;\n",
                     file->next_id, name, orientation, magnitude);
   return file->next_id++;
 }
@@ -355,7 +355,7 @@ step_shape_definition_representation (step_file *file, step_id definition, step_
 step_id
 step_colour_rgb (step_file *file, char *name, double red, double green, double blue)
 {
-  fprintf (file->f, "#%i = COLOUR_RGB ( '%s', %g, %g, %g ) ;\n",
+  fprintf (file->f, "#%i = COLOUR_RGB ( '%s', %f, %f, %f ) ;\n",
                     file->next_id, name, red, green, blue);
   return file->next_id++;
 }
