@@ -4281,7 +4281,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
 	      Vcpy2 (S2, hq2);
 	    };
 	}
-      fprintf (stderr, "Intersection returning %i\n", Vequ2 (S1, S2) ? 1 : 2);
+//      fprintf (stderr, "Intersection returning %i\n", Vequ2 (S1, S2) ? 1 : 2);
       return (Vequ2 (S1, S2) ? 1 : 2);
     }
   else
@@ -4329,7 +4329,7 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
 	  S1[0] = q1[0] + ROUND (t * rqx);
 	  S1[1] = q1[1] + ROUND (t * rqy);
 	}
-      fprintf (stderr, "Intersection returning 1\n");
+//      fprintf (stderr, "Intersection returning 1\n");
       return 1;
     }
 }				/* vect_inters2 */
