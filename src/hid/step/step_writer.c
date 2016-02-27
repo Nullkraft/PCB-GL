@@ -72,6 +72,8 @@ step_file
   file->cartesian_point_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   file->direction_hash =       g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   file->vector_hash =          g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  file->axis2_hash =           g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  file->colour_hash =          g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
   return file;
 }
@@ -82,6 +84,8 @@ destroy_step_output_file (step_file *file)
   g_hash_table_destroy (file->cartesian_point_hash);
   g_hash_table_destroy (file->direction_hash);
   g_hash_table_destroy (file->vector_hash);
+  g_hash_table_destroy (file->axis2_hash);
+  g_hash_table_destroy (file->colour_hash);
   g_free (file);
 }
 
@@ -236,8 +240,20 @@ step_direction (step_file *file, char *name, double x, double y, double z)
 step_id
 step_axis2_placement_3d (step_file *file, char *name, step_id location, step_id axis, step_id ref_direction)
 {
-  fprintf (file->f, "#%i=AXIS2_PLACEMENT_3D('%s',#%i,#%i,#%i);\n",
-                    file->next_id, name, location, axis, ref_direction);
+  char *line;
+  step_id id;
+
+  line = g_strdup_printf ("'%s',#%i,#%i,#%i", name, location, axis, ref_direction);
+
+  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (file->axis2_hash, line))) != 0)
+    {
+      g_free (line);
+      return id;
+    }
+
+  g_hash_table_insert (file->axis2_hash, line, GINT_TO_POINTER (file->next_id));
+  fprintf (file->f, "#%i=AXIS2_PLACEMENT_3D(%s);\n", file->next_id, line);
+
   return file->next_id++;
 }
 
@@ -398,8 +414,20 @@ step_shape_definition_representation (step_file *file, step_id definition, step_
 step_id
 step_colour_rgb (step_file *file, char *name, double red, double green, double blue)
 {
-  fprintf (file->f, "#%i=COLOUR_RGB('%s',%f,%f,%f);\n",
-                    file->next_id, name, red, green, blue);
+  char *line;
+  step_id id;
+
+  line = g_strdup_printf ("'%s',%f,%f,%f", name, red, green, blue);
+
+  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (file->colour_hash, line))) != 0)
+    {
+      g_free (line);
+      return id;
+    }
+
+  g_hash_table_insert (file->colour_hash, line, GINT_TO_POINTER (file->next_id));
+  fprintf (file->f, "#%i=COLOUR_RGB(%s);\n", file->next_id, line);
+
   return file->next_id++;
 }
 
