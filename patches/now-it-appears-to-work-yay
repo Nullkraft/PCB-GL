@@ -1,0 +1,20 @@
+Bottom: f32cd39a0434d72fe9371ec7d6faa5e48ab07d4e
+Top:    f32cd39a0434d72fe9371ec7d6faa5e48ab07d4e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-27 14:44:38 +0000
+
+Now it appears to work - YAY....
+
+Turns out that we should NOT attempt to invert the top and bottom
+faces of the via barrels, as when we insert them into the opposite
+side-sense faces of the copper above and below them, the edge
+orientation is already correct without any cheating.
+
+TODO: Reduce operations on the extrusion to positive / negative,
+      as it doesn't make sense to leave the multitude of broken
+      options.
+
+
+---
+
+
