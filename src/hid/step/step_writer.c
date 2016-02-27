@@ -340,7 +340,7 @@ step_face_bound (step_file *file, char *name, step_id bound, bool orientation)
 step_id
 step_face_outer_bound (step_file *file, char *name, step_id bound, bool orientation)
 {
-  fprintf (file->f, "#%i=FACE_OUTER_BOUND('%s',#%i,%s);\n",
+  fprintf (file->f, "#%i=FACE_OUTER_BOUND('%s',#%i,%s);",
                     file->next_id, name, bound, step_bool (orientation));
 
   return file->next_id++;
