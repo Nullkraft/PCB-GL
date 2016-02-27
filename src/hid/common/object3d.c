@@ -66,7 +66,7 @@
 
 #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
 #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
-#define HACK_PLATED_BARREL_THICKNESS MM_TO_COORD(0.02)
+#define HACK_PLATED_BARREL_THICKNESS MM_TO_COORD(0.08) //2
 #define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
 #define HACK_SILK_THICKNESS MM_TO_COORD(0.01)
 
@@ -696,6 +696,7 @@ object3d_from_contours (POLYAREA *contours,
         normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 #else
         normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+        //normal_z = (top_bot_inverted != cw) ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 #endif
 
         edge_info_set_round (UNDIR_DATA (edges[i]),
@@ -1886,7 +1887,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 #endif
                                                copper_appearance,
                                                NULL,
-                                               false, true);
+                                               false, false/*true*/);
 
 /* Connect the via barrels in this block of code */
 #if 1
