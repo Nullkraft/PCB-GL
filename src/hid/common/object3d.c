@@ -2158,6 +2158,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 
           /* Steal the data from the drill object */
           steal_object_geometry (top_group_object, drill_object);
+          destroy_object3d (drill_object);
 
           free (pa->user_data);
         }
