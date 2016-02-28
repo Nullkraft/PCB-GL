@@ -1,0 +1,204 @@
+Bottom: 1553e4515d43f27e90a387ea11955bc95a2ec811
+Top:    b58f11894f05349410687ef47d2f178930d467e8
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-28 00:56:43 +0000
+
+Refresh of more-caching-for-step-output
+
+---
+
+diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
+index fb9ae2e..ab82b0d 100644
+--- a/src/hid/step/step_writer.c
++++ b/src/hid/step/step_writer.c
+@@ -74,6 +74,8 @@ step_file
+   file->vector_hash =          g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+   file->axis2_hash =           g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+   file->colour_hash =          g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
++  file->cylindrical_hash =     g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
++  file->circle_hash =          g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+ 
+   return file;
+ }
+@@ -86,6 +88,8 @@ destroy_step_output_file (step_file *file)
+   g_hash_table_destroy (file->vector_hash);
+   g_hash_table_destroy (file->axis2_hash);
+   g_hash_table_destroy (file->colour_hash);
++  g_hash_table_destroy (file->cylindrical_hash);
++  g_hash_table_destroy (file->circle_hash);
+   g_free (file);
+ }
+ 
+@@ -108,6 +112,23 @@ make_3d_metric_step_geometric_representation_context (step_file *file)
+   return file->next_id++;
+ }
+ 
++static step_id
++lookup_or_create (GHashTable *hash, char *entity, char *content)
++{
++  step_id id;
++
++  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (hash, content))) != 0)
++    {
++      g_free (line);
++      return id;
++    }
++
++  g_hash_table_insert (hash, content, GINT_TO_POINTER (file->next_id));
++  fprintf (file->f, "#%i=%s(%s);\n", file->next_id, entity, content);
++
++  return file->next_id++;
++}
++
+ step_id
+ step_application_context (step_file *file, char *application)
+ {
+@@ -200,61 +221,22 @@ step_product_definition_shape (step_file *file, char *name, char *description, s
+ step_id
+ step_cartesian_point (step_file *file, char *name, double x, double y, double z)
+ {
+-  char *line;
+-  step_id id;
+-
+-  line = g_strdup_printf ("'%s',(%f,%f,%f)", name, x, y, z);
+-
+-  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (file->cartesian_point_hash, line))) != 0)
+-    {
+-      g_free (line);
+-      return id;
+-    }
+-
+-  g_hash_table_insert (file->cartesian_point_hash, line, GINT_TO_POINTER (file->next_id));
+-  fprintf (file->f, "#%i=CARTESIAN_POINT(%s);\n", file->next_id, line);
+-
+-  return file->next_id++;
++  char *content = g_strdup_printf ("'%s',(%f,%f,%f)", name, x, y, z);
++  return lookup_or_create (file, file->cartesian_point_hash, "CARTESIAN_POINT", content);
+ }
+ 
+ step_id
+ step_direction (step_file *file, char *name, double x, double y, double z)
+ {
+-  char *line;
+-  step_id id;
+-
+-  line = g_strdup_printf ("'%s',(%f,%f,%f)", name, x, y, z);
+-
+-  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (file->direction_hash, line))) != 0)
+-    {
+-      g_free (line);
+-      return id;
+-    }
+-
+-  g_hash_table_insert (file->direction_hash, line, GINT_TO_POINTER (file->next_id));
+-  fprintf (file->f, "#%i=DIRECTION(%s);\n", file->next_id, line);
+-
+-  return file->next_id++;
++  char *content = g_strdup_printf ("'%s',(%f,%f,%f)", name, x, y, z);
++  return lookup_or_create (file, file->direction_hash, "DIRECTION", content);
+ }
+ 
+ step_id
+ step_axis2_placement_3d (step_file *file, char *name, step_id location, step_id axis, step_id ref_direction)
+ {
+-  char *line;
+-  step_id id;
+-
+-  line = g_strdup_printf ("'%s',#%i,#%i,#%i", name, location, axis, ref_direction);
+-
+-  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (file->axis2_hash, line))) != 0)
+-    {
+-      g_free (line);
+-      return id;
+-    }
+-
+-  g_hash_table_insert (file->axis2_hash, line, GINT_TO_POINTER (file->next_id));
+-  fprintf (file->f, "#%i=AXIS2_PLACEMENT_3D(%s);\n", file->next_id, line);
+-
+-  return file->next_id++;
++  char *content =  g_strdup_printf ("'%s',#%i,#%i,#%i", name, location, axis, ref_direction);
++  return lookup_or_create (file, file->axis2_hash, "AXIS2_PLACEMENT_3D", content);
+ }
+ 
+ step_id
+@@ -268,37 +250,22 @@ step_plane (step_file *file, char *name, step_id position)
+ step_id
+ step_cylindrical_surface (step_file *file, char *name, step_id position, double radius)
+ {
+-  fprintf (file->f, "#%i=CYLINDRICAL_SURFACE('%s',#%i,%f);\n",
+-                    file->next_id, name, position, radius);
+-  return file->next_id++;
++  char *content = g_strdup_printf ("'%s',#%i,%f", name, position, radius);
++  return lookup_or_create (file, file->cylindrical_hash, "CYLINDRICAL_SURFACE", content);
+ }
+ 
+ step_id
+ step_circle (step_file *file, char *name, step_id position, double radius)
+ {
+-  fprintf (file->f, "#%i=CIRCLE('%s',#%i,%f);\n",
+-                    file->next_id, name, position, radius);
+-  return file->next_id++;
++  char *content = g_strdup_printf ("'%s',#%i,%f", name, position, radius);
++  return lookup_or_create (file, file->circle_hash, "CIRCLE", content);
+ }
+ 
+ step_id
+ step_vector (step_file *file, char *name, step_id orientation, double magnitude)
+ {
+-  char *line;
+-  step_id id;
+-
+-  line = g_strdup_printf ("'%s',#%i,%f", name, orientation, magnitude);
+-
+-  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (file->vector_hash, line))) != 0)
+-    {
+-      g_free (line);
+-      return id;
+-    }
+-
+-  g_hash_table_insert (file->vector_hash, line, GINT_TO_POINTER (file->next_id));
+-  fprintf (file->f, "#%i=VECTOR(%s);\n", file->next_id, line);
+-
+-  return file->next_id++;
++  char *content = g_strdup_printf ("'%s',#%i,%f", name, orientation, magnitude);
++  return lookup_or_create (file, file->vector_hash, "VECTOR", content);
+ }
+ 
+ step_id
+@@ -414,21 +381,8 @@ step_shape_definition_representation (step_file *file, step_id definition, step_
+ step_id
+ step_colour_rgb (step_file *file, char *name, double red, double green, double blue)
+ {
+-  char *line;
+-  step_id id;
+-
+-  line = g_strdup_printf ("'%s',%f,%f,%f", name, red, green, blue);
+-
+-  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (file->colour_hash, line))) != 0)
+-    {
+-      g_free (line);
+-      return id;
+-    }
+-
+-  g_hash_table_insert (file->colour_hash, line, GINT_TO_POINTER (file->next_id));
+-  fprintf (file->f, "#%i=COLOUR_RGB(%s);\n", file->next_id, line);
+-
+-  return file->next_id++;
++  char *content = g_strdup_printf ("'%s',%f,%f,%f", name, red, green, blue);
++  return lookup_or_create (file, file->colour_hash, "COLOUR_RGB", content);
+ }
+ 
+ step_id
+diff --git a/src/hid/step/step_writer.h b/src/hid/step/step_writer.h
+index 1a569a1..3fe3ca4 100644
+--- a/src/hid/step/step_writer.h
++++ b/src/hid/step/step_writer.h
+@@ -10,6 +10,8 @@ typedef struct {
+   GHashTable *vector_hash;
+   GHashTable *axis2_hash;
+   GHashTable *colour_hash;
++  GHashTable *cylindrical_hash;
++  GHashTable *circle_hash;
+ } step_file;
+ 
+ step_id_list step_id_list_append (step_id_list list, step_id id);
