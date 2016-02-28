@@ -1510,12 +1510,12 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
   destroy_appearance (copper_appearance);
 
   /* ASSUME THERE IS A POLYGON WHERE WE KNOW WE PUT ONE... */
-  ((PolygonType *)PCB->Data->Layer[1].Polygon->data)->Clipped = info.poly;
+//  ((PolygonType *)PCB->Data->Layer[1].Polygon->data)->Clipped = info.poly;
 
   /* DEBUG */
 //  poly_M_Copy0 (&PCB->Data->outline, info.poly);
 //  PCB->Data->outline_valid = true;
-  gui->invalidate_all ();
+//  gui->invalidate_all ();
 
 //  poly_Free (&info.poly);
 
