@@ -10,6 +10,8 @@ typedef struct {
   GHashTable *vector_hash;
   GHashTable *axis2_hash;
   GHashTable *colour_hash;
+  GHashTable *cylindrical_hash;
+  GHashTable *circle_hash;
 } step_file;
 
 step_id_list step_id_list_append (step_id_list list, step_id id);
