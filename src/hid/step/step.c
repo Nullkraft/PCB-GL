@@ -152,7 +152,7 @@ step_do_export (HID_Attr_Val * options)
   if (filename == NULL)
     filename = "pcb-out.step";
 
-#if 0
+#if 1
   board_outline_list = object3d_from_board_outline ();
 #else
   board_outline_list = NULL;
