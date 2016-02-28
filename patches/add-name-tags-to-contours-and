@@ -1,5 +1,5 @@
 Bottom: 0b3c6d7d7faf7bf11f5530793df73ddc98bafe6b
-Top:    090011dc27b03f92db8237be096251c4f964c029
+Top:    1944e68a8828835d035efc0d3f9915738829dcde
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 22:55:29 +0000
 
@@ -69,7 +69,7 @@ index 94bdf45..1e3c629 100644
  
  PLINE *poly_NewContour(VNODE *node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 2ba4f52..0a74a22 100644
+index 2ba4f52..e290907 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -601,8 +601,13 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
@@ -154,7 +154,7 @@ index 2ba4f52..0a74a22 100644
  
  #ifdef DEBUG_CIRCSEGS
 -  if (!(np = CirclePoly (pv->X, pv->Y, pv->Thickness / 2)))
-+  if (!(np = CirclePoly (pv->X, pv->Y, pv->Thickness / 2), feature_name))
++  if (!(np = CirclePoly (pv->X, pv->Y, pv->Thickness / 2, feature_name)))
  #else
 -  if (!(np = CirclePoly (pv->X, pv->Y, pv->DrillingHole / 2)))
 +  if (!(np = CirclePoly (pv->X, pv->Y, pv->DrillingHole / 2, feature_name)))
