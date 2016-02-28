@@ -1,0 +1,30 @@
+Bottom: e9d1de139a6bbbe348249ef65d60d2604c7ceb33
+Top:    e57a12c5f1165bedcf93507248e6b80cb77e4640
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-28 03:50:59 +0000
+
+Refresh of re-enable-board-core-emission
+
+---
+
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 9f55c74..47499ce 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -158,6 +158,7 @@ step_do_export (HID_Attr_Val * options)
+   piece = board_outline;
+   do {
+     GList *mask_objects;
++    GList *copper_layer_objects;
+     PLINE *curc;
+     PLINE *next;
+     PLINE **prev_next;
+@@ -213,7 +214,7 @@ step_do_export (HID_Attr_Val * options)
+ //  object3d_list_export_to_step_assy (board_outline_list, temp_pcb_filename);
+   g_list_free_full (board_outline_list, (GDestroyNotify)destroy_object3d);
+ 
+-  {
++  if (0) {
+     GList *models = NULL;
+     struct assembly_model *model;
+     struct assembly_model_instance *instance;
