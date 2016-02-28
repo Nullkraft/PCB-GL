@@ -23,7 +23,6 @@
 #include "misc.h"
 #include "hid/hidint.h"
 
-
 //#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
 #undef REVERSED_PCB_CONTOURS
 
