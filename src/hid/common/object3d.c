@@ -1543,9 +1543,10 @@ steal_object_geometry (object3d *dst, object3d *src)
 {
   g_assert (dst != src);
 
-  dst->faces    = g_list_concat (dst->faces,    src->faces);
-  dst->edges    = g_list_concat (dst->edges,    src->edges);
-  dst->vertices = g_list_concat (dst->vertices, src->vertices);
+  /* Prepend the src chunks, as src is likely to be a lot smaller then dst once we get going */
+  dst->faces    = g_list_concat (src->faces,    dst->faces);
+  dst->edges    = g_list_concat (src->edges,    dst->edges);
+  dst->vertices = g_list_concat (src->vertices, dst->vertices);
   src->faces = NULL;
   src->edges = NULL;
   src->vertices = NULL;
