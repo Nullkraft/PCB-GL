@@ -378,17 +378,24 @@ object3d_from_contours (POLYAREA *contours,
 
     object = make_object3d (PCB->Name);
 
+#if 0
+    /* XXX: REF-COUNTING WOULD BE WAY BETTER! */
     if (master_object_appearance != NULL)
       {
         object_appearance = make_appearance ();
         appearance_set_appearance (object_appearance, master_object_appearance);
       }
 
+    /* XXX: REF-COUNTING WOULD BE WAY BETTER! */
     if (master_top_bot_appearance != NULL)
       {
         top_bot_appearance = make_appearance ();
         appearance_set_appearance (top_bot_appearance, master_top_bot_appearance);
       }
+#else
+#endif
+    object_appearance = master_object_appearance;
+    top_bot_appearance = master_top_bot_appearance;
 
     object3d_set_appearance (object, object_appearance);
 
@@ -849,8 +856,8 @@ object3d_from_board_outline (void)
                                     top_bot_appearance,
                                     false, false);
 
-  destroy_appearance (board_appearance);
-  destroy_appearance (top_bot_appearance);
+//  destroy_appearance (board_appearance); /* XXX: HANGING ON TO THIS FOR NOW */
+//  destroy_appearance (top_bot_appearance); /* XXX: HANGING ON TO THIS FOR NOW */
 
   poly_Free (&board_outline);
 
@@ -1132,7 +1139,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
                                     NULL,
                                     false, false);
 
-  destroy_appearance (mask_appearance);
+//  destroy_appearance (mask_appearance); /* XXX: HANGING ON TO THIS FOR NOW */
 
   poly_Free (&info.poly);
 
@@ -2172,7 +2179,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
     }
 
 
-  destroy_appearance (copper_appearance);
+//  destroy_appearance (copper_appearance); /* XXX: HANGING ON TO THIS FOR NOW */
 
 //  /* ASSUME THERE IS A POLYGON WHERE WE KNOW WE PUT ONE... */
 //  ((PolygonType *)PCB->Data->Layer[1].Polygon->data)->Clipped = info.poly;
