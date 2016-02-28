@@ -1,5 +1,5 @@
-Bottom: bdd7be554b1395ebf42043e47ee0e7bfc6fda0e3
-Top:    c6e8fae65cdc801095f8cb0166e0604e345dce3e
+Bottom: 652ea4a266592c638264a0eb39a9cb87607a022a
+Top:    f509a47bd46c677d0729410b9da465bcf640cfd2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-26 14:54:44 +0000
 
@@ -9,7 +9,7 @@ Try to prepend, not append to g_lists. This avoids wasting time traversing lists
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index a2e0ef7..54a8379 100644
+index ead3eab..241fdd3 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -110,19 +110,19 @@ object3d_set_appearance (object3d *object, appearance *appear)
