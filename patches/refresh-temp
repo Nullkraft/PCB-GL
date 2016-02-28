@@ -1,0 +1,20 @@
+Bottom: 536c6b1a10f8ae6feeb68431088ba2a92b11df12
+Top:    defcf99b944c3bd4494c2b0af594ff8ca8b9a0e9
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-28 03:56:15 +0000
+
+Refresh of debug-wonky-copper-polygon
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 6db76b1..1be45bd 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -23,7 +23,6 @@
+ #include "misc.h"
+ #include "hid/hidint.h"
+ 
+-
+ //#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
+ #undef REVERSED_PCB_CONTOURS
