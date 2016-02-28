@@ -2395,10 +2395,8 @@ POLYAREA *board_outline_poly (bool include_holes)
         }
     }
 
-  if (!found_outline) {
+  if (!found_outline)
     printf ("Didn't find outline\n");
-    return whole_world;
-  }
 
   /* Do stuff to turn the outline layer into a polygon */
 
@@ -2435,8 +2433,11 @@ POLYAREA *board_outline_poly (bool include_holes)
   info.poly = whole_world;
 #endif
 
-  r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
-  r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
+  if (found_outline)
+    {
+      r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
+      r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
+    }
 
 #ifndef DEBUG_CIRCSEGS
   if (include_holes)
