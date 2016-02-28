@@ -202,7 +202,7 @@ step_do_export (HID_Attr_Val * options)
         poly_DelContour (&curc);
       }
 
-#if 1
+#if 0
     mask_objects = object3d_from_soldermask_within_area (piece, TOP_SIDE);
     board_outline_list = g_list_concat (board_outline_list, mask_objects);
 
@@ -210,8 +210,10 @@ step_do_export (HID_Attr_Val * options)
     board_outline_list = g_list_concat (board_outline_list, mask_objects);
 #endif
 
+#if 0
     copper_layer_objects = object3d_from_copper_layers_within_area (piece);
     board_outline_list = g_list_concat (board_outline_list, copper_layer_objects);
+#endif
 
   } while ((piece = piece->f) != board_outline);
   poly_Free (&board_outline);

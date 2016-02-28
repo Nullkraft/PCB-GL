@@ -300,7 +300,7 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
       *cx = COORD_TO_STEP_X (PCB, contour->cx);
       *cy = COORD_TO_STEP_Y (PCB, contour->cy);
       *r = COORD_TO_MM (contour->radius);
-      *cw = (contour->Flags.orient != PLF_DIR);
+      *cw = (contour->Flags.orient == PLF_INV);
       return;
     }
 #endif
@@ -316,7 +316,7 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
   *cx = COORD_TO_STEP_X (PCB, edge->cx);
   *cy = COORD_TO_STEP_Y (PCB, edge->cy);
   *r = COORD_TO_MM (edge->radius);
-  *cw = (compare_ccw_cw (EDGE_BACKWARD_VERTEX (edge)->point, center, EDGE_FORWARD_VERTEX (edge)->point) > 0);
+  *cw = (compare_ccw_cw (EDGE_BACKWARD_VERTEX (edge)->point, center, EDGE_FORWARD_VERTEX (edge)->point) < 0);
 }
 
 typedef struct
@@ -538,6 +538,8 @@ object3d_from_contours (POLYAREA *contours,
           LDATA (edges[              i]) = faces[npoints];
           RDATA (edges[1 * npoints + i]) = faces[npoints + 1];
           LDATA (edges[1 * npoints + i]) = faces[i];
+          RDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
+          LDATA (edges[2 * npoints + i]) = faces[i];
         }
       else
         {
@@ -545,15 +547,6 @@ object3d_from_contours (POLYAREA *contours,
           RDATA (edges[              i]) = faces[npoints];
           LDATA (edges[1 * npoints + i]) = faces[npoints + 1];
           RDATA (edges[1 * npoints + i]) = faces[i];
-        }
-
-      if (invert)
-        {
-          RDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
-          LDATA (edges[2 * npoints + i]) = faces[i];
-        }
-      else
-        {
           LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
           RDATA (edges[2 * npoints + i]) = faces[i];
         }
@@ -647,6 +640,7 @@ object3d_from_contours (POLYAREA *contours,
 #ifdef REVERSED_PCB_CONTOURS
         normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 #else
+        /* XXX: NOT SURE THIS IS CORRECT! */
         normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 #endif
 
@@ -2000,7 +1994,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 #endif
     }
 
-  if (1) /* Drill holes */
+  if (0) /* Drill holes */
     {
       Coord top_depth;
       Coord bottom_depth;
