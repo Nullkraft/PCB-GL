@@ -113,13 +113,13 @@ make_3d_metric_step_geometric_representation_context (step_file *file)
 }
 
 static step_id
-lookup_or_create (GHashTable *hash, char *entity, char *content)
+lookup_or_create (step_file *file, GHashTable *hash, const char *entity, char *content)
 {
   step_id id;
 
   if ((id = GPOINTER_TO_INT (g_hash_table_lookup (hash, content))) != 0)
     {
-      g_free (line);
+      g_free (content);
       return id;
     }
 
