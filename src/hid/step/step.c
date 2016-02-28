@@ -158,6 +158,7 @@ step_do_export (HID_Attr_Val * options)
   piece = board_outline;
   do {
     GList *mask_objects;
+    GList *copper_layer_objects;
     PLINE *curc;
     PLINE *next;
     PLINE **prev_next;
@@ -213,7 +214,7 @@ step_do_export (HID_Attr_Val * options)
 //  object3d_list_export_to_step_assy (board_outline_list, temp_pcb_filename);
   g_list_free_full (board_outline_list, (GDestroyNotify)destroy_object3d);
 
-  {
+  if (0) {
     GList *models = NULL;
     struct assembly_model *model;
     struct assembly_model_instance *instance;
