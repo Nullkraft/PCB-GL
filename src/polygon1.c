@@ -200,7 +200,7 @@ poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
   *c++ = *v++;
   *c = *v;
 
-  res->is_round = is_round;
+  res->is_round = false;// is_round;
   res->cx = cx;
   res->cy = cy;
   res->radius = radius;
