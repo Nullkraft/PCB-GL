@@ -8,7 +8,8 @@ typedef struct {
   GHashTable *cartesian_point_hash;
   GHashTable *direction_hash;
   GHashTable *vector_hash;
-
+  GHashTable *axis2_hash;
+  GHashTable *colour_hash;
 } step_file;
 
 step_id_list step_id_list_append (step_id_list list, step_id id);
