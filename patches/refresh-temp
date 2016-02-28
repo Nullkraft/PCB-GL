@@ -1,0 +1,31 @@
+Bottom: c7241d6b4d897aab105656d6f072917e2ed309cf
+Top:    db2cf74905013fbc8801f62331baea08af297795
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-28 23:58:47 +0000
+
+Refresh of adjust-coordinate-system
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 5823ccc..b89f387 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -342,7 +342,7 @@ object3d_from_contours (const POLYAREA *contours,
+ #ifdef REVERSED_PCB_CONTOURS
+     face3d_set_normal (faces[npoints], 0., 0., -1.);
+ #else
+-    face3d_set_normal (faces[npoints], 0., 0., 1.);
++    face3d_set_normal (faces[npoints], 0., 0., 1.); /* PCB bottom is at positive Z in this scheme */
+ #endif
+     face3d_set_appearance (faces[npoints], top_bot_appearance);
+     object3d_add_face (object, faces[npoints]);
+@@ -351,7 +351,7 @@ object3d_from_contours (const POLYAREA *contours,
+ #ifdef REVERSED_PCB_CONTOURS
+     face3d_set_normal (faces[npoints + 1], 0., 0., 1.);
+ #else
+-    face3d_set_normal (faces[npoints + 1], 0., 0., -1.);
++    face3d_set_normal (faces[npoints + 1], 0., 0., -1.); /* PCB top is at negative Z in this scheme */
+ #endif
+     face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
+     object3d_add_face (object, faces[npoints + 1]);
