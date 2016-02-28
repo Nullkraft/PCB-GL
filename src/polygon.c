@@ -2331,7 +2331,7 @@ pv_outline_callback (const BoxType * b, void *cl)
     }
 
 #ifdef DEBUG_CIRCSEGS
-  if (!(np = CirclePoly (pv->X, pv->Y, pv->Thickness / 2), feature_name))
+  if (!(np = CirclePoly (pv->X, pv->Y, pv->Thickness / 2, feature_name)))
 #else
   if (!(np = CirclePoly (pv->X, pv->Y, pv->DrillingHole / 2, feature_name)))
 #endif
