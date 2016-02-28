@@ -1,5 +1,5 @@
 Bottom: ce738502c19b56088c946e11e9a419534571adc2
-Top:    b58f11894f05349410687ef47d2f178930d467e8
+Top:    8d39935fdbb022bdbae64949a54d8eeac87c5b10
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-27 23:39:57 +0000
 
@@ -9,7 +9,7 @@ More caching for STEP output
 ---
 
 diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
-index 784145a..ab82b0d 100644
+index 784145a..7c9605d 100644
 --- a/src/hid/step/step_writer.c
 +++ b/src/hid/step/step_writer.c
 @@ -72,6 +72,10 @@ step_file
@@ -39,13 +39,13 @@ index 784145a..ab82b0d 100644
  }
  
 +static step_id
-+lookup_or_create (GHashTable *hash, char *entity, char *content)
++lookup_or_create (step_file *file, GHashTable *hash, const char *entity, char *content)
 +{
 +  step_id id;
 +
 +  if ((id = GPOINTER_TO_INT (g_hash_table_lookup (hash, content))) != 0)
 +    {
-+      g_free (line);
++      g_free (content);
 +      return id;
 +    }
 +
