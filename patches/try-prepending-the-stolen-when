@@ -1,0 +1,17 @@
+Bottom: 1553e4515d43f27e90a387ea11955bc95a2ec811
+Top:    1553e4515d43f27e90a387ea11955bc95a2ec811
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-02-28 00:25:49 +0000
+
+Try prepending the stolen when concatenating geometry..
+
+The destination objects will likely keep getting larger, so it should avoid
+needing to traverse the entire list length to append data.
+
+Possibly a circularly linked list might be more efficient here, but GLib
+doesn't have a convenient implementation.
+
+
+---
+
+
