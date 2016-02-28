@@ -1,5 +1,5 @@
-Bottom: 356133224e6a1201559e133ec870d9db5593359f
-Top:    7caf2333cac8b49c79f5d9829ec060262f02356b
+Bottom: f860a82f5601518dfdd758bdddbbc55cf818949d
+Top:    8f7fc643fedd2f9c0e8b86abba1aa1f459dadc6a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-25 12:51:36 +0000
 
@@ -9,7 +9,7 @@ Extend object3d code to support arc-segments in POLYAREA contours
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 1be45bd..4f8a69b 100644
+index 217888c..f1a4a67 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -23,6 +23,8 @@
