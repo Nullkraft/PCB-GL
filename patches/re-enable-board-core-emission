@@ -1,5 +1,5 @@
 Bottom: a8b1a117926f1e889a205ac22e45ef96f33e770e
-Top:    a8b1a117926f1e889a205ac22e45ef96f33e770e
+Top:    e9d1de139a6bbbe348249ef65d60d2604c7ceb33
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-28 03:48:08 +0000
 
@@ -8,4 +8,48 @@ Re-enable board core emission
 
 ---
 
-
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 48ddf29..9f55c74 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -152,14 +152,12 @@ step_do_export (HID_Attr_Val * options)
+   if (filename == NULL)
+     filename = "pcb-out.step";
+ 
+-//  board_outline_list = object3d_from_board_outline ();
+-  board_outline_list = NULL;
++  board_outline_list = object3d_from_board_outline ();
+ 
+   board_outline = board_outline_poly (true);
+   piece = board_outline;
+   do {
+     GList *mask_objects;
+-    GList *copper_layer_objects;
+     PLINE *curc;
+     PLINE *next;
+     PLINE **prev_next;
+@@ -199,11 +197,11 @@ step_do_export (HID_Attr_Val * options)
+         poly_DelContour (&curc);
+       }
+ 
+-//    mask_objects = object3d_from_soldermask_within_area (piece, TOP_SIDE);
+-//    board_outline_list = g_list_concat (board_outline_list, mask_objects);
++    mask_objects = object3d_from_soldermask_within_area (piece, TOP_SIDE);
++    board_outline_list = g_list_concat (board_outline_list, mask_objects);
+ 
+-//    mask_objects = object3d_from_soldermask_within_area (piece, BOTTOM_SIDE);
+-//    board_outline_list = g_list_concat (board_outline_list, mask_objects);
++    mask_objects = object3d_from_soldermask_within_area (piece, BOTTOM_SIDE);
++    board_outline_list = g_list_concat (board_outline_list, mask_objects);
+ 
+     copper_layer_objects = object3d_from_copper_layers_within_area (piece);
+     board_outline_list = g_list_concat (board_outline_list, copper_layer_objects);
+@@ -215,7 +213,7 @@ step_do_export (HID_Attr_Val * options)
+ //  object3d_list_export_to_step_assy (board_outline_list, temp_pcb_filename);
+   g_list_free_full (board_outline_list, (GDestroyNotify)destroy_object3d);
+ 
+-  if (0) {
++  {
+     GList *models = NULL;
+     struct assembly_model *model;
+     struct assembly_model_instance *instance;
