@@ -115,6 +115,7 @@ make_3d_metric_step_geometric_representation_context (step_file *file)
 static step_id
 lookup_or_create (step_file *file, GHashTable *hash, const char *entity, char *content)
 {
+#if 0
   step_id id;
 
   if ((id = GPOINTER_TO_INT (g_hash_table_lookup (hash, content))) != 0)
@@ -124,6 +125,7 @@ lookup_or_create (step_file *file, GHashTable *hash, const char *entity, char *c
     }
 
   g_hash_table_insert (hash, content, GINT_TO_POINTER (file->next_id));
+#endif
   fprintf (file->f, "#%i=%s(%s);\n", file->next_id, entity, content);
 
   return file->next_id++;
