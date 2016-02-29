@@ -1,5 +1,5 @@
-Bottom: 1e31e3e8d44f9c542c2945f31bddc88baebbb7fc
-Top:    e1cd3edbcfae81ce6728b610d8cc8dd1ade76458
+Bottom: 2206603b239f04c9bd2d462ba879f0b73bccf147
+Top:    d9abd7e6611566e47d901f56993ebdb72cab83ab
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-28 21:27:32 +0000
 
@@ -9,7 +9,7 @@ Work on trying to fix the STEP export to be correct (cf. Solidworks BREP mapping
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 849d29a..55dc926 100644
+index 3809cb0..aef3ded 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -300,7 +300,7 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
