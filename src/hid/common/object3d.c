@@ -26,7 +26,7 @@
 #define PERFECT_ROUND_CONTOURS
 
 #define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
-#undef REVERSED_PCB_CONTOURS
+//#undef REVERSED_PCB_CONTOURS
 
 #ifdef REVERSED_PCB_CONTOURS
 #define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
@@ -359,11 +359,11 @@ object3d_from_contours (POLYAREA *contours,
   double length;
   double nx, ny;
 
-#ifdef REVERSED_PCB_CONTOURS
-  invert = extrude_inverted ? false : true;
-#else
+//#ifdef REVERSED_PCB_CONTOURS
+//  invert = extrude_inverted ? false : true;
+//#else
   invert = extrude_inverted ? true : false;
-#endif
+//#endif
 
   if (contours == NULL)
     return NULL;
@@ -449,7 +449,7 @@ object3d_from_contours (POLYAREA *contours,
 
       object3d_add_face (object, faces[i]);
       /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
-      if (0) //invert)
+      if (!extrude_inverted) //invert)
         face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
       else
         face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
@@ -473,7 +473,7 @@ object3d_from_contours (POLYAREA *contours,
     object3d_add_face (object, faces[npoints + 1]);
 
     /* Pick the first bottom / top edge within the bottom / top face outer contour loop, and link it to the face */
-    if (0) //(invert)
+    if (!extrude_inverted) //1) //(invert)
       {
         face3d_add_contour (faces[npoints    ], make_contour3d (edges[0]));
         face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints])));
@@ -502,7 +502,7 @@ object3d_from_contours (POLYAREA *contours,
 
         /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
         /* XXX: Haven't properly thought through how (if) inverting works with multiple contours */
-      if (0) //invert)
+      if (!extrude_inverted)//1) //invert)
         {
           face3d_add_contour (faces[npoints    ], make_contour3d (edges[i]));
           face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints + i])));
@@ -544,7 +544,7 @@ object3d_from_contours (POLYAREA *contours,
       DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
       /* XXX: Do we need to differently with this for inverted contours? */
 
-      if (0) //(invert) // IS THIS CASE CORRECT IN ANY CASE - OR IS IT THE CRUX OF CREATING AN INVERTED CONTOUR??
+      if (!extrude_inverted) //1) //(invert) // IS THIS CASE CORRECT IN ANY CASE - OR IS IT THE CRUX OF CREATING AN INVERTED CONTOUR??
         {
           RDATA (edges[              i]) = faces[i];
           LDATA (edges[              i]) = faces[npoints];
@@ -587,7 +587,7 @@ object3d_from_contours (POLYAREA *contours,
        *     edges[2*npoints-3*npoints-1] are the upright edges, oriented from bottom to top
        */
 
-#if 0 //def REVERSED_PCB_CONTOURS  /* UNDERLYING DATA HAS CW CONTOURS FOR OUTER, CCW FOR INNER - E.g. PCB's polygons when translated into STEP coordinates */
+#if 1 //def REVERSED_PCB_CONTOURS  /* UNDERLYING DATA HAS CW CONTOURS FOR OUTER, CCW FOR INNER - E.g. PCB's polygons when translated into STEP coordinates */
       if (extrude_inverted)
         {
           /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
@@ -638,17 +638,18 @@ object3d_from_contours (POLYAREA *contours,
         }
 #endif
 
-      g_assert (LDATA (edges[              i]) == faces[i]);
-      g_assert (RDATA (edges[              i]) == faces[npoints]);
-      g_assert (LDATA (edges[1 * npoints + i]) == faces[npoints + 1]);
-      g_assert (RDATA (edges[1 * npoints + i]) == faces[i]);
-      g_assert (LDATA (edges[2 * npoints + i]) == faces[prev_i_around_ct]);
-      g_assert (RDATA (edges[2 * npoints + i]) == faces[i]);
-      g_assert (       ONEXT (edges[              i])  == edges[2 * npoints + i]);
-      g_assert (ONEXT (ONEXT (edges[              i])) == SYM (edges[prev_i_around_ct]));
-      g_assert (       ONEXT (edges[1 * npoints + i])  == SYM (edges[1 * npoints + prev_i_around_ct]));
-      g_assert (ONEXT (ONEXT (edges[1 * npoints + i])) == SYM (edges[2 * npoints + i]));
-
+#if 0
+      g_assert (RDATA (edges[              i]) == faces[i]);
+      g_assert (LDATA (edges[              i]) == faces[npoints]);
+      g_assert (RDATA (edges[1 * npoints + i]) == faces[npoints + 1]);
+      g_assert (LDATA (edges[1 * npoints + i]) == faces[i]);
+      g_assert (RDATA (edges[2 * npoints + i]) == faces[prev_i_around_ct]);
+      g_assert (LDATA (edges[2 * npoints + i]) == faces[i]);
+      g_assert (       ONEXT (edges[              i])  == SYM (edges[prev_i_around_ct]));
+      g_assert (ONEXT (ONEXT (edges[              i])) == edges[2 * npoints + i]);
+      g_assert (       ONEXT (edges[1 * npoints + i])  == SYM (edges[2 * npoints + i]));
+      g_assert (ONEXT (ONEXT (edges[1 * npoints + i])) == SYM (edges[1 * npoints + prev_i_around_ct]));
+#endif
 
       if (get_contour_edge_n_is_round (ct, offset_in_ct)) {
         double cx;
@@ -669,19 +670,21 @@ object3d_from_contours (POLYAREA *contours,
          *      CYLINDRICAL SURFACE ORIENTATION IS ALWAYS POINTING OUTWARD FROM ITS AXIS, SO
          *      ORIENTATION REVERSED IS USED FOR HOLES
          */
-        if ((ct->Flags.orient == PLF_INV) != extrude_inverted)
+        if ((ct->Flags.orient == PLF_INV) == extrude_inverted)
           face3d_set_surface_orientation_reversed (faces[i]);
 
         face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
                                   /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 
         /* DOES NOT DEPEND ON WHETHER WE INVERT THE CONTOUR.. THE EDGE TRAVERSAL IS REVERSED DURING EMISSION */
-#ifdef REVERSED_PCB_CONTOURS
-        normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
-#else
+//#ifdef REVERSED_PCB_CONTOURS
+        if (invert)
+          normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+//#else
+        else
         /* XXX: NOT SURE THIS IS CORRECT! */
-        normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
-#endif
+          normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+//#endif
 
         edge_info_set_round (UNDIR_DATA (edges[i]),
                              cx, cy, COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
@@ -716,21 +719,25 @@ object3d_from_contours (POLYAREA *contours,
       next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
       prev_i_around_ct = start_of_ct + (offset_in_ct + ct_npoints - 1) % ct_npoints;
 
-      g_assert (LDATA (edges[              i]) == faces[i]);
-      g_assert (RDATA (edges[              i]) == faces[npoints]);
-      g_assert (LDATA (edges[1 * npoints + i]) == faces[npoints + 1]);
-      g_assert (RDATA (edges[1 * npoints + i]) == faces[i]);
-      g_assert (LDATA (edges[2 * npoints + i]) == faces[prev_i_around_ct]);
-      g_assert (RDATA (edges[2 * npoints + i]) == faces[i]);
-      g_assert (              ONEXT (edges[              i])   ==      edges[2 * npoints + i]);
-      g_assert (       ONEXT (ONEXT (edges[              i]))  == SYM (edges[              prev_i_around_ct]));
+#if 0
+      g_assert (RDATA (edges[              i]) == faces[i]);
+      g_assert (LDATA (edges[              i]) == faces[npoints]);
+      g_assert (RDATA (edges[1 * npoints + i]) == faces[npoints + 1]);
+      g_assert (LDATA (edges[1 * npoints + i]) == faces[i]);
+      g_assert (RDATA (edges[2 * npoints + i]) == faces[prev_i_around_ct]);
+      g_assert (LDATA (edges[2 * npoints + i]) == faces[i]);
+
+      g_assert (              ONEXT (edges[              i])   == SYM (edges[prev_i_around_ct]));
+      g_assert (       ONEXT (ONEXT (edges[              i]))  == edges[2 * npoints + i]);
       g_assert (ONEXT (ONEXT (ONEXT (edges[              i]))) ==      edges[              i]);
-      g_assert (              ONEXT (edges[1 * npoints + i])   == SYM (edges[1 * npoints + prev_i_around_ct]));
-      g_assert (       ONEXT (ONEXT (edges[1 * npoints + i]))  == SYM (edges[2 * npoints + i]));
+      g_assert (              ONEXT (edges[1 * npoints + i])   == SYM (edges[2 * npoints + i]));
+      g_assert (       ONEXT (ONEXT (edges[1 * npoints + i]))  == SYM (edges[1 * npoints + prev_i_around_ct]));
       g_assert (ONEXT (ONEXT (ONEXT (edges[1 * npoints + i]))) ==      edges[1 * npoints + i]);
-      g_assert (LNEXT (edges[              i]) ==      edges[2 * npoints + next_i_around_ct]);
-      g_assert (LNEXT (edges[1 * npoints + i]) ==      edges[1 * npoints + next_i_around_ct]);
-      g_assert (LNEXT (edges[2 * npoints + i]) == SYM (edges[1 * npoints + prev_i_around_ct]));
+
+      g_assert (LNEXT (edges[              i]) ==      edges[0 * npoints + next_i_around_ct]);
+      g_assert (LNEXT (edges[1 * npoints + i]) == SYM (edges[2 * npoints + next_i_around_ct]));
+      g_assert (LNEXT (edges[2 * npoints + i]) ==      edges[1 * npoints + i]);
+#endif
     }
 
 
@@ -1054,8 +1061,8 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
 
   objects = object3d_from_contours (info.poly,
 #ifdef REVERSED_PCB_CONTOURS
-                                    (side == TOP_SIDE) ? 0                   - HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
-                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS - HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS,                       /* Top */
+                                    (side == TOP_SIDE) ? 0                   + HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
+                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS + HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS,                       /* Top */
 #else
                                     (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS                       : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS + HACK_MASK_THICKNESS, /* Bottom */
                                     (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS, /* Top */
@@ -1987,7 +1994,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 #endif
     }
 
-  if (0) //drill_m_polyarea != NULL) /* Drill holes */
+  if (drill_m_polyarea != NULL) /* Drill holes */
     {
       Coord top_depth;
       Coord bottom_depth;

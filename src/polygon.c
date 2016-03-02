@@ -619,7 +619,7 @@ CirclePoly (Coord x, Coord y, Coord radius, char *name)
   if ((contour = poly_NewContour (poly_CreateNodeArcApproximation (v, x, y, radius))) == NULL)
     return NULL;
   frac_circle2 (contour, x, y, v, 1);
-  contour->is_round = false;// TRUE;
+  contour->is_round = TRUE;
   contour->cx = x;
   contour->cy = y;
   contour->radius = radius;
