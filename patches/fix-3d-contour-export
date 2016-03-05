@@ -1,5 +1,5 @@
 Bottom: 00842c93a8488fc7f3a8ad793f88ae8f65d63fe9
-Top:    18234d417c39dc1d3bd2b9bb94b574c6ac443d9f
+Top:    1f00f6ee1996539a85f6750c74d43b53408b42fa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 12:41:31 +0000
 
@@ -9,7 +9,7 @@ Fix 3D contour export
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 5e54508..4b81334 100644
+index 5e54508..e183993 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -25,7 +25,7 @@
@@ -25,7 +25,7 @@ index 5e54508..4b81334 100644
  
  #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
  #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
-+#define HACK_PLATED_BARREL_THICKNESS MM_TO_COORD(0.08) //2
++#define HACK_PLATED_BARREL_THICKNESS MM_TO_COORD(0.08)
  #define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
  #define HACK_SILK_THICKNESS MM_TO_COORD(0.01)
  
