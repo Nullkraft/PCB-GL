@@ -1,5 +1,5 @@
 Bottom: 3f1ea28edad4e91d1d0f6c98e9a729644929d0dd
-Top:    d069d3029addf3be3c819c44ed7acb499fccf6c0
+Top:    254272370ce8472deba87c5f5bbc7cdfa4ab9bbc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:27 +0000
 
@@ -11,7 +11,7 @@ This will be useful when extruding voids within objects during 3D export.
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 21427f7..d3c8883 100644
+index 21427f7..5f221ba 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -327,7 +327,8 @@ object3d_from_contours (const POLYAREA *contours,
@@ -243,39 +243,62 @@ index 21427f7..d3c8883 100644
            /* Update which contour we're looking at */
            if (offset_in_ct == ct_npoints)
              {
-@@ -684,6 +837,13 @@ object3d_from_contours (const POLYAREA *contours,
+@@ -681,26 +834,37 @@ object3d_from_contours (const POLYAREA *contours,
+               ct_npoints = get_contour_npoints (ct);
+             }
+ 
++=======
            next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
            prev_i_around_ct = start_of_ct + (offset_in_ct + ct_npoints - 1) % ct_npoints;
  
-+=======
-+      next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
-+      prev_i_around_ct = start_of_ct + (offset_in_ct + ct_npoints - 1) % ct_npoints;
+-          g_assert (RDATA (edges[              i]) == faces[i]);
+-          g_assert (LDATA (edges[              i]) == faces[npoints]);
+-          g_assert (RDATA (edges[1 * npoints + i]) == faces[npoints + 1]);
+-          g_assert (LDATA (edges[1 * npoints + i]) == faces[i]);
+-          g_assert (RDATA (edges[2 * npoints + i]) == faces[prev_i_around_ct]);
+-          g_assert (LDATA (edges[2 * npoints + i]) == faces[i]);
+-
+-          g_assert (              ONEXT (edges[              i])   == SYM (edges[prev_i_around_ct]));
+-          g_assert (       ONEXT (ONEXT (edges[              i]))  == edges[2 * npoints + i]);
+-          g_assert (ONEXT (ONEXT (ONEXT (edges[              i]))) ==      edges[              i]);
+-          g_assert (              ONEXT (edges[1 * npoints + i])   == SYM (edges[2 * npoints + i]));
+-          g_assert (       ONEXT (ONEXT (edges[1 * npoints + i]))  == SYM (edges[1 * npoints + prev_i_around_ct]));
+-          g_assert (ONEXT (ONEXT (ONEXT (edges[1 * npoints + i]))) ==      edges[1 * npoints + i]);
+-
+-          g_assert (LNEXT (edges[              i]) ==      edges[0 * npoints + next_i_around_ct]);
+-          g_assert (LNEXT (edges[1 * npoints + i]) == SYM (edges[2 * npoints + next_i_around_ct]));
+-          g_assert (LNEXT (edges[2 * npoints + i]) ==      edges[1 * npoints + i]);
++          if (!extrude_inverted)
++            {
++              g_assert (RDATA (edges[              i]) == faces[i]);
++              g_assert (LDATA (edges[              i]) == faces[npoints]);
++              g_assert (RDATA (edges[1 * npoints + i]) == faces[npoints + 1]);
++              g_assert (LDATA (edges[1 * npoints + i]) == faces[i]);
++              g_assert (RDATA (edges[2 * npoints + i]) == faces[prev_i_around_ct]);
++              g_assert (LDATA (edges[2 * npoints + i]) == faces[i]);
 +
-+      if (!extrude_inverted)
-+        {
-+>>>>>>> patched
-           g_assert (RDATA (edges[              i]) == faces[i]);
-           g_assert (LDATA (edges[              i]) == faces[npoints]);
-           g_assert (RDATA (edges[1 * npoints + i]) == faces[npoints + 1]);
-@@ -702,6 +862,17 @@ object3d_from_contours (const POLYAREA *contours,
-           g_assert (LNEXT (edges[1 * npoints + i]) == SYM (edges[2 * npoints + next_i_around_ct]));
-           g_assert (LNEXT (edges[2 * npoints + i]) ==      edges[1 * npoints + i]);
++              g_assert (              ONEXT (edges[              i])   == SYM (edges[prev_i_around_ct]));
++              g_assert (       ONEXT (ONEXT (edges[              i]))  == edges[2 * npoints + i]);
++              g_assert (ONEXT (ONEXT (ONEXT (edges[              i]))) ==      edges[              i]);
++              g_assert (              ONEXT (edges[1 * npoints + i])   == SYM (edges[2 * npoints + i]));
++              g_assert (       ONEXT (ONEXT (edges[1 * npoints + i]))  == SYM (edges[1 * npoints + prev_i_around_ct]));
++              g_assert (ONEXT (ONEXT (ONEXT (edges[1 * npoints + i]))) ==      edges[1 * npoints + i]);
++
++              g_assert (LNEXT (edges[              i]) ==      edges[0 * npoints + next_i_around_ct]);
++              g_assert (LNEXT (edges[1 * npoints + i]) == SYM (edges[2 * npoints + next_i_around_ct]));
++              g_assert (LNEXT (edges[2 * npoints + i]) ==      edges[1 * npoints + i]);
++            }
++          else
++            {
++              /* XXX: No debug checks for this yet. LDATA and RDATA should be swapped from the
++               *      above case, and ONEXT order should be reversed. It works, so have not
++               *      written in the debug checks.
++               */
++            }
          }
-+<<<<<<< current
-+=======
-+      else
-+        {
-+          /* XXX: No debug checks for this yet. LDATA and RDATA should be swapped from the
-+           *      above case, and ONEXT order should be reversed. It works, so have not
-+           *      written in the debug checks.
-+           */
-+        }
-+    }
-+>>>>>>> patched
  #endif
  
-       objects = g_list_append (objects, object);
-@@ -740,7 +911,8 @@ object3d_from_board_outline (void)
+@@ -740,7 +904,8 @@ object3d_from_board_outline (void)
                                      -HACK_BOARD_THICKNESS / 2, /* Top */
  #endif
                                      board_appearance,
@@ -285,7 +308,7 @@ index 21427f7..d3c8883 100644
  
    destroy_appearance (board_appearance);
    destroy_appearance (top_bot_appearance);
-@@ -1004,7 +1176,8 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -1004,7 +1169,8 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
                                      (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS, /* Top */
  #endif
                                      mask_appearance,
@@ -295,7 +318,7 @@ index 21427f7..d3c8883 100644
  
    destroy_appearance (mask_appearance);
  
-@@ -1302,7 +1475,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1302,7 +1468,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                -depth - HACK_COPPER_THICKNESS, /* Top */
  #endif
                                copper_appearance,
