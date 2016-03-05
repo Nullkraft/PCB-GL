@@ -2422,6 +2422,8 @@ pv_outline_callback (const BoxType * b, void *cl)
     }
   else
     {
+      /* NOT FROM ELEMENT, DROP HOLE */
+      return 1;
       feature_name = STRDUP(pv->Name);
     }
 
