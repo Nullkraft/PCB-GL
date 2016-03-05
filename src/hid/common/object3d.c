@@ -465,6 +465,7 @@ object3d_from_board_outline (void)
 #endif
           edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
         }
+    }
 
     if (1) {
       /* Cylinder centers on 45x45mm, stitch vertex is at 40x45mm. Radius is thus 5mm */
