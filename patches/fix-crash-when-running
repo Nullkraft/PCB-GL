@@ -1,0 +1,24 @@
+Bottom: 83da83de732ae815fd7b698499d506ba77d842d1
+Top:    62334c9976f257e1caad9dda66e21545e2f76217
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 14:21:52 +0000
+
+Fix crash when running exporters only (needs to be rolled into debug patch for polygon parentage)
+
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 316cb55..f6bf546 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1613,6 +1613,9 @@ ghid_populate_polygon_parentage (PolygonType *polygon)
+ void
+ ghid_notify_polygon_changed (PolygonType *polygon)
+ {
++  if (ghidgui == NULL)
++    return;
++
+   if (ghidgui->debugged_polygon == polygon) {
+     ghid_populate_polygon_parentage (polygon);
+   }
