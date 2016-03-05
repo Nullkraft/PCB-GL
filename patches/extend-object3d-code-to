@@ -1,5 +1,5 @@
-Bottom: eb232ae54c99e18c87fc1a3d6d18b0a9266a449e
-Top:    45f603b1ec7c7f13219406194d1d5b87cd00d3c0
+Bottom: 8588b2e27bc7be21f638e87349e32eae55f09348
+Top:    b5a5975edfc9ab1f82ae88d55989dc27a66663ad
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 11:16:11 +0000
 
@@ -237,7 +237,7 @@ index 47499ce..52182c0 100644
    board_outline = board_outline_poly (true);
    piece = board_outline;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index ca4dd28..3c3f1a6 100644
+index 296841f..493618a 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -39,7 +39,7 @@
@@ -270,7 +270,7 @@ index ca4dd28..3c3f1a6 100644
  #ifdef DEBUG
  #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
  #else
-@@ -2997,14 +2997,20 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2998,14 +2998,20 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  
    *res = NULL;
  
