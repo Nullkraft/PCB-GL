@@ -606,7 +606,7 @@ object3d_from_board_outline (void)
                                     top_bot_appearance);
 #else
   objects = object3d_from_contours (board_outline,
-                                     HACK_BOARD_THICKNESS / 2, /* Bottom *//
+                                     HACK_BOARD_THICKNESS / 2, /* Bottom */
                                     -HACK_BOARD_THICKNESS / 2, /* Top */
                                     board_appearance,
                                     top_bot_appearance);
