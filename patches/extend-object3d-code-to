@@ -1,5 +1,5 @@
-Bottom: 325ecce059a42c2c0c0b1f066f415cba0bf9d874
-Top:    db03ccf60c2728e7de63e51d9329bfe19ea544c0
+Bottom: 748417186433c05a057ad0f0be8897d08922ce3c
+Top:    9131c40d7e084acf1f70bb2ba8ba5199871de514
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 14:34:02 +0000
 
@@ -8,7 +8,7 @@ Extend object3d code to support arc-segments in POLYAREA contours
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 393467b..7d4b3c6 100644
+index 489004b..2eb8ea5 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -23,6 +23,8 @@
@@ -20,7 +20,7 @@ index 393467b..7d4b3c6 100644
  //#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
  #undef REVERSED_PCB_CONTOURS
  
-@@ -200,9 +202,11 @@ object3d_draw_debug (void)
+@@ -201,9 +203,11 @@ object3d_draw_debug (void)
  static int
  get_contour_npoints (PLINE *contour)
  {
@@ -32,7 +32,7 @@ index 393467b..7d4b3c6 100644
  
    return contour->Count;
  }
-@@ -212,6 +216,7 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
+@@ -213,6 +217,7 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
  {
    VNODE *vertex = &contour->head;
  
@@ -40,7 +40,7 @@ index 393467b..7d4b3c6 100644
    if (contour->is_round)
      {
        /* HACK SPECIAL CASE FOR ROUND CONTOURS */
-@@ -225,6 +230,7 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
+@@ -226,6 +231,7 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
  
        return;
      }
@@ -48,7 +48,7 @@ index 393467b..7d4b3c6 100644
  
    while (n > 0) {
      vertex = vertex->next; /* The VNODE structure is circularly linked, so wrapping is OK */
-@@ -235,6 +241,84 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
+@@ -236,6 +242,84 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
    *y = COORD_TO_STEP_Y (PCB, vertex->point[1]);
  }
  
@@ -133,7 +133,7 @@ index 393467b..7d4b3c6 100644
  GList *
  object3d_from_contours (const POLYAREA *contours,
                          double zbot,
-@@ -455,31 +539,40 @@ object3d_from_contours (const POLYAREA *contours,
+@@ -456,31 +540,40 @@ object3d_from_contours (const POLYAREA *contours,
        splice (SYM(edges[2 * npoints + i]),  edges[npoints + i]);
  #endif
  
@@ -191,7 +191,7 @@ index 393467b..7d4b3c6 100644
        }
  
      }
-@@ -1436,19 +1529,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1439,19 +1532,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
        {
          fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
  
