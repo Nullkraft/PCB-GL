@@ -368,30 +368,32 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
 
   for (object_iter = objects, part = 1;
        object_iter != NULL;
-       object_iter = g_list_next (object_iter), part++) {
+       object_iter = g_list_next (object_iter), part++)
+    {
 
-    object3d *object = object_iter->data;
-    GString *part_id;
-    GString *part_name;
-    GString *body_name;
+      object3d *object = object_iter->data;
+      GString *part_id;
+      GString *part_name;
+      GString *body_name;
 
-    part_id   = g_string_new ("board");
-    part_name = g_string_new ("PCB board");
-    body_name = g_string_new ("PCB board body");
+      part_id   = g_string_new ("board");
+      part_name = g_string_new ("PCB board");
+      body_name = g_string_new ("PCB board body");
 
-    if (multiple_parts) {
-      g_string_append_printf (part_id, "-%i", part);
-      g_string_append_printf (part_name, " - %i", part);
-      g_string_append_printf (body_name, " - %i", part);
+      if (multiple_parts)
+        {
+          g_string_append_printf (part_id, "-%i", part);
+          g_string_append_printf (part_name, " - %i", part);
+          g_string_append_printf (body_name, " - %i", part);
+        }
+
+      object3d_to_step_fragment (step, object, part_id->str, part_name->str, "PCB model", body_name->str,
+                                 &comp_shape_definition_representation, &comp_placement_axis);
+
+      g_string_free (part_id, true);
+      g_string_free (part_name, true);
+      g_string_free (body_name, true);
     }
-
-    object3d_to_step_fragment (step, object, part_id->str, part_name->str, "PCB model", body_name->str,
-                               &comp_shape_definition_representation, &comp_placement_axis);
-
-    g_string_free (part_id, true);
-    g_string_free (part_name, true);
-    g_string_free (body_name, true);
-  }
 
   finish_ap214_file (step);
 
@@ -438,17 +440,20 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
     // assembly and component.  There are two distinct ways to relate
     // the geometry.
     //
-    if (useMappedItem) {
-	createGeomAsmMI(
-	    asm_sdr->used_representation(), asmAxis,
-	    comp_sdr->used_representation(), compAxis, 
-	    nauo);
-    } else {
-	createGeomAsmCDSR(
-	    asm_sdr->used_representation(), asmAxis,
-	    comp_sdr->used_representation(), compAxis, 
-	    nauo);
-    }
+    if (useMappedItem)
+      {
+          createGeomAsmMI(
+              asm_sdr->used_representation(), asmAxis,
+              comp_sdr->used_representation(), compAxis, 
+              nauo);
+      }
+    else
+      {
+          createGeomAsmCDSR(
+              asm_sdr->used_representation(), asmAxis,
+              comp_sdr->used_representation(), compAxis, 
+              nauo);
+      }
 
 
   // Given two product_definitions this creates an assembly between them.
