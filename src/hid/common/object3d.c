@@ -1201,7 +1201,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
       r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
 #endif
 
-#if 0
+#if 1
       if (group == top_group ||
           group == bottom_group)
         {
