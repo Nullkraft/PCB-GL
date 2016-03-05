@@ -149,7 +149,7 @@ step_vertex_point (step_file *file, char *name, step_id pnt)
 step_id
 step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_end, step_id edge_geometry, bool same_sense)
 {
-  fprintf (file->f, "#%i = EDGE_CURVE ( '%s', #%i, #%i, #%i, %s ) ;\n",
+  fprintf (file->f, "\n#%i = EDGE_CURVE ( '%s', #%i, #%i, #%i, %s ) ; ",
                     file->next_id, name, edge_start, edge_end, edge_geometry, step_bool (same_sense));
   return file->next_id++;
 }
@@ -157,7 +157,7 @@ step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_e
 step_id
 step_oriented_edge (step_file *file, char *name, step_id edge_element, bool orientation)
 {
-  fprintf (file->f, "#%i = ORIENTED_EDGE ( '%s', *, *, #%i, %s ) ;\n",
+  fprintf (file->f, "#%i = ORIENTED_EDGE ( '%s', *, *, #%i, %s ) ; ",
                     file->next_id, name, edge_element, step_bool (orientation));
   return file->next_id++;
 }
@@ -176,7 +176,7 @@ step_edge_loop (step_file *file, char *name, step_id_list edge_list)
 step_id
 step_face_bound (step_file *file, char *name, step_id bound, bool orientation)
 {
-  fprintf (file->f, "#%i = FACE_BOUND ( '%s', #%i, %s ) ;\n",
+  fprintf (file->f, "#%i = FACE_BOUND ( '%s', #%i, %s ) ; ",
                     file->next_id, name, bound, step_bool (orientation));
 
   return file->next_id++;
@@ -196,7 +196,7 @@ step_advanced_face (step_file *file, char *name, step_id_list bounds, step_id fa
 {
   fprintf (file->f, "#%i = ADVANCED_FACE ( '%s', ", file->next_id, name);
   fprint_id_list (file->f, bounds);
-  fprintf (file->f, ", #%i, %s ) ; ", face_geometry, step_bool (same_sense));
+  fprintf (file->f, ", #%i, %s ) ;\n", face_geometry, step_bool (same_sense));
   destroy_step_id_list (bounds);
 
   return file->next_id++;
