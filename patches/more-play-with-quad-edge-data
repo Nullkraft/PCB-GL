@@ -1,5 +1,5 @@
 Bottom: 1cd9e373c3b15a1db309055bc384986bfd5f6ca3
-Top:    68d6bd5bdfbc4af52d29226ddb8f3418d39fd421
+Top:    fdb809eef23dd8c98d8d87797a5586a8efe8ff9c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -146,7 +146,7 @@ index 22e783f..f54468c 100644
 +void edge_info_set_stitch (edge_info *info);
  void destroy_edge_info (edge_info *info);
 diff --git a/src/hid/common/face3d.c b/src/hid/common/face3d.c
-index 1a8c8c3..0df8f23 100644
+index 1a8c8c3..8791abf 100644
 --- a/src/hid/common/face3d.c
 +++ b/src/hid/common/face3d.c
 @@ -1,6 +1,9 @@
@@ -183,7 +183,7 @@ index 1a8c8c3..0df8f23 100644
 +}
 +
 +void
-+face3d_set_normal (face3d *face, float nx, float ny, float nz)
++face3d_set_normal (face3d *face, double nx, double ny, double nz)
 +{
 +  face->nx = nx;
 +  face->ny = ny;
@@ -191,7 +191,7 @@ index 1a8c8c3..0df8f23 100644
 +}
 +
 +void
-+face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius)
++face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius)
 +{
 +  face->is_cylindrical = true;
 +  face->cx = cx;
@@ -203,7 +203,7 @@ index 1a8c8c3..0df8f23 100644
 +  face->radius = radius;
  }
 diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
-index 42154df..8000e6e 100644
+index 42154df..842d251 100644
 --- a/src/hid/common/face3d.h
 +++ b/src/hid/common/face3d.h
 @@ -1,8 +1,25 @@
@@ -213,9 +213,9 @@ index 42154df..8000e6e 100644
 +
 +  /* For cylindrical surfaces */
 +  bool is_cylindrical;
-+  float cx, cy, cz; /* A point on the axis */
-+  float ax, ay, az; /* Direction of the axis */
-+  float radius;
++  double cx, cy, cz; /* A point on the axis */
++  double ax, ay, az; /* Direction of the axis */
++  double radius;
 +
 +  appearance *appear;
 +
@@ -231,8 +231,8 @@ index 42154df..8000e6e 100644
 -void face3d_add_contour (face3d *face, edge_ref contour);
 +void face3d_add_contour (face3d *face, contour3d *contour);
 +void face3d_set_appearance (face3d *face, appearance *appear);
-+void face3d_set_normal (face3d *face, float nx, float ny, float nz);
-+void face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius);
++void face3d_set_normal (face3d *face, double nx, double ny, double nz);
++void face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 index 3168d68..bca8032 100644
 --- a/src/hid/common/object3d.c
