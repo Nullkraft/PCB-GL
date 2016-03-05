@@ -1,0 +1,22 @@
+Bottom: 8dadf9feb934a5fa6a7ee9a91d8ed9f2949c436f
+Top:    91c6c7f4eeb156f05c173d357af069df7f62ad1e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 21:56:00 +0000
+
+Refresh of disable-small-edge-epsilon
+
+---
+
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index ee8938b..5781a61 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -231,7 +231,7 @@ object3d_to_step_body_fragment (step_file *step,
+           dir_y = dv->y - ov->y;
+           dir_z = dv->z - ov->z;
+ 
+-#if 1
++#if 0
+           /* XXX: This avoids the test file step_outline_test.pcb failing to display properly in freecad when coordinates are slightly rounded */
+           if (dir_x < EPSILON && -dir_x < EPSILON &&
+               dir_y < EPSILON && -dir_y < EPSILON &&
