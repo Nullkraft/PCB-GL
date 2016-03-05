@@ -1,7 +1,7 @@
-Bottom: 435e11d6878a2b9cb8464506931f0571142f7c61
+Bottom: b760cdbc5238510efc54a18d33ed6a293d8afe73
 Top:    f0efb6f2fceaa5e2f04ae8f288cf819cf54af3e8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 16:26:15 +0000
+Date:   2016-03-05 16:31:25 +0000
 
 Extend board export
 
@@ -718,7 +718,7 @@ index e8c26e2..2ffdb54 100644
  GList *object3d_from_board_outline (void);
 +GList *object3d_from_soldermask_within_area (POLYAREA *area, int side);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 6879a98..aa2ee46 100644
+index 8748f51..aa2ee46 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -5,6 +5,8 @@
@@ -790,15 +790,6 @@ index 6879a98..aa2ee46 100644
  #define FWD 1
  #define REV 2
  #define ORIENTED_EDGE_IDENTIFIER(e) (((edge_info *)UNDIR_DATA (e))->edge_identifier + ((e & 2) ? REV : FWD))
-@@ -174,7 +188,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
-       face->surface_identifier =
-         step_plane (step, "NONE",
-                     step_axis2_placement_3d (step, "NONE",
--                                             step_cartesian_point (step, "NONE", ov->x,  /* A point on the plane. Defines 0,0 of the plane's parameterised coords. */ 
-+                                             step_cartesian_point (step, "NONE", ov->x,  /* A point on the plane. Defines 0,0 of the plane's parameterised coords. */
-                                                                                  ov->y,      /* Set this to the origin vertex of the first edge */
-                                                                                  ov->z),     /* this contour links to in the quad edge structure. */
-                                                    step_direction (step, "NONE", face->nx, face->ny, face->nz), /* An axis direction normal to the the face - Gives z-axis */
 @@ -292,7 +306,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
    brep_style_identifier = step_styled_item (step, "NONE", presentation_style_assignments_from_appearance (step, object->appear), brep_identifier);
    step_presentation_layer_assignment (step, "1", "Layer 1", make_step_id_list (1, brep_style_identifier));
