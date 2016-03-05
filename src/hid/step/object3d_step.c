@@ -146,7 +146,7 @@ object3d_export_to_step (object3d *object, const char *filename)
       face->surface_identifier =
         step_plane (step, "NONE",
                     step_axis2_placement_3d (step, "NONE",
-                                             step_cartesian_point (step, "NONE", ov->x,  /* A point on the plane. Defines 0,0 of the plane's parameterised coords. */ 
+                                             step_cartesian_point (step, "NONE", ov->x,  /* A point on the plane. Defines 0,0 of the plane's parameterised coords. */
                                                                                  ov->y,      /* Set this to the origin vertex of the first edge */
                                                                                  ov->z),     /* this contour links to in the quad edge structure. */
                                                    step_direction (step, "NONE", face->nx, face->ny, face->nz), /* An axis direction normal to the the face - Gives z-axis */
