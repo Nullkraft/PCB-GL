@@ -1,5 +1,5 @@
-Bottom: 0c7f4f7a347ac415ad958805569cccdc0c2c3064
-Top:    a492fcbf992611399985d2d8cab042eea0817174
+Bottom: e8539cb6d56fbbd5db2ccd39e02a727fbddafb40
+Top:    d7c9b2f44db1a0aec18293d98f31490af8320f6d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:28 +0000
 
@@ -9,10 +9,10 @@ Try consolidating geometry in step creation
 ---
 
 diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
-index d64e062..7c9605d 100644
+index 7cf11a4..30add5e 100644
 --- a/src/hid/step/step_writer.c
 +++ b/src/hid/step/step_writer.c
-@@ -69,12 +69,27 @@ step_file
+@@ -71,12 +71,27 @@ step_file
    file->f = f;
    file->next_id = 1;
  
@@ -40,7 +40,7 @@ index d64e062..7c9605d 100644
    g_free (file);
  }
  
-@@ -97,6 +112,23 @@ make_3d_metric_step_geometric_representation_context (step_file *file)
+@@ -99,6 +114,23 @@ make_3d_metric_step_geometric_representation_context (step_file *file)
    return file->next_id++;
  }
  
@@ -64,7 +64,7 @@ index d64e062..7c9605d 100644
  step_id
  step_application_context (step_file *file, char *application)
  {
-@@ -189,25 +221,22 @@ step_product_definition_shape (step_file *file, char *name, char *description, s
+@@ -191,25 +223,22 @@ step_product_definition_shape (step_file *file, char *name, char *description, s
  step_id
  step_cartesian_point (step_file *file, char *name, double x, double y, double z)
  {
@@ -96,7 +96,7 @@ index d64e062..7c9605d 100644
  }
  
  step_id
-@@ -221,25 +250,22 @@ step_plane (step_file *file, char *name, step_id position)
+@@ -223,25 +252,22 @@ step_plane (step_file *file, char *name, step_id position)
  step_id
  step_cylindrical_surface (step_file *file, char *name, step_id position, double radius)
  {
@@ -128,7 +128,7 @@ index d64e062..7c9605d 100644
  }
  
  step_id
-@@ -355,9 +381,8 @@ step_shape_definition_representation (step_file *file, step_id definition, step_
+@@ -357,9 +383,8 @@ step_shape_definition_representation (step_file *file, step_id definition, step_
  step_id
  step_colour_rgb (step_file *file, char *name, double red, double green, double blue)
  {
