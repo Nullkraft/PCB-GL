@@ -581,37 +581,43 @@ object3d_export_to_step (object3d *object, const char *filename)
             {
               fprintf (f, "#%i, ", ORIENTED_EDGE_IDENTIFIER(edge)); /* XXX: IS ORIENTATION GOING TO BE CORRECT?? */
             }
-        }
+        fprintf (f, "#%i)", ORIENTED_EDGE_IDENTIFIER(edge)); /* XXX: IS ORIENTATION GOING TO BE CORRECT?? */
+        fprintf (f, " ) ; ");
 
-        fprintf (f, "#%i = ADVANCED_FACE ( 'NONE', ", next_step_identifier);
-        fprintf (f, "(");
-        for (contour_iter = face->contours;
-             contour_iter != NULL && g_list_next (contour_iter) != NULL;
-             contour_iter = g_list_next (contour_iter))
-          {
-            fprintf (f, "#%i, ", ((contour3d *)contour_iter->data)->face_bound_identifier);
-          }
-        fprintf (f, "#%i)", ((contour3d *)contour_iter->data)->face_bound_identifier);
-        fprintf (f, ", #%i, %s ) ;\n", face->surface_identifier, face->surface_orientation_reversed ? ".F." : ".T.");
-        face->face_identifier = next_step_identifier;
-        next_step_identifier = next_step_identifier + 1;
-
-        if (face->appear != NULL)
-          {
-            /* Face styles */
-            fprintf (f, "#%i = COLOUR_RGB ( '', %f, %f, %f ) ;\n",             next_step_identifier, face->appear->r, face->appear->g, face->appear->b);
-            fprintf (f, "#%i = FILL_AREA_STYLE_COLOUR ( '', #%i ) ;\n",        next_step_identifier + 1, next_step_identifier);
-            fprintf (f, "#%i = FILL_AREA_STYLE ('', ( #%i ) ) ;\n",            next_step_identifier + 2, next_step_identifier + 1);
-            fprintf (f, "#%i = SURFACE_STYLE_FILL_AREA ( #%i ) ;\n",           next_step_identifier + 3, next_step_identifier + 2);
-            fprintf (f, "#%i = SURFACE_SIDE_STYLE ('', ( #%i ) ) ;\n",         next_step_identifier + 4, next_step_identifier + 3);
-            fprintf (f, "#%i = SURFACE_STYLE_USAGE ( .BOTH. , #%i ) ;\n",      next_step_identifier + 5, next_step_identifier + 4);
-            fprintf (f, "#%i = PRESENTATION_STYLE_ASSIGNMENT ( ( #%i ) ) ;\n", next_step_identifier + 6, next_step_identifier + 5);
-            fprintf (f, "#%i = OVER_RIDING_STYLED_ITEM ( 'NONE', ( #%i ), #%i, #%i ) ;\n",
-                     next_step_identifier + 7, next_step_identifier + 6, face->face_identifier, brep_style_identifier);
-            styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (next_step_identifier + 7));
-            next_step_identifier = next_step_identifier + 8;
-          }
+        fprintf (f, "#%i = FACE_%sBOUND ( 'NONE', #%i, .T. ) ;\n", next_step_identifier + 1, outer_contour ? "OUTER_" : "", next_step_identifier);
+        contour->face_bound_identifier = next_step_identifier + 1;
+        next_step_identifier = next_step_identifier + 2;
       }
+
+    fprintf (f, "#%i = ADVANCED_FACE ( 'NONE', ", next_step_identifier);
+    fprintf (f, "(");
+    for (contour_iter = face->contours;
+         contour_iter != NULL && g_list_next (contour_iter) != NULL;
+         contour_iter = g_list_next (contour_iter))
+      {
+        fprintf (f, "#%i, ", ((contour3d *)contour_iter->data)->face_bound_identifier);
+      }
+    fprintf (f, "#%i)", ((contour3d *)contour_iter->data)->face_bound_identifier);
+    fprintf (f, ", #%i, %s ) ;\n", face->surface_identifier, face->surface_orientation_reversed ? ".F." : ".T.");
+    face->face_identifier = next_step_identifier;
+    next_step_identifier = next_step_identifier + 1;
+
+    if (face->appear != NULL)
+      {
+        /* Face styles */
+        fprintf (f, "#%i = COLOUR_RGB ( '', %f, %f, %f ) ;\n",             next_step_identifier, face->appear->r, face->appear->g, face->appear->b);
+        fprintf (f, "#%i = FILL_AREA_STYLE_COLOUR ( '', #%i ) ;\n",        next_step_identifier + 1, next_step_identifier);
+        fprintf (f, "#%i = FILL_AREA_STYLE ('', ( #%i ) ) ;\n",            next_step_identifier + 2, next_step_identifier + 1);
+        fprintf (f, "#%i = SURFACE_STYLE_FILL_AREA ( #%i ) ;\n",           next_step_identifier + 3, next_step_identifier + 2);
+        fprintf (f, "#%i = SURFACE_SIDE_STYLE ('', ( #%i ) ) ;\n",         next_step_identifier + 4, next_step_identifier + 3);
+        fprintf (f, "#%i = SURFACE_STYLE_USAGE ( .BOTH. , #%i ) ;\n",      next_step_identifier + 5, next_step_identifier + 4);
+        fprintf (f, "#%i = PRESENTATION_STYLE_ASSIGNMENT ( ( #%i ) ) ;\n", next_step_identifier + 6, next_step_identifier + 5);
+        fprintf (f, "#%i = OVER_RIDING_STYLED_ITEM ( 'NONE', ( #%i ), #%i, #%i ) ;\n",
+                 next_step_identifier + 7, next_step_identifier + 6, face->face_identifier, brep_style_identifier);
+        styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (next_step_identifier + 7));
+        next_step_identifier = next_step_identifier + 8;
+      }
+  }
 
   /* Closed shell which bounds the brep solid */
   pcb_shell_identifier = next_step_identifier;
