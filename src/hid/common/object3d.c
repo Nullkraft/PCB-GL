@@ -304,14 +304,14 @@ object3d_from_board_outline (void)
               ct_npoints = get_contour_npoints (ct);
             }
 
-        get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
+          get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
 
-        vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_STEP_Z (PCB, HACK_BOARD_THICKNESS)); /* Bottom */
-        vertices[npoints + i] = make_vertex3d (x1, y1, 0);                                            /* Top */
+          vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_STEP_Z (PCB, HACK_BOARD_THICKNESS)); /* Bottom */
+          vertices[npoints + i] = make_vertex3d (x1, y1, 0);                                            /* Top */
 
-        object3d_add_vertex (object, vertices[i]);
-        object3d_add_vertex (object, vertices[npoints + i]);
-      }
+          object3d_add_vertex (object, vertices[i]);
+          object3d_add_vertex (object, vertices[npoints + i]);
+        }
 
       /* Define the edges */
       for (i = 0; i < 3 * npoints; i++)
