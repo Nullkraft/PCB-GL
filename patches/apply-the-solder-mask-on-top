@@ -1,5 +1,5 @@
 Bottom: e4fa2c670999c5e7a0ecd94bde087da76af37bd8
-Top:    563ad345d4a7fd8f2cc3e401dad3fe8c25e91899
+Top:    9ead5574030f1a8b3f7a02d5b457e92daab4be3c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 14:54:16 +0000
 
@@ -9,7 +9,7 @@ Apply the solder-mask on top of the board (core) thickness, don't shrink the cor
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index b89f387..e939b5a 100644
+index b89f387..dc7303b 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -600,14 +600,14 @@ object3d_from_board_outline (void)
@@ -26,7 +26,7 @@ index b89f387..e939b5a 100644
    objects = object3d_from_contours (board_outline,
 -                                     HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS, /* Bottom */
 -                                    -HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Top */
-+                                     HACK_BOARD_THICKNESS / 2, /* Bottom *//
++                                     HACK_BOARD_THICKNESS / 2, /* Bottom */
 +                                    -HACK_BOARD_THICKNESS / 2, /* Top */
                                      board_appearance,
                                      top_bot_appearance);
