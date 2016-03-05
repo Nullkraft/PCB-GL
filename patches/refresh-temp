@@ -1,0 +1,22 @@
+Bottom: 476182efd202535481a48623dda3bfd2a6a337b5
+Top:    9d5c46c38d7894a0491263f09cb23d689d77d5f8
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 23:48:28 +0000
+
+Refresh of hid-step-add-copper-layer
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index d36c272..d26f58f 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -1201,7 +1201,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+       r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
+ #endif
+ 
+-#if 0
++#if 1
+       if (group == top_group ||
+           group == bottom_group)
+         {
