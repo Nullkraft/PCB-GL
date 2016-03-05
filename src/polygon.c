@@ -989,7 +989,6 @@ SubtractPad (PadType * pad, PolygonType * p)
           (np = LinePoly ((LineType *) pad, pad->Thickness + pad->Clearance)))
         return -1;
     }
-
   return Subtract (np, p, true);
 }
 
