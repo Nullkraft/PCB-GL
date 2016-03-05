@@ -1,5 +1,5 @@
-Bottom: d9abd7e6611566e47d901f56993ebdb72cab83ab
-Top:    8edae1933a00bc1ef1466acc1849e9a2f1f16504
+Bottom: 9f8c2ec816f1c594027ddd66027f2e6375b497e9
+Top:    c2ac354e8bbeaefb88942320dd8a7a44497ca991
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-29 19:13:04 +0000
 
@@ -9,7 +9,7 @@ Try from first principles on object3d stuff
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index aef3ded..57d49a0 100644
+index d6638e0..ead0e97 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -25,8 +25,8 @@
@@ -776,7 +776,7 @@ index aef3ded..57d49a0 100644
  
  static Coord
  compute_depth (int group)
-@@ -1764,8 +1351,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1763,8 +1350,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
        group_objects = g_list_concat (group_objects,
          object3d_from_contours (info.poly,
  #ifdef REVERSED_PCB_CONTOURS
@@ -787,7 +787,7 @@ index aef3ded..57d49a0 100644
  #else
                                  -depth - HACK_BOARD_THICKNESS / 2,                         /* Bottom */
                                  -depth - HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS, /* Top */
-@@ -1814,8 +1401,13 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1813,8 +1400,13 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
        POLYAREA *pa;
        GList *barrel_objects;
  
@@ -801,7 +801,7 @@ index aef3ded..57d49a0 100644
        g_assert (group_m_polyarea[group] != NULL);
        g_assert (group_m_polyarea[group + 1] != NULL);
  
-@@ -1825,8 +1417,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1824,8 +1416,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  
        barrel_objects = object3d_from_contours (barrel_m_polyarea,
  #ifdef REVERSED_PCB_CONTOURS
@@ -812,7 +812,7 @@ index aef3ded..57d49a0 100644
  #else
                                                 -bottom_depth - HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS, /* Bottom */
                                                 -top_depth    - HACK_BOARD_THICKNESS / 2,                         /* Top */
-@@ -1995,7 +1587,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1994,7 +1586,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  #endif
      }
  
@@ -821,7 +821,7 @@ index aef3ded..57d49a0 100644
      {
        Coord top_depth;
        Coord bottom_depth;
-@@ -2011,8 +1603,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -2010,8 +1602,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  
        drill_objects = object3d_from_contours (drill_m_polyarea,
  #ifdef REVERSED_PCB_CONTOURS
@@ -832,7 +832,7 @@ index aef3ded..57d49a0 100644
  #else
                                                -bottom_depth - HACK_BOARD_THICKNESS / 2,                         /* Bottom */
                                                -top_depth    - HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS, /* Top */
-@@ -2059,21 +1651,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -2058,21 +1650,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
            face3d_add_contour (top_group_face,    make_contour3d (drill_top_face_first_edge));
            face3d_add_contour (bottom_group_face, make_contour3d (drill_bottom_face_first_edge));
  
@@ -854,7 +854,7 @@ index aef3ded..57d49a0 100644
            /* Need to walk around the top / bottom edge contours, and re-connect with the linked up copper groups */
  
            e = drill_top_face_first_edge;
-@@ -2136,8 +1713,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -2135,8 +1712,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  
    for (group = min_copper_group; group <= max_copper_group; group++)
      {

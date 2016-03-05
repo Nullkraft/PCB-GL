@@ -1,5 +1,5 @@
-Bottom: 5742a4f6d5ee52e2f1354697ccd4bd3e09b0917d
-Top:    2206603b239f04c9bd2d462ba879f0b73bccf147
+Bottom: c2ac354e8bbeaefb88942320dd8a7a44497ca991
+Top:    8edae1933a00bc1ef1466acc1849e9a2f1f16504
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-28 00:25:49 +0000
 
@@ -15,10 +15,10 @@ doesn't have a convenient implementation.
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index df0357c..3809cb0 100644
+index ead0e97..57d49a0 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -1612,9 +1612,10 @@ steal_object_geometry (object3d *dst, object3d *src)
+@@ -1193,9 +1193,10 @@ steal_object_geometry (object3d *dst, object3d *src)
  {
    g_assert (dst != src);
  
