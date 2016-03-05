@@ -1613,6 +1613,9 @@ ghid_populate_polygon_parentage (PolygonType *polygon)
 void
 ghid_notify_polygon_changed (PolygonType *polygon)
 {
+  if (ghidgui == NULL)
+    return;
+
   if (ghidgui->debugged_polygon == polygon) {
     ghid_populate_polygon_parentage (polygon);
   }
