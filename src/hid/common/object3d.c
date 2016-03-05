@@ -1504,7 +1504,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                               copper_appearance,
                               NULL));
 
-
     break;
   }
 
