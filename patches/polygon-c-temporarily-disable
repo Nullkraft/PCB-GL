@@ -1,7 +1,7 @@
-Bottom: 624bc6c35c0c1c220a4307a73e56c81497239dd2
-Top:    b83e35cb4f0758567e81e93b7a1052af3e2e457e
+Bottom: c39169bcd76aa96717da6200420c3031aaf520e6
+Top:    f98b1c55e7cd0fd6b7aa38a6bfd1edc70c20c21f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 22:31:21 +0000
+Date:   2016-03-05 16:23:54 +0000
 
 polygon.c: Temporarily disable coalescing adjacent line segments
 
@@ -11,7 +11,7 @@ We need to extend the tests to properly account for arc segments.
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index c2da6eb..fa616ad 100644
+index fa4531b..9f73d09 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -1364,6 +1364,7 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
