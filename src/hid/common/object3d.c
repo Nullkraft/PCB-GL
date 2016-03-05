@@ -600,14 +600,14 @@ object3d_from_board_outline (void)
 
 #ifdef REVERSED_PCB_CONTOURS
   objects = object3d_from_contours (board_outline,
-                                    -HACK_BOARD_THICKNESS + HACK_MASK_THICKNESS, /* Bottom */
-                                    0                     -HACK_MASK_THICKNESS,  /* Top */
+                                    -HACK_BOARD_THICKNESS, /* Bottom */
+                                    0                    ,  /* Top */
                                     board_appearance,
                                     top_bot_appearance);
 #else
   objects = object3d_from_contours (board_outline,
-                                     HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS, /* Bottom */
-                                    -HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Top */
+                                     HACK_BOARD_THICKNESS / 2, /* Bottom *//
+                                    -HACK_BOARD_THICKNESS / 2, /* Top */
                                     board_appearance,
                                     top_bot_appearance);
 #endif
@@ -850,14 +850,14 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
 
 #ifdef REVERSED_PCB_CONTOURS
   objects = object3d_from_contours (info.poly,
-                                    (side == TOP_SIDE) ? -HACK_MASK_THICKNESS : -HACK_BOARD_THICKNESS,                       /* Bottom */
-                                    (side == TOP_SIDE) ? 0                    : -HACK_BOARD_THICKNESS + HACK_MASK_THICKNESS, /* Top */
+                                    (side == TOP_SIDE) ? 0                    : -HACK_BOARD_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
+                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS  : -HACK_BOARD_THICKNESS,                       /* Top */
                                     mask_appearance,
                                     NULL);
 #else
   objects = object3d_from_contours (info.poly,
-                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2,                       /* Bottom */
-                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2                       : HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS, /* Top */
+                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2                       : HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Bottom */
+                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2, /* Top */
                                     mask_appearance,
                                     NULL);
 #endif
