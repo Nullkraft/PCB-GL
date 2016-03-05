@@ -1,4 +1,4 @@
-Bottom: 3168083f4f763931a1581b298420b8042d67c2c7
+Bottom: c37fcdf79a28ebb44276a22589549d57ab2bc2f5
 Top:    9c8d4f5bea2d9c2fa1a47c2728940ca938ee89ad
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:00:23 +0000
@@ -9,7 +9,7 @@ Debug stuff
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 073d89e..162eb64 100644
+index 527dbc4..162eb64 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -1531,19 +1531,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
@@ -41,14 +41,6 @@ index 073d89e..162eb64 100644
      if (group == top_group ||
          group == bottom_group)
        {
-@@ -1596,7 +1598,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
-                               copper_appearance,
-                               NULL));
- 
--
-     //break;
-   }
- 
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
 index 47499ce..52182c0 100644
 --- a/src/hid/step/step.c
