@@ -465,6 +465,7 @@ object3d_from_board_outline (void)
 #endif
           edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
         }
+
     }
 
     if (1) {
@@ -515,9 +516,6 @@ object3d_from_board_outline (void)
 
       /* Cylindrical face */
       cylinder_faces[0] = make_face3d ();
-      face3d_set_cylindrical (cylinder_faces[0], COORD_TO_STEP_X (PCB, MM_TO_COORD (45.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 0., /* A point on the axis of the cylinder */
-                                        0., 0., 1.,             /* Direction of the cylindrical axis */
-                                        5.);                   /* Radius of cylinder */
       face3d_set_cylindrical (cylinder_faces[0], COORD_TO_STEP_X (PCB, MM_TO_COORD (45.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 0., /* A point on the axis of the cylinder */
                                         0., 0., 1.,             /* Direction of the cylindrical axis */
                                         5.);                   /* Radius of cylinder */
