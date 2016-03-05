@@ -5,7 +5,7 @@ typedef struct
   float z;
   int id;
 
-  /* STEP crap - to hell with encapsulation */
+  /* XXX: STEP specific - breaks encapsulation */
   int vertex_identifier;
 } vertex3d;
 

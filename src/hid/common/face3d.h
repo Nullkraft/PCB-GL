@@ -10,7 +10,7 @@ typedef struct {
 
   appearance *appear;
 
-  /* STEP crap - to hell with encapsulation */
+  /* XXX: STEP specific - breaks encapsulation */
   int plane_identifier;
   bool plane_orientation_reversed;
   int face_identifier;

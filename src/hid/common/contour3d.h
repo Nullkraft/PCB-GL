@@ -1,7 +1,7 @@
 typedef struct {
   edge_ref first_edge;
 
-  /* STEP crap - to hell with encapsulation */
+  /* XXX: STEP specific - breaks encapsulation */
   int face_bound_identifier;
 } contour3d;
 
