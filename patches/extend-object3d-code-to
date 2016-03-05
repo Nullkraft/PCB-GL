@@ -1,5 +1,5 @@
 Bottom: 1f12c0459eaafe3012117c5b4755d553ed295761
-Top:    e2561f0d28182c6c5fe20494c6c7343ffc058fbf
+Top:    31c37d90f820fb92df3f201d43ada7c51089352d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:27 +0000
 
@@ -9,7 +9,7 @@ Extend object3d code to support arc-segments in POLYAREA contours
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 0db6e9d..c6fb480 100644
+index 0db6e9d..1d1eeaf 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -249,6 +249,8 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
@@ -21,15 +21,16 @@ index 0db6e9d..c6fb480 100644
  #ifdef PERFECT_ROUND_CONTOURS
    if (contour->is_round)
      {
-@@ -257,12 +259,43 @@ get_contour_edge_n_is_round (PLINE *contour, int n)
+@@ -257,12 +259,44 @@ get_contour_edge_n_is_round (PLINE *contour, int n)
      }
  #endif
  
 -  return false;
-+  while (n > 0) {
-+    edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
-+    n--;
-+  }
++  while (n > 0)
++    {
++      edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
++      n--;
++    }
 +
 +  return edge->is_round;
 +}
@@ -66,7 +67,7 @@ index 0db6e9d..c6fb480 100644
  #ifdef PERFECT_ROUND_CONTOURS
    if (contour->is_round)
      {
-@@ -271,8 +304,22 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
+@@ -271,8 +305,23 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
        *cy = COORD_TO_STEP_Y (PCB, contour->cy);
        *r = COORD_TO_MM (contour->radius);
        *cw = (contour->Flags.orient == PLF_INV);
@@ -74,10 +75,11 @@ index 0db6e9d..c6fb480 100644
      }
  #endif
 +
-+  while (n > 0) {
-+    edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
-+    n--;
-+  }
++  while (n > 0)
++    {
++      edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
++      n--;
++    }
 +
 +  center[0] = edge->cx;
 +  center[1] = edge->cy;
