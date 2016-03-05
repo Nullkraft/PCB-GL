@@ -1,17 +1,14 @@
 Bottom: 9ead5574030f1a8b3f7a02d5b457e92daab4be3c
-Top:    38baccd41a290c2f85f6826d97354ada1a371a4a
+Top:    70b93488ce1f16451b1189729122d5fb11b53308
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-23 23:43:19 +0000
+Date:   2016-03-05 14:57:20 +0000
 
 hid/step: Add copper layer export to 3D model
-
-FIXME: Some changes related to debugging polygon badness
-
 
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index dc7303b..6ae9cb6 100644
+index dc7303b..43055b2 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -20,6 +20,8 @@
@@ -23,15 +20,17 @@ index dc7303b..6ae9cb6 100644
  
  //#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
  #undef REVERSED_PCB_CONTOURS
-@@ -61,6 +63,7 @@
+@@ -61,7 +63,9 @@
  
  
  #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
 +#define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
  #define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
++#define HACK_SILK_THICKNESS MM_TO_COORD(0.01)
  
  static GList *object3d_test_objects = NULL;
-@@ -841,6 +844,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+ 
+@@ -841,6 +845,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
    r_search (layer->arc_tree,  &bounds, NULL, arc_mask_callback, &info);
    r_search (layer->text_tree, &bounds, NULL, text_mask_callback, &info);
    r_search (layer->polygon_tree, &bounds, NULL, polygon_mask_callback, &info);
@@ -39,7 +38,26 @@ index dc7303b..6ae9cb6 100644
    r_search (PCB->Data->pad_tree, &bounds, NULL, pad_mask_callback, &info);
    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_mask_callback, &info);
    r_search (PCB->Data->via_tree, &bounds, NULL, pv_mask_callback, &info);
-@@ -1213,3 +1217,277 @@ old_object3d_from_board_outline (void)
+@@ -850,14 +855,14 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+ 
+ #ifdef REVERSED_PCB_CONTOURS
+   objects = object3d_from_contours (info.poly,
+-                                    (side == TOP_SIDE) ? 0                    : -HACK_BOARD_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
+-                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS  : -HACK_BOARD_THICKNESS,                       /* Top */
++                                    (side == TOP_SIDE) ? 0                   - HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
++                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS - HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS,                       /* Top */
+                                     mask_appearance,
+                                     NULL);
+ #else
+   objects = object3d_from_contours (info.poly,
+-                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2                       : HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Bottom */
+-                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2, /* Top */
++                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS                       : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS + HACK_MASK_THICKNESS, /* Bottom */
++                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS, /* Top */
+                                     mask_appearance,
+                                     NULL);
+ #endif
+@@ -1213,3 +1218,279 @@ old_object3d_from_board_outline (void)
  
    return board_objects;
  }
@@ -52,7 +70,6 @@ index dc7303b..6ae9cb6 100644
 +  int min_copper_group;
 +  int max_copper_group;
 +  int num_copper_groups;
-+  int middle_copper_group;
 +  int depth;
 +
 +  top_group = GetLayerGroupNumberBySide (TOP_SIDE);
@@ -61,34 +78,33 @@ index dc7303b..6ae9cb6 100644
 +  min_copper_group = MIN (bottom_group, top_group);
 +  max_copper_group = MAX (bottom_group, top_group);
 +  num_copper_groups = max_copper_group - min_copper_group;// + 1;
-+  middle_copper_group = min_copper_group + num_copper_groups / 2;
 +
 +  if (group >= 0 && group < max_group) {
 +    if (group >= min_copper_group && group <= max_copper_group) {
 +      /* XXX: IS THIS INCORRECT FOR REVERSED GROUP ORDERINGS? */
-+      depth = -(group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups;
++      depth = -(group - min_copper_group) * (HACK_BOARD_THICKNESS + HACK_COPPER_THICKNESS) / num_copper_groups;
 +    } else {
 +      depth = 0;
 +    }
-+#if 0
++#if 1
 +  } else if (SL_TYPE (group) == SL_MASK) {
 +    if (SL_SIDE (group) == SL_TOP_SIDE) {
-+      depth = -((min_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING);
++      depth = HACK_COPPER_THICKNESS;
 +    } else {
-+      depth = -((max_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING);
++      depth = -HACK_BOARD_THICKNESS - HACK_BOARD_THICKNESS - HACK_MASK_THICKNESS;
 +    }
 +  } else if (SL_TYPE (group) == SL_SILK) {
 +    if (SL_SIDE (group) == SL_TOP_SIDE) {
-+      depth = -((min_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING - SILK_MASK_SPACING);
++      depth = HACK_COPPER_THICKNESS + HACK_SILK_THICKNESS;
 +    } else {
-+      depth = -((max_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
++      depth = -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS - HACK_SILK_THICKNESS;
 +    }
 +  } else if (SL_TYPE (group) == SL_INVISIBLE) {
 +    /* Same as silk, but for the back-side layer */
 +    if (Settings.ShowBottomSide) {
-+      depth = -((min_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING - SILK_MASK_SPACING);
++      depth = HACK_COPPER_THICKNESS + HACK_SILK_THICKNESS;
 +    } else {
-+      depth = -((max_copper_group - middle_copper_group) * HACK_BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
++      depth = -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS - HACK_SILK_THICKNESS;
 +    }
 +#endif
 +  } else {
@@ -252,7 +268,11 @@ index dc7303b..6ae9cb6 100644
 +
 +  for (group = min_phys_group; group <= max_phys_group; group++) {
 +
-+    Coord depth = compute_depth (group);
++#ifdef REVERSED_PCB_CONTOURS
++    Coord depth = compute_depth (group) - HACK_BOARD_THICKNESS;
++#else
++    Coord depth = compute_depth (group) + HACK_BOARD_THICKNESS / 2;
++#endif
 +    info.poly = NULL;
 +
 +    fprintf (stderr, "Computing copper geometry for group %i\n", group);
@@ -296,8 +316,8 @@ index dc7303b..6ae9cb6 100644
 +                              depth,                         /* Bottom */
 +                              depth + HACK_COPPER_THICKNESS, /* Top */
 +#else
-+                              -depth + HACK_COPPER_THICKNESS, /* Bottom */
-+                              -depth,                         /* Top */
++                              -depth,                         /* Bottom */
++                              -depth - HACK_COPPER_THICKNESS, /* Top */
 +#endif
 +                              copper_appearance,
 +                              NULL));
