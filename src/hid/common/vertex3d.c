@@ -8,6 +8,9 @@ typedef struct
   float y;
   float z;
   int id;
+
+  /* XXX: STEP specific - breaks encapsulation */
+  int vertex_identifier;
 } vertex3d;
 
 vertex3d *
