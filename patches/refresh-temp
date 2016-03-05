@@ -1,0 +1,21 @@
+Bottom: 43287e2d7e8e1efd5d617575d7f7489bc3df7fa8
+Top:    6c29e0b4e87f807dc4e1002f6bc0a097022b7dda
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 20:51:22 +0000
+
+Refresh of continue-tinkering-with-3d
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 770c1f8..55bc28d 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -581,6 +581,7 @@ object3d_export_to_step (object3d *object, const char *filename)
+             {
+               fprintf (f, "#%i, ", ORIENTED_EDGE_IDENTIFIER(edge)); /* XXX: IS ORIENTATION GOING TO BE CORRECT?? */
+             }
++        }
+ 
+         fprintf (f, "#%i = ADVANCED_FACE ( 'NONE', ", next_step_identifier);
+         fprintf (f, "(");
