@@ -1669,9 +1669,6 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
   assert (*result == NULL);
   do
     {
-      /* see where to go next */
-      if (!jump (&curv, &dir, j_rule))
-	break;
       /* add vertex to polygon */
       if ((newn = poly_CreateNode (curv->point)) == NULL)
         return err_no_memory;
@@ -1697,6 +1694,10 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir)
 
       /* Advance to the next vertex.  */
       curv = (dir == FORW) ? NEXT_VERTEX (curv) : PREV_VERTEX (curv);
+
+      /* see where to go next */
+      if (!jump (&curv, &dir, j_rule))
+	break;
     }
   while (1);
   return err_ok;
