@@ -266,7 +266,7 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
       *cx = COORD_TO_STEP_X (PCB, contour->cx);
       *cy = COORD_TO_STEP_Y (PCB, contour->cy);
       *r = COORD_TO_MM (contour->radius);
-      *cw = (contour->Flags.orient != PLF_DIR);
+      *cw = (contour->Flags.orient == PLF_INV);
     }
 #endif
 }
