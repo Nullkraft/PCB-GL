@@ -1,5 +1,5 @@
 Bottom: 048985d6a23f7ac09251a8f8f782f327ef0a0235
-Top:    2bb56fabeb048af0f39eddd5c5571d115662f3c3
+Top:    74dde53935add978e9732721b575c752515db728
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -996,19 +996,26 @@ index 9afe726..4300818 100644
 +  return object;
 +}
 diff --git a/src/hid/common/vertex3d.c b/src/hid/common/vertex3d.c
-index df5fd0e..174bad6 100644
+index df5fd0e..c89c231 100644
 --- a/src/hid/common/vertex3d.c
 +++ b/src/hid/common/vertex3d.c
-@@ -8,6 +8,9 @@ typedef struct
-   float y;
-   float z;
-   int id;
-+
-+  /* XXX: STEP specific - breaks encapsulation */
-+  int vertex_identifier;
- } vertex3d;
+@@ -1,14 +1,8 @@
+ #include <stdlib.h>
+ 
+-static int global_vertex3d_count;
++#include "vertex3d.h"
+ 
+-typedef struct
+-{
+-  float x;
+-  float y;
+-  float z;
+-  int id;
+-} vertex3d;
++static int global_vertex3d_count;
  
  vertex3d *
+ make_vertex3d (float x, float y, float z)
 diff --git a/src/hid/common/vertex3d.h b/src/hid/common/vertex3d.h
 index bac7e89..51093c0 100644
 --- a/src/hid/common/vertex3d.h
