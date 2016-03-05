@@ -1,5 +1,5 @@
 Bottom: 1b58f101752654c4e003a6aaa9eb94ddad8314f7
-Top:    10e471da2bc2b79bd0ba8e7673b758dbc3ad1ecc
+Top:    14d8fa0c88ba389671896d3602dd733bc60ef608
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:33:44 +0000
 
@@ -39,7 +39,7 @@ index d4917d7..d2bf7b3 100644
 +void appearance_set_color (appearance *appear, float r, float g, float b);
 +void appearance_set_appearance (appearance *appear, const appearance *from);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 21f8211..ea52c65 100644
+index 21f8211..42232a0 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -5,6 +5,7 @@
@@ -134,24 +134,9 @@ index 21f8211..ea52c65 100644
  
        vertices = malloc (sizeof (vertex3d *) * 2 * npoints); /* (n-bottom, n-top) */
        edges    = malloc (sizeof (edge_ref  ) * 3 * npoints); /* (n-bottom, n-top, n-sides) */
-@@ -296,22 +309,16 @@ object3d_from_board_outline (void)
-           double x1, y1;
+@@ -305,13 +318,8 @@ object3d_from_board_outline (void)
  
-           /* Update which contour we're looking at */
--          if (offset_in_ct == ct_npoints)
--            {
--              offset_in_ct = 0;
--              ct = ct->next;
--              ct_npoints = get_contour_npoints (ct);
--            }
-+          if (offset_in_ct == ct_npoints) {
-+            offset_in_ct = 0;
-+            ct = ct->next;
-+            ct_npoints = get_contour_npoints (ct);
-+          }
- 
--          get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
-+              get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
+           get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
  
 -#ifdef REVERSED_PCB_CONTOURS
 -          vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_STEP_Z (PCB, HACK_BOARD_THICKNESS)); /* Bottom */
@@ -165,7 +150,7 @@ index 21f8211..ea52c65 100644
  
            object3d_add_vertex (object, vertices[i]);
            object3d_add_vertex (object, vertices[npoints + i]);
-@@ -330,14 +337,14 @@ object3d_from_board_outline (void)
+@@ -330,14 +338,14 @@ object3d_from_board_outline (void)
          {
            faces[i] = make_face3d ();
  
@@ -185,7 +170,7 @@ index 21f8211..ea52c65 100644
  
        faces[npoints] = make_face3d (); /* bottom_face */
  #ifdef REVERSED_PCB_CONTOURS
-@@ -467,18 +474,18 @@ object3d_from_board_outline (void)
+@@ -467,18 +475,18 @@ object3d_from_board_outline (void)
  
  #ifdef REVERSED_PCB_CONTOURS
                edge_info_set_round (UNDIR_DATA (edges[i]),
@@ -210,7 +195,7 @@ index 21f8211..ea52c65 100644
  #endif
                edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
              }
-@@ -580,9 +587,297 @@ object3d_from_board_outline (void)
+@@ -580,9 +588,297 @@ object3d_from_board_outline (void)
        objects = g_list_append (objects, object);
  
      }
