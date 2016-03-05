@@ -435,74 +435,74 @@ object3d_from_contours (const POLYAREA *contours,
         {
           faces[i] = make_face3d ();
 
-
-      object3d_add_face (object, faces[i]);
-      /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
-      if (!extrude_inverted)
-        face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
-      else
-        face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
-    }
-
-    faces[npoints    ] = make_face3d (); /* bottom_face */
-    faces[npoints + 1] = make_face3d (); /* top_face */
-    if (invert_face_normals)
-      {
-        face3d_set_normal (faces[npoints    ], 0., 0., -1.); /* bottom_face */
-        face3d_set_normal (faces[npoints + 1], 0., 0.,  1.); /* top_face */
-      }
-    else
-      {
-        face3d_set_normal (faces[npoints    ], 0., 0.,  1.); /* bottom_face */ /* PCB bottom is at positive Z in this scheme */
-        face3d_set_normal (faces[npoints + 1], 0., 0., -1.); /* top_face */    /* PCB top is at negative Z in this scheme */
-      }
-    face3d_set_appearance (faces[npoints    ], top_bot_appearance);
-    face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
-    object3d_add_face (object, faces[npoints    ]);
-    object3d_add_face (object, faces[npoints + 1]);
-
-    /* Pick the first bottom / top edge within the bottom / top face outer contour loop, and link it to the face */
-    if (!extrude_inverted)
-      {
-        face3d_add_contour (faces[npoints    ], make_contour3d (edges[0]));
-        face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints])));
-      }
-    else
-      {
-        face3d_add_contour (faces[npoints    ], make_contour3d (SYM(edges[0])));
-        face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints]));
-      }
-
-    ct = contour;
-    start_of_ct = 0;
-    offset_in_ct = 0;
-    ct_npoints = get_contour_npoints (ct);
-
-    for (i = 0; i < npoints; i++, offset_in_ct++) {
-      int next_i_around_ct;
-      int prev_i_around_ct;
-
-      /* Update which contour we're looking at */
-      if (offset_in_ct == ct_npoints)
-        {
-          start_of_ct = i;
-          offset_in_ct = 0;
-          ct = ct->next;
-          ct_npoints = get_contour_npoints (ct);
-
-        /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
-        /* XXX: Haven't properly thought through how (if) inverting works with multiple contours */
-      if (!extrude_inverted)
-        {
-          face3d_add_contour (faces[npoints    ], make_contour3d (edges[i]));
-          face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints + i])));
+          object3d_add_face (object, faces[i]);
+          /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
+          if (!extrude_inverted)
+            face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
+          else
+            face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
         }
-      else
-        {
-          face3d_add_contour (faces[npoints    ], make_contour3d (SYM(edges[i])));
-          face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints + i]));
-        }
-      }
+
+        faces[npoints    ] = make_face3d (); /* bottom_face */
+        faces[npoints + 1] = make_face3d (); /* top_face */
+        if (invert_face_normals)
+          {
+            face3d_set_normal (faces[npoints    ], 0., 0., -1.); /* bottom_face */
+            face3d_set_normal (faces[npoints + 1], 0., 0.,  1.); /* top_face */
+          }
+        else
+          {
+            face3d_set_normal (faces[npoints    ], 0., 0.,  1.); /* bottom_face */ /* PCB bottom is at positive Z in this scheme */
+            face3d_set_normal (faces[npoints + 1], 0., 0., -1.); /* top_face */    /* PCB top is at negative Z in this scheme */
+          }
+        face3d_set_appearance (faces[npoints    ], top_bot_appearance);
+        face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
+        object3d_add_face (object, faces[npoints    ]);
+        object3d_add_face (object, faces[npoints + 1]);
+
+        /* Pick the first bottom / top edge within the bottom / top face outer contour loop, and link it to the face */
+        if (!extrude_inverted)
+          {
+            face3d_add_contour (faces[npoints    ], make_contour3d (edges[0]));
+            face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints])));
+          }
+        else
+          {
+            face3d_add_contour (faces[npoints    ], make_contour3d (SYM(edges[0])));
+            face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints]));
+          }
+
+        ct = contour;
+        start_of_ct = 0;
+        offset_in_ct = 0;
+        ct_npoints = get_contour_npoints (ct);
+
+        for (i = 0; i < npoints; i++, offset_in_ct++)
+          {
+            int next_i_around_ct;
+            int prev_i_around_ct;
+
+            /* Update which contour we're looking at */
+            if (offset_in_ct == ct_npoints)
+              {
+                start_of_ct = i;
+                offset_in_ct = 0;
+                ct = ct->next;
+                ct_npoints = get_contour_npoints (ct);
+
+                /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
+                /* XXX: Haven't properly thought through how (if) inverting works with multiple contours */
+                if (!extrude_inverted)
+                  {
+                    face3d_add_contour (faces[npoints    ], make_contour3d (edges[i]));
+                    face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints + i])));
+                  }
+                else
+                  {
+                    face3d_add_contour (faces[npoints    ], make_contour3d (SYM(edges[i])));
+                    face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints + i]));
+                  }
+              }
 
             next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
             prev_i_around_ct = start_of_ct + (offset_in_ct + ct_npoints - 1) % ct_npoints;
@@ -559,65 +559,65 @@ object3d_from_contours (const POLYAREA *contours,
                 face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
                                           /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 
-        /* DOES NOT DEPEND ON WHETHER WE INVERT THE CONTOUR.. THE EDGE TRAVERSAL IS REVERSED DURING EMISSION.
-         * Only depends on the coordinate system transform, and what Z values it requires to create a
-         * clockwise / counterclockwise circular edge consistent with the the polygon data.
-         */
+                /* DOES NOT DEPEND ON WHETHER WE INVERT THE CONTOUR.. THE EDGE TRAVERSAL IS REVERSED DURING EMISSION.
+                 * Only depends on the coordinate system transform, and what Z values it requires to create a
+                 * clockwise / counterclockwise circular edge consistent with the the polygon data.
+                 */
 #ifdef REVERSED_PCB_CONTOURS
                 normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 #else
                 normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 #endif
 
-              edge_info_set_round (UNDIR_DATA (edges[i]),
-                                   cx, cy, COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
-                                   0., 0., normal_z, /* Normal */ radius);
-              edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
-                                   cx, cy, COORD_TO_STEP_Z (PCB, ztop), /* Center of circle */ /* TOP */
-                                   0., 0., normal_z, /* Normal */ radius);
-              if (ct->is_round)
-                edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
-            }
+                edge_info_set_round (UNDIR_DATA (edges[i]),
+                                     cx, cy, COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
+                                     0., 0., normal_z, /* Normal */ radius);
+                edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
+                                     cx, cy, COORD_TO_STEP_Z (PCB, ztop), /* Center of circle */ /* TOP */
+                                     0., 0., normal_z, /* Normal */ radius);
+                if (ct->is_round)
+                  edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
+              }
 
-          /* NB: Contours are counter clockwise in XY plane.
-           *     edges[          0-npoints-1] are the base of the extrusion, following in the counter clockwise order
-           *     edges[1*npoints-2*npoints-1] are the top  of the extrusion, following in the counter clockwise order
-           *     edges[2*npoints-3*npoints-1] are the upright edges, oriented from bottom to top
-           */
+            /* NB: Contours are counter clockwise in XY plane.
+             *     edges[          0-npoints-1] are the base of the extrusion, following in the counter clockwise order
+             *     edges[1*npoints-2*npoints-1] are the top  of the extrusion, following in the counter clockwise order
+             *     edges[2*npoints-3*npoints-1] are the upright edges, oriented from bottom to top
+             */
 
-          if (extrude_inverted)
-            {
-              LDATA (edges[              i]) = faces[i];
-              RDATA (edges[              i]) = faces[npoints];
-              LDATA (edges[1 * npoints + i]) = faces[npoints + 1];
-              RDATA (edges[1 * npoints + i]) = faces[i];
-              LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
-              RDATA (edges[2 * npoints + i]) = faces[i];
+            if (extrude_inverted)
+              {
+                LDATA (edges[              i]) = faces[i];
+                RDATA (edges[              i]) = faces[npoints];
+                LDATA (edges[1 * npoints + i]) = faces[npoints + 1];
+                RDATA (edges[1 * npoints + i]) = faces[i];
+                LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
+                RDATA (edges[2 * npoints + i]) = faces[i];
 
-              /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
-              splice (SYM(edges[prev_i_around_ct]), edges[i]);
-              splice (edges[i], edges[2 * npoints + i]);
-              /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
-              splice (edges[npoints + i], SYM(edges[npoints + prev_i_around_ct]));
-              splice (SYM(edges[npoints + prev_i_around_ct]), SYM(edges[2 * npoints + i]));
-            }
-          else
-            {
-              RDATA (edges[              i]) = faces[i];
-              LDATA (edges[              i]) = faces[npoints];
-              RDATA (edges[1 * npoints + i]) = faces[npoints + 1];
-              LDATA (edges[1 * npoints + i]) = faces[i];
-              RDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
-              LDATA (edges[2 * npoints + i]) = faces[i];
+                /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
+                splice (SYM(edges[prev_i_around_ct]), edges[i]);
+                splice (edges[i], edges[2 * npoints + i]);
+                /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
+                splice (edges[npoints + i], SYM(edges[npoints + prev_i_around_ct]));
+                splice (SYM(edges[npoints + prev_i_around_ct]), SYM(edges[2 * npoints + i]));
+              }
+            else
+              {
+                RDATA (edges[              i]) = faces[i];
+                LDATA (edges[              i]) = faces[npoints];
+                RDATA (edges[1 * npoints + i]) = faces[npoints + 1];
+                LDATA (edges[1 * npoints + i]) = faces[i];
+                RDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
+                LDATA (edges[2 * npoints + i]) = faces[i];
 
-              /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
-              splice (SYM(edges[prev_i_around_ct]), edges[2 * npoints + i]);
-              splice (edges[2 * npoints + i], edges[i]);
-              /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
-              splice (edges[npoints + i], SYM(edges[2 * npoints + i]));
-              splice (SYM(edges[2 * npoints + i]), SYM(edges[npoints + prev_i_around_ct]));
-            }
-        }
+                /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
+                splice (SYM(edges[prev_i_around_ct]), edges[2 * npoints + i]);
+                splice (edges[2 * npoints + i], edges[i]);
+                /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
+                splice (edges[npoints + i], SYM(edges[2 * npoints + i]));
+                splice (SYM(edges[2 * npoints + i]), SYM(edges[npoints + prev_i_around_ct]));
+              }
+          }
 
       if (0)
         {
