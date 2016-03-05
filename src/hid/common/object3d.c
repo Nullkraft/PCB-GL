@@ -1612,6 +1612,12 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
    *
    */
 
+#if 1
+    fprintf (stderr, "Subtracting pin + via drills\n");
+    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_drill_callback, &info);
+    r_search (PCB->Data->via_tree, &bounds, NULL, pv_drill_callback, &info);
+#endif
+
   if (info.poly == NULL)
     {
       fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
