@@ -1,0 +1,63 @@
+Bottom: 475c82e9b98fcb21e2e4be103bdf01bc2dc051ba
+Top:    2bb56fabeb048af0f39eddd5c5571d115662f3c3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 19:32:40 +0000
+
+Refresh of more-play-with-quad-edge-data
+
+---
+
+diff --git a/src/hid/common/contour3d.h b/src/hid/common/contour3d.h
+index 8ce8d8a..818bd8e 100644
+--- a/src/hid/common/contour3d.h
++++ b/src/hid/common/contour3d.h
+@@ -1,7 +1,7 @@
+ typedef struct {
+   edge_ref first_edge;
+ 
+-  /* STEP crap - to hell with encapsulation */
++  /* XXX: STEP specific - breaks encapsulation */
+   int face_bound_identifier;
+ } contour3d;
+ 
+diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
+index b91ff40..6d83bfb 100644
+--- a/src/hid/common/edge3d.h
++++ b/src/hid/common/edge3d.h
+@@ -10,10 +10,8 @@ typedef struct
+   float cz;
+   float nx;
+   float ny;
+-  float nz;
+-  float radius;
+ 
+-  /* STEP crap - to hell with encapsulation */
++  /* XXX: STEP specific - breaks encapsulation */
+   int infinite_line_identifier;
+   int edge_identifier;
+ } edge_info;
+diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
+index ed60d6d..52be6dc 100644
+--- a/src/hid/common/face3d.h
++++ b/src/hid/common/face3d.h
+@@ -10,7 +10,7 @@ typedef struct {
+ 
+   appearance *appear;
+ 
+-  /* STEP crap - to hell with encapsulation */
++  /* XXX: STEP specific - breaks encapsulation */
+   int plane_identifier;
+   bool plane_orientation_reversed;
+   int face_identifier;
+diff --git a/src/hid/common/vertex3d.h b/src/hid/common/vertex3d.h
+index 278ae60..51093c0 100644
+--- a/src/hid/common/vertex3d.h
++++ b/src/hid/common/vertex3d.h
+@@ -5,7 +5,7 @@ typedef struct
+   float z;
+   int id;
+ 
+-  /* STEP crap - to hell with encapsulation */
++  /* XXX: STEP specific - breaks encapsulation */
+   int vertex_identifier;
+ } vertex3d;
