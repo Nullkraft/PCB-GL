@@ -1,5 +1,5 @@
 Bottom: 048985d6a23f7ac09251a8f8f782f327ef0a0235
-Top:    74dde53935add978e9732721b575c752515db728
+Top:    95be5a55c729e6c5ffa6e262be6e02c589e02a70
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -115,10 +115,10 @@ index 245abca..9014125 100644
 +  g_free (info);
  }
 diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
-index e67cdb3..6d83bfb 100644
+index e67cdb3..b7fbef4 100644
 --- a/src/hid/common/edge3d.h
 +++ b/src/hid/common/edge3d.h
-@@ -1,11 +1,22 @@
+@@ -1,11 +1,24 @@
  typedef struct
  {
 -  bool is_stitch;
@@ -129,10 +129,11 @@ index e67cdb3..6d83bfb 100644
    bool is_round;
    float cx;
    float cy;
--  float radius;
 +  float cz;
 +  float nx;
 +  float ny;
++  float nz;
+   float radius;
 +
 +  /* XXX: STEP specific - breaks encapsulation */
 +  int infinite_line_identifier;
