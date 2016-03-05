@@ -1,5 +1,5 @@
-Bottom: 33d22681e627b04b6714a9dc2b7e04597dd5337b
-Top:    a9529e960b3f21af7a20e8284f561073377cc986
+Bottom: 1d63012aab583e4b2edee18dbd11b7d8d0fe791d
+Top:    f956049138c06baa5c38d6f2411f3d659cfbe481
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 12:30:34 +0000
 
@@ -26,10 +26,10 @@ index 1e3c629..76b724a 100644
  
  /* tools for clipping */
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 3c3f1a6..1372197 100644
+index 493618a..8b99dac 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1218,7 +1218,7 @@ count_contours_i_am_inside (const BoxType * b, void *cl)
+@@ -1219,7 +1219,7 @@ count_contours_i_am_inside (const BoxType * b, void *cl)
  
  /* cntr_in_M_POLYAREA
  returns poly is inside outfst ? TRUE : FALSE */
@@ -38,7 +38,7 @@ index 3c3f1a6..1372197 100644
  cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
  {
    POLYAREA *outer = outfst;
-@@ -1252,10 +1252,10 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+@@ -1253,10 +1253,10 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
  	  break;
  	case 1:		/* Found we are inside this piece, and not any of its holes */
  	  heap_destroy (&heap);
@@ -51,7 +51,7 @@ index 3c3f1a6..1372197 100644
  	default:
  	  printf ("Something strange here\n");
  	  break;
-@@ -1263,7 +1263,7 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+@@ -1264,7 +1264,7 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
      }
    while (1);
    heap_destroy (&heap);
@@ -60,7 +60,7 @@ index 3c3f1a6..1372197 100644
  }				/* cntr_in_M_POLYAREA */
  
  static char *
-@@ -1379,7 +1379,7 @@ cntr_label_POLYAREA (PLINE * poly, POLYAREA * ppl, BOOLp test)
+@@ -1380,7 +1380,7 @@ cntr_label_POLYAREA (PLINE * poly, POLYAREA * ppl, BOOLp test)
    if (poly->Flags.status == ISECTED)
      return false;
  
@@ -69,7 +69,7 @@ index 3c3f1a6..1372197 100644
      {
        if (test)
  	return TRUE;
-@@ -2265,7 +2265,7 @@ find_inside_m_pa (const BoxType * b, void *cl)
+@@ -2266,7 +2266,7 @@ find_inside_m_pa (const BoxType * b, void *cl)
    /* Don't look at contours marked as being intersected */
    if (check->Flags.status == ISECTED)
      return 0;
@@ -78,7 +78,7 @@ index 3c3f1a6..1372197 100644
      {
        info->result = check;
        longjmp (info->jb, 1);
-@@ -2334,7 +2334,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2335,7 +2335,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  	       && (a->contours->xmax <= box.X2)
  	       && (a->contours->ymax <= box.Y2)) &&
  	      /* Then test properly */
@@ -87,7 +87,7 @@ index 3c3f1a6..1372197 100644
  	    {
  
  	      /* Delete this contour, all children -> holes queue */
-@@ -2434,7 +2434,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2435,7 +2435,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  
  	  if (del_outside)
  	    del_contour = curc->Flags.status != ISECTED &&
