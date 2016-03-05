@@ -1,5 +1,5 @@
-Bottom: 316b5599690a39d21a8e5942042163687617881a
-Top:    f3dcd89f0316ca3c49bd7537d7446dba0e1d8c7c
+Bottom: 788d463e1437f27ee050edfe775a07322e837d9a
+Top:    788d463e1437f27ee050edfe775a07322e837d9a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:28 +0000
 
@@ -8,24 +8,4 @@ Disable a few noisy debug printf
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index c5b2d71..1b70a80 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -241,14 +241,10 @@ node_add_single (VNODE * dest, Vector po)
-   VNODE *p;
- 
- /* XXX: MAY NOT BE CORRECT IF WE NEED TO SEPARATE STRAIGHT AND CURVED SEGMENTS */
--  if (vect_equal (po, EDGE_BACKWARD_VERTEX (dest)->point)) {
--    pcb_fprintf (stderr, "node_add_single() returning EDGE_BACKWARD_VERTEX (dest);\n");
-+  if (vect_equal (po, EDGE_BACKWARD_VERTEX (dest)->point))
-     return EDGE_BACKWARD_VERTEX (dest);
--  }
--  if (vect_equal (po, EDGE_FORWARD_VERTEX (dest)->point)) {
--    pcb_fprintf (stderr, "node_add_single() returning EDGE_FORWARD_VERTEX (dest);\n");
-+  if (vect_equal (po, EDGE_FORWARD_VERTEX (dest)->point))
-     return EDGE_FORWARD_VERTEX (dest);
--  }
-   p = poly_CreateNode (po);
-   if (p == NULL)
-     return NULL;
+
