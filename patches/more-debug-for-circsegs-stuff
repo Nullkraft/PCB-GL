@@ -1,5 +1,5 @@
-Bottom: c794b28634d83d96e1421646361131e9cf28b73e
-Top:    5292dc2973688f5c9297faf32779c5503aeaa8a2
+Bottom: aa3b998e29f9bb2386214ab67d03a73ec9bf92bd
+Top:    b4f70e8dada6a849dfe3fa49ee3ab80634dcc4bc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 22:44:07 +0000
 
@@ -12,7 +12,7 @@ Lets us explore operations on more specific basis.
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index af46ded..8b92e79 100644
+index a9b0f29..5ee27a5 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -108,6 +108,8 @@ dicer output is used for HIDs which cannot render things with holes
@@ -94,7 +94,7 @@ index af46ded..8b92e79 100644
    info->poly = res;
  
    return 1;
-@@ -2301,13 +2330,19 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2299,8 +2328,12 @@ POLYAREA *board_outline_poly (bool include_holes)
    region.X2 = PCB->MaxWidth;
    region.Y2 = PCB->MaxHeight;
  
@@ -106,8 +106,11 @@ index af46ded..8b92e79 100644
    info.poly = whole_world;
 +#endif
  
-   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
-   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
+   if (found_outline)
+     {
+@@ -2308,7 +2341,9 @@ POLYAREA *board_outline_poly (bool include_holes)
+       r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
+     }
  
 +#ifndef DEBUG_CIRCSEGS
    if (include_holes)
@@ -115,7 +118,7 @@ index af46ded..8b92e79 100644
      {
        r_search (PCB->Data->pin_tree, &region, NULL, pv_outline_callback, &info);
        r_search (PCB->Data->via_tree, &region, NULL, pv_outline_callback, &info);
-@@ -2315,6 +2350,10 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2316,6 +2351,10 @@ POLYAREA *board_outline_poly (bool include_holes)
  
    clipped = info.poly;
  
@@ -126,7 +129,7 @@ index af46ded..8b92e79 100644
    /* Now we just need to work out which pieces of polygon are inside
       and outside the board! */
  
-@@ -2362,6 +2401,7 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2363,6 +2402,7 @@ POLYAREA *board_outline_poly (bool include_holes)
    g_list_free (pieces_to_delete);
  #endif
  
@@ -134,7 +137,7 @@ index af46ded..8b92e79 100644
    // The actual operation we want is to split the test polygon into multiple pieces
    // along the intersection with the polygon contours of any polygon on the outer layer.
    // The result would be nested, touching (not normally produced by the PBO code),
-@@ -2375,6 +2415,7 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2376,6 +2416,7 @@ POLYAREA *board_outline_poly (bool include_holes)
      return whole_world;
    else
      poly_Free (&whole_world);
