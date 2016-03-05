@@ -25,7 +25,7 @@
 #include "object3d_step.h"
 
 
-//#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
+#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
 #undef REVERSED_PCB_CONTOURS
 
 #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
@@ -222,7 +222,7 @@ object3d_to_step_body_fragment (step_file *step,
       dir_y = dv->y - ov->y;
       dir_z = dv->z - ov->z;
 
-#if 1
+#if 0
       /* XXX: This avoids the test file step_outline_test.pcb failing to display properly in freecad when coordinates are slightly rounded */
       if (dir_x < EPSILON && -dir_x < EPSILON &&
           dir_y < EPSILON && -dir_y < EPSILON &&
@@ -280,9 +280,10 @@ object3d_to_step_body_fragment (step_file *step,
 
       edge = contour->first_edge;
       do {
-        edge_loop_edges = g_list_append (edge_loop_edges, GINT_TO_POINTER (ORIENTED_EDGE_IDENTIFIER (edge)));
+        edge_loop_edges = g_list_prepend (edge_loop_edges, GINT_TO_POINTER (ORIENTED_EDGE_IDENTIFIER (edge)));
       } while (edge = LNEXT (edge), edge != contour->first_edge);
 
+      edge_loop_edges = g_list_reverse (edge_loop_edges);
       edge_loop = step_edge_loop (step, "NONE", edge_loop_edges);
 
       if (outer_contour)
@@ -290,12 +291,15 @@ object3d_to_step_body_fragment (step_file *step,
       else
         contour->face_bound_identifier = step_face_bound (step, "NONE", edge_loop, true);
 
-      face_contour_list = g_list_append (face_contour_list, GINT_TO_POINTER (contour->face_bound_identifier));
+      face_contour_list = g_list_prepend (face_contour_list, GINT_TO_POINTER (contour->face_bound_identifier));
     }
 
+    face_contour_list = g_list_reverse (face_contour_list);
     face->face_identifier = step_advanced_face (step, "NONE", face_contour_list, face->surface_identifier, !face->surface_orientation_reversed);
-    shell_face_list = g_list_append (shell_face_list, GINT_TO_POINTER (face->face_identifier));
+    shell_face_list = g_list_prepend (shell_face_list, GINT_TO_POINTER (face->face_identifier));
   }
+
+  shell_face_list = g_list_reverse (shell_face_list);
 
   /* Closed shell which bounds the brep solid */
   pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
