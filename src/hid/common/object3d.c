@@ -461,26 +461,12 @@ object3d_from_contours (const POLYAREA *contours,
       int prev_i_around_ct;
 
       /* Update which contour we're looking at */
-      if (offset_in_ct == ct_npoints) {
-        start_of_ct = i;
-        offset_in_ct = 0;
-        ct = ct->next;
-        ct_npoints = get_contour_npoints (ct);
-
-        /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
-        /* XXX: Haven't properly thought through how (if) inverting works with multiple contours */
-      if (!extrude_inverted)
+      if (offset_in_ct == ct_npoints)
         {
-          face3d_add_contour (faces[npoints    ], make_contour3d (edges[i]));
-          face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints + i])));
-        }
-      else
-        {
-          face3d_add_contour (faces[npoints    ], make_contour3d (SYM(edges[i])));
-          face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints + i]));
-        }
-      }
->>>>>>> patched
+          start_of_ct = i;
+          offset_in_ct = 0;
+          ct = ct->next;
+          ct_npoints = get_contour_npoints (ct);
 
           get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
 
@@ -504,6 +490,21 @@ object3d_from_contours (const POLYAREA *contours,
         {
           faces[i] = make_face3d ();
 
+
+        /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
+        /* XXX: Haven't properly thought through how (if) inverting works with multiple contours */
+      if (!extrude_inverted)
+        {
+          face3d_add_contour (faces[npoints    ], make_contour3d (edges[i]));
+          face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints + i])));
+        }
+      else
+        {
+          face3d_add_contour (faces[npoints    ], make_contour3d (SYM(edges[i])));
+          face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints + i]));
+        }
+      }
+>>>>>>> patched
 <<<<<<< current
           object3d_add_face (object, faces[i]);
           /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
