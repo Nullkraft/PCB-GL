@@ -445,6 +445,7 @@ object3d_from_board_outline (void)
 
           if (ct->is_round)
             {
+
               face3d_set_cylindrical (faces[i], COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), 0., /* A point on the axis of the cylinder */
                                                 0., 0., 1.,                                                       /* Direction of the cylindrical axis */
                                                 COORD_TO_MM (ct->radius));
