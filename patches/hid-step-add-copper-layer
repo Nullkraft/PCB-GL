@@ -1,5 +1,5 @@
 Bottom: 6105ad33c597dd6f1bbc0c24ab46290debbcaf8f
-Top:    6053dcdce311455b97375d843be1c551f0ffc17d
+Top:    e01ac1456d6337a42350fc1f1334c6a0b9b5fe99
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:26 +0000
 
@@ -9,7 +9,7 @@ hid/step: Add copper layer export to 3D model
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 0154912..5855772 100644
+index 0154912..7ed0887 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -20,6 +20,8 @@
@@ -324,11 +324,11 @@ index 0154912..5855772 100644
 +        }
 +#endif
 +
-+    if (info.poly == NULL)
-+      {
-+        fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
-+        continue;
-+      }
++      if (info.poly == NULL)
++        {
++          fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
++          continue;
++        }
 +
 +      objects = g_list_concat (objects,
 +        object3d_from_contours (info.poly,
