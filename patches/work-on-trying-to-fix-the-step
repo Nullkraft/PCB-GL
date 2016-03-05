@@ -1,5 +1,5 @@
-Bottom: 5742a4f6d5ee52e2f1354697ccd4bd3e09b0917d
-Top:    9f8c2ec816f1c594027ddd66027f2e6375b497e9
+Bottom: 9089c8171a146f0df7646296802f4ced47a1890a
+Top:    1e1f70f1cb198e800fb15489ab48b48107bab0fb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-28 21:27:32 +0000
 
@@ -9,7 +9,7 @@ Work on trying to fix the STEP export to be correct (cf. Solidworks BREP mapping
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index df0357c..d6638e0 100644
+index f99c308..3ce98ae 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -300,7 +300,7 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
@@ -30,7 +30,7 @@ index df0357c..d6638e0 100644
  }
  
  typedef struct
-@@ -538,6 +538,8 @@ object3d_from_contours (POLYAREA *contours,
+@@ -531,6 +531,8 @@ object3d_from_contours (POLYAREA *contours,
            LDATA (edges[              i]) = faces[npoints];
            RDATA (edges[1 * npoints + i]) = faces[npoints + 1];
            LDATA (edges[1 * npoints + i]) = faces[i];
@@ -39,7 +39,7 @@ index df0357c..d6638e0 100644
          }
        else
          {
-@@ -545,15 +547,6 @@ object3d_from_contours (POLYAREA *contours,
+@@ -538,15 +540,6 @@ object3d_from_contours (POLYAREA *contours,
            RDATA (edges[              i]) = faces[npoints];
            LDATA (edges[1 * npoints + i]) = faces[npoints + 1];
            RDATA (edges[1 * npoints + i]) = faces[i];
@@ -55,7 +55,7 @@ index df0357c..d6638e0 100644
            LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
            RDATA (edges[2 * npoints + i]) = faces[i];
          }
-@@ -647,6 +640,7 @@ object3d_from_contours (POLYAREA *contours,
+@@ -640,6 +633,7 @@ object3d_from_contours (POLYAREA *contours,
  #ifdef REVERSED_PCB_CONTOURS
          normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
  #else
@@ -63,7 +63,7 @@ index df0357c..d6638e0 100644
          normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
  #endif
  
-@@ -2000,7 +1994,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1993,7 +1987,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  #endif
      }
  
@@ -73,10 +73,10 @@ index df0357c..d6638e0 100644
        Coord top_depth;
        Coord bottom_depth;
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index f8d3068..a7bc294 100644
+index 5b2cd40..97b3201 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -282,7 +282,7 @@ object3d_to_step_body_fragment (step_file *step,
+@@ -259,7 +259,7 @@ object3d_to_step_body_fragment (step_file *step,
      step_id ev = ((vertex3d *)DDATA (edge))->vertex_identifier;
  
      /* XXX: The lookup of these edges by adding to info->edge_identifier requires the step_* functions to assign sequential identifiers */
