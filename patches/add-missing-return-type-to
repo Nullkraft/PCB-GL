@@ -1,13 +1,1257 @@
 Bottom: 0b0cf95a3193ab6a1aed18d7c4cc6a1f1768ebf4
-Top:    00842c93a8488fc7f3a8ad793f88ae8f65d63fe9
+Top:    18234d417c39dc1d3bd2b9bb94b574c6ac443d9f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 12:38:14 +0000
+Date:   2016-03-05 12:41:31 +0000
 
 Add missing return type to prototype (needs rolling into the patch which introduced this function)
 
-
 ---
 
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 5e54508..4b81334 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -25,7 +25,7 @@
+ 
+ #define PERFECT_ROUND_CONTOURS
+ 
+-//#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
++#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
+ #undef REVERSED_PCB_CONTOURS
+ 
+ #ifdef REVERSED_PCB_CONTOURS
+@@ -66,6 +66,7 @@
+ 
+ #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
+ #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
++#define HACK_PLATED_BARREL_THICKNESS MM_TO_COORD(0.08) //2
+ #define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
+ #define HACK_SILK_THICKNESS MM_TO_COORD(0.01)
+ 
+@@ -299,7 +300,7 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
+       *cx = COORD_TO_STEP_X (PCB, contour->cx);
+       *cy = COORD_TO_STEP_Y (PCB, contour->cy);
+       *r = COORD_TO_MM (contour->radius);
+-      *cw = (contour->Flags.orient != PLF_DIR);
++      *cw = (contour->Flags.orient == PLF_INV);
+       return;
+     }
+ #endif
+@@ -318,18 +319,30 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
+   *cw = (compare_ccw_cw (EDGE_BACKWARD_VERTEX (edge)->point, center, EDGE_FORWARD_VERTEX (edge)->point) > 0);
+ }
+ 
++typedef struct
++{
++  object3d *object;
++  face3d *top_face;
++  face3d *bottom_face;
++} polygon_3d_link;
++
++/* NOTE: This function sets the user_data pointer on POLYAREA it
++ *       converts, to point at a polygon_3d_link structure
++ *       referencing the generated object and upper/lower faces
++ */
+ GList *
+-object3d_from_contours (const POLYAREA *contours,
++object3d_from_contours (POLYAREA *contours,
+                         double zbot,
+                         double ztop,
+                         const appearance *master_object_appearance,
+-                        const appearance *master_top_bot_appearance)
++                        const appearance *master_top_bot_appearance,
++                        bool extrude_inverted)
+ {
+   GList *objects = NULL;
+   object3d *object;
+   appearance *object_appearance = NULL;
+   appearance *top_bot_appearance = NULL;
+-  const POLYAREA *pa;
++  POLYAREA *pa;
+   PLINE *contour;
+   PLINE *ct;
+   int ncontours;
+@@ -341,6 +354,16 @@ object3d_from_contours (const POLYAREA *contours,
+   int start_of_ct;
+   int offset_in_ct;
+   int ct_npoints;
++  polygon_3d_link *link;
++  bool invert_face_normals;
++  double length;
++  double nx, ny;
++
++#ifdef REVERSED_PCB_CONTOURS
++  invert_face_normals = extrude_inverted ? false : true;
++#else
++  invert_face_normals = extrude_inverted ? true : false;
++#endif
+ 
+   if (contours == NULL)
+     return NULL;
+@@ -417,39 +440,40 @@ object3d_from_contours (const POLYAREA *contours,
+ 
+       object3d_add_face (object, faces[i]);
+       /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
+-#ifdef REVERSED_PCB_CONTOURS
+-      face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
+-#else
+-      face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
+-#endif
++      if (!extrude_inverted)
++        face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
++      else
++        face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
+     }
+ 
+-    faces[npoints] = make_face3d (); /* bottom_face */
+-#ifdef REVERSED_PCB_CONTOURS
+-    face3d_set_normal (faces[npoints], 0., 0., -1.);
+-#else
+-    face3d_set_normal (faces[npoints], 0., 0., 1.); /* PCB bottom is at positive Z in this scheme */
+-#endif
+-    face3d_set_appearance (faces[npoints], top_bot_appearance);
+-    object3d_add_face (object, faces[npoints]);
+-
++    faces[npoints    ] = make_face3d (); /* bottom_face */
+     faces[npoints + 1] = make_face3d (); /* top_face */
+-#ifdef REVERSED_PCB_CONTOURS
+-    face3d_set_normal (faces[npoints + 1], 0., 0., 1.);
+-#else
+-    face3d_set_normal (faces[npoints + 1], 0., 0., -1.); /* PCB top is at negative Z in this scheme */
+-#endif
++    if (invert_face_normals)
++      {
++        face3d_set_normal (faces[npoints    ], 0., 0., -1.); /* bottom_face */
++        face3d_set_normal (faces[npoints + 1], 0., 0.,  1.); /* top_face */
++      }
++    else
++      {
++        face3d_set_normal (faces[npoints    ], 0., 0.,  1.); /* bottom_face */ /* PCB bottom is at positive Z in this scheme */
++        face3d_set_normal (faces[npoints + 1], 0., 0., -1.); /* top_face */    /* PCB top is at negative Z in this scheme */
++      }
++    face3d_set_appearance (faces[npoints    ], top_bot_appearance);
+     face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
++    object3d_add_face (object, faces[npoints    ]);
+     object3d_add_face (object, faces[npoints + 1]);
+ 
+     /* Pick the first bottom / top edge within the bottom / top face outer contour loop, and link it to the face */
+-#ifdef REVERSED_PCB_CONTOURS
+-    face3d_add_contour (faces[npoints], make_contour3d (edges[0]));
+-    face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints])));
+-#else
+-    face3d_add_contour (faces[npoints], make_contour3d (SYM(edges[0])));
+-    face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints]));
+-#endif
++    if (!extrude_inverted)
++      {
++        face3d_add_contour (faces[npoints    ], make_contour3d (edges[0]));
++        face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints])));
++      }
++    else
++      {
++        face3d_add_contour (faces[npoints    ], make_contour3d (SYM(edges[0])));
++        face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints]));
++      }
+ 
+     ct = contour;
+     start_of_ct = 0;
+@@ -468,13 +492,17 @@ object3d_from_contours (const POLYAREA *contours,
+         ct_npoints = get_contour_npoints (ct);
+ 
+         /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
+-#ifdef REVERSED_PCB_CONTOURS
+-        face3d_add_contour (faces[npoints], make_contour3d (edges[i]));
+-        face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints + i])));
+-#else
+-        face3d_add_contour (faces[npoints], make_contour3d (SYM(edges[i])));
+-        face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints + i]));
+-#endif
++        /* XXX: Haven't properly thought through how (if) inverting works with multiple contours */
++      if (!extrude_inverted)
++        {
++          face3d_add_contour (faces[npoints    ], make_contour3d (edges[i]));
++          face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints + i])));
++        }
++      else
++        {
++          face3d_add_contour (faces[npoints    ], make_contour3d (SYM(edges[i])));
++          face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints + i]));
++        }
+       }
+ 
+       next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
+@@ -482,14 +510,21 @@ object3d_from_contours (const POLYAREA *contours,
+ 
+       /* Setup the face normals for the edges along the contour extrusion (top and bottom are handled separaetely) */
+       /* Define the (non-normalized) face normal to point to the outside of the contour */
+-#if REVERSED_PCB_CONTOURS
+       /* Vertex ordering of the edge we're finding the normal to is reversed in this case */
+-      face3d_set_normal (faces[i], -(vertices[next_i_around_ct]->y - vertices[i]->y),
+-                                    (vertices[next_i_around_ct]->x - vertices[i]->x), 0.);
+-#else
+-      face3d_set_normal (faces[i],  (vertices[next_i_around_ct]->y - vertices[i]->y),
+-                                   -(vertices[next_i_around_ct]->x - vertices[i]->x), 0.);
+-#endif
++
++      nx =  (vertices[next_i_around_ct]->y - vertices[i]->y);
++      ny = -(vertices[next_i_around_ct]->x - vertices[i]->x);
++      length = hypot (nx, ny);
++      nx /= length;
++      ny /= length;
++
++      if (invert_face_normals)
++        {
++          nx = -nx;
++          ny = -ny;
++        }
++
++      face3d_set_normal (faces[i], nx, ny, 0.);
+ 
+       /* Assign the appropriate vertex geometric data to each edge end */
+       ODATA (edges[              i]) = vertices[0 * npoints + i];
+@@ -498,45 +533,7 @@ object3d_from_contours (const POLYAREA *contours,
+       DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
+       ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
+       DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
+-#if REVERSED_PCB_CONTOURS
+-      RDATA (edges[              i]) = faces[i];
+-      LDATA (edges[              i]) = faces[npoints];
+-      RDATA (edges[1 * npoints + i]) = faces[npoints + 1];
+-      LDATA (edges[1 * npoints + i]) = faces[i];
+-      RDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
+-      LDATA (edges[2 * npoints + i]) = faces[i];
+-#else
+-      LDATA (edges[              i]) = faces[i];
+-      RDATA (edges[              i]) = faces[npoints];
+-      LDATA (edges[1 * npoints + i]) = faces[npoints + 1];
+-      RDATA (edges[1 * npoints + i]) = faces[i];
+-      LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
+-      RDATA (edges[2 * npoints + i]) = faces[i];
+-#endif
+-
+-      /* NB: Contours are counter clockwise in XY plane.
+-       *     edges[          0-npoints-1] are the base of the extrusion, following in the counter clockwise order
+-       *     edges[1*npoints-2*npoints-1] are the top  of the extrusion, following in the counter clockwise order
+-       *     edges[2*npoints-3*npoints-1] are the upright edges, oriented from bottom to top
+-       */
+-
+-#ifdef REVERSED_PCB_CONTOURS  /* UNDERLYING DATA HAS CW CONTOURS FOR OUTER, CCW FOR INNER - E.g. PCB's polygons when translated into STEP coordinates */
+-      /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
+-      splice (SYM(edges[prev_i_around_ct]), edges[2 * npoints + i]);
+-      splice (edges[2 * npoints + i], edges[i]);
+-
+-      /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
+-      splice (edges[npoints + i], SYM(edges[2 * npoints + i]));
+-      splice (SYM(edges[2 * npoints + i]), SYM(edges[npoints + prev_i_around_ct]));
+-#else /* UNDERLYING DATA HAS CCW CONTOURS FOR OUTER, CW FOR INNER. E.g. PCB's raw coordinates in X, Y */
+-      /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
+-      splice (edges[i], edges[2 * npoints + i]);
+-      splice (edges[2 * npoints + i], SYM(edges[prev_i_around_ct]));
+-
+-      /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
+-      splice (SYM(edges[npoints + prev_i_around_ct]), SYM(edges[2 * npoints + i]));
+-      splice (SYM(edges[2 * npoints + i]),  edges[npoints + i]);
+-#endif
++      /* XXX: Do we need to differently with this for inverted contours? */
+ 
+       if (get_contour_edge_n_is_round (ct, offset_in_ct)) {
+         double cx;
+@@ -547,21 +544,30 @@ object3d_from_contours (const POLYAREA *contours,
+ 
+         get_contour_edge_n_round_geometry_in_step_mm (ct, offset_in_ct, &cx, &cy, &radius, &cw);
+ 
++        /* AXIS DIRECTON NOT DEPEND ON WHETHER WE INVERT THE TOP/BOT CONTOUR.. THE EDGE LOOP IS APPROPRIATE ALREADY */
+         face3d_set_cylindrical (faces[i], cx, cy, 0., /* A point on the axis of the cylinder */
+-                                          0., 0., 1., /* Direction of the cylindrical axis */
++                                          0., 0., 1., /* Direction of the cylindrical axis */ /* XXX HAD THIS AT -1 when last testing with Solidworks? */
+                                           radius);
+ 
+         /* XXX: DEPENDS ON INSIDE / OUTSIDE CORNER!! */
+-        if (ct->Flags.orient == PLF_INV)
++        /* XXX: SURFACE ORIENTATION IS ONLY FIXED UP DURING EMISSION IF WE FLAG THE NEED HERE..
++         *      CYLINDRICAL SURFACE ORIENTATION IS ALWAYS POINTING OUTWARD FROM ITS AXIS, SO
++         *      ORIENTATION REVERSED IS USED FOR HOLES
++         */
++        if ((ct->Flags.orient == PLF_INV) != extrude_inverted)
+           face3d_set_surface_orientation_reversed (faces[i]);
+ 
+         face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
+                                   /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
+ 
++        /* DOES NOT DEPEND ON WHETHER WE INVERT THE CONTOUR.. THE EDGE TRAVERSAL IS REVERSED DURING EMISSION.
++         * Only depends on the coordinate system transform, and what Z values it requires to create a
++         * clockwise / counterclockwise circular edge consistent with the the polygon data.
++         */
+ #ifdef REVERSED_PCB_CONTOURS
+-        normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
++          normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+ #else
+-        normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
++          normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+ #endif
+ 
+         edge_info_set_round (UNDIR_DATA (edges[i]),
+@@ -574,101 +580,109 @@ object3d_from_contours (const POLYAREA *contours,
+           edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
+       }
+ 
+-    }
+-
+-    if (0) {
+-      /* Cylinder centers on 45x45mm, stitch vertex is at 40x45mm. Radius is thus 5mm */
+-
+-      edge_ref cylinder_edges[3];
+-      vertex3d *cylinder_vertices[2];
+-      face3d *cylinder_faces[2];
+-
+-      /* Edge on top of board */
+-      cylinder_edges[0] = make_edge ();
+-      UNDIR_DATA (cylinder_edges[0]) = make_edge_info ();
+-#ifdef REVERSED_PCB_CONTOURS
+-      edge_info_set_round (UNDIR_DATA (cylinder_edges[0]),
+-                           COORD_TO_STEP_X (PCB, MM_TO_COORD (45.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 0., /* Center of circle */
+-                            0.,   0., 1., /* Normal */
+-                            5.);          /* Radius */
+-#else
+-      edge_info_set_round (UNDIR_DATA (cylinder_edges[0]),
+-                           COORD_TO_STEP_X (PCB, MM_TO_COORD (45.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 0., /* Center of circle */
+-                            0.,   0., 1., /* Normal */
+-                            5.);         /* Radius */
+-#endif
+-      object3d_add_edge (object, cylinder_edges[0]);
+-
+-      /* Edge on top of cylinder */
+-      cylinder_edges[1] = make_edge ();
+-      UNDIR_DATA (cylinder_edges[1]) = make_edge_info ();
+-      edge_info_set_round (UNDIR_DATA (cylinder_edges[1]),
+-                           COORD_TO_STEP_X (PCB, MM_TO_COORD (45.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 10., /* Center of circle */
+-                            0.,   0., 1.,  /* Normal */
+-                            5.);          /* Radius */
+-      object3d_add_edge (object, cylinder_edges[1]);
+-
+-      /* Edge stitching cylinder */
+-      cylinder_edges[2] = make_edge ();
+-      UNDIR_DATA (cylinder_edges[2]) = make_edge_info ();
+-      edge_info_set_stitch (UNDIR_DATA (cylinder_edges[2]));
+-      object3d_add_edge (object, cylinder_edges[2]);
+-
+-      /* Vertex on board top surface */
+-      cylinder_vertices[0] = make_vertex3d (COORD_TO_STEP_X (PCB, MM_TO_COORD (40.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 0.); /* Bottom */
+-      object3d_add_vertex (object, cylinder_vertices[0]);
+-
+-      /* Vertex on cylinder top surface */
+-      cylinder_vertices[1] = make_vertex3d (COORD_TO_STEP_X (PCB, MM_TO_COORD (40.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 10.); /* Top */
+-      object3d_add_vertex (object, cylinder_vertices[1]);
++      /* NB: Contours are counter clockwise in XY plane.
++       *     edges[          0-npoints-1] are the base of the extrusion, following in the counter clockwise order
++       *     edges[1*npoints-2*npoints-1] are the top  of the extrusion, following in the counter clockwise order
++       *     edges[2*npoints-3*npoints-1] are the upright edges, oriented from bottom to top
++       */
+ 
+-      /* Cylindrical face */
+-      cylinder_faces[0] = make_face3d ();
+-      face3d_set_cylindrical (cylinder_faces[0], COORD_TO_STEP_X (PCB, MM_TO_COORD (45.)), COORD_TO_STEP_Y (PCB, MM_TO_COORD (45.)), 0., /* A point on the axis of the cylinder */
+-                                        0., 0., 1.,             /* Direction of the cylindrical axis */
+-                                        5.);                   /* Radius of cylinder */
+-      face3d_set_normal (cylinder_faces[0], 1., 0., 0.);       /* A normal to the axis direction */
+-                                   /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
+-      object3d_add_face (object, cylinder_faces[0]);
+-      face3d_add_contour (cylinder_faces[0], make_contour3d (cylinder_edges[0]));
++      if (extrude_inverted)
++        {
++          LDATA (edges[              i]) = faces[i];
++          RDATA (edges[              i]) = faces[npoints];
++          LDATA (edges[1 * npoints + i]) = faces[npoints + 1];
++          RDATA (edges[1 * npoints + i]) = faces[i];
++          LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
++          RDATA (edges[2 * npoints + i]) = faces[i];
++
++          /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
++          splice (SYM(edges[prev_i_around_ct]), edges[i]);
++          splice (edges[i], edges[2 * npoints + i]);
++          /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
++          splice (edges[npoints + i], SYM(edges[npoints + prev_i_around_ct]));
++          splice (SYM(edges[npoints + prev_i_around_ct]), SYM(edges[2 * npoints + i]));
++        }
++      else
++        {
++          RDATA (edges[              i]) = faces[i];
++          LDATA (edges[              i]) = faces[npoints];
++          RDATA (edges[1 * npoints + i]) = faces[npoints + 1];
++          LDATA (edges[1 * npoints + i]) = faces[i];
++          RDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
++          LDATA (edges[2 * npoints + i]) = faces[i];
++
++          /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
++          splice (SYM(edges[prev_i_around_ct]), edges[2 * npoints + i]);
++          splice (edges[2 * npoints + i], edges[i]);
++          /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
++          splice (edges[npoints + i], SYM(edges[2 * npoints + i]));
++          splice (SYM(edges[2 * npoints + i]), SYM(edges[npoints + prev_i_around_ct]));
++        }
++    }
+ 
+-      /* Top face of cylinder */
+-      cylinder_faces[1] = make_face3d (); /* top face of cylinder */
+-      face3d_set_normal (cylinder_faces[1], 0., 0., 1.);
+-      face3d_set_appearance (cylinder_faces[1], top_bot_appearance);
+-      object3d_add_face (object, cylinder_faces[1]);
+-      face3d_add_contour (cylinder_faces[1], make_contour3d (cylinder_edges[1]));
++#ifndef NDEBUG
++    ct = contour;
++    start_of_ct = 0;
++    offset_in_ct = 0;
++    ct_npoints = get_contour_npoints (ct);
+ 
+-      /* Splice onto board */
+-      face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(cylinder_edges[0])));
++    for (i = 0; i < npoints; i++, offset_in_ct++) {
++      int next_i_around_ct;
++      int prev_i_around_ct;
+ 
+-      /* Assign the appropriate vertex geometric data to each edge end */
+-      ODATA (cylinder_edges[0]) = cylinder_vertices[0];
+-      DDATA (cylinder_edges[0]) = cylinder_vertices[0];
+-      ODATA (cylinder_edges[1]) = cylinder_vertices[1];
+-      DDATA (cylinder_edges[1]) = cylinder_vertices[1];
+-      ODATA (cylinder_edges[2]) = cylinder_vertices[0];
+-      DDATA (cylinder_edges[2]) = cylinder_vertices[1];
+-      LDATA (cylinder_edges[0]) = cylinder_faces[0];
+-      RDATA (cylinder_edges[0]) = faces[npoints + 1]; /* TOP OF BOARD FACE */
+-      LDATA (cylinder_edges[1]) = cylinder_faces[1];
+-      RDATA (cylinder_edges[1]) = cylinder_faces[0];
+-      LDATA (cylinder_edges[2]) = cylinder_faces[0];
+-      RDATA (cylinder_edges[2]) = cylinder_faces[0];
++      /* Update which contour we're looking at */
++      if (offset_in_ct == ct_npoints) {
++        start_of_ct = i;
++        offset_in_ct = 0;
++        ct = ct->next;
++        ct_npoints = get_contour_npoints (ct);
+ 
+-      /* Splice things together.... */
++      }
+ 
+-      /* Link edges orbiting the cylinder bottom vertex */
+-      splice (cylinder_edges[0], cylinder_edges[2]);
+-      splice (cylinder_edges[2], SYM(cylinder_edges[0]));
++      next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
++      prev_i_around_ct = start_of_ct + (offset_in_ct + ct_npoints - 1) % ct_npoints;
+ 
+-      /* Link edges orbiting the cylinder top vertex */
+-      splice (SYM(cylinder_edges[2]), cylinder_edges[1]);
+-      splice (cylinder_edges[1], SYM(cylinder_edges[1]));
++      if (!extrude_inverted)
++        {
++          g_assert (RDATA (edges[              i]) == faces[i]);
++          g_assert (LDATA (edges[              i]) == faces[npoints]);
++          g_assert (RDATA (edges[1 * npoints + i]) == faces[npoints + 1]);
++          g_assert (LDATA (edges[1 * npoints + i]) == faces[i]);
++          g_assert (RDATA (edges[2 * npoints + i]) == faces[prev_i_around_ct]);
++          g_assert (LDATA (edges[2 * npoints + i]) == faces[i]);
++
++          g_assert (              ONEXT (edges[              i])   == SYM (edges[prev_i_around_ct]));
++          g_assert (       ONEXT (ONEXT (edges[              i]))  == edges[2 * npoints + i]);
++          g_assert (ONEXT (ONEXT (ONEXT (edges[              i]))) ==      edges[              i]);
++          g_assert (              ONEXT (edges[1 * npoints + i])   == SYM (edges[2 * npoints + i]));
++          g_assert (       ONEXT (ONEXT (edges[1 * npoints + i]))  == SYM (edges[1 * npoints + prev_i_around_ct]));
++          g_assert (ONEXT (ONEXT (ONEXT (edges[1 * npoints + i]))) ==      edges[1 * npoints + i]);
++
++          g_assert (LNEXT (edges[              i]) ==      edges[0 * npoints + next_i_around_ct]);
++          g_assert (LNEXT (edges[1 * npoints + i]) == SYM (edges[2 * npoints + next_i_around_ct]));
++          g_assert (LNEXT (edges[2 * npoints + i]) ==      edges[1 * npoints + i]);
++        }
++      else
++        {
++          /* XXX: No debug checks for this yet. LDATA and RDATA should be swapped from the
++           *      above case, and ONEXT order should be reversed. It works, so have not
++           *      written in the debug checks.
++           */
++        }
+     }
++#endif
+ 
+     objects = g_list_append (objects, object);
+ 
++    link = malloc (sizeof (polygon_3d_link));
++    pa->user_data = link;
++    link->object = object;
++    link->bottom_face = faces[npoints];
++    link->top_face = faces[npoints + 1];
++
++//    fprintf (stderr, "Linking piece %p with object %p, top face %p (contour count %i), bottom face %p (contour count %i)\n",
++//             pa, link->object, link->top_face, g_list_length (link->top_face->contours), link->bottom_face, g_list_length (link->bottom_face->contours));
++
+   } while (pa = pa->f, pa != contours);
+ 
+   return objects;
+@@ -693,19 +707,17 @@ object3d_from_board_outline (void)
+   appearance_set_color (board_appearance,   1.0, 1.0, 0.6);
+ //  appearance_set_color (top_bot_appearance, 0.2, 0.8, 0.2);
+ 
+-#ifdef REVERSED_PCB_CONTOURS
+   objects = object3d_from_contours (board_outline,
++#ifdef REVERSED_PCB_CONTOURS
+                                     -HACK_BOARD_THICKNESS, /* Bottom */
+                                     0                    ,  /* Top */
+-                                    board_appearance,
+-                                    top_bot_appearance);
+ #else
+-  objects = object3d_from_contours (board_outline,
+                                      HACK_BOARD_THICKNESS / 2, /* Bottom */
+                                     -HACK_BOARD_THICKNESS / 2, /* Top */
+-                                    board_appearance,
+-                                    top_bot_appearance);
+ #endif
++                                    board_appearance,
++                                    top_bot_appearance,
++                                    false); /* Don't invert */
+ 
+   destroy_appearance (board_appearance);
+   destroy_appearance (top_bot_appearance);
+@@ -912,6 +924,7 @@ pv_mask_callback (const BoxType * b, void *cl)
+   return 1;
+ }
+ 
++#if 1
+ static int
+ pv_drill_callback (const BoxType * b, void *cl)
+ {
+@@ -922,7 +935,24 @@ pv_drill_callback (const BoxType * b, void *cl)
+   if (!(np = CirclePoly (pv->X, pv->Y, (pv->DrillingHole + 1) / 2, NULL)))
+     return 0;
+ 
+-  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
++  info->poly = res;
++
++  return 1;
++}
++#endif
++
++static int
++pv_barrel_callback (const BoxType * b, void *cl)
++{
++  PinType *pv = (PinType *)b;
++  struct mask_info *info = cl;
++  POLYAREA *np, *res;
++
++  if (!(np = CirclePoly (pv->X, pv->Y, (pv->DrillingHole + HACK_PLATED_BARREL_THICKNESS + 1) / 2, NULL)))
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
+   info->poly = res;
+ 
+   return 1;
+@@ -960,19 +990,17 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+   mask_appearance = make_appearance ();
+   appearance_set_color (mask_appearance, 0.2, 0.8, 0.2);
+ 
+-#ifdef REVERSED_PCB_CONTOURS
+   objects = object3d_from_contours (info.poly,
+-                                    (side == TOP_SIDE) ? 0                   - HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
+-                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS - HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS,                       /* Top */
+-                                    mask_appearance,
+-                                    NULL);
++#ifdef REVERSED_PCB_CONTOURS
++                                    (side == TOP_SIDE) ? 0                   + HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
++                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS + HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS,                       /* Top */
+ #else
+-  objects = object3d_from_contours (info.poly,
+                                     (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS                       : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS + HACK_MASK_THICKNESS, /* Bottom */
+                                     (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS, /* Top */
+-                                    mask_appearance,
+-                                    NULL);
+ #endif
++                                    mask_appearance,
++                                    NULL,
++                                    false); /* Don't invert */
+ 
+   destroy_appearance (mask_appearance);
+ 
+@@ -1157,6 +1185,7 @@ old_object3d_from_board_outline (void)
+       DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
+       ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
+       DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
++
+ #if REVERSED_PCB_CONTOURS
+       RDATA (edges[              i]) = faces[i];
+       LDATA (edges[              i]) = faces[npoints];
+@@ -1496,19 +1525,68 @@ pv_copper_callback (const BoxType * b, void *cl)
+   return 1;
+ }
+ 
++
++static void
++steal_object_geometry (object3d *dst, object3d *src)
++{
++  g_assert (dst != src);
++
++  dst->faces    = g_list_concat (dst->faces,    src->faces);
++  dst->edges    = g_list_concat (dst->edges,    src->edges);
++  dst->vertices = g_list_concat (dst->vertices, src->vertices);
++  src->faces = NULL;
++  src->edges = NULL;
++  src->vertices = NULL;
++}
++
++static void
++update_object_pointers (POLYAREA **group_m_poly, object3d *old_object, object3d *new_object)
++{
++  int group;
++  int top_group;
++  int bottom_group;
++  int min_copper_group;
++  int max_copper_group;
++  POLYAREA *pa;
++
++  top_group =    GetLayerGroupNumberBySide (TOP_SIDE);
++  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
++
++  min_copper_group = MIN (bottom_group, top_group);
++  max_copper_group = MAX (bottom_group, top_group);
++
++  for (group = min_copper_group; group <= max_copper_group; group++)
++    {
++      pa = group_m_poly[group];
++      do
++        {
++          polygon_3d_link *link = pa->user_data;
++
++          if (link->object == old_object)
++            link->object = new_object;
++
++        }
++      while ((pa = pa->f) != group_m_poly[group]);
++    }
++}
++
+ GList *
+ object3d_from_copper_layers_within_area (POLYAREA *area)
+ {
+   appearance *copper_appearance;
+-  GList *objects;
++  GList *group_objects;
+   struct copper_info info;
+   BoxType bounds;
+ 
+   int group;
+   int top_group;
+   int bottom_group;
+-  int min_phys_group;
+-  int max_phys_group;
++  int min_copper_group;
++  int max_copper_group;
++
++  POLYAREA **group_m_polyarea;
++  POLYAREA *barrel_m_polyarea;
++  POLYAREA *drill_m_polyarea;
+ 
+ //  poly_Copy0 (&info.poly, area);
+ 
+@@ -1525,101 +1603,433 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+   top_group =    GetLayerGroupNumberBySide (TOP_SIDE);
+   bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
+ 
+-  min_phys_group = MIN (bottom_group, top_group);
+-  max_phys_group = MAX (bottom_group, top_group);
++  min_copper_group = MIN (bottom_group, top_group);
++  max_copper_group = MAX (bottom_group, top_group);
++//  num_copper_groups = max_copper_group - min_copper_group;
+ 
+-  objects = NULL;
++  group_m_polyarea = calloc (max_copper_group + 1, sizeof (POLYAREA *));
+ 
+-  for (group = min_phys_group; group <= max_phys_group; group++) {
++  group_objects = NULL;
+ 
+-#ifdef REVERSED_PCB_CONTOURS
+-    Coord depth = compute_depth (group) - HACK_BOARD_THICKNESS;
+-#else
+-    Coord depth = compute_depth (group) + HACK_BOARD_THICKNESS / 2;
+-#endif
+-    info.poly = NULL;
++  for (group = min_copper_group; group <= max_copper_group; group++)
++    {
++      Coord depth = compute_depth (group);
++
++      info.poly = NULL;
+ 
+-    fprintf (stderr, "Computing copper geometry for group %i\n", group);
++      fprintf (stderr, "Computing copper geometry for group %i\n", group);
+ 
+ #if 1
+-    GROUP_LOOP (PCB->Data, group);
+-      {
+-        fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
++      GROUP_LOOP (PCB->Data, group);
++        {
++          fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
+ 
+-        r_search (layer->line_tree, &bounds, NULL, line_copper_callback, &info);
+-        r_search (layer->arc_tree,  &bounds, NULL, arc_copper_callback, &info);
+-        r_search (layer->text_tree, &bounds, NULL, text_copper_callback, &info);
+-        r_search (layer->polygon_tree, &bounds, NULL, polygon_copper_callback, &info);
+-      }
+-    END_LOOP;
++          r_search (layer->line_tree, &bounds, NULL, line_copper_callback, &info);
++          r_search (layer->arc_tree,  &bounds, NULL, arc_copper_callback, &info);
++          r_search (layer->text_tree, &bounds, NULL, text_copper_callback, &info);
++          r_search (layer->polygon_tree, &bounds, NULL, polygon_copper_callback, &info);
++        }
++      END_LOOP;
+ #endif
+ 
+ #if 1
+-    fprintf (stderr, "Accumulating pin + via pads\n");
+-    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
+-    r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
++      fprintf (stderr, "Accumulating pin + via pads\n");
++      r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
++      r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
+ #endif
+ 
+ #if 1
+-    if (group == top_group ||
+-        group == bottom_group)
++      if (group == top_group ||
++          group == bottom_group)
++        {
++          info.side = (group == top_group) ? TOP_SIDE : BOTTOM_SIDE;
++          fprintf (stderr, "Accumulating SMT pads for side %i\n", info.side);
++          r_search (PCB->Data->pad_tree, &bounds, NULL, pad_copper_callback, &info);
++        }
++#endif
++
++    /* TODO: Inter-layer features
++     *
++     * Accumulate a circular polygon for each plated hole we may cut, ensuring
++     * the finished polygon contour extends to include the via barrel extents.
++     *
++     * Subtract non-plated hole contours from the polygons.
++     *
++     * For each hole, add the via-barrel between layers... removing the Object3D
++     * from the list of objects as they become joined with some other. (The final
++     * list of objects shuold match 1:1 with resultant bodies, and contain no
++     * duplicates.
++     *
++     * To accomodate overlapping drill holes, accumulate all via-barrels into a
++     * polygon, and subtract that from the positive copper polygon. As we already
++     * added via-barrels to each copper layer, the each barrel extrusion contour
++     * should match only one body of copper on a given layer.
++     *
++     * Remove the drilled hole down each via by extruding the additional faces.
++     *
++     * To accomodate overlapping drill holes, accumulate all drills into a polygon,
++     * and subtract that from the positive copper polygon. Any subtracted contour
++     * should at this point match to one body of copper on a given layer.
++     *
++     */
++
++#if 0
++      fprintf (stderr, "Subtracting pin + via drills\n");
++      r_search (PCB->Data->pin_tree, &bounds, NULL, pv_drill_callback, &info);
++      r_search (PCB->Data->via_tree, &bounds, NULL, pv_drill_callback, &info);
++#endif
++
++    if (info.poly == NULL)
+       {
+-        info.side = (group == top_group) ? TOP_SIDE : BOTTOM_SIDE;
+-        fprintf (stderr, "Accumulating SMT pads for side %i\n", info.side);
+-        r_search (PCB->Data->pad_tree, &bounds, NULL, pad_copper_callback, &info);
++        fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
++        continue;
+       }
++
++      group_objects = g_list_concat (group_objects,
++        object3d_from_contours (info.poly,
++#ifdef REVERSED_PCB_CONTOURS
++                                depth,                         /* Bottom */
++                                depth + HACK_COPPER_THICKNESS, /* Top */
++#else
++                                -depth - HACK_BOARD_THICKNESS / 2,                         /* Bottom */
++                                -depth - HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS, /* Top */
+ #endif
++                                copper_appearance,
++                                NULL,
++                                false)); /* Don't invert */
+ 
+-  /* TODO: Inter-layer features
+-   *
+-   * Accumulate a circular polygon for each plated hole we may cut, ensuring
+-   * the finished polygon contour extends to include the via barrel extents.
+-   *
+-   * Subtract non-plated hole contours from the polygons.
+-   *
+-   * For each hole, add the via-barrel between layers... removing the Object3D
+-   * from the list of objects as they become joined with some other. (The final
+-   * list of objects shuold match 1:1 with resultant bodies, and contain no
+-   * duplicates.
+-   *
+-   * To accomodate overlapping drill holes, accumulate all via-barrels into a
+-   * polygon, and subtract that from the positive copper polygon. As we already
+-   * added via-barrels to each copper layer, the each barrel extrusion contour
+-   * should match only one body of copper on a given layer.
+-   *
+-   * Remove the drilled hole down each via by extruding the additional faces.
+-   *
+-   * To accomodate overlapping drill holes, accumulate all drills into a polygon,
+-   * and subtract that from the positive copper polygon. Any subtracted contour
+-   * should at this point match to one body of copper on a given layer.
+-   *
++      group_m_polyarea[group] = info.poly;
++    }
++
++  /* Now need to punch drill-holes through the inter-layers..
++   * Ideally, we construct a polygon of drill-holes, so any overlapping are taken into account
+    */
++  info.poly = NULL;
++
++  fprintf (stderr, "Accumulating pin + via barrel outers\n");
++  r_search (PCB->Data->pin_tree, &bounds, NULL, pv_barrel_callback, &info);
++  r_search (PCB->Data->via_tree, &bounds, NULL, pv_barrel_callback, &info);
++
++  barrel_m_polyarea = info.poly;
++
++  info.poly = NULL;
+ 
+ #if 1
+-    fprintf (stderr, "Subtracting pin + via drills\n");
+-    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_drill_callback, &info);
+-    r_search (PCB->Data->via_tree, &bounds, NULL, pv_drill_callback, &info);
++  fprintf (stderr, "Accumulating pin + via barrel drills\n");
++  r_search (PCB->Data->pin_tree, &bounds, NULL, pv_drill_callback, &info);
++  r_search (PCB->Data->via_tree, &bounds, NULL, pv_drill_callback, &info);
++
++  drill_m_polyarea = info.poly;
++
++  info.poly = NULL;
+ #endif
+ 
+-  if (info.poly == NULL)
++  // Extrude barrel?
++  // Grab top-face of barrel. Delete the face, stealing its contour.. find which top-side copper Object3D to paste in into, link it up.
++  // Grab bottom-fac of barrel. Delete the face, stealing its contour.. find which next-side copper Object3D to paste it into, link it up. (Might already be the same object as in step above.. how to find it?)
++  // Repeat for each inter-layer barrel segment
++  // Repeat for each contour in the accumulated barrel M_POLYAERA
++
++
++  for (group = min_copper_group; group < max_copper_group; group++)
+     {
+-      fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
+-      continue;
++      Coord top_depth;
++      Coord bottom_depth;
++      POLYAREA *pa;
++      GList *barrel_objects;
++
++      /* HACK - LET US EMIT BLANK BOARDS.. SHOULD CHECK BEFORE WE START TO LOOP? */
++      if (barrel_m_polyarea == NULL)
++        break;
++
++      /* Extrude barrel from group to group + 1 */
++      fprintf (stderr, "Extruding barrels from layer group %i to %i\n", group, group + 1);
++
++      g_assert (group_m_polyarea[group] != NULL);
++      g_assert (group_m_polyarea[group + 1] != NULL);
++
++      /* Depth is the bottom? of the layer? */
++      top_depth = compute_depth (group);
++      bottom_depth = compute_depth (group + 1);
++
++      barrel_objects = object3d_from_contours (barrel_m_polyarea,
++#ifdef REVERSED_PCB_CONTOURS
++                                               bottom_depth + HACK_COPPER_THICKNESS, /* Bottom */
++                                               top_depth,                            /* Top */
++#else
++                                               -bottom_depth - HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS, /* Bottom */
++                                               -top_depth    - HACK_BOARD_THICKNESS / 2,                         /* Top */
++#endif
++                                               copper_appearance,
++                                               NULL,
++                                               false); /* Don't invert */
++
++/* Connect the via barrels in this block of code */
++#if 1
++      /* Loop over all barrel outline pieces */
++      pa = barrel_m_polyarea;
++      do
++        {
++          /* For each barrel, we want to find the Polyarea it hits on group, and group+1.. this tracks to the objects and faces we must manipulate */
++
++          polygon_3d_link *top_link    ;
++          polygon_3d_link *barrel_link ;
++          polygon_3d_link *bottom_link ;
++
++          object3d *top_group_object    ;
++          object3d *barrel_object       ;
++          object3d *bottom_group_object ;
++
++          face3d *top_group_face     ;
++          face3d *barrel_top_face    ;
++          face3d *barrel_bottom_face ;
++          face3d *bottom_group_face  ;
++
++          edge_ref barrel_top_face_first_edge    ;
++          edge_ref barrel_bottom_face_first_edge ;
++          edge_ref e;
++
++          POLYAREA *top_pa    = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group    ] , false);
++          POLYAREA *bottom_pa = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[group + 1] , false);
++
++          /* These conditions should not occur, and can likely only happen because some other
++           * bug in the polygon processing code has created an inconsistent m_polyarea somewhere.
++           * We need to check for them though, since sadly - bad polygon boolean operations are
++           * still far too common.
++           */
++          g_warn_if_fail (top_pa != NULL);
++          g_warn_if_fail (bottom_pa != NULL);
++          if (top_pa == NULL)
++              continue;
++
++          if (bottom_pa == NULL)
++            continue;
++
++          top_link    = top_pa->user_data;
++          barrel_link = pa->user_data;
++          bottom_link = bottom_pa->user_data;
++
++          top_group_object    = top_link->object;
++          barrel_object       = barrel_link->object;
++          bottom_group_object = bottom_link->object;
++
++          top_group_face     = top_link->bottom_face;
++          barrel_top_face    = barrel_link->top_face;
++          barrel_bottom_face = barrel_link->bottom_face;
++          bottom_group_face  = bottom_link->top_face;
++
++          barrel_top_face_first_edge = ((contour3d *)barrel_top_face->contours->data)->first_edge;
++          barrel_bottom_face_first_edge = ((contour3d *)barrel_bottom_face->contours->data)->first_edge;
++
++//          fprintf (stderr, "Extruding a barrel\n");
++
++          /* Do some magic to join the objects */
++
++          /* XXX: Need to invert the barrel object? */
++
++          g_assert (g_list_length (barrel_top_face->contours) == 1);
++          g_assert (g_list_length (barrel_bottom_face->contours) == 1);
++
++          face3d_add_contour (top_group_face,    make_contour3d (barrel_top_face_first_edge));
++          face3d_add_contour (bottom_group_face, make_contour3d (barrel_bottom_face_first_edge));
++
++          /* Need to walk around the top / bottom edge contours, and re-connect with the linked up copper groups */
++
++          e = barrel_top_face_first_edge;
++          do
++            {
++//              edge_info *info = UNDIR_DATA (e);
++//              face3d *side_face = RDATA (e);
++
++              /* Check and reassign the edge */
++              g_assert (LDATA (e) == barrel_top_face);
++              LDATA (e) = top_group_face;
++
++//              /* Only adjust from one end! */
++//              if (side_face->is_cylindrical)
++//                {
++//                  edge_face->surface_orientation_reversed = !edge_face->surface_orientation_reversed;
++//                  edge_face->az = -edge_face->az;
++//                }
++
++//              if (info->is_round)
++//                info->nz = -info->nz; /* Flip circular normal, if this contour is a circle */
++
++              /* XXX: Also need to flip this edge!... CHEAT, and just flip the object3d edge bucket references...
++               * XXX: Leaves the quad-edges WRONG!
++               */
++//              barrel_object->edges = g_list_remove (barrel_object->edges, (void *)e);
++//              object3d_add_edge (barrel_object, SYM (e));
++            }
++          while ((e = LNEXT (e)) != barrel_top_face_first_edge);
++
++          e = barrel_bottom_face_first_edge;
++          do
++            {
++//              edge_info *info = UNDIR_DATA (e);
++
++              /* Check and reassign the edge */
++              g_assert (LDATA (e) == barrel_bottom_face);
++              LDATA (e) = bottom_group_face;
++
++//              if (info->is_round)
++//                info->nz = -info->nz; /* Flip circular normal, if this contour is a circle */
++//
++              /* XXX: Also need to flip this edge!... CHEAT, and just flip the object3d edge bucket references...
++               * XXX: Leaves the quad-edges WRONG!
++               */
++//              barrel_object->edges = g_list_remove (barrel_object->edges, (void *)SYM (e));
++//              object3d_add_edge (barrel_object, e);
++            }
++          while ((e = LNEXT (e)) != barrel_bottom_face_first_edge);
++
++          /* XXX: What about destroying the barrel top / bottom face appearance (if any?) */
++
++          barrel_object->faces = g_list_remove (barrel_object->faces, barrel_top_face);
++          barrel_object->faces = g_list_remove (barrel_object->faces, barrel_bottom_face);
++          destroy_face3d (barrel_top_face);    /* This leaves the edges, vertices etc.. it only deletes the face contour list */
++          destroy_face3d (barrel_bottom_face); /* This leaves the edges, vertices etc.. it only deletes the face contour list */
++          /* No vertices should be deleted */
++          /* All edges must end up in the top object, so we leave them */
++
++          /* Steal the data from the barrel object */
++          steal_object_geometry (top_group_object, barrel_object);
++          destroy_object3d (barrel_object);
++
++          if (top_group_object != bottom_group_object)
++            { /* Top object and bottom object were previously distinct */
++
++              /* Update any remaining link pointers to the previous bottom object we are about to delete */
++              update_object_pointers (group_m_polyarea, bottom_group_object, top_group_object);
++//              bottom_link->object = top_group_object;
++//#warning THROUGH OBJECT JOINING.. CAN WE STILL REFER TO bottom_group_object from various other places??? PROBABLY YES!
++
++              /* Remove the old bottom object from the list of output objects */
++              group_objects = g_list_remove (group_objects, bottom_group_object);
++
++              /* Steal the data from the old bottom object */
++              steal_object_geometry (top_group_object, bottom_group_object);
++
++              /* Delete the old bottom object */
++              destroy_object3d (bottom_group_object);
++            }
++
++          free (pa->user_data);
++        }
++      while (pa = pa->f, pa != barrel_m_polyarea);
++
++      g_list_free (barrel_objects);
++#else
++      group_objects = g_list_concat (group_objects, barrel_objects);
++#endif
+     }
+ 
+-    objects = g_list_concat (objects,
+-      object3d_from_contours (info.poly,
++  if (drill_m_polyarea != NULL) /* Drill holes */
++    {
++      Coord top_depth;
++      Coord bottom_depth;
++      POLYAREA *pa;
++      GList *drill_objects;
++
++      /* Extrude drill hole */
++      fprintf (stderr, "Extruding drill holes\n");
++
++      /* Depth is the bottom? of the layer? */
++      top_depth = compute_depth (min_copper_group);
++      bottom_depth = compute_depth (max_copper_group);
++
++      drill_objects = object3d_from_contours (drill_m_polyarea,
+ #ifdef REVERSED_PCB_CONTOURS
+-                              depth,                         /* Bottom */
+-                              depth + HACK_COPPER_THICKNESS, /* Top */
++                                               bottom_depth,                      /* Bottom */
++                                               top_depth + HACK_COPPER_THICKNESS, /* Top */
+ #else
+-                              -depth,                         /* Bottom */
+-                              -depth - HACK_COPPER_THICKNESS, /* Top */
++                                              -bottom_depth - HACK_BOARD_THICKNESS / 2,                         /* Bottom */
++                                              -top_depth    - HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS, /* Top */
+ #endif
+-                              copper_appearance,
+-                              NULL));
++                                              copper_appearance,
++                                              NULL,
++                                              true); /* Invert */
+ 
+-  }
++/* Connect the via drill holes in this block of code */
++#if 1
++      /* Loop over all barrel outline pieces */
++      pa = drill_m_polyarea;
++      do
++        {
++          /* For each drill hole, we want to find the Polyarea it hits on min_copper_group, and max_copper_group.. this tracks to the objects and faces we must manipulate */
++          polygon_3d_link *top_link    = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[min_copper_group] , false)->user_data;
++          polygon_3d_link *drill_link  = pa->user_data;
++          polygon_3d_link *bottom_link = cntr_in_M_POLYAREA (pa->contours, group_m_polyarea[max_copper_group] , false)->user_data;
++
++          object3d *top_group_object    = top_link->object;
++          object3d *drill_object        = drill_link->object;
++          object3d *bottom_group_object = bottom_link->object;
++
++          face3d *top_group_face    = top_link->top_face;
++          face3d *drill_top_face    = drill_link->top_face;
++          face3d *drill_bottom_face = drill_link->bottom_face;
++          face3d *bottom_group_face = bottom_link->bottom_face;
++
++          edge_ref drill_top_face_first_edge = ((contour3d *)drill_top_face->contours->data)->first_edge;
++          edge_ref drill_bottom_face_first_edge = ((contour3d *)drill_bottom_face->contours->data)->first_edge;
++          edge_ref e;
++
++          g_warn_if_fail (top_group_object == bottom_group_object);
++
++//          fprintf (stderr, "Extruding a drill\n");
++
++          /* Do some magic to join the objects */
++
++          /* XXX: Need to invert the barrel object? */
++
++          g_assert (g_list_length (drill_top_face->contours) == 1);
++          g_assert (g_list_length (drill_bottom_face->contours) == 1);
++
++          face3d_add_contour (top_group_face,    make_contour3d (drill_top_face_first_edge));
++          face3d_add_contour (bottom_group_face, make_contour3d (drill_bottom_face_first_edge));
++
++          /* Need to walk around the top / bottom edge contours, and re-connect with the linked up copper groups */
++
++          e = drill_top_face_first_edge;
++          do
++            {
++              /* Check and reassign the edge */
++              g_assert (LDATA (e) == drill_top_face);
++              LDATA (e) = top_group_face;
++            }
++          while ((e = LNEXT (e)) != drill_top_face_first_edge);
++
++          e = drill_bottom_face_first_edge;
++          do
++            {
++              /* Check and reassign the edge */
++              g_assert (LDATA (e) == drill_bottom_face);
++              LDATA (e) = bottom_group_face;
++            }
++          while ((e = LNEXT (e)) != drill_bottom_face_first_edge);
++
++          /* XXX: What about destroying the barrel top / bottom face appearance (if any?) */
++
++          drill_object->faces = g_list_remove (drill_object->faces, drill_top_face);
++          drill_object->faces = g_list_remove (drill_object->faces, drill_bottom_face);
++          destroy_face3d (drill_top_face);    /* This leaves the edges, vertices etc.. it only deletes the face contour list */
++          destroy_face3d (drill_bottom_face); /* This leaves the edges, vertices etc.. it only deletes the face contour list */
++          /* No vertices should be deleted */
++          /* All edges must end up in the top object, so we leave them */
++
++          /* Steal the data from the drill object */
++          steal_object_geometry (top_group_object, drill_object);
++          destroy_object3d (drill_object);
++
++          free (pa->user_data);
++        }
++      while (pa = pa->f, pa != drill_m_polyarea);
++
++      g_list_free (drill_objects);
++#else
++      group_objects = g_list_concat (group_objects, drill_objects);
++#endif
++    }
+ 
+ 
+   destroy_appearance (copper_appearance);
+@@ -1635,5 +2045,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+ 
+   poly_Free (&info.poly);
+ 
+-  return objects;
++  poly_Free (&barrel_m_polyarea);
++  poly_Free (&drill_m_polyarea);
++
++  for (group = min_copper_group; group <= max_copper_group; group++)
++    {
++      if (group_m_polyarea[group] != NULL)
++        {
++          free (group_m_polyarea[group]->user_data);
++          poly_Free (&group_m_polyarea[group]);
++        }
++    }
++
++  return group_objects;
+ }
+diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
+index 0e679ab..82b69fd 100644
+--- a/src/hid/common/object3d.h
++++ b/src/hid/common/object3d.h
+@@ -15,7 +15,7 @@ void object3d_set_appearance (object3d *object, appearance *appear);
+ void object3d_add_edge (object3d *object, edge_ref edge);
+ void object3d_add_vertex (object3d *object, vertex3d *vertex);
+ void object3d_add_face (object3d *object, face3d *face);
+-GList *object3d_from_contours (const POLYAREA *contours, double zbot, double ztop, const appearance *master_object_appearance, const appearance *master_top_bot_appearance);
++GList *object3d_from_contours (POLYAREA *contours, double zbot, double ztop, const appearance *master_object_appearance, const appearance *master_top_bot_appearance, bool extrude_inverted);
+ GList *object3d_from_board_outline (void);
+ GList *object3d_from_soldermask_within_area (POLYAREA *area, int side);
+ GList *object3d_from_copper_layers_within_area (POLYAREA *area);
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index 5b2cd40..beb5321 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -25,7 +25,7 @@
+ #include "object3d_step.h"
+ 
+ 
+-//#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
++#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
+ #undef REVERSED_PCB_CONTOURS
+ 
+ #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
+@@ -222,7 +222,7 @@ object3d_to_step_body_fragment (step_file *step,
+       dir_y = dv->y - ov->y;
+       dir_z = dv->z - ov->z;
+ 
+-#if 1
++#if 0
+       /* XXX: This avoids the test file step_outline_test.pcb failing to display properly in freecad when coordinates are slightly rounded */
+       if (dir_x < EPSILON && -dir_x < EPSILON &&
+           dir_y < EPSILON && -dir_y < EPSILON &&
+@@ -280,9 +280,10 @@ object3d_to_step_body_fragment (step_file *step,
+ 
+       edge = contour->first_edge;
+       do {
+-        edge_loop_edges = g_list_append (edge_loop_edges, GINT_TO_POINTER (ORIENTED_EDGE_IDENTIFIER (edge)));
++        edge_loop_edges = g_list_prepend (edge_loop_edges, GINT_TO_POINTER (ORIENTED_EDGE_IDENTIFIER (edge)));
+       } while (edge = LNEXT (edge), edge != contour->first_edge);
+ 
++      edge_loop_edges = g_list_reverse (edge_loop_edges); /* FOR SOME REASON, SOLIDWORKS CARES ABOUT THIS WHEN BREP MAPPING */ /* ODDLY, SOLIDWORKS SEEMS TO LIKE IT WHEN THE FILE IS BROKEN ACCORDING TO THE ONLINE STEP FILE ANALYSER */
+       edge_loop = step_edge_loop (step, "NONE", edge_loop_edges);
+ 
+       if (outer_contour)
+@@ -290,13 +291,16 @@ object3d_to_step_body_fragment (step_file *step,
+       else
+         contour->face_bound_identifier = step_face_bound (step, "NONE", edge_loop, true);
+ 
+-      face_contour_list = g_list_append (face_contour_list, GINT_TO_POINTER (contour->face_bound_identifier));
++      face_contour_list = g_list_prepend (face_contour_list, GINT_TO_POINTER (contour->face_bound_identifier));
+     }
+ 
++    face_contour_list = g_list_reverse (face_contour_list);
+     face->face_identifier = step_advanced_face (step, "NONE", face_contour_list, face->surface_identifier, !face->surface_orientation_reversed);
+-    shell_face_list = g_list_append (shell_face_list, GINT_TO_POINTER (face->face_identifier));
++    shell_face_list = g_list_prepend (shell_face_list, GINT_TO_POINTER (face->face_identifier));
+   }
+ 
++  shell_face_list = g_list_reverse (shell_face_list);
++
+   /* Closed shell which bounds the brep solid */
+   pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
+   brep_identifier = step_manifold_solid_brep (step, body_name /* This is picked up as the solid body name by Solidworks */, pcb_shell_identifier);
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 2bb9bfd..52182c0 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -202,13 +202,11 @@ step_do_export (HID_Attr_Val * options)
+         poly_DelContour (&curc);
+       }
+ 
+-#if 1
+     mask_objects = object3d_from_soldermask_within_area (piece, TOP_SIDE);
+     board_outline_list = g_list_concat (board_outline_list, mask_objects);
+ 
+     mask_objects = object3d_from_soldermask_within_area (piece, BOTTOM_SIDE);
+     board_outline_list = g_list_concat (board_outline_list, mask_objects);
+-#endif
+ 
+     copper_layer_objects = object3d_from_copper_layers_within_area (piece);
+     board_outline_list = g_list_concat (board_outline_list, copper_layer_objects);
 diff --git a/src/polygon1.c b/src/polygon1.c
 index 2c75fa4..c5b2d71 100644
 --- a/src/polygon1.c
