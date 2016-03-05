@@ -3,10 +3,13 @@
 #include <assert.h>
 #include <stdbool.h>
 
+#include <glib.h>
+
 #include "quad.h"
 #include "vertex3d.h"
 #include "face3d.h"
 #include "edge3d.h"
+#include "appearance.h"
 #include "object3d.h"
 #include "polygon.h"
 #include "data.h"
@@ -62,13 +65,14 @@ object3d_test_init (void)
 }
 
 object3d *
-make_object3d ()
+make_object3d (char *name)
 {
   static int object3d_count = 0;
   object3d *object;
 
-  object = malloc (sizeof (object3d));
+  object = g_new (object3d, 1);
   object->id = object3d_count++;
+  name = g_strdup (name);
 
   return object;
 }
@@ -76,8 +80,35 @@ make_object3d ()
 void
 destroy_object3d (object3d *object)
 {
-  /* XXX: LEAK GEOMETERY AND TOPOLOGY */
-  free (object);
+  g_list_free_full (object->vertices, (GDestroyNotify)destroy_vertex3d);
+  g_list_free_full (object->edges, (GDestroyNotify)destroy_edge);
+  g_list_free_full (object->faces, (GDestroyNotify)destroy_face3d);
+  g_free (object->name);
+  g_free (object);
+}
+
+void
+object3d_set_appearance (object3d *object, appearance *appear)
+{
+  object->appear = appear;
+}
+
+void
+object3d_add_edge (object3d *object, edge_ref edge)
+{
+  object->edges = g_list_append (object->edges, (void *)edge);
+}
+
+void
+object3d_add_vertex (object3d *object, vertex3d *vertex)
+{
+  object->vertices = g_list_append (object->vertices, vertex);
+}
+
+void
+object3d_add_face (object3d *object, face3d *face)
+{
+  object->faces = g_list_append (object->faces, face);
 }
 
 #define XOFFSET 50
@@ -90,7 +121,10 @@ object3d_create_test_cube (void)
   object3d *object;
   vertex3d *cube_vertices[8];
   edge_ref cube_edges[12];
+  face3d *faces[6];
   int i;
+
+  object = make_object3d ("TEST CUBE");
 
   cube_vertices[0] = make_vertex3d (XOFFSET + SCALE * 0., YOFFSET + SCALE * 0., ZOFFSET + SCALE *  0.);
   cube_vertices[1] = make_vertex3d (XOFFSET + SCALE * 1., YOFFSET + SCALE * 0., ZOFFSET + SCALE *  0.);
@@ -101,8 +135,20 @@ object3d_create_test_cube (void)
   cube_vertices[6] = make_vertex3d (XOFFSET + SCALE * 1., YOFFSET + SCALE * 1., ZOFFSET + SCALE * -1.);
   cube_vertices[7] = make_vertex3d (XOFFSET + SCALE * 0., YOFFSET + SCALE * 1., ZOFFSET + SCALE * -1.);
 
+  for (i = 0; i < 8; i++)
+    object3d_add_vertex (object, cube_vertices[i]);
+
   for (i = 0; i < 12; i++)
-    cube_edges[i] = make_edge ();
+    {
+      cube_edges[i] = make_edge ();
+      object3d_add_edge (object, cube_edges[i]);
+    }
+
+  for (i = 0; i < 6; i++)
+    {
+      faces[i] = make_face3d ();
+      object3d_add_face (object, faces[i]);
+    }
 
   for (i = 0; i < 4; i++)
     {
@@ -133,8 +179,6 @@ object3d_create_test_cube (void)
 
   quad_enum (cube_edges[0], debug_print_edge, NULL);
 
-  object = make_object3d ();
-  object->first_edge = cube_edges[0];
 
   return object;
 }
@@ -199,7 +243,9 @@ draw_quad_edge (edge_ref e, void *data)
 void
 object3d_draw_debug (void)
 {
-  quad_enum (object3d_test_object->first_edge, draw_quad_edge, NULL);
+  g_return_if_fail (object3d_test_object->edges != NULL);
+
+  quad_enum ((edge_ref)object3d_test_object->edges->data, draw_quad_edge, NULL);
 }
 
 /*********************************************************************************************************/
@@ -247,6 +293,7 @@ object3d *
 object3d_from_board_outline (void)
 {
   object3d *object;
+  appearance *board_appearance;
   POLYAREA *outline;
   PLINE *contour;
   PLINE *ct;
@@ -255,6 +302,7 @@ object3d_from_board_outline (void)
   int i;
   vertex3d **vertices;
   edge_ref *edges;
+  face3d **faces;
   int start_of_ct;
   int offset_in_ct;
   int ct_npoints;
@@ -287,8 +335,15 @@ object3d_from_board_outline (void)
    * holes = ncontours - 1  (LATER)
    */
 
+  object = make_object3d (PCB->Name);
+  board_appearance = make_appearance ();
+  appearance_set_color (board_appearance, 1., 1., 0.);
+
+  object3d_set_appearance (object, board_appearance);
+
   vertices = malloc (sizeof (vertex3d *) * 2 * npoints);
   edges    = malloc (sizeof (edge_ref  ) * 3 * npoints);
+  faces    = malloc (sizeof (face3d *) * (2 + npoints));
 
   /* Define the vertices */
   ct = contour;
@@ -311,12 +366,31 @@ object3d_from_board_outline (void)
       get_contour_coord_n_in_mm (ct, offset_in_ct, &x1, &y1);
       vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_MM (HACK_BOARD_THICKNESS)); /* Bottom */
       vertices[npoints + i] = make_vertex3d (x1, y1, 0); /* Top */
+
+      object3d_add_vertex (object, vertices[i]);
+      object3d_add_vertex (object, vertices[npoints + i]);
     }
 
   /* Define the edges */
-
   for (i = 0; i < 3 * npoints; i++)
-    edges[i] = make_edge ();
+    {
+      edges[i] = make_edge ();
+      object3d_add_edge (object, edges[i]);
+    }
+
+  /* Define the faces */
+  for (i = 0; i < npoints; i++)
+    {
+      faces[i] = make_face3d ();
+      /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
+      face3d_add_contour (faces[i], edges[2 * npoints + i]);
+    }
+  faces[npoints]     = make_face3d (); /* bottom_face */
+  faces[npoints + 1] = make_face3d (); /* top_face */
+
+  /* Pick the first bottom / top edge which within the bottom / top face outer contour loop, and link it to the face */
+  face3d_add_contour (faces[npoints], edges[0]);
+  face3d_add_contour (faces[npoints + 1], edges[npoints]);
 
   ct = contour;
   start_of_ct = 0;
@@ -326,6 +400,7 @@ object3d_from_board_outline (void)
   for (i = 0; i < npoints; i++, offset_in_ct++)
     {
       int next_i_around_ct;
+      int prev_i_around_ct;
 
       /* Update which contour we're looking at */
       if (offset_in_ct == ct_npoints)
@@ -335,9 +410,14 @@ object3d_from_board_outline (void)
           offset_in_ct = 0;
           ct = ct->next;
           ct_npoints = get_contour_npoints (ct);
+
+          /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
+          face3d_add_contour (faces[npoints], edges[i]);
+          face3d_add_contour (faces[npoints + 1], edges[npoints + i]);
         }
 
       next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
+      prev_i_around_ct = start_of_ct + (offset_in_ct + ct_npoints - 1) % ct_npoints;
 
       /* Assign the appropriate vertex geometric data to each edge end */
       ODATA (edges[0 * npoints + i]) = vertices[0 * npoints + i];
@@ -346,6 +426,12 @@ object3d_from_board_outline (void)
       DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
       ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
       DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
+      LDATA (edges[0 * npoints + i]) = faces[i];
+      RDATA (edges[0 * npoints + i]) = faces[npoints];
+      LDATA (edges[1 * npoints + i]) = faces[npoints + 1];
+      RDATA (edges[1 * npoints + i]) = faces[i];
+      LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
+      RDATA (edges[2 * npoints + i]) = faces[i];
 
       /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
       splice (edges[i], edges[npoints + i]);
@@ -363,13 +449,9 @@ object3d_from_board_outline (void)
           UNDIR_DATA (edges[1 * npoints + i]) = make_edge_info (false, true, COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (ct->radius));
           UNDIR_DATA (edges[2 * npoints + i]) = make_edge_info (true,  true, COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (ct->radius));
         }
-
     }
 
   poly_Free (&outline);
-
-  object = make_object3d ();
-  object->first_edge = edges[0]; /* edges[34] */
 
   return object;
 }
