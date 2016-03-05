@@ -1,5 +1,5 @@
 Bottom: 048985d6a23f7ac09251a8f8f782f327ef0a0235
-Top:    475c82e9b98fcb21e2e4be103bdf01bc2dc051ba
+Top:    2bb56fabeb048af0f39eddd5c5571d115662f3c3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -51,14 +51,14 @@ index 0000000..6aa3189
 +}
 diff --git a/src/hid/common/contour3d.h b/src/hid/common/contour3d.h
 new file mode 100644
-index 0000000..8ce8d8a
+index 0000000..818bd8e
 --- /dev/null
 +++ b/src/hid/common/contour3d.h
 @@ -0,0 +1,9 @@
 +typedef struct {
 +  edge_ref first_edge;
 +
-+  /* STEP crap - to hell with encapsulation */
++  /* XXX: STEP specific - breaks encapsulation */
 +  int face_bound_identifier;
 +} contour3d;
 +
@@ -115,10 +115,10 @@ index 245abca..9014125 100644
 +  g_free (info);
  }
 diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
-index e67cdb3..b91ff40 100644
+index e67cdb3..6d83bfb 100644
 --- a/src/hid/common/edge3d.h
 +++ b/src/hid/common/edge3d.h
-@@ -1,11 +1,24 @@
+@@ -1,11 +1,22 @@
  typedef struct
  {
 -  bool is_stitch;
@@ -129,13 +129,12 @@ index e67cdb3..b91ff40 100644
    bool is_round;
    float cx;
    float cy;
+-  float radius;
 +  float cz;
 +  float nx;
 +  float ny;
-+  float nz;
-   float radius;
 +
-+  /* STEP crap - to hell with encapsulation */
++  /* XXX: STEP specific - breaks encapsulation */
 +  int infinite_line_identifier;
 +  int edge_identifier;
  } edge_info;
@@ -203,7 +202,7 @@ index 1a8c8c3..0df8f23 100644
 +  face->radius = radius;
  }
 diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
-index 6200161..ed60d6d 100644
+index 6200161..52be6dc 100644
 --- a/src/hid/common/face3d.h
 +++ b/src/hid/common/face3d.h
 @@ -1,8 +1,25 @@
@@ -219,7 +218,7 @@ index 6200161..ed60d6d 100644
 +
 +  appearance *appear;
 +
-+  /* STEP crap - to hell with encapsulation */
++  /* XXX: STEP specific - breaks encapsulation */
 +  int plane_identifier;
 +  bool plane_orientation_reversed;
 +  int face_identifier;
@@ -1011,7 +1010,7 @@ index df5fd0e..174bad6 100644
  
  vertex3d *
 diff --git a/src/hid/common/vertex3d.h b/src/hid/common/vertex3d.h
-index bac7e89..278ae60 100644
+index bac7e89..51093c0 100644
 --- a/src/hid/common/vertex3d.h
 +++ b/src/hid/common/vertex3d.h
 @@ -4,6 +4,9 @@ typedef struct
@@ -1019,7 +1018,7 @@ index bac7e89..278ae60 100644
    float z;
    int id;
 +
-+  /* STEP crap - to hell with encapsulation */
++  /* XXX: STEP specific - breaks encapsulation */
 +  int vertex_identifier;
  } vertex3d;
  
