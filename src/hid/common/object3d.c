@@ -1157,7 +1157,6 @@ old_object3d_from_board_outline (void)
       DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
       ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
       DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
-
 #if REVERSED_PCB_CONTOURS
       RDATA (edges[              i]) = faces[i];
       LDATA (edges[              i]) = faces[npoints];
