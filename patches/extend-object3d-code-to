@@ -1,5 +1,5 @@
 Bottom: 936fe17d9ea5cc4a853db3197be6e498876cc672
-Top:    ad1fc608089812922f4e37f7b7e3c4362af6e30e
+Top:    9c8d4f5bea2d9c2fa1a47c2728940ca938ee89ad
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 14:34:02 +0000
 
@@ -8,7 +8,7 @@ Extend object3d code to support arc-segments in POLYAREA contours
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 9c71594..af855b8 100644
+index 9c71594..162eb64 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -245,6 +245,8 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
@@ -65,13 +65,13 @@ index 9c71594..af855b8 100644
  #ifdef PERFECT_ROUND_CONTOURS
    if (contour->is_round)
      {
-@@ -267,8 +300,21 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
+@@ -267,8 +300,22 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
        *cy = COORD_TO_STEP_Y (PCB, contour->cy);
        *r = COORD_TO_MM (contour->radius);
        *cw = (contour->Flags.orient != PLF_DIR);
 +      return;
      }
--#endif
+ #endif
 +
 +  while (n > 0) {
 +    edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
@@ -88,7 +88,7 @@ index 9c71594..af855b8 100644
  }
  
  GList *
-@@ -1484,19 +1530,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1484,19 +1531,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
        {
          fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
  
@@ -117,7 +117,7 @@ index 9c71594..af855b8 100644
      if (group == top_group ||
          group == bottom_group)
        {
-@@ -1549,7 +1597,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1549,7 +1598,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                copper_appearance,
                                NULL));
  
