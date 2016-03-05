@@ -1,5 +1,5 @@
 Bottom: 4c163cc613f0278a37eddd0b481b1ae3c91a6d75
-Top:    7d1103e340e712e5d482fdb09271afd3d8b01ab8
+Top:    e84fa00bc8755da66fe8077cf44e5fb1672c275b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -98,12 +98,12 @@ index e69de29..1a8c8c3 100644
 +  face->contours = g_list_append (face->contours, (void *)contour);
 +}
 diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
-index e69de29..6200161 100644
+index e69de29..42154df 100644
 --- a/src/hid/common/face3d.h
 +++ b/src/hid/common/face3d.h
 @@ -0,0 +1,8 @@
 +typedef struct {
-+  float nx, ny, nz; /* Face normal?*/
++  double nx, ny, nz; /* Face normal?*/
 +  GList *contours;
 +} face3d;
 +
@@ -111,7 +111,7 @@ index e69de29..6200161 100644
 +void destroy_face3d (face3d *face);
 +void face3d_add_contour (face3d *face, edge_ref contour);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 991ca86..2cd041e 100644
+index 991ca86..3168d68 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -3,10 +3,13 @@
@@ -515,7 +515,7 @@ index 991ca86..2cd041e 100644
 +        }
 +      else
 +        {
-+          float dx, dy, dz;
++          double dx, dy, dz;
 +
 +          dx = end_v->x - start_v->x;
 +          dy = end_v->y - start_v->y;
