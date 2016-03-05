@@ -533,7 +533,6 @@ object3d_from_contours (POLYAREA *contours,
       DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
       ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
       DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
-      /* XXX: Do we need to differently with this for inverted contours? */
 
       if (get_contour_edge_n_is_round (ct, offset_in_ct)) {
         double cx;
