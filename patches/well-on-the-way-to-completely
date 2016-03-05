@@ -1,5 +1,5 @@
 Bottom: a6ec2587f3cb2c6fc4b92388c8f9f1b8ed51a9df
-Top:    1e763784adb58abb432b2f5a2e644d00b2731893
+Top:    ef9e079da327d1ac5af5d3bc52813ba00a4f18dd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -317,7 +317,7 @@ index 9271c79..6e2bf29 100644
            face3d_set_normal (cylinder_faces[0], 1., 0., 0.);       /* A normal to the axis direction */
                                         /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 1687042..c3dafff 100644
+index 1687042..77db6b9 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -23,6 +23,20 @@
@@ -341,161 +341,76 @@ index 1687042..c3dafff 100644
  static step_id_list
  presentation_style_assignments_from_appearance (step_file *step, appearance *appear)
  {
-@@ -124,72 +138,91 @@ object3d_export_to_step (object3d *object, const char *filename)
- #define ORIENTED_EDGE_IDENTIFIER(e) (((edge_info *)UNDIR_DATA (e))->edge_identifier + ((e & 2) ? REV : FWD))
+@@ -147,6 +161,20 @@ object3d_export_to_step (object3d *object, const char *filename)
+           vertex3d *ov = ODATA (outer_contour->first_edge);
+           vertex3d *dv = DDATA (outer_contour->first_edge);
  
-   /* Define ininite planes corresponding to every planar face, and cylindrical surfaces for every cylindrical face */
--  for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter))
--    {
--      face3d *face = face_iter->data;
--
--      if (face->is_cylindrical)
--        {
--          /* CYLINDRICAL SURFACE NORMAL POINTS OUTWARDS AWAY FROM ITS AXIS.
--           * face->surface_orientation_reversed NEEDS TO BE SET FOR HOLES IN THE SOLID
--           */
--          face->surface_identifier =
--            step_cylindrical_surface (step, "NONE",
--                                      step_axis2_placement_3d (step, "NONE",
--                                                               step_cartesian_point (step, "NONE", face->cx, face->cy, face->cz),
--                                                                     step_direction (step, "NONE", face->ax, face->ay, face->az),
--                                                                     step_direction (step, "NONE", face->nx, face->ny, face->nz)),
--                                      face->radius);
--        }
--      else
--        {
--          contour3d *outer_contour = face->contours->data;
--          vertex3d *ov = ODATA (outer_contour->first_edge);
--          vertex3d *dv = DDATA (outer_contour->first_edge);
--
--          face->surface_identifier =
--            step_plane (step, "NONE",
--                        step_axis2_placement_3d (step, "NONE",
--                                                 step_cartesian_point (step, "NONE", ov->x,  /* A point on the plane. Defines 0,0 of the plane's parameterised coords. */
--                                                                                     ov->y,      /* Set this to the origin vertex of the first edge */
--                                                                                     ov->z),     /* this contour links to in the quad edge structure. */
--                                                       step_direction (step, "NONE", face->nx, face->ny, face->nz), /* An axis direction normal to the the face - Gives z-axis */
++          double rx, ry, rz;
++
++          rx = dv->x - ov->x;
++          ry = dv->y - ov->y;
++          rz = dv->z - ov->z;
++
++          /* Catch the circular face case where the start and end vertices are identical */
++          if (rx < EPSILON && -rx < EPSILON &&
++              ry < EPSILON && -ry < EPSILON &&
++              rz < EPSILON && -rz < EPSILON)
++            {
++              rx = 1., ry = 0., rz = 0.;
++            }
++
+           face->surface_identifier =
+             step_plane (step, "NONE",
+                         step_axis2_placement_3d (step, "NONE",
+@@ -154,9 +182,9 @@ object3d_export_to_step (object3d *object, const char *filename)
+                                                                                      ov->y,      /* Set this to the origin vertex of the first edge */
+                                                                                      ov->z),     /* this contour links to in the quad edge structure. */
+                                                        step_direction (step, "NONE", face->nx, face->ny, face->nz), /* An axis direction normal to the the face - Gives z-axis */
 -                                                       step_direction (step, "NONE", dv->x - ov->x,     /* Reference x-axis, orthogonal to z-axis. */
 -                                                                                     dv->y - ov->y,         /* Define this to be along the first edge this */
 -                                                                                     dv->z - ov->z)));      /* contour links to in the quad edge structure */
--        }
-+  for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter)) {
-+    face3d *face = face_iter->data;
-+
-+    if (face->is_cylindrical) {
-+      /* CYLINDRICAL SURFACE NORMAL POINTS OUTWARDS AWAY FROM ITS AXIS.
-+       * face->surface_orientation_reversed NEEDS TO BE SET FOR HOLES IN THE SOLID
-+       */
-+      face->surface_identifier =
-+        step_cylindrical_surface (step, "NONE",
-+                                  step_axis2_placement_3d (step, "NONE",
-+                                                           step_cartesian_point (step, "NONE", face->cx, face->cy, face->cz),
-+                                                                 step_direction (step, "NONE", face->ax, face->ay, face->az),
-+                                                                 step_direction (step, "NONE", face->nx, face->ny, face->nz)),
-+                                  face->radius);
-+    } else {
-+      contour3d *outer_contour = face->contours->data;
-+      vertex3d *ov = ODATA (outer_contour->first_edge);
-+      vertex3d *dv = DDATA (outer_contour->first_edge);
-+
-+      double rx, ry, rz;
-+
-+      rx = dv->x - ov->x;
-+      ry = dv->y - ov->y;
-+      rz = dv->z - ov->z;
-+
-+      /* Catch the circular face case where the start and end vertices are identical */
-+      if (rx < EPSILON && -rx < EPSILON &&
-+          ry < EPSILON && -ry < EPSILON &&
-+          rz < EPSILON && -rz < EPSILON) {
-+        rx = 1., ry = 0., rz = 0.;
-+      }
-+
-+      face->surface_identifier =
-+        step_plane (step, "NONE",
-+                    step_axis2_placement_3d (step, "NONE",
-+                                             step_cartesian_point (step, "NONE", ov->x,  /* A point on the plane. Defines 0,0 of the plane's parameterised coords. */
-+                                                                                 ov->y,      /* Set this to the origin vertex of the first edge */
-+                                                                                 ov->z),     /* this contour links to in the quad edge structure. */
-+                                                   step_direction (step, "NONE", face->nx, face->ny, face->nz), /* An axis direction normal to the the face - Gives z-axis */
-+                                                   step_direction (step, "NONE", rx,     /* Reference x-axis, orthogonal to z-axis. */
-+                                                                                 ry,         /* Define this to be along the first edge this */
-+                                                                                 rz)));      /* contour links to in the quad edge structure */
++                                                       step_direction (step, "NONE", rx,     /* Reference x-axis, orthogonal to z-axis. */
++                                                                                     ry,         /* Define this to be along the first edge this */
++                                                                                     rz)));      /* contour links to in the quad edge structure */
+         }
      }
  
-   /* Define the infinite lines corresponding to every edge (either lines or circles)*/
--  for (edge_iter = object->edges; edge_iter != NULL; edge_iter = g_list_next (edge_iter))
--    {
--      edge_ref edge = (edge_ref)edge_iter->data;
--      edge_info *info = UNDIR_DATA (edge);
-+  for (edge_iter = object->edges; edge_iter != NULL; edge_iter = g_list_next (edge_iter)) {
-+    edge_ref edge = (edge_ref)edge_iter->data;
-+    edge_info *info = UNDIR_DATA (edge);
+@@ -181,14 +209,31 @@ object3d_export_to_step (object3d *object, const char *filename)
+           vertex3d *ov = ODATA (edge);
+           vertex3d *dv = DDATA (edge);
+ 
++          double dir_x, dir_y, dir_z;
 +
-+    if (info->is_round) {
-+      info->infinite_line_identifier =
-+        step_circle (step, "NONE",
-+                     step_axis2_placement_3d (step, "NONE",
-+                                              step_cartesian_point (step, "NONE", info->cx, info->cy, info->cz),  // <--- Center of the circle
-+                                                    step_direction (step, "NONE", info->nx, info->ny, info->nz),  // <--- Normal of the circle
-+                                                    step_direction (step, "NONE", -1.0,     0.0,      0.0)),      // <--- Approximate X-axis direction of placement /* XXX: PULL FROM FACE DATA */
-+                                                    info->radius);
-+    } else {
-+      vertex3d *ov = ODATA (edge);
-+      vertex3d *dv = DDATA (edge);
-+
-+      double dir_x, dir_y, dir_z;
-+
-+      dir_x = dv->x - ov->x;
-+      dir_y = dv->y - ov->y;
-+      dir_z = dv->z - ov->z;
++          dir_x = dv->x - ov->x;
++          dir_y = dv->y - ov->y;
++          dir_z = dv->z - ov->z;
 +
 +#if 1
-+      /* XXX: This avoids the test file step_outline_test.pcb failing to display properly in freecad when coordinates are slightly rounded */
-+      if (dir_x < EPSILON && -dir_x < EPSILON &&
-+          dir_y < EPSILON && -dir_y < EPSILON &&
-+          dir_z < EPSILON && -dir_z < EPSILON) {
-+        printf ("EDGE TOO SHORT TO DETERMINE DIRECTION - GUESSING! Coords (%f, %f)\n", ov->x, ov->y);
-+        pcb_printf ("Approx PCB coords of short edge: %#mr, %#mr\n", (Coord)STEP_X_TO_COORD (PCB, ov->x), (Coord)STEP_Y_TO_COORD (PCB, ov->y));
-+        dir_x = 1.0; /* DUMMY TO AVOID A ZERO LENGTH DIRECTION VECTOR */
-+      }
++          /* XXX: This avoids the test file step_outline_test.pcb failing to display properly in freecad when coordinates are slightly rounded */
++          if (dir_x < EPSILON && -dir_x < EPSILON &&
++              dir_y < EPSILON && -dir_y < EPSILON &&
++              dir_z < EPSILON && -dir_z < EPSILON)
++            {
++              printf ("EDGE TOO SHORT TO DETERMINE DIRECTION - GUESSING! Coords (%f, %f)\n", ov->x, ov->y);
++              pcb_printf ("Approx PCB coords of short edge: %#mr, %#mr\n", (Coord)STEP_X_TO_COORD (PCB, ov->x), (Coord)STEP_Y_TO_COORD (PCB, ov->y));
++              dir_x = 1.0; /* DUMMY TO AVOID A ZERO LENGTH DIRECTION VECTOR */
++            }
 +#endif
 +
-+      info->infinite_line_identifier =
-+        step_line (step, "NONE",
-+                   step_cartesian_point (step, "NONE", ov->x, ov->y, ov->z),  // <--- A point on the line (the origin vertex)
-+                   step_vector (step, "NONE",
-+                                step_direction (step, "NONE", dir_x, dir_y, dir_z), // <--- Direction along the line
-+                                1000.0));     // <--- Arbitrary length in this direction for the parameterised coordinate "1".
- 
--      if (info->is_round)
--        {
--          info->infinite_line_identifier =
--            step_circle (step, "NONE",
--                         step_axis2_placement_3d (step, "NONE",
--                                                  step_cartesian_point (step, "NONE", info->cx, info->cy, info->cz),  // <--- Center of the circle
--                                                        step_direction (step, "NONE", info->nx, info->ny, info->nz),  // <--- Normal of the circle
--                                                        step_direction (step, "NONE", -1.0,     0.0,      0.0)),      // <--- Approximate X-axis direction of placement /* XXX: PULL FROM FACE DATA */
--                                                        info->radius);
--        }
--      else
--        {
--          vertex3d *ov = ODATA (edge);
--          vertex3d *dv = DDATA (edge);
--
--          info->infinite_line_identifier =
--            step_line (step, "NONE",
--                       step_cartesian_point (step, "NONE", ov->x, ov->y, ov->z),  // <--- A point on the line (the origin vertex)
--                       step_vector (step, "NONE",
+           info->infinite_line_identifier =
+             step_line (step, "NONE",
+                        step_cartesian_point (step, "NONE", ov->x, ov->y, ov->z),  // <--- A point on the line (the origin vertex)
+                        step_vector (step, "NONE",
 -                                    step_direction (step, "NONE", dv->x - ov->x,
 -                                                                  dv->y - ov->y,
 -                                                                  dv->z - ov->z),  // <--- Direction along the line
--                                    1000.0));     // <--- Arbitrary length in this direction for the parameterised coordinate "1".
--        }
++                                    step_direction (step, "NONE", dir_x, dir_y, dir_z), // <--- Direction along the line
+                                     1000.0));     // <--- Arbitrary length in this direction for the parameterised coordinate "1".
++
+         }
      }
  
-   /* Define the vertices */
-@@ -256,15 +289,13 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -256,15 +301,13 @@ object3d_export_to_step (object3d *object, const char *filename)
    pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
    brep_identifier = step_manifold_solid_brep (step, "PCB outline", pcb_shell_identifier);
  
@@ -516,7 +431,7 @@ index 1687042..c3dafff 100644
  
    /* Face styles */
    for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter))
-@@ -282,6 +313,7 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -282,6 +325,7 @@ object3d_export_to_step (object3d *object, const char *filename)
  
    /* Emit references to the styled and over_ridden styled items */
    step_mechanical_design_geometric_presentation_representation (step, "", styled_item_identifiers, geometric_representation_context_identifier);
