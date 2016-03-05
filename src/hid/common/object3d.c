@@ -238,6 +238,7 @@ draw_quad_edge (edge_ref e, void *data)
           glEnd ();
           return;
         }
+    }
 
   glBegin (GL_LINES);
   glVertex3f (MM_TO_COORD (((vertex3d *)ODATA(e))->x), MM_TO_COORD (((vertex3d *)ODATA(e))->y), MM_TO_COORD (((vertex3d *)ODATA(e))->z));
