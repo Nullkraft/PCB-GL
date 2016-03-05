@@ -1,12 +1,13 @@
 Bottom: b760cdbc5238510efc54a18d33ed6a293d8afe73
-Top:    f0efb6f2fceaa5e2f04ae8f288cf819cf54af3e8
+Top:    a3a951532d48ac2b6d495cc9725a0b91b2124119
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 16:31:25 +0000
+Date:   2016-03-05 16:33:44 +0000
 
 Extend board export
 
 Include emission of soldermask etc..
 
+V2: Apply the solder-mask on top of the board (core) thickness, don't shrink the core to account for it
 
 ---
 
@@ -38,7 +39,7 @@ index d4917d7..d2bf7b3 100644
 +void appearance_set_color (appearance *appear, float r, float g, float b);
 +void appearance_set_appearance (appearance *appear, const appearance *from);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index c34c17f..f219c6b 100644
+index c34c17f..4ce4990 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -5,6 +5,7 @@
@@ -431,14 +432,14 @@ index c34c17f..f219c6b 100644
 +
 +#ifdef REVERSED_PCB_CONTOURS
 +  objects = object3d_from_contours (board_outline,
-+                                    -HACK_BOARD_THICKNESS + HACK_MASK_THICKNESS, /* Bottom */
-+                                    0                     -HACK_MASK_THICKNESS,  /* Top */
++                                    -HACK_BOARD_THICKNESS, /* Bottom */
++                                    0                    ,  /* Top */
 +                                    board_appearance,
 +                                    top_bot_appearance);
 +#else
 +  objects = object3d_from_contours (board_outline,
-+                                     HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS, /* Bottom */
-+                                    -HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Top */
++                                     HACK_BOARD_THICKNESS / 2, /* Bottom */
++                                    -HACK_BOARD_THICKNESS / 2, /* Top */
 +                                    board_appearance,
 +                                    top_bot_appearance);
 +#endif
@@ -681,14 +682,14 @@ index c34c17f..f219c6b 100644
 +
 +#ifdef REVERSED_PCB_CONTOURS
 +  objects = object3d_from_contours (info.poly,
-+                                    (side == TOP_SIDE) ? -HACK_MASK_THICKNESS : -HACK_BOARD_THICKNESS,                       /* Bottom */
-+                                    (side == TOP_SIDE) ? 0                    : -HACK_BOARD_THICKNESS + HACK_MASK_THICKNESS, /* Top */
++                                    (side == TOP_SIDE) ? 0                    : -HACK_BOARD_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
++                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS  : -HACK_BOARD_THICKNESS,                       /* Top */
 +                                    mask_appearance,
 +                                    NULL);
 +#else
 +  objects = object3d_from_contours (info.poly,
-+                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2,                       /* Bottom */
-+                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2                       : HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS, /* Top */
++                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2                       : HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Bottom */
++                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2, /* Top */
 +                                    mask_appearance,
 +                                    NULL);
 +#endif
