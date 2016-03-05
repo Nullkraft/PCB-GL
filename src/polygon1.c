@@ -2810,8 +2810,10 @@ BOOLp
 poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
 {
   *dst = NULL;
-  if (src != NULL)
-    *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
+  if (src == NULL)
+    return TRUE;
+
+  *dst = (POLYAREA *)calloc (1, sizeof (POLYAREA));
   if (*dst == NULL)
     return FALSE;
   (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
@@ -2840,7 +2842,8 @@ poly_M_Copy0 (POLYAREA ** dst, const POLYAREA * srcfst)
 
   *dst = NULL;
   if (src == NULL)
-    return FALSE;
+    return TRUE;
+
   do
     {
       if ((di = poly_Create ()) == NULL || !poly_Copy1 (di, src))
