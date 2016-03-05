@@ -1,5 +1,7 @@
 #include <glib.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <stdio.h>
 
 #include "step_id.h"
 #include "vertex3d.h"
