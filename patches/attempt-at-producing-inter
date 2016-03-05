@@ -1,5 +1,5 @@
-Bottom: bef8140c75de6b8955944ea57c25a7eff34538e3
-Top:    cce37d725983f7622356ddcde809b58ffb764c0d
+Bottom: 14f48766527e942206e5fd0a7b6f7d4c36761cd8
+Top:    881e22a10d3b5499b0e0383ac4e486b919321252
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:27 +0000
 
@@ -19,7 +19,7 @@ doesn't have a convenient implementation.
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 20501f5..aef8d50 100644
+index 5d55598..78d139a 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -66,6 +66,7 @@
@@ -115,7 +115,7 @@ index 20501f5..aef8d50 100644
    info->poly = res;
  
    return 1;
-@@ -1268,19 +1305,69 @@ pv_copper_callback (const BoxType * b, void *cl)
+@@ -1265,19 +1302,69 @@ pv_copper_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -188,7 +188,7 @@ index 20501f5..aef8d50 100644
  
  //  poly_Copy0 (&info.poly, area);
  
-@@ -1297,19 +1384,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1294,19 +1381,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
    top_group =    GetLayerGroupNumberBySide (TOP_SIDE);
    bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
  
@@ -215,7 +215,7 @@ index 20501f5..aef8d50 100644
        info.poly = NULL;
  
        fprintf (stderr, "Computing copper geometry for group %i\n", group);
-@@ -1368,9 +1453,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1365,9 +1450,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
         *
         */
  
@@ -227,7 +227,7 @@ index 20501f5..aef8d50 100644
  
        if (info.poly == NULL)
          {
-@@ -1378,18 +1465,308 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1375,18 +1462,308 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
            continue;
          }
  
@@ -539,7 +539,7 @@ index 20501f5..aef8d50 100644
      }
  
  
-@@ -1406,5 +1783,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1403,5 +1780,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  
    poly_Free (&info.poly);
  
