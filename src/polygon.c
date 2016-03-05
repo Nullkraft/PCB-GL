@@ -861,9 +861,67 @@ LinePoly (LineType * L, Coord thick, char *name)
   return np;
 }
 
-/* make a rounded-corner rectangle */
-POLYAREA *
+/* make a rectangle pad (clear is applied square, not rounded) */
+static POLYAREA *
 SquarePadPoly (PadType * pad, Coord clear)
+{
+  PLINE *contour = NULL;
+  POLYAREA *np = NULL;
+  Vector v;
+  double d;
+  double cx, cy;
+  PadType _c=*pad,*c=&_c;
+  int halfclear = (clear + 1) / 2;
+
+  d =
+    sqrt (SQUARE (pad->Point1.X - pad->Point2.X) +
+          SQUARE (pad->Point1.Y - pad->Point2.Y));
+  if (d != 0)
+    {
+      double a = halfclear / d;
+      cx = (c->Point1.Y - c->Point2.Y) * a;
+      cy = (c->Point2.X - c->Point1.X) * a;
+
+      c->Point1.X -= cy;
+      c->Point1.Y += cx;
+      c->Point2.X += cy;
+      c->Point2.Y -= cx;
+    }
+  else
+    {
+      cx = halfclear;
+      cy = 0;
+
+      c->Point1.Y += cx;
+      c->Point2.Y -= cx;
+    }
+
+  v[0] = c->Point1.X + cx;
+  v[1] = c->Point1.Y + cy;
+  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
+    return 0;
+
+  v[0] = c->Point1.X - cx;
+  v[1] = c->Point1.Y - cy;
+  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+
+  v[0] = c->Point2.X - cx;
+  v[1] = c->Point2.Y - cy;
+  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+
+  v[0] = c->Point2.X + cx;
+  v[1] = c->Point2.Y + cy;
+  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+
+  /* now we have the line contour */
+  if (!(np = ContourToPoly (contour)))
+    return NULL;
+  return np;
+}
+
+/* make a rounded-corner rectangle */
+static POLYAREA *
+SquarePadClearPoly (PadType * pad, Coord clear)
 {
   PLINE *contour = NULL;
   POLYAREA *np = NULL;
@@ -1025,6 +1083,24 @@ BoxPolyBloated (BoxType *box, Coord bloat)
                    box->Y1 - bloat, box->Y2 + bloat);
 }
 
+POLYAREA *
+PadPoly (PadType *pad, Coord size)
+{
+  if (TEST_FLAG (SQUAREFLAG, pad))
+    return SquarePadPoly (pad, size);
+  else
+    return LinePoly ((LineType *) pad, size, NULL);
+}
+
+static POLYAREA *
+PadClearPoly (PadType *pad, Coord size)
+{
+  if (TEST_FLAG (SQUAREFLAG, pad))
+    return SquarePadClearPoly (pad, size);
+  else
+    return LinePoly ((LineType *) pad, size, NULL);
+}
+
 /* remove the pin clearance from the polygon */
 static int
 SubtractPin (DataType * d, PinType * pin, LayerType * l, PolygonType * p)
@@ -1095,18 +1171,8 @@ SubtractPad (PadType * pad, PolygonType * p)
 
   if (pad->Clearance == 0)
     return 0;
-  if (TEST_FLAG (SQUAREFLAG, pad))
-    {
-      if (!
-          (np = SquarePadPoly (pad, pad->Thickness + pad->Clearance)))
-        return -1;
-    }
-  else
-    {
-      if (!
-          (np = LinePoly ((LineType *) pad, pad->Thickness + pad->Clearance, NULL)))
-        return -1;
-    }
+  if (!(np = PadClearPoly (pad, pad->Thickness + pad->Clearance)))
+    return -1;
   return Subtract (np, p, true);
 }
 
