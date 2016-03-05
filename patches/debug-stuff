@@ -1,5 +1,5 @@
-Bottom: e2561f0d28182c6c5fe20494c6c7343ffc058fbf
-Top:    920c864aaedccd20e0916df4d2f7e229e7f67364
+Bottom: 31c37d90f820fb92df3f201d43ada7c51089352d
+Top:    e5fe52fafb5e9c9acb427f11d3c56f4e66495b71
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:27 +0000
 
@@ -9,10 +9,10 @@ Debug stuff
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index c6fb480..ce1d39f 100644
+index 1d1eeaf..2d9983e 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -1217,19 +1217,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1219,19 +1219,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
        {
          fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
  
