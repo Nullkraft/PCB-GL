@@ -967,39 +967,60 @@ compute_depth (int group)
   max_copper_group = MAX (bottom_group, top_group);
   num_copper_groups = max_copper_group - min_copper_group;// + 1;
 
-  if (group >= 0 && group < max_group) {
-    if (group >= min_copper_group && group <= max_copper_group) {
-      /* XXX: IS THIS INCORRECT FOR REVERSED GROUP ORDERINGS? */
-      depth = -(group - min_copper_group) * (HACK_BOARD_THICKNESS + HACK_COPPER_THICKNESS) / num_copper_groups;
-    } else {
-      depth = 0;
-    }
+  if (group >= 0 && group < max_group)
+    {
+      if (group >= min_copper_group && group <= max_copper_group)
+        {
+          /* XXX: IS THIS INCORRECT FOR REVERSED GROUP ORDERINGS? */
+          depth = -(group - min_copper_group) * (HACK_BOARD_THICKNESS + HACK_COPPER_THICKNESS) / num_copper_groups;
+        }
+      else
+        {
+          depth = 0;
+        }
 #if 1
-  } else if (SL_TYPE (group) == SL_MASK) {
-    if (SL_SIDE (group) == SL_TOP_SIDE) {
-      depth = HACK_COPPER_THICKNESS;
-    } else {
-      depth = -HACK_BOARD_THICKNESS - HACK_BOARD_THICKNESS - HACK_MASK_THICKNESS;
     }
-  } else if (SL_TYPE (group) == SL_SILK) {
-    if (SL_SIDE (group) == SL_TOP_SIDE) {
-      depth = HACK_COPPER_THICKNESS + HACK_SILK_THICKNESS;
-    } else {
-      depth = -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS - HACK_SILK_THICKNESS;
+  else if (SL_TYPE (group) == SL_MASK)
+    {
+      if (SL_SIDE (group) == SL_TOP_SIDE)
+        {
+          depth = HACK_COPPER_THICKNESS;
+        }
+      else
+        {
+          depth = -HACK_BOARD_THICKNESS - HACK_BOARD_THICKNESS - HACK_MASK_THICKNESS;
+        }
     }
-  } else if (SL_TYPE (group) == SL_INVISIBLE) {
-    /* Same as silk, but for the back-side layer */
-    if (Settings.ShowBottomSide) {
-      depth = HACK_COPPER_THICKNESS + HACK_SILK_THICKNESS;
-    } else {
-      depth = -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS - HACK_SILK_THICKNESS;
+  else if (SL_TYPE (group) == SL_SILK)
+    {
+      if (SL_SIDE (group) == SL_TOP_SIDE)
+        {
+          depth = HACK_COPPER_THICKNESS + HACK_SILK_THICKNESS;
+        }
+      else
+        {
+          depth = -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS - HACK_SILK_THICKNESS;
+        }
     }
+  else if (SL_TYPE (group) == SL_INVISIBLE)
+    {
+      /* Same as silk, but for the back-side layer */
+      if (Settings.ShowBottomSide)
+        {
+          depth = HACK_COPPER_THICKNESS + HACK_SILK_THICKNESS;
+        }
+      else
+        {
+          depth = -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS - HACK_SILK_THICKNESS;
+        }
 #endif
-  } else {
-    /* DEFAULT CASE */
-    printf ("Unknown layer group to set depth for: %i\n", group);
-    depth = 0.0;
-  }
+    }
+  else
+    {
+      /* DEFAULT CASE */
+      printf ("Unknown layer group to set depth for: %i\n", group);
+      depth = 0.0;
+    }
 
   return depth;
 }
@@ -1154,64 +1175,65 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 
   objects = NULL;
 
-  for (group = min_phys_group; group <= max_phys_group; group++) {
+  for (group = min_phys_group; group <= max_phys_group; group++)
+    {
 
 #ifdef REVERSED_PCB_CONTOURS
-    Coord depth = compute_depth (group) - HACK_BOARD_THICKNESS;
+      Coord depth = compute_depth (group) - HACK_BOARD_THICKNESS;
 #else
-    Coord depth = compute_depth (group) + HACK_BOARD_THICKNESS / 2;
+      Coord depth = compute_depth (group) + HACK_BOARD_THICKNESS / 2;
 #endif
-    info.poly = NULL;
+      info.poly = NULL;
 
-    fprintf (stderr, "Computing copper geometry for group %i\n", group);
+      fprintf (stderr, "Computing copper geometry for group %i\n", group);
 
 #if 1
-    GROUP_LOOP (PCB->Data, group);
-      {
-        fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
+      GROUP_LOOP (PCB->Data, group);
+        {
+          fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
 
-        r_search (layer->line_tree, &bounds, NULL, line_copper_callback, &info);
-        r_search (layer->arc_tree,  &bounds, NULL, arc_copper_callback, &info);
-        r_search (layer->text_tree, &bounds, NULL, text_copper_callback, &info);
-        r_search (layer->polygon_tree, &bounds, NULL, polygon_copper_callback, &info);
-      }
-    END_LOOP;
+          r_search (layer->line_tree, &bounds, NULL, line_copper_callback, &info);
+          r_search (layer->arc_tree,  &bounds, NULL, arc_copper_callback, &info);
+          r_search (layer->text_tree, &bounds, NULL, text_copper_callback, &info);
+          r_search (layer->polygon_tree, &bounds, NULL, polygon_copper_callback, &info);
+        }
+      END_LOOP;
 
-    fprintf (stderr, "Accumulating pin + via pads\n");
-//    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
-//    r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
+      fprintf (stderr, "Accumulating pin + via pads\n");
+  //    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
+  //    r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
 #endif
 
 #if 0
-    if (group == top_group ||
-        group == bottom_group)
+      if (group == top_group ||
+          group == bottom_group)
+        {
+          info.side = (group == top_group) ? TOP_SIDE : BOTTOM_SIDE;
+          fprintf (stderr, "Accumulating SMT pads for side %i\n", info.side);
+          r_search (PCB->Data->pad_tree, &bounds, NULL, pad_copper_callback, &info);
+        }
+#endif
+
+    if (info.poly == NULL)
       {
-        info.side = (group == top_group) ? TOP_SIDE : BOTTOM_SIDE;
-        fprintf (stderr, "Accumulating SMT pads for side %i\n", info.side);
-        r_search (PCB->Data->pad_tree, &bounds, NULL, pad_copper_callback, &info);
+        fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
+        continue;
       }
-#endif
 
-  if (info.poly == NULL)
-    {
-      fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
-      continue;
-    }
-
-    objects = g_list_concat (objects,
-      object3d_from_contours (info.poly,
+      objects = g_list_concat (objects,
+        object3d_from_contours (info.poly,
 #ifdef REVERSED_PCB_CONTOURS
-                              depth,                         /* Bottom */
-                              depth + HACK_COPPER_THICKNESS, /* Top */
+                                depth,                         /* Bottom */
+                                depth + HACK_COPPER_THICKNESS, /* Top */
 #else
-                              -depth,                         /* Bottom */
-                              -depth - HACK_COPPER_THICKNESS, /* Top */
+                                -depth,                         /* Bottom */
+                                -depth - HACK_COPPER_THICKNESS, /* Top */
 #endif
-                              copper_appearance,
-                              NULL));
+                                copper_appearance,
+                                NULL));
 
 
-  }
+    }
 
 
   destroy_appearance (copper_appearance);
