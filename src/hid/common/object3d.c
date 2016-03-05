@@ -546,13 +546,13 @@ object3d_from_contours (POLYAREA *contours,
         /* NOTE: Axis directon not depend on whether we invert the top/bot contour.. the edge loop is appropriate already */
         face3d_set_cylindrical (faces[i], cx, cy, 0., /* A point on the axis of the cylinder */
                                           0., 0., 1., /* Direction of the cylindrical axis */ /* XXX HAD THIS AT -1 when last testing with Solidworks? */
-                                          radius);
+                                          radius);Y
 
-        /* XXX: DEPENDS ON INSIDE / OUTSIDE CORNER!! */
-        /* XXX: SURFACE ORIENTATION IS ONLY FIXED UP DURING EMISSION IF WE FLAG THE NEED HERE..
-         *      CYLINDRICAL SURFACE ORIENTATION IS ALWAYS POINTING OUTWARD FROM ITS AXIS, SO
-         *      ORIENTATION REVERSED IS USED FOR HOLES
+        /* NOTE: Surface orientation is only fixed up during emission if we flag the need here..
+         *       cylindrical surface orientation is always pointing outward from its axis, so
+         *       orientation reversed is used for holes
          */
+        /* XXX: DEPENDS ON INSIDE / OUTSIDE CORNER!! - THIS IS NOT EXACTLY CORRECT!.. NEEDS TO TAKE ACOUNT FOR cw / ccw WHEN DEALING WITH ARC CONTOUR SEGMENTS */
         if ((ct->Flags.orient == PLF_INV) != extrude_inverted)
           face3d_set_surface_orientation_reversed (faces[i]);
 
