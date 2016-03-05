@@ -1,5 +1,5 @@
 Bottom: 29c5bfff6100c27baca4a8186ff368a2a75a29c7
-Top:    fc5beae6ce707ddd4309d55f3a60bb459cc61785
+Top:    1e6942b631d5e392b182fb4fa558d12b5a8a660f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -715,7 +715,7 @@ index 015d575..6e8c5d3 100644
  #include "hid/common/contour3d.h"
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 new file mode 100644
-index 0000000..3464ff2
+index 0000000..573a12c
 --- /dev/null
 +++ b/src/hid/step/object3d_step.c
 @@ -0,0 +1,283 @@
@@ -867,7 +867,7 @@ index 0000000..3464ff2
 +      face->surface_identifier =
 +        step_plane (step, "NONE",
 +                    step_axis2_placement_3d (step, "NONE",
-+                                             step_cartesian_point (step, "NONE", ov->x,  /* A point on the plane. Defines 0,0 of the plane's parameterised coords. */ 
++                                             step_cartesian_point (step, "NONE", ov->x,  /* A point on the plane. Defines 0,0 of the plane's parameterised coords. */
 +                                                                                 ov->y,      /* Set this to the origin vertex of the first edge */
 +                                                                                 ov->z),     /* this contour links to in the quad edge structure. */
 +                                                   step_direction (step, "NONE", face->nx, face->ny, face->nz), /* An axis direction normal to the the face - Gives z-axis */
