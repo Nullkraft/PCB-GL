@@ -302,6 +302,7 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
       *cw = (contour->Flags.orient != PLF_DIR);
       return;
     }
+#endif
 
   while (n > 0) {
     edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
