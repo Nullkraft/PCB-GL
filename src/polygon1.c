@@ -511,6 +511,7 @@ next_cvc_from_other_poly (CVCList *start)
   return l;
 }
 
+static void
 cvc_list_dump (CVCList *list)
 {
   VNODE *node;
