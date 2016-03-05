@@ -1,0 +1,34 @@
+Bottom: e01ac1456d6337a42350fc1f1334c6a0b9b5fe99
+Top:    476182efd202535481a48623dda3bfd2a6a337b5
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 23:47:52 +0000
+
+Refresh of hid-step-add-copper-layer
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 7ed0887..d36c272 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -1086,9 +1086,6 @@ polygon_copper_callback (const BoxType * b, void *cl)
+   struct mask_info *info = (struct mask_info *) cl;
+   POLYAREA *np, *res;
+ 
+-//  if (!(np = PolygonToPoly (poly)))
+-//    return 0;
+-
+   if (poly->Clipped == NULL)
+     {
+       fprintf (stderr, "poly_copper_callback(): polygon->Clipped == NULL\n");
+@@ -1200,8 +1197,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+       END_LOOP;
+ 
+       fprintf (stderr, "Accumulating pin + via pads\n");
+-  //    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
+-  //    r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
++      r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
++      r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
+ #endif
+ 
+ #if 0
