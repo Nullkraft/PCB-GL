@@ -411,8 +411,8 @@ object3d_from_contours (const POLYAREA *contours,
               offset_in_ct = 0;
               ct = ct->next;
               ct_npoints = get_contour_npoints (ct);
-
             }
+
           get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
 
           vertices[i]           = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, zbot)); /* Bottom */
@@ -503,70 +503,6 @@ object3d_from_contours (const POLYAREA *contours,
           face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints + i]));
         }
       }
->>>>>>> patched
-<<<<<<< current
-          object3d_add_face (object, faces[i]);
-          /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
-          face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
-        }
-
-        faces[npoints    ] = make_face3d (); /* bottom_face */
-        faces[npoints + 1] = make_face3d (); /* top_face */
-        if (invert_face_normals)
-          {
-            face3d_set_normal (faces[npoints    ], 0., 0., -1.); /* bottom_face */
-            face3d_set_normal (faces[npoints + 1], 0., 0.,  1.); /* top_face */
-          }
-        else
-          {
-            face3d_set_normal (faces[npoints    ], 0., 0.,  1.); /* bottom_face */ /* PCB bottom is at positive Z in this scheme */
-            face3d_set_normal (faces[npoints + 1], 0., 0., -1.); /* top_face */    /* PCB top is at negative Z in this scheme */
-          }
-        face3d_set_appearance (faces[npoints    ], top_bot_appearance);
-        face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
-        object3d_add_face (object, faces[npoints    ]);
-        object3d_add_face (object, faces[npoints + 1]);
-
-        /* Pick the first bottom / top edge within the bottom / top face outer contour loop, and link it to the face */
-        face3d_add_contour (faces[npoints    ], make_contour3d (edges[0]));
-        face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints])));
-
-        ct = contour;
-        start_of_ct = 0;
-        offset_in_ct = 0;
-        ct_npoints = get_contour_npoints (ct);
-=======
-          /* NOTE: Axis directon not depend on whether we invert the top/bot contour.. the edge loop is appropriate already */
-          face3d_set_cylindrical (faces[i], cx, cy, 0., /* A point on the axis of the cylinder */
-                                            0., 0., 1., /* Direction of the cylindrical axis */ /* XXX HAD THIS AT -1 when last testing with Solidworks? */
-                                            radius);
-
-          /* NOTE: Surface orientation is only fixed up during emission if we flag the need here..
-           *       cylindrical surface orientation is always pointing outward from its axis, so
-           *       orientation reversed is used for holes
-           */
-          /* XXX: DEPENDS ON INSIDE / OUTSIDE CORNER!! - THIS IS NOT EXACTLY CORRECT!.. NEEDS TO TAKE ACOUNT FOR cw / ccw WHEN DEALING WITH ARC CONTOUR SEGMENTS */
-          if ((ct->Flags.orient == PLF_INV) != extrude_inverted)
-            face3d_set_surface_orientation_reversed (faces[i]);
->>>>>>> patched
-
-        for (i = 0; i < npoints; i++, offset_in_ct++)
-          {
-            int next_i_around_ct;
-            int prev_i_around_ct;
-
-            /* Update which contour we're looking at */
-            if (offset_in_ct == ct_npoints)
-              {
-                start_of_ct = i;
-                offset_in_ct = 0;
-                ct = ct->next;
-                ct_npoints = get_contour_npoints (ct);
-
-                /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
-                face3d_add_contour (faces[npoints    ], make_contour3d (edges[i]));
-                face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(edges[npoints + i])));
-              }
 
             next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
             prev_i_around_ct = start_of_ct + (offset_in_ct + ct_npoints - 1) % ct_npoints;
