@@ -1,5 +1,5 @@
-Bottom: 95be5a55c729e6c5ffa6e262be6e02c589e02a70
-Top:    58ea6555392695422fad8e50ed219c9269423a1d
+Bottom: 68d6bd5bdfbc4af52d29226ddb8f3418d39fd421
+Top:    67b0347f96ae583ef77113d88b3c8c147487a023
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -23,7 +23,7 @@ index 0df8f23..ff20c3f 100644
 +  face->surface_orientation_reversed = true;
 +}
 diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
-index 52be6dc..b3c140d 100644
+index 8000e6e..6a2ccec 100644
 --- a/src/hid/common/face3d.h
 +++ b/src/hid/common/face3d.h
 @@ -11,8 +11,8 @@ typedef struct {
@@ -43,7 +43,7 @@ index 52be6dc..b3c140d 100644
  void face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius);
 +void face3d_set_surface_orientation_reversed (face3d *face);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 4300818..f2cbfb1 100644
+index bca8032..3f375ea 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -35,7 +35,7 @@
