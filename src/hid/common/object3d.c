@@ -1695,7 +1695,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                               -depth - HACK_COPPER_THICKNESS, /* Top */
 #endif
                               copper_appearance,
-                              NULL));
+                              NULL,
+                              false)); /* Don't invert */
 
   }
 
