@@ -1,0 +1,22 @@
+Bottom: 73237fca7ad14cac5d870b8ecdb33b298cc96457
+Top:    d7bfa42bd11d1a968a9aa74958e5e2c4b08d315e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 10:39:06 +0000
+
+Refresh of now-it-appears-to-work-yay
+
+---
+
+diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
+index 819466a..9655d8f 100644
+--- a/src/hid/step/step_writer.c
++++ b/src/hid/step/step_writer.c
+@@ -297,7 +297,7 @@ step_face_bound (step_file *file, char *name, step_id bound, bool orientation)
+ step_id
+ step_face_outer_bound (step_file *file, char *name, step_id bound, bool orientation)
+ {
+-  fprintf (file->f, "#%i=FACE_OUTER_BOUND('%s',#%i,%s);",
++  fprintf (file->f, "#%i = FACE_OUTER_BOUND ( '%s', #%i, %s ) ;\n",
+                     file->next_id, name, bound, step_bool (orientation));
+ 
+   return file->next_id++;
