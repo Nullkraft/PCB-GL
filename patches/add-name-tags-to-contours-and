@@ -1,7 +1,7 @@
-Bottom: 8da3aa6b38c1fd59133961791ef4fa52292c46b0
-Top:    fa6c171e351be7d4bd62c2447b23571621e82419
+Bottom: 9191fc55b101f1b5a85cf4d7cf06290f42f6fd75
+Top:    d2981fc306c3ebb0ffc47c807ed27f5d235e68ab
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 22:55:29 +0000
+Date:   2016-03-05 14:30:19 +0000
 
 Add name tags to contours and feature naming for pins and vias in STEP export
 
@@ -69,7 +69,7 @@ index 94bdf45..1e3c629 100644
  
  PLINE *poly_NewContour(VNODE *node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 30c5cd3..2ed32ca 100644
+index 2bca1f3..4d523ae 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -601,8 +601,13 @@ frac_circle2 (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
@@ -113,7 +113,7 @@ index 30c5cd3..2ed32ca 100644
  }
  
  POLYAREA *
-@@ -1948,7 +1954,7 @@ IsPointInPolygon (Coord X, Coord Y, Coord r, PolygonType *p)
+@@ -1947,7 +1953,7 @@ IsPointInPolygon (Coord X, Coord Y, Coord r, PolygonType *p)
      return true;
    if (r < 1)
      return false;
@@ -122,7 +122,7 @@ index 30c5cd3..2ed32ca 100644
      return false;
    return isects (c, p, true);
  }
-@@ -2298,11 +2304,36 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2297,11 +2303,36 @@ pv_outline_callback (const BoxType * b, void *cl)
    PinType *pv = (PinType *)b;
    struct clip_outline_info *info = cl;
    POLYAREA *np, *res;

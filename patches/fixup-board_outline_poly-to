@@ -1,7 +1,7 @@
-Bottom: 778aa4868bc15ff71b373e41075a6c74a994dcbd
-Top:    a5b804d16ff81de6278a1c51fb0edfa571efbf60
+Bottom: 44644214457b2ead6a4624ea154c54f2703c7d9f
+Top:    35ecef1d8c84520d1606afa71a372901bb3f5dee
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-28 03:32:55 +0000
+Date:   2016-03-05 14:30:19 +0000
 
 Fixup board_outline_poly() to subtract vias / pins even if no outline was found
 
@@ -9,10 +9,10 @@ Fixup board_outline_poly() to subtract vias / pins even if no outline was found
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 2ba4f52..30c5cd3 100644
+index 770e842..2bca1f3 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -2395,10 +2395,8 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2394,10 +2394,8 @@ POLYAREA *board_outline_poly (bool include_holes)
          }
      }
  
@@ -24,7 +24,7 @@ index 2ba4f52..30c5cd3 100644
  
    /* Do stuff to turn the outline layer into a polygon */
  
-@@ -2435,8 +2433,11 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2434,8 +2432,11 @@ POLYAREA *board_outline_poly (bool include_holes)
    info.poly = whole_world;
  #endif
  
