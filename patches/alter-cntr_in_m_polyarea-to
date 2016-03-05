@@ -1,0 +1,14 @@
+Bottom: 33d22681e627b04b6714a9dc2b7e04597dd5337b
+Top:    33d22681e627b04b6714a9dc2b7e04597dd5337b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 12:30:34 +0000
+
+Alter cntr_in_M_POLYAREA() to return which POLYAREA which the passed PLINE was found inside.
+
+In the case which previously returned FALSE, where the PLINE was not found
+inside any of the linked POLYAREA, the funciton returns NULL.
+
+
+---
+
+
