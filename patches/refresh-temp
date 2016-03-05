@@ -1,0 +1,22 @@
+Bottom: 74dde53935add978e9732721b575c752515db728
+Top:    95be5a55c729e6c5ffa6e262be6e02c589e02a70
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 19:45:48 +0000
+
+Refresh of more-play-with-quad-edge-data
+
+---
+
+diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
+index 6d83bfb..b7fbef4 100644
+--- a/src/hid/common/edge3d.h
++++ b/src/hid/common/edge3d.h
+@@ -10,6 +10,8 @@ typedef struct
+   float cz;
+   float nx;
+   float ny;
++  float nz;
++  float radius;
+ 
+   /* XXX: STEP specific - breaks encapsulation */
+   int infinite_line_identifier;
