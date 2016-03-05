@@ -266,35 +266,6 @@ object3d_from_board_outline (void)
       offset_in_ct = 0;
       ct_npoints = get_contour_npoints (ct);
 
-      for (i = 0; i < npoints; i++, offset_in_ct++) {
-        double x1, y1;
-
-        /* Update which contour we're looking at */
-        if (offset_in_ct == ct_npoints)
-          {
-            offset_in_ct = 0;
-            ct = ct->next;
-            ct_npoints = get_contour_npoints (ct);
-          }
-
-      object = make_object3d (PCB->Name);
-      board_appearance = make_appearance ();
-      top_bot_appearance = make_appearance ();
-      appearance_set_color (board_appearance,   1.0, 1.0, 0.6);
-      appearance_set_color (top_bot_appearance, 0.2, 0.8, 0.2);
-
-      object3d_set_appearance (object, board_appearance);
-
-      vertices = malloc (sizeof (vertex3d *) * 2 * npoints);
-      edges    = malloc (sizeof (edge_ref  ) * 3 * npoints);
-      faces    = malloc (sizeof (face3d *) * (2 + npoints));
-
-      /* Define the vertices */
-      ct = contour;
-      start_of_ct = 0;
-      offset_in_ct = 0;
-      ct_npoints = get_contour_npoints (ct);
-
       for (i = 0; i < npoints; i++, offset_in_ct++)
         {
           double x1, y1;
