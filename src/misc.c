@@ -362,10 +362,12 @@ SetLineBoundingBox (LineType *Line)
  */
 void
 calc_arc_from_points_and_included_angle (PointType *p1, PointType *p2, Angle included_angle,
-                                         Coord *cx, Coord *cy, Coord *radius,
+                                         double *cx, double *cy, double *radius,
+//                                         Coord *cx, Coord *cy, Coord *radius,
                                          Angle *start_angle, Angle *delta_angle)
 {
-  Coord hx, hy;
+  double hx, hy;
+//  Coord hx, hy;
   double p_to_h_dist;
   double c_to_h_dist;
   double unit_hcx, unit_hcy;
@@ -434,7 +436,8 @@ SetPolygonBoundingBox (PolygonType *Polygon)
     if (point->included_angle != 0)
       {
         BoxType arc_bound;
-        Coord cx, cy, radius;
+        double cx, cy, radius;
+//        Coord cx, cy, radius;
         Angle start_angle, delta_angle;
         PointType *next_point;
 
