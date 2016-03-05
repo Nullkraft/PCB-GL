@@ -1,5 +1,5 @@
-Bottom: 2a7a3108c3e69ac53c4c85fa041a9d265617d61f
-Top:    acc5657b3b86b3ccf40bc6d223a5f2a17f9134eb
+Bottom: 4db8ac431f5d7c05489bf497a97d27d036bdd348
+Top:    4db8ac431f5d7c05489bf497a97d27d036bdd348
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 17:25:26 +0000
 
@@ -8,38 +8,4 @@ Prepend when adding things to lists
 
 ---
 
-diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index e16f1e7..ce59b47 100644
---- a/src/hid/step/object3d_step.c
-+++ b/src/hid/step/object3d_step.c
-@@ -280,9 +280,10 @@ object3d_to_step_body_fragment (step_file *step,
- 
-       edge = contour->first_edge;
-       do {
--        edge_loop_edges = g_list_append (edge_loop_edges, GINT_TO_POINTER (ORIENTED_EDGE_IDENTIFIER (edge)));
-+        edge_loop_edges = g_list_prepend (edge_loop_edges, GINT_TO_POINTER (ORIENTED_EDGE_IDENTIFIER (edge)));
-       } while (edge = LNEXT (edge), edge != contour->first_edge);
- 
-+      edge_loop_edges = g_list_reverse (edge_loop_edges);
-       edge_loop = step_edge_loop (step, "NONE", edge_loop_edges);
- 
-       if (outer_contour)
-@@ -290,13 +291,16 @@ object3d_to_step_body_fragment (step_file *step,
-       else
-         contour->face_bound_identifier = step_face_bound (step, "NONE", edge_loop, true);
- 
--      face_contour_list = g_list_append (face_contour_list, GINT_TO_POINTER (contour->face_bound_identifier));
-+      face_contour_list = g_list_prepend (face_contour_list, GINT_TO_POINTER (contour->face_bound_identifier));
-     }
- 
-+    face_contour_list = g_list_reverse (face_contour_list);
-     face->face_identifier = step_advanced_face (step, "NONE", face_contour_list, face->surface_identifier, !face->surface_orientation_reversed);
--    shell_face_list = g_list_append (shell_face_list, GINT_TO_POINTER (face->face_identifier));
-+    shell_face_list = g_list_prepend (shell_face_list, GINT_TO_POINTER (face->face_identifier));
-   }
- 
-+  shell_face_list = g_list_reverse (shell_face_list);
-+
-   /* Closed shell which bounds the brep solid */
-   pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
-   brep_identifier = step_manifold_solid_brep (step, body_name /* This is picked up as the solid body name by Solidworks */, pcb_shell_identifier);
+
