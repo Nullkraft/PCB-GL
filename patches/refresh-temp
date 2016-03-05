@@ -1,0 +1,32 @@
+Bottom: b47a30d8e24a50ce4b38c71b3a560a2b66a46183
+Top:    e42cef28f32cc67fd3f46030fda9b541dcc6ad96
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 13:52:41 +0000
+
+Refresh of fix-3d-contour-export
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 8e37f26..cbeea35 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -724,8 +724,7 @@ object3d_from_board_outline (void)
+                                     -HACK_BOARD_THICKNESS / 2, /* Top */
+ #endif
+                                     board_appearance,
+-                                    top_bot_appearance,
+-                                    false); /* Don't invert */
++                                    top_bot_appearance);
+ 
+   destroy_appearance (board_appearance);
+   destroy_appearance (top_bot_appearance);
+@@ -989,8 +988,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+                                     (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS, /* Top */
+ #endif
+                                     mask_appearance,
+-                                    NULL,
+-                                    false); /* Don't invert */
++                                    NULL);
+ 
+   destroy_appearance (mask_appearance);
