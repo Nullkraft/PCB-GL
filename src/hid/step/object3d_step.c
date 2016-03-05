@@ -466,11 +466,7 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
       if (multiple_bodies)
         g_string_append_printf (body_name, " - %i", part);
 
-<<<<<<< current
-      object3d_to_step_body_fragment (step, object, body_name->str, &comp_brep, &styled_items);
-=======
-    object3d_to_step_body_fragment (step, object, body_name->str, &comp_brep, &styled_items, appear_hash);
->>>>>>> patched
+      object3d_to_step_body_fragment (step, object, body_name->str, &comp_brep, &styled_items, appear_hash);
 
       g_string_free (body_name, true);
 
@@ -553,13 +549,8 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
           g_string_append_printf (body_name, " - %i", part);
         }
 
-<<<<<<< current
       object3d_to_step_fragment (step, object, part_id->str, part_name->str, "PCB model", body_name->str,
-                                 &comp_shape_definition_representation, &comp_placement_axis);
-=======
-    object3d_to_step_fragment (step, object, part_id->str, part_name->str, "PCB model", body_name->str,
-                               &comp_shape_definition_representation, &comp_placement_axis, appear_hash);
->>>>>>> patched
+                                 &comp_shape_definition_representation, &comp_placement_axis, appear_hash);
 
       g_string_free (part_id, true);
       g_string_free (part_name, true);

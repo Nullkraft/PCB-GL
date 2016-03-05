@@ -417,46 +417,8 @@ object3d_from_contours (POLYAREA *contours,
         }
 #else
 #endif
-    object_appearance = master_object_appearance;
-    top_bot_appearance = master_top_bot_appearance;
-
-    object3d_set_appearance (object, object_appearance);
-
-    vertices = malloc (sizeof (vertex3d *) * 2 * npoints); /* (n-bottom, n-top) */
-    edges    = malloc (sizeof (edge_ref  ) * 3 * npoints); /* (n-bottom, n-top, n-sides) */
-    faces    = malloc (sizeof (face3d *) * (npoints + 2)); /* (n-sides, 1-bottom, 1-top */
-
-    /* Define the vertices */
-    ct = contour;
-    offset_in_ct = 0;
-    ct_npoints = get_contour_npoints (ct);
->>>>>>> patched
-
-      contour = pa->contours;
-      ncontours = 0;
-      npoints = 0;
-
-      ct = contour;
-      while (ct != NULL)
-        {
-          ncontours ++;
-          npoints += get_contour_npoints (ct);
-          ct = ct->next;
-        }
-
-      object = make_object3d (PCB->Name);
-
-      if (master_object_appearance != NULL)
-        {
-          object_appearance = make_appearance ();
-          appearance_set_appearance (object_appearance, master_object_appearance);
-        }
-
-      if (master_top_bot_appearance != NULL)
-        {
-          top_bot_appearance = make_appearance ();
-          appearance_set_appearance (top_bot_appearance, master_top_bot_appearance);
-        }
+      object_appearance = master_object_appearance;
+      top_bot_appearance = master_top_bot_appearance;
 
       object3d_set_appearance (object, object_appearance);
 
