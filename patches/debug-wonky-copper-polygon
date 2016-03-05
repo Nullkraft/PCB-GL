@@ -1,5 +1,5 @@
-Bottom: 83c44afaac941b1aa0bb637ebc252173c73ce343
-Top:    0c59f5727809a4af667c921c67e1d523e44d1195
+Bottom: 7fb0b23e588c658051dbb199db50e91d561c05b8
+Top:    b5c6f0de91afaf7f72b38a0a06ce98ddf6b22bd2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:26 +0000
 
@@ -9,10 +9,10 @@ Debug wonky copper polygon generation
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 17b366a..d3f3da2 100644
+index a062e05..25da812 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -1155,19 +1155,19 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1156,19 +1156,19 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
        {
          fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
  
@@ -39,7 +39,7 @@ index 17b366a..d3f3da2 100644
      if (group == top_group ||
          group == bottom_group)
        {
-@@ -1221,6 +1221,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1222,6 +1222,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                NULL));
  
  
@@ -47,7 +47,7 @@ index 17b366a..d3f3da2 100644
    }
  
  
-@@ -1231,7 +1232,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1232,7 +1233,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  //  PCB->Data->outline_valid = true;
  //  gui->invalidate_all ();
  
