@@ -396,7 +396,6 @@ object3d_from_contours (const POLYAREA *contours,
       edges    = malloc (sizeof (edge_ref  ) * 3 * npoints); /* (n-bottom, n-top, n-sides) */
       faces    = malloc (sizeof (face3d *) * (npoints + 2)); /* (n-sides, 1-bottom, 1-top */
 
-<<<<<<< current
       /* Define the vertices */
       ct = contour;
       offset_in_ct = 0;
