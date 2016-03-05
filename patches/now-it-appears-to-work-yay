@@ -1,5 +1,5 @@
-Bottom: 3e210ba4cc318dae10a81ce9faaa6c75362f0139
-Top:    50ee773a7533b5d62a4b961b03f79d7afcb28055
+Bottom: 6ffc9728e36c5f26f3ce202d3a458f6f2a48c47b
+Top:    6ffc9728e36c5f26f3ce202d3a458f6f2a48c47b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-27 14:44:38 +0000
 
@@ -17,46 +17,4 @@ TODO: Reduce operations on the extrusion to positive / negative,
 
 ---
 
-diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 9d39cda..f1a6849 100644
---- a/src/hid/common/object3d.c
-+++ b/src/hid/common/object3d.c
-@@ -66,7 +66,7 @@
- 
- #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
- #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
--#define HACK_PLATED_BARREL_THICKNESS MM_TO_COORD(0.02)
-+#define HACK_PLATED_BARREL_THICKNESS MM_TO_COORD(0.08) //2
- #define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
- #define HACK_SILK_THICKNESS MM_TO_COORD(0.01)
- 
-@@ -696,6 +696,7 @@ object3d_from_contours (POLYAREA *contours,
-         normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
- #else
-         normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
-+        //normal_z = (top_bot_inverted != cw) ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
- #endif
- 
-         edge_info_set_round (UNDIR_DATA (edges[i]),
-@@ -1886,7 +1887,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
- #endif
-                                                copper_appearance,
-                                                NULL,
--                                               false, true);
-+                                               false, false/*true*/);
- 
- /* Connect the via barrels in this block of code */
- #if 1
-diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
-index 178d8f3..d64e062 100644
---- a/src/hid/step/step_writer.c
-+++ b/src/hid/step/step_writer.c
-@@ -297,7 +297,7 @@ step_face_bound (step_file *file, char *name, step_id bound, bool orientation)
- step_id
- step_face_outer_bound (step_file *file, char *name, step_id bound, bool orientation)
- {
--  fprintf (file->f, "#%i=FACE_OUTER_BOUND('%s',#%i,%s);\n",
-+  fprintf (file->f, "#%i=FACE_OUTER_BOUND('%s',#%i,%s);",
-                     file->next_id, name, bound, step_bool (orientation));
- 
-   return file->next_id++;
+
