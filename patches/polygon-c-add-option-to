@@ -1,10 +1,11 @@
 Bottom: 7010cd9919aac970dca36182c5fffafaf66f37ad
-Top:    cd55feeac2aea07a9d2b47e439a6899364a15c24
+Top:    8a7c16d64a7b5bd3d9347428bb365d347d824b30
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-13 18:44:29 +0000
+Date:   2016-03-05 16:23:01 +0000
 
 polygon.c: Add option to include drills holes (from vias / pins) in the board outline
 
+V2: Fixup board_outline_poly() to subtract vias / pins even if no outline was found
 
 ---
 
@@ -22,7 +23,7 @@ index 1c8b92b..1fd999f 100644
    }
  }
 diff --git a/src/polygon.c b/src/polygon.c
-index 205a1a3..e780ded 100644
+index 205a1a3..fc83944 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -2023,6 +2023,22 @@ line_outline_callback (const BoxType * b, void *cl)
@@ -57,19 +58,38 @@ index 205a1a3..e780ded 100644
  {
    int i;
    int count;
-@@ -2114,6 +2130,12 @@ POLYAREA *board_outline_poly (void)
-   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
-   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
+@@ -2076,10 +2092,8 @@ POLYAREA *board_outline_poly (void)
+         }
+     }
  
+-  if (!found_outline) {
++  if (!found_outline)
+     printf ("Didn't find outline\n");
+-    return whole_world;
+-  }
+ 
+   /* Do stuff to turn the outline layer into a polygon */
+ 
+@@ -2111,8 +2125,17 @@ POLYAREA *board_outline_poly (void)
+   region.X2 = PCB->MaxWidth;
+   region.Y2 = PCB->MaxHeight;
+ 
+-  r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
+-  r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
++  if (found_outline)
++    {
++      r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
++      r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
++    }
++
 +  if (include_holes)
 +    {
 +      r_search (PCB->Data->pin_tree, &region, NULL, pv_outline_callback, &info);
 +      r_search (PCB->Data->via_tree, &region, NULL, pv_outline_callback, &info);
 +    }
-+
+ 
    clipped = info.poly;
  
-   /* Now we just need to work out which pieces of polygon are inside
 diff --git a/src/polygon.h b/src/polygon.h
 index 30e5ea3..a02fd99 100644
 --- a/src/polygon.h
