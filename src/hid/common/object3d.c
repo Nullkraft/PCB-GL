@@ -581,6 +581,7 @@ object3d_export_to_step (object3d *object, const char *filename)
             {
               fprintf (f, "#%i, ", ORIENTED_EDGE_IDENTIFIER(edge)); /* XXX: IS ORIENTATION GOING TO BE CORRECT?? */
             }
+        }
 
         fprintf (f, "#%i = ADVANCED_FACE ( 'NONE', ", next_step_identifier);
         fprintf (f, "(");
