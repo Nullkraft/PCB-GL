@@ -1,0 +1,30 @@
+Bottom: 4c163cc613f0278a37eddd0b481b1ae3c91a6d75
+Top:    a9dd624aaec41ed88c0a6645dac3ac677cc4ab5d
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 19:54:00 +0000
+
+Refresh of play-with-quad-edge-data
+
+---
+
+diff --git a/src/hid/common/vertex3d.c b/src/hid/common/vertex3d.c
+index d6b3a9b..1704b2b 100644
+--- a/src/hid/common/vertex3d.c
++++ b/src/hid/common/vertex3d.c
+@@ -1,14 +1,9 @@
+ #include <stdlib.h>
+ 
++#include "vertex3d.h"
++
+ static int global_vertex3d_count;
+ 
+-typedef struct
+-{
+-  double x;
+-  double y;
+-  double z;
+-  int id;
+-} vertex3d;
+ 
+ vertex3d *
+ make_vertex3d (double x, double y, double z)
