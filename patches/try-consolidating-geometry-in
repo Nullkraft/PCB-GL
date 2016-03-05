@@ -1,15 +1,14 @@
 Bottom: 7992c0c52796ca9d4480d61b6da240f15f873d5a
-Top:    8124969d1d4f1877a120c587f4fbafb4ab74f59c
+Top:    7579efc7137120b2a055e576d8796e2ed0388c6c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-26 12:48:46 +0000
+Date:   2016-03-05 10:21:53 +0000
 
 Try consolidating geometry in step creation
-
 
 ---
 
 diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
-index d64e062..89bbfd4 100644
+index d64e062..784145a 100644
 --- a/src/hid/step/step_writer.c
 +++ b/src/hid/step/step_writer.c
 @@ -69,12 +69,19 @@ step_file
@@ -32,7 +31,7 @@ index d64e062..89bbfd4 100644
    g_free (file);
  }
  
-@@ -189,16 +196,42 @@ step_product_definition_shape (step_file *file, char *name, char *description, s
+@@ -189,16 +196,40 @@ step_product_definition_shape (step_file *file, char *name, char *description, s
  step_id
  step_cartesian_point (step_file *file, char *name, double x, double y, double z)
  {
@@ -51,7 +50,6 @@ index d64e062..89bbfd4 100644
 +
 +  g_hash_table_insert (file->cartesian_point_hash, line, GINT_TO_POINTER (file->next_id));
 +  fprintf (file->f, "#%i=CARTESIAN_POINT(%s);\n", file->next_id, line);
-+  g_free (line);
 +
    return file->next_id++;
  }
@@ -74,12 +72,11 @@ index d64e062..89bbfd4 100644
 +
 +  g_hash_table_insert (file->direction_hash, line, GINT_TO_POINTER (file->next_id));
 +  fprintf (file->f, "#%i=DIRECTION(%s);\n", file->next_id, line);
-+  g_free (line);
 +
    return file->next_id++;
  }
  
-@@ -237,8 +270,21 @@ step_circle (step_file *file, char *name, step_id position, double radius)
+@@ -237,8 +268,20 @@ step_circle (step_file *file, char *name, step_id position, double radius)
  step_id
  step_vector (step_file *file, char *name, step_id orientation, double magnitude)
  {
@@ -98,7 +95,6 @@ index d64e062..89bbfd4 100644
 +
 +  g_hash_table_insert (file->vector_hash, line, GINT_TO_POINTER (file->next_id));
 +  fprintf (file->f, "#%i=VECTOR(%s);\n", file->next_id, line);
-+  g_free (line);
 +
    return file->next_id++;
  }
