@@ -1,5 +1,5 @@
-Bottom: 596cce94f0a29fb9caa10592d6e2623f41ed3027
-Top:    c7ef9210846135cbbe6f1a210b0ad0c08bb9fa82
+Bottom: a44cf247c4a28b24bd2788bf324fface588744c4
+Top:    bbb2e472a7c58ce477a7bf050297258398ed4bba
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:39:11 +0000
 
@@ -9,18 +9,9 @@ Fix 3D contour export
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index dd071eb..b8bd25c 100644
+index a4ac5ba..e7dff21 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -25,7 +25,7 @@
- 
- #define PERFECT_ROUND_CONTOURS
- 
--//#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
-+#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
- #undef REVERSED_PCB_CONTOURS
- 
- #ifdef REVERSED_PCB_CONTOURS
 @@ -294,6 +294,15 @@ object3d_from_contours (const POLYAREA *contours,
    int start_of_ct;
    int offset_in_ct;
@@ -312,18 +303,9 @@ index dd071eb..b8bd25c 100644
    destroy_appearance (mask_appearance);
  
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 5b2cd40..93d7dcc 100644
+index e16f1e7..93d7dcc 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -25,7 +25,7 @@
- #include "object3d_step.h"
- 
- 
--//#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
-+#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
- #undef REVERSED_PCB_CONTOURS
- 
- #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
 @@ -222,7 +222,7 @@ object3d_to_step_body_fragment (step_file *step,
        dir_y = dv->y - ov->y;
        dir_z = dv->z - ov->z;
