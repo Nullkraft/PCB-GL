@@ -1,5 +1,5 @@
 Bottom: 2643aeced7e80f473f6098dfa84a8fe7b0e65f18
-Top:    d32e3c39e04139ee490dff0ccd5c10cf16c063db
+Top:    24dcf752f37dc408feca345f85553dfd4970546b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-29 19:13:04 +0000
 
@@ -513,18 +513,18 @@ index d05a73c..5e4e469 100644
  
    return group_objects;
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 97b3201..3340c83 100644
+index 97b3201..beb5321 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -26,7 +26,7 @@
+@@ -25,7 +25,7 @@
+ #include "object3d_step.h"
  
  
- //#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
--#undef REVERSED_PCB_CONTOURS
-+//#undef REVERSED_PCB_CONTOURS
+-//#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
++#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
+ #undef REVERSED_PCB_CONTOURS
  
  #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
- 
 @@ -222,7 +222,7 @@ object3d_to_step_body_fragment (step_file *step,
        dir_y = dv->y - ov->y;
        dir_z = dv->z - ov->z;
@@ -534,17 +534,16 @@ index 97b3201..3340c83 100644
        /* XXX: This avoids the test file step_outline_test.pcb failing to display properly in freecad when coordinates are slightly rounded */
        if (dir_x < EPSILON && -dir_x < EPSILON &&
            dir_y < EPSILON && -dir_y < EPSILON &&
-@@ -259,7 +259,8 @@ object3d_to_step_body_fragment (step_file *step,
+@@ -259,7 +259,7 @@ object3d_to_step_body_fragment (step_file *step,
      step_id ev = ((vertex3d *)DDATA (edge))->vertex_identifier;
  
      /* XXX: The lookup of these edges by adding to info->edge_identifier requires the step_* functions to assign sequential identifiers */
 -    info->edge_identifier = step_edge_curve (step, "NONE", sv, ev, info->infinite_line_identifier, /*true*/ !info->is_round);
 +    info->edge_identifier = step_edge_curve (step, "NONE", sv, ev, info->infinite_line_identifier, true);
-+    //info->edge_identifier = step_edge_curve (step, "NONE", sv, ev, info->infinite_line_identifier, !info->is_round); /* XXX: WHY ARE OUR ROUND CONTOURS BASS-ACKWARDS? */
      step_oriented_edge (step, "NONE", info->edge_identifier, true);  /* Add 1 to info->edge_identifier to find this (same) oriented edge */
      step_oriented_edge (step, "NONE", info->edge_identifier, false); /* Add 2 to info->edge_identifier to find this (back) oriented edge */
    }
-@@ -280,9 +281,10 @@ object3d_to_step_body_fragment (step_file *step,
+@@ -280,9 +280,10 @@ object3d_to_step_body_fragment (step_file *step,
  
        edge = contour->first_edge;
        do {
@@ -556,7 +555,7 @@ index 97b3201..3340c83 100644
        edge_loop = step_edge_loop (step, "NONE", edge_loop_edges);
  
        if (outer_contour)
-@@ -290,13 +292,16 @@ object3d_to_step_body_fragment (step_file *step,
+@@ -290,13 +291,16 @@ object3d_to_step_body_fragment (step_file *step,
        else
          contour->face_bound_identifier = step_face_bound (step, "NONE", edge_loop, true);
  
