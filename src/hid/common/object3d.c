@@ -1086,9 +1086,6 @@ polygon_copper_callback (const BoxType * b, void *cl)
   struct mask_info *info = (struct mask_info *) cl;
   POLYAREA *np, *res;
 
-//  if (!(np = PolygonToPoly (poly)))
-//    return 0;
-
   if (poly->Clipped == NULL)
     {
       fprintf (stderr, "poly_copper_callback(): polygon->Clipped == NULL\n");
@@ -1200,8 +1197,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
       END_LOOP;
 
       fprintf (stderr, "Accumulating pin + via pads\n");
-  //    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
-  //    r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
+      r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
+      r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
 #endif
 
 #if 0
