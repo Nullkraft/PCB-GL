@@ -1,5 +1,5 @@
 Bottom: 00ddcf098f4c78151ad426b3f82c02d4d92b6d67
-Top:    00ddcf098f4c78151ad426b3f82c02d4d92b6d67
+Top:    f2ca8c5dcf6b4752ff3ba129a6aaff0dd0de3d8f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 17:26:06 +0000
 
@@ -8,4 +8,16 @@ Disable small edge EPSILON hack for computing edge normals
 
 ---
 
-
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index ce59b47..93d7dcc 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -222,7 +222,7 @@ object3d_to_step_body_fragment (step_file *step,
+       dir_y = dv->y - ov->y;
+       dir_z = dv->z - ov->z;
+ 
+-#if 1
++#if 0
+       /* XXX: This avoids the test file step_outline_test.pcb failing to display properly in freecad when coordinates are slightly rounded */
+       if (dir_x < EPSILON && -dir_x < EPSILON &&
+           dir_y < EPSILON && -dir_y < EPSILON &&
