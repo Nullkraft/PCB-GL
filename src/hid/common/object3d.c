@@ -533,6 +533,7 @@ object3d_from_board_outline (void)
 
       /* Splice onto board */
       face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(cylinder_edges[0])));
+
       /* Assign the appropriate vertex geometric data to each edge end */
       ODATA (cylinder_edges[0]) = cylinder_vertices[0];
       DDATA (cylinder_edges[0]) = cylinder_vertices[0];
