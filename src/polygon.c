@@ -112,7 +112,7 @@ dicer output is used for HIDs which cannot render things with holes
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
-#define UNSUBTRACT_BLOAT 10
+#define UNSUBTRACT_BLOAT 100 /*10*/
 #define SUBTRACT_PIN_VIA_BATCH_SIZE 100
 #define SUBTRACT_LINE_BATCH_SIZE 20
 

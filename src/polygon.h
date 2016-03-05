@@ -106,4 +106,6 @@ void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
                           void (*emit) (PLINE *, void *), void *user_data);
 void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
 POLYAREA *board_outline_poly (bool include_holes);
+
+BoxType *get_seg_bounds (PLINE *contour, VNODE *node);
 #endif
