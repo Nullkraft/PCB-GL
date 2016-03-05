@@ -1,0 +1,21 @@
+Bottom: 02cedfd79b14aa84bb93eaa490f7cdb891695500
+Top:    475c82e9b98fcb21e2e4be103bdf01bc2dc051ba
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 19:30:17 +0000
+
+Refresh of more-play-with-quad-edge-data
+
+---
+
+diff --git a/src/hid/common/vertex3d.c b/src/hid/common/vertex3d.c
+index 51db3a7..174bad6 100644
+--- a/src/hid/common/vertex3d.c
++++ b/src/hid/common/vertex3d.c
+@@ -9,7 +9,7 @@ typedef struct
+   float z;
+   int id;
+ 
+-  /* STEP crap - to hell with encapsulation */
++  /* XXX: STEP specific - breaks encapsulation */
+   int vertex_identifier;
+ } vertex3d;
