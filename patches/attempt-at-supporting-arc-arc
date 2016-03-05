@@ -1,7 +1,7 @@
-Bottom: 86c8304fe414dd0aa19da87b6349b7edf37cd8ff
-Top:    0fad79c9ecf08d516e1e365b8fcf1287d2e553fd
+Bottom: e18a763e2e39be444486c6d67bd903a477c72c1e
+Top:    f7a6fa607dd30875a697c50bc4c7afc397b74731
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 22:46:01 +0000
+Date:   2016-03-05 14:30:15 +0000
 
 Attempt at supporting arc-arc intersections in polygons
 
@@ -265,7 +265,7 @@ index 3c1cee1..8bdb180 100644
        else
          {
 diff --git a/src/polygon.c b/src/polygon.c
-index 2ba4f52..be69b16 100644
+index 770e842..814e4ec 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -112,7 +112,7 @@ dicer output is used for HIDs which cannot render things with holes

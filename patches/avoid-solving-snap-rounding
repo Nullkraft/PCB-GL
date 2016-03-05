@@ -1,7 +1,7 @@
-Bottom: 0fad79c9ecf08d516e1e365b8fcf1287d2e553fd
-Top:    1333a8025acfb17b85d36274a075785810cb7616
+Bottom: f7a6fa607dd30875a697c50bc4c7afc397b74731
+Top:    1d62330fd180a0f0476c50f3364bbce6935adaf6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 22:46:01 +0000
+Date:   2016-03-05 14:30:15 +0000
 
 Avoid solving snap-rounding problem
 
@@ -130,7 +130,7 @@ index 94bdf45..ebe38f5 100644
  int poly_Boolean(const POLYAREA * a, const POLYAREA * b, POLYAREA ** res, int action);
  int poly_Boolean_free(POLYAREA * a, POLYAREA * b, POLYAREA ** res, int action);
 diff --git a/src/polygon.c b/src/polygon.c
-index be69b16..93a93d1 100644
+index 814e4ec..79e93e7 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -303,7 +303,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector
@@ -151,7 +151,7 @@ index be69b16..93a93d1 100644
        c->head.prev->cx = X;
        c->head.prev->cy = Y;
        c->head.prev->radius = radius;
-@@ -1312,6 +1312,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
+@@ -1311,6 +1311,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
        r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
        subtract_accumulated (&info, polygon);
      }

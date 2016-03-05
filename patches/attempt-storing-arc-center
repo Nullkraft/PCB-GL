@@ -1,7 +1,7 @@
-Bottom: 576edfe97c4a2b4bde1f1301968c62178665fef9
-Top:    24a292c287e4c7f0110ba1e62c06afd071db49b3
+Bottom: 5bf97469767ebddd417fd5d1f47374ee432504f7
+Top:    4fc60e1e3d51e9d483aac7fcd8549d9ff6159bea
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 20:19:14 +0000
+Date:   2016-03-05 14:30:16 +0000
 
 Attempt storing arc center calcultations in floating point...
 
@@ -79,7 +79,7 @@ index 22de3a8..010e676 100644
  void poly_InclVertex(VNODE * after, VNODE * node);
  void poly_ExclVertex(VNODE * node);
 diff --git a/src/polygon.c b/src/polygon.c
-index 2426203..1694548 100644
+index 791de89..033928c 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -291,7 +291,8 @@ ContourToPoly (PLINE * contour)
