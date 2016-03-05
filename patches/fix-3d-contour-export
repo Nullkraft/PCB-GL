@@ -1,5 +1,5 @@
-Bottom: 7857afd7d4f0047dbb8ef2b3769c3bd99293de4d
-Top:    5d8ae66361f2bfc8e0a8a37e0ec98f0dff551b3e
+Bottom: 2dc0413d723630f43ba512d176eca5f287838dc6
+Top:    2dc0413d723630f43ba512d176eca5f287838dc6
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:27 +0000
 
@@ -8,16 +8,4 @@ Fix 3D contour export
 
 ---
 
-diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 62df3f1..d7f5d60 100644
---- a/src/hid/common/object3d.c
-+++ b/src/hid/common/object3d.c
-@@ -299,7 +299,7 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
-       *cx = COORD_TO_STEP_X (PCB, contour->cx);
-       *cy = COORD_TO_STEP_Y (PCB, contour->cy);
-       *r = COORD_TO_MM (contour->radius);
--      *cw = (contour->Flags.orient != PLF_DIR);
-+      *cw = (contour->Flags.orient == PLF_INV);
-       return;
-     }
- #endif
+
