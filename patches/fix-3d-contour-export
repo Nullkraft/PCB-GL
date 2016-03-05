@@ -1,5 +1,5 @@
-Bottom: 00842c93a8488fc7f3a8ad793f88ae8f65d63fe9
-Top:    e42cef28f32cc67fd3f46030fda9b541dcc6ad96
+Bottom: 0432b3951213604f38935ad281bb36acabcefed3
+Top:    cc8b6c8a63080418c840cfc1237d8c9d41869b33
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 12:41:31 +0000
 
@@ -9,7 +9,7 @@ Fix 3D contour export
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 5e54508..cbeea35 100644
+index 1cd0c28..61008f0 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -25,7 +25,7 @@
@@ -381,21 +381,3 @@ index 5b2cd40..beb5321 100644
    /* Closed shell which bounds the brep solid */
    pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
    brep_identifier = step_manifold_solid_brep (step, body_name /* This is picked up as the solid body name by Solidworks */, pcb_shell_identifier);
-diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 2bb9bfd..52182c0 100644
---- a/src/hid/step/step.c
-+++ b/src/hid/step/step.c
-@@ -202,13 +202,11 @@ step_do_export (HID_Attr_Val * options)
-         poly_DelContour (&curc);
-       }
- 
--#if 1
-     mask_objects = object3d_from_soldermask_within_area (piece, TOP_SIDE);
-     board_outline_list = g_list_concat (board_outline_list, mask_objects);
- 
-     mask_objects = object3d_from_soldermask_within_area (piece, BOTTOM_SIDE);
-     board_outline_list = g_list_concat (board_outline_list, mask_objects);
--#endif
- 
-     copper_layer_objects = object3d_from_copper_layers_within_area (piece);
-     board_outline_list = g_list_concat (board_outline_list, copper_layer_objects);
