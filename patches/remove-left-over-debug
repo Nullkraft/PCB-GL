@@ -1,5 +1,5 @@
-Bottom: 9ddd96c21486a08ddc235f5e8e442a264eb6289f
-Top:    e9fef597a61842f6dfe8c92e1610bf2000c004a5
+Bottom: 435bed48c6d491ee494376b14538a6679a964a32
+Top:    5da96c04732fe650f601157596666ce40a547823
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 15:15:10 +0000
 
@@ -9,10 +9,10 @@ Remove left over debug
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index aa7aa58..f541d4c 100644
+index 9b464f5..fe540f9 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -1697,8 +1697,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1695,8 +1695,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                copper_appearance,
                                NULL,
                                false)); /* Don't invert */
