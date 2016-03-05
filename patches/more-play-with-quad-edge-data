@@ -1,5 +1,5 @@
 Bottom: 048985d6a23f7ac09251a8f8f782f327ef0a0235
-Top:    02cedfd79b14aa84bb93eaa490f7cdb891695500
+Top:    475c82e9b98fcb21e2e4be103bdf01bc2dc051ba
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -997,7 +997,7 @@ index 9afe726..4300818 100644
 +  return object;
 +}
 diff --git a/src/hid/common/vertex3d.c b/src/hid/common/vertex3d.c
-index df5fd0e..51db3a7 100644
+index df5fd0e..174bad6 100644
 --- a/src/hid/common/vertex3d.c
 +++ b/src/hid/common/vertex3d.c
 @@ -8,6 +8,9 @@ typedef struct
@@ -1005,7 +1005,7 @@ index df5fd0e..51db3a7 100644
    float z;
    int id;
 +
-+  /* STEP crap - to hell with encapsulation */
++  /* XXX: STEP specific - breaks encapsulation */
 +  int vertex_identifier;
  } vertex3d;
  
