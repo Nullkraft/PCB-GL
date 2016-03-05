@@ -1200,11 +1200,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
       END_LOOP;
 
       fprintf (stderr, "Accumulating pin + via pads\n");
-  //    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
-  //    r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
+      r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
+      r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
 #endif
 
-#if 0
+#if 1
       if (group == top_group ||
           group == bottom_group)
         {
@@ -1214,11 +1214,36 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
         }
 #endif
 
-    if (info.poly == NULL)
-      {
-        fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
-        continue;
-      }
+      /* TODO: Inter-layer features
+       *
+       * Accumulate a circular polygon for each plated hole we may cut, ensuring
+       * the finished polygon contour extends to include the via barrel extents.
+       *
+       * Subtract non-plated hole contours from the polygons.
+       *
+       * For each hole, add the via-barrel between layers... removing the Object3D
+       * from the list of objects as they become joined with some other. (The final
+       * list of objects shuold match 1:1 with resultant bodies, and contain no
+       * duplicates.
+       *
+       * To accomodate overlapping drill holes, accumulate all via-barrels into a
+       * polygon, and subtract that from the positive copper polygon. As we already
+       * added via-barrels to each copper layer, the each barrel extrusion contour
+       * should match only one body of copper on a given layer.
+       *
+       * Remove the drilled hole down each via by extruding the additional faces.
+       *
+       * To accomodate overlapping drill holes, accumulate all drills into a polygon,
+       * and subtract that from the positive copper polygon. Any subtracted contour
+       * should at this point match to one body of copper on a given layer.
+       *
+       */
+
+      if (info.poly == NULL)
+        {
+          fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
+          continue;
+        }
 
       objects = g_list_concat (objects,
         object3d_from_contours (info.poly,
