@@ -1,5 +1,5 @@
 Bottom: c4002ed5f01ca2c0f265695d50e4e9b052e6984e
-Top:    a9dd624aaec41ed88c0a6645dac3ac677cc4ab5d
+Top:    92417c990658c7c54de626e4e40a3cab703b065f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -85,10 +85,10 @@ new file mode 100644
 index 0000000..e69de29
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 new file mode 100644
-index 0000000..991ca86
+index 0000000..56114d9
 --- /dev/null
 +++ b/src/hid/common/object3d.c
-@@ -0,0 +1,915 @@
+@@ -0,0 +1,940 @@
 +#include <stdio.h>
 +#include <stdlib.h>
 +#include <assert.h>
@@ -195,31 +195,32 @@ index 0000000..991ca86
 +  for (i = 0; i < 12; i++)
 +    cube_edges[i] = make_edge ();
 +
-+  for (i = 0; i < 4; i++) {
-+    int next_vertex = (i + 1) % 4;
-+    int prev_vertex = (i + 3) % 4;
++  for (i = 0; i < 4; i++)
++    {
++      int next_vertex = (i + 1) % 4;
++      int prev_vertex = (i + 3) % 4;
 +
-+    /* Assign bottom edge endpoints */
-+    ODATA (cube_edges[i]) = cube_vertices[i];
-+    DDATA (cube_edges[i]) = cube_vertices[next_vertex];
++      /* Assign bottom edge endpoints */
++      ODATA (cube_edges[i]) = cube_vertices[i];
++      DDATA (cube_edges[i]) = cube_vertices[next_vertex];
 +
-+    /* Assign top edge endpoints */
-+    ODATA (cube_edges[4 + i]) = cube_vertices[4 + i];
-+    DDATA (cube_edges[4 + i]) = cube_vertices[4 + next_vertex];
++      /* Assign top edge endpoints */
++      ODATA (cube_edges[4 + i]) = cube_vertices[4 + i];
++      DDATA (cube_edges[4 + i]) = cube_vertices[4 + next_vertex];
 +
-+    /* Assign side edge endpoints */
-+    ODATA (cube_edges[8 + i]) = cube_vertices[i];
-+    DDATA (cube_edges[8 + i]) = cube_vertices[4 + i];
++      /* Assign side edge endpoints */
++      ODATA (cube_edges[8 + i]) = cube_vertices[i];
++      DDATA (cube_edges[8 + i]) = cube_vertices[4 + i];
 +
-+    /* Link up edges orbiting around each bottom vertex */
-+    splice (cube_edges[i], cube_edges[8 + i]);
-+    splice (cube_edges[8 + i], SYM(cube_edges[prev_vertex]));
++      /* Link up edges orbiting around each bottom vertex */
++      splice (cube_edges[i], cube_edges[8 + i]);
++      splice (cube_edges[8 + i], SYM(cube_edges[prev_vertex]));
 +
-+    /* Link up edges orbiting around each bottom top */
-+    splice (cube_edges[4 + i], SYM(cube_edges[4 + prev_vertex]));
-+    splice (SYM(cube_edges[4 + prev_vertex]), SYM(cube_edges[8 + i]));
++      /* Link up edges orbiting around each bottom top */
++      splice (cube_edges[4 + i], SYM(cube_edges[4 + prev_vertex]));
++      splice (SYM(cube_edges[4 + prev_vertex]), SYM(cube_edges[8 + i]));
 +
-+  }
++    }
 +
 +  quad_enum (cube_edges[0], debug_print_edge, NULL);
 +
@@ -257,25 +258,28 @@ index 0000000..991ca86
 +  glColor3f (1., 1., 1.);
 +#endif
 +
-+  if (UNDIR_DATA(e) != NULL) {
-+    edge_info *info = UNDIR_DATA(e);
-+    if (info->is_stitch)
-+      return;
-+    if (info->is_round) {
-+      int i;
-+      glBegin (GL_LINES);
-+      for (i = 0; i < CIRC_SEGS; i++) {
-+        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos (i * 2. * M_PI / (double)CIRC_SEGS)),
-+                    MM_TO_COORD (info->cy + info->radius * sin (i * 2. * M_PI / (double)CIRC_SEGS)),
-+                    MM_TO_COORD (((vertex3d *)ODATA(e))->z));
-+        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
-+                    MM_TO_COORD (info->cy + info->radius * sin ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
-+                    MM_TO_COORD (((vertex3d *)ODATA(e))->z));
-+      }
-+      glEnd ();
-+      return;
++  if (UNDIR_DATA(e) != NULL)
++    {
++      edge_info *info = UNDIR_DATA(e);
++      if (info->is_stitch)
++        return;
++      if (info->is_round)
++        {
++          int i;
++          glBegin (GL_LINES);
++          for (i = 0; i < CIRC_SEGS; i++)
++            {
++              glVertex3f (MM_TO_COORD (info->cx + info->radius * cos (i * 2. * M_PI / (double)CIRC_SEGS)),
++                          MM_TO_COORD (info->cy + info->radius * sin (i * 2. * M_PI / (double)CIRC_SEGS)),
++                          MM_TO_COORD (((vertex3d *)ODATA(e))->z));
++              glVertex3f (MM_TO_COORD (info->cx + info->radius * cos ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
++                          MM_TO_COORD (info->cy + info->radius * sin ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
++                          MM_TO_COORD (((vertex3d *)ODATA(e))->z));
++            }
++          glEnd ();
++          return;
++        }
 +    }
-+  }
 +
 +  glBegin (GL_LINES);
 +  glVertex3f (MM_TO_COORD (((vertex3d *)ODATA(e))->x), MM_TO_COORD (((vertex3d *)ODATA(e))->y), MM_TO_COORD (((vertex3d *)ODATA(e))->z));
@@ -320,10 +324,11 @@ index 0000000..991ca86
 +      return;
 +    }
 +
-+  while (n > 0) {
-+    vertex = vertex->next; /* The VNODE structure is circularly linked, so wrapping is OK */
-+    n--;
-+  }
++  while (n > 0)
++    {
++      vertex = vertex->next; /* The VNODE structure is circularly linked, so wrapping is OK */
++      n--;
++    }
 +
 +  *x = COORD_TO_MM (vertex->point[0]);
 +  *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
@@ -448,11 +453,12 @@ index 0000000..991ca86
 +  ncontours = 0;
 +  npoints = 0;
 +  ct = contour;
-+  while (ct != NULL) {
-+    ncontours ++;
-+    npoints += get_contour_npoints (ct);
-+    ct = ct->next;
-+  }
++  while (ct != NULL)
++    {
++      ncontours ++;
++      npoints += get_contour_npoints (ct);
++      ct = ct->next;
++    }
 +
 +  /* TODO: Avoid needing to store these identifiers by nailing down our usage pattern of identifiers */
 +  /* Allocate some storage for identifiers */
@@ -528,338 +534,351 @@ index 0000000..991ca86
 +  next_step_identifier = next_step_identifier + 5;
 +
 +  /* Define the side planes */
-+  for (i = 0; i < npoints; i++) {
-+    double x1, y1, x2, y2;
++  for (i = 0; i < npoints; i++)
++    {
++      double x1, y1, x2, y2;
 +
-+    /* Walk through the contours until we find the right one to look at */
-+    PLINE *ct = contour;
-+    int adjusted_i = i;
++      /* Walk through the contours until we find the right one to look at */
++      PLINE *ct = contour;
++      int adjusted_i = i;
 +
-+    while (adjusted_i >= get_contour_npoints (ct)) {
-+      adjusted_i -= get_contour_npoints (ct);
-+      ct = ct->next;
++      while (adjusted_i >= get_contour_npoints (ct))
++        {
++          adjusted_i -= get_contour_npoints (ct);
++          ct = ct->next;
++        }
++
++      if (ct->is_round)
++        {
++          /* HACK SPECIAL CASE FOR ROUND CONTOURS (Surface edges bounded by a cylindrical surface, not n-planes) */
++
++          fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
++                      "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
++                      "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
++                      "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i, #%i, #%i ) ; "
++                      "#%i = CYLINDRICAL_SURFACE ( 'NONE', #%i, %f ) ;\n",
++                   next_step_identifier, /* A point on the axis of the cylinder */ COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0.0,
++                   next_step_identifier + 1, /* Direction of surface axis... not sure if the sign of the direction matters */ 0.0, 0.0, 1.0,
++                   next_step_identifier + 2, /* URM???? NOT SURE WHAT THIS DIRECTION IS FOR                                */ 1.0, 0.0, 0.0,
++                   next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
++                   next_step_identifier + 4, next_step_identifier + 3, COORD_TO_MM (ct->radius));
++
++          side_plane_identifier[i] = next_step_identifier + 4;
++          next_step_identifier = next_step_identifier + 5;
++        }
++      else
++        {
++          get_contour_coord_n_in_mm (ct, adjusted_i,     &x1, &y1);
++          get_contour_coord_n_in_mm (ct, adjusted_i + 1, &x2, &y2);
++
++          fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
++                      "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
++                      "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
++                      "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i, #%i, #%i ) ; "
++                      "#%i = PLANE ( 'NONE',  #%i ) ;\n",
++                   next_step_identifier,     /* A point on the plane                      */ x1, y1, 0.0,
++                   next_step_identifier + 1, /* An axis direction pointing into the shape */ -(y2 - y1), (x2 - x1), 0.0, // <--- NOT SURE IF I NEED TO NORMALISE THIS, OR FLIP THE DIRECTION??
++                   next_step_identifier + 2, /* A reference direction pointing.. "meh"?   */ 0.0, 0.0, 1.0,
++                   next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
++                   next_step_identifier + 4, next_step_identifier + 3);
++          side_plane_identifier[i] = next_step_identifier + 4;
++          next_step_identifier = next_step_identifier + 5;
++        }
 +    }
 +
-+    if (ct->is_round)
++    /* Define the infinite lines */
++    for (i = 0; i < npoints; i++)
 +      {
-+        /* HACK SPECIAL CASE FOR ROUND CONTOURS (Surface edges bounded by a cylindrical surface, not n-planes) */
++        double x1, y1, x2, y2;
 +
-+        fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i, #%i, #%i ) ; "
-+                    "#%i = CYLINDRICAL_SURFACE ( 'NONE', #%i, %f ) ;\n",
-+                 next_step_identifier, /* A point on the axis of the cylinder */ COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0.0,
-+                 next_step_identifier + 1, /* Direction of surface axis... not sure if the sign of the direction matters */ 0.0, 0.0, 1.0,
-+                 next_step_identifier + 2, /* URM???? NOT SURE WHAT THIS DIRECTION IS FOR                                */ 1.0, 0.0, 0.0,
-+                 next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
-+                 next_step_identifier + 4, next_step_identifier + 3, COORD_TO_MM (ct->radius));
++        /* Walk through the contours until we find the right one to look at */
++        PLINE *ct = contour;
++        int adjusted_i = i;
 +
-+        side_plane_identifier[i] = next_step_identifier + 4;
-+        next_step_identifier = next_step_identifier + 5;
-+      }
-+    else
-+      {
++        while (adjusted_i >= get_contour_npoints (ct))
++          {
++            adjusted_i -= get_contour_npoints (ct);
++            ct = ct->next;
++          }
++
 +        get_contour_coord_n_in_mm (ct, adjusted_i,     &x1, &y1);
 +        get_contour_coord_n_in_mm (ct, adjusted_i + 1, &x2, &y2);
 +
-+        fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i, #%i, #%i ) ; "
-+                    "#%i = PLANE ( 'NONE',  #%i ) ;\n",
-+                 next_step_identifier,     /* A point on the plane                      */ x1, y1, 0.0,
-+                 next_step_identifier + 1, /* An axis direction pointing into the shape */ -(y2 - y1), (x2 - x1), 0.0, // <--- NOT SURE IF I NEED TO NORMALISE THIS, OR FLIP THE DIRECTION??
-+                 next_step_identifier + 2, /* A reference direction pointing.. "meh"?   */ 0.0, 0.0, 1.0,
-+                 next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
-+                 next_step_identifier + 4, next_step_identifier + 3);
-+        side_plane_identifier[i] = next_step_identifier + 4;
-+        next_step_identifier = next_step_identifier + 5;
-+      }
-+  }
++        if (ct->is_round)
++          {
++            /* HACK SPECIAL CASE FOR ROUND CONTOURS (Top and bottom faces bounded a circular contour, not n-lines) */
 +
-+  /* Define the infinite lines */
-+  for (i = 0; i < npoints; i++) {
-+    double x1, y1, x2, y2;
++            /* Bottom */
++            fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
++                        "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
++                        "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
++                        "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i,  #%i,  #%i ) ;"
++                        "#%i = CIRCLE ( 'NONE', #%i, %f ) ;\n",
++                     next_step_identifier,     /* Center of the circle   */ COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), -COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
++                     next_step_identifier + 1, /* Normal of circle?      */ 0.0, 0.0, -1.0, // <--- NOT SURE IF I NEED TO FLIP THE DIRECTION??
++                     next_step_identifier + 2, /* ??????                 */ -1.0, 0.0, 0.0, // NOT SURE WHAT THIS IS!
++                     next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
++                     next_step_identifier + 4, next_step_identifier + 3, COORD_TO_MM (ct->radius));
++            bottom_infinite_line_identifier[i] = next_step_identifier + 4;
++            next_step_identifier = next_step_identifier + 5;
 +
-+    /* Walk through the contours until we find the right one to look at */
-+    PLINE *ct = contour;
-+    int adjusted_i = i;
++            /* Top */
++            fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
++                        "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
++                        "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
++                        "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i,  #%i,  #%i ) ;"
++                        "#%i = CIRCLE ( 'NONE', #%i, %f ) ;\n",
++                     next_step_identifier,     /* Center of the circle   */ COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
++                     next_step_identifier + 1, /* Normal of circle?      */ 0.0, 0.0, -1.0, // <--- NOT SURE IF I NEED TO FLIP THE DIRECTION??
++                     next_step_identifier + 2, /* ??????                 */ -1.0, 0.0, 0.0, // NOT SURE WHAT THIS IS!
++                     next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
++                     next_step_identifier + 4, next_step_identifier + 3, COORD_TO_MM (ct->radius));
++            top_infinite_line_identifier[i] = next_step_identifier + 4;
++            next_step_identifier = next_step_identifier + 5;
++          }
++        else
++          {
++            /* Bottom */
++            fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
++                        "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
++                        "#%i = VECTOR ( 'NONE', #%i, 1000.0 ) ; "
++                        "#%i = LINE ( 'NONE', #%i, #%i ) ;\n",
++                     next_step_identifier,     /* A point on the line         */ x1, y1, -COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
++                     next_step_identifier + 1, /* A direction along the line  */ (x2 - x1), (y2 - y1), 0.0, // <--- NOT SURE IF I NEED TO NORMALISE THIS, OR FLIP THE DIRECTION??
++                     next_step_identifier + 2, next_step_identifier + 1,
++                     next_step_identifier + 3, next_step_identifier, next_step_identifier + 2);
++            bottom_infinite_line_identifier[i] = next_step_identifier + 3;
++            next_step_identifier = next_step_identifier + 4;
 +
-+    while (adjusted_i >= get_contour_npoints (ct)) {
-+      adjusted_i -= get_contour_npoints (ct);
-+      ct = ct->next;
-+    }
++            /* Top */
++            fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
++                        "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
++                        "#%i = VECTOR ( 'NONE', #%i, 1000.0 ) ; "
++                        "#%i = LINE ( 'NONE', #%i, #%i ) ;\n",
++                     next_step_identifier,     /* A point on the line         */ x1, y1, COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
++                     next_step_identifier + 1, /* A direction along the line  */ (x2 - x1), (y2 - y1), 0.0, // <--- NOT SURE IF I NEED TO NORMALISE THIS, OR FLIP THE DIRECTION??
++                     next_step_identifier + 2, next_step_identifier + 1,
++                     next_step_identifier + 3, next_step_identifier, next_step_identifier + 2);
++            top_infinite_line_identifier[i] = next_step_identifier + 3;
++            next_step_identifier = next_step_identifier + 4;
++          }
 +
-+    get_contour_coord_n_in_mm (ct, adjusted_i,     &x1, &y1);
-+    get_contour_coord_n_in_mm (ct, adjusted_i + 1, &x2, &y2);
-+
-+    if (ct->is_round)
-+      {
-+        /* HACK SPECIAL CASE FOR ROUND CONTOURS (Top and bottom faces bounded a circular contour, not n-lines) */
-+
-+        /* Bottom */
-+        fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i,  #%i,  #%i ) ;"
-+                    "#%i = CIRCLE ( 'NONE', #%i, %f ) ;\n",
-+                 next_step_identifier,     /* Center of the circle   */ COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), -COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
-+                 next_step_identifier + 1, /* Normal of circle?      */ 0.0, 0.0, -1.0, // <--- NOT SURE IF I NEED TO FLIP THE DIRECTION??
-+                 next_step_identifier + 2, /* ??????                 */ -1.0, 0.0, 0.0, // NOT SURE WHAT THIS IS!
-+                 next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
-+                 next_step_identifier + 4, next_step_identifier + 3, COORD_TO_MM (ct->radius));
-+        bottom_infinite_line_identifier[i] = next_step_identifier + 4;
-+        next_step_identifier = next_step_identifier + 5;
-+
-+        /* Top */
-+        fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i,  #%i,  #%i ) ;"
-+                    "#%i = CIRCLE ( 'NONE', #%i, %f ) ;\n",
-+                 next_step_identifier,     /* Center of the circle   */ COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
-+                 next_step_identifier + 1, /* Normal of circle?      */ 0.0, 0.0, -1.0, // <--- NOT SURE IF I NEED TO FLIP THE DIRECTION??
-+                 next_step_identifier + 2, /* ??????                 */ -1.0, 0.0, 0.0, // NOT SURE WHAT THIS IS!
-+                 next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
-+                 next_step_identifier + 4, next_step_identifier + 3, COORD_TO_MM (ct->radius));
-+        top_infinite_line_identifier[i] = next_step_identifier + 4;
-+        next_step_identifier = next_step_identifier + 5;
-+      }
-+    else
-+      {
-+        /* Bottom */
++        /* Side */
 +        fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
 +                    "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
 +                    "#%i = VECTOR ( 'NONE', #%i, 1000.0 ) ; "
 +                    "#%i = LINE ( 'NONE', #%i, #%i ) ;\n",
 +                 next_step_identifier,     /* A point on the line         */ x1, y1, -COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
-+                 next_step_identifier + 1, /* A direction along the line  */ (x2 - x1), (y2 - y1), 0.0, // <--- NOT SURE IF I NEED TO NORMALISE THIS, OR FLIP THE DIRECTION??
++                 next_step_identifier + 1, /* A direction along the line  */ 0.0, 0.0, 1.0, // <--- NOT SURE IF I NEED TO NORMALISE THIS, OR FLIP THE DIRECTION??
 +                 next_step_identifier + 2, next_step_identifier + 1,
 +                 next_step_identifier + 3, next_step_identifier, next_step_identifier + 2);
-+        bottom_infinite_line_identifier[i] = next_step_identifier + 3;
-+        next_step_identifier = next_step_identifier + 4;
-+
-+        /* Top */
-+        fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-+                    "#%i = VECTOR ( 'NONE', #%i, 1000.0 ) ; "
-+                    "#%i = LINE ( 'NONE', #%i, #%i ) ;\n",
-+                 next_step_identifier,     /* A point on the line         */ x1, y1, COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
-+                 next_step_identifier + 1, /* A direction along the line  */ (x2 - x1), (y2 - y1), 0.0, // <--- NOT SURE IF I NEED TO NORMALISE THIS, OR FLIP THE DIRECTION??
-+                 next_step_identifier + 2, next_step_identifier + 1,
-+                 next_step_identifier + 3, next_step_identifier, next_step_identifier + 2);
-+        top_infinite_line_identifier[i] = next_step_identifier + 3;
++        side_infinite_line_identifier[i] = next_step_identifier + 3;
 +        next_step_identifier = next_step_identifier + 4;
 +      }
 +
-+    /* Side */
-+    fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
-+                "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-+                "#%i = VECTOR ( 'NONE', #%i, 1000.0 ) ; "
-+                "#%i = LINE ( 'NONE', #%i, #%i ) ;\n",
-+             next_step_identifier,     /* A point on the line         */ x1, y1, -COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
-+             next_step_identifier + 1, /* A direction along the line  */ 0.0, 0.0, 1.0, // <--- NOT SURE IF I NEED TO NORMALISE THIS, OR FLIP THE DIRECTION??
-+             next_step_identifier + 2, next_step_identifier + 1,
-+             next_step_identifier + 3, next_step_identifier, next_step_identifier + 2);
-+    side_infinite_line_identifier[i] = next_step_identifier + 3;
-+    next_step_identifier = next_step_identifier + 4;
-+  }
++    /* Define the vertices */
++    for (i = 0; i < npoints; i++)
++      {
++        double x1, y1;
 +
-+  /* Define the vertices */
-+  for (i = 0; i < npoints; i++) {
-+    double x1, y1;
++        /* Walk through the contours until we find the right one to look at */
++        PLINE *ct = contour;
++        int adjusted_i = i;
 +
-+    /* Walk through the contours until we find the right one to look at */
-+    PLINE *ct = contour;
-+    int adjusted_i = i;
++        while (adjusted_i >= get_contour_npoints (ct))
++          {
++            adjusted_i -= get_contour_npoints (ct);
++            ct = ct->next;
++          }
 +
-+    while (adjusted_i >= get_contour_npoints (ct)) {
-+      adjusted_i -= get_contour_npoints (ct);
-+      ct = ct->next;
-+    }
++        get_contour_coord_n_in_mm (ct, adjusted_i, &x1, &y1);
 +
-+    get_contour_coord_n_in_mm (ct, adjusted_i, &x1, &y1);
++        /* Bottom */
++        fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
++                    "#%i = VERTEX_POINT ( 'NONE', #%i ) ;\n",
++                 next_step_identifier,     /* Vertex coordinate  */ x1, y1, -COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
++                 next_step_identifier + 1, next_step_identifier);
++        bottom_vertex_identifier[i] = next_step_identifier + 1;
++        next_step_identifier = next_step_identifier + 2;
++
++        /* Top */
++        fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
++                    "#%i = VERTEX_POINT ( 'NONE', #%i ) ;\n",
++                 next_step_identifier,     /* Vertex coordinate  */ x1, y1, COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
++                 next_step_identifier + 1, next_step_identifier);
++        top_vertex_identifier[i] = next_step_identifier + 1;
++        next_step_identifier = next_step_identifier + 2;
++      }
++
++    /* Define the Edges */
++    for (i = 0; i < npoints; i++)
++      {
++
++        /* Walk through the contours until we find the right one to look at */
++        PLINE *ct = contour;
++        int adjusted_i = i;
++        int i_start = 0;
++
++        while (adjusted_i >= get_contour_npoints (ct))
++          {
++            adjusted_i -= get_contour_npoints (ct);
++            i_start += get_contour_npoints (ct);
++            ct = ct->next;
++          }
++
++        /* Due to the way the index wrapping works, this works for circular cutouts as well as n-sided */
++
++        /* Bottom */
++        fprintf (f, "#%i = EDGE_CURVE ( 'NONE', #%i, #%i, #%i,   .T. ) ; "
++                    "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .F. ) ; "
++                    "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .T. ) ;\n",
++                 next_step_identifier, bottom_vertex_identifier[i], bottom_vertex_identifier[i_start + (adjusted_i + 1) % get_contour_npoints (ct)], bottom_infinite_line_identifier[i],      // <-- MIGHT NEED TO REVERSE THIS???
++                 next_step_identifier + 1, next_step_identifier,
++                 next_step_identifier + 2, next_step_identifier);
++        bottom_edge_identifier[i] = next_step_identifier; /* Add 1 for same oriented, add 2 for back oriented */
++        next_step_identifier = next_step_identifier + 3;
++
++        /* Top */
++        fprintf (f, "#%i = EDGE_CURVE ( 'NONE', #%i, #%i, #%i,   .T. ) ; "
++                    "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .F. ) ; "
++                    "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .T. ) ;\n",
++                 next_step_identifier, top_vertex_identifier[i], top_vertex_identifier[i_start + (adjusted_i + 1) % get_contour_npoints (ct)], top_infinite_line_identifier[i],                 // <-- MIGHT NEED TO REVERSE THIS???
++                 next_step_identifier + 1, next_step_identifier,
++                 next_step_identifier + 2, next_step_identifier);
++        top_edge_identifier[i] = next_step_identifier; /* Add 1 for same oriented, add 2 for back oriented */
++        next_step_identifier = next_step_identifier + 3;
++
++        /* Side */
++        fprintf (f, "#%i = EDGE_CURVE ( 'NONE', #%i, #%i, #%i,   .T. ) ; "
++                    "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .F. ) ; "
++                    "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .T. ) ;\n",
++                 next_step_identifier, bottom_vertex_identifier[i], top_vertex_identifier[i], side_infinite_line_identifier[i],
++                 next_step_identifier + 1, next_step_identifier,
++                 next_step_identifier + 2, next_step_identifier);
++        side_edge_identifier[i] = next_step_identifier; /* Add 1 for same oriented, add 2 for back oriented */
++        next_step_identifier = next_step_identifier + 3;
++      }
++
++    /* Define the faces */
 +
 +    /* Bottom */
-+    fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
-+                "#%i = VERTEX_POINT ( 'NONE', #%i ) ;\n",
-+             next_step_identifier,     /* Vertex coordinate  */ x1, y1, -COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
-+             next_step_identifier + 1, next_step_identifier);
-+    bottom_vertex_identifier[i] = next_step_identifier + 1;
-+    next_step_identifier = next_step_identifier + 2;
++    {
++      PLINE *ct = contour;
++      int icont;
++      int start_i;
++
++      start_i = 0;
++      for (icont = 0; icont < ncontours; icont++, start_i += get_contour_npoints (ct), ct = ct->next)
++        {
++
++          fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ( ",
++                   next_step_identifier);
++          for (i = start_i + get_contour_npoints (ct) - 1; i > start_i; i--)
++            fprintf (f, "#%i, ", bottom_edge_identifier[i] + FWD);
++          fprintf (f, "#%i ) ) ; "
++                      "#%i = FACE_%sBOUND ( 'NONE', #%i, .T. ) ; \n",
++                   bottom_edge_identifier[start_i] + FWD,
++                   next_step_identifier + 1, icont > 0 ? "" : "OUTER_", next_step_identifier);
++          bottom_face_bound_identifier[icont] = next_step_identifier + 1;
++          next_step_identifier = next_step_identifier + 2;
++        }
++
++      fprintf (f, "#%i = ADVANCED_FACE ( 'NONE', ( ",
++               next_step_identifier);
++      for (icont = 0; icont < ncontours - 1; icont++)
++        fprintf (f, "#%i, ",
++                 bottom_face_bound_identifier[icont]);
++      fprintf (f, "#%i ), #%i, .F. ) ;\n",
++               bottom_face_bound_identifier[ncontours - 1], bottom_plane_identifier);
++      bottom_face_identifier = next_step_identifier;
++      next_step_identifier = next_step_identifier + 1;
++    }
 +
 +    /* Top */
-+    fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
-+                "#%i = VERTEX_POINT ( 'NONE', #%i ) ;\n",
-+             next_step_identifier,     /* Vertex coordinate  */ x1, y1, COORD_TO_MM (HACK_BOARD_THICKNESS) / 2.0,
-+             next_step_identifier + 1, next_step_identifier);
-+    top_vertex_identifier[i] = next_step_identifier + 1;
-+    next_step_identifier = next_step_identifier + 2;
-+  }
++    {
++      PLINE *ct = contour;
++      int icont;
++      int start_i;
 +
-+  /* Define the Edges */
-+  for (i = 0; i < npoints; i++) {
++      start_i = 0;
++      for (icont = 0; icont < ncontours; icont++, start_i += get_contour_npoints (ct), ct = ct->next)
++        {
++          fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ( ",
++                   next_step_identifier);
++          for (i = start_i; i < start_i + get_contour_npoints (ct) - 1; i++)
++            fprintf (f, "#%i, ", top_edge_identifier[i] + REV);
++          fprintf (f, "#%i ) ) ; "
++                      "#%i = FACE_%sBOUND ( 'NONE', #%i, .T. ) ; \n",
++                   top_edge_identifier[start_i + get_contour_npoints (ct) - 1] + REV,
++                   next_step_identifier + 1, icont > 0 ? "" : "OUTER_", next_step_identifier);
++          top_face_bound_identifier[icont] = next_step_identifier + 1;
++          next_step_identifier = next_step_identifier + 2;
++        }
 +
-+    /* Walk through the contours until we find the right one to look at */
-+    PLINE *ct = contour;
-+    int adjusted_i = i;
-+    int i_start = 0;
-+
-+    while (adjusted_i >= get_contour_npoints (ct)) {
-+      adjusted_i -= get_contour_npoints (ct);
-+      i_start += get_contour_npoints (ct);
-+      ct = ct->next;
-+    }
-+
-+    /* Due to the way the index wrapping works, this works for circular cutouts as well as n-sided */
-+
-+    /* Bottom */
-+    fprintf (f, "#%i = EDGE_CURVE ( 'NONE', #%i, #%i, #%i,   .T. ) ; "
-+                "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .F. ) ; "
-+                "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .T. ) ;\n",
-+             next_step_identifier, bottom_vertex_identifier[i], bottom_vertex_identifier[i_start + (adjusted_i + 1) % get_contour_npoints (ct)], bottom_infinite_line_identifier[i],      // <-- MIGHT NEED TO REVERSE THIS???
-+             next_step_identifier + 1, next_step_identifier,
-+             next_step_identifier + 2, next_step_identifier);
-+    bottom_edge_identifier[i] = next_step_identifier; /* Add 1 for same oriented, add 2 for back oriented */
-+    next_step_identifier = next_step_identifier + 3;
-+
-+    /* Top */
-+    fprintf (f, "#%i = EDGE_CURVE ( 'NONE', #%i, #%i, #%i,   .T. ) ; "
-+                "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .F. ) ; "
-+                "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .T. ) ;\n",
-+             next_step_identifier, top_vertex_identifier[i], top_vertex_identifier[i_start + (adjusted_i + 1) % get_contour_npoints (ct)], top_infinite_line_identifier[i],                 // <-- MIGHT NEED TO REVERSE THIS???
-+             next_step_identifier + 1, next_step_identifier,
-+             next_step_identifier + 2, next_step_identifier);
-+    top_edge_identifier[i] = next_step_identifier; /* Add 1 for same oriented, add 2 for back oriented */
-+    next_step_identifier = next_step_identifier + 3;
-+
-+    /* Side */
-+    fprintf (f, "#%i = EDGE_CURVE ( 'NONE', #%i, #%i, #%i,   .T. ) ; "
-+                "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .F. ) ; "
-+                "#%i = ORIENTED_EDGE ( 'NONE', *, *, #%i, .T. ) ;\n",
-+             next_step_identifier, bottom_vertex_identifier[i], top_vertex_identifier[i], side_infinite_line_identifier[i],
-+             next_step_identifier + 1, next_step_identifier,
-+             next_step_identifier + 2, next_step_identifier);
-+    side_edge_identifier[i] = next_step_identifier; /* Add 1 for same oriented, add 2 for back oriented */
-+    next_step_identifier = next_step_identifier + 3;
-+  }
-+
-+  /* Define the faces */
-+
-+  /* Bottom */
-+  {
-+    PLINE *ct = contour;
-+    int icont;
-+    int start_i;
-+
-+    start_i = 0;
-+    for (icont = 0; icont < ncontours; icont++, start_i += get_contour_npoints (ct), ct = ct->next) {
-+
-+      fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ( ",
++      fprintf (f, "#%i = ADVANCED_FACE ( 'NONE', ( ",
 +               next_step_identifier);
-+      for (i = start_i + get_contour_npoints (ct) - 1; i > start_i; i--)
-+        fprintf (f, "#%i, ", bottom_edge_identifier[i] + FWD);
-+      fprintf (f, "#%i ) ) ; "
-+                  "#%i = FACE_%sBOUND ( 'NONE', #%i, .T. ) ; \n",
-+               bottom_edge_identifier[start_i] + FWD,
-+               next_step_identifier + 1, icont > 0 ? "" : "OUTER_", next_step_identifier);
-+      bottom_face_bound_identifier[icont] = next_step_identifier + 1;
-+      next_step_identifier = next_step_identifier + 2;
++      for (icont = 0; icont < ncontours - 1; icont++)
++        fprintf (f, "#%i, ",
++                 top_face_bound_identifier[icont]);
++      fprintf (f, "#%i ), #%i, .F. ) ;\n",
++               top_face_bound_identifier[ncontours - 1], top_plane_identifier);
++      top_face_identifier = next_step_identifier;
++      next_step_identifier = next_step_identifier + 1;
 +    }
 +
-+    fprintf (f, "#%i = ADVANCED_FACE ( 'NONE', ( ",
-+             next_step_identifier);
-+    for (icont = 0; icont < ncontours - 1; icont++)
-+      fprintf (f, "#%i, ",
-+               bottom_face_bound_identifier[icont]);
-+    fprintf (f, "#%i ), #%i, .F. ) ;\n",
-+             bottom_face_bound_identifier[ncontours - 1], bottom_plane_identifier);
-+    bottom_face_identifier = next_step_identifier;
-+    next_step_identifier = next_step_identifier + 1;
++    /* Sides */
++    for (i = 0; i < npoints; i++)
++      {
++
++        /* Walk through the contours until we find the right one to look at */
++        PLINE *ct = contour;
++        int adjusted_i = i;
++        int i_start = 0;
++
++        while (adjusted_i >= get_contour_npoints (ct))
++          {
++            adjusted_i -= get_contour_npoints (ct);
++            i_start += get_contour_npoints (ct);
++            ct = ct->next;
++          }
++
++        fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ( #%i, #%i, #%i, #%i ) ) ; "
++                    "#%i = FACE_OUTER_BOUND ( 'NONE', #%i, .T. ) ; "
++                    "#%i = ADVANCED_FACE ( 'NONE', ( #%i ), #%i, .F. ) ;\n",
++                 next_step_identifier, side_edge_identifier[i_start + (adjusted_i + 1) % get_contour_npoints (ct)] + REV, top_edge_identifier[i] + FWD, side_edge_identifier[i] + FWD, bottom_edge_identifier[i] + REV,
++                 next_step_identifier + 1, next_step_identifier,
++                 next_step_identifier + 2, next_step_identifier + 1, side_plane_identifier[i]);
++        side_face_identifier[i] = next_step_identifier + 2;
++        next_step_identifier = next_step_identifier + 3;
++      }
++
++    /* Closed shell which bounds the brep solid */
++    pcb_shell_identifier = next_step_identifier;
++    next_step_identifier++;
++    fprintf (f, "#%i = CLOSED_SHELL ( 'NONE', ( #%i, #%i, ", pcb_shell_identifier, bottom_face_identifier, top_face_identifier);
++    for (i = 0; i < npoints - 1; i++)
++      {
++        fprintf (f, "#%i, ", side_face_identifier[i]);
++      }
++    fprintf (f, "#%i) ) ;\n",
++             side_face_identifier[npoints - 1]);
++
++    /* Finally emit the brep solid definition */
++    fprintf (f, "#%i = MANIFOLD_SOLID_BREP ( 'PCB outline', #%i ) ;\n", brep_identifier, pcb_shell_identifier);
++
++    free (side_plane_identifier);
++    free (bottom_infinite_line_identifier);
++    free (top_infinite_line_identifier);
++    free (side_infinite_line_identifier);
++    free (bottom_vertex_identifier);
++    free (top_vertex_identifier);
++    free (bottom_edge_identifier);
++    free (top_edge_identifier);
++    free (side_edge_identifier);
++    free (side_face_identifier);
++    free (bottom_face_bound_identifier);
++    free (top_face_bound_identifier);
 +  }
-+
-+  /* Top */
-+  {
-+    PLINE *ct = contour;
-+    int icont;
-+    int start_i;
-+
-+    start_i = 0;
-+    for (icont = 0; icont < ncontours; icont++, start_i += get_contour_npoints (ct), ct = ct->next) {
-+      fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ( ",
-+               next_step_identifier);
-+      for (i = start_i; i < start_i + get_contour_npoints (ct) - 1; i++)
-+        fprintf (f, "#%i, ", top_edge_identifier[i] + REV);
-+      fprintf (f, "#%i ) ) ; "
-+                  "#%i = FACE_%sBOUND ( 'NONE', #%i, .T. ) ; \n",
-+               top_edge_identifier[start_i + get_contour_npoints (ct) - 1] + REV,
-+               next_step_identifier + 1, icont > 0 ? "" : "OUTER_", next_step_identifier);
-+      top_face_bound_identifier[icont] = next_step_identifier + 1;
-+      next_step_identifier = next_step_identifier + 2;
-+    }
-+
-+    fprintf (f, "#%i = ADVANCED_FACE ( 'NONE', ( ",
-+             next_step_identifier);
-+    for (icont = 0; icont < ncontours - 1; icont++)
-+      fprintf (f, "#%i, ",
-+               top_face_bound_identifier[icont]);
-+    fprintf (f, "#%i ), #%i, .F. ) ;\n",
-+             top_face_bound_identifier[ncontours - 1], top_plane_identifier);
-+    top_face_identifier = next_step_identifier;
-+    next_step_identifier = next_step_identifier + 1;
-+  }
-+
-+  /* Sides */
-+  for (i = 0; i < npoints; i++) {
-+
-+    /* Walk through the contours until we find the right one to look at */
-+    PLINE *ct = contour;
-+    int adjusted_i = i;
-+    int i_start = 0;
-+
-+    while (adjusted_i >= get_contour_npoints (ct)) {
-+      adjusted_i -= get_contour_npoints (ct);
-+      i_start += get_contour_npoints (ct);
-+      ct = ct->next;
-+    }
-+
-+    fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ( #%i, #%i, #%i, #%i ) ) ; "
-+                "#%i = FACE_OUTER_BOUND ( 'NONE', #%i, .T. ) ; "
-+                "#%i = ADVANCED_FACE ( 'NONE', ( #%i ), #%i, .F. ) ;\n",
-+             next_step_identifier, side_edge_identifier[i_start + (adjusted_i + 1) % get_contour_npoints (ct)] + REV, top_edge_identifier[i] + FWD, side_edge_identifier[i] + FWD, bottom_edge_identifier[i] + REV,
-+             next_step_identifier + 1, next_step_identifier,
-+             next_step_identifier + 2, next_step_identifier + 1, side_plane_identifier[i]);
-+    side_face_identifier[i] = next_step_identifier + 2;
-+    next_step_identifier = next_step_identifier + 3;
-+  }
-+
-+  /* Closed shell which bounds the brep solid */
-+  pcb_shell_identifier = next_step_identifier;
-+  next_step_identifier++;
-+  fprintf (f, "#%i = CLOSED_SHELL ( 'NONE', ( #%i, #%i, ", pcb_shell_identifier, bottom_face_identifier, top_face_identifier);
-+  for (i = 0; i < npoints - 1; i++) {
-+    fprintf (f, "#%i, ", side_face_identifier[i]);
-+  }
-+  fprintf (f, "#%i) ) ;\n",
-+           side_face_identifier[npoints - 1]);
-+
-+  /* Finally emit the brep solid definition */
-+  fprintf (f, "#%i = MANIFOLD_SOLID_BREP ( 'PCB outline', #%i ) ;\n", brep_identifier, pcb_shell_identifier);
-+
-+  free (side_plane_identifier);
-+  free (bottom_infinite_line_identifier);
-+  free (top_infinite_line_identifier);
-+  free (side_infinite_line_identifier);
-+  free (bottom_vertex_identifier);
-+  free (top_vertex_identifier);
-+  free (bottom_edge_identifier);
-+  free (top_edge_identifier);
-+  free (side_edge_identifier);
-+  free (side_face_identifier);
-+  free (bottom_face_bound_identifier);
-+  free (top_face_bound_identifier);
-+}
 +#undef FWD
 +#undef REV
 +#endif
@@ -895,11 +914,12 @@ index 0000000..991ca86
 +  contour = outline->contours;
 +
 +  ct = contour;
-+  while (ct != NULL) {
-+    ncontours ++;
-+    npoints += get_contour_npoints (ct);
-+    ct = ct->next;
-+  }
++  while (ct != NULL)
++    {
++      ncontours ++;
++      npoints += get_contour_npoints (ct);
++      ct = ct->next;
++    }
 +
 +  /* We know how many edges and vertices we need now...
 +   *
@@ -922,20 +942,22 @@ index 0000000..991ca86
 +  offset_in_ct = 0;
 +  ct_npoints = get_contour_npoints (ct);
 +
-+  for (i = 0; i < npoints; i++, offset_in_ct++) {
-+    double x1, y1;
++  for (i = 0; i < npoints; i++, offset_in_ct++)
++    {
++      double x1, y1;
 +
-+    /* Update which contour we're looking at */
-+    if (offset_in_ct == ct_npoints) {
-+      offset_in_ct = 0;
-+      ct = ct->next;
-+      ct_npoints = get_contour_npoints (ct);
++      /* Update which contour we're looking at */
++      if (offset_in_ct == ct_npoints)
++        {
++          offset_in_ct = 0;
++          ct = ct->next;
++          ct_npoints = get_contour_npoints (ct);
++        }
++
++      get_contour_coord_n_in_mm (ct, offset_in_ct, &x1, &y1);
++      vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_MM (HACK_BOARD_THICKNESS)); /* Bottom */
++      vertices[npoints + i] = make_vertex3d (x1, y1, 0); /* Top */
 +    }
-+
-+    get_contour_coord_n_in_mm (ct, offset_in_ct, &x1, &y1);
-+    vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_MM (HACK_BOARD_THICKNESS)); /* Bottom */
-+    vertices[npoints + i] = make_vertex3d (x1, y1, 0); /* Top */
-+  }
 +
 +  /* Define the edges */
 +
@@ -947,45 +969,48 @@ index 0000000..991ca86
 +  offset_in_ct = 0;
 +  ct_npoints = get_contour_npoints (ct);
 +
-+  for (i = 0; i < npoints; i++, offset_in_ct++) {
-+    int next_i_around_ct;
++  for (i = 0; i < npoints; i++, offset_in_ct++)
++    {
++      int next_i_around_ct;
 +
-+    /* Update which contour we're looking at */
-+    if (offset_in_ct == ct_npoints) {
-+      start_of_ct = i;
-+      printf ("start_of_ct = %i\n", start_of_ct);
-+      offset_in_ct = 0;
-+      ct = ct->next;
-+      ct_npoints = get_contour_npoints (ct);
++      /* Update which contour we're looking at */
++      if (offset_in_ct == ct_npoints)
++        {
++          start_of_ct = i;
++          printf ("start_of_ct = %i\n", start_of_ct);
++          offset_in_ct = 0;
++          ct = ct->next;
++          ct_npoints = get_contour_npoints (ct);
++        }
++
++      next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
++
++      /* Assign the appropriate vertex geometric data to each edge end */
++      ODATA (edges[0 * npoints + i]) = vertices[0 * npoints + i];
++      DDATA (edges[0 * npoints + i]) = vertices[0 * npoints + next_i_around_ct];
++      ODATA (edges[1 * npoints + i]) = vertices[1 * npoints + i];
++      DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
++      ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
++      DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
++
++      /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
++      splice (edges[i], edges[npoints + i]);
++      splice (edges[npoints + i], SYM(edges[next_i_around_ct]));
++
++      /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
++      splice (edges[npoints + i], SYM(edges[npoints + next_i_around_ct]));
++      splice (SYM(edges[npoints + next_i_around_ct]), SYM(edges[2 * npoints + i]));
++
++      /* XXX: TOPOLOGY WILL BE OK, MAY NEED MORE INFO FOR GEOMETRY */
++      /* XXX: DO WE NEED TO ASSIGN EXTRA INFORMATION TO CIRCULAR EDGES FOR RENDERING / EXPORT??? */
++      if (ct->is_round)
++        {
++          UNDIR_DATA (edges[0 * npoints + i]) = make_edge_info (false, true, COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (ct->radius));
++          UNDIR_DATA (edges[1 * npoints + i]) = make_edge_info (false, true, COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (ct->radius));
++          UNDIR_DATA (edges[2 * npoints + i]) = make_edge_info (true,  true, COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (ct->radius));
++        }
++
 +    }
-+
-+    next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
-+
-+    /* Assign the appropriate vertex geometric data to each edge end */
-+    ODATA (edges[0 * npoints + i]) = vertices[0 * npoints + i];
-+    DDATA (edges[0 * npoints + i]) = vertices[0 * npoints + next_i_around_ct];
-+    ODATA (edges[1 * npoints + i]) = vertices[1 * npoints + i];
-+    DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
-+    ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
-+    DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
-+
-+    /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
-+    splice (edges[i], edges[npoints + i]);
-+    splice (edges[npoints + i], SYM(edges[next_i_around_ct]));
-+
-+    /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
-+    splice (edges[npoints + i], SYM(edges[npoints + next_i_around_ct]));
-+    splice (SYM(edges[npoints + next_i_around_ct]), SYM(edges[2 * npoints + i]));
-+
-+    /* XXX: TOPOLOGY WILL BE OK, MAY NEED MORE INFO FOR GEOMETRY */
-+    /* XXX: DO WE NEED TO ASSIGN EXTRA INFORMATION TO CIRCULAR EDGES FOR RENDERING / EXPORT??? */
-+    if (ct->is_round) {
-+      UNDIR_DATA (edges[0 * npoints + i]) = make_edge_info (false, true, COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (ct->radius));
-+      UNDIR_DATA (edges[1 * npoints + i]) = make_edge_info (false, true, COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (ct->radius));
-+      UNDIR_DATA (edges[2 * npoints + i]) = make_edge_info (true,  true, COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (ct->radius));
-+    }
-+
-+  }
 +
 +  poly_Free (&outline);
 +
