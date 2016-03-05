@@ -1,15 +1,24 @@
 Bottom: b08c9b0bd2804799e21b405b08d146234957cde8
-Top:    3e6b5c0f8b0cac52fc62f13e347bac35c8003c80
+Top:    b2b23050f9c06c7c6681b1cc905966d0fbfdc40a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 13:23:32 +0000
+Date:   2016-03-05 14:03:27 +0000
 
 Attempt at producing inter-layer copper with via barrels etc..!
 
+INCLUDES:
+
+Try prepending the stolen when concatenating geometry..
+
+The destination objects will likely keep getting larger, so it should avoid
+needing to traverse the entire list length to append data.
+
+Possibly a circularly linked list might be more efficient here, but GLib
+doesn't have a convenient implementation.
 
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index bcd87e6..10402df 100644
+index bcd87e6..5983de6 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -66,6 +66,7 @@
@@ -105,7 +114,7 @@ index bcd87e6..10402df 100644
    info->poly = res;
  
    return 1;
-@@ -1574,19 +1611,68 @@ pv_copper_callback (const BoxType * b, void *cl)
+@@ -1574,19 +1611,69 @@ pv_copper_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -115,9 +124,10 @@ index bcd87e6..10402df 100644
 +{
 +  g_assert (dst != src);
 +
-+  dst->faces    = g_list_concat (dst->faces,    src->faces);
-+  dst->edges    = g_list_concat (dst->edges,    src->edges);
-+  dst->vertices = g_list_concat (dst->vertices, src->vertices);
++  /* Prepend the src chunks, as src is likely to be a lot smaller then dst once we get going */
++  dst->faces    = g_list_concat (src->faces,    dst->faces);
++  dst->edges    = g_list_concat (src->edges,    dst->edges);
++  dst->vertices = g_list_concat (src->vertices, dst->vertices);
 +  src->faces = NULL;
 +  src->edges = NULL;
 +  src->vertices = NULL;
@@ -177,7 +187,7 @@ index bcd87e6..10402df 100644
  
  //  poly_Copy0 (&info.poly, area);
  
-@@ -1603,102 +1689,392 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1603,102 +1690,392 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
    top_group =    GetLayerGroupNumberBySide (TOP_SIDE);
    bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
  
@@ -637,7 +647,7 @@ index bcd87e6..10402df 100644
  
  
    destroy_appearance (copper_appearance);
-@@ -1714,5 +2090,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1714,5 +2091,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  
    poly_Free (&info.poly);
  
