@@ -1,5 +1,5 @@
-Bottom: 9beb36702bf1115e9a680bafb92b4a4f62785f91
-Top:    f804028358235b99f7b920648bea45ed4a1bbc90
+Bottom: 83d01c95325a0c429c1ac9957ce1a83d11e4104f
+Top:    2a23764067a946d6e13f6e540b0d0fa50f27f29e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -40,7 +40,7 @@ index 84a4b26..4553186 100644
    g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
  }
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 8440a48..5251dc3 100644
+index a2df888..ad297ce 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -49,34 +49,20 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
@@ -436,10 +436,10 @@ index 1d2d5cd0..5dc6f4d 100644
 +void object3d_list_export_to_step_assy (GList *objects, const char *filename);
  void object3d_export_to_step (object3d *object, const char *filename);
 diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
-index 33a3d4a..dcd0472 100644
+index 9c5b301..7f74349 100644
 --- a/src/hid/step/step_writer.c
 +++ b/src/hid/step/step_writer.c
-@@ -69,6 +69,114 @@ destroy_step_output_file (step_file *file)
+@@ -72,6 +72,114 @@ destroy_step_output_file (step_file *file)
    g_free (file);
  }
  

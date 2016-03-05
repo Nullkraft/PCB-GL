@@ -1,5 +1,5 @@
-Bottom: fc5beae6ce707ddd4309d55f3a60bb459cc61785
-Top:    9beb36702bf1115e9a680bafb92b4a4f62785f91
+Bottom: f2fac2026f860d78c964260b4edd548ddd8d51c6
+Top:    83d01c95325a0c429c1ac9957ce1a83d11e4104f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -449,7 +449,7 @@ index a150934..cad586d 100644
 +vertex3d *make_vertex3d (double x, double y, double z);
  void destroy_vertex3d (vertex3d *v);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 3464ff2..8440a48 100644
+index 573a12c..a2df888 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -23,6 +23,20 @@
@@ -569,10 +569,10 @@ index 3464ff2..8440a48 100644
    shape_representation_identifier =
      step_advanced_brep_shape_representation (step, "test_pcb_absr_name",
 diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
-index 0a04ea0..33a3d4a 100644
+index 79c492f..9c5b301 100644
 --- a/src/hid/step/step_writer.c
 +++ b/src/hid/step/step_writer.c
-@@ -144,7 +144,7 @@ step_vertex_point (step_file *file, char *name, step_id pnt)
+@@ -147,7 +147,7 @@ step_vertex_point (step_file *file, char *name, step_id pnt)
  step_id
  step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_end, step_id edge_geometry, bool same_sense)
  {
@@ -581,7 +581,7 @@ index 0a04ea0..33a3d4a 100644
                      file->next_id, name, edge_start, edge_end, edge_geometry, step_bool (same_sense));
    return file->next_id++;
  }
-@@ -152,7 +152,7 @@ step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_e
+@@ -155,7 +155,7 @@ step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_e
  step_id
  step_oriented_edge (step_file *file, char *name, step_id edge_element, bool orientation)
  {
@@ -590,7 +590,7 @@ index 0a04ea0..33a3d4a 100644
                      file->next_id, name, edge_element, step_bool (orientation));
    return file->next_id++;
  }
-@@ -171,7 +171,7 @@ step_edge_loop (step_file *file, char *name, step_id_list edge_list)
+@@ -174,7 +174,7 @@ step_edge_loop (step_file *file, char *name, step_id_list edge_list)
  step_id
  step_face_bound (step_file *file, char *name, step_id bound, bool orientation)
  {
@@ -599,7 +599,7 @@ index 0a04ea0..33a3d4a 100644
                      file->next_id, name, bound, step_bool (orientation));
  
    return file->next_id++;
-@@ -191,7 +191,7 @@ step_advanced_face (step_file *file, char *name, step_id_list bounds, step_id fa
+@@ -194,7 +194,7 @@ step_advanced_face (step_file *file, char *name, step_id_list bounds, step_id fa
  {
    fprintf (file->f, "#%i = ADVANCED_FACE ( '%s', ", file->next_id, name);
    fprint_id_list (file->f, bounds);
