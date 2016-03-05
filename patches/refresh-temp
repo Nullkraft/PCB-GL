@@ -1,0 +1,21 @@
+Bottom: 979adf0e0133ec7162c04c19e7b54b6ebf042652
+Top:    cd4fed9964e12ca5e01e52554cac5b4e96c5485b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 21:09:43 +0000
+
+Refresh of well-on-the-way-to-completely
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index bcf5d47..215ff9f 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -533,6 +533,7 @@ object3d_from_board_outline (void)
+ 
+       /* Splice onto board */
+       face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(cylinder_edges[0])));
++
+       /* Assign the appropriate vertex geometric data to each edge end */
+       ODATA (cylinder_edges[0]) = cylinder_vertices[0];
+       DDATA (cylinder_edges[0]) = cylinder_vertices[0];
