@@ -1,5 +1,5 @@
 Bottom: c4002ed5f01ca2c0f265695d50e4e9b052e6984e
-Top:    0bf61a3e271b8fa90f2fc2b1f06bd7bfc976ac30
+Top:    4c163cc613f0278a37eddd0b481b1ae3c91a6d75
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -31,7 +31,7 @@ index 47b171d..5ef4e2c 100644
  EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
 diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
 new file mode 100644
-index 0000000..245abca
+index 0000000..3f08003
 --- /dev/null
 +++ b/src/hid/common/edge3d.c
 @@ -0,0 +1,25 @@
@@ -41,7 +41,7 @@ index 0000000..245abca
 +#include "edge3d.h"
 +
 +edge_info *
-+make_edge_info (bool is_stitch, bool is_round, float cx, float cy, float radius)
++make_edge_info (bool is_stitch, bool is_round, double cx, double cy, double radius)
 +{
 +  edge_info *info;
 +
@@ -62,7 +62,7 @@ index 0000000..245abca
 +}
 diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
 new file mode 100644
-index 0000000..e67cdb3
+index 0000000..22e783f
 --- /dev/null
 +++ b/src/hid/common/edge3d.h
 @@ -0,0 +1,11 @@
@@ -70,12 +70,12 @@ index 0000000..e67cdb3
 +{
 +  bool is_stitch;
 +  bool is_round;
-+  float cx;
-+  float cy;
-+  float radius;
++  double cx;
++  double cy;
++  double radius;
 +} edge_info;
 +
-+edge_info *make_edge_info (bool is_stitch, bool is_round, float cx, float cy, float radius);
++edge_info *make_edge_info (bool is_stitch, bool is_round, double cx, double cy, double radius);
 +void destroy_edge_info (edge_info *info);
 diff --git a/src/hid/common/face3d.c b/src/hid/common/face3d.c
 new file mode 100644
@@ -85,7 +85,7 @@ new file mode 100644
 index 0000000..e69de29
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 new file mode 100644
-index 0000000..0a264ce
+index 0000000..991ca86
 --- /dev/null
 +++ b/src/hid/common/object3d.c
 @@ -0,0 +1,915 @@
@@ -265,11 +265,11 @@ index 0000000..0a264ce
 +      int i;
 +      glBegin (GL_LINES);
 +      for (i = 0; i < CIRC_SEGS; i++) {
-+        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos (i * 2. * M_PI / (float)CIRC_SEGS)),
-+                    MM_TO_COORD (info->cy + info->radius * sin (i * 2. * M_PI / (float)CIRC_SEGS)),
++        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos (i * 2. * M_PI / (double)CIRC_SEGS)),
++                    MM_TO_COORD (info->cy + info->radius * sin (i * 2. * M_PI / (double)CIRC_SEGS)),
 +                    MM_TO_COORD (((vertex3d *)ODATA(e))->z));
-+        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos ((i + 1) * 2. * M_PI / (float)CIRC_SEGS)),
-+                    MM_TO_COORD (info->cy + info->radius * sin ((i + 1) * 2. * M_PI / (float)CIRC_SEGS)),
++        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
++                    MM_TO_COORD (info->cy + info->radius * sin ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
 +                    MM_TO_COORD (((vertex3d *)ODATA(e))->z));
 +      }
 +      glEnd ();
@@ -1267,7 +1267,7 @@ index 0000000..523cb5e
 +*/
 diff --git a/src/hid/common/vertex3d.c b/src/hid/common/vertex3d.c
 new file mode 100644
-index 0000000..df5fd0e
+index 0000000..d6b3a9b
 --- /dev/null
 +++ b/src/hid/common/vertex3d.c
 @@ -0,0 +1,31 @@
@@ -1277,14 +1277,14 @@ index 0000000..df5fd0e
 +
 +typedef struct
 +{
-+  float x;
-+  float y;
-+  float z;
++  double x;
++  double y;
++  double z;
 +  int id;
 +} vertex3d;
 +
 +vertex3d *
-+make_vertex3d (float x, float y, float z)
++make_vertex3d (double x, double y, double z)
 +{
 +  vertex3d *v;
 +
@@ -1304,19 +1304,19 @@ index 0000000..df5fd0e
 +}
 diff --git a/src/hid/common/vertex3d.h b/src/hid/common/vertex3d.h
 new file mode 100644
-index 0000000..bac7e89
+index 0000000..e399b88
 --- /dev/null
 +++ b/src/hid/common/vertex3d.h
 @@ -0,0 +1,10 @@
 +typedef struct
 +{
-+  float x;
-+  float y;
-+  float z;
++  double x;
++  double y;
++  double z;
 +  int id;
 +} vertex3d;
 +
-+vertex3d *make_vertex3d (float x, float y, float z);
++vertex3d *make_vertex3d (double x, double y, double z);
 +void destroy_vertex3d (vertex3d *v);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index 3fcd41a..c52dd69 100644
