@@ -1,25 +1,39 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <glib.h>
 
 #include "edge3d.h"
 
 edge_info *
-make_edge_info (bool is_stitch, bool is_round, double cx, double cy, double radius)
+make_edge_info (void)
 {
   edge_info *info;
 
-  info = malloc (sizeof(edge_info));
-  info->is_stitch = is_stitch;
-  info->is_round = is_round;
-  info->cx = cx;
-  info->cy = cy;
-  info->radius = radius;
+  info = g_new0 (edge_info, 1);
 
   return info;
 }
 
 void
+edge_info_set_round (edge_info *info, double cx, double cy, double cz, double nx, double ny, double nz, double radius)
+{
+  info->is_round = true;
+  info->cx = cx;
+  info->cy = cy;
+  info->cz = cz;
+  info->nx = nx;
+  info->ny = ny;
+  info->nz = nz;
+  info->radius = radius;
+}
+
+void edge_info_set_stitch (edge_info *info)
+{
+  info->is_stitch = true;
+}
+
+void
 destroy_edge_info (edge_info *info)
 {
-  free (info);
+  g_free (info);
 }
