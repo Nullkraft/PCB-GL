@@ -1,5 +1,5 @@
 Bottom: 2643aeced7e80f473f6098dfa84a8fe7b0e65f18
-Top:    b6de38d9b5ab917380029a2205830aad565dbaa2
+Top:    0d0fc82bb233bec19437c1339f129aa7facec095
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-29 19:13:04 +0000
 
@@ -573,27 +573,28 @@ index 97b3201..beb5321 100644
    pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
    brep_identifier = step_manifold_solid_brep (step, body_name /* This is picked up as the solid body name by Solidworks */, pcb_shell_identifier);
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index ac61199..1e1824d 100644
+index ac61199..52182c0 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
-@@ -202,7 +202,7 @@ step_do_export (HID_Attr_Val * options)
+@@ -202,18 +202,14 @@ step_do_export (HID_Attr_Val * options)
          poly_DelContour (&curc);
        }
  
 -#if 0
-+#if 1
      mask_objects = object3d_from_soldermask_within_area (piece, TOP_SIDE);
      board_outline_list = g_list_concat (board_outline_list, mask_objects);
  
-@@ -210,7 +210,7 @@ step_do_export (HID_Attr_Val * options)
+     mask_objects = object3d_from_soldermask_within_area (piece, BOTTOM_SIDE);
      board_outline_list = g_list_concat (board_outline_list, mask_objects);
- #endif
+-#endif
  
 -#if 0
-+#if 1
      copper_layer_objects = object3d_from_copper_layers_within_area (piece);
      board_outline_list = g_list_concat (board_outline_list, copper_layer_objects);
- #endif
+-#endif
+ 
+   } while ((piece = piece->f) != board_outline);
+   poly_Free (&board_outline);
 diff --git a/src/polygon.c b/src/polygon.c
 index c62a56c..f587028 100644
 --- a/src/polygon.c
