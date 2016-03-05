@@ -1,0 +1,33 @@
+Bottom: 7d1103e340e712e5d482fdb09271afd3d8b01ab8
+Top:    e84fa00bc8755da66fe8077cf44e5fb1672c275b
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 19:51:07 +0000
+
+Refresh of wip-on-quad-edge-play
+
+---
+
+diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
+index 6200161..42154df 100644
+--- a/src/hid/common/face3d.h
++++ b/src/hid/common/face3d.h
+@@ -1,5 +1,5 @@
+ typedef struct {
+-  float nx, ny, nz; /* Face normal?*/
++  double nx, ny, nz; /* Face normal?*/
+   GList *contours;
+ } face3d;
+ 
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 2cd041e..3168d68 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -442,7 +442,7 @@ object3d_export_to_step (object3d *object, const char *filename)
+         }
+       else
+         {
+-          float dx, dy, dz;
++          double dx, dy, dz;
+ 
+           dx = end_v->x - start_v->x;
+           dy = end_v->y - start_v->y;
