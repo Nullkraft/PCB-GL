@@ -1,0 +1,96 @@
+Bottom: 7e01124fb11368643d3e244daa1aab15326f1b64
+Top:    3e6b5c0f8b0cac52fc62f13e347bac35c8003c80
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 13:51:08 +0000
+
+Refresh of attempt-at-producing-inter
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 974af9d..10402df 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -1906,12 +1906,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+           barrel_top_face_first_edge = ((contour3d *)barrel_top_face->contours->data)->first_edge;
+           barrel_bottom_face_first_edge = ((contour3d *)barrel_bottom_face->contours->data)->first_edge;
+ 
+-//          fprintf (stderr, "Extruding a barrel\n");
+-
+           /* Do some magic to join the objects */
+ 
+-          /* XXX: Need to invert the barrel object? */
+-
+           g_assert (g_list_length (barrel_top_face->contours) == 1);
+           g_assert (g_list_length (barrel_bottom_face->contours) == 1);
+ 
+@@ -1923,48 +1919,18 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+           e = barrel_top_face_first_edge;
+           do
+             {
+-//              edge_info *info = UNDIR_DATA (e);
+-//              face3d *side_face = RDATA (e);
+-
+               /* Check and reassign the edge */
+               g_assert (LDATA (e) == barrel_top_face);
+               LDATA (e) = top_group_face;
+-
+-//              /* Only adjust from one end! */
+-//              if (side_face->is_cylindrical)
+-//                {
+-//                  edge_face->surface_orientation_reversed = !edge_face->surface_orientation_reversed;
+-//                  edge_face->az = -edge_face->az;
+-//                }
+-
+-//              if (info->is_round)
+-//                info->nz = -info->nz; /* Flip circular normal, if this contour is a circle */
+-
+-              /* XXX: Also need to flip this edge!... CHEAT, and just flip the object3d edge bucket references...
+-               * XXX: Leaves the quad-edges WRONG!
+-               */
+-//              barrel_object->edges = g_list_remove (barrel_object->edges, (void *)e);
+-//              object3d_add_edge (barrel_object, SYM (e));
+             }
+           while ((e = LNEXT (e)) != barrel_top_face_first_edge);
+ 
+           e = barrel_bottom_face_first_edge;
+           do
+             {
+-//              edge_info *info = UNDIR_DATA (e);
+-
+               /* Check and reassign the edge */
+               g_assert (LDATA (e) == barrel_bottom_face);
+               LDATA (e) = bottom_group_face;
+-
+-//              if (info->is_round)
+-//                info->nz = -info->nz; /* Flip circular normal, if this contour is a circle */
+-//
+-              /* XXX: Also need to flip this edge!... CHEAT, and just flip the object3d edge bucket references...
+-               * XXX: Leaves the quad-edges WRONG!
+-               */
+-//              barrel_object->edges = g_list_remove (barrel_object->edges, (void *)SYM (e));
+-//              object3d_add_edge (barrel_object, e);
+             }
+           while ((e = LNEXT (e)) != barrel_bottom_face_first_edge);
+ 
+@@ -1986,8 +1952,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+ 
+               /* Update any remaining link pointers to the previous bottom object we are about to delete */
+               update_object_pointers (group_m_polyarea, bottom_group_object, top_group_object);
+-//              bottom_link->object = top_group_object;
+-//#warning THROUGH OBJECT JOINING.. CAN WE STILL REFER TO bottom_group_object from various other places??? PROBABLY YES!
+ 
+               /* Remove the old bottom object from the list of output objects */
+               group_objects = g_list_remove (group_objects, bottom_group_object);
+@@ -2061,12 +2025,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+ 
+           g_warn_if_fail (top_group_object == bottom_group_object);
+ 
+-//          fprintf (stderr, "Extruding a drill\n");
+-
+           /* Do some magic to join the objects */
+ 
+-          /* XXX: Need to invert the barrel object? */
+-
+           g_assert (g_list_length (drill_top_face->contours) == 1);
+           g_assert (g_list_length (drill_bottom_face->contours) == 1);
