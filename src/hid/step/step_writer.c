@@ -22,7 +22,10 @@ fprint_id_list (FILE *f, step_id_list list)
        iter = g_list_next (iter)) {
     fprintf (f, "#%i, ", GPOINTER_TO_INT (iter->data));
   }
-  fprintf (f, "#%i )", GPOINTER_TO_INT (iter->data));
+  if (iter == NULL)
+    fprintf (f, ")");
+  else
+    fprintf (f, "#%i )", GPOINTER_TO_INT (iter->data));
 }
 
 static void
