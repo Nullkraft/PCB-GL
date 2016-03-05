@@ -413,6 +413,29 @@ object3d_from_contours (const POLYAREA *contours,
               ct_npoints = get_contour_npoints (ct);
 
             }
+          get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
+
+          vertices[i]           = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, zbot)); /* Bottom */
+          vertices[npoints + i] = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, ztop)); /* Top */
+
+          object3d_add_vertex (object, vertices[i]);
+          object3d_add_vertex (object, vertices[npoints + i]);
+        }
+
+      /* Define the edges */
+      for (i = 0; i < 3 * npoints; i++)
+        {
+          edges[i] = make_edge ();
+          UNDIR_DATA (edges[i]) = make_edge_info ();
+          object3d_add_edge (object, edges[i]);
+        }
+
+      /* Define the faces */
+      for (i = 0; i < npoints; i++)
+        {
+          faces[i] = make_face3d ();
+
+
       object3d_add_face (object, faces[i]);
       /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
       if (!extrude_inverted)
@@ -466,29 +489,6 @@ object3d_from_contours (const POLYAREA *contours,
           offset_in_ct = 0;
           ct = ct->next;
           ct_npoints = get_contour_npoints (ct);
-
-          get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
-
-          vertices[i]           = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, zbot)); /* Bottom */
-          vertices[npoints + i] = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, ztop)); /* Top */
-
-          object3d_add_vertex (object, vertices[i]);
-          object3d_add_vertex (object, vertices[npoints + i]);
-        }
-
-      /* Define the edges */
-      for (i = 0; i < 3 * npoints; i++)
-        {
-          edges[i] = make_edge ();
-          UNDIR_DATA (edges[i]) = make_edge_info ();
-          object3d_add_edge (object, edges[i]);
-        }
-
-      /* Define the faces */
-      for (i = 0; i < npoints; i++)
-        {
-          faces[i] = make_face3d ();
-
 
         /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
         /* XXX: Haven't properly thought through how (if) inverting works with multiple contours */
