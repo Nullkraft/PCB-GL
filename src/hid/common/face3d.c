@@ -38,7 +38,7 @@ face3d_set_appearance (face3d *face, appearance *appear)
 }
 
 void
-face3d_set_normal (face3d *face, float nx, float ny, float nz)
+face3d_set_normal (face3d *face, double nx, double ny, double nz)
 {
   face->nx = nx;
   face->ny = ny;
@@ -46,7 +46,7 @@ face3d_set_normal (face3d *face, float nx, float ny, float nz)
 }
 
 void
-face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius)
+face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius)
 {
   face->is_cylindrical = true;
   face->cx = cx;
