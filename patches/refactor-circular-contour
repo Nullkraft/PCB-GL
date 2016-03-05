@@ -1,5 +1,5 @@
-Bottom: a3a951532d48ac2b6d495cc9725a0b91b2124119
-Top:    f070a7c0ba4ef08c6cb2209757686d1f28ab239e
+Bottom: ca7ca90198ee1093dbb6c5a72c35cda5e7c59ec5
+Top:    4cba554f1564e1749e360bc6489d4c76f3ba321d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:42:47 +0000
 
@@ -8,7 +8,7 @@ Refactor circular contour handling to be more generic
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 4ce4990..1b348fb 100644
+index 06c72b9..fb3b5c2 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -21,6 +21,8 @@
@@ -96,6 +96,12 @@ index 4ce4990..1b348fb 100644
 +          double radius;
 +          double normal_z;
 +          bool cw;
++
++          get_contour_edge_n_round_geometry_in_step_mm (ct, offset_in_ct, &cx, &cy, &radius, &cw);
++
++          face3d_set_cylindrical (faces[i], cx, cy, 0., /* A point on the axis of the cylinder */
++                                            0., 0., 1., /* Direction of the cylindrical axis */
++                                            radius);
  
 -        face3d_set_cylindrical (faces[i], COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), 0., /* A point on the axis of the cylinder */
 -                                          0., 0., 1.,                                                       /* Direction of the cylindrical axis */
@@ -103,12 +109,6 @@ index 4ce4990..1b348fb 100644
 -        face3d_set_surface_orientation_reversed (faces[i]); /* XXX: Assuming this is a hole, the cylindrical surface normal points in the wrong direction - INCORRECT IF THIS IS THE OUTER CONTOUR!*/
 -        face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
 -                                  /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
-+          get_contour_edge_n_round_geometry_in_step_mm (ct, offset_in_ct, &cx, &cy, &radius, &cw);
-+
-+          face3d_set_cylindrical (faces[i], cx, cy, 0., /* A point on the axis of the cylinder */
-+                                            0., 0., 1., /* Direction of the cylindrical axis */
-+                                            radius);
-+
 +          /* XXX: DEPENDS ON INSIDE / OUTSIDE CORNER!! */
 +          if (ct->Flags.orient == PLF_INV)
 +            face3d_set_surface_orientation_reversed (faces[i]);
