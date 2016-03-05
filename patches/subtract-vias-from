@@ -1,5 +1,5 @@
 Bottom: 560e212bf8b17efd635ffc4da8c1e2bc8adebfeb
-Top:    560e212bf8b17efd635ffc4da8c1e2bc8adebfeb
+Top:    91c95e4865747d5d107e82e9bfc3d36611b060b7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 14:37:56 +0000
 
@@ -8,4 +8,20 @@ Subtract vias from ...
 
 ---
 
-
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 538e6d9..31e9610 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -1576,6 +1576,12 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+    *
+    */
+ 
++#if 1
++    fprintf (stderr, "Subtracting pin + via drills\n");
++    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_drill_callback, &info);
++    r_search (PCB->Data->via_tree, &bounds, NULL, pv_drill_callback, &info);
++#endif
++
+   if (info.poly == NULL)
+     {
+       fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
