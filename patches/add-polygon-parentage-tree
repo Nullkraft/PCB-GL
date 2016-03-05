@@ -1,14 +1,13 @@
 Bottom: b83e35cb4f0758567e81e93b7a1052af3e2e457e
-Top:    83da83de732ae815fd7b698499d506ba77d842d1
+Top:    62334c9976f257e1caad9dda66e21545e2f76217
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 22:44:06 +0000
+Date:   2016-03-05 14:22:25 +0000
 
 Add polygon parentage tree debug view
 
 NB: Also contains some probably bug fixes for PBO operations,
 in particular - relating to bad exit codes when a NULL poly is
 copied.
-
 
 ---
 
@@ -34,7 +33,7 @@ index 1fd999f..5274072 100644
  
    glShadeModel (GL_SMOOTH);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index ca4b069..316cb55 100644
+index ca4b069..f6bf546 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -119,6 +119,8 @@ a zoom in/out.
@@ -121,7 +120,7 @@ index ca4b069..316cb55 100644
    /* -- The bottom status line label */
    ghidgui->status_line_hbox = gtk_hbox_new (FALSE, 0);
    gtk_box_pack_start (GTK_BOX (ghidgui->vbox_middle),
-@@ -1492,6 +1548,76 @@ ghid_build_pcb_top_window (void)
+@@ -1492,6 +1548,79 @@ ghid_build_pcb_top_window (void)
    port->tooltip_update_timeout_id = 0;
  }
  
@@ -190,6 +189,9 @@ index ca4b069..316cb55 100644
 +void
 +ghid_notify_polygon_changed (PolygonType *polygon)
 +{
++  if (ghidgui == NULL)
++    return;
++
 +  if (ghidgui->debugged_polygon == polygon) {
 +    ghid_populate_polygon_parentage (polygon);
 +  }
