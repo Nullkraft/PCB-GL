@@ -1,0 +1,35 @@
+Bottom: e42c80e1c4bb3af8e6eb1d19b3f4483d056f103f
+Top:    af0f1313fd16470ffa47debc424d14136abaa914
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 21:31:54 +0000
+
+Refresh of adjust-step-export-to-0-2mm
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 27eadb2..1bc7f54 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -73,7 +73,7 @@
+ #endif
+ 
+ 
+-#define HACK_BOARD_THICKNESS MM_TO_COORD(2.3)
++#define HACK_BOARD_THICKNESS MM_TO_COORD(0.2)
+ #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
+ #define HACK_PLATED_BARREL_THICKNESS MM_TO_COORD(0.08)
+ #define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 1ef6332..b9c30f2 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -45,7 +45,7 @@
+ 
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented STEP function %s.\n", __FUNCTION__); abort()
+ 
+-#define HACK_BOARD_THICKNESS MM_TO_COORD(2.3)
++#define HACK_BOARD_THICKNESS MM_TO_COORD(0.2)
+ 
+ 
+ HID step_hid;
