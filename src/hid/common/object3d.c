@@ -472,7 +472,7 @@ object3d_from_board_outline (void)
 
         }
 
-      if (1)
+      if (0)
         {
           /* Cylinder centers on 45x45mm, stitch vertex is at 40x45mm. Radius is thus 5mm */
 
@@ -580,7 +580,8 @@ object3d_test_board_outline (void)
   GList *board_outlines;
 
   board_outlines = object3d_from_board_outline ();
-  object3d_export_to_step (board_outlines->data, "object3d_test.step");
+  object3d_list_export_to_step_assy (board_outlines, "object3d_test.step");
+  //object3d_export_to_step (board_outlines->data, "object3d_test.step");
 
   g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
 }
