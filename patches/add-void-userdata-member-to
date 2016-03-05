@@ -1,0 +1,20 @@
+Bottom: a9529e960b3f21af7a20e8284f561073377cc986
+Top:    a9529e960b3f21af7a20e8284f561073377cc986
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 12:36:01 +0000
+
+Add void *userdata member to the POLYAREA object
+
+This is intended to allow client code operating on polygons to assign
+arbitrary additional data to the polygon contours.
+
+The initial target use-case is in 3D export code, where it is helpful to
+have temporary links between POLYAREA contours being extruded and the 3D
+object structures being generated. Allowing this tagging directly avoids
+the need to maintain a hash-mapping or similar.
+
+
+
+---
+
+
