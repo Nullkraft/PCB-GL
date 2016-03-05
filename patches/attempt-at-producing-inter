@@ -1,4 +1,4 @@
-Bottom: acb5508d62534c0db9eb3ef2553d1c264ed84b20
+Bottom: 0b0cf95a3193ab6a1aed18d7c4cc6a1f1768ebf4
 Top:    c36ed793f00bd572d3e567c3e53994b336ecce98
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-25 20:31:14 +0000
@@ -714,20 +714,6 @@ index 0e679ab..2768a71 100644
  GList *object3d_from_board_outline (void);
  GList *object3d_from_soldermask_within_area (POLYAREA *area, int side);
  GList *object3d_from_copper_layers_within_area (POLYAREA *area);
-diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 316cb55..f6bf546 100644
---- a/src/hid/gtk/gui-top-window.c
-+++ b/src/hid/gtk/gui-top-window.c
-@@ -1613,6 +1613,9 @@ ghid_populate_polygon_parentage (PolygonType *polygon)
- void
- ghid_notify_polygon_changed (PolygonType *polygon)
- {
-+  if (ghidgui == NULL)
-+    return;
-+
-   if (ghidgui->debugged_polygon == polygon) {
-     ghid_populate_polygon_parentage (polygon);
-   }
 diff --git a/src/polygon1.c b/src/polygon1.c
 index 2c75fa4..c5b2d71 100644
 --- a/src/polygon1.c
