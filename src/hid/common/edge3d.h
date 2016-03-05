@@ -10,6 +10,8 @@ typedef struct
   float cz;
   float nx;
   float ny;
+  float nz;
+  float radius;
 
   /* XXX: STEP specific - breaks encapsulation */
   int infinite_line_identifier;
