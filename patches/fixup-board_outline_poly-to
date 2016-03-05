@@ -1,40 +1,11 @@
-Bottom: 44644214457b2ead6a4624ea154c54f2703c7d9f
-Top:    35ecef1d8c84520d1606afa71a372901bb3f5dee
+Bottom: cd55feeac2aea07a9d2b47e439a6899364a15c24
+Top:    cd55feeac2aea07a9d2b47e439a6899364a15c24
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 14:30:19 +0000
+Date:   2016-03-05 16:20:42 +0000
 
 Fixup board_outline_poly() to subtract vias / pins even if no outline was found
 
 
 ---
 
-diff --git a/src/polygon.c b/src/polygon.c
-index 770e842..2bca1f3 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -2394,10 +2394,8 @@ POLYAREA *board_outline_poly (bool include_holes)
-         }
-     }
- 
--  if (!found_outline) {
-+  if (!found_outline)
-     printf ("Didn't find outline\n");
--    return whole_world;
--  }
- 
-   /* Do stuff to turn the outline layer into a polygon */
- 
-@@ -2434,8 +2432,11 @@ POLYAREA *board_outline_poly (bool include_holes)
-   info.poly = whole_world;
- #endif
- 
--  r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
--  r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
-+  if (found_outline)
-+    {
-+      r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
-+      r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
-+    }
- 
- #ifndef DEBUG_CIRCSEGS
-   if (include_holes)
+
