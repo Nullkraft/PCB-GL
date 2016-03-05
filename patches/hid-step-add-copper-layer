@@ -1,5 +1,5 @@
-Bottom: 9ead5574030f1a8b3f7a02d5b457e92daab4be3c
-Top:    70b93488ce1f16451b1189729122d5fb11b53308
+Bottom: d6924b0f4e3814ee66d22a9c770ad8432f5431d5
+Top:    6448cf5d2d26dc7da08973cdff77aa1eedfa73e7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:26 +0000
 
@@ -9,7 +9,7 @@ hid/step: Add copper layer export to 3D model
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index dc7303b..43055b2 100644
+index 5698ea6..52bb954 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -20,6 +20,8 @@
@@ -19,9 +19,9 @@ index dc7303b..43055b2 100644
 +#include "misc.h"
 +#include "hid/hidint.h"
  
- //#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
- #undef REVERSED_PCB_CONTOURS
-@@ -61,7 +63,9 @@
+ #define PERFECT_ROUND_CONTOURS
+ 
+@@ -63,7 +65,9 @@
  
  
  #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
@@ -31,7 +31,7 @@ index dc7303b..43055b2 100644
  
  static GList *object3d_test_objects = NULL;
  
-@@ -841,6 +845,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -886,6 +890,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
    r_search (layer->arc_tree,  &bounds, NULL, arc_mask_callback, &info);
    r_search (layer->text_tree, &bounds, NULL, text_mask_callback, &info);
    r_search (layer->polygon_tree, &bounds, NULL, polygon_mask_callback, &info);
@@ -39,7 +39,7 @@ index dc7303b..43055b2 100644
    r_search (PCB->Data->pad_tree, &bounds, NULL, pad_mask_callback, &info);
    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_mask_callback, &info);
    r_search (PCB->Data->via_tree, &bounds, NULL, pv_mask_callback, &info);
-@@ -850,14 +855,14 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -895,14 +900,14 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
  
  #ifdef REVERSED_PCB_CONTOURS
    objects = object3d_from_contours (info.poly,
@@ -58,7 +58,7 @@ index dc7303b..43055b2 100644
                                      mask_appearance,
                                      NULL);
  #endif
-@@ -1213,3 +1218,279 @@ old_object3d_from_board_outline (void)
+@@ -1258,3 +1263,279 @@ old_object3d_from_board_outline (void)
  
    return board_objects;
  }
