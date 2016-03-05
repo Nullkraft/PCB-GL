@@ -49,6 +49,7 @@ int circle_circle_intersect (double x0, double y0, double r0,
   if (d < fabs(r0 - r1))
   {
     /* no solution. one circle is contained in the other */
+    printf ("No circle_circle intersection, %f, %f\n", r0, r1);
     return 0;
   }
 
