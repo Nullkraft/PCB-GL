@@ -1214,11 +1214,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
         }
 #endif
 
-    if (info.poly == NULL)
-      {
-        fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
-        continue;
-      }
+      if (info.poly == NULL)
+        {
+          fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
+          continue;
+        }
 
       objects = g_list_concat (objects,
         object3d_from_contours (info.poly,
