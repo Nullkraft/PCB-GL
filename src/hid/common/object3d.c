@@ -607,12 +607,17 @@ object3d_from_contours (const POLYAREA *contours,
 
                 get_contour_edge_n_round_geometry_in_step_mm (ct, offset_in_ct, &cx, &cy, &radius, &cw);
 
+                /* NOTE: Axis directon not depend on whether we invert the top/bot contour.. the edge loop is appropriate already */
                 face3d_set_cylindrical (faces[i], cx, cy, 0., /* A point on the axis of the cylinder */
                                                   0., 0., 1., /* Direction of the cylindrical axis */ /* XXX HAD THIS AT -1 when last testing with Solidworks? */
                                                   radius);
 
-                /* XXX: DEPENDS ON INSIDE / OUTSIDE CORNER!! */
-                if (ct->Flags.orient == PLF_INV)
+               /* NOTE: Surface orientation is only fixed up during emission if we flag the need here..
+                *       cylindrical surface orientation is always pointing outward from its axis, so
+                *       orientation reversed is used for holes
+                */
+               /* XXX: DEPENDS ON INSIDE / OUTSIDE CORNER!! - THIS IS NOT EXACTLY CORRECT!.. NEEDS TO TAKE ACOUNT FOR cw / ccw WHEN DEALING WITH ARC CONTOUR SEGMENTS */
+               if ((ct->Flags.orient == PLF_INV) != extrude_inverted)
                   face3d_set_surface_orientation_reversed (faces[i]);
 
                 face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
@@ -628,50 +633,6 @@ object3d_from_contours (const POLYAREA *contours,
                 normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 #endif
 
-<<<<<<< current
-                edge_info_set_round (UNDIR_DATA (edges[i]),
-                                     cx, cy, COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
-                                     0., 0., normal_z, /* Normal */ radius);
-                edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
-                                     cx, cy, COORD_TO_STEP_Z (PCB, ztop), /* Center of circle */ /* TOP */
-                                     0., 0., normal_z, /* Normal */ radius);
-                if (ct->is_round)
-                  edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
-              }
-
-            /* NB: Contours are counter clockwise in XY plane.
-             *     edges[          0-npoints-1] are the base of the extrusion, following in the counter clockwise order
-             *     edges[1*npoints-2*npoints-1] are the top  of the extrusion, following in the counter clockwise order
-             *     edges[2*npoints-3*npoints-1] are the upright edges, oriented from bottom to top
-             */
-
-            RDATA (edges[              i]) = faces[i];
-            LDATA (edges[              i]) = faces[npoints];
-            RDATA (edges[1 * npoints + i]) = faces[npoints + 1];
-            LDATA (edges[1 * npoints + i]) = faces[i];
-            RDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
-            LDATA (edges[2 * npoints + i]) = faces[i];
-
-            /* Link edges orbiting around each bottom vertex i (0 <= i < npoints) */
-            splice (SYM(edges[prev_i_around_ct]), edges[2 * npoints + i]);
-            splice (edges[2 * npoints + i], edges[i]);
-            /* Link edges orbiting around each top vertex (npoints + i) (0 <= i < npoints) */
-            splice (edges[npoints + i], SYM(edges[2 * npoints + i]));
-            splice (SYM(edges[2 * npoints + i]), SYM(edges[npoints + prev_i_around_ct]));
-          }
-
-        if (0)
-          {
-            /* Cylinder centers on 45x45mm, stitch vertex is at 40x45mm. Radius is thus 5mm */
-
-            edge_ref cylinder_edges[3];
-            vertex3d *cylinder_vertices[2];
-            face3d *cylinder_faces[2];
-
-            /* Edge on top of board */
-            cylinder_edges[0] = make_edge ();
-            UNDIR_DATA (cylinder_edges[0]) = make_edge_info ();
-=======
               edge_info_set_round (UNDIR_DATA (edges[i]),
                                    cx, cy, COORD_TO_STEP_Z (PCB, zbot), /* Center of circle */ /* BOTTOM */
                                    0., 0., normal_z, /* Normal */ radius);
