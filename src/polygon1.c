@@ -39,6 +39,7 @@
       are marked
 */
 
+#undef NDEBUG
 #include	<assert.h>
 #include	<stdlib.h>
 #include	<stdio.h>
@@ -971,6 +972,7 @@ insert_vertex_in_seg (struct info *i, struct seg *s, Vector v, double param)
   DEBUGP ("new intersection on segment \"i\" at %#mD\n", v[0], v[1]);
 #endif
   i->node_insert_list = prepend_insert_node_task (i->node_insert_list, s, new_node, param);
+  assert (!s->intersected);
   s->intersected = 1;
   return true;
 }
