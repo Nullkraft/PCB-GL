@@ -1,5 +1,5 @@
-Bottom: cef02223920700fe83846f6fa01247c0ccccf41c
-Top:    bbb24a88a0accc63d8f7889c5af1de2aaa73cbdb
+Bottom: 5667c3588eebc3e7ff65aa4ffe447c7a1719d91e
+Top:    5667c3588eebc3e7ff65aa4ffe447c7a1719d91e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:26 +0000
 
@@ -8,30 +8,4 @@ Disable debug
 
 ---
 
-diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 0f93b29..2113c5f 100644
---- a/src/hid/common/object3d.c
-+++ b/src/hid/common/object3d.c
-@@ -1235,7 +1235,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
-                               copper_appearance,
-                               NULL));
- 
--    break;
-+    //break;
-   }
- 
- 
-@@ -1247,10 +1247,10 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
- //  gui->invalidate_all ();
- 
-   /* ASSUME THERE IS A POLYGON WHERE WE KNOW WE PUT ONE... */
--  ((PolygonType *)PCB->Data->Layer[1].Polygon->data)->Clipped = info.poly;
--  gui->invalidate_all ();
-+//  ((PolygonType *)PCB->Data->Layer[1].Polygon->data)->Clipped = info.poly;
-+//  gui->invalidate_all ();
- 
--//  poly_Free (&info.poly);
-+  poly_Free (&info.poly);
- 
-   return objects;
- }
+
