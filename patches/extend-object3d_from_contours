@@ -1,5 +1,5 @@
 Bottom: 3f1ea28edad4e91d1d0f6c98e9a729644929d0dd
-Top:    d8b2e1f710e6e68b23e47bbd3759a1b0e1d5de69
+Top:    3edf2c673fbdce95a19dff8eacde3b71873d9faa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:27 +0000
 
@@ -11,7 +11,7 @@ This will be useful when extruding voids within objects during 3D export.
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 21427f7..8b0f71b 100644
+index 21427f7..4bb0c5f 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -327,7 +327,8 @@ object3d_from_contours (const POLYAREA *contours,
@@ -36,12 +36,21 @@ index 21427f7..8b0f71b 100644
  #endif
  
    if (contours == NULL)
-@@ -410,7 +411,61 @@ object3d_from_contours (const POLYAREA *contours,
+@@ -410,8 +411,8 @@ object3d_from_contours (const POLYAREA *contours,
                offset_in_ct = 0;
                ct = ct->next;
                ct_npoints = get_contour_npoints (ct);
+-            }
+ 
++            }
+           get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
+ 
+           vertices[i]           = make_vertex3d (x1, y1, COORD_TO_STEP_Z (PCB, zbot)); /* Bottom */
+@@ -434,6 +435,76 @@ object3d_from_contours (const POLYAREA *contours,
+         {
+           faces[i] = make_face3d ();
+ 
 +
-             }
 +      object3d_add_face (object, faces[i]);
 +      /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
 +      if (!extrude_inverted)
@@ -95,13 +104,6 @@ index 21427f7..8b0f71b 100644
 +          offset_in_ct = 0;
 +          ct = ct->next;
 +          ct_npoints = get_contour_npoints (ct);
- 
-           get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
- 
-@@ -434,6 +489,22 @@ object3d_from_contours (const POLYAREA *contours,
-         {
-           faces[i] = make_face3d ();
- 
 +
 +        /* If there is more than one contour, it will be an inner contour of the bottom and top faces. Refer to it here */
 +        /* XXX: Haven't properly thought through how (if) inverting works with multiple contours */
