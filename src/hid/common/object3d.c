@@ -543,7 +543,7 @@ object3d_from_contours (POLYAREA *contours,
 
         get_contour_edge_n_round_geometry_in_step_mm (ct, offset_in_ct, &cx, &cy, &radius, &cw);
 
-        /* AXIS DIRECTON NOT DEPEND ON WHETHER WE INVERT THE TOP/BOT CONTOUR.. THE EDGE LOOP IS APPROPRIATE ALREADY */
+        /* NOTE: Axis directon not depend on whether we invert the top/bot contour.. the edge loop is appropriate already */
         face3d_set_cylindrical (faces[i], cx, cy, 0., /* A point on the axis of the cylinder */
                                           0., 0., 1., /* Direction of the cylindrical axis */ /* XXX HAD THIS AT -1 when last testing with Solidworks? */
                                           radius);
@@ -564,9 +564,9 @@ object3d_from_contours (POLYAREA *contours,
          * clockwise / counterclockwise circular edge consistent with the the polygon data.
          */
 #ifdef REVERSED_PCB_CONTOURS
-          normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+        normal_z = cw ? 1. : -1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 #else
-          normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
+        normal_z = cw ? -1. : 1.; /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
 #endif
 
         edge_info_set_round (UNDIR_DATA (edges[i]),
@@ -678,9 +678,6 @@ object3d_from_contours (POLYAREA *contours,
     link->object = object;
     link->bottom_face = faces[npoints];
     link->top_face = faces[npoints + 1];
-
-//    fprintf (stderr, "Linking piece %p with object %p, top face %p (contour count %i), bottom face %p (contour count %i)\n",
-//             pa, link->object, link->top_face, g_list_length (link->top_face->contours), link->bottom_face, g_list_length (link->bottom_face->contours));
 
   } while (pa = pa->f, pa != contours);
 
