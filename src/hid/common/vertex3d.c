@@ -4,14 +4,14 @@ static int global_vertex3d_count;
 
 typedef struct
 {
-  float x;
-  float y;
-  float z;
+  double x;
+  double y;
+  double z;
   int id;
 } vertex3d;
 
 vertex3d *
-make_vertex3d (float x, float y, float z)
+make_vertex3d (double x, double y, double z)
 {
   vertex3d *v;
 

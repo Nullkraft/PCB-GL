@@ -174,11 +174,11 @@ draw_quad_edge (edge_ref e, void *data)
       int i;
       glBegin (GL_LINES);
       for (i = 0; i < CIRC_SEGS; i++) {
-        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos (i * 2. * M_PI / (float)CIRC_SEGS)),
-                    MM_TO_COORD (info->cy + info->radius * sin (i * 2. * M_PI / (float)CIRC_SEGS)),
+        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos (i * 2. * M_PI / (double)CIRC_SEGS)),
+                    MM_TO_COORD (info->cy + info->radius * sin (i * 2. * M_PI / (double)CIRC_SEGS)),
                     MM_TO_COORD (((vertex3d *)ODATA(e))->z));
-        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos ((i + 1) * 2. * M_PI / (float)CIRC_SEGS)),
-                    MM_TO_COORD (info->cy + info->radius * sin ((i + 1) * 2. * M_PI / (float)CIRC_SEGS)),
+        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
+                    MM_TO_COORD (info->cy + info->radius * sin ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
                     MM_TO_COORD (((vertex3d *)ODATA(e))->z));
       }
       glEnd ();

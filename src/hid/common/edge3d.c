@@ -4,7 +4,7 @@
 #include "edge3d.h"
 
 edge_info *
-make_edge_info (bool is_stitch, bool is_round, float cx, float cy, float radius)
+make_edge_info (bool is_stitch, bool is_round, double cx, double cy, double radius)
 {
   edge_info *info;
 
