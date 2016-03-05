@@ -1,0 +1,25 @@
+Bottom: b1586e6c7f8a150793c07e16fa6a9501f7ffc81b
+Top:    6cd5bea13785a7f5cb98efc3a50651f9f39e3c8f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 16:09:48 +0000
+
+Refresh of subtract-vias-from
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 42c26a2..5a686ac 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -1612,11 +1612,9 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+    *
+    */
+ 
+-#if 1
+     fprintf (stderr, "Subtracting pin + via drills\n");
+     r_search (PCB->Data->pin_tree, &bounds, NULL, pv_drill_callback, &info);
+     r_search (PCB->Data->via_tree, &bounds, NULL, pv_drill_callback, &info);
+-#endif
+ 
+   if (info.poly == NULL)
+     {
