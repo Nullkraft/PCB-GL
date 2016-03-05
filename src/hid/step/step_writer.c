@@ -19,9 +19,10 @@ fprint_id_list (FILE *f, step_id_list list)
   fprintf (f, "( ");
   for (iter = list;
        iter != NULL && g_list_next (iter) != NULL;
-       iter = g_list_next (iter)) {
-    fprintf (f, "#%i, ", GPOINTER_TO_INT (iter->data));
-  }
+       iter = g_list_next (iter))
+    {
+      fprintf (f, "#%i, ", GPOINTER_TO_INT (iter->data));
+    }
   if (iter == NULL)
     fprintf (f, ")");
   else
@@ -50,10 +51,11 @@ make_step_id_list (int count, ...)
 
   va_start (args, NULL);
 
-  for (i = 0; i < count; i++) {
-    step_id id = va_arg (args, step_id);
-    list = g_list_append (list, GINT_TO_POINTER (id));
-  }
+  for (i = 0; i < count; i++)
+    {
+      step_id id = va_arg (args, step_id);
+      list = g_list_append (list, GINT_TO_POINTER (id));
+    }
 
   va_end (args);
 
