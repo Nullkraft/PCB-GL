@@ -1,5 +1,5 @@
 Bottom: e4fa2c670999c5e7a0ecd94bde087da76af37bd8
-Top:    084430c58f64bc1518e2104e331686e48dad2e40
+Top:    7c62e953e8504807e1cad035ff36a6bf351f8b46
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-23 23:43:19 +0000
 
@@ -11,7 +11,7 @@ FIXME: Some changes related to debugging polygon badness
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index b89f387..0723343 100644
+index b89f387..e2f471a 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -20,6 +20,8 @@
@@ -23,14 +23,14 @@ index b89f387..0723343 100644
  
  //#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
  #undef REVERSED_PCB_CONTOURS
-@@ -62,6 +64,7 @@
+@@ -61,6 +63,7 @@
+ 
  
  #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
- #define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
 +#define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
+ #define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
  
  static GList *object3d_test_objects = NULL;
- 
 @@ -841,6 +844,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
    r_search (layer->arc_tree,  &bounds, NULL, arc_mask_callback, &info);
    r_search (layer->text_tree, &bounds, NULL, text_mask_callback, &info);
