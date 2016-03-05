@@ -1,0 +1,56 @@
+Bottom: 68d6bd5bdfbc4af52d29226ddb8f3418d39fd421
+Top:    fdb809eef23dd8c98d8d87797a5586a8efe8ff9c
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 19:55:57 +0000
+
+Refresh of more-play-with-quad-edge-data
+
+---
+
+diff --git a/src/hid/common/face3d.c b/src/hid/common/face3d.c
+index 0df8f23..8791abf 100644
+--- a/src/hid/common/face3d.c
++++ b/src/hid/common/face3d.c
+@@ -36,7 +36,7 @@ face3d_set_appearance (face3d *face, appearance *appear)
+ }
+ 
+ void
+-face3d_set_normal (face3d *face, float nx, float ny, float nz)
++face3d_set_normal (face3d *face, double nx, double ny, double nz)
+ {
+   face->nx = nx;
+   face->ny = ny;
+@@ -44,7 +44,7 @@ face3d_set_normal (face3d *face, float nx, float ny, float nz)
+ }
+ 
+ void
+-face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius)
++face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius)
+ {
+   face->is_cylindrical = true;
+   face->cx = cx;
+diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
+index 8000e6e..842d251 100644
+--- a/src/hid/common/face3d.h
++++ b/src/hid/common/face3d.h
+@@ -4,9 +4,9 @@ typedef struct {
+ 
+   /* For cylindrical surfaces */
+   bool is_cylindrical;
+-  float cx, cy, cz; /* A point on the axis */
+-  float ax, ay, az; /* Direction of the axis */
+-  float radius;
++  double cx, cy, cz; /* A point on the axis */
++  double ax, ay, az; /* Direction of the axis */
++  double radius;
+ 
+   appearance *appear;
+ 
+@@ -21,5 +21,5 @@ face3d *make_face3d (void);
+ void destroy_face3d (face3d *face);
+ void face3d_add_contour (face3d *face, contour3d *contour);
+ void face3d_set_appearance (face3d *face, appearance *appear);
+-void face3d_set_normal (face3d *face, float nx, float ny, float nz);
+-void face3d_set_cylindrical (face3d *face, float cx, float cy, float cz, float ax, float ay, float az, float radius);
++void face3d_set_normal (face3d *face, double nx, double ny, double nz);
++void face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius);
