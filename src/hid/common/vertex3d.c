@@ -1,14 +1,9 @@
 #include <stdlib.h>
 
+#include "vertex3d.h"
+
 static int global_vertex3d_count;
 
-typedef struct
-{
-  double x;
-  double y;
-  double z;
-  int id;
-} vertex3d;
 
 vertex3d *
 make_vertex3d (double x, double y, double z)
