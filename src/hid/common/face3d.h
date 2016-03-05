@@ -11,10 +11,10 @@ typedef struct {
   appearance *appear;
 
   /* XXX: STEP specific - breaks encapsulation */
-  int surface_identifier;
+  step_id surface_identifier;
   bool surface_orientation_reversed;
-  int face_identifier;
-  int face_bound_identifier;
+  step_id face_identifier;
+  step_id face_bound_identifier;
 } face3d;
 
 face3d *make_face3d (void);
