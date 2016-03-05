@@ -1,5 +1,5 @@
 Bottom: b83e35cb4f0758567e81e93b7a1052af3e2e457e
-Top:    62334c9976f257e1caad9dda66e21545e2f76217
+Top:    2401eb4379a5c8c183fc97a7a2d46fa2ad42770c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 14:22:25 +0000
 
@@ -286,7 +286,7 @@ index 28dfe26..6f0f6b0 100644
  double vect_det2 (Vector v1, Vector v2);
  double vect_len2 (Vector v1);
 diff --git a/src/polygon.c b/src/polygon.c
-index fa616ad..87959a2 100644
+index fa616ad..4806c08 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -831,6 +831,8 @@ SquarePadPoly (PadType * pad, Coord clear)
@@ -312,15 +312,7 @@ index fa616ad..87959a2 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    if (!p->Clipped)
      Message ("Polygon cleared out of existence near (%d, %d)\n",
-@@ -985,6 +989,7 @@ SubtractPad (PadType * pad, PolygonType * p)
-           (np = LinePoly ((LineType *) pad, pad->Thickness + pad->Clearance)))
-         return -1;
-     }
-+
-   return Subtract (np, p, true);
- }
- 
-@@ -1228,11 +1233,13 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+@@ -1228,11 +1232,13 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
        goto fail;
      }
    p->Clipped = biggest (merged);
@@ -334,7 +326,7 @@ index fa616ad..87959a2 100644
    if (p->NoHoles) printf ("Just leaked in Unsubtract\n");
    p->NoHoles = NULL;
    return 0;
-@@ -1337,6 +1344,7 @@ InitClip (DataType *Data, LayerType *layer, PolygonType * p)
+@@ -1337,6 +1343,7 @@ InitClip (DataType *Data, LayerType *layer, PolygonType * p)
    if (p->Clipped)
      poly_Free (&p->Clipped);
    p->Clipped = original_poly (p);
@@ -342,7 +334,7 @@ index fa616ad..87959a2 100644
    poly_FreeContours (&p->NoHoles);
    if (!p->Clipped)
      return 0;
-@@ -1653,8 +1661,11 @@ plow_callback (const BoxType * b, void *cl)
+@@ -1653,8 +1660,11 @@ plow_callback (const BoxType * b, void *cl)
    PolygonType *polygon = (PolygonType *) b;
  
    if (TEST_FLAG (CLEARPOLYFLAG, polygon))
@@ -356,7 +348,7 @@ index fa616ad..87959a2 100644
    return 0;
  }
  
-@@ -1768,7 +1779,10 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1768,7 +1778,10 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
      }
  
    if (type == POLYGON_TYPE)
@@ -368,7 +360,7 @@ index fa616ad..87959a2 100644
    else
      PlowsPolygon (Data, type, ptr1, ptr2, add_plow, NULL);
  }
-@@ -1953,6 +1967,7 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
+@@ -1953,6 +1966,7 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
     * we do this dirty work.
     */
    poly->Clipped = NULL;
@@ -376,7 +368,7 @@ index fa616ad..87959a2 100644
    if (poly->NoHoles) printf ("Just leaked in MorpyPolygon\n");
    poly->NoHoles = NULL;
    flags = poly->Flags;
-@@ -2181,6 +2196,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
+@@ -2181,6 +2195,12 @@ delete_piece_cb (gpointer data, gpointer userdata)
    piece->f->b = piece->b;
    piece->f = piece->b = piece;
  
