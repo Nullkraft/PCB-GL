@@ -324,69 +324,6 @@ object3d_from_board_outline (void)
     for (i = 0; i < npoints; i++) {
       faces[i] = make_face3d ();
 
-      contour = pa->contours;
-      ncontours = 0;
-      npoints = 0;
-
-      ct = contour;
-      while (ct != NULL)
-        {
-          ncontours ++;
-          npoints += get_contour_npoints (ct);
-          ct = ct->next;
-        }
-
-      object = make_object3d (PCB->Name);
-      board_appearance = make_appearance ();
-      top_bot_appearance = make_appearance ();
-      appearance_set_color (board_appearance,   1.0, 1.0, 0.6);
-      appearance_set_color (top_bot_appearance, 0.2, 0.8, 0.2);
-
-      object3d_set_appearance (object, board_appearance);
-
-      vertices = malloc (sizeof (vertex3d *) * 2 * npoints); /* (n-bottom, n-top) */
-      edges    = malloc (sizeof (edge_ref  ) * 3 * npoints); /* (n-bottom, n-top, n-sides) */
-      faces    = malloc (sizeof (face3d *) * (npoints + 2)); /* (n-sides, 1-bottom, 1-top */
-
-      /* Define the vertices */
-      ct = contour;
-      offset_in_ct = 0;
-      ct_npoints = get_contour_npoints (ct);
-
-      for (i = 0; i < npoints; i++, offset_in_ct++)
-        {
-          double x1, y1;
-
-          /* Update which contour we're looking at */
-          if (offset_in_ct == ct_npoints)
-            {
-              offset_in_ct = 0;
-              ct = ct->next;
-              ct_npoints = get_contour_npoints (ct);
-            }
-
-          get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
-
-          vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_STEP_Z (PCB, HACK_BOARD_THICKNESS)); /* Bottom */
-          vertices[npoints + i] = make_vertex3d (x1, y1, 0);                                            /* Top */
-
-          object3d_add_vertex (object, vertices[i]);
-          object3d_add_vertex (object, vertices[npoints + i]);
-        }
-
-      /* Define the edges */
-      for (i = 0; i < 3 * npoints; i++)
-        {
-          edges[i] = make_edge ();
-          UNDIR_DATA (edges[i]) = make_edge_info ();
-          object3d_add_edge (object, edges[i]);
-        }
-
-      /* Define the faces */
-      for (i = 0; i < npoints; i++)
-        {
-          faces[i] = make_face3d ();
-
           object3d_add_face (object, faces[i]);
           /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
 #ifdef REVERSED_PCB_CONTOURS
