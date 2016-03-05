@@ -1,5 +1,5 @@
 Bottom: 6105ad33c597dd6f1bbc0c24ab46290debbcaf8f
-Top:    476182efd202535481a48623dda3bfd2a6a337b5
+Top:    9d5c46c38d7894a0491263f09cb23d689d77d5f8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:26 +0000
 
@@ -9,7 +9,7 @@ hid/step: Add copper layer export to 3D model
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 0154912..d36c272 100644
+index 0154912..d26f58f 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -20,6 +20,8 @@
@@ -311,7 +311,7 @@ index 0154912..d36c272 100644
 +      r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
 +#endif
 +
-+#if 0
++#if 1
 +      if (group == top_group ||
 +          group == bottom_group)
 +        {
