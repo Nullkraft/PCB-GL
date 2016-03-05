@@ -1,5 +1,5 @@
-Bottom: b39326d342b1d41ae5633bdc55a5645ce46d7e8b
-Top:    75226d8cf109371483ccaf98a834d98fc297ecb3
+Bottom: e6aca1c9bfd64024f050540b6165fe89f939db6b
+Top:    9a029f6b73684e3249045f8254752d65c6e6b90a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:27 +0000
 
@@ -11,7 +11,7 @@ This will be useful when extruding voids within objects during 3D export.
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 1a6d1d6..d7c2975 100644
+index 9451604..59c3fe0 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -323,7 +323,8 @@ object3d_from_contours (const POLYAREA *contours,
@@ -229,7 +229,7 @@ index 1a6d1d6..d7c2975 100644
  
    destroy_appearance (board_appearance);
    destroy_appearance (top_bot_appearance);
-@@ -990,7 +1050,8 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -989,7 +1049,8 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
                                      (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS, /* Top */
  #endif
                                      mask_appearance,
@@ -239,7 +239,7 @@ index 1a6d1d6..d7c2975 100644
  
    destroy_appearance (mask_appearance);
  
-@@ -1288,7 +1349,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1287,7 +1348,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                -depth - HACK_COPPER_THICKNESS, /* Top */
  #endif
                                copper_appearance,
