@@ -3499,6 +3499,30 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
                     PREV_VERTEX (EDGE_FORWARD_VERTEX (edge)) = new_node;
                     EDGE_FORWARD_VERTEX (edge) = new_node;
                     contour->Count++;
+
+#warning WE DID NOT CALCULATE PARAM!
+#if 0
+                    if (param >= 0.0 && param <= 1.0)
+                      {
+                        /* Nicely behaved linear segment addition, with parameter */
+                        new_node->p1 = new_node->prev->p1;
+                        new_node->prev->p1 = param;
+                        new_node->p0 = param;
+                      }
+                    else
+#endif
+                      {
+                        /* Used for arc-segment insersions, where we redeclare the original coordinates of the pieces */
+                        if (new_node->prev->p1 != 1.0)
+                          printf ("task->new_node->prev->p1 != 1.0\n");
+                        new_node->prev->p1 = 1.0; /* NB: Should already be 1.0 - might be worth asserting? */
+                        Vcopy (new_node->prev->orig_point1, new_node->point);
+
+                        new_node->p0 = 0.0;
+                        new_node->p1 = 1.0;
+                        Vcopy (new_node->orig_point0, new_node->point);
+                        Vcopy (new_node->orig_point1, new_node->next->point);
+                      }
                   }
 
                   // XXX: REALLY HOPE THIS DOESN'T UPDATE ANYTHING BY SNAP-ROUNDING, OR WE MIGHT AFFECT THE INTERSECTION WITH THE OTHER POLYGON?
