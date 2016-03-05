@@ -1,5 +1,5 @@
-Bottom: 91f9bbd0195d210eafd2d42e3b98d06e4862b3c3
-Top:    5edd2161f58b5ff6dfcde4ff0490d5e413dd96ed
+Bottom: 643fd3952e7908614b1facbc269824a4c3090be4
+Top:    b52367f0fd79d23115b7e9d350a2d78e7467feb1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:26 +0000
 
@@ -9,25 +9,10 @@ Enable output of via pads, and dial down circular approximation accuracy
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 8037638..66d2d59 100644
+index 662a0bf..7ee5840 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -1200,11 +1200,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
-       END_LOOP;
- 
-       fprintf (stderr, "Accumulating pin + via pads\n");
--  //    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
--  //    r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
-+      r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
-+      r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
- #endif
- 
--#if 0
-+#if 1
-       if (group == top_group ||
-           group == bottom_group)
-         {
-@@ -1214,6 +1214,31 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1211,6 +1211,31 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
          }
  #endif
  
