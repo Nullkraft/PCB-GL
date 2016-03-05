@@ -724,7 +724,8 @@ object3d_from_board_outline (void)
                                     -HACK_BOARD_THICKNESS / 2, /* Top */
 #endif
                                     board_appearance,
-                                    top_bot_appearance);
+                                    top_bot_appearance,
+                                    false); /* Don't invert */
 
   destroy_appearance (board_appearance);
   destroy_appearance (top_bot_appearance);
@@ -988,7 +989,8 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
                                     (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS, /* Top */
 #endif
                                     mask_appearance,
-                                    NULL);
+                                    NULL,
+                                    false); /* Don't invert */
 
   destroy_appearance (mask_appearance);
 
