@@ -1,15 +1,14 @@
 Bottom: a2d0eefb36f12cefa2c314bcbbe58bb6f6e83b22
-Top:    85e07ae84b10661f6c4c5279d4210e52d1ac5761
+Top:    596cce94f0a29fb9caa10592d6e2623f41ed3027
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 16:31:27 +0000
+Date:   2016-03-05 16:42:47 +0000
 
 Refactor circular contour handling to be more generic
-
 
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 3d525eb..a64a451 100644
+index 3d525eb..dd071eb 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -23,6 +23,8 @@
@@ -77,7 +76,7 @@ index 3d525eb..a64a451 100644
 +      *cx = COORD_TO_STEP_X (PCB, contour->cx);
 +      *cy = COORD_TO_STEP_Y (PCB, contour->cy);
 +      *r = COORD_TO_MM (contour->radius);
-+      *cw = (contour->Flags.orient != PLF_DIR);
++      *cw = (contour->Flags.orient == PLF_INV);
 +    }
 +#endif
 +}
