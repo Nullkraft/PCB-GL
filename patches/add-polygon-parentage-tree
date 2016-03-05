@@ -1,7 +1,7 @@
-Bottom: b83e35cb4f0758567e81e93b7a1052af3e2e457e
-Top:    2401eb4379a5c8c183fc97a7a2d46fa2ad42770c
+Bottom: f98b1c55e7cd0fd6b7aa38a6bfd1edc70c20c21f
+Top:    710bbef05f04c3f008a1f308ea99fd0e5fccd1dc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 14:22:25 +0000
+Date:   2016-03-05 16:24:14 +0000
 
 Add polygon parentage tree debug view
 
@@ -283,7 +283,7 @@ index 28dfe26..6f0f6b0 100644
  double vect_det2 (Vector v1, Vector v2);
  double vect_len2 (Vector v1);
 diff --git a/src/polygon.c b/src/polygon.c
-index fa616ad..4806c08 100644
+index 9f73d09..0a96a2e 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -831,6 +831,8 @@ SquarePadPoly (PadType * pad, Coord clear)
