@@ -1,0 +1,21 @@
+Bottom: df748e20bdf38af2dc3f0f55955b206486c39600
+Top:    3007a833f2e75c54ad1b77ad2f8c1ca806b44edc
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 20:42:46 +0000
+
+Refresh of more-play-with-quad-edge-data
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index b928816..a97f98c 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -238,6 +238,7 @@ draw_quad_edge (edge_ref e, void *data)
+           glEnd ();
+           return;
+         }
++    }
+ 
+   glBegin (GL_LINES);
+   glVertex3f (MM_TO_COORD (((vertex3d *)ODATA(e))->x), MM_TO_COORD (((vertex3d *)ODATA(e))->y), MM_TO_COORD (((vertex3d *)ODATA(e))->z));
