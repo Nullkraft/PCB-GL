@@ -1,5 +1,5 @@
 Bottom: ef9e079da327d1ac5af5d3bc52813ba00a4f18dd
-Top:    b24892cca5361e11d78965f299751b182db23ddb
+Top:    ce28f08af2ca621938f10afd47ae31bc2ca5b909
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -40,7 +40,7 @@ index 6e2bf29..104e01f 100644
    g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
  }
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 77db6b9..9b0e118 100644
+index 77db6b9..4859c31 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -49,34 +49,20 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
@@ -171,7 +171,7 @@ index 77db6b9..9b0e118 100644
  
  #if 1
    /* Body style */
-@@ -327,18 +328,251 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -327,18 +328,256 @@ object3d_export_to_step (object3d *object, const char *filename)
    step_mechanical_design_geometric_presentation_representation (step, "", styled_item_identifiers, geometric_representation_context_identifier);
  #endif
  
@@ -185,11 +185,11 @@ index 77db6b9..9b0e118 100644
      step_advanced_brep_shape_representation (step, "test_pcb_absr_name",
 -                                             make_step_id_list (2, brep_identifier, 13 /* XXX */), geometric_representation_context_identifier);
 +                                             make_step_id_list (2, brep_identifier, anchor_axis_identifier), geometric_representation_context_identifier);
-+
-+  shape_definition_representation_identifier =
-+  step_shape_definition_representation (step, product_definition_shape_identifier, shape_representation_identifier);
  
 -  step_shape_definition_representation (step, 9 /* XXX */, shape_representation_identifier);
++  shape_definition_representation_identifier =
++  step_shape_definition_representation (step, product_definition_shape_identifier, shape_representation_identifier);
++
 +  if (shape_definition_representation != NULL)
 +    *shape_definition_representation = shape_definition_representation_identifier;
 +
@@ -210,39 +210,41 @@ index 77db6b9..9b0e118 100644
 +  GList *object_iter;
 +  int part;
 +  bool multiple_parts;
-+
+ 
+-  fprintf (f, "ENDSEC;\n" );
+-  fprintf (f, "END-ISO-10303-21;\n" );
 +  multiple_parts = (g_list_next (objects) != NULL);
 +
 +  step = start_ap214_file (filename);
 +
 +  for (object_iter = objects, part = 1;
 +       object_iter != NULL;
-+       object_iter = g_list_next (object_iter), part++) {
++       object_iter = g_list_next (object_iter), part++)
++    {
 +
-+    object3d *object = object_iter->data;
-+    GString *part_id;
-+    GString *part_name;
-+    GString *body_name;
++      object3d *object = object_iter->data;
++      GString *part_id;
++      GString *part_name;
++      GString *body_name;
 +
-+    part_id   = g_string_new ("board");
-+    part_name = g_string_new ("PCB board");
-+    body_name = g_string_new ("PCB board body");
- 
--  fprintf (f, "ENDSEC;\n" );
--  fprintf (f, "END-ISO-10303-21;\n" );
-+    if (multiple_parts) {
-+      g_string_append_printf (part_id, "-%i", part);
-+      g_string_append_printf (part_name, " - %i", part);
-+      g_string_append_printf (body_name, " - %i", part);
++      part_id   = g_string_new ("board");
++      part_name = g_string_new ("PCB board");
++      body_name = g_string_new ("PCB board body");
++
++      if (multiple_parts)
++        {
++          g_string_append_printf (part_id, "-%i", part);
++          g_string_append_printf (part_name, " - %i", part);
++          g_string_append_printf (body_name, " - %i", part);
++        }
++
++      object3d_to_step_fragment (step, object, part_id->str, part_name->str, "PCB model", body_name->str,
++                                 &comp_shape_definition_representation, &comp_placement_axis);
++
++      g_string_free (part_id, true);
++      g_string_free (part_name, true);
++      g_string_free (body_name, true);
 +    }
-+
-+    object3d_to_step_fragment (step, object, part_id->str, part_name->str, "PCB model", body_name->str,
-+                               &comp_shape_definition_representation, &comp_placement_axis);
-+
-+    g_string_free (part_id, true);
-+    g_string_free (part_name, true);
-+    g_string_free (body_name, true);
-+  }
 +
 +  finish_ap214_file (step);
 +
@@ -289,17 +291,20 @@ index 77db6b9..9b0e118 100644
 +    // assembly and component.  There are two distinct ways to relate
 +    // the geometry.
 +    //
-+    if (useMappedItem) {
-+	createGeomAsmMI(
-+	    asm_sdr->used_representation(), asmAxis,
-+	    comp_sdr->used_representation(), compAxis, 
-+	    nauo);
-+    } else {
-+	createGeomAsmCDSR(
-+	    asm_sdr->used_representation(), asmAxis,
-+	    comp_sdr->used_representation(), compAxis, 
-+	    nauo);
-+    }
++    if (useMappedItem)
++      {
++          createGeomAsmMI(
++              asm_sdr->used_representation(), asmAxis,
++              comp_sdr->used_representation(), compAxis, 
++              nauo);
++      }
++    else
++      {
++          createGeomAsmCDSR(
++              asm_sdr->used_representation(), asmAxis,
++              comp_sdr->used_representation(), compAxis, 
++              nauo);
++      }
 +
 +
 +  // Given two product_definitions this creates an assembly between them.
