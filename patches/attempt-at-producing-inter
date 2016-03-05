@@ -1,5 +1,5 @@
-Bottom: 34c524bbf90c8ef9ccfd7980123b9008a3848a17
-Top:    b2b23050f9c06c7c6681b1cc905966d0fbfdc40a
+Bottom: e9fef597a61842f6dfe8c92e1610bf2000c004a5
+Top:    354c69e7cca9e244c21ad86f61bb9b25cd8aac94
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 14:03:27 +0000
 
@@ -18,7 +18,7 @@ doesn't have a convenient implementation.
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 10484d6..5983de6 100644
+index f541d4c..fe3340d 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -66,6 +66,7 @@
@@ -67,7 +67,7 @@ index 10484d6..5983de6 100644
    bool invert_face_normals;
    double length;
    double nx, ny;
-@@ -750,6 +763,12 @@ object3d_from_contours (const POLYAREA *contours,
+@@ -751,6 +764,12 @@ object3d_from_contours (const POLYAREA *contours,
  
      objects = g_list_append (objects, object);
  
@@ -80,7 +80,7 @@ index 10484d6..5983de6 100644
    } while (pa = pa->f, pa != contours);
  
    return objects;
-@@ -991,6 +1010,7 @@ pv_mask_callback (const BoxType * b, void *cl)
+@@ -992,6 +1011,7 @@ pv_mask_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -88,7 +88,7 @@ index 10484d6..5983de6 100644
  static int
  pv_drill_callback (const BoxType * b, void *cl)
  {
-@@ -1001,7 +1021,24 @@ pv_drill_callback (const BoxType * b, void *cl)
+@@ -1002,7 +1022,24 @@ pv_drill_callback (const BoxType * b, void *cl)
    if (!(np = CirclePoly (pv->X, pv->Y, (pv->DrillingHole + 1) / 2, NULL)))
      return 0;
  
