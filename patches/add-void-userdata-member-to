@@ -1,5 +1,5 @@
-Bottom: a9529e960b3f21af7a20e8284f561073377cc986
-Top:    acb5508d62534c0db9eb3ef2553d1c264ed84b20
+Bottom: f956049138c06baa5c38d6f2411f3d659cfbe481
+Top:    3a12a3484aef70b406c99a631f28d4c86a2491cc
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 12:36:01 +0000
 
@@ -30,10 +30,10 @@ index 76b724a..bcb2152 100644
  
  void poly_dump (POLYAREA *p);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1372197..2c75fa4 100644
+index 8b99dac..c5b2d71 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -3901,6 +3901,7 @@ poly_Init (POLYAREA * p)
+@@ -3902,6 +3902,7 @@ poly_Init (POLYAREA * p)
    p->contours = NULL;
    p->contour_tree = r_create_tree (NULL, 0, 0);
    p->parentage = no_parentage;
