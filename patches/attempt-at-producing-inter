@@ -1,4 +1,4 @@
-Bottom: a9529e960b3f21af7a20e8284f561073377cc986
+Bottom: acb5508d62534c0db9eb3ef2553d1c264ed84b20
 Top:    c36ed793f00bd572d3e567c3e53994b336ecce98
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-25 20:31:14 +0000
@@ -728,20 +728,8 @@ index 316cb55..f6bf546 100644
    if (ghidgui->debugged_polygon == polygon) {
      ghid_populate_polygon_parentage (polygon);
    }
-diff --git a/src/polyarea.h b/src/polyarea.h
-index 76b724a..bcb2152 100644
---- a/src/polyarea.h
-+++ b/src/polyarea.h
-@@ -159,6 +159,7 @@ struct POLYAREA
-     PLINE *contours;
-     rtree_t *contour_tree;
-     POLYPARENTAGE parentage;
-+    void *user_data; /* To be used at will by the owner of this polygon */
- };
- 
- void poly_dump (POLYAREA *p);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1372197..c5b2d71 100644
+index 2c75fa4..c5b2d71 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -517,6 +517,7 @@ next_cvc_from_other_poly (CVCList *start)
@@ -752,11 +740,3 @@ index 1372197..c5b2d71 100644
  cvc_list_dump (CVCList *list)
  {
    VNODE *node;
-@@ -3901,6 +3902,7 @@ poly_Init (POLYAREA * p)
-   p->contours = NULL;
-   p->contour_tree = r_create_tree (NULL, 0, 0);
-   p->parentage = no_parentage;
-+  p->user_data = NULL;
- }
- 
- POLYAREA *
