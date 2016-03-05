@@ -1,5 +1,5 @@
 typedef struct {
-  float nx, ny, nz; /* Face normal?*/
+  double nx, ny, nz; /* Face normal?*/
   GList *contours;
 } face3d;
 

@@ -442,7 +442,7 @@ object3d_export_to_step (object3d *object, const char *filename)
         }
       else
         {
-          float dx, dy, dz;
+          double dx, dy, dz;
 
           dx = end_v->x - start_v->x;
           dy = end_v->y - start_v->y;
