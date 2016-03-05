@@ -1,0 +1,23 @@
+Bottom: acb5508d62534c0db9eb3ef2553d1c264ed84b20
+Top:    0b0cf95a3193ab6a1aed18d7c4cc6a1f1768ebf4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 12:37:22 +0000
+
+Refresh of fix-crash-when-running
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 316cb55..f6bf546 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1613,6 +1613,9 @@ ghid_populate_polygon_parentage (PolygonType *polygon)
+ void
+ ghid_notify_polygon_changed (PolygonType *polygon)
+ {
++  if (ghidgui == NULL)
++    return;
++
+   if (ghidgui->debugged_polygon == polygon) {
+     ghid_populate_polygon_parentage (polygon);
+   }
