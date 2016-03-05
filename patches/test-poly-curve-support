@@ -1,5 +1,5 @@
-Bottom: 83818d63e1e051746516edb506bb81c03a515c29
-Top:    d9574c747a549c2c214a4f18533f6fed11f70c32
+Bottom: f2ac08996f63aee1f4c8cfeb47903b0a44d13705
+Top:    3abaffadea7dee3735852fe57b6e9d533f680afb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-24 22:44:07 +0000
 
@@ -9,10 +9,10 @@ Test poly-curve support
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 0395ac0..0accd67 100644
+index 7cee65a..c9e3240 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -2189,6 +2189,23 @@ pv_outline_callback (const BoxType * b, void *cl)
+@@ -2188,6 +2188,23 @@ pv_outline_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -36,7 +36,7 @@ index 0395ac0..0accd67 100644
  static void
  delete_piece_cb (gpointer data, gpointer userdata)
  {
-@@ -2276,13 +2293,14 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2275,13 +2292,14 @@ POLYAREA *board_outline_poly (bool include_holes)
     *  \_____________/
     */
  
@@ -53,7 +53,7 @@ index 0395ac0..0accd67 100644
    r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
    r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
  
-@@ -2339,6 +2357,21 @@ POLYAREA *board_outline_poly (bool include_holes)
+@@ -2338,6 +2356,21 @@ POLYAREA *board_outline_poly (bool include_holes)
      g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
  
    g_list_free (pieces_to_delete);
