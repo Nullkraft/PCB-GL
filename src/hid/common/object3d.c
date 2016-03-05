@@ -556,7 +556,7 @@ object3d_from_board_outline (void)
       /* Link edges orbiting the cylinder top vertex */
       splice (SYM(cylinder_edges[2]), cylinder_edges[1]);
       splice (cylinder_edges[1], SYM(cylinder_edges[1]));
-
+    }
 
       objects = g_list_append (objects, object);
 
