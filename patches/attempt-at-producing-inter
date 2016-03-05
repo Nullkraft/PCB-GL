@@ -1,5 +1,5 @@
 Bottom: b47a30d8e24a50ce4b38c71b3a560a2b66a46183
-Top:    b64359e5113a06245c2d07328644916cafbb52dc
+Top:    5db973fb340a5ce8585a97840ecc0fabc394fc1c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 13:23:32 +0000
 
@@ -9,7 +9,7 @@ Attempt at producing inter-layer copper with via barrels etc..!
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 8e37f26..2ed213e 100644
+index 8e37f26..b274f50 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -66,6 +66,7 @@
@@ -130,14 +130,17 @@ index 8e37f26..2ed213e 100644
 +        /* NOTE: Axis directon not depend on whether we invert the top/bot contour.. the edge loop is appropriate already */
          face3d_set_cylindrical (faces[i], cx, cy, 0., /* A point on the axis of the cylinder */
                                            0., 0., 1., /* Direction of the cylindrical axis */ /* XXX HAD THIS AT -1 when last testing with Solidworks? */
-                                           radius);
- 
-         /* XXX: DEPENDS ON INSIDE / OUTSIDE CORNER!! */
+-                                          radius);
+-
+-        /* XXX: DEPENDS ON INSIDE / OUTSIDE CORNER!! */
 -        if (ct->Flags.orient == PLF_INV)
-+        /* XXX: SURFACE ORIENTATION IS ONLY FIXED UP DURING EMISSION IF WE FLAG THE NEED HERE..
-+         *      CYLINDRICAL SURFACE ORIENTATION IS ALWAYS POINTING OUTWARD FROM ITS AXIS, SO
-+         *      ORIENTATION REVERSED IS USED FOR HOLES
++                                          radius);Y
++
++        /* NOTE: Surface orientation is only fixed up during emission if we flag the need here..
++         *       cylindrical surface orientation is always pointing outward from its axis, so
++         *       orientation reversed is used for holes
 +         */
++        /* XXX: DEPENDS ON INSIDE / OUTSIDE CORNER!! - THIS IS NOT EXACTLY CORRECT!.. NEEDS TO TAKE ACOUNT FOR cw / ccw WHEN DEALING WITH ARC CONTOUR SEGMENTS */
 +        if ((ct->Flags.orient == PLF_INV) != extrude_inverted)
            face3d_set_surface_orientation_reversed (faces[i]);
  
@@ -589,9 +592,6 @@ index 8e37f26..2ed213e 100644
 +                                copper_appearance,
 +                                NULL,
 +                                false)); /* Don't invert */
-+
-+      group_m_polyarea[group] = info.poly;
-+    }
  
 -  /* TODO: Inter-layer features
 -   *
@@ -616,6 +616,9 @@ index 8e37f26..2ed213e 100644
 -   * and subtract that from the positive copper polygon. Any subtracted contour
 -   * should at this point match to one body of copper on a given layer.
 -   *
++      group_m_polyarea[group] = info.poly;
++    }
++
 +  /* Now need to punch drill-holes through the inter-layers..
 +   * Ideally, we construct a polygon of drill-holes, so any overlapping are taken into account
     */
