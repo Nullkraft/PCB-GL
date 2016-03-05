@@ -1,5 +1,5 @@
 Bottom: f4b867a8d8edce730c38233b64ba965de5fcc92d
-Top:    0a4930a4d309d6c541918925483a5751f70b043c
+Top:    f072369b14998f9566303d03ddd05867dd1c9c38
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:26 +0000
 
@@ -39,15 +39,13 @@ index f79ec16..6750e9c 100644
      face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
      object3d_add_face (object, faces[npoints + 1]);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index aa2ee46..5b2cd40 100644
+index aa2ee46..e16f1e7 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -25,7 +25,8 @@
- #include "object3d_step.h"
+@@ -26,6 +26,7 @@
  
  
--#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
-+//#define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
+ #define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
 +#undef REVERSED_PCB_CONTOURS
  
  #define EPSILON 1e-5 /* XXX: Unknown  what this needs to be */
