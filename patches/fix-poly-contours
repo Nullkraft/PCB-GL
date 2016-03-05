@@ -1,7 +1,7 @@
-Bottom: 05221c7021b900bb5faddddb808e790b3e8cecd3
-Top:    d30f1330a516a368662837a6183a4b231b1f4171
+Bottom: f9434debb08d4cca7df41140aae7d467034bf614
+Top:    f67de877d5febd3f54ad7e2f17f988506fa5320f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 16:53:43 +0000
+Date:   2016-03-05 16:23:30 +0000
 
 Fix poly contours (?)
 
@@ -13,7 +13,7 @@ XXX: Thermals are not fixed up after frac_circle() changes
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index ed41e59..0beae50 100644
+index 23fc671..cbe398e 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -419,6 +419,37 @@ frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int fraction)
