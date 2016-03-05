@@ -834,45 +834,38 @@ object3d_from_contours (const POLYAREA *contours,
               ct_npoints = get_contour_npoints (ct);
             }
 
+=======
           next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
           prev_i_around_ct = start_of_ct + (offset_in_ct + ct_npoints - 1) % ct_npoints;
 
-=======
-      next_i_around_ct = start_of_ct + (offset_in_ct + 1) % ct_npoints;
-      prev_i_around_ct = start_of_ct + (offset_in_ct + ct_npoints - 1) % ct_npoints;
+          if (!extrude_inverted)
+            {
+              g_assert (RDATA (edges[              i]) == faces[i]);
+              g_assert (LDATA (edges[              i]) == faces[npoints]);
+              g_assert (RDATA (edges[1 * npoints + i]) == faces[npoints + 1]);
+              g_assert (LDATA (edges[1 * npoints + i]) == faces[i]);
+              g_assert (RDATA (edges[2 * npoints + i]) == faces[prev_i_around_ct]);
+              g_assert (LDATA (edges[2 * npoints + i]) == faces[i]);
 
-      if (!extrude_inverted)
-        {
->>>>>>> patched
-          g_assert (RDATA (edges[              i]) == faces[i]);
-          g_assert (LDATA (edges[              i]) == faces[npoints]);
-          g_assert (RDATA (edges[1 * npoints + i]) == faces[npoints + 1]);
-          g_assert (LDATA (edges[1 * npoints + i]) == faces[i]);
-          g_assert (RDATA (edges[2 * npoints + i]) == faces[prev_i_around_ct]);
-          g_assert (LDATA (edges[2 * npoints + i]) == faces[i]);
+              g_assert (              ONEXT (edges[              i])   == SYM (edges[prev_i_around_ct]));
+              g_assert (       ONEXT (ONEXT (edges[              i]))  == edges[2 * npoints + i]);
+              g_assert (ONEXT (ONEXT (ONEXT (edges[              i]))) ==      edges[              i]);
+              g_assert (              ONEXT (edges[1 * npoints + i])   == SYM (edges[2 * npoints + i]));
+              g_assert (       ONEXT (ONEXT (edges[1 * npoints + i]))  == SYM (edges[1 * npoints + prev_i_around_ct]));
+              g_assert (ONEXT (ONEXT (ONEXT (edges[1 * npoints + i]))) ==      edges[1 * npoints + i]);
 
-          g_assert (              ONEXT (edges[              i])   == SYM (edges[prev_i_around_ct]));
-          g_assert (       ONEXT (ONEXT (edges[              i]))  == edges[2 * npoints + i]);
-          g_assert (ONEXT (ONEXT (ONEXT (edges[              i]))) ==      edges[              i]);
-          g_assert (              ONEXT (edges[1 * npoints + i])   == SYM (edges[2 * npoints + i]));
-          g_assert (       ONEXT (ONEXT (edges[1 * npoints + i]))  == SYM (edges[1 * npoints + prev_i_around_ct]));
-          g_assert (ONEXT (ONEXT (ONEXT (edges[1 * npoints + i]))) ==      edges[1 * npoints + i]);
-
-          g_assert (LNEXT (edges[              i]) ==      edges[0 * npoints + next_i_around_ct]);
-          g_assert (LNEXT (edges[1 * npoints + i]) == SYM (edges[2 * npoints + next_i_around_ct]));
-          g_assert (LNEXT (edges[2 * npoints + i]) ==      edges[1 * npoints + i]);
+              g_assert (LNEXT (edges[              i]) ==      edges[0 * npoints + next_i_around_ct]);
+              g_assert (LNEXT (edges[1 * npoints + i]) == SYM (edges[2 * npoints + next_i_around_ct]));
+              g_assert (LNEXT (edges[2 * npoints + i]) ==      edges[1 * npoints + i]);
+            }
+          else
+            {
+              /* XXX: No debug checks for this yet. LDATA and RDATA should be swapped from the
+               *      above case, and ONEXT order should be reversed. It works, so have not
+               *      written in the debug checks.
+               */
+            }
         }
-<<<<<<< current
-=======
-      else
-        {
-          /* XXX: No debug checks for this yet. LDATA and RDATA should be swapped from the
-           *      above case, and ONEXT order should be reversed. It works, so have not
-           *      written in the debug checks.
-           */
-        }
-    }
->>>>>>> patched
 #endif
 
       objects = g_list_append (objects, object);
