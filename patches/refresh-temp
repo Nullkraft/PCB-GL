@@ -1,0 +1,103 @@
+Bottom: 0bf61a3e271b8fa90f2fc2b1f06bd7bfc976ac30
+Top:    4c163cc613f0278a37eddd0b481b1ae3c91a6d75
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-05 19:49:43 +0000
+
+Refresh of play-with-quad-edge-data
+
+---
+
+diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
+index 245abca..3f08003 100644
+--- a/src/hid/common/edge3d.c
++++ b/src/hid/common/edge3d.c
+@@ -4,7 +4,7 @@
+ #include "edge3d.h"
+ 
+ edge_info *
+-make_edge_info (bool is_stitch, bool is_round, float cx, float cy, float radius)
++make_edge_info (bool is_stitch, bool is_round, double cx, double cy, double radius)
+ {
+   edge_info *info;
+ 
+diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
+index e67cdb3..22e783f 100644
+--- a/src/hid/common/edge3d.h
++++ b/src/hid/common/edge3d.h
+@@ -2,10 +2,10 @@ typedef struct
+ {
+   bool is_stitch;
+   bool is_round;
+-  float cx;
+-  float cy;
+-  float radius;
++  double cx;
++  double cy;
++  double radius;
+ } edge_info;
+ 
+-edge_info *make_edge_info (bool is_stitch, bool is_round, float cx, float cy, float radius);
++edge_info *make_edge_info (bool is_stitch, bool is_round, double cx, double cy, double radius);
+ void destroy_edge_info (edge_info *info);
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 0a264ce..991ca86 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -174,11 +174,11 @@ draw_quad_edge (edge_ref e, void *data)
+       int i;
+       glBegin (GL_LINES);
+       for (i = 0; i < CIRC_SEGS; i++) {
+-        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos (i * 2. * M_PI / (float)CIRC_SEGS)),
+-                    MM_TO_COORD (info->cy + info->radius * sin (i * 2. * M_PI / (float)CIRC_SEGS)),
++        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos (i * 2. * M_PI / (double)CIRC_SEGS)),
++                    MM_TO_COORD (info->cy + info->radius * sin (i * 2. * M_PI / (double)CIRC_SEGS)),
+                     MM_TO_COORD (((vertex3d *)ODATA(e))->z));
+-        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos ((i + 1) * 2. * M_PI / (float)CIRC_SEGS)),
+-                    MM_TO_COORD (info->cy + info->radius * sin ((i + 1) * 2. * M_PI / (float)CIRC_SEGS)),
++        glVertex3f (MM_TO_COORD (info->cx + info->radius * cos ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
++                    MM_TO_COORD (info->cy + info->radius * sin ((i + 1) * 2. * M_PI / (double)CIRC_SEGS)),
+                     MM_TO_COORD (((vertex3d *)ODATA(e))->z));
+       }
+       glEnd ();
+diff --git a/src/hid/common/vertex3d.c b/src/hid/common/vertex3d.c
+index df5fd0e..d6b3a9b 100644
+--- a/src/hid/common/vertex3d.c
++++ b/src/hid/common/vertex3d.c
+@@ -4,14 +4,14 @@ static int global_vertex3d_count;
+ 
+ typedef struct
+ {
+-  float x;
+-  float y;
+-  float z;
++  double x;
++  double y;
++  double z;
+   int id;
+ } vertex3d;
+ 
+ vertex3d *
+-make_vertex3d (float x, float y, float z)
++make_vertex3d (double x, double y, double z)
+ {
+   vertex3d *v;
+ 
+diff --git a/src/hid/common/vertex3d.h b/src/hid/common/vertex3d.h
+index bac7e89..e399b88 100644
+--- a/src/hid/common/vertex3d.h
++++ b/src/hid/common/vertex3d.h
+@@ -1,10 +1,10 @@
+ typedef struct
+ {
+-  float x;
+-  float y;
+-  float z;
++  double x;
++  double y;
++  double z;
+   int id;
+ } vertex3d;
+ 
+-vertex3d *make_vertex3d (float x, float y, float z);
++vertex3d *make_vertex3d (double x, double y, double z);
+ void destroy_vertex3d (vertex3d *v);
