@@ -1,5 +1,5 @@
-Bottom: 0f893f329f09ae83d0a6a9e729cc250ff1c45414
-Top:    c37fcdf79a28ebb44276a22589549d57ab2bc2f5
+Bottom: f017643752510d12b5bb068fe70af3532d0a5d53
+Top:    71e0ed98ed90fedb6af76910cf4e9bd9ed8a493c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 14:34:02 +0000
 
@@ -8,7 +8,7 @@ Extend object3d code to support arc-segments in POLYAREA contours
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 413fd5d..527dbc4 100644
+index a64a451..a6ef0ff 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -245,6 +245,8 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
