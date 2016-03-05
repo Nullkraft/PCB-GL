@@ -259,10 +259,11 @@ get_contour_edge_n_is_round (PLINE *contour, int n)
     }
 #endif
 
-  while (n > 0) {
-    edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
-    n--;
-  }
+  while (n > 0)
+    {
+      edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
+      n--;
+    }
 
   return edge->is_round;
 }
@@ -308,10 +309,11 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
     }
 #endif
 
-  while (n > 0) {
-    edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
-    n--;
-  }
+  while (n > 0)
+    {
+      edge = edge->next; /* The VNODE structure is circularly linked, so wrapping is OK */
+      n--;
+    }
 
   center[0] = edge->cx;
   center[1] = edge->cy;
