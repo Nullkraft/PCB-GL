@@ -24,6 +24,7 @@
 #define PERFECT_ROUND_CONTOURS
 
 #define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
+#undef REVERSED_PCB_CONTOURS
 
 #ifdef REVERSED_PCB_CONTOURS
 #define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
@@ -386,7 +387,7 @@ object3d_from_contours (const POLYAREA *contours,
 #ifdef REVERSED_PCB_CONTOURS
       face3d_set_normal (faces[npoints], 0., 0., -1.);
 #else
-      face3d_set_normal (faces[npoints], 0., 0., 1.);
+      face3d_set_normal (faces[npoints], 0., 0., 1.); /* PCB bottom is at positive Z in this scheme */
 #endif
       face3d_set_appearance (faces[npoints], top_bot_appearance);
       object3d_add_face (object, faces[npoints]);
@@ -395,7 +396,7 @@ object3d_from_contours (const POLYAREA *contours,
 #ifdef REVERSED_PCB_CONTOURS
       face3d_set_normal (faces[npoints + 1], 0., 0., 1.);
 #else
-      face3d_set_normal (faces[npoints + 1], 0., 0., -1.);
+      face3d_set_normal (faces[npoints + 1], 0., 0., -1.); /* PCB top is at negative Z in this scheme */
 #endif
       face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
       object3d_add_face (object, faces[npoints + 1]);
