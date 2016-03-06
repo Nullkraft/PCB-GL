@@ -1,4 +1,4 @@
-Bottom: c2e8a7faac0ccdc35347acb4704183e3ba3db1ef
+Bottom: 6f3212de2c2de37bcf89d1b541228c79935612a3
 Top:    853585b4edcfdb387190b8bc86f069d0a8b7ffa7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
@@ -10,31 +10,6 @@ Avoids casting
 
 ---
 
-diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index ec11c48..4c3468d 100644
---- a/src/hid/common/object3d.c
-+++ b/src/hid/common/object3d.c
-@@ -304,14 +304,14 @@ object3d_from_board_outline (void)
-               ct_npoints = get_contour_npoints (ct);
-             }
- 
--        get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
-+          get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
- 
--        vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_STEP_Z (PCB, HACK_BOARD_THICKNESS)); /* Bottom */
--        vertices[npoints + i] = make_vertex3d (x1, y1, 0);                                            /* Top */
-+          vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_STEP_Z (PCB, HACK_BOARD_THICKNESS)); /* Bottom */
-+          vertices[npoints + i] = make_vertex3d (x1, y1, 0);                                            /* Top */
- 
--        object3d_add_vertex (object, vertices[i]);
--        object3d_add_vertex (object, vertices[npoints + i]);
--      }
-+          object3d_add_vertex (object, vertices[i]);
-+          object3d_add_vertex (object, vertices[npoints + i]);
-+        }
- 
-       /* Define the edges */
-       for (i = 0; i < 3 * npoints; i++)
 diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
 index 0d4b955..8523390 100644
 --- a/src/hid/step/step_writer.c
