@@ -1,5 +1,5 @@
-Bottom: 6105ad33c597dd6f1bbc0c24ab46290debbcaf8f
-Top:    9d5c46c38d7894a0491263f09cb23d689d77d5f8
+Bottom: 4c6fc33ef15e5fcbb6f4648d7613f6f22e51bb44
+Top:    724450b1f64d5cdc293b8ecabf3dc1c7c8fae099
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:26 +0000
 
@@ -9,7 +9,7 @@ hid/step: Add copper layer export to 3D model
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 0154912..d26f58f 100644
+index c40d458..fab6ed2 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -20,6 +20,8 @@
@@ -31,7 +31,7 @@ index 0154912..d26f58f 100644
  
  static GList *object3d_test_objects = NULL;
  
-@@ -920,6 +924,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -921,6 +925,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
    r_search (layer->arc_tree,  &bounds, NULL, arc_mask_callback, &info);
    r_search (layer->text_tree, &bounds, NULL, text_mask_callback, &info);
    r_search (layer->polygon_tree, &bounds, NULL, polygon_mask_callback, &info);
@@ -39,7 +39,7 @@ index 0154912..d26f58f 100644
    r_search (PCB->Data->pad_tree, &bounds, NULL, pad_mask_callback, &info);
    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_mask_callback, &info);
    r_search (PCB->Data->via_tree, &bounds, NULL, pv_mask_callback, &info);
-@@ -929,11 +934,11 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -930,11 +935,11 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
  
    objects = object3d_from_contours (info.poly,
  #ifdef REVERSED_PCB_CONTOURS
@@ -55,7 +55,7 @@ index 0154912..d26f58f 100644
  #endif
                                      mask_appearance,
                                      NULL);
-@@ -944,3 +949,298 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -945,3 +950,298 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
  
    return objects;
  }
