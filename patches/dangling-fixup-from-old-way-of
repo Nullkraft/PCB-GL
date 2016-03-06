@@ -1,5 +1,5 @@
-Bottom: 237e636eecd1d6f98812593718e147362d979989
-Top:    4235226a040f8b00aecbcf26d283a4a8e6332f66
+Bottom: d60d2f5ebf9b0270404406cfefd318d5b4ecd463
+Top:    1dd1f1447ae77b5294332f49afe9d314232dc67e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 00:29:26 +0000
 
@@ -9,7 +9,7 @@ Dangling fixup from old way of emitting board contours
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index cc0f725..c043bbe 100644
+index 79a7296..2b20833 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -305,8 +305,13 @@ object3d_from_board_outline (void)
@@ -47,7 +47,7 @@ index cc0f725..c043bbe 100644
        face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
        object3d_add_face (object, faces[npoints + 1]);
  
-@@ -460,11 +473,11 @@ object3d_from_board_outline (void)
+@@ -461,11 +474,11 @@ object3d_from_board_outline (void)
                                     0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
  #else
                edge_info_set_round (UNDIR_DATA (edges[i]),
