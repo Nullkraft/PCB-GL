@@ -1,5 +1,5 @@
-Bottom: d6530e1c569a3ed11b2f0cd3c27bc26fae887dc9
-Top:    3a8a4b60f9aed2415b7602c1eb410bf784132d5f
+Bottom: cc627a383bca7302d2c50b2a8884ebed0e3d1b99
+Top:    d61801ee2347c5c0f1f74ae9251348b228b43740
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 12:48:13 +0000
 
@@ -9,10 +9,10 @@ STEP changes from continue-tinkering-with-3d
 ---
 
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 41c287d..eeec97a 100644
+index 5237c4f..55ed660 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -25,6 +25,7 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -26,6 +26,7 @@ object3d_export_to_step (object3d *object, const char *filename)
    struct tm utc;
    int next_step_identifier;
    int geometric_representation_context_identifier;
@@ -20,7 +20,7 @@ index 41c287d..eeec97a 100644
    int brep_identifier;
    int pcb_shell_identifier;
    int brep_style_identifier;
-@@ -95,12 +96,13 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -96,12 +97,13 @@ object3d_export_to_step (object3d *object, const char *filename)
                "#16 =( NAMED_UNIT ( * ) PLANE_ANGLE_UNIT ( ) SI_UNIT ( $, .RADIAN. ) );\n"
                "#17 =( NAMED_UNIT ( * ) SI_UNIT ( $, .STERADIAN. ) SOLID_ANGLE_UNIT ( ) );\n"
                "#18 =( GEOMETRIC_REPRESENTATION_CONTEXT ( 3 ) GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT ( ( #14 ) ) GLOBAL_UNIT_ASSIGNED_CONTEXT ( ( #15, #16, #17 ) ) REPRESENTATION_CONTEXT ( 'NONE', 'WORKASPACE' ) );\n");
@@ -38,7 +38,7 @@ index 41c287d..eeec97a 100644
  
    /* Save a place for the brep identifier */
    next_step_identifier = 21;
-@@ -148,7 +150,6 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -149,7 +151,6 @@ object3d_export_to_step (object3d *object, const char *filename)
                     next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
                     next_step_identifier + 4, next_step_identifier + 3, face->radius);
  
@@ -46,7 +46,7 @@ index 41c287d..eeec97a 100644
            face->surface_identifier = next_step_identifier + 4;
            next_step_identifier = next_step_identifier + 5;
          }
-@@ -191,7 +192,6 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -192,7 +193,6 @@ object3d_export_to_step (object3d *object, const char *filename)
                     next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
                     next_step_identifier + 4, next_step_identifier + 3);
  
@@ -54,7 +54,7 @@ index 41c287d..eeec97a 100644
            face->surface_identifier = next_step_identifier + 4;
            next_step_identifier = next_step_identifier + 5;
          }
-@@ -211,7 +211,8 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -212,7 +212,8 @@ object3d_export_to_step (object3d *object, const char *filename)
                        "#%i = AXIS2_PLACEMENT_3D ( 'NONE', #%i,  #%i,  #%i ) ; "
                        "#%i = CIRCLE ( 'NONE', #%i, %f ) ;\n",
                     next_step_identifier,     /* Center of the circle   */ info->cx, info->cy, info->cz, // <--- Center of coordinate placement
@@ -64,7 +64,7 @@ index 41c287d..eeec97a 100644
                     next_step_identifier + 2, /* ??????                 */ -1.0, 0.0, 0.0, // <--- Approximate X-axis direction of placement /* XXX: PULL FROM FACE DATA */
                     next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
                     next_step_identifier + 4, next_step_identifier + 3, info->radius);
-@@ -284,7 +285,6 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -285,7 +286,6 @@ object3d_export_to_step (object3d *object, const char *filename)
            contour3d *contour = contour_iter->data;
            edge_ref edge;
  
@@ -72,7 +72,7 @@ index 41c287d..eeec97a 100644
            fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ", next_step_identifier);
  
            /* Emit the edges.. */
-@@ -295,43 +295,43 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -296,43 +296,43 @@ object3d_export_to_step (object3d *object, const char *filename)
              {
                fprintf (f, "#%i, ", ORIENTED_EDGE_IDENTIFIER(edge)); /* XXX: IS ORIENTATION GOING TO BE CORRECT?? */
              }
@@ -153,7 +153,7 @@ index 41c287d..eeec97a 100644
  
    /* Closed shell which bounds the brep solid */
    pcb_shell_identifier = next_step_identifier;
-@@ -364,10 +364,12 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -365,10 +365,12 @@ object3d_export_to_step (object3d *object, const char *filename)
    fprintf (f, ", #%i ) ;\n", geometric_representation_context_identifier);
    next_step_identifier = next_step_identifier + 1;
  
