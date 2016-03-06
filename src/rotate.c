@@ -442,7 +442,7 @@ RotateScreenObject (Coord X, Coord Y, unsigned Steps)
   if ((type = SearchScreen (X, Y, ROTATE_TYPES, &ptr1, &ptr2,
 			    &ptr3)) != NO_TYPE)
     {
-      if (TEST_FLAG (LOCKFLAG, (ArcType *) ptr2))
+      if (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, (ArcType *) ptr2))
 	{
 	  Message (_("Sorry, the object is locked\n"));
 	  return;

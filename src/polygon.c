@@ -2212,7 +2212,8 @@ MorphPolygon (LayerType *layer, PolygonType *poly)
   bool many = false;
   FlagType flags;
 
-  if (!poly->Clipped || TEST_FLAG (LOCKFLAG, poly))
+  if (!poly->Clipped ||
+      (!PCB->ViolateLock && TEST_FLAG (LOCKFLAG, poly)))
     return false;
   if (poly->Clipped->f == poly->Clipped)
     return false;
