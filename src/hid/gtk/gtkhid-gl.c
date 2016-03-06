@@ -17,8 +17,8 @@
 
 #include "hid/common/quad.h"
 #include "hid/common/vertex3d.h"
-#include "hid/common/face3d.h"
 #include "hid/common/appearance.h"
+#include "hid/common/face3d.h"
 #include "hid/common/object3d.h"
 
 #ifndef WIN32
