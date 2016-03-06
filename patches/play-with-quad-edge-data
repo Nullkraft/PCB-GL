@@ -1,5 +1,5 @@
 Bottom: c4002ed5f01ca2c0f265695d50e4e9b052e6984e
-Top:    7ec7338f84ad24394a991922d814d58558b38bec
+Top:    45053a2706db05cf3799df452c84f43f90fccacb
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 23:02:22 +0000
 
@@ -173,10 +173,10 @@ index 0000000..42154df
 +void face3d_add_contour (face3d *face, edge_ref contour);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 new file mode 100644
-index 0000000..28fb0fe
+index 0000000..6463437
 --- /dev/null
 +++ b/src/hid/common/object3d.c
-@@ -0,0 +1,445 @@
+@@ -0,0 +1,444 @@
 +#include <stdio.h>
 +#include <stdlib.h>
 +#include <stdbool.h>
@@ -574,7 +574,6 @@ index 0000000..28fb0fe
 +          if (offset_in_ct == ct_npoints)
 +            {
 +              start_of_ct = i;
-+              printf ("start_of_ct = %i\n", start_of_ct);
 +              offset_in_ct = 0;
 +              ct = ct->next;
 +              ct_npoints = get_contour_npoints (ct);
