@@ -1,5 +1,5 @@
 Bottom: ed7fc8c9c4ce2c61194018b2ed6b65123b73be49
-Top:    fd482e9758f93cfa250be564486c3b16e51bb830
+Top:    4a0a75436949af56b3dd6b3490c23e384c8d253e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -21,39 +21,16 @@ index 60807b7..bd6874d 100644
  	hid/step/object3d_step.c \
  	hid/step/object3d_step.h
  libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
-diff --git a/src/hid/common/contour3d.c b/src/hid/common/contour3d.c
-index eb2235e..13e865e 100644
---- a/src/hid/common/contour3d.c
-+++ b/src/hid/common/contour3d.c
-@@ -1,5 +1,6 @@
- #include <glib.h>
- #include <stdbool.h>
-+#include <stdio.h>
- 
- #include "step_id.h"
- #include "quad.h"
 diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
-index 35a8846..23e335e 100644
+index 35a8846..0cf8613 100644
 --- a/src/hid/common/edge3d.c
 +++ b/src/hid/common/edge3d.c
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,4 @@
  #include <stdbool.h>
- #include <stdlib.h>
-+#include <stdio.h>
+-#include <stdlib.h>
  #include <glib.h>
  
  #include "step_id.h"
-diff --git a/src/hid/common/face3d.c b/src/hid/common/face3d.c
-index 5f1df0a..13d7501 100644
---- a/src/hid/common/face3d.c
-+++ b/src/hid/common/face3d.c
-@@ -1,5 +1,6 @@
- #include <glib.h>
- #include <stdbool.h>
-+#include <stdio.h>
- 
- #include "step_id.h"
- #include "quad.h"
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 index 34ffceb..9271c79 100644
 --- a/src/hid/common/object3d.c
