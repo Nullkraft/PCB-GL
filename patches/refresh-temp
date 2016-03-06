@@ -1,0 +1,30 @@
+Bottom: 66ee69e95f8455d306b8aa8f6cbfbde1734b1ea6
+Top:    b481d4491e53df2c55635303421e8f6f83f60c08
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-06 13:46:26 +0000
+
+Refresh of wip-on-quad-edge-play
+
+---
+
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index 2bc6a9a..0c3cd6b 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -2,12 +2,12 @@
+ //#include <stdlib.h>
+ //#include <stdbool.h>
+ 
+-//#include <glib.h>
++#include <glib.h>
+ 
+ #include "hid/common/quad.h"
+-//#include "hid/common/vertex3d.h"
+-//#include "hid/common/appearance.h"
+-//#include "hid/common/face3d.h"
++#include "hid/common/vertex3d.h"
++#include "hid/common/appearance.h"
++#include "hid/common/face3d.h"
+ //#include "hid/common/edge3d.h"
+ #include "hid/common/object3d.h"
+ //#include "polygon.h"
