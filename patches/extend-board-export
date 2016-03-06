@@ -1,5 +1,5 @@
 Bottom: e2f686a7f1c4d7d8226b19b0fc3d3e52fa344f08
-Top:    e2f686a7f1c4d7d8226b19b0fc3d3e52fa344f08
+Top:    3c75d68c9d5dd24dbb85087d03a23d7fe3744dee
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 00:49:06 +0000
 
@@ -12,4 +12,526 @@ V2: Apply the solder-mask on top of the board (core) thickness, don't shrink the
 
 ---
 
-
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 9246b40..9120b08 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -60,6 +60,7 @@
+ 
+ 
+ #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
++#define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
+ 
+ static GList *object3d_test_objects = NULL;
+ 
+@@ -596,14 +597,18 @@ GList *
+ object3d_from_board_outline (void)
+ {
+   POLYAREA *board_outline = board_outline_poly (true);
++
++#if 0
++  return object3d_from_soldermask_within_area (board_outline, TOP_SIDE);
++#else
++
+   appearance *board_appearance;
+   appearance *top_bot_appearance;
+   GList *objects;
+ 
+   board_appearance = make_appearance ();
+-  top_bot_appearance = make_appearance ();
++  top_bot_appearance = NULL;
+   appearance_set_color (board_appearance,   1.0, 1.0, 0.6);
+-  appearance_set_color (top_bot_appearance, 0.2, 0.8, 0.2);
+ 
+   objects = object3d_from_contours (board_outline,
+ #ifdef REVERSED_PCB_CONTOURS
+@@ -622,4 +627,250 @@ object3d_from_board_outline (void)
+   poly_Free (&board_outline);
+ 
+   return objects;
++#endif
++}
++
++struct mask_info {
++  POLYAREA *poly;
++  int side;
++};
++
++static POLYAREA *
++TextToPoly (TextType *Text, Coord min_line_width)
++{
++  POLYAREA *np, *res;
++  Coord x = 0;
++  unsigned char *string = (unsigned char *) Text->TextString;
++  Cardinal n;
++  FontType *font = &PCB->Font;
++
++  res = NULL;
++
++  while (string && *string)
++    {
++      /* draw lines if symbol is valid and data is present */
++      if (*string <= MAX_FONTPOSITION && font->Symbol[*string].Valid)
++        {
++          LineType *line = font->Symbol[*string].Line;
++          LineType newline;
++
++          for (n = font->Symbol[*string].LineN; n; n--, line++)
++            {
++              /* create one line, scale, move, rotate and swap it */
++              newline = *line;
++              newline.Point1.X = SCALE_TEXT (newline.Point1.X + x, Text->Scale);
++              newline.Point1.Y = SCALE_TEXT (newline.Point1.Y, Text->Scale);
++              newline.Point2.X = SCALE_TEXT (newline.Point2.X + x, Text->Scale);
++              newline.Point2.Y = SCALE_TEXT (newline.Point2.Y, Text->Scale);
++              newline.Thickness = SCALE_TEXT (newline.Thickness, Text->Scale / 2);
++              if (newline.Thickness < min_line_width)
++                newline.Thickness = min_line_width;
++
++              RotateLineLowLevel (&newline, 0, 0, Text->Direction);
++
++              /* the labels of SMD objects on the bottom
++               * side haven't been swapped yet, only their offset
++               */
++              if (TEST_FLAG (ONSOLDERFLAG, Text))
++                {
++                  newline.Point1.X = SWAP_SIGN_X (newline.Point1.X);
++                  newline.Point1.Y = SWAP_SIGN_Y (newline.Point1.Y);
++                  newline.Point2.X = SWAP_SIGN_X (newline.Point2.X);
++                  newline.Point2.Y = SWAP_SIGN_Y (newline.Point2.Y);
++                }
++              /* add offset and draw line */
++              newline.Point1.X += Text->X;
++              newline.Point1.Y += Text->Y;
++              newline.Point2.X += Text->X;
++              newline.Point2.Y += Text->Y;
++
++              np = LinePoly (&newline, newline.Thickness, NULL);
++              poly_Boolean_free (res, np, &res, PBO_UNITE);
++            }
++
++          /* move on to next cursor position */
++          x += (font->Symbol[*string].Width + font->Symbol[*string].Delta);
++        }
++      else
++        {
++          /* the default symbol is a filled box */
++          BoxType defaultsymbol = PCB->Font.DefaultSymbol;
++          Coord size = (defaultsymbol.X2 - defaultsymbol.X1) * 6 / 5;
++
++          defaultsymbol.X1 = SCALE_TEXT (defaultsymbol.X1 + x, Text->Scale);
++          defaultsymbol.Y1 = SCALE_TEXT (defaultsymbol.Y1, Text->Scale);
++          defaultsymbol.X2 = SCALE_TEXT (defaultsymbol.X2 + x, Text->Scale);
++          defaultsymbol.Y2 = SCALE_TEXT (defaultsymbol.Y2, Text->Scale);
++
++          RotateBoxLowLevel (&defaultsymbol, 0, 0, Text->Direction);
++
++          /* add offset and draw box */
++          defaultsymbol.X1 += Text->X;
++          defaultsymbol.Y1 += Text->Y;
++          defaultsymbol.X2 += Text->X;
++          defaultsymbol.Y2 += Text->Y;
++
++          np = RectPoly (defaultsymbol.X1, defaultsymbol.X2,
++                         defaultsymbol.Y1, defaultsymbol.Y2);
++          poly_Boolean_free (res, np, &res, PBO_UNITE);
++
++          /* move on to next cursor position */
++          x += size;
++        }
++      string++;
++    }
++
++  return res;
++}
++
++static int
++line_mask_callback (const BoxType * b, void *cl)
++{
++  LineType *line = (LineType *) b;
++  struct mask_info *info = (struct mask_info *) cl;
++  POLYAREA *np, *res;
++
++  if (!(np = LinePoly (line, line->Thickness, NULL)))
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  info->poly = res;
++
++  return 1;
++}
++
++static int
++arc_mask_callback (const BoxType * b, void *cl)
++{
++  ArcType *arc = (ArcType *) b;
++  struct mask_info *info = (struct mask_info *) cl;
++  POLYAREA *np, *res;
++
++  if (!(np = ArcPoly (arc, arc->Thickness, NULL)))
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  info->poly = res;
++
++  return 1;
++}
++
++
++static int
++text_mask_callback (const BoxType * b, void *cl)
++{
++  TextType *text = (TextType *) b;
++  struct mask_info *info = (struct mask_info *) cl;
++  POLYAREA *np, *res;
++
++  if (!(np = TextToPoly (text, PCB->minWid))) /* XXX: Min mask cutout width should be separate */
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  info->poly = res;
++
++  return 1;
++}
++
++static int
++polygon_mask_callback (const BoxType * b, void *cl)
++{
++  PolygonType *poly = (PolygonType *) b;
++  struct mask_info *info = (struct mask_info *) cl;
++  POLYAREA *np, *res;
++
++  if (!(np = PolygonToPoly (poly)))
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  info->poly = res;
++
++  return 1;
++}
++
++static int
++pad_mask_callback (const BoxType * b, void *cl)
++{
++  PadType *pad = (PadType *) b;
++  struct mask_info *info = (struct mask_info *) cl;
++  POLYAREA *np, *res;
++
++  if (pad->Mask == 0)
++    return 0;
++
++  if (XOR (TEST_FLAG (ONSOLDERFLAG, pad), (info->side == BOTTOM_SIDE)))
++    return 0;
++
++  if (!(np = PadPoly (pad, pad->Mask)))
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  info->poly = res;
++
++  return 1;
++}
++
++static int
++pv_mask_callback (const BoxType * b, void *cl)
++{
++  PinType *pv = (PinType *)b;
++  struct mask_info *info = cl;
++  POLYAREA *np, *res;
++
++  if (!(np = CirclePoly (pv->X, pv->Y, pv->Mask / 2, NULL)))
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  info->poly = res;
++
++  return 1;
++}
++
++
++GList *
++object3d_from_soldermask_within_area (POLYAREA *area, int side)
++{
++  appearance *mask_appearance;
++  GList *objects;
++  struct mask_info info;
++  BoxType bounds;
++  LayerType *layer;
++
++  poly_Copy0 (&info.poly, area);
++  info.side = side;
++
++  bounds.X1 = area->contours->xmin;
++  bounds.X2 = area->contours->xmax;
++  bounds.Y1 = area->contours->ymin;
++  bounds.Y2 = area->contours->ymax;
++
++  layer = LAYER_PTR ((side == TOP_SIDE) ? top_soldermask_layer : bottom_soldermask_layer);
++
++  r_search (layer->line_tree, &bounds, NULL, line_mask_callback, &info);
++  r_search (layer->arc_tree,  &bounds, NULL, arc_mask_callback, &info);
++  r_search (layer->text_tree, &bounds, NULL, text_mask_callback, &info);
++  r_search (layer->polygon_tree, &bounds, NULL, polygon_mask_callback, &info);
++  r_search (PCB->Data->pad_tree, &bounds, NULL, pad_mask_callback, &info);
++  r_search (PCB->Data->pin_tree, &bounds, NULL, pv_mask_callback, &info);
++  r_search (PCB->Data->via_tree, &bounds, NULL, pv_mask_callback, &info);
++
++  mask_appearance = make_appearance ();
++  appearance_set_color (mask_appearance, 0.2, 0.8, 0.2);
++
++  objects = object3d_from_contours (info.poly,
++#ifdef REVERSED_PCB_CONTOURS
++                                    (side == TOP_SIDE) ? 0                    : -HACK_BOARD_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
++                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS  : -HACK_BOARD_THICKNESS,                       /* Top */
++#else
++                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2                       : HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Bottom */
++                                    (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2, /* Top */
++#endif
++                                    mask_appearance,
++                                    NULL);
++
++  destroy_appearance (mask_appearance);
++
++  poly_Free (&info.poly);
++
++  return objects;
+ }
+diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
+index 0e8b1d5..2ffdb54 100644
+--- a/src/hid/common/object3d.h
++++ b/src/hid/common/object3d.h
+@@ -17,3 +17,4 @@ void object3d_add_vertex (object3d *object, vertex3d *vertex);
+ void object3d_add_face (object3d *object, face3d *face);
+ GList *object3d_from_contours (const POLYAREA *contours, double zbot, double ztop, const appearance *master_object_appearance, const appearance *master_top_bot_appearance);
+ GList *object3d_from_board_outline (void);
++GList *object3d_from_soldermask_within_area (POLYAREA *area, int side);
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 2e2e86d..d765c3c 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -6,7 +6,7 @@
+ //#include <stdarg.h> /* not used */
+ //#include <stdlib.h>
+ //#include <string.h>
+-//#include <assert.h> /* not used */
++#include <assert.h>
+ #include <time.h>
+ 
+ #include "global.h"
+@@ -25,6 +25,7 @@
+ #include "hid/common/hidinit.h"
+ #include "polygon.h"
+ #include "misc.h"
++#include "rtree.h"
+ 
+ #include "hid/common/step_id.h"
+ #include "hid/common/quad.h"
+@@ -136,6 +137,8 @@ step_do_export (HID_Attr_Val * options)
+   const char *filename;
+   const char *temp_pcb_filename = "_pcb.step";
+   GList *board_outline_list;
++  POLYAREA *board_outline;
++  POLYAREA *piece;
+ 
+   if (!options)
+     {
+@@ -150,7 +153,61 @@ step_do_export (HID_Attr_Val * options)
+     filename = "pcb-out.step";
+ 
+   board_outline_list = object3d_from_board_outline ();
+-  object3d_list_export_to_step_assy (board_outline_list, temp_pcb_filename);
++
++  board_outline = board_outline_poly (true);
++  piece = board_outline;
++  do {
++    GList *mask_objects;
++    PLINE *curc;
++    PLINE *next;
++    PLINE **prev_next;
++
++    // Remove any complete internal contours due to vias, so we may
++    // more realistically show tented vias without loosing the ability
++    // to split the soldermask body with a contour partly formed of vias.
++    //
++    // Should have the semantics that via holes in the mask are only due
++    // to the clearance size, not the drill size - IFF they are on the
++    // interior of a board body piece.
++    //
++    // If the via wall forms part of the board piece outside contour, the
++    // soldermask will be the maximum of the drilling hole, or the clearance;
++    // via drill-hole walls are not removed from the piece outside contour.
++
++    prev_next = &piece->contours;
++    for (curc = piece->contours; curc != NULL; curc = next)
++      {
++        next = curc->next;
++
++        /* XXX: Insufficient test for via contour.. really need to KNOW this was a pin/via,
++         *      as we may start using round tagged contours for circular cutouts etc...
++         */
++        if (!curc->is_round)
++          {
++            prev_next = &curc->next;
++            continue;
++          }
++
++        /* Remove contour... */
++        assert (*prev_next == curc);
++        *prev_next = curc->next;
++        curc->next = NULL;
++
++        r_delete_entry (piece->contour_tree, (BoxType *) curc);
++        poly_DelContour (&curc);
++      }
++
++    mask_objects = object3d_from_soldermask_within_area (piece, TOP_SIDE);
++    board_outline_list = g_list_concat (board_outline_list, mask_objects);
++
++    mask_objects = object3d_from_soldermask_within_area (piece, BOTTOM_SIDE);
++    board_outline_list = g_list_concat (board_outline_list, mask_objects);
++
++  } while ((piece = piece->f) != board_outline);
++  poly_Free (&board_outline);
++
++  object3d_list_export_to_step_part (board_outline_list, temp_pcb_filename);
++//  object3d_list_export_to_step_assy (board_outline_list, temp_pcb_filename);
+   g_list_free_full (board_outline_list, (GDestroyNotify)destroy_object3d);
+ 
+   {
+diff --git a/src/polygon.c b/src/polygon.c
+index ea7c4ec..15256b8 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -861,14 +861,72 @@ LinePoly (LineType * L, Coord thick, char *name)
+   return np;
+ }
+ 
+-/* make a rounded-corner rectangle */
+-POLYAREA *
++/* make a rectangle pad (clear is applied square, not rounded) */
++static POLYAREA *
+ SquarePadPoly (PadType * pad, Coord clear)
+ {
+   PLINE *contour = NULL;
+   POLYAREA *np = NULL;
+   Vector v;
+   double d;
++  double cx, cy;
++  PadType _c=*pad,*c=&_c;
++  int halfclear = (clear + 1) / 2;
++
++  d =
++    sqrt (SQUARE (pad->Point1.X - pad->Point2.X) +
++          SQUARE (pad->Point1.Y - pad->Point2.Y));
++  if (d != 0)
++    {
++      double a = halfclear / d;
++      cx = (c->Point1.Y - c->Point2.Y) * a;
++      cy = (c->Point2.X - c->Point1.X) * a;
++
++      c->Point1.X -= cy;
++      c->Point1.Y += cx;
++      c->Point2.X += cy;
++      c->Point2.Y -= cx;
++    }
++  else
++    {
++      cx = halfclear;
++      cy = 0;
++
++      c->Point1.Y += cx;
++      c->Point2.Y -= cx;
++    }
++
++  v[0] = c->Point1.X + cx;
++  v[1] = c->Point1.Y + cy;
++  if ((contour = poly_NewContour (poly_CreateNode (v))) == NULL)
++    return 0;
++
++  v[0] = c->Point1.X - cx;
++  v[1] = c->Point1.Y - cy;
++  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++
++  v[0] = c->Point2.X - cx;
++  v[1] = c->Point2.Y - cy;
++  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++
++  v[0] = c->Point2.X + cx;
++  v[1] = c->Point2.Y + cy;
++  poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++
++  /* now we have the line contour */
++  if (!(np = ContourToPoly (contour)))
++    return NULL;
++  return np;
++}
++
++/* make a rounded-corner rectangle */
++static POLYAREA *
++SquarePadClearPoly (PadType * pad, Coord clear)
++{
++  PLINE *contour = NULL;
++  POLYAREA *np = NULL;
++  Vector v;
++  double d;
+   double tx, ty;
+   double cx, cy;
+   PadType _t=*pad,*t=&_t;
+@@ -1025,6 +1083,24 @@ BoxPolyBloated (BoxType *box, Coord bloat)
+                    box->Y1 - bloat, box->Y2 + bloat);
+ }
+ 
++POLYAREA *
++PadPoly (PadType *pad, Coord size)
++{
++  if (TEST_FLAG (SQUAREFLAG, pad))
++    return SquarePadPoly (pad, size);
++  else
++    return LinePoly ((LineType *) pad, size, NULL);
++}
++
++static POLYAREA *
++PadClearPoly (PadType *pad, Coord size)
++{
++  if (TEST_FLAG (SQUAREFLAG, pad))
++    return SquarePadClearPoly (pad, size);
++  else
++    return LinePoly ((LineType *) pad, size, NULL);
++}
++
+ /* remove the pin clearance from the polygon */
+ static int
+ SubtractPin (DataType * d, PinType * pin, LayerType * l, PolygonType * p)
+@@ -1095,18 +1171,8 @@ SubtractPad (PadType * pad, PolygonType * p)
+ 
+   if (pad->Clearance == 0)
+     return 0;
+-  if (TEST_FLAG (SQUAREFLAG, pad))
+-    {
+-      if (!
+-          (np = SquarePadPoly (pad, pad->Thickness + pad->Clearance)))
+-        return -1;
+-    }
+-  else
+-    {
+-      if (!
+-          (np = LinePoly ((LineType *) pad, pad->Thickness + pad->Clearance, NULL)))
+-        return -1;
+-    }
++  if (!(np = PadClearPoly (pad, pad->Thickness + pad->Clearance)))
++    return -1;
+   return Subtract (np, p, true);
+ }
+ 
+diff --git a/src/polygon.h b/src/polygon.h
+index 8d4bfc4..15df8cc 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -92,6 +92,7 @@ POLYAREA * LinePoly(LineType *l, Coord thick, char *name);
+ POLYAREA * ArcPoly(ArcType *l, Coord thick, char *name);
+ POLYAREA * PinPoly(PinType *l, Coord thick, Coord clear);
+ POLYAREA * BoxPolyBloated (BoxType *box, Coord radius);
++POLYAREA * PadPoly (PadType *pad, Coord size);
+ void frac_circle (PLINE *, Coord, Coord, Vector, int);
+ int InitClip(DataType *d, LayerType *l, PolygonType *p);
+ void RestoreToPolygon(DataType *, int, void *, void *);
