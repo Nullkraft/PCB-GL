@@ -1,4 +1,4 @@
-Bottom: 1ee34354f18a23d8fcf7e63b70a7092f2169061f
+Bottom: a077ce4d5a7997d687ff10799376c44b0c85b0db
 Top:    b481d4491e53df2c55635303421e8f6f83f60c08
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
@@ -66,9 +66,8 @@ index 0000000..d4917d7
 +void destroy_appearance (appearance *appearance);
 +void appearance_set_color (appearance *appearance, float r, float g, float b);
 diff --git a/src/hid/common/face3d.c b/src/hid/common/face3d.c
-new file mode 100644
-index 0000000..1a8c8c3
---- /dev/null
+index e69de29..1a8c8c3 100644
+--- a/src/hid/common/face3d.c
 +++ b/src/hid/common/face3d.c
 @@ -0,0 +1,27 @@
 +#include <glib.h>
@@ -99,9 +98,8 @@ index 0000000..1a8c8c3
 +  face->contours = g_list_append (face->contours, (void *)contour);
 +}
 diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
-new file mode 100644
-index 0000000..42154df
---- /dev/null
+index e69de29..42154df 100644
+--- a/src/hid/common/face3d.h
 +++ b/src/hid/common/face3d.h
 @@ -0,0 +1,8 @@
 +typedef struct {
