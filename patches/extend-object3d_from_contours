@@ -1,5 +1,5 @@
-Bottom: 7767f27c45c90faf1ae234273ee676830b2d6b3b
-Top:    14f48766527e942206e5fd0a7b6f7d4c36761cd8
+Bottom: 8db01ee971c8bdce5b5cc3f0da05f1310c52db9b
+Top:    cd861e7cc367aacecc8b6d45fe06738b02f93228
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:27 +0000
 
@@ -11,7 +11,7 @@ This will be useful when extruding voids within objects during 3D export.
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 98a5c93..5d55598 100644
+index ef9d57f..9170c65 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -329,7 +329,8 @@ object3d_from_contours (const POLYAREA *contours,
@@ -422,7 +422,7 @@ index 98a5c93..5d55598 100644
  
    destroy_appearance (mask_appearance);
  
-@@ -1323,7 +1385,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1317,7 +1379,8 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                  -depth - HACK_COPPER_THICKNESS, /* Top */
  #endif
                                  copper_appearance,

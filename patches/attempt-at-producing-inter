@@ -1,5 +1,5 @@
-Bottom: 14f48766527e942206e5fd0a7b6f7d4c36761cd8
-Top:    881e22a10d3b5499b0e0383ac4e486b919321252
+Bottom: cd861e7cc367aacecc8b6d45fe06738b02f93228
+Top:    bffb8232f2dd901b5753f84511e411d4dd57409e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:27 +0000
 
@@ -19,7 +19,7 @@ doesn't have a convenient implementation.
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 5d55598..78d139a 100644
+index 9170c65..43bccb9 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -66,6 +66,7 @@
@@ -215,7 +215,7 @@ index 5d55598..78d139a 100644
        info.poly = NULL;
  
        fprintf (stderr, "Computing copper geometry for group %i\n", group);
-@@ -1365,9 +1450,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1359,9 +1444,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
         *
         */
  
@@ -227,7 +227,7 @@ index 5d55598..78d139a 100644
  
        if (info.poly == NULL)
          {
-@@ -1375,18 +1462,308 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1369,18 +1456,308 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
            continue;
          }
  
@@ -539,7 +539,7 @@ index 5d55598..78d139a 100644
      }
  
  
-@@ -1403,5 +1780,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1397,5 +1774,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  
    poly_Free (&info.poly);
  

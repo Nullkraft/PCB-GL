@@ -1,5 +1,5 @@
-Bottom: 1e6f48fe9dec92cd9d825dad5092d688263d6e42
-Top:    32efdc89ad8c9f2c43ad74bba7c5a307e56f75ac
+Bottom: c4d4f5bded5b024e74a4dc20979dfa7311df7809
+Top:    ebd7bb0f9c19bf2c4f79c0739af13bd3bd6797ed
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:28 +0000
 
@@ -11,7 +11,7 @@ XXX: TODO - refcounting for appearances, for now - leak them!
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 3bfd346..233ae94 100644
+index 7cbeaaf..a5e50a9 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -393,26 +393,32 @@ object3d_from_contours (POLYAREA *contours,
@@ -73,7 +73,7 @@ index 3bfd346..233ae94 100644
  
    poly_Free (&info.poly);
  
-@@ -1684,7 +1690,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1678,7 +1684,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
      }
  
  
