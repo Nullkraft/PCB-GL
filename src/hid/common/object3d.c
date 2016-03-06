@@ -597,34 +597,25 @@ GList *
 object3d_from_board_outline (void)
 {
   POLYAREA *board_outline = board_outline_poly (true);
-
-#if 0
-  return object3d_from_soldermask_within_area (board_outline, TOP_SIDE);
-#else
-
   appearance *board_appearance;
   appearance *top_bot_appearance;
   GList *objects;
 
   board_appearance = make_appearance ();
-  top_bot_appearance = NULL;
-//  top_bot_appearance = make_appearance ();
+  top_bot_appearance = make_appearance ();
   appearance_set_color (board_appearance,   1.0, 1.0, 0.6);
-//  appearance_set_color (top_bot_appearance, 0.2, 0.8, 0.2);
+  appearance_set_color (top_bot_appearance, 0.2, 0.8, 0.2);
 
-#ifdef REVERSED_PCB_CONTOURS
   objects = object3d_from_contours (board_outline,
+#ifdef REVERSED_PCB_CONTOURS
                                     -HACK_BOARD_THICKNESS, /* Bottom */
                                     0                    ,  /* Top */
-                                    board_appearance,
-                                    top_bot_appearance);
 #else
-  objects = object3d_from_contours (board_outline,
                                      HACK_BOARD_THICKNESS / 2, /* Bottom */
                                     -HACK_BOARD_THICKNESS / 2, /* Top */
+#endif
                                     board_appearance,
                                     top_bot_appearance);
-#endif
 
   destroy_appearance (board_appearance);
   destroy_appearance (top_bot_appearance);
