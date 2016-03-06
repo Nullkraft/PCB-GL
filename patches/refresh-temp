@@ -1,0 +1,22 @@
+Bottom: f33ad92b9c5745cb39aff68f4fa2f3ed3053627f
+Top:    29f872262b68eda757825da014ef65df9bea3138
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-06 13:57:54 +0000
+
+Refresh of more-play-with-quad-edge-data-STEP
+
+---
+
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index 06d5415..41c287d 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -9,7 +9,7 @@
+ #include "hid/common/contour3d.h"
+ #include "hid/common/appearance.h"
+ #include "hid/common/face3d.h"
+-//#include "hid/common/edge3d.h"
++#include "hid/common/edge3d.h"
+ #include "hid/common/object3d.h"
+ //#include "polygon.h"
+ #include "data.h"
