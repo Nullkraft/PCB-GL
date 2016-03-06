@@ -1,5 +1,6 @@
 typedef struct {
   double nx, ny, nz; /* Face normal?*/
+  bool surface_orientation_reversed;
   GList *contours;
 
   /* For cylindrical surfaces */
@@ -12,7 +13,6 @@ typedef struct {
 
   /* XXX: STEP specific - breaks encapsulation */
   int surface_identifier;
-  bool surface_orientation_reversed;
   int face_identifier;
   int face_bound_identifier;
 } face3d;
