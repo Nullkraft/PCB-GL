@@ -1,5 +1,5 @@
-Bottom: 1bc00783ab4e32318ce588a0031151dc58d550c1
-Top:    29e89d0d1038720f98699f11f8d4908d1d33fa79
+Bottom: c776489b452296a7bf56522a9cc4abf1f4f3cc78
+Top:    34ea448f8acead7c18e359adaa6f579cd342473e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -9,10 +9,10 @@ And working again (mostly)
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 58f3c6f..104e01f 100644
+index a016111..bb1eb14 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -472,7 +472,7 @@ object3d_from_board_outline (void)
+@@ -471,7 +471,7 @@ object3d_from_board_outline (void)
  
          }
  
@@ -21,7 +21,7 @@ index 58f3c6f..104e01f 100644
          {
            /* Cylinder centers on 45x45mm, stitch vertex is at 40x45mm. Radius is thus 5mm */
  
-@@ -580,7 +580,8 @@ object3d_test_board_outline (void)
+@@ -579,7 +579,8 @@ object3d_test_board_outline (void)
    GList *board_outlines;
  
    board_outlines = object3d_from_board_outline ();

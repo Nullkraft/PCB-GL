@@ -1,5 +1,5 @@
-Bottom: eaaef442fe997b7c69e6f953df6ad1af904426fa
-Top:    5ac257db62328324c30c67f43f21515c4871a777
+Bottom: c28d18dbf1b5fe51e6ccdbd30d66e9f4af4b0feb
+Top:    8f8bdc0c7b8c12325b05889270b110ce6e26a7e0
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 00:40:59 +0000
 
@@ -9,10 +9,10 @@ Refactor circular contour handling to be more generic
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 04d1160..454baa8 100644
+index d8d85c1..ef08bdc 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -21,6 +21,8 @@
+@@ -20,6 +20,8 @@
  
  #include "pcb-printf.h"
  
@@ -21,7 +21,7 @@ index 04d1160..454baa8 100644
  #define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
  
  #ifdef REVERSED_PCB_CONTOURS
-@@ -199,9 +201,11 @@ object3d_draw_debug (void)
+@@ -198,9 +200,11 @@ object3d_draw_debug (void)
  static int
  get_contour_npoints (PLINE *contour)
  {
@@ -33,7 +33,7 @@ index 04d1160..454baa8 100644
  
    return contour->Count;
  }
-@@ -211,6 +215,7 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
+@@ -210,6 +214,7 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
  {
    VNODE *vertex = &contour->head;
  
@@ -41,7 +41,7 @@ index 04d1160..454baa8 100644
    if (contour->is_round)
      {
        /* HACK SPECIAL CASE FOR ROUND CONTOURS */
-@@ -224,6 +229,7 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
+@@ -223,6 +228,7 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
  
        return;
      }
@@ -49,7 +49,7 @@ index 04d1160..454baa8 100644
  
    while (n > 0)
      {
-@@ -235,6 +241,35 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
+@@ -234,6 +240,35 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
    *y = COORD_TO_STEP_Y (PCB, vertex->point[1]);
  }
  
@@ -85,7 +85,7 @@ index 04d1160..454baa8 100644
  GList *
  object3d_from_contours (const POLYAREA *contours,
                          double zbot,
-@@ -463,31 +498,41 @@ object3d_from_contours (const POLYAREA *contours,
+@@ -462,31 +497,41 @@ object3d_from_contours (const POLYAREA *contours,
            splice (SYM(edges[2 * npoints + i]),  edges[npoints + i]);
  #endif
  
