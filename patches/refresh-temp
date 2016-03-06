@@ -1,0 +1,20 @@
+Bottom: f25e15ef3cad820fa6f8cbec137d67707c0faf3d
+Top:    647eb27fc68a011bbce9d5f3051424ab36bbfa63
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-06 17:36:27 +0000
+
+Refresh of attempt-to-refactor-the-step
+
+---
+
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index 1687042..27187c1 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -1,6 +1,5 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <assert.h>
+ #include <stdbool.h>
+ 
+ #include <glib.h>
