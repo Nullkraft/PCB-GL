@@ -1127,6 +1127,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   ghid_graphics_class.end_layer = ghid_end_layer;
   ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
   ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step");
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step");
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step");
+  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step");
 }
 
 void
@@ -2728,7 +2733,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glDisable (GL_LIGHTING);
 
   draw_crosshair (Output.fgGC, priv);
-//  object3d_draw_debug ();
+  object3d_draw_debug ();
 
   hidgl_flush_triangles (priv->hidgl);
 
