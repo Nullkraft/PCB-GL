@@ -1,7 +1,7 @@
-Bottom: 078afeda1a87095a31e96d7dca58127f59553dea
-Top:    91a4dd86097ddfc02fac15f17c2de92c98fc096d
+Bottom: 415616e0c08a8809523812ace7325fe17cfaf791
+Top:    68c94ec8f460b33f40b2cf65479d5c8bf63b8945
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-06 14:59:07 +0000
+Date:   2016-03-06 23:56:12 +0000
 
 Rename PinPoly to PinClearPoly, re-introducing PinPoly to create the shape of the pin.
 
@@ -9,7 +9,7 @@ Rename PinPoly to PinClearPoly, re-introducing PinPoly to create the shape of th
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index c2274aa..35c7069 100644
+index d414796..017fbf4 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -938,7 +938,23 @@ pv_mask_callback (const BoxType * b, void *cl)

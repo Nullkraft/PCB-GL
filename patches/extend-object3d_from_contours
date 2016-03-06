@@ -1,7 +1,7 @@
-Bottom: 718d86a4a70ba85982a70ceeb012997b8048e1a0
-Top:    c0222081f745a8d7f402bca0300ca99def644f3c
+Bottom: ef84797ed974ab4d411b5fd5638214c8ab15248a
+Top:    c55527a94d546cc27f068c4028a0858d5541ad22
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-06 14:59:07 +0000
+Date:   2016-03-06 23:56:12 +0000
 
 Extend object3d_from_contours() to have an option to produce an inverted shell contour
 
@@ -11,7 +11,7 @@ This will be useful when extruding voids within objects during 3D export.
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index f6cf852..566e1d5 100644
+index 33fe6c3..e82a9e7 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -328,7 +328,8 @@ object3d_from_contours (const POLYAREA *contours,

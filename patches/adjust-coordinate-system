@@ -1,7 +1,7 @@
-Bottom: 11360d50f5b66302741ff6ffcfa17e14f78367f9
-Top:    4b13e587db5783b092277ed27b6d735b4b9f1c39
+Bottom: 979aebfd9e31114dbaf24144b75d297434698416
+Top:    e7412cf9311d0ae7bc4a6bbd9d90cf05a19dc79f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-06 14:59:05 +0000
+Date:   2016-03-06 23:56:10 +0000
 
 Adjust coordinate system GOODNES KNOWS WHETHER THE GEOMETRY IS CORRECT... IDA-STEP SEEMS TO COPE THOUGH
 
@@ -9,7 +9,7 @@ Adjust coordinate system GOODNES KNOWS WHETHER THE GEOMETRY IS CORRECT... IDA-ST
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index f6e12f6..f7d32b5 100644
+index 743ef65..08e009d 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -23,6 +23,7 @@
@@ -21,7 +21,7 @@ index f6e12f6..f7d32b5 100644
  #ifdef REVERSED_PCB_CONTOURS
  #define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index be6f9d6..ee0dbd5 100644
+index f5cacb7..b7a5a87 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -22,6 +22,7 @@

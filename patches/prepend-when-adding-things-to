@@ -1,7 +1,7 @@
-Bottom: 52add0428d8ae01221805d487e500ffbb1bbba28
-Top:    c16d2440dd827a5d461dc55e676f746d71ad1fff
+Bottom: c5497895ac2740a193d96ba742cedd7d61d43a27
+Top:    bc1991e37b6c613e42c22b06ba1fa2341a65d961
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-06 14:59:05 +0000
+Date:   2016-03-06 23:56:11 +0000
 
 Prepend when adding things to lists
 
@@ -9,7 +9,7 @@ Prepend when adding things to lists
 ---
 
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index ee0dbd5..acd02d1 100644
+index b7a5a87..a04d8eb 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -291,10 +291,11 @@ object3d_to_step_body_fragment (step_file *step,

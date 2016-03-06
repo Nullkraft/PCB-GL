@@ -1,7 +1,7 @@
-Bottom: dea87aee3733403283743e4a7f27ae8fdf036229
-Top:    bfe658db45484576f1865b8715be141b37426556
+Bottom: e07f7b3a50f369215e5831da1ed0562824f8b1f1
+Top:    cdd973bab214e7813858b2c4091bbfb87fe43760
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-06 14:59:06 +0000
+Date:   2016-03-06 23:56:11 +0000
 
 Enable output of via pads, and dial down circular approximation accuracy
 
@@ -9,7 +9,7 @@ Enable output of via pads, and dial down circular approximation accuracy
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 72025c5..64a776f 100644
+index f79622e..2cdb502 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -1209,6 +1209,31 @@ object3d_from_copper_layers_within_area (POLYAREA *area)

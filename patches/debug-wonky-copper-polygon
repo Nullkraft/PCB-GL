@@ -1,7 +1,7 @@
-Bottom: bfe658db45484576f1865b8715be141b37426556
-Top:    1b44c01954c574cbb54f676819e5c40b5d326726
+Bottom: cdd973bab214e7813858b2c4091bbfb87fe43760
+Top:    e8669ced80d56670157efda786098708e3958ae3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-06 14:59:06 +0000
+Date:   2016-03-06 23:56:11 +0000
 
 Debug wonky copper polygon generation
 
@@ -9,7 +9,7 @@ Debug wonky copper polygon generation
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 64a776f..427496f 100644
+index 2cdb502..ab316e7 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -1187,19 +1187,19 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
