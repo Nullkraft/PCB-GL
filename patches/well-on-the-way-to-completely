@@ -1,5 +1,5 @@
-Bottom: bd7fc6913845a91ab87801e3e2f767bfe26a4c86
-Top:    6910f364c9a2a88954da8fd5a632b78155bf8b2e
+Bottom: c3c3b93b59a2b21865227ff9c4f1d9701b20537e
+Top:    e3b95c0f4dcbbebb82120ca9f8a99c032ae7dd84
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -318,10 +318,10 @@ index a9b05c9..a016111 100644
            face3d_set_normal (cylinder_faces[0], 1., 0., 0.);       /* A normal to the axis direction */
                                         /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 870afc4..e8aab3c 100644
+index 0c197da..3e24d2b 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -21,6 +21,20 @@
+@@ -20,6 +20,20 @@
  #include "object3d_step.h"
  
  
@@ -342,7 +342,7 @@ index 870afc4..e8aab3c 100644
  static step_id_list
  presentation_style_assignments_from_appearance (step_file *step, appearance *appear)
  {
-@@ -145,6 +159,20 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -144,6 +158,20 @@ object3d_export_to_step (object3d *object, const char *filename)
            vertex3d *ov = ODATA (outer_contour->first_edge);
            vertex3d *dv = DDATA (outer_contour->first_edge);
  
@@ -363,7 +363,7 @@ index 870afc4..e8aab3c 100644
            face->surface_identifier =
              step_plane (step, "NONE",
                          step_axis2_placement_3d (step, "NONE",
-@@ -152,9 +180,9 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -151,9 +179,9 @@ object3d_export_to_step (object3d *object, const char *filename)
                                                                                       ov->y,      /* Set this to the origin vertex of the first edge */
                                                                                       ov->z),     /* this contour links to in the quad edge structure. */
                                                         step_direction (step, "NONE", face->nx, face->ny, face->nz), /* An axis direction normal to the the face - Gives z-axis */
@@ -376,7 +376,7 @@ index 870afc4..e8aab3c 100644
          }
      }
  
-@@ -179,14 +207,31 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -178,14 +206,31 @@ object3d_export_to_step (object3d *object, const char *filename)
            vertex3d *ov = ODATA (edge);
            vertex3d *dv = DDATA (edge);
  
@@ -411,7 +411,7 @@ index 870afc4..e8aab3c 100644
          }
      }
  
-@@ -254,15 +299,13 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -253,15 +298,13 @@ object3d_export_to_step (object3d *object, const char *filename)
    pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
    brep_identifier = step_manifold_solid_brep (step, "PCB outline", pcb_shell_identifier);
  
@@ -432,7 +432,7 @@ index 870afc4..e8aab3c 100644
  
    /* Face styles */
    for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter))
-@@ -280,6 +323,7 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -279,6 +322,7 @@ object3d_export_to_step (object3d *object, const char *filename)
  
    /* Emit references to the styled and over_ridden styled items */
    step_mechanical_design_geometric_presentation_representation (step, "", styled_item_identifiers, geometric_representation_context_identifier);
