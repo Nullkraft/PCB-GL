@@ -1,5 +1,5 @@
 Bottom: cc9756bbdca9639c9e616385a447d2628b32043d
-Top:    95b3371cf42d85777be8b8a1952531e9eb2084fb
+Top:    a65c58af2be11f089e4be7689b4f15a38dcf07de
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -374,7 +374,7 @@ index e163861..a39355c 100644
  object3d *object3d_create_test_cube (void);
  object3d *object3d_from_board_outline (void);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c52dd69..b9830b8 100644
+index c52dd69..1aecd0a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -16,6 +16,9 @@
@@ -382,8 +382,8 @@ index c52dd69..b9830b8 100644
  
  #include "hid/common/quad.h"
 +#include "hid/common/vertex3d.h"
-+#include "hid/common/face3d.h"
 +#include "hid/common/appearance.h"
++#include "hid/common/face3d.h"
  #include "hid/common/object3d.h"
  
  #ifndef WIN32
