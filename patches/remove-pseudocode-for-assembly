@@ -1,5 +1,5 @@
-Bottom: 2f078f65c55f46cc70f64af5e85ff5411fff5375
-Top:    c28d18dbf1b5fe51e6ccdbd30d66e9f4af4b0feb
+Bottom: ed4ea15f314be9280f035bdd1c26c0e5dc10decc
+Top:    81bf86eeeefeee2a1d3d81f11f8a69339b5085c1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -9,10 +9,10 @@ Remove pseudocode for assembly emission
 ---
 
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 2ec9ece..829221b 100644
+index fb495a5..be6f9d6 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -523,178 +523,6 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
+@@ -519,178 +519,6 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
    finish_ap214_file (step);
  
    /* XXX: TODO: MAKE AN ASSEMBLY PRODUCT AND GATHER THE ABOVE PIECES INSIDE IT */
