@@ -1,0 +1,66 @@
+Bottom: 35844a4ec8f1a93d045c2b925550f17fb1fb6626
+Top:    ed39982e46e5a9cd70a1190a5e1f3adecfaa7895
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-06 17:48:42 +0000
+
+Refresh of continue-tinkering-with-3d
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 86d813a..ad4411e 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -307,7 +307,7 @@ object3d_from_board_outline (void)
+   object3d *object;
+   appearance *board_appearance;
+   appearance *top_bot_appearance;
+-  POLYAREA *board_outline;
++  POLYAREA *outline;
+   POLYAREA *pa;
+   PLINE *contour;
+   PLINE *ct;
+@@ -321,13 +321,13 @@ object3d_from_board_outline (void)
+   int offset_in_ct;
+   int ct_npoints;
+ 
+-  board_outline = board_outline_poly (true);
++  outline = board_outline_poly (true);
+ 
+-  if (board_outline == NULL)
++  if (outline == NULL)
+     return NULL;
+ 
+   /* Loop over all board outline pieces */
+-  pa = board_outline;
++  pa = outline;
+   do
+     {
+ 
+@@ -582,9 +582,9 @@ object3d_from_board_outline (void)
+       objects = g_list_append (objects, object);
+ 
+     }
+-  while (pa = pa->f, pa != board_outline);
++  while (pa = pa->f, pa != outline);
+ 
+-  poly_Free (&board_outline);
++  poly_Free (&outline);
+ 
+   return objects;
+ }
+@@ -592,10 +592,10 @@ object3d_from_board_outline (void)
+ void
+ object3d_test_board_outline (void)
+ {
+-  GList *board_outlines;
++  GList *objects;
+ 
+-  board_outlines = object3d_from_board_outline ();
+-//  object3d_export_to_step (board_outlines->data, "object3d_test.step");
++  objects = object3d_from_board_outline ();
++//  object3d_export_to_step (objects->data, "object3d_test.step");
+ 
+-  g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
++  g_list_free_full (objects, (GDestroyNotify)destroy_object3d);
+ }
