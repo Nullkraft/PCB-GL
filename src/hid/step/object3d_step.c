@@ -9,7 +9,7 @@
 #include "hid/common/contour3d.h"
 #include "hid/common/appearance.h"
 #include "hid/common/face3d.h"
-//#include "hid/common/edge3d.h"
+#include "hid/common/edge3d.h"
 #include "hid/common/object3d.h"
 //#include "polygon.h"
 #include "data.h"
