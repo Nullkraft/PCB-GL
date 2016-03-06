@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <stdbool.h>
 
+#include <glib.h>
+
 #include "quad.h"
 #include "vertex3d.h"
 #include "face3d.h"
@@ -67,7 +69,7 @@ make_object3d ()
   static int object3d_count = 0;
   object3d *object;
 
-  object = malloc (sizeof (object3d));
+  object = g_new0 (object3d, 1);
   object->id = object3d_count++;
 
   return object;
@@ -77,7 +79,7 @@ void
 destroy_object3d (object3d *object)
 {
   /* XXX: LEAK GEOMETERY AND TOPOLOGY */
-  free (object);
+  g_free (object);
 }
 
 #define XOFFSET 50
