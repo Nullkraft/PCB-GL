@@ -1,5 +1,5 @@
-Bottom: 8249ea0ad3f608d92ea2f5008624084da521eadd
-Top:    4eb6eeca80453ac7cfe1b65165c173e22228d43d
+Bottom: c16d2440dd827a5d461dc55e676f746d71ad1fff
+Top:    af01961511bce2a727882a41a56ef4bb3ec57a9b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:05 +0000
 
@@ -9,10 +9,10 @@ Disable small edge EPSILON hack for computing edge normals
 ---
 
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index ee8938b..5781a61 100644
+index acd02d1..0983a24 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -231,7 +231,7 @@ object3d_to_step_body_fragment (step_file *step,
+@@ -227,7 +227,7 @@ object3d_to_step_body_fragment (step_file *step,
            dir_y = dv->y - ov->y;
            dir_z = dv->z - ov->z;
  

@@ -1,5 +1,5 @@
-Bottom: baa3a46993587bd30c4a4f5e1e15809450e58a9b
-Top:    8249ea0ad3f608d92ea2f5008624084da521eadd
+Bottom: 52add0428d8ae01221805d487e500ffbb1bbba28
+Top:    c16d2440dd827a5d461dc55e676f746d71ad1fff
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:05 +0000
 
@@ -9,10 +9,10 @@ Prepend when adding things to lists
 ---
 
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index d47a8b4..ee8938b 100644
+index ee0dbd5..acd02d1 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -295,10 +295,11 @@ object3d_to_step_body_fragment (step_file *step,
+@@ -291,10 +291,11 @@ object3d_to_step_body_fragment (step_file *step,
            edge = contour->first_edge;
            do
              {
@@ -25,7 +25,7 @@ index d47a8b4..ee8938b 100644
            edge_loop = step_edge_loop (step, "NONE", edge_loop_edges);
  
            if (outer_contour)
-@@ -306,13 +307,16 @@ object3d_to_step_body_fragment (step_file *step,
+@@ -302,13 +303,16 @@ object3d_to_step_body_fragment (step_file *step,
            else
              contour->face_bound_identifier = step_face_bound (step, "NONE", edge_loop, true);
  

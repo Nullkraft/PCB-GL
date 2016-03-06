@@ -1,5 +1,5 @@
-Bottom: 94b90798440ff36bde247d4ea54ea446178dfa72
-Top:    498065841b8d412ca17b37e89208362a7f81690d
+Bottom: 11360d50f5b66302741ff6ffcfa17e14f78367f9
+Top:    4b13e587db5783b092277ed27b6d735b4b9f1c39
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:05 +0000
 
@@ -9,10 +9,10 @@ Adjust coordinate system GOODNES KNOWS WHETHER THE GEOMETRY IS CORRECT... IDA-ST
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index a924326..bb63fa6 100644
+index f6e12f6..f7d32b5 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -24,6 +24,7 @@
+@@ -23,6 +23,7 @@
  #define PERFECT_ROUND_CONTOURS
  
  #define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
@@ -21,10 +21,10 @@ index a924326..bb63fa6 100644
  #ifdef REVERSED_PCB_CONTOURS
  #define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 829221b..d47a8b4 100644
+index be6f9d6..ee0dbd5 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -26,6 +26,7 @@
+@@ -22,6 +22,7 @@
  
  
  #define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */

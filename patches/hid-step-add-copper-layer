@@ -1,5 +1,5 @@
-Bottom: 1da66cba444268c512fbb16fa31ab171ded9210e
-Top:    baa3a46993587bd30c4a4f5e1e15809450e58a9b
+Bottom: 41575e199519002bf1e98d7cf887a6e82676df3c
+Top:    52add0428d8ae01221805d487e500ffbb1bbba28
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:05 +0000
 
@@ -9,10 +9,10 @@ hid/step: Add copper layer export to 3D model
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index bb63fa6..f536640 100644
+index f7d32b5..c333505 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -20,6 +20,8 @@
+@@ -19,6 +19,8 @@
  #include "rotate.h"
  
  #include "pcb-printf.h"
@@ -21,7 +21,7 @@ index bb63fa6..f536640 100644
  
  #define PERFECT_ROUND_CONTOURS
  
-@@ -63,7 +65,9 @@
+@@ -62,7 +64,9 @@
  
  
  #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
@@ -31,7 +31,7 @@ index bb63fa6..f536640 100644
  
  static GList *object3d_test_objects = NULL;
  
-@@ -919,6 +923,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -918,6 +922,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
    r_search (layer->arc_tree,  &bounds, NULL, arc_mask_callback, &info);
    r_search (layer->text_tree, &bounds, NULL, text_mask_callback, &info);
    r_search (layer->polygon_tree, &bounds, NULL, polygon_mask_callback, &info);
@@ -39,7 +39,7 @@ index bb63fa6..f536640 100644
    r_search (PCB->Data->pad_tree, &bounds, NULL, pad_mask_callback, &info);
    r_search (PCB->Data->pin_tree, &bounds, NULL, pv_mask_callback, &info);
    r_search (PCB->Data->via_tree, &bounds, NULL, pv_mask_callback, &info);
-@@ -928,11 +933,11 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -927,11 +932,11 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
  
    objects = object3d_from_contours (info.poly,
  #ifdef REVERSED_PCB_CONTOURS
@@ -55,7 +55,7 @@ index bb63fa6..f536640 100644
  #endif
                                      mask_appearance,
                                      NULL);
-@@ -943,3 +948,298 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -942,3 +947,298 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
  
    return objects;
  }
