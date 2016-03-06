@@ -471,7 +471,6 @@ object3d_from_board_outline (void)
           face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
                                     /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 
-
           edge_info_set_round (UNDIR_DATA (edges[i]),
                                COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), -COORD_TO_MM (HACK_BOARD_THICKNESS), /* Center of circle */
                                0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius));
