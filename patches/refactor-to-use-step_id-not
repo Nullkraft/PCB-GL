@@ -1,5 +1,5 @@
 Bottom: d6530e1c569a3ed11b2f0cd3c27bc26fae887dc9
-Top:    cc627a383bca7302d2c50b2a8884ebed0e3d1b99
+Top:    40319d696db779fa36820523541a712f143c25f4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 16:18:11 +0000
 
@@ -88,6 +88,14 @@ index 0197118..34ffceb 100644
  #include "quad.h"
  #include "vertex3d.h"
  #include "contour3d.h"
+diff --git a/src/hid/common/step_id.h b/src/hid/common/step_id.h
+new file mode 100644
+index 0000000..86a4974
+--- /dev/null
++++ b/src/hid/common/step_id.h
+@@ -0,0 +1,2 @@
++typedef int step_id;
++typedef GList* step_id_list;
 diff --git a/src/hid/common/vertex3d.c b/src/hid/common/vertex3d.c
 index 1704b2b..74c286c 100644
 --- a/src/hid/common/vertex3d.c
