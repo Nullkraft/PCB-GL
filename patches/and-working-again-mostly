@@ -1,5 +1,5 @@
-Bottom: 6910f364c9a2a88954da8fd5a632b78155bf8b2e
-Top:    6eb6712b58f544daf0f985339a6927d385d70138
+Bottom: e3b95c0f4dcbbebb82120ca9f8a99c032ae7dd84
+Top:    fe805d488ecd5d4b42b30d7ef1911d73b297209a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -32,10 +32,10 @@ index a016111..bb1eb14 100644
    g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
  }
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index e8aab3c..ed9b9b4 100644
+index 3e24d2b..cf3469d 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -47,34 +47,20 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
+@@ -46,34 +46,20 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
    return psa_list;
  }
  
@@ -73,7 +73,7 @@ index e8aab3c..ed9b9b4 100644
    currenttime = time (NULL);
    gmtime_r (&currenttime, &utc);
  
-@@ -98,38 +84,53 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -97,38 +83,53 @@ object3d_export_to_step (object3d *object, const char *filename)
    fprintf (f, "\n");
    fprintf (f, "DATA;\n");
  
@@ -154,7 +154,7 @@ index e8aab3c..ed9b9b4 100644
  
  #define FWD 1
  #define REV 2
-@@ -297,7 +298,7 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -296,7 +297,7 @@ object3d_export_to_step (object3d *object, const char *filename)
  
    /* Closed shell which bounds the brep solid */
    pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
@@ -163,7 +163,7 @@ index e8aab3c..ed9b9b4 100644
  
  #if 1
    /* Body style */
-@@ -325,18 +326,256 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -324,18 +325,256 @@ object3d_export_to_step (object3d *object, const char *filename)
    step_mechanical_design_geometric_presentation_representation (step, "", styled_item_identifiers, geometric_representation_context_identifier);
  #endif
  
