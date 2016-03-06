@@ -64,7 +64,6 @@ void
 object3d_test_init (void)
 {
   object3d_test_objects = object3d_from_board_outline ();
-  object3d_test_board_outline ();
 }
 
 object3d *
@@ -586,16 +585,4 @@ object3d_from_board_outline (void)
   poly_Free (&board_outline);
 
   return objects;
-}
-
-void
-object3d_test_board_outline (void)
-{
-  GList *board_outlines;
-
-  board_outlines = object3d_from_board_outline ();
-  object3d_list_export_to_step_assy (board_outlines, "object3d_test.step");
-  //object3d_export_to_step (board_outlines->data, "object3d_test.step");
-
-  g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
 }
