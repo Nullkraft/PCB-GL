@@ -1,5 +1,5 @@
 Bottom: a0d7f878f73dfd0d4d6bc1521cf534a9356f9247
-Top:    de32e13e330a570a739d2297411e4ea22fa5fe0b
+Top:    6cb996f496262d47e25b946da1a5e6b53669e44a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:08:29 +0000
 
@@ -24,13 +24,14 @@ index 5ef4e2c..4144a6d 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 717b121..56114d9 100644
+index 717b121..fec88cf 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -243,6 +243,560 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
+@@ -243,6 +243,562 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
    *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
  }
  
++#if 0
 +void
 +object3d_export_to_step (object3d *object, const char *filename)
 +{
@@ -585,10 +586,11 @@ index 717b121..56114d9 100644
 +
 +  fclose (f);
 +}
++#endif
  
  object3d *
  object3d_from_board_outline (void)
-@@ -374,3 +928,13 @@ object3d_from_board_outline (void)
+@@ -374,3 +930,13 @@ object3d_from_board_outline (void)
  
    return object;
  }
@@ -603,12 +605,12 @@ index 717b121..56114d9 100644
 +  destroy_object3d (board_outline);
 +}
 diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
-index e163861..b967543 100644
+index e163861..5cb6ca3 100644
 --- a/src/hid/common/object3d.h
 +++ b/src/hid/common/object3d.h
 @@ -9,3 +9,5 @@ object3d *make_object3d (void);
  void destroy_object3d (object3d *object);
  object3d *object3d_create_test_cube (void);
  object3d *object3d_from_board_outline (void);
-+void object3d_export_to_step (object3d *object, const char *filename);
++//void object3d_export_to_step (object3d *object, const char *filename);
 +void object3d_test_board_outline (void);
