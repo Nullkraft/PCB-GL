@@ -1,4 +1,4 @@
-Bottom: ef9e079da327d1ac5af5d3bc52813ba00a4f18dd
+Bottom: 44f0d2ffebd524b0d36e3887ca954fef38a38dc1
 Top:    ce28f08af2ca621938f10afd47ae31bc2ca5b909
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
@@ -9,18 +9,10 @@ And working again (mostly)
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 6e2bf29..104e01f 100644
+index 58f3c6f..104e01f 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -305,6 +305,7 @@ object3d_from_board_outline (void)
-             }
- 
-           get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
-+
-           vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_STEP_Z (PCB, HACK_BOARD_THICKNESS)); /* Bottom */
-           vertices[npoints + i] = make_vertex3d (x1, y1, 0);                                            /* Top */
- 
-@@ -471,7 +472,7 @@ object3d_from_board_outline (void)
+@@ -472,7 +472,7 @@ object3d_from_board_outline (void)
  
          }
  
@@ -29,7 +21,7 @@ index 6e2bf29..104e01f 100644
          {
            /* Cylinder centers on 45x45mm, stitch vertex is at 40x45mm. Radius is thus 5mm */
  
-@@ -579,7 +580,8 @@ object3d_test_board_outline (void)
+@@ -580,7 +580,8 @@ object3d_test_board_outline (void)
    GList *board_outlines;
  
    board_outlines = object3d_from_board_outline ();
