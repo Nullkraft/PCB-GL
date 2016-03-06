@@ -1,5 +1,5 @@
 Bottom: bc16e50f42a577e69d5b1b1288cd554d86e41e5c
-Top:    7f1114e51061b97f65c172a8624f5351c84ab866
+Top:    7f296bbbae193e5f3bf72998badab5dd92a22c64
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:08:29 +0000
 
@@ -84,12 +84,11 @@ index 015d575..6e8c5d3 100644
  #include "hid/common/contour3d.h"
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 new file mode 100644
-index 0000000..56a000e
+index 0000000..7d1283c
 --- /dev/null
 +++ b/src/hid/step/object3d_step.c
-@@ -0,0 +1,574 @@
+@@ -0,0 +1,571 @@
 +#include <stdio.h>
-+//#include <stdlib.h>
 +#include <stdbool.h>
 +
 +#include <glib.h>
@@ -100,9 +99,7 @@ index 0000000..56a000e
 +#include "hid/common/contour3d.h"
 +#include "hid/common/appearance.h"
 +#include "hid/common/face3d.h"
-+//#include "hid/common/edge3d.h"
 +#include "hid/common/object3d.h"
-+//#include "polygon.h"
 +#include "data.h"
 +
 +#include "object3d_step.h"
