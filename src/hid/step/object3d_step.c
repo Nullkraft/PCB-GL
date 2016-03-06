@@ -1,5 +1,4 @@
 #include <stdio.h>
-//#include <stdlib.h>
 #include <stdbool.h>
 
 #include <glib.h>
@@ -10,9 +9,7 @@
 #include "hid/common/contour3d.h"
 #include "hid/common/appearance.h"
 #include "hid/common/face3d.h"
-//#include "hid/common/edge3d.h"
 #include "hid/common/object3d.h"
-//#include "polygon.h"
 #include "data.h"
 
 #include "object3d_step.h"
