@@ -1,5 +1,5 @@
-Bottom: 5710a3ef0877248c824b21095543e81225d94cfe
-Top:    3c7d1a81e54d5ebed129daed819530f85ddeeded
+Bottom: 21f6e35ebda6cdae992273251bc29058b1ba93ac
+Top:    d47b164abdd83a8591ff5362a8a3a1c737457606
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 00:41:15 +0000
 
@@ -9,7 +9,7 @@ Fix 3D contour export
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 4fd9533..6a2afae 100644
+index 454baa8..d48bba6 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -293,6 +293,15 @@ object3d_from_contours (const POLYAREA *contours,
