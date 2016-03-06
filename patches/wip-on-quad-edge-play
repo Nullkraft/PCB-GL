@@ -1,5 +1,5 @@
 Bottom: 02ba21569834d698cca7eb5533e92989da5b373e
-Top:    166c70b8b08b1e51d579786d9035fc2b04842bf6
+Top:    2afaecec940c0e63141f649436b2011e67f100dd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -111,10 +111,10 @@ index e69de29..42154df 100644
 +void destroy_face3d (face3d *face);
 +void face3d_add_contour (face3d *face, edge_ref contour);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 71c8a08..98d03d6 100644
+index 71c8a08..8dd2b81 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -3,10 +3,13 @@
+@@ -3,8 +3,11 @@
  #include <assert.h>
  #include <stdbool.h>
  
@@ -122,12 +122,10 @@ index 71c8a08..98d03d6 100644
 +
  #include "quad.h"
  #include "vertex3d.h"
++#include "appearance.h"
  #include "face3d.h"
  #include "edge3d.h"
-+#include "appearance.h"
  #include "object3d.h"
- #include "polygon.h"
- #include "data.h"
 @@ -62,13 +65,14 @@ object3d_test_init (void)
  }
  
