@@ -426,8 +426,8 @@ object3d_export_to_step (object3d *object, const char *filename)
                    next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
                    next_step_identifier + 4, next_step_identifier + 3, face->radius);
 
-          face->plane_orientation_reversed = true;
-          face->plane_identifier = next_step_identifier + 4;
+          face->surface_orientation_reversed = true;
+          face->surface_identifier = next_step_identifier + 4;
           next_step_identifier = next_step_identifier + 5;
         }
       else
@@ -469,8 +469,8 @@ object3d_export_to_step (object3d *object, const char *filename)
                    next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
                    next_step_identifier + 4, next_step_identifier + 3);
 
-          face->plane_orientation_reversed = false;
-          face->plane_identifier = next_step_identifier + 4;
+          face->surface_orientation_reversed = false;
+          face->surface_identifier = next_step_identifier + 4;
           next_step_identifier = next_step_identifier + 5;
         }
     }
@@ -590,7 +590,7 @@ object3d_export_to_step (object3d *object, const char *filename)
           fprintf (f, "#%i, ", ((contour3d *)contour_iter->data)->face_bound_identifier);
         }
       fprintf (f, "#%i)", ((contour3d *)contour_iter->data)->face_bound_identifier);
-      fprintf (f, ", #%i, %s ) ;\n", face->plane_identifier, face->plane_orientation_reversed ? ".F." : ".T.");
+      fprintf (f, ", #%i, %s ) ;\n", face->surface_identifier, face->surface_orientation_reversed ? ".F." : ".T.");
       face->face_identifier = next_step_identifier;
       next_step_identifier = next_step_identifier + 1;
 
