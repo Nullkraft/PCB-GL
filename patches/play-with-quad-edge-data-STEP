@@ -1,5 +1,5 @@
-Bottom: b77bf395ecc451408adef91a7d78a7d4b799f8a8
-Top:    9e7cc165aa397cd9407ce88244810969163d920f
+Bottom: 61744ba7ab17ce29c59e99666893c89cf14849c9
+Top:    4625ec50bab4caa4f7d9dff393238e021eb0dde4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:08:29 +0000
 
@@ -32,7 +32,7 @@ index 9965e66..60807b7 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 7068bbe..c78e739 100644
+index c31349a..2a027e4 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -5,6 +5,7 @@
@@ -43,7 +43,7 @@ index 7068bbe..c78e739 100644
  #include "quad.h"
  #include "vertex3d.h"
  #include "contour3d.h"
-@@ -596,7 +597,7 @@ object3d_test_board_outline (void)
+@@ -499,7 +500,7 @@ object3d_test_board_outline (void)
    GList *board_outlines;
  
    board_outlines = object3d_from_board_outline ();
@@ -53,12 +53,12 @@ index 7068bbe..c78e739 100644
    g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
  }
 diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
-index 314e377..a81558e 100644
+index e8c26e2..acb690d 100644
 --- a/src/hid/common/object3d.h
 +++ b/src/hid/common/object3d.h
-@@ -17,3 +17,5 @@ void object3d_add_vertex (object3d *object, vertex3d *vertex);
+@@ -16,3 +16,5 @@ void object3d_add_edge (object3d *object, edge_ref edge);
+ void object3d_add_vertex (object3d *object, vertex3d *vertex);
  void object3d_add_face (object3d *object, face3d *face);
- object3d *object3d_create_test_cube (void);
  GList *object3d_from_board_outline (void);
 +//void object3d_export_to_step (object3d *object, const char *filename);
 +void object3d_test_board_outline (void);
