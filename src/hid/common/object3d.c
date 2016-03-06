@@ -7,9 +7,9 @@
 
 #include "quad.h"
 #include "vertex3d.h"
+#include "appearance.h"
 #include "face3d.h"
 #include "edge3d.h"
-#include "appearance.h"
 #include "object3d.h"
 #include "polygon.h"
 #include "data.h"
