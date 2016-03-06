@@ -1,5 +1,5 @@
-Bottom: b216f34a27ab559e4171e7e53576be3bb2d06284
-Top:    d2ccad9ad000a262e1903adad320937127886da1
+Bottom: ed4180e54ac83285d51d0e0873b34f63ab8c97fa
+Top:    fb481d22d8c7019545582be514b2bd964da8c045
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -23,10 +23,10 @@ index 8791abf..0926001 100644
 +  face->surface_orientation_reversed = true;
 +}
 diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
-index 4838c43..d626ce0 100644
+index 95232a6..f69d07b 100644
 --- a/src/hid/common/face3d.h
 +++ b/src/hid/common/face3d.h
-@@ -17,3 +17,4 @@ void face3d_add_contour (face3d *face, contour3d *contour);
+@@ -18,3 +18,4 @@ void face3d_add_contour (face3d *face, contour3d *contour);
  void face3d_set_appearance (face3d *face, appearance *appear);
  void face3d_set_normal (face3d *face, double nx, double ny, double nz);
  void face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius);
