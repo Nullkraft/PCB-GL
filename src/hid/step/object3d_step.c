@@ -13,7 +13,6 @@
 #include "hid/common/face3d.h"
 #include "hid/common/edge3d.h"
 #include "hid/common/object3d.h"
-#include "data.h"
 
 #include "step_writer.h"
 
