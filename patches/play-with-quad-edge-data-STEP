@@ -1,5 +1,5 @@
 Bottom: fb481d22d8c7019545582be514b2bd964da8c045
-Top:    a168f8a03748927cd70d01bafff8e465be163933
+Top:    eaa540c68dddb8a5a16998b053c506b801230db5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:08:29 +0000
 
@@ -9,10 +9,18 @@ STEP stuff from play-with-quad-edge-data
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 9965e66..35d6178 100644
+index 9965e66..60807b7 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -358,7 +358,9 @@ LIBGTK_SRCS = \
+@@ -169,6 +169,7 @@ PCB_SRCS = \
+ 	hid/common/object3d.h \
+ 	hid/common/quad.c \
+ 	hid/common/quad.h \
++	hid/common/step_id.h \
+ 	hid/common/vertex3d.c \
+ 	hid/common/vertex3d.h \
+ 	hid/hidint.h 
+@@ -358,7 +359,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-top-window.c \
  	hid/gtk/gui-utils.c \
  	hid/gtk/snavi.c \
@@ -24,10 +32,18 @@ index 9965e66..35d6178 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 278a90d..263c089 100644
+index 278a90d..cfc0861 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -608,7 +608,7 @@ object3d_test_board_outline (void)
+@@ -5,6 +5,7 @@
+ 
+ #include <glib.h>
+ 
++#include "step_id.h"
+ #include "quad.h"
+ #include "vertex3d.h"
+ #include "contour3d.h"
+@@ -608,7 +609,7 @@ object3d_test_board_outline (void)
    GList *board_outlines;
  
    board_outlines = object3d_from_board_outline ();
@@ -54,18 +70,31 @@ index 0000000..86a4974
 @@ -0,0 +1,2 @@
 +typedef int step_id;
 +typedef GList* step_id_list;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 015d575..6e8c5d3 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -15,6 +15,7 @@
+ #include "gui-pinout-preview.h"
+ #include "pcb-printf.h"
+ 
++#include "hid/common/step_id.h"
+ #include "hid/common/quad.h"
+ #include "hid/common/vertex3d.h"
+ #include "hid/common/contour3d.h"
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 new file mode 100644
-index 0000000..b781307
+index 0000000..fb0b142
 --- /dev/null
 +++ b/src/hid/step/object3d_step.c
-@@ -0,0 +1,573 @@
+@@ -0,0 +1,574 @@
 +#include <stdio.h>
 +//#include <stdlib.h>
 +#include <stdbool.h>
 +
 +#include <glib.h>
 +
++#include "hid/common/step_id.h"
 +#include "hid/common/quad.h"
 +#include "hid/common/vertex3d.h"
 +#include "hid/common/contour3d.h"
