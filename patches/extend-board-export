@@ -1,5 +1,5 @@
 Bottom: 3ba92b9df7c5c24cd64329e91d9facf1a18f92d1
-Top:    7f9a7f4622102b9e6636a99e76e89d54b30508f9
+Top:    03d964c22a70d589fc7d7690c81da6a704300116
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 00:29:30 +0000
 
@@ -36,7 +36,7 @@ index d4917d7..d2bf7b3 100644
 +void appearance_set_color (appearance *appear, float r, float g, float b);
 +void appearance_set_appearance (appearance *appear, const appearance *from);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index c043bbe..e8eb364 100644
+index c043bbe..66a13a8 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -4,6 +4,7 @@
@@ -164,7 +164,7 @@ index c043bbe..e8eb364 100644
  #endif
                edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
              }
-@@ -579,7 +586,37 @@ object3d_from_board_outline (void)
+@@ -579,9 +586,39 @@ object3d_from_board_outline (void)
        objects = g_list_append (objects, object);
  
      }
@@ -201,8 +201,11 @@ index c043bbe..e8eb364 100644
 +  destroy_appearance (board_appearance);
 +  destroy_appearance (top_bot_appearance);
  
-   poly_Free (&outline);
+-  poly_Free (&outline);
++  poly_Free (&board_outline);
  
+   return objects;
+ }
 diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
 index b34c7b4..cf5657f 100644
 --- a/src/hid/common/object3d.h
