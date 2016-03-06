@@ -1,4 +1,4 @@
-Bottom: 651465697f87bd3ce95297e1eed9c61059d53a82
+Bottom: 4b61daf2776496b8aa7bca8fbc740efab6223a8f
 Top:    b6a72611e4818db2d63b65d440e019ece0240d25
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
@@ -308,7 +308,7 @@ index c516e04..2f9f22d 100644
            face3d_set_normal (cylinder_faces[0], 1., 0., 0.);       /* A normal to the axis direction */
                                         /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 0c197da..3d20de9 100644
+index 866121a..3d20de9 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -20,6 +20,20 @@
@@ -400,23 +400,3 @@ index 0c197da..3d20de9 100644
 +
          }
      }
- 
-@@ -254,14 +299,11 @@ object3d_export_to_step (object3d *object, const char *filename)
-   brep_identifier = step_manifold_solid_brep (step, "PCB outline", pcb_shell_identifier);
- 
-   /* Body style */
--  if (1)
--    {
--      /* XXX: THERE MUST BE A BODY STYLE, CERTAINLY IF WE WANT TO OVER RIDE FACE COLOURS */
--      brep_style_identifier = step_styled_item (step, "NONE", presentation_style_assignments_from_appearance (step, object->appear), brep_identifier);
--      step_presentation_layer_assignment (step, "1", "Layer 1", make_step_id_list (1, brep_style_identifier));
-+  /* XXX: THERE MUST BE A BODY STYLE, CERTAINLY IF WE WANT TO OVER RIDE FACE COLOURS */
-+  brep_style_identifier = step_styled_item (step, "NONE", presentation_style_assignments_from_appearance (step, object->appear), brep_identifier);
-+  step_presentation_layer_assignment (step, "1", "Layer 1", make_step_id_list (1, brep_style_identifier));
- 
--      styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (brep_style_identifier));
--    }
-+  styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (brep_style_identifier));
- 
-   /* Face styles */
-   for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter))
