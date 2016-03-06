@@ -1,5 +1,5 @@
 Bottom: ae1813b9c9e9412d87b516a913d667f2ecc85e47
-Top:    fd1558a8b57ab4e2a247d5925028795c07f87aff
+Top:    24fd1273b7b242eda8cd18da3d8362eb33129ecd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -8,18 +8,6 @@ Remove pseudocode for assembly emission
 
 ---
 
-diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 04d1160..bfa1e61 100644
---- a/src/hid/common/object3d.c
-+++ b/src/hid/common/object3d.c
-@@ -465,6 +465,7 @@ object3d_from_contours (const POLYAREA *contours,
- 
-           if (ct->is_round)
-             {
-+
-               face3d_set_cylindrical (faces[i], COORD_TO_STEP_X (PCB, ct->cx), COORD_TO_STEP_Y (PCB, ct->cy), 0., /* A point on the axis of the cylinder */
-                                                 0., 0., 1.,                                                       /* Direction of the cylindrical axis */
-                                                 COORD_TO_MM (ct->radius));
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 index 2ec9ece..829221b 100644
 --- a/src/hid/step/object3d_step.c
