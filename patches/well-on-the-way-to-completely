@@ -1,5 +1,5 @@
 Bottom: 651465697f87bd3ce95297e1eed9c61059d53a82
-Top:    723f6105eece5680e082a7272986f9f067985164
+Top:    67cfaa970d0e419b29a596493133a6237c4ba977
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -9,7 +9,7 @@ Well on the way to completely messing up the STEP code, just by flipping the Y c
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index c516e04..7267a74 100644
+index c516e04..2f9f22d 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -15,6 +15,28 @@
@@ -41,15 +41,6 @@ index c516e04..7267a74 100644
  
  
  #ifndef WIN32
-@@ -92,7 +114,7 @@ object3d_add_face (object3d *object, face3d *face)
- }
- 
- 
--float colors[12][3] = {{1., 0., 0.},
-+double colors[12][3] = {{1., 0., 0.},
-                        {1., 1., 0.},
-                        {0., 1., 0.},
-                        {0., 1., 1.},
 @@ -131,12 +153,12 @@ draw_quad_edge (edge_ref e, void *data)
            for (i = 0; i < CIRC_SEGS; i++)
              {
