@@ -114,7 +114,7 @@ object3d_add_face (object3d *object, face3d *face)
 }
 
 
-double colors[12][3] = {{1., 0., 0.},
+float colors[12][3] = {{1., 0., 0.},
                        {1., 1., 0.},
                        {0., 1., 0.},
                        {0., 1., 1.},
