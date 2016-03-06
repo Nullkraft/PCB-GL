@@ -1,5 +1,5 @@
 Bottom: e8cbe40bcd3226b045abe38f3d2a925bf93019d3
-Top:    109386ac25479151eb665e0706b899c45ffd0f76
+Top:    c9d7595b50e046eff2d055aa5c34f93b7292fd2d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -23,17 +23,23 @@ index 8791abf..0926001 100644
 +  face->surface_orientation_reversed = true;
 +}
 diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
-index 842d251..a4d81a4 100644
+index 842d251..c630c17 100644
 --- a/src/hid/common/face3d.h
 +++ b/src/hid/common/face3d.h
-@@ -11,8 +11,8 @@ typedef struct {
+@@ -1,5 +1,6 @@
+ typedef struct {
+   double nx, ny, nz; /* Face normal?*/
++  bool surface_orientation_reversed;
+   GList *contours;
+ 
+   /* For cylindrical surfaces */
+@@ -11,8 +12,7 @@ typedef struct {
    appearance *appear;
  
    /* XXX: STEP specific - breaks encapsulation */
 -  int plane_identifier;
 -  bool plane_orientation_reversed;
 +  int surface_identifier;
-+  bool surface_orientation_reversed;
    int face_identifier;
    int face_bound_identifier;
  } face3d;
