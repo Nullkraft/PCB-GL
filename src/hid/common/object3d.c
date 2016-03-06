@@ -428,8 +428,6 @@ object3d_from_board_outline (void)
       splice (edges[npoints + i], SYM(edges[npoints + next_i_around_ct]));
       splice (SYM(edges[npoints + next_i_around_ct]), SYM(edges[2 * npoints + i]));
 
-      /* XXX: TOPOLOGY WILL BE OK, MAY NEED MORE INFO FOR GEOMETRY */
-      /* XXX: DO WE NEED TO ASSIGN EXTRA INFORMATION TO CIRCULAR EDGES FOR RENDERING / EXPORT??? */
       if (ct->is_round)
         {
           UNDIR_DATA (edges[0 * npoints + i]) = make_edge_info (false, true, COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (ct->radius));
