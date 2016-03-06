@@ -39,7 +39,7 @@
 
 extern CrosshairType Crosshair;
 
-extern MarkType Marked;
+extern _MarkType Marked;
 
 extern OutputType Output;
 
