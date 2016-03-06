@@ -1,5 +1,5 @@
-Bottom: 7f30c7545c6a5dab3f496179581199a1abf6f94e
-Top:    656775f9b82b696069339091699a3dfaf8bf1c48
+Bottom: 70142d1f30d3ac2710fc37fa1838f841a5fc53f1
+Top:    0381401fcd4be67d99b00d83f8a9233ebbf6e870
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 00:48:59 +0000
 
@@ -11,7 +11,7 @@ XXX: TODO - refcounting for appearances, for now - leak them!
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 2b4be77..c2be50b 100644
+index c24ab8a..1051207 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -393,26 +393,32 @@ object3d_from_contours (POLYAREA *contours,
@@ -53,7 +53,7 @@ index 2b4be77..c2be50b 100644
  
        object3d_set_appearance (object, object_appearance);
  
-@@ -741,8 +747,8 @@ object3d_from_board_outline (void)
+@@ -739,8 +745,8 @@ object3d_from_board_outline (void)
                                      top_bot_appearance,
                                      false); /* Don't invert */
  
@@ -64,7 +64,7 @@ index 2b4be77..c2be50b 100644
  
    poly_Free (&board_outline);
  
-@@ -1024,7 +1030,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -1022,7 +1028,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
                                      NULL,
                                      false); /* Don't invert */
  
@@ -73,7 +73,7 @@ index 2b4be77..c2be50b 100644
  
    poly_Free (&info.poly);
  
-@@ -1678,7 +1684,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1676,7 +1682,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
      }
  
  

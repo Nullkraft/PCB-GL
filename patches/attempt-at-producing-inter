@@ -1,5 +1,5 @@
-Bottom: 5ce327f8b2f352876b3959e9e2b4c76d7cc2ca29
-Top:    28b3075cee3e97aa55414ef6c436a9091da41beb
+Bottom: eb57c7503a80717e9e8a8a7828deb19849a6ac4c
+Top:    3cea73121eea210798e02bfb3483434f64f32c4b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 00:48:59 +0000
 
@@ -19,7 +19,7 @@ doesn't have a convenient implementation.
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index e6ab73e..fce0d4e23 100644
+index 0f8efa2..e0f60d1 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -66,6 +66,7 @@
@@ -81,7 +81,7 @@ index e6ab73e..fce0d4e23 100644
      }
    while (pa = pa->f, pa != contours);
  
-@@ -1010,6 +1029,7 @@ pv_mask_callback (const BoxType * b, void *cl)
+@@ -1008,6 +1027,7 @@ pv_mask_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -89,7 +89,7 @@ index e6ab73e..fce0d4e23 100644
  static int
  pv_drill_callback (const BoxType * b, void *cl)
  {
-@@ -1020,7 +1040,24 @@ pv_drill_callback (const BoxType * b, void *cl)
+@@ -1018,7 +1038,24 @@ pv_drill_callback (const BoxType * b, void *cl)
    if (!(np = CirclePoly (pv->X, pv->Y, (pv->DrillingHole + 1) / 2, NULL)))
      return 0;
  
@@ -115,7 +115,7 @@ index e6ab73e..fce0d4e23 100644
    info->poly = res;
  
    return 1;
-@@ -1265,19 +1302,69 @@ pv_copper_callback (const BoxType * b, void *cl)
+@@ -1263,19 +1300,69 @@ pv_copper_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -188,7 +188,7 @@ index e6ab73e..fce0d4e23 100644
  
  //  poly_Copy0 (&info.poly, area);
  
-@@ -1294,19 +1381,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1292,19 +1379,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
    top_group =    GetLayerGroupNumberBySide (TOP_SIDE);
    bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
  
@@ -215,7 +215,7 @@ index e6ab73e..fce0d4e23 100644
        info.poly = NULL;
  
        fprintf (stderr, "Computing copper geometry for group %i\n", group);
-@@ -1359,9 +1444,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1357,9 +1442,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
         *
         */
  
@@ -227,7 +227,7 @@ index e6ab73e..fce0d4e23 100644
  
        if (info.poly == NULL)
          {
-@@ -1369,18 +1456,308 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1367,18 +1454,308 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
            continue;
          }
  
@@ -539,7 +539,7 @@ index e6ab73e..fce0d4e23 100644
      }
  
  
-@@ -1397,5 +1774,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1395,5 +1772,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  
    poly_Free (&info.poly);
  
