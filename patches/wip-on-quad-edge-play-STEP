@@ -1,5 +1,5 @@
 Bottom: b481d4491e53df2c55635303421e8f6f83f60c08
-Top:    919e8b28ff69f069f4d92811dc167b986d0d73df
+Top:    d1b07f8f08aa243aa8b984a5871f306fe83621f4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 12:07:11 +0000
 
@@ -605,10 +605,24 @@ index 125befb..f89c15c 100644
  #undef REV
  #endif
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 0c3cd6b..24082a4 100644
+index 0c3cd6b..449d44a 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -16,13 +16,25 @@
+@@ -1,11 +1,12 @@
+ #include <stdio.h>
+ //#include <stdlib.h>
+-//#include <stdbool.h>
++#include <stdbool.h>
+ 
+ #include <glib.h>
+ 
+ #include "hid/common/quad.h"
+ #include "hid/common/vertex3d.h"
++#include "hid/common/contour3d.h"
+ #include "hid/common/appearance.h"
+ #include "hid/common/face3d.h"
+ //#include "hid/common/edge3d.h"
+@@ -16,13 +17,25 @@
  #include "object3d_step.h"
  
  
@@ -635,7 +649,7 @@ index 0c3cd6b..24082a4 100644
  
    f = fopen (filename, "w");
    if (f == NULL)
-@@ -90,150 +102,26 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -90,150 +103,26 @@ object3d_export_to_step (object3d *object, const char *filename)
                "#20 = SHAPE_DEFINITION_REPRESENTATION ( #9, #19 ) ;\n",
                "test_pcb_absr_name");
  
@@ -795,7 +809,7 @@ index 0c3cd6b..24082a4 100644
            fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
                        "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
                        "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-@@ -245,322 +133,116 @@ quad_emit_board_contour_step (FILE *f, PLINE *contour)
+@@ -245,322 +134,116 @@ quad_emit_board_contour_step (FILE *f, PLINE *contour)
                     next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
                     next_step_identifier + 4, next_step_identifier + 3, COORD_TO_MM (ct->radius));
  
