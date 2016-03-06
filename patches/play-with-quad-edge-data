@@ -1,5 +1,5 @@
 Bottom: c4002ed5f01ca2c0f265695d50e4e9b052e6984e
-Top:    938ca1c7eeedb791368db0cd19ae1cbd5296d912
+Top:    a5bbe677c3f7cbe212a5552faeb545616dd3879e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 23:02:22 +0000
 
@@ -173,7 +173,7 @@ index 0000000..42154df
 +void face3d_add_contour (face3d *face, edge_ref contour);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 new file mode 100644
-index 0000000..79f80b4
+index 0000000..6e65621
 --- /dev/null
 +++ b/src/hid/common/object3d.c
 @@ -0,0 +1,444 @@
@@ -586,14 +586,14 @@ index 0000000..79f80b4
 +      prev_i_around_ct = start_of_ct + (offset_in_ct + ct_npoints - 1) % ct_npoints;
 +
 +      /* Assign the appropriate vertex geometric data to each edge end */
-+      ODATA (edges[0 * npoints + i]) = vertices[0 * npoints + i];
-+      DDATA (edges[0 * npoints + i]) = vertices[0 * npoints + next_i_around_ct];
++      ODATA (edges[              i]) = vertices[i];
++      DDATA (edges[              i]) = vertices[next_i_around_ct];
 +      ODATA (edges[1 * npoints + i]) = vertices[1 * npoints + i];
 +      DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
-+      ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
++      ODATA (edges[2 * npoints + i]) = vertices[i];
 +      DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
-+      LDATA (edges[0 * npoints + i]) = faces[i];
-+      RDATA (edges[0 * npoints + i]) = faces[npoints];
++      LDATA (edges[              i]) = faces[i];
++      RDATA (edges[              i]) = faces[npoints];
 +      LDATA (edges[1 * npoints + i]) = faces[npoints + 1];
 +      RDATA (edges[1 * npoints + i]) = faces[i];
 +      LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
