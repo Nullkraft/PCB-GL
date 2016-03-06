@@ -1,5 +1,5 @@
 Bottom: 27c240cc88b1a180c9a8eaed22ef3e8a420efe2e
-Top:    651465697f87bd3ce95297e1eed9c61059d53a82
+Top:    4b61daf2776496b8aa7bca8fbc740efab6223a8f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -44,7 +44,7 @@ index acb690d..b34c7b4 100644
 -//void object3d_export_to_step (object3d *object, const char *filename);
  void object3d_test_board_outline (void);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 7d04aa1..0c197da 100644
+index 7d04aa1..866121a 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -13,23 +13,39 @@
@@ -329,7 +329,7 @@ index 7d04aa1..0c197da 100644
  
        for (contour_iter = face->contours;
             contour_iter != NULL;
-@@ -283,88 +225,66 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -283,88 +225,63 @@ object3d_export_to_step (object3d *object, const char *filename)
          {
            contour3d *contour = contour_iter->data;
            edge_ref edge;
@@ -387,7 +387,18 @@ index 7d04aa1..0c197da 100644
 -      }
 -  }
 +          while (edge = LNEXT (edge), edge != contour->first_edge);
-+
+ 
+-  /* Closed shell which bounds the brep solid */
+-  pcb_shell_identifier = next_step_identifier;
+-  next_step_identifier++;
+-  fprintf (f, "#%i = CLOSED_SHELL ( 'NONE', ", pcb_shell_identifier);
+-  /* Emit the faces.. */
+-  fprintf (f, "(");
+-  for (face_iter = object->faces;
+-       face_iter != NULL && g_list_next (face_iter) != NULL;
+-       face_iter = g_list_next (face_iter))
+-    {
+-      fprintf (f, "#%i, ", ((face3d *)face_iter->data)->face_identifier);
 +          edge_loop = step_edge_loop (step, "NONE", edge_loop_edges);
 +
 +          if (outer_contour)
@@ -400,35 +411,15 @@ index 7d04aa1..0c197da 100644
 +
 +      face->face_identifier = step_advanced_face (step, "NONE", face_contour_list, face->surface_identifier, !face->surface_orientation_reversed);
 +      shell_face_list = g_list_append (shell_face_list, GINT_TO_POINTER (face->face_identifier));
-+    }
- 
-   /* Closed shell which bounds the brep solid */
--  pcb_shell_identifier = next_step_identifier;
--  next_step_identifier++;
--  fprintf (f, "#%i = CLOSED_SHELL ( 'NONE', ", pcb_shell_identifier);
--  /* Emit the faces.. */
--  fprintf (f, "(");
--  for (face_iter = object->faces;
--       face_iter != NULL && g_list_next (face_iter) != NULL;
--       face_iter = g_list_next (face_iter))
-+  pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
-+  brep_identifier = step_manifold_solid_brep (step, "PCB outline", pcb_shell_identifier);
-+
-+  /* Body style */
-+  if (1)
-     {
--      fprintf (f, "#%i, ", ((face3d *)face_iter->data)->face_identifier);
--    }
+     }
 -  fprintf (f, "#%i)", ((face3d *)face_iter->data)->face_identifier);
 -  fprintf (f, " ) ;\n");
-+      /* XXX: THERE MUST BE A BODY STYLE, CERTAINLY IF WE WANT TO OVER RIDE FACE COLOURS */
-+      brep_style_identifier = step_styled_item (step, "NONE", presentation_style_assignments_from_appearance (step, object->appear), brep_identifier);
-+      step_presentation_layer_assignment (step, "1", "Layer 1", make_step_id_list (1, brep_style_identifier));
  
 -  /* Finally emit the brep solid definition */
 -  fprintf (f, "#%i = MANIFOLD_SOLID_BREP ( 'PCB outline', #%i ) ;\n", brep_identifier, pcb_shell_identifier);
-+      styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (brep_style_identifier));
-+    }
++  /* Closed shell which bounds the brep solid */
++  pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
++  brep_identifier = step_manifold_solid_brep (step, "PCB outline", pcb_shell_identifier);
  
 -  /* Emit references to the styled and over_ridden styled items */
 -  fprintf (f, "#%i = MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION (  '', ", next_step_identifier);
@@ -436,6 +427,13 @@ index 7d04aa1..0c197da 100644
 -  for (styled_item_iter = styled_item_identifiers;
 -       styled_item_iter != NULL && g_list_next (styled_item_iter) != NULL;
 -       styled_item_iter = g_list_next (styled_item_iter))
++  /* Body style */
++  /* XXX: THERE MUST BE A BODY STYLE, CERTAINLY IF WE WANT TO OVER RIDE FACE COLOURS */
++  brep_style_identifier = step_styled_item (step, "NONE", presentation_style_assignments_from_appearance (step, object->appear), brep_identifier);
++  step_presentation_layer_assignment (step, "1", "Layer 1", make_step_id_list (1, brep_style_identifier));
++
++  styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (brep_style_identifier));
++
 +  /* Face styles */
 +  for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter))
      {
