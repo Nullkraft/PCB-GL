@@ -243,7 +243,6 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
   *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
 }
 
-
 object3d *
 object3d_from_board_outline (void)
 {
@@ -373,4 +372,14 @@ object3d_from_board_outline (void)
   object->first_edge = edges[0]; /* edges[34] */
 
   return object;
+}
+
+void
+object3d_test_board_outline (void)
+{
+  object3d *board_outline;
+
+  board_outline = object3d_from_board_outline ();
+  object3d_export_to_step (board_outline, "object3d_test.step");
+  destroy_object3d (board_outline);
 }
