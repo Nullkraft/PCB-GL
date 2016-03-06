@@ -395,7 +395,6 @@ object3d_from_board_outline (void)
           if (offset_in_ct == ct_npoints)
             {
               start_of_ct = i;
-              printf ("start_of_ct = %i\n", start_of_ct);
               offset_in_ct = 0;
               ct = ct->next;
               ct_npoints = get_contour_npoints (ct);
