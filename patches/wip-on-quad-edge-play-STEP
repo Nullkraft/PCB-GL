@@ -1,5 +1,5 @@
-Bottom: 7f1114e51061b97f65c172a8624f5351c84ab866
-Top:    2d1d1584fdb8d16d36f4ad1c47eaf905047b7a11
+Bottom: 7f296bbbae193e5f3bf72998badab5dd92a22c64
+Top:    99ba38437d44f57dad3bc8cfa89c771f3e22a42b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 12:07:11 +0000
 
@@ -9,10 +9,10 @@ STEP stuff from wip-on-quad-edge-play
 ---
 
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 56a000e..87dd35e 100644
+index 7d1283c..b165dd1 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -18,13 +18,25 @@
+@@ -15,13 +15,25 @@
  #include "object3d_step.h"
  
  
@@ -39,7 +39,7 @@ index 56a000e..87dd35e 100644
  
    f = fopen (filename, "w");
    if (f == NULL)
-@@ -92,150 +104,26 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -89,150 +101,26 @@ object3d_export_to_step (object3d *object, const char *filename)
                "#20 = SHAPE_DEFINITION_REPRESENTATION ( #9, #19 ) ;\n",
                "test_pcb_absr_name");
  
@@ -199,7 +199,7 @@ index 56a000e..87dd35e 100644
            fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; "
                        "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
                        "#%i =       DIRECTION ( 'NONE', ( %f, %f, %f )) ; "
-@@ -247,322 +135,116 @@ quad_emit_board_contour_step (FILE *f, PLINE *contour)
+@@ -244,322 +132,116 @@ quad_emit_board_contour_step (FILE *f, PLINE *contour)
                     next_step_identifier + 3, next_step_identifier, next_step_identifier + 1, next_step_identifier + 2,
                     next_step_identifier + 4, next_step_identifier + 3, COORD_TO_MM (ct->radius));
  
