@@ -499,6 +499,7 @@ typedef struct PCBType
     ElementOn, RatOn, InvisibleObjectsOn, PinOn, SilkActive,	/* active layer is actually silk */
     SolderMaskActive, /* active layer is actually solder mask */
     RatDraw;			 /* we're drawing rats */
+  bool ViolateLock;
   char *ViaColor,		/* some colors */
    *ViaSelectedColor,
     *PinColor,
