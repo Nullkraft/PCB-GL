@@ -1,0 +1,22 @@
+Bottom: a5bbe677c3f7cbe212a5552faeb545616dd3879e
+Top:    c032851dd1e3bb8cd6aba31545de9d6fc646f4cb
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-06 23:11:09 +0000
+
+Refresh of play-with-quad-edge-data
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 6e65621..e4f69c6 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -428,8 +428,6 @@ object3d_from_board_outline (void)
+       splice (edges[npoints + i], SYM(edges[npoints + next_i_around_ct]));
+       splice (SYM(edges[npoints + next_i_around_ct]), SYM(edges[2 * npoints + i]));
+ 
+-      /* XXX: TOPOLOGY WILL BE OK, MAY NEED MORE INFO FOR GEOMETRY */
+-      /* XXX: DO WE NEED TO ASSIGN EXTRA INFORMATION TO CIRCULAR EDGES FOR RENDERING / EXPORT??? */
+       if (ct->is_round)
+         {
+           UNDIR_DATA (edges[0 * npoints + i]) = make_edge_info (false, true, COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (ct->radius));
