@@ -1,4 +1,4 @@
-Bottom: a6ec2587f3cb2c6fc4b92388c8f9f1b8ed51a9df
+Bottom: 2b25aa815241ae59950a8b9d4706aa2281357102
 Top:    44f0d2ffebd524b0d36e3887ca954fef38a38dc1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
@@ -440,43 +440,3 @@ index 1687042..77db6b9 100644
  
    shape_representation_identifier =
      step_advanced_brep_shape_representation (step, "test_pcb_absr_name",
-diff --git a/src/hid/step/step_writer.c b/src/hid/step/step_writer.c
-index 54f7210..ca7fa92 100644
---- a/src/hid/step/step_writer.c
-+++ b/src/hid/step/step_writer.c
-@@ -149,7 +149,7 @@ step_vertex_point (step_file *file, char *name, step_id pnt)
- step_id
- step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_end, step_id edge_geometry, bool same_sense)
- {
--  fprintf (file->f, "#%i = EDGE_CURVE ( '%s', #%i, #%i, #%i, %s ) ;\n",
-+  fprintf (file->f, "\n#%i = EDGE_CURVE ( '%s', #%i, #%i, #%i, %s ) ; ",
-                     file->next_id, name, edge_start, edge_end, edge_geometry, step_bool (same_sense));
-   return file->next_id++;
- }
-@@ -157,7 +157,7 @@ step_edge_curve (step_file *file, char *name, step_id edge_start, step_id edge_e
- step_id
- step_oriented_edge (step_file *file, char *name, step_id edge_element, bool orientation)
- {
--  fprintf (file->f, "#%i = ORIENTED_EDGE ( '%s', *, *, #%i, %s ) ;\n",
-+  fprintf (file->f, "#%i = ORIENTED_EDGE ( '%s', *, *, #%i, %s ) ; ",
-                     file->next_id, name, edge_element, step_bool (orientation));
-   return file->next_id++;
- }
-@@ -176,7 +176,7 @@ step_edge_loop (step_file *file, char *name, step_id_list edge_list)
- step_id
- step_face_bound (step_file *file, char *name, step_id bound, bool orientation)
- {
--  fprintf (file->f, "#%i = FACE_BOUND ( '%s', #%i, %s ) ;\n",
-+  fprintf (file->f, "#%i = FACE_BOUND ( '%s', #%i, %s ) ; ",
-                     file->next_id, name, bound, step_bool (orientation));
- 
-   return file->next_id++;
-@@ -196,7 +196,7 @@ step_advanced_face (step_file *file, char *name, step_id_list bounds, step_id fa
- {
-   fprintf (file->f, "#%i = ADVANCED_FACE ( '%s', ", file->next_id, name);
-   fprint_id_list (file->f, bounds);
--  fprintf (file->f, ", #%i, %s ) ; ", face_geometry, step_bool (same_sense));
-+  fprintf (file->f, ", #%i, %s ) ;\n", face_geometry, step_bool (same_sense));
-   destroy_step_id_list (bounds);
- 
-   return file->next_id++;
