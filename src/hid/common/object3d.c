@@ -275,20 +275,9 @@ object3d_from_board_outline (void)
       ct = ct->next;
     }
 
-  /* We know how many edges and vertices we need now...
-   *
-   * let n = npoints
-   * bodies = 1             (FOR NOW - just the first board outline)
-   * vertices = 2n          (n-top, n-bottom)
-   * edges = 3n             (n-top, n-bottom, n-sides)
-   * faces = 2 + n          (1-top, 1-bottom, n-sides)
-   *
-   * holes = 0              (FOR NOW - just the outline, no holes)
-   * holes = ncontours - 1  (LATER)
-   */
 
-  vertices = malloc (sizeof (vertex3d *) * 2 * npoints);
-  edges    = malloc (sizeof (edge_ref  ) * 3 * npoints);
+  vertices = malloc (sizeof (vertex3d *) * 2 * npoints); /* (n-bottom, n-top) */
+  edges    = malloc (sizeof (edge_ref  ) * 3 * npoints); /* (n-bottom, n-top, n-sides) */
 
   /* Define the vertices */
   ct = contour;
