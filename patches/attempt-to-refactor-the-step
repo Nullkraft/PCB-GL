@@ -1,4 +1,4 @@
-Bottom: 73683549659b556fc98d5a7f7bf3ab7c5886c7b9
+Bottom: ed7fc8c9c4ce2c61194018b2ed6b65123b73be49
 Top:    fd482e9758f93cfa250be564486c3b16e51bb830
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
@@ -22,31 +22,16 @@ index 60807b7..bd6874d 100644
  	hid/step/object3d_step.h
  libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
 diff --git a/src/hid/common/contour3d.c b/src/hid/common/contour3d.c
-index 6aa3189..13e865e 100644
+index eb2235e..13e865e 100644
 --- a/src/hid/common/contour3d.c
 +++ b/src/hid/common/contour3d.c
-@@ -1,6 +1,8 @@
+@@ -1,5 +1,6 @@
  #include <glib.h>
  #include <stdbool.h>
 +#include <stdio.h>
  
-+#include "step_id.h"
+ #include "step_id.h"
  #include "quad.h"
- #include "contour3d.h"
- 
-diff --git a/src/hid/common/contour3d.h b/src/hid/common/contour3d.h
-index 818bd8e..0000492 100644
---- a/src/hid/common/contour3d.h
-+++ b/src/hid/common/contour3d.h
-@@ -2,7 +2,7 @@ typedef struct {
-   edge_ref first_edge;
- 
-   /* XXX: STEP specific - breaks encapsulation */
--  int face_bound_identifier;
-+  step_id face_bound_identifier;
- } contour3d;
- 
- contour3d *make_contour3d (edge_ref first_edge);
 diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
 index 35a8846..23e335e 100644
 --- a/src/hid/common/edge3d.c
