@@ -1,5 +1,5 @@
 Bottom: c4002ed5f01ca2c0f265695d50e4e9b052e6984e
-Top:    550aee0dbc7845c62033d7b132057f7388ab2af4
+Top:    89e6006df14eb98451d4899acc0456fdf5e16544
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 12:11:20 +0000
 
@@ -84,10 +84,10 @@ new file mode 100644
 index 0000000..e69de29
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 new file mode 100644
-index 0000000..71c8a08
+index 0000000..f6ebcdd
 --- /dev/null
 +++ b/src/hid/common/object3d.c
-@@ -0,0 +1,375 @@
+@@ -0,0 +1,364 @@
 +#include <stdio.h>
 +#include <stdlib.h>
 +#include <assert.h>
@@ -365,20 +365,9 @@ index 0000000..71c8a08
 +      ct = ct->next;
 +    }
 +
-+  /* We know how many edges and vertices we need now...
-+   *
-+   * let n = npoints
-+   * bodies = 1             (FOR NOW - just the first board outline)
-+   * vertices = 2n          (n-top, n-bottom)
-+   * edges = 3n             (n-top, n-bottom, n-sides)
-+   * faces = 2 + n          (1-top, 1-bottom, n-sides)
-+   *
-+   * holes = 0              (FOR NOW - just the outline, no holes)
-+   * holes = ncontours - 1  (LATER)
-+   */
 +
-+  vertices = malloc (sizeof (vertex3d *) * 2 * npoints);
-+  edges    = malloc (sizeof (edge_ref  ) * 3 * npoints);
++  vertices = malloc (sizeof (vertex3d *) * 2 * npoints); /* (n-bottom, n-top) */
++  edges    = malloc (sizeof (edge_ref  ) * 3 * npoints); /* (n-bottom, n-top, n-sides) */
 +
 +  /* Define the vertices */
 +  ct = contour;
