@@ -1,7 +1,7 @@
-Bottom: 54ed204e6b0587d0e9e03dfcb04a3c01bc0c717a
-Top:    076d9abd44b9e4a373697f5ff86f5b44248291f0
+Bottom: 31ee9be7eb8cec26b12d2d85579d7f3a1add3f1d
+Top:    8778279c28a593f3f7e8e11eedc545dfe1674eae
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-06 00:53:25 +0000
+Date:   2016-03-06 00:53:35 +0000
 
 Extend board export
 
@@ -13,7 +13,7 @@ V2: Apply the solder-mask on top of the board (core) thickness, don't shrink the
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 2061539..01c897e 100644
+index 1fe5976..a924326 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -62,6 +62,7 @@
@@ -24,7 +24,7 @@ index 2061539..01c897e 100644
  
  static GList *object3d_test_objects = NULL;
  
-@@ -640,14 +641,18 @@ GList *
+@@ -664,14 +665,18 @@ GList *
  object3d_from_board_outline (void)
  {
    POLYAREA *board_outline = board_outline_poly (true);
@@ -45,7 +45,7 @@ index 2061539..01c897e 100644
  
    objects = object3d_from_contours (board_outline,
  #ifdef REVERSED_PCB_CONTOURS
-@@ -666,4 +671,250 @@ object3d_from_board_outline (void)
+@@ -690,4 +695,250 @@ object3d_from_board_outline (void)
    poly_Free (&board_outline);
  
    return objects;
