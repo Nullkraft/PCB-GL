@@ -1,4 +1,4 @@
-Bottom: d427c5de27867bb49f9164ceb73a8f50d0ab0345
+Bottom: 95b3371cf42d85777be8b8a1952531e9eb2084fb
 Top:    b810a900a2ca39068289b7d2810407d0e3b51294
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
@@ -212,7 +212,7 @@ index 42154df..4838c43 100644
 +void face3d_set_normal (face3d *face, double nx, double ny, double nz);
 +void face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index eea2e45..1a00164 100644
+index 2c821f7..1a00164 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -7,6 +7,7 @@
@@ -223,15 +223,6 @@ index eea2e45..1a00164 100644
  #include "appearance.h"
  #include "face3d.h"
  #include "edge3d.h"
-@@ -70,7 +71,7 @@ make_object3d (char *name)
-   static int object3d_count = 0;
-   object3d *object;
- 
--  object = g_new (object3d, 1);
-+  object = g_new0 (object3d, 1);
-   object->id = object3d_count++;
-   name = g_strdup (name);
- 
 @@ -141,12 +142,15 @@ object3d_create_test_cube (void)
    for (i = 0; i < 12; i++)
      {
