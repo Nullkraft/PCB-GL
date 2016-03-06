@@ -9,8 +9,6 @@ make_edge_info (void)
   edge_info *info;
 
   info = g_new0 (edge_info, 1);
-  info->is_stitch = is_stitch;
-  info->is_round = is_round;
 
   return info;
 }
