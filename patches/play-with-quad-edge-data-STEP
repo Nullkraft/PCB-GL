@@ -1,5 +1,5 @@
 Bottom: a0d7f878f73dfd0d4d6bc1521cf534a9356f9247
-Top:    92417c990658c7c54de626e4e40a3cab703b065f
+Top:    de32e13e330a570a739d2297411e4ea22fa5fe0b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:08:29 +0000
 
@@ -8,6 +8,21 @@ STEP stuff from play-with-quad-edge-data
 
 ---
 
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 5ef4e2c..4144a6d 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -354,7 +354,9 @@ LIBGTK_SRCS = \
+ 	hid/gtk/gui-top-window.c \
+ 	hid/gtk/gui-utils.c \
+ 	hid/gtk/snavi.c \
+-	hid/gtk/snavi.h
++	hid/gtk/snavi.h \
++	hid/step/object3d_step.c \
++	hid/step/object3d_step.h
+ libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
+ 
+ hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 index 717b121..56114d9 100644
 --- a/src/hid/common/object3d.c
