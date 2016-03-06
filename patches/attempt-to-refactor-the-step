@@ -1,5 +1,5 @@
 Bottom: f6204ecf024d322d95dc28dea45b3b01e1130c56
-Top:    f25e15ef3cad820fa6f8cbec137d67707c0faf3d
+Top:    647eb27fc68a011bbce9d5f3051424ab36bbfa63
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -44,18 +44,17 @@ index acb690d..b34c7b4 100644
 -//void object3d_export_to_step (object3d *object, const char *filename);
  void object3d_test_board_outline (void);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 6cda225..1687042 100644
+index 6cda225..27187c1 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,5 @@
  #include <stdio.h>
 -//#include <stdlib.h>
 +#include <stdlib.h>
-+#include <assert.h>
  #include <stdbool.h>
  
  #include <glib.h>
-@@ -12,26 +13,42 @@
+@@ -12,26 +12,42 @@
  #include "hid/common/face3d.h"
  #include "hid/common/edge3d.h"
  #include "hid/common/object3d.h"
@@ -101,7 +100,7 @@ index 6cda225..1687042 100644
    GList *face_iter;
    GList *edge_iter;
    GList *vertex_iter;
-@@ -44,6 +61,8 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -44,6 +60,8 @@ object3d_export_to_step (object3d *object, const char *filename)
        return;
      }
  
@@ -110,7 +109,7 @@ index 6cda225..1687042 100644
    currenttime = time (NULL);
    gmtime_r (&currenttime, &utc);
  
-@@ -98,38 +117,13 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -98,38 +116,13 @@ object3d_export_to_step (object3d *object, const char *filename)
                "#17 =( NAMED_UNIT ( * ) SI_UNIT ( $, .STERADIAN. ) SOLID_ANGLE_UNIT ( ) );\n"
                "#18 =( GEOMETRIC_REPRESENTATION_CONTEXT ( 3 ) GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT ( ( #14 ) ) GLOBAL_UNIT_ASSIGNED_CONTEXT ( ( #15, #16, #17 ) ) REPRESENTATION_CONTEXT ( 'NONE', 'WORKASPACE' ) );\n");
    geometric_representation_context_identifier = 18;
@@ -150,7 +149,7 @@ index 6cda225..1687042 100644
    for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter))
      {
        face3d *face = face_iter->data;
-@@ -137,64 +131,32 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -137,64 +130,32 @@ object3d_export_to_step (object3d *object, const char *filename)
        if (face->is_cylindrical)
          {
            /* CYLINDRICAL SURFACE NORMAL POINTS OUTWARDS AWAY FROM ITS AXIS.
@@ -236,7 +235,7 @@ index 6cda225..1687042 100644
          }
      }
  
-@@ -206,43 +168,27 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -206,43 +167,27 @@ object3d_export_to_step (object3d *object, const char *filename)
  
        if (info->is_round)
          {
@@ -298,7 +297,7 @@ index 6cda225..1687042 100644
          }
      }
  
-@@ -251,10 +197,8 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -251,10 +196,8 @@ object3d_export_to_step (object3d *object, const char *filename)
      {
        vertex3d *vertex = vertex_iter->data;
  
@@ -311,7 +310,7 @@ index 6cda225..1687042 100644
      }
  
    /* Define the Edges */
-@@ -262,15 +206,13 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -262,15 +205,13 @@ object3d_export_to_step (object3d *object, const char *filename)
      {
        edge_ref edge = (edge_ref)edge_iter->data;
        edge_info *info = UNDIR_DATA (edge);
@@ -333,7 +332,7 @@ index 6cda225..1687042 100644
      }
  
    /* Define the faces */
-@@ -278,6 +220,7 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -278,6 +219,7 @@ object3d_export_to_step (object3d *object, const char *filename)
      {
        face3d *face = face_iter->data;
        bool outer_contour = true;
@@ -341,7 +340,7 @@ index 6cda225..1687042 100644
  
        for (contour_iter = face->contours;
             contour_iter != NULL;
-@@ -285,88 +228,66 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -285,88 +227,66 @@ object3d_export_to_step (object3d *object, const char *filename)
          {
            contour3d *contour = contour_iter->data;
            edge_ref edge;
