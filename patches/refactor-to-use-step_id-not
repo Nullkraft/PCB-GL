@@ -1,5 +1,5 @@
 Bottom: d6530e1c569a3ed11b2f0cd3c27bc26fae887dc9
-Top:    d6530e1c569a3ed11b2f0cd3c27bc26fae887dc9
+Top:    6cfa2c0d9934aa49210231a7244eb4abe3f89a08
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 16:18:11 +0000
 
@@ -8,4 +8,60 @@ Refactor to use step_id, not int
 
 ---
 
-
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 35d6178..60807b7 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -169,6 +169,7 @@ PCB_SRCS = \
+ 	hid/common/object3d.h \
+ 	hid/common/quad.c \
+ 	hid/common/quad.h \
++	hid/common/step_id.h \
+ 	hid/common/vertex3d.c \
+ 	hid/common/vertex3d.h \
+ 	hid/hidint.h 
+diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
+index f54468c..3080865 100644
+--- a/src/hid/common/edge3d.h
++++ b/src/hid/common/edge3d.h
+@@ -14,8 +14,8 @@ typedef struct
+   double radius;
+ 
+   /* XXX: STEP specific - breaks encapsulation */
+-  int infinite_line_identifier;
+-  int edge_identifier;
++  step_id infinite_line_identifier;
++  step_id edge_identifier;
+ } edge_info;
+ 
+ edge_info *make_edge_info (void);
+diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
+index c630c17..1ca9eb4 100644
+--- a/src/hid/common/face3d.h
++++ b/src/hid/common/face3d.h
+@@ -12,9 +12,9 @@ typedef struct {
+   appearance *appear;
+ 
+   /* XXX: STEP specific - breaks encapsulation */
+-  int surface_identifier;
+-  int face_identifier;
+-  int face_bound_identifier;
++  step_id surface_identifier;
++  step_id face_identifier;
++  step_id face_bound_identifier;
+ } face3d;
+ 
+ face3d *make_face3d (void);
+diff --git a/src/hid/common/vertex3d.h b/src/hid/common/vertex3d.h
+index 3625c5e..8bb6ec9 100644
+--- a/src/hid/common/vertex3d.h
++++ b/src/hid/common/vertex3d.h
+@@ -6,7 +6,7 @@ typedef struct
+   int id;
+ 
+   /* XXX: STEP specific - breaks encapsulation */
+-  int vertex_identifier;
++  step_id vertex_identifier;
+ } vertex3d;
+ 
+ vertex3d *make_vertex3d (double x, double y, double z);
