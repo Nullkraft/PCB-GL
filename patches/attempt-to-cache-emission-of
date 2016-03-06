@@ -1,5 +1,5 @@
-Bottom: 1d38fe60f503425cd9f5a6965c02b8606a572883
-Top:    97284acddd06797435461cc99acd0c9125b22bba
+Bottom: 3b2100a09c44d1ccea169576a70887f428acdcf4
+Top:    306364ca9d28169417f9e455536746085ac85131
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -11,10 +11,10 @@ XXX: TODO - refcounting for appearances, for now - leak them!
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index c24ab8a..1051207 100644
+index 32cfed7..e4ec9c0 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -393,26 +393,32 @@ object3d_from_contours (POLYAREA *contours,
+@@ -392,26 +392,32 @@ object3d_from_contours (POLYAREA *contours,
        npoints = 0;
  
        ct = contour;
@@ -53,7 +53,7 @@ index c24ab8a..1051207 100644
  
        object3d_set_appearance (object, object_appearance);
  
-@@ -739,8 +745,8 @@ object3d_from_board_outline (void)
+@@ -738,8 +744,8 @@ object3d_from_board_outline (void)
                                      top_bot_appearance,
                                      false); /* Don't invert */
  
@@ -64,7 +64,7 @@ index c24ab8a..1051207 100644
  
    poly_Free (&board_outline);
  
-@@ -1022,7 +1028,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -1021,7 +1027,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
                                      NULL,
                                      false); /* Don't invert */
  
@@ -73,7 +73,7 @@ index c24ab8a..1051207 100644
  
    poly_Free (&info.poly);
  
-@@ -1676,7 +1682,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1675,7 +1681,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
      }
  
  
@@ -83,10 +83,10 @@ index c24ab8a..1051207 100644
    /* DEBUG */
  //  poly_M_Copy0 (&PCB->Data->outline, info.poly);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 5781a61..2d78563 100644
+index 0983a24..fe56d8d 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -52,6 +52,29 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
+@@ -48,6 +48,29 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
    return psa_list;
  }
  
@@ -116,7 +116,7 @@ index 5781a61..2d78563 100644
  static step_file *
  start_ap214_file (const char *filename)
  {
-@@ -138,7 +161,8 @@ object3d_to_step_body_fragment (step_file *step,
+@@ -134,7 +157,8 @@ object3d_to_step_body_fragment (step_file *step,
                                  object3d *object,
                                  char *body_name,
                                  step_id *brep,
@@ -126,7 +126,7 @@ index 5781a61..2d78563 100644
  {
    step_id brep_identifier;
    step_id pcb_shell_identifier;
-@@ -324,7 +348,7 @@ object3d_to_step_body_fragment (step_file *step,
+@@ -320,7 +344,7 @@ object3d_to_step_body_fragment (step_file *step,
  #if 1
    /* Body style */
    /* XXX: THERE MUST BE A BODY STYLE, CERTAINLY IF WE WANT TO OVER RIDE FACE COLOURS */
@@ -135,7 +135,7 @@ index 5781a61..2d78563 100644
    step_presentation_layer_assignment (step, "1", "Layer 1", make_step_id_list (1, brep_style_identifier));
  
    *styled_item_identifiers = step_id_list_append (*styled_item_identifiers, brep_style_identifier);
-@@ -337,11 +361,12 @@ object3d_to_step_body_fragment (step_file *step,
+@@ -333,11 +357,12 @@ object3d_to_step_body_fragment (step_file *step,
        if (face->appear != NULL)
          {
            step_id orsi = step_over_riding_styled_item (step, "NONE",
@@ -149,7 +149,7 @@ index 5781a61..2d78563 100644
  #endif
  
    if (brep != NULL)
-@@ -408,6 +433,9 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
+@@ -404,6 +429,9 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
    GString *part_name;
    step_id_list breps;
    step_id_list styled_items;
@@ -159,7 +159,7 @@ index 5781a61..2d78563 100644
  
    multiple_bodies = (g_list_next (objects) != NULL);
  
-@@ -438,7 +466,7 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
+@@ -434,7 +462,7 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
        if (multiple_bodies)
          g_string_append_printf (body_name, " - %i", part);
  
@@ -168,7 +168,7 @@ index 5781a61..2d78563 100644
  
        g_string_free (body_name, true);
  
-@@ -454,12 +482,13 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
+@@ -450,12 +478,13 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
                        &shape_definition_representation,
                        &placement_axis);
  
@@ -183,7 +183,7 @@ index 5781a61..2d78563 100644
  {
    step_id product_definition_shape_identifier;
    step_id geometric_representation_context_identifier;
-@@ -470,7 +499,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
+@@ -466,7 +495,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
                           &geometric_representation_context_identifier,
                           &product_definition_shape_identifier);
  
@@ -192,7 +192,7 @@ index 5781a61..2d78563 100644
  
    step_absr_fragment (step,
                        make_step_id_list (1, brep_identifier),
-@@ -491,6 +520,9 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
+@@ -487,6 +516,9 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
    GList *object_iter;
    int part;
    bool multiple_parts;
@@ -202,7 +202,7 @@ index 5781a61..2d78563 100644
  
    multiple_parts = (g_list_next (objects) != NULL);
  
-@@ -518,13 +550,14 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
+@@ -514,13 +546,14 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
          }
  
        object3d_to_step_fragment (step, object, part_id->str, part_name->str, "PCB model", body_name->str,
@@ -218,7 +218,7 @@ index 5781a61..2d78563 100644
    finish_ap214_file (step);
  
    /* XXX: TODO: MAKE AN ASSEMBLY PRODUCT AND GATHER THE ABOVE PIECES INSIDE IT */
-@@ -536,6 +569,6 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -532,6 +565,6 @@ object3d_export_to_step (object3d *object, const char *filename)
    step_file *step;
  
    step = start_ap214_file (filename);

@@ -1,5 +1,5 @@
-Bottom: 5dbf64c8342bb5216ff359d56860c5316e60f50a
-Top:    2cd57e3bc04ba1e7e10083a716854b3b0c5178ee
+Bottom: 8f5c634cdb47d0d09254ee5922434bfbf72a1ef8
+Top:    9b4e458e20895af02772c7607168bd8e55d60653
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:07 +0000
 
@@ -9,10 +9,10 @@ Remove old debug code for splicing a cylinder onto the board outline object3d
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index e0f60d1..646540f 100644
+index d9342b5..877fece 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -634,98 +634,6 @@ object3d_from_contours (POLYAREA *contours,
+@@ -633,98 +633,6 @@ object3d_from_contours (POLYAREA *contours,
              }
          }
  

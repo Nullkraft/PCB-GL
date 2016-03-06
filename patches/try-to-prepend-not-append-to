@@ -1,5 +1,5 @@
-Bottom: 48f97bb36e4ec8c69139aeacb0a6d53e6c29b7c1
-Top:    5b69745c82ff50a573aadee813dd9eecd9a4f378
+Bottom: 0082b3268533825873b656bcd120680d88da563f
+Top:    526c0037a69a43a902700967f3b5e0c0cf400f46
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:07 +0000
 
@@ -9,10 +9,10 @@ Try to prepend, not append to g_lists. This avoids wasting time traversing lists
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 7def7f2..c24ab8a 100644
+index 73761f6..32cfed7 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -119,19 +119,19 @@ object3d_set_appearance (object3d *object, appearance *appear)
+@@ -118,19 +118,19 @@ object3d_set_appearance (object3d *object, appearance *appear)
  void
  object3d_add_edge (object3d *object, edge_ref edge)
  {
@@ -35,7 +35,7 @@ index 7def7f2..c24ab8a 100644
  }
  
  
-@@ -696,7 +696,7 @@ object3d_from_contours (POLYAREA *contours,
+@@ -695,7 +695,7 @@ object3d_from_contours (POLYAREA *contours,
          }
  #endif
  
