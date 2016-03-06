@@ -1,5 +1,5 @@
 Bottom: d6530e1c569a3ed11b2f0cd3c27bc26fae887dc9
-Top:    40319d696db779fa36820523541a712f143c25f4
+Top:    e9205db1ab526e861b393af829cf680914d3f5f5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 16:18:11 +0000
 
@@ -20,6 +20,31 @@ index 35d6178..60807b7 100644
  	hid/common/vertex3d.c \
  	hid/common/vertex3d.h \
  	hid/hidint.h 
+diff --git a/src/hid/common/contour3d.c b/src/hid/common/contour3d.c
+index 6aa3189..eb2235e 100644
+--- a/src/hid/common/contour3d.c
++++ b/src/hid/common/contour3d.c
+@@ -1,6 +1,7 @@
+ #include <glib.h>
+ #include <stdbool.h>
+ 
++#include "step_id.h"
+ #include "quad.h"
+ #include "contour3d.h"
+ 
+diff --git a/src/hid/common/contour3d.h b/src/hid/common/contour3d.h
+index 818bd8e..0000492 100644
+--- a/src/hid/common/contour3d.h
++++ b/src/hid/common/contour3d.h
+@@ -2,7 +2,7 @@ typedef struct {
+   edge_ref first_edge;
+ 
+   /* XXX: STEP specific - breaks encapsulation */
+-  int face_bound_identifier;
++  step_id face_bound_identifier;
+ } contour3d;
+ 
+ contour3d *make_contour3d (edge_ref first_edge);
 diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
 index 263f986..35a8846 100644
 --- a/src/hid/common/edge3d.c
