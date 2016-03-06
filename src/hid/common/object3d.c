@@ -344,18 +344,6 @@ object3d_from_board_outline (void)
           ct = ct->next;
         }
 
-      /* We know how many edges and vertices we need now...
-       *
-       * let n = npoints
-       * bodies = 1             (FOR NOW - just the first board outline)
-       * vertices = 2n          (n-top, n-bottom)
-       * edges = 3n             (n-top, n-bottom, n-sides)
-       * faces = 2 + n          (1-top, 1-bottom, n-sides)
-       *
-       * holes = 0              (FOR NOW - just the outline, no holes)
-       * holes = ncontours - 1  (LATER)
-       */
-
       object = make_object3d (PCB->Name);
       board_appearance = make_appearance ();
       top_bot_appearance = make_appearance ();
@@ -364,9 +352,9 @@ object3d_from_board_outline (void)
 
       object3d_set_appearance (object, board_appearance);
 
-      vertices = malloc (sizeof (vertex3d *) * 2 * npoints);
-      edges    = malloc (sizeof (edge_ref  ) * 3 * npoints);
-      faces    = malloc (sizeof (face3d *) * (2 + npoints));
+      vertices = malloc (sizeof (vertex3d *) * 2 * npoints); /* (n-bottom, n-top) */
+      edges    = malloc (sizeof (edge_ref  ) * 3 * npoints); /* (n-bottom, n-top, n-sides) */
+      faces    = malloc (sizeof (face3d *) * (npoints + 2)); /* (n-sides, 1-bottom, 1-top */
 
       /* Define the vertices */
       ct = contour;
