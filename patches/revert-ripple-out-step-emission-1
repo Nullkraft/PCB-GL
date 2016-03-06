@@ -1,5 +1,5 @@
 Bottom: 166c70b8b08b1e51d579786d9035fc2b04842bf6
-Top:    ccb766ca3b62574d75d9742aac5be07d63db907b
+Top:    b1b273a74a584bc08f9bc1dfd0eeb0aa6dfbf6a9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:15:40 +0000
 
@@ -13,14 +13,13 @@ This reverts commit 68ca4abd37f1f1e22527df4e80b3e11519a4cfbf.
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 98d03d6..73a9ee9 100644
+index 98d03d6..8a8d5e0 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -289,6 +289,244 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
+@@ -289,6 +289,243 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
    *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
  }
  
-+
 +static void
 +fprint_idlist (FILE *f, int *ids, int num_ids)
 +{
@@ -261,7 +260,7 @@ index 98d03d6..73a9ee9 100644
  object3d *
  object3d_from_board_outline (void)
  {
-@@ -455,3 +693,13 @@ object3d_from_board_outline (void)
+@@ -455,3 +692,13 @@ object3d_from_board_outline (void)
  
    return object;
  }
