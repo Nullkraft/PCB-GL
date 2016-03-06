@@ -1,5 +1,5 @@
 Bottom: 8ac823c6493072e5bb505f415bfa2386053ca5f0
-Top:    89b6fdb21835a9020a497d2b864f4a2ac8e4e614
+Top:    bfc8629a7ae9afb987ba0e7b1c7fc0562950223f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:26 +0000
 
@@ -9,7 +9,7 @@ Adjust coordinate system GOODNES KNOWS WHETHER THE GEOMETRY IS CORRECT... IDA-ST
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 96f4344..790b7d1 100644
+index 96f4344..5437690 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -24,6 +24,7 @@
@@ -20,24 +20,6 @@ index 96f4344..790b7d1 100644
  
  #ifdef REVERSED_PCB_CONTOURS
  #define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
-@@ -386,7 +387,7 @@ object3d_from_contours (const POLYAREA *contours,
- #ifdef REVERSED_PCB_CONTOURS
-       face3d_set_normal (faces[npoints], 0., 0., -1.);
- #else
--      face3d_set_normal (faces[npoints], 0., 0., 1.);
-+      face3d_set_normal (faces[npoints], 0., 0., 1.); /* PCB bottom is at positive Z in this scheme */
- #endif
-       face3d_set_appearance (faces[npoints], top_bot_appearance);
-       object3d_add_face (object, faces[npoints]);
-@@ -395,7 +396,7 @@ object3d_from_contours (const POLYAREA *contours,
- #ifdef REVERSED_PCB_CONTOURS
-       face3d_set_normal (faces[npoints + 1], 0., 0., 1.);
- #else
--      face3d_set_normal (faces[npoints + 1], 0., 0., -1.);
-+      face3d_set_normal (faces[npoints + 1], 0., 0., -1.); /* PCB top is at negative Z in this scheme */
- #endif
-       face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
-       object3d_add_face (object, faces[npoints + 1]);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 index 829221b..d47a8b4 100644
 --- a/src/hid/step/object3d_step.c
