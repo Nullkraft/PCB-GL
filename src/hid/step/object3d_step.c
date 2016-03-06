@@ -298,7 +298,6 @@ object3d_export_to_step (object3d *object, const char *filename)
   pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
   brep_identifier = step_manifold_solid_brep (step, "PCB outline", pcb_shell_identifier);
 
-#if 1
   /* Body style */
   /* XXX: THERE MUST BE A BODY STYLE, CERTAINLY IF WE WANT TO OVER RIDE FACE COLOURS */
   brep_style_identifier = step_styled_item (step, "NONE", presentation_style_assignments_from_appearance (step, object->appear), brep_identifier);
@@ -322,7 +321,6 @@ object3d_export_to_step (object3d *object, const char *filename)
 
   /* Emit references to the styled and over_ridden styled items */
   step_mechanical_design_geometric_presentation_representation (step, "", styled_item_identifiers, geometric_representation_context_identifier);
-#endif
 
   shape_representation_identifier =
     step_advanced_brep_shape_representation (step, "test_pcb_absr_name",
