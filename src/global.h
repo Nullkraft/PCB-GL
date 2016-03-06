@@ -609,7 +609,7 @@ typedef struct
 {
   bool status;
   Coord X, Y;
-} MarkType;
+} _MarkType;
 
 /* ---------------------------------------------------------------------------
  * our resources

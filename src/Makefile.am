@@ -28,6 +28,8 @@ else
 AM_CFLAGS= -DNDEBUG
 endif
 
+AM_CFLAGS= -Wno-unused-parameter
+
 PCB_SRCS = \
 	action.c \
 	action.h \
@@ -484,6 +486,8 @@ LIBSTEP_SRCS = \
 	hid/step/step.h \
 	hid/step/assembly.cpp \
 	hid/step/assembly.h \
+	hid/step/model.cpp \
+	hid/step/model.h \
 	hid/step/utils.cpp \
 	hid/step/utils.h \
 	hid/step/step_writer.c \
