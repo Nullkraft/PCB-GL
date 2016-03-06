@@ -1233,7 +1233,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 
       fprintf (stderr, "Computing copper geometry for group %i\n", group);
 
-#if 1
       GROUP_LOOP (PCB->Data, group);
         {
           fprintf (stderr, "Accumulating elements from layer %i\n", GetLayerNumber (PCB->Data, layer));
@@ -1244,15 +1243,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
           r_search (layer->polygon_tree, &bounds, NULL, polygon_copper_callback, &info);
         }
       END_LOOP;
-#endif
 
-#if 1
       fprintf (stderr, "Accumulating pin + via pads\n");
       r_search (PCB->Data->pin_tree, &bounds, NULL, pv_copper_callback, &info);
       r_search (PCB->Data->via_tree, &bounds, NULL, pv_copper_callback, &info);
-#endif
 
-#if 1
       if (group == top_group ||
           group == bottom_group)
         {
@@ -1260,7 +1255,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
           fprintf (stderr, "Accumulating SMT pads for side %i\n", info.side);
           r_search (PCB->Data->pad_tree, &bounds, NULL, pad_copper_callback, &info);
         }
-#endif
 
       /* TODO: Inter-layer features
        *
