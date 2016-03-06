@@ -1,5 +1,5 @@
 Bottom: 7ec7338f84ad24394a991922d814d58558b38bec
-Top:    a0fd8ec9afbdc4a985daf231cad78f91390ee169
+Top:    411076dc3f01abdaea69ac5857900ce5b9d70a98
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -212,7 +212,7 @@ index 42154df..4838c43 100644
 +void face3d_set_normal (face3d *face, double nx, double ny, double nz);
 +void face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 28fb0fe..ee75899 100644
+index 28fb0fe..5817469 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -6,6 +6,7 @@
@@ -274,12 +274,7 @@ index 28fb0fe..ee75899 100644
  
        object3d_set_appearance (object, board_appearance);
  
-@@ -350,11 +358,11 @@ object3d_from_board_outline (void)
-               offset_in_ct = 0;
-               ct = ct->next;
-               ct_npoints = get_contour_npoints (ct);
--            }
-+             }
+@@ -354,7 +362,7 @@ object3d_from_board_outline (void)
  
            get_contour_coord_n_in_mm (ct, offset_in_ct, &x1, &y1);
            vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_MM (HACK_BOARD_THICKNESS)); /* Bottom */
