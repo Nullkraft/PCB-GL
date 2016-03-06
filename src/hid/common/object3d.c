@@ -305,6 +305,7 @@ object3d_from_board_outline (void)
             }
 
           get_contour_coord_n_in_step_mm (ct, offset_in_ct, &x1, &y1);
+
           vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_STEP_Z (PCB, HACK_BOARD_THICKNESS)); /* Bottom */
           vertices[npoints + i] = make_vertex3d (x1, y1, 0);                                            /* Top */
 
