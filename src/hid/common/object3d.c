@@ -467,9 +467,10 @@ object3d_from_board_outline (void)
           if (ct->is_round)
             {
 
-              face3d_set_cylindrical (faces[i], COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* A point on the axis of the cylinder */
-                                                0., 0., 1.,                                     /* Direction of the cylindrical axis */
-                                                COORD_TO_MM (ct->radius));
+              face3d_set_cylindrical (faces[i],
+                                      COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* A point on the axis of the cylinder */
+                                      0., 0., 1.,                                     /* Direction of the cylindrical axis */
+                                      COORD_TO_MM (ct->radius));
               face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
                                         /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 
