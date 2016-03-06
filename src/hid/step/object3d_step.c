@@ -250,7 +250,7 @@ object3d_export_to_step (object3d *object, const char *filename)
     {
       vertex3d *vertex = vertex_iter->data;
 
-      fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ", next_step_identifier, vertex->x, vertex->y, vertex->z); /* Vertex coordinate  */ 
+      fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ", next_step_identifier, vertex->x, vertex->y, vertex->z); /* Vertex coordinate  */
       fprintf (f, "#%i = VERTEX_POINT ( 'NONE', #%i ) ;\n",             next_step_identifier + 1, next_step_identifier);
       vertex->vertex_identifier = next_step_identifier + 1;
       next_step_identifier = next_step_identifier + 2;
