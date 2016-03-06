@@ -1,5 +1,6 @@
 typedef struct {
   double nx, ny, nz; /* Face normal?*/
+  bool surface_orientation_reversed;
   GList *contours;
 
   /* For cylindrical surfaces */
