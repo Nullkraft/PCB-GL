@@ -1,5 +1,5 @@
-Bottom: 77efd42d9263ba6d1169ab7e429a8d82a9e8a561
-Top:    237e636eecd1d6f98812593718e147362d979989
+Bottom: b6a72611e4818db2d63b65d440e019ece0240d25
+Top:    d60d2f5ebf9b0270404406cfefd318d5b4ecd463
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -9,10 +9,10 @@ And working again (mostly)
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 149d3dd..cc0f725 100644
+index 2f9f22d..79a7296 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -471,7 +471,7 @@ object3d_from_board_outline (void)
+@@ -472,7 +472,7 @@ object3d_from_board_outline (void)
  
          }
  
@@ -21,7 +21,7 @@ index 149d3dd..cc0f725 100644
          {
            /* Cylinder centers on 45x45mm, stitch vertex is at 40x45mm. Radius is thus 5mm */
  
-@@ -579,7 +579,8 @@ object3d_test_board_outline (void)
+@@ -580,7 +580,8 @@ object3d_test_board_outline (void)
    GList *objects;
  
    objects = object3d_from_board_outline ();
@@ -32,7 +32,7 @@ index 149d3dd..cc0f725 100644
    g_list_free_full (objects, (GDestroyNotify)destroy_object3d);
  }
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 3e24d2b..cf3469d 100644
+index 3d20de9..ffbf245 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -46,34 +46,20 @@ presentation_style_assignments_from_appearance (step_file *step, appearance *app
@@ -161,11 +161,11 @@ index 3e24d2b..cf3469d 100644
 -  brep_identifier = step_manifold_solid_brep (step, "PCB outline", pcb_shell_identifier);
 +  brep_identifier = step_manifold_solid_brep (step, body_name /* This is picked up as the solid body name by Solidworks */, pcb_shell_identifier);
  
- #if 1
    /* Body style */
-@@ -324,18 +325,256 @@ object3d_export_to_step (object3d *object, const char *filename)
+   /* XXX: THERE MUST BE A BODY STYLE, CERTAINLY IF WE WANT TO OVER RIDE FACE COLOURS */
+@@ -322,18 +323,256 @@ object3d_export_to_step (object3d *object, const char *filename)
+   /* Emit references to the styled and over_ridden styled items */
    step_mechanical_design_geometric_presentation_representation (step, "", styled_item_identifiers, geometric_representation_context_identifier);
- #endif
  
 +  /* Need an anchor in 3D space to orient the shape */
 +  anchor_axis_identifier = step_axis2_placement_3d (step, "NONE",
