@@ -1,5 +1,5 @@
 Bottom: 6c54f992872359a8259c1da607fbd6b0ecb04259
-Top:    43cd2eda282b23783d461aad5ab8b99c6752bfdd
+Top:    109386ac25479151eb665e0706b899c45ffd0f76
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:28:34 +0000
 
@@ -58,7 +58,7 @@ index d626ce0..a4d81a4 100644
  
  face3d *make_face3d (void);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index c8923b1..6a00a7d 100644
+index c8923b1..aad155b 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -63,6 +63,7 @@ object3d_test_init (void)
@@ -69,11 +69,10 @@ index c8923b1..6a00a7d 100644
  }
  
  object3d *
-@@ -301,6 +302,367 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
+@@ -301,6 +302,366 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
    *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
  }
  
-+
 +void
 +object3d_export_to_step (object3d *object, const char *filename)
 +{
@@ -437,7 +436,7 @@ index c8923b1..6a00a7d 100644
  GList *
  object3d_from_board_outline (void)
  {
-@@ -601,3 +963,14 @@ object3d_from_board_outline (void)
+@@ -601,3 +962,14 @@ object3d_from_board_outline (void)
  
    return objects;
  }
