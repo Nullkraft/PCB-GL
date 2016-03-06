@@ -13,7 +13,6 @@ typedef struct {
 
   /* XXX: STEP specific - breaks encapsulation */
   int plane_identifier;
-  bool plane_orientation_reversed;
   int face_identifier;
   int face_bound_identifier;
 } face3d;
