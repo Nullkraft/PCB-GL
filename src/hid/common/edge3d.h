@@ -12,6 +12,10 @@ typedef struct
   double ny;
   double nz;
   double radius;
+
+  /* XXX: STEP specific - breaks encapsulation */
+  int infinite_line_identifier;
+  int edge_identifier;
 } edge_info;
 
 edge_info *make_edge_info (void);
