@@ -1,5 +1,5 @@
 Bottom: b1a8d956c3f2c1ad1bea4322d1efd46d61c5c8fd
-Top:    1b58f101752654c4e003a6aaa9eb94ddad8314f7
+Top:    7918b1fe7705b7bb80a13a584756ecfbe4551f49
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 21:32:09 +0000
 
@@ -9,7 +9,7 @@ Dangling fixup from old way of emitting board contours
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 769b7a5..21f8211 100644
+index 769b7a5..4636319 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -305,8 +305,13 @@ object3d_from_board_outline (void)
@@ -26,23 +26,8 @@ index 769b7a5..21f8211 100644
  
            object3d_add_vertex (object, vertices[i]);
            object3d_add_vertex (object, vertices[npoints + i]);
-@@ -325,22 +330,30 @@ object3d_from_board_outline (void)
-         {
-           faces[i] = make_face3d ();
- 
--          object3d_add_face (object, faces[i]);
--          /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
-+            object3d_add_face (object, faces[i]);
-+            /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
- #ifdef REVERSED_PCB_CONTOURS
--          face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
-+            face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
- #else
--          face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
-+            face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
- #endif
--        }
-+          }
+@@ -335,12 +340,20 @@ object3d_from_board_outline (void)
+         }
  
        faces[npoints] = make_face3d (); /* bottom_face */
 +#ifdef REVERSED_PCB_CONTOURS
