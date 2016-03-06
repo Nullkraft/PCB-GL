@@ -1,5 +1,5 @@
-Bottom: a51e4e412afdc7b8c14995cbf69996da59265b23
-Top:    94afe55da2afcbb058287b26e0054b7c10fb1d60
+Bottom: 8d72df210f60c2872e24e83e3862f48189b3d230
+Top:    ae1813b9c9e9412d87b516a913d667f2ecc85e47
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 00:29:30 +0000
 
@@ -36,7 +36,7 @@ index d4917d7..d2bf7b3 100644
 +void appearance_set_color (appearance *appear, float r, float g, float b);
 +void appearance_set_appearance (appearance *appear, const appearance *from);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 55f8d5a..bfa1e61 100644
+index c070aec..04d1160 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -5,6 +5,7 @@
@@ -139,7 +139,7 @@ index 55f8d5a..bfa1e61 100644
  
            object3d_add_vertex (object, vertices[i]);
            object3d_add_vertex (object, vertices[npoints + i]);
-@@ -468,18 +475,18 @@ object3d_from_board_outline (void)
+@@ -467,18 +474,18 @@ object3d_from_board_outline (void)
  
  #ifdef REVERSED_PCB_CONTOURS
                edge_info_set_round (UNDIR_DATA (edges[i]),
@@ -164,7 +164,7 @@ index 55f8d5a..bfa1e61 100644
  #endif
                edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
              }
-@@ -581,7 +588,37 @@ object3d_from_board_outline (void)
+@@ -580,7 +587,37 @@ object3d_from_board_outline (void)
        objects = g_list_append (objects, object);
  
      }
@@ -215,7 +215,7 @@ index b34c7b4..cf5657f 100644
  GList *object3d_from_board_outline (void);
  void object3d_test_board_outline (void);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index b49caba..829221b 100644
+index 4859c31..2ec9ece 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -5,6 +5,8 @@
