@@ -1,5 +1,5 @@
 Bottom: fb481d22d8c7019545582be514b2bd964da8c045
-Top:    edec49e9c93b53129f888dd43dcc18ccb0a79778
+Top:    a168f8a03748927cd70d01bafff8e465be163933
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:08:29 +0000
 
@@ -46,6 +46,14 @@ index 314e377..a81558e 100644
  GList *object3d_from_board_outline (void);
 +//void object3d_export_to_step (object3d *object, const char *filename);
 +void object3d_test_board_outline (void);
+diff --git a/src/hid/common/step_id.h b/src/hid/common/step_id.h
+new file mode 100644
+index 0000000..86a4974
+--- /dev/null
++++ b/src/hid/common/step_id.h
+@@ -0,0 +1,2 @@
++typedef int step_id;
++typedef GList* step_id_list;
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 new file mode 100644
 index 0000000..b781307
