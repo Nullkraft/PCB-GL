@@ -1,6 +1,6 @@
 Version: 1
-Previous: 6d42c1e7f970377f19dbb37bdea69d4af27eea48
-Head: e199b06f3e2162a26b714a9e408126d2f95e665f
+Previous: c69b1b2186754888c557ec0eaf3371c1e7ce78df
+Head: cc0f6912b4f423ef1c5d0805abfb44178a70ae04
 Applied:
   add-simple-step-exporter-for: e2413380055b695096e257a739a610ff7961f2d4
   step-fixup-for-refactored-hid: 114d738a8ffbf92e585d88d08c141eb1e3c7423d
@@ -11,39 +11,38 @@ Applied:
   add-stepcode-based-assembly: f7c388aaf899081defecb2039e1ef31d6b540291
   change-scroll-wheel-bindings: 7cb07b7788e1a298a4fb93a92455605aa067bb82
   alternative-more-thorough-step: 458752f70c5d2a654654fc417c15dd9fce69f349
-  dangling-fixup-from-old-way-of: b3ac1a289268a5d9b6c38886fa72370a89e7fb4a
-  extend-board-export: 267da25f63f9ed9966eae968c506cf71fca6d248
-  refactor-circular-contour: b069f23dbf35d7b674b373d6c8dd98cd7a0b8e0a
-  adjust-coordinate-system: 6b249bdf53cefd45bf1d8ce698e073ccfa07fa39
-  fix-3d-contour-export: 5292dc9e0f74ef595eb010c01770246882f3195c
-  comment-object3d_draw_debug: 810f06f9a59b9cb40a2c7a250256c9c0ac58381d
-  hid-step-add-copper-layer: 4c83e71ba26bda5301417576afa8a348175eb1b3
-  prepend-when-adding-things-to: d0e7455a57195b9e9ebbdc901372dae75637b496
-  disable-small-edge-epsilon: 3d4baf4d2a82a022e2843171118cc6c366ed0f76
-  re-enable-board-core-emission: aa5ca8b473a3e9c9c346add6412795304bfeaaaa
-  turn-off-debug-hacks-in-object: bfb3da0369c4ff98b33d8e0d1a542904784049da
-  enable-output-of-via-pads-and: e3db86f22b99d5aaf218cbe12692a82d99c6a94b
-  debug-wonky-copper-polygon: 24e7ea2b265ee9fe021e11651ed3d0f8e125ac9b
-  add-polygon-parentage-tree: 98df754749ea547e0738d735c59f52e97fbf4ff8
-  polygon-debug: c2f04cfaf225db3678a780971038f1645746fa22
-  copy-contour-is_round: dbcc0abfc953ddbcf9c8ee115f9dbca100021b00
-  disable-debug: c09d879454079991fe2e1eedda20b52cbb53e1a8
-  remove-left-over-debug: bc72bc9caf21dc4a8c3930e03a1973356a535db7
-  extend-object3d-code-to: 0cd17565bf408034ff305cb254e38458fc801369
-  debug-stuff: 15065948c7887e89ddbb47a1cae9791ceec86447
-  rename-pinpoly-to-pinclearpoly: 633894e99430e3add4f20bb603e19407b3845f95
-  subtract-vias-from: 99e50b017eb5578efc8c210b300d8dcb7a1a40ef
-  alter-cntr_in_m_polyarea-to: e88926a98f10aa4324dbc121b5495e06b8e8077a
-  add-void-userdata-member-to: 10f11c46c61da16420749c1d19cc8b5cf1bfd331
-  extend-object3d_from_contours: e2bc359c45787d500338289c5016b1f1307237eb
-  attempt-at-producing-inter: 2d0767a371b0775e06685f3e3e2bb52d0721c1ac
-  remove-old-debug-code-for: 01a7241cfa8fb0359347b8a07c00347c2efae39b
-  todo-notes: 833d18e198551ebfb35787b977b5453c512c12d9
-  remove-spaces-from-step-output: 298a5598ee83421efed05cb33ba24b1e27fa3769
-  try-to-prepend-not-append-to: e0e3999cb6100a0948df3e6ff88472b1273d9355
-  try-consolidating-geometry-in: 743022fdbe733087a206fa4c64d86a2fd5a05fa1
-  attempt-to-cache-emission-of: 59fb47989102f55470811677ea47dfca5981f57b
-  fixup-debug-drawing-on: e199b06f3e2162a26b714a9e408126d2f95e665f
+  extend-board-export: 31a5e46ea99201d3103e34d4b2bd67fdc44aefb0
+  refactor-circular-contour: d3b281d027d379b410d63ed50830fd4291332bf8
+  adjust-coordinate-system: e0ace87964d0c873c555379a00f5f223a919f7b1
+  fix-3d-contour-export: da033dbc82355c9982c4b277a1e981973a17fedd
+  comment-object3d_draw_debug: bb3f3965df6d3879b07fc6c3ceb1995b6f19750a
+  hid-step-add-copper-layer: abfd0fdcfc9d69defedbb5c2ce01b3773e4165d3
+  prepend-when-adding-things-to: c66895b651e4a6cf301abacd569e3f04eae9e82c
+  disable-small-edge-epsilon: 0c8c8f9ba33e64c69678e4910b458d4d15a9c59d
+  re-enable-board-core-emission: 5a03ec46c84a8c7e63e8c38702ff097387842c59
+  turn-off-debug-hacks-in-object: f4e896f97c8f1499a57075d8d6b5947ff678aab2
+  enable-output-of-via-pads-and: 2ef3763482e115b14274b8afaf37e9fe5707bf36
+  debug-wonky-copper-polygon: 62e22c8ac1dce26cc4d2068c520a6dd90a43f2c5
+  add-polygon-parentage-tree: a5c863b441c90505e3f2e8a36215217923adc20a
+  polygon-debug: 47ae827f0401539d0d3ae8d0609fe7d29e520f3a
+  copy-contour-is_round: bae817f8da4587d2bdb29bda6081cf069a4e8dcf
+  disable-debug: 75046161e0f2acfed7bfa10f488158ef193d9ff8
+  remove-left-over-debug: d286e76a834641fd604a524d7dbd6994067a5fcb
+  extend-object3d-code-to: 865fb8ad3917407a3fac11c1db006397256ca3f2
+  debug-stuff: fe07acecae334783afa74b7f32de3aa20e0fa470
+  rename-pinpoly-to-pinclearpoly: 8a7af780352c5b5898d25646b7dd3628962c99dd
+  subtract-vias-from: b2f5a2db9b3a7928d51ba732386361a3433b316b
+  alter-cntr_in_m_polyarea-to: 56dbd49a338f0e0f97599a1cbf84c7264d54e01c
+  add-void-userdata-member-to: e2e95598eb7a6cb420342a19ba9f647eeb74a187
+  extend-object3d_from_contours: 8de7df6b8108f010f482590aa53988a62d151985
+  attempt-at-producing-inter: 1ed7eb0781dd35065af355bd92776facfa59b6a5
+  remove-old-debug-code-for: 41e3c9b3493ce76ec4770d2695b03becb1c1f03a
+  todo-notes: 7d8f4cd05d61b7bafb8311d427bb27b190cb721f
+  remove-spaces-from-step-output: a4f59037b058c495d9e2ba58249e6f420309990c
+  try-to-prepend-not-append-to: b7907f2190c0f2cd0f403a234330b16299cb9ce8
+  try-consolidating-geometry-in: f13c585e08a3bc143c8dcd30757d9b48515fdeb1
+  attempt-to-cache-emission-of: f2483858a59ae28534d1c0e754cebbd66f892cfe
+  fixup-debug-drawing-on: cc0f6912b4f423ef1c5d0805abfb44178a70ae04
 Unapplied:
   apply-debug-to-polygon1-c: 87b5739a90fb18d825ec88a90047bed93ae49b24
   temp: 79874d46410be841d509e1039f48d18e8b914b2e
