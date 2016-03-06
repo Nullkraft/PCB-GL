@@ -1,5 +1,5 @@
 Bottom: 6b402d4d25de2318bdc655e5e160c826c1cc6963
-Top:    b9fcbbe22233d2007bdcd1968ea5577e91d1f1ef
+Top:    d8f958ad235a44c2af19425b9144c5d00ca15386
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
 
@@ -63,10 +63,10 @@ index 0000000..7723f31
 +contour3d *make_contour3d (edge_ref first_edge);
 +void destroy_contour3d (contour3d *contour);
 diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
-index 463c002..d2ae858 100644
+index 463c002..d95260f 100644
 --- a/src/hid/common/edge3d.c
 +++ b/src/hid/common/edge3d.c
-@@ -4,18 +4,33 @@
+@@ -4,18 +4,31 @@
  #include "edge3d.h"
  
  edge_info *
@@ -76,8 +76,8 @@ index 463c002..d2ae858 100644
    edge_info *info;
  
    info = g_new0 (edge_info, 1);
-   info->is_stitch = is_stitch;
-   info->is_round = is_round;
+-  info->is_stitch = is_stitch;
+-  info->is_round = is_round;
 +
 +  return info;
 +}
