@@ -1,5 +1,5 @@
 Bottom: 2d1d1584fdb8d16d36f4ad1c47eaf905047b7a11
-Top:    0350117d8503261d9030d43fcce57a3f024edba2
+Top:    9ea03dfc4f7165df7fd23eff7e7a9921d24c73c8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 16:38:59 +0000
 
@@ -125,7 +125,7 @@ index e399b88..8bb6ec9 100644
  
  vertex3d *make_vertex3d (double x, double y, double z);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 87dd35e..f6f8669 100644
+index 87dd35e..8bfd758 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -10,7 +10,7 @@
@@ -363,7 +363,7 @@ index 87dd35e..f6f8669 100644
 -      fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ", next_step_identifier,     /* Vertex coordinate  */ x, y, z);
 +      vertex3d *vertex = vertex_iter->data;
 +
-+      fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ", next_step_identifier, vertex->x, vertex->y, vertex->z); /* Vertex coordinate  */ 
++      fprintf (f, "#%i = CARTESIAN_POINT ( 'NONE', ( %f, %f, %f )) ; ", next_step_identifier, vertex->x, vertex->y, vertex->z); /* Vertex coordinate  */
        fprintf (f, "#%i = VERTEX_POINT ( 'NONE', #%i ) ;\n",             next_step_identifier + 1, next_step_identifier);
 -      vertex_identifiers[i] = next_step_identifier + 1;
 +      vertex->vertex_identifier = next_step_identifier + 1;
