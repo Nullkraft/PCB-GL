@@ -1,5 +1,5 @@
 Bottom: 9eee0a0731f7899a8f8f23c7602a107e3be67e15
-Top:    bd7fc6913845a91ab87801e3e2f767bfe26a4c86
+Top:    c3c3b93b59a2b21865227ff9c4f1d9701b20537e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -44,14 +44,11 @@ index acb690d..b34c7b4 100644
 -//void object3d_export_to_step (object3d *object, const char *filename);
  void object3d_test_board_outline (void);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 7d04aa1..870afc4 100644
+index 7d04aa1..0c197da 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -11,25 +11,42 @@
- #include "hid/common/face3d.h"
- #include "hid/common/edge3d.h"
+@@ -13,23 +13,39 @@
  #include "hid/common/object3d.h"
-+#include "polygon.h"
  #include "data.h"
  
 +#include "step_writer.h"
@@ -92,7 +89,7 @@ index 7d04aa1..870afc4 100644
    GList *face_iter;
    GList *edge_iter;
    GList *vertex_iter;
-@@ -42,6 +59,8 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -42,6 +58,8 @@ object3d_export_to_step (object3d *object, const char *filename)
        return;
      }
  
@@ -101,7 +98,7 @@ index 7d04aa1..870afc4 100644
    currenttime = time (NULL);
    gmtime_r (&currenttime, &utc);
  
-@@ -96,38 +115,13 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -96,38 +114,13 @@ object3d_export_to_step (object3d *object, const char *filename)
                "#17 =( NAMED_UNIT ( * ) SI_UNIT ( $, .STERADIAN. ) SOLID_ANGLE_UNIT ( ) );\n"
                "#18 =( GEOMETRIC_REPRESENTATION_CONTEXT ( 3 ) GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT ( ( #14 ) ) GLOBAL_UNIT_ASSIGNED_CONTEXT ( ( #15, #16, #17 ) ) REPRESENTATION_CONTEXT ( 'NONE', 'WORKASPACE' ) );\n");
    geometric_representation_context_identifier = 18;
@@ -141,7 +138,7 @@ index 7d04aa1..870afc4 100644
    for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter))
      {
        face3d *face = face_iter->data;
-@@ -135,64 +129,32 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -135,64 +128,32 @@ object3d_export_to_step (object3d *object, const char *filename)
        if (face->is_cylindrical)
          {
            /* CYLINDRICAL SURFACE NORMAL POINTS OUTWARDS AWAY FROM ITS AXIS.
@@ -227,7 +224,7 @@ index 7d04aa1..870afc4 100644
          }
      }
  
-@@ -204,43 +166,27 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -204,43 +165,27 @@ object3d_export_to_step (object3d *object, const char *filename)
  
        if (info->is_round)
          {
@@ -289,7 +286,7 @@ index 7d04aa1..870afc4 100644
          }
      }
  
-@@ -249,10 +195,8 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -249,10 +194,8 @@ object3d_export_to_step (object3d *object, const char *filename)
      {
        vertex3d *vertex = vertex_iter->data;
  
@@ -302,7 +299,7 @@ index 7d04aa1..870afc4 100644
      }
  
    /* Define the Edges */
-@@ -260,15 +204,13 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -260,15 +203,13 @@ object3d_export_to_step (object3d *object, const char *filename)
      {
        edge_ref edge = (edge_ref)edge_iter->data;
        edge_info *info = UNDIR_DATA (edge);
@@ -324,7 +321,7 @@ index 7d04aa1..870afc4 100644
      }
  
    /* Define the faces */
-@@ -276,6 +218,7 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -276,6 +217,7 @@ object3d_export_to_step (object3d *object, const char *filename)
      {
        face3d *face = face_iter->data;
        bool outer_contour = true;
@@ -332,7 +329,7 @@ index 7d04aa1..870afc4 100644
  
        for (contour_iter = face->contours;
             contour_iter != NULL;
-@@ -283,88 +226,66 @@ object3d_export_to_step (object3d *object, const char *filename)
+@@ -283,88 +225,66 @@ object3d_export_to_step (object3d *object, const char *filename)
          {
            contour3d *contour = contour_iter->data;
            edge_ref edge;
