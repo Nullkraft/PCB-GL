@@ -1,5 +1,5 @@
-Bottom: 96ed7c42fbd65d278b9721ceaf6bd0a8210113aa
-Top:    469cf8ed70a4c920b82e06d43e1f7e7f0d7af509
+Bottom: cfdb6f1dc2e0dbcb5ea8c972ff9108fb6c23b603
+Top:    143288db486031f4cbe86230d85c318aabf35292
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:31:28 +0000
 
@@ -9,7 +9,7 @@ Try to prepend, not append to g_lists. This avoids wasting time traversing lists
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index bbd27b6..7cbeaaf 100644
+index 78c3091..2b4be77 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -119,19 +119,19 @@ object3d_set_appearance (object3d *object, appearance *appear)
@@ -36,7 +36,7 @@ index bbd27b6..7cbeaaf 100644
  
  
 @@ -696,7 +696,7 @@ object3d_from_contours (POLYAREA *contours,
-           }
+         }
  #endif
  
 -      objects = g_list_append (objects, object);
