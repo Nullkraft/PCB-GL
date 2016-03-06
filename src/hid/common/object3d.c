@@ -445,11 +445,11 @@ object3d_from_board_outline (void)
                                       -(vertices[next_i_around_ct]->x - vertices[i]->x), 0.);
 
           /* Assign the appropriate vertex geometric data to each edge end */
-          ODATA (edges[              i]) = vertices[0 * npoints + i];
-          DDATA (edges[              i]) = vertices[0 * npoints + next_i_around_ct];
+          ODATA (edges[              i]) = vertices[i];
+          DDATA (edges[              i]) = vertices[next_i_around_ct];
           ODATA (edges[1 * npoints + i]) = vertices[1 * npoints + i];
           DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
-          ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
+          ODATA (edges[2 * npoints + i]) = vertices[i];
           DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
           LDATA (edges[              i]) = faces[i];
           RDATA (edges[              i]) = faces[npoints];
