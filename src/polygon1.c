@@ -276,9 +276,14 @@ new_descriptor (VNODE * a, PLINE *pl, char poly, char side)
   CVCList *l = (CVCList *) malloc (sizeof (CVCList));
   Vector v;
   register double ang, dx, dy;
+  bool debug = false;
 
   if (!l)
     return NULL;
+
+  if (a->point[0] == 217500000 && a->point[1] == 8004135)
+    debug = true;
+
   l->head = NULL;
   l->parent = a;
   l->parent_contour = pl;
@@ -328,6 +333,8 @@ new_descriptor (VNODE * a, PLINE *pl, char poly, char side)
     ang = 4.0 - ang;		/* 4th quadrant */
   l->angle = ang;
   assert (ang >= 0.0 && ang <= 4.0);
+  if (debug)
+    fprintf (stderr, "HELLO, THIS IS THE PROBLEMATIC COORDINATE\n");
 #ifdef DEBUG_ANGLE
   DEBUGP ("node on %c at (%$mn, %$mn) assigned angle %g on side %c\n", poly,
 	  a->point[0], a->point[1], ang, side);
@@ -357,7 +364,7 @@ static int compare_cvc_nodes (CVCList *a, CVCList *b)
 insert_descriptor
   (C) 2006 harry eaton
 
-   argument a is a cross-vertex node.
+   argument a is a cross-vertex node (and treated as a vertex).
    argument poly is the polygon it comes from ('A' or 'B')
    argument side is the side this descriptor goes on ('P' for previous
    'N' for next.
@@ -835,6 +842,11 @@ prepend_insert_node_task (insert_node_task *list, POLYAREA *poly, seg *seg, VNOD
   return task;
 }
 
+void foo (void)
+{
+  fprintf (stderr, "foo()\n");
+}
+
 /*
  * seg_in_seg()
  * (C) 2006 harry eaton
@@ -864,6 +876,8 @@ seg_in_seg (const BoxType * b, void *cl)
 
   cnt = vect_inters2 (EDGE_BACKWARD_VERTEX (s->v)->point, EDGE_FORWARD_VERTEX (s->v)->point,
 		      EDGE_BACKWARD_VERTEX (i->v)->point, EDGE_FORWARD_VERTEX (i->v)->point, s1, s2);
+  if (cnt == 2)
+    foo ();
   if (!cnt)
     return 0;
   if (i->touch)			/* if checking touches one find and we're done */
@@ -4594,6 +4608,16 @@ vect_inters2_fp (double p1[2], double p2[2],
   double s, t, deel;
   double rpx, rpy, rqx, rqy;
 
+  if ((p1[0] == 217500000 && p1[1] == 8004135) ||
+      (p2[0] == 217500000 && p2[1] == 8004135) ||
+      (q1[0] == 217500000 && q1[1] == 8004135) ||
+      (q2[0] == 217500000 && q2[1] == 8004135))
+    {
+      fprintf (stderr, "************** vect_inters2() called with one of the points as our suspect vertex thingy ***********\n");
+      pcb_fprintf (stderr, "(%$mn, %$mn)-(%$mn, %$mn) tested against (%$mn, %$mn)-(%$mn, %$mn)\n",
+                   p1[0], p1[1], p2[0], p2[1], q1[0], q1[1], q2[0], q2[1]);
+    }
+
   if (max (p1[0], p2[0]) < min (q1[0], q2[0]) ||
       max (q1[0], q2[0]) < min (p1[0], p2[0]) ||
       max (p1[1], p2[1]) < min (q1[1], q2[1]) ||
@@ -4618,6 +4642,8 @@ vect_inters2_fp (double p1[2], double p2[2],
     {
       double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
       Vector hp1, hq1, hp2, hq2, q1p1, q1q2;
+
+      fprintf (stderr, "vect_inters2(): Parallel line case\n");
 
       Vsub2 (q1p1, q1, p1);
       Vsub2 (q1q2, q1, q2);
