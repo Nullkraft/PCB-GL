@@ -1,5 +1,5 @@
 Bottom: 61744ba7ab17ce29c59e99666893c89cf14849c9
-Top:    4625ec50bab4caa4f7d9dff393238e021eb0dde4
+Top:    026d7834c9e396b36bc045722e28d38f4aa2f4d2
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:08:29 +0000
 
@@ -84,7 +84,7 @@ index 015d575..6e8c5d3 100644
  #include "hid/common/contour3d.h"
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 new file mode 100644
-index 0000000..fb0b142
+index 0000000..56a000e
 --- /dev/null
 +++ b/src/hid/step/object3d_step.c
 @@ -0,0 +1,574 @@
@@ -164,9 +164,9 @@ index 0000000..fb0b142
 +              "#9 = PRODUCT_DEFINITION_SHAPE ( 'NONE', 'NONE',  #8 ) ;\n");
 +
 +  /* Need an anchor in 3D space to orient the shape */
-+  fprintf (f, "#10 =    CARTESIAN_POINT ( 'NONE',  ( 0.0, 0.0, 0.0 ) ) ;\n"
-+              "#11 =          DIRECTION ( 'NONE',  ( 0.0, 0.0, 1.0 ) ) ;\n"
-+              "#12 =          DIRECTION ( 'NONE',  ( 1.0, 0.0, 0.0 ) ) ;\n"
++  fprintf (f, "#10 =    CARTESIAN_POINT ( 'NONE', ( 0.0, 0.0, 0.0 ) ) ;\n"
++              "#11 =          DIRECTION ( 'NONE', ( 0.0, 0.0, 1.0 ) ) ;\n"
++              "#12 =          DIRECTION ( 'NONE', ( 1.0, 0.0, 0.0 ) ) ;\n"
 +              "#13 = AXIS2_PLACEMENT_3D ( 'NONE', #10, #11, #12 ) ;\n");
 +
 +  /* Grr.. more boilerplate - this time unit definitions */
