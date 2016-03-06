@@ -5,6 +5,7 @@
 
 #include <glib.h>
 
+#include "step_id.h"
 #include "quad.h"
 #include "vertex3d.h"
 #include "contour3d.h"
