@@ -1,4 +1,4 @@
-Bottom: 6b402d4d25de2318bdc655e5e160c826c1cc6963
+Bottom: d427c5de27867bb49f9164ceb73a8f50d0ab0345
 Top:    b810a900a2ca39068289b7d2810407d0e3b51294
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
@@ -212,7 +212,7 @@ index 42154df..4838c43 100644
 +void face3d_set_normal (face3d *face, double nx, double ny, double nz);
 +void face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 8dd2b81..1a00164 100644
+index eea2e45..1a00164 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -7,6 +7,7 @@
@@ -272,22 +272,8 @@ index 8dd2b81..1a00164 100644
    POLYAREA *outline;
    PLINE *contour;
    PLINE *ct;
-@@ -323,27 +329,17 @@ object3d_from_board_outline (void)
-       ct = ct->next;
-     }
+@@ -325,7 +331,9 @@ object3d_from_board_outline (void)
  
--  /* We know how many edges and vertices we need now...
--   *
--   * let n = npoints
--   * bodies = 1             (FOR NOW - just the first board outline)
--   * vertices = 2n          (n-top, n-bottom)
--   * edges = 3n             (n-top, n-bottom, n-sides)
--   * faces = 2 + n          (1-top, 1-bottom, n-sides)
--   *
--   * holes = 0              (FOR NOW - just the outline, no holes)
--   * holes = ncontours - 1  (LATER)
--   */
--
    object = make_object3d (PCB->Name);
    board_appearance = make_appearance ();
 -  appearance_set_color (board_appearance, 1., 1., 0.);
@@ -297,16 +283,7 @@ index 8dd2b81..1a00164 100644
  
    object3d_set_appearance (object, board_appearance);
  
--  vertices = malloc (sizeof (vertex3d *) * 2 * npoints);
--  edges    = malloc (sizeof (edge_ref  ) * 3 * npoints);
--  faces    = malloc (sizeof (face3d *) * (2 + npoints));
-+  vertices = malloc (sizeof (vertex3d *) * 2 * npoints); /* (n-bottom, n-top) */
-+  edges    = malloc (sizeof (edge_ref  ) * 3 * npoints); /* (n-bottom, n-top, n-sides) */
-+  faces    = malloc (sizeof (face3d *) * (npoints + 2)); /* (n-sides, 1-bottom, 1-top */
- 
-   /* Define the vertices */
-   ct = contour;
-@@ -365,7 +361,7 @@ object3d_from_board_outline (void)
+@@ -353,7 +361,7 @@ object3d_from_board_outline (void)
  
        get_contour_coord_n_in_mm (ct, offset_in_ct, &x1, &y1);
        vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_MM (HACK_BOARD_THICKNESS)); /* Bottom */
@@ -315,7 +292,7 @@ index 8dd2b81..1a00164 100644
  
        object3d_add_vertex (object, vertices[i]);
        object3d_add_vertex (object, vertices[npoints + i]);
-@@ -375,6 +371,7 @@ object3d_from_board_outline (void)
+@@ -363,6 +371,7 @@ object3d_from_board_outline (void)
    for (i = 0; i < 3 * npoints; i++)
      {
        edges[i] = make_edge ();
@@ -323,7 +300,7 @@ index 8dd2b81..1a00164 100644
        object3d_add_edge (object, edges[i]);
      }
  
-@@ -382,15 +379,29 @@ object3d_from_board_outline (void)
+@@ -370,15 +379,29 @@ object3d_from_board_outline (void)
    for (i = 0; i < npoints; i++)
      {
        faces[i] = make_face3d ();
@@ -358,7 +335,7 @@ index 8dd2b81..1a00164 100644
  
    ct = contour;
    start_of_ct = 0;
-@@ -398,58 +409,80 @@ object3d_from_board_outline (void)
+@@ -386,58 +409,80 @@ object3d_from_board_outline (void)
    ct_npoints = get_contour_npoints (ct);
  
    for (i = 0; i < npoints; i++, offset_in_ct++)
