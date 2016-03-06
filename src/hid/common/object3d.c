@@ -63,6 +63,7 @@ object3d_test_init (void)
 {
   //object3d_test_objects = g_list_append (NULL, object3d_create_test_cube ());
   object3d_test_objects = object3d_from_board_outline ();
+  object3d_test_board_outline ();
 }
 
 object3d *
