@@ -1,5 +1,5 @@
+#include <glib.h>
 #include <stdbool.h>
-#include <stdlib.h>
 
 #include "edge3d.h"
 
@@ -8,7 +8,7 @@ make_edge_info (bool is_stitch, bool is_round, double cx, double cy, double radi
 {
   edge_info *info;
 
-  info = malloc (sizeof(edge_info));
+  info = g_new0 (edge_info, 1);
   info->is_stitch = is_stitch;
   info->is_round = is_round;
   info->cx = cx;
@@ -21,5 +21,5 @@ make_edge_info (bool is_stitch, bool is_round, double cx, double cy, double radi
 void
 destroy_edge_info (edge_info *info)
 {
-  free (info);
+  g_free (info);
 }

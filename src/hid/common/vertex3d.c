@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <glib.h>
 
 #include "vertex3d.h"
 
@@ -10,7 +10,7 @@ make_vertex3d (double x, double y, double z)
 {
   vertex3d *v;
 
-  v = malloc (sizeof(vertex3d));
+  v = g_new0 (vertex3d, 1);
   v->x = x;
   v->y = y;
   v->z = z;
@@ -22,5 +22,5 @@ make_vertex3d (double x, double y, double z)
 void
 destroy_vertex3d (vertex3d *v)
 {
-  free (v);
+  g_free (v);
 }
