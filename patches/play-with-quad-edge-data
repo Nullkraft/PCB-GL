@@ -1,5 +1,5 @@
 Bottom: c4002ed5f01ca2c0f265695d50e4e9b052e6984e
-Top:    02ba21569834d698cca7eb5533e92989da5b373e
+Top:    550aee0dbc7845c62033d7b132057f7388ab2af4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 12:11:20 +0000
 
@@ -30,12 +30,12 @@ index 47b171d..5ef4e2c 100644
  EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
 diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
 new file mode 100644
-index 0000000..3f08003
+index 0000000..463c002
 --- /dev/null
 +++ b/src/hid/common/edge3d.c
 @@ -0,0 +1,25 @@
++#include <glib.h>
 +#include <stdbool.h>
-+#include <stdlib.h>
 +
 +#include "edge3d.h"
 +
@@ -44,7 +44,7 @@ index 0000000..3f08003
 +{
 +  edge_info *info;
 +
-+  info = malloc (sizeof(edge_info));
++  info = g_new0 (edge_info, 1);
 +  info->is_stitch = is_stitch;
 +  info->is_round = is_round;
 +  info->cx = cx;
@@ -57,7 +57,7 @@ index 0000000..3f08003
 +void
 +destroy_edge_info (edge_info *info)
 +{
-+  free (info);
++  g_free (info);
 +}
 diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
 new file mode 100644
@@ -724,11 +724,11 @@ index 0000000..523cb5e
 +*/
 diff --git a/src/hid/common/vertex3d.c b/src/hid/common/vertex3d.c
 new file mode 100644
-index 0000000..1704b2b
+index 0000000..5445e4c
 --- /dev/null
 +++ b/src/hid/common/vertex3d.c
 @@ -0,0 +1,26 @@
-+#include <stdlib.h>
++#include <glib.h>
 +
 +#include "vertex3d.h"
 +
@@ -740,7 +740,7 @@ index 0000000..1704b2b
 +{
 +  vertex3d *v;
 +
-+  v = malloc (sizeof(vertex3d));
++  v = g_new0 (vertex3d, 1);
 +  v->x = x;
 +  v->y = y;
 +  v->z = z;
@@ -752,7 +752,7 @@ index 0000000..1704b2b
 +void
 +destroy_vertex3d (vertex3d *v)
 +{
-+  free (v);
++  g_free (v);
 +}
 diff --git a/src/hid/common/vertex3d.h b/src/hid/common/vertex3d.h
 new file mode 100644
