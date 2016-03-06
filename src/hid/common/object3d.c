@@ -330,14 +330,14 @@ object3d_from_board_outline (void)
         {
           faces[i] = make_face3d ();
 
-            object3d_add_face (object, faces[i]);
-            /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
+          object3d_add_face (object, faces[i]);
+          /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
 #ifdef REVERSED_PCB_CONTOURS
-            face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
+          face3d_add_contour (faces[i], make_contour3d (edges[2 * npoints + i]));
 #else
-            face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
+          face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
 #endif
-          }
+        }
 
       faces[npoints] = make_face3d (); /* bottom_face */
 #ifdef REVERSED_PCB_CONTOURS
