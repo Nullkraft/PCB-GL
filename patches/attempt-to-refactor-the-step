@@ -1,5 +1,5 @@
 Bottom: 0732ac34e572981c0adc48d68487076a0d2e795a
-Top:    3bbf39dca0984f6539a5427f5a09cb7265733030
+Top:    f25e15ef3cad820fa6f8cbec137d67707c0faf3d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -22,10 +22,17 @@ index 60807b7..bd6874d 100644
  	hid/step/object3d_step.h
  libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index e866a83..9271c79 100644
+index e866a83..a9b05c9 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -263,7 +263,6 @@ object3d_from_board_outline (void)
+@@ -1,6 +1,5 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <assert.h>
+ #include <stdbool.h>
+ 
+ #include <glib.h>
+@@ -263,7 +262,6 @@ object3d_from_board_outline (void)
  
        /* Define the vertices */
        ct = contour;
