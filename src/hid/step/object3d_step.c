@@ -2,12 +2,12 @@
 //#include <stdlib.h>
 //#include <stdbool.h>
 
-//#include <glib.h>
+#include <glib.h>
 
 #include "hid/common/quad.h"
-//#include "hid/common/vertex3d.h"
-//#include "hid/common/appearance.h"
-//#include "hid/common/face3d.h"
+#include "hid/common/vertex3d.h"
+#include "hid/common/appearance.h"
+#include "hid/common/face3d.h"
 //#include "hid/common/edge3d.h"
 #include "hid/common/object3d.h"
 //#include "polygon.h"
