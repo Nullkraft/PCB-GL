@@ -1,5 +1,5 @@
 Bottom: 586edbe9472359afd7a1cbf72b3e203f4d650213
-Top:    61625ad252d9258fe614763c94a672667773801b
+Top:    ee4bb1b3b1b5d408ecb373f132744ab041194164
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:08:29 +0000
 
@@ -47,18 +47,19 @@ index a39355c..256c6a3 100644
 +void object3d_test_board_outline (void);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
 new file mode 100644
-index 0000000..0c3cd6b
+index 0000000..b781307
 --- /dev/null
 +++ b/src/hid/step/object3d_step.c
-@@ -0,0 +1,572 @@
+@@ -0,0 +1,573 @@
 +#include <stdio.h>
 +//#include <stdlib.h>
-+//#include <stdbool.h>
++#include <stdbool.h>
 +
 +#include <glib.h>
 +
 +#include "hid/common/quad.h"
 +#include "hid/common/vertex3d.h"
++#include "hid/common/contour3d.h"
 +#include "hid/common/appearance.h"
 +#include "hid/common/face3d.h"
 +//#include "hid/common/edge3d.h"
