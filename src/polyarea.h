@@ -112,6 +112,7 @@ struct PLINE
     } Flags;
     int tristrip_num_vertices;
     float *tristrip_vertices;
+    char *name;
 };
 
 PLINE *poly_NewContour(VNODE *node);
