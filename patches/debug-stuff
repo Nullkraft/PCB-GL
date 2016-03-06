@@ -1,5 +1,5 @@
-Bottom: b99b3a839213fef54353600facd25f2ec5213d86
-Top:    7923ac1f203602af5928109f4c61b6b6ec6f6417
+Bottom: d334adb6d53ddb723170c01cfc7872abbf9ca304
+Top:    078afeda1a87095a31e96d7dca58127f59553dea
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:06 +0000
 
@@ -9,10 +9,10 @@ Debug stuff
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 02e2076..73ae37d 100644
+index 73e2710..c2274aa 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -1232,24 +1232,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1231,24 +1231,21 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  
        fprintf (stderr, "Computing copper geometry for group %i\n", group);
  
@@ -43,7 +43,7 @@ index 02e2076..73ae37d 100644
        if (group == top_group ||
            group == bottom_group)
          {
-@@ -1257,7 +1254,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1256,7 +1253,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
            fprintf (stderr, "Accumulating SMT pads for side %i\n", info.side);
            r_search (PCB->Data->pad_tree, &bounds, NULL, pad_copper_callback, &info);
          }

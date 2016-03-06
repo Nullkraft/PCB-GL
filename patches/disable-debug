@@ -1,5 +1,5 @@
-Bottom: 799c00e60fb6747fee8b0528d76b0b9b030f36e9
-Top:    9925d30d928db61804ab3ae6d21d1811b1fde52c
+Bottom: cc4dc315e453a7d8c395daaf3242a22c99e721b0
+Top:    db292631e2a9947ae48977d3ab4325c7e2702d8d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:06 +0000
 
@@ -9,10 +9,10 @@ Disable debug
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 78e5478..27e7c54 100644
+index 427496f..128ae26 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -1253,7 +1253,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1252,7 +1252,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                  copper_appearance,
                                  NULL));
  
@@ -21,7 +21,7 @@ index 78e5478..27e7c54 100644
      }
  
  
-@@ -1265,10 +1265,10 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1264,10 +1264,10 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
  //  gui->invalidate_all ();
  
    /* ASSUME THERE IS A POLYGON WHERE WE KNOW WE PUT ONE... */

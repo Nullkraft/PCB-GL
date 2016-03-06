@@ -1,5 +1,5 @@
-Bottom: 7923ac1f203602af5928109f4c61b6b6ec6f6417
-Top:    247933c364d02747ae5c0bc8f66f31471692e694
+Bottom: 078afeda1a87095a31e96d7dca58127f59553dea
+Top:    91a4dd86097ddfc02fac15f17c2de92c98fc096d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:07 +0000
 
@@ -9,10 +9,10 @@ Rename PinPoly to PinClearPoly, re-introducing PinPoly to create the shape of th
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 73ae37d..c19a0ba 100644
+index c2274aa..35c7069 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -939,7 +939,23 @@ pv_mask_callback (const BoxType * b, void *cl)
+@@ -938,7 +938,23 @@ pv_mask_callback (const BoxType * b, void *cl)
    struct mask_info *info = cl;
    POLYAREA *np, *res;
  
@@ -37,7 +37,7 @@ index 73ae37d..c19a0ba 100644
      return 0;
  
    poly_Boolean_free (info->poly, np, &res, PBO_SUB);
-@@ -1177,7 +1193,7 @@ pv_copper_callback (const BoxType * b, void *cl)
+@@ -1176,7 +1192,7 @@ pv_copper_callback (const BoxType * b, void *cl)
    struct copper_info *info = cl;
    POLYAREA *np, *res;
  

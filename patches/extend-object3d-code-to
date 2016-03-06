@@ -1,5 +1,5 @@
-Bottom: 91629b403e1dfaff9987390fd5f1a35964a9156a
-Top:    b99b3a839213fef54353600facd25f2ec5213d86
+Bottom: 7217448eba5be8a04103c0fd1ddebe65f397a57e
+Top:    d334adb6d53ddb723170c01cfc7872abbf9ca304
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:06 +0000
 
@@ -9,10 +9,10 @@ Extend object3d code to support arc-segments in POLYAREA contours
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 9f4b0e0..02e2076 100644
+index 389c255..73e2710 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -249,6 +249,8 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
+@@ -248,6 +248,8 @@ get_contour_coord_n_in_step_mm (PLINE *contour, int n, double *x, double *y)
  static bool
  get_contour_edge_n_is_round (PLINE *contour, int n)
  {
@@ -21,7 +21,7 @@ index 9f4b0e0..02e2076 100644
  #ifdef PERFECT_ROUND_CONTOURS
    if (contour->is_round)
      {
-@@ -257,12 +259,44 @@ get_contour_edge_n_is_round (PLINE *contour, int n)
+@@ -256,12 +258,44 @@ get_contour_edge_n_is_round (PLINE *contour, int n)
      }
  #endif
  
@@ -67,7 +67,7 @@ index 9f4b0e0..02e2076 100644
  #ifdef PERFECT_ROUND_CONTOURS
    if (contour->is_round)
      {
-@@ -271,8 +305,23 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
+@@ -270,8 +304,23 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
        *cy = COORD_TO_STEP_Y (PCB, contour->cy);
        *r = COORD_TO_MM (contour->radius);
        *cw = (contour->Flags.orient == PLF_INV);
