@@ -623,7 +623,6 @@ object3d_from_board_outline (void)
   poly_Free (&board_outline);
 
   return objects;
-#endif
 }
 
 void
