@@ -507,6 +507,6 @@ object3d_test_board_outline (void)
   object3d *board_outline;
 
   board_outline = object3d_from_board_outline ();
-//  object3d_export_to_step (board_outline, "object3d_test.step");
+  object3d_export_to_step (board_outline, "object3d_test.step");
   destroy_object3d (board_outline);
 }
