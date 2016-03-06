@@ -1,0 +1,33 @@
+Bottom: 938ca1c7eeedb791368db0cd19ae1cbd5296d912
+Top:    a5bbe677c3f7cbe212a5552faeb545616dd3879e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-06 23:09:36 +0000
+
+Refresh of play-with-quad-edge-data
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 79f80b4..6e65621 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -407,14 +407,14 @@ object3d_from_board_outline (void)
+       prev_i_around_ct = start_of_ct + (offset_in_ct + ct_npoints - 1) % ct_npoints;
+ 
+       /* Assign the appropriate vertex geometric data to each edge end */
+-      ODATA (edges[0 * npoints + i]) = vertices[0 * npoints + i];
+-      DDATA (edges[0 * npoints + i]) = vertices[0 * npoints + next_i_around_ct];
++      ODATA (edges[              i]) = vertices[i];
++      DDATA (edges[              i]) = vertices[next_i_around_ct];
+       ODATA (edges[1 * npoints + i]) = vertices[1 * npoints + i];
+       DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
+-      ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
++      ODATA (edges[2 * npoints + i]) = vertices[i];
+       DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
+-      LDATA (edges[0 * npoints + i]) = faces[i];
+-      RDATA (edges[0 * npoints + i]) = faces[npoints];
++      LDATA (edges[              i]) = faces[i];
++      RDATA (edges[              i]) = faces[npoints];
+       LDATA (edges[1 * npoints + i]) = faces[npoints + 1];
+       RDATA (edges[1 * npoints + i]) = faces[i];
+       LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
