@@ -1,5 +1,5 @@
 Bottom: f99cc42d5ff13cc60a072b86b546afb343d3cb7e
-Top:    c6a9952f8d4351d520eac3ffc21bb04df877846e
+Top:    8be921caba590044cb53424cba0e659eb4340264
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 16:12:16 +0000
 
@@ -10,7 +10,7 @@ Add reversed orientation field to face3d structure
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 28fde72..cc2fa1d 100644
+index 28fde72..d08a189 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -34,7 +34,7 @@
@@ -110,21 +110,6 @@ index 28fde72..cc2fa1d 100644
        ct = contour;
        while (ct != NULL)
          {
-@@ -432,11 +445,11 @@ object3d_from_board_outline (void)
-                                       -(vertices[next_i_around_ct]->x - vertices[i]->x), 0.);
- 
-           /* Assign the appropriate vertex geometric data to each edge end */
--          ODATA (edges[              i]) = vertices[i];
--          DDATA (edges[              i]) = vertices[next_i_around_ct];
-+          ODATA (edges[              i]) = vertices[0 * npoints + i];
-+          DDATA (edges[              i]) = vertices[0 * npoints + next_i_around_ct];
-           ODATA (edges[1 * npoints + i]) = vertices[1 * npoints + i];
-           DDATA (edges[1 * npoints + i]) = vertices[1 * npoints + next_i_around_ct];
--          ODATA (edges[2 * npoints + i]) = vertices[i];
-+          ODATA (edges[2 * npoints + i]) = vertices[0 * npoints + i];
-           DDATA (edges[2 * npoints + i]) = vertices[1 * npoints + i];
-           LDATA (edges[              i]) = faces[i];
-           RDATA (edges[              i]) = faces[npoints];
 @@ -479,9 +492,109 @@ object3d_from_board_outline (void)
              }
  
