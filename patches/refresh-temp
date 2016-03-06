@@ -1,0 +1,42 @@
+Bottom: fd482e9758f93cfa250be564486c3b16e51bb830
+Top:    4a0a75436949af56b3dd6b3490c23e384c8d253e
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-06 16:41:53 +0000
+
+Refresh of attempt-to-refactor-the-step
+
+---
+
+diff --git a/src/hid/common/contour3d.c b/src/hid/common/contour3d.c
+index 13e865e..eb2235e 100644
+--- a/src/hid/common/contour3d.c
++++ b/src/hid/common/contour3d.c
+@@ -1,6 +1,5 @@
+ #include <glib.h>
+ #include <stdbool.h>
+-#include <stdio.h>
+ 
+ #include "step_id.h"
+ #include "quad.h"
+diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
+index 23e335e..0cf8613 100644
+--- a/src/hid/common/edge3d.c
++++ b/src/hid/common/edge3d.c
+@@ -1,6 +1,4 @@
+ #include <stdbool.h>
+-#include <stdlib.h>
+-#include <stdio.h>
+ #include <glib.h>
+ 
+ #include "step_id.h"
+diff --git a/src/hid/common/face3d.c b/src/hid/common/face3d.c
+index 13d7501..5f1df0a 100644
+--- a/src/hid/common/face3d.c
++++ b/src/hid/common/face3d.c
+@@ -1,6 +1,5 @@
+ #include <glib.h>
+ #include <stdbool.h>
+-#include <stdio.h>
+ 
+ #include "step_id.h"
+ #include "quad.h"
