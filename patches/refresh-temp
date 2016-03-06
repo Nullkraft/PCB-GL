@@ -1,0 +1,45 @@
+Bottom: d8f958ad235a44c2af19425b9144c5d00ca15386
+Top:    b810a900a2ca39068289b7d2810407d0e3b51294
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-06 16:58:52 +0000
+
+Refresh of more-play-with-quad-edge-data
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index bc3f5d7..1a00164 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -329,18 +329,6 @@ object3d_from_board_outline (void)
+       ct = ct->next;
+     }
+ 
+-  /* We know how many edges and vertices we need now...
+-   *
+-   * let n = npoints
+-   * bodies = 1             (FOR NOW - just the first board outline)
+-   * vertices = 2n          (n-top, n-bottom)
+-   * edges = 3n             (n-top, n-bottom, n-sides)
+-   * faces = 2 + n          (1-top, 1-bottom, n-sides)
+-   *
+-   * holes = 0              (FOR NOW - just the outline, no holes)
+-   * holes = ncontours - 1  (LATER)
+-   */
+-
+   object = make_object3d (PCB->Name);
+   board_appearance = make_appearance ();
+   top_bot_appearance = make_appearance ();
+@@ -349,9 +337,9 @@ object3d_from_board_outline (void)
+ 
+   object3d_set_appearance (object, board_appearance);
+ 
+-  vertices = malloc (sizeof (vertex3d *) * 2 * npoints);
+-  edges    = malloc (sizeof (edge_ref  ) * 3 * npoints);
+-  faces    = malloc (sizeof (face3d *) * (2 + npoints));
++  vertices = malloc (sizeof (vertex3d *) * 2 * npoints); /* (n-bottom, n-top) */
++  edges    = malloc (sizeof (edge_ref  ) * 3 * npoints); /* (n-bottom, n-top, n-sides) */
++  faces    = malloc (sizeof (face3d *) * (npoints + 2)); /* (n-sides, 1-bottom, 1-top */
+ 
+   /* Define the vertices */
+   ct = contour;
