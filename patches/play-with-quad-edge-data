@@ -1,5 +1,5 @@
 Bottom: c4002ed5f01ca2c0f265695d50e4e9b052e6984e
-Top:    a0d7f878f73dfd0d4d6bc1521cf534a9356f9247
+Top:    02ba21569834d698cca7eb5533e92989da5b373e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 12:11:20 +0000
 
@@ -84,10 +84,10 @@ new file mode 100644
 index 0000000..e69de29
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 new file mode 100644
-index 0000000..717b121
+index 0000000..71c8a08
 --- /dev/null
 +++ b/src/hid/common/object3d.c
-@@ -0,0 +1,376 @@
+@@ -0,0 +1,375 @@
 +#include <stdio.h>
 +#include <stdlib.h>
 +#include <assert.h>
@@ -332,7 +332,6 @@ index 0000000..717b121
 +  *x = COORD_TO_MM (vertex->point[0]);
 +  *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
 +}
-+
 +
 +object3d *
 +object3d_from_board_outline (void)
