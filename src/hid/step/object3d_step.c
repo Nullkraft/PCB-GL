@@ -225,7 +225,7 @@ object3d_export_to_step (object3d *object, const char *filename)
       for (icont = 0; icont < ncontours; icont++, start_i += get_contour_npoints (ct), ct = ct->next)
         {
 
-          /* XXX: FWD / BWD NEEDS TO BE FUDGED IN HERE PERHAPS? */ 
+          /* XXX: FWD / BWD NEEDS TO BE FUDGED IN HERE PERHAPS? */
           fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ", next_step_identifier); fprint_idlist (f, face_edge_identifiers[i], face_contour_npoints[i]); fprintf (f, " ) ; ");
           fprintf (f, "#%i = FACE_%sBOUND ( 'NONE', #%i, .T. ) ; \n", next_step_identifier + 1, icont > 0 ? "" : "OUTER_", next_step_identifier);
           face_bound_identifiers[icont] = next_step_identifier + 1;
