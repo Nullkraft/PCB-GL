@@ -289,7 +289,6 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
   *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
 }
 
-
 static void
 fprint_idlist (FILE *f, int *ids, int num_ids)
 {
