@@ -1,4 +1,4 @@
-Bottom: a0d7f878f73dfd0d4d6bc1521cf534a9356f9247
+Bottom: 02ba21569834d698cca7eb5533e92989da5b373e
 Top:    2edcec31823ed56878bab42b5a110ab0d7673c81
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:08:29 +0000
@@ -24,18 +24,10 @@ index 5ef4e2c..4144a6d 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 717b121..5c39523 100644
+index 71c8a08..5c39523 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -243,7 +243,6 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
-   *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
- }
- 
--
- object3d *
- object3d_from_board_outline (void)
- {
-@@ -374,3 +373,13 @@ object3d_from_board_outline (void)
+@@ -373,3 +373,13 @@ object3d_from_board_outline (void)
  
    return object;
  }
