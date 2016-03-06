@@ -1,0 +1,22 @@
+Bottom: a9079c69397741c5b6fa24c6dcdfbde0203d27dd
+Top:    2d1d1584fdb8d16d36f4ad1c47eaf905047b7a11
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-06 17:32:10 +0000
+
+Refresh of wip-on-quad-edge-play-STEP
+
+---
+
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index 494c3e3..87dd35e 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -225,7 +225,7 @@ object3d_export_to_step (object3d *object, const char *filename)
+       for (icont = 0; icont < ncontours; icont++, start_i += get_contour_npoints (ct), ct = ct->next)
+         {
+ 
+-          /* XXX: FWD / BWD NEEDS TO BE FUDGED IN HERE PERHAPS? */ 
++          /* XXX: FWD / BWD NEEDS TO BE FUDGED IN HERE PERHAPS? */
+           fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ", next_step_identifier); fprint_idlist (f, face_edge_identifiers[i], face_contour_npoints[i]); fprintf (f, " ) ; ");
+           fprintf (f, "#%i = FACE_%sBOUND ( 'NONE', #%i, .T. ) ; \n", next_step_identifier + 1, icont > 0 ? "" : "OUTER_", next_step_identifier);
+           face_bound_identifiers[icont] = next_step_identifier + 1;
