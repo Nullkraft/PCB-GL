@@ -254,14 +254,11 @@ object3d_export_to_step (object3d *object, const char *filename)
   brep_identifier = step_manifold_solid_brep (step, "PCB outline", pcb_shell_identifier);
 
   /* Body style */
-  if (1)
-    {
-      /* XXX: THERE MUST BE A BODY STYLE, CERTAINLY IF WE WANT TO OVER RIDE FACE COLOURS */
-      brep_style_identifier = step_styled_item (step, "NONE", presentation_style_assignments_from_appearance (step, object->appear), brep_identifier);
-      step_presentation_layer_assignment (step, "1", "Layer 1", make_step_id_list (1, brep_style_identifier));
+  /* XXX: THERE MUST BE A BODY STYLE, CERTAINLY IF WE WANT TO OVER RIDE FACE COLOURS */
+  brep_style_identifier = step_styled_item (step, "NONE", presentation_style_assignments_from_appearance (step, object->appear), brep_identifier);
+  step_presentation_layer_assignment (step, "1", "Layer 1", make_step_id_list (1, brep_style_identifier));
 
-      styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (brep_style_identifier));
-    }
+  styled_item_identifiers = g_list_append (styled_item_identifiers, GINT_TO_POINTER (brep_style_identifier));
 
   /* Face styles */
   for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter))
