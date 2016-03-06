@@ -1,5 +1,5 @@
 Bottom: c4002ed5f01ca2c0f265695d50e4e9b052e6984e
-Top:    c032851dd1e3bb8cd6aba31545de9d6fc646f4cb
+Top:    b7c94da2734922fcc6680e5574f94136ce7b5870
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 23:02:22 +0000
 
@@ -173,7 +173,7 @@ index 0000000..42154df
 +void face3d_add_contour (face3d *face, edge_ref contour);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 new file mode 100644
-index 0000000..e4f69c6
+index 0000000..3b0351f
 --- /dev/null
 +++ b/src/hid/common/object3d.c
 @@ -0,0 +1,442 @@
@@ -551,7 +551,7 @@ index 0000000..e4f69c6
 +      /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
 +      face3d_add_contour (faces[i], edges[2 * npoints + i]);
 +    }
-+  faces[npoints]     = make_face3d (); /* bottom_face */
++  faces[npoints] = make_face3d (); /* bottom_face */
 +  faces[npoints + 1] = make_face3d (); /* top_face */
 +
 +  /* Pick the first bottom / top edge which within the bottom / top face outer contour loop, and link it to the face */
