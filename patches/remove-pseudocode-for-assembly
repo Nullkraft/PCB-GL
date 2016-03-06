@@ -1,5 +1,5 @@
-Bottom: ce28f08af2ca621938f10afd47ae31bc2ca5b909
-Top:    6f3212de2c2de37bcf89d1b541228c79935612a3
+Bottom: ae1813b9c9e9412d87b516a913d667f2ecc85e47
+Top:    fd1558a8b57ab4e2a247d5925028795c07f87aff
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -9,10 +9,10 @@ Remove pseudocode for assembly emission
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 104e01f..4c3468d 100644
+index 04d1160..bfa1e61 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -445,6 +445,7 @@ object3d_from_board_outline (void)
+@@ -465,6 +465,7 @@ object3d_from_contours (const POLYAREA *contours,
  
            if (ct->is_round)
              {
@@ -21,10 +21,10 @@ index 104e01f..4c3468d 100644
                                                  0., 0., 1.,                                                       /* Direction of the cylindrical axis */
                                                  COORD_TO_MM (ct->radius));
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 4859c31..b49caba 100644
+index 2ec9ece..829221b 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -398,178 +398,6 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
+@@ -523,178 +523,6 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
    finish_ap214_file (step);
  
    /* XXX: TODO: MAKE AN ASSEMBLY PRODUCT AND GATHER THE ABOVE PIECES INSIDE IT */
