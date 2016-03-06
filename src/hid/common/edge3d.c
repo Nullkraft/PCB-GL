@@ -1,6 +1,4 @@
 #include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <glib.h>
 
 #include "step_id.h"
