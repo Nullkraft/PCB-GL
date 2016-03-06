@@ -1,7 +1,7 @@
-Bottom: 29d9c5247733d2697b9c8cf062cc1e78263309ad
-Top:    e2f686a7f1c4d7d8226b19b0fc3d3e52fa344f08
+Bottom: 3cd7cce42f6078293638bc45f764453e02753cca
+Top:    54ed204e6b0587d0e9e03dfcb04a3c01bc0c717a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-06 00:49:06 +0000
+Date:   2016-03-06 00:53:25 +0000
 
 XXX: SEE BELOW.. Alternative, more thorough STEP export code
 
@@ -43,10 +43,10 @@ index b03d9dc..742c411 100644
  
  pcb_LDFLAGS = \
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index bfa1e61..9246b40 100644
+index 454baa8..2061539 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -67,7 +67,6 @@ void
+@@ -69,7 +69,6 @@ void
  object3d_test_init (void)
  {
    object3d_test_objects = object3d_from_board_outline ();
@@ -54,7 +54,7 @@ index bfa1e61..9246b40 100644
  }
  
  object3d *
-@@ -624,15 +623,3 @@ object3d_from_board_outline (void)
+@@ -668,15 +667,3 @@ object3d_from_board_outline (void)
  
    return objects;
  }
