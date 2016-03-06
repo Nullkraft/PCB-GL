@@ -1,5 +1,5 @@
 Bottom: 651465697f87bd3ce95297e1eed9c61059d53a82
-Top:    67cfaa970d0e419b29a596493133a6237c4ba977
+Top:    b6a72611e4818db2d63b65d440e019ece0240d25
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:26:00 +0000
 
@@ -308,7 +308,7 @@ index c516e04..2f9f22d 100644
            face3d_set_normal (cylinder_faces[0], 1., 0., 0.);       /* A normal to the axis direction */
                                         /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 0c197da..3e24d2b 100644
+index 0c197da..3d20de9 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -20,6 +20,20 @@
@@ -401,11 +401,9 @@ index 0c197da..3e24d2b 100644
          }
      }
  
-@@ -253,15 +298,13 @@ object3d_export_to_step (object3d *object, const char *filename)
-   pcb_shell_identifier = step_closed_shell (step, "NONE", shell_face_list);
+@@ -254,14 +299,11 @@ object3d_export_to_step (object3d *object, const char *filename)
    brep_identifier = step_manifold_solid_brep (step, "PCB outline", pcb_shell_identifier);
  
-+#if 1
    /* Body style */
 -  if (1)
 -    {
@@ -422,11 +420,3 @@ index 0c197da..3e24d2b 100644
  
    /* Face styles */
    for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter))
-@@ -279,6 +322,7 @@ object3d_export_to_step (object3d *object, const char *filename)
- 
-   /* Emit references to the styled and over_ridden styled items */
-   step_mechanical_design_geometric_presentation_representation (step, "", styled_item_identifiers, geometric_representation_context_identifier);
-+#endif
- 
-   shape_representation_identifier =
-     step_advanced_brep_shape_representation (step, "test_pcb_absr_name",
