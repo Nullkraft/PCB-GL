@@ -1,5 +1,5 @@
-Bottom: 61744ba7ab17ce29c59e99666893c89cf14849c9
-Top:    026d7834c9e396b36bc045722e28d38f4aa2f4d2
+Bottom: bc16e50f42a577e69d5b1b1288cd554d86e41e5c
+Top:    7f1114e51061b97f65c172a8624f5351c84ab866
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:08:29 +0000
 
@@ -32,10 +32,10 @@ index 9965e66..60807b7 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index c31349a..2a027e4 100644
+index f7e9b0d..880ea9d 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -5,6 +5,7 @@
+@@ -4,6 +4,7 @@
  
  #include <glib.h>
  
@@ -43,7 +43,7 @@ index c31349a..2a027e4 100644
  #include "quad.h"
  #include "vertex3d.h"
  #include "contour3d.h"
-@@ -499,7 +500,7 @@ object3d_test_board_outline (void)
+@@ -498,7 +499,7 @@ object3d_test_board_outline (void)
    GList *board_outlines;
  
    board_outlines = object3d_from_board_outline ();
