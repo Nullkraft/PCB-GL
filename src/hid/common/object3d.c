@@ -5,6 +5,7 @@
 
 #include <glib.h>
 
+#include "step_id.h"
 #include "quad.h"
 #include "vertex3d.h"
 #include "contour3d.h"
@@ -499,7 +500,7 @@ object3d_test_board_outline (void)
   GList *board_outlines;
 
   board_outlines = object3d_from_board_outline ();
-//  object3d_export_to_step (board_outlines->data, "object3d_test.step");
+  object3d_export_to_step (board_outlines->data, "object3d_test.step");
 
   g_list_free_full (board_outlines, (GDestroyNotify)destroy_object3d);
 }
