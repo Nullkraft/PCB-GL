@@ -358,7 +358,7 @@ object3d_from_board_outline (void)
               offset_in_ct = 0;
               ct = ct->next;
               ct_npoints = get_contour_npoints (ct);
-             }
+            }
 
           get_contour_coord_n_in_mm (ct, offset_in_ct, &x1, &y1);
           vertices[i]           = make_vertex3d (x1, y1, -COORD_TO_MM (HACK_BOARD_THICKNESS)); /* Bottom */
