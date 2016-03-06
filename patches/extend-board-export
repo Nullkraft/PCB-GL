@@ -1,5 +1,5 @@
-Bottom: a528a87ced30cf453a6ede87f036ef51f7aff627
-Top:    2c7182ae0a00310390bc1e30002b056a2b95e9a5
+Bottom: 0b6e63262e201605049c5fe8ea3cdcbe5b67fc10
+Top:    31de5714fbd2310660b846ab93594cb34bc51960
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 00:29:30 +0000
 
@@ -215,7 +215,7 @@ index b34c7b4..cf5657f 100644
  GList *object3d_from_board_outline (void);
  void object3d_test_board_outline (void);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index ed9b9b4..dc93e3e 100644
+index cf3469d..a2f2ba6 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -3,6 +3,8 @@
@@ -227,7 +227,7 @@ index ed9b9b4..dc93e3e 100644
  #include "hid/common/step_id.h"
  #include "hid/common/quad.h"
  #include "hid/common/vertex3d.h"
-@@ -96,26 +98,15 @@ finish_ap214_file (step_file *step)
+@@ -95,26 +97,15 @@ finish_ap214_file (step_file *step)
  }
  
  static void
@@ -257,7 +257,7 @@ index ed9b9b4..dc93e3e 100644
  
    /* Setup the context of the "product" we are defining", and that it is a 'part' */
    application_context_identifier = step_application_context (step, "automotive_design");
-@@ -132,6 +123,29 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
+@@ -131,6 +122,29 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
  
    geometric_representation_context_identifier = make_3d_metric_step_geometric_representation_context (step);
  
@@ -287,7 +287,7 @@ index ed9b9b4..dc93e3e 100644
  #define FWD 1
  #define REV 2
  #define ORIENTED_EDGE_IDENTIFIER(e) (((edge_info *)UNDIR_DATA (e))->edge_identifier + ((e & 2) ? REV : FWD))
-@@ -306,7 +320,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
+@@ -305,7 +319,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
    brep_style_identifier = step_styled_item (step, "NONE", presentation_style_assignments_from_appearance (step, object->appear), brep_identifier);
    step_presentation_layer_assignment (step, "1", "Layer 1", make_step_id_list (1, brep_style_identifier));
  
@@ -296,7 +296,7 @@ index ed9b9b4..dc93e3e 100644
  
    /* Face styles */
    for (face_iter = object->faces; face_iter != NULL; face_iter = g_list_next (face_iter))
-@@ -318,14 +332,34 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
+@@ -317,14 +331,34 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
            step_id orsi = step_over_riding_styled_item (step, "NONE",
                                                         presentation_style_assignments_from_appearance (step, face->appear),
                                                         face->face_identifier, brep_style_identifier);
@@ -335,7 +335,7 @@ index ed9b9b4..dc93e3e 100644
    /* Need an anchor in 3D space to orient the shape */
    anchor_axis_identifier = step_axis2_placement_3d (step, "NONE",
                                                      step_cartesian_point (step, "NONE", 0.0, 0.0, 0.0),
-@@ -334,20 +368,111 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
+@@ -333,20 +367,111 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
  
    shape_representation_identifier =
      step_advanced_brep_shape_representation (step, "test_pcb_absr_name",
