@@ -1,5 +1,5 @@
-Bottom: 166c70b8b08b1e51d579786d9035fc2b04842bf6
-Top:    b4e7b6f94ca54ff4bf322b74e3200438ad39e5f9
+Bottom: eae61c3bf8b09e14ff67ca2242f2794d291aa3c6
+Top:    d29d3343ce648cea10ccdac6d80da42939033d82
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 11:08:29 +0000
 
@@ -9,10 +9,10 @@ STEP stuff from play-with-quad-edge-data
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 06bb694..df1ea37 100644
+index 9965e66..35d6178 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -356,7 +356,9 @@ LIBGTK_SRCS = \
+@@ -358,7 +358,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-top-window.c \
  	hid/gtk/gui-utils.c \
  	hid/gtk/snavi.c \
@@ -24,10 +24,10 @@ index 06bb694..df1ea37 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 98d03d6..032290d 100644
+index c234067..6066541 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -455,3 +455,13 @@ object3d_from_board_outline (void)
+@@ -698,3 +698,13 @@ object3d_from_tracking (void)
  
    return object;
  }
