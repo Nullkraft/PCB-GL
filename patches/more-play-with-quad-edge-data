@@ -1,4 +1,4 @@
-Bottom: a5bbe677c3f7cbe212a5552faeb545616dd3879e
+Bottom: c032851dd1e3bb8cd6aba31545de9d6fc646f4cb
 Top:    1344f0eabcdb44dc1c4e247d6688445f44e4f1b9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-05 16:25:59 +0000
@@ -212,7 +212,7 @@ index 42154df..4838c43 100644
 +void face3d_set_normal (face3d *face, double nx, double ny, double nz);
 +void face3d_set_cylindrical (face3d *face, double cx, double cy, double cz, double ax, double ay, double az, double radius);
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 6e65621..fc9c7e6 100644
+index e4f69c6..fc9c7e6 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -6,6 +6,7 @@
@@ -354,7 +354,7 @@ index 6e65621..fc9c7e6 100644
        /* Assign the appropriate vertex geometric data to each edge end */
        ODATA (edges[              i]) = vertices[i];
        DDATA (edges[              i]) = vertices[next_i_around_ct];
-@@ -420,22 +448,39 @@ object3d_from_board_outline (void)
+@@ -420,20 +448,39 @@ object3d_from_board_outline (void)
        LDATA (edges[2 * npoints + i]) = faces[prev_i_around_ct];
        RDATA (edges[2 * npoints + i]) = faces[i];
  
@@ -376,8 +376,6 @@ index 6e65621..fc9c7e6 100644
 +      splice (SYM(edges[2 * npoints + i]), edges[npoints + i]);
 +      splice (edges[npoints + i], SYM(edges[npoints + prev_i_around_ct]));
  
--      /* XXX: TOPOLOGY WILL BE OK, MAY NEED MORE INFO FOR GEOMETRY */
--      /* XXX: DO WE NEED TO ASSIGN EXTRA INFORMATION TO CIRCULAR EDGES FOR RENDERING / EXPORT??? */
        if (ct->is_round)
          {
 -          UNDIR_DATA (edges[0 * npoints + i]) = make_edge_info (false, true, COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), COORD_TO_MM (ct->radius));
