@@ -9,6 +9,12 @@ typedef struct {
   double radius;
 
   appearance *appear;
+
+  /* XXX: STEP specific - breaks encapsulation */
+  int surface_identifier;
+  bool surface_orientation_reversed;
+  int face_identifier;
+  int face_bound_identifier;
 } face3d;
 
 face3d *make_face3d (void);
