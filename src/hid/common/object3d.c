@@ -34,7 +34,7 @@
 
 #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
 
-static object3d *object3d_test_object = NULL;
+static GList *object3d_test_objects = NULL;
 
 static void
 print_edge_id (edge_ref e)
@@ -60,8 +60,8 @@ debug_print_edge (edge_ref e, void *data)
 void
 object3d_test_init (void)
 {
-  //object3d_test_object = object3d_create_test_cube ();
-  object3d_test_object = object3d_from_board_outline ();
+  //object3d_test_objects = g_list_append (NULL, object3d_create_test_cube ());
+  object3d_test_objects = object3d_from_board_outline ();
 }
 
 object3d *
@@ -217,8 +217,8 @@ draw_quad_edge (edge_ref e, void *data)
   if (UNDIR_DATA(e) != NULL)
     {
       edge_info *info = UNDIR_DATA(e);
-      if (info->is_stitch)
-        return;
+//      if (info->is_stitch)
+//        return;
       if (info->is_round)
         {
           int i;
@@ -244,12 +244,19 @@ draw_quad_edge (edge_ref e, void *data)
   glEnd ();
 }
 
+static void
+object3d_draw_debug_single (object3d *object, void *user_data)
+{
+  g_return_if_fail (object->edges != NULL);
+
+//  quad_enum ((edge_ref)object->edges->data, draw_quad_edge, NULL);
+  g_list_foreach (object->edges, (GFunc)draw_quad_edge, NULL);
+}
+
 void
 object3d_draw_debug (void)
 {
-  g_return_if_fail (object3d_test_object->edges != NULL);
-
-  quad_enum ((edge_ref)object3d_test_object->edges->data, draw_quad_edge, NULL);
+  g_list_foreach (object3d_test_objects, (GFunc)object3d_draw_debug_single, NULL);
 }
 
 /*********************************************************************************************************/
@@ -293,13 +300,15 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
   *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
 }
 
-object3d *
+GList *
 object3d_from_board_outline (void)
 {
+  GList *objects = NULL;
   object3d *object;
   appearance *board_appearance;
   appearance *top_bot_appearance;
   POLYAREA *outline;
+  POLYAREA *pa;
   PLINE *contour;
   PLINE *ct;
   int ncontours;
@@ -313,15 +322,19 @@ object3d_from_board_outline (void)
   int ct_npoints;
 
   outline = board_outline_poly (true);
-  //outline = board_outline_poly (false); /* (FOR NOW - just the outline, no holes) */
-  ncontours = 0;
-  npoints = 0;
 
-  /* XXX: There can be more than one contour, but for now we restrict ourselves to the first one */
-  contour = outline->contours;
+  if (outline == NULL)
+    return NULL;
 
-  if (1)
+  /* Loop over all board outline pieces */
+  pa = outline;
+  do
     {
+
+      contour = pa->contours;
+      ncontours = 0;
+      npoints = 0;
+
       ct = contour;
       while (ct != NULL)
         {
@@ -479,9 +492,109 @@ object3d_from_board_outline (void)
             }
 
         }
+
+      if (1)
+        {
+          /* Cylinder centers on 45x45mm, stitch vertex is at 40x45mm. Radius is thus 5mm */
+
+          edge_ref cylinder_edges[3];
+          vertex3d *cylinder_vertices[2];
+          face3d *cylinder_faces[2];
+
+          /* Edge on top of board */
+          cylinder_edges[0] = make_edge ();
+          UNDIR_DATA (cylinder_edges[0]) = make_edge_info ();
+          edge_info_set_round (UNDIR_DATA (cylinder_edges[0]),
+                               45., 45., 0., /* Center of circle */
+                                0.,  0., 1., /* Normal */
+                                5.);         /* Radius */
+          object3d_add_edge (object, cylinder_edges[0]);
+
+          /* Edge on top of cylinder */
+          cylinder_edges[1] = make_edge ();
+          UNDIR_DATA (cylinder_edges[1]) = make_edge_info ();
+          edge_info_set_round (UNDIR_DATA (cylinder_edges[1]),
+                               45., 45., 10., /* Center of circle */
+                                0.,  0., 1.,  /* Normal */
+                                5.);          /* Radius */
+          object3d_add_edge (object, cylinder_edges[1]);
+
+          /* Edge stitching cylinder */
+          cylinder_edges[2] = make_edge ();
+          UNDIR_DATA (cylinder_edges[2]) = make_edge_info ();
+          edge_info_set_stitch (UNDIR_DATA (cylinder_edges[2]));
+          object3d_add_edge (object, cylinder_edges[2]);
+
+          /* Vertex on board top surface */
+          cylinder_vertices[0] = make_vertex3d (40., 45., 0.); /* Bottom */
+          object3d_add_vertex (object, cylinder_vertices[0]);
+
+          /* Vertex on cylinder top surface */
+          cylinder_vertices[1] = make_vertex3d (40., 45., 10.); /* Top */
+          object3d_add_vertex (object, cylinder_vertices[1]);
+
+          /* Cylindrical face */
+          cylinder_faces[0] = make_face3d ();
+          face3d_set_cylindrical (cylinder_faces[0], 45., 45., 0., /* A point on the axis of the cylinder */
+                                            0., 0., 1.,            /* Direction of the cylindrical axis */
+                                            5.);                   /* Radius of cylinder */
+          face3d_set_normal (cylinder_faces[0], 1., 0., 0.);       /* A normal to the axis direction */
+                                       /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
+          object3d_add_face (object, cylinder_faces[0]);
+          face3d_add_contour (cylinder_faces[0], make_contour3d (cylinder_edges[0]));
+
+          /* Top face of cylinder */
+          cylinder_faces[1] = make_face3d (); /* top face of cylinder */
+          face3d_set_normal (cylinder_faces[1], 0., 0., 1.);
+          face3d_set_appearance (cylinder_faces[1], top_bot_appearance);
+          object3d_add_face (object, cylinder_faces[1]);
+          face3d_add_contour (cylinder_faces[1], make_contour3d (cylinder_edges[1]));
+
+          /* Splice onto board */
+          face3d_add_contour (faces[npoints + 1], make_contour3d (SYM(cylinder_edges[0])));
+
+          /* Assign the appropriate vertex geometric data to each edge end */
+          ODATA (cylinder_edges[0]) = cylinder_vertices[0];
+          DDATA (cylinder_edges[0]) = cylinder_vertices[0];
+          ODATA (cylinder_edges[1]) = cylinder_vertices[1];
+          DDATA (cylinder_edges[1]) = cylinder_vertices[1];
+          ODATA (cylinder_edges[2]) = cylinder_vertices[0];
+          DDATA (cylinder_edges[2]) = cylinder_vertices[1];
+          LDATA (cylinder_edges[0]) = cylinder_faces[0];
+          RDATA (cylinder_edges[0]) = faces[npoints + 1]; /* TOP OF BOARD FACE */
+          LDATA (cylinder_edges[1]) = cylinder_faces[1];
+          RDATA (cylinder_edges[1]) = cylinder_faces[0];
+          LDATA (cylinder_edges[2]) = cylinder_faces[0];
+          RDATA (cylinder_edges[2]) = cylinder_faces[0];
+
+          /* Splice things together.... */
+
+          /* Link edges orbiting the cylinder bottom vertex */
+          splice (cylinder_edges[0], cylinder_edges[2]);
+          splice (cylinder_edges[2], SYM(cylinder_edges[0]));
+
+          /* Link edges orbiting the cylinder top vertex */
+          splice (SYM(cylinder_edges[2]), cylinder_edges[1]);
+          splice (cylinder_edges[1], SYM(cylinder_edges[1]));
+        }
+
+      objects = g_list_append (objects, object);
+
     }
+  while (pa = pa->f, pa != outline);
 
   poly_Free (&outline);
 
-  return object;
+  return objects;
+}
+
+void
+object3d_test_board_outline (void)
+{
+  GList *objects;
+
+  objects = object3d_from_board_outline ();
+//  object3d_export_to_step (objects->data, "object3d_test.step");
+
+  g_list_free_full (objects, (GDestroyNotify)destroy_object3d);
 }
