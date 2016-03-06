@@ -618,7 +618,7 @@ object3d_from_board_outline (void)
   destroy_appearance (board_appearance);
   destroy_appearance (top_bot_appearance);
 
-  poly_Free (&outline);
+  poly_Free (&board_outline);
 
   return objects;
 }
