@@ -1,5 +1,5 @@
-Bottom: 2dff123c99a97f0819037a82f21cb669ccfb552b
-Top:    81ac6a3f8a7f9ddb2c0ba3e98fcae77dc1b86f68
+Bottom: 6a4927f98ff980b509d4008e036ee2f3126e2c14
+Top:    bd4cd6f0fadf06ebe72b50500a419413b35d8494
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-02-13 19:01:08 +0000
 
@@ -9,7 +9,7 @@ temp
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f0311dc..359444f 100644
+index 5501c2f..55d7ad1 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -271,9 +271,14 @@ new_descriptor (VNODE * a, char poly, char side)
@@ -66,7 +66,7 @@ index f0311dc..359444f 100644
    if (!cnt)
      return 0;
    if (i->touch)			/* if checking touches one find and we're done */
-@@ -4200,6 +4214,16 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4201,6 +4215,16 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
    double s, t, deel;
    double rpx, rpy, rqx, rqy;
  
@@ -83,7 +83,7 @@ index f0311dc..359444f 100644
    if (max (p1[0], p2[0]) < min (q1[0], q2[0]) ||
        max (q1[0], q2[0]) < min (p1[0], p2[0]) ||
        max (p1[1], p2[1]) < min (q1[1], q2[1]) ||
-@@ -4222,6 +4246,8 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4223,6 +4247,8 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
        double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
        Vector hp1, hq1, hp2, hq2, q1p1, q1q2;
  
