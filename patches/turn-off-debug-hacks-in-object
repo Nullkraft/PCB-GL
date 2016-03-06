@@ -1,5 +1,5 @@
-Bottom: 51bca10808fdac06a85325565cff655e790b9076
-Top:    e43d526611a8a81d627cb6ab4d6438aedbf4de41
+Bottom: d1bab76d9605ae59065ae610631066cb4b420948
+Top:    887c203d037bec6ef0fa36e8f4e399228302461e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 00:48:57 +0000
 
@@ -9,10 +9,10 @@ Turn off debug hacks in object generation
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index fab6ed2..b00a1d2 100644
+index f536640..92a3a1e 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -1237,9 +1237,9 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+@@ -1235,9 +1235,9 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
    destroy_appearance (copper_appearance);
  
    /* DEBUG */

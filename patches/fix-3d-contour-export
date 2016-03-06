@@ -1,5 +1,5 @@
-Bottom: bfc8629a7ae9afb987ba0e7b1c7fc0562950223f
-Top:    b62859314feb264e52a429fb9df630275946b02e
+Bottom: 59037db8673d6d90c68b7323fc34015b931e46d0
+Top:    2aa9ec5d192bd20457f07e43b54de91cb10862b8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 00:48:57 +0000
 
@@ -9,7 +9,7 @@ Fix 3D contour export
 ---
 
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 5437690..c40d458 100644
+index f43b4a8..bb63fa6 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
 @@ -294,6 +294,15 @@ object3d_from_contours (const POLYAREA *contours,
@@ -257,46 +257,3 @@ index 5437690..c40d458 100644
        objects = g_list_append (objects, object);
  
      }
-@@ -657,19 +681,16 @@ object3d_from_board_outline (void)
-   appearance_set_color (board_appearance,   1.0, 1.0, 0.6);
- //  appearance_set_color (top_bot_appearance, 0.2, 0.8, 0.2);
- 
--#ifdef REVERSED_PCB_CONTOURS
-   objects = object3d_from_contours (board_outline,
-+#ifdef REVERSED_PCB_CONTOURS
-                                     -HACK_BOARD_THICKNESS, /* Bottom */
-                                     0                    ,  /* Top */
--                                    board_appearance,
--                                    top_bot_appearance);
- #else
--  objects = object3d_from_contours (board_outline,
-                                      HACK_BOARD_THICKNESS / 2, /* Bottom */
-                                     -HACK_BOARD_THICKNESS / 2, /* Top */
-+#endif
-                                     board_appearance,
-                                     top_bot_appearance);
--#endif
- 
-   destroy_appearance (board_appearance);
-   destroy_appearance (top_bot_appearance);
-@@ -907,19 +928,16 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
-   mask_appearance = make_appearance ();
-   appearance_set_color (mask_appearance, 0.2, 0.8, 0.2);
- 
--#ifdef REVERSED_PCB_CONTOURS
-   objects = object3d_from_contours (info.poly,
-+#ifdef REVERSED_PCB_CONTOURS
-                                     (side == TOP_SIDE) ? 0                    : -HACK_BOARD_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
-                                     (side == TOP_SIDE) ? HACK_MASK_THICKNESS  : -HACK_BOARD_THICKNESS,                       /* Top */
--                                    mask_appearance,
--                                    NULL);
- #else
--  objects = object3d_from_contours (info.poly,
-                                     (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2                       : HACK_BOARD_THICKNESS / 2 + HACK_MASK_THICKNESS, /* Bottom */
-                                     (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2, /* Top */
-+#endif
-                                     mask_appearance,
-                                     NULL);
--#endif
- 
-   destroy_appearance (mask_appearance);
