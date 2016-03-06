@@ -387,16 +387,12 @@ object3d_from_board_outline (void)
         }
 
       faces[npoints] = make_face3d (); /* bottom_face */
-      faces[npoints]->nx =  0.;
-      faces[npoints]->ny =  0.;
-      faces[npoints]->nz = -1.;
+      face3d_set_normal (faces[npoints], 0., 0., -1.);
       face3d_set_appearance (faces[npoints], top_bot_appearance);
       object3d_add_face (object, faces[npoints]);
 
       faces[npoints + 1] = make_face3d (); /* top_face */
-      faces[npoints + 1]->nx = 0.;
-      faces[npoints + 1]->ny = 0.;
-      faces[npoints + 1]->nz = 1.;
+      face3d_set_normal (faces[npoints + 1], 0., 0., 1.);
       face3d_set_appearance (faces[npoints + 1], top_bot_appearance);
       object3d_add_face (object, faces[npoints + 1]);
 
@@ -432,9 +428,8 @@ object3d_from_board_outline (void)
 
           /* Setup the face normals for the edges along the contour extrusion (top and bottom are handled separaetely) */
           /* Define the (non-normalized) face normal to point to the outside of the contour */
-          faces[i]->nx = vertices[next_i_around_ct]->y - vertices[i]->y;
-          faces[i]->ny = vertices[i]->x - vertices[next_i_around_ct]->x;
-          faces[i]->nz = 0.;
+          face3d_set_normal (faces[i], (vertices[next_i_around_ct]->y - vertices[i]->y),
+                                      -(vertices[next_i_around_ct]->x - vertices[i]->x), 0.);
 
           /* Assign the appropriate vertex geometric data to each edge end */
           ODATA (edges[              i]) = vertices[i];
@@ -466,20 +461,20 @@ object3d_from_board_outline (void)
 
           if (ct->is_round)
             {
-
               face3d_set_cylindrical (faces[i],
                                       COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* A point on the axis of the cylinder */
                                       0., 0., 1.,                                     /* Direction of the cylindrical axis */
                                       COORD_TO_MM (ct->radius));
+              face3d_set_surface_orientation_reversed (faces[i]); /* XXX: Assuming this is a hole, the cylindrical surface normal points in the wrong direction - INCORRECT IF THIS IS THE OUTER CONTOUR!*/
               face3d_set_normal (faces[i], 1., 0., 0.);  /* A normal to the axis direction */
                                         /* XXX: ^^^ Could line this up with the direction to the vertex in the corresponding circle edge */
 
               edge_info_set_round (UNDIR_DATA (edges[i]),
                                    COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), -COORD_TO_MM (HACK_BOARD_THICKNESS), /* Center of circle */
-                                   0., 0., 1., /* Normal */ COORD_TO_MM (ct->radius));
+                                   0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
               edge_info_set_round (UNDIR_DATA (edges[npoints + i]),
                                    COORD_TO_MM (ct->cx), COORD_TO_MM (ct->cy), 0., /* Center of circle */
-                                   0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius));
+                                   0., 0., -1., /* Normal */ COORD_TO_MM (ct->radius)); /* NORMAL POINTING TO -VE Z MAKES CIRCLE CLOCKWISE */
               edge_info_set_stitch (UNDIR_DATA (edges[2 * npoints + i]));
             }
 
