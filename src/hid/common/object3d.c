@@ -23,6 +23,7 @@
 #include "edge3d.h"
 #include "object3d.h"
 #include "polygon.h"
+#include "rats.h"
 
 #include "rtree.h"
 #include "rotate.h"
@@ -94,7 +95,7 @@ make_object3d (char *name)
 
   object = g_new0 (object3d, 1);
   object->id = object3d_count++;
-  name = g_strdup (name);
+  object->name = g_strdup (name);
 
   return object;
 }
@@ -333,6 +334,22 @@ get_contour_edge_n_round_geometry_in_step_mm (PLINE *contour, int n, double *cx,
   *cw = (compare_ccw_cw (EDGE_BACKWARD_VERTEX (edge)->point, center, EDGE_FORWARD_VERTEX (edge)->point) > 0);
 }
 
+static char *
+make_object_name (char *base_name, char *suffix_name)
+{
+  if (base_name == NULL)
+    {
+      return g_strdup (suffix_name);
+    }
+  else
+    {
+      if (suffix_name == NULL)
+        return g_strdup (base_name);
+      else
+        return g_strdup_printf ("%s - %s", base_name, suffix_name);
+    }
+}
+
 typedef struct
 {
   object3d *object;
@@ -350,14 +367,15 @@ object3d_from_contours (POLYAREA *contours,
                         double ztop,
                         const appearance *master_object_appearance,
                         const appearance *master_top_bot_appearance,
-                        bool extrude_inverted)
+                        bool extrude_inverted,
+                        char *base_name)
 {
   GList *objects = NULL;
   object3d *object;
   appearance *object_appearance = NULL;
   appearance *top_bot_appearance = NULL;
   POLYAREA *pa;
-  PLINE *contour;
+  PLINE *outer_contour;
   PLINE *ct;
   int ncontours;
   int npoints;
@@ -372,6 +390,7 @@ object3d_from_contours (POLYAREA *contours,
   bool invert_face_normals;
   double length;
   double nx, ny;
+  char *object_name;
 
 #ifdef REVERSED_PCB_CONTOURS
   invert_face_normals = extrude_inverted ? false : true;
@@ -387,18 +406,20 @@ object3d_from_contours (POLYAREA *contours,
   do
     {
 
-      contour = pa->contours;
+      outer_contour = pa->contours;
       ncontours = 0;
       npoints = 0;
 
-      ct = contour;
+      ct = outer_contour;
       while (ct != NULL) {
         ncontours ++;
         npoints += get_contour_npoints (ct);
         ct = ct->next;
       }
 
-      object = make_object3d (PCB->Name);
+      object_name = make_object_name (base_name, pa->contours->name);
+      object = make_object3d (object_name);
+      g_free (object_name);
 
 #if 0
       /* XXX: REF-COUNTING WOULD BE WAY BETTER! */
@@ -426,7 +447,7 @@ object3d_from_contours (POLYAREA *contours,
       faces    = malloc (sizeof (face3d *) * (npoints + 2)); /* (n-sides, 1-bottom, 1-top */
 
       /* Define the vertices */
-      ct = contour;
+      ct = outer_contour;
       offset_in_ct = 0;
       ct_npoints = get_contour_npoints (ct);
 
@@ -462,7 +483,7 @@ object3d_from_contours (POLYAREA *contours,
       /* Define the faces */
       for (i = 0; i < npoints; i++)
         {
-          faces[i] = make_face3d ();
+          faces[i] = make_face3d (NULL);
 
           object3d_add_face (object, faces[i]);
           /* Pick one of the upright edges which is within this face outer contour loop, and link it to the face */
@@ -472,8 +493,8 @@ object3d_from_contours (POLYAREA *contours,
             face3d_add_contour (faces[i], make_contour3d (SYM(edges[2 * npoints + i])));
         }
 
-      faces[npoints    ] = make_face3d (); /* bottom_face */
-      faces[npoints + 1] = make_face3d (); /* top_face */
+      faces[npoints    ] = make_face3d ("Bottom"); /* bottom_face */
+      faces[npoints + 1] = make_face3d ("Top");    /* top_face */
       if (invert_face_normals)
         {
           face3d_set_normal (faces[npoints    ], 0., 0., -1.); /* bottom_face */
@@ -501,7 +522,7 @@ object3d_from_contours (POLYAREA *contours,
           face3d_add_contour (faces[npoints + 1], make_contour3d (edges[npoints]));
         }
 
-      ct = contour;
+      ct = outer_contour;
       start_of_ct = 0;
       offset_in_ct = 0;
       ct_npoints = get_contour_npoints (ct);
@@ -741,7 +762,8 @@ object3d_from_board_outline (void)
 #endif
                                     board_appearance,
                                     top_bot_appearance,
-                                    false); /* Don't invert */
+                                    false, /* Don't invert */
+                                    PCB->Name);
 
 //  destroy_appearance (board_appearance); /* XXX: HANGING ON TO THIS FOR NOW */
 //  destroy_appearance (top_bot_appearance); /* XXX: HANGING ON TO THIS FOR NOW */
@@ -1023,8 +1045,9 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
                                     (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS, /* Top */
 #endif
                                     mask_appearance,
-                                    NULL,
-                                    false); /* Don't invert */
+                                    NULL,  /* top_bot_appearance */
+                                    false, /* Don't invert */
+                                    (side == TOP_SIDE) ? "Top soldermask" : "Bottom soldermask"); /* Name */
 
 //  destroy_appearance (mask_appearance); /* XXX: HANGING ON TO THIS FOR NOW */
 
@@ -1186,18 +1209,86 @@ polygon_copper_callback (const BoxType * b, void *cl)
   return 1;
 }
 
+static
+char *netname_from_connection_name (int type, ElementType *ele, void *ptr2)
+{
+  char *netname = NULL;
+  char *connection_name;
+
+  if (ele == NULL || NAMEONPCB_NAME (ele) == NULL)
+    return NULL;
+
+  connection_name = ConnectionName (type, ele, ptr2);
+
+  /* ConnectionName uses a static buffer - URGH!! */
+  /*
+   * if (connection_name == NULL)
+   *   return NULL;
+   */
+
+  /* Find netlist entry */
+  MENU_LOOP (&PCB->NetlistLib);
+  {
+    if (!menu->Name)
+    continue;
+
+    ENTRY_LOOP (menu);
+    {
+      if (!entry->ListEntry)
+        continue;
+
+      if (strcmp (entry->ListEntry, connection_name) == 0) {
+        netname = g_strdup (menu->Name);
+        /* For some reason, the netname has spaces in front of it, strip them */
+        g_strstrip (netname);
+        break;
+      }
+    }
+    END_LOOP;
+
+    if (netname != NULL)
+      break;
+  }
+  END_LOOP;
+
+  /* ConnectionName uses a static buffer - URGH!! */
+  /*
+   * free (connection_name);
+   */
+
+  return netname;
+}
+
+static
+char *netname_from_pin (PinType *pin)
+{
+  return netname_from_connection_name (PIN_TYPE, pin->Element, pin);
+}
+
+static
+char *netname_from_pad (PadType *pad)
+{
+  return netname_from_connection_name (PAD_TYPE, pad->Element, pad);
+}
+
 static int
 pad_copper_callback (const BoxType * b, void *cl)
 {
   PadType *pad = (PadType *) b;
   struct copper_info *info = (struct copper_info *) cl;
   POLYAREA *np, *res;
+  char *netname;
 
   if (XOR (TEST_FLAG (ONSOLDERFLAG, pad), (info->side == BOTTOM_SIDE)))
     return 0;
 
   if (!(np = PadPoly (pad, pad->Thickness)))
     return 0;
+
+  netname = netname_from_pad (pad);
+  if (netname != NULL)
+    fprintf (stderr, "Accumulating pad from net %s\n", netname);
+  g_free (netname);
 
   poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
   info->poly = res;
@@ -1211,9 +1302,15 @@ pv_copper_callback (const BoxType * b, void *cl)
   PinType *pv = (PinType *)b;
   struct copper_info *info = cl;
   POLYAREA *np, *res;
+  char *netname;
 
   if (!(np = PinPoly (pv, PIN_SIZE (pv))))
     return 0;
+
+  netname = netname_from_pin (pv);
+  if (netname != NULL)
+    fprintf (stderr, "Accumulating pv from net %s\n", netname);
+  g_free (netname);
 
   poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
   info->poly = res;
@@ -1385,8 +1482,9 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                 -depth - HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS, /* Top */
 #endif
                                 copper_appearance,
-                                NULL,
-                                false)); /* Don't invert */
+                                NULL,  /* top_bot_appearance */
+                                false, /* Don't invert */
+                                "Net")); /* Name */
 
       group_m_polyarea[group] = info.poly;
     }
@@ -1449,8 +1547,9 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                                -top_depth    - HACK_BOARD_THICKNESS / 2,                         /* Top */
 #endif
                                                copper_appearance,
-                                               NULL,
-                                               false); /* Don't invert */
+                                               NULL,  /* top_bot_appearance */
+                                               false, /* Don't invert */
+                                               NULL); /* Name */
 
 /* Connect the via barrels in this block of code */
 #if 1
@@ -1599,8 +1698,9 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                               -top_depth    - HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS, /* Top */
 #endif
                                               copper_appearance,
-                                              NULL,
-                                              true); /* Invert */
+                                              NULL,  /* top_bot_appearance */
+                                              true,  /* Invert */
+                                              NULL); /* Name */
 
 /* Connect the via drill holes in this block of code */
 #if 1
