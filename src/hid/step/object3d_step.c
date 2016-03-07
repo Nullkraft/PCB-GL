@@ -277,6 +277,8 @@ object3d_to_step_body_fragment (step_file *step,
             {
               printf ("EDGE TOO SHORT TO DETERMINE DIRECTION - GUESSING! Coords (%f, %f)\n", ov->x, ov->y);
               pcb_printf ("Approx PCB coords of short edge: %#mr, %#mr\n", (Coord)STEP_X_TO_COORD (PCB, ov->x), (Coord)STEP_Y_TO_COORD (PCB, ov->y));
+              printf ("Length of short edge is %f nm\n", sqrt (pow (dir_x, 2.) + pow (dir_y, 2.) + pow (dir_z, 2.)) * 1000000.);
+              printf ("dx = %f, dy = %f, dz = %f\n", dir_x, dir_y, dir_z);
               dir_x = 1.0; /* DUMMY TO AVOID A ZERO LENGTH DIRECTION VECTOR */
             }
 #endif
