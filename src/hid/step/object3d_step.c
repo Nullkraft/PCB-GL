@@ -37,6 +37,18 @@
 
 
 static step_id_list
+null_presentation_style_assignments (step_file *step)
+{
+  step_id colour = step_colour_rgb (step, "", 0., 0., 1.);
+  step_id fill_area_style = step_fill_area_style (step, "", make_step_id_list (1, step_fill_area_style_colour (step, "", colour)));
+  step_id surface_side_style = step_surface_side_style (step, "", make_step_id_list (1, step_surface_style_fill_area (step, fill_area_style)));
+  step_id_list styles_list = make_step_id_list (1, step_surface_style_usage (step, "BOTH", surface_side_style));
+  step_id_list psa_list = make_step_id_list (1, step_presentation_style_assignment (step, styles_list));
+
+  return psa_list;
+}
+
+static step_id_list
 presentation_style_assignments_from_appearance (step_file *step, appearance *appear)
 {
   step_id colour = step_colour_rgb (step, "", appear->r, appear->g, appear->b);
@@ -394,6 +406,8 @@ step_absr_fragment (step_file *step,
   step_id shape_representation_identifier;
   step_id anchor_axis_identifier;
   step_id shape_definition_representation_identifier;
+  step_id_list psa;
+  step_id shape_style_identifier;
 
   /* Need an anchor in 3D space to orient the shape */
   if (placement_axis == NULL || *placement_axis == 0)
@@ -414,6 +428,11 @@ step_absr_fragment (step_file *step,
 
   shape_definition_representation_identifier =
   step_shape_definition_representation (step, product_definition_shape_identifier, shape_representation_identifier);
+
+  psa = null_presentation_style_assignments (step);
+  shape_style_identifier = step_styled_item (step, "NONE", psa, shape_representation_identifier);
+  step_presentation_layer_assignment (step, "0", "Layer 0", make_step_id_list (1, shape_style_identifier));
+  styled_item_list = step_id_list_append (styled_item_list, shape_style_identifier); /* XXX: Assignment is not required, since we append */
 
   /* Emit references to the styled and over_ridden styled items */
   step_mechanical_design_geometric_presentation_representation (step, "", styled_item_list, geometric_representation_context_identifier);
