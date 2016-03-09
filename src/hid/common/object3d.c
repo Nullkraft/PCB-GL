@@ -35,7 +35,7 @@
 #define PERFECT_ROUND_CONTOURS
 
 #define REVERSED_PCB_CONTOURS 1 /* PCB Contours are reversed from the expected CCW for outer ordering - once the Y-coordinate flip is taken into account */
-#undef REVERSED_PCB_CONTOURS
+//#undef REVERSED_PCB_CONTOURS
 
 #ifdef REVERSED_PCB_CONTOURS
 #define COORD_TO_STEP_X(pcb, x) (COORD_TO_MM(                   (x)))
@@ -739,10 +739,24 @@ GList *
 object3d_from_board_outline (void)
 {
   POLYAREA *board_outline = board_outline_poly (true);
+  POLYAREA *pa;
 
 #if 0
   return object3d_from_soldermask_within_area (board_outline, TOP_SIDE);
 #else
+
+  if (board_outline == NULL)
+    return NULL;
+
+  /* Erase outer contour naming from the polygon - we don't want all the
+   * hole names that get combined into the outer name! */
+  pa = board_outline;
+  do
+    {
+      free (pa->contours->name);
+      pa->contours->name = NULL;
+    }
+  while ((pa = pa->f) != board_outline);
 
   appearance *board_appearance;
   appearance *top_bot_appearance;
@@ -1013,6 +1027,7 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
   struct mask_info info;
   BoxType bounds;
   LayerType *layer;
+  POLYAREA *pa;
 
   poly_Copy0 (&info.poly, area);
   info.side = side;
@@ -1033,13 +1048,26 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
   r_search (PCB->Data->pin_tree, &bounds, NULL, pv_mask_callback, &info);
   r_search (PCB->Data->via_tree, &bounds, NULL, pv_mask_callback, &info);
 
+  if (info.poly == NULL)
+    return NULL;
+
+  /* Erase outer contour naming from the polygon - we don't want all the
+   * hole names that get combined into the outer name! */
+  pa = info.poly;
+  do
+    {
+      free (pa->contours->name);
+      pa->contours->name = NULL;
+    }
+  while ((pa = pa->f) != info.poly);
+
   mask_appearance = make_appearance ();
   appearance_set_color (mask_appearance, 0.2, 0.8, 0.2);
 
   objects = object3d_from_contours (info.poly,
 #ifdef REVERSED_PCB_CONTOURS
-                                    (side == TOP_SIDE) ? 0                   - HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
-                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS - HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS,                       /* Top */
+                                    (side == TOP_SIDE) ? 0                   + HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS, /* Bottom */
+                                    (side == TOP_SIDE) ? HACK_MASK_THICKNESS + HACK_COPPER_THICKNESS : -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS,                       /* Top */
 #else
                                     (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS                       : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS + HACK_MASK_THICKNESS, /* Bottom */
                                     (side == TOP_SIDE) ? -HACK_BOARD_THICKNESS / 2 - HACK_COPPER_THICKNESS - HACK_MASK_THICKNESS : HACK_BOARD_THICKNESS / 2 + HACK_COPPER_THICKNESS, /* Top */
@@ -1191,6 +1219,7 @@ polygon_copper_callback (const BoxType * b, void *cl)
   PolygonType *poly = (PolygonType *) b;
   struct mask_info *info = (struct mask_info *) cl;
   POLYAREA *np, *res;
+  POLYAREA *pa;
 
   if (poly->Clipped == NULL)
     {
@@ -1202,6 +1231,19 @@ polygon_copper_callback (const BoxType * b, void *cl)
     poly_M_Copy0 (&np, poly->Clipped); /* Copy the whole polygon */
   else
     poly_Copy0 (&np, poly->Clipped); /* Just copy the first polygon piece */
+
+  if (np == NULL)
+    return 0;
+
+  /* Erase outer contour naming from the polygon - we don't want all the
+   * hole names that get combined into the outer name! */
+  pa = np;
+  do
+    {
+      free (pa->contours->name);
+      pa->contours->name = NULL;
+    }
+  while ((pa = pa->f) != np);
 
   poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
   info->poly = res;
@@ -1287,8 +1329,10 @@ pad_copper_callback (const BoxType * b, void *cl)
 
   netname = netname_from_pad (pad);
   if (netname != NULL)
-    fprintf (stderr, "Accumulating pad from net %s\n", netname);
-  g_free (netname);
+    {
+      np->contours->name = strdup (netname);
+      g_free (netname);
+    }
 
   poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
   info->poly = res;
@@ -1309,8 +1353,10 @@ pv_copper_callback (const BoxType * b, void *cl)
 
   netname = netname_from_pin (pv);
   if (netname != NULL)
-    fprintf (stderr, "Accumulating pv from net %s\n", netname);
-  g_free (netname);
+    {
+      np->contours->name = strdup (netname);
+      g_free (netname);
+    }
 
   poly_Boolean_free (info->poly, np, &res, PBO_UNITE);
   info->poly = res;
@@ -1362,6 +1408,27 @@ update_object_pointers (POLYAREA **group_m_poly, object3d *old_object, object3d 
         }
       while ((pa = pa->f) != group_m_poly[group]);
     }
+}
+
+/* Returns a string allocated with g_malloc family of functions */
+static char *
+merge_contour_name (char *old, const char *new)
+{
+  char *combined;
+
+  if (old == NULL)
+    return g_strdup (new);
+
+  if (new == NULL)
+    return old;
+
+  if (strcmp (old, new) == 0)
+    return old;
+
+  combined = g_strdup_printf ("%s_%s", old, new);
+  g_free (old);
+
+  return combined;
 }
 
 GList *
@@ -1470,6 +1537,17 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
         {
           fprintf (stderr, "Skipping layer group %i, info.poly was NULL\n", group);
           continue;
+        }
+
+      if (1)
+        {
+          POLYAREA *pa = info.poly;
+          do
+            {
+              printf ("Polygon piece with outer contour named %s\n",
+                      pa->contours->name == NULL ? "NULL" : pa->contours->name);
+            }
+          while ((pa = pa->f) != info.poly);
         }
 
       group_objects = g_list_concat (group_objects,
@@ -1660,6 +1738,9 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 
               /* Steal the data from the old bottom object */
               steal_object_geometry (top_group_object, bottom_group_object);
+
+              printf ("Merging object with name %s and %s\n", top_group_object->name, bottom_group_object->name);
+              top_group_object->name = merge_contour_name (top_group_object->name, bottom_group_object->name);
 
               /* Delete the old bottom object */
               destroy_object3d (bottom_group_object);
