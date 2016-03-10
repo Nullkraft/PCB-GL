@@ -3352,6 +3352,10 @@ poly_PreContour (PLINE * C, BOOLp optimize)
 
   if (optimize)
     {
+      /* XXX: Looks like this loop misses an iteration? IE.. no test between head->prev ------- head ------- head->next
+       *      in any case, if we remove the head vertex, we need to adjust the polygon...
+       *      does poly_ExclVertex cope with that? - NO!
+       */
       for (c = NEXT_VERTEX ((p = &C->head)); c != &C->head; c = NEXT_VERTEX (p = c))
 	{
 	  /* if the previous node is on the same line with this one, we should remove it */
@@ -3376,8 +3380,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
   C->ymin = C->ymax = C->head.point[1];
 
   p = PREV_VERTEX ((c = &C->head));
-  if (c != p)
-    {
+//  if (c != p) /* WTF?? */
+//    {
       do
 	{
 	  /* calculate area for orientation */
@@ -3388,7 +3392,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
 	  C->Count++;
 	}
       while ((c = NEXT_VERTEX (p = c)) != &C->head);
-    }
+//    }
   C->area = ABS (area);
   if (C->Count > 2)
     C->Flags.orient = ((area < 0) ? PLF_INV : PLF_DIR);
@@ -4368,3 +4372,90 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  * perhaps reverse tracing the arc would require look-ahead to check
  * for arcs
  */
+
+
+/* s1 and s2 are treated as edges */
+static bool
+line_segments_can_merge (VNODE *s1, VNODE *s2)
+{
+  Vector p1, p2;
+
+  assert (EDGE_FOWARD_VERTEX (s1) == EDGE_BACKWARD_VERTEX (s2));
+  Vsub2 (p1, EDGE_BACKWARD_VERTEX (s2)->point, EDGE_BACKWARD_VERTEX (s1)->point); /* See assert above for first arg */
+  Vsub2 (p2, EDGE_FORWARD_VERTEX (s2)->point, EDGE_BACKWARD_VERTEX (s2)->point);
+
+  /* If the product below is zero then segments are on the same line */
+  return (vect_det2 (p1, p2) == 0);
+}
+
+/* s1 and s2 are treated as edges */
+static bool
+arc_segments_can_merge (VNODE *s1, VNODE *s2)
+{
+  return (s1->cx        == s2->cx &&
+          s1->cy        == s2->cy &&
+          s1->radius    == s2->radius);
+}
+
+
+/* NB: Operates on a single contour, does not follow links */
+/* XXX: Does not update the segment r-tree, so no further
+ *      boolean operations should be attempted on this polygon!
+ */
+static void
+simplify_contour (PLINE *contour)
+{
+  VNODE *p, *c;
+
+  /* XXX: Looks like this loop misses an iteration? IE.. no test between head->prev ------- head ------- head->next
+   *      in any case, if we remove the head vertex, we need to adjust the polygon...
+   *      does poly_ExclVertex cope with that? - NO!
+   */
+  for (c = NEXT_VERTEX ((p = &contour->head)); c != &contour->head; c = NEXT_VERTEX (p = c))
+    {
+      bool delete_vertex_c;
+
+      if (!VERTEX_BACKWARD_EDGE (p)->is_round && !VERTEX_BACKWARD_EDGE (c)->is_round)
+        {
+          delete_vertex_c = line_segments_can_merge (VERTEX_BACKWARD_EDGE (p), VERTEX_BACKWARD_EDGE (c));
+          if (delete_vertex_c)
+            fprintf (stderr, "Merging adjacent line segments\n");
+        }
+      else if (VERTEX_BACKWARD_EDGE (p)->is_round && VERTEX_BACKWARD_EDGE (c)->is_round)
+        {
+          delete_vertex_c = arc_segments_can_merge (VERTEX_BACKWARD_EDGE (p), VERTEX_BACKWARD_EDGE (c));
+          if (delete_vertex_c)
+            fprintf (stderr, "Merging adjacent arc segments\n");
+        }
+      else
+        {
+          /* LINE-ARC and ARC-LINE segments cannot merge */
+          delete_vertex_c = false;
+        }
+
+      if (delete_vertex_c)
+        {
+          poly_ExclVertex (c);
+          g_slice_free (VNODE, c);
+          c = p;
+          contour->Count --;
+        }
+    }
+}
+
+void
+poly_Simplify (POLYAREA *poly)
+{
+  POLYAREA *pa = poly;
+  PLINE *curc;
+
+  if (poly == NULL)
+    return;
+
+  do
+    {
+      for (curc = pa->contours; curc != NULL; curc = curc->next)
+        simplify_contour (curc);
+    }
+  while ((pa = pa->f) != poly);
+}
