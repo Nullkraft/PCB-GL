@@ -1550,8 +1550,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
           while ((pa = pa->f) != info.poly);
         }
 
+      group_m_polyarea[group] = info.poly;
+      poly_Simplify (group_m_polyarea[group]);
+
       group_objects = g_list_concat (group_objects,
-        object3d_from_contours (info.poly,
+        object3d_from_contours (group_m_polyarea[group],
 #ifdef REVERSED_PCB_CONTOURS
                                 depth,                         /* Bottom */
                                 depth + HACK_COPPER_THICKNESS, /* Top */
@@ -1563,8 +1566,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
                                 NULL,  /* top_bot_appearance */
                                 false, /* Don't invert */
                                 "Net")); /* Name */
-
-      group_m_polyarea[group] = info.poly;
     }
 
   /* Now need to punch drill-holes through the inter-layers..
@@ -1577,6 +1578,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
   r_search (PCB->Data->via_tree, &bounds, NULL, pv_barrel_callback, &info);
 
   barrel_m_polyarea = info.poly;
+  poly_Simplify (barrel_m_polyarea);
 
   info.poly = NULL;
 
@@ -1585,6 +1587,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
   r_search (PCB->Data->via_tree, &bounds, NULL, pv_drill_callback, &info);
 
   drill_m_polyarea = info.poly;
+  poly_Simplify (drill_m_polyarea);
 
   info.poly = NULL;
 
