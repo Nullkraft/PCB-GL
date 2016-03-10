@@ -51,6 +51,7 @@
 #include "rtree.h"
 #include "heap.h"
 #include "pcb-printf.h"
+#include "polygon.h" // FOR POLY_CIRC_SEGS
 
 #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
 
@@ -3017,7 +3018,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 
   *res = NULL;
 
-#if 1
+#if 0
   /* Make copies for tracking polygon parentage (DEBUG) */
   if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
       return err_no_memory;
@@ -3352,6 +3353,10 @@ poly_PreContour (PLINE * C, BOOLp optimize)
 
   if (optimize)
     {
+      /* XXX: Looks like this loop misses an iteration? IE.. no test between head->prev ------- head ------- head->next
+       *      in any case, if we remove the head vertex, we need to adjust the polygon...
+       *      does poly_ExclVertex cope with that? - NO!
+       */
       for (c = NEXT_VERTEX ((p = &C->head)); c != &C->head; c = NEXT_VERTEX (p = c))
 	{
 	  /* if the previous node is on the same line with this one, we should remove it */
@@ -3376,8 +3381,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
   C->ymin = C->ymax = C->head.point[1];
 
   p = PREV_VERTEX ((c = &C->head));
-  if (c != p)
-    {
+//  if (c != p) /* WTF?? */
+//    {
       do
 	{
 	  /* calculate area for orientation */
@@ -3388,7 +3393,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
 	  C->Count++;
 	}
       while ((c = NEXT_VERTEX (p = c)) != &C->head);
-    }
+//    }
   C->area = ABS (area);
   if (C->Count > 2)
     C->Flags.orient = ((area < 0) ? PLF_INV : PLF_DIR);
@@ -3915,6 +3920,7 @@ poly_Init (POLYAREA * p)
 {
   p->f = p->b = p;
   p->contours = NULL;
+  p->simple_contours = NULL;
   p->contour_tree = r_create_tree (NULL, 0, 0);
   p->parentage = no_parentage;
   p->user_data = NULL;
@@ -3952,12 +3958,14 @@ poly_Free (POLYAREA ** p)
   for (cur = (*p)->f; cur != *p; cur = (*p)->f)
     {
       poly_FreeContours (&cur->contours);
+      poly_FreeContours (&cur->simple_contours);
       r_destroy_tree (&cur->contour_tree);
       cur->f->b = cur->b;
       cur->b->f = cur->f;
       free (cur);
     }
   poly_FreeContours (&cur->contours);
+  poly_FreeContours (&cur->simple_contours);
   r_destroy_tree (&cur->contour_tree);
 
   /* Free parentage information - assume all linked polygons share this, so only need to do it for the past polygon */
@@ -4368,3 +4376,115 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  * perhaps reverse tracing the arc would require look-ahead to check
  * for arcs
  */
+
+
+/* s1 and s2 are treated as edges */
+static bool
+line_segments_can_merge (VNODE *s1, VNODE *s2)
+{
+  Vector p1, p2;
+
+  assert (EDGE_FOWARD_VERTEX (s1) == EDGE_BACKWARD_VERTEX (s2));
+  Vsub2 (p1, EDGE_BACKWARD_VERTEX (s2)->point, EDGE_BACKWARD_VERTEX (s1)->point); /* See assert above for first arg */
+  Vsub2 (p2, EDGE_FORWARD_VERTEX (s2)->point, EDGE_BACKWARD_VERTEX (s2)->point);
+
+  /* If the product below is zero then segments are on the same line */
+  return (vect_det2 (p1, p2) == 0);
+}
+
+/* s1 and s2 are treated as edges */
+static bool
+arc_segments_can_merge (VNODE *s1, VNODE *s2)
+{
+  return (s1->cx        == s2->cx &&
+          s1->cy        == s2->cy &&
+          s1->radius    == s2->radius);
+}
+
+
+/* NB: Operates on a single contour, does not follow links */
+/* XXX: Does not update the segment r-tree, so no further
+ *      boolean operations should be attempted on this polygon!
+ */
+static void
+simplify_contour (PLINE *contour)
+{
+  VNODE *p, *c;
+  int count = 0;
+
+  /* XXX: Looks like this loop misses an iteration? IE.. no test between head->prev ------- head ------- head->next
+   *      in any case, if we remove the head vertex, we need to adjust the polygon...
+   *      does poly_ExclVertex cope with that? - NO!
+   */
+  for (c = NEXT_VERTEX ((p = &contour->head)); c != &contour->head; c = NEXT_VERTEX (p = c))
+    {
+      bool delete_vertex_c;
+
+      if (VERTEX_FORWARD_EDGE (c)->is_round == false)
+        count = 0;
+
+      if (!VERTEX_FORWARD_EDGE (p)->is_round && !VERTEX_FORWARD_EDGE (c)->is_round)
+        {
+          delete_vertex_c = line_segments_can_merge (VERTEX_FORWARD_EDGE (p), VERTEX_FORWARD_EDGE (c));
+          if (delete_vertex_c)
+            fprintf (stderr, "Merging adjacent line segments\n");
+        }
+      else if (VERTEX_FORWARD_EDGE (p)->is_round && VERTEX_FORWARD_EDGE (c)->is_round)
+        {
+          delete_vertex_c = arc_segments_can_merge (VERTEX_FORWARD_EDGE (p), VERTEX_FORWARD_EDGE (c));
+          /* XXX: If we merge too many arc segments, they become more than 180 degrees span, and cw/ccw determination fails */
+          if (count == POLY_CIRC_SEGS / 2 - 2) /* Thought -1 should work, but then appear to get bad polygon cutouts */
+            {
+              delete_vertex_c = false;
+              count = 0;
+            }
+          if (delete_vertex_c)
+            {
+              fprintf (stderr, "Merging adjacent arc segments\n");
+              count++;
+            }
+        }
+      else
+        {
+          /* LINE-ARC and ARC-LINE segments cannot merge */
+          delete_vertex_c = false;
+          count = 0;
+        }
+
+      if (delete_vertex_c)
+        {
+          assert (c != &contour->head);
+          poly_ExclVertex (c);
+          g_slice_free (VNODE, c);
+          c = p;
+          contour->Count --;
+        }
+
+    }
+}
+
+void
+poly_Simplify (POLYAREA *poly)
+{
+  POLYAREA *pa = poly;
+  PLINE *curc;
+  PLINE **last;
+
+  if (poly == NULL)
+    return;
+
+  do
+    {
+      assert (pa->simple_contours == NULL);
+      last = &pa->simple_contours;
+      for (curc = pa->contours; curc != NULL; curc = curc->next)
+        {
+          if (!poly_CopyContour (last, curc))
+            g_assert_not_reached ();
+          if (!(*last)->is_round) /* Don't worry about simplifying round contours, since those get special cased on output anyway */
+            simplify_contour (*last);
+          last = &(*last)->next;
+        }
+    }
+  while ((pa = pa->f) != poly);
+}
