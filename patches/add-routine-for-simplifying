@@ -1,5 +1,5 @@
 Bottom: ff5c08639b97f4ef6ce60fa69464dbadfcb77e19
-Top:    ff5c08639b97f4ef6ce60fa69464dbadfcb77e19
+Top:    80b12e92cf6805fc4ba2eb2d4048c3f7d0cf2ca7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-10 20:23:50 +0000
 
@@ -8,4 +8,183 @@ Add routine for simplifying polygon contours
 
 ---
 
-
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index d38cdb3..6917a30 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -1550,8 +1550,11 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+           while ((pa = pa->f) != info.poly);
+         }
+ 
++      group_m_polyarea[group] = info.poly;
++      poly_Simplify (group_m_polyarea[group]);
++
+       group_objects = g_list_concat (group_objects,
+-        object3d_from_contours (info.poly,
++        object3d_from_contours (group_m_polyarea[group],
+ #ifdef REVERSED_PCB_CONTOURS
+                                 depth,                         /* Bottom */
+                                 depth + HACK_COPPER_THICKNESS, /* Top */
+@@ -1563,8 +1566,6 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+                                 NULL,  /* top_bot_appearance */
+                                 false, /* Don't invert */
+                                 "Net")); /* Name */
+-
+-      group_m_polyarea[group] = info.poly;
+     }
+ 
+   /* Now need to punch drill-holes through the inter-layers..
+@@ -1577,6 +1578,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+   r_search (PCB->Data->via_tree, &bounds, NULL, pv_barrel_callback, &info);
+ 
+   barrel_m_polyarea = info.poly;
++  poly_Simplify (barrel_m_polyarea);
+ 
+   info.poly = NULL;
+ 
+@@ -1585,6 +1587,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+   r_search (PCB->Data->via_tree, &bounds, NULL, pv_drill_callback, &info);
+ 
+   drill_m_polyarea = info.poly;
++  poly_Simplify (drill_m_polyarea);
+ 
+   info.poly = NULL;
+ 
+diff --git a/src/polyarea.h b/src/polyarea.h
+index 2d9d868..8ab33e9 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -209,6 +209,7 @@ int poly_Boolean(const POLYAREA * a, const POLYAREA * b, POLYAREA ** res, int ac
+ int poly_Boolean_free(POLYAREA * a, POLYAREA * b, POLYAREA ** res, int action);
+ int poly_AndSubtract_free(POLYAREA * a, POLYAREA * b, POLYAREA ** aandb, POLYAREA ** aminusb);
+ int SavePOLYAREA( POLYAREA *PA, char * fname);
++void poly_Simplify(POLYAREA *poly);
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/src/polygon1.c b/src/polygon1.c
+index a084876..533462b 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -3352,6 +3352,10 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+ 
+   if (optimize)
+     {
++      /* XXX: Looks like this loop misses an iteration? IE.. no test between head->prev ------- head ------- head->next
++       *      in any case, if we remove the head vertex, we need to adjust the polygon...
++       *      does poly_ExclVertex cope with that? - NO!
++       */
+       for (c = NEXT_VERTEX ((p = &C->head)); c != &C->head; c = NEXT_VERTEX (p = c))
+ 	{
+ 	  /* if the previous node is on the same line with this one, we should remove it */
+@@ -3376,8 +3380,8 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+   C->ymin = C->ymax = C->head.point[1];
+ 
+   p = PREV_VERTEX ((c = &C->head));
+-  if (c != p)
+-    {
++//  if (c != p) /* WTF?? */
++//    {
+       do
+ 	{
+ 	  /* calculate area for orientation */
+@@ -3388,7 +3392,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+ 	  C->Count++;
+ 	}
+       while ((c = NEXT_VERTEX (p = c)) != &C->head);
+-    }
++//    }
+   C->area = ABS (area);
+   if (C->Count > 2)
+     C->Flags.orient = ((area < 0) ? PLF_INV : PLF_DIR);
+@@ -4368,3 +4372,90 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+  * perhaps reverse tracing the arc would require look-ahead to check
+  * for arcs
+  */
++
++
++/* s1 and s2 are treated as edges */
++static bool
++line_segments_can_merge (VNODE *s1, VNODE *s2)
++{
++  Vector p1, p2;
++
++  assert (EDGE_FOWARD_VERTEX (s1) == EDGE_BACKWARD_VERTEX (s2));
++  Vsub2 (p1, EDGE_BACKWARD_VERTEX (s2)->point, EDGE_BACKWARD_VERTEX (s1)->point); /* See assert above for first arg */
++  Vsub2 (p2, EDGE_FORWARD_VERTEX (s2)->point, EDGE_BACKWARD_VERTEX (s2)->point);
++
++  /* If the product below is zero then segments are on the same line */
++  return (vect_det2 (p1, p2) == 0);
++}
++
++/* s1 and s2 are treated as edges */
++static bool
++arc_segments_can_merge (VNODE *s1, VNODE *s2)
++{
++  return (s1->cx        == s2->cx &&
++          s1->cy        == s2->cy &&
++          s1->radius    == s2->radius);
++}
++
++
++/* NB: Operates on a single contour, does not follow links */
++/* XXX: Does not update the segment r-tree, so no further
++ *      boolean operations should be attempted on this polygon!
++ */
++static void
++simplify_contour (PLINE *contour)
++{
++  VNODE *p, *c;
++
++  /* XXX: Looks like this loop misses an iteration? IE.. no test between head->prev ------- head ------- head->next
++   *      in any case, if we remove the head vertex, we need to adjust the polygon...
++   *      does poly_ExclVertex cope with that? - NO!
++   */
++  for (c = NEXT_VERTEX ((p = &contour->head)); c != &contour->head; c = NEXT_VERTEX (p = c))
++    {
++      bool delete_vertex_c;
++
++      if (!VERTEX_BACKWARD_EDGE (p)->is_round && !VERTEX_BACKWARD_EDGE (c)->is_round)
++        {
++          delete_vertex_c = line_segments_can_merge (VERTEX_BACKWARD_EDGE (p), VERTEX_BACKWARD_EDGE (c));
++          if (delete_vertex_c)
++            fprintf (stderr, "Merging adjacent line segments\n");
++        }
++      else if (VERTEX_BACKWARD_EDGE (p)->is_round && VERTEX_BACKWARD_EDGE (c)->is_round)
++        {
++          delete_vertex_c = arc_segments_can_merge (VERTEX_BACKWARD_EDGE (p), VERTEX_BACKWARD_EDGE (c));
++          if (delete_vertex_c)
++            fprintf (stderr, "Merging adjacent arc segments\n");
++        }
++      else
++        {
++          /* LINE-ARC and ARC-LINE segments cannot merge */
++          delete_vertex_c = false;
++        }
++
++      if (delete_vertex_c)
++        {
++          poly_ExclVertex (c);
++          g_slice_free (VNODE, c);
++          c = p;
++          contour->Count --;
++        }
++    }
++}
++
++void
++poly_Simplify (POLYAREA *poly)
++{
++  POLYAREA *pa = poly;
++  PLINE *curc;
++
++  if (poly == NULL)
++    return;
++
++  do
++    {
++      for (curc = pa->contours; curc != NULL; curc = curc->next)
++        simplify_contour (curc);
++    }
++  while ((pa = pa->f) != poly);
++}
