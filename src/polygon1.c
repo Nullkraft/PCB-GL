@@ -51,6 +51,7 @@
 #include "rtree.h"
 #include "heap.h"
 #include "pcb-printf.h"
+#include "polygon.h" // FOR POLY_CIRC_SEGS
 
 #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
 
@@ -3017,7 +3018,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 
   *res = NULL;
 
-#if 1
+#if 0
   /* Make copies for tracking polygon parentage (DEBUG) */
   if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
       return err_no_memory;
@@ -3919,6 +3920,7 @@ poly_Init (POLYAREA * p)
 {
   p->f = p->b = p;
   p->contours = NULL;
+  p->simple_contours = NULL;
   p->contour_tree = r_create_tree (NULL, 0, 0);
   p->parentage = no_parentage;
   p->user_data = NULL;
@@ -3956,12 +3958,14 @@ poly_Free (POLYAREA ** p)
   for (cur = (*p)->f; cur != *p; cur = (*p)->f)
     {
       poly_FreeContours (&cur->contours);
+      poly_FreeContours (&cur->simple_contours);
       r_destroy_tree (&cur->contour_tree);
       cur->f->b = cur->b;
       cur->b->f = cur->f;
       free (cur);
     }
   poly_FreeContours (&cur->contours);
+  poly_FreeContours (&cur->simple_contours);
   r_destroy_tree (&cur->contour_tree);
 
   /* Free parentage information - assume all linked polygons share this, so only need to do it for the past polygon */
@@ -4406,6 +4410,7 @@ static void
 simplify_contour (PLINE *contour)
 {
   VNODE *p, *c;
+  int count = 0;
 
   /* XXX: Looks like this loop misses an iteration? IE.. no test between head->prev ------- head ------- head->next
    *      in any case, if we remove the head vertex, we need to adjust the polygon...
@@ -4415,31 +4420,46 @@ simplify_contour (PLINE *contour)
     {
       bool delete_vertex_c;
 
-      if (!VERTEX_BACKWARD_EDGE (p)->is_round && !VERTEX_BACKWARD_EDGE (c)->is_round)
+      if (VERTEX_FORWARD_EDGE (c)->is_round == false)
+        count = 0;
+
+      if (!VERTEX_FORWARD_EDGE (p)->is_round && !VERTEX_FORWARD_EDGE (c)->is_round)
         {
-          delete_vertex_c = line_segments_can_merge (VERTEX_BACKWARD_EDGE (p), VERTEX_BACKWARD_EDGE (c));
+          delete_vertex_c = line_segments_can_merge (VERTEX_FORWARD_EDGE (p), VERTEX_FORWARD_EDGE (c));
           if (delete_vertex_c)
             fprintf (stderr, "Merging adjacent line segments\n");
         }
-      else if (VERTEX_BACKWARD_EDGE (p)->is_round && VERTEX_BACKWARD_EDGE (c)->is_round)
+      else if (VERTEX_FORWARD_EDGE (p)->is_round && VERTEX_FORWARD_EDGE (c)->is_round)
         {
-          delete_vertex_c = arc_segments_can_merge (VERTEX_BACKWARD_EDGE (p), VERTEX_BACKWARD_EDGE (c));
+          delete_vertex_c = arc_segments_can_merge (VERTEX_FORWARD_EDGE (p), VERTEX_FORWARD_EDGE (c));
+          /* XXX: If we merge too many arc segments, they become more than 180 degrees span, and cw/ccw determination fails */
+          if (count == POLY_CIRC_SEGS / 2 - 1)
+            {
+              delete_vertex_c = false;
+              count = 0;
+            }
           if (delete_vertex_c)
-            fprintf (stderr, "Merging adjacent arc segments\n");
+            {
+              fprintf (stderr, "Merging adjacent arc segments\n");
+              count++;
+            }
         }
       else
         {
           /* LINE-ARC and ARC-LINE segments cannot merge */
           delete_vertex_c = false;
+          count = 0;
         }
 
       if (delete_vertex_c)
         {
+          assert (c != &contour->head);
           poly_ExclVertex (c);
           g_slice_free (VNODE, c);
           c = p;
           contour->Count --;
         }
+
     }
 }
 
@@ -4448,14 +4468,23 @@ poly_Simplify (POLYAREA *poly)
 {
   POLYAREA *pa = poly;
   PLINE *curc;
+  PLINE **last;
 
   if (poly == NULL)
     return;
 
   do
     {
+      assert (pa->simple_contours == NULL);
+      last = &pa->simple_contours;
       for (curc = pa->contours; curc != NULL; curc = curc->next)
-        simplify_contour (curc);
+        {
+          if (!poly_CopyContour (last, curc))
+            g_assert_not_reached ();
+          if (!(*last)->is_round) /* Don't worry about simplifying round contours, since those get special cased on output anyway */
+            simplify_contour (*last);
+          last = &(*last)->next;
+        }
     }
   while ((pa = pa->f) != poly);
 }

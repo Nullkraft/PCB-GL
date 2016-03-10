@@ -158,6 +158,7 @@ struct POLYAREA
 {
     POLYAREA *f, *b;
     PLINE *contours;
+    PLINE *simple_contours;
     rtree_t *contour_tree;
     POLYPARENTAGE parentage;
     void *user_data; /* To be used at will by the owner of this polygon */
