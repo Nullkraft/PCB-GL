@@ -1,0 +1,32 @@
+Bottom: 72ce0bf1cef2704818361991be2a2030252908b4
+Top:    304a650a3f34514901ea7fa59868e0ba7e817e57
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-12 18:59:05 +0000
+
+Refresh of make-sanity-checks-in
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index 3fd9dc6..643730e 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -2183,14 +2183,15 @@ MoveLayerToGroup (int layer, int group)
+ {
+   int prev, i, j;
+ 
+-  if (layer < 0 || layer >= max_copper_layer + 2)
+-    return -1;
++  assert (layer >= 0 && layer < max_copper_layer + 2);
++  assert (group >= 0 && group < max_group);
++
+   prev = GetLayerGroupNumberByNumber (layer);
+   if ((layer == bottom_silk_layer
+         && group == GetLayerGroupNumberByNumber (top_silk_layer))
+       || (layer == top_silk_layer
+           && group == GetLayerGroupNumberByNumber (bottom_silk_layer))
+-      || (group < 0 || group >= max_group) || (prev == group))
++      || prev == group)
+     return prev;
+ 
+   /* Remove layer from prev group */
