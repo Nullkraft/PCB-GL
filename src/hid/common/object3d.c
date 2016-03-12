@@ -660,6 +660,9 @@ object3d_from_board_outline (void)
 {
   POLYAREA *board_outline = board_outline_poly (true);
   POLYAREA *pa;
+  appearance *board_appearance;
+  appearance *top_bot_appearance;
+  GList *objects;
 
 #if 0
   return object3d_from_soldermask_within_area (board_outline, TOP_SIDE);
@@ -677,10 +680,6 @@ object3d_from_board_outline (void)
       pa->contours->name = NULL;
     }
   while ((pa = pa->f) != board_outline);
-
-  appearance *board_appearance;
-  appearance *top_bot_appearance;
-  GList *objects;
 
   board_appearance = make_appearance ();
   top_bot_appearance = NULL;
