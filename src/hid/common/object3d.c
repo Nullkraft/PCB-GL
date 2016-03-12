@@ -152,8 +152,7 @@ float colors[12][3] = {{1., 0., 0.},
 #define CIRC_SEGS 64
 
 static void
-draw_quad_edge (edge_ref e,
-                G_GNUC_UNUSED void *data)
+draw_quad_edge (edge_ref e, void *data)
 {
 #if 0
   int id = ID(e) % 12;
@@ -198,8 +197,7 @@ draw_quad_edge (edge_ref e,
 }
 
 static void
-object3d_draw_debug_single (object3d *object,
-                            G_GNUC_UNUSED void *user_data)
+object3d_draw_debug_single (object3d *object, void *user_data)
 {
   g_return_if_fail (object->edges != NULL);
 
