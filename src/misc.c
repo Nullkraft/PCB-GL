@@ -96,7 +96,7 @@ static void GetGridLockCoordinates (int, void *, void *, void *,
 static struct
 {
   bool ElementOn, InvisibleObjectsOn, PinOn, ViaOn, RatOn;
-  int LayerStack[MAX_LAYER];
+  Cardinal LayerStack[MAX_LAYER];
   bool LayerOn[MAX_LAYER];
   int cnt;
 } SavedStack;
@@ -775,7 +775,7 @@ IsLayerNumEmpty (int num)
 bool
 IsLayerGroupEmpty (int num)
 {
-  int i;
+  Cardinal i;
   for (i=0; i<PCB->LayerGroups.Number[num]; i++)
     if (!IsLayerNumEmpty (PCB->LayerGroups.Entries[num][i]))
       return false;
@@ -1107,10 +1107,10 @@ error:
  * comma separated layer numbers (1,2,b:4,6,8,t)
  */
 int
-ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
+ParseGroupString (char *group_string, LayerGroupType *LayerGroup, Cardinal *LayerN)
 {
   char *s;
-  int group, member, layer;
+  Cardinal group, member, layer;
   bool top_set = false,        /* flags for the two special layers to */
     bottom_set = false;           /* provide a default setting for old formats */
   int groupnum[MAX_LAYER];
@@ -1138,7 +1138,7 @@ ParseGroupString (char *group_string, LayerGroupType *LayerGroup, int *LayerN)
         default:
           if (!isdigit ((int) *s))
             goto error;
-          *LayerN = MAX (*LayerN, atoi (s));
+          *LayerN = MAX (*LayerN, (unsigned int)atoi (s));
           break;
         }
 
@@ -1396,10 +1396,10 @@ ExpandFilename (char *Dirname, char *Filename)
 /* ---------------------------------------------------------------------------
  * returns the layer number for the passed pointer
  */
-int
+Cardinal
 GetLayerNumber (DataType *Data, LayerType *Layer)
 {
-  int i;
+  Cardinal i;
 
   for (i = 0; i < MAX_LAYER + EXTRA_LAYERS; i++)
     if (Layer == &Data->Layer[i])
@@ -1411,9 +1411,9 @@ GetLayerNumber (DataType *Data, LayerType *Layer)
  * move layer (number is passed in) to top of layerstack
  */
 static void
-PushOnTopOfLayerStack (int NewTop)
+PushOnTopOfLayerStack (Cardinal NewTop)
 {
-  int i;
+  Cardinal i;
 
   /* ignore silk and other extra layers */
   if (NewTop < max_copper_layer)
@@ -1436,9 +1436,10 @@ PushOnTopOfLayerStack (int NewTop)
  * returns the number of changed layers
  */
 int
-ChangeGroupVisibility (int Layer, bool On, bool ChangeStackOrder)
+ChangeGroupVisibility (Cardinal Layer, bool On, bool ChangeStackOrder)
 {
-  int group, i, changed = 1;    /* at least the current layer changes */
+  Cardinal group, i;
+  int changed = 1;    /* at least the current layer changes */
 
   /* Warning: these special case values must agree with what gui-top-window.c
      |  thinks the are.
@@ -1452,7 +1453,7 @@ ChangeGroupVisibility (int Layer, bool On, bool ChangeStackOrder)
   group = GetLayerGroupNumberByNumber (Layer);
   for (i = PCB->LayerGroups.Number[group]; i;)
     {
-      int layer = PCB->LayerGroups.Entries[group][--i];
+      Cardinal layer = PCB->LayerGroups.Entries[group][--i];
 
       /* don't count the passed member of the group */
       if (layer != Layer && layer < max_copper_layer)
@@ -1487,7 +1488,8 @@ LayerStringToLayerStack (char *s)
   static int listed_layers = 0;
   int l = strlen (s);
   char **args;
-  int i, argn, lno;
+  Cardinal ci, lno;
+  int i, argn;
   int prev_sep = 1;
 
   s = strdup (s);
@@ -1514,11 +1516,11 @@ LayerStringToLayerStack (char *s)
 	}
     }
 
-  for (i = 0; i < max_copper_layer + EXTRA_LAYERS; i++)
+  for (ci = 0; ci < max_copper_layer + EXTRA_LAYERS; ci++)
     {
-      if (i < max_copper_layer)
-        LayerStack[i] = i;
-      PCB->Data->Layer[i].On = false;
+      if (ci < max_copper_layer)
+        LayerStack[ci] = ci;
+      PCB->Data->Layer[ci].On = false;
     }
   PCB->ElementOn = false;
   PCB->InvisibleObjectsOn = false;
@@ -1547,7 +1549,7 @@ LayerStringToLayerStack (char *s)
 	Settings.ShowBottomSide = 1;
       else if (isdigit ((int) args[i][0]))
 	{
-	  lno = atoi (args[i]);
+	  lno = (Cardinal)atoi (args[i]);
 	  ChangeGroupVisibility (lno, true, true);
 	}
       else
@@ -1580,7 +1582,7 @@ LayerStringToLayerStack (char *s)
 /* ---------------------------------------------------------------------------
  * returns the layergroup number for the passed pointer
  */
-int
+Cardinal
 GetLayerGroupNumberByPointer (LayerType *Layer)
 {
   return (GetLayerGroupNumberByNumber (GetLayerNumber (PCB->Data, Layer)));
@@ -1589,10 +1591,10 @@ GetLayerGroupNumberByPointer (LayerType *Layer)
 /* ---------------------------------------------------------------------------
  * returns the layergroup number for the passed layernumber
  */
-int
+Cardinal
 GetLayerGroupNumberByNumber (Cardinal Layer)
 {
-  int group, entry;
+  Cardinal group, entry;
 
   for (group = 0; group < max_group; group++)
     for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry++)
@@ -1608,7 +1610,7 @@ GetLayerGroupNumberByNumber (Cardinal Layer)
 /* ---------------------------------------------------------------------------
  * returns the layergroup number for the passed side (TOP_LAYER or BOTTOM_LAYER)
  */
-int
+Cardinal
 GetLayerGroupNumberBySide (int side)
 {
   /* Find the relavant board side layer group by determining the
@@ -2178,10 +2180,10 @@ MaskFlags (FlagType flag, unsigned int flags)
  * Layer Group Functions
  */
 
-int
-MoveLayerToGroup (int layer, int group)
+Cardinal
+MoveLayerToGroup (Cardinal layer, Cardinal group)
 {
-  int prev, i, j;
+  Cardinal prev, i, j;
 
   assert (layer >= 0 && layer < max_copper_layer + 2);
   assert (group >= 0 && group < max_group);
@@ -2216,7 +2218,7 @@ LayerGroupsToString (LayerGroupType *lg)
 #endif
   char *cp = buf;
   char sep = 0;
-  int group, entry;
+  Cardinal group, entry;
   for (group = 0; group < max_group; group++)
     if (PCB->LayerGroups.Number[group])
       {
@@ -2225,7 +2227,7 @@ LayerGroupsToString (LayerGroupType *lg)
         sep = 1;
         for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry++)
           {
-            int layer = PCB->LayerGroups.Entries[group][entry];
+            Cardinal layer = PCB->LayerGroups.Entries[group][entry];
             if (layer == top_silk_layer)
               {
                 if (entry != 0)
