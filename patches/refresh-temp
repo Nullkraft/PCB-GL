@@ -1,0 +1,32 @@
+Bottom: 10d77d31e1378e34d04f213f61b26fe232e28c3e
+Top:    728a290828f3b4f5cb5a1e507bc8d0c05bad16d3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-12 19:08:27 +0000
+
+Refresh of patch
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index fb6c0a0..70cc51b 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -152,7 +152,8 @@ float colors[12][3] = {{1., 0., 0.},
+ #define CIRC_SEGS 64
+ 
+ static void
+-draw_quad_edge (edge_ref e, void *data)
++draw_quad_edge (edge_ref e,
++                G_GNUC_UNUSED void *data)
+ {
+ #if 0
+   int id = ID(e) % 12;
+@@ -197,7 +198,8 @@ draw_quad_edge (edge_ref e, void *data)
+ }
+ 
+ static void
+-object3d_draw_debug_single (object3d *object, void *user_data)
++object3d_draw_debug_single (object3d *object,
++                            G_GNUC_UNUSED void *user_data)
+ {
+   g_return_if_fail (object->edges != NULL);
