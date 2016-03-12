@@ -1,5 +1,5 @@
 Bottom: 304a650a3f34514901ea7fa59868e0ba7e817e57
-Top:    4ea9c531bb71f49dfa3a2778fe4ab49d5dd3df1f
+Top:    56713c45e7181516168044a4f54083f4f577dd04
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-12 18:50:12 +0000
 
@@ -48,31 +48,10 @@ index a542ccf..a050b98 100644
    GList *Element;
    GList *Rat;
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 277d99f..fb6c0a0 100644
+index 277d99f..af87448 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -740,6 +740,9 @@ object3d_from_board_outline (void)
- {
-   POLYAREA *board_outline = board_outline_poly (true);
-   POLYAREA *pa;
-+  appearance *board_appearance;
-+  appearance *top_bot_appearance;
-+  GList *objects;
- 
- #if 0
-   return object3d_from_soldermask_within_area (board_outline, TOP_SIDE);
-@@ -758,10 +761,6 @@ object3d_from_board_outline (void)
-     }
-   while ((pa = pa->f) != board_outline);
- 
--  appearance *board_appearance;
--  appearance *top_bot_appearance;
--  GList *objects;
--
-   board_appearance = make_appearance ();
-   top_bot_appearance = NULL;
-   appearance_set_color (board_appearance,   1.0, 1.0, 0.6);
-@@ -1091,13 +1090,13 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -1091,13 +1091,13 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
  }
  
  static Coord
@@ -106,7 +85,7 @@ index 3579a40..83b5ec4 100644
      return;
    layer = cbs->event->xbutton.y * (max_copper_layer + 2) / lg_height;
 diff --git a/src/misc.c b/src/misc.c
-index 643730e..c7bdef2 100644
+index 643730e..0e46b98 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -96,7 +96,7 @@ static void GetGridLockCoordinates (int, void *, void *, void *,
@@ -118,15 +97,6 @@ index 643730e..c7bdef2 100644
    bool LayerOn[MAX_LAYER];
    int cnt;
  } SavedStack;
-@@ -614,7 +614,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
- {
-   SymbolType *symbol = FontPtr->Symbol;
-   unsigned char *s = (unsigned char *) Text->TextString;
--  int i;
-+  unsigned int i;
-   int space;
- 
-   Coord minx, miny, maxx, maxy, tx;
 @@ -775,7 +775,7 @@ IsLayerNumEmpty (int num)
  bool
  IsLayerGroupEmpty (int num)
