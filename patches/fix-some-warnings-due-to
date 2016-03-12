@@ -1,5 +1,5 @@
 Bottom: b4d720389515a88af15141cd36bf63a1611e5789
-Top:    91e86596f2561ebdc99e3df1e9b1c87c5f01c929
+Top:    3d7be0830157ff382ec90b5793144940415e3753
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-12 16:15:30 +0000
 
@@ -911,3 +911,16 @@ index 3c3b4d0..7c4e95c 100644
    int haspath;
    char *t1, *t2;
    int found_bindir = 0;
+diff --git a/src/polygon.c b/src/polygon.c
+index f587028..ab4e944 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -354,7 +354,7 @@ original_poly (PolygonType * p)
+   POLYAREA *np = NULL;
+   Cardinal n;
+   Vector v;
+-  int hole = 0;
++  unsigned int hole = 0;
+ 
+   if ((np = poly_Create ()) == NULL)
+     return NULL;
