@@ -1,0 +1,23 @@
+Bottom: 72ce0bf1cef2704818361991be2a2030252908b4
+Top:    72ce0bf1cef2704818361991be2a2030252908b4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-12 18:59:03 +0000
+
+Make sanity checks in MoveLayerToGroup asserts.
+
+The only caller which uses the returned group value was in the Lesstif HID,
+but it did not check for the possibility of a -1 return. The -1 return was
+made in the case of a precondition failure, having been passed an out-of
+bound layer. (Which represents a software bug).
+
+Remove the return -1 in favour of an assert, and introduce a similar assert
+checking the validity of the group number - rather than turning the function
+into a NOP if an invalid group was passed.
+
+This is a step towards making the layer and group numbers unsigned, as
+we cannot return -1 when that is done.
+
+
+---
+
+
