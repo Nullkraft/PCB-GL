@@ -152,7 +152,8 @@ float colors[12][3] = {{1., 0., 0.},
 #define CIRC_SEGS 64
 
 static void
-draw_quad_edge (edge_ref e, void *data)
+draw_quad_edge (edge_ref e,
+                G_GNUC_UNUSED void *data)
 {
 #if 0
   int id = ID(e) % 12;
@@ -197,7 +198,8 @@ draw_quad_edge (edge_ref e, void *data)
 }
 
 static void
-object3d_draw_debug_single (object3d *object, void *user_data)
+object3d_draw_debug_single (object3d *object,
+                            G_GNUC_UNUSED void *user_data)
 {
   g_return_if_fail (object->edges != NULL);
 
@@ -740,6 +742,9 @@ object3d_from_board_outline (void)
 {
   POLYAREA *board_outline = board_outline_poly (true);
   POLYAREA *pa;
+  appearance *board_appearance;
+  appearance *top_bot_appearance;
+  GList *objects;
 
 #if 0
   return object3d_from_soldermask_within_area (board_outline, TOP_SIDE);
@@ -757,10 +762,6 @@ object3d_from_board_outline (void)
       pa->contours->name = NULL;
     }
   while ((pa = pa->f) != board_outline);
-
-  appearance *board_appearance;
-  appearance *top_bot_appearance;
-  GList *objects;
 
   board_appearance = make_appearance ();
   top_bot_appearance = NULL;
@@ -1091,13 +1092,13 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
 }
 
 static Coord
-compute_depth (int group)
+compute_depth (Cardinal group)
 {
-  int top_group;
-  int bottom_group;
-  int min_copper_group;
-  int max_copper_group;
-  int num_copper_groups;
+  Cardinal top_group;
+  Cardinal bottom_group;
+  Cardinal min_copper_group;
+  Cardinal max_copper_group;
+  Cardinal num_copper_groups;
   int depth;
 
   top_group = GetLayerGroupNumberBySide (TOP_SIDE);
