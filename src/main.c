@@ -394,24 +394,24 @@ print_defaults ()
 }
 
 #define SSET(F,D,N,H) { N, H, \
-	HID_String,  0, 0, { 0, D, 0 }, 0, &Settings.F }
+	HID_String,  0, 0, { 0, D, 0, 0 }, 0, &Settings.F, 0 }
 #define ISET(F,D,N,H) { N, H, \
-	HID_Integer, 0, 0, { D, 0, 0 }, 0, &Settings.F }
+	HID_Integer, 0, 0, { D, 0, 0, 0 }, 0, &Settings.F, 0 }
 #define BSET(F,D,N,H) { N, H, \
-	HID_Boolean, 0, 0, { D, 0, 0 }, 0, &Settings.F }
+	HID_Boolean, 0, 0, { D, 0, 0, 0 }, 0, &Settings.F, 0 }
 #define RSET(F,D,N,H) { N, H, \
-	HID_Real,    0, 0, { 0, 0, D }, 0, &Settings.F }
+	HID_Real,    0, 0, { 0, 0, D, 0 }, 0, &Settings.F, 0 }
 #define CSET(F,D,N,H) { N, H, \
-	HID_Coord,    0, 0, { 0, 0, 0, D }, 0, &Settings.F }
+	HID_Coord,    0, 0, { 0, 0, 0, D }, 0, &Settings.F, 0 }
 
 #define COLOR(F,D,N,H) { N, H, \
-	HID_String, 0, 0, { 0, D, 0 }, 0, &Settings.F }
+	HID_String, 0, 0, { 0, D, 0, 0 }, 0, &Settings.F, 0 }
 #define LAYERCOLOR(N,D) { "layer-color-" #N, "Color for layer " #N, \
-	HID_String, 0, 0, { 0, D, 0 }, 0, &Settings.LayerColor[N-1] }
+	HID_String, 0, 0, { 0, D, 0, 0 }, 0, &Settings.LayerColor[N-1], 0 }
 #define LAYERNAME(N,D) { "layer-name-" #N, "Name for layer " #N, \
-	HID_String, 0, 0, { 0, D, 0 }, 0, &Settings.DefaultLayerName[N-1] }
+	HID_String, 0, 0, { 0, D, 0, 0 }, 0, &Settings.DefaultLayerName[N-1], 0 }
 #define LAYERSELCOLOR(N) { "layer-selected-color-" #N, "Color for layer " #N " when selected", \
-	HID_String, 0, 0, { 0, "#00ffff", 0 }, 0, &Settings.LayerSelectedColor[N-1] }
+	HID_String, 0, 0, { 0, "#00ffff", 0, 0 }, 0, &Settings.LayerSelectedColor[N-1], 0 }
 
 static int show_help = 0;
 static int show_version = 0;
@@ -438,8 +438,8 @@ Show help on command line options.
 @end ftable
 %end-doc
 */
-  {"help", "Show help on command line options", HID_Boolean, 0, 0, {0, 0, 0}, 0,
-  &show_help},
+  {"help", "Show help on command line options", HID_Boolean, 0, 0, {0, 0, 0, 0}, 0,
+  &show_help, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -448,7 +448,7 @@ Show version.
 @end ftable
 %end-doc
 */
-  {"version", "Show version", HID_Boolean, 0, 0, {0, 0, 0}, 0, &show_version},
+  {"version", "Show version", HID_Boolean, 0, 0, {0, 0, 0, 0}, 0, &show_version, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -457,8 +457,8 @@ Be verbose on stdout.
 @end ftable
 %end-doc
 */
-  {"verbose", "Be verbose on stdout", HID_Boolean, 0, 0, {0, 0, 0}, 0,
-   &Settings.verbose},
+  {"verbose", "Be verbose on stdout", HID_Boolean, 0, 0, {0, 0, 0, 0}, 0,
+   &Settings.verbose, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -467,8 +467,8 @@ Show copyright.
 @end ftable
 %end-doc
 */
-  {"copyright", "Show Copyright", HID_Boolean, 0, 0, {0, 0, 0}, 0,
-   &show_copyright},
+  {"copyright", "Show Copyright", HID_Boolean, 0, 0, {0, 0, 0, 0}, 0,
+   &show_copyright, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -477,8 +477,8 @@ Show option defaults.
 @end ftable
 %end-doc
 */
-  {"show-defaults", "Show option defaults", HID_Boolean, 0, 0, {0, 0, 0}, 0,
-   &show_defaults},
+  {"show-defaults", "Show option defaults", HID_Boolean, 0, 0, {0, 0, 0, 0}, 0,
+   &show_defaults, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -487,8 +487,8 @@ Show available actions and exit.
 @end ftable
 %end-doc
 */
-  {"show-actions", "Show available actions", HID_Boolean, 0, 0, {0, 0, 0}, 0,
-   &show_actions},
+  {"show-actions", "Show available actions", HID_Boolean, 0, 0, {0, 0, 0, 0}, 0,
+   &show_actions, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -498,7 +498,7 @@ Dump actions (for documentation).
 %end-doc
 */
   {"dump-actions", "Dump actions (for documentation)", HID_Boolean, 0, 0,
-   {0, 0, 0}, 0, &do_dump_actions},
+   {0, 0, 0, 0}, 0, &do_dump_actions, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -507,8 +507,8 @@ Set default grid units. Can be mm or mil. Defaults to mil.
 @end ftable
 %end-doc
 */
-  {"grid-units", "Default grid units (mm|mil)", HID_String, 0, 0, {0, "mil", 0},
-  0, &grid_units},
+  {"grid-units", "Default grid units (mm|mil)", HID_String, 0, 0, {0, "mil", 0, 0},
+  0, &grid_units, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -518,8 +518,8 @@ when user is using a metric grid unit.
 @end ftable
 %end-doc
 */
-  {"clear-increment-mm", "Default clear increment amount (metric)", HID_Coord, 0, 0, {0, 0, 0},
-  0, &increment_mm.clear},
+  {"clear-increment-mm", "Default clear increment amount (metric)", HID_Coord, 0, 0, {0, 0, 0, 0},
+  0, &increment_mm.clear, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -529,8 +529,8 @@ when user is using a metric grid unit.
 @end ftable
 %end-doc
 */
-  {"grid-increment-mm", "Default grid increment amount (metric)", HID_Coord, 0, 0, {0, 0, 0},
-  0, &increment_mm.grid},
+  {"grid-increment-mm", "Default grid increment amount (metric)", HID_Coord, 0, 0, {0, 0, 0, 0},
+  0, &increment_mm.grid, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -540,8 +540,8 @@ when user is using a metric grid unit.
 @end ftable
 %end-doc
 */
-  {"line-increment-mm", "Default line increment amount (metric)", HID_Coord, 0, 0, {0, 0, 0},
-  0, &increment_mm.line},
+  {"line-increment-mm", "Default line increment amount (metric)", HID_Coord, 0, 0, {0, 0, 0, 0},
+  0, &increment_mm.line, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -551,8 +551,8 @@ when user is using a metric grid unit.
 @end ftable
 %end-doc
 */
-  {"size-increment-mm", "Default size increment amount (metric)", HID_Coord, 0, 0, {0, 0, 0},
-  0, &increment_mm.size},
+  {"size-increment-mm", "Default size increment amount (metric)", HID_Coord, 0, 0, {0, 0, 0, 0},
+  0, &increment_mm.size, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -562,8 +562,8 @@ when user is using an imperial grid unit.
 @end ftable
 %end-doc
 */
-  {"clear-increment-mil", "Default clear increment amount (imperial)", HID_Coord, 0, 0, {0, 0, 0},
-  0, &increment_mil.clear},
+  {"clear-increment-mil", "Default clear increment amount (imperial)", HID_Coord, 0, 0, {0, 0, 0, 0},
+  0, &increment_mil.clear, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -573,8 +573,8 @@ when user is using a imperial grid unit.
 @end ftable
 %end-doc
 */
-  {"grid-increment-mil", "Default grid increment amount (imperial)", HID_Coord, 0, 0, {0, 0, 0},
-  0, &increment_mil.grid},
+  {"grid-increment-mil", "Default grid increment amount (imperial)", HID_Coord, 0, 0, {0, 0, 0, 0},
+  0, &increment_mil.grid, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -584,8 +584,8 @@ when user is using a imperial grid unit.
 @end ftable
 %end-doc
 */
-  {"line-increment-mil", "Default line increment amount (imperial)", HID_Coord, 0, 0, {0, 0, 0},
-  0, &increment_mil.line},
+  {"line-increment-mil", "Default line increment amount (imperial)", HID_Coord, 0, 0, {0, 0, 0, 0},
+  0, &increment_mil.line, 0},
 
 /* %start-doc options "1 General Options"
 @ftable @code
@@ -595,8 +595,8 @@ when user is using a imperial grid unit.
 @end ftable
 %end-doc
 */
-  {"size-increment-mil", "Default size increment amount (imperial)", HID_Coord, 0, 0, {0, 0, 0},
-  0, &increment_mil.size},
+  {"size-increment-mil", "Default size increment amount (imperial)", HID_Coord, 0, 0, {0, 0, 0, 0},
+  0, &increment_mil.size, 0},
 
 /* %start-doc options "3 Colors"
 @ftable @code
@@ -1660,7 +1660,7 @@ static void
 InitPaths (char *argv0)
 {
   size_t l;
-  int i;
+  unsigned int i;
   int haspath;
   char *t1, *t2;
   int found_bindir = 0;
