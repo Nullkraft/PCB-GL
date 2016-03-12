@@ -740,6 +740,9 @@ object3d_from_board_outline (void)
 {
   POLYAREA *board_outline = board_outline_poly (true);
   POLYAREA *pa;
+  appearance *board_appearance;
+  appearance *top_bot_appearance;
+  GList *objects;
 
 #if 0
   return object3d_from_soldermask_within_area (board_outline, TOP_SIDE);
@@ -757,10 +760,6 @@ object3d_from_board_outline (void)
       pa->contours->name = NULL;
     }
   while ((pa = pa->f) != board_outline);
-
-  appearance *board_appearance;
-  appearance *top_bot_appearance;
-  GList *objects;
 
   board_appearance = make_appearance ();
   top_bot_appearance = NULL;
@@ -1091,13 +1090,13 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
 }
 
 static Coord
-compute_depth (int group)
+compute_depth (Cardinal group)
 {
-  int top_group;
-  int bottom_group;
-  int min_copper_group;
-  int max_copper_group;
-  int num_copper_groups;
+  Cardinal top_group;
+  Cardinal bottom_group;
+  Cardinal min_copper_group;
+  Cardinal max_copper_group;
+  Cardinal num_copper_groups;
   int depth;
 
   top_group = GetLayerGroupNumberBySide (TOP_SIDE);
