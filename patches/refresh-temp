@@ -1,0 +1,22 @@
+Bottom: 72ce0bf1cef2704818361991be2a2030252908b4
+Top:    e84e4098246de459f2119ba124b64602e1747a37
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-12 16:14:29 +0000
+
+Refresh of enable-wextra-and-pedantic
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index 058fa40..53a96ca 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1143,7 +1143,7 @@ LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_L
+ # if we have gcc then add -Wall
+ if test "x$GCC" = "xyes"; then
+ 	# see about adding some extra checks if the compiler takes them
+-	for flag in -Wall ; do
++	for flag in -Wall -Wextra -pedantic; do
+ 		case " ${CFLAGS} " in
+ 			*\ ${flag}\ *)
+ 				# flag is already present
