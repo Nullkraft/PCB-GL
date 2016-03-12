@@ -234,7 +234,8 @@ Zoom (int argc, char **argv, Coord x, Coord y)
 /* ------------------------------------------------------------ */
 
 void
-ghid_calibrate (double xval, double yval)
+ghid_calibrate (G_GNUC_UNUSED double xval,
+                G_GNUC_UNUSED double yval)
 {
   printf (_("ghid_calibrate() -- not implemented\n"));
 }
@@ -417,7 +418,9 @@ GuiWatch;
   /* We need a wrapper around the hid file watch to pass the correct flags
    */
 static gboolean
-ghid_watch (GIOChannel *source, GIOCondition condition, gpointer data)
+ghid_watch (G_GNUC_UNUSED GIOChannel *source,
+            GIOCondition condition,
+            gpointer data)
 {
   unsigned int pcb_condition = 0;
   hidval x;
@@ -499,7 +502,7 @@ static GSourceFuncs ghid_block_hook_funcs = {
 
 static gboolean
 ghid_block_hook_prepare (GSource *source,
-                         gint    *timeout)
+           G_GNUC_UNUSED gint    *timeout)
 {
   hidval data = ((BlockHookSource *)source)->user_data;
   ((BlockHookSource *)source)->func( data );
@@ -507,15 +510,15 @@ ghid_block_hook_prepare (GSource *source,
 }
 
 static gboolean
-ghid_block_hook_check (GSource *source)
+ghid_block_hook_check (G_GNUC_UNUSED GSource *source)
 {
   return FALSE;
 }
 
 static gboolean
-ghid_block_hook_dispatch (GSource     *source,
-                          GSourceFunc  callback,
-                          gpointer     user_data)
+ghid_block_hook_dispatch (G_GNUC_UNUSED GSource     *source,
+                          G_GNUC_UNUSED GSourceFunc  callback,
+                          G_GNUC_UNUSED gpointer     user_data)
 {
   return FALSE;
 }
@@ -677,8 +680,8 @@ struct progress_dialog
 };
 
 static void
-run_response_handler (GtkDialog *dialog,
-                      gint response_id,
+run_response_handler (G_GNUC_UNUSED GtkDialog *dialog,
+                       gint response_id,
                       gpointer data)
 {
   struct progress_dialog *pd = data;
@@ -687,8 +690,8 @@ run_response_handler (GtkDialog *dialog,
 }
 
 static gint
-run_delete_handler (GtkDialog *dialog,
-                    GdkEventAny *event,
+run_delete_handler (G_GNUC_UNUSED GtkDialog *dialog,
+                    G_GNUC_UNUSED GdkEventAny *event,
                     gpointer data)
 {
   struct progress_dialog *pd = data;
@@ -699,7 +702,8 @@ run_delete_handler (GtkDialog *dialog,
 }
 
 static void
-run_destroy_handler (GtkDialog *dialog, gpointer data)
+run_destroy_handler (G_GNUC_UNUSED GtkDialog *dialog,
+                     gpointer data)
 {
   struct progress_dialog *pd = data;
 
@@ -953,7 +957,8 @@ ghid_attributes_revert ()
 }
 
 static void
-attributes_delete_callback (GtkWidget *w, void *v)
+attributes_delete_callback (G_GNUC_UNUSED GtkWidget *w,
+                            void *v)
 {
   int i, n;
 
@@ -1098,7 +1103,10 @@ This just pops up a dialog telling the user which version of
 
 
 static int
-About (int argc, char **argv, Coord x, Coord y)
+About (G_GNUC_UNUSED int argc,
+       G_GNUC_UNUSED char **argv,
+       G_GNUC_UNUSED Coord x,
+       G_GNUC_UNUSED Coord y)
 {
   ghid_dialog_about ();
   return 0;
@@ -1118,14 +1126,20 @@ Prompts the user for a coordinate, if one is not already selected.
 %end-doc */
 
 static int
-GetXY (int argc, char **argv, Coord x, Coord y)
+GetXY (G_GNUC_UNUSED int argc,
+       G_GNUC_UNUSED char **argv,
+       G_GNUC_UNUSED Coord x,
+       G_GNUC_UNUSED Coord y)
 {
   return 0;
 }
 
 /* ---------------------------------------------------------------------- */
 
-static int PointCursor (int argc, char **argv, Coord x, Coord y)
+static int PointCursor (int argc,
+                        G_GNUC_UNUSED char **argv,
+                        G_GNUC_UNUSED Coord x,
+                        G_GNUC_UNUSED Coord y)
 {
   if (!ghidgui)
     return 0;
@@ -1150,7 +1164,10 @@ static void ghid_normal_cursor (void)
 /* ---------------------------------------------------------------------- */
 
 static int
-RouteStylesChanged (int argc, char **argv, Coord x, Coord y)
+RouteStylesChanged (G_GNUC_UNUSED int argc,
+                    G_GNUC_UNUSED char **argv,
+                    G_GNUC_UNUSED Coord x,
+                    G_GNUC_UNUSED Coord y)
 {
   if (!ghidgui || !ghidgui->route_style_selector)
     return 0;
@@ -1166,7 +1183,10 @@ RouteStylesChanged (int argc, char **argv, Coord x, Coord y)
 /* ---------------------------------------------------------------------- */
 
 int
-PCBChanged (int argc, char **argv, Coord x, Coord y)
+PCBChanged (G_GNUC_UNUSED int argc,
+            G_GNUC_UNUSED char **argv,
+            G_GNUC_UNUSED Coord x,
+            G_GNUC_UNUSED Coord y)
 {
   if (!ghidgui)
     return 0;
@@ -1194,7 +1214,10 @@ PCBChanged (int argc, char **argv, Coord x, Coord y)
 /* ---------------------------------------------------------------------- */
 
 static int
-LayerGroupsChanged (int argc, char **argv, Coord x, Coord y)
+LayerGroupsChanged (G_GNUC_UNUSED int argc,
+                    G_GNUC_UNUSED char **argv,
+                    G_GNUC_UNUSED Coord x,
+                    G_GNUC_UNUSED Coord y)
 {
   printf (_("LayerGroupsChanged -- not implemented\n"));
   return 0;
@@ -1203,7 +1226,10 @@ LayerGroupsChanged (int argc, char **argv, Coord x, Coord y)
 /* ---------------------------------------------------------------------- */
 
 static int
-LibraryChanged (int argc, char **argv, Coord x, Coord y)
+LibraryChanged (G_GNUC_UNUSED int argc,
+                G_GNUC_UNUSED char **argv,
+                G_GNUC_UNUSED Coord x,
+                G_GNUC_UNUSED Coord y)
 {
   /* No need to show the library window every time it changes...
    *  ghid_library_window_show (&ghid_port, FALSE);
@@ -1214,7 +1240,10 @@ LibraryChanged (int argc, char **argv, Coord x, Coord y)
 /* ---------------------------------------------------------------------- */
 
 static int
-Command (int argc, char **argv, Coord x, Coord y)
+Command (G_GNUC_UNUSED int argc,
+         G_GNUC_UNUSED char **argv,
+         G_GNUC_UNUSED Coord x,
+         G_GNUC_UNUSED Coord y)
 {
   ghid_handle_user_command (TRUE);
   return 0;
@@ -1223,7 +1252,10 @@ Command (int argc, char **argv, Coord x, Coord y)
 /* ---------------------------------------------------------------------- */
 
 static int
-Load (int argc, char **argv, Coord x, Coord y)
+Load (int argc,
+      char **argv,
+      G_GNUC_UNUSED Coord x,
+      G_GNUC_UNUSED Coord y)
 {
   char *function;
   char *name = NULL;
@@ -1266,7 +1298,7 @@ Load (int argc, char **argv, Coord x, Coord y)
   if (name)
     {
       if (Settings.verbose)
-      	fprintf (stderr, "%s:  Calling LoadFrom(%s, %s)\n", __FUNCTION__,
+      	fprintf (stderr, "%s:  Calling LoadFrom(%s, %s)\n", G_STRFUNC,
 		 function, name);
       hid_actionl ("LoadFrom", function, name, NULL);
       g_free (name);
@@ -1297,7 +1329,10 @@ called with that filename.
 %end-doc */
 
 static int
-Save (int argc, char **argv, Coord x, Coord y)
+Save (int argc,
+      char **argv,
+      G_GNUC_UNUSED Coord x,
+      G_GNUC_UNUSED Coord y)
 {
   char *function;
   char *name;
@@ -1327,7 +1362,7 @@ Save (int argc, char **argv, Coord x, Coord y)
     {
       if (Settings.verbose)
 	fprintf (stderr, "%s:  Calling SaveTo(%s, %s)\n", 
-		 __FUNCTION__, function, name);
+		 G_STRFUNC, function, name);
       
       if (strcasecmp (function, "PasteBuffer") == 0)
 	hid_actionl ("PasteBuffer", "Save", name, NULL);
@@ -1396,7 +1431,10 @@ side'' of the board.
 
 
 static int
-SwapSides (int argc, char **argv, Coord x, Coord y)
+SwapSides (int argc,
+           char **argv,
+           G_GNUC_UNUSED Coord x,
+           G_GNUC_UNUSED Coord y)
 {
   int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
   int top_group = GetLayerGroupNumberBySide (TOP_SIDE);
@@ -1460,7 +1498,10 @@ options, and print the layout.
 %end-doc */
 
 static int
-Print (int argc, char **argv, Coord x, Coord y)
+Print (G_GNUC_UNUSED int argc,
+       G_GNUC_UNUSED char **argv,
+       G_GNUC_UNUSED Coord x,
+       G_GNUC_UNUSED Coord y)
 {
   HID **hids;
   int i;
@@ -1496,11 +1537,11 @@ Print (int argc, char **argv, Coord x, Coord y)
 static HID_Attribute
 printer_calibrate_attrs[] = {
   {N_("Enter Values here:"), "",
-   HID_Label, 0, 0, {0, 0, 0}, 0, 0},
+   HID_Label, 0, 0, {0, 0, 0, 0}, 0, 0, 0},
   {N_("x-calibration"), N_("X scale for calibrating your printer"),
-   HID_Real, 0.5, 25, {0, 0, 1.00}, 0, 0},
+   HID_Real, 0.5, 25, {0, 0, 1.00, 0}, 0, 0, 0},
   {N_("y-calibration"), N_("Y scale for calibrating your printer"),
-   HID_Real, 0.5, 25, {0, 0, 1.00}, 0, 0}
+   HID_Real, 0.5, 25, {0, 0, 1.00, 0}, 0, 0, 0}
 };
 static HID_Attr_Val printer_calibrate_values[3];
 
@@ -1518,7 +1559,10 @@ the measurements in, so that future printouts will be more precise.
 %end-doc */
 
 static int
-PrintCalibrate (int argc, char **argv, Coord x, Coord y)
+PrintCalibrate (G_GNUC_UNUSED int argc,
+                G_GNUC_UNUSED char **argv,
+                G_GNUC_UNUSED Coord x,
+                G_GNUC_UNUSED Coord y)
 {
   HID *printer = hid_find_printer ();
   printer->calibrate (0.0, 0.0);
@@ -1536,7 +1580,10 @@ PrintCalibrate (int argc, char **argv, Coord x, Coord y)
 /* ------------------------------------------------------------ */
 
 static int
-Export (int argc, char **argv, Coord x, Coord y)
+Export (G_GNUC_UNUSED int argc,
+        G_GNUC_UNUSED char **argv,
+        G_GNUC_UNUSED Coord x,
+        G_GNUC_UNUSED Coord y)
 {
 
   /* check if layout is empty */
@@ -1553,7 +1600,10 @@ Export (int argc, char **argv, Coord x, Coord y)
 /* ------------------------------------------------------------ */
 
 static int
-Benchmark (int argc, char **argv, Coord x, Coord y)
+Benchmark (G_GNUC_UNUSED int argc,
+           G_GNUC_UNUSED char **argv,
+           G_GNUC_UNUSED Coord x,
+           G_GNUC_UNUSED Coord y)
 {
   int i = 0;
   time_t start, end;
@@ -1594,7 +1644,10 @@ currently within the window already.
 %end-doc */
 
 static int
-Center(int argc, char **argv, Coord pcb_x, Coord pcb_y)
+Center (int argc,
+        G_GNUC_UNUSED char **argv,
+        Coord pcb_x,
+        Coord pcb_y)
 {
   GdkDisplay *display;
   GdkScreen *screen;
@@ -1674,7 +1727,10 @@ The values are percentages of the board size.  Thus, a move of
 %end-doc */
 
 static int
-CursorAction(int argc, char **argv, Coord x, Coord y)
+CursorAction (int argc,
+              char **argv,
+              G_GNUC_UNUSED Coord x,
+              G_GNUC_UNUSED Coord y)
 {
   UnitList extra_units_x = {
     { "grid",  PCB->Grid, 0 },
@@ -1756,7 +1812,10 @@ Open the DRC violations window.
 %end-doc */
 
 static int
-DoWindows (int argc, char **argv, Coord x, Coord y)
+DoWindows (int argc,
+           char **argv,
+           G_GNUC_UNUSED Coord x,
+           G_GNUC_UNUSED Coord y)
 {
   char *a = argc == 1 ? argv[0] : (char *)"";
 
@@ -1813,7 +1872,10 @@ Sets the display units to millimeters.
 %end-doc */
 
 static int
-SetUnits (int argc, char **argv, Coord x, Coord y)
+SetUnits (int argc,
+          char **argv,
+          G_GNUC_UNUSED Coord x,
+          G_GNUC_UNUSED Coord y)
 {
   const Unit *new_unit;
   if (argc == 0)
@@ -1858,7 +1920,10 @@ default is given, div=40.
 %end-doc */
 
 static int
-ScrollAction (int argc, char **argv, Coord x, Coord y)
+ScrollAction (int argc,
+              char **argv,
+              G_GNUC_UNUSED Coord x,
+              G_GNUC_UNUSED Coord y)
 {
   gdouble dx = 0.0, dy = 0.0;
   int div = 40;
@@ -1904,7 +1969,10 @@ Mode = 0.
 %end-doc */
 
 static int
-PanAction (int argc, char **argv, Coord x, Coord y)
+PanAction (int argc,
+           char **argv,
+           G_GNUC_UNUSED Coord x,
+           G_GNUC_UNUSED Coord y)
 {
   int mode;
 
@@ -1948,7 +2016,10 @@ button number which is triggering the popup.
 
 
 static int
-Popup (int argc, char **argv, Coord x, Coord y)
+Popup (int argc,
+       char **argv,
+       G_GNUC_UNUSED Coord x,
+       G_GNUC_UNUSED Coord y)
 {
   GtkMenu *menu;
 
@@ -1985,7 +2056,10 @@ Asks user which schematics to import into PCB.
 
 
 static int
-ImportGUI (int argc, char **argv, Coord x, Coord y)
+ImportGUI (G_GNUC_UNUSED int argc,
+           G_GNUC_UNUSED char **argv,
+           G_GNUC_UNUSED Coord x,
+           G_GNUC_UNUSED Coord y)
 {
     GSList *names = NULL;
     gchar *name = NULL;
@@ -2029,7 +2103,10 @@ ImportGUI (int argc, char **argv, Coord x, Coord y)
 
 /* ------------------------------------------------------------ */
 static int
-Busy (int argc, char **argv, Coord x, Coord y)
+Busy (G_GNUC_UNUSED int argc,
+      G_GNUC_UNUSED char **argv,
+      G_GNUC_UNUSED Coord x,
+      G_GNUC_UNUSED Coord y)
 {
   ghid_watch_cursor ();
   return 0;
@@ -2037,27 +2114,25 @@ Busy (int argc, char **argv, Coord x, Coord y)
 
 HID_Action ghid_main_action_list[] = {
   {"About", 0, About, about_help, about_syntax},
-  {"Benchmark", 0, Benchmark},
-  {"Busy", 0, Busy},
+  {"Benchmark", 0, Benchmark, NULL, NULL},
+  {"Busy", 0, Busy, NULL, NULL},
   {"Center", N_("Click on a location to center"), Center, center_help, center_syntax},
-  {"Command", 0, Command},
+  {"Command", 0, Command, NULL, NULL},
   {"Cursor", 0, CursorAction, cursor_help, cursor_syntax},
   {"DoWindows", 0, DoWindows, dowindows_help, dowindows_syntax},
-  {"Export", 0, Export},
+  {"Export", 0, Export, NULL, NULL},
   {"GetXY", "", GetXY, getxy_help, getxy_syntax},
   {"ImportGUI", 0, ImportGUI, importgui_help, importgui_syntax},
-  {"LayerGroupsChanged", 0, LayerGroupsChanged},
-  {"LibraryChanged", 0, LibraryChanged},
-  {"Load", 0, Load},
+  {"LayerGroupsChanged", 0, LayerGroupsChanged, NULL, NULL},
+  {"LibraryChanged", 0, LibraryChanged, NULL, NULL},
+  {"Load", 0, Load, NULL, NULL},
   {"Pan", 0, PanAction, pan_help, pan_syntax},
-  {"PCBChanged", 0, PCBChanged},
-  {"PointCursor", 0, PointCursor},
+  {"PCBChanged", 0, PCBChanged, NULL, NULL},
+  {"PointCursor", 0, PointCursor, NULL, NULL},
   {"Popup", 0, Popup, popup_help, popup_syntax},
-  {"Print", 0, Print,
-   print_help, print_syntax},
-  {"PrintCalibrate", 0, PrintCalibrate,
-   printcalibrate_help, printcalibrate_syntax},
-  {"RouteStylesChanged", 0, RouteStylesChanged},
+  {"Print", 0, Print, print_help, print_syntax},
+  {"PrintCalibrate", 0, PrintCalibrate, printcalibrate_help, printcalibrate_syntax},
+  {"RouteStylesChanged", 0, RouteStylesChanged, NULL, NULL},
   {"Save", 0, Save, save_help, save_syntax},
   {"Scroll", N_("Click on a place to scroll"), ScrollAction, scroll_help, scroll_syntax},
   {"SetUnits", 0, SetUnits, setunits_help, setunits_syntax},
@@ -2069,13 +2144,13 @@ REGISTER_ACTIONS (ghid_main_action_list)
 
 
 static int
-flag_flipx (void *data)
+flag_flipx (G_GNUC_UNUSED void *data)
 {
   return gport->view.flip_x;
 }
 
 static int
-flag_flipy (void *data)
+flag_flipy (G_GNUC_UNUSED void *data)
 {
   return gport->view.flip_y;
 }
@@ -2149,7 +2224,7 @@ hid_gtk_init ()
   ghid_hid.struct_size              = sizeof (HID);
   ghid_hid.name                     = "gtk";
   ghid_hid.description              = "Gtk - The Gimp Toolkit";
-  ghid_hid.gui                      = 1;
+  ghid_hid.gui                      = true;
 
   ghid_hid.get_export_options       = ghid_get_export_options;
   ghid_hid.do_export                = ghid_do_export;
