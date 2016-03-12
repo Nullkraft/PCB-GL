@@ -66,7 +66,7 @@ BoxType * GetDataBoundingBox (DataType *);
 void CenterDisplay (Coord, Coord);
 void SetFontInfo (FontType *);
 char *make_route_string (RouteStyleType rs[], int n_styles);
-int ParseGroupString (char *, LayerGroupType *, int * /* LayerN */);
+int ParseGroupString (char *, LayerGroupType *, Cardinal * /* LayerN */);
 int ParseRouteString (char *, RouteStyleType *, const char *);
 void QuitApplication (void);
 char *EvaluateFilename (char *, char *, char *, char *);
@@ -74,11 +74,11 @@ char *ExpandFilename (char *, char *);
 void SetTextBoundingBox (FontType *, TextType *);
 
 void SaveOutputWindow (void);
-int GetLayerNumber (DataType *, LayerType *);
-int GetLayerGroupNumberByPointer (LayerType *);
-int GetLayerGroupNumberByNumber (Cardinal);
-int GetLayerGroupNumberBySide (int);
-int ChangeGroupVisibility (int, bool, bool);
+Cardinal GetLayerNumber (DataType *, LayerType *);
+Cardinal GetLayerGroupNumberByPointer (LayerType *);
+Cardinal GetLayerGroupNumberByNumber (Cardinal);
+Cardinal GetLayerGroupNumberBySide (int);
+int ChangeGroupVisibility (Cardinal, bool, bool);
 void LayerStringToLayerStack (char *);
 
 
@@ -126,7 +126,7 @@ FlagType MaskFlags (FlagType, unsigned int);
 /* Layer Group Functions */
 
 /* Returns group actually moved to (i.e. either group or previous) */
-int MoveLayerToGroup (int layer, int group);
+Cardinal MoveLayerToGroup (Cardinal layer, Cardinal group);
 /* returns pointer to private buffer */
 char *LayerGroupsToString (LayerGroupType *);
 /* Make the current layer groups the default.  */
