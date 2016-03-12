@@ -1417,7 +1417,7 @@ lgbutton_expose (Widget w, XtPointer u, XmDrawingAreaCallbackStruct *cbs)
 static void
 lgbutton_input (Widget w, XtPointer u, XmDrawingAreaCallbackStruct *cbs)
 {
-  int layer, group;
+  Cardinal layer, group;
   if (cbs->event->type != ButtonPress)
     return;
   layer = cbs->event->xbutton.y * (max_copper_layer + 2) / lg_height;
