@@ -1,5 +1,5 @@
 Bottom: 304a650a3f34514901ea7fa59868e0ba7e817e57
-Top:    56713c45e7181516168044a4f54083f4f577dd04
+Top:    a5f2b6db71f4bf043b1a2a90b4a9df3aa7b357e5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-12 18:50:12 +0000
 
@@ -312,3 +312,16 @@ index 84f62ed..7a5c135 100644
  /* returns pointer to private buffer */
  char *LayerGroupsToString (LayerGroupType *);
  /* Make the current layer groups the default.  */
+diff --git a/src/search.c b/src/search.c
+index 6c00673..5e33b3d 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -1150,7 +1150,7 @@ SearchObjectByLocation (unsigned Type,
+ {
+   void *r1, *r2, *r3;
+   void **pr1 = &r1, **pr2 = &r2, **pr3 = &r3;
+-  int i;
++  Cardinal i;
+   double HigherBound = 0;
+   int HigherAvail = NO_TYPE;
+   int locked = Type & LOCKED_TYPE;
