@@ -1,5 +1,5 @@
 Bottom: 911cffe376b5a9fda7d045dc7eb441c6fd741588
-Top:    6a9446a4008c8d1554affab6f0e38c321bbc0f85
+Top:    77042c85570cd022e3acfb8c96bfe4a2c6472f8a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-12 16:15:30 +0000
 
@@ -911,6 +911,19 @@ index 3c3b4d0..7c4e95c 100644
    int haspath;
    char *t1, *t2;
    int found_bindir = 0;
+diff --git a/src/misc.c b/src/misc.c
+index 0e46b98..9230b16 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -614,7 +614,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
+ {
+   SymbolType *symbol = FontPtr->Symbol;
+   unsigned char *s = (unsigned char *) Text->TextString;
+-  int i;
++  Cardinal i;
+   int space;
+ 
+   Coord minx, miny, maxx, maxy, tx;
 diff --git a/src/polygon.c b/src/polygon.c
 index f587028..ab4e944 100644
 --- a/src/polygon.c
