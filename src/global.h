@@ -393,7 +393,7 @@ typedef struct			/* holds all objects */
   Cardinal ViaN,		/* number of vias */
     ElementN,			/* and elements */
     RatN;			/* and rat-lines */
-  int LayerN;			/* number of layers in this board */
+  Cardinal LayerN;		/* number of layers in this board */
   GList *Via;
   GList *Element;
   GList *Rat;
