@@ -1,0 +1,35 @@
+Bottom: 5c50f6cbb60837fbd901c746f1f81b9727e77c99
+Top:    7709b4535e217d082976efc6095e0b6108adb8de
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-12 19:01:05 +0000
+
+Refresh of convert-layer-and-group
+
+---
+
+diff --git a/src/hid/lesstif/dialogs.c b/src/hid/lesstif/dialogs.c
+index 3579a40..83b5ec4 100644
+--- a/src/hid/lesstif/dialogs.c
++++ b/src/hid/lesstif/dialogs.c
+@@ -1417,7 +1417,7 @@ lgbutton_expose (Widget w, XtPointer u, XmDrawingAreaCallbackStruct *cbs)
+ static void
+ lgbutton_input (Widget w, XtPointer u, XmDrawingAreaCallbackStruct *cbs)
+ {
+-  int layer, group;
++  Cardinal layer, group;
+   if (cbs->event->type != ButtonPress)
+     return;
+   layer = cbs->event->xbutton.y * (max_copper_layer + 2) / lg_height;
+diff --git a/src/misc.h b/src/misc.h
+index 4857d89..7a5c135 100644
+--- a/src/misc.h
++++ b/src/misc.h
+@@ -126,7 +126,7 @@ FlagType MaskFlags (FlagType, unsigned int);
+ /* Layer Group Functions */
+ 
+ /* Returns group actually moved to (i.e. either group or previous) */
+-int MoveLayerToGroup (Cardinal layer, Cardinal group);
++Cardinal MoveLayerToGroup (Cardinal layer, Cardinal group);
+ /* returns pointer to private buffer */
+ char *LayerGroupsToString (LayerGroupType *);
+ /* Make the current layer groups the default.  */
