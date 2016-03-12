@@ -61,7 +61,7 @@ Name of the STEP output file. Can contain a path.
 %end-doc
 */
   {"stepfile", "STEP output file",
-   HID_String, 0, 0, {0, 0, 0}, 0, 0},
+   HID_String, 0, 0, {0, 0, 0, 0}, 0, 0, 0},
 #define HA_stepfile 0
 };
 
@@ -83,6 +83,7 @@ step_get_export_options (int *n)
   return step_attribute_list;
 }
 
+#if 0
 /* NB: Result is in mm */
 static void
 parse_cartesian_point_3d_string (const char *str, double *x, double *y, double *z)
@@ -103,6 +104,7 @@ parse_rotation_string (const char *str, double *rotation)
 {
   *rotation = 0.0;
 }
+#endif
 
 static void
 parse_position_attribute (ElementType *element, char *attr_name, double *res)
@@ -133,7 +135,7 @@ parse_numeric_attribute (ElementType *element, char *attr_name, double *res)
 static void
 step_do_export (HID_Attr_Val * options)
 {
-  int i;
+  unsigned int i;
   const char *filename;
   const char *temp_pcb_filename = "_pcb.step";
   GList *board_outline_list;
@@ -275,11 +277,13 @@ step_do_export (HID_Attr_Val * options)
         rx = 1.0, ry = 0.0, rz = 0.0;
 #endif
 
+#if 0
         /* XXX: Should parse a unit suffix, e.g. "degrees" */
         attribute = AttributeGet (element, "PCB::rotation");
         if (attribute == NULL)
           continue;
         parse_rotation_string (attribute, &rotation);
+#endif
 
         /* XXX: QUICKER TO CODE INDIVIDULAL VALUES NOT SPACE SEPARATED */
         parse_position_attribute (element, "PCB::3d_model::origin::X", &ox);
