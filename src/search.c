@@ -1218,7 +1218,7 @@ SearchObjectByLocation (unsigned Type,
 {
   void *r1, *r2, *r3;
   void **pr1 = &r1, **pr2 = &r2, **pr3 = &r3;
-  int i;
+  Cardinal i;
   double HigherBound = 0;
   unsigned int HigherAvail = NO_TYPE;
   int locked = Type & LOCKED_TYPE;
