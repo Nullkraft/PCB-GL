@@ -1,0 +1,22 @@
+Bottom: 6b42d6a04fbaef61e413788201c8dcd738e70427
+Top:    72ce0bf1cef2704818361991be2a2030252908b4
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-12 16:14:14 +0000
+
+Refresh of add-routine-for-simplifying
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 857ef63..e3c7227 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -4433,7 +4433,7 @@ simplify_contour (PLINE *contour)
+         {
+           delete_vertex_c = arc_segments_can_merge (VERTEX_FORWARD_EDGE (p), VERTEX_FORWARD_EDGE (c));
+           /* XXX: If we merge too many arc segments, they become more than 180 degrees span, and cw/ccw determination fails */
+-          if (count == POLY_CIRC_SEGS / 2 - 1)
++          if (count == POLY_CIRC_SEGS / 2 - 2) /* Thought -1 should work, but then appear to get bad polygon cutouts */
+             {
+               delete_vertex_c = false;
+               count = 0;
