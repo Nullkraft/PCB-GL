@@ -1,5 +1,5 @@
 Bottom: 304a650a3f34514901ea7fa59868e0ba7e817e57
-Top:    5c50f6cbb60837fbd901c746f1f81b9727e77c99
+Top:    7709b4535e217d082976efc6095e0b6108adb8de
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-12 18:50:12 +0000
 
@@ -112,6 +112,19 @@ index 277d99f..70cc51b 100644
    int depth;
  
    top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+diff --git a/src/hid/lesstif/dialogs.c b/src/hid/lesstif/dialogs.c
+index 3579a40..83b5ec4 100644
+--- a/src/hid/lesstif/dialogs.c
++++ b/src/hid/lesstif/dialogs.c
+@@ -1417,7 +1417,7 @@ lgbutton_expose (Widget w, XtPointer u, XmDrawingAreaCallbackStruct *cbs)
+ static void
+ lgbutton_input (Widget w, XtPointer u, XmDrawingAreaCallbackStruct *cbs)
+ {
+-  int layer, group;
++  Cardinal layer, group;
+   if (cbs->event->type != ButtonPress)
+     return;
+   layer = cbs->event->xbutton.y * (max_copper_layer + 2) / lg_height;
 diff --git a/src/misc.c b/src/misc.c
 index 643730e..c7bdef2 100644
 --- a/src/misc.c
@@ -311,7 +324,7 @@ index 643730e..c7bdef2 100644
                {
                  if (entry != 0)
 diff --git a/src/misc.h b/src/misc.h
-index 84f62ed..4857d89 100644
+index 84f62ed..7a5c135 100644
 --- a/src/misc.h
 +++ b/src/misc.h
 @@ -66,7 +66,7 @@ BoxType * GetDataBoundingBox (DataType *);
@@ -345,7 +358,7 @@ index 84f62ed..4857d89 100644
  
  /* Returns group actually moved to (i.e. either group or previous) */
 -int MoveLayerToGroup (int layer, int group);
-+int MoveLayerToGroup (Cardinal layer, Cardinal group);
++Cardinal MoveLayerToGroup (Cardinal layer, Cardinal group);
  /* returns pointer to private buffer */
  char *LayerGroupsToString (LayerGroupType *);
  /* Make the current layer groups the default.  */
