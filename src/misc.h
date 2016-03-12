@@ -126,7 +126,7 @@ FlagType MaskFlags (FlagType, unsigned int);
 /* Layer Group Functions */
 
 /* Returns group actually moved to (i.e. either group or previous) */
-int MoveLayerToGroup (Cardinal layer, Cardinal group);
+Cardinal MoveLayerToGroup (Cardinal layer, Cardinal group);
 /* returns pointer to private buffer */
 char *LayerGroupsToString (LayerGroupType *);
 /* Make the current layer groups the default.  */
