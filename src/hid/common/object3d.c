@@ -1017,13 +1017,13 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
 }
 
 static Coord
-compute_depth (int group)
+compute_depth (Cardinal group)
 {
-  int top_group;
-  int bottom_group;
-  int min_copper_group;
-  int max_copper_group;
-  int num_copper_groups;
+  Cardinal top_group;
+  Cardinal bottom_group;
+  Cardinal min_copper_group;
+  Cardinal max_copper_group;
+  Cardinal num_copper_groups;
   int depth;
 
   top_group = GetLayerGroupNumberBySide (TOP_SIDE);

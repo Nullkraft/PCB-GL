@@ -64,7 +64,7 @@ extern char *Progname;
 extern char *InputTranslations;
 
 extern int addedLines;
-extern int LayerStack[MAX_LAYER];
+extern Cardinal LayerStack[MAX_LAYER];
 
 extern bool Bumped;
 
