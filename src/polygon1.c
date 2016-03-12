@@ -4433,7 +4433,7 @@ simplify_contour (PLINE *contour)
         {
           delete_vertex_c = arc_segments_can_merge (VERTEX_FORWARD_EDGE (p), VERTEX_FORWARD_EDGE (c));
           /* XXX: If we merge too many arc segments, they become more than 180 degrees span, and cw/ccw determination fails */
-          if (count == POLY_CIRC_SEGS / 2 - 1)
+          if (count == POLY_CIRC_SEGS / 2 - 2) /* Thought -1 should work, but then appear to get bad polygon cutouts */
             {
               delete_vertex_c = false;
               count = 0;
