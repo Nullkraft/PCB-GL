@@ -1,5 +1,5 @@
 Bottom: ff5c08639b97f4ef6ce60fa69464dbadfcb77e19
-Top:    6b42d6a04fbaef61e413788201c8dcd738e70427
+Top:    72ce0bf1cef2704818361991be2a2030252908b4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-10 20:23:50 +0000
 
@@ -138,7 +138,7 @@ index 13e23ad..0847e8a 100644
  
  #if 0
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a084876..857ef63 100644
+index a084876..e3c7227 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -51,6 +51,7 @@
@@ -273,7 +273,7 @@ index a084876..857ef63 100644
 +        {
 +          delete_vertex_c = arc_segments_can_merge (VERTEX_FORWARD_EDGE (p), VERTEX_FORWARD_EDGE (c));
 +          /* XXX: If we merge too many arc segments, they become more than 180 degrees span, and cw/ccw determination fails */
-+          if (count == POLY_CIRC_SEGS / 2 - 1)
++          if (count == POLY_CIRC_SEGS / 2 - 2) /* Thought -1 should work, but then appear to get bad polygon cutouts */
 +            {
 +              delete_vertex_c = false;
 +              count = 0;
