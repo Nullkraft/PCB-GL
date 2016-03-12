@@ -1,0 +1,18 @@
+Bottom: 1500c5151de9c9d4ec57ae529044c558783768ed
+Top:    1500c5151de9c9d4ec57ae529044c558783768ed
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-12 23:56:16 +0000
+
+Fixup square thermal polygons to use frac_circle2
+
+The main adjustment is that callers need to add their own last vertex
+in order to avoid an extraneous edge marked as being round.
+
+XXX: Might be neater to fix this by having frac_circle just not set
+the round flag on the last vertex added... we can extend the checking
+code to re-use vertices if the next edge added is to be round.
+
+
+---
+
+
