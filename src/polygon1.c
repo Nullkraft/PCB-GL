@@ -1124,9 +1124,9 @@ rounded_contour_bounds_touch (const BoxType * b, void *cl)
       box.Y2 = (box.Y1 = av->point[1] - 1) + 3;
 
       /* NB: If this actually hits anything, we are teleported back to the beginning */
-      if (rtree_over->tree)
-        if (UNLIKELY (r_search (rtree_over->tree, &box, NULL, vertex_in_seg_rounded, &info)))
-          assert (0); /* XXX: Memory allocation failure */
+      if (rtree_over->tree &&
+          UNLIKELY (r_search (rtree_over->tree, &box, NULL, vertex_in_seg_rounded, &info)))
+        assert (0); /* XXX: Memory allocation failure */
     }
   while ((av = NEXT_VERTEX (av)) != &looping_over->head);
 
