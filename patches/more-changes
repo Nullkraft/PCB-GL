@@ -1,5 +1,5 @@
 Bottom: 2e2085fdb4f05f7177923c90b4e958e684197960
-Top:    8a37bb5b752570cd64b1bdb2562cf2182fb6c357
+Top:    f25c5c2d2c37cf8acaf74616a979821c0b59707f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-13 21:24:07 +0000
 
@@ -9,7 +9,7 @@ More changes...
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b5a9304..ef11dd8 100644
+index b5a9304..a17cff8 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1072,7 +1072,7 @@ vertex_in_seg_rounded (const BoxType * b, void *cl)
@@ -136,12 +136,11 @@ index b5a9304..ef11dd8 100644
  
  	  next = curc->next;
  
-@@ -3364,6 +3407,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -3364,6 +3407,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        /* intersect needs to make a list of the contours in a and b which are intersected */
        M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
  
-+      /* XXX - Need to loop the intersection routines until the geometry stabalises...
-+       *       Adding an extra round of intersection fixes at least one case here
++      /* XXX - Need to loop the intersection routines until the geometry stabalises???
 +       */
 +//      M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
 +
