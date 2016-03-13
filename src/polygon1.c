@@ -1072,7 +1072,7 @@ vertex_in_seg_rounded (const BoxType * b, void *cl)
     longjmp (*i->touch, TOUCHES);
 
 //  i->s->p->Flags.status = ISECTED; /* XXX */
-  s->p->Flags.status = ISECTED;
+//  s->p->Flags.status = ISECTED;
 
   new_node = node_add_single_point (s->v, i->v->point);
   if (new_node != NULL)
@@ -1124,9 +1124,9 @@ rounded_contour_bounds_touch (const BoxType * b, void *cl)
       box.Y2 = (box.Y1 = av->point[1] - 1) + 3;
 
       /* NB: If this actually hits anything, we are teleported back to the beginning */
-      if (rtree_over->tree)
-        if (UNLIKELY (r_search (rtree_over->tree, &box, NULL, vertex_in_seg_rounded, &info)))
-          assert (0); /* XXX: Memory allocation failure */
+      if (rtree_over->tree &&
+          UNLIKELY (r_search (rtree_over->tree, &box, NULL, vertex_in_seg_rounded, &info)))
+        assert (0); /* XXX: Memory allocation failure */
     }
   while ((av = NEXT_VERTEX (av)) != &looping_over->head);
 
@@ -1377,30 +1377,73 @@ static void
 M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add, CVCList **list_out)
 {
   POLYAREA *a = afst, *b = bfst;
+  POLYAREA *a2, *b2;
   PLINE *curcA, *curcB;
   CVCList *the_list = NULL;
 
   if (a == NULL || b == NULL)
     error (err_bad_parm);
 
-#if 1
-  do
+  if (add)
     {
+#if 1
+      /* Intersect all a outer contours against all other piece outer + inner contours (and vice-versa) */
       do
         {
-          if (a->contours->xmax >= b->contours->xmin &&
-              a->contours->ymax >= b->contours->ymin &&
-              a->contours->xmin <= b->contours->xmax &&
-              a->contours->ymin <= b->contours->ymax)
+          a2 = a->f;
+          for (a2 = a->f; a2 != a; a2 = a2->f)
             {
-              intersect_rounded (e, a, b, add);
-              intersect_rounded (e, b, a, add);
+              if (a->contours->xmax >= a2->contours->xmin &&
+                  a->contours->ymax >= a2->contours->ymin &&
+                  a->contours->xmin <= a2->contours->xmax &&
+                  a->contours->ymin <= a2->contours->ymax)
+                {
+                  intersect_rounded (e, a, a2, true);
+                }
             }
         }
-      while (add && (a = a->f) != afst);
-    }
-  while (add && (b = b->f) != bfst);
+      while ((a = a->f) != afst);
+
 #endif
+
+#if 1
+      /* Intersect all a outer contours against all other piece outer + inner contours (and vice-versa) */
+      do
+        {
+          b2 = b->f;
+          for (b2 = b->f; b2 != b; b2 = b2->f)
+            {
+              if (b->contours->xmax >= b2->contours->xmin &&
+                  b->contours->ymax >= b2->contours->ymin &&
+                  b->contours->xmin <= b2->contours->xmax &&
+                  b->contours->ymin <= b2->contours->ymax)
+                {
+                  intersect_rounded (e, b, b2, true);
+                }
+            }
+        }
+      while ((b = b->f) != bfst);
+#endif
+
+#if 0
+      do
+        {
+          do
+            {
+              if (a->contours->xmax >= b->contours->xmin &&
+                  a->contours->ymax >= b->contours->ymin &&
+                  a->contours->xmin <= b->contours->xmax &&
+                  a->contours->ymin <= b->contours->ymax)
+                {
+                  intersect_rounded (e, a, b, add);
+                  intersect_rounded (e, b, a, add);
+                }
+            }
+          while (add && (a = a->f) != afst);
+        }
+      while (add && (b = b->f) != bfst);
+#endif
+    }
 
   do
     {
@@ -1600,7 +1643,7 @@ label_contour (PLINE * a)
         }
       else
         {
-          g_warning ("Walked entire contour and couldn't find anything we could label - it is either all SHARED OR SHARED2");
+          g_info ("Walked entire contour and couldn't find anything we could label - it is either all SHARED OR SHARED2");
           /* Head was marked, so presumably the entire contour is either SHARED or SHARED2 */
         }
     }
@@ -2189,7 +2232,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir, char **
 
   if (*contour_name != NULL)
     {
-      fprintf (stderr, "Setting contour name on intersected contour as %s\n", *contour_name);
+//      fprintf (stderr, "Setting contour name on intersected contour as %s\n", *contour_name);
       (*result)->name = strdup (*contour_name);
     }
 
@@ -2477,8 +2520,8 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
 	  int is_first = contour_is_first (a, curc);
 	  int is_last = contour_is_last (curc);
 	  int isect_contour = (curc->Flags.status == ISECTED);
-          if (isect_contour && curc->name != NULL)
-            printf ("A contour with name %s was ISECTED\n", curc->name);
+//          if (isect_contour && curc->name != NULL)
+//            printf ("A contour with name %s was ISECTED\n", curc->name);
 
 	  next = curc->next;
 
@@ -3363,6 +3406,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 
       /* intersect needs to make a list of the contours in a and b which are intersected */
       M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
+
+      /* XXX - Need to loop the intersection routines until the geometry stabalises...
+       *       Adding an extra round of intersection fixes at least one case here
+       */
+//      M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
 
 #if 1
       M_POLYAREA_check_hairline_edges (the_list, a);
