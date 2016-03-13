@@ -1063,10 +1063,7 @@ vertex_in_seg_rounded (const BoxType * b, void *cl)
    * already been intersected this pass, skip it until the next pass.
    */
   if (s->intersected)
-    {
-//      g_warning ("Should not reach this 1");
-      return 0;
-    }
+    return 0;
 
   if (!line_point_inters (EDGE_BACKWARD_VERTEX (s->v)->point, EDGE_FORWARD_VERTEX (s->v)->point, i->v->point))
     return 0;
