@@ -1,5 +1,5 @@
 Bottom: e91d276aeab18e1d8ba3a6121c6df9e17d386c71
-Top:    2ba7580c0edd1ff25bf0aa2d86b5f3726bd3c579
+Top:    dccf695dfe5e751cd6327fd3cc3cd126bd8538b7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-13 22:00:24 +0000
 
@@ -9,7 +9,7 @@ Polygon intersection additions
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index e3c7227..6455bdf 100644
+index e3c7227..671b7f8 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -76,6 +76,9 @@ double vect_len2 (Vector v1);
@@ -239,14 +239,14 @@ index e3c7227..6455bdf 100644
 +  struct seg *s = (struct seg *) b;
 +  VNODE *new_node;
 +
-+  if (!line_point_inters (EDGE_BACKWARD_VERTEX (s->v)->point, EDGE_FORWARD_VERTEX (s->v)->point, i->v->point))
-+    return 0;
-+
 +  /* When new nodes are added at the end of a pass due to an intersection
 +   * the segments may be altered. If either segment we're looking at has
 +   * already been intersected this pass, skip it until the next pass.
 +   */
 +  if (s->intersected)
++    return 0;
++
++  if (!line_point_inters (EDGE_BACKWARD_VERTEX (s->v)->point, EDGE_FORWARD_VERTEX (s->v)->point, i->v->point))
 +    return 0;
 +
 +  if (i->touch)			/* if checking touches one find and we're done */
