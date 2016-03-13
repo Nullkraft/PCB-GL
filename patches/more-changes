@@ -1,4 +1,4 @@
-Bottom: c146c73b96284422ad79d077444251bea27af7c6
+Bottom: 67375734b46beab50d73c975ee8a8a58ec82fd67
 Top:    72a87fcf4b153e9e3d3820b7e0825a0f5b148ea5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-13 21:24:07 +0000
@@ -8,19 +8,6 @@ More changes...
 
 ---
 
-diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
-index 094d307..936e736 100644
---- a/src/hid/common/object3d.h
-+++ b/src/hid/common/object3d.h
-@@ -5,7 +5,7 @@ typedef struct {
-   GList *edges;
-   GList *vertices;
-   GList *faces;
--  void *user_data
-+  void *user_data;
- } object3d;
- 
- void object3d_test_init (void);
 diff --git a/src/polygon.h b/src/polygon.h
 index f5ae0b3..4f9e9c6 100644
 --- a/src/polygon.h
