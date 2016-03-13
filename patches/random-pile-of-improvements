@@ -1,5 +1,5 @@
 Bottom: 83369e71366369c9ecb257bb01c4ebaacf57ae75
-Top:    c146c73b96284422ad79d077444251bea27af7c6
+Top:    67375734b46beab50d73c975ee8a8a58ec82fd67
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-13 17:05:24 +0000
 
@@ -421,14 +421,14 @@ index 277d99f..efe337c 100644
    return group_objects;
  }
 diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
-index edf4d4c..094d307 100644
+index edf4d4c..936e736 100644
 --- a/src/hid/common/object3d.h
 +++ b/src/hid/common/object3d.h
 @@ -5,6 +5,7 @@ typedef struct {
    GList *edges;
    GList *vertices;
    GList *faces;
-+  void *user_data
++  void *user_data;
  } object3d;
  
  void object3d_test_init (void);
