@@ -1058,14 +1058,14 @@ vertex_in_seg_rounded (const BoxType * b, void *cl)
   struct seg *s = (struct seg *) b;
   VNODE *new_node;
 
-  if (!line_point_inters (EDGE_BACKWARD_VERTEX (s->v)->point, EDGE_FORWARD_VERTEX (s->v)->point, i->v->point))
-    return 0;
-
   /* When new nodes are added at the end of a pass due to an intersection
    * the segments may be altered. If either segment we're looking at has
    * already been intersected this pass, skip it until the next pass.
    */
   if (s->intersected)
+    return 0;
+
+  if (!line_point_inters (EDGE_BACKWARD_VERTEX (s->v)->point, EDGE_FORWARD_VERTEX (s->v)->point, i->v->point))
     return 0;
 
   if (i->touch)			/* if checking touches one find and we're done */
