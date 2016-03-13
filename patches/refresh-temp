@@ -1,0 +1,35 @@
+Bottom: 7129e1d401e4a4e8d24b107f810b821e9c2d5ae9
+Top:    3812ac8cf839f526dbfb528746305581eb2849fa
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-13 21:43:26 +0000
+
+Refresh of random-pile-of-improvements
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 87a622e..f8c8832 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1101,10 +1101,9 @@ rounded_contour_bounds_touch (const BoxType * b, void *cl)
+   VNODE *av; /* node iterators */ /* av is considered an edge */
+   struct info info;
+   BoxType box;
+-  jmp_buf restart;
+ 
+   /* Have vertex_in_seg_rounded return to our desired location if it touches */
+-  info.env = &restart;
++  info.env = NULL;
+   info.touch = c_info->getout;
+   info.need_restart = 0;
+   info.node_insert_list = c_info->node_insert_list;
+@@ -1123,9 +1122,6 @@ rounded_contour_bounds_touch (const BoxType * b, void *cl)
+       box.X2 = (box.X1 = av->point[0] - 1) + 3; /* NB: We expand the search box to ensure we catch edges which may round to this coordinate */
+       box.Y2 = (box.Y1 = av->point[1] - 1) + 3;
+ 
+-      if (setjmp (restart))
+-	continue;
+-
+       /* NB: If this actually hits anything, we are teleported back to the beginning */
+       if (rtree_over->tree)
+ 	if (UNLIKELY (r_search (rtree_over->tree, &box, NULL, vertex_in_seg_rounded, &info)))
