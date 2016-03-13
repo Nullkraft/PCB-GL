@@ -1,0 +1,22 @@
+Bottom: 2d29679701e4dcfb09a4bc68db546e040efc48c7
+Top:    2ba7580c0edd1ff25bf0aa2d86b5f3726bd3c579
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-13 22:03:08 +0000
+
+Refresh of polygon-intersection-additions
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 1a12c04..6455bdf 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -935,7 +935,7 @@ get_seg (const BoxType * b, void *cl)
+  *
+  * This uses an rtree to find A-B intersections. Whenever a new vertex is
+  * added, the search for intersections is re-started because the rounding
+- * could alter the topology otherwise. 
++ * could alter the topology otherwise.
+  * This should use a faster algorithm for snap rounding intersection finding.
+  * The best algorthim is probably found in:
+  *
