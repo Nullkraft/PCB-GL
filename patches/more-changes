@@ -1,5 +1,5 @@
 Bottom: 3812ac8cf839f526dbfb528746305581eb2849fa
-Top:    f5dc80b55c72a199cab3ec85a3eeff0800c7d994
+Top:    616a9ee0b317f941b915516497a6bcb4f8efc8e9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-13 21:24:07 +0000
 
@@ -8,19 +8,6 @@ More changes...
 
 ---
 
-diff --git a/src/polygon.h b/src/polygon.h
-index f5ae0b3..94e1a86 100644
---- a/src/polygon.h
-+++ b/src/polygon.h
-@@ -34,7 +34,7 @@
- 
- /* Implementation constants */
- 
--#define POLY_CIRC_SEGS 20 //8 //40
-+#define POLY_CIRC_SEGS 40 //8 //40
- #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
- 
- #if 0
 diff --git a/src/polygon1.c b/src/polygon1.c
 index f8c8832..7561400 100644
 --- a/src/polygon1.c
