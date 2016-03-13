@@ -1101,10 +1101,9 @@ rounded_contour_bounds_touch (const BoxType * b, void *cl)
   VNODE *av; /* node iterators */ /* av is considered an edge */
   struct info info;
   BoxType box;
-  jmp_buf restart;
 
   /* Have vertex_in_seg_rounded return to our desired location if it touches */
-  info.env = &restart;
+  info.env = NULL;
   info.touch = c_info->getout;
   info.need_restart = 0;
   info.node_insert_list = c_info->node_insert_list;
@@ -1122,9 +1121,6 @@ rounded_contour_bounds_touch (const BoxType * b, void *cl)
 
       box.X2 = (box.X1 = av->point[0] - 1) + 3; /* NB: We expand the search box to ensure we catch edges which may round to this coordinate */
       box.Y2 = (box.Y1 = av->point[1] - 1) + 3;
-
-      if (setjmp (restart))
-	continue;
 
       /* NB: If this actually hits anything, we are teleported back to the beginning */
       if (rtree_over->tree)
