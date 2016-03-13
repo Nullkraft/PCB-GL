@@ -1298,7 +1298,7 @@ Load (int argc,
   if (name)
     {
       if (Settings.verbose)
-      	fprintf (stderr, "%s:  Calling LoadFrom(%s, %s)\n", G_STRFUNC,
+	fprintf (stderr, "%s:  Calling LoadFrom(%s, %s)\n", G_STRFUNC,
 		 function, name);
       hid_actionl ("LoadFrom", function, name, NULL);
       g_free (name);
