@@ -1374,10 +1374,32 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
 }
 
 static void
+intersect_rounded_self (jmp_buf * e, POLYAREA *pfst)
+{
+  POLYAREA *p, *p2;
+
+  p = pfst;
+  do
+    {
+      p2 = p->f;
+      for (p2 = p->f; p2 != p; p2 = p2->f)
+        {
+          if (p->contours->xmax >= p2->contours->xmin &&
+              p->contours->ymax >= p2->contours->ymin &&
+              p->contours->xmin <= p2->contours->xmax &&
+              p->contours->ymin <= p2->contours->ymax)
+            {
+              intersect_rounded (e, p, p2, true);
+            }
+        }
+    }
+  while ((p = p->f) != pfst);
+}
+
+static void
 M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add, CVCList **list_out)
 {
   POLYAREA *a = afst, *b = bfst;
-  POLYAREA *a2, *b2;
   PLINE *curcA, *curcB;
   CVCList *the_list = NULL;
 
@@ -1386,46 +1408,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add, CV
 
   if (add)
     {
-#if 1
       /* Intersect all a outer contours against all other piece outer + inner contours (and vice-versa) */
-      do
-        {
-          a2 = a->f;
-          for (a2 = a->f; a2 != a; a2 = a2->f)
-            {
-              if (a->contours->xmax >= a2->contours->xmin &&
-                  a->contours->ymax >= a2->contours->ymin &&
-                  a->contours->xmin <= a2->contours->xmax &&
-                  a->contours->ymin <= a2->contours->ymax)
-                {
-                  intersect_rounded (e, a, a2, true);
-                }
-            }
-          while (add && (a = a->f) != afst);
-        }
-      while ((a = a->f) != afst);
-
-#endif
-    }
-
-#if 1
-      /* Intersect all a outer contours against all other piece outer + inner contours (and vice-versa) */
-      do
-        {
-          b2 = b->f;
-          for (b2 = b->f; b2 != b; b2 = b2->f)
-            {
-              if (b->contours->xmax >= b2->contours->xmin &&
-                  b->contours->ymax >= b2->contours->ymin &&
-                  b->contours->xmin <= b2->contours->xmax &&
-                  b->contours->ymin <= b2->contours->ymax)
-                {
-                  intersect_rounded (e, b, b2, true);
-                }
-            }
-        }
-      while ((b = b->f) != bfst);
-#endif
+      /* Intersect all b outer contours against all other piece outer + inner contours (and vice-versa) */
+      intersect_rounded_self (e, a);
+      intersect_rounded_self (e, b);
 
 #if 0
       do
