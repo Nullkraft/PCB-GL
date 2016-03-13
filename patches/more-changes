@@ -1,5 +1,5 @@
 Bottom: 2d29679701e4dcfb09a4bc68db546e040efc48c7
-Top:    616a9ee0b317f941b915516497a6bcb4f8efc8e9
+Top:    2fa6461835fe5505bfb3876448aa145b0915d3ab
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-13 21:24:07 +0000
 
@@ -9,7 +9,7 @@ More changes...
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1a12c04..7561400 100644
+index 1a12c04..2501c32 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1058,29 +1058,32 @@ vertex_in_seg_rounded (const BoxType * b, void *cl)
@@ -156,21 +156,14 @@ index 1a12c04..7561400 100644
  
  	  next = curc->next;
  
-@@ -3240,7 +3286,7 @@ Touching (POLYAREA * a, POLYAREA * b)
-       if (!poly_Valid (b))
- 	return -1;
- #endif
--      M_POLYAREA_intersect (&e, a, b, false, NULL);
-+//      M_POLYAREA_intersect (&e, a, b, false, NULL);
- 
-       if (M_POLYAREA_label (a, b, TRUE))
- 	return TRUE;
-@@ -3364,6 +3410,9 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -3364,6 +3410,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        /* intersect needs to make a list of the contours in a and b which are intersected */
        M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
  
-+      /* XXX */
-+      M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
++      /* XXX - Need to loop the intersection routines until the geometry stabalises...
++       *       Adding an extra round of intersection fixes at least one case here
++       */
++//      M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
 +
  #if 1
        M_POLYAREA_check_hairline_edges (the_list, a);
