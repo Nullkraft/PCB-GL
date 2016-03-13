@@ -3286,7 +3286,7 @@ Touching (POLYAREA * a, POLYAREA * b)
       if (!poly_Valid (b))
 	return -1;
 #endif
-//      M_POLYAREA_intersect (&e, a, b, false, NULL);
+      M_POLYAREA_intersect (&e, a, b, false, NULL);
 
       if (M_POLYAREA_label (a, b, TRUE))
 	return TRUE;
@@ -3410,8 +3410,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       /* intersect needs to make a list of the contours in a and b which are intersected */
       M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
 
-      /* XXX */
-      M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
+      /* XXX - Need to loop the intersection routines until the geometry stabalises...
+       *       Adding an extra round of intersection fixes at least one case here
+       */
+//      M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
 
 #if 1
       M_POLYAREA_check_hairline_edges (the_list, a);
