@@ -1,5 +1,5 @@
 Bottom: 83369e71366369c9ecb257bb01c4ebaacf57ae75
-Top:    7129e1d401e4a4e8d24b107f810b821e9c2d5ae9
+Top:    3812ac8cf839f526dbfb528746305581eb2849fa
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-13 17:05:24 +0000
 
@@ -453,7 +453,7 @@ index e92dcb0..6f8f4e0 100644
 +  g_slice_free (vertex3d, v);
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index e3c7227..87a622e 100644
+index e3c7227..f8c8832 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -76,6 +76,9 @@ double vect_len2 (Vector v1);
@@ -548,7 +548,7 @@ index e3c7227..87a622e 100644
  	  s->intersected = 1;
  	  return 0; /* Keep looking for intersections with segment "i" */
  	}
-@@ -917,6 +927,276 @@ get_seg (const BoxType * b, void *cl)
+@@ -917,6 +927,272 @@ get_seg (const BoxType * b, void *cl)
  }
  
  /*
@@ -726,10 +726,9 @@ index e3c7227..87a622e 100644
 +  VNODE *av; /* node iterators */ /* av is considered an edge */
 +  struct info info;
 +  BoxType box;
-+  jmp_buf restart;
 +
 +  /* Have vertex_in_seg_rounded return to our desired location if it touches */
-+  info.env = &restart;
++  info.env = NULL;
 +  info.touch = c_info->getout;
 +  info.need_restart = 0;
 +  info.node_insert_list = c_info->node_insert_list;
@@ -747,9 +746,6 @@ index e3c7227..87a622e 100644
 +
 +      box.X2 = (box.X1 = av->point[0] - 1) + 3; /* NB: We expand the search box to ensure we catch edges which may round to this coordinate */
 +      box.Y2 = (box.Y1 = av->point[1] - 1) + 3;
-+
-+      if (setjmp (restart))
-+	continue;
 +
 +      /* NB: If this actually hits anything, we are teleported back to the beginning */
 +      if (rtree_over->tree)
@@ -825,7 +821,7 @@ index e3c7227..87a622e 100644
   * intersect() (and helpers)
   * (C) 2006, harry eaton
   * This uses an rtree to find A-B intersections. Whenever a new vertex is
-@@ -961,11 +1241,15 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -961,11 +1237,15 @@ contour_bounds_touch (const BoxType * b, void *cl)
      {
        rtree_over = pb;
        looping_over = pa;
@@ -841,7 +837,7 @@ index e3c7227..87a622e 100644
      }
  
    av = &looping_over->head;
-@@ -1002,9 +1286,11 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -1002,9 +1282,11 @@ contour_bounds_touch (const BoxType * b, void *cl)
  	continue;
  
        /* NB: If this actually hits anything, we are teleported back to the beginning */
@@ -856,7 +852,7 @@ index e3c7227..87a622e 100644
  				seg_in_region, seg_in_seg, &info)))
  	  assert (0); /* XXX: Memory allocation failure */
      }
-@@ -1016,6 +1302,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -1016,6 +1298,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
    return 0;
  }
  
@@ -864,7 +860,7 @@ index e3c7227..87a622e 100644
  static int
  intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
  {
-@@ -1023,7 +1310,6 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -1023,7 +1306,6 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
    PLINE *pa;
    contour_info c_info;
    int need_restart = 0;
@@ -872,7 +868,7 @@ index e3c7227..87a622e 100644
    c_info.need_restart = 0;
    c_info.node_insert_list = NULL;
  
-@@ -1035,6 +1321,13 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -1035,6 +1317,13 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        t = b;
        b = a;
        a = t;
@@ -886,7 +882,7 @@ index e3c7227..87a622e 100644
      }
  
    for (pa = a->contours; pa; pa = pa->next)	/* Loop over the contours of POLYAREA "a" */
-@@ -1069,39 +1362,7 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -1069,39 +1358,7 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
      }
  
    /* Process any deferred node insersions */
@@ -927,7 +923,7 @@ index e3c7227..87a622e 100644
  
    return need_restart;
  }
-@@ -1124,6 +1385,26 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add, CV
+@@ -1124,6 +1381,26 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add, CV
  
    if (a == NULL || b == NULL)
      error (err_bad_parm);
@@ -954,7 +950,7 @@ index e3c7227..87a622e 100644
    do
      {
        do
-@@ -2647,7 +2928,7 @@ next_cvc_from_same_poly (CVCList *start)
+@@ -2647,7 +2924,7 @@ next_cvc_from_same_poly (CVCList *start)
    return n;
  }
  
@@ -963,7 +959,7 @@ index e3c7227..87a622e 100644
  static seg *
  find_edge_seg (VNODE *edge, PLINE *contour)
  {
-@@ -2703,6 +2984,7 @@ find_cvc_at_point (CVCList *start, Vector point)
+@@ -2703,6 +2980,7 @@ find_cvc_at_point (CVCList *start, Vector point)
      }
    while (1);
  }
@@ -971,7 +967,7 @@ index e3c7227..87a622e 100644
  
  /* NOTE: If any contour is split into multiple pieces due to hairline edge pairs
   * will not necessarily be inserted into the correct location. Hole contours
-@@ -4197,7 +4479,7 @@ vect_det2 (Vector v1, Vector v2)
+@@ -4197,7 +4475,7 @@ vect_det2 (Vector v1, Vector v2)
  }
  
  static double
@@ -980,7 +976,7 @@ index e3c7227..87a622e 100644
  {
    double dx = v1[0] - v2[0];
    double dy = v1[1] - v2[1];
-@@ -4210,17 +4492,20 @@ vect_m_dist (Vector v1, Vector v2)
+@@ -4210,17 +4488,20 @@ vect_m_dist (Vector v1, Vector v2)
    if (dy > 0)
      return +dd;
    return -dd;
@@ -1005,7 +1001,7 @@ index e3c7227..87a622e 100644
  {
    double s, t, deel;
    double rpx, rpy, rqx, rqy;
-@@ -4238,10 +4523,13 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4238,10 +4519,13 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  
    deel = rpy * rqx - rpx * rqy;	/* -vect_det(rp,rq); */
  
@@ -1020,7 +1016,7 @@ index e3c7227..87a622e 100644
    if (deel == 0)		/* parallel */
      {
        double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
-@@ -4256,9 +4544,9 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4256,9 +4540,9 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
  	return 0;
        dc1 = 0;			/* m_len(p1 - p1) */
  
@@ -1033,7 +1029,7 @@ index e3c7227..87a622e 100644
  
  /* Sorting the independent points from small to large */
        Vcpy2 (hp1, p1);
-@@ -4359,6 +4647,32 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4359,6 +4643,32 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
      }
  }				/* vect_inters2 */
  
@@ -1066,7 +1062,7 @@ index e3c7227..87a622e 100644
  /* how about expanding polygons so that edges can be arcs rather than
   * lines. Consider using the third coordinate to store the radius of the
   * arc. The arc would pass through the vertex points. Positive radius
-@@ -4426,8 +4740,8 @@ simplify_contour (PLINE *contour)
+@@ -4426,8 +4736,8 @@ simplify_contour (PLINE *contour)
        if (!VERTEX_FORWARD_EDGE (p)->is_round && !VERTEX_FORWARD_EDGE (c)->is_round)
          {
            delete_vertex_c = line_segments_can_merge (VERTEX_FORWARD_EDGE (p), VERTEX_FORWARD_EDGE (c));
@@ -1077,7 +1073,7 @@ index e3c7227..87a622e 100644
          }
        else if (VERTEX_FORWARD_EDGE (p)->is_round && VERTEX_FORWARD_EDGE (c)->is_round)
          {
-@@ -4440,7 +4754,7 @@ simplify_contour (PLINE *contour)
+@@ -4440,7 +4750,7 @@ simplify_contour (PLINE *contour)
              }
            if (delete_vertex_c)
              {
