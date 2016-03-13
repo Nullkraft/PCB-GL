@@ -5,7 +5,7 @@ typedef struct {
   GList *edges;
   GList *vertices;
   GList *faces;
-  void *user_data
+  void *user_data;
 } object3d;
 
 void object3d_test_init (void);
