@@ -1,5 +1,5 @@
 Bottom: dccf695dfe5e751cd6327fd3cc3cd126bd8538b7
-Top:    335d09f05387f1c700422e215bf3f2c9b7284a3c
+Top:    7ff312579e0d5e58293bfa4bf19b2a1d6b6e0c86
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-13 21:24:07 +0000
 
@@ -9,23 +9,22 @@ More changes...
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 671b7f8..a4378f8 100644
+index 671b7f8..3e7181d 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1063,6 +1063,12 @@ vertex_in_seg_rounded (const BoxType * b, void *cl)
+@@ -1063,7 +1063,10 @@ vertex_in_seg_rounded (const BoxType * b, void *cl)
     * already been intersected this pass, skip it until the next pass.
     */
    if (s->intersected)
+-    return 0;
 +    {
 +//      g_warning ("Should not reach this 1");
 +      return 0;
 +    }
-+
-+  if (!line_point_inters (EDGE_BACKWARD_VERTEX (s->v)->point, EDGE_FORWARD_VERTEX (s->v)->point, i->v->point))
-     return 0;
  
    if (!line_point_inters (EDGE_BACKWARD_VERTEX (s->v)->point, EDGE_FORWARD_VERTEX (s->v)->point, i->v->point))
-@@ -1072,15 +1078,15 @@ vertex_in_seg_rounded (const BoxType * b, void *cl)
+     return 0;
+@@ -1072,15 +1075,15 @@ vertex_in_seg_rounded (const BoxType * b, void *cl)
      longjmp (*i->touch, TOUCHES);
  
  //  i->s->p->Flags.status = ISECTED; /* XXX */
@@ -44,7 +43,7 @@ index 671b7f8..a4378f8 100644
        i->node_insert_list =
          prepend_insert_node_task (i->node_insert_list, i->rtree_over_poly, s, new_node);
        s->intersected = 1;
-@@ -1124,9 +1130,9 @@ rounded_contour_bounds_touch (const BoxType * b, void *cl)
+@@ -1124,9 +1127,9 @@ rounded_contour_bounds_touch (const BoxType * b, void *cl)
        box.Y2 = (box.Y1 = av->point[1] - 1) + 3;
  
        /* NB: If this actually hits anything, we are teleported back to the beginning */
@@ -57,7 +56,7 @@ index 671b7f8..a4378f8 100644
      }
    while ((av = NEXT_VERTEX (av)) != &looping_over->head);
  
-@@ -1377,31 +1383,74 @@ static void
+@@ -1377,31 +1380,74 @@ static void
  M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add, CVCList **list_out)
  {
    POLYAREA *a = afst, *b = bfst;
@@ -99,8 +98,8 @@ index 671b7f8..a4378f8 100644
 -  while (add && (b = b->f) != bfst);
 +      while ((a = a->f) != afst);
 +
-+#endif
-+
+ #endif
+ 
 +#if 1
 +      /* Intersect all a outer contours against all other piece outer + inner contours (and vice-versa) */
 +      do
@@ -118,8 +117,8 @@ index 671b7f8..a4378f8 100644
 +            }
 +        }
 +      while ((b = b->f) != bfst);
- #endif
- 
++#endif
++
 +#if 0
 +      do
 +        {
@@ -143,7 +142,7 @@ index 671b7f8..a4378f8 100644
    do
      {
        do
-@@ -1600,7 +1649,7 @@ label_contour (PLINE * a)
+@@ -1600,7 +1646,7 @@ label_contour (PLINE * a)
          }
        else
          {
@@ -152,7 +151,7 @@ index 671b7f8..a4378f8 100644
            /* Head was marked, so presumably the entire contour is either SHARED or SHARED2 */
          }
      }
-@@ -2189,7 +2238,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir, char **
+@@ -2189,7 +2235,7 @@ Gather (VNODE *startv, PLINE **result, J_Rule j_rule, DIRECTION initdir, char **
  
    if (*contour_name != NULL)
      {
@@ -161,7 +160,7 @@ index 671b7f8..a4378f8 100644
        (*result)->name = strdup (*contour_name);
      }
  
-@@ -2477,8 +2526,8 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
+@@ -2477,8 +2523,8 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
  	  int is_first = contour_is_first (a, curc);
  	  int is_last = contour_is_last (curc);
  	  int isect_contour = (curc->Flags.status == ISECTED);
@@ -172,7 +171,7 @@ index 671b7f8..a4378f8 100644
  
  	  next = curc->next;
  
-@@ -3364,6 +3413,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -3364,6 +3410,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        /* intersect needs to make a list of the contours in a and b which are intersected */
        M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
  
