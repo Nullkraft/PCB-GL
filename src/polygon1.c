@@ -935,7 +935,7 @@ get_seg (const BoxType * b, void *cl)
  *
  * This uses an rtree to find A-B intersections. Whenever a new vertex is
  * added, the search for intersections is re-started because the rounding
- * could alter the topology otherwise. 
+ * could alter the topology otherwise.
  * This should use a faster algorithm for snap rounding intersection finding.
  * The best algorthim is probably found in:
  *
