@@ -1,5 +1,5 @@
 Bottom: 5d574f397146625e64e36eca76082f52ca2bf0cc
-Top:    d8381b2e90d165e5c2880b56f361eab0f237f8e4
+Top:    b1d6dda42bad2b028b15b43f5f8226f035889089
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-12 16:15:30 +0000
 
@@ -212,7 +212,7 @@ index 7e28028..41b506f 100644
    struct layer_data *data = (struct layer_data *) user_data;
    gint id;
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 763f493..e526875 100644
+index 763f493..c46440f 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -234,7 +234,8 @@ Zoom (int argc, char **argv, Coord x, Coord y)
@@ -419,7 +419,7 @@ index 763f493..e526875 100644
      {
        if (Settings.verbose)
 -      	fprintf (stderr, "%s:  Calling LoadFrom(%s, %s)\n", __FUNCTION__,
-+      	fprintf (stderr, "%s:  Calling LoadFrom(%s, %s)\n", G_STRFUNC,
++	fprintf (stderr, "%s:  Calling LoadFrom(%s, %s)\n", G_STRFUNC,
  		 function, name);
        hid_actionl ("LoadFrom", function, name, NULL);
        g_free (name);
