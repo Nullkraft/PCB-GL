@@ -3407,8 +3407,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       /* intersect needs to make a list of the contours in a and b which are intersected */
       M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
 
-      /* XXX - Need to loop the intersection routines until the geometry stabalises...
-       *       Adding an extra round of intersection fixes at least one case here
+      /* XXX - Need to loop the intersection routines until the geometry stabalises???
        */
 //      M_POLYAREA_intersect (&e, a, b, TRUE, &the_list);
 
