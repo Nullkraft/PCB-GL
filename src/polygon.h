@@ -34,7 +34,7 @@
 
 /* Implementation constants */
 
-#define POLY_CIRC_SEGS 20 //40 //8 //40
+#define POLY_CIRC_SEGS 40 //8 //40
 #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
 
 #if 0

@@ -1376,19 +1376,6 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
   return 0;
 }
 
-#if 0
-static void
-intersect_rounded_pl_m_pl (jump_buf * e, POLYAREA *outer_contour, POLYAREA *m_contour)
-{
-  PLINE *pl;
-
-  for (pl = m_contour; pl != NULL; pl = pl->next)
-    {
-      intersect_rounded_no_trees (e, outer_contour, pl, true);
-    }
-}
-#endif
-
 static void
 M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add, CVCList **list_out)
 {
@@ -3299,7 +3286,7 @@ Touching (POLYAREA * a, POLYAREA * b)
       if (!poly_Valid (b))
 	return -1;
 #endif
-      M_POLYAREA_intersect (&e, a, b, false, NULL);
+//      M_POLYAREA_intersect (&e, a, b, false, NULL);
 
       if (M_POLYAREA_label (a, b, TRUE))
 	return TRUE;
@@ -3356,7 +3343,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 
   *res = NULL;
 
-#if 1
+#if 0
   /* Make copies for tracking polygon parentage (DEBUG) */
   if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
       return err_no_memory;
