@@ -1,0 +1,25 @@
+Bottom: a927ad5367c08f6e2136b5d0f9bcfac687b41675
+Top:    2e2085fdb4f05f7177923c90b4e958e684197960
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-13 22:28:18 +0000
+
+Refresh of polygon-intersection-additions
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 1b0056c..b5a9304 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1124,9 +1124,9 @@ rounded_contour_bounds_touch (const BoxType * b, void *cl)
+       box.Y2 = (box.Y1 = av->point[1] - 1) + 3;
+ 
+       /* NB: If this actually hits anything, we are teleported back to the beginning */
+-      if (rtree_over->tree)
+-        if (UNLIKELY (r_search (rtree_over->tree, &box, NULL, vertex_in_seg_rounded, &info)))
+-          assert (0); /* XXX: Memory allocation failure */
++      if (rtree_over->tree &&
++          UNLIKELY (r_search (rtree_over->tree, &box, NULL, vertex_in_seg_rounded, &info)))
++        assert (0); /* XXX: Memory allocation failure */
+     }
+   while ((av = NEXT_VERTEX (av)) != &looping_over->head);
