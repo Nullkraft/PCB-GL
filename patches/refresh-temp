@@ -1,0 +1,52 @@
+Bottom: 2e2085fdb4f05f7177923c90b4e958e684197960
+Top:    b66ba603fd863d4c13a7b57a7159f93ff96d65d1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-03-13 22:29:40 +0000
+
+Refresh of polygon-intersection-additions
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index b5a9304..d4ec9ae 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1383,24 +1383,27 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add, CV
+   if (a == NULL || b == NULL)
+     error (err_bad_parm);
+ 
+-#if 1
+-  do
++  if (1)
+     {
++#if 1
+       do
+         {
+-          if (a->contours->xmax >= b->contours->xmin &&
+-              a->contours->ymax >= b->contours->ymin &&
+-              a->contours->xmin <= b->contours->xmax &&
+-              a->contours->ymin <= b->contours->ymax)
++          do
+             {
+-              intersect_rounded (e, a, b, add);
+-              intersect_rounded (e, b, a, add);
++              if (a->contours->xmax >= b->contours->xmin &&
++                  a->contours->ymax >= b->contours->ymin &&
++                  a->contours->xmin <= b->contours->xmax &&
++                  a->contours->ymin <= b->contours->ymax)
++                {
++                  intersect_rounded (e, a, b, add);
++                  intersect_rounded (e, b, a, add);
++                }
+             }
++          while (add && (a = a->f) != afst);
+         }
+-      while (add && (a = a->f) != afst);
+-    }
+-  while (add && (b = b->f) != bfst);
++      while (add && (b = b->f) != bfst);
+ #endif
++    }
+ 
+   do
+     {
