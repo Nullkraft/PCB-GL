@@ -1143,7 +1143,7 @@ LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_L
 # if we have gcc then add -Wall
 if test "x$GCC" = "xyes"; then
 	# see about adding some extra checks if the compiler takes them
-	for flag in -Wall ; do
+	for flag in -Wall -fno-omit-frame-pointer; do
 		case " ${CFLAGS} " in
 			*\ ${flag}\ *)
 				# flag is already present
