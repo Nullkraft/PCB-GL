@@ -1071,9 +1071,6 @@ vertex_in_seg_rounded (const BoxType * b, void *cl)
   if (!line_point_inters (EDGE_BACKWARD_VERTEX (s->v)->point, EDGE_FORWARD_VERTEX (s->v)->point, i->v->point))
     return 0;
 
-  if (!line_point_inters (EDGE_BACKWARD_VERTEX (s->v)->point, EDGE_FORWARD_VERTEX (s->v)->point, i->v->point))
-    return 0;
-
   if (i->touch)			/* if checking touches one find and we're done */
     longjmp (*i->touch, TOUCHES);
 
