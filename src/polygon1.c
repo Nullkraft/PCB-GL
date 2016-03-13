@@ -1387,66 +1387,66 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add, CV
   if (a == NULL || b == NULL)
     error (err_bad_parm);
 
-  if (0)//add)
-{
-#if 1
-  /* Intersect all a outer contours against all other piece outer + inner contours (and vice-versa) */
-  do
+  if (add)
     {
-      a2 = a->f;
-      for (a2 = a->f; a2 != a; a2 = a2->f)
-        {
-          if (a->contours->xmax >= a2->contours->xmin &&
-              a->contours->ymax >= a2->contours->ymin &&
-              a->contours->xmin <= a2->contours->xmax &&
-              a->contours->ymin <= a2->contours->ymax)
-            {
-              intersect_rounded (e, a, a2, true);
-            }
-        }
-    }
-  while ((a = a->f) != afst);
-
-#endif
-
 #if 1
-  /* Intersect all a outer contours against all other piece outer + inner contours (and vice-versa) */
-  do
-    {
-      b2 = b->f;
-      for (b2 = b->f; b2 != b; b2 = b2->f)
-        {
-          if (b->contours->xmax >= b2->contours->xmin &&
-              b->contours->ymax >= b2->contours->ymin &&
-              b->contours->xmin <= b2->contours->xmax &&
-              b->contours->ymin <= b2->contours->ymax)
-            {
-              intersect_rounded (e, b, b2, true);
-            }
-        }
-    }
-  while ((b = b->f) != bfst);
-#endif
-
-#if 1
-  do
-    {
+      /* Intersect all a outer contours against all other piece outer + inner contours (and vice-versa) */
       do
         {
-          if (a->contours->xmax >= b->contours->xmin &&
-              a->contours->ymax >= b->contours->ymin &&
-              a->contours->xmin <= b->contours->xmax &&
-              a->contours->ymin <= b->contours->ymax)
+          a2 = a->f;
+          for (a2 = a->f; a2 != a; a2 = a2->f)
             {
-              intersect_rounded (e, a, b, add);
-              intersect_rounded (e, b, a, add);
+              if (a->contours->xmax >= a2->contours->xmin &&
+                  a->contours->ymax >= a2->contours->ymin &&
+                  a->contours->xmin <= a2->contours->xmax &&
+                  a->contours->ymin <= a2->contours->ymax)
+                {
+                  intersect_rounded (e, a, a2, true);
+                }
             }
         }
-      while (add && (a = a->f) != afst);
-    }
-  while (add && (b = b->f) != bfst);
+      while ((a = a->f) != afst);
+
 #endif
-}
+
+#if 1
+      /* Intersect all a outer contours against all other piece outer + inner contours (and vice-versa) */
+      do
+        {
+          b2 = b->f;
+          for (b2 = b->f; b2 != b; b2 = b2->f)
+            {
+              if (b->contours->xmax >= b2->contours->xmin &&
+                  b->contours->ymax >= b2->contours->ymin &&
+                  b->contours->xmin <= b2->contours->xmax &&
+                  b->contours->ymin <= b2->contours->ymax)
+                {
+                  intersect_rounded (e, b, b2, true);
+                }
+            }
+        }
+      while ((b = b->f) != bfst);
+#endif
+
+#if 0
+      do
+        {
+          do
+            {
+              if (a->contours->xmax >= b->contours->xmin &&
+                  a->contours->ymax >= b->contours->ymin &&
+                  a->contours->xmin <= b->contours->xmax &&
+                  a->contours->ymin <= b->contours->ymax)
+                {
+                  intersect_rounded (e, a, b, add);
+                  intersect_rounded (e, b, a, add);
+                }
+            }
+          while (add && (a = a->f) != afst);
+        }
+      while (add && (b = b->f) != bfst);
+#endif
+    }
 
   do
     {
