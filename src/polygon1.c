@@ -1383,24 +1383,27 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add, CV
   if (a == NULL || b == NULL)
     error (err_bad_parm);
 
-#if 1
-  do
+  if (1)
     {
+#if 1
       do
         {
-          if (a->contours->xmax >= b->contours->xmin &&
-              a->contours->ymax >= b->contours->ymin &&
-              a->contours->xmin <= b->contours->xmax &&
-              a->contours->ymin <= b->contours->ymax)
+          do
             {
-              intersect_rounded (e, a, b, add);
-              intersect_rounded (e, b, a, add);
+              if (a->contours->xmax >= b->contours->xmin &&
+                  a->contours->ymax >= b->contours->ymin &&
+                  a->contours->xmin <= b->contours->xmax &&
+                  a->contours->ymin <= b->contours->ymax)
+                {
+                  intersect_rounded (e, a, b, add);
+                  intersect_rounded (e, b, a, add);
+                }
             }
+          while (add && (a = a->f) != afst);
         }
-      while (add && (a = a->f) != afst);
-    }
-  while (add && (b = b->f) != bfst);
+      while (add && (b = b->f) != bfst);
 #endif
+    }
 
   do
     {
