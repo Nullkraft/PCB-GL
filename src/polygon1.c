@@ -1077,10 +1077,10 @@ vertex_in_seg_rounded (const BoxType * b, void *cl)
   new_node = node_add_single_point (s->v, i->v->point);
   if (new_node != NULL)
     {
-//#ifdef DEBUG_INTERSECT
+#ifdef DEBUG_INTERSECT
       DEBUGP ("found new rounded intersection on segment \"s\" at (%$mn, %$mn)\n",
               i->v->point[0], i->v->point[1]);
-//#endif
+#endif
       i->node_insert_list =
         prepend_insert_node_task (i->node_insert_list, i->rtree_over_poly, s, new_node);
       s->intersected = 1;
