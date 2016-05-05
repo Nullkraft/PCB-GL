@@ -1,5 +1,5 @@
 Bottom: ccbd414de8fd69781a811205105292eff5b95542
-Top:    46a346c7c65f204e67ea776c8e0358d3f03cf22c
+Top:    603c3f85df2030265386aedeafe5ee15eed64686
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-05-05 18:48:39 +0100
 
@@ -506,7 +506,7 @@ index 71327b4..1fed021 100644
    g_free (netname);
  
 diff --git a/src/line.c b/src/line.c
-index 469f0f6..abad924 100644
+index 469f0f6..4dde0ca 100644
 --- a/src/line.c
 +++ b/src/line.c
 @@ -41,6 +41,8 @@
@@ -596,7 +596,10 @@ index 469f0f6..abad924 100644
 +  char *netclass;
 +  Coord required_drc_clearance;
 +  Coord tmp;
-+
+ 
+-  if (TEST_FLAG (ONSOLDERFLAG, pad) == i->bottom_side &&
+-      !TEST_FLAG (FOUNDFLAG, pad) && LinePadIntersect (i->line, pad))
+-    longjmp (i->env, 1);
 +  if (TEST_FLAG (FOUNDFLAG, pad) || TEST_FLAG (ONSOLDERFLAG, pad) != i->bottom_side)
 +    return 1;
 +
@@ -604,10 +607,7 @@ index 469f0f6..abad924 100644
 +  netclass = get_netclass_for_pad (pad);
 +  required_drc_clearance = get_clearance_between_netclasses (i->drawn_line_netclass, netclass);
 +  i->line->Thickness = Settings.LineThickness + 2 * required_drc_clearance;
- 
--  if (TEST_FLAG (ONSOLDERFLAG, pad) == i->bottom_side &&
--      !TEST_FLAG (FOUNDFLAG, pad) && LinePadIntersect (i->line, pad))
--    longjmp (i->env, 1);
++
 +  if (LinePadIntersect (i->line, pad))
 +    {
 +      pad->ExtraDrcClearance = required_drc_clearance - i->drawn_line_clearance;
@@ -630,14 +630,14 @@ index 469f0f6..abad924 100644
 +
 +  if (TEST_FLAG (FOUNDFLAG, line))
 +    return 1;
- 
--  if (!TEST_FLAG (FOUNDFLAG, line) && LineLineIntersect (line, i->line))
--    longjmp (i->env, 1);
++
 +  tmp = i->line->Thickness;
 +  netclass = get_netclass_for_line (i->layer, line);
 +  required_drc_clearance = get_clearance_between_netclasses (i->drawn_line_netclass, netclass);
 +  i->line->Thickness = Settings.LineThickness + 2 * required_drc_clearance;
-+
+ 
+-  if (!TEST_FLAG (FOUNDFLAG, line) && LineLineIntersect (line, i->line))
+-    longjmp (i->env, 1);
 +  if (LineLineIntersect (line, i->line))
 +    {
 +      line->ExtraDrcClearance = required_drc_clearance - i->drawn_line_clearance;
@@ -657,7 +657,9 @@ index 469f0f6..abad924 100644
 +  char *netclass;
 +  Coord required_drc_clearance;
 +  Coord tmp;
-+
+ 
+-  if (!TEST_FLAG (FOUNDFLAG, arc) && LineArcIntersect (i->line, arc))
+-    longjmp (i->env, 1);
 +  if (TEST_FLAG (FOUNDFLAG, arc))
 +    return 1;
 +
@@ -665,9 +667,7 @@ index 469f0f6..abad924 100644
 +  netclass = get_netclass_for_arc (i->layer, arc);
 +  required_drc_clearance = get_clearance_between_netclasses (i->drawn_line_netclass, netclass);
 +  i->line->Thickness = Settings.LineThickness + 2 * required_drc_clearance;
- 
--  if (!TEST_FLAG (FOUNDFLAG, arc) && LineArcIntersect (i->line, arc))
--    longjmp (i->env, 1);
++
 +  if (LineArcIntersect (i->line, arc))
 +    {
 +      arc->ExtraDrcClearance = required_drc_clearance - i->drawn_line_clearance;
@@ -759,7 +759,7 @@ index 469f0f6..abad924 100644
  	    }
  	  s2 *= 0.5;
  	  length2 = MIN (f2 * temp2, temp2);
-@@ -490,16 +597,75 @@ EnforceLineDRC (void)
+@@ -490,16 +597,79 @@ EnforceLineDRC (void)
    /* Silence a bogus compiler warning by storing this in a variable */
    int layer_idx = INDEXOFCURRENT;
  
@@ -823,9 +823,13 @@ index 469f0f6..abad924 100644
 +      if (TEST_FLAG (ALLDIRECTIONFLAG, PCB)) /* We don't have code to handle this case! */
 +        return;
 +
++      /* Just run drc_lines to update clearances, without accepting any of its adjustment, when AUTODRCFLAG is not set */
 +      drc_lines (&rs, (PCB->Clipping == 2) != gui->shift_is_pressed ());
 +      return;
 +    }
++
++  if (TEST_FLAG (ALLDIRECTIONFLAG, PCB)) /* We don't have code to handle this case! */
++    return;
 +
    /* first try starting straight */
 -  r1 = drc_lines (&rs, false);
