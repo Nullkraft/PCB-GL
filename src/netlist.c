@@ -163,7 +163,7 @@ netlist_find (LibraryMenuType * net, LibraryEntryType * pin)
   int x, y;
   if (pin_name_to_xy (net->Entry, &x, &y))
     return;
-  LookupConnection (x, y, 1, 1, FOUNDFLAG, true);
+  LookupConnection (x, y, 1, 1, FOUNDFLAG, true, true);
 }
 
 static void
@@ -172,7 +172,7 @@ netlist_select (LibraryMenuType * net, LibraryEntryType * pin)
   int x, y;
   if (pin_name_to_xy (net->Entry, &x, &y))
     return;
-  LookupConnection (x, y, 1, 1, SELECTEDFLAG, true);
+  LookupConnection (x, y, 1, 1, SELECTEDFLAG, true, true);
 }
 
 static void
@@ -241,10 +241,19 @@ netlist_style (LibraryMenuType *net, const char *style)
   net->Style = STRDUP ((char *)style);
 }
 
+#if 0
+static void
+netlist_netclass (LibraryMenuType *net, const char *netclass)
+{
+  free (net->Netclass);
+  net->Style = STRDUP ((char *)netclass);
+}
+#endif
+
 /* The primary purpose of this action is to rebuild a netlist from a
    script, in conjunction with the clear action above.  */
 static int
-netlist_add (const char *netname, const char *pinname)
+netlist_add (const char *netname, const char *pinname, const char *netclass)
 {
   int ni, pi;
   LibraryType *netlist = &PCB->NetlistLib;
@@ -259,7 +268,12 @@ netlist_add (const char *netname, const char *pinname)
       }
   if (net == NULL)
     {
-      net = CreateNewNet (netlist, (char *)netname, NULL);
+      net = CreateNewNet (netlist, (char *)netname, NULL, (char *)netclass); /* XXX: Only takes class from the first net */
+    }
+  else
+    {
+      if (strcmp (net->Netclass, netclass) != 0)
+        g_warning ("Netclass '%s' different to initial '%s'... being ignored", netclass, net->Netclass);
     }
 
   for (pi=0; pi<net->EntryN; pi++)
@@ -387,7 +401,7 @@ Netlist (int argc, char **argv, Coord x, Coord y)
   else if (strcasecmp (argv[0], "add") == 0)
     {
       /* Add is different, because the net/pin won't already exist.  */
-      return netlist_add (ARG(1), ARG(2));
+      return netlist_add (ARG(1), ARG(2), NULL); /* Net class? */
     }
   else if (strcasecmp (argv[0], "sort") == 0)
     {
