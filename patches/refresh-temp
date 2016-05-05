@@ -1,0 +1,24 @@
+Bottom: 29746e050a26a6af0e6c882436db38fa69637cec
+Top:    a6205c0b2710fa23ec44cfe62a0bd1788018d2b6
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-05-05 19:06:13 +0100
+
+Refresh of disable-polygon-debug-gui
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index f6bf546..e8ef1d8 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1480,8 +1480,10 @@ ghid_build_pcb_top_window (void)
+ 
+   gtk_tree_view_append_column (GTK_TREE_VIEW (ghidgui->polygon_debug_tv), column);
+ 
++#if 0
+   gtk_box_pack_end (GTK_BOX (hbox_middle),
+                     ghidgui->polygon_debug_tv, TRUE, TRUE, 0);
++#endif
+ 
+   g_signal_connect (G_OBJECT (gtk_tree_view_get_selection (GTK_TREE_VIEW (ghidgui->polygon_debug_tv))),
+                     "changed",
