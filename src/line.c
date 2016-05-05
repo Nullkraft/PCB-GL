@@ -657,9 +657,13 @@ EnforceLineDRC (void)
       if (TEST_FLAG (ALLDIRECTIONFLAG, PCB)) /* We don't have code to handle this case! */
         return;
 
+      /* Just run drc_lines to update clearances, without accepting any of its adjustment, when AUTODRCFLAG is not set */
       drc_lines (&rs, (PCB->Clipping == 2) != gui->shift_is_pressed ());
       return;
     }
+
+  if (TEST_FLAG (ALLDIRECTIONFLAG, PCB)) /* We don't have code to handle this case! */
+    return;
 
   /* first try starting straight */
   r1 = drc_lines (&rs, false);              /* XXX: This code doesn't cope well with all-direction lines (?) */
