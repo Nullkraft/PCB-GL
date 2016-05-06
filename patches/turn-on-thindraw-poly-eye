@@ -1,5 +1,5 @@
 Bottom: 67887e18f95733eeb0f54c46931e83d9c6acf893
-Top:    67887e18f95733eeb0f54c46931e83d9c6acf893
+Top:    e277b5d4a71170de250c6c135d9810d44375cea7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-05-06 17:01:46 +0100
 
@@ -8,4 +8,16 @@ Turn on thindraw poly eye-candy
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 51295d7..0750d0f 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -904,7 +904,7 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ 
+   double old_alpha_mult = gtk_gc->alpha_mult;
+   common_thindraw_pcb_polygon (gc, poly, clip_box);
+-#if 0
++#if 1
+   ghid_set_alpha_mult (gc, gtk_gc->alpha_mult * 0.25);
+   hid_draw_fill_pcb_polygon (gc, poly, clip_box);
+   ghid_set_alpha_mult (gc, old_alpha_mult);
