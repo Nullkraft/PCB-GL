@@ -57,8 +57,8 @@
 (define (pcbfwd:each-net netnames port)
   (if (not (null? netnames))
       (let ((netname (car netnames)))
-	(pcbfwd:net-class netname port)
 	(pcbfwd:each-pin netname (gnetlist:get-all-connections netname) port)
+	(pcbfwd:net-class netname port)
 	(pcbfwd:each-net (cdr netnames) port))))
 
 (define (pcbfwd:each-attr refdes attrs port)
