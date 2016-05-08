@@ -1,5 +1,5 @@
 Bottom: 19591c475d6bf440ce8a1c6210224806a65ab843
-Top:    aea155e9d5639916fd5f400be1d9b7576e54038a
+Top:    5601d9310c615672d8df729a0f8a8373470edc56
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-05-08 12:04:58 +0100
 
@@ -83,10 +83,10 @@ index 7114ae0..73dd42e 100644
  	      }
  	}
 diff --git a/tools/gnet-pcbfwd.scm b/tools/gnet-pcbfwd.scm
-index 29274a6..e225704 100644
+index 29274a6..9067978 100644
 --- a/tools/gnet-pcbfwd.scm
 +++ b/tools/gnet-pcbfwd.scm
-@@ -49,9 +49,15 @@
+@@ -49,10 +49,16 @@
  	(format port "Netlist(Add,~a,~a)~%" net (pcbfwd:pinfmt pin))
  	(pcbfwd:each-pin net (cdr pins) port))))
  
@@ -98,6 +98,8 @@ index 29274a6..e225704 100644
  (define (pcbfwd:each-net netnames port)
    (if (not (null? netnames))
        (let ((netname (car netnames)))
-+	(pcbfwd:net-class netname port)
  	(pcbfwd:each-pin netname (gnetlist:get-all-connections netname) port)
++	(pcbfwd:net-class netname port)
  	(pcbfwd:each-net (cdr netnames) port))))
+ 
+ (define (pcbfwd:each-attr refdes attrs port)
