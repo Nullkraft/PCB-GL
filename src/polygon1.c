@@ -3654,9 +3654,22 @@ poly_DelContour (PLINE ** c)
 
       g_slice_free (VNODE, cur);
     }
-  if ((*c)->head.cvc_next != NULL)
+
+  if ((*c)->head.cvc_next == -1)
+    {
+      fprintf (stderr, "WHY DID THIS HAPPEN?? cvc_next == -1 in poly_DelContour() !\n");
+    }
+  else if ((*c)->head.cvc_next != NULL)
     {
       free ((*c)->head.cvc_next);
+    }
+
+  if ((*c)->head.cvc_prev == -1)
+    {
+      fprintf (stderr, "WHY DID THIS HAPPEN?? cvc_prev == -1 in poly_DelContour() !\n");
+    }
+  else if ((*c)->head.cvc_prev != NULL)
+    {
       free ((*c)->head.cvc_prev);
     }
   /* FIXME -- strict aliasing violation.  */
