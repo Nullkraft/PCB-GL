@@ -1,5 +1,5 @@
 Bottom: 19591c475d6bf440ce8a1c6210224806a65ab843
-Top:    d74dceffb23745e8dae9e6f94d4be35c0b851c2d
+Top:    aea155e9d5639916fd5f400be1d9b7576e54038a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-05-08 12:04:58 +0100
 
@@ -9,10 +9,10 @@ Add action to set netclass
 ---
 
 diff --git a/src/netlist.c b/src/netlist.c
-index 7114ae0..a8f5286 100644
+index 7114ae0..73dd42e 100644
 --- a/src/netlist.c
 +++ b/src/netlist.c
-@@ -241,14 +241,12 @@ netlist_style (LibraryMenuType *net, const char *style)
+@@ -241,19 +241,17 @@ netlist_style (LibraryMenuType *net, const char *style)
    net->Style = STRDUP ((char *)style);
  }
  
@@ -28,16 +28,27 @@ index 7114ae0..a8f5286 100644
  
  /* The primary purpose of this action is to rebuild a netlist from a
     script, in conjunction with the clear action above.  */
-@@ -272,7 +270,7 @@ netlist_add (const char *netname, const char *pinname, const char *netclass)
-     }
-   else
+ static int
+-netlist_add (const char *netname, const char *pinname, const char *netclass)
++netlist_add (const char *netname, const char *pinname)
+ {
+   int ni, pi;
+   LibraryType *netlist = &PCB->NetlistLib;
+@@ -268,12 +266,7 @@ netlist_add (const char *netname, const char *pinname, const char *netclass)
+       }
+   if (net == NULL)
      {
+-      net = CreateNewNet (netlist, (char *)netname, NULL, (char *)netclass); /* XXX: Only takes class from the first net */
+-    }
+-  else
+-    {
 -      if (strcmp (net->Netclass, netclass) != 0)
-+      if (netclass != NULL && strcmp (net->Netclass, netclass) != 0)
-         g_warning ("Netclass '%s' different to initial '%s'... being ignored", netclass, net->Netclass);
+-        g_warning ("Netclass '%s' different to initial '%s'... being ignored", netclass, net->Netclass);
++      net = CreateNewNet (netlist, (char *)netname, NULL, NULL);
      }
  
-@@ -398,6 +396,8 @@ Netlist (int argc, char **argv, Coord x, Coord y)
+   for (pi=0; pi<net->EntryN; pi++)
+@@ -398,10 +391,12 @@ Netlist (int argc, char **argv, Coord x, Coord y)
      }
    else if (strcasecmp (argv[0], "style") == 0)
      func = (NFunc)netlist_style;
@@ -46,7 +57,12 @@ index 7114ae0..a8f5286 100644
    else if (strcasecmp (argv[0], "add") == 0)
      {
        /* Add is different, because the net/pin won't already exist.  */
-@@ -504,6 +504,10 @@ Netlist (int argc, char **argv, Coord x, Coord y)
+-      return netlist_add (ARG(1), ARG(2), NULL); /* Net class? */
++      return netlist_add (ARG(1), ARG(2)); /* Net class? */
+     }
+   else if (strcasecmp (argv[0], "sort") == 0)
+     {
+@@ -504,6 +499,10 @@ Netlist (int argc, char **argv, Coord x, Coord y)
  	{
  	  netlist_style (net, ARG(2));
  	}
@@ -57,7 +73,7 @@ index 7114ae0..a8f5286 100644
        else if (argc > 2)
  	{
  	  int l = strlen (argv[2]);
-@@ -513,7 +517,7 @@ Netlist (int argc, char **argv, Coord x, Coord y)
+@@ -513,7 +512,7 @@ Netlist (int argc, char **argv, Coord x, Coord y)
  		    && net->Entry[j].ListEntry[l] == '-'))
  	      {
  		pin = net->Entry + j;
