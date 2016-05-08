@@ -1,5 +1,5 @@
 Bottom: 19591c475d6bf440ce8a1c6210224806a65ab843
-Top:    d0a5139261762845f03ffbc119184da203b6d3ef
+Top:    d74dceffb23745e8dae9e6f94d4be35c0b851c2d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-05-08 12:04:58 +0100
 
@@ -9,7 +9,7 @@ Add action to set netclass
 ---
 
 diff --git a/src/netlist.c b/src/netlist.c
-index 7114ae0..17b9957 100644
+index 7114ae0..a8f5286 100644
 --- a/src/netlist.c
 +++ b/src/netlist.c
 @@ -241,14 +241,12 @@ netlist_style (LibraryMenuType *net, const char *style)
@@ -21,12 +21,22 @@ index 7114ae0..17b9957 100644
  netlist_netclass (LibraryMenuType *net, const char *netclass)
  {
    free (net->Netclass);
-   net->Style = STRDUP ((char *)netclass);
+-  net->Style = STRDUP ((char *)netclass);
++  net->Netclass = STRDUP ((char *)netclass);
  }
 -#endif
  
  /* The primary purpose of this action is to rebuild a netlist from a
     script, in conjunction with the clear action above.  */
+@@ -272,7 +270,7 @@ netlist_add (const char *netname, const char *pinname, const char *netclass)
+     }
+   else
+     {
+-      if (strcmp (net->Netclass, netclass) != 0)
++      if (netclass != NULL && strcmp (net->Netclass, netclass) != 0)
+         g_warning ("Netclass '%s' different to initial '%s'... being ignored", netclass, net->Netclass);
+     }
+ 
 @@ -398,6 +396,8 @@ Netlist (int argc, char **argv, Coord x, Coord y)
      }
    else if (strcasecmp (argv[0], "style") == 0)
@@ -56,3 +66,22 @@ index 7114ae0..17b9957 100644
  		func (net, pin);
  	      }
  	}
+diff --git a/tools/gnet-pcbfwd.scm b/tools/gnet-pcbfwd.scm
+index 29274a6..e225704 100644
+--- a/tools/gnet-pcbfwd.scm
++++ b/tools/gnet-pcbfwd.scm
+@@ -49,9 +49,15 @@
+ 	(format port "Netlist(Add,~a,~a)~%" net (pcbfwd:pinfmt pin))
+ 	(pcbfwd:each-pin net (cdr pins) port))))
+ 
++(define (pcbfwd:net-class netname port)
++  (let ((netclass (gnetlist:get-net-class netname)))
++  (if (not (null? netclass))
++    (format port "Netlist(Class,~a,~a)~%" netname netclass))))
++
+ (define (pcbfwd:each-net netnames port)
+   (if (not (null? netnames))
+       (let ((netname (car netnames)))
++	(pcbfwd:net-class netname port)
+ 	(pcbfwd:each-pin netname (gnetlist:get-all-connections netname) port)
+ 	(pcbfwd:each-net (cdr netnames) port))))
