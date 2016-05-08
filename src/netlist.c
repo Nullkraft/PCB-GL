@@ -241,14 +241,12 @@ netlist_style (LibraryMenuType *net, const char *style)
   net->Style = STRDUP ((char *)style);
 }
 
-#if 0
 static void
 netlist_netclass (LibraryMenuType *net, const char *netclass)
 {
   free (net->Netclass);
-  net->Style = STRDUP ((char *)netclass);
+  net->Netclass = STRDUP ((char *)netclass);
 }
-#endif
 
 /* The primary purpose of this action is to rebuild a netlist from a
    script, in conjunction with the clear action above.  */
@@ -272,7 +270,7 @@ netlist_add (const char *netname, const char *pinname, const char *netclass)
     }
   else
     {
-      if (strcmp (net->Netclass, netclass) != 0)
+      if (netclass != NULL && strcmp (net->Netclass, netclass) != 0)
         g_warning ("Netclass '%s' different to initial '%s'... being ignored", netclass, net->Netclass);
     }
 
@@ -398,6 +396,8 @@ Netlist (int argc, char **argv, Coord x, Coord y)
     }
   else if (strcasecmp (argv[0], "style") == 0)
     func = (NFunc)netlist_style;
+  else if (strcasecmp (argv[0], "class") == 0)
+    func = (NFunc)netlist_netclass;
   else if (strcasecmp (argv[0], "add") == 0)
     {
       /* Add is different, because the net/pin won't already exist.  */
@@ -504,6 +504,10 @@ Netlist (int argc, char **argv, Coord x, Coord y)
 	{
 	  netlist_style (net, ARG(2));
 	}
+      else if (func == (void *)netlist_netclass)
+	{
+	  netlist_netclass (net, ARG(2));
+	}
       else if (argc > 2)
 	{
 	  int l = strlen (argv[2]);
@@ -513,7 +517,7 @@ Netlist (int argc, char **argv, Coord x, Coord y)
 		    && net->Entry[j].ListEntry[l] == '-'))
 	      {
 		pin = net->Entry + j;
-		pin_found = 1;
+	pin_found = 1;
 		func (net, pin);
 	      }
 	}
