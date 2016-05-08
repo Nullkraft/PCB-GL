@@ -1,0 +1,70 @@
+Bottom: 9b96978a1d2d76e9921abaf5be38b2df3d781601
+Top:    19591c475d6bf440ce8a1c6210224806a65ab843
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-05-08 12:07:40 +0100
+
+Refresh of workaround-crash-freeing
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index f73fb6b..24e9dfa 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -3635,43 +3635,28 @@ poly_DelContour (PLINE ** c)
+       prev = PREV_EDGE (cur);
+ 
+       if (cur->cvc_next == -1)
+-        {
+-          fprintf (stderr, "WHY DID THIS HAPPEN?? cvc_next == -1 in poly_DelContour() !\n");
+-        }
+-      else if (cur->cvc_next != NULL)
+-        {
+-          free (cur->cvc_next);
+-        }
++        fprintf (stderr, "WHY DID THIS HAPPEN?? cvc_next == -1 in poly_DelContour() !\n");
++      else
++        free (cur->cvc_next);
+ 
+       if (cur->cvc_prev == -1)
+-        {
+-          fprintf (stderr, "WHY DID THIS HAPPEN?? cvc_prev == -1 in poly_DelContour() !\n");
+-        }
+-      else if (cur->cvc_prev != NULL)
+-        {
+-          free (cur->cvc_prev);
+-        }
++        fprintf (stderr, "WHY DID THIS HAPPEN?? cvc_prev == -1 in poly_DelContour() !\n");
++      else
++        free (cur->cvc_prev);
+ 
+       g_slice_free (VNODE, cur);
+     }
+ 
+   if ((*c)->head.cvc_next == -1)
+-    {
+-      fprintf (stderr, "WHY DID THIS HAPPEN?? cvc_next == -1 in poly_DelContour() !\n");
+-    }
+-  else if ((*c)->head.cvc_next != NULL)
+-    {
+-      free ((*c)->head.cvc_next);
+-    }
++    fprintf (stderr, "WHY DID THIS HAPPEN?? cvc_next == -1 in poly_DelContour() !\n");
++  else
++    free ((*c)->head.cvc_next);
+ 
+   if ((*c)->head.cvc_prev == -1)
+-    {
+-      fprintf (stderr, "WHY DID THIS HAPPEN?? cvc_prev == -1 in poly_DelContour() !\n");
+-    }
+-  else if ((*c)->head.cvc_prev != NULL)
+-    {
+-      free ((*c)->head.cvc_prev);
+-    }
++    fprintf (stderr, "WHY DID THIS HAPPEN?? cvc_prev == -1 in poly_DelContour() !\n");
++  else
++    free ((*c)->head.cvc_prev);
++
+   /* FIXME -- strict aliasing violation.  */
+   if ((*c)->tree)
+     {
