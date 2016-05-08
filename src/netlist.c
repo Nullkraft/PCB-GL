@@ -251,7 +251,7 @@ netlist_netclass (LibraryMenuType *net, const char *netclass)
 /* The primary purpose of this action is to rebuild a netlist from a
    script, in conjunction with the clear action above.  */
 static int
-netlist_add (const char *netname, const char *pinname, const char *netclass)
+netlist_add (const char *netname, const char *pinname)
 {
   int ni, pi;
   LibraryType *netlist = &PCB->NetlistLib;
@@ -266,12 +266,7 @@ netlist_add (const char *netname, const char *pinname, const char *netclass)
       }
   if (net == NULL)
     {
-      net = CreateNewNet (netlist, (char *)netname, NULL, (char *)netclass); /* XXX: Only takes class from the first net */
-    }
-  else
-    {
-      if (netclass != NULL && strcmp (net->Netclass, netclass) != 0)
-        g_warning ("Netclass '%s' different to initial '%s'... being ignored", netclass, net->Netclass);
+      net = CreateNewNet (netlist, (char *)netname, NULL, NULL);
     }
 
   for (pi=0; pi<net->EntryN; pi++)
@@ -401,7 +396,7 @@ Netlist (int argc, char **argv, Coord x, Coord y)
   else if (strcasecmp (argv[0], "add") == 0)
     {
       /* Add is different, because the net/pin won't already exist.  */
-      return netlist_add (ARG(1), ARG(2), NULL); /* Net class? */
+      return netlist_add (ARG(1), ARG(2)); /* Net class? */
     }
   else if (strcasecmp (argv[0], "sort") == 0)
     {
