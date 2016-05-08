@@ -1,5 +1,5 @@
 Bottom: d74dceffb23745e8dae9e6f94d4be35c0b851c2d
-Top:    d74dceffb23745e8dae9e6f94d4be35c0b851c2d
+Top:    8a0953edc93717637febf4a393b2d481e3a9f608
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-05-08 20:05:13 +0100
 
@@ -8,4 +8,27 @@ Apply modulo arithmetic when computing angles, so output stays user-friendly (an
 
 ---
 
-
+diff --git a/src/buffer.c b/src/buffer.c
+index c03c5d5..a359076 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -1315,6 +1315,7 @@ FreeRotateElementLowLevel (DataType *Data, ElementType *Element,
+   /* XXX: Should parse a unit suffix, e.g. "degrees" */
+   parse_numeric_attribute (Element, "PCB::rotation", &rotation);
+   rotation += angle;
++  rotation = fmod (rotation, 360.L);
+   value = g_strdup_printf ("%f degrees", rotation);
+   AttributePutToList (&Element->Attributes, "PCB::rotation", value, true);
+   g_free (value);
+diff --git a/src/rotate.c b/src/rotate.c
+index d477d79..789ff81 100644
+--- a/src/rotate.c
++++ b/src/rotate.c
+@@ -273,6 +273,7 @@ RotateElementLowLevel (DataType *Data, ElementType *Element,
+   /* XXX: Should parse a unit suffix, e.g. "degrees" */
+   parse_numeric_attribute (Element, "PCB::rotation", &rotation);
+   rotation += Number * 90.;
++  rotation = fmod (rotation, 360.L);
+   value = g_strdup_printf ("%f degrees", rotation);
+   AttributePutToList (&Element->Attributes, "PCB::rotation", value, true);
+   g_free (value);
