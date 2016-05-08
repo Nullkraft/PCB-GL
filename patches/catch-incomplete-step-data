@@ -1,4 +1,4 @@
-Bottom: d30152a329cb2ce185c41de721f0ac1ff70f53a7
+Bottom: ab4b51bd368852ee16b97c3ff24c6c9c719c445d
 Top:    81bebf78d78cca8304a3d476e9c6866a341b1c21
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-05-08 20:06:08 +0100
@@ -30,18 +30,3 @@ index ea90a52..e44b78a 100644
 +      pd = *(SdaiCharacterized_product_definition_ptr)(*pds->definition_ ());
  
        pd_list->push_back (pd);
- 
-diff --git a/tools/gnet-pcbfwd.scm b/tools/gnet-pcbfwd.scm
-index e225704..9067978 100644
---- a/tools/gnet-pcbfwd.scm
-+++ b/tools/gnet-pcbfwd.scm
-@@ -57,8 +57,8 @@
- (define (pcbfwd:each-net netnames port)
-   (if (not (null? netnames))
-       (let ((netname (car netnames)))
--	(pcbfwd:net-class netname port)
- 	(pcbfwd:each-pin netname (gnetlist:get-all-connections netname) port)
-+	(pcbfwd:net-class netname port)
- 	(pcbfwd:each-net (cdr netnames) port))))
- 
- (define (pcbfwd:each-attr refdes attrs port)
