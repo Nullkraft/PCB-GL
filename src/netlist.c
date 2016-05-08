@@ -245,7 +245,7 @@ static void
 netlist_netclass (LibraryMenuType *net, const char *netclass)
 {
   free (net->Netclass);
-  net->Style = STRDUP ((char *)netclass);
+  net->Netclass = STRDUP ((char *)netclass);
 }
 
 /* The primary purpose of this action is to rebuild a netlist from a
@@ -270,7 +270,7 @@ netlist_add (const char *netname, const char *pinname, const char *netclass)
     }
   else
     {
-      if (strcmp (net->Netclass, netclass) != 0)
+      if (netclass != NULL && strcmp (net->Netclass, netclass) != 0)
         g_warning ("Netclass '%s' different to initial '%s'... being ignored", netclass, net->Netclass);
     }
 
