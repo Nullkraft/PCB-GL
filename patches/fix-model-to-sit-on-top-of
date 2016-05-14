@@ -1,5 +1,5 @@
 Bottom: 7d094568ebf89217dddf50632a0b0ecd2d9ffa4b
-Top:    7d094568ebf89217dddf50632a0b0ecd2d9ffa4b
+Top:    4386b91b7f66efc5aba6b5d62726b79609f75365
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-05-14 09:34:17 +0100
 
@@ -8,4 +8,28 @@ Fix model to sit on top of copper tracks
 
 ---
 
-
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 76ab121..f841e45 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -61,7 +61,7 @@
+ 
+ 
+ #define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
+-
++#define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
+ 
+ HID step_hid;
+ 
+@@ -408,9 +408,9 @@ step_do_export (HID_Attr_Val * options)
+         instance->ox += COORD_TO_STEP_X (PCB, element->MarkX);
+         instance->oy += COORD_TO_STEP_Y (PCB, element->MarkY);
+ #ifdef REVERSED_PCB_CONTOURS
+-        instance->oz += COORD_TO_STEP_Z (PCB, on_solder ? -HACK_BOARD_THICKNESS : 0);
++        instance->oz += COORD_TO_STEP_Z (PCB, on_solder ? -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS : HACK_COPPER_THICKNESS);
+ #else
+-        instance->oz += COORD_TO_STEP_Z (PCB, on_solder_negate * -HACK_BOARD_THICKNESS / 2);
++        instance->oz += COORD_TO_STEP_Z (PCB, on_solder_negate * (-HACK_BOARD_THICKNESS / 2 -HACK_COPPER_THICKNESS));
+ #endif
+ 
+         model->instances = g_list_append (model->instances, instance);
