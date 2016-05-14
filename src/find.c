@@ -3073,7 +3073,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
         LOOKUP_MORE & ~(AndRats ? 0 : RATLINE_TYPE),
         &ptr1, &ptr2, &ptr3, X, Y, Range);
       if (type == NO_TYPE)
-        return;
+        goto out;
       if (type & SILK_TYPE)
         {
           int laynum = GetLayerNumber (PCB->Data,
@@ -3081,12 +3081,16 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
 
           /* don't mess with non-conducting objects! */
           if (laynum >= max_copper_layer || ((LayerType *)ptr1)->no_drc)
-            return;
+            goto out;
         }
     }
 
-  name = ConnectionName (type, ptr1, ptr2);
-  hid_actionl ("NetlistShow", name, NULL);
+
+  if (AndDraw) /* Skip highlighting the net if we're not drawing */
+    {
+      name = ConnectionName (type, ptr1, ptr2);
+      hid_actionl ("NetlistShow", name, NULL);
+    }
 
   User = store_undo;
   InitConnectionLookup ();
@@ -3096,8 +3100,6 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
    */
   ListStart (type, ptr1, ptr2, ptr3, flag);
   DoIt (flag, AndRats, AndDraw);
-  if (store_undo)
-    IncrementUndoSerialNumber ();
   User = false;
 
   /* we are done */
@@ -3106,6 +3108,10 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
   if (AndDraw && Settings.RingBellWhenFinished)
     gui->beep ();
   FreeConnectionLookupMemory ();
+
+out:
+  if (store_undo)
+    IncrementUndoSerialNumber ();
 }
 
 /* ---------------------------------------------------------------------------
