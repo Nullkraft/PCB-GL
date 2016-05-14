@@ -1,0 +1,113 @@
+Bottom: 4386b91b7f66efc5aba6b5d62726b79609f75365
+Top:    c744a2dc55ff0d7b35d1ce75bf5e4573290e6ef1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-05-14 15:32:40 +0100
+
+Refresh of fixup-undo-in-line-clearance
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index a9f7972..3294184 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -900,6 +900,7 @@ NotifyLine (void)
+                                    &ptr3);
+               LookupConnection (Crosshair.X, Crosshair.Y, true, 1, CONNECTEDFLAG, false, true);
+               LookupConnection (Crosshair.X, Crosshair.Y, true, 1, FOUNDFLAG, true, true);
++              /* XXX: What about undo serial number? */
+             }
+           /* XXX: NEED TO FIGURE OUT WHAT NET CLASS THIS IS, AND/OR STORE FOR USE WITH DRC */
+ 	  Crosshair.Netclass = get_netclass_at_xy (LAYER_ON_STACK(0), Crosshair.X, Crosshair.Y); /* XXX: Not sure about the layer! */
+diff --git a/src/find.c b/src/find.c
+index 655d227..01e815f 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3073,7 +3073,7 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
+         LOOKUP_MORE & ~(AndRats ? 0 : RATLINE_TYPE),
+         &ptr1, &ptr2, &ptr3, X, Y, Range);
+       if (type == NO_TYPE)
+-        return;
++        goto out;
+       if (type & SILK_TYPE)
+         {
+           int laynum = GetLayerNumber (PCB->Data,
+@@ -3081,12 +3081,16 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
+ 
+           /* don't mess with non-conducting objects! */
+           if (laynum >= max_copper_layer || ((LayerType *)ptr1)->no_drc)
+-            return;
++            goto out;
+         }
+     }
+ 
+-  name = ConnectionName (type, ptr1, ptr2);
+-  hid_actionl ("NetlistShow", name, NULL);
++
++  if (AndDraw) /* Skip highlighting the net if we're not drawing */
++    {
++      name = ConnectionName (type, ptr1, ptr2);
++      hid_actionl ("NetlistShow", name, NULL);
++    }
+ 
+   User = store_undo;
+   InitConnectionLookup ();
+@@ -3096,8 +3100,6 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
+    */
+   ListStart (type, ptr1, ptr2, ptr3, flag);
+   DoIt (flag, AndRats, AndDraw);
+-  if (store_undo)
+-    IncrementUndoSerialNumber ();
+   User = false;
+ 
+   /* we are done */
+@@ -3106,6 +3108,10 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int flag,
+   if (AndDraw && Settings.RingBellWhenFinished)
+     gui->beep ();
+   FreeConnectionLookupMemory ();
++
++out:
++  if (store_undo)
++    IncrementUndoSerialNumber ();
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/netclass.c b/src/netclass.c
+index b81d0dc..d13d3f0 100644
+--- a/src/netclass.c
++++ b/src/netclass.c
+@@ -295,11 +295,14 @@ find_netname_for_object (int type, void *ptr1, void *ptr2, void *ptr3)
+ {
+   char *netname;
+   int flag = CONNECTEDFLAG;
+-  ClearFlagOnAllObjects (false /*AndDraw*/, flag, true /* store_undo */);
++  bool changed = false;
++
++  changed |= ClearFlagOnAllObjects (false /*AndDraw*/, flag, true /* store_undo */);
+   /* Find a pin / pad which is connected, and grab the netname from this */
+-  LookupObject (type, ptr1, ptr2, ptr3, false /*AndDraw*/, flag, true /*AndRats*/, true /*store_undo*/);
++  LookupObject (type, ptr1, ptr2, ptr3, false /*AndDraw*/, flag, true /*AndRats*/, true /*store_undo*/); /* This call bumps the undo serial number */
+   netname = find_first_flagged_netname (flag);
+-  Undo (true);
++//  if (changed)
++    Undo (true);
+   return netname;
+ }
+ 
+@@ -308,11 +311,14 @@ find_netname_at_xy (LayerType *layer, Coord x, Coord y)
+ {
+   char *netname;
+   int flag = CONNECTEDFLAG;
+-  ClearFlagOnAllObjects (false /*AndDraw*/, flag, true /*store_undo*/);
++  bool changed = false;
++
++  changed |= ClearFlagOnAllObjects (false /*AndDraw*/, flag, true /*store_undo*/);
+   /* Find a pin / pad which is connected, and grab the netname from this */
+-  LookupConnection (x, y, false /*AndDraw*/, 0 /*Range*/, flag, true /*AndRats*/, true /*store_undo*/);
++  LookupConnection (x, y, false /*AndDraw*/, 0 /*Range*/, flag, true /*AndRats*/, true /*store_undo*/); /* This call bumps the undo serial number */
+   netname = find_first_flagged_netname (flag);
+-  Undo (true);
++//  if (changed)
++    Undo (true);
+   return netname;
+ }
