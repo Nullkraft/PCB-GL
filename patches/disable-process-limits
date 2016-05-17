@@ -1,5 +1,5 @@
 Bottom: e51ff85b0f85c4a234eb7bcc79cee89e1df03755
-Top:    e51ff85b0f85c4a234eb7bcc79cee89e1df03755
+Top:    7b1772f2a262fe361f13bc3c32a8748f8841eae8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-05-17 18:08:43 +0100
 
@@ -8,4 +8,15 @@ Disable process limits
 
 ---
 
-
+diff --git a/src/polygon.c b/src/polygon.c
+index 420772b..fb40faf 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -132,6 +132,7 @@ polygon_init (void)
+ 
+   bw_rotate_circle_seg[0] =  cos_ang;  bw_rotate_circle_seg[1] =  sin_ang;
+   bw_rotate_circle_seg[2] = -sin_ang;  bw_rotate_circle_seg[3] =  cos_ang;
++return;
+ 
+   /* DEBUG - AVOID PCB running the system out of memory! */
+   getrlimit (RLIMIT_AS, &limit);
