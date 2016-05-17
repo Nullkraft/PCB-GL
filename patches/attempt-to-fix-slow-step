@@ -1,5 +1,5 @@
 Bottom: 2e11885c7c7b4260a2f82d876f9a990c762a6571
-Top:    2e11885c7c7b4260a2f82d876f9a990c762a6571
+Top:    e0b891b837317514a8ac873b2cacd31cc05964d5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-05-17 18:09:17 +0100
 
@@ -8,4 +8,115 @@ Attempt to fix slow STEP assembly traversal
 
 ---
 
-
+diff --git a/src/hid/step/assembly.cpp b/src/hid/step/assembly.cpp
+index d095fae..cc3fa9a 100644
+--- a/src/hid/step/assembly.cpp
++++ b/src/hid/step/assembly.cpp
+@@ -734,17 +734,17 @@ append_model_from_file (Registry *registry,
+   pd_list pd_list;
+ 
+   // Find all PRODUCT_DEFINITION entities with a SHAPE_DEFINITION_REPRESETNATION
+-  find_all_pd_with_sdr (instance_list, &all_pd_list);
++  find_all_pd_with_sdr (instance_list, &all_pd_list, max_existing_file_id);
+ 
+   // Find and copy over any PRODUCT_DEFINITION in our list which have entity numbers from the append
+   for (pd_list::iterator iter = all_pd_list.begin(); iter != all_pd_list.end(); iter++)
+-    if ((*iter)->StepFileId () > max_existing_file_id)
++//    if ((*iter)->StepFileId () > max_existing_file_id)
+       pd_list.push_back (*iter);
+ 
+   /*  Try to determine the root product */
+-  find_and_remove_child_pd (instance_list, &pd_list, "Next_assembly_usage_occurrence"); // Remove any PD which are children of another via NAUO
+-  find_and_remove_child_pd (instance_list, &pd_list, "Assembly_component_usage");       // Remove any PD which are children of another via ACU
+-  find_and_remove_child_pd_mi_rm_sr (instance_list, &pd_list); // Remove any PD which are children of another via MAPPED_ITEM->REPRESENTATION_MAP->SHAPE_REPRESENTATION
++  find_and_remove_child_pd (instance_list, &pd_list, max_existing_file_id, "Next_assembly_usage_occurrence"); // Remove any PD which are children of another via NAUO
++  find_and_remove_child_pd (instance_list, &pd_list, max_existing_file_id, "Assembly_component_usage");       // Remove any PD which are children of another via ACU
++  find_and_remove_child_pd_mi_rm_sr (instance_list, &pd_list, max_existing_file_id); // Remove any PD which are children of another via MAPPED_ITEM->REPRESENTATION_MAP->SHAPE_REPRESENTATION
+ 
+ #ifdef DEBUG_PRODUCT_DEFINITION_SEARCH
+   std::cout << "Hopefully left with the root product definition" << std::endl;
+diff --git a/src/hid/step/utils.cpp b/src/hid/step/utils.cpp
+index f258958..931bc75 100644
+--- a/src/hid/step/utils.cpp
++++ b/src/hid/step/utils.cpp
+@@ -59,9 +59,10 @@
+ 
+ 
+ void
+-find_all_pd_with_sdr (InstMgr *instance_list, pd_list *pd_list)
++find_all_pd_with_sdr (InstMgr *instance_list, pd_list *pd_list, int start_after_id)
+ {
+-  int search_index = 0;
++  MgrNode * mnode = instance_list->FindFileId (start_after_id);
++  int search_index = instance_list->GetIndex (mnode) + 1;
+ 
+   // Loop over the instances of SHAPE_DEFITION_REPRESENTATION in the file
+   SdaiShape_definition_representation *sdr;
+@@ -115,9 +116,10 @@ find_all_pd_with_sdr (InstMgr *instance_list, pd_list *pd_list)
+  * typically this will be "Assembly_component_usage" or "Next_assembly_usage_occurance"
+  */
+ void
+-find_and_remove_child_pd (InstMgr *instance_list, pd_list *pd_list, const char *entityName)
++find_and_remove_child_pd (InstMgr *instance_list, pd_list *pd_list, int start_after_id, const char *entityName)
+ {
+-  int search_index = 0;
++  MgrNode * mnode = instance_list->FindFileId (start_after_id);
++  int search_index = instance_list->GetIndex (mnode) + 1;
+ 
+   SdaiAssembly_component_usage *acu;
+   while (ENTITY_NULL != (acu = (SdaiAssembly_component_usage *)
+@@ -147,9 +149,10 @@ find_and_remove_child_pd (InstMgr *instance_list, pd_list *pd_list, const char *
+ }
+ 
+ static SdaiProduct_definition *
+-find_pd_for_sr (InstMgr *instance_list, SdaiShape_representation *target_sr)
++find_pd_for_sr (InstMgr *instance_list, int start_after_id, SdaiShape_representation *target_sr)
+ {
+-  int search_index = 0;
++  MgrNode * mnode = instance_list->FindFileId (start_after_id);
++  int search_index = instance_list->GetIndex (mnode) + 1;
+ 
+   // Loop over the instances of SHAPE_DEFITION_REPRESENTATION in the file
+   SdaiShape_definition_representation *sdr;
+@@ -172,9 +175,10 @@ find_pd_for_sr (InstMgr *instance_list, SdaiShape_representation *target_sr)
+ }
+ 
+ void
+-find_and_remove_child_pd_mi_rm_sr (InstMgr *instance_list, pd_list *pd_list)
++find_and_remove_child_pd_mi_rm_sr (InstMgr *instance_list, pd_list *pd_list, int start_after_id)
+ {
+-  int search_index = 0;
++  MgrNode * mnode = instance_list->FindFileId (start_after_id);
++  int search_index = instance_list->GetIndex (mnode) + 1;
+ 
+   SdaiMapped_item *mi;
+   while (ENTITY_NULL != (mi = (SdaiMapped_item *)
+@@ -186,7 +190,7 @@ find_and_remove_child_pd_mi_rm_sr (InstMgr *instance_list, pd_list *pd_list)
+ //      SdaiRepresentation_item *mapping_origin = mapping_source->mapping_origin_ (); // <- Eg. an axis
+       SdaiRepresentation *mapped_representation = mapping_source->mapped_representation_ (); // <- Shape representation of the product which is a child
+ 
+-      SdaiProduct_definition *child_pd = find_pd_for_sr (instance_list, (SdaiShape_representation *)mapped_representation);
++      SdaiProduct_definition *child_pd = find_pd_for_sr (instance_list, start_after_id, (SdaiShape_representation *)mapped_representation);
+       /* Need to find product_definition which has PD<-PDS.definition_<-SDR.definition_SDR.used_representation->SR */
+ 
+ //      SdaiProduct_definition *related_pd = mi->related_product_definition_ ();
+diff --git a/src/hid/step/utils.h b/src/hid/step/utils.h
+index 43ead5c..06f6143 100644
+--- a/src/hid/step/utils.h
++++ b/src/hid/step/utils.h
+@@ -29,13 +29,13 @@
+ typedef std::list<SdaiProduct_definition *> pd_list;
+ 
+ 
+-void find_all_pd_with_sdr (InstMgr *instance_list, pd_list *pd_list);
++void find_all_pd_with_sdr (InstMgr *instance_list, pd_list *pd_list, int start_after_id);
+ 
+ /* entityName should be the name of entity Assembly_component_usage or one of its subtypes
+  * typically this will be "Assembly_component_usage" or "Next_assembly_usage_occurance"
+  */
+-void find_and_remove_child_pd (InstMgr *instance_list, pd_list *pd_list, const char *entityName);
+-void find_and_remove_child_pd_mi_rm_sr (InstMgr *instance_list, pd_list *pd_list);
++void find_and_remove_child_pd (InstMgr *instance_list, pd_list *pd_list, int start_after_id, const char *entityName);
++void find_and_remove_child_pd_mi_rm_sr (InstMgr *instance_list, pd_list *pd_list, int start_after_id);
+ 
+ SdaiShape_definition_representation *find_sdr_for_pd (InstMgr *instance_list, SdaiProduct_definition *target_pd);
