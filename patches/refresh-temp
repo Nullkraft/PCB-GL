@@ -1,0 +1,50 @@
+Bottom: b3320c6e194c20657724d3fadcd7d676c74baba3
+Top:    e67e393b228164f5989539e2a58a3765a1c31854
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-05-24 10:00:42 +0100
+
+Refresh of step-fix-step-hole-emission
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index d05125e..4c03dd4 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -1383,6 +1383,26 @@ pv_copper_callback (const BoxType * b, void *cl)
+ }
+ 
+ 
++static int
++hole_sub_copper_callback (const BoxType * b, void *cl)
++{
++  PinType *pv = (PinType *)b;
++  struct copper_info *info = cl;
++  POLYAREA *np, *res;
++
++  if (!TEST_FLAG (HOLEFLAG, pv))
++    return 0;
++
++  if (!(np = CirclePoly (pv->X, pv->Y, (pv->DrillingHole + 1) / 2, NULL)))
++    return 0;
++
++  poly_Boolean_free (info->poly, np, &res, PBO_SUB);
++  info->poly = res;
++
++  return 1;
++}
++
++
+ static void
+ steal_object_geometry (object3d *src, object3d *dst)
+ {
+@@ -1584,6 +1604,9 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
+           r_search (PCB->Data->pad_tree, &bounds, NULL, pad_copper_callback, &info);
+         }
+ 
++      r_search (PCB->Data->pin_tree, &bounds, NULL, hole_sub_copper_callback, &info);
++      r_search (PCB->Data->via_tree, &bounds, NULL, hole_sub_copper_callback, &info);
++
+       /* TODO: Inter-layer features
+        *
+        * Accumulate a circular polygon for each plated hole we may cut, ensuring
