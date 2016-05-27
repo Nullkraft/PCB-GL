@@ -279,6 +279,7 @@ EXTRA_DIST= \
 	$(srcdir)/hid/png/hid.conf \
 	$(srcdir)/hid/nelma/hid.conf \
 	$(srcdir)/hid/ps/hid.conf \
+	$(srcdir)/hid/step/hid.conf \
 	gpcb-menu.res.in \
 	pcb-menu.res.in \
 	gpcb-menu.res.h \
