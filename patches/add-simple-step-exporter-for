@@ -1,5 +1,5 @@
 Bottom: d6b0176e8cffb3250532cdc42917b156d4f1aba4
-Top:    e6c79c466c36403b069591ba071b57ece4f37e51
+Top:    c9fc6acc78eda733d9fe3406235acba7a5187902
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 23:56:09 +0000
 
@@ -9,7 +9,7 @@ Add simple STEP exporter for the board outline
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index bd6874d..b463979 100644
+index bd6874d..d1eb83e 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -12,7 +12,7 @@ HIDLIST = @HIDLIST@
@@ -29,7 +29,15 @@ index bd6874d..b463979 100644
  	parse_y.h \
  	pcb-menu.h \
  	res_parse.h \
-@@ -464,6 +465,20 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
+@@ -278,6 +279,7 @@ EXTRA_DIST= \
+ 	$(srcdir)/hid/png/hid.conf \
+ 	$(srcdir)/hid/nelma/hid.conf \
+ 	$(srcdir)/hid/ps/hid.conf \
++	$(srcdir)/hid/step/hid.conf \
+ 	gpcb-menu.res.in \
+ 	pcb-menu.res.in \
+ 	gpcb-menu.res.h \
+@@ -464,6 +466,20 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
  	(for f in ${LIBPS_SRCS} ; do cat $(srcdir)/$$f ; done) | grep "^REGISTER" > $@.tmp
  	mv $@.tmp $@
  
