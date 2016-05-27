@@ -1,5 +1,5 @@
-Bottom: 99649ca9a15050b22452a53ec67bbbe09ccf7bff
-Top:    5536e51b97bafd7255ddf9185f7f8f6b85c97fd8
+Bottom: 32a923a9c6e50409cd38ae4ee7b8f51892e1f0a6
+Top:    84e72b45a3cb6a329f466f39381a6ef34cccf66d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 23:56:10 +0000
 
@@ -37,7 +37,7 @@ index f557c37..058fa40 100644
      F=$srcdir/src/hid/$hid/hid.conf
      if test -f $F ; then
 diff --git a/src/Makefile.am b/src/Makefile.am
-index b463979..b03d9dc 100644
+index d1eb83e..d85b062 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -175,6 +175,7 @@ PCB_SRCS = \
@@ -48,7 +48,7 @@ index b463979..b03d9dc 100644
  DBUS_SRCS= \
  	dbus-pcbmain.c \
  	dbus-pcbmain.h \
-@@ -465,14 +466,38 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
+@@ -466,14 +467,38 @@ hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
  	(for f in ${LIBPS_SRCS} ; do cat $(srcdir)/$$f ; done) | grep "^REGISTER" > $@.tmp
  	mv $@.tmp $@
  

@@ -1,5 +1,5 @@
-Bottom: ee5fb9366b4090b46c5dbe72faaa779cc0db1f50
-Top:    84a3d37e5e38aa1ccb85bbb62820c47459a2c651
+Bottom: 0a24749c99a7e94d4f4a0c645aa2eb61e60e7697
+Top:    8ec919282443ef59588ac47e186f1c752bdaa57c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 23:56:10 +0000
 
@@ -13,10 +13,10 @@ should be recreated if possible.
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index b03d9dc..742c411 100644
+index d85b062..47a0a24 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -361,11 +361,7 @@ LIBGTK_SRCS = \
+@@ -362,11 +362,7 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-top-window.c \
  	hid/gtk/gui-utils.c \
  	hid/gtk/snavi.c \
@@ -29,7 +29,7 @@ index b03d9dc..742c411 100644
  libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
-@@ -484,7 +480,11 @@ LIBSTEP_SRCS = \
+@@ -485,7 +481,11 @@ LIBSTEP_SRCS = \
  	hid/step/assembly.cpp \
  	hid/step/assembly.h \
  	hid/step/utils.cpp \
