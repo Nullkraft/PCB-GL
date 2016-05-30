@@ -100,9 +100,9 @@ Name of the STEP output file. Can contain a path.
    @end ftable
    %end-doc
    */
-    {N_("solder-mask"), N_("Export solder-mask"),
+    {N_("soldermask"), N_("Export soldermask"),
          HID_Boolean, 0, 0, {1, 0, 0}, 0, 0},
-#define HA_solder_mask 2
+#define HA_soldermask 2
 
   /* %start-doc options "91 STEP Export"
    @ftable @code
@@ -275,7 +275,7 @@ step_do_export (HID_Attr_Val * options)
 #endif
 
 #if 1
-    if (options[HA_solder_mask].int_value)
+    if (options[HA_soldermask].int_value)
       {
         mask_objects = object3d_from_soldermask_within_area (piece, TOP_SIDE);
         board_outline_list = g_list_concat (board_outline_list, mask_objects);
