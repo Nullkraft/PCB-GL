@@ -1,5 +1,5 @@
 Bottom: 6c4fbd8f59082c52e8d6cc64b3e16c90761f0dcf
-Top:    3b61dc0477bca30367d7c0c673f10f6283f6c098
+Top:    bf94f98f9b6959cb3ec45a9d0837c6ba46d042d5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-06-11 23:09:00 +0100
 
@@ -11,6 +11,18 @@ XXX: Need to check if the path which previously missed
 
 ---
 
+diff --git a/src/move.c b/src/move.c
+index cfdf881..15cbddc 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -946,6 +946,7 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+       MoveLinePoint (Ptr1, moving_line, &moving_line->Point2);
+ 
+       ptr2 = moving_line;
++      IncrementUndoSerialNumber ();
+     }
+   else
+     {
 diff --git a/src/netclass.c b/src/netclass.c
 index d13d3f0..54c6d6e 100644
 --- a/src/netclass.c
