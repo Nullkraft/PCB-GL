@@ -1,0 +1,16 @@
+Bottom: bf94f98f9b6959cb3ec45a9d0837c6ba46d042d5
+Top:    bf94f98f9b6959cb3ec45a9d0837c6ba46d042d5
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-06-12 19:59:09 +0100
+
+Fix timeout forced redraw to run from the main loop, not directly
+
+This avoids us drawing when the board is in an intermediate state. Will
+likely not give as much immediacy as drawing from where the graphics are
+invalidated - but avoids visual artaefacts when drawing tracks with
+auto-enforce DRC enabled.
+
+
+---
+
+
