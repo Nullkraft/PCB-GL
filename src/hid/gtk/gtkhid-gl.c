@@ -944,7 +944,6 @@ ghid_invalidate_all ()
 
   if (elapsed > MAX_ELAPSED)
     g_idle_add_full (G_PRIORITY_HIGH, force_redraw, NULL, NULL);
-//    gdk_window_process_all_updates ();
 }
 
 void
