@@ -1,5 +1,5 @@
 Bottom: bf94f98f9b6959cb3ec45a9d0837c6ba46d042d5
-Top:    bf94f98f9b6959cb3ec45a9d0837c6ba46d042d5
+Top:    0edb76042449b48a9426495f844028c7110e67fd
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-06-12 19:59:09 +0100
 
@@ -13,4 +13,32 @@ auto-enforce DRC enabled.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 0750d0f..d98cdb9 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -925,6 +925,14 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
+   ghid_invalidate_all ();
+ }
+ 
++static gboolean
++force_redraw (gpointer user_data)
++{
++  gdk_window_process_all_updates ();
++
++  return G_SOURCE_REMOVE;
++}
++
+ #define MAX_ELAPSED (50. / 1000.) /* 50ms */
+ void
+ ghid_invalidate_all ()
+@@ -935,7 +943,8 @@ ghid_invalidate_all ()
+   ghid_draw_area_update (gport, NULL);
+ 
+   if (elapsed > MAX_ELAPSED)
+-    gdk_window_process_all_updates ();
++    g_idle_add_full (G_PRIORITY_HIGH, force_redraw, NULL, NULL);
++//    gdk_window_process_all_updates ();
+ }
+ 
+ void
