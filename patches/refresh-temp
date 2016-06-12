@@ -1,0 +1,22 @@
+Bottom: 4a1b07e0481a064e9839ebc6c2edb2273bca5aaf
+Top:    b9ea69fcd64a9278ed0fc7c271d384d691a13468
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-06-12 20:03:31 +0100
+
+Refresh of improve-auto-enforce-drc
+
+---
+
+diff --git a/src/line.c b/src/line.c
+index 5f6898b..5b65745 100644
+--- a/src/line.c
++++ b/src/line.c
+@@ -808,7 +808,7 @@ drc_lines (PointType *end, bool way)
+ 	  length2 = MIN (f2 * temp2, temp2);
+ 	}
+       if (!blocker && (( x_is_long && line2.Point2.X - line1.Point1.X == dx) ||
+-		       (!x_is_long && line2.Point2.Y - line1.Point1.Y == dy)))
++                       (!x_is_long && line2.Point2.Y - line1.Point1.Y == dy)))
+ 	f += s;
+       else
+ 	f -= s;
