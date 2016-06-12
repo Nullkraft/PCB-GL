@@ -1,0 +1,21 @@
+Bottom: 0edb76042449b48a9426495f844028c7110e67fd
+Top:    5b25c4a41d985c159fdeffe00def42bb7aa25da5
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-06-12 20:00:28 +0100
+
+Refresh of fix-timeout-forced-redraw-to
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index d98cdb9..81a245b 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -944,7 +944,6 @@ ghid_invalidate_all ()
+ 
+   if (elapsed > MAX_ELAPSED)
+     g_idle_add_full (G_PRIORITY_HIGH, force_redraw, NULL, NULL);
+-//    gdk_window_process_all_updates ();
+ }
+ 
+ void
