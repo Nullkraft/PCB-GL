@@ -808,7 +808,7 @@ drc_lines (PointType *end, bool way)
 	  length2 = MIN (f2 * temp2, temp2);
 	}
       if (!blocker && (( x_is_long && line2.Point2.X - line1.Point1.X == dx) ||
-		       (!x_is_long && line2.Point2.Y - line1.Point1.Y == dy)))
+                       (!x_is_long && line2.Point2.Y - line1.Point1.Y == dy)))
 	f += s;
       else
 	f -= s;
