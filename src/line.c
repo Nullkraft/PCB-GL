@@ -500,7 +500,7 @@ drc_line (PointType *end)
  * adjusts the end point until there is no intersection or
  * it winds up back at the start. If way is false it checks
  * straight start, 45 end lines, otherwise it checks 45 start,
- * straight end. 
+ * straight end.
  *
  * It returns the straight-line length of the best answer, and
  * changes the position of the input point to the best answer.
@@ -658,7 +658,7 @@ drc_lines2 (PointType *end, bool way)
  * adjusts the end point until there is no intersection or
  * it winds up back at the start. If way is false it checks
  * straight start, 45 end lines, otherwise it checks 45 start,
- * straight end. 
+ * straight end.
  *
  * It returns the straight-line length of the best answer, and
  * changes the position of the input point to the best answer.
