@@ -1,5 +1,5 @@
 Bottom: b9ea69fcd64a9278ed0fc7c271d384d691a13468
-Top:    b9ea69fcd64a9278ed0fc7c271d384d691a13468
+Top:    0ee4dd6ce1499484e405b74f1074656341ddf103
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-06-13 15:10:30 +0100
 
@@ -8,4 +8,41 @@ More auto-enforce DRC changes
 
 ---
 
-
+diff --git a/src/line.c b/src/line.c
+index 5b65745..b8fbf18 100644
+--- a/src/line.c
++++ b/src/line.c
+@@ -886,8 +886,12 @@ EnforceLineDRC (void)
+     }
+   END_LOOP;
+ 
+-  rs.X = /*r45.X =*/ Crosshair.X;
+-  rs.Y = /*r45.Y =*/ Crosshair.Y;
++  rs.X = Crosshair.X;
++  rs.Y = Crosshair.Y;
++#if 1
++  r45.X = Crosshair.X;
++  r45.Y = Crosshair.Y;
++#endif
+ 
+   if (!TEST_FLAG (AUTODRCFLAG, PCB))
+     {
+@@ -907,7 +911,7 @@ EnforceLineDRC (void)
+     }
+   else
+     {
+-#if 1 /* Auto switch starting angle */
++#if 0 /* Auto switch starting angle */
+       /* first try starting straight */
+       r1 = drc_lines (&rs, false);
+       /* then try starting at 45 */
+@@ -929,7 +933,8 @@ EnforceLineDRC (void)
+           Crosshair.Y = r45.Y;
+         }
+ #else /* Fixed starting angle */
+-      drc_lines (&rs, (PCB->Clipping == 1) != gui->shift_is_pressed ());
++//      drc_lines (&rs, (PCB->Clipping == 1) != gui->shift_is_pressed ());
++      drc_lines (&rs, false);
+       Crosshair.X = rs.X;
+       Crosshair.Y = rs.Y;
+ #endif
