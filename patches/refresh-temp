@@ -1,0 +1,131 @@
+Bottom: 0ee4dd6ce1499484e405b74f1074656341ddf103
+Top:    a5a98e96f0793f089635e33128031e36d380c089
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-06-20 17:46:31 +0100
+
+Refresh of add-board-thickness-parameter
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 4c03dd4..e7a2720 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -75,7 +75,9 @@
+ #endif
+ 
+ 
+-#define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
++static Coord board_thickness;
++#define HACK_BOARD_THICKNESS board_thickness
++//#define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
+ #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
+ #define HACK_PLATED_BARREL_THICKNESS MM_TO_COORD(0.08)
+ #define HACK_MASK_THICKNESS MM_TO_COORD(0.01)
+@@ -2228,3 +2230,9 @@ object3d_from_silk_within_area (POLYAREA *area, int side)
+ 
+   return objects;
+ }
++
++void
++object3d_set_board_thickness (Coord thickness)
++{
++  board_thickness = thickness;
++}
+diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
+index 797165e..b288cf2 100644
+--- a/src/hid/common/object3d.h
++++ b/src/hid/common/object3d.h
+@@ -21,3 +21,4 @@ GList *object3d_from_board_outline (void);
+ GList *object3d_from_soldermask_within_area (POLYAREA *area, int side);
+ GList *object3d_from_copper_layers_within_area (POLYAREA *area);
+ GList *object3d_from_silk_within_area (POLYAREA *area, int side);
++void object3d_set_board_thickness (Coord thickness);
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index f2e32fe..657f3ca 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -60,7 +60,9 @@
+ #endif
+ 
+ 
+-#define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
++static Coord board_thickness;
++#define HACK_BOARD_THICKNESS board_thickness
++//#define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
+ #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
+ 
+ HID step_hid;
+@@ -88,7 +90,7 @@ Name of the STEP output file. Can contain a path.
+    @end ftable
+    %end-doc
+    */
+-    {N_("copper"), N_("Export copper objects"),
++    {"copper", N_("Export copper objects"),
+          HID_Boolean, 0, 0, {1, 0, 0}, 0, 0},
+ #define HA_copper 1
+ 
+@@ -100,7 +102,7 @@ Name of the STEP output file. Can contain a path.
+    @end ftable
+    %end-doc
+    */
+-    {N_("soldermask"), N_("Export soldermask"),
++    {"soldermask", N_("Export soldermask"),
+          HID_Boolean, 0, 0, {1, 0, 0}, 0, 0},
+ #define HA_soldermask 2
+ 
+@@ -112,7 +114,7 @@ Name of the STEP output file. Can contain a path.
+    @end ftable
+    %end-doc
+    */
+-    {N_("silk"), N_("Export silk"),
++    {"silk", N_("Export silk"),
+          HID_Boolean, 0, 0, {1, 0, 0}, 0, 0},
+ #define HA_silk 3
+ 
+@@ -124,9 +126,21 @@ Name of the STEP output file. Can contain a path.
+    @end ftable
+    %end-doc
+    */
+-    {N_("models"), N_("Export component models"),
++    {"models", N_("Export component models"),
+          HID_Boolean, 0, 0, {1, 0, 0}, 0, 0},
+ #define HA_models 4
++
++  /* %start-doc options "91 STEP Export"
++   @ftable @code
++   @cindex thickness
++   @item --thickness
++   Board thickness
++   @end ftable
++   %end-doc
++   */
++    {"thickness", N_("Board thickness"),
++         HID_Coord, 0, 0, {0, 0, 0, MM_TO_COORD (1.6)}, 0, 0},
++#define HA_thickness 5
+ };
+ 
+ #define NUM_OPTIONS (sizeof(step_attribute_list)/sizeof(step_attribute_list[0]))
+@@ -212,6 +226,9 @@ step_do_export (HID_Attr_Val * options)
+       options = step_option_values;
+     }
+ 
++  board_thickness = options[HA_thickness].coord_value;
++  object3d_set_board_thickness (board_thickness);
++
+   filename = options[HA_stepfile].str_value;
+   if (filename == NULL)
+     filename = "pcb-out.step";
+diff --git a/src/line.c b/src/line.c
+index b8fbf18..0658666 100644
+--- a/src/line.c
++++ b/src/line.c
+@@ -56,8 +56,6 @@ AdjustAttachedLine (void)
+ {
+   AttachedLineType *line = &Crosshair.AttachedLine;
+ 
+-  printf ("AdjustAttachedLine\n");
+-
+   /* I need at least one point */
+   if (line->State == STATE_FIRST)
+     return;
