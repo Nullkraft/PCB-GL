@@ -1,5 +1,5 @@
-Bottom: 5d14ce4aa534171ecda3f5056840930b2e128d26
-Top:    a5a98e96f0793f089635e33128031e36d380c089
+Bottom: 86ab7f1d10f16b351ce31122eccafe655986378a
+Top:    7a66247900e262504757d8b5d6099ec9e8fc22b3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-06-13 15:10:30 +0100
 
@@ -9,10 +9,10 @@ More auto-enforce DRC changes
 ---
 
 diff --git a/src/line.c b/src/line.c
-index 993a719..0658666 100644
+index 5b65745..b8fbf18 100644
 --- a/src/line.c
 +++ b/src/line.c
-@@ -884,8 +884,12 @@ EnforceLineDRC (void)
+@@ -886,8 +886,12 @@ EnforceLineDRC (void)
      }
    END_LOOP;
  
@@ -27,7 +27,7 @@ index 993a719..0658666 100644
  
    if (!TEST_FLAG (AUTODRCFLAG, PCB))
      {
-@@ -905,7 +909,7 @@ EnforceLineDRC (void)
+@@ -907,7 +911,7 @@ EnforceLineDRC (void)
      }
    else
      {
@@ -36,7 +36,7 @@ index 993a719..0658666 100644
        /* first try starting straight */
        r1 = drc_lines (&rs, false);
        /* then try starting at 45 */
-@@ -927,7 +931,8 @@ EnforceLineDRC (void)
+@@ -929,7 +933,8 @@ EnforceLineDRC (void)
            Crosshair.Y = r45.Y;
          }
  #else /* Fixed starting angle */
