@@ -56,8 +56,6 @@ AdjustAttachedLine (void)
 {
   AttachedLineType *line = &Crosshair.AttachedLine;
 
-  printf ("AdjustAttachedLine\n");
-
   /* I need at least one point */
   if (line->State == STATE_FIRST)
     return;
