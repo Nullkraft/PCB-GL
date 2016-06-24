@@ -1,0 +1,22 @@
+Bottom: a7d72866440920641e010f105f3ec8d0ed2755e2
+Top:    277a6ec7fbc7a24378118af168f5066c48f0f8ed
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-06-24 13:53:48 +0100
+
+Refresh of bump-circle-approximation
+
+---
+
+diff --git a/src/polygon.h b/src/polygon.h
+index 58634f7..90d0d26 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -34,7 +34,7 @@
+ 
+ /* Implementation constants */
+ 
+-#define POLY_CIRC_SEGS 24 //20 //8 //40
++#define POLY_CIRC_SEGS 40 //24 //20 //8 //40
+ #define POLY_CIRC_SEGS_D ((double)POLY_CIRC_SEGS)
+ 
+ #if 0
