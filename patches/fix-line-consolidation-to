@@ -1,0 +1,13 @@
+Bottom: 277a6ec7fbc7a24378118af168f5066c48f0f8ed
+Top:    277a6ec7fbc7a24378118af168f5066c48f0f8ed
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-06-24 14:18:54 +0100
+
+Fix line consolidation to never treat lines with different geometry as stacked.
+
+We previously checked this for the merge case, but failed to check for the coincident case.
+
+
+---
+
+
