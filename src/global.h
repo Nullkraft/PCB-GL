@@ -553,8 +553,9 @@ typedef struct			/* rubberband lines for element moves */
 
 typedef struct			/* current marked line */
 {
-  PointType Point1,		/* start- and end-position */
-    Point2;
+  PointType Point1;		/* start position */
+  PointType Point2;		/* middle position */
+  PointType Point3;		/* end position */
   long int State;
   bool draw;
 } AttachedLineType;
