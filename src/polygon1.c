@@ -1185,7 +1185,7 @@ count_contours_i_am_inside (const BoxType * b, void *cl)
 
 /* cntr_in_M_POLYAREA
 returns poly is inside outfst ? TRUE : FALSE */
-static int
+POLYAREA *
 cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
 {
   POLYAREA *outer = outfst;
@@ -1219,10 +1219,10 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
 	  break;
 	case 1:		/* Found we are inside this piece, and not any of its holes */
 	  heap_destroy (&heap);
-	  return TRUE;
+	  return outer;
 	case 2:		/* Found inside a hole in the smallest polygon so far. No need to check the other polygons */
 	  heap_destroy (&heap);
-	  return FALSE;
+	  return NULL;
 	default:
 	  printf ("Something strange here\n");
 	  break;
@@ -1230,7 +1230,7 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
     }
   while (1);
   heap_destroy (&heap);
-  return FALSE;
+  return NULL;
 }				/* cntr_in_M_POLYAREA */
 
 static char *
@@ -1346,7 +1346,7 @@ cntr_label_POLYAREA (PLINE * poly, POLYAREA * ppl, BOOLp test)
   if (poly->Flags.status == ISECTED)
     return false;
 
-  if (cntr_in_M_POLYAREA (poly, ppl, test))
+  if (cntr_in_M_POLYAREA (poly, ppl, test) != NULL)
     {
       if (test)
 	return TRUE;
@@ -2232,7 +2232,7 @@ find_inside_m_pa (const BoxType * b, void *cl)
   /* Don't look at contours marked as being intersected */
   if (check->Flags.status == ISECTED)
     return 0;
-  if (cntr_in_M_POLYAREA (check, info->want_inside, FALSE))
+  if (cntr_in_M_POLYAREA (check, info->want_inside, FALSE) != NULL)
     {
       info->result = check;
       longjmp (info->jb, 1);
@@ -2301,7 +2301,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
 	       && (a->contours->xmax <= box.X2)
 	       && (a->contours->ymax <= box.Y2)) &&
 	      /* Then test properly */
-	      cntr_in_M_POLYAREA (a->contours, bpa, FALSE))
+	      cntr_in_M_POLYAREA (a->contours, bpa, FALSE) != NULL)
 	    {
 
 	      /* Delete this contour, all children -> holes queue */
@@ -2401,7 +2401,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
 
 	  if (del_outside)
 	    del_contour = curc->Flags.status != ISECTED &&
-	      !cntr_in_M_POLYAREA (curc, bpa, FALSE);
+	      cntr_in_M_POLYAREA (curc, bpa, FALSE) == NULL;
 
 	  /* Skip intersected contours */
 	  if (curc->Flags.status == ISECTED)
