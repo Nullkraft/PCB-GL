@@ -41,11 +41,15 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
 
 #include "hid/common/hidnogui.h"
 #include "hid/common/draw_helpers.h"
+#include "hid/common/hidnogui.h"
 #include "hid/common/trackball.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+#include "hid/common/hidcairo.h"
+#include <cairo.h>
 
 //#define VIEW_ORTHO
 
@@ -94,6 +98,8 @@ typedef struct render_priv {
   HID_DRAW *hid_draw;
   GList *active_gc_list;
   double edit_depth;
+
+  HID_DRAW *hid_draw_cairo;
 
 } render_priv;
 
@@ -1068,6 +1074,72 @@ draw_crosshair (hidGC gc, render_priv *priv)
   glDisable (GL_COLOR_LOGIC_OP);
 }
 
+static HID_DRAW_CLASS ghidcairo_graphics_class;
+
+static cairo_t *_cr = NULL;
+static bool cairo_subcomposite = false;
+
+static int
+hidcairo_set_layer (HID_DRAW *hid_draw, const char *name, int group, int _empty)
+{
+  bool group_visible = false;
+
+  if (group >= 0 && group < max_group)
+    {
+      group_visible = is_layer_group_visible (group);
+    }
+  else
+    {
+      switch (SL_TYPE (group))
+	{
+	case SL_INVISIBLE:
+	  group_visible = PCB->InvisibleObjectsOn;
+	  break;
+	case SL_MASK:
+	  group_visible = SL_MYSIDE (group) && TEST_FLAG (SHOWMASKFLAG, PCB);
+	  break;
+	case SL_SILK:
+	  group_visible = SL_MYSIDE (group) && PCB->ElementOn;
+	  break;
+	case SL_ASSY:
+	  break;
+	case SL_PDRILL:
+	case SL_UDRILL:
+	  group_visible = true;
+	  break;
+	case SL_RATS:
+	  group_visible = PCB->RatOn;
+	  break;
+	}
+    }
+
+//  cairo_pop_group_to_source (_cr);
+//  cairo_paint_with_alpha (_cr, 0.8);
+
+  if (group_visible)
+    {
+      cairo_subcomposite = true;
+      cairo_push_group (_cr);
+    }
+  else
+    {
+      cairo_subcomposite = false;
+    }
+
+  return group_visible;
+}
+
+static void
+hidcairo_end_layer (HID_DRAW *hid_draw)
+{
+  if (cairo_subcomposite)
+    {
+      cairo_pop_group_to_source (_cr);
+      cairo_paint_with_alpha (_cr, 0.7);
+      cairo_subcomposite = false;
+    }
+}
+
 void
 ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 {
@@ -1109,6 +1181,27 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   hidgl_instance_init (&ghid_graphics);
 
   priv->hid_draw = &ghid_graphics;
+
+  /* CAIRO TEST */
+
+  memset (&ghidcairo_graphics_class, 0, sizeof (HID_DRAW_CLASS));
+
+  common_nogui_graphics_class_init (&ghidcairo_graphics_class);
+  common_draw_helpers_class_init (&ghidcairo_graphics_class);
+  hidcairo_class_init (&ghidcairo_graphics_class);
+
+  ghidcairo_graphics_class.set_layer      = hidcairo_set_layer;
+  ghidcairo_graphics_class.end_layer      = hidcairo_end_layer;
+
+  ghidcairo_graphics_class.gui = true;
+
+  priv->hid_draw_cairo = calloc (1, sizeof (HID_DRAW));
+  priv->hid_draw_cairo->klass = &ghidcairo_graphics_class;
+  priv->hid_draw_cairo->poly_before = true;
+  common_nogui_graphics_init (priv->hid_draw_cairo);
+  common_draw_helpers_init (priv->hid_draw_cairo);
+  hidcairo_init (priv->hid_draw_cairo);
+
 }
 
 void
@@ -1142,6 +1235,9 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
                                 drawarea_glcontext,
                                 TRUE,
                                 GDK_GL_RGBA_TYPE);
+
+
+  gtk_widget_set_double_buffered (widget, true); /* XXX: For Cairo testing only */
 }
 
 void
@@ -2336,6 +2432,7 @@ ghid_draw_everything (hidGC gc)
 }
 
 #define Z_NEAR 3.0
+#if 0
 gboolean
 ghid_drawing_area_expose_cb (GtkWidget *widget,
                              GdkEventExpose *ev,
@@ -2736,6 +2833,33 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   return FALSE;
 }
+#else
+gboolean
+ghid_drawing_area_expose_cb (GtkWidget *widget,
+                             GdkEventExpose *ev,
+                             GHidPort *port)
+{
+  render_priv *priv = port->render_priv;
+
+  _cr = gdk_cairo_create (widget->window);
+
+  cairo_set_source_rgb (_cr, 0.0, 0.0, 0.0);
+  cairo_paint (_cr);
+
+  cairo_scale (_cr, 1.0 / 100000., 1.0 / 100000.); /* XXX */
+
+  hidcairo_start_render (priv->hid_draw_cairo, _cr);
+  hid_expose_callback (priv->hid_draw_cairo, 0);
+  hidcairo_finish_render (priv->hid_draw_cairo);
+
+  cairo_destroy (_cr);
+  _cr = NULL;
+
+  g_timer_start (priv->time_since_expose);
+
+  return FALSE;
+}
+#endif
 
 /* This realize callback is used to work around a crash bug in some mesa
  * versions (observed on a machine running the intel i965 driver. It isn't
