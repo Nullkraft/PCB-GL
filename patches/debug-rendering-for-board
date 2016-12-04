@@ -1,7 +1,7 @@
-Bottom: b4f70e8dada6a849dfe3fa49ee3ab80634dcc4bc
-Top:    2e4374c7e9d44e6f5422939a4513867c741f25a8
+Bottom: fd37ae52f7dc02d9df82ea736f159bb7897bb950
+Top:    8a9f1a7e18a055cb77b1f70097eb05b45ba4c085
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-24 22:44:07 +0000
+Date:   2016-12-04 15:55:59 +0000
 
 Debug rendering for board outline
 
@@ -9,7 +9,7 @@ Debug rendering for board outline
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5274072..3fcd41a 100644
+index cd1b79e..16aee3e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -896,9 +896,11 @@ ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)

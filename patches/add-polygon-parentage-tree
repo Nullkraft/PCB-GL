@@ -1,7 +1,7 @@
-Bottom: f98b1c55e7cd0fd6b7aa38a6bfd1edc70c20c21f
-Top:    710bbef05f04c3f008a1f308ea99fd0e5fccd1dc
+Bottom: a65754bddea4f45b85f45d341fc7da431f05beca
+Top:    cecf9d54d4d785bcc5f3a80bd4cf49e42b9525ae
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 16:24:14 +0000
+Date:   2016-12-04 15:55:58 +0000
 
 Add polygon parentage tree debug view
 
@@ -9,10 +9,10 @@ Add polygon parentage tree debug view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1fd999f..5274072 100644
+index 56e15cf..cd1b79e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -2612,6 +2612,16 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2621,6 +2621,16 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawMark (Output.fgGC);
    hidgl_flush_triangles (priv->hidgl);
  
