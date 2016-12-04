@@ -1,5 +1,5 @@
 Bottom: 174f4fa3e9b417127e1c74e0900ccedbcbdc3d4b
-Top:    af50a278d6f54e604529f4e3339519e2de5cd2f1
+Top:    6e2f6553f3840c1e012f26229c6df60ac3095a80
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-04 15:56:02 +0000
 
@@ -649,7 +649,7 @@ index 0000000..a39355c
 +object3d *object3d_from_board_outline (void);
 diff --git a/src/hid/common/quad.c b/src/hid/common/quad.c
 new file mode 100644
-index 0000000..ff9cf36
+index 0000000..7d026b0
 --- /dev/null
 +++ b/src/hid/common/quad.c
 @@ -0,0 +1,126 @@
@@ -668,7 +668,7 @@ index 0000000..ff9cf36
 +#include <memory.h>
 +#include <malloc.h>
 +
-+#define MARK(e)  ((edge_struct *)((e) & ~3u))->mark
++#define MARK(e)  ((edge_struct *)((e) & ~3ul))->mark
 +
 +/* Make a new edge: */
 +
@@ -697,7 +697,7 @@ index 0000000..ff9cf36
 +    edge_ref f = SYM(e);
 +    if (ONEXT(e) != e) splice(e, OPREV(e));
 +    if (ONEXT(f) != f) splice(f, OPREV(f));
-+    free((char *) ((e) & ~3u));
++    free((char *) ((e) & ~3ul));
 +  }
 +
 +/* Splice primitive: */
@@ -781,7 +781,7 @@ index 0000000..ff9cf36
 +*/
 diff --git a/src/hid/common/quad.h b/src/hid/common/quad.h
 new file mode 100644
-index 0000000..523cb5e
+index 0000000..7b778f2
 --- /dev/null
 +++ b/src/hid/common/quad.h
 @@ -0,0 +1,104 @@
@@ -821,16 +821,16 @@ index 0000000..523cb5e
 +
 +/* Edge orientation operators: */
 +
-+#define ROT(e) (((e) & ~3u)+(((e) + 1) & 3u))
-+#define SYM(e) (((e) & ~3u)+(((e) + 2) & 3u))
-+#define TOR(e) (((e) & ~3u)+(((e) + 3) & 3u))
++#define ROT(e) (((e) & ~3ul)+(((e) + 1) & 3u))
++#define SYM(e) (((e) & ~3ul)+(((e) + 2) & 3u))
++#define TOR(e) (((e) & ~3ul)+(((e) + 3) & 3u))
 +
 +/* Vertex/face walking operators: */
 +
-+#define ONEXT(e)    ((edge_struct *)((e) & ~3u))->next[((e) + 0) & 3u]
-+#define ROTRNEXT(e) ((edge_struct *)((e) & ~3u))->next[((e) + 1) & 3u]
-+#define SYMDNEXT(e) ((edge_struct *)((e) & ~3u))->next[((e) + 2) & 3u]
-+#define TORLNEXT(e) ((edge_struct *)((e) & ~3u))->next[((e) + 3) & 3u]
++#define ONEXT(e)    ((edge_struct *)((e) & ~3ul))->next[((e) + 0) & 3u]
++#define ROTRNEXT(e) ((edge_struct *)((e) & ~3ul))->next[((e) + 1) & 3u]
++#define SYMDNEXT(e) ((edge_struct *)((e) & ~3ul))->next[((e) + 2) & 3u]
++#define TORLNEXT(e) ((edge_struct *)((e) & ~3ul))->next[((e) + 3) & 3u]
 +
 +#define RNEXT(e) (TOR(ROTRNEXT(e)))
 +#define DNEXT(e) (SYM(SYMDNEXT(e)))
@@ -843,13 +843,13 @@ index 0000000..523cb5e
 +
 +/* Data pointers: */
 +
-+#define ODATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 0) & 3u]
-+#define RDATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 1) & 3u]
-+#define DDATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 2) & 3u]
-+#define LDATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 3) & 3u]
++#define ODATA(e) ((edge_struct *)((e) & ~3ul))->data[((e) + 0) & 3u]
++#define RDATA(e) ((edge_struct *)((e) & ~3ul))->data[((e) + 1) & 3u]
++#define DDATA(e) ((edge_struct *)((e) & ~3ul))->data[((e) + 2) & 3u]
++#define LDATA(e) ((edge_struct *)((e) & ~3ul))->data[((e) + 3) & 3u]
 +
-+#define ID(e)         ((edge_struct *)((e) & ~3u))->id
-+#define UNDIR_DATA(e) ((edge_struct *)((e) & ~3u))->undir_data[(e) & 1u]
++#define ID(e)         ((edge_struct *)((e) & ~3ul))->id
++#define UNDIR_DATA(e) ((edge_struct *)((e) & ~3ul))->undir_data[(e) & 1u]
 +
 +edge_ref make_edge(void);
 +
