@@ -158,6 +158,7 @@ struct POLYAREA
 {
     POLYAREA *f, *b;
     PLINE *contours;
+    PLINE *simple_contours;
     rtree_t *contour_tree;
     POLYPARENTAGE parentage;
     void *user_data; /* To be used at will by the owner of this polygon */
@@ -209,6 +210,7 @@ int poly_Boolean(const POLYAREA * a, const POLYAREA * b, POLYAREA ** res, int ac
 int poly_Boolean_free(POLYAREA * a, POLYAREA * b, POLYAREA ** res, int action);
 int poly_AndSubtract_free(POLYAREA * a, POLYAREA * b, POLYAREA ** aandb, POLYAREA ** aminusb);
 int SavePOLYAREA( POLYAREA *PA, char * fname);
+void poly_Simplify(POLYAREA *poly);
 #ifdef __cplusplus
 }
 #endif
