@@ -1896,37 +1896,39 @@ static int
 ActionDumpLibrary (int argc, char **argv, Coord x, Coord y)
 {
   int i, j;
+  GList *ii, *jj;
 
   printf ("**** Do not count on this format.  It will change ****\n\n");
   printf ("MenuN   = %d\n", (int) Library.MenuN);
-  printf ("MenuMax = %d\n", (int) Library.MenuMax);
-  for (i = 0; i < Library.MenuN; i++)
+  for (ii = Library.Menu, i = 0; ii != NULL; ii = g_list_next (ii), i++)
     {
-      printf ("Library #%d:\n", i);
-      printf ("    EntryN    = %d\n", (int) Library.Menu[i].EntryN);
-      printf ("    EntryMax  = %d\n", (int) Library.Menu[i].EntryMax);
-      printf ("    Name      = \"%s\"\n", UNKNOWN (Library.Menu[i].Name));
-      printf ("    directory = \"%s\"\n",
-	      UNKNOWN (Library.Menu[i].directory));
-      printf ("    Style     = \"%s\"\n", UNKNOWN (Library.Menu[i].Style));
-      printf ("    flag      = %d\n", Library.Menu[i].flag);
+      LibraryMenuType *menu = ii->data;
 
-      for (j = 0; j < Library.Menu[i].EntryN; j++)
+      printf ("Library #%d:\n", i);
+      printf ("    EntryN    = %d\n", (int) menu->EntryN);
+      printf ("    Name      = \"%s\"\n", UNKNOWN (menu->Name));
+      printf ("    directory = \"%s\"\n", UNKNOWN (menu->directory));
+      printf ("    Style     = \"%s\"\n", UNKNOWN (menu->Style));
+      printf ("    flag      = %d\n", menu->flag);
+
+      for (jj = menu->Entry, j = 0; jj != NULL; jj = g_list_next (jj), j++)
 	{
+          LibraryEntryType *entry = jj->data;
+
 	  printf ("    #%4d: ", j);
-	  if (Library.Menu[i].Entry[j].Template == (char *) -1)
+	  if (entry->Template == (char *) -1)
 	    {
 	      printf ("newlib: \"%s\"\n",
-		      UNKNOWN (Library.Menu[i].Entry[j].ListEntry));
+		      UNKNOWN (entry->ListEntry));
 	    }
 	  else
 	    {
 	      printf ("\"%s\", \"%s\", \"%s\", \"%s\", \"%s\"\n",
-		      UNKNOWN (Library.Menu[i].Entry[j].ListEntry),
-		      UNKNOWN (Library.Menu[i].Entry[j].Template),
-		      UNKNOWN (Library.Menu[i].Entry[j].Package),
-		      UNKNOWN (Library.Menu[i].Entry[j].Value),
-		      UNKNOWN (Library.Menu[i].Entry[j].Description));
+		      UNKNOWN (entry->ListEntry),
+		      UNKNOWN (entry->Template),
+		      UNKNOWN (entry->Package),
+		      UNKNOWN (entry->Value),
+		      UNKNOWN (entry->Description));
 	    }
 	}
     }
@@ -3278,6 +3280,8 @@ static const char renumber_help[] =
 static int
 ActionRenumber (int argc, char **argv, Coord x, Coord y)
 {
+  return 0;
+#if 0
   bool changed = false;
   ElementType **element_list;
   ElementType **locked_element_list;
@@ -3617,6 +3621,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
   free (is);
   free (was);
   return 0;
+#endif
 }
 
 
@@ -4638,16 +4643,15 @@ ActionChangeName (int argc, char **argv, Coord x, Coord y)
 		    SetChangedFlag (true);
 		    if (type == ELEMENT_TYPE)
 		      {
-			RubberbandType *ptr;
-			int i;
+			GList *iter;
 
 			RestoreUndoSerialNumber ();
 			Crosshair.AttachedObject.RubberbandN = 0;
 			LookupRatLines (type, ptr1, ptr2, ptr3);
-			ptr = Crosshair.AttachedObject.Rubberband;
-			for (i = 0; i < Crosshair.AttachedObject.RubberbandN;
-			     i++, ptr++)
+			for (iter = Crosshair.AttachedObject.Rubberband;
+			     iter != NULL; iter = g_list_next (iter))
 			  {
+			    RubberbandType *ptr = iter->data;
 			    if (PCB->RatOn)
 			      EraseRat ((RatType *) ptr->Line);
 			    MoveObjectToRemoveUndoList (RATLINE_TYPE,
@@ -6989,22 +6993,26 @@ find_element_by_refdes (char *refdes)
 static AttributeType *
 lookup_attr (AttributeListType *list, const char *name)
 {
-  int i;
-  for (i=0; i<list->Number; i++)
-    if (strcmp (list->List[i].name, name) == 0)
-      return & list->List[i];
+  GList *iter;
+  for (iter = list->List; iter != NULL; iter = g_list_next (iter))
+    {
+      AttributeType *attr = iter->data;
+      if (strcmp (attr->name, name) == 0)
+        return attr;
+    }
   return NULL;
 }
 
 static void
 delete_attr (AttributeListType *list, AttributeType *attr)
 {
-  int idx = attr - list->List;
-  if (idx < 0 || idx >= list->Number)
-    return;
-  if (list->Number - idx > 1)
-    memmove (attr, attr+1, (list->Number - idx - 1) * sizeof(AttributeType));
-  list->Number --;
+  GList *iter;
+
+  iter = g_list_find (list->List, attr);
+  g_return_if_fail (iter != NULL);
+
+  FreeAttribute (attr);
+  list->List = g_list_delete_link (list->List, iter);
 }
 
 /* ---------------------------------------------------------------- */

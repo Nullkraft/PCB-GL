@@ -342,14 +342,13 @@ ReportDialog (int argc, char **argv, Coord x, Coord y)
 
 	pcb_snprintf (report, sizeof (report), _("%m+POLYGON ID# %ld;  Flags:%s\n"
 		 "Its bounding box is %$mD %$mD.\n"
-		 "It has %d points and could store %d more\n"
-		 "  without using more memory.\n"
+		 "It has %d points.\n"
 		 "It has %d holes and resides on layer %d.\n"
 		 "%s"), USER_UNITMASK, Polygon->ID,
 		 flags_to_string (Polygon->Flags, POLYGON_TYPE),
 		 Polygon->BoundingBox.X1, Polygon->BoundingBox.Y1,
 		 Polygon->BoundingBox.X2, Polygon->BoundingBox.Y2,
-		 Polygon->PointN, Polygon->PointMax - Polygon->PointN,
+		 Polygon->PointN,
 		 Polygon->HoleIndexN,
 		 GetLayerNumber (PCB->Data, (LayerType *) ptr1),
 		 TEST_FLAG (LOCKFLAG, Polygon) ? _("It is LOCKED.\n") : "");
