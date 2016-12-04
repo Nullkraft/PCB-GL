@@ -1120,7 +1120,11 @@ label_contour (PLINE * a)
       assert (label == INSIDE || label == OUTSIDE);
       LABEL_NODE (cur, label);
     }
-  while ((cur = cur->next) != first_labelled);
+  while ((cur = cur->next) != first_labelled &&
+	 !(cur->next == &a->head && first_labelled == NULL));
+
+  if (first_labelled == NULL)
+    fprintf (stderr, "OOPS, DIDN'T LABEL ANYTHING!\n");
 #ifdef DEBUG_ALL_LABELS
   print_labels (a);
   DEBUGP ("\n\n");
