@@ -1159,7 +1159,7 @@ SearchLayerObjectInternal (LayerType *layer,
       && SearchLineByLocation (locked, (LayerType **)Result1, (LineType **) Result2, (LineType **) Result3))
     return LINE_TYPE;
 
-    if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
+  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
       Type & ARCPOINT_TYPE &&
       SearchArcPointByLocation (locked, (LayerType **)Result1, (ArcType **) Result2, (PointType **) Result3))
     return ARCPOINT_TYPE;
