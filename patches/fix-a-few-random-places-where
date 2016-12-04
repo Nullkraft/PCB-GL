@@ -1,7 +1,7 @@
-Bottom: 7b1adeab03ad5d94d92bf2e5dc0b28e3862d8228
-Top:    1725c326ab310fb2d9d7e680938f988503114851
+Bottom: 0df212f6a91ff8be79f4cf2dc830b87cf94ea432
+Top:    23132933b3dde6a91cc589fd1cefee461543ba85
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 14:30:15 +0000
+Date:   2016-12-04 15:56:01 +0000
 
 Fix a few random places where we fail badly if the board outline polygon computes to NULL
 
@@ -13,7 +13,7 @@ happens.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5274072..a033a4f 100644
+index cd1b79e..56fa133 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1684,6 +1684,8 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)

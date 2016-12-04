@@ -1,7 +1,7 @@
-Bottom: f7a6fa607dd30875a697c50bc4c7afc397b74731
-Top:    1d62330fd180a0f0476c50f3364bbce6935adaf6
+Bottom: 2b17fbfd05c876af4f6d6abd7e5cc238e1a4a5bc
+Top:    d40f4d18408e8af4f0db2de1a06c63d7f59242c9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 14:30:15 +0000
+Date:   2016-12-04 15:56:00 +0000
 
 Avoid solving snap-rounding problem
 
@@ -130,7 +130,7 @@ index 94bdf45..ebe38f5 100644
  int poly_Boolean(const POLYAREA * a, const POLYAREA * b, POLYAREA ** res, int action);
  int poly_Boolean_free(POLYAREA * a, POLYAREA * b, POLYAREA ** res, int action);
 diff --git a/src/polygon.c b/src/polygon.c
-index 814e4ec..79e93e7 100644
+index 6425c5e..82c3b8f 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -303,7 +303,7 @@ degree_circle (PLINE * c, Coord X, Coord Y /* <- Center */, Coord radius, Vector

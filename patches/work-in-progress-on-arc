@@ -1,7 +1,7 @@
-Bottom: 1d62330fd180a0f0476c50f3364bbce6935adaf6
-Top:    69ab6b7279cdf5e4242fa542a6e39e3894e2062b
+Bottom: d40f4d18408e8af4f0db2de1a06c63d7f59242c9
+Top:    d4c7556a82600529aae09426768948e4d731221d
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 14:30:15 +0000
+Date:   2016-12-04 15:56:01 +0000
 
 Work in progress on arc intersection etc..
 
@@ -356,7 +356,7 @@ index ebe38f5..22de3a8 100644
      CVCList *prev, *next, *head;
      char poly, side;
 diff --git a/src/polygon.c b/src/polygon.c
-index 79e93e7..791de89 100644
+index 82c3b8f..37c5dbf 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -114,7 +114,7 @@ dicer output is used for HIDs which cannot render things with holes
