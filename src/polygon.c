@@ -307,6 +307,16 @@ original_poly (PolygonType * p)
       if (n == p->PointN - 1 ||
           (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
         {
+          if (contour == NULL)
+            {
+              printf ("How did that escape - did the loop iterate zero times??\n");
+              POLYGONPOINT_LOOP (p);
+                {
+                  printf ("Hello\n");
+                }
+              END_LOOP;
+              return NULL;
+            }
           poly_PreContour (contour, TRUE);
 
           /* make sure it is a positive contour (outer) or negative (hole) */
