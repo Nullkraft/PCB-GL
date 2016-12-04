@@ -51,6 +51,7 @@ bool ArcPadIntersect (ArcType *, PadType *);
 void LookupElementConnections (ElementType *, FILE *);
 void LookupConnectionsToAllElements (FILE *);
 void LookupConnection (Coord, Coord, bool, Coord, int, bool AndRats, bool store_undo);
+void LookupObject (int, void *, void *, void *, bool, int, bool AndRats, bool store_undo);
 void LookupUnusedPins (FILE *);
 bool ClearFlagOnLinesAndPolygons (bool, int flag, bool store_undo);
 bool ClearFlagOnPinsViasAndPads (bool, int flag, bool store_undo);
