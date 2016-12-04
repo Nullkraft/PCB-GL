@@ -714,6 +714,7 @@ adjust_tree (rtree_t * tree, struct seg *s)
   return 0;
 }
 
+#if 0  /* TURNS OUT DISABLING THIS ACTUALLY (VERY MARGINALLY) SPEEDS THINGS UP! */
 /*
  * seg_in_region()
  * (C) 2006, harry eaton
@@ -735,6 +736,7 @@ seg_in_region (const BoxType * b, void *cl)
     return 0;
   return 1;			/* might intersect */
 }
+#endif
 
 /* Prepend a deferred node-insersion task to a list */
 static insert_node_task *
@@ -961,7 +963,7 @@ contour_bounds_touch (const BoxType * b, void *cl)
       info.tree = rtree_over->tree;
       if (info.tree)
 	if (UNLIKELY (r_search (info.tree, &info.s->box,
-				seg_in_region, seg_in_seg, &info)))
+				NULL /* seg_in_region */, seg_in_seg, &info)))
 	  assert (0); /* XXX: Memory allocation failure */
     }
   while ((av = NEXT_EDGE (av)) != &looping_over->head);
