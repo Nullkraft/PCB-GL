@@ -1200,7 +1200,7 @@ static int is_drill;
 static int is_copper;
 
 static int
-png_set_layer (const char *name, int group, int empty)
+png_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
   int idx = (group >= 0
 	     && group <
