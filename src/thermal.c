@@ -441,6 +441,7 @@ oct_therm (PinType *pin, Cardinal style)
  * Usually this is 4 disjoint regions.
  *
  */
+/* XXX: Could check for polygon with hole as output... indicating the geometry isolated the pin? */
 POLYAREA *
 ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
 {
