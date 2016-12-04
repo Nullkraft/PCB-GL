@@ -76,18 +76,17 @@ static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
 
 static int doing_pinout = 0;
 static bool doing_assy = false;
-static HID_DRAW *hid_draw = NULL;
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
  */
-static void DrawEverything (const BoxType *);
+static void DrawEverything (hidGC gc);
 static void AddPart (void *);
-/* static */ void DrawEMark (ElementType *, Coord, Coord, bool);
-/* static */ void DrawRats (HID_DRAW *hid_draw);
+/* static */ void DrawEMark (hidGC gc, ElementType *, Coord, Coord, bool);
+/* static */ void DrawRats (hidGC gc);
 
 static void
-set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
+set_object_color (hidGC gc, AnyObjectType *obj, char *warn_color, char *selected_color,
                   char *connected_color, char *found_color, char *normal_color)
 {
   char *color;
@@ -98,7 +97,7 @@ set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
   else if (found_color     != NULL && TEST_FLAG (FOUNDFLAG,     obj)) color = found_color;
   else                                                                color = normal_color;
 
-  hid_draw_set_color (Output.fgGC, color);
+  hid_draw_set_color (gc, color);
 }
 
 /*---------------------------------------------------------------------------
@@ -138,39 +137,46 @@ Redraw (void)
   gui->invalidate_all ();
 }
 
+struct side_info {
+  hidGC gc;
+  int side;
+};
+
 static int
 pad_callback (const BoxType * b, void *cl)
 {
   PadType *pad = (PadType *) b;
-  int *side = cl;
+  struct side_info *info = cl;
 
-  if (ON_SIDE (pad, *side))
+  if (ON_SIDE (pad, info->side))
     {
-      set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
+      set_object_color (info->gc, (AnyObjectType *)pad, PCB->WarnColor,
                         PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
                         FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 
-      dapi->draw_pad (pad, NULL, NULL);
+      dapi->draw_pad (info->gc, pad, NULL);
     }
   return 1;
 }
 
 static void
-draw_element_name (ElementType *element)
+draw_element_name (hidGC gc, ElementType *element)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
+
   if ((TEST_FLAG (HIDENAMESFLAG, PCB) && hid_draw_is_gui (hid_draw)) ||
       TEST_FLAG (HIDENAMEFLAG, element))
     return;
-  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)element);
+  ghid_set_lock_effects (gc, (AnyObjectType *)element);
   if (doing_pinout || doing_assy)
-    hid_draw_set_color (Output.fgGC, PCB->ElementColor);
+    hid_draw_set_color (gc, PCB->ElementColor);
   else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, element)))
-    hid_draw_set_color (Output.fgGC, PCB->ElementSelectedColor);
+    hid_draw_set_color (gc, PCB->ElementSelectedColor);
   else if (FRONT (element))
-    hid_draw_set_color (Output.fgGC, PCB->ElementColor);
+    hid_draw_set_color (gc, PCB->ElementColor);
   else
-    hid_draw_set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-  hid_draw_pcb_text (Output.fgGC, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
+    hid_draw_set_color (gc, PCB->InvisibleObjectsColor);
+  hid_draw_pcb_text (gc, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
 }
 
 static int
@@ -178,42 +184,42 @@ name_callback (const BoxType * b, void *cl)
 {
   TextType *text = (TextType *) b;
   ElementType *element = (ElementType *) text->Element;
-  int *side = cl;
+  struct side_info *info = cl;
 
   if (TEST_FLAG (HIDENAMEFLAG, element))
     return 0;
 
-  if (ON_SIDE (element, *side))
-    draw_element_name (element);
+  if (ON_SIDE (element, info->side))
+    draw_element_name (info->gc, element);
   return 0;
 }
 
 static void
-draw_element_pins_and_pads (ElementType *element)
+draw_element_pins_and_pads (hidGC gc, ElementType *element)
 {
   PAD_LOOP (element);
   {
     if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
       {
-        set_object_color ((AnyObjectType *)pad, PCB->WarnColor,
+        set_object_color (gc, (AnyObjectType *)pad, PCB->WarnColor,
                           PCB->PinSelectedColor, PCB->ConnectedColor, PCB->FoundColor,
                           FRONT (pad) ? PCB->PinColor : PCB->InvisibleObjectsColor);
 
-        dapi->draw_pad (pad, NULL, NULL);
+        dapi->draw_pad (gc, pad, NULL);
       }
   }
   END_LOOP;
   PIN_LOOP (element);
   {
-    set_object_color ((AnyObjectType *)pin, PCB->WarnColor, PCB->PinSelectedColor,
+    set_object_color (gc, (AnyObjectType *)pin, PCB->WarnColor, PCB->PinSelectedColor,
                       PCB->ConnectedColor, PCB->FoundColor, PCB->PinColor);
 
-    dapi->draw_pin (pin, NULL, NULL);
+    dapi->draw_pin (gc, pin, NULL);
 
-    set_object_color ((AnyObjectType *)pin, PCB->WarnColor,
+    set_object_color (gc, (AnyObjectType *)pin, PCB->WarnColor,
                       PCB->PinSelectedColor, NULL, NULL, Settings.BlackColor);
 
-    dapi->draw_pin_hole (pin, NULL, NULL);
+    dapi->draw_pin_hole (gc, pin, NULL);
   }
   END_LOOP;
 }
@@ -222,8 +228,9 @@ static int
 EMark_callback (const BoxType * b, void *cl)
 {
   ElementType *element = (ElementType *) b;
+  hidGC gc = cl;
 
-  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
+  DrawEMark (gc, element, element->MarkX, element->MarkY, !FRONT (element));
   return 1;
 }
 
@@ -231,39 +238,40 @@ static int
 rat_callback (const BoxType * b, void *cl)
 {
   RatType *rat = (RatType *)b;
+  hidGC gc = cl;
 
-  set_object_color ((AnyObjectType *) rat, NULL, PCB->RatSelectedColor,
+  set_object_color (gc, (AnyObjectType *) rat, NULL, PCB->RatSelectedColor,
                     PCB->ConnectedColor, PCB->FoundColor, PCB->RatColor);
 
-  dapi->draw_rat (rat, NULL, NULL);
+  dapi->draw_rat (gc, rat, NULL);
   return 1;
 }
 
 static void
-draw_element_package (ElementType *element)
+draw_element_package (hidGC gc, ElementType *element)
 {
-  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)element);
+  ghid_set_lock_effects (gc, (AnyObjectType *)element);
   /* set color and draw lines, arcs, text and pins */
   if (doing_pinout || doing_assy)
-    hid_draw_set_color (Output.fgGC, PCB->ElementColor);
+    hid_draw_set_color (gc, PCB->ElementColor);
   else if (TEST_FLAG (SELECTEDFLAG, element))
-    hid_draw_set_color (Output.fgGC, PCB->ElementSelectedColor);
+    hid_draw_set_color (gc, PCB->ElementSelectedColor);
   else if (FRONT (element))
-    hid_draw_set_color (Output.fgGC, PCB->ElementColor);
+    hid_draw_set_color (gc, PCB->ElementColor);
   else
-    hid_draw_set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+    hid_draw_set_color (gc, PCB->InvisibleObjectsColor);
 
   /* draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (element);
   {
-    //hid_draw_pcb_line (Output.fgGC, line);
-    dapi->draw_line (line, NULL, NULL);
+    //hid_draw_pcb_line (gc, line);
+    dapi->draw_line (gc, line, NULL);
   }
   END_LOOP;
   ARC_LOOP (element);
   {
-    //hid_draw_pcb_arc (Output.fgGC, arc);
-    dapi->draw_arc (arc, NULL, NULL);
+    //hid_draw_pcb_arc (gc, arc);
+    dapi->draw_arc (gc, arc, NULL);
   }
   END_LOOP;
 }
@@ -272,10 +280,10 @@ static int
 element_callback (const BoxType * b, void *cl)
 {
   ElementType *element = (ElementType *) b;
-  int *side = cl;
+  struct side_info *info = cl;
 
-  if (ON_SIDE (element, *side))
-    draw_element_package (element);
+  if (ON_SIDE (element, info->side))
+    draw_element_package (info->gc, element);
   return 1;
 }
 
@@ -284,17 +292,17 @@ element_callback (const BoxType * b, void *cl)
  */
 
 void
-PrintAssembly (HID_DRAW *hid_draw, int side)
+PrintAssembly (hidGC gc, int side)
 {
   int side_group = GetLayerGroupNumberBySide (side);
 
   doing_assy = true;
-  hid_draw_set_draw_faded (Output.fgGC, 1);
-  DrawLayerGroup (hid_draw, side_group);
-  hid_draw_set_draw_faded (Output.fgGC, 0);
+  hid_draw_set_draw_faded (gc, 1);
+  DrawLayerGroup (gc, side_group);
+  hid_draw_set_draw_faded (gc, 0);
 
   /* draw package */
-  DrawSilk (hid_draw, side);
+  DrawSilk (gc, side);
   doing_assy = false;
 }
 
@@ -302,9 +310,9 @@ PrintAssembly (HID_DRAW *hid_draw, int side)
  * initializes some identifiers for a new zoom factor and redraws whole screen
  */
 static void
-DrawEverything (const BoxType *drawn_area)
+DrawEverything (hidGC gc)
 {
-  int i, ngroups, side;
+  int i, ngroups;
   int top_group, bottom_group;
   /* This is the list of layer groups we will draw.  */
   int do_group[MAX_GROUP];
@@ -312,6 +320,10 @@ DrawEverything (const BoxType *drawn_area)
   int drawn_groups[MAX_GROUP];
   int plated, unplated;
   bool paste_empty;
+  struct side_info info;
+  HID_DRAW *hid_draw = gc->hid_draw;
+
+  info.gc = gc;
 
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
@@ -337,14 +349,14 @@ DrawEverything (const BoxType *drawn_area)
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
       && hid_draw_set_layer (hid_draw, "invisible", SL (INVISIBLE, 0), 0))
     {
-      side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
+      info.side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
       if (PCB->ElementOn)
 	{
-	  r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, element_callback, &side);
-	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], hid_draw->clip_box, NULL, name_callback, &side);
-	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), hid_draw->clip_box, NULL);
+	  r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, element_callback, &info);
+	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], hid_draw->clip_box, NULL, name_callback, &info);
+	  dapi->draw_layer (gc, &(PCB->Data->Layer[max_copper_layer + info.side]), NULL);
 	}
-      r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_callback, &side);
+      r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_callback, &info);
       hid_draw_end_layer (hid_draw);
     }
 
@@ -355,7 +367,7 @@ DrawEverything (const BoxType *drawn_area)
 
       if (hid_draw_set_layer (hid_draw, 0, group, 0))
         {
-          DrawLayerGroup (hid_draw, group);
+          DrawLayerGroup (gc, group);
           hid_draw_end_layer (hid_draw);
         }
     }
@@ -365,20 +377,20 @@ DrawEverything (const BoxType *drawn_area)
 
   /* Draw pins, pads, vias below silk */
   if (hid_draw_is_gui (hid_draw))
-    dapi->draw_ppv (SWAP_IDENT ? bottom_group : top_group, hid_draw->clip_box, NULL);
+    dapi->draw_ppv (gc, SWAP_IDENT ? bottom_group : top_group, NULL);
   else
     {
       CountHoles (&plated, &unplated, hid_draw->clip_box);
 
       if (plated && hid_draw_set_layer (hid_draw, "plated-drill", SL (PDRILL, 0), 0))
         {
-          dapi->draw_holes (1, hid_draw->clip_box, NULL);
+          dapi->draw_holes (gc, 1, NULL);
           hid_draw_end_layer (hid_draw);
         }
 
       if (unplated && hid_draw_set_layer (hid_draw, "unplated-drill", SL (UDRILL, 0), 0))
         {
-          dapi->draw_holes (0, hid_draw->clip_box, NULL);
+          dapi->draw_holes (gc, 0, NULL);
           hid_draw_end_layer (hid_draw);
         }
     }
@@ -386,25 +398,25 @@ DrawEverything (const BoxType *drawn_area)
   /* Draw the solder mask if turned on */
   if (hid_draw_set_layer (hid_draw, "componentmask", SL (MASK, TOP), 0))
     {
-      DrawMask (hid_draw, TOP_SIDE);
+      DrawMask (gc, TOP_SIDE);
       hid_draw_end_layer (hid_draw);
     }
 
   if (hid_draw_set_layer (hid_draw, "soldermask", SL (MASK, BOTTOM), 0))
     {
-      DrawMask (hid_draw, BOTTOM_SIDE);
+      DrawMask (gc, BOTTOM_SIDE);
       hid_draw_end_layer (hid_draw);
     }
 
   if (hid_draw_set_layer (hid_draw, "topsilk", SL (SILK, TOP), 0))
     {
-      DrawSilk (hid_draw, TOP_SIDE);
+      DrawSilk (gc, TOP_SIDE);
       hid_draw_end_layer (hid_draw);
     }
 
   if (hid_draw_set_layer (hid_draw, "bottomsilk", SL (SILK, BOTTOM), 0))
     {
-      DrawSilk (hid_draw, BOTTOM_SIDE);
+      DrawSilk (gc, BOTTOM_SIDE);
       hid_draw_end_layer (hid_draw);
     }
 
@@ -412,11 +424,11 @@ DrawEverything (const BoxType *drawn_area)
     {
       /* Draw element Marks */
       if (PCB->PinOn)
-	r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, EMark_callback, NULL);
+	r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, EMark_callback, gc);
       /* Draw rat lines on top */
       if (hid_draw_set_layer (hid_draw, "rats", SL (RATS, 0), 0))
         {
-          DrawRats (hid_draw);
+          DrawRats (gc);
           hid_draw_end_layer (hid_draw);
         }
     }
@@ -424,38 +436,38 @@ DrawEverything (const BoxType *drawn_area)
   paste_empty = IsPasteEmpty (TOP_SIDE);
   if (hid_draw_set_layer (hid_draw, "toppaste", SL (PASTE, TOP), paste_empty))
     {
-      DrawPaste (hid_draw, TOP_SIDE);
+      DrawPaste (gc, TOP_SIDE);
       hid_draw_end_layer (hid_draw);
     }
 
   paste_empty = IsPasteEmpty (BOTTOM_SIDE);
   if (hid_draw_set_layer (hid_draw, "bottompaste", SL (PASTE, BOTTOM), paste_empty))
     {
-      DrawPaste (hid_draw, BOTTOM_SIDE);
+      DrawPaste (gc, BOTTOM_SIDE);
       hid_draw_end_layer (hid_draw);
     }
 
   if (hid_draw_set_layer (hid_draw, "topassembly", SL (ASSY, TOP), 0))
     {
-      PrintAssembly (hid_draw, TOP_SIDE);
+      PrintAssembly (gc, TOP_SIDE);
       hid_draw_end_layer (hid_draw);
     }
 
   if (hid_draw_set_layer (hid_draw, "bottomassembly", SL (ASSY, BOTTOM), 0))
     {
-      PrintAssembly (hid_draw, BOTTOM_SIDE);
+      PrintAssembly (gc, BOTTOM_SIDE);
       hid_draw_end_layer (hid_draw);
     }
 
   if (hid_draw_set_layer (hid_draw, "fab", SL (FAB, 0), 0))
     {
-      PrintFab (Output.fgGC);
+      PrintFab (gc);
       hid_draw_end_layer (hid_draw);
     }
 }
 
 /* static */ void
-DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
+DrawEMark (hidGC gc, ElementType *e, Coord X, Coord Y, bool invisible)
 {
   Coord mark_size = EMARK_SIZE;
   if (!PCB->InvisibleObjectsOn && invisible)
@@ -476,14 +488,14 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
       mark_size = MIN (mark_size, pad0->Thickness / 2);
     }
 
-  ghid_set_lock_effects (Output.fgGC, (AnyObjectType *)e);
-  hid_draw_set_color (Output.fgGC, invisible ? PCB->InvisibleMarkColor : PCB->ElementColor);
-  hid_draw_set_line_cap (Output.fgGC, Trace_Cap);
-  hid_draw_set_line_width (Output.fgGC, 0);
-  hid_draw_line (Output.fgGC, X - mark_size, Y, X, Y - mark_size);
-  hid_draw_line (Output.fgGC, X + mark_size, Y, X, Y - mark_size);
-  hid_draw_line (Output.fgGC, X - mark_size, Y, X, Y + mark_size);
-  hid_draw_line (Output.fgGC, X + mark_size, Y, X, Y + mark_size);
+  ghid_set_lock_effects (gc, (AnyObjectType *)e);
+  hid_draw_set_color (gc, invisible ? PCB->InvisibleMarkColor : PCB->ElementColor);
+  hid_draw_set_line_cap (gc, Trace_Cap);
+  hid_draw_set_line_width (gc, 0);
+  hid_draw_line (gc, X - mark_size, Y, X, Y - mark_size);
+  hid_draw_line (gc, X + mark_size, Y, X, Y - mark_size);
+  hid_draw_line (gc, X - mark_size, Y, X, Y + mark_size);
+  hid_draw_line (gc, X + mark_size, Y, X, Y + mark_size);
 
   /*
    * If an element is locked, place a "L" on top of the "diamond".
@@ -492,22 +504,26 @@ DrawEMark (ElementType *e, Coord X, Coord Y, bool invisible)
    */
   if (TEST_FLAG (LOCKFLAG, e) )
     {
-      hid_draw_line (Output.fgGC, X, Y, X + 2 * mark_size, Y);
-      hid_draw_line (Output.fgGC, X, Y, X, Y - 4* mark_size);
+      hid_draw_line (gc, X, Y, X + 2 * mark_size, Y);
+      hid_draw_line (gc, X, Y, X, Y - 4* mark_size);
     }
 }
 
 static int
 pin_mask_callback (const BoxType * b, void *cl)
 {
-  dapi->draw_pin_mask ((PinType *) b, NULL, NULL);
+  hidGC gc = cl;
+
+  dapi->draw_pin_mask (gc, (PinType *) b, NULL);
   return 1;
 }
 
 static int
 via_mask_callback (const BoxType * b, void *cl)
 {
-  dapi->draw_via_mask ((PinType *) b, NULL, NULL);
+  hidGC gc = cl;
+
+  dapi->draw_via_mask (gc, (PinType *) b, NULL);
   return 1;
 }
 
@@ -515,9 +531,10 @@ static int
 pad_mask_callback (const BoxType * b, void *cl)
 {
   PadType *pad = (PadType *) b;
-  int *side = cl;
-  if (ON_SIDE (pad, *side))
-    dapi->draw_pad_mask (pad, NULL, NULL);
+  struct side_info *info = cl;
+
+  if (ON_SIDE (pad, info->side))
+    dapi->draw_pad_mask (info->gc, pad, NULL);
   return 1;
 }
 
@@ -526,10 +543,13 @@ pad_mask_callback (const BoxType * b, void *cl)
  */
 
 void
-DrawSilk (HID_DRAW *new_hid_draw, int side)
+DrawSilk (hidGC gc, int side)
 {
-  HID_DRAW *old_hid_draw = hid_draw;
-  hid_draw = new_hid_draw;
+  struct side_info info;
+  HID_DRAW *hid_draw = gc->hid_draw;
+
+  info.gc = gc;
+  info.side = side;
 
 #if 0
   /* This code is used when you want to mask silk to avoid exposed
@@ -542,62 +562,57 @@ DrawSilk (HID_DRAW *new_hid_draw, int side)
     {
       hid_draw_use_mask (hid_draw, HID_MASK_BEFORE);
 #endif
-      dapi->draw_layer (LAYER_PTR (max_copper_layer + side), hid_draw->clip_box, NULL);
+      dapi->draw_layer (gc, LAYER_PTR (max_copper_layer + side), NULL);
       /* draw package */
-      r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, element_callback, &side);
-      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], hid_draw->clip_box, NULL, name_callback, &side);
+      r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, element_callback, &info);
+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], hid_draw->clip_box, NULL, name_callback, &info);
 #if 0
     }
 
   hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
-  r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_mask_callback, NULL);
-  r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_mask_callback, NULL);
-  r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_mask_callback, &side);
+  r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_mask_callback, gc);
+  r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_mask_callback, gc);
+  r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_mask_callback, &info);
 
   if (hid_draw->poly_after)
     {
-      hid_draw_use_mask (hid_draw, HID_MASK_AFTER);
-      dapi->draw_layer (LAYER_PTR (max_copper_layer + layer), hid_draw->clip_box, NULL);
+      hid_draw_use_mask (gc, hid_draw, HID_MASK_AFTER);
+      dapi->draw_layer (gc, LAYER_PTR (max_copper_layer + layer), NULL);
       /* draw package */
       r_search (PCB->Data->element_tree, hid_draw->clip_box, NULL, element_callback, &side);
-      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], hid_draw->clip_box, NULL, name_callback, &side);
+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], hid_draw->clip_box, NULL, name_callback, &info);
     }
   hid_draw_use_mask (hid_draw, HID_MASK_OFF);
 #endif
-
-  hid_draw = old_hid_draw;
 }
 
 
 static void
-DrawMaskBoardArea (HID_DRAW *hid_draw, int mask_type)
+DrawMaskBoardArea (hidGC gc, int mask_type)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
+
   /* Skip the mask drawing if the GUI doesn't want this type */
   if ((mask_type == HID_MASK_BEFORE && !hid_draw->poly_before) ||
       (mask_type == HID_MASK_AFTER  && !hid_draw->poly_after))
     return;
 
   hid_draw_use_mask (hid_draw, mask_type);
-  hid_draw_set_color (Output.fgGC, PCB->MaskColor);
+  hid_draw_set_color (gc, PCB->MaskColor);
   if (hid_draw->clip_box == NULL)
-    hid_draw_fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+    hid_draw_fill_rect (gc, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   else
-    hid_draw_fill_rect (Output.fgGC, hid_draw->clip_box->X1, hid_draw->clip_box->Y1,
-                                     hid_draw->clip_box->X2, hid_draw->clip_box->Y2);
+    hid_draw_fill_rect (gc, hid_draw->clip_box->X1, hid_draw->clip_box->Y1,
+                            hid_draw->clip_box->X2, hid_draw->clip_box->Y2);
 }
-
-struct poly_info {
-  const const BoxType *drawn_area;
-  LayerType *layer;
-};
 
 static int
 mask_poly_callback (const BoxType * b, void *cl)
 {
-  struct poly_info *i = cl;
   PolygonType *polygon = (PolygonType *)b;
+  hidGC gc = cl;
 
-  hid_draw_pcb_polygon (Output.pmGC, polygon, i->drawn_area);
+  hid_draw_pcb_polygon (Output.pmGC, polygon);
   return 1;
 }
 
@@ -605,6 +620,7 @@ static int
 mask_line_callback (const BoxType * b, void *cl)
 {
   LineType *line = (LineType *)b;
+  hidGC gc = cl;
 
   hid_draw_pcb_line (Output.pmGC, line);
   return 1;
@@ -614,6 +630,7 @@ static int
 mask_arc_callback (const BoxType * b, void *cl)
 {
   ArcType *arc = (ArcType *)b;
+  hidGC gc = cl;
 
   hid_draw_pcb_arc (Output.pmGC, arc);
   return 1;
@@ -622,16 +639,13 @@ mask_arc_callback (const BoxType * b, void *cl)
 static int
 mask_text_callback (const BoxType * b, void *cl)
 {
-  LayerType *layer = cl;
   TextType *text = (TextType *)b;
+  hidGC gc = cl;
   int min_silk_line;
 
-  if (layer == &PCB->Data->SILKLAYER ||
-      layer == &PCB->Data->BACKSILKLAYER)
-    min_silk_line = PCB->minSlk;
-  else
-    min_silk_line = PCB->minWid;
-  hid_draw_pcb_text (Output.fgGC, text, min_silk_line);
+  min_silk_line = PCB->minSlk;
+
+  hid_draw_pcb_text (gc, text, min_silk_line);
   return 1;
 }
 
@@ -639,34 +653,38 @@ mask_text_callback (const BoxType * b, void *cl)
  * draws solder mask layer - this will cover nearly everything
  */
 void
-DrawMask (HID_DRAW *hid_draw, int side)
+DrawMask (hidGC gc, int side)
 {
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
   LayerType *Layer = LAYER_PTR (side == TOP_SIDE ? top_soldermask_layer : bottom_soldermask_layer);
-  struct poly_info info;
+  struct side_info info;
+  HID_DRAW *hid_draw = gc->hid_draw;
+
+  info.gc = gc;
+  info.side = side;
 
   if (thin)
     hid_draw_set_color (Output.pmGC, PCB->MaskColor);
   else
     {
-      DrawMaskBoardArea (hid_draw, HID_MASK_BEFORE);
+      DrawMaskBoardArea (gc, HID_MASK_BEFORE);
       hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
     }
 
-  r_search (Layer->polygon_tree, hid_draw->clip_box, NULL, mask_poly_callback, &info);
-  r_search (Layer->line_tree,    hid_draw->clip_box, NULL, mask_line_callback, Layer);
-  r_search (Layer->arc_tree,     hid_draw->clip_box, NULL, mask_arc_callback,  Layer);
-  r_search (Layer->text_tree,    hid_draw->clip_box, NULL, mask_text_callback, Layer);
+  r_search (Layer->polygon_tree, hid_draw->clip_box, NULL, mask_poly_callback, gc);
+  r_search (Layer->line_tree,    hid_draw->clip_box, NULL, mask_line_callback, gc);
+  r_search (Layer->arc_tree,     hid_draw->clip_box, NULL, mask_arc_callback,  gc);
+  r_search (Layer->text_tree,    hid_draw->clip_box, NULL, mask_text_callback, gc);
 
-  r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_mask_callback, NULL);
-  r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_mask_callback, NULL);
-  r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_mask_callback, &side);
+  r_search (PCB->Data->pin_tree, hid_draw->clip_box, NULL, pin_mask_callback, gc);
+  r_search (PCB->Data->via_tree, hid_draw->clip_box, NULL, via_mask_callback, gc);
+  r_search (PCB->Data->pad_tree, hid_draw->clip_box, NULL, pad_mask_callback, &info);
 
   if (thin)
     hid_draw_set_color (Output.pmGC, "erase");
   else
     {
-      DrawMaskBoardArea (hid_draw, HID_MASK_AFTER);
+      DrawMaskBoardArea (gc, HID_MASK_AFTER);
       hid_draw_use_mask (hid_draw, HID_MASK_OFF);
     }
 }
@@ -675,20 +693,22 @@ DrawMask (HID_DRAW *hid_draw, int side)
  * draws solder paste layer for a given side of the board
  */
 void
-DrawPaste (HID_DRAW *hid_draw, int side)
+DrawPaste (hidGC gc, int side)
 {
-  hid_draw_set_color (Output.fgGC, PCB->ElementColor);
+  hid_draw_set_color (gc, PCB->ElementColor);
   ALLPAD_LOOP (PCB->Data);
   {
     if (ON_SIDE (pad, side))
-      dapi->draw_pad_paste (pad, NULL, NULL);
+      dapi->draw_pad_paste (gc, pad, NULL);
   }
   ENDALL_LOOP;
 }
 
 /* static */ void
-DrawRats (HID_DRAW *hid_draw)
+DrawRats (hidGC gc)
 {
+  HID_DRAW *hid_draw = gc->hid_draw;
+
   /*
    * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
    * XXX gtk only allows negative drawing.
@@ -697,7 +717,7 @@ DrawRats (HID_DRAW *hid_draw)
 
   if (hid_draw_can_draw_in_mask_clear (hid_draw))
     hid_draw_use_mask (hid_draw, HID_MASK_CLEAR);
-  r_search (PCB->Data->rat_tree, hid_draw->clip_box, NULL, rat_callback, NULL);
+  r_search (PCB->Data->rat_tree, hid_draw->clip_box, NULL, rat_callback, gc);
   if (hid_draw_can_draw_in_mask_clear (hid_draw))
     hid_draw_use_mask (hid_draw, HID_MASK_OFF);
 }
@@ -707,13 +727,14 @@ DrawRats (HID_DRAW *hid_draw)
  * also draws the pins / pads / vias in this layer group.
  */
 void
-DrawLayerGroup (HID_DRAW *hid_draw, int group)
+DrawLayerGroup (hidGC gc, int group)
 {
   int i, rv = 1;
   int layernum;
   LayerType *Layer;
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
+  HID_DRAW *hid_draw = gc->hid_draw;
 
   for (i = n_entries - 1; i >= 0; i--)
     {
@@ -723,13 +744,13 @@ DrawLayerGroup (HID_DRAW *hid_draw, int group)
           strcmp (Layer->Name, "route") == 0)
         rv = 0;
       if (layernum < max_copper_layer && Layer->On)
-        dapi->draw_layer (Layer, hid_draw->clip_box, NULL);
+        dapi->draw_layer (gc, Layer, NULL);
     }
   if (n_entries > 1)
     rv = 1;
 
   if (rv && !hid_draw_is_gui (hid_draw))
-    dapi->draw_ppv (group, hid_draw->clip_box, NULL);
+    dapi->draw_ppv (gc, group, NULL);
 }
 
 static void
@@ -1236,11 +1257,11 @@ DrawObject (int type, void *ptr1, void *ptr2)
 }
 
 static void
-draw_element (ElementType *element)
+draw_element (hidGC gc, ElementType *element)
 {
-  draw_element_package (element);
-  draw_element_name (element);
-  draw_element_pins_and_pads (element);
+  draw_element_package (gc, element);
+  draw_element_name (gc, element);
+  draw_element_pins_and_pads (gc, element);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1248,11 +1269,11 @@ draw_element (ElementType *element)
  */
 
 void
-hid_expose_callback (HID_DRAW *expose_hid_draw, void *item)
+hid_expose_callback (HID_DRAW *hid_draw, void *item)
 {
-  hid_draw = expose_hid_draw;
+  hidGC gc;
 
-  Output.fgGC = hid_draw_make_gc (hid_draw);
+  gc = hid_draw_make_gc (hid_draw);
   Output.bgGC = hid_draw_make_gc (hid_draw);
   Output.pmGC = hid_draw_make_gc (hid_draw);
 
@@ -1262,13 +1283,13 @@ hid_expose_callback (HID_DRAW *expose_hid_draw, void *item)
   if (item)
     {
       doing_pinout = true;
-      draw_element ((ElementType *)item);
+      draw_element (gc, (ElementType *)item);
       doing_pinout = false;
     }
   else
-    DrawEverything (hid_draw->clip_box);
+    DrawEverything (gc);
 
-  hid_draw_destroy_gc (Output.fgGC);
+  hid_draw_destroy_gc (gc);
   hid_draw_destroy_gc (Output.bgGC);
   hid_draw_destroy_gc (Output.pmGC);
   hid_draw = NULL;
