@@ -236,7 +236,9 @@ typedef struct			/* a line/polygon point */
 {
   Coord X, Y, X2, Y2;	/* so Point type can be cast as BoxType */
   long int ID;
+  Angle included_angle;
 } PointType;
+
 
 /* Lines, rats, pads, etc.  */
 typedef struct {
