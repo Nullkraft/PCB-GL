@@ -1,7 +1,7 @@
-Bottom: 30922c36f54bd459b743c831c368c9075fcafb43
-Top:    fc7aa866f8c19a3e0be340e1ec06f9f55d85e4cd
+Bottom: 304bcaa3f26845edcf32c9fa6a9a6eb891fde045
+Top:    73ab8972a4f7a995dc678734dc5bdfd4d2e2d428
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 16:25:13 +0000
+Date:   2016-12-04 15:55:52 +0000
 
 Hidcairo
 
@@ -628,7 +628,7 @@ index 0000000..43c55ee
 +
 +//extern HID_DRAW cairo_graphics;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0e8d8f6..4d874f1 100644
+index 0ce72fb..967ea36 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -41,12 +41,16 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
@@ -776,7 +776,7 @@ index 0e8d8f6..4d874f1 100644
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
-@@ -2727,6 +2824,33 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2736,6 +2833,33 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    return FALSE;
  }

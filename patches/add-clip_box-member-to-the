@@ -1,7 +1,7 @@
-Bottom: 5b1315448639336020dfec7dd58f981b8574b94b
-Top:    c0a0417557e3c29a8f1bf07a79fde566a7988e5c
+Bottom: 3f2057a0d5e3bb85b8ee7ce81578512889a1ab00
+Top:    6d9f9bc7d1a9f14112bbc3611657a4c55d647c3e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 16:56:22 +0000
+Date:   2016-12-04 15:55:52 +0000
 
 Add clip_box member to the HID_DRAW * instance structure
 
@@ -106,10 +106,10 @@ index 6bbd1b0..7cebfe7 100644
  
    gport->drawable = save_drawable;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ff9112e..3a8703d 100644
+index 606d8de..f824be0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -2564,6 +2564,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2573,6 +2573,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_draw_bg_image ();
  
@@ -117,7 +117,7 @@ index ff9112e..3a8703d 100644
    /* hid_expose_callback (&ghid_graphics, &region, 0); */
    ghid_draw_everything (&region);
    hidgl_flush_triangles (priv->hidgl);
-@@ -2951,6 +2952,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2960,6 +2961,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
    region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
  

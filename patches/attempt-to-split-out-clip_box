@@ -1,7 +1,7 @@
-Bottom: 79c4a3048ff1867ec2bd503639a1b26f1140fafc
-Top:    3028831f4ed9d00012fac2c3e1e1549e0d7e6173
+Bottom: 665fbcb4d0ead2916b172eb293099fcdcc3c5cb1
+Top:    7d1262025097c734dbdc2b5d7cc150db981a2984
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 16:56:22 +0000
+Date:   2016-12-04 15:55:52 +0000
 
 Attempt to split out clip_box using code from big re-write
 
@@ -721,7 +721,7 @@ index 7cebfe7..2bfb003 100644
    gport->drawable = save_drawable;
    gport->view = save_view;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6ed1799..91d45d7 100644
+index 6b90e27..4d5ffa8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -400,7 +400,7 @@ ghid_make_gc (HID_DRAW *hid_draw)
@@ -1147,7 +1147,7 @@ index 6ed1799..91d45d7 100644
      hid_draw_end_layer (&ghid_graphics);
    }
  
-@@ -2572,8 +2576,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2581,8 +2585,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_draw_bg_image ();
  
    common_set_clip_box (priv->hid_draw, &region);
@@ -1158,7 +1158,7 @@ index 6ed1799..91d45d7 100644
    hidgl_flush_triangles (priv->hid_draw);
  
    glTexCoord2f (0., 0.);
-@@ -2620,7 +2624,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2629,7 +2633,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    priv->edit_depth = compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT));
    hidgl_set_depth (Output.fgGC, priv->edit_depth);
  
@@ -1167,7 +1167,7 @@ index 6ed1799..91d45d7 100644
  
    ghid_invalidate_current_gc ();
  
-@@ -2838,7 +2842,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2847,7 +2851,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                      -gport->view.y0, 0);
  
@@ -1176,7 +1176,7 @@ index 6ed1799..91d45d7 100644
    hidgl_flush_triangles (priv->hid_draw);
    glPopMatrix ();
  
-@@ -2867,7 +2871,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2876,7 +2880,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    view_data save_view;
    int save_width, save_height;
    BoxType region;
@@ -1184,7 +1184,7 @@ index 6ed1799..91d45d7 100644
  
    save_view = gport->view;
    save_width = gport->width;
-@@ -2962,7 +2965,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2971,7 +2974,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
  
    common_set_clip_box (priv->hid_draw, &region);

@@ -1,7 +1,7 @@
-Bottom: c0a0417557e3c29a8f1bf07a79fde566a7988e5c
-Top:    f4ed11363d5ac65fc566d22cabb0ee80c2821c0e
+Bottom: 6d9f9bc7d1a9f14112bbc3611657a4c55d647c3e
+Top:    812ea89cc72f642645cd9220838ffe4638c50c30
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 16:56:22 +0000
+Date:   2016-12-04 15:55:52 +0000
 
 hidgl: Fixup to use HID_DRAW * rather than hidgl_instance *
 
@@ -436,7 +436,7 @@ index e2d7f67..a4fe876 100644
  /* hidgl_pacakge_acy_resistor.c */
  void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3a8703d..6ed1799 100644
+index f824be0..6b90e27 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -39,6 +39,7 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
@@ -762,7 +762,7 @@ index 3a8703d..6ed1799 100644
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
    glDisable (GL_STENCIL_TEST);
-@@ -2564,10 +2571,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2573,10 +2580,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_draw_bg_image ();
  
@@ -776,7 +776,7 @@ index 3a8703d..6ed1799 100644
  
    glTexCoord2f (0., 0.);
    glColor3f (1., 1., 1.);
-@@ -2619,7 +2626,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2628,7 +2635,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    DrawAttached (Output.fgGC);
    DrawMark (Output.fgGC);
@@ -785,7 +785,7 @@ index 3a8703d..6ed1799 100644
  
    glEnable (GL_LIGHTING);
  
-@@ -2681,7 +2688,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2690,7 +2697,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    draw_crosshair (Output.fgGC, priv);
  
@@ -794,7 +794,7 @@ index 3a8703d..6ed1799 100644
  
    draw_lead_user (Output.fgGC, priv);
  
-@@ -2729,6 +2736,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2738,6 +2745,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    Coord save_max_width;
    Coord save_max_height;
    double xz, yz;
@@ -802,7 +802,7 @@ index 3a8703d..6ed1799 100644
  
    save_view = gport->view;
    save_width = gport->width;
-@@ -2812,7 +2820,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2821,7 +2829,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -811,7 +811,7 @@ index 3a8703d..6ed1799 100644
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
    glDisable (GL_STENCIL_TEST);
-@@ -2830,8 +2838,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2839,8 +2847,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                      -gport->view.y0, 0);
  
@@ -822,7 +822,7 @@ index 3a8703d..6ed1799 100644
    glPopMatrix ();
  
    ghid_end_drawing (gport, widget);
-@@ -2859,6 +2867,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2868,6 +2876,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    view_data save_view;
    int save_width, save_height;
    BoxType region;
@@ -830,7 +830,7 @@ index 3a8703d..6ed1799 100644
  
    save_view = gport->view;
    save_width = gport->width;
-@@ -2899,7 +2908,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2908,7 +2917,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
      return NULL;
    }
@@ -839,7 +839,7 @@ index 3a8703d..6ed1799 100644
    gport->render_priv->in_context = true;
  
    glEnable (GL_BLEND);
-@@ -2924,7 +2933,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2933,7 +2942,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -848,7 +848,7 @@ index 3a8703d..6ed1799 100644
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
    glDisable (GL_STENCIL_TEST);
-@@ -2952,14 +2961,14 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2961,14 +2970,14 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
    region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
  
@@ -867,7 +867,7 @@ index 3a8703d..6ed1799 100644
  
    /* end drawing to current GL-context */
    gport->render_priv->in_context = false;
-@@ -3021,7 +3030,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
+@@ -3030,7 +3039,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
    GtkWidget *widget = gport->drawing_area;
    GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
@@ -876,7 +876,7 @@ index 3a8703d..6ed1799 100644
  
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
-@@ -3032,9 +3041,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
+@@ -3041,9 +3050,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
  void
  ghid_finish_debug_draw (HID_DRAW *hid_draw)
  {
@@ -887,7 +887,7 @@ index 3a8703d..6ed1799 100644
    glPopMatrix ();
  
    ghid_end_drawing (gport, gport->drawing_area);
-@@ -3396,7 +3403,6 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -3405,7 +3412,6 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
  static void
  draw_lead_user (hidGC gc, render_priv *priv)
  {
@@ -895,7 +895,7 @@ index 3a8703d..6ed1799 100644
    int i;
    double radius = priv->lead_user_radius;
    double width = MM_TO_COORD (LEAD_USER_WIDTH);
-@@ -3423,7 +3429,7 @@ draw_lead_user (hidGC gc, render_priv *priv)
+@@ -3432,7 +3438,7 @@ draw_lead_user (hidGC gc, render_priv *priv)
                        radius, radius, 0, 360, gport->view.coord_per_px);
      }
  

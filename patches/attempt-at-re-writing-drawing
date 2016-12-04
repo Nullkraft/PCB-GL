@@ -1,7 +1,7 @@
-Bottom: 3028831f4ed9d00012fac2c3e1e1549e0d7e6173
-Top:    30922c36f54bd459b743c831c368c9075fcafb43
+Bottom: 7d1262025097c734dbdc2b5d7cc150db981a2984
+Top:    304bcaa3f26845edcf32c9fa6a9a6eb891fde045
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 16:56:22 +0000
+Date:   2016-12-04 15:55:52 +0000
 
 Attempt at re-writing drawing routines to pass state via hidGC
 
@@ -1623,7 +1623,7 @@ index 4ef080e..19c4708 100644
  	{
  	  printf("name %s idx %d\n", name, idx);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 91d45d7..0e8d8f6 100644
+index 4d5ffa8..0ce72fb 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -53,8 +53,6 @@ extern HID ghid_hid;
@@ -2625,7 +2625,7 @@ index 91d45d7..0e8d8f6 100644
  
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
-@@ -2531,8 +2554,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2540,8 +2563,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -2634,7 +2634,7 @@ index 91d45d7..0e8d8f6 100644
    /* Setup stenciling */
    /* Drawing operations set the stencil buffer to '1' */
    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); /* Stencil pass => replace stencil value (with 1) */
-@@ -2575,9 +2596,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2584,9 +2605,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_draw_bg_image ();
  
@@ -2647,7 +2647,7 @@ index 91d45d7..0e8d8f6 100644
    hidgl_flush_triangles (priv->hid_draw);
  
    glTexCoord2f (0., 0.);
-@@ -2622,14 +2643,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2631,14 +2652,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    /* Set the current depth to the right value for the layer we are editing */
    priv->edit_depth = compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT));
@@ -2666,7 +2666,7 @@ index 91d45d7..0e8d8f6 100644
    hidgl_flush_triangles (priv->hid_draw);
  
    glEnable (GL_LIGHTING);
-@@ -2682,7 +2701,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2691,7 +2710,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    }
  
    if (!global_view_2d)
@@ -2675,7 +2675,7 @@ index 91d45d7..0e8d8f6 100644
  
    glDisable (GL_CULL_FACE);
    glDisable (GL_DEPTH_TEST);
-@@ -2690,19 +2709,18 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2699,19 +2718,18 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_COLOR_MATERIAL);
    glDisable (GL_LIGHTING);
  
@@ -2698,7 +2698,7 @@ index 91d45d7..0e8d8f6 100644
    Output.bgGC = NULL;
    Output.pmGC = NULL;
    g_timer_start (priv->time_since_expose);
-@@ -2832,7 +2850,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2841,7 +2859,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* call the drawing routine */
@@ -2706,7 +2706,7 @@ index 91d45d7..0e8d8f6 100644
    glPushMatrix ();
    glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
              (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px,
-@@ -2862,6 +2879,7 @@ GdkPixmap *
+@@ -2871,6 +2888,7 @@ GdkPixmap *
  ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
  {
    render_priv *priv = gport->render_priv;
@@ -2714,7 +2714,7 @@ index 91d45d7..0e8d8f6 100644
    GdkGLConfig *glconfig;
    GdkPixmap *pixmap;
    GdkGLPixmap *glpixmap;
-@@ -2944,7 +2962,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2953,7 +2971,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* call the drawing routine */
@@ -2722,7 +2722,7 @@ index 91d45d7..0e8d8f6 100644
    glPushMatrix ();
    glScalef ((gport->view.flip_x ? -1. : 1.) / gport->view.coord_per_px,
              (gport->view.flip_y ? -1. : 1.) / gport->view.coord_per_px,
-@@ -2964,8 +2981,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2973,8 +2990,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
    region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
  
@@ -2733,7 +2733,7 @@ index 91d45d7..0e8d8f6 100644
    hidgl_flush_triangles (priv->hid_draw);
    glPopMatrix ();
  
-@@ -2993,6 +3010,7 @@ HID_DRAW *
+@@ -3002,6 +3019,7 @@ HID_DRAW *
  ghid_request_debug_draw (void)
  {
    GHidPort *port = gport;
@@ -2741,7 +2741,7 @@ index 91d45d7..0e8d8f6 100644
    GtkWidget *widget = port->drawing_area;
    GtkAllocation allocation;
  
-@@ -3009,8 +3027,6 @@ ghid_request_debug_draw (void)
+@@ -3018,8 +3036,6 @@ ghid_request_debug_draw (void)
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -2750,7 +2750,7 @@ index 91d45d7..0e8d8f6 100644
    /* Setup stenciling */
    glDisable (GL_STENCIL_TEST);
  
-@@ -3023,17 +3039,16 @@ ghid_request_debug_draw (void)
+@@ -3032,17 +3048,16 @@ ghid_request_debug_draw (void)
                  port->view.flip_y ? port->view.y0 - PCB->MaxHeight :
                               -port->view.y0, 0);
  

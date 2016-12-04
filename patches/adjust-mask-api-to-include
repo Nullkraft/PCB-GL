@@ -1,7 +1,7 @@
-Bottom: ef0fec57e0917df136b509a700e3fbb39d125d91
-Top:    fc4ecd4ec374f12ac23302244e454070f3810f79
+Bottom: bc0813b2071bae9d485db1ba15f837dda9071cf1
+Top:    e84e5017e87d298c7671dfc8e38a4bd38cfd096e
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 16:56:21 +0000
+Date:   2016-12-04 15:55:51 +0000
 
 Adjust mask API to include a HID_DRAW pointer
 
@@ -95,7 +95,7 @@ index 1c8e814..8024e84 100644
    static int mask_seq_id = 0;
    GdkColor color;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 36cf217..ff07d65 100644
+index 63c20bf..e8e9119 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -538,7 +538,7 @@ ghid_draw_bg_image (void)

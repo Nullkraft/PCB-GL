@@ -1,7 +1,7 @@
-Bottom: ed979d446133c943031a073ea6f3a918b1ef9744
-Top:    01200836a307a90b0a860697c25f70a5e23fb9a5
+Bottom: 26cddd1fc2933aa8ca442a65c9305f95cff11e3a
+Top:    9220a931e88eeb88470e901a145fc475b08d4517
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-18 16:56:22 +0000
+Date:   2016-12-04 15:55:51 +0000
 
 Add HID_DRAW* parameter to (HID_DRAW *)->make_gc() function
 
@@ -96,7 +96,7 @@ index 5fac157..2a2a280 100644
    hidGC gc = (hidGC)g_new0 (struct gtk_gc_struct, 1);
    gtkGC gtk_gc = (gtkGC)gc;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index edc53c6..a7b2f97 100644
+index 1582c25..01662c3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -381,7 +381,7 @@ ghid_destroy_gc (hidGC gc)
