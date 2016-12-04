@@ -15,7 +15,8 @@
 #endif
 
 extern HID ghid_hid;
-extern HID_DRAW ghid_graphics;
+HID_DRAW ghid_graphics;
+extern HID_DRAW_CLASS ghid_graphics_class;
 
 /* Sets priv->u_gc to the "right" GC to use (wrt mask or window)
 */
@@ -861,7 +862,7 @@ redraw_region (GdkRectangle *rect)
   ghid_draw_bg_image();
 
   common_set_clip_box (&ghid_graphics, &region);
-  hid_expose_callback (&ghid_graphics, &region, 0);
+  hid_expose_callback (&ghid_graphics, 0);
   ghid_draw_grid ();
 
   /* In some cases we are called with the crosshair still off */
@@ -1112,6 +1113,14 @@ draw_crosshair (render_priv *priv)
 void
 ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 {
+  /* Init ghid_graphics HID_DRAW instance */
+  memset (&ghid_graphics, 0, sizeof (HID_DRAW));
+
+  ghid_graphics.klass = &ghid_graphics_class;
+  ghid_graphics.poly_after = true;
+  common_nogui_graphics_init (&ghid_graphics);
+  common_draw_helpers_init (&ghid_graphics);
+
   /* Init any GC's required */
   port->render_priv = g_new0 (render_priv, 1);
   port->render_priv->crosshair_gc = hid_draw_make_gc (&ghid_graphics);
@@ -1239,7 +1248,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                       0, 0, allocation.width, allocation.height);
 
   /* call the drawing routine */
-  hid_expose_callback (&ghid_graphics, NULL, pinout->element);
+  hid_expose_callback (&ghid_graphics, pinout->element);
 
   gport->drawable = save_drawable;
   gport->view = save_view;
@@ -1297,7 +1306,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
 
   common_set_clip_box (&ghid_graphics, &region);
-  hid_expose_callback (&ghid_graphics, &region, NULL);
+  hid_expose_callback (&ghid_graphics, NULL);
 
   gport->drawable = save_drawable;
   gport->view = save_view;

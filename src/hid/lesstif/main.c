@@ -836,7 +836,7 @@ Benchmark (int argc, char **argv, Coord x, Coord y)
   do
     {
       XFillRectangle (display, pixmap, bg_gc, 0, 0, view_width, view_height);
-      hid_expose_callback (&lesstif_graphics, &region, 0);
+      hid_expose_callback (&lesstif_graphics, 0);
       XSync (display, 0);
       time (&end);
       i++;
@@ -2587,7 +2587,7 @@ idle_proc (XtPointer dummy)
       common_set_clip_box (&lesstif_graphics, &region);
 
       DrawBackgroundImage();
-      hid_expose_callback (&lesstif_graphics, &region, 0);
+      hid_expose_callback (&lesstif_graphics, 0);
       draw_grid ();
       lesstif_use_mask (&lesstif_graphics, HID_MASK_OFF);
       show_crosshair (0); /* To keep the drawn / not drawn info correct */
@@ -3814,7 +3814,7 @@ pinout_callback (Widget da, PinoutData * pd,
   XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);
 
   common_set_clip_box (&lesstif_graphics, &region);
-  hid_expose_callback (&lesstif_graphics, &region, pd->item);
+  hid_expose_callback (&lesstif_graphics, pd->item);
 
   pinout = 0;
   view_left_x = save_vx;

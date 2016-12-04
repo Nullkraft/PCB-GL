@@ -685,11 +685,11 @@ gerber_do_export (HID_Attr_Val * options)
 
   common_set_clip_box (&gerber_graphics, &region);
 
-  hid_expose_callback (&gerber_graphics, &region, 0);
+  hid_expose_callback (&gerber_graphics, 0);
 
   layer_list_idx = 0;
   finding_apertures = 0;
-  hid_expose_callback (&gerber_graphics, &region, 0);
+  hid_expose_callback (&gerber_graphics, 0);
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
 
@@ -913,12 +913,12 @@ gerber_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
       && strcmp (name, "outline")
       && strcmp (name, "route"))
     {
+      hidGC gc = hid_draw_make_gc (&gerber_graphics);
       if (outline_layer
 	  && outline_layer != PCB->Data->Layer+idx)
-	dapi->draw_layer (outline_layer, &region, NULL);
+	dapi->draw_layer (outline_layer, gerber_graphics.clip_box, NULL);
       else if (!outline_layer)
 	{
-	  hidGC gc = hid_draw_make_gc (&gerber_graphics);
 	  printf("name %s idx %d\n", name, idx);
 	  if (SL_TYPE (idx) == SL_SILK)
 	    hid_draw_set_line_width (gc, PCB->minSlk);
@@ -930,8 +930,8 @@ gerber_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 	  hid_draw_line (gc, 0, 0, 0, PCB->MaxHeight);
 	  hid_draw_line (gc, PCB->MaxWidth, 0, PCB->MaxWidth, PCB->MaxHeight);
 	  hid_draw_line (gc, 0, PCB->MaxHeight, PCB->MaxWidth, PCB->MaxHeight);
-	  hid_draw_destroy_gc (gc);
 	}
+      hid_draw_destroy_gc (gc);
     }
 
   return 1;
