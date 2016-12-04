@@ -52,17 +52,10 @@ typedef struct {
 
 } hidgl_priv;
 
-/* NB: hidgl_instance is a public type, intended to be used as an opaque pointer */
-typedef struct {
-  hidgl_priv *priv;
-
-} hidgl_instance;
 
 /* NB: hidglGC is a semi-private type, only defined here to enable inlining of geometry creation, and for derived GUIs to extend */
 typedef struct hidgl_gc_struct {
   struct hid_gc_struct gc; /* Parent */
-
-  hidgl_instance *hidgl;
 
   float depth;
 
@@ -71,7 +64,7 @@ typedef struct hidgl_gc_struct {
 extern hidgl_shader *circular_program;
 extern hidgl_shader *resistor_program;
 
-void hidgl_flush_triangles (hidgl_instance *hidgl);
+void hidgl_flush_triangles (HID_DRAW *hid_draw);
 void hidgl_ensure_vertex_space (hidGC gc, int count);
 void hidgl_ensure_triangle_space (hidGC gc, int count);
 
@@ -81,9 +74,8 @@ hidgl_add_vertex_3D_tex (hidGC gc,
                          GLfloat x, GLfloat y, GLfloat z,
                          GLfloat s, GLfloat t)
 {
-  hidglGC hidgl_gc = (hidglGC)gc;
-  hidgl_instance *hidgl = hidgl_gc->hidgl;
-  hidgl_priv *priv = hidgl->priv;
+  HID_DRAW *hid_draw = gc->hid_draw;
+  hidgl_priv *priv = hid_draw->priv;
 
   priv->buffer.triangle_array [priv->buffer.coord_comp_count++] = x;
   priv->buffer.triangle_array [priv->buffer.coord_comp_count++] = y;
@@ -166,16 +158,18 @@ void hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_bo
 void hidgl_fill_rect (hidGC gc, Coord x1, Coord y1, Coord x2, Coord y2);
 
 void hidgl_init (void);
-hidgl_instance *hidgl_new_instance (void);
-void hidgl_free_instance (hidgl_instance *hidgl);
-void hidgl_init_gc (hidgl_instance *hidgl, hidGC gc);
+HID_DRAW *hidgl_new_instance (void);
+void hidgl_class_init (HID_DRAW_CLASS *klass);
+void hidgl_instance_init (HID_DRAW *hid_draw);
+void hidgl_free_instance (HID_DRAW *hid_draw);
+void hidgl_init_gc (HID_DRAW *hid_draw, hidGC gc);
 void hidgl_finish_gc (hidGC gc);
-void hidgl_start_render (hidgl_instance *hidgl);
-void hidgl_finish_render (hidgl_instance *hidgl);
-int hidgl_stencil_bits (hidgl_instance *hidgl);
-int hidgl_assign_clear_stencil_bit (hidgl_instance *hidgl);
-void hidgl_return_stencil_bit (hidgl_instance *hidgl, int bit);
-void hidgl_reset_stencil_usage (hidgl_instance *hidgl);
+void hidgl_start_render (HID_DRAW *hid_draw);
+void hidgl_finish_render (HID_DRAW *hid_draw);
+int hidgl_stencil_bits (HID_DRAW *hid_draw);
+int hidgl_assign_clear_stencil_bit (HID_DRAW *hid_draw);
+void hidgl_return_stencil_bit (HID_DRAW *hid_draw, int bit);
+void hidgl_reset_stencil_usage (HID_DRAW *hid_draw);
 
 /* hidgl_pacakge_acy_resistor.c */
 void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);

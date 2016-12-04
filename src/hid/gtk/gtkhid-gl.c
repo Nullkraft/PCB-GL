@@ -39,6 +39,7 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
 #include <gtk/gtkgl.h>
 #include "hid/common/hidgl.h"
 
+#include "hid/common/hidnogui.h"
 #include "hid/common/draw_helpers.h"
 #include "hid/common/trackball.h"
 
@@ -49,7 +50,7 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
 //#define VIEW_ORTHO
 
 extern HID ghid_hid;
-extern HID_DRAW ghid_graphics;
+static HID_DRAW ghid_graphics;
 extern HID_DRAW_CLASS ghid_graphics_class;
 
 static hidGC current_gc = NULL;
@@ -92,7 +93,7 @@ typedef struct render_priv {
   Coord lead_user_x;
   Coord lead_user_y;
 
-  hidgl_instance *hidgl;
+  HID_DRAW *hid_draw;
   GList *active_gc_list;
   double edit_depth;
 
@@ -235,18 +236,18 @@ compute_depth (int group)
 }
 
 static void
-start_subcomposite (hidgl_instance *hidgl)
+start_subcomposite (HID_DRAW *hid_draw)
 {
   render_priv *priv = gport->render_priv;
   int stencil_bit;
 
   /* Flush out any existing geoemtry to be rendered */
-  hidgl_flush_triangles (hidgl);
+  hidgl_flush_triangles (hid_draw);
 
   glEnable (GL_STENCIL_TEST);                                 /* Enable Stencil test */
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);                 /* Stencil pass => replace stencil value (with 1) */
 
-  stencil_bit = hidgl_assign_clear_stencil_bit (hidgl);       /* Get a new (clean) bitplane to stencil with */
+  stencil_bit = hidgl_assign_clear_stencil_bit (hid_draw);    /* Get a new (clean) bitplane to stencil with */
   glStencilMask (stencil_bit);                                /* Only write to our subcompositing stencil bitplane */
   glStencilFunc (GL_GREATER, stencil_bit, stencil_bit);       /* Pass stencil test if our assigned bit is clear */
 
@@ -254,14 +255,14 @@ start_subcomposite (hidgl_instance *hidgl)
 }
 
 static void
-end_subcomposite (hidgl_instance *hidgl)
+end_subcomposite (HID_DRAW *hid_draw)
 {
   render_priv *priv = gport->render_priv;
 
   /* Flush out any existing geoemtry to be rendered */
-  hidgl_flush_triangles (hidgl);
+  hidgl_flush_triangles (hid_draw);
 
-  hidgl_return_stencil_bit (hidgl, priv->subcomposite_stencil_bit);  /* Relinquish any bitplane we previously used */
+  hidgl_return_stencil_bit (hid_draw, priv->subcomposite_stencil_bit);  /* Relinquish any bitplane we previously used */
 
   glStencilMask (0);
   glStencilFunc (GL_ALWAYS, 0, 0);                            /* Always pass stencil test */
@@ -304,7 +305,6 @@ int
 ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
   render_priv *priv = gport->render_priv;
-  hidgl_instance *hidgl = priv->hidgl;
   bool group_visible = false;
   bool subcomposite = true;
 
@@ -349,10 +349,10 @@ ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 	}
     }
 
-  end_subcomposite (hidgl);
+  end_subcomposite (hid_draw);
 
   if (group_visible && subcomposite)
-    start_subcomposite (hidgl);
+    start_subcomposite (hid_draw);
 
   /* Drawing is already flushed by {start,end}_subcomposite */
   set_depth_on_all_active_gc (priv, compute_depth (group));
@@ -361,12 +361,9 @@ ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 }
 
 static void
-ghid_end_layer ()
+ghid_end_layer (HID_DRAW *graphics)
 {
-  render_priv *priv = gport->render_priv;
-  hidgl_instance *hidgl = priv->hidgl;
-
-  end_subcomposite (hidgl);
+  end_subcomposite (graphics);
 }
 
 void
@@ -388,9 +385,9 @@ ghid_make_gc (HID_DRAW *hid_draw)
   gtkGC gtk_gc = (gtkGC)gc;
 
   gc->hid = &ghid_hid;
-  gc->hid_draw = &ghid_graphics;
+  gc->hid_draw = hid_draw;
 
-  hidgl_init_gc (priv->hidgl, gc);
+  hidgl_init_gc (hid_draw, gc);
 
   gtk_gc->colorname = Settings.BackgroundColor;
   gtk_gc->alpha_mult = 1.0;
@@ -540,15 +537,13 @@ ghid_draw_bg_image (void)
 void
 ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 {
-  render_priv *priv = gport->render_priv;
-  hidgl_instance *hidgl = priv->hidgl;
   static int stencil_bit = 0;
 
   if (mode == cur_mask)
     return;
 
   /* Flush out any existing geoemtry to be rendered */
-  hidgl_flush_triangles (hidgl);
+  hidgl_flush_triangles (hid_draw);
 
   switch (mode)
     {
@@ -561,7 +556,7 @@ ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
       glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
       glDepthMask (GL_FALSE);
       glEnable (GL_STENCIL_TEST);                           /* Enable Stencil test */
-      stencil_bit = hidgl_assign_clear_stencil_bit (hidgl); /* Get a new (clean) bitplane to stencil with */
+      stencil_bit = hidgl_assign_clear_stencil_bit (hid_draw); /* Get a new (clean) bitplane to stencil with */
       glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  /* Always pass stencil test, write stencil_bit */
       glStencilMask (stencil_bit);                          /* Only write to our subcompositing stencil bitplane */
       glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           /* Stencil pass => replace stencil value (with 1) */
@@ -577,7 +572,7 @@ ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode)
 
     case HID_MASK_OFF:
       /* Disable stenciling */
-      hidgl_return_stencil_bit (hidgl, stencil_bit);        /* Relinquish any bitplane we previously used */
+      hidgl_return_stencil_bit (hid_draw, stencil_bit);     /* Relinquish any bitplane we previously used */
       glDisable (GL_STENCIL_TEST);                          /* Disable Stencil test */
       break;
     }
@@ -733,7 +728,7 @@ set_gl_color_for_gc (hidGC gc)
   g = g * gtk_gc->saturation + luminance * (1.0 - gtk_gc->saturation);
   b = b * gtk_gc->saturation + luminance * (1.0 - gtk_gc->saturation);
 
-  hidgl_flush_triangles (gtk_gc->hidgl_gc.hidgl);
+  hidgl_flush_triangles (gtk_gc->hidgl_gc.gc.hid_draw);
   glColor4d (r, g, b, a);
 }
 
@@ -1103,12 +1098,24 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
     }
 
   hidgl_init ();
-  priv->hidgl = hidgl_new_instance ();
 
   /* Setup HID function pointers specific to the GL renderer*/
+  hidgl_class_init (&ghid_graphics_class);
+
   ghid_graphics_class.end_layer = ghid_end_layer;
   ghid_graphics_class._fill_pcb_polygon = ghid_fill_pcb_polygon;
   ghid_graphics_class._thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+
+  /* Init ghid_graphics HID_DRAW instance */
+  memset (&ghid_graphics, 0, sizeof (HID_DRAW));
+
+  ghid_graphics.klass = &ghid_graphics_class;
+  ghid_graphics.poly_after = true;
+  common_nogui_graphics_init (&ghid_graphics);
+  common_draw_helpers_init (&ghid_graphics);
+  hidgl_instance_init (&ghid_graphics);
+
+  priv->hid_draw = &ghid_graphics;
 }
 
 void
@@ -1116,7 +1123,7 @@ ghid_shutdown_renderer (GHidPort *port)
 {
   render_priv *priv = port->render_priv;
 
-  hidgl_free_instance (priv->hidgl);
+  hidgl_free_instance (priv->hid_draw);
 
   ghid_cancel_lead_user ();
   g_free (port->render_priv);
@@ -1161,7 +1168,7 @@ ghid_start_drawing (GHidPort *port, GtkWidget *widget)
 
   port->render_priv->in_context = true;
 
-  hidgl_start_render (port->render_priv->hidgl);
+  hidgl_start_render (port->render_priv->hid_draw);
 
   return TRUE;
 }
@@ -1171,7 +1178,7 @@ ghid_end_drawing (GHidPort *port, GtkWidget *widget)
 {
   GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
 
-  hidgl_finish_render (port->render_priv->hidgl);
+  hidgl_finish_render (port->render_priv->hid_draw);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
@@ -1709,7 +1716,7 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)
 
 //  poly_FreeContours (&polygon.NoHoles);
 
-  hidgl_flush_triangles (priv->hidgl);
+  hidgl_flush_triangles (priv->hid_draw);
 }
 
 static void
@@ -1796,7 +1803,7 @@ GhidDrawMask (int side, BoxType * screen)
   fill_board_outline (out->fgGC, screen);
 
   ghid_set_alpha_mult (out->fgGC, 1.0);
-//  hidgl_flush_triangles (priv->hidgl);
+//  hidgl_flush_triangles (priv->hid_draw);
 #if 0
   glDisable (GL_TEXTURE_GEN_S);
   glDisable (GL_TEXTURE_GEN_T);
@@ -1880,7 +1887,7 @@ ghid_draw_outline_between_layers (int from_layer, int to_layer, BoxType *drawn_a
 
   poly_FreeContours (&polygon.NoHoles);
 
-  hidgl_flush_triangles (priv->hidgl);
+  hidgl_flush_triangles (priv->hid_draw);
 }
 
 static int
@@ -1919,7 +1926,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
 
       if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
         /* Mask out drilled holes on this layer */
-        hidgl_flush_triangles (priv->hidgl);
+        hidgl_flush_triangles (priv->hid_draw);
         glPushAttrib (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glColorMask (0, 0, 0, 0);
         glDepthMask (GL_FALSE);
@@ -1927,7 +1934,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
         fill_board_outline_holes (Output.bgGC, screen);
-        hidgl_flush_triangles (priv->hidgl);
+        hidgl_flush_triangles (priv->hid_draw);
         glPopAttrib ();
       }
 
@@ -1944,7 +1951,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
         hid_draw_set_layer (&ghid_graphics, 0, group, 0);
 
         if (!is_outline && !TEST_FLAG (THINDRAWFLAG, PCB)) {
-          hidgl_flush_triangles (priv->hidgl);
+          hidgl_flush_triangles (priv->hid_draw);
           glPushAttrib (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
           glColorMask (0, 0, 0, 0);
           glDepthMask (GL_FALSE);
@@ -1952,7 +1959,7 @@ GhidDrawLayerGroup (int group, const BoxType * screen)
           if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
           if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
           fill_board_outline_holes (Output.bgGC, screen);
-          hidgl_flush_triangles (priv->hidgl);
+          hidgl_flush_triangles (priv->hid_draw);
           glPopAttrib ();
         }
       }
@@ -2255,18 +2262,18 @@ ghid_draw_everything (BoxType *drawn_area)
 
   /* Draw pins, pads, vias below silk */
   if (global_view_2d) {
-    start_subcomposite (priv->hidgl);
+    start_subcomposite (priv->hid_draw);
 
     if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
       /* Mask out drilled holes */
-      hidgl_flush_triangles (priv->hidgl);
+      hidgl_flush_triangles (priv->hid_draw);
       glPushAttrib (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       glColorMask (0, 0, 0, 0);
       glDepthMask (GL_FALSE);
       if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
       if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
       fill_board_outline_holes (Output.bgGC, drawn_area);
-      hidgl_flush_triangles (priv->hidgl);
+      hidgl_flush_triangles (priv->hid_draw);
       glPopAttrib ();
     }
 
@@ -2274,7 +2281,7 @@ ghid_draw_everything (BoxType *drawn_area)
     if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
     if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
 
-    end_subcomposite (priv->hidgl);
+    end_subcomposite (priv->hid_draw);
   }
 
   /* Draw the solder mask if turned on */
@@ -2335,7 +2342,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
   /* TODO: We could use the GLU tessellator though */
-  if (hidgl_stencil_bits (priv->hidgl) == 0)
+  if (hidgl_stencil_bits (priv->hid_draw) == 0)
     ghid_graphics_class._fill_pcb_polygon = common_fill_pcb_polygon;
 
   glEnable (GL_BLEND);
@@ -2421,7 +2428,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  hidgl_reset_stencil_usage (priv->hidgl);
+  hidgl_reset_stencil_usage (priv->hid_draw);
 
   /* Disable the stencil test until we need it - otherwise it gets dirty */
   glDisable (GL_STENCIL_TEST);
@@ -2573,10 +2580,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_draw_bg_image ();
 
-  common_set_clip_box (&ghid_graphics, &region);
-  /* hid_expose_callback (&ghid_graphics, &region, 0); */
+  common_set_clip_box (priv->hid_draw, &region);
+  /* hid_expose_callback (priv->hid_draw, &region, 0); */
   ghid_draw_everything (&region);
-  hidgl_flush_triangles (priv->hidgl);
+  hidgl_flush_triangles (priv->hid_draw);
 
   glTexCoord2f (0., 0.);
   glColor3f (1., 1., 1.);
@@ -2628,7 +2635,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   DrawAttached (Output.fgGC);
   DrawMark (Output.fgGC);
-  hidgl_flush_triangles (priv->hidgl);
+  hidgl_flush_triangles (priv->hid_draw);
 
   glEnable (GL_LIGHTING);
 
@@ -2690,7 +2697,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   draw_crosshair (Output.fgGC, priv);
 
-  hidgl_flush_triangles (priv->hidgl);
+  hidgl_flush_triangles (priv->hid_draw);
 
   draw_lead_user (Output.fgGC, priv);
 
@@ -2738,6 +2745,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   Coord save_max_width;
   Coord save_max_height;
   double xz, yz;
+  HID_DRAW *hid_draw = priv->hid_draw;
 
   save_view = gport->view;
   save_width = gport->width;
@@ -2821,7 +2829,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  hidgl_reset_stencil_usage (priv->hidgl);
+  hidgl_reset_stencil_usage (priv->hid_draw);
 
   /* Disable the stencil test until we need it - otherwise it gets dirty */
   glDisable (GL_STENCIL_TEST);
@@ -2839,8 +2847,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                 gport->view.flip_y ? gport->view.y0 - PCB->MaxHeight :
                                     -gport->view.y0, 0);
 
-  hid_expose_callback (&ghid_graphics, NULL, pinout->element);
-  hidgl_flush_triangles (priv->hidgl);
+  hid_expose_callback (hid_draw, NULL, pinout->element);
+  hidgl_flush_triangles (priv->hid_draw);
   glPopMatrix ();
 
   ghid_end_drawing (gport, widget);
@@ -2868,6 +2876,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   view_data save_view;
   int save_width, save_height;
   BoxType region;
+  HID_DRAW *hid_draw = priv->hid_draw;
 
   save_view = gport->view;
   save_width = gport->width;
@@ -2908,7 +2917,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
     return NULL;
   }
-  hidgl_start_render (priv->hidgl);
+  hidgl_start_render (priv->hid_draw);
   gport->render_priv->in_context = true;
 
   glEnable (GL_BLEND);
@@ -2933,7 +2942,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  hidgl_reset_stencil_usage (priv->hidgl);
+  hidgl_reset_stencil_usage (priv->hid_draw);
 
   /* Disable the stencil test until we need it - otherwise it gets dirty */
   glDisable (GL_STENCIL_TEST);
@@ -2961,14 +2970,14 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   region.Y1 = MAX (0, MIN (PCB->MaxHeight, region.Y1));
   region.Y2 = MAX (0, MIN (PCB->MaxHeight, region.Y2));
 
-  common_set_clip_box (&ghid_graphics, &region);
-  hid_expose_callback (&ghid_graphics, &region, NULL);
-  hidgl_flush_triangles (priv->hidgl);
+  common_set_clip_box (priv->hid_draw, &region);
+  hid_expose_callback (priv->hid_draw, &region, NULL);
+  hidgl_flush_triangles (priv->hid_draw);
   glPopMatrix ();
 
   glFlush ();
 
-  hidgl_finish_render (priv->hidgl);
+  hidgl_finish_render (priv->hid_draw);
 
   /* end drawing to current GL-context */
   gport->render_priv->in_context = false;
@@ -3030,7 +3039,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
   GtkWidget *widget = gport->drawing_area;
   GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
 
-  hidgl_flush_triangles (priv->hidgl);
+  hidgl_flush_triangles (priv->hid_draw);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
@@ -3041,9 +3050,7 @@ ghid_flush_debug_draw (HID_DRAW *hid_draw)
 void
 ghid_finish_debug_draw (HID_DRAW *hid_draw)
 {
-  render_priv *priv = gport->render_priv;
-
-  hidgl_flush_triangles (priv->hidgl);
+  hidgl_flush_triangles (hid_draw);
   glPopMatrix ();
 
   ghid_end_drawing (gport, gport->drawing_area);
@@ -3405,7 +3412,6 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
 static void
 draw_lead_user (hidGC gc, render_priv *priv)
 {
-  gtkGC gtk_gc = (gtkGC)gc;
   int i;
   double radius = priv->lead_user_radius;
   double width = MM_TO_COORD (LEAD_USER_WIDTH);
@@ -3432,7 +3438,7 @@ draw_lead_user (hidGC gc, render_priv *priv)
                       radius, radius, 0, 360, gport->view.coord_per_px);
     }
 
-  hidgl_flush_triangles (gtk_gc->hidgl_gc.hidgl);
+  hidgl_flush_triangles (gc->hid_draw);
   glPopAttrib ();
 }
 
