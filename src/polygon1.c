@@ -3860,6 +3860,7 @@ poly_Init (POLYAREA * p)
   p->contours = NULL;
   p->contour_tree = r_create_tree (NULL, 0, 0);
   p->parentage = no_parentage;
+  p->user_data = NULL;
 }
 
 POLYAREA *
