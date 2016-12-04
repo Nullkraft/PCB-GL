@@ -12,25 +12,25 @@ void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
 static void
 draw_pin (PinType *pin, const BoxType *drawn_area, void *userdata)
 {
-  hid_draw_pcb_pv (Output.fgGC, Output.bgGC, pin, false, false);
+  hid_draw_pcb_pv (Output.fgGC, pin, false);
 }
 
 static void
 draw_pin_mask (PinType *pin, const BoxType *drawn_area, void *userdata)
 {
-  hid_draw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+  hid_draw_pcb_pv (Output.pmGC, pin, true);
 }
 
 static void
 draw_via (PinType *via, const BoxType *drawn_area, void *userdata)
 {
-  hid_draw_pcb_pv (Output.fgGC, Output.bgGC, via, false, false);
+  hid_draw_pcb_pv (Output.fgGC, via, false);
 }
 
 static void
 draw_via_mask (PinType *via, const BoxType *drawn_area, void *userdata)
 {
-  hid_draw_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
+  hid_draw_pcb_pv (Output.pmGC, via, true);
 }
 
 static void

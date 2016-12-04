@@ -1286,9 +1286,17 @@ static void
 _draw_pv (PinType *pv, bool draw_hole)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB))
-    hid_draw__thin_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
+    {
+      hid_draw__thin_pcb_pv (Output.fgGC, pv, false);
+      if (draw_hole)
+        hid_draw__thin_pcb_pv_hole (Output.fgGC, pv);
+    }
   else
-    hid_draw__fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
+    {
+      hid_draw__fill_pcb_pv (Output.fgGC, pv, false);
+      if (draw_hole)
+        hid_draw__fill_pcb_pv_hole (Output.bgGC, pv);
+    }
 
   if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
     _draw_pv_name (pv);
@@ -1575,9 +1583,9 @@ clearPin_callback (const BoxType * b, void *cl)
 {
   PinType *pin = (PinType *) b;
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    hid_draw__thin_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+    hid_draw__thin_pcb_pv (Output.pmGC, pin, true);
   else
-    hid_draw__fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+    hid_draw__fill_pcb_pv (Output.pmGC, pin, true);
   return 1;
 }
 
@@ -1595,7 +1603,7 @@ static int
 clearPin_callback_solid (const BoxType * b, void *cl)
 {
   PinType *pin = (PinType *) b;
-  hid_draw__fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+  hid_draw__fill_pcb_pv (Output.pmGC, pin, true);
   return 1;
 }
 
