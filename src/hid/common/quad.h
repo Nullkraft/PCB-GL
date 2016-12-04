@@ -34,16 +34,16 @@ typedef struct {
 
 /* Edge orientation operators: */
 
-#define ROT(e) (((e) & ~3u)+(((e) + 1) & 3u))
-#define SYM(e) (((e) & ~3u)+(((e) + 2) & 3u))
-#define TOR(e) (((e) & ~3u)+(((e) + 3) & 3u))
+#define ROT(e) (((e) & ~3ul)+(((e) + 1) & 3u))
+#define SYM(e) (((e) & ~3ul)+(((e) + 2) & 3u))
+#define TOR(e) (((e) & ~3ul)+(((e) + 3) & 3u))
 
 /* Vertex/face walking operators: */
 
-#define ONEXT(e)    ((edge_struct *)((e) & ~3u))->next[((e) + 0) & 3u]
-#define ROTRNEXT(e) ((edge_struct *)((e) & ~3u))->next[((e) + 1) & 3u]
-#define SYMDNEXT(e) ((edge_struct *)((e) & ~3u))->next[((e) + 2) & 3u]
-#define TORLNEXT(e) ((edge_struct *)((e) & ~3u))->next[((e) + 3) & 3u]
+#define ONEXT(e)    ((edge_struct *)((e) & ~3ul))->next[((e) + 0) & 3u]
+#define ROTRNEXT(e) ((edge_struct *)((e) & ~3ul))->next[((e) + 1) & 3u]
+#define SYMDNEXT(e) ((edge_struct *)((e) & ~3ul))->next[((e) + 2) & 3u]
+#define TORLNEXT(e) ((edge_struct *)((e) & ~3ul))->next[((e) + 3) & 3u]
 
 #define RNEXT(e) (TOR(ROTRNEXT(e)))
 #define DNEXT(e) (SYM(SYMDNEXT(e)))
@@ -56,13 +56,13 @@ typedef struct {
 
 /* Data pointers: */
 
-#define ODATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 0) & 3u]
-#define RDATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 1) & 3u]
-#define DDATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 2) & 3u]
-#define LDATA(e) ((edge_struct *)((e) & ~3u))->data[((e) + 3) & 3u]
+#define ODATA(e) ((edge_struct *)((e) & ~3ul))->data[((e) + 0) & 3u]
+#define RDATA(e) ((edge_struct *)((e) & ~3ul))->data[((e) + 1) & 3u]
+#define DDATA(e) ((edge_struct *)((e) & ~3ul))->data[((e) + 2) & 3u]
+#define LDATA(e) ((edge_struct *)((e) & ~3ul))->data[((e) + 3) & 3u]
 
-#define ID(e)         ((edge_struct *)((e) & ~3u))->id
-#define UNDIR_DATA(e) ((edge_struct *)((e) & ~3u))->undir_data[(e) & 1u]
+#define ID(e)         ((edge_struct *)((e) & ~3ul))->id
+#define UNDIR_DATA(e) ((edge_struct *)((e) & ~3ul))->undir_data[(e) & 1u]
 
 edge_ref make_edge(void);
 
