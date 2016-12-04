@@ -1,0 +1,36 @@
+Bottom: 388a7ed79656024171e1e88c1e90cb1a0c1c7a95
+Top:    dd929369835e1b95735172d5476357febf9d0d01
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-04 19:16:20 +0000
+
+Fix indentation in a few places
+
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 3294184..4e8ceb7 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -4353,7 +4353,7 @@ ActionMinMaskGap (int argc, char **argv, Coord x, Coord y)
+       if (!TEST_FLAGS (flags, pin) || ! pin->Mask)
+ 	continue;
+ 
+-	thickness = pin->DrillingHole;
++      thickness = pin->DrillingHole;
+       if (pin->Thickness > thickness)
+ 	thickness = pin->Thickness;
+       thickness += value;
+diff --git a/src/search.c b/src/search.c
+index f0cb44b..bf7413a 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -1159,7 +1159,7 @@ SearchLayerObjectInternal (LayerType *layer,
+       && SearchLineByLocation (locked, (LayerType **)Result1, (LineType **) Result2, (LineType **) Result3))
+     return LINE_TYPE;
+ 
+-    if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
++  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
+       Type & ARCPOINT_TYPE &&
+       SearchArcPointByLocation (locked, (LayerType **)Result1, (ArcType **) Result2, (PointType **) Result3))
+     return ARCPOINT_TYPE;
