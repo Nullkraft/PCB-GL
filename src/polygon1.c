@@ -915,7 +915,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 
       do
 	{
-	  num_new_nodes = bo_intersect (e, a, b);
+	  num_new_nodes = bo_intersect (e, a, b, first_pass);
 	  if (!first_pass && num_new_nodes != 0)
 	    printf ("Got %i new nodes with another pass\n", num_new_nodes);
 	  first_pass = 0;
