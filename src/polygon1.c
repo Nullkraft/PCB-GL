@@ -75,8 +75,10 @@ double vect_dist2 (Vector v1, Vector v2);
 double vect_det2 (Vector v1, Vector v2);
 double vect_len2 (Vector v1);
 
-int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1, Vector S2,
-                  double *s1_out, double *t1_out, double *s2_out, double *t2_out);
+int vect_inters2 (Vector p1, Vector p2, double s1, double s2,
+                  Vector q1, Vector q2, double t1, double t2,
+                  Vector i1, Vector i2,
+                  double *i1s, double *i1t, double *i2s, double *i2t);
 
 static void poly_InclVertex_int (VNODE * after, VNODE * node);
 
@@ -116,11 +118,11 @@ static void poly_InclVertex_int (VNODE * after, VNODE * node);
 
 #undef DEBUG_INTERSECT
 #undef DEBUG_LABEL
-#undef DEBUG_ALL_LABELS
+#define DEBUG_ALL_LABELS
 #undef DEBUG_JUMP
 #undef DEBUG_GATHER
 #undef DEBUG_ANGLE
-#undef DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) pcb_fprintf(stderr, ## __VA_ARGS__)
 #else
@@ -226,7 +228,8 @@ poly_CreateNode (Vector v)
 VNODE *
 poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
 {
-  return poly_CreateNodeFull (v, false /*true*/, cx, cy, radius);
+//  return poly_CreateNodeFull (v, false /*true*/, cx, cy, radius);
+  return poly_CreateNodeFull (v, true, cx, cy, radius);
 }
 
 /***************************************************************/
@@ -249,29 +252,29 @@ node_add_single (VNODE * dest, Vector po)
 {
   VNODE *p;
 
-//  pcb_printf ("  New node is %f from previous, %f from next",
-//              vect_dist2 (po, dest->point),
-//              vect_dist2 (po, dest->next->point));
+  pcb_printf ("    New node is %f from previous, %f from next",
+              vect_dist2 (po, dest->point),
+              vect_dist2 (po, dest->next->point));
 
 #warning NOT SURE WHAT A SENSIBLE EPSILON IN INTEGER NANOMETERS IS - INCORRECT NUMBERS ONE WAY OR THE OTHER CAUSE BREAKAGE
 //#define DIST_EPSILON 3.
 #define DIST_EPSILON 1.
   if (vect_dist2 (po, EDGE_BACKWARD_VERTEX (dest)->point) < DIST_EPSILON)
     {
-//      printf (" - (TOUCHING)\n");
+      printf (" - (TOUCHING)\n");
       return EDGE_BACKWARD_VERTEX (dest);
     }
   if (vect_dist2 (po, EDGE_FORWARD_VERTEX (dest)->point) < DIST_EPSILON)
     {
-//      printf (" - (TOUCHING)\n");
+      printf (" - (TOUCHING)\n");
       return EDGE_FORWARD_VERTEX (dest);
     }
 #undef DIST_EPSILON
 
-//  printf (" - (CREATING NEW NODE AND EDGE)\n");
-//  pcb_printf ("New node is (%mm, %mm)\n", po[0], po[1]);
+  printf (" - (CREATING NEW NODE AND EDGE)\n");
 
   p = poly_CreateNodeFull (po, dest->is_round, dest->cx, dest->cy, dest->radius);
+  pcb_printf (" %p (%mm, %mm)\n", p, po[0], po[1]);
   if (p == NULL)
     return NULL;
 
@@ -289,6 +292,27 @@ node_add_single (VNODE * dest, Vector po)
 #define ISECT_BAD_PARAM (-1)
 #define ISECT_NO_MEMORY (-2)
 
+/*
+ * Determine whether the angle swept by a-b to a-c is
+ * counter clockwise, clockwise or zero
+ */
+static int compare_ccw_cw (Vector a, Vector b, Vector c)
+{
+  double cross;
+  Vector ab;
+  Vector ac;
+
+  Vsub2 (ab, b, a);
+  Vsub2 (ac, c, a);
+
+  cross = (double) ab[0] * ac[1] - (double) ac[0] * ab[1];
+  if (cross > 0.0)
+    return 1;
+  else if (cross < 0.0)
+    return -1;
+  else
+    return 0;
+}
 
 /*
 new_descriptor
@@ -309,43 +333,110 @@ new_descriptor (VNODE * a, char poly, char side)
   l->side = side;
   l->next = l->prev = l;
   l->skip_me = false;
+  if ((side == 'P' && a->prev->is_round == false) || /* previous, not round */
+      (side != 'P' && a      ->is_round == false))   /* next,     not round */
+    { /* Line-segment case */
+
 #if 0
-  if (side == 'P')		/* previous */
-    vect_sub (v, PREV_VERTEX (a)->point, a->point);
-  else				/* next */
-    vect_sub (v, NEXT_VERTEX (a)->point, a->point);
+      if (side == 'P')		/* previous */
+        vect_sub (v, PREV_VERTEX (a)->point, a->point);
+      else				/* next */
+        vect_sub (v, NEXT_VERTEX (a)->point, a->point);
 #else
-  /* XXX: Not entirely sure about these */
-  if (side == 'P')		/* previous */
-    vect_sub (v, VERTEX_BACKWARD_EDGE (a)->orig_point0, VERTEX_BACKWARD_EDGE (a)->orig_point1);
-  else				/* next */
-    vect_sub (v,  VERTEX_FORWARD_EDGE (a)->orig_point1,  VERTEX_FORWARD_EDGE (a)->orig_point0);
+      /* XXX: Not entirely sure about these */
+      if (side == 'P')		/* previous */
+        vect_sub (v, a->prev->orig_point0, a->prev->orig_point1);
+      else				/* next */
+        vect_sub (v, a->orig_point1, a->orig_point0);
 #endif
 
-  /* Uses slope/(slope+1) in quadrant 1 as a proxy for the angle.
-   * It still has the same monotonic sort result
-   * and is far less expensive to compute than the real angle.
-   */
-  if (vect_equal (v, vect_zero))
-    {
-      printf ("OH DEAR.. THIS ISN'T GOING TO END WELL\n");
-      *(char *)0 = 0;
-      if (side == 'P')
-	{
-	  if (PREV_VERTEX (a)->cvc_prev == (CVCList *) - 1)
-	    PREV_VERTEX (a)->cvc_prev = PREV_VERTEX (a)->cvc_next = NULL;
-	  poly_ExclVertex (PREV_VERTEX (a));
-	  vect_sub (v, PREV_VERTEX (a)->point, a->point);
+      /* Uses slope/(slope+1) in quadrant 1 as a proxy for the angle.
+       * It still has the same monotonic sort result
+       * and is far less expensive to compute than the real angle.
+       */
+      if (vect_equal (v, vect_zero))
+        {
+          printf ("OH DEAR.. THIS ISN'T GOING TO END WELL\n");
+          *(char *)0 = 0;
+          if (side == 'P')
+            {
+              if (PREV_VERTEX (a)->cvc_prev == (CVCList *) - 1)
+                PREV_VERTEX (a)->cvc_prev = PREV_VERTEX (a)->cvc_next = NULL;
+              poly_ExclVertex (PREV_VERTEX (a));
+              vect_sub (v, PREV_VERTEX (a)->point, a->point);
 #warning DOES THIS LEAK A VERTEX?
-	}
-      else
-	{
-	  if (NEXT_VERTEX (a)->cvc_prev == (CVCList *) - 1)
-	    NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
-	  poly_ExclVertex (NEXT_VERTEX (a));
-	  vect_sub (v, NEXT_VERTEX (a)->point, a->point);
+            }
+          else
+            {
+              if (NEXT_VERTEX (a)->cvc_prev == (CVCList *) - 1)
+                NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
+              poly_ExclVertex (NEXT_VERTEX (a));
+              vect_sub (v, NEXT_VERTEX (a)->point, a->point);
 #warning DOES THIS LEAK A VERTEX?
-	}
+            }
+        }
+
+      l->curvature = 0.0;
+
+    }
+  else
+    { /* Arc segment case */
+
+      Vector center;
+      double radial_dx;
+
+      /* Compute tangent to arc by rotating radial line between
+       * the relevant endpoint and its center through 90 degrees
+       * CCW. When operating in the "P" side, we then flip this
+       * vector. (Alternatively, the radial line is moved through
+       * 90 degrees CW)
+       */
+
+      if (side == 'P')		/* previous */
+        {
+          center[0] = VERTEX_BACKWARD_EDGE (a)->cx;
+          center[1] = VERTEX_BACKWARD_EDGE (a)->cy;
+          l->curvature = (double)+compare_ccw_cw (EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (a))->point, center, a->point) / VERTEX_BACKWARD_EDGE (a)->radius;
+          // OR: ?
+          // l->curvature = (double)-compare_ccw_cw (a->point, center, a->prev->point) / a->prev->radius;
+        }
+      else				/* next */
+        {
+          center[0] = VERTEX_FORWARD_EDGE (a)->cx;
+          center[1] = VERTEX_FORWARD_EDGE (a)->cy;
+          l->curvature = (double)-compare_ccw_cw (a->point, center, EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (a))->point) / VERTEX_FORWARD_EDGE (a)->radius;
+        }
+
+      /* First of all, make v the radial line */
+      vect_sub (v, center, a->point);
+
+      if (vect_equal (v, vect_zero))
+        {
+          printf ("OH DEAR.. THIS ISN'T GOING TO END WELL - ARC CASE\n");
+#warning NO CORRECTIVE ACTION FOR THIS CASE AT THE MOMENT, JUST FORCE A CRASH
+          *(char *)0 = 0;
+        }
+
+      /* Now rotate it through 90 to give the curve tangent */
+      radial_dx = v[0];
+      v[0] = -v[1];
+      v[1] = radial_dx;
+
+#if 0
+      /* Flip the vector for the previous case */
+      if (side == 'P')		/* previous */
+        {
+          v[0] = -v[0];
+          v[1] = -v[1];
+        }
+#endif
+      /* Flip the vector for the previous case */
+      if ((side == 'P' && compare_ccw_cw (a->prev->point, center, a      ->point) ==  1) ||
+          (side != 'P' && compare_ccw_cw (a      ->point, center, a->next->point) == -1))
+        {
+          v[0] = -v[0];
+          v[1] = -v[1];
+        }
     }
   assert (!vect_equal (v, vect_zero));
   dx = fabs ((double) v[0]);
@@ -380,6 +471,10 @@ static int compare_cvc_nodes (CVCList *a, CVCList *b)
   if (a->angle < b->angle)
     return -1;
   else if (a->angle > b->angle)
+    return 1;
+  else if (a->curvature < b->curvature)
+    return -1;
+  else if (a->curvature > b->curvature)
     return 1;
   else
     return 0;
@@ -423,6 +518,7 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
 	      break;
 	    }
 
+          // Next line equivelant to:   if (l->head == start)    ???
 	  if (vect_equal (l->head->parent->point, start->parent->point)) /* Wrap around in the list */
 	    {
 	      /* this seems to be a new point */
@@ -555,6 +651,21 @@ next_cvc_from_other_poly (CVCList *start)
   return l;
 }
 
+
+/* \brief Compare the curvature / geometries of two edges
+ *
+ * \return true if the geometry of the two edges match
+ */
+static bool
+compare_edge_arcs_equal (VNODE *a, VNODE *b)
+{
+  return a->is_round == b->is_round &&
+         a->radius   == b->radius   &&
+         a->cx       == b->cx       &&
+         a->cy       == b->cy;
+}
+
+
 /*
 edge_label
  (C) 2006 harry eaton
@@ -614,8 +725,9 @@ edge_label (VNODE * pn, int existing_label)
       /* If this fires, we found two geometrically distinct edges which for some reason compare as equal in our cvc_list.
        * Shared edges should be geometrically identical (but may be in opposite directions).
        */
-      if (!vect_equal (EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side)->point,
-                       EDGE_FORWARD_VERTEX (pn)->point))
+      if (!(vect_equal (EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), l->side)->point,
+                        EDGE_FORWARD_VERTEX (pn)->point) &&
+            compare_edge_arcs_equal (VERTEX_SIDE_DIR_EDGE (l->parent, l->side), pn)))
         g_critical ("Expected shared edge, but geometry doesn't match");
 
       /* SHARED is the same direction case,
@@ -874,50 +986,36 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
   assert (!s1->v->is_round);
   assert (!s2->v->is_round);
 
-//  printf ("Intersecting\n");
-//  pcb_printf ("  Line   %p (%mm, %mm)-(%mm, %mm)\n",
-//              s1->v,
-//              EDGE_BACKWARD_VERTEX (s1->v)->point[0],
-//              EDGE_BACKWARD_VERTEX (s1->v)->point[1],
-//              EDGE_FORWARD_VERTEX (s1->v)->point[0],
-//              EDGE_FORWARD_VERTEX (s1->v)->point[1]);
-//  pcb_printf ("  Line   %p (%mm, %mm)-(%mm, %mm)\n",
-//              s2->v,
-//              EDGE_BACKWARD_VERTEX (s2->v)->point[0],
-//              EDGE_BACKWARD_VERTEX (s2->v)->point[1],
-//              EDGE_FORWARD_VERTEX (s2->v)->point[0],
-//              EDGE_FORWARD_VERTEX (s2->v)->point[1]);
-
-//  cnt = vect_inters2 (EDGE_BACKWARD_VERTEX (s1->v)->point, EDGE_FORWARD_VERTEX (s1->v)->point,
-//                      EDGE_BACKWARD_VERTEX (s2->v)->point, EDGE_FORWARD_VERTEX (s2->v)->point, v1, v2);
-
-  if (s1->v->orig_point0[0] != EDGE_BACKWARD_VERTEX (s1->v)->point[0] ||
-      s1->v->orig_point0[1] != EDGE_BACKWARD_VERTEX (s1->v)->point[1] ||
-      s1->v->orig_point1[0] !=  EDGE_FORWARD_VERTEX (s1->v)->point[0] ||
-      s1->v->orig_point1[1] !=  EDGE_FORWARD_VERTEX (s1->v)->point[1] ||
-      s2->v->orig_point0[0] != EDGE_BACKWARD_VERTEX (s2->v)->point[0] ||
-      s2->v->orig_point0[1] != EDGE_BACKWARD_VERTEX (s2->v)->point[1] ||
-      s2->v->orig_point1[0] !=  EDGE_FORWARD_VERTEX (s2->v)->point[0] ||
-      s2->v->orig_point1[1] !=  EDGE_FORWARD_VERTEX (s2->v)->point[1]) {
-//    printf ("  ORIGINAL DATA DOES NOT MATCH CURRENT - INTERSECTING ALREADY INTERSECTED LINE\n");
-//    pcb_printf ("  Original:  Line (%mm, %mm)-(%mm, %mm)\n",
-//                s1->v->orig_point0[0], s1->v->orig_point0[1], s1->v->orig_point1[0], s1->v->orig_point1[1]);
-//    pcb_printf ("  Original:  Line (%mm, %mm)-(%mm, %mm)\n",
-//                s2->v->orig_point0[0], s2->v->orig_point0[1], s2->v->orig_point1[0], s2->v->orig_point1[1]);
-  }
+  printf ("Intersecting\n");
+  pcb_printf ("  Line   %p (%mm, %mm)-(%mm, %mm)\n",
+              s1->v,
+              EDGE_BACKWARD_VERTEX (s1->v)->point[0],
+              EDGE_BACKWARD_VERTEX (s1->v)->point[1],
+              EDGE_FORWARD_VERTEX (s1->v)->point[0],
+              EDGE_FORWARD_VERTEX (s1->v)->point[1]);
+  pcb_printf ("  Original: (%mn, %mn)-(%mn, %mn) p0=%f, p1=%f\n",
+              s1->v->orig_point0[0], s1->v->orig_point0[1], s1->v->orig_point1[0], s1->v->orig_point1[1], s1->v->p0, s1->v->p1);
+  pcb_printf ("  Line   %p (%mm, %mm)-(%mm, %mm)\n",
+              s2->v,
+              EDGE_BACKWARD_VERTEX (s2->v)->point[0],
+              EDGE_BACKWARD_VERTEX (s2->v)->point[1],
+              EDGE_FORWARD_VERTEX (s2->v)->point[0],
+              EDGE_FORWARD_VERTEX (s2->v)->point[1]);
+  pcb_printf ("  Original : (%mn, %mn)-(%mn, %mn) p0=%f, p1=%f\n",
+              s2->v->orig_point0[0], s2->v->orig_point0[1], s2->v->orig_point1[0], s2->v->orig_point1[1], s2->v->p0, s2->v->p1);
 
   /* Intersect the two original lines */
-  cnt = vect_inters2 (s1->v->orig_point0, s1->v->orig_point1,
-                      s2->v->orig_point0, s2->v->orig_point1, v1, v2,
-                      &s1_i1, &s2_i1, &s1_i2, &s2_i2);
+  cnt = vect_inters2 (s1->v->orig_point0, s1->v->orig_point1, s1->v->p0, s1->v->p1,
+                      s2->v->orig_point0, s2->v->orig_point1, s2->v->p0, s2->v->p1,
+                      v1, v2, &s1_i1, &s2_i1, &s1_i2, &s2_i2);
+
+  printf ("Coefficients (on original lines) %f, %f, %f, %f - intersection count is %i\n", s1_i1, s2_i1, s1_i2, s2_i2, cnt);
 
   if (cnt == 0)
     {
-//      printf ("\n");
+      printf ("\n");
       return 0;
     }
-
-//  printf ("Coefficients (on original lines) %f, %f, %f, %f - intersection count is %i\n", s1_i1, s2_i1, s1_i2, s2_i2, cnt);
 
   /* ... */
   if (cnt == 2)
@@ -930,14 +1028,14 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
       if (s1->v->p0 > s1_i2 || s1_i2 > s1->v->p1)
         {
 //          printf ("  Second intersection is off the first line bounds\n");
-          printf ("BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (In the way we handle this... - might still be valid intersection)\n");
+          printf ("BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (In the way we handle this... - might still be valid intersection) <<<<<<<<<<<\n");
           cnt--;
         }
 //      else if (s2->v->p0 - EPSILON > s2_i2 || s2_i2 > s2->v->p1 + EPSILON)
       else if (s2->v->p0 > s2_i2 || s2_i2 > s2->v->p1)
         {
 //          printf ("  Second intersection is off the second line bounds\n");
-          printf ("BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (In the way we handle this... - might still be valid intersection)\n");
+          printf ("BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (In the way we handle this... - might still be valid intersection) <<<<<<<<<<<\n");
           cnt--;
         }
     }
@@ -946,6 +1044,8 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
   if (s1->v->p0 > s1_i1 || s1_i1 > s1->v->p1)
     {
 //      printf ("  First intersection is off the first line bounds\n");
+      if (cnt == 2)
+        printf ("BUG2!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (In the way we handle this... - might still be valid intersection) <<<<<<<<<<<\n");
       cnt--;
       /* Copy second intersection details to first */
       Vcopy (v1, v2);
@@ -956,6 +1056,8 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
   else if (s2->v->p0 > s2_i1 || s2_i1 > s2->v->p1)
     {
 //      printf ("  First intersection is off the second line bounds\n");
+      if (cnt == 2)
+        printf ("BUG2!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (In the way we handle this... - might still be valid intersection) <<<<<<<<<<<\n");
       cnt--;
       /* Copy second intersection details to first */
       Vcopy (v1, v2);
@@ -965,7 +1067,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
 
   if (cnt == 0)
     {
-//      printf ("\n");
+      printf ("\n");
       return 0;
     }
 
@@ -981,7 +1083,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
       bool done_insert_on_s1 = insert_vertex_in_seg (i, s1, cnt > 1 ? v2 : v1, cnt > 1 ? s1_i2 : s1_i1); /* Was s2 */
       bool done_insert_on_s2 = insert_vertex_in_seg (i, s2, cnt > 1 ? v2 : v1, cnt > 1 ? s2_i2 : s2_i1); /* Was s1 */
 
-//      printf ("\n");
+      printf ("\n");
 
       /* Skip any remaining r_search hits against segment i, as any futher
        * intersections will be rejected until the next pass anyway.
@@ -995,6 +1097,7 @@ seg_in_seg_line_line (struct info *i, struct seg *s1, struct seg *s2)
        */
       if (done_insert_on_s1 || done_insert_on_s2)
         return 0;
+//        longjmp (*i->env, 1);
     }
 
   return 0;
@@ -1014,37 +1117,63 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
   assert (!s2->v->is_round);
 
   cnt = circle_line_intersect ((double)s1->v->cx, (double)s1->v->cy, (double)s1->v->radius,
-                               (double)EDGE_BACKWARD_VERTEX (s2->v)->point[0], (double)EDGE_BACKWARD_VERTEX (s2->v)->point[1],
-                               (double) EDGE_FORWARD_VERTEX (s2->v)->point[0], (double) EDGE_FORWARD_VERTEX (s2->v)->point[1],
+                               (double)s2->v->orig_point0[0], (double)s2->v->orig_point0[1],
+                               (double)s2->v->orig_point1[0], (double)s2->v->orig_point1[1],
                                &m1, &m2);
-  if (cnt == 0)
-    return 0;
-
   start_angle = atan2 ((EDGE_BACKWARD_VERTEX (s1->v)->point[1] - s1->v->cy), -(EDGE_BACKWARD_VERTEX (s1->v)->point[0] - s1->v->cx)) / M180;
   end_angle   = atan2 (( EDGE_FORWARD_VERTEX (s1->v)->point[1] - s1->v->cy), -( EDGE_FORWARD_VERTEX (s1->v)->point[0] - s1->v->cx)) / M180;
 
-  #warning delta angle calculation looks rather suspect - wont work for arcs > 180 degrees span
+#warning delta angle calculation looks rather suspect - wont work for arcs > 180 degrees span
   delta_angle = end_angle - start_angle;
 
   if (delta_angle > 180.) delta_angle -= 360.;
   if (delta_angle < -180.) delta_angle += 360.;
 
+#if 0
+  if (delta_angle > 180. - EPSILON && delta_angle < 180 + EPSILON)
+    {
+      printf ("HMM\n");
+      cnt = 0;
+      return 0;
+    }
+#endif
+
   printf ("Intersecting\n");
 
-  pcb_printf ("  circle %p (%mm, %mm) R=%mm, start_angle=%f, end_angle=%f, delta_angle=%f\n",
+  pcb_printf ("  circle %p (%mn, %mn) R=%mn, start_angle=%f, end_angle=%f, delta_angle=%f\n",
               s1->v, s1->v->cx, s1->v->cy, s1->v->radius, start_angle, end_angle, delta_angle);
 
-  pcb_printf ("  Line   %p (%mm, %mm)-(%mm, %mm) - intersect count is %i\n",
+  pcb_printf ("  Line   %p (%mm, %mm)-(%mm, %mm)",
               s2->v,
               EDGE_BACKWARD_VERTEX (s2->v)->point[0],
               EDGE_BACKWARD_VERTEX (s2->v)->point[1],
               EDGE_FORWARD_VERTEX (s2->v)->point[0],
-              EDGE_FORWARD_VERTEX (s2->v)->point[1],
-              cnt);
+              EDGE_FORWARD_VERTEX (s2->v)->point[1]);
+  pcb_printf ("  Original : (%mn, %mn)-(%mn, %mn) p0=%f, p1=%f\n",
+              s2->v->orig_point0[0], s2->v->orig_point0[1], s2->v->orig_point1[0], s2->v->orig_point1[1], s2->v->p0, s2->v->p1);
+
+  printf ("  Intersect count is %i\n", cnt);
+
+  if (cnt == 0)
+    {
+      printf ("Trying with a perturbation\n");
+      cnt = circle_line_intersect ((double)s1->v->cx, (double)s1->v->cy, (double)s1->v->radius,
+                                   (double)s2->v->orig_point0[0], (double)s2->v->orig_point0[1] + 1,
+                                   (double)s2->v->orig_point1[0], (double)s2->v->orig_point1[1] + 1,
+                                   &m1, &m2);
+      printf ("  Intersect count is %i\n", cnt);
+
+      if (cnt == 0)
+        return 0;
+
+      printf ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <<<<<<\n");
+    }
 
   if (cnt == 2)
     {
-      if (m2 < 0. - EPSILON || m2 > 1. + EPSILON)
+      //if (m2 < 0. - EPSILON || m2 > 1. + EPSILON)
+      //if (s2->v->p0 - EPSILON > m2 || m2 > s2->v->p1 + EPSILON)
+      if (s2->v->p0 > m2 || m2 > s2->v->p1)
         {
           printf ("  Second intersection is out of line bounds, m2 = %f\n", m2);
           cnt--;
@@ -1055,9 +1184,9 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
           Angle m2_angle;
           Angle m2_delta;
 
-          Vcopy (v2, s2->v->point);
-          v2[0] += m2 * (EDGE_FORWARD_VERTEX (s2->v)->point[0] - EDGE_BACKWARD_VERTEX (s2->v)->point[0]);
-          v2[1] += m2 * (EDGE_FORWARD_VERTEX (s2->v)->point[1] - EDGE_BACKWARD_VERTEX (s2->v)->point[1]);
+          Vcopy (v2, s2->v->orig_point0);
+          v2[0] += m2 * (s2->v->orig_point1[0] - s2->v->orig_point0[0]);
+          v2[1] += m2 * (s2->v->orig_point1[1] - s2->v->orig_point0[1]);
 
           m2_angle = atan2 ((v2[1] - s1->v->cy), -(v2[0] - s1->v->cx)) / M180;
           m2_delta = m2_angle - start_angle;
@@ -1066,18 +1195,24 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
           if (m2_delta < -180.) m2_delta += 360.;
 
           pcb_printf ("  Second intersection is at (%mm, %mm), angle %f\n", v2[0], v2[1], m2_angle);
+              printf ("    m2_angle=%f m2_delta=%f, delta_angle=%f\n",
+                      m2_angle, m2_delta, delta_angle);
 
-          if ((delta_angle > 0. && ( m2_delta < 0. - EPSILON ||  m2_delta >  delta_angle + EPSILON)) ||
-              (delta_angle < 0. && (-m2_delta < 0. - EPSILON || -m2_delta > -delta_angle + EPSILON)))
+//          if ((delta_angle > 0. && ( m2_delta < 0. - EPSILON ||  m2_delta >  delta_angle + EPSILON)) ||
+//              (delta_angle < 0. && (-m2_delta < 0. - EPSILON || -m2_delta > -delta_angle + EPSILON)))
+          if ((delta_angle > 0. && ( m2_delta < 0. ||  m2_delta >  delta_angle)) ||
+              (delta_angle <= 0. && (-m2_delta < 0. || -m2_delta > -delta_angle)))
             {
-              printf ("  Excluding second intersection, as not on arc, m2_angle=%f m2_delta=%f, delta_angle=%f\n",
+              printf ("    Excluding second intersection, as not on arc, m2_angle=%f m2_delta=%f, delta_angle=%f\n",
                       m2_angle, m2_delta, delta_angle);
               cnt --;
             }
         }
     }
 
-  if (m1 < 0. - EPSILON || m1 > 1. + EPSILON)
+  //if (m1 < 0. - EPSILON || m1 > 1. + EPSILON)
+  //if (s2->v->p0 - EPSILON > m1 || m1 > s2->v->p1 + EPSILON)
+  if (s2->v->p0 > m1 || m1 > s2->v->p1)
     {
       printf ("  First intersection is out of line bounds, m1 = %f\n", m1);
       cnt--;
@@ -1089,9 +1224,15 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
       Angle m1_angle;
       Angle m1_delta;
 
+#if 0
       Vcopy (v1, s2->v->point);
       v1[0] += m1 * (EDGE_FORWARD_VERTEX (s2->v)->point[0] - EDGE_BACKWARD_VERTEX (s2->v)->point[0]);
       v1[1] += m1 * (EDGE_FORWARD_VERTEX (s2->v)->point[1] - EDGE_BACKWARD_VERTEX (s2->v)->point[1]);
+#else
+      Vcopy (v1, s2->v->orig_point0);
+      v1[0] += m1 * (s2->v->orig_point1[0] - s2->v->orig_point0[0]);
+      v1[1] += m1 * (s2->v->orig_point1[1] - s2->v->orig_point0[1]);
+#endif
 
       m1_angle = atan2 ((v1[1] - s1->v->cy), -(v1[0] - s1->v->cx)) / M180;
       m1_delta = m1_angle - start_angle;
@@ -1100,11 +1241,15 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
       if (m1_delta < -180.) m1_delta += 360.;
 
       pcb_printf ("  First intersection is at (%mm, %mm), angle %f\n", v1[0], v1[1], m1_angle);
+          printf ("    m1_angle=%f m1_delta=%f, delta_angle=%f\n",
+                  m1_angle, m1_delta, delta_angle);
 
-      if ((delta_angle > 0. && ( m1_delta < 0. - EPSILON ||  m1_delta >  delta_angle + EPSILON)) ||
-          (delta_angle < 0. && (-m1_delta < 0. - EPSILON || -m1_delta > -delta_angle + EPSILON)))
+//      if ((delta_angle > 0. && ( m1_delta < 0. - EPSILON ||  m1_delta >  delta_angle + EPSILON)) ||
+//          (delta_angle < 0. && (-m1_delta < 0. - EPSILON || -m1_delta > -delta_angle + EPSILON)))
+      if ((delta_angle > 0. && ( m1_delta < 0. ||  m1_delta >  delta_angle)) ||
+          (delta_angle <= 0. && (-m1_delta < 0. || -m1_delta > -delta_angle)))
         {
-          printf ("  Excluding first intersection, as not on arc, m1_angle=%f m1_delta=%f, delta_angle=%f\n",
+          printf ("    Excluding first intersection, as not on arc, m1_angle=%f m1_delta=%f, delta_angle=%f\n",
                   m1_angle, m1_delta, delta_angle);
           cnt --;
           m1 = m2;
@@ -1129,8 +1274,8 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
 
   for (; cnt; cnt--)
     {
-      bool done_insert_on_s1 = insert_vertex_in_seg (i, s1, cnt > 1 ? v2 : v1, 0.0 /* XXX */); /* Was s2 */
-      bool done_insert_on_s2 = insert_vertex_in_seg (i, s2, cnt > 1 ? v2 : v1, 0.0 /* XXX */); /* Was s1 */
+      bool done_insert_on_s1 = insert_vertex_in_seg (i, s1, cnt > 1 ? v2 : v1, -1.0 /*cnt > 1 ? 0.0 : 0.0*/); /* XXX */
+      bool done_insert_on_s2 = insert_vertex_in_seg (i, s2, cnt > 1 ? v2 : v1, cnt > 1 ? m2 : m1);
 
       printf ("\n");
 
@@ -1146,6 +1291,7 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
        */
       if (done_insert_on_s1 || done_insert_on_s2)
         return 0;
+//        longjmp (*i->env, 1);
     }
 
   return 0;
@@ -1154,12 +1300,195 @@ seg_in_seg_arc_line (struct info *i, struct seg *s1, struct seg *s2)
 static int
 seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
 {
+  Vector v1, v2;
+  int cnt;
+  double xi1, yi1;
+  double xi2, yi2;
+  Angle start_angle1;
+  Angle end_angle1;
+  Angle delta_angle1;
+  Angle start_angle2;
+  Angle end_angle2;
+  Angle delta_angle2;
+
   assert (s1->v->is_round);
   assert (s2->v->is_round);
 
 //  printf ("Querying arc-arc intersection\n");
+
+#if 1
   /* COP OUT */
-  return seg_in_seg_line_line (i, s1, s2);
+  if (s1->v->cx     == s2->v->cx &&
+      s1->v->cy     == s2->v->cy &&
+      s1->v->radius == s2->v->radius)
+    {
+      printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
+      return seg_in_seg_line_line (i, s1, s2);
+    }
+#endif
+
+  cnt = circle_circle_intersect ((double)s1->v->cx, (double)s1->v->cy, (double)s1->v->radius,
+                                 (double)s2->v->cx, (double)s2->v->cy, (double)s2->v->radius,
+                                 &xi1, &yi1, &xi2, &yi2);
+
+  v1[0] = xi1;
+  v1[1] = yi1;
+  v2[0] = xi2;
+  v2[1] = yi2;
+
+  start_angle1 = atan2 ((s1->v      ->point[1] - s1->v->cy), -(s1->v      ->point[0] - s1->v->cx)) / M180;
+  end_angle1   = atan2 ((s1->v->next->point[1] - s1->v->cy), -(s1->v->next->point[0] - s1->v->cx)) / M180;
+
+  start_angle2 = atan2 ((s2->v      ->point[1] - s2->v->cy), -(s2->v      ->point[0] - s2->v->cx)) / M180;
+  end_angle2   = atan2 ((s2->v->next->point[1] - s2->v->cy), -(s2->v->next->point[0] - s2->v->cx)) / M180;
+
+  #warning delta angle calculation looks rather suspect - wont work for arcs > 180 degrees span
+  delta_angle1 = end_angle1 - start_angle1;
+  delta_angle2 = end_angle2 - start_angle2;
+
+  if (delta_angle1 > 180.) delta_angle1 -= 360.;
+  if (delta_angle1 < -180.) delta_angle1 += 360.;
+
+  if (delta_angle2 > 180.) delta_angle2 -= 360.;
+  if (delta_angle2 < -180.) delta_angle2 += 360.;
+
+  printf ("Intersecting\n");
+
+  pcb_printf ("  circle %p (%mm, %mm) R=%mm, start_angle=%f, end_angle=%f, delta_angle=%f\n",
+              s1->v, s1->v->cx, s1->v->cy, s1->v->radius, start_angle1, end_angle1, delta_angle1);
+
+  pcb_printf ("  circle %p (%mm, %mm) R=%mm, start_angle=%f, end_angle=%f, delta_angle=%f\n",
+              s2->v, s2->v->cx, s2->v->cy, s2->v->radius, start_angle2, end_angle2, delta_angle2);
+
+  printf ("  Intersect count is %i\n", cnt);
+
+  if (cnt == 0)
+    return 0;
+
+  if (cnt == 2)
+    /* Process whether the second intersection lies on the second arc */
+    {
+      Angle s2i2_angle = atan2 ((v2[1] - s2->v->cy), -(v2[0] - s2->v->cx)) / M180;
+      Angle s2i2_delta = s2i2_angle - start_angle2;
+
+      if (s2i2_delta >  180.) s2i2_delta -= 360.;
+      if (s2i2_delta < -180.) s2i2_delta += 360.;
+
+      pcb_printf ("  Second intersection is at (%mm, %mm), angle %f\n", v2[0], v2[1], s2i2_angle);
+          printf ("    s2i2_angle=%f s2i2_delta=%f, delta_angle2=%f\n",
+                  s2i2_angle, s2i2_delta, delta_angle2);
+
+      if ((delta_angle2 >  0. && ( s2i2_delta < 0. ||  s2i2_delta >  delta_angle2)) ||
+          (delta_angle2 <= 0. && (-s2i2_delta < 0. || -s2i2_delta > -delta_angle2)))
+        {
+          printf ("    Excluding second intersection, as not on arc, s2i2_angle=%f s2i2_delta=%f, delta_angle=%f\n",
+                  s2i2_angle, s2i2_delta, delta_angle2);
+          cnt --;
+        }
+      else
+        /* Process whether the second intersection lies on the first arc */
+        {
+          Angle s1i2_angle = atan2 ((v2[1] - s1->v->cy), -(v2[0] - s1->v->cx)) / M180;
+          Angle s1i2_delta = s1i2_angle - start_angle1;
+
+          if (s1i2_delta >  180.) s1i2_delta -= 360.;
+          if (s1i2_delta < -180.) s1i2_delta += 360.;
+
+          pcb_printf ("  Second intersection is at (%mm, %mm), angle %f\n", v2[0], v2[1], s1i2_angle);
+              printf ("    s1i2_angle=%f s1i2_delta=%f, delta_angle1=%f\n",
+                      s1i2_angle, s1i2_delta, delta_angle1);
+
+          if ((delta_angle1 >  0. && ( s1i2_delta < 0. ||  s1i2_delta >  delta_angle1)) ||
+              (delta_angle1 <= 0. && (-s1i2_delta < 0. || -s1i2_delta > -delta_angle1)))
+            {
+              printf ("    Excluding second intersection, as not on arc, s1i2_angle=%f s1i2_delta=%f, delta_angle=%f\n",
+                      s1i2_angle, s1i2_delta, delta_angle1);
+              cnt --;
+            }
+        }
+    }
+
+  if (1)
+    /* process whether the first intersection lies on the second arc */
+    {
+      Angle s2i1_angle = atan2 ((v1[1] - s2->v->cy), -(v1[0] - s2->v->cx)) / M180;
+      Angle s2i1_delta = s2i1_angle - start_angle2;
+
+      if (s2i1_delta >  180.) s2i1_delta -= 360.;
+      if (s2i1_delta < -180.) s2i1_delta += 360.;
+
+      pcb_printf ("  First intersection is at (%mm, %mm), angle %f\n", v1[0], v1[1], s2i1_angle);
+          printf ("    s2i1_angle=%f s2i1_delta=%f, delta_angle2=%f\n",
+                  s2i1_angle, s2i1_delta, delta_angle2);
+
+      if ((delta_angle2 >  0. && ( s2i1_delta < 0. ||  s2i1_delta >  delta_angle2)) ||
+          (delta_angle2 <= 0. && (-s2i1_delta < 0. || -s2i1_delta > -delta_angle2)))
+        {
+          printf ("    Excluding first intersection, as not on arc, s2i1_angle=%f s2i1_delta=%f, delta_angle=%f\n",
+                  s2i1_angle, s2i1_delta, delta_angle2);
+          cnt --;
+          Vcopy (v1, v2);
+        }
+      else
+        /* Process whether the first intersection lies on the first arc */
+        {
+          Angle s1i1_angle = atan2 ((v1[1] - s1->v->cy), -(v1[0] - s1->v->cx)) / M180;
+          Angle s1i1_delta = s1i1_angle - start_angle1;
+
+          if (s1i1_delta >  180.) s1i1_delta -= 360.;
+          if (s1i1_delta < -180.) s1i1_delta += 360.;
+
+          pcb_printf ("  First intersection is at (%mm, %mm), angle %f\n", v1[0], v1[1], s1i1_angle);
+              printf ("    s1i1_angle=%f s1i1_delta=%f, delta_angle1=%f\n",
+                      s1i1_angle, s1i1_delta, delta_angle1);
+
+          if ((delta_angle1 >  0. && ( s1i1_delta < 0. ||  s1i1_delta >  delta_angle1)) ||
+              (delta_angle1 <= 0. && (-s1i1_delta < 0. || -s1i1_delta > -delta_angle1)))
+            {
+              printf ("    Excluding first intersection, as not on arc, s1i1_angle=%f s1i1_delta=%f, delta_angle=%f\n",
+                      s1i1_angle, s1i1_delta, delta_angle1);
+              cnt --;
+              Vcopy (v1, v2);
+            }
+        }
+    }
+
+  if (cnt == 0)
+    {
+      printf ("\n");
+      return 0;
+    }
+
+  if (i->touch)  /* if checking touches one find and we're done */
+    longjmp (*i->touch, TOUCHES);
+
+  /* Mark the contour PLINEs as intersected */
+  s1->p->Flags.status = ISECTED;
+  s2->p->Flags.status = ISECTED;
+
+  for (; cnt; cnt--)
+    {
+      bool done_insert_on_s1 = insert_vertex_in_seg (i, s1, cnt > 1 ? v2 : v1, -1.0 /*cnt > 1 ? 0.0 : 0.0*/); /* XXX */
+      bool done_insert_on_s2 = insert_vertex_in_seg (i, s2, cnt > 1 ? v2 : v1, -1.0 /*cnt > 1 ? 0.0 : 0.0*/); /* XXX */
+
+      printf ("\n");
+
+      /* Skip any remaining r_search hits against segment i, as any futher
+       * intersections will be rejected until the next pass anyway.
+       */
+      if ((done_insert_on_s1 && s1 == i->s) ||
+          (done_insert_on_s2 && s2 == i->s))
+        longjmp (*i->env, 1);
+
+      /* If we inserted on s (but not i), skip return now, as we can't continue with
+       * the for-loop iteration if we modified geoemtry
+       */
+      if (done_insert_on_s1 || done_insert_on_s2)
+        return 0;
+//        longjmp (*i->env, 1);
+    }
+
+  return 0;
 }
 
 /*
@@ -1438,9 +1767,27 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
       PREV_VERTEX (EDGE_FORWARD_VERTEX (task->node_seg->v)) = task->new_node;
       EDGE_FORWARD_VERTEX (task->node_seg->v) = task->new_node;
       task->node_seg->p->Count++;
-      task->new_node->p1 = task->new_node->prev->p1;
-      task->new_node->prev->p1 = task->param;
-      task->new_node->p0 = task->param;
+
+      if (task->param >= 0.0 && task->param <= 1.0)
+        {
+          /* Nicely behaved linear segment addition, with parameter */
+          task->new_node->p1 = task->new_node->prev->p1;
+          task->new_node->prev->p1 = task->param;
+          task->new_node->p0 = task->param;
+        }
+      else
+        {
+          /* Used for arc-segment insersions, where we redeclare the original coordinates of the pieces */
+          if (task->new_node->prev->p1 != 1.0)
+            printf ("task->new_node->prev->p1 != 1.0\n");
+          task->new_node->prev->p1 = 1.0; /* NB: Should already be 1.0 - might be worth asserting? */
+          Vcopy (task->new_node->prev->orig_point1, task->new_node->point);
+
+          task->new_node->p0 = 0.0;
+          task->new_node->p1 = 1.0;
+          Vcopy (task->new_node->orig_point0, task->new_node->point);
+          Vcopy (task->new_node->orig_point1, task->new_node->next->point);
+        }
 
 #warning NEED AN UPDATE FOR ROUND CONTOURS HERE?
       if (cntrbox_check (task->node_seg->p, task->new_node->point)) /* XXX: DOES THIS WORK / MATTER FOR ARC SEGMENT INSERTIONS? */
@@ -1627,9 +1974,10 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("%#mD->%#mD labeled %s\n",
+      DEBUGP ("(%mn, %mn)->(%mn, %mn) labeled %s  is_round=%i radius=%li cvc_next=%p cvc_prev=%p\n",
               EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
-               EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e));
+               EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e),
+              e->is_round, e->radius, EDGE_BACKWARD_VERTEX (e)->cvc_next, EDGE_BACKWARD_VERTEX (e)->cvc_prev);
     }
   while ((e = NEXT_EDGE (e)) != &a->head);
 }
@@ -3077,7 +3425,9 @@ PLINE_check_hairline_edges (CVCList *the_list, PLINE *contour, POLYAREA *bfst)
               VNODE *n_otherend = EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (n->parent, n->side), n->side);
               VNODE *point_v; /* As vertex */
 
-              if (vect_equal (l_otherend->point, n_otherend->point))
+              if (vect_equal (l_otherend->point, n_otherend->point) &&
+                  compare_edge_arcs_equal (VERTEX_SIDE_DIR_EDGE (l->parent, l->side),
+                                           VERTEX_SIDE_DIR_EDGE (n->parent, n->side)))
                 {
                   /* Mark the shared edges from being used in any possibly existing
                    * cross-connected node at their other ends.
@@ -4047,13 +4397,17 @@ crossing (const BoxType * b, void *cl)
   struct seg *s = (struct seg *) b;
   struct pip *p = (struct pip *) cl;
 
-#if 0
+#warning BREAKAGE!
+/* XXX: This should probably not count crossings of the ray which are outside the p0-p1 bounds of the actual line segment! */
+/* XXX: Using intersected (non orig_point{0,1} data), causes inconsistencies and a crash with some examples */
+
+#if 1
   if (EDGE_BACKWARD_VERTEX (s->v)->point[1] <= p->p[1])
 #else
   if (s->v->orig_point0[1] <= p->p[1])
 #endif
     {
-#if 0
+#if 1
       if (EDGE_FORWARD_VERTEX (s->v)->point[1] > p->p[1])
 #else
       if (s->v->orig_point1[1] > p->p[1])
@@ -4061,13 +4415,15 @@ crossing (const BoxType * b, void *cl)
 	{
 	  Vector v1, v2;
 	  long long cross;
-#if 0
+#if 1
 	  Vsub2 (v1, EDGE_FORWARD_VERTEX (s->v)->point, EDGE_BACKWARD_VERTEX (s->v)->point);
 	  Vsub2 (v2, p->p, EDGE_BACKWARD_VERTEX (s->v)->point);
 #else
 	  Vsub2 (v1, s->v->orig_point1, s->v->orig_point0);
 	  Vsub2 (v2, p->p, s->v->orig_point0);
 #endif
+#warning THIS WILL PROBABLY OVERFLOW FOR COORDINATES > 32 BIT
+          /* XXX Convert to double? */
 	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
 	  if (cross == 0)
 	    {
@@ -4080,7 +4436,7 @@ crossing (const BoxType * b, void *cl)
     }
   else
     {
-#if 0
+#if 1
       if (EDGE_FORWARD_VERTEX (s->v)->point[1] <= p->p[1])
 #else
       if (s->v->orig_point1[1] <= p->p[1])
@@ -4089,13 +4445,15 @@ crossing (const BoxType * b, void *cl)
 	  Vector v1, v2;
 	  long long cross;
 /* XXX: COULD USE ORIGINAL GEOMETRY, ALSO PROBABLY NEEDS UPDATING FOR CURVES */
-#if 0
+#if 1
 	  Vsub2 (v1, EDGE_FORWARD_VERTEX (s->v)->point, EDGE_BACKWARD_VERTEX (s->v)->point);
 	  Vsub2 (v2, p->p, EDGE_BACKWARD_VERTEX (s->v)->point);
 #else
 	  Vsub2 (v1, s->v->orig_point1, s->v->orig_point0);
 	  Vsub2 (v2, p->p, s->v->orig_point0);
 #endif
+#warning THIS WILL PROBABLY OVERFLOW FOR COORDINATES > 32 BIT
+          /* XXX Convert to double? */
 	  cross = (long long) v1[0] * v2[1] - (long long) v2[0] * v1[1];
 	  if (cross == 0)
 	    {
@@ -4413,9 +4771,9 @@ poly_ChkContour (PLINE * a)
 	{
 #warning THIS DOES NOT TAKE INTO ACCOUNT arc-arc and arc-line segments
 	  if (!node_neighbours (a1, a2) &&
-	      (icnt = vect_inters2 (a1->point, a1->next->point,
-				    a2->point, a2->next->point, i1, i2,
-				    NULL, NULL, NULL, NULL)) > 0)
+	      (icnt = vect_inters2 (a1->point, a1->next->point, 0.0, 1.0,
+				    a2->point, a2->next->point, 0.0, 1.0,
+				    i1, i2, NULL, NULL, NULL, NULL)) > 0)
 	    {
 	      if (icnt > 1)
 		return TRUE;
@@ -4612,6 +4970,29 @@ vect_m_dist (Vector v1, Vector v2)
   return -dd;
 }				/* vect_m_dist */
 
+/* Compute the parameter of the closest point to 'point' on the (infinite) line
+ * l1-l2. param == 0.0 corresponds to point projecting onto l1, param == 1.0
+ * corresponds to point projecting onto l2. The returned param may be outside
+ * the 0.0-1.0 range.
+ */
+static double
+calculate_line_point_intersection (Vector l1, Vector l2, Vector point)
+{
+  Vector l1l2;
+  Vector l1point;
+  double param;
+
+  Vsub2 (l1l2,    l2,    l1);
+  Vsub2 (l1point, point, l1);
+
+  param = dot (l1point, l1l2) / dot (l1l2, l1l2);
+
+//  pcb_printf ("  Line (%mm, %mm)-(%mm, %mm)  Point (%mm, %mm)  Param = %f <<<<<<\n",
+//              l1[0], l1[1], l2[0], l2[1], point[0], point[1], param);
+
+  return param;
+}
+
 /*
 vect_inters2
  (C) 1993 Klamer Schutte
@@ -4619,20 +5000,22 @@ vect_inters2
 */
 
 int
-vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
-              Vector S1, Vector S2,
-              double *s1_out, double *t1_out,
-              double *s2_out, double *t2_out)
+vect_inters2 (Vector p1, Vector p2, double s1, double s2,
+              Vector q1, Vector q2, double t1, double t2,
+              Vector i1, Vector i2,
+              double *i1s, double *i1t,
+              double *i2s, double *i2t)
 {
   double s, t, deel;
   double rpx, rpy, rqx, rqy;
 
   /* DUMMY */
-  if (s1_out != NULL) *s1_out = -1.0;
-  if (t1_out != NULL) *t1_out = -1.0;
-  if (s2_out != NULL) *s2_out = -1.0;
-  if (t2_out != NULL) *t2_out = -1.0;
+  if (i1s != NULL) *i1s = -1.0;
+  if (i1t != NULL) *i1t = -1.0;
+  if (i2s != NULL) *i2s = -1.0;
+  if (i2t != NULL) *i2t = -1.0;
 
+  /* XXX: Presumably the r-tree search which usually gets us into this function means this test ought not to hit? */
   if (max (p1[0], p2[0]) < min (q1[0], q2[0]) ||
       max (q1[0], q2[0]) < min (p1[0], p2[0]) ||
       max (p1[1], p2[1]) < min (q1[1], q2[1]) ||
@@ -4653,6 +5036,33 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
 
   if (deel == 0)		/* parallel */
     {
+      Vector p1_trimmed;
+      Vector p2_trimmed;
+      Vector q1_trimmed;
+      Vector q2_trimmed;
+
+//      double sq1;
+//      double sq2;
+//      double tp1;
+//      double tp2;
+
+      p1_trimmed[0] = p1[0] + ROUND (s1 * rpx);
+      p1_trimmed[1] = p1[1] + ROUND (s1 * rpy);
+      p2_trimmed[0] = p1[0] + ROUND (s2 * rpx);
+      p2_trimmed[1] = p1[1] + ROUND (s2 * rpy);
+
+      q1_trimmed[0] = q1[0] + ROUND (t1 * rqx);
+      q1_trimmed[1] = q1[1] + ROUND (t1 * rqy);
+      q2_trimmed[0] = q1[0] + ROUND (t2 * rqx);
+      q2_trimmed[1] = q1[1] + ROUND (t2 * rqy);
+
+      /* Calculate the parameter values on each line (p1-p2 has s param, q1-q2 has t param), of the end-points of the other line */
+//      sq1 = calculate_line_point_intersection (p1, p2, q1_trimmed);
+//      sq2 = calculate_line_point_intersection (p1, p2, q2_trimmed);
+//      tp1 = calculate_line_point_intersection (q1, q2, p1_trimmed);
+//      tp2 = calculate_line_point_intersection (q1, q2, p2_trimmed);
+
+      {
       double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
       Vector hp1, hq1, hp2, hq2, q1p1, q1q2;
       double hs1, hs2, ht1, ht2;
@@ -4661,24 +5071,27 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
       Vsub2 (q1q2, q1, q2);
 
 
+      /* XXX: Isn't this the same as the deel=0 test?) */
       /* If this product is not zero then p1-p2 and q1-q2 are not on same line! */
       if (vect_det2 (q1p1, q1q2) != 0)
 	return 0;
       dc1 = 0;			/* m_len(p1 - p1) */
 
-      dc2 = vect_m_dist (p1, p2); /* Signed square length p1-p2, positive if p1 is "rightmost" of p2 */
-      d1 = vect_m_dist (p1, q1);
-      d2 = vect_m_dist (p1, q2);
+
+      /* XXX: Using trimmed coordinates is a potential problem, as we loose the advantage of tracing everything back to undisturbed geometery */
+      dc2 = vect_m_dist (p1_trimmed, p2_trimmed); /* Signed square length p1-p2, positive if p1 is "rightmost" of p2 */
+      d1 = vect_m_dist (p1_trimmed, q1_trimmed);
+      d2 = vect_m_dist (p1_trimmed, q2_trimmed);
 
 /* Sorting the independent points from small to large */
-      Vcpy2 (hp1, p1);
-      Vcpy2 (hp2, p2);
-      Vcpy2 (hq1, q1);
-      Vcpy2 (hq2, q2);
-      hs1 = 0.0;
-      hs2 = 1.0;
-      ht1 = 0.0;
-      ht2 = 1.0;
+      Vcpy2 (hp1, p1_trimmed);
+      Vcpy2 (hp2, p2_trimmed);
+      Vcpy2 (hq1, q1_trimmed);
+      Vcpy2 (hq2, q2_trimmed);
+      hs1 = s1;
+      hs2 = s2;
+      ht1 = t1;
+      ht2 = t2;
 
       if (dc1 > dc2)
 	{/* dc2 is negative, e.g. p2 is "rightmost" of p1. */
@@ -4702,21 +5115,21 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
 	    return 0;   /* p1-hp2 < p1-hq1  ... IE  hp2 > hq1 .... hp2 is "rightmost" of hq1... IE both hp1 and hp2 are right of the rightmost point of q1-q2, hq1 */
 	  if (dc2 < d2)
             {           /* p1-hp2 < p1-hq2  ... IE  hp2 > hq2 .... hp2 is "rightmost" of hq2... */
-	      Vcpy2 (S1, hp2); /* One intersection is the leftmost  point of p1-p2 */
-	      Vcpy2 (S2, hq1); /* One intersection is the rightmost point of q1-q2 */
-              if (s1_out != NULL) *s1_out = hs2;
-              if (t1_out != NULL) *t1_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hp2 lies ALONG q1-q2 */
-              if (s2_out != NULL) *s2_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hq1 lies ALONG p1-p2 */
-              if (t2_out != NULL) *t2_out = ht1;
+	      Vcpy2 (i1, hp2); /* One intersection is the leftmost  point of p1-p2 */
+	      Vcpy2 (i2, hq1); /* One intersection is the rightmost point of q1-q2 */
+              if (i1s != NULL) *i1s = hs2;
+              if (i1t != NULL) *i1t = calculate_line_point_intersection (q1, q2, hp2); /* COMPUTE COEFFICIENT OF WHERE hp2 lies ALONG q1-q2 */
+              if (i2s != NULL) *i2s = calculate_line_point_intersection (p1, p2, hq1); /* COMPUTE COEFFICIENT OF WHERE hq1 lies ALONG p1-p2 */
+              if (i2t != NULL) *i2t = ht1;
 	    }
 	  else
 	    {           /* p1-hp2 >= p1-hq2  ... IE  hp2 <= hq2 ... hp2 is "left of (or coincident to)" hq2... */
-	      Vcpy2 (S1, hq1); /* One intersection is the rightmost point of q1-q2 */
-	      Vcpy2 (S2, hq2); /* One intersection is the leftmost  point of q1-q2 */
-              if (s1_out != NULL) *s1_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hq1 lies ALONG p1-p2 */
-              if (t1_out != NULL) *t1_out = ht1;
-              if (s2_out != NULL) *s2_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hq2 lies ALONG p1-p2 */
-              if (t2_out != NULL) *t2_out = ht2;
+	      Vcpy2 (i1, hq1); /* One intersection is the rightmost point of q1-q2 */
+	      Vcpy2 (i2, hq2); /* One intersection is the leftmost  point of q1-q2 */
+              if (i1s != NULL) *i1s = calculate_line_point_intersection (p1, p2, hq1); /* NEED TO COMPUTE COEFFICIENT OF WHERE hq1 lies ALONG p1-p2 */
+              if (i1t != NULL) *i1t = ht1;
+              if (i2s != NULL) *i2s = calculate_line_point_intersection (p1, p2, hq2); /* NEED TO COMPUTE COEFFICIENT OF WHERE hq2 lies ALONG p1-p2 */
+              if (i2t != NULL) *i2t = ht2;
 	    };
 	}
       else
@@ -4725,38 +5138,36 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
 	    return 0;   /* p1-hp1 > p1-hq2   ... IE  hp1 < hq2 .... hp1 is "left" of hq2... IE rightmost point of line p1-p2 is left of both points of q1-q2 */
 	  if (dc2 < d2)
 	    {           /* p1-hp2 < p1-hq2   ... IE  hp2 > hq2 .... hp2 is "right" of hq2 */
-	      Vcpy2 (S1, hp1);  /* One intersection is the rightmost point of p1-p2 */
-	      Vcpy2 (S2, hp2);  /* One intersection is the leftmost  point of p1-p2 */
-              if (s1_out != NULL) *s1_out = hs1;
-              if (t1_out != NULL) *t1_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hp1 lies ALONG q1-q2 */
-              if (s2_out != NULL) *s2_out = hs2;
-              if (t2_out != NULL) *t2_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hp2 lies ALONG q1-q2 */
+	      Vcpy2 (i1, hp1);  /* One intersection is the rightmost point of p1-p2 */
+	      Vcpy2 (i2, hp2);  /* One intersection is the leftmost  point of p1-p2 */
+              if (i1s != NULL) *i1s = hs1;
+              if (i1t != NULL) *i1t = calculate_line_point_intersection (q1, q2, hp1); /* NEED TO COMPUTE COEFFICIENT OF WHERE hp1 lies ALONG q1-q2 */
+              if (i2s != NULL) *i2s = hs2;
+              if (i2t != NULL) *i2t = calculate_line_point_intersection (q1, q2, hp2); /* NEED TO COMPUTE COEFFICIENT OF WHERE hp2 lies ALONG q1-q2 */
 	    }
 	  else
 	    {           /* p1-hp2 >= p1-hq2   ... IE  hp2 <= hq2 .... hp2 is "left of (or coincident to) " of hq2 */
-	      Vcpy2 (S1, hp1);  /* One intersection is the rightmost point of p1-p2 */
-	      Vcpy2 (S2, hq2);  /* One intersection is the leftmost  point of q1-q2 */
-              if (s1_out != NULL) *s1_out = hs1;
-              if (t1_out != NULL) *t1_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hp1 lies ALONG q1-q2 */
-              if (s2_out != NULL) *s2_out = -1.0; /* XXX: NEED TO COMPUTE COEFFICIENT OF WHERE hq2 lies ALONG p1-p2 */
-              if (t2_out != NULL) *t2_out = ht2;
+	      Vcpy2 (i1, hp1);  /* One intersection is the rightmost point of p1-p2 */
+	      Vcpy2 (i2, hq2);  /* One intersection is the leftmost  point of q1-q2 */
+              if (i1s != NULL) *i1s = hs1;
+              if (i1t != NULL) *i1t = calculate_line_point_intersection (q1, q2, hp1); /* NEED TO COMPUTE COEFFICIENT OF WHERE hp1 lies ALONG q1-q2 */
+              if (i2s != NULL) *i2s = calculate_line_point_intersection (p1, p2, hq2); /* NEED TO COMPUTE COEFFICIENT OF WHERE hq2 lies ALONG p1-p2 */
+              if (i2t != NULL) *i2t = ht2;
 	    };
 	}
 
+#if 0
       /* XXX: NEED TO RETURN THE POINTS ON EACH LINE */
 #warning MISSING RETURN CODE FOR PARALLEL LINE CASES
 
       printf ("!!!!!!!!!!!!!!!!!!!!!!!!!!!! XXXXXXXXXXXXXXXXXXXXXXXX "
               "!!!!!!!!!!!!!!!!!!!!!!!!!!!! <<<<<<<<<<<<<<<<<<<<<<<<\n");
+#endif
 
-      /* XXX: ASSUME WE HIT THIS WHEN WE GET TWO IDENTICAL LINES... TOTALLY RISKY AND BOGUS ASSUMPTION... */
-      //if (s1_out != NULL) *s1_out = 0.0;
-      //if (t1_out != NULL) *t1_out = 1.0;
-      //if (s2_out != NULL) *s2_out = 0.0;
-      //if (t2_out != NULL) *t2_out = 1.0;
-
-      return (Vequ2 (S1, S2) ? 1 : 2);
+      return (Vequ2 (i1, i2) ? 1 : 2);
+      }
     }
+
   else
     {				/* not parallel */
       /*
@@ -4782,29 +5193,29 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
 
       if (Vequ2 (q1, p1))
 	{
-	  S1[0] = q1[0];
-	  S1[1] = q1[1];
+	  i1[0] = q1[0];
+	  i1[1] = q1[1];
 	  s = 0.0;
 	  t = 0.0;
 	}
       else if  (Vequ2 (q1, p2))
         {
-	  S1[0] = q1[0];
-	  S1[1] = q1[1];
+	  i1[0] = q1[0];
+	  i1[1] = q1[1];
 	  s = 1.0;
 	  t = 0.0;
         }
       else if (Vequ2 (q2, p1))
 	{
-	  S1[0] = q2[0];
-	  S1[1] = q2[1];
+	  i1[0] = q2[0];
+	  i1[1] = q2[1];
 	  s = 0.0;
 	  t = 1.0;
 	}
       else if (Vequ2 (q2, p2))
 	{
-	  S1[0] = q2[0];
-	  S1[1] = q2[1];
+	  i1[0] = q2[0];
+	  i1[1] = q2[1];
 	  s = 1.0;
 	  t = 1.0;
 	}
@@ -4819,13 +5230,13 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
 	  if (t < 0.       || t > 1.          )
 	    return 0;
 
-	  S1[0] = q1[0] + ROUND (t * rqx);
-	  S1[1] = q1[1] + ROUND (t * rqy);
+	  i1[0] = q1[0] + ROUND (t * rqx);
+	  i1[1] = q1[1] + ROUND (t * rqy);
 	}
 
       /* Output the coefficients of the intersection along each line */
-      if (s1_out != NULL) *s1_out = s;
-      if (t1_out != NULL) *t1_out = t;
+      if (i1s != NULL) *i1s = s;
+      if (i1t != NULL) *i1t = t;
 
       return 1;
     }
