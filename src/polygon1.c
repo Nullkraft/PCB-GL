@@ -1325,6 +1325,8 @@ seg_in_seg_arc_arc (struct info *i, struct seg *s1, struct seg *s2)
       s1->v->radius == s2->v->radius)
     {
       printf ("Cop-out for co-circular arcs for now - they will be better handled by their line approximations. <<<<<<<<<<\n");
+      s1->v->is_round = false;
+      s2->v->is_round = false;
       return seg_in_seg_line_line (i, s1, s2);
     }
 #endif
