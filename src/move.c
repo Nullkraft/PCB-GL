@@ -926,7 +926,8 @@ MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
     if (!found_line_at_1_end)
       max_multiplier = MAX (max_multiplier, 1.0);
 
-  if (Type == LINE_TYPE)
+//  if (Type == LINE_TYPE)
+    if (0)
     {
       Coord ldx, ldy;
       ldx = (moving_line->Point2.X - moving_line->Point1.X);
