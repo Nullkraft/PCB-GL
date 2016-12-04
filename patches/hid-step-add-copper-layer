@@ -1,7 +1,7 @@
-Bottom: 9dcac5eff0014ee4c7e11aba620a93bddfc90681
-Top:    01057e4eca656a89d59b6e97526960abd6078360
+Bottom: fef547bddeebc9eb7906785aa5dc70c834c70c09
+Top:    b730f1bee7453ef7502070637b77c3ed979a78f8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-06 23:56:10 +0000
+Date:   2016-12-04 15:56:07 +0000
 
 hid/step: Add copper layer export to 3D model
 
@@ -364,7 +364,7 @@ index 2ffdb54..0e679ab 100644
  GList *object3d_from_soldermask_within_area (POLYAREA *area, int side);
 +GList *object3d_from_copper_layers_within_area (POLYAREA *area);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9f1d695..51295d7 100644
+index 37340d4..3b54c6e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1696,6 +1696,9 @@ fill_board_outline_holes (hidGC gc, const BoxType *drawn_area)

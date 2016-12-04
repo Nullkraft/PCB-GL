@@ -1,7 +1,7 @@
-Bottom: bf94f98f9b6959cb3ec45a9d0837c6ba46d042d5
-Top:    5b25c4a41d985c159fdeffe00def42bb7aa25da5
+Bottom: 821d9efd730bdf2dce61c9c049639a5a8de226d8
+Top:    de3507c92aa28779deceb41ef5977a540d91c474
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-06-12 19:59:09 +0100
+Date:   2016-12-04 15:56:13 +0000
 
 Fix timeout forced redraw to run from the main loop, not directly
 
@@ -14,7 +14,7 @@ auto-enforce DRC enabled.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0750d0f..81a245b 100644
+index 8229e63..8e3b9f4 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -925,6 +925,14 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
