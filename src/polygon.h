@@ -34,8 +34,8 @@
 
 /* Implementation constants */
 
-#define POLY_CIRC_SEGS 20 //8 //40
-#define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
+#define POLY_CIRC_SEGS 24 //20 //8 //40
+#define POLY_CIRC_SEGS_D ((double)POLY_CIRC_SEGS)
 
 #if 0
 /* THIS IS BROKEN:
@@ -54,8 +54,8 @@
 /* adjustment to make the segments outline the circle rather than connect
  * points on the circle: 1 - cos (\alpha / 2) < (\alpha / 2) ^ 2 / 2
  */
-#define POLY_CIRC_RADIUS_ADJ (1.0 + M_PI / POLY_CIRC_SEGS_F * \
-                                    M_PI / POLY_CIRC_SEGS_F / 2.0)
+#define POLY_CIRC_RADIUS_ADJ (1.0 + M_PI / POLY_CIRC_SEGS_D * \
+                                    M_PI / POLY_CIRC_SEGS_D / 2.0)
 #else
 #define POLY_CIRC_RADIUS_ADJ 1.0
 #endif
