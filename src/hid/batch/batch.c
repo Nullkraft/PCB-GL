@@ -166,7 +166,7 @@ batch_set_layer (HID_DRAW *hid_draw, const char *name, int idx, int empty)
 }
 
 static hidGC
-batch_make_gc (void)
+batch_make_gc (HID_DRAW *hid_draw)
 {
   return 0;
 }
