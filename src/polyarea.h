@@ -89,6 +89,10 @@ struct VNODE
     CVCList *cvc_prev;
     CVCList *cvc_next;
     Vector point;
+    Vector orig_point0;
+    Vector orig_point1;
+    double p0; /* Smaller parameter along curve, 0-1 */
+    double p1; /* Larger  parameter along curve, 0-1 */
     bool is_round;
     Coord cx, cy;
     Coord radius;
@@ -196,8 +200,8 @@ double vect_dist2 (Vector v1, Vector v2);
 double vect_det2 (Vector v1, Vector v2);
 double vect_len2 (Vector v1);
 
-int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
-                  Vector S2);
+//int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+//                  Vector S2);
 
 int poly_Boolean(const POLYAREA * a, const POLYAREA * b, POLYAREA ** res, int action);
 int poly_Boolean_free(POLYAREA * a, POLYAREA * b, POLYAREA ** res, int action);
