@@ -101,6 +101,8 @@ struct hid_draw_st
   /* Note that both of these may be set, in which case polygons will be drawn twice: */
   bool poly_before; /* If set, the redraw code will draw polygons before erasing the clearances. */
   bool poly_after;  /* If set, the redraw code will draw polygons after  erasing the clearances. */
+
+  BoxType *clip_box; /* Used by HIDs and draw.c to restrict rendering to a given region */
 };
 
 /* Base hidGC elements visible to any module */
