@@ -2011,12 +2011,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                                   ev->area.y,
                                   min_depth, &new_x, &new_y))
     horizon_problem = true;
+
   max_x = min_x = new_x;
   max_y = min_y = new_y;
 
   if (!ghid_unproject_to_z_plane (ev->area.x,
                                   ev->area.y,
                                   max_depth, &new_x, &new_y))
+    horizon_problem = true;
+
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
@@ -2025,12 +2028,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                                  ev->area.y,
                                  min_depth, &new_x, &new_y))
     horizon_problem = true;
+
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
   if (!ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
                                   ev->area.y,
                                   max_depth, &new_x, &new_y))
+    horizon_problem = true;
+
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
@@ -2039,6 +2045,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                                   ev->area.y + ev->area.height,
                                   min_depth, &new_x, &new_y))
     horizon_problem = true;
+
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
@@ -2046,6 +2053,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                                   ev->area.y + ev->area.height,
                                   max_depth, &new_x, &new_y))
     horizon_problem = true;
+
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
@@ -2055,6 +2063,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                                   min_depth,
                                   &new_x, &new_y))
     horizon_problem = true;
+
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
