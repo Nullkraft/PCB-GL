@@ -1,7 +1,7 @@
-Bottom: 3de0b44fe9805425a0bce44544b786aeaab365d4
-Top:    3c91c0a916f369110fa2ca425e87d5ceeae3d1eb
+Bottom: a313cc8140b5f3d84bb938edf2d5f3647127f54e
+Top:    d32958ecd79bdb5c6c025d2b3279649a1ae5f083
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-12-04 19:16:18 +0000
+Date:   2016-12-04 19:24:33 +0000
 
 Add "store_undo" parameter to some find.c functions.
 
@@ -11,7 +11,7 @@ Tying the store of undo information and redrawing together is unhelpful!
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 7782164..eeeb208 100644
+index c16ea79..01cf9aa 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -895,8 +895,8 @@ NotifyLine (void)

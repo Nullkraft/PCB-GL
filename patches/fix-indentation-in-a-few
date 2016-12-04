@@ -1,23 +1,11 @@
-Bottom: 152873a088f39d697a6dadd52970d711ae8fb825
+Bottom: dd929369835e1b95735172d5476357febf9d0d01
 Top:    dd929369835e1b95735172d5476357febf9d0d01
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-12-04 19:16:20 +0000
+Date:   2016-12-04 19:24:36 +0000
 
 Fix indentation in a few places
 
 
 ---
 
-diff --git a/src/action.c b/src/action.c
-index 3294184..4e8ceb7 100644
---- a/src/action.c
-+++ b/src/action.c
-@@ -4353,7 +4353,7 @@ ActionMinMaskGap (int argc, char **argv, Coord x, Coord y)
-       if (!TEST_FLAGS (flags, pin) || ! pin->Mask)
- 	continue;
- 
--	thickness = pin->DrillingHole;
-+      thickness = pin->DrillingHole;
-       if (pin->Thickness > thickness)
- 	thickness = pin->Thickness;
-       thickness += value;
+

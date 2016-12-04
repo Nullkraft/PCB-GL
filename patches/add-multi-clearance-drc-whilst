@@ -1,7 +1,7 @@
-Bottom: 3c91c0a916f369110fa2ca425e87d5ceeae3d1eb
-Top:    3b333948940e7dc3c722c9db4d8853f1d6244d18
+Bottom: d32958ecd79bdb5c6c025d2b3279649a1ae5f083
+Top:    efcf2da46d7456f1d9c636589893fe0cbdebf269
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-12-04 19:16:18 +0000
+Date:   2016-12-04 19:24:33 +0000
 
 Add multi-clearance DRC (whilst drawing lines)
 
@@ -31,7 +31,7 @@ index 47a0a24..8c3d25a 100644
  	hid/common/draw_helpers.h \
  	hid/common/hid_resource.c \
 diff --git a/src/action.c b/src/action.c
-index eeeb208..a9f7972 100644
+index 01cf9aa..e7a2ea4 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -73,6 +73,7 @@

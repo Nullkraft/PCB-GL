@@ -1,7 +1,7 @@
-Bottom: 31fe8bd09d11b215ed637d0be85c2e55da14435c
-Top:    26cdf50bb06934cba89466b66974ca2327900a10
+Bottom: 9014c433027b0722a66f93935a04b9ee9e3ff2de
+Top:    2f5997bb7a9844d0cc5441109bfdd3da604e1981
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-12-04 19:16:13 +0000
+Date:   2016-12-04 19:24:28 +0000
 
 Add action to reconstruct pins / vias / holes
 
@@ -9,7 +9,7 @@ Add action to reconstruct pins / vias / holes
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 742c977..7782164 100644
+index 8b0eb8d..c16ea79 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -110,6 +110,9 @@ typedef enum

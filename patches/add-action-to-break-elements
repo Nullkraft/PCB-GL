@@ -1,7 +1,7 @@
-Bottom: e86af5af30288f3c74ee492f622db599e5c70fee
-Top:    31fe8bd09d11b215ed637d0be85c2e55da14435c
+Bottom: 90c6fa2890b15dc900aa3cc77cf7ba4442a140af
+Top:    9014c433027b0722a66f93935a04b9ee9e3ff2de
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-12-04 19:16:13 +0000
+Date:   2016-12-04 19:24:28 +0000
 
 Add action to break elements to pieces in place
 
@@ -9,7 +9,7 @@ Add action to break elements to pieces in place
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 1616641..742c977 100644
+index 416cf0a..8b0eb8d 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -8070,6 +8070,150 @@ ActionAttributes (int argc, char **argv, Coord x, Coord y)
