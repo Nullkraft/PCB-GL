@@ -742,7 +742,8 @@ DrawAttached (hidGC gc)
 	  if (PCB->Clipping && !TEST_FLAG (ALLDIRECTIONFLAG, PCB))
 	    XORDrawAttachedLine (gc, Crosshair.AttachedLine.Point2.X,
 	                             Crosshair.AttachedLine.Point2.Y,
-	                         Crosshair.X, Crosshair.Y,
+	                             Crosshair.AttachedLine.Point3.X,
+	                             Crosshair.AttachedLine.Point3.Y,
 	                         PCB->RatDraw ? 10 : Settings.LineThickness);
 	  if (TEST_FLAG (SHOWDRCFLAG, PCB))
 	    {
@@ -756,7 +757,8 @@ DrawAttached (hidGC gc)
 	      if (PCB->Clipping)
 		XORDrawAttachedLine (gc, Crosshair.AttachedLine.Point2.X,
 		                         Crosshair.AttachedLine.Point2.Y,
-		                     Crosshair.X, Crosshair.Y,
+		                         Crosshair.AttachedLine.Point3.X,
+		                         Crosshair.AttachedLine.Point3.Y,
 		                     PCB->RatDraw ? 10 : Settings.
 		                     LineThickness + 2 * (PCB->Bloat + 1));
 	      hid_draw_set_color (gc, Settings.CrosshairColor);
