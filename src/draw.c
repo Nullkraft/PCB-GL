@@ -156,6 +156,32 @@ pad_callback (const BoxType * b, void *cl)
 }
 
 static void
+DrawStrippedText (hidGC gc, ElementType *Element, int min_width)
+{
+  TextType text;
+  TextType *text_ptr;
+  char *end_string;
+
+  if (TEST_FLAG (NAMEONPCBFLAG, PCB) &&
+      TEST_FLAG (STRIPHIERFLAG, Element))
+    {
+      text_ptr = &text;
+      memcpy (text_ptr, &ELEMENT_TEXT (PCB, Element), sizeof (TextType));
+
+      /* Strip hierarchy */
+      end_string = strrchr (text.TextString, '/');
+      if (end_string != NULL)
+        text.TextString = end_string + 1;
+    }
+  else
+    {
+      text_ptr = &ELEMENT_TEXT (PCB, Element);
+    }
+
+  hid_draw_pcb_text (gc, text_ptr, min_width);
+}
+
+static void
 draw_element_name (ElementType *element)
 {
   if ((TEST_FLAG (HIDENAMESFLAG, PCB) && hid_draw_is_gui (hid_draw)) ||
@@ -170,7 +196,7 @@ draw_element_name (ElementType *element)
     hid_draw_set_color (Output.fgGC, PCB->ElementColor);
   else
     hid_draw_set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-  hid_draw_pcb_text (Output.fgGC, &ELEMENT_TEXT (PCB, element), PCB->minSlk);
+  DrawStrippedText (Output.fgGC, element, PCB->minSlk);
 }
 
 static int
