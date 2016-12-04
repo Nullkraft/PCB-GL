@@ -1,11 +1,12 @@
-Bottom: c4002ed5f01ca2c0f265695d50e4e9b052e6984e
-Top:    45053a2706db05cf3799df452c84f43f90fccacb
+Bottom: 174f4fa3e9b417127e1c74e0900ccedbcbdc3d4b
+Top:    af50a278d6f54e604529f4e3339519e2de5cd2f1
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-06 23:02:22 +0000
+Date:   2016-12-04 15:56:02 +0000
 
 Play with quad-edge data-structure - using PCB as a framework for GL!
 
 Squashes: WIP on quad edge play
+
 
 ---
 
@@ -937,7 +938,7 @@ index 0000000..e399b88
 +vertex3d *make_vertex3d (double x, double y, double z);
 +void destroy_vertex3d (vertex3d *v);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3fcd41a..1aecd0a 100644
+index 16aee3e..08e20e1 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -15,6 +15,12 @@
@@ -966,7 +967,7 @@ index 3fcd41a..1aecd0a 100644
  
    gtk_widget_get_allocation (widget, &allocation);
  
-@@ -2684,6 +2696,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2693,6 +2705,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);
