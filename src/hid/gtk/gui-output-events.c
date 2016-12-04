@@ -45,6 +45,7 @@
 #include "find.h"
 #include "search.h"
 #include "rats.h"
+#include "netclass.h"
 #include "snavi.h"
 #include "gui-trackball.h"
 
@@ -400,6 +401,7 @@ describe_location (Coord X, Coord Y)
   char *elename = "";
   char *pinname;
   char *netname = NULL;
+  char *netclass = NULL;
   char *description;
 
   /* check if there are any pins or pads at that position */
@@ -438,6 +440,7 @@ describe_location (Coord X, Coord Y)
         netname = g_strdup (menu->Name);
         /* For some reason, the netname has spaces in front of it, strip them */
         g_strstrip (netname);
+        netclass = menu->Netclass;
         break;
       }
     }
@@ -450,10 +453,12 @@ describe_location (Coord X, Coord Y)
 
   description = g_strdup_printf (_("Element name: %s\n"
                                  "Pinname : %s\n"
-                                 "Netname : %s"),
+                                 "Netname : %s\n"
+                                 "Netclass : %s\n"),
                                  elename,
                                  (pinname != NULL) ? pinname : _("--"),
-                                 (netname != NULL) ? netname : _("--"));
+                                 (netname != NULL) ? netname : _("--"),
+                                 (netclass != NULL) ? netclass : _("--"));
 
   g_free (netname);
 
