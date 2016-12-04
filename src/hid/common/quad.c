@@ -13,7 +13,7 @@
 #include <memory.h>
 #include <malloc.h>
 
-#define MARK(e)  ((edge_struct *)((e) & ~3ul))->mark
+#define MARK(e)  ((edge_struct *)((e) & ~(uintptr_t)3u))->mark
 
 /* Make a new edge: */
 
@@ -42,7 +42,7 @@ void destroy_edge(edge_ref e)
     edge_ref f = SYM(e);
     if (ONEXT(e) != e) splice(e, OPREV(e));
     if (ONEXT(f) != f) splice(f, OPREV(f));
-    free((char *) ((e) & ~3ul));
+    free((char *) ((e) & ~(uintptr_t)3u));
   }
 
 /* Splice primitive: */
