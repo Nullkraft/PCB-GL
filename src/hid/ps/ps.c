@@ -32,7 +32,7 @@
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
-static int ps_set_layer (const char *name, int group, int empty);
+static int ps_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty);
 static void use_gc (hidGC gc);
 
 typedef struct ps_gc_struct
@@ -675,7 +675,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 
   global.linewidth = -1;
   /* reset static vars */
-  ps_set_layer (NULL, 0, -1);
+  ps_set_layer (&ps_graphics, NULL, 0, -1);
   use_gc (NULL);
 
   global.region.X1 = 0;
@@ -699,7 +699,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 
   global.pagecount = 1; /* Reset 'pagecount' if single file */
   global.doing_toc = 0;
-  ps_set_layer (NULL, 0, -1);  /* reset static vars */
+  ps_set_layer (&ps_graphics, NULL, 0, -1);  /* reset static vars */
   hid_expose_callback (&ps_graphics, &global.region, 0);
 
   if (the_file)
@@ -786,7 +786,7 @@ corner (FILE *fh, Coord x, Coord y, int dx, int dy)
 }
 
 static int
-ps_set_layer (const char *name, int group, int empty)
+ps_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty)
 {
   static int lastgroup = -1;
   time_t currenttime;
