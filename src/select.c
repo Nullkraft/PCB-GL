@@ -976,7 +976,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
   if (Type & NET_TYPE)
     {
       InitConnectionLookup ();
-      changed = ClearFlagOnAllObjects (true, FOUNDFLAG) || changed;
+      changed = ClearFlagOnAllObjects (true, FOUNDFLAG, true) || changed;
 
       MENU_LOOP (&PCB->NetlistLib);
       {
@@ -997,7 +997,7 @@ SelectObjectByName (int Type, char *Pattern, bool select)
       END_LOOP;
 
       changed = SelectByFlag (FOUNDFLAG, select) || changed;
-      changed = ClearFlagOnAllObjects (false, FOUNDFLAG) || changed;
+      changed = ClearFlagOnAllObjects (false, FOUNDFLAG, false) || changed;
       FreeConnectionLookupMemory ();
     }
 
