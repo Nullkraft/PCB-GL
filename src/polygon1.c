@@ -333,8 +333,7 @@ new_descriptor (VNODE * a, char poly, char side)
   l->side = side;
   l->next = l->prev = l;
   l->skip_me = false;
-  if ((side == 'P' && a->prev->is_round == false) || /* previous, not round */
-      (side != 'P' && a      ->is_round == false))   /* next,     not round */
+  if (VERTEX_SIDE_DIR_EDGE (a, side)->is_round == false)  /* not round */
     { /* Line-segment case */
 
 #if 0
@@ -392,20 +391,21 @@ new_descriptor (VNODE * a, char poly, char side)
        * 90 degrees CW)
        */
 
+      center[0] = VERTEX_SIDE_DIR_EDGE (a, side)->cx;
+      center[1] = VERTEX_SIDE_DIR_EDGE (a, side)->cy;
+      l->curvature = (double)-compare_ccw_cw (a->point, center, EDGE_SIDE_DIR_VERTEX (VERTEX_SIDE_DIR_EDGE (a, side), side)->point) / VERTEX_SIDE_DIR_EDGE (a, side)->radius;
+#if 0
       if (side == 'P')		/* previous */
         {
-          center[0] = VERTEX_BACKWARD_EDGE (a)->cx;
-          center[1] = VERTEX_BACKWARD_EDGE (a)->cy;
           l->curvature = (double)+compare_ccw_cw (EDGE_BACKWARD_VERTEX (VERTEX_BACKWARD_EDGE (a))->point, center, a->point) / VERTEX_BACKWARD_EDGE (a)->radius;
           // OR: ?
           // l->curvature = (double)-compare_ccw_cw (a->point, center, a->prev->point) / a->prev->radius;
         }
       else				/* next */
         {
-          center[0] = VERTEX_FORWARD_EDGE (a)->cx;
-          center[1] = VERTEX_FORWARD_EDGE (a)->cy;
           l->curvature = (double)-compare_ccw_cw (a->point, center, EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (a))->point) / VERTEX_FORWARD_EDGE (a)->radius;
         }
+#endif
 
       /* First of all, make v the radial line */
       vect_sub (v, center, a->point);
