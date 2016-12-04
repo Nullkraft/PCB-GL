@@ -31,7 +31,7 @@ typedef struct hid_draw_class_st
      and 90 being "up" (positive Y).  */
 
   /* Make an empty graphics context.  */
-  hidGC (*make_gc) (void);
+  hidGC (*make_gc) (HID_DRAW *hid_draw);
   void (*destroy_gc) (hidGC gc);
   void (*use_mask) (HID_DRAW *hid_draw, enum mask_mode mode);
 
@@ -141,7 +141,7 @@ hid_draw_end_layer (HID_DRAW *hid_draw)
 inline hidGC
 hid_draw_make_gc (HID_DRAW *hid_draw)
 {
-  return hid_draw->klass->make_gc ();
+  return hid_draw->klass->make_gc (hid_draw);
 }
 
 inline void

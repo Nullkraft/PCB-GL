@@ -478,8 +478,8 @@ void ghid_pinout_window_show (GHidPort *out, ElementType *Element);
 
 /* gtkhid-gdk.c AND gtkhid-gl.c */
 int ghid_set_layer (HID_DRAW *hid_draw, const char *name, int group, int empty);
-hidGC ghid_make_gc (void);
-void ghid_destroy_gc (hidGC);
+hidGC ghid_make_gc (HID_DRAW *hid_draw);
+void ghid_destroy_gc (hidGC gc);
 void ghid_use_mask (HID_DRAW *hid_draw, enum mask_mode mode);
 void ghid_set_color (hidGC gc, const char *name);
 void ghid_set_line_cap (hidGC gc, EndCapStyle style);
