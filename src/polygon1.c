@@ -192,7 +192,8 @@ poly_dump (POLYAREA * p)
 }
 
 static VNODE *
-poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
+poly_CreateNodeFull (Vector v, bool is_round, double cx, double cy, double radius)
+//poly_CreateNodeFull (Vector v, bool is_round, Coord cx, Coord cy, Coord radius)
 {
   VNODE *res;
   Coord *c;
@@ -226,7 +227,8 @@ poly_CreateNode (Vector v)
 }
 
 VNODE *
-poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
+//poly_CreateNodeArcApproximation (Vector v, Coord cx, Coord cy, Coord radius)
+poly_CreateNodeArcApproximation (Vector v, double cx, double cy, double radius)
 {
 //  return poly_CreateNodeFull (v, false /*true*/, cx, cy, radius);
   return poly_CreateNodeFull (v, true, cx, cy, radius);
@@ -1974,7 +1976,7 @@ print_labels (PLINE * a)
 
   do
     {
-      DEBUGP ("(%mn, %mn)->(%mn, %mn) labeled %s  is_round=%i radius=%li cvc_next=%p cvc_prev=%p\n",
+      DEBUGP ("(%mn, %mn)->(%mn, %mn) labeled %s  is_round=%i radius=%f cvc_next=%p cvc_prev=%p\n",
               EDGE_BACKWARD_VERTEX (e)->point[0], EDGE_BACKWARD_VERTEX (e)->point[1],
                EDGE_FORWARD_VERTEX (e)->point[0],  EDGE_FORWARD_VERTEX (e)->point[1], theState (e),
               e->is_round, e->radius, EDGE_BACKWARD_VERTEX (e)->cvc_next, EDGE_BACKWARD_VERTEX (e)->cvc_prev);
