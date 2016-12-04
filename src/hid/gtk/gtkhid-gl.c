@@ -9,6 +9,9 @@
 #include "../hidint.h"
 #include "gui.h"
 #include "gui-pinout-preview.h"
+#include "draw.h"
+#include "draw_funcs.h"
+#include "rtree.h"
 
 /* The Linux OpenGL ABI 1.0 spec requires that we define
  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
@@ -127,8 +130,8 @@ end_subcomposite (hidgl_instance *hidgl)
 }
 
 
-int
-ghid_set_layer (const char *name, int group, int empty)
+static int
+set_layer (const char *name, int group, int empty)
 {
   render_priv *priv = gport->render_priv;
   hidgl_instance *hidgl = priv->hidgl;
@@ -894,6 +897,136 @@ ghid_screen_update (void)
 {
 }
 
+static void
+ghid_expose (const BoxType *drawn_area)
+{
+  int i, ngroups, side;
+  int top_group, bottom_group;
+  /* This is the list of layer groups we will draw.  */
+  int do_group[MAX_LAYER];
+  /* This is the reverse of the order in which we draw them.  */
+  int drawn_groups[MAX_LAYER];
+  bool paste_empty;
+  HID *old_gui = gui;
+
+  gui = &ghid_hid;
+  Output.fgGC = hid_draw_make_gc (&ghid_graphics);
+  Output.bgGC = hid_draw_make_gc (&ghid_graphics);
+  Output.pmGC = hid_draw_make_gc (&ghid_graphics);
+
+  hid_draw_set_color (Output.pmGC, "erase");
+  hid_draw_set_color (Output.bgGC, "drill");
+
+  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+
+  memset (do_group, 0, sizeof (do_group));
+  for (ngroups = 0, i = 0; i < max_copper_layer; i++)
+    {
+      LayerType *l = LAYER_ON_STACK (i);
+      int group = GetLayerGroupNumberByNumber (LayerStack[i]);
+      if (l->On && !do_group[group])
+	{
+	  do_group[group] = 1;
+	  drawn_groups[ngroups++] = group;
+	}
+    }
+
+  top_group = GetLayerGroupNumberBySide (TOP_SIDE);
+  bottom_group = GetLayerGroupNumberBySide (BOTTOM_SIDE);
+
+  /*
+   * first draw all 'invisible' stuff
+   */
+  if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
+      && set_layer ("invisible", SL (INVISIBLE, 0), 0))
+    {
+      side = SWAP_IDENT ? TOP_SIDE : BOTTOM_SIDE;
+      if (PCB->ElementOn)
+	{
+	  r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
+	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
+	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
+	}
+      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+      gui->end_layer ();
+    }
+
+  /* draw all layers in layerstack order */
+  for (i = ngroups - 1; i >= 0; i--)
+    {
+      int group = drawn_groups[i];
+
+      if (set_layer (0, group, 0))
+        {
+          DrawLayerGroup (group, drawn_area);
+          gui->end_layer ();
+        }
+    }
+
+  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
+    return;
+
+  /* Draw pins, pads, vias below silk */
+  DrawPPV (SWAP_IDENT ? bottom_group : top_group, drawn_area);
+
+  /* Draw the solder mask if turned on */
+  if (set_layer ("componentmask", SL (MASK, TOP), 0))
+    {
+      DrawMask (TOP_SIDE, drawn_area);
+      gui->end_layer ();
+    }
+
+  if (set_layer ("soldermask", SL (MASK, BOTTOM), 0))
+    {
+      DrawMask (BOTTOM_SIDE, drawn_area);
+      gui->end_layer ();
+    }
+
+  if (set_layer ("topsilk", SL (SILK, TOP), 0))
+    {
+      DrawSilk (TOP_SIDE, drawn_area);
+      gui->end_layer ();
+    }
+
+  if (set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
+    {
+      DrawSilk (BOTTOM_SIDE, drawn_area);
+      gui->end_layer ();
+    }
+
+  /* Draw element Marks */
+  if (PCB->PinOn)
+    r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
+              NULL);
+
+  /* Draw rat lines on top */
+  if (set_layer ("rats", SL (RATS, 0), 0))
+    {
+      DrawRats(drawn_area);
+      gui->end_layer ();
+    }
+
+  paste_empty = IsPasteEmpty (TOP_SIDE);
+  if (set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
+    {
+      DrawPaste (TOP_SIDE, drawn_area);
+      gui->end_layer ();
+    }
+
+  paste_empty = IsPasteEmpty (BOTTOM_SIDE);
+  if (set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
+    {
+      DrawPaste (BOTTOM_SIDE, drawn_area);
+      gui->end_layer ();
+    }
+
+  hid_draw_destroy_gc (Output.fgGC);
+  hid_draw_destroy_gc (Output.bgGC);
+  hid_draw_destroy_gc (Output.pmGC);
+  gui = old_gui;
+}
+
 #define Z_NEAR 3.0
 gboolean
 ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -1039,7 +1172,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_draw_bg_image ();
 
   ghid_invalidate_current_gc ();
-  hid_expose_callback (&ghid_graphics, &region, 0);
+  ghid_expose (&region);
   hidgl_flush_triangles (priv->hidgl);
 
   ghid_draw_grid (priv->crosshair_gc, &region);
