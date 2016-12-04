@@ -1,5 +1,5 @@
-Bottom: 81bebf78d78cca8304a3d476e9c6866a341b1c21
-Top:    0876a0264266896199e2488b38d9f0b500175382
+Bottom: 67ec562f7fa76d6ed9cf63e485aae74d10cbc264
+Top:    94b95c4f2ca89337a2f396b776f216aca28dec52
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-12 18:50:12 +0000
 
@@ -35,7 +35,7 @@ index 89d9b87..2c20ab2 100644
  extern bool Bumped;
  
 diff --git a/src/global.h b/src/global.h
-index d5d2f82..716641e 100644
+index d0b3f14..c86a2f1 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -393,7 +393,7 @@ typedef struct			/* holds all objects */
@@ -48,10 +48,10 @@ index d5d2f82..716641e 100644
    GList *Element;
    GList *Rat;
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index 8d81a8e..3a370b3 100644
+index e7a2720..b3b4abc 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -1100,13 +1100,13 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -1102,13 +1102,13 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
  }
  
  static Coord
