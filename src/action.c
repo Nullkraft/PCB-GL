@@ -4339,7 +4339,7 @@ ActionMinMaskGap (int argc, char **argv, Coord x, Coord y)
       if (!TEST_FLAGS (flags, pin) || ! pin->Mask)
 	continue;
 
-	thickness = pin->DrillingHole;
+      thickness = pin->DrillingHole;
       if (pin->Thickness > thickness)
 	thickness = pin->Thickness;
       thickness += value;
