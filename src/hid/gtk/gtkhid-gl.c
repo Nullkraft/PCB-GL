@@ -3022,7 +3022,7 @@ ghid_request_debug_draw (void)
 }
 
 void
-ghid_flush_debug_draw (void)
+ghid_flush_debug_draw (HID_DRAW *hid_draw)
 {
   render_priv *priv = gport->render_priv;
   GtkWidget *widget = gport->drawing_area;
@@ -3037,7 +3037,7 @@ ghid_flush_debug_draw (void)
 }
 
 void
-ghid_finish_debug_draw (void)
+ghid_finish_debug_draw (HID_DRAW *hid_draw)
 {
   render_priv *priv = gport->render_priv;
 
