@@ -70,7 +70,6 @@ void DrawLayerGroup (int side, const BoxType *drawn_area);
 void DrawPaste (int side, const BoxType *drawn_area);
 void DrawSilk (HID_DRAW *hid_draw, int side, const BoxType *drawn_area);
 void DrawMask (int side, const BoxType *drawn_area);
-void DrawHoles (bool draw_plated, bool draw_unplated, const BoxType *drawn_area);
 void PrintAssembly (int side, const BoxType *drawn_area);
 
 /* TEMPORARY */
