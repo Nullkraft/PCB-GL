@@ -1,5 +1,5 @@
-Bottom: 6ad03eee65b3e53a1d73f3408c24882fcf9bb7f9
-Top:    1d53ff2fd1dd70c584498feedfb7dd06b803a4b2
+Bottom: f140d9dbd0e899e60b55872fff09e410903d3d06
+Top:    af57be3fdd9eb85c3b3c35ced89a21f410939e54
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2016-02-13 18:44:27 +0000
 
@@ -1641,7 +1641,7 @@ index 0000000..62ef69f
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 73f940e..09ece1f 100644
+index 35f7ebc..8adfb0d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -381,6 +381,47 @@ ghid_draw_grid (hidGC gc, BoxType *drawn_area)
@@ -1852,7 +1852,7 @@ index 73f940e..09ece1f 100644
    glClearColor (port->bg_color.red / 65535.,
                  port->bg_color.green / 65535.,
                  port->bg_color.blue / 65535.,
-@@ -2101,6 +2214,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2110,6 +2223,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
    /* glStencilFunc (GL_GREATER, 1, 1); */           /* Draw only where stencil buffer is 0 */
  
@@ -1860,7 +1860,7 @@ index 73f940e..09ece1f 100644
  #if 0
    if (global_view_2d) {
      glBegin (GL_QUADS);
-@@ -2134,12 +2248,54 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2143,12 +2257,54 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    }
  #endif
  
@@ -1915,7 +1915,7 @@ index 73f940e..09ece1f 100644
    /* Set the current depth to the right value for the layer we are editing */
    priv->edit_depth = compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT));
    hidgl_set_depth (Output.fgGC, priv->edit_depth);
-@@ -2152,7 +2308,66 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2161,7 +2317,66 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawMark (Output.fgGC);
    hidgl_flush_triangles (priv->hidgl);
  
@@ -1982,7 +1982,7 @@ index 73f940e..09ece1f 100644
    hidgl_flush_triangles (priv->hidgl);
  
    draw_lead_user (Output.fgGC, priv);
-@@ -2283,7 +2498,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2292,7 +2507,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -1991,7 +1991,7 @@ index 73f940e..09ece1f 100644
    hidgl_reset_stencil_usage (priv->hidgl);
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -2346,6 +2561,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2355,6 +2570,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
@@ -1999,7 +1999,7 @@ index 73f940e..09ece1f 100644
                                          GDK_GL_MODE_SINGLE);
  
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
-@@ -2394,7 +2610,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2403,7 +2619,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
