@@ -1,7 +1,7 @@
-Bottom: dd43e54d55d683bd123fcfc518a270050e0fb023
-Top:    7635e81f8e1a5b6ae2be906440e556aac25482ff
+Bottom: 6085abc054df36284860fdacbb1ccbbf8dce2b2c
+Top:    b14387610029fd5789650304209a94f5f904cb58
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-02-13 18:44:28 +0000
+Date:   2016-12-04 15:55:50 +0000
 
 Play with locked object rendering
 
@@ -199,7 +199,7 @@ index b78331f..8335d17 100644
 +{
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index da711d5..091fed1 100644
+index 5d2ca7a..1b90a04 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -80,6 +80,8 @@ typedef struct render_priv {
@@ -403,7 +403,7 @@ index da711d5..091fed1 100644
    hid_draw_set_color (Output.fgGC, color);
    DrawDrillChannel (Output.fgGC, Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
    return 0;
-@@ -3188,3 +3244,26 @@ ghid_cancel_lead_user (void)
+@@ -3197,3 +3253,26 @@ ghid_cancel_lead_user (void)
    priv->lead_user_timer = NULL;
    priv->lead_user = false;
  }

@@ -1,16 +1,17 @@
-Bottom: 7010cd9919aac970dca36182c5fffafaf66f37ad
-Top:    8a7c16d64a7b5bd3d9347428bb365d347d824b30
+Bottom: 28d731fcc4b89d9d306c4abed262e2d0cd4768f2
+Top:    9a7a5dc5c1972c895435505437c1316ac44f4995
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
-Date:   2016-03-05 16:23:01 +0000
+Date:   2016-12-04 15:55:50 +0000
 
 polygon.c: Add option to include drills holes (from vias / pins) in the board outline
 
 V2: Fixup board_outline_poly() to subtract vias / pins even if no outline was found
 
+
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1c8b92b..1fd999f 100644
+index 752b8db..56e15cf 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1617,7 +1617,7 @@ ensure_board_outline (void)
