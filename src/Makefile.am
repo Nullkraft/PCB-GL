@@ -38,6 +38,22 @@ PCB_SRCS = \
 	box.h \
 	buffer.c \
 	buffer.h \
+	borast/borast-minimal.h \
+	borast/borastint-minimal.h \
+	borast/borast-bentley-ottmann.c \
+	borast/borast-combsort-private.h \
+	borast/borast-compiler-private.h \
+	borast/borast-fixed-private.h \
+	borast/borast-fixed-type-private.h \
+	borast/borast-freelist.c \
+	borast/borast-freelist-private.h \
+	borast/borast-malloc-private.h \
+	borast/borast-traps.c \
+	borast/borast-traps-private.h \
+	borast/borast-types-private.h \
+	borast/borast-wideint.c \
+	borast/borast-wideint-private.h \
+	borast/borast-wideint-type-private.h \
 	change.c \
 	change.h \
 	clip.c \
@@ -136,6 +152,7 @@ PCB_SRCS = \
 	set.h \
 	strflags.c \
 	strflags.h \
+	sweep.h \
 	thermal.c \
 	thermal.h \
 	undo.c \
