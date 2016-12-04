@@ -38,6 +38,33 @@ PCB_SRCS = \
 	box.h \
 	buffer.c \
 	buffer.h \
+	cairo/cairoint.h \
+	cairo/cairo-atomic-private.h \
+	cairo/cairo-bentley-ottmann.c \
+	cairo/cairo-cache-private.h \
+	cairo/cairo-clip-private.h \
+	cairo/cairo-combsort-private.h \
+	cairo/cairo-compiler-private.h \
+	cairo/cairo-fixed-private.h \
+	cairo/cairo-fixed-type-private.h \
+	cairo/cairo-freelist.c \
+	cairo/cairo-freelist-private.h \
+	cairo/cairo-hash-private.h \
+	cairo/cairo-list-private.h \
+	cairo/cairo-malloc-private.h \
+	cairo/cairo-mutex-impl-private.h \
+	cairo/cairo-mutex-list-private.h \
+	cairo/cairo-mutex-private.h \
+	cairo/cairo-mutex-type-private.h \
+	cairo/cairo-path-fixed-private.h \
+	cairo/cairo-reference-count-private.h \
+	cairo/cairo-scaled-font-private.h \
+	cairo/cairo-spans-private.h \
+	cairo/cairo-surface-private.h \
+	cairo/cairo-types-private.h \
+	cairo/cairo-wideint.c \
+	cairo/cairo-wideint-private.h \
+	cairo/cairo-wideint-type-private.h \
 	change.c \
 	change.h \
 	clip.c \
@@ -74,6 +101,8 @@ PCB_SRCS = \
 	free_atexit.h \
 	gettext.h \
 	global.h \
+	gpqueue/gpqueue.c \
+	gpqueue/gpqueue.h \
 	heap.c \
 	heap.h \
 	hid.h \
@@ -134,6 +163,8 @@ PCB_SRCS = \
 	set.h \
 	strflags.c \
 	strflags.h \
+	sweep.c \
+	sweep.h \
 	thermal.c \
 	thermal.h \
 	undo.c \
