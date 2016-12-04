@@ -346,6 +346,7 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
 {
   LayerType *lay = &Dest->Layer[GetLayerNumber (Source, layer)];
 
+  RestoreToPolygon (Source, POLYGON_TYPE, layer, polygon);
   r_delete_entry (layer->polygon_tree, (BoxType *)polygon);
 
   layer->Polygon = g_list_remove (layer->Polygon, polygon);
@@ -358,6 +359,7 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
   if (!lay->polygon_tree)
     lay->polygon_tree = r_create_tree (NULL, 0, 0);
   r_insert_entry (lay->polygon_tree, (BoxType *)polygon, 0);
+  ClearFromPolygon (Source, POLYGON_TYPE, layer, polygon);
   return (polygon);
 }
 
