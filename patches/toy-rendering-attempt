@@ -1,5 +1,5 @@
 Bottom: 040a649c87d54f24477744d8f5ab4005ff8a9eca
-Top:    3255655c8a0237d097e33aab5275e52eb288b30b
+Top:    ce671c37b1f84ce52eba78a5cbad4c962db83106
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -35,7 +35,7 @@ index 3ab2cfd..adefe55 100644
   * some local types
   */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8e3b9f4..c5ccc21 100644
+index 8e3b9f4..a9599d8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1127,6 +1127,10 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
@@ -43,9 +43,9 @@ index 8e3b9f4..c5ccc21 100644
    ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
    ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 +
-+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/cheyney_step/Resistor_vr68.step");
-+  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/cheyney_step/Ceramite_2500z_10kV.step");
-+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/cheyney_step/Filament_Transformer.step");
++//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step");
++  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step");
++//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step");
  }
  
  void
