@@ -1,5 +1,5 @@
 Bottom: c7c9546dad4160b56f1e3ee3e69224653f60d376
-Top:    f2f75c163c053077c440cacf9cace3dd14913e6f
+Top:    c36643a6935f9137b8197f70d1561e35b0db4f65
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -34,11 +34,59 @@ index 4e8ceb7..12ca76d 100644
  /* ---------------------------------------------------------------------------
   * some local types
   */
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index e7a2720..eaa13dd 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -200,8 +200,8 @@ draw_quad_edge (edge_ref e, void *data)
+   glEnd ();
+ }
+ 
+-static void
+-object3d_draw_debug_single (object3d *object, void *user_data)
++void
++object3d_draw (obejct3d *object)
+ {
+   g_return_if_fail (object->edges != NULL);
+ 
+@@ -209,6 +209,12 @@ object3d_draw_debug_single (object3d *object, void *user_data)
+   g_list_foreach (object->edges, (GFunc)draw_quad_edge, NULL);
+ }
+ 
++static void
++object3d_draw_debug_single (object3d *object, void *user_data)
++{
++  object3d_draw (object);
++}
++
+ void
+ object3d_draw_debug (void)
+ {
+diff --git a/src/hid/common/object3d.h b/src/hid/common/object3d.h
+index b288cf2..3d228f6 100644
+--- a/src/hid/common/object3d.h
++++ b/src/hid/common/object3d.h
+@@ -9,6 +9,7 @@ typedef struct {
+ } object3d;
+ 
+ void object3d_test_init (void);
++void object3d_draw (object3d *object);
+ void object3d_draw_debug (void);
+ object3d *make_object3d (char *name);
+ void destroy_object3d (object3d *object);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 61b2064..f62f522 100644
+index 61b2064..070b7ea 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1127,6 +1127,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -123,6 +123,7 @@ static bool ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, double *pcb_
+ 
+ void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
+ 
++object3d *step_read_test = NULL
+ 
+ 
+ /* Coordinate conversions */
+@@ -1127,6 +1128,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
    ghid_graphics_class.end_layer = ghid_end_layer;
    ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
    ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
@@ -46,16 +94,18 @@ index 61b2064..f62f522 100644
 +//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step");
 +//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step");
 +//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step");
-+  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step");
++  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step", &step_read_test);
  }
  
  void
-@@ -2728,7 +2733,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2728,7 +2734,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);
 -//  object3d_draw_debug ();
-+  object3d_draw_debug ();
++  //object3d_draw_debug ();
++  if (step_read_test != NULL)
++    object3d_draw (step_read_test);
  
    hidgl_flush_triangles (priv->hidgl);
  
