@@ -1,5 +1,5 @@
-Bottom: 0aa5c980cec094729f8b89db86e76e61bb5e6651
-Top:    d1ebde806e952bd5e6461efa938410084e23cd0f
+Bottom: c1acb475d5bf3a2e4e93f9454591c16f254ef369
+Top:    9ccb76be2a6f493fd7ba4ac904e9ef01dea457d8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -9,10 +9,10 @@ temp
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 5501c2f..55d7ad1 100644
+index 3d4be3a..8755343 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -271,9 +271,14 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -276,9 +276,14 @@ new_descriptor (VNODE * a, PLINE *pl, char poly, char side)
    CVCList *l = (CVCList *) malloc (sizeof (CVCList));
    Vector v;
    register double ang, dx, dy;
@@ -26,8 +26,8 @@ index 5501c2f..55d7ad1 100644
 +
    l->head = NULL;
    l->parent = a;
-   l->poly = poly;
-@@ -322,6 +327,8 @@ new_descriptor (VNODE * a, char poly, char side)
+   l->parent_contour = pl;
+@@ -328,6 +333,8 @@ new_descriptor (VNODE * a, PLINE *pl, char poly, char side)
      ang = 4.0 - ang;		/* 4th quadrant */
    l->angle = ang;
    assert (ang >= 0.0 && ang <= 4.0);
@@ -36,7 +36,7 @@ index 5501c2f..55d7ad1 100644
  #ifdef DEBUG_ANGLE
    DEBUGP ("node on %c at (%$mn, %$mn) assigned angle %g on side %c\n", poly,
  	  a->point[0], a->point[1], ang, side);
-@@ -351,7 +358,7 @@ static int compare_cvc_nodes (CVCList *a, CVCList *b)
+@@ -357,7 +364,7 @@ static int compare_cvc_nodes (CVCList *a, CVCList *b)
  insert_descriptor
    (C) 2006 harry eaton
  
@@ -45,7 +45,7 @@ index 5501c2f..55d7ad1 100644
     argument poly is the polygon it comes from ('A' or 'B')
     argument side is the side this descriptor goes on ('P' for previous
     'N' for next.
-@@ -823,6 +830,11 @@ prepend_insert_node_task (insert_node_task *list, seg *seg, VNODE *new_node)
+@@ -835,6 +842,11 @@ prepend_insert_node_task (insert_node_task *list, POLYAREA *poly, seg *seg, VNOD
    return task;
  }
  
@@ -57,7 +57,7 @@ index 5501c2f..55d7ad1 100644
  /*
   * seg_in_seg()
   * (C) 2006 harry eaton
-@@ -852,6 +864,8 @@ seg_in_seg (const BoxType * b, void *cl)
+@@ -864,6 +876,8 @@ seg_in_seg (const BoxType * b, void *cl)
  
    cnt = vect_inters2 (EDGE_BACKWARD_VERTEX (s->v)->point, EDGE_FORWARD_VERTEX (s->v)->point,
  		      EDGE_BACKWARD_VERTEX (i->v)->point, EDGE_FORWARD_VERTEX (i->v)->point, s1, s2);
@@ -66,7 +66,7 @@ index 5501c2f..55d7ad1 100644
    if (!cnt)
      return 0;
    if (i->touch)			/* if checking touches one find and we're done */
-@@ -4201,6 +4215,16 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4594,6 +4608,16 @@ vect_inters2_fp (double p1[2], double p2[2],
    double s, t, deel;
    double rpx, rpy, rqx, rqy;
  
@@ -83,7 +83,7 @@ index 5501c2f..55d7ad1 100644
    if (max (p1[0], p2[0]) < min (q1[0], q2[0]) ||
        max (q1[0], q2[0]) < min (p1[0], p2[0]) ||
        max (p1[1], p2[1]) < min (q1[1], q2[1]) ||
-@@ -4223,6 +4247,8 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
+@@ -4619,6 +4643,8 @@ vect_inters2_fp (double p1[2], double p2[2],
        double dc1, dc2, d1, d2, h;	/* Check to see whether p1-p2 and q1-q2 are on the same line */
        Vector hp1, hq1, hp2, hq2, q1p1, q1q2;
  
