@@ -1,5 +1,5 @@
-Bottom: 00768cdfb9852f828a9c25cbc71425b8a07f7e84
-Top:    8b3961cfe1b8225aa0d94442eed818fc77c40969
+Bottom: 4bbea401a3440a3f867884ca7558af689fe82e60
+Top:    c555f531cb20f042e17e0d402fd61ef943b2ecec
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-07 18:10:14 +0000
 
@@ -11,7 +11,7 @@ Answer - no, Solidworks still manages to randomly screw up assignment of styles 
 ---
 
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 01404dc..d9c610a 100644
+index 9740e9b..6585a31 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -37,6 +37,18 @@
@@ -33,7 +33,7 @@ index 01404dc..d9c610a 100644
  presentation_style_assignments_from_appearance (step_file *step, appearance *appear)
  {
    step_id colour = step_colour_rgb (step, "", appear->r, appear->g, appear->b);
-@@ -384,6 +396,8 @@ step_absr_fragment (step_file *step,
+@@ -394,6 +406,8 @@ step_absr_fragment (step_file *step,
    step_id shape_representation_identifier;
    step_id anchor_axis_identifier;
    step_id shape_definition_representation_identifier;
@@ -41,8 +41,8 @@ index 01404dc..d9c610a 100644
 +  step_id shape_style_identifier;
  
    /* Need an anchor in 3D space to orient the shape */
-   anchor_axis_identifier = step_axis2_placement_3d (step, "NONE",
-@@ -399,6 +413,11 @@ step_absr_fragment (step_file *step,
+   if (placement_axis == NULL || *placement_axis == 0)
+@@ -415,6 +429,11 @@ step_absr_fragment (step_file *step,
    shape_definition_representation_identifier =
    step_shape_definition_representation (step, product_definition_shape_identifier, shape_representation_identifier);
  
