@@ -1,0 +1,52 @@
+Bottom: 550c7532fe695850b042b644f688e4cc31c2f475
+Top:    bc330ad5310ef69ef66867ab688cf05709b65be1
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-05 22:23:14 +0000
+
+Refresh of toy-rendering-attempt
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index a9599d8..88da274 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1129,8 +1129,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+   ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+ 
+ //  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step");
+-  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step");
++//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step");
+ //  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step");
++  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step");
+ }
+ 
+ void
+@@ -2722,7 +2723,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glDisable (GL_LIGHTING);
+ 
+   draw_crosshair (Output.fgGC, priv);
+-//  object3d_draw_debug ();
++  object3d_draw_debug ();
+ 
+   hidgl_flush_triangles (priv->hidgl);
+ 
+diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
+index 41dcfe6..5705425 100644
+--- a/src/hid/step/model.cpp
++++ b/src/hid/step/model.cpp
+@@ -87,11 +87,11 @@ read_model_from_file (Registry *registry,
+   pd_list pd_list;
+ 
+   // Find all PRODUCT_DEFINITION entities with a SHAPE_DEFINITION_REPRESETNATION
+-  find_all_pd_with_sdr (instance_list, &pd_list);
++  find_all_pd_with_sdr (instance_list, &pd_list, 1);
+ 
+   /*  Try to determine the root product */
+-  find_and_remove_child_pd (instance_list, &pd_list, "Next_assembly_usage_occurrence"); // Remove any PD which are children of another via NAUO
+-  find_and_remove_child_pd (instance_list, &pd_list, "Assembly_component_usage");       // Remove any PD which are children of another via ACU
++  find_and_remove_child_pd (instance_list, &pd_list, 1, "Next_assembly_usage_occurrence"); // Remove any PD which are children of another via NAUO
++  find_and_remove_child_pd (instance_list, &pd_list, 1, "Assembly_component_usage");       // Remove any PD which are children of another via ACU
+ 
+ #ifdef DEBUG_PRODUCT_DEFINITION_SEARCH
+   std::cout << "Hopefully left with the root product definition" << std::endl;
