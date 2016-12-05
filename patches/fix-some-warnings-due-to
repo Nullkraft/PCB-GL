@@ -1,5 +1,5 @@
-Bottom: 6047896d1386ec4f1e0428d187e5e16fe85169a4
-Top:    c52e3ceff44fbbd693ff32ffee5c10f19a297e5b
+Bottom: 07e968b624675d5aa3762866a12093657382e540
+Top:    67193597f974fbfab35cfdcc13f40b6d170636f9
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-12 16:15:30 +0000
 
@@ -9,7 +9,7 @@ Fix some warnings due to -Wextra and -pedantic
 ---
 
 diff --git a/src/global.h b/src/global.h
-index c86a2f1..2287475 100644
+index d0b3f14..b8efc7b 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -167,7 +167,7 @@ typedef struct
@@ -912,7 +912,7 @@ index 3c3b4d0..7c4e95c 100644
    char *t1, *t2;
    int found_bindir = 0;
 diff --git a/src/misc.c b/src/misc.c
-index 0e46b98..9230b16 100644
+index 643730e..804cb9f 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -614,7 +614,7 @@ SetTextBoundingBox (FontType *FontPtr, TextType *Text)
