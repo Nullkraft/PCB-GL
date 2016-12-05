@@ -1,5 +1,5 @@
-Bottom: d1ebde806e952bd5e6461efa938410084e23cd0f
-Top:    6d53876aaaa1af1ebf42bc976dce9b7cae13989f
+Bottom: 9ccb76be2a6f493fd7ba4ac904e9ef01dea457d8
+Top:    e7d6dfe57788ff8771b6249790af26d5211e3370
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -9,10 +9,10 @@ Try using cvc_next instead of cvc_prev where possible
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 55d7ad1..f0365bf 100644
+index 8755343..197a180 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -297,7 +297,7 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -303,7 +303,7 @@ new_descriptor (VNODE * a, PLINE *pl, char poly, char side)
      {
        if (side == 'P')
  	{
@@ -21,7 +21,7 @@ index 55d7ad1..f0365bf 100644
  	    PREV_VERTEX (a)->cvc_prev = PREV_VERTEX (a)->cvc_next = NULL;
  	  poly_ExclVertex (PREV_VERTEX (a));
            fprintf (stderr, "REMOVING VERTEX 111111111111111111111111111111111111111111111111111111\n");
-@@ -306,7 +306,7 @@ new_descriptor (VNODE * a, char poly, char side)
+@@ -312,7 +312,7 @@ new_descriptor (VNODE * a, PLINE *pl, char poly, char side)
  	}
        else
  	{
@@ -30,7 +30,7 @@ index 55d7ad1..f0365bf 100644
  	    NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
  	  poly_ExclVertex (NEXT_VERTEX (a));
            fprintf (stderr, "REMOVING VERTEX 222222222222222222222222222222222222222222222222222222\n");
-@@ -685,7 +685,7 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
+@@ -691,7 +691,7 @@ add_descriptors (PLINE * pl, char poly, CVCList * list)
  
    do
      {
@@ -39,7 +39,7 @@ index 55d7ad1..f0365bf 100644
  	{
  	  assert (node->cvc_prev == (CVCList *) - 1
  		  && node->cvc_next == (CVCList *) - 1);
-@@ -1812,7 +1812,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule)
+@@ -2148,7 +2148,7 @@ jump (VNODE **curv, DIRECTION *cdir, J_Rule j_rule, char **contour_name)
    VNODE *e; /* e is considered an edge */
    DIRECTION newone;
  
