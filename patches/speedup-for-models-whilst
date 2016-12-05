@@ -1,5 +1,5 @@
-Bottom: ad4e5777b0342edf0617b6c1aabf69862c38dfe8
-Top:    7a84673403916b2faea7a4f9851af9cfed796660
+Bottom: ce671c37b1f84ce52eba78a5cbad4c962db83106
+Top:    ce671c37b1f84ce52eba78a5cbad4c962db83106
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:09 +0000
 
@@ -8,46 +8,4 @@ Speedup for models whilst debugging
 
 ---
 
-diff --git a/src/hid/step/assembly.cpp b/src/hid/step/assembly.cpp
-index 1cc4a3f..87a2a18 100644
---- a/src/hid/step/assembly.cpp
-+++ b/src/hid/step/assembly.cpp
-@@ -708,7 +708,12 @@ append_model_from_file (Registry *registry,
- //  int file_increment = ( int )( ( ceil( ( max_existing_file_id + 99.0 ) / 1000.0 ) + 1.0 ) * 1000.0 ); /* XXX: RELYING ON SCL NOT CHANGING */
- //  std::cout << "INFO: Expecting a to add " << file_increment << " to entity names" << std::endl;
- 
-+#if 1
-   STEPfile sfile = STEPfile (*registry, *instance_list, "", false);
-+#else
-+  STEPfile *sfilep = new STEPfile (*registry, *instance_list, "", false);
-+  STEPfile &sfile = *sfilep; /* Let us deliberately leak STEPfile for a performance test */
-+#endif
- 
-   // XXX: This appears to throw exceptions from std::ios_base if the file doesn't exist
-   try
-diff --git a/src/polygon.c b/src/polygon.c
-index c5d6315..77a2e93 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -2422,6 +2422,8 @@ pv_outline_callback (const BoxType * b, void *cl)
-     }
-   else
-     {
-+      /* NOT FROM ELEMENT, DROP HOLE */
-+      return 1;
-       feature_name = STRDUP(pv->Name);
-     }
- 
-diff --git a/src/polygon.h b/src/polygon.h
-index 13e23ad..a4e053b 100644
---- a/src/polygon.h
-+++ b/src/polygon.h
-@@ -34,7 +34,7 @@
- 
- /* Implementation constants */
- 
--#define POLY_CIRC_SEGS 8 //40
-+#define POLY_CIRC_SEGS 8
- #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
- 
- #if 0
+
