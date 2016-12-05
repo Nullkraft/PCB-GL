@@ -1128,9 +1128,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
   ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/cheyney_step/Resistor_vr68.step");
-  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/cheyney_step/Ceramite_2500z_10kV.step");
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/cheyney_step/Filament_Transformer.step");
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step");
+  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step");
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step");
 }
 
 void
