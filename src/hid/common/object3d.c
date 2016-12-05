@@ -200,13 +200,19 @@ draw_quad_edge (edge_ref e, void *data)
   glEnd ();
 }
 
-static void
-object3d_draw_debug_single (object3d *object, void *user_data)
+void
+object3d_draw (obejct3d *object)
 {
   g_return_if_fail (object->edges != NULL);
 
 //  quad_enum ((edge_ref)object->edges->data, draw_quad_edge, NULL);
   g_list_foreach (object->edges, (GFunc)draw_quad_edge, NULL);
+}
+
+static void
+object3d_draw_debug_single (object3d *object, void *user_data)
+{
+  object3d_draw (object);
 }
 
 void
