@@ -1,5 +1,5 @@
 Bottom: 53d14b610b873346097201f9bdaf08c93b813760
-Top:    53d14b610b873346097201f9bdaf08c93b813760
+Top:    c1acb475d5bf3a2e4e93f9454591c16f254ef369
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -8,4 +8,111 @@ Apply debug to polygon1.c
 
 ---
 
-
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 24e9dfa..3d4be3a 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -246,10 +246,14 @@ node_add_single (VNODE * dest, Vector po)
+   VNODE *p;
+ 
+ /* XXX: MAY NOT BE CORRECT IF WE NEED TO SEPARATE STRAIGHT AND CURVED SEGMENTS */
+-  if (vect_equal (po, EDGE_BACKWARD_VERTEX (dest)->point))
++  if (vect_equal (po, EDGE_BACKWARD_VERTEX (dest)->point)) {
++    pcb_fprintf (stderr, "node_add_single() returning EDGE_BACKWARD_VERTEX (dest);\n");
+     return EDGE_BACKWARD_VERTEX (dest);
+-  if (vect_equal (po, EDGE_FORWARD_VERTEX (dest)->point))
++  }
++  if (vect_equal (po, EDGE_FORWARD_VERTEX (dest)->point)) {
++    pcb_fprintf (stderr, "node_add_single() returning EDGE_FORWARD_VERTEX (dest);\n");
+     return EDGE_FORWARD_VERTEX (dest);
++  }
+   p = poly_CreateNode (po);
+   if (p == NULL)
+     return NULL;
+@@ -297,6 +301,7 @@ new_descriptor (VNODE * a, PLINE *pl, char poly, char side)
+ 	  if (PREV_VERTEX (a)->cvc_prev == (CVCList *) - 1)
+ 	    PREV_VERTEX (a)->cvc_prev = PREV_VERTEX (a)->cvc_next = NULL;
+ 	  poly_ExclVertex (PREV_VERTEX (a));
++          fprintf (stderr, "REMOVING VERTEX 111111111111111111111111111111111111111111111111111111\n");
+ 	  vect_sub (v, PREV_VERTEX (a)->point, a->point);
+ #warning DOES THIS LEAK A VERTEX?
+ 	}
+@@ -305,6 +310,7 @@ new_descriptor (VNODE * a, PLINE *pl, char poly, char side)
+ 	  if (NEXT_VERTEX (a)->cvc_prev == (CVCList *) - 1)
+ 	    NEXT_VERTEX (a)->cvc_prev = NEXT_VERTEX (a)->cvc_next = NULL;
+ 	  poly_ExclVertex (NEXT_VERTEX (a));
++          fprintf (stderr, "REMOVING VERTEX 222222222222222222222222222222222222222222222222222222\n");
+ 	  vect_sub (v, NEXT_VERTEX (a)->point, a->point);
+ #warning DOES THIS LEAK A VERTEX?
+ 	}
+@@ -613,6 +619,34 @@ edge_label (VNODE * pn, int existing_label)
+ 
+   if (shared_edge_case)
+     {
++      pcb_fprintf (stderr, "edge_label called on edge (%mm, %mm)-(%mm, %mm)\n",
++                   EDGE_BACKWARD_VERTEX (pn)->point[0],
++                   EDGE_BACKWARD_VERTEX (pn)->point[1],
++                   EDGE_FORWARD_VERTEX (pn)->point[0],
++                   EDGE_FORWARD_VERTEX (pn)->point[1]);
++      pcb_fprintf (stderr, "EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (l->parent))->point = (%mm, %mm)\n",
++                   EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (l->parent))->point[0],
++                   EDGE_FORWARD_VERTEX (VERTEX_FORWARD_EDGE (l->parent))->point[1]);
++      pcb_fprintf (stderr, "EDGE_FORWARD_VERTEX (pn))->point = (%mm, %mm)\n",
++                   EDGE_FORWARD_VERTEX (pn)->point[0],
++                   EDGE_FORWARD_VERTEX (pn)->point[1]);
++      {
++        CVCList *iter = EDGE_BACKWARD_VERTEX (pn)->cvc_next;
++        pcb_fprintf (stderr, "Inspecting cross-vertex starting with the edge backwards_vertex at (%mm, %mm)\n",
++                     EDGE_BACKWARD_VERTEX (pn)->point[0],
++                     EDGE_BACKWARD_VERTEX (pn)->point[1]);
++        do {
++          pcb_fprintf (stderr, "angle = %f, poly = %c, side = %c, (%mm, %mm)-(%mm, %mm)\n",
++                       iter->angle,
++                       iter->poly,
++                       iter->side,
++                       EDGE_BACKWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[0],
++                       EDGE_BACKWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[1],
++                       EDGE_FORWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[0],
++                       EDGE_FORWARD_VERTEX (VERTEX_SIDE_DIR_EDGE (iter->parent, iter->side))->point[1]);
++        } while ((iter = iter->next) != pn->cvc_next);
++      }
++
+       /* If this fires, we found two geometrically distinct edges which for some reason compare as equal in our cvc_list.
+        * Shared edges should be geometrically identical (but may be in opposite directions).
+        */
+@@ -3328,6 +3362,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ 
+   *res = NULL;
+ 
++  fprintf (stderr, "# A POLYGON\n");
++  if (a == NULL) printf ("NULL\n"); else poly_dump (a);
++  fprintf (stderr, "# B POLYGON\n");
++  if (b == NULL) printf ("NULL\n"); else poly_dump (b);
++
+ #if 0
+   /* Make copies for tracking polygon parentage (DEBUG) */
+   if (!poly_M_Copy0 (&a_copy, a) || !poly_M_Copy0 (&b_copy, b))
+@@ -3697,6 +3736,7 @@ poly_PreContour (PLINE * C, BOOLp optimize)
+ 	  if (vect_det2 (p1, p2) == 0)
+ 	    {
+ 	      poly_ExclVertex (c);
++              fprintf (stderr, "REMOVING VERTEX 333333333333333333333333333333333333333333333333333333\n");
+ 	      g_slice_free (VNODE, c);
+ 	      c = p;
+ 	    }
+@@ -4640,6 +4680,7 @@ vect_inters2_fp (double p1[2], double p2[2],
+ 	      Vcpy2 (S2, hq2);
+ 	    };
+ 	}
++      fprintf (stderr, "Intersection returning %i\n", Vequ2 (S1, S2) ? 1 : 2);
+       return (Vequ2 (S1, S2) ? 1 : 2);
+     }
+   else
+@@ -4687,6 +4728,7 @@ vect_inters2_fp (double p1[2], double p2[2],
+ 	  S1[0] = q1[0] + ROUND (t * rqx);
+ 	  S1[1] = q1[1] + ROUND (t * rqy);
+ 	}
++      fprintf (stderr, "Intersection returning 1\n");
+       return 1;
+     }
+ }				/* vect_inters2 */
