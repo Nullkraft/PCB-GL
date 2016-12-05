@@ -1,0 +1,29 @@
+Bottom: bc330ad5310ef69ef66867ab688cf05709b65be1
+Top:    4769f404cfecff60c1ea9a765d6a0d1024ebb081
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-05 22:23:45 +0000
+
+Refresh of patch-out-non-full-screen
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 88da274..afe7d1f 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2349,6 +2349,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+     object3d_test_init ();
+   }
+ 
++  printf ("Expose event at (%i,%i): %i x %i\n", ev->area.x, ev->area.y, ev->area.width, ev->area.height);
++
++  /* For some reason we get horrible glitching when we don't repaint the whole event region...
++   * It also appears that we get spurious small repaints interleaved with full area re-paints,
++   * so lets try just droping the small ones
++   */
++  if (ev->area.x != 0 || ev->area.y != 0)
++    return; /* XXX? */
++
+   gtk_widget_get_allocation (widget, &allocation);
+ 
+   ghid_start_drawing (port, widget);
