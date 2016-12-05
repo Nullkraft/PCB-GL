@@ -1,5 +1,5 @@
-Bottom: 0ffc54a8c1529228da61a08e5bcf4342c9ae0d20
-Top:    bc330ad5310ef69ef66867ab688cf05709b65be1
+Bottom: c7c9546dad4160b56f1e3ee3e69224653f60d376
+Top:    f2f75c163c053077c440cacf9cace3dd14913e6f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -35,7 +35,7 @@ index 4e8ceb7..12ca76d 100644
   * some local types
   */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8e3b9f4..88da274 100644
+index 61b2064..f62f522 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1127,6 +1127,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
@@ -50,7 +50,7 @@ index 8e3b9f4..88da274 100644
  }
  
  void
-@@ -2718,7 +2723,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2728,7 +2733,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);

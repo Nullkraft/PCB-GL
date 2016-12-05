@@ -1,5 +1,5 @@
-Bottom: bc330ad5310ef69ef66867ab688cf05709b65be1
-Top:    f2f75c163c053077c440cacf9cace3dd14913e6f
+Bottom: 0ffc54a8c1529228da61a08e5bcf4342c9ae0d20
+Top:    c7c9546dad4160b56f1e3ee3e69224653f60d376
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-05 22:23:41 +0000
 
@@ -11,10 +11,10 @@ Patch out non-full-screen invalidates
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 88da274..f62f522 100644
+index 8e3b9f4..61b2064 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -2349,6 +2349,16 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2344,6 +2344,16 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      object3d_test_init ();
    }
  
