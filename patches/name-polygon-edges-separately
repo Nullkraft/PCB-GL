@@ -1,5 +1,5 @@
-Bottom: 87959edc3af0a7fd24456bfdfb8ddef407e2dce9
-Top:    6e1d36b8c16458ed4eb9d37b3af450cbca0032e1
+Bottom: 5f95806c69b52c077c31d7a66f79931b925ebbf4
+Top:    5f95806c69b52c077c31d7a66f79931b925ebbf4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2015-02-15 22:35:13 +0000
 
@@ -10,65 +10,4 @@ XXX: Incomplete.. needs us to actually set the name flags on the contour edges!
 
 ---
 
-diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 83c648a..d4c01db 100644
---- a/src/hid/step/step.c
-+++ b/src/hid/step/step.c
-@@ -232,6 +232,20 @@ get_contour_coord_n_in_mm (PLINE *contour, int n, double *x, double *y)
-   *y = COORD_TO_MM (vertex->point[1]); /* FIXME: PCB's coordinate system has y increasing downwards */
- }
- 
-+/* NB: contour edge 'n' starts at contour coord 'n', and ends at coord 'n + 1' */
-+static char *
-+get_contour_edge_n_name (PLINE *contour, int n)
-+{
-+  VNODE *vertex = &contour->head;
-+
-+  while (n > 0) {
-+    vertex = vertex->next; /* The VNODE structure is circularly linked, so wrapping is OK */
-+    n--;
-+  }
-+
-+  return vertex->edge_name; /* NB: Vertex 'n' is used to store the name for edge 'n' */
-+}
-+
- #define FWD 1
- #define REV 2
- static void
-@@ -651,7 +665,11 @@ step_emit_board_contour (FILE *f, PLINE *contour)
-       ct = ct->next;
-     }
- 
--    face_name = (ct->name != NULL) ? ct->name : "";
-+    // face_name = (ct->name != NULL) ? ct->name : ""; // Naming all faces of a contour with the contour name
-+    face_name = get_contour_edge_n_name (ct, adjusted_i); // Naming each face of a contour separately. (XXX: Should we prepend the contour name?)
-+
-+    if (face_name == NULL)
-+      face_name = "";
- 
-     fprintf (f, "#%i = EDGE_LOOP ( 'NONE', ( #%i, #%i, #%i, #%i ) ) ; "
-                 "#%i = FACE_OUTER_BOUND ( 'NONE', #%i, .T. ) ; "
-diff --git a/src/polyarea.h b/src/polyarea.h
-index 92ca8a2..e478d5d 100644
---- a/src/polyarea.h
-+++ b/src/polyarea.h
-@@ -88,6 +88,7 @@ struct VNODE
-     CVCList *cvc_prev;
-     CVCList *cvc_next;
-     Vector point;
-+    char *edge_name;
- };
- 
- typedef struct PLINE PLINE;
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 76e989d..4c89aaa 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -2627,6 +2627,7 @@ poly_DelContour (PLINE ** c)
- 	  free (cur->cvc_next);
- 	  free (cur->cvc_prev);
- 	}
-+      free (cur->edge_name);
-       free (cur);
-     }
-   if ((*c)->head.cvc_next != NULL)
+
