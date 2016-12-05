@@ -1,5 +1,5 @@
-Bottom: b681ad5d2a8c2235b0771fc494d5a4ed5128a1c9
-Top:    ad4e5777b0342edf0617b6c1aabf69862c38dfe8
+Bottom: 040a649c87d54f24477744d8f5ab4005ff8a9eca
+Top:    3255655c8a0237d097e33aab5275e52eb288b30b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -9,10 +9,10 @@ Toy rendering attempt
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 742c411..0630dd5 100644
+index 8c3d25a..6e3d281 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -479,6 +479,8 @@ LIBSTEP_SRCS = \
+@@ -484,6 +484,8 @@ LIBSTEP_SRCS = \
  	hid/step/step.h \
  	hid/step/assembly.cpp \
  	hid/step/assembly.h \
@@ -22,10 +22,10 @@ index 742c411..0630dd5 100644
  	hid/step/utils.h \
  	hid/step/step_writer.c \
 diff --git a/src/action.c b/src/action.c
-index e2fbaaf..d8f5f6c 100644
+index 3ab2cfd..adefe55 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -90,6 +90,8 @@
+@@ -91,6 +91,8 @@
  #include <sys/wait.h>
  #endif
  
@@ -35,10 +35,10 @@ index e2fbaaf..d8f5f6c 100644
   * some local types
   */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 51295d7..ad08a48 100644
+index 8e3b9f4..c5ccc21 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1119,6 +1119,10 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -1127,6 +1127,10 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
    ghid_graphics_class.end_layer = ghid_end_layer;
    ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
    ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
