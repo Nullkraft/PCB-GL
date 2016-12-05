@@ -62,7 +62,7 @@
 
 static Coord board_thickness;
 #define HACK_BOARD_THICKNESS board_thickness
-//#define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
+//#define HACK_BOARD_THICKNESS MM_TO_COORD(2.3)
 #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
 
 HID step_hid;
