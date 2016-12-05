@@ -1,5 +1,5 @@
 Bottom: c1f978e7ce85b66c0d74d78d50b5a0003a11b290
-Top:    1a650c8d9d82e360ef6f64688e05bf74506fabe9
+Top:    554976292801198ea54943729b8babca57a70464
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-12 17:17:39 +0000
 
@@ -54,7 +54,7 @@ index b3b4abc..f37dffe 100644
    top_bot_appearance = NULL;
    appearance_set_color (board_appearance,   1.0, 1.0, 0.6);
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 9b78fc9..5a60464 100644
+index 9b78fc9..9740e9b 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
 @@ -387,7 +387,7 @@ step_absr_fragment (step_file *step,
@@ -66,6 +66,17 @@ index 9b78fc9..5a60464 100644
                      step_id *shape_definition_representation,
                      step_id *placement_axis)
  {
+@@ -418,8 +418,8 @@ step_absr_fragment (step_file *step,
+   /* Emit references to the styled and over_ridden styled items */
+   step_mechanical_design_geometric_presentation_representation (step, "", styled_item_list, geometric_representation_context_identifier);
+ 
+-  if (shape_representation != NULL)
+-    *shape_representation = shape_representation_identifier;
++//  if (shape_representation != NULL)
++//    *shape_representation = shape_representation_identifier;
+ 
+   if (shape_definition_representation != NULL)
+     *shape_definition_representation = shape_definition_representation_identifier;
 @@ -432,7 +432,7 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
    step_file *step;
    step_id geometric_representation_context;
@@ -93,6 +104,15 @@ index 9b78fc9..5a60464 100644
                        shape_definition_representation,
                        placement_axis);
  }
+@@ -612,7 +612,7 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
+                       NULL, //styled_item_identifiers,
+                       assy_geometric_representation_context_identifier,
+                       assy_product_definition_shape_identifier,
+-                      NULL /* shape_representation */,
++//                      NULL /* shape_representation */,
+                       NULL /* shape_definition_representation */,
+                       &origin_axis); /* This is set, not NULL so is taken as an input */
+ 
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
 index 657f3ca..71d5a47 100644
 --- a/src/hid/step/step.c
