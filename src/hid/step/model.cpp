@@ -87,11 +87,11 @@ read_model_from_file (Registry *registry,
   pd_list pd_list;
 
   // Find all PRODUCT_DEFINITION entities with a SHAPE_DEFINITION_REPRESETNATION
-  find_all_pd_with_sdr (instance_list, &pd_list);
+  find_all_pd_with_sdr (instance_list, &pd_list, 1);
 
   /*  Try to determine the root product */
-  find_and_remove_child_pd (instance_list, &pd_list, "Next_assembly_usage_occurrence"); // Remove any PD which are children of another via NAUO
-  find_and_remove_child_pd (instance_list, &pd_list, "Assembly_component_usage");       // Remove any PD which are children of another via ACU
+  find_and_remove_child_pd (instance_list, &pd_list, 1, "Next_assembly_usage_occurrence"); // Remove any PD which are children of another via NAUO
+  find_and_remove_child_pd (instance_list, &pd_list, 1, "Assembly_component_usage");       // Remove any PD which are children of another via ACU
 
 #ifdef DEBUG_PRODUCT_DEFINITION_SEARCH
   std::cout << "Hopefully left with the root product definition" << std::endl;
