@@ -1,5 +1,5 @@
-Bottom: c7c9546dad4160b56f1e3ee3e69224653f60d376
-Top:    c36643a6935f9137b8197f70d1561e35b0db4f65
+Bottom: 206cfdf288b25da9dfeee511eee0a36701bffec3
+Top:    07e968b624675d5aa3762866a12093657382e540
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -75,7 +75,7 @@ index b288cf2..3d228f6 100644
  object3d *make_object3d (char *name);
  void destroy_object3d (object3d *object);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 61b2064..070b7ea 100644
+index af391dd..cdeafbb 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -123,6 +123,7 @@ static bool ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, double *pcb_
@@ -98,7 +98,7 @@ index 61b2064..070b7ea 100644
  }
  
  void
-@@ -2728,7 +2734,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2729,7 +2735,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);
