@@ -1,5 +1,5 @@
 Bottom: 61e2445ecfa2a5acafb6d39c09cbe02b55700dc4
-Top:    47f4ba42dbf4edd32ee03bbf1b8b4527162c94f5
+Top:    797c6b01aa3ce40ccc5d3cabebb72658f009134f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -318,7 +318,7 @@ index b288cf2..3d228f6 100644
  object3d *make_object3d (char *name);
  void destroy_object3d (object3d *object);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index af391dd..2dff37d 100644
+index af391dd..b5ec76c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -23,6 +23,10 @@
@@ -388,7 +388,7 @@ index af391dd..2dff37d 100644
    poly_FreeContours (&polygon.NoHoles);
  }
  
-@@ -2089,10 +2108,93 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
+@@ -2089,10 +2108,83 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
    return draw_hole_cyl ((PinType *)b, (struct cyl_info *)cl, VIA_TYPE);
  }
  
@@ -430,16 +430,6 @@ index af391dd..2dff37d 100644
 +  m[0][2] = instance->rz;  m[1][2] = oz;    m[2][2] = instance->az;    m[3][2] = 0.0f;
 +  m[0][3] = 0.0f;          m[1][3] = 0.0f;  m[2][3] = 0.0f;            m[3][3] = 1.0f;
 +  glMultMatrixf(&m[0][0]);
-+
-+  printf ("Matrix: %f %f %f %f\n"
-+          "        %f %f %f %f\n"
-+          "        %f %f %f %f\n"
-+          "        %f %f %f %f\n\n",
-+          m[0][0], m[1][0], m[2][0], m[3][0],
-+          m[0][1], m[1][1], m[2][1], m[3][1],
-+          m[0][2], m[1][2], m[2][2], m[3][2],
-+          m[0][3], m[1][3], m[2][3], m[3][3]
-+          );
 +
 +  ox = step_model->ay * step_model->rz - step_model->az * step_model->ry;
 +  oy = step_model->az * step_model->rx - step_model->ax * step_model->rz;
@@ -483,7 +473,7 @@ index af391dd..2dff37d 100644
  
    if (FRONT (element))
      {
-@@ -2100,33 +2202,27 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -2100,33 +2192,27 @@ frontE_package_callback (const BoxType * b, void *cl)
          return 0;
  
        if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "ACY400") == 0) {
@@ -523,7 +513,7 @@ index af391dd..2dff37d 100644
        }
      }
    return 1;
-@@ -2135,8 +2231,7 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -2135,8 +2221,7 @@ frontE_package_callback (const BoxType * b, void *cl)
  static void
  ghid_draw_packages (BoxType *drawn_area)
  {
@@ -533,19 +523,16 @@ index af391dd..2dff37d 100644
  }
  
  void
-@@ -2342,8 +2437,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   if (do_once) {
-     do_once = false;
+@@ -2344,6 +2429,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      object3d_test_init ();
-+    //step_load_models ();
    }
  
-+  step_load_models ();
++  step_load_models (BOARD_THICKNESS);
 +
  //  printf ("Expose event at (%i,%i): %i x %i\n", ev->area.x, ev->area.y, ev->area.width, ev->area.height);
  //  printf ("Event type %i, send_event %i\n", ev->type, ev->send_event);
  
-@@ -2670,7 +2768,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2670,7 +2757,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      hidgl_flush_triangles (priv->hidgl);
    }
  
@@ -554,7 +541,7 @@ index af391dd..2dff37d 100644
  
    glShadeModel (GL_SMOOTH);
  
-@@ -2729,7 +2827,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2729,7 +2816,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);
@@ -618,7 +605,7 @@ index 7a8b5df..4594824 100644
  void export_step_assembly (const char *filename, GList *assembly_models);
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
 new file mode 100644
-index 0000000..d6fbcc0
+index 0000000..df737b2
 --- /dev/null
 +++ b/src/hid/step/model.cpp
 @@ -0,0 +1,635 @@
@@ -1010,19 +997,19 @@ index 0000000..d6fbcc0
 +          else if (strcmp (surface->EntityName (), "Plane") == 0)
 +            {
 +              on_plane = true;
-+              printf ("WARNING: planar surfaces are not supported yet\n");
++//              printf ("WARNING: planar surfaces are not supported yet\n");
 +            }
 +          else if (strcmp (surface->EntityName (), "Cylindrical_Surface") == 0)
 +            {
-+              printf ("WARNING: cylindrical suraces are not supported yet\n");
++//              printf ("WARNING: cylindrical suraces are not supported yet\n");
 +            }
 +          else if (strcmp (surface->EntityName (), "Toroidal_Surface") == 0)
 +            {
-+              printf ("WARNING: toroidal suraces are not supported yet\n");
++//              printf ("WARNING: toroidal suraces are not supported yet\n");
 +            }
 +          else if (strcmp (surface->EntityName (), "Spherical_Surface") == 0)
 +            {
-+              printf ("WARNING: spherical surfaces are not supported yet\n");
++//              printf ("WARNING: spherical surfaces are not supported yet\n");
 +            }
 +          else
 +            {
@@ -1289,7 +1276,7 @@ index 0000000..6c70278
 +step_model *step_model_to_shape_master (const char *filename, object3d **out_object);
 +void step_model_free (step_model *step_model);
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 657f3ca..3ee6afd 100644
+index 657f3ca..97d790d 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
 @@ -41,6 +41,7 @@
@@ -1300,6 +1287,15 @@ index 657f3ca..3ee6afd 100644
  #include "assembly.h"
  
  #define CRASH fprintf(stderr, "HID error: pcb called unimplemented STEP function %s.\n", __FUNCTION__); abort()
+@@ -60,7 +61,7 @@
+ #endif
+ 
+ 
+-static Coord board_thickness;
++static Coord board_thickness = 0;
+ #define HACK_BOARD_THICKNESS board_thickness
+ //#define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
+ #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
 @@ -139,7 +140,7 @@ Name of the STEP output file. Can contain a path.
     %end-doc
     */
@@ -1309,20 +1305,22 @@ index 657f3ca..3ee6afd 100644
  #define HA_thickness 5
  };
  
-@@ -208,6 +209,226 @@ parse_numeric_attribute (ElementType *element, char *attr_name, double *res)
+@@ -208,6 +209,228 @@ parse_numeric_attribute (ElementType *element, char *attr_name, double *res)
    *res = COORD_TO_MM (GetValueEx (attr_value, NULL, &absolute, NULL, "mm")); /* KLUDGE */
  }
  
 +static GList *loaded_models = NULL;
 +
 +void
-+step_load_models(void)
++step_load_models(Coord board_thickness_)
 +{
 +  int i;
 +  const char *filename;
 +  struct assembly_model *model;
 +  struct assembly_model_instance *instance;
 +  const char *attribute;
++
++  board_thickness = board_thickness_;
 +
 +  ELEMENT_LOOP (PCB->Data);
 +    {
@@ -1536,7 +1534,7 @@ index 657f3ca..3ee6afd 100644
  static void
  step_do_export (HID_Attr_Val * options)
  {
-@@ -328,6 +549,7 @@ step_do_export (HID_Attr_Val * options)
+@@ -328,6 +551,7 @@ step_do_export (HID_Attr_Val * options)
      models = g_list_append (models, model);
  
      instance = g_new0 (struct assembly_model_instance, 1);
@@ -1544,7 +1542,7 @@ index 657f3ca..3ee6afd 100644
      instance->name = "PCB";
      instance->ox = 0.0,  instance->oy = 0.0,  instance->oz = 0.0;
      instance->ax = 0.0,  instance->ay = 0.0,  instance->az = 1.0;
-@@ -454,6 +676,7 @@ step_do_export (HID_Attr_Val * options)
+@@ -454,6 +678,7 @@ step_do_export (HID_Attr_Val * options)
                {
                  model = g_new0 (struct assembly_model, 1);
                  model->filename = model_filename;
@@ -1552,7 +1550,7 @@ index 657f3ca..3ee6afd 100644
                  models = g_list_append (models, model);
                }
  
-@@ -472,6 +695,7 @@ step_do_export (HID_Attr_Val * options)
+@@ -472,6 +697,7 @@ step_do_export (HID_Attr_Val * options)
              // [  0   0  -1] [z] = [-z]
  
              instance = g_new0 (struct assembly_model_instance, 1);
@@ -1561,14 +1559,14 @@ index 657f3ca..3ee6afd 100644
  #ifdef REVERSED_PCB_CONTOURS
              instance->ox =                     ( ox * cos_rot + oy * sin_rot);
 diff --git a/src/hid/step/step.h b/src/hid/step/step.h
-index 50a01ab..704035f 100644
+index 50a01ab..47f3882 100644
 --- a/src/hid/step/step.h
 +++ b/src/hid/step/step.h
 @@ -1,3 +1,4 @@
  extern HID step_hid;
  void step_init (HID *hid);
  void step_graphics_init (HID_DRAW *graphics);
-+void step_load_models();
++void step_load_models(Coord board_thickness);
 diff --git a/src/polygon1.c b/src/polygon1.c
 index 24e9dfa..3d0615c 100644
 --- a/src/polygon1.c
