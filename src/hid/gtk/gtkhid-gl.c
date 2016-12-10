@@ -2135,12 +2135,14 @@ hidgl_draw_step_model_instance (struct assembly_model_instance *instance)
                 STEP_TO_COORD_Y (PCB, instance->oy),
                 STEP_TO_COORD_Z (PCB, instance->oz));
 
-  // XXX: Not sure why we need to flip the instance "y" values, this is strange
-  ox = -instance->ay * instance->rz - instance->az * -instance->ry;
+  /* Undo -Y coord scaling */
+  glScalef (1.0f, -1.0f, 1.0f);
+
+  ox = instance->ay * instance->rz - instance->az * -instance->ry;
   oy = instance->az * instance->rx - instance->ax * instance->rz;
-  oz = instance->ax * -instance->ry - -instance->ay * instance->rx;
+  oz = instance->ax * instance->ry - instance->ay * instance->rx;
   m[0][0] = instance->rx;  m[1][0] = ox;    m[2][0] = instance->ax;    m[3][0] = 0.0f;
-  m[0][1] = -instance->ry;  m[1][1] = oy;    m[2][1] = -instance->ay;    m[3][1] = 0.0f;
+  m[0][1] = instance->ry;  m[1][1] = oy;    m[2][1] = instance->ay;    m[3][1] = 0.0f;
   m[0][2] = instance->rz;  m[1][2] = oz;    m[2][2] = instance->az;    m[3][2] = 0.0f;
   m[0][3] = 0.0f;          m[1][3] = 0.0f;  m[2][3] = 0.0f;            m[3][3] = 1.0f;
   glMultMatrixf(&m[0][0]);
@@ -2165,6 +2167,9 @@ hidgl_draw_step_model_instance (struct assembly_model_instance *instance)
   m[2][0] = step_model->rz;  m[2][1] = oz;    m[2][2] = step_model->az;  m[2][3] = 0.0f;
   m[3][0] = 0.0f;            m[3][1] = 0.0f;  m[3][2] = 0.0f;            m[3][3] = 1.0f;
   glMultMatrixf(&m[0][0]);
+
+  /* Undo -Y coord scaling */
+  glScalef (1.0f, -1.0f, 1.0f);
 
   glTranslatef (-STEP_TO_COORD_X (PCB, step_model->ox),
                 -STEP_TO_COORD_Y (PCB, step_model->oy),
