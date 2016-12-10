@@ -1,5 +1,5 @@
 Bottom: 61e2445ecfa2a5acafb6d39c09cbe02b55700dc4
-Top:    91c780575073cb0986c2d46d968f9b4b3e7d2ee0
+Top:    27ec30fa47f5ea77fc549c375956b28e04d9f8c3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -9,19 +9,10 @@ Toy rendering attempt
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 8c3d25a..1f06e79 100644
+index 8c3d25a..6e3d281 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -28,6 +28,8 @@ else
- AM_CFLAGS= -DNDEBUG
- endif
- 
-+AM_CFLAGS= -Wno-unused-parameter
-+
- PCB_SRCS = \
- 	action.c \
- 	action.h \
-@@ -484,6 +486,8 @@ LIBSTEP_SRCS = \
+@@ -484,6 +484,8 @@ LIBSTEP_SRCS = \
  	hid/step/step.h \
  	hid/step/assembly.cpp \
  	hid/step/assembly.h \
