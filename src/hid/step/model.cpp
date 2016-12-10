@@ -60,7 +60,7 @@ extern "C" {
 # include <unistd.h>
 #endif
 
-#if 0
+#if 1
 #  define DEBUG_PRODUCT_DEFINITION_SEARCH
 #  define DEBUG_CHILD_REMOVAL
 #  define DEBUG_PRODUCT_DEFINITION
@@ -87,7 +87,15 @@ read_model_from_file (Registry *registry,
 {
   STEPfile sfile = STEPfile (*registry, *instance_list, "", false);
 
-  sfile.ReadExchangeFile (filename);
+  try
+    {
+      sfile.ReadExchangeFile (filename);
+    }
+  catch (...)
+    {
+      std::cout << "ERROR: Caught exception when attempting to read from file '" << filename << "' (does the file exist?)" << std::endl;
+      return NULL;
+    }
 
   Severity severity = sfile.Error().severity();
   if (severity != SEVERITY_NULL)

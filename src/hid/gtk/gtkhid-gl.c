@@ -1145,7 +1145,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 //  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/DPAK.step", &step_read_test);
 //  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Inductor_R1.step", &step_read_test);
 //  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Capacitor_100V_10uF.step", &step_read_test);
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/", &step_read_test);
+  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/shape_rep.step", &step_read_test);
 }
 
 void

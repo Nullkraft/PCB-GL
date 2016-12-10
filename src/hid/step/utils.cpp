@@ -62,7 +62,12 @@ void
 find_all_pd_with_sdr (InstMgr *instance_list, pd_list *pd_list, int start_after_id)
 {
   MgrNode * mnode = instance_list->FindFileId (start_after_id);
-  int search_index = instance_list->GetIndex (mnode) + 1;
+  int search_index;
+
+  if (mnode == NULL)
+    search_index = 0;
+  else
+    search_index = instance_list->GetIndex (mnode) + 1;
 
   // Loop over the instances of SHAPE_DEFITION_REPRESENTATION in the file
   SdaiShape_definition_representation *sdr;
@@ -119,7 +124,12 @@ void
 find_and_remove_child_pd (InstMgr *instance_list, pd_list *pd_list, int start_after_id, const char *entityName)
 {
   MgrNode * mnode = instance_list->FindFileId (start_after_id);
-  int search_index = instance_list->GetIndex (mnode) + 1;
+  int search_index;
+
+  if (mnode == NULL)
+    search_index = 0;
+  else
+    search_index = instance_list->GetIndex (mnode) + 1;
 
   SdaiAssembly_component_usage *acu;
   while (ENTITY_NULL != (acu = (SdaiAssembly_component_usage *)
@@ -152,7 +162,12 @@ static SdaiProduct_definition *
 find_pd_for_sr (InstMgr *instance_list, int start_after_id, SdaiShape_representation *target_sr)
 {
   MgrNode * mnode = instance_list->FindFileId (start_after_id);
-  int search_index = instance_list->GetIndex (mnode) + 1;
+  int search_index;
+
+  if (mnode == NULL)
+    search_index = 0;
+  else
+    search_index = instance_list->GetIndex (mnode) + 1;
 
   // Loop over the instances of SHAPE_DEFITION_REPRESENTATION in the file
   SdaiShape_definition_representation *sdr;
@@ -178,7 +193,12 @@ void
 find_and_remove_child_pd_mi_rm_sr (InstMgr *instance_list, pd_list *pd_list, int start_after_id)
 {
   MgrNode * mnode = instance_list->FindFileId (start_after_id);
-  int search_index = instance_list->GetIndex (mnode) + 1;
+  int search_index;
+
+  if (mnode == NULL)
+    search_index = 0;
+  else
+    search_index = instance_list->GetIndex (mnode) + 1;
 
   SdaiMapped_item *mi;
   while (ENTITY_NULL != (mi = (SdaiMapped_item *)

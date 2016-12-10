@@ -341,7 +341,8 @@ step_load_models(Coord board_thickness_)
               if (old_model->instances == NULL)
                 {
                   /* Assume unused, so unload */
-                  step_model_free (old_model->step_model);
+                  if (old_model->step_model != NULL)
+                    step_model_free (old_model->step_model);
                   g_free (old_model);
                   loaded_models = g_list_remove (loaded_models, old_model);
                 }
