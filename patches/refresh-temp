@@ -1,0 +1,22 @@
+Bottom: 91c780575073cb0986c2d46d968f9b4b3e7d2ee0
+Top:    27ec30fa47f5ea77fc549c375956b28e04d9f8c3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-10 14:32:47 +0000
+
+Refresh of toy-rendering-attempt
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 1f06e79..6e3d281 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -28,8 +28,6 @@ else
+ AM_CFLAGS= -DNDEBUG
+ endif
+ 
+-AM_CFLAGS= -Wno-unused-parameter
+-
+ PCB_SRCS = \
+ 	action.c \
+ 	action.h \
