@@ -95,7 +95,7 @@ read_model_from_file (Registry *registry,
       sfile.Error().PrintContents (std::cout);
       std::cout << "WARNING: Error reading from file '" << filename << "'" << std::endl;
 //      return NULL;
-#warning HANDLE OTHER ERRORS BETTER?
+// XXX: HANDLE OTHER ERRORS BETTER?
     }
 
   pd_list pd_list;
@@ -130,10 +130,8 @@ read_model_from_file (Registry *registry,
 
 typedef std::list<SdaiManifold_solid_brep *> msb_list;
 
-void
-find_manifold_solid_brep (Registry *registry,
-                          InstMgr *instance_list,
-                          SdaiShape_representation *sr,
+static void
+find_manifold_solid_brep (SdaiShape_representation *sr,
                           msb_list *msb_list)
 {
   SingleLinkNode *iter = sr->items_ ()->GetHead ();
@@ -230,6 +228,9 @@ static void process_edges (GHashTable *edges_hash_set, object3d *object)
           SdaiCurve *curve = ec->edge_geometry_ ();
           bool same_sense = ec->same_sense_ ();
 
+          if (!same_sense)
+            printf ("XXX: HAVE NOT TESTED THIS CASE.... same_sense is false\n");
+
 #if 0
           printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
 #endif
@@ -304,10 +305,11 @@ extern "C" struct step_model *
 step_model_to_shape_master (const char *filename, object3d **out_object)
 {
   object3d *object;
-  edge_ref edge;
-  vertex3d *vertex;
   GHashTable *edges_hash_set;
   bool on_plane;
+  step_model *step_model;
+
+  printf ("step_model_to_shape_master(\"%s\", %p)\n", filename, out_object);
 
   object = make_object3d ((char *)"Test");
 
@@ -339,7 +341,7 @@ step_model_to_shape_master (const char *filename, object3d **out_object)
     std::cout << "WARNING: Could not find AXIS2_PLACEMENT_3D entity in SHAPE_REPRESENTATION" << std::endl;
 
   msb_list msb_list;
-  find_manifold_solid_brep (registry, instance_list, sr, &msb_list);
+  find_manifold_solid_brep (sr, &msb_list);
 
   for (msb_list::iterator iter = msb_list.begin (); iter != msb_list.end (); iter++)
     {
@@ -410,9 +412,9 @@ step_model_to_shape_master (const char *filename, object3d **out_object)
               SdaiFace_bound *fb = (SdaiFace_bound *)((EntityNode *)iter)->node;
 
 
+#if 0
               bool is_outer_bound = (strcmp (fb->EntityName (), "Face_Outer_Bound") == 0);
 
-#if 0
               if (is_outer_bound)
                 std::cout << "  Outer bounds of face include ";
               else
@@ -514,10 +516,10 @@ step_model_to_shape_master (const char *filename, object3d **out_object)
                           continue;
                         }
 
+#if 0
                       SdaiCartesian_point *edge_start_cp = (SdaiCartesian_point *)edge_start_point;
                       SdaiCartesian_point *edge_end_cp = (SdaiCartesian_point *)edge_end_point;
 
-#if 0
                       printf ("    Edge #%i starts at (%f, %f, %f) and ends at (%f, %f, %f)\n",
                               edge->StepFileId (),
                               ((RealNode *)edge_start_cp->coordinates_ ()->GetHead())->value,
@@ -581,12 +583,42 @@ step_model_to_shape_master (const char *filename, object3d **out_object)
         g_hash_table_destroy (edges_hash_set);
     }
 
+  step_model = g_new0(struct step_model, 1);
+
+//  step_model->filename = g_strdup(filename);
+//  step_model->instances = NULL;    /* ??? */
+
+  if (part_origin != NULL)
+    {
+      step_model->ox = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ())->value;
+      step_model->oy = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+      step_model->oz = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      step_model->ax = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+      step_model->ay = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      step_model->az = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      step_model->rx = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
+      step_model->ry = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      step_model->rz = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+    }
+
+  step_model->object = object;
+
+  if (out_object != NULL)
+    *out_object = object;
+
   delete instance_list;
   delete registry;
 
-  *out_object = object;
 
-  return NULL;
+  return step_model;
+}
+
+void step_model_free(step_model *step_model)
+{
+//  g_list_free (step_model->instances);
+//  g_free ((char *)step_model->filename);
+  destroy_object3d (step_model->object);
+  g_free (step_model);
 }
 
 /* Geometry surface and face types encountered so far..

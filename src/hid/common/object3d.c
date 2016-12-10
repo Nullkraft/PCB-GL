@@ -166,7 +166,7 @@ draw_quad_edge (edge_ref e, void *data)
 
   glColor3f (colors[id][0], colors[id][1], colors[id][2]);
 #else
-  glColor3f (1., 1., 1.);
+//  glColor3f (1., 1., 1.);
 #endif
 
   x1 = ((vertex3d *)ODATA(e))->x;

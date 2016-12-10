@@ -1,14 +1,14 @@
-
-struct step_model_instance {
+#if 0
+typedef struct step_model_instance {
   double x;
   double y;
   double rotation;
-};
+} step_model_instance;
+#endif
 
-
-struct step_model {
+typedef struct step_model {
   const char *filename;
-  GList *instances;
+//  GList *instances;
   double ox;
   double oy;
   double oz;
@@ -18,6 +18,8 @@ struct step_model {
   double rx;
   double ry;
   double rz;
-};
+  object3d *object;
+} step_model;
 
-struct step_model *step_model_to_shape_master (const char *filename, object3d **out_object);
+step_model *step_model_to_shape_master (const char *filename, object3d **out_object);
+void step_model_free (step_model *step_model);
