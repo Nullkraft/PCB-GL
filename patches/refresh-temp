@@ -1,0 +1,111 @@
+Bottom: 47f4ba42dbf4edd32ee03bbf1b8b4527162c94f5
+Top:    797c6b01aa3ce40ccc5d3cabebb72658f009134f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-10 21:22:16 +0000
+
+Refresh of toy-rendering-attempt
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 2dff37d..b5ec76c 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2147,16 +2147,6 @@ hidgl_draw_step_model_instance (struct assembly_model_instance *instance)
+   m[0][3] = 0.0f;          m[1][3] = 0.0f;  m[2][3] = 0.0f;            m[3][3] = 1.0f;
+   glMultMatrixf(&m[0][0]);
+ 
+-  printf ("Matrix: %f %f %f %f\n"
+-          "        %f %f %f %f\n"
+-          "        %f %f %f %f\n"
+-          "        %f %f %f %f\n\n",
+-          m[0][0], m[1][0], m[2][0], m[3][0],
+-          m[0][1], m[1][1], m[2][1], m[3][1],
+-          m[0][2], m[1][2], m[2][2], m[3][2],
+-          m[0][3], m[1][3], m[2][3], m[3][3]
+-          );
+-
+   ox = step_model->ay * step_model->rz - step_model->az * step_model->ry;
+   oy = step_model->az * step_model->rx - step_model->ax * step_model->rz;
+   oz = step_model->ax * step_model->ry - step_model->ay * step_model->rx;
+@@ -2437,10 +2427,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   if (do_once) {
+     do_once = false;
+     object3d_test_init ();
+-    //step_load_models ();
+   }
+ 
+-  step_load_models ();
++  step_load_models (BOARD_THICKNESS);
+ 
+ //  printf ("Expose event at (%i,%i): %i x %i\n", ev->area.x, ev->area.y, ev->area.width, ev->area.height);
+ //  printf ("Event type %i, send_event %i\n", ev->type, ev->send_event);
+diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
+index d6fbcc0..df737b2 100644
+--- a/src/hid/step/model.cpp
++++ b/src/hid/step/model.cpp
+@@ -386,19 +386,19 @@ step_model_to_shape_master (const char *filename, object3d **out_object)
+           else if (strcmp (surface->EntityName (), "Plane") == 0)
+             {
+               on_plane = true;
+-              printf ("WARNING: planar surfaces are not supported yet\n");
++//              printf ("WARNING: planar surfaces are not supported yet\n");
+             }
+           else if (strcmp (surface->EntityName (), "Cylindrical_Surface") == 0)
+             {
+-              printf ("WARNING: cylindrical suraces are not supported yet\n");
++//              printf ("WARNING: cylindrical suraces are not supported yet\n");
+             }
+           else if (strcmp (surface->EntityName (), "Toroidal_Surface") == 0)
+             {
+-              printf ("WARNING: toroidal suraces are not supported yet\n");
++//              printf ("WARNING: toroidal suraces are not supported yet\n");
+             }
+           else if (strcmp (surface->EntityName (), "Spherical_Surface") == 0)
+             {
+-              printf ("WARNING: spherical surfaces are not supported yet\n");
++//              printf ("WARNING: spherical surfaces are not supported yet\n");
+             }
+           else
+             {
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 3ee6afd..97d790d 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -61,7 +61,7 @@
+ #endif
+ 
+ 
+-static Coord board_thickness;
++static Coord board_thickness = 0;
+ #define HACK_BOARD_THICKNESS board_thickness
+ //#define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
+ #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
+@@ -212,7 +212,7 @@ parse_numeric_attribute (ElementType *element, char *attr_name, double *res)
+ static GList *loaded_models = NULL;
+ 
+ void
+-step_load_models(void)
++step_load_models(Coord board_thickness_)
+ {
+   int i;
+   const char *filename;
+@@ -220,6 +220,8 @@ step_load_models(void)
+   struct assembly_model_instance *instance;
+   const char *attribute;
+ 
++  board_thickness = board_thickness_;
++
+   ELEMENT_LOOP (PCB->Data);
+     {
+       bool on_solder = TEST_FLAG (ONSOLDERFLAG, element);
+diff --git a/src/hid/step/step.h b/src/hid/step/step.h
+index 704035f..47f3882 100644
+--- a/src/hid/step/step.h
++++ b/src/hid/step/step.h
+@@ -1,4 +1,4 @@
+ extern HID step_hid;
+ void step_init (HID *hid);
+ void step_graphics_init (HID_DRAW *graphics);
+-void step_load_models();
++void step_load_models(Coord board_thickness);
