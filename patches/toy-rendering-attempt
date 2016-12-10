@@ -1,5 +1,5 @@
 Bottom: 61e2445ecfa2a5acafb6d39c09cbe02b55700dc4
-Top:    a0fe51fce1a37b24a00ee0fce84c819b867120f8
+Top:    47f4ba42dbf4edd32ee03bbf1b8b4527162c94f5
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -318,7 +318,7 @@ index b288cf2..3d228f6 100644
  object3d *make_object3d (char *name);
  void destroy_object3d (object3d *object);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index af391dd..e9fa5fc 100644
+index af391dd..2dff37d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -23,6 +23,10 @@
@@ -388,7 +388,7 @@ index af391dd..e9fa5fc 100644
    poly_FreeContours (&polygon.NoHoles);
  }
  
-@@ -2089,10 +2108,88 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
+@@ -2089,10 +2108,93 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
    return draw_hole_cyl ((PinType *)b, (struct cyl_info *)cl, VIA_TYPE);
  }
  
@@ -419,12 +419,14 @@ index af391dd..e9fa5fc 100644
 +                STEP_TO_COORD_Y (PCB, instance->oy),
 +                STEP_TO_COORD_Z (PCB, instance->oz));
 +
-+  // XXX: Not sure why we need to flip the instance "y" values, this is strange
-+  ox = -instance->ay * instance->rz - instance->az * -instance->ry;
++  /* Undo -Y coord scaling */
++  glScalef (1.0f, -1.0f, 1.0f);
++
++  ox = instance->ay * instance->rz - instance->az * -instance->ry;
 +  oy = instance->az * instance->rx - instance->ax * instance->rz;
-+  oz = instance->ax * -instance->ry - -instance->ay * instance->rx;
++  oz = instance->ax * instance->ry - instance->ay * instance->rx;
 +  m[0][0] = instance->rx;  m[1][0] = ox;    m[2][0] = instance->ax;    m[3][0] = 0.0f;
-+  m[0][1] = -instance->ry;  m[1][1] = oy;    m[2][1] = -instance->ay;    m[3][1] = 0.0f;
++  m[0][1] = instance->ry;  m[1][1] = oy;    m[2][1] = instance->ay;    m[3][1] = 0.0f;
 +  m[0][2] = instance->rz;  m[1][2] = oz;    m[2][2] = instance->az;    m[3][2] = 0.0f;
 +  m[0][3] = 0.0f;          m[1][3] = 0.0f;  m[2][3] = 0.0f;            m[3][3] = 1.0f;
 +  glMultMatrixf(&m[0][0]);
@@ -449,6 +451,9 @@ index af391dd..e9fa5fc 100644
 +  m[2][0] = step_model->rz;  m[2][1] = oz;    m[2][2] = step_model->az;  m[2][3] = 0.0f;
 +  m[3][0] = 0.0f;            m[3][1] = 0.0f;  m[3][2] = 0.0f;            m[3][3] = 1.0f;
 +  glMultMatrixf(&m[0][0]);
++
++  /* Undo -Y coord scaling */
++  glScalef (1.0f, -1.0f, 1.0f);
 +
 +  glTranslatef (-STEP_TO_COORD_X (PCB, step_model->ox),
 +                -STEP_TO_COORD_Y (PCB, step_model->oy),
@@ -478,7 +483,7 @@ index af391dd..e9fa5fc 100644
  
    if (FRONT (element))
      {
-@@ -2100,33 +2197,27 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -2100,33 +2202,27 @@ frontE_package_callback (const BoxType * b, void *cl)
          return 0;
  
        if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "ACY400") == 0) {
@@ -518,7 +523,7 @@ index af391dd..e9fa5fc 100644
        }
      }
    return 1;
-@@ -2135,8 +2226,7 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -2135,8 +2231,7 @@ frontE_package_callback (const BoxType * b, void *cl)
  static void
  ghid_draw_packages (BoxType *drawn_area)
  {
@@ -528,7 +533,7 @@ index af391dd..e9fa5fc 100644
  }
  
  void
-@@ -2342,8 +2432,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2342,8 +2437,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    if (do_once) {
      do_once = false;
      object3d_test_init ();
@@ -540,7 +545,7 @@ index af391dd..e9fa5fc 100644
  //  printf ("Expose event at (%i,%i): %i x %i\n", ev->area.x, ev->area.y, ev->area.width, ev->area.height);
  //  printf ("Event type %i, send_event %i\n", ev->type, ev->send_event);
  
-@@ -2670,7 +2763,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2670,7 +2768,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      hidgl_flush_triangles (priv->hidgl);
    }
  
@@ -549,7 +554,7 @@ index af391dd..e9fa5fc 100644
  
    glShadeModel (GL_SMOOTH);
  
-@@ -2729,7 +2822,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2729,7 +2827,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);
