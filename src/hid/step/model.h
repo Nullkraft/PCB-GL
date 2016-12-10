@@ -20,4 +20,4 @@ struct step_model {
   double rz;
 };
 
-struct step_model *step_model_to_shape_master (const char *filename);
+struct step_model *step_model_to_shape_master (const char *filename, object3d **out_object);

@@ -123,7 +123,7 @@ static bool ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, double *pcb_
 
 void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
 
-object3d *step_read_test = NULL
+object3d *step_read_test = NULL;
 
 
 /* Coordinate conversions */
@@ -1129,10 +1129,15 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
   ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step");
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step");
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step");
-  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step", &step_read_test);
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step", &step_read_test);
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step", &step_read_test);
+  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step", &step_read_test);
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step", &step_read_test);
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/step_interlayer_manual.step", &step_read_test);
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/DPAK.step", &step_read_test);
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Inductor_R1.step", &step_read_test);
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Capacitor_100V_10uF.step", &step_read_test);
+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/", &step_read_test);
 }
 
 void

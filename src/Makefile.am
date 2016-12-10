@@ -28,6 +28,8 @@ else
 AM_CFLAGS= -DNDEBUG
 endif
 
+AM_CFLAGS= -Wno-unused-parameter
+
 PCB_SRCS = \
 	action.c \
 	action.h \
