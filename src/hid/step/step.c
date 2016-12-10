@@ -61,7 +61,7 @@
 #endif
 
 
-static Coord board_thickness;
+static Coord board_thickness = 0;
 #define HACK_BOARD_THICKNESS board_thickness
 //#define HACK_BOARD_THICKNESS MM_TO_COORD(1.6)
 #define HACK_COPPER_THICKNESS MM_TO_COORD(0.035)
@@ -212,13 +212,15 @@ parse_numeric_attribute (ElementType *element, char *attr_name, double *res)
 static GList *loaded_models = NULL;
 
 void
-step_load_models(void)
+step_load_models(Coord board_thickness_)
 {
   int i;
   const char *filename;
   struct assembly_model *model;
   struct assembly_model_instance *instance;
   const char *attribute;
+
+  board_thickness = board_thickness_;
 
   ELEMENT_LOOP (PCB->Data);
     {

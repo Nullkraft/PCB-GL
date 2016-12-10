@@ -2147,16 +2147,6 @@ hidgl_draw_step_model_instance (struct assembly_model_instance *instance)
   m[0][3] = 0.0f;          m[1][3] = 0.0f;  m[2][3] = 0.0f;            m[3][3] = 1.0f;
   glMultMatrixf(&m[0][0]);
 
-  printf ("Matrix: %f %f %f %f\n"
-          "        %f %f %f %f\n"
-          "        %f %f %f %f\n"
-          "        %f %f %f %f\n\n",
-          m[0][0], m[1][0], m[2][0], m[3][0],
-          m[0][1], m[1][1], m[2][1], m[3][1],
-          m[0][2], m[1][2], m[2][2], m[3][2],
-          m[0][3], m[1][3], m[2][3], m[3][3]
-          );
-
   ox = step_model->ay * step_model->rz - step_model->az * step_model->ry;
   oy = step_model->az * step_model->rx - step_model->ax * step_model->rz;
   oz = step_model->ax * step_model->ry - step_model->ay * step_model->rx;
@@ -2437,10 +2427,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   if (do_once) {
     do_once = false;
     object3d_test_init ();
-    //step_load_models ();
   }
 
-  step_load_models ();
+  step_load_models (BOARD_THICKNESS);
 
 //  printf ("Expose event at (%i,%i): %i x %i\n", ev->area.x, ev->area.y, ev->area.width, ev->area.height);
 //  printf ("Event type %i, send_event %i\n", ev->type, ev->send_event);

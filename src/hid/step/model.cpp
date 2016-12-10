@@ -386,19 +386,19 @@ step_model_to_shape_master (const char *filename, object3d **out_object)
           else if (strcmp (surface->EntityName (), "Plane") == 0)
             {
               on_plane = true;
-              printf ("WARNING: planar surfaces are not supported yet\n");
+//              printf ("WARNING: planar surfaces are not supported yet\n");
             }
           else if (strcmp (surface->EntityName (), "Cylindrical_Surface") == 0)
             {
-              printf ("WARNING: cylindrical suraces are not supported yet\n");
+//              printf ("WARNING: cylindrical suraces are not supported yet\n");
             }
           else if (strcmp (surface->EntityName (), "Toroidal_Surface") == 0)
             {
-              printf ("WARNING: toroidal suraces are not supported yet\n");
+//              printf ("WARNING: toroidal suraces are not supported yet\n");
             }
           else if (strcmp (surface->EntityName (), "Spherical_Surface") == 0)
             {
-              printf ("WARNING: spherical surfaces are not supported yet\n");
+//              printf ("WARNING: spherical surfaces are not supported yet\n");
             }
           else
             {
