@@ -1,5 +1,5 @@
 Bottom: 61e2445ecfa2a5acafb6d39c09cbe02b55700dc4
-Top:    27ec30fa47f5ea77fc549c375956b28e04d9f8c3
+Top:    a0fe51fce1a37b24a00ee0fce84c819b867120f8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -9,10 +9,24 @@ Toy rendering attempt
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 8c3d25a..6e3d281 100644
+index 8c3d25a..8c9e089 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -484,6 +484,8 @@ LIBSTEP_SRCS = \
+@@ -24,10 +24,12 @@ bin_PROGRAMS=	pcb
+ 
+ if DEBUG_BUILD
+ # don't disable assert()
++AM_CFLAGS= -Wno-unused-parameter
+ else
+-AM_CFLAGS= -DNDEBUG
++AM_CFLAGS= -DNDEBUG -Wno-unused-parameter
+ endif
+ 
++
+ PCB_SRCS = \
+ 	action.c \
+ 	action.h \
+@@ -484,6 +486,8 @@ LIBSTEP_SRCS = \
  	hid/step/step.h \
  	hid/step/assembly.cpp \
  	hid/step/assembly.h \
@@ -61,10 +75,18 @@ index 89d9b87..1006a61 100644
  extern OutputType Output;
  
 diff --git a/src/global.h b/src/global.h
-index b8efc7b..2186c0f 100644
+index b8efc7b..e8badb6 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -609,7 +609,7 @@ typedef struct
+@@ -364,6 +364,7 @@ typedef struct
+   GList *Arc;
+   BoxType VBox;
+   AttributeListType Attributes;
++  void *assembly_model_instance; /* XXX: Opaque type? */
+ } ElementType;
+ 
+ /* ---------------------------------------------------------------------------
+@@ -609,7 +610,7 @@ typedef struct
  {
    bool status;
    Coord X, Y;
@@ -74,10 +96,10 @@ index b8efc7b..2186c0f 100644
  /* ---------------------------------------------------------------------------
   * our resources
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index e7a2720..771e803 100644
+index e7a2720..1973757 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -153,11 +153,14 @@ float colors[12][3] = {{1., 0., 0.},
+@@ -153,19 +153,30 @@ float colors[12][3] = {{1., 0., 0.},
                         {0.5, 1., 1.}};
  
  
@@ -93,8 +115,10 @@ index e7a2720..771e803 100644
  #if 0
    int id = ID(e) % 12;
  
-@@ -166,6 +169,14 @@ draw_quad_edge (edge_ref e, void *data)
-   glColor3f (1., 1., 1.);
+   glColor3f (colors[id][0], colors[id][1], colors[id][2]);
+ #else
+-  glColor3f (1., 1., 1.);
++//  glColor3f (1., 1., 1.);
  #endif
  
 +  x1 = ((vertex3d *)ODATA(e))->x;
@@ -294,10 +318,32 @@ index b288cf2..3d228f6 100644
  object3d *make_object3d (char *name);
  void destroy_object3d (object3d *object);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index af391dd..4c2d39d 100644
+index af391dd..e9fa5fc 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -123,6 +123,7 @@ static bool ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, double *pcb_
+@@ -23,6 +23,10 @@
+ #include "hid/common/face3d.h"
+ #include "hid/common/object3d.h"
+ 
++#include "hid/step/step.h" // XXX: Abstraction breaking
++#include "hid/step/model.h" // XXX: Abstraction breaking
++#include "hid/step/assembly.h" // XXX: Abstraction breaking
++
+ #ifndef WIN32
+ /* The Linux OpenGL ABI 1.0 spec requires that we define
+  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+@@ -54,6 +58,10 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
+ #include <dmalloc.h>
+ #endif
+ 
++#define STEP_TO_COORD_X(pcb, x) (  MM_TO_COORD((x)))
++#define STEP_TO_COORD_Y(pcb, y) ((pcb->MaxHeight) - MM_TO_COORD((y)))
++#define STEP_TO_COORD_Z(pcb, z) ( MM_TO_COORD((z)))
++
+ //#define VIEW_ORTHO
+ 
+ extern HID ghid_hid;
+@@ -123,6 +131,7 @@ static bool ghid_unproject_to_z_plane (int ex, int ey, Coord pcb_z, double *pcb_
  
  void ghid_set_lock_effects (hidGC gc, AnyObjectType *object);
  
@@ -305,14 +351,23 @@ index af391dd..4c2d39d 100644
  
  
  /* Coordinate conversions */
-@@ -1127,6 +1128,16 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -169,7 +178,7 @@ Py (int y)
+ #define BOARD_THICKNESS         MM_TO_COORD(1.60)
+ #define MASK_COPPER_SPACING     MM_TO_COORD(0.05)
+ #define SILK_MASK_SPACING       MM_TO_COORD(0.01)
+-static int
++static Coord
+ compute_depth (int group)
+ {
+   static int last_depth_computed = 0;
+@@ -1127,6 +1136,16 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
    ghid_graphics_class.end_layer = ghid_end_layer;
    ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
    ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 +
 +//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step", &step_read_test);
 +//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step", &step_read_test);
-+  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step", &step_read_test);
++//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step", &step_read_test);
 +//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step", &step_read_test);
 +//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/step_interlayer_manual.step", &step_read_test);
 +//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/DPAK.step", &step_read_test);
@@ -322,7 +377,179 @@ index af391dd..4c2d39d 100644
  }
  
  void
-@@ -2729,7 +2740,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1653,8 +1672,8 @@ fill_board_outline (hidGC gc, const BoxType *drawn_area)
+     polygon.BoundingBox = *drawn_area;
+   polygon.Flags = NoFlags ();
+   SET_FLAG (FULLPOLYFLAG, &polygon);
+-//  hid_draw_fill_pcb_polygon (gc, &polygon, drawn_area);
+-  hid_draw_thin_pcb_polygon (gc, &polygon, drawn_area);
++  hid_draw_fill_pcb_polygon (gc, &polygon, drawn_area);
++//  hid_draw_thin_pcb_polygon (gc, &polygon, drawn_area);
+   poly_FreeContours (&polygon.NoHoles);
+ }
+ 
+@@ -2089,10 +2108,88 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
+   return draw_hole_cyl ((PinType *)b, (struct cyl_info *)cl, VIA_TYPE);
+ }
+ 
++static void
++hidgl_draw_step_model_instance (struct assembly_model_instance *instance)
++{
++  render_priv *priv = gport->render_priv;
++  step_model *step_model = instance->model->step_model;
++  GLfloat m[4][4];
++  double ox, oy, oz;
++
++  if (step_model == NULL)
++    return;
++
++  hidgl_flush_triangles (priv->hidgl);
++  glPushAttrib (GL_CURRENT_BIT);
++  glPushMatrix ();
++
++  glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
++
++  // OpenGL matrix layout (numbers are memory offsets)
++  // [ 0  4   8  12 ]
++  // [ 1  5   9  13 ]
++  // [ 2  6  10  14 ]
++  // [ 3  7  11  15 ]
++
++  glTranslatef (STEP_TO_COORD_X (PCB, instance->ox),
++                STEP_TO_COORD_Y (PCB, instance->oy),
++                STEP_TO_COORD_Z (PCB, instance->oz));
++
++  // XXX: Not sure why we need to flip the instance "y" values, this is strange
++  ox = -instance->ay * instance->rz - instance->az * -instance->ry;
++  oy = instance->az * instance->rx - instance->ax * instance->rz;
++  oz = instance->ax * -instance->ry - -instance->ay * instance->rx;
++  m[0][0] = instance->rx;  m[1][0] = ox;    m[2][0] = instance->ax;    m[3][0] = 0.0f;
++  m[0][1] = -instance->ry;  m[1][1] = oy;    m[2][1] = -instance->ay;    m[3][1] = 0.0f;
++  m[0][2] = instance->rz;  m[1][2] = oz;    m[2][2] = instance->az;    m[3][2] = 0.0f;
++  m[0][3] = 0.0f;          m[1][3] = 0.0f;  m[2][3] = 0.0f;            m[3][3] = 1.0f;
++  glMultMatrixf(&m[0][0]);
++
++  printf ("Matrix: %f %f %f %f\n"
++          "        %f %f %f %f\n"
++          "        %f %f %f %f\n"
++          "        %f %f %f %f\n\n",
++          m[0][0], m[1][0], m[2][0], m[3][0],
++          m[0][1], m[1][1], m[2][1], m[3][1],
++          m[0][2], m[1][2], m[2][2], m[3][2],
++          m[0][3], m[1][3], m[2][3], m[3][3]
++          );
++
++  ox = step_model->ay * step_model->rz - step_model->az * step_model->ry;
++  oy = step_model->az * step_model->rx - step_model->ax * step_model->rz;
++  oz = step_model->ax * step_model->ry - step_model->ay * step_model->rx;
++  // NB: The matrix indexes below are transposed from the visual layout
++  // As the matrix is orthogonal, this should give us the inverse matrix
++  m[0][0] = step_model->rx;  m[0][1] = ox;    m[0][2] = step_model->ax;  m[0][3] = 0.0f;
++  m[1][0] = step_model->ry;  m[1][1] = oy;    m[1][2] = step_model->ay;  m[1][3] = 0.0f;
++  m[2][0] = step_model->rz;  m[2][1] = oz;    m[2][2] = step_model->az;  m[2][3] = 0.0f;
++  m[3][0] = 0.0f;            m[3][1] = 0.0f;  m[3][2] = 0.0f;            m[3][3] = 1.0f;
++  glMultMatrixf(&m[0][0]);
++
++  glTranslatef (-STEP_TO_COORD_X (PCB, step_model->ox),
++                -STEP_TO_COORD_Y (PCB, step_model->oy),
++                -STEP_TO_COORD_Z (PCB, step_model->oz));
++
++  object3d_draw (step_model->object);
++
++  hidgl_flush_triangles (priv->hidgl);
++
++  glPopMatrix ();
++  glPopAttrib ();
++}
++
+ static int
+-frontE_package_callback (const BoxType * b, void *cl)
++E_package_callback (const BoxType * b, void *cl)
+ {
+   ElementType *element = (ElementType *) b;
++  int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
++  Coord depth = compute_depth (layer_group);
++
++
++  if (element->assembly_model_instance != NULL)
++    {
++      hidgl_draw_step_model_instance (element->assembly_model_instance);
++    }
+ 
+   if (FRONT (element))
+     {
+@@ -2100,33 +2197,27 @@ frontE_package_callback (const BoxType * b, void *cl)
+         return 0;
+ 
+       if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "ACY400") == 0) {
+-        int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
+-        hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
++        hidgl_draw_acy_resistor (element, depth, BOARD_THICKNESS);
+       }
+ 
+       if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "800mil_resistor.fp") == 0) {
+-        int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
+-        hidgl_draw_800mil_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
++        hidgl_draw_800mil_resistor (element, depth, BOARD_THICKNESS);
+       }
+ 
+       if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "2300mil_resistor.fp") == 0) {
+-        int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
+-        hidgl_draw_2300mil_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
++        hidgl_draw_2300mil_resistor (element, depth, BOARD_THICKNESS);
+       }
+ 
+       if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "diode_700mil_surface.fp") == 0) {
+-        int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
+-        hidgl_draw_700mil_diode_smd (element, compute_depth (layer_group), BOARD_THICKNESS);
++        hidgl_draw_700mil_diode_smd (element, depth, BOARD_THICKNESS);
+       }
+ 
+       if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "cap_100V_10uF.fp") == 0) {
+-        int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
+-        hidgl_draw_1650mil_cap (element, compute_depth (layer_group), BOARD_THICKNESS);
++        hidgl_draw_1650mil_cap (element, depth, BOARD_THICKNESS);
+       }
+ 
+       if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "cap_15000V_2500pF.fp") == 0) {
+-        int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
+-        hidgl_draw_350x800mil_cap (element, compute_depth (layer_group), BOARD_THICKNESS);
++        hidgl_draw_350x800mil_cap (element, depth, BOARD_THICKNESS);
+       }
+     }
+   return 1;
+@@ -2135,8 +2226,7 @@ frontE_package_callback (const BoxType * b, void *cl)
+ static void
+ ghid_draw_packages (BoxType *drawn_area)
+ {
+-  /* XXX: Just the front elements for now */
+-  r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_package_callback, NULL);
++  r_search (PCB->Data->element_tree, drawn_area, NULL, E_package_callback, NULL);
+ }
+ 
+ void
+@@ -2342,8 +2432,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   if (do_once) {
+     do_once = false;
+     object3d_test_init ();
++    //step_load_models ();
+   }
+ 
++  step_load_models ();
++
+ //  printf ("Expose event at (%i,%i): %i x %i\n", ev->area.x, ev->area.y, ev->area.width, ev->area.height);
+ //  printf ("Event type %i, send_event %i\n", ev->type, ev->send_event);
+ 
+@@ -2670,7 +2763,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+     hidgl_flush_triangles (priv->hidgl);
+   }
+ 
+-  glEnable (GL_LIGHTING);
++//  glEnable (GL_LIGHTING);
+ 
+   glShadeModel (GL_SMOOTH);
+ 
+@@ -2729,7 +2822,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);
@@ -346,12 +573,50 @@ index c9eb567..3c7eae3 100644
      static const Unit *old_grid_unit = NULL;
      if (crosshair_x != c_x || crosshair_y != c_y
  	|| Settings.grid_unit != old_grid_unit
+diff --git a/src/hid/step/assembly.cpp b/src/hid/step/assembly.cpp
+index cc3fa9a..b4de7e2 100644
+--- a/src/hid/step/assembly.cpp
++++ b/src/hid/step/assembly.cpp
+@@ -94,6 +94,7 @@
+ #include <glib.h>
+ 
+ extern "C" {
++typedef struct step_model step_model;
+ #include "assembly.h"
+ }
+ 
+diff --git a/src/hid/step/assembly.h b/src/hid/step/assembly.h
+index 7a8b5df..4594824 100644
+--- a/src/hid/step/assembly.h
++++ b/src/hid/step/assembly.h
+@@ -1,5 +1,11 @@
++struct assembly_model {
++  const char *filename;
++  GList *instances;
++  step_model *step_model;
++};
+ 
+ struct assembly_model_instance {
++  struct assembly_model *model;
+   const char *name;
+ //  double ox;
+ //  double oy;
+@@ -16,9 +22,4 @@ struct assembly_model_instance {
+ };
+ 
+ 
+-struct assembly_model {
+-  const char *filename;
+-  GList *instances;
+-};
+-
+ void export_step_assembly (const char *filename, GList *assembly_models);
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
 new file mode 100644
-index 0000000..7828fb9
+index 0000000..d6fbcc0
 --- /dev/null
 +++ b/src/hid/step/model.cpp
-@@ -0,0 +1,603 @@
+@@ -0,0 +1,635 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -449,7 +714,7 @@ index 0000000..7828fb9
 +      sfile.Error().PrintContents (std::cout);
 +      std::cout << "WARNING: Error reading from file '" << filename << "'" << std::endl;
 +//      return NULL;
-+#warning HANDLE OTHER ERRORS BETTER?
++// XXX: HANDLE OTHER ERRORS BETTER?
 +    }
 +
 +  pd_list pd_list;
@@ -484,10 +749,8 @@ index 0000000..7828fb9
 +
 +typedef std::list<SdaiManifold_solid_brep *> msb_list;
 +
-+void
-+find_manifold_solid_brep (Registry *registry,
-+                          InstMgr *instance_list,
-+                          SdaiShape_representation *sr,
++static void
++find_manifold_solid_brep (SdaiShape_representation *sr,
 +                          msb_list *msb_list)
 +{
 +  SingleLinkNode *iter = sr->items_ ()->GetHead ();
@@ -584,6 +847,9 @@ index 0000000..7828fb9
 +          SdaiCurve *curve = ec->edge_geometry_ ();
 +          bool same_sense = ec->same_sense_ ();
 +
++          if (!same_sense)
++            printf ("XXX: HAVE NOT TESTED THIS CASE.... same_sense is false\n");
++
 +#if 0
 +          printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
 +#endif
@@ -658,10 +924,11 @@ index 0000000..7828fb9
 +step_model_to_shape_master (const char *filename, object3d **out_object)
 +{
 +  object3d *object;
-+  edge_ref edge;
-+  vertex3d *vertex;
 +  GHashTable *edges_hash_set;
 +  bool on_plane;
++  step_model *step_model;
++
++  printf ("step_model_to_shape_master(\"%s\", %p)\n", filename, out_object);
 +
 +  object = make_object3d ((char *)"Test");
 +
@@ -693,7 +960,7 @@ index 0000000..7828fb9
 +    std::cout << "WARNING: Could not find AXIS2_PLACEMENT_3D entity in SHAPE_REPRESENTATION" << std::endl;
 +
 +  msb_list msb_list;
-+  find_manifold_solid_brep (registry, instance_list, sr, &msb_list);
++  find_manifold_solid_brep (sr, &msb_list);
 +
 +  for (msb_list::iterator iter = msb_list.begin (); iter != msb_list.end (); iter++)
 +    {
@@ -764,9 +1031,9 @@ index 0000000..7828fb9
 +              SdaiFace_bound *fb = (SdaiFace_bound *)((EntityNode *)iter)->node;
 +
 +
++#if 0
 +              bool is_outer_bound = (strcmp (fb->EntityName (), "Face_Outer_Bound") == 0);
 +
-+#if 0
 +              if (is_outer_bound)
 +                std::cout << "  Outer bounds of face include ";
 +              else
@@ -868,10 +1135,10 @@ index 0000000..7828fb9
 +                          continue;
 +                        }
 +
++#if 0
 +                      SdaiCartesian_point *edge_start_cp = (SdaiCartesian_point *)edge_start_point;
 +                      SdaiCartesian_point *edge_end_cp = (SdaiCartesian_point *)edge_end_point;
 +
-+#if 0
 +                      printf ("    Edge #%i starts at (%f, %f, %f) and ends at (%f, %f, %f)\n",
 +                              edge->StepFileId (),
 +                              ((RealNode *)edge_start_cp->coordinates_ ()->GetHead())->value,
@@ -935,12 +1202,42 @@ index 0000000..7828fb9
 +        g_hash_table_destroy (edges_hash_set);
 +    }
 +
++  step_model = g_new0(struct step_model, 1);
++
++//  step_model->filename = g_strdup(filename);
++//  step_model->instances = NULL;    /* ??? */
++
++  if (part_origin != NULL)
++    {
++      step_model->ox = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ())->value;
++      step_model->oy = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
++      step_model->oz = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
++      step_model->ax = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ())->value;
++      step_model->ay = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
++      step_model->az = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
++      step_model->rx = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
++      step_model->ry = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
++      step_model->rz = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
++    }
++
++  step_model->object = object;
++
++  if (out_object != NULL)
++    *out_object = object;
++
 +  delete instance_list;
 +  delete registry;
 +
-+  *out_object = object;
 +
-+  return NULL;
++  return step_model;
++}
++
++void step_model_free(step_model *step_model)
++{
++//  g_list_free (step_model->instances);
++//  g_free ((char *)step_model->filename);
++  destroy_object3d (step_model->object);
++  g_free (step_model);
 +}
 +
 +/* Geometry surface and face types encountered so far..
@@ -957,21 +1254,21 @@ index 0000000..7828fb9
 +*/
 diff --git a/src/hid/step/model.h b/src/hid/step/model.h
 new file mode 100644
-index 0000000..707c2bb
+index 0000000..6c70278
 --- /dev/null
 +++ b/src/hid/step/model.h
-@@ -0,0 +1,23 @@
-+
-+struct step_model_instance {
+@@ -0,0 +1,25 @@
++#if 0
++typedef struct step_model_instance {
 +  double x;
 +  double y;
 +  double rotation;
-+};
++} step_model_instance;
++#endif
 +
-+
-+struct step_model {
++typedef struct step_model {
 +  const char *filename;
-+  GList *instances;
++//  GList *instances;
 +  double ox;
 +  double oy;
 +  double oz;
@@ -981,9 +1278,292 @@ index 0000000..707c2bb
 +  double rx;
 +  double ry;
 +  double rz;
-+};
++  object3d *object;
++} step_model;
 +
-+struct step_model *step_model_to_shape_master (const char *filename, object3d **out_object);
++step_model *step_model_to_shape_master (const char *filename, object3d **out_object);
++void step_model_free (step_model *step_model);
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 657f3ca..3ee6afd 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -41,6 +41,7 @@
+ #include <dmalloc.h>
+ #endif
+ 
++#include "model.h"
+ #include "assembly.h"
+ 
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented STEP function %s.\n", __FUNCTION__); abort()
+@@ -139,7 +140,7 @@ Name of the STEP output file. Can contain a path.
+    %end-doc
+    */
+     {"thickness", N_("Board thickness"),
+-         HID_Coord, 0, 0, {0, 0, 0, MM_TO_COORD (1.6)}, 0, 0},
++         HID_Coord, 0, MM_TO_COORD(100), {0, 0, 0, MM_TO_COORD (1.6)}, 0, 0}, /* XXX: Arbitrary limit of 100mm thick PCB */
+ #define HA_thickness 5
+ };
+ 
+@@ -208,6 +209,226 @@ parse_numeric_attribute (ElementType *element, char *attr_name, double *res)
+   *res = COORD_TO_MM (GetValueEx (attr_value, NULL, &absolute, NULL, "mm")); /* KLUDGE */
+ }
+ 
++static GList *loaded_models = NULL;
++
++void
++step_load_models(void)
++{
++  int i;
++  const char *filename;
++  struct assembly_model *model;
++  struct assembly_model_instance *instance;
++  const char *attribute;
++
++  ELEMENT_LOOP (PCB->Data);
++    {
++      bool on_solder = TEST_FLAG (ONSOLDERFLAG, element);
++      double on_solder_negate = on_solder ? -1.0 : 1.0;
++      const char *model_filename;
++      double ox, oy, oz;
++      double ax, ay, az;
++      double rx, ry, rz;
++      double rotation;
++      double cos_rot;
++      double sin_rot;
++      GList *model_iter;
++
++      /* Skip if the component doesn't have a STEP-AP214 3d_model */
++      attribute = AttributeGet (element, "PCB::3d_model::type");
++      if (attribute == NULL || strcmp (attribute, "STEP-AP214") != 0)
++        continue;
++
++      attribute = AttributeGet (element, "PCB::3d_model::filename");
++      if (attribute == NULL)
++        continue;
++      model_filename = attribute;
++
++#if 0   /* Rather than write a parser for three floats in a string, separate X, Y, Z explicitly for quicker testing */
++
++      attribute = AttributeGet (element, "PCB::3d_model::origin");
++      if (attribute == NULL)
++        continue;
++      parse_cartesian_point_3d_string (attribute, &ox, &oy, &oz);
++
++      attribute = AttributeGet (element, "PCB::3d_model::axis");
++      if (attribute == NULL)
++        continue;
++      parse_direction_3d_string (attribute, &ax, &ay, &az);
++      ax = 0.0, ay = 0.0, az = 1.0;
++
++      attribute = AttributeGet (element, "PCB::3d_model::ref_dir");
++      if (attribute == NULL)
++        continue;
++      parse_direction_3d_string (attribute, &rx, &ry, &rz);
++      rx = 1.0, ry = 0.0, rz = 0.0;
++#endif
++
++      /* XXX: Should parse a unit suffix, e.g. "degrees" */
++      attribute = AttributeGet (element, "PCB::rotation");
++      if (attribute == NULL)
++        continue;
++      parse_rotation_string (attribute, &rotation);
++
++      /* XXX: QUICKER TO CODE INDIVIDULAL VALUES NOT SPACE SEPARATED */
++      parse_position_attribute (element, "PCB::3d_model::origin::X", &ox);
++      parse_position_attribute (element, "PCB::3d_model::origin::Y", &oy);
++      parse_position_attribute (element, "PCB::3d_model::origin::Z", &oz);
++      parse_numeric_attribute (element, "PCB::3d_model::axis::X", &ax);
++      parse_numeric_attribute (element, "PCB::3d_model::axis::Y", &ay);
++      parse_numeric_attribute (element, "PCB::3d_model::axis::Z", &az);
++      parse_numeric_attribute (element, "PCB::3d_model::ref_dir::X", &rx);
++      parse_numeric_attribute (element, "PCB::3d_model::ref_dir::Y", &ry);
++      parse_numeric_attribute (element, "PCB::3d_model::ref_dir::Z", &rz);
++      parse_numeric_attribute (element, "PCB::rotation", &rotation);
++
++#if 1  /* Write the intended final syntax attributes */
++      if (1)
++        {
++          GString *value = g_string_new (NULL);
++
++          attribute = AttributeGet (element, "PCB::3d_model::origin::X");
++          g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0mm");
++          attribute = AttributeGet (element, "PCB::3d_model::origin::Y");
++          g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0mm");
++          attribute = AttributeGet (element, "PCB::3d_model::origin::Z");
++          g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0mm");
++          AttributePutToList (&element->Attributes, "PCB::3d_model::origin", value->str, true);
++
++          attribute = AttributeGet (element, "PCB::3d_model::axis::X");
++          g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0");
++          attribute = AttributeGet (element, "PCB::3d_model::axis::Y");
++          g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0");
++          attribute = AttributeGet (element, "PCB::3d_model::axis::Z");
++          g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0");
++          AttributePutToList (&element->Attributes, "PCB::3d_model::axis", value->str, true);
++
++          attribute = AttributeGet (element, "PCB::3d_model::ref_dir::X");
++          g_string_printf (value, "%s", attribute != NULL ? attribute : "0.0");
++          attribute = AttributeGet (element, "PCB::3d_model::ref_dir::Y");
++          g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0");
++          attribute = AttributeGet (element, "PCB::3d_model::ref_dir::Z");
++          g_string_append_printf (value, " %s", attribute != NULL ? attribute : "0.0");
++          AttributePutToList (&element->Attributes, "PCB::3d_model::ref_dir", value->str, true);
++
++          g_string_free (value, true);
++        }
++#endif
++
++      instance = element->assembly_model_instance;
++
++      if (instance != NULL)
++        {
++          if (strcmp (instance->model->filename, model_filename) == 0)
++            {
++              /* Same model */
++            }
++          else
++            {
++              /* Different model, delete the old instance */
++
++              struct assembly_model *old_model;
++
++              old_model = instance->model;
++              old_model->instances = g_list_remove (old_model->instances, instance);
++              g_free (instance);
++              instance = NULL;
++
++              /* Keep things clean, don't leave this pointers dangling - even temporarily */
++              element->assembly_model_instance = NULL;
++
++              if (old_model->instances == NULL)
++                {
++                  /* Assume unused, so unload */
++                  step_model_free (old_model->step_model);
++                  g_free (old_model);
++                  loaded_models = g_list_remove (loaded_models, old_model);
++                }
++            }
++        }
++
++      if (instance == NULL)
++        {
++          /* No model loaded yet */
++          model = NULL;
++
++          /* Look for prior usage of this model */
++          for (model_iter = loaded_models;
++               model_iter != NULL;
++               model_iter = g_list_next (model_iter))
++            {
++              struct assembly_model *possible_model;
++              possible_model = model_iter->data;
++              if (strcmp (possible_model->filename, model_filename) == 0)
++                {
++                  model = possible_model;
++                  break;
++                }
++            }
++
++          /* If we didn't find this model used already, add it to the list */
++          if (model == NULL)
++            {
++              model = g_new0 (struct assembly_model, 1);
++              model->filename = model_filename;
++              model->step_model = step_model_to_shape_master (model_filename, NULL);
++              loaded_models = g_list_append (loaded_models, model);
++            }
++          instance = g_new0 (struct assembly_model_instance, 1);
++          instance->model = model;
++          model->instances = g_list_append (model->instances, instance);
++          element->assembly_model_instance = instance;
++        }
++
++      cos_rot = cos (rotation * M_PI / 180.);
++      sin_rot = sin (rotation * M_PI / 180.);
++
++      // Rotation of part on board
++      // (NB: Y flipped from normal right handed convention)
++      //[cos -sin   0] [x] = [xcos - ysin]
++      //[sin  cos   0] [y]   [xsin + ycos]
++      //[  0    0   1] [z]   [z          ]
++
++      // Flip of part to backside of board
++      // [  1   0   0] [x] = [ x]
++      // [  0  -1   0] [y] = [-y]
++      // [  0   0  -1] [z] = [-z]
++
++
++      instance->name = NAMEONPCB_NAME (element);
++#ifdef REVERSED_PCB_CONTOURS
++      instance->ox =                     ( ox * cos_rot + oy * sin_rot);
++      instance->oy = -on_solder_negate * (-ox * sin_rot + oy * cos_rot);
++      instance->oz = -on_solder_negate * oz; /* <--- ????: -ve on on_solder_negative seems inconsistent w.r.t. others! */
++      instance->ax =                     ( ax * cos_rot + ay * sin_rot);
++      instance->ay = -on_solder_negate * (-ax * sin_rot + ay * cos_rot);
++      instance->az = -on_solder_negate * az;
++      instance->rx =                     ( rx * cos_rot + ry * sin_rot);
++      instance->ry = -on_solder_negate * (-rx * sin_rot + ry * cos_rot);
++      instance->rz = -on_solder_negate * rz;
++#else
++      instance->ox =                     ( ox * cos_rot + oy * sin_rot);
++      instance->oy =  on_solder_negate * (-ox * sin_rot + oy * cos_rot);
++      instance->oz =  on_solder_negate * oz;
++      instance->ax =                     ( ax * cos_rot + ay * sin_rot);
++      instance->ay =  on_solder_negate * (-ax * sin_rot + ay * cos_rot);
++      instance->az =  on_solder_negate * az;
++      instance->rx =                     ( rx * cos_rot + ry * sin_rot);
++      instance->ry =  on_solder_negate * (-rx * sin_rot + ry * cos_rot);
++      instance->rz =  on_solder_negate * rz;
++#endif
++
++      instance->ox += COORD_TO_STEP_X (PCB, element->MarkX);
++      instance->oy += COORD_TO_STEP_Y (PCB, element->MarkY);
++#ifdef REVERSED_PCB_CONTOURS
++      instance->oz += COORD_TO_STEP_Z (PCB, on_solder ? -HACK_BOARD_THICKNESS - HACK_COPPER_THICKNESS : HACK_COPPER_THICKNESS);
++#else
++      instance->oz += COORD_TO_STEP_Z (PCB, on_solder_negate * (-HACK_BOARD_THICKNESS / 2 -HACK_COPPER_THICKNESS));
++#endif
++
++    }
++  END_LOOP;
++}
++
+ static void
+ step_do_export (HID_Attr_Val * options)
+ {
+@@ -328,6 +549,7 @@ step_do_export (HID_Attr_Val * options)
+     models = g_list_append (models, model);
+ 
+     instance = g_new0 (struct assembly_model_instance, 1);
++    instance->model = model;
+     instance->name = "PCB";
+     instance->ox = 0.0,  instance->oy = 0.0,  instance->oz = 0.0;
+     instance->ax = 0.0,  instance->ay = 0.0,  instance->az = 1.0;
+@@ -454,6 +676,7 @@ step_do_export (HID_Attr_Val * options)
+               {
+                 model = g_new0 (struct assembly_model, 1);
+                 model->filename = model_filename;
++                model->step_model = NULL; /* We don't use this for assembly export */
+                 models = g_list_append (models, model);
+               }
+ 
+@@ -472,6 +695,7 @@ step_do_export (HID_Attr_Val * options)
+             // [  0   0  -1] [z] = [-z]
+ 
+             instance = g_new0 (struct assembly_model_instance, 1);
++            instance->model = model;
+             instance->name = NAMEONPCB_NAME (element);
+ #ifdef REVERSED_PCB_CONTOURS
+             instance->ox =                     ( ox * cos_rot + oy * sin_rot);
+diff --git a/src/hid/step/step.h b/src/hid/step/step.h
+index 50a01ab..704035f 100644
+--- a/src/hid/step/step.h
++++ b/src/hid/step/step.h
+@@ -1,3 +1,4 @@
+ extern HID step_hid;
+ void step_init (HID *hid);
+ void step_graphics_init (HID_DRAW *graphics);
++void step_load_models();
 diff --git a/src/polygon1.c b/src/polygon1.c
 index 24e9dfa..3d0615c 100644
 --- a/src/polygon1.c
