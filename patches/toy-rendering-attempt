@@ -1,5 +1,5 @@
 Bottom: 61e2445ecfa2a5acafb6d39c09cbe02b55700dc4
-Top:    797c6b01aa3ce40ccc5d3cabebb72658f009134f
+Top:    0a3b84a8555719668d0d40757f7b38e9e8c06ee7
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -318,7 +318,7 @@ index b288cf2..3d228f6 100644
  object3d *make_object3d (char *name);
  void destroy_object3d (object3d *object);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index af391dd..b5ec76c 100644
+index af391dd..b6ed19b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -23,6 +23,10 @@
@@ -373,7 +373,7 @@ index af391dd..b5ec76c 100644
 +//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/DPAK.step", &step_read_test);
 +//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Inductor_R1.step", &step_read_test);
 +//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Capacitor_100V_10uF.step", &step_read_test);
-+//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/", &step_read_test);
++  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/shape_rep.step", &step_read_test);
  }
  
  void
@@ -605,10 +605,10 @@ index 7a8b5df..4594824 100644
  void export_step_assembly (const char *filename, GList *assembly_models);
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
 new file mode 100644
-index 0000000..df737b2
+index 0000000..8fee10d
 --- /dev/null
 +++ b/src/hid/step/model.cpp
-@@ -0,0 +1,635 @@
+@@ -0,0 +1,643 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -671,7 +671,7 @@ index 0000000..df737b2
 +# include <unistd.h>
 +#endif
 +
-+#if 0
++#if 1
 +#  define DEBUG_PRODUCT_DEFINITION_SEARCH
 +#  define DEBUG_CHILD_REMOVAL
 +#  define DEBUG_PRODUCT_DEFINITION
@@ -698,7 +698,15 @@ index 0000000..df737b2
 +{
 +  STEPfile sfile = STEPfile (*registry, *instance_list, "", false);
 +
-+  sfile.ReadExchangeFile (filename);
++  try
++    {
++      sfile.ReadExchangeFile (filename);
++    }
++  catch (...)
++    {
++      std::cout << "ERROR: Caught exception when attempting to read from file '" << filename << "' (does the file exist?)" << std::endl;
++      return NULL;
++    }
 +
 +  Severity severity = sfile.Error().severity();
 +  if (severity != SEVERITY_NULL)
@@ -1276,7 +1284,7 @@ index 0000000..6c70278
 +step_model *step_model_to_shape_master (const char *filename, object3d **out_object);
 +void step_model_free (step_model *step_model);
 diff --git a/src/hid/step/step.c b/src/hid/step/step.c
-index 657f3ca..97d790d 100644
+index 657f3ca..65fc4dc 100644
 --- a/src/hid/step/step.c
 +++ b/src/hid/step/step.c
 @@ -41,6 +41,7 @@
@@ -1305,7 +1313,7 @@ index 657f3ca..97d790d 100644
  #define HA_thickness 5
  };
  
-@@ -208,6 +209,228 @@ parse_numeric_attribute (ElementType *element, char *attr_name, double *res)
+@@ -208,6 +209,229 @@ parse_numeric_attribute (ElementType *element, char *attr_name, double *res)
    *res = COORD_TO_MM (GetValueEx (attr_value, NULL, &absolute, NULL, "mm")); /* KLUDGE */
  }
  
@@ -1441,7 +1449,8 @@ index 657f3ca..97d790d 100644
 +              if (old_model->instances == NULL)
 +                {
 +                  /* Assume unused, so unload */
-+                  step_model_free (old_model->step_model);
++                  if (old_model->step_model != NULL)
++                    step_model_free (old_model->step_model);
 +                  g_free (old_model);
 +                  loaded_models = g_list_remove (loaded_models, old_model);
 +                }
@@ -1534,7 +1543,7 @@ index 657f3ca..97d790d 100644
  static void
  step_do_export (HID_Attr_Val * options)
  {
-@@ -328,6 +551,7 @@ step_do_export (HID_Attr_Val * options)
+@@ -328,6 +552,7 @@ step_do_export (HID_Attr_Val * options)
      models = g_list_append (models, model);
  
      instance = g_new0 (struct assembly_model_instance, 1);
@@ -1542,7 +1551,7 @@ index 657f3ca..97d790d 100644
      instance->name = "PCB";
      instance->ox = 0.0,  instance->oy = 0.0,  instance->oz = 0.0;
      instance->ax = 0.0,  instance->ay = 0.0,  instance->az = 1.0;
-@@ -454,6 +678,7 @@ step_do_export (HID_Attr_Val * options)
+@@ -454,6 +679,7 @@ step_do_export (HID_Attr_Val * options)
                {
                  model = g_new0 (struct assembly_model, 1);
                  model->filename = model_filename;
@@ -1550,7 +1559,7 @@ index 657f3ca..97d790d 100644
                  models = g_list_append (models, model);
                }
  
-@@ -472,6 +697,7 @@ step_do_export (HID_Attr_Val * options)
+@@ -472,6 +698,7 @@ step_do_export (HID_Attr_Val * options)
              // [  0   0  -1] [z] = [-z]
  
              instance = g_new0 (struct assembly_model_instance, 1);
@@ -1567,6 +1576,66 @@ index 50a01ab..47f3882 100644
  void step_init (HID *hid);
  void step_graphics_init (HID_DRAW *graphics);
 +void step_load_models(Coord board_thickness);
+diff --git a/src/hid/step/utils.cpp b/src/hid/step/utils.cpp
+index 931bc75..7c5be28 100644
+--- a/src/hid/step/utils.cpp
++++ b/src/hid/step/utils.cpp
+@@ -62,7 +62,12 @@ void
+ find_all_pd_with_sdr (InstMgr *instance_list, pd_list *pd_list, int start_after_id)
+ {
+   MgrNode * mnode = instance_list->FindFileId (start_after_id);
+-  int search_index = instance_list->GetIndex (mnode) + 1;
++  int search_index;
++
++  if (mnode == NULL)
++    search_index = 0;
++  else
++    search_index = instance_list->GetIndex (mnode) + 1;
+ 
+   // Loop over the instances of SHAPE_DEFITION_REPRESENTATION in the file
+   SdaiShape_definition_representation *sdr;
+@@ -119,7 +124,12 @@ void
+ find_and_remove_child_pd (InstMgr *instance_list, pd_list *pd_list, int start_after_id, const char *entityName)
+ {
+   MgrNode * mnode = instance_list->FindFileId (start_after_id);
+-  int search_index = instance_list->GetIndex (mnode) + 1;
++  int search_index;
++
++  if (mnode == NULL)
++    search_index = 0;
++  else
++    search_index = instance_list->GetIndex (mnode) + 1;
+ 
+   SdaiAssembly_component_usage *acu;
+   while (ENTITY_NULL != (acu = (SdaiAssembly_component_usage *)
+@@ -152,7 +162,12 @@ static SdaiProduct_definition *
+ find_pd_for_sr (InstMgr *instance_list, int start_after_id, SdaiShape_representation *target_sr)
+ {
+   MgrNode * mnode = instance_list->FindFileId (start_after_id);
+-  int search_index = instance_list->GetIndex (mnode) + 1;
++  int search_index;
++
++  if (mnode == NULL)
++    search_index = 0;
++  else
++    search_index = instance_list->GetIndex (mnode) + 1;
+ 
+   // Loop over the instances of SHAPE_DEFITION_REPRESENTATION in the file
+   SdaiShape_definition_representation *sdr;
+@@ -178,7 +193,12 @@ void
+ find_and_remove_child_pd_mi_rm_sr (InstMgr *instance_list, pd_list *pd_list, int start_after_id)
+ {
+   MgrNode * mnode = instance_list->FindFileId (start_after_id);
+-  int search_index = instance_list->GetIndex (mnode) + 1;
++  int search_index;
++
++  if (mnode == NULL)
++    search_index = 0;
++  else
++    search_index = instance_list->GetIndex (mnode) + 1;
+ 
+   SdaiMapped_item *mi;
+   while (ENTITY_NULL != (mi = (SdaiMapped_item *)
 diff --git a/src/polygon1.c b/src/polygon1.c
 index 24e9dfa..3d0615c 100644
 --- a/src/polygon1.c
