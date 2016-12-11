@@ -1,0 +1,570 @@
+Bottom: 0a3b84a8555719668d0d40757f7b38e9e8c06ee7
+Top:    9e07ec543f2d01927bf9b02197dd9e5179d28da3
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-11 16:53:22 +0000
+
+Refresh of toy-rendering-attempt
+
+---
+
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 1973757..37a790d 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -167,6 +167,7 @@ draw_quad_edge (edge_ref e, void *data)
+   glColor3f (colors[id][0], colors[id][1], colors[id][2]);
+ #else
+ //  glColor3f (1., 1., 1.);
++  glColor3f (1., 1., 0.);
+ #endif
+ 
+   x1 = ((vertex3d *)ODATA(e))->x;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index b6ed19b..ba2f40c 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1111,6 +1111,7 @@ void
+ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ {
+   render_priv *priv;
++  step_model *test_model;
+ 
+   port->render_priv = priv = g_new0 (render_priv, 1);
+ 
+@@ -1137,15 +1138,20 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+   ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
+   ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
+ 
+-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step", &step_read_test);
+-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step", &step_read_test);
+-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step", &step_read_test);
+-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step", &step_read_test);
+-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/step_interlayer_manual.step", &step_read_test);
+-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/DPAK.step", &step_read_test);
+-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Inductor_R1.step", &step_read_test);
+-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Capacitor_100V_10uF.step", &step_read_test);
+-  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/shape_rep.step", &step_read_test);
++  test_model = 
++//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step");
++//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step");
++//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step");
++//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step");
++//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/step_interlayer_manual.step");
++//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/DPAK.step");
++    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Inductor_R1.step");
++//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Capacitor_100V_10uF.step");
++//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/shape_rep.step");
++//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/7446722007_handfixed.stp");
++
++  if (test_model != NULL)
++    step_read_test = test_model->object;
+ }
+ 
+ void
+diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
+index 8fee10d..7d67006 100644
+--- a/src/hid/step/model.cpp
++++ b/src/hid/step/model.cpp
+@@ -78,6 +78,8 @@ extern "C" {
+ 
+ 
+ typedef std::list<SDAI_Application_instance *> ai_list;
++typedef std::list<SdaiManifold_solid_brep *> msb_list;
++typedef std::list<SdaiMapped_item *> mi_list;
+ 
+ 
+ SdaiProduct_definition *
+@@ -114,6 +116,8 @@ read_model_from_file (Registry *registry,
+   /*  Try to determine the root product */
+   find_and_remove_child_pd (instance_list, &pd_list, 1, "Next_assembly_usage_occurrence"); // Remove any PD which are children of another via NAUO
+   find_and_remove_child_pd (instance_list, &pd_list, 1, "Assembly_component_usage");       // Remove any PD which are children of another via ACU
++  find_and_remove_child_pd_mi_rm_sr (instance_list, &pd_list, 1); // Remove any PD which are children of another via MAPPED_ITEM->REPRESENTATION_MAP->SHAPE_REPRESENTATION
++
+ 
+ #ifdef DEBUG_PRODUCT_DEFINITION_SEARCH
+   std::cout << "Hopefully left with the root product definition" << std::endl;
+@@ -136,8 +140,6 @@ read_model_from_file (Registry *registry,
+   return *pd_list.begin();
+ }
+ 
+-typedef std::list<SdaiManifold_solid_brep *> msb_list;
+-
+ static void
+ find_manifold_solid_brep (SdaiShape_representation *sr,
+                           msb_list *msb_list)
+@@ -155,6 +157,23 @@ find_manifold_solid_brep (SdaiShape_representation *sr,
+     }
+ }
+ 
++static void
++find_mapped_item (SdaiShape_representation *sr,
++                  mi_list *mi_list)
++{
++  SingleLinkNode *iter = sr->items_ ()->GetHead ();
++
++  while (iter != NULL)
++    {
++      SDAI_Application_instance *node = ((EntityNode *)iter)->node;
++
++      if (strcmp (node->EntityName (), "Mapped_Item") == 0)
++        mi_list->push_back ((SdaiMapped_item *)node);
++
++      iter = iter->NextNode ();
++    }
++}
++
+ static void process_edges (GHashTable *edges_hash_set, object3d *object)
+ {
+   GHashTableIter iter;
+@@ -309,41 +328,105 @@ static void process_edges (GHashTable *edges_hash_set, object3d *object)
+     }
+ }
+ 
+-extern "C" struct step_model *
+-step_model_to_shape_master (const char *filename, object3d **out_object)
++typedef struct process_step_info {
++  /* Hash / list of SR -> step_model */
++} process_step_info;
++
++static step_model *
++process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr);
++
++static step_model *
++process_shape_representation(InstMgr *instance_list, SdaiShape_representation *sr)
+ {
+-  object3d *object;
+-  GHashTable *edges_hash_set;
+-  bool on_plane;
+-  step_model *step_model;
++  std::cout << "INFO: Processing raw SR" << std::endl;
+ 
+-  printf ("step_model_to_shape_master(\"%s\", %p)\n", filename, out_object);
++  /* We need to find "Shape_representation_relation" linking this SR to another.
++   * The SRR could be on its own, or (for assemblies), is likely to be in a complex with
++   * "Representation_relationship_with_transformation", in which case the
++   * "Representation_Relationship" supertype of Shape_representation_relation is also
++   * explicitly in the complex.
++   */
+ 
+-  object = make_object3d ((char *)"Test");
++  srr_list srr_list;
+ 
+-  Registry * registry = new Registry (SchemaInit);
+-  InstMgr * instance_list = new InstMgr (/* ownsInstance = */1);
++  // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
++  find_all_srr_with_rep_1 (instance_list, &srr_list, 1, sr);
+ 
+-  // Increment FileId so entities start at #1 instead of #0.
+-  instance_list->NextFileId();
++  for (srr_list::iterator iter = srr_list.begin (); iter != srr_list.end (); iter++)
++    {
++      SdaiShape_representation_relationship *srr = (*iter);
++      std::cout << "Found SRR; processing" << std::endl;
+ 
+-  SdaiProduct_definition *pd = read_model_from_file (registry, instance_list, filename);
+-  if (pd == NULL)
++      SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(srr->rep_2_ ());
++
++      /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
++      /* XXX: Origin offset etc..? */
++      /* XXX: Do something with the result */
++      process_sr_or_subtype (instance_list, child_sr);
++    }
++
++
++  srr_rrwt_list srr_rrwt_list;
++
++  // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
++  find_all_srr_rrwt_with_rep_1 (instance_list, &srr_rrwt_list, 1, sr);
++
++  for (srr_rrwt_list::iterator iter = srr_rrwt_list.begin (); iter != srr_rrwt_list.end (); iter++)
+     {
+-      printf ("ERROR Loading STEP model from file '%s'", filename);
+-      return NULL;
++      srr_rrwt *item = (*iter);
++      std::cout << "Found SRR + RRWT; processing" << std::endl;
++
++      SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(item->rep_2);
++      SdaiItem_defined_transformation *idt = item->idt;
++
++      std::cout << "  child SR: #" << child_sr->StepFileId() << " IDT: #" << idt->StepFileId() << std::endl;
++
++      /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
++      /* XXX: Origin offset etc..? */
++      /* XXX: Do something with the result */
++      process_sr_or_subtype (instance_list, child_sr);
+     }
+ 
+-  SdaiShape_definition_representation *sdr = find_sdr_for_pd (instance_list, pd);
+-  SdaiShape_representation *sr = (SdaiShape_representation *)sdr->used_representation_ ();
+ 
+-  // If sr is an exact match for the step entity SHAPE_REPRESENTATION (not a subclass), return - we are already in the correct form
++  // Find all SRR where RR.rep_1 = sr
++  //              let   child_sr = RR.rep_2
++
++  // If SRR node is complex, and also RRWT, extract transform as follows:
++  // SdaiTransformation(SdaiSelect) transformation = RRWT.transformation_operator
++  // Check transformation.UnderlyingTypeName () == "Item_defined_transformation" - if not, error (don't know how to do Functionally defined tranformation
++  // item1 = transform.transform_item_1_() // Axis in parent (use dynamic cast to ensure it is the correct type?)
++  // item2 = transform.transform_item_2_() // Axis in child (use dynamic cast to ensure it is the correct type?)
++  // If item1 or item2 is NULL, then drop this child?
++
++  // If SRR node was not complex, insert child with 1:1 tranformation
++
++
++
++  return NULL;
++}
++
++static step_model *
++process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr)
++{
++  step_model *step_model;
++  object3d *object;
++  GHashTable *edges_hash_set;
++  bool on_plane;
++
++  // If sr is an exact match for the step entity SHAPE_REPRESENTATION (not a subclass), call the specific hander
++  if (strcmp (sr->EntityName (), "Shape_Representation") == 0)
++    {
++      return process_shape_representation (instance_list, sr);
++    }
++
+   if (strcmp (sr->EntityName (), "Advanced_Brep_Shape_Representation") != 0)
+     {
+       printf ("step_model_to_shape_master: Looking for Advanced_Brep_Shape_Representation, but found %s (which we don't support yet)\n", sr->EntityName ());
+       return NULL;
+     }
+ 
++  object = make_object3d ((char *)"Test");
++
+   SdaiAxis2_placement_3d *part_origin = find_axis2_placement_3d_in_sr (sr);
+   if (part_origin == NULL)
+     std::cout << "WARNING: Could not find AXIS2_PLACEMENT_3D entity in SHAPE_REPRESENTATION" << std::endl;
+@@ -591,6 +674,53 @@ step_model_to_shape_master (const char *filename, object3d **out_object)
+         g_hash_table_destroy (edges_hash_set);
+     }
+ 
++  mi_list mi_list;
++  find_mapped_item (sr, &mi_list);
++
++  for (mi_list::iterator iter = mi_list.begin (); iter != mi_list.end (); iter++)
++    {
++      std::cout << "Found MAPPED_ITEM; processing" << std::endl;
++      SdaiMapped_item *mi = (*iter);
++
++      SdaiRepresentation_map *rm = dynamic_cast<SdaiRepresentation_map *>(mi->mapping_source_());
++      SdaiAxis2_placement_3d *mi_axis = dynamic_cast<SdaiAxis2_placement_3d *>(mi->mapping_target_());
++
++      if (rm == NULL)
++        {
++          std::cout << "ERROR: Could not find REPRESENTATION_ITEM referred to by MAPPED_ITEM" << std::endl;
++          continue;
++        }
++
++      if (mi_axis == NULL)
++        {
++          std::cout << "ERROR: Could not find AXIS2_PLACEMENT_3D referred to by MAPPED_ITEM" << std::endl;
++          continue;
++        }
++
++      SdaiAxis2_placement_3d *rm_axis = dynamic_cast<SdaiAxis2_placement_3d *>(rm->mapping_origin_());
++      SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(rm->mapped_representation_());
++
++      if (rm_axis == NULL)
++        {
++          std::cout << "ERROR: Could not find AXIS2_PLACEMENT_3D referred to by REPRESENTATION_ITEM" << std::endl;
++          continue;
++        }
++
++      if (child_sr == NULL)
++        {
++          std::cout << "ERROR: Could not find SHAPE_REPRESENTATION referred to by MAPPED_ITEM" << std::endl;
++          continue;
++        }
++
++
++      std::cout << "Should now have the pieces, and can derive a transform as required to recurse down" << std::endl;
++
++      /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
++      /* XXX: Origin offset etc..? */
++      /* XXX: Do something with the result */
++      process_sr_or_subtype (instance_list, child_sr);
++    }
++
+   step_model = g_new0(struct step_model, 1);
+ 
+ //  step_model->filename = g_strdup(filename);
+@@ -611,13 +741,37 @@ step_model_to_shape_master (const char *filename, object3d **out_object)
+ 
+   step_model->object = object;
+ 
+-  if (out_object != NULL)
+-    *out_object = object;
++  return step_model;
++}
++
++extern "C" struct step_model *
++step_model_to_shape_master (const char *filename)
++{
++  step_model *step_model;
++
++  printf ("step_model_to_shape_master(\"%s\")\n", filename);
++
++  Registry * registry = new Registry (SchemaInit);
++  InstMgr * instance_list = new InstMgr (/* ownsInstance = */1);
++
++  // Increment FileId so entities start at #1 instead of #0.
++  instance_list->NextFileId();
++
++  SdaiProduct_definition *pd = read_model_from_file (registry, instance_list, filename);
++  if (pd == NULL)
++    {
++      printf ("ERROR Loading STEP model from file '%s'", filename);
++      return NULL;
++    }
++
++  SdaiShape_definition_representation *sdr = find_sdr_for_pd (instance_list, pd);
++  SdaiShape_representation *sr = (SdaiShape_representation *)sdr->used_representation_ ();
++
++  step_model = process_sr_or_subtype (instance_list, sr);
+ 
+   delete instance_list;
+   delete registry;
+ 
+-
+   return step_model;
+ }
+ 
+diff --git a/src/hid/step/model.h b/src/hid/step/model.h
+index 6c70278..af67d54 100644
+--- a/src/hid/step/model.h
++++ b/src/hid/step/model.h
+@@ -21,5 +21,5 @@ typedef struct step_model {
+   object3d *object;
+ } step_model;
+ 
+-step_model *step_model_to_shape_master (const char *filename, object3d **out_object);
++step_model *step_model_to_shape_master (const char *filename);
+ void step_model_free (step_model *step_model);
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 65fc4dc..10a34e5 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -373,7 +373,7 @@ step_load_models(Coord board_thickness_)
+             {
+               model = g_new0 (struct assembly_model, 1);
+               model->filename = model_filename;
+-              model->step_model = step_model_to_shape_master (model_filename, NULL);
++              model->step_model = step_model_to_shape_master (model_filename);
+               loaded_models = g_list_append (loaded_models, model);
+             }
+           instance = g_new0 (struct assembly_model_instance, 1);
+diff --git a/src/hid/step/utils.cpp b/src/hid/step/utils.cpp
+index 7c5be28..caab465 100644
+--- a/src/hid/step/utils.cpp
++++ b/src/hid/step/utils.cpp
+@@ -49,10 +49,12 @@
+ #  define DEBUG_PRODUCT_DEFINITION_SEARCH
+ #  define DEBUG_CHILD_REMOVAL
+ #  define DEBUG_PRODUCT_DEFINITION
++#  define DEBUG_SHAPE_REPRESENTATION_RELATIONSHIP_SEARCH
+ #else
+ #  undef DEBUG_PRODUCT_DEFINITION_SEARCH
+ #  undef DEBUG_CHILD_REMOVAL
+ #  undef DEBUG_PRODUCT_DEFINITION
++#  undef DEBUG_SHAPE_REPRESENTATION_RELATIONSHIP_SEARCH
+ #endif
+ 
+ #include <glib.h>
+@@ -288,3 +290,164 @@ find_axis2_placement_3d_in_sr (SdaiShape_representation *sr)
+ 
+   return NULL;
+ }
++
++void
++find_all_srr_with_rep_1( InstMgr *instance_list, srr_list *srr_list, int start_after_id, SdaiRepresentation *rep_1)
++{
++  MgrNode * mnode = instance_list->FindFileId (start_after_id);
++  int search_index;
++
++  if (mnode == NULL)
++    search_index = 0;
++  else
++    search_index = instance_list->GetIndex (mnode) + 1;
++
++  // Loop over the instances of SHAPE_REPRESENTATION_RELATIONSHIP in the file
++  SdaiShape_representation_relationship *srr;
++  while (ENTITY_NULL != (srr = (SdaiShape_representation_relationship *)
++                               instance_list->GetApplication_instance ("Shape_representation_relationship", search_index)))
++    {
++      SdaiRepresentation *found_rep_1 = srr->rep_1_ ();
++#ifdef DEBUG_SHAPE_REPRESENTATION_RELATIONSHIP_SEARCH
++      SdaiRepresentation *found_rep_2 = srr->rep_2_ ();
++#endif
++
++      if (srr->IsComplex())
++        {
++          std::cout << "ERROR: Found a complex SRR when we were expecting a simplex" << std::endl;
++          return;
++        }
++
++      if (found_rep_1 == rep_1)
++        srr_list->push_back (srr);
++
++#ifdef DEBUG_SHAPE_REPRESENTATION_RELATIONSHIP_SEARCH
++      std::cout << "Got a SRR, #" << srr->StepFileId ();
++      std::cout << " rep_1 = #" << found_rep_1->StepFileId ();
++      std::cout << " rep_2 = #" << found_rep_2->StepFileId ();
++      std::cout << std::endl;
++#endif
++
++      int id = srr->StepFileId ();
++      MgrNode * mnode = instance_list->FindFileId (id);
++      search_index = instance_list->GetIndex (mnode) + 1;
++    }
++}
++
++void
++find_all_srr_rrwt_with_rep_1( InstMgr *instance_list, srr_rrwt_list *srr_rrwt_list, int start_after_id, SdaiRepresentation *rep_1)
++{
++  MgrNode * mnode = instance_list->FindFileId (start_after_id);
++  int search_index;
++  SDAI_Application_instance *entity;
++
++  if (mnode == NULL)
++    search_index = 0;
++  else
++    search_index = instance_list->GetIndex (mnode) + 1;
++
++  while (ENTITY_NULL != (entity = instance_list->GetApplication_instance ("Representation_relationship", search_index)))
++    {
++      STEPcomplex *stepcomplex;
++      STEPattribute *attr;
++      SdaiRepresentation *found_rep_1 = NULL;
++      SdaiRepresentation *found_rep_2 = NULL;
++      SdaiTransformation *transform = NULL;
++      SdaiItem_defined_transformation *idt = NULL;
++
++      bool found_srr = false;
++      bool found_rrwt = false;
++
++      if (!entity->IsComplex())
++        {
++          std::cout << "WARNING: Found a non-complex Representation_relationship when looking for SRR + RRWT" << std::endl;
++          continue;
++        }
++
++      stepcomplex = dynamic_cast<STEPcomplex *>(entity)->head;
++
++      /* Assume the first is always the RR */
++      stepcomplex->ResetAttributes ();
++      while ((attr = stepcomplex->NextAttribute()) != NULL) {
++          if (!strcmp (attr->Name (), "rep_1"))
++            found_rep_1 = dynamic_cast<SdaiRepresentation *>(attr->Entity ());
++          if (!strcmp (attr->Name (), "rep_2"))
++            found_rep_2 = dynamic_cast<SdaiRepresentation *>(attr->Entity ());
++      }
++
++      while (stepcomplex) {
++          if (stepcomplex->EntityName() == NULL)
++            {
++              std::cout << "ERROR: NULL whilst traversing complex" << std::endl;
++              return;
++            }
++          else if (!strcmp (stepcomplex->EntityName (), "Shape_Representation_Relationship"))
++            {
++              found_srr = true;
++            }
++          else if (!strcmp (stepcomplex->EntityName (), "Representation_Relationship_With_Transformation"))
++            {
++              found_rrwt = true;
++
++              stepcomplex->ResetAttributes ();
++              while ((attr = stepcomplex->NextAttribute()) != NULL)
++                {
++                  if (!strcmp (attr->Name (), "transformation_operator"))
++                    {
++                      transform = dynamic_cast<SdaiTransformation *>(attr->Select ());
++                      idt = *transform;
++                    }
++                }
++            }
++          stepcomplex = stepcomplex->sc;
++      }
++
++#ifdef DEBUG_SHAPE_REPRESENTATION_RELATIONSHIP_SEARCH
++      std::cout << "GOT A complex, #" << entity->StepFileId () << ":" << std::endl;
++      std::cout << "    RR";
++
++      if (found_rep_1 != NULL)
++        std::cout << " rep_1 = #" << found_rep_1->StepFileId ();
++      else
++        std::cout << " rep_1 = NIL";
++
++      if (found_rep_2 != NULL)
++        std::cout << " rep_2 = #" << found_rep_2->StepFileId ();
++      else
++        std::cout << " rep_2 = NIL";
++
++      std::cout << std::endl;
++
++      if (found_srr)
++        std::cout << "    SRR" << std::endl;
++
++      if (found_rrwt)
++        {
++          std::cout << "    RRWT, transform = ";
++          if (transform != NULL)
++            std::cout << "#" << idt->StepFileId () << std::endl;
++          else
++            std::cout << "NIL" << std::endl;
++        }
++
++      std::cout << std::endl;
++#endif
++
++      if (found_rep_1 == rep_1 &&
++          found_srr &&
++          found_rrwt)
++        {
++          srr_rrwt *item = new srr_rrwt;
++
++          item->rep_2 = found_rep_2;
++          item->idt = idt;
++
++          srr_rrwt_list->push_back (item);
++        }
++
++      int id = entity->StepFileId ();
++      MgrNode * mnode = instance_list->FindFileId (id);
++      search_index = instance_list->GetIndex (mnode) + 1;
++    }
++
++}
+diff --git a/src/hid/step/utils.h b/src/hid/step/utils.h
+index 06f6143..1ae2f18 100644
+--- a/src/hid/step/utils.h
++++ b/src/hid/step/utils.h
+@@ -26,7 +26,14 @@
+  */
+ 
+ 
++typedef struct srr_rrwt {
++  SdaiRepresentation *rep_2;
++  SdaiItem_defined_transformation *idt;
++} srr_rrwt;
++
+ typedef std::list<SdaiProduct_definition *> pd_list;
++typedef std::list<SdaiShape_representation_relationship *> srr_list;
++typedef std::list<srr_rrwt *> srr_rrwt_list;
+ 
+ 
+ void find_all_pd_with_sdr (InstMgr *instance_list, pd_list *pd_list, int start_after_id);
+@@ -42,3 +49,6 @@ SdaiShape_definition_representation *find_sdr_for_pd (InstMgr *instance_list, Sd
+ SdaiShape_representation *find_sr_for_pd (InstMgr *instance_list, SdaiProduct_definition *target_pd);
+ 
+ SdaiAxis2_placement_3d *find_axis2_placement_3d_in_sr (SdaiShape_representation *sr);
++
++void find_all_srr_with_rep_1( InstMgr *instance_list, srr_list *srr_list, int start_after_id, SdaiRepresentation *rep_1);
++void find_all_srr_rrwt_with_rep_1( InstMgr *instance_list, srr_rrwt_list *srr_rrwt_list, int start_after_id, SdaiRepresentation *rep_1);
